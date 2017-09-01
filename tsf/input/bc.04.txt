@@ -1,0 +1,15 @@
+testcase begin bc.04
+/ A: PARTIAL DIGITS; ADDRESS TIMEOUT
+inject PS B &port.A
+delay 1
+inject PS D &port.A 2
+delay 1
+inject PS D &port.A 0
+delay 12
+inject PS E &port.A
+delay 1
+verify PS S &port.A s=d m=&port.dial
+verify PS S &port.A m=&port.silence
+verify PS S &port.A s=x m=&port.reorder c=&cause.addresstimeout
+verify PS R &port.A &cause.normal
+testcase end

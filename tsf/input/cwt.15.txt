@@ -1,0 +1,32 @@
+subscribe &dn.A cwt
+
+testcase verify off
+read bc.BA
+/ 1A 1B
+read cwt.In2Ack
+/ 1C
+read cwt.Nf2Tmr
+/ 3A
+read cwt.Nd2ExB
+testcase verify on
+
+testcase begin cwt.15
+/ 15A
+inject PS E &port.A
+delay 2
+verify PS S &port.A r=t
+verify PC P &port.A &prog.media m=&port.A
+/ verify PC A &port.A [sent by shelf, so marked injected]
+verify PS S &port.A s=x
+verify PC F &port.A f &service.cwb &facility.cwt.alerted
+
+/ C RINGING: ANSWER
+read cwt.Nu1Off
+
+/ IDLE C & A
+inject PS E &port.C
+inject PS E &port.A
+
+delay 2
+testcase end
+unsubscribe &dn.A cwt

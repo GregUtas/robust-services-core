@@ -1,0 +1,33 @@
+//==============================================================================
+//
+//  cstddef
+//
+#ifndef CSTDDEF_INCLUDED
+#define CSTDDEF_INCLUDED
+
+#include "cstdint"
+
+//  FILES IN THE subs/ DIRECTORY MUST NOT BE INCLUDED IN THE BUILD.
+//
+//  Parser.h may not be able to parse headers outside the code base.  However,
+//  types in those headers must somehow be made visible, so they are declared
+//  in subs/ files.  This way, only what the code base uses has to be parsed,
+//  and the parser does not have to support C++ constructs that the code base
+//  does not use.  The subs/ files also serve to document what the code base
+//  actually uses.
+//
+//  Because the code base does not #include any subs/ files, they are compiled
+//  through subs.cpp.  However, they will not get included in an actual build.
+//
+//  The declarations in subs/ files are often simplified versions of their true
+//  counterparts and may also omit things that the code base does not use.
+//
+#ifdef CT_COMPILER
+   typedef uint32_t wchar_t;
+   typedef uintptr_t size_t;
+   const nullptr_t NULL = nullptr;
+#endif
+
+typedef intptr_t ptrdiff_t;
+
+#endif

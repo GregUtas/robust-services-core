@@ -1,0 +1,60 @@
+//==============================================================================
+//
+//  memory
+//
+#ifndef MEMORY_INCLUDED
+#define MEMORY_INCLUDED
+
+#include "cstddef"
+
+namespace std
+{
+   template< typename T > struct allocator { };
+
+   template< typename T > class unique_ptr
+   {
+   public:
+      class deleter_type
+      {
+      public:
+         deleter_type();
+         ~deleter_type();
+      };
+      unique_ptr();
+      unique_ptr(nullptr_t null);
+      explicit unique_ptr(T* pointer);
+      unique_ptr(unique_ptr&& that);
+      ~unique_ptr();
+      T& operator*() const;
+      T* operator->() const;
+      unique_ptr& operator=(unique_ptr&& that);
+      unique_ptr& operator=(nullptr_t null);
+      T* get() const;
+      T* release();
+      void reset(T* pointer = nullptr);
+   };
+
+   template< typename T > class unique_ptr< T[] >
+   {
+   public:
+      class deleter_type
+      {
+      public:
+         deleter_type();
+         ~deleter_type();
+      };
+      unique_ptr();
+      unique_ptr(nullptr_t null);
+      explicit unique_ptr(T* pointer);
+      unique_ptr(unique_ptr&& that);
+      ~unique_ptr();
+      unique_ptr& operator=(unique_ptr&& that);
+      unique_ptr& operator=(nullptr_t null);
+      T& operator[](size_t index) const;
+      T* get() const;
+      T* release();
+      void reset(T* pointer = nullptr);
+   };
+}
+
+#endif

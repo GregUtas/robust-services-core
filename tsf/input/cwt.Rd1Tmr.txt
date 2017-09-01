@@ -1,0 +1,8 @@
+/ RENOTIFIED 1: CWT ANSWER TIMEOUT
+delay 6
+verify PC F &port.A f &service.cwb &facility.cwt.unanswered
+verify PM R &port.A &cause.answertimeout
+verify PC F &port.A f &service.disc &facility.req c=&cause.answertimeout
+verify PS S &port.A s=x
+verify PM S &port.A m=&port.reorder c=&cause.answertimeout
+verify PS S &port.A m=&port.reorder c=&cause.answertimeout

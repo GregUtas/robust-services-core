@@ -1,0 +1,52 @@
+//==============================================================================
+//
+//  vector
+//
+#ifndef VECTOR_INCLUDED
+#define VECTOR_INCLUDED
+
+#include "cstddef"
+#include "iterator"
+
+namespace std
+{
+   template< typename T > class vector
+   {
+   public:
+      typedef iterator< T > const_iterator;
+      vector();
+      vector(size_t count, const T& item);
+      ~vector();
+      const T& operator[](size_t pos) const;
+      T& operator[](size_t pos);
+      const T& at(size_t pos) const;
+      T& at(size_t pos);
+      const T& back() const;
+      T& back();
+      const_iterator begin() const;
+      size_t capacity() const;
+      const_iterator cbegin() const;
+      const_iterator cend() const;
+      void clear();
+      const_iterator crbegin() const;
+      const_iterator crend() const;
+      bool empty() const;
+      const_iterator end() const;
+      const_iterator erase(const_iterator& where);
+      const T& front() const;
+      T& front();
+      const_iterator insert(const_iterator& where, const T& item);
+      const_iterator insert(const_iterator& where, size_t count, const T& item);
+      void pop_back();
+      void push_back(const T& item);
+      const_iterator rbegin() const;
+      const_iterator rend() const;
+      void resize(size_t count);
+      void resize(size_t count, const T& item);
+      void shrink_to_fit();
+      size_t size() const;
+      void swap(vector& that);
+   };
+}
+
+#endif

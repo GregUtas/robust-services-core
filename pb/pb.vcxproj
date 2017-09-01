@@ -1,0 +1,206 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A1D355BA-591F-412B-B3E9-AB88248A5552}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>pb</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="..\shared\TSF Common.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="..\shared\TSF Common.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="..\shared\TSF Common.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="..\shared\TSF Common.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <CodeAnalysisRuleSet>C:\Program Files\Microsoft Visual Studio 14.0\Team Tools\Static Analysis Tools\Rule Sets\NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StructMemberAlignment>4Bytes</StructMemberAlignment>
+      <AdditionalIncludeDirectories>C:\Users\gregu\Documents\tsf\tsf\nb;C:\Users\gregu\Documents\tsf\tsf\nt;C:\Users\gregu\Documents\tsf\tsf\nw;C:\Users\gregu\Documents\tsf\tsf\sb;C:\Users\gregu\Documents\tsf\tsf\st;C:\Users\gregu\Documents\tsf\tsf\mb;C:\Users\gregu\Documents\tsf\tsf\cb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <EnablePREfast>false</EnablePREfast>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\gregu\Documents\tsf\tsf\nb;C:\Users\gregu\Documents\tsf\tsf\nt;C:\Users\gregu\Documents\tsf\tsf\nw;C:\Users\gregu\Documents\tsf\tsf\sb;C:\Users\gregu\Documents\tsf\tsf\st;C:\Users\gregu\Documents\tsf\tsf\mb;C:\Users\gregu\Documents\tsf\tsf\cb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\gregu\Documents\tsf\tsf\nb;C:\Users\gregu\Documents\tsf\tsf\nt;C:\Users\gregu\Documents\tsf\tsf\nw;C:\Users\gregu\Documents\tsf\tsf\sb;C:\Users\gregu\Documents\tsf\tsf\st;C:\Users\gregu\Documents\tsf\tsf\mb;C:\Users\gregu\Documents\tsf\tsf\cb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\gregu\Documents\tsf\tsf\nb;C:\Users\gregu\Documents\tsf\tsf\nt;C:\Users\gregu\Documents\tsf\tsf\nw;C:\Users\gregu\Documents\tsf\tsf\sb;C:\Users\gregu\Documents\tsf\tsf\st;C:\Users\gregu\Documents\tsf\tsf\mb;C:\Users\gregu\Documents\tsf\tsf\cb;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="PbModule.cpp" />
+    <ClCompile Include="PotsBicFeature.cpp" />
+    <ClCompile Include="PotsBocFeature.cpp" />
+    <ClCompile Include="PotsCfbFeature.cpp" />
+    <ClCompile Include="PotsCfnFeature.cpp" />
+    <ClCompile Include="PotsCfuFeature.cpp" />
+    <ClCompile Include="PotsCircuit.cpp" />
+    <ClCompile Include="PotsCliParms.cpp" />
+    <ClCompile Include="PotsCwtFeature.cpp" />
+    <ClCompile Include="PotsCxfFeature.cpp" />
+    <ClCompile Include="PotsFeature.cpp" />
+    <ClCompile Include="PotsFeatureProfile.cpp" />
+    <ClCompile Include="PotsFeatureRegistry.cpp" />
+    <ClCompile Include="PotsFeatures.cpp" />
+    <ClCompile Include="PotsHtlFeature.cpp" />
+    <ClCompile Include="PotsIncrement.cpp" />
+    <ClCompile Include="PotsMessages.cpp" />
+    <ClCompile Include="PotsProfile.cpp" />
+    <ClCompile Include="PotsProfileRegistry.cpp" />
+    <ClCompile Include="PotsProtocol.cpp" />
+    <ClCompile Include="PotsSusFeature.cpp" />
+    <ClCompile Include="PotsTwcFeature.cpp" />
+    <ClCompile Include="PotsWmlFeature.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="PbModule.h" />
+    <ClInclude Include="PotsBicFeature.h" />
+    <ClInclude Include="PotsBocFeature.h" />
+    <ClInclude Include="PotsCfbFeature.h" />
+    <ClInclude Include="PotsCfnFeature.h" />
+    <ClInclude Include="PotsCfuFeature.h" />
+    <ClInclude Include="PotsCircuit.h" />
+    <ClInclude Include="PotsCliParms.h" />
+    <ClInclude Include="PotsCwtFeature.h" />
+    <ClInclude Include="PotsCxfFeature.h" />
+    <ClInclude Include="PotsFeature.h" />
+    <ClInclude Include="PotsFeatureProfile.h" />
+    <ClInclude Include="PotsFeatureRegistry.h" />
+    <ClInclude Include="PotsFeatures.h" />
+    <ClInclude Include="PotsHtlFeature.h" />
+    <ClInclude Include="PotsIncrement.h" />
+    <ClInclude Include="PotsProfile.h" />
+    <ClInclude Include="PotsProfileRegistry.h" />
+    <ClInclude Include="PotsProtocol.h" />
+    <ClInclude Include="PotsSusFeature.h" />
+    <ClInclude Include="PotsTwcFeature.h" />
+    <ClInclude Include="PotsWmlFeature.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\cb\cb.vcxproj">
+      <Project>{81edfbc1-362e-4082-a9c5-e1b116ad0302}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\mb\mb.vcxproj">
+      <Project>{d3133157-1e87-42bf-84f2-61140dc2b773}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\nb\nb.vcxproj">
+      <Project>{50814a14-cc19-45a3-9f0a-c9bd6cc0e1fb}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\nt\nt.vcxproj">
+      <Project>{9ad2cf38-7b5e-4584-9028-f637787de098}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\nw\nw.vcxproj">
+      <Project>{f6873bbe-818e-4991-9fd9-d7214e9371a1}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\sb\sb.vcxproj">
+      <Project>{f38cd809-f188-49af-bd46-0f2b08dd0746}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\st\st.vcxproj">
+      <Project>{868cf7da-d9f6-40bd-8005-8c94ede5ceb7}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

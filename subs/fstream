@@ -1,0 +1,41 @@
+//==============================================================================
+//
+//  fstream
+//
+#ifndef FSTREAM_INCLUDED
+#define FSTREAM_INCLUDED
+
+#include "ios"
+#include "istream"
+#include "ostream"
+#include "string"
+
+namespace std
+{
+   class basic_ifstream : public basic_istream
+   {
+   public:
+      basic_ifstream(const char* fn, int mode = basic_ios::in);
+      basic_ifstream(const std::string& s, int mode = basic_ios::in);
+      ~basic_ifstream();
+   };
+
+   class basic_ofstream : public basic_ostream
+   {
+   public:
+      basic_ofstream(const char* fn, int mode = basic_ios::out);
+      basic_ofstream(const std::string& s, int mode = basic_ios::out);
+      ~basic_ofstream();
+   };
+
+   class basic_fstream : public basic_iostream
+   {
+   public:
+      basic_fstream(const char* fn, int mode = basic_ios::in | basic_ios::out);
+      basic_fstream(const std::string& s, int mode = basic_ios::in | basic_ios::out);
+      ~basic_fstream();
+   };
+
+}
+
+#endif

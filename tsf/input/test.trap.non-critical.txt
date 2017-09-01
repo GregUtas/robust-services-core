@@ -1,0 +1,43 @@
+/ MAKE RECOVERY TEST THREAD NON-CRITICAL
+read test.trap.setup
+swflags set &flag.criticalthread off
+testcase begin recover.non-critical.Return
+read trap.01
+testcase begin recover.non-critical.SwErr
+read trap.02
+testcase begin recover.non-critical.BadPtr
+read trap.03
+testcase begin recover.non-critical.DivZero
+read trap.04
+testcase begin recover.non-critical.SIGINT
+read trap.05
+testcase begin recover.non-critical.SIGILL
+read trap.06
+testcase begin recover.non-critical.SIGTERM
+read trap.07
+testcase begin recover.non-critical.SIGBREAK
+read trap.08
+testcase begin recover.non-critical.abort
+read trap.09
+testcase begin recover.non-critical.terminate
+read trap.10
+testcase begin recover.non-critical.KillLocal
+read trap.11
+testcase begin recover.non-critical.KillRemote
+read trap.12
+testcase begin recover.non-critical.InfiniteLoop
+read trap.13
+testcase begin recover.non-critical.StackOverflow
+read trap.14
+testcase begin recover.non-critical.TrapDuringRecovery
+read trap.15
+testcase begin recover.non-critical.DeleteRemote
+read trap.16
+testcase begin recover.non-critical.DeleteLocal
+read trap.17
+testcase begin recover.non-critical.Ctrl-C
+read trap.18
+testcase begin recover.non-critical.Ctrl-Break
+read trap.19
+testcase begin recover.non-critical.ThreadCtorTrap
+read trap.20

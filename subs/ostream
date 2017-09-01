@@ -1,0 +1,44 @@
+//==============================================================================
+//
+//  ostream
+//
+#ifndef OSTREAM_INCLUDED
+#define OSTREAM_INCLUDED
+
+#include "ios"
+
+namespace std
+{
+   class basic_ostream : public basic_ios
+   {
+   public:
+      basic_ostream();
+      virtual ~basic_ostream();
+      basic_ostream& operator<<(bool b);
+      basic_ostream& operator<<(char c);
+      basic_ostream& operator<<(unsigned char uc);
+      basic_ostream& operator<<(short s);
+      basic_ostream& operator<<(unsigned short us);
+      basic_ostream& operator<<(int i);
+      basic_ostream& operator<<(unsigned int ui);
+      basic_ostream& operator<<(long l);
+      basic_ostream& operator<<(unsigned long ul);
+      basic_ostream& operator<<(long long ll);
+      basic_ostream& operator<<(unsigned long long ull);
+      basic_ostream& operator<<(float f);
+      basic_ostream& operator<<(double d);
+      basic_ostream& operator<<(long double ld);
+      basic_ostream& operator<<(const char* s);
+      basic_ostream& operator<<(const void* p);
+      basic_ostream& operator<<(const stream_manipulator& m);
+      basic_ostream& write(const void* stuff, streamsize count);
+      streampos tellp();
+      basic_ostream& seekp(streampos pos);
+      basic_ostream& seekp(streampos offset, basic_ios::seekdir dir);
+   };
+
+   extern const stream_manipulator endl;
+   extern const stream_manipulator flush;
+}
+
+#endif

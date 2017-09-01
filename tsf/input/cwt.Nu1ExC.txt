@@ -1,0 +1,6 @@
+/ NULL 1: IDLE C
+inject PS E &port.C
+delay 2
+verify PS R &port.C &cause.normal
+verify PM S &port.A m=&port.silence c=&cause.normal
+verify PS S &port.A m=&port.silence c=&cause.normal

@@ -1,0 +1,306 @@
+//==============================================================================
+//
+//  TlvMessage.h
+//
+//  Copyright (C) 2012-2017 Greg Utas.  All rights reserved.
+//
+#ifndef TLVMESSAGE_H_INCLUDED
+#define TLVMESSAGE_H_INCLUDED
+
+#include "Message.h"
+#include <cstddef>
+#include <cstdint>
+#include "Debug.h"
+#include "Memory.h"
+#include "MsgHeader.h"
+#include "NbTypes.h"
+#include "SbIpBuffer.h"
+#include "SbTypes.h"
+#include "SysTypes.h"
+#include "TlvParameter.h"
+
+using namespace NodeBase;
+
+//------------------------------------------------------------------------------
+
+namespace SessionBase
+{
+//  Supports messages whose parameters are encodeded in TLV format.  Although
+//  this class can be used directly, any non-trivial protocol should usually
+//  define its own subclass or per-signal subclasses.
+//
+class TlvMessage : public Message
+{
+public:
+   //  Overridden to create an incoming message.
+   //
+   explicit TlvMessage(SbIpBufferPtr& buff);
+
+   //  Overridden to create an outgoing message.
+   //
+   TlvMessage(ProtocolSM* psm, MsgSize size);
+
+   //  Supports message decapsulation.  PARM is an encapsulated message
+   //  that was created using WRAP (see below).  It has now arrived at its
+   //  destination, which wants to unwrap it to create an incoming message.
+   //  PARM also contains the message header, which is placed into the new
+   //  message's header.
+   //
+   TlvMessage(const TlvParmLayout& parm, ProtocolSM* psm);
+
+   //  Copies MSG into an outgoing message and queues it on PSM.  The header
+   //  contains the message length but is not changed in any other way.
+   //
+   TlvMessage(const Message& msg, ProtocolSM* psm);
+
+   //  Virtual to allow subclassing.
+   //
+   virtual ~TlvMessage();
+
+   //  Encapsulates MSG's payload as a parameter within the message, giving
+   //  it the identifier PID.
+   //
+   virtual TlvParmPtr Wrap(const TlvMessage& msg, ParameterId pid);
+
+   //  Returns the first parameter that matches PID.  Returns nullptr if no
+   //  such parameter exists.  T is the type for the parameter's contents,
+   //  omitting the TLV header.  The syntax for invocation on MSG is
+   //    auto info = msg.FindType< T >(pid);
+   //
+   template< typename T > T* FindType(ParameterId pid) const
+   {
+      Debug::ft(TlvMessage_FindType());
+      auto pptr = FindParm(pid);
+      if(pptr == nullptr) return nullptr;
+      return reinterpret_cast< T* >(pptr->bytes);
+   }
+
+   //  Adds a parameter of type T (PARM) that is identified by PID.
+   //  The syntax for invocation on MSG is
+   //    auto info = msg.AddType(parm, pid);
+   //  where PARM is of type T, with its fields already filled in
+   //  (although they can also be filled in afterwards).
+   //
+   template< typename T > T* AddType(const T& parm, ParameterId pid)
+   {
+      Debug::ft(TlvMessage_AddType());
+      auto pptr = AddParm(pid, sizeof(T));
+      if(pptr == nullptr) return nullptr;
+      auto dest = reinterpret_cast< T* >(pptr->bytes);
+      *dest = parm;
+      return dest;
+   }
+
+   //  Searches icMsg for a parameter of type T, identified by icPid.  If
+   //  one is found, it is copied into this message using the identifier
+   //  ogPid.  If ogPid is not provided, icPid is also used for the copy.
+   //  The syntax for invocation on MSG is
+   //    auto info = msg.CopyType< T >(icMsg, icPid, ogPid);
+   //
+   template< typename T > T* CopyType
+      (const TlvMessage& icMsg, ParameterId icPid, ParameterId ogPid = 0)
+   {
+      Debug::ft(TlvMessage_CopyType());
+      if(ogPid == NIL_ID) ogPid = icPid;
+      auto pptr = icMsg.FindType< T >(icPid);
+      if(pptr != nullptr) return AddType(*pptr, ogPid);
+      return nullptr;
+   }
+
+   //  Looks for a parameter of type T, identified by PID, and updates
+   //  PARM accordingly.  Returns PID if
+   //  o the parameter is found and USE is Illegal, or
+   //  o the parameter is not found and USE is Mandatory.
+   //  Returns 0 otherwise.  The syntax for invocation on MSG is
+   //    T* parm;
+   //    auto rc = msg.VerifyParm(pid, use, parm);
+   //
+   template< typename T > Parameter::TestRc VerifyParm
+      (ParameterId pid, Parameter::Usage use, T*& parm) const
+   {
+      Debug::ft(TlvMessage_VerifyParm());
+
+      auto pptr = FindParm(pid);
+      parm = (pptr == nullptr ? nullptr : reinterpret_cast< T* >(pptr->bytes));
+
+      if((pptr == nullptr) && (use == Parameter::Mandatory))
+         return Parameter::MessageMissingMandatoryParm;
+      if((pptr != nullptr) && (use == Parameter::Illegal))
+         return Parameter::MessageContainsIllegalParm;
+      return Parameter::Ok;
+   }
+private:
+   struct ParmIterator;  // forward declaration
+public:
+   //  Returns the first parameter that matches PID.  Returns nullptr if no
+   //  such parameter exists.
+   //
+   TlvParmPtr FindParm(ParameterId pid) const;
+
+   //  Returns the first parameter in the message and updates PIT, which
+   //  is used to iterate through the parameters.
+   //
+   TlvParmPtr FirstParm(ParmIterator& pit) const;
+
+   //  Returns the next parameter in the message based on PIT, which is
+   //  updated.
+   //
+   TlvParmPtr NextParm(ParmIterator& pit) const;
+
+   //  Returns all parameters in the message by updating PTAB, an array
+   //  that contains SIZE elements (indices 0 to SIZE-1).  Returns the
+   //  number of parameters found.
+   //
+   size_t AllParms(TlvParmArray ptab, size_t size) const;
+
+   //  Returns all parameters that match PID by updating PTAB, an array that
+   //  contains SIZE elements (indices 0 to SIZE-1).  Returns the number of
+   //  parameters found.
+   //
+   size_t FindParms(ParameterId pid, TlvParmArray ptab, size_t size) const;
+
+   //  Adds a parameter to the message.  PID is its identifier and PLEN
+   //  is its length in bytes.  The syntax for invocation on MSG, where
+   //  T is the type for the parameter's contents, is
+   //    auto pptr = msg.AddParm(pid, plen);
+   //    auto info = reinterpret_cast< T* >(pptr->bytes);
+   //  after which INFO's fields can be filled in.
+   //
+   virtual TlvParmPtr AddParm(ParameterId pid, MsgSize plen);
+
+   //  Inserts a parameter identified by PID, filling it with SIZE bytes
+   //  that are taken from SRC.
+   //
+   TlvParmPtr AddBytes(const byte_t* src, MsgSize size, ParameterId pid);
+
+   //  Copies the parameter SRC (in another message) into this message by
+   //  creating a parameter identified by PID.  If PID is NIL_ID, SRCE's
+   //  parameter identifier is used.
+   //
+   TlvParmPtr CopyParm(const TlvParmLayout& src, ParameterId pid = NIL_ID);
+
+   //  Expands PARM, which already exists, by PLEN bytes.
+   //
+   virtual TlvParmPtr ExpandParm(TlvParmLayout& parm, MsgSize plen);
+
+   //  Removes a parameter by changing its identifier to NIL_ID.
+   //
+   virtual void DeleteParm(TlvParmLayout& parm);
+
+   //  Overridden to inspect the message's contents.
+   //
+   virtual InspectRc InspectMsg(debug32_t& errval) const override;
+
+   //  Overridden to check the fence pattern before sending the message.
+   //
+   virtual bool Send(Message::Route route) override;
+
+   //  Overridden for patching.
+   //
+   virtual void Patch(sel_t selector, void* arguments) override;
+
+   //> The byte alignment used for messages in this network.  The default
+   //  value pads the header and parameters to a multiple of four bytes.
+   //
+   static const size_t Log2Align = 2;
+
+   //  Given a structure of SIZE bytes, this returns the value that rounds
+   //  SIZE up to a multiple of 2^Log2Align ('^' meaning exponentiation).
+   //
+   static MsgSize Pad(MsgSize size)
+   {
+      return MsgSize(Memory::Align(size, Log2Align));
+   }
+protected:
+   //  The physical layout of a TLV message's data.
+   //
+   struct TlvMsgLayout
+   {
+      MsgHeader header;
+      union
+      {
+         TlvParmLayout firstParm;                  // first parameter
+         byte_t bytes[MsgHeader::MaxMsgSize - 1];  // payload as bytes
+      };
+   };
+
+   //  The type for the fence that is placed after a parameter to detect
+   //  trampling.
+   //
+   typedef uint16_t Fence;
+   static const size_t FenceSize = sizeof(Fence);
+
+   //  Finds a byte array that is identified by PID, and returns its
+   //  length in SIZE.
+   //
+   byte_t* FindBytes(MsgSize& size, ParameterId pid) const;
+
+   //  Returns true if PPTR references a parameter within this message, in
+   //  which case PIT is updated to reference the parameter that *follows*
+   //  PPTR.  LAST is set to false unless PPTR is the last parameter in the
+   //  message.
+   //
+   virtual bool MatchParm(TlvParmPtr pptr, ParmIterator& pit, bool& last) const;
+
+   //  Adds the fence pattern to an incoming message in preparation for
+   //  adding more parameters to it.
+   //
+   virtual void AddFence();
+
+   //  Returns the entire TLV message (header plus parameters).
+   //
+   TlvMsgLayout* TlvLayout() const
+      { return reinterpret_cast< TlvMsgLayout* >(Buffer()->HeaderPtr()); }
+
+   //  Returns the number of bytes that precede the parameter referenced by
+   //  PPTR.  Returns -1 if PPTR is nullptr or is not within this message.
+   //
+   int ParmOffset(ParmIterator& pit) const;
+
+   //  Returns a pointer to the message's fence, which follows the header
+   //  and parameters in TlvLayout.
+   //
+   Fence* FencePtr() const;
+
+   //  Kills the running context if the message fence has been overwritten.
+   //
+   void CheckFence() const;
+
+   //  This marker is placed after a parameter when it is added to a message.
+   //  o The fence is not included in MsgHeader.length.
+   //  o An incoming message does not contain a fence.
+   //  o When a parameter is added, enough bytes are obtained to append
+   //    the fence.
+   //
+   static const Fence ParmFencePattern = 0xaaaa;
+
+   //  This marker is placed after a parameter when the one above was trampled.
+   //
+   static const Fence ParmDeathPattern = 0xdead;
+private:
+   //  Overridden to change the message's direction.
+   //
+   virtual void ChangeDir(MsgDirection dir) override;
+
+   //  See the comment in Singleton.h about an fn_name in a template header.
+   //
+   inline static fn_name TlvMessage_FindType()
+      { return "TlvMessage.FindType"; }
+   inline static fn_name TlvMessage_AddType()
+      { return "TlvMessage.AddType"; }
+   inline static fn_name TlvMessage_CopyType()
+      { return "TlvMessage.CopyType"; }
+   inline static fn_name TlvMessage_VerifyParm()
+      { return "TlvMessage.VerifyParm"; }
+
+   //  Iterator for a TLV message's parameters.
+   //
+   struct ParmIterator
+   {
+      const TlvMsgLayout* mptr;  // reference to message
+      TlvParmPtr pptr;           // reference to current parameter
+      MsgSize pindex;            // parameter's offset within message
+   };
+};
+}
+#endif

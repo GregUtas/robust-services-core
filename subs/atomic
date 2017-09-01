@@ -1,0 +1,75 @@
+//==============================================================================
+//
+//  atomic
+//
+#ifndef ATOMIC_INCLUDED
+#define ATOMIC_INCLUDED
+
+#include "cstdint"
+
+const long ATOMIC_FLAG_INIT = 0;
+
+namespace std
+{
+   enum memory_order
+   {
+      memory_order_relaxed,
+      memory_order_consume,
+      memory_order_acquire,
+      memory_order_release,
+      memory_order_acq_rel,
+      memory_order_seq_cst
+   };
+
+   class atomic_flag
+   {
+   public:
+      atomic_flag();
+      atomic_flag(long init);
+      bool test_and_set(memory_order order = memory_order_seq_cst);
+      void clear(memory_order order = memory_order_seq_cst);
+   };
+
+   class atomic_bool
+   {
+   public:
+      atomic_bool();
+      atomic_bool(bool value);
+      bool exchange(bool value, memory_order order = memory_order_seq_cst);
+      bool load(memory_order order = memory_order_seq_cst) const;
+      void store(bool value, memory_order order = memory_order_seq_cst);
+   };
+
+   template< typename T > class atomic
+   {
+   public:
+      atomic();
+      atomic(T value);
+      T exchange(T value, memory_order order = memory_order_seq_cst);
+      T fetch_add(T value, memory_order order = memory_order_seq_cst);
+      T fetch_sub(T value, memory_order order = memory_order_seq_cst);
+      T fetch_and(T value, memory_order order = memory_order_seq_cst);
+      T fetch_or(T value, memory_order order = memory_order_seq_cst);
+      T fetch_xor(T value, memory_order order = memory_order_seq_cst);
+      T load(memory_order order = memory_order_seq_cst) const;
+      void store(T value, memory_order order = memory_order_seq_cst);
+      operator T() const;
+      T operator=(T value);
+      T operator++();
+      T operator++(int);
+      T operator--();
+      T operator--(int);
+      T operator+=(T value);
+      T operator-=(T value);
+      T operator&=(T value);
+      T operator|=(T value);
+      T operator^=(T value);
+
+   };
+
+   typedef atomic< uint8_t > atomic_uint8_t;
+   typedef atomic< uint32_t > atomic_uint32_t;
+   typedef atomic< uint64_t > atomic_uint64_t;
+}
+
+#endif

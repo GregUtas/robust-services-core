@@ -1,0 +1,21 @@
+//==============================================================================
+//
+//  csignal
+//
+#ifndef CSIGNAL_INCLUDED
+#define CSIGNAL_INCLUDED
+
+#define SIGABRT 6
+#define SIGINT 2
+#define SIGILL 4
+#define SIGFPE 8
+#define SIGSEGV 11
+#define SIGTERM 15
+#define SIGBREAK 21
+
+typedef void (*sighandler) (int sig);
+void SIG_DFL(int sig);
+void* signal(int sig, sighandler handler);
+int raise(int sig);
+
+#endif

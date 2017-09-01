@@ -1,0 +1,29 @@
+//==============================================================================
+//
+//  algorithm
+//
+#ifndef ALGORITHM_INCLUDED
+#define ALGORITHM_INCLUDED
+
+#include "iterator"
+
+namespace std
+{
+   template< typename T > const T& min(const T& a, const T& b);
+   template< typename T > const T& max(const T& a, const T& b);
+
+   template< typename T > void sort
+	   (iterator< T >& begin, iterator< T >& end, const bool (*sorted) (T& first, T& second));
+
+   template< typename T > iterator< T > set_difference
+      (const iterator< T >& src1beg, const iterator< T >& src1end,
+       const iterator< T >& src2beg, const iterator< T >& src2end, iterator< T >& dstbeg);
+   template< typename T > iterator< T > set_intersection
+      (const iterator< T >& src1beg, const iterator< T >& src1end,
+      const iterator< T >& src2beg, const iterator< T >& src2end, iterator< T >& dstbeg);
+   template< typename T > iterator< T > set_union
+      (const iterator< T >& src1beg, const iterator< T >& src1end,
+      const iterator< T >& src2beg, const iterator< T >& src2end, iterator< T >& dstbeg);
+}
+
+#endif

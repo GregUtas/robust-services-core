@@ -1,0 +1,56 @@
+//==============================================================================
+//
+//  bitset
+//
+#ifndef BITSET_INCLUDED
+#define BITSET_INCLUDED
+
+#include "cstddef"
+#include "string"
+
+namespace std
+{
+   template< typename N > class bitset
+   {
+   public:
+      bitset();
+      bitset(unsigned long long pattern);
+      bitset(const bitset& that);
+      ~bitset();
+      bitset& operator=(const bitset& that);
+      bool operator==(const bitset& that);
+      bool operator!=(const bitset& that);
+      bool operator[](size_t pos) const;
+      bitset operator~() const;
+      bitset operator<<(size_t shift);
+      bitset operator>>(size_t shift);
+      bitset& operator<<=(size_t shift);
+      bitset& operator>>=(size_t shift);
+      bitset& operator&=(const bitset& that);
+      bitset& operator^=(const bitset& that);
+      bitset& operator|=(const bitset& that);
+      bool all() const;
+      bool any() const;
+      size_t count() const;
+      bitset& flip();
+      bitset& flip(size_t pos);
+      bool none() const;
+      bitset& reset();
+      bitset& reset(size_t pos);
+      bitset& set();
+      bitset& set(size_t pos, bool val = true);
+      size_t size() const;
+      bool test(size_t pos) const;
+      string to_string() const;
+      unsigned long to_ulong() const;
+   };
+
+   template< typename T > bitset< T > operator&
+      (const bitset< T >& lhs, const bitset< T >& rhs);
+   template< typename T > bitset< T > operator^
+      (const bitset< T >& lhs, const bitset< T >& rhs);
+   template< typename T > bitset< T > operator|
+      (const bitset< T >& lhs, const bitset< T >& rhs);
+}
+
+#endif

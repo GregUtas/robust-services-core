@@ -1,0 +1,9 @@
+/ RECOVER infinite loop
+/ Enable use of SIGYIELD to kill thread that runs too long.
+symbols assign save.traponrtctimeout traponrtctimeout
+cfgparms set traponrtctimeout t
+delay 1
+recover loop
+delay 3
+cfgparms set traponrtctimeout &save.traponrtctimeout
+testcase end

@@ -1,0 +1,31 @@
+subscribe &dn.A cwt
+
+testcase verify off
+read bc.AB
+/ 1A 1B
+read cwt.In2Ack
+/ 1C
+read cwt.Nf2Tmr
+/ 2A
+read cwt.Nd2Tmr
+/ 2B
+read cwt.Rf2Tmr
+/ 2C
+read cwt.Rd2Fls
+testcase verify on
+
+testcase begin cwt.08
+/ 8A
+read cwt.AdAExC
+/ 8B
+read cwt.Hg1ExA
+/ 8C
+read cwt.ReBOff
+/ IDLE A
+read cwt.Nu1ExA
+/ IDLE B
+read cwt.Nu0ExB
+
+delay 2
+testcase end
+unsubscribe &dn.A cwt

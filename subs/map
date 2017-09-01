@@ -1,0 +1,42 @@
+//==============================================================================
+//
+//  map
+//
+#ifndef MAP_INCLUDED
+#define MAP_INCLUDED
+
+#include "cstddef"
+#include "utility"
+
+namespace std
+{
+   template< typename T1, typename T2 > class map
+   {
+   public:
+      typedef pair< T1, T2 > entry;
+      map();
+      ~map();
+      entry* begin() const;
+      entry* cbegin() const;
+      entry* cend() const;
+      void clear();
+      size_t count(const T1& key) const;
+      entry* crbegin() const;
+      entry* crend() const;
+      bool empty() const;
+      entry* end() const;
+      size_t erase(const T1& key);
+      entry* find(const T1& key) const;
+      entry* find(const T1& key);
+      pair< entry*, bool > insert(entry& item);
+      entry* lower_bound(const T1& key) const;
+      entry* lower_bound(const T1& key);
+      entry* rbegin() const;
+      entry* rend() const;
+      size_t size() const;
+      entry* upper_bound(const T1& key) const;
+      entry* upper_bound(const T1& key);
+   };
+}
+
+#endif

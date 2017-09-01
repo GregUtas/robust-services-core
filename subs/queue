@@ -1,0 +1,26 @@
+//==============================================================================
+//
+//  queue
+//
+#ifndef QUEUE_INCLUDED
+#define QUEUE_INCLUDED
+
+#include "cstddef"
+
+namespace std
+{
+   template< typename T > class queue
+   {
+   public:
+      queue();
+      ~queue();
+      T& back() const;
+      bool empty() const;
+      T& front() const;
+      void pop();
+      void push(const T& item);
+      size_t size() const;
+   };
+}
+
+#endif

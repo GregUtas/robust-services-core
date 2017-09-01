@@ -1,0 +1,163 @@
+//==============================================================================
+//
+//  CliIntParm.cpp
+//
+//  Copyright (C) 2012-2017 Greg Utas.  All rights reserved.
+//
+#include "CliIntParm.h"
+#include <ios>
+#include <iosfwd>
+#include <sstream>
+#include <string>
+#include "CliBuffer.h"
+#include "CliCookie.h"
+#include "CliThread.h"
+#include "Debug.h"
+
+using std::ostream;
+using std::string;
+
+//------------------------------------------------------------------------------
+
+namespace NodeBase
+{
+fixed_string CliIntParm::AnyIntParm = "<int>";
+fixed_string CliIntParm::AnyHexParm = "<hex>";
+const char CliIntParm::RangeSeparator = ':';
+
+//------------------------------------------------------------------------------
+
+fn_name CliIntParm_ctor = "CliIntParm.ctor";
+
+CliIntParm::CliIntParm(const char* help, word min, word max,
+   bool opt, const char* tag, bool hex) : CliParm(help, opt, tag),
+   min_(min),
+   max_(max),
+   hex_(hex)
+{
+   Debug::ft(CliIntParm_ctor);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CliIntParm_dtor = "CliIntParm.dtor";
+
+CliIntParm::~CliIntParm()
+{
+   Debug::ft(CliIntParm_dtor);
+}
+
+//------------------------------------------------------------------------------
+
+void CliIntParm::Display(ostream& stream,
+   const string& prefix, const Flags& options) const
+{
+   CliParm::Display(stream, prefix, options);
+
+   stream << prefix << "min : " << min_ << CRLF;
+   stream << prefix << "max : " << max_ << CRLF;
+   stream << prefix << "hex : " << hex_ << CRLF;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CliIntParm_GetIntParmRc = "CliIntParm.GetIntParmRc";
+
+CliParm::Rc CliIntParm::GetIntParmRc(word& n, CliThread& cli) const
+{
+   Debug::ft(CliIntParm_GetIntParmRc);
+
+   n = 0;
+
+   string s;
+   string t;
+
+   //  Get the next string after saving the current location in the buffer.
+   //
+   auto x = cli.ibuf->Pos();
+   auto rc = cli.ibuf->GetStr(t, s);
+   auto tagged = (!t.empty());
+
+   //  If a tag was found, then it must match this parameter's tag before
+   //  we bother to look for the parameter itself.
+   //
+   if(tagged)
+   {
+      auto tag = Tag();
+
+      if((tag == nullptr) || (t.compare(tag) != 0))
+      {
+         cli.ibuf->SetPos(x);
+         cli.Cookie().Advance();
+         return None;
+      }
+   }
+
+   //  If the string is an integer within the correct range, return it.
+   //
+   if(rc == Ok)
+   {
+      rc = CliBuffer::GetInt(s, n, hex_);
+
+      if(rc == Ok)
+      {
+         if((n >= min_) && (n <= max_))
+         {
+            cli.Cookie().Advance();
+            return Ok;
+         }
+      }
+
+      n = 0;
+   }
+
+   //  A valid parameter was not found.  This is an error unless the
+   //  parameter is optional and was untagged, in which case we report
+   //  its absence after backing up if the skip character was entered.
+   //
+   if(IsOptional() && !tagged)
+   {
+      if(rc != Skip) cli.ibuf->SetPos(x);
+      cli.Cookie().Advance();
+      return None;
+   }
+
+   //  Error.  Highlight the location where an integer was expected.
+   //
+   cli.ibuf->ErrorAtPos(cli, "Integer expected or out of range", x);
+   cli.Cookie().Advance();
+   return Error;
+}
+
+//------------------------------------------------------------------------------
+
+void CliIntParm::Patch(sel_t selector, void* arguments)
+{
+   CliParm::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CliIntParm_ShowValues = "CliIntParm.ShowValues";
+
+bool CliIntParm::ShowValues(string& values) const
+{
+   Debug::ft(CliIntParm_ShowValues);
+
+   if((min_ == WORD_MIN) && (max_ == WORD_MAX))
+   {
+      if(hex_)
+         values = AnyHexParm;
+      else
+         values = AnyIntParm;
+      return false;
+   }
+
+   std::ostringstream stream;
+
+   if(hex_) stream << std::nouppercase << std::hex;
+   stream << min_ << RangeSeparator << max_;
+   values = stream.str();
+   return true;
+}
+}

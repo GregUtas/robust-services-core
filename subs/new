@@ -1,0 +1,22 @@
+//==============================================================================
+//
+//  new
+//
+#ifndef NEW_INCLUDED
+#define NEW_INCLUDED
+
+#include "cstddef"
+
+void* operator new(size_t size);
+void* operator new(size_t size, int throws);
+void* operator new[](size_t size);
+void* operator new[](size_t size, int throws);
+void operator delete(void* addr);
+void operator delete[](void* addr);
+
+namespace std
+{
+   const int nothrow = 1;
+}
+
+#endif

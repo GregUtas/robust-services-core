@@ -1,0 +1,10 @@
+/ ============ THE STACK OVERFLOW MAY TAKE SOME TIME TO OCCUR ===========
+/ RECOVER stack overflow
+/ Enable breakpoints to provide time for overflow.
+symbols assign save.breakenabled breakenabled
+cfgparms set breakenabled t
+delay 1
+recover stack
+delay 3
+cfgparms set breakenabled &save.breakenabled
+testcase end

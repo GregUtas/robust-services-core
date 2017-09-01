@@ -1,0 +1,107 @@
+//==============================================================================
+//
+//  string
+//
+#ifndef STRING_INCLUDED
+#define STRING_INCLUDED
+
+#include "cstddef"
+#include "cstdint"
+#include "istream"
+#include "memory"
+#include "ostream"
+
+namespace std
+{
+   template< typename T > class char_traits { };
+
+   template< typename charT, class traits = char_traits< charT >,
+      class alloc = allocator< charT >> class basic_string
+   {
+   public:
+      static const size_t npos = UINT32_MAX;
+      basic_string();
+      basic_string(const basic_string& that);
+      basic_string(const charT* that);
+      basic_string(size_t count, charT c);
+      ~basic_string();
+      basic_string& operator=(const basic_string& s);
+      basic_string& operator=(const charT* s);
+      basic_string& operator=(charT c);
+      basic_string& operator+=(const basic_string& s);
+      basic_string& operator+=(const charT* s);
+      basic_string& operator+=(charT c);
+      const charT& operator[](size_t pos) const;
+      charT& operator[](size_t pos);
+      basic_string& append(const basic_string& s);
+      basic_string& append(const charT* s);
+      basic_string& append(size_t count, charT c);
+      const charT& at(size_t pos) const;
+      charT& at(size_t pos);
+      const charT& back() const;
+      charT& back();
+      const charT* c_str() const;
+      size_t capacity() const;
+      void clear();
+      int compare(const basic_string& s) const;
+      int compare(const charT* s) const;
+      int compare(size_t p, size_t n, const basic_string& s) const;
+      int compare(size_t p1, size_t n1, const basic_string& s, size_t p2, size_t n2) const;
+      bool empty() const;
+      basic_string& erase(size_t pos = 0, size_t num = npos);
+      size_t find(const basic_string& s, size_t pos = 0) const;
+      size_t find(const charT* s, size_t pos = 0) const;
+      size_t find(charT c, size_t pos = 0) const;
+      size_t find_first_not_of(const basic_string& s, size_t pos = 0) const;
+      size_t find_first_not_of(const charT* s, size_t pos = 0) const;
+      size_t find_first_not_of(charT c, size_t pos = 0) const;
+      size_t find_first_of(const basic_string& s, size_t pos = 0) const;
+      size_t find_first_of(const charT* s, size_t pos = 0) const;
+      size_t find_first_of(charT c, size_t pos = 0) const;
+      size_t find_last_not_of(const basic_string& s, size_t pos = 0) const;
+      size_t find_last_not_of(const charT* s, size_t pos = 0) const;
+      size_t find_last_not_of(charT c, size_t pos = 0) const;
+      size_t find_last_of(const basic_string& s, size_t pos = 0) const;
+      size_t find_last_of(const charT* s, size_t pos = 0) const;
+      size_t find_last_of(charT c, size_t pos = 0) const;
+      const charT& front() const;
+      charT& front();
+      basic_string& insert(size_t pos, const basic_string& s);
+      basic_string& insert(size_t pos, const charT* s);
+      basic_string& insert(size_t pos, size_t count, charT c);
+      size_t length() const;
+      void pop_back();
+      void push_back(charT c);
+      basic_string& replace(size_t pos, size_t num, const basic_string& s);
+      basic_string& replace(size_t pos, size_t num, const charT* s);
+      basic_string& replace(size_t pos, size_t num, size_t count, charT c);
+      size_t rfind(const basic_string& s, size_t pos = npos) const;
+      size_t rfind(const charT* s, size_t pos = npos) const;
+      size_t rfind(charT c, size_t pos = npos) const;
+      void shrink_to_fit();
+      size_t size() const;
+      basic_string& substr(size_t pos = 0, size_t num = npos) const;
+   };
+
+   template < typename E, typename T, typename A > basic_string< E, T, A> operator+
+      (const basic_string< E, T, A >& s, const basic_string< E, T, A >& t);
+   template < typename E, typename T, typename A > basic_string< E, T, A> operator+
+      (const basic_string< E, T, A >& s, const E c);
+   template < typename E, typename T, typename A > basic_string< E, T, A> operator+
+      (const E c, const basic_string< E, T, A >& s);
+   template < typename E, typename T, typename A > basic_string< E, T, A> operator+
+      (const basic_string< E, T, A >& s, const E* pc);
+   template < typename E, typename T, typename A > basic_string< E, T, A> operator+
+      (const E* pc, const basic_string< E, T, A >& s);
+
+   template < typename E, typename T, typename A > basic_istream& getline
+      (basic_istream& i, basic_string< E, T, A >& s);
+   template < typename E, typename T, typename A > basic_ostream& operator<<
+      (basic_ostream& o, const basic_string< E, T, A >& s);
+   template < typename E, typename T, typename A > basic_istream& operator>>
+      (basic_istream& i, const basic_string< E, T, A >& s);
+
+   typedef basic_string< char, char_traits<char>, allocator<char>> string;
+}
+
+#endif

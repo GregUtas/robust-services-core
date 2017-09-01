@@ -1,0 +1,8 @@
+assign sbdep (ab f nbase) & (as f sbase)
+if &cli.result != 0 testcase failed &cli.result "assign failed"
+type sbdep
+if &cli.result != 0 testcase failed &cli.result "type failed"
+purge sbdep
+if &cli.result != 0 testcase failed &cli.result "purge failed"
+delay 1
+testcase end

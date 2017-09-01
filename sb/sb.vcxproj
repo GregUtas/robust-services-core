@@ -1,0 +1,256 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{F38CD809-F188-49AF-BD46-0F2B08DD0746}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>sb</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="..\shared\TSF Common.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="..\shared\TSF Common.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="..\shared\TSF Common.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="..\shared\TSF Common.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <CodeAnalysisRuleSet>C:\Program Files\Microsoft Visual Studio 14.0\Team Tools\Static Analysis Tools\Rule Sets\NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\gregu\Documents\tsf\tsf\nb;C:\Users\gregu\Documents\tsf\tsf\nw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <EnablePREfast>false</EnablePREfast>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\gregu\Documents\tsf\tsf\nb;C:\Users\gregu\Documents\tsf\tsf\nw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\gregu\Documents\tsf\tsf\nb;C:\Users\gregu\Documents\tsf\tsf\nw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\gregu\Documents\tsf\tsf\nb;C:\Users\gregu\Documents\tsf\tsf\nw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="AnalyzeMsgEvent.cpp" />
+    <ClCompile Include="AnalyzeSapEvent.cpp" />
+    <ClCompile Include="AnalyzeSnpEvent.cpp" />
+    <ClCompile Include="Context.cpp" />
+    <ClCompile Include="Event.cpp" />
+    <ClCompile Include="EventHandler.cpp" />
+    <ClCompile Include="Factory.cpp" />
+    <ClCompile Include="FactoryRegistry.cpp" />
+    <ClCompile Include="ForceTransitionEvent.cpp" />
+    <ClCompile Include="GlobalAddress.cpp" />
+    <ClCompile Include="InitiationReqEvent.cpp" />
+    <ClCompile Include="Initiator.cpp" />
+    <ClCompile Include="InvokerPool.cpp" />
+    <ClCompile Include="InvokerPoolRegistry.cpp" />
+    <ClCompile Include="InvokerThread.cpp" />
+    <ClCompile Include="LocalAddress.cpp" />
+    <ClCompile Include="Message.cpp" />
+    <ClCompile Include="MsgContext.cpp" />
+    <ClCompile Include="MsgFactory.cpp" />
+    <ClCompile Include="MsgHeader.cpp" />
+    <ClCompile Include="MsgPort.cpp" />
+    <ClCompile Include="Parameter.cpp" />
+    <ClCompile Include="Protocol.cpp" />
+    <ClCompile Include="ProtocolLayer.cpp" />
+    <ClCompile Include="ProtocolRegistry.cpp" />
+    <ClCompile Include="ProtocolSM.cpp" />
+    <ClCompile Include="PsmContext.cpp" />
+    <ClCompile Include="PsmFactory.cpp" />
+    <ClCompile Include="RootServiceSM.cpp" />
+    <ClCompile Include="SbCliParms.cpp" />
+    <ClCompile Include="SbExtInputHandler.cpp" />
+    <ClCompile Include="SbHandlers.cpp" />
+    <ClCompile Include="SbIncrement.cpp" />
+    <ClCompile Include="SbInputHandler.cpp" />
+    <ClCompile Include="SbInvokerPools.cpp" />
+    <ClCompile Include="SbIpBuffer.cpp" />
+    <ClCompile Include="SbModule.cpp" />
+    <ClCompile Include="SbPools.cpp" />
+    <ClCompile Include="SbTrace.cpp" />
+    <ClCompile Include="SbTracer.cpp" />
+    <ClCompile Include="SbTypes.cpp" />
+    <ClCompile Include="Service.cpp" />
+    <ClCompile Include="ServiceRegistry.cpp" />
+    <ClCompile Include="ServiceSM.cpp" />
+    <ClCompile Include="Signal.cpp" />
+    <ClCompile Include="SsmContext.cpp" />
+    <ClCompile Include="SsmFactory.cpp" />
+    <ClCompile Include="State.cpp" />
+    <ClCompile Include="TextTlvMessage.cpp" />
+    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="TimerProtocol.cpp" />
+    <ClCompile Include="TimerRegistry.cpp" />
+    <ClCompile Include="TimerThread.cpp" />
+    <ClCompile Include="TlvMessage.cpp" />
+    <ClCompile Include="TlvParameter.cpp" />
+    <ClCompile Include="TlvProtocol.cpp" />
+    <ClCompile Include="Trigger.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Context.h" />
+    <ClInclude Include="Event.h" />
+    <ClInclude Include="EventHandler.h" />
+    <ClInclude Include="Factory.h" />
+    <ClInclude Include="FactoryRegistry.h" />
+    <ClInclude Include="GlobalAddress.h" />
+    <ClInclude Include="Initiator.h" />
+    <ClInclude Include="InvokerPool.h" />
+    <ClInclude Include="InvokerPoolRegistry.h" />
+    <ClInclude Include="InvokerThread.h" />
+    <ClInclude Include="LocalAddress.h" />
+    <ClInclude Include="Message.h" />
+    <ClInclude Include="MsgContext.h" />
+    <ClInclude Include="MsgFactory.h" />
+    <ClInclude Include="MsgHeader.h" />
+    <ClInclude Include="MsgPort.h" />
+    <ClInclude Include="Parameter.h" />
+    <ClInclude Include="Protocol.h" />
+    <ClInclude Include="ProtocolLayer.h" />
+    <ClInclude Include="ProtocolRegistry.h" />
+    <ClInclude Include="ProtocolSM.h" />
+    <ClInclude Include="PsmContext.h" />
+    <ClInclude Include="PsmFactory.h" />
+    <ClInclude Include="RootServiceSM.h" />
+    <ClInclude Include="SbAppIds.h" />
+    <ClInclude Include="SbCliParms.h" />
+    <ClInclude Include="SbEvents.h" />
+    <ClInclude Include="SbExtInputHandler.h" />
+    <ClInclude Include="SbHandlers.h" />
+    <ClInclude Include="SbIncrement.h" />
+    <ClInclude Include="SbInputHandler.h" />
+    <ClInclude Include="SbInvokerPools.h" />
+    <ClInclude Include="SbIpBuffer.h" />
+    <ClInclude Include="SbModule.h" />
+    <ClInclude Include="SbPools.h" />
+    <ClInclude Include="SbTrace.h" />
+    <ClInclude Include="SbTracer.h" />
+    <ClInclude Include="SbTypes.h" />
+    <ClInclude Include="Service.h" />
+    <ClInclude Include="ServiceRegistry.h" />
+    <ClInclude Include="ServiceSM.h" />
+    <ClInclude Include="Signal.h" />
+    <ClInclude Include="SsmContext.h" />
+    <ClInclude Include="SsmFactory.h" />
+    <ClInclude Include="State.h" />
+    <ClInclude Include="TextTlvMessage.h" />
+    <ClInclude Include="Timer.h" />
+    <ClInclude Include="TimerProtocol.h" />
+    <ClInclude Include="TimerRegistry.h" />
+    <ClInclude Include="TimerThread.h" />
+    <ClInclude Include="TlvIntParameter.h" />
+    <ClInclude Include="TlvMessage.h" />
+    <ClInclude Include="TlvParameter.h" />
+    <ClInclude Include="TlvProtocol.h" />
+    <ClInclude Include="Trigger.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\nb\nb.vcxproj">
+      <Project>{50814a14-cc19-45a3-9f0a-c9bd6cc0e1fb}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\nw\nw.vcxproj">
+      <Project>{f6873bbe-818e-4991-9fd9-d7214e9371a1}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

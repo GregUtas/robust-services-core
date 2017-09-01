@@ -1,0 +1,19 @@
+testcase begin htl.01
+subscribe &dn.A htl &dn.B
+/ A-B: HTL USAGE
+inject PS B &port.A
+delay 2
+inject PS B &port.B
+delay 2
+inject PS E &port.B
+delay 3
+inject PS E &port.A
+delay 2
+verify PS S &port.B r=t
+verify PS S &port.A m=&port.ringback
+verify PS S &port.B r=f m=&port.A
+verify PS S &port.A m=&port.B
+verify PS R &port.A &cause.normal
+verify PS R &port.B &cause.normal
+unsubscribe &dn.A htl
+testcase end

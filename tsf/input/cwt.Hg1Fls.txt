@@ -1,0 +1,10 @@
+/ HOLDING 1: FLASH (ANSWER)
+inject PS L &port.A
+delay 2
+verify PS S &port.A m=&port.silence
+verify PC B &port.A m=&port.A
+verify PM S &port.A r=f m=&port.C
+verify PS S &port.A m=&port.C
+verify PS S &port.A s=x
+verify PC F &port.A f &service.cwb &facility.cwt.answered
+verify PS S &port.C m=&port.A

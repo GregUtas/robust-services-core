@@ -1,0 +1,11 @@
+testcase begin sus.01
+subscribe &dn.A sus
+/ A: SUS(OBC)
+inject PS B &port.A
+delay 1
+inject PS E &port.A
+delay 1
+verify PS S &port.A m=&port.reorder c=&cause.facilityreject
+verify PS R &port.A &cause.normal
+unsubscribe &dn.A sus
+testcase end

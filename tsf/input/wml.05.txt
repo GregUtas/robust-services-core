@@ -1,0 +1,42 @@
+testcase begin wml.05
+subscribe &dn.A wml &dn.B 6
+/ A: WML DEACTIVATION
+inject PS B &port.A
+delay 1
+inject PS D &port.A &sc.wml.deactivation
+delay 2
+inject PS E &port.A
+delay 1
+verify PS S &port.A s=d m=&port.dial
+verify PS S &port.A s=x m=&port.conf c=&cause.confirmation
+verify PS R &port.A &cause.normal
+contexts c
+if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+/ A: WML ACTIVATION TO B
+inject PS B &port.A
+delay 1
+inject PS D &port.A &sc.wml.activation
+delay 2
+inject PS D &port.A #
+delay 2
+inject PS E &port.A
+delay 1
+verify PS S &port.A s=d m=&port.dial
+verify PS S &port.A s=d m=&port.stutter
+verify PS S &port.A s=x m=&port.conf c=&cause.confirmation
+verify PS R &port.A &cause.normal
+contexts c
+if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+/ A-B: WML USAGE; RINGBACK; RELEASE
+inject PS B &port.A
+delay 8
+inject PS E &port.A
+delay 1
+verify PS S &port.A s=d m=&port.dial
+verify PS S &port.A s=x m=&port.silence
+verify PS S &port.B r=t
+verify PS S &port.A m=&port.ringback
+verify PS R &port.A &cause.normal
+verify PS R &port.B &cause.normal
+unsubscribe &dn.A wml
+testcase end

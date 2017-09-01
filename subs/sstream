@@ -1,0 +1,32 @@
+//==============================================================================
+//
+//  sstream
+//
+#ifndef SSTREAM_INCLUDED
+#define SSTREAM_INCLUDED
+
+#include "istream"
+#include "ostream"
+#include "string"
+
+namespace std
+{
+   class basic_istringstream : public basic_istream
+   {
+   public:
+      basic_istringstream(const string& s);
+      ~basic_istringstream();
+   };
+
+   class basic_ostringstream : public basic_ostream
+   {
+   public:
+      basic_ostringstream();
+      basic_ostringstream(const string& s);
+      ~basic_ostringstream();
+      string& str() const;
+      void str(const string& s);
+   };
+}
+
+#endif

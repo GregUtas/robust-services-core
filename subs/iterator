@@ -1,0 +1,25 @@
+//==============================================================================
+//
+//  iterator
+//
+#ifndef ITERATOR_INCLUDED
+#define ITERATOR_INCLUDED
+
+#include "cstddef"
+
+namespace std
+{
+   template< typename T > struct iterator
+   {
+      iterator& operator++();
+      iterator& operator++(int);
+      iterator& operator--();
+      iterator& operator--(int);
+      T& operator*() const;
+      T* operator->() const;
+   };
+
+   template< typename T > iterator< T > next(const iterator< T > iter, size_t diff = 1);
+}
+
+#endif

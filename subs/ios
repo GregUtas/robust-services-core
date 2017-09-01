@@ -1,0 +1,55 @@
+//==============================================================================
+//
+//  ios
+//
+#ifndef IOS_INCLUDED
+#define IOS_INCLUDED
+
+#include "cstdint"
+
+namespace std
+{
+   typedef int64_t streamsize;
+   typedef int64_t streampos;
+
+   class basic_ios
+   {
+   public:
+      basic_ios();
+      virtual ~basic_ios();
+      static const int in = 1;
+      static const int out = 2;
+      static const int ate = 4;
+      static const int app = 8;
+      static const int trunc = 16;
+      static const int binary = 32;
+      enum seekdir {beg, cur, end};
+      bool operator!() const;
+      void clear();
+      bool eof() const;
+      bool fail() const;
+      streamsize precision() const;
+      streamsize precision(streamsize value);
+   };
+
+   class stream_manipulator
+   {
+   public:
+      stream_manipulator();
+      virtual ~stream_manipulator();
+   };
+
+   extern const stream_manipulator boolalpha;
+   extern const stream_manipulator dec;
+   extern const stream_manipulator fixed;
+   extern const stream_manipulator hex;
+   extern const stream_manipulator left;
+   extern const stream_manipulator oct;
+   extern const stream_manipulator noboolalpha;
+   extern const stream_manipulator nouppercase;
+   extern const stream_manipulator right;
+   extern const stream_manipulator scientific;
+   extern const stream_manipulator uppercase;
+}
+
+#endif

@@ -1,0 +1,32 @@
+//==============================================================================
+//
+//  iosfwd
+//
+#ifndef IOSFWD_INCLUDED
+#define IOSFWD_INCLUDED
+
+namespace std
+{
+   template< typename T > struct allocator;
+   template< typename T > class char_traits;
+
+   class basic_ios;
+   class basic_istream;
+   class basic_ostream;
+   class basic_istringstream;
+   class basic_ostringstream;
+   class basic_ifstream;
+   class basic_ofstream;
+   class basic_fstream;
+
+   typedef basic_ios ios;
+   typedef basic_istream istream;
+   typedef basic_ostream ostream;
+   typedef basic_istringstream istringstream;
+   typedef basic_ostringstream ostringstream;
+   typedef basic_ifstream ifstream;
+   typedef basic_ofstream ofstream;
+   typedef basic_fstream fstream;
+}
+
+#endif

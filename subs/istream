@@ -1,0 +1,49 @@
+//==============================================================================
+//
+//  istream
+//
+#ifndef ISTREAM_INCLUDED
+#define ISTREAM_INCLUDED
+
+#include "cstddef"
+#include "ios"
+#include "ostream"
+
+namespace std
+{
+   class basic_istream : public basic_ios
+   {
+   public:
+      basic_istream();
+      virtual ~basic_istream();
+      basic_istream& operator>>(int& i) const;
+      basic_istream& getline(char* buff, size_t len);
+      basic_istream& read(void* stuff, streamsize count);
+      streamsize gcount() const;
+      int peek();
+      streampos tellg();
+      basic_istream& seekg(streampos pos);
+      basic_istream& seekg(streampos offset, basic_ios::seekdir dir);
+   };
+
+   class basic_iostream : public basic_ostream
+   {
+   public:
+      basic_iostream();
+      virtual ~basic_iostream();
+      
+      //  The following are cloned from basic_istream because
+      //  our parser does not support multiple inheritance.
+      //
+      basic_istream& operator>>(int& i) const;
+      basic_istream& getline(char* buff, size_t len);
+      basic_istream& read(void* stuff, streamsize count);
+      streamsize gcount() const;
+      int peek();
+      streampos tellg();
+      basic_istream& seekg(streampos pos);
+      basic_istream& seekg(streampos offset, basic_ios::seekdir dir);
+   };
+}
+
+#endif

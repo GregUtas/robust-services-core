@@ -1,0 +1,25 @@
+//==============================================================================
+//
+//  stack
+//
+#ifndef STACK_INCLUDED
+#define STACK_INCLUDED
+
+#include "cstddef"
+
+namespace std
+{
+   template< typename T > class stack
+   {
+   public:
+      stack();
+      ~stack();
+      bool empty() const;
+      void pop();
+      void push(const T& item);
+      size_t size() const;
+      T& top() const;
+   };
+}
+
+#endif

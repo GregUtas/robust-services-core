@@ -43,4 +43,4 @@ The development of RSC got sidetracked when the author decided to develop C++
 static analysis tools.  This toolset detects violations of various C++ design
 guidelines, such as those found in Scott Myer's *Effective C++*.  It also analyzes
 `#include` lists to find `#include`'s that should be added or deleted.  An
-overview of the toolset is provided [here](docs/RSC-Cpp-Static-Analysis-Tool).
+overview of the toolset is provided [here](docs/RSC-Cpp-Static-Analysis-Tools).

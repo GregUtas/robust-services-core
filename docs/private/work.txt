@@ -222,25 +222,25 @@ x log reliance on a forward declaration in another header [no: one practice
 ................................................................................
 CHECK BUGS & ENHANCEMENTS
 o W008 Cast removes const qualification
-  1  C:/Users/gregu/Documents/tsf/tsf/nb/ObjectPool.cpp(828):
+  1  C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.cpp(828):
        auto maxdiff = (ptrdiff_t) (blockSize_ * (ObjectsPerSegment - 1));
      in a const function, the member blockSize_ appears to transfer constness
 	 to the local maxdiff, even through what should be a temporary result
 i W039 Data is write-only
-  1 C:/Users/gregu/Documents/tsf/tsf/ct/Library.h(211):
+  1 C:/Users/gregu/Documents/rsc/rsc/ct/Library.h(211):
       LibraryVarSet* varSet_;
     this doesn't mean that varSet_ can be deleted, because it is used to create
     the symbol "$vars"
 o W044 Data could be const
-  1 C:/Users/gregu/Documents/tsf/tsf/ct/CxxExecute.h(266):
+  1 C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.h(266):
       CxxToken* via_;
-  2 C:/Users/gregu/Documents/tsf/tsf/ct/CodeFile.cpp(79):
+  2 C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(79):
       stringVector intIncls_;
 	cannot be const because assigned to a non-const reference in a conditional
     statement, but as the "else" clause: fixing this is difficult, as it would
     involve tracking two stack arguments for the assignment operator
 o W076 Argument could be const
-  1 C:/Users/utas/Documents/tsf/tsf/sb/TlvMessage.h(188/1):
+  1 C:/Users/utas/Documents/rsc/rsc/sb/TlvMessage.h(188/1):
       virtual void DeleteParm(TlvParmLayout& parm);
     parm.header.pid is LHS of = : a single via_ can't track a chain of "."
 o enhance >check to detect

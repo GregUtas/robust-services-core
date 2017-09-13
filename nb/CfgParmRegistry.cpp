@@ -22,8 +22,8 @@ using std::string;
 
 namespace NodeBase
 {
-fixed_string CfgParmRegistry::BackFromExePath = "tsf\\tsf\\";
-fixed_string CfgParmRegistry::AppendToExePath = "tsf/input/element.config.txt";
+fixed_string CfgParmRegistry::BackFromExePath = "rsc\\rsc\\";
+fixed_string CfgParmRegistry::AppendToExePath = "/input/element.config.txt";
 
 //------------------------------------------------------------------------------
 

@@ -1,0 +1,10 @@
+/ ================ PREPARE TO CLICK RETRY, THEN CONTINUE ================
+/ RECOVER terminate
+/ Enable breakpoints because of pop-up.
+symbols assign save.breakenabled breakenabled
+cfgparms set breakenabled t
+delay 1
+recover terminate
+delay 3
+cfgparms set breakenabled &save.breakenabled
+testcase end

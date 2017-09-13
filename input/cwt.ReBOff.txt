@@ -1,0 +1,6 @@
+/ B RERINGING: OFFHOOK (REANSWER)
+inject PS B &port.A
+delay 2
+verify PS S &port.A r=f s=x m=&port.B
+verify PC F &port.A f &service.cwa &facility.cwt.reanswered m=&port.A
+verify PS S &port.B m=&port.A

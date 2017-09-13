@@ -1,0 +1,45 @@
+quit all
+nt
+sb
+st
+pots
+
+stop
+clear buffer
+clear selections
+clear tools
+set tools fnbtc on
+include all on
+exclude faction &faction.audit
+exclude faction &faction.bkgd
+exclude faction &faction.oper
+exclude timers
+//* swflags set &flag.cipalwaysoverip on
+
+symbols set dn.A 20000
+symbols set dn.B 20001
+symbols set dn.C 20002
+symbols set dn.D 20003
+symbols set dn.E 20004
+symbols set dn.X 90000
+symbols set dn.Y 90001
+symbols set dn.Z 90002
+register &dn.A
+register &dn.B
+register &dn.C
+register &dn.D
+register &dn.E
+register &dn.X
+register &dn.Y
+register &dn.Z
+symbols set port.A 11
+symbols set port.B 12
+symbols set port.C 13
+symbols set port.D 14
+symbols set port.E 15
+symbols set port.X 16
+symbols set port.Y 17
+symbols set port.Z 18
+
+testcase prolog test.cp.prolog
+testcase epilog test.cp.epilog

@@ -1,0 +1,7 @@
+/ RECOVER trap during recovery
+swflags set &flag.recoverytrap on
+delay 1
+recover swerr
+delay 3
+swflags set &flag.recoverytrap off
+testcase end

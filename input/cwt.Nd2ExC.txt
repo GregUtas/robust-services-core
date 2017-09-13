@@ -1,0 +1,7 @@
+/ NOTIFIED 2; IDLE C
+inject PS E &port.C
+delay 2
+verify PS R &port.C &cause.normal
+verify PM R &port.A &cause.normal
+verify PS S &port.A s=x c=&cause.normal
+verify PC F &port.A f &service.cwa &facility.cwt.released

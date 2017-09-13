@@ -1,0 +1,9 @@
+stop
+contexts c
+if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+save trace &testcase.name
+save funcs &testcase.name
+st save msc &testcase.name
+clear buffer
+send cout
+print Testcase &testcase.name completed.

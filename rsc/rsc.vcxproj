@@ -1,0 +1,190 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\an\an.vcxproj">
+      <Project>{ff8adb07-f57d-4477-8867-9c45948a0220}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\cb\cb.vcxproj">
+      <Project>{81edfbc1-362e-4082-a9c5-e1b116ad0302}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\cn\cn.vcxproj">
+      <Project>{c32ef89c-a415-4e15-8251-bbe1f1411f35}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ct\ct.vcxproj">
+      <Project>{57309c43-59ce-40e0-be61-cf240edb14ef}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\mb\mb.vcxproj">
+      <Project>{d3133157-1e87-42bf-84f2-61140dc2b773}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\nb\nb.vcxproj">
+      <Project>{50814a14-cc19-45a3-9f0a-c9bd6cc0e1fb}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\nt\nt.vcxproj">
+      <Project>{9ad2cf38-7b5e-4584-9028-f637787de098}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\nw\nw.vcxproj">
+      <Project>{f6873bbe-818e-4991-9fd9-d7214e9371a1}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\on\on.vcxproj">
+      <Project>{c95d31fd-a747-4692-a561-a10aea211979}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\pb\pb.vcxproj">
+      <Project>{a1d355ba-591f-412b-b3e9-ab88248a5552}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\rn\rn.vcxproj">
+      <Project>{07785ea1-6817-4ded-ac74-329c64429e23}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\sb\sb.vcxproj">
+      <Project>{f38cd809-f188-49af-bd46-0f2b08dd0746}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\sn\sn.vcxproj">
+      <Project>{0dfbbcdb-d579-419d-b58b-62fe99735c7a}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\st\st.vcxproj">
+      <Project>{868cf7da-d9f6-40bd-8005-8c94ede5ceb7}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{307BE7A7-2E82-488B-91FB-C83D87F9726D}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>rsc</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <ProjectName>rsc</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="..\shared\RSC Common.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="..\shared\RSC Common.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="..\shared\RSC Common.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="..\shared\RSC Common.props" />
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <CodeAnalysisRuleSet>C:\Program Files\Microsoft Visual Studio 14.0\Team Tools\Static Analysis Tools\Rule Sets\NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\gregu\Documents\rsc\rsc\nb;C:\Users\gregu\Documents\rsc\rsc\nt;C:\Users\gregu\Documents\rsc\rsc\ct;C:\Users\greguDocuments\rsc\rsc\nw;C:\Users\gregu\Documents\rsc\rsc\sb;C:\Users\gregu\Documents\rsc\rsc\st;C:\Users\gregu\Documents\rsc\rsc\mb;C:\Users\gregu\Documents\rsc\rsc\cb;C:\Users\gregu\Documents\rsc\rsc\pb;C:\Users\gregu\Documents\rsc\rsc\on;C:\Users\gregu\Documents\rsc\rsc\cn;C:\Users\gregu\Documents\rsc\rsc\rn;C:\Users\gregu\Documents\rsc\rsc\an;C:\Users\gregu\Documents\rsc\rsc\sn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <EnablePREfast>false</EnablePREfast>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\gregu\Documents\rsc\rsc\nb;C:\Users\gregu\Documents\rsc\rsc\nt;C:\Users\gregu\Documents\rsc\rsc\ct;C:\Users\greguDocuments\rsc\rsc\nw;C:\Users\gregu\Documents\rsc\rsc\sb;C:\Users\gregu\Documents\rsc\rsc\st;C:\Users\gregu\Documents\rsc\rsc\mb;C:\Users\gregu\Documents\rsc\rsc\cb;C:\Users\gregu\Documents\rsc\rsc\pb;C:\Users\gregu\Documents\rsc\rsc\on;C:\Users\gregu\Documents\rsc\rsc\cn;C:\Users\gregu\Documents\rsc\rsc\rn;C:\Users\gregu\Documents\rsc\rsc\an;C:\Users\gregu\Documents\rsc\rsc\sn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\gregu\Documents\rsc\rsc\nb;C:\Users\gregu\Documents\rsc\rsc\nt;C:\Users\gregu\Documents\rsc\rsc\ct;C:\Users\greguDocuments\rsc\rsc\nw;C:\Users\gregu\Documents\rsc\rsc\sb;C:\Users\gregu\Documents\rsc\rsc\st;C:\Users\gregu\Documents\rsc\rsc\mb;C:\Users\gregu\Documents\rsc\rsc\cb;C:\Users\gregu\Documents\rsc\rsc\pb;C:\Users\gregu\Documents\rsc\rsc\on;C:\Users\gregu\Documents\rsc\rsc\cn;C:\Users\gregu\Documents\rsc\rsc\rn;C:\Users\gregu\Documents\rsc\rsc\an;C:\Users\gregu\Documents\rsc\rsc\sn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\gregu\Documents\rsc\rsc\nb;C:\Users\gregu\Documents\rsc\rsc\nt;C:\Users\gregu\Documents\rsc\rsc\ct;C:\Users\greguDocuments\rsc\rsc\nw;C:\Users\gregu\Documents\rsc\rsc\sb;C:\Users\gregu\Documents\rsc\rsc\st;C:\Users\gregu\Documents\rsc\rsc\mb;C:\Users\gregu\Documents\rsc\rsc\cb;C:\Users\gregu\Documents\rsc\rsc\pb;C:\Users\gregu\Documents\rsc\rsc\on;C:\Users\gregu\Documents\rsc\rsc\cn;C:\Users\gregu\Documents\rsc\rsc\rn;C:\Users\gregu\Documents\rsc\rsc\an;C:\Users\gregu\Documents\rsc\rsc\sn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

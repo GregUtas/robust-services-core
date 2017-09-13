@@ -1,7 +1,0 @@
-/ ACTIVE ON WAITING CALL: IDLE B
-inject PS E &port.B
-delay 12
-verify PS R &port.B &cause.normal
-verify PM R &port.A &cause.normal
-verify PS S &port.A s=x c=&cause.normal
-verify PC F &port.A f &service.cwb &facility.cwt.released

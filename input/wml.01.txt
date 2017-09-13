@@ -1,0 +1,11 @@
+testcase begin wml.01
+subscribe &dn.A wml &dn.B 6
+/ A: ABANDON (WML ACTIVATED)
+inject PS B &port.A
+delay 3
+inject PS E &port.A
+delay 1
+verify PS S &port.A s=d m=&port.dial
+verify PS R &port.A &cause.normal
+unsubscribe &dn.A wml
+testcase end

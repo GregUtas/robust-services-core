@@ -1,0 +1,8 @@
+/ FLASH (FLIP TO WAITING)
+inject PS L &port.A
+delay 2
+verify PC P &port.A 5 m=&port.A
+verify PC P &port.A 5 m=&port.held
+verify PS S &port.A m=&port.C
+verify PS S &port.C m=&port.A
+verify PS S &port.B m=&port.held

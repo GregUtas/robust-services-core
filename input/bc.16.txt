@@ -1,0 +1,17 @@
+testcase begin bc.16
+/ A-B: ALERTING TIMEOUT
+swflags set &flag.cipalertingtimeout on
+inject PS B &port.A
+delay 1
+inject PS D &port.A &dn.B
+delay 8
+inject PS E &port.A
+delay 1
+verify PS S &port.A s=d m=&port.dial
+verify PS S &port.A s=x m=&port.silence
+verify PS S &port.B r=t
+verify PS R &port.B &cause.alertingtimeout
+verify PS S &port.A c=&cause.alertingtimeout
+verify PS R &port.A &cause.normal
+swflags set &flag.cipalertingtimeout off
+testcase end

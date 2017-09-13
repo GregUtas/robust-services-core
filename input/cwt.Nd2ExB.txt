@@ -1,0 +1,6 @@
+/ NOTIFIED 2; IDLE B
+inject PS E &port.B
+delay 2
+verify PS R &port.B &cause.normal
+verify PM R &port.A &cause.normal
+verify PS S &port.A m=&port.silence c=&cause.normal

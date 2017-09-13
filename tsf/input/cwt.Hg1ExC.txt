@@ -1,9 +1,0 @@
-/ HOLDING 1: IDLE C
-inject PS E &port.C
-delay 2
-verify PS R &port.C &cause.normal
-verify PM R &port.A &cause.normal
-verify PC F &port.A f &service.disc &facility.req c=&cause.normal
-verify PS S &port.A s=x
-verify PM S &port.A c=&cause.normal
-verify PS S &port.A c=&cause.normal

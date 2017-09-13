@@ -1,0 +1,43 @@
+/ MAKE RECOVERY TEST THREAD CRITICAL
+read test.trap.setup
+swflags set &flag.criticalthread on
+testcase begin recover.critical.Return
+read trap.01
+testcase begin recover.critical.SwErr
+read trap.02
+testcase begin recover.critical.BadPtr
+read trap.03
+testcase begin recover.critical.DivZero
+read trap.04
+testcase begin recover.critical.SIGINT
+read trap.05
+testcase begin recover.critical.SIGILL
+read trap.06
+testcase begin recover.critical.SIGTERM
+read trap.07
+testcase begin recover.critical.SIGBREAK
+read trap.08
+testcase begin recover.critical.abort
+read trap.09
+testcase begin recover.critical.terminate
+read trap.10
+testcase begin recover.critical.KillLocal
+read trap.11
+testcase begin recover.critical.KillRemote
+read trap.12
+testcase begin recover.critical.InfiniteLoop
+read trap.13
+testcase begin recover.critical.StackOverflow
+read trap.14
+testcase begin recover.critical.TrapDuringRecovery
+read trap.15
+testcase begin recover.critical.DeleteRemote
+read trap.16
+testcase begin recover.critical.DeleteLocal
+read trap.17
+testcase begin recover.critical.ThreadCtorTrap
+read trap.20
+testcase begin recover.critical.Ctrl-Break
+read trap.19
+testcase begin recover.critical.Ctrl-C
+read trap.18

@@ -1,0 +1,10 @@
+/ ============== PREPARE TO ENTER CTRL-BREAK (CTRL-FN-F12) ==============
+/ RECOVER infinite loop
+delay 1
+symbols assign save.traponrtctimeout traponrtctimeout
+cfgparms set traponrtctimeout f
+delay 1
+recover loop
+delay 3
+cfgparms set traponrtctimeout &save.traponrtctimeout
+testcase end

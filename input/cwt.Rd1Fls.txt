@@ -1,0 +1,10 @@
+/ RENOTIFIED 1: FLASH (ANSWER)
+inject PS L &port.A
+delay 2
+verify PC B &port.A m=&port.A
+/ RING OFF
+verify PM S &port.A r=f m=&port.C
+verify PS S &port.A m=&port.C
+verify PS S &port.A s=x
+verify PC F &port.A f &service.cwb &facility.cwt.answered
+verify PS S &port.C m=&port.A

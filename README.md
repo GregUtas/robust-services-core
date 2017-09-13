@@ -14,11 +14,11 @@ The framework that supports robust applications is referred to as the
 *Robust Services Core* (RSC).  Many of the design patterns in RSC are used
 in telecom products, where the term *carrier-grade* refers to a server with
 at least five-nines (99.999%) availability.  A pattern language summarizing
-these patterns appears in the second
-chapter of *Robust Communications Software*, which is included in the [`docs`](/docs)
-directory.  The document [*RSC Product Overview*](/docs/RSC-Product-Overview.pdf)
-describes which of these patterns are currently available in this repository
-and the primary code files that implement them.
+these patterns appears in the [second chapter](/docs/RCS-chapter-2.pdf) of
+*Robust Communications Software*.  The document [*RSC Product Overview*]
+(/docs/RSC-Product-Overview.pdf) discusses which of these patterns are
+currently available in this repository and the primary code files that
+implement them.
 
 RSC is currently targeted at Windows.  It defines an abstraction layer, in
 the form of common C++ `.h`'s and platform-specific `.cpp`'s, that should

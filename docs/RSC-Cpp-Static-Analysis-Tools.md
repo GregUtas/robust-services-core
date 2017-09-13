@@ -1,1 +1,1 @@
-# RSC C++ Static Analysis Tools
+# Robust Services Core: C++ Static Analysis Tools

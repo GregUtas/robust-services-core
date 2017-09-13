@@ -15,10 +15,10 @@ The framework that supports robust applications is referred to as the
 in telecom products, where the term *carrier-grade* refers to a server with
 at least five-nines (99.999%) availability.  A pattern language summarizing
 these patterns appears in the second
-chapter of *Robust Communications Software*, which is included in the `docs/`
-directory.  The document *RSC Product Overview* in the same directory describes
-which of these patterns are currently available in this repository and the
-primary code files that implement them.
+chapter of *Robust Communications Software*, which is included in the [`docs`](/docs)
+directory.  The document [*RSC Product Overview*](/docs/RSC-Product-Overview.pdf)
+describes which of these patterns are currently available in this repository
+and the primary code files that implement them.
 
 RSC is currently targeted at Windows.  It defines an abstraction layer, in
 the form of common C++ `.h`'s and platform-specific `.cpp`'s, that should
@@ -36,12 +36,11 @@ as a software architect in the telecom industry.  But more importantly, POTS
 is a non-trivial application, and everyone has a reasonable understanding of what
 it does.  You should therefore be able to understand what the POTS code is doing
 without having read a large specification.  An overview of the POTS application
-is provided in *RSC POTS Application* in the docs/ directory.
+is provided [here](/docs/RSC-POTS-Application).
 
 ## C++ Static Analysis Tool
-The development of RSC got sidetracked when the author decided to develop
-C++ static analysis tools.  This toolset detects violations of various C++
-design guidelines, such as those found in Scott Myer's *Effective C++*.  It
-also analyzes `#include` lists to find `#include`'s that should be added or
-deleted.  An overview of the toolset is provided in *RSC C++ Static Analysis
-Tool* in the docs/ directory.
+The development of RSC got sidetracked when the author decided to develop C++
+static analysis tools.  This toolset detects violations of various C++ design
+guidelines, such as those found in Scott Myer's *Effective C++*.  It also analyzes
+`#include` lists to find `#include`'s that should be added or deleted.  An
+overview of the toolset is provided [here](docs/RSC-Cpp-Static-Analysis-Tool).

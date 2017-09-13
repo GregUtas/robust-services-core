@@ -1,1 +1,1 @@
-# RSC POTS Application
+# Robust Services Core POTS Application

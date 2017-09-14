@@ -6,8 +6,8 @@ services.
 ## Tests
 
 Many of the scripts in the [`input/`](/input) directory are tests for the POTS application.
-When the `test.cp.setup` script is run before tests, the following files will be generated
-for each test:
+When the [`test.cp.setup`](/input/test.cp.setup.txt) script is run before tests, the following
+files are generated after each test:
 1. A detailed function and message trace of the scenario.
 2. A [message sequence chart](http://en.wikipedia.org/wiki/Message_sequence_chart) of the
 scenario, followed by a context trace (a summary of socket activity, incoming and outgoing

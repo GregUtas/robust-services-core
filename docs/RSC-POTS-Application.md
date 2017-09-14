@@ -26,7 +26,7 @@ which alter the behavior of basic calls, can also be assigned to each user.
 The POTS application currently defines the following supplementary services:
 * **Barring of Incoming Calls (BIC)**: Incoming calls are blocked.
 * **Barring of Outgoing Calls (BOC)**: Outgoing calls are blocked.
-* **Call Forward Unconditional/Busy/No Reply (CFU, CFB, CFN)**: Incoming calls are
+* **Call Forward Unconditional/Busy/No Reply (CFU/CFB/CFN)**: Incoming calls are
 forwarded to a pre-specified number
   1. immediately (CFU),
   2. if the user is already involved in a call (CFB), or

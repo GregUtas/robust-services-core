@@ -5,9 +5,9 @@ services.
 
 ## Tests
 
-Many of the scripts in the [`input/`](/input) directory are tests for the POTS application.
-When the [`test.cp.setup`](/input/test.cp.setup.txt) script is run before tests, the following
-files are generated after each test:
+Many of the scripts in the [`input`](/input) directory are tests for the POTS application.
+When the [`test.cp.setup`](/input/test.cp.setup.txt) script is run, the following files
+are generated for each subsequent test:
 1. A detailed function and message trace of the scenario.
 2. A [message sequence chart](http://en.wikipedia.org/wiki/Message_sequence_chart) of the
 scenario, followed by a context trace (a summary of socket activity, incoming and outgoing
@@ -36,7 +36,7 @@ call disconnects, the two remaining users are connected.  *Not yet implemented, 
 be assigned to a user's profile.*
 * **Call Waiting (CWT)**: A user in an established call can receive a second call and
 then repeatedly flip between the two calls.  If the user disconnects, the inactive
-call rerings him.
+call rerings the user.
 * **Hot Line (HTL)**: When the user initiates a call, it always routes to a pre-specified
 number.
 * **Suspended Service (SUS)**: The user cannot initiate or receive calls.

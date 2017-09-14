@@ -13,7 +13,7 @@ files are generated after each test:
 scenario, followed by a context trace (a summary of socket activity, incoming and outgoing
 messages, internal events, and the event handlers that were invoked).
 
-## Configuring Users
+## Configuring User Profiles
 
 Users (phone numbers) are created in the `>pots` CLI increment.  The CLI commands
 available in that increment are described in [RSC-CLI-Commands](/docs/RSC-CLI-Commands.pdf),

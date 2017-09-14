@@ -31,16 +31,17 @@ forwarded to a pre-specified number
   1. immediately (CFU),
   2. if the user is already involved in a call (CFB), or
   3. if the user does not answer before a specified timeout (CFN).
-* **Call Transfer (CXF)** (*not yet implemented*): When a user who has established
-a consultation or conference call disconnects, the two remaining users are connected.
+* **Call Transfer (CXF)**: When a user who has established a consultation or conference
+call disconnects, the two remaining users are connected.  *Not yet implemented, but can
+be assigned to a user's profile.*
 * **Call Waiting (CWT)**: A user in an established call can receive a second call and
 then repeatedly flip between the two calls.  If the user disconnects, the inactive
 call rerings him.
 * **Hot Line (HTL)**: When the user initiates a call, it always routes to a pre-specified
 number.
 * **Suspended Service (SUS)**: The user cannot initiate or receive calls.
-* **Three-Way Calling (TWC)** (*not yet implemented*): A user in an established call can
-place the call on hold and initiate a consultation call, which can then be conferenced with
-the original call.
+* **Three-Way Calling (TWC)**: A user in an established call can place the call on hold
+and initiate a consultation call, which can then be conferenced with the original call.
+*Not yet implemented, but can be assigned to a user's profile.*
 * **Warm Line (WML)**: When a call is initiated and no digits are dialed before the timeout
 interval, the call is routed to a pre-specified number.

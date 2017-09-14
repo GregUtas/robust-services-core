@@ -57,3 +57,6 @@ easiest to do this by opening the `.vcxproj` files in Notepad and replacing
 occurrences of `C:\Users\gregu\Documents\rsc\rsc` (the directory that contains the
 source code on my PC) with the top-level directory into which you downloaded the
 repository.
+
+Before running the executable, you also have to modify paths in the
+[configuration file](input/element.config.txt), which is read during startup.

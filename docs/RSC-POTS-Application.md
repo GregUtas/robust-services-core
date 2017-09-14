@@ -13,6 +13,9 @@ are generated for each subsequent test:
 scenario, followed by a context trace (a summary of socket activity, incoming and outgoing
 messages, internal events, and the event handlers that were invoked).
 
+The [traffic](/input/traffic.txt) script launches a thread that generates calls, initially
+at a rate of 150 per minute.
+
 ## Configuring User Profiles
 
 Users (phone numbers) are created in the `>pots` CLI increment.  The CLI commands

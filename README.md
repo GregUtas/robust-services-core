@@ -6,8 +6,8 @@ This repository contains
 3. Tools for the static analysis of C++ software.
 
 ## License
-All of the software in this repository was developed by Greg Utas, who
-currently retains copyright.
+The software in this repository was developed by Greg Utas, who currently
+retains copyright.
 
 ## Robust Services Core
 The framework that supports robust applications is referred to as the
@@ -16,9 +16,9 @@ in telecom products, where the term *carrier-grade* refers to a server with
 at least five-nines (99.999%) availability.  A pattern language summarizing
 these patterns appears in the [second chapter](/docs/RCS-chapter-2.pdf) of
 *Robust Communications Software*.  The document
-[*RSC Product Overview*](/docs/RSC-Product-Overview.pdf) discusses which of
-these patterns are currently available in this repository and the primary
-code files that implement them.
+[*RSC Product Overview*](/docs/RSC-Product-Overview.pdf) discusses which
+patterns are currently available in this repository and the primary code
+files that implement them.
 
 ## POTS Application
 Including an application with a framework serves to test it and illustrate its
@@ -27,7 +27,7 @@ Service) application.  POTS was chosen for several reasons.  For one thing,
 the author had extensive experience with such applications while working
 as a software architect in the telecom industry.  But more importantly, POTS
 is a non-trivial application, and everyone has a reasonable understanding of what
-it does.  You should therefore be able to understand what the POTS code is doing
+it does.  You should therefore be able to figure out what the POTS code is doing
 without having read a large specification.  An overview of the POTS application
 is provided [here](/docs/RSC-POTS-Application.md).
 
@@ -51,7 +51,7 @@ The directories that contain source code, and their dependencies, are listed in
 the comments that precede the implementation of [`main`](/rsc/main.cpp).  RSC is
 currently developed using Visual Studio 2017.  If this is also your development
 environment, the `.vcxproj` (project) files in this repository already contain
-most of the build instructions that you need.  The main thing that you beed to
+most of the build instructions that you need.  The main thing that you need to
 do is change the paths to where the source code is located.  It's probably
 easiest to do this by opening the `.vcxproj` files in Notepad and replacing
 occurrences of `C:\Users\gregu\Documents\rsc\rsc` (the directory that contains the

@@ -16,7 +16,7 @@ messages, internal events, and the event handlers that were invoked).
 ## Configuring Users
 
 Users (phone numbers) are created in the `>pots` CLI increment.  The CLI commands
-available in the POTS increment are described in [RSC-CLI-Commands](/docs/RSC-CLI-Commands.pdf),
+available in that increment are described in [RSC-CLI-Commands](/docs/RSC-CLI-Commands.pdf),
 starting after the line `pots>help full`.
 
 Phone numbers are five digits in length, in the range 20000-99999.  *Supplementary services*,

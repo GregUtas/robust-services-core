@@ -11,8 +11,8 @@ retains copyright.
 
 ## Robust Services Core
 The framework that supports robust applications is referred to as the
-*Robust Services Core* (RSC).  Many of the design patterns in RSC are used
-in telecom products, where the term *carrier-grade* refers to a server with
+*Robust Services Core* (RSC).  Many of the design patterns in RSC are used in
+robust telecom products, where the term *carrier-grade* refers to a server with
 at least five-nines (99.999%) availability.  A pattern language summarizing
 these patterns appears in the [second chapter](/docs/RCS-chapter-2.pdf) of
 *Robust Communications Software*.  The document
@@ -35,8 +35,8 @@ is provided [here](/docs/RSC-POTS-Application.md).
 The development of RSC got sidetracked when the author decided to develop C++
 static analysis tools.  This toolset detects violations of various C++ design
 guidelines, such as those found in Scott Myer's *Effective C++*.  It also analyzes
-`#include` lists to find `#include`'s that should be added or deleted.  An
-overview of the toolset is provided [here](docs/RSC-Cpp-Static-Analysis-Tools.md).
+`#include` lists to find `#include`'s that should be added or deleted.  An overview
+of the toolset is provided [here](docs/RSC-Cpp-Static-Analysis-Tools.md).
 
 ## Building an Executable
 RSC is primarily implemented in C++0x.  However, it uses some C++11 capabilities,

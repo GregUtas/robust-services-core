@@ -3,7 +3,7 @@
 The POTS (Plain Ordinary Telephone Service) application simulates basic telephone
 services.
 
-## Tests
+## Running Tests
 
 Many of the scripts in the [`input`](/input) directory are tests for the POTS application.
 When the [`test.cp.setup`](/input/test.cp.setup.txt) script is run, the following files
@@ -13,8 +13,12 @@ are generated for each subsequent test:
 scenario, followed by a context trace (a summary of socket activity, incoming and outgoing
 messages, internal events, and the event handlers that were invoked).
 
-The [traffic](/input/traffic.txt) script launches a thread that generates calls, initially
-at a rate of 150 per minute.
+The [traffic](/input/traffic.txt) script (`>read traffic`) launches a thread that initiates,
+answers, and releases calls, initially at a rate of 150 per minute.  The call rate can be
+increased to the point where the system enters overload, which on my PC occurs when the
+rate reaches about 18,000 calls per minute (`>traffic rate 18000`).  Whatever the current
+call rate, you can observe the system's behavior with commands such as `>status`, `>sched
+show`, and `>traffic profile`.
 
 ## Configuring User Profiles
 

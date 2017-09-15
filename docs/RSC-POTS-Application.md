@@ -13,7 +13,7 @@ are generated for each subsequent test:
 scenario, followed by a context trace (a summary of socket activity, incoming and outgoing
 messages, internal events, and the event handlers that were invoked).
 
-The [traffic](/input/traffic.txt) script (`>read traffic`) launches a
+The [`traffic`](/input/traffic.txt) script (`>read traffic`) launches a
 [thread](/an/PotsTrafficThread.h) that initiates, answers, and releases calls, initially
 at a rate of 120 per minute.  The call rate can be increased to the point where the system
 enters overload, which on my PC occurs when the rate exceeds about 18,000 calls per minute

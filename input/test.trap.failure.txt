@@ -1,10 +1,8 @@
-/ MAKE RECOVERY TEST THREAD CRITICAL
+/ Make the recovery test thread critical.
 read test.trap.setup
 swflags set &flag.criticalthread on
 read debug
+
+/ Freely edited to rerun trap testcases that failed.
 testcase begin recover.critical.DeleteLocal
 read trap.17
-/* testcase begin recover.critical.Ctrl-C
-/* read trap.18
-/* testcase begin recover.critical.Ctrl-Break
-/* read trap.19

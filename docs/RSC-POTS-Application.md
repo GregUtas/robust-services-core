@@ -1,4 +1,4 @@
- # Robust Services Core: POTS Application
+# Robust Services Core: POTS Application
 
 The POTS (Plain Ordinary Telephone Service) application simulates basic telephone
 services.
@@ -14,8 +14,8 @@ scenario, followed by a context trace (a summary of socket activity, incoming an
 messages, internal events, and the event handlers that were invoked).
 
 The [traffic](/input/traffic.txt) script (`>read traffic`) launches a
-[thread](/an/PotsTrafficThread.h)that initiates, answers, and releases calls, initially at
-a rate of 150 per minute.  The call rate can be increased to the point where the system
+[thread](/an/PotsTrafficThread.h) that initiates, answers, and releases calls, initially
+at a rate of 120 per minute.  The call rate can be increased to the point where the system
 enters overload, which on my PC occurs when the rate exceeds about 18,000 calls per minute
 (`>traffic rate 18000`).  Whatever the current call rate, you can observe the system's
 behavior with commands such as `>status`, `>sched show`, and `>traffic profile`.
@@ -52,3 +52,16 @@ and initiate a consultation call, which can then be conferenced with the origina
 *Not yet implemented, but can be assigned to a user's profile.*
 * **Warm Line (WML)**: When a call is initiated and no digits are dialed before the timeout
 interval, the call is routed to a pre-specified number.
+
+## Design Overview
+The [`SessionBase`](/sb) component of RCS defines virtual base classes for implementing state
+machines and protocols.  As a session-oriented application, POTS uses this framework.  The
+documents [*RCS-Session-Processing*](/docs/RSC-Session-Processing.pdf) and [*A Pattern Language
+of Call Processing*](/docs/PLCP.pdf) should prove helpful if studying the POTS software in
+detail.
+
+The protocol between the user (client/phone) and network (server) is defined
+[here](/pb/PotsProtocol.h).
+On the network side, the POTS basic call state machine is based on the states and events defined
+[here](/cb/BcSessions.h).  Its concrete state subclasses are defined [here](/sn/PotsSessions.h),
+and its event handlers are implemented [here](/sn/PotsBcHandlers.cpp).

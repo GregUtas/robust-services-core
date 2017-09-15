@@ -1,7 +1,7 @@
 # CLI Scripts
 
-Most of the `.txt` files in this directory are CLI scripts.  A script is executed by
-entering the CLI command `>read <script>`.
+Most of the files in this directory are CLI scripts.  A script is executed by entering
+the CLI command `>read <script>`.
 
 The file [`element.config`](/input/element.config.txt) is read during system startup
 to initialize various configuration parameters.  You will need to modify the values

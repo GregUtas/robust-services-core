@@ -1,19 +1,18 @@
 # CLI Scripts
 
-Most of the files in this directory are CLI scripts.  A script is executed by entering
-the CLI command `>read <script>`.
+**NOTE**: The file [`element.config`](/input/element.config.txt) in this directory is read
+during system  startup to initialize various configuration parameters.  You will need to
+change the values for its `HelpPath`, `InputPath`, `OutputPath`, and `SourcePath` parameters.
 
-The file [`element.config`](/input/element.config.txt) is read during system startup
-to initialize various configuration parameters.  You will need to modify the values
-for its `HelpPath`, `InputPath`, `OutputPath`, and `SourcePath` parameters.
-
-Here is an overview of the scripts.
+The other files in this directory are CLI scripts.  A script is executed by entering the CLI
+command `>read <script>`.  The following table describes the scripts that you might want to
+run directly.
 
 Script | Description
 ------ | -----------
 buildlib | builds code library
 debug | sets up environment before using breakpoint debugging
-finish | saves traffic, scheduler, and statistics reports in the file defined by `script.name` (`>set script.name <script>')
+finish | saves traffic, scheduler, and statistics reports in the file defined by `script.name` (`>set script.name <script>`)
 regression | reads all testcases and saves results in `regression.*` files when done
 restart.cold 1/2 | run to initiate cold restart and then to capture trace
 restart.warm 1/2 | run to initiate warm restart and then to capture trace

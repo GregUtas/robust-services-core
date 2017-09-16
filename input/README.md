@@ -10,7 +10,7 @@ run directly.
 
 Script | Description
 ------ | -----------
-buildlib | builds code library
+buildlib | builds CodeTools library
 debug | sets up environment before using breakpoint debugging
 finish | saves traffic, scheduler, and statistics reports in the file defined by `script.name` (`>set script.name <script>`)
 regression | reads all testcases and saves results in `regression.*` files when done
@@ -31,3 +31,5 @@ test.trap.critical | reads all trap testcases, with recovery thread asking to be
 test.trap.non-critical | reads all trap testcases, with recovery thread asking to be exited after a trap
 test.trap.setup | sets up environment for running trap testcases
 traffic | starts to run POTS traffic; use `>read finish` to save summary of results in `traffic.*` files when done
+win32 | used as argument to CodeTools `>parse` command when compiling for 32-bit Windows
+win64 | used as argument to CodeTools `>parse` command when compiling for 64-bit Windows

@@ -59,4 +59,5 @@ source code on my PC) with the top-level directory into which you downloaded the
 repository.
 
 Before running the executable, you also need to modify paths in the
-[configuration file](input/element.config.txt), which is read during startup.
+[configuration file](input/element.config.txt), which is read when the program
+is initializing during startup.

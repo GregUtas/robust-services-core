@@ -39,10 +39,12 @@ guidelines, such as those found in Scott Myer's *Effective C++*.  It also analyz
 of the toolset is provided [here](docs/RSC-Cpp-Static-Analysis-Tools.md).
 
 ## Building an Executable
-RSC requires C++11.  It is currently implemented on Windows, where it runs as a
-console application.  However, it defines an abstraction layer, in the form of
-generic C++ `.h`'s and platform-specific `.cpp`'s, that should allow it to be
-ported to other systems fairly easily.
+RSC requires C++11.
+
+RSC is currently implemented on Windows, where it runs as a console application.
+However, it defines an abstraction layer, in the form of generic C++ `.h`'s and
+platform-specific `.cpp`'s, that should allow it to be ported to other systems
+fairly easily.
 
 The directories that contain source code, and their dependencies, are listed in
 the comments that precede the implementation of [`main`](/rsc/main.cpp).  RSC was

@@ -17,7 +17,7 @@ regression | reads all testcases and saves results in `regression.*` files when 
 restart.cold 1/2 | run to initiate cold restart and then to capture trace
 restart.warm 1/2 | run to initiate warm restart and then to capture trace
 savehelp | read this at any time to save full explanation of all CLI commands in `help.cli.txt`
-saveinit | read this immediately after startup to save trace of system initialization in `init.trace` and `init.funcs.txt`
+saveinit | read this immediately after startup to save trace of system initialization in `init.trace.txt` and `init.funcs.txt`
 test.cp.all | reads all call processing testcases (including test.cp.setup)
 test.cp.bc | reads all basic call testcases
 test.cp.cfx | reads all call forwarding testcases

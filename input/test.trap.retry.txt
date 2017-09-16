@@ -1,0 +1,8 @@
+/ Make the recovery test thread critical.
+read test.trap.setup
+swflags set &flag.criticalthread on
+read debug
+
+/ Edit the following to rerun trap testcases that failed.
+testcase begin recover.critical.DeleteLocal
+read trap.17

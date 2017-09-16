@@ -1,3 +1,7 @@
+/ Suppress scheduling timeout.  Exclude audit and
+/ background threads, as well as the timer thread,
+/ from traces.
+/
 cfgparms set breakenabled t
 exclude faction &faction.audit
 exclude faction &faction.bkgd

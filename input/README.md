@@ -4,9 +4,12 @@
 during system  startup to initialize various configuration parameters.  You will need to
 change the values for its `HelpPath`, `InputPath`, `OutputPath`, and `SourcePath` parameters.
 
-The other files in this directory are CLI scripts.  A script is executed by entering the CLI
-command `>read <script>`.  The following table describes the scripts that you might want to
-run directly.
+The file `win32` or `win64` is used as argument to the CodeTools `>parse` command when compiling
+for 32-bit Windows and 64-bit Windows, respectively.  If you target RSC to another platform,
+you will need to create similar files for use with the `>parse` command.
+
+The remaining files are CLI scripts.  A script is executed with the CLI command `>read <script>`.
+The following table describes the scripts that you might want to run directly.
 
 Script | Description
 ------ | -----------
@@ -31,5 +34,3 @@ test.trap.critical | reads all trap testcases, with recovery thread asking to be
 test.trap.non-critical | reads all trap testcases, with recovery thread asking to be exited after a trap
 test.trap.setup | sets up environment for running trap testcases
 traffic | starts to run POTS traffic; use `>read finish` to save summary of results in `traffic.*` files when done
-win32 | used as argument to CodeTools `>parse` command when compiling for 32-bit Windows
-win64 | used as argument to CodeTools `>parse` command when compiling for 64-bit Windows

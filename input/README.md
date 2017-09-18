@@ -5,7 +5,7 @@ during system  startup to initialize various configuration parameters.  You will
 change the values for its `HelpPath`, `InputPath`, `OutputPath`, and `SourcePath` parameters.
 
 The file `win32` or `win64` is used as argument to the CodeTools `>parse` command when compiling
-for 32-bit Windows and 64-bit Windows, respectively.  If you target RSC to another platform,
+for 32-bit Windows or 64-bit Windows, respectively.  If you target RSC to another platform,
 you will need to create similar files for use with the `>parse` command.
 
 The remaining files are CLI scripts.  A script is executed with the CLI command `>read <script>`.

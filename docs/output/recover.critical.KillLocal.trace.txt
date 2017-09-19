@@ -1,0 +1,155 @@
+START OF TRACE: 19-Sep-2017 12:21:23.549 on Reigi
+
+mm:ss.ttt  Thr  Event  TotalTime   NetTime  Function
+---------  ---  -----  ---------   -------  --------
+21:23.550   15  +lock         26         1    Thread.Pause
+21:23.550   15                25        19    : Thread.ExitBlockingOperation
+21:23.550   15                 6         6    :   Thread.ResumeLocked
+21:23.550   15                 8         8    Thread.Pause (interrupted)
+21:23.550   15              2857        11  RecoveryTestThread.Enter
+21:23.550   15              2846        40    Thread.Raise
+21:23.550   15                43        43    : Thread.RunningThread
+21:23.550   15                15         8    :   :   Thread.ExitSwLog
+21:23.550   15                 7         7    :   :   : Thread.RunningThread
+21:23.550   15              2763         0    : SignalException.ctor
+21:23.550   15              2763         8    :   Exception.ctor
+21:23.550   15                37         9    :   : Thread.ExtendTime
+21:23.550   15                28        28    :   :   Thread.RunningThread
+21:23.550   15              2268      2268    :   : SysThreadStack.Display
+21:23.553   15               450         8    :   : Thread.TrapHandler
+21:23.553   15                27         4    :   :   Orphans.ExitNow
+21:23.553   15                11         7    :   :   : MutexGuard.ctor
+21:23.553   15                 4         4    :   :   :   SysMutex.Acquire
+21:23.553   15                12         5    :   :   : MutexGuard.dtor
+21:23.553   15                 5         5    :   :   :   SysMutex.Release
+21:23.553   15                 2         2    :   :   :   Thread.RunningThread
+21:23.553   15               415         4    :   :   Thread.Pause (msecs=0)
+21:23.553   15                 4         4    :   :   : Thread.RunningThread
+21:23.553   15               407         5    :   :   : Thread.EnterBlockingOperation
+21:23.553   15                 2         2    :   :   :   Thread.RunningThread
+21:23.553   15  -lock        400         4    :   :   :   Thread.Unlock
+21:23.553   15                17        17    :   :   :   : Thread.LogContextSwitch
+21:23.553   15                 4         4    :   :   :   :   : SysMutex.Acquire
+21:23.553   15                 4         4    :   :   :   :   : SysMutex.Release
+21:23.553   15               372       372    :   :   :   : SysMutex.Release
+21:23.553   15                 7         7    :   :   :   : Thread.InitialMsecs
+21:23.553   15                 0         0    :   :   :   : ThreadAdmin.WarpFactor
+21:23.553   15  +lock          6         0    :   :   Thread.Pause
+21:23.553   15                 6         4    :   :   : Thread.ExitBlockingOperation
+21:23.553   15                 2         2    :   :   :   Thread.ResumeLocked
+21:23.553   15                17        17    :   :   Thread.Pause (completed)
+21:23.553   15                 5         5    :   :   Thread.SetSignal
+21:23.553   15               131       131    :   :   Log.Create
+21:23.553   15               120         0    :   :   :   SysTime.ctor(now)
+21:23.553   15               120         0    :   :   :   : Object.ctor
+21:23.553   15               120       120    :   :   :   :   Base.ctor
+21:23.553   15               436       436    :   :   LeakyBucketCounter.HasReachedLimit
+21:23.554   15               251         7    :   :   Log.Spool
+21:23.554   15               244        10    :   :   : LogThread.Spool
+21:23.554   15                 6         6    :   :   :   Thread.RunningThread
+21:23.554   15                21        21    :   :   :   FunctionGuard.ctor
+21:23.554   15                14         8    :   :   :   :   Thread.MakeUnpreemptable
+21:23.554   15                 6         6    :   :   :   :   : Thread.RunningThread
+21:23.554   15                22         7    :   :   :   MsgBuffer.operator new
+21:23.554   15                15         7    :   :   :   : ObjectPool.DeqBlock
+21:23.554   15                 8         8    :   :   :   :   Q1Way.Deq
+21:23.554   15                33         0    :   :   :   StreamRequest.ctor
+21:23.554   15                33         0    :   :   :   : MsgBuffer.ctor
+21:23.554   15                33         0    :   :   :   :   Pooled.ctor
+21:23.554   15                33         0    :   :   :   :   : Object.ctor
+21:23.554   15                33        33    :   :   :   :   :   Base.ctor
+21:23.554   15                43         9    :   :   :   Thread.EnqMsg
+21:23.554   15                 6         6    :   :   :   : Q1Way.Enq
+21:23.554   15                 9         9    :   :   :   : Q1Way.Count
+21:23.554   15                19         8    :   :   :   : Thread.Interrupt
+21:23.554   15                11        11    :   :   :   :   SysThread.Interrupt
+21:23.554   15               109       109    :   :   :   FunctionGuard.dtor
+21:23.554   15               125         7    :   :   Log.Spool
+21:23.554   15               118        10    :   :   : LogThread.Spool
+21:23.554   15                 6         6    :   :   :   Thread.RunningThread
+21:23.554   15                20        20    :   :   :   FunctionGuard.ctor
+21:23.554   15                13         6    :   :   :   :   Thread.MakeUnpreemptable
+21:23.554   15                 7         7    :   :   :   :   : Thread.RunningThread
+21:23.554   15                24        10    :   :   :   MsgBuffer.operator new
+21:23.554   15                14         9    :   :   :   : ObjectPool.DeqBlock
+21:23.554   15                 5         5    :   :   :   :   Q1Way.Deq
+21:23.554   15                20         0    :   :   :   StreamRequest.ctor
+21:23.554   15                20         0    :   :   :   : MsgBuffer.ctor
+21:23.554   15                20         0    :   :   :   :   Pooled.ctor
+21:23.554   15                20         0    :   :   :   :   : Object.ctor
+21:23.554   15                20        20    :   :   :   :   :   Base.ctor
+21:23.554   15                23         5    :   :   :   Thread.EnqMsg
+21:23.554   15                 3         3    :   :   :   : Q1Way.Enq
+21:23.554   15                 4         4    :   :   :   : Q1Way.Count
+21:23.554   15                11         5    :   :   :   : Thread.Interrupt
+21:23.554   15                 6         6    :   :   :   :   SysThread.Interrupt
+21:23.554   15                15        15    :   :   :   FunctionGuard.dtor
+21:23.554   15                10         4    :   :   :   :   Thread.MakePreemptable
+21:23.554   15                 6         6    :   :   :   :   : Thread.RunningThread
+21:23.554   15               694        21    :   :   RecoveryTestThread.Destroy
+21:23.554   15               673         5    :   :   : Singleton.Destroy
+21:23.554   15               668        48    :   :   :   Singletons.UnbindInstance
+21:23.554   15               572         4    :   :   :   : RecoveryTestThread.dtor
+21:23.554   15               568         4    :   :   :   :   Thread.dtor
+21:23.554   15  -lock        564         5    :   :   :   :   : Thread.Unlock
+21:23.554   15                17        17    :   :   :   :   :   Thread.LogContextSwitch
+21:23.554   15                 4         4    :   :   :   :   :   :   SysMutex.Acquire
+21:23.554   15                 5         5    :   :   :   :   :   :   SysMutex.Release
+21:23.554   15               542        34    :   :   :   :   :   SysMutex.Release
+21:23.554   15               432         1    :   :   :   :   :   : C++.delete
+21:23.554   15                29         9    :   :   :   :   :   :   SysThread.dtor
+21:23.554   15                11        11    :   :   :   :   :   :   : SysThread.DeleteSentry
+21:23.554   15                 9         9    :   :   :   :   :   :   : SysThread.Delete
+21:23.554   15               379       379    :   :   :   :   :   :   Object.operator delete
+21:23.554   15                37         9    :   :   :   :   :   :   :   :   :   :   :   Memory.Free
+21:23.554   15                28        28    :   :   :   :   :   :   :   :   :   :   :   : SysHeap.Free
+21:23.554   15                18         9    :   :   :   :   :   :   :   :   :   :   :   :   : Memory.Free
+21:23.554   15                 9         9    :   :   :   :   :   :   :   :   :   :   :   :   :   SysHeap.Free
+21:23.554   15               108         8    :   :   :   :   :   :   :   :   Object.operator delete
+21:23.554   15                41        10    :   :   :   :   :   :   :   :   : Memory.Free
+21:23.554   15                13        13    :   :   :   :   :   :   :   :   :   SysHeap.Free
+21:23.554   15                18         8    :   :   :   :   :   :   :   :   :   StatisticsRegistry.UnbindStat
+21:23.554   15                10        10    :   :   :   :   :   :   :   :   :   : Registry.Erase
+21:23.554   15                59        11    :   :   :   :   :   :   :   :   : Statistic.dtor
+21:23.554   15                48         7    :   :   :   :   :   :   :   :   :   StatisticsRegistry.UnbindStat
+21:23.554   15                41        41    :   :   :   :   :   :   :   :   :   : Registry.Erase
+21:23.554   15                32         8    :   :   :   :   :   :   :   :   :   :   : Memory.Free
+21:23.554   15                24        24    :   :   :   :   :   :   :   :   :   :   :   SysHeap.Free
+21:23.554   15                16         8    :   :   :   :   :   :   :   :   :   :   :   :   Memory.Free
+21:23.554   15                 8         8    :   :   :   :   :   :   :   :   :   :   :   :   : SysHeap.Free
+21:23.554   15                23         7    :   :   :   :   :   :   :   :   Object.operator delete
+21:23.554   15                16         8    :   :   :   :   :   :   :   :   : Memory.Free
+21:23.554   15                 8         8    :   :   :   :   :   :   :   :   :   SysHeap.Free
+21:23.554   15               191         1    :   :   :   :   :   :   :   : C++.delete
+21:23.554   15                89         8    :   :   :   :   :   :   :   :   Counter.dtor
+21:23.554   15                81         8    :   :   :   :   :   :   :   :   : Statistic.dtor
+21:23.554   15                73         9    :   :   :   :   :   :   :   :   :   StatisticsRegistry.UnbindStat
+21:23.554   15                64        64    :   :   :   :   :   :   :   :   :   : Registry.Erase
+21:23.554   15                51        11    :   :   :   :   :   :   :   :   :   :   : Memory.Free
+21:23.554   15                40        40    :   :   :   :   :   :   :   :   :   :   :   SysHeap.Free
+21:23.554   15                26        11    :   :   :   :   :   :   :   :   :   :   :   :   Memory.Free
+21:23.554   15                15        15    :   :   :   :   :   :   :   :   :   :   :   :   : SysHeap.Free
+21:23.554   15                69        13    :   :   :   :   :   :   :   :   Object.operator delete
+21:23.554   15                56        56    :   :   :   :   :   :   :   :   : Memory.Free
+21:23.554   15                37        37    :   :   :   :   :   :   :   :   :   : Registry.Erase
+21:23.554   15                24        11    :   :   :   :   :   :   :   :   :   :   :   :   Memory.Free
+21:23.554   15                13        13    :   :   :   :   :   :   :   :   :   :   :   :   : SysHeap.Free
+21:23.554   15                32        11    :   :   :   :   :   :   :   :   Object.operator delete
+21:23.554   15                21        11    :   :   :   :   :   :   :   :   : Memory.Free
+21:23.555   15                10        10    :   :   :   :   :   :   :   :   :   SysHeap.Free
+21:23.555   15                23         7    :   :   :   :   :   :   Object.operator delete
+21:23.555   15                16         8    :   :   :   :   :   :   : Memory.Free
+21:23.555   15                 8         8    :   :   :   :   :   :   :   SysHeap.Free
+21:23.555   15                76         1    :   :   :   :   :   : C++.delete
+21:23.555   15                51        36    :   :   :   :   :   :   ThreadPriv.dtor
+21:23.555   15                 7         7    :   :   :   :   :   :   : LeakyBucketCounter.dtor
+21:23.555   15                 8         8    :   :   :   :   :   :   : LeakyBucketCounter.dtor
+21:23.555   15                24         8    :   :   :   :   :   :   Object.operator delete
+21:23.555   15                16         7    :   :   :   :   :   :   : Memory.Free
+21:23.555   15                 9         9    :   :   :   :   :   :   :   SysHeap.Free
+21:23.555   15                48         9    :   :   :   : Pooled.operator delete
+21:23.555   15                39        29    :   :   :   :   ObjectPool.EnqBlock
+21:23.555   15                10        10    :   :   :   :   : Q1Way.Enq
+21:23.555   15                 7         7    :   : SignalException.dtor
+21:23.555   15                 0         0    :   :   Exception.dtor
+END OF TRACE

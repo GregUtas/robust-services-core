@@ -1,0 +1,177 @@
+nb>read test.trap.critical
+nb>/ MAKE RECOVERY TEST THREAD CRITICAL
+nb>read test.trap.setup
+nb>quit all
+  Nothing to quit.
+nb>nt
+nt>stop
+  OK.
+nt>clear buffer
+  OK.
+nt>clear selections
+  OK.
+nt>clear tools
+  OK.
+nt>set tools f on
+  f: OK.
+  OK.
+nt>include all on
+  OK.
+nt>exclude faction &faction.audit
+  OK.
+nt>exclude faction &faction.bkgd
+  OK.
+nt>exclude faction &faction.oper
+  OK.
+nt>sb exclude timers
+  OK.
+nt>testcase prolog test.trap.prolog
+  OK.
+nt>testcase epilog test.trap.epilog
+  OK.
+nt>swflags set &flag.criticalthread on
+  OK.
+nt>testcase begin recover.critical.Return
+  OK.
+symbols set testcase.name recover.critical.Return
+  OK.
+read test.trap.prolog
+nt>send &testcase.name
+nt>print Testcase &testcase.name completed.
+nt>testcase begin recover.critical.SwErr
+  OK.
+symbols set testcase.name recover.critical.SwErr
+  OK.
+read test.trap.prolog
+nt>send &testcase.name
+nt>print Testcase &testcase.name completed.
+nt>testcase begin recover.critical.BadPtr
+  OK.
+symbols set testcase.name recover.critical.BadPtr
+  OK.
+read test.trap.prolog
+nt>send &testcase.name
+nt>print Testcase &testcase.name completed.
+nt>testcase begin recover.critical.DivZero
+  OK.
+symbols set testcase.name recover.critical.DivZero
+  OK.
+read test.trap.prolog
+nt>send &testcase.name
+nt>print Testcase &testcase.name completed.
+nt>testcase begin recover.critical.SIGINT
+  OK.
+symbols set testcase.name recover.critical.SIGINT
+  OK.
+read test.trap.prolog
+nt>send &testcase.name
+nt>print Testcase &testcase.name completed.
+nt>testcase begin recover.critical.SIGILL
+  OK.
+symbols set testcase.name recover.critical.SIGILL
+  OK.
+read test.trap.prolog
+nt>send &testcase.name
+nt>print Testcase &testcase.name completed.
+nt>testcase begin recover.critical.SIGTERM
+  OK.
+symbols set testcase.name recover.critical.SIGTERM
+  OK.
+read test.trap.prolog
+nt>send &testcase.name
+nt>print Testcase &testcase.name completed.
+nt>testcase begin recover.critical.SIGBREAK
+  OK.
+symbols set testcase.name recover.critical.SIGBREAK
+  OK.
+read test.trap.prolog
+nt>send &testcase.name
+nt>print Testcase &testcase.name completed.
+nt>testcase begin recover.critical.abort
+  OK.
+symbols set testcase.name recover.critical.abort
+  OK.
+read test.trap.prolog
+nt>send &testcase.name
+nt>print Testcase &testcase.name completed.
+nt>testcase begin recover.critical.terminate
+  OK.
+symbols set testcase.name recover.critical.terminate
+  OK.
+read test.trap.prolog
+nt>send &testcase.name
+nt>print Testcase &testcase.name completed.
+nt>testcase begin recover.critical.KillLocal
+  OK.
+symbols set testcase.name recover.critical.KillLocal
+  OK.
+read test.trap.prolog
+nt>send &testcase.name
+nt>print Testcase &testcase.name completed.
+nt>testcase begin recover.critical.KillRemote
+  OK.
+symbols set testcase.name recover.critical.KillRemote
+  OK.
+read test.trap.prolog
+nt>send &testcase.name
+nt>print Testcase &testcase.name completed.
+nt>testcase begin recover.critical.InfiniteLoop
+  OK.
+symbols set testcase.name recover.critical.InfiniteLoop
+  OK.
+read test.trap.prolog
+nt>send &testcase.name
+nt>print Testcase &testcase.name completed.
+nt>testcase begin recover.critical.StackOverflow
+  OK.
+symbols set testcase.name recover.critical.StackOverflow
+  OK.
+read test.trap.prolog
+nt>send &testcase.name
+nt>print Testcase &testcase.name completed.
+nt>testcase begin recover.critical.TrapDuringRecovery
+  OK.
+symbols set testcase.name recover.critical.TrapDuringRecovery
+  OK.
+read test.trap.prolog
+nt>send &testcase.name
+nt>print Testcase &testcase.name completed.
+nt>testcase begin recover.critical.DeleteRemote
+  OK.
+symbols set testcase.name recover.critical.DeleteRemote
+  OK.
+read test.trap.prolog
+nt>send &testcase.name
+nt>print Testcase &testcase.name completed.
+nt>testcase begin recover.critical.DeleteLocal
+  OK.
+symbols set testcase.name recover.critical.DeleteLocal
+  OK.
+read test.trap.prolog
+nt>send &testcase.name
+nt>print Testcase &testcase.name completed.
+nt>testcase begin recover.critical.ThreadCtorTrap
+  OK.
+symbols set testcase.name recover.critical.ThreadCtorTrap
+  OK.
+read test.trap.prolog
+nt>send &testcase.name
+nt>print Testcase &testcase.name completed.
+nt>testcase begin recover.critical.Ctrl-Break
+  OK.
+symbols set testcase.name recover.critical.Ctrl-Break
+  OK.
+read test.trap.prolog
+nt>send &testcase.name
+nt>print Testcase &testcase.name completed.
+nt>testcase begin recover.critical.Ctrl-C
+  OK.
+symbols set testcase.name recover.critical.Ctrl-C
+  OK.
+read test.trap.prolog
+nt>send &testcase.name
+nt>print Testcase &testcase.name completed.
+nt>testcase query
+  Passed: 20
+  Failed: 0
+nt>

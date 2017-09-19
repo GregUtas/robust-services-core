@@ -1,0 +1,37 @@
+nt>sched start
+  OK.
+nt>start
+  OK.
+nt>read trap.10
+nt>/ ================ PREPARE TO CLICK RETRY, THEN CONTINUE ================
+nt>/ RECOVER terminate
+nt>/ Enable breakpoints because of pop-up.
+nt>symbols assign save.breakenabled breakenabled
+  OK.
+nt>cfgparms set breakenabled t
+  OK.
+nt>delay 1
+  OK.
+nt>recover terminate
+  OK.
+nt>delay 3
+  OK.
+nt>cfgparms set breakenabled &save.breakenabled
+  OK.
+nt>testcase end
+  OK.
+read test.trap.epilog
+nt>stop
+  OK.
+nt>sched stop
+  OK.
+nt>sched show &testcase.name
+  OK.
+nt>save trace &testcase.name
+  OK.
+nt>save funcs &testcase.name
+  OK.
+nt>clear buffer
+  OK.
+nt>send cout
+  OK.

@@ -1,0 +1,90 @@
+pots>start
+  OK.
+pots>inject PS B &port.A
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.A *7
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.A 0
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.A &dn.B
+  OK.
+pots>delay 2
+  OK.
+pots>inject PS B &port.B
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.A s=d m=&port.dial
+  OK.
+pots>verify PS S &port.A m=&port.silence
+  OK.
+pots>verify PS S &port.A s=d m=&port.stutter
+  OK.
+pots>verify PS S &port.A s=x m=&port.silence
+  OK.
+pots>verify PS S &port.B r=t
+  OK.
+pots>verify PS S &port.A m=&port.ringback
+  OK.
+pots>verify PS S &port.B r=f m=&port.A
+  OK.
+pots>verify PS S &port.A m=&port.B
+  OK.
+pots>/ INITIATE CWT: DENIED BY CCW
+pots>inject PS B &port.C
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.C &dn.A
+  OK.
+pots>delay 3
+  OK.
+pots>verify PS S &port.C s=d m=&port.dial
+  OK.
+pots>verify PS S &port.C s=x m=&port.silence
+  OK.
+pots>verify PM F &port.A f &service.cwm &facility.req
+  OK.
+pots>verify PC F &port.A f &service.cwa &facility.req
+  OK.
+pots>verify PM F &port.A f &service.cwm &facility.nack
+  OK.
+pots>verify PC F &port.A f &service.cwb &facility.nack
+  OK.
+pots>verify PM R &port.A &cause.userbusy
+  OK.
+pots>verify PS S &port.C m=&port.busy c=&cause.userbusy
+  OK.
+pots>inject PS E &port.A
+  OK.
+pots>inject PS E &port.B
+  OK.
+pots>inject PS E &port.C
+  OK.
+pots>delay 2
+  OK.
+pots>testcase end
+  OK.
+read test.cp.epilog
+pots>stop
+  OK.
+pots>contexts c
+  0
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+  Result is false.
+pots>save trace &testcase.name
+  OK.
+pots>save funcs &testcase.name
+  OK.
+pots>st save msc &testcase.name
+  OK.
+pots>clear buffer
+  OK.
+pots>send cout
+  OK.

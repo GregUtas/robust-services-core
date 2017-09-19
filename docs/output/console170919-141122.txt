@@ -1,0 +1,555 @@
+nb>read traffic
+nb>quit all
+  Nothing to quit.
+nb>symbols set script.name traffic
+  OK.
+nb>stop
+  OK.
+nb>clear buffer
+  OK.
+nb>nt
+nt>sb
+sb>pots
+pots>an
+an>//* swflags set &flag.cipalwaysoverip on
+an>delay 2
+  OK.
+an>traffic rate 120
+an>traffic rate 18000
+an>status
+STATUS REPORT: 19-Sep-2017 14:12:08.335 on Reigi
+MEMORY USAGE
+  Alloc                            Bytes        Max     Memory  Heap
+  Fails     Allocs      Frees     In Use     In Use       Type  Address
+      0         14          0      32216      32216  temporary  000001D2FA8E0000
+      0     150956     112216   55919112   55933800    dynamic  000001D2FBF30000
+      0      22806         50    2244016    2244016  protected  000001D2FBE50000
+      0         52          9   17394952   17398440  permanent  000001D2FAB20000
+      0         30          2       5488       5488  immutable  000001D2FBD00000
+
+OBJECT POOLS
+  Alloc  Lowest    Curr    Curr
+  Fails   Avail   Avail  In Use   Allocs    Frees   Pool
+      0    1009    1009      15       15        0   Threads
+      0    6109    6144       0       69       69   MsgBuffers
+      0    4487    4632    4584   116781   112197   SbIpBuffers
+      0       *   10240       0        0        0   BtIpBuffers
+      0    7411    7505   10927    40354    29427   Contexts
+      0    3463    3608    4584   116781   112197   Messages
+      0   10612   10625   20095    23076     2981   MsgPorts
+      0   10625   10625   20095    23076     2981   ProtocolSMs
+      0    3563    3563    5653    25494    19841   Timers
+      0    2045    2048       0   162460   162460   Events
+      0    6481    6481   10927    12790     1863   ServiceSMs
+      0       *    1024       0        0        0   MediaEndpts
+
+CPU IDLE TIME: 13.2%
+
+IP PORT DISCARDS
+  There were no discards to display.
+
+INGRESS WORK QUEUES
+    Curr     Max     Max
+  Length  Length   Delay   Faction
+       0      80     275   Payload
+
+FACTORY DISCARDS
+  There were no discards to display.
+an>status
+STATUS REPORT: 19-Sep-2017 14:12:48.580 on Reigi
+MEMORY USAGE
+  Alloc                            Bytes        Max     Memory  Heap
+  Fails     Allocs      Frees     In Use     In Use       Type  Address
+      0         14          0      32216      32216  temporary  000001D2FA8E0000
+      0     409684     359104   57184608   57208000    dynamic  000001D2FBF30000
+      0      22806         50    2244016    2244016  protected  000001D2FBE50000
+      0         52          9   17394952   17398440  permanent  000001D2FAB20000
+      0         30          2       5488       5488  immutable  000001D2FBD00000
+
+OBJECT POOLS
+  Alloc  Lowest    Curr    Curr
+  Fails   Avail   Avail  In Use   Allocs    Frees   Pool
+      0    1009    1009      15       15        0   Threads
+      0    6109    6144       0       74       74   MsgBuffers
+      0    2377    2863    6353   365437   359084   SbIpBuffers
+      0       *   10240       0        0        0   BtIpBuffers
+      0    3209    3758   14674   118104   103430   Contexts
+      0    1353    1839    6353   365437   359084   Messages
+      0    2921    3932   26788    54716    27928   MsgPorts
+      0    2996    4052   26668    54596    27928   ProtocolSMs
+      0    2344    2584    6632    66215    59583   Timers
+      0    2045    2048       0   448393   448393   Events
+      0    2397    2854   14554    30167    15613   ServiceSMs
+      0       *    1024       0        0        0   MediaEndpts
+
+CPU IDLE TIME: 0.9%
+
+IP PORT DISCARDS
+  There were no discards to display.
+
+INGRESS WORK QUEUES
+    Curr     Max     Max
+  Length  Length   Delay   Faction
+      89     316    1712   Payload
+
+FACTORY DISCARDS
+  There were no discards to display.
+an>status
+STATUS REPORT: 19-Sep-2017 14:13:38.084 on Reigi
+MEMORY USAGE
+  Alloc                            Bytes        Max     Memory  Heap
+  Fails     Allocs      Frees     In Use     In Use       Type  Address
+      0         14          0      32216      32216  temporary  000001D2FA8E0000
+      0     741567     682318   58074200   58100360    dynamic  000001D2FBF30000
+      0      22806         50    2244016    2244016  protected  000001D2FBE50000
+      0         52          9   17394952   17398440  permanent  000001D2FAB20000
+      0         30          2       5488       5488  immutable  000001D2FBD00000
+
+OBJECT POOLS
+  Alloc  Lowest    Curr    Curr
+  Fails   Avail   Avail  In Use   Allocs    Frees   Pool
+      0    1009    1009      15       15        0   Threads
+      0    6109    6144       0       79       79   MsgBuffers
+      0    2377    3375    5841   688138   682297   SbIpBuffers
+      0       *   10240       0        0        0   BtIpBuffers
+      0    3209    3870   14562   217936   203374   Contexts
+      0    1353    2351    5841   688138   682297   Messages
+      0    2921    4476   26244    92617    66373   MsgPorts
+      0    2996    4476   26244    92606    66362   ProtocolSMs
+      0    2068    2269    6947   117619   110672   Timers
+      0    2045    2048       0   810399   810399   Events
+      0    2397    2846   14562    51406    36844   ServiceSMs
+      0       *    1024       0        0        0   MediaEndpts
+
+CPU IDLE TIME: 0.6%
+
+IP PORT DISCARDS
+  There were no discards to display.
+
+INGRESS WORK QUEUES
+    Curr     Max     Max
+  Length  Length   Delay   Faction
+       0     655    2757   Payload
+
+FACTORY DISCARDS
+   Msgs   Ctxs  Factory
+     47     11  POTS Basic Call
+an>traffic profile
+Basic call states:
+          AO   CI   AI   SR   AS   SC   OA        RS
+     Nu    0  846    0    0    0   60 4011   Ac  296   Di   Ex
+      0   AT             SF        PC   TA 3446   LS    0 1719
+           0              0        38 4011       296
+POTS circuit states:
+    Idle  Actv  Orig  Term  Lock
+    5957   304  7862  6826    51
+Traffic call states:
+    Orig  Dial  Term  Ring  Conn  Susp  Disc  Rlsg
+     779   109   624  3577  1724   274   494  1398
+an>status
+STATUS REPORT: 19-Sep-2017 14:14:27.602 on Reigi
+MEMORY USAGE
+  Alloc                            Bytes        Max     Memory  Heap
+  Fails     Allocs      Frees     In Use     In Use       Type  Address
+      0         14          0      32216      32216  temporary  000001D2FA8E0000
+      0    1072385    1002865   58993272   59004968    dynamic  000001D2FBF30000
+      0      22806         50    2244016    2244016  protected  000001D2FBE50000
+      0         52          9   17394952   17398440  permanent  000001D2FAB20000
+      0         30          2       5488       5488  immutable  000001D2FBD00000
+
+OBJECT POOLS
+  Alloc  Lowest    Curr    Curr
+  Fails   Avail   Avail  In Use   Allocs    Frees   Pool
+      0    1009    1009      15       15        0   Threads
+      0    6109    6143       1       89       88   MsgBuffers
+      0    2166    2578    6638  1009482  1002844   SbIpBuffers
+      0       *   10240       0        0        0   BtIpBuffers
+      0    3081    3162   15270   317290   302020   Contexts
+      0    1142    1554    6638  1009482  1002844   Messages
+      0    2921    3098   27622   131362   103740   MsgPorts
+      0    2996    3501   27219   130931   103712   ProtocolSMs
+      0    1995    2260    6956   168784   161828   Timers
+      0    2045    2048       0  1170836  1170836   Events
+      0    2268    2541   14867    72548    57681   ServiceSMs
+      0       *    1024       0        0        0   MediaEndpts
+
+CPU IDLE TIME: 0.0%
+
+IP PORT DISCARDS
+  There were no discards to display.
+
+INGRESS WORK QUEUES
+    Curr     Max     Max
+  Length  Length   Delay   Faction
+     281     655    2779   Payload
+
+FACTORY DISCARDS
+   Msgs   Ctxs  Factory
+    134     28  POTS Basic Call
+an>traffic rate 24000
+an>status
+STATUS REPORT: 19-Sep-2017 14:14:57.017 on Reigi
+MEMORY USAGE
+  Alloc                            Bytes        Max     Memory  Heap
+  Fails     Allocs      Frees     In Use     In Use       Type  Address
+      0         14          0      32216      32216  temporary  000001D2FA8E0000
+      0    1278330    1195724   60381704   60398360    dynamic  000001D2FBF30000
+      0      29806         50    2804016    2804016  protected  000001D2FBE50000
+      0         52          9   17394952   17398440  permanent  000001D2FAB20000
+      0         30          2       5488       5488  immutable  000001D2FBD00000
+
+OBJECT POOLS
+  Alloc  Lowest    Curr    Curr
+  Fails   Avail   Avail  In Use   Allocs    Frees   Pool
+      0    1009    1009      15       15        0   Threads
+      0    6109    6143       1      100       99   MsgBuffers
+      0    1799    2254    6962  1202664  1195702   SbIpBuffers
+      0       *   10240       0        0        0   BtIpBuffers
+      0    2635    2696   15736   375860   360124   Contexts
+      0     775    1230    6962  1202443  1195481   Messages
+      0    2921    3180   27540   153901   126361   MsgPorts
+      0    2996    4170   26550   152458   125908   ProtocolSMs
+      0    1783    2064    7152   197965   190813   Timers
+      0    2045    2048       0  1376998  1376998   Events
+      0    2268    2662   14746    84767    70021   ServiceSMs
+      0       *    1024       0        0        0   MediaEndpts
+
+CPU IDLE TIME: 0.2%
+
+IP PORT DISCARDS
+   Msgs  IP Port
+    221  POTS Call
+
+INGRESS WORK QUEUES
+    Curr     Max     Max
+  Length  Length   Delay   Faction
+     783    1200    5320   Payload
+
+FACTORY DISCARDS
+   Msgs   Ctxs  Factory
+   2056    453  POTS Basic Call
+an>status
+STATUS REPORT: 19-Sep-2017 14:15:28.053 on Reigi
+MEMORY USAGE
+  Alloc                            Bytes        Max     Memory  Heap
+  Fails     Allocs      Frees     In Use     In Use       Type  Address
+      0         14          0      32216      32216  temporary  000001D2FA8E0000
+      0    1494793    1407431   60746072   60757152    dynamic  000001D2FBF30000
+      0      29806         50    2804016    2804016  protected  000001D2FBE50000
+      0         52          9   17394952   17398440  permanent  000001D2FAB20000
+      0         30          2       5488       5488  immutable  000001D2FBD00000
+
+OBJECT POOLS
+  Alloc  Lowest    Curr    Curr
+  Fails   Avail   Avail  In Use   Allocs    Frees   Pool
+      0    1009    1009      15       15        0   Threads
+      0    6109    6144       0      105      105   MsgBuffers
+      0    1704    2712    6504  1413913  1407409   SbIpBuffers
+      0       *   10240       0        0        0   BtIpBuffers
+      0    2423    3796   14636   435379   420743   Contexts
+      0     680    1688    6504  1409744  1403240   Messages
+      0    2870    5632   25088   176306   151218   MsgPorts
+      0    2996    6820   23900   173411   149511   ProtocolSMs
+      0    1766    2704    6512   225867   219355   Timers
+      0    2045    2048       0  1578093  1578093   Events
+      0    2268    3960   13448    96957    83509   ServiceSMs
+      0       *    1024       0        0        0   MediaEndpts
+
+CPU IDLE TIME: 0.2%
+
+IP PORT DISCARDS
+   Msgs  IP Port
+   4169  POTS Call
+
+INGRESS WORK QUEUES
+    Curr     Max     Max
+  Length  Length   Delay   Faction
+    1188    1248    7616   Payload
+
+FACTORY DISCARDS
+   Msgs   Ctxs  Factory
+   6850   1707  POTS Basic Call
+an>traffic profile
+Basic call states:
+          AO   CI   AI   SR   AS   SC   OA        RS
+     Nu    0 1215    0    0    0   20 3088   Ac  282   Di   Ex
+      0   AT             SF        PC   TA 3296   LS    0 1837
+           0              0        13 3088       282
+POTS circuit states:
+    Idle  Actv  Orig  Term  Lock
+   13498  1270  7318  5851    63
+Traffic call states:
+    Orig  Dial  Term  Ring  Conn  Susp  Disc  Rlsg
+    2152    95   406  2841  1646   273   511  1497
+an>status
+STATUS REPORT: 19-Sep-2017 14:16:00.720 on Reigi
+MEMORY USAGE
+  Alloc                            Bytes        Max     Memory  Heap
+  Fails     Allocs      Frees     In Use     In Use       Type  Address
+      0         14          0      32216      32216  temporary  000001D2FA8E0000
+      0    1723240    1631085   61162368   61187952    dynamic  000001D2FBF30000
+      0      29806         50    2804016    2804016  protected  000001D2FBE50000
+      0         52          9   17394952   17398440  permanent  000001D2FAB20000
+      0         30          2       5488       5488  immutable  000001D2FBD00000
+
+OBJECT POOLS
+  Alloc  Lowest    Curr    Curr
+  Fails   Avail   Avail  In Use   Allocs    Frees   Pool
+      0    1009    1009      15       15        0   Threads
+      0    6109    6144       0      115      115   MsgBuffers
+      0    1704    3278    5938  1637001  1631063   SbIpBuffers
+      0       *   10240       0        0        0   BtIpBuffers
+      0    2423    4757   13675   497601   483926   Contexts
+      0     680    2254    5938  1628193  1622255   Messages
+      0    2870    7286   23434   200281   176847   MsgPorts
+      0    2996    8290   22430   196285   173855   ProtocolSMs
+      0    1766    2887    6329   255454   249125   Timers
+      0    2045    2048       0  1790332  1790332   Events
+      0    2268    4737   12671   110377    97706   ServiceSMs
+      0       *    1024       0        0        0   MediaEndpts
+
+CPU IDLE TIME: 0.2%
+
+IP PORT DISCARDS
+   Msgs  IP Port
+   8808  POTS Call
+
+INGRESS WORK QUEUES
+    Curr     Max     Max
+  Length  Length   Delay   Faction
+     975    1258    7616   Payload
+
+FACTORY DISCARDS
+   Msgs   Ctxs  Factory
+  12190   2992  POTS Basic Call
+an>traffic rate 0
+an>status
+STATUS REPORT: 19-Sep-2017 14:16:47.474 on Reigi
+MEMORY USAGE
+  Alloc                            Bytes        Max     Memory  Heap
+  Fails     Allocs      Frees     In Use     In Use       Type  Address
+      0         14          0      32216      32216  temporary  000001D2FA8E0000
+      0    1953500    1862585   60932496   61457664    dynamic  000001D2FBF30000
+      0      29806         50    2804016    2804016  protected  000001D2FBE50000
+      0         52          9   17394952   17398440  permanent  000001D2FAB20000
+      0         30          2       5488       5488  immutable  000001D2FBD00000
+
+OBJECT POOLS
+  Alloc  Lowest    Curr    Curr
+  Fails   Avail   Avail  In Use   Allocs    Frees   Pool
+      0    1009    1009      15       15        0   Threads
+      0    6109    6144       0      126      126   MsgBuffers
+      0    1704    7140    2076  1862746  1860670   SbIpBuffers
+      0       *   10240       0        0        0   BtIpBuffers
+      0    2423   13322    5110   559692   554582   Contexts
+      0     680    6116    2076  1850848  1848772   Messages
+      0    2870   21458    9262   219009   209747   MsgPorts
+      0    2996   21458    9262   215207   205945   ProtocolSMs
+      0    1766    7207    2009   282727   280718   Timers
+      0    2045    2048       0  1997387  1997387   Events
+      0    2268   12298    5110   121360   116250   ServiceSMs
+      0       *    1024       0        0        0   MediaEndpts
+
+CPU IDLE TIME: 47.1%
+
+IP PORT DISCARDS
+   Msgs  IP Port
+  11898  POTS Call
+
+INGRESS WORK QUEUES
+    Curr     Max     Max
+  Length  Length   Delay   Faction
+       0    1282    7616   Payload
+
+FACTORY DISCARDS
+   Msgs   Ctxs  Factory
+  15396   3802  POTS Basic Call
+an>status
+STATUS REPORT: 19-Sep-2017 14:17:24.780 on Reigi
+MEMORY USAGE
+  Alloc                            Bytes        Max     Memory  Heap
+  Fails     Allocs      Frees     In Use     In Use       Type  Address
+      0         14          0      32216      32216  temporary  000001D2FA8E0000
+      0    1985578    1896723   60635856   61457664    dynamic  000001D2FBF30000
+      0      29806         50    2804016    2804016  protected  000001D2FBE50000
+      0         52          9   17394952   17398440  permanent  000001D2FAB20000
+      0         30          2       5488       5488  immutable  000001D2FBD00000
+
+OBJECT POOLS
+  Alloc  Lowest    Curr    Curr
+  Fails   Avail   Avail  In Use   Allocs    Frees   Pool
+      0    1009    1009      15       15        0   Threads
+      0    6109    6143       1      131      130   MsgBuffers
+      0    1704    9200      16  1894824  1894808   SbIpBuffers
+      0       *   10240       0        0        0   BtIpBuffers
+      0    2423   18136     296   567845   567549   Contexts
+      0     680    8176      16  1882926  1882910   Messages
+      0    2870   30392     328   219158   218830   MsgPorts
+      0    2996   30392     328   215356   215028   ProtocolSMs
+      0    1766    8942     274   285296   285022   Timers
+      0    2045    2048       0  2019830  2019830   Events
+      0    2268   17112     296   121509   121213   ServiceSMs
+      0       *    1024       0        0        0   MediaEndpts
+
+CPU IDLE TIME: 86.7%
+
+IP PORT DISCARDS
+   Msgs  IP Port
+  11898  POTS Call
+
+INGRESS WORK QUEUES
+    Curr     Max     Max
+  Length  Length   Delay   Faction
+       0    1282    7616   Payload
+
+FACTORY DISCARDS
+   Msgs   Ctxs  Factory
+  15396   3802  POTS Basic Call
+an>traffic profile
+Basic call states:
+          AO   CI   AI   SR   AS   SC   OA        RS
+     Nu    0    0    0    0    0    0    0   Ac    0   Di   Ex
+      0   AT             SF        PC   TA    0   LS    0  149
+           0              0         0    0         0
+POTS circuit states:
+    Idle  Actv  Orig  Term  Lock
+   27832     0    21   128    19
+Traffic call states:
+    Orig  Dial  Term  Ring  Conn  Susp  Disc  Rlsg
+       0     0     0     0     0     0     0   167
+an>status
+STATUS REPORT: 19-Sep-2017 14:18:02.253 on Reigi
+MEMORY USAGE
+  Alloc                            Bytes        Max     Memory  Heap
+  Fails     Allocs      Frees     In Use     In Use       Type  Address
+      0         14          0      32216      32216  temporary  000001D2FA8E0000
+      0    1987091    1898252   60633552   61457664    dynamic  000001D2FBF30000
+      0      29806         50    2804016    2804016  protected  000001D2FBE50000
+      0         52          9   17394952   17398440  permanent  000001D2FAB20000
+      0         30          2       5488       5488  immutable  000001D2FBD00000
+
+OBJECT POOLS
+  Alloc  Lowest    Curr    Curr
+  Fails   Avail   Avail  In Use   Allocs    Frees   Pool
+      0    1009    1009      15       15        0   Threads
+      0    6109    6144       0      141      141   MsgBuffers
+      0    1704    9216       0  1896337  1896337   SbIpBuffers
+      0       *   10240       0        0        0   BtIpBuffers
+      0    2423   18395      37   568339   568302   Contexts
+      0     680    8192       0  1884439  1884439   Messages
+      0    2870   30683      37   219239   219202   MsgPorts
+      0    2996   30683      37   215437   215400   ProtocolSMs
+      0    1766    9179      37   285372   285335   Timers
+      0    2045    2048       0  2020601  2020601   Events
+      0    2268   17371      37   121590   121553   ServiceSMs
+      0       *    1024       0        0        0   MediaEndpts
+
+CPU IDLE TIME: 96.9%
+
+IP PORT DISCARDS
+   Msgs  IP Port
+  11898  POTS Call
+
+INGRESS WORK QUEUES
+    Curr     Max     Max
+  Length  Length   Delay   Faction
+       0    1282    7616   Payload
+
+FACTORY DISCARDS
+   Msgs   Ctxs  Factory
+  15396   3802  POTS Basic Call
+an>status
+STATUS REPORT: 19-Sep-2017 14:18:27.340 on Reigi
+MEMORY USAGE
+  Alloc                            Bytes        Max     Memory  Heap
+  Fails     Allocs      Frees     In Use     In Use       Type  Address
+      0         14          0      32216      32216  temporary  000001D2FA8E0000
+      0    1987304    1898465   60633552   61457664    dynamic  000001D2FBF30000
+      0      29806         50    2804016    2804016  protected  000001D2FBE50000
+      0         52          9   17394952   17398440  permanent  000001D2FAB20000
+      0         30          2       5488       5488  immutable  000001D2FBD00000
+
+OBJECT POOLS
+  Alloc  Lowest    Curr    Curr
+  Fails   Avail   Avail  In Use   Allocs    Frees   Pool
+      0    1009    1009      15       15        0   Threads
+      0    6109    6144       0      146      146   MsgBuffers
+      0    1704    9216       0  1896550  1896550   SbIpBuffers
+      0       *   10240       0        0        0   BtIpBuffers
+      0    2423   18431       1   568421   568420   Contexts
+      0     680    8192       0  1884652  1884652   Messages
+      0    2870   30719       1   219262   219261   MsgPorts
+      0    2996   30719       1   215460   215459   ProtocolSMs
+      0    1766    9215       1   285372   285371   Timers
+      0    2045    2048       0  2020696  2020696   Events
+      0    2268   17407       1   121613   121612   ServiceSMs
+      0       *    1024       0        0        0   MediaEndpts
+
+CPU IDLE TIME: 98.1%
+
+IP PORT DISCARDS
+   Msgs  IP Port
+  11898  POTS Call
+
+INGRESS WORK QUEUES
+    Curr     Max     Max
+  Length  Length   Delay   Faction
+       0    1282    7616   Payload
+
+FACTORY DISCARDS
+   Msgs   Ctxs  Factory
+  15396   3802  POTS Basic Call
+an>status
+STATUS REPORT: 19-Sep-2017 14:18:37.844 on Reigi
+MEMORY USAGE
+  Alloc                            Bytes        Max     Memory  Heap
+  Fails     Allocs      Frees     In Use     In Use       Type  Address
+      0         14          0      32216      32216  temporary  000001D2FA8E0000
+      0    1987327    1936688   56497624   61457664    dynamic  000001D2FBF30000
+      0      29806      28050     564016    2804016  protected  000001D2FBE50000
+      0         52          9   17394952   17398440  permanent  000001D2FAB20000
+      0         30          2       5488       5488  immutable  000001D2FBD00000
+
+OBJECT POOLS
+  Alloc  Lowest    Curr    Curr
+  Fails   Avail   Avail  In Use   Allocs    Frees   Pool
+      0    1009    1009      15       15        0   Threads
+      0    6109    6143       1      151      150   MsgBuffers
+      0    1704    9216       0  1896573  1896573   SbIpBuffers
+      0       *   10240       0        0        0   BtIpBuffers
+      0    2423   18432       0   568432   568432   Contexts
+      0     680    8192       0  1884675  1884675   Messages
+      0    2870   30720       0   219267   219267   MsgPorts
+      0    2996   30720       0   215465   215465   ProtocolSMs
+      0    1766    9216       0   285372   285372   Timers
+      0    2045    2048       0  2020703  2020703   Events
+      0    2268   17408       0   121618   121618   ServiceSMs
+      0       *    1024       0        0        0   MediaEndpts
+
+CPU IDLE TIME: 97.7%
+
+IP PORT DISCARDS
+   Msgs  IP Port
+  11898  POTS Call
+
+INGRESS WORK QUEUES
+    Curr     Max     Max
+  Length  Length   Delay   Faction
+       0    1282    7616   Payload
+
+FACTORY DISCARDS
+   Msgs   Ctxs  Factory
+  15396   3802  POTS Basic Call
+an>traffic profile
+Basic call states:
+          AO   CI   AI   SR   AS   SC   OA        RS
+     Nu    0    0    0    0    0    0    0   Ac    0   Di   Ex
+      0   AT             SF        PC   TA    0   LS    0    0
+           0              0         0    0         0
+POTS circuit states:
+    Idle  Actv  Orig  Term  Lock
+       0     0     0     0     0
+Traffic call states:
+    Orig  Dial  Term  Ring  Conn  Susp  Disc  Rlsg
+       0     0     0     0     0     0     0     0
+an>

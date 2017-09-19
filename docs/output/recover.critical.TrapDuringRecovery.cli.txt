@@ -1,0 +1,33 @@
+nt>sched start
+  OK.
+nt>start
+  OK.
+nt>read trap.15
+nt>/ RECOVER trap during recovery
+nt>swflags set &flag.recoverytrap on
+  OK.
+nt>delay 1
+  OK.
+nt>recover swerr
+  OK.
+nt>delay 3
+  OK.
+nt>swflags set &flag.recoverytrap off
+  OK.
+nt>testcase end
+  OK.
+read test.trap.epilog
+nt>stop
+  OK.
+nt>sched stop
+  OK.
+nt>sched show &testcase.name
+  OK.
+nt>save trace &testcase.name
+  OK.
+nt>save funcs &testcase.name
+  OK.
+nt>clear buffer
+  OK.
+nt>send cout
+  OK.

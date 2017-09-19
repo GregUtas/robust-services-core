@@ -1,0 +1,70 @@
+START OF TRACE: 19-Sep-2017 12:21:47.567 on Reigi
+
+mm:ss.ttt  Thr  Event  TotalTime   NetTime  Function
+---------  ---  -----  ---------   -------  --------
+21:50.520   15  +lock          9         2    Thread.Pause
+21:50.520   15                 7         7    : Thread.ExitBlockingOperation
+21:50.520   15                48        48    Thread.Pause (completed)
+21:50.520   15           3004371        25  RecoveryTestThread.Enter
+21:50.520   15                 7         7    :   Thread.RunningThread
+21:50.520   15           3004346        15    Thread.Pause (msecs=3000)
+21:50.520   15                15        15    : Thread.RunningThread
+21:50.520   15           3004316        16    : Thread.EnterBlockingOperation
+21:50.520   15                 7         7    :   Thread.RunningThread
+21:50.520   15  -lock    3004293        15    :   Thread.Unlock
+21:50.520   15                57        57    :   : Thread.LogContextSwitch
+21:50.520   15                16        16    :   :   : SysMutex.Acquire
+21:50.520   15                16        16    :   :   : SysMutex.Release
+21:50.520   15           3000239   3000028    :   : SysMutex.Release
+21:53.520   15                97         1    :   :   C++.delete
+21:53.520   15                63        28    :   :   : SysThread.dtor
+21:53.521   15                18        18    :   :   :   SysThread.DeleteSentry
+21:53.521   15                17        17    :   :   :   SysThread.Delete
+21:53.521   15                33        10    :   :   : Object.operator delete
+21:53.521   15                23        12    :   :   :   Memory.Free
+21:53.521   15                11        11    :   :   :   : SysHeap.Free
+21:53.521   15               114        86    :   :   Debug.SwErr(int)
+21:53.521   15                34        10    :   :   :   Thread.EnterSwLog
+21:53.521   15                24        11    :   :   :   : Thread.RunningThread
+21:53.521   15                13        13    :   :   :   :   ThreadRegistry.FindThread
+21:53.521   15                28        10    :   :   : Debug.GenerateSwLog
+21:53.521   15                18        18    :   :   :   Log.Create
+21:53.521   15              3956         0    :   : SignalException.ctor
+21:53.521   15              3956      1523    :   :   Exception.ctor
+21:53.521   15               102         0    :   :   :   :   SysTime.ctor(now)
+21:53.521   15               102         0    :   :   :   :   : Object.ctor
+21:53.521   15               102       102    :   :   :   :   :   Base.ctor
+21:53.521   15              1086      1086    :   :   :   SysThreadStack.Display
+21:53.522   15               221        12    :   :   :   Log.Spool
+21:53.522   15               209        14    :   :   :   : LogThread.Spool
+21:53.522   15                24        11    :   :   :   :   Thread.RunningThread
+21:53.522   15                13        13    :   :   :   :   : ThreadRegistry.FindThread
+21:53.522   15                11        11    :   :   :   :   FunctionGuard.ctor
+21:53.522   15                41        12    :   :   :   :   MsgBuffer.operator new
+21:53.522   15                29        13    :   :   :   :   : ObjectPool.DeqBlock
+21:53.522   15                16        16    :   :   :   :   :   Q1Way.Deq
+21:53.522   15                51         0    :   :   :   :   StreamRequest.ctor
+21:53.522   15                51         0    :   :   :   :   : MsgBuffer.ctor
+21:53.522   15                51         0    :   :   :   :   :   Pooled.ctor
+21:53.522   15                51         0    :   :   :   :   :   : Object.ctor
+21:53.522   15                51        51    :   :   :   :   :   :   Base.ctor
+21:53.522   15                58        11    :   :   :   :   Thread.EnqMsg
+21:53.522   15                 9         9    :   :   :   :   : Q1Way.Enq
+21:53.522   15                11        11    :   :   :   :   : Q1Way.Count
+21:53.522   15                27        12    :   :   :   :   : Thread.Interrupt
+21:53.522   15                15        15    :   :   :   :   :   SysThread.Interrupt
+21:53.522   15                10        10    :   :   :   :   FunctionGuard.dtor
+21:53.522   15                42        11    :   :   :   Thread.ExitSwLog
+21:53.522   15                31        11    :   :   :   : Thread.RunningThread
+21:53.522   15                20        20    :   :   :   :   ThreadRegistry.FindThread
+21:53.522   15                70        11    :   :   :   Thread.ExitSwLog
+21:53.522   15                59        35    :   :   :   : Thread.RunningThread
+21:53.522   15                26        13    :   :   :   :   :   Thread.RunningThread
+21:53.522   15                13        13    :   :   :   :   :   : ThreadRegistry.FindThread
+21:53.522   15                24        24    :   :   :   :   ThreadRegistry.FindThread
+21:53.522   15              2433        10    :   :   : Thread.ExtendTime
+21:53.522   15              2423      2423    :   :   :   Thread.RunningThread
+21:53.525   15                15        15    :   : Thread.TrapHandler
+21:53.525   15                11        11    :   : SignalException.dtor
+21:53.525   15                 0         0    :   :   Exception.dtor
+END OF TRACE

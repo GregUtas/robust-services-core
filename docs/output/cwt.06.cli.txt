@@ -1,0 +1,60 @@
+pots>start
+  OK.
+pots>/ 6A & 6B
+pots>read cwt.Rd1Tmr
+pots>/ RENOTIFIED 1: CWT ANSWER TIMEOUT
+pots>delay 6
+  OK.
+pots>verify PC F &port.A f &service.cwb &facility.cwt.unanswered
+  OK.
+pots>verify PM R &port.A &cause.answertimeout
+  OK.
+pots>verify PC F &port.A f &service.disc &facility.req c=&cause.answertimeout
+  OK.
+pots>verify PS S &port.A s=x
+  OK.
+pots>verify PM S &port.A m=&port.reorder c=&cause.answertimeout
+  OK.
+pots>verify PS S &port.A m=&port.reorder c=&cause.answertimeout
+  OK.
+pots>/ IDLE A
+pots>inject PS E &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PC E &port.A
+  OK.
+pots>verify PM R &port.A &cause.normal
+  OK.
+pots>verify PS R &port.A &cause.normal
+  OK.
+pots>/ IDLE C
+pots>read cwt.Nu0ExC
+pots>/ NULL 0: IDLE C
+pots>inject PS E &port.C
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS R &port.C &cause.normal
+  OK.
+pots>delay 2
+  OK.
+pots>testcase end
+  OK.
+read test.cp.epilog
+pots>stop
+  OK.
+pots>contexts c
+  0
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+  Result is false.
+pots>save trace &testcase.name
+  OK.
+pots>save funcs &testcase.name
+  OK.
+pots>st save msc &testcase.name
+  OK.
+pots>clear buffer
+  OK.
+pots>send cout
+  OK.

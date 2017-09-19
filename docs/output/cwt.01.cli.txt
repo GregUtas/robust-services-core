@@ -1,0 +1,100 @@
+pots>start
+  OK.
+pots>/ 1A 1B
+pots>read cwt.In2Ack
+pots>/ INITIATE CWT
+pots>inject PS B &port.C
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.C &dn.A
+  OK.
+pots>delay 3
+  OK.
+pots>verify PS S &port.C s=d m=&port.dial
+  OK.
+pots>verify PS S &port.C s=x m=&port.silence
+  OK.
+pots>verify PM F &port.A f &service.cwm &facility.req
+  OK.
+pots>verify PC F &port.A f &service.cwa &facility.req
+  OK.
+pots>verify PM F &port.A f &service.cwm &facility.ack
+  OK.
+pots>verify PC F &port.A f &service.cwb &facility.ack
+  OK.
+pots>verify PM S &port.A r=t
+  OK.
+pots>verify PS S &port.A s=f m=&port.cwt
+  OK.
+pots>verify PC A &port.A
+  OK.
+pots>verify PS S &port.C m=&port.ringback
+  OK.
+pots>/ 1C
+pots>read cwt.Nf2Tmr
+pots>/ NOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+  OK.
+pots>/ 1D
+pots>read cwt.Nd2ExC
+pots>/ NOTIFIED 2; IDLE C
+pots>inject PS E &port.C
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS R &port.C &cause.normal
+  OK.
+pots>verify PM R &port.A &cause.normal
+  OK.
+pots>verify PS S &port.A s=x c=&cause.normal
+  OK.
+pots>verify PC F &port.A f &service.cwa &facility.cwt.released
+  OK.
+pots>/ 1E
+pots>read cwt.Nu1ExA
+pots>/ NULL 1: EXIT A
+pots>inject PS E &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PC E &port.A
+  OK.
+pots>verify PM R &port.A &cause.normal
+  OK.
+pots>verify PS R &port.A &cause.normal
+  OK.
+pots>verify PS S &port.B m=&port.silence c=&cause.normal
+  OK.
+pots>/ IDLE B
+pots>read cwt.Nu0ExB
+pots>/ NULL 0: IDLE B
+pots>inject PS E &port.B
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS R &port.B &cause.normal
+  OK.
+pots>delay 2
+  OK.
+pots>testcase end
+  OK.
+read test.cp.epilog
+pots>stop
+  OK.
+pots>contexts c
+  0
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+  Result is false.
+pots>save trace &testcase.name
+  OK.
+pots>save funcs &testcase.name
+  OK.
+pots>st save msc &testcase.name
+  OK.
+pots>clear buffer
+  OK.
+pots>send cout
+  OK.

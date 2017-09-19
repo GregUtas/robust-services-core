@@ -1,0 +1,57 @@
+pots>start
+  OK.
+pots>/ 15A
+pots>inject PS E &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.A r=t
+  OK.
+pots>verify PC P &port.A &prog.media m=&port.A
+  OK.
+pots>/ verify PC A &port.A [sent by shelf, so marked injected]
+pots>verify PS S &port.A s=x
+  OK.
+pots>verify PC F &port.A f &service.cwb &facility.cwt.alerted
+  OK.
+pots>/ C RINGING: ANSWER
+pots>read cwt.Nu1Off
+pots>/ NULL: C RINGING A; ANSWER
+pots>inject PS B &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PC B &port.A
+  OK.
+pots>verify PM S &port.A r=f m=&port.C
+  OK.
+pots>verify PS S &port.A r=f m=&port.C
+  OK.
+pots>verify PS S &port.C m=&port.A
+  OK.
+pots>/ IDLE C & A
+pots>inject PS E &port.C
+  OK.
+pots>inject PS E &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>testcase end
+  OK.
+read test.cp.epilog
+pots>stop
+  OK.
+pots>contexts c
+  0
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+  Result is false.
+pots>save trace &testcase.name
+  OK.
+pots>save funcs &testcase.name
+  OK.
+pots>st save msc &testcase.name
+  OK.
+pots>clear buffer
+  OK.
+pots>send cout
+  OK.

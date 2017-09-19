@@ -1,0 +1,36 @@
+pots>start
+  OK.
+pots>/ 14A
+pots>read cwt.Re1ExB
+pots>/ RERINGING: IDLE B
+pots>inject PS E &port.B
+  OK.
+pots>delay 12
+  OK.
+pots>verify PS R &port.B &cause.normal
+  OK.
+pots>verify PM R &port.A &cause.normal
+  OK.
+pots>verify PS R &port.A &cause.normal
+  OK.
+pots>delay 2
+  OK.
+pots>testcase end
+  OK.
+read test.cp.epilog
+pots>stop
+  OK.
+pots>contexts c
+  0
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+  Result is false.
+pots>save trace &testcase.name
+  OK.
+pots>save funcs &testcase.name
+  OK.
+pots>st save msc &testcase.name
+  OK.
+pots>clear buffer
+  OK.
+pots>send cout
+  OK.

@@ -1,0 +1,51 @@
+pots>start
+  OK.
+pots>/ 12A
+pots>read cwt.Hg1ExC
+pots>/ HOLDING 1: IDLE C
+pots>inject PS E &port.C
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS R &port.C &cause.normal
+  OK.
+pots>verify PM R &port.A &cause.normal
+  OK.
+pots>verify PC F &port.A f &service.disc &facility.req c=&cause.normal
+  OK.
+pots>verify PS S &port.A s=x
+  OK.
+pots>verify PM S &port.A c=&cause.normal
+  OK.
+pots>verify PS S &port.A c=&cause.normal
+  OK.
+pots>/ IDLE A
+pots>inject PS E &port.A
+  OK.
+pots>verify PC E &port.A
+  OK.
+pots>verify PM R &port.A &cause.normal
+  OK.
+pots>verify PS R &port.A &cause.normal
+  OK.
+pots>delay 2
+  OK.
+pots>testcase end
+  OK.
+read test.cp.epilog
+pots>stop
+  OK.
+pots>contexts c
+  0
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+  Result is false.
+pots>save trace &testcase.name
+  OK.
+pots>save funcs &testcase.name
+  OK.
+pots>st save msc &testcase.name
+  OK.
+pots>clear buffer
+  OK.
+pots>send cout
+  OK.

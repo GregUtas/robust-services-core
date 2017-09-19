@@ -1,0 +1,37 @@
+nt>sched start
+  OK.
+nt>start
+  OK.
+nt>read trap.14
+nt>/ ============ THE STACK OVERFLOW MAY TAKE SOME TIME TO OCCUR ===========
+nt>/ RECOVER stack overflow
+nt>/ Enable breakpoints to provide time for overflow.
+nt>symbols assign save.breakenabled breakenabled
+  OK.
+nt>cfgparms set breakenabled t
+  OK.
+nt>delay 1
+  OK.
+nt>recover stack
+  OK.
+nt>delay 3
+  OK.
+nt>cfgparms set breakenabled &save.breakenabled
+  OK.
+nt>testcase end
+  OK.
+read test.trap.epilog
+nt>stop
+  OK.
+nt>sched stop
+  OK.
+nt>sched show &testcase.name
+  OK.
+nt>save trace &testcase.name
+  OK.
+nt>save funcs &testcase.name
+  OK.
+nt>clear buffer
+  OK.
+nt>send cout
+  OK.

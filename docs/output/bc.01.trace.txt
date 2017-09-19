@@ -1,0 +1,1789 @@
+START OF TRACE: 18-Sep-2017 19:16:50.698 on Reigi
+
+mm:ss.ttt  Thr  Event  TotalTime   NetTime  Function
+---------  ---  -----  ---------   -------  --------
+16:51.207   13                38        21    : SysMutex.Acquire
+16:51.207   13                17        17    :   Thread.InitialMsecs
+16:51.207   13                 0         0    :   ThreadAdmin.WarpFactor
+16:51.207   13  +lock       2851         4  UdpIoThread.Enter
+16:51.207   13                30        14    Thread.ExitBlockingOperation
+16:51.207   13                16        16    : Thread.ResumeLocked
+16:51.207   13               114        19    SysSocket.TracePeer
+16:51.207   13                95        16    : NwTracer.PortStatus
+16:51.207   13                20        20    :   NwTracer.FindPort
+16:51.207   13  urecv             0000029D8D3373C0  rcvd=8 port=40002 peer=192.168.0.11: 40001
+16:51.207   13                59         0    :   SysIpL3Addr.ctor(copy)
+16:51.207   13                59         0    :   : SysIpL2Addr.ctor(copy)
+16:51.207   13                59         0    :   :   Object.ctor
+16:51.207   13                59        59    :   :   : Base.ctor
+16:51.207   13                19        19    IpPort.BytesRcvd
+16:51.207   13              2612        19    IoThread.InvokeHandler
+16:51.207   13               329        18    : SbExtInputHandler.AllocBuff
+16:51.207   13                54        19    :   SbIpBuffer.operator new
+16:51.207   13                35        16    :   : ObjectPool.DeqBlock
+16:51.207   13                19        19    :   :   Q1Way.Deq
+16:51.207   13               257         0    :   SbIpBuffer.ctor
+16:51.207   13               243         3    :   : IpBuffer.ctor
+16:51.207   13                54         0    :   :   MsgBuffer.ctor
+16:51.207   13                54         0    :   :   : Pooled.ctor
+16:51.207   13                54         0    :   :   :   Object.ctor
+16:51.207   13                54        54    :   :   :   : Base.ctor
+16:51.207   13                56         0    :   :   SysIpL3Addr.ctor
+16:51.207   13                56         0    :   :   : SysIpL2Addr.ctor
+16:51.207   13                56         0    :   :   :   Object.ctor
+16:51.207   13                56        56    :   :   :   : Base.ctor
+16:51.207   13                71         0    :   :   SysIpL3Addr.ctor
+16:51.207   13                71         0    :   :   : SysIpL2Addr.ctor
+16:51.207   13                71         0    :   :   :   Object.ctor
+16:51.207   13                71        71    :   :   :   : Base.ctor
+16:51.207   13                13        13    :   :   IpBuffer.BuffSize
+16:51.207   13                46        16    :   :   Memory.Alloc
+16:51.207   13                30        30    :   :   : SysHeap.Alloc
+16:51.207   13                14        14    :   : MsgHeader.ctor
+16:51.207   13                82        16    : Memory.Copy
+16:51.207   13                32        17    :   SysIpL3Addr.operator=(copy)
+16:51.207   13                15        15    :   : SysIpL2Addr.operator=(copy)
+16:51.207   13                34        16    :   SysIpL3Addr.operator=(copy)
+16:51.207   13                18        18    :   : SysIpL2Addr.operator=(copy)
+16:51.207   13              2182        66    : PotsCallHandler.ReceiveBuff
+16:51.207   13                20        20    :   MsgPort.Find
+16:51.207   13                18        18    :   PayloadInvokerPool.RejectIngressWork
+16:51.207   13              2078        19    :   SbInputHandler.ReceiveBuff
+16:51.207   13              2059        21    :   : InvokerPool.ReceiveBuff
+16:51.207   13               176        18    :   :   PotsCallFactory.AllocIcMsg
+16:51.207   13                51        17    :   :   : Message.operator new
+16:51.207   13                34        15    :   :   :   ObjectPool.DeqBlock
+16:51.207   13                19        19    :   :   :   : Q1Way.Deq
+16:51.207   13               107         0    :   :   : Pots_UN_Message.ctor(i/c)
+16:51.207   13               107         0    :   :   :   PotsMessage.ctor(i/c)
+16:51.207   13               107         0    :   :   :   : TlvMessage.ctor(i/c)
+16:51.207   13               107         0    :   :   :   :   Message.ctor(i/c)
+16:51.207   13               107         0    :   :   :   :   : Pooled.ctor
+16:51.207   13               107         0    :   :   :   :   :   Object.ctor
+16:51.207   13               107       107    :   :   :   :   :   : Base.ctor
+16:51.208   13              1862        20    :   :   InvokerPool.ReceiveMsg
+16:51.208   13               459        17    :   :   : InvokerPool.TraceRxNet
+16:51.208   13               442        20    :   :   :   SbTracer.MsgStatus
+16:51.208   13                16        16    :   :   :   : NwTracer.BuffStatus
+16:51.208   13                18        18    :   :   :   : Message.RxSbAddr
+16:51.208   13                57        57    :   :   :   : Thread.RunningThread
+16:51.208   13  RXNET       2109  0000029D8D2D3238  ssm         PotsCallFactory
+16:51.208   13  icmsg  
+--------------------------------------------------------------------------------
+factory=7 (PotsCallFactory)
+  SessionBase.SbIpBuffer
+  this : 0000029D91C6B108
+  patchArea : 0x0
+  pid      : 4
+  seq      : 1
+  link     : 0000000000000000
+  assigned : true
+  orphaned : 0
+  corrupt  : false
+  logged   : false
+  rxTicks : 459840598394
+  buff     : 0000029D8D338040
+  hdrSize  : 24
+  buffSize : 32
+  txAddr   : 192.168.0.11: 40001
+  rxAddr   : 192.168.0.11: 40002
+  dir      : 0
+  external : false
+  queued   : false
+  length   : 8
+    00: 00 00 00 00 00 00 06 00 - 01 00 00 00 01 07 07 00  ................
+    01: 44 00 04 00 02 00 08 00 - 02 00 04 00 02 00 0b 00  D...............
+  MsgHeader:
+    txAddr : bid=0  seq=0  pid=0  fid=6
+    rxAddr : bid=1  seq=1  pid=7  fid=7
+    priority=0  initial=1  final=0  join=0  self=0
+  injected=1  kill=0  route=0  length=8  spare=0x0
+    protocol=4 (PotsProtocol)  signal=2 (PotsOffhookSignal)
+  Parameters:
+    PotsHeaderParameter
+      signal : 2 (PotsOffhookSignal)
+      port   : 11 (POTS 20000)
+--------------------------------------------------------------------------------
+16:51.208   13                52        19    :   :   :   : SbIpBuffer.operator new
+16:51.208   13                33        15    :   :   :   :   ObjectPool.DeqBlock
+16:51.208   13                18        18    :   :   :   :   : Q1Way.Deq
+16:51.208   13               279         0    :   :   :   : SbIpBuffer.ctor(copy)
+16:51.208   13               279         3    :   :   :   :   IpBuffer.ctor(copy)
+16:51.208   13                58         0    :   :   :   :   : MsgBuffer.ctor(copy)
+16:51.208   13                58         0    :   :   :   :   :   Pooled.ctor
+16:51.208   13                58         0    :   :   :   :   :   : Object.ctor
+16:51.208   13                58        58    :   :   :   :   :   :   Base.ctor
+16:51.208   13                59         0    :   :   :   :   : SysIpL3Addr.ctor(copy)
+16:51.208   13                59         0    :   :   :   :   :   SysIpL2Addr.ctor(copy)
+16:51.208   13                59         0    :   :   :   :   :   : Object.ctor
+16:51.208   13                59        59    :   :   :   :   :   :   Base.ctor
+16:51.208   13                77         0    :   :   :   :   : SysIpL3Addr.ctor(copy)
+16:51.208   13                77         0    :   :   :   :   :   SysIpL2Addr.ctor(copy)
+16:51.208   13                77         0    :   :   :   :   :   : Object.ctor
+16:51.208   13                77        77    :   :   :   :   :   :   Base.ctor
+16:51.208   13                13        13    :   :   :   :   : IpBuffer.BuffSize
+16:51.208   13                35        20    :   :   :   :   : Memory.Alloc
+16:51.208   13                15        15    :   :   :   :   :   SysHeap.Alloc
+16:51.208   13                34        34    :   :   :   :   : Memory.Copy
+16:51.208   13              1256        17    :   :   : SsmFactory.ReceiveMsg
+16:51.208   13              1239        20    :   :   :   PsmFactory.ReceiveMsg
+16:51.208   13               302        43    :   :   :   : SsmFactory.AllocContext
+16:51.208   13                75        18    :   :   :   :   Context.operator new
+16:51.208   13                57        15    :   :   :   :   : ObjectPool.DeqBlock
+16:51.208   13                42        42    :   :   :   :   :   Q1Way.Deq
+16:51.208   13               184         0    :   :   :   :   SsmContext.ctor
+16:51.208   13               184         1    :   :   :   :   : PsmContext.ctor
+16:51.208   13               139         0    :   :   :   :   :   MsgContext.ctor
+16:51.208   13               139         0    :   :   :   :   :   : Context.ctor
+16:51.208   13                71         0    :   :   :   :   :   :   Pooled.ctor
+16:51.208   13                71         0    :   :   :   :   :   :   : Object.ctor
+16:51.208   13                71        71    :   :   :   :   :   :   :   Base.ctor
+16:51.208   13                13        13    :   :   :   :   :   :   Q1Way.Init
+16:51.208   13                55        55    :   :   :   :   :   :   Q1Way.Init
+16:51.208   13                13        13    :   :   :   :   :   Q1Way.Init
+16:51.208   13                31        31    :   :   :   :   :   Q1Way.Init
+16:51.208   13                17        17    :   :   :   : Factory.IncrContexts
+16:51.208   13                48        17    :   :   :   : MsgPort.operator new
+16:51.208   13                31        15    :   :   :   :   ObjectPool.DeqBlock
+16:51.208   13                16        16    :   :   :   :   : Q1Way.Deq
+16:51.208   13               736         1    :   :   :   : MsgPort.ctor(i/c)
+16:51.208   13                60         0    :   :   :   :   ProtocolLayer.ctor(first)
+16:51.208   13                60         0    :   :   :   :   : Pooled.ctor
+16:51.208   13                60         0    :   :   :   :   :   Object.ctor
+16:51.208   13                60        60    :   :   :   :   :   : Base.ctor
+16:51.209   13               190        16    :   :   :   :   Message.GetReceiver
+16:51.209   13                61         0    :   :   :   :   : SysIpL3Addr.ctor(copy)
+16:51.209   13                61         0    :   :   :   :   :   SysIpL2Addr.ctor(copy)
+16:51.209   13                61         0    :   :   :   :   :   : Object.ctor
+16:51.209   13                61        61    :   :   :   :   :   :   Base.ctor
+16:51.209   13                81         0    :   :   :   :   : GlobalAddress.ctor(L3addr, locaddr)
+16:51.209   13                81         0    :   :   :   :   :   SysIpL3Addr.ctor(copy)
+16:51.209   13                81         0    :   :   :   :   :   : SysIpL2Addr.ctor(copy)
+16:51.209   13                81         0    :   :   :   :   :   :   Object.ctor
+16:51.209   13                81        81    :   :   :   :   :   :   : Base.ctor
+16:51.209   13                32        16    :   :   :   :   : SysIpL3Addr.dtor
+16:51.209   13                16        16    :   :   :   :   :   SysIpL2Addr.dtor
+16:51.209   13               214        15    :   :   :   :   Message.GetSender
+16:51.209   13                60         0    :   :   :   :   : SysIpL3Addr.ctor(copy)
+16:51.209   13                60         0    :   :   :   :   :   SysIpL2Addr.ctor(copy)
+16:51.209   13                60         0    :   :   :   :   :   : Object.ctor
+16:51.209   13                60        60    :   :   :   :   :   :   Base.ctor
+16:51.209   13                79         0    :   :   :   :   : GlobalAddress.ctor(L3addr, locaddr)
+16:51.209   13                79         0    :   :   :   :   :   SysIpL3Addr.ctor(copy)
+16:51.209   13                79         0    :   :   :   :   :   : SysIpL2Addr.ctor(copy)
+16:51.209   13                79         0    :   :   :   :   :   :   Object.ctor
+16:51.209   13                79        79    :   :   :   :   :   :   : Base.ctor
+16:51.209   13                60        15    :   :   :   :   : SysIpL3Addr.dtor
+16:51.209   13                45        45    :   :   :   :   :   SysIpL2Addr.dtor
+16:51.209   13               271        22    :   :   :   :   MsgPort.Initialize
+16:51.209   13                17        17    :   :   :   :   : ObjectPool.ObjBid
+16:51.209   13                32        14    :   :   :   :   : PsmContext.EnqPort
+16:51.209   13                18        18    :   :   :   :   :   Q1Way.Enq
+16:51.209   13                18        18    :   :   :   :   : MsgPort.UpdatePeer
+16:51.209   13               182        20    :   :   :   :   : PotsCallFactory.PortAllocated
+16:51.209   13                53        18    :   :   :   :   :   TlvMessage.FindType
+16:51.209   13                35        17    :   :   :   :   :   : TlvMessage.FindParm
+16:51.209   13                18        18    :   :   :   :   :   :   TlvMessage.FirstParm
+16:51.209   13               109        14    :   :   :   :   :   PotsProfile.SetObjAddr
+16:51.209   13                62        18    :   :   :   :   :   : MsgPort.Find
+16:51.209   13                44        18    :   :   :   :   :   :   ObjectPool.BidToObj
+16:51.209   13                26        26    :   :   :   :   :   :   : ObjectPool.First
+16:51.209   13                33        33    :   :   :   :   :   : MsgPort.Find
+16:51.209   13  +port             0000029D8F479158  port=1      PotsCallFactory
+16:51.209   13                17        17    :   :   :   : Message.SetRxAddr
+16:51.209   13                99        15    :   :   :   : MsgFactory.ReceiveMsg
+16:51.209   13                46        15    :   :   :   :   Context.EnqMsg
+16:51.209   13                31        15    :   :   :   :   : Message.Enqueue
+16:51.209   13                16        16    :   :   :   :   :   Q1Way.Enq
+16:51.209   13                38        38    :   :   :   :   MsgFactory.CaptureMsg
+16:51.209   13   +msg             0000029D8F9656A8              PotsOffhookSignal
+16:51.209   13                18        18    :   :   :   :   :   Context.RunningContext
+16:51.209   13                15        15    :   :   : Factory.RecordMsg
+16:51.209   13                47        15    :   :   : Context.Enqueue
+16:51.209   13                16        16    :   :   :   Q2Way.Enq
+16:51.209   13                16        16    :   :   :   InvokerPool.Enqueued
+16:51.209   13                65        17    :   :   : InvokerPool.KickThread
+16:51.209   13                48        19    :   :   :   Thread.Interrupt
+16:51.209   13                29        29    :   :   :   : SysThread.Interrupt
+16:51.209   13                45        15    IoThread.ConditionalPause
+16:51.209   13                30        16    : Thread.RtcPercentUsed
+16:51.209   13                14        14    :   Thread.RunningThread
+16:51.210   13                27        27    SysSocket.Empty
+16:51.210   13  -lock          0         0    : Thread.Unlock
+16:51.210   10                40        22    :   :   SysMutex.Acquire
+16:51.210   10                18        18    :   :   : Thread.InitialMsecs
+16:51.210   10                 0         0    :   :   : ThreadAdmin.WarpFactor
+16:51.210   10  +lock         56         1    :   Thread.Pause
+16:51.210   10                55        14    :   : Thread.ExitBlockingOperation
+16:51.210   10                41        17    :   :   Thread.ResumeLocked
+16:51.210   10                24        17    :   :   : InvokerThread.ScheduledIn
+16:51.210   10                 7         7    :   :   :   Context.SetContextMsg
+16:51.210   10                14        14    :   Thread.Pause (interrupted)
+16:51.210   10                15        15    : Thread.RunningThread
+16:51.210   10               105        17    : InvokerPool.FindWork
+16:51.210   10                88        14    :   Context.Exqueue
+16:51.210   10                41        41    :   : Q2Way.Exq
+16:51.210   10                16        16    :   : Context.SetState
+16:51.210   10                17        17    :   : InvokerPool.Dequeued
+16:51.210   10                32        17    : InvokerThread.SetContext
+16:51.210   10                15        15    :   Context.SetState
+16:51.210   10              8663        17    : Context.ProcessWork
+16:51.210   10              8630        20    :   Context.ProcessMsg
+16:51.210   10                15        15    :   : Context.SetContextMsg
+16:51.210   10                92        92    :   : Context.CaptureTask
+16:51.210   10  TRANS       8356  0000029D8D2D3238  ssm prio=0  PotsOffhookSignal
+16:51.210   10                20        20    :   :   : Message.RxFactory
+16:51.210   10  >>msg             0000029D8F9656A8  port=1      PotsOffhookSignal
+16:51.210   10                16        16    :   :   : Context.RunningContext
+16:51.210   10                15        15    :   :   : Message.RxSbAddr
+16:51.210   10                17        17    :   :   : Message.TxSbAddr
+16:51.210   10              8471        20    :   : SsmContext.ProcessIcMsg
+16:51.210   10                17        17    :   :   PsmContext.FindPort
+16:51.210   10              1153        17    :   :   MsgPort.ReceiveMsg
+16:51.210   10              1136        18    :   :   : ProtocolLayer.SendToUpper
+16:51.210   10               627        19    :   :   :   MsgPort.AllocUpper
+16:51.210   10               608        20    :   :   :   : PotsCallFactory.AllocIcPsm
+16:51.210   10                80        17    :   :   :   :   TlvMessage.FindType
+16:51.210   10                63        17    :   :   :   :   : TlvMessage.FindParm
+16:51.210   10                46        46    :   :   :   :   :   TlvMessage.FirstParm
+16:51.210   10                82        19    :   :   :   :   ProtocolSM.operator new
+16:51.210   10                63        17    :   :   :   :   : ObjectPool.DeqBlock
+16:51.210   10                46        46    :   :   :   :   :   Q1Way.Deq
+16:51.210   10               426         3    :   :   :   :   PotsCallPsm.ctor(subseq)
+16:51.210   10               250         0    :   :   :   :   : MediaPsm.ctor(subseq)
+16:51.210   10               250         0    :   :   :   :   :   ProtocolSM.ctor(subseq)
+16:51.210   10                94         0    :   :   :   :   :   : ProtocolLayer.ctor(subseq)
+16:51.210   10                94         0    :   :   :   :   :   :   Pooled.ctor
+16:51.210   10                94         0    :   :   :   :   :   :   : Object.ctor
+16:51.210   10                94        94    :   :   :   :   :   :   :   Base.ctor
+16:51.210   10               156        19    :   :   :   :   :   : ProtocolSM.Initialize
+16:51.210   10                13        13    :   :   :   :   :   :   Q1Way.Init
+16:51.210   10                13        13    :   :   :   :   :   :   Q1Way.Init
+16:51.210   10                14        14    :   :   :   :   :   :   Q1Way.Init
+16:51.210   10                17        17    :   :   :   :   :   :   Q1Way.Init
+16:51.210   10                80        16    :   :   :   :   :   :   PsmContext.HenqPsm
+16:51.210   10                33        15    :   :   :   :   :   :   : Q1Way.Insert
+16:51.211   10                18        18    :   :   :   :   :   :   :   Q1Way.Henq
+16:51.211   10   +psm             0000029D8FCCC148  port=1      PotsCallFactory
+16:51.211   10                31        15    :   :   :   :   :   :   : ProtocolSM.Port
+16:51.211   10                16        16    :   :   :   :   :   :   :   MsgPort.Port
+16:51.211   10                77         1    :   :   :   :   : PotsHeaderInfo.ctor
+16:51.211   10                13        13    :   :   :   :   :   MediaInfo.ctor
+16:51.211   10                13        13    :   :   :   :   :   MediaInfo.ctor
+16:51.211   10                50        50    :   :   :   :   :   MediaInfo.ctor
+16:51.211   10                16        16    :   :   :   :   : PotsRingInfo.ctor
+16:51.211   10                14        14    :   :   :   :   : PotsScanInfo.ctor
+16:51.211   10                16        16    :   :   :   :   : CauseInfo.ctor
+16:51.211   10                50        50    :   :   :   :   : PotsFacilityInfo.ctor
+16:51.211   10                15        15    :   :   :   ProtocolSM.UnwrapMsg
+16:51.211   10                16        16    :   :   :   Context.SetContextMsg
+16:51.211   10               460        28    :   :   :   MediaPsm.ReceiveMsg
+16:51.211   10               432        17    :   :   :   : ProtocolSM.ReceiveMsg
+16:51.211   10               103        18    :   :   :   :   ProtocolSM.HenqReceivedMsg
+16:51.211   10                57        15    :   :   :   :   : Message.Henqueue
+16:51.211   10                28        14    :   :   :   :   :   Message.Exqueue
+16:51.211   10                14        14    :   :   :   :   :   : Q1Way.Exq
+16:51.211   10                14        14    :   :   :   :   :   Q1Way.Henq
+16:51.211   10                28        28    :   :   :   :   : Message.SetPsm
+16:51.211   10               312        19    :   :   :   :   PotsCallPsm.ProcessIcMsg
+16:51.211   10                67        17    :   :   :   :   : MediaPsm.UpdateIcMedia
+16:51.211   10                50        18    :   :   :   :   :   TlvMessage.FindParm
+16:51.211   10                16        16    :   :   :   :   :   : TlvMessage.FirstParm
+16:51.211   10                16        16    :   :   :   :   :   : TlvMessage.NextParm
+16:51.211   10                28        28    :   :   :   :   : ProtocolSM.SetState
+16:51.211   10                69        18    :   :   :   :   : Event.operator new
+16:51.211   10                35        15    :   :   :   :   :   ObjectPool.DeqBlock
+16:51.211   10                20        20    :   :   :   :   :   : Q1Way.Deq
+16:51.211   10                16        16    :   :   :   :   :   ProtocolLayer.RootSsm
+16:51.211   10               129         0    :   :   :   :   : AnalyzeMsgEvent.ctor
+16:51.211   10               129         1    :   :   :   :   :   Event.ctor
+16:51.211   10                58         0    :   :   :   :   :   : Pooled.ctor
+16:51.211   10                58         0    :   :   :   :   :   :   Object.ctor
+16:51.211   10                58        58    :   :   :   :   :   :   : Base.ctor
+16:51.211   10                35        18    :   :   :   :   :   : Context.ContextRoot
+16:51.211   10                17        17    :   :   :   :   :   :   Context.RunningContext
+16:51.211   10                35        35    :   :   :   :   :   : Context.RunningContextTraced
+16:51.211   10   +evt             0000029D91BFA0B8              evt=1
+16:51.211   10                32        17    :   :   MsgPort.UppermostPsm
+16:51.211   10                15        15    :   :   : ProtocolSM.UppermostPsm
+16:51.211   10               660        18    :   :   SsmContext.AllocRoot
+16:51.211   10               642        30    :   :   : PotsCallFactory.AllocRoot
+16:51.211   10                66        17    :   :   :   ServiceSM.operator new
+16:51.211   10                49        14    :   :   :   : ObjectPool.DeqBlock
+16:51.211   10                35        35    :   :   :   :   Q1Way.Deq
+16:51.211   10               546         1    :   :   :   PotsBcSsm.ctor
+16:51.211   10               466         0    :   :   :   : ProxyBcSsm.ctor
+16:51.211   10               466         0    :   :   :   :   BcSsm.ctor
+16:51.211   10               342         0    :   :   :   :   : MediaSsm.ctor
+16:51.211   10               342         2    :   :   :   :   :   RootServiceSM.ctor
+16:51.211   10               292         2    :   :   :   :   :   : ServiceSM.ctor
+16:51.211   10               135         0    :   :   :   :   :   :   Pooled.ctor
+16:51.211   10               135         0    :   :   :   :   :   :   : Object.ctor
+16:51.211   10               135       135    :   :   :   :   :   :   :   Base.ctor
+16:51.212   10                27        27    :   :   :   :   :   :   Q1Way.Init
+16:51.212   10                25        25    :   :   :   :   :   :   Q1Way.Init
+16:51.212   10                22        22    :   :   :   :   :   :   Q1Way.Init
+16:51.212   10                42        42    :   :   :   :   :   :   Q1Way.Init
+16:51.212   10                39        39    :   :   :   :   :   :   Context.RunningContext
+16:51.212   10   +ssm             0000029D90F641D8              PotsBcService
+16:51.212   10                16        16    :   :   :   :   :   : Context.RunningContext
+16:51.212   10                32        32    :   :   :   :   :   : SsmContext.SetRoot
+16:51.212   10                18        18    :   :   :   :   : DigitString.ctor
+16:51.212   10                16        16    :   :   :   :   : AnalysisResult.ctor
+16:51.212   10                90        90    :   :   :   :   : RouteResult.ctor
+16:51.212   10                35        17    :   :   :   : MediaPsm.MakeEdge
+16:51.212   10                18        18    :   :   :   :   MediaPsm.IcPortUpdated
+16:51.212   10                16        16    :   :   :   : PotsBcSsm.SetProfile
+16:51.212   10                28        14    :   :   :   : ProxyBcSsm.SetUPsm
+16:51.212   10                14        14    :   :   :   :   BcSsm.SetUPsm
+16:51.212   10                59        28    :   :   Event.SetOwner
+16:51.212   10                31        15    :   :   : ServiceSM.EnqEvent
+16:51.212   10                16        16    :   :   :   Q1Way.Enq
+16:51.212   10              4385        42    :   :   ServiceSM.ProcessEvent
+16:51.212   10               314        17    :   :   : SbAnalyzeMessage.ProcessEvent
+16:51.212   10                47        15    :   :   :   ProxyBcSsm.CalcPort
+16:51.212   10                32        32    :   :   :   : BcSsm.CalcPort
+16:51.212   10               250        30    :   :   :   PotsBcNuAnalyzeLocalMessage.ProcessEvent
+16:51.212   10                16        16    :   :   :   : PotsCallPsm.Cast
+16:51.212   10                64        17    :   :   :   : Event.operator new
+16:51.212   10                47        15    :   :   :   :   ObjectPool.DeqBlock
+16:51.212   10                32        32    :   :   :   :   : Q1Way.Deq
+16:51.212   10               140         0    :   :   :   : BcOriginateEvent.ctor
+16:51.212   10               140         0    :   :   :   :   BcEvent.ctor
+16:51.212   10               140         1    :   :   :   :   : Event.ctor
+16:51.212   10                59         0    :   :   :   :   :   Pooled.ctor
+16:51.212   10                59         0    :   :   :   :   :   : Object.ctor
+16:51.212   10                59        59    :   :   :   :   :   :   Base.ctor
+16:51.212   10                31        14    :   :   :   :   :   ServiceSM.EnqEvent
+16:51.212   10                17        17    :   :   :   :   :   : Q1Way.Enq
+16:51.212   10                49        49    :   :   :   :   :   Context.RunningContextTraced
+16:51.212   10   +evt             0000029D91BFA198              BcOriginateEvent
+16:51.212   10                33        33    :   :   : Context.RunningContextTraced
+16:51.212   10  >>evt             0000029D91BFA0B8  continue    AnalyzeMsgEvent >> PotsBcNull
+16:51.212   10               137         2    :   :   : C++.delete
+16:51.212   10                82        15    :   :   :   AnalyzeMsgEvent.dtor
+16:51.212   10                67        18    :   :   :   : Event.dtor
+16:51.212   10                18        18    :   :   :   :   Context.RunningContextTraced
+16:51.212   10   -evt             0000029D91BFA0B8              AnalyzeMsgEvent
+16:51.212   10                31        14    :   :   :   :   ServiceSM.ExqEvent
+16:51.212   10                17        17    :   :   :   :   : Q1Way.Exq
+16:51.212   10                53        18    :   :   :   Pooled.operator delete
+16:51.212   10                35        16    :   :   :   : ObjectPool.EnqBlock
+16:51.212   10                19        19    :   :   :   :   Q1Way.Enq
+16:51.212   10               364        27    :   :   : PotsBcNuOriginate.ProcessEvent
+16:51.213   10                17        17    :   :   :   BcSsm.SetModel
+16:51.213   10               320        19    :   :   :   BcSsm.RaiseAuthorizeOrigination
+16:51.213   10                33        17    :   :   :   : PotsBcSsm.SetNextSnp
+16:51.213   10                16        16    :   :   :   :   ServiceSM.SetNextSnp
+16:51.213   10                33        17    :   :   :   : BcSsm.SetNextState
+16:51.213   10                16        16    :   :   :   :   ServiceSM.SetNextState
+16:51.213   10                51        18    :   :   :   : PotsBcSsm.SetNextSap
+16:51.213   10                17        17    :   :   :   :   PotsStatistics.Incr
+16:51.213   10                16        16    :   :   :   :   ServiceSM.SetNextSap
+16:51.213   10                47        17    :   :   :   : Event.operator new
+16:51.213   10                30        14    :   :   :   :   ObjectPool.DeqBlock
+16:51.213   10                16        16    :   :   :   :   : Q1Way.Deq
+16:51.213   10               137         0    :   :   :   : BcAuthorizeOriginationEvent.ctor
+16:51.213   10               137         0    :   :   :   :   BcEvent.ctor
+16:51.213   10               137         1    :   :   :   :   : Event.ctor
+16:51.213   10                57         0    :   :   :   :   :   Pooled.ctor
+16:51.213   10                57         0    :   :   :   :   :   : Object.ctor
+16:51.213   10                57        57    :   :   :   :   :   :   Base.ctor
+16:51.213   10                30        13    :   :   :   :   :   ServiceSM.EnqEvent
+16:51.213   10                17        17    :   :   :   :   :   : Q1Way.Enq
+16:51.213   10                49        49    :   :   :   :   :   Context.RunningContextTraced
+16:51.213   10   +evt             0000029D91BFA278              BcAuthorizeOriginationEvent
+16:51.213   10                46        46    :   :   : Context.RunningContextTraced
+16:51.213   10  >>evt             0000029D91BFA198  continue    BcOriginateEvent >> PotsBcNull
+16:51.213   10               142         1    :   :   : C++.delete
+16:51.213   10                94        14    :   :   :   BcOriginateEvent.dtor
+16:51.213   10                80        14    :   :   :   : BcEvent.dtor
+16:51.213   10                66        18    :   :   :   :   Event.dtor
+16:51.213   10                18        18    :   :   :   :   : Context.RunningContextTraced
+16:51.213   10   -evt             0000029D91BFA198              BcOriginateEvent
+16:51.213   10                30        14    :   :   :   :   : ServiceSM.ExqEvent
+16:51.213   10                16        16    :   :   :   :   :   Q1Way.Exq
+16:51.213   10                47        17    :   :   :   Pooled.operator delete
+16:51.213   10                30        15    :   :   :   : ObjectPool.EnqBlock
+16:51.213   10                15        15    :   :   :   :   Q1Way.Enq
+16:51.213   10               185        17    :   :   : Event.BuildSap
+16:51.213   10                46        16    :   :   :   Event.operator new
+16:51.213   10                30        14    :   :   :   : ObjectPool.DeqBlock
+16:51.213   10                16        16    :   :   :   :   Q1Way.Deq
+16:51.213   10               122         0    :   :   :   AnalyzeSapEvent.ctor
+16:51.213   10               122         0    :   :   :   : Event.ctor
+16:51.213   10                56         0    :   :   :   :   Pooled.ctor
+16:51.213   10                56         0    :   :   :   :   : Object.ctor
+16:51.213   10                56        56    :   :   :   :   :   Base.ctor
+16:51.213   10                30        14    :   :   :   :   ServiceSM.EnqEvent
+16:51.213   10                16        16    :   :   :   :   : Q1Way.Enq
+16:51.213   10                36        36    :   :   :   :   Context.RunningContextTraced
+16:51.213   10   +evt             0000029D91BFA358              AnalyzeSapEvent
+16:51.213   10               157        18    :   :   : ServiceSM.ProcessInitqSap
+16:51.213   10                70        18    :   :   :   Initiator.InvokeHandler
+16:51.213   10                52        18    :   :   :   : PotsSusInitiator.ProcessEvent
+16:51.213   10                34        16    :   :   :   :   PotsProfile.HasFeature
+16:51.213   10                18        18    :   :   :   :   : PotsProfile.FindFeature
+16:51.213   10                69        17    :   :   :   Initiator.InvokeHandler
+16:51.213   10                52        17    :   :   :   : PotsBocInitiator.ProcessEvent
+16:51.213   10                35        16    :   :   :   :   PotsProfile.HasFeature
+16:51.213   10                19        19    :   :   :   :   : PotsProfile.FindFeature
+16:51.213   10               581        17    :   :   : PotsBcAoAuthorizeOrigination.ProcessEvent
+16:51.213   10               564        18    :   :   :   BcSsm.RaiseCollectInformation
+16:51.213   10               134        17    :   :   :   : PotsBcSsm.SetNextSnp
+16:51.213   10               117       117    :   :   :   :   ServiceSM.SetNextSnp
+16:51.214   10                50        26    :   :   :   : BcSsm.SetNextState
+16:51.214   10                24        24    :   :   :   :   ServiceSM.SetNextState
+16:51.214   10                47        25    :   :   :   : PotsBcSsm.SetNextSap
+16:51.214   10                22        22    :   :   :   :   ServiceSM.SetNextSap
+16:51.214   10                70        25    :   :   :   : Event.operator new
+16:51.214   10                45        21    :   :   :   :   ObjectPool.DeqBlock
+16:51.214   10                24        24    :   :   :   :   : Q1Way.Deq
+16:51.214   10               245         0    :   :   :   : BcCollectInformationEvent.ctor
+16:51.214   10               245         0    :   :   :   :   BcEvent.ctor
+16:51.214   10               245         1    :   :   :   :   : Event.ctor
+16:51.214   10                88         0    :   :   :   :   :   Pooled.ctor
+16:51.214   10                88         0    :   :   :   :   :   : Object.ctor
+16:51.214   10                88        88    :   :   :   :   :   :   Base.ctor
+16:51.214   10                49        23    :   :   :   :   :   ServiceSM.EnqEvent
+16:51.214   10                26        26    :   :   :   :   :   : Q1Way.Enq
+16:51.214   10               107       107    :   :   :   :   :   Context.RunningContextTraced
+16:51.214   10   +evt             0000029D91BFA438              BcCollectInformationEvent
+16:51.214   10                60        60    :   :   : Context.RunningContextTraced
+16:51.214   10  >>evt             0000029D91BFA278  continue    BcAuthorizeOriginationEvent >> PotsBcAuthorizingOrigination
+16:51.214   10               224         3    :   :   : C++.delete
+16:51.214   10               141        21    :   :   :   BcAuthorizeOriginationEvent.dtor
+16:51.214   10               120        21    :   :   :   : BcEvent.dtor
+16:51.214   10                99        25    :   :   :   :   Event.dtor
+16:51.214   10                28        28    :   :   :   :   : Context.RunningContextTraced
+16:51.214   10   -evt             0000029D91BFA278              BcAuthorizeOriginationEvent
+16:51.214   10                46        21    :   :   :   :   : ServiceSM.ExqEvent
+16:51.214   10                25        25    :   :   :   :   :   Q1Way.Exq
+16:51.214   10                80        26    :   :   :   Pooled.operator delete
+16:51.214   10                54        24    :   :   :   : ObjectPool.EnqBlock
+16:51.214   10                30        30    :   :   :   :   Q1Way.Enq
+16:51.214   10               145         2    :   :   : C++.delete
+16:51.214   10                95        20    :   :   :   AnalyzeSapEvent.dtor
+16:51.214   10                75        26    :   :   :   : Event.dtor
+16:51.214   10                19        19    :   :   :   :   Context.RunningContextTraced
+16:51.214   10   -evt             0000029D91BFA358              AnalyzeSapEvent
+16:51.214   10                30        13    :   :   :   :   ServiceSM.ExqEvent
+16:51.214   10                17        17    :   :   :   :   : Q1Way.Exq
+16:51.214   10                48        16    :   :   :   Pooled.operator delete
+16:51.214   10                32        15    :   :   :   : ObjectPool.EnqBlock
+16:51.214   10                17        17    :   :   :   :   Q1Way.Enq
+16:51.214   10               220        16    :   :   : Event.BuildSap
+16:51.214   10                46        16    :   :   :   Event.operator new
+16:51.214   10                30        14    :   :   :   : ObjectPool.DeqBlock
+16:51.214   10                16        16    :   :   :   :   Q1Way.Deq
+16:51.214   10               158         0    :   :   :   AnalyzeSapEvent.ctor
+16:51.214   10               158         2    :   :   :   : Event.ctor
+16:51.214   10                67         0    :   :   :   :   Pooled.ctor
+16:51.214   10                67         0    :   :   :   :   : Object.ctor
+16:51.214   10                67        67    :   :   :   :   :   Base.ctor
+16:51.215   10                42        20    :   :   :   :   ServiceSM.EnqEvent
+16:51.215   10                22        22    :   :   :   :   : Q1Way.Enq
+16:51.215   10                47        47    :   :   :   :   Context.RunningContextTraced
+16:51.215   10   +evt             0000029D91BFA518              AnalyzeSapEvent
+16:51.215   10               184        24    :   :   : ServiceSM.ProcessInitqSap
+16:51.215   10                96        28    :   :   :   Initiator.InvokeHandler
+16:51.215   10                68        23    :   :   :   : PotsHtlInitiator.ProcessEvent
+16:51.215   10                45        22    :   :   :   :   PotsProfile.HasFeature
+16:51.215   10                23        23    :   :   :   :   : PotsProfile.FindFeature
+16:51.215   10                64        26    :   :   :   Initiator.InvokeHandler
+16:51.215   10                38        17    :   :   :   : PotsWmlInitiator.ProcessEvent
+16:51.215   10                21        21    :   :   :   :   PotsProfile.FindFeature
+16:51.215   10              1235        17    :   :   : PotsBcCiCollectInformation.ProcessEvent
+16:51.215   10                37        20    :   :   :   PotsCallPsm.Cast
+16:51.215   10                17        17    :   :   :   : DigitString.Size
+16:51.215   10               823        17    :   :   :   PotsCallPsm.ReportDigits
+16:51.215   10               806        18    :   :   :   : PotsCallPsm.SendSignal
+16:51.215   10                75        18    :   :   :   :   Message.operator new
+16:51.215   10                57        14    :   :   :   :   : ObjectPool.DeqBlock
+16:51.215   10                43        43    :   :   :   :   :   Q1Way.Deq
+16:51.215   10               713         1    :   :   :   :   Pots_NU_Message.ctor(o/g)
+16:51.215   10               666         0    :   :   :   :   : PotsMessage.ctor(o/g)
+16:51.215   10               666         0    :   :   :   :   :   TlvMessage.ctor(o/g)
+16:51.215   10               616         3    :   :   :   :   :   : Message.ctor(o/g)
+16:51.215   10                68         0    :   :   :   :   :   :   Pooled.ctor
+16:51.215   10                68         0    :   :   :   :   :   :   : Object.ctor
+16:51.215   10                68        68    :   :   :   :   :   :   :   Base.ctor
+16:51.215   10                55        18    :   :   :   :   :   :   SbIpBuffer.operator new
+16:51.215   10                37        16    :   :   :   :   :   :   : ObjectPool.DeqBlock
+16:51.215   10                21        21    :   :   :   :   :   :   :   Q1Way.Deq
+16:51.215   10               303         1    :   :   :   :   :   :   SbIpBuffer.ctor
+16:51.215   10               283         2    :   :   :   :   :   :   : IpBuffer.ctor
+16:51.215   10                66         0    :   :   :   :   :   :   :   MsgBuffer.ctor
+16:51.215   10                66         0    :   :   :   :   :   :   :   : Pooled.ctor
+16:51.215   10                66         0    :   :   :   :   :   :   :   :   Object.ctor
+16:51.215   10                66        66    :   :   :   :   :   :   :   :   : Base.ctor
+16:51.215   10                63         0    :   :   :   :   :   :   :   SysIpL3Addr.ctor
+16:51.215   10                63         0    :   :   :   :   :   :   :   : SysIpL2Addr.ctor
+16:51.215   10                63         0    :   :   :   :   :   :   :   :   Object.ctor
+16:51.215   10                63        63    :   :   :   :   :   :   :   :   : Base.ctor
+16:51.215   10                79         0    :   :   :   :   :   :   :   SysIpL3Addr.ctor
+16:51.215   10                79         0    :   :   :   :   :   :   :   : SysIpL2Addr.ctor
+16:51.215   10                79         0    :   :   :   :   :   :   :   :   Object.ctor
+16:51.215   10                79        79    :   :   :   :   :   :   :   :   : Base.ctor
+16:51.215   10                15        15    :   :   :   :   :   :   :   IpBuffer.BuffSize
+16:51.215   10                58        18    :   :   :   :   :   :   :   Memory.Alloc
+16:51.215   10                40        40    :   :   :   :   :   :   :   : SysHeap.Alloc
+16:51.215   10                19        19    :   :   :   :   :   :   : MsgHeader.ctor
+16:51.215   10                64        16    :   :   :   :   :   :   ProtocolSM.EnqOgMsg
+16:51.215   10                31        16    :   :   :   :   :   :   : Message.Enqueue
+16:51.215   10                15        15    :   :   :   :   :   :   :   Q1Way.Enq
+16:51.215   10                17        17    :   :   :   :   :   :   : Message.SetPsm
+16:51.215   10                18        18    :   :   :   :   :   :   ProtocolSM.GetProtocol
+16:51.215   10                17        17    :   :   :   :   :   :   Message.SetProtocol
+16:51.215   10                88        22    :   :   :   :   :   :   Context.RunningContextTraced
+16:51.216   10   +msg             0000029D8F965838  port=1      PotsProtocol sig=0
+16:51.216   10                16        16    :   :   :   :   :   :   : Context.RunningContext
+16:51.216   10                50        15    :   :   :   :   :   :   : ProtocolSM.Port
+16:51.216   10                35        35    :   :   :   :   :   :   :   MsgPort.Port
+16:51.216   10                50        50    :   :   :   :   :   : TlvMessage.FencePtr
+16:51.216   10                46        14    :   :   :   :   : ProtocolSM.PeerFactory
+16:51.216   10                32        14    :   :   :   :   :   ProtocolSM.Port
+16:51.216   10                18        18    :   :   :   :   :   : MsgPort.Port
+16:51.216   10                71        18    :   :   :   MediaPsm.SetOgTone
+16:51.216   10                18        18    :   :   :   : ToneRegistry.ToneToPort
+16:51.216   10                35        19    :   :   :   : MediaPsm.SetOgPort
+16:51.216   10                16        16    :   :   :   :   Circuit.MakeConn
+16:51.216   10               287        17    :   :   :   PotsBcSsm.StartTimer
+16:51.216   10                16        16    :   :   :   : PotsBcSsm.TimerPsm
+16:51.216   10               254        18    :   :   :   : ProtocolSM.StartTimer
+16:51.216   10                41        41    :   :   :   :   ProtocolSM.FindTimer
+16:51.216   10                51        18    :   :   :   :   Timer.operator new
+16:51.216   10                33        15    :   :   :   :   : ObjectPool.DeqBlock
+16:51.216   10                18        18    :   :   :   :   :   Q1Way.Deq
+16:51.216   10               144         2    :   :   :   :   Timer.ctor
+16:51.216   10                59         0    :   :   :   :   : Pooled.ctor
+16:51.216   10                59         0    :   :   :   :   :   Object.ctor
+16:51.216   10                59        59    :   :   :   :   :   : Base.ctor
+16:51.216   10                33        18    :   :   :   :   : TimerRegistry.CalcQId
+16:51.216   10                15        15    :   :   :   :   :   Thread.MsecsSinceStart
+16:51.216   10                14        14    :   :   :   :   : Q2Way.Henq
+16:51.216   10                17        17    :   :   :   :   : Q1Way.Henq
+16:51.216   10                19        19    :   :   :   :   : Context.RunningContextTraced
+16:51.216   10   +tmr             0000029D90B3C448  id=1        secs=10 psm=0000029D8FCCC148
+16:51.216   10                22        22    :   :   : Context.RunningContextTraced
+16:51.216   10  >>evt             0000029D91BFA438  suspend     BcCollectInformationEvent >> PotsBcCollectingInformation
+16:51.216   10               146         1    :   :   : C++.delete
+16:51.216   10                96        15    :   :   :   BcCollectInformationEvent.dtor
+16:51.216   10                81        14    :   :   :   : BcEvent.dtor
+16:51.216   10                67        18    :   :   :   :   Event.dtor
+16:51.216   10                18        18    :   :   :   :   : Context.RunningContextTraced
+16:51.216   10   -evt             0000029D91BFA438              BcCollectInformationEvent
+16:51.216   10                31        14    :   :   :   :   : ServiceSM.ExqEvent
+16:51.216   10                17        17    :   :   :   :   :   Q1Way.Exq
+16:51.216   10                49        17    :   :   :   Pooled.operator delete
+16:51.216   10                32        15    :   :   :   : ObjectPool.EnqBlock
+16:51.216   10                17        17    :   :   :   :   Q1Way.Enq
+16:51.216   10               148         2    :   :   : C++.delete
+16:51.216   10                97        25    :   :   :   AnalyzeSapEvent.dtor
+16:51.216   10                72        24    :   :   :   : Event.dtor
+16:51.216   10                18        18    :   :   :   :   Context.RunningContextTraced
+16:51.216   10   -evt             0000029D91BFA518              AnalyzeSapEvent
+16:51.216   10                30        14    :   :   :   :   ServiceSM.ExqEvent
+16:51.216   10                16        16    :   :   :   :   : Q1Way.Exq
+16:51.216   10                49        16    :   :   :   Pooled.operator delete
+16:51.216   10                33        15    :   :   :   : ObjectPool.EnqBlock
+16:51.216   10                18        18    :   :   :   :   Q1Way.Enq
+16:51.216   10              2145        17    :   :   SsmContext.EndOfTransaction
+16:51.216   10              2048        19    :   :   : PsmContext.EndOfTransaction
+16:51.216   10               551        15    :   :   :   MsgContext.EndOfTransaction
+16:51.216   10               536        17    :   :   :   : Message.Handled
+16:51.216   10                35        17    :   :   :   :   Message.ClearContext
+16:51.216   10                18        18    :   :   :   :   : Context.SetContextMsg
+16:51.216   10               484         2    :   :   :   :   C++.delete
+16:51.216   10               431        16    :   :   :   :   : Pots_UN_Message.dtor
+16:51.216   10               415        15    :   :   :   :   :   PotsMessage.dtor
+16:51.216   10               400        14    :   :   :   :   :   : TlvMessage.dtor
+16:51.217   10               386        18    :   :   :   :   :   :   Message.dtor
+16:51.217   10                67        22    :   :   :   :   :   :   : Context.RunningContextTraced
+16:51.217   10   -msg             0000029D8F9656A8  port=1      PotsOffhookSignal
+16:51.217   10                15        15    :   :   :   :   :   :   :   Context.RunningContext
+16:51.217   10                30        15    :   :   :   :   :   :   :   ProtocolSM.Port
+16:51.217   10                15        15    :   :   :   :   :   :   :   : MsgPort.Port
+16:51.217   10                33        15    :   :   :   :   :   :   : Message.Exqueue
+16:51.217   10                18        18    :   :   :   :   :   :   :   Q1Way.Exq
+16:51.217   10               268       268    :   :   :   :   :   :   : Message.ClearContext
+16:51.217   10               250         2    :   :   :   :   :   :   :   : C++.delete
+16:51.217   10               160        16    :   :   :   :   :   :   :   :   SbIpBuffer.dtor
+16:51.217   10               144        17    :   :   :   :   :   :   :   :   : IpBuffer.dtor
+16:51.217   10                39        19    :   :   :   :   :   :   :   :   :   Memory.Free
+16:51.217   10                20        20    :   :   :   :   :   :   :   :   :   : SysHeap.Free
+16:51.217   10                36        18    :   :   :   :   :   :   :   :   :   SysIpL3Addr.dtor
+16:51.217   10                18        18    :   :   :   :   :   :   :   :   :   : SysIpL2Addr.dtor
+16:51.217   10                34        18    :   :   :   :   :   :   :   :   :   SysIpL3Addr.dtor
+16:51.217   10                16        16    :   :   :   :   :   :   :   :   :   : SysIpL2Addr.dtor
+16:51.217   10                18        18    :   :   :   :   :   :   :   :   :   MsgBuffer.dtor
+16:51.217   10                88        19    :   :   :   :   :   :   :   :   SbIpBuffer.operator delete
+16:51.217   10                69        19    :   :   :   :   :   :   :   :   : Pooled.operator delete
+16:51.217   10                50        27    :   :   :   :   :   :   :   :   :   ObjectPool.EnqBlock
+16:51.217   10                23        23    :   :   :   :   :   :   :   :   :   : Q1Way.Enq
+16:51.217   10                51        17    :   :   :   :   : Pooled.operator delete
+16:51.217   10                34        15    :   :   :   :   :   ObjectPool.EnqBlock
+16:51.217   10                19        19    :   :   :   :   :   : Q1Way.Enq
+16:51.217   10              1478        18    :   :   :   MediaPsm.EndOfTransaction
+16:51.217   10              1460        19    :   :   :   : ProtocolSM.EndOfTransaction
+16:51.217   10                36        18    :   :   :   :   MediaPsm.PrepareOgMsgq
+16:51.217   10                18        18    :   :   :   :   : PotsCallPsm.EnsureMediaMsg
+16:51.217   10               536        19    :   :   :   :   PotsCallPsm.ProcessOgMsg
+16:51.217   10                17        17    :   :   :   :   : ProtocolSM.SetState
+16:51.217   10               160        18    :   :   :   :   : PotsMessage.AddHeader
+16:51.217   10                17        17    :   :   :   :   :   Message.SetSignal
+16:51.217   10               125        17    :   :   :   :   :   TlvMessage.AddType
+16:51.217   10               108        20    :   :   :   :   :   : TlvMessage.AddParm
+16:51.217   10                36        18    :   :   :   :   :   :   TlvMessage.CheckFence
+16:51.217   10                18        18    :   :   :   :   :   :   : TlvMessage.FencePtr
+16:51.217   10                35        18    :   :   :   :   :   :   IpBuffer.AddBytes
+16:51.217   10                17        17    :   :   :   :   :   :   : SbIpBuffer.PayloadSize
+16:51.217   10                17        17    :   :   :   :   :   :   TlvMessage.FencePtr
+16:51.217   10               135        16    :   :   :   :   : Pots_NU_Message.AddScan
+16:51.217   10               119        17    :   :   :   :   :   TlvMessage.AddType
+16:51.217   10               102        19    :   :   :   :   :   : TlvMessage.AddParm
+16:51.217   10                33        16    :   :   :   :   :   :   TlvMessage.CheckFence
+16:51.217   10                17        17    :   :   :   :   :   :   : TlvMessage.FencePtr
+16:51.217   10                33        17    :   :   :   :   :   :   IpBuffer.AddBytes
+16:51.217   10                16        16    :   :   :   :   :   :   : SbIpBuffer.PayloadSize
+16:51.217   10                17        17    :   :   :   :   :   :   TlvMessage.FencePtr
+16:51.217   10               139        17    :   :   :   :   : MediaPsm.UpdateOgMedia
+16:51.217   10               122        17    :   :   :   :   :   TlvMessage.AddType
+16:51.217   10               105        19    :   :   :   :   :   : TlvMessage.AddParm
+16:51.217   10                34        17    :   :   :   :   :   :   TlvMessage.CheckFence
+16:51.217   10                17        17    :   :   :   :   :   :   : TlvMessage.FencePtr
+16:51.217   10                34        17    :   :   :   :   :   :   IpBuffer.AddBytes
+16:51.217   10                17        17    :   :   :   :   :   :   : SbIpBuffer.PayloadSize
+16:51.217   10                18        18    :   :   :   :   :   :   TlvMessage.FencePtr
+16:51.217   10                66        19    :   :   :   :   : ProtocolSM.AddressesUnknown
+16:51.218   10                15        15    :   :   :   :   :   Message.RxSbAddr
+16:51.218   10                32        14    :   :   :   :   :   ProtocolSM.Port
+16:51.218   10                18        18    :   :   :   :   :   : MsgPort.Port
+16:51.218   10               869        18    :   :   :   :   ProtocolLayer.SendToLower
+16:51.218   10                16        16    :   :   :   :   : ProtocolLayer.EnsureLower
+16:51.218   10                14        14    :   :   :   :   : MsgPort.WrapMsg
+16:51.218   10               821        19    :   :   :   :   : MsgPort.SendMsg
+16:51.218   10                54        54    :   :   :   :   :   Message.SetSender
+16:51.218   10                35        19    :   :   :   :   :   :   SysIpL3Addr.operator=(copy)
+16:51.218   10                16        16    :   :   :   :   :   :   : SysIpL2Addr.operator=(copy)
+16:51.218   10                52        52    :   :   :   :   :   Message.SetReceiver
+16:51.218   10                33        18    :   :   :   :   :   :   SysIpL3Addr.operator=(copy)
+16:51.218   10                15        15    :   :   :   :   :   :   : SysIpL2Addr.operator=(copy)
+16:51.218   10                81        18    :   :   :   :   :   MsgPort.Route
+16:51.218   10                63        18    :   :   :   :   :   : PotsCallPsm.Route
+16:51.218   10                45        15    :   :   :   :   :   :   ProtocolSM.PeerFactory
+16:51.218   10                30        15    :   :   :   :   :   :   : ProtocolSM.Port
+16:51.218   10                15        15    :   :   :   :   :   :   :   MsgPort.Port
+16:51.218   10               615        18    :   :   :   :   :   TlvMessage.Send
+16:51.218   10                33        17    :   :   :   :   :   : TlvMessage.CheckFence
+16:51.218   10                16        16    :   :   :   :   :   :   TlvMessage.FencePtr
+16:51.218   10               564        17    :   :   :   :   :   : Message.Send
+16:51.218   10                28        14    :   :   :   :   :   :   ProtocolSM.Port
+16:51.218   10                14        14    :   :   :   :   :   :   : MsgPort.Port
+16:51.218   10                30        15    :   :   :   :   :   :   Message.Exqueue
+16:51.218   10                15        15    :   :   :   :   :   :   : Q1Way.Exq
+16:51.218   10               489        18    :   :   :   :   :   :   IpBuffer.Send
+16:51.218   10                24        24    :   :   :   :   :   :   : SbIpBuffer.PayloadSize
+16:51.218   10               447        20    :   :   :   :   :   :   : SysUdpSocket.SendBuff
+16:51.218   10                37        19    :   :   :   :   :   :   :   IpBuffer.OutgoingBytes
+16:51.218   10                18        18    :   :   :   :   :   :   :   : SbIpBuffer.PayloadSize
+16:51.218   10               261        20    :   :   :   :   :   :   :   SysUdpSocket.SendTo
+16:51.218   10               241       241    :   :   :   :   :   :   :   : SysSocket.SetBlocking
+16:51.218   10               129       129    :   :   :   :   :   :   :   SysSocket.TracePeer
+16:51.218   10  usend             0000029D8D3373C0  sent=24 port=40002 peer=192.168.0.11: 40001
+16:51.218   10               107         0    :   :   :   :   :   :   :   :   :   Object.ctor
+16:51.218   10               107       107    :   :   :   :   :   :   :   :   :   : Base.ctor
+16:51.218   10  <<msg             0000029D8F965838  port=1      PotsSuperviseSignal
+16:51.218   10  ogmsg  
+--------------------------------------------------------------------------------
+factory=7 (PotsCallFactory)
+  SessionBase.SbIpBuffer
+  this : 0000029D91C6B1A0
+  patchArea : 0x0
+  pid      : 4
+  seq      : 1
+  link     : 0000000000000000
+  assigned : true
+  orphaned : 0
+  corrupt  : false
+  logged   : false
+  rxTicks : 459840619450
+  buff     : 0000029D8D147DB0
+  hdrSize  : 24
+  buffSize : 48
+  txAddr   : 192.168.0.11: 40002
+  rxAddr   : 192.168.0.11: 40001
+  dir      : 1
+  external : true
+  queued   : false
+  length   : 24
+    00: 01 00 00 00 01 07 07 00 - 00 00 00 00 00 00 06 00  ................
+    01: 00 00 04 00 09 00 18 00 - 02 00 04 00 09 00 0b 00  ................
+    02: 05 00 01 00 fd 00 00 00 - 06 00 02 00 02 00 00 00  ....ý...........
+  MsgHeader:
+    txAddr : bid=1  seq=1  pid=7  fid=7
+    rxAddr : bid=0  seq=0  pid=0  fid=6
+    priority=0  initial=0  final=0  join=0  self=0
+  injected=0  kill=0  route=0  length=24  spare=0x0
+    protocol=4 (PotsProtocol)  signal=9 (PotsSuperviseSignal)
+  Parameters:
+    PotsHeaderParameter
+      signal : 9 (PotsSuperviseSignal)
+      port   : 11 (POTS 20000)
+    PotsScanParameter
+      digits : true
+      flash  : false
+    PotsMediaParameter
+      rxFrom : 2 (Dial tone)
+--------------------------------------------------------------------------------
+16:51.218   10   -msg             0000029D8F965838  port=1      PotsSuperviseSignal
+16:51.218   10                80        18    :   :   : ProxyBcSsm.EndOfTransaction
+16:51.218   10                44        44    :   :   :   ProxyBcSsm.FirstProxy
+16:51.218   10                18        18    :   :   :   ServiceSM.EndOfTransaction
+16:51.219   10                15        15    :   : Context.SetContextMsg
+16:51.219   10                17        17    :   : SsmContext.IsIdle
+16:51.219   10                16        16    :   Context.SetState
+16:51.219   10                67        19    : InvokerThread.ClearContext
+16:51.219   10                48        16    :   Thread.PauseOver
+16:51.219   10                32        16    :   : Thread.RtcPercentUsed
+16:51.219   10                16        16    :   :   Thread.RunningThread
+16:51.219   10                16        16    : Thread.RunningThread
+16:51.219   10               172        28    : InvokerPool.FindWork
+16:51.219   10                 8         8    :   :   Thread.RunningThread
+16:51.219   10               144        15    :   Thread.Pause (msecs=4294967295)
+16:51.219   10                16        16    :   : Thread.RunningThread
+16:51.219   10               113        16    :   : Thread.EnterBlockingOperation
+16:51.219   10                16        16    :   :   Thread.RunningThread
+16:51.219   10                43        17    :   :   InvokerThread.BlockingAllowed
+16:51.219   10                16        16    :   :   : Context.SetContextMsg
+16:51.219   10                10        10    :   :   : InvokerPool.ScheduledOut
+16:51.219   10  -lock         38        15    :   :   Thread.Unlock
+16:51.219   10                23        23    :   :   : Thread.LogContextSwitch
+16:51.219   10                 0         0    :   :   : SysMutex.Release
+16:51.219   14                43        26    : SysMutex.Acquire
+16:51.219   14                17        17    :   Thread.InitialMsecs
+16:51.219   14                 0         0    :   ThreadAdmin.WarpFactor
+16:51.219   14  +lock       1842         5  UdpIoThread.Enter
+16:51.219   14                35        19    Thread.ExitBlockingOperation
+16:51.219   14                16        16    : Thread.ResumeLocked
+16:51.219   14                80        80    SysSocket.TracePeer
+16:51.219   14  urecv             0000029D8D337A00  rcvd=24 port=40001 peer=192.168.0.11: 40002
+16:51.219   14                60         0    :   SysIpL3Addr.ctor(copy)
+16:51.219   14                60         0    :   : SysIpL2Addr.ctor(copy)
+16:51.219   14                60         0    :   :   Object.ctor
+16:51.219   14                60        60    :   :   : Base.ctor
+16:51.219   14                18        18    IpPort.BytesRcvd
+16:51.219   14              1530        20    IoThread.InvokeHandler
+16:51.219   14               324        17    : SbExtInputHandler.AllocBuff
+16:51.219   14                52        18    :   SbIpBuffer.operator new
+16:51.219   14                34        16    :   : ObjectPool.DeqBlock
+16:51.219   14                18        18    :   :   Q1Way.Deq
+16:51.219   14               255         1    :   SbIpBuffer.ctor
+16:51.219   14               241         2    :   : IpBuffer.ctor
+16:51.219   14                54         0    :   :   MsgBuffer.ctor
+16:51.219   14                54         0    :   :   : Pooled.ctor
+16:51.219   14                54         0    :   :   :   Object.ctor
+16:51.219   14                54        54    :   :   :   : Base.ctor
+16:51.219   14                56         0    :   :   SysIpL3Addr.ctor
+16:51.219   14                56         0    :   :   : SysIpL2Addr.ctor
+16:51.219   14                56         0    :   :   :   Object.ctor
+16:51.219   14                56        56    :   :   :   : Base.ctor
+16:51.219   14                71         0    :   :   SysIpL3Addr.ctor
+16:51.219   14                71         0    :   :   : SysIpL2Addr.ctor
+16:51.219   14                71         0    :   :   :   Object.ctor
+16:51.219   14                71        71    :   :   :   : Base.ctor
+16:51.219   14                13        13    :   :   IpBuffer.BuffSize
+16:51.219   14                45        15    :   :   Memory.Alloc
+16:51.219   14                30        30    :   :   : SysHeap.Alloc
+16:51.219   14                13        13    :   : MsgHeader.ctor
+16:51.219   14                82        17    : Memory.Copy
+16:51.220   14                32        17    :   SysIpL3Addr.operator=(copy)
+16:51.220   14                15        15    :   : SysIpL2Addr.operator=(copy)
+16:51.220   14                33        15    :   SysIpL3Addr.operator=(copy)
+16:51.220   14                18        18    :   : SysIpL2Addr.operator=(copy)
+16:51.220   14              1104        19    : PotsShelfHandler.ReceiveBuff
+16:51.220   14              1085        20    :   SbInputHandler.ReceiveBuff
+16:51.220   14              1065        19    :   : InvokerPool.ReceiveBuff
+16:51.220   14               174        17    :   :   PotsShelfFactory.AllocIcMsg
+16:51.220   14                50        17    :   :   : Message.operator new
+16:51.220   14                33        15    :   :   :   ObjectPool.DeqBlock
+16:51.220   14                18        18    :   :   :   : Q1Way.Deq
+16:51.220   14               107         0    :   :   : Pots_NU_Message.ctor(i/c)
+16:51.220   14               107         0    :   :   :   PotsMessage.ctor(i/c)
+16:51.220   14               107         0    :   :   :   : TlvMessage.ctor(i/c)
+16:51.220   14               107         0    :   :   :   :   Message.ctor(i/c)
+16:51.220   14               107         0    :   :   :   :   : Pooled.ctor
+16:51.220   14               107         0    :   :   :   :   :   Object.ctor
+16:51.220   14               107       107    :   :   :   :   :   : Base.ctor
+16:51.220   14               872        28    :   :   InvokerPool.ReceiveMsg
+16:51.220   14               421        17    :   :   : InvokerPool.TraceRxNet
+16:51.220   14               404        22    :   :   :   SbTracer.MsgStatus
+16:51.220   14                17        17    :   :   :   : NwTracer.BuffStatus
+16:51.220   14                18        18    :   :   :   : Message.RxSbAddr
+16:51.220   14                22        22    :   :   :   : Thread.RunningThread
+16:51.220   14  RXNET       1043  0000029D8D3A5640  fac         PotsShelfFactory
+16:51.220   14  icmsg  
+--------------------------------------------------------------------------------
+factory=6 (PotsShelfFactory)
+  SessionBase.SbIpBuffer
+  this : 0000029D91C6B238
+  patchArea : 0x0
+  pid      : 4
+  seq      : 1
+  link     : 0000000000000000
+  assigned : true
+  orphaned : 0
+  corrupt  : false
+  logged   : false
+  rxTicks : 459840629552
+  buff     : 0000029D8D147E50
+  hdrSize  : 24
+  buffSize : 48
+  txAddr   : 192.168.0.11: 40002
+  rxAddr   : 192.168.0.11: 40001
+  dir      : 0
+  external : false
+  queued   : false
+  length   : 24
+    00: 00 00 00 00 00 00 07 00 - 00 00 00 00 00 00 06 00  ................
+    01: 02 00 04 00 09 00 18 00 - 02 00 04 00 09 00 0b 00  ................
+    02: 05 00 01 00 fd 00 00 00 - 06 00 02 00 02 00 00 00  ....ý...........
+  MsgHeader:
+    txAddr : bid=0  seq=0  pid=0  fid=7
+    rxAddr : bid=0  seq=0  pid=0  fid=6
+    priority=2  initial=0  final=0  join=0  self=0
+  injected=0  kill=0  route=0  length=24  spare=0x0
+    protocol=4 (PotsProtocol)  signal=9 (PotsSuperviseSignal)
+  Parameters:
+    PotsHeaderParameter
+      signal : 9 (PotsSuperviseSignal)
+      port   : 11 (POTS 20000)
+    PotsScanParameter
+      digits : true
+      flash  : false
+    PotsMediaParameter
+      rxFrom : 2 (Dial tone)
+--------------------------------------------------------------------------------
+16:51.220   14                50        17    :   :   :   : SbIpBuffer.operator new
+16:51.220   14                33        15    :   :   :   :   ObjectPool.DeqBlock
+16:51.220   14                18        18    :   :   :   :   : Q1Way.Deq
+16:51.220   14               275         0    :   :   :   : SbIpBuffer.ctor(copy)
+16:51.220   14               275         2    :   :   :   :   IpBuffer.ctor(copy)
+16:51.220   14                57         0    :   :   :   :   : MsgBuffer.ctor(copy)
+16:51.220   14                57         0    :   :   :   :   :   Pooled.ctor
+16:51.220   14                57         0    :   :   :   :   :   : Object.ctor
+16:51.220   14                57        57    :   :   :   :   :   :   Base.ctor
+16:51.220   14                59         0    :   :   :   :   : SysIpL3Addr.ctor(copy)
+16:51.220   14                59         0    :   :   :   :   :   SysIpL2Addr.ctor(copy)
+16:51.220   14                59         0    :   :   :   :   :   : Object.ctor
+16:51.220   14                59        59    :   :   :   :   :   :   Base.ctor
+16:51.220   14                78         0    :   :   :   :   : SysIpL3Addr.ctor(copy)
+16:51.220   14                78         0    :   :   :   :   :   SysIpL2Addr.ctor(copy)
+16:51.220   14                78         0    :   :   :   :   :   : Object.ctor
+16:51.220   14                78        78    :   :   :   :   :   :   Base.ctor
+16:51.220   14                13        13    :   :   :   :   : IpBuffer.BuffSize
+16:51.220   14                31        15    :   :   :   :   : Memory.Alloc
+16:51.220   14                16        16    :   :   :   :   :   SysHeap.Alloc
+16:51.220   14                35        35    :   :   :   :   : Memory.Copy
+16:51.220   14               280        19    :   :   : MsgFactory.ReceiveMsg
+16:51.220   14                50        17    :   :   :   Context.operator new
+16:51.220   14                33        14    :   :   :   : ObjectPool.DeqBlock
+16:51.220   14                19        19    :   :   :   :   Q1Way.Deq
+16:51.220   14               105         0    :   :   :   MsgContext.ctor
+16:51.220   14               105         1    :   :   :   : Context.ctor
+16:51.220   14                58         0    :   :   :   :   Pooled.ctor
+16:51.220   14                58         0    :   :   :   :   : Object.ctor
+16:51.220   14                58        58    :   :   :   :   :   Base.ctor
+16:51.220   14                13        13    :   :   :   :   Q1Way.Init
+16:51.220   14                33        33    :   :   :   :   Q1Way.Init
+16:51.220   14                15        15    :   :   :   Factory.IncrContexts
+16:51.220   14                48        15    :   :   :   Context.EnqMsg
+16:51.220   14                33        15    :   :   :   : Message.Enqueue
+16:51.220   14                18        18    :   :   :   :   Q1Way.Enq
+16:51.220   14                43        43    :   :   :   MsgFactory.CaptureMsg
+16:51.220   14   +msg             0000029D8F9659C8              PotsSuperviseSignal
+16:51.221   14                19        19    :   :   :   :   Context.RunningContext
+16:51.221   14                16        16    :   :   : Factory.RecordMsg
+16:51.221   14                50        17    :   :   : Context.Enqueue
+16:51.221   14                17        17    :   :   :   Q2Way.Enq
+16:51.221   14                16        16    :   :   :   InvokerPool.Enqueued
+16:51.221   14                77        17    :   :   : InvokerPool.KickThread
+16:51.221   14                60        20    :   :   :   Thread.Interrupt
+16:51.221   14                40        40    :   :   :   : SysThread.Interrupt
+16:51.221   14                48        18    IoThread.ConditionalPause
+16:51.221   14                30        16    : Thread.RtcPercentUsed
+16:51.221   14                14        14    :   Thread.RunningThread
+16:51.221   14                32        32    SysSocket.Empty
+16:51.221   14                16        16    IpPort.RecvsInSequence
+16:51.221   14                19        19    SysSocket.SetBlocking
+16:51.221   14                59        16    Thread.EnterBlockingOperation
+16:51.221   14                 8         8    : Thread.RunningThread
+16:51.221   14  -lock         35        14    : Thread.Unlock
+16:51.221   14                21        21    :   Thread.LogContextSwitch
+16:51.221   14                 0         0    :   SysMutex.Release
+16:51.221   10                44        26    :   :   SysMutex.Acquire
+16:51.221   10                18        18    :   :   : Thread.InitialMsecs
+16:51.221   10                 0         0    :   :   : ThreadAdmin.WarpFactor
+16:51.221   10  +lock         57         1    :   Thread.Pause
+16:51.221   10                56        14    :   : Thread.ExitBlockingOperation
+16:51.221   10                42        18    :   :   Thread.ResumeLocked
+16:51.221   10                24        17    :   :   : InvokerThread.ScheduledIn
+16:51.221   10                 7         7    :   :   :   Context.SetContextMsg
+16:51.221   10                14        14    :   Thread.Pause (interrupted)
+16:51.221   10                15        15    : Thread.RunningThread
+16:51.221   10                78        16    : InvokerPool.FindWork
+16:51.221   10                62        15    :   Context.Exqueue
+16:51.221   10                16        16    :   : Q2Way.Exq
+16:51.221   10                15        15    :   : Context.SetState
+16:51.221   10                16        16    :   : InvokerPool.Dequeued
+16:51.221   10                31        16    : InvokerThread.SetContext
+16:51.221   10                15        15    :   Context.SetState
+16:51.221   10              1510        17    : Context.ProcessWork
+16:51.221   10              1493        18    :   Context.ProcessMsg
+16:51.221   10                15        15    :   : Context.SetContextMsg
+16:51.221   10                92        92    :   : Context.CaptureTask
+16:51.221   10  TRANS       1409  0000029D8D3A5640  fac prio=2  PotsSuperviseSignal
+16:51.221   10                20        20    :   :   : Message.RxFactory
+16:51.221   10  >>msg             0000029D8F9659C8              PotsSuperviseSignal
+16:51.221   10                16        16    :   :   : Context.RunningContext
+16:51.221   10                15        15    :   :   : Message.RxSbAddr
+16:51.221   10                17        17    :   :   : Message.TxSbAddr
+16:51.221   10               527        15    :   : MsgContext.ProcessIcMsg
+16:51.221   10                16        16    :   :   Message.RxFactory
+16:51.221   10                18        18    :   :   Context.TraceMsg
+16:51.221   10               478        18    :   :   PotsShelfFactory.ProcessIcMsg
+16:51.221   10                56        17    :   :   : TlvMessage.FindType
+16:51.221   10                39        16    :   :   :   TlvMessage.FindParm
+16:51.221   10                23        23    :   :   :   : TlvMessage.FirstParm
+16:51.222   10               404        16    :   :   : PotsCircuit.ReceiveMsg
+16:51.222   10                49        16    :   :   :   TlvMessage.FindType
+16:51.222   10                33        15    :   :   :   : TlvMessage.FindParm
+16:51.222   10                18        18    :   :   :   :   TlvMessage.FirstParm
+16:51.222   10                97        16    :   :   :   TlvMessage.FindType
+16:51.222   10                81        18    :   :   :   : TlvMessage.FindParm
+16:51.222   10                16        16    :   :   :   :   TlvMessage.FirstParm
+16:51.222   10                16        16    :   :   :   :   TlvMessage.NextParm
+16:51.222   10                15        15    :   :   :   :   TlvMessage.NextParm
+16:51.222   10                16        16    :   :   :   :   TlvMessage.NextParm
+16:51.222   10                64        16    :   :   :   TlvMessage.FindType
+16:51.222   10                48        16    :   :   :   : TlvMessage.FindParm
+16:51.222   10                16        16    :   :   :   :   TlvMessage.FirstParm
+16:51.222   10                16        16    :   :   :   :   TlvMessage.NextParm
+16:51.222   10               150        24    :   :   :   TlvMessage.FindType
+16:51.222   10               126        26    :   :   :   : TlvMessage.FindParm
+16:51.222   10                26        26    :   :   :   :   TlvMessage.FirstParm
+16:51.222   10                25        25    :   :   :   :   TlvMessage.NextParm
+16:51.222   10                24        24    :   :   :   :   TlvMessage.NextParm
+16:51.222   10                25        25    :   :   :   :   TlvMessage.NextParm
+16:51.222   10                28        28    :   :   :   PotsCircuit.SetState
+16:51.222   10               621         1    :   : C++.delete
+16:51.222   10               551        21    :   :   Pots_NU_Message.dtor
+16:51.222   10               530        15    :   :   : PotsMessage.dtor
+16:51.222   10               515        20    :   :   :   TlvMessage.dtor
+16:51.222   10               495        26    :   :   :   : Message.dtor
+16:51.222   10                58        34    :   :   :   :   Context.RunningContextTraced
+16:51.222   10   -msg             0000029D8F9659C8              PotsSuperviseSignal
+16:51.222   10                24        24    :   :   :   :   : Context.RunningContext
+16:51.222   10                52        23    :   :   :   :   Message.Exqueue
+16:51.222   10                29        29    :   :   :   :   : Q1Way.Exq
+16:51.222   10               359        28    :   :   :   :   Message.ClearContext
+16:51.222   10               331        27    :   :   :   :   : Context.SetContextMsg
+16:51.222   10               304         2    :   :   :   :   :   C++.delete
+16:51.222   10               181        23    :   :   :   :   :   : SbIpBuffer.dtor
+16:51.222   10               158        16    :   :   :   :   :   :   IpBuffer.dtor
+16:51.222   10                39        19    :   :   :   :   :   :   : Memory.Free
+16:51.222   10                20        20    :   :   :   :   :   :   :   SysHeap.Free
+16:51.222   10                34        18    :   :   :   :   :   :   : SysIpL3Addr.dtor
+16:51.222   10                16        16    :   :   :   :   :   :   :   SysIpL2Addr.dtor
+16:51.222   10                39        16    :   :   :   :   :   :   : SysIpL3Addr.dtor
+16:51.222   10                23        23    :   :   :   :   :   :   :   SysIpL2Addr.dtor
+16:51.222   10                30        30    :   :   :   :   :   :   : MsgBuffer.dtor
+16:51.222   10               121        31    :   :   :   :   :   : SbIpBuffer.operator delete
+16:51.222   10                90        33    :   :   :   :   :   :   Pooled.operator delete
+16:51.222   10                57        29    :   :   :   :   :   :   : ObjectPool.EnqBlock
+16:51.222   10                28        28    :   :   :   :   :   :   :   Q1Way.Enq
+16:51.222   10                69        25    :   :   Pooled.operator delete
+16:51.222   10                44        21    :   :   : ObjectPool.EnqBlock
+16:51.223   10                23        23    :   :   :   Q1Way.Enq
+16:51.223   10               220         2    :   : C++.delete
+16:51.223   10               144        22    :   :   MsgContext.dtor
+16:51.223   10               122        24    :   :   : Context.dtor
+16:51.223   10                22        22    :   :   :   Q1Way.Purge
+16:51.223   10                21        21    :   :   :   Q1Way.Purge
+16:51.223   10                27        27    :   :   :   Context.Exqueue
+16:51.223   10                28        28    :   :   :   InvokerThread.ClearContext
+16:51.223   10                74        25    :   :   Pooled.operator delete
+16:51.223   10                49        23    :   :   : ObjectPool.EnqBlock
+16:51.223   10                26        26    :   :   :   Q1Way.Enq
+16:51.223   10               106        24    : InvokerThread.ClearContext
+16:51.223   10                82        26    :   Thread.PauseOver
+16:51.223   10                56        28    :   : Thread.RtcPercentUsed
+16:51.223   10                28        28    :   :   Thread.RunningThread
+16:51.223   10                26        26    : Thread.RunningThread
+16:51.223   10               279        41    : InvokerPool.FindWork
+16:51.223   10                12        12    :   :   Thread.RunningThread
+16:51.223   10               238        24    :   Thread.Pause (msecs=4294967295)
+16:51.223   10                27        27    :   : Thread.RunningThread
+16:51.223   10               187        27    :   : Thread.EnterBlockingOperation
+16:51.223   10                27        27    :   :   Thread.RunningThread
+16:51.223   10                70        28    :   :   InvokerThread.BlockingAllowed
+16:51.223   10                27        27    :   :   : Context.SetContextMsg
+16:51.223   10                15        15    :   :   : InvokerPool.ScheduledOut
+16:51.223   10  -lock         63        24    :   :   Thread.Unlock
+16:51.223   10                39        39    :   :   : Thread.LogContextSwitch
+16:51.223   10                 0         0    :   :   : SysMutex.Release
+16:51.713   13  +lock        692         5  UdpIoThread.Enter
+16:51.713   13                35        35    Thread.ExitBlockingOperation
+16:51.713   13  urecv             0000029D8D3373C0  rcvd=8 port=40002 peer=192.168.0.11: 40001
+16:51.713   13                21         0    :   SysIpL3Addr.ctor(copy)
+16:51.713   13                21         0    :   : SysIpL2Addr.ctor(copy)
+16:51.713   13                21        21    :   :   Object.ctor
+16:51.713   13                 7         7    IpPort.BytesRcvd
+16:51.713   13               584         8    IoThread.InvokeHandler
+16:51.713   13               132         6    : SbExtInputHandler.AllocBuff
+16:51.713   13                22         7    :   SbIpBuffer.operator new
+16:51.713   13                15         7    :   : ObjectPool.DeqBlock
+16:51.713   13                 8         8    :   :   Q1Way.Deq
+16:51.713   13               104         1    :   SbIpBuffer.ctor
+16:51.713   13                97         2    :   : IpBuffer.ctor
+16:51.713   13                21         0    :   :   MsgBuffer.ctor
+16:51.713   13                21         0    :   :   : Pooled.ctor
+16:51.713   13                21         0    :   :   :   Object.ctor
+16:51.713   13                21        21    :   :   :   : Base.ctor
+16:51.713   13                24         0    :   :   SysIpL3Addr.ctor
+16:51.713   13                24         0    :   :   : SysIpL2Addr.ctor
+16:51.713   13                24         0    :   :   :   Object.ctor
+16:51.713   13                24        24    :   :   :   : Base.ctor
+16:51.713   13                28         0    :   :   SysIpL3Addr.ctor
+16:51.713   13                28         0    :   :   : SysIpL2Addr.ctor
+16:51.713   13                28         0    :   :   :   Object.ctor
+16:51.713   13                28        28    :   :   :   : Base.ctor
+16:51.713   13                 5         5    :   :   IpBuffer.BuffSize
+16:51.713   13                17         6    :   :   Memory.Alloc
+16:51.713   13                11        11    :   :   : SysHeap.Alloc
+16:51.713   13                 6         6    :   : MsgHeader.ctor
+16:51.713   13                33         7    : Memory.Copy
+16:51.713   13                13         7    :   SysIpL3Addr.operator=(copy)
+16:51.713   13                 6         6    :   : SysIpL2Addr.operator=(copy)
+16:51.713   13                13         6    :   SysIpL3Addr.operator=(copy)
+16:51.713   13                 7         7    :   : SysIpL2Addr.operator=(copy)
+16:51.713   13               411         8    : PotsCallHandler.ReceiveBuff
+16:51.713   13                19         6    :   MsgPort.Find
+16:51.713   13                13         7    :   : ObjectPool.BidToObj
+16:51.713   13                 6         6    :   :   ObjectPool.First
+16:51.713   13               384         9    :   SbInputHandler.ReceiveBuff
+16:51.713   13               375         9    :   : InvokerPool.ReceiveBuff
+16:51.713   13                71         7    :   :   PotsCallFactory.AllocIcMsg
+16:51.713   13                19         6    :   :   : Message.operator new
+16:51.713   13                13         6    :   :   :   ObjectPool.DeqBlock
+16:51.713   13                 7         7    :   :   :   : Q1Way.Deq
+16:51.713   13                45         0    :   :   : Pots_UN_Message.ctor(i/c)
+16:51.713   13                45         0    :   :   :   PotsMessage.ctor(i/c)
+16:51.713   13                45         0    :   :   :   : TlvMessage.ctor(i/c)
+16:51.713   13                45         0    :   :   :   :   Message.ctor(i/c)
+16:51.713   13                45         0    :   :   :   :   : Pooled.ctor
+16:51.713   13                45         0    :   :   :   :   :   Object.ctor
+16:51.713   13                45        45    :   :   :   :   :   : Base.ctor
+16:51.713   13               295         7    :   :   InvokerPool.ReceiveMsg
+16:51.713   13               163         6    :   :   : InvokerPool.TraceRxNet
+16:51.713   13               157         8    :   :   :   SbTracer.MsgStatus
+16:51.713   13                 5         5    :   :   :   : NwTracer.BuffStatus
+16:51.713   13                 6         6    :   :   :   : Message.RxSbAddr
+16:51.713   13                 8         8    :   :   :   : Thread.RunningThread
+16:51.713   13  RXNET        393  0000029D8D2D3238  ssm         PotsCallFactory
+16:51.713   13  icmsg  
+--------------------------------------------------------------------------------
+factory=7 (PotsCallFactory)
+  SessionBase.SbIpBuffer
+  this : 0000029D91C6B2D0
+  patchArea : 0x0
+  pid      : 4
+  seq      : 1
+  link     : 0000000000000000
+  assigned : true
+  orphaned : 0
+  corrupt  : false
+  logged   : false
+  rxTicks : 459841878526
+  buff     : 0000029D8D337FC0
+  hdrSize  : 24
+  buffSize : 32
+  txAddr   : 192.168.0.11: 40001
+  rxAddr   : 192.168.0.11: 40002
+  dir      : 0
+  external : false
+  queued   : false
+  length   : 8
+    00: 00 00 00 00 00 00 06 00 - 01 00 00 00 01 07 07 00  ................
+    01: 42 00 04 00 06 00 08 00 - 02 00 04 00 06 00 0b 00  B...............
+  MsgHeader:
+    txAddr : bid=0  seq=0  pid=0  fid=6
+    rxAddr : bid=1  seq=1  pid=7  fid=7
+    priority=2  initial=0  final=0  join=0  self=0
+  injected=1  kill=0  route=0  length=8  spare=0x0
+    protocol=4 (PotsProtocol)  signal=6 (PotsOnhookSignal)
+  Parameters:
+    PotsHeaderParameter
+      signal : 6 (PotsOnhookSignal)
+      port   : 11 (POTS 20000)
+--------------------------------------------------------------------------------
+16:51.713   13                27         6    :   :   :   : SbIpBuffer.operator new
+16:51.713   13                21        14    :   :   :   :   ObjectPool.DeqBlock
+16:51.713   13                 7         7    :   :   :   :   : Q1Way.Deq
+16:51.713   13               103         0    :   :   :   : SbIpBuffer.ctor(copy)
+16:51.713   13               103         2    :   :   :   :   IpBuffer.ctor(copy)
+16:51.713   13                22         0    :   :   :   :   : MsgBuffer.ctor(copy)
+16:51.713   13                22         0    :   :   :   :   :   Pooled.ctor
+16:51.713   13                22         0    :   :   :   :   :   : Object.ctor
+16:51.713   13                22        22    :   :   :   :   :   :   Base.ctor
+16:51.713   13                21         0    :   :   :   :   : SysIpL3Addr.ctor(copy)
+16:51.713   13                21         0    :   :   :   :   :   SysIpL2Addr.ctor(copy)
+16:51.713   13                21         0    :   :   :   :   :   : Object.ctor
+16:51.713   13                21        21    :   :   :   :   :   :   Base.ctor
+16:51.713   13                33         0    :   :   :   :   : SysIpL3Addr.ctor(copy)
+16:51.713   13                33         0    :   :   :   :   :   SysIpL2Addr.ctor(copy)
+16:51.713   13                33         0    :   :   :   :   :   : Object.ctor
+16:51.713   13                33        33    :   :   :   :   :   :   Base.ctor
+16:51.713   13                 5         5    :   :   :   :   : IpBuffer.BuffSize
+16:51.713   13                11         6    :   :   :   :   : Memory.Alloc
+16:51.713   13                 5         5    :   :   :   :   :   SysHeap.Alloc
+16:51.713   13                 9         9    :   :   :   :   : Memory.Copy
+16:51.713   13                70         6    :   :   : SsmFactory.ReceiveMsg
+16:51.713   13                64         7    :   :   :   PsmFactory.ReceiveMsg
+16:51.713   13                18         6    :   :   :   : MsgPort.Find
+16:51.713   13                12         6    :   :   :   :   ObjectPool.BidToObj
+16:51.713   13                 6         6    :   :   :   :   : ObjectPool.First
+16:51.713   13                39         6    :   :   :   : MsgFactory.ReceiveMsg
+16:51.713   13                18         6    :   :   :   :   Context.EnqMsg
+16:51.713   13                12         6    :   :   :   :   : Message.Enqueue
+16:51.713   13                 6         6    :   :   :   :   :   Q1Way.Enq
+16:51.713   13                15        15    :   :   :   :   MsgFactory.CaptureMsg
+16:51.713   13   +msg             0000029D8F965CE8              PotsOnhookSignal
+16:51.713   13                 7         7    :   :   :   :   :   Context.RunningContext
+16:51.713   13                 7         7    :   :   : Factory.RecordMsg
+16:51.713   13                18         6    :   :   : Context.Enqueue
+16:51.713   13                 6         6    :   :   :   Q2Way.Enq
+16:51.713   13                 6         6    :   :   :   InvokerPool.Enqueued
+16:51.713   13                30         6    :   :   : InvokerPool.KickThread
+16:51.713   13                24        12    :   :   :   Thread.Interrupt
+16:51.713   13                12        12    :   :   :   : SysThread.Interrupt
+16:51.713   13                20         9    IoThread.ConditionalPause
+16:51.713   13                11         8    : Thread.RtcPercentUsed
+16:51.713   13                 3         3    :   Thread.RunningThread
+16:51.713   13                10        10    SysSocket.Empty
+16:51.713   13                 4         4    IpPort.RecvsInSequence
+16:51.713   13                 5         5    SysSocket.SetBlocking
+16:51.713   13                22         4    Thread.EnterBlockingOperation
+16:51.713   13                 3         3    : Thread.RunningThread
+16:51.713   13  -lock         15         6    : Thread.Unlock
+16:51.713   13                 9         9    :   Thread.LogContextSwitch
+16:51.713   13                 0         0    :   SysMutex.Release
+16:51.713   10                 9         9    :   :   : Thread.InitialMsecs
+16:51.713   10                 0         0    :   :   : ThreadAdmin.WarpFactor
+16:51.713   10  +lock         24         0    :   Thread.Pause
+16:51.713   10                24         6    :   : Thread.ExitBlockingOperation
+16:51.713   10                18         7    :   :   Thread.ResumeLocked
+16:51.713   10                11         8    :   :   : InvokerThread.ScheduledIn
+16:51.713   10                 3         3    :   :   :   Context.SetContextMsg
+16:51.713   10                 6         6    :   Thread.Pause (interrupted)
+16:51.713   10                 7         7    : Thread.RunningThread
+16:51.713   10                33         6    : InvokerPool.FindWork
+16:51.713   10                27         7    :   Context.Exqueue
+16:51.713   10                 6         6    :   : Q2Way.Exq
+16:51.714   10                 8         8    :   : Context.SetState
+16:51.714   10                 6         6    :   : InvokerPool.Dequeued
+16:51.714   10                12         7    : InvokerThread.SetContext
+16:51.714   10                 5         5    :   Context.SetState
+16:51.714   10              1860         8    : Context.ProcessWork
+16:51.714   10              1852         8    :   Context.ProcessMsg
+16:51.714   10                 6         6    :   : Context.SetContextMsg
+16:51.714   10                36        36    :   : Context.CaptureTask
+16:51.714   10  TRANS       1761  0000029D8D2D3238  ssm prio=2  PotsOnhookSignal
+16:51.714   10                 8         8    :   :   : Message.RxFactory
+16:51.714   10  >>msg             0000029D8F965CE8  port=1      PotsOnhookSignal
+16:51.714   10                 6         6    :   :   : Context.RunningContext
+16:51.714   10                 5         5    :   :   : Message.RxSbAddr
+16:51.714   10                 6         6    :   :   : Message.TxSbAddr
+16:51.714   10              1748         9    :   : SsmContext.ProcessIcMsg
+16:51.714   10                 8         8    :   :   PsmContext.FindPort
+16:51.714   10               160         6    :   :   MsgPort.ReceiveMsg
+16:51.714   10               154         8    :   :   : ProtocolLayer.SendToUpper
+16:51.714   10                 6         6    :   :   :   ProtocolSM.UnwrapMsg
+16:51.714   10                 7         7    :   :   :   Context.SetContextMsg
+16:51.714   10               133         7    :   :   :   MediaPsm.ReceiveMsg
+16:51.714   10               126         5    :   :   :   : ProtocolSM.ReceiveMsg
+16:51.714   10                32         5    :   :   :   :   ProtocolSM.HenqReceivedMsg
+16:51.714   10                20         4    :   :   :   :   : Message.Henqueue
+16:51.714   10                11         6    :   :   :   :   :   Message.Exqueue
+16:51.714   10                 5         5    :   :   :   :   :   : Q1Way.Exq
+16:51.714   10                 5         5    :   :   :   :   :   Q1Way.Henq
+16:51.714   10                 7         7    :   :   :   :   : Message.SetPsm
+16:51.714   10                89        10    :   :   :   :   PotsCallPsm.ProcessIcMsg
+16:51.714   10                 4         4    :   :   :   :   : MediaPsm.UpdateIcMedia
+16:51.714   10                 4         4    :   :   :   :   : ProtocolSM.SetState
+16:51.714   10                20         5    :   :   :   :   : Event.operator new
+16:51.714   10                10         4    :   :   :   :   :   ObjectPool.DeqBlock
+16:51.714   10                 6         6    :   :   :   :   :   : Q1Way.Deq
+16:51.714   10                 5         5    :   :   :   :   :   ProtocolLayer.RootSsm
+16:51.714   10                51         0    :   :   :   :   : AnalyzeMsgEvent.ctor
+16:51.714   10                51         1    :   :   :   :   :   Event.ctor
+16:51.714   10                15         0    :   :   :   :   :   : Pooled.ctor
+16:51.714   10                15         0    :   :   :   :   :   :   Object.ctor
+16:51.714   10                15        15    :   :   :   :   :   :   : Base.ctor
+16:51.714   10                13         8    :   :   :   :   :   : ServiceSM.EnqEvent
+16:51.714   10                 5         5    :   :   :   :   :   :   Q1Way.Enq
+16:51.714   10                22        22    :   :   :   :   :   : Context.RunningContextTraced
+16:51.714   10   +evt             0000029D91BFA5F8              AnalyzeMsgEvent
+16:51.714   10               454        13    :   :   ServiceSM.ProcessEvent
+16:51.714   10               183         8    :   :   : SbAnalyzeMessage.ProcessEvent
+16:51.714   10                15         7    :   :   :   ProxyBcSsm.CalcPort
+16:51.714   10                 8         8    :   :   :   : BcSsm.CalcPort
+16:51.714   10               160         8    :   :   :   PotsBcCiAnalyzeLocalMessage.ProcessEvent
+16:51.714   10                71         5    :   :   :   : PotsBcSsm.StopTimer
+16:51.714   10                 4         4    :   :   :   :   PotsBcSsm.TimerPsm
+16:51.714   10                62         5    :   :   :   :   ProtocolSM.StopTimer
+16:51.714   10                 5         5    :   :   :   :   : ProtocolSM.FindTimer
+16:51.714   10                52         0    :   :   :   :   : C++.delete
+16:51.714   10                27         6    :   :   :   :   :   Timer.dtor
+16:51.714   10                 5         5    :   :   :   :   :   : Context.RunningContextTraced
+16:51.714   10   -tmr             0000029D90B3C448  id=1        secs=10 psm=0000029D8FCCC148
+16:51.714   10                 8         4    :   :   :   :   :   : Timer.Deregister
+16:51.714   10                 4         4    :   :   :   :   :   :   Q2Way.Exq
+16:51.714   10                 8         3    :   :   :   :   :   : Timer.Exqueue
+16:51.714   10                 5         5    :   :   :   :   :   :   Q1Way.Exq
+16:51.714   10                25         5    :   :   :   :   :   Pooled.operator delete
+16:51.714   10                20         5    :   :   :   :   :   : ObjectPool.EnqBlock
+16:51.714   10                15        15    :   :   :   :   :   :   Q1Way.Enq
+16:51.714   10                81         6    :   :   :   : BcSsm.RaiseLocalRelease
+16:51.714   10                14         5    :   :   :   :   PotsBcSsm.SetNextSap
+16:51.714   10                 5         5    :   :   :   :   : PotsStatistics.Incr
+16:51.714   10                 4         4    :   :   :   :   : ServiceSM.SetNextSap
+16:51.714   10                18         4    :   :   :   :   Event.operator new
+16:51.714   10                14         4    :   :   :   :   : ObjectPool.DeqBlock
+16:51.714   10                10        10    :   :   :   :   :   Q1Way.Deq
+16:51.714   10                43         0    :   :   :   :   BcLocalReleaseEvent.ctor
+16:51.714   10                43         0    :   :   :   :   : BcReleaseEvent.ctor
+16:51.714   10                43         0    :   :   :   :   :   BcEvent.ctor
+16:51.714   10                43         1    :   :   :   :   :   : Event.ctor
+16:51.714   10                15         0    :   :   :   :   :   :   Pooled.ctor
+16:51.714   10                15         0    :   :   :   :   :   :   : Object.ctor
+16:51.714   10                15        15    :   :   :   :   :   :   :   Base.ctor
+16:51.714   10                 8         4    :   :   :   :   :   :   ServiceSM.EnqEvent
+16:51.714   10                 4         4    :   :   :   :   :   :   : Q1Way.Enq
+16:51.714   10                19        19    :   :   :   :   :   :   Context.RunningContextTraced
+16:51.714   10   +evt             0000029D91BFA6D8              BcLocalReleaseEvent
+16:51.714   10                 8         8    :   :   : Context.RunningContextTraced
+16:51.714   10  >>evt             0000029D91BFA5F8  continue    AnalyzeMsgEvent >> PotsBcCollectingInformation
+16:51.714   10               178         0    :   :   : C++.delete
+16:51.714   10                28         6    :   :   :   AnalyzeMsgEvent.dtor
+16:51.714   10                22         6    :   :   :   : Event.dtor
+16:51.714   10                 6         6    :   :   :   :   Context.RunningContextTraced
+16:51.714   10   -evt             0000029D91BFA5F8              AnalyzeMsgEvent
+16:51.714   10                10         4    :   :   :   :   ServiceSM.ExqEvent
+16:51.714   10                 6         6    :   :   :   :   : Q1Way.Exq
+16:51.714   10               150         8    :   :   :   Pooled.operator delete
+16:51.714   10                91         5    :   :   :   : ObjectPool.EnqBlock
+16:51.714   10                51        51    :   :   :   :   Q1Way.Enq
+16:51.714   10   +msg             0000029D8F965E78  port=1      PotsProtocol sig=0
+16:51.714   10                 9         4    :   :   :   :   :   :   : ProtocolSM.Port
+16:51.714   10                 5         5    :   :   :   :   :   :   :   MsgPort.Port
+16:51.714   10                35         1    :   :   :   :   Pots_NU_Message.ctor(o/g)
+16:51.714   10                18         0    :   :   :   :   : PotsMessage.ctor(o/g)
+16:51.714   10                18         4    :   :   :   :   :   TlvMessage.ctor(o/g)
+16:51.714   10                14        14    :   :   :   :   :   : TlvMessage.FencePtr
+16:51.714   10                16         5    :   :   :   :   : ProtocolSM.PeerFactory
+16:51.714   10                11         5    :   :   :   :   :   ProtocolSM.Port
+16:51.714   10                 6         6    :   :   :   :   :   : MsgPort.Port
+16:51.714   10                12         6    :   :   :   : PotsCallPsm.SendCause
+16:51.714   10                 6         6    :   :   :   :   PotsCallPsm.SendSignal
+16:51.714   10                21         5    :   :   :   : PotsProfile.SetState
+16:51.714   10                16         5    :   :   :   :   ProtocolSM.Port
+16:51.714   10                11        11    :   :   :   :   : MsgPort.Port
+16:51.714   10                18         6    :   :   :   : BcSsm.ClearCall
+16:51.714   10                12         6    :   :   :   :   BcSsm.SetNextState
+16:51.714   10                 6         6    :   :   :   :   : ServiceSM.SetNextState
+16:51.714   10                14        14    :   :   : Context.RunningContextTraced
+16:51.714   10  >>evt             0000029D91BFA6D8  suspend     BcLocalReleaseEvent >> PotsBcCollectingInformation
+16:51.714   10                58         1    :   :   : C++.delete
+16:51.714   10                39         6    :   :   :   BcLocalReleaseEvent.dtor
+16:51.714   10                33         5    :   :   :   : BcReleaseEvent.dtor
+16:51.714   10                28         4    :   :   :   :   BcEvent.dtor
+16:51.714   10                24         7    :   :   :   :   : Event.dtor
+16:51.714   10                 6         6    :   :   :   :   :   Context.RunningContextTraced
+16:51.714   10   -evt             0000029D91BFA6D8              BcLocalReleaseEvent
+16:51.714   10                11         6    :   :   :   :   :   ServiceSM.ExqEvent
+16:51.714   10                 5         5    :   :   :   :   :   : Q1Way.Exq
+16:51.714   10                18         6    :   :   :   Pooled.operator delete
+16:51.714   10                12         6    :   :   :   : ObjectPool.EnqBlock
+16:51.714   10                 6         6    :   :   :   :   Q1Way.Enq
+16:51.714   10              1048         7    :   :   SsmContext.EndOfTransaction
+16:51.714   10              1028         6    :   :   : PsmContext.EndOfTransaction
+16:51.714   10               210         6    :   :   :   MsgContext.EndOfTransaction
+16:51.714   10               204         6    :   :   :   : Message.Handled
+16:51.714   10                12         6    :   :   :   :   Message.ClearContext
+16:51.714   10                 6         6    :   :   :   :   : Context.SetContextMsg
+16:51.714   10               186         1    :   :   :   :   C++.delete
+16:51.714   10               165         6    :   :   :   :   : Pots_UN_Message.dtor
+16:51.714   10               159         5    :   :   :   :   :   PotsMessage.dtor
+16:51.714   10               154         6    :   :   :   :   :   : TlvMessage.dtor
+16:51.714   10               148         7    :   :   :   :   :   :   Message.dtor
+16:51.714   10                22         7    :   :   :   :   :   :   : Context.RunningContextTraced
+16:51.714   10   -msg             0000029D8F965CE8  port=1      PotsOnhookSignal
+16:51.714   10                 5         5    :   :   :   :   :   :   :   Context.RunningContext
+16:51.714   10                10         5    :   :   :   :   :   :   :   ProtocolSM.Port
+16:51.714   10                 5         5    :   :   :   :   :   :   :   : MsgPort.Port
+16:51.714   10                11         6    :   :   :   :   :   :   : Message.Exqueue
+16:51.714   10                 5         5    :   :   :   :   :   :   :   Q1Way.Exq
+16:51.714   10               108       108    :   :   :   :   :   :   : Message.ClearContext
+16:51.714   10               101         1    :   :   :   :   :   :   :   : C++.delete
+16:51.714   10                72         9    :   :   :   :   :   :   :   :   SbIpBuffer.dtor
+16:51.714   10                63         8    :   :   :   :   :   :   :   :   : IpBuffer.dtor
+16:51.714   10                20         6    :   :   :   :   :   :   :   :   :   Memory.Free
+16:51.714   10                14        14    :   :   :   :   :   :   :   :   :   : SysHeap.Free
+16:51.714   10                16        10    :   :   :   :   :   :   :   :   :   SysIpL3Addr.dtor
+16:51.714   10                 6         6    :   :   :   :   :   :   :   :   :   : SysIpL2Addr.dtor
+16:51.714   10                12         6    :   :   :   :   :   :   :   :   :   SysIpL3Addr.dtor
+16:51.714   10                 6         6    :   :   :   :   :   :   :   :   :   : SysIpL2Addr.dtor
+16:51.714   10                 7         7    :   :   :   :   :   :   :   :   :   MsgBuffer.dtor
+16:51.714   10                28         7    :   :   :   :   :   :   :   :   SbIpBuffer.operator delete
+16:51.714   10                21         7    :   :   :   :   :   :   :   :   : Pooled.operator delete
+16:51.714   10                14         7    :   :   :   :   :   :   :   :   :   ObjectPool.EnqBlock
+16:51.714   10                 7         7    :   :   :   :   :   :   :   :   :   : Q1Way.Enq
+16:51.714   10                20         6    :   :   :   :   : Pooled.operator delete
+16:51.714   10                14         7    :   :   :   :   :   ObjectPool.EnqBlock
+16:51.714   10                 7         7    :   :   :   :   :   : Q1Way.Enq
+16:51.714   10               615         7    :   :   :   MediaPsm.EndOfTransaction
+16:51.714   10               608         9    :   :   :   : ProtocolSM.EndOfTransaction
+16:51.714   10                 7         7    :   :   :   :   MediaPsm.PrepareOgMsgq
+16:51.714   10               176         9    :   :   :   :   PotsCallPsm.ProcessOgMsg
+16:51.714   10                65         8    :   :   :   :   : PotsMessage.AddHeader
+16:51.714   10                 7         7    :   :   :   :   :   Message.SetSignal
+16:51.714   10                50         7    :   :   :   :   :   TlvMessage.AddType
+16:51.714   10                43         8    :   :   :   :   :   : TlvMessage.AddParm
+16:51.714   10                13         7    :   :   :   :   :   :   TlvMessage.CheckFence
+16:51.715   10                 6         6    :   :   :   :   :   :   : TlvMessage.FencePtr
+16:51.715   10                16         9    :   :   :   :   :   :   IpBuffer.AddBytes
+16:51.715   10                 7         7    :   :   :   :   :   :   : SbIpBuffer.PayloadSize
+16:51.715   10                 6         6    :   :   :   :   :   :   TlvMessage.FencePtr
+16:51.715   10                72        15    :   :   :   :   : PotsMessage.AddCause
+16:51.715   10                57        12    :   :   :   :   :   TlvMessage.AddType
+16:51.715   10                45        10    :   :   :   :   :   : TlvMessage.AddParm
+16:51.715   10                15         9    :   :   :   :   :   :   TlvMessage.CheckFence
+16:51.715   10                 6         6    :   :   :   :   :   :   : TlvMessage.FencePtr
+16:51.715   10                13         7    :   :   :   :   :   :   IpBuffer.AddBytes
+16:51.715   10                 6         6    :   :   :   :   :   :   : SbIpBuffer.PayloadSize
+16:51.715   10                 7         7    :   :   :   :   :   :   TlvMessage.FencePtr
+16:51.715   10                 6         6    :   :   :   :   : ProtocolSM.SetState
+16:51.715   10                24         7    :   :   :   :   : ProtocolSM.AddressesUnknown
+16:51.715   10                 5         5    :   :   :   :   :   Message.RxSbAddr
+16:51.715   10                12         5    :   :   :   :   :   ProtocolSM.Port
+16:51.715   10                 7         7    :   :   :   :   :   : MsgPort.Port
+16:51.715   10               416         8    :   :   :   :   ProtocolLayer.SendToLower
+16:51.715   10                 5         5    :   :   :   :   : ProtocolLayer.EnsureLower
+16:51.715   10                 5         5    :   :   :   :   : MsgPort.WrapMsg
+16:51.715   10               398         9    :   :   :   :   : MsgPort.SendMsg
+16:51.715   10                20        20    :   :   :   :   :   Message.SetSender
+16:51.715   10                13         7    :   :   :   :   :   :   SysIpL3Addr.operator=(copy)
+16:51.715   10                 6         6    :   :   :   :   :   :   : SysIpL2Addr.operator=(copy)
+16:51.715   10                20        20    :   :   :   :   :   Message.SetReceiver
+16:51.715   10                12         6    :   :   :   :   :   :   SysIpL3Addr.operator=(copy)
+16:51.715   10                 6         6    :   :   :   :   :   :   : SysIpL2Addr.operator=(copy)
+16:51.715   10                30         6    :   :   :   :   :   MsgPort.Route
+16:51.715   10                24         7    :   :   :   :   :   : PotsCallPsm.Route
+16:51.715   10                17         6    :   :   :   :   :   :   ProtocolSM.PeerFactory
+16:51.715   10                11         6    :   :   :   :   :   :   : ProtocolSM.Port
+16:51.715   10                 5         5    :   :   :   :   :   :   :   MsgPort.Port
+16:51.715   10               319         7    :   :   :   :   :   TlvMessage.Send
+16:51.715   10                11         6    :   :   :   :   :   : TlvMessage.CheckFence
+16:51.715   10                 5         5    :   :   :   :   :   :   TlvMessage.FencePtr
+16:51.715   10               301         9    :   :   :   :   :   : Message.Send
+16:51.715   10                11         6    :   :   :   :   :   :   ProtocolSM.Port
+16:51.715   10                 5         5    :   :   :   :   :   :   : MsgPort.Port
+16:51.715   10                11         6    :   :   :   :   :   :   Message.Exqueue
+16:51.715   10                 5         5    :   :   :   :   :   :   : Q1Way.Exq
+16:51.715   10               142         7    :   :   :   :   :   :   IpBuffer.Send
+16:51.715   10                 9         9    :   :   :   :   :   :   : SbIpBuffer.PayloadSize
+16:51.715   10               126         8    :   :   :   :   :   :   : SysUdpSocket.SendBuff
+16:51.715   10                14         7    :   :   :   :   :   :   :   IpBuffer.OutgoingBytes
+16:51.715   10                 7         7    :   :   :   :   :   :   :   : SbIpBuffer.PayloadSize
+16:51.715   10                74         8    :   :   :   :   :   :   :   SysUdpSocket.SendTo
+16:51.715   10                66        66    :   :   :   :   :   :   :   : SysSocket.SetBlocking
+16:51.715   10                24        24    :   :   :   :   :   :   :   SysSocket.TracePeer
+16:51.715   10  usend             0000029D8D3373C0  sent=16 port=40002 peer=192.168.0.11: 40001
+16:51.715   10                18         0    :   :   :   :   :   :   :   :   SysIpL3Addr.ctor(copy)
+16:51.715   10                18         0    :   :   :   :   :   :   :   :   : SysIpL2Addr.ctor(copy)
+16:51.715   10                18         0    :   :   :   :   :   :   :   :   :   Object.ctor
+16:51.715   10                18        18    :   :   :   :   :   :   :   :   :   : Base.ctor
+16:51.715   10                 6         6    :   :   :   :   :   :   :   IpPort.BytesSent
+16:51.715   10                 4         4    :   :   :   :   :   :   Context.RunningContext
+16:51.715   10               124       124    :   :   :   :   :   :   Context.TraceMsg
+16:51.715   10  <<msg             0000029D8F965E78  port=1      PotsReleaseSignal
+16:51.715   10  ogmsg  
+--------------------------------------------------------------------------------
+factory=7 (PotsCallFactory)
+  SessionBase.SbIpBuffer
+  this : 0000029D91C6B368
+  patchArea : 0x0
+  pid      : 4
+  seq      : 1
+  link     : 0000000000000000
+  assigned : true
+  orphaned : 0
+  corrupt  : false
+  logged   : false
+  rxTicks : 459841882269
+  buff     : 0000029D8D147EF0
+  hdrSize  : 24
+  buffSize : 40
+  txAddr   : 192.168.0.11: 40002
+  rxAddr   : 192.168.0.11: 40001
+  dir      : 1
+  external : true
+  queued   : false
+  length   : 16
+    00: 01 00 00 00 01 07 07 00 - 00 00 00 00 00 00 06 00  ................
+    01: 00 00 04 00 0b 00 10 00 - 02 00 04 00 0b 00 0b 00  ................
+    02: 07 00 01 00 04 00 00 00 -                          ........
+  MsgHeader:
+    txAddr : bid=1  seq=1  pid=7  fid=7
+    rxAddr : bid=0  seq=0  pid=0  fid=6
+    priority=0  initial=0  final=0  join=0  self=0
+  injected=0  kill=0  route=0  length=16  spare=0x0
+    protocol=4 (PotsProtocol)  signal=11 (PotsReleaseSignal)
+  Parameters:
+    PotsHeaderParameter
+      signal : 11 (PotsReleaseSignal)
+      port   : 11 (POTS 20000)
+    PotsCauseParameter
+      cause : 4 (Normal Call Clearing)
+--------------------------------------------------------------------------------
+16:51.715   10                18         6    :   :   :   :   :   :   :   :   :   Context.RunningContextTraced
+16:51.715   10   -msg             0000029D8F965E78  port=1      PotsReleaseSignal
+16:51.715   10                 4         4    :   :   :   :   :   :   :   :   :   : Context.RunningContext
+16:51.715   10                 8         4    :   :   :   :   :   :   :   :   :   : ProtocolSM.Port
+16:51.715   10                 4         4    :   :   :   :   :   :   :   :   :   :   MsgPort.Port
+16:51.715   10                 4         4    :   :   :   :   :   :   :   :   :   Message.Exqueue
+16:51.715   10                69        69    :   :   :   :   :   :   :   :   :   Message.ClearContext
+16:51.715   10                64         1    :   :   :   :   :   :   :   :   :   :   C++.delete
+16:51.715   10                43         4    :   :   :   :   :   :   :   :   :   :   : SbIpBuffer.dtor
+16:51.715   10                39         6    :   :   :   :   :   :   :   :   :   :   :   IpBuffer.dtor
+16:51.715   10                10         5    :   :   :   :   :   :   :   :   :   :   :   : Memory.Free
+16:51.715   10                 5         5    :   :   :   :   :   :   :   :   :   :   :   :   SysHeap.Free
+16:51.715   10                 9         4    :   :   :   :   :   :   :   :   :   :   :   : SysIpL3Addr.dtor
+16:51.715   10                 5         5    :   :   :   :   :   :   :   :   :   :   :   :   SysIpL2Addr.dtor
+16:51.715   10                 9         5    :   :   :   :   :   :   :   :   :   :   :   : SysIpL3Addr.dtor
+16:51.715   10                 4         4    :   :   :   :   :   :   :   :   :   :   :   :   SysIpL2Addr.dtor
+16:51.715   10                 5         5    :   :   :   :   :   :   :   :   :   :   :   : MsgBuffer.dtor
+16:51.715   10                20         5    :   :   :   :   :   :   :   :   :   :   : SbIpBuffer.operator delete
+16:51.715   10                15         6    :   :   :   :   :   :   :   :   :   :   :   Pooled.operator delete
+16:51.715   10                 9         4    :   :   :   :   :   :   :   :   :   :   :   : ObjectPool.EnqBlock
+16:51.715   10                 5         5    :   :   :   :   :   :   :   :   :   :   :   :   Q1Way.Enq
+16:51.715   10                14         5    :   :   :   :   :   :   :   Pooled.operator delete
+16:51.715   10                 9         4    :   :   :   :   :   :   :   : ObjectPool.EnqBlock
+16:51.715   10                 5         5    :   :   :   :   :   :   :   :   Q1Way.Enq
+16:51.715   10               197         5    :   :   :   ProtocolSM.Destroy
+16:51.715   10                 5         5    :   :   :   : ProtocolSM.SendFinal
+16:51.715   10               187         0    :   :   :   : C++.delete
+16:51.715   10               174         4    :   :   :   :   PotsCallPsm.dtor
+16:51.715   10               170         4    :   :   :   :   : MediaPsm.dtor
+16:51.715   10               166         8    :   :   :   :   :   ProtocolSM.dtor
+16:51.715   10                12         5    :   :   :   :   :   : Context.RunningContextTraced
+16:51.715   10   -psm             0000029D8FCCC148  port=1      PotsCallFactory
+16:51.715   10                 7         4    :   :   :   :   :   :   ProtocolSM.Port
+16:51.715   10                 3         3    :   :   :   :   :   :   : MsgPort.Port
+16:51.715   10                 3         3    :   :   :   :   :   : Q1Way.Purge
+16:51.715   10                 3         3    :   :   :   :   :   : Q1Way.Purge
+16:51.715   10                 3         3    :   :   :   :   :   : Q1Way.Purge
+16:51.715   10                 4         4    :   :   :   :   :   : Q1Way.Purge
+16:51.715   10                 9         4    :   :   :   :   :   : PsmContext.ExqPsm
+16:51.715   10                 5         5    :   :   :   :   :   :   Q1Way.Exq
+16:51.715   10                47         6    :   :   :   :   :   : PotsBcSsm.PsmDeleted
+16:51.715   10                 4         4    :   :   :   :   :   :   PotsCallPsm.Cast
+16:51.715   10                17         5    :   :   :   :   :   :   PotsProfile.ClearObjAddr(psm)
+16:51.715   10                 7         3    :   :   :   :   :   :   : ProtocolSM.Port
+16:51.715   10                 4         4    :   :   :   :   :   :   :   MsgPort.Port
+16:51.715   10                 5         5    :   :   :   :   :   :   : PotsProfile.ClearObjAddr(addr)
+16:51.715   10                20         5    :   :   :   :   :   :   ProxyBcSsm.PsmDeleted
+16:51.715   10                15         5    :   :   :   :   :   :   : BcSsm.PsmDeleted
+16:51.715   10                10         5    :   :   :   :   :   :   :   MediaSsm.PsmDeleted
+16:51.715   10                 5         5    :   :   :   :   :   :   :   : ServiceSM.PsmDeleted
+16:51.715   10                77         4    :   :   :   :   :   : ProtocolLayer.dtor
+16:51.715   10                73         5    :   :   :   :   :   :   MsgPort.AdjacentDeleted
+16:51.715   10                 4         4    :   :   :   :   :   :   : ProtocolLayer.AdjacentDeleted
+16:51.715   10                64         2    :   :   :   :   :   :   : C++.delete
+16:51.715   10                49         6    :   :   :   :   :   :   :   MsgPort.dtor
+16:51.715   10                 5         5    :   :   :   :   :   :   :   : Context.RunningContextTraced
+16:51.715   10  -port             0000029D8F479158  port=1      PotsCallFactory
+16:51.715   10                 8         4    :   :   :   :   :   :   :   : PsmContext.ExqPort
+16:51.715   10                 4         4    :   :   :   :   :   :   :   :   Q1Way.Exq
+16:51.715   10                13         4    :   :   :   :   :   :   :   : GlobalAddress.dtor
+16:51.715   10                 9         5    :   :   :   :   :   :   :   :   SysIpL3Addr.dtor
+16:51.715   10                 4         4    :   :   :   :   :   :   :   :   : SysIpL2Addr.dtor
+16:51.715   10                13         5    :   :   :   :   :   :   :   : GlobalAddress.dtor
+16:51.715   10                 8         4    :   :   :   :   :   :   :   :   SysIpL3Addr.dtor
+16:51.715   10                 4         4    :   :   :   :   :   :   :   :   : SysIpL2Addr.dtor
+16:51.715   10                 4         4    :   :   :   :   :   :   :   : ProtocolLayer.dtor
+16:51.715   10                13         4    :   :   :   :   :   :   :   Pooled.operator delete
+16:51.715   10                 9         4    :   :   :   :   :   :   :   : ObjectPool.EnqBlock
+16:51.715   10                 5         5    :   :   :   :   :   :   :   :   Q1Way.Enq
+16:51.715   10                13         4    :   :   :   :   Pooled.operator delete
+16:51.715   10                 9         4    :   :   :   :   : ObjectPool.EnqBlock
+16:51.715   10                 5         5    :   :   :   :   :   Q1Way.Enq
+16:51.715   10                13         5    :   :   : ProxyBcSsm.EndOfTransaction
+16:51.715   10                 4         4    :   :   :   ProxyBcSsm.FirstProxy
+16:51.715   10                 4         4    :   :   :   ServiceSM.EndOfTransaction
+16:51.715   10                69         1    :   :   C++.delete
+16:51.715   10                56         5    :   :   : PotsBcSsm.dtor
+16:51.715   10                 3         3    :   :   :   PotsCallPsm.Cast
+16:51.715   10                48         3    :   :   :   ProxyBcSsm.dtor
+16:51.715   10                45         4    :   :   :   : BcSsm.dtor
+16:51.715   10                41         4    :   :   :   :   MediaSsm.dtor
+16:51.715   10                37         5    :   :   :   :   : RootServiceSM.dtor
+16:51.715   10                 4         4    :   :   :   :   :   SsmContext.SetRoot
+16:51.715   10                28         7    :   :   :   :   :   ServiceSM.dtor
+16:51.715   10                 5         5    :   :   :   :   :   : Context.RunningContextTraced
+16:51.715   10   -ssm             0000029D90F641D8              PotsBcService
+16:51.715   10                 3         3    :   :   :   :   :   : Q1Way.Purge
+16:51.715   10                 3         3    :   :   :   :   :   : Q1Way.Purge
+16:51.715   10                 3         3    :   :   :   :   :   : Q1Way.Purge
+16:51.715   10                 7         7    :   :   :   :   :   : Q1Way.Purge
+16:51.715   10                12         4    :   :   : Pooled.operator delete
+16:51.715   10                 8         4    :   :   :   ObjectPool.EnqBlock
+16:51.715   10                 4         4    :   :   :   : Q1Way.Enq
+16:51.715   10                 4         4    :   : Context.SetContextMsg
+16:51.715   10                 3         3    :   : SsmContext.IsIdle
+16:51.715   10                47         1    :   : C++.delete
+16:51.715   10                34         3    :   :   SsmContext.dtor
+16:51.715   10                31         5    :   :   : PsmContext.dtor
+16:51.715   10                 3         3    :   :   :   Q1Way.Purge
+16:51.715   10                23         3    :   :   :   MsgContext.dtor
+16:51.715   10                20         6    :   :   :   : Context.dtor
+16:51.715   10                 3         3    :   :   :   :   Q1Way.Purge
+16:51.715   10                 3         3    :   :   :   :   Q1Way.Purge
+16:51.715   10                 4         4    :   :   :   :   Context.Exqueue
+16:51.715   10                 4         4    :   :   :   :   InvokerThread.ClearContext
+16:51.715   10                12         4    :   :   Pooled.operator delete
+16:51.715   10                 8         4    :   :   : ObjectPool.EnqBlock
+16:51.715   10                 4         4    :   :   :   Q1Way.Enq
+16:51.715   10                16         4    : InvokerThread.ClearContext
+16:51.715   10                12         4    :   Thread.PauseOver
+16:51.715   10                 8         4    :   : Thread.RtcPercentUsed
+16:51.715   10                 4         4    :   :   Thread.RunningThread
+16:51.715   10                 3         3    : Thread.RunningThread
+16:51.715   10                45         8    : InvokerPool.FindWork
+16:51.715   10                 2         2    :   :   Thread.RunningThread
+16:51.715   10                37         4    :   Thread.Pause (msecs=4294967295)
+16:51.715   10                 4         4    :   : Thread.RunningThread
+16:51.715   10                29         4    :   : Thread.EnterBlockingOperation
+16:51.715   10                 4         4    :   :   Thread.RunningThread
+16:51.715   10                11         5    :   :   InvokerThread.BlockingAllowed
+16:51.715   10                 4         4    :   :   : Context.SetContextMsg
+16:51.715   10                 2         2    :   :   : InvokerPool.ScheduledOut
+16:51.715   10  -lock         10         4    :   :   Thread.Unlock
+16:51.715   10                 6         6    :   :   : Thread.LogContextSwitch
+16:51.715   10                 0         0    :   :   : SysMutex.Release
+16:51.716   14                10         6    : SysMutex.Acquire
+16:51.716   14                 4         4    :   Thread.InitialMsecs
+16:51.716   14                 0         0    :   ThreadAdmin.WarpFactor
+16:51.716   14  +lock        415         6  UdpIoThread.Enter
+16:51.716   14                 7         3    Thread.ExitBlockingOperation
+16:51.716   14                 4         4    : Thread.ResumeLocked
+16:51.716   14                20        20    SysSocket.TracePeer
+16:51.716   14  urecv             0000029D8D337A00  rcvd=16 port=40001 peer=192.168.0.11: 40002
+16:51.716   14                15         0    :   SysIpL3Addr.ctor(copy)
+16:51.716   14                15         0    :   : SysIpL2Addr.ctor(copy)
+16:51.716   14                15         0    :   :   Object.ctor
+16:51.716   14                15        15    :   :   : Base.ctor
+16:51.716   14                 5         5    IpPort.BytesRcvd
+16:51.716   14               295         7    IoThread.InvokeHandler
+16:51.716   14                97         4    : SbExtInputHandler.AllocBuff
+16:51.716   14                14         5    :   SbIpBuffer.operator new
+16:51.716   14                 9         4    :   : ObjectPool.DeqBlock
+16:51.716   14                 5         5    :   :   Q1Way.Deq
+16:51.716   14                79         1    :   SbIpBuffer.ctor
+16:51.716   14                75         2    :   : IpBuffer.ctor
+16:51.716   14                21         0    :   :   MsgBuffer.ctor
+16:51.716   14                21         0    :   :   : Pooled.ctor
+16:51.716   14                21         0    :   :   :   Object.ctor
+16:51.716   14                21        21    :   :   :   : Base.ctor
+16:51.716   14                15         0    :   :   SysIpL3Addr.ctor
+16:51.716   14                15         0    :   :   : SysIpL2Addr.ctor
+16:51.716   14                15         0    :   :   :   Object.ctor
+16:51.716   14                15        15    :   :   :   : Base.ctor
+16:51.716   14                18         0    :   :   SysIpL3Addr.ctor
+16:51.716   14                18         0    :   :   : SysIpL2Addr.ctor
+16:51.716   14                18         0    :   :   :   Object.ctor
+16:51.716   14                18        18    :   :   :   : Base.ctor
+16:51.716   14                 3         3    :   :   IpBuffer.BuffSize
+16:51.716   14                16         4    :   :   Memory.Alloc
+16:51.716   14                12        12    :   :   : SysHeap.Alloc
+16:51.716   14                 3         3    :   : MsgHeader.ctor
+16:51.716   14                24         5    : Memory.Copy
+16:51.716   14                 7         4    :   SysIpL3Addr.operator=(copy)
+16:51.716   14                 3         3    :   : SysIpL2Addr.operator=(copy)
+16:51.716   14                12         5    :   SysIpL3Addr.operator=(copy)
+16:51.716   14                 7         7    :   : SysIpL2Addr.operator=(copy)
+16:51.716   14               167         7    : PotsShelfHandler.ReceiveBuff
+16:51.716   14               160         7    :   SbInputHandler.ReceiveBuff
+16:51.716   14               153         7    :   : InvokerPool.ReceiveBuff
+16:51.716   14               146         9    :   :   PotsShelfFactory.AllocIcMsg
+16:51.716   14                78        32    :   :   : Message.operator new
+16:51.716   14  RXNET        219  0000029D8D3A5640  fac         PotsShelfFactory
+16:51.716   14  icmsg  
+--------------------------------------------------------------------------------
+factory=6 (PotsShelfFactory)
+  SessionBase.SbIpBuffer
+  this : 0000029D91C6B400
+  patchArea : 0x0
+  pid      : 4
+  seq      : 1
+  link     : 0000000000000000
+  assigned : true
+  orphaned : 0
+  corrupt  : false
+  logged   : false
+  rxTicks : 459841886580
+  buff     : 0000029D8FB95D10
+  hdrSize  : 24
+  buffSize : 40
+  txAddr   : 192.168.0.11: 40002
+  rxAddr   : 192.168.0.11: 40001
+  dir      : 0
+  external : false
+  queued   : false
+  length   : 16
+    00: 00 00 00 00 00 00 07 00 - 00 00 00 00 00 00 06 00  ................
+    01: 0a 00 04 00 0b 00 10 00 - 02 00 04 00 0b 00 0b 00  ................
+    02: 07 00 01 00 04 00 00 00 -                          ........
+  MsgHeader:
+    txAddr : bid=0  seq=0  pid=0  fid=7
+    rxAddr : bid=0  seq=0  pid=0  fid=6
+    priority=2  initial=0  final=1  join=0  self=0
+  injected=0  kill=0  route=0  length=16  spare=0x0
+    protocol=4 (PotsProtocol)  signal=11 (PotsReleaseSignal)
+  Parameters:
+    PotsHeaderParameter
+      signal : 11 (PotsReleaseSignal)
+      port   : 11 (POTS 20000)
+    PotsCauseParameter
+      cause : 4 (Normal Call Clearing)
+--------------------------------------------------------------------------------
+16:51.716   14                29         9    :   :   :   Context.EnqMsg
+16:51.716   14                20        10    :   :   :   : Message.Enqueue
+16:51.716   14                10        10    :   :   :   :   Q1Way.Enq
+16:51.716   14                17        17    :   :   :   MsgFactory.CaptureMsg
+16:51.716   14   +msg             0000029D8F966008              PotsReleaseSignal
+16:51.716   14                 8         8    :   :   :   :   Context.RunningContext
+16:51.716   14                 7         7    :   :   : Factory.RecordMsg
+16:51.716   14                22         7    :   :   : Context.Enqueue
+16:51.716   14                 8         8    :   :   :   Q2Way.Enq
+16:51.716   14                 7         7    :   :   :   InvokerPool.Enqueued
+16:51.716   14                30         8    :   :   : InvokerPool.KickThread
+16:51.716   14                22         9    :   :   :   Thread.Interrupt
+16:51.716   14                13        13    :   :   :   : SysThread.Interrupt
+16:51.716   14                20         7    IoThread.ConditionalPause
+16:51.716   14                13         7    : Thread.RtcPercentUsed
+16:51.716   14                 6         6    :   Thread.RunningThread
+16:51.716   14                18        18    SysSocket.Empty
+16:51.716   14                 7         7    IpPort.RecvsInSequence
+16:51.716   14                10        10    SysSocket.SetBlocking
+16:51.716   14                27         8    Thread.EnterBlockingOperation
+16:51.716   14                 3         3    : Thread.RunningThread
+16:51.716   14  -lock         16         7    : Thread.Unlock
+16:51.716   14                 9         9    :   Thread.LogContextSwitch
+16:51.716   14                 0         0    :   SysMutex.Release
+16:51.716   10                26        17    :   :   SysMutex.Acquire
+16:51.716   10                 9         9    :   :   : Thread.InitialMsecs
+16:51.716   10                 0         0    :   :   : ThreadAdmin.WarpFactor
+16:51.716   10  +lock         22         0    :   Thread.Pause
+16:51.716   10                22         6    :   : Thread.ExitBlockingOperation
+16:51.716   10                16         7    :   :   Thread.ResumeLocked
+16:51.716   10                 9         6    :   :   : InvokerThread.ScheduledIn
+16:51.716   10                 3         3    :   :   :   Context.SetContextMsg
+16:51.716   10                11        11    :   Thread.Pause (interrupted)
+16:51.716   10                 6         6    : Thread.RunningThread
+16:51.716   10                32         7    : InvokerPool.FindWork
+16:51.716   10                25         7    :   Context.Exqueue
+16:51.716   10                 6         6    :   : Q2Way.Exq
+16:51.716   10                 6         6    :   : Context.SetState
+16:51.716   10                 6         6    :   : InvokerPool.Dequeued
+16:51.716   10                15         7    : InvokerThread.SetContext
+16:51.716   10                 8         8    :   Context.SetState
+16:51.716   10               374         9    : Context.ProcessWork
+16:51.716   10               365         9    :   Context.ProcessMsg
+16:51.716   10                 7         7    :   : Context.SetContextMsg
+16:51.716   10                47        47    :   : Context.CaptureTask
+16:51.716   10  TRANS        337  0000029D8D3A5640  fac prio=2  PotsReleaseSignal
+16:51.716   10                 9         9    :   :   : Message.RxFactory
+16:51.716   10  >>msg             0000029D8F966008              PotsReleaseSignal
+16:51.716   10                 7         7    :   :   : Context.RunningContext
+16:51.716   10                 6         6    :   :   : Message.RxSbAddr
+16:51.716   10                 9         9    :   :   : Message.TxSbAddr
+16:51.716   10               101         4    :   : MsgContext.ProcessIcMsg
+16:51.716   10                 4         4    :   :   Message.RxFactory
+16:51.716   10                 5         5    :   :   Context.TraceMsg
+16:51.716   10                88         5    :   :   PotsShelfFactory.ProcessIcMsg
+16:51.716   10                14         5    :   :   : TlvMessage.FindType
+16:51.716   10                 9         4    :   :   :   TlvMessage.FindParm
+16:51.716   10                 5         5    :   :   :   : TlvMessage.FirstParm
+16:51.716   10                69         6    :   :   : PotsCircuit.ReceiveMsg
+16:51.716   10                20         7    :   :   :   TlvMessage.FindType
+16:51.716   10                13         6    :   :   :   : TlvMessage.FindParm
+16:51.716   10                 7         7    :   :   :   :   TlvMessage.FirstParm
+16:51.716   10                28         7    :   :   :   TlvMessage.FindType
+16:51.716   10                21         7    :   :   :   : TlvMessage.FindParm
+16:51.716   10                 6         6    :   :   :   :   TlvMessage.FirstParm
+16:51.716   10                 8         8    :   :   :   :   TlvMessage.NextParm
+16:51.716   10                 7         7    :   :   :   PotsCircuit.SetState
+16:51.716   10                 8         8    :   :   :   Circuit.MakeConn
+16:51.716   10               201         1    :   : C++.delete
+16:51.716   10               187        11    :   :   Pots_NU_Message.dtor
+16:51.716   10               150         6    :   :   : PotsMessage.dtor
+16:51.716   10               144         5    :   :   :   TlvMessage.dtor
+16:51.716   10               139         7    :   :   :   : Message.dtor
+16:51.716   10                15         9    :   :   :   :   Context.RunningContextTraced
+16:51.716   10   -msg             0000029D8F966008              PotsReleaseSignal
+16:51.717   10                 6         6    :   :   :   :   : Context.RunningContext
+16:51.717   10                13         6    :   :   :   :   Message.Exqueue
+16:51.717   10                 7         7    :   :   :   :   : Q1Way.Exq
+16:51.717   10               104         6    :   :   :   :   Message.ClearContext
+16:51.717   10                98         8    :   :   :   :   : Context.SetContextMsg
+16:51.717   10                90         0    :   :   :   :   :   C++.delete
+16:51.717   10                63         6    :   :   :   :   :   : SbIpBuffer.dtor
+16:51.717   10                57         7    :   :   :   :   :   :   IpBuffer.dtor
+16:51.717   10                16         7    :   :   :   :   :   :   : Memory.Free
+16:51.717   10                 9         9    :   :   :   :   :   :   :   SysHeap.Free
+16:51.717   10                14         7    :   :   :   :   :   :   : SysIpL3Addr.dtor
+16:51.717   10                 7         7    :   :   :   :   :   :   :   SysIpL2Addr.dtor
+16:51.717   10                13         8    :   :   :   :   :   :   : SysIpL3Addr.dtor
+16:51.717   10                 5         5    :   :   :   :   :   :   :   SysIpL2Addr.dtor
+16:51.717   10                 7         7    :   :   :   :   :   :   : MsgBuffer.dtor
+16:51.717   10                27         8    :   :   :   :   :   : SbIpBuffer.operator delete
+16:51.717   10                19         8    :   :   :   :   :   :   Pooled.operator delete
+16:51.717   10                11        11    :   :   :   :   :   :   : ObjectPool.EnqBlock
+16:51.717   10                26         9    :   :   : Context.dtor
+16:51.717   10                 5         5    :   :   :   Q1Way.Purge
+16:51.717   10                 3         3    :   :   :   Q1Way.Purge
+16:51.717   10                 4         4    :   :   :   Context.Exqueue
+16:51.717   10                 5         5    :   :   :   InvokerThread.ClearContext
+16:51.717   10                13         5    :   :   Pooled.operator delete
+16:51.717   10                 8         4    :   :   : ObjectPool.EnqBlock
+16:51.717   10                 4         4    :   :   :   Q1Way.Enq
+16:51.717   10                16         4    : InvokerThread.ClearContext
+16:51.717   10                12         4    :   Thread.PauseOver
+16:51.717   10                 8         4    :   : Thread.RtcPercentUsed
+16:51.717   10                 4         4    :   :   Thread.RunningThread
+16:51.717   10                 4         4    : Thread.RunningThread
+16:51.717   10                44         7    : InvokerPool.FindWork
+16:51.717   10                 1         1    :   :   Thread.RunningThread
+16:51.717   10                37         4    :   Thread.Pause (msecs=4294967295)
+16:51.717   10                 4         4    :   : Thread.RunningThread
+16:51.717   10                29         4    :   : Thread.EnterBlockingOperation
+16:51.717   10                 4         4    :   :   Thread.RunningThread
+16:51.717   10                11         5    :   :   InvokerThread.BlockingAllowed
+16:51.717   10                 4         4    :   :   : Context.SetContextMsg
+16:51.717   10                 2         2    :   :   : InvokerPool.ScheduledOut
+16:51.717   10  -lock         10         4    :   :   Thread.Unlock
+16:51.717   10                 6         6    :   :   : Thread.LogContextSwitch
+16:51.717   10                 0         0    :   :   : SysMutex.Release
+END OF TRACE

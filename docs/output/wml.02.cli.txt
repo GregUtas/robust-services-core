@@ -1,0 +1,48 @@
+pots>start
+  OK.
+pots>subscribe &dn.A wml &dn.B 6
+  OK.
+pots>/ A: PARTIAL DIAL (WML ACTIVATED)
+pots>inject PS B &port.A
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.A 2
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.A 0
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS E &port.A
+  OK.
+pots>delay 1
+  OK.
+pots>verify PS S &port.A s=d m=&port.dial
+  OK.
+pots>verify PS S &port.A m=&port.silence
+  OK.
+pots>verify PS R &port.A &cause.normal
+  OK.
+pots>unsubscribe &dn.A wml
+  OK.
+pots>testcase end
+  OK.
+read test.cp.epilog
+pots>stop
+  OK.
+pots>contexts c
+  0
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+  Result is false.
+pots>save trace &testcase.name
+  OK.
+pots>save funcs &testcase.name
+  OK.
+pots>st save msc &testcase.name
+  OK.
+pots>clear buffer
+  OK.
+pots>send cout
+  OK.

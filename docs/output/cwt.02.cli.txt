@@ -1,0 +1,184 @@
+pots>start
+  OK.
+pots>/ 2A
+pots>read cwt.Nd2Tmr
+pots>/ NOTIFIED: RENOTIFY
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.cwt
+  OK.
+pots>/ 2B
+pots>read cwt.Rf2Tmr
+pots>/ RENOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+  OK.
+pots>/ 2C
+pots>read cwt.Rd2Fls
+pots>/ RENOTIFIED 2: FLASH (ANSWER)
+pots>inject PS L &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PC B &port.A m=&port.A
+  OK.
+pots>verify PC P &port.A &prog.media m=&port.held
+  OK.
+pots>verify PS S &port.A m=&port.silence
+  OK.
+pots>verify PM S &port.A r=f m=&port.C
+  OK.
+pots>verify PS S &port.A m=&port.C
+  OK.
+pots>verify PS S &port.C m=&port.A
+  OK.
+pots>verify PS S &port.B m=&port.held
+  OK.
+pots>/ 2D
+pots>read cwt.AdAFls
+pots>/ FLASH (FLIP TO ORIGINAL)
+pots>inject PS L &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.A m=&port.B
+  OK.
+pots>verify PC P &port.A &prog.media m=&port.held
+  OK.
+pots>verify PC P &port.A &prog.media m=&port.A
+  OK.
+pots>verify PS S &port.C m=&port.held
+  OK.
+pots>verify PS S &port.B m=&port.A
+  OK.
+pots>/ 2E
+pots>read cwt.AdHFls
+pots>/ FLASH (FLIP TO WAITING)
+pots>inject PS L &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PC P &port.A 5 m=&port.A
+  OK.
+pots>verify PC P &port.A 5 m=&port.held
+  OK.
+pots>verify PS S &port.A m=&port.C
+  OK.
+pots>verify PS S &port.C m=&port.A
+  OK.
+pots>verify PS S &port.B m=&port.held
+  OK.
+pots>/ 2F
+pots>read cwt.MuxSus
+pots>/ ONHOOK (SUSPEND)
+pots>inject PS E &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PC E &port.A
+  OK.
+pots>/ 2G
+pots>read cwt.MuxRes
+pots>/ OFFHOOK (RESUME)
+pots>inject PS B &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PC B &port.A
+  OK.
+pots>/ 2D (REPEATED)
+pots>read cwt.AdAFls
+pots>/ FLASH (FLIP TO ORIGINAL)
+pots>inject PS L &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.A m=&port.B
+  OK.
+pots>verify PC P &port.A &prog.media m=&port.held
+  OK.
+pots>verify PC P &port.A &prog.media m=&port.A
+  OK.
+pots>verify PS S &port.C m=&port.held
+  OK.
+pots>verify PS S &port.B m=&port.A
+  OK.
+pots>/ 2H
+pots>read cwt.AdHExA
+pots>/ ORIGINAL ACTIVE: ONHOOK A (RERING)
+pots>inject PS E &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PC E &port.A
+  OK.
+pots>verify PM R &port.A &cause.normal
+  OK.
+pots>verify PS S &port.A r=t m=&port.silence
+  OK.
+pots>verify PS S &port.B m=&port.silence c=&cause.normal
+  OK.
+pots>/ 2I
+pots>read cwt.Nu0ExB
+pots>/ NULL 0: IDLE B
+pots>inject PS E &port.B
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS R &port.B &cause.normal
+  OK.
+pots>/ 2J
+pots>read cwt.ReCOff
+pots>/ C RERINGING: REANSWER
+pots>inject PS B &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.A r=f s=x m=&port.C
+  OK.
+pots>verify PC F &port.A f &service.cwb &facility.cwt.reanswered m=&port.A
+  OK.
+pots>verify PS S &port.C m=&port.A
+  OK.
+pots>/ 2K
+pots>read cwt.MuxSus
+pots>/ ONHOOK (SUSPEND)
+pots>inject PS E &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PC E &port.A
+  OK.
+pots>/ IDLE C (A SUSPENDED)
+pots>inject PS E &port.C
+  OK.
+pots>delay 1
+  OK.
+pots>verify PS R &port.C &cause.normal
+  OK.
+pots>verify PM R &port.A &cause.normal
+  OK.
+pots>verify PS R &port.A &cause.normal
+  OK.
+pots>delay 2
+  OK.
+pots>testcase end
+  OK.
+read test.cp.epilog
+pots>stop
+  OK.
+pots>contexts c
+  0
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+  Result is false.
+pots>save trace &testcase.name
+  OK.
+pots>save funcs &testcase.name
+  OK.
+pots>st save msc &testcase.name
+  OK.
+pots>clear buffer
+  OK.
+pots>send cout
+  OK.

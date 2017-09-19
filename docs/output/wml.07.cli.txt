@@ -1,0 +1,92 @@
+pots>start
+  OK.
+pots>subscribe &dn.A wml &dn.B 6
+  OK.
+pots>/ A: WML DEACTIVATION
+pots>inject PS B &port.A
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.A &sc.wml.deactivation
+  OK.
+pots>delay 2
+  OK.
+pots>inject PS E &port.A
+  OK.
+pots>delay 1
+  OK.
+pots>verify PS S &port.A s=d m=&port.dial
+  OK.
+pots>verify PS S &port.A s=x m=&port.conf c=&cause.confirmation
+  OK.
+pots>verify PS R &port.A &cause.normal
+  OK.
+pots>contexts c
+  0
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+  Result is false.
+pots>/ A: WML ACTIVATION ERROR
+pots>inject PS B &port.A
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.A &sc.wml.activation
+  OK.
+pots>delay 2
+  OK.
+pots>inject PS D &port.A &sc.wml.deactivation
+  OK.
+pots>delay 2
+  OK.
+pots>inject PS E &port.A
+  OK.
+pots>delay 1
+  OK.
+pots>verify PS S &port.A s=d m=&port.dial
+  OK.
+pots>verify PS S &port.A s=d m=&port.stutter
+  OK.
+pots>verify PS S &port.A s=x m=&port.reorder c=&cause.invalidaddress
+  OK.
+pots>verify PS R &port.A &cause.normal
+  OK.
+pots>contexts c
+  0
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+  Result is false.
+pots>/ A: ADDRESS TIMEOUT (WML DEACTIVATED)
+pots>inject PS B &port.A
+  OK.
+pots>delay 12
+  OK.
+pots>inject PS E &port.A
+  OK.
+pots>delay 1
+  OK.
+pots>verify PS S &port.A s=d m=&port.dial
+  OK.
+pots>verify PS S &port.A s=x m=&port.reorder c=&cause.addresstimeout
+  OK.
+pots>verify PS R &port.A &cause.normal
+  OK.
+pots>unsubscribe &dn.A wml
+  OK.
+pots>testcase end
+  OK.
+read test.cp.epilog
+pots>stop
+  OK.
+pots>contexts c
+  0
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+  Result is false.
+pots>save trace &testcase.name
+  OK.
+pots>save funcs &testcase.name
+  OK.
+pots>st save msc &testcase.name
+  OK.
+pots>clear buffer
+  OK.
+pots>send cout
+  OK.

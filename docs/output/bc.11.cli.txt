@@ -1,0 +1,68 @@
+pots>start
+  OK.
+pots>/ A-B: RINGBACK; ANSWER; SUSPEND; RELEASE
+pots>inject PS B &port.A
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.A 2
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.A 0
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.A 001
+  OK.
+pots>delay 2
+  OK.
+pots>inject PS B &port.B
+  OK.
+pots>delay 3
+  OK.
+pots>inject PS E &port.B
+  OK.
+pots>delay 3
+  OK.
+pots>inject PS E &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.A s=d m=&port.dial
+  OK.
+pots>verify PS S &port.A m=&port.silence
+  OK.
+pots>verify PS S &port.A s=x
+  OK.
+pots>verify PS S &port.B r=t
+  OK.
+pots>verify PS S &port.A m=&port.ringback
+  OK.
+pots>verify PS S &port.B r=f m=&port.A
+  OK.
+pots>verify PS S &port.A m=&port.B
+  OK.
+pots>verify PS R &port.A &cause.normal
+  OK.
+pots>verify PS R &port.B &cause.normal
+  OK.
+pots>testcase end
+  OK.
+read test.cp.epilog
+pots>stop
+  OK.
+pots>contexts c
+  0
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+  Result is false.
+pots>save trace &testcase.name
+  OK.
+pots>save funcs &testcase.name
+  OK.
+pots>st save msc &testcase.name
+  OK.
+pots>clear buffer
+  OK.
+pots>send cout
+  OK.

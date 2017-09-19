@@ -1,0 +1,54 @@
+pots>start
+  OK.
+pots>/ INITIATE CWT: DENIED BECAUSE CWT ALREADY ACTIVE
+pots>inject PS B &port.D
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.D &dn.A
+  OK.
+pots>delay 3
+  OK.
+pots>verify PS S &port.D s=d m=&port.dial
+  OK.
+pots>verify PS S &port.D s=x m=&port.silence
+  OK.
+pots>verify PM F &port.A f &service.cwm &facility.req
+  OK.
+pots>verify PC F &port.A f &service.cwb &facility.nack
+  OK.
+pots>verify PM R &port.A &cause.userbusy
+  OK.
+pots>verify PS S &port.D m=&port.busy c=&cause.userbusy
+  OK.
+pots>inject PS E &port.D
+  OK.
+pots>delay 3
+  OK.
+pots>inject PS E &port.A
+  OK.
+pots>inject PS E &port.B
+  OK.
+pots>inject PS E &port.C
+  OK.
+pots>delay 3
+  OK.
+pots>testcase end
+  OK.
+read test.cp.epilog
+pots>stop
+  OK.
+pots>contexts c
+  0
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+  Result is false.
+pots>save trace &testcase.name
+  OK.
+pots>save funcs &testcase.name
+  OK.
+pots>st save msc &testcase.name
+  OK.
+pots>clear buffer
+  OK.
+pots>send cout
+  OK.

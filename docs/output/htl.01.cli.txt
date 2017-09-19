@@ -1,0 +1,54 @@
+pots>start
+  OK.
+pots>subscribe &dn.A htl &dn.B
+  OK.
+pots>/ A-B: HTL USAGE
+pots>inject PS B &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>inject PS B &port.B
+  OK.
+pots>delay 2
+  OK.
+pots>inject PS E &port.B
+  OK.
+pots>delay 3
+  OK.
+pots>inject PS E &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.B r=t
+  OK.
+pots>verify PS S &port.A m=&port.ringback
+  OK.
+pots>verify PS S &port.B r=f m=&port.A
+  OK.
+pots>verify PS S &port.A m=&port.B
+  OK.
+pots>verify PS R &port.A &cause.normal
+  OK.
+pots>verify PS R &port.B &cause.normal
+  OK.
+pots>unsubscribe &dn.A htl
+  OK.
+pots>testcase end
+  OK.
+read test.cp.epilog
+pots>stop
+  OK.
+pots>contexts c
+  0
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+  Result is false.
+pots>save trace &testcase.name
+  OK.
+pots>save funcs &testcase.name
+  OK.
+pots>st save msc &testcase.name
+  OK.
+pots>clear buffer
+  OK.
+pots>send cout
+  OK.

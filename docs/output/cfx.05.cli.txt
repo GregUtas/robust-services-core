@@ -1,0 +1,103 @@
+pots>start
+  OK.
+pots>/ B-A: ANSWER
+pots>read bc.BA
+pots>/ B-A: RINGBACK; ANSWER
+pots>inject PS B &port.B
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.B &dn.A
+  OK.
+pots>delay 2
+  OK.
+pots>inject PS B &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.B s=d m=&port.dial
+  OK.
+pots>verify PS S &port.B s=x m=&port.silence
+  OK.
+pots>verify PS S &port.A r=t
+  OK.
+pots>verify PS S &port.B m=&port.ringback
+  OK.
+pots>verify PS S &port.A r=f m=&port.B
+  OK.
+pots>verify PS S &port.B m=&port.A
+  OK.
+pots>delay 2
+  OK.
+pots>/ C-A(CWT)
+pots>inject PS B &port.C
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.C &dn.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.C s=d m=&port.dial
+  OK.
+pots>verify PS S &port.C s=x m=&port.silence
+  OK.
+pots>verify PM F &port.A f &service.cwm &facility.req
+  OK.
+pots>verify PC F &port.A f &service.cwa &facility.req
+  OK.
+pots>verify PM F &port.A f &service.cwm &facility.ack
+  OK.
+pots>verify PC F &port.A f &service.cwb &facility.ack
+  OK.
+pots>verify PM S &port.A r=t
+  OK.
+pots>verify PS S &port.A s=f m=&port.cwt
+  OK.
+pots>verify PC A &port.A
+  OK.
+pots>verify PS S &port.C m=&port.ringback
+  OK.
+pots>/ CFN TIMEOUT: C-A(CFN)-D
+pots>delay 15
+  OK.
+pots>/ ANSWER D
+pots>inject PS B &port.D
+  OK.
+pots>delay 2
+  OK.
+pots>/* ADD VERIFICATION
+pots>/ IDLE B, A, C, D
+pots>inject PS E &port.B
+  OK.
+pots>inject PS E &port.C
+  OK.
+pots>inject PS E &port.A
+  OK.
+pots>inject PS E &port.D
+  OK.
+pots>delay 2
+  OK.
+pots>contexts c
+  0
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+  Result is false.
+pots>testcase end
+  OK.
+read test.cp.epilog
+pots>stop
+  OK.
+pots>contexts c
+  0
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+  Result is false.
+pots>save trace &testcase.name
+  OK.
+pots>save funcs &testcase.name
+  OK.
+pots>st save msc &testcase.name
+  OK.
+pots>clear buffer
+  OK.
+pots>send cout
+  OK.

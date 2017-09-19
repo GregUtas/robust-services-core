@@ -1,0 +1,76 @@
+pots>start
+  OK.
+pots>/ 3A
+pots>read cwt.Nd2ExB
+pots>/ NOTIFIED 2; IDLE B
+pots>inject PS E &port.B
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS R &port.B &cause.normal
+  OK.
+pots>verify PM R &port.A &cause.normal
+  OK.
+pots>verify PS S &port.A m=&port.silence c=&cause.normal
+  OK.
+pots>/ 3B
+pots>read cwt.Nd2Tmr
+pots>/ NOTIFIED: RENOTIFY
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.cwt
+  OK.
+pots>/ 3C
+pots>read cwt.Nf1Tmr
+pots>/ NOTIFYING 1: STOP CWT TONE
+pots>delay 4
+  OK.
+pots>verify PS S &port.A m=&port.silence
+  OK.
+pots>/ 3D & 3E
+pots>read cwt.Rd1Fls
+pots>/ RENOTIFIED 1: FLASH (ANSWER)
+pots>inject PS L &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PC B &port.A m=&port.A
+  OK.
+pots>/ RING OFF
+pots>verify PM S &port.A r=f m=&port.C
+  OK.
+pots>verify PS S &port.A m=&port.C
+  OK.
+pots>verify PS S &port.A s=x
+  OK.
+pots>verify PC F &port.A f &service.cwb &facility.cwt.answered
+  OK.
+pots>verify PS S &port.C m=&port.A
+  OK.
+pots>/ IDLE C
+pots>inject PS E &port.C
+  OK.
+pots>/ IDLE A
+pots>inject PS E &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>testcase end
+  OK.
+read test.cp.epilog
+pots>stop
+  OK.
+pots>contexts c
+  0
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+  Result is false.
+pots>save trace &testcase.name
+  OK.
+pots>save funcs &testcase.name
+  OK.
+pots>st save msc &testcase.name
+  OK.
+pots>clear buffer
+  OK.
+pots>send cout
+  OK.

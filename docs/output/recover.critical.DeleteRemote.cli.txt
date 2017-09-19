@@ -1,0 +1,27 @@
+nt>sched start
+  OK.
+nt>start
+  OK.
+nt>read trap.16
+nt>/ RECOVER destroy remotely
+nt>recover delete f
+  OK.
+nt>delay 3
+  OK.
+nt>testcase end
+  OK.
+read test.trap.epilog
+nt>stop
+  OK.
+nt>sched stop
+  OK.
+nt>sched show &testcase.name
+  OK.
+nt>save trace &testcase.name
+  OK.
+nt>save funcs &testcase.name
+  OK.
+nt>clear buffer
+  OK.
+nt>send cout
+  OK.

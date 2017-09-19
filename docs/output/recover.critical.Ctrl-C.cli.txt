@@ -1,0 +1,38 @@
+nt>sched start
+  OK.
+nt>start
+  OK.
+nt>read trap.18
+nt>/ ======================= PREPARE TO ENTER CTRL-C =======================
+nt>/ RECOVER infinite loop
+nt>delay 1
+  OK.
+nt>symbols assign save.traponrtctimeout traponrtctimeout
+  OK.
+nt>cfgparms set traponrtctimeout f
+  OK.
+nt>delay 1
+  OK.
+nt>recover loop
+  OK.
+nt>delay 3
+  OK.
+nt>cfgparms set traponrtctimeout &save.traponrtctimeout
+  OK.
+nt>testcase end
+  OK.
+read test.trap.epilog
+nt>stop
+  OK.
+nt>sched stop
+  OK.
+nt>sched show &testcase.name
+  OK.
+nt>save trace &testcase.name
+  OK.
+nt>save funcs &testcase.name
+  OK.
+nt>clear buffer
+  OK.
+nt>send cout
+  OK.

@@ -1,0 +1,43 @@
+nt>sched start
+  OK.
+nt>start
+  OK.
+nt>read trap.20
+nt>/ RECOVER thread constructor trap
+nt>/ Exit the recovery thread so that it has to be recreated, and then
+nt>/ set the flag that causes a trap in its constructor before doing so.
+nt>/ This also causes a trap in the CLI thread, because it is the thread
+nt>/ that attempts to create the recovery thread.
+nt>recover return
+  OK.
+nt>delay 3
+  OK.
+nt>swflags set &flag.threadctortrap on
+  OK.
+nt>include faction &faction.admin
+                  _|
+  Integer expected or out of range
+nt>delay 1
+  OK.
+nt>recover return
+nt>swflags set &flag.threadctortrap off
+  OK.
+nt>delay 3
+  OK.
+nt>testcase end
+  OK.
+read test.trap.epilog
+nt>stop
+  OK.
+nt>sched stop
+  OK.
+nt>sched show &testcase.name
+  OK.
+nt>save trace &testcase.name
+  OK.
+nt>save funcs &testcase.name
+  OK.
+nt>clear buffer
+  OK.
+nt>send cout
+  OK.

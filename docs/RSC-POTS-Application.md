@@ -23,7 +23,7 @@ behavior with commands such as `>status`, `>sched show`, and `>traffic profile`.
 ## Configuring User Profiles
 
 Users (phone numbers) are created in the `>pots` CLI increment.  The CLI commands
-available in that increment are described in [RSC-CLI-Commands](/docs/RSC-CLI-Commands.pdf),
+available in that increment are described [here](/docs/output/help.cli.txt),
 starting after the line `pots>help full`.
 
 Phone numbers are five digits in length, in the range 20000-99999.  *Supplementary services*,

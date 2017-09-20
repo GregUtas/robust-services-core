@@ -74,17 +74,16 @@ initialized, the CLI prompt `nb>` appears to indicate that CLI commands in the
 startup is shown [here](/docs/output/startup.txt), and a list of all CLI commands
 is provided [here](/docs/output/help.cli.txt).
 
-If you enter `read saveinit` as the first CLI command, a function trace of most of
-the initialization, which starts even before the invocation of `main()`, is generated.
+If you enter `read saveinit` as the first CLI command, a function trace of the
+initialization, which starts even before the invocation of `main()`, is generated.
 This trace should look a lot like [this](/docs/output/init.trace.txt).  Each function
-that appears in the trace invoked `Debug::ft` to add itself to the trace.  This captures
-the following:
+that appears in such a trace invoked `Debug::ft`, which records the following:
   * the function's name
   * the time when it was invoked
   * the thread that invoked it
-  * its depth (in frames) on the stack, which controls indentation so that you tell how
-the function calls were nested
-  * the total time spent in the function
+  * its depth (in frames) on the stack: this controls indentation so that you tell how
+function calls were nested
+  * the total time spent in the function (in microseconds)
   * the net time spent in the function
 
 All output appears in the directory specified by `OutputPath` in the configuration file.

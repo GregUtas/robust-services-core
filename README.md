@@ -44,19 +44,57 @@ RSC requires C++11.
 RSC is currently implemented on Windows, where it runs as a console application.
 However, it defines an abstraction layer, in the form of generic C++ `.h`'s and
 platform-specific `.cpp`'s, that should allow it to be ported to other systems
-fairly easily.
+fairly easily.  Two executables, for 32-bit and 64-bit Windows, are provided
+[here](/executables).
 
 The directories that contain source code, and their dependencies, are listed in
-the comments that precede the implementation of [`main`](/rsc/main.cpp).  RSC was
-developed using Visual Studio 2017.  If this is also your development environment,
-the `.vcxproj` (project) files in this repository should already provide most of
-the build instructions that you need.  However, you will need to
-change the paths to where the source code is located.  It's probably
+the comments that precede the implementation of [`main`](/rsc/main.cpp).  Each
+of these directories is built as a separate static library, with `main` residing
+in its own directory.
+
+RSC was developed using Visual Studio 2017.  If this is also your development
+environment, the `.vcxproj` (project) files in this repository should already
+provide most of the build instructions that you need.  However, you will need
+to change the paths to where the source code is located.  It's probably
 easiest to do this by opening the `.vcxproj` files in Notepad and replacing
 occurrences of `C:\Users\gregu\Documents\rsc\rsc` (the directory that contains the
 source code on my PC) with the top-level directory into which you downloaded the
 repository.
 
-Before running the executable, you also need to change paths (as described above)
-in the [configuration file](input/element.config.txt), which is read when the program
-is initializing during startup.
+## Running the executable
+
+Before you run the executable, you also need to change each path (as described in
+the above paragraph) in the [configuration file](input/element.config.txt), which
+is read when the program is initializing during startup.
+
+During initialization, the program displays each module as it is initialized.  (A
+*module* is currently equivalent to a static library.)  After all modules have
+initialized, the CLI prompt `nb>` appears to indicate that CLI commands in the
+`nb` directory are available.  The information written to the console during
+startup is shown [here](/docs/output/startup.txt), and a list of all CLI commands
+is provided [here](/docs/output/help.cli.txt).
+
+If you enter `read saveinit` as the first CLI command, a function trace of most of
+the initialization, which starts even before the invocation of `main()`, is generated.
+This trace should look a lot like [this](/docs/output/init.trace.txt).  Each function
+that appears in the trace invoked `Debug::ft` to add itself to the trace.  This captures
+the following:
+  * the function's name
+  * the time when it was invoked
+  * the thread that invoked it
+  * its depth (in frames) on the stack, which controls indentation so that you tell how
+the function calls were nested
+  * the total time spent in the function
+  * the net time spent in the function
+
+All output appears in the directory specified by `OutputPath` in the configuration file.
+In addition to any specific outputs that you request, such as the initialization trace,
+every CLI session produces
+  * a `console` file (a transcript of the CLI commands that you entered and what was
+written to the console)
+  * a `log` file (events that were written to the console asynchronously)
+  * a `stats` file (generated periodically to report system statistics)
+
+The names of these files are followed by *`yymmdd-hhmmss`*, which is the time when the
+system initialized (for a `console` or `log` file) or when the report was produced (for
+a `stats` file).

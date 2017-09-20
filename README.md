@@ -84,10 +84,10 @@ that appears in such a trace invoked `Debug::ft`, which records the following:
   * its depth (in frames) on the stack: this controls indentation so that you tell how
 function calls were nested
   * the total time spent in the function (in microseconds)
-  * the net time spent in the function
+  * the net time spent in the function (in microseconds)
 
 All output appears in the directory specified by `OutputPath` in the configuration file.
-In addition to any specific outputs that you request, such as the initialization trace,
+In addition to any specific output that you request, such as the initialization trace,
 every CLI session produces
   * a `console` file (a transcript of the CLI commands that you entered and what was
 written to the console)

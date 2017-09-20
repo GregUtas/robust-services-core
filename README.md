@@ -22,7 +22,7 @@ files that implement them.
 
 ## POTS application
 Including an application with a framework serves to test it and illustrate its
-use.  To these ends, this repository includes a POTS (Plain Ordinary Telephone
+use.  This repository therefore includes a POTS (Plain Ordinary Telephone
 Service) application.  POTS was chosen for several reasons.  For one thing,
 the author had extensive experience with such applications while working
 as a software architect in the telecom industry.  But more importantly, POTS

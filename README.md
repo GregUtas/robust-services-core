@@ -1,4 +1,4 @@
-# robustness
+# robust-services-core
 
 This repository contains
 1. A framework for developing robust applications in C++.
@@ -20,7 +20,7 @@ these patterns appears in the [second chapter](/docs/RCS-chapter-2.pdf) of
 patterns are currently available in this repository and the primary code
 files that implement them.
 
-## POTS Application
+## POTS application
 Including an application with a framework serves to test it and illustrate its
 use.  To these ends, this repository includes a POTS (Plain Ordinary Telephone
 Service) application.  POTS was chosen for several reasons.  For one thing,
@@ -31,14 +31,14 @@ it does.  You should therefore be able to figure out what the POTS code is doing
 without having read a large specification.  An overview of the POTS application
 is provided [here](/docs/RSC-POTS-Application.md).
 
-## C++ Static Analysis Tool
+## C++ static analysis tool
 The development of RSC got sidetracked when the author decided to develop C++
 static analysis tools.  This toolset detects violations of various C++ design
 guidelines, such as those found in Scott Myer's *Effective C++*.  It also analyzes
 `#include` lists to find `#include`'s that should be added or deleted.  An overview
 of the toolset is provided [here](docs/RSC-Cxx-Static-Analysis-Tools.md).
 
-## Building an Executable
+## Building an executable
 RSC requires C++11.
 
 RSC is currently implemented on Windows, where it runs as a console application.

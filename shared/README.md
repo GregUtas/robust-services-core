@@ -1,4 +1,4 @@
-# Build Files
+# Build files
 
 The Visual Studio 2017 file `RSC Common.props` specifies
 options that are used in all Windows builds: Debug/Release

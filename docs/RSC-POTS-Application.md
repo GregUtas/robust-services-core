@@ -64,7 +64,7 @@ interval, the call is routed to a pre-specified number.
 ## Design Overview
 The [`SessionBase`](/sb) component of RCS defines virtual base classes for implementing state
 machines and protocols.  As a session-oriented application, POTS uses this framework.  The
-documents [*RCS-Session-Processing*](/docs/RSC-Session-Processing.pdf) and [*A Pattern Language
+documents [*RSC-Session-Processing*](/docs/RSC-Session-Processing.pdf) and [*A Pattern Language
 of Call Processing*](/docs/PLCP.pdf) should prove helpful if studying the POTS software in
 detail.
 

@@ -97,3 +97,27 @@ written to the console)
 The numeric string *`yymmdd-hhmmss`* is appended to the names of these files to record
 the time when the system initialized (for a `console` or `log` file) or when the report
 was generated (for a `stats` file).
+
+## Testing
+
+Most of the files in the [inputs](/inputs) directory are test scripts.  The document that
+describes the [POTS application](/docs/RSC-Pots-Application.md) also discusses its tests,
+which exercise a considerable portion of the RSC software.  The tests described here are
+therefore rather tactical and minimal.
+
+  1. Twenty scripts test the *Safety Net* aspect of the `Thread` class.  Most of these cause
+a POSIX signal to be raised.  POSIX signals are handled by throwing a C++ exception that is
+caught in `Thread.Start`, after which the appropriate recovery action is taken.  Getting the
+safety net to work is likely to be one of the challenges when porting RSC to another platform,
+which is why these tests are provided.  All of the safety net scripts can be executed with the
+command `>read test.trap.critical`.  For each test, the following are generated:
+    * A function trace (`*.trace.txt`).
+    * A function profile (`*.funcs.txt`), which lists the functions invoked and the total net
+time spent in each.  This report is not particularly useful here, but is helpful when trying
+to determine which functions to focus on when trying to improve real-time performance.
+    * A scheduler trace (`*.sched.txt`).  **CONTINUE HERE**.
+    * A console file of the test (`*.cli.txt).
+  2. Entering `>nt` in the CLI enters the "nt" *increment* (a set of CLI commands).  This
+increment provides a number of commands for testing the queue and time functions found in
+`Q1Way.h`, `Q2Way.h`, and `SysTime.h`.
+

@@ -6,24 +6,32 @@ services.
 ## Running Tests
 
 Many of the scripts in the [`input`](/input) directory are tests for the POTS application.
-When the [`test.cp.setup`](/input/test.cp.setup.txt) script is run, the following files
-are generated for each subsequent test:
-1. A detailed function and message trace of the scenario.
-2. A [message sequence chart](http://en.wikipedia.org/wiki/Message_sequence_chart) of the
-scenario, followed by a context trace (a summary of socket activity, incoming and outgoing
-messages, internal events, and the event handlers that were invoked).
+When the [`test.cp.setup`](/input/test.cp.setup.txt) script is read, the following files
+are generated during each test (see the files in the [output](/docs/output) directory):
+
+* A detailed function and message trace (`*.trace.txt`).
+* A function profile (`*.funcs.txt`), as described in the [**Testing**](/README.md) section.
+* A [message sequence chart](http://en.wikipedia.org/wiki/Message_sequence_chart) of the
+scenario (`*.msc.txt`).  This is followed by an event trace (a summary of socket activity,
+object creations/deletions, incoming and outgoing messages, and internal states and events).
+The items in this event trace also appear in the function trace.
+* A console file (`*.cli.txt`).
 
 The [`traffic`](/input/traffic.txt) script (`>read traffic`) launches a
 [thread](/an/PotsTrafficThread.h) that initiates, answers, and releases calls, initially
 at a rate of 120 per minute.  The call rate can be increased to the point where the system
-enters overload, which on my PC occurs when the rate exceeds about 18,000 calls per minute
-(`>traffic rate 18000`).  Whatever the current call rate, you can observe the system's
-behavior with commands such as `>status`, `>sched show`, and `>traffic profile`.
+enters overload.  Whatever the current call rate, you can observe the system's behavior with
+commands such as `>status`, `>sched show`, and `>traffic profile`.  A console file of a
+traffic run appears [here](/docs/output/console170919-141122.txt), and a log file appears
+[here](/docs/output/logs170919-141122.txt).  During the run, the call rate is suddenly
+increased from 120 to 18,000 calls per minute.  Once this rate is reached, it is increased
+to 24,000 calls per minute to create an overload situation.  After overload has persisted
+for a while, the call rate is dropped to 0, which gradually causes all calls to be released.
 
 ## Configuring User Profiles
 
 Users (phone numbers) are created in the `>pots` CLI increment.  The CLI commands
-available in that increment are described in [RSC-CLI-Commands](/docs/RSC-CLI-Commands.pdf),
+available in that increment are described [here](/docs/output/help.cli.txt),
 starting after the line `pots>help full`.
 
 Phone numbers are five digits in length, in the range 20000-99999.  *Supplementary services*,
@@ -56,7 +64,7 @@ interval, the call is routed to a pre-specified number.
 ## Design Overview
 The [`SessionBase`](/sb) component of RCS defines virtual base classes for implementing state
 machines and protocols.  As a session-oriented application, POTS uses this framework.  The
-documents [*RCS-Session-Processing*](/docs/RSC-Session-Processing.pdf) and [*A Pattern Language
+documents [*RSC Session Processing*](/docs/RSC-Session-Processing.pdf) and [*A Pattern Language
 of Call Processing*](/docs/PLCP.pdf) should prove helpful if studying the POTS software in
 detail.
 

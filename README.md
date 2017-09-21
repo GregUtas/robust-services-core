@@ -94,6 +94,6 @@ written to the console)
   * a `log` file (events that were written to the console asynchronously)
   * a `stats` file (generated periodically to report system statistics)
 
-The names of these files are followed by *`yymmdd-hhmmss`*, which is the time when the
-system initialized (for a `console` or `log` file) or when the report was produced (for
-a `stats` file).
+The numeric string *`yymmdd-hhmmss`* is appended to the names of these files to record
+the time when the system initialized (for a `console` or `log` file) or when the report
+was generated (for a `stats` file).

@@ -75,7 +75,7 @@ startup is shown [here](/docs/output/startup.txt), and a list of all CLI command
 is provided [here](/docs/output/help.cli.txt).
 
 If you enter `read saveinit` as the first CLI command, a function trace of the
-initialization, which starts even before the invocation of `main()`, is generated.
+initialization, which starts even before the invocation of `main`, is generated.
 This trace should look a lot like [this](/docs/output/init.trace.txt).  Each function
 that appears in such a trace invoked `Debug::ft`, which records the following:
   * the function's name
@@ -91,7 +91,7 @@ In addition to any specific output that you request, such as the initialization 
 every CLI session produces
   * a `console` file (a transcript of the CLI commands that you entered and what was
 written to the console)
-  * a `log` file (events that were written to the console asynchronously)
+  * a `log` file (system events that were written to the console asynchronously)
   * a `stats` file (generated periodically to report system statistics)
 
 The numeric string *`yymmdd-hhmmss`* is appended to the names of these files to record
@@ -103,7 +103,7 @@ was generated (for a `stats` file).
 Most of the files in the [input](/input) directory are test scripts.  The document that
 describes the [POTS application](/docs/RSC-POTS-Application.md) also discusses its tests,
 which exercise a considerable portion of the RSC software.  The tests described here are
-therefore rather tactical and minimal.
+rather tactical by comparison.
 
 Twenty scripts test the *Safety Net* capability of the `Thread` class.  Most of these tests
 cause a POSIX signal to be raised.  POSIX signals are handled by throwing a C++ exception

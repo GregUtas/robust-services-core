@@ -6,19 +6,28 @@ services.
 ## Running Tests
 
 Many of the scripts in the [`input`](/input) directory are tests for the POTS application.
-When the [`test.cp.setup`](/input/test.cp.setup.txt) script is run, the following files
-are generated for each subsequent test:
-1. A detailed function and message trace of the scenario.
-2. A [message sequence chart](http://en.wikipedia.org/wiki/Message_sequence_chart) of the
-scenario, followed by a context trace (a summary of socket activity, incoming and outgoing
-messages, internal events, and the event handlers that were invoked).
+When the [`test.cp.setup`](/input/test.cp.setup.txt) script is read, the following files
+are generated during each test (see the files in the [output](/docs/output) directory):
+
+* A detailed function and message trace (`*.trace.txt`).
+* A function profile (`*.funcs.txt`), as described in the [##Testing##](/README.md) section.
+* A [message sequence chart](http://en.wikipedia.org/wiki/Message_sequence_chart) of the
+scenario (`*.msc.txt).  This is followed by an event trace (a summary of socket activity,
+object creations/deletions, incoming and outgoing messages, and internal states and events).
+The items in this event trace also appear in the function trace.
+* A console file (`*.cli.txt`).
 
 The [`traffic`](/input/traffic.txt) script (`>read traffic`) launches a
 [thread](/an/PotsTrafficThread.h) that initiates, answers, and releases calls, initially
 at a rate of 120 per minute.  The call rate can be increased to the point where the system
 enters overload, which on my PC occurs when the rate exceeds about 18,000 calls per minute
 (`>traffic rate 18000`).  Whatever the current call rate, you can observe the system's
-behavior with commands such as `>status`, `>sched show`, and `>traffic profile`.
+behavior with commands such as `>status`, `>sched show`, and `>traffic profile`.  A console
+of a traffic run appears [here](/docs/output/logs170919-141122.txt).  During the run, the
+call rate is immediately increased to 18,000 calls per minute.  Once this has been reached,
+the rate is increased to 24,000 calls per minute to create an overload situation.  After
+overload has persisted for a while, the call rate is dropped to 0, after which all calls
+are eventually released.  The statistics for the traffic run are shown [here](
 
 ## Configuring User Profiles
 

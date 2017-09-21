@@ -100,24 +100,30 @@ was generated (for a `stats` file).
 
 ## Testing
 
-Most of the files in the [inputs](/inputs) directory are test scripts.  The document that
-describes the [POTS application](/docs/RSC-Pots-Application.md) also discusses its tests,
+Most of the files in the [input](/input) directory are test scripts.  The document that
+describes the [POTS application](/docs/RSC-POTS-Application.md) also discusses its tests,
 which exercise a considerable portion of the RSC software.  The tests described here are
 therefore rather tactical and minimal.
 
-  1. Twenty scripts test the *Safety Net* aspect of the `Thread` class.  Most of these cause
-a POSIX signal to be raised.  POSIX signals are handled by throwing a C++ exception that is
-caught in `Thread.Start`, after which the appropriate recovery action is taken.  Getting the
-safety net to work is likely to be one of the challenges when porting RSC to another platform,
-which is why these tests are provided.  All of the safety net scripts can be executed with the
-command `>read test.trap.critical`.  For each test, the following are generated:
-    * A function trace (`*.trace.txt`).
-    * A function profile (`*.funcs.txt`), which lists the functions invoked and the total net
-time spent in each.  This report is not particularly useful here, but is helpful when trying
-to determine which functions to focus on when trying to improve real-time performance.
-    * A scheduler trace (`*.sched.txt`).  **CONTINUE HERE**.
-    * A console file of the test (`*.cli.txt).
-  2. Entering `>nt` in the CLI enters the "nt" *increment* (a set of CLI commands).  This
-increment provides a number of commands for testing the queue and time functions found in
-`Q1Way.h`, `Q2Way.h`, and `SysTime.h`.
+Twenty scripts test the *Safety Net* capability of the `Thread` class.  Most of these tests
+cause a POSIX signal to be raised.  POSIX signals are handled by throwing a C++ exception
+that is caught in `Thread.Start`, after which an appropriate recovery action is taken.
+Getting the safety net to work could be one of the challenges when porting RSC to another
+platform, which is why these tests are provided.  All of the safety net tests can be run
+with the command `>read test.trap.critical.`  During each test, the following are generated
+(see the `recover.*` files in the [output](/docs/output) directory):
 
+  * A function trace (`*.trace.txt`), as described above.
+  * A function profile (`*.funcs.txt`) that lists each function that was invoked, along with
+how many times it was invoked and the total net time spent in it.  This information is not
+that useful here, but it is valuable when trying to decide which functions to focus on in
+order to improve real-time performance.
+  * A scheduler trace (`*.sched.txt`).  The first part of this trace lists all threads in the
+executable, with statistics for each one.  The second part is a record of all the context
+switches that occurred during the test.
+  * A console file of the test (`*.cli.txt`), as described above.
+ 
+Entering `>nt` in the CLI enters the "nt" *increment* (a set of CLI commands).  This increment
+provides sets of commands for testing the functions in the [`LeakyBucketCounter`](/nb/LeakyBucketCounter.h),
+[`Q1Way`](/nb/Q1Way.h), [`Q2Way`](/nb/Q2Way.h), [`Registry`](/nb/Registry.h), and
+[`SysTime`](/nb/SysTime.h) interfaces.

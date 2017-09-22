@@ -1,10 +1,11 @@
 # Robust Services Core: C++ Static Analysis Tools
 
 The C++ static analysis tools are implemented in the `ct` increment,
-which is entered with the CLI command `>ct`.  See the [CLI help
-file](/docs/output/help.cli.txt) for the commands available in the `ct`
-increment.  The commands can also be found by entering `>help ct` for
-a brief summary, or `>help ct full` for a more detailed explanation.
+which is entered with the CLI command `>ct`.  For the commands available
+in this increment, see the [CLI help file](/docs/output/help.cli.txt),
+starting after the line `ct>help full`.  The commands can also be listed
+by entering `>help ct` for a brief summary, or `>help ct full` for a more
+detailed explanation.
 
 The contents of the code library must be defined before any of the commands
 can be used. This can be done with `>read buildlib`.

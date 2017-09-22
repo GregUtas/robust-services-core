@@ -3,20 +3,20 @@
 The C++ static analysis tools are implemented in the `ct` increment,
 which is entered with the CLI command `>ct`.  See the [CLI help
 file](/docs/output/help.cli.txt) for the commands available in the `ct`
-increment.  These commands can also be found by entering `>help ct` for
+increment.  The commands can also be found by entering `>help ct` for
 a brief summary, or `>help ct full` for a more detailed explanation.
 
-Before using any of the commands, the contents of the code library must be
-defined.  This can be done with `>read buildlib`.
+The contents of the code library must be defined before any of the commands
+can be used. This can be done with `>read buildlib`.
 
 As the library is built, `#include` relationships are noted.  This allows
 `#include` dependencies to be analyzed by the operators `us`, `ub`, `as`,
 `ab`, `ca`, `ns`, and `nb`, which are described in the full help documentation.
 
-Some commands cannot be used until the code has first been parsed.  The command
-`>parse - $files` parses all of the files in the library.  If a file has not
-been parsed, it will be if you enter a command for which this is a prerequisite.
-Commands that require parsing include
+Some commands cannot be used until the code has been parsed.  The command
+`>parse - $files` will parse all of the files in the library.  If a file has
+not been parsed, this will occur if you enter a command for which this is a
+prerequisite.  Commands that require parsing include
 
 * `>check`, to check for violations of C++ design guidelines
 * `>export`, to export the code using standardized formatting

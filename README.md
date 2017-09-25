@@ -24,9 +24,9 @@ that implement them.
 Including an application with a framework serves to test it and illustrate its
 use.  This repository therefore includes a POTS (Plain Ordinary Telephone
 Service) application.  POTS was chosen for several reasons.  For one thing,
-the author had extensive experience with such applications while working
+the author had extensive experience with similar applications while working
 as a software architect in the telecom industry.  But more importantly, POTS
-is a non-trivial application, and everyone has a reasonable understanding of what
+is a non-trivial application, yet everyone has a reasonable understanding of what
 it does.  You should therefore be able to figure out what the POTS code is doing
 without having read a large specification.  An overview of the POTS application
 is provided [here](/docs/RSC-POTS-Application.md).
@@ -35,7 +35,7 @@ is provided [here](/docs/RSC-POTS-Application.md).
 The development of RSC got sidetracked when the author decided to develop C++
 static analysis tools.  This toolset detects violations of various C++ design
 guidelines, such as those found in Scott Myer's *Effective C++*.  It also analyzes
-`#include` lists to find `#include`'s that should be added or deleted.  An overview
+`#include` lists to determine which ones should be added or deleted.  An overview
 of the toolset is provided [here](docs/RSC-Cxx-Static-Analysis-Tools.md).
 
 ## Building an executable
@@ -57,9 +57,9 @@ environment, the `.vcxproj` (project) files in this repository should already
 provide most of the build instructions that you need.  However, you will need
 to change the paths to where the source code is located.  It's probably
 easiest to do this by opening the `.vcxproj` files in Notepad and replacing
-occurrences of `C:\Users\gregu\Documents\rsc\rsc` (the directory that contains the
-source code on my PC) with the top-level directory into which you downloaded the
-repository.
+occurrences of `C:\Users\gregu\Documents\rsc\rsc` (the directory that contains
+the source code on the author's PC) with the directory into which you downloaded
+the repository.
 
 ## Running the executable
 
@@ -74,7 +74,7 @@ initialized, the CLI prompt `nb>` appears to indicate that CLI commands in the
 startup is shown [here](/docs/output/startup.txt), and a list of all CLI commands
 is provided [here](/docs/output/help.cli.txt).
 
-If you enter `read saveinit` as the first CLI command, a function trace of the
+If you enter `>read saveinit` as the first CLI command, a function trace of the
 initialization, which starts even before the invocation of `main`, is generated.
 This trace should look a lot like [this](/docs/output/init.trace.txt).  Each function
 that appears in such a trace invoked `Debug::ft`, which records the following:
@@ -108,7 +108,7 @@ rather tactical by comparison.
 Twenty scripts test the *Safety Net* capability of the `Thread` class.  Most of these tests
 cause a POSIX signal to be raised.  POSIX signals are handled by throwing a C++ exception
 that is caught in `Thread.Start`, after which an appropriate recovery action is taken.
-Getting the safety net to work could be one of the challenges when porting RSC to another
+Getting the safety net to work could be a challenge when porting RSC to another
 platform, which is why these tests are provided.  All of the safety net tests can be run
 with the command `>read test.trap.critical.`  During each test, the following are generated
 (see the `recover.*` files in the [output](/docs/output) directory):
@@ -116,14 +116,14 @@ with the command `>read test.trap.critical.`  During each test, the following ar
   * A function trace (`*.trace.txt`), as described above.
   * A function profile (`*.funcs.txt`) that lists each function that was invoked, along with
 how many times it was invoked and the total net time spent in it.  This information is not
-that useful here, but it is valuable when trying to decide which functions to focus on in
-order to improve real-time performance.
+that useful here, but it is valuable when deciding which functions to focus on in order to
+improve real-time performance.
   * A scheduler trace (`*.sched.txt`).  The first part of this trace lists all threads in the
-executable, with statistics for each one.  The second part is a record of all the context
-switches that occurred during the test.
+executable, with statistics for each.  The second part is a record of all the context switches
+that occurred during the test.
   * A console file of the test (`*.cli.txt`), as described above.
  
-Entering `>nt` in the CLI enters the "nt" *increment* (a set of CLI commands).  This increment
-provides sets of commands for testing the functions in the [`LeakyBucketCounter`](/nb/LeakyBucketCounter.h),
+Entering `>nt` in the CLI accesses the "nt" *increment* (a set of CLI commands).  This increment
+provides sets of commands for testing functions in the [`LeakyBucketCounter`](/nb/LeakyBucketCounter.h),
 [`Q1Way`](/nb/Q1Way.h), [`Q2Way`](/nb/Q2Way.h), [`Registry`](/nb/Registry.h), and
 [`SysTime`](/nb/SysTime.h) interfaces.

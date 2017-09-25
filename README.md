@@ -17,8 +17,8 @@ at least five-nines (99.999%) availability.  A pattern language summarizing
 these patterns appears in the [second chapter](/docs/RCS-chapter-2.pdf) of
 *Robust Communications Software*.  The document
 [*RSC Product Overview*](/docs/RSC-Product-Overview.pdf) discusses which
-patterns are currently available in this repository and the primary code
-files that implement them.
+patterns are currently available in this repository and the primary code files
+that implement them.
 
 ### POTS application
 Including an application with a framework serves to test it and illustrate its
@@ -45,7 +45,7 @@ RSC is currently implemented on Windows, where it runs as a console application.
 However, it defines an abstraction layer, in the form of generic C++ `.h`'s and
 platform-specific `.cpp`'s, that should allow it to be ported to other systems
 fairly easily.  Two executables, for 32-bit and 64-bit Windows, are provided
-[here](/executables).
+[here](/exe).
 
 The directories that contain source code, and their dependencies, are listed in
 the comments that precede the implementation of [`main`](/rsc/main.cpp).  Each

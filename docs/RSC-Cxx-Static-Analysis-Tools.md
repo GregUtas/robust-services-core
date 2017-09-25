@@ -1,11 +1,11 @@
 # Robust Services Core: C++ Static Analysis Tools
 
-The C++ static analysis tools are implemented in the `ct` increment,
+The C++ static analysis tools are accessed through the `ct` increment,
 which is entered with the CLI command `>ct`.  The commands available
 in that increment are described [here](/docs/output/help.cli.txt),
 starting after the line `ct>help full`.
 
-The contents of the code library must be defined before any of the commands
+The contents of the code library must be defined before any of the tools
 can be used. This can be done with `>read buildlib`.
 
 As the library is built, `#include` relationships are noted.  This allows
@@ -14,9 +14,8 @@ As the library is built, `#include` relationships are noted.  This allows
 
 Some commands cannot be used without first parsing the code.  The command
 `>parse - win64 $files` parses all of the files in the library (for 64-bit
-Windows).  If a file has not been parsed, parsing occurs when you enter a
-command for which parsing is a prerequisite.  Commands that require parsing
-include
+Windows).  If a file has not been parsed, parsing occurs when a command that
+requires it is entered.  These commands include
 
 * `>check`, to look for violations of C++ design guidelines
 * `>export`, to write out the code in a standard format
@@ -29,7 +28,7 @@ and [`>trim`](/docs/output/rsc.trim.txt) commands for the current version of
 the entire code base.
 
 The parser currently supports everything used in the code base.  Because this
-is not everything in C++11, there are limitations, which are described in the
+is not everything in C++11, there are limitations, which are noted in the
 comments at the beginning of [Parser.h](/ct/Parser.h).  The goal is to support
 whatever the code base uses, although some things would be deemed undesirable
 or marginal and would therefore not be introduced.

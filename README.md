@@ -100,7 +100,7 @@ was generated (for a `stats` file).
 
 ## Testing
 
-Most of the files in the [input](/input) directory are test scripts.  The document that
+Most of the files in the [`input`](/input) directory are test scripts.  The document that
 describes the [POTS application](/docs/RSC-POTS-Application.md) also discusses its tests,
 which exercise a considerable portion of the RSC software.  The tests described below are
 rather tactical by comparison.
@@ -111,7 +111,7 @@ that is caught in `Thread.Start`, after which an appropriate recovery action is 
 Getting the safety net to work could be a challenge when porting RSC to another
 platform, which is why these tests are provided.  All of the safety net tests can be run
 with the command `>read test.trap.critical.`  During each test, the following are generated
-(see the `recover.*` files in the [output](/docs/output) directory):
+(see the `recover.*` files in the [`output`](/docs/output) directory):
 
   * A function trace (`*.trace.txt`), as described above.
   * A function profile (`*.funcs.txt`) that lists each function that was invoked, along with

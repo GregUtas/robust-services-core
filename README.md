@@ -28,15 +28,15 @@ the author had extensive experience with similar applications while working
 as a software architect in the telecom industry.  But more importantly, POTS
 is a non-trivial application, yet everyone has a reasonable understanding of what
 it does.  You should therefore be able to figure out what the POTS code is doing
-without having read a large specification.  An overview of the POTS application
+without reading a large specification.  An overview of the POTS application
 is provided [here](/docs/RSC-POTS-Application.md).
 
 ### C++ static analysis tool
 The development of RSC got sidetracked when the author decided to develop C++
 static analysis tools.  This toolset detects violations of various C++ design
 guidelines, such as those found in Scott Myer's *Effective C++*.  It also analyzes
-`#include` lists to determine which ones should be added or deleted.  An overview
-of the toolset is provided [here](docs/RSC-Cxx-Static-Analysis-Tools.md).
+`#include` directives to determine which ones should be added or deleted.  An
+overview of the toolset is provided [here](docs/RSC-Cxx-Static-Analysis-Tools.md).
 
 ## Building an executable
 RSC requires C++11.
@@ -47,12 +47,12 @@ platform-specific `.cpp`'s, that should allow it to be ported to other systems
 fairly easily.  Two executables, for 32-bit and 64-bit Windows, are provided
 [here](/exe).
 
-The directories that contain source code, and their dependencies, are listed in
-the comments that precede the implementation of [`main`](/rsc/main.cpp).  Each
-of these directories is built as a separate static library, with `main` residing
-in its own directory.
+The directories that contain source code, and the dependencies between them, are
+listed in the comments that precede the implementation of [`main`](/rsc/main.cpp).
+Each of these directories is built as a separate static library, with `main`
+residing in its own directory.
 
-RSC was developed using Visual Studio 2017.  If this is also your development
+RSC was developed using Visual Studio 2017.  If that is also your development
 environment, the `.vcxproj` (project) files in this repository should already
 provide most of the build instructions that you need.  However, you will need
 to change the paths to where the source code is located.  It's probably
@@ -81,8 +81,8 @@ that appears in such a trace invoked `Debug::ft`, which records the following:
   * the function's name
   * the time when it was invoked
   * the thread that invoked it
-  * its depth (in frames) on the stack: this controls indentation so that you tell how
-function calls were nested
+  * its depth (in frames) on the stack: this controls indentation so that you can
+see how function calls were nested
   * the total time spent in the function (in microseconds)
   * the net time spent in the function (in microseconds)
 
@@ -102,7 +102,7 @@ was generated (for a `stats` file).
 
 Most of the files in the [input](/input) directory are test scripts.  The document that
 describes the [POTS application](/docs/RSC-POTS-Application.md) also discusses its tests,
-which exercise a considerable portion of the RSC software.  The tests described here are
+which exercise a considerable portion of the RSC software.  The tests described below are
 rather tactical by comparison.
 
 Twenty scripts test the *Safety Net* capability of the `Thread` class.  Most of these tests
@@ -116,8 +116,8 @@ with the command `>read test.trap.critical.`  During each test, the following ar
   * A function trace (`*.trace.txt`), as described above.
   * A function profile (`*.funcs.txt`) that lists each function that was invoked, along with
 how many times it was invoked and the total net time spent in it.  This information is not
-that useful here, but it is valuable when deciding which functions to focus on in order to
-improve real-time performance.
+that useful here, but it is valuable when you want to pinpoint which functions to focus on in
+order to improve real-time performance.
   * A scheduler trace (`*.sched.txt`).  The first part of this trace lists all threads in the
 executable, with statistics for each.  The second part is a record of all the context switches
 that occurred during the test.

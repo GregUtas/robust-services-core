@@ -29,7 +29,7 @@ the entire code base.
 
 The parser currently supports everything used in the code base.  Because this
 is not everything in C++11, there are limitations, which are noted in the
-comments at the beginning of [Parser.h](/ct/Parser.h).  The goal is to support
+comments at the beginning of [`Parser.h`](/ct/Parser.h).  The goal is to support
 whatever the code base uses, although some things would be deemed undesirable
 or marginal and would therefore not be introduced.
 

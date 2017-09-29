@@ -42,6 +42,6 @@ because a write is only noted on what immediately precedes a reference-select
   * A variable that is only modified in the second clause following a `?`
 operator is flagged as "could be const" by `>check`, because writes are only
 tracked in the first clause.
-  * Because external headers in the [subs](/subs) directory do not contain
+  * Because external headers in the [`subs`](/subs) directory do not contain
 source code, `>trim` can suggest removing an `#include` that is actually needed
 to make a destructor visible to a `unique_ptr` template instance.

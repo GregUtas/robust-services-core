@@ -7,7 +7,7 @@ services.
 
 Many of the scripts in the [`input`](/input) directory are tests for the POTS application.
 When the [`test.cp.setup`](/input/test.cp.setup.txt) script is read, the following files
-are generated during each test (see the files in the [output](/docs/output) directory):
+are generated during each test (see the files in the [`output`](/docs/output) directory):
 
 * A detailed function and message trace (`*.trace.txt`).
 * A function profile (`*.funcs.txt`), as described in the [**Testing**](/README.md) section.

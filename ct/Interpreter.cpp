@@ -618,7 +618,7 @@ LibrarySet* Interpreter::Error(LibExprErr err) const
    case DirSetExpected:
    case FileSetExpected:
       //
-      //c To properly highlight where the error occurrerd, the operator
+      //c To properly highlight where the error occurred, the operator
       //  that detected this problem should set curr_.  This would involve
       //  pushing prev_ onto the stack for each operand and operator.  Go
       //  back to the start of the *previous* token, which should be the

@@ -590,8 +590,8 @@ TraceRc TraceBuffer::SetTool(FlagId tid, bool value)
    Debug::ft(TraceBuffer_SetTool);
 
    //u This is invoked well before main(), so avoid creating ToolRegistry that
-   //  early.  It causes heap corruption in Windows debug mode, but the reason
-   //  has not been determined.
+   //  early.  Doing so causes heap corruption in Windows debug mode, but the
+   //  reason has not been determined.
    //
    auto reg = Singleton< ToolRegistry >::Extant();
 

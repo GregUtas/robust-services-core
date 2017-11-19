@@ -1,5 +1,7 @@
 # Robust Services Core: Coding Guidelines
 
+The `>check` and `>trim` commands can help to determine whether software follows most of these guidelines.
+
 ## Formatting
 1. Begin each file with the following heading:
 ```
@@ -16,6 +18,7 @@
 1. Use `//` comments instead of `/*...*/`.
 1. Add blank lines for readability, but avoid multiple blank lines.
 1. Limit lines to 80 characters in length.  Break after `,:)` and before `(`.  A break at an operator can either occur before or after, depending on which reads better.
+1. Break before `{` and `}` unless a definition can fit on a single line.
 1. Almost always use Camel case.  Use all uppercase and underscores only in low-level types and constants.  Names that evoke Hungarian notation are an abomination.
 1. Keep `*` and `&` with the type instead of the variable (`Type* t` instead of `Type *t`).
 
@@ -55,17 +58,18 @@
    1. non-virtual and protected
    1. virtual and protected, to restrict deletion
 1. If a destructor frees a resource, even automatically through a `unique_ptr` member, also define
-   1. a copy constructor: `Class(const Class& that);`
-   1. a copy assignment operator: `Class& operator=(const Class& that);`
-If the class allows copying, also define
-   3. a move constructor: `Class(Class&& that);`
-   1. a move assignment operator: `Class& operator=(Class&& that);`
-   - In C++11, each of the above functions can be suffixed with `= delete` to prohibit its use, or `= default` to use the compiler-generated default.  The pre-C++11 equivalents are to make the function private (`delete`) or not declare it at all (`default`).
-   - In a copy assignment operator, create copies of `that`’s resources first, then release `this`’s existing resources, and finally assign the new ones.
-   - A "move" function is an optimization that releases the existing resources and then takes over the ones owned by that.  Its implementation typically uses `std::swap`.
-1. To prohibit stack allocation, make constructors private, and/or make the destructor private.
-1. To prohibit scalar heap allocation, define `operator new` as private.
-1. To prohibit vector heap allocation, define `operator new[]` as private.
+   - a copy constructor: `Class(const Class& that);`
+   - a copy assignment operator: `Class& operator=(const Class& that);` </li>
+   Here, create copies of `that`’s resources first, then release `this`’s existing resources, and finally assign the new ones.  
+1. If a class allows copying, also define "move" functions.  These release `this`’s existing resources and then take over the ones owned by `that`.  Their implementations typically use `std::swap`.
+   - a move constructor: `Class(Class&& that);`
+   - a move assignment operator: `Class& operator=(Class&& that);`
+1. In C++11, each of the above functions can be suffixed with `= delete` to prohibit its use, or `= default` to use
+the compiler-generated default.  However, the [parser](/ct/Parser.h) does not yet support this syntax, so the pre-C++11
+equivalents must be used.  These are to make the function private (`delete`) or not declare it at all (`default`).
+1. To prohibit stack allocation, make constructors private and/or make the destructor private.
+1. To prohibit scalar heap allocation, make `operator new` private.
+1. To prohibit vector heap allocation, make `operator new[]` private.
 1. If a class only has static members, convert it to a namespace.  If this is not possible, prohibit its creation.
 1. Include `virtual` and `override` when overriding a function defined in a base class.
 1. Make a function or argument const when appropriate.
@@ -88,7 +92,7 @@ If the class allows copying, also define
 1. A simple "Get" function should not invoke `Debug::ft` unless it is virtual.
 1. Left-align the types and variable names in a long declaration list.
 1. Use `nullptr` instead of `NULL`.
-1. Check for `nullptr`, even when an argument is passed by reference. (A reference merely documents that `nullptr` is an invalid input.)
+1. Check for `nullptr`, even when an argument is passed by reference. (A reference merely _documents_ that `nullptr` is an invalid input.)
 1. After invoking `delete`, set a pointer to `nullptr`.
 1. Use `unique_ptr` to avoid the need for `delete`.
 1. Use `unique_ptr` so that a resource owned by a stack variable will be freed if an exception occurs.

@@ -1,8 +1,10 @@
 # Robust Services Core: Coding Guidelines
+All code must `>parse` successfully.
 
-The `>check` and `>trim` commands can help to determine whether software follows most of these guidelines.
+Use the `>check` and `>trim` commands to help determine whether software follows these guidelines.
 
 ## Formatting
+Try to make it impossible for a reader to tell where code was added or changed.
 1. Begin each file with the following heading:
 ```
   //================================================================================
@@ -30,8 +32,18 @@ The `>check` and `>trim` commands can help to determine whether software follows
    1. other headers, in alphabetical order
 1. Remove an `#include` solely associated with functions inherited from a base class.
 1. Remove an `#include` by forward-declaring a class that is only named in references or pointers.  Use an explicit forward declaration instead of relying on this as a side effect of a friend declaration.
-1. Remove using declarations and directives.  Prefix the namespace directly (i.e. `std::`\<symbol>).
+1. Avoid `using` declarations and directives.  Prefix the namespace directly (i.e. `std::`\<symbol>).
 1. Initialize global data (static members) in the .cpp if possible.
+
+## Preprocessor
+Avoid using the preprocessor except for one of the purposes discussed here.
+1. An `#include` guard.
+1. Conditional compilation (`#ifdef`).  Symbols used here are defined when launching the compiler.  Current examples include
+   1. `OS_WIN` for Windows (defines a specific platform; may only appear in a .cpp)
+   1. `FIELD_LOAD` for a production build (else assumed to be a debug build; may only appear in a .cpp)
+   1. `WORDSIZE_32` for a 32-bit CPU (else assumed to be 64-bit; may only be used in the `/subs` directory)
+   1. `CT_COMPILER` when running the `>parse` command (may only appear in `/subs` files) </li>
+1. To `#define` an imitation keyword that maps to an empty string.  The only current example is `NO_OP`.
 
 ## Implementations
 1. Order `#include` statements as follows:
@@ -107,3 +119,14 @@ equivalents must be used.  These are to make the function private (`delete`) or 
    1. `EnterBlockingOperation` and `ExitBlockingOperation`
    1. `Lock` and `Unlock`
    1. `MakePreemptable` and `MakeUnpreemptable`
+   
+## Tagged comments
+Some comments identify work items.  They have the form `//a`, where `a` is an alphabetic character.  The following are currently used:
+- `//b` is a basic call enhancement
+- `//c` is a CodeTools enhancement
+- `//d` is a decoupling enhancement
+- `//e` is an unclassified enhancement
+- `//p` is a POTS enhancement
+- `//r` is a restart enhancement
+- `//s` is a socket enhancement
+- `//u` is a workaround for an unexplained bug

@@ -20,7 +20,8 @@
 1. Keep `*` and `&` with the type instead of the variable (`Type* t` instead of `Type *t`).
 
 ## Interfaces
-1. Insert an `#include` guard based on the file name (`FileName.ext` and `FILENAME_EXT_INCLUDED`) immediately after the standard heading.1. Sort `#include` statements as follows:
+1. Insert an `#include` guard based on the file name (`FileName.ext` and `FILENAME_EXT_INCLUDED`) immediately after the standard heading.
+1. Sort `#include` statements as follows:
    1. the header that defines the base class of the class defined in the header
    1. C++/C library headers, in alphabetical order
    1. other headers, in alphabetical order

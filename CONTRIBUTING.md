@@ -46,8 +46,8 @@ gets implemented will be what you wanted.
 
 ## Reporting a bug
 Describe what you did and how the results differed from what you expected.  Attach a
-console file and, if possible, a test script that can be `>read` from the console and/or
-the output from a trace tool.
+console file and log file.  If possible, also attach a test script that can be `>read`
+from the console, along with the output from a trace tool.
 
 ## Suggesting an enhancement
 Describe the expected behavior.  Unless it is obvious why the new capability would be

@@ -14,12 +14,12 @@ The other ways to contribute involve the use of GitHub issues, which are labelle
 
 Label | Meaning
 ------|--------
-`application` | affects software in the `mb`, `cb`, `pots`, `sn`, `an`, `rn`, or `on` directory
+`application` | focuses on software in the `mb`, `cb`, `pots`, `sn`, `an`, `rn`, or `on` directory
 `blocked` | must wait for the completion of another item
 `bug` | something that needs to be fixed
-`core` | affects software in the `nb`, `nw`, `sb`, `cn`, or `rsc` directory
-`core tools` | affects software in the `nt` or `st` directory
-`c++ tools` | affects software in the `ct` or `subs` directory
+`core` | focuses on software in the `nb`, `nw`, `sb`, `cn`, or `rsc` directory
+`core tools` | focuses on software in the `nt` or `st` directory
+`c++ tools` | focuses on software in the `ct` or `subs` directory
 `design` | discussed in [_RSC Software Design_](/docs/RSC-Software-Design.pdf)
 `documentation` | additions or changes to documents or comments
 `duplicate` | already described in another issue

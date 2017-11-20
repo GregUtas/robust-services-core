@@ -127,3 +127,7 @@ Entering `>nt` in the CLI accesses the "nt" *increment* (a set of CLI commands).
 provides sets of commands for testing functions in the [`LeakyBucketCounter`](/nb/LeakyBucketCounter.h),
 [`Q1Way`](/nb/Q1Way.h), [`Q2Way`](/nb/Q2Way.h), [`Registry`](/nb/Registry.h), and
 [`SysTime`](/nb/SysTime.h) interfaces.
+
+## Contributing
+
+How to contribute to RSC is described [here](CONTRIBUTING.md).

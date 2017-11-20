@@ -19,34 +19,39 @@ Try to make it impossible for a reader to tell where code was added or changed.
 1. Remove unnecessary interior spaces and semicolons.  Remove trailing spaces.
 1. Use `//` comments instead of `/*...*/`.
 1. Add blank lines for readability, but avoid multiple blank lines.
-1. Limit lines to 80 characters in length.  Break after `,:)` and before `(`.  A break at an operator can either occur before or after, depending on which reads better.
-1. Break before `{` and `}` unless a definition can fit on a single line.
-1. Almost always use Camel case.  Use all uppercase and underscores only in low-level types and constants.  Names that evoke Hungarian notation are an abomination.
+1. Limit lines to 80 characters in length.  Break after `,:)` and before `(`.  A break at an operator can
+either occur before or after, depending on which reads better.
+1. Break before `{` and `}` unless everything in between also fits on the same line.
+1. Almost always use Camel case.  Use all uppercase and underscores only in low-level types and constants.
+Names that evoke Hungarian notation are an abomination.
 1. Keep `*` and `&` with the type instead of the variable (`Type* t` instead of `Type *t`).
 
 ## Interfaces
-1. Insert an `#include` guard based on the file name (`FileName.ext` and `FILENAME_EXT_INCLUDED`) immediately after the standard heading.
-1. Sort `#include` statements as follows:
+1. Insert an `#include` guard based on the file name (`FileName.ext` and `FILENAME_EXT_INCLUDED`) immediately
+after the standard heading.
+1. Sort `#include` directives as follows:
    1. the header that defines the base class of the class defined in the header
    1. C++/C library headers, in alphabetical order
    1. other headers, in alphabetical order
 1. Remove an `#include` solely associated with functions inherited from a base class.
-1. Remove an `#include` by forward-declaring a class that is only named in references or pointers.  Use an explicit forward declaration instead of relying on this as a side effect of a friend declaration.
+1. Remove an `#include` by forward-declaring a class that is only named in references or pointers.  Use an
+explicit forward declaration instead of relying on this as a side effect of a friend declaration.
 1. Avoid `using` declarations and directives.  Prefix the namespace directly (i.e. `std::`\<symbol>).
 1. Initialize global data (static members) in the .cpp if possible.
 
 ## Preprocessor
-Avoid using the preprocessor except for one of the purposes discussed here.
+Avoid using the preprocessor except for one of the purposes described here.
 1. An `#include` guard.
-1. Conditional compilation (`#ifdef`).  Symbols used here are defined when launching the compiler.  Current examples include
-   1. `OS_WIN` for Windows (defines a specific platform; may only appear in a .cpp)
-   1. `FIELD_LOAD` for a production build (else assumed to be a debug build; may only appear in a .cpp)
-   1. `WORDSIZE_32` for a 32-bit CPU (else assumed to be 64-bit; may only be used in the `/subs` directory)
-   1. `CT_COMPILER` when running the `>parse` command (may only appear in `/subs` files) </li>
+1. Conditional compilation (`#ifdef`).  Symbols used here are defined when launching the compiler.  Those
+in current use are
+   1. `OS_WIN` for Windows (defines a specific platform; may only be used in a `Sys*.cpp` file)
+   1. `FIELD_LOAD` for a production build (else assumed to be a debug build; may only be used in a .cpp)
+   1. `WORDSIZE_32` for a 32-bit CPU (else assumed to be 64-bit; may only be used in `/subs` files)
+   1. `CT_COMPILER` when running the `>parse` command (may only be used in `/subs` files) </li>
 1. To `#define` an imitation keyword that maps to an empty string.  The only current example is `NO_OP`.
 
 ## Implementations
-1. Order `#include` statements as follows:
+1. Order `#include` directives as follows:
    1. the header that defines the functions being implemented
    1. C++/C library headers, in alphabetical order
    1. other headers, in alphabetical order
@@ -72,8 +77,10 @@ Avoid using the preprocessor except for one of the purposes discussed here.
 1. If a destructor frees a resource, even automatically through a `unique_ptr` member, also define
    - a copy constructor: `Class(const Class& that);`
    - a copy assignment operator: `Class& operator=(const Class& that);` </li>
-   Here, create copies of `that`’s resources first, then release `this`’s existing resources, and finally assign the new ones.  
-1. If a class allows copying, also define "move" functions.  These release `this`’s existing resources and then take over the ones owned by `that`.  Their implementations typically use `std::swap`.
+   Here, create copies of `that`’s resources first, then release `this`’s existing resources, and finally assign
+   the new ones.  
+1. If a class allows copying, also define "move" functions.  These release `this`’s existing resources and then take
+over the ones owned by `that`.  Their implementations typically use `std::swap`.
    - a move constructor: `Class(Class&& that);`
    - a move assignment operator: `Class& operator=(Class&& that);`
 1. In C++11, each of the above functions can be suffixed with `= delete` to prohibit its use, or `= default` to use
@@ -90,21 +97,26 @@ equivalents must be used.  These are to make the function private (`delete`) or 
 1. Override `Display` if a class has data.
 1. Override `Patch` except in a trivial leaf class.
 1. Avoid invoking virtual functions in the same class hierarchy within constructors and destructors.
-1. Provide an implementation for a pure virtual function to highlight the bug of calling it too early during construction or too late during destruction.
+1. Provide an implementation for a pure virtual function to highlight the bug of calling it too early during
+construction or too late during destruction.
 1. If a class is large, consider using the PIMPL idiom to move its private members to the .cpp.
-1. When only a subset of a class’s data should be write-protected, split it into a pair of collaborating classes that use `MemProt` and `MemDyn` (or `MemImm` and `MemPerm`).
-1. Static member data begins with an uppercase letter and ends with an underscore, which may be omitted if it is not returned by a "Get" function.  Non-static member data begins with a lowercase letter and ends with an underscore, which may be omitted if it is public (in which case it should probably be in a struct).
+1. When only a subset of a class’s data should be write-protected, split it into a pair of collaborating classes
+that use `MemProt` and `MemDyn` (or `MemImm` and `MemPerm`).
+1. Static member data begins with an uppercase letter and ends with an underscore, which may be omitted if it is
+not returned by a "Get" function.  Non-static member data begins with a lowercase letter and ends with an underscore,
+which may be omitted if it is public (in which case it should probably be in a struct).
 
 ## Functions
 1. Use the initialization list for constructors.  Initialize members in the order that the class declared them.
 1. Use `()` instead of `(void)` for an empty argument list.
 1. Name each argument.  Use the same name in the interface and the implementation.
 1. Make the invocation of `Debug::ft` the first line in a function body, and follow it with a blank line.
-1. The `fn_name` passed to `Debug::ft` and similar functions should accurately reflect the name of the invoking function.
+1. The `fn_name` passed to `Debug::ft` and other functions should accurately reflect the name of the invoking function.
 1. A simple "Get" function should not invoke `Debug::ft` unless it is virtual.
 1. Left-align the types and variable names in a long declaration list.
 1. Use `nullptr` instead of `NULL`.
-1. Check for `nullptr`, even when an argument is passed by reference. (A reference merely _documents_ that `nullptr` is an invalid input.)
+1. Check for `nullptr`, even when an argument is passed by reference. (A reference merely _documents_ that
+`nullptr`is an invalid input.)
 1. After invoking `delete`, set a pointer to `nullptr`.
 1. Use `unique_ptr` to avoid the need for `delete`.
 1. Use `unique_ptr` so that a resource owned by a stack variable will be freed if an exception occurs.
@@ -119,9 +131,14 @@ equivalents must be used.  These are to make the function private (`delete`) or 
    1. `EnterBlockingOperation` and `ExitBlockingOperation`
    1. `Lock` and `Unlock`
    1. `MakePreemptable` and `MakeUnpreemptable`
+1. It is a serious bug for a function to cause an unexpected exception, so check arguments and results returned
+by other functions.
+1. Throw an exception only when it is impossible to fail gracefully or the work being performed must be aborted.
+Prefer to generate a log (`Debug::SwErr`) and return a failure value.
    
 ## Tagged comments
-Some comments identify work items.  They have the form `//a`, where `a` is an alphabetic character.  The following are currently used:
+Some comments identify work items.  They have the form `//a`, where `a` is an alphabetic character.  The following
+are currently used:
 - `//b` is a basic call enhancement
 - `//c` is a CodeTools enhancement
 - `//d` is a decoupling enhancement

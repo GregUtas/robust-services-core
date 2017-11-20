@@ -1,7 +1,6 @@
 # How to contribute to Robust Services Core
 
-Thanks for your interest!  The following sections describe different ways that you can
-contribute.
+Thanks for your interest!  This document describes different ways that you can contribute.
 
 ## Asking a question
 Questions are useful because they can identify where documentation needs to be improved.

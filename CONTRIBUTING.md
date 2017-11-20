@@ -17,8 +17,8 @@ The other ways to contribute involve the use of GitHub issues, which are labelle
 Label | Meaning
 ------|--------
 `application` | focuses on software in the `mb`, `cb`, `pots`, `sn`, `an`, `rn`, or `on` directory
-`blocked` | must wait for the completion of another item
-`bug` | something that needs to be fixed
+`blocked` | another item needs to be completed before this one
+`bug` | a problem that needs to be fixed
 `core` | focuses on software in the `nb`, `nw`, `sb`, `cn`, or `rsc` directory
 `core tools` | focuses on software in the `nt` or `st` directory
 `c++ tools` | focuses on software in the `ct` or `subs` directory
@@ -28,7 +28,7 @@ Label | Meaning
 `enhancement` | a capability that should be added
 `help wanted` | an issue where collaboration is especially sought
 `invalid/declined` | will not be implemented
-`question` | something that should probably go in a FAQ
+`question` | something that should be added to a FAQ
 `1` | a day's effort once reasonably familiar with the software
 `2` | several day's effort once reasonably familiar with the software
 `3` | around a week's effort once reasonably familiar with the software
@@ -46,7 +46,8 @@ gets implemented will be what you wanted.
 
 ## Reporting a bug
 Describe what you did and how the results differed from what you expected.  Attach a
-console file and, if possible, a test script and/or the output from a trace tool.
+console file and, if possible, a test script that can be `>read` from the console and/or
+the output from a trace tool.
 
 ## Suggesting an enhancement
 Describe the expected behavior.  Unless it is obvious why the new capability would be

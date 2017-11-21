@@ -34,7 +34,7 @@ is provided [here](/docs/RSC-POTS-Application.md).
 ### C++ static analysis tool
 The development of RSC got sidetracked when the author decided to develop C++
 static analysis tools.  This toolset detects violations of various C++ design
-guidelines, such as those found in Scott Myer's *Effective C++*.  It also analyzes
+guidelines, such as those found in Scott Meyers' *Effective C++*.  It also analyzes
 `#include` directives to determine which ones should be added or deleted.  An
 overview of the toolset is provided [here](docs/RSC-Cxx-Static-Analysis-Tools.md).
 

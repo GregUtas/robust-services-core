@@ -16,7 +16,7 @@ or assert ownership of the Copyright. If You do not own the Copyright in the ent
 authorship, please follow the instructions [here](/AGREEMENT.md).
 
 "Copyright" means all rights protecting works of authorship owned or controlled by You,
-including copyright, moral and neighboring rights, as appropriate, for the full term of their
+including copyright, moral, and neighboring rights, as appropriate, for the full term of their
 existence including any extensions by You.
 
 "Material" means the work of authorship which is made available by Us to third parties. When
@@ -45,14 +45,14 @@ Contribution to Us, whichever is earlier.
 worldwide in all Copyright covering the Contribution; provided that this transfer is conditioned
 upon compliance with Section 2.3.
 
-1. To the extent that any of the rights in Section 2.1(a) cannot be assigned by You to Us, You
+1. To the extent that any of the rights in Section 2.1(1) cannot be assigned by You to Us, You
 grant to Us a perpetual, worldwide, exclusive, royalty-free, transferable, irrevocable license
 under such non-assigned rights, with rights to sublicense through multiple tiers of sublicensees,
 to practice such non-assigned rights, including, but not limited to, the right to reproduce, modify,
-display, perform and distribute the Contribution; provided that this license is conditioned upon
+display, perform, and distribute the Contribution; provided that this license is conditioned upon
 compliance with Section 2.3.
 
-1. To the extent that any of the rights in Section 2.1(a) can neither be assigned nor licensed by
+1. To the extent that any of the rights in Section 2.1(1) can neither be assigned nor licensed by
 You to Us, You irrevocably waive and agree never to assert such rights against Us, any of our
 successors in interest, or any of our licensees, either direct or indirect; provided that this
 agreement not to assert is conditioned upon compliance with Section 2.3.
@@ -61,7 +61,7 @@ agreement not to assert is conditioned upon compliance with Section 2.3.
 a perpetual, worldwide, non-exclusive, royalty-free, transferable, irrevocable license under such
 rights covering the Contribution, with rights to sublicense through multiple tiers of sublicensees,
 to reproduce, modify, display, perform, and distribute the Contribution. The intention of the parties
-is that this license will be as broad as possible and to provide You with rights as similar as possibl
+is that this license will be as broad as possible and to provide You with rights as similar as possible
 to the owner of the rights that You transferred. This license back is limited to the Contribution and
 does not provide any rights to the Material.
 
@@ -70,7 +70,7 @@ does not provide any rights to the Material.
 For patent claims including, without limitation, method, process, and apparatus claims which You own,
 control or have the right to grant, now or in the future, You grant to Us a perpetual, worldwide,
 non-exclusive, transferable, royalty-free, irrevocable patent license, with the right to sublicense
-these rights to multiple tiers of sublicensees, to make, have made, use, sell, offer for sale, import
+these rights to multiple tiers of sublicensees, to make, have made, use, sell, offer for sale, import,
 and otherwise transfer the Contribution and the Contribution in combination with the Material (and
 portions of such combination). This license is granted only to the extent that the exercise of the
 licensed rights infringes such patent claims; and provided that this license is conditioned upon
@@ -86,16 +86,16 @@ licenses" on or after the Effective Date, whether or not such licenses are subse
 In addition, We may use the following licenses for Media in the Contribution: GNU Free Documentation
 License v1.3 (including any right to adopt any future version of a license if permitted).
 
-### 2.4 Moral Rights.
+### 2.4 Moral Rights
 If moral rights apply to the Contribution, to the maximum extent permitted by law, You waive and agree
 not to assert such moral rights against Us or our successors in interest, or any of our licensees,
 either direct or indirect.
 
-### 2.5 Our Rights.
+### 2.5 Our Rights
 You acknowledge that We are not obligated to use Your Contribution as part of the Material and may
 decide to include any Contribution We consider appropriate.
 
-### 2.6 Reservation of Rights.
+### 2.6 Reservation of Rights
 Any rights not expressly assigned or licensed under this section are expressly reserved by You.
 
 ## 3. Agreement
@@ -119,7 +119,7 @@ entire work of authorship Submitted.
 
 EXCEPT FOR THE EXPRESS WARRANTIES IN SECTION 3, THE CONTRIBUTION IS PROVIDED "AS IS". MORE
 PARTICULARLY, ALL EXPRESS OR IMPLIED WARRANTIES INCLUDING, WITHOUT LIMITATION, ANY IMPLIED
-WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT ARE EXPRESSLY
+WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT ARE EXPRESSLY
 DISCLAIMED BY YOU TO US AND BY US TO YOU. TO THE EXTENT THAT ANY SUCH WARRANTIES CANNOT BE
 DISCLAIMED, SUCH WARRANTY IS LIMITED IN DURATION TO THE MINIMUM PERIOD PERMITTED BY LAW.
 
@@ -127,7 +127,7 @@ DISCLAIMED, SUCH WARRANTY IS LIMITED IN DURATION TO THE MINIMUM PERIOD PERMITTED
 
 TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT WILL YOU  OR US BE LIABLE FOR
 ANY LOSS OF PROFITS, LOSS OF ANTICIPATED SAVINGS, LOSS OF DATA, INDIRECT, SPECIAL, INCIDENTAL,
-CONSEQUENTIAL AND EXEMPLARY DAMAGES ARISING OUT OF THIS AGREEMENT REGARDLESS OF THE LEGAL OR
+CONSEQUENTIAL, AND EXEMPLARY DAMAGES ARISING OUT OF THIS AGREEMENT REGARDLESS OF THE LEGAL OR
 EQUITABLE THEORY (CONTRACT, TORT OR OTHERWISE) UPON WHICH THE CLAIM IS BASED.
 
 ## 6. Miscellaneous
@@ -157,15 +157,15 @@ any failure of essential purpose of this Agreement or any limited remedy to the 
 under law.
 
 You <br>
-Name: __________________________________ <br>
-Address: _______________________________ <br>
-________________________________________ <br>
-________________________________________ <br>
+Name: ____________________________________________ <br>
+Address: _________________________________________ <br>
+__________________________________________________ <br>
+__________________________________________________ <br>
 
 Us <br>
-________________________________________ <br>
-Name: __________________________________ <br>
-Title: _________________________________ <br>
-Address: _______________________________ <br>
-________________________________________ <br>
-________________________________________ <br>
+__________________________________________________ <br>
+Name: ____________________________________________ <br>
+Title: ___________________________________________ <br>
+Address: _________________________________________ <br>
+__________________________________________________ <br>
+__________________________________________________ <br>

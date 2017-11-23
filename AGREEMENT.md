@@ -26,7 +26,7 @@ and who owns the copyright.
 You must own the copyright to the software (or have developed it yourself, if you have
 also obtained a waiver from the copyright owner) before signing this agreement.
 
-- If you are an individual, please use [this form](/ASSIGNMENT1.md).
-- If you are an organization, please use [this form](/ASSIGNMENT2.md).
+- If you are an individual, please use [this form](/INDIVIDUAL.md).
+- If you are an organization, please use [this form](/ENTITY.md).
 
 After signing the form, please email it to rsc-agreements@pentennea.com.

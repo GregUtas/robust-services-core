@@ -4,11 +4,11 @@ Thanks for your interest!  This document describes different ways that you can c
 
 ## Asking a question
 Questions are helpful because they can identify where documentation needs to be improved.
-If you can't find the answer there, send your question to Greg Utas (greg@pentennea.com).
+If you can't find answers there, please email your questions to rsc-questions@pentennea.com.
 
 ## Collaboration
-To contribute in other ways, you need to be a collaborator.  Send an email to Greg Utas
-(greg@pentennea.com) to be invited to the repository.
+To contribute in other ways, you need to become a collaborator.  To receive an invitation
+to join the repository, please email your request to rsc-collaborators@pentennea.com.
 
 ## Issues
 
@@ -55,6 +55,7 @@ beneficial, include a rationale and/or examples of how it would be used.
 
 ## Writing code
 Before working on code
+- Please sign the [contributor agreement](/AGREEMENT.md) and email it to us.
 - Make sure that the change has been documented as an issue.
 - Ask to be assigned to the issue so that other contributors can see what is already
 being worked on.

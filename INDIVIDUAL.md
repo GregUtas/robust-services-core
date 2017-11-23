@@ -156,16 +156,14 @@ which is enforceable.  The terms and conditions set forth in this Agreement shal
 any failure of essential purpose of this Agreement or any limited remedy to the maximum extent possible
 under law.
 
-You <br>
-
+**You** <br>
 Name: ____________________________________________ <br>
 Address: _________________________________________ <br>
 __________________________________________________ <br>
 __________________________________________________ <br>
 Date: ____________________________________________ <br>
 
-Us <br>
-
+**Us** <br>
 Name: ____________________________________________ <br>
 Title: ___________________________________________ <br>
 Address: _________________________________________ <br>

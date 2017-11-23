@@ -1,7 +1,7 @@
 # Contributor Agreement
-Before contributing to RSC, please assign your copyright to the project.  The Free
-Software Foundation also does this with contributions to their projects (e.g. GNU),
-and they explain why [here](https://www.gnu.org/licenses/why-assign.en.html).
+Before contributing to RSC, please assign the copyright for your work to the project.
+The Free Software Foundation also does this with contributions to their projects (e.g.
+GNU), and they explain why [here](https://www.gnu.org/licenses/why-assign.en.html).
 
 ## Do you own the copyright?
 
@@ -21,12 +21,12 @@ If you do not own the copyright, you need to get a waiver from the owner.  Pleas
 email rsc-agreements@pentennea.com and explain what software you plan to contribute
 and who owns the copyright.
 
-## Transferring the copyright to the project
+## Assigning the copyright to the project
 
 You must own the copyright to the software (or have developed it yourself, if you have
 also obtained a waiver from the copyright owner) before signing this agreement.
 
-- If you are an individual, please use [this form](/ASSIGNMENT1.html).
-- If you are an organization, please use [this form](/ASSIGNMENT2.html).
+- If you are an individual, please use [this form](/ASSIGNMENT1.md).
+- If you are an organization, please use [this form](/ASSIGNMENT2.md).
 
 After signing the form, please email it to rsc-agreements@pentennea.com.

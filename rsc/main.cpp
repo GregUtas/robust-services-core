@@ -28,12 +28,12 @@
 //  OperationsNode  OnModule    on       **       ** **    ** ** ** **
 //  none            main.cpp    none     the desired subset of the above
 //
-//  RootThread is defined in NodeBase, so that namespace must be #included
-//  here.  To build only NodeBase, create NbModule.  To include additional
-//  layers, #include only the namespace, and create only the module, for the
-//  uppermost layer that is required in the build.  That module's Register
-//  function will, in turn, pull in the modules that it requires, and so on
-//  transitively.
+//  RootThread is defined in NodeBase, so a using directive for NodeBase must
+//  be included here.  To build only NodeBase, create NbModule.  To include
+//  additional layers, add a using directive for the namespace, and create
+//  only the module, for the uppermost layer that is required in the build.
+//  That module's Register function will, in turn, pull in the modules that
+//  it requires, and so on transitively.
 //
 //  Compiler options (Windows)
 //  --------------------------

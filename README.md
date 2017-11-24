@@ -6,8 +6,8 @@ This repository contains
 3. Tools for the static analysis of C++ software.
 
 ## License
-The software in this repository was developed by Greg Utas, who currently
-retains copyright.
+The software in this repository is licensed under the terms of the [GNU General
+Public License, version 3](/LICENSE.txt).
 
 ## Robust Services Core
 The framework that supports robust applications is referred to as the

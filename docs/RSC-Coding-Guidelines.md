@@ -160,7 +160,7 @@ Prefer to generate a log (`Debug::SwErr`) and return a failure value.
 ## Tagged comments
 Some comments identify work items.  They have the form `//a`, where `a` is usually an alphabetic character.  The
 following are currently used:
-- `//&` is used in [`main.cpp`](/rsc/main.cpp) to comment out things that might be enabled in a subset build
+- `//&` is something in [`main.cpp`](/rsc/main.cpp) that might be enabled for a subset build
 - `//>` is an internal constant that can be changed to alter behavior
 - `//b` is a basic call enhancement
 - `//c` is a CodeTools enhancement

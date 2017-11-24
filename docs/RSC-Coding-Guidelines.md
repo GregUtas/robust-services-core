@@ -3,16 +3,34 @@ All code must `>parse` successfully.
 
 Use the `>check` and `>trim` commands to help determine whether software follows these guidelines.
 
+The existing software does not always follow every guideline.  In some cases, there is a good reason
+for violating a guideline.  In others, the effort that would be needed to make the software conform
+is better spent elsewhere.
+
 ## Formatting
-Try to make it impossible for a reader to tell where code was added or changed.
+Try to make it impossible for the reader to tell where code was added or changed.
 1. Begin each file with the following heading:
 ```
-  //================================================================================
-  //
-  //  <FileName>
-  //
-  //  Copyright (C) 201n-201n <Name>.  All rights reserved.
-  //
+//================================================================================
+//
+//  <FileName.ext>
+//
+//  Copyright (C) 2017  Greg Utas
+//
+//  This file is part of the Robust Services Core (RSC).
+//
+//  RSC is free software: you can redistribute it and/or modify it under the
+//  terms of the GNU General Public License as published by the Free Software
+//  Foundation, either version 3 of the License, or (at your option) any later
+//  version.
+//
+//  RSC is distributed in the hope that it will be useful, but WITHOUT ANY
+//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+//  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+//  details.
+//
+//  You should have received a copy of the GNU General Public License along
+//  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 ```
 2. Use spaces instead of tabs.
 1. Indent a multiple of 3 spaces.
@@ -40,12 +58,14 @@ explicit forward declaration instead of relying on this as a side effect of a fr
 1. Initialize global data (static members) in the .cpp if possible.
 
 ## Preprocessor
-Avoid using the preprocessor except for one of the purposes described here.
+Do not use the preprocessor except for one of the following purposes:
 1. An `#include` guard.
 1. Conditional compilation (`#ifdef`).  Symbols used here are defined when launching the compiler.  Those
 in current use are
    1. `OS_WIN` for Windows (defines a specific platform; may only be used in a `Sys*.cpp` file)
-   1. `FIELD_LOAD` for a production build (else assumed to be a debug build; may only be used in a .cpp)
+   1. `FIELD_LOAD` for a production build (else assumed to be a debug build; may only be used in a .cpp
+   that executes _before_ the configuration file has been read during system initialization; otherwise
+   use `Element::RunningInLab()`)
    1. `WORDSIZE_32` for a 32-bit CPU (else assumed to be 64-bit; may only be used in `/subs` files)
    1. `CT_COMPILER` when running the `>parse` command (may only be used in `/subs` files) </li>
 1. To `#define` an imitation keyword that maps to an empty string.  The only current example is `NO_OP`.
@@ -91,6 +111,7 @@ equivalents must be used.  These are to make the function private (`delete`) or 
 1. To prohibit vector heap allocation, make `operator new[]` private.
 1. If a class only has static members, convert it to a namespace.  If this is not possible, prohibit its creation.
 1. Include `virtual` and `override` when overriding a function defined in a base class.
+1. Within the same level of access control, sort overridden functions alphabetically.
 1. Make a function or argument const when appropriate.
 1. Remove `inline` as a keyword.
 1. Avoid `friend` where possible.
@@ -137,8 +158,10 @@ by other functions.
 Prefer to generate a log (`Debug::SwErr`) and return a failure value.
    
 ## Tagged comments
-Some comments identify work items.  They have the form `//a`, where `a` is an alphabetic character.  The following
-are currently used:
+Some comments identify work items.  They have the form `//a`, where `a` is usually an alphabetic character.  The
+following are currently used:
+- `//&` is used in [`main.cpp`](/rsc/main.cpp) to comment out things that might be enabled in a subset build
+- `//>` is an internal constant that can be changed to alter behavior
 - `//b` is a basic call enhancement
 - `//c` is a CodeTools enhancement
 - `//d` is a decoupling enhancement

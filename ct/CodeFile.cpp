@@ -2,7 +2,22 @@
 //
 //  CodeFile.cpp
 //
-//  Copyright (C) 2012-2017 Greg Utas.  All rights reserved.
+//  Copyright (C) 2017  Greg Utas
+//
+//  This file is part of the Robust Services Core (RSC).
+//
+//  RSC is free software: you can redistribute it and/or modify it under the
+//  terms of the GNU General Public License as published by the Free Software
+//  Foundation, either version 3 of the License, or (at your option) any later
+//  version.
+//
+//  RSC is distributed in the hope that it will be useful, but WITHOUT ANY
+//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+//  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+//  details.
+//
+//  You should have received a copy of the GNU General Public License along
+//  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CodeFile.h"
 #include <algorithm>
@@ -1057,8 +1072,30 @@ void CodeFile::CheckIncludes() const
 
 const string SingleRule(COMMENT_STR + string(78, '-'));
 const string DoubleRule(COMMENT_STR + string(78, '='));
-fixed_string CopyrightNotice
-   ("Copyright (C) 2012-2017 Greg Utas.  All rights reserved.");
+
+const size_t FilePrologSize = 18;
+
+fixed_string FileProlog[FilePrologSize] =
+{
+   EMPTY_STR,
+   "Copyright (C) 2017  Greg Utas",
+   EMPTY_STR,
+   "This file is part of the Robust Services Core (RSC).",
+   EMPTY_STR,
+   "RSC is free software: you can redistribute it and/or modify it under the",
+   "terms of the GNU General Public License as published by the Free Software",
+   "Foundation, either version 3 of the License, or (at your option) any later",
+   "version.",
+   EMPTY_STR,
+   "RSC is distributed in the hope that it will be useful, but WITHOUT ANY",
+   "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS",
+   "FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more",
+   "details.",
+   EMPTY_STR,
+   "You should have received a copy of the GNU General Public License along",
+   "with RSC.  If not, see <http://www.gnu.org/licenses/>.",
+   EMPTY_STR
+};
 
 fn_name CodeFile_CheckProlog = "CodeFile.CheckProlog";
 
@@ -1070,40 +1107,38 @@ void CodeFile::CheckProlog() const
    //
    //  //==================...
    //  //
-   //  //  filename
-   //  //
-   //  //  copyright notice
-   //  //
+   //  //  FileName.ext
+   //  //  FileProlog [multiple lines]
    //
-   auto line = 0;
-   auto ok = (code_.find(DoubleRule) == 0);
-   if(ok) ++line;
+   auto pos = info_[0].begin;
+   auto ok = (code_.find(DoubleRule, pos) == pos);
+   if(!ok) return LogLine(0, HeadingNotStandard);
 
-   auto pos = info_[1].begin;
-   ok = ok && (info_[1].type == EmptyComment);
+   pos = info_[1].begin;
    ok = ok && (code_.find(COMMENT_STR, pos) == pos);
-   if(ok) ++line;
+   ok = ok && (info_[1].type == EmptyComment);
+   if(!ok) return LogLine(1, HeadingNotStandard);
 
    pos = info_[2].begin;
    ok = ok && (code_.find(COMMENT_STR, pos) == pos);
    ok = ok && (code_.find(Name(), pos) == pos + 4);
-   if(ok) ++line;
+   if(!ok) return LogLine(2, HeadingNotStandard);
 
-   pos = info_[3].begin;
-   ok = ok && (info_[3].type == EmptyComment);
-   ok = ok && (code_.find(COMMENT_STR, pos) == pos);
-   if(ok) ++line;
+   size_t line = 3;
 
-   pos = info_[4].begin;
-   ok = ok && (code_.find(COMMENT_STR, pos) == pos);
-   ok = ok && (code_.find(CopyrightNotice, pos) == pos + 4);
-   if(ok) ++line;
+   for(auto i = 0; i < FilePrologSize; ++i)
+   {
+      pos = info_[line].begin;
+      ok = ok && (code_.find(COMMENT_STR, pos) == pos);
 
-   pos = info_[5].begin;
-   ok = ok && (info_[5].type == EmptyComment);
-   ok = ok && (code_.find(COMMENT_STR, pos) == pos);
+      if(FileProlog[i] == EMPTY_STR)
+         ok = ok && (info_[line].type == EmptyComment);
+      else
+         ok = ok && (code_.find(FileProlog[i], pos) == pos + 4);
 
-   if(!ok) LogLine(line, HeadingNotStandard);
+      if(!ok) return LogLine(line, HeadingNotStandard);
+      ++line;
+   }
 }
 
 //------------------------------------------------------------------------------

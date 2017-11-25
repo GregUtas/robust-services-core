@@ -3,7 +3,7 @@
 The POTS (Plain Ordinary Telephone Service) application simulates basic telephone
 services.
 
-## Running Tests
+## Running tests
 
 Many of the scripts in the [`input`](/input) directory are tests for the POTS application.
 When the [`test.cp.setup`](/input/test.cp.setup.txt) script is read, the following files
@@ -28,7 +28,7 @@ increased from 120 to 18,000 calls per minute.  Once this rate is reached, it is
 to 24,000 calls per minute to create an overload situation.  After overload has persisted
 for a while, the call rate is dropped to 0, which gradually causes all calls to be released.
 
-## Configuring User Profiles
+## Configuring user profiles
 
 Users (phone numbers) are created in the `>pots` CLI increment.  The CLI commands
 available in that increment are described [here](/docs/output/help.cli.txt),
@@ -37,7 +37,7 @@ starting after the line `pots>help full`.
 Phone numbers are five digits in length, in the range 20000-99999.  *Supplementary services*,
 which alter the behavior of basic calls, can also be assigned to each user.
 
-### Supplementary Services
+### Supplementary services
 The POTS application currently defines the following supplementary services:
 * **Barring of Incoming Calls (BIC)**: Incoming calls are blocked.
 * **Barring of Outgoing Calls (BOC)**: Outgoing calls are blocked.
@@ -61,7 +61,7 @@ and initiate a consultation call, which can then be conferenced with the origina
 * **Warm Line (WML)**: When a call is initiated and no digits are dialed before the timeout
 interval, the call is routed to a pre-specified number.
 
-## Design Overview
+## Design overview
 The [`SessionBase`](/sb) component of RCS defines virtual base classes for implementing state
 machines and protocols.  As a session-oriented application, POTS uses this framework.  The
 documents [*RSC Session Processing*](/docs/RSC-Session-Processing.pdf) and [*A Pattern Language

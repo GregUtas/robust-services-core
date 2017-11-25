@@ -1,4 +1,4 @@
-# How to contribute to Robust Services Core
+# Robust Services Core: How to Contribute
 
 Thanks for your interest!  This document describes different ways that you can contribute.
 
@@ -51,12 +51,13 @@ from the console, along with the output from a trace tool.
 
 ## Suggesting an enhancement
 Describe the expected behavior.  Unless it is obvious why the new capability would be
-beneficial, include a rationale and/or examples of how it would be used.
+beneficial, include a rationale and/or examples of how it would be used.  If you have
+ideas about how to implement it, include some high-level design notes.
 
 ## Writing code
 Before working on code
 - Please sign the [contributor agreement](/AGREEMENT.md) and email it to us.
-- Make sure that the change has been documented as an issue.
+- Make sure that the change has been documented as an [issue](../../issues).
 - Ask to be assigned to the issue so that other contributors can see what is already
 being worked on.
 - Read the [coding guidelines](/docs/RSC-Coding-Guidelines.md) and the [second

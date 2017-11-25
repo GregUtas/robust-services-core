@@ -1,4 +1,4 @@
-# Robust Services Core Entity Contributor Assignment Agreement
+# Robust Services Core: Entity Contributor Assignment Agreement
 
 Thank you for your interest in contributing to Robust Services Core ("We" or "Us").
 

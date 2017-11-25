@@ -1,4 +1,4 @@
-# Contributor Agreement
+# Robust Services Core: Contributor Agreement
 Before contributing to RSC, please assign the copyright for your work to the project.
 The Free Software Foundation also does this with contributions to their projects (e.g.
 GNU), and they explain why [here](https://www.gnu.org/licenses/why-assign.en.html).

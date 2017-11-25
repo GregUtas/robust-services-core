@@ -1,4 +1,4 @@
-# Robust Services Core Individual Contributor Assignment Agreement
+# Robust Services Core: Individual Contributor Assignment Agreement
 
 Thank you for your interest in contributing to Robust Services Core ("We" or "Us").
 

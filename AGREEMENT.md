@@ -29,4 +29,4 @@ also obtained a waiver from the copyright owner) before signing this agreement.
 - If you are an individual, please use [this form](/INDIVIDUAL.md).
 - If you are an organization, please use [this form](/ENTITY.md).
 
-After signing the form, please email it to rsc-agreements@pentennea.com.
+After signing the form, please scan it and email it to rsc-agreements@pentennea.com.

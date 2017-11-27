@@ -30,7 +30,7 @@
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 size_t SysUdpSocket::MaxUdpSize_ = 0;
 

@@ -38,7 +38,7 @@ enum ModuleIds
    NbModuleId = 1,   // NodeBase        NbModule
    NtModuleId = 2,   // NodeTools       NtModule
    CtModuleId = 3,   // CodeTools       CtModule
-   NwModuleId = 4,   // NodeBase        NwModule
+   NwModuleId = 4,   // NetworkBase     NwModule
    SbModuleId = 5,   // SessionBase     SbModule
    StModuleId = 6,   // SessionTools    StModule
    MbModuleId = 7,   // MediaBase       MbModule

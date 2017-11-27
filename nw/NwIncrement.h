@@ -27,9 +27,11 @@
 #include "NbTypes.h"
 #include "SysTypes.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 //  Network layer additions to the Clear command.
 //

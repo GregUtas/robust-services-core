@@ -29,6 +29,8 @@
 #include "RegCell.h"
 #include "SysTypes.h"
 
+using namespace NodeBase;
+
 namespace NodeBase
 {
    class CliText;
@@ -36,7 +38,7 @@ namespace NodeBase
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 class IpService : public Protected
 {

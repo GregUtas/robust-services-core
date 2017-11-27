@@ -27,15 +27,21 @@
 #include "CliTextParm.h"
 #include "SysTypes.h"
 
+using namespace NodeBase;
+
 namespace NodeBase
 {
    class CliCommand;
+}
+
+namespace NetworkBase
+{
    class SysIpL3Addr;
 }
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 //  Strings used by commands in the Network increment.
 //

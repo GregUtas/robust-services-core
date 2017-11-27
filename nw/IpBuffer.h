@@ -28,9 +28,11 @@
 #include "SysIpL3Addr.h"
 #include "SysTypes.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 //  IpBuffer wraps a message that passes between NodeBase and the IP stack.
 //  It allocates a buffer for a contiguous message that may include an

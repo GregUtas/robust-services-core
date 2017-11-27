@@ -28,9 +28,11 @@
 #include "NwTypes.h"
 #include "SysTypes.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 //  I/O thread for UDP-based protocols.
 //

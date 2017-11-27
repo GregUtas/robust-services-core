@@ -25,11 +25,13 @@
 #include "Module.h"
 #include "NbTypes.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
-//  Module for initializing NodeBase.
+//  Module for initializing NetworkBase.
 //
 class NwModule : public Module
 {

@@ -31,9 +31,11 @@
 #include "SysDecls.h"
 #include "SysTypes.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 //  Flags that request and report a socket's status during Poll().
 //

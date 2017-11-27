@@ -662,7 +662,9 @@ void Class::CheckOverrides() const
    if(patch)
    {
       auto& name = *space->Name();
-      patch = ((name == "NodeBase") || (name == "SessionBase"));
+      patch = (name == "NodeBase");
+      patch = patch || (name == "NetworkBase");
+      patch = patch || (name == "SessionBase");
    }
 
    if(subs_.empty())

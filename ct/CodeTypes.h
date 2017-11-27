@@ -476,7 +476,8 @@ enum LineType
    Code,                  // source code
    Blank,                 // blank lines
    EmptyComment,          // //
-   SeparatorComment,      // // followed by repeated -, =, or /
+   LicenseComment,        // //  FileName.ext or license information
+   SeparatorComment,      // //+ (+ = repeated -, =, or /)
    TaggedComment,         // //@ (@ = any character except -, =, or /)
    TextComment,           // //  text
    SlashAsteriskComment,  // /*

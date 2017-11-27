@@ -31,7 +31,7 @@ using std::string;
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 fn_name TcpIpService_ctor = "TcpIpService.ctor";
 

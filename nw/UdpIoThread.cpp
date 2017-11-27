@@ -33,7 +33,7 @@
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 fn_name UdpIoThread_ctor = "UdpIoThread.ctor";
 

@@ -27,7 +27,7 @@
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 class UdpIpService : public IpService
 {

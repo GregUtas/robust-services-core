@@ -1548,6 +1548,24 @@ string StackArg::TypeString(bool arg) const
 
 //------------------------------------------------------------------------------
 
+fn_name StackArg_WasIndexed = "StackArg.WasIndexed";
+
+void StackArg::WasIndexed()
+{
+   Debug::ft(StackArg_WasIndexed);
+
+   //  If the number of pointers (excluding arrays) attached to this type
+   //  accounts for all the pointers that remain (which includes arrays),
+   //  then all arrays have been indexed.  In that case, we are indexing
+   //  via a pointer, and its target is no longer a member for constness
+   //  purposes.
+   //
+   if(item->GetTypeSpec()->PtrCount(false) >= Ptrs(true)) member_ = false;
+   DecrPtrs();
+}
+
+//------------------------------------------------------------------------------
+
 fn_name StackArg_WasRead = "StackArg.WasRead";
 
 void StackArg::WasRead() const

@@ -29,7 +29,7 @@
 #include "SbTypes.h"
 #include "SysTypes.h"
 
-namespace NodeBase
+namespace NetworkBase
 {
    class SysIpL3Addr;
 }
@@ -42,6 +42,7 @@ namespace SessionBase
    struct LocalAddress;
 }
 
+using namespace NetworkBase;
 using namespace NodeBase;
 
 //------------------------------------------------------------------------------

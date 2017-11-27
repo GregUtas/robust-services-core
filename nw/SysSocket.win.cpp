@@ -30,7 +30,7 @@
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 const u_long IO_Blocking = 0;
 const u_long IO_NonBlocking = 1;

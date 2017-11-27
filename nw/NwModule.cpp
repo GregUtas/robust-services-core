@@ -34,7 +34,7 @@
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 bool NwModule::Registered = Register();
 
@@ -71,7 +71,7 @@ bool NwModule::Register()
 {
    Debug::ft(NwModule_Register);
 
-   //  Create the modules required by NodeBase.
+   //  Create the modules required by NetworkBase.
    //
    Singleton< NbModule >::Instance();
    return true;

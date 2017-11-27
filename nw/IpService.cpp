@@ -35,7 +35,7 @@ using std::string;
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 const id_t IpService::MaxId = 1000;
 

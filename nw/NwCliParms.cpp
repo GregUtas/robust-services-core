@@ -33,7 +33,7 @@ using std::string;
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 fixed_string NoHostAddrExpl = "Host address not found.";
 fixed_string NoHostInfoExpl = "Host information not found.";
@@ -96,11 +96,11 @@ PortsText::PortsText() : CliText(PortsTextExpl, PortsTextStr) { }
 
 //------------------------------------------------------------------------------
 
-fn_name NodeBase_GetIpL3Addr = "NodeBase.GetIpL3Addr";
+fn_name NetworkBase_GetIpL3Addr = "NetworkBase.GetIpL3Addr";
 
 bool GetIpL3Addr(SysIpL3Addr& input, const CliCommand& comm, CliThread& cli)
 {
-   Debug::ft(NodeBase_GetIpL3Addr);
+   Debug::ft(NetworkBase_GetIpL3Addr);
 
    string s;
    char c;

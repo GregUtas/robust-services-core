@@ -27,7 +27,7 @@
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 fn_name SysUdpSocket_ctor = "SysUdpSocket.ctor";
 

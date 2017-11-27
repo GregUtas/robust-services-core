@@ -147,6 +147,7 @@ fixed_string LineTypeStrings[LineType_N + 1] =
    "source code",
    "blank",
    COMMENT_STR,
+   "license //",
    "separator //",
    "tagged //",
    "text //",

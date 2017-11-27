@@ -29,14 +29,16 @@
 #include "NwTypes.h"
 #include "Q1Link.h"
 
-namespace NodeBase
+using namespace NodeBase;
+
+namespace NetworkBase
 {
    class IpPortStats;
 }
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 //  An IP port that supports a service (an application protocol).
 //

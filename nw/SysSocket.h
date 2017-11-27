@@ -30,14 +30,16 @@
 #include "ToolTypes.h"
 #include "TraceRecord.h"
 
-namespace NodeBase
+using namespace NodeBase;
+
+namespace NetworkBase
 {
    class NwTrace;
 }
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 //  Operating system abstraction layer: sockets.
 //

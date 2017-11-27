@@ -32,7 +32,7 @@
 //  NodeBase        NbModule    nb
 //  NodeTools       NtModule    nt       **
 //  CodeTools       CtModule    ct       **
-//  NodeBase        NwModule    nw       **
+//  NetworkBase     NwModule    nw       **
 //  SessionBase     SbModule    sb       **       **
 //  SessionTools    StModule    st       ** **    ** **
 //  MediaBase       MbModule    mb       **       ** **

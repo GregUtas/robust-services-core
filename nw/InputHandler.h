@@ -27,9 +27,11 @@
 #include "NwTypes.h"
 #include "SysTypes.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 //  An input handler receives messages on an IP port that supports an
 //  application protocol.  Its functions are invoked from I/O level,

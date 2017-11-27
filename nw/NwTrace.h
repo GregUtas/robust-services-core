@@ -27,9 +27,11 @@
 #include "SysIpL3Addr.h"
 #include "SysTypes.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 //  Records a TCP socket event.
 //

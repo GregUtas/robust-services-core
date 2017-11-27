@@ -31,9 +31,11 @@
 #include "SysTypes.h"
 #include "ToolTypes.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 //  Interface for tracing messages to/from specific IP peers and ports.
 //

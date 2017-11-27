@@ -38,7 +38,7 @@ using std::string;
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 //  The maximum size and the standard sizes for message buffers.  A small number
 //  of fixed sizes reduces heap fragmentation.  It also leaves slack space that

@@ -245,6 +245,11 @@ public:
    //
    void WasWritten() const;
 
+   //  Invokes DecrPtrs.  If the item is a member, handles constness
+   //  for arrays as opposed pointers.
+   //
+   void WasIndexed();
+
    //  Invoked when THIS is assigned to THAT.  TYPE is the type of
    //  assignment that occurred.
    //

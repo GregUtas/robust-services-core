@@ -29,14 +29,16 @@
 #include "Q1Way.h"
 #include "SysIpL2Addr.h"
 
-namespace NodeBase
+using namespace NodeBase;
+
+namespace NetworkBase
 {
    class HostAddrCfg;
 }
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 //  Global registry for IP ports that receive messages for applications.
 //

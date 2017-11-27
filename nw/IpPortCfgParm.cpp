@@ -34,7 +34,7 @@ using std::string;
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 fn_name IpPortCfgParm_ctor = "IpPortCfgParm.ctor";
 

@@ -27,7 +27,7 @@
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 //  An IP port that supports a TCP-based protocol.
 //

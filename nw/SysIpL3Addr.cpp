@@ -31,7 +31,7 @@ using std::string;
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 fn_name SysIpL3Addr_ctor1 = "SysIpL3Addr.ctor";
 

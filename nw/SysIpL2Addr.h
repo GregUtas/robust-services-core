@@ -26,9 +26,11 @@
 #include <string>
 #include "NwTypes.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 //  Operating system abstraction layer: layer 2 IP address.
 //

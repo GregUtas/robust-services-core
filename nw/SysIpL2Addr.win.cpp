@@ -32,7 +32,7 @@ using std::string;
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 fn_name SysIpL2Addr_ctor3 = "SysIpL2Addr.ctor";
 

@@ -25,14 +25,16 @@
 #include "CfgIntParm.h"
 #include "SysTypes.h"
 
-namespace NodeBase
+using namespace NodeBase;
+
+namespace NetworkBase
 {
    class IpService;
 }
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 //  Configuration parameter for IP ports.
 //

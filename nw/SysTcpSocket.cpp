@@ -36,7 +36,7 @@ using std::string;
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 fn_name SysTcpSocket_ctor1 = "SysTcpSocket.ctor";
 

@@ -27,14 +27,16 @@
 #include "NbTypes.h"
 #include "Registry.h"
 
-namespace NodeBase
+using namespace NodeBase;
+
+namespace NetworkBase
 {
    class IpService;
 }
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 //  Global registry for protocols supported over IP.
 //

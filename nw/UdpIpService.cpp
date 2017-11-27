@@ -24,9 +24,11 @@
 #include "SysTypes.h"
 #include "UdpIpPort.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 fn_name UdpIpService_ctor = "UdpIpService.ctor";
 

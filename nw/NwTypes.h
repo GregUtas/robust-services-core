@@ -28,7 +28,7 @@
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 //  An IP port number.  Interally, an IP port should be stored in host order.
 //

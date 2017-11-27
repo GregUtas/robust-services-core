@@ -31,7 +31,7 @@ using std::string;
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 fn_name IpServiceRegistry_ctor = "IpServiceRegistry.ctor";
 

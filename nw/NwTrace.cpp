@@ -30,7 +30,7 @@ using std::ostream;
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 NwTrace::NwTrace(Id rid, const SysSocket* socket, word data) :
    TimedRecord(sizeof(NwTrace), NetworkTracer),

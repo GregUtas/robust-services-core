@@ -23,10 +23,11 @@
 #include "SysTypes.h"
 
 using std::ostream;
+using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 fixed_string ProtocolStrings[IpProtocol_N + 1] =
 {

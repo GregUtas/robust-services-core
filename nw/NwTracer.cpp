@@ -34,7 +34,7 @@ using std::ostream;
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 fixed_string NetworkTraceToolName = "NetworkTracer";
 fixed_string NetworkTraceToolExpl = "traces sockets";

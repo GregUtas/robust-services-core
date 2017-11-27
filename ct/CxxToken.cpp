@@ -1254,7 +1254,7 @@ void Operation::Execute() const
       if(IsOverloaded(arg1, arg2)) return;
       arg1.WasRead();
       arg2.WasRead();
-      arg1.DecrPtrs();
+      arg1.WasIndexed();
       Context::PushArg(arg1);
       return;
 

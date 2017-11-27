@@ -30,9 +30,11 @@
 #include "SysIpL3Addr.h"
 #include "SysTypes.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 //  For efficiency, the preferred I/O design is one in which messages destined
 //  for applications are "pushed" directly into an input handler, either from

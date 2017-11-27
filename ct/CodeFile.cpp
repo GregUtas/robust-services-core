@@ -973,6 +973,7 @@ void CodeFile::CheckIncludeGuard()
       switch(info_[n].type)
       {
       case EmptyComment:
+      case LicenseComment:
       case TextComment:
       case SeparatorComment:
       case TaggedComment:
@@ -1123,6 +1124,7 @@ void CodeFile::CheckProlog() const
    ok = ok && (code_.find(COMMENT_STR, pos) == pos);
    ok = ok && (code_.find(Name(), pos) == pos + 4);
    if(!ok) return LogLine(2, HeadingNotStandard);
+   info_[2].type = LicenseComment;
 
    size_t line = 3;
 
@@ -1132,9 +1134,14 @@ void CodeFile::CheckProlog() const
       ok = ok && (code_.find(COMMENT_STR, pos) == pos);
 
       if(FileProlog[i] == EMPTY_STR)
+      {
          ok = ok && (info_[line].type == EmptyComment);
+      }
       else
+      {
          ok = ok && (code_.find(FileProlog[i], pos) == pos + 4);
+         if(ok) info_[line].type = LicenseComment;
+      }
 
       if(!ok) return LogLine(line, HeadingNotStandard);
       ++line;
@@ -1642,9 +1649,11 @@ UsingMode CodeFile::FindUsingFor(const string& name, size_t prefix,
    //
    auto search = this->Affecters();
 
-   //  Omit files that also affect the one that defines NAME.
+   //  Omit files that also affect the one that defines NAME.  This removes the
+   //  file that actually defines NAME, so add it back to the search.
    //
    SetDifference(search, item->GetDeclFile()->Affecters());
+   search.insert(item->GetDeclFile()->Fid());
 
    auto& files = Singleton< Library >::Instance()->Files();
 

@@ -29,7 +29,7 @@
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 fn_name SysTcpSocket_Accept = "SysTcpSocket.Accept";
 

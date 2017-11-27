@@ -40,7 +40,7 @@ using std::string;
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 //  Configuration parameter for the host IP address.
 //

@@ -28,9 +28,11 @@
 #include "TcpIoThread.h"
 #include "TcpIpService.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 fn_name TcpIpPort_ctor = "TcpIpPort.ctor";
 

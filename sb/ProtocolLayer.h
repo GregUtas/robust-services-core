@@ -26,11 +26,12 @@
 #include "Message.h"
 #include "SbTypes.h"
 
-namespace NodeBase
+namespace NetworkBase
 {
    class SysSocket;
 }
 
+using namespace NetworkBase;
 using namespace NodeBase;
 
 //------------------------------------------------------------------------------

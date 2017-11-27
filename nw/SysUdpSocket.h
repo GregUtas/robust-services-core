@@ -27,9 +27,11 @@
 #include "NwTypes.h"
 #include "SysTypes.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 //  Operating system abstraction layer: UDP socket.
 //

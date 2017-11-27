@@ -40,7 +40,7 @@ using std::string;
 
 //------------------------------------------------------------------------------
 
-namespace NodeBase
+namespace NetworkBase
 {
 const size_t TcpIoThread::MaxConns = 48 * 1024;  // 48K
 

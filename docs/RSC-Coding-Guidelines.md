@@ -52,9 +52,10 @@ after the standard heading.
    1. C++/C library headers, in alphabetical order
    1. other headers, in alphabetical order
 1. Remove an `#include` solely associated with functions inherited from a base class.
-1. Remove an `#include` by forward-declaring a class that is only named in references or pointers.  Use an
-explicit forward declaration instead of relying on this as a side effect of a friend declaration.
-1. Avoid `using` declarations and directives.  Prefix the namespace directly (i.e. `std::`\<symbol>).
+1. Remove an `#include` by forward-declaring a class that is only named in references or pointers.  Use
+an explicit forward declaration instead of relying on this as a side effect of a friend declaration.
+1. Avoid `using` declarations and directives for `std` symbols.  Prefix the namespace directly (i.e.
+`std::`\<symbol>).
 1. Initialize global data (static members) in the .cpp if possible.
 
 ## Preprocessor
@@ -62,7 +63,8 @@ Do not use the preprocessor except for one of the following purposes:
 1. An `#include` guard.
 1. Conditional compilation (`#ifdef`).  Symbols used here are defined when launching the compiler.  Those
 in current use are
-   1. `OS_WIN` for Windows (defines a specific platform; may only be used in a `Sys*.cpp` file)
+   1. `OS_WIN` for Windows (defines a specific platform: may only be used in platform-specific files;
+   those for Windows are named \*.win.cpp)
    1. `FIELD_LOAD` for a production build (else assumed to be a debug build; may only be used in a .cpp
    that executes _before_ the configuration file has been read during system initialization; otherwise
    use `Element::RunningInLab()`)

@@ -115,6 +115,7 @@ using std::string;
 using namespace NodeBase;
 //& using namespace NodeTools;
 using namespace CodeTools;
+//& using namespace NetworkBase;
 //& using namespace SessionBase;
 //& using namespace MediaBase;
 //& using namespace CallBase;
@@ -154,12 +155,13 @@ main_t main(int argc, char* argv[])
    //
 //& Singleton< NbModule >::Instance();
 //& Singleton< NtModule >::Instance();
+   Singleton< CtModule >::Instance();
+//& Singleton< NwModule >::Instance();
 //& Singleton< SbModule >::Instance();
 //& Singleton< StModule >::Instance();
 //& Singleton< MbModule >::Instance();
 //& Singleton< CbModule >::Instance();
 //& Singleton< PbModule >::Instance();
-   Singleton< CtModule >::Instance();
    Singleton< OnModule >::Instance();
    Singleton< CnModule >::Instance();
    Singleton< RnModule >::Instance();

@@ -31,12 +31,14 @@ it does.  You should therefore be able to figure out what the POTS code is doing
 without reading a large specification.  An overview of the POTS application
 is provided [here](/docs/RSC-POTS-Application.md).
 
-### C++ static analysis tool
+## C++ static analysis tool
 The development of RSC got sidetracked when the author decided to develop C++
 static analysis tools.  This toolset detects violations of various C++ design
 guidelines, such as those found in Scott Meyers' *Effective C++*.  It also analyzes
-`#include` directives to determine which ones should be added or deleted.  An
-overview of the toolset is provided [here](docs/RSC-Cxx-Static-Analysis-Tools.md).
+`#include` directives to determine which ones should be added or deleted.  Even if
+you're not developing applications for which RSC is suitable, you might find these
+tools useful.  An overview of the toolset is provided
+[here](docs/RSC-Cpp-Static-Analysis-Tools.md).
 
 ## Building an executable
 RSC requires C++11.

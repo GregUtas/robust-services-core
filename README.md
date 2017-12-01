@@ -11,8 +11,8 @@ The framework that supports robust applications is referred to as the *Robust Se
 Core* (RSC).  RSC will put your project on the right path and give it a jump start if
 you're developing or or reengineering a system whose requirements can be characterized as
 
-- highly available, reliable, and/or scalable
-- embedded, reactive, stateful, and/or distributed
+- highly available, reliable, and/or scalable;
+- embedded, reactive, stateful, and/or distributed.
 
 The patterns embodied in RSC make developers more productive.  Many of them have been
 proven in flagship telecom products, including (from the author's experience as chief
@@ -25,15 +25,14 @@ files that implement them.
 
 ### POTS application
 
-Including an application with a framework serves to test it and illustrate its
-use.  This repository therefore includes a POTS (Plain Ordinary Telephone
-Service) application.  POTS was chosen for several reasons.  For one thing,
-the author had extensive experience with similar applications while working
-as a software architect in the telecom industry.  But more importantly, POTS
-is a non-trivial application, yet everyone has a reasonable understanding of what
-it does.  You should therefore be able to figure out what the POTS code is doing
-without reading a large specification.  An overview of the POTS application
-is provided [here](/docs/RSC-POTS-Application.md).
+Including an application with a framework serves to test it and illustrate its use.
+This repository therefore includes a POTS (Plain Ordinary Telephone Service) application.
+POTS was chosen for several reasons.  For one thing, the author had extensive experience
+with similar applications while working in the telecom industry.  But more importantly,
+POTS is a non-trivial application, yet everyone has a reasonable understanding of what
+it does.  You should therefore be able to figure out what the POTS code is doing without
+reading a large specification.  An overview of the POTS application is provided
+[here](/docs/RSC-POTS-Application.md).
 
 ## C++ static analysis tool
 
@@ -137,8 +136,10 @@ provides sets of commands for testing functions in the [`LeakyBucketCounter`](/n
 
 ## License
 
-The software in this repository is licensed under the terms of the [GNU General
-Public License, version 3](/LICENSE.txt).
+The software in this repository is freely available under the terms of the [GNU General Public
+License, version 3](/LICENSE.txt).  If you have concerns about this license, it may be possible
+to obtain the software under the terms of another license approved by the [Free Software
+Foundation](https://www.gnu.org/licenses/license-list.html).
 
 ## Contributing
 

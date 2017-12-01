@@ -5,22 +5,26 @@ This repository contains
 2. An application built using the framework.
 3. Tools for the static analysis of C++ software.
 
-## License
-The software in this repository is licensed under the terms of the [GNU General
-Public License, version 3](/LICENSE.txt).
-
 ## Robust Services Core
-The framework that supports robust applications is referred to as the
-*Robust Services Core* (RSC).  Many of the design patterns in RSC are used in
-robust telecom products, where the term *carrier-grade* refers to a server with
-at least five-nines (99.999%) availability.  A pattern language summarizing
-these patterns appears in the [second chapter](/docs/RCS-chapter-2.pdf) of
-*Robust Communications Software*.  The document
-[*RSC Product Overview*](/docs/RSC-Product-Overview.pdf) discusses which
-patterns are currently available in this repository and the primary code files
-that implement them.
+
+The framework that supports robust applications is referred to as the *Robust Services
+Core* (RSC).  RSC will put your project on the right path and give it a jump start if
+you're developing or or reengineering a system whose requirements can be characterized as
+
+- highly available, reliable, and/or scalable
+- embedded, reactive, stateful, and/or distributed
+
+The patterns embodied in RSC make developers more productive.  Many of them have been
+proven in flagship telecom products, including (from the author's experience as chief
+software architect) the core network server that handles all of the calls in AT&T's
+cellular network.  A pattern language summarizing these patterns appears in the
+[second chapter](/docs/RCS-chapter-2.pdf) of *Robust Communications Software*.  The
+document [*RSC Product Overview*](/docs/RSC-Product-Overview.pdf) describes which of
+the patterns are currently available in this repository and points to the primary code
+files that implement them.
 
 ### POTS application
+
 Including an application with a framework serves to test it and illustrate its
 use.  This repository therefore includes a POTS (Plain Ordinary Telephone
 Service) application.  POTS was chosen for several reasons.  For one thing,
@@ -32,6 +36,7 @@ without reading a large specification.  An overview of the POTS application
 is provided [here](/docs/RSC-POTS-Application.md).
 
 ## C++ static analysis tool
+
 The development of RSC got sidetracked when the author decided to develop C++
 static analysis tools.  This toolset detects violations of various C++ design
 guidelines, such as those found in Scott Meyers' *Effective C++*.  It also analyzes
@@ -40,6 +45,7 @@ you're not developing applications with RSC, you might find these tools useful.
 An overview of them is provided [here](docs/RSC-Cpp-Static-Analysis-Tools.md).
 
 ## Building an executable
+
 RSC requires C++11.
 
 RSC is currently implemented on Windows, where it runs as a console application.
@@ -128,6 +134,11 @@ Entering `>nt` in the CLI accesses the "nt" *increment* (a set of CLI commands).
 provides sets of commands for testing functions in the [`LeakyBucketCounter`](/nb/LeakyBucketCounter.h),
 [`Q1Way`](/nb/Q1Way.h), [`Q2Way`](/nb/Q2Way.h), [`Registry`](/nb/Registry.h), and
 [`SysTime`](/nb/SysTime.h) interfaces.
+
+## License
+
+The software in this repository is licensed under the terms of the [GNU General
+Public License, version 3](/LICENSE.txt).
 
 ## Contributing
 

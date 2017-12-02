@@ -14,8 +14,8 @@ developing or or reengineering a system whose requirements can be characterized 
 - highly available, reliable, and/or scalable;
 - embedded, reactive, stateful, and/or distributed.
 
-The patterns embodied in RSC make developers more productive.  Many of them have been
-proven in flagship telecom products, including (from the author's experience as chief
+The design patterns used in RSC make developers more productive.  They have been proven
+in flagship telecom products, including (from the author's experience as its chief
 software architect) the core network server that handles all of the calls in AT&T's
 cellular network.  A pattern language that summarizes the patterns appears in the
 [second chapter](/docs/RCS-chapter-2.pdf) of *Robust Communications Software*.  The

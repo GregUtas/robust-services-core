@@ -17,11 +17,12 @@ you're developing or or reengineering a system whose requirements can be charact
 The patterns embodied in RSC make developers more productive.  Many of them have been
 proven in flagship telecom products, including (from the author's experience as chief
 software architect) the core network server that handles all of the calls in AT&T's
-cellular network.  A pattern language summarizing these patterns appears in the
+cellular network.  A pattern language that summarizes the patterns appears in the
 [second chapter](/docs/RCS-chapter-2.pdf) of *Robust Communications Software*.  The
 document [*RSC Product Overview*](/docs/RSC-Product-Overview.pdf) describes which of
-the patterns are currently available in this repository and points to the primary code
-files that implement them.
+them are currently available in this repository and points to the primary code files
+that implement them, and this [tutorial](/docs/RCS-tutorial.pdf) provides more
+information about some of them.
 
 ### POTS application
 

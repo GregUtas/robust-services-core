@@ -8,6 +8,7 @@ File | Description
 [RSC-Coding-Guidelines](/docs/RSC-Coding-Guidelines.md) | C++ coding guidelines
 [RSC-Software-Design](/docs/RSC-Software-Design.pdf) | high-level design notes for some enhancements
 [RSC-Cpp-Static-Analysis-Tools](/docs/RSC-Cpp-Static-Analysis-Tools.md) | overview of C++ static analysis tools
+[RSC-Session-Processing-tutorial](/docs/RSC-Session-Processing-tutorial.pdf) | overview of `SessionBase`
 [RSC-Session-Processing](/docs/RSC-Session-Processing.pdf) | design guide for `SessionBase` applications
 [RSC-POTS-Application](/docs/RSC-POTS-Application.md) | overview of the POTS application
 [PLCP](/docs/PLCP.pdf) | *A Pattern Language of Call Processing*

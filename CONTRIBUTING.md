@@ -58,7 +58,5 @@ ideas about how to implement it, include some high-level design notes.
 Before working on code
 - Please sign the [contributor agreement](/AGREEMENT.md) and email it to us.
 - Make sure that the change has been documented as an [issue](../../issues).
-- Ask to be assigned to the issue so that other contributors can see what is already
-being worked on.
-- Read the [coding guidelines](/docs/RSC-Coding-Guidelines.md) and the [second
-chapter](/docs/RCS-chapter-2.pdf) of *Robust Communications Software*.
+- Ask to be assigned to the issue so that other contributors can see what is being worked on.
+- Read the [documents](/docs) that are relevant to the code that you will be writing.

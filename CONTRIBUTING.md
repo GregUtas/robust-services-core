@@ -8,7 +8,8 @@ If you can't find answers there, please email your questions to rsc-questions@pe
 
 ## Collaboration
 To contribute in other ways, you need to become a collaborator.  To receive an invitation
-to join the repository, please email your request to rsc-collaborators@pentennea.com.
+to join the repository, please email your request to rsc-collaborators@pentennea.com, briefly
+describing your background and areas of interest.
 
 ## Issues
 

@@ -59,4 +59,4 @@ Before working on code
 - Please sign the [contributor agreement](/AGREEMENT.md) and email it to us.
 - Make sure that the change has been documented as an [issue](../../issues).
 - Ask to be assigned to the issue so that other contributors can see what is being worked on.
-- Read the [documents](/docs) that are relevant to the code that you will be writing.
+- Read the [documents](/docs/README.md) that are relevant to the code that you will be writing.

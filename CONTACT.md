@@ -4,7 +4,8 @@
 Please email your questions to rsc-questions@pentennea.com.
 
 ## Collaborator requests
-To be invited to the repository as a collaborator, please email rsc-collaborators@pentennea.com.
+To be invited to the repository as a collaborator, please email rsc-collaborators@pentennea.com, briefly
+describing your background and areas of interest.
 
 ## Contributor agreements
 Before submitting code or documentation, please email your copyright assignment to rsc-agreements@pentennea.com.

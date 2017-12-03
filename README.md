@@ -44,6 +44,12 @@ guidelines, such as those found in Scott Meyers' *Effective C++*.  It also analy
 you're not developing applications with RSC, you might find these tools useful.
 An overview of them is provided [here](docs/RSC-Cpp-Static-Analysis-Tools.md).
 
+## Installing the repository
+
+Download the repository to a directory named `rsc`, located directly within another
+directory named `rsc`.  This is because, when the executable starts, it looks for
+its configuration file on the path `.../rsc/rsc/input/element.config.txt`.
+
 ## Building an executable
 
 RSC requires C++11.

@@ -3,8 +3,8 @@
 File | Description
 ---- | -----------
 [RCS-chapter-2](/docs/RCS-chapter-2.pdf) | chapter 2 of *Robust Communications Software*
-[RSC-Product-Overview](/docs/RSC-Product-Overview.pdf) | roadmap for the Robust Services Core
 [RCS-tutorial](/docs/RCS-tutorial.pdf) | overview of *Robust Communications Software*
+[RSC-Product-Overview](/docs/RSC-Product-Overview.pdf) | roadmap for the Robust Services Core
 [RSC-Coding-Guidelines](/docs/RSC-Coding-Guidelines.md) | C++ coding guidelines
 [RSC-Software-Design](/docs/RSC-Software-Design.pdf) | high-level design notes for various enhancements
 [RSC-Cpp-Static-Analysis-Tools](/docs/RSC-Cpp-Static-Analysis-Tools.md) | overview of the C++ static analysis tools

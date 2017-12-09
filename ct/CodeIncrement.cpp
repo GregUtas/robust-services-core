@@ -217,6 +217,7 @@ word ApplyCommand::ProcessCommand(CliThread& cli) const
             else if(work == REMOVE_INCLUDE_STR) act = CodeFile::RemoveInclude;
             else if(work == ADD_FORWARD_STR) act = CodeFile::AddForward;
             else if(work == REMOVE_FORWARD_STR) act = CodeFile::RemoveForward;
+            else if(work == ADD_USING_STR) act = CodeFile::AddUsing;
             else if(work == REMOVE_USING_STR) act = CodeFile::RemoveUsing;
             else act = CodeFile::NoChange;
 

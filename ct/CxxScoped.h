@@ -65,12 +65,6 @@ public:
    //
    bool IsDefinedIn(const CxxArea* area) const;
 
-   //  Updates NAME with the item's Nth fully qualified name.  The name omits
-   //  template arguments but prefixes a scope resolution operator.  Returns
-   //  false if no more names are available.
-   //
-   virtual bool GetScopedName(std::string& name, size_t n) const;
-
    //  Updates VIEW to indicate this item's accessibility to SCOPE.
    //
    virtual void AccessibilityTo(const CxxScope* scope, SymbolView* view) const;
@@ -432,9 +426,9 @@ private:
    //
    const QualNamePtr name_;
 
-   //  If and how the base class was found via a using statement.
+   //  Set if a using statement made the base class visible.
    //
-   UsingMode mode_;
+   bool using_;
 };
 
 //------------------------------------------------------------------------------
@@ -905,9 +899,9 @@ private:
    //
    Cxx::ClassTag tag_ : 8;
 
-   //  If and how ref_ was found via a using statement.
+   //  Set if a using statement made the friend visible.
    //
-   UsingMode mode_ : 6;
+   bool using_ : 1;
 
    //  Set when searching for the friend's referent, to prevent recursive
    //  invocations of FindReferent.
@@ -1145,6 +1139,10 @@ public:
    //
    bool IsUsingFor(const std::string& name, size_t prefix) const;
 
+   //  Returns true if the declaration resolved a symbol in the same file.
+   //
+   bool ResolvedLocal() const { return local_; }
+
    //  Overridden to log warnings associated with the declaration.
    //
    virtual void Check() const override;
@@ -1175,7 +1173,7 @@ public:
    //
    virtual bool InLine() const override { return false; }
 
-   //  Overridden to determine if the typedef is unused.
+   //  Overridden to determine if the declaration is unused.
    //
    virtual bool IsUnused() const override { return (users_ == 0); }
 
@@ -1218,7 +1216,11 @@ private:
 
    //  How many times the declaration resolved a symbol.
    //
-   mutable size_t users_ : 15;
+   mutable size_t users_ : 14;
+
+   //  Set if the declaration resolved a symbol in the same file.
+   //
+   mutable bool local_ : 1;
 
    //  Set if name_ is a namespace.
    //

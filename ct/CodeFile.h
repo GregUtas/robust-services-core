@@ -111,10 +111,10 @@ public:
    //
    bool IsTemplateHeader() const;
 
-   //  Returns true if ITEM is visible within this file or SCOPE because
-   //  of a using statement that matches NAME to at least PREFIX.
+   //  Returns the using statement, if any, that makes ITEM visible within
+   //  this file or SCOPE because it matches NAME to at least PREFIX.
    //
-   UsingMode FindUsingFor(const std::string& name, size_t prefix,
+   Using* FindUsingFor(const std::string& name, size_t prefix,
       const CxxScoped* item, const CxxScope* scope) const;
 
    //  Returns the source code as a string.
@@ -239,6 +239,7 @@ public:
       RemoveInclude,
       AddForward,
       RemoveForward,
+      AddUsing,
       RemoveUsing
    };
 
@@ -329,10 +330,10 @@ private:
    //
    Data* FindData(const std::string& name) const;
 
-   //  Returns TRUE if NAME is made visible by one of the file's using
-   //  statements that matches NAME at least to PREFIX.
+   //  Returns the file's using statement, if any, that makes NAME
+   //  visible by matching NAME at least to PREFIX.
    //
-   bool HasUsingFor(const std::string& name, size_t prefix) const;
+   Using* GetUsingFor(const std::string& name, size_t prefix) const;
 
    //  Returns TRUE if the file has a forward declaration for ITEM.
    //
@@ -348,11 +349,10 @@ private:
    void EraseInternals(CxxNamedSet& set) const;
 
    //  Displays, in STREAM, the symbols in SET and where they are defined.
-   //  If FQ is set, fully qualified names are displayed.  TITLE describes
-   //  the contents of SET.
+   //  TITLE describes the contents of SET.
    //
    static void DisplaySymbols(std::ostream& stream,
-      const CxxNamedSet& set, bool fq, const std::string& title);
+      const CxxNamedSet& set, const std::string& title);
 
    //  Creates an Editor object.  Returns nullptr on failure, updating RC
    //  and EXPL with an explanation.

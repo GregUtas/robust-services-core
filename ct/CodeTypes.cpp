@@ -319,5 +319,6 @@ fixed_string ADD_INCLUDE_STR    = "Add an #include for";
 fixed_string REMOVE_INCLUDE_STR = "Remove the #include for";
 fixed_string ADD_FORWARD_STR    = "Add a forward declaration for";
 fixed_string REMOVE_FORWARD_STR = "Remove the forward declaration for";
-fixed_string REMOVE_USING_STR   = "Remove the using statements for";
+fixed_string ADD_USING_STR      = "Add a using statement for";
+fixed_string REMOVE_USING_STR   = "Remove the using statement for";
 }

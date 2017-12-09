@@ -260,18 +260,18 @@ void Block::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-fn_name Block_HasUsingFor = "Block.HasUsingFor";
+fn_name Block_GetUsingFor = "Block.GetUsingFor";
 
-bool Block::HasUsingFor(const string& name, size_t prefix) const
+Using* Block::GetUsingFor(const string& name, size_t prefix) const
 {
-   Debug::ft(Block_HasUsingFor);
+   Debug::ft(Block_GetUsingFor);
 
    for(auto u = Usings_.cbegin(); u != Usings_.cend(); ++u)
    {
-      if((*u)->IsUsingFor(name, prefix)) return true;
+      if((*u)->IsUsingFor(name, prefix)) return *u;
    }
 
-   return false;
+   return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -1893,7 +1893,7 @@ void Function::AddThisArg()
    TypeSpecPtr typeSpec(new DataSpec(cls->Name()->c_str()));
    typeSpec->SetPtrs(1);
    typeSpec->SetConst(const_);
-   typeSpec->SetReferent(cls, NoUsing);
+   typeSpec->SetReferent(cls, false);
    string argName(THIS_STR);
    ArgumentPtr arg(new Argument(argName, typeSpec));
    arg->SetScope(this);
@@ -3218,9 +3218,9 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
       }
    }
 
-   for(auto u = usages.usings.cbegin(); u != usages.usings.cend(); ++u)
+   for(auto u = usages.users.cbegin(); u != usages.users.cend(); ++u)
    {
-      symbols.usings.insert(*u);
+      symbols.AddUser(*u);
    }
 
    //  If this file defines the function, include the symbols used in its
@@ -4636,10 +4636,10 @@ void FuncSpec::SetRefDetached(bool on)
 
 //------------------------------------------------------------------------------
 
-void FuncSpec::SetReferent(CxxNamed* ref, UsingMode mode)
+void FuncSpec::SetReferent(CxxNamed* ref, bool use)
 {
    Debug::SwErr(FuncSpec_Warning, "SetReferent", 0);
-   func_->GetTypeSpec()->SetReferent(ref, mode);
+   func_->GetTypeSpec()->SetReferent(ref, use);
 }
 
 //------------------------------------------------------------------------------

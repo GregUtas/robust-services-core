@@ -240,7 +240,7 @@ fn_name BaseDecl_ctor = "BaseDecl.ctor";
 
 BaseDecl::BaseDecl(QualNamePtr& name, Cxx::Access access) :
    name_(name.release()),
-   mode_(NoUsing)
+   using_(false)
 {
    Debug::ft(BaseDecl_ctor);
 
@@ -288,7 +288,7 @@ bool BaseDecl::FindReferent()
    if(item != nullptr)
    {
       name_->SetReferent(item);
-      mode_ = view.mode;
+      using_ = view.using_;
       item->SetAsReferent(this);
       return true;
    }
@@ -319,7 +319,7 @@ void BaseDecl::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    //  arguments, because subclassing a template instance is not supported.
    //
    symbols.AddBase(GetClass());
-   if(mode_ != NoUsing) symbols.AddUsing(GetClass());
+   if(using_) symbols.AddUser(this);
 }
 
 //------------------------------------------------------------------------------
@@ -566,15 +566,6 @@ CodeFile* CxxScoped::GetImplFile() const
 
 //------------------------------------------------------------------------------
 
-bool CxxScoped::GetScopedName(string& name, size_t n) const
-{
-   if(n != 0) return false;
-   name = SCOPE_STR + ScopedName(false);
-   return true;
-}
-
-//------------------------------------------------------------------------------
-
 bool CxxScoped::IsAuto() const
 {
    auto spec = GetTypeSpec();
@@ -744,8 +735,8 @@ bool CxxScoped::NameRefersToItem(const std::string& name,
          //  "a::b", the using statement must be for "a::b", "a::b::c",
          //  or "a::b::c::d".
          //
-         view->mode = file->FindUsingFor(fqName, pos - 4, this, scope);
-         if(view->mode != NoUsing) return true;
+         view->using_ = file->FindUsingFor(fqName, pos - 4, this, scope);
+         if(view->using_) return true;
       }
 
       ++i;
@@ -1327,7 +1318,7 @@ fn_name Friend_ctor = "Friend.ctor";
 Friend::Friend() :
    inline_(nullptr),
    tag_(Cxx::Typename),
-   mode_(NoUsing),
+   using_(false),
    searching_(false),
    searched_(false),
    users_(0)
@@ -1619,7 +1610,7 @@ bool Friend::FindReferent()
       searched_ = true;
       SetScope(scope->GetSpace());
       ref = ResolveName(GetDeclFile(), scope, mask, &view);
-      if(ref != nullptr) mode_ = view.mode;
+      if(ref != nullptr) using_ = view.using_;
    }
 
    //  Keep searching for the friend if the initial search failed or previous
@@ -1718,7 +1709,7 @@ void Friend::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
    //  Indicate whether our referent was made visible by a using statement.
    //
-   if(mode_ != NoUsing) symbols.AddUsing(ref);
+   if(using_) symbols.AddUser(this);
 }
 
 //------------------------------------------------------------------------------
@@ -2183,6 +2174,7 @@ fn_name Using_ctor = "Using.ctor";
 Using::Using(QualNamePtr& name, bool space) :
    name_(name.release()),
    users_(0),
+   local_(false),
    space_(space)
 {
    Debug::ft(Using_ctor);
@@ -2296,7 +2288,17 @@ bool Using::IsUsingFor(const string& name, size_t prefix) const
 
    if((pos != string::npos) && (pos >= prefix))
    {
-      ++users_;
+      auto file = Context::File();
+
+      //  If there is no context file, a parse is not in progress, in which
+      //  case a tool is invoking this after the parse was completed.
+      //
+      if(file != nullptr)
+      {
+         ++users_;
+         if(GetDeclFid() == file->Fid()) local_ = true;
+      }
+
       return true;
    }
 

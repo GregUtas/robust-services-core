@@ -172,6 +172,15 @@ id_t CxxNamed::GetDeclFid() const
 
 //------------------------------------------------------------------------------
 
+bool CxxNamed::GetScopedName(string& name, size_t n) const
+{
+   if(n != 0) return false;
+   name = SCOPE_STR + ScopedName(false);
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
 Namespace* CxxNamed::GetSpace() const
 {
    auto item = GetScope();
@@ -522,7 +531,7 @@ DataSpec::DataSpec(QualNamePtr& name) :
    arrayPos_(INT8_MAX),
    const_(false),
    constptr_(false),
-   mode_(NoUsing),
+   using_(false),
    ptrDet_(false),
    refDet_(false)
 {
@@ -542,7 +551,7 @@ DataSpec::DataSpec(const char* name) :
    arrayPos_(INT8_MAX),
    const_(false),
    constptr_(false),
-   mode_(NoUsing),
+   using_(false),
    ptrDet_(false),
    refDet_(false)
 {
@@ -563,7 +572,7 @@ DataSpec::DataSpec(const DataSpec& that) : TypeSpec(that),
    arrayPos_(that.arrayPos_),
    const_(that.const_),
    constptr_(that.constptr_),
-   mode_(that.mode_),
+   using_(that.using_),
    ptrDet_(that.ptrDet_),
    refDet_(that.refDet_)
 {
@@ -842,7 +851,7 @@ bool DataSpec::FindReferent()
 
    if(item != nullptr)
    {
-      SetReferent(item, view.mode);
+      SetReferent(item, view.using_);
       return true;
    }
 
@@ -871,7 +880,7 @@ bool DataSpec::FindReferent()
       //  case, report that the referent was found.
       //
       item = syms->FindSymbol(file, scope, qname, VALUE_REFS, &view);
-      if(item != nullptr) SetReferent(item, view.mode);
+      if(item != nullptr) SetReferent(item, view.using_);
    case TemplateParameter:
    case TemplateClass:
       //
@@ -1033,7 +1042,7 @@ void DataSpec::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
    //  Indicate whether our referent was made visible by a using statement.
    //
-   if(mode_ != NoUsing) symbols.AddUsing(ref);
+   if(using_) symbols.AddUser(this);
 }
 
 //------------------------------------------------------------------------------
@@ -1453,7 +1462,7 @@ bool DataSpec::ResolveTemplateArgument()
    auto item = parser->ResolveInstanceArgument(name_.get());
    if(item == nullptr) return false;
 
-   SetReferent(item, NoUsing);
+   SetReferent(item, false);
    return true;
 }
 
@@ -1528,7 +1537,7 @@ void DataSpec::SetLocale(Cxx::ItemType locale)
 
 fn_name DataSpec_SetReferent = "DataSpec.SetReferent";
 
-void DataSpec::SetReferent(CxxNamed* ref, UsingMode mode)
+void DataSpec::SetReferent(CxxNamed* ref, bool use)
 {
    Debug::ft(DataSpec_SetReferent);
 
@@ -1539,7 +1548,7 @@ void DataSpec::SetReferent(CxxNamed* ref, UsingMode mode)
    if(!ref->IsTemplate() || (ref->Referent() != nullptr))
    {
       name_->SetReferent(ref);
-      mode_ = mode;
+      using_ = use;
 
       if(ref->Type() != Cxx::Typedef)
       {
@@ -1736,7 +1745,7 @@ QualName::QualName(TypeNamePtr& type) :
    class_(nullptr),
    type_(nullptr),
    forw_(nullptr),
-   mode_(NoUsing),
+   using_(false),
    oper_(Cxx::NIL_OPERATOR),
    global_(false),
    qualified_(false)
@@ -1756,7 +1765,7 @@ QualName::QualName(const string& name) :
    class_(nullptr),
    type_(nullptr),
    forw_(nullptr),
-   mode_(NoUsing),
+   using_(false),
    oper_(Cxx::NIL_OPERATOR),
    global_(false),
    qualified_(false)
@@ -1778,7 +1787,7 @@ QualName::QualName(const QualName& that) : CxxNamed(that),
    class_(that.class_),
    type_(that.type_),
    forw_(that.forw_),
-   mode_(that.mode_),
+   using_(that.using_),
    oper_(that.oper_),
    global_(that.global_),
    qualified_(that.qualified_)
@@ -2014,7 +2023,7 @@ void QualName::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    }
 
    symbols.AddDirect(ref);
-   if(mode_ != NoUsing) symbols.AddUsing(ref);
+   if(using_) symbols.AddUser(this);
 }
 
 //------------------------------------------------------------------------------
@@ -2157,7 +2166,7 @@ CxxNamed* QualName::Referent() const
    //
    ref_ = item->Referent();
    if(ref_ == nullptr) return ReferentError(item->Trace(), item->Type());
-   mode_ = view.mode;
+   using_ = view.using_;
    return ref_;
 }
 
@@ -3083,7 +3092,7 @@ void TypeSpec::SetRefDetached(bool on)
 
 //------------------------------------------------------------------------------
 
-void TypeSpec::SetReferent(CxxNamed* ref, UsingMode mode)
+void TypeSpec::SetReferent(CxxNamed* ref, bool use)
 {
    Debug::SwErr(TypeSpec_PureVirtualFunction, "SetReferent", 0);
 }

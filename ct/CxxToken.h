@@ -45,22 +45,22 @@ namespace CodeTools
 //
 struct CxxUsageSets
 {
-   CxxNamedSet bases;      // type used as base class
-   CxxNamedSet directs;    // type used directly
-   CxxNamedSet indirects;  // type used via a pointer or reference
-   CxxNamedSet forwards;   // type found via a forward declaration
-   CxxNamedSet friends;    // type found via a friend declaration
-   CxxNamedSet usings;     // type found via a using statement
+   CxxNamedSet bases;      // types used as base class
+   CxxNamedSet directs;    // types used directly
+   CxxNamedSet indirects;  // types named in a pointer or reference
+   CxxNamedSet forwards;   // types resolved via a forward declaration
+   CxxNamedSet friends;    // types resolved via a friend declaration
+   CxxNamedSet users;      // names resolved via a using statement
 
-   //  Adds ITEM to the specified set (AddForward adds ITEM to FRIENDS if it
-   //  is a friend declaration).  These are used so that a debug breakpoint
-   //  can be set to find the origin of an item.
+   //  Adds ITEM to the specified set (AddForward adds ITEM to FRIENDS if
+   //  it is a friend declaration).  These functions exist so that a debug
+   //  breakpoint can be set within them to find the origin of an item.
    //
    void AddBase(const CxxNamed* item);
    void AddDirect(const CxxNamed* item);
    void AddIndirect(const CxxNamed* item);
    void AddForward(const CxxNamed* item);
-   void AddUsing(const CxxNamed* item);
+   void AddUser(const CxxNamed* item);
 };
 
 //------------------------------------------------------------------------------

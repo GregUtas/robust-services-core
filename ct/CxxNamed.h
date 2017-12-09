@@ -179,6 +179,12 @@ public:
    //
    virtual std::string ScopedName(bool templates) const;
 
+   //  Updates NAME with the item's Nth fully qualified name.  The name omits
+   //  template arguments but prefixes a scope resolution operator.  Returns
+   //  false if no more names are available.
+   //
+   virtual bool GetScopedName(std::string& name, size_t n) const;
+
    //  Returns the area (namespace or class) in which the item was declared.
    //  Returns (because of an override) the item itself if it is an area.
    //
@@ -223,6 +229,12 @@ public:
    //  without an implementation or a class without an implemented function.
    //
    virtual bool IsImplemented() const { return true; }
+
+   //  Returns the item's direct type, which could be a typedef or forward.
+   //  declaration.  To follow either of these to the final underlying type,
+   //  use CxxToken.Root.
+   //
+   virtual CxxNamed* DirectType() const { return Referent(); }
 
    //  Finds what the item refers to.  The default version generates a log and
    //  returns false.
@@ -308,12 +320,6 @@ protected:
    //  Resolves the item's qualified name within a function.
    //
    CxxNamed* ResolveLocal(SymbolView* view) const;
-
-   //  Returns the item's direct type, which could be a typedef or forward.
-   //  declaration.  To follow either of these to the final underlying type,
-   //  use CxxToken.Root.
-   //
-   virtual CxxNamed* DirectType() const { return Referent(); }
 
    //  Invoked when ResolveName finds TYPE, a typedef.  If it returns false,
    //  ResolveName returns TYPE.  Otherwise, name resolution continues with
@@ -622,9 +628,9 @@ private:
    //
    mutable CxxScoped* forw_;
 
-   //  If and how ref_ was found via a using statement.
+   //  Set if ref_ was made visible by a using statement.
    //
-   mutable UsingMode mode_: 8;
+   mutable bool using_ : 8;
 
    //  The operator, if any, that follows the final name.
    //
@@ -816,10 +822,10 @@ public:
    //
    virtual void SetRefDetached(bool on) = 0;
 
-   //  Sets what the type refers to.  MODE indicates whether the item was
-   //  made visible by an #include or using statement.
+   //  Sets what the type refers to.  USE is set if a using statement made
+   //  the type visible.
    //
-   virtual void SetReferent(CxxNamed* ref, UsingMode mode) = 0;
+   virtual void SetReferent(CxxNamed* ref, bool use) = 0;
 
    //  Returns the number of pointer tags attached to the type.  It follows
    //  the type to its root (a class or terminal), adding up pointer tags
@@ -1229,7 +1235,7 @@ private:
 
    //  Overridden to set what the type refers to.
    //
-   virtual void SetReferent(CxxNamed* ref, UsingMode mode) override;
+   virtual void SetReferent(CxxNamed* ref, bool use) override;
 
    //  Overridden to set the level of reference indirection to the type.
    //
@@ -1295,9 +1301,9 @@ private:
    //
    bool constptr_ : 1;
 
-   //  If and how ref_ was found via a using statement.
+   //  Set if a using statement resolved this name.
    //
-   UsingMode mode_ : 2;
+   bool using_ : 1;
 
    //  Set if a pointer tag was detached.
    //

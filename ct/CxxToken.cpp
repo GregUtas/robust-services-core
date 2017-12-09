@@ -374,9 +374,9 @@ void CxxUsageSets::AddIndirect(const CxxNamed* item)
 
 //------------------------------------------------------------------------------
 
-void CxxUsageSets::AddUsing(const CxxNamed* item)
+void CxxUsageSets::AddUser(const CxxNamed* item)
 {
-   usings.insert(item);
+   users.insert(item);
 }
 
 //==============================================================================
@@ -2309,7 +2309,7 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
       //
       static_cast< QualName* >(arg2.item)->MemberAccessed(cls, mem);
 
-      if((view.accessibility == Inherited) && (!view.Friend) &&
+      if((view.accessibility == Inherited) && (!view.friend_) &&
          (cls->ClassDistance(scope->GetClass()) == NOT_A_SUBCLASS))
       {
          mem->RecordAccess(Cxx::Public);

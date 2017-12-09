@@ -253,18 +253,6 @@ enum Accessibility
 
 //------------------------------------------------------------------------------
 //
-//  How a symbol was made visible by a using statement.
-//
-enum UsingMode
-{
-   NoUsing,       // not accessed through a using statement
-   ScopeUsing,    // using statement within scope (class or function)
-   FileUsing,     // using statement in same file
-   IncludedUsing  // using statement in another file
-};
-
-//------------------------------------------------------------------------------
-//
 //  Indicates how closely a type matches the one expected by a function or
 //  template.
 //
@@ -289,22 +277,22 @@ struct SymbolView
    //
    Accessibility accessibility : 4;
 
-   //  If and how the symbol was resolved by a using statement.
-   //
-   UsingMode mode : 4;
-
    //  How well the symbol's arguments matched those supplied.
    //
    TypeMatch match : 4;
 
+   //  Set if the symbol was resolved by a using statement.
+   //
+   bool using_ : 1;
+
    //  Set if the symbol was accessible because of a friend declaration.
    //
-   bool Friend : 2;
+   bool friend_ : 1;
 
    //  Set if the symbol has a referent.  True except for unresolved
    //  forward and friend declarations.
    //
-   bool resolved : 2;
+   bool resolved : 1;
 
    //  If ACCESSIBILITY is Inherited, the distance (in the class hierarchy)
    //  from the class that defined the symbol to the class that used it.
@@ -317,11 +305,11 @@ struct SymbolView
 //  For initializing SymbolView instances.
 //
 constexpr SymbolView NotAccessible =
-   {Inaccessible, NoUsing, Compatible, false, true, 0};
+   {Inaccessible, Compatible, false, false, true, 0};
 constexpr SymbolView DeclaredGlobally =
-   {Unrestricted, NoUsing, Compatible, false, true, 0};
+   {Unrestricted, Compatible, false, false, true, 0};
 constexpr SymbolView DeclaredLocally =
-   {Declared, NoUsing, Compatible, false, true, 0};
+   {Declared,Compatible, false, false, true, 0};
 
 //------------------------------------------------------------------------------
 //
@@ -558,6 +546,7 @@ extern fixed_string ADD_INCLUDE_STR;
 extern fixed_string REMOVE_INCLUDE_STR;
 extern fixed_string ADD_FORWARD_STR;
 extern fixed_string REMOVE_FORWARD_STR;
+extern fixed_string ADD_USING_STR;
 extern fixed_string REMOVE_USING_STR;
 }
 #endif

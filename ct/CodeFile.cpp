@@ -80,6 +80,7 @@ public:
    word RemoveInclude(const string& item, string& expl);
    word AddForward(string& item, string& expl);
    word RemoveForward(string& item, string& expl);
+   word AddUsing(string& item, string& expl);
    word RemoveUsing(string& item, string& expl);
    word Write(const string& path, string& expl);
 private:
@@ -156,6 +157,20 @@ word Editor::AddInclude(const string& item, string& expl)
    InsertInclude(include, incls);
    changed_ = true;
    return 0;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_AddUsing = "Editor.AddUsing";
+
+word Editor::AddUsing(string& item, string& expl)
+{
+   Debug::ft(Editor_AddUsing);
+
+   //c Support adding a using declaration using the >apply command.
+
+   expl = NotImplementedExpl;
+   return -1;
 }
 
 //------------------------------------------------------------------------------
@@ -681,6 +696,22 @@ string CodeInfo::WarningCode(Warning warning)
 
    stream << 'W' << setw(3) << std::setfill('0') << int(warning);
    return stream.str();
+}
+
+//==============================================================================
+
+fn_name CodeTools_ExtractUsings = "CodeTools.ExtractUsings";
+
+void ExtractUsings(const CxxNamedSet& n, const CxxNamedSet& u1, CxxNamedSet& u2)
+{
+   Debug::ft(CodeTools_ExtractUsings);
+
+   //  U2 is the intersection of N and U1.
+   //
+   for(auto i = n.cbegin(); i != n.cend(); ++i)
+   {
+      if(u1.find(*i) != u1.cend()) u2.insert(*i);
+   }
 }
 
 //==============================================================================
@@ -1567,7 +1598,7 @@ void CodeFile::DisplayItems(ostream& stream, const string& opts) const
 //------------------------------------------------------------------------------
 
 void CodeFile::DisplaySymbols
-   (ostream& stream, const CxxNamedSet& set, bool fq, const string& title)
+   (ostream& stream, const CxxNamedSet& set, const string& title)
 {
    //  Put the symbol names into a stringSet so that they will
    //  always appear in the same order.
@@ -1579,7 +1610,7 @@ void CodeFile::DisplaySymbols
 
    for(auto i = set.cbegin(); i != set.cend(); ++i)
    {
-      auto name = (fq ? (*i)->ScopedName(true) : *(*i)->Name());
+      auto name = (*i)->ScopedName(false);
       auto file = (*i)->GetDeclFile();
 
       if(file != nullptr)
@@ -1633,15 +1664,17 @@ Data* CodeFile::FindData(const string& name) const
 
 fn_name CodeFile_FindUsingFor = "CodeFile.FindUsingFor";
 
-UsingMode CodeFile::FindUsingFor(const string& name, size_t prefix,
+Using* CodeFile::FindUsingFor(const string& name, size_t prefix,
    const CxxScoped* item, const CxxScope* scope) const
 {
    Debug::ft(CodeFile_FindUsingFor);
 
    //  It's easy if this file or SCOPE has a sufficient using statement.
    //
-   if(HasUsingFor(name, prefix)) return FileUsing;
-   if(scope->HasUsingFor(name, prefix)) return ScopeUsing;
+   auto u = GetUsingFor(name, prefix);
+   if(u != nullptr) return u;
+   u = scope->GetUsingFor(name, prefix);
+   if(u != nullptr) return u;
 
    //  Something that this file #includes (transitively) must make ITEM visible.
    //  Search the files that affect this one.  A file in the resulting set must
@@ -1659,10 +1692,11 @@ UsingMode CodeFile::FindUsingFor(const string& name, size_t prefix,
 
    for(auto f = search.cbegin(); f != search.cend(); ++f)
    {
-      if(files.At(*f)->HasUsingFor(name, prefix)) return IncludedUsing;
+      u = files.At(*f)->GetUsingFor(name, prefix);
+      if(u != nullptr) return u;
    }
 
-   return NoUsing;
+   return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -1789,6 +1823,22 @@ string CodeFile::GetNthLine(size_t n) const
 
 //------------------------------------------------------------------------------
 
+fn_name CodeFile_GetUsingFor = "CodeFile.GetUsingFor";
+
+Using* CodeFile::GetUsingFor(const string& name, size_t prefix) const
+{
+   Debug::ft(CodeFile_GetUsingFor);
+
+   for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
+   {
+      if((*u)->IsUsingFor(name, prefix)) return u->get();
+   }
+
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeFile_HasForwardFor = "CodeFile.HasForwardFor";
 
 bool CodeFile::HasForwardFor(const CxxNamed* item) const
@@ -1798,22 +1848,6 @@ bool CodeFile::HasForwardFor(const CxxNamed* item) const
    for(auto f = forws_.cbegin(); f != forws_.cend(); ++f)
    {
       if((*f)->Referent() == item) return true;
-   }
-
-   return false;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CodeFile_HasUsingFor = "CodeFile.HasUsingFor";
-
-bool CodeFile::HasUsingFor(const string& name, size_t prefix) const
-{
-   Debug::ft(CodeFile_HasUsingFor);
-
-   for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
-   {
-      if((*u)->IsUsingFor(name, prefix)) return true;
    }
 
    return false;
@@ -2068,6 +2102,9 @@ word CodeFile::Modify(Modification act, string& item, string& expl)
       break;
    case RemoveForward:
       rc = editor->RemoveForward(item, expl);
+      break;
+   case AddUsing:
+      rc = editor->AddUsing(item, expl);
       break;
    case RemoveUsing:
       rc = editor->RemoveUsing(item, expl);
@@ -2344,7 +2381,7 @@ void CodeFile::Trim(ostream& stream) const
    auto& indirects = symbols.indirects;
    auto& forwards = symbols.forwards;
    auto& friends = symbols.friends;
-   auto& usings = symbols.usings;
+   auto& users = symbols.users;
 
    //  Remove direct and indirect symbols declared by the file itself.
    //
@@ -2369,11 +2406,11 @@ void CodeFile::Trim(ostream& stream) const
 
    //  Display the symbols that the file uses.
    //
-   DisplaySymbols(stream, bases, true, "Base usage:");
-   DisplaySymbols(stream, nextIncls, true, "Direct usage:");
-   DisplaySymbols(stream, indirects, true, "Indirect usage:");
-   DisplaySymbols(stream, forwards, true, "Forward usage:");
-   DisplaySymbols(stream, friends, true, "Friend usage:");
+   DisplaySymbols(stream, bases, "Base usage:");
+   DisplaySymbols(stream, nextIncls, "Direct usage:");
+   DisplaySymbols(stream, indirects, "Indirect usage:");
+   DisplaySymbols(stream, forwards, "Forward usage:");
+   DisplaySymbols(stream, friends, "Friend usage:");
 
    //  An #include should appear for a type that is used indirectly unless
    //  the underlying type is a terminal (e.g. int*) or is defined within
@@ -2560,9 +2597,12 @@ void CodeFile::Trim(ostream& stream) const
       }
    }
 
+   SetOfIds baseIds;
+
    for(auto b = bases.cbegin(); b != bases.cend(); ++b)
    {
       nextIncls.insert(*b);
+      baseIds.insert((*b)->GetDeclFid());
    }
 
    //  Assemble nextInclIds, which is everything that needs to be #included.
@@ -2808,13 +2848,120 @@ void CodeFile::Trim(ostream& stream) const
       }
    }
 
-   //  Output the using statements that should be removed.
+   //  Create INCLUDED, the files that this file can rely on for accessing
+   //  using statements.  This set consists of the file itself, files that
+   //  declare base classes (baseIds) of any class implemented in this file,
+   //  and files (declIds) that declare items that this file defines.
+   //
+   CodeFileVector included;
+
+   included.push_back(this);
+
+   for(auto b = baseIds.cbegin(); b != baseIds.cend(); ++b)
+   {
+      included.push_back(files.At(*b));
+   }
+
+   for(auto d = declIds.cbegin(); d != declIds.cend(); ++d)
+   {
+      included.push_back(files.At(*d));
+   }
+
+   //  Create USINGREFS, the referents for all symbols (USERS) that appear
+   //  in this file and that were resolved by a using statement.
+   //
+   CxxNamedSet usingrefs;
+
+   for(auto u = users.cbegin(); u != users.cend(); ++ u)
+   {
+      usingrefs.insert((*u)->Referent());
+   }
+
+   //  Extract, from USINGREFS, the symbols that may require an #include.
+   //  Note the USERS (and, consequently, USINGREFS) may contain symbols
+   //  used in inherited functions.  But because such symbols are omitted
+   //  by Function.GetUsages, they will not appear in EXTERNALS.
+   //
+   CxxNamedSet externals;
+
+   ExtractUsings(bases, usingrefs, externals);
+   ExtractUsings(nextIncls, usingrefs, externals);
+   ExtractUsings(indirects, usingrefs, externals);
+   ExtractUsings(forwards, usingrefs, externals);
+   ExtractUsings(friends, usingrefs, externals);
+
+   //  Look at each name (N) that was resolved by a using statement, and
+   //  determine if this file should add a using statement to resolve N.
+   //
+   CxxNamedSet addUsing;
+
+   for(auto n = users.cbegin(); n != users.cend(); ++n)
+   {
+      //  If N's referent is not in EXTERNALS, a using statement for it
+      //  is not required.  This occurs, for example, if N appeared in the
+      //  signature of an inherited function, as discussed above.
+      //
+      auto ref = (*n)->Referent();
+      if(externals.find(ref) == externals.cend()) continue;
+
+      //  See if a file in INCLUDED has a using statement that would make
+      //  N visible.  If so, this file does not need to add one.  However,
+      //  check that such a using statement was actually used by the file
+      //  where it appears, because the file will be told to remove it if
+      //  it didn't need it.  (This code was adapted from NameRefersToItem,
+      //  simplified to handle only the case of a symbol that is *known* to
+      //  require resolution by a using statement.)
+      //
+      auto found = false;
+      auto name = (*n)->QualifiedName(true, false);
+      string fqName;
+      size_t i = 0;
+
+      while(ref->GetScopedName(fqName, i))
+      {
+         auto pos = NameCouldReferTo(fqName, name);
+         fqName.erase(0, 2);
+
+         if(pos != string::npos)
+         {
+            for(auto i = included.cbegin(); i != included.cend(); ++i)
+            {
+               auto u = (*i)->GetUsingFor(fqName, pos - 4);
+
+               if((u != nullptr) && u->ResolvedLocal())
+               {
+                  found = true;
+                  break;
+               }
+            }
+         }
+
+         ++i;
+      }
+
+      if(!found) addUsing.insert(ref);
+   }
+
+   //  Output the using statements that should be added.
+   //
+   if(!addUsing.empty())
+   {
+      stream << spaces(3) << ADD_USING_STR << CRLF;
+
+      for(auto a = addUsing.cbegin(); a != addUsing.cend(); ++a)
+      {
+         stream << spaces(6) << (*a)->ScopedName(true) << CRLF;
+      }
+   }
+
+   //  Using statements that did not resolve a symbol used in this
+   //  file should be removed.
    //
    CxxNamedSet delUsing;
 
    for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
    {
-      if((*u)->IsUnused()) delUsing.insert(u->get());
+      if(!(*u)->ResolvedLocal()) delUsing.insert(u->get());
    }
 
    if(!delUsing.empty())
@@ -2827,11 +2974,18 @@ void CodeFile::Trim(ostream& stream) const
       }
    }
 
-   //  Indicate which symbols were resolved through a using statement.
+   //  Indicate which symbols were accessed through a using statement.
    //
-   if(!usings.empty())
+   if(!users.empty())
    {
-      DisplaySymbols(stream, usings, true,
+      CxxNamedSet qualify;
+
+      for(auto u = users.cbegin(); u != users.cend(); ++u)
+      {
+         qualify.insert((*u)->DirectType());
+      }
+
+      DisplaySymbols(stream, qualify,
          "To remove dependencies on using statements, qualify");
    }
 }

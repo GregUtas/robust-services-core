@@ -488,7 +488,7 @@ public:
 
    //  Overridden to look at using statements that are local to the class.
    //
-   virtual bool HasUsingFor
+   virtual Using* GetUsingFor
       (const std::string& name, size_t prefix) const override;
 
    //  Overridden to look for an implemented function.

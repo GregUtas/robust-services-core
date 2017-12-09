@@ -80,11 +80,11 @@ public:
    //
    virtual Cxx::Access GetCurrAccess() const { return Cxx::Private; }
 
-   //  Returns TRUE if NAME is made visible by one of the scope's using
-   //  statements that matches NAME at least to PREFIX.
+   //  Returns the scope's using statement, if any, that makes NAME visible
+   //  by matching NAME at least to PREFIX.
    //
-   virtual bool HasUsingFor(const std::string& name, size_t prefix)
-      const { return false; }
+   virtual Using* GetUsingFor(const std::string& name, size_t prefix)
+      const { return nullptr; }
 
    //  Updates VIEW to indicate the accessibility of ITEM, which was declared
    //  in this scope, to SCOPE.  The default version, for use by functions
@@ -218,7 +218,7 @@ public:
 
    //  Overridden to look at using statements that are local to a function.
    //
-   virtual bool HasUsingFor
+   virtual Using* GetUsingFor
       (const std::string& name, size_t prefix) const override;
 
    //  Overridden to determine if in-line display is possible.
@@ -262,7 +262,7 @@ private:
    //
    bool nested_;
 
-   //  The using statement visible within the currently executing block.
+   //  The using statements visible within the currently executing block.
    //
    static UsingVector Usings_;
 };
@@ -1513,7 +1513,7 @@ private:
    virtual void SetPtrs(TagCount ptrs) override;
    virtual void SetRefDetached(bool on) override;
    virtual void SetRefs(TagCount refs) override;
-   virtual void SetReferent(CxxNamed* ref, UsingMode mode) override;
+   virtual void SetReferent(CxxNamed* ref, bool use) override;
 
    //  The following is not supported.  It generates a log and returns
    //  nullptr.

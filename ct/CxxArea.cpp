@@ -190,7 +190,7 @@ void Class::AccessibilityOf
             if(frnd != nullptr)
             {
                view->accessibility = Inherited;
-               view->Friend = true;
+               view->friend_ = true;
                if(controls[1] == Cxx::Private) frnd->IncrUsers();
             }
             else if(controls[1] != Cxx::Private)
@@ -247,7 +247,7 @@ void Class::AccessibilityOf
    if(frnd != nullptr)
    {
       view->accessibility = Unrestricted;
-      view->Friend = true;
+      view->friend_ = true;
       if(controls.back() != Cxx::Public) frnd->IncrUsers();
       return;
    }
@@ -1433,6 +1433,22 @@ void Class::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
+fn_name Class_GetUsingFor = "Class.GetUsingFor";
+
+Using* Class::GetUsingFor(const string& name, size_t prefix) const
+{
+   Debug::ft(Class_GetUsingFor);
+
+   for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
+   {
+      if((*u)->IsUsingFor(name, prefix)) return u->get();
+   }
+
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Class_HasPODMember = "Class.HasPODMember";
 
 bool Class::HasPODMember() const
@@ -1444,22 +1460,6 @@ bool Class::HasPODMember() const
    for(auto d = data->cbegin(); d != data->cend(); ++d)
    {
       if((*d)->IsPOD()) return true;
-   }
-
-   return false;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Class_HasUsingFor = "Class.HasUsingFor";
-
-bool Class::HasUsingFor(const string& name, size_t prefix) const
-{
-   Debug::ft(Class_HasUsingFor);
-
-   for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
-   {
-      if((*u)->IsUsingFor(name, prefix)) return true;
    }
 
    return false;

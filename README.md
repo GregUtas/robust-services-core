@@ -9,7 +9,7 @@ This repository contains
 
 The framework that supports robust applications is referred to as the *Robust Services
 Core* (RSC).  RSC will put your project on the right path and jump-start it if you're
-developing or or reengineering a system whose requirements can be characterized as
+developing or reengineering a system whose requirements can be characterized as
 
 - highly available, reliable, and/or scalable;
 - embedded, reactive, stateful, and/or distributed.

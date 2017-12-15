@@ -344,15 +344,62 @@ private:
    //
    void LogLine(size_t n, Warning warning, size_t offset = 0) const;
 
+   //  Returns false if >trim does not apply to this file (e.g. a template
+   //  header).  STREAM is where the output for >trim is being directed.
+   //
+   bool CanBeTrimmed(std::ostream& stream) const;
+
+   //  Updates declIds with the identifiers of files that declare items
+   //  that this file (if a .cpp) defines.
+   //
+   void GetDeclIds(SetOfIds& declIds) const;
+
+   //  Updates SYMBOLS with information about symbols used in this file.
+   //  declIds is the result from GetDeclIds.
+   //
+   void GetUsageInfo(const SetOfIds& declIds, CxxUsageSets& symbols) const;
+
    //  Removes, from SET, items that this file declared.
    //
    void EraseInternals(CxxNamedSet& set) const;
 
-   //  Displays, in STREAM, the symbols in SET and where they are defined.
-   //  TITLE describes the contents of SET.
+   //  Updates inclSet by adding types that this file used directly, which
+   //  includes types used directly (in DIRECTS) or in executable code.
    //
-   static void DisplaySymbols(std::ostream& stream,
-      const CxxNamedSet& set, const std::string& title);
+   void AddDirectTypes(const CxxNamedSet& directs, CxxNamedSet& inclSet) const;
+
+   //  Updates inclSet by adding types that this file used indirectly (in
+   //  INDIRECTS) and that are defined within the code base.
+   //
+   void AddIndirectExternalTypes
+      (const CxxNamedSet& indirects, CxxNamedSet& inclSet) const;
+
+   //  Resets BASES to base classes for those *declared* in this file.
+   //
+   void GetDeclaredBaseClasses(CxxNamedSet& bases) const;
+
+   //  Adds the files that declare items in inclSet to inclIds, excluding
+   //  this file.
+   //
+   void AddIncludeIds(const CxxNamedSet& inclSet, SetOfIds& inclIds) const;
+
+   //  Updates unclIds by removing the files that are #included by any
+   //  file in declIds.  This applies to a .cpp only, where declIds is
+   //  the set of headers that declare items that the .cpp defines.
+   //
+   void RemoveHeaderIds(const SetOfIds& declIds, SetOfIds& inclIds) const;
+
+   //  Removes forward declaration candidates from addForws based on various
+   //  criteria.  FORWARDS contains the forward declarations already used by
+   //  the file, and inclIds identifies the files that it should #include.
+   //
+   void PruneForwardCandidates(const CxxNamedSet& forwards,
+      const SetOfIds& inclIds, CxxNamedSet& addForws) const;
+
+   //  Looks at the file's existing forward declarations.  Those that are not
+   //  needed are removed from addForws (if present) and added to delForws.
+   //
+   void PruneLocalForwards(CxxNamedSet& addForws, CxxNamedSet& delForws) const;
 
    //  Creates an Editor object.  Returns nullptr on failure, updating RC
    //  and EXPL with an explanation.

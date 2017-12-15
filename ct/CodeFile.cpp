@@ -700,17 +700,309 @@ string CodeInfo::WarningCode(Warning warning)
 
 //==============================================================================
 
-fn_name CodeTools_ExtractUsings = "CodeTools.ExtractUsings";
+fn_name CodeTools_AddForwardDependencies = "CodeTools.AddForwardDependencies";
 
-void ExtractUsings(const CxxNamedSet& n, const CxxNamedSet& u1, CxxNamedSet& u2)
+void AddForwardDependencies(const CxxUsageSets& symbols, CxxNamedSet& inclSet)
 {
-   Debug::ft(CodeTools_ExtractUsings);
+   Debug::ft(CodeTools_AddForwardDependencies);
 
-   //  U2 is the intersection of N and U1.
+   //  SYMBOLS is the usage information for the symbols that appeared in this
+   //  file.  An #include should appear for a forward declaration that resolved
+   //  an indirect reference in this file.  Omit the #include, however, if the
+   //  declaration appears in a file that defines one of our base classes,
+   //  including an indirect base class.
    //
-   for(auto i = n.cbegin(); i != n.cend(); ++i)
+   for(auto f = symbols.forwards.cbegin(); f != symbols.forwards.cend(); ++f)
    {
-      if(u1.find(*i) != u1.cend()) u2.insert(*i);
+      auto fid = (*f)->GetDeclFid();
+      auto include = true;
+
+      for(auto b = symbols.bases.cbegin(); b != symbols.bases.cend(); ++b)
+      {
+         auto base = static_cast< const Class* >(*b);
+
+         for(auto s = base->BaseClass(); s != nullptr; s = s->BaseClass())
+         {
+            if(s->GetDeclFid() == fid)
+            {
+               include = false;
+               break;
+            }
+         }
+      }
+
+      if(include) inclSet.insert(*f);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeTools_AddIntersection = "CodeTools.AddIntersection";
+
+void AddIntersection
+   (CxxNamedSet& n1, const CxxNamedSet& n2, const CxxNamedSet& n3)
+{
+   Debug::ft(CodeTools_AddIntersection);
+
+   //  Add the intersection of N2 and N3 to N1.
+   //
+   for(auto i = n2.cbegin(); i != n2.cend(); ++i)
+   {
+      if(n3.find(*i) != n3.cend()) n1.insert(*i);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeTools_FindForwardCandidates = "CodeTools.FindForwardCandidates";
+
+void FindForwardCandidates(const CxxUsageSets& symbols, CxxNamedSet& addForws)
+{
+   Debug::ft(CodeTools_FindForwardCandidates);
+
+   //  A forward declaration may be required for a type that was referenced
+   //  indirectly.
+   //
+   for(auto i = symbols.indirects.cbegin(); i != symbols.indirects.cend(); ++i)
+   {
+      addForws.insert(*i);
+   }
+
+   //  A forward declaration may be required for a type that was resolved by
+   //  a friend, rather than a forward, declaration.
+   //
+   for(auto f = symbols.friends.cbegin(); f != symbols.friends.cend(); ++f)
+   {
+      auto r = (*f)->Referent();
+      if(r != nullptr) addForws.insert(r);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void DisplayFileNames(ostream& stream, const SetOfIds& fids, fixed_string title)
+{
+   //  Display, in STREAM, the names of files identified in FIDS.
+   //  TITLE provides an explanation for the list.
+   //
+   if(fids.empty()) return;
+
+   auto& files = Singleton< Library >::Instance()->Files();
+   stream << spaces(3) << title << CRLF;
+
+   for(auto a = fids.cbegin(); a != fids.cend(); ++a)
+   {
+      stream << spaces(6) << files.At(*a)->Name() << CRLF;
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void DisplayFullNames
+   (ostream& stream, const CxxNamedSet& items, fixed_string title)
+{
+   //  Display, in STREAM, the names in ITEMS, including their scope.
+   //  TITLE provides an explanation for the list.
+   //
+   if(!items.empty())
+   {
+      stream << spaces(3) << title << CRLF;
+
+      for(auto a = items.cbegin(); a != items.cend(); ++a)
+      {
+         stream << spaces(6) << (*a)->ScopedName(true) << CRLF;
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void DisplaySymbols
+   (ostream& stream, const CxxNamedSet& set, const string& title)
+{
+   //  Display, in STREAM, the symbols in SET and where they are defined.
+   //  Include TITLE, which describes the contents of SET.  Start by putting
+   //  the symbol names into a stringSet so that they will always appear in
+   //  the same order.
+   //
+   if(set.empty()) return;
+   stream << spaces(3) << title << CRLF;
+
+   stringSet names;
+
+   for(auto i = set.cbegin(); i != set.cend(); ++i)
+   {
+      auto name = (*i)->ScopedName(false);
+      auto file = (*i)->GetDeclFile();
+
+      if(file != nullptr)
+         name += " [" + file->Name() + ']';
+      else
+         name += " [file unknown]";
+
+      names.insert(name);
+   }
+
+   for(auto n = names.cbegin(); n != names.cend(); ++n)
+   {
+      stream << spaces(6) << *n << CRLF;
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeTools_RemoveAliasedClasses = "CodeTools.RemoveAliasedClasses";
+
+void RemoveAliasedClasses(CxxNamedSet& inclSet)
+{
+   Debug::ft(CodeTools_RemoveAliasedClasses);
+
+   //  Look at all pairs of items in inclSet, whose files will be #included
+   //  by this file.  If one item in the pair is a class and the other item
+   //  is a typedef for it, an #include for the class is not required.
+   //
+   for(auto item1 = inclSet.begin(); item1 != inclSet.end(); NO_OP)
+   {
+      auto erase1 = false;
+      auto cls = (*item1)->GetClass();
+
+      if(cls != nullptr)
+      {
+         for(auto item2 = std::next(item1); item2 != inclSet.end(); ++item2)
+         {
+            if((*item2)->Type() == Cxx::Typedef)
+            {
+               auto type = static_cast< const Typedef* >(*item2);
+               auto ref = type->Referent();
+
+               if((cls == ref) || (cls == ref->GetTemplate()) ||
+                  (cls->GetTemplate() == ref))
+               {
+                  erase1 = true;
+                  break;
+               }
+            }
+         }
+      }
+
+      if(erase1)
+         inclSet.erase(*item1++);
+      else
+         ++item1;
+   }
+
+   for(auto item1 = inclSet.begin(); item1 != inclSet.end(); ++item1)
+   {
+      if((*item1)->Type() == Cxx::Typedef)
+      {
+         auto type = static_cast< const Typedef* >(*item1);
+         auto ref = type->Referent();
+
+         for(auto item2 = std::next(item1); item2 != inclSet.end(); NO_OP)
+         {
+            auto erase2 = false;
+            auto cls = (*item2)->GetClass();
+
+            if(cls != nullptr)
+            {
+               if((cls == ref) || (cls == ref->GetTemplate()) ||
+                  (cls->GetTemplate() == ref))
+               {
+                  erase2 = true;
+               }
+            }
+
+            if(erase2)
+               inclSet.erase(*item2++);
+            else
+               ++item2;
+         }
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeTools_RemoveIncludedBaseItems = "CodeTools.RemoveIncludedBaseItems";
+
+void RemoveIncludedBaseItems(CxxNamedSet& inclSet)
+{
+   Debug::ft(CodeTools_RemoveIncludedBaseItems);
+
+   //  Update inclSet by removing types defined in a base class of another
+   //  item in inclSet.  An #include is not needed for such a type.
+   //
+   for(auto item1 = inclSet.begin(); item1 != inclSet.end(); NO_OP)
+   {
+      auto erase1 = false;
+      auto cls1 = (*item1)->GetClass();
+
+      if(cls1 != nullptr)
+      {
+         for(auto item2 = std::next(item1); item2 != inclSet.end(); NO_OP)
+         {
+            auto erase2 = false;
+            auto cls2 = (*item2)->GetClass();
+
+            if(cls2 != nullptr)
+            {
+               if(cls2->DerivesFrom(cls1))
+               {
+                  erase1 = true;
+                  break;
+               }
+
+               erase2 = cls1->DerivesFrom(cls2);
+            }
+
+            if(erase2)
+               inclSet.erase(*item2++);
+            else
+               ++item2;
+         }
+      }
+
+      if(erase1)
+         inclSet.erase(*item1++);
+      else
+         ++item1;
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeTools_RemoveIndirectBaseItems = "CodeTools.RemoveIndirectBaseItems";
+
+void RemoveIndirectBaseItems(const CxxNamedSet& bases, CxxNamedSet& inclSet)
+{
+   Debug::ft(CodeTools_RemoveIndirectBaseItems);
+
+   //  Update inclSet by removing types defined in indirect base classes
+   //  of BASES, which are the base classes implemented in this file.
+   //
+   for(auto item1 = inclSet.begin(); item1 != inclSet.end(); NO_OP)
+   {
+      auto erase = false;
+      auto cls1 = (*item1)->GetClass();
+
+      if(cls1 != nullptr)
+      {
+         for(auto b = bases.cbegin(); b != bases.cend(); ++b)
+         {
+            auto base = (*b)->GetClass();
+
+            if(base->DerivesFrom(cls1))
+            {
+               erase = true;
+               break;
+            }
+         }
+      }
+
+      if(erase)
+         inclSet.erase(*item1++);
+      else
+         ++item1;
    }
 }
 
@@ -747,6 +1039,73 @@ CodeFile::~CodeFile()
    Debug::ft(CodeFile_dtor);
 
    CxxStats::Decr(CxxStats::CODE_FILE);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeFile_AddDirectTypes = "CodeFile.AddDirectTypes";
+
+void CodeFile::AddDirectTypes
+   (const CxxNamedSet& directs, CxxNamedSet& inclSet) const
+{
+   Debug::ft(CodeFile_AddDirectTypes);
+
+   //  SYMBOLS contains types that were used directly.  Types in executable
+   //  code are also considered to be used directly, except for terminals
+   //  and types defined in this file.
+   //
+   for(auto d = directs.cbegin(); d != directs.cend(); ++d)
+   {
+      inclSet.insert(*d);
+   }
+
+   for(auto u = usages_.cbegin(); u != usages_.cend(); ++u)
+   {
+      if((*u)->GetDeclFile() == this) continue;
+      if((*u)->Type() == Cxx::Terminal) continue;
+      inclSet.insert(*u);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeFile_AddIncludeIds = "CodeFile.AddIncludeIds";
+
+void CodeFile::AddIncludeIds
+   (const CxxNamedSet& inclSet, SetOfIds& inclIds) const
+{
+   Debug::ft(CodeFile_AddIncludeIds);
+
+   auto thisFid = Fid();
+
+   for(auto n = inclSet.cbegin(); n != inclSet.cend(); ++n)
+   {
+      auto fid = (*n)->GetDeclFid();
+      if((fid != NIL_ID) && (fid != thisFid)) inclIds.insert(fid);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeFile_AddIndirectExternalTypes = "CodeFile.AddIndirectExternalTypes";
+
+void CodeFile::AddIndirectExternalTypes
+   (const CxxNamedSet& indirects, CxxNamedSet& inclSet) const
+{
+   Debug::ft(CodeFile_AddIndirectExternalTypes);
+
+   //  SYMBOLS contains types that were used indirectly.  Filter out those
+   //  which are terminals (for which an #include is not required) or that
+   //  are defined in the code base (for which an #include can be avoided
+   //  by using a forward declaration).
+   //
+   for(auto i = indirects.cbegin(); i != indirects.cend(); ++i)
+   {
+      auto type = (*i)->Type();
+      if(type == Cxx::Terminal) continue;
+      if((type == Cxx::Class) && !(*i)->GetDeclFile()->IsSubsFile()) continue;
+      inclSet.insert(*i);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -790,6 +1149,34 @@ const SetOfIds& CodeFile::Affecters() const
    affecterIds_ = static_cast< CodeFileSet* >(asSet)->Set();
    fileSet->Release();
    return affecterIds_;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeFile_CanBeTrimmed = "CodeFile.CanBeTrimmed";
+
+bool CodeFile::CanBeTrimmed(ostream& stream) const
+{
+   Debug::ft(CodeFile_CanBeTrimmed);
+
+   //  Don't trim empty files, substitute files, or unexecuted files
+   //  (template headers).
+   //
+   if(size_ == 0) return false;
+   if(isSubsFile_) return false;
+
+   stream << Name() << CRLF;
+
+   switch(location_)
+   {
+   case FuncInTemplate:
+      stream << spaces(3) << "OMITTED: mostly unexecuted." << CRLF;
+      return false;
+   case FuncIsTemplate:
+      stream << spaces(3) << "WARNING: partially unexecuted." << CRLF;
+   }
+
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -1597,38 +1984,6 @@ void CodeFile::DisplayItems(ostream& stream, const string& opts) const
 
 //------------------------------------------------------------------------------
 
-void CodeFile::DisplaySymbols
-   (ostream& stream, const CxxNamedSet& set, const string& title)
-{
-   //  Put the symbol names into a stringSet so that they will
-   //  always appear in the same order.
-   //
-   if(set.empty()) return;
-   stream << spaces(3) << title << CRLF;
-
-   stringSet names;
-
-   for(auto i = set.cbegin(); i != set.cend(); ++i)
-   {
-      auto name = (*i)->ScopedName(false);
-      auto file = (*i)->GetDeclFile();
-
-      if(file != nullptr)
-         name += " [" + file->Name() + ']';
-      else
-         name += " [file unknown]";
-
-      names.insert(name);
-   }
-
-   for(auto n = names.cbegin(); n != names.cend(); ++n)
-   {
-      stream << spaces(6) << *n << CRLF;
-   }
-}
-
-//------------------------------------------------------------------------------
-
 fn_name CodeFile_EraseInternals = "CodeFile.EraseInternals";
 
 void CodeFile::EraseInternals(CxxNamedSet& set) const
@@ -1742,6 +2097,52 @@ void CodeFile::GenerateReport(ostream& stream, const SetOfIds& set)
 
 //------------------------------------------------------------------------------
 
+fn_name CodeFile_GetDeclaredBaseClasses = "CodeFile.GetDeclaredBaseClasses";
+
+void CodeFile::GetDeclaredBaseClasses(CxxNamedSet& bases) const
+{
+   Debug::ft(CodeFile_GetDeclaredBaseClasses);
+
+   //  Reset BASES to the base classes of those declared in this file.
+   //
+   bases.clear();
+
+   for(auto c = classes_.cbegin(); c != classes_.cend(); ++c)
+   {
+      auto base = (*c)->BaseClass();
+      if(base != nullptr) bases.insert(base);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeFile_GetDeclIds = "CodeFile.GetDeclIds";
+
+void CodeFile::GetDeclIds(SetOfIds& declIds) const
+{
+   Debug::ft(CodeFile_GetDeclIds);
+
+   //  If this is a .cpp, assemble the headers that declare
+   //  items that the .cpp defines.
+   //
+   if(IsCpp())
+   {
+      for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
+      {
+         auto fid = (*f)->GetDistinctDeclFid();
+         if(fid != NIL_ID) declIds.insert(fid);
+      }
+
+      for(auto d = data_.cbegin(); d != data_.cend(); ++d)
+      {
+         auto fid = (*d)->GetDistinctDeclFid();
+         if(fid != NIL_ID) declIds.insert(fid);
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeFile_GetLineCounts = "CodeFile.GetLineCounts";
 
 void CodeFile::GetLineCounts() const
@@ -1819,6 +2220,62 @@ string CodeFile::GetNthLine(size_t n) const
    string s;
    GetNthLine(n, s);
    return s;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeFile_GetUsageInfo = "CodeFile.GetUsageInfo";
+
+void CodeFile::GetUsageInfo
+   (const SetOfIds& declIds, CxxUsageSets& symbols) const
+{
+   Debug::ft(CodeFile_GetUsageInfo);
+
+   //  Ask each of the code items in this file to provide information
+   //  about the symbols that it uses.
+   //
+   auto& files = Singleton< Library >::Instance()->Files();
+
+   for(auto m = macros_.cbegin(); m != macros_.cend(); ++m)
+   {
+      (*m)->GetUsages(*this, symbols);
+   }
+
+   for(auto c = classes_.cbegin(); c != classes_.cend(); ++c)
+   {
+      (*c)->GetUsages(*this, symbols);
+   }
+
+   for(auto t = types_.cbegin(); t != types_.cend(); ++t)
+   {
+      (*t)->GetUsages(*this, symbols);
+   }
+
+   for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
+   {
+      (*f)->GetUsages(*this, symbols);
+   }
+
+   for(auto d = data_.cbegin(); d != data_.cend(); ++d)
+   {
+      (*d)->GetUsages(*this, symbols);
+   }
+
+   //  For a .cpp, include, as base classes, those defined in any header
+   //  that the .cpp implements.
+   //
+   if(IsCpp())
+   {
+      for(auto d = declIds.cbegin(); d != declIds.cend(); ++d)
+      {
+         auto classes = files.At(*d)->Classes();
+
+         for(auto c = classes->cbegin(); c != classes->cend(); ++c)
+         {
+            symbols.AddBase(*c);
+         }
+      }
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -2120,6 +2577,170 @@ word CodeFile::Modify(Modification act, string& item, string& expl)
 
 //------------------------------------------------------------------------------
 
+fn_name CodeFile_PruneForwardCandidates = "CodeFile.PruneForwardCandidates";
+
+void CodeFile::PruneForwardCandidates(const CxxNamedSet& forwards,
+   const SetOfIds& inclIds, CxxNamedSet& addForws) const
+{
+   Debug::ft(CodeFile_PruneForwardCandidates);
+
+   //  Go through the possible forward declarations and remove those that
+   //  are not needed.
+   //
+   auto& files = Singleton< Library >::Instance()->Files();
+
+   //  Find the files that affect (that is, are transitively #included
+   //  by) inclIds (the files that will be #included).
+   //
+   auto inclSet = new CodeFileSet(LibrarySet::TemporaryName(), nullptr);
+   auto& incls = inclSet->Set();
+   SetUnion(incls, inclIds);
+   auto affecterSet = inclSet->Affecters();
+   inclSet->Release();
+   auto& affecterIds = static_cast< CodeFileSet* >(affecterSet)->Set();
+
+   for(auto add = addForws.begin(); add != addForws.end(); NO_OP)
+   {
+      auto addFile = (*add)->GetDeclFile();
+      auto remove = false;
+
+      //  Do not add a forward declaration for a type that was resolved by
+      //  an existing forward declaration, whether in this file or another.
+      //
+      for(auto f = forwards.cbegin(); f != forwards.cend(); ++f)
+      {
+         remove = ((*f)->Referent() == *add);
+         if(remove) break;
+      }
+
+      //  Double-check the forward declarations in this file.  One for a
+      //  function argument can get omitted from FORWARDS as follows:
+      //  o While parsing the function's *declaration*, the forward is used.
+      //  o While parsing the function's *definition*, the forward is not
+      //    used because an #include in the .cpp makes the argument's type
+      //    directly visible.
+      //  o When the function's declaration and definition are merged (see
+      //    Function.UpdateDeclaration), the arguments in the definition
+      //    replace those in the declaration.  Consequently, when GetUsages
+      //    is invoked on the argument, the referent of its DataSpec is its
+      //    actual declaration, not its forward declaration.
+      //
+      if(!remove) remove = HasForwardFor(*add);
+
+      if(!remove)
+      {
+         auto addFid = addFile->Fid();
+
+         //  Do not add a forward declaration for a type that will be #included,
+         //  even transitively.
+         //
+         for(auto a = affecterIds.cbegin(); a != affecterIds.cend(); ++a)
+         {
+            remove = (*a == addFid);
+            if(remove) break;
+         }
+
+         //  Do not add a forward declaration for a type that is already forward
+         //  declared in a file that will be #included, even transitively.
+         //
+         if(!remove)
+         {
+            for(auto a = affecterIds.cbegin(); a != affecterIds.cend(); ++a)
+            {
+               auto incl = files.At(*a);
+
+               if(incl != this)
+               {
+                  remove = incl->HasForwardFor(*add);
+                  if(remove) break;
+               }
+            }
+         }
+      }
+
+      if(remove)
+         addForws.erase(*add++);
+      else
+         ++add;
+   }
+
+   affecterSet->Release();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeFile_PruneLocalForwards = "CodeFile.PruneLocalForwards";
+
+void CodeFile::PruneLocalForwards
+   (CxxNamedSet& addForws, CxxNamedSet& delForws) const
+{
+   Debug::ft(CodeFile_PruneLocalForwards);
+
+   //  Keep a forward declaration that resolved a symbol (possibly on behalf
+   //  of a different file) or that *will* resolve a symbol that now needs a
+   //  forward declaration.  Delete a declaration if its referent cannot be
+   //  found.
+   //
+   for(auto f = forws_.cbegin(); f != forws_.cend(); ++f)
+   {
+      auto remove = true;
+      auto ref = (*f)->Referent();
+
+      if(ref != nullptr)
+      {
+         if((*f)->IsUnused())
+         {
+            for(auto a = addForws.begin(); a != addForws.end(); ++a)
+            {
+               if((*a) == ref)
+               {
+                  addForws.erase(*a);
+                  remove = false;
+                  break;
+               }
+            }
+         }
+         else
+         {
+            remove = false;
+         }
+      }
+
+      if(remove) delForws.insert(*f);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeFile_RemoveHeaderIds = "CodeFile.RemoveHeaderIds";
+
+void CodeFile::RemoveHeaderIds(const SetOfIds& declIds, SetOfIds& inclIds) const
+{
+   Debug::ft(CodeFile_RemoveHeaderIds);
+
+   //  If this is a .cpp, it implements items declared one or more headers
+   //  (declIds).  The .cpp need not #include anything that one of those
+   //  headers already #includes.
+   //
+   auto& files = Singleton< Library >::Instance()->Files();
+
+   if(IsCpp())
+   {
+      for(auto d = declIds.cbegin(); d != declIds.cend(); ++d)
+      {
+         SetDifference(inclIds, files.At(*d)->InclList());
+      }
+
+      //  Ensure that all files in declIds are #included.  It is possible for
+      //  one to get dropped if, for example, the .cpp uses a subclass of an
+      //  item that it implements.
+      //
+      SetUnion(inclIds, declIds);
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeFile_Scan = "CodeFile.Scan";
 
 void CodeFile::Scan()
@@ -2290,91 +2911,17 @@ void CodeFile::Trim(ostream& stream) const
 {
    Debug::ft(CodeFile_Trim);
 
-   //  Don't trim empty files, substitute files, or unexecuted files
-   //  (template headers).
+   //  If this file should be trimmed, find the headers that declare items
+   //  that this file defines, and assemble information about the symbols
+   //  that this file uses.
    //
-   if(size_ == 0) return;
-   if(isSubsFile_) return;
-
-   stream << Name() << CRLF;
-
-   switch(location_)
-   {
-   case FuncInTemplate:
-      stream << spaces(3) << "OMITTED: mostly unexecuted." << CRLF;
-      return;
-   case FuncIsTemplate:
-      stream << spaces(3) << "WARNING: partially unexecuted." << CRLF;
-   }
-
+   if(!CanBeTrimmed(stream)) return;
    Debug::Progress(Name(), true);
 
-   //  If this is a .cpp, assemble declIds, the headers that declare
-   //  the items that the .cpp defines.
-   //
    SetOfIds declIds;
-
-   if(IsCpp())
-   {
-      for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
-      {
-         auto fid = (*f)->GetDistinctDeclFid();
-         if(fid != NIL_ID) declIds.insert(fid);
-      }
-
-      for(auto d = data_.cbegin(); d != data_.cend(); ++d)
-      {
-         auto fid = (*d)->GetDistinctDeclFid();
-         if(fid != NIL_ID) declIds.insert(fid);
-      }
-   }
-
-   //  Ask each of the code items in this file to provide information
-   //  about the symbols that it uses.
-   //
-   auto& files = Singleton< Library >::Instance()->Files();
    CxxUsageSets symbols;
-
-   for(auto m = macros_.cbegin(); m != macros_.cend(); ++m)
-   {
-      (*m)->GetUsages(*this, symbols);
-   }
-
-   for(auto c = classes_.cbegin(); c != classes_.cend(); ++c)
-   {
-      (*c)->GetUsages(*this, symbols);
-   }
-
-   for(auto t = types_.cbegin(); t != types_.cend(); ++t)
-   {
-      (*t)->GetUsages(*this, symbols);
-   }
-
-   for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
-   {
-      (*f)->GetUsages(*this, symbols);
-   }
-
-   for(auto d = data_.cbegin(); d != data_.cend(); ++d)
-   {
-      (*d)->GetUsages(*this, symbols);
-   }
-
-   //  For a .cpp, include, as base classes, those defined in any header
-   //  that the .cpp implements.
-   //
-   if(IsCpp())
-   {
-      for(auto d = declIds.cbegin(); d != declIds.cend(); ++d)
-      {
-         auto classes = files.At(*d)->Classes();
-
-         for(auto c = classes->cbegin(); c != classes->cend(); ++c)
-         {
-            symbols.AddBase(*c);
-         }
-      }
-   }
+   GetDeclIds(declIds);
+   GetUsageInfo(declIds, symbols);
 
    auto& bases = symbols.bases;
    auto& directs = symbols.directs;
@@ -2384,522 +2931,154 @@ void CodeFile::Trim(ostream& stream) const
    auto& users = symbols.users;
 
    //  Remove direct and indirect symbols declared by the file itself.
+   //  Find inclSet, the types that were used directly or in executable
+   //  code.  It will contain all the types that should be #included.
    //
+   CxxNamedSet inclSet;
    EraseInternals(directs);
    EraseInternals(indirects);
-
-   //  An #include should appear for a type that is used directly.
-   //
-   CxxNamedSet nextIncls;
-
-   for(auto d = directs.cbegin(); d != directs.cend(); ++d)
-   {
-      nextIncls.insert(*d);
-   }
-
-   for(auto u = usages_.cbegin(); u != usages_.cend(); ++u)
-   {
-      if((*u)->GetDeclFile() == this) continue;
-      if((*u)->Type() == Cxx::Terminal) continue;
-      nextIncls.insert(*u);
-   }
+   AddDirectTypes(directs, inclSet);
 
    //  Display the symbols that the file uses.
    //
    DisplaySymbols(stream, bases, "Base usage:");
-   DisplaySymbols(stream, nextIncls, "Direct usage:");
+   DisplaySymbols(stream, inclSet, "Direct usage:");
    DisplaySymbols(stream, indirects, "Indirect usage:");
    DisplaySymbols(stream, forwards, "Forward usage:");
    DisplaySymbols(stream, friends, "Friend usage:");
 
-   //  An #include should appear for a type that is used indirectly unless
-   //  the underlying type is a terminal (e.g. int*) or is defined within
-   //  the code base (in which case the #include can be removed by using a
-   //  forward declaration).
+   //  Expand inclSet with types used indirectly but defined outside
+   //  the code base.  Then expand it with forward declarations that
+   //  resolved an indirect reference in this file.
    //
-   for(auto i = indirects.cbegin(); i != indirects.cend(); ++i)
-   {
-      auto type = (*i)->Type();
-      if(type == Cxx::Terminal) continue;
-      if((type == Cxx::Class) && !(*i)->GetDeclFile()->IsSubsFile()) continue;
-      nextIncls.insert(*i);
-   }
+   AddIndirectExternalTypes(indirects, inclSet);
+   AddForwardDependencies(symbols, inclSet);
 
-   //  An #include should appear for a forward declaration that resolved an
-   //  indirect reference in this file.  Omit the #include, however, if the
-   //  declaration appears in a file that defines one of our base classes,
-   //  including an indirect base class.
+   //  A derived class must #include its base class, so shrink inclSet
+   //  by removing items defined in an indirect base class.  Then shrink
+   //  it by removing items defined in a base class of another item that
+   //  will be #included.  Finally, shrink it again by removing classes
+   //  that are named in a typedef that will be #included.
    //
-   for(auto f = forwards.cbegin(); f != forwards.cend(); ++f)
-   {
-      auto fid = (*f)->GetDeclFid();
-      auto include = true;
+   RemoveIndirectBaseItems(bases, inclSet);
+   RemoveIncludedBaseItems(inclSet);
+   RemoveAliasedClasses(inclSet);
 
-      for(auto b = bases.cbegin(); b != bases.cend(); ++b)
-      {
-         auto base = static_cast< const Class* >(*b);
-
-         for(auto s = base->BaseClass(); s != nullptr; s = s->BaseClass())
-         {
-            if(s->GetDeclFid() == fid)
-            {
-               include = false;
-               break;
-            }
-         }
-      }
-
-      if(include) nextIncls.insert(*f);
-   }
-
-   //  A derived class must #include its base class, so it is unnecessary
-   //  to #include an item defined in an indirect base class.
+   //  For a .cpp, BASES includes base classes defined in its header.
+   //  Regenerate it so that it is limited to base classes for those
+   //  declared in the .cpp.
    //
-   for(auto item1 = nextIncls.begin(); item1 != nextIncls.end(); NO_OP)
-   {
-      auto erase = false;
-      auto cls1 = (*item1)->GetClass();
+   if(IsCpp()) GetDeclaredBaseClasses(bases);
 
-      if(cls1 != nullptr)
-      {
-         for(auto b = bases.cbegin(); b != bases.cend(); ++b)
-         {
-            auto base = (*b)->GetClass();
-
-            if(base->DerivesFrom(cls1))
-            {
-               erase = true;
-               break;
-            }
-         }
-      }
-
-      if(erase)
-         nextIncls.erase(*item1++);
-      else
-         ++item1;
-   }
-
-   //  It is unnecessary to #include an item defined in a base class of
-   //  another item that will be #included.
+   //  An #include should always appear for a base class.  Add them to
+   //  inclSet in case any of them were removed.  While iterating through
+   //  the base classes, assemble baseIds, the files that declare them.
    //
-   for(auto item1 = nextIncls.begin(); item1 != nextIncls.end(); NO_OP)
-   {
-      auto erase1 = false;
-      auto cls1 = (*item1)->GetClass();
-
-      if(cls1 != nullptr)
-      {
-         for(auto item2 = std::next(item1); item2 != nextIncls.end(); NO_OP)
-         {
-            auto erase2 = false;
-            auto cls2 = (*item2)->GetClass();
-
-            if(cls2 != nullptr)
-            {
-               if(cls2->DerivesFrom(cls1))
-               {
-                  erase1 = true;
-                  break;
-               }
-
-               erase2 = cls1->DerivesFrom(cls2);
-            }
-
-            if(erase2)
-               nextIncls.erase(*item2++);
-            else
-               ++item2;
-         }
-      }
-
-      if(erase1)
-         nextIncls.erase(*item1++);
-      else
-         ++item1;
-   }
-
-   //  It is unnecessary to #include an item defined in a class when a
-   //  typedef that is an alias for that class will be #included.
-   //
-   for(auto item1 = nextIncls.begin(); item1 != nextIncls.end(); NO_OP)
-   {
-      auto erase1 = false;
-      auto cls = (*item1)->GetClass();
-
-      if(cls != nullptr)
-      {
-         for(auto item2 = std::next(item1); item2 != nextIncls.end(); ++item2)
-         {
-            if((*item2)->Type() == Cxx::Typedef)
-            {
-               auto type = static_cast< const Typedef* >(*item2);
-               auto ref = type->Referent();
-
-               if((cls == ref) || (cls == ref->GetTemplate()) ||
-                  (cls->GetTemplate() == ref))
-               {
-                  erase1 = true;
-                  break;
-               }
-            }
-         }
-      }
-
-      if(erase1)
-         nextIncls.erase(*item1++);
-      else
-         ++item1;
-   }
-
-   for(auto item1 = nextIncls.begin(); item1 != nextIncls.end(); ++item1)
-   {
-      if((*item1)->Type() == Cxx::Typedef)
-      {
-         auto type = static_cast< const Typedef* >(*item1);
-         auto ref = type->Referent();
-
-         for(auto item2 = std::next(item1); item2 != nextIncls.end(); NO_OP)
-         {
-            auto erase2 = false;
-            auto cls = (*item2)->GetClass();
-
-            if(cls != nullptr)
-            {
-               if((cls == ref) || (cls == ref->GetTemplate()) ||
-                  (cls->GetTemplate() == ref))
-               {
-                  erase2 = true;
-               }
-            }
-
-            if(erase2)
-               nextIncls.erase(*item2++);
-            else
-               ++item2;
-         }
-      }
-   }
-
-   //  An #include should always appear for a base class.  These are added last
-   //  in case the above rules removed any of them.  Recall that, for a .cpp,
-   //  the base classes included those defined in its header(s), so regenerate
-   //  its base class set, limiting it to those declared in the .cpp.
-   //
-   if(IsCpp())
-   {
-      bases.clear();
-
-      for(auto c = classes_.cbegin(); c != classes_.cend(); ++c)
-      {
-         auto base = (*c)->BaseClass();
-         if(base != nullptr) bases.insert(base);
-      }
-   }
-
    SetOfIds baseIds;
 
    for(auto b = bases.cbegin(); b != bases.cend(); ++b)
    {
-      nextIncls.insert(*b);
+      inclSet.insert(*b);
       baseIds.insert((*b)->GetDeclFid());
    }
 
-   //  Assemble nextInclIds, which is everything that needs to be #included.
+   //  Assemble inclIds, all the files that need to be #included.  It
+   //  starts with all of the files (excluding this one) that declare
+   //  items in inclSet.  A .cpp can then remove any file that will be
+   //  #included by a header that declares an item that the .cpp defines.
    //
-   auto thisFid = Fid();
-   SetOfIds nextInclIds;
+   SetOfIds inclIds;
+   AddIncludeIds(inclSet, inclIds);
+   RemoveHeaderIds(declIds, inclIds);
 
-   for(auto n = nextIncls.cbegin(); n != nextIncls.cend(); ++n)
-   {
-      auto fid = (*n)->GetDeclFid();
-      if((fid != NIL_ID) && (fid != thisFid)) nextInclIds.insert(fid);
-   }
-
-   //  If this is a .cpp, it implements items declared one or more headers,
-   //  which were already assembled in declIds.  The .cpp need not #include
-   //  anything that one of those headers already #includes.
-   //
-   if(IsCpp())
-   {
-      for(auto d = declIds.cbegin(); d != declIds.cend(); ++d)
-      {
-         SetDifference(nextInclIds, files.At(*d)->InclList());
-      }
-
-      //  Ensure that all files in declIds are included.  It is possible for
-      //  one to get dropped if, for example, the .cpp uses a subclass of an
-      //  item that it implements.
-      //
-      SetUnion(nextInclIds, declIds);
-   }
-
-   //  Assemble addIds, the #includes that should be added.  It contains
-   //  nextInclIds, minus what is already #included, and the file itself.
+   //  Output addIds, the #includes that should be added.  It contains
+   //  inclIds, minus the file itself and what is already #included.
    //
    SetOfIds addIds;
-   SetDifference(addIds, nextInclIds, inclIds_);
+   SetDifference(addIds, inclIds, inclIds_);
+   addIds.erase(Fid());
+   DisplayFileNames(stream, addIds, ADD_INCLUDE_STR);
 
-   for(auto a = addIds.begin(); a != addIds.end(); ++a)
-   {
-      if(files.At(*a) == this)
-      {
-         addIds.erase(*a);
-         break;
-      }
-   }
-
-   //  Output the #includes that should be added.
-   //
-   if(!addIds.empty())
-   {
-      stream << spaces(3) << ADD_INCLUDE_STR << CRLF;
-
-      for(auto a = addIds.cbegin(); a != addIds.cend(); ++a)
-      {
-         stream << spaces(6) << files.At(*a)->Name() << CRLF;
-      }
-   }
-
-   //  Assemble delIds, which are the #includes that should be removed.
-   //  It contains what is already #included, minus
-   //  o everything that needs to be #included
-   //  o external files (we don't parse them, so we can't say)
+   //  Output delIds, which are the #includes that should be removed.  It
+   //  contains what is already #included, minus everything that needs to
+   //  be #included.
    //
    SetOfIds delIds;
-   SetDifference(delIds, inclIds_, nextInclIds);
+   SetDifference(delIds, inclIds_, inclIds);
+   DisplayFileNames(stream, delIds, REMOVE_INCLUDE_STR);
 
-   for(auto d = delIds.begin(); d != delIds.end(); NO_OP)
-   {
-      auto file = files.At(*d);
-
-      if(file->IsExtFile())
-         delIds.erase(*d++);
-      else
-         ++d;
-   }
-
-   //  Output the #includes that should be removed.
-   //
-   if(!delIds.empty())
-   {
-      stream << spaces(3) << REMOVE_INCLUDE_STR << CRLF;
-
-      for(auto d = delIds.cbegin(); d != delIds.cend(); ++d)
-      {
-         stream << spaces(6) << files.At(*d)->Name() << CRLF;
-      }
-   }
-
-   //  Now determine the forward declarations that should be added.
+   //  Now determine the forward declarations that should be added.  Types
+   //  used indirectly, as well as friend declarations, provide candidates.
+   //  The candidates are then trimmed by removing, for example, forward
+   //  declarations in other files that resolved symbols in this file.
    //
    CxxNamedSet addForws;
-
-   //  A forward declaration may be required for a type that the file
-   //  referenced indirectly.
-   //
-   for(auto i = indirects.cbegin(); i != indirects.cend(); ++i)
-   {
-      addForws.insert(*i);
-   }
-
-   //  A forward declaration may be required for a type that was resolved
-   //  by a friend, rather than a forward, declaration.
-   //
-   for(auto f = friends.cbegin(); f != friends.cend(); ++f)
-   {
-      auto r = (*f)->Referent();
-      if(r != nullptr) addForws.insert(r);
-   }
-
-   //  Go through the possible forward declarations and remove those that
-   //  are not required.
-   //
-   for(auto add = addForws.begin(); add != addForws.end(); NO_OP)
-   {
-      auto addFile = (*add)->GetDeclFile();
-      auto remove = false;
-
-      //  Do not add a forward declaration for a type that was resolved by
-      //  an existing forward declaration, whether in this file or another.
-      //
-      for(auto f = forwards.cbegin(); f != forwards.cend(); ++f)
-      {
-         remove = ((*f)->Referent() == *add);
-         if(remove) break;
-      }
-
-      //  Double-check the forward declarations in this file.  One for a
-      //  function argument can get omitted from FORWARDS as follows:
-      //  o While parsing the function's *declaration*, the forward is used.
-      //  o While parsing the function's *definition*, the forward is not
-      //    used because an #include in the .cpp makes the argument's type
-      //    directly visible.
-      //  o When the function's declaration and definition are merged (see
-      //    Function::UpdateDeclaration), the arguments in the definition
-      //    replace those in the declaration.  Consequently, when GetUsages
-      //    is invoked on the argument, the referent of its DataSpec is its
-      //    actual declaration, not its forward declaration.
-      //
-      if(!remove) remove = HasForwardFor(*add);
-
-      //  Do not add a forward declaration for a type that will be included,
-      //  even transitively.
-      //
-      if(!remove)
-      {
-         auto addFid = addFile->Fid();
-         auto inclSet = new CodeFileSet(LibrarySet::TemporaryName(), nullptr);
-         auto& inclIds = inclSet->Set();
-         SetUnion(inclIds, nextInclIds);
-         auto affecterSet = inclSet->Affecters();
-         inclSet->Release();
-         auto& affecterIds = static_cast< CodeFileSet* >(affecterSet)->Set();
-
-         for(auto a = affecterIds.cbegin(); a != affecterIds.cend(); ++a)
-         {
-            remove = (*a == addFid);
-            if(remove) break;
-         }
-
-         //  Do not add a forward declaration for a type that is already forward
-         //  declared in a file that will be included, even transitively.
-         //
-         if(!remove)
-         {
-            for(auto a = affecterIds.cbegin(); a != affecterIds.cend(); ++a)
-            {
-               auto incl = files.At(*a);
-
-               if(incl != this)
-               {
-                  remove = incl->HasForwardFor(*add);
-                  if(remove) break;
-               }
-            }
-         }
-
-         affecterSet->Release();
-      }
-
-      if(remove)
-         addForws.erase(*add++);
-      else
-         ++add;
-   }
+   FindForwardCandidates(symbols, addForws);
+   PruneForwardCandidates(forwards, inclIds, addForws);
 
    //  Determine which of the file's current forward declarations to keep.
-   //  Keep a declaration that resolved a symbol (possibly on behalf of a
-   //  different file) or that *will* resolve a symbol that now needs a
-   //  forward declaration.  Delete a declaration if its referent cannot
-   //  be found.
    //
    CxxNamedSet delForws;
+   PruneLocalForwards(addForws, delForws);
 
-   for(auto f = forws_.cbegin(); f != forws_.cend(); ++f)
-   {
-      auto remove = true;
-      auto ref = (*f)->Referent();
-
-      if(ref != nullptr)
-      {
-         if((*f)->IsUnused())
-         {
-            for(auto a = addForws.begin(); a != addForws.end(); ++a)
-            {
-               if((*a) == ref)
-               {
-                  addForws.erase(*a);
-                  remove = false;
-                  break;
-               }
-            }
-         }
-         else
-         {
-            remove = false;
-         }
-      }
-
-      if(remove) delForws.insert(*f);
-   }
-
-   //  Output the forward declarations that should be added.
+   //  Output the forward declarations that should be added or removed.
    //
-   if(!addForws.empty())
-   {
-      stream << spaces(3) << ADD_FORWARD_STR << CRLF;
+   DisplayFullNames(stream, addForws, ADD_FORWARD_STR);
+   DisplayFullNames(stream, delForws, REMOVE_FORWARD_STR);
 
-      for(auto a = addForws.cbegin(); a != addForws.cend(); ++a)
-      {
-         stream << spaces(6) << (*a)->ScopedName(true) << CRLF;
-      }
-   }
-
-   //  Output the forward declarations that should be removed.
-   //
-   if(!delForws.empty())
-   {
-      stream << spaces(3) << REMOVE_FORWARD_STR << CRLF;
-
-      for(auto d = delForws.cbegin(); d != delForws.cend(); ++d)
-      {
-         stream << spaces(6) << (*d)->ScopedName(true) << CRLF;
-      }
-   }
-
-   //  Create INCLUDED, the files that this file can rely on for accessing
+   //  Create usingFiles, the files that this file can rely on for accessing
    //  using statements.  This set consists of the file itself, files that
    //  declare base classes (baseIds) of any class implemented in this file,
    //  and files (declIds) that declare items that this file defines.
    //
-   CodeFileVector included;
+   CodeFileVector usingFiles;
 
-   included.push_back(this);
+   usingFiles.push_back(this);
+
+   auto& files = Singleton< Library >::Instance()->Files();
 
    for(auto b = baseIds.cbegin(); b != baseIds.cend(); ++b)
    {
-      included.push_back(files.At(*b));
+      usingFiles.push_back(files.At(*b));
    }
 
    for(auto d = declIds.cbegin(); d != declIds.cend(); ++d)
    {
-      included.push_back(files.At(*d));
+      usingFiles.push_back(files.At(*d));
    }
 
-   //  Create USINGREFS, the referents for all symbols (USERS) that appear
-   //  in this file and that were resolved by a using statement.
+   //  Create usingRefs, the referents for all symbols (USERS) in this
+   //  file that were resolved by using statements.
    //
-   CxxNamedSet usingrefs;
+   CxxNamedSet usingRefs;
 
    for(auto u = users.cbegin(); u != users.cend(); ++ u)
    {
-      usingrefs.insert((*u)->Referent());
+      usingRefs.insert((*u)->Referent());
    }
 
-   //  Extract, from USINGREFS, the symbols that may require an #include.
-   //  Note the USERS (and, consequently, USINGREFS) may contain symbols
+   //  Extract, from usingRefs, the symbols that may require an #include.
+   //  Note that USERS (and, consequently, usingRefs) may contain symbols
    //  used in inherited functions.  But because such symbols are omitted
-   //  by Function.GetUsages, they will not appear in EXTERNALS.
+   //  by Function.GetUsages, they will not end up in EXTERNALS.
    //
    CxxNamedSet externals;
-
-   ExtractUsings(bases, usingrefs, externals);
-   ExtractUsings(nextIncls, usingrefs, externals);
-   ExtractUsings(indirects, usingrefs, externals);
-   ExtractUsings(forwards, usingrefs, externals);
-   ExtractUsings(friends, usingrefs, externals);
+   AddIntersection(externals, bases, usingRefs);
+   AddIntersection(externals, inclSet, usingRefs);
+   AddIntersection(externals, indirects, usingRefs);
+   AddIntersection(externals, forwards, usingRefs);
+   AddIntersection(externals, friends, usingRefs);
 
    //  Look at each name (N) that was resolved by a using statement, and
-   //  determine if this file should add a using statement to resolve N.
+   //  determine if this file should add a using statement to resolve it.
    //
    CxxNamedSet addUsing;
 
    for(auto n = users.cbegin(); n != users.cend(); ++n)
    {
       //  If N's referent is not in EXTERNALS, a using statement for it
-      //  is not required.  This occurs, for example, if N appeared in the
-      //  signature of an inherited function, as discussed above.
+      //  is not required.  This occurs, for example, if N appeared in
+      //  the signature of an inherited function, as discussed above.
       //
       auto ref = (*n)->Referent();
       if(externals.find(ref) == externals.cend()) continue;
@@ -2924,7 +3103,7 @@ void CodeFile::Trim(ostream& stream) const
 
          if(pos != string::npos)
          {
-            for(auto i = included.cbegin(); i != included.cend(); ++i)
+            for(auto i = usingFiles.cbegin(); i != usingFiles.cend(); ++i)
             {
                auto u = (*i)->GetUsingFor(fqName, pos - 4);
 
@@ -2944,15 +3123,7 @@ void CodeFile::Trim(ostream& stream) const
 
    //  Output the using statements that should be added.
    //
-   if(!addUsing.empty())
-   {
-      stream << spaces(3) << ADD_USING_STR << CRLF;
-
-      for(auto a = addUsing.cbegin(); a != addUsing.cend(); ++a)
-      {
-         stream << spaces(6) << (*a)->ScopedName(true) << CRLF;
-      }
-   }
+   DisplayFullNames(stream, addUsing, ADD_USING_STR);
 
    //  Using statements that did not resolve a symbol used in this
    //  file should be removed.
@@ -2964,29 +3135,18 @@ void CodeFile::Trim(ostream& stream) const
       if(!(*u)->ResolvedLocal()) delUsing.insert(u->get());
    }
 
-   if(!delUsing.empty())
-   {
-      stream << spaces(3) << REMOVE_USING_STR << CRLF;
+   DisplayFullNames(stream, delUsing, REMOVE_USING_STR);
 
-      for(auto d = delUsing.cbegin(); d != delUsing.cend(); ++d)
-      {
-         stream << spaces(6) << (*d)->ScopedName(true) << CRLF;
-      }
-   }
-
-   //  Indicate which symbols were accessed through a using statement.
+   //  Output the symbols that were resolved by a using statement.
    //
-   if(!users.empty())
+   CxxNamedSet qualify;
+
+   for(auto u = users.cbegin(); u != users.cend(); ++u)
    {
-      CxxNamedSet qualify;
-
-      for(auto u = users.cbegin(); u != users.cend(); ++u)
-      {
-         qualify.insert((*u)->DirectType());
-      }
-
-      DisplaySymbols(stream, qualify,
-         "To remove dependencies on using statements, qualify");
+      qualify.insert((*u)->DirectType());
    }
+
+   DisplaySymbols(stream, qualify,
+      "To remove dependencies on using statements, qualify");
 }
 }

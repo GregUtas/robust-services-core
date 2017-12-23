@@ -60,7 +60,7 @@ CxxNamed::CxxNamed(const CxxNamed& that)
 {
    Debug::ft(CxxNamed_ctor2);
 
-   this->decl_ = that.decl_;
+   this->loc_ = that.loc_;
 }
 
 //------------------------------------------------------------------------------
@@ -125,7 +125,7 @@ void CxxNamed::DisplayReferent(ostream& stream, bool fq) const
    }
    else
    {
-      stream << ref->GetDeclFile()->Name();
+      stream << ref->GetFile()->Name();
       if(!fq) stream << ": " << *ref->Name();
    }
 }
@@ -165,7 +165,7 @@ Class* CxxNamed::GetClass() const
 
 id_t CxxNamed::GetDeclFid() const
 {
-   auto file = GetDeclFile();
+   auto file = GetFile();
    if(file == nullptr) return NIL_ID;
    return file->Fid();
 }
@@ -219,8 +219,8 @@ bool CxxNamed::IsPreviousDeclOf(const CxxNamed* item) const
    //
    if((item == this) || (item == nullptr)) return false;
 
-   auto file1 = this->GetDeclFile();
-   auto file2 = item->GetDeclFile();
+   auto file1 = this->GetFile();
+   auto file2 = item->GetFile();
    auto& files = Singleton< Library >::Instance()->Files();
    auto& affecters = files.At(file2->Fid())->Affecters();
    SetOfIds::const_iterator it = affecters.find(file1->Fid());
@@ -250,7 +250,7 @@ void CxxNamed::Log(Warning warning, size_t offset) const
       }
    }
 
-   GetDeclFile()->LogPos(GetDeclPos(), warning, offset);
+   GetFile()->LogPos(GetPos(), warning, offset);
 }
 
 //------------------------------------------------------------------------------
@@ -504,8 +504,8 @@ void CxxNamed::SetTemplateParms(TemplateParmsPtr& parms)
 string CxxNamed::strLocation() const
 {
    std::ostringstream stream;
-   auto file = GetDeclFile();
-   stream << file->Name() << ", line " << file->GetLineNum(GetDeclPos());
+   auto file = GetFile();
+   stream << file->Name() << ", line " << file->GetLineNum(GetPos());
    return stream.str();
 }
 
@@ -1939,7 +1939,7 @@ void QualName::GetClassUsage(const CodeFile& file, CxxUsageSets& symbols) const
    if(cls != nullptr)
    {
       if(cls->IsInTemplateInstance()) cls = cls->GetTemplate();
-      if(cls->GetDeclFile() != &file) symbols.AddDirect(cls);
+      if(cls->GetFile() != &file) symbols.AddDirect(cls);
    }
 }
 

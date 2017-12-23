@@ -341,7 +341,7 @@ bool CxxToken::WasWritten(const StackArg* arg, bool passed)
 
 void CxxUsageSets::AddBase(const CxxNamed* item)
 {
-   if(item->GetDeclFile() == nullptr) return;
+   if(item->GetFile() == nullptr) return;
    bases.insert(item);
 }
 
@@ -349,7 +349,7 @@ void CxxUsageSets::AddBase(const CxxNamed* item)
 
 void CxxUsageSets::AddDirect(const CxxNamed* item)
 {
-   if(item->GetDeclFile() == nullptr) return;
+   if(item->GetFile() == nullptr) return;
    directs.insert(item);
 }
 
@@ -357,7 +357,7 @@ void CxxUsageSets::AddDirect(const CxxNamed* item)
 
 void CxxUsageSets::AddForward(const CxxNamed* item)
 {
-   if(item->GetDeclFile() == nullptr) return;
+   if(item->GetFile() == nullptr) return;
    if(item->Type() == Cxx::Friend)
       friends.insert(item);
    else
@@ -368,7 +368,7 @@ void CxxUsageSets::AddForward(const CxxNamed* item)
 
 void CxxUsageSets::AddIndirect(const CxxNamed* item)
 {
-   if(item->GetDeclFile() == nullptr) return;
+   if(item->GetFile() == nullptr) return;
    indirects.insert(item);
 }
 

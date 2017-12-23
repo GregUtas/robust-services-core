@@ -41,13 +41,11 @@ namespace CodeTools
 {
 //  Where a C++ item was declared or defined.
 //
-struct CxxLocation
+class CxxLocation
 {
    friend class CxxNamed;
 public:
    CxxLocation() : file(nullptr), pos(std::string::npos), internal(false) { }
-
-   void SetLoc(CodeFile* f, size_t p) { file = f; pos = p; }
 
    size_t GetPos() const
    {
@@ -56,12 +54,23 @@ public:
       else
          return pos;
    }
-
-   CodeFile* file;     // the file where the item appeared
 private:
-   size_t pos : 31;    // the item's location (character offset) in that file
-   bool internal : 1;  // set if the item appeared in internally generated code
-                       // (e.g. in a template instance)
+   //  Records an item's location in source code.
+   //
+   void SetLoc(CodeFile* f, size_t p) { file = f; pos = p; }
+
+   //  The file where the item appeared.
+   //
+   CodeFile* file;
+
+   //  The item's location (string offset) in FILE.
+   //
+   size_t pos : 31;
+
+   //  Set if the item appears in internally generated code
+   //  (e.g. in a template instance).
+   //
+   bool internal : 1;
 };
 
 //------------------------------------------------------------------------------
@@ -99,26 +108,26 @@ public:
 
    //  Returns the file in which this item was found.
    //
-   CodeFile* GetDeclFile() const { return decl_.file; }
+   CodeFile* GetFile() const { return loc_.file; }
 
    //  Returns the offset at which the item was found.  The item's file has a
    //  string member which contains the code, and the offset is an index into
    //  that string.
    //
-   size_t GetDeclPos() const { return decl_.GetPos(); }
+   size_t GetPos() const { return loc_.GetPos(); }
 
    //  Sets the file and offset at which this item was found.
    //
-   virtual void SetDecl(CodeFile* file, size_t pos) { decl_.SetLoc(file, pos); }
+   virtual void SetPos(CodeFile* file, size_t pos) { loc_.SetLoc(file, pos); }
 
    //  Indicates that the item appeared in internally generated code
    //  (which currently means within a template instance).
    //
-   void SetInternal() { decl_.internal = true; }
+   void SetInternal() { loc_.internal = true; }
 
    //  Returns true if the item appeared in internally generated code.
    //
-   bool IsInternal() const { return decl_.internal; }
+   bool IsInternal() const { return loc_.internal; }
 
    //  Returns true if the item was declared in a function's code block
    //  or argument list.
@@ -209,7 +218,7 @@ public:
 
    //  Invoked before adding the item to the current scope (Context::Scope()).
    //  Returning false indicates that
-   //  o for a C++ item, that it should be deleted, not added to the scope;
+   //  o for a C++ item, that it is a definition of a previous declaration;
    //  o for a preprocessor directive, that the code that follows it should
    //    not be compiled.
    //
@@ -351,9 +360,9 @@ private:
    //
    virtual void SubclassAccess(Class* cls) const { }
 
-   //  The location where the item was declared.
+   //  The location where the item appeared.
    //
-   CxxLocation decl_;
+   CxxLocation loc_;
 };
 
 //------------------------------------------------------------------------------
@@ -1030,12 +1039,8 @@ private:
    //
    virtual CxxToken* AutoType() const override { return (CxxToken*) this; }
 
-   //  Overridden to find the type's referent and to log warnings associated
-   //  with its specification.  Because it verifies that pointer and reference
-   //  tags are attached to types, not names, the parser invokes it during the
-   //  parse phase.  The reason is that a TypeSpec gets deleted when a data or
-   //  function definition is merged into its original declaration, so the
-   //  checks must occur before this happens.
+   //  Overridden to verify that pointer and reference tags are attached to
+   //  types, not names.
    //
    virtual void Check() const override;
 

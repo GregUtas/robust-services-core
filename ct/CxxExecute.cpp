@@ -330,10 +330,15 @@ void Context::SetPos(const CxxScoped* scope)
 {
    Debug::ft(Context_SetPos);
 
-   if(scope->GetDefnFile() == File_)
-      SetPos(scope->GetDefnPos());
-   else if(scope->GetDeclFile() == File_)
-      SetPos(scope->GetDeclPos());
+//x if(scope->GetDefnFile() == File_)
+//x   SetPos(scope->GetDefnPos());
+//x else if(scope->GetFile() == File_)
+//x    SetPos(scope->GetPos());
+//x else
+//x    Context::SwErr(Context_SetPos, scope->Trace(), 0);
+
+   if(scope->GetFile() == File_)
+      SetPos(scope->GetPos());
    else
       Context::SwErr(Context_SetPos, scope->Trace(), 0);
 }

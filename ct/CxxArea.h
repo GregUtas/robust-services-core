@@ -207,6 +207,10 @@ private:
    //  The area's typedefs.
    //
    TypedefPtrVector types_;
+
+   //  The area's definitions (of previously declared data or functions).
+   //
+   ScopePtrVector defns_;
 };
 
 //------------------------------------------------------------------------------
@@ -825,7 +829,7 @@ public:
 
    //  Overridden to preserve the location where the namespace first occurred.
    //
-   virtual void SetDecl(CodeFile* file, size_t pos) override;
+   virtual void SetPos(CodeFile* file, size_t pos) override;
 
    //  Overridden to handle the global namespace.
    //

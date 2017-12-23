@@ -92,12 +92,22 @@ public:
    //
    void DisplayFiles(std::ostream& stream) const;
 
-   //  Returns the file that defined the item.  Declaration (GetDeclFile) is
-   //  distinct from definition (GetDefnFile) for static data and functions.
+   //  Returns the file that declared the item.  Declaration (GetFile) is
+   //  distinct from definition (GetDefnFile) for static or extern data
+   //  and functions.  Returns nullptr if the declaration and definition
+   //  were combined.
+   //
+   virtual CodeFile* GetDeclFile() const { return GetFile(); }
+
+   //  Returns the file that defined the item.  Declaration (GetFile) is
+   //  distinct from definition (GetDefnFile) for static or extern data
+   //  and functions.  Returns nullptr if the declaration and definition
+   //  were combined.
    //
    virtual CodeFile* GetDefnFile() const { return nullptr; }
 
-   //  Returns the offset where the item was defined.
+   //  Returns the offset where the item was defined.  Returns string::npos
+   //  if the declaration and definition were combined.
    //
    virtual size_t GetDefnPos() const { return std::string::npos; }
 
@@ -166,10 +176,6 @@ protected:
    //
    CxxScoped();
 
-   //  Sets the file and offset where the item was defined.
-   //
-   virtual void SetDefn(CodeFile* file, size_t pos) { }
-
    //  Logs an unused item.  The default version generates a log that
    //  contains WARNING if IsUnused returns true.
    //
@@ -226,12 +232,6 @@ public:
    //  Returns true if the argument has a default value.
    //
    bool HasDefault() const { return (default_ != nullptr); }
-
-   //  Invoked when this argument is part of a function declaration, and THAT
-   //  argument is part of the function's definition.  This argument acquires
-   //  THAT's name.
-   //
-   void Merge(Argument& that);
 
    //  Returns true if the argument is passed by value.
    //
@@ -1127,8 +1127,10 @@ class Using : public CxxScoped
 {
 public:
    //  NAME is what is being used.  SPACE is set if it is a namespace.
+   //  STATUS indicates whether the statement was found during parsing
+   //  or added by the >trim command.
    //
-   Using(QualNamePtr& name, bool space);
+   Using(QualNamePtr& name, bool space, TrimStatus status);
 
    //  Not subclassed.
    //
@@ -1141,7 +1143,11 @@ public:
 
    //  Returns true if the declaration resolved a symbol in the same file.
    //
-   bool ResolvedLocal() const { return local_; }
+   TrimStatus Status() const { return status_; }
+
+   //  Used by >trim when the statement should be removed.
+   //
+   void FlagForRemoval() { status_ = ToBeRemoved; }
 
    //  Overridden to log warnings associated with the declaration.
    //
@@ -1216,11 +1222,11 @@ private:
 
    //  How many times the declaration resolved a symbol.
    //
-   mutable size_t users_ : 14;
+   mutable size_t users_ : 13;
 
    //  Set if the declaration resolved a symbol in the same file.
    //
-   mutable bool local_ : 1;
+   TrimStatus status_ : 2;
 
    //  Set if name_ is a namespace.
    //

@@ -208,7 +208,7 @@ void Block::EnterBlock()
 {
    Debug::ft(Block_EnterBlock);
 
-   Context::SetPos(GetDeclPos());
+   Context::SetPos(GetPos());
    SetScope(Context::Scope());
    Context::PushScope(this);
 
@@ -439,7 +439,7 @@ void ClassData::CheckAccessControl() const
    //  o it belongs to a struct or union
    //
    if(GetAccess() == Cxx::Private) return;
-   if(GetDeclFile()->IsCpp()) return;
+   if(GetFile()->IsCpp()) return;
    if(GetClass()->GetClassTag() != Cxx::ClassType) return;
    if(depth_ > 0) return;
    Log(DataNotPrivate);
@@ -538,9 +538,8 @@ void ClassData::EnterBlock()
    Debug::ft(ClassData_EnterBlock);
 
    //  The initialization of a static member is handled by
-   //  o EnterScope, if initialized when declared, or
-   //  o Initialize, when SpaceData.UpdateDeclaration merges
-   //    the definition into the declaration.
+   //  o ClassData.EnterScope, if initialized where declared, or
+   //  o SpaceData.EnterScope, if initialized separately.
    //
    if(IsStatic())
    {
@@ -558,7 +557,7 @@ void ClassData::EnterBlock()
    //
    if(init_ != nullptr)
    {
-      Context::SetPos(init_->GetDeclPos());
+      Context::SetPos(init_->GetPos());
       InitByExpr(init_->GetInit());
       init_ = nullptr;
       return;
@@ -595,7 +594,7 @@ bool ClassData::EnterScope()
    }
 
    //  Presumably we're dealing with well-formed code.  We could therefore
-   //  remove these checks and just invoke Initialize directly.  However,
+   //  remove these checks and just invoke ExecuteInit directly.  However,
    //  they are included because they help to verify that *this* software
    //  is correct.  The same is true for most of the checks on type
    //  restrictions or type compatibility, such as the one above for field
@@ -620,7 +619,7 @@ void ClassData::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
    Data::GetUsages(file, symbols);
 
-   if((width_ != nullptr) && (GetDeclFile() == &file))
+   if((width_ != nullptr) && (GetFile() == &file))
    {
       width_->GetUsages(file, symbols);
    }
@@ -829,19 +828,6 @@ bool CxxScope::IsSubscopeOf(const string& name) const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxScope_MergeScope = "CxxScope.MergeScope";
-
-void CxxScope::MergeScope(CxxScope& defn)
-{
-   Debug::ft(CxxScope_MergeScope);
-
-   SetDefn(defn.GetDeclFile(), defn.GetDeclPos());
-   this->pushes_ = defn.pushes_;
-   defn.pushes_ = 0;
-}
-
-//------------------------------------------------------------------------------
-
 fn_name CxxScope_NameIsTemplateParm = "CxxScope.NameIsTemplateParm";
 
 bool CxxScope::NameIsTemplateParm(const string& name) const
@@ -1016,6 +1002,8 @@ Data::Data(TypeSpecPtr& spec) :
    initing_(false),
    nonconst_(false),
    nonconstptr_(false),
+   defn_(false),
+   mate_(nullptr),
    spec_(spec.release()),
    reads_(0),
    writes_(0)
@@ -1209,11 +1197,35 @@ bool Data::ExecuteInit(bool push)
    //  If some form of initialization exists, one of the following will
    //  set inited_ and return true; thus the empty statement.
    //
-   initing_ = true;
+   auto decl = GetDecl();
+   decl->initing_ = true;
    if(InitByExpr(expr_.get()) || InitByAssign() || InitByDefault()) { }
-   initing_ = false;
+   decl->initing_ = false;
    if(push) Context::PopScope();
-   return inited_;
+   return decl->inited_;
+}
+
+//------------------------------------------------------------------------------
+
+CodeFile* Data::GetDeclFile() const
+{
+   return (defn_ ? mate_->GetFile() : GetFile());
+}
+
+//------------------------------------------------------------------------------
+
+CodeFile* Data::GetDefnFile() const
+{
+   if(!defn_ && (mate_ != nullptr)) return mate_->GetFile();
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+size_t Data::GetDefnPos() const
+{
+   if(!defn_ && (mate_ != nullptr)) return mate_->GetPos();
+   return string::npos;
 }
 
 //------------------------------------------------------------------------------
@@ -1247,12 +1259,8 @@ void Data::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    Debug::ft(Data_GetUsages);
 
    spec_->GetUsages(file, symbols);
-
-   if(GetFileRole(&file).isDefiner)
-   {
-      if(expr_ != nullptr) expr_->GetUsages(file, symbols);
-      if(rhs_ != nullptr) rhs_->GetUsages(file, symbols);
-   }
+   if(expr_ != nullptr) expr_->GetUsages(file, symbols);
+   if(rhs_ != nullptr) rhs_->GetUsages(file, symbols);
 }
 
 //------------------------------------------------------------------------------
@@ -1268,7 +1276,7 @@ bool Data::InitByAssign()
    rhs_->EnterBlock();
    auto result = Context::PopArg(true);
    spec_->MustMatchWith(result);
-   inited_ = true;
+   GetDecl()->inited_ = true;
    return true;
 }
 
@@ -1290,6 +1298,7 @@ bool Data::InitByDefault()
    if(spec->Ptrs(false) > 0) return false;
    if(spec->Refs() > 0) return false;
 
+   auto decl = GetDecl();
    auto cls = static_cast< Class* >(root);
    cls->Instantiate();
    auto ctor = cls->FindCtor(nullptr);
@@ -1299,19 +1308,19 @@ bool Data::InitByDefault()
       SymbolView view;
       cls->AccessibilityOf(Context::Scope(), ctor, &view);
       ctor->WasCalled();
-      inited_ = true;
+      decl->inited_ = true;
    }
    else
    {
-      inited_ = (!cls->HasPODMember());
+      decl->inited_ = (!cls->HasPODMember());
 
-      if(inited_)
+      if(decl->inited_)
          Log(DefaultConstructor);
       else
          Log(DefaultPODConstructor);
    }
 
-   return inited_;
+   return decl->inited_;
 }
 
 //------------------------------------------------------------------------------
@@ -1380,7 +1389,7 @@ bool Data::InitByExpr(CxxToken* expr)
       }
    }
 
-   inited_ = true;
+   GetDecl()->inited_ = true;
    return true;
 }
 
@@ -1421,20 +1430,6 @@ bool Data::IsDefaultConstructible() const
    }
 
    return false;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Data_Merge = "Data.Merge";
-
-void Data::Merge(Data& defn)
-{
-   Debug::ft(Data_Merge);
-
-   MergeScope(defn);
-   this->inited_ = defn.inited_;
-   this->expr_.reset(defn.expr_.release());
-   this->rhs_.reset(defn.rhs_.release());
 }
 
 //------------------------------------------------------------------------------
@@ -1480,12 +1475,13 @@ void Data::SetAssignment(ExprPtr& expr)
 
 fn_name Data_SetDefn = "Data.SetDefn";
 
-void Data::SetDefn(CodeFile* file, size_t pos)
+void Data::SetDefn(Data* data)
 {
    Debug::ft(Data_SetDefn);
 
-   defn_.SetLoc(file, pos);
-   file->InsertData(this);
+   data->mate_ = this;
+   data->defn_ = true;
+   this->mate_ = data;
 }
 
 //------------------------------------------------------------------------------
@@ -1505,6 +1501,7 @@ bool Data::SetNonConst()
 
 void Data::Shrink()
 {
+   if(!defn_ && (mate_ != nullptr)) mate_->Shrink();
    spec_->Shrink();
    if(expr_ != nullptr) expr_->Shrink();
    if(rhs_ != nullptr) rhs_->Shrink();
@@ -1652,7 +1649,7 @@ void FuncData::EnterBlock()
    auto spec = GetTypeSpec();
    auto anon = spec->IsAuto();
 
-   Context::SetPos(GetDeclPos());
+   Context::SetPos(GetPos());
    SetScope(Context::Scope());
    Singleton< CxxSymbols >::Instance()->InsertLocal(this);
    spec->EnteringScope(this);
@@ -1749,6 +1746,8 @@ Function::Function(QualNamePtr& name) :
    nonpublic_(false),
    nonstatic_(false),
    calls_(0),
+   defn_(false),
+   mate_(nullptr),
    pos_(string::npos),
    begin_(string::npos),
    end_(string::npos),
@@ -1787,6 +1786,8 @@ Function::Function(QualNamePtr& name, TypeSpecPtr& spec, bool type) :
    nonpublic_(false),
    nonstatic_(false),
    calls_(0),
+   defn_(false),
+   mate_(nullptr),
    spec_(spec.release()),
    pos_(string::npos),
    begin_(string::npos),
@@ -1871,10 +1872,10 @@ void Function::AddThisArg()
    auto cls = GetClass();
    if(cls == nullptr) return;
 
-   //  The above does not reject the definition of a static member function,
-   //  which does not include that "static" keyword.  To prevent the addition
-   //  of a "this" argument, see if a function with the same arguments, but
-   //  no "this" argument, already exists.
+   //  The above does not reject the *definition* of a static member function,
+   //  which lacks a declaration's "static" keyword.  To prevent the addition
+   //  of a "this" argument, see if a function with the same arguments, but no
+   //  "this" argument, already exists.
    //
    if(impl_ != nullptr)
    {
@@ -1897,7 +1898,7 @@ void Function::AddThisArg()
    string argName(THIS_STR);
    ArgumentPtr arg(new Argument(argName, typeSpec));
    arg->SetScope(this);
-   arg->SetDecl(GetDeclFile(), GetDeclPos());
+   arg->SetPos(GetFile(), GetPos());
    args_.insert(args_.begin(), std::move(arg));
    this_ = true;
 }
@@ -1914,7 +1915,7 @@ bool Function::ArgCouldBeConst(size_t n) const
    //  function is a template or a member of a class template, check the
    //  argument in the first template instance.
    //
-   auto arg = args_[n].get();
+   auto arg = GetDefn()->args_[n].get();
 
    if(!arg->CouldBeConst()) return false;
 
@@ -1944,7 +1945,7 @@ bool Function::ArgIsUnused(size_t n) const
    //  function is a template or a member of a class template, check the
    //  argument in the first template instance.
    //
-   auto arg = args_[n].get();
+   auto arg = GetDefn()->args_[n].get();
 
    if(!arg->IsUnused()) return false;
 
@@ -2155,8 +2156,8 @@ void Function::Check() const
    CheckForVirtualDefault();
    CheckMemberUsage();
 
-   if(impl_ == nullptr) return;
-   impl_->Check();
+   auto impl = GetDefn()->impl_.get();
+   if(impl != nullptr) impl->Check();
 }
 
 //------------------------------------------------------------------------------
@@ -2294,7 +2295,7 @@ void Function::CheckCtor() const
    //  Check that this is a constructor and that it isn't deleted.
    //
    if(FuncType() != FuncCtor) return;
-   if(impl_ == nullptr) return;
+   if(GetDefn()->impl_ == nullptr) return;
 
    //  A base class constructor should not be public.
    //
@@ -2326,9 +2327,11 @@ void Function::CheckCtor() const
    auto cls = GetClass();
    cls->GetMemberInitAttrs(items);
 
-   for(size_t i = 0; i < mems_.size(); ++i)
+   auto& mems = GetDefn()->mems_;
+
+   for(size_t i = 0; i < mems.size(); ++i)
    {
-      auto mem = mems_.at(i).get();
+      auto mem = mems.at(i).get();
       auto data = cls->FindData(*mem->Name());
 
       for(size_t j = 0; j < items.size(); ++j)
@@ -2361,7 +2364,7 @@ void Function::CheckCtor() const
       {
          if(item->initOrder < last)
          {
-            auto token = mems_.at(item->initOrder - 1).get();
+            auto token = mems.at(item->initOrder - 1).get();
             auto init = static_cast< MemberInit* >(token);
             init->Log(MemberInitNotSorted);
          }
@@ -2460,7 +2463,7 @@ void Function::CheckIfDefined() const
    //  Pure virtual functions are logged separately, because not providing an
    //  implementation may be intentional.
    //
-   if(impl_ != nullptr) return;
+   if(GetDefn()->impl_ != nullptr) return;
    if(Name()->front() == '(') return;
    if(IsDeleted()) return;
 
@@ -2553,7 +2556,7 @@ void Function::CheckMemberUsage() const
    //  function, whether they are class or function instantiations.)
    //
    if(virtual_) return;
-   if(nonstatic_) return;
+   if(GetDefn()->nonstatic_) return;
    if(tmplt_ != nullptr) return;
    if(!tmplts_.empty()) return;
    if(FuncType() != FuncStandard) return;
@@ -2565,7 +2568,7 @@ void Function::CheckMemberUsage() const
    //  If the function accessed only public members, it could be free.
    //  Otherwise, it could be static.
    //
-   if(!nonpublic_) Log(FunctionCouldBeFree);
+   if(!GetDefn()->nonpublic_) Log(FunctionCouldBeFree);
    else if(!static_) Log(FunctionCouldBeStatic);
 }
 
@@ -2764,8 +2767,8 @@ void Function::DisplayInfo(ostream& stream, bool fq) const
 {
    auto cls = GetClass();
    auto inst = ((cls != nullptr) && cls->IsInTemplateInstance());
-   auto subs = GetDeclFile()->IsSubsFile();
-   auto impl = (impl_ != nullptr);
+   auto subs = GetFile()->IsSubsFile();
+   auto impl = (GetDefn()->impl_ != nullptr);
    auto calls = false;
 
    stream << " // ";
@@ -2788,8 +2791,8 @@ void Function::EnterBlock()
 {
    Debug::ft(Function_EnterBlock);
 
-   //  If the function has no implementation, do nothing.  (An empty function
-   //  has an empty code block, so it will get past this).
+   //  If the function has no implementation, do nothing.  An empty function
+   //  (just the braces) has an empty code block, so it will get past this.
    //
    if(impl_ == nullptr) return;
 
@@ -2885,22 +2888,34 @@ bool Function::EnterScope()
    //
    Context::Enter(this);
    EnterSignature();
-
-   //  If this function was already declared, merge this definition into
-   //  the declaration and allow the definition to be deleted.
-   //
-   if(UpdateDeclaration()) return false;
    CloseScope();
 
-   //  This is a new function declaration (and possibly definition, if at
-   //  file scope).  Add it to this file's list of functions and check if
-   //  it's an override before executing it.
+   //  See whether this is a new function or the definition of a
+   //  previously declared function.
+   //
+   auto defn = false;
+
+   if(impl_ != nullptr)
+   {
+      auto decl = GetArea()->MatchFunc(this, false);
+
+      if((decl != nullptr) && decl->IsPreviousDeclOf(this))
+      {
+         defn = true;
+         Singleton< CxxSymbols >::Instance()->EraseFunc(this);
+         decl->SetDefn(this);
+      }
+   }
+
+   //  Add the function to this file's list of functions.  If it's
+   //  a declaration, check if it's an override.  Then execute it.
    //
    found_ = true;
-   if(AtFileScope()) GetDeclFile()->InsertFunc(this);
-   CheckOverride();
+//x if(AtFileScope()) GetFile()->InsertFunc(this);
+   GetFile()->InsertFunc(this);
+   if(!defn) CheckOverride();
    EnterBlock();
-   return true;
+   return !defn;
 }
 
 //------------------------------------------------------------------------------
@@ -3120,6 +3135,38 @@ FunctionType Function::FuncType() const
 
 //------------------------------------------------------------------------------
 
+CodeFile* Function::GetDeclFile() const
+{
+   return (defn_ ? mate_->GetFile() : GetFile());
+}
+
+//------------------------------------------------------------------------------
+
+const Function* Function::GetDefn() const
+{
+   if(defn_) return this;
+   if(mate_ != nullptr) return mate_;
+   return this;
+}
+
+//------------------------------------------------------------------------------
+
+CodeFile* Function::GetDefnFile() const
+{
+   if(!defn_ && (mate_ != nullptr)) return mate_->GetFile();
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+size_t Function::GetDefnPos() const
+{
+   if(!defn_ && (mate_ != nullptr)) return mate_->GetPos();
+   return string::npos;
+}
+
+//------------------------------------------------------------------------------
+
 void Function::GetDefnRange(size_t& begin, size_t& end) const
 {
    begin = begin_;
@@ -3195,7 +3242,7 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    //  obtained, but only symbols accessed via a using statement are merged
    //  into SYMBOLS in the cases discussed.
    //
-   if(!override_ && (GetDeclFile() == &file))
+   if(!GetDecl()->override_ && (GetFile() == &file))
    {
       for(auto d = usages.directs.cbegin(); d != usages.directs.cend(); ++d)
       {
@@ -3676,7 +3723,7 @@ bool Function::IsTrivial() const
    Debug::ft(Function_IsTrivial);
 
    if(tmplt_ != nullptr) return false;
-   if(impl_ == nullptr) return false;
+   if(GetDefn()->impl_ == nullptr) return false;
 
    auto file = GetImplFile();
    if(file == nullptr) return true;
@@ -3721,7 +3768,7 @@ bool Function::IsUndefined() const
 {
    Debug::ft(Function_IsUndefined);
 
-   if(impl_ == nullptr) return true;
+   if(GetDefn()->impl_ == nullptr) return true;
    if(Name()->front() == '(') return true;
    if(IsDeleted()) return true;
    return false;
@@ -3868,37 +3915,6 @@ StackArg Function::MemberToArg(StackArg& via, Cxx::Operator op)
 
 //------------------------------------------------------------------------------
 
-fn_name Function_Merge = "Function.Merge";
-
-void Function::Merge(Function& defn)
-{
-   Debug::ft(Function_Merge);
-
-   //  The definition provides the code, which includes (for a constructor)
-   //  any base constructor call and member initialization list.  It also
-   //  provides a portion of each argument, which will be needed to execute
-   //  the code.
-   //
-   MergeScope(defn);
-
-   this->inline_ = defn.inline_;
-   this->code_.reset(defn.code_.release());
-   this->begin_ = defn.begin_;
-   this->end_ = defn.end_;
-   call_.reset(defn.call_.release());
-   std::swap(mems_, defn.mems_);
-   impl_.reset(defn.impl_.release());
-
-   for(size_t i = 0; i < args_.size(); ++i)
-   {
-      auto declArg = args_.at(i).get();
-      auto defnArg = defn.args_.at(i).get();
-      declArg->Merge(*defnArg);
-   }
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Function_MinArgs = "Function.MinArgs";
 
 size_t Function::MinArgs() const
@@ -3995,12 +4011,13 @@ void Function::SetBaseInit(ExprPtr& expr)
 
 fn_name Function_SetDefn = "Function.SetDefn";
 
-void Function::SetDefn(CodeFile* file, size_t pos)
+void Function::SetDefn(Function* func)
 {
    Debug::ft(Function_SetDefn);
 
-   defn_.SetLoc(file, pos);
-   file->InsertFunc(this);
+   func->mate_ = this;
+   func->defn_ = true;
+   this->mate_ = func;
 }
 
 //------------------------------------------------------------------------------
@@ -4023,9 +4040,7 @@ void Function::SetImpl(BlockPtr& block)
 
    //  This is invoked when
    //  o The definition of a previously declared function is encountered.
-   //    EnterScope will be invoked on this new instance momentarily, and
-   //    UpdateDeclaration will merge it with its previous declaration and
-   //    allow this instance to be deleted.
+   //    EnterScope will be invoked on this new instance momentarily.
    //  o A function is simultaneously declared and defined in a class (an
    //    inline).  In this case, parsing of the implementation is delayed
    //    until the class has been parsed.  EnterScope was already invoked
@@ -4042,7 +4057,7 @@ void Function::SetImpl(BlockPtr& block)
 
 fn_name Function_SetOperator = "Function.SetOperator";
 
-bool Function::SetOperator(Cxx::Operator oper)
+void Function::SetOperator(Cxx::Operator oper)
 {
    Debug::ft(Function_SetOperator);
 
@@ -4056,7 +4071,7 @@ bool Function::SetOperator(Cxx::Operator oper)
    {
       auto count = args_.size();
       if(oper == Cxx::CAST) ++count;
-      if(!CxxOp::UpdateOperator(oper, count)) return false;
+      CxxOp::UpdateOperator(oper, count);
       name_->SetOperator(oper);
    }
 
@@ -4064,7 +4079,6 @@ bool Function::SetOperator(Cxx::Operator oper)
    //  case an operator symbol had not yet been appended to its name.
    //
    Singleton< CxxSymbols >::Instance()->InsertFunc(this);
-   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -4093,7 +4107,7 @@ void Function::SetStatic(bool stat, Cxx::Operator oper)
 void Function::Shrink()
 {
    name_->Shrink();
-
+   if(!defn_ && (mate_ != nullptr)) mate_->Shrink();
    if(spec_ != nullptr) spec_->Shrink();
 
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
@@ -4215,35 +4229,6 @@ string Function::TypeString(bool arg) const
    }
 
    return ts + ')';
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Function_UpdateDeclaration = "Function.UpdateDeclaration";
-
-bool Function::UpdateDeclaration()
-{
-   Debug::ft(Function_UpdateDeclaration);
-
-   //  If this is the definition of a previously declared function, merge
-   //  the definition into the declaration and execute the function after
-   //  removing the duplicate symbol from the symbol table.
-   //
-   if(impl_ != nullptr)
-   {
-      auto prev = GetArea()->MatchFunc(this, false);
-
-      if((prev != nullptr) && prev->IsPreviousDeclOf(this))
-      {
-         CloseScope();
-         prev->Merge(*this);
-         Singleton< CxxSymbols >::Instance()->EraseFunc(this);
-         prev->EnterBlock();
-         return true;
-      }
-   }
-
-   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -4744,7 +4729,7 @@ void SpaceData::CheckIfStatic() const
    //  defaults to static.  However, constexpr (even though theoretically
    //  static) is often preferable to the use of extern.
    //
-   if(!IsExtern() && !IsConstexpr() && GetDeclFile()->IsHeader())
+   if(!IsExtern() && !IsConstexpr() && GetFile()->IsHeader())
    {
       Log(GlobalStaticData);
    }
@@ -4787,15 +4772,25 @@ bool SpaceData::EnterScope()
 {
    Debug::ft(SpaceData_EnterScope);
 
-   //  If DATA was previously declared, update its previous instance and
-   //  allow it to be deleted.  This occurs when initializing (a) a class's
-   //  static data member at file scope; (b) data that was declared extern.
-   //
    GetTypeSpec()->EnteringScope(this);
    CloseScope();
-   if(UpdateDeclaration()) return false;
-   if(AtFileScope()) GetDeclFile()->InsertData(this);
-   return true;
+
+   //  See whether this is a new declaration or the definition
+   //  of previously declared data (i.e. class static data or
+   //  data that was declared extern).
+   //
+   auto decl = GetArea()->FindData(*Name());
+   auto defn = ((decl != nullptr) && decl->IsPreviousDeclOf(this));
+
+   if(defn)
+      decl->SetDefn(this);
+   else
+      Singleton< CxxSymbols >::Instance()->InsertData(this);
+
+//x if(AtFileScope()) GetFile()->InsertData(this);
+   GetFile()->InsertData(this);
+   ExecuteInit(true);
+   return !defn;
 }
 
 //------------------------------------------------------------------------------
@@ -4816,35 +4811,5 @@ void SpaceData::Shrink()
    Data::Shrink();
 
    name_->Shrink();
-}
-
-//------------------------------------------------------------------------------
-
-fn_name SpaceData_UpdateDeclaration = "SpaceData.UpdateDeclaration";
-
-bool SpaceData::UpdateDeclaration()
-{
-   Debug::ft(SpaceData_UpdateDeclaration);
-
-   //  If this is the definition of previously declared data, merge the
-   //  definition into the declaration and execute its initialization
-   //  after removing the duplicate symbol from the symbol table.
-   //
-   auto prev = GetArea()->FindData(*Name());
-
-   if((prev != nullptr) && prev->IsPreviousDeclOf(this))
-   {
-      prev->Merge(*this);
-      Singleton< CxxSymbols >::Instance()->EraseData(this);
-      prev->ExecuteInit(true);
-      return true;
-   }
-
-   //  This is a new declaration, so add it to the symbol table and
-   //  execute its initialization.
-   //
-   Singleton< CxxSymbols >::Instance()->InsertData(this);
-   ExecuteInit(true);
-   return false;
 }
 }

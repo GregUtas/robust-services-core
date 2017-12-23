@@ -121,11 +121,11 @@ public:
    //
    const std::string* GetCode() const { return &code_; }
 
-   //  Returns the files #included by this file.  Used for iteration.
+   //  Returns the files #included by this file.
    //
    const SetOfIds& InclList() const { return inclIds_; }
 
-   //  Returns the files that #include this file.  Used for iteration.
+   //  Returns the files that #include this file.
    //
    const SetOfIds& UserList() const { return userIds_; }
 
@@ -218,7 +218,7 @@ public:
    //  required and which symbols require qualification to remove using
    //  statements.
    //
-   void Trim(std::ostream& stream) const;
+   void Trim(std::ostream& stream);
 
    //  Formats the file.  Returns 0 if the file was unchanged, a positive
    //  number after successful changes, and a negative number on failure,
@@ -396,6 +396,10 @@ private:
    void PruneForwardCandidates(const CxxNamedSet& forwards,
       const SetOfIds& inclIds, CxxNamedSet& addForws) const;
 
+   //  Returns the files that should be #included by this file.
+   //
+   const SetOfIds& TrimList() const { return trimIds_; }
+
    //  Looks at the file's existing forward declarations.  Those that are not
    //  needed are removed from addForws (if present) and added to delForws.
    //
@@ -450,7 +454,12 @@ private:
    //
    SetOfIds inclIds_;
 
-   //  The identifiers of file that #include this one.
+   //  The identifiers of #included files, modified to the files that
+   //  *should* be #included if >trim has been run on this file.
+   //
+   SetOfIds trimIds_;
+
+   //  The identifiers of files that #include this one.
    //
    SetOfIds userIds_;
 

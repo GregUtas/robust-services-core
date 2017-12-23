@@ -4056,7 +4056,7 @@ bool Function::SetOperator(Cxx::Operator oper)
    {
       auto count = args_.size();
       if(oper == Cxx::CAST) ++count;
-      if(!CxxOp::UpdateOperator(oper, count)) return false;
+      CxxOp::UpdateOperator(oper, count);
       name_->SetOperator(oper);
    }
 

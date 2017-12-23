@@ -37,6 +37,7 @@ void SetDifference(SetOfIds& lhs, const SetOfIds& rhs1, const SetOfIds& rhs2)
 {
    Debug::ft(CodeTools_SetDifference1);
 
+   lhs.clear();
    std::set_difference(rhs1.cbegin(), rhs1.cend(),
       rhs2.cbegin(), rhs2.cend(), std::inserter(lhs, lhs.begin()));
 }
@@ -63,8 +64,9 @@ void SetIntersection(SetOfIds& lhs, const SetOfIds& rhs1, const SetOfIds& rhs2)
 {
    Debug::ft(CodeTools_SetIntersection1);
 
+   lhs.clear();
    std::set_intersection(rhs1.cbegin(), rhs1.cend(),
-      rhs2.cbegin(), rhs2.cend(), std::inserter(lhs, lhs.end()));
+      rhs2.cbegin(), rhs2.cend(), std::inserter(lhs, lhs.begin()));
 }
 
 //------------------------------------------------------------------------------
@@ -89,8 +91,9 @@ void SetUnion(SetOfIds& lhs, const SetOfIds& rhs1, const SetOfIds& rhs2)
 {
    Debug::ft(CodeTools_SetUnion1);
 
+   lhs.clear();
    std::set_union(rhs1.cbegin(), rhs1.cend(),
-      rhs2.cbegin(), rhs2.cend(), std::inserter(lhs, lhs.end()));
+      rhs2.cbegin(), rhs2.cend(), std::inserter(lhs, lhs.begin()));
 }
 
 //------------------------------------------------------------------------------

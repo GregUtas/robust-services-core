@@ -2422,7 +2422,7 @@ bool Parser::GetProcDecl(FunctionPtr& func)
    func.reset(new Function(funcName, typeSpec));
    SetContext(func.get(), start);
    if(!GetArguments(func)) return Retreat(start, func);
-   if(!func->SetOperator(oper)) return Retreat(start, func);
+   func->SetOperator(oper);
 
    auto readonly = NextKeywordIs(CONST_STR);
    auto noex = NextKeywordIs(NOEXCEPT_STR);
@@ -2482,7 +2482,7 @@ bool Parser::GetProcDefn(FunctionPtr& func)
    func.reset(new Function(funcName, typeSpec));
    SetContext(func.get(), start);
    if(!GetArguments(func)) return Retreat(start, func);
-   if(!func->SetOperator(oper)) return Retreat(start, func);
+   func->SetOperator(oper);
 
    auto readonly = NextKeywordIs(CONST_STR);
    auto noex = NextKeywordIs(NOEXCEPT_STR);
@@ -4065,6 +4065,18 @@ bool Parser::ParseInFile(Cxx::Keyword kwd, Namespace* space)
    }
 
    return false;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Parser_ParseQualName = "Parser.ParseQualName";
+
+bool Parser::ParseQualName(const string& code, QualNamePtr& name)
+{
+   Debug::ft(Parser_ParseQualName);
+
+   Enter(code, false);
+   return GetQualName(name);
 }
 
 //------------------------------------------------------------------------------

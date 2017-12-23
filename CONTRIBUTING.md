@@ -27,6 +27,7 @@ Label | Meaning
 `documentation` | additions or changes to documents or code comments
 `duplicate` | already described in another issue
 `enhancement` | a capability that should be added
+`good first issue` | suggestions for new contributors
 `help wanted` | an issue where collaboration is especially sought
 `invalid/declined` | will not be implemented
 `question` | something that should be added to a FAQ
@@ -36,7 +37,7 @@ Label | Meaning
 `4` | several week's effort once reasonbly familiar with the software
 `5` | a major project
 
-If you're a new contributor, you may want to start with an item labelled `1` or `2`.
+If you're a new contributor, you may want to start with an item labelled `good first issue`.
 
 When creating an issue
 - Choose a descriptive title and appropriate labels.

@@ -270,7 +270,7 @@ SysHeap* Memory::EnsureHeap(MemoryType type)
 
 fn_name Memory_Free = "Memory.Free";
 
-void Memory::Free(void* addr)
+void Memory::Free(const void* addr)
 {
    Debug::ft(Memory_Free);
 

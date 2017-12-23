@@ -62,7 +62,7 @@ public:
 
    //  Deallocates the memory segment returned by Alloc.
    //
-   static void Free(void* addr);
+   static void Free(const void* addr);
 
    //  Extends the segment at ADDR so that it can hold nBytes.  If there
    //  is insufficient space for the additional bytes, a new segment of

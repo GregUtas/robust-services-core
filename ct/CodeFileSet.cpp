@@ -35,11 +35,11 @@
 #include "Registry.h"
 #include "SetOperations.h"
 #include "Singleton.h"
-#include "SysTypes.h"
+//* #include "SysTypes.h"
 
 using std::ostream;
 using std::string;
-using namespace NodeBase;
+//* using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 
@@ -878,34 +878,33 @@ word CodeFileSet::Trim(ostream& stream, string& expl) const
 {
    Debug::ft(CodeFileSet_Trim);
 
-   auto& fileSet = Set();
-
-   if(fileSet.empty())
+   if(Set().empty())
    {
       expl = EmptySet;
       return 0;
    }
 
    //  In order to trim a file, it must have been parsed.  Trim headers
-   //  first, then .cpps.  The order does not matter at present, but it
-   //  would if the recommendation for a .cpp  was modified based on
-   //  what would also be recommended for the headers that it #includes.
+   //  in build order so that the recommendations for files built later
+   //  can take into account recommendations for headers built earlier.
    //
    auto rc = Parse(expl, "-");
    if(rc != 0) return rc;
 
    auto& files = Singleton< Library >::Instance()->Files();
 
-   for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
+   auto order = SortInBuildOrder();
+
+   for(auto f = order->cbegin(); f != order->cend(); ++f)
    {
-      auto file = files.At(*f);
+      auto file = files.At(f->fid);
 
       if(file->IsHeader()) file->Trim(stream);
    }
 
-   for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
+   for(auto f = order->cbegin(); f != order->cend(); ++f)
    {
-      auto file = files.At(*f);
+      auto file = files.At(f->fid);
 
       if(file->IsCpp()) file->Trim(stream);
    }

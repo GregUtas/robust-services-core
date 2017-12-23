@@ -168,6 +168,10 @@ public:
    //
    bool ParseTypeSpec(const std::string& code, TypeSpecPtr& spec);
 
+   //  Returns true and creates NAME if CODE is a valid name, maybe qualified.
+   //
+   bool ParseQualName(const string& code, QualNamePtr& name);
+
    //  If parsing a template instance for which NAME is an argument, returns
    //  that argument.
    //

@@ -293,13 +293,13 @@ string CxxOp::OperatorToName(Cxx::Operator oper)
 
 fn_name CxxOp_UpdateOperator = "CxxOp.UpdateOperator";
 
-bool CxxOp::UpdateOperator(Cxx::Operator& oper, size_t args)
+void CxxOp::UpdateOperator(Cxx::Operator& oper, size_t args)
 {
    Debug::ft(CxxOp_UpdateOperator);
 
    auto& attrs = Attrs[oper];
 
-   if((attrs.arguments == args) || (attrs.arguments == 0)) return true;
+   if((attrs.arguments == args) || (attrs.arguments == 0)) return;
 
    auto& token = attrs.symbol;
 
@@ -310,16 +310,9 @@ bool CxxOp::UpdateOperator(Cxx::Operator& oper, size_t args)
       if((entry.arguments == args) && (entry.symbol.compare(token) == 0))
       {
          oper = Cxx::Operator(i);
-         return true;
+         return;
       }
    }
-
-   //  This used to return false, which causes problems for operator->.
-   //  It's binary, but its signature is unary: T* operator->() const;
-   //  There could be other such operators, so only use the number of
-   //  arguments to resolve ambiguities.
-   //
-   return true;
 }
 
 //==============================================================================

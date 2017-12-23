@@ -339,9 +339,9 @@ struct CxxOp
 {
    //  OPER was selected before the number of arguments was known.  Now
    //  that the number is known, verify that it is correct, updating it
-   //  if it was ambiguous until ARGS was known.  Always returns true.
+   //  if it was ambiguous before ARGS was known.
    //
-   static bool UpdateOperator(Cxx::Operator& oper, size_t args);
+   static void UpdateOperator(Cxx::Operator& oper, size_t args);
 
    //  Returns the function name for overloading OPER.
    //

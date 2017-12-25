@@ -755,32 +755,6 @@ void AddIntersection
 
 //------------------------------------------------------------------------------
 
-fn_name CodeTools_FindForwardCandidates = "CodeTools.FindForwardCandidates";
-
-void FindForwardCandidates(const CxxUsageSets& symbols, CxxNamedSet& addForws)
-{
-   Debug::ft(CodeTools_FindForwardCandidates);
-
-   //  A forward declaration may be required for a type that was referenced
-   //  indirectly.
-   //
-   for(auto i = symbols.indirects.cbegin(); i != symbols.indirects.cend(); ++i)
-   {
-      addForws.insert(*i);
-   }
-
-   //  A forward declaration may be required for a type that was resolved by
-   //  a friend, rather than a forward, declaration.
-   //
-   for(auto f = symbols.friends.cbegin(); f != symbols.friends.cend(); ++f)
-   {
-      auto r = (*f)->Referent();
-      if(r != nullptr) addForws.insert(r);
-   }
-}
-
-//------------------------------------------------------------------------------
-
 void DisplayFileNames(ostream& stream, const SetOfIds& fids, fixed_string title)
 {
    //  Display, in STREAM, the names of files identified in FIDS.
@@ -852,6 +826,32 @@ void DisplaySymbolsAndFiles
    for(auto n = names.cbegin(); n != names.cend(); ++n)
    {
       stream << spaces(6) << *n << CRLF;
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeTools_FindForwardCandidates = "CodeTools.FindForwardCandidates";
+
+void FindForwardCandidates(const CxxUsageSets& symbols, CxxNamedSet& addForws)
+{
+   Debug::ft(CodeTools_FindForwardCandidates);
+
+   //  A forward declaration may be required for a type that was referenced
+   //  indirectly.
+   //
+   for(auto i = symbols.indirects.cbegin(); i != symbols.indirects.cend(); ++i)
+   {
+      addForws.insert(*i);
+   }
+
+   //  A forward declaration may be required for a type that was resolved by
+   //  a friend, rather than a forward, declaration.
+   //
+   for(auto f = symbols.friends.cbegin(); f != symbols.friends.cend(); ++f)
+   {
+      auto r = (*f)->Referent();
+      if(r != nullptr) addForws.insert(r);
    }
 }
 
@@ -1247,15 +1247,10 @@ void CodeFile::CheckDebugFt() const
    //
    for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
    {
-      if((*f)->IsInTemplateInstance())
-         continue;
-      if((*f)->IsTemplateInstance())
-         continue;  //x?
+      if((*f)->IsInTemplateInstance()) continue;
       (*f)->GetDefnRange(begin, end);
       if(begin >= end) continue;
       auto last = GetLineNum(end);
-      if(last == string::npos)  //x
-         continue;
       auto open = false, debug = false, code = false;
 
       for(auto n = GetLineNum(begin); n < last; ++n)
@@ -1306,80 +1301,85 @@ void CodeFile::CheckFunctionOrder() const
 {
    Debug::ft(CodeFile_CheckFunctionOrder);
 
-   if(!IsCpp() || funcs_.empty()) return;
+   if(IsHeader() || funcs_.empty()) return;
 
+   CxxScope* scope = nullptr;
+   auto state = FuncCtor;
+   const string* prev = nullptr;
+   const string* curr = nullptr;
    std::set< Function* > forwards;
 
-   auto f = funcs_.cbegin();
-
-   while(true)
+   for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
    {
-      auto scope = (*f)->GetScope();
-      auto state = FuncCtor;
-      const string* prev = nullptr;
-      const string* curr = nullptr;
-      forwards.clear();
+      //  Skip functions created in template instances, which are added to
+      //  the file that caused their instantiation.
+      //
+      if((*f)->IsInTemplateInstance()) continue;
 
-      while((*f)->GetScope() == scope)
+      //  Functions only need to be sorted until a function in a new scope
+      //  is encountered.
+      //
+      if((*f)->GetScope() != scope)
       {
-         //  If a function is declared forward in a .cpp, add it to FORWARDS
-         //  the first time (its declaration) so that it can be handled when
-         //  its definition appears.
-         //
-         if(((*f)->GetFile() == this) &&  //x?
-            ((*f)->GetDefnFile() == this) &&
-            (forwards.find(*f) == forwards.end()))
+         state = FuncCtor;
+         prev = nullptr;
+         curr = nullptr;
+         forwards.clear();
+      }
+
+      //  If a function is declared forward in a .cpp, add it to FORWARDS
+      //  the first time (its declaration) so that it can be handled when
+      //  its definition appears.
+      //
+      if(((*f)->GetDefnFile() == this) &&
+         (forwards.find(*f) == forwards.end()))
+      {
+         forwards.insert(*f);
+      }
+      else
+      {
+         switch(state)
          {
-            forwards.insert(*f);
-         }
-         else
-         {
-            switch(state)
+         case FuncCtor:
+            switch((*f)->FuncType())
+            {
+            case FuncOperator:
+            case FuncStandard:
+               prev = (*f)->Name();
+            case FuncDtor:
+               state = FuncStandard;
+            }
+            break;
+
+         case FuncStandard:
+            switch((*f)->FuncType())
             {
             case FuncCtor:
-               switch((*f)->FuncType())
+            case FuncDtor:
+               LogPos((*f)->GetPos(), FunctionNotSorted);
+               break;
+
+            case FuncOperator:
+               curr = (*f)->Name();
+               if((prev != nullptr) && (strCompare(*curr, *prev) < 0))
                {
-               case FuncOperator:
-               case FuncStandard:
-                  prev = (*f)->Name();
-               case FuncDtor:
-                  state = FuncStandard;
+                  if(prev->find(OPERATOR_STR) != 0)
+                  {
+                     LogPos((*f)->GetPos(), FunctionNotSorted);
+                  }
                }
+               prev = curr;
                break;
 
             case FuncStandard:
-               switch((*f)->FuncType())
+               curr = (*f)->Name();
+               if((prev != nullptr) && (strCompare(*curr, *prev) < 0))
                {
-               case FuncCtor:
-               case FuncDtor:
-                  LogPos((*f)->GetDefnPos(), FunctionNotSorted);
-                  break;
-
-               case FuncOperator:
-                  curr = (*f)->Name();
-                  if((prev != nullptr) && (strCompare(*curr, *prev) < 0))
-                  {
-                     if(prev->find(OPERATOR_STR) != 0)
-                     {
-                        LogPos((*f)->GetDefnPos(), FunctionNotSorted);
-                     }
-                  }
-                  prev = curr;
-                  break;
-
-               case FuncStandard:
-                  curr = (*f)->Name();
-                  if((prev != nullptr) && (strCompare(*curr, *prev) < 0))
-                  {
-                     LogPos((*f)->GetDefnPos(), FunctionNotSorted);
-                  }
-                  prev = curr;
+                  LogPos((*f)->GetPos(), FunctionNotSorted);
                }
+               prev = curr;
             }
          }
-
-         ++f;
-         if(f == funcs_.cend()) return;
       }
    }
 }
@@ -1974,9 +1974,9 @@ void CodeFile::DisplayItems(ostream& stream, const string& opts) const
       stream << FullName() << CRLF;
       stream << '{' << CRLF;
       DisplayObjects(incls_, stream, lead, qual);
+      DisplayObjects(macros_, stream, lead, qual);
       DisplayObjects(forws_, stream, lead, qual);
       DisplayObjects(usings_, stream, lead, qual);
-      DisplayObjects(macros_, stream, lead, qual);
       DisplayObjects(enums_, stream, lead, qual);
       DisplayObjects(types_, stream, lead, qual);
       DisplayObjects(funcs_, stream, lead, qual);
@@ -2640,7 +2640,7 @@ void CodeFile::PruneForwardCandidates(const CxxNamedSet& forwards,
       {
          remove = HasForwardFor(*add);
          if(remove)
-            Debug::noop();
+            Debug::noop();  //x
       }
 
       if(!remove)
@@ -3082,8 +3082,8 @@ void CodeFile::Trim(ostream& stream)
 
    //  Extract, from usingRefs, the symbols that may require an #include.
    //  Note that USERS (and, consequently, usingRefs) may contain symbols
-   //  used in inherited functions.  But because such symbols are omitted
-   //  by Function.GetUsages, they will not end up in EXTERNALS.
+   //  used in previously declared functions.  But because such symbols
+   //  are omitted by Function.GetUsages, they will not end up in EXTERNALS.
    //
    CxxNamedSet externals;
    AddIntersection(externals, bases, usingRefs);
@@ -3099,14 +3099,14 @@ void CodeFile::Trim(ostream& stream)
 
    for(auto n = users.cbegin(); n != users.cend(); ++n)
    {
-      //  If N's referent is not in EXTERNALS, a using statement for it
-      //  is not required.  This occurs, for example, if N appeared in
-      //  the signature of an inherited function, as discussed above.
+      //  If N's referent is not in EXTERNALS, a using statement for it is
+      //  not required.  This occurs, for example, if N appeared in the
+      //  signature of a previously declared function, as discussed above.
       //
       auto ref = (*n)->Referent();
       if(externals.find(ref) == externals.cend()) continue;
 
-      //  See if a file in INCLUDED has a using statement that would make
+      //  See if a file in usingFiles has a using statement that would make
       //  N visible.  If so, this file does not need to add one.  However,
       //  check that such a using statement is not tagged for removal.
       //  (This code was adapted from NameRefersToItem, simplified to
@@ -3160,9 +3160,17 @@ void CodeFile::Trim(ostream& stream)
    DisplaySymbols(stream, addUsing, ADD_USING_STR);
 
    //  Using statements that did not resolve a non-inherited symbol
-   //  used in this file should be removed.
+   //  used in this file should be removed.  Prior to doing this,
+   //  add all symbols that were resolved by using statements to
+   //  EXTERNALS.  Although some may be inherited, they nonetheless
+   //  require a using statement, whether in this file or elsewhere.
    //
    CxxNamedSet delUsing;
+
+   for(auto u = users.cbegin(); u != users.cend(); ++u)
+   {
+      externals.insert(*u);
+   }
 
    for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
    {
@@ -3200,16 +3208,19 @@ void CodeFile::Trim(ostream& stream)
 
    DisplaySymbols(stream, delUsing, REMOVE_USING_STR);
 
-   //  Output the symbols that were resolved by a using statement.
+   //* For a header, output the symbols that were resolved by a using statement.
    //
-   CxxNamedSet qualify;
-
-   for(auto u = users.cbegin(); u != users.cend(); ++u)
+// if(IsHeader())
    {
-      qualify.insert((*u)->DirectType());
-   }
+      CxxNamedSet qualify;
 
-   DisplaySymbolsAndFiles(stream, qualify,
-      "To remove dependencies on using statements, qualify");
+      for(auto u = users.cbegin(); u != users.cend(); ++u)
+      {
+         qualify.insert((*u)->DirectType());
+      }
+
+      DisplaySymbolsAndFiles(stream, qualify,
+         "To remove dependencies on using statements, qualify");
+   }
 }
 }

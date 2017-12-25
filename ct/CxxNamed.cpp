@@ -165,7 +165,7 @@ Class* CxxNamed::GetClass() const
 
 id_t CxxNamed::GetDeclFid() const
 {
-   auto file = GetFile();
+   auto file = GetDeclFile();
    if(file == nullptr) return NIL_ID;
    return file->Fid();
 }
@@ -813,7 +813,7 @@ void DataSpec::EnteringScope(const CxxScope* scope)
    }
 
    EnterArrays();
-   Check();
+   Check();  //* delay until >check
    if(name_->GetReferent() == nullptr) FindReferent();
 }
 
@@ -1031,7 +1031,7 @@ void DataSpec::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
       //  an accurate direct/indirect determination for a .cpp seems to involve
       //  more effort than is worthwhile.
       //
-      if(!file.IsCpp() && IsUsedInNameOnly())
+      if(file.IsHeader() && IsUsedInNameOnly())
          symbols.AddIndirect(ref);
       else
          symbols.AddDirect(ref);

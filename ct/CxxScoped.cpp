@@ -62,11 +62,11 @@ Argument::Argument(string& name, TypeSpecPtr& spec) :
 
 //------------------------------------------------------------------------------
 
-fn_name Argument_CheckDefn = "Argument.CheckDefn";
+fn_name Argument_CheckVoid = "Argument.CheckVoid";
 
-void Argument::CheckDefn() const
+void Argument::CheckVoid() const
 {
-   Debug::ft(Argument_CheckDefn);
+   Debug::ft(Argument_CheckVoid);
 
    if(name_.empty())
    {
@@ -81,7 +81,7 @@ void Argument::CheckDefn() const
       }
       else
       {
-         Log(AnonymousArgument);
+         Log(AnonymousArgument);  //* delay until >check
       }
    }
 }
@@ -114,7 +114,7 @@ bool Argument::EnterScope()
       spec_->MustMatchWith(result);
    }
 
-   CheckDefn();
+   CheckVoid();
    return true;
 }
 
@@ -139,11 +139,7 @@ void Argument::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    Debug::ft(Argument_GetUsages);
 
    spec_->GetUsages(file, symbols);
-
-   if((default_ != nullptr) && (GetFile() == &file))
-   {
-      default_->GetUsages(file, symbols);
-   }
+   if(default_ != nullptr) default_->GetUsages(file, symbols);
 }
 
 //------------------------------------------------------------------------------
@@ -390,7 +386,7 @@ void CxxScoped::AccessibilityTo(const CxxScope* scope, SymbolView* view) const
 
 void CxxScoped::AddFiles(SetOfIds& imSet) const
 {
-   auto decl = GetFile();
+   auto decl = GetDeclFile();
    auto defn = GetDefnFile();
    if(decl != nullptr) imSet.insert(decl->Fid());
    if(defn != nullptr) imSet.insert(defn->Fid());
@@ -523,25 +519,6 @@ CxxScoped* CxxScoped::FindInheritedName() const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxScoped_GetFileRole = "CxxScoped.GetFileRole";
-
-FileRole CxxScoped::GetFileRole(const CodeFile* file) const
-{
-   Debug::ft(CxxScoped_GetFileRole);
-
-   FileRole role = {false, false};
-   if(file == nullptr) return role;
-   role.isDeclarer = (GetDeclFile() == file);
-   auto defn = GetDefnFile();
-   if(defn == nullptr)
-      role.isDefiner = role.isDeclarer;
-   else
-      role.isDefiner = (defn == file);
-   return role;
-}
-
-//------------------------------------------------------------------------------
-
 CodeFile* CxxScoped::GetImplFile() const
 {
    auto file = GetDefnFile();
@@ -619,12 +596,13 @@ bool CxxScoped::NameRefersToItem(const std::string& name,
    //
    *view = NotAccessible;
 
-   //  Assume that NAME is visible if it was not declared in a file, in
-   //  which case it is a built-in.  Also assume that NAME is visible if
-   //  it's a template specification.
-   //c Verify the visibility of each component in NAME.  Not doing so
-   //  forced Lexer::TypeTable to be renamed to TypesTable so that it
-   //  could be distinguished from CxxSymbols::TypeTable.
+   //  If this item was not declared in a file, it's a built-in type and is
+   //  therefore visible.  If NAME is a template specification, assume that
+   //  it is visible.
+   //c Verify the visibility of each component in a template specification.
+   //  Not doing so forced Lexer::TypesTable to be renamed from TypeTable so
+   //  that it could be distinguished from CxxSymbols::TypeTable, preventing
+   //  a false "doubly declared identifier" error.
    //
    auto itemFile = GetFile();
 

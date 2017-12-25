@@ -403,8 +403,8 @@ word Library::Export(ostream& stream, const string& opts) const
    auto gns = root->GlobalNamespace();
 
    stream << "NAMESPACE VIEW" << CRLF << CRLF;
-   root->Display(stream, EMPTY_STR, Flags(FQ_Mask));
-   gns->Display(stream, EMPTY_STR, Flags(FQ_Mask));
+   root->Display(stream, EMPTY_STR, Flags(FQ_Mask | NS_Mask));
+   gns->Display(stream, EMPTY_STR, Flags(FQ_Mask | NS_Mask));
 
    stream << string(80, '=') << CRLF;
    stream << "FILE VIEW" << CRLF << CRLF;

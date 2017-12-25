@@ -305,7 +305,7 @@ public:
 
    //  Returns true if the data was initialized.
    //
-   bool WasInited() const { return inited_; }
+   bool WasInited() const { return GetDecl()->inited_; }
 
    //  Invoked on a data declaration when its definition (DATA) is found.
    //
@@ -334,10 +334,6 @@ public:
    //
    virtual CxxToken* AutoType() const override { return (CxxToken*) this; }
 
-   //  Returns true if the data's initialization is currently being executed.
-   //
-   virtual bool IsInitializing() const override { return initing_; }
-
    //  Overridden to return the file that declared the data.
    //
    virtual CodeFile* GetDeclFile() const override;
@@ -346,10 +342,6 @@ public:
    //  data.
    //
    virtual CodeFile* GetDefnFile() const override;
-
-   //  Overridden to return the offset where the data is initialized.
-   //
-   virtual size_t GetDefnPos() const override;
 
    //  Overridden to return the data's underlying numeric type.
    //
@@ -375,6 +367,10 @@ public:
    //  Overridden to indicate whether the data is a const pointer.
    //
    virtual bool IsConstPtr() const override;
+
+   //  Returns true if the data's initialization is currently being executed.
+   //
+   virtual bool IsInitializing() const override { return initing_; }
 
    //  Overridden to return true if the data is static.
    //
@@ -446,11 +442,11 @@ protected:
 
    //  Displays any parenthesized expression that initializes the data.
    //
-   void DisplayExpression(std::ostream& stream) const;
+   void DisplayExpression(std::ostream& stream, const Flags& options) const;
 
    //  Displays any assignment statement that initializes the data.
    //
-   void DisplayAssignment(std::ostream& stream) const;
+   void DisplayAssignment(std::ostream& stream, const Flags& options) const;
 
    //  Displays read/write statistics.
    //
@@ -458,7 +454,13 @@ protected:
 private:
    //  Returns the data's declaration.
    //
+   const Data* GetDecl() const { return (defn_ ? mate_ : this); }
    Data* GetDecl() { return (defn_ ? mate_ : this); }
+
+   //  Returns the data's definition (if distinct from its declaration),
+   //  else its declaration.
+   //
+   const Data* GetDefn() const;
 
    //  Returns the name to be used in the initialization statement.
    //
@@ -1092,10 +1094,6 @@ public:
    //
    virtual CodeFile* GetDefnFile() const override;
 
-   //  Overridden to return the offset where the function is defined.
-   //
-   virtual size_t GetDefnPos() const override;
-
    //  Overridden to return the function itself.
    //
    virtual Function* GetFunction()
@@ -1180,6 +1178,7 @@ private:
    //  Returns the function's declaration.
    //
    const Function* GetDecl() const { return (defn_ ? mate_ : this); }
+   Function* GetDecl() { return (defn_ ? mate_ : this); }
 
    //  Adds a "this" argument to the function if required.  This occurs
    //  immediately before executing the function's code (in EnterBlock).
@@ -1302,6 +1301,11 @@ private:
    //  Determines how the function is associated with a template.
    //
    TemplateLocation GetTemplateLocation() const;
+
+   //  Displays the function's definition.
+   //
+   void DisplayDefn(std::ostream& stream,
+      const std::string& prefix, const Flags& options) const;
 
    //  Displays information about where the function is implemented, how many
    //  many times it was overridden, and how many times it was invoked.

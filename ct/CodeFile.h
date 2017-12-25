@@ -454,8 +454,8 @@ private:
    //
    SetOfIds inclIds_;
 
-   //  The identifiers of #included files, modified to the files that
-   //  *should* be #included if >trim has been run on this file.
+   //  The identifiers of #included files.  When >trim is run on this file,
+   //  this is modified to the files that *should* be #included.
    //
    SetOfIds trimIds_;
 

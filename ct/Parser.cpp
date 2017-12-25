@@ -571,7 +571,7 @@ bool Parser::GetCast(ExprPtr& expr)
    if(!GetTypeSpec(spec)) return lexer_.Retreat(start);
    if(!lexer_.NextCharIs(')')) return lexer_.Retreat(start);
    if(!GetCxxExpr(item, expr->EndPos(), false)) return lexer_.Retreat(start);
-   spec->Check();
+   spec->Check();  //* delay until >check
 
    auto token = TokenPtr(new Operation(Cxx::CAST));
    auto cast = static_cast< Operation* >(token.get());
@@ -1018,7 +1018,7 @@ bool Parser::GetCtorInit(FunctionPtr& func)
          if(!GetArgList(token)) return lexer_.Retreat(start);
          memberName = *baseName->Name();
          auto mem = MemberInitPtr(new MemberInit(memberName, token));
-         mem->SetDecl(Context::File(), begin);
+         mem->SetPos(Context::File(), begin);
          func->AddMemberInit(mem);
       }
    }
@@ -1032,7 +1032,7 @@ bool Parser::GetCtorInit(FunctionPtr& func)
       if(end == string::npos) return lexer_.Retreat(start);
       if(!GetArgList(token)) return lexer_.Retreat(start);
       auto mem = MemberInitPtr(new MemberInit(memberName, token));
-      mem->SetDecl(Context::File(), begin);
+      mem->SetPos(Context::File(), begin);
       func->AddMemberInit(mem);
    }
 
@@ -1141,7 +1141,7 @@ bool Parser::GetCxxCast(ExprPtr& expr, Cxx::Operator op)
    if(!GetTypeSpec(spec)) return lexer_.Retreat(start);
    if(!lexer_.NextCharIs('>')) return lexer_.Retreat(start);
    if(!GetParExpr(item, false)) return lexer_.Retreat(start);
-   spec->Check();
+   spec->Check();  //* delay until >check
 
    auto token = TokenPtr(new Operation(op));
    auto cast = static_cast< Operation* >(token.get());
@@ -2039,7 +2039,7 @@ bool Parser::GetNamespace()
 
    auto outer = Context::Scope();
    auto inner = static_cast< Namespace* >(outer)->EnsureNamespace(name);
-   inner->SetDecl(Context::File(), begin);
+   inner->SetPos(Context::File(), begin);
    Context::PushScope(inner);
    GetFileDecls(inner);
    Context::PopScope();
@@ -2105,7 +2105,7 @@ bool Parser::GetNew(ExprPtr& expr, Cxx::Operator op)
    //
    TypeSpecPtr typeSpec;
    if(!GetTypeSpec(typeSpec)) return lexer_.Retreat(start);
-   typeSpec->Check();
+   typeSpec->Check();  //* delay until >check
    token.reset(typeSpec.release());
    newOp->AddArg(token, false);
 
@@ -2604,7 +2604,7 @@ bool Parser::GetSizeOf(ExprPtr& expr)
       TypeSpecPtr spec;
       if(GetTypeSpec(spec))
       {
-         spec->Check();
+         spec->Check();  //* delay until >check
          arg.reset(spec.release());
          if(lexer_.NextCharIs(')')) break;
          lexer_.Reposition(mark);
@@ -3146,7 +3146,7 @@ bool Parser::GetUsing(UsingPtr& use)
    auto space = NextKeywordIs(NAMESPACE_STR);
    if(!GetQualName(usingName)) return lexer_.Retreat(start);
    if(!lexer_.NextCharIs(';')) return lexer_.Retreat(start);
-   use.reset(new Using(usingName, space));
+   use.reset(new Using(usingName, space, Original));
    SetContext(use.get(), begin);
    return Success(Parser_GetUsing, begin);
 }
@@ -4247,7 +4247,7 @@ void Parser::SetContext(CxxNamed* item, size_t pos) const
    }
 
    if(scope != nullptr) item->SetAccess(scope->GetCurrAccess());
-   item->SetDecl(Context::File(), pos);
+   item->SetPos(Context::File(), pos);
    if(tmpltClassInst_ || tmpltFuncInst_) item->SetInternal();
 }
 

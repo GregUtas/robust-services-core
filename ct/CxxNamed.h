@@ -59,16 +59,17 @@ private:
    //
    void SetLoc(CodeFile* f, size_t p) { file = f; pos = p; }
 
-   //  The file where the item appeared.
+   //  The file in which the item appeared.
    //
    CodeFile* file;
 
-   //  The item's location (string offset) in FILE.
+   //  The item's location in FILE.  The file has a string member which
+   //  contains the code, and this is an index into that string.
    //
    size_t pos : 31;
 
-   //  Set if the item appears in internally generated code
-   //  (e.g. in a template instance).
+   //  Set if the item appeared in internally generated code, which currently
+   //  means in a template instance.
    //
    bool internal : 1;
 };
@@ -110,9 +111,7 @@ public:
    //
    CodeFile* GetFile() const { return loc_.file; }
 
-   //  Returns the offset at which the item was found.  The item's file has a
-   //  string member which contains the code, and the offset is an index into
-   //  that string.
+   //  Returns the offset at which the item was found.
    //
    size_t GetPos() const { return loc_.GetPos(); }
 
@@ -120,8 +119,7 @@ public:
    //
    virtual void SetPos(CodeFile* file, size_t pos) { loc_.SetLoc(file, pos); }
 
-   //  Indicates that the item appeared in internally generated code
-   //  (which currently means within a template instance).
+   //  Indicates that the item appeared in internally generated code.
    //
    void SetInternal() { loc_.internal = true; }
 
@@ -208,9 +206,21 @@ public:
    //
    virtual Cxx::Access GetAccess() const { return Cxx::Public; }
 
+   //  Returns the file that *declared* the item.  Declaration is distinct
+   //  from definition for extern data and functions, and often for static
+   //  class data.  Such items appear twice, with one being the declaration
+   //  and the other the definition.
+   //
+   virtual CodeFile* GetDeclFile() const { return GetFile(); }
+
    //  Returns the identifier of the file in which the item was declared.
    //
    virtual id_t GetDeclFid() const;
+
+   //  Returns the file that *defined* the item.  Returns nullptr if the
+   //  item has no definition or if it was defined where it was declared.
+   //
+   virtual CodeFile* GetDefnFile() const { return nullptr; }
 
    //  Returns true if the item was declared at file scope.
    //

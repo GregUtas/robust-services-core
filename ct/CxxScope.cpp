@@ -510,7 +510,7 @@ void ClassData::Display(ostream& stream,
       width_->Print(stream);
    }
 
-   DisplayAssignment(stream);
+   DisplayAssignment(stream, options);
    stream << ';';
 
    if(!options.test(DispCode))
@@ -619,10 +619,7 @@ void ClassData::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
    Data::GetUsages(file, symbols);
 
-   if((width_ != nullptr) && (GetFile() == &file))
-   {
-      width_->GetUsages(file, symbols);
-   }
+   if(width_ != nullptr) width_->GetUsages(file, symbols);
 }
 
 //------------------------------------------------------------------------------
@@ -1143,41 +1140,57 @@ void Data::CheckUsage() const
 
 //------------------------------------------------------------------------------
 
-void Data::DisplayAssignment(ostream& stream) const
+void Data::DisplayAssignment(ostream& stream, const Flags& options) const
 {
-   if(rhs_ != nullptr)
-   {
-      //  The source code only contains the assignment operator and the
-      //  initialization expression.
-      //
-      std::ostringstream buffer;
+   //* Always display an assignment in namespace view.  In file view,
+   //  only display it where it occurs.
+   //
+/* auto ns = options.test(DispNS);
+   if(!ns && (rhs_ == nullptr)) return; */
 
-      stream << " = ";
-      rhs_->Back()->Print(buffer);
+   auto rhs = GetDefn()->rhs_.get();
+   if(rhs == nullptr) return;
 
-      auto expr = buffer.str();
+   //  The source code only contains the assignment operator and the
+   //  initialization expression.
+   //
+   std::ostringstream buffer;
 
-      if(expr.size() <= 80)
-         stream << expr;
-      else
-         stream << "{ /*" << expr.size() << " characters */ }";
-   }
+   stream << " = ";
+   rhs->Back()->Print(buffer);
+
+   auto expr = buffer.str();
+
+   if(expr.size() <= 80)
+      stream << expr;
+   else
+      stream << "{ /*" << expr.size() << " characters */ }";
 }
 
 //------------------------------------------------------------------------------
 
-void Data::DisplayExpression(ostream& stream) const
+void Data::DisplayExpression(ostream& stream, const Flags& options) const
 {
-   if(expr_ != nullptr) expr_->Print(stream);
+   //* Always display an expession in namespace view.  In file view,
+   //  only display it where it occurs.
+   //
+/* auto ns = options.test(DispNS);
+   if(!ns && (expr_ == nullptr)) return; */
+
+   auto expr = GetDefn()->expr_.get();
+   if(expr == nullptr) return;
+
+   expr->Print(stream);
 }
 
 //------------------------------------------------------------------------------
 
 void Data::DisplayStats(ostream& stream) const
 {
-   stream << "i=" << int(inited_) << SPACE;
-   stream << "r=" << reads_ << SPACE;
-   stream << "w=" << writes_ << SPACE;
+   auto decl = GetDecl();
+   stream << "i=" << int(decl->inited_) << SPACE;
+   stream << "r=" << decl->reads_ << SPACE;
+   stream << "w=" << decl->writes_ << SPACE;
 }
 
 //------------------------------------------------------------------------------
@@ -1214,18 +1227,20 @@ CodeFile* Data::GetDeclFile() const
 
 //------------------------------------------------------------------------------
 
-CodeFile* Data::GetDefnFile() const
+const Data* Data::GetDefn() const
 {
-   if(!defn_ && (mate_ != nullptr)) return mate_->GetFile();
-   return nullptr;
+   if(defn_) return this;
+   if(mate_ != nullptr) return mate_;
+   return this;
 }
 
 //------------------------------------------------------------------------------
 
-size_t Data::GetDefnPos() const
+CodeFile* Data::GetDefnFile() const
 {
-   if(!defn_ && (mate_ != nullptr)) return mate_->GetPos();
-   return string::npos;
+   if(defn_) return GetFile();
+   if(mate_ != nullptr) return mate_->GetFile();
+   return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -1501,7 +1516,6 @@ bool Data::SetNonConst()
 
 void Data::Shrink()
 {
-   if(!defn_ && (mate_ != nullptr)) mate_->Shrink();
    spec_->Shrink();
    if(expr_ != nullptr) expr_->Shrink();
    if(rhs_ != nullptr) rhs_->Shrink();
@@ -1614,8 +1628,8 @@ void FuncData::DisplayItem(ostream& stream, const Flags& options) const
 
    stream << name_;
    GetTypeSpec()->DisplayArrays(stream);
-   DisplayExpression(stream);
-   DisplayAssignment(stream);
+   DisplayExpression(stream, options);
+   DisplayAssignment(stream, options);
 
    if(next_ == nullptr)
    {
@@ -2618,78 +2632,14 @@ void Function::Display(ostream& stream,
 
    auto code = options.test(DispCode);
    auto fq = options.test(DispFQ);
+
    stream << prefix;
    if(!options.test(DispNoAC) && (GetClass() != nullptr))
    {
-      stream << GetAccess() << ": ";
+      stream << GetDecl()->GetAccess() << ": ";
    }
    DisplayDecl(stream, options);
-
-   if((impl_ == nullptr) || IsInternal())
-   {
-      stream << ';';
-      if(!code) DisplayInfo(stream, fq);
-      stream << CRLF;
-   }
-   else
-   {
-      auto mems = mems_.size();
-      auto inits = mems + (call_ != nullptr ? 1 : 0);
-
-      switch(inits)
-      {
-      case 0:
-         break;
-
-      case 1:
-         stream << " : ";
-
-         if(call_ != nullptr)
-            call_->Print(stream);
-         else
-            mems_.front()->Print(stream);
-         break;
-
-      default:
-         stream << " :";
-         if(!code) DisplayInfo(stream, fq);
-         stream << CRLF;
-         auto lead = prefix + spaces(Indent_Size);
-
-         if(call_ != nullptr)
-         {
-            stream << lead;
-            call_->Print(stream);
-            if(mems > 0) stream << ',' << CRLF;
-         }
-
-         for(auto m = mems_.cbegin(); m != mems_.cend(); ++m)
-         {
-            stream << lead;
-            (*m)->Print(stream);
-            if(*m != mems_.back()) stream << ',' << CRLF;
-         }
-      }
-
-      auto form = Block::Braced;  // inlined unless multiple statements
-
-      if(inits > 1)
-         form = Block::Empty;  // never inlined, even if empty
-      else if(inits > 0)
-         form = Block::Unbraced;  // inlined only if empty
-
-      if(!impl_->CrlfOver(form))
-      {
-         impl_->Print(stream);
-         if(!code && (inits <= 1)) DisplayInfo(stream, fq);
-         stream << CRLF;
-      }
-      else
-      {
-         if(!code && (inits <= 1)) DisplayInfo(stream, fq);
-         impl_->Display(stream, prefix, Flags(LF_Mask));
-      }
-   }
+   DisplayDefn(stream, prefix, options);
 
    if(code) return;
 
@@ -2716,17 +2666,19 @@ void Function::Display(ostream& stream,
 
 void Function::DisplayDecl(ostream& stream, const Flags& options) const
 {
-   if(extern_) stream << EXTERN_STR << SPACE;
+   auto decl = GetDecl();  //x
+
+   if(decl->extern_) stream << EXTERN_STR << SPACE;
    if(!options.test(DispNoTP))
    {
       auto parms = GetTemplateParms();
       if(parms != nullptr) parms->Print(stream);
    }
-   if(inline_) stream << INLINE_STR << SPACE;
-   if(constexpr_) stream << CONSTEXPR_STR << SPACE;
-   if(static_) stream << STATIC_STR << SPACE;
-   if(virtual_) stream << VIRTUAL_STR << SPACE;
-   if(explicit_) stream << EXPLICIT_STR << SPACE;
+   if(decl->inline_) stream << INLINE_STR << SPACE;
+   if(decl->constexpr_) stream << CONSTEXPR_STR << SPACE;
+   if(decl->static_) stream << STATIC_STR << SPACE;
+   if(decl->virtual_) stream << VIRTUAL_STR << SPACE;
+   if(decl->explicit_) stream << EXPLICIT_STR << SPACE;
 
    if(Operator() == Cxx::CAST)
    {
@@ -2756,9 +2708,93 @@ void Function::DisplayDecl(ostream& stream, const Flags& options) const
 
    stream << ')';
    if(const_) stream << SPACE << CONST_STR;
-   if(noexcept_) stream << SPACE << NOEXCEPT_STR;
-   if(override_) stream << SPACE << OVERRIDE_STR;
-   if(pure_) stream << " = 0";
+   if(decl->noexcept_) stream << SPACE << NOEXCEPT_STR;
+   if(decl->override_) stream << SPACE << OVERRIDE_STR;
+   if(decl->pure_) stream << " = 0";
+}
+
+//------------------------------------------------------------------------------
+
+void Function::DisplayDefn(ostream& stream,
+   const string& prefix, const Flags& options) const
+{
+   auto fq = options.test(DispFQ);
+   auto ns = options.test(DispNS);
+   auto code = options.test(DispCode);
+   auto defn = GetDefn();
+   auto impl = defn->impl_.get();
+
+   //  Do not display the function's implementation if
+   //  (a) there isn't one
+   //* (b) this is only the function's declaration in file view
+   //  (c) this is internally generated code (a template instance)
+   //
+   if((impl == nullptr) || /* (!ns && (impl_ == nullptr)) || */ IsInternal())
+   {
+      stream << ';';
+      if(!code) DisplayInfo(stream, fq);
+      stream << CRLF;
+      return;
+   }
+
+   auto call = defn->call_.get();
+   auto& mems = defn->mems_;
+   auto memcount = mems.size();
+   auto inits = memcount + (call != nullptr ? 1 : 0);
+
+   switch(inits)
+   {
+   case 0:
+      break;
+
+   case 1:
+      stream << " : ";
+
+      if(call != nullptr)
+         call->Print(stream);
+      else
+         mems.front()->Print(stream);
+      break;
+
+   default:
+      stream << " :";
+      if(!code) DisplayInfo(stream, fq);
+      stream << CRLF;
+      auto lead = prefix + spaces(Indent_Size);
+
+      if(call != nullptr)
+      {
+         stream << lead;
+         call->Print(stream);
+         if(memcount > 0) stream << ',' << CRLF;
+      }
+
+      for(auto m = mems.cbegin(); m != mems.cend(); ++m)
+      {
+         stream << lead;
+         (*m)->Print(stream);
+         if(*m != mems.back()) stream << ',' << CRLF;
+      }
+   }
+
+   auto form = Block::Braced;  // inlined unless multiple statements
+
+   if(inits > 1)
+      form = Block::Empty;  // never inlined, even if empty
+   else if(inits > 0)
+      form = Block::Unbraced;  // inlined only if empty
+
+   if(!impl->CrlfOver(form))
+   {
+      impl->Print(stream);
+      if(!code && (inits <= 1)) DisplayInfo(stream, fq);
+      stream << CRLF;
+   }
+   else
+   {
+      if(!code && (inits <= 1)) DisplayInfo(stream, fq);
+      impl->Display(stream, prefix, Flags(LF_Mask));
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -2769,6 +2805,7 @@ void Function::DisplayInfo(ostream& stream, bool fq) const
    auto inst = ((cls != nullptr) && cls->IsInTemplateInstance());
    auto subs = GetFile()->IsSubsFile();
    auto impl = (GetDefn()->impl_ != nullptr);
+   auto decl = GetDecl();
    auto calls = false;
 
    stream << " // ";
@@ -2778,8 +2815,8 @@ void Function::DisplayInfo(ostream& stream, bool fq) const
    else
       calls = true;
 
-   if(!overs_.empty()) stream << "o=" << overs_.size() << SPACE;
-   if((calls_ > 0) || calls) stream << "c=" << calls_ << SPACE;
+   if(!decl->overs_.empty()) stream << "o=" << decl->overs_.size() << SPACE;
+   if((decl->calls_ > 0) || calls) stream << "c=" << decl->calls_ << SPACE;
    if(!fq && impl) DisplayFiles(stream);
 }
 
@@ -2911,8 +2948,7 @@ bool Function::EnterScope()
    //  a declaration, check if it's an override.  Then execute it.
    //
    found_ = true;
-//x if(AtFileScope()) GetFile()->InsertFunc(this);
-   GetFile()->InsertFunc(this);
+   if(defn || AtFileScope()) GetFile()->InsertFunc(this);
    if(!defn) CheckOverride();
    EnterBlock();
    return !defn;
@@ -3153,16 +3189,9 @@ const Function* Function::GetDefn() const
 
 CodeFile* Function::GetDefnFile() const
 {
-   if(!defn_ && (mate_ != nullptr)) return mate_->GetFile();
+   if(defn_) return GetFile();
+   if(mate_ != nullptr) return mate_->GetFile();
    return nullptr;
-}
-
-//------------------------------------------------------------------------------
-
-size_t Function::GetDefnPos() const
-{
-   if(!defn_ && (mate_ != nullptr)) return mate_->GetPos();
-   return string::npos;
 }
 
 //------------------------------------------------------------------------------
@@ -3242,7 +3271,7 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    //  obtained, but only symbols accessed via a using statement are merged
    //  into SYMBOLS in the cases discussed.
    //
-   if(!GetDecl()->override_ && (GetFile() == &file))
+   if(!GetDecl()->override_ && !defn_)
    {
       for(auto d = usages.directs.cbegin(); d != usages.directs.cend(); ++d)
       {
@@ -3270,25 +3299,18 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
       symbols.AddUser(*u);
    }
 
-   //  If this file defines the function, include the symbols used in its
-   //  implementation.  When the declaration and definition are separate,
-   //  this includes the function name itself.
+   //  If this is a function definition, include the declaration as a usage.
    //
-   auto role = GetFileRole(&file);
+   if(defn_) symbols.AddDirect(mate_);
 
-   if(role.isDefiner)
+   if(call_ != nullptr) call_->GetUsages(file, symbols);
+
+   for(auto m = mems_.cbegin(); m != mems_.cend(); ++m)
    {
-      if(!role.isDeclarer) symbols.AddDirect(this);
-
-      if(call_ != nullptr) call_->GetUsages(file, symbols);
-
-      for(auto m = mems_.cbegin(); m != mems_.cend(); ++m)
-      {
-         (*m)->GetUsages(file, symbols);
-      }
-
-      if(impl_ != nullptr) impl_->GetUsages(file, symbols);
+      (*m)->GetUsages(file, symbols);
    }
+
+   if(impl_ != nullptr) impl_->GetUsages(file, symbols);
 }
 
 //------------------------------------------------------------------------------
@@ -4107,7 +4129,7 @@ void Function::SetStatic(bool stat, Cxx::Operator oper)
 void Function::Shrink()
 {
    name_->Shrink();
-   if(!defn_ && (mate_ != nullptr)) mate_->Shrink();
+
    if(spec_ != nullptr) spec_->Shrink();
 
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
@@ -4286,7 +4308,7 @@ void Function::WasCalled()
       //
       //  Record invocations up the class hierarchy.
       //
-      for(auto dtor = base_; dtor != nullptr; dtor = dtor->base_)
+      for(auto dtor = GetDecl()->base_; dtor != nullptr; dtor = dtor->base_)
       {
          ++dtor->calls_;
       }
@@ -4303,12 +4325,12 @@ void Function::WasCalled()
 
       if((func != nullptr) && (func->FuncType() == FuncCtor))
       {
-         if(func->base_ == nullptr) func->base_ = this;
+         if(func->GetDecl()->base_ == nullptr) func->GetDecl()->base_ = this;
       }
 
       //  Now record invocations up the class hierarchy.
       //
-      for(auto ctor = base_; ctor != nullptr; ctor = ctor->base_)
+      for(auto ctor = GetDecl()->base_; ctor != nullptr; ctor = ctor->base_)
       {
          ++ctor->calls_;
       }
@@ -4741,6 +4763,7 @@ void SpaceData::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
    auto fq = options.test(DispFQ);
+
    stream << prefix;
    if(IsExtern()) stream << EXTERN_STR << SPACE;
    if(IsStatic()) stream << STATIC_STR << SPACE;
@@ -4749,8 +4772,8 @@ void SpaceData::Display(ostream& stream,
    stream << SPACE;
    strName(stream, fq, name_.get());
    GetTypeSpec()->DisplayArrays(stream);
-   DisplayExpression(stream);
-   DisplayAssignment(stream);
+   DisplayExpression(stream, options);
+   DisplayAssignment(stream, options);
    stream << ';';
 
    if(!options.test(DispCode))
@@ -4787,8 +4810,7 @@ bool SpaceData::EnterScope()
    else
       Singleton< CxxSymbols >::Instance()->InsertData(this);
 
-//x if(AtFileScope()) GetFile()->InsertData(this);
-   GetFile()->InsertData(this);
+   if(defn || AtFileScope()) GetFile()->InsertData(this);
    ExecuteInit(true);
    return !defn;
 }

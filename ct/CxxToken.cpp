@@ -376,6 +376,7 @@ void CxxUsageSets::AddIndirect(const CxxNamed* item)
 
 void CxxUsageSets::AddUser(const CxxNamed* item)
 {
+   if(item->GetFile() == nullptr) return;
    users.insert(item);
 }
 

@@ -131,6 +131,7 @@ fixed_string LOCALS_STR        = "$locals";  // name for code blocks
 //------------------------------------------------------------------------------
 
 const Flags FQ_Mask = Flags(1 << DispFQ);
+const Flags NS_Mask = Flags(1 << DispNS);
 const Flags LF_Mask = Flags(1 << DispLF);
 const Flags NoLF_Mask = Flags(1 << DispNoLF);
 const Flags Last_Mask = Flags(1 << DispLast);

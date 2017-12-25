@@ -69,8 +69,8 @@ public:
    //
    virtual void AccessibilityTo(const CxxScope* scope, SymbolView* view) const;
 
-   //  Determines ITEM's visibility at file scope if it is public or its
-   //  user is known to be a friend.
+   //  Determines this item's visibility at file scope if it is public or
+   //  its user is known to be a friend.
    //
    Accessibility FileScopeAccessiblity() const;
 
@@ -91,29 +91,6 @@ public:
    //  defined in another file, that file is also displayed.
    //
    void DisplayFiles(std::ostream& stream) const;
-
-   //  Returns the file that declared the item.  Declaration (GetFile) is
-   //  distinct from definition (GetDefnFile) for static or extern data
-   //  and functions.  Returns nullptr if the declaration and definition
-   //  were combined.
-   //
-   virtual CodeFile* GetDeclFile() const { return GetFile(); }
-
-   //  Returns the file that defined the item.  Declaration (GetFile) is
-   //  distinct from definition (GetDefnFile) for static or extern data
-   //  and functions.  Returns nullptr if the declaration and definition
-   //  were combined.
-   //
-   virtual CodeFile* GetDefnFile() const { return nullptr; }
-
-   //  Returns the offset where the item was defined.  Returns string::npos
-   //  if the declaration and definition were combined.
-   //
-   virtual size_t GetDefnPos() const { return std::string::npos; }
-
-   //  Determines FILE's role in declaring and defining this item.
-   //
-   FileRole GetFileRole(const CodeFile* file) const;
 
    //  Updates imSet with the files that declare and define the item.
    //
@@ -319,9 +296,9 @@ private:
    //
    virtual CxxToken* RootType() const override { return spec_.get(); }
 
-   //  Checks the argument's definition.
+   //  Checks for a "(void)" argument.
    //
-   void CheckDefn() const;
+   void CheckVoid() const;
 
    //  The argument's name, if any.
    //

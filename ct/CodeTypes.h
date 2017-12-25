@@ -158,16 +158,6 @@ extern const std::string ValidOctDigits;
 
 //------------------------------------------------------------------------------
 //
-//  A file's role in declaring and defining an item.
-//
-struct FileRole
-{
-   bool isDeclarer;  // declares item
-   bool isDefiner;   // defines item
-};
-
-//------------------------------------------------------------------------------
-//
 //  For adding and removing levels of pointer indirection and for counting
 //  arrays and references.
 //
@@ -493,6 +483,7 @@ std::ostream& operator<<(std::ostream& stream, LineType type);
 enum CodeDisplayOptions
 {
    DispFQ,    // display fully qualified name
+   DispNS,    // display namespace view (else file view)
    DispLF,    // insert optional line feed
    DispNoLF,  // omit line feed
    DispLast,  // set for the last item in a series
@@ -502,6 +493,7 @@ enum CodeDisplayOptions
 };
 
 extern const Flags FQ_Mask;
+extern const Flags NS_Mask;
 extern const Flags LF_Mask;
 extern const Flags NoLF_Mask;
 extern const Flags Last_Mask;

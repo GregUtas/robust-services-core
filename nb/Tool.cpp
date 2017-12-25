@@ -130,6 +130,6 @@ fixed_string ToolOff = "OFF";
 string Tool::Status() const
 {
    auto buff = Singleton< TraceBuffer >::Instance();
-   return(buff->ToolIsOn(Tid()) ? ToolOn : ToolOff);
+   return (buff->ToolIsOn(Tid()) ? ToolOn : ToolOff);
 }
 }

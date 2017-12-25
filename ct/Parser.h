@@ -170,7 +170,7 @@ public:
 
    //  Returns true and creates NAME if CODE is a valid name, maybe qualified.
    //
-   bool ParseQualName(const string& code, QualNamePtr& name);
+   bool ParseQualName(const std::string& code, QualNamePtr& name);
 
    //  If parsing a template instance for which NAME is an argument, returns
    //  that argument.
@@ -534,7 +534,7 @@ private:
    //
    bool NextKeywordIs(fixed_string str);
 
-   //  Invokes SetScope, SetAccess, and SetDecl on ITEM immediately after
+   //  Invokes SetScope, SetAccess, and SetPos on ITEM immediately after
    //  its creation.
    //
    void SetContext(CxxNamed* item, size_t pos) const;

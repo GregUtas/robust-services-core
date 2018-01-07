@@ -268,7 +268,6 @@ bool BaseDecl::FindReferent()
 
    if(item != nullptr)
    {
-      name_->SetReferent(item);
       using_ = view.using_;
       item->SetAsReferent(this);
       return true;
@@ -591,10 +590,6 @@ bool CxxScoped::NameRefersToItem(const std::string& name,
    const CxxScope* scope, const CodeFile* file, SymbolView* view) const
 {
    Debug::ft(CxxScoped_NameRefersToItem);
-
-   //  Start by assuming the worst.
-   //
-   *view = NotAccessible;
 
    //  If this item was not declared in a file, it's a built-in type and is
    //  therefore visible.  If NAME is a template specification, assume that
@@ -1444,8 +1439,9 @@ CxxNamed* Friend::FindForward() const
    CxxScoped* item = GetScope();
    auto func = GetFunction();
    auto qname = GetQualName();
-   auto size = qname->Names_size();
-   string name = *qname->Names_at(0)->Name();
+   auto& names = qname->Names();
+   auto size = names.size();
+   string name = *names.at(0)->Name();
    size_t idx = (*item->Name() == name ? 1 : 0);
    Namespace* space;
    Class* cls;
@@ -1466,13 +1462,14 @@ CxxNamed* Friend::FindForward() const
          //
          if(idx >= size) return item;
          space = static_cast< Namespace* >(item);
-         name = *qname->Names_at(idx)->Name();
+         name = *names.at(idx)->Name();
          item = nullptr;
          if(++idx >= size)
          {
             if(func != nullptr) item = space->MatchFunc(func, false);
          }
          if(item == nullptr) item = space->FindItem(name);
+         qname->SetReferent(idx - 1, item, nullptr);
          if(item == nullptr) return nullptr;
          break;
 
@@ -1487,13 +1484,13 @@ CxxNamed* Friend::FindForward() const
             //
             if(idx == 0) break;
             if(cls->IsInTemplateInstance()) break;
-            auto curr = qname->Names_at(idx - 1);
-            auto args = curr->GetTemplateArgs();
+            auto args = names.at(idx - 1)->GetTemplateArgs();
             if(args == nullptr) break;
             if(!ResolveTemplate(cls, args, (idx >= size))) break;
             cls = cls->EnsureInstance(args);
-            if(cls == nullptr) return nullptr;
             item = cls;
+            qname->SetReferent(idx - 1, item, nullptr);  // updated value
+            if(item == nullptr) return nullptr;
          }
          while(false);
 
@@ -1501,13 +1498,14 @@ CxxNamed* Friend::FindForward() const
          //  when TYPE is a namespace.
          //
          if(idx >= size) return item;
-         name = *qname->Names_at(idx)->Name();
+         name = *names.at(idx)->Name();
          item = nullptr;
          if(++idx >= size)
          {
             if(func != nullptr) item = cls->MatchFunc(func, true);
          }
          if(item == nullptr) item = cls->FindMember(name, true);
+         qname->SetReferent(idx - 1, item, nullptr);
          if(item == nullptr) return nullptr;
          break;
 
@@ -1517,10 +1515,11 @@ CxxNamed* Friend::FindForward() const
             //
             auto tdef = static_cast< Typedef* >(item);
             tdef->SetAsReferent(this);
-            if(!ResolveTypedef(tdef)) return tdef;
+            if(!ResolveTypedef(tdef, idx - 1)) return tdef;
             auto root = tdef->Root();
             if(root == nullptr) return tdef;
             item = static_cast< CxxScoped* >(root);
+            qname->SetReferent(idx - 1, item, nullptr);  // updated value
          }
          break;
 
@@ -1645,7 +1644,8 @@ void Friend::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
          if(outer != nullptr)
          {
-            if(outer->GetTemplate() != nullptr) outer = outer->GetTemplate();
+            if(outer->GetTemplate() != nullptr)
+               outer = outer->GetClassTemplate();
             symbols.AddDirect(outer);
          }
          else if(ref->GetTemplateArgs() != nullptr)
@@ -1711,7 +1711,7 @@ CxxNamed* Friend::Referent() const
 
 fn_name Friend_ResolveForward = "Friend.ResolveForward";
 
-bool Friend::ResolveForward(CxxScoped* decl) const
+bool Friend::ResolveForward(CxxScoped* decl, size_t n) const
 {
    Debug::ft(Friend_ResolveForward);
 
@@ -1720,7 +1720,7 @@ bool Friend::ResolveForward(CxxScoped* decl) const
    //  and continue resolving the name.
    //
    if(decl == this) return false;
-   name_->SetForward(decl);
+   name_->Names().at(n)->SetForward(decl);
    decl->SetAsReferent(this);
    SetScope(decl->GetSpace());
    return true;
@@ -2278,9 +2278,7 @@ CxxNamed* Using::Referent() const
    if(ref != nullptr) return ref;
 
    SymbolView view;
-   ref = ResolveName(GetFile(), GetScope(), USING_REFS, &view);
-   name_->SetReferent(ref);
-   return ref;
+   return ResolveName(GetFile(), GetScope(), USING_REFS, &view);
 }
 
 //------------------------------------------------------------------------------

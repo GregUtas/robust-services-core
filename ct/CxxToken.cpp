@@ -1857,8 +1857,7 @@ bool Operation::ExecuteOverload
 
       if(area != nullptr)
       {
-         SymbolView view = NotAccessible;
-
+         SymbolView view;
          auto candidate = area->FindFunc(name, &args, true, scope, &view);
 
          if((candidate != nullptr) && (view.match > match))
@@ -2290,7 +2289,7 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
       return;
    }
 
-   SymbolView view = NotAccessible;
+   SymbolView view;
    auto scope = Context::Scope();
    auto mem = cls->FindMember(*name, true, scope, &view);
 
@@ -2515,7 +2514,6 @@ void Operation::PushType(const string& name)
    auto file = Context::File();
    auto scope = Context::Scope();
    SymbolView view;
-
    auto item = syms->FindSymbol(file, scope, name, TYPE_REFS, &view);
 
    if(item != nullptr)

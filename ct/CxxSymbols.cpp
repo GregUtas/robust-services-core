@@ -613,7 +613,6 @@ void CxxSymbols::FindSymbols(const CodeFile* file, const CxxScope* scope,
    //  NAME wasn't a terminal, so look at other types of symbols.
    //
    SymbolVector items;
-   SymbolView view;
 
    if(mask.test(Cxx::Class)) ListSymbols(key, *classes_, items);
    if(mask.test(Cxx::Data)) ListSymbols(key, *data_, items);
@@ -629,6 +628,8 @@ void CxxSymbols::FindSymbols(const CodeFile* file, const CxxScope* scope,
    {
       if((area == nullptr) || ((*i)->IsDefinedIn(area)))
       {
+         SymbolView view;
+
          if((*i)->NameRefersToItem(name, scope, file, &view))
          {
             list.push_back(*i);
@@ -648,6 +649,8 @@ void CxxSymbols::FindSymbols(const CodeFile* file, const CxxScope* scope,
    {
       if((area == nullptr) || ((*i)->IsDefinedIn(area)))
       {
+         SymbolView view;
+
          if((*i)->NameRefersToItem(name, scope, file, &view))
          {
             list.push_back(*i);

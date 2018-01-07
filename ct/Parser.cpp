@@ -127,7 +127,7 @@ bool Parser::CheckType(QualNamePtr& name)
 
    //  This only applies when TYPE is unqualified.
    //
-   if(name->Names_size() != 1) return true;
+   if(name->Names().size() != 1) return true;
 
    auto type = Lexer::GetType(*name->Name());
 
@@ -1053,7 +1053,7 @@ bool Parser::GetCxxAlpha(ExprPtr& expr)
    QualNamePtr qualName;
    if(!GetQualName(qualName)) return lexer_.Retreat(start);
 
-   if(qualName->Names_size() == 1)
+   if(qualName->Names().size() == 1)
    {
       //  See if the name is actually a keyword or operator.
       //

@@ -1266,6 +1266,14 @@ CxxScoped* Class::FindName(const string& name, const Class* base) const
 
 //------------------------------------------------------------------------------
 
+Class* Class::GetClassTemplate() const
+{
+   if(!IsTemplate()) return nullptr;
+   return const_cast< Class* >(this);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Class_GetConvertibleTypes = "Class.GetConvertibleTypes";
 
 void Class::GetConvertibleTypes(StackArgVector& types)
@@ -1372,10 +1380,10 @@ void Class::GetMemberInitAttrs(DataInitVector& members) const
 
 //------------------------------------------------------------------------------
 
-Class* Class::GetTemplate() const
+CxxScope* Class::GetTemplate() const
 {
    if(!IsTemplate()) return nullptr;
-   return const_cast< Class* >(this);
+   return static_cast< CxxScope* >(const_cast< Class* >(this));
 }
 
 //------------------------------------------------------------------------------

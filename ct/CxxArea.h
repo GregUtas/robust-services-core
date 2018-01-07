@@ -292,6 +292,10 @@ public:
    //
    const FriendPtrVector* Friends() const { return &friends_; }
 
+   //  Returns the class template, if any, associated with the class.
+   //
+   virtual Class* GetClassTemplate() const;
+
    //  Returns a class template's instantiations.
    //
    const ClassInstPtrVector* Instances() const { return &tmplts_; }
@@ -482,7 +486,7 @@ public:
 
    //  Overridden to return the class if it is a class template.
    //
-   virtual Class* GetTemplate() const override;
+   virtual CxxScope* GetTemplate() const override;
 
    //  Overridden to update SYMBOLS with the type usage of each of the
    //  class's components.
@@ -694,9 +698,13 @@ public:
    virtual BaseDecl* GetBaseDecl() const
       override { return tmplt_->GetBaseDecl(); }
 
-   //  Returns the instance's class template.
+   //  Overridden to return the instance's class template.
    //
-   virtual Class* GetTemplate() const override { return tmplt_; }
+   virtual Class* GetClassTemplate() const override { return tmplt_; }
+
+   //  Overridden to return the instance's class template.
+   //
+   virtual CxxScope* GetTemplate() const override { return tmplt_; }
 
    //  Overridden to return the instance's template arguments.
    //

@@ -836,7 +836,7 @@ private:
 
    //  Overridden to record DECL and update the friend's scope.
    //
-   virtual bool ResolveForward(CxxScoped* decl) const override;
+   virtual bool ResolveForward(CxxScoped* decl, size_t n) const override;
 
    //  Overridden to return the friend.
    //
@@ -1124,7 +1124,11 @@ public:
 
    //  Used by >trim when the statement should be removed.
    //
-   void FlagForRemoval() { status_ = ToBeRemoved; }
+   void MarkForRemoval() { status_ = ToBeRemoved; }
+
+   //  Used by >trim when the statement should be retained.
+   //
+   void MarkForRetention() { status_ = Original; }
 
    //  Overridden to log warnings associated with the declaration.
    //
@@ -1175,7 +1179,8 @@ public:
 
    //  Overridden to stop at a typedef.
    //
-   virtual bool ResolveTypedef(Typedef* type) const override { return false; }
+   virtual bool ResolveTypedef(Typedef* type, size_t n) const
+      override { return false; }
 
    //  Overridden to return the scoped name of what is being used.
    //

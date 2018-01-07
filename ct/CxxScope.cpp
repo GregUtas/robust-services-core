@@ -3216,6 +3216,22 @@ CxxScope* Function::GetScope() const
 
 //------------------------------------------------------------------------------
 
+fn_name Function_GetTemplate = "Function.GetTemplate";
+
+CxxScope* Function::GetTemplate() const
+{
+   Debug::ft(Function_GetTemplate);
+
+   if(tmplt_ != nullptr) return tmplt_;
+   if(IsTemplate()) return static_cast< CxxScope* >
+      (const_cast< Function* >(this));
+   auto cls = GetClass();
+   if(cls != nullptr) return cls->GetTemplate();
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Function_GetTemplateLocation = "Function.GetTemplateLocation";
 
 TemplateLocation Function::GetTemplateLocation() const

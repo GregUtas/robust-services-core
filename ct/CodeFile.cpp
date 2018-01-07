@@ -707,11 +707,11 @@ void AddForwardDependencies(const CxxUsageSets& symbols, CxxNamedSet& inclSet)
 {
    Debug::ft(CodeTools_AddForwardDependencies);
 
-   //  SYMBOLS is the usage information for the symbols that appeared in this
-   //  file.  An #include should appear for a forward declaration that resolved
-   //  an indirect reference in this file.  Omit the #include, however, if the
-   //  declaration appears in a file that defines one of our base classes,
-   //  including an indirect base class.
+   //  SYMBOLS is the usage information for the symbols that appeared in
+   //  this file.  An #include should appear for a forward declaration that
+   //  resolved an indirect reference in this file.  Omit the #include,
+   //  however, if the declaration appears in a file that defines one of
+   //  our indirect base classes.
    //
    for(auto f = symbols.forwards.cbegin(); f != symbols.forwards.cend(); ++f)
    {
@@ -722,34 +722,19 @@ void AddForwardDependencies(const CxxUsageSets& symbols, CxxNamedSet& inclSet)
       {
          auto base = static_cast< const Class* >(*b);
 
-         for(auto s = base->BaseClass(); s != nullptr; s = s->BaseClass())
+         for(auto c = base->BaseClass(); c != nullptr; c = c->BaseClass())
          {
-            if(s->GetDeclFid() == fid)
+            if(c->GetDeclFid() == fid)
             {
                include = false;
                break;
             }
          }
+
+         if(!include) break;
       }
 
       if(include) inclSet.insert(*f);
-   }
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CodeTools_AddIntersection = "CodeTools.AddIntersection";
-
-void AddIntersection
-   (CxxNamedSet& n1, const CxxNamedSet& n2, const CxxNamedSet& n3)
-{
-   Debug::ft(CodeTools_AddIntersection);
-
-   //  Add the intersection of N2 and N3 to N1.
-   //
-   for(auto i = n2.cbegin(); i != n2.cend(); ++i)
-   {
-      if(n3.find(*i) != n3.cend()) n1.insert(*i);
    }
 }
 
@@ -852,6 +837,25 @@ void FindForwardCandidates(const CxxUsageSets& symbols, CxxNamedSet& addForws)
    {
       auto r = (*f)->Referent();
       if(r != nullptr) addForws.insert(r);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeTools_GetTransitiveBases = "CodeTools.GetTransitiveBases";
+
+void GetTransitiveBases(const CxxNamedSet& bases, SetOfIds& baseIds)
+{
+   Debug::ft(CodeTools_GetTransitiveBases);
+
+   for(auto b = bases.cbegin(); b != bases.cend(); ++b)
+   {
+      auto base = static_cast< const Class* >(*b);
+
+      for(auto c = base; c != nullptr; c = c->BaseClass())
+      {
+         baseIds.insert(c->GetDeclFid());
+      }
    }
 }
 
@@ -2624,25 +2628,6 @@ void CodeFile::PruneForwardCandidates(const CxxNamedSet& forwards,
          if(remove) break;
       }
 
-      //* Double-check the forward declarations in this file.  One for a
-      //  function argument can get omitted from FORWARDS as follows:
-      //  o While parsing the function's *declaration*, the forward is used.
-      //  o While parsing the function's *definition*, the forward is not
-      //    used because an #include in the .cpp makes the argument's type
-      //    directly visible.
-      //  o When the function's declaration and definition are merged (see
-      //    Function.UpdateDeclaration), the arguments in the definition
-      //    replace those in the declaration.  Consequently, when GetUsages
-      //    is invoked on the argument, the referent of its DataSpec is its
-      //    actual declaration, not its forward declaration.
-      //
-      if(!remove)
-      {
-         remove = HasForwardFor(*add);
-         if(remove)
-            Debug::noop();  //x
-      }
-
       if(!remove)
       {
          auto addFid = addFile->Fid();
@@ -2988,15 +2973,11 @@ void CodeFile::Trim(ostream& stream)
    if(IsCpp()) GetDeclaredBaseClasses(bases);
 
    //  An #include should always appear for a base class.  Add them to
-   //  inclSet in case any of them were removed.  While iterating through
-   //  the base classes, assemble baseIds, the files that declare them.
+   //  inclSet in case any of them were removed.
    //
-   SetOfIds baseIds;
-
    for(auto b = bases.cbegin(); b != bases.cend(); ++b)
    {
       inclSet.insert(*b);
-      baseIds.insert((*b)->GetDeclFid());
    }
 
    //  Assemble inclIds, all the files that need to be #included.  It
@@ -3049,14 +3030,17 @@ void CodeFile::Trim(ostream& stream)
    DisplaySymbols(stream, addForws, ADD_FORWARD_STR);
    DisplaySymbols(stream, delForws, REMOVE_FORWARD_STR);
 
+   //  Find the files that define base classes, including transitive base
+   //  classes, of classes defined or implemented in this file.
+   //
+   SetOfIds baseIds;
+   GetTransitiveBases(bases, baseIds);
+
    //  Create usingFiles, the files that this file can rely on for accessing
-   //  using statements.  This set consists of the file itself, files that
-   //  declare base classes (baseIds) of any class implemented in this file,
-   //  and files (declIds) that declare items that this file defines.
+   //  using statements.  This set consists of transitive base class files
+   //  (baseIds) and files that declare what this file defines (declIds).
    //
    CodeFileVector usingFiles;
-
-   usingFiles.push_back(this);
 
    auto& files = Singleton< Library >::Instance()->Files();
 
@@ -3070,55 +3054,36 @@ void CodeFile::Trim(ostream& stream)
       usingFiles.push_back(files.At(*d));
    }
 
-   //  Create usingRefs, the referents for all symbols (USERS) in this
-   //  file that were resolved by using statements.
-   //
-   CxxNamedSet usingRefs;
-
-   for(auto u = users.cbegin(); u != users.cend(); ++ u)
-   {
-      usingRefs.insert((*u)->Referent());
-   }
-
-   //  Extract, from usingRefs, the symbols that may require an #include.
-   //  Note that USERS (and, consequently, usingRefs) may contain symbols
-   //  used in previously declared functions.  But because such symbols
-   //  are omitted by Function.GetUsages, they will not end up in EXTERNALS.
-   //
-   CxxNamedSet externals;
-   AddIntersection(externals, bases, usingRefs);
-   AddIntersection(externals, inclSet, usingRefs);
-   AddIntersection(externals, indirects, usingRefs);
-   AddIntersection(externals, forwards, usingRefs);
-   AddIntersection(externals, friends, usingRefs);
-
    //  Look at each name (N) that was resolved by a using statement, and
-   //  determine if this file should add a using statement to resolve it.
+   //  determine if this file should have a using statement to resolve it.
+   //  First, mark all of the using statements in this file for removal.
+   //  When it is determined that one is required, it will be marked for
+   //  retention.
    //
    CxxNamedSet addUsing;
 
+   for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
+   {
+      (*u)->MarkForRemoval();
+   }
+
    for(auto n = users.cbegin(); n != users.cend(); ++n)
    {
-      //  If N's referent is not in EXTERNALS, a using statement for it is
-      //  not required.  This occurs, for example, if N appeared in the
-      //  signature of a previously declared function, as discussed above.
-      //
-      auto ref = (*n)->Referent();
-      if(externals.find(ref) == externals.cend()) continue;
-
       //  See if a file in usingFiles has a using statement that would make
-      //  N visible.  If so, this file does not need to add one.  However,
-      //  check that such a using statement is not tagged for removal.
-      //  (This code was adapted from NameRefersToItem, simplified to
-      //  handle only the case of a symbol that needs to be resolved by
-      //  a using statement.)
+      //  N visible.  If so, this file does not need one.  Verify, however,
+      //  that such a using statement is not tagged for removal.  (This code
+      //  was adapted from NameRefersToItem, simplified to handle only the
+      //  case of a symbol that needs to be resolved by a using statement.)
       //
       auto found = false;
       auto name = (*n)->QualifiedName(true, false);
       string fqName;
       size_t i = 0;
+      auto ref = (*n)->DirectType();
+      auto tmplt = ref->GetTemplate();
+      if(tmplt != nullptr) ref = tmplt;
 
-      while(ref->GetScopedName(fqName, i))
+      while(!found && ref->GetScopedName(fqName, i))
       {
          auto pos = NameCouldReferTo(fqName, name);
          fqName.erase(0, 2);
@@ -3135,6 +3100,20 @@ void CodeFile::Trim(ostream& stream)
                   break;
                }
             }
+
+            if(!found)
+            {
+               //  No file in usingFiles had a suitable using statement.
+               //  If this file has one, keep it.
+               //
+               auto u = GetUsingFor(fqName, pos - 4);
+
+               if(u != nullptr)
+               {
+                  u->MarkForRetention();
+                  found = true;
+               }
+            }
          }
 
          ++i;
@@ -3142,6 +3121,9 @@ void CodeFile::Trim(ostream& stream)
 
       if(!found)
       {
+         //  Neither a file in usingFiles nor this file had a suitable using
+         //  statement.  This file should therefore add one.
+         //
          addUsing.insert(ref);
 
          QualNamePtr qualName;
@@ -3155,57 +3137,21 @@ void CodeFile::Trim(ostream& stream)
       }
    }
 
-   //  Output the using statements that should be added.
-   //
-   DisplaySymbols(stream, addUsing, ADD_USING_STR);
-
-   //  Using statements that did not resolve a non-inherited symbol
-   //  used in this file should be removed.  Prior to doing this,
-   //  add all symbols that were resolved by using statements to
-   //  EXTERNALS.  Although some may be inherited, they nonetheless
-   //  require a using statement, whether in this file or elsewhere.
+   //  Using statements still marked for removal should be deleted.
    //
    CxxNamedSet delUsing;
 
-   for(auto u = users.cbegin(); u != users.cend(); ++u)
-   {
-      externals.insert(*u);
-   }
-
    for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
    {
-      auto found = false;
-
-      for(auto x = externals.cbegin(); x != externals.cend(); ++x)
-      {
-         auto name = (*x)->QualifiedName(true, false);
-         string fqName;
-         size_t i = 0;
-
-         while((*x)->GetScopedName(fqName, i))
-         {
-            auto pos = NameCouldReferTo(fqName, name);
-            fqName.erase(0, 2);
-
-            if(pos != string::npos)
-            {
-               if((*u)->IsUsingFor(fqName, pos - 4)) found = true;
-            }
-
-            if(found) break;
-            ++i;
-         }
-
-         if(found) break;
-      }
-
-      if(!found)
+      if((*u)->Status() == ToBeRemoved)
       {
          delUsing.insert(u->get());
-         (*u)->FlagForRemoval();
       }
    }
 
+   //  Output the using statements that should be added and removed.
+   //
+   DisplaySymbols(stream, addUsing, ADD_USING_STR);
    DisplaySymbols(stream, delUsing, REMOVE_USING_STR);
 
    //* For a header, output the symbols that were resolved by a using statement.

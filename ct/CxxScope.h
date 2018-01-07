@@ -1107,6 +1107,14 @@ public:
    //
    virtual CxxScope* GetScope() const override;
 
+   //  Overridden to return a template if this function
+   //  (a) is a function template
+   //  (b) is a function template instance
+   //  (c) is a function in a class template
+   //  (d) is a function in a class template instance
+   //
+   virtual CxxScope* GetTemplate() const override;
+
    //  Overridden to return the function's return type.
    //
    virtual TypeSpec* GetTypeSpec() const override { return spec_.get(); }

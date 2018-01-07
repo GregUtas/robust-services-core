@@ -1493,7 +1493,6 @@ void Lexer::Preprocess()
    auto syms = Singleton< CxxSymbols >::Instance();
    auto file = Context::File();
    auto scope = Singleton< CxxRoot >::Instance()->GlobalNamespace();
-   SymbolView view;
    string id;
 
    while(FindIdentifier(id))
@@ -1506,6 +1505,7 @@ void Lexer::Preprocess()
          continue;
       }
 
+      SymbolView view;
       auto item = syms->FindSymbol(file, scope, id, MACRO_MASK, &view);
 
       if(item != nullptr)

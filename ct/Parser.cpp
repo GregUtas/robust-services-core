@@ -3146,7 +3146,7 @@ bool Parser::GetUsing(UsingPtr& use)
    auto space = NextKeywordIs(NAMESPACE_STR);
    if(!GetQualName(usingName)) return lexer_.Retreat(start);
    if(!lexer_.NextCharIs(';')) return lexer_.Retreat(start);
-   use.reset(new Using(usingName, space, Original));
+   use.reset(new Using(usingName, space));
    SetContext(use.get(), begin);
    return Success(Parser_GetUsing, begin);
 }

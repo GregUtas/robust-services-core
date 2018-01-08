@@ -27,8 +27,6 @@
 #include <vector>
 #include "CodeTypes.h"
 
-using namespace NodeBase;  //x
-
 //------------------------------------------------------------------------------
 
 namespace CodeTools

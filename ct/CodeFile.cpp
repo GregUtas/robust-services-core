@@ -2968,8 +2968,13 @@ void CodeFile::Trim(ostream& stream)
 
    //  For a .cpp, BASES includes base classes defined in its header.
    //  Regenerate it so that it is limited to base classes for those
-   //  declared in the .cpp.
+   //  declared in the .cpp.  Before doing this, find the files that
+   //  define base classes, including transitive base classes, of
+   //  classes defined or implemented in this file.  This set (baseIds)
+   //  will be needed later, when analyzing using statements.
    //
+   SetOfIds baseIds;
+   GetTransitiveBases(bases, baseIds);
    if(IsCpp()) GetDeclaredBaseClasses(bases);
 
    //  An #include should always appear for a base class.  Add them to
@@ -3030,12 +3035,6 @@ void CodeFile::Trim(ostream& stream)
    DisplaySymbols(stream, addForws, ADD_FORWARD_STR);
    DisplaySymbols(stream, delForws, REMOVE_FORWARD_STR);
 
-   //  Find the files that define base classes, including transitive base
-   //  classes, of classes defined or implemented in this file.
-   //
-   SetOfIds baseIds;
-   GetTransitiveBases(bases, baseIds);
-
    //  Create usingFiles, the files that this file can rely on for accessing
    //  using statements.  This set consists of transitive base class files
    //  (baseIds) and files that declare what this file defines (declIds).
@@ -3080,6 +3079,7 @@ void CodeFile::Trim(ostream& stream)
       string fqName;
       size_t i = 0;
       auto ref = (*n)->DirectType();
+      if(ref == nullptr) continue;
       auto tmplt = ref->GetTemplate();
       if(tmplt != nullptr) ref = tmplt;
 
@@ -3094,7 +3094,7 @@ void CodeFile::Trim(ostream& stream)
             {
                auto u = (*i)->GetUsingFor(fqName, pos - 4);
 
-               if((u != nullptr) && (u->Status() != ToBeRemoved))
+               if((u != nullptr) && !u->IsToBeRemoved())
                {
                   found = true;
                   break;
@@ -3132,18 +3132,19 @@ void CodeFile::Trim(ostream& stream)
          auto parser = std::unique_ptr< Parser >(new Parser(scope));
          parser->ParseQualName(name, qualName);
          qualName->SetReferent(ref);
-         auto u = UsingPtr(new Using(qualName, false, ToBeAdded));
+         auto u = UsingPtr(new Using(qualName, false, true));
          InsertUsing(u);
       }
    }
 
    //  Using statements still marked for removal should be deleted.
+   //  Don't report any that were added by >trim.
    //
    CxxNamedSet delUsing;
 
    for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
    {
-      if((*u)->Status() == ToBeRemoved)
+      if((*u)->IsToBeRemoved() && !(*u)->WasAdded())
       {
          delUsing.insert(u->get());
       }

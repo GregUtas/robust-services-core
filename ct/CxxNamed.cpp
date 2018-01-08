@@ -2187,7 +2187,6 @@ bool QualName::SetReferent(CxxNamed* ref) const
    Debug::ft(QualName_SetReferent);
 
    names_.back()->SetReferent(ref, nullptr);
-
    return true;
 }
 

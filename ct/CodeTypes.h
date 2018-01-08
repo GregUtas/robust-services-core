@@ -540,17 +540,6 @@ template< typename T > void DisplayObjects(const std::vector< T >& group,
 
 //------------------------------------------------------------------------------
 //
-//  Tags items that the Trim command says should be added or removed.
-//
-enum TrimStatus
-{
-   Original,    // item was present in source code
-   ToBeAdded,   // >trim says item should be added
-   ToBeRemoved  // >trim says item should be removed
-};
-
-//------------------------------------------------------------------------------
-//
 //  Strings used by the Trim and Apply commands.
 //
 extern fixed_string ADD_INCLUDE_STR;

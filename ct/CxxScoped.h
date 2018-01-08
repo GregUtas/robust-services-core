@@ -1104,10 +1104,9 @@ class Using : public CxxScoped
 {
 public:
    //  NAME is what is being used.  SPACE is set if it is a namespace.
-   //  STATUS indicates whether the statement was found during parsing
-   //  or added by the >trim command.
+   //  ADDED is set if the statement was added by the >trim command.
    //
-   Using(QualNamePtr& name, bool space, TrimStatus status);
+   Using(QualNamePtr& name, bool space, bool added = false);
 
    //  Not subclassed.
    //
@@ -1118,17 +1117,21 @@ public:
    //
    bool IsUsingFor(const std::string& name, size_t prefix) const;
 
-   //  Returns true if the declaration resolved a symbol in the same file.
-   //
-   TrimStatus Status() const { return status_; }
-
    //  Used by >trim when the statement should be removed.
    //
-   void MarkForRemoval() { status_ = ToBeRemoved; }
+   void MarkForRemoval() { remove_ = true; }
 
    //  Used by >trim when the statement should be retained.
    //
-   void MarkForRetention() { status_ = Original; }
+   void MarkForRetention() { remove_ = false; }
+
+   //  Returns true if the >trim command added the statement.
+   //
+   bool WasAdded() const { return added_; }
+
+   //  Returns true if the >trim command marked the statement for removal.
+   //
+   bool IsToBeRemoved() const { return remove_; }
 
    //  Overridden to log warnings associated with the declaration.
    //
@@ -1206,9 +1209,13 @@ private:
    //
    mutable size_t users_ : 13;
 
-   //  Set if the declaration resolved a symbol in the same file.
+   //  Set if the declaration was added by >trim.
    //
-   TrimStatus status_ : 2;
+   bool added_ : 1;
+
+   //  Set if the declaration is to be removed.
+   //
+   bool remove_ : 1;
 
    //  Set if name_ is a namespace.
    //

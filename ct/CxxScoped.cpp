@@ -2134,10 +2134,11 @@ string Typedef::TypeString(bool arg) const
 
 fn_name Using_ctor = "Using.ctor";
 
-Using::Using(QualNamePtr& name, bool space, TrimStatus status) :
+Using::Using(QualNamePtr& name, bool space, bool added) :
    name_(name.release()),
    users_(0),
-   status_(status),
+   added_(added),
+   remove_(false),
    space_(space)
 {
    Debug::ft(Using_ctor);
@@ -2153,8 +2154,7 @@ void Using::Check() const
 {
    Debug::ft(Using_Check);
 
-   if(status_ == ToBeAdded) return;
-
+   if(added_) return;
    if(users_ == 0) Log(UsingUnused);
    if(GetFile()->IsHeader()) Log(UsingInHeader);
 }
@@ -2164,7 +2164,7 @@ void Using::Check() const
 void Using::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   if(status_ == ToBeAdded) return;
+   if(added_) return;
 
    auto fq = options.test(DispFQ);
    stream << prefix << USING_STR << SPACE;

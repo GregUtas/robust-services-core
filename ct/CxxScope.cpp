@@ -409,12 +409,17 @@ void ClassData::Check() const
 {
    Debug::ft(ClassData_Check);
 
-   CheckUsage();
-   CheckConstness();
-   CheckIfInitialized();
-   CheckIfHiding();
-   CheckAccessControl();
-   CheckIfMutated();
+   Data::Check();
+
+   if(IsDecl())
+   {
+      CheckUsage();
+      CheckConstness();
+      CheckIfInitialized();
+      CheckIfHiding();
+      CheckAccessControl();
+      CheckIfMutated();
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -1021,6 +1026,18 @@ Data::~Data()
 
 //------------------------------------------------------------------------------
 
+fn_name Data_Check = "Data.Check";
+
+void Data::Check() const
+{
+   Debug::ft(Data_Check);
+
+   spec_->Check();
+   if(!defn_ && (mate_ != nullptr)) mate_->Check();
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Data_CheckConstness = "Data.CheckConstness";
 
 void Data::CheckConstness(bool could) const
@@ -1142,11 +1159,11 @@ void Data::CheckUsage() const
 
 void Data::DisplayAssignment(ostream& stream, const Flags& options) const
 {
-   //* Always display an assignment in namespace view.  In file view,
+   //  Always display an assignment in namespace view.  In file view,
    //  only display it where it occurs.
    //
-/* auto ns = options.test(DispNS);
-   if(!ns && (rhs_ == nullptr)) return; */
+   auto ns = options.test(DispNS);
+   if(!ns && (rhs_ == nullptr)) return;
 
    auto rhs = GetDefn()->rhs_.get();
    if(rhs == nullptr) return;
@@ -1171,11 +1188,11 @@ void Data::DisplayAssignment(ostream& stream, const Flags& options) const
 
 void Data::DisplayExpression(ostream& stream, const Flags& options) const
 {
-   //* Always display an expession in namespace view.  In file view,
+   //  Always display an expression in namespace view.  In file view,
    //  only display it where it occurs.
    //
-/* auto ns = options.test(DispNS);
-   if(!ns && (expr_ == nullptr)) return; */
+   auto ns = options.test(DispNS);
+   if(!ns && (expr_ == nullptr)) return;
 
    auto expr = GetDefn()->expr_.get();
    if(expr == nullptr) return;
@@ -1589,6 +1606,8 @@ fn_name FuncData_Check = "FuncData.Check";
 void FuncData::Check() const
 {
    Debug::ft(FuncData_Check);
+
+   Data::Check();
 
    //  Don't check a variable in a function template, as it isn't executed.
    //  Don't check a function's internal variables for potential constness.
@@ -2158,20 +2177,31 @@ void Function::Check() const
    Debug::ft(Function_Check);
 
    if(IsTemplateInstance()) return;
-   CheckIfDefined();
-   CheckIfUsed(FunctionUnused);
-   CheckIfHiding();
-   CheckArgs();
-   CheckAccessControl();
-   CheckCtor();
-   CheckDtor();
-   CheckIfOverridden();
-   CheckIfPublicVirtual();
-   CheckForVirtualDefault();
-   CheckMemberUsage();
 
-   auto impl = GetDefn()->impl_.get();
-   if(impl != nullptr) impl->Check();
+   if(spec_ != nullptr) spec_->Check();
+
+   for(auto a = args_.cbegin(); a != args_.cend(); ++a)
+   {
+      (*a)->Check();
+   }
+
+   if(!defn_)
+   {
+      CheckIfDefined();
+      CheckIfUsed(FunctionUnused);
+      CheckIfHiding();
+      CheckArgs();
+      CheckAccessControl();
+      CheckCtor();
+      CheckDtor();
+      CheckIfOverridden();
+      CheckIfPublicVirtual();
+      CheckForVirtualDefault();
+      CheckMemberUsage();
+      if(mate_ != nullptr) mate_->Check();
+   }
+
+   if(impl_ != nullptr) impl_->Check();
 }
 
 //------------------------------------------------------------------------------
@@ -2471,14 +2501,13 @@ void Function::CheckIfDefined() const
    Debug::ft(Function_CheckIfDefined);
 
    //  A function without an implementation is logged as undefined unless
-   //  o it's actually part of a function signature typedef, in which case its
-   //    "name" begins with "(*", or
+   //  o it's actually part of a function signature typedef, or
    //  o it is deleting the default that the compiler would otherwise provide.
    //  Pure virtual functions are logged separately, because not providing an
    //  implementation may be intentional.
    //
    if(GetDefn()->impl_ != nullptr) return;
-   if(Name()->front() == '(') return;
+   if(type_) return;
    if(IsDeleted()) return;
 
    if(pure_)
@@ -2556,6 +2585,18 @@ void Function::CheckIfPublicVirtual() const
 
 //------------------------------------------------------------------------------
 
+fn_name Function_CheckIfUsed = "Function.CheckIfUsed";
+
+void Function::CheckIfUsed(Warning warning) const
+{
+   Debug::ft(Function_CheckIfUsed);
+
+   if(type_) return;
+   CxxScoped::CheckIfUsed(warning);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Function_CheckMemberUsage = "Function.CheckMemberUsage";
 
 void Function::CheckMemberUsage() const
@@ -2565,11 +2606,14 @@ void Function::CheckMemberUsage() const
    //  Check if this function could be static or free.  For either to be
    //  possible, the function not be virtual, must not have accessed a
    //  non-static member, and must be a standard member function that is
-   //  not part of a template.  (To support templates, nonstatic_ and
-   //  and nonpublic_ would have to be looked at over all instances of a
-   //  function, whether they are class or function instantiations.)
+   //  not part of a template.
+   //c To support templates, nonstatic_ and nonpublic_ would have to be
+   //  looked at over all instances of a function, whether instantiated
+   //  in a class or function template, because these flags are never set
+   //  in a pure template.
    //
    if(virtual_) return;
+   if(type_) return;
    if(GetDefn()->nonstatic_) return;
    if(tmplt_ != nullptr) return;
    if(!tmplts_.empty()) return;
@@ -2634,7 +2678,7 @@ void Function::Display(ostream& stream,
    auto fq = options.test(DispFQ);
 
    stream << prefix;
-   if(!options.test(DispNoAC) && (GetClass() != nullptr))
+   if(!options.test(DispNoAC) && !defn_ && (GetClass() != nullptr))
    {
       stream << GetDecl()->GetAccess() << ": ";
    }
@@ -2666,19 +2710,22 @@ void Function::Display(ostream& stream,
 
 void Function::DisplayDecl(ostream& stream, const Flags& options) const
 {
-   auto decl = GetDecl();  //x
-
-   if(decl->extern_) stream << EXTERN_STR << SPACE;
+   //  Note that, except for "const", tags (extern, inline, constexpr, static,
+   //  virtual, explicit, noexcept, override, and "= 0" for pure virtual) are
+   //  only set in the declaration, not in a separate definition.  Because of
+   //  this, they will not appear when displaying a separate definition.
+   //
+   if(extern_) stream << EXTERN_STR << SPACE;
    if(!options.test(DispNoTP))
    {
       auto parms = GetTemplateParms();
       if(parms != nullptr) parms->Print(stream);
    }
-   if(decl->inline_) stream << INLINE_STR << SPACE;
-   if(decl->constexpr_) stream << CONSTEXPR_STR << SPACE;
-   if(decl->static_) stream << STATIC_STR << SPACE;
-   if(decl->virtual_) stream << VIRTUAL_STR << SPACE;
-   if(decl->explicit_) stream << EXPLICIT_STR << SPACE;
+   if(inline_) stream << INLINE_STR << SPACE;
+   if(constexpr_) stream << CONSTEXPR_STR << SPACE;
+   if(static_) stream << STATIC_STR << SPACE;
+   if(virtual_) stream << VIRTUAL_STR << SPACE;
+   if(explicit_) stream << EXPLICIT_STR << SPACE;
 
    if(Operator() == Cxx::CAST)
    {
@@ -2708,9 +2755,9 @@ void Function::DisplayDecl(ostream& stream, const Flags& options) const
 
    stream << ')';
    if(const_) stream << SPACE << CONST_STR;
-   if(decl->noexcept_) stream << SPACE << NOEXCEPT_STR;
-   if(decl->override_) stream << SPACE << OVERRIDE_STR;
-   if(decl->pure_) stream << " = 0";
+   if(noexcept_) stream << SPACE << NOEXCEPT_STR;
+   if(override_) stream << SPACE << OVERRIDE_STR;
+   if(pure_) stream << " = 0";
 }
 
 //------------------------------------------------------------------------------
@@ -2726,10 +2773,10 @@ void Function::DisplayDefn(ostream& stream,
 
    //  Do not display the function's implementation if
    //  (a) there isn't one
-   //* (b) this is only the function's declaration in file view
+   //  (b) this is only the function's declaration in file view
    //  (c) this is internally generated code (a template instance)
    //
-   if((impl == nullptr) || /* (!ns && (impl_ == nullptr)) || */ IsInternal())
+   if((impl == nullptr) || (!ns && (impl_ == nullptr)) || IsInternal())
    {
       stream << ';';
       if(!code) DisplayInfo(stream, fq);
@@ -3807,7 +3854,6 @@ bool Function::IsUndefined() const
    Debug::ft(Function_IsUndefined);
 
    if(GetDefn()->impl_ == nullptr) return true;
-   if(Name()->front() == '(') return true;
    if(IsDeleted()) return true;
    return false;
 }
@@ -4424,8 +4470,7 @@ TagCount FuncSpec::Arrays() const
 
 void FuncSpec::Check() const
 {
-   Debug::SwErr(FuncSpec_Warning, "Check", 0);
-   func_->GetTypeSpec()->Check();
+   func_->Check();
 }
 
 //------------------------------------------------------------------------------
@@ -4736,10 +4781,15 @@ void SpaceData::Check() const
 {
    Debug::ft(SpaceData_Check);
 
-   CheckUsage();
-   CheckConstness();
-   CheckIfStatic();
-   CheckIfInitialized();
+   Data::Check();
+
+   if(IsDecl())
+   {
+      CheckUsage();
+      CheckConstness();
+      CheckIfStatic();
+      CheckIfInitialized();
+   }
 }
 
 //------------------------------------------------------------------------------

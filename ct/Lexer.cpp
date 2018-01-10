@@ -1516,7 +1516,6 @@ void Lexer::Preprocess()
          {
             auto code = const_cast< string* >(source_);
             auto size = id.size();
-            auto str = code->substr(curr_, size);
             for(auto i = 0; i < id.size(); ++i) code->at(curr_ + i) = SPACE;
             def->WasRead();
          }

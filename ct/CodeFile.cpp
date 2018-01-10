@@ -2032,6 +2032,84 @@ Data* CodeFile::FindData(const string& name) const
 
 //------------------------------------------------------------------------------
 
+fn_name CodeFile_FindOrAddUsing = "CodeFile.FindOrAddUsing";
+
+void CodeFile::FindOrAddUsing(const CxxNamed* user,
+   const CodeFileVector usingFiles, CxxNamedSet& addUsing)
+{
+   Debug::ft(CodeFile_FindOrAddUsing);
+
+   //  See if a file in usingFiles has a using statement that would make USER
+   //  visible.  If so, this file does not need one.  Verify, however, that
+   //  such a using statement is not tagged for removal.  This code was adapted
+   //  from CxxScoped.NameRefersToItem, simplified to handle only the case of a
+   //  symbol that needs to be resolved by a using statement.
+   //
+   auto found = false;
+   auto name = user->QualifiedName(true, false);
+   string fqName;
+   size_t i = 0;
+   auto ref = user->DirectType();
+   if(ref == nullptr) return;
+   auto tmplt = ref->GetTemplate();
+   if(tmplt != nullptr) ref = tmplt;
+
+   while(!found && ref->GetScopedName(fqName, i))
+   {
+      auto pos = NameCouldReferTo(fqName, name);
+      fqName.erase(0, 2);
+
+      if(pos != string::npos)
+      {
+         for(auto i = usingFiles.cbegin(); i != usingFiles.cend(); ++i)
+         {
+            auto u = (*i)->GetUsingFor(fqName, pos - 4);
+
+            if((u != nullptr) && !u->IsToBeRemoved())
+            {
+               found = true;
+               break;
+            }
+         }
+
+         if(!found)
+         {
+            //  No file in usingFiles had a suitable using statement.
+            //  If this file has one, keep it.
+            //
+            auto u = GetUsingFor(fqName, pos - 4);
+
+            if(u != nullptr)
+            {
+               u->MarkForRetention();
+               found = true;
+            }
+         }
+      }
+
+      ++i;
+   }
+
+   if(!found)
+   {
+      //  Neither a file in usingFiles nor this file had a suitable using
+      //  statement.  This file should therefore add one.
+      //
+      addUsing.insert(ref);
+
+      QualNamePtr qualName;
+      auto name = ref->ScopedName(false);
+      auto scope = Singleton< CxxRoot >::Instance()->GlobalNamespace();
+      auto parser = std::unique_ptr< Parser >(new Parser(scope));
+      parser->ParseQualName(name, qualName);
+      qualName->SetReferent(ref);
+      auto u = UsingPtr(new Using(qualName, false, true));
+      InsertUsing(u);
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeFile_FindUsingFor = "CodeFile.FindUsingFor";
 
 Using* CodeFile::FindUsingFor(const string& name, size_t prefix,
@@ -3068,73 +3146,7 @@ void CodeFile::Trim(ostream& stream)
 
    for(auto n = users.cbegin(); n != users.cend(); ++n)
    {
-      //  See if a file in usingFiles has a using statement that would make
-      //  N visible.  If so, this file does not need one.  Verify, however,
-      //  that such a using statement is not tagged for removal.  (This code
-      //  was adapted from NameRefersToItem, simplified to handle only the
-      //  case of a symbol that needs to be resolved by a using statement.)
-      //
-      auto found = false;
-      auto name = (*n)->QualifiedName(true, false);
-      string fqName;
-      size_t i = 0;
-      auto ref = (*n)->DirectType();
-      if(ref == nullptr) continue;
-      auto tmplt = ref->GetTemplate();
-      if(tmplt != nullptr) ref = tmplt;
-
-      while(!found && ref->GetScopedName(fqName, i))
-      {
-         auto pos = NameCouldReferTo(fqName, name);
-         fqName.erase(0, 2);
-
-         if(pos != string::npos)
-         {
-            for(auto i = usingFiles.cbegin(); i != usingFiles.cend(); ++i)
-            {
-               auto u = (*i)->GetUsingFor(fqName, pos - 4);
-
-               if((u != nullptr) && !u->IsToBeRemoved())
-               {
-                  found = true;
-                  break;
-               }
-            }
-
-            if(!found)
-            {
-               //  No file in usingFiles had a suitable using statement.
-               //  If this file has one, keep it.
-               //
-               auto u = GetUsingFor(fqName, pos - 4);
-
-               if(u != nullptr)
-               {
-                  u->MarkForRetention();
-                  found = true;
-               }
-            }
-         }
-
-         ++i;
-      }
-
-      if(!found)
-      {
-         //  Neither a file in usingFiles nor this file had a suitable using
-         //  statement.  This file should therefore add one.
-         //
-         addUsing.insert(ref);
-
-         QualNamePtr qualName;
-         auto name = ref->ScopedName(false);
-         auto scope = Singleton< CxxRoot >::Instance()->GlobalNamespace();
-         auto parser = std::unique_ptr< Parser >(new Parser(scope));
-         parser->ParseQualName(name, qualName);
-         qualName->SetReferent(ref);
-         auto u = UsingPtr(new Using(qualName, false, true));
-         InsertUsing(u);
-      }
+      FindOrAddUsing(*n, usingFiles, addUsing);
    }
 
    //  Using statements still marked for removal should be deleted.
@@ -3155,9 +3167,9 @@ void CodeFile::Trim(ostream& stream)
    DisplaySymbols(stream, addUsing, ADD_USING_STR);
    DisplaySymbols(stream, delUsing, REMOVE_USING_STR);
 
-   //* For a header, output the symbols that were resolved by a using statement.
+   //  For a header, output the symbols that were resolved by a using statement.
    //
-// if(IsHeader())
+   if(IsHeader())
    {
       CxxNamedSet qualify;
 

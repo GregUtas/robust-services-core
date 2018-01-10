@@ -138,7 +138,6 @@ bool CfgIntParm::SetNextValue(word value)
 
    if((value >= min_) && (value <= max_))
    {
-      string input;
       next_ = value;
       return true;
    }

@@ -334,6 +334,10 @@ public:
    //
    virtual CxxToken* AutoType() const override { return (CxxToken*) this; }
 
+   //  Overridden to log warnings associated with the data's type.
+   //
+   virtual void Check() const override;
+
    //  Overridden to return the file that declared the data.
    //
    virtual CodeFile* GetDeclFile() const override;
@@ -412,6 +416,10 @@ protected:
    //  Creates a data item with SPEC.  Protected because this class is virtual.
    //
    explicit Data(TypeSpecPtr& spec);
+
+   //  Returns true if this is a data declaration.
+   //
+   bool IsDecl() const { return !defn_; }
 
    //  Executes the data's initialization expression.  Invokes PushScope if
    //  PUSH is set.  Returns false if no form of initialization occurred.
@@ -1072,6 +1080,10 @@ public:
    //  Overridden to not log an override for hiding an inherited name.
    //
    virtual void CheckIfHiding() const override;
+
+   //  Overridden to determine if the function is used.
+   //
+   virtual void CheckIfUsed(Warning warning) const override;
 
    //  Overridden to display the function.
    //

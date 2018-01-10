@@ -405,6 +405,12 @@ private:
    //
    void PruneLocalForwards(CxxNamedSet& addForws, CxxNamedSet& delForws) const;
 
+   //  Searches usingFiles for a using statement that makes USER visible.  If
+   //  no such statement is found, one is created and added to addUsing.
+   //
+   void FindOrAddUsing(const CxxNamed* user,
+      const CodeFileVector usingFiles, CxxNamedSet& addUsing);
+
    //  Creates an Editor object.  Returns nullptr on failure, updating RC
    //  and EXPL with an explanation.
    //

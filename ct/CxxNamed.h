@@ -528,6 +528,10 @@ public:
    //
    bool CheckCtorDefn() const;
 
+   //  Overridden to check each name and any template parameters.
+   //
+   virtual void Check() const override;
+
    //  Overridden to forward to names_.back().
    //
    virtual CxxNamed* DirectType() const override;
@@ -700,6 +704,10 @@ public:
    //  how the name was resolved.
    //
    void SetReferent(CxxNamed* item, const SymbolView* view) const;
+
+   //  Overridden to check template arguments.
+   //
+   virtual void Check() const override;
 
    //  Overridden to return type_ if it exists, else ref_.
    //
@@ -1357,6 +1365,10 @@ public:
    //
    const TypeName* Default() const { return default_.get(); }
 
+   //  Overridden to check the default type.
+   //
+   virtual void Check() const override;
+
    //  Overridden to return the parameter's name.
    //
    virtual const std::string* Name() const override { return &name_; }
@@ -1419,6 +1431,10 @@ public:
    //  Returns the template's parameters.
    //
    const TemplateParmPtrVector* Parms() const { return &parms_; }
+
+   //  Overridden to check each parameter.
+   //
+   virtual void Check() const override;
 
    //  Overridden to display the template's full specification.
    //

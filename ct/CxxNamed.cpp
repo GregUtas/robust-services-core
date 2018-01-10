@@ -855,7 +855,6 @@ void DataSpec::EnteringScope(const CxxScope* scope)
    }
 
    EnterArrays();
-   Check();  //* delay until >check
    if(name_->GetReferent() == nullptr) FindReferent();
 }
 
@@ -1858,6 +1857,22 @@ void QualName::Append(const string& name, bool space)
 
 //------------------------------------------------------------------------------
 
+fn_name QualName_Check = "QualName.Check";
+
+void QualName::Check() const
+{
+   Debug::ft(QualName_Check);
+
+   for(auto n = names_.cbegin(); n != names_.cend(); ++n)
+   {
+      (*n)->Check();
+   }
+
+   if(parms_ != nullptr) parms_->Check();
+}
+
+//------------------------------------------------------------------------------
+
 fn_name QualName_CheckCtorDefn = "QualName.CheckCtorDefn";
 
 bool QualName::CheckCtorDefn() const
@@ -2288,6 +2303,17 @@ TemplateParm::TemplateParm(const TemplateParm& that) :
 
 //------------------------------------------------------------------------------
 
+fn_name TemplateParm_Check = "TemplateParm.Check";
+
+void TemplateParm::Check() const
+{
+   Debug::ft(TemplateParm_Check);
+
+   if(default_ != nullptr) default_->Check();
+}
+
+//------------------------------------------------------------------------------
+
 void TemplateParm::Print(ostream& stream) const
 {
    stream << tag_ << SPACE;
@@ -2355,6 +2381,20 @@ void TemplateParms::AddParm(TemplateParmPtr& parm)
    Debug::ft(TemplateParms_AddParm);
 
    parms_.push_back(std::move(parm));
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TemplateParms_Check = "TemplateParms.Check";
+
+void TemplateParms::Check() const
+{
+   Debug::ft(TemplateParms_Check);
+
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      (*p)->Check();
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -2479,6 +2519,23 @@ void TypeName::Append(const string& name)
    Debug::ft(TypeName_Append);
 
    name_ += name;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TypeName_Check = "TypeName.Check";
+
+void TypeName::Check() const
+{
+   Debug::ft(TypeName_Check);
+
+   if(args_ != nullptr)
+   {
+      for(auto a = args_->cbegin(); a != args_->cend(); ++a)
+      {
+         (*a)->Check();
+      }
+   }
 }
 
 //------------------------------------------------------------------------------

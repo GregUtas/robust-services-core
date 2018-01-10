@@ -62,6 +62,18 @@ Argument::Argument(string& name, TypeSpecPtr& spec) :
 
 //------------------------------------------------------------------------------
 
+fn_name Argument_Check = "Argument.Check";
+
+void Argument::Check() const
+{
+   Debug::ft(Argument_Check);
+
+   spec_->Check();
+   if(name_.empty()) Log(AnonymousArgument);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Argument_CheckVoid = "Argument.CheckVoid";
 
 void Argument::CheckVoid() const
@@ -78,10 +90,6 @@ void Argument::CheckVoid() const
          Log(VoidAsArgument);
          auto func = static_cast< Function* >(GetScope());
          func->DeleteVoidArg();
-      }
-      else
-      {
-         Log(AnonymousArgument);  //* delay until >check
       }
    }
 }
@@ -1978,6 +1986,7 @@ void Typedef::Check() const
 {
    Debug::ft(Typedef_Check);
 
+   spec_->Check();
    CheckIfUsed(TypedefUnused);
    CheckIfHiding();
    CheckAccessControl();

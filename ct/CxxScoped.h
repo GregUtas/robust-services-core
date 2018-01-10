@@ -222,9 +222,9 @@ public:
    //
    virtual CxxToken* AutoType() const override { return spec_.get(); }
 
-   //  Overridden to display the argument.
+   //  Overridden to log warnings associated with the argument.
    //
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Check() const override;
 
    //  Overridden to make the argument visible within its function.
    //
@@ -267,6 +267,10 @@ public:
    //  Overridden to return the argument's name, if any.
    //
    virtual const std::string* Name() const override { return &name_; }
+
+   //  Overridden to display the argument.
+   //
+   virtual void Print(std::ostream& stream) const override;
 
    //  Overridden to record that the argument cannot be const.
    //

@@ -115,6 +115,18 @@ Catch::Catch(size_t pos) : CxxStatement(pos)
 
 //------------------------------------------------------------------------------
 
+fn_name Catch_Check = "Catch.Check";
+
+void Catch::Check() const
+{
+   Debug::ft(Catch_Check);
+
+   if(arg_ != nullptr) arg_->Check();
+   handler_->Check();
+}
+
+//------------------------------------------------------------------------------
+
 void Catch::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -285,6 +297,17 @@ Do::Do(size_t pos) : Condition(pos)
 
 //------------------------------------------------------------------------------
 
+fn_name Do_Check = "Do.Check";
+
+void Do::Check() const
+{
+   Debug::ft(Do_Check);
+
+   loop_->Check();
+}
+
+//------------------------------------------------------------------------------
+
 void Do::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -413,6 +436,18 @@ For::For(size_t pos) : Condition(pos)
    Debug::ft(For_ctor);
 
    CxxStats::Incr(CxxStats::FOR);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name For_Check = "For.Check";
+
+void For::Check() const
+{
+   Debug::ft(For_Check);
+
+   if(initial_ != nullptr) initial_->Check();
+   loop_->Check();
 }
 
 //------------------------------------------------------------------------------
@@ -564,6 +599,18 @@ If::If(size_t pos) : Condition(pos),
    Debug::ft(If_ctor);
 
    CxxStats::Incr(CxxStats::IF);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name If_Check = "If.Check";
+
+void If::Check() const
+{
+   Debug::ft(If_Check);
+
+   then_->Check();
+   if(else_ != nullptr) else_->Check();
 }
 
 //------------------------------------------------------------------------------
@@ -804,6 +851,17 @@ Switch::Switch(size_t pos) : CxxStatement(pos)
 
 //------------------------------------------------------------------------------
 
+fn_name Switch_Check = "Switch.Check";
+
+void Switch::Check() const
+{
+   Debug::ft(Switch_Check);
+
+   cases_->Check();
+}
+
+//------------------------------------------------------------------------------
+
 void Switch::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -861,6 +919,22 @@ Try::Try(size_t pos) : CxxStatement(pos)
    Debug::ft(Try_ctor);
 
    CxxStats::Incr(CxxStats::TRY);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Try_Check = "Try.Check";
+
+void Try::Check() const
+{
+   Debug::ft(Try_Check);
+
+   try_->Check();
+
+   for(auto c = catches_.cbegin(); c != catches_.cend(); ++c)
+   {
+      (*c)->Check();
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -948,6 +1022,17 @@ While::While(size_t pos) : Condition(pos)
    Debug::ft(While_ctor);
 
    CxxStats::Incr(CxxStats::WHILE);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name While_Check = "While.Check";
+
+void While::Check() const
+{
+   Debug::ft(While_Check);
+
+   loop_->Check();
 }
 
 //------------------------------------------------------------------------------

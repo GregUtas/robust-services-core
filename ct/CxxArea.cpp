@@ -812,10 +812,10 @@ size_t Class::CreateCode(const ClassInst* inst, stringPtr& code) const
 
    if(code_ == nullptr)
    {
-      //  This is the first instantiation, so get class template's code.
+      //  This is the first instantiation, so get the class template's code.
       //
       std::ostringstream stream;
-      Display(stream, EMPTY_STR, Flags(Code_Mask | NoTP_Mask));
+      Display(stream, EMPTY_STR, Flags(NS_Mask | Code_Mask | NoTP_Mask));
       code_.reset(new string(stream.str()));
    }
 

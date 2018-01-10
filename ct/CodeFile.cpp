@@ -46,6 +46,7 @@
 #include "Library.h"
 #include "Memory.h"
 #include "NbCliParms.h"
+#include "Parser.h"
 #include "Registry.h"
 #include "SetOperations.h"
 #include "Singleton.h"
@@ -706,11 +707,11 @@ void AddForwardDependencies(const CxxUsageSets& symbols, CxxNamedSet& inclSet)
 {
    Debug::ft(CodeTools_AddForwardDependencies);
 
-   //  SYMBOLS is the usage information for the symbols that appeared in this
-   //  file.  An #include should appear for a forward declaration that resolved
-   //  an indirect reference in this file.  Omit the #include, however, if the
-   //  declaration appears in a file that defines one of our base classes,
-   //  including an indirect base class.
+   //  SYMBOLS is the usage information for the symbols that appeared in
+   //  this file.  An #include should appear for a forward declaration that
+   //  resolved an indirect reference in this file.  Omit the #include,
+   //  however, if the declaration appears in a file that defines one of
+   //  our indirect base classes.
    //
    for(auto f = symbols.forwards.cbegin(); f != symbols.forwards.cend(); ++f)
    {
@@ -721,14 +722,16 @@ void AddForwardDependencies(const CxxUsageSets& symbols, CxxNamedSet& inclSet)
       {
          auto base = static_cast< const Class* >(*b);
 
-         for(auto s = base->BaseClass(); s != nullptr; s = s->BaseClass())
+         for(auto c = base->BaseClass(); c != nullptr; c = c->BaseClass())
          {
-            if(s->GetDeclFid() == fid)
+            if(c->GetDeclFid() == fid)
             {
                include = false;
                break;
             }
          }
+
+         if(!include) break;
       }
 
       if(include) inclSet.insert(*f);
@@ -737,18 +740,77 @@ void AddForwardDependencies(const CxxUsageSets& symbols, CxxNamedSet& inclSet)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeTools_AddIntersection = "CodeTools.AddIntersection";
-
-void AddIntersection
-   (CxxNamedSet& n1, const CxxNamedSet& n2, const CxxNamedSet& n3)
+void DisplayFileNames(ostream& stream, const SetOfIds& fids, fixed_string title)
 {
-   Debug::ft(CodeTools_AddIntersection);
-
-   //  Add the intersection of N2 and N3 to N1.
+   //  Display, in STREAM, the names of files identified in FIDS.
+   //  TITLE provides an explanation for the list.
    //
-   for(auto i = n2.cbegin(); i != n2.cend(); ++i)
+   if(fids.empty()) return;
+
+   auto& files = Singleton< Library >::Instance()->Files();
+   stream << spaces(3) << title << CRLF;
+
+   for(auto a = fids.cbegin(); a != fids.cend(); ++a)
    {
-      if(n3.find(*i) != n3.cend()) n1.insert(*i);
+      stream << spaces(6) << files.At(*a)->Name() << CRLF;
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void DisplaySymbols
+   (ostream& stream, const CxxNamedSet& items, fixed_string title)
+{
+   //  Display, in STREAM, the names in ITEMS, including their scope.
+   //  TITLE provides an explanation for the list.  Put the symbols in
+   //  a stringSet so that they will always appear in the same order.
+   //
+   if(items.empty()) return;
+   stream << spaces(3) << title << CRLF;
+
+   stringSet names;
+
+   for(auto a = items.cbegin(); a != items.cend(); ++a)
+   {
+      names.insert((*a)->ScopedName(true));
+   }
+
+   for(auto n = names.cbegin(); n != names.cend(); ++n)
+   {
+      stream << spaces(6) << *n << CRLF;
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void DisplaySymbolsAndFiles
+   (ostream& stream, const CxxNamedSet& set, const string& title)
+{
+   //  Display, in STREAM, the symbols in SET and where they are defined.
+   //  Include TITLE, which describes the contents of SET.  Put the symbols
+   //  in a stringSet so that they will always appear in the same order.
+   //
+   if(set.empty()) return;
+   stream << spaces(3) << title << CRLF;
+
+   stringSet names;
+
+   for(auto i = set.cbegin(); i != set.cend(); ++i)
+   {
+      auto name = (*i)->ScopedName(false);
+      auto file = (*i)->GetFile();
+
+      if(file != nullptr)
+         name += " [" + file->Name() + ']';
+      else
+         name += " [file unknown]";
+
+      names.insert(name);
+   }
+
+   for(auto n = names.cbegin(); n != names.cend(); ++n)
+   {
+      stream << spaces(6) << *n << CRLF;
    }
 }
 
@@ -780,72 +842,20 @@ void FindForwardCandidates(const CxxUsageSets& symbols, CxxNamedSet& addForws)
 
 //------------------------------------------------------------------------------
 
-void DisplayFileNames(ostream& stream, const SetOfIds& fids, fixed_string title)
+fn_name CodeTools_GetTransitiveBases = "CodeTools.GetTransitiveBases";
+
+void GetTransitiveBases(const CxxNamedSet& bases, SetOfIds& baseIds)
 {
-   //  Display, in STREAM, the names of files identified in FIDS.
-   //  TITLE provides an explanation for the list.
-   //
-   if(fids.empty()) return;
+   Debug::ft(CodeTools_GetTransitiveBases);
 
-   auto& files = Singleton< Library >::Instance()->Files();
-   stream << spaces(3) << title << CRLF;
-
-   for(auto a = fids.cbegin(); a != fids.cend(); ++a)
+   for(auto b = bases.cbegin(); b != bases.cend(); ++b)
    {
-      stream << spaces(6) << files.At(*a)->Name() << CRLF;
-   }
-}
+      auto base = static_cast< const Class* >(*b);
 
-//------------------------------------------------------------------------------
-
-void DisplayFullNames
-   (ostream& stream, const CxxNamedSet& items, fixed_string title)
-{
-   //  Display, in STREAM, the names in ITEMS, including their scope.
-   //  TITLE provides an explanation for the list.
-   //
-   if(!items.empty())
-   {
-      stream << spaces(3) << title << CRLF;
-
-      for(auto a = items.cbegin(); a != items.cend(); ++a)
+      for(auto c = base; c != nullptr; c = c->BaseClass())
       {
-         stream << spaces(6) << (*a)->ScopedName(true) << CRLF;
+         baseIds.insert(c->GetDeclFid());
       }
-   }
-}
-
-//------------------------------------------------------------------------------
-
-void DisplaySymbols
-   (ostream& stream, const CxxNamedSet& set, const string& title)
-{
-   //  Display, in STREAM, the symbols in SET and where they are defined.
-   //  Include TITLE, which describes the contents of SET.  Start by putting
-   //  the symbol names into a stringSet so that they will always appear in
-   //  the same order.
-   //
-   if(set.empty()) return;
-   stream << spaces(3) << title << CRLF;
-
-   stringSet names;
-
-   for(auto i = set.cbegin(); i != set.cend(); ++i)
-   {
-      auto name = (*i)->ScopedName(false);
-      auto file = (*i)->GetDeclFile();
-
-      if(file != nullptr)
-         name += " [" + file->Name() + ']';
-      else
-         name += " [file unknown]";
-
-      names.insert(name);
-   }
-
-   for(auto n = names.cbegin(); n != names.cend(); ++n)
-   {
-      stream << spaces(6) << *n << CRLF;
    }
 }
 
@@ -1061,7 +1071,7 @@ void CodeFile::AddDirectTypes
 
    for(auto u = usages_.cbegin(); u != usages_.cend(); ++u)
    {
-      if((*u)->GetDeclFile() == this) continue;
+      if((*u)->GetFile() == this) continue;
       if((*u)->Type() == Cxx::Terminal) continue;
       inclSet.insert(*u);
    }
@@ -1103,7 +1113,7 @@ void CodeFile::AddIndirectExternalTypes
    {
       auto type = (*i)->Type();
       if(type == Cxx::Terminal) continue;
-      if((type == Cxx::Class) && !(*i)->GetDeclFile()->IsSubsFile()) continue;
+      if((type == Cxx::Class) && !(*i)->GetFile()->IsSubsFile()) continue;
       inclSet.insert(*i);
    }
 }
@@ -1241,7 +1251,7 @@ void CodeFile::CheckDebugFt() const
    //
    for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
    {
-      if((*f)->IsTemplateInstance()) continue;
+      if((*f)->IsInTemplateInstance()) continue;
       (*f)->GetDefnRange(begin, end);
       if(begin >= end) continue;
       auto last = GetLineNum(end);
@@ -1295,80 +1305,85 @@ void CodeFile::CheckFunctionOrder() const
 {
    Debug::ft(CodeFile_CheckFunctionOrder);
 
-   if(!IsCpp() || funcs_.empty()) return;
+   if(IsHeader() || funcs_.empty()) return;
 
+   CxxScope* scope = nullptr;
+   auto state = FuncCtor;
+   const string* prev = nullptr;
+   const string* curr = nullptr;
    std::set< Function* > forwards;
 
-   auto f = funcs_.cbegin();
-
-   while(true)
+   for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
    {
-      auto scope = (*f)->GetScope();
-      auto state = FuncCtor;
-      const string* prev = nullptr;
-      const string* curr = nullptr;
-      forwards.clear();
+      //  Skip functions created in template instances, which are added to
+      //  the file that caused their instantiation.
+      //
+      if((*f)->IsInTemplateInstance()) continue;
 
-      while((*f)->GetScope() == scope)
+      //  Functions only need to be sorted until a function in a new scope
+      //  is encountered.
+      //
+      if((*f)->GetScope() != scope)
       {
-         //  If a function is declared forward in a .cpp, add it to FORWARDS
-         //  the first time (its declaration) so that it can be handled when
-         //  its definition appears.
-         //
-         if(((*f)->GetDeclFile() == this) &&
-            ((*f)->GetDefnFile() == this) &&
-            (forwards.find(*f) == forwards.end()))
+         state = FuncCtor;
+         prev = nullptr;
+         curr = nullptr;
+         forwards.clear();
+      }
+
+      //  If a function is declared forward in a .cpp, add it to FORWARDS
+      //  the first time (its declaration) so that it can be handled when
+      //  its definition appears.
+      //
+      if(((*f)->GetDefnFile() == this) &&
+         (forwards.find(*f) == forwards.end()))
+      {
+         forwards.insert(*f);
+      }
+      else
+      {
+         switch(state)
          {
-            forwards.insert(*f);
-         }
-         else
-         {
-            switch(state)
+         case FuncCtor:
+            switch((*f)->FuncType())
+            {
+            case FuncOperator:
+            case FuncStandard:
+               prev = (*f)->Name();
+            case FuncDtor:
+               state = FuncStandard;
+            }
+            break;
+
+         case FuncStandard:
+            switch((*f)->FuncType())
             {
             case FuncCtor:
-               switch((*f)->FuncType())
+            case FuncDtor:
+               LogPos((*f)->GetPos(), FunctionNotSorted);
+               break;
+
+            case FuncOperator:
+               curr = (*f)->Name();
+               if((prev != nullptr) && (strCompare(*curr, *prev) < 0))
                {
-               case FuncOperator:
-               case FuncStandard:
-                  prev = (*f)->Name();
-               case FuncDtor:
-                  state = FuncStandard;
+                  if(prev->find(OPERATOR_STR) != 0)
+                  {
+                     LogPos((*f)->GetPos(), FunctionNotSorted);
+                  }
                }
+               prev = curr;
                break;
 
             case FuncStandard:
-               switch((*f)->FuncType())
+               curr = (*f)->Name();
+               if((prev != nullptr) && (strCompare(*curr, *prev) < 0))
                {
-               case FuncCtor:
-               case FuncDtor:
-                  LogPos((*f)->GetDefnPos(), FunctionNotSorted);
-                  break;
-
-               case FuncOperator:
-                  curr = (*f)->Name();
-                  if((prev != nullptr) && (strCompare(*curr, *prev) < 0))
-                  {
-                     if(prev->find(OPERATOR_STR) != 0)
-                     {
-                        LogPos((*f)->GetDefnPos(), FunctionNotSorted);
-                     }
-                  }
-                  prev = curr;
-                  break;
-
-               case FuncStandard:
-                  curr = (*f)->Name();
-                  if((prev != nullptr) && (strCompare(*curr, *prev) < 0))
-                  {
-                     LogPos((*f)->GetDefnPos(), FunctionNotSorted);
-                  }
-                  prev = curr;
+                  LogPos((*f)->GetPos(), FunctionNotSorted);
                }
+               prev = curr;
             }
          }
-
-         ++f;
-         if(f == funcs_.cend()) return;
       }
    }
 }
@@ -1469,7 +1484,7 @@ void CodeFile::CheckIncludes() const
                err = err || (strCompare(*(*i2)->Name(), *prev->Name()) < 0);
             }
 
-            if(err) LogPos((*i2)->GetDeclPos(), IncludeNotSorted);
+            if(err) LogPos((*i2)->GetPos(), IncludeNotSorted);
          }
 
          prev = i2->get();
@@ -1481,7 +1496,7 @@ void CodeFile::CheckIncludes() const
       {
          if(*(*i1)->Name() == *(*i2)->Name())
          {
-            LogPos((*i2)->GetDeclPos(), IncludeDuplicated);
+            LogPos((*i2)->GetPos(), IncludeDuplicated);
          }
       }
    }
@@ -1963,9 +1978,9 @@ void CodeFile::DisplayItems(ostream& stream, const string& opts) const
       stream << FullName() << CRLF;
       stream << '{' << CRLF;
       DisplayObjects(incls_, stream, lead, qual);
+      DisplayObjects(macros_, stream, lead, qual);
       DisplayObjects(forws_, stream, lead, qual);
       DisplayObjects(usings_, stream, lead, qual);
-      DisplayObjects(macros_, stream, lead, qual);
       DisplayObjects(enums_, stream, lead, qual);
       DisplayObjects(types_, stream, lead, qual);
       DisplayObjects(funcs_, stream, lead, qual);
@@ -1992,7 +2007,7 @@ void CodeFile::EraseInternals(CxxNamedSet& set) const
 
    for(auto i = set.cbegin(); i != set.cend(); NO_OP)
    {
-      if((*i)->GetDeclFile() == this)
+      if((*i)->GetFile() == this)
          set.erase(*i++);
       else
          ++i;
@@ -2013,6 +2028,84 @@ Data* CodeFile::FindData(const string& name) const
    }
 
    return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeFile_FindOrAddUsing = "CodeFile.FindOrAddUsing";
+
+void CodeFile::FindOrAddUsing(const CxxNamed* user,
+   const CodeFileVector usingFiles, CxxNamedSet& addUsing)
+{
+   Debug::ft(CodeFile_FindOrAddUsing);
+
+   //  See if a file in usingFiles has a using statement that would make USER
+   //  visible.  If so, this file does not need one.  Verify, however, that
+   //  such a using statement is not tagged for removal.  This code was adapted
+   //  from CxxScoped.NameRefersToItem, simplified to handle only the case of a
+   //  symbol that needs to be resolved by a using statement.
+   //
+   auto found = false;
+   auto name = user->QualifiedName(true, false);
+   string fqName;
+   size_t i = 0;
+   auto ref = user->DirectType();
+   if(ref == nullptr) return;
+   auto tmplt = ref->GetTemplate();
+   if(tmplt != nullptr) ref = tmplt;
+
+   while(!found && ref->GetScopedName(fqName, i))
+   {
+      auto pos = NameCouldReferTo(fqName, name);
+      fqName.erase(0, 2);
+
+      if(pos != string::npos)
+      {
+         for(auto i = usingFiles.cbegin(); i != usingFiles.cend(); ++i)
+         {
+            auto u = (*i)->GetUsingFor(fqName, pos - 4);
+
+            if((u != nullptr) && !u->IsToBeRemoved())
+            {
+               found = true;
+               break;
+            }
+         }
+
+         if(!found)
+         {
+            //  No file in usingFiles had a suitable using statement.
+            //  If this file has one, keep it.
+            //
+            auto u = GetUsingFor(fqName, pos - 4);
+
+            if(u != nullptr)
+            {
+               u->MarkForRetention();
+               found = true;
+            }
+         }
+      }
+
+      ++i;
+   }
+
+   if(!found)
+   {
+      //  Neither a file in usingFiles nor this file had a suitable using
+      //  statement.  This file should therefore add one.
+      //
+      addUsing.insert(ref);
+
+      QualNamePtr qualName;
+      auto name = ref->ScopedName(false);
+      auto scope = Singleton< CxxRoot >::Instance()->GlobalNamespace();
+      auto parser = std::unique_ptr< Parser >(new Parser(scope));
+      parser->ParseQualName(name, qualName);
+      qualName->SetReferent(ref);
+      auto u = UsingPtr(new Using(qualName, false, true));
+      InsertUsing(u);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -2040,8 +2133,8 @@ Using* CodeFile::FindUsingFor(const string& name, size_t prefix,
    //  Omit files that also affect the one that defines NAME.  This removes the
    //  file that actually defines NAME, so add it back to the search.
    //
-   SetDifference(search, item->GetDeclFile()->Affecters());
-   search.insert(item->GetDeclFile()->Fid());
+   SetDifference(search, item->GetFile()->Affecters());
+   search.insert(item->GetFile()->Fid());
 
    auto& files = Singleton< Library >::Instance()->Files();
 
@@ -2601,7 +2694,7 @@ void CodeFile::PruneForwardCandidates(const CxxNamedSet& forwards,
 
    for(auto add = addForws.begin(); add != addForws.end(); NO_OP)
    {
-      auto addFile = (*add)->GetDeclFile();
+      auto addFile = (*add)->GetFile();
       auto remove = false;
 
       //  Do not add a forward declaration for a type that was resolved by
@@ -2612,20 +2705,6 @@ void CodeFile::PruneForwardCandidates(const CxxNamedSet& forwards,
          remove = ((*f)->Referent() == *add);
          if(remove) break;
       }
-
-      //  Double-check the forward declarations in this file.  One for a
-      //  function argument can get omitted from FORWARDS as follows:
-      //  o While parsing the function's *declaration*, the forward is used.
-      //  o While parsing the function's *definition*, the forward is not
-      //    used because an #include in the .cpp makes the argument's type
-      //    directly visible.
-      //  o When the function's declaration and definition are merged (see
-      //    Function.UpdateDeclaration), the arguments in the definition
-      //    replace those in the declaration.  Consequently, when GetUsages
-      //    is invoked on the argument, the referent of its DataSpec is its
-      //    actual declaration, not its forward declaration.
-      //
-      if(!remove) remove = HasForwardFor(*add);
 
       if(!remove)
       {
@@ -2720,7 +2799,7 @@ void CodeFile::RemoveHeaderIds(const SetOfIds& declIds, SetOfIds& inclIds) const
 
    //  If this is a .cpp, it implements items declared one or more headers
    //  (declIds).  The .cpp need not #include anything that one of those
-   //  headers already #includes.
+   //  headers will already #include.
    //
    auto& files = Singleton< Library >::Instance()->Files();
 
@@ -2728,7 +2807,7 @@ void CodeFile::RemoveHeaderIds(const SetOfIds& declIds, SetOfIds& inclIds) const
    {
       for(auto d = declIds.cbegin(); d != declIds.cend(); ++d)
       {
-         SetDifference(inclIds, files.At(*d)->InclList());
+         SetDifference(inclIds, files.At(*d)->TrimList());
       }
 
       //  Ensure that all files in declIds are #included.  It is possible for
@@ -2810,12 +2889,13 @@ void CodeFile::Scan()
             auto id = used->Fid();
 
             inclIds_.insert(id);
+            trimIds_.insert(id);
             used->AddUser(this);
             if(firstIncl_ == NIL_ID) firstIncl_ = id;
          }
 
          auto incl = IncludePtr(new Include(file, angle));
-         incl->SetDecl(this, info_[n].begin);
+         incl->SetPos(this, info_[n].begin);
          InsertInclude(incl);
       }
    }
@@ -2907,7 +2987,7 @@ istreamPtr CodeFile::Stream() const
 
 fn_name CodeFile_Trim = "CodeFile.Trim";
 
-void CodeFile::Trim(ostream& stream) const
+void CodeFile::Trim(ostream& stream)
 {
    Debug::ft(CodeFile_Trim);
 
@@ -2941,11 +3021,11 @@ void CodeFile::Trim(ostream& stream) const
 
    //  Display the symbols that the file uses.
    //
-   DisplaySymbols(stream, bases, "Base usage:");
-   DisplaySymbols(stream, inclSet, "Direct usage:");
-   DisplaySymbols(stream, indirects, "Indirect usage:");
-   DisplaySymbols(stream, forwards, "Forward usage:");
-   DisplaySymbols(stream, friends, "Friend usage:");
+   DisplaySymbolsAndFiles(stream, bases, "Base usage:");
+   DisplaySymbolsAndFiles(stream, inclSet, "Direct usage:");
+   DisplaySymbolsAndFiles(stream, indirects, "Indirect usage:");
+   DisplaySymbolsAndFiles(stream, forwards, "Forward usage:");
+   DisplaySymbolsAndFiles(stream, friends, "Friend usage:");
 
    //  Expand inclSet with types used indirectly but defined outside
    //  the code base.  Then expand it with forward declarations that
@@ -2966,20 +3046,21 @@ void CodeFile::Trim(ostream& stream) const
 
    //  For a .cpp, BASES includes base classes defined in its header.
    //  Regenerate it so that it is limited to base classes for those
-   //  declared in the .cpp.
+   //  declared in the .cpp.  Before doing this, find the files that
+   //  define base classes, including transitive base classes, of
+   //  classes defined or implemented in this file.  This set (baseIds)
+   //  will be needed later, when analyzing using statements.
    //
+   SetOfIds baseIds;
+   GetTransitiveBases(bases, baseIds);
    if(IsCpp()) GetDeclaredBaseClasses(bases);
 
    //  An #include should always appear for a base class.  Add them to
-   //  inclSet in case any of them were removed.  While iterating through
-   //  the base classes, assemble baseIds, the files that declare them.
+   //  inclSet in case any of them were removed.
    //
-   SetOfIds baseIds;
-
    for(auto b = bases.cbegin(); b != bases.cend(); ++b)
    {
       inclSet.insert(*b);
-      baseIds.insert((*b)->GetDeclFid());
    }
 
    //  Assemble inclIds, all the files that need to be #included.  It
@@ -3007,6 +3088,12 @@ void CodeFile::Trim(ostream& stream) const
    SetDifference(delIds, inclIds_, inclIds);
    DisplayFileNames(stream, delIds, REMOVE_INCLUDE_STR);
 
+   //  Save the files that *should* be #included.
+   //
+   trimIds_.clear();
+   SetUnion(trimIds_, inclIds_, addIds);
+   SetDifference(trimIds_, delIds);
+
    //  Now determine the forward declarations that should be added.  Types
    //  used indirectly, as well as friend declarations, provide candidates.
    //  The candidates are then trimmed by removing, for example, forward
@@ -3023,17 +3110,14 @@ void CodeFile::Trim(ostream& stream) const
 
    //  Output the forward declarations that should be added or removed.
    //
-   DisplayFullNames(stream, addForws, ADD_FORWARD_STR);
-   DisplayFullNames(stream, delForws, REMOVE_FORWARD_STR);
+   DisplaySymbols(stream, addForws, ADD_FORWARD_STR);
+   DisplaySymbols(stream, delForws, REMOVE_FORWARD_STR);
 
    //  Create usingFiles, the files that this file can rely on for accessing
-   //  using statements.  This set consists of the file itself, files that
-   //  declare base classes (baseIds) of any class implemented in this file,
-   //  and files (declIds) that declare items that this file defines.
+   //  using statements.  This set consists of transitive base class files
+   //  (baseIds) and files that declare what this file defines (declIds).
    //
    CodeFileVector usingFiles;
-
-   usingFiles.push_back(this);
 
    auto& files = Singleton< Library >::Instance()->Files();
 
@@ -3047,106 +3131,55 @@ void CodeFile::Trim(ostream& stream) const
       usingFiles.push_back(files.At(*d));
    }
 
-   //  Create usingRefs, the referents for all symbols (USERS) in this
-   //  file that were resolved by using statements.
-   //
-   CxxNamedSet usingRefs;
-
-   for(auto u = users.cbegin(); u != users.cend(); ++ u)
-   {
-      usingRefs.insert((*u)->Referent());
-   }
-
-   //  Extract, from usingRefs, the symbols that may require an #include.
-   //  Note that USERS (and, consequently, usingRefs) may contain symbols
-   //  used in inherited functions.  But because such symbols are omitted
-   //  by Function.GetUsages, they will not end up in EXTERNALS.
-   //
-   CxxNamedSet externals;
-   AddIntersection(externals, bases, usingRefs);
-   AddIntersection(externals, inclSet, usingRefs);
-   AddIntersection(externals, indirects, usingRefs);
-   AddIntersection(externals, forwards, usingRefs);
-   AddIntersection(externals, friends, usingRefs);
-
    //  Look at each name (N) that was resolved by a using statement, and
-   //  determine if this file should add a using statement to resolve it.
+   //  determine if this file should have a using statement to resolve it.
+   //  First, mark all of the using statements in this file for removal.
+   //  When it is determined that one is required, it will be marked for
+   //  retention.
    //
    CxxNamedSet addUsing;
 
-   for(auto n = users.cbegin(); n != users.cend(); ++n)
+   for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
    {
-      //  If N's referent is not in EXTERNALS, a using statement for it
-      //  is not required.  This occurs, for example, if N appeared in
-      //  the signature of an inherited function, as discussed above.
-      //
-      auto ref = (*n)->Referent();
-      if(externals.find(ref) == externals.cend()) continue;
-
-      //  See if a file in INCLUDED has a using statement that would make
-      //  N visible.  If so, this file does not need to add one.  However,
-      //  check that such a using statement was actually used by the file
-      //  where it appears, because the file will be told to remove it if
-      //  it didn't need it.  (This code was adapted from NameRefersToItem,
-      //  simplified to handle only the case of a symbol that is *known* to
-      //  require resolution by a using statement.)
-      //
-      auto found = false;
-      auto name = (*n)->QualifiedName(true, false);
-      string fqName;
-      size_t i = 0;
-
-      while(ref->GetScopedName(fqName, i))
-      {
-         auto pos = NameCouldReferTo(fqName, name);
-         fqName.erase(0, 2);
-
-         if(pos != string::npos)
-         {
-            for(auto i = usingFiles.cbegin(); i != usingFiles.cend(); ++i)
-            {
-               auto u = (*i)->GetUsingFor(fqName, pos - 4);
-
-               if((u != nullptr) && u->ResolvedLocal())
-               {
-                  found = true;
-                  break;
-               }
-            }
-         }
-
-         ++i;
-      }
-
-      if(!found) addUsing.insert(ref);
+      (*u)->MarkForRemoval();
    }
 
-   //  Output the using statements that should be added.
-   //
-   DisplayFullNames(stream, addUsing, ADD_USING_STR);
+   for(auto n = users.cbegin(); n != users.cend(); ++n)
+   {
+      FindOrAddUsing(*n, usingFiles, addUsing);
+   }
 
-   //  Using statements that did not resolve a symbol used in this
-   //  file should be removed.
+   //  Using statements still marked for removal should be deleted.
+   //  Don't report any that were added by >trim.
    //
    CxxNamedSet delUsing;
 
    for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
    {
-      if(!(*u)->ResolvedLocal()) delUsing.insert(u->get());
+      if((*u)->IsToBeRemoved() && !(*u)->WasAdded())
+      {
+         delUsing.insert(u->get());
+      }
    }
 
-   DisplayFullNames(stream, delUsing, REMOVE_USING_STR);
-
-   //  Output the symbols that were resolved by a using statement.
+   //  Output the using statements that should be added and removed.
    //
-   CxxNamedSet qualify;
+   DisplaySymbols(stream, addUsing, ADD_USING_STR);
+   DisplaySymbols(stream, delUsing, REMOVE_USING_STR);
 
-   for(auto u = users.cbegin(); u != users.cend(); ++u)
+   //  For a header, output the symbols that were resolved by a using statement.
+   //
+   if(IsHeader())
    {
-      qualify.insert((*u)->DirectType());
-   }
+      CxxNamedSet qualify;
 
-   DisplaySymbols(stream, qualify,
-      "To remove dependencies on using statements, qualify");
+      for(auto u = users.cbegin(); u != users.cend(); ++u)
+      {
+         qualify.insert((*u)->DirectType());
+      }
+
+      DisplaySymbolsAndFiles(stream, qualify,
+         "To remove dependencies on using statements, qualify");
+   }
 }
 }

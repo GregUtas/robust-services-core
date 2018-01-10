@@ -207,6 +207,10 @@ private:
    //  The area's typedefs.
    //
    TypedefPtrVector types_;
+
+   //  The area's definitions (of previously declared data or functions).
+   //
+   ScopePtrVector defns_;
 };
 
 //------------------------------------------------------------------------------
@@ -287,6 +291,10 @@ public:
    //  Returns the class's friends.
    //
    const FriendPtrVector* Friends() const { return &friends_; }
+
+   //  Returns the class template, if any, associated with the class.
+   //
+   virtual Class* GetClassTemplate() const;
 
    //  Returns a class template's instantiations.
    //
@@ -478,7 +486,7 @@ public:
 
    //  Overridden to return the class if it is a class template.
    //
-   virtual Class* GetTemplate() const override;
+   virtual CxxScope* GetTemplate() const override;
 
    //  Overridden to update SYMBOLS with the type usage of each of the
    //  class's components.
@@ -690,9 +698,13 @@ public:
    virtual BaseDecl* GetBaseDecl() const
       override { return tmplt_->GetBaseDecl(); }
 
-   //  Returns the instance's class template.
+   //  Overridden to return the instance's class template.
    //
-   virtual Class* GetTemplate() const override { return tmplt_; }
+   virtual Class* GetClassTemplate() const override { return tmplt_; }
+
+   //  Overridden to return the instance's class template.
+   //
+   virtual CxxScope* GetTemplate() const override { return tmplt_; }
 
    //  Overridden to return the instance's template arguments.
    //
@@ -825,7 +837,7 @@ public:
 
    //  Overridden to preserve the location where the namespace first occurred.
    //
-   virtual void SetDecl(CodeFile* file, size_t pos) override;
+   virtual void SetPos(CodeFile* file, size_t pos) override;
 
    //  Overridden to handle the global namespace.
    //

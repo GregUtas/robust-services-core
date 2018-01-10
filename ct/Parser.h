@@ -534,7 +534,7 @@ private:
    //
    bool NextKeywordIs(fixed_string str);
 
-   //  Invokes SetScope, SetAccess, and SetDecl on ITEM immediately after
+   //  Invokes SetScope, SetAccess, and SetPos on ITEM immediately after
    //  its creation.
    //
    void SetContext(CxxNamed* item, size_t pos) const;

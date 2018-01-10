@@ -341,7 +341,7 @@ bool CxxToken::WasWritten(const StackArg* arg, bool passed)
 
 void CxxUsageSets::AddBase(const CxxNamed* item)
 {
-   if(item->GetDeclFile() == nullptr) return;
+   if(item->GetFile() == nullptr) return;
    bases.insert(item);
 }
 
@@ -349,7 +349,7 @@ void CxxUsageSets::AddBase(const CxxNamed* item)
 
 void CxxUsageSets::AddDirect(const CxxNamed* item)
 {
-   if(item->GetDeclFile() == nullptr) return;
+   if(item->GetFile() == nullptr) return;
    directs.insert(item);
 }
 
@@ -357,7 +357,7 @@ void CxxUsageSets::AddDirect(const CxxNamed* item)
 
 void CxxUsageSets::AddForward(const CxxNamed* item)
 {
-   if(item->GetDeclFile() == nullptr) return;
+   if(item->GetFile() == nullptr) return;
    if(item->Type() == Cxx::Friend)
       friends.insert(item);
    else
@@ -368,7 +368,7 @@ void CxxUsageSets::AddForward(const CxxNamed* item)
 
 void CxxUsageSets::AddIndirect(const CxxNamed* item)
 {
-   if(item->GetDeclFile() == nullptr) return;
+   if(item->GetFile() == nullptr) return;
    indirects.insert(item);
 }
 
@@ -376,6 +376,7 @@ void CxxUsageSets::AddIndirect(const CxxNamed* item)
 
 void CxxUsageSets::AddUser(const CxxNamed* item)
 {
+   if(item->GetFile() == nullptr) return;
    users.insert(item);
 }
 
@@ -1856,8 +1857,7 @@ bool Operation::ExecuteOverload
 
       if(area != nullptr)
       {
-         SymbolView view = NotAccessible;
-
+         SymbolView view;
          auto candidate = area->FindFunc(name, &args, true, scope, &view);
 
          if((candidate != nullptr) && (view.match > match))
@@ -2289,7 +2289,7 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
       return;
    }
 
-   SymbolView view = NotAccessible;
+   SymbolView view;
    auto scope = Context::Scope();
    auto mem = cls->FindMember(*name, true, scope, &view);
 
@@ -2514,7 +2514,6 @@ void Operation::PushType(const string& name)
    auto file = Context::File();
    auto scope = Context::Scope();
    SymbolView view;
-
    auto item = syms->FindSymbol(file, scope, name, TYPE_REFS, &view);
 
    if(item != nullptr)

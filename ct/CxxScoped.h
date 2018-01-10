@@ -69,8 +69,8 @@ public:
    //
    virtual void AccessibilityTo(const CxxScope* scope, SymbolView* view) const;
 
-   //  Determines ITEM's visibility at file scope if it is public or its
-   //  user is known to be a friend.
+   //  Determines this item's visibility at file scope if it is public or
+   //  its user is known to be a friend.
    //
    Accessibility FileScopeAccessiblity() const;
 
@@ -91,19 +91,6 @@ public:
    //  defined in another file, that file is also displayed.
    //
    void DisplayFiles(std::ostream& stream) const;
-
-   //  Returns the file that defined the item.  Declaration (GetDeclFile) is
-   //  distinct from definition (GetDefnFile) for static data and functions.
-   //
-   virtual CodeFile* GetDefnFile() const { return nullptr; }
-
-   //  Returns the offset where the item was defined.
-   //
-   virtual size_t GetDefnPos() const { return std::string::npos; }
-
-   //  Determines FILE's role in declaring and defining this item.
-   //
-   FileRole GetFileRole(const CodeFile* file) const;
 
    //  Updates imSet with the files that declare and define the item.
    //
@@ -166,10 +153,6 @@ protected:
    //
    CxxScoped();
 
-   //  Sets the file and offset where the item was defined.
-   //
-   virtual void SetDefn(CodeFile* file, size_t pos) { }
-
    //  Logs an unused item.  The default version generates a log that
    //  contains WARNING if IsUnused returns true.
    //
@@ -227,12 +210,6 @@ public:
    //
    bool HasDefault() const { return (default_ != nullptr); }
 
-   //  Invoked when this argument is part of a function declaration, and THAT
-   //  argument is part of the function's definition.  This argument acquires
-   //  THAT's name.
-   //
-   void Merge(Argument& that);
-
    //  Returns true if the argument is passed by value.
    //
    bool IsPassedByValue() const;
@@ -245,9 +222,9 @@ public:
    //
    virtual CxxToken* AutoType() const override { return spec_.get(); }
 
-   //  Overridden to display the argument.
+   //  Overridden to log warnings associated with the argument.
    //
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Check() const override;
 
    //  Overridden to make the argument visible within its function.
    //
@@ -291,6 +268,10 @@ public:
    //
    virtual const std::string* Name() const override { return &name_; }
 
+   //  Overridden to display the argument.
+   //
+   virtual void Print(std::ostream& stream) const override;
+
    //  Overridden to record that the argument cannot be const.
    //
    virtual bool SetNonConst() override;
@@ -319,9 +300,9 @@ private:
    //
    virtual CxxToken* RootType() const override { return spec_.get(); }
 
-   //  Checks the argument's definition.
+   //  Checks for a "(void)" argument.
    //
-   void CheckDefn() const;
+   void CheckVoid() const;
 
    //  The argument's name, if any.
    //
@@ -859,7 +840,7 @@ private:
 
    //  Overridden to record DECL and update the friend's scope.
    //
-   virtual bool ResolveForward(CxxScoped* decl) const override;
+   virtual bool ResolveForward(CxxScoped* decl, size_t n) const override;
 
    //  Overridden to return the friend.
    //
@@ -1127,8 +1108,9 @@ class Using : public CxxScoped
 {
 public:
    //  NAME is what is being used.  SPACE is set if it is a namespace.
+   //  ADDED is set if the statement was added by the >trim command.
    //
-   Using(QualNamePtr& name, bool space);
+   Using(QualNamePtr& name, bool space, bool added = false);
 
    //  Not subclassed.
    //
@@ -1139,9 +1121,21 @@ public:
    //
    bool IsUsingFor(const std::string& name, size_t prefix) const;
 
-   //  Returns true if the declaration resolved a symbol in the same file.
+   //  Used by >trim when the statement should be removed.
    //
-   bool ResolvedLocal() const { return local_; }
+   void MarkForRemoval() { remove_ = true; }
+
+   //  Used by >trim when the statement should be retained.
+   //
+   void MarkForRetention() { remove_ = false; }
+
+   //  Returns true if the >trim command added the statement.
+   //
+   bool WasAdded() const { return added_; }
+
+   //  Returns true if the >trim command marked the statement for removal.
+   //
+   bool IsToBeRemoved() const { return remove_; }
 
    //  Overridden to log warnings associated with the declaration.
    //
@@ -1192,7 +1186,8 @@ public:
 
    //  Overridden to stop at a typedef.
    //
-   virtual bool ResolveTypedef(Typedef* type) const override { return false; }
+   virtual bool ResolveTypedef(Typedef* type, size_t n) const
+      override { return false; }
 
    //  Overridden to return the scoped name of what is being used.
    //
@@ -1216,11 +1211,15 @@ private:
 
    //  How many times the declaration resolved a symbol.
    //
-   mutable size_t users_ : 14;
+   mutable size_t users_ : 13;
 
-   //  Set if the declaration resolved a symbol in the same file.
+   //  Set if the declaration was added by >trim.
    //
-   mutable bool local_ : 1;
+   bool added_ : 1;
+
+   //  Set if the declaration is to be removed.
+   //
+   bool remove_ : 1;
 
    //  Set if name_ is a namespace.
    //

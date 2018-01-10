@@ -127,7 +127,7 @@ bool Parser::CheckType(QualNamePtr& name)
 
    //  This only applies when TYPE is unqualified.
    //
-   if(name->Names_size() != 1) return true;
+   if(name->Names().size() != 1) return true;
 
    auto type = Lexer::GetType(*name->Name());
 
@@ -571,7 +571,6 @@ bool Parser::GetCast(ExprPtr& expr)
    if(!GetTypeSpec(spec)) return lexer_.Retreat(start);
    if(!lexer_.NextCharIs(')')) return lexer_.Retreat(start);
    if(!GetCxxExpr(item, expr->EndPos(), false)) return lexer_.Retreat(start);
-   spec->Check();
 
    auto token = TokenPtr(new Operation(Cxx::CAST));
    auto cast = static_cast< Operation* >(token.get());
@@ -1018,7 +1017,7 @@ bool Parser::GetCtorInit(FunctionPtr& func)
          if(!GetArgList(token)) return lexer_.Retreat(start);
          memberName = *baseName->Name();
          auto mem = MemberInitPtr(new MemberInit(memberName, token));
-         mem->SetDecl(Context::File(), begin);
+         mem->SetPos(Context::File(), begin);
          func->AddMemberInit(mem);
       }
    }
@@ -1032,7 +1031,7 @@ bool Parser::GetCtorInit(FunctionPtr& func)
       if(end == string::npos) return lexer_.Retreat(start);
       if(!GetArgList(token)) return lexer_.Retreat(start);
       auto mem = MemberInitPtr(new MemberInit(memberName, token));
-      mem->SetDecl(Context::File(), begin);
+      mem->SetPos(Context::File(), begin);
       func->AddMemberInit(mem);
    }
 
@@ -1053,7 +1052,7 @@ bool Parser::GetCxxAlpha(ExprPtr& expr)
    QualNamePtr qualName;
    if(!GetQualName(qualName)) return lexer_.Retreat(start);
 
-   if(qualName->Names_size() == 1)
+   if(qualName->Names().size() == 1)
    {
       //  See if the name is actually a keyword or operator.
       //
@@ -1141,7 +1140,6 @@ bool Parser::GetCxxCast(ExprPtr& expr, Cxx::Operator op)
    if(!GetTypeSpec(spec)) return lexer_.Retreat(start);
    if(!lexer_.NextCharIs('>')) return lexer_.Retreat(start);
    if(!GetParExpr(item, false)) return lexer_.Retreat(start);
-   spec->Check();
 
    auto token = TokenPtr(new Operation(op));
    auto cast = static_cast< Operation* >(token.get());
@@ -2039,7 +2037,7 @@ bool Parser::GetNamespace()
 
    auto outer = Context::Scope();
    auto inner = static_cast< Namespace* >(outer)->EnsureNamespace(name);
-   inner->SetDecl(Context::File(), begin);
+   inner->SetPos(Context::File(), begin);
    Context::PushScope(inner);
    GetFileDecls(inner);
    Context::PopScope();
@@ -2105,7 +2103,6 @@ bool Parser::GetNew(ExprPtr& expr, Cxx::Operator op)
    //
    TypeSpecPtr typeSpec;
    if(!GetTypeSpec(typeSpec)) return lexer_.Retreat(start);
-   typeSpec->Check();
    token.reset(typeSpec.release());
    newOp->AddArg(token, false);
 
@@ -2241,10 +2238,6 @@ void Parser::GetPointers(TypeSpec* spec)
 {
    Debug::ft(Parser_GetPointers2);
 
-   //  It is too early to invoke Log(PtrTagDetached) here.  The parser
-   //  tries data declarations first, so the "*" may actually turn out
-   //  to be a multiplication operator.
-   //
    bool space1, space2;
    auto ptrs1 = lexer_.GetIndirectionLevel('*', space1);
    auto array = lexer_.NextStringIs(ARRAY_STR, false);
@@ -2540,10 +2533,6 @@ void Parser::GetReferences(TypeSpec* spec)
 {
    Debug::ft(Parser_GetReferences);
 
-   //  It is too early to invoke Log(PtrTagDetached) here.  The parser
-   //  tries data declarations first, so the "*" may actually turn out
-   //  to be a multiplication operator.
-   //
    bool space;
    auto refs = lexer_.GetIndirectionLevel('&', space);
    if(space) spec->SetRefDetached(true);
@@ -2604,7 +2593,6 @@ bool Parser::GetSizeOf(ExprPtr& expr)
       TypeSpecPtr spec;
       if(GetTypeSpec(spec))
       {
-         spec->Check();
          arg.reset(spec.release());
          if(lexer_.NextCharIs(')')) break;
          lexer_.Reposition(mark);
@@ -4247,7 +4235,7 @@ void Parser::SetContext(CxxNamed* item, size_t pos) const
    }
 
    if(scope != nullptr) item->SetAccess(scope->GetCurrAccess());
-   item->SetDecl(Context::File(), pos);
+   item->SetPos(Context::File(), pos);
    if(tmpltClassInst_ || tmpltFuncInst_) item->SetInternal();
 }
 

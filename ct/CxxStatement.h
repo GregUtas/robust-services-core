@@ -115,6 +115,7 @@ public:
    ~Catch() { CxxStats::Decr(CxxStats::CATCH); }
    void AddArg(ArgumentPtr& a) { arg_ = std::move(a); }
    void AddHandler(BlockPtr& b) { handler_ = std::move(b); }
+   virtual void Check() const override;
    virtual void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
    virtual void EnterBlock() override;
@@ -151,6 +152,7 @@ public:
    explicit Do(size_t pos);
    ~Do() { CxxStats::Decr(CxxStats::DO); }
    void AddLoop(BlockPtr& b) { loop_ = std::move(b); }
+   virtual void Check() const override;
    virtual void Print(std::ostream& stream) const override;
    virtual void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
@@ -193,6 +195,7 @@ public:
    void AddInitial(TokenPtr& i) { initial_ = std::move(i); }
    void AddSubsequent(ExprPtr& s) { subsequent_ = std::move(s); }
    void AddLoop(BlockPtr& b) { loop_ = std::move(b); }
+   virtual void Check() const override;
    virtual void Print(std::ostream& stream) const override;
    virtual void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
@@ -220,6 +223,7 @@ public:
    void AddThen(BlockPtr& b) { then_ = std::move(b); }
    void AddElse(BlockPtr& b) { else_ = std::move(b); }
    void SetElseIf() { elseif_ = true; }
+   virtual void Check() const override;
    virtual void Print(std::ostream& stream) const override;
    virtual void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
@@ -301,6 +305,7 @@ public:
    ~Switch() { CxxStats::Decr(CxxStats::SWITCH); }
    void AddExpr(ExprPtr& e) { expr_ = std::move(e); }
    void AddCases(BlockPtr& b) { cases_ = std::move(b); }
+   virtual void Check() const override;
    virtual void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
    virtual void EnterBlock() override;
@@ -324,6 +329,7 @@ public:
    ~Try() { CxxStats::Decr(CxxStats::TRY); }
    void AddTry(BlockPtr& b) { try_ = std::move(b); }
    void AddCatch(TokenPtr& t) { catches_.push_back(std::move(t)); }
+   virtual void Check() const override;
    virtual void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
    virtual void EnterBlock() override;
@@ -347,6 +353,7 @@ public:
    explicit While(size_t pos);
    ~While() { CxxStats::Decr(CxxStats::WHILE); }
    void AddLoop(BlockPtr& b) { loop_ = std::move(b); }
+   virtual void Check() const override;
    virtual void Print(std::ostream& stream) const override;
    virtual void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;

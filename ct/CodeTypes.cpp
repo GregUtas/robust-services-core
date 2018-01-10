@@ -131,6 +131,7 @@ fixed_string LOCALS_STR        = "$locals";  // name for code blocks
 //------------------------------------------------------------------------------
 
 const Flags FQ_Mask = Flags(1 << DispFQ);
+const Flags NS_Mask = Flags(1 << DispNS);
 const Flags LF_Mask = Flags(1 << DispLF);
 const Flags NoLF_Mask = Flags(1 << DispNoLF);
 const Flags Last_Mask = Flags(1 << DispLast);
@@ -321,4 +322,29 @@ fixed_string ADD_FORWARD_STR    = "Add a forward declaration for";
 fixed_string REMOVE_FORWARD_STR = "Remove the forward declaration for";
 fixed_string ADD_USING_STR      = "Add a using statement for";
 fixed_string REMOVE_USING_STR   = "Remove the using statement for";
+
+//==============================================================================
+
+SymbolView::SymbolView() :
+   accessibility(Inaccessible),
+   match(Compatible),
+   using_(false),
+   friend_(false),
+   resolved(false),
+   distance(0)
+{
+}
+
+//------------------------------------------------------------------------------
+
+SymbolView::SymbolView(Accessibility a,
+   TypeMatch m, bool u, bool f, bool r, Distance d) :
+   accessibility(a),
+   match(m),
+   using_(u),
+   friend_(f),
+   resolved(r),
+   distance(d)
+{
+}
 }

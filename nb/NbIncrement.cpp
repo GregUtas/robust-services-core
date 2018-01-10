@@ -904,7 +904,6 @@ word HelpCommand::ProcessCommand(CliThread& cli) const
    {
       cli.EndOfInput(false);
       incr->Explain(*cli.obuf, 2);
-      auto file = string(incr->Name());
       return DisplayHelpFile(cli, incr->Name());  // [8]
    }
 

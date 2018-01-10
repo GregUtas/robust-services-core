@@ -104,10 +104,6 @@ protected:
    //
    void OpenScope(std::string& name);
 
-   //  Merges a scope's definition, DEFN, into its declaration (this).
-   //
-   void MergeScope(CxxScope& defn);
-
    //  Replaces this class's or function's template parameters, as they
    //  appear in CODE, with the template arguments in ARGS, starting at
    //  BEGIN.
@@ -309,18 +305,11 @@ public:
 
    //  Returns true if the data was initialized.
    //
-   bool WasInited() const { return inited_; }
+   bool WasInited() const { return GetDecl()->inited_; }
 
-   //  Merges two data items on behalf of SpaceData::UpdateDeclaration.  This
-   //  occurs when the data's initialization occurs after its declaration.
-   //  Invoked on the declaration, which acquires items from the definition.
+   //  Invoked on a data declaration when its definition (DATA) is found.
    //
-   void Merge(Data& defn);
-
-   //  Executes the data's initialization expression.  Invokes PushScope if
-   //  PUSH is set.  Returns false if no form of initialization occurred.
-   //
-   bool ExecuteInit(bool push);
+   void SetDefn(Data* data);
 
    //  Returns true if the data is default constructible.  This function's
    //  purpose is to determine if the data will be initialized if omitted
@@ -345,17 +334,18 @@ public:
    //
    virtual CxxToken* AutoType() const override { return (CxxToken*) this; }
 
-   //  Returns true if the data's initialization is currently being executed.
+   //  Overridden to log warnings associated with the data's type.
    //
-   virtual bool IsInitializing() const override { return initing_; }
+   virtual void Check() const override;
 
-   //  Overridden to return the file that defined (initialized) the data.
+   //  Overridden to return the file that declared the data.
    //
-   virtual CodeFile* GetDefnFile() const override { return defn_.file; }
+   virtual CodeFile* GetDeclFile() const override;
 
-   //  Overridden to return the offset where the data is initialized.
+   //  Overridden to return the file (if any) that defined (initialized) the
+   //  data.
    //
-   virtual size_t GetDefnPos() const override { return defn_.GetPos(); }
+   virtual CodeFile* GetDefnFile() const override;
 
    //  Overridden to return the data's underlying numeric type.
    //
@@ -382,6 +372,10 @@ public:
    //
    virtual bool IsConstPtr() const override;
 
+   //  Returns true if the data's initialization is currently being executed.
+   //
+   virtual bool IsInitializing() const override { return initing_; }
+
    //  Overridden to return true if the data is static.
    //
    virtual bool IsStatic() const override { return static_; }
@@ -398,10 +392,6 @@ public:
    //  Overridden to record that the data cannot be const.
    //
    virtual bool SetNonConst() override;
-
-   //  Overridden to set the file and offset where the data is initialized.
-   //
-   virtual void SetDefn(CodeFile* file, size_t pos) override;
 
    //  Overridden to shrink containers.
    //
@@ -427,6 +417,15 @@ protected:
    //
    explicit Data(TypeSpecPtr& spec);
 
+   //  Returns true if this is a data declaration.
+   //
+   bool IsDecl() const { return !defn_; }
+
+   //  Executes the data's initialization expression.  Invokes PushScope if
+   //  PUSH is set.  Returns false if no form of initialization occurred.
+   //
+   bool ExecuteInit(bool push);
+
    //  Executes the initialization expression EXPR, which appeared in
    //  parentheses.  If the data's type is a class, EXPR is handled as
    //  a constructor call, else it is handled as a single-member brace
@@ -451,32 +450,38 @@ protected:
 
    //  Displays any parenthesized expression that initializes the data.
    //
-   void DisplayExpression(std::ostream& stream) const;
+   void DisplayExpression(std::ostream& stream, const Flags& options) const;
 
    //  Displays any assignment statement that initializes the data.
    //
-   void DisplayAssignment(std::ostream& stream) const;
+   void DisplayAssignment(std::ostream& stream, const Flags& options) const;
 
    //  Displays read/write statistics.
    //
    void DisplayStats(std::ostream& stream) const;
 private:
-   //  Overridden to return the data's type.
+   //  Returns the data's declaration.
    //
-   virtual CxxToken* RootType() const override { return spec_.get(); }
+   const Data* GetDecl() const { return (defn_ ? mate_ : this); }
+   Data* GetDecl() { return (defn_ ? mate_ : this); }
+
+   //  Returns the data's definition (if distinct from its declaration),
+   //  else its declaration.
+   //
+   const Data* GetDefn() const;
 
    //  Returns the name to be used in the initialization statement.
    //
    virtual void GetInitName(QualNamePtr& qualName) const;
 
+   //  Overridden to return the data's type.
+   //
+   virtual CxxToken* RootType() const override { return spec_.get(); }
+
    //  Executes the assignment statement that initializes the data.
    //  Returns true if such a statement existed.
    //
    bool InitByAssign();
-
-   //  Where the data was initialized (defined).
-   //
-   CxxLocation defn_;
 
    //  Set for extern data.
    //
@@ -505,6 +510,15 @@ private:
    //  Set if the data cannot be a const pointer.
    //
    bool nonconstptr_ : 1;
+
+   //  Set if this is the definition of previously declared data.
+   //
+   bool defn_ : 1;
+
+   //  If defn_ is set, the data's declaration.  If defn_ is not set,
+   //  the data's definition (if distinct from its declaration).
+   //
+   Data* mate_;
 
    //  The data's type.
    //
@@ -583,10 +597,6 @@ private:
    //
    virtual void GetInitName(QualNamePtr& qualName) const override;
 
-   //  Merges an initialization (definition) with its previous declaration.
-   //
-   bool UpdateDeclaration();
-
    //  Checks for static data in a header.
    //
    void CheckIfStatic() const;
@@ -595,10 +605,9 @@ private:
    //
    void CheckIfInitialized() const;
 
-   //  The data item's name.  The initialization of a class's data member
-   //  contains a qualified name at file scope, but the qualification is lost
-   //  when the definition merges with the original declaration.  Other data
-   //  declarations do not have qualified names (and so name_->size() == 1).
+   //  The data item's name.  The definition of static class data contains
+   //  a qualified name at file scope.  Declarations do not have qualified
+   //  names (and so name_->size() == 1).
    //
    const QualNamePtr name_;
 };
@@ -885,7 +894,7 @@ public:
 
    //  Sets the operator if the function is an operator overload.
    //
-   bool SetOperator(Cxx::Operator oper);
+   void SetOperator(Cxx::Operator oper);
 
    //  Marks the function as an inline friend function.
    //
@@ -1072,6 +1081,10 @@ public:
    //
    virtual void CheckIfHiding() const override;
 
+   //  Overridden to determine if the function is used.
+   //
+   virtual void CheckIfUsed(Warning warning) const override;
+
    //  Overridden to display the function.
    //
    virtual void Display(std::ostream& stream,
@@ -1085,13 +1098,13 @@ public:
    //
    virtual bool EnterScope() override;
 
-   //  Overridden to return the file that defined (implemented) the function.
+   //  Overridden to return the file that declared the function.
    //
-   virtual CodeFile* GetDefnFile() const override { return defn_.file; }
+   virtual CodeFile* GetDeclFile() const override;
 
-   //  Overridden to return the offset where the function is implemented.
+   //  Overridden to return the file (if any) that defined the function.
    //
-   virtual size_t GetDefnPos() const override { return defn_.GetPos(); }
+   virtual CodeFile* GetDefnFile() const override;
 
    //  Overridden to return the function itself.
    //
@@ -1105,6 +1118,14 @@ public:
    //  Overridden to handle an inline friend function.
    //
    virtual CxxScope* GetScope() const override;
+
+   //  Overridden to return a template if this function
+   //  (a) is a function template
+   //  (b) is a function template instance
+   //  (c) is a function in a class template
+   //  (d) is a function in a class template instance
+   //
+   virtual CxxScope* GetTemplate() const override;
 
    //  Overridden to return the function's return type.
    //
@@ -1153,10 +1174,6 @@ public:
    //
    virtual void RecordUsage() const override;
 
-   //  Overridden to set the file and offset where the function is implemented.
-   //
-   virtual void SetDefn(CodeFile* file, size_t pos) override;
-
    //  Overridden to shrink containers.
    //
    virtual void Shrink() override;
@@ -1178,6 +1195,11 @@ public:
    //
    virtual bool WasRead() override { ++calls_; return true; }
 private:
+   //  Returns the function's declaration.
+   //
+   const Function* GetDecl() const { return (defn_ ? mate_ : this); }
+   Function* GetDecl() { return (defn_ ? mate_ : this); }
+
    //  Adds a "this" argument to the function if required.  This occurs
    //  immediately before executing the function's code (in EnterBlock).
    //
@@ -1205,15 +1227,14 @@ private:
    //
    Function* FindBaseFunc() const;
 
-   //  If this is the implementation (definition) of a previously declared
-   //  function, merges the two functions and returns true.
+   //  Invoked on a function's declaration when its definition (FUNC) is found.
    //
-   bool UpdateDeclaration();
+   void SetDefn(Function* func);
 
-   //  Merges two functions on behalf of UpdateDeclaration.  Invoked on the
-   //  declaration, which acquires items from the definition.
+   //  Returns the function's definition (if distinct from its declaration),
+   //  else its declaration.
    //
-   void Merge(Function& defn);
+   const Function* GetDefn() const;
 
    //  Returns true if this function is overridden by CLS or one of its
    //  subclasses.
@@ -1301,20 +1322,19 @@ private:
    //
    TemplateLocation GetTemplateLocation() const;
 
+   //  Displays the function's definition.
+   //
+   void DisplayDefn(std::ostream& stream,
+      const std::string& prefix, const Flags& options) const;
+
    //  Displays information about where the function is implemented, how many
    //  many times it was overridden, and how many times it was invoked.
    //
    void DisplayInfo(std::ostream& stream, bool fq) const;
 
-   //  The function's name.  A function implementation usually has a qualified
-   //  name, but the qualification is lost when the definition is merged with
-   //  the original declaration.
+   //  The function's name.
    //
    const QualNamePtr name_;
-
-   //  Where the function was implemented.
-   //
-   CxxLocation defn_;
 
    //  Set for a function tagged as extern.
    //
@@ -1382,7 +1402,16 @@ private:
 
    //  How many times the function was invoked.
    //
-   size_t calls_ : 16;
+   size_t calls_ : 15;
+
+   //  Set if this is the definition of a previously declared function.
+   //
+   bool defn_ : 1;
+
+   //  If defn_ is set, the function's declaration.  If defn_ is not set,
+   //  the function's definition (if distinct from its declaration).
+   //
+   Function* mate_;
 
    //  The type returned by the function.
    //

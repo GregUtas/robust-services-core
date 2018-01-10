@@ -780,7 +780,7 @@ TransTrace* InvokerPool::TraceRxNet(Message& msg, const Factory& fac)
          }
       }
 
-      if(trans != nullptr) trans->TransTrace::ResumeTime(warp);
+      if(trans != nullptr) trans->ResumeTime(warp);
    }
 
    return trans;

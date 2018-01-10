@@ -158,16 +158,6 @@ extern const std::string ValidOctDigits;
 
 //------------------------------------------------------------------------------
 //
-//  A file's role in declaring and defining an item.
-//
-struct FileRole
-{
-   bool isDeclarer;  // declares item
-   bool isDefiner;   // defines item
-};
-
-//------------------------------------------------------------------------------
-//
 //  For adding and removing levels of pointer indirection and for counting
 //  arrays and references.
 //
@@ -273,6 +263,14 @@ enum TypeMatch
 //
 struct SymbolView
 {
+   //  Initializes the instance to NotAccessible.
+   //
+   SymbolView();
+
+   //  Initializes the instance to the specified values.
+   //
+   SymbolView(Accessibility a, TypeMatch m, bool u, bool f, bool r, Distance d);
+
    //  The symbol's accessibility.
    //
    Accessibility accessibility : 4;
@@ -304,12 +302,12 @@ struct SymbolView
 
 //  For initializing SymbolView instances.
 //
-constexpr SymbolView NotAccessible =
-   {Inaccessible, Compatible, false, false, true, 0};
-constexpr SymbolView DeclaredGlobally =
-   {Unrestricted, Compatible, false, false, true, 0};
-constexpr SymbolView DeclaredLocally =
-   {Declared,Compatible, false, false, true, 0};
+const SymbolView
+   NotAccessible(Inaccessible, Compatible, false, false, true, 0);
+const SymbolView
+   DeclaredGlobally(Unrestricted, Compatible, false, false, true, 0);
+const SymbolView
+   DeclaredLocally(Declared,Compatible, false, false, true, 0);
 
 //------------------------------------------------------------------------------
 //
@@ -493,6 +491,7 @@ std::ostream& operator<<(std::ostream& stream, LineType type);
 enum CodeDisplayOptions
 {
    DispFQ,    // display fully qualified name
+   DispNS,    // display namespace view (else file view)
    DispLF,    // insert optional line feed
    DispNoLF,  // omit line feed
    DispLast,  // set for the last item in a series
@@ -502,6 +501,7 @@ enum CodeDisplayOptions
 };
 
 extern const Flags FQ_Mask;
+extern const Flags NS_Mask;
 extern const Flags LF_Mask;
 extern const Flags NoLF_Mask;
 extern const Flags Last_Mask;

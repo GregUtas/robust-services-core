@@ -121,11 +121,11 @@ public:
    //
    const std::string* GetCode() const { return &code_; }
 
-   //  Returns the files #included by this file.  Used for iteration.
+   //  Returns the files #included by this file.
    //
    const SetOfIds& InclList() const { return inclIds_; }
 
-   //  Returns the files that #include this file.  Used for iteration.
+   //  Returns the files that #include this file.
    //
    const SetOfIds& UserList() const { return userIds_; }
 
@@ -218,7 +218,7 @@ public:
    //  required and which symbols require qualification to remove using
    //  statements.
    //
-   void Trim(std::ostream& stream) const;
+   void Trim(std::ostream& stream);
 
    //  Formats the file.  Returns 0 if the file was unchanged, a positive
    //  number after successful changes, and a negative number on failure,
@@ -396,10 +396,20 @@ private:
    void PruneForwardCandidates(const CxxNamedSet& forwards,
       const SetOfIds& inclIds, CxxNamedSet& addForws) const;
 
+   //  Returns the files that should be #included by this file.
+   //
+   const SetOfIds& TrimList() const { return trimIds_; }
+
    //  Looks at the file's existing forward declarations.  Those that are not
    //  needed are removed from addForws (if present) and added to delForws.
    //
    void PruneLocalForwards(CxxNamedSet& addForws, CxxNamedSet& delForws) const;
+
+   //  Searches usingFiles for a using statement that makes USER visible.  If
+   //  no such statement is found, one is created and added to addUsing.
+   //
+   void FindOrAddUsing(const CxxNamed* user,
+      const CodeFileVector usingFiles, CxxNamedSet& addUsing);
 
    //  Creates an Editor object.  Returns nullptr on failure, updating RC
    //  and EXPL with an explanation.
@@ -450,7 +460,12 @@ private:
    //
    SetOfIds inclIds_;
 
-   //  The identifiers of file that #include this one.
+   //  The identifiers of #included files.  When >trim is run on this file,
+   //  this is modified to the files that *should* be #included.
+   //
+   SetOfIds trimIds_;
+
+   //  The identifiers of files that #include this one.
    //
    SetOfIds userIds_;
 

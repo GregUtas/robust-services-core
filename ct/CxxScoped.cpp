@@ -62,11 +62,23 @@ Argument::Argument(string& name, TypeSpecPtr& spec) :
 
 //------------------------------------------------------------------------------
 
-fn_name Argument_CheckDefn = "Argument.CheckDefn";
+fn_name Argument_Check = "Argument.Check";
 
-void Argument::CheckDefn() const
+void Argument::Check() const
 {
-   Debug::ft(Argument_CheckDefn);
+   Debug::ft(Argument_Check);
+
+   spec_->Check();
+   if(name_.empty()) Log(AnonymousArgument);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Argument_CheckVoid = "Argument.CheckVoid";
+
+void Argument::CheckVoid() const
+{
+   Debug::ft(Argument_CheckVoid);
 
    if(name_.empty())
    {
@@ -78,10 +90,6 @@ void Argument::CheckDefn() const
          Log(VoidAsArgument);
          auto func = static_cast< Function* >(GetScope());
          func->DeleteVoidArg();
-      }
-      else
-      {
-         Log(AnonymousArgument);
       }
    }
 }
@@ -114,11 +122,7 @@ bool Argument::EnterScope()
       spec_->MustMatchWith(result);
    }
 
-   //  When a function has a separate declaration and definition, the latter
-   //  merges into the former.  Warnings related to the function's signature
-   //  must therefore be checked before this occurs.
-   //
-   CheckDefn();
+   CheckVoid();
    return true;
 }
 
@@ -143,11 +147,7 @@ void Argument::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    Debug::ft(Argument_GetUsages);
 
    spec_->GetUsages(file, symbols);
-
-   if((default_ != nullptr) && (GetDeclFile() == &file))
-   {
-      default_->GetUsages(file, symbols);
-   }
+   if(default_ != nullptr) default_->GetUsages(file, symbols);
 }
 
 //------------------------------------------------------------------------------
@@ -159,17 +159,6 @@ bool Argument::IsPassedByValue() const
    Debug::ft(Argument_IsPassedByValue);
 
    return ((spec_->Ptrs(true) == 0) && (spec_->Refs() == 0));
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Argument_Merge = "Argument.Merge";
-
-void Argument::Merge(Argument& that)
-{
-   Debug::ft(Argument_Merge);
-
-   std::swap(this->name_, that.name_);
 }
 
 //------------------------------------------------------------------------------
@@ -283,11 +272,10 @@ bool BaseDecl::FindReferent()
    //  Find the class to which this base class declaration refers.
    //
    SymbolView view;
-   auto item = ResolveName(GetDeclFile(), GetScope(), CLASS_MASK, &view);
+   auto item = ResolveName(GetFile(), GetScope(), CLASS_MASK, &view);
 
    if(item != nullptr)
    {
-      name_->SetReferent(item);
       using_ = view.using_;
       item->SetAsReferent(this);
       return true;
@@ -517,7 +505,7 @@ Accessibility CxxScoped::FileScopeAccessiblity() const
    Debug::ft(CxxScoped_FileScopeAccessiblity);
 
    if(IsInTemplateInstance()) return Unrestricted;
-   if(GetDeclFile()->IsCpp()) return Restricted;
+   if(GetFile()->IsCpp()) return Restricted;
    return Unrestricted;
 }
 
@@ -534,25 +522,6 @@ CxxScoped* CxxScoped::FindInheritedName() const
    auto base = cls->BaseClass();
    if(base == nullptr) return nullptr;
    return base->FindName(*Name(), nullptr);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CxxScoped_GetFileRole = "CxxScoped.GetFileRole";
-
-FileRole CxxScoped::GetFileRole(const CodeFile* file) const
-{
-   Debug::ft(CxxScoped_GetFileRole);
-
-   FileRole role = {false, false};
-   if(file == nullptr) return role;
-   role.isDeclarer = (GetDeclFile() == file);
-   auto defn = GetDefnFile();
-   if(defn == nullptr)
-      role.isDefiner = role.isDeclarer;
-   else
-      role.isDefiner = (defn == file);
-   return role;
 }
 
 //------------------------------------------------------------------------------
@@ -630,18 +599,15 @@ bool CxxScoped::NameRefersToItem(const std::string& name,
 {
    Debug::ft(CxxScoped_NameRefersToItem);
 
-   //  Start by assuming the worst.
+   //  If this item was not declared in a file, it's a built-in type and is
+   //  therefore visible.  If NAME is a template specification, assume that
+   //  it is visible.
+   //c Verify the visibility of each component in a template specification.
+   //  Not doing so forced Lexer::TypesTable to be renamed from TypeTable so
+   //  that it could be distinguished from CxxSymbols::TypeTable, preventing
+   //  a false "doubly declared identifier" error.
    //
-   *view = NotAccessible;
-
-   //  Assume that NAME is visible if it was not declared in a file, in
-   //  which case it is a built-in.  Also assume that NAME is visible if
-   //  it's a template specification.
-   //c Verify the visibility of each component in NAME.  Not doing so
-   //  forced Lexer::TypeTable to be renamed to TypesTable so that it
-   //  could be distinguished from CxxSymbols::TypeTable.
-   //
-   auto itemFile = GetDeclFile();
+   auto itemFile = GetFile();
 
    if((name.find('<') != string::npos) || (itemFile == nullptr))
    {
@@ -799,7 +765,7 @@ void Enum::AddEnumerator(string& name, ExprPtr& init, size_t pos)
    Debug::ft(Enum_AddEnumerator);
 
    auto etor = EnumeratorPtr(new Enumerator(name, init, this));
-   etor->SetDecl(GetDeclFile(), pos);
+   etor->SetPos(GetFile(), pos);
    etor->SetScope(GetScope());
    etor->SetAccess(GetAccess());
    etors_.push_back(std::move(etor));
@@ -899,7 +865,7 @@ void Enum::EnterBlock()
 {
    Debug::ft(Enum_EnterBlock);
 
-   Context::SetPos(GetDeclPos());
+   Context::SetPos(GetPos());
    SetScope(Context::Scope());
 
    for(auto e = etors_.cbegin(); e != etors_.cend(); ++e)
@@ -916,7 +882,7 @@ bool Enum::EnterScope()
 {
    Debug::ft(Enum_EnterScope);
 
-   if(AtFileScope()) GetDeclFile()->InsertEnum(this);
+   if(AtFileScope()) GetFile()->InsertEnum(this);
 
    for(auto e = etors_.cbegin(); e != etors_.cend(); ++e)
    {
@@ -1064,7 +1030,7 @@ void Enumerator::EnterBlock()
 {
    Debug::ft(Enumerator_EnterBlock);
 
-   Context::SetPos(GetDeclPos());
+   Context::SetPos(GetPos());
    SetScope(Context::Scope());
 
    if(init_ != nullptr)
@@ -1257,7 +1223,7 @@ bool Forward::EnterScope()
 {
    Debug::ft(Forward_EnterScope);
 
-   if(AtFileScope()) GetDeclFile()->InsertForw(this);
+   if(AtFileScope()) GetFile()->InsertForw(this);
    return true;
 }
 
@@ -1432,7 +1398,7 @@ void Friend::Display(ostream& stream,
       DisplayReferent(stream, fq);
 
       auto forw = name_->GetForward();
-      if(forw != nullptr) stream << " via " << forw->GetDeclFile()->Name();
+      if(forw != nullptr) stream << " via " << forw->GetFile()->Name();
    }
 
    stream << CRLF;
@@ -1481,8 +1447,9 @@ CxxNamed* Friend::FindForward() const
    CxxScoped* item = GetScope();
    auto func = GetFunction();
    auto qname = GetQualName();
-   auto size = qname->Names_size();
-   string name = *qname->Names_at(0)->Name();
+   auto& names = qname->Names();
+   auto size = names.size();
+   string name = *names.at(0)->Name();
    size_t idx = (*item->Name() == name ? 1 : 0);
    Namespace* space;
    Class* cls;
@@ -1503,13 +1470,14 @@ CxxNamed* Friend::FindForward() const
          //
          if(idx >= size) return item;
          space = static_cast< Namespace* >(item);
-         name = *qname->Names_at(idx)->Name();
+         name = *names.at(idx)->Name();
          item = nullptr;
          if(++idx >= size)
          {
             if(func != nullptr) item = space->MatchFunc(func, false);
          }
          if(item == nullptr) item = space->FindItem(name);
+         qname->SetReferent(idx - 1, item, nullptr);
          if(item == nullptr) return nullptr;
          break;
 
@@ -1524,13 +1492,13 @@ CxxNamed* Friend::FindForward() const
             //
             if(idx == 0) break;
             if(cls->IsInTemplateInstance()) break;
-            auto curr = qname->Names_at(idx - 1);
-            auto args = curr->GetTemplateArgs();
+            auto args = names.at(idx - 1)->GetTemplateArgs();
             if(args == nullptr) break;
             if(!ResolveTemplate(cls, args, (idx >= size))) break;
             cls = cls->EnsureInstance(args);
-            if(cls == nullptr) return nullptr;
             item = cls;
+            qname->SetReferent(idx - 1, item, nullptr);  // updated value
+            if(item == nullptr) return nullptr;
          }
          while(false);
 
@@ -1538,13 +1506,14 @@ CxxNamed* Friend::FindForward() const
          //  when TYPE is a namespace.
          //
          if(idx >= size) return item;
-         name = *qname->Names_at(idx)->Name();
+         name = *names.at(idx)->Name();
          item = nullptr;
          if(++idx >= size)
          {
             if(func != nullptr) item = cls->MatchFunc(func, true);
          }
          if(item == nullptr) item = cls->FindMember(name, true);
+         qname->SetReferent(idx - 1, item, nullptr);
          if(item == nullptr) return nullptr;
          break;
 
@@ -1554,10 +1523,11 @@ CxxNamed* Friend::FindForward() const
             //
             auto tdef = static_cast< Typedef* >(item);
             tdef->SetAsReferent(this);
-            if(!ResolveTypedef(tdef)) return tdef;
+            if(!ResolveTypedef(tdef, idx - 1)) return tdef;
             auto root = tdef->Root();
             if(root == nullptr) return tdef;
             item = static_cast< CxxScoped* >(root);
+            qname->SetReferent(idx - 1, item, nullptr);  // updated value
          }
          break;
 
@@ -1609,7 +1579,7 @@ bool Friend::FindReferent()
       //
       searched_ = true;
       SetScope(scope->GetSpace());
-      ref = ResolveName(GetDeclFile(), scope, mask, &view);
+      ref = ResolveName(GetFile(), scope, mask, &view);
       if(ref != nullptr) using_ = view.using_;
    }
 
@@ -1682,7 +1652,8 @@ void Friend::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
          if(outer != nullptr)
          {
-            if(outer->GetTemplate() != nullptr) outer = outer->GetTemplate();
+            if(outer->GetTemplate() != nullptr)
+               outer = outer->GetClassTemplate();
             symbols.AddDirect(outer);
          }
          else if(ref->GetTemplateArgs() != nullptr)
@@ -1748,7 +1719,7 @@ CxxNamed* Friend::Referent() const
 
 fn_name Friend_ResolveForward = "Friend.ResolveForward";
 
-bool Friend::ResolveForward(CxxScoped* decl) const
+bool Friend::ResolveForward(CxxScoped* decl, size_t n) const
 {
    Debug::ft(Friend_ResolveForward);
 
@@ -1757,7 +1728,7 @@ bool Friend::ResolveForward(CxxScoped* decl) const
    //  and continue resolving the name.
    //
    if(decl == this) return false;
-   name_->SetForward(decl);
+   name_->Names().at(n)->SetForward(decl);
    decl->SetAsReferent(this);
    SetScope(decl->GetSpace());
    return true;
@@ -2015,6 +1986,7 @@ void Typedef::Check() const
 {
    Debug::ft(Typedef_Check);
 
+   spec_->Check();
    CheckIfUsed(TypedefUnused);
    CheckIfHiding();
    CheckAccessControl();
@@ -2074,7 +2046,7 @@ void Typedef::EnterBlock()
 {
    Debug::ft(Typedef_EnterBlock);
 
-   Context::SetPos(GetDeclPos());
+   Context::SetPos(GetPos());
    SetScope(Context::Scope());
    spec_->EnteringScope(GetScope());
    refs_ = 0;
@@ -2088,7 +2060,7 @@ bool Typedef::EnterScope()
 {
    Debug::ft(Typedef_EnterScope);
 
-   if(AtFileScope()) GetDeclFile()->InsertType(this);
+   if(AtFileScope()) GetFile()->InsertType(this);
    Context::Enter(this);
    spec_->EnteringScope(GetScope());
    refs_ = 0;
@@ -2171,10 +2143,11 @@ string Typedef::TypeString(bool arg) const
 
 fn_name Using_ctor = "Using.ctor";
 
-Using::Using(QualNamePtr& name, bool space) :
+Using::Using(QualNamePtr& name, bool space, bool added) :
    name_(name.release()),
    users_(0),
-   local_(false),
+   added_(added),
+   remove_(false),
    space_(space)
 {
    Debug::ft(Using_ctor);
@@ -2190,8 +2163,9 @@ void Using::Check() const
 {
    Debug::ft(Using_Check);
 
+   if(added_) return;
    if(users_ == 0) Log(UsingUnused);
-   if(GetDeclFile()->IsHeader()) Log(UsingInHeader);
+   if(GetFile()->IsHeader()) Log(UsingInHeader);
 }
 
 //------------------------------------------------------------------------------
@@ -2199,6 +2173,8 @@ void Using::Check() const
 void Using::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
+   if(added_) return;
+
    auto fq = options.test(DispFQ);
    stream << prefix << USING_STR << SPACE;
    if(space_) stream << NAMESPACE_STR << SPACE;
@@ -2222,7 +2198,7 @@ void Using::EnterBlock()
 {
    Debug::ft(Using_EnterBlock);
 
-   Context::SetPos(GetDeclPos());
+   Context::SetPos(GetPos());
    SetScope(Context::Scope());
    Block::AddUsing(this);
    FindReferent();
@@ -2282,23 +2258,17 @@ bool Using::IsUsingFor(const string& name, size_t prefix) const
    //
    auto ref = Referent();
    if(ref == nullptr) return false;
-   auto refname = ref->ScopedName(false);
 
+   auto refname = ref->ScopedName(false);
    auto pos = NameIsSuperscopeOf(name, refname);
 
    if((pos != string::npos) && (pos >= prefix))
    {
-      auto file = Context::File();
-
       //  If there is no context file, a parse is not in progress, in which
       //  case a tool is invoking this after the parse was completed.
       //
-      if(file != nullptr)
-      {
-         ++users_;
-         if(GetDeclFid() == file->Fid()) local_ = true;
-      }
-
+      auto file = Context::File();
+      if(file != nullptr) ++users_;
       return true;
    }
 
@@ -2317,9 +2287,7 @@ CxxNamed* Using::Referent() const
    if(ref != nullptr) return ref;
 
    SymbolView view;
-   ref = ResolveName(GetDeclFile(), GetScope(), USING_REFS, &view);
-   name_->SetReferent(ref);
-   return ref;
+   return ResolveName(GetFile(), GetScope(), USING_REFS, &view);
 }
 
 //------------------------------------------------------------------------------

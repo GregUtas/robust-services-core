@@ -411,7 +411,7 @@ void Class::BlockCopied(const StackArg* arg)
    if(copied_) return;
    copied_ = true;
 
-   if(GetDeclFile()->IsSubsFile()) return;
+   if(GetFile()->IsSubsFile()) return;
 
    auto data = Datas();
 
@@ -713,7 +713,7 @@ void Class::CheckRuleOfThree() const
 {
    Debug::ft(Class_CheckRuleOfThree);
 
-   if(GetDeclFile()->IsSubsFile()) return;
+   if(GetFile()->IsSubsFile()) return;
 
    auto dtor = FindDtor();
    auto copyCtor = FindFuncByRole(CopyCtor, true);
@@ -812,10 +812,10 @@ size_t Class::CreateCode(const ClassInst* inst, stringPtr& code) const
 
    if(code_ == nullptr)
    {
-      //  This is the first instantiation, so get class template's code.
+      //  This is the first instantiation, so get the class template's code.
       //
       std::ostringstream stream;
-      Display(stream, EMPTY_STR, Flags(Code_Mask | NoTP_Mask));
+      Display(stream, EMPTY_STR, Flags(NS_Mask | Code_Mask | NoTP_Mask));
       code_.reset(new string(stream.str()));
    }
 
@@ -892,7 +892,7 @@ ClassInst* Class::CreateInstance(const string& name, const TypeName* type)
    tmplts_.push_back(std::move(tmplt));
 
    inst->SetScope(GetScope());
-   inst->SetDecl(GetDeclFile(), GetDeclPos());
+   inst->SetPos(GetFile(), GetPos());
    return inst;
 }
 
@@ -1093,7 +1093,7 @@ bool Class::EnterScope()
 {
    Debug::ft(Class_EnterScope);
 
-   if(AtFileScope()) GetDeclFile()->InsertClass(this);
+   if(AtFileScope()) GetFile()->InsertClass(this);
    return true;
 }
 
@@ -1266,6 +1266,14 @@ CxxScoped* Class::FindName(const string& name, const Class* base) const
 
 //------------------------------------------------------------------------------
 
+Class* Class::GetClassTemplate() const
+{
+   if(!IsTemplate()) return nullptr;
+   return const_cast< Class* >(this);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Class_GetConvertibleTypes = "Class.GetConvertibleTypes";
 
 void Class::GetConvertibleTypes(StackArgVector& types)
@@ -1372,10 +1380,10 @@ void Class::GetMemberInitAttrs(DataInitVector& members) const
 
 //------------------------------------------------------------------------------
 
-Class* Class::GetTemplate() const
+CxxScope* Class::GetTemplate() const
 {
    if(!IsTemplate()) return nullptr;
-   return const_cast< Class* >(this);
+   return static_cast< CxxScope* >(const_cast< Class* >(this));
 }
 
 //------------------------------------------------------------------------------
@@ -1987,6 +1995,10 @@ bool CxxArea::AddData(DataPtr& data)
       AddItem(data.get());
       data_.push_back(std::move(data));
    }
+   else
+   {
+      defns_.push_back(std::move(data));
+   }
 
    return true;
 }
@@ -2050,6 +2062,10 @@ bool CxxArea::AddFunc(FunctionPtr& func)
          opers_.push_back(std::move(func));
       else
          funcs_.push_back(std::move(func));
+   }
+   else
+   {
+      defns_.push_back(std::move(func));
    }
 
    return true;
@@ -2391,6 +2407,11 @@ void CxxArea::Shrink()
       (*t)->Shrink();
    }
 
+   for(auto d = defns_.cbegin(); d != defns_.cend(); ++d)
+   {
+      (*d)->Shrink();
+   }
+
    auto size = classes_.capacity() * sizeof(ClassPtr);
    size += (data_.capacity() * sizeof(DataPtr));
    size += (enums_.capacity() * sizeof(EnumPtr));
@@ -2398,6 +2419,7 @@ void CxxArea::Shrink()
    size += (funcs_.capacity() * sizeof(FunctionPtr));
    size += (opers_.capacity() * sizeof(FunctionPtr));
    size += (types_.capacity() * sizeof(TypedefPtr));
+   size += (defns_.capacity() * sizeof(TypedefPtr));
 
    if(Type() == Cxx::Namespace)
    {
@@ -2446,8 +2468,7 @@ void Namespace::AccessibilityOf
 {
    Debug::ft(Namespace_AccessibilityOf);
 
-   view->accessibility =
-      (item->GetDeclFile()->IsCpp() ? Restricted : Unrestricted);
+   view->accessibility = (item->GetFile()->IsCpp() ? Restricted : Unrestricted);
    view->distance = scope->ScopeDistance(this);
 }
 
@@ -2599,13 +2620,13 @@ string Namespace::ScopedName(bool templates) const
 
 //------------------------------------------------------------------------------
 
-fn_name Namespace_SetDecl = "Namespace.SetDecl";
+fn_name Namespace_SetPos = "Namespace.SetPos";
 
-void Namespace::SetDecl(CodeFile* file, size_t pos)
+void Namespace::SetPos(CodeFile* file, size_t pos)
 {
-   Debug::ft(Namespace_SetDecl);
+   Debug::ft(Namespace_SetPos);
 
-   if(GetDeclFile() == nullptr) CxxNamed::SetDecl(file, pos);
+   if(GetFile() == nullptr) CxxNamed::SetPos(file, pos);
 }
 
 //------------------------------------------------------------------------------

@@ -192,7 +192,7 @@ bool Define::EnterScope()
    if(!defined_) return true;
 
    Context::File()->InsertMacro(this);
-   Context::SetPos(GetDeclPos());
+   Context::SetPos(GetPos());
    if(!AtFileScope()) Log(DefineNotAtFileScope);
 
    if(rhs_ != nullptr)
@@ -260,7 +260,7 @@ bool Elif::EnterScope()
    //  Compile the code that follows the #elif if its #if has not yet compiled
    //  any code and the condition following the #elif evaluates to true.
    //
-   Context::SetPos(GetDeclPos());
+   Context::SetPos(GetPos());
    auto iff = Context::Optional();
    if(iff->HasCompiledCode()) return false;
    if(!Conditional::EnterScope()) return false;
@@ -300,7 +300,7 @@ bool Else::EnterScope()
    //  Compile the code that follows the #else if its #if/#ifdef/#ifndef has
    //  not yet compiled any code.
    //
-   Context::SetPos(GetDeclPos());
+   Context::SetPos(GetPos());
    auto ifx = Context::Optional();
    return !ifx->HasCompiledCode();
 }
@@ -353,7 +353,7 @@ bool Error::EnterScope()
 {
    Debug::ft(Error_EnterScope);
 
-   Context::SetPos(GetDeclPos());
+   Context::SetPos(GetPos());
    Context::SwErr(Error_EnterScope, GetText(), 0);
    return true;
 }
@@ -443,7 +443,7 @@ bool Ifdef::EnterScope()
    //  Compile the code that follows the #ifdef if the symbol that follows
    //  it has been defined.
    //
-   Context::SetPos(GetDeclPos());
+   Context::SetPos(GetPos());
    Context::PushOptional(this);
    if(!Existential::SymbolDefined()) return false;
    SetCompile();
@@ -509,7 +509,7 @@ bool Iff::EnterScope()
    //  Compile the code that follows the #if if the condition that follows
    //  evalutes to true.
    //
-   Context::SetPos(GetDeclPos());
+   Context::SetPos(GetPos());
    Context::PushOptional(this);
    if(!Conditional::EnterScope()) return false;
    SetCompile();
@@ -575,7 +575,7 @@ bool Ifndef::EnterScope()
    //  Compile the code that follows the #ifdef if the symbol that follows
    //  it has not been defined.
    //
-   Context::SetPos(GetDeclPos());
+   Context::SetPos(GetPos());
    Context::PushOptional(this);
    if(Existential::SymbolDefined()) return false;
    SetCompile();

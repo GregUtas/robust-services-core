@@ -41,13 +41,11 @@ namespace CodeTools
 {
 //  Where a C++ item was declared or defined.
 //
-struct CxxLocation
+class CxxLocation
 {
    friend class CxxNamed;
 public:
    CxxLocation() : file(nullptr), pos(std::string::npos), internal(false) { }
-
-   void SetLoc(CodeFile* f, size_t p) { file = f; pos = p; }
 
    size_t GetPos() const
    {
@@ -56,12 +54,24 @@ public:
       else
          return pos;
    }
-
-   CodeFile* file;     // the file where the item appeared
 private:
-   size_t pos : 31;    // the item's location (character offset) in that file
-   bool internal : 1;  // set if the item appeared in internally generated code
-                       // (e.g. in a template instance)
+   //  Records an item's location in source code.
+   //
+   void SetLoc(CodeFile* f, size_t p) { file = f; pos = p; }
+
+   //  The file in which the item appeared.
+   //
+   CodeFile* file;
+
+   //  The item's location in FILE.  The file has a string member which
+   //  contains the code, and this is an index into that string.
+   //
+   size_t pos : 31;
+
+   //  Set if the item appeared in internally generated code, which currently
+   //  means in a template instance.
+   //
+   bool internal : 1;
 };
 
 //------------------------------------------------------------------------------
@@ -99,26 +109,23 @@ public:
 
    //  Returns the file in which this item was found.
    //
-   CodeFile* GetDeclFile() const { return decl_.file; }
+   CodeFile* GetFile() const { return loc_.file; }
 
-   //  Returns the offset at which the item was found.  The item's file has a
-   //  string member which contains the code, and the offset is an index into
-   //  that string.
+   //  Returns the offset at which the item was found.
    //
-   size_t GetDeclPos() const { return decl_.GetPos(); }
+   size_t GetPos() const { return loc_.GetPos(); }
 
    //  Sets the file and offset at which this item was found.
    //
-   virtual void SetDecl(CodeFile* file, size_t pos) { decl_.SetLoc(file, pos); }
+   virtual void SetPos(CodeFile* file, size_t pos) { loc_.SetLoc(file, pos); }
 
-   //  Indicates that the item appeared in internally generated code
-   //  (which currently means within a template instance).
+   //  Indicates that the item appeared in internally generated code.
    //
-   void SetInternal() { decl_.internal = true; }
+   void SetInternal() { loc_.internal = true; }
 
    //  Returns true if the item appeared in internally generated code.
    //
-   bool IsInternal() const { return decl_.internal; }
+   bool IsInternal() const { return loc_.internal; }
 
    //  Returns true if the item was declared in a function's code block
    //  or argument list.
@@ -163,9 +170,9 @@ public:
    //
    bool IsTemplate() const { return GetTemplateParms() != nullptr; }
 
-   //  Returns the class template, if any, associated with a class.
+   //  Returns the template, if any, associated with a class or function.
    //
-   virtual Class* GetTemplate() const { return nullptr; }
+   virtual CxxScope* GetTemplate() const { return nullptr; }
 
    //  Returns the qualified name as it appeared in the source code.  Includes
    //  prefixed scopes if SCOPES is set and template arguments if TEMPLATES is
@@ -199,9 +206,21 @@ public:
    //
    virtual Cxx::Access GetAccess() const { return Cxx::Public; }
 
+   //  Returns the file that *declared* the item.  Declaration is distinct
+   //  from definition for extern data and functions, and often for static
+   //  class data.  Such items appear twice, with one being the declaration
+   //  and the other the definition.
+   //
+   virtual CodeFile* GetDeclFile() const { return GetFile(); }
+
    //  Returns the identifier of the file in which the item was declared.
    //
    virtual id_t GetDeclFid() const;
+
+   //  Returns the file that *defined* the item.  Returns nullptr if the
+   //  item has no definition or if it was defined where it was declared.
+   //
+   virtual CodeFile* GetDefnFile() const { return nullptr; }
 
    //  Returns true if the item was declared at file scope.
    //
@@ -209,7 +228,7 @@ public:
 
    //  Invoked before adding the item to the current scope (Context::Scope()).
    //  Returning false indicates that
-   //  o for a C++ item, that it should be deleted, not added to the scope;
+   //  o for a C++ item, that it is a definition of a previous declaration;
    //  o for a preprocessor directive, that the code that follows it should
    //    not be compiled.
    //
@@ -230,7 +249,7 @@ public:
    //
    virtual bool IsImplemented() const { return true; }
 
-   //  Returns the item's direct type, which could be a typedef or forward.
+   //  Returns the item's direct type, which could be a typedef or forward
    //  declaration.  To follow either of these to the final underlying type,
    //  use CxxToken.Root.
    //
@@ -323,9 +342,10 @@ protected:
 
    //  Invoked when ResolveName finds TYPE, a typedef.  If it returns false,
    //  ResolveName returns TYPE.  Otherwise, name resolution continues with
-   //  TYPE's referent (its underlying type).
+   //  TYPE's referent (its underlying type).  In a qualified name, N is the
+   //  index of the name associated with the typedef.
    //
-   virtual bool ResolveTypedef(Typedef* type) const { return true; }
+   virtual bool ResolveTypedef(Typedef* type, size_t n) const { return true; }
 
    //  Invoked when ResolveName finds ARGS, template arguments for CLS.  END
    //  is set if the arguments are attached to the last name in the qualified
@@ -339,21 +359,18 @@ protected:
    //
    void AddUsage() const;
 private:
-   //  Invoked when ResolveName finds DECL, a forward or friend declaration.
-   //  If it returns false, ResolveName returns DECL.  Otherwise, name
-   //  resolution continues with DECL's referent (the class or function to
-   //  which it refers).  If this is still unknown, DECL is returned.
+   //  Invoked when ResolveName finds DECL, a forward or friend declaration,
+   //  when resolving the Nth name in a possibly qualified name.  If it
+   //  returns false, ResolveName returns DECL.  Otherwise, name resolution
+   //  continues with DECL's referent (the class or function to which it
+   //  refers).  If this is still unknown, DECL is returned.
    //
-   virtual bool ResolveForward(CxxScoped* decl) const { return false; }
+   virtual bool ResolveForward
+      (CxxScoped* decl, size_t n) const { return false; }
 
-   //  Invoked when ResolveName finds an item through a qualified name that
-   //  includes a subclass name (derived::member instead of base::member).
+   //  The location where the item appeared.
    //
-   virtual void SubclassAccess(Class* cls) const { }
-
-   //  The location where the item was declared.
-   //
-   CxxLocation decl_;
+   CxxLocation loc_;
 };
 
 //------------------------------------------------------------------------------
@@ -452,7 +469,7 @@ public:
    //
    void SetLocale(Cxx::ItemType locale) const;
 
-   //  Sets oper_ when an operator follows the final name.
+   //  Invoked when an operator follows the last name, which is "operator".
    //
    void SetOperator(Cxx::Operator oper);
 
@@ -460,61 +477,48 @@ public:
    //
    void MoveTemplateParms(CxxScoped* item);
 
-   //  Returns the number of names.
+   //  Returns the names that comprise the qualified name.
    //
-   size_t Names_size() const;
+   const TypeNamePtrVector& Names() const { return names_; }
 
-   //  Returns the Nth name.
-   //
-   TypeName* Names_at(size_t idx) const;
-
-   //  Returns the last name.
-   //
-   TypeName* Names_back() const;
-
-   //  Returns the operator, if any, that follows the final name.
+   //  Returns the operator, if any, that follows the last name.
    //
    Cxx::Operator Operator() const { return oper_; }
 
-   //  Sets the name's referent.  If the name appears in executable code, this
-   //  is used by QualName.EnterBlock and Operation.PushMember.  It is also
+   //  Sets the referent of the Nth name to ITEM.  VIEW provides information
+   //  about how the name was resolved.  If name resolution failed, ITEM will
+   //  be nullptr.  If whoever requested name resolution did not provide a
+   //  SymbolView, VIEW will be nullptr.
+   //
+   void SetReferent(size_t n, CxxNamed* item, SymbolView* view) const;
+
+   //  Sets the last name's referent.  This is used by QualName.EnterBlock and
+   //  Operation.PushMember when a name appears in executable code.  It is also
    //  used by classes that contain a QualName member and that find a referent.
    //  Those classes do not contain executable code, so they can safely use the
-   //  ref_ field because a QualName only uses it when it appears in executable
-   //  code.
+   //  last name's ref_ field because it is normally used only when it appears
+   //  in executable code.
    //
    bool SetReferent(CxxNamed* ref) const;
 
-   //  Returns the referent.  This is used in conjunction with SetReferent.  The
-   //  class that contains a QualName instance cannot use the Referent function
-   //  (overridden below) to access the referent because, if it is nullptr, the
-   //  QualName will try to find it, starting with local variables.
+   //  Returns the last name's referent.  This is used in conjunction with
+   //  SetReferent.  A class that contains a QualName instance cannot use the
+   //  Referent function (overridden below) to access the referent because,
+   //  if it is nullptr, the QualName will try to find it, starting with local
+   //  variables.
    //
-   CxxNamed* GetReferent() const { return ref_; }
+   CxxNamed* GetReferent() const;
 
-   //  Records the typedef when ResolveTypedef returns true.
-   //
-   void SetTypedef(CxxNamed* type) const;
-
-   //  Records the forward declaration when ResolveForward returns true.
-   //
-   void SetForward(CxxScoped* decl) const;
-
-   //  Returns the forward declaration recorded by SetForward.
+   //  Returns the last forward declaration in names_.
    //
    CxxScoped* GetForward() const;
 
-   //  Invoked when the name accesses MEM via CLS.  Sets the referent to MEM
-   //  and records CLS as the type through which it was accessed.
+   //  Invoked when the name accesses MEM via CLS.  Forwards to the first name
+   //  that has no referent and that matches MEM's name.
    //
    void MemberAccessed(Class* cls, CxxNamed* mem) const;
 
-   //  Invoked by GetUsages to add, to directly used symbols, the class (if
-   //  any) whose member was accessed by the name.
-   //
-   void GetClassUsage(const CodeFile& file, CxxUsageSets& symbols) const;
-
-   //  Invokes MatchTemplate on each entry in names_, returing the least
+   //  Invokes MatchTemplate on each entry in names_, returning the least
    //  favorable result.
    //
    TypeMatch MatchTemplate(const QualName* that,
@@ -524,7 +528,11 @@ public:
    //
    bool CheckCtorDefn() const;
 
-   //  Overridden to return type_ if it differs from ref_.
+   //  Overridden to check each name and any template parameters.
+   //
+   virtual void Check() const override;
+
+   //  Overridden to forward to names_.back().
    //
    virtual CxxNamed* DirectType() const override;
 
@@ -551,8 +559,8 @@ public:
    virtual void GetUsages
       (const CodeFile& file, CxxUsageSets& symbols) const override;
 
-   //  Overridden to return the unqualified name (the name after the last
-   //  scope resolution operator).
+   //  Overridden to return the name after the last scope resolution
+   //  operator.
    //
    virtual const std::string* Name() const override;
 
@@ -565,13 +573,13 @@ public:
    virtual std::string QualifiedName
       (bool scopes, bool templates) const override;
 
-   //  Overridden to return what the name refers to.
+   //  Overridden to return the referent of the last name.
    //
    virtual CxxNamed* Referent() const override;
 
-   //  Overridden to record and resolve the typedef.
+   //  Overridden to forward to names_[n].
    //
-   virtual bool ResolveTypedef(Typedef* type) const override;
+   virtual bool ResolveTypedef(Typedef* type, size_t n) const override;
 
    //  Overridden to instantiate the template unless END is set.
    //
@@ -586,10 +594,6 @@ public:
    //
    virtual void Shrink() override;
 
-   //  Overridden to record access through a subclass name.
-   //
-   virtual void SubclassAccess(Class* cls) const override;
-
    //  Overridden to reveal that this is a qualified name.
    //
    virtual Cxx::ItemType Type() const override { return Cxx::QualName; }
@@ -598,39 +602,13 @@ public:
    //
    virtual std::string TypeString(bool arg) const override;
 private:
-   //  Invoked when an error occurs in Referent().
+   //  The name(s).
    //
-   CxxNamed* ReferentError(const std::string& item, debug32_t offset) const;
-
-   union
-   {
-      TypeName* name_;            // an unqualified name
-      TypeNamePtrVector* names_;  // the names in a qualified name
-   };
-
-   //  What the name refers to.
-   //
-   mutable CxxNamed* ref_;
-
-   //  The class, if any, through which the name was accessed.
-   //
-   mutable Class* class_;
+   TypeNamePtrVector names_;
 
    //  The template parameters if the name declares a template.
    //
    TemplateParmsPtr parms_;
-
-   //  The typedef, if any, resolved via ResolveTypedef.
-   //
-   mutable CxxNamed* type_;
-
-   //  The forward declaration, if any, resolved via ResolveForward.
-   //
-   mutable CxxScoped* forw_;
-
-   //  Set if ref_ was made visible by a using statement.
-   //
-   mutable bool using_ : 8;
 
    //  The operator, if any, that follows the final name.
    //
@@ -639,10 +617,6 @@ private:
    //  Set if the name begins with a scope resolution operator.
    //
    bool global_ : 8;
-
-   //  Set if there are multiple names (using names_ instead of name_).
-   //
-   bool qualified_ : 8;
 };
 
 //------------------------------------------------------------------------------
@@ -708,6 +682,37 @@ public:
    TypeMatch MatchTemplate(const TypeName* that,
       stringVector& tmpltParms, stringVector& tmpltArgs, bool& argFound) const;
 
+   //  Invoked when the name accesses MEM via CLS.  Sets the referent to MEM
+   //  and records CLS as the type through which it was accessed.
+   //
+   void MemberAccessed(Class* cls, CxxNamed* mem) const;
+
+   //  Invoked when the name is that of a member which a qualified name
+   //  accessed via a subclass (derived::member instead of base::member).
+   //
+   void SubclassAccess(Class* cls) const;
+
+   //  Records the forward declaration when ResolveForward returns true.
+   //
+   void SetForward(CxxScoped* decl) const { forw_ = decl; }
+
+   //  Returns the forward declaration recorded by SetForward.
+   //
+   CxxScoped* GetForward() const { return forw_; }
+
+   //  Sets the name's referent to ITEM.  VIEW provides information about
+   //  how the name was resolved.
+   //
+   void SetReferent(CxxNamed* item, const SymbolView* view) const;
+
+   //  Overridden to check template arguments.
+   //
+   virtual void Check() const override;
+
+   //  Overridden to return type_ if it exists, else ref_.
+   //
+   virtual CxxNamed* DirectType() const override;
+
    //  Overridden to invoke FindReferent on each template argument.
    //
    virtual bool FindReferent() override;
@@ -734,6 +739,14 @@ public:
    virtual std::string QualifiedName
       (bool scopes, bool templates) const override;
 
+   //  Overridden to return what the name refers to.
+   //
+   virtual CxxNamed* Referent() const override { return ref_; }
+
+   //  Overridden to record and resolve the typedef.
+   //
+   virtual bool ResolveTypedef(Typedef* type, size_t n) const override;
+
    //  Overridden to shrink containers.
    //
    virtual void Shrink() override;
@@ -750,6 +763,26 @@ private:
    //  Any template arguments if the name is that of a template.
    //
    std::unique_ptr< TypeSpecPtrVector > args_;
+
+   //  What the name refers to.
+   //
+   mutable CxxNamed* ref_;
+
+   //  The class, if any, through which the name was accessed.
+   //
+   mutable Class* class_;
+
+   //  The typedef, if any, resolved via ResolveTypedef.
+   //
+   mutable CxxNamed* type_;
+
+   //  The forward declaration, if any, resolved via ResolveForward.
+   //
+   mutable CxxScoped* forw_;
+
+   //  Set if ref_ was made visible by a using statement.
+   //
+   mutable bool using_;
 };
 
 //------------------------------------------------------------------------------
@@ -1030,12 +1063,8 @@ private:
    //
    virtual CxxToken* AutoType() const override { return (CxxToken*) this; }
 
-   //  Overridden to find the type's referent and to log warnings associated
-   //  with its specification.  Because it verifies that pointer and reference
-   //  tags are attached to types, not names, the parser invokes it during the
-   //  parse phase.  The reason is that a TypeSpec gets deleted when a data or
-   //  function definition is merged into its original declaration, so the
-   //  checks must occur before this happens.
+   //  Overridden to verify that pointer and reference tags are attached to
+   //  types, not names.
    //
    virtual void Check() const override;
 
@@ -1182,19 +1211,19 @@ private:
    //
    virtual void RemoveRefs() override;
 
-   //  Overridden to return the forward declaration unless it has template
+   //  Overridden to resolve the forward declaration only if it has template
    //  arguments.
    //
-   virtual bool ResolveForward(CxxScoped* decl) const override;
+   virtual bool ResolveForward(CxxScoped* decl, size_t n) const override;
 
    //  Overridden to determine if EnsureInstance should be invoked.
    //
    virtual bool ResolveTemplate
       (Class* cls, const TypeName* args, bool end) const override;
 
-   //  Overridden to return the typedef unless it has template arguments.
+   //  Overridden to resolve the typedef unless it has template arguments.
    //
-   virtual bool ResolveTypedef(Typedef* type) const override;
+   virtual bool ResolveTypedef(Typedef* type, size_t n) const override;
 
    //  Overridden to construct an argument based on the type of referent and
    //  the level of pointer indirection to it.
@@ -1249,10 +1278,6 @@ private:
    //  Overridden to shrink containers.
    //
    virtual void Shrink() override;
-
-   //  Overridden to record access through a subclass name.
-   //
-   virtual void SubclassAccess(Class* cls) const override;
 
    //  Overridden to return the base class default (the scoped name) unless the
    //  type is "auto", in which case the referent (if known) is returned.
@@ -1340,6 +1365,10 @@ public:
    //
    const TypeName* Default() const { return default_.get(); }
 
+   //  Overridden to check the default type.
+   //
+   virtual void Check() const override;
+
    //  Overridden to return the parameter's name.
    //
    virtual const std::string* Name() const override { return &name_; }
@@ -1402,6 +1431,10 @@ public:
    //  Returns the template's parameters.
    //
    const TemplateParmPtrVector* Parms() const { return &parms_; }
+
+   //  Overridden to check each parameter.
+   //
+   virtual void Check() const override;
 
    //  Overridden to display the template's full specification.
    //

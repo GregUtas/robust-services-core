@@ -181,7 +181,7 @@ public:
 
    //  Sets the application message to be injected.
    //
-   void SetAppMsg(Message& appMsg);
+   void SetAppMsg(Message& msg);
 
    //  Invoked to provide TestPsm with its CLI thread and session identifier
    //  when injecting an initial message.

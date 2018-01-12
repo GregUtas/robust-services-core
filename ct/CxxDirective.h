@@ -626,9 +626,9 @@ public:
 class Ifdef : public Existential
 {
 public:
-   //  Creates an #ifdef directive that checks for the existence of NAME.
+   //  Creates an #ifdef directive that checks for the existence of SYMBOL.
    //
-   explicit Ifdef(std::string& name);
+   explicit Ifdef(std::string& symbol);
 
    //  Not subclassed.
    //
@@ -701,9 +701,9 @@ private:
 class Ifndef : public Existential
 {
 public:
-   //  Creates an #ifndef directive that checks for the existence of NAME.
+   //  Creates an #ifndef directive that checks for the existence of SYMBOL.
    //
-   explicit Ifndef(std::string& name);
+   explicit Ifndef(std::string& symbol);
 
    //  Not subclassed.
    //

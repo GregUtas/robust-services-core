@@ -2236,17 +2236,47 @@ void Function::CheckArgs() const
    Debug::ft(Function_CheckArgs);
 
    //  See if the function has any arguments to check.  Don't check the
-   //  arguments for a function that is an override, undefined, unused,
-   //  or an operator.
+   //  arguments to a function that is undefined, unused, or an operator.
    //
    auto n = args_.size();
-   if(n == 0 || override_ || IsUndefined() || IsUnused()) return;
-
-   //  Look for unused arguments and arguments that could be const.
-   //
+   if(n == 0 || IsUndefined() || IsUnused()) return;
    auto type = FuncType();
    if(type == FuncOperator) return;
 
+   //  If the function is defined separately from its declaration, look
+   //  for renamed arguments.  If the function is an override, look for
+   //  arguments that were renamed from the direct base class.
+   //
+   if(mate_ != nullptr)
+   {
+      for(size_t i = 0; i < n; ++i)
+      {
+         if(*args_[i]->Name() != *mate_->args_[i]->Name())
+         {
+            args_[i]->Log(DefinitionRenamesArgument, i + (this_ ? 0 : 1));
+         }
+      }
+   }
+
+   if(override_)
+   {
+      auto base = FindBaseFunc();
+
+      for(size_t i = 0; i < n; ++i)
+      {
+         if(*args_[i]->Name() != *base->args_[i]->Name())
+         {
+            args_[i]->Log(OverrideRenamesArgument, i + (this_ ? 0 : 1));
+         }
+      }
+
+      //  The remaining checks are not applied to an override.
+      //
+      return;
+   }
+
+   //  Look for unused arguments and arguments that could be const.
+   //
    for(size_t i = 0; i < n; ++i)
    {
       auto arg = args_[i].get();
@@ -2604,13 +2634,17 @@ void Function::CheckMemberUsage() const
    Debug::ft(Function_CheckMemberUsage);
 
    //  Check if this function could be static or free.  For either to be
-   //  possible, the function not be virtual, must not have accessed a
-   //  non-static member, and must be a standard member function that is
-   //  not part of a template.
-   //c To support templates, nonstatic_ and nonpublic_ would have to be
-   //  looked at over all instances of a function, whether instantiated
-   //  in a class or function template, because these flags are never set
-   //  in a pure template.
+   //  possible, the function cannot be virtual, must not have accessed a
+   //  non-static member, and must be a standard member function that is not
+   //  part of a template.  [A function which accesses a non-static member
+   //  could still be free or static, provided that the member was public.
+   //  However, the function would have to add the underlying object as an
+   //  argument--essentially a "this" argument.  Some will argue that this
+   //  improves encapsulation, but we will demure.]
+   //c To support this for templates, nonstatic_ and nonpublic_ would have to
+   //  to be looked at over all instances of a function, whether instantiated
+   //  in a class or function template, because these flags are never set in
+   //  a pure template.
    //
    if(virtual_) return;
    if(type_) return;
@@ -4084,11 +4118,11 @@ StackArg Function::ResultType() const
 
 fn_name Function_SetBaseInit = "Function.SetBaseInit";
 
-void Function::SetBaseInit(ExprPtr& expr)
+void Function::SetBaseInit(ExprPtr& init)
 {
    Debug::ft(Function_SetBaseInit);
 
-   call_.reset(expr.release());
+   call_.reset(init.release());
 }
 
 //------------------------------------------------------------------------------

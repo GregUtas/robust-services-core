@@ -587,11 +587,11 @@ TestPsm* TestPsm::Find(const MsgPort& port)
 
 fn_name TestPsm_ProcessIcMsg = "TestPsm.ProcessIcMsg";
 
-ProtocolSM::IncomingRc TestPsm::ProcessIcMsg(Message& msg, Event*& evt)
+ProtocolSM::IncomingRc TestPsm::ProcessIcMsg(Message& msg, Event*& event)
 {
    Debug::ft(TestPsm_ProcessIcMsg);
 
-   evt = new AnalyzeMsgEvent(msg);
+   event = new AnalyzeMsgEvent(msg);
    return EventRaised;
 }
 

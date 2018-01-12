@@ -398,7 +398,7 @@ void ServiceSM::Patch(sel_t selector, void* arguments)
 
 fn_name ServiceSM_ProcessEvent = "ServiceSM.ProcessEvent";
 
-EventHandler::Rc ServiceSM::ProcessEvent(Event* icEvent, Event*& ogEvent)
+EventHandler::Rc ServiceSM::ProcessEvent(Event* currEvent, Event*& nextEvent)
 {
    Debug::ft(ServiceSM_ProcessEvent);
 
@@ -434,12 +434,12 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* icEvent, Event*& ogEvent)
          //
          phase = InitiatorSapPhase;
          if(ssmq_.Empty()) break;
-         sapEvent = icEvent->BuildSap(*this, nextSap_);
+         sapEvent = currEvent->BuildSap(*this, nextSap_);
          if(sapEvent == nullptr) break;
          tid = nextSap_;
          nextSap_ = NIL_ID;
          modifierSsm = ssmq_.First();
-         rc = ProcessSsmqSap(modifierSsm, *sapEvent, ogEvent, phase);
+         rc = ProcessSsmqSap(modifierSsm, *sapEvent, nextEvent, phase);
          if(phase == InitiatorSapPhase) nextSap_ = tid;
          break;
 
@@ -448,22 +448,22 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* icEvent, Event*& ogEvent)
          //  A modifier ended a transaction during SSMQ SAP processing after
          //  saving the context.  It has now restored that context in order
          //  to resume traversal of the SSMQ, starting at the next modifier.
-         //  icEvent is the SAP whose processing is to resume; it contains
+         //  currEvent is the SAP whose processing is to resume; it contains
          //  the information needed to restore the context.
          //
          phase = InitiatorSapPhase;
-         sapEvent = icEvent;
+         sapEvent = currEvent;
          if(sapEvent->Owner() == this)
             tid = static_cast< AnalyzeSapEvent* >(sapEvent)->GetTrigger();
          else
             tid = NIL_ID;
          nextSap_ = NIL_ID;
          modifierSsm = static_cast< AnalyzeSapEvent* >(sapEvent)->CurrSsm();
-         icEvent = static_cast< AnalyzeSapEvent* >(sapEvent)->CurrEvent();
+         currEvent = static_cast< AnalyzeSapEvent* >(sapEvent)->CurrEvent();
          nextState_ = currState_;
          ssmq_.Next(modifierSsm);
          if(modifierSsm != nullptr)
-            rc = ProcessSsmqSap(modifierSsm, *sapEvent, ogEvent, phase);
+            rc = ProcessSsmqSap(modifierSsm, *sapEvent, nextEvent, phase);
          if(phase == InitiatorSapPhase) nextSap_ = tid;
          break;
 
@@ -492,9 +492,10 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* icEvent, Event*& ogEvent)
             triggered_[tid] = true; break;
          }
 
-         if(sapEvent == nullptr) sapEvent = icEvent->BuildSap(*this, tid);
+         if(sapEvent == nullptr) sapEvent = currEvent->BuildSap(*this, tid);
          if(sapEvent == nullptr) break;
-         rc = ProcessInitqSap(trigger, modifierInit, *sapEvent, ogEvent, phase);
+         rc = ProcessInitqSap(trigger,
+            modifierInit, *sapEvent, nextEvent, phase);
          break;
 
       case InitiatorReentryPhase:
@@ -502,12 +503,12 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* icEvent, Event*& ogEvent)
          //  A modifier was just initiated, and it ended the transaction
          //  during SSMQ SAP processing after saving the context.  It has
          //  now restored that context in order to resume traversal of the
-         //  InitQ, starting at the next modifier.  icEvent is the SAP
+         //  InitQ, starting at the next modifier.  currEvent is the SAP
          //  whose processing is to resume; it contains the information
          //  needed to restore the context.
          //
          phase = LocalEventPhase;
-         sapEvent = icEvent;
+         sapEvent = currEvent;
          if(sapEvent->Owner() == this)
             tid = static_cast< AnalyzeSapEvent* >(sapEvent)->GetTrigger();
          else
@@ -515,7 +516,7 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* icEvent, Event*& ogEvent)
          if(tid == NIL_ID) break;
          nextSap_ = NIL_ID;
          trigger = GetService()->GetTrigger(tid);
-         icEvent = static_cast< AnalyzeSapEvent* >(sapEvent)->CurrEvent();
+         currEvent = static_cast< AnalyzeSapEvent* >(sapEvent)->CurrEvent();
          modifierInit = static_cast< AnalyzeSapEvent* >
             (sapEvent)->CurrInitiator();
          modifierInit = trigger->initq_.Next(*modifierInit);
@@ -525,7 +526,8 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* icEvent, Event*& ogEvent)
             triggered_[tid] = true; break;
          }
 
-         rc = ProcessInitqSap(trigger, modifierInit, *sapEvent, ogEvent, phase);
+         rc = ProcessInitqSap(trigger,
+            modifierInit, *sapEvent, nextEvent, phase);
          break;
 
       case LocalEventPhase:
@@ -537,17 +539,17 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* icEvent, Event*& ogEvent)
          {
             auto svc = GetService();
             auto state = svc->GetState(currState_);
-            auto ehid = state->GetHandler(icEvent->Eid());
+            auto ehid = state->GetHandler(currEvent->Eid());
             auto handler = svc->GetHandler(ehid);
 
             if(handler == nullptr)
             {
                Context::Kill(ServiceSM_ProcessEvent,
-                  pack3(sid_, state->Stid(), icEvent->Eid()), 0);
+                  pack3(sid_, state->Stid(), currEvent->Eid()), 0);
                return EventHandler::Suspend;
             }
 
-            rc = handler->ProcessEvent(*this, *icEvent, ogEvent);
+            rc = handler->ProcessEvent(*this, *currEvent, nextEvent);
 
             //  Record the event handler's invocation if this context
             //  is traced.
@@ -561,7 +563,7 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* icEvent, Event*& ogEvent)
 
                if(buff->ToolIsOn(ContextTracer))
                {
-                  icEvent->Capture(sid_, *state, rc);
+                  currEvent->Capture(sid_, *state, rc);
                }
 
                if(trans != nullptr) trans->ResumeTime(warp);
@@ -576,7 +578,7 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* icEvent, Event*& ogEvent)
             //
             //  There should be no next event and no next SAP.
             //
-            if(ogEvent != nullptr) rc = EventError2(ogEvent, rc);
+            if(nextEvent != nullptr) rc = EventError2(nextEvent, rc);
 
             if(nextSap_ != NIL_ID)
             {
@@ -589,10 +591,10 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* icEvent, Event*& ogEvent)
             //
             //  There should be a next event that this SSM owns.
             //
-            if(ogEvent != nullptr)
+            if(nextEvent != nullptr)
             {
-               if(ogEvent->Owner() != this)
-                  rc = EventError2(ogEvent, EventHandler::Suspend);
+               if(nextEvent->Owner() != this)
+                  rc = EventError2(nextEvent, EventHandler::Suspend);
             }
             else
             {
@@ -606,18 +608,18 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* icEvent, Event*& ogEvent)
             //  There should be a next event that one of this SSM's
             //  ancestors owns.
             //
-            if(ogEvent != nullptr)
+            if(nextEvent != nullptr)
             {
                ServiceSM* ancestor;
 
                for(ancestor = parentSsm_; ancestor != nullptr;
                   ancestor = ancestor->Parent())
                {
-                  if(ogEvent->Owner() == ancestor) break;
+                  if(nextEvent->Owner() == ancestor) break;
                }
 
                if(ancestor == nullptr)
-                  rc = EventError2(ogEvent, EventHandler::Suspend);
+                  rc = EventError2(nextEvent, EventHandler::Suspend);
             }
             else
             {
@@ -634,20 +636,20 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* icEvent, Event*& ogEvent)
             //  case this SSM is requesting the creation of one of its
             //  siblings).
             //
-            if(ogEvent != nullptr)
+            if(nextEvent != nullptr)
             {
-               if(ogEvent->Eid() == Event::InitiationReq)
+               if(nextEvent->Eid() == Event::InitiationReq)
                {
-                  if(ogEvent->Owner() == this)
+                  if(nextEvent->Owner() == this)
                      rc = EventHandler::Continue;
-                  else if(ogEvent->Owner() == parentSsm_)
+                  else if(nextEvent->Owner() == parentSsm_)
                      rc = EventHandler::Revert;
                   else
-                     rc = EventError2(ogEvent, EventHandler::Suspend);
+                     rc = EventError2(nextEvent, EventHandler::Suspend);
                }
                else
                {
-                  rc = EventError2(ogEvent, EventHandler::Suspend);
+                  rc = EventError2(nextEvent, EventHandler::Suspend);
                }
             }
             else
@@ -669,7 +671,7 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* icEvent, Event*& ogEvent)
          //
          if(!ssmq_.Empty())
          {
-            snpEvent = icEvent->BuildSnp(*this, nextSnp_);
+            snpEvent = currEvent->BuildSnp(*this, nextSnp_);
             if(snpEvent != nullptr) ProcessSsmqSnp(ssmq_.First(), *snpEvent);
          }
 
@@ -688,7 +690,7 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* icEvent, Event*& ogEvent)
             if(modifierInit != nullptr)
             {
                if(snpEvent == nullptr)
-                  snpEvent = icEvent->BuildSnp(*this, tid);
+                  snpEvent = currEvent->BuildSnp(*this, tid);
                if(snpEvent != nullptr)
                   ProcessInitqSnp(trigger, modifierInit, *snpEvent);
             }
@@ -703,23 +705,23 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* icEvent, Event*& ogEvent)
          //  Free the events that have just been processed and update this
          //  SSM's state.  Continue with the next event or exit.
          //
-         if(icEvent != ogEvent)
+         if(currEvent != nextEvent)
          {
-            if(icEvent != nullptr)
+            if(currEvent != nullptr)
             {
                //  If the incoming and SAP events are the same, make sure
                //  not to free the event twice, which would happen if this
                //  SSM owned the event and the event's SAP was itself, as
                //  is the case for Analyze Message and Initiation Request.
                //
-               if(icEvent == sapEvent) sapEvent = nullptr;
+               if(currEvent == sapEvent) sapEvent = nullptr;
 
-               if((icEvent->Owner() == this) &&
-                  (icEvent->GetLocation() != Event::Saved))
+               if((currEvent->Owner() == this) &&
+                  (currEvent->GetLocation() != Event::Saved))
                {
-                  delete icEvent;
+                  delete currEvent;
                }
-               icEvent = nullptr;
+               currEvent = nullptr;
             }
          }
 
@@ -747,36 +749,36 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* icEvent, Event*& ogEvent)
             //
             //  Return unless there is a pending event.
             //
-            icEvent = eventq_[Event::Pending].First();
-            if(icEvent == nullptr) return EventHandler::Suspend;
-            icEvent->SetLocation(Event::Active);
+            currEvent = eventq_[Event::Pending].First();
+            if(currEvent == nullptr) return EventHandler::Suspend;
+            currEvent->SetLocation(Event::Active);
             phase = ModifierSapPhase;
             break;
 
          case EventHandler::Continue:
             //
-            //  If ogEvent is ours, continue with the next event.  If it is
+            //  If nextEvent is ours, continue with the next event.  If it is
             //  an SAP owned by us, RestoreContext was invoked, and we must
             //  resume processing of the SSMQ or InitQ from the point where
             //  the previous transaction ended.
             //
-            //  In rare cases, ogEvent can be owned by an ancestor.  This
+            //  In rare cases, nextEvent can be owned by an ancestor.  This
             //  occurs if a modifier returns EventHandler::Revert with an
             //  event that is destined for its grandparent.
             //
-            if(ogEvent->Owner() != this) return EventHandler::Continue;
+            if(nextEvent->Owner() != this) return EventHandler::Continue;
 
-            if(ogEvent->Eid() != Event::AnalyzeSap)
+            if(nextEvent->Eid() != Event::AnalyzeSap)
                phase = ModifierSapPhase;
-            else if(((AnalyzeSapEvent*) ogEvent)->CurrInitiator() != nullptr)
+            else if(((AnalyzeSapEvent*) nextEvent)->CurrInitiator() != nullptr)
                phase = InitiatorReentryPhase;
-            else if(((AnalyzeSapEvent*) ogEvent)->CurrSsm() != nullptr)
+            else if(((AnalyzeSapEvent*) nextEvent)->CurrSsm() != nullptr)
                phase = ModifierReentryPhase;
             else
                Context::Kill(ServiceSM_ProcessEvent, 0, 0);
 
-            icEvent = ogEvent;
-            ogEvent = nullptr;
+            currEvent = nextEvent;
+            nextEvent = nullptr;
             break;
 
          default:
@@ -787,12 +789,12 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* icEvent, Event*& ogEvent)
             //  instead, the outcome will probably be different.  How to
             //  resolve this is unclear, so block it until a use case arises.
             //
-            icEvent = eventq_[Event::Pending].First();
+            currEvent = eventq_[Event::Pending].First();
 
-            while(icEvent != nullptr)
+            while(currEvent != nullptr)
             {
-               EventError1(icEvent);
-               icEvent = eventq_[Event::Pending].First();
+               EventError1(currEvent);
+               currEvent = eventq_[Event::Pending].First();
             }
 
             return rc;
@@ -812,7 +814,7 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* icEvent, Event*& ogEvent)
 
 fn_name ServiceSM_ProcessInitAck = "ServiceSM.ProcessInitAck";
 
-EventHandler::Rc ServiceSM::ProcessInitAck(Event& icEvent, Event*& nextEvent)
+EventHandler::Rc ServiceSM::ProcessInitAck(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft(ServiceSM_ProcessInitAck);
 
@@ -826,7 +828,7 @@ EventHandler::Rc ServiceSM::ProcessInitAck(Event& icEvent, Event*& nextEvent)
 
 fn_name ServiceSM_ProcessInitNack = "ServiceSM.ProcessInitNack";
 
-EventHandler::Rc ServiceSM::ProcessInitNack(Event& icEvent, Event*& nextEvent)
+EventHandler::Rc ServiceSM::ProcessInitNack(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft(ServiceSM_ProcessInitNack);
 
@@ -977,11 +979,11 @@ void ServiceSM::ProcessInitqSnp
 fn_name ServiceSM_ProcessInitReq = "ServiceSM.ProcessInitReq";
 
 EventHandler::Rc ServiceSM::ProcessInitReq
-   (Event& icEvent, Event*& nextEvent, Phase& phase)
+   (Event& currEvent, Event*& nextEvent, Phase& phase)
 {
    Debug::ft(ServiceSM_ProcessInitReq);
 
-   auto& initEvent = static_cast< InitiationReqEvent& >(icEvent);
+   auto& initEvent = static_cast< InitiationReqEvent& >(currEvent);
    auto rc = EventHandler::Pass;
 
    //  This function only handles initiation requests made by *Initiators*.
@@ -995,7 +997,7 @@ EventHandler::Rc ServiceSM::ProcessInitReq
    {
       next = ssmq_.Next(*curr);
 
-      rc = curr->ProcessEvent(&icEvent, nextEvent);
+      rc = curr->ProcessEvent(&currEvent, nextEvent);
 
       switch(rc)
       {
@@ -1016,7 +1018,7 @@ EventHandler::Rc ServiceSM::ProcessInitReq
       if(initEvent.WasDenied()) break;
    }
 
-   if(icEvent.Owner() != this) return rc;
+   if(currEvent.Owner() != this) return rc;
 
    auto reg = Singleton< ServiceRegistry >::Instance();
    auto svc = reg->GetService(initEvent.GetModifier());
@@ -1026,7 +1028,7 @@ EventHandler::Rc ServiceSM::ProcessInitReq
    HenqModifier(*modifier);
    initEvent.SetScreening(false);
 
-   rc = modifier->ProcessEvent(&icEvent, nextEvent);
+   rc = modifier->ProcessEvent(&currEvent, nextEvent);
 
    switch(rc)
    {
@@ -1068,7 +1070,7 @@ EventHandler::Rc ServiceSM::ProcessInitReq
 
 fn_name ServiceSM_ProcessSap = "ServiceSM.ProcessSap";
 
-EventHandler::Rc ServiceSM::ProcessSap(Event& icEvent, Event*& nextEvent)
+EventHandler::Rc ServiceSM::ProcessSap(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft(ServiceSM_ProcessSap);
 
@@ -1079,7 +1081,7 @@ EventHandler::Rc ServiceSM::ProcessSap(Event& icEvent, Event*& nextEvent)
 
 fn_name ServiceSM_ProcessSip = "ServiceSM.ProcessSip";
 
-EventHandler::Rc ServiceSM::ProcessSip(Event& icEvent, Event*& nextEvent)
+EventHandler::Rc ServiceSM::ProcessSip(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft(ServiceSM_ProcessSip);
 
@@ -1090,7 +1092,7 @@ EventHandler::Rc ServiceSM::ProcessSip(Event& icEvent, Event*& nextEvent)
 
 fn_name ServiceSM_ProcessSnp = "ServiceSM.ProcessSnp";
 
-EventHandler::Rc ServiceSM::ProcessSnp(Event& icEvent, Event*& nextEvent)
+EventHandler::Rc ServiceSM::ProcessSnp(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft(ServiceSM_ProcessSnp);
 

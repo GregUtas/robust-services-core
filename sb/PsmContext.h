@@ -108,11 +108,11 @@ private:
 
    //  Adds PORT to portq_.
    //
-   virtual void EnqPort(MsgPort& psm) override;
+   virtual void EnqPort(MsgPort& port) override;
 
    //  Removes PORT from portq_.
    //
-   virtual void ExqPort(MsgPort& psm) override;
+   virtual void ExqPort(MsgPort& port) override;
 
    //  Overridden to handle the arrival of MSG.
    //

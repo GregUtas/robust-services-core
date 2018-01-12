@@ -185,33 +185,33 @@ void SsmContext::ProcessIcMsg(Message& msg)
    //  Tell the port to process MSG.  This usually ends up returning an
    //  event for the root SSM.
    //
-   auto icEvent = port->ReceiveMsg(msg);
+   auto currEvent = port->ReceiveMsg(msg);
 
-   if(icEvent != nullptr)
+   if(currEvent != nullptr)
    {
       //  If the root SSM doesn't exist, create it.
       //
       if(root_ == nullptr)
       {
          root_ = AllocRoot(msg, *port->UppermostPsm());
-         icEvent->SetOwner(*root_);
+         currEvent->SetOwner(*root_);
       }
 
       if(root_ != nullptr)
       {
          //  Keep processing events while the root SSM wishes to continue.
          //
-         Event* ogEvent = nullptr;
+         Event* nextEvent = nullptr;
          auto rc = EventHandler::Continue;
 
          while(rc == EventHandler::Continue)
          {
-            rc = root_->ProcessEvent(icEvent, ogEvent);
+            rc = root_->ProcessEvent(currEvent, nextEvent);
 
             if(rc == EventHandler::Continue)
             {
-               icEvent = ogEvent;
-               ogEvent = nullptr;
+               currEvent = nextEvent;
+               nextEvent = nullptr;
             }
          }
       }

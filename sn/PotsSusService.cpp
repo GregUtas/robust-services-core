@@ -74,7 +74,7 @@ PotsSusInitiator::PotsSusInitiator(TriggerId tid, Initiator::Priority prio) :
 fn_name PotsSusInitiator_ProcessEvent = "PotsSusInitiator.ProcessEvent";
 
 EventHandler::Rc PotsSusInitiator::ProcessEvent
-   (const ServiceSM& parentSsm, Event& icEvent, Event*& ogEvent) const
+   (const ServiceSM& parentSsm, Event& currEvent, Event*& nextEvent) const
 {
    Debug::ft(PotsSusInitiator_ProcessEvent);
 
@@ -83,7 +83,7 @@ EventHandler::Rc PotsSusInitiator::ProcessEvent
 
    if(prof->HasFeature(SUS))
    {
-      ogEvent = new InitiationReqEvent(*icEvent.Owner(), PotsSusServiceId);
+      nextEvent = new InitiationReqEvent(*currEvent.Owner(), PotsSusServiceId);
       return EventHandler::Initiate;
    }
 

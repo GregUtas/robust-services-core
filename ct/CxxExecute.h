@@ -619,7 +619,7 @@ private:
 
    //  Returns true if the option identified by OPT is on.
    //
-   static bool OptionIsOn(char c);
+   static bool OptionIsOn(char opt);
 
    //  Sets the current execution position in the source code
    //  for a SCOPE that has both a declaration and definition.

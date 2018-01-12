@@ -168,7 +168,7 @@ private:
    //  Called to record the time that a message waited on a work queue
    //  before being processed.
    //
-   void RecordDelay(Message::Priority prio, msecs_t msecs) const;
+   void RecordDelay(Message::Priority prio, msecs_t delay) const;
 
    //  Returns CTX to the progress work queue after it has processed
    //  messages of immediate priority.

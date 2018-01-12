@@ -256,6 +256,8 @@ fixed_string WarningStrings[Warning_N + 1] =
    "\"(void)\" as function argument",
    "Unnamed argument",
    "Adjacent arguments have the same type",
+   "Definition renames argument in declaration",
+   "Override renames argument in direct base class",
    "Virtual function defines default argument",
    "ARGUMENT CANNOT BE CONST",
    "Object could be passed by const reference",

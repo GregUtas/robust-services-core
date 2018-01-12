@@ -170,7 +170,7 @@ void PotsCallPsm::InjectFinalMsg()
 
 fn_name PotsCallPsm_ProcessIcMsg = "PotsCallPsm.ProcessIcMsg";
 
-ProtocolSM::IncomingRc PotsCallPsm::ProcessIcMsg(Message& msg, Event*& evt)
+ProtocolSM::IncomingRc PotsCallPsm::ProcessIcMsg(Message& msg, Event*& event)
 {
    Debug::ft(PotsCallPsm_ProcessIcMsg);
 
@@ -197,7 +197,7 @@ ProtocolSM::IncomingRc PotsCallPsm::ProcessIcMsg(Message& msg, Event*& evt)
       SetState(Active);
    }
 
-   evt = new AnalyzeMsgEvent(msg);
+   event = new AnalyzeMsgEvent(msg);
    return EventRaised;
 }
 

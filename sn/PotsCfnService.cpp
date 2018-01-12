@@ -49,7 +49,7 @@ PotsCfnInitiator::PotsCfnInitiator() : Initiator(PotsCfnServiceId,
 fn_name PotsCfnInitiator_ProcessEvent = "PotsCfnInitiator.ProcessEvent";
 
 EventHandler::Rc PotsCfnInitiator::ProcessEvent
-   (const ServiceSM& parentSsm, Event& icEvent, Event*& ogEvent) const
+   (const ServiceSM& parentSsm, Event& currEvent, Event*& nextEvent) const
 {
    Debug::ft(PotsCfnInitiator_ProcessEvent);
 
@@ -59,7 +59,7 @@ EventHandler::Rc PotsCfnInitiator::ProcessEvent
 
    if((cfnp != nullptr) && cfnp->IsActive())
    {
-      ogEvent = new InitiationReqEvent(*icEvent.Owner(), PotsCfnServiceId);
+      nextEvent = new InitiationReqEvent(*currEvent.Owner(), PotsCfnServiceId);
       return EventHandler::Initiate;
    }
 

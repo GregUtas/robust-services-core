@@ -25,9 +25,6 @@
 #include "CodeSet.h"
 #include <string>
 #include "LibraryTypes.h"
-#include "SysTypes.h"  //x
-
-using namespace NodeBase;  //x
 
 //------------------------------------------------------------------------------
 

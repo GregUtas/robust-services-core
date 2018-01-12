@@ -102,7 +102,7 @@ private:
    struct PeerFilter
    {
       PeerFilter();
-      PeerFilter(const SysIpL3Addr& a, TraceStatus status);
+      PeerFilter(const SysIpL3Addr& a, TraceStatus s);
 
       SysIpL3Addr peer;    // peer
       TraceStatus status;  // whether included or excluded

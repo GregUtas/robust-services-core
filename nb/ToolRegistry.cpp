@@ -114,9 +114,9 @@ Tool* ToolRegistry::FindTool(char abbr) const
 
 //------------------------------------------------------------------------------
 
-Tool* ToolRegistry::GetTool(FlagId fid) const
+Tool* ToolRegistry::GetTool(FlagId id) const
 {
-   return tools_.At(fid);
+   return tools_.At(id);
 }
 
 //------------------------------------------------------------------------------
@@ -130,10 +130,10 @@ void ToolRegistry::Patch(sel_t selector, void* arguments)
 
 fn_name ToolRegistry_UnbindTool = "ToolRegistry.UnbindTool";
 
-void ToolRegistry::UnbindTool(Tool& incr)
+void ToolRegistry::UnbindTool(Tool& tool)
 {
    Debug::ft(ToolRegistry_UnbindTool);
 
-   tools_.Erase(incr);
+   tools_.Erase(tool);
 }
 }

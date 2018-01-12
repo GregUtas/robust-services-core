@@ -283,7 +283,7 @@ PotsCwtInitiator::PotsCwtInitiator() :
 fn_name PotsCwtInitiator_ProcessEvent = "PotsCwtInitiator.ProcessEvent";
 
 EventHandler::Rc PotsCwtInitiator::ProcessEvent
-   (const ServiceSM& parentSsm, Event& icEvent, Event*& ogEvent) const
+   (const ServiceSM& parentSsm, Event& currEvent, Event*& nextEvent) const
 {
    Debug::ft(PotsCwtInitiator_ProcessEvent);
 
@@ -292,7 +292,7 @@ EventHandler::Rc PotsCwtInitiator::ProcessEvent
 
    if(prof->HasFeature(CWT))
    {
-      ogEvent = new InitiationReqEvent(*icEvent.Owner(), PotsCwbServiceId);
+      nextEvent = new InitiationReqEvent(*currEvent.Owner(), PotsCwbServiceId);
       return EventHandler::Initiate;
    }
 

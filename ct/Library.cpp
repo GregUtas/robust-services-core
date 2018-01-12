@@ -370,7 +370,7 @@ void Library::EraseVar(LibrarySet& var)
 
 fn_name Library_Evaluate = "Library.Evaluate";
 
-LibrarySet* Library::Evaluate(const string& expr, size_t offset) const
+LibrarySet* Library::Evaluate(const string& expr, size_t pos) const
 {
    Debug::ft(Library_Evaluate);
 
@@ -385,7 +385,7 @@ LibrarySet* Library::Evaluate(const string& expr, size_t offset) const
    }
 
    auto interpreter =
-      std::unique_ptr< Interpreter >(new Interpreter(expr, offset));
+      std::unique_ptr< Interpreter >(new Interpreter(expr, pos));
    auto set = interpreter->Evaluate();
    interpreter.reset();
    return set;

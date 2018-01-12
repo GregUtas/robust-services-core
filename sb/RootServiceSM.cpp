@@ -85,7 +85,7 @@ void RootServiceSM::Patch(sel_t selector, void* arguments)
 fn_name RootServiceSM_ProcessInitAck = "RootServiceSM.ProcessInitAck";
 
 EventHandler::Rc RootServiceSM::ProcessInitAck
-   (Event& icEvent, Event*& nextEvent)
+   (Event& currEvent, Event*& nextEvent)
 {
    Debug::ft(RootServiceSM_ProcessInitAck);
 
@@ -98,7 +98,7 @@ EventHandler::Rc RootServiceSM::ProcessInitAck
 fn_name RootServiceSM_ProcessInitNack = "RootServiceSM.ProcessInitNack";
 
 EventHandler::Rc RootServiceSM::ProcessInitNack
-   (Event& icEvent, Event*& nextEvent)
+   (Event& currEvent, Event*& nextEvent)
 {
    Debug::ft(RootServiceSM_ProcessInitNack);
 
@@ -110,7 +110,7 @@ EventHandler::Rc RootServiceSM::ProcessInitNack
 
 fn_name RootServiceSM_ProcessSap = "RootServiceSM.ProcessSap";
 
-EventHandler::Rc RootServiceSM::ProcessSap(Event& icEvent, Event*& nextEvent)
+EventHandler::Rc RootServiceSM::ProcessSap(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft(RootServiceSM_ProcessSap);
 
@@ -122,7 +122,7 @@ EventHandler::Rc RootServiceSM::ProcessSap(Event& icEvent, Event*& nextEvent)
 
 fn_name RootServiceSM_ProcessSip = "RootServiceSM.ProcessSip";
 
-EventHandler::Rc RootServiceSM::ProcessSip(Event& icEvent, Event*& nextEvent)
+EventHandler::Rc RootServiceSM::ProcessSip(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft(RootServiceSM_ProcessSip);
 
@@ -134,7 +134,7 @@ EventHandler::Rc RootServiceSM::ProcessSip(Event& icEvent, Event*& nextEvent)
 
 fn_name RootServiceSM_ProcessSnp = "RootServiceSM.ProcessSnp";
 
-EventHandler::Rc RootServiceSM::ProcessSnp(Event& icEvent, Event*& nextEvent)
+EventHandler::Rc RootServiceSM::ProcessSnp(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft(RootServiceSM_ProcessSnp);
 

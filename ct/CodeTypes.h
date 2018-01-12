@@ -416,6 +416,8 @@ enum Warning
    VoidAsArgument,           // use of (void) to specify function parameter
    AnonymousArgument,        // declaration of unnamed argument
    AdjacentArgumentTypes,    // adjacent arguments have the same type
+   DefinitionRenamesArgument, // names in declaration and definition differ
+   OverrideRenamesArgument,  // names in override and direct base class differ
    VirtualDefaultArgument,   // virtual function defines default argument
    ArgumentCannotBeConst,    // for detecting const logic errors
    ArgumentCouldBeConstRef,  // object could be passed by const reference
@@ -537,17 +539,6 @@ template< typename T > void DisplayObjects(const std::vector< T >& group,
       (*i)->Display(stream, prefix, options);
    }
 }
-
-//------------------------------------------------------------------------------
-//
-//  Tags items that the Trim command says should be added or removed.
-//
-enum TrimStatus
-{
-   Original,    // item was present in source code
-   ToBeAdded,   // >trim says item should be added
-   ToBeRemoved  // >trim says item should be removed
-};
 
 //------------------------------------------------------------------------------
 //

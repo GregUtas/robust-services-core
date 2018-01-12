@@ -75,7 +75,7 @@ PotsBicInitiator::PotsBicInitiator() : Initiator(PotsBicServiceId,
 fn_name PotsBicInitiator_ProcessEvent = "PotsBicInitiator.ProcessEvent";
 
 EventHandler::Rc PotsBicInitiator::ProcessEvent
-   (const ServiceSM& parentSsm, Event& icEvent, Event*& ogEvent) const
+   (const ServiceSM& parentSsm, Event& currEvent, Event*& nextEvent) const
 {
    Debug::ft(PotsBicInitiator_ProcessEvent);
 
@@ -84,7 +84,7 @@ EventHandler::Rc PotsBicInitiator::ProcessEvent
 
    if(prof->HasFeature(BIC))
    {
-      ogEvent = new InitiationReqEvent(*icEvent.Owner(), PotsBicServiceId);
+      nextEvent = new InitiationReqEvent(*currEvent.Owner(), PotsBicServiceId);
       return EventHandler::Initiate;
    }
 

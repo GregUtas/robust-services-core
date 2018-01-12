@@ -753,11 +753,11 @@ void ParseFrame::PushOp(const Operation* op)
 
 fn_name ParseFrame_PushOptional = "ParseFrame.PushOptional";
 
-void ParseFrame::PushOptional(OptionalCode* opt)
+void ParseFrame::PushOptional(OptionalCode* code)
 {
    Debug::ft(ParseFrame_PushOptional);
 
-   opts_.push_back(opt);
+   opts_.push_back(code);
 }
 
 //------------------------------------------------------------------------------

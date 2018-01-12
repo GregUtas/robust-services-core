@@ -161,7 +161,7 @@ LibrarySet* LibrarySet::Create(const string& name, SetOfIds* set) const
 
 //------------------------------------------------------------------------------
 
-LibrarySet* LibrarySet::Difference(const LibrarySet* that) const
+LibrarySet* LibrarySet::Difference(const LibrarySet* rhs) const
 {
    return OpError();
 }
@@ -245,7 +245,7 @@ LibrarySet* LibrarySet::Implements() const
 
 //------------------------------------------------------------------------------
 
-LibrarySet* LibrarySet::Intersection(const LibrarySet* that) const
+LibrarySet* LibrarySet::Intersection(const LibrarySet* rhs) const
 {
    return OpError();
 }
@@ -391,11 +391,11 @@ word LibrarySet::Scan
 
 fn_name LibrarySet_Show = "LibrarySet.Show";
 
-word LibrarySet::Show(string& list) const
+word LibrarySet::Show(string& result) const
 {
    Debug::ft(LibrarySet_Show);
 
-   return NotImplemented(list);
+   return NotImplemented(result);
 }
 
 //------------------------------------------------------------------------------
@@ -451,7 +451,7 @@ word LibrarySet::Trim(ostream& stream, string& expl) const
 
 //------------------------------------------------------------------------------
 
-LibrarySet* LibrarySet::Union(const LibrarySet* that) const
+LibrarySet* LibrarySet::Union(const LibrarySet* rhs) const
 {
    return OpError();
 }

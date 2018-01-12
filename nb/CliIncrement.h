@@ -50,7 +50,7 @@ public:
 
    //  Used by the CLI to search for a command whose name matches TEXT.
    //
-   CliCommand* FindCommand(const std::string& text) const;
+   CliCommand* FindCommand(const std::string& comm) const;
 
    //  Displays a one-line summary of the increment's purpose if LEVEL is 0.
    //  If LEVEL is 1, displays a one-line summary of each of the increment's

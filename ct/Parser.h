@@ -502,23 +502,23 @@ private:
    bool GetThrow(ExprPtr& expr);
    bool GetTypeId(ExprPtr& expr);
 
-   //  Updates EXPR with the results of parsing a statement that begins with
-   //  the specified keyword.  GetBasic handles assignments, function calls,
-   //  and null statements.
+   //  Updates STATEMENT with the results of parsing a statement that begins
+   //  with the specified keyword.  GetBasic handles assignments, function
+   //  calls, and null statements.
    //
-   bool GetBasic(TokenPtr& expr);
-   bool GetBreak(TokenPtr& expr);
-   bool GetCase(TokenPtr& expr);
-   bool GetCatch(TokenPtr& expr);
-   bool GetContinue(TokenPtr& expr);
-   bool GetDefault(TokenPtr& expr);
-   bool GetDo(TokenPtr& expr);
-   bool GetFor(TokenPtr& expr);
-   bool GetIf(TokenPtr& expr);
-   bool GetReturn(TokenPtr& expr);
-   bool GetSwitch(TokenPtr& expr);
-   bool GetTry(TokenPtr& expr);
-   bool GetWhile(TokenPtr& expr);
+   bool GetBasic(TokenPtr& statement);
+   bool GetBreak(TokenPtr& statement);
+   bool GetCase(TokenPtr& statement);
+   bool GetCatch(TokenPtr& statement);
+   bool GetContinue(TokenPtr& statement);
+   bool GetDefault(TokenPtr& statement);
+   bool GetDo(TokenPtr& statement);
+   bool GetFor(TokenPtr& statement);
+   bool GetIf(TokenPtr& statement);
+   bool GetReturn(TokenPtr& statement);
+   bool GetSwitch(TokenPtr& statement);
+   bool GetTry(TokenPtr& statement);
+   bool GetWhile(TokenPtr& statement);
 
    //  Prepares to parse CODE.  PREPROCESS is set if the code should be
    //  preprocessed.

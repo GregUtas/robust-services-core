@@ -114,7 +114,7 @@ private:
    //  the currently running invoker.
    //
    virtual bool BlockingAllowed
-      (BlockingReason status, fn_name_arg func) override;
+      (BlockingReason why, fn_name_arg func) override;
 
    //  Overridden to track the currently running invoker.
    //

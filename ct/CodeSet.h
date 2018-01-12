@@ -50,9 +50,9 @@ public:
    //  Override the operators supported by both directories and files.
    //
    virtual LibrarySet* Assign(LibrarySet* rhs) override;
-   virtual LibrarySet* Difference(const LibrarySet* that) const override;
-   virtual LibrarySet* Intersection(const LibrarySet* that) const override;
-   virtual LibrarySet* Union(const LibrarySet* that) const override;
+   virtual LibrarySet* Difference(const LibrarySet* rhs) const override;
+   virtual LibrarySet* Intersection(const LibrarySet* rhs) const override;
+   virtual LibrarySet* Union(const LibrarySet* rhs) const override;
 
    //  Updates STREAM with the number of files in the set and returns 0.
    //

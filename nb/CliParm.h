@@ -144,12 +144,12 @@ public:
    //  Returns the next parameter in I if it is an integer.  Used when
    //  an integer parameter is mandatory.
    //
-   bool GetIntParm(word& i, CliThread& cli) const;
+   bool GetIntParm(word& n, CliThread& cli) const;
 
    //  Returns the next parameter in I if it is an integer.  Used when
    //  an integer parameter is optional.
    //
-   virtual Rc GetIntParmRc(word& i, CliThread& cli) const;
+   virtual Rc GetIntParmRc(word& n, CliThread& cli) const;
 
    //  Returns the next parameter in B if it is a boolean.  Used when a
    //  boolean parameter is mandatory.

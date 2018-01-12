@@ -510,7 +510,7 @@ MsgPort* ProtocolSM::Port() const
 
 fn_name ProtocolSM_ProcessIcMsg = "ProtocolSM.ProcessIcMsg";
 
-ProtocolSM::IncomingRc ProtocolSM::ProcessIcMsg(Message& msg, Event*& evt)
+ProtocolSM::IncomingRc ProtocolSM::ProcessIcMsg(Message& msg, Event*& event)
 {
    Debug::ft(ProtocolSM_ProcessIcMsg);
 

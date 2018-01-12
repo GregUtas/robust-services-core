@@ -139,9 +139,9 @@ public:
    //
    virtual LibrarySet* Create(const std::string& name, SetOfIds* set) const;
    virtual LibrarySet* Assign(LibrarySet* rhs);
-   virtual LibrarySet* Intersection(const LibrarySet* that) const;
-   virtual LibrarySet* Difference(const LibrarySet* that) const;
-   virtual LibrarySet* Union(const LibrarySet* that) const;
+   virtual LibrarySet* Intersection(const LibrarySet* rhs) const;
+   virtual LibrarySet* Difference(const LibrarySet* rhs) const;
+   virtual LibrarySet* Union(const LibrarySet* rhs) const;
    virtual LibrarySet* Directories() const;
    virtual LibrarySet* Files() const;
    virtual LibrarySet* FileName(const LibrarySet* that) const;

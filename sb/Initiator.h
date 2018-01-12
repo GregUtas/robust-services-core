@@ -64,7 +64,7 @@ public:
    //  Invokes the initiator's ProcessEvent function.
    //
    EventHandler::Rc InvokeHandler
-      (const ServiceSM& parentSsm, Event& icEvent, Event*& ogEvent) const;
+      (const ServiceSM& parentSsm, Event& currEvent, Event*& nextEvent) const;
 
    //  Returns the offset to link_.
    //
@@ -99,12 +99,12 @@ private:
 
    //  The initiator's event handler, which receives either an SAP or SNP,
    //  depending on the trigger with which it has registered.  It can either
-   //  pass icEvent onwards or create an InitiationReqEvent and return it in
-   //  ogEvent to request the creation of its ServiceSM.  The default version
+   //  pass currEvent onwards or create an InitiationReqEvent and return it in
+   //  nextEvent to request the creation of its ServiceSM.  The default version
    //  generates a log and returns EventHandler::Pass and must be overridden.
    //
    virtual EventHandler::Rc ProcessEvent
-      (const ServiceSM& parentSsm, Event& icEvent, Event*& ogEvent) const;
+      (const ServiceSM& parentSsm, Event& currEvent, Event*& nextEvent) const;
 
    //  Returns the trigger where the initiator is located.
    //

@@ -49,7 +49,7 @@ PotsCfbInitiator::PotsCfbInitiator() :
 fn_name PotsCfbInitiator_ProcessEvent = "PotsCfbInitiator.ProcessEvent";
 
 EventHandler::Rc PotsCfbInitiator::ProcessEvent
-   (const ServiceSM& parentSsm, Event& icEvent, Event*& ogEvent) const
+   (const ServiceSM& parentSsm, Event& currEvent, Event*& nextEvent) const
 {
    Debug::ft(PotsCfbInitiator_ProcessEvent);
 
@@ -59,7 +59,7 @@ EventHandler::Rc PotsCfbInitiator::ProcessEvent
 
    if((cfbp != nullptr) && cfbp->IsActive())
    {
-      ogEvent = new InitiationReqEvent(*icEvent.Owner(), PotsCfbServiceId);
+      nextEvent = new InitiationReqEvent(*currEvent.Owner(), PotsCfbServiceId);
       return EventHandler::Initiate;
    }
 

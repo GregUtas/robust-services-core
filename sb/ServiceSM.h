@@ -216,10 +216,10 @@ private:
    //
    bool ExqEvent(Event& evt, Event::Location loc);
 
-   //  Coordinates the event handling phases for ICEVENT.  OGEVENT is the
-   //  next event to be processed, if any.
+   //  Coordinates the event handling phases for currEvent.  nextEvent is
+   //  the next event to be processed, if any.
    //
-   EventHandler::Rc ProcessEvent(Event* icEvent, Event*& ogEvent);
+   EventHandler::Rc ProcessEvent(Event* currEvent, Event*& nextEvent);
 
    //  Used during error recovery.
    //
@@ -256,7 +256,7 @@ private:
    //  Routes an SIP down this SSM's SSMQ.
    //
    EventHandler::Rc ProcessInitReq
-      (Event& icEvent, Event*& nextEvent, Phase& phase);
+      (Event& currEvent, Event*& nextEvent, Phase& phase);
 
    //  Used during error recovery.
    //

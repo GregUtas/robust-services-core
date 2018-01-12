@@ -1189,13 +1189,13 @@ Function* Class::FindFunc(const string& name, StackArgVector* args,
 
 fn_name Class_FindFuncByRole = "Class.FindFuncByRole";
 
-Function* Class::FindFuncByRole(FunctionRole type, bool base) const
+Function* Class::FindFuncByRole(FunctionRole role, bool base) const
 {
    Debug::ft(Class_FindFuncByRole);
 
    const FunctionPtrVector* funcs = nullptr;
 
-   switch(type)
+   switch(role)
    {
    case FuncOther:
       return nullptr;
@@ -1209,13 +1209,13 @@ Function* Class::FindFuncByRole(FunctionRole type, bool base) const
 
    for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
    {
-      if((*f)->FuncRole() == type) return f->get();
+      if((*f)->FuncRole() == role) return f->get();
    }
 
    if(!base) return nullptr;
    auto super = BaseClass();
    if(super == nullptr) return nullptr;
-   return super->FindFuncByRole(type, base);
+   return super->FindFuncByRole(role, base);
 }
 
 //------------------------------------------------------------------------------
@@ -1595,23 +1595,23 @@ TypeMatch Class::MatchTemplate(const TypeName& type) const
 fn_name Class_MemberIsAccessibleTo = "Class.MemberIsAccessibleTo";
 
 bool Class::MemberIsAccessibleTo
-   (const CxxScoped* item, const CxxScope* scope, SymbolView* view)
+   (const CxxScoped* member, const CxxScope* scope, SymbolView* view)
 {
    Debug::ft(Class_MemberIsAccessibleTo);
 
    SymbolView local;
-   if(item == nullptr) return false;
+   if(member == nullptr) return false;
    if(scope == nullptr) return true;
    if(view == nullptr) view = &local;
 
-   item->AccessibilityTo(scope, view);
+   member->AccessibilityTo(scope, view);
    if(view->accessibility != Inaccessible) return true;
 
    //  We should never get here when compiling well-formed code, so there is
    //  probably a bug in AccessibilityOf.  Log this, but assume that ITEM is
    //  accessible.
    //
-   auto expl = item->ScopedName(true) + " is inaccessible";
+   auto expl = member->ScopedName(true) + " is inaccessible";
    Context::SwErr(Class_MemberIsAccessibleTo, expl, 0);
    return true;
 }

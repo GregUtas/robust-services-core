@@ -110,7 +110,7 @@ protected:
    //  the constructor acts as a wrapper for the default heap.  Protected
    //  because this class is virtual.
    //
-   SysHeap(MemoryType type, size_t size);
+   SysHeap(MemoryType type, size_t bytes);
 private:
    //  Overridden to prohibit copying.
    //

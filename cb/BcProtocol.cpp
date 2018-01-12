@@ -911,7 +911,7 @@ void BcPsm::InjectFinalMsg()
 
 fn_name BcPsm_ProcessIcMsg = "BcPsm.ProcessIcMsg";
 
-ProtocolSM::IncomingRc BcPsm::ProcessIcMsg(Message& msg, Event*& evt)
+ProtocolSM::IncomingRc BcPsm::ProcessIcMsg(Message& msg, Event*& event)
 {
    Debug::ft(BcPsm_ProcessIcMsg);
 
@@ -936,7 +936,7 @@ ProtocolSM::IncomingRc BcPsm::ProcessIcMsg(Message& msg, Event*& evt)
       if(toi->owner == this)
       {
          iamTimer_ = false;
-         evt = RootSsm()->RaiseProtocolError(*this, Timeout);
+         event = RootSsm()->RaiseProtocolError(*this, Timeout);
          return EventRaised;
       }
 
@@ -1029,11 +1029,11 @@ ProtocolSM::IncomingRc BcPsm::ProcessIcMsg(Message& msg, Event*& evt)
          error = pack2(cpi->progress, sig);
 
       Debug::SwErr(BcPsm_ProcessIcMsg, error, state);
-      evt = RootSsm()->RaiseProtocolError(*this, SignalInvalid);
+      event = RootSsm()->RaiseProtocolError(*this, SignalInvalid);
       return EventRaised;
    }
 
-   evt = new AnalyzeMsgEvent(msg);
+   event = new AnalyzeMsgEvent(msg);
    return EventRaised;
 }
 

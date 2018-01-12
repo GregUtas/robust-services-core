@@ -287,7 +287,7 @@ public:
 
    //  Returns a string for displaying PRIO.
    //
-   static const char* strPriority(Priority p);
+   static const char* strPriority(Priority prio);
 
    //  Records BT as the trace record that captured this message.
    //

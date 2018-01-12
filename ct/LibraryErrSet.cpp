@@ -177,11 +177,11 @@ word LibraryErrSet::Scan
 
 fn_name LibraryErrSet_Show = "LibraryErrSet.Show";
 
-word LibraryErrSet::Show(string& list) const
+word LibraryErrSet::Show(string& result) const
 {
    Debug::ft(LibraryErrSet_Show);
 
-   return Error(list);
+   return Error(result);
 }
 
 //------------------------------------------------------------------------------

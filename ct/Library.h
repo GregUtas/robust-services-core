@@ -99,12 +99,12 @@ public:
    //
    void EraseVar(LibrarySet& var);
 
-   //  Assigns the results of EXPR to NAME.  OFFSET is where EXPR started
-   //  in the input stream.  Updates EXPL to indicate success or failure.
-   //  Returns 0 on success.
+   //  Assigns the results of EXPR to NAME.  POS is where EXPR started in the
+   //  input stream.  Updates EXPL to indicate success or failure.  Returns 0
+   //  on success.
    //
    word Assign(const std::string& name,
-      const std::string& expr, size_t offset, std::string& expl);
+      const std::string& expr, size_t pos, std::string& expl);
 
    //  Displays the library's contents in STREAM.  The characters in OPTS
    //  control formatting options.  Returns 0 on success.

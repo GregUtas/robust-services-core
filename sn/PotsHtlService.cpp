@@ -76,7 +76,7 @@ PotsHtlInitiator::PotsHtlInitiator() : Initiator(PotsHtlServiceId,
 fn_name PotsHtlInitiator_ProcessEvent = "PotsHtlInitiator.ProcessEvent";
 
 EventHandler::Rc PotsHtlInitiator::ProcessEvent
-   (const ServiceSM& parentSsm, Event& icEvent, Event*& ogEvent) const
+   (const ServiceSM& parentSsm, Event& currEvent, Event*& nextEvent) const
 {
    Debug::ft(PotsHtlInitiator_ProcessEvent);
 
@@ -85,7 +85,7 @@ EventHandler::Rc PotsHtlInitiator::ProcessEvent
 
    if(prof->HasFeature(HTL))
    {
-      ogEvent = new InitiationReqEvent(*icEvent.Owner(), PotsHtlServiceId);
+      nextEvent = new InitiationReqEvent(*currEvent.Owner(), PotsHtlServiceId);
       return EventHandler::Initiate;
    }
 

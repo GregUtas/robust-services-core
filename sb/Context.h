@@ -247,11 +247,11 @@ private:
 
    //  Adds PORT to the context.
    //
-   virtual void EnqPort(MsgPort& psm);
+   virtual void EnqPort(MsgPort& port);
 
    //  Removes PORT from the context.
    //
-   virtual void ExqPort(MsgPort& psm);
+   virtual void ExqPort(MsgPort& port);
 
    //  Invoked by ProcessWork (see below) to process a single incoming MSG.
    //

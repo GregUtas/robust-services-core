@@ -205,14 +205,14 @@ size_t TlvMessage::AllParms(TlvParmArray ptab, size_t size) const
 
 fn_name TlvMessage_ChangeDir = "TlvMessage.ChangeDir";
 
-void TlvMessage::ChangeDir(MsgDirection dir)
+void TlvMessage::ChangeDir(MsgDirection nextDir)
 {
    Debug::ft(TlvMessage_ChangeDir);
 
    //  An outgoing message must have a valid parameter fence.
    //
-   Message::ChangeDir(dir);
-   if(dir == MsgOutgoing) AddFence();
+   Message::ChangeDir(nextDir);
+   if(nextDir == MsgOutgoing) AddFence();
 }
 
 //------------------------------------------------------------------------------

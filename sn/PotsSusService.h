@@ -41,7 +41,7 @@ protected:
    virtual ~PotsSusInitiator() { }
 private:
    virtual EventHandler::Rc ProcessEvent(const ServiceSM& parentSsm,
-      Event& icEvent, Event*& ogEvent) const override;
+      Event& currEvent, Event*& nextEvent) const override;
 };
 
 class PotsOSusInitiator : public PotsSusInitiator

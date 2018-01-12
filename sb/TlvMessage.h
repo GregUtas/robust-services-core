@@ -295,7 +295,7 @@ protected:
 private:
    //  Overridden to change the message's direction.
    //
-   virtual void ChangeDir(MsgDirection dir) override;
+   virtual void ChangeDir(MsgDirection nextDir) override;
 
    //  See the comment in Singleton.h about an fn_name in a template header.
    //

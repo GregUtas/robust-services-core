@@ -39,7 +39,7 @@ public:
    PotsWmlInitiator();
 private:
    virtual EventHandler::Rc ProcessEvent(const ServiceSM& parentSsm,
-      Event& icEvent, Event*& ogEvent) const override;
+      Event& currEvent, Event*& nextEvent) const override;
 };
 
 class PotsWmlService : public Service

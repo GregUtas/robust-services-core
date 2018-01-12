@@ -355,7 +355,7 @@ void PotsMuxPsm::EnsureMediaMsg()
 
 fn_name PotsMuxPsm_ProcessIcMsg = "PotsMuxPsm.ProcessIcMsg";
 
-ProtocolSM::IncomingRc PotsMuxPsm::ProcessIcMsg(Message& msg, Event*& evt)
+ProtocolSM::IncomingRc PotsMuxPsm::ProcessIcMsg(Message& msg, Event*& event)
 {
    Debug::ft(PotsMuxPsm_ProcessIcMsg);
 
@@ -396,7 +396,7 @@ ProtocolSM::IncomingRc PotsMuxPsm::ProcessIcMsg(Message& msg, Event*& evt)
       return DiscardMessage;
    }
 
-   evt = new AnalyzeMsgEvent(msg);
+   event = new AnalyzeMsgEvent(msg);
    return EventRaised;
 }
 

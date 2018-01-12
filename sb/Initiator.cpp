@@ -148,7 +148,7 @@ Trigger* Initiator::GetTrigger() const
 fn_name Initiator_InvokeHandler = "Initiator.InvokeHandler";
 
 EventHandler::Rc Initiator::InvokeHandler
-   (const ServiceSM& parentSsm, Event& icEvent, Event*& ogEvent) const
+   (const ServiceSM& parentSsm, Event& currEvent, Event*& nextEvent) const
 {
    Debug::ft(Initiator_InvokeHandler);
 
@@ -159,7 +159,7 @@ EventHandler::Rc Initiator::InvokeHandler
 
    if(svc->GetStatus() != Service::Enabled) return EventHandler::Pass;
 
-   auto rc = ProcessEvent(parentSsm, icEvent, ogEvent);
+   auto rc = ProcessEvent(parentSsm, currEvent, nextEvent);
 
    switch(rc)
    {
@@ -167,9 +167,9 @@ EventHandler::Rc Initiator::InvokeHandler
       //
       //  Check that no event was created.
       //
-      if(ogEvent != nullptr)
+      if(nextEvent != nullptr)
       {
-         return EventError(ogEvent, EventHandler::Pass);
+         return EventError(nextEvent, EventHandler::Pass);
       }
       break;
 
@@ -177,24 +177,24 @@ EventHandler::Rc Initiator::InvokeHandler
       //
       //  Check that an initiation request was created.
       //
-      if(ogEvent == nullptr)
+      if(nextEvent == nullptr)
       {
          Debug::SwErr(Initiator_InvokeHandler, parentSsm.Sid(), sid_);
          return EventHandler::Pass;
       }
 
-      if(ogEvent->Eid() != Event::InitiationReq)
+      if(nextEvent->Eid() != Event::InitiationReq)
       {
-         return EventError(ogEvent, EventHandler::Pass);
+         return EventError(nextEvent, EventHandler::Pass);
       }
       break;
 
    default:
       Debug::SwErr(Initiator_InvokeHandler, sid_, rc);
 
-      if(ogEvent != nullptr)
+      if(nextEvent != nullptr)
       {
-         return EventError(ogEvent, EventHandler::Pass);
+         return EventError(nextEvent, EventHandler::Pass);
       }
       return EventHandler::Pass;
    }
@@ -223,7 +223,7 @@ void Initiator::Patch(sel_t selector, void* arguments)
 fn_name Initiator_ProcessEvent = "Initiator.ProcessEvent";
 
 EventHandler::Rc Initiator::ProcessEvent
-   (const ServiceSM& parentSsm, Event& icEvent, Event*& ogEvent) const
+   (const ServiceSM& parentSsm, Event& currEvent, Event*& nextEvent) const
 {
    Debug::ft(Initiator_ProcessEvent);
 

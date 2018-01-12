@@ -184,7 +184,7 @@ PotsWmlInitiator::PotsWmlInitiator() : Initiator(PotsWmlServiceId,
 fn_name PotsWmlInitiator_ProcessEvent = "PotsWmlInitiator.ProcessEvent";
 
 EventHandler::Rc PotsWmlInitiator::ProcessEvent
-   (const ServiceSM& parentSsm, Event& icEvent, Event*& ogEvent) const
+   (const ServiceSM& parentSsm, Event& currEvent, Event*& nextEvent) const
 {
    Debug::ft(PotsWmlInitiator_ProcessEvent);
 
@@ -194,7 +194,7 @@ EventHandler::Rc PotsWmlInitiator::ProcessEvent
 
    if((wmlp != nullptr) && wmlp->IsActive() && pssm.DialedDigits().Empty())
    {
-      ogEvent = new InitiationReqEvent(*icEvent.Owner(), PotsWmlServiceId);
+      nextEvent = new InitiationReqEvent(*currEvent.Owner(), PotsWmlServiceId);
       return EventHandler::Initiate;
    }
 

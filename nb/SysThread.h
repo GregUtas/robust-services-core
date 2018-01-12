@@ -98,12 +98,12 @@ private:
    ~SysThread();
 
    //  Used by the constructor to create an actual native thread.  ENTRY,
-   //  CLIENT, and SIZE were passed to the constructor.  Updates NID to
-   //  the new thread's native identifier.  Returns the thread's native
+   //  CLIENT, and stackSize were passed to the constructor.  Updates NID
+   //  to the new thread's native identifier.  Returns the thread's native
    //  handle.
    //
    static SysThread_t Create(const ThreadEntry entry,
-      const Thread* client, size_t size, SysThreadId& nid);
+      const Thread* client, size_t stackSize, SysThreadId& nid);
 
    //  Used by the constructor to wrap the thread that is running main().
    //  Returns the thread's native handle after possibly performing some

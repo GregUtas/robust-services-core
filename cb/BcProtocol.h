@@ -169,7 +169,7 @@ public:
 
    //  Adds a progress indicator to a CPG.
    //
-   ProgressInfo* AddProgress(const ProgressInfo& cause);
+   ProgressInfo* AddProgress(const ProgressInfo& progress);
 
    //  Adds a cause value to a REL.
    //

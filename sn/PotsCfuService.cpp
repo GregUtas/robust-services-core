@@ -49,7 +49,7 @@ PotsCfuInitiator::PotsCfuInitiator() : Initiator(PotsCfuServiceId,
 fn_name PotsCfuInitiator_ProcessEvent = "PotsCfuInitiator.ProcessEvent";
 
 EventHandler::Rc PotsCfuInitiator::ProcessEvent
-   (const ServiceSM& parentSsm, Event& icEvent, Event*& ogEvent) const
+   (const ServiceSM& parentSsm, Event& currEvent, Event*& nextEvent) const
 {
    Debug::ft(PotsCfuInitiator_ProcessEvent);
 
@@ -59,7 +59,7 @@ EventHandler::Rc PotsCfuInitiator::ProcessEvent
 
    if((cfup != nullptr) && cfup->IsActive())
    {
-      ogEvent = new InitiationReqEvent(*icEvent.Owner(), PotsCfuServiceId);
+      nextEvent = new InitiationReqEvent(*currEvent.Owner(), PotsCfuServiceId);
       return EventHandler::Initiate;
    }
 

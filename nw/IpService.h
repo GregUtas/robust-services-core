@@ -92,9 +92,9 @@ public:
    //
    virtual void GetAppSocketSizes(size_t& rxSize, size_t& txSize) const;
 
-   //  Provisions the service on PORT.
+   //  Provisions the service on PID.
    //
-   IpPort* Provision(ipport_t port);
+   IpPort* Provision(ipport_t pid);
 
    //  Returns the service's identifier.
    //

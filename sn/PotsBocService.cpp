@@ -75,7 +75,7 @@ PotsBocInitiator::PotsBocInitiator() : Initiator(PotsBocServiceId,
 fn_name PotsBocInitiator_ProcessEvent = "PotsBocInitiator.ProcessEvent";
 
 EventHandler::Rc PotsBocInitiator::ProcessEvent
-   (const ServiceSM& parentSsm, Event& icEvent, Event*& ogEvent) const
+   (const ServiceSM& parentSsm, Event& currEvent, Event*& nextEvent) const
 {
    Debug::ft(PotsBocInitiator_ProcessEvent);
 
@@ -84,7 +84,7 @@ EventHandler::Rc PotsBocInitiator::ProcessEvent
 
    if(prof->HasFeature(BOC))
    {
-      ogEvent = new InitiationReqEvent(*icEvent.Owner(), PotsBocServiceId);
+      nextEvent = new InitiationReqEvent(*currEvent.Owner(), PotsBocServiceId);
       return EventHandler::Initiate;
    }
 

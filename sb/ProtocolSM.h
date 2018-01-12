@@ -267,14 +267,14 @@ private:
    virtual Message* UnwrapMsg(Message& msg) override;
 
    //  Implements the incoming side of the PSM's state machine.  The PSM can
-   //  set an event (EVT) for the root SSM (usually AnalyzeMsgEvent; rarely,
+   //  set an event (EVENT) for the root SSM (usually AnalyzeMsgEvent; rarely,
    //  a protocol error event defined by the PSM) and return EventForRoot, in
    //  which case the SSM receives the event immediately.  Other choices are
    //  to return either ReceiveMessage, which passes MSG up the protocol stack,
    //  leaves EVT as nullptr, the return value is interpreted as follows:
    //  or DiscardMessage, which deletes MSG and end the transaction.
    //
-   virtual IncomingRc ProcessIcMsg(Message& msg, Event*& evt) = 0;
+   virtual IncomingRc ProcessIcMsg(Message& msg, Event*& event) = 0;
 
    //  Invoked just before ProcessOgMsg is invoked on each message on the
    //  outgoing message queue.  A PSM might implement this function to build

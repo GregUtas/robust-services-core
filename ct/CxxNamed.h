@@ -156,17 +156,17 @@ public:
    virtual void SetAccess(Cxx::Access access) { }
 
    //  Sets the template parameters when the item declares a template.
-   //  The default version invokes SetTemplateParms on GetQualName.
+   //  The default version generates a log and must be overridden by an
+   //  item that can declare a template.
    //
    virtual void SetTemplateParms(TemplateParmsPtr& parms);
 
    //  Returns the template parameters associated with the item, if any.
-   //  The default implementation invokes GetQualName and, if the result
-   //  is not nullptr, asks it for its template parameters.
+   //  Must be overridden by an item that can declare a template.
    //
-   virtual const TemplateParms* GetTemplateParms() const;
+   virtual const TemplateParms* GetTemplateParms() const { return nullptr; }
 
-   //  Returns true if the item is a class template or function template.
+   //  Returns true if the item declares template parameters.
    //
    bool IsTemplate() const { return GetTemplateParms() != nullptr; }
 
@@ -368,6 +368,10 @@ private:
    virtual bool ResolveForward
       (CxxScoped* decl, size_t n) const { return false; }
 
+   //  Overridden to prohibit copy assignment.
+   //
+   void operator=(const CxxNamed& that);
+
    //  The location where the item appeared.
    //
    CxxLocation loc_;
@@ -448,13 +452,9 @@ public:
    //
    QualName(const QualName& that);
 
-   //  Specifies whether a scope resolution operator preceded the first name.
-   //
-   void SetGlobal(bool global) { global_ = global; }
-
    //  Returns true if a scope resolution operator preceded the first name.
    //
-   bool IsGlobal() const { return global_; }
+   bool IsGlobal() const;
 
    //  Adds TYPE to the name.  In a qualified name, TYPE is preceded by a
    //  scope resolution operator.
@@ -467,23 +467,19 @@ public:
 
    //  Invokes SetLocale on each name.
    //
-   void SetLocale(Cxx::ItemType locale) const;
+   void SetLocale(Cxx::ItemType locale) const;  //ql
 
    //  Invoked when an operator follows the last name, which is "operator".
    //
-   void SetOperator(Cxx::Operator oper);
-
-   //  Transfers the name's template parameters, if any, to ITEM.
-   //
-   void MoveTemplateParms(CxxScoped* item);
+   void SetOperator(Cxx::Operator oper);  //qo
 
    //  Returns the names that comprise the qualified name.
    //
-   const TypeNamePtrVector& Names() const { return names_; }
+   const TypeNamePtrVector& Names() const { return names_; }  //qn
 
    //  Returns the operator, if any, that follows the last name.
    //
-   Cxx::Operator Operator() const { return oper_; }
+   Cxx::Operator Operator() const { return oper_; }  //qo
 
    //  Sets the referent of the Nth name to ITEM.  VIEW provides information
    //  about how the name was resolved.  If name resolution failed, ITEM will
@@ -549,11 +545,6 @@ public:
    //
    virtual TypeName* GetTemplateArgs() const override;
 
-   //  Overridden to return the item's template parameters.
-   //
-   virtual const TemplateParms* GetTemplateParms() const
-      override { return parms_.get(); }
-
    //  Overridden to update SYMBOLS with the name's type usage.
    //
    virtual void GetUsages
@@ -586,10 +577,6 @@ public:
    virtual bool ResolveTemplate
       (Class* cls, const TypeName* args, bool end) const override;
 
-   //  Sets the template parameters when the name declares a template.
-   //
-   virtual void SetTemplateParms(TemplateParmsPtr& parms) override;
-
    //  Overridden to shrink containers.
    //
    virtual void Shrink() override;
@@ -602,21 +589,17 @@ public:
    //
    virtual std::string TypeString(bool arg) const override;
 private:
+   //  Overridden to prohibit copy assignment.
+   //
+   void operator=(const QualName& that);
+
    //  The name(s).
    //
-   TypeNamePtrVector names_;
-
-   //  The template parameters if the name declares a template.
-   //
-   TemplateParmsPtr parms_;
+   TypeNamePtrVector names_;  //qn
 
    //  The operator, if any, that follows the final name.
    //
-   Cxx::Operator oper_ : 8;
-
-   //  Set if the name begins with a scope resolution operator.
-   //
-   bool global_ : 8;
+   Cxx::Operator oper_ : 8;  //qo
 };
 
 //------------------------------------------------------------------------------
@@ -637,6 +620,14 @@ public:
    //  Copy constructor.
    //
    TypeName(const TypeName& that);
+
+   //  Invoked if a scope resolution operator preceded the name.
+   //
+   void SetScoped() { scoped_ = true; }
+
+   //  Returns true if the name was preceded by a scope resolution operator.
+   //
+   bool IsScoped() const { return scoped_; }
 
    //  Adds a template argument (type specialization) to this name.
    //
@@ -694,7 +685,7 @@ public:
 
    //  Records the forward declaration when ResolveForward returns true.
    //
-   void SetForward(CxxScoped* decl) const { forw_ = decl; }
+   void SetForward(CxxScoped* decl) const;
 
    //  Returns the forward declaration recorded by SetForward.
    //
@@ -756,6 +747,10 @@ public:
    //
    virtual std::string TypeString(bool arg) const override;
 private:
+   //  Overridden to prohibit copy assignment.
+   //
+   void operator=(const TypeName& that);
+
    //  The name that appears in what could be a qualified name.
    //
    std::string name_;
@@ -780,9 +775,14 @@ private:
    //
    mutable CxxScoped* forw_;
 
+   //  Set if a scope resolution operator precedes the name.
+   //  Initialized to false; must be set by SetScoped.
+   //
+   bool scoped_ : 1;
+
    //  Set if ref_ was made visible by a using statement.
    //
-   mutable bool using_;
+   mutable bool using_ : 1;
 };
 
 //------------------------------------------------------------------------------
@@ -984,6 +984,10 @@ protected:
    //
    TypeSpec(const TypeSpec& that);
 private:
+   //  Overridden to prohibit copy assignment.
+   //
+   void operator=(const TypeSpec& that);
+
    //  The item type to which the type belongs.  The default is Cxx::Operation.
    //
    Cxx::ItemType locale_ : 8;
@@ -1020,6 +1024,10 @@ public:
    //
    ~DataSpec();
 private:
+   //  Overridden to prohibit copy assignment.
+   //
+   void operator=(const DataSpec& that);
+
    //  Returns true if the type was declared as auto, even if (unlike IsAuto)
    //  its underlying type has been determined.
    //
@@ -1357,10 +1365,6 @@ public:
    //
    ~TemplateParm() { CxxStats::Decr(CxxStats::TEMPLATE_PARM); }
 
-   //  Copy constructor.
-   //
-   TemplateParm(const TemplateParm& that);
-
    //  Returns the parameter's default type.
    //
    const TypeName* Default() const { return default_.get(); }
@@ -1419,10 +1423,6 @@ public:
    //  Not subclassed.
    //
    ~TemplateParms() { CxxStats::Decr(CxxStats::TEMPLATE_PARMS); }
-
-   //  Copy constructor.
-   //
-   TemplateParms(const TemplateParms& that);
 
    //  Adds another parameter to the template.
    //

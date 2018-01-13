@@ -278,11 +278,6 @@ protected:
    static void ShrinkExpression(const ExprPtr& expr);
    static void ShrinkTokens(const TokenPtrVector& tokens);
 private:
-   //  Overridden to prohibit copying.
-   //
-   CxxToken(const CxxToken& that);
-   void operator=(const CxxToken& that);
-
    //  Returns the item's underlying type.  Can return nullptr, whereas Root
    //  (above) returns the item that returned nullptr.
    //

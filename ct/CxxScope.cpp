@@ -2178,6 +2178,7 @@ void Function::Check() const
 
    if(IsTemplateInstance()) return;
 
+   if(parms_ != nullptr) parms_->Check();
    if(spec_ != nullptr) spec_->Check();
 
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
@@ -2750,11 +2751,12 @@ void Function::DisplayDecl(ostream& stream, const Flags& options) const
    //  this, they will not appear when displaying a separate definition.
    //
    if(extern_) stream << EXTERN_STR << SPACE;
+
    if(!options.test(DispNoTP))
    {
-      auto parms = GetTemplateParms();
-      if(parms != nullptr) parms->Print(stream);
+      if(parms_ != nullptr) parms_->Print(stream);
    }
+
    if(inline_) stream << INLINE_STR << SPACE;
    if(constexpr_) stream << CONSTEXPR_STR << SPACE;
    if(static_) stream << STATIC_STR << SPACE;
@@ -4190,7 +4192,7 @@ void Function::SetOperator(Cxx::Operator oper)
       auto count = args_.size();
       if(oper == Cxx::CAST) ++count;
       CxxOp::UpdateOperator(oper, count);
-      name_->SetOperator(oper);
+      name_->SetOperator(oper);  //qo
    }
 
    //  Adding the function to the symbol table was deferred until now in
@@ -4222,10 +4224,21 @@ void Function::SetStatic(bool stat, Cxx::Operator oper)
 
 //------------------------------------------------------------------------------
 
+fn_name Function_SetTemplateParms = "Function.SetTemplateParms";
+
+void Function::SetTemplateParms(TemplateParmsPtr& parms)
+{
+   Debug::ft(Function_SetTemplateParms);
+
+   parms_ = std::move(parms);
+}
+
+//------------------------------------------------------------------------------
+
 void Function::Shrink()
 {
    name_->Shrink();
-
+   if(parms_ != nullptr) parms_->Shrink();
    if(spec_ != nullptr) spec_->Shrink();
 
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
@@ -4817,6 +4830,8 @@ void SpaceData::Check() const
 
    Data::Check();
 
+   if(parms_ != nullptr) parms_->Check();
+
    if(IsDecl())
    {
       CheckUsage();
@@ -4928,10 +4943,22 @@ void SpaceData::GetInitName(QualNamePtr& qualName) const
 
 //------------------------------------------------------------------------------
 
+fn_name SpaceData_SetTemplateParms = "SpaceData.SetTemplateParms";
+
+void SpaceData::SetTemplateParms(TemplateParmsPtr& parms)
+{
+   Debug::ft(SpaceData_SetTemplateParms);
+
+   parms_ = std::move(parms);
+}
+
+//------------------------------------------------------------------------------
+
 void SpaceData::Shrink()
 {
    Data::Shrink();
 
    name_->Shrink();
+   if(parms_ != nullptr) parms_->Shrink();
 }
 }

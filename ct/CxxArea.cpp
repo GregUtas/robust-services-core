@@ -453,6 +453,8 @@ void Class::Check() const
 
    CxxArea::Check();
 
+   if(parms_ != nullptr) parms_->Check();
+
    //  If this is a class template, aggregate the friend usages from its
    //  instantiations.
    //
@@ -996,8 +998,7 @@ void Class::DisplayBase(ostream& stream, const Flags& options) const
 {
    if(!options.test(DispNoTP))
    {
-      auto parms = GetTemplateParms();
-      if(parms != nullptr) parms->Print(stream);
+      if(parms_ != nullptr) parms_->Print(stream);
    }
 
    if(OuterClass() != nullptr) stream << GetAccess() << ": ";
@@ -1661,11 +1662,23 @@ bool Class::SetCurrAccess(Cxx::Access access)
 
 //------------------------------------------------------------------------------
 
+fn_name Class_SetTemplateParms = "Class.SetTemplateParms";
+
+void Class::SetTemplateParms(TemplateParmsPtr& parms)
+{
+   Debug::ft(Class_SetTemplateParms);
+
+   parms_ = std::move(parms);
+}
+
+//------------------------------------------------------------------------------
+
 void Class::Shrink()
 {
    CxxArea::Shrink();
 
    name_->Shrink();
+   if(parms_ != nullptr) parms_->Shrink();
    if(base_ != nullptr) base_->Shrink();
 
    for(auto f = friends_.cbegin(); f != friends_.cend(); ++f)

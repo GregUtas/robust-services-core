@@ -208,11 +208,6 @@ private:
    //
    ~CxxSymbols();
 
-   //  Overridden to prohibit copying.
-   //
-   CxxSymbols(const CxxSymbols& that);
-   void operator=(const CxxSymbols& that);
-
    //  Symbol tables.
    //
    ClassTablePtr classes_;

@@ -488,6 +488,11 @@ public:
    //
    virtual CxxScope* GetTemplate() const override;
 
+   //  Overriden to support class templates.
+   //
+   virtual const TemplateParms* GetTemplateParms() const
+      override { return parms_.get(); }
+
    //  Overridden to update SYMBOLS with the type usage of each of the
    //  class's components.
    //
@@ -519,6 +524,10 @@ public:
    //  Overridden to record usage of the class.
    //
    virtual void RecordUsage() const override { AddUsage(); }
+
+   //  Overriden to support class templates.
+   //
+   virtual void SetTemplateParms(TemplateParmsPtr& parms) override;
 
    //  Overridden to shrink containers.
    //
@@ -587,6 +596,10 @@ private:
    //  The class's name.
    //
    const QualNamePtr name_;
+
+   //  The template parameters for a class template.
+   //
+   TemplateParmsPtr parms_;
 
    //  The type of class.
    //

@@ -576,6 +576,11 @@ public:
    //
    virtual QualName* GetQualName() const override { return name_.get(); }
 
+   //  Overriden to support static member data in a template.
+   //
+   virtual const TemplateParms* GetTemplateParms() const
+      override { return parms_.get(); }
+
    //  Overridden to return the item's name.
    //
    virtual const std::string* Name() const override { return name_->Name(); }
@@ -588,6 +593,10 @@ public:
    //  Overridden to record usage of the item.
    //
    virtual void RecordUsage() const override { AddUsage(); }
+
+   //  Overriden to support static member data in a template.
+   //
+   virtual void SetTemplateParms(TemplateParmsPtr& parms) override;
 
    //  Overridden to shrink containers.
    //
@@ -610,6 +619,10 @@ private:
    //  names (and so name_->size() == 1).
    //
    const QualNamePtr name_;
+
+   //  The template parameters for static member data belonging to a template.
+   //
+   TemplateParmsPtr parms_;
 };
 
 //------------------------------------------------------------------------------
@@ -934,7 +947,7 @@ public:
 
    //  Returns the function's operator (Cxx::NIL_OPERATOR if not an operator).
    //
-   Cxx::Operator Operator() const { return name_->Operator(); }
+   Cxx::Operator Operator() const { return name_->Operator(); }  //qo
 
    //  Returns true if the function is an override.  This does not perform any
    //  analysis, but simply relies on the "override" tag, which should always
@@ -1127,6 +1140,11 @@ public:
    //
    virtual CxxScope* GetTemplate() const override;
 
+   //  Overriden to support function templates.
+   //
+   virtual const TemplateParms* GetTemplateParms() const
+      override { return parms_.get(); }
+
    //  Overridden to return the function's return type.
    //
    virtual TypeSpec* GetTypeSpec() const override { return spec_.get(); }
@@ -1173,6 +1191,10 @@ public:
    //  Overridden to record usage of the function.
    //
    virtual void RecordUsage() const override;
+
+   //  Overriden to support function templates.
+   //
+   virtual void SetTemplateParms(TemplateParmsPtr& parms) override;
 
    //  Overridden to shrink containers.
    //
@@ -1335,6 +1357,10 @@ private:
    //  The function's name.
    //
    const QualNamePtr name_;
+
+   //  The template parameters for a function template.
+   //
+   TemplateParmsPtr parms_;
 
    //  Set for a function tagged as extern.
    //

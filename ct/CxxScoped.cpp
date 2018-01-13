@@ -1470,9 +1470,8 @@ CxxNamed* Friend::FindForward() const
    CxxScoped* item = GetScope();
    auto func = GetFunction();
    auto qname = GetQualName();
-   auto& names = qname->Names();  //qn
-   auto size = names.size();
-   string name = *names.at(0)->Name();
+   auto size = qname->Size();
+   string name = *qname->First()->Name();
    size_t idx = (*item->Name() == name ? 1 : 0);
    Namespace* space;
    Class* cls;
@@ -1493,7 +1492,7 @@ CxxNamed* Friend::FindForward() const
          //
          if(idx >= size) return item;
          space = static_cast< Namespace* >(item);
-         name = *names.at(idx)->Name();
+         name = *qname->At(idx)->Name();
          item = nullptr;
          if(++idx >= size)
          {
@@ -1515,7 +1514,7 @@ CxxNamed* Friend::FindForward() const
             //
             if(idx == 0) break;
             if(cls->IsInTemplateInstance()) break;
-            auto args = names.at(idx - 1)->GetTemplateArgs();
+            auto args = qname->At(idx - 1)->GetTemplateArgs();
             if(args == nullptr) break;
             if(!ResolveTemplate(cls, args, (idx >= size))) break;
             cls = cls->EnsureInstance(args);
@@ -1529,7 +1528,7 @@ CxxNamed* Friend::FindForward() const
          //  when TYPE is a namespace.
          //
          if(idx >= size) return item;
-         name = *names.at(idx)->Name();
+         name = *qname->At(idx)->Name();
          item = nullptr;
          if(++idx >= size)
          {
@@ -1751,7 +1750,7 @@ bool Friend::ResolveForward(CxxScoped* decl, size_t n) const
    //  and continue resolving the name.
    //
    if(decl == this) return false;
-   name_->Names().at(n)->SetForward(decl);  //qn
+   name_->At(n)->SetForward(decl);
    decl->SetAsReferent(this);
    SetScope(decl->GetSpace());
    return true;

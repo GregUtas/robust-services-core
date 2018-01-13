@@ -947,7 +947,7 @@ public:
 
    //  Returns the function's operator (Cxx::NIL_OPERATOR if not an operator).
    //
-   Cxx::Operator Operator() const { return name_->Operator(); }  //qo
+   Cxx::Operator Operator() const { return name_->Operator(); }
 
    //  Returns true if the function is an override.  This does not perform any
    //  analysis, but simply relies on the "override" tag, which should always

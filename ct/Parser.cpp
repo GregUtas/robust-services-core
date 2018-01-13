@@ -127,7 +127,7 @@ bool Parser::CheckType(QualNamePtr& name)
 
    //  This only applies when TYPE is unqualified.
    //
-   if(name->Names().size() != 1) return true;  //qn
+   if(name->Size() != 1) return true;
 
    auto type = Lexer::GetType(*name->Name());
 
@@ -1052,7 +1052,7 @@ bool Parser::GetCxxAlpha(ExprPtr& expr)
    QualNamePtr qualName;
    if(!GetQualName(qualName)) return lexer_.Retreat(start);
 
-   if(qualName->Names().size() == 1)  //qn
+   if(qualName->Size() == 1)
    {
       //  See if the name is actually a keyword or operator.
       //
@@ -1358,7 +1358,7 @@ bool Parser::GetDtorDefn(FunctionPtr& func)
    name.insert(0, 1, '~');
    auto className = TypeNamePtr(new TypeName(name));
    className->SetScoped();
-   dtorName->AddTypeName(className);
+   dtorName->PushBack(className);
    func.reset(new Function(dtorName));
    func->SetNoexcept(noex);
    SetContext(func.get(), start);
@@ -2461,10 +2461,10 @@ bool Parser::GetProcDefn(FunctionPtr& func)
       Cxx::Operator oper;
       if(!lexer_.GetName(name, oper)) return lexer_.Retreat(start);
       funcName.reset(new QualName(name));
-      funcName->SetOperator(oper);  //qo
+      funcName->SetOperator(oper);
       string spec;
       if(!lexer_.GetTemplateSpec(spec)) return lexer_.Retreat(start);
-      funcName->Append(spec);
+      funcName->Append(spec, false);
    }
    else
    {
@@ -2472,7 +2472,7 @@ bool Parser::GetProcDefn(FunctionPtr& func)
    }
    if(!lexer_.NextCharIs('(')) return lexer_.Retreat(start);
 
-   auto oper = funcName->Operator();  //qo
+   auto oper = funcName->Operator();
    func.reset(new Function(funcName, typeSpec));
    SetContext(func.get(), start);
    if(!GetArguments(func)) return Retreat(start, func);
@@ -2508,7 +2508,7 @@ bool Parser::GetQualName(QualNamePtr& name)
    {
       if(!GetTypeName(type)) return lexer_.Retreat(start);
       type->SetScoped();
-      name->AddTypeName(type);
+      name->PushBack(type);
    }
 
    if(*name->Name() == OPERATOR_STR)
@@ -2521,7 +2521,7 @@ bool Parser::GetQualName(QualNamePtr& name)
          return lexer_.Retreat(start);
       }
 
-      name->SetOperator(oper);  //qo
+      name->SetOperator(oper);
    }
 
    SetContext(name.get(), start);
@@ -2653,7 +2653,7 @@ bool Parser::GetSpaceData(Cxx::Keyword kwd, DataPtr& data)
    auto cexpr = NextKeywordIs(CONSTEXPR_STR);
    if(!GetTypeSpec(typeSpec)) return lexer_.Retreat(start);
    if(!GetQualName(dataName)) return lexer_.Retreat(start);
-   if(dataName->Operator() != Cxx::NIL_OPERATOR) return lexer_.Retreat(start);  //qo
+   if(dataName->Operator() != Cxx::NIL_OPERATOR) return lexer_.Retreat(start);
 
    if(lexer_.NextCharIs('('))
    {

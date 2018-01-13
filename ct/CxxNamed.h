@@ -430,180 +430,6 @@ private:
 
 //------------------------------------------------------------------------------
 //
-//  Used when an item can have a qualified name (that is, when its name
-//  in the source code can contain a scope resolution operator).
-//
-class QualName : public CxxNamed
-{
-public:
-   //  Creates a name that begins with TYPE.
-   //
-   explicit QualName(TypeNamePtr& type);
-
-   //  Creates a name that begins with NAME.
-   //
-   explicit QualName(const std::string& name);
-
-   //  Not subclassed.
-   //
-   ~QualName();
-
-   //  Copy constructor.
-   //
-   QualName(const QualName& that);
-
-   //  Returns true if a scope resolution operator preceded the first name.
-   //
-   bool IsGlobal() const;
-
-   //  Adds TYPE to the name.  In a qualified name, TYPE is preceded by a
-   //  scope resolution operator.
-   //
-   void AddTypeName(TypeNamePtr& type);
-
-   //  Adds NAME to the last name.  Inserts a space if SPACE is set.
-   //
-   void Append(const std::string& name, bool space = false);
-
-   //  Invokes SetLocale on each name.
-   //
-   void SetLocale(Cxx::ItemType locale) const;  //ql
-
-   //  Invoked when an operator follows the last name, which is "operator".
-   //
-   void SetOperator(Cxx::Operator oper);  //qo
-
-   //  Returns the names that comprise the qualified name.
-   //
-   const TypeNamePtrVector& Names() const { return names_; }  //qn
-
-   //  Returns the operator, if any, that follows the last name.
-   //
-   Cxx::Operator Operator() const { return oper_; }  //qo
-
-   //  Sets the referent of the Nth name to ITEM.  VIEW provides information
-   //  about how the name was resolved.  If name resolution failed, ITEM will
-   //  be nullptr.  If whoever requested name resolution did not provide a
-   //  SymbolView, VIEW will be nullptr.
-   //
-   void SetReferent(size_t n, CxxNamed* item, SymbolView* view) const;
-
-   //  Sets the last name's referent.  This is used by QualName.EnterBlock and
-   //  Operation.PushMember when a name appears in executable code.  It is also
-   //  used by classes that contain a QualName member and that find a referent.
-   //  Those classes do not contain executable code, so they can safely use the
-   //  last name's ref_ field because it is normally used only when it appears
-   //  in executable code.
-   //
-   bool SetReferent(CxxNamed* ref) const;
-
-   //  Returns the last name's referent.  This is used in conjunction with
-   //  SetReferent.  A class that contains a QualName instance cannot use the
-   //  Referent function (overridden below) to access the referent because,
-   //  if it is nullptr, the QualName will try to find it, starting with local
-   //  variables.
-   //
-   CxxNamed* GetReferent() const;
-
-   //  Returns the last forward declaration in names_.
-   //
-   CxxScoped* GetForward() const;
-
-   //  Invoked when the name accesses MEM via CLS.  Forwards to the first name
-   //  that has no referent and that matches MEM's name.
-   //
-   void MemberAccessed(Class* cls, CxxNamed* mem) const;
-
-   //  Invokes MatchTemplate on each entry in names_, returning the least
-   //  favorable result.
-   //
-   TypeMatch MatchTemplate(const QualName* that,
-      stringVector& tmpltParms, stringVector& tmpltArgs, bool& argFound) const;
-
-   //  Checks that the name is a valid constructor name ("...A::A").
-   //
-   bool CheckCtorDefn() const;
-
-   //  Overridden to check each name and any template parameters.
-   //
-   virtual void Check() const override;
-
-   //  Overridden to forward to names_.back().
-   //
-   virtual CxxNamed* DirectType() const override;
-
-   //  Overridden to find the referent and push it onto the argument stack.
-   //
-   virtual void EnterBlock() override;
-
-   //  Overridden to return the item itself.
-   //
-   virtual QualName* GetQualName() const
-      override { return const_cast< QualName* >(this); }
-
-   //  Overridden to see if an entry in names_ specifies a template instance.
-   //
-   virtual TypeName* GetTemplateArgs() const override;
-
-   //  Overridden to update SYMBOLS with the name's type usage.
-   //
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
-
-   //  Overridden to return the name after the last scope resolution
-   //  operator.
-   //
-   virtual const std::string* Name() const override;
-
-   //  Overridden to display the name, including any template arguments.
-   //
-   virtual void Print(std::ostream& stream) const override;
-
-   //  Overridden to return the qualified name.
-   //
-   virtual std::string QualifiedName
-      (bool scopes, bool templates) const override;
-
-   //  Overridden to return the referent of the last name.
-   //
-   virtual CxxNamed* Referent() const override;
-
-   //  Overridden to forward to names_[n].
-   //
-   virtual bool ResolveTypedef(Typedef* type, size_t n) const override;
-
-   //  Overridden to instantiate the template unless END is set.
-   //
-   virtual bool ResolveTemplate
-      (Class* cls, const TypeName* args, bool end) const override;
-
-   //  Overridden to shrink containers.
-   //
-   virtual void Shrink() override;
-
-   //  Overridden to reveal that this is a qualified name.
-   //
-   virtual Cxx::ItemType Type() const override { return Cxx::QualName; }
-
-   //  Overridden to return the referent's full root type.
-   //
-   virtual std::string TypeString(bool arg) const override;
-private:
-   //  Overridden to prohibit copy assignment.
-   //
-   void operator=(const QualName& that);
-
-   //  The name(s).
-   //
-   TypeNamePtrVector names_;  //qn
-
-   //  The operator, if any, that follows the final name.
-   //
-   Cxx::Operator oper_ : 8;  //qo
-};
-
-//------------------------------------------------------------------------------
-//
 //  One of the names in a qualified name.
 //
 class TypeName : public CxxNamed
@@ -621,6 +447,15 @@ public:
    //
    TypeName(const TypeName& that);
 
+   //  In a qualified name, adds TYPE as the name that follows this one.
+   //  A scope resolution operator separates the two names.
+   //
+   void PushBack(TypeNamePtr& type);
+
+   //  Returns the next name in a qualified name.
+   //
+   TypeName* Next() const { return next_.get(); }
+
    //  Invoked if a scope resolution operator preceded the name.
    //
    void SetScoped() { scoped_ = true; }
@@ -633,13 +468,21 @@ public:
    //
    void AddTemplateArg(TypeSpecPtr& arg);
 
+   //  Returns the template arguments.
+   //
+   const TypeSpecPtrVector* Args() const { return args_.get(); }
+
    //  Adds the string corresponding to OPER to the name.
    //
    void SetOperator(Cxx::Operator oper);
 
-   //  Adds NAME to the last name.
+   //  Returns the operator, if any, that follows the name.
    //
-   void Append(const std::string& name);
+   Cxx::Operator Operator() const { return oper_; }
+
+   //  Adds the suffix NAME to the name.  Adds a space first if SPACE is set.
+   //
+   void Append(const std::string& name, bool space);
 
    //  Invokes SetLocale on each template argument.
    //
@@ -658,10 +501,6 @@ public:
    //  Invokes Instantiating on each template argument.
    //
    void Instantiating() const;
-
-   //  Returns the template arguments.
-   //
-   const TypeSpecPtrVector* Args() const { return args_.get(); }
 
    //  Determines if THAT can instantiate a template for args_.
    //  o Returns Compatible if args_ is empty.
@@ -759,6 +598,10 @@ private:
    //
    std::unique_ptr< TypeSpecPtrVector > args_;
 
+   //  The next name in a qualified name.
+   //
+   TypeNamePtr next_;
+
    //  What the name refers to.
    //
    mutable CxxNamed* ref_;
@@ -775,6 +618,10 @@ private:
    //
    mutable CxxScoped* forw_;
 
+   //  The operator, if any, that follows the name.
+   //
+   Cxx::Operator oper_ : 8;
+
    //  Set if a scope resolution operator precedes the name.
    //  Initialized to false; must be set by SetScoped.
    //
@@ -783,6 +630,188 @@ private:
    //  Set if ref_ was made visible by a using statement.
    //
    mutable bool using_ : 1;
+};
+
+//------------------------------------------------------------------------------
+//
+//  Used when an item can have a qualified name (that is, when its name
+//  in the source code can contain a scope resolution operator).
+//
+class QualName : public CxxNamed
+{
+public:
+   //  Creates a name that begins with TYPE.
+   //
+   explicit QualName(TypeNamePtr& type);
+
+   //  Creates a name that begins with NAME.
+   //
+   explicit QualName(const std::string& name);
+
+   //  Not subclassed.
+   //
+   ~QualName();
+
+   //  Copy constructor.
+   //
+   QualName(const QualName& that);
+
+   //  Adds TYPE to the name.  In a qualified name, TYPE is preceded by a
+   //  scope resolution operator.
+   //
+   void PushBack(TypeNamePtr& type);
+
+   //  Returns the first name.
+   //
+   TypeName* First() const { return first_.get(); }
+
+   //  Returns the Nth name.
+   //
+   TypeName* At(size_t n) const;
+
+   //  Returns the number of names.
+   //
+   size_t Size() const;
+
+   //  Returns true if a scope resolution operator preceded the first name.
+   //
+   bool IsGlobal() const { return First()->IsScoped(); }
+
+   //  Adds the suffix NAME to the last name.  Adds a space first if SPACE
+   //  is set.
+   //
+   void Append(const std::string& name, bool space) const;
+
+   //  Invoked when an operator follows the last name, which is "operator".
+   //
+   void SetOperator(Cxx::Operator oper) const;
+
+   //  Returns the operator, if any, that follows the last name.
+   //
+   Cxx::Operator Operator() const { return Last()->Operator(); }
+
+   //  Invokes SetLocale on each name.
+   //
+   void SetLocale(Cxx::ItemType locale) const;
+
+   //  Sets the referent of the Nth name to ITEM.  VIEW provides information
+   //  about how the name was resolved.  If name resolution failed, ITEM will
+   //  be nullptr.  If whoever requested name resolution did not provide a
+   //  SymbolView, VIEW will be nullptr.
+   //
+   void SetReferent(size_t n, CxxNamed* item, SymbolView* view) const;
+
+   //  Sets the last name's referent.  This is used by QualName.EnterBlock and
+   //  Operation.PushMember when a name appears in executable code.  It is also
+   //  used by classes that contain a QualName member and that find a referent.
+   //  Those classes do not contain executable code, so they can safely use the
+   //  last name's ref_ field because it is normally used only when it appears
+   //  in executable code.
+   //
+   bool SetReferent(CxxNamed* ref) const;
+
+   //  Returns the last name's referent.  This is used in conjunction with
+   //  SetReferent.  A class that contains a QualName instance cannot use the
+   //  Referent function (overridden below) to access the referent because,
+   //  if it is nullptr, the QualName will try to find it, starting with local
+   //  variables.
+   //
+   CxxNamed* GetReferent() const { return Last()->Referent(); }
+
+   //  Returns the last name that was resolved by a forward declaration.
+   //
+   CxxScoped* GetForward() const;
+
+   //  Invoked when the name accesses MEM via CLS.  Forwards to the first name
+   //  that has no referent and that matches MEM's name.
+   //
+   void MemberAccessed(Class* cls, CxxNamed* mem) const;
+
+   //  Invokes MatchTemplate on each name, returning the least favorable result.
+   //
+   TypeMatch MatchTemplate(const QualName* that,
+      stringVector& tmpltParms, stringVector& tmpltArgs, bool& argFound) const;
+
+   //  Checks that the name is a valid constructor name ("...A::A").
+   //
+   bool CheckCtorDefn() const;
+
+   //  Overridden to check each name and any template parameters.
+   //
+   virtual void Check() const override;
+
+   //  Overridden to forward to the last name.
+   //
+   virtual CxxNamed* DirectType() const
+      override { return Last()->DirectType(); }
+
+   //  Overridden to find the referent and push it onto the argument stack.
+   //
+   virtual void EnterBlock() override;
+
+   //  Overridden to return the item itself.
+   //
+   virtual QualName* GetQualName() const
+      override { return const_cast< QualName* >(this); }
+
+   //  Overridden to see if one of the names specifies a template instance.
+   //
+   virtual TypeName* GetTemplateArgs() const override;
+
+   //  Overridden to update SYMBOLS with the name's type usage.
+   //
+   virtual void GetUsages
+      (const CodeFile& file, CxxUsageSets& symbols) const override;
+
+   //  Overridden to return the last name.
+   //
+   virtual const std::string* Name() const override { return Last()->Name(); }
+
+   //  Overridden to display the name, including any template arguments.
+   //
+   virtual void Print(std::ostream& stream) const override;
+
+   //  Overridden to return the qualified name.
+   //
+   virtual std::string QualifiedName
+      (bool scopes, bool templates) const override;
+
+   //  Overridden to return the referent of the last name.
+   //
+   virtual CxxNamed* Referent() const override;
+
+   //  Overridden to forward to the Nth name.
+   //
+   virtual bool ResolveTypedef(Typedef* type, size_t n) const override;
+
+   //  Overridden to instantiate the template unless END is set.
+   //
+   virtual bool ResolveTemplate
+      (Class* cls, const TypeName* args, bool end) const override;
+
+   //  Overridden to shrink containers.
+   //
+   virtual void Shrink() override;
+
+   //  Overridden to reveal that this is a qualified name.
+   //
+   virtual Cxx::ItemType Type() const override { return Cxx::QualName; }
+
+   //  Overridden to return the referent's full root type.
+   //
+   virtual std::string TypeString(bool arg) const override;
+private:
+   //  Overridden to prohibit copy assignment.
+   //
+   void operator=(const QualName& that);
+
+   //  Returns the last name.
+   //
+   TypeName* Last() const;
+
+   //  The first name in what might be a qualified name.
+   //
+   TypeNamePtr first_;
 };
 
 //------------------------------------------------------------------------------

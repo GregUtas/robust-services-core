@@ -4192,7 +4192,7 @@ void Function::SetOperator(Cxx::Operator oper)
       auto count = args_.size();
       if(oper == Cxx::CAST) ++count;
       CxxOp::UpdateOperator(oper, count);
-      name_->SetOperator(oper);  //qo
+      name_->SetOperator(oper);
    }
 
    //  Adding the function to the symbol table was deferred until now in

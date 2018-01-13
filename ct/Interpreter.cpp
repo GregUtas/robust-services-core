@@ -184,11 +184,6 @@ public:
    //
    LibExprErr GetError() const { return err_; }
 private:
-   //  Overridden to prohibit copying.
-   //
-   LibraryOpcode(const LibraryOpcode& that);
-   void operator=(const LibraryOpcode& that);
-
    //  Verifies that the type of argument ENTERED is the type that
    //  is ACCEPTED by this opcode.
    //

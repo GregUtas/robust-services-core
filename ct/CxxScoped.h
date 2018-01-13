@@ -166,10 +166,6 @@ protected:
    //
    virtual void CheckAccessControl() const;
 private:
-   //  Overridden to prohibit copying.
-   //
-   CxxScoped(const CxxScoped& that);
-
    //  The scope where the item appeared.
    //
    mutable CxxScope* scope_;
@@ -600,10 +596,6 @@ public:
    //
    virtual std::string TypeString(bool arg) const override;
 private:
-   //  Overridden to prohibit copying.
-   //
-   Enumerator(const Enumerator& that);
-
    //  The enumerator's name.
    //
    std::string name_;
@@ -661,6 +653,11 @@ public:
    //
    virtual QualName* GetQualName() const override { return name_.get(); }
 
+   //  Overriden to support the forward declaration of templates.
+   //
+   virtual const TemplateParms* GetTemplateParms() const
+      override { return parms_.get(); }
+
    //  Overridden to determine if the declaration is unused.
    //
    virtual bool IsUnused() const override { return (users_ == 0); }
@@ -680,6 +677,10 @@ public:
    //  Overridden to count usages.
    //
    virtual void SetAsReferent(const CxxNamed* user) override { ++users_; }
+
+   //  Overriden to support the forward declaration of templates.
+   //
+   virtual void SetTemplateParms(TemplateParmsPtr& parms) override;
 
    //  Overridden to shrink containers.
    //
@@ -704,6 +705,10 @@ private:
    //  The class's name.
    //
    const QualNamePtr name_;
+
+   //  The template parameters if the class declares a template.
+   //
+   TemplateParmsPtr parms_;
 
    //  How many times the declaration resolved a symbol.
    //
@@ -781,6 +786,11 @@ public:
    //
    virtual QualName* GetQualName() const override;
 
+   //  Overriden to support templates as friends.
+   //
+   virtual const TemplateParms* GetTemplateParms() const
+      override { return parms_.get(); }
+
    //  Overridden to update SYMBOLS with the declaration's type usage.
    //
    virtual void GetUsages
@@ -822,6 +832,10 @@ public:
    //
    virtual void SetAsReferent(const CxxNamed* user) override;
 
+   //  Overriden to support templates as friends.
+   //
+   virtual void SetTemplateParms(TemplateParmsPtr& parms) override;
+
    //  Overridden to shrink containers.
    //
    virtual void Shrink() override;
@@ -860,13 +874,13 @@ private:
    //
    CxxNamed* GetReferent() const;
 
-   //  Overridden to prohibit copying.
-   //
-   Friend(const Friend& that);
-
    //  The friend's qualified name.
    //
    QualNamePtr name_;
+
+   //  The template parameters if the friend is a template.
+   //
+   TemplateParmsPtr parms_;
 
    //  If the friend is a non-inlined function, its specification.
    //
@@ -897,7 +911,7 @@ private:
    //
    size_t users_ : 16;
 
-   //  Set to prevent FindReferent from nesting too deeply.
+   //  Used to prevent FindReferent from nesting too deeply.
    //
    static size_t Depth_;
 };

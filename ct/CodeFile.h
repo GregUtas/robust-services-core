@@ -280,11 +280,6 @@ public:
    virtual void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
-   //  Overridden to prohibit copying.
-   //
-   CodeFile(const CodeFile& that);
-   void operator=(const CodeFile& that);
-
    //  Returns the stream created for reading the file.
    //
    istreamPtr Stream() const;

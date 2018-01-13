@@ -590,11 +590,6 @@ private:
    //
    static std::string Indent();
 
-   //  Overridden to prohibit copying.
-   //
-   Parser(const Parser& that);
-   void operator=(const Parser& that);
-
    //  The lexical analyzer.
    //
    Lexer lexer_;

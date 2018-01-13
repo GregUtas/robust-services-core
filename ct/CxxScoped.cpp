@@ -1174,6 +1174,8 @@ void Forward::Check() const
 {
    Debug::ft(Forward_Check);
 
+   if(parms_ != nullptr) parms_->Check();
+
    if(Referent() == nullptr)
    {
       Log(ForwardUnresolved);
@@ -1190,8 +1192,12 @@ void Forward::Display(ostream& stream,
 {
    auto fq = options.test(DispFQ);
    stream << prefix;
-   auto parms = GetTemplateParms();
-   if(parms != nullptr) parms->Print(stream);
+
+   if(!options.test(DispNoTP))
+   {
+      if(parms_ != nullptr) parms_->Print(stream);
+   }
+
    stream << tag_ << SPACE;
    strName(stream, fq, name_.get());
    stream << ';';
@@ -1259,9 +1265,21 @@ string Forward::ScopedName(bool templates) const
 
 //------------------------------------------------------------------------------
 
+fn_name Forward_SetTemplateParms = "Forward.SetTemplateParms";
+
+void Forward::SetTemplateParms(TemplateParmsPtr& parms)
+{
+   Debug::ft(Forward_SetTemplateParms);
+
+   parms_ = std::move(parms);
+}
+
+//------------------------------------------------------------------------------
+
 void Forward::Shrink()
 {
    name_->Shrink();
+   if(parms_ != nullptr) parms_->Shrink();
 }
 
 //------------------------------------------------------------------------------
@@ -1349,10 +1367,12 @@ void Friend::Check() const
 {
    Debug::ft(Friend_Check);
 
-   auto ref = GetReferent();
+   if(parms_ != nullptr) parms_->Check();
 
    //  Log an unknown friend.
    //
+   auto ref = GetReferent();
+
    if(ref == nullptr)
    {
       Log(FriendUnresolved);
@@ -1374,8 +1394,11 @@ void Friend::Display(ostream& stream,
    auto fq = options.test(DispFQ);
    stream << prefix;
 
-   auto parms = GetTemplateParms();
-   if(parms != nullptr) parms->Print(stream);
+   if(!options.test(DispNoTP))
+   {
+      if(parms_ != nullptr) parms_->Print(stream);
+   }
+
    stream << FRIEND_STR << SPACE;
 
    auto func = GetFunction();
@@ -1447,9 +1470,8 @@ CxxNamed* Friend::FindForward() const
    CxxScoped* item = GetScope();
    auto func = GetFunction();
    auto qname = GetQualName();
-   auto& names = qname->Names();
-   auto size = names.size();
-   string name = *names.at(0)->Name();
+   auto size = qname->Size();
+   string name = *qname->First()->Name();
    size_t idx = (*item->Name() == name ? 1 : 0);
    Namespace* space;
    Class* cls;
@@ -1470,7 +1492,7 @@ CxxNamed* Friend::FindForward() const
          //
          if(idx >= size) return item;
          space = static_cast< Namespace* >(item);
-         name = *names.at(idx)->Name();
+         name = *qname->At(idx)->Name();
          item = nullptr;
          if(++idx >= size)
          {
@@ -1492,7 +1514,7 @@ CxxNamed* Friend::FindForward() const
             //
             if(idx == 0) break;
             if(cls->IsInTemplateInstance()) break;
-            auto args = names.at(idx - 1)->GetTemplateArgs();
+            auto args = qname->At(idx - 1)->GetTemplateArgs();
             if(args == nullptr) break;
             if(!ResolveTemplate(cls, args, (idx >= size))) break;
             cls = cls->EnsureInstance(args);
@@ -1506,7 +1528,7 @@ CxxNamed* Friend::FindForward() const
          //  when TYPE is a namespace.
          //
          if(idx >= size) return item;
-         name = *names.at(idx)->Name();
+         name = *qname->At(idx)->Name();
          item = nullptr;
          if(++idx >= size)
          {
@@ -1728,7 +1750,7 @@ bool Friend::ResolveForward(CxxScoped* decl, size_t n) const
    //  and continue resolving the name.
    //
    if(decl == this) return false;
-   name_->Names().at(n)->SetForward(decl);
+   name_->At(n)->SetForward(decl);
    decl->SetAsReferent(this);
    SetScope(decl->GetSpace());
    return true;
@@ -1799,7 +1821,7 @@ void Friend::SetFunc(FunctionPtr& func)
       auto scope = cls->GetScope();
       SetScope(scope);
       inline_ = func.get();
-      name_->MoveTemplateParms(inline_);
+      inline_->SetTemplateParms(parms_);
       inline_->SetFriend();
       static_cast< CxxArea* >(scope)->AddFunc(func);
       GetQualName()->SetReferent(inline_);
@@ -1855,9 +1877,23 @@ bool Friend::SetReferent(CxxNamed* ref) const
 
 //------------------------------------------------------------------------------
 
+fn_name Friend_SetTemplateParms = "Friend.SetTemplateParms";
+
+void Friend::SetTemplateParms(TemplateParmsPtr& parms)
+{
+   Debug::ft(Friend_SetTemplateParms);
+
+   parms_ = std::move(parms);
+}
+
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+
 void Friend::Shrink()
 {
    if(name_ != nullptr) name_->Shrink();
+   if(parms_ != nullptr) parms_->Shrink();
    if(func_ != nullptr) func_->Shrink();
 }
 

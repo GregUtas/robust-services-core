@@ -203,11 +203,6 @@ public:
    //
    virtual std::string TypeString(bool arg) const override;
 private:
-   //  Overridden to prohibit copying.
-   //
-   MacroName(const MacroName& that);
-   void operator=(const MacroName& that);
-
    //  The macro's name.
    //
    std::string name_;

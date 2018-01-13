@@ -88,11 +88,6 @@ private:
    //
    LibrarySet* Error(LibExprErr err) const;
 
-   //  Overridden to prohibit copying.
-   //
-   Interpreter(const Interpreter& that);
-   void operator=(const Interpreter& that);
-
    //  The expression to be evaluated.
    //
    const std::string& expr_;

@@ -127,7 +127,7 @@ bool Parser::CheckType(QualNamePtr& name)
 
    //  This only applies when TYPE is unqualified.
    //
-   if(name->Names().size() != 1) return true;
+   if(name->Size() != 1) return true;
 
    auto type = Lexer::GetType(*name->Name());
 
@@ -1052,7 +1052,7 @@ bool Parser::GetCxxAlpha(ExprPtr& expr)
    QualNamePtr qualName;
    if(!GetQualName(qualName)) return lexer_.Retreat(start);
 
-   if(qualName->Names().size() == 1)
+   if(qualName->Size() == 1)
    {
       //  See if the name is actually a keyword or operator.
       //
@@ -1357,7 +1357,8 @@ bool Parser::GetDtorDefn(FunctionPtr& func)
 
    name.insert(0, 1, '~');
    auto className = TypeNamePtr(new TypeName(name));
-   dtorName->AddTypeName(className);
+   className->SetScoped();
+   dtorName->PushBack(className);
    func.reset(new Function(dtorName));
    func->SetNoexcept(noex);
    SetContext(func.get(), start);
@@ -2463,7 +2464,7 @@ bool Parser::GetProcDefn(FunctionPtr& func)
       funcName->SetOperator(oper);
       string spec;
       if(!lexer_.GetTemplateSpec(spec)) return lexer_.Retreat(start);
-      funcName->Append(spec);
+      funcName->Append(spec, false);
    }
    else
    {
@@ -2492,20 +2493,22 @@ bool Parser::GetQualName(QualNamePtr& name)
 {
    Debug::ft(Parser_GetQualName);
 
-   //  <QualName> = [ <TypeName> "::" ]* (<TypeName> | "operator" <Operator>)
+   //  <QualName> = ["::"] [ <TypeName> "::" ]*
+   //               (<TypeName> | "operator" <Operator>)
    //
    auto start = lexer_.Curr();
 
    TypeNamePtr type;
    auto global = lexer_.NextStringIs(SCOPE_STR);
    if(!GetTypeName(type)) return lexer_.Retreat(start);
+   if(global) type->SetScoped();
    name.reset(new QualName(type));
-   name->SetGlobal(global);
 
    while(lexer_.NextStringIs(SCOPE_STR))
    {
       if(!GetTypeName(type)) return lexer_.Retreat(start);
-      name->AddTypeName(type);
+      type->SetScoped();
+      name->PushBack(type);
    }
 
    if(*name->Name() == OPERATOR_STR)

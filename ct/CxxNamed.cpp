@@ -203,15 +203,6 @@ Namespace* CxxNamed::GetSpace() const
 
 //------------------------------------------------------------------------------
 
-const TemplateParms* CxxNamed::GetTemplateParms() const
-{
-   auto qname = GetQualName();
-   if(qname == nullptr) return nullptr;
-   return qname->GetTemplateParms();
-}
-
-//------------------------------------------------------------------------------
-
 bool CxxNamed::IsInTemplateInstance() const
 {
    return GetScope()->IsInTemplateInstance();
@@ -305,7 +296,7 @@ CxxNamed* CxxNamed::ResolveLocal(SymbolView* view) const
    auto syms = Singleton< CxxSymbols >::Instance();
    auto qname = GetQualName();
 
-   if((qname->Names().size() == 1) && !qname->IsGlobal())
+   if((qname->Size() == 1) && !qname->IsGlobal())
    {
       auto item = syms->FindLocal(*Name(), view);
 
@@ -334,8 +325,7 @@ CxxNamed* CxxNamed::ResolveName(const CodeFile* file,
    Class* cls;
    auto func = GetFunction();
    auto qname = GetQualName();
-   auto& names = qname->Names();
-   auto size = names.size();
+   auto size = qname->Size();
    auto syms = Singleton< CxxSymbols >::Instance();
    auto selector = (size == 1 ? mask : SCOPE_REFS);
 
@@ -354,7 +344,7 @@ CxxNamed* CxxNamed::ResolveName(const CodeFile* file,
       //  Start with the first name in the qualified name.  Return if
       //  it refers to itself, which can occur for a friend declaration.
       //
-      name = *names.at(0)->Name();
+      name = *qname->At(0)->Name();
       item = syms->FindSymbol(file, scope, name, selector, view);
       qname->SetReferent(0, item, view);
       if(item == this) return item;
@@ -383,7 +373,7 @@ CxxNamed* CxxNamed::ResolveName(const CodeFile* file,
          if(idx >= size) return item;
          space = static_cast< Namespace* >(item);
          if(!name.empty()) name += SCOPE_STR;
-         name += *names.at(idx)->Name();
+         name += *qname->At(idx)->Name();
          item = nullptr;
          if(++idx >= size)
          {
@@ -416,7 +406,7 @@ CxxNamed* CxxNamed::ResolveName(const CodeFile* file,
             //  instance.
             //
             if(cls->IsInTemplateInstance()) break;
-            auto args = names.at(idx - 1)->GetTemplateArgs();
+            auto args = qname->At(idx - 1)->GetTemplateArgs();
             if(args == nullptr) break;
             if(args->HasTemplateParmFor(scope)) break;
             if(!ResolveTemplate(cls, args, (idx >= size))) break;
@@ -432,7 +422,7 @@ CxxNamed* CxxNamed::ResolveName(const CodeFile* file,
          //  when TYPE is a namespace.
          //
          if(idx >= size) return item;
-         name = *names.at(idx)->Name();
+         name = *qname->At(idx)->Name();
          item = nullptr;
          if(++idx >= size)
          {
@@ -449,7 +439,7 @@ CxxNamed* CxxNamed::ResolveName(const CodeFile* file,
          }
          qname->SetReferent(idx - 1, item, view);
          if(item == nullptr) return nullptr;
-         if(item->GetClass() != cls) names.at(idx - 1)->SubclassAccess(cls);
+         if(item->GetClass() != cls) qname->At(idx - 1)->SubclassAccess(cls);
          break;
 
       case Cxx::Enum:
@@ -458,7 +448,7 @@ CxxNamed* CxxNamed::ResolveName(const CodeFile* file,
          //  else return the enum itself.
          //
          if(idx >= size) return item;
-         name = *names.at(idx)->Name();
+         name = *qname->At(idx)->Name();
          item = static_cast< Enum* >(item)->FindEnumerator(name);
          *view = DeclaredLocally;
          qname->SetReferent(idx, item, view);
@@ -529,15 +519,7 @@ void CxxNamed::SetTemplateParms(TemplateParmsPtr& parms)
 {
    Debug::ft(CxxNamed_SetTemplateParms);
 
-   auto qname = GetQualName();
-
-   if(qname != nullptr)
-   {
-      qname->SetTemplateParms(parms);
-      return;
-   }
-
-   auto expl = "Failed to find qualified name for " + Trace();
+   auto expl = "Template parameters not supported by " + Trace();
    Context::SwErr(CxxNamed_SetTemplateParms, expl, 0);
 }
 
@@ -870,11 +852,9 @@ bool DataSpec::FindReferent()
    //  Bypass name_ itself; a QualName only finds its referent when used
    //  in executable code.
    //
-   auto& names = name_->Names();
-
-   for(auto n = names.cbegin(); n != names.cend(); ++n)
+   for(auto n = name_->First(); n != nullptr; n = n->Next())
    {
-      (*n)->FindReferent();
+      n->FindReferent();
    }
 
    //  This should find a referent during parsing, when there is a context
@@ -1009,11 +989,9 @@ void DataSpec::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    //  Find usages for any template arguments used in the type's name.
    //  Bypass name_ itself, because it doesn't know if it is indirect.
    //
-   auto& names = name_->Names();
-
-   for(auto n = names.cbegin(); n != names.cend(); ++n)
+   for(auto n = name_->First(); n != nullptr; n = n->Next())
    {
-      (*n)->GetUsages(file, symbols);
+      n->GetUsages(file, symbols);
    }
 
    //  Get the usages for any array specifications.
@@ -1461,7 +1439,7 @@ bool DataSpec::ResolveForward(CxxScoped* decl, size_t n) const
    //
    if(decl->IsTemplate())
    {
-      name_->Names().at(n)->SetForward(decl);
+      name_->At(n)->SetForward(decl);
       decl->SetAsReferent(this);
       return (decl->Referent() != nullptr);
    }
@@ -1623,11 +1601,9 @@ void DataSpec::SetTemplateRole(TemplateRole role) const
 
    if(role == TemplateClass)
    {
-      auto& names = name_->Names();
-
-      for(auto n = names.cbegin(); n != names.cend(); ++n)
+      for(auto n = name_->First(); n != nullptr; n = n->Next())
       {
-         (*n)->SetTemplateRole(TemplateParameter);
+         n->SetTemplateRole(TemplateParameter);
       }
    }
 }
@@ -1768,13 +1744,11 @@ void MemberInit::Shrink()
 
 fn_name QualName_ctor1 = "QualName.ctor(type)";
 
-QualName::QualName(TypeNamePtr& type) :
-   oper_(Cxx::NIL_OPERATOR),
-   global_(false)
+QualName::QualName(TypeNamePtr& type)
 {
    Debug::ft(QualName_ctor1);
 
-   names_.push_back(std::move(type));
+   first_ = std::move(type);
    CxxStats::Incr(CxxStats::QUAL_NAME);
 }
 
@@ -1782,14 +1756,12 @@ QualName::QualName(TypeNamePtr& type) :
 
 fn_name QualName_ctor2 = "QualName.ctor(string)";
 
-QualName::QualName(const string& name) :
-   oper_(Cxx::NIL_OPERATOR),
-   global_(false)
+QualName::QualName(const string& name)
 {
    Debug::ft(QualName_ctor2);
 
    auto copy = name;
-   names_.push_back(TypeNamePtr(new TypeName(copy)));
+   first_ = (TypeNamePtr(new TypeName(copy)));
    CxxStats::Incr(CxxStats::QUAL_NAME);
 }
 
@@ -1797,22 +1769,14 @@ QualName::QualName(const string& name) :
 
 fn_name QualName_ctor3 = "QualName.ctor(copy)";
 
-QualName::QualName(const QualName& that) : CxxNamed(that),
-   oper_(that.oper_),
-   global_(that.global_)
+QualName::QualName(const QualName& that) : CxxNamed(that)
 {
    Debug::ft(QualName_ctor3);
 
-   for(auto n = that.names_.begin(); n != that.names_.end(); ++n)
+   for(auto n = that.First(); n != nullptr; n = n->Next())
    {
-      auto thatName = (*n).get();
-      auto thisName = new TypeName(*thatName);
-      names_.push_back(TypeNamePtr(thisName));
-   }
-
-   if(that.parms_ != nullptr)
-   {
-      parms_.reset(new TemplateParms(*that.parms_));
+      auto thisName = new TypeName(*n);
+      PushBack(TypeNamePtr(thisName));
    }
 
    CxxStats::Incr(CxxStats::QUAL_NAME);
@@ -1831,28 +1795,28 @@ QualName::~QualName()
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_AddTypeName = "QualName.AddTypeName";
+fn_name QualName_Append = "QualName.Append";
 
-void QualName::AddTypeName(TypeNamePtr& type)
+void QualName::Append(const string& name, bool space) const
 {
-   Debug::ft(QualName_AddTypeName);
+   Debug::ft(QualName_Append);
 
-   names_.push_back(std::move(type));
+   Last()->Append(name, space);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_Append = "QualName.Append";
-
-void QualName::Append(const string& name, bool space)
+TypeName* QualName::At(size_t n) const
 {
-   Debug::ft(QualName_Append);
-
-   if(!names_.empty())
+   for(auto i = First(); i != nullptr; i = i->Next())
    {
-      if(space) names_.back()->Append(SPACE_STR);
-      names_.back()->Append(name);
+      if(n == 0)
+         return i;
+      else
+         --n;
    }
+
+   return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -1863,12 +1827,10 @@ void QualName::Check() const
 {
    Debug::ft(QualName_Check);
 
-   for(auto n = names_.cbegin(); n != names_.cend(); ++n)
+   for(auto n = First(); n != nullptr; n = n->Next())
    {
-      (*n)->Check();
+      n->Check();
    }
-
-   if(parms_ != nullptr) parms_->Check();
 }
 
 //------------------------------------------------------------------------------
@@ -1879,16 +1841,9 @@ bool QualName::CheckCtorDefn() const
 {
    Debug::ft(QualName_CheckCtorDefn);
 
-   auto size = names_.size();
+   auto size = Size();
    if(size <= 1) return false;
-   return (*names_.at(size - 1)->Name() == *names_.at(size - 2)->Name());
-}
-
-//------------------------------------------------------------------------------
-
-CxxNamed* QualName::DirectType() const
-{
-   return names_.back()->DirectType();
+   return (*At(size - 1)->Name() == *At(size - 2)->Name());
 }
 
 //------------------------------------------------------------------------------
@@ -1927,20 +1882,15 @@ void QualName::EnterBlock()
 
 CxxScoped* QualName::GetForward() const
 {
-   for(auto n = names_.crbegin(); n != names_.crend(); ++n)
+   CxxScoped* forw = nullptr;
+
+   for(auto n = First(); n != nullptr; n = n->Next())
    {
-      auto f = (*n)->GetForward();
-      if(f != nullptr) return f;
+      auto f = n->GetForward();
+      if(f != nullptr) forw = f;
    }
 
-   return nullptr;
-}
-
-//------------------------------------------------------------------------------
-
-CxxNamed* QualName::GetReferent() const
-{
-   return names_.back()->Referent();
+   return forw;
 }
 
 //------------------------------------------------------------------------------
@@ -1951,9 +1901,9 @@ TypeName* QualName::GetTemplateArgs() const
 {
    Debug::ft(QualName_GetTemplateArgs);
 
-   for(auto n = names_.begin(); n != names_.cend(); ++n)
+   for(auto n = First(); n != nullptr; n = n->Next())
    {
-      auto spec = (*n)->GetTemplateArgs();
+      auto spec = n->GetTemplateArgs();
       if(spec != nullptr) return spec;
    }
 
@@ -1970,9 +1920,9 @@ void QualName::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
    //  Get the usages for each individual name.
    //
-   for(auto n = names_.begin(); n != names_.cend(); ++n)
+   for(auto n = First(); n != nullptr; n = n->Next())
    {
-      (*n)->GetUsages(file, symbols);
+      n->GetUsages(file, symbols);
    }
 
    //  Add, as a direct usage, our referent or the typedef through which
@@ -2011,6 +1961,20 @@ void QualName::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
+TypeName* QualName::Last() const
+{
+   TypeName* prev = nullptr;
+
+   for(auto curr = First(); curr != nullptr; curr = curr->Next())
+   {
+      prev = curr;
+   }
+
+   return prev;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name QualName_MatchTemplate = "QualName.MatchTemplate";
 
 TypeMatch QualName::MatchTemplate(const QualName* that,
@@ -2019,15 +1983,17 @@ TypeMatch QualName::MatchTemplate(const QualName* that,
    Debug::ft(QualName_MatchTemplate);
 
    auto match = Compatible;
-   auto size = names_.size();
+   auto size = Size();
+   auto n1 = this->First();
+   auto n2 = that->First();
 
    for(size_t i = 0; i < size; ++i)
    {
-      auto n1 = this->names_.at(i).get();
-      auto n2 = that->names_.at(i).get();
       auto result = n1->MatchTemplate(n2, tmpltParms, tmpltArgs, argFound);
       if(result == Incompatible) return Incompatible;
       if(result < match) match = result;
+      n1 = n1->Next();
+      n2 = n2->Next();
    }
 
    return match;
@@ -2041,13 +2007,13 @@ void QualName::MemberAccessed(Class* cls, CxxNamed* mem) const
 {
    Debug::ft(QualName_MemberAccessed);
 
-   for(auto n = names_.begin(); n != names_.cend(); ++n)
+   for(auto n = First(); n != nullptr; n = n->Next())
    {
-      if((*n)->Referent() == nullptr)
+      if(n->Referent() == nullptr)
       {
-         if(*(*n)->Name() == *mem->Name())
+         if(*n->Name() == *mem->Name())
          {
-            (*n)->MemberAccessed(cls, mem);
+            n->MemberAccessed(cls, mem);
             return;
          }
       }
@@ -2059,33 +2025,26 @@ void QualName::MemberAccessed(Class* cls, CxxNamed* mem) const
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_MoveTemplateParms = "QualName.MoveTemplateParms";
-
-void QualName::MoveTemplateParms(CxxScoped* item)
-{
-   Debug::ft(QualName_MoveTemplateParms);
-
-   item->SetTemplateParms(parms_);
-}
-
-//------------------------------------------------------------------------------
-
-const string* QualName::Name() const
-{
-   return names_.back()->Name();
-}
-
-//------------------------------------------------------------------------------
-
 void QualName::Print(ostream& stream) const
 {
-   if(global_) stream << SCOPE_STR;
-
-   for(auto n = names_.begin(); n != names_.cend(); ++n)
+   for(auto n = First(); n != nullptr; n = n->Next())
    {
-      (*n)->Print(stream);
-      if(*n != names_.back()) stream << SCOPE_STR;
+      n->Print(stream);
    }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name QualName_PushBack = "QualName.PushBack";
+
+void QualName::PushBack(TypeNamePtr& type)
+{
+   Debug::ft(QualName_PushBack);
+
+   if(first_ == nullptr)
+      first_ = std::move(type);
+   else
+      Last()->PushBack(type);
 }
 
 //------------------------------------------------------------------------------
@@ -2094,23 +2053,21 @@ string QualName::QualifiedName(bool scopes, bool templates) const
 {
    if(scopes)
    {
-      //  Build the qualified name.  Each name (except the first) is preceded
-      //  by a scope resolution operator.
+      //  Build the qualified name.
       //
-      string qname = (global_ ? SCOPE_STR : EMPTY_STR);
+      string qname;
 
-      for(auto n = names_.begin(); n != names_.cend(); ++n)
+      for(auto n = First(); n != nullptr; n = n->Next())
       {
-         qname += (*n)->QualifiedName(scopes, templates);
-         if(*n != names_.back()) qname += SCOPE_STR;
+         qname += n->QualifiedName(scopes, templates);
       }
 
       return qname;
    }
 
-   //  Only the leaf name is wanted.
+   //  Only the last name is wanted.
    //
-   return names_.back()->QualifiedName(scopes, templates);
+   return Last()->QualifiedName(scopes, templates);
 }
 
 //------------------------------------------------------------------------------
@@ -2123,7 +2080,7 @@ CxxNamed* QualName::Referent() const
 
    //  This is invoked to find a referent in executable code.
    //
-   auto ref = names_.back()->Referent();
+   auto ref = Last()->Referent();
    if(ref != nullptr) return ref;
 
    SymbolView view;
@@ -2164,7 +2121,7 @@ bool QualName::ResolveTypedef(Typedef* type, size_t n) const
 {
    Debug::ft(QualName_ResolveTypedef);
 
-   return names_[n]->ResolveTypedef(type, n);
+   return At(n)->ResolveTypedef(type, n);
 }
 
 //------------------------------------------------------------------------------
@@ -2175,9 +2132,9 @@ void QualName::SetLocale(Cxx::ItemType locale) const
 {
    Debug::ft(QualName_SetLocale);
 
-   for(auto n = names_.begin(); n != names_.cend(); ++n)
+   for(auto n = First(); n != nullptr; n = n->Next())
    {
-      (*n)->SetLocale(locale);
+      n->SetLocale(locale);
    }
 }
 
@@ -2185,12 +2142,11 @@ void QualName::SetLocale(Cxx::ItemType locale) const
 
 fn_name QualName_SetOperator = "QualName.SetOperator";
 
-void QualName::SetOperator(Cxx::Operator oper)
+void QualName::SetOperator(Cxx::Operator oper) const
 {
    Debug::ft(QualName_SetOperator);
 
-   oper_ = oper;
-   names_.back()->SetOperator(oper_);
+   Last()->SetOperator(oper);
 }
 
 //------------------------------------------------------------------------------
@@ -2201,7 +2157,7 @@ bool QualName::SetReferent(CxxNamed* ref) const
 {
    Debug::ft(QualName_SetReferent);
 
-   names_.back()->SetReferent(ref, nullptr);
+   Last()->SetReferent(ref, nullptr);
    return true;
 }
 
@@ -2211,33 +2167,26 @@ void QualName::SetReferent(size_t n, CxxNamed* item, SymbolView* view) const
 {
    Debug::ft(QualName_SetReferent);
 
-   names_.at(n)->SetReferent(item, view);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name QualName_SetTemplateParms = "QualName.SetTemplateParms";
-
-void QualName::SetTemplateParms(TemplateParmsPtr& parms)
-{
-   Debug::ft(QualName_SetTemplateParms);
-
-   parms_ = std::move(parms);
+   At(n)->SetReferent(item, view);
 }
 
 //------------------------------------------------------------------------------
 
 void QualName::Shrink()
 {
-   for(auto n = names_.begin(); n != names_.cend(); ++n)
+   for(auto n = First(); n != nullptr; n = n->Next())
    {
-      (*n)->Shrink();
+      n->Shrink();
    }
+}
 
-   if(parms_ != nullptr) parms_->Shrink();
+//------------------------------------------------------------------------------
 
-   auto size = names_.capacity() * sizeof(TypeNamePtr);
-   CxxStats::Vectors(CxxStats::QUAL_NAME, size);
+size_t QualName::Size() const
+{
+   size_t s = 0;
+   for(auto n = First(); n != nullptr; n = n->Next()) ++s;
+   return s;
 }
 
 //------------------------------------------------------------------------------
@@ -2254,7 +2203,7 @@ string QualName::TypeString(bool arg) const
 
       if(ref->IsTemplate())
       {
-         ts += names_.back()->TypeString(arg);
+         ts += Last()->TypeString(arg);
       }
 
       return ts;
@@ -2278,26 +2227,6 @@ TemplateParm::TemplateParm
 
    std::swap(name_, name);
    default_ = std::move(default);
-   CxxStats::Incr(CxxStats::TEMPLATE_PARM);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name TemplateParm_ctor2 = "TemplateParm.ctor(copy)";
-
-TemplateParm::TemplateParm(const TemplateParm& that) :
-   name_(that.name_),
-   tag_(that.tag_),
-   ptrs_(that.ptrs_)
-{
-   Debug::ft(TemplateParm_ctor2);
-
-   if(that.default_ != nullptr)
-   {
-      auto default = TypeNamePtr(new TypeName(*that.default_));
-      default_ = std::move(default);
-   }
-
    CxxStats::Incr(CxxStats::TEMPLATE_PARM);
 }
 
@@ -2352,23 +2281,6 @@ TemplateParms::TemplateParms(TemplateParmPtr& parm)
    Debug::ft(TemplateParms_ctor1);
 
    parms_.push_back(std::move(parm));
-   CxxStats::Incr(CxxStats::TEMPLATE_PARMS);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name TemplateParms_ctor2 = "TemplateParms.ctor(copy)";
-
-TemplateParms::TemplateParms(const TemplateParms& that)
-{
-   Debug::ft(TemplateParms_ctor2);
-
-   for(auto p = that.parms_.cbegin(); p != that.parms_.cend(); ++p)
-   {
-      auto parm = TemplateParmPtr(new TemplateParm(**p));
-      parms_.push_back(std::move(parm));
-   }
-
    CxxStats::Incr(CxxStats::TEMPLATE_PARMS);
 }
 
@@ -2450,6 +2362,8 @@ TypeName::TypeName(string& name) :
    class_(nullptr),
    type_(nullptr),
    forw_(nullptr),
+   oper_(Cxx::NIL_OPERATOR),
+   scoped_(false),
    using_(false)
 {
    Debug::ft(TypeName_ctor1);
@@ -2468,6 +2382,8 @@ TypeName::TypeName(const TypeName& that) : CxxNamed(that),
    class_(that.class_),
    type_(that.type_),
    forw_(that.forw_),
+   oper_(that.oper_),
+   scoped_(that.scoped_),
    using_(that.using_)
 {
    Debug::ft(TypeName_ctor2);
@@ -2514,10 +2430,11 @@ void TypeName::AddTemplateArg(TypeSpecPtr& arg)
 
 fn_name TypeName_Append = "TypeName.Append";
 
-void TypeName::Append(const string& name)
+void TypeName::Append(const string& name, bool space)
 {
    Debug::ft(TypeName_Append);
 
+   if(space) name_ += SPACE;
    name_ += name;
 }
 
@@ -2688,6 +2605,7 @@ void TypeName::MemberAccessed(Class* cls, CxxNamed* mem) const
 
 void TypeName::Print(ostream& stream) const
 {
+   if(scoped_) stream << SCOPE_STR;
    stream << *Name();
 
    if(args_ != nullptr)
@@ -2706,11 +2624,21 @@ void TypeName::Print(ostream& stream) const
 
 //------------------------------------------------------------------------------
 
+void TypeName::PushBack(TypeNamePtr& type)
+{
+   next_ = std::move(type);
+}
+
+//------------------------------------------------------------------------------
+
 string TypeName::QualifiedName(bool scopes, bool templates) const
 {
-   if(!templates || (args_ == nullptr)) return name_;
+   string qname = (scoped_ && scopes ? SCOPE_STR : EMPTY_STR);
+   qname += name_;
 
-   auto qname = name_ + '<';
+   if(!templates || (args_ == nullptr)) return qname;
+
+   qname += '<';
 
    for(auto a = args_->cbegin(); a != args_->cend(); ++a)
    {
@@ -2731,6 +2659,17 @@ bool TypeName::ResolveTypedef(Typedef* type, size_t n) const
 
    type_ = type;
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TypeName_SetForward = "TypeName.SetForward";
+
+void TypeName::SetForward(CxxScoped* decl) const
+{
+   Debug::ft(TypeName_SetForward);
+
+   forw_ = decl;
 }
 
 //------------------------------------------------------------------------------
@@ -2757,6 +2696,8 @@ fn_name TypeName_SetOperator = "TypeName.SetOperator";
 void TypeName::SetOperator(Cxx::Operator oper)
 {
    Debug::ft(TypeName_SetOperator);
+
+   oper_ = oper;
 
    switch(oper)
    {

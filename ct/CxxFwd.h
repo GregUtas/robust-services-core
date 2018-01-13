@@ -152,7 +152,6 @@ typedef std::vector< TemplateParmPtr > TemplateParmPtrVector;
 typedef std::vector< ScopePtr > ScopePtrVector;
 typedef std::vector< TokenPtr > TokenPtrVector;
 typedef std::vector< TypedefPtr > TypedefPtrVector;
-typedef std::vector< TypeNamePtr > TypeNamePtrVector;
 typedef std::vector< TypeSpecPtr > TypeSpecPtrVector;
 typedef std::vector< UsingPtr > UsingPtrVector;
 

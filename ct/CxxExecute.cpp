@@ -126,11 +126,6 @@ public:
    //
    virtual bool Display(std::ostream& stream) override;
 private:
-   //  Overridden to prohibit copying.
-   //
-   ErrTrace(const ErrTrace& that);
-   void operator=(const ErrTrace& that);
-
    //  If non-zero, the error associated with the action.
    //
    const word err_;

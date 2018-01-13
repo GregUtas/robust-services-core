@@ -200,11 +200,6 @@ private:
    //
    LibrarySet* OpError() const;
 
-   //  Overridden to prohibit copying.
-   //
-   LibrarySet(const LibrarySet& that);
-   void operator=(const LibrarySet& that);
-
    //  Link for the queue of sets.
    //
    Q2Link link_;

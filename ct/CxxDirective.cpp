@@ -23,6 +23,7 @@
 #include <bitset>
 #include <iosfwd>
 #include <ostream>
+#include <sstream>
 #include <vector>
 #include "CodeFile.h"
 #include "CodeTypes.h"
@@ -70,7 +71,7 @@ Conditional::Conditional()
 void Conditional::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   condition_->Print(stream);
+   condition_->Print(stream, options);
    stream << CRLF;
    OptionalCode::Display(stream, prefix, options);
 }
@@ -166,14 +167,18 @@ void Define::Display(ostream& stream,
    if(rhs_ != nullptr)
    {
       stream << SPACE;
-      rhs_->Print(stream);
+      rhs_->Print(stream, options);
    }
 
    if(!options.test(DispCode))
    {
-      stream << " // r=" << refs_ << SPACE;
-      if(!defined_) stream << "[not defined]" << SPACE;
-      if(!options.test(DispFQ)) DisplayFiles(stream);
+      std::ostringstream buff;
+      buff << " // ";
+      if(options.test(DispStats)) buff << "r=" << refs_ << SPACE;
+      if(!defined_) buff << "[not defined]" << SPACE;
+      if(!options.test(DispFQ)) DisplayFiles(buff);
+      auto str = buff.str();
+      if(str.size() > 4) stream << str;
    }
 
    stream << CRLF;
@@ -686,8 +691,9 @@ void Macro::Display(ostream& stream,
 
    if(!options.test(DispCode))
    {
-      stream << " // r=" << refs_ << SPACE;
-      stream << "built-in";
+      stream << " // ";
+      if(options.test(DispStats)) stream << "r=" << refs_ << SPACE;
+      stream << "[built-in]";
    }
 
    stream << CRLF;
@@ -816,7 +822,7 @@ void MacroName::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-void MacroName::Print(ostream& stream) const
+void MacroName::Print(ostream& stream, const Flags& options) const
 {
    stream << name_;
 }

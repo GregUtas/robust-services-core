@@ -409,7 +409,8 @@ public:
 
    //  Overridden to display the initialization statement.
    //
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
 
    //  Overridden to shrink containers.
    //
@@ -562,7 +563,8 @@ public:
 
    //  Overridden to display the name.
    //
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
 
    //  Overridden to return the name and, optionally, its template arguments.
    //
@@ -769,7 +771,8 @@ public:
 
    //  Overridden to display the name, including any template arguments.
    //
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
 
    //  Overridden to return the qualified name.
    //
@@ -1214,7 +1217,8 @@ private:
 
    //  Overridden to display the type.
    //
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
 
    //  Overridden to return the number of pointers associated with this type.
    //  Each array specification is counted as a pointer if ARRAYS is set.
@@ -1408,7 +1412,8 @@ public:
 
    //  Overridden to display the parameter.
    //
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
 
    //  Overridden to shrink the item's name.
    //
@@ -1467,7 +1472,8 @@ public:
 
    //  Overridden to display the template's full specification.
    //
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
 
    //  Overridden to shrink containers.
    //

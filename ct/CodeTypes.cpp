@@ -138,6 +138,7 @@ const Flags Last_Mask = Flags(1 << DispLast);
 const Flags Code_Mask = Flags(1 << DispCode);
 const Flags NoAC_Mask = Flags(1 << DispNoAC);
 const Flags NoTP_Mask = Flags(1 << DispNoTP);
+const Flags Stats_Mask = Flags(1 << DispStats);
 
 uint8_t Indent_Size = 3;
 

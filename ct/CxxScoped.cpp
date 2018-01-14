@@ -23,6 +23,7 @@
 #include <bitset>
 #include <ostream>
 #include <set>
+#include <sstream>
 #include <utility>
 #include <vector>
 #include "CodeFile.h"
@@ -163,9 +164,9 @@ bool Argument::IsPassedByValue() const
 
 //------------------------------------------------------------------------------
 
-void Argument::Print(ostream& stream) const
+void Argument::Print(ostream& stream, const Flags& options) const
 {
-   spec_->Print(stream);
+   spec_->Print(stream, options);
 
    if(spec_->GetFuncSpec() == nullptr)
    {
@@ -177,7 +178,7 @@ void Argument::Print(ostream& stream) const
    if(default_ != nullptr)
    {
       stream << " = ";
-      default_->Print(stream);
+      default_->Print(stream, options);
    }
 }
 
@@ -837,9 +838,12 @@ void Enum::Display(ostream& stream,
 
    if(!options.test(DispCode))
    {
-      if(!anon || !fq) stream << " // ";
-      if(!anon) stream << "r=" << refs_ << SPACE;
-      if(!fq) DisplayFiles(stream);
+      std::ostringstream buff;
+      buff << " // ";
+      if(!anon && options.test(DispStats)) buff << "r=" << refs_ << SPACE;
+      if(!fq) DisplayFiles(buff);
+      auto str = buff.str();
+      if(str.size() > 4) stream << str;
    }
 
    auto opts = options;
@@ -1015,11 +1019,11 @@ void Enumerator::Display
    if(init_ != nullptr)
    {
       stream << " = ";
-      init_->Print(stream);
+      init_->Print(stream, options);
    }
 
    if(!options.test(DispLast)) stream << ',';
-   if(!options.test(DispCode)) stream << " // r=" << refs_;
+   if(options.test(DispStats)) stream << " // r=" << refs_;
 }
 
 //------------------------------------------------------------------------------
@@ -1195,7 +1199,7 @@ void Forward::Display(ostream& stream,
 
    if(!options.test(DispNoTP))
    {
-      if(parms_ != nullptr) parms_->Print(stream);
+      if(parms_ != nullptr) parms_->Print(stream, options);
    }
 
    stream << tag_ << SPACE;
@@ -1204,7 +1208,8 @@ void Forward::Display(ostream& stream,
 
    if(!options.test(DispCode))
    {
-      stream << " // u=" << users_ << ": ";
+      stream << " // ";
+      if(options.test(DispStats)) stream << "u=" << users_ << SPACE;
       DisplayReferent(stream, fq);
    }
    stream << CRLF;
@@ -1396,7 +1401,7 @@ void Friend::Display(ostream& stream,
 
    if(!options.test(DispNoTP))
    {
-      if(parms_ != nullptr) parms_->Print(stream);
+      if(parms_ != nullptr) parms_->Print(stream, options);
    }
 
    stream << FRIEND_STR << SPACE;
@@ -1417,7 +1422,8 @@ void Friend::Display(ostream& stream,
 
    if(!options.test(DispCode))
    {
-      stream << " // u=" << users_ << SPACE;
+      stream << " // ";
+      if(options.test(DispStats)) stream << "u=" << users_ << SPACE;
       DisplayReferent(stream, fq);
 
       auto forw = name_->GetForward();
@@ -2048,7 +2054,7 @@ void Typedef::Display(ostream& stream,
    if(IsDeclaredInFunction())
    {
       stream << prefix;
-      Print(stream);
+      Print(stream, options);
       stream << CRLF;
       return;
    }
@@ -2057,7 +2063,7 @@ void Typedef::Display(ostream& stream,
    stream << prefix;
    if(GetScope()->Type() == Cxx::Class) stream << GetAccess() << ": ";
    stream << TYPEDEF_STR << SPACE;
-   spec_->Print(stream);
+   spec_->Print(stream, options);
    if(spec_->GetFuncSpec() == nullptr)
    {
       stream << SPACE << (fq ? ScopedName(true) : *Name());
@@ -2067,8 +2073,12 @@ void Typedef::Display(ostream& stream,
 
    if(!options.test(DispCode))
    {
-      stream << " // r=" << refs_ << SPACE;
-      if(!fq) DisplayFiles(stream);
+      std::ostringstream buff;
+      buff << " // ";
+      if(options.test(DispStats)) buff << "r=" << refs_ << SPACE;
+      if(!fq) DisplayFiles(buff);
+      auto str = buff.str();
+      if(str.size() > 4) stream << str;
    }
 
    stream << CRLF;
@@ -2138,11 +2148,11 @@ void Typedef::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-void Typedef::Print(ostream& stream) const
+void Typedef::Print(ostream& stream, const Flags& options) const
 {
    stream << TYPEDEF_STR << SPACE;
 
-   spec_->Print(stream);
+   spec_->Print(stream, options);
    if(spec_->GetFuncSpec() == nullptr) stream << SPACE << *Name();
    spec_->DisplayArrays(stream);
    stream << ';';
@@ -2219,7 +2229,8 @@ void Using::Display(ostream& stream,
 
    if(!options.test(DispCode))
    {
-      stream << " // u=" << users_ << ": ";
+      stream << " // ";
+      if(options.test(DispStats)) stream << "u=" << users_ << SPACE;
       DisplayReferent(stream, fq);
    }
 

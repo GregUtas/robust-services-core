@@ -347,7 +347,7 @@ extern const StackArg NilStackArg;
 
 //------------------------------------------------------------------------------
 //
-//  Parser options for the CLI >parse command.
+//  Options for the CLI >parse command.
 //
 constexpr char TraceParse = 'p';
 constexpr char SaveParseTrace = 's';

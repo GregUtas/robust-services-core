@@ -48,7 +48,7 @@ Break::Break(size_t pos) : CxxStatement(pos)
 
 //------------------------------------------------------------------------------
 
-void Break::Print(ostream& stream) const
+void Break::Print(ostream& stream, const Flags& options) const
 {
    stream << BREAK_STR << ';';
 }
@@ -72,7 +72,7 @@ void Case::Display(ostream& stream,
 {
    auto lead = prefix.substr(0, prefix.size() - Indent_Size);
    stream << lead << CASE_STR << SPACE;
-   expr_->Print(stream);
+   expr_->Print(stream, options);
    stream << ':' << CRLF;
 }
 
@@ -133,7 +133,7 @@ void Catch::Display(ostream& stream,
    stream << prefix << CATCH_STR << '(';
 
    if(arg_ != nullptr)
-      arg_->Print(stream);
+      arg_->Print(stream, options);
    else
       stream << ELLIPSES_STR;
 
@@ -236,7 +236,7 @@ void Condition::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-void Condition::Print(ostream& stream) const
+void Condition::Print(ostream& stream, const Flags& options) const
 {
    Show(stream);
 }
@@ -246,7 +246,7 @@ void Condition::Print(ostream& stream) const
 bool Condition::Show(ostream& stream) const
 {
    if(condition_ == nullptr) return false;
-   condition_->Print(stream);
+   condition_->Print(stream, Flags());
    return true;
 }
 
@@ -263,7 +263,7 @@ Continue::Continue(size_t pos) : CxxStatement(pos)
 
 //------------------------------------------------------------------------------
 
-void Continue::Print(ostream& stream) const
+void Continue::Print(ostream& stream, const Flags& options) const
 {
    stream << CONTINUE_STR << ';';
 }
@@ -317,7 +317,7 @@ void Do::Display(ostream& stream,
 
    if(!lf)
    {
-      loop_->Print(stream);
+      loop_->Print(stream, options);
       stream << SPACE;
    }
    else
@@ -329,7 +329,7 @@ void Do::Display(ostream& stream,
    }
 
    stream << WHILE_STR << '(';
-   Condition::Print(stream);
+   Condition::Print(stream, options);
    stream << ");" << CRLF;
 }
 
@@ -366,12 +366,12 @@ bool Do::InLine() const
 
 //------------------------------------------------------------------------------
 
-void Do::Print(ostream& stream) const
+void Do::Print(ostream& stream, const Flags& options) const
 {
    stream << SPACE << DO_STR;
-   loop_->Print(stream);
+   loop_->Print(stream, options);
    stream << SPACE << WHILE_STR << '(';
-   Condition::Print(stream);
+   Condition::Print(stream, options);
    stream << ");";
 }
 
@@ -421,9 +421,9 @@ void Expr::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-void Expr::Print(ostream& stream) const
+void Expr::Print(ostream& stream, const Flags& options) const
 {
-   expr_->Print(stream);
+   expr_->Print(stream, options);
    stream << ';';
 }
 
@@ -457,6 +457,7 @@ void For::Display(ostream& stream,
 {
    auto data = false;
    string info;
+   auto stats = options.test(DispStats);
 
    stream << prefix << FOR_STR << '(';
 
@@ -467,7 +468,7 @@ void For::Display(ostream& stream,
    if(initial_ != nullptr)
    {
       std::ostringstream buffer;
-      initial_->Print(buffer);
+      initial_->Print(buffer, options);
       auto init = buffer.str();
       auto pos = init.find(COMMENT_STR);
       if(pos != string::npos)
@@ -488,13 +489,13 @@ void For::Display(ostream& stream,
 
    if(!Condition::Show(stream)) stream << SPACE;
    stream << "; ";
-   if(subsequent_ != nullptr) subsequent_->Print(stream);
+   if(subsequent_ != nullptr) subsequent_->Print(stream, options);
    stream << ')';
 
    if(options.test(DispNoLF))
    {
-      loop_->Print(stream);
-      stream << info;
+      loop_->Print(stream, options);
+      if(stats) stream << info;
    }
    else
    {
@@ -504,13 +505,14 @@ void For::Display(ostream& stream,
       {
          auto opts = options;
          opts.set(DispLF);
-         stream << info;
+         if(stats) stream << info;
          loop_->Display(stream, prefix, opts);
       }
       else
       {
-         loop_->Print(stream);
-         stream << info << CRLF;
+         loop_->Print(stream, options);
+         if(stats) stream << info;
+         stream << CRLF;
       }
    }
 }
@@ -574,7 +576,7 @@ bool For::InLine() const
 
 //------------------------------------------------------------------------------
 
-void For::Print(ostream& stream) const
+void For::Print(ostream& stream, const Flags& options) const
 {
    Display(stream, EMPTY_STR, Flags(LF_Mask));
 }
@@ -624,7 +626,7 @@ void If::Display(ostream& stream,
       stream << prefix;
 
    stream << IF_STR << '(';
-   Condition::Print(stream);
+   Condition::Print(stream, options);
    stream << ')';
 
    auto lf =
@@ -632,7 +634,7 @@ void If::Display(ostream& stream,
 
    if(!lf)
    {
-      then_->Print(stream);
+      then_->Print(stream, options);
       stream << CRLF;
       return;
    }
@@ -683,19 +685,19 @@ bool If::InLine() const
 
 //------------------------------------------------------------------------------
 
-void If::Print(ostream& stream) const
+void If::Print(ostream& stream, const Flags& options) const
 {
    stream << IF_STR << '(';
-   Condition::Print(stream);
+   Condition::Print(stream, options);
    stream << ')';
-   then_->Print(stream);
+   then_->Print(stream, options);
    if(else_ == nullptr) return;
 
    //  We want multiple lines when an "else" clause exists.  Somehow this
    //  didn't happen, but output the else clause anyway.
    //
    stream << " <@ " << ELSE_STR;
-   else_->Print(stream);
+   else_->Print(stream, options);
 }
 
 //------------------------------------------------------------------------------
@@ -773,7 +775,7 @@ void NoOp::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-void NoOp::Print(ostream& stream) const
+void NoOp::Print(ostream& stream, const Flags& options) const
 {
    stream << ';';
 }
@@ -825,14 +827,14 @@ void Return::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-void Return::Print(ostream& stream) const
+void Return::Print(ostream& stream, const Flags& options) const
 {
    stream << RETURN_STR;
 
    if(expr_ != nullptr)
    {
       stream << SPACE;
-      expr_->Print(stream);
+      expr_->Print(stream, options);
    }
 
    stream << ';';
@@ -866,7 +868,7 @@ void Switch::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
    stream << prefix << SWITCH_STR << '(';
-   expr_->Print(stream);
+   expr_->Print(stream, options);
    stream << ')';
 
    auto opts = options;
@@ -1041,7 +1043,7 @@ void While::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
    stream << prefix << WHILE_STR << '(';
-   Condition::Print(stream);
+   Condition::Print(stream, options);
    stream << ')';
 
    auto opts = options;
@@ -1082,12 +1084,12 @@ bool While::InLine() const
 
 //------------------------------------------------------------------------------
 
-void While::Print(ostream& stream) const
+void While::Print(ostream& stream, const Flags& options) const
 {
    stream << SPACE << WHILE_STR << '(';
-   Condition::Print(stream);
+   Condition::Print(stream, options);
    stream << ')';
-   loop_->Print(stream);
+   loop_->Print(stream, options);
 }
 
 //------------------------------------------------------------------------------

@@ -540,7 +540,7 @@ void CxxNamed::strName(ostream& stream, bool fq, const QualName* name) const
    if(fq)
       stream << ScopedName(true);
    else
-      name->Print(stream);
+      name->Print(stream, Flags());
 }
 
 //==============================================================================
@@ -770,7 +770,7 @@ void DataSpec::DisplayArrays(ostream& stream) const
    {
       for(auto a = arrays_->cbegin(); a != arrays_->cend(); ++a)
       {
-         (*a)->Print(stream);
+         (*a)->Print(stream, Flags());
       }
    }
 }
@@ -1301,10 +1301,10 @@ TypeMatch DataSpec::MatchTemplateArg(const TypeSpec* that) const
 
 //------------------------------------------------------------------------------
 
-void DataSpec::Print(ostream& stream) const
+void DataSpec::Print(ostream& stream, const Flags& options) const
 {
    if(const_) stream << CONST_STR << SPACE;
-   name_->Print(stream);
+   name_->Print(stream, options);
    DisplayTags(stream);
 
    if(IsAutoDecl())
@@ -1725,10 +1725,10 @@ void MemberInit::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-void MemberInit::Print(ostream& stream) const
+void MemberInit::Print(ostream& stream, const Flags& options) const
 {
    stream << name_;
-   init_->Print(stream);
+   init_->Print(stream, options);
 }
 
 //------------------------------------------------------------------------------
@@ -2025,11 +2025,11 @@ void QualName::MemberAccessed(Class* cls, CxxNamed* mem) const
 
 //------------------------------------------------------------------------------
 
-void QualName::Print(ostream& stream) const
+void QualName::Print(ostream& stream, const Flags& options) const
 {
    for(auto n = First(); n != nullptr; n = n->Next())
    {
-      n->Print(stream);
+      n->Print(stream, options);
    }
 }
 
@@ -2243,7 +2243,7 @@ void TemplateParm::Check() const
 
 //------------------------------------------------------------------------------
 
-void TemplateParm::Print(ostream& stream) const
+void TemplateParm::Print(ostream& stream, const Flags& options) const
 {
    stream << tag_ << SPACE;
    stream << *Name();
@@ -2251,7 +2251,7 @@ void TemplateParm::Print(ostream& stream) const
    if(default_ != nullptr)
    {
       stream << " = ";
-      default_->Print(stream);
+      default_->Print(stream, options);
    }
 }
 
@@ -2311,13 +2311,13 @@ void TemplateParms::Check() const
 
 //------------------------------------------------------------------------------
 
-void TemplateParms::Print(ostream& stream) const
+void TemplateParms::Print(ostream& stream, const Flags& options) const
 {
    stream << TEMPLATE_STR << '<';
 
    for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
    {
-      (*p)->Print(stream);
+      (*p)->Print(stream, options);
       if(*p != parms_.back()) stream << ',';
    }
 
@@ -2603,7 +2603,7 @@ void TypeName::MemberAccessed(Class* cls, CxxNamed* mem) const
 
 //------------------------------------------------------------------------------
 
-void TypeName::Print(ostream& stream) const
+void TypeName::Print(ostream& stream, const Flags& options) const
 {
    if(scoped_) stream << SCOPE_STR;
    stream << *Name();
@@ -2614,7 +2614,7 @@ void TypeName::Print(ostream& stream) const
 
       for(auto a = args_->cbegin(); a != args_->cend(); ++a)
       {
-         (*a)->Print(stream);
+         (*a)->Print(stream, options);
          if(*a != args_->back()) stream << ',';
       }
 

@@ -184,7 +184,8 @@ public:
 
    //  Overridden to display the name, including any template arguments.
    //
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
 
    //  Overridden to return the macro's name.
    //

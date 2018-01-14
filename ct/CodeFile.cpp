@@ -1970,29 +1970,34 @@ void CodeFile::DisplayItems(ostream& stream, const string& opts) const
 {
    if(dir_ == nullptr) return;
 
-   auto lead = spaces(Indent_Size);
-   auto qual = Flags(FQ_Mask);
+   stream << FullName();
+   if(parsed_ == Unparsed) stream << ": NOT PARSED";
+   stream << CRLF;
+   if(parsed_ == Unparsed) return;
 
-   if(opts.find('c') != string::npos)
+   auto lead = spaces(Indent_Size);
+   auto options = Flags(FQ_Mask);
+   if(opts.find(ItemStatistics) != string::npos) options.set(DispStats);
+
+   if(opts.find(CanonicalFileView) != string::npos)
    {
-      stream << FullName() << CRLF;
       stream << '{' << CRLF;
-      DisplayObjects(incls_, stream, lead, qual);
-      DisplayObjects(macros_, stream, lead, qual);
-      DisplayObjects(forws_, stream, lead, qual);
-      DisplayObjects(usings_, stream, lead, qual);
-      DisplayObjects(enums_, stream, lead, qual);
-      DisplayObjects(types_, stream, lead, qual);
-      DisplayObjects(funcs_, stream, lead, qual);
-      DisplayObjects(data_, stream, lead, qual);
-      DisplayObjects(classes_, stream, lead, qual);
+      DisplayObjects(incls_, stream, lead, options);
+      DisplayObjects(macros_, stream, lead, options);
+      DisplayObjects(forws_, stream, lead, options);
+      DisplayObjects(usings_, stream, lead, options);
+      DisplayObjects(enums_, stream, lead, options);
+      DisplayObjects(types_, stream, lead, options);
+      DisplayObjects(funcs_, stream, lead, options);
+      DisplayObjects(data_, stream, lead, options);
+      DisplayObjects(classes_, stream, lead, options);
       stream << '}' << CRLF;
    }
 
-   if(opts.find('o') != string::npos)
+   if(opts.find(OriginalFileView) != string::npos)
    {
       stream << '{' << CRLF;
-      DisplayObjects(items_, stream, lead, qual);
+      DisplayObjects(items_, stream, lead, options);
       stream << '}' << CRLF;
    }
 }

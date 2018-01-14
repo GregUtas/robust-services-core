@@ -151,7 +151,7 @@ void Block::Display(ostream& stream,
    case 0:
       if(!lf)
       {
-         Print(stream);
+         Print(stream, options);
       }
       else
       {
@@ -165,7 +165,7 @@ void Block::Display(ostream& stream,
       {
          if(!lf)
          {
-            Print(stream);
+            Print(stream, options);
             break;
          }
 
@@ -179,7 +179,7 @@ void Block::Display(ostream& stream,
             }
 
             stream << CRLF << prefix << spaces(Indent_Size);
-            statements_.front()->Print(stream);
+            statements_.front()->Print(stream, options);
             break;
          }
       }
@@ -287,7 +287,7 @@ bool Block::InLine() const
 
 //------------------------------------------------------------------------------
 
-void Block::Print(ostream& stream) const
+void Block::Print(ostream& stream, const Flags& options) const
 {
    switch(statements_.size())
    {
@@ -298,7 +298,7 @@ void Block::Print(ostream& stream) const
    case 1:
       if(statements_.front()->Type() != Cxx::NoOp) stream << SPACE;
       if(braced_) stream << "{ ";
-      statements_.front()->Print(stream);
+      statements_.front()->Print(stream, options);
       if(braced_) stream << " }";
       return;
 
@@ -505,14 +505,14 @@ void ClassData::Display(ostream& stream,
    if(IsStatic()) stream << STATIC_STR << SPACE;
    if(mutable_) stream << MUTABLE_STR << SPACE;
    if(IsConstexpr()) stream << CONSTEXPR_STR << SPACE;
-   GetTypeSpec()->Print(stream);
+   GetTypeSpec()->Print(stream, options);
    stream << SPACE << (fq ? ScopedName(true) : name_);
    GetTypeSpec()->DisplayArrays(stream);
 
    if(width_ != nullptr)
    {
       stream << " : ";
-      width_->Print(stream);
+      width_->Print(stream, options);
    }
 
    DisplayAssignment(stream, options);
@@ -520,10 +520,17 @@ void ClassData::Display(ostream& stream,
 
    if(!options.test(DispCode))
    {
-      stream << " // ";
-      if(!WasInited() && IsStatic()) stream << "<@";
-      DisplayStats(stream);
-      if(!fq) DisplayFiles(stream);
+      std::ostringstream buff;
+      buff << " // ";
+      if(!WasInited() && IsStatic())
+      {
+         buff << "<@";
+         if(!options.test(DispStats)) buff << "uninit ";
+      }
+      DisplayStats(buff, options);
+      if(!fq) DisplayFiles(buff);
+      auto str = buff.str();
+      if(str.size() > 4) stream << str;
    }
 
    stream << CRLF;
@@ -1086,7 +1093,7 @@ bool Data::CheckFunctionString(const Function* func) const
    //  statement.  Look for the "." between <scope> and <name>.
    //
    std::ostringstream stream;
-   rhs_->Print(stream);
+   rhs_->Print(stream, Flags());
 
    auto str = stream.str();
    auto quote = str.find(QUOTE);
@@ -1174,7 +1181,7 @@ void Data::DisplayAssignment(ostream& stream, const Flags& options) const
    std::ostringstream buffer;
 
    stream << " = ";
-   rhs->Back()->Print(buffer);
+   rhs->Back()->Print(buffer, options);
 
    auto expr = buffer.str();
 
@@ -1197,13 +1204,15 @@ void Data::DisplayExpression(ostream& stream, const Flags& options) const
    auto expr = GetDefn()->expr_.get();
    if(expr == nullptr) return;
 
-   expr->Print(stream);
+   expr->Print(stream, options);
 }
 
 //------------------------------------------------------------------------------
 
-void Data::DisplayStats(ostream& stream) const
+void Data::DisplayStats(ostream& stream, const Flags& options) const
 {
+   if(!options.test(DispStats)) return;
+
    auto decl = GetDecl();
    stream << "i=" << int(decl->inited_) << SPACE;
    stream << "r=" << decl->reads_ << SPACE;
@@ -1637,7 +1646,7 @@ void FuncData::DisplayItem(ostream& stream, const Flags& options) const
       if(IsExtern()) stream << EXTERN_STR << SPACE;
       if(IsStatic()) stream << STATIC_STR << SPACE;
       if(IsConstexpr()) stream << CONSTEXPR_STR << SPACE;
-      GetTypeSpec()->Print(stream);
+      GetTypeSpec()->Print(stream, options);
       stream << SPACE;
    }
    else
@@ -1654,16 +1663,16 @@ void FuncData::DisplayItem(ostream& stream, const Flags& options) const
    {
       stream << ';';
 
-      if(!options.test(DispCode))
-      {
-         stream << " // ";
-         DisplayStats(stream);
-      }
+      std::ostringstream buff;
+      buff << " // ";
+      DisplayStats(buff, options);
+      auto str = buff.str();
+      if(str.size() > 4) stream << str;
    }
    else
    {
       stream << ", ";
-      next_->Print(stream);
+      next_->Print(stream, options);
    }
 }
 
@@ -1725,9 +1734,9 @@ void FuncData::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-void FuncData::Print(ostream& stream) const
+void FuncData::Print(ostream& stream, const Flags& options) const
 {
-   DisplayItem(stream, Flags());
+   DisplayItem(stream, options);
 }
 
 //------------------------------------------------------------------------------
@@ -2641,7 +2650,7 @@ void Function::CheckMemberUsage() const
    //  could still be free or static, provided that the member was public.
    //  However, the function would have to add the underlying object as an
    //  argument--essentially a "this" argument.  Some will argue that this
-   //  improves encapsulation, but we will demure.]
+   //  improves encapsulation, but we will demur.]
    //c To support this for templates, nonstatic_ and nonpublic_ would have to
    //  to be looked at over all instances of a function, whether instantiated
    //  in a class or function template, because these flags are never set in
@@ -2709,9 +2718,6 @@ void Function::Display(ostream& stream,
 {
    if(tmplt_ != nullptr) return;
 
-   auto code = options.test(DispCode);
-   auto fq = options.test(DispFQ);
-
    stream << prefix;
    if(!options.test(DispNoAC) && !defn_ && (GetClass() != nullptr))
    {
@@ -2720,22 +2726,17 @@ void Function::Display(ostream& stream,
    DisplayDecl(stream, options);
    DisplayDefn(stream, prefix, options);
 
-   if(code) return;
-
-   auto size = tmplts_.size();
-
-   if(size > 0)
+   if(!options.test(DispCode) & !tmplts_.empty())
    {
-      stream << prefix << "instantiations (" << size << "):" << CRLF;
+      stream << prefix << "instantiations (" << tmplts_.size() << "):" << CRLF;
       auto lead = prefix + spaces(Indent_Size);
 
-      for(size_t i = 0; i < size; ++i)
+      for(auto t = tmplts_.cbegin(); t != tmplts_.cend(); ++t)
       {
-         auto inst = tmplts_.at(i);
          stream << lead;
-         inst->DisplayDecl(stream, options);
+         (*t)->DisplayDecl(stream, options);
          stream << ';';
-         if(!code) inst->DisplayInfo(stream, fq);
+         (*t)->DisplayInfo(stream, options);
          stream << CRLF;
       }
    }
@@ -2754,7 +2755,7 @@ void Function::DisplayDecl(ostream& stream, const Flags& options) const
 
    if(!options.test(DispNoTP))
    {
-      if(parms_ != nullptr) parms_->Print(stream);
+      if(parms_ != nullptr) parms_->Print(stream, options);
    }
 
    if(inline_) stream << INLINE_STR << SPACE;
@@ -2767,13 +2768,13 @@ void Function::DisplayDecl(ostream& stream, const Flags& options) const
    {
       strName(stream, options.test(DispFQ), name_.get());
       stream << SPACE;
-      spec_->Print(stream);
+      spec_->Print(stream, options);
    }
    else
    {
       if(spec_ != nullptr)
       {
-         spec_->Print(stream);
+         spec_->Print(stream, options);
          stream << SPACE;
       }
 
@@ -2785,7 +2786,7 @@ void Function::DisplayDecl(ostream& stream, const Flags& options) const
    for(size_t i = 0 ; i < args_.size(); ++i)
    {
       if((i == 0) && this_) continue;
-      args_[i]->Print(stream);
+      args_[i]->Print(stream, options);
       if(i != args_.size() - 1) stream << ", ";
    }
 
@@ -2801,9 +2802,7 @@ void Function::DisplayDecl(ostream& stream, const Flags& options) const
 void Function::DisplayDefn(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   auto fq = options.test(DispFQ);
    auto ns = options.test(DispNS);
-   auto code = options.test(DispCode);
    auto defn = GetDefn();
    auto impl = defn->impl_.get();
 
@@ -2815,7 +2814,7 @@ void Function::DisplayDefn(ostream& stream,
    if((impl == nullptr) || (!ns && (impl_ == nullptr)) || IsInternal())
    {
       stream << ';';
-      if(!code) DisplayInfo(stream, fq);
+      DisplayInfo(stream, options);
       stream << CRLF;
       return;
    }
@@ -2834,28 +2833,28 @@ void Function::DisplayDefn(ostream& stream,
       stream << " : ";
 
       if(call != nullptr)
-         call->Print(stream);
+         call->Print(stream, options);
       else
-         mems.front()->Print(stream);
+         mems.front()->Print(stream, options);
       break;
 
    default:
       stream << " :";
-      if(!code) DisplayInfo(stream, fq);
+      DisplayInfo(stream, options);
       stream << CRLF;
       auto lead = prefix + spaces(Indent_Size);
 
       if(call != nullptr)
       {
          stream << lead;
-         call->Print(stream);
+         call->Print(stream, options);
          if(memcount > 0) stream << ',' << CRLF;
       }
 
       for(auto m = mems.cbegin(); m != mems.cend(); ++m)
       {
          stream << lead;
-         (*m)->Print(stream);
+         (*m)->Print(stream, options);
          if(*m != mems.back()) stream << ',' << CRLF;
       }
    }
@@ -2869,21 +2868,25 @@ void Function::DisplayDefn(ostream& stream,
 
    if(!impl->CrlfOver(form))
    {
-      impl->Print(stream);
-      if(!code && (inits <= 1)) DisplayInfo(stream, fq);
+      impl->Print(stream, options);
+      if(inits <= 1) DisplayInfo(stream, options);
       stream << CRLF;
    }
    else
    {
-      if(!code && (inits <= 1)) DisplayInfo(stream, fq);
-      impl->Display(stream, prefix, Flags(LF_Mask));
+      auto opts = options;
+      opts.set(DispLF);
+      if(inits <= 1) DisplayInfo(stream, options);
+      impl->Display(stream, prefix, opts);
    }
 }
 
 //------------------------------------------------------------------------------
 
-void Function::DisplayInfo(ostream& stream, bool fq) const
+void Function::DisplayInfo(ostream& stream, const Flags& options) const
 {
+   if(options.test(DispCode)) return;
+
    auto cls = GetClass();
    auto inst = ((cls != nullptr) && cls->IsInTemplateInstance());
    auto subs = GetFile()->IsSubsFile();
@@ -2891,16 +2894,23 @@ void Function::DisplayInfo(ostream& stream, bool fq) const
    auto decl = GetDecl();
    auto calls = false;
 
-   stream << " // ";
+   std::ostringstream buff;
+   buff << " // ";
 
    if(!impl && !inst && !subs)
-      stream << "<@unimpl" << SPACE;
+      buff << "<@unimpl" << SPACE;
    else
       calls = true;
 
-   if(!decl->overs_.empty()) stream << "o=" << decl->overs_.size() << SPACE;
-   if((decl->calls_ > 0) || calls) stream << "c=" << decl->calls_ << SPACE;
-   if(!fq && impl) DisplayFiles(stream);
+   if(options.test(DispStats))
+   {
+      if(!decl->overs_.empty()) buff << "o=" << decl->overs_.size() << SPACE;
+      if((decl->calls_ > 0) || calls) buff << "c=" << decl->calls_ << SPACE;
+   }
+
+   if(!options.test(DispFQ) && impl) DisplayFiles(buff);
+   auto str = buff.str();
+   if(str.size() > 4) stream << str;
 }
 
 //------------------------------------------------------------------------------
@@ -4654,7 +4664,7 @@ const string* FuncSpec::Name() const
 
 //------------------------------------------------------------------------------
 
-void FuncSpec::Print(ostream& stream) const
+void FuncSpec::Print(ostream& stream, const Flags& options) const
 {
    func_->DisplayDecl(stream, Flags());
 }
@@ -4883,7 +4893,7 @@ void SpaceData::Display(ostream& stream,
    if(IsExtern()) stream << EXTERN_STR << SPACE;
    if(IsStatic()) stream << STATIC_STR << SPACE;
    if(IsConstexpr()) stream << CONSTEXPR_STR << SPACE;
-   GetTypeSpec()->Print(stream);
+   GetTypeSpec()->Print(stream, options);
    stream << SPACE;
    strName(stream, fq, name_.get());
    GetTypeSpec()->DisplayArrays(stream);
@@ -4893,10 +4903,17 @@ void SpaceData::Display(ostream& stream,
 
    if(!options.test(DispCode))
    {
-      stream << " // ";
-      if(!WasInited()) stream << "<@";
-      DisplayStats(stream);
-      if(!fq) DisplayFiles(stream);
+      std::ostringstream buff;
+      buff << " // ";
+      if(!WasInited())
+      {
+         buff << "<@";
+         if(!options.test(DispStats)) buff << "uninit ";
+      }
+      DisplayStats(buff, options);
+      if(!fq) DisplayFiles(buff);
+      auto str = buff.str();
+      if(str.size() > 4) stream << str;
    }
 
    stream << CRLF;

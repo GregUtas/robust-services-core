@@ -493,13 +493,14 @@ std::ostream& operator<<(std::ostream& stream, LineType type);
 enum CodeDisplayOptions
 {
    DispFQ,    // display fully qualified name
-   DispNS,    // display namespace view (else file view)
+   DispNS,    // display in namespace view (else in file view)
    DispLF,    // insert optional line feed
    DispNoLF,  // omit line feed
    DispLast,  // set for the last item in a series
    DispCode,  // output will be used to generate code
    DispNoAC,  // omit access control prefix
-   DispNoTP   // omit template parameters definition list
+   DispNoTP,  // omit template parameters definition list
+   DispStats  // include statistics (e.g. reads, writes)
 };
 
 extern const Flags FQ_Mask;
@@ -510,6 +511,7 @@ extern const Flags Last_Mask;
 extern const Flags Code_Mask;
 extern const Flags NoAC_Mask;
 extern const Flags NoTP_Mask;
+extern const Flags Stats_Mask;
 
 extern uint8_t Indent_Size;
 

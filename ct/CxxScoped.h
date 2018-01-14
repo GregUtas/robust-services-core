@@ -266,7 +266,8 @@ public:
 
    //  Overridden to display the argument.
    //
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
 
    //  Overridden to record that the argument cannot be const.
    //
@@ -1027,7 +1028,8 @@ public:
 
    //  Overridden to display the typedef in a function.
    //
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
 
    //  Overridden to display the typedef.
    //

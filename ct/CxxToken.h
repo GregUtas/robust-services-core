@@ -237,7 +237,8 @@ public:
    //  Displays the item in-line.  Should not add leading or trailing spaces
    //  or an endline.  The output should be compilable.
    //
-   virtual void Print(std::ostream& stream) const;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const;
 
    //  Shrinks the item's containers (e.g. strings and vectors) to the minimum
    //  size required for their current contents.
@@ -256,9 +257,9 @@ public:
    //
    bool IsPOD() const { return GetNumeric().IsPOD(); }
 
-   //  Outputs PREFIX, invokes Print(stream) above, and inserts an endline.
-   //  This is the appropriate implementation for items that can be displayed
-   //  inline or separately.  See CodeDisplayOptions for OPTIONS flags.
+   //  Outputs PREFIX, invokes Print(stream, options) above, and inserts an
+   //  endline.  This is the appropriate implementation for items that can be
+   //  displayed inline or separately.  See CodeDisplayOptions for OPTIONS.
    //
    virtual void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
@@ -365,7 +366,8 @@ public:
    IntLiteral(int64_t num, const Tags& tags)
       : num_(num), tags_(tags) { CxxStats::Incr(CxxStats::INT_LITERAL); }
    ~IntLiteral() { CxxStats::Decr(CxxStats::INT_LITERAL); }
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
    virtual CxxNamed* Referent() const override;
    virtual std::string TypeString(bool arg) const override;
 private:
@@ -401,7 +403,8 @@ public:
    FloatLiteral(long double num, const Tags& tags)
       : num_(num), tags_(tags) { CxxStats::Incr(CxxStats::FLOAT_LITERAL); }
    ~FloatLiteral() { CxxStats::Decr(CxxStats::FLOAT_LITERAL); }
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
    virtual CxxNamed* Referent() const override;
    virtual std::string TypeString(bool arg) const override;
 private:
@@ -420,7 +423,7 @@ public:
    explicit BoolLiteral(bool b)
       : b_(b) { CxxStats::Incr(CxxStats::BOOL_LITERAL); }
    ~BoolLiteral() { CxxStats::Decr(CxxStats::BOOL_LITERAL); }
-   virtual void Print(std::ostream& stream) const
+   virtual void Print(std::ostream& stream, const Flags& options) const
       override { stream << std::boolalpha << b_; }
    virtual CxxNamed* Referent() const override;
    virtual std::string TypeString(bool arg) const override { return BOOL_STR; }
@@ -439,7 +442,8 @@ public:
    explicit CharLiteral(char c)
       : c_(c) { CxxStats::Incr(CxxStats::CHAR_LITERAL); }
    ~CharLiteral() { CxxStats::Decr(CxxStats::CHAR_LITERAL); }
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
    virtual CxxNamed* Referent() const override;
    virtual std::string TypeString(bool arg) const override { return CHAR_STR; }
 private:
@@ -459,7 +463,7 @@ public:
    ~StrLiteral() { CxxStats::Decr(CxxStats::STR_LITERAL); }
    std::string GetStr() const { return str_; }
    virtual TypeSpec* GetTypeSpec() const override;
-   virtual void Print(std::ostream& stream) const
+   virtual void Print(std::ostream& stream, const Flags& options) const
       override { stream << QUOTE << str_ << QUOTE; }
    virtual CxxNamed* Referent() const override;
    virtual void Shrink() override;
@@ -481,7 +485,7 @@ class NullPtr : public Literal
 public:
    NullPtr() { CxxStats::Incr(CxxStats::NULLPTR); }
    ~NullPtr() { CxxStats::Decr(CxxStats::NULLPTR); }
-   virtual void Print(std::ostream& stream) const
+   virtual void Print(std::ostream& stream, const Flags& options) const
       override { stream << NULLPTR_STR; }
    virtual bool IsConstPtr() const override { return true; }
    virtual CxxNamed* Referent() const override;
@@ -557,7 +561,8 @@ public:
 
    //  Overridden to display the operator and its arguments.
    //
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
 
    //  Overridden to push this operator and its arguments onto the stack.
    //
@@ -672,7 +677,8 @@ class Elision : public CxxToken
 public:
    Elision() { CxxStats::Incr(CxxStats::ELISION); }
    ~Elision() { CxxStats::Decr(CxxStats::ELISION); }
-   virtual void Print(std::ostream& stream) const override { }
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override { }
    virtual void EnterBlock() override { }
    virtual Cxx::ItemType Type() const override { return Cxx::Elision; }
 };
@@ -687,7 +693,8 @@ public:
    explicit Precedence(ExprPtr& expr)
       : expr_(std::move(expr)) { CxxStats::Incr(CxxStats::PRECEDENCE); }
    ~Precedence() { CxxStats::Decr(CxxStats::PRECEDENCE); }
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
    virtual void EnterBlock() override;
    virtual void GetUsages
       (const CodeFile& file, CxxUsageSets& symbols) const override;
@@ -707,7 +714,8 @@ public:
    BraceInit();
    ~BraceInit() { CxxStats::Decr(CxxStats::BRACE_INIT); }
    void AddItem(TokenPtr& item) { items_.push_back(std::move(item)); }
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
    virtual void EnterBlock() override;
    virtual void GetUsages
       (const CodeFile& file, CxxUsageSets& symbols) const override;
@@ -761,7 +769,8 @@ public:
 
    //  Overridden to display the expression.
    //
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
 
    //  Overridden to invoke Context::Execute after invoking EnterBlock on
    //  each token in items_.
@@ -828,7 +837,8 @@ public:
 
    //  Overridden to display the array's size within brackets.
    //
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
 
    //  Overridden to invoke EnterBlock on expr_.
    //

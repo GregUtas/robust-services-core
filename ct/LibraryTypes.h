@@ -114,5 +114,15 @@ enum LibExprErr
 //  Returns a string that explains ERR.
 //
 const char* strError(LibExprErr err);
+
+//------------------------------------------------------------------------------
+//
+//  Options for the CLI >export command.
+//
+constexpr char NamespaceView = 'n';
+constexpr char CanonicalFileView = 'c';
+constexpr char OriginalFileView = 'o';
+constexpr char ClassHierarchyView = 'h';
+constexpr char ItemStatistics = 's';
 }
 #endif

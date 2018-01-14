@@ -227,7 +227,8 @@ public:
 
    //  Overridden to display a block in-line if it has one statement or none.
    //
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
 
    //  Overridden to return the enclosing function's scoped name, followed by
    //  a string that signifies executable code rather than only the function.
@@ -458,7 +459,7 @@ protected:
 
    //  Displays read/write statistics.
    //
-   void DisplayStats(std::ostream& stream) const;
+   void DisplayStats(std::ostream& stream, const Flags& options) const;
 private:
    //  Returns the data's declaration.
    //
@@ -813,7 +814,8 @@ public:
 
    //  Overridden to display the data declaration and definition.
    //
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
 
    //  Overridden to shrink containers.
    //
@@ -1352,7 +1354,7 @@ private:
    //  Displays information about where the function is implemented, how many
    //  many times it was overridden, and how many times it was invoked.
    //
-   void DisplayInfo(std::ostream& stream, bool fq) const;
+   void DisplayInfo(std::ostream& stream, const Flags& options) const;
 
    //  The function's name.
    //
@@ -1516,7 +1518,8 @@ private:
 
    //  The following are forwarded to the function.
    //
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
    virtual void EnteringScope(const CxxScope* scope) override;
    virtual bool IsConst() const override;
    virtual const std::string* Name() const override;

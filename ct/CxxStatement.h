@@ -59,7 +59,8 @@ class Condition : public CxxStatement
 public:
    virtual ~Condition() { }
    void AddCondition(ExprPtr& c) { condition_ = std::move(c); }
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
    virtual void EnterBlock() override;
    virtual void GetUsages
       (const CodeFile& file, CxxUsageSets& symbols) const override;
@@ -80,7 +81,8 @@ class Break : public CxxStatement
 public:
    explicit Break(size_t pos);
    ~Break() { CxxStats::Decr(CxxStats::BREAK); }
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
    virtual void EnterBlock() override { }
 };
 
@@ -138,7 +140,8 @@ class Continue : public CxxStatement
 public:
    explicit Continue(size_t pos);
    ~Continue() { CxxStats::Decr(CxxStats::CONTINUE); }
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
    virtual void EnterBlock() override { }
 };
 
@@ -153,7 +156,8 @@ public:
    ~Do() { CxxStats::Decr(CxxStats::DO); }
    void AddLoop(BlockPtr& b) { loop_ = std::move(b); }
    virtual void Check() const override;
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
    virtual void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
    virtual void EnterBlock() override;
@@ -174,7 +178,8 @@ class Expr : public CxxStatement
 public:
    Expr(ExprPtr& expression, size_t pos);
    ~Expr() { CxxStats::Decr(CxxStats::EXPR); }
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
    virtual void EnterBlock() override;
    virtual void GetUsages
       (const CodeFile& file, CxxUsageSets& symbols) const override;
@@ -196,7 +201,8 @@ public:
    void AddSubsequent(ExprPtr& s) { subsequent_ = std::move(s); }
    void AddLoop(BlockPtr& b) { loop_ = std::move(b); }
    virtual void Check() const override;
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
    virtual void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
    virtual void EnterBlock() override;
@@ -224,7 +230,8 @@ public:
    void AddElse(BlockPtr& b) { else_ = std::move(b); }
    void SetElseIf() { elseif_ = true; }
    virtual void Check() const override;
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
    virtual void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
    virtual void EnterBlock() override;
@@ -267,7 +274,8 @@ class NoOp : public CxxStatement
 public:
    explicit NoOp(size_t pos);
    ~NoOp() { CxxStats::Decr(CxxStats::NOOP); }
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
    virtual void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
    virtual void EnterBlock() override { }
@@ -285,7 +293,8 @@ public:
    explicit Return(size_t pos);
    ~Return() { CxxStats::Decr(CxxStats::RETURN); }
    void AddExpr(ExprPtr& e) { expr_ = std::move(e); }
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
    virtual void EnterBlock() override;
    virtual void GetUsages
       (const CodeFile& file, CxxUsageSets& symbols) const override;
@@ -354,7 +363,8 @@ public:
    ~While() { CxxStats::Decr(CxxStats::WHILE); }
    void AddLoop(BlockPtr& b) { loop_ = std::move(b); }
    virtual void Check() const override;
-   virtual void Print(std::ostream& stream) const override;
+   virtual void Print
+      (std::ostream& stream, const Flags& options) const override;
    virtual void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
    virtual void EnterBlock() override;

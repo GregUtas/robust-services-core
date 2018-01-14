@@ -975,16 +975,14 @@ void Class::Display(ostream& stream,
          }
       }
 
-      auto size = tmplts_.size();
-
-      if(size > 0)
+      if(!tmplts_.empty())
       {
          stream << prefix << spaces(Indent_Size)
-            << "instantiations (" << size << "):" << CRLF;
+            << "instantiations (" << tmplts_.size() << "):" << CRLF;
 
-         for(size_t i = 0; i < size; ++i)
+         for(auto t = tmplts_.cbegin(); t != tmplts_.cend(); ++t)
          {
-            tmplts_.at(i)->Display(stream, lead, options);
+            (*t)->Display(stream, lead, options);
          }
       }
    }
@@ -998,7 +996,7 @@ void Class::DisplayBase(ostream& stream, const Flags& options) const
 {
    if(!options.test(DispNoTP))
    {
-      if(parms_ != nullptr) parms_->Print(stream);
+      if(parms_ != nullptr) parms_->Print(stream, options);
    }
 
    if(OuterClass() != nullptr) stream << GetAccess() << ": ";
@@ -1799,15 +1797,23 @@ void ClassInst::Display(ostream& stream,
    stream << prefix;
    Class::DisplayBase(stream, options);
    if(!created_) stream << ";";
-   if(!code) stream << " // r=" << refs_ << SPACE;
+
+   std::ostringstream buff;
+   buff << " // ";
+   if(options.test(DispStats)) buff << "r=" << refs_ << SPACE;
 
    if(!created_)
    {
-      if(!code) stream << "<@uninst" << CRLF;
+      if(!code) buff << "<@uninst" << CRLF;
+      auto str = buff.str();
+      if(str.size() > 4) stream << str;
       return;
    }
 
-   if(!compiled_ && !code) stream << "<@failed to parse";
+   if(!compiled_ && !code) buff << "<@failed to parse";
+   auto str = buff.str();
+   if(str.size() > 4) stream << str;
+
    stream << CRLF << prefix << '{' << CRLF;
 
    if(!compiled_)

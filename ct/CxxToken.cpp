@@ -73,10 +73,10 @@ void ArraySpec::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-void ArraySpec::Print(ostream& stream) const
+void ArraySpec::Print(ostream& stream, const Flags& options) const
 {
    stream << '[';
-   if(expr_ != nullptr) expr_->Print(stream);
+   if(expr_ != nullptr) expr_->Print(stream, options);
    stream << ']';
 }
 
@@ -148,13 +148,13 @@ void BraceInit::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-void BraceInit::Print(ostream& stream) const
+void BraceInit::Print(ostream& stream, const Flags& options) const
 {
    stream << "{ ";
 
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
    {
-      (*i)->Print(stream);
+      (*i)->Print(stream, options);
       if(*i != items_.back()) stream << ',';
       stream << SPACE;
    }
@@ -173,7 +173,7 @@ void BraceInit::Shrink()
 
 //==============================================================================
 
-void CharLiteral::Print(ostream& stream) const
+void CharLiteral::Print(ostream& stream, const Flags& options) const
 {
    stream << APOSTROPHE;
    if(c_ == APOSTROPHE) stream << BACKSLASH;
@@ -228,7 +228,7 @@ void CxxToken::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
    stream << prefix;
-   Print(stream);
+   Print(stream, options);
    stream << CRLF;
 }
 
@@ -269,7 +269,7 @@ const string* CxxToken::Name() const
 
 //------------------------------------------------------------------------------
 
-void CxxToken::Print(ostream& stream) const
+void CxxToken::Print(ostream& stream, const Flags& options) const
 {
    stream << "// " << ERROR_STR << '(' << strClass(this, false) << ')';
 }
@@ -679,11 +679,11 @@ void Expression::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-void Expression::Print(ostream& stream) const
+void Expression::Print(ostream& stream, const Flags& options) const
 {
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
    {
-      (*i)->Print(stream);
+      (*i)->Print(stream, options);
    }
 }
 
@@ -716,7 +716,7 @@ void Expression::Start()
 string Expression::Trace() const
 {
    std::ostringstream stream;
-   Print(stream);
+   Print(stream, Flags());
    return stream.str();
 }
 
@@ -736,7 +736,7 @@ Numeric FloatLiteral::GetNumeric() const
 
 //------------------------------------------------------------------------------
 
-void FloatLiteral::Print(ostream& stream) const
+void FloatLiteral::Print(ostream& stream, const Flags& options) const
 {
    if(tags_.exp_)
       stream << std::scientific;
@@ -809,7 +809,7 @@ Numeric IntLiteral::GetNumeric() const
 
 //------------------------------------------------------------------------------
 
-void IntLiteral::Print(ostream& stream) const
+void IntLiteral::Print(ostream& stream, const Flags& options) const
 {
    switch(tags_.radix_)
    {
@@ -923,7 +923,7 @@ CxxToken* Literal::RootType() const
 string Literal::Trace() const
 {
    std::ostringstream stream;
-   Print(stream);
+   Print(stream, Flags());
    return stream.str();
 }
 
@@ -1121,7 +1121,7 @@ void Operation::CheckCast(const StackArg& inArg, const StackArg& outArg) const
 void Operation::DisplayArg(ostream& stream, size_t index) const
 {
    if(index < args_.size())
-      args_.at(index)->Print(stream);
+      args_.at(index)->Print(stream, Flags());
    else
       stream << ERROR_STR << "(arg=" << index << ')';
 }
@@ -2072,7 +2072,7 @@ bool Operation::MakeBinary()
 
 fn_name Operation_Print = "Operation.Print";
 
-void Operation::Print(ostream& stream) const
+void Operation::Print(ostream& stream, const Flags& options) const
 {
    auto& attrs = CxxOp::Attrs[op_];
    bool space;
@@ -2083,7 +2083,7 @@ void Operation::Print(ostream& stream) const
       stream << '(';
       for(auto a = args_.cbegin(); a != args_.cend(); ++a)
       {
-         (*a)->Print(stream);
+         (*a)->Print(stream, options);
          if(*a != args_.back()) stream << ", ";
       }
       stream << ')';
@@ -2600,10 +2600,10 @@ void Precedence::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-void Precedence::Print(ostream& stream) const
+void Precedence::Print(ostream& stream, const Flags& options) const
 {
    stream << '(';
-   if(expr_ != nullptr) expr_->Print(stream);
+   if(expr_ != nullptr) expr_->Print(stream, options);
    stream << ')';
 }
 

@@ -399,39 +399,52 @@ word Library::Export(ostream& stream, const string& opts) const
 {
    Debug::ft(Library_Export);
 
-   auto root = Singleton< CxxRoot >::Instance();
-   auto gns = root->GlobalNamespace();
-
-   stream << "NAMESPACE VIEW" << CRLF << CRLF;
-   root->Display(stream, EMPTY_STR, Flags(FQ_Mask | NS_Mask));
-   gns->Display(stream, EMPTY_STR, Flags(FQ_Mask | NS_Mask));
-
-   stream << string(80, '=') << CRLF;
-   stream << "FILE VIEW" << CRLF << CRLF;
-
-   for(auto f = files_.First(); f != nullptr; files_.Next(f))
+   if(opts.find(NamespaceView) != string::npos)
    {
-      f->DisplayItems(stream, opts);
+      auto root = Singleton< CxxRoot >::Instance();
+      auto gns = root->GlobalNamespace();
+      auto options = Flags(FQ_Mask | NS_Mask);
+      if(opts.find(ItemStatistics) != string::npos) options.set(DispStats);
+
+      stream << "NAMESPACE VIEW" << CRLF << CRLF;
+      root->Display(stream, EMPTY_STR, options);
+      gns->Display(stream, EMPTY_STR, options);
+      stream << string(80, '=') << CRLF;
    }
 
-   stream << string(80, '=') << CRLF;
-   stream << "CLASS VIEW" << CRLF << CRLF;
-
-   ClassVector roots;
-
-   for(auto f = files_.First(); f != nullptr; files_.Next(f))
+   if((opts.find(CanonicalFileView) != string::npos) ||
+      (opts.find(OriginalFileView) != string::npos))
    {
-      auto classes = f->Classes();
+      stream << "FILE VIEW" << CRLF << CRLF;
 
-      for(auto c = classes->cbegin(); c != classes->cend(); ++c)
+      for(auto f = files_.First(); f != nullptr; files_.Next(f))
       {
-         if((*c)->BaseClass() == nullptr) roots.push_back(*c);
+         f->DisplayItems(stream, opts);
       }
+
+      stream << string(80, '=') << CRLF;
    }
 
-   for(auto c = roots.cbegin(); c != roots.cend(); ++c)
+   if(opts.find(ClassHierarchyView) != string::npos)
    {
-      (*c)->DisplayHierarchy(stream, EMPTY_STR);
+      stream << "CLASS VIEW" << CRLF << CRLF;
+
+      ClassVector roots;
+
+      for(auto f = files_.First(); f != nullptr; files_.Next(f))
+      {
+         auto classes = f->Classes();
+
+         for(auto c = classes->cbegin(); c != classes->cend(); ++c)
+         {
+            if((*c)->BaseClass() == nullptr) roots.push_back(*c);
+         }
+      }
+
+      for(auto c = roots.cbegin(); c != roots.cend(); ++c)
+      {
+         (*c)->DisplayHierarchy(stream, EMPTY_STR);
+      }
    }
 
    return 0;

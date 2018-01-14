@@ -424,15 +424,14 @@ word CountlinesCommand::ProcessCommand(CliThread& cli) const
 //
 //  The EXPORT command.
 //
-class OrderParm : public CliCharParm
+class ViewsParm : public CliTextParm
 {
-public: OrderParm();
+public: ViewsParm();
 };
 
-fixed_string OrderStr = "co";
-fixed_string OrderExpl = "'c'=canonical 'o'=original (default='c')";
+fixed_string ViewsExpl = "options (enter \">help export full\" for details)";
 
-OrderParm::OrderParm() : CliCharParm(OrderExpl, OrderStr, true) { }
+ViewsParm::ViewsParm() : CliTextParm(ViewsExpl, true) { }
 
 class ExportCommand : public CliCommand
 {
@@ -448,7 +447,7 @@ fixed_string ExportExpl = "Exports library information.";
 ExportCommand::ExportCommand() : CliCommand(ExportStr, ExportExpl)
 {
    BindParm(*new FileMandParm);
-   BindParm(*new OrderParm);
+   BindParm(*new ViewsParm);
 }
 
 fn_name ExportCommand_ProcessCommand = "ExportCommand.ProcessCommand";
@@ -460,17 +459,13 @@ word ExportCommand::ProcessCommand(CliThread& cli) const
    string title;
 
    if(!GetFileName(title, cli)) return -1;
-   cli.EndOfInput(false);
 
    auto stream = cli.FileStream();
    if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
 
    string opts;
-   char c;
-   if(GetCharParmRc(c, cli) == CliParm::Ok)
-      opts = c;
-   else
-      opts = "c";
+   if(!GetString(opts, cli)) opts = "nchs";
+   cli.EndOfInput(false);
 
    auto lib = Singleton< Library >::Instance();
    auto rc = lib->Export(*stream, opts);
@@ -717,7 +712,7 @@ class OptionsParm : public CliTextParm
 public: OptionsParm();
 };
 
-fixed_string OptionsExpl = "parser options (enter >help full for details)";
+fixed_string OptionsExpl = "options (enter \">help parse full\" for details)";
 
 OptionsParm::OptionsParm() : CliTextParm(OptionsExpl) { }
 

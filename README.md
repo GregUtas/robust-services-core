@@ -84,12 +84,12 @@ During initialization, the program displays each module as it is initialized.  (
 *module* is currently equivalent to a static library.)  After all modules have
 initialized, the CLI prompt `nb>` appears to indicate that CLI commands in the
 `nb` directory are available.  The information written to the console during
-startup is shown [here](/docs/output/startup.txt), and a list of all CLI commands
-is provided [here](/docs/output/help.cli.txt).
+startup is shown [here](/output/startup.txt), and a list of all CLI commands
+is provided [here](/output/help.cli.txt).
 
 If you enter `>read saveinit` as the first CLI command, a function trace of the
 initialization, which starts even before the invocation of `main`, is generated.
-This trace should look a lot like [this](/docs/output/init.trace.txt).  Each function
+This trace should look a lot like [this](/output/init.trace.txt).  Each function
 that appears in such a trace invoked `Debug::ft`, which records the following:
   * the function's name
   * the time when it was invoked
@@ -124,7 +124,7 @@ that is caught in `Thread.Start`, after which an appropriate recovery action is 
 Getting the safety net to work could be a challenge when porting RSC to another
 platform, which is why these tests are provided.  All of the safety net tests can be run
 with the command `>read test.trap.critical.`  During each test, the following are generated
-(see the `recover.*` files in the [`output`](/docs/output) directory):
+(see the `recover.*` files in the [`output`](/output) directory):
 
   * A function trace (`*.trace.txt`), as described above.
   * A function profile (`*.funcs.txt`) that lists each function that was invoked, along with

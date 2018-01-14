@@ -12,4 +12,4 @@ File | Description
 [RSC-Session-Processing](/docs/RSC-Session-Processing.pdf) | design guide for `SessionBase` applications
 [RSC-POTS-Application](/docs/RSC-POTS-Application.md) | overview of the POTS application
 [PLCP](/docs/PLCP.pdf) | *A Pattern Language of Call Processing*
-[`output`](/docs/output) directory | mostly output from test scripts, but also a summary of all [CLI commands](/docs/output/help.cli.txt)
+[`output`](/output) directory | mostly output from test scripts, but also a summary of all [CLI commands](/output/help.cli.txt)

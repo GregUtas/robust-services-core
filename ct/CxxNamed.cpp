@@ -527,9 +527,11 @@ void CxxNamed::SetTemplateParms(TemplateParmsPtr& parms)
 
 string CxxNamed::strLocation() const
 {
-   std::ostringstream stream;
    auto file = GetFile();
-   stream << file->Name() << ", line " << file->GetLineNum(GetPos());
+   if(file == nullptr) return "unknown location";
+
+   std::ostringstream stream;
+   stream << file->Name() << ", line " << file->GetLineNum(GetPos()) + 1;
    return stream.str();
 }
 
@@ -1013,7 +1015,7 @@ void DataSpec::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
       auto role = GetTemplateRole();
       if((role == TemplateParameter) || (role == TemplateArgument)) return;
       auto qname = QualifiedName(true, false);
-      auto log = "Unknown type for " + qname + " at " + strLocation();
+      auto log = "Unknown type for " + qname + " [" + strLocation() + ']';
       Debug::SwErr(DataSpec_GetUsages, log, 0, InfoLog);
       return;
    }

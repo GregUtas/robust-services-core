@@ -232,7 +232,7 @@ CxxToken* MacroLINE::GetValue() const
       return unknown_.get();
    }
 
-   auto line = StrLiteralPtr(new StrLiteral(parser->GetPos()));
+   auto line = StrLiteralPtr(new StrLiteral(parser->GetLINE()));
    lines_.push_back(std::move(line));
    return lines_.back().get();
 }

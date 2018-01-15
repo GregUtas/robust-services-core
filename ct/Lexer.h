@@ -63,8 +63,8 @@ public:
 
    //  Returns the current parse position.
    //
-   //  NOTE: Unless stated otherwise, a non-const function advances curr_
-   //  ====  to the next parse position after what it extracted.
+   //  NOTE: Unless stated otherwise, a non-const Lexer function advances
+   //  ====  curr_ to the next parse position after what was extracted.
    //
    size_t Curr() const { return curr_; }
 
@@ -139,10 +139,13 @@ public:
    //
    std::string Extract(size_t pos, size_t count) const;
 
-   //  Returns a string containing the current line, with a '$' preceding the
-   //  current character.
+   //  Returns the line that includes POS, with a '$' inserted after POS.
    //
-   std::string CurrLine() const;
+   std::string GetLine(size_t pos) const;
+
+   //  Returns the line number that contains POS.
+   //
+   size_t GetLineNum(size_t pos) const;
 
    //  Returns true and sets SPEC to the template specification that follows
    //  the name of a template instance.

@@ -114,21 +114,6 @@ size_t Lexer::CurrChar(char& c) const
 
 //------------------------------------------------------------------------------
 
-fn_name Lexer_CurrLine = "Lexer.CurrLine";
-
-string Lexer::CurrLine() const
-{
-   Debug::ft(Lexer_CurrLine);
-
-   auto first = rfind(CRLF) + 1;
-   auto last = source_->find(CRLF, curr_);
-   auto line = source_->substr(first, last - first);
-   line.insert(curr_ - first, 1, '$');
-   return line;
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Lexer_Extract = "Lexer.Extract";
 
 string Lexer::Extract(size_t pos, size_t count) const
@@ -611,6 +596,44 @@ size_t Lexer::GetInt(int64_t& num)
    }
 
    return count;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Lexer_GetLine = "Lexer.GetLine";
+
+string Lexer::GetLine(size_t pos) const
+{
+   Debug::ft(Lexer_GetLine);
+
+   auto first = source_->rfind(CRLF, pos);
+   if(first == string::npos)
+      first = 0;
+   else
+      ++first;
+   auto last = source_->find(CRLF, pos);
+   auto text = source_->substr(first, last - first);
+   text.insert(pos - first, 1, '$');
+   return text;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Lexer_GetLineNum = "Lexer.GetLineNum";
+
+size_t Lexer::GetLineNum(size_t pos) const
+{
+   Debug::ft(Lexer_GetLineNum);
+
+   if(pos >= source_->size()) pos = source_->size() - 1;
+   size_t line = 1;
+
+   for(size_t i = 0; i < pos; ++i)
+   {
+      if(source_->at(i) == CRLF) ++line;
+   }
+
+   return line;
 }
 
 //------------------------------------------------------------------------------

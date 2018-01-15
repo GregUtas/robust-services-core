@@ -284,7 +284,7 @@ bool BaseDecl::FindReferent()
 
    //  The base class wasn't found.
    //
-   auto log = "Unknown base class: " + *Name() + " at " + strLocation();
+   auto log = "Unknown base class: " + *Name() + " [" + strLocation() + ']';
    Debug::SwErr(BaseDecl_FindReferent, log, 0, InfoLog);
    return false;
 }
@@ -2288,7 +2288,7 @@ bool Using::FindReferent()
    if(Referent() != nullptr) return true;
 
    auto qname = QualifiedName(true, false);
-   auto log = "Unknown using: " + qname + " at " + strLocation();
+   auto log = "Unknown using: " + qname + " [" + strLocation() + ']';
    Debug::SwErr(Using_FindReferent, log, 0, InfoLog);
    return false;
 }

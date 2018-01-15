@@ -200,28 +200,24 @@ void Context::Enter(const CxxScoped* owner)
 
 string Context::Location()
 {
-   if(File_ == nullptr) return "[in unknown file]";
+   auto parser = GetParser();
+   if(parser == nullptr) return "[at unknown location]";
 
    std::ostringstream stream;
-   stream << " [in " << File_->Name();
+   stream << " [" << parser->GetVenue();
+   stream << ", line " << parser->GetLineNum(GetPos());
 
-   auto scope = Scope();
-
-   if(scope != nullptr)
+   if(parser->GetSourceType() == Parser::IsFile)
    {
-      auto name = scope->ScopedName(true);
-      string locals(SCOPE_STR);
-      locals += LOCALS_STR;
-      auto pos = name.find(locals);
-      if(pos != string::npos) name.erase(pos);
+      auto scope = Scope();
 
-      if(ParsingTemplateInstance())
+      if(scope != nullptr)
       {
-         stream << ", while instantiating " << name;
-      }
-      else
-      {
-         stream << ", line " << File_->GetLineNum(GetPos()) + 1;
+         auto name = scope->ScopedName(true);
+         string locals(SCOPE_STR);
+         locals += LOCALS_STR;
+         auto pos = name.find(locals);
+         if(pos != string::npos) name.erase(pos);
          if(!name.empty()) stream << ", scope " << name;
       }
    }

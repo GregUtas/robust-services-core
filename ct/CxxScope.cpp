@@ -3565,12 +3565,12 @@ Function* Function::InstantiateFunction(const TypeName* type) const
    //  Once it is parsed, set its access control to that of the template
    //  function and register it as one of that function's instances.
    //
-   auto parser = std::unique_ptr< Parser >(new Parser(EMPTY_STR));
    auto fullName = ScopedName(true) + ts;
    RemoveRefs(fullName);
+   auto parser = std::unique_ptr< Parser >(new Parser(EMPTY_STR));
    parser->ParseFuncInst(fullName, type, area, code);
-   code.reset();
    parser.reset();
+   code.reset();
 
    func = area->FindFunc(instName, nullptr, false, nullptr, nullptr);
    if(func == nullptr) return InstantiateError(instName, 3);

@@ -2107,6 +2107,7 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user,
       auto scope = Singleton< CxxRoot >::Instance()->GlobalNamespace();
       auto parser = std::unique_ptr< Parser >(new Parser(scope));
       parser->ParseQualName(name, qualName);
+      parser.reset();
       qualName->SetReferent(ref);
       auto u = UsingPtr(new Using(qualName, false, true));
       InsertUsing(u);

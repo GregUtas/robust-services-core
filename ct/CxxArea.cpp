@@ -1942,8 +1942,8 @@ bool ClassInst::Instantiate()
    auto begin = tmplt_->CreateCode(this, code_);
    auto parser = std::unique_ptr< Parser >(new Parser(EMPTY_STR));
    compiled_ = parser->ParseClassInst(this, begin);
-   if(compiled_) code_.reset();
    parser.reset();
+   if(compiled_) code_.reset();
    return compiled_;
 }
 

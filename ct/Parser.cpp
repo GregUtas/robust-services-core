@@ -22,7 +22,9 @@
 #include "Parser.h"
 #include <cctype>
 #include <cstdio>
+#include <iomanip>
 #include <iosfwd>
+#include <ostream>
 #include <sstream>
 #include <utility>
 #include "CodeFile.h"
@@ -44,12 +46,18 @@
 #include "SysThreadStack.h"
 #include "ThisThread.h"
 
+using std::ostream;
+using std::setw;
 using std::string;
 
 //------------------------------------------------------------------------------
 
 namespace CodeTools
 {
+uint32_t Parser::Backups[] = {0};
+
+//------------------------------------------------------------------------------
+
 fn_name Parser_ctor1 = "Parser.ctor(opts)";
 
 Parser::Parser(const string& opts) :
@@ -114,18 +122,30 @@ Parser::~Parser()
 
    //  Remove the parser and close the parse trace file, if any.
    //
-   if(Context::Optional() != nullptr) Report(EndifExpected);
+   if(Context::Optional() != nullptr) Fault(EndifExpected);
    Context::PopParser(this);
    pTrace_.reset();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_Backup = "Parser.Backup";
+fn_name Parser_Backup1 = "Parser.Backup[none]";
+
+bool Parser::Backup(size_t cause)
+{
+   Debug::ft(Parser_Backup1);
+
+   ++Backups[cause];
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Parser_Backup2 = "Parser.Backup";
 
 bool Parser::Backup(size_t pos, size_t cause)
 {
-   Debug::ft(Parser_Backup);
+   Debug::ft(Parser_Backup2);
 
    auto curr = lexer_.Curr();
 
@@ -135,7 +155,20 @@ bool Parser::Backup(size_t pos, size_t cause)
       cause_ = cause;
    }
 
+   ++Backups[cause];
    return lexer_.Retreat(pos);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Parser_Backup3 = "Parser.Backup[func]";
+
+bool Parser::Backup(size_t pos, FunctionPtr& func, size_t cause)
+{
+   Debug::ft(Parser_Backup3);
+
+   func.reset();
+   return Backup(pos, cause);
 }
 
 //------------------------------------------------------------------------------
@@ -205,6 +238,25 @@ bool Parser::CheckType(QualNamePtr& name)
 
 //------------------------------------------------------------------------------
 
+fn_name Parser_DisplayStats = "Parser.DisplayStats";
+
+void Parser::DisplayStats(ostream& stream)
+{
+   Debug::ft(Parser_DisplayStats);
+
+   stream << "Cause       Count" << CRLF;
+
+   for(size_t i = 0; i <= MaxCause; ++i)
+   {
+      if(Backups[i] > 0)
+      {
+         stream << setw(5) << i << setw(12) << Backups[i] << CRLF;
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Parser_Enter = "Parser.Enter";
 
 void Parser::Enter(SourceType source, const string& venue,
@@ -231,7 +283,24 @@ void Parser::Failure(const string& venue) const
    auto line = lexer_.GetLineNum(farthest_);
    std::ostringstream text;
    text << venue << ", line " << line << ':' << CRLF << code;
-   Debug::SwErr(Parser_Failure, text.str(), cause_);
+   Debug::SwErr(Parser_Failure, text.str(), cause_, InfoLog);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Parser_Fault = "Parser.Fault";
+
+bool Parser::Fault(DirectiveError err) const
+{
+   Debug::ft(Parser_Fault);
+
+   auto curr = lexer_.Curr();
+   auto code = lexer_.GetLine(curr);
+   auto line = lexer_.GetLineNum(curr);
+   std::ostringstream text;
+   text << venue_ << ", line " << line << ':' << CRLF << code;
+   Debug::SwErr(Parser_Fault, text.str(), err, InfoLog);
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -281,12 +350,12 @@ bool Parser::GetArgList(TokenPtr& call)
       while(true)
       {
          auto end = lexer_.FindFirstOf(",)");
-         if(end == string::npos) return Backup(start);
-         if(!GetCxxExpr(expr, end)) return Backup(start);
+         if(end == string::npos) return Backup(start, 1);
+         if(!GetCxxExpr(expr, end)) return Backup(start, 2);
          auto arg = TokenPtr(expr.release());
          temps.push_back(std::move(arg));
          if(lexer_.NextCharIs(')')) break;
-         if(!lexer_.NextCharIs(',')) return Backup(start);
+         if(!lexer_.NextCharIs(',')) return Backup(start, 3);
       }
    }
 
@@ -316,10 +385,8 @@ bool Parser::GetArgument(ArgumentPtr& arg)
 
    TypeSpecPtr typeSpec;
    string argName;
-   ArraySpecPtr arraySpec;
-   ExprPtr default;
 
-   if(!GetTypeSpec(typeSpec, argName)) return Backup(start);
+   if(!GetTypeSpec(typeSpec, argName)) return Backup(4);
 
    //  If the argument was a function type, argName was set to its name,
    //  if any.  For other arguments, the name follows the TypeSpec.
@@ -334,15 +401,17 @@ bool Parser::GetArgument(ArgumentPtr& arg)
       }
    }
 
+   ArraySpecPtr arraySpec;
    while(GetArraySpec(arraySpec)) typeSpec->AddArray(arraySpec);
 
+   ExprPtr default;
    if(lexer_.NextStringIs("="))
    {
       //  Get the argument's default value.
       //
       auto end = lexer_.FindFirstOf(",)");
-      if(end == string::npos) return Backup(start);
-      if(!GetCxxExpr(default, end)) return Backup(start);
+      if(end == string::npos) return Backup(start, 5);
+      if(!GetCxxExpr(default, end)) return Backup(start, 6);
    }
 
    arg.reset(new Argument(argName, typeSpec));
@@ -360,9 +429,11 @@ bool Parser::GetArguments(FunctionPtr& func)
    Debug::ft(Parser_GetArguments);
 
    //  <Arguments> = "(" [<Argument>] ["," <Argument>]* ")"
-   //  The left parenthesis has already been parsed.
+   //  The left parenthesis has already been parsed.  Looking for the right
+   //  parenthesis immediately is an optimization for the no arguments case.
    //
    auto start = lexer_.Curr();
+   if(lexer_.NextCharIs(')')) return Success(Parser_GetArguments, start);
 
    ArgumentPtr arg;
 
@@ -372,12 +443,12 @@ bool Parser::GetArguments(FunctionPtr& func)
 
       while(lexer_.NextCharIs(','))
       {
-         if(!GetArgument(arg)) return Backup(start);
+         if(!GetArgument(arg)) return Backup(start, 7);
          func->AddArg(arg);
       }
    }
 
-   if(!lexer_.NextCharIs(')')) return Backup(start);
+   if(!lexer_.NextCharIs(')')) return Backup(start, 8);
    return Success(Parser_GetArguments, start);
 }
 
@@ -396,12 +467,13 @@ bool Parser::GetArraySpec(ArraySpecPtr& array)
    //  If a left bracket is found, extract any expression between it
    //  and the right bracket.  Note that the expression can be empty.
    //
-   ExprPtr size;
-   if(!lexer_.NextCharIs('[')) return Backup(start);
+   if(!lexer_.NextCharIs('[')) return Backup(9);
    auto end = lexer_.FindClosing('[', ']');
-   if(end == string::npos) return Backup(start);
+   if(end == string::npos) return Backup(start, 10);
+
+   ExprPtr size;
    GetCxxExpr(size, end);
-   if(!lexer_.NextCharIs(']')) return Backup(start);
+   if(!lexer_.NextCharIs(']')) return Backup(start, 11);
    array.reset(new ArraySpec(size));
    return Success(Parser_GetArraySpec, start);
 }
@@ -417,12 +489,12 @@ bool Parser::GetBaseDecl(BaseDeclPtr& base)
    //  <BaseDecl> = ":" <Access> <QualName>
    //
    auto start = lexer_.Curr();
+   if(!lexer_.NextStringIs(":")) return Backup(12);
 
    Cxx::Access access;
    QualNamePtr baseName;
-   if(!lexer_.NextStringIs(":")) return Backup(start);
-   if(!lexer_.GetAccess(access)) return Backup(start);
-   if(!GetQualName(baseName)) return Backup(start);
+   if(!lexer_.GetAccess(access)) return Backup(start, 13);
+   if(!GetQualName(baseName)) return Backup(start, 14);
    base.reset(new BaseDecl(baseName, access));
    SetContext(base.get(), start);
    return Success(Parser_GetBaseDecl, start);
@@ -449,9 +521,9 @@ bool Parser::GetBasic(TokenPtr& statement)
 
    ExprPtr expr;
    auto end = lexer_.FindFirstOf(";");
-   if(end == string::npos) return Backup(start);
-   if(!GetCxxExpr(expr, end, false)) return Backup(start);
-   if(!lexer_.NextCharIs(';')) return Backup(start);
+   if(end == string::npos) return Backup(start, 15);
+   if(!GetCxxExpr(expr, end, false)) return Backup(start, 16);
+   if(!lexer_.NextCharIs(';')) return Backup(start, 17);
 
    statement.reset(new Expr(expr, start));
    return Success(Parser_GetBasic, start);
@@ -500,7 +572,7 @@ bool Parser::GetBlock(BlockPtr& block)
    }
 
    Context::PopScope();
-   if(braced && !lexer_.NextCharIs('}')) return Backup(start);
+   if(braced && !lexer_.NextCharIs('}')) return Backup(start, 18);
    return Success(Parser_GetBlock, start);
 }
 
@@ -518,7 +590,7 @@ bool Parser::GetBraceInit(ExprPtr& expr)
    //  to follow the final item in the list, just before the closing brace.
    //
    auto end = lexer_.FindClosing('{', '}');
-   if(end == string::npos) return Backup(start);
+   if(end == string::npos) return Backup(start, 19);
 
    auto temps = TokenPtrVector();
    ExprPtr item;
@@ -528,14 +600,14 @@ bool Parser::GetBraceInit(ExprPtr& expr)
       while(true)
       {
          auto next = lexer_.FindFirstOf(",}");
-         if(next == string::npos) return Backup(start);
+         if(next == string::npos) return Backup(start, 20);
          if(!GetCxxExpr(item, next)) break;
          auto init = TokenPtr(item.release());
          temps.push_back(std::move(init));
          auto comma = lexer_.NextCharIs(',');
          auto brace = lexer_.NextCharIs('}');
          if(brace) break;
-         if(!comma) return Backup(start);
+         if(!comma) return Backup(start, 21);
       }
    }
 
@@ -566,7 +638,7 @@ bool Parser::GetBreak(TokenPtr& statement)
 
    //  The "break" keyword has already been parsed.
    //
-   if(!lexer_.NextCharIs(';')) return Backup(start);
+   if(!lexer_.NextCharIs(';')) return Backup(start, 22);
    statement.reset(new Break(begin));
    return Success(Parser_GetBreak, begin);
 }
@@ -586,9 +658,9 @@ bool Parser::GetCase(TokenPtr& statement)
    //
    ExprPtr expr;
    auto end = lexer_.FindFirstOf(":");
-   if(end == string::npos) return Backup(start);
-   if(!GetCxxExpr(expr, end)) return Backup(start);
-   if(!lexer_.NextCharIs(':')) return Backup(start);
+   if(end == string::npos) return Backup(start, 23);
+   if(!GetCxxExpr(expr, end)) return Backup(start, 24);
+   if(!lexer_.NextCharIs(':')) return Backup(start, 25);
 
    statement.reset(new Case(expr, begin));
    return Success(Parser_GetCase, begin);
@@ -608,9 +680,9 @@ bool Parser::GetCast(ExprPtr& expr)
    //
    TypeSpecPtr spec;
    ExprPtr item;
-   if(!GetTypeSpec(spec)) return Backup(start);
-   if(!lexer_.NextCharIs(')')) return Backup(start);
-   if(!GetCxxExpr(item, expr->EndPos(), false)) return Backup(start);
+   if(!GetTypeSpec(spec)) return Backup(26);
+   if(!lexer_.NextCharIs(')')) return Backup(start, 27);
+   if(!GetCxxExpr(item, expr->EndPos(), false)) return Backup(start, 28);
 
    auto token = TokenPtr(new Operation(Cxx::CAST));
    auto cast = static_cast< Operation* >(token.get());
@@ -634,22 +706,22 @@ bool Parser::GetCatch(TokenPtr& statement)
 
    ArgumentPtr arg;
    BlockPtr handler;
-   if(!NextKeywordIs(CATCH_STR)) return Backup(start);
-   if(!lexer_.NextCharIs('(')) return Backup(start);
+   if(!NextKeywordIs(CATCH_STR)) return Backup(start, 29);
+   if(!lexer_.NextCharIs('(')) return Backup(start, 30);
 
    if(lexer_.Extract(lexer_.Curr(), 3) == ELLIPSES_STR)
    {
       auto end = lexer_.FindClosing('(', ')');
-      if(end == string::npos) return Backup(start);
+      if(end == string::npos) return Backup(start, 31);
       lexer_.Reposition(end);
    }
    else
    {
-      if(!GetArgument(arg)) return Backup(start);
+      if(!GetArgument(arg)) return Backup(start, 32);
    }
 
-   if(!lexer_.NextCharIs(')')) return Backup(start);
-   if(!GetBlock(handler)) return Backup(start);
+   if(!lexer_.NextCharIs(')')) return Backup(start, 33);
+   if(!GetBlock(handler)) return Backup(start, 34);
 
    statement.reset(new Catch(start));
    auto c = static_cast< Catch* >(statement.get());
@@ -717,8 +789,8 @@ bool Parser::GetClassData(DataPtr& data)
    auto stat = NextKeywordIs(STATIC_STR);
    auto mute = NextKeywordIs(MUTABLE_STR);
    auto cexpr = NextKeywordIs(CONSTEXPR_STR);
-   if(!GetTypeSpec(typeSpec)) return Backup(start);
-   if(!lexer_.GetName(dataName)) return Backup(start);
+   if(!GetTypeSpec(typeSpec)) return Backup(start, 35);
+   if(!lexer_.GetName(dataName)) return Backup(start, 36);
    while(GetArraySpec(arraySpec)) typeSpec->AddArray(arraySpec);
 
    if(lexer_.NextStringIs(":"))
@@ -726,25 +798,25 @@ bool Parser::GetClassData(DataPtr& data)
       //  Get the data's field width.
       //
       auto end = lexer_.FindFirstOf(";=");
-      if(end == string::npos) return Backup(start);
-      if(!GetCxxExpr(width, end)) return Backup(start);
+      if(end == string::npos) return Backup(start, 37);
+      if(!GetCxxExpr(width, end)) return Backup(start, 38);
    }
 
    if(lexer_.NextStringIs("="))
    {
       if(lexer_.NextCharIs('{'))
       {
-         if(!GetBraceInit(init)) return Backup(start);
+         if(!GetBraceInit(init)) return Backup(start, 39);
       }
       else
       {
          auto end = lexer_.FindFirstOf(";");
-         if(end == string::npos) return Backup(start);
-         if(!GetCxxExpr(init, end)) return Backup(start);
+         if(end == string::npos) return Backup(start, 40);
+         if(!GetCxxExpr(init, end)) return Backup(start, 41);
       }
    }
 
-   if(!lexer_.NextCharIs(';')) return Backup(start);
+   if(!lexer_.NextCharIs(';')) return Backup(start, 42);
    data.reset(new ClassData(dataName, typeSpec));
    SetContext(data.get(), start);
    data->SetStatic(stat);
@@ -782,15 +854,15 @@ bool Parser::GetClassDecl(Cxx::Keyword kwd, ClassPtr& cls, ForwardPtr& forw)
       tag = Cxx::UnionType;
       break;
    case Cxx::TEMPLATE:
-      if(!GetTemplateParms(parms)) return Backup(start);
+      if(!GetTemplateParms(parms)) return Backup(start, 43);
       begin = kwdBegin_;
-      if(!lexer_.GetClassTag(tag)) return Backup(start);
+      if(!lexer_.GetClassTag(tag)) return Backup(start, 44);
    }
 
    QualNamePtr className;
    if(!GetQualName(className))
    {
-      if(tag != Cxx::UnionType) return Backup(start);
+      if(tag != Cxx::UnionType) return Backup(start, 45);
       className.reset(new QualName(EMPTY_STR));
    }
 
@@ -806,7 +878,7 @@ bool Parser::GetClassDecl(Cxx::Keyword kwd, ClassPtr& cls, ForwardPtr& forw)
 
    BaseDeclPtr base;
    GetBaseDecl(base);
-   if(!lexer_.NextCharIs('{')) return Backup(start);
+   if(!lexer_.NextCharIs('{')) return Backup(start, 46);
    cls.reset(new Class(className, tag));
    cls->SetTemplateParms(parms);
    SetContext(cls.get(), begin);
@@ -814,8 +886,8 @@ bool Parser::GetClassDecl(Cxx::Keyword kwd, ClassPtr& cls, ForwardPtr& forw)
    cls->AddBase(base);
    GetMemberDecls(cls.get());
    Context::PopScope();
-   if(!lexer_.NextCharIs('}')) return Backup(start);
-   if(!lexer_.NextCharIs(';')) return Backup(start);
+   if(!lexer_.NextCharIs('}')) return Backup(start, 47);
+   if(!lexer_.NextCharIs(';')) return Backup(start, 48);
    return Success(Parser_GetClassDecl, begin);
 }
 
@@ -903,10 +975,10 @@ bool Parser::GetConditional(ExprPtr& expr)
    ExprPtr exp1;
    ExprPtr exp0;
    auto end = lexer_.FindFirstOf(":");
-   if(end == string::npos) return Backup(start);
-   if(!GetCxxExpr(exp1, end)) return Backup(start);
-   if(!lexer_.NextCharIs(':')) return Backup(start);
-   if(!GetCxxExpr(exp0, expr->EndPos(), false)) return Backup(start);
+   if(end == string::npos) return Backup(start, 49);
+   if(!GetCxxExpr(exp1, end)) return Backup(start, 50);
+   if(!lexer_.NextCharIs(':')) return Backup(start, 51);
+   if(!GetCxxExpr(exp0, expr->EndPos(), false)) return Backup(start, 52);
 
    auto token = TokenPtr(new Operation(Cxx::CONDITIONAL));
    auto cond = static_cast< Operation* >(token.get());
@@ -933,7 +1005,7 @@ bool Parser::GetContinue(TokenPtr& statement)
 
    //  The "continue" keyword has already been parsed.
    //
-   if(!lexer_.NextCharIs(';')) return Backup(start);
+   if(!lexer_.NextCharIs(';')) return Backup(start, 53);
    statement.reset(new Continue(begin));
    return Success(Parser_GetContinue, begin);
 }
@@ -953,17 +1025,17 @@ bool Parser::GetCtorDecl(FunctionPtr& func)
    string name;
    auto expl = NextKeywordIs(EXPLICIT_STR);
    auto cexpr = NextKeywordIs(CONSTEXPR_STR);
-   if(!GetName(name)) return Backup(start);
-   if(!lexer_.NextCharIs('(')) return Backup(start);
+   if(!GetName(name)) return Backup(start, 54);
+   if(!lexer_.NextCharIs('(')) return Backup(start, 55);
    auto ctorName = QualNamePtr(new QualName(name));
    func.reset(new Function(ctorName));
    SetContext(func.get(), start);
    func->SetExplicit(expl);
    func->SetConstexpr(cexpr);
    if(cexpr) func->SetInline(true);
-   if(!GetArguments(func)) return Retreat(start, func);
+   if(!GetArguments(func)) return Backup(start, func, 214);
    auto noex = NextKeywordIs(NOEXCEPT_STR);
-   if(!GetCtorInit(func)) return Retreat(start, func);
+   if(!GetCtorInit(func)) return Backup(start, func, 215);
    func->SetNoexcept(noex);
    return Success(Parser_GetCtorDecl, start);
 }
@@ -985,14 +1057,14 @@ bool Parser::GetCtorDefn(FunctionPtr& func)
    //  actually repeated.
    //
    QualNamePtr ctorName;
-   if(!GetQualName(ctorName)) return Backup(start);
-   if(!lexer_.NextCharIs('(')) return Backup(start);
-   if(!ctorName->CheckCtorDefn()) return Backup(start);
+   if(!GetQualName(ctorName)) return Backup(start, 56);
+   if(!lexer_.NextCharIs('(')) return Backup(start, 57);
+   if(!ctorName->CheckCtorDefn()) return Backup(start, 58);
    func.reset(new Function(ctorName));
    SetContext(func.get(), start);
-   if(!GetArguments(func)) return Retreat(start, func);
+   if(!GetArguments(func)) return Backup(start, func, 216);
    auto noex = NextKeywordIs(NOEXCEPT_STR);
-   if(!GetCtorInit(func)) return Retreat(start, func);
+   if(!GetCtorInit(func)) return Backup(start, func, 217);
    func->SetNoexcept(noex);
    return Success(Parser_GetCtorDefn, start);
 }
@@ -1012,7 +1084,7 @@ bool Parser::GetCtorInit(FunctionPtr& func)
    if(!lexer_.NextStringIs(":")) return Success(Parser_GetCtorInit, start);
 
    auto end = lexer_.FindFirstOf("{");
-   if(end == string::npos) return Backup(start);
+   if(end == string::npos) return Backup(start, 59);
 
    size_t begin;
    QualNamePtr baseName;
@@ -1044,17 +1116,17 @@ bool Parser::GetCtorInit(FunctionPtr& func)
          token = TokenPtr(baseName.release());
          auto init = ExprPtr(new Expression(end, true));
          init->AddItem(token);
-         if(!lexer_.NextCharIs('(')) return Backup(start);
-         if(!GetArgList(token)) return Backup(start);
+         if(!lexer_.NextCharIs('(')) return Backup(start, 60);
+         if(!GetArgList(token)) return Backup(start, 61);
          init->AddItem(token);
          func->SetBaseInit(init);
       }
       else
       {
-         if(!lexer_.NextCharIs('(')) return Backup(start);
+         if(!lexer_.NextCharIs('(')) return Backup(start, 62);
          end = lexer_.FindClosing('(', ')');
-         if(end == string::npos) return Backup(start);
-         if(!GetArgList(token)) return Backup(start);
+         if(end == string::npos) return Backup(start, 63);
+         if(!GetArgList(token)) return Backup(start, 64);
          memberName = *baseName->Name();
          auto mem = MemberInitPtr(new MemberInit(memberName, token));
          mem->SetPos(Context::File(), begin);
@@ -1065,11 +1137,11 @@ bool Parser::GetCtorInit(FunctionPtr& func)
    while(lexer_.NextCharIs(','))
    {
       begin = lexer_.Curr();
-      if(!lexer_.GetName(memberName)) return Backup(start);
-      if(!lexer_.NextCharIs('(')) return Backup(start);
+      if(!lexer_.GetName(memberName)) return Backup(start, 65);
+      if(!lexer_.NextCharIs('(')) return Backup(start, 66);
       end = lexer_.FindClosing('(', ')');
-      if(end == string::npos) return Backup(start);
-      if(!GetArgList(token)) return Backup(start);
+      if(end == string::npos) return Backup(start, 67);
+      if(!GetArgList(token)) return Backup(start, 68);
       auto mem = MemberInitPtr(new MemberInit(memberName, token));
       mem->SetPos(Context::File(), begin);
       func->AddMemberInit(mem);
@@ -1090,7 +1162,7 @@ bool Parser::GetCxxAlpha(ExprPtr& expr)
 
    TokenPtr item;
    QualNamePtr qualName;
-   if(!GetQualName(qualName)) return Backup(start);
+   if(!GetQualName(qualName)) return Backup(start, 69);
 
    if(qualName->Size() == 1)
    {
@@ -1101,28 +1173,28 @@ bool Parser::GetCxxAlpha(ExprPtr& expr)
       switch(op)
       {
       case Cxx::NIL_OPERATOR:
-         if(!CheckType(qualName)) return Backup(start);
+         if(!CheckType(qualName)) return Backup(start, 70);
          break;
 
       case Cxx::FALSE:
       case Cxx::TRUE:
          item.reset(new BoolLiteral(op == Cxx::TRUE));
          if(expr->AddItem(item)) return true;
-         return Backup(start);
+         return Backup(start, 71);
 
       case Cxx::NULLPTR:
          item.reset(new NullPtr);
          if(expr->AddItem(item)) return true;
-         return Backup(start);
+         return Backup(start, 72);
 
       case Cxx::OBJECT_CREATE:
          if(GetNew(expr, op)) return true;
-         return Backup(start);
+         return Backup(start, 73);
 
       case Cxx::OBJECT_DELETE:
          if(lexer_.NextStringIs(ARRAY_STR)) op = Cxx::OBJECT_DELETE_ARRAY;
          if(GetDelete(expr, op)) return true;
-         return Backup(start);
+         return Backup(start, 74);
 
       case Cxx::STATIC_CAST:
       case Cxx::CONST_CAST:
@@ -1136,30 +1208,30 @@ bool Parser::GetCxxAlpha(ExprPtr& expr)
             auto pos = lexer_.FindFirstOf("<");
             lexer_.Reposition(pos);
             if(GetCxxCast(expr, op)) return true;
-            return Backup(start);
+            return Backup(start, 75);
          }
 
       case Cxx::THROW:
          if(GetThrow(expr)) return true;
-         return Backup(start);
+         return Backup(start, 76);
 
       case Cxx::SIZEOF_TYPE:
          if(GetSizeOf(expr)) return true;
-         return Backup(start);
+         return Backup(start, 77);
 
       case Cxx::TYPE_NAME:
          if(GetTypeId(expr)) return true;
-         return Backup(start);
+         return Backup(start, 78);
 
       default:
          Debug::SwErr(Parser_GetCxxAlpha, op, 0);
-         return Backup(start);
+         return Backup(start, 79);
       }
    }
 
    item.reset(qualName.release());
    if(expr->AddItem(item)) return true;
-   return Backup(start);
+   return Backup(start, 80);
 }
 
 //------------------------------------------------------------------------------
@@ -1176,10 +1248,10 @@ bool Parser::GetCxxCast(ExprPtr& expr, Cxx::Operator op)
    //
    TypeSpecPtr spec;
    ExprPtr item;
-   if(!lexer_.NextCharIs('<')) return Backup(start);
-   if(!GetTypeSpec(spec)) return Backup(start);
-   if(!lexer_.NextCharIs('>')) return Backup(start);
-   if(!GetParExpr(item, false)) return Backup(start);
+   if(!lexer_.NextCharIs('<')) return Backup(start, 81);
+   if(!GetTypeSpec(spec)) return Backup(start, 82);
+   if(!lexer_.NextCharIs('>')) return Backup(start, 83);
+   if(!GetParExpr(item, false)) return Backup(start, 84);
 
    auto token = TokenPtr(new Operation(op));
    auto cast = static_cast< Operation* >(token.get());
@@ -1227,7 +1299,7 @@ bool Parser::GetCxxExpr(ExprPtr& expr, size_t end, bool force)
          if(ispunct(c))
          {
             if(GetOp(expr, true)) break;
-            return Backup(start);
+            return Backup(start, 85);
          }
          if(isdigit(c))
          {
@@ -1243,7 +1315,7 @@ bool Parser::GetCxxExpr(ExprPtr& expr, size_t end, bool force)
    if(expr->Empty())
    {
       expr.release();
-      return Backup(start);
+      return Backup(start, 86);
    }
 
    return Success(Parser_GetCxxExpr, start);
@@ -1262,7 +1334,7 @@ bool Parser::GetDefault(TokenPtr& statement)
 
    //  The "default" keyword has already been parsed.
    //
-   if(!lexer_.NextCharIs(':')) return Backup(start);
+   if(!lexer_.NextCharIs(':')) return Backup(start, 87);
    string label(DEFAULT_STR);
    statement.reset(new Label(label, begin));
    return Success(Parser_GetDefault, begin);
@@ -1284,8 +1356,8 @@ bool Parser::GetDefined(ExprPtr& expr)
    string name;
 
    auto par = lexer_.NextCharIs('(');
-   if(!lexer_.GetName(name)) return Backup(start);
-   if(par && !lexer_.NextCharIs(')')) return Backup(start);
+   if(!lexer_.GetName(name)) return Backup(start, 88);
+   if(par && !lexer_.NextCharIs(')')) return Backup(start, 89);
 
    auto token = TokenPtr(new Operation(Cxx::DEFINED));
    auto op = static_cast< Operation* >(token.get());
@@ -1308,7 +1380,7 @@ bool Parser::GetDelete(ExprPtr& expr, Cxx::Operator op)
    //  The delete operator has already been parsed.
    //
    ExprPtr item;
-   if(!GetCxxExpr(item, expr->EndPos(), false)) return Backup(start);
+   if(!GetCxxExpr(item, expr->EndPos(), false)) return Backup(start, 90);
 
    auto token = TokenPtr(new Operation(op));
    auto delOp = static_cast< Operation* >(token.get());
@@ -1333,10 +1405,10 @@ bool Parser::GetDo(TokenPtr& statement)
    //
    BlockPtr loop;
    ExprPtr condition;
-   if(!GetBlock(loop)) return Backup(start);
-   if(!NextKeywordIs(WHILE_STR)) return Backup(start);
-   if(!GetParExpr(condition, false)) return Backup(start);
-   if(!lexer_.NextCharIs(';')) return Backup(start);
+   if(!GetBlock(loop)) return Backup(start, 91);
+   if(!NextKeywordIs(WHILE_STR)) return Backup(start, 92);
+   if(!GetParExpr(condition, false)) return Backup(start, 93);
+   if(!lexer_.NextCharIs(';')) return Backup(start, 94);
 
    statement.reset(new Do(begin));
    auto d = static_cast< Do* >(statement.get());
@@ -1357,12 +1429,12 @@ bool Parser::GetDtorDecl(FunctionPtr& func)
    //
    auto start = lexer_.Curr();
    auto virt = NextKeywordIs(VIRTUAL_STR);
-   if(!lexer_.NextCharIs('~')) return Backup(start);
+   if(!lexer_.NextCharIs('~')) return Backup(start, 95);
 
    string name;
-   if(!GetName(name)) return Backup(start);
-   if(!lexer_.NextCharIs('(')) return Backup(start);
-   if(!lexer_.NextCharIs(')')) return Backup(start);
+   if(!GetName(name)) return Backup(start, 96);
+   if(!lexer_.NextCharIs('(')) return Backup(start, 97);
+   if(!lexer_.NextCharIs(')')) return Backup(start, 98);
    auto noex = NextKeywordIs(NOEXCEPT_STR);
 
    name.insert(0, 1, '~');
@@ -1388,11 +1460,11 @@ bool Parser::GetDtorDefn(FunctionPtr& func)
 
    QualNamePtr dtorName;
    string name;
-   if(!GetQualName(dtorName)) return Backup(start);
-   if(!lexer_.NextStringIs("::~")) return Backup(start);
-   if(!lexer_.GetName(name)) return Backup(start);
-   if(!lexer_.NextCharIs('(')) return Backup(start);
-   if(!lexer_.NextCharIs(')')) return Backup(start);
+   if(!GetQualName(dtorName)) return Backup(start, 99);
+   if(!lexer_.NextStringIs("::~")) return Backup(start, 100);
+   if(!lexer_.GetName(name)) return Backup(start, 101);
+   if(!lexer_.NextCharIs('(')) return Backup(start, 102);
+   if(!lexer_.NextCharIs(')')) return Backup(start, 103);
    auto noex = NextKeywordIs(NOEXCEPT_STR);
 
    name.insert(0, 1, '~');
@@ -1423,12 +1495,12 @@ bool Parser::GetEnum(EnumPtr& decl)
 
    string enumName;
    lexer_.GetName(enumName);
-   if(!lexer_.NextCharIs('{')) return Backup(start);
+   if(!lexer_.NextCharIs('{')) return Backup(start, 104);
 
    string etorName;
    ExprPtr etorInit;
    auto etorPos = lexer_.Curr();
-   if(!GetEnumerator(etorName, etorInit)) return Backup(start);
+   if(!GetEnumerator(etorName, etorInit)) return Backup(start, 105);
    decl.reset(new Enum(enumName));
    SetContext(decl.get(), begin);
    decl->AddEnumerator(etorName, etorInit, etorPos);
@@ -1441,8 +1513,8 @@ bool Parser::GetEnum(EnumPtr& decl)
       decl->AddEnumerator(etorName, etorInit, etorPos);
    }
 
-   if(!lexer_.NextCharIs('}')) return Backup(start);
-   if(!lexer_.NextCharIs(';')) return Backup(start);
+   if(!lexer_.NextCharIs('}')) return Backup(start, 106);
+   if(!lexer_.NextCharIs(';')) return Backup(start, 107);
    return Success(Parser_GetEnum, begin);
 }
 
@@ -1458,13 +1530,13 @@ bool Parser::GetEnumerator(string& name, ExprPtr& init)
 
    //  <Enumerator> = <Name> ["=" <Expr>]
    //
-   if(!lexer_.GetName(name)) return Backup(start);
+   if(!lexer_.GetName(name)) return Backup(start, 108);
 
    if(lexer_.NextCharIs('='))
    {
       auto end = lexer_.FindFirstOf(",}");
-      if(end == string::npos) return Backup(start);
-      if(!GetCxxExpr(init, end)) return Backup(start);
+      if(end == string::npos) return Backup(start, 109);
+      if(!GetCxxExpr(init, end)) return Backup(start, 110);
    }
 
    return Success(Parser_GetEnumerator, start);
@@ -1508,7 +1580,7 @@ bool Parser::GetFor(TokenPtr& statement)
    //
    TokenPtr initial;
    DataPtr data;
-   if(!lexer_.NextCharIs('(')) return Backup(start);
+   if(!lexer_.NextCharIs('(')) return Backup(start, 111);
    if(GetFuncData(data))
    {
       initial.reset(data.release());
@@ -1517,9 +1589,9 @@ bool Parser::GetFor(TokenPtr& statement)
    {
       ExprPtr expr;
       auto end = lexer_.FindFirstOf(";");
-      if(end == string::npos) return Backup(start);
+      if(end == string::npos) return Backup(start, 112);
       GetCxxExpr(expr, end);
-      if(!lexer_.NextCharIs(';')) return Backup(start);
+      if(!lexer_.NextCharIs(';')) return Backup(start, 113);
       initial.reset(expr.release());
    }
 
@@ -1527,11 +1599,11 @@ bool Parser::GetFor(TokenPtr& statement)
    ExprPtr subsequent;
    BlockPtr loop;
    auto end = lexer_.FindFirstOf(";");
-   if(end == string::npos) return Backup(start);
+   if(end == string::npos) return Backup(start, 114);
    GetCxxExpr(condition, end);
-   if(!lexer_.NextCharIs(';')) return Backup(start);
-   if(!GetParExpr(subsequent, true, true)) return Backup(start);
-   if(!GetBlock(loop)) return Backup(start);
+   if(!lexer_.NextCharIs(';')) return Backup(start, 115);
+   if(!GetParExpr(subsequent, true, true)) return Backup(start, 116);
+   if(!GetBlock(loop)) return Backup(start, 117);
 
    statement.reset(new For(begin));
    auto f = static_cast< For* >(statement.get());
@@ -1562,7 +1634,7 @@ bool Parser::GetFriend(FriendPtr& decl)
    if(GetTemplateParms(parms))
    {
       begin = kwdBegin_;
-      if(!NextKeywordIs(FRIEND_STR)) return Backup(start);
+      if(!NextKeywordIs(FRIEND_STR)) return Backup(start, 118);
    }
 
    decl.reset(new Friend);
@@ -1581,8 +1653,8 @@ bool Parser::GetFriend(FriendPtr& decl)
       Cxx::ClassTag tag;
       QualNamePtr friendName;
       if(lexer_.GetClassTag(tag)) decl->SetTag(tag);
-      if(!GetQualName(friendName)) return Backup(start);
-      if(!lexer_.NextCharIs(';')) return Backup(start);
+      if(!GetQualName(friendName)) return Backup(start, 119);
+      if(!lexer_.NextCharIs(';')) return Backup(start, 120);
       decl->SetName(friendName);
    }
 
@@ -1617,8 +1689,8 @@ bool Parser::GetFuncData(DataPtr& data)
 
    auto stat = NextKeywordIs(STATIC_STR);
    auto cexpr = NextKeywordIs(CONSTEXPR_STR);
-   if(!GetTypeSpec(typeSpec)) return Backup(start);
-   if(!lexer_.GetName(dataName)) return Backup(start);
+   if(!GetTypeSpec(typeSpec)) return Backup(start, 121);
+   if(!lexer_.GetName(dataName)) return Backup(start, 122);
    if(lexer_.NextCharIs('('))
    {
       //  A parenthesized expression is initializing the data.  Parse it as
@@ -1626,9 +1698,9 @@ bool Parser::GetFuncData(DataPtr& data)
       //
       TokenPtr expr;
       auto end = lexer_.FindClosing('(', ')');
-      if(end == string::npos) return Backup(start);
-      if(!GetArgList(expr)) return Backup(start);
-      if(!lexer_.NextCharIs(';')) return Backup(start);
+      if(end == string::npos) return Backup(start, 123);
+      if(!GetArgList(expr)) return Backup(start, 124);
+      if(!lexer_.NextCharIs(';')) return Backup(start, 125);
 
       data.reset(new FuncData(dataName, typeSpec));
       SetContext(data.get(), start);
@@ -1657,7 +1729,7 @@ bool Parser::GetFuncData(DataPtr& data)
          typeSpec.reset(prev->GetTypeSpec()->Clone());
          GetPointers(typeSpec.get());
          GetReferences(typeSpec.get());
-         if(!lexer_.GetName(dataName)) return Backup(start);
+         if(!lexer_.GetName(dataName)) return Backup(start, 126);
       }
 
       while(GetArraySpec(arraySpec)) typeSpec->AddArray(arraySpec);
@@ -1666,13 +1738,13 @@ bool Parser::GetFuncData(DataPtr& data)
       {
          if(lexer_.NextCharIs('{'))
          {
-            if(!GetBraceInit(init)) return Backup(start);
+            if(!GetBraceInit(init)) return Backup(start, 127);
          }
          else
          {
             auto end = lexer_.FindFirstOf(",;");
-            if(end == string::npos) return Backup(start);
-            if(!GetCxxExpr(init, end)) return Backup(start);
+            if(end == string::npos) return Backup(start, 128);
+            if(!GetCxxExpr(init, end)) return Backup(start, 129);
          }
       }
 
@@ -1701,7 +1773,7 @@ bool Parser::GetFuncData(DataPtr& data)
    }
    while(lexer_.NextCharIs(','));
 
-   if(!lexer_.NextCharIs(';')) return Backup(start);
+   if(!lexer_.NextCharIs(';')) return Backup(start, 130);
    return Success(Parser_GetFuncData, start);
 }
 
@@ -1731,7 +1803,7 @@ bool Parser::GetFuncDecl(Cxx::Keyword kwd, FunctionPtr& func)
       if(GetTemplateParms(parms)) begin = lexer_.Curr();
       break;
    case Cxx::TEMPLATE:
-      if(!GetTemplateParms(parms)) return Backup(start);
+      if(!GetTemplateParms(parms)) return Backup(start, 131);
       begin = lexer_.Curr();
       break;
    }
@@ -1765,7 +1837,7 @@ bool Parser::GetFuncDecl(Cxx::Keyword kwd, FunctionPtr& func)
       break;
    }
 
-   if(!found) return Retreat(start, func);
+   if(!found) return Backup(start, func, 218);
    func->SetTemplateParms(parms);
    func->SetExtern(extn);
    func->SetInline(inln);
@@ -1780,10 +1852,10 @@ bool Parser::GetFuncDecl(Cxx::Keyword kwd, FunctionPtr& func)
    else
    {
       auto pos = lexer_.Curr();
-      if(!lexer_.NextCharIs('{')) return Retreat(start, func);
+      if(!lexer_.NextCharIs('{')) return Backup(start, func, 219);
 
       auto end = lexer_.FindClosing('{', '}');
-      if(end == string::npos) return Retreat(start, func);
+      if(end == string::npos) return Backup(start, func, 220);
       func->SetDefnRange(begin, end);
 
       //  Wait to parse a class's inlines until the rest of the
@@ -1792,7 +1864,7 @@ bool Parser::GetFuncDecl(Cxx::Keyword kwd, FunctionPtr& func)
       if(func->AtFileScope())
       {
          lexer_.Reposition(pos);
-         if(!GetFuncImpl(func.get())) return Retreat(start, func);
+         if(!GetFuncImpl(func.get())) return Backup(start, func, 221);
       }
       else
       {
@@ -1825,7 +1897,7 @@ bool Parser::GetFuncDefn(Cxx::Keyword kwd, FunctionPtr& func)
 
    if(kwd == Cxx::TEMPLATE)
    {
-      if(!GetTemplateParms(parms)) return Backup(start);
+      if(!GetTemplateParms(parms)) return Backup(start, 132);
       begin = lexer_.Curr();
    }
 
@@ -1840,14 +1912,14 @@ bool Parser::GetFuncDefn(Cxx::Keyword kwd, FunctionPtr& func)
       found = GetProcDefn(func);
    }
 
-   if(!found) return Retreat(start, func);
+   if(!found) return Backup(start, func, 222);
    func->SetTemplateParms(parms);
    func->SetInline(inln);
 
    auto curr = lexer_.Curr();
-   if(!lexer_.NextCharIs('{')) return Retreat(start, func);
+   if(!lexer_.NextCharIs('{')) return Backup(start, func, 223);
    lexer_.Reposition(curr);
-   if(!GetFuncImpl(func.get())) return Retreat(start, func);
+   if(!GetFuncImpl(func.get())) return Backup(start, func, 224);
    func->SetDefnRange(begin, lexer_.rfind('}'));
    return Success(Parser_GetFuncDefn, start);
 }
@@ -1897,20 +1969,20 @@ bool Parser::GetFuncSpec(TypeSpecPtr& spec, FunctionPtr& func)
    //  GetTypeSpec has already parsed the function's return type.
    //
    auto start = lexer_.Curr();
-   if(!lexer_.NextCharIs('(')) return Backup(start);
-   if(!lexer_.NextCharIs('*')) return Backup(start);
+   if(!lexer_.NextCharIs('(')) return Backup(133);
+   if(!lexer_.NextCharIs('*')) return Backup(start, 134);
 
    string name;
-   if(!lexer_.GetName(name)) return Backup(start);
-   if(!lexer_.NextCharIs(')')) return Backup(start);
-   if(!lexer_.NextCharIs('(')) return Backup(start);
+   if(!lexer_.GetName(name)) return Backup(start, 135);
+   if(!lexer_.NextCharIs(')')) return Backup(start, 136);
+   if(!lexer_.NextCharIs('(')) return Backup(start, 137);
 
    name.insert(0, "(*");
    name += ')';
    auto funcName = QualNamePtr(new QualName(name));
    func.reset(new Function(funcName, spec, true));
    SetContext(func.get(), start);
-   if(!GetArguments(func)) return Retreat(start, func);
+   if(!GetArguments(func)) return Backup(start, func, 225);
    return Success(Parser_GetFuncSpec, start);
 }
 
@@ -1930,11 +2002,11 @@ bool Parser::GetIf(TokenPtr& statement)
    ExprPtr condition;
    BlockPtr thenBlock;
    BlockPtr elseBlock;
-   if(!GetParExpr(condition, false)) return Backup(start);
-   if(!GetBlock(thenBlock)) return Backup(start);
+   if(!GetParExpr(condition, false)) return Backup(start, 138);
+   if(!GetBlock(thenBlock)) return Backup(start, 139);
    if(NextKeywordIs(ELSE_STR))
    {
-      if(!GetBlock(elseBlock)) return Backup(start);
+      if(!GetBlock(elseBlock)) return Backup(start, 140);
       if(!elseBlock->IsBraced())
       {
          auto first = elseBlock->FirstStatement();
@@ -2098,8 +2170,8 @@ bool Parser::GetNamespace()
    auto start = lexer_.Curr();
 
    string name;
-   if(!lexer_.GetName(name)) return Backup(start);
-   if(!lexer_.NextCharIs('{')) return Backup(start);
+   if(!lexer_.GetName(name)) return Backup(start, 141);
+   if(!lexer_.NextCharIs('{')) return Backup(start, 142);
 
    auto outer = Context::Scope();
    auto inner = static_cast< Namespace* >(outer)->EnsureNamespace(name);
@@ -2108,7 +2180,7 @@ bool Parser::GetNamespace()
    GetFileDecls(inner);
    Context::PopScope();
 
-   if(!lexer_.NextCharIs('}')) return Backup(start);
+   if(!lexer_.NextCharIs('}')) return Backup(start, 143);
    if(lexer_.NextCharIs(';')) Log(RemoveSemicolon);
    return Success(Parser_GetNamespace, begin);
 }
@@ -2155,7 +2227,7 @@ bool Parser::GetNew(ExprPtr& expr, Cxx::Operator op)
    //
    if(lexer_.NextCharIs('('))
    {
-      if(!GetArgList(token)) return Backup(start);
+      if(!GetArgList(token)) return Backup(start, 144);
    }
    else
    {
@@ -2168,7 +2240,7 @@ bool Parser::GetNew(ExprPtr& expr, Cxx::Operator op)
    //  Add the type that is being created.
    //
    TypeSpecPtr typeSpec;
-   if(!GetTypeSpec(typeSpec)) return Backup(start);
+   if(!GetTypeSpec(typeSpec)) return Backup(start, 145);
    token.reset(typeSpec.release());
    newOp->AddArg(token, false);
 
@@ -2195,7 +2267,7 @@ bool Parser::GetNew(ExprPtr& expr, Cxx::Operator op)
    {
       if(lexer_.NextCharIs('('))
       {
-         if(!GetArgList(token)) return Backup(start);
+         if(!GetArgList(token)) return Backup(start, 146);
          newOp->AddArg(token, false);
       }
    }
@@ -2261,7 +2333,7 @@ bool Parser::GetOp(ExprPtr& expr, bool cxx)
    }
 
    if(expr->AddItem(item)) return true;
-   return Backup(start);
+   return Backup(start, 147);
 }
 
 //------------------------------------------------------------------------------
@@ -2276,11 +2348,11 @@ bool Parser::GetParExpr(ExprPtr& expr, bool omit, bool opt)
 
    //  Parse the expression inside the parentheses.
    //
-   if(!omit && !lexer_.NextCharIs('(')) return Backup(start);
+   if(!omit && !lexer_.NextCharIs('(')) return Backup(start, 148);
    auto end = lexer_.FindClosing('(', ')');
-   if(end == string::npos) return Backup(start);
-   if(!GetCxxExpr(expr, end) && !opt) return Backup(start);
-   if(!lexer_.NextCharIs(')')) return Backup(start);
+   if(end == string::npos) return Backup(start, 149);
+   if(!GetCxxExpr(expr, end) && !opt) return Backup(start, 150);
+   if(!lexer_.NextCharIs(')')) return Backup(start, 151);
    return true;
 }
 
@@ -2326,17 +2398,17 @@ bool Parser::GetPreAlpha(ExprPtr& expr)
    //  Look for "defined", which is actually an operator.
    //
    string name;
-   if(!lexer_.GetName(name)) return Backup(start);
+   if(!lexer_.GetName(name)) return Backup(start, 152);
 
    if(name == DEFINED_STR)
    {
       if(GetDefined(expr)) return true;
-      return Backup(start);
+      return Backup(start, 153);
    }
 
    TokenPtr item = MacroNamePtr(new MacroName(name));
    if(expr->AddItem(item)) return true;
-   return Backup(start);
+   return Backup(start, 154);
 }
 
 //------------------------------------------------------------------------------
@@ -2352,7 +2424,7 @@ bool Parser::GetPrecedence(ExprPtr& expr)
    //  The left parenthesis has already been parsed.
    //
    ExprPtr item;
-   if(!GetParExpr(item, true)) return Backup(start);
+   if(!GetParExpr(item, true)) return Backup(start, 155);
 
    auto token = TokenPtr(new Precedence(item));
    expr->AddItem(token);
@@ -2395,7 +2467,7 @@ bool Parser::GetPreExpr(ExprPtr& expr, size_t end)
          if(ispunct(c))
          {
             if(GetOp(expr, false)) break;
-            return Backup(start);
+            return Backup(start, 156);
          }
          if(isdigit(c))
          {
@@ -2411,7 +2483,7 @@ bool Parser::GetPreExpr(ExprPtr& expr, size_t end)
    if(expr->Empty())
    {
       expr.release();
-      return Backup(start);
+      return Backup(start, 157);
    }
 
    return Success(Parser_GetPreExpr, start);
@@ -2444,21 +2516,21 @@ bool Parser::GetProcDecl(FunctionPtr& func)
 
    if(NextKeywordIs(OPERATOR_STR))
    {
-      if(!GetTypeSpec(typeSpec)) return Backup(start);
+      if(!GetTypeSpec(typeSpec)) return Backup(start, 158);
       name = OPERATOR_STR;
       oper = Cxx::CAST;
    }
    else
    {
-      if(!GetTypeSpec(typeSpec)) return Backup(start);
-      if(!lexer_.GetName(name, oper)) return Backup(start);
+      if(!GetTypeSpec(typeSpec)) return Backup(start, 159);
+      if(!lexer_.GetName(name, oper)) return Backup(start, 160);
    }
 
-   if(!lexer_.NextCharIs('(')) return Backup(start);
+   if(!lexer_.NextCharIs('(')) return Backup(start, 161);
    auto funcName = QualNamePtr(new QualName(name));
    func.reset(new Function(funcName, typeSpec));
    SetContext(func.get(), start);
-   if(!GetArguments(func)) return Retreat(start, func);
+   if(!GetArguments(func)) return Backup(start, func, 226);
    func->SetOperator(oper);
 
    auto readonly = NextKeywordIs(CONST_STR);
@@ -2491,7 +2563,7 @@ bool Parser::GetProcDefn(FunctionPtr& func)
    auto start = lexer_.Curr();
 
    TypeSpecPtr typeSpec;
-   if(!GetTypeSpec(typeSpec)) return Backup(start);
+   if(!GetTypeSpec(typeSpec)) return Backup(start, 162);
 
    //  If this is a function template instance, append the template
    //  arguments to the name.  GetQualName cannot be used because it
@@ -2502,23 +2574,23 @@ bool Parser::GetProcDefn(FunctionPtr& func)
    {
       string name;
       Cxx::Operator oper;
-      if(!lexer_.GetName(name, oper)) return Backup(start);
+      if(!lexer_.GetName(name, oper)) return Backup(start, 163);
       funcName.reset(new QualName(name));
       funcName->SetOperator(oper);
       string spec;
-      if(!lexer_.GetTemplateSpec(spec)) return Backup(start);
+      if(!lexer_.GetTemplateSpec(spec)) return Backup(start, 164);
       funcName->Append(spec, false);
    }
    else
    {
-      if(!GetQualName(funcName)) return Backup(start);
+      if(!GetQualName(funcName)) return Backup(start, 165);
    }
-   if(!lexer_.NextCharIs('(')) return Backup(start);
+   if(!lexer_.NextCharIs('(')) return Backup(start, 166);
 
    auto oper = funcName->Operator();
    func.reset(new Function(funcName, typeSpec));
    SetContext(func.get(), start);
-   if(!GetArguments(func)) return Retreat(start, func);
+   if(!GetArguments(func)) return Backup(start, func, 227);
    func->SetOperator(oper);
 
    auto readonly = NextKeywordIs(CONST_STR);
@@ -2543,13 +2615,13 @@ bool Parser::GetQualName(QualNamePtr& name)
 
    TypeNamePtr type;
    auto global = lexer_.NextStringIs(SCOPE_STR);
-   if(!GetTypeName(type)) return Backup(start);
+   if(!GetTypeName(type)) return Backup(start, 167);
    if(global) type->SetScoped();
    name.reset(new QualName(type));
 
    while(lexer_.NextStringIs(SCOPE_STR))
    {
-      if(!GetTypeName(type)) return Backup(start);
+      if(!GetTypeName(type)) return Backup(start, 168);
       type->SetScoped();
       name->PushBack(type);
    }
@@ -2561,7 +2633,7 @@ bool Parser::GetQualName(QualNamePtr& name)
       if(!lexer_.GetOpOverride(oper))
       {
          Debug::SwErr(Parser_GetQualName, 0, 0);
-         return Backup(start);
+         return Backup(start, 169);
       }
 
       name->SetOperator(oper);
@@ -2600,9 +2672,9 @@ bool Parser::GetReturn(TokenPtr& statement)
    //
    ExprPtr expr;
    auto end = lexer_.FindFirstOf(";");
-   if(end == string::npos) return Backup(start);
+   if(end == string::npos) return Backup(start, 170);
    GetCxxExpr(expr, end);
-   if(!lexer_.NextCharIs(';')) return Backup(start);
+   if(!lexer_.NextCharIs(';')) return Backup(start, 171);
 
    statement.reset(new Return(begin));
    static_cast< Return* >(statement.get())->AddExpr(expr);
@@ -2622,7 +2694,7 @@ bool Parser::GetSizeOf(ExprPtr& expr)
    //  The sizeof operator has already been parsed.  Its argument can be a
    //  name (e.g. a local or argument), a type, or an expression.
    //
-   if(!lexer_.NextCharIs('(')) return Backup(start);
+   if(!lexer_.NextCharIs('(')) return Backup(start, 172);
    auto mark = lexer_.Curr();
    TokenPtr arg;
 
@@ -2645,7 +2717,7 @@ bool Parser::GetSizeOf(ExprPtr& expr)
       }
 
       ExprPtr size;
-      if(!GetParExpr(size, true)) return Backup(start);
+      if(!GetParExpr(size, true)) return Backup(start, 173);
       arg.reset(size.release());
    }
    while(false);
@@ -2688,21 +2760,21 @@ bool Parser::GetSpaceData(Cxx::Keyword kwd, DataPtr& data)
       extn = true;
       break;
    case Cxx::TEMPLATE:
-      if(!GetTemplateParms(parms)) return Backup(start);
+      if(!GetTemplateParms(parms)) return Backup(start, 174);
       break;
    }
 
    auto stat = NextKeywordIs(STATIC_STR);
    auto cexpr = NextKeywordIs(CONSTEXPR_STR);
-   if(!GetTypeSpec(typeSpec)) return Backup(start);
-   if(!GetQualName(dataName)) return Backup(start);
-   if(dataName->Operator() != Cxx::NIL_OPERATOR) return Backup(start);
+   if(!GetTypeSpec(typeSpec)) return Backup(start, 175);
+   if(!GetQualName(dataName)) return Backup(start, 176);
+   if(dataName->Operator() != Cxx::NIL_OPERATOR) return Backup(start, 177);
 
    if(lexer_.NextCharIs('('))
    {
       auto end = lexer_.FindClosing('(', ')');
-      if(end == string::npos) return Backup(start);
-      if(!GetArgList(expr)) return Backup(start);
+      if(end == string::npos) return Backup(start, 178);
+      if(!GetArgList(expr)) return Backup(start, 179);
    }
    else
    {
@@ -2712,18 +2784,18 @@ bool Parser::GetSpaceData(Cxx::Keyword kwd, DataPtr& data)
       {
          if(lexer_.NextCharIs('{'))
          {
-            if(!GetBraceInit(init)) return Backup(start);
+            if(!GetBraceInit(init)) return Backup(start, 180);
          }
          else
          {
             auto end = lexer_.FindFirstOf(";");
-            if(end == string::npos) return Backup(start);
-            if(!GetCxxExpr(init, end)) return Backup(start);
+            if(end == string::npos) return Backup(start, 181);
+            if(!GetCxxExpr(init, end)) return Backup(start, 182);
          }
       }
    }
 
-   if(!lexer_.NextCharIs(';')) return Backup(start);
+   if(!lexer_.NextCharIs(';')) return Backup(start, 183);
    data.reset(new SpaceData(dataName, typeSpec));
    SetContext(data.get(), start);
    data->SetTemplateParms(parms);
@@ -2789,9 +2861,9 @@ bool Parser::GetSubscript(ExprPtr& expr)
    //
    ExprPtr item;
    auto end = lexer_.FindClosing('[', ']');
-   if(end == string::npos) return Backup(start);
-   if(!GetCxxExpr(item, end)) return Backup(start);
-   if(!lexer_.NextCharIs(']')) return Backup(start);
+   if(end == string::npos) return Backup(start, 184);
+   if(!GetCxxExpr(item, end)) return Backup(start, 185);
+   if(!lexer_.NextCharIs(']')) return Backup(start, 186);
 
    //  The array subscript operator is binary, so adding it to the expression
    //  causes it to take what preceded it (the array) as its first argument.
@@ -2820,8 +2892,8 @@ bool Parser::GetSwitch(TokenPtr& statement)
    //
    ExprPtr value;
    BlockPtr cases;
-   if(!GetParExpr(value, false)) return Backup(start);
-   if(!GetBlock(cases)) return Backup(start);
+   if(!GetParExpr(value, false)) return Backup(start, 187);
+   if(!GetBlock(cases)) return Backup(start, 188);
 
    statement.reset(new Switch(begin));
    auto s = static_cast< Switch* >(statement.get());
@@ -2843,10 +2915,10 @@ bool Parser::GetTemplateParm(TemplateParmPtr& parm)
    auto start = lexer_.Curr();
 
    Cxx::ClassTag tag;
-   if(!lexer_.GetClassTag(tag, true)) return Backup(start);
+   if(!lexer_.GetClassTag(tag, true)) return Backup(start, 189);
 
    string argName;
-   if(!lexer_.GetName(argName)) return Backup(start);
+   if(!lexer_.GetName(argName)) return Backup(start, 190);
 
    auto ptrs = GetPointers();
 
@@ -2854,7 +2926,7 @@ bool Parser::GetTemplateParm(TemplateParmPtr& parm)
 
    if(lexer_.NextCharIs('='))
    {
-      if(!GetTypeName(type)) return Backup(start);
+      if(!GetTypeName(type)) return Backup(start, 191);
    }
 
    parm.reset(new TemplateParm(argName, tag, ptrs, type));
@@ -2872,21 +2944,21 @@ bool Parser::GetTemplateParms(TemplateParmsPtr& parms)
    //  <TemplateParms> = "template" "<" <TemplateParm> ["," <TemplateParm>]* ">"
    //
    auto start = lexer_.Curr();
-   if(!NextKeywordIs(TEMPLATE_STR)) return Backup(start);
-   if(!lexer_.NextCharIs('<')) return Backup(start);
+   if(!NextKeywordIs(TEMPLATE_STR)) return Backup(192);
+   if(!lexer_.NextCharIs('<')) return Backup(start, 193);
 
    TemplateParmPtr parm;
-   if(!GetTemplateParm(parm)) return Backup(start);
+   if(!GetTemplateParm(parm)) return Backup(start, 194);
 
    parms.reset(new TemplateParms(parm));
 
    while(lexer_.NextCharIs(','))
    {
-      if(!GetTemplateParm(parm)) return Backup(start);
+      if(!GetTemplateParm(parm)) return Backup(start, 195);
       parms->AddParm(parm);
    }
 
-   if(!lexer_.NextCharIs('>')) return Backup(start);
+   if(!lexer_.NextCharIs('>')) return Backup(start, 196);
    return Success(Parser_GetTemplateParms, start);
 }
 
@@ -2939,7 +3011,7 @@ bool Parser::GetTry(TokenPtr& statement)
    //
    BlockPtr work;
    TokenPtr trap;
-   if(!GetBlock(work)) return Backup(start);
+   if(!GetBlock(work)) return Backup(start, 197);
 
    statement.reset(new Try(begin));
    auto t = static_cast< Try* >(statement.get());
@@ -2965,19 +3037,19 @@ bool Parser::GetTypedef(TypedefPtr& type)
 
    TypeSpecPtr typeSpec;
    string typeName;
-   if(!GetTypeSpec(typeSpec, typeName)) return Backup(start);
+   if(!GetTypeSpec(typeSpec, typeName)) return Backup(start, 198);
 
    //  If typeSpec was a function type, typeName was set to its name,
    //  if any.  For other typedefs, the name follows typeSpec.
    //
    if(typeSpec->GetFuncSpec() == nullptr)
    {
-      if(!lexer_.GetName(typeName)) return Backup(start);
+      if(!lexer_.GetName(typeName)) return Backup(start, 199);
    }
 
    ArraySpecPtr arraySpec;
    while(GetArraySpec(arraySpec)) typeSpec->AddArray(arraySpec);
-   if(!lexer_.NextCharIs(';')) return Backup(start);
+   if(!lexer_.NextCharIs(';')) return Backup(start, 200);
 
    type.reset(new Typedef(typeName, typeSpec));
    SetContext(type.get(), begin);
@@ -2997,7 +3069,7 @@ bool Parser::GetTypeId(ExprPtr& expr)
    //  The typeid operator has already been parsed.
    //
    ExprPtr type;
-   if(!GetParExpr(type, false)) return Backup(start);
+   if(!GetParExpr(type, false)) return Backup(start, 201);
 
    auto token = TokenPtr(new Operation(Cxx::TYPE_NAME));
    auto op = static_cast< Operation* >(token.get());
@@ -3020,7 +3092,7 @@ bool Parser::GetTypeName(TypeNamePtr& type)
    auto start = lexer_.Curr();
 
    string name;
-   if(!lexer_.GetName(name)) return Backup(start);
+   if(!lexer_.GetName(name)) return Backup(202);
    type.reset(new TypeName(name));
    SetContext(type.get(), start);
 
@@ -3041,18 +3113,18 @@ bool Parser::GetTypeName(TypeNamePtr& type)
       if(lexer_.NextCharIs('<')) return lexer_.Reposition(mark);
       if(lexer_.NextCharIs('=')) return lexer_.Reposition(mark);
       auto next = lexer_.FindFirstOf(";{.=()!>&|+-~/%^?");
-      if(next == string::npos) return Backup(start);
+      if(next == string::npos) return Backup(start, 203);
       if(lexer_.At(next) != '>') return lexer_.Reposition(mark);
 
       do
       {
          TypeSpecPtr arg;
-         if(!GetTypeSpec(arg)) return Backup(start);
+         if(!GetTypeSpec(arg)) return Backup(start, 204);
          type->AddTemplateArg(arg);
       }
       while(lexer_.NextCharIs(','));
 
-      if(!lexer_.NextCharIs('>')) return Backup(start);
+      if(!lexer_.NextCharIs('>')) return Backup(start, 205);
    }
 
    return true;
@@ -3077,8 +3149,8 @@ bool Parser::GetTypeSpec(TypeSpecPtr& spec)
 
    QualNamePtr typeName;
    auto readonly = NextKeywordIs(CONST_STR);
-   if(!GetQualName(typeName)) return Backup(start);
-   if(!CheckType(typeName)) return Backup(start);
+   if(!GetQualName(typeName)) return Backup(start, 206);
+   if(!CheckType(typeName)) return Backup(start, 207);
    if(NextKeywordIs(CONST_STR))
    {
       if(readonly)
@@ -3178,8 +3250,8 @@ bool Parser::GetUsing(UsingPtr& use)
 
    QualNamePtr usingName;
    auto space = NextKeywordIs(NAMESPACE_STR);
-   if(!GetQualName(usingName)) return Backup(start);
-   if(!lexer_.NextCharIs(';')) return Backup(start);
+   if(!GetQualName(usingName)) return Backup(start, 208);
+   if(!lexer_.NextCharIs(';')) return Backup(start, 209);
    use.reset(new Using(usingName, space));
    SetContext(use.get(), begin);
    return Success(Parser_GetUsing, begin);
@@ -3200,8 +3272,8 @@ bool Parser::GetWhile(TokenPtr& statement)
    //
    ExprPtr condition;
    BlockPtr loop;
-   if(!GetParExpr(condition, false)) return Backup(start);
-   if(!GetBlock(loop)) return Backup(start);
+   if(!GetParExpr(condition, false)) return Backup(start, 210);
+   if(!GetBlock(loop)) return Backup(start, 211);
 
    statement.reset(new While(begin));
    auto w = static_cast< While* >(statement.get());
@@ -3224,8 +3296,8 @@ bool Parser::HandleDefine()
    auto end = lexer_.FindLineEnd(start);
    string name;
 
-   if(!lexer_.NextStringIs(HASH_DEFINE_STR)) return Report(DirectiveMismatch);
-   if(!lexer_.GetName(name)) return Report(SymbolExpected);
+   if(!lexer_.NextStringIs(HASH_DEFINE_STR)) return Fault(DirectiveMismatch);
+   if(!lexer_.GetName(name)) return Fault(SymbolExpected);
    ExprPtr expr;
    GetPreExpr(expr, end);
 
@@ -3305,15 +3377,15 @@ bool Parser::HandleElif(DirectivePtr& dir)
    auto start = lexer_.Curr();
    auto end = lexer_.FindLineEnd(start);
 
-   if(!lexer_.NextStringIs(HASH_ELIF_STR)) return Report(DirectiveMismatch);
+   if(!lexer_.NextStringIs(HASH_ELIF_STR)) return Fault(DirectiveMismatch);
    auto iff = Context::Optional();
-   if(iff == nullptr) return Report(ElifUnexpected);
+   if(iff == nullptr) return Fault(ElifUnexpected);
    ExprPtr expr;
-   if(!GetPreExpr(expr, end)) return Report(ConditionExpected);
+   if(!GetPreExpr(expr, end)) return Fault(ConditionExpected);
 
    auto elif = ElifPtr(new Elif);
    elif->AddCondition(expr);
-   if(!iff->AddElif(elif.get())) return Report(ElifUnexpected);
+   if(!iff->AddElif(elif.get())) return Fault(ElifUnexpected);
    SetContext(elif.get(), start);
    lexer_.FindCode(elif.get(), elif->EnterScope());
    dir = std::move(elif);
@@ -3332,12 +3404,12 @@ bool Parser::HandleElse(DirectivePtr& dir)
    //
    auto start = lexer_.Curr();
 
-   if(!lexer_.NextStringIs(HASH_ELSE_STR)) return Report(DirectiveMismatch);
+   if(!lexer_.NextStringIs(HASH_ELSE_STR)) return Fault(DirectiveMismatch);
    auto ifx = Context::Optional();
-   if(ifx == nullptr) return Report(ElseUnexpected);
+   if(ifx == nullptr) return Fault(ElseUnexpected);
 
    auto els = ElsePtr(new Else);
-   if(!ifx->AddElse(els.get())) return Report(ElseUnexpected);
+   if(!ifx->AddElse(els.get())) return Fault(ElseUnexpected);
    SetContext(els.get(), start);
    lexer_.FindCode(els.get(), els->EnterScope());
    dir = std::move(els);
@@ -3356,8 +3428,8 @@ bool Parser::HandleEndif(DirectivePtr& dir)
    //
    auto start = lexer_.Curr();
 
-   if(!lexer_.NextStringIs(HASH_ENDIF_STR)) return Report(DirectiveMismatch);
-   if(!Context::PopOptional()) return Report(EndifUnexpected);
+   if(!lexer_.NextStringIs(HASH_ENDIF_STR)) return Fault(DirectiveMismatch);
+   if(!Context::PopOptional()) return Fault(EndifUnexpected);
 
    auto endif = EndifPtr(new Endif);
    SetContext(endif.get(), start);
@@ -3377,7 +3449,7 @@ bool Parser::HandleError(DirectivePtr& dir)
    //
    auto start = lexer_.Curr();
 
-   if(!lexer_.NextStringIs(HASH_ERROR_STR)) return Report(DirectiveMismatch);
+   if(!lexer_.NextStringIs(HASH_ERROR_STR)) return Fault(DirectiveMismatch);
    auto begin = lexer_.Curr();
    auto end = lexer_.FindLineEnd(begin);
    auto text = lexer_.Extract(begin, end - begin);
@@ -3401,9 +3473,9 @@ bool Parser::HandleIf(DirectivePtr& dir)
    auto start = lexer_.Curr();
    auto end = lexer_.FindLineEnd(start);
 
-   if(!lexer_.NextStringIs(HASH_IF_STR)) return Report(DirectiveMismatch);
+   if(!lexer_.NextStringIs(HASH_IF_STR)) return Fault(DirectiveMismatch);
    ExprPtr expr;
-   if(!GetPreExpr(expr, end)) return Report(ConditionExpected);
+   if(!GetPreExpr(expr, end)) return Fault(ConditionExpected);
 
    auto iff = IffPtr(new Iff);
    iff->AddCondition(expr);
@@ -3426,8 +3498,8 @@ bool Parser::HandleIfdef(DirectivePtr& dir)
    auto start = lexer_.Curr();
    string symbol;
 
-   if(!lexer_.NextStringIs(HASH_IFDEF_STR)) return Report(DirectiveMismatch);
-   if(!lexer_.GetName(symbol)) return Report(SymbolExpected);
+   if(!lexer_.NextStringIs(HASH_IFDEF_STR)) return Fault(DirectiveMismatch);
+   if(!lexer_.GetName(symbol)) return Fault(SymbolExpected);
 
    auto ifdef = IfdefPtr(new Ifdef(symbol));
    SetContext(ifdef.get(), start);
@@ -3449,8 +3521,8 @@ bool Parser::HandleIfndef(DirectivePtr& dir)
    auto start = lexer_.Curr();
    string symbol;
 
-   if(!lexer_.NextStringIs(HASH_IFNDEF_STR)) return Report(DirectiveMismatch);
-   if(!lexer_.GetName(symbol)) return Report(SymbolExpected);
+   if(!lexer_.NextStringIs(HASH_IFNDEF_STR)) return Fault(DirectiveMismatch);
+   if(!lexer_.GetName(symbol)) return Fault(SymbolExpected);
 
    auto ifndef = IfndefPtr(new Ifndef(symbol));
    SetContext(ifndef.get(), start);
@@ -3478,8 +3550,8 @@ bool Parser::HandleInclude()
    string name;
    bool angle;
 
-   if(!lexer_.NextStringIs(HASH_INCLUDE_STR)) return Report(DirectiveMismatch);
-   if(!lexer_.GetIncludeFile(start, name, angle)) return Report(FileExpected);
+   if(!lexer_.NextStringIs(HASH_INCLUDE_STR)) return Fault(DirectiveMismatch);
+   if(!lexer_.GetIncludeFile(start, name, angle)) return Fault(FileExpected);
    auto incl = Context::File()->InsertInclude(name);
    if(incl != nullptr) SetContext(incl, start);
    return lexer_.Reposition(end);
@@ -3497,7 +3569,7 @@ bool Parser::HandleLine(DirectivePtr& dir)
    //
    auto start = lexer_.Curr();
 
-   if(!lexer_.NextStringIs(HASH_LINE_STR)) return Report(DirectiveMismatch);
+   if(!lexer_.NextStringIs(HASH_LINE_STR)) return Fault(DirectiveMismatch);
    auto begin = lexer_.Curr();
    auto end = lexer_.FindLineEnd(begin);
    auto text = lexer_.Extract(begin, end - begin);
@@ -3552,7 +3624,7 @@ bool Parser::HandlePragma(DirectivePtr& dir)
    //
    auto start = lexer_.Curr();
 
-   if(!lexer_.NextStringIs(HASH_PRAGMA_STR)) return Report(DirectiveMismatch);
+   if(!lexer_.NextStringIs(HASH_PRAGMA_STR)) return Fault(DirectiveMismatch);
    auto begin = lexer_.Curr();
    auto end = lexer_.FindLineEnd(begin);
    auto text = lexer_.Extract(begin, end - begin);
@@ -3588,7 +3660,7 @@ bool Parser::HandleTilde(ExprPtr& expr, size_t start)
          {
             QualNamePtr name;
             lexer_.Reposition(start);
-            if(!GetQualName(name)) return Backup(start);
+            if(!GetQualName(name)) return Backup(start, 212);
             item.reset(name.release());
          }
       }
@@ -3598,7 +3670,7 @@ bool Parser::HandleTilde(ExprPtr& expr, size_t start)
    //
    if(item == nullptr) item.reset(new Operation(Cxx::ONES_COMPLEMENT));
    if(expr->AddItem(item)) return true;
-   return Backup(start);
+   return Backup(start, 213);
 }
 
 //------------------------------------------------------------------------------
@@ -3614,8 +3686,8 @@ bool Parser::HandleUndef(DirectivePtr& dir)
    auto start = lexer_.Curr();
    string name;
 
-   if(!lexer_.NextStringIs(HASH_UNDEF_STR)) return Report(DirectiveMismatch);
-   if(!lexer_.GetName(name)) return Report(SymbolExpected);
+   if(!lexer_.NextStringIs(HASH_UNDEF_STR)) return Fault(DirectiveMismatch);
+   if(!lexer_.GetName(name)) return Fault(SymbolExpected);
 
    UndefPtr undef = UndefPtr(new Undef(name));
    SetContext(undef.get(), start);
@@ -4128,13 +4200,13 @@ bool Parser::Punt(size_t end, ExprPtr& expr, size_t cause)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_Report = "Parser.Report";
+fn_name Parser_ResetStats = "Parser.ResetStats";
 
-bool Parser::Report(ErrorCode code)  //*
+void Parser::ResetStats()
 {
-   Debug::ft(Parser_Report);
-   Context::SwErr(Parser_Report, "Parser directive error", code);
-   return false;
+   Debug::ft(Parser_ResetStats);
+
+   for(size_t i = 0; i <= MaxCause; ++i) Backups[i] = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -4157,18 +4229,6 @@ CxxNamed* Parser::ResolveInstanceArgument(const QualName* name) const
    }
 
    return nullptr;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Parser_Retreat = "Parser.Retreat(item)";
-
-bool Parser::Retreat(size_t pos, FunctionPtr& func, size_t cause)
-{
-   Debug::ft(Parser_Retreat);
-
-   func.reset();
-   return Backup(pos, cause);
 }
 
 //------------------------------------------------------------------------------

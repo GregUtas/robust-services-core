@@ -44,6 +44,7 @@
 #include "Library.h"
 #include "LibrarySet.h"
 #include "NbCliParms.h"
+#include "Parser.h"
 #include "Registry.h"
 #include "Singleton.h"
 #include "Symbol.h"
@@ -885,6 +886,11 @@ class ItemsText : public CliText
 public: ItemsText();
 };
 
+class StatsText : public CliText
+{
+public: StatsText();
+};
+
 class ShowWhatParm : public CliTextParm
 {
 public: ShowWhatParm();
@@ -896,6 +902,7 @@ public:
    static const id_t DirsIndex = 1;
    static const id_t FailedIndex = 2;
    static const id_t ItemsIndex = 3;
+   static const id_t StatsIndex = 4;
 
    ShowCommand();
 private:
@@ -917,6 +924,11 @@ fixed_string ItemsTextExpl = "memory usage by item type";
 
 ItemsText::ItemsText() : CliText(ItemsTextExpl, ItemsTextStr) { }
 
+fixed_string StatsTextStr = "stats";
+fixed_string StatsTextExpl = "parser statistics";
+
+StatsText::StatsText() : CliText(StatsTextExpl, StatsTextStr) { }
+
 fixed_string ShowWhatExpl = "what to show...";
 
 ShowWhatParm::ShowWhatParm() : CliTextParm(ShowWhatExpl)
@@ -924,6 +936,7 @@ ShowWhatParm::ShowWhatParm() : CliTextParm(ShowWhatExpl)
    BindText(*new DirsText, ShowCommand::DirsIndex);
    BindText(*new FailedText, ShowCommand::FailedIndex);
    BindText(*new ItemsText, ShowCommand::ItemsIndex);
+   BindText(*new StatsText, ShowCommand::StatsIndex);
 }
 
 fixed_string ShowStr = "show";
@@ -994,6 +1007,10 @@ word ShowCommand::ProcessCommand(CliThread& cli) const
 
    case ItemsIndex:
       CxxStats::Display(*cli.obuf);
+      break;
+
+   case StatsIndex:
+      Parser::DisplayStats(*cli.obuf);
       break;
 
    default:
@@ -1221,6 +1238,8 @@ CodeIncrement::CodeIncrement() : CliIncrement(CtStr, CtExpl)
    BindCommand(*new ExportCommand);
    BindCommand(*new ShrinkCommand);
    BindCommand(*new ExpCommand);
+
+   Parser::ResetStats();
 }
 
 //------------------------------------------------------------------------------

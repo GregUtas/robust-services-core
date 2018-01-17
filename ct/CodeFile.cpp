@@ -477,7 +477,7 @@ public:
    //  Generates a report in STREAM for the files in SET.  The report includes
    //  line type counts and warnings found during parsing and "execution".
    //
-   static void GenerateReport(std::ostream& stream, const SetOfIds& set);
+   static void GenerateReport(ostream& stream, const SetOfIds& set);
 
    //  Returns LOG's index if it has already been reported, else -1.
    //

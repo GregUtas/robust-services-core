@@ -24,6 +24,7 @@
 
 #include <string>
 #include <cstddef>
+#include <iosfwd>
 #include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxFwd.h"
@@ -224,6 +225,14 @@ public:
    //
    bool ParsingTemplateInstance()
       const { return ((source_ == IsClassInst) || (source_ == IsFuncInst)); }
+
+   //  Zeroes the statistics.
+   //
+   static void ResetStats();
+
+   //  Displays the statistics in STREAM.
+   //
+   static void DisplayStats(std::ostream& stream);
 private:
    //  Prepares to parse CODE, of type SOURCE.  PREPROCESS is set if the
    //  code should be preprocessed.  VENUE identifies the code for logging
@@ -276,7 +285,7 @@ private:
 
    //  Errors associated with preprocessor directives.
    //
-   enum ErrorCode
+   enum DirectiveError
    {
       DirectiveMismatch = 1,
       SymbolExpected,
@@ -291,7 +300,7 @@ private:
    //  Reports an error associated with a preprocessor directive and returns
    //  false.
    //
-   static bool Report(ErrorCode code);
+   bool Fault(DirectiveError err) const;
 
    //  Parses declarations in CLS (a class, struct, or union).
    //
@@ -589,7 +598,12 @@ private:
    //  Invoked when an attempted parse fails.  Records CAUSE if POS is the
    //  farthest point reached in the parse and returns lexer_.retreat(pos).
    //
-   bool Backup(size_t pos, size_t cause = 0);
+   bool Backup(size_t pos, size_t cause);
+
+   //  The same as Backup, but used when the lexer's current position has
+   //  not changed (i.e. when the first thing searched for wasn't found).
+   //
+   static bool Backup(size_t cause);
 
    //  The same as Backup, but also deletes FUNC.  FUNC needs to be deleted
    //  immediately when it may have pushed a new scope, which must be popped
@@ -600,7 +614,7 @@ private:
    //  it to acquire the new function, which can only occur *after* the new
    //  function has been constructed.
    //
-   bool Retreat(size_t pos, FunctionPtr& func, size_t cause = 0);
+   bool Backup(size_t pos, FunctionPtr& func, size_t cause);
 
    //  Logs WARNING at POS.  If POS is not specified, the last position where
    //  parsing started is used.
@@ -672,6 +686,14 @@ private:
    //  Output file for parse tracing, if any.
    //
    ostreamPtr pTrace_;
+
+   //  The highest legal cause_ value.
+   //
+   static const size_t MaxCause = 255;
+
+   //  Statistics on where the parser backed up.
+   //
+   static uint32_t Backups[MaxCause + 1];
 };
 }
 #endif

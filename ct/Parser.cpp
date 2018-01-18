@@ -2104,7 +2104,7 @@ string Parser::GetLINE() const
 
 fn_name Parser_GetLineNum = "Parser.GetLineNum";
 
-size_t Parser::GetLineNum(size_t pos) const
+LineNum Parser::GetLineNum(size_t pos) const
 {
    Debug::ft(Parser_GetLineNum);
 

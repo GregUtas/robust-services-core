@@ -441,10 +441,10 @@ word Editor::Write(const string& path, string& expl)
 //
 struct WarningLog
 {
-   const CodeFile* file;   // file where warning occurred
-   size_t line;            // line where warning occurred
-   Warning warning;        // type of warning
-   size_t offset;          // warning-specific; displayed if non-zero
+   const CodeFile* file;  // file where warning occurred
+   size_t line;           // line where warning occurred
+   Warning warning;       // type of warning
+   size_t offset;         // warning-specific; displayed if non-zero
 
    bool operator==(const WarningLog& that) const;
    bool operator!=(const WarningLog& that) const;
@@ -2262,7 +2262,7 @@ void CodeFile::GetLineCounts() const
 
 //------------------------------------------------------------------------------
 
-size_t CodeFile::GetLineNum(size_t pos) const
+LineNum CodeFile::GetLineNum(size_t pos) const
 {
    if(pos > size_) return string::npos;
 

@@ -201,7 +201,7 @@ public:
    //  Returns the line number associated with POS in what is being parsed.
    //  If POS is not specified, the parser's current location is used.
    //
-   size_t GetLineNum(size_t pos = std::string::npos) const;
+   LineNum GetLineNum(size_t pos = std::string::npos) const;
 
    //  Returns the time when the parse originally started.
    //

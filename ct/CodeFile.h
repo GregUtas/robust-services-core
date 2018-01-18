@@ -150,7 +150,7 @@ public:
    //  Returns the line number on which POS occurs.  Returns string::npos if
    //  POS is out of range.
    //
-   size_t GetLineNum(size_t pos) const;
+   LineNum GetLineNum(size_t pos) const;
 
    //  Sets S to the string for the Nth line of code, excluding the endline,
    //  or EMPTY_STR if N was out of range.  Returns true if N was valid.
@@ -437,7 +437,7 @@ private:
 
    //  The number of lines in code_.
    //
-   size_t lines_;
+   LineNum lines_;
 
    //  Information about each line in code_.
    //

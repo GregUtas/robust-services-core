@@ -621,12 +621,12 @@ string Lexer::GetLine(size_t pos) const
 
 fn_name Lexer_GetLineNum = "Lexer.GetLineNum";
 
-size_t Lexer::GetLineNum(size_t pos) const
+LineNum Lexer::GetLineNum(size_t pos) const
 {
    Debug::ft(Lexer_GetLineNum);
 
    if(pos >= source_->size()) pos = source_->size() - 1;
-   size_t line = 1;
+   LineNum line = 1;
 
    for(size_t i = 0; i < pos; ++i)
    {

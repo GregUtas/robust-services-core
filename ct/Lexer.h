@@ -145,7 +145,7 @@ public:
 
    //  Returns the line number that contains POS.
    //
-   size_t GetLineNum(size_t pos) const;
+   LineNum GetLineNum(size_t pos) const;
 
    //  Returns true and sets SPEC to the template specification that follows
    //  the name of a template instance.

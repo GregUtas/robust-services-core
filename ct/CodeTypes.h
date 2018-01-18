@@ -158,6 +158,12 @@ extern const std::string ValidOctDigits;
 
 //------------------------------------------------------------------------------
 //
+//  A line number in source code.
+//
+typedef size_t LineNum;
+
+//------------------------------------------------------------------------------
+//
 //  For adding and removing levels of pointer indirection and for counting
 //  arrays and references.
 //

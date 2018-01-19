@@ -21,6 +21,7 @@
 //
 #include "CxxExecute.h"
 #include <cstring>
+#include <iomanip>
 #include <iosfwd>
 #include <sstream>
 #include <utility>
@@ -42,6 +43,7 @@
 #include "TraceBuffer.h"
 #include "TraceDump.h"
 
+using std::setw;
 using std::string;
 using namespace NodeBase;
 
@@ -205,7 +207,7 @@ string Context::Location()
 
    std::ostringstream stream;
    stream << " [" << parser->GetVenue();
-   stream << ", line " << parser->GetLineNum(GetPos());
+   stream << ", line " << parser->GetLineNum(GetPos()) + 1;
 
    if(parser->GetSourceType() == Parser::IsFile)
    {
@@ -454,13 +456,20 @@ fixed_string ActionStrings[CxxTrace::Action_N] =
    ERROR_STR  // actually used: appears in execution traces
 };
 
-//------------------------------------------------------------------------------
+uint16_t CxxTrace::Last_ = UINT16_MAX;
 
-const size_t CxxTrace::ActionWidth = 8;
+//------------------------------------------------------------------------------
 
 CxxTrace::CxxTrace(size_t size, Action action) : TraceRecord(size, ParserTracer)
 {
    rid_ = action;
+   line_ = UINT16_MAX;
+
+   if((rid_ >= PUSH_OP) && (rid_ < EXECUTE))
+   {
+      auto parser = Context::GetParser();
+      if(parser != nullptr) line_ = parser->GetLineNum(Context::GetPos());
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -475,8 +484,19 @@ bool CxxTrace::Display(std::ostream& stream)
       stream << spaces(TraceDump::EvtToObj);
    }
 
+   if((line_ != Last_) && ((rid_ >= PUSH_OP) && (rid_ < EXECUTE)))
+   {
+      stream << setw(5) << line_ + 1;
+      Last_ = line_;
+   }
+   else
+   {
+      stream << spaces(5);
+      if(rid_ <= END_TEMPLATE) Last_ = UINT16_MAX;
+   }
+
    auto& s = ActionStrings[rid_];
-   stream << string(ActionWidth - strlen(s), SPACE) << s << TraceDump::Tab();
+   stream << string(10 - strlen(s), SPACE) << s << TraceDump::Tab();
    return true;
 }
 

@@ -531,7 +531,8 @@ string CxxNamed::strLocation() const
    if(file == nullptr) return "unknown location";
 
    std::ostringstream stream;
-   stream << file->Name() << ", line " << file->GetLineNum(GetPos()) + 1;
+   stream << file->Name() << ", line ";
+   stream << file->GetLexer().GetLineNum(GetPos()) + 1;
    return stream.str();
 }
 

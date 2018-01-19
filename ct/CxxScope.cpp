@@ -3859,10 +3859,10 @@ bool Function::IsTrivial() const
    auto file = GetImplFile();
    if(file == nullptr) return true;
 
-   auto last = file->GetLineNum(end_);
+   auto last = file->GetLexer().GetLineNum(end_);
    auto body = false;
 
-   for(auto n = file->GetLineNum(begin_); n < last; ++n)
+   for(auto n = file->GetLexer().GetLineNum(begin_); n < last; ++n)
    {
       auto type = file->GetLineType(n);
 

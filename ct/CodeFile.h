@@ -40,7 +40,6 @@ namespace CodeTools
 {
    class Editor;
    class CodeDir;
-   struct LineInfo;
 }
 
 using namespace NodeBase;
@@ -103,10 +102,6 @@ public:
    //
    bool IsSubsFile() const { return isSubsFile_; }
 
-   //  Returns the number of lines in the file.
-   //
-   size_t LineCount() const { return lines_; }
-
    //  Returns true if the file defines a class template.
    //
    bool IsTemplateHeader() const;
@@ -117,9 +112,13 @@ public:
    Using* FindUsingFor(const std::string& name, size_t prefix,
       const CxxScoped* item, const CxxScope* scope) const;
 
-   //  Returns the source code as a string.
+   //  Returns a pointer to the original source code.
    //
    const std::string* GetCode() const { return &code_; }
+
+   //  Provides read-only access to the lexer.
+   //
+   const Lexer& GetLexer() const { return lexer_; }
 
    //  Returns the files #included by this file.
    //
@@ -142,25 +141,6 @@ public:
    //  Returns the file's classes.
    //
    const ClassVector* Classes() const { return &classes_; }
-
-   //  NOTE: Internally, line numbers start at 0.  When a line number is to
-   //  ====  be displayed, it must be incremented.  Similarly, a line number
-   //        obtained externally (e.g. via the CLI) must be decremented.
-   //
-   //  Returns the line number on which POS occurs.  Returns string::npos if
-   //  POS is out of range.
-   //
-   LineNum GetLineNum(size_t pos) const;
-
-   //  Sets S to the string for the Nth line of code, excluding the endline,
-   //  or EMPTY_STR if N was out of range.  Returns true if N was valid.
-   //
-   bool GetNthLine(size_t n, std::string& s) const;
-
-   //  Returns the string for the Nth line of code.  Returns EMPTY_STR if N
-   //  is out of range.
-   //
-   std::string GetNthLine(size_t n) const;
 
    //  Adds the item to those defined in this file.
    //
@@ -295,7 +275,7 @@ private:
    //  Checks for the standard lines that should appear at the top
    //  of each file.
    //
-   void CheckProlog() const;
+   void CheckProlog();
 
    //  Looks for and checks an #include guard.
    //
@@ -431,21 +411,13 @@ private:
    //
    std::string code_;
 
-   //  The number of characters in code_.
-   //
-   size_t size_;
-
-   //  The number of lines in code_.
-   //
-   LineNum lines_;
-
-   //  Information about each line in code_.
-   //
-   LineInfo* info_;
-
    //  Assists with parsing code_.
    //
    Lexer lexer_;
+
+   //  The type of each line in code_.
+   //
+   std::vector< LineType > lineType_;
 
    //  The first file #included by this one.
    //

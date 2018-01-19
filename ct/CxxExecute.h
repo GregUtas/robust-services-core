@@ -80,10 +80,14 @@ protected:
    //  Overridden to display the trace record.
    //
    virtual bool Display(std::ostream& stream) override;
-
-   //  The width of the action field in trace output.
+private:
+   //  The line number associated with the trace record.
    //
-   static const size_t ActionWidth;
+   uint16_t line_;
+
+   //  The last line number displayed.
+   //
+   static uint16_t Last_;
 };
 
 //------------------------------------------------------------------------------

@@ -59,16 +59,6 @@ using std::string;
 
 namespace CodeTools
 {
-//  Information about a line of source code.
-//
-struct LineInfo
-{
-   size_t begin;   // where the line begins (i.e. code_[begin])
-   LineType type;  // the type of line (e.g. code, blank, comment)
-};
-
-//==============================================================================
-//
 //  Used when editing a code file.
 //
 class Editor
@@ -606,7 +596,7 @@ void CodeInfo::GenerateReport(ostream& stream, const SetOfIds& set)
          stream << spaces(2) << item->file->FullName() << '(' << item->line + 1;
          if(item->offset != 0) stream << '/' << item->offset;
          stream << "): ";
-         stream << item->file->GetNthLine(item->line) << CRLF;
+         stream << item->file->GetLexer().GetNthLine(item->line) << CRLF;
          ++item;
       }
       while((item != last) && (item->warning == w));
@@ -636,7 +626,7 @@ void CodeInfo::GenerateReport(ostream& stream, const SetOfIds& set)
          {
             stream << spaces(4) << "line " << item->line + 1;
             if(item->offset != 0) stream << '/' << item->offset;
-            stream << ": " << f->GetNthLine(item->line) << CRLF;
+            stream << ": " << f->GetLexer().GetNthLine(item->line) << CRLF;
             ++item;
          }
          while((item != last) && (item->warning == w) && (item->file == f));
@@ -1024,9 +1014,6 @@ CodeFile::CodeFile(const string& name, CodeDir* dir) : LibraryItem(name),
    dir_(dir),
    isHeader_(false),
    isSubsFile_(false),
-   size_(0),
-   lines_(0),
-   info_(nullptr),
    firstIncl_(NIL_ID),
    slashAsterisk_(false),
    parsed_(Unparsed),
@@ -1172,7 +1159,7 @@ bool CodeFile::CanBeTrimmed(ostream& stream) const
    //  Don't trim empty files, substitute files, or unexecuted files
    //  (template headers).
    //
-   if(size_ == 0) return false;
+   if(code_.empty()) return false;
    if(isSubsFile_) return false;
 
    stream << Name() << CRLF;
@@ -1210,7 +1197,7 @@ void CodeFile::Check()
 
    //  Don't check an empty file or a substitute file.
    //
-   if((lines_ == 0) || isSubsFile_) return;
+   if(code_.empty() || isSubsFile_) return;
 
    for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
    {
@@ -1254,12 +1241,12 @@ void CodeFile::CheckDebugFt() const
       if((*f)->IsInTemplateInstance()) continue;
       (*f)->GetDefnRange(begin, end);
       if(begin >= end) continue;
-      auto last = GetLineNum(end);
+      auto last = lexer_.GetLineNum(end);
       auto open = false, debug = false, code = false;
 
-      for(auto n = GetLineNum(begin); n < last; ++n)
+      for(auto n = lexer_.GetLineNum(begin); n < last; ++n)
       {
-         switch(info_[n].type)
+         switch(lineType_[n])
          {
          case OpenBrace:
             open = true;
@@ -1270,7 +1257,7 @@ void CodeFile::CheckDebugFt() const
             if(code) LogLine(n, DebugFtNotFirst);
             code = true;
 
-            if(GetNthLine(n, s))
+            if(lexer_.GetNthLine(n, s))
             {
                auto prev = s.find('(');
                if(prev == string::npos) break;
@@ -1399,11 +1386,12 @@ void CodeFile::CheckIncludeGuard()
    if(IsCpp()) return;
 
    size_t pos = string::npos;
+   size_t lines = lineType_.size();
    size_t n;
 
-   for(n = 0; (n < lines_) && (pos == string::npos); ++n)
+   for(n = 0; (n < lines) && (pos == string::npos); ++n)
    {
-      switch(info_[n].type)
+      switch(lineType_[n])
       {
       case EmptyComment:
       case LicenseComment:
@@ -1413,7 +1401,7 @@ void CodeFile::CheckIncludeGuard()
       case Blank:
          continue;
       case HashDirective:
-         pos = info_[n].begin;
+         pos = lexer_.GetLineStart(n);
          break;
       default:
          LogLine(n, IncludeGuardMissing);
@@ -1533,7 +1521,7 @@ fixed_string FileProlog[FilePrologSize] =
 
 fn_name CodeFile_CheckProlog = "CodeFile.CheckProlog";
 
-void CodeFile::CheckProlog() const
+void CodeFile::CheckProlog()
 {
    Debug::ft(CodeFile_CheckProlog);
 
@@ -1544,36 +1532,36 @@ void CodeFile::CheckProlog() const
    //  //  FileName.ext
    //  //  FileProlog [multiple lines]
    //
-   auto pos = info_[0].begin;
+   auto pos = lexer_.GetLineStart(0);
    auto ok = (code_.find(DoubleRule, pos) == pos);
    if(!ok) return LogLine(0, HeadingNotStandard);
 
-   pos = info_[1].begin;
+   pos = lexer_.GetLineStart(1);
    ok = ok && (code_.find(COMMENT_STR, pos) == pos);
-   ok = ok && (info_[1].type == EmptyComment);
+   ok = ok && (lineType_[1] == EmptyComment);
    if(!ok) return LogLine(1, HeadingNotStandard);
 
-   pos = info_[2].begin;
+   pos = lexer_.GetLineStart(2);
    ok = ok && (code_.find(COMMENT_STR, pos) == pos);
    ok = ok && (code_.find(Name(), pos) == pos + 4);
    if(!ok) return LogLine(2, HeadingNotStandard);
-   info_[2].type = LicenseComment;
+   lineType_[2] = LicenseComment;
 
    size_t line = 3;
 
    for(auto i = 0; i < FilePrologSize; ++i)
    {
-      pos = info_[line].begin;
+      pos = lexer_.GetLineStart(line);
       ok = ok && (code_.find(COMMENT_STR, pos) == pos);
 
       if(FileProlog[i] == EMPTY_STR)
       {
-         ok = ok && (info_[line].type == EmptyComment);
+         ok = ok && (lineType_[line] == EmptyComment);
       }
       else
       {
          ok = ok && (code_.find(FileProlog[i], pos) == pos + 4);
-         if(ok) info_[line].type = LicenseComment;
+         if(ok) lineType_[line] = LicenseComment;
       }
 
       if(!ok) return LogLine(line, HeadingNotStandard);
@@ -1594,13 +1582,14 @@ void CodeFile::CheckSeparation()
    //
    LineType prevType = Blank;
    slashAsterisk_ = false;
+   auto lines = lineType_.size();
 
-   for(size_t n = 0; n < lines_; ++n)
+   for(size_t n = 0; n < lines; ++n)
    {
       //  Based on the type of line just found, look for warnings that can
       //  only be found based on the type of line that preceded this one.
       //
-      switch(info_[n].type)
+      switch(lineType_[n])
       {
       case Code:
          switch(prevType)
@@ -1679,7 +1668,7 @@ void CodeFile::CheckSeparation()
          break;
       }
 
-      prevType = info_[n].type;
+      prevType = lineType_[n];
    }
 }
 
@@ -1717,7 +1706,7 @@ LineType CodeFile::ClassifyLine(size_t n)
    //  as a Blank.
    //
    string s;
-   if(!GetNthLine(n, s)) return LineType_N;
+   if(!lexer_.GetNthLine(n, s)) return LineType_N;
 
    auto length = s.size();
    if(length == 0) return Blank;
@@ -1878,7 +1867,7 @@ LineType CodeFile::ClassifyLine(size_t n)
       }
    }
 
-   if((n > 0) && (info_[n - 1].type == FunctionNameSplit)) return FunctionName;
+   if((n > 0) && (lineType_[n - 1] == FunctionNameSplit)) return FunctionName;
    return Code;
 }
 
@@ -1922,8 +1911,6 @@ void CodeFile::Display(ostream& stream,
    stream << prefix << "dir       : " << dir_ << CRLF;
    stream << prefix << "isHeader  : " << isHeader_ << CRLF;
    stream << prefix << "code      : " << &code_ << CRLF;
-   stream << prefix << "size      : " << size_ << CRLF;
-   stream << prefix << "lines     : " << lines_ << CRLF;
    stream << prefix << "firstIncl : " << firstIncl_ << CRLF;
    stream << prefix << "parsed    : " << parsed_ << CRLF;
 
@@ -2252,73 +2239,21 @@ void CodeFile::GetLineCounts() const
    //
    if(isSubsFile_) return;
 
-   CodeInfo::LineTypeCounts[AnyLine] += lines_;
+   auto lines = lineType_.size();
+   CodeInfo::LineTypeCounts[AnyLine] += lines;
 
-   for(size_t n = 0; n < lines_; ++n)
+   for(size_t n = 0; n < lines; ++n)
    {
-      ++CodeInfo::LineTypeCounts[info_[n].type];
+      ++CodeInfo::LineTypeCounts[lineType_[n]];
    }
-}
-
-//------------------------------------------------------------------------------
-
-LineNum CodeFile::GetLineNum(size_t pos) const
-{
-   if(pos > size_) return string::npos;
-
-   //  Do a binary search over the lines' starting positions.
-   //
-   int min = 0;
-   int max = lines_ - 1;
-
-   while(min < max)
-   {
-      auto mid = (min + max + 1) >> 1;
-
-      if(info_[mid].begin > pos)
-         max = mid - 1;
-      else
-         min = mid;
-   }
-
-   return min;
 }
 
 //------------------------------------------------------------------------------
 
 LineType CodeFile::GetLineType(size_t n) const
 {
-   if(n >= lines_) return LineType_N;
-   return info_[n].type;
-}
-
-//------------------------------------------------------------------------------
-
-bool CodeFile::GetNthLine(size_t n, string& s) const
-{
-   if(n >= lines_)
-   {
-      s.clear();
-      return false;
-   }
-
-   auto curr = info_[n].begin;
-
-   if(n == lines_ - 1)
-      s = code_.substr(curr, size_ - curr - 1);
-   else
-      s = code_.substr(curr, info_[n + 1].begin - curr - 1);
-
-   return true;
-}
-
-//------------------------------------------------------------------------------
-
-string CodeFile::GetNthLine(size_t n) const
-{
-   string s;
-   GetNthLine(n, s);
-   return s;
+   if(n >= lineType_.size()) return LineType_N;
+   return lineType_[n];
 }
 
 //------------------------------------------------------------------------------
@@ -2585,7 +2520,7 @@ void CodeFile::LogLine(size_t n, Warning warning, size_t offset) const
    //  Log the warning if it is valid, has a valid line number, and is
    //  not a duplicate.
    //
-   if((warning < Warning_N) && (n < lines_))
+   if((warning < Warning_N) && (n < lineType_.size()))
    {
       WarningLog log;
 
@@ -2606,7 +2541,7 @@ void CodeFile::LogPos(size_t pos, Warning warning, size_t offset) const
 {
    Debug::ft(CodeFile_LogPos);
 
-   LogLine(GetLineNum(pos), warning, offset);
+   LogLine(lexer_.GetLineNum(pos), warning, offset);
 }
 
 //------------------------------------------------------------------------------
@@ -2845,36 +2780,27 @@ void CodeFile::Scan()
 
    while(input->peek() != EOF)
    {
-      //  Fetch the next line and analyze it.  At present, only #include
-      //  directives are parsed, in order to analyze dependencies.
-      //
       std::getline(*input, str);
       code_ += str;
       code_ += CRLF;
-      ++lines_;
    }
 
-   //  Initialize the information about each line.
-   //
    input.reset();
-   size_ = code_.size();
-   info_ = (LineInfo*) Memory::Alloc(sizeof(LineInfo) * lines_, MemTemp);
    lexer_.Initialize(&code_);
+   auto lines = lexer_.LineCount();
 
-   for(size_t n = 0, pos = 0; n < lines_; ++n)
+   for(size_t n = 0; n < lines; ++n)
    {
-      info_[n].begin = pos;
-      info_[n].type = LineType_N;
-      pos = code_.find(CRLF, pos) + 1;
+      lineType_.push_back(LineType_N);
    }
 
    //  Categorize each line unless this is a substitute file.
    //
    if(!isSubsFile_)
    {
-      for(size_t n = 0; n < lines_; ++n)
+      for(size_t n = 0; n < lines; ++n)
       {
-         info_[n].type = ClassifyLine(n);
+         lineType_[n] = ClassifyLine(n);
       }
    }
 
@@ -2884,9 +2810,9 @@ void CodeFile::Scan()
    string file;
    bool angle;
 
-   for(size_t n = 0; n < lines_; ++n)
+   for(size_t n = 0; n < lines; ++n)
    {
-      if(lexer_.GetIncludeFile(info_[n].begin, file, angle))
+      if(lexer_.GetIncludeFile(lexer_.GetLineStart(n), file, angle))
       {
          auto used = lib->EnsureFile(file);
 
@@ -2901,7 +2827,7 @@ void CodeFile::Scan()
          }
 
          auto incl = IncludePtr(new Include(file, angle));
-         incl->SetPos(this, info_[n].begin);
+         incl->SetPos(this, lexer_.GetLineStart(n));
          InsertInclude(incl);
       }
    }

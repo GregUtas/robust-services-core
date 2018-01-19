@@ -282,7 +282,7 @@ void Parser::Failure(const string& venue) const
    auto code = lexer_.GetLine(farthest_);
    auto line = lexer_.GetLineNum(farthest_);
    std::ostringstream text;
-   text << venue << ", line " << line << ':' << CRLF << code;
+   text << venue << ", line " << line + 1 << ':' << CRLF << code;
    Debug::SwErr(Parser_Failure, text.str(), cause_, InfoLog);
 }
 
@@ -298,7 +298,7 @@ bool Parser::Fault(DirectiveError err) const
    auto code = lexer_.GetLine(curr);
    auto line = lexer_.GetLineNum(curr);
    std::ostringstream text;
-   text << venue_ << ", line " << line << ':' << CRLF << code;
+   text << venue_ << ", line " << line + 1 << ':' << CRLF << code;
    Debug::SwErr(Parser_Fault, text.str(), err, InfoLog);
    return false;
 }
@@ -2096,7 +2096,7 @@ string Parser::GetLINE() const
    std::ostringstream stream;
 
    if(ParsingTemplateInstance()) stream << venue_ << SPACE;
-   stream << lexer_.GetLineNum(lexer_.Curr());
+   stream << lexer_.GetLineNum(lexer_.Curr()) + 1;
    return stream.str();
 }
 
@@ -2104,7 +2104,7 @@ string Parser::GetLINE() const
 
 fn_name Parser_GetLineNum = "Parser.GetLineNum";
 
-LineNum Parser::GetLineNum(size_t pos) const
+size_t Parser::GetLineNum(size_t pos) const
 {
    Debug::ft(Parser_GetLineNum);
 
@@ -4189,7 +4189,7 @@ bool Parser::Punt(size_t end, ExprPtr& expr, size_t cause)
 
    auto line = lexer_.GetLineNum(start);
    std::ostringstream text;
-   text << venue_ << ", line " << line << ':' << CRLF << code;
+   text << venue_ << ", line " << line + 1 << ':' << CRLF << code;
    Debug::SwErr(Parser_Punt, text.str(), cause);
 
    auto item = TokenPtr(new StrLiteral(code));

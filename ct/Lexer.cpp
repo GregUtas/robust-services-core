@@ -54,23 +54,11 @@ fn_name Lexer_ctor1 = "Lexer.ctor";
 Lexer::Lexer() :
    source_(nullptr),
    size_(0),
+   lines_(0),
    curr_(0),
    prev_(0)
 {
    Debug::ft(Lexer_ctor1);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Lexer_ctor2 = "Lexer.ctor(copy)";
-
-Lexer::Lexer(const Lexer& that) :
-   source_(that.source_),
-   size_(that.size_),
-   curr_(that.curr_),
-   prev_(that.prev_)
-{
-   Debug::ft(Lexer_ctor2);
 }
 
 //------------------------------------------------------------------------------
@@ -619,21 +607,34 @@ string Lexer::GetLine(size_t pos) const
 
 //------------------------------------------------------------------------------
 
-fn_name Lexer_GetLineNum = "Lexer.GetLineNum";
-
-LineNum Lexer::GetLineNum(size_t pos) const
+size_t Lexer::GetLineNum(size_t pos) const
 {
-   Debug::ft(Lexer_GetLineNum);
+   if(pos > size_) return string::npos;
 
-   if(pos >= source_->size()) pos = source_->size() - 1;
-   LineNum line = 1;
+   //  Do a binary search over the lines' starting positions.
+   //
+   int min = 0;
+   int max = lines_ - 1;
 
-   for(size_t i = 0; i < pos; ++i)
+   while(min < max)
    {
-      if(source_->at(i) == CRLF) ++line;
+      auto mid = (min + max + 1) >> 1;
+
+      if(start_[mid] > pos)
+         max = mid - 1;
+      else
+         min = mid;
    }
 
-   return line;
+   return min;
+}
+
+//------------------------------------------------------------------------------
+
+size_t Lexer::GetLineStart(size_t line) const
+{
+   if(line >= lines_) return string::npos;
+   return start_[line];
 }
 
 //------------------------------------------------------------------------------
@@ -666,6 +667,35 @@ bool Lexer::GetName(string& name, Cxx::Operator& oper)
 
    Debug::SwErr(Lexer_GetName2, 0, 0);
    return false;
+}
+
+//------------------------------------------------------------------------------
+
+bool Lexer::GetNthLine(size_t n, string& s) const
+{
+   if(n >= lines_)
+   {
+      s.clear();
+      return false;
+   }
+
+   auto curr = start_[n];
+
+   if(n == lines_ - 1)
+      s = source_->substr(curr, size_ - curr - 1);
+   else
+      s = source_->substr(curr, start_[n + 1] - curr - 1);
+
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
+string Lexer::GetNthLine(size_t n) const
+{
+   string s;
+   GetNthLine(n, s);
+   return s;
 }
 
 //------------------------------------------------------------------------------
@@ -1219,8 +1249,25 @@ void Lexer::Initialize(const string* source)
 
    source_ = source;
    size_ = source_->size();
+   lines_ = 0;
+   start_.clear();
    curr_ = 0;
    prev_ = 0;
+   if(size_ == 0) return;
+
+   for(size_t n = 0; n < size_; ++n)
+   {
+      if(source_->at(n) == CRLF) ++lines_;
+   }
+
+   if(source_->back() != CRLF) ++lines_;
+
+   for(size_t n = 0, pos = 0; n < lines_; ++n)
+   {
+      start_.push_back(pos);
+      pos = source_->find(CRLF, pos) + 1;
+   }
+
    Advance();
 }
 
@@ -1480,25 +1527,6 @@ Cxx::Type Lexer::NextType()
    auto type = GetType(token);
    if(type != Cxx::NIL_TYPE) Advance(token.size());
    return type;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Lexer_opAssign = "Lexer.operator=(copy)";
-
-Lexer& Lexer::operator=(const Lexer& that)
-{
-   Debug::ft(Lexer_opAssign);
-
-   if(&that != this)
-   {
-      this->source_ = that.source_;
-      this->size_ = that.size_;
-      this->curr_ = that.curr_;
-      this->prev_ = that.prev_;
-   }
-
-   return *this;
 }
 
 //------------------------------------------------------------------------------

@@ -344,9 +344,8 @@ word CodeFileSet::Format(string& expl) const
       }
    }
 
-   auto total = fileSet.size();
    std::ostringstream summary;
-   summary << "Total: " << total << ", changed: " << changed;
+   summary << "Total: " << fileSet.size() << ", changed: " << changed;
    if(failed > 0) summary << ", failed: " << failed;
    expl += summary.str();
    return 0;

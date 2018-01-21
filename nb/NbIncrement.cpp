@@ -1025,7 +1025,7 @@ word IfCommand::ProcessCommand(CliThread& cli) const
    //  as a command; otherwise, report that the outcome was true.
    //
    if(!result) return cli.Report(0, ReturnFalse);
-   if(comm.size() > 0) return cli.Execute(comm);
+   if(!comm.empty()) return cli.Execute(comm);
    return cli.Report(1, ReturnTrue);
 }
 

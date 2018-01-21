@@ -49,44 +49,50 @@ namespace CodeTools
 //  NOT SUPPORTED
 //  -------------
 //  C++ specifications are voluminous, so there are many things that the parser
-//  does not support, including some things in C++11 and beyond.  The following
-//  is a list of pre-C++11 things that are known not to be supported, along with
-//  some of the functions that would need to be modified to support them.
+//  does not support.  The following is a list of things (through C++11) that
+//  are known not to be supported, along with some of the functions that would
+//  need to be modified to support them.
 //
 //  reserved words:
-//    o asm, goto, register, volatile, wchar_t
+//    o asm, alignas, alignof, char16_t, char32_t, concept, decltype, export,
+//      final, goto, register, requires, static_assert, thread_local, volatile,
+//      wchar_t
 //    o and, and_eq, bitand, bitor, compl, not, not_eq, or, or_eq, xor, xor_eq
 //    o #undef, #line, #pragma (parsed but have no effect)
-//    o #if, #elif (the code that follows the directive is ignored)
+//    o #if, #elif (the conditional that follows the directive is ignored)
 //    o elaborated type specifiers (class, struct, union, or enum prefixed to
 //      resolve a type ambiguity caused by overloading an identifier)
 //  character and string literals (GetCxxExpr, GetCxxAlpha, GetChar, GetStr):
-//    o continuing a string literal when quotation marks are separated by spaces
 //    o type tags (u8, u, U, L, R)
 //  namespaces:
-//    o anonymous namespaces (GetNamespace)
+//    o anonymous and inline namespaces (GetNamespace and symbol resolution)
 //    o namespace aliases (GetNamespace)
 //  classes:
 //    o multiple inheritance (GetBaseDecl)
 //    o tagging a base class as virtual (GetBaseDecl)
-//    o defining a class within a function (ParseInBlock and others)
 //    o non-public base class (allowed by parser, but accessibility checking
 //      does not enforce it)
 //    o anonymous structs (GetClassDecl)
 //    o enums, typedefs, or functions in an anonymous union (allowed by parser,
 //      but CxxArea.FindEnum, FindFunc, and FindType do not look for them)
 //    o including a union instance immediately after declaring it (GetClassDecl)
+//    o pointer-to-member (the type "Class::*" and operators ".*" and "->*)
 //  functions:
 //    o the order of tags is inflexible: "extern inline static virtual explicit
 //      constexpr <function-definition> const noexcept override" (GetFuncDecl)
+//    o "=default" and "=delete"
 //    o using a different type (an alias) for an argument in the definition of
 //      a previously declared function (DataSpec.MatchesExactly)
 //    o argument-dependent lookup of regular functions (done only for operator
 //      overloads)
+//    o constructor inheritance (GetUsing, Class.FindCtor, and others)
+//    o defining a class or function within a function (ParseInBlock and others)
+//    o range-based for loops (GetFor and many others)
 //    o overloading the function call or comma operator (the parser allows it,
 //      but calls to the overload won't be registered because Operator.Execute
 //      doesn't look for it)
 //    o variadic argument lists
+//    o lambdas (GetArgument and many others)
 //    o dynamic exception specifications
 //  data:
 //    o the order of tags is inflexible: "extern static mutable constexpr const"
@@ -95,8 +101,12 @@ namespace CodeTools
 //      file scope or within a class (GetClassData and GetSpaceData)--note that
 //      this *is* supported within a function (e.g. int i = 0, *pi = nullptr)
 //    o unnamed bit fields (GetClassData)
+//  enums:
+//    o accessing an enum or enumerator using "." or "->" instead of "::"
+//    o scoped ("enum class", "enum struct") and opaque enums
 //  typedefs:
 //    o "typedef enum" and "typedef struct" (GetTypedef)
+//    o type aliases and alias templates (GetUsing and others)
 //  templates:
 //    o template parameters other than typename, class, or struct: in the /subs
 //      directory, for example, bitset had to be declared as bitset<typename N>
@@ -107,14 +117,7 @@ namespace CodeTools
 //    o a constructor call that requires template argument deduction when a
 //      template is a base class: need to include the template argument after
 //      the class template name
-//  C++11:
-//    o alignas, alignof, char16_t, char32_t, concept, decltype, export, final,
-//      requires, static_assert, thread_local
-//    o constructor inheritance (GetUsing, Class.FindCtor, and others)
-//    o scoped enums (GetEnum)
-//    o type aliases and alias templates (GetUsing and others)
-//    o lambdas (GetArgument and many others)
-//    o range-based for loops (GetFor and many others)
+//    o "extern template"
 //
 //  Comments in the CodeTools namespace that begin with "//c" describe other
 //  enhancements that have not been implemented.
@@ -447,9 +450,10 @@ private:
 
    //  Returns true and creates or updates NAME on finding a name that could be
    //  qualified.  If NAME ends in "operator", the operator that follows it is
-   //  also parsed.
+   //  also parsed.  A CONSTRAINT of TypeKeyword allows the name to be a type,
+   //  such as int.
    //
-   bool GetQualName(QualNamePtr& name);
+   bool GetQualName(QualNamePtr& name, Constraint constraint = NonKeyword);
 
    //  Checks if NAME is a built-in type or a keyword that is an invalid type.
    //
@@ -466,9 +470,10 @@ private:
       (QualNamePtr& name, Cxx::Type type, int size, int sign);
 
    //  Returns true and creates or updates TYPE on finding a typed name, which
-   //  may include a template signature.
+   //  may include a template signature.  CONSTRAINT specifies whether the name
+   //  may contain keywords that are types (e.g. int).
    //
-   bool GetTypeName(TypeNamePtr& type);
+   bool GetTypeName(TypeNamePtr& type, Constraint constraint = NonKeyword);
 
    //  Returns true and creates NAME on finding an identifier.  This is used to
    //  to parse constructor and destructor names, in which the contents of angle
@@ -595,6 +600,11 @@ private:
    //
    void SetContext(CxxNamed* item, size_t pos) const;
 
+   //  Logs WARNING at POS.  If POS is not specified, the last position where
+   //  parsing started is used.
+   //
+   void Log(Warning warning, size_t pos = std::string::npos) const;
+
    //  Invoked when an attempted parse fails.  Records CAUSE if POS is the
    //  farthest point reached in the parse and returns lexer_.retreat(pos).
    //
@@ -616,27 +626,23 @@ private:
    //
    bool Backup(size_t pos, FunctionPtr& func, size_t cause);
 
-   //  Logs WARNING at POS.  If POS is not specified, the last position where
-   //  parsing started is used.
-   //
-   void Log(Warning warning, size_t pos = std::string::npos) const;
-
    //  When the parsing of an expression fails, this is invoked to add the
    //  unparsed string to EXPR.  The string extends from the current parse
    //  location to END.  A "<@" prefix and "@>" suffix are also added to the
    //  string.  CAUSE is the same as for Backup and Retreat.  Returns false.
    //
-   bool Punt(size_t end, ExprPtr& expr, size_t cause = 0);
+   bool Skip(size_t end, ExprPtr& expr, size_t cause = 0);
 
    //  Invoked when the parse fails.  VENUE identifies what was being parsed
    //  (usually venue_).
    //
    void Failure(const std::string& venue) const;
 
-   //  Returns true from the function named FN, which began its parse at
-   //  START, after adding its parse string (START to prev_) to log_.
+   //  Returns true from the function named FUNC, which began its parse at
+   //  START.  If the parse is being traced, the parsed string (from START
+   //  to lexer_.Prev()) is added to the parse tree.
    //
-   bool Success(const std::string& fn, size_t start) const;
+   bool Success(fn_name_arg func, size_t start) const;
 
    //  Returns a string of blanks based on the depth of parsing.
    //

@@ -460,10 +460,11 @@ uint16_t CxxTrace::Last_ = UINT16_MAX;
 
 //------------------------------------------------------------------------------
 
-CxxTrace::CxxTrace(size_t size, Action action) : TraceRecord(size, ParserTracer)
+CxxTrace::CxxTrace(size_t size, Action action) :
+   TraceRecord(size, ParserTracer),
+   line_(UINT16_MAX)
 {
    rid_ = action;
-   line_ = UINT16_MAX;
 
    if((rid_ >= PUSH_OP) && (rid_ < EXECUTE))
    {

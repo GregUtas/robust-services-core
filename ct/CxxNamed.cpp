@@ -834,6 +834,8 @@ void DataSpec::EnteringScope(const CxxScope* scope)
 {
    Debug::ft(DataSpec_EnteringScope);
 
+   Context::SetPos(GetPos());
+
    if(scope->NameIsTemplateParm(*Name()))
    {
       SetTemplateRole(TemplateParameter);
@@ -1857,6 +1859,7 @@ void QualName::EnterBlock()
 {
    Debug::ft(QualName_EnterBlock);
 
+   Context::SetPos(GetPos());
    auto name = *Name();
    if(name == "NULL") Log(UseOfNull);
 
@@ -2222,14 +2225,14 @@ string QualName::TypeString(bool arg) const
 fn_name TemplateParm_ctor1 = "TemplateParm.ctor";
 
 TemplateParm::TemplateParm
-   (string& name, Cxx::ClassTag tag, size_t ptrs, TypeNamePtr& default) :
+   (string& name, Cxx::ClassTag tag, size_t ptrs, TypeNamePtr& preset) :
    tag_(tag),
    ptrs_(ptrs)
 {
    Debug::ft(TemplateParm_ctor1);
 
    std::swap(name_, name);
-   default_ = std::move(default);
+   default_ = std::move(preset);
    CxxStats::Incr(CxxStats::TEMPLATE_PARM);
 }
 

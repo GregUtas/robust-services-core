@@ -114,6 +114,7 @@ bool Argument::EnterScope()
 {
    Debug::ft(Argument_EnterScope);
 
+   Context::SetPos(GetPos());
    spec_->EnteringScope(GetScope());
 
    if(default_ != nullptr)
@@ -257,6 +258,7 @@ bool BaseDecl::EnterScope()
    //  If the base class cannot be found, return false so that this
    //  object will be deleted.  Otherwise, record our new subclass.
    //
+   Context::SetPos(GetPos());
    if(!FindReferent()) return false;
    GetClass()->AddSubclass(static_cast< Class* >(Context::Scope()));
    return true;
@@ -1223,6 +1225,7 @@ void Forward::EnterBlock()
 {
    Debug::ft(Forward_EnterBlock);
 
+   Context::SetPos(GetPos());
    Context::PushArg(StackArg(Referent(), 0));
 }
 
@@ -1441,6 +1444,7 @@ void Friend::EnterBlock()
 {
    Debug::ft(Friend_EnterBlock);
 
+   Context::SetPos(GetPos());
    Context::PushArg(StackArg(Referent(), 0));
 }
 
@@ -1456,6 +1460,7 @@ bool Friend::EnterScope()
    //  to the symbol table.  This was not done in the constructor because the
    //  friend's name was not yet known.  Look for what the friend refers to.
    //
+   Context::SetPos(GetPos());
    Singleton< CxxSymbols >::Instance()->InsertFriend(this);
    FindReferent();
    return true;
@@ -2259,6 +2264,7 @@ bool Using::EnterScope()
 {
    Debug::ft(Using_EnterScope);
 
+   Context::SetPos(GetPos());
    FindReferent();
    return true;
 }

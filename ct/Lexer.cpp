@@ -136,6 +136,7 @@ size_t Lexer::FindClosing(char lhc, char rhc, size_t pos) const
 
    //  Look for the RHC that matches LHC.  Skip over comments and literals.
    //
+   auto f = false;
    size_t level = 1;
 
    if(pos == string::npos) pos = curr_;
@@ -155,7 +156,7 @@ size_t Lexer::FindClosing(char lhc, char rhc, size_t pos) const
       }
       else if(c == QUOTE)
       {
-         pos = SkipStrLiteral(pos);
+         pos = SkipStrLiteral(pos, f);
       }
       else if(c == APOSTROPHE)
       {
@@ -248,6 +249,7 @@ size_t Lexer::FindFirstOf(const string& targs) const
 
    while(pos < size_)
    {
+      auto f = false;
       auto c = source_->at(pos);
 
       if(targs.find(c) != string::npos)
@@ -265,7 +267,7 @@ size_t Lexer::FindFirstOf(const string& targs) const
       switch(c)
       {
       case QUOTE:
-         pos = SkipStrLiteral(pos);
+         pos = SkipStrLiteral(pos, f);
          break;
       case APOSTROPHE:
          pos = SkipCharLiteral(pos);
@@ -298,12 +300,13 @@ bool Lexer::FindIdentifier(string& id)
 
    while(curr_ < size_)
    {
+      auto f = false;
       auto c = source_->at(curr_);
 
       switch(c)
       {
       case QUOTE:
-         curr_ = SkipStrLiteral(curr_);
+         curr_ = SkipStrLiteral(curr_, f);
          Advance(1);
          continue;
       case APOSTROPHE:
@@ -641,15 +644,38 @@ size_t Lexer::GetLineStart(size_t line) const
 
 fn_name Lexer_GetName1 = "Lexer.GetName";
 
-bool Lexer::GetName(string& name)
+bool Lexer::GetName(string& name, Constraint constraint)
 {
    Debug::ft(Lexer_GetName1);
 
    auto str = NextIdentifier();
-   auto size = str.size();
-   if(size == 0) return false;
+   if(str.size() == 0) return false;
+
+   //  There are two exceptions to CONSTRAINT:
+   //  o NonKeyword is used to look for function names, so "operator"
+   //    (which is in Keywords) must be allowed.
+   //  o TypeKeyword is used to look for types, so "auto" (which is
+   //    also in Keywords) must be allowed.
+   //
+   switch(constraint)
+   {
+   case NonKeyword:
+      if(str != OPERATOR_STR)
+      {
+         if(Types->lower_bound(str) != Types->cend()) return false;
+         if(Keywords->lower_bound(str) != Keywords->cend()) return false;
+      }
+      break;
+
+   case TypeKeyword:
+      if(str != AUTO_STR)
+      {
+         if(Keywords->lower_bound(str) != Keywords->cend()) return false;
+      }
+   }
+
    name += str;
-   return Advance(size);
+   return Advance(str.size());
 }
 
 //------------------------------------------------------------------------------
@@ -660,12 +686,24 @@ bool Lexer::GetName(string& name, Cxx::Operator& oper)
 {
    Debug::ft(Lexer_GetName2);
 
-   if(!GetName(name)) return false;
-   oper = Cxx::NIL_OPERATOR;
-   if(name != OPERATOR_STR) return true;
-   if(GetOpOverride(oper)) return true;
+   auto prev = prev_;
 
-   Debug::SwErr(Lexer_GetName2, 0, 0);
+   oper = Cxx::NIL_OPERATOR;
+   if(!GetName(name, AnyKeyword)) return false;
+
+   if(name == OPERATOR_STR)
+   {
+      if(GetOpOverride(oper)) return true;
+      Debug::SwErr(Lexer_GetName2, name, oper, InfoLog);
+   }
+   else
+   {
+      if((Types->lower_bound(name) == Types->cend()) &&
+         (Keywords->lower_bound(name) == Keywords->cend()))
+         return true;
+   }
+
+   Reposition(prev_);
    return false;
 }
 
@@ -994,10 +1032,12 @@ bool Lexer::GetStr(string& s)
 {
    Debug::ft(Lexer_GetStr);
 
-   auto end = SkipStrLiteral(curr_);
+   auto frag = false;
+   auto end = SkipStrLiteral(curr_, frag);
    if(end == string::npos) return false;
    ++curr_;
    s = source_->substr(curr_, end - curr_);
+   if(frag) Concatenate(s);
    return Reposition(end + 1);
 }
 
@@ -1566,7 +1606,6 @@ void Lexer::Preprocess()
          if(def->Empty())
          {
             auto code = const_cast< string* >(source_);
-            auto size = id.size();
             for(auto i = 0; i < id.size(); ++i) code->at(curr_ + i) = SPACE;
             def->WasRead();
          }
@@ -1676,17 +1715,32 @@ size_t Lexer::SkipCharLiteral(size_t pos) const
 
 fn_name Lexer_SkipStrLiteral = "Lexer.SkipStrLiteral";
 
-size_t Lexer::SkipStrLiteral(size_t pos) const
+size_t Lexer::SkipStrLiteral(size_t pos, bool& fragmented) const
 {
    Debug::ft(Lexer_SkipStrLiteral);
 
-   //  The literal ends at the next non-escaped occurrence of a quotation mark.
+   //  The literal ends at the next non-escaped occurrence of a quotation mark,
+   //  unless it is followed by spaces and endlines, and then another quotation
+   //  mark that continues the literal.
    //
+   size_t next;
+
    while(++pos < size_)
    {
       auto c = source_->at(pos);
-      if(c == QUOTE) return pos;
-      if(c == BACKSLASH) ++pos;
+
+      switch(c)
+      {
+      case QUOTE:
+         next = source_->find_first_not_of(Whitespace, pos + 1);
+         if(next == string::npos) return pos;
+         if(source_->at(next) != QUOTE) return pos;
+         fragmented = true;
+         pos = next;
+         break;
+      case BACKSLASH:
+         ++pos;
+      }
    }
 
    return string::npos;

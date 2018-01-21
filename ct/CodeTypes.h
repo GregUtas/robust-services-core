@@ -156,6 +156,21 @@ extern const std::string ValidIntDigits;
 extern const std::string ValidHexDigits;
 extern const std::string ValidOctDigits;
 
+//  Whitespace characters.
+//
+extern const std::string Whitespace;
+
+//------------------------------------------------------------------------------
+//
+//  Restrictions when looking for a name (e.g. in a type or identifier).
+//
+enum Constraint
+{
+   NonKeyword,   // must not be a keyword
+   TypeKeyword,  // may only be a type keyword (e.g int)
+   AnyKeyword    // may be a keyword
+};
+
 //------------------------------------------------------------------------------
 //
 //  For adding and removing levels of pointer indirection and for counting

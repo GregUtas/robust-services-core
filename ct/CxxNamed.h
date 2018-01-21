@@ -1389,10 +1389,10 @@ class TemplateParm : public CxxNamed
 {
 public:
    //  Creates a parameter defined by NAME, TYPE, and PTRS (e.g. T/class/1
-   //  for template <class T*...), which may specify an optional DEFAULT.
+   //  for template <class T*...), which may specify an optional default.
    //
    TemplateParm(std::string& name,
-      Cxx::ClassTag tag, size_t ptrs, TypeNamePtr& default);
+      Cxx::ClassTag tag, size_t ptrs, TypeNamePtr& preset);
 
    //  Not subclassed.
    //

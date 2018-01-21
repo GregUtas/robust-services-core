@@ -230,7 +230,7 @@ bool Parser::CheckType(QualNamePtr& name)
       return false;
 
    default:
-      Debug::SwErr(Parser_CheckType, *name->Name(), type);
+      Debug::SwErr(Parser_CheckType, *name->Name(), type, InfoLog);
    }
 
    return false;
@@ -267,6 +267,8 @@ void Parser::Enter(SourceType source, const string& venue,
    source_ = source;
    venue_ = venue;
    inst_ = inst;
+   farthest_ = 0;
+   cause_ = 0;
    lexer_.Initialize(&code);
    if(preprocess) lexer_.PreprocessSource();
 }
@@ -282,7 +284,7 @@ void Parser::Failure(const string& venue) const
    auto code = lexer_.GetLine(farthest_);
    auto line = lexer_.GetLineNum(farthest_);
    std::ostringstream text;
-   text << venue << ", line " << line + 1 << ':' << CRLF << code;
+   text << venue << ", line " << line + 1 << ": " << code;
    Debug::SwErr(Parser_Failure, text.str(), cause_, InfoLog);
 }
 
@@ -404,18 +406,18 @@ bool Parser::GetArgument(ArgumentPtr& arg)
    ArraySpecPtr arraySpec;
    while(GetArraySpec(arraySpec)) typeSpec->AddArray(arraySpec);
 
-   ExprPtr default;
+   ExprPtr preset;
    if(lexer_.NextStringIs("="))
    {
       //  Get the argument's default value.
       //
       auto end = lexer_.FindFirstOf(",)");
       if(end == string::npos) return Backup(start, 5);
-      if(!GetCxxExpr(default, end)) return Backup(start, 6);
+      if(!GetCxxExpr(preset, end)) return Backup(start, 6);
    }
 
    arg.reset(new Argument(argName, typeSpec));
-   arg->SetDefault(default);
+   arg->SetDefault(preset);
    SetContext(arg.get(), start);
    return Success(Parser_GetArgument, start);
 }
@@ -1162,7 +1164,7 @@ bool Parser::GetCxxAlpha(ExprPtr& expr)
 
    TokenPtr item;
    QualNamePtr qualName;
-   if(!GetQualName(qualName)) return Backup(start, 69);
+   if(!GetQualName(qualName, AnyKeyword)) return Backup(start, 69);
 
    if(qualName->Size() == 1)
    {
@@ -1224,7 +1226,7 @@ bool Parser::GetCxxAlpha(ExprPtr& expr)
          return Backup(start, 78);
 
       default:
-         Debug::SwErr(Parser_GetCxxAlpha, op, 0);
+         Debug::SwErr(Parser_GetCxxAlpha, op, 0, InfoLog);
          return Backup(start, 79);
       }
    }
@@ -1282,18 +1284,18 @@ bool Parser::GetCxxExpr(ExprPtr& expr, size_t end, bool force)
       {
       case QUOTE:
          if(GetStr(expr)) break;
-         return Punt(end, expr);
+         return Skip(end, expr);
 
       case APOSTROPHE:
          if(GetChar(expr)) break;
-         return Punt(end, expr);
+         return Skip(end, expr);
 
       case '{':
          return false;
 
       case '_':
          if(GetCxxAlpha(expr)) break;
-         return Punt(end, expr);
+         return Skip(end, expr);
 
       default:
          if(ispunct(c))
@@ -1304,11 +1306,11 @@ bool Parser::GetCxxExpr(ExprPtr& expr, size_t end, bool force)
          if(isdigit(c))
          {
             if(GetNum(expr)) break;
-            return Punt(end, expr);
+            return Skip(end, expr);
          }
          if(GetCxxAlpha(expr)) break;
          if(GetOp(expr, true)) break;
-         return Punt(end, expr);
+         return Skip(end, expr);
       }
    }
 
@@ -2033,6 +2035,8 @@ bool Parser::GetInlines(Class* cls)
 {
    Debug::ft(Parser_GetInlines);
 
+   //  This jumps around to parse functions, so adjust farthest_ accordingly.
+   //
    Context::PushScope(cls);
 
    auto end = lexer_.Curr();
@@ -2044,6 +2048,7 @@ bool Parser::GetInlines(Class* cls)
 
       if(pos != string::npos)
       {
+         farthest_ = pos;
          lexer_.Reposition(pos);
          GetFuncImpl(funcs->at(i).get());
       }
@@ -2057,6 +2062,7 @@ bool Parser::GetInlines(Class* cls)
 
       if(pos != string::npos)
       {
+         farthest_ = pos;
          lexer_.Reposition(pos);
          GetFuncImpl(opers->at(i).get());
       }
@@ -2074,12 +2080,14 @@ bool Parser::GetInlines(Class* cls)
 
          if(pos != string::npos)
          {
+            farthest_ = pos;
             lexer_.Reposition(pos);
             GetFuncImpl(func);
          }
       }
    }
 
+   farthest_ = end;
    lexer_.Reposition(end);
    Context::PopScope();
    return true;
@@ -2450,18 +2458,18 @@ bool Parser::GetPreExpr(ExprPtr& expr, size_t end)
       {
       case QUOTE:
          if(GetStr(expr)) break;
-         return Punt(end, expr);
+         return Skip(end, expr);
 
       case APOSTROPHE:
          if(GetChar(expr)) break;
-         return Punt(end, expr);
+         return Skip(end, expr);
 
       case '{':
          return false;
 
       case '_':
          if(GetPreAlpha(expr)) break;
-         return Punt(end, expr);
+         return Skip(end, expr);
 
       default:
          if(ispunct(c))
@@ -2472,11 +2480,11 @@ bool Parser::GetPreExpr(ExprPtr& expr, size_t end)
          if(isdigit(c))
          {
             if(GetNum(expr)) break;
-            return Punt(end, expr);
+            return Skip(end, expr);
          }
          if(GetPreAlpha(expr)) break;
          if(GetOp(expr, false)) break;
-         return Punt(end, expr);
+         return Skip(end, expr);
       }
    }
 
@@ -2604,7 +2612,7 @@ bool Parser::GetProcDefn(FunctionPtr& func)
 
 fn_name Parser_GetQualName = "Parser.GetQualName";
 
-bool Parser::GetQualName(QualNamePtr& name)
+bool Parser::GetQualName(QualNamePtr& name, Constraint constraint)
 {
    Debug::ft(Parser_GetQualName);
 
@@ -2615,13 +2623,13 @@ bool Parser::GetQualName(QualNamePtr& name)
 
    TypeNamePtr type;
    auto global = lexer_.NextStringIs(SCOPE_STR);
-   if(!GetTypeName(type)) return Backup(start, 167);
+   if(!GetTypeName(type, constraint)) return Backup(start, 167);
    if(global) type->SetScoped();
    name.reset(new QualName(type));
 
    while(lexer_.NextStringIs(SCOPE_STR))
    {
-      if(!GetTypeName(type)) return Backup(start, 168);
+      if(!GetTypeName(type, constraint)) return Backup(start, 168);
       type->SetScoped();
       name->PushBack(type);
    }
@@ -2632,7 +2640,7 @@ bool Parser::GetQualName(QualNamePtr& name)
 
       if(!lexer_.GetOpOverride(oper))
       {
-         Debug::SwErr(Parser_GetQualName, 0, 0);
+         Debug::SwErr(Parser_GetQualName, 0, 0, InfoLog);
          return Backup(start, 169);
       }
 
@@ -2701,7 +2709,7 @@ bool Parser::GetSizeOf(ExprPtr& expr)
    do
    {
       QualNamePtr name;
-      if(GetQualName(name))
+      if(GetQualName(name, TypeKeyword))
       {
          arg.reset(name.release());
          if(lexer_.NextCharIs(')')) break;
@@ -3083,7 +3091,7 @@ bool Parser::GetTypeId(ExprPtr& expr)
 
 fn_name Parser_GetTypeName = "Parser.GetTypeName";
 
-bool Parser::GetTypeName(TypeNamePtr& type)
+bool Parser::GetTypeName(TypeNamePtr& type, Constraint constraint)
 {
    Debug::ft(Parser_GetTypeName);
 
@@ -3092,7 +3100,7 @@ bool Parser::GetTypeName(TypeNamePtr& type)
    auto start = lexer_.Curr();
 
    string name;
-   if(!lexer_.GetName(name)) return Backup(202);
+   if(!lexer_.GetName(name, constraint)) return Backup(202);
    type.reset(new TypeName(name));
    SetContext(type.get(), start);
 
@@ -3149,7 +3157,7 @@ bool Parser::GetTypeSpec(TypeSpecPtr& spec)
 
    QualNamePtr typeName;
    auto readonly = NextKeywordIs(CONST_STR);
-   if(!GetQualName(typeName)) return Backup(start, 206);
+   if(!GetQualName(typeName, TypeKeyword)) return Backup(start, 206);
    if(!CheckType(typeName)) return Backup(start, 207);
    if(NextKeywordIs(CONST_STR))
    {
@@ -3988,7 +3996,7 @@ bool Parser::ParseInBlock(Cxx::Keyword kwd, Block* block)
             return block->AddStatement(usingItem.release());
          break;
       case '-':
-         Debug::SwErr(Parser_ParseInBlock, kwd, 0);
+         Debug::SwErr(Parser_ParseInBlock, kwd, 0, InfoLog);
          return false;
       }
 
@@ -4062,7 +4070,7 @@ bool Parser::ParseInClass(Cxx::Keyword kwd, Class* cls)
          if(GetUsing(usingItem)) return cls->AddUsing(usingItem);
          break;
       case '-':
-         Debug::SwErr(Parser_ParseInClass, kwd, 0);
+         Debug::SwErr(Parser_ParseInClass, kwd, 0, InfoLog);
          return false;
       }
 
@@ -4138,7 +4146,7 @@ bool Parser::ParseInFile(Cxx::Keyword kwd, Namespace* space)
          if(GetUsing(usingItem)) return Context::AddUsing(usingItem);
          break;
       case '-':
-         Debug::SwErr(Parser_ParseInFile, kwd, 0);
+         Debug::SwErr(Parser_ParseInFile, kwd, 0, InfoLog);
          return false;
       }
 
@@ -4172,30 +4180,6 @@ bool Parser::ParseTypeSpec(const string& code, TypeSpecPtr& spec)
    auto parsed = GetTypeSpec(spec);
    spec->SetLocale(Cxx::TypeSpec);
    return parsed;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Parser_Punt = "Parser.Punt";
-
-bool Parser::Punt(size_t end, ExprPtr& expr, size_t cause)
-{
-   Debug::ft(Parser_Punt);
-
-   auto start = lexer_.Curr();
-   string code = "<@ ";
-   code += lexer_.Extract(start, end - start);
-   code += " @>";
-
-   auto line = lexer_.GetLineNum(start);
-   std::ostringstream text;
-   text << venue_ << ", line " << line + 1 << ':' << CRLF << code;
-   Debug::SwErr(Parser_Punt, text.str(), cause);
-
-   auto item = TokenPtr(new StrLiteral(code));
-   expr->AddItem(item);
-   lexer_.Reposition(end);
-   return Success(Parser_Punt, start);
 }
 
 //------------------------------------------------------------------------------
@@ -4296,7 +4280,7 @@ bool Parser::SetCompoundType
       return true;
 
    default:
-      Debug::SwErr(Parser_SetCompoundType, *name->Name(), type);
+      Debug::SwErr(Parser_SetCompoundType, *name->Name(), type, InfoLog);
    }
 
    return false;
@@ -4327,9 +4311,33 @@ void Parser::SetContext(CxxNamed* item, size_t pos) const
 
 //------------------------------------------------------------------------------
 
+fn_name Parser_Skip = "Parser.Skip";
+
+bool Parser::Skip(size_t end, ExprPtr& expr, size_t cause)
+{
+   Debug::ft(Parser_Skip);
+
+   auto start = lexer_.Curr();
+   string code = "<@ ";
+   code += lexer_.Extract(start, end - start);
+   code += " @>";
+
+   auto line = lexer_.GetLineNum(start);
+   std::ostringstream text;
+   text << venue_ << ", line " << line + 1 << ": " << code;
+   Debug::SwErr(Parser_Skip, text.str(), cause, InfoLog);
+
+   auto item = TokenPtr(new StrLiteral(code));
+   expr->AddItem(item);
+   lexer_.Reposition(end);
+   return Success(Parser_Skip, start);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Parser_Success = "Parser.Success";
 
-bool Parser::Success(const string& fn, size_t start) const
+bool Parser::Success(fn_name_arg func, size_t start) const
 {
    Debug::ft(Parser_Success);
 
@@ -4342,7 +4350,7 @@ bool Parser::Success(const string& fn, size_t start) const
    //
    auto lead = spaces((SysThreadStack::FuncDepth() - depth_) << 1);
 
-   *pTrace_ << lead << fn << ": ";
+   *pTrace_ << lead << func << ": ";
 
    auto prev = lexer_.Prev();
    auto count = (prev > start ? prev - start : 0);

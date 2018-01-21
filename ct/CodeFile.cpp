@@ -1386,10 +1386,9 @@ void CodeFile::CheckIncludeGuard()
    if(IsCpp()) return;
 
    size_t pos = string::npos;
-   size_t lines = lineType_.size();
    size_t n;
 
-   for(n = 0; (n < lines) && (pos == string::npos); ++n)
+   for(n = 0; (n < lineType_.size()) && (pos == string::npos); ++n)
    {
       switch(lineType_[n])
       {
@@ -1582,9 +1581,8 @@ void CodeFile::CheckSeparation()
    //
    LineType prevType = Blank;
    slashAsterisk_ = false;
-   auto lines = lineType_.size();
 
-   for(size_t n = 0; n < lines; ++n)
+   for(size_t n = 0; n < lineType_.size(); ++n)
    {
       //  Based on the type of line just found, look for warnings that can
       //  only be found based on the type of line that preceded this one.
@@ -2239,10 +2237,9 @@ void CodeFile::GetLineCounts() const
    //
    if(isSubsFile_) return;
 
-   auto lines = lineType_.size();
-   CodeInfo::LineTypeCounts[AnyLine] += lines;
+   CodeInfo::LineTypeCounts[AnyLine] += lineType_.size();
 
-   for(size_t n = 0; n < lines; ++n)
+   for(size_t n = 0; n < lineType_.size(); ++n)
    {
       ++CodeInfo::LineTypeCounts[lineType_[n]];
    }

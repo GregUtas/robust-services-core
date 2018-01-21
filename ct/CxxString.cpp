@@ -163,6 +163,38 @@ string& AdjustPtrs(string& type, TagCount ptrs)
 
 //------------------------------------------------------------------------------
 
+fn_name CodeTools_Concatenate = "CodeTools.Concatenate";
+
+void Concatenate(std::string& s)
+{
+   Debug::ft(CodeTools_Concatenate);
+
+   std::vector< char > chars;
+   size_t pos = 0;
+
+   while(pos < s.size())
+   {
+      auto c = s[pos];
+
+      switch(c)
+      {
+      case QUOTE:
+         pos = s.find(QUOTE, pos + 1) + 1;
+         break;
+      case BACKSLASH:
+         ++pos;
+      }
+
+      chars.push_back(s[pos]);
+      ++pos;
+   }
+
+   s.clear();
+   for(pos = 0; pos < chars.size(); ++pos) s.push_back(chars[pos]);
+}
+
+//------------------------------------------------------------------------------
+
 bool FileExtensionIs(const std::string& file, const std::string& ext)
 {
    auto s = '.' + ext;

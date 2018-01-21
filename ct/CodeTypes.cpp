@@ -39,6 +39,7 @@ const string ValidIntChars("0123456789.XxUuLlEe");
 const string ValidIntDigits("0123456789");
 const string ValidHexDigits("0123456789abcdefABCDEF");
 const string ValidOctDigits("01234567");
+const string Whitespace(" \t\n\v\f\r");
 
 //------------------------------------------------------------------------------
 

@@ -406,10 +406,9 @@ bool Expression::AddBinaryOp(TokenPtr& item)
 {
    Debug::ft(Expression_AddBinaryOp);
 
-   auto size = items_.size();
    auto oper = static_cast< Operation* >(item.get());
 
-   if(size > 0)
+   if(!items_.empty())
    {
       //  ITEM is a binary operator and something preceded it.
       //  o If a constant or variable, make that the first argument.
@@ -588,7 +587,6 @@ bool Expression::AddVariableOp(TokenPtr& item)
 {
    Debug::ft(Expression_AddVariableOp);
 
-   auto size = items_.size();
    auto oper = static_cast< Operation* >(item.get());
    auto op = oper->Op();
 
@@ -599,7 +597,7 @@ bool Expression::AddVariableOp(TokenPtr& item)
    //  o Add a conditional operator immediately, as it elides backwards to
    //    the expression before the "?".
    //
-   if((size == 0) || (op == Cxx::FUNCTION_CALL) || (op == Cxx::CONDITIONAL))
+   if(items_.empty() || (op == Cxx::FUNCTION_CALL) || (op == Cxx::CONDITIONAL))
    {
       items_.push_back(std::move(item));
       return true;
@@ -965,7 +963,6 @@ void Operation::AddArg(TokenPtr& arg, bool prefixed)
    Debug::ft(Operation_AddArg);
 
    auto& attrs = CxxOp::Attrs[op_];
-   auto size = args_.size();
 
    if(arg == nullptr)
    {
@@ -973,7 +970,7 @@ void Operation::AddArg(TokenPtr& arg, bool prefixed)
       return;
    }
 
-   if((attrs.arguments != 0) && (size >= attrs.arguments))
+   if((attrs.arguments != 0) && (args_.size() >= attrs.arguments))
    {
       Debug::SwErr(Operation_AddArg, op_, arg->Type());
    }

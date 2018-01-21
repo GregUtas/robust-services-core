@@ -226,10 +226,10 @@ public:
    //
    bool GetTemplateSpec(std::string& spec);
 
-   //  Returns true and creates or updates NAME on finding an identifier (or
-   //  keyword).  Advances curr_ beyond NAME.
+   //  Returns true and creates or updates NAME on finding an identifier that
+   //    Advances curr_ beyond NAME.
    //
-   bool GetName(std::string& name);
+   bool GetName(std::string& name, Constraint constraint = NonKeyword);
 
    //  Returns true and creates or updates NAME on finding an identifier (or
    //  keyword).  If NAME is "operator", updates OPER to the operator that
@@ -324,9 +324,10 @@ private:
    size_t SkipCharLiteral(size_t pos) const;
 
    //  Advances over the literal that begins at POS.  Returns the position of
-   //  the character that closes the literal.
+   //  the character that closes the literal.  Sets FRAGMENTED if the string
+   //  is of the form ("<string>"<whitespace>)*"<string>".
    //
-   size_t SkipStrLiteral(size_t pos) const;
+   size_t SkipStrLiteral(size_t pos, bool& fragmented) const;
 
    //  Returns the position of the next character to parse, starting from POS.
    //  Skips comments and character and string literals.  Returns string::npos

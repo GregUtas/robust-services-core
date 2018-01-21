@@ -549,6 +549,8 @@ void ClassData::EnterBlock()
 {
    Debug::ft(ClassData_EnterBlock);
 
+   Context::SetPos(GetPos());
+
    //  The initialization of a static member is handled by
    //  o ClassData.EnterScope, if initialized where declared, or
    //  o SpaceData.EnterScope, if initialized separately.
@@ -590,6 +592,7 @@ bool ClassData::EnterScope()
    //  A static const POD member (unless its a pointer) could also be
    //  initialized at this point.
    //
+   Context::SetPos(GetPos());
    GetTypeSpec()->EnteringScope(this);
 
    if(width_ != nullptr)
@@ -2015,9 +2018,7 @@ bool Function::ArgumentsMatch(const Function* that) const
 
    //  Check each argument for an exact match.
    //
-   auto thisSize = this->args_.size();
-
-   if(thisSize != that->args_.size()) return false;
+   if(this->args_.size() != that->args_.size()) return false;
 
    auto s1 = this->spec_.get();
    auto s2 = that->spec_.get();
@@ -2821,8 +2822,7 @@ void Function::DisplayDefn(ostream& stream,
 
    auto call = defn->call_.get();
    auto& mems = defn->mems_;
-   auto memcount = mems.size();
-   auto inits = memcount + (call != nullptr ? 1 : 0);
+   auto inits = mems.size() + (call != nullptr ? 1 : 0);
 
    switch(inits)
    {
@@ -2848,7 +2848,7 @@ void Function::DisplayDefn(ostream& stream,
       {
          stream << lead;
          call->Print(stream, options);
-         if(memcount > 0) stream << ',' << CRLF;
+         if(!mems.empty()) stream << ',' << CRLF;
       }
 
       for(auto m = mems.cbegin(); m != mems.cend(); ++m)
@@ -4927,6 +4927,7 @@ bool SpaceData::EnterScope()
 {
    Debug::ft(SpaceData_EnterScope);
 
+   Context::SetPos(GetPos());
    GetTypeSpec()->EnteringScope(this);
    CloseScope();
 

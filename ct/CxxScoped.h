@@ -200,7 +200,7 @@ public:
 
    //  Sets the argument's default value.
    //
-   void SetDefault(ExprPtr& default) { default_.reset(default.release()); }
+   void SetDefault(ExprPtr& preset) { default_.reset(preset.release()); }
 
    //  Returns true if the argument has a default value.
    //

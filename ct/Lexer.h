@@ -27,6 +27,7 @@
 #include <string>
 #include <unordered_map>
 #include <utility>
+#include <vector>
 #include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxFwd.h"
@@ -47,24 +48,56 @@ public:
    //
    ~Lexer() { }
 
-   //  Initializes the lexer to assist with parsing SOURCE.  Also invokes
-   //  Advance() to position curr_ at the first valid parse position.
+   //  Initializes the lexer to assist with parsing SOURCE, which must not
+   //  be nullptr.  Also invokes Advance() to position curr_ at the first
+   //  valid parse position.
    //
    void Initialize(const std::string* source);
 
-   //  Until the next #define is reached, look for #defined symbols that map to
-   //  empty strings and erase them so that they will not cause parsing errors.
+   //  Returns the character at POS.
    //
-   void PreprocessSource() const;
+   char At(size_t pos) const { return source_->at(pos); }
 
-   //  Returns true if ID, in its entirety, is a valid identifier.
+   //  Returns the number of lines in source_.
    //
-   static bool IsValidIdentifier(const std::string& id);
+   size_t LineCount() const { return lines_; }
+
+   //  Returns the line number on which POS occurs.  Returns string::npos
+   //  if POS is out of range.
+   //
+   //  NOTE: Internally, line numbers start at 0.  When a line number is to
+   //  ====  be displayed, it must be incremented.  Similarly, a line number
+   //        obtained externally (e.g. via the CLI) must be decremented.
+   //
+   size_t GetLineNum(size_t pos) const;
+
+   //  Returns the position of the first character in LINE.
+   //
+   size_t GetLineStart(size_t line) const;
+
+   //  Returns the line that includes POS, with a '$' inserted after POS.
+   //
+   std::string GetLine(size_t pos) const;
+
+   //  Sets S to the string for the Nth line of code, excluding the endline,
+   //  or EMPTY_STR if N was out of range.  Returns true if N was valid.
+   //
+   bool GetNthLine(size_t n, std::string& s) const;
+
+   //  Returns the string for the Nth line of code.  Returns EMPTY_STR if N
+   //  is out of range.
+   //
+   std::string GetNthLine(size_t n) const;
+
+   //  Returns a string containing the next LEN characters, starting at POS.
+   //  Converts endlines to blanks and compresses adjacent blanks.
+   //
+   std::string Extract(size_t pos, size_t count) const;
 
    //  Returns the current parse position.
    //
-   //  NOTE: Unless stated otherwise, a non-const function advances curr_
-   //  ====  to the next parse position after what it extracted.
+   //  NOTE: Unless stated otherwise, a non-const Lexer function advances
+   //  ====  curr_ to the next parse position after what was extracted.
    //
    size_t Curr() const { return curr_; }
 
@@ -77,9 +110,30 @@ public:
    //
    bool Eof() const { return curr_ >= size_; }
 
-   //  Returns the character at POS.
+   //  Sets prev_ to curr_, moves to the next parse position from there,
+   //  and returns true.
    //
-   char At(size_t pos) const { return source_->at(pos); }
+   bool Advance();
+
+   //  Sets prev_ to curr_ + incr, moves to the next parse position from
+   //  there, and returns true.
+   //
+   bool Advance(size_t incr);
+
+   //  Sets prev_ to POS, moves to the next parse position from there, and
+   //  returns true.
+   //
+   bool Reposition(size_t pos);
+
+   //  Sets prev_ and curr_ to POS and returns false.  Used for backing up
+   //  to a position that is known to be valid and trying another parse.
+   //
+   bool Retreat(size_t pos);
+
+   //  Skips the current line and moves to the next parse position starting
+   //  at the next line.  Returns true.
+   //
+   bool Skip();
 
    //  Returns the character at curr_.
    //
@@ -89,6 +143,44 @@ public:
    //  string::npos if curr_ is out of range.
    //
    size_t CurrChar(char& c) const;
+
+   //  Returns true and advances curr_ if the character at curr_ matches C.
+   //
+   bool NextCharIs(char c);
+
+   //  The same as NextCharIs, but only advances curr_ to the character that
+   //  immediately follows C.  Used to parse literals, as it does not skip
+   //  over blanks and comments.
+   //
+   bool ThisCharIs(char c);
+
+   //  Returns true if STR starts at curr_, advancing curr_ beyond STR.  Used
+   //  when looking for a specific keyword or operator.  If CHECK isn't forced
+   //  to false, then either
+   //  o a space or endline must follow STR, or
+   //  o if STR ends in a punctuation character, the next character must not
+   //    be punctuation (and vice versa).
+   //
+   bool NextStringIs(fixed_string str, bool check = true);
+
+   //  Returns the position of the first occurrence of C before the current
+   //  parse position.
+   //
+   size_t rfind(char c) const;
+
+   //  Returns the location where the line containing POS ends.  This is the
+   //  location of the next CRLF that is not preceded by a '\'.
+   //
+   size_t FindLineEnd(size_t pos) const;
+
+   //  Until the next #define is reached, look for #defined symbols that map to
+   //  empty strings and erase them so that they will not cause parsing errors.
+   //
+   void PreprocessSource() const;
+
+   //  Returns true if ID, in its entirety, is a valid identifier.
+   //
+   static bool IsValidIdentifier(const std::string& id);
 
    //  Returns the next identifier (which could be a keyword).  The first
    //  character not allowed in an identifier finalizes the string.
@@ -111,11 +203,6 @@ public:
    //
    std::string NextOperator() const;
 
-   //  Returns the location where the line containing POS ends.  This is the
-   //  location of the next CRLF that is not preceded by a '\'.
-   //
-   size_t FindLineEnd(size_t pos) const;
-
    //  Searches for a right-hand character (RHC) that matches a left-hand one
    //  (LHC) that was just found (e.g. (), [], {}, <>) at POS.  If the default
    //  value of POS is used (string::npos), POS is set to curr_.  For each LHC
@@ -134,25 +221,15 @@ public:
    //
    size_t FindFirstOf(const std::string& targs) const;
 
-   //  Returns a string containing the next LEN characters, starting at POS.
-   //  Converts endlines to blanks and compresses adjacent blanks.
-   //
-   std::string Extract(size_t pos, size_t count) const;
-
-   //  Returns a string containing the current line, with a '$' preceding the
-   //  current character.
-   //
-   std::string CurrLine() const;
-
    //  Returns true and sets SPEC to the template specification that follows
    //  the name of a template instance.
    //
    bool GetTemplateSpec(std::string& spec);
 
-   //  Returns true and creates or updates NAME on finding an identifier (or
-   //  keyword).  Advances curr_ beyond NAME.
+   //  Returns true and creates or updates NAME on finding an identifier that
+   //    Advances curr_ beyond NAME.
    //
-   bool GetName(std::string& name);
+   bool GetName(std::string& name, Constraint constraint = NonKeyword);
 
    //  Returns true and creates or updates NAME on finding an identifier (or
    //  keyword).  If NAME is "operator", updates OPER to the operator that
@@ -218,25 +295,6 @@ public:
    //
    TagCount GetIndirectionLevel(char c, bool& space);
 
-   //  Returns true and advances curr_ if the character at curr_ matches C.
-   //
-   bool NextCharIs(char c);
-
-   //  The same as NextCharIs, but only advances curr_ to the character that
-   //  immediately follows C.  Used to parse literals, as it does not skip
-   //  over blanks and comments.
-   //
-   bool ThisCharIs(char c);
-
-   //  Returns true if STR starts at curr_, advancing curr_ beyond STR.  Used
-   //  when looking for a specific keyword or operator.  If CHECK isn't forced
-   //  to false, then either
-   //  o a space or endline must follow STR, or
-   //  o if STR ends in a punctuation character, the next character must not
-   //    be punctuation (and vice versa).
-   //
-   bool NextStringIs(fixed_string str, bool check = true);
-
    //  POS is the start of a line.  If the line is an #include directive, sets
    //  FILE to the included filename, sets ANGLE if FILE appeared within angle
    //  brackets, and returns TRUE.
@@ -247,36 +305,6 @@ public:
    //  set, the code following OPT is to be compiled, else it is to be skipped.
    //
    void FindCode(OptionalCode* opt, bool compile);
-
-   //  Sets prev_ to curr_, moves to the next parse position from there,
-   //  and returns true.
-   //
-   bool Advance();
-
-   //  Sets prev_ to curr_ + incr, moves to the next parse position from
-   //  there, and returns true.
-   //
-   bool Advance(size_t incr);
-
-   //  Sets prev_ to POS, moves to the next parse position from there, and
-   //  returns true.
-   //
-   bool Reposition(size_t pos);
-
-   //  Sets prev_ and curr_ to POS and returns false.  Used for backing up
-   //  to a position that is known to be valid and trying another parse.
-   //
-   bool Retreat(size_t pos);
-
-   //  Skips the current line and moves to the next parse position starting
-   //  at the next line.  Returns true.
-   //
-   bool Skip();
-
-   //  Returns the position of the first occurrence of C before the current
-   //  parse position.
-   //
-   size_t rfind(char c) const;
 private:
    //  Used by PreprocessSource, which creates a clone of "this" lexer to
    //  do the work.
@@ -296,9 +324,10 @@ private:
    size_t SkipCharLiteral(size_t pos) const;
 
    //  Advances over the literal that begins at POS.  Returns the position of
-   //  the character that closes the literal.
+   //  the character that closes the literal.  Sets FRAGMENTED if the string
+   //  is of the form ("<string>"<whitespace>)*"<string>".
    //
-   size_t SkipStrLiteral(size_t pos) const;
+   size_t SkipStrLiteral(size_t pos, bool& fragmented) const;
 
    //  Returns the position of the next character to parse, starting from POS.
    //  Skips comments and character and string literals.  Returns string::npos
@@ -337,15 +366,6 @@ private:
    //
    Cxx::Directive FindDirective();
 
-   //  The copy constructor is not implemented.
-   //
-   Lexer(const Lexer& that);
-
-   //  The copy operator allows a lexer to be cloned so that the original is
-   //  preserved.
-   //
-   Lexer& operator=(const Lexer& that);
-
    //  Initializes the keyword and operator hash tables.
    //
    static bool Initialize();
@@ -357,6 +377,14 @@ private:
    //  The size of source_.
    //
    size_t size_;
+
+   //  The number of lines in source_.
+   //
+   size_t lines_;
+
+   //  The position where each line starts; it ends at a CRLF.
+   //
+   std::vector< size_t > start_;
 
    //  The current position within source_.
    //

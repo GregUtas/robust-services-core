@@ -200,7 +200,7 @@ public:
 
    //  Sets the argument's default value.
    //
-   void SetDefault(ExprPtr& default) { default_.reset(default.release()); }
+   void SetDefault(ExprPtr& preset) { default_.reset(preset.release()); }
 
    //  Returns true if the argument has a default value.
    //
@@ -494,6 +494,12 @@ public:
    //  Overridden to return an enumeration's fully qualified name.
    //
    virtual std::string TypeString(bool arg) const override;
+
+   //  Overridden to support, for example, writing to an enum in a std::vector
+   //  or passing an enum as an argument.
+   //
+   virtual bool WasWritten(const StackArg* arg, bool passed)
+      override { return false; }
 private:
    //  The enumeration's name.
    //

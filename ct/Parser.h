@@ -24,6 +24,7 @@
 
 #include <string>
 #include <cstddef>
+#include <iosfwd>
 #include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxFwd.h"
@@ -48,44 +49,50 @@ namespace CodeTools
 //  NOT SUPPORTED
 //  -------------
 //  C++ specifications are voluminous, so there are many things that the parser
-//  does not support, including some things in C++11 and beyond.  The following
-//  is a list of pre-C++11 things that are known not to be supported, along with
-//  some of the functions that would need to be modified to support them.
+//  does not support.  The following is a list of things (through C++11) that
+//  are known not to be supported, along with some of the functions that would
+//  need to be modified to support them.
 //
 //  reserved words:
-//    o asm, goto, register, volatile, wchar_t
+//    o asm, alignas, alignof, char16_t, char32_t, concept, decltype, export,
+//      final, goto, register, requires, static_assert, thread_local, volatile,
+//      wchar_t
 //    o and, and_eq, bitand, bitor, compl, not, not_eq, or, or_eq, xor, xor_eq
 //    o #undef, #line, #pragma (parsed but have no effect)
-//    o #if, #elif (the code that follows the directive is ignored)
+//    o #if, #elif (the conditional that follows the directive is ignored)
 //    o elaborated type specifiers (class, struct, union, or enum prefixed to
 //      resolve a type ambiguity caused by overloading an identifier)
 //  character and string literals (GetCxxExpr, GetCxxAlpha, GetChar, GetStr):
-//    o continuing a string literal when quotation marks are separated by spaces
 //    o type tags (u8, u, U, L, R)
 //  namespaces:
-//    o anonymous namespaces (GetNamespace)
+//    o anonymous and inline namespaces (GetNamespace and symbol resolution)
 //    o namespace aliases (GetNamespace)
 //  classes:
 //    o multiple inheritance (GetBaseDecl)
 //    o tagging a base class as virtual (GetBaseDecl)
-//    o defining a class within a function (ParseInBlock and others)
 //    o non-public base class (allowed by parser, but accessibility checking
 //      does not enforce it)
 //    o anonymous structs (GetClassDecl)
 //    o enums, typedefs, or functions in an anonymous union (allowed by parser,
 //      but CxxArea.FindEnum, FindFunc, and FindType do not look for them)
 //    o including a union instance immediately after declaring it (GetClassDecl)
+//    o pointer-to-member (the type "Class::*" and operators ".*" and "->*)
 //  functions:
 //    o the order of tags is inflexible: "extern inline static virtual explicit
 //      constexpr <function-definition> const noexcept override" (GetFuncDecl)
+//    o "=default" and "=delete"
 //    o using a different type (an alias) for an argument in the definition of
 //      a previously declared function (DataSpec.MatchesExactly)
 //    o argument-dependent lookup of regular functions (done only for operator
 //      overloads)
+//    o constructor inheritance (GetUsing, Class.FindCtor, and others)
+//    o defining a class or function within a function (ParseInBlock and others)
+//    o range-based for loops (GetFor and many others)
 //    o overloading the function call or comma operator (the parser allows it,
 //      but calls to the overload won't be registered because Operator.Execute
 //      doesn't look for it)
 //    o variadic argument lists
+//    o lambdas (GetArgument and many others)
 //    o dynamic exception specifications
 //  data:
 //    o the order of tags is inflexible: "extern static mutable constexpr const"
@@ -94,8 +101,12 @@ namespace CodeTools
 //      file scope or within a class (GetClassData and GetSpaceData)--note that
 //      this *is* supported within a function (e.g. int i = 0, *pi = nullptr)
 //    o unnamed bit fields (GetClassData)
+//  enums:
+//    o accessing an enum or enumerator using "." or "->" instead of "::"
+//    o scoped ("enum class", "enum struct") and opaque enums
 //  typedefs:
 //    o "typedef enum" and "typedef struct" (GetTypedef)
+//    o type aliases and alias templates (GetUsing and others)
 //  templates:
 //    o template parameters other than typename, class, or struct: in the /subs
 //      directory, for example, bitset had to be declared as bitset<typename N>
@@ -106,14 +117,7 @@ namespace CodeTools
 //    o a constructor call that requires template argument deduction when a
 //      template is a base class: need to include the template argument after
 //      the class template name
-//  C++11:
-//    o alignas, alignof, char16_t, char32_t, concept, decltype, export, final,
-//      requires, static_assert, thread_local
-//    o constructor inheritance (GetUsing, Class.FindCtor, and others)
-//    o scoped enums (GetEnum)
-//    o type aliases and alias templates (GetUsing and others)
-//    o lambdas (GetArgument and many others)
-//    o range-based for loops (GetFor and many others)
+//    o "extern template"
 //
 //  Comments in the CodeTools namespace that begin with "//c" describe other
 //  enhancements that have not been implemented.
@@ -177,15 +181,40 @@ public:
    //
    CxxNamed* ResolveInstanceArgument(const QualName* name) const;
 
+   //  Things that can be parsed.
+   //
+   enum SourceType
+   {
+      IsUnknown,
+      IsFile,       // source code in a file
+      IsClassInst,  // code for a class template instance
+      IsFuncInst,   // code for a function template instance
+      IsTypeSpec,   // a string containing a type specification
+      IsQualName    // a string containing a qualified name
+   };
+
+   //  Returns what is being parsed.
+   //
+   SourceType GetSourceType() const { return source_; }
+
+   //  Returns the name of what is being parsed (e.g. a file or template name).
+   //
+   std::string GetVenue() const { return venue_; }
+
+   //  Returns the line number associated with POS in what is being parsed.
+   //  If POS is not specified, the parser's current location is used.
+   //
+   size_t GetLineNum(size_t pos = std::string::npos) const;
+
    //  Returns the time when the parse originally started.
    //
    static const SysTime* GetTime();
 
-   //  Returns a string that specifies the parser's current position.  If
-   //  parsing source code, this will be a numeric.  If parsing a template,
-   //  it provides the template's name.
+   //  Returns a string that specifies the parser's current position for the
+   //  __LINE__ macro.  If parsing source code, this will be a numeric.  If
+   //  parsing a template, it prefixes the template's name.
    //
-   std::string GetPos() const;
+   std::string GetLINE() const;
 
    //  Returns the parser's current position within its Lexer.
    //
@@ -198,8 +227,24 @@ public:
    //  Returns true if a template instance is currently being parsed.
    //
    bool ParsingTemplateInstance()
-      const { return (tmpltClassInst_ | tmpltFuncInst_); }
+      const { return ((source_ == IsClassInst) || (source_ == IsFuncInst)); }
+
+   //  Zeroes the statistics.
+   //
+   static void ResetStats();
+
+   //  Displays the statistics in STREAM.
+   //
+   static void DisplayStats(std::ostream& stream);
 private:
+   //  Prepares to parse CODE, of type SOURCE.  PREPROCESS is set if the
+   //  code should be preprocessed.  VENUE identifies the code for logging
+   //  purposes, and INST is the template's name and arguments if parsing
+   //  a template instance.
+   //
+   void Enter(SourceType source, const std::string& venue,
+      const TypeName* inst, const std::string& code, bool preprocess);
+
    //  Parses declarations at file scope.  SPACE is the current namespace.
    //
    void GetFileDecls(Namespace* space);
@@ -240,6 +285,25 @@ private:
    //  an alphabetic character.  Used in preprocessor directives.
    //
    bool GetPreAlpha(ExprPtr& expr);
+
+   //  Errors associated with preprocessor directives.
+   //
+   enum DirectiveError
+   {
+      DirectiveMismatch = 1,
+      SymbolExpected,
+      FileExpected,
+      ConditionExpected,
+      ElifUnexpected,
+      ElseUnexpected,
+      EndifUnexpected,
+      EndifExpected
+   };
+
+   //  Reports an error associated with a preprocessor directive and returns
+   //  false.
+   //
+   bool Fault(DirectiveError err) const;
 
    //  Parses declarations in CLS (a class, struct, or union).
    //
@@ -386,9 +450,10 @@ private:
 
    //  Returns true and creates or updates NAME on finding a name that could be
    //  qualified.  If NAME ends in "operator", the operator that follows it is
-   //  also parsed.
+   //  also parsed.  A CONSTRAINT of TypeKeyword allows the name to be a type,
+   //  such as int.
    //
-   bool GetQualName(QualNamePtr& name);
+   bool GetQualName(QualNamePtr& name, Constraint constraint = NonKeyword);
 
    //  Checks if NAME is a built-in type or a keyword that is an invalid type.
    //
@@ -405,9 +470,10 @@ private:
       (QualNamePtr& name, Cxx::Type type, int size, int sign);
 
    //  Returns true and creates or updates TYPE on finding a typed name, which
-   //  may include a template signature.
+   //  may include a template signature.  CONSTRAINT specifies whether the name
+   //  may contain keywords that are types (e.g. int).
    //
-   bool GetTypeName(TypeNamePtr& type);
+   bool GetTypeName(TypeNamePtr& type, Constraint constraint = NonKeyword);
 
    //  Returns true and creates NAME on finding an identifier.  This is used to
    //  to parse constructor and destructor names, in which the contents of angle
@@ -520,11 +586,6 @@ private:
    bool GetTry(TokenPtr& statement);
    bool GetWhile(TokenPtr& statement);
 
-   //  Prepares to parse CODE.  PREPROCESS is set if the code should be
-   //  preprocessed.
-   //
-   void Enter(const std::string& code, bool preprocess);
-
    //  Updates STR to the next keyword.  Returns Cxx::NIL_KEYWORD if the
    //  next token is not a keyword.
    //
@@ -539,56 +600,65 @@ private:
    //
    void SetContext(CxxNamed* item, size_t pos) const;
 
-   //  Reasons for errors associated with preprocessor directives.
-   //
-   enum ErrorCode
-   {
-      DirectiveMismatch = 1,
-      SymbolExpected,
-      FileExpected,
-      ConditionExpected,
-      ElifUnexpected,
-      ElseUnexpected,
-      EndifUnexpected,
-      EndifExpected
-   };
-
-   //  Reports an error associated with a preprocessor directive and returns
-   //  false.
-   //
-   static bool Report(ErrorCode code);
-
    //  Logs WARNING at POS.  If POS is not specified, the last position where
    //  parsing started is used.
    //
    void Log(Warning warning, size_t pos = std::string::npos) const;
 
+   //  Invoked when an attempted parse fails.  Records CAUSE if POS is the
+   //  farthest point reached in the parse and returns lexer_.retreat(pos).
+   //
+   bool Backup(size_t pos, size_t cause);
+
+   //  The same as Backup, but used when the lexer's current position has
+   //  not changed (i.e. when the first thing searched for wasn't found).
+   //
+   static bool Backup(size_t cause);
+
+   //  The same as Backup, but also deletes FUNC.  FUNC needs to be deleted
+   //  immediately when it may have pushed a new scope, which must be popped
+   //  in case another function parse is attempted.  If that parse succeeds,
+   //  the Function constructor invokes OpenScope, picking up the scope set
+   //  by the function that failed to parse.  This occurs because the failed
+   //  function would normally not be deleted until its FunctionPtr releases
+   //  it to acquire the new function, which can only occur *after* the new
+   //  function has been constructed.
+   //
+   bool Backup(size_t pos, FunctionPtr& func, size_t cause);
+
    //  When the parsing of an expression fails, this is invoked to add the
    //  unparsed string to EXPR.  The string extends from the current parse
-   //  string to END.  A "<@" prefix and "@>" suffix are also added to this
-   //  string.  Returns false.
+   //  location to END.  A "<@" prefix and "@>" suffix are also added to the
+   //  string.  CAUSE is the same as for Backup and Retreat.  Returns false.
    //
-   bool Punt(ExprPtr& expr, size_t end);
+   bool Skip(size_t end, ExprPtr& expr, size_t cause = 0);
 
-   //  Backs up to POS, deletes FUNC, and returns false.  FUNC needs to be
-   //  deleted immediately when it may have pushed a new scope, which must
-   //  be popped in case another function parse is attempted.  If that new
-   //  parse succeeds, the Function constructor invokes OpenScope, picking
-   //  up the scope set by the function that failed to parse.  This occurs
-   //  because the failed function would normally not be deleted until its
-   //  FunctionPtr releases it to acquire the new function, which can only
-   //  occur *after* the new function has been constructed.
+   //  Invoked when the parse fails.  VENUE identifies what was being parsed
+   //  (usually venue_).
    //
-   bool Retreat(size_t pos, FunctionPtr& func);
+   void Failure(const std::string& venue) const;
 
-   //  Returns true from the function named FN, which began its parse at
-   //  START, after adding its parse string (START to prev_) to log_.
+   //  Returns true from the function named FUNC, which began its parse at
+   //  START.  If the parse is being traced, the parsed string (from START
+   //  to lexer_.Prev()) is added to the parse tree.
    //
-   bool Success(const std::string& fn, size_t start) const;
+   bool Success(fn_name_arg func, size_t start) const;
 
    //  Returns a string of blanks based on the depth of parsing.
    //
    static std::string Indent();
+
+   //  Identifies what is being parsed.
+   //
+   SourceType source_;
+
+   //  The name of the code being parsed.  Included in logs.
+   //
+   std::string venue_;
+
+   //  The template's name and arguments if parsing a template instance.
+   //
+   const TypeName* inst_;
 
    //  The lexical analyzer.
    //
@@ -610,25 +680,26 @@ private:
    //
    size_t kwdBegin_;
 
-   //  Set when parsing a class template instance.
+   //  The deepest point where backup occurred.
    //
-   bool tmpltClassInst_;
+   size_t farthest_;
 
-   //  Set when parsing a function template instance.
+   //  Why backup at farthest_ occurred.  This is simply a location in
+   //  the parser code but could be mapped to a text explanation.
    //
-   bool tmpltFuncInst_;
-
-   //  The template arguments when parsing a template instance.
-   //
-   const TypeName* type_;
-
-   //  The name of the template being parsed.
-   //
-   std::string tmpltName_;
+   size_t cause_;
 
    //  Output file for parse tracing, if any.
    //
    ostreamPtr pTrace_;
+
+   //  The highest legal cause_ value.
+   //
+   static const size_t MaxCause = 255;
+
+   //  Statistics on where the parser backed up.
+   //
+   static uint32_t Backups[MaxCause + 1];
 };
 }
 #endif

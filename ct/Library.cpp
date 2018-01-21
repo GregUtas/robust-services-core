@@ -412,6 +412,8 @@ word Library::Export(ostream& stream, const string& opts) const
       stream << string(80, '=') << CRLF;
    }
 
+   auto rule = false;
+
    if((opts.find(CanonicalFileView) != string::npos) ||
       (opts.find(OriginalFileView) != string::npos))
    {
@@ -422,11 +424,12 @@ word Library::Export(ostream& stream, const string& opts) const
          f->DisplayItems(stream, opts);
       }
 
-      stream << string(80, '=') << CRLF;
+      rule = true;
    }
 
    if(opts.find(ClassHierarchyView) != string::npos)
    {
+      if(rule) stream << string(80, '=') << CRLF;
       stream << "CLASS VIEW" << CRLF << CRLF;
 
       ClassVector roots;

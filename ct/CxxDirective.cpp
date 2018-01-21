@@ -49,9 +49,7 @@ void AlignLeft(ostream& stream, const string& prefix)
 {
    //  If PREFIX is more than one indentation, indent one level less.
    //
-   auto size = prefix.size();
-
-   if(size < Indent_Size)
+   if(prefix.size() < Indent_Size)
       stream << prefix;
    else
       stream << prefix.substr(Indent_Size);
@@ -92,7 +90,6 @@ bool Conditional::EnterScope()
    condition_->EnterBlock();
    auto result = Context::PopArg(true);
    result.CheckIfBool();
-
    return false;
 }
 

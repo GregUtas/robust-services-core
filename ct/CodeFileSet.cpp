@@ -194,7 +194,7 @@ word CodeFileSet::Countlines(string& result) const
 
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
    {
-      count += files.At(*f)->LineCount();
+      count += files.At(*f)->GetLexer().LineCount();
    }
 
    result = result + strInt(count);
@@ -328,7 +328,7 @@ word CodeFileSet::Format(string& expl) const
 
       auto file = files.At(*f);
 
-      if(file->LineCount() > 0)
+      if(file->GetLexer().LineCount() > 0)
       {
          auto rc = file->Format(err);
 
@@ -344,9 +344,8 @@ word CodeFileSet::Format(string& expl) const
       }
    }
 
-   auto total = fileSet.size();
    std::ostringstream summary;
-   summary << "Total: " << total << ", changed: " << changed;
+   summary << "Total: " << fileSet.size() << ", changed: " << changed;
    if(failed > 0) summary << ", failed: " << failed;
    expl += summary.str();
    return 0;
@@ -597,7 +596,7 @@ word CodeFileSet::Parse(string& expl, const string& opts) const
    {
       auto file = files.At(f->fid);
 
-      if(file->IsHeader() && (file->LineCount() > 0))
+      if(file->IsHeader() && (file->GetLexer().LineCount() > 0))
       {
          if(!parser->Parse(*file)) ++failed;
          ++total;
@@ -668,10 +667,10 @@ word CodeFileSet::Scan
             shown = true;
          }
 
-         auto n = file->GetLineNum(pos);
-         auto str = file->GetNthLine(n);
+         auto line = file->GetLexer().GetLineNum(pos);
+         auto str = file->GetLexer().GetNthLine(line);
 
-         stream << spaces(2) << n + 1 << ": " << str << CRLF;
+         stream << spaces(2) << line + 1 << ": " << str << CRLF;
          pos = code->find(pattern, pos + pattern.size());
       }
    }

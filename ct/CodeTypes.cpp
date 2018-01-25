@@ -181,8 +181,6 @@ ostream& operator<<(std::ostream& stream, LineType type)
 
 fixed_string WarningStrings[Warning_N + 1] =
 {
-   "#define appears within a class or function",
-   "#include appears within a class or function",
    "C-style comment",
    "NULL",
    "Pointer tag ('*') detached from type",
@@ -195,11 +193,19 @@ fixed_string WarningStrings[Warning_N + 1] =
    "Pointer arithmetic",
    "Semicolon not required",
    "Redundant const in type specification",
+   "#define appears within a class or function",
+   "#include appears within a class or function",
    "No #include guard found",
    "#include not sorted in standard order",
    "#include duplicated",
+   "Add #include directive",
+   "Remove #include directive",
    "Using statement in header",
    "Using statement duplicated",
+   "Add using statement",
+   "Remove using statement",
+   "Add forward declaration",
+   "Remove forward declaration",
    "Unused argument",
    "Unused class",
    "Unused data",
@@ -289,6 +295,8 @@ fixed_string WarningStrings[Warning_N + 1] =
    ERROR_STR
 };
 
+//------------------------------------------------------------------------------
+
 bool IsUnusedItemWarning(Warning warning)
 {
    switch(warning)
@@ -309,6 +317,8 @@ bool IsUnusedItemWarning(Warning warning)
    return false;
 }
 
+//------------------------------------------------------------------------------
+
 ostream& operator<<(std::ostream& stream, Warning warning)
 {
    if((warning >= 0) && (warning < Warning_N))
@@ -317,15 +327,6 @@ ostream& operator<<(std::ostream& stream, Warning warning)
       stream << WarningStrings[Warning_N];
    return stream;
 }
-
-//------------------------------------------------------------------------------
-
-fixed_string ADD_INCLUDE_STR    = "Add an #include for";
-fixed_string REMOVE_INCLUDE_STR = "Remove the #include for";
-fixed_string ADD_FORWARD_STR    = "Add a forward declaration for";
-fixed_string REMOVE_FORWARD_STR = "Remove the forward declaration for";
-fixed_string ADD_USING_STR      = "Add a using statement for";
-fixed_string REMOVE_USING_STR   = "Remove the using statement for";
 
 //==============================================================================
 

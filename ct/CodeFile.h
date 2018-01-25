@@ -42,6 +42,11 @@ namespace CodeTools
    class CodeDir;
 }
 
+namespace NodeBase
+{
+   class CliThread;
+}
+
 using namespace NodeBase;
 
 //------------------------------------------------------------------------------
@@ -196,9 +201,15 @@ public:
 
    //  Generates a report in STREAM about which #include statements are
    //  required and which symbols require qualification to remove using
-   //  statements.
+   //  statements.  Also invoked by Check, with STREAM as nullptr.
    //
-   void Trim(std::ostream& stream);
+   void Trim(std::ostream* stream);
+
+   //  Interactively fixes warnings in the file detected by Check().  If
+   //  an error occurs, a non-zero value is returned and EXPL is updated
+   //  to provide an explanation.
+   //
+   word Fix(CliThread& cli, std::string& expl);
 
    //  Formats the file.  Returns 0 if the file was unchanged, a positive
    //  number after successful changes, and a negative number on failure,
@@ -206,37 +217,17 @@ public:
    //
    word Format(std::string& expl);
 
-   //  Creates an #include directive for including file.
+   //  Logs WARNING, which occurred at POS.  OFFSET and EXPL are specific to
+   //  WARNING.
    //
-   std::string MakeInclude() const;
+   void LogPos(size_t pos, Warning warning, size_t offset = 0,
+      const std::string& expl = std::string(EMPTY_STR)) const;
 
-   //  Modifications that can be applied to a file.
+   //  Generates a report in STREAM (if not nullptr) for the files in SET.  The
+   //  report includes line type counts and warnings found during parsing and
+   //  "execution".
    //
-   enum Modification
-   {
-      NoChange,
-      AddInclude,
-      RemoveInclude,
-      AddForward,
-      RemoveForward,
-      AddUsing,
-      RemoveUsing
-   };
-
-   //  Modifies the file as specified by ACT and ITEM.  Returns 0 if the file
-   //  was unchanged, a positive number after successful changes, and a negative
-   //  number on failure, in which case EXPL provides an explanation.
-   //
-   word Modify(Modification act, std::string& item, std::string& expl);
-
-   //  Logs WARNING, which occurred at POS.  OFFSET is specific to WARNING.
-   //
-   void LogPos(size_t pos, Warning warning, size_t offset = 0) const;
-
-   //  Generates a report in STREAM for the files in SET.  The report includes
-   //  line type counts and warnings found during parsing and "execution".
-   //
-   static void GenerateReport(std::ostream& stream, const SetOfIds& set);
+   static void GenerateReport(std::ostream* stream, const SetOfIds& set);
 
    //  Adds the file's line types to the global count.
    //
@@ -260,9 +251,9 @@ public:
    virtual void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
-   //  Returns the stream created for reading the file.
+   //  Returns a stream for reading the file.
    //
-   istreamPtr Stream() const;
+   istreamPtr InputStream() const;
 
    //  Adds FILE as one that #includes this file.
    //
@@ -283,7 +274,7 @@ private:
 
    //  Looks for #include directives that should be removed.
    //
-   void CheckIncludes() const;
+   void CheckIncludeOrder() const;
 
    //  Looks for using statements that should be removed.
    //
@@ -314,15 +305,16 @@ private:
    //
    bool HasForwardFor(const CxxNamed* item) const;
 
-   //  Logs WARNING, which occurred on line N.  OFFSET is specific to
-   //  WARNING.
+   //  Logs WARNING, which occurred on line N.  OFFSET and EXPL are specific
+   //  to WARNING.
    //
-   void LogLine(size_t n, Warning warning, size_t offset = 0) const;
+   void LogLine(size_t n, Warning warning, size_t offset = 0,
+      const std::string& expl = std::string(EMPTY_STR)) const;
 
    //  Returns false if >trim does not apply to this file (e.g. a template
    //  header).  STREAM is where the output for >trim is being directed.
    //
-   bool CanBeTrimmed(std::ostream& stream) const;
+   bool CanBeTrimmed(std::ostream* stream) const;
 
    //  Updates declIds with the identifiers of files that declare items
    //  that this file (if a .cpp) defines.
@@ -385,6 +377,27 @@ private:
    //
    void FindOrAddUsing(const CxxNamed* user,
       const CodeFileVector usingFiles, CxxNamedSet& addUsing);
+
+   //  Logs an AddInclude warning for each file in FIDS.
+   //
+   void LogAddIncludes(const SetOfIds& fids) const;
+
+   //  Logs a RemoveInclude warning for each file in FIDS.
+   //
+   void LogRemoveIncludes(const SetOfIds& fids) const;
+
+   //  Logs WARNING for each item in ITEMS.
+   //
+   void LogItemWarnings(const CxxNamedSet& items, Warning warning) const;
+
+   //  Logs a RemoveInclude warning for each item in ITEMS.
+   //
+   void LogRemoveForwards(const CxxNamedSet& items) const;
+
+   //  Logs a RemovUsing warning for each of the file's using statements
+   //  that is marked for removal.
+   //
+   void LogRemoveUsings() const;
 
    //  Creates an Editor object.  Returns nullptr on failure, updating RC
    //  and EXPL with an explanation.
@@ -466,6 +479,11 @@ private:
    //
    CxxNamedSet usages_;
 
+   //  For a header, the names that need to be qualified in
+   //  order to remove using statements.
+   //
+   CxxNamedSet qualify_;
+
    //  Set if a /* comment is open during a lexical scan.
    //
    bool slashAsterisk_;
@@ -477,6 +495,10 @@ private:
    //  Whether any of the file's functions involve templates.
    //
    TemplateLocation location_;
+
+   //  Whether the file has been checked.
+   //
+   bool checked_;
 };
 }
 #endif

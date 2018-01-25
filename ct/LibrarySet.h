@@ -31,6 +31,11 @@
 #include "Q2Link.h"
 #include "SysTypes.h"
 
+namespace NodeBase
+{
+   class CliThread;
+}
+
 using namespace NodeBase;
 
 //------------------------------------------------------------------------------
@@ -68,11 +73,11 @@ public:
    //
    virtual LibSetType GetType() const;
 
-   //  Returns 0 after checking items in the set.  Produces a report in
-   //  STREAM that contains line counts and lines that vary from the C++
-   //  coding guidelines.
+   //  Returns 0 after checking code files in the set for conformance to
+   //  C++ coding guidelines.  If STREAM is not nullptr, produces a report
+   //  that contains line counts and warnings.
    //
-   virtual word Check(std::ostream& stream, std::string& expl) const;
+   virtual word Check(std::ostream* stream, std::string& expl) const;
 
    //  On success, returns 0 and updates RESULT with the number of items
    //  in the set.  Returns another value on failure and updates RESULT
@@ -85,6 +90,11 @@ public:
    //  RESULT with an explanation.
    //
    virtual word Countlines(std::string& result) const;
+
+   //  Returns 0 after fixing warnings detected by Check() in the set.
+   //  Returns another value on failure and updates EXPL with an explanation.
+   //
+   virtual word Fix(CliThread& cli, std::string& expl) const;
 
    //  On success, returns 0 after reformatting the file.  Returns another
    //  value on failure and updates EXPL with an explanation.
@@ -186,6 +196,11 @@ protected:
    //
    static word Shown(std::string& result);
 private:
+   //  Overridden to prohibit copying.
+   //
+   LibrarySet(const LibrarySet& that);
+   void operator=(const LibrarySet& that);
+
    //  Returns 0 if this set can be assigned to a variable.  Returns another
    //  value and updates EXPL with an explanation if it cannot be assigned.
    //

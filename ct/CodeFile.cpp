@@ -30,6 +30,7 @@
 #include <sstream>
 #include <utility>
 #include "Algorithms.h"
+#include "CliThread.h"
 #include "CodeDir.h"
 #include "CodeFileSet.h"
 #include "Cxx.h"
@@ -44,7 +45,6 @@
 #include "Formatters.h"
 #include "FunctionName.h"
 #include "Library.h"
-#include "Memory.h"
 #include "NbCliParms.h"
 #include "Parser.h"
 #include "Registry.h"
@@ -59,6 +59,294 @@ using std::string;
 
 namespace CodeTools
 {
+//  Used to log a warning.
+//
+struct WarningLog
+{
+   const CodeFile* file;  // file where warning occurred
+   size_t line;           // line where warning occurred
+   Warning warning;       // type of warning
+   size_t offset;         // warning-specific; displayed if non-zero
+   string expl;           // warning-specific; displayed if not empty
+
+   bool operator==(const WarningLog& that) const;
+   bool operator!=(const WarningLog& that) const;
+};
+
+//------------------------------------------------------------------------------
+
+bool WarningLog::operator==(const WarningLog& that) const
+{
+   if(this->file != that.file) return false;
+   if(this->line != that.line) return false;
+   if(this->warning != that.warning) return false;
+   if(this->offset != that.offset) return false;
+   return (this->expl == that.expl);
+}
+
+//------------------------------------------------------------------------------
+
+bool WarningLog::operator!=(const WarningLog& that) const
+{
+   return !(*this == that);
+}
+
+//==============================================================================
+//
+//  Information generated when analyzing, parsing, and executing code.
+//
+class CodeInfo
+{
+public:
+   //  Generates a report in STREAM for the files in SET.  The report includes
+   //  line type counts and warnings found during parsing and "execution".
+   //
+   static void GenerateReport(ostream* stream, const SetOfIds& set);
+
+   //  Returns LOG's index if it has already been reported, else -1.
+   //
+   static word FindWarning(const WarningLog& log);
+
+   //  The number of lines of each type, globally.
+   //
+   static size_t LineTypeCounts[LineType_N];
+
+   //  Warnings found in all files.
+   //
+   static std::vector< WarningLog > Warnings;
+
+   //  Returns the string "Wnnn", where nnn is WARNING's integer value.
+   //
+   static std::string WarningCode(Warning warning);
+
+   //  Returns true if LOG2 > LOG1 when sorting by file/line/warning.
+   //
+   static bool IsSortedByFile
+      (const WarningLog& log1, const WarningLog& log2);
+
+   //  Returns true if LOG2 > LOG1 when sorting by warning/file/line.
+   //
+   static bool IsSortedByWarning
+      (const WarningLog& log1, const WarningLog& log2);
+private:
+   //  The total number of warnings of each type, globally.
+   //
+   static size_t WarningCounts[Warning_N];
+};
+
+//------------------------------------------------------------------------------
+
+size_t CodeInfo::LineTypeCounts[] = { };
+
+size_t CodeInfo::WarningCounts[] = { };
+
+std::vector< WarningLog > CodeInfo::Warnings = std::vector< WarningLog >();
+
+//------------------------------------------------------------------------------
+
+fn_name CodeInfo_GenerateReport = "CodeInfo.GenerateReport";
+
+void CodeInfo::GenerateReport(ostream* stream, const SetOfIds& set)
+{
+   Debug::ft(CodeInfo_GenerateReport);
+
+   //  Clear any previous report's global counts.
+   //
+   for(auto t = 0; t < LineType_N; ++t) LineTypeCounts[t] = 0;
+   for(auto w = 0; w < Warning_N; ++w) WarningCounts[w] = 0;
+
+   //  Run a check on each file in SET, as well as on each C++ item.
+   //
+   auto& files = Singleton< Library >::Instance()->Files();
+
+   for(auto f = set.cbegin(); f != set.cend(); ++f)
+   {
+      files.At(*f)->Check();
+   }
+
+   Singleton< CxxRoot >::Instance()->GlobalNamespace()->Check();
+
+   //  Return if a report is not required.
+   //
+   if(stream == nullptr) return;
+
+   //  Count the lines of each type.
+   //
+   for(auto f = set.cbegin(); f != set.cend(); ++f)
+   {
+      files.At(*f)->GetLineCounts();
+   }
+
+   std::vector< WarningLog > warnings;
+
+   //  Count the total number of warnings of each type that appear in files
+   //  belonging to SET, extracing them into the local set of warnings.
+   //
+   for(auto item = Warnings.cbegin(); item != Warnings.cend(); ++item)
+   {
+      if(set.find(item->file->Fid()) != set.cend())
+      {
+         ++WarningCounts[item->warning];
+         warnings.push_back(*item);
+      }
+   }
+
+   //  Display the total number of lines of each type.
+   //
+   *stream << "LINE COUNTS" << CRLF;
+
+   for(auto t = 0; t < LineType_N; ++t)
+   {
+      *stream << setw(12) << LineType(t)
+         << spaces(2) << setw(6) << LineTypeCounts[t] << CRLF;
+   }
+
+   //  Display the total number of warnings of each type.
+   //
+   *stream << CRLF << "WARNING COUNTS" << CRLF;
+
+   for(auto w = 0; w < Warning_N; ++w)
+   {
+      if(WarningCounts[w] != 0)
+      {
+         *stream << setw(6) << WarningCode(Warning(w))
+            << setw(6) << WarningCounts[w] << spaces(2) << Warning(w) << CRLF;
+      }
+   }
+
+   *stream << string(120, '=') << CRLF;
+   *stream << "WARNINGS SORTED BY TYPE/FILE/LINE" << CRLF;
+
+   //  Sort and output the warnings by warning type/file/line.
+   //
+   std::sort(warnings.begin(), warnings.end(), IsSortedByWarning);
+
+   auto item = warnings.cbegin();
+   auto last = warnings.cend();
+
+   while(item != last)
+   {
+      auto w = item->warning;
+      *stream << WarningCode(w) << SPACE << w << CRLF;
+
+      do
+      {
+         *stream << spaces(2) << item->file->FullName();
+         *stream << '(' << item->line + 1;
+         if(item->offset != 0) *stream << '/' << item->offset;
+         *stream << "): ";
+
+         if((item->line != 0) || item->expl.empty())
+         {
+            *stream << item->file->GetLexer().GetNthLine(item->line);
+         }
+
+         *stream << item->expl << CRLF;
+         ++item;
+      }
+      while((item != last) && (item->warning == w));
+   }
+
+   *stream << string(120, '=') << CRLF;
+   *stream << "WARNINGS SORTED BY FILE/TYPE/LINE" << CRLF;
+
+   //  Sort and output the warnings by file/warning type/line.
+   //
+   std::sort(warnings.begin(), warnings.end(), IsSortedByFile);
+
+   item = warnings.cbegin();
+   last = warnings.cend();
+
+   while(item != last)
+   {
+      auto f = item->file;
+      *stream << f->FullName() << CRLF;
+
+      do
+      {
+         auto w = item->warning;
+         *stream << spaces(2) << WarningCode(w) << SPACE << w << CRLF;
+
+         do
+         {
+            *stream << spaces(4) << item->line + 1;
+            if(item->offset != 0) *stream << '/' << item->offset;
+            *stream << ": ";
+
+            if((item->line != 0) || item->expl.empty())
+            {
+               *stream << f->GetLexer().GetNthLine(item->line);
+            }
+
+            *stream << item->expl << CRLF;
+            ++item;
+         }
+         while((item != last) && (item->warning == w) && (item->file == f));
+      }
+      while((item != last) && (item->file == f));
+   }
+}
+
+//------------------------------------------------------------------------------
+
+bool CodeInfo::IsSortedByFile(const WarningLog& log1, const WarningLog& log2)
+{
+   auto result = strCompare(log1.file->FullName(), log2.file->FullName());
+   if(result == -1) return true;
+   if(result == 1) return false;
+   if(log1.warning < log2.warning) return true;
+   if(log1.warning > log2.warning) return false;
+   if(log1.line < log2.line) return true;
+   if(log1.line > log2.line) return false;
+   if(log1.expl < log2.expl) return true;
+   if(log1.expl > log2.expl) return false;
+   return (&log1 < &log2);
+}
+
+//------------------------------------------------------------------------------
+
+bool CodeInfo::IsSortedByWarning(const WarningLog& log1, const WarningLog& log2)
+{
+   if(log1.warning < log2.warning) return true;
+   if(log1.warning > log2.warning) return false;
+   auto result = strCompare(log1.file->FullName(), log2.file->FullName());
+   if(result == -1) return true;
+   if(result == 1) return false;
+   if(log1.line < log2.line) return true;
+   if(log1.line > log2.line) return false;
+   if(log1.expl < log2.expl) return true;
+   if(log1.expl > log2.expl) return false;
+   return (&log1 < &log2);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeInfo_FindWarning = "CodeInfo.FindWarning";
+
+word CodeInfo::FindWarning(const WarningLog& log)
+{
+   Debug::ft(CodeInfo_FindWarning);
+
+   for(size_t i = 0; i < Warnings.size(); ++i)
+   {
+      if(Warnings.at(i) == log) return i;
+   }
+
+   return -1;
+}
+
+//------------------------------------------------------------------------------
+
+string CodeInfo::WarningCode(Warning warning)
+{
+   std::ostringstream stream;
+
+   stream << 'W' << setw(3) << std::setfill('0') << int(warning);
+   return stream.str();
+}
+
+//==============================================================================
+//
 //  Used when editing a code file.
 //
 class Editor
@@ -67,12 +355,13 @@ public:
    explicit Editor(istreamPtr& input);
    ~Editor();
    word Read(string& expl);
-   word AddInclude(const string& item, string& expl);
-   word RemoveInclude(const string& item, string& expl);
-   word AddForward(string& item, string& expl);
-   word RemoveForward(string& item, string& expl);
-   word AddUsing(string& item, string& expl);
-   word RemoveUsing(string& item, string& expl);
+   word SortIncludes(const WarningLog& log, string& expl);
+   word AddInclude(const WarningLog& log, string& expl);
+   word RemoveInclude(const WarningLog& log, string& expl);
+   word AddForward(const WarningLog& log, string& expl);
+   word RemoveForward(const WarningLog& log, string& expl);
+   word AddUsing(const WarningLog& log, string& expl);
+   word RemoveUsing(const WarningLog& log, string& expl);
    word Write(const string& path, string& expl);
 private:
    word GetProlog(string& expl);
@@ -116,7 +405,7 @@ Editor::~Editor()
 
 fn_name Editor_AddForward = "Editor.AddForward";
 
-word Editor::AddForward(string& item, string& expl)
+word Editor::AddForward(const WarningLog& log, string& expl)
 {
    Debug::ft(Editor_AddForward);
 
@@ -130,21 +419,14 @@ word Editor::AddForward(string& item, string& expl)
 
 fn_name Editor_AddInclude = "Editor.AddInclude";
 
-word Editor::AddInclude(const string& item, string& expl)
+word Editor::AddInclude(const WarningLog& log, string& expl)
 {
    Debug::ft(Editor_AddInclude);
 
-   auto file = Singleton< Library >::Instance()->FindFile(item);
-
-   if(file == nullptr)
-   {
-      expl = NoFileExpl;
-      return -2;
-   }
-
-   auto include = file->MakeInclude();
+   string include = HASH_INCLUDE_STR;
+   include.push_back(SPACE);
+   include += log.expl;
    auto& incls = (include.back() == '>' ? extIncls_ : intIncls_);
-
    InsertInclude(include, incls);
    changed_ = true;
    return 0;
@@ -154,7 +436,7 @@ word Editor::AddInclude(const string& item, string& expl)
 
 fn_name Editor_AddUsing = "Editor.AddUsing";
 
-word Editor::AddUsing(string& item, string& expl)
+word Editor::AddUsing(const WarningLog& log, string& expl)
 {
    Debug::ft(Editor_AddUsing);
 
@@ -222,6 +504,7 @@ word Editor::GetIncludes(string& expl)
    while(input_->peek() != EOF)
    {
       std::getline(*input_, str);
+
       if(str.find(HASH_INCLUDE_STR) != 0)
       {
          epilog_.push_back(str);
@@ -229,6 +512,7 @@ word Editor::GetIncludes(string& expl)
       }
 
       auto next = str.find_first_not_of(SPACE, strlen(HASH_INCLUDE_STR));
+
       if(next == string::npos)
       {
          expl = "Empty #include directive.";
@@ -236,9 +520,7 @@ word Editor::GetIncludes(string& expl)
       }
 
       auto& incls = (str[next] == '<' ? extIncls_ : intIncls_);
-
-      InsertInclude(str, incls);
-      if(*incls.rbegin() != str) changed_ = true;
+      incls.push_back(str);
    }
 
    return 0;
@@ -314,7 +596,7 @@ word Editor::Read(string& expl)
 
 fn_name Editor_RemoveForward = "Editor.RemoveForward";
 
-word Editor::RemoveForward(string& item, string& expl)
+word Editor::RemoveForward(const WarningLog& log, string& expl)
 {
    Debug::ft(Editor_RemoveForward);
 
@@ -328,19 +610,11 @@ word Editor::RemoveForward(string& item, string& expl)
 
 fn_name Editor_RemoveInclude = "Editor.RemoveInclude";
 
-word Editor::RemoveInclude(const string& item, string& expl)
+word Editor::RemoveInclude(const WarningLog& log, string& expl)
 {
    Debug::ft(Editor_RemoveInclude);
 
-   auto file = Singleton< Library >::Instance()->FindFile(item);
-
-   if(file == nullptr)
-   {
-      expl = NoFileExpl;
-      return -2;
-   }
-
-   auto include = file->MakeInclude();
+   auto include = log.file->GetLexer().GetNthLine(log.line);
    auto& incls = (include.back() == '>' ? extIncls_ : intIncls_);
 
    if(!EraseInclude(include, incls))
@@ -357,7 +631,7 @@ word Editor::RemoveInclude(const string& item, string& expl)
 
 fn_name Editor_RemoveUsing = "Editor.RemoveUsing";
 
-word Editor::RemoveUsing(string& item, string& expl)
+word Editor::RemoveUsing(const WarningLog& log, string& expl)
 {
    Debug::ft(Editor_RemoveUsing);
 
@@ -365,6 +639,28 @@ word Editor::RemoveUsing(string& item, string& expl)
 
    expl = NotImplementedExpl;
    return -1;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_SortIncludes = "Editor.SortIncludes";
+
+word Editor::SortIncludes(const WarningLog& log, string& expl)
+{
+   Debug::ft(Editor_SortIncludes);
+
+   auto include = log.file->GetLexer().GetNthLine(log.line);
+
+   if(include.find(HASH_INCLUDE_STR) != 0)
+   {
+      expl = "#include not found in unsorted #include directive";
+      return -6;
+   }
+
+   auto& list = (include.find('<') != string::npos ? extIncls_ : intIncls_);
+   std::sort(list.begin(), list.end());
+   changed_ = true;
+   return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -383,6 +679,7 @@ word Editor::Write(const string& path, string& expl)
    //
    auto file = path + ".tmp";
    auto output = ostreamPtr(SysFile::CreateOstream(file.c_str(), true));
+
    if(output == nullptr)
    {
       expl = "Failed to open output file.";
@@ -416,277 +713,14 @@ word Editor::Write(const string& path, string& expl)
    remove(path.c_str());
 
    auto err = rename(file.c_str(), path.c_str());
+
    if(err != 0)
    {
       expl = "Failed to rename new file to old.";
       return -6;
    }
 
-   return 1;
-}
-
-//==============================================================================
-//
-//  Used to log a warning.
-//
-struct WarningLog
-{
-   const CodeFile* file;  // file where warning occurred
-   size_t line;           // line where warning occurred
-   Warning warning;       // type of warning
-   size_t offset;         // warning-specific; displayed if non-zero
-
-   bool operator==(const WarningLog& that) const;
-   bool operator!=(const WarningLog& that) const;
-};
-
-//------------------------------------------------------------------------------
-
-bool WarningLog::operator==(const WarningLog& that) const
-{
-   if(this->file != that.file) return false;
-   if(this->line != that.line) return false;
-   if(this->warning != that.warning) return false;
-   return (this->offset == that.offset);
-}
-
-//------------------------------------------------------------------------------
-
-bool WarningLog::operator!=(const WarningLog& that) const
-{
-   return !(*this == that);
-}
-
-//==============================================================================
-//
-//  Information generated when analyzing, parsing, and executing code.
-//
-class CodeInfo
-{
-public:
-   //  Generates a report in STREAM for the files in SET.  The report includes
-   //  line type counts and warnings found during parsing and "execution".
-   //
-   static void GenerateReport(ostream& stream, const SetOfIds& set);
-
-   //  Returns LOG's index if it has already been reported, else -1.
-   //
-   static word FindWarning(const WarningLog& log);
-
-   //  The number of lines of each type, globally.
-   //
-   static size_t LineTypeCounts[LineType_N];
-
-   //  Warnings found in all files.
-   //
-   static std::vector< WarningLog > Warnings;
-private:
-   //  Returns the string "Wnnn", where nnn is WARNING's integer value.
-   //
-   static std::string WarningCode(Warning warning);
-
-   //  Returns true if LOG2 > LOG1 when sorting by file/line/warning.
-   //
-   static bool IsSortedByFile
-      (const WarningLog& log1, const WarningLog& log2);
-
-   //  Returns true if LOG2 > LOG1 when sorting by warning/file/line.
-   //
-   static bool IsSortedByWarning
-      (const WarningLog& log1, const WarningLog& log2);
-
-   //  The total number of warnings of each type, globally.
-   //
-   static size_t WarningCounts[Warning_N];
-};
-
-//------------------------------------------------------------------------------
-
-size_t CodeInfo::LineTypeCounts[] = { };
-
-size_t CodeInfo::WarningCounts[] = { };
-
-std::vector< WarningLog > CodeInfo::Warnings = std::vector< WarningLog >();
-
-//------------------------------------------------------------------------------
-
-fn_name CodeInfo_GenerateReport = "CodeInfo.GenerateReport";
-
-void CodeInfo::GenerateReport(ostream& stream, const SetOfIds& set)
-{
-   Debug::ft(CodeInfo_GenerateReport);
-
-   //  Clear any previous report's global counts.
-   //
-   for(auto t = 0; t < LineType_N; ++t) LineTypeCounts[t] = 0;
-   for(auto w = 0; w < Warning_N; ++w) WarningCounts[w] = 0;
-
-   //  Run a check on each file in SET, as well as on each C++ item.
-   //
-   auto& files = Singleton< Library >::Instance()->Files();
-
-   for(auto f = set.cbegin(); f != set.cend(); ++f)
-   {
-      files.At(*f)->Check();
-   }
-
-   Singleton< CxxRoot >::Instance()->GlobalNamespace()->Check();
-
-   //  Count the lines of each type.
-   //
-   for(auto f = set.cbegin(); f != set.cend(); ++f)
-   {
-      files.At(*f)->GetLineCounts();
-   }
-
-   std::vector< WarningLog > warnings;
-
-   //  Count the total number of warnings of each type that appear in files
-   //  belonging to SET, extracing them into the local set of warnings.
-   //
-   for(auto item = Warnings.cbegin(); item != Warnings.cend(); ++item)
-   {
-      if(set.find(item->file->Fid()) != set.cend())
-      {
-         ++WarningCounts[item->warning];
-         warnings.push_back(*item);
-      }
-   }
-
-   //  Display the total number of lines of each type.
-   //
-   stream << "LINE COUNTS" << CRLF;
-
-   for(auto t = 0; t < LineType_N; ++t)
-   {
-      stream << setw(12) << LineType(t)
-         << spaces(2) << setw(6) << LineTypeCounts[t] << CRLF;
-   }
-
-   //  Display the total number of warnings of each type.
-   //
-   stream << CRLF << "WARNING COUNTS" << CRLF;
-
-   for(auto w = 0; w < Warning_N; ++w)
-   {
-      if(WarningCounts[w] != 0)
-      {
-         stream << setw(6) << WarningCode(Warning(w))
-            << setw(6) << WarningCounts[w] << spaces(2) << Warning(w) << CRLF;
-      }
-   }
-
-   stream << string(120, '=') << CRLF;
-   stream << "WARNINGS SORTED BY TYPE/FILE/LINE" << CRLF;
-
-   //  Sort and output the warnings by warning type/file/line.
-   //
-   std::sort(warnings.begin(), warnings.end(), IsSortedByWarning);
-
-   auto item = warnings.cbegin();
-   auto last = warnings.cend();
-
-   while(item != last)
-   {
-      auto w = item->warning;
-      stream << WarningCode(w) << SPACE << Warning(w) << CRLF;
-
-      do
-      {
-         stream << spaces(2) << item->file->FullName() << '(' << item->line + 1;
-         if(item->offset != 0) stream << '/' << item->offset;
-         stream << "): ";
-         stream << item->file->GetLexer().GetNthLine(item->line) << CRLF;
-         ++item;
-      }
-      while((item != last) && (item->warning == w));
-   }
-
-   stream << string(120, '=') << CRLF;
-   stream << "WARNINGS SORTED BY FILE/TYPE/LINE" << CRLF;
-
-   //  Sort and output the warnings by file/warning type/line.
-   //
-   std::sort(warnings.begin(), warnings.end(), IsSortedByFile);
-
-   item = warnings.cbegin();
-   last = warnings.cend();
-
-   while(item != last)
-   {
-      auto f = item->file;
-      stream << f->FullName() << ':' << CRLF;
-
-      do
-      {
-         auto w = item->warning;
-         stream << spaces(2) << WarningCode(w) << SPACE << w << CRLF;
-
-         do
-         {
-            stream << spaces(4) << "line " << item->line + 1;
-            if(item->offset != 0) stream << '/' << item->offset;
-            stream << ": " << f->GetLexer().GetNthLine(item->line) << CRLF;
-            ++item;
-         }
-         while((item != last) && (item->warning == w) && (item->file == f));
-      }
-      while((item != last) && (item->file == f));
-   }
-}
-
-//------------------------------------------------------------------------------
-
-bool CodeInfo::IsSortedByFile(const WarningLog& log1, const WarningLog& log2)
-{
-   auto result = strCompare(log1.file->FullName(), log2.file->FullName());
-   if(result == -1) return true;
-   if(result == 1) return false;
-   if(log1.warning < log2.warning) return true;
-   if(log1.warning > log2.warning) return false;
-   if(log1.line < log2.line) return true;
-   if(log1.line > log2.line) return false;
-   return (&log1 < &log2);
-}
-
-//------------------------------------------------------------------------------
-
-bool CodeInfo::IsSortedByWarning(const WarningLog& log1, const WarningLog& log2)
-{
-   if(log1.warning < log2.warning) return true;
-   if(log1.warning > log2.warning) return false;
-   auto result = strCompare(log1.file->FullName(), log2.file->FullName());
-   if(result == -1) return true;
-   if(result == 1) return false;
-   if(log1.line < log2.line) return true;
-   if(log1.line > log2.line) return false;
-   return (&log1 < &log2);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CodeInfo_FindWarning = "CodeInfo.FindWarning";
-
-word CodeInfo::FindWarning(const WarningLog& log)
-{
-   Debug::ft(CodeInfo_FindWarning);
-
-   for(size_t i = 0; i < Warnings.size(); ++i)
-   {
-      if(Warnings.at(i) == log) return i;
-   }
-
-   return -1;
-}
-
-//------------------------------------------------------------------------------
-
-string CodeInfo::WarningCode(Warning warning)
-{
-   std::ostringstream stream;
-
-   stream << 'W' << setw(3) << std::setfill('0') << int(warning);
-   return stream.str();
+   return 0;
 }
 
 //==============================================================================
@@ -730,33 +764,35 @@ void AddForwardDependencies(const CxxUsageSets& symbols, CxxNamedSet& inclSet)
 
 //------------------------------------------------------------------------------
 
-void DisplayFileNames(ostream& stream, const SetOfIds& fids, fixed_string title)
+void DisplayFileNames(ostream* stream, const SetOfIds& fids, fixed_string title)
 {
    //  Display, in STREAM, the names of files identified in FIDS.
    //  TITLE provides an explanation for the list.
    //
+   if(stream == nullptr) return;
    if(fids.empty()) return;
 
    auto& files = Singleton< Library >::Instance()->Files();
-   stream << spaces(3) << title << CRLF;
+   *stream << spaces(3) << title << CRLF;
 
    for(auto a = fids.cbegin(); a != fids.cend(); ++a)
    {
-      stream << spaces(6) << files.At(*a)->Name() << CRLF;
+      *stream << spaces(6) << files.At(*a)->Name() << CRLF;
    }
 }
 
 //------------------------------------------------------------------------------
 
 void DisplaySymbols
-   (ostream& stream, const CxxNamedSet& items, fixed_string title)
+   (ostream* stream, const CxxNamedSet& items, fixed_string title)
 {
    //  Display, in STREAM, the names in ITEMS, including their scope.
    //  TITLE provides an explanation for the list.  Put the symbols in
    //  a stringSet so that they will always appear in the same order.
    //
+   if(stream == nullptr) return;
    if(items.empty()) return;
-   stream << spaces(3) << title << CRLF;
+   *stream << spaces(3) << title << CRLF;
 
    stringSet names;
 
@@ -767,21 +803,22 @@ void DisplaySymbols
 
    for(auto n = names.cbegin(); n != names.cend(); ++n)
    {
-      stream << spaces(6) << *n << CRLF;
+      *stream << spaces(6) << *n << CRLF;
    }
 }
 
 //------------------------------------------------------------------------------
 
 void DisplaySymbolsAndFiles
-   (ostream& stream, const CxxNamedSet& set, const string& title)
+   (ostream* stream, const CxxNamedSet& set, const string& title)
 {
    //  Display, in STREAM, the symbols in SET and where they are defined.
    //  Include TITLE, which describes the contents of SET.  Put the symbols
    //  in a stringSet so that they will always appear in the same order.
    //
+   if(stream == nullptr) return;
    if(set.empty()) return;
-   stream << spaces(3) << title << CRLF;
+   *stream << spaces(3) << title << CRLF;
 
    stringSet names;
 
@@ -800,7 +837,7 @@ void DisplaySymbolsAndFiles
 
    for(auto n = names.cbegin(); n != names.cend(); ++n)
    {
-      stream << spaces(6) << *n << CRLF;
+      *stream << spaces(6) << *n << CRLF;
    }
 }
 
@@ -1017,7 +1054,8 @@ CodeFile::CodeFile(const string& name, CodeDir* dir) : LibraryItem(name),
    firstIncl_(NIL_ID),
    slashAsterisk_(false),
    parsed_(Unparsed),
-   location_(FuncNoTemplate)
+   location_(FuncNoTemplate),
+   checked_(false)
 {
    Debug::ft(CodeFile_ctor);
 
@@ -1152,7 +1190,7 @@ const SetOfIds& CodeFile::Affecters() const
 
 fn_name CodeFile_CanBeTrimmed = "CodeFile.CanBeTrimmed";
 
-bool CodeFile::CanBeTrimmed(ostream& stream) const
+bool CodeFile::CanBeTrimmed(ostream* stream) const
 {
    Debug::ft(CodeFile_CanBeTrimmed);
 
@@ -1161,16 +1199,17 @@ bool CodeFile::CanBeTrimmed(ostream& stream) const
    //
    if(code_.empty()) return false;
    if(isSubsFile_) return false;
+   if(stream == nullptr) return (location_ != FuncInTemplate);
 
-   stream << Name() << CRLF;
+   *stream << Name() << CRLF;
 
    switch(location_)
    {
    case FuncInTemplate:
-      stream << spaces(3) << "OMITTED: mostly unexecuted." << CRLF;
+      *stream << spaces(3) << "OMITTED: mostly unexecuted." << CRLF;
       return false;
    case FuncIsTemplate:
-      stream << spaces(3) << "WARNING: partially unexecuted." << CRLF;
+      *stream << spaces(3) << "WARNING: partially unexecuted." << CRLF;
    }
 
    return true;
@@ -1193,11 +1232,17 @@ void CodeFile::Check()
 {
    Debug::ft(CodeFile_Check);
 
+   if(checked_) return;
+
    Debug::Progress(Name(), true);
 
    //  Don't check an empty file or a substitute file.
    //
-   if(code_.empty() || isSubsFile_) return;
+   if(code_.empty() || isSubsFile_)
+   {
+      checked_ = true;
+      return;
+   }
 
    for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
    {
@@ -1206,11 +1251,13 @@ void CodeFile::Check()
 
    CheckProlog();
    CheckIncludeGuard();
-   CheckIncludes();
+   CheckIncludeOrder();
    CheckUsings();
    CheckSeparation();
    CheckFunctionOrder();
    CheckDebugFt();
+   Trim(nullptr);
+   checked_ = true;
 }
 
 //------------------------------------------------------------------------------
@@ -1437,11 +1484,11 @@ void CodeFile::CheckIncludeGuard()
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_CheckIncludes = "CodeFile.CheckIncludes";
+fn_name CodeFile_CheckIncludeOrder = "CodeFile.CheckIncludeOrder";
 
-void CodeFile::CheckIncludes() const
+void CodeFile::CheckIncludeOrder() const
 {
-   Debug::ft(CodeFile_CheckIncludes);
+   Debug::ft(CodeFile_CheckIncludeOrder);
 
    const Include* prev = nullptr;
 
@@ -1887,7 +1934,7 @@ Editor* CodeFile::CreateEditor(word& rc, string& expl) const
       return nullptr;
    }
 
-   auto input = Stream();
+   auto input = InputStream();
    if(input == nullptr)
    {
       expl = "Failed to open source code file.";
@@ -2140,6 +2187,134 @@ Using* CodeFile::FindUsingFor(const string& name, size_t prefix,
 
 //------------------------------------------------------------------------------
 
+fixed_string FixPrompt = "Fix?";
+fixed_string FixChars = "ynsq";
+fixed_string FixHelp = "Enter y(yes) n(no) s(skip file) q(quit): ";
+
+fn_name CodeFile_Fix = "CodeFile.Fix";
+
+word CodeFile::Fix(CliThread& cli, string& expl)
+{
+   Debug::ft(CodeFile_Fix);
+
+   auto& Warnings = CodeInfo::Warnings;
+
+   std::vector< WarningLog > warnings;
+
+   //  Extract the warnings associated with this file.
+   //
+   for(auto item = Warnings.cbegin(); item != Warnings.cend(); ++item)
+   {
+      if(item->file == this)
+      {
+         warnings.push_back(*item);
+      }
+   }
+
+   if(warnings.empty()) return 0;
+
+   //  Create an editor for the file.  Reading the file, and then writing
+   //  it, automatically sorts its #include statements into standard order.
+   //
+   word rc = 0;
+   auto editor = std::unique_ptr< Editor >(CreateEditor(rc, expl));
+   if(editor == nullptr) return rc;
+
+   rc = editor->Read(expl);
+   if(rc != 0) return rc;
+
+   char reply = 'y';
+
+   //  Sort the warnings by warning type/file/line.
+   //
+   std::sort(warnings.begin(), warnings.end(), CodeInfo::IsSortedByWarning);
+
+   size_t found = 0;
+   auto exit = false;
+
+   for(auto item = warnings.cbegin(); item != warnings.cend(); ++item)
+   {
+      switch(item->warning)
+      {
+      case IncludeNotSorted:
+      case IncludeAdd:
+      case IncludeRemove:
+         ++found;
+         break;
+      default:
+         continue;
+      }
+
+      if(found == 1) *cli.obuf << item->file->Name() << ':' << CRLF;
+      *cli.obuf << spaces(2) << "Line " << item->line + 1;
+      if(item->offset != 0) *cli.obuf << '/' << item->offset;
+      *cli.obuf << ": " << Warning(item->warning);
+      *cli.obuf << SPACE << item->expl << CRLF;
+
+      if((item->line != 0) || item->expl.empty())
+      {
+         *cli.obuf << spaces(2);
+         *cli.obuf << item->file->GetLexer().GetNthLine(item->line) << CRLF;
+      }
+
+      reply = cli.CharPrompt(FixPrompt, FixChars, FixHelp);
+      expl.clear();
+
+      switch(reply)
+      {
+      case 'y':
+         switch(item->warning)
+         {
+         case IncludeNotSorted:
+            rc = editor->SortIncludes(*item, expl);
+            break;
+         case IncludeAdd:
+            rc = editor->AddInclude(*item, expl);
+            break;
+         case IncludeRemove:
+            rc = editor->RemoveInclude(*item, expl);
+            break;
+         case ForwardAdd:
+            rc = editor->AddForward(*item, expl);
+            break;
+         case ForwardRemove:
+            rc = editor->RemoveForward(*item, expl);
+            break;
+         case UsingAdd:
+            rc = editor->AddUsing(*item, expl);
+            break;
+         case UsingRemove:
+            rc = editor->RemoveUsing(*item, expl);
+            break;
+         default:
+            *cli.obuf << "Internal error: cannot try to fix warning." << CRLF;
+         }
+
+         *cli.obuf << spaces(2) << (rc >= 0 ? SuccessExpl : expl) << CRLF;
+         break;
+
+      case 'n':
+         break;
+
+      case 's':
+      case 'q':
+         exit = true;
+         cli.Flush();
+      }
+   }
+
+   if((found > 0) && !exit)
+   {
+      *cli.obuf << "End of supported warnings." << CRLF;
+   }
+
+   rc = editor->Write(FullName(), expl);
+   if((rc == 0) && (reply == 'q')) rc = -1;
+   return rc;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeFile_Format = "CodeFile.Format";
 
 word CodeFile::Format(string& expl)
@@ -2172,7 +2347,7 @@ string CodeFile::FullName() const
 
 fn_name CodeFile_GenerateReport = "CodeFile.GenerateReport";
 
-void CodeFile::GenerateReport(ostream& stream, const SetOfIds& set)
+void CodeFile::GenerateReport(ostream* stream, const SetOfIds& set)
 {
    Debug::ft(CodeFile_GenerateReport);
 
@@ -2382,6 +2557,22 @@ const SetOfIds& CodeFile::Implementers() const
 
 //------------------------------------------------------------------------------
 
+fn_name CodeFile_InputStream = "CodeFile.InputStream";
+
+istreamPtr CodeFile::InputStream() const
+{
+   Debug::ft(CodeFile_InputStream);
+
+   //  If the file's directory is unknown (e.g. in the standard library), it
+   //  can't be opened.  The file could nonetheless be known, however, as the
+   //  result of parsing an #include directive.
+   //
+   if(dir_ == nullptr) return nullptr;
+   return istreamPtr(SysFile::CreateIstream(FullName().c_str()));
+}
+
+//------------------------------------------------------------------------------
+
 void CodeFile::InsertClass(Class* cls)
 {
    items_.push_back(cls);
@@ -2503,9 +2694,60 @@ bool CodeFile::IsTemplateHeader() const
 
 //------------------------------------------------------------------------------
 
+fn_name CodeFile_LogAddIncludes = "CodeFile.LogAddIncludes";
+
+void CodeFile::LogAddIncludes(const SetOfIds& fids) const
+{
+   Debug::ft(CodeFile_LogAddIncludes);
+
+   //  For each file in FIDS, generate a log saying that an #include for
+   //  it should be added.  Put the filename in angle brackets or quotes,
+   //  whichever is appropriate.
+   //
+   auto& files = Singleton< Library >::Instance()->Files();
+
+   for(auto a = fids.cbegin(); a != fids.cend(); ++a)
+   {
+      string fn;
+      auto f = files.At(*a);
+      auto x = f->IsSubsFile();
+      fn.push_back(x ? '<' : QUOTE);
+      fn += f->Name();
+      fn.push_back(x ? '>' : QUOTE);
+      LogPos(0, IncludeAdd, 0, fn);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeFile_LogItemWarnings = "CodeFile.LogItemWarnings";
+
+void CodeFile::LogItemWarnings(const CxxNamedSet& items, Warning warning) const
+{
+   Debug::ft(CodeFile_LogItemWarnings);
+
+   //  For each item in ITEMS, generate a log for WARNING.  Put their
+   //  names in a stringSet so they will always appear in the same order.
+   //
+   stringSet names;
+
+   for(auto a = items.cbegin(); a != items.cend(); ++a)
+   {
+      names.insert((*a)->ScopedName(true));
+   }
+
+   for(auto n = names.cbegin(); n != names.cend(); ++n)
+   {
+      LogPos(0, warning, 0, *n);
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeFile_LogLine = "CodeFile.LogLine";
 
-void CodeFile::LogLine(size_t n, Warning warning, size_t offset) const
+void CodeFile::LogLine
+   (size_t n, Warning warning, size_t offset, const string& expl) const
 {
    Debug::ft(CodeFile_LogLine);
 
@@ -2525,6 +2767,7 @@ void CodeFile::LogLine(size_t n, Warning warning, size_t offset) const
       log.line = n;
       log.warning = warning;
       log.offset = offset;
+      log.expl = expl;
 
       if(CodeInfo::FindWarning(log) < 0) CodeInfo::Warnings.push_back(log);
    }
@@ -2534,76 +2777,92 @@ void CodeFile::LogLine(size_t n, Warning warning, size_t offset) const
 
 fn_name CodeFile_LogPos = "CodeFile.LogPos";
 
-void CodeFile::LogPos(size_t pos, Warning warning, size_t offset) const
+void CodeFile::LogPos
+   (size_t pos, Warning warning, size_t offset, const string& expl) const
 {
    Debug::ft(CodeFile_LogPos);
 
-   LogLine(lexer_.GetLineNum(pos), warning, offset);
+   LogLine(lexer_.GetLineNum(pos), warning, offset, expl);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_MakeInclude = "CodeFile.MakeInclude";
+fn_name CodeFile_LogRemoveForwards = "CodeFile.LogRemoveForwards";
 
-string CodeFile::MakeInclude() const
+void CodeFile::LogRemoveForwards(const CxxNamedSet& items) const
 {
-   Debug::ft(CodeFile_MakeInclude);
+   Debug::ft(CodeFile_LogRemoveForwards);
 
-   auto front = (IsSubsFile() ? '<' : QUOTE);
-   auto back = (front == '<' ? '>' : QUOTE);
-   string include = HASH_INCLUDE_STR;
-   include.push_back(SPACE);
-   include += front + Name() + back;
-   return include;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CodeFile_Modify = "CodeFile.Modify";
-
-word CodeFile::Modify(Modification act, string& item, string& expl)
-{
-   Debug::ft(CodeFile_Modify);
-
-   //  Reading the file, and then writing it, automatically sorts its
-   //  #include statements into standard order.
+   //  Log each forward declaration that should be removed.  If the
+   //  declaration cannot be found (something that shouldn't occur),
+   //  just display its symbol.
    //
-   word rc = 0;
-   auto editor = std::unique_ptr< Editor >(CreateEditor(rc, expl));
-   if(editor == nullptr) return rc;
-
-   rc = editor->Read(expl);
-   if(rc != 0) return rc;
-
-   switch(act)
+   for(auto a = items.cbegin(); a != items.cend(); ++a)
    {
-   case NoChange:
-      break;
-   case AddInclude:
-      rc = editor->AddInclude(item, expl);
-      break;
-   case RemoveInclude:
-      rc = editor->RemoveInclude(item, expl);
-      break;
-   case AddForward:
-      rc = editor->AddForward(item, expl);
-      break;
-   case RemoveForward:
-      rc = editor->RemoveForward(item, expl);
-      break;
-   case AddUsing:
-      rc = editor->AddUsing(item, expl);
-      break;
-   case RemoveUsing:
-      rc = editor->RemoveUsing(item, expl);
-      break;
-   default:
-      expl = SystemErrorExpl;
-      return act;
-   }
+      auto found = false;
+      auto name = (*a)->ScopedName(true);
 
-   if(rc != 0) return rc;
-   return editor->Write(FullName(), expl);
+      for(auto f = forws_.cbegin(); f != forws_.cend(); ++f)
+      {
+         if((*f)->ScopedName(true) == name)
+         {
+            LogPos((*f)->GetPos(), ForwardRemove);
+            found = true;
+         }
+      }
+
+      if(!found) LogPos(0, ForwardRemove, 0, name);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeFile_LogRemoveIncludes = "CodeFile.LogRemoveIncludes";
+
+void CodeFile::LogRemoveIncludes(const SetOfIds& fids) const
+{
+   Debug::ft(CodeFile_LogRemoveIncludes);
+
+   //  For each file in FIDS, generate a log saying that the #include for
+   //  it should be removed.  If the #include cannot be found (something
+   //  that shouldn't occur), just display its filename.
+   //
+   auto& files = Singleton< Library >::Instance()->Files();
+
+   for(auto a = fids.cbegin(); a != fids.cend(); ++a)
+   {
+      string fn;
+      auto f = files.At(*a);
+      auto x = f->IsSubsFile();
+      fn.push_back(x ? '<' : QUOTE);
+      fn += f->Name();
+      fn.push_back(x ? '>' : QUOTE);
+      auto pos = code_.find(fn);
+
+      if(pos == string::npos)
+         LogPos(0, IncludeRemove, 0, fn);
+      else
+         LogPos(pos, IncludeRemove);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeFile_LogRemoveUsings = "CodeFile.LogRemoveUsings";
+
+void CodeFile::LogRemoveUsings() const
+{
+   Debug::ft(CodeFile_LogRemoveUsings);
+
+   //  Log each using statement that should be removed.
+   //
+   for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
+   {
+      if((*u)->IsToBeRemoved() && !(*u)->WasAdded())
+      {
+         LogPos((*u)->GetPos(), UsingRemove);
+      }
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -2766,7 +3025,7 @@ void CodeFile::Scan()
 
    if(!code_.empty()) return;
 
-   auto input = Stream();
+   auto input = InputStream();
    if(input == nullptr) return;
    input->clear();
    input->seekg(0);
@@ -2898,25 +3157,9 @@ void CodeFile::Shrink()
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_Stream = "CodeFile.Stream";
-
-istreamPtr CodeFile::Stream() const
-{
-   Debug::ft(CodeFile_Stream);
-
-   //  If the file's directory is unknown (e.g. in the standard library), it
-   //  can't be opened.  The file could nonetheless be known, however, as the
-   //  result of parsing an #include directive.
-   //
-   if(dir_ == nullptr) return nullptr;
-   return istreamPtr(SysFile::CreateIstream(FullName().c_str()));
-}
-
-//------------------------------------------------------------------------------
-
 fn_name CodeFile_Trim = "CodeFile.Trim";
 
-void CodeFile::Trim(ostream& stream)
+void CodeFile::Trim(ostream* stream)
 {
    Debug::ft(CodeFile_Trim);
 
@@ -3007,7 +3250,8 @@ void CodeFile::Trim(ostream& stream)
    SetOfIds addIds;
    SetDifference(addIds, inclIds, inclIds_);
    addIds.erase(Fid());
-   DisplayFileNames(stream, addIds, ADD_INCLUDE_STR);
+   DisplayFileNames(stream, addIds, "Add an #include for");
+   LogAddIncludes(addIds);
 
    //  Output delIds, which are the #includes that should be removed.  It
    //  contains what is already #included, minus everything that needs to
@@ -3015,7 +3259,8 @@ void CodeFile::Trim(ostream& stream)
    //
    SetOfIds delIds;
    SetDifference(delIds, inclIds_, inclIds);
-   DisplayFileNames(stream, delIds, REMOVE_INCLUDE_STR);
+   DisplayFileNames(stream, delIds, "Remove the #include for");
+   LogRemoveIncludes(delIds);
 
    //  Save the files that *should* be #included.
    //
@@ -3039,8 +3284,10 @@ void CodeFile::Trim(ostream& stream)
 
    //  Output the forward declarations that should be added or removed.
    //
-   DisplaySymbols(stream, addForws, ADD_FORWARD_STR);
-   DisplaySymbols(stream, delForws, REMOVE_FORWARD_STR);
+   DisplaySymbols(stream, addForws, "Add a forward declaration for");
+   DisplaySymbols(stream, delForws, "Remove the forward declaration for");
+   LogItemWarnings(addForws, ForwardAdd);
+   LogRemoveForwards(delForws);
 
    //  Create usingFiles, the files that this file can rely on for accessing
    //  using statements.  This set consists of transitive base class files
@@ -3093,21 +3340,21 @@ void CodeFile::Trim(ostream& stream)
 
    //  Output the using statements that should be added and removed.
    //
-   DisplaySymbols(stream, addUsing, ADD_USING_STR);
-   DisplaySymbols(stream, delUsing, REMOVE_USING_STR);
+   DisplaySymbols(stream, addUsing, "Add a using statement for");
+   DisplaySymbols(stream, delUsing, "Remove the using statement for");
+   LogItemWarnings(addUsing, UsingAdd);
+   LogRemoveUsings();
 
    //  For a header, output the symbols that were resolved by a using statement.
    //
    if(IsHeader())
    {
-      CxxNamedSet qualify;
-
       for(auto u = users.cbegin(); u != users.cend(); ++u)
       {
-         qualify.insert((*u)->DirectType());
+         qualify_.insert((*u)->DirectType());
       }
 
-      DisplaySymbolsAndFiles(stream, qualify,
+      DisplaySymbolsAndFiles(stream, qualify_,
          "To remove dependencies on using statements, qualify");
    }
 }

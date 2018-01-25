@@ -95,7 +95,7 @@ LibrarySet* LibrarySet::Assign(LibrarySet* rhs)
 
 fn_name LibrarySet_Check = "LibrarySet.Check";
 
-word LibrarySet::Check(ostream& stream, string& expl) const
+word LibrarySet::Check(ostream* stream, string& expl) const
 {
    Debug::ft(LibrarySet_Check);
 
@@ -204,6 +204,17 @@ LibrarySet* LibrarySet::Files() const
 LibrarySet* LibrarySet::FileType(const LibrarySet* that) const
 {
    return OpError();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name LibrarySet_Fix = "LibrarySet.Fix";
+
+word LibrarySet::Fix(CliThread& cli, string& expl) const
+{
+   Debug::ft(LibrarySet_Fix);
+
+   return NotImplemented(expl);
 }
 
 //------------------------------------------------------------------------------

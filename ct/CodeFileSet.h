@@ -59,11 +59,15 @@ public:
 
    //  Checks the code files in the set.
    //
-   virtual word Check(std::ostream& stream, std::string& expl) const override;
+   virtual word Check(std::ostream* stream, std::string& expl) const override;
 
    //  Updates RESULT with the number of lines of code in the set.
    //
    virtual word Countlines(std::string& result) const override;
+
+   //  Fixes warnings detected by >check.
+   //
+   virtual word Fix(CliThread& cli, std::string& expl) const override;
 
    //  Formats the code files in the set.
    //

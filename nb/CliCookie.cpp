@@ -122,7 +122,7 @@ void CliCookie::Display(ostream& stream,
 
    for(size_t i = 0; i < MaxParmDepth; ++i)
    {
-      stream << int(index_[i]) << SPACE;
+      stream << index_[i] << SPACE;
       if(depth_ == i) stream << "/ ";
    }
 

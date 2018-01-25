@@ -21,13 +21,11 @@
 //
 #include "CodeIncrement.h"
 #include <cstddef>
-#include <cstdio>
 #include <iomanip>
-#include <istream>
+#include <memory>
 #include <sstream>
 #include <string>
 #include "CliBuffer.h"
-#include "CliCharParm.h"
 #include "CliCommand.h"
 #include "CliIntParm.h"
 #include "CliText.h"
@@ -35,7 +33,6 @@
 #include "CliThread.h"
 #include "CodeDir.h"
 #include "CodeFile.h"
-#include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxRoot.h"
 #include "Debug.h"
@@ -141,125 +138,6 @@ LibrarySet* LibraryCommand::Evaluate(CliThread& cli)
 
 //------------------------------------------------------------------------------
 //
-//  The APPLY command.
-//
-class ApplyFileParm : public CliTextParm
-{
-public: ApplyFileParm();
-};
-
-class ApplyCommand : public CliCommand
-{
-public:
-   ApplyCommand();
-private:
-   virtual word ProcessCommand(CliThread& cli) const override;
-};
-
-fixed_string ApplyFileExpl = "filename (assumed to end in \".trim.txt\")";
-
-ApplyFileParm::ApplyFileParm() : CliTextParm(ApplyFileExpl) { }
-
-fixed_string ApplyStr = "apply";
-fixed_string ApplyExpl = "Interactively applies changes in a >trim file";
-
-ApplyCommand::ApplyCommand() : CliCommand(ApplyStr, ApplyExpl)
-{
-   BindParm(*new ApplyFileParm);
-}
-
-fixed_string ApplyChars = "ynsq";
-fixed_string ApplyHelp = "Enter y(yes) n(no) s(skip file) q(quit): ";
-
-fn_name ApplyCommand_ProcessCommand = "ApplyCommand.ProcessCommand";
-
-word ApplyCommand::ProcessCommand(CliThread& cli) const
-{
-   Debug::ft(ApplyCommand_ProcessCommand);
-
-   string name, expl;
-
-   if(!GetString(name, cli)) return -1;
-   cli.EndOfInput(false);
-
-   auto path = Element::OutputPath() + PATH_SEPARATOR + name + ".trim.txt";
-   auto input = istreamPtr(SysFile::CreateIstream(path.c_str()));
-
-   if(input == nullptr) return cli.Report(-7, "Failed to open file " + path);
-   input->clear();
-   input->seekg(0);
-
-   auto act = CodeFile::NoChange;
-   auto lib = Singleton< Library >::Instance();
-   CodeFile* file = nullptr;
-   string str, work, item, prep;
-   word rc;
-
-   while(input->peek() != EOF)
-   {
-      std::getline(*input, str);
-      if(str.empty()) continue;
-
-      auto pos = str.find_first_not_of(SPACE);
-
-      switch(pos)
-      {
-      case 0:
-         file = lib->FindFile(str);
-         act = CodeFile::NoChange;
-         if(file == nullptr) *cli.obuf << "Failed to find " << str << CRLF;
-         break;
-
-      case 3:
-         if(file != nullptr)
-         {
-            work = str.substr(3);
-            if(work == ADD_INCLUDE_STR) act = CodeFile::AddInclude;
-            else if(work == REMOVE_INCLUDE_STR) act = CodeFile::RemoveInclude;
-            else if(work == ADD_FORWARD_STR) act = CodeFile::AddForward;
-            else if(work == REMOVE_FORWARD_STR) act = CodeFile::RemoveForward;
-            else if(work == ADD_USING_STR) act = CodeFile::AddUsing;
-            else if(work == REMOVE_USING_STR) act = CodeFile::RemoveUsing;
-            else act = CodeFile::NoChange;
-
-            prep = (work.find("Add") == 0 ? "to" : "from");
-         }
-         break;
-
-      case 6:
-         if((file != nullptr) && (act != CodeFile::NoChange))
-         {
-            item = str.substr(6);
-            expl = work + SPACE + item + SPACE;
-            expl += prep + SPACE + file->Name() + '?';
-            auto reply = cli.CharPrompt(expl, ApplyChars, ApplyHelp);
-            expl.clear();
-
-            switch(reply)
-            {
-            case 'y':
-               rc = file->Modify(act, item, expl);
-               *cli.obuf << spaces(2) << (rc >= 0 ? SuccessExpl : expl) << CRLF;
-               break;
-            case 'n':
-               break;
-            case 's':
-               file = nullptr;
-               break;
-            case 'q':
-               cli.Flush();
-               return 0;
-            }
-         }
-      }
-   }
-
-   cli.Flush();
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-//
 //  The ASSIGN command.
 //
 class AssignCommand : public CliCommand
@@ -336,7 +214,7 @@ word CheckCommand::ProcessCommand(CliThread& cli) const
    if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
 
    string expl;
-   auto rc = set->Check(*stream, expl);
+   auto rc = set->Check(stream, expl);
    set->Release();
 
    if(rc == 0)
@@ -571,6 +449,42 @@ word FileInfoCommand::ProcessCommand(CliThread& cli) const
    if(file == nullptr) return cli.Report(-2, NoFileExpl);
    file->Display(*cli.obuf, spaces(2), Flags(Vb_Mask));
    return 0;
+}
+
+//------------------------------------------------------------------------------
+//
+//  The FIX command.
+//
+class FixCommand : public LibraryCommand
+{
+public:
+   FixCommand();
+private:
+   virtual word ProcessCommand(CliThread& cli) const override;
+};
+
+fixed_string FixStr = "fix";
+fixed_string FixExpl = "Interactively fixes warnings detected by >check.";
+
+FixCommand::FixCommand() : LibraryCommand(FixStr, FixExpl)
+{
+   BindParm(*new FileSetExprParm);
+}
+
+fn_name FixCommand_ProcessCommand = "FixCommand.ProcessCommand";
+
+word FixCommand::ProcessCommand(CliThread& cli) const
+{
+   Debug::ft(FixCommand_ProcessCommand);
+
+   auto set = LibraryCommand::Evaluate(cli);
+   if(set == nullptr) return cli.Report(-7, AllocationError);
+
+   string expl;
+   auto rc = set->Fix(cli, expl);
+   set->Release();
+   if(rc == 0) expl = SuccessExpl;
+   return cli.Report(rc, expl);
 }
 
 //------------------------------------------------------------------------------
@@ -1233,7 +1147,7 @@ CodeIncrement::CodeIncrement() : CliIncrement(CtStr, CtExpl)
    BindCommand(*new ParseCommand);
    BindCommand(*new CheckCommand);
    BindCommand(*new TrimCommand);
-   BindCommand(*new ApplyCommand);
+   BindCommand(*new FixCommand);
    BindCommand(*new FormatCommand);
    BindCommand(*new ExportCommand);
    BindCommand(*new ShrinkCommand);

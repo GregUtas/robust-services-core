@@ -29,6 +29,7 @@
 #include "CodeFile.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "Lexer.h"
 #include "Library.h"
 #include "NbCliParms.h"
 #include "Parser.h"
@@ -129,7 +130,7 @@ LibrarySet* CodeFileSet::Affecters() const
 
 fn_name CodeFileSet_Check = "CodeFileSet.Check";
 
-word CodeFileSet::Check(ostream& stream, string& expl) const
+word CodeFileSet::Check(ostream* stream, string& expl) const
 {
    Debug::ft(CodeFileSet_Check);
 
@@ -303,6 +304,40 @@ LibrarySet* CodeFileSet::FileType(const LibrarySet* that) const
    }
 
    return result;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeFileSet_Fix = "CodeFileSet.Fix";
+
+word CodeFileSet::Fix(CliThread& cli, std::string& expl) const
+{
+   Debug::ft(CodeFileSet_Fix);
+
+   auto& fileSet = Set();
+
+   if(fileSet.empty())
+   {
+      expl = EmptySet;
+      return 0;
+   }
+
+   //  In order to fix warnings in a file, it must have been checked.
+   //
+   auto rc = Check(nullptr, expl);
+   if(rc != 0) return rc;
+
+   //  Iterate over the set of code files and fix them.
+   //
+   auto& files = Singleton< Library >::Instance()->Files();
+
+   for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
+   {
+      rc = files.At(*f)->Fix(cli, expl);
+      if(rc != 0) return rc;
+   }
+
+   return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -897,14 +932,14 @@ word CodeFileSet::Trim(ostream& stream, string& expl) const
    {
       auto file = files.At(f->fid);
 
-      if(file->IsHeader()) file->Trim(stream);
+      if(file->IsHeader()) file->Trim(&stream);
    }
 
    for(auto f = order->cbegin(); f != order->cend(); ++f)
    {
       auto file = files.At(f->fid);
 
-      if(file->IsCpp()) file->Trim(stream);
+      if(file->IsCpp()) file->Trim(&stream);
    }
 
    return 0;

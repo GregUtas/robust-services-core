@@ -354,8 +354,6 @@ enum AssignmentType
 //
 enum Warning
 {
-   DefineNotAtFileScope,     // #define appears within a class or function
-   IncludeNotAtFileScope,    // #include appears within a class or function
    UseOfSlashAsterisk,       // use of /* */ comment
    UseOfNull,                // use of NULL
    PtrTagDetached,           // <type> *<data> instead of <type>* data
@@ -368,11 +366,19 @@ enum Warning
    PointerArithmetic,        // use of pointer arithmetic
    RemoveSemicolon,          // unnecessary semicolon
    RedundantConst,           // more than one const qualifier for same token
+   DefineNotAtFileScope,     // #define appears within a class or function
+   IncludeNotAtFileScope,    // #include appears within a class or function
    IncludeGuardMissing,      // no #include guard
    IncludeNotSorted,         // #include not sorted in standard order
    IncludeDuplicated,        // #include already exists for this file
+   IncludeAdd,               // #include should be added
+   IncludeRemove,            // #include should be removed
    UsingInHeader,            // header contains using directive or declaration
    UsingDuplicated,          // using statement duplicated
+   UsingAdd,                 // using statement should be added
+   UsingRemove,              // using statement should be removed
+   ForwardAdd,               // forward declaration should be added
+   ForwardRemove,            // forward declaration should be removed
    ArgumentUnused,           // argument not used
    ClassUnused,              // no members used
    DataUnused,               // data is neither read nor written
@@ -556,16 +562,5 @@ template< typename T > void DisplayObjects(const std::vector< T >& group,
       (*i)->Display(stream, prefix, options);
    }
 }
-
-//------------------------------------------------------------------------------
-//
-//  Strings used by the Trim and Apply commands.
-//
-extern fixed_string ADD_INCLUDE_STR;
-extern fixed_string REMOVE_INCLUDE_STR;
-extern fixed_string ADD_FORWARD_STR;
-extern fixed_string REMOVE_FORWARD_STR;
-extern fixed_string ADD_USING_STR;
-extern fixed_string REMOVE_USING_STR;
 }
 #endif

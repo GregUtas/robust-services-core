@@ -1345,9 +1345,9 @@ size_t StackArg::Ptrs(bool arrays) const
 
    if(item == nullptr) return 0;
    auto spec = item->GetTypeSpec();
-   word count = (spec == nullptr ? 0 : spec->Ptrs(arrays));
+   size_t count = (spec == nullptr ? 0 : spec->Ptrs(arrays));
    count += ptrs_;
-   if(count >= 0) return size_t(count);
+   if(count >= 0) return count;
 
    auto expl = "Negative pointer count for " + item->Trace();
    Context::SwErr(StackArg_Ptrs, expl, count);

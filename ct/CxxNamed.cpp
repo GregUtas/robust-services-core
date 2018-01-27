@@ -1236,7 +1236,7 @@ TypeMatch DataSpec::MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
    auto idx = FindIndex(tmpltParms, parm);
    auto match = Compatible;
 
-   if(idx >= 0)
+   if(idx != string::npos)
    {
       //  If the template parameter specifies pointers, remove that number
       //  of pointers from the template argument to find the actual type.

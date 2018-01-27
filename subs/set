@@ -14,7 +14,7 @@ namespace std
    template< typename T > class set
    {
    public:
-      typedef iterator< T > const_iterator;
+      typedef iterator_t< T > const_iterator;
       set();
       set(const set& that);
       ~set();
@@ -38,7 +38,7 @@ namespace std
       void swap(set& that);
    };
 
-   template< typename T > iterator< T > inserter(set< T >& items, iterator< T >& iter);
+   template< typename T > iterator_t< T > inserter(set< T >& items, iterator_t< T >& iter);
 }
 
 #endif

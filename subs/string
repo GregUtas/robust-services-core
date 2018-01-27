@@ -102,6 +102,16 @@ namespace std
       (basic_istream& i, const basic_string< E, T, A >& s);
 
    typedef basic_string< char, char_traits<char>, allocator<char>> string;
+
+   string to_string(int n);
+   string to_string(unsigned int n);
+   string to_string(long n);
+   string to_string(unsigned long n);
+   string to_string(long long n);
+   string to_string(unsigned long long n);
+   string to_string(float n);
+   string to_string(double n);
+   string to_string(long double n);
 }
 
 #endif

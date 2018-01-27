@@ -893,11 +893,7 @@ fn_name MacroName_TypeString = "MacroName.TypeString";
 string MacroName::TypeString(bool arg) const
 {
    auto ref = Referent();
-
-   if(ref != nullptr)
-   {
-      return ref->TypeString(arg);
-   }
+   if(ref != nullptr) return ref->TypeString(arg);
 
    auto expl = "Failed to find referent for " + name_;
    Context::SwErr(MacroName_TypeString, expl, 0);

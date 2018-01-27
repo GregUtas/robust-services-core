@@ -2216,6 +2216,12 @@ void Using::Check() const
 
    if(added_) return;
    if(users_ == 0) Log(UsingUnused);
+
+   //  Do not log a using statement in a header file unless its referent is
+   //  external (e.g. is defined in the namespace std:: rather than in RSC).
+   //
+   auto ref = Referent();
+   if((ref != nullptr) && !ref->GetSpace()->GetFile()->IsSubsFile()) return;
    if(GetFile()->IsHeader()) Log(UsingInHeader);
 }
 

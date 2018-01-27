@@ -686,8 +686,6 @@ bool Lexer::GetName(string& name, Cxx::Operator& oper)
 {
    Debug::ft(Lexer_GetName2);
 
-   auto prev = prev_;
-
    oper = Cxx::NIL_OPERATOR;
    if(!GetName(name, AnyKeyword)) return false;
 

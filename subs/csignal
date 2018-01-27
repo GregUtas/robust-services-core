@@ -13,7 +13,7 @@
 #define SIGTERM 15
 #define SIGBREAK 21
 
-typedef void (*sighandler) (int sig);
+typedef void (*sighandler)(int sig);
 void SIG_DFL(int sig);
 void* signal(int sig, sighandler handler);
 int raise(int sig);

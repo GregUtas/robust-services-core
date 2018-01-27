@@ -184,6 +184,10 @@ public:
    //
    void SetParsed(bool passed) { parsed_ = (passed ? Passed : Failed); }
 
+   //  Marks the source code as having been edited.
+   //
+   void SetModified() { modified_ = true; }
+
    //  Invoked when the file defines a function template or a function
    //  in a class template.
    //
@@ -217,11 +221,11 @@ public:
    //
    word Format(std::string& expl);
 
-   //  Logs WARNING, which occurred at POS.  OFFSET and EXPL are specific to
+   //  Logs WARNING, which occurred at POS.  OFFSET and INFO are specific to
    //  WARNING.
    //
    void LogPos(size_t pos, Warning warning, size_t offset = 0,
-      const std::string& expl = std::string(EMPTY_STR)) const;
+      const std::string& info = std::string(EMPTY_STR)) const;
 
    //  Generates a report in STREAM (if not nullptr) for the files in SET.  The
    //  report includes line type counts and warnings found during parsing and
@@ -305,11 +309,11 @@ private:
    //
    bool HasForwardFor(const CxxNamed* item) const;
 
-   //  Logs WARNING, which occurred on line N.  OFFSET and EXPL are specific
+   //  Logs WARNING, which occurred on line N.  OFFSET and INFO are specific
    //  to WARNING.
    //
    void LogLine(size_t n, Warning warning, size_t offset = 0,
-      const std::string& expl = std::string(EMPTY_STR)) const;
+      const std::string& info = std::string(EMPTY_STR)) const;
 
    //  Returns false if >trim does not apply to this file (e.g. a template
    //  header).  STREAM is where the output for >trim is being directed.
@@ -378,35 +382,39 @@ private:
    void FindOrAddUsing(const CxxNamed* user,
       const CodeFileVector usingFiles, CxxNamedSet& addUsing);
 
-   //  Logs an AddInclude warning for each file in FIDS.
+   //  Logs an IncludeAdd for each file in FIDS.
    //
-   void LogAddIncludes(const SetOfIds& fids) const;
+   void LogAddIncludes(std::ostream* stream, const SetOfIds& fids) const;
 
-   //  Logs a RemoveInclude warning for each file in FIDS.
+   //  Logs an IncludeRemove for each file in FIDS.
    //
-   void LogRemoveIncludes(const SetOfIds& fids) const;
+   void LogRemoveIncludes(std::ostream* stream, const SetOfIds& fids) const;
 
-   //  Logs WARNING for each item in ITEMS.
+   //  Logs a ForwardAdd for each item in ITEMS.
    //
-   void LogItemWarnings(const CxxNamedSet& items, Warning warning) const;
+   void LogAddForwards(std::ostream* stream, const CxxNamedSet& items) const;
 
-   //  Logs a RemoveInclude warning for each item in ITEMS.
+   //  Logs a ForwardRemove for each item in ITEMS.
    //
-   void LogRemoveForwards(const CxxNamedSet& items) const;
+   void LogRemoveForwards(std::ostream* stream, const CxxNamedSet& items) const;
 
-   //  Logs a RemovUsing warning for each of the file's using statements
-   //  that is marked for removal.
+   //  Logs a UsingAdd for each item in ITEMS.
    //
-   void LogRemoveUsings() const;
+   void LogAddUsings(std::ostream* stream, const CxxNamedSet& items) const;
+
+   //  Logs a UsingRemove for each of the file's using statements that is
+   //  marked for removal.
+   //
+   void LogRemoveUsings(std::ostream* stream) const;
 
    //  Creates an Editor object.  Returns nullptr on failure, updating RC
    //  and EXPL with an explanation.
    //
-   Editor* CreateEditor(word& rc, std::string& expl) const;
+   Editor* CreateEditor(word& rc, std::string& expl);
 
    //  The file's identifier in the code base.
    //
-   RegCell fid_;
+   const RegCell fid_;
 
    //  The file's directory.
    //
@@ -496,9 +504,13 @@ private:
    //
    TemplateLocation location_;
 
-   //  Whether the file has been checked.
+   //  Set if >check was run on the file.
    //
    bool checked_;
+
+   //  Set if >fix changed the file's source code
+   //
+   bool modified_;
 };
 }
 #endif

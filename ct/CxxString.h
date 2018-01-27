@@ -45,10 +45,10 @@ namespace CodeTools
    //
    bool PathIncludes(const std::string& path, const std::string& dir);
 
-   //  Returns the index of the string in SV that matches S.  Returns -1 if
-   //  no string in SV matches S.
+   //  Returns the index of the string in SV that matches S.  If no string
+   //  in SV matches S, returns string::npos.
    //
-   int FindIndex(const stringVector& sv, const std::string& s);
+   size_t FindIndex(const stringVector& sv, const std::string& s);
 
    //  Concatentates a string of the form ("<string>"<whitespace>)*"<string>"
    //  by removing the quotation marks and whitespace between the strings.

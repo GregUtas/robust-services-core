@@ -9,17 +9,18 @@
 
 namespace std
 {
-   template< typename T > struct iterator
+   template< typename T > struct iterator_t
    {
-      iterator& operator++();
-      iterator& operator++(int);
-      iterator& operator--();
-      iterator& operator--(int);
+      iterator_t& operator++();
+      iterator_t& operator++(int);
+      iterator_t& operator--();
+      iterator_t& operator--(int);
       T& operator*() const;
       T* operator->() const;
    };
 
-   template< typename T > iterator< T > next(const iterator< T > iter, size_t diff = 1);
+   template< typename T > iterator_t< T > next(const iterator_t< T > iter, size_t diff = 1);
+   template< typename T > iterator_t< T > prev(const iterator_t< T > iter, size_t diff = 1);
 }
 
 #endif

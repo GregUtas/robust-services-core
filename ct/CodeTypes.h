@@ -160,6 +160,11 @@ extern const std::string ValidOctDigits;
 //
 extern const std::string Whitespace;
 
+//  Single (//------...) and double (///======...) rules.
+//
+extern const std::string SingleRule;
+extern const std::string DoubleRule;
+
 //------------------------------------------------------------------------------
 //
 //  Restrictions when looking for a name (e.g. in a type or identifier).
@@ -534,7 +539,7 @@ extern const Flags NoAC_Mask;
 extern const Flags NoTP_Mask;
 extern const Flags Stats_Mask;
 
-extern uint8_t Indent_Size;
+extern const uint8_t Indent_Size;
 
 //------------------------------------------------------------------------------
 //

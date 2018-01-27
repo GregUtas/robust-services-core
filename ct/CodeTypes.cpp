@@ -40,6 +40,8 @@ const string ValidIntDigits("0123456789");
 const string ValidHexDigits("0123456789abcdefABCDEF");
 const string ValidOctDigits("01234567");
 const string Whitespace(" \t\n\v\f\r");
+const string SingleRule(COMMENT_STR + string(78, '-'));
+const string DoubleRule(COMMENT_STR + string(78, '='));
 
 //------------------------------------------------------------------------------
 
@@ -141,7 +143,7 @@ const Flags NoAC_Mask = Flags(1 << DispNoAC);
 const Flags NoTP_Mask = Flags(1 << DispNoTP);
 const Flags Stats_Mask = Flags(1 << DispStats);
 
-uint8_t Indent_Size = 3;
+const uint8_t Indent_Size = 3;
 
 //------------------------------------------------------------------------------
 

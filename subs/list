@@ -1,0 +1,46 @@
+//==============================================================================
+//
+//  list
+//
+#ifndef LIST_INCLUDED
+#define LIST_INCLUDED
+
+#include "iterator"
+
+namespace std
+{
+   template< typename T > class list
+   {
+   public:
+      typedef iterator_t< T > iterator;
+      typedef iterator_t< T > const_iterator;
+      list();
+      list(const list& that);
+      ~list();
+      const T& back() const;
+      iterator begin() const;
+      const_iterator cbegin() const;
+      const_iterator cend() const;
+      void clear();
+      const_iterator crbegin() const;
+      const_iterator crend() const;
+      bool empty() const;
+      iterator end() const;
+      iterator erase(iterator& where);
+      iterator erase(iterator& first, iterator& last);
+      const T& front() const;
+      iterator insert(iterator& where, const T& value);
+      void pop_back();
+      void pop_front();
+      void push_back(const T& value);
+      void push_front(const T& value);
+      iterator rbegin() const;
+      iterator rend() const;
+      size_t size() const;
+      void sort();
+      void sort(const bool (*sorted)(T& first, T& second));
+      void swap(list& that);
+   };
+}
+
+#endif

@@ -262,8 +262,12 @@ void Class::AccessibilityOf
 
 //------------------------------------------------------------------------------
 
+fn_name Class_AccessibilityTo = "Class.AccessibilityTo";
+
 void Class::AccessibilityTo(const CxxScope* scope, SymbolView* view) const
 {
+   Debug::ft(Class_AccessibilityTo);
+
    AccessibilityOf(scope, this, view);
 }
 
@@ -271,7 +275,7 @@ void Class::AccessibilityTo(const CxxScope* scope, SymbolView* view) const
 
 fn_name Class_AddAnonymousUnion = "Class.AddAnonymousUnion";
 
-bool Class::AddAnonymousUnion(ClassPtr& cls)
+bool Class::AddAnonymousUnion(const ClassPtr& cls)
 {
    Debug::ft(Class_AddAnonymousUnion);
 

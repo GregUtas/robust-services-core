@@ -45,7 +45,6 @@
 
 using std::setw;
 using std::string;
-using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 
@@ -1345,9 +1344,9 @@ size_t StackArg::Ptrs(bool arrays) const
 
    if(item == nullptr) return 0;
    auto spec = item->GetTypeSpec();
-   word count = (spec == nullptr ? 0 : spec->Ptrs(arrays));
+   size_t count = (spec == nullptr ? 0 : spec->Ptrs(arrays));
    count += ptrs_;
-   if(count >= 0) return size_t(count);
+   if(count >= 0) return count;
 
    auto expl = "Negative pointer count for " + item->Trace();
    Context::SwErr(StackArg_Ptrs, expl, count);
@@ -1442,7 +1441,7 @@ void StackArg::SetAutoType()
 
 fn_name StackArg_SetAutoTypeFor = "StackArg.SetAutoTypeFor";
 
-bool StackArg::SetAutoTypeFor(FuncData& data)
+bool StackArg::SetAutoTypeFor(const FuncData& data)
 {
    Debug::ft(StackArg_SetAutoTypeFor);
 
@@ -1453,7 +1452,7 @@ bool StackArg::SetAutoTypeFor(FuncData& data)
 
 fn_name StackArg_SetAutoTypeOn = "StackArg.SetAutoTypeOn";
 
-bool StackArg::SetAutoTypeOn(FuncData& data) const
+bool StackArg::SetAutoTypeOn(const FuncData& data) const
 {
    Debug::ft(StackArg_SetAutoTypeOn);
 

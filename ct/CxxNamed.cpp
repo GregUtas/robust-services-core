@@ -33,6 +33,7 @@
 #include "CxxSymbols.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "Lexer.h"
 #include "Library.h"
 #include "Parser.h"
 #include "Registry.h"
@@ -1236,7 +1237,7 @@ TypeMatch DataSpec::MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
    auto idx = FindIndex(tmpltParms, parm);
    auto match = Compatible;
 
-   if(idx >= 0)
+   if(idx != string::npos)
    {
       //  If the template parameter specifies pointers, remove that number
       //  of pointers from the template argument to find the actual type.
@@ -2169,7 +2170,8 @@ bool QualName::SetReferent(CxxNamed* ref) const
 
 //------------------------------------------------------------------------------
 
-void QualName::SetReferent(size_t n, CxxNamed* item, SymbolView* view) const
+void QualName::SetReferent
+   (size_t n, CxxNamed* item, const SymbolView* view) const
 {
    Debug::ft(QualName_SetReferent);
 

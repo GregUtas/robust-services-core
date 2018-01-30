@@ -28,8 +28,6 @@
 #include "LibraryTypes.h"
 #include "SysTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace CodeTools
@@ -60,7 +58,7 @@ private:
 
    //  Returns a non-zero value and updates EXPL with an explanation.
    //
-   virtual word Check(std::ostream& stream, std::string& expl) const override;
+   virtual word Check(std::ostream* stream, std::string& expl) const override;
 
    //  Returns a non-zero value and updates RESULT with an explanation.
    //
@@ -69,6 +67,10 @@ private:
    //  Returns a non-zero value and updates RESULT with an explanation.
    //
    virtual word Countlines(std::string& result) const override;
+
+   //  Returns a non-zero value and updates EXPL with an explanation.
+   //
+   virtual word Fix(CliThread& cli, std::string& expl) const override;
 
    //  Returns a non-zero value and updates EXPL with an explanation.
    //

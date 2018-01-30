@@ -27,7 +27,6 @@
 #include "SysTypes.h"
 
 using std::string;
-using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 

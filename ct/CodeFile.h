@@ -28,8 +28,6 @@
 #include <string>
 #include "CodeTypes.h"
 #include "CxxFwd.h"
-#include "CxxNamed.h"
-#include "CxxScoped.h"
 #include "Lexer.h"
 #include "LibraryTypes.h"
 #include "RegCell.h"
@@ -38,11 +36,15 @@
 
 namespace CodeTools
 {
-   class Editor;
    class CodeDir;
+   class Editor;
+   struct CxxUsageSets;
 }
 
-using namespace NodeBase;
+namespace NodeBase
+{
+   class CliThread;
+}
 
 //------------------------------------------------------------------------------
 
@@ -131,7 +133,7 @@ public:
    //  Returns implIds_ (the files that implement this one), constructing
    //  it first if necessary.
    //
-   const SetOfIds& Implementers() const;
+   const SetOfIds& Implementers();
 
    //  Returns affecterIds_ (the files that affect this one), constructing
    //  it first if necessary.
@@ -179,6 +181,10 @@ public:
    //
    void SetParsed(bool passed) { parsed_ = (passed ? Passed : Failed); }
 
+   //  Marks the source code as having been edited.
+   //
+   void SetModified() { modified_ = true; }
+
    //  Invoked when the file defines a function template or a function
    //  in a class template.
    //
@@ -196,9 +202,15 @@ public:
 
    //  Generates a report in STREAM about which #include statements are
    //  required and which symbols require qualification to remove using
-   //  statements.
+   //  statements.  Also invoked by Check, with STREAM as nullptr.
    //
-   void Trim(std::ostream& stream);
+   void Trim(std::ostream* stream);
+
+   //  Interactively fixes warnings in the file detected by Check().  If
+   //  an error occurs, a non-zero value is returned and EXPL is updated
+   //  to provide an explanation.
+   //
+   word Fix(CliThread& cli, std::string& expl);
 
    //  Formats the file.  Returns 0 if the file was unchanged, a positive
    //  number after successful changes, and a negative number on failure,
@@ -206,37 +218,17 @@ public:
    //
    word Format(std::string& expl);
 
-   //  Creates an #include directive for including file.
+   //  Logs WARNING, which occurred at POS.  OFFSET and INFO are specific to
+   //  WARNING.
    //
-   std::string MakeInclude() const;
+   void LogPos(size_t pos, Warning warning, size_t offset = 0,
+      const std::string& info = std::string(EMPTY_STR)) const;
 
-   //  Modifications that can be applied to a file.
+   //  Generates a report in STREAM (if not nullptr) for the files in SET.  The
+   //  report includes line type counts and warnings found during parsing and
+   //  "execution".
    //
-   enum Modification
-   {
-      NoChange,
-      AddInclude,
-      RemoveInclude,
-      AddForward,
-      RemoveForward,
-      AddUsing,
-      RemoveUsing
-   };
-
-   //  Modifies the file as specified by ACT and ITEM.  Returns 0 if the file
-   //  was unchanged, a positive number after successful changes, and a negative
-   //  number on failure, in which case EXPL provides an explanation.
-   //
-   word Modify(Modification act, std::string& item, std::string& expl);
-
-   //  Logs WARNING, which occurred at POS.  OFFSET is specific to WARNING.
-   //
-   void LogPos(size_t pos, Warning warning, size_t offset = 0) const;
-
-   //  Generates a report in STREAM for the files in SET.  The report includes
-   //  line type counts and warnings found during parsing and "execution".
-   //
-   static void GenerateReport(std::ostream& stream, const SetOfIds& set);
+   static void GenerateReport(std::ostream* stream, const SetOfIds& set);
 
    //  Adds the file's line types to the global count.
    //
@@ -260,9 +252,9 @@ public:
    virtual void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
-   //  Returns the stream created for reading the file.
+   //  Returns a stream for reading the file.
    //
-   istreamPtr Stream() const;
+   istreamPtr InputStream() const;
 
    //  Adds FILE as one that #includes this file.
    //
@@ -283,7 +275,7 @@ private:
 
    //  Looks for #include directives that should be removed.
    //
-   void CheckIncludes() const;
+   void CheckIncludeOrder() const;
 
    //  Looks for using statements that should be removed.
    //
@@ -314,25 +306,25 @@ private:
    //
    bool HasForwardFor(const CxxNamed* item) const;
 
-   //  Logs WARNING, which occurred on line N.  OFFSET is specific to
-   //  WARNING.
+   //  Logs WARNING, which occurred on line N.  OFFSET and INFO are specific
+   //  to WARNING.
    //
-   void LogLine(size_t n, Warning warning, size_t offset = 0) const;
+   void LogLine(size_t n, Warning warning, size_t offset = 0,
+      const std::string& info = std::string(EMPTY_STR)) const;
 
    //  Returns false if >trim does not apply to this file (e.g. a template
    //  header).  STREAM is where the output for >trim is being directed.
    //
-   bool CanBeTrimmed(std::ostream& stream) const;
+   bool CanBeTrimmed(std::ostream* stream) const;
 
-   //  Updates declIds with the identifiers of files that declare items
-   //  that this file (if a .cpp) defines.
+   //  Finds the identifiers of files that declare items that this file
+   //  (if a .cpp) defines.
    //
-   void GetDeclIds(SetOfIds& declIds) const;
+   void FindDeclIds();
 
    //  Updates SYMBOLS with information about symbols used in this file.
-   //  declIds is the result from GetDeclIds.
    //
-   void GetUsageInfo(const SetOfIds& declIds, CxxUsageSets& symbols) const;
+   void GetUsageInfo(CxxUsageSets& symbols) const;
 
    //  Removes, from SET, items that this file declared.
    //
@@ -358,11 +350,11 @@ private:
    //
    void AddIncludeIds(const CxxNamedSet& inclSet, SetOfIds& inclIds) const;
 
-   //  Updates unclIds by removing the files that are #included by any
-   //  file in declIds.  This applies to a .cpp only, where declIds is
+   //  Updates inclIds by removing the files that are #included by any
+   //  file in declIds_.  This applies to a .cpp only, where declIds_ is
    //  the set of headers that declare items that the .cpp defines.
    //
-   void RemoveHeaderIds(const SetOfIds& declIds, SetOfIds& inclIds) const;
+   void RemoveHeaderIds(SetOfIds& inclIds) const;
 
    //  Removes forward declaration candidates from addForws based on various
    //  criteria.  FORWARDS contains the forward declarations already used by
@@ -386,14 +378,39 @@ private:
    void FindOrAddUsing(const CxxNamed* user,
       const CodeFileVector usingFiles, CxxNamedSet& addUsing);
 
+   //  Logs an IncludeAdd for each file in FIDS.
+   //
+   void LogAddIncludes(std::ostream* stream, const SetOfIds& fids) const;
+
+   //  Logs an IncludeRemove for each file in FIDS.
+   //
+   void LogRemoveIncludes(std::ostream* stream, const SetOfIds& fids) const;
+
+   //  Logs a ForwardAdd for each item in ITEMS.
+   //
+   void LogAddForwards(std::ostream* stream, const CxxNamedSet& items) const;
+
+   //  Logs a ForwardRemove for each item in ITEMS.
+   //
+   void LogRemoveForwards(std::ostream* stream, const CxxNamedSet& items) const;
+
+   //  Logs a UsingAdd for each item in ITEMS.
+   //
+   void LogAddUsings(std::ostream* stream, const CxxNamedSet& items) const;
+
+   //  Logs a UsingRemove for each of the file's using statements that is
+   //  marked for removal.
+   //
+   void LogRemoveUsings(std::ostream* stream) const;
+
    //  Creates an Editor object.  Returns nullptr on failure, updating RC
    //  and EXPL with an explanation.
    //
-   Editor* CreateEditor(word& rc, std::string& expl) const;
+   Editor* CreateEditor(word& rc, std::string& expl);
 
    //  The file's identifier in the code base.
    //
-   RegCell fid_;
+   const RegCell fid_;
 
    //  The file's directory.
    //
@@ -419,10 +436,6 @@ private:
    //
    std::vector< LineType > lineType_;
 
-   //  The first file #included by this one.
-   //
-   id_t firstIncl_;
-
    //  The identifiers of #included files.
    //
    SetOfIds inclIds_;
@@ -438,7 +451,16 @@ private:
 
    //  The identifiers of files that implement this one.
    //
-   mutable SetOfIds implIds_;
+   SetOfIds implIds_;
+
+   //  The identifiers of files that define direct base classes used by this
+   //  file.
+   //
+   SetOfIds baseIds_;
+
+   //  The identifiers of files that declare items that this file defines.
+   //
+   SetOfIds declIds_;
 
    //  The files that affect this one (those that it transitively #includes).
    //  Computed when first needed, after which the cached result is returned.
@@ -466,6 +488,11 @@ private:
    //
    CxxNamedSet usages_;
 
+   //  For a header, the names that need to be qualified in
+   //  order to remove using statements.
+   //
+   CxxNamedSet qualify_;
+
    //  Set if a /* comment is open during a lexical scan.
    //
    bool slashAsterisk_;
@@ -477,6 +504,14 @@ private:
    //  Whether any of the file's functions involve templates.
    //
    TemplateLocation location_;
+
+   //  Set if >check was run on the file.
+   //
+   bool checked_;
+
+   //  Set if >fix changed the file's source code
+   //
+   bool modified_;
 };
 }
 #endif

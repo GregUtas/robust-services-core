@@ -27,13 +27,13 @@
 #include "CxxDirective.h"
 #include "CxxExecute.h"
 #include "CxxRoot.h"
+#include "CxxString.h"
 #include "CxxSymbols.h"
 #include "CxxToken.h"
 #include "Debug.h"
 #include "Singleton.h"
 
 using std::string;
-using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 
@@ -685,8 +685,6 @@ fn_name Lexer_GetName2 = "Lexer.GetName(oper)";
 bool Lexer::GetName(string& name, Cxx::Operator& oper)
 {
    Debug::ft(Lexer_GetName2);
-
-   auto prev = prev_;
 
    oper = Cxx::NIL_OPERATOR;
    if(!GetName(name, AnyKeyword)) return false;

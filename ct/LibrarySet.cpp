@@ -20,7 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "LibrarySet.h"
-#include <sstream>
+#include <ostream>
 #include "Algorithms.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -95,7 +95,7 @@ LibrarySet* LibrarySet::Assign(LibrarySet* rhs)
 
 fn_name LibrarySet_Check = "LibrarySet.Check";
 
-word LibrarySet::Check(ostream& stream, string& expl) const
+word LibrarySet::Check(ostream* stream, string& expl) const
 {
    Debug::ft(LibrarySet_Check);
 
@@ -128,16 +128,13 @@ word LibrarySet::Counted(string& result, const size_t* count)
 {
    Debug::ft(LibrarySet_Counted);
 
-   std::ostringstream stream;
-
-   stream << "Count: ";
+   result = "Count: ";
 
    if(count != nullptr)
-      stream << *count;
+      result += std::to_string(*count);
    else
-      stream << EmptySet;
+      result += EmptySet;
 
-   result = stream.str();
    return 0;
 }
 
@@ -204,6 +201,17 @@ LibrarySet* LibrarySet::Files() const
 LibrarySet* LibrarySet::FileType(const LibrarySet* that) const
 {
    return OpError();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name LibrarySet_Fix = "LibrarySet.Fix";
+
+word LibrarySet::Fix(CliThread& cli, string& expl) const
+{
+   Debug::ft(LibrarySet_Fix);
+
+   return NotImplemented(expl);
 }
 
 //------------------------------------------------------------------------------
@@ -432,10 +440,10 @@ string LibrarySet::TemporaryName()
 {
    Debug::ft(LibrarySet_TemporaryName);
 
-   std::ostringstream stream;
-   stream << "%temp" << int(SeqNo_);
+   string name = "%temp";
+   name += std::to_string(int(SeqNo_));
    SeqNo_++;
-   return stream.str();
+   return name;
 }
 
 //------------------------------------------------------------------------------

@@ -25,6 +25,7 @@
 #include "Debug.h"
 #include "SysTypes.h"
 
+using namespace NodeBase;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -205,14 +206,14 @@ bool FileExtensionIs(const std::string& file, const std::string& ext)
 
 //------------------------------------------------------------------------------
 
-int FindIndex(const stringVector& sv, const string& s)
+size_t FindIndex(const stringVector& sv, const string& s)
 {
    for(size_t i = 0; i < sv.size(); ++i)
    {
       if(sv[i] == s) return i;
    }
 
-   return -1;
+   return string::npos;
 }
 
 //------------------------------------------------------------------------------
@@ -408,38 +409,24 @@ string RemoveConsts(const std::string& type)
 {
    Debug::ft(CodeTools_RemoveConsts);
 
-   string result = type;
-
-   //  If TYPE is const, it begins with "const ".
+   //  Remove occurrences of "const " (a type or argument
+   //  that is const) or " const" (a const pointer).
    //
-   auto pos = type.find(CONST_STR);
-   if(pos == string::npos) return result;
+   auto result = type;
+   auto pos = type.find("const ");
 
-   result = type;
-
-   if(pos == 0)
+   while(pos != string::npos)
    {
-      if(type[5] == SPACE) result.erase(0, 6);
+      result.erase(pos, 6);
+      pos = result.find("const ", pos);
    }
 
-   //  If TYPE is a const pointer, it ends with "const", possibly followed
-   //  by spaces and reference tags.  If so, remove the "const" and spaces.
-   //
-   pos = result.rfind(CONST_STR);
+   pos = result.find(" const");
 
-   if(pos != string::npos)
+   while(pos != string::npos)
    {
-      auto i = pos + strlen(CONST_STR);
-      auto n = result.size();
-
-      while((i < n) && (result[i] == SPACE)) ++i;
-      while((i < n) && (result[i] == '&')) ++i;
-
-      if(i == n)
-      {
-         result.erase(pos, strlen(CONST_STR));
-         while(result.back() == SPACE) result.pop_back();
-      }
+      result.erase(pos, 6);
+      pos = result.find(" const", pos);
    }
 
    return result;

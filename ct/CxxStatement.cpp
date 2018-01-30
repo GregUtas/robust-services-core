@@ -26,6 +26,7 @@
 #include "CodeTypes.h"
 #include "CxxExecute.h"
 #include "CxxNamed.h"
+#include "CxxScope.h"
 #include "CxxScoped.h"
 #include "Debug.h"
 #include "SysTypes.h"

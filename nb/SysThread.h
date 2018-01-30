@@ -64,11 +64,11 @@ public:
 private:
    //  The signature of the Thread entry function.
    //
-   typedef main_t (*ThreadEntry) (void* self);
+   typedef main_t (*ThreadEntry)(void* self);
 
    //  The signature of a signal handler.
    //
-   typedef void (*sighandler_t) (signal_t sig);
+   typedef void (*sighandler_t)(signal_t sig);
 
    //  The thread's status flags.
    //

@@ -28,8 +28,6 @@
 #include "RegCell.h"
 #include "SysTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace CodeTools
@@ -89,7 +87,7 @@ private:
 
    //  The directory's identifier in the code base.
    //
-   RegCell did_;
+   const RegCell did_;
 
    //  The directory's path.
    //

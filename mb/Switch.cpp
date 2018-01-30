@@ -20,8 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Switch.h"
-#include <iosfwd>
-#include <sstream>
+#include <ostream>
 #include "Circuit.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -70,15 +69,8 @@ string Switch::CircuitName(PortId pid) const
 {
    Debug::ft(Switch_CircuitName);
 
-   std::ostringstream name;
    auto cct = GetCircuit(pid);
-
-   if(cct != nullptr)
-      name << cct->Name();
-   else
-      name << "Unequipped";
-
-   return name.str();
+   return (cct != nullptr ? cct->Name() : "Unequipped");
 }
 
 //------------------------------------------------------------------------------

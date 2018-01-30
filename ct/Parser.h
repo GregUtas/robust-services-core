@@ -24,6 +24,7 @@
 
 #include <string>
 #include <cstddef>
+#include <cstdint>
 #include <iosfwd>
 #include "CodeTypes.h"
 #include "Cxx.h"
@@ -631,7 +632,7 @@ private:
    //  location to END.  A "<@" prefix and "@>" suffix are also added to the
    //  string.  CAUSE is the same as for Backup and Retreat.  Returns false.
    //
-   bool Skip(size_t end, ExprPtr& expr, size_t cause = 0);
+   bool Skip(size_t end, const ExprPtr& expr, size_t cause = 0);
 
    //  Invoked when the parse fails.  VENUE identifies what was being parsed
    //  (usually venue_).

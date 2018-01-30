@@ -289,7 +289,7 @@ testcase          : Configures or executes testcases.
 swflags           : Supports flags used to control branching
 (                 : subcommand...
   set             : modifies a flag's setting
-    (0:63)        : flag identifier
+    (0:31)        : flag identifier
   (               : setting...
     on            : on
     off           : off
@@ -1146,6 +1146,7 @@ show              : Displays library information.
   dirs            : code directories
   failed          : code files that failed to parse
   items           : memory usage by item type
+  stats           : parser statistics
 )
 
 type              : Displays the items in a set, separated by commas.
@@ -1181,7 +1182,7 @@ fileid            : Displays information about a code file.
   (1:4095)        : file's identifier
 
 parse             : Parses code files.
-  <str>           : parser options (enter >help full for details)
+  <str>           : options (enter ">help parse full" for details)
   <str>           : file for #define symbols (.txt in input directory)
   <str>           : a set of code files
 
@@ -1193,15 +1194,15 @@ trim              : Analyzes #include and using statements.
   <str>           : filename for output
   <str>           : a set of code files
 
-apply             : Interactively applies changes in a >trim file
-  <str>           : filename (assumed to end in ".trim.txt")
+fix               : Interactively fixes warnings detected by >check.
+  <str>           : a set of code files
 
 format            : Reformats code files.
   <str>           : a set of code files or directories
 
 export            : Exports library information.
   <str>           : filename for output
-  [c|o]           : 'c'=canonical 'o'=original (default='c')
+  [<str>]         : options (enter ">help export full" for details)
 
 shrink            : Shrinks the library's element containers.
 
@@ -1269,14 +1270,6 @@ Here are some examples of library commands:
     changing Thread.h
   >assign s1 h1 & c1 : s1 = SessionBase .cpps that could be affected
     by changing Thread.h
-
-Parser options in the >parse command:
-  - (none)
-  p (save parse tree on failure)
-  s (always save parse tree)
-  x (generate "object code" during execution)
-  i (immediate tracing: needed if 'x' causes trace buffer to overflow)
-  f (enable FunctionTracer)
 ct>quit
 nb>send cout
   OK.

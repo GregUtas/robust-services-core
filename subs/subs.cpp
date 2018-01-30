@@ -29,6 +29,7 @@
 #include "iostream"
 #include "istream"
 #include "iterator"
+#include "list"
 #include "map"
 #include "memory"
 #include "new"

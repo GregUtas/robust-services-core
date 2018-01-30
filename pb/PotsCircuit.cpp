@@ -153,16 +153,14 @@ void PotsCircuit::DisplayStateCounts(ostream& stream, const string& prefix)
 
 string PotsCircuit::Name() const
 {
-   std::ostringstream name;
-
-   name << "POTS ";
+   string name = "POTS ";
 
    if(profile_ != nullptr)
-      name << profile_->GetDN();
+      name += std::to_string(profile_->GetDN());
    else
-      name << "unassigned";
+      name += "unassigned";
 
-   return name.str();
+   return name;
 }
 
 //------------------------------------------------------------------------------

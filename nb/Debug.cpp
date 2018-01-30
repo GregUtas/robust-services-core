@@ -20,7 +20,6 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Debug.h"
-#include <iosfwd>
 #include <sstream>
 #include "CoutThread.h"
 #include "Element.h"
@@ -172,9 +171,7 @@ void Debug::SwErr(fn_name_arg func, debug64_t errval, debug64_t offset,
 {
    Debug::ft(Debug_SwErr1);
 
-   std::ostringstream stream;
-   stream << strHex(errval);
-   GenerateSwLog(func, stream.str(), offset, level, title);
+   GenerateSwLog(func, std::to_string(errval), offset, level, title);
 }
 
 //------------------------------------------------------------------------------

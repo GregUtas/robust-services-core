@@ -100,7 +100,7 @@ bool    DuplicateHandle(HANDLE SourceProcessHandle, HANDLE SourceHandle,
                         DWORD DesiredAccess, bool InheritHandle, DWORD Options);
 bool    SetPriorityClass(HANDLE Process, DWORD PriorityClass);
 
-typedef DWORD (*LPTHREAD_START_ROUTINE) (void* ThreadParameter);
+typedef DWORD (*LPTHREAD_START_ROUTINE)(void* ThreadParameter);
 HANDLE  CreateThread(void* ThreadAttributes, SIZE_T StackSize, LPTHREAD_START_ROUTINE StartAddress,
                      void* ThreadParameter, DWORD CreationFlags, DWORD* ThreadId);
 HANDLE  GetCurrentThread();

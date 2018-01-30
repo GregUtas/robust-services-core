@@ -18,7 +18,7 @@ namespace std
       set();
       set(const set& that);
       ~set();
-      const_iterator begin() const;
+      const_iterator begin();
       const_iterator cbegin() const;
       const_iterator cend() const;
       void clear();
@@ -26,14 +26,14 @@ namespace std
       const_iterator crbegin() const;
       const_iterator crend() const;
       bool empty() const;
-      const_iterator end() const;
+      const_iterator end();
       const_iterator erase(const_iterator& where);
       size_t erase(const T& key);
       const_iterator find(const T& key) const;
       const_iterator find(const T& key);
       pair< const_iterator, bool > insert(const T& key);
-      const_iterator rbegin() const;
-      const_iterator rend() const;
+      const_iterator rbegin();
+      const_iterator rend();
       size_t size() const;
       void swap(set& that);
    };

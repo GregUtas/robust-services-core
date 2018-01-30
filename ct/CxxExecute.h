@@ -24,6 +24,7 @@
 
 #include "TraceRecord.h"
 #include <cstddef>
+#include <cstdint>
 #include <string>
 #include "CodeTypes.h"
 #include "Cxx.h"
@@ -227,7 +228,7 @@ public:
    //  Updates DATA, which has the type "auto", to the type most recently
    //  set by SetAsAutoType.  Returns false if that type is invalid.
    //
-   static bool SetAutoTypeFor(FuncData& data);
+   static bool SetAutoTypeFor(const FuncData& data);
 
    //  Returns the level of compatibility when assigning THAT to this item.
    //  The TypeString for each item must be provided.  Setting IMPLICIT
@@ -279,7 +280,7 @@ public:
 private:
    //  Sets DATA's referent to this argument.  Returns FALSE on failure.
    //
-   bool SetAutoTypeOn(FuncData& data) const;
+   bool SetAutoTypeOn(const FuncData& data) const;
 
    //  Invoked by CalcMatchWith, once for THAT, and once for any types to
    //  which THAT can be converted.

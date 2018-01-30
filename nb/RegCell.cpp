@@ -20,8 +20,6 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "RegCell.h"
-#include <iosfwd>
-#include <sstream>
 #include "Debug.h"
 
 using std::string;
@@ -60,9 +58,8 @@ void RegCell::SetId(id_t cid)
 
 string RegCell::to_str() const
 {
-   std::ostringstream stream;
-   stream << id;
-   if(!bound) stream << " (not bound)";
-   return stream.str();
+   auto str = std::to_string(id);
+   if(!bound) str += " (not bound)";
+   return str;
 }
 }

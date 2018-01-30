@@ -33,6 +33,7 @@
 #include "CxxSymbols.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "Lexer.h"
 #include "Library.h"
 #include "Parser.h"
 #include "Registry.h"
@@ -2169,7 +2170,8 @@ bool QualName::SetReferent(CxxNamed* ref) const
 
 //------------------------------------------------------------------------------
 
-void QualName::SetReferent(size_t n, CxxNamed* item, SymbolView* view) const
+void QualName::SetReferent
+   (size_t n, CxxNamed* item, const SymbolView* view) const
 {
    Debug::ft(QualName_SetReferent);
 

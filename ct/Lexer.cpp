@@ -27,13 +27,13 @@
 #include "CxxDirective.h"
 #include "CxxExecute.h"
 #include "CxxRoot.h"
+#include "CxxString.h"
 #include "CxxSymbols.h"
 #include "CxxToken.h"
 #include "Debug.h"
 #include "Singleton.h"
 
 using std::string;
-using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 

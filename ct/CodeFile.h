@@ -28,8 +28,6 @@
 #include <string>
 #include "CodeTypes.h"
 #include "CxxFwd.h"
-#include "CxxNamed.h"
-#include "CxxScoped.h"
 #include "Lexer.h"
 #include "LibraryTypes.h"
 #include "RegCell.h"
@@ -38,16 +36,15 @@
 
 namespace CodeTools
 {
-   class Editor;
    class CodeDir;
+   class Editor;
+   struct CxxUsageSets;
 }
 
 namespace NodeBase
 {
    class CliThread;
 }
-
-using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 
@@ -136,7 +133,7 @@ public:
    //  Returns implIds_ (the files that implement this one), constructing
    //  it first if necessary.
    //
-   const SetOfIds& Implementers() const;
+   const SetOfIds& Implementers();
 
    //  Returns affecterIds_ (the files that affect this one), constructing
    //  it first if necessary.
@@ -320,15 +317,14 @@ private:
    //
    bool CanBeTrimmed(std::ostream* stream) const;
 
-   //  Updates declIds with the identifiers of files that declare items
-   //  that this file (if a .cpp) defines.
+   //  Finds the identifiers of files that declare items that this file
+   //  (if a .cpp) defines.
    //
-   void GetDeclIds(SetOfIds& declIds) const;
+   void FindDeclIds();
 
    //  Updates SYMBOLS with information about symbols used in this file.
-   //  declIds is the result from GetDeclIds.
    //
-   void GetUsageInfo(const SetOfIds& declIds, CxxUsageSets& symbols) const;
+   void GetUsageInfo(CxxUsageSets& symbols) const;
 
    //  Removes, from SET, items that this file declared.
    //
@@ -354,11 +350,11 @@ private:
    //
    void AddIncludeIds(const CxxNamedSet& inclSet, SetOfIds& inclIds) const;
 
-   //  Updates unclIds by removing the files that are #included by any
-   //  file in declIds.  This applies to a .cpp only, where declIds is
+   //  Updates inclIds by removing the files that are #included by any
+   //  file in declIds_.  This applies to a .cpp only, where declIds_ is
    //  the set of headers that declare items that the .cpp defines.
    //
-   void RemoveHeaderIds(const SetOfIds& declIds, SetOfIds& inclIds) const;
+   void RemoveHeaderIds(SetOfIds& inclIds) const;
 
    //  Removes forward declaration candidates from addForws based on various
    //  criteria.  FORWARDS contains the forward declarations already used by
@@ -440,10 +436,6 @@ private:
    //
    std::vector< LineType > lineType_;
 
-   //  The first file #included by this one.
-   //
-   id_t firstIncl_;
-
    //  The identifiers of #included files.
    //
    SetOfIds inclIds_;
@@ -459,7 +451,16 @@ private:
 
    //  The identifiers of files that implement this one.
    //
-   mutable SetOfIds implIds_;
+   SetOfIds implIds_;
+
+   //  The identifiers of files that define direct base classes used by this
+   //  file.
+   //
+   SetOfIds baseIds_;
+
+   //  The identifiers of files that declare items that this file defines.
+   //
+   SetOfIds declIds_;
 
    //  The files that affect this one (those that it transitively #includes).
    //  Computed when first needed, after which the cached result is returned.

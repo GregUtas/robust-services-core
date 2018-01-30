@@ -33,8 +33,6 @@
 #include "CxxString.h"
 #include "SysTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace CodeTools
@@ -701,7 +699,7 @@ public:
    //  be nullptr.  If whoever requested name resolution did not provide a
    //  SymbolView, VIEW will be nullptr.
    //
-   void SetReferent(size_t n, CxxNamed* item, SymbolView* view) const;
+   void SetReferent(size_t n, CxxNamed* item, const SymbolView* view) const;
 
    //  Sets the last name's referent.  This is used by QualName.EnterBlock and
    //  Operation.PushMember when a name appears in executable code.  It is also

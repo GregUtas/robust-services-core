@@ -234,10 +234,7 @@ string strIndex(int n, int width, bool colon)
 
 string strInt(int64_t n)
 {
-   std::ostringstream stream;
-
-   stream << n;
-   return stream.str();
+   return std::to_string(n);
 }
 
 //------------------------------------------------------------------------------
@@ -253,13 +250,8 @@ string strLower(const string& s)
 
 string strName(const char* name, int value)
 {
-   std::ostringstream stream;
-
-   if(name == nullptr)
-      stream << value;
-   else
-      stream << name;
-   return stream.str();
+   if(name == nullptr) return std::to_string(value);
+   return name;
 }
 
 //------------------------------------------------------------------------------

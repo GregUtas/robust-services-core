@@ -20,7 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "LibrarySet.h"
-#include <sstream>
+#include <ostream>
 #include "Algorithms.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -128,16 +128,13 @@ word LibrarySet::Counted(string& result, const size_t* count)
 {
    Debug::ft(LibrarySet_Counted);
 
-   std::ostringstream stream;
-
-   stream << "Count: ";
+   result = "Count: ";
 
    if(count != nullptr)
-      stream << *count;
+      result += std::to_string(*count);
    else
-      stream << EmptySet;
+      result += EmptySet;
 
-   result = stream.str();
    return 0;
 }
 
@@ -443,10 +440,10 @@ string LibrarySet::TemporaryName()
 {
    Debug::ft(LibrarySet_TemporaryName);
 
-   std::ostringstream stream;
-   stream << "%temp" << int(SeqNo_);
+   string name = "%temp";
+   name += std::to_string(int(SeqNo_));
    SeqNo_++;
-   return stream.str();
+   return name;
 }
 
 //------------------------------------------------------------------------------

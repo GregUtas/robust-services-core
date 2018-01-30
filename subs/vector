@@ -23,7 +23,7 @@ namespace std
       T& at(size_t pos);
       const T& back() const;
       T& back();
-      const_iterator begin() const;
+      const_iterator begin();
       size_t capacity() const;
       const_iterator cbegin() const;
       const_iterator cend() const;
@@ -31,7 +31,7 @@ namespace std
       const_iterator crbegin() const;
       const_iterator crend() const;
       bool empty() const;
-      const_iterator end() const;
+      const_iterator end();
       const_iterator erase(const_iterator& where);
       const T& front() const;
       T& front();
@@ -39,8 +39,8 @@ namespace std
       const_iterator insert(const_iterator& where, size_t count, const T& item);
       void pop_back();
       void push_back(const T& item);
-      const_iterator rbegin() const;
-      const_iterator rend() const;
+      const_iterator rbegin();
+      const_iterator rend();
       void resize(size_t count);
       void resize(size_t count, const T& item);
       void shrink_to_fit();

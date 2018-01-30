@@ -23,7 +23,6 @@
 
 using std::ostream;
 using std::string;
-using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 
@@ -354,4 +353,14 @@ SymbolView::SymbolView(Accessibility a,
    distance(d)
 {
 }
+
+//------------------------------------------------------------------------------
+
+const SymbolView NotAccessible
+   (Inaccessible, Compatible, false, false, true, 0);
+const SymbolView DeclaredGlobally
+   (Unrestricted, Compatible, false, false, true, 0);
+const SymbolView DeclaredLocally
+   (Declared,Compatible, false, false, true, 0);
 }
+

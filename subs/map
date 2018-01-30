@@ -16,7 +16,7 @@ namespace std
       typedef pair< T1, T2 > entry;
       map();
       ~map();
-      entry* begin() const;
+      entry* begin();
       entry* cbegin() const;
       entry* cend() const;
       void clear();
@@ -24,15 +24,15 @@ namespace std
       entry* crbegin() const;
       entry* crend() const;
       bool empty() const;
-      entry* end() const;
+      entry* end();
       size_t erase(const T1& key);
       entry* find(const T1& key) const;
       entry* find(const T1& key);
       pair< entry*, bool > insert(entry& item);
       entry* lower_bound(const T1& key) const;
       entry* lower_bound(const T1& key);
-      entry* rbegin() const;
-      entry* rend() const;
+      entry* rbegin();
+      entry* rend();
       size_t size() const;
       entry* upper_bound(const T1& key) const;
       entry* upper_bound(const T1& key);

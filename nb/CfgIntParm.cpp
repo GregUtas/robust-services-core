@@ -87,10 +87,7 @@ string CfgIntParm::GetCurr() const
 {
    Debug::ft(CfgIntParm_GetCurr);
 
-   std::ostringstream stream;
-
-   stream << *curr_;
-   return stream.str();
+   return std::to_string(*curr_);
 }
 
 //------------------------------------------------------------------------------

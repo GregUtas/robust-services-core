@@ -23,8 +23,6 @@
 #include <cctype>
 #include <cstdio>
 #include <iomanip>
-#include <iosfwd>
-#include <ostream>
 #include <sstream>
 #include <utility>
 #include "CodeFile.h"
@@ -4313,7 +4311,7 @@ void Parser::SetContext(CxxNamed* item, size_t pos) const
 
 fn_name Parser_Skip = "Parser.Skip";
 
-bool Parser::Skip(size_t end, ExprPtr& expr, size_t cause)
+bool Parser::Skip(size_t end, const ExprPtr& expr, size_t cause)
 {
    Debug::ft(Parser_Skip);
 

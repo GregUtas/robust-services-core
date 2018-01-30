@@ -33,12 +33,12 @@
 #include "CxxToken.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "Lexer.h"
 #include "Parser.h"
 #include "Singleton.h"
 
 using std::ostream;
 using std::string;
-using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 

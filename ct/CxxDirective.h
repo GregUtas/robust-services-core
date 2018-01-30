@@ -30,8 +30,6 @@
 #include "CxxFwd.h"
 #include "CxxScoped.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace CodeTools

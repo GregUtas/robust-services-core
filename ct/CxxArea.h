@@ -33,8 +33,6 @@
 #include "CxxScoped.h"
 #include "SysTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace CodeTools
@@ -173,7 +171,7 @@ private:
    //  Invoked to add CLS to the area if CLS is an anonymous union.  Returns
    //  true if the union's members were promoted to the union's outer scope.
    //
-   virtual bool AddAnonymousUnion(ClassPtr& cls) { return false; }
+   virtual bool AddAnonymousUnion(const ClassPtr& cls) { return false; }
 
    //  Invoked by FindFunc.  Updates VIEW with MATCH and returns FUNC.
    //
@@ -424,7 +422,7 @@ public:
    //  Overridden to promote CLS's members to their outer scope if CLS is
    //  an anonymous union.
    //
-   virtual bool AddAnonymousUnion(ClassPtr& cls) override;
+   virtual bool AddAnonymousUnion(const ClassPtr& cls) override;
 
    //  Overridden to update imSet with files that declare or define any of
    //  the class's members.
@@ -634,7 +632,7 @@ private:
    //
    DirectivePtrVector dirs_;
 
-   //  The class's items, in the order in which they appeared.
+   //  The class's items in the order in which they appeared.
    //
    NamedVector items_;
 

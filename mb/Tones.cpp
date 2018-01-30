@@ -20,8 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Tones.h"
-#include <iosfwd>
-#include <sstream>
+#include <ostream>
 #include <string>
 #include "Algorithms.h"
 #include "Debug.h"
@@ -85,9 +84,7 @@ ToneBusy::~ToneBusy() { }
 
 string ToneBusy::Name() const
 {
-   std::ostringstream name;
-   name << "Busy tone";
-   return name.str();
+   return "Busy tone";
 }
 
 //------------------------------------------------------------------------------
@@ -98,9 +95,7 @@ ToneCallWaiting::~ToneCallWaiting() { }
 
 string ToneCallWaiting::Name() const
 {
-   std::ostringstream name;
-   name << "Call waiting tone";
-   return name.str();
+   return "Call waiting tone";
 }
 
 //------------------------------------------------------------------------------
@@ -111,9 +106,7 @@ ToneConfirmation::~ToneConfirmation() { }
 
 string ToneConfirmation::Name() const
 {
-   std::ostringstream name;
-   name << "Confirmation tone";
-   return name.str();
+   return "Confirmation tone";
 }
 
 //------------------------------------------------------------------------------
@@ -124,9 +117,7 @@ ToneDial::~ToneDial() { }
 
 string ToneDial::Name() const
 {
-   std::ostringstream name;
-   name << "Dial tone";
-   return name.str();
+   return "Dial tone";
 }
 
 //------------------------------------------------------------------------------
@@ -137,9 +128,7 @@ ToneHeld::~ToneHeld() { }
 
 string ToneHeld::Name() const
 {
-   std::ostringstream name;
-   name << "Held tone";
-   return name.str();
+   return "Held tone";
 }
 
 //------------------------------------------------------------------------------
@@ -150,9 +139,7 @@ ToneReceiverOffHook::~ToneReceiverOffHook() { }
 
 string ToneReceiverOffHook::Name() const
 {
-   std::ostringstream name;
-   name << "Receiver off-hook tone";
-   return name.str();
+   return "Receiver off-hook tone";
 }
 
 //------------------------------------------------------------------------------
@@ -163,9 +150,7 @@ ToneReorder::~ToneReorder() { }
 
 string ToneReorder::Name() const
 {
-   std::ostringstream name;
-   name << "Reorder tone";
-   return name.str();
+   return "Reorder tone";
 }
 
 //------------------------------------------------------------------------------
@@ -176,9 +161,7 @@ ToneRingback::~ToneRingback() { }
 
 string ToneRingback::Name() const
 {
-   std::ostringstream name;
-   name << "Ringback tone";
-   return name.str();
+   return "Ringback tone";
 }
 
 //------------------------------------------------------------------------------
@@ -201,9 +184,7 @@ ToneSilent::~ToneSilent() { }
 
 string ToneSilent::Name() const
 {
-   std::ostringstream name;
-   name << "Silent tone";
-   return name.str();
+   return "Silent tone";
 }
 
 //------------------------------------------------------------------------------
@@ -214,8 +195,6 @@ ToneStutteredDial::~ToneStutteredDial() { }
 
 string ToneStutteredDial::Name() const
 {
-   std::ostringstream name;
-   name << "Stuttered dial tone";
-   return name.str();
+   return "Stuttered dial tone";
 }
 }

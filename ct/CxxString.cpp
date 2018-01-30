@@ -25,6 +25,7 @@
 #include "Debug.h"
 #include "SysTypes.h"
 
+using namespace NodeBase;
 using std::string;
 
 //------------------------------------------------------------------------------

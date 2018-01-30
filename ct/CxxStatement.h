@@ -29,9 +29,6 @@
 #include <utility>
 #include "Cxx.h"
 #include "CxxFwd.h"
-#include "CxxScope.h"
-
-using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 

@@ -21,7 +21,6 @@
 //
 #include "CxxScoped.h"
 #include <bitset>
-#include <ostream>
 #include <set>
 #include <sstream>
 #include <utility>

@@ -322,12 +322,9 @@ struct SymbolView
 
 //  For initializing SymbolView instances.
 //
-const SymbolView
-   NotAccessible(Inaccessible, Compatible, false, false, true, 0);
-const SymbolView
-   DeclaredGlobally(Unrestricted, Compatible, false, false, true, 0);
-const SymbolView
-   DeclaredLocally(Declared,Compatible, false, false, true, 0);
+extern const SymbolView NotAccessible;
+extern const SymbolView DeclaredGlobally;
+extern const SymbolView DeclaredLocally;
 
 //------------------------------------------------------------------------------
 //

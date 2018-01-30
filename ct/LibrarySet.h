@@ -36,8 +36,6 @@ namespace NodeBase
    class CliThread;
 }
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace CodeTools

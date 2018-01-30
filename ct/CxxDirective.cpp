@@ -22,7 +22,6 @@
 #include "CxxDirective.h"
 #include <bitset>
 #include <iosfwd>
-#include <ostream>
 #include <sstream>
 #include <vector>
 #include "CodeFile.h"

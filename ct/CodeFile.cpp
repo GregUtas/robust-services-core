@@ -371,29 +371,6 @@ string CodeInfo::WarningCode(Warning warning)
 //
 class Editor
 {
-public:
-   //  Creates an editor for the source code in FILE, which is read from INPUT.
-   //
-   explicit Editor(CodeFile* file, istreamPtr& input);
-
-   //  All of the public editing functions attempt to fix the warning reported
-   //  in LOG.  They return 0 on success.  Any other result indicates an error,
-   //  in which case EXPL provides an explanation.
-   //
-   word Read(string& expl);
-   word SortIncludes(const WarningLog& log, string& expl);
-   word AddInclude(const WarningLog& log, string& expl);
-   word RemoveInclude(const WarningLog& log, string& expl);
-   word AddForward(const WarningLog& log, string& expl);
-   word RemoveForward(const WarningLog& log, string& expl);
-   word AddUsing(const WarningLog& log, string& expl);
-   word RemoveUsing(const WarningLog& log, string& expl);
-
-   //  Writes out the file to PATH if it was changed during editing.  Returns 0
-   //  if the file had not been changed, 1 if it was successfully written, and a
-   //  negative value if an error occurred.
-   //
-   word Write(const string& path, string& expl);
 private:
    struct SourceLine
    {
@@ -418,7 +395,40 @@ private:
    //  with const iterators.
    //
    typedef std::list< SourceLine >::iterator Iter;
+public:
+   //  Creates an editor for the source code in FILE, which is read from INPUT.
+   //
+   Editor(CodeFile* file, istreamPtr& input);
 
+   //  All of the public editing functions attempt to fix the warning reported
+   //  in LOG.  They return 0 on success.  Any other result indicates an error,
+   //  in which case EXPL provides an explanation.
+   //
+   word Read(string& expl);
+   word SortIncludes(const WarningLog& log, string& expl);
+   word AddInclude(const WarningLog& log, string& expl);
+   word RemoveInclude(const WarningLog& log, string& expl);
+   word AddForward(const WarningLog& log, string& expl);
+   word RemoveForward(const WarningLog& log, string& expl);
+   word AddUsing(const WarningLog& log, string& expl);
+   word RemoveUsing(const WarningLog& log, string& expl);
+
+   //  Replaces multiple blank lines with a single blank line.  Always invoked
+   //  on source that was changed.
+   //
+   word EraseBlankLinePairs();
+
+   //  Removes trailing spaces.  Always invoked on source that was changed.
+   //
+   void EraseTrailingBlanks(SourceList& list);
+   word EraseTrailingBlanks();
+
+   //  Writes out the file to PATH if it was changed during editing.  Returns 0
+   //  if the file had not been changed, 1 if it was successfully written, and a
+   //  negative value if an error occurred.
+   //
+   word Write(const string& path, string& expl);
+private:
    //  Reads in the file's prolog (everything up to, and including, the first
    //  #include directive.
    //
@@ -475,11 +485,6 @@ private:
    //  in a namespace that is now empty, erases the "namespace <name> { }".
    //
    word EraseEmptyNamespace(const Iter& iter);
-
-   //  Invoked before writing the file.  Replaces multiple blank lines with a
-   //  single blank line.
-   //
-   void EraseBlankLinePairs();
 
    //  Invoked to report TEXT, which is assigned to EXPL.  Returns RC.
    //
@@ -719,12 +724,12 @@ Editor::Iter Editor::Erase(SourceList& list, const string& source, string& expl)
 
 fn_name Editor_EraseBlankLinePairs = "Editor.EraseBlankLinePairs";
 
-void Editor::EraseBlankLinePairs()
+word Editor::EraseBlankLinePairs()
 {
    Debug::ft(Editor_EraseBlankLinePairs);
 
    auto i1 = epilog_.begin();
-   if(i1 == epilog_.end()) return;
+   if(i1 == epilog_.end()) return 0;
 
    for(auto i2 = std::next(i1); i2 != epilog_.end(); i2 = std::next(i1))
    {
@@ -738,6 +743,8 @@ void Editor::EraseBlankLinePairs()
          i1 = i2;
       }
    }
+
+   return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -765,6 +772,35 @@ word Editor::EraseEmptyNamespace(const Iter& iter)
    }
 
    return 0;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_EraseTrailingBlanks1 = "Editor.EraseTrailingBlanks";
+
+word Editor::EraseTrailingBlanks()
+{
+   Debug::ft(Editor_EraseTrailingBlanks1);
+
+   EraseTrailingBlanks(prolog_);
+   EraseTrailingBlanks(extIncls_);
+   EraseTrailingBlanks(intIncls_);
+   EraseTrailingBlanks(epilog_);
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_EraseTrailingBlanks2 = "Editor.EraseTrailingBlanks[list]";
+
+void Editor::EraseTrailingBlanks(SourceList& list)
+{
+   Debug::ft(Editor_EraseTrailingBlanks2);
+
+   for(auto i = list.begin(); i != list.end(); ++i)
+   {
+      while(!i->code.empty() && (i->code.back() == SPACE)) i->code.pop_back();
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -1085,6 +1121,9 @@ word Editor::Write(const string& path, string& expl)
    auto output = ostreamPtr(SysFile::CreateOstream(file.c_str(), true));
    if(output == nullptr) return Report(expl, "Failed to open output file.", -7);
 
+   EraseBlankLinePairs();
+   EraseTrailingBlanks();
+
    for(auto s = prolog_.cbegin(); s != prolog_.cend(); ++s)
    {
       *output << s->code << CRLF;
@@ -1099,8 +1138,6 @@ word Editor::Write(const string& path, string& expl)
    {
       *output << s->code << CRLF;
    }
-
-   EraseBlankLinePairs();
 
    for(auto s = epilog_.cbegin(); s != epilog_.cend(); ++s)
    {
@@ -2684,6 +2721,8 @@ word CodeFile::Fix(CliThread& cli, string& expl)
       case ForwardRemove:
       case UsingAdd:
       case UsingRemove:
+      case TrailingSpace:
+      case RemoveBlankLine:
          ++found;
          break;
       default:
@@ -2740,6 +2779,12 @@ word CodeFile::Fix(CliThread& cli, string& expl)
          case UsingRemove:
             rc = editor->RemoveUsing(*item, expl);
             break;
+         case TrailingSpace:
+            rc = editor->EraseTrailingBlanks();
+            break;
+         case RemoveBlankLine:
+            rc = editor->EraseBlankLinePairs();
+            break;
          default:
             expl = "Fixing this type of warning is not supported.";
          }
@@ -2794,6 +2839,9 @@ word CodeFile::Format(string& expl)
 
    rc = editor->Read(expl);
    if(rc != 0) return rc;
+
+   editor->EraseTrailingBlanks();
+   editor->EraseBlankLinePairs();
    return editor->Write(FullName(), expl);
 }
 

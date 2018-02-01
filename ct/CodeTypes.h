@@ -395,8 +395,9 @@ enum Warning
    FriendUnresolved,         // no referent found for friend declaration
    FriendAsForward,          // friend declaration is also forward declaration
    HidesInheritedName,       // member has the same name as a base class member
-   ClassCouldBeNamespace,    // only enums, typedefs, or static functions used
-   ClassCouldBeStruct,       // no subclasses and no non-static function invoked
+   ClassCouldBeNamespace,    // only has enums, typedefs, and static functions
+   ClassCouldBeStruct,       // has no private members
+   StructCouldBeClass,       // has private members
    RedundantAccessControl,   // previous member already public/protected/private
    ItemCouldBePrivate,       // item only used within declarer
    ItemCouldBeProtected,     // item only used within declarer and subclasses

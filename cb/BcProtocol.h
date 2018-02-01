@@ -40,7 +40,7 @@
 
 namespace CallBase
 {
-   struct DigitString;
+   class DigitString;
    struct ProgressInfo;
    struct CauseInfo;
    struct RouteResult;

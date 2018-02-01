@@ -472,8 +472,9 @@ private:
 //
 //  Statistics for memory usage by classes that represent C++ items.
 //
-struct CxxStats
+class CxxStats
 {
+public:
    //  The classes whose memory usage is tracked.
    //
    enum Item

@@ -300,7 +300,7 @@ ThreadStats::~ThreadStats()
 //
 //  Information about a context switch.
 //
-class ContextSwitch
+struct ContextSwitch
 {
 public:
    //  Initializes the record.

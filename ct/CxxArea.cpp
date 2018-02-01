@@ -519,109 +519,80 @@ void Class::CheckIfUsed(Warning warning) const
 {
    Debug::ft(Class_CheckIfUsed);
 
-   //  Log a class as unused if it has
-   //  (a) no subclasses or instantiations
-   //  (b) none of its non-static functions are invoked
-   //  (c) none of its non-static public data is used
-   //  (d) none of its static public data is used
-   //  (e) none of its static functions are invoked
-   //  (f) none of its enums are used
-   //  (g) none of its typedefs are used
-   //  If (a) and (b) are true, but not (c), suggest making it a struct.
-   //  If (a), (b), and (c) are true, but one of (d), (e), (f), or (g)
-   //  is not, suggest making it a namespace.  However, do not suggest
-   //  converting to a struct or namespace if the class has a base class
-   //  or a private static member that is used.
+   auto attrs = GetUsageAttrs();
+
+   //  If the class has a public inner class or public member functions or
+   //  data, suggest making it a struct unless it is derived from a class
+   //  or has private items, in which case it should be a class.
    //
-   if(!subs_.empty()) return;
-   if(!tmplts_.empty()) return;
-
-   auto opers = Opers();
-   for(auto o = opers->cbegin(); o != opers->cend(); ++o)
+   if((attrs.test(HasPublicInnerClass)) ||
+      (attrs.test(HasPublicMemberFunction)) ||
+      (attrs.test(HasPublicMemberData)))
    {
-      if(!(*o)->IsStatic() && ((*o)->HasInvokers())) return;
-   }
-
-   auto funcs = Funcs();
-   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
-   {
-      if(!(*f)->IsStatic() && ((*f)->HasInvokers())) return;
-   }
-
-   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
-   {
-      if(((*f)->GetAccess() == Cxx::Private) && (*f)->HasInvokers()) return;
-   }
-
-   auto classes = Classes();
-   for(auto c = classes->cbegin(); c != classes->cend(); ++c)
-   {
-      if(((*c)->GetAccess() == Cxx::Private) && !(*c)->IsUnused()) return;
-   }
-
-   auto data = Datas();
-   for(auto d = data->cbegin(); d != data->cend(); ++d)
-   {
-      auto i = d->get();
-      if((i->GetAccess() == Cxx::Private) && i->IsStatic() && !i->IsUnused())
-         return;
-   }
-
-   auto base = BaseClass();
-
-   for(auto d = data->cbegin(); d != data->cend(); ++d)
-   {
-      auto i = d->get();
-      if((i->GetAccess() == Cxx::Public) && !i->IsStatic() && !i->IsUnused())
+      auto base = BaseClass();
+      if((base != nullptr) && (base->GetClassTag() == Cxx::ClassType))
       {
-         if(base == nullptr)
-         {
-            if(tag_ == Cxx::ClassType) Log(ClassCouldBeStruct);
-         }
+         if(tag_ == Cxx::StructType) Log(StructCouldBeClass);
          return;
       }
+
+      if((attrs.test(HasNonPublicInnerClass)) ||
+         (attrs.test(HasNonPublicMemberFunction)) ||
+         (attrs.test(HasNonPublicMemberData)) ||
+         (attrs.test(HasNonPublicStaticFunction)) ||
+         (attrs.test(HasNonPublicStaticData)))
+      {
+         if(tag_ == Cxx::StructType) Log(StructCouldBeClass);
+      }
+      else
+      {
+         if(tag_ == Cxx::ClassType) Log(ClassCouldBeStruct);
+      }
+
+      return;
    }
 
-   for(auto d = data->cbegin(); d != data->cend(); ++d)
+   //  If the class only has public static functions and data, or enums and
+   //  typedefs, suggest making it a namespace unless it is derived, used as
+   //  a base class, or instantiated.
+   //
+   if((attrs.test(HasPublicStaticFunction)) ||
+      (attrs.test(HasPublicStaticData)) ||
+      (attrs.test(HasEnum)) ||
+      (attrs.test(HasTypedef)))
    {
-      auto i = d->get();
-      if((i->GetAccess() == Cxx::Public) && i->IsStatic() && !i->IsUnused())
+      auto base = BaseClass();
+      if((base != nullptr) && (base->GetClassTag() == Cxx::ClassType))
       {
-         if(base == nullptr) Log(ClassCouldBeNamespace);
+         if(tag_ == Cxx::StructType) Log(StructCouldBeClass);
          return;
       }
-   }
 
-   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
-   {
-      if((*f)->IsStatic() && ((*f)->HasInvokers()))
+      if((attrs.test(IsBase)) || (attrs.test(HasInstantiations)) ||
+         (attrs.test(HasNonPublicInnerClass)) ||
+         (attrs.test(HasNonPublicMemberFunction)) ||
+         (attrs.test(HasNonPublicMemberData)) ||
+         (attrs.test(HasNonPublicStaticFunction)) ||
+         (attrs.test(HasNonPublicStaticData)))
       {
-         if(base == nullptr) Log(ClassCouldBeNamespace);
+         if(tag_ == Cxx::StructType) Log(StructCouldBeClass);
          return;
       }
+
+      Log(ClassCouldBeNamespace);
+      return;
    }
 
-   auto enums = Enums();
-   for(auto e = enums->cbegin(); e != enums->cend(); ++e)
-   {
-      if(!(*e)->IsUnused())
-      {
-         if(base == nullptr) Log(ClassCouldBeNamespace);
-         return;
-      }
-   }
+   //  Before logging the class as unused, see if it is constructed.
+   //
+   if(attrs.test(IsConstructed)) return;
 
-   auto types = Types();
-   for(auto t = types->cbegin(); t != types->cend(); ++t)
-   {
-      if(!(*t)->IsUnused())
-      {
-         Log(ClassCouldBeNamespace);
-         return;
-      }
-   }
-
-   Log(warning);
+   //  Note that non-public items can only used by the class itself (although
+   //  we treat protected members as private, which could cause inaccuracies).
+   //  In any case, the class is only considered used if it is constructed or
+   //  if it has public items that are used.
+   //
+   if(!attrs.test(IsConstructed)) Log(warning);
 }
 
 //------------------------------------------------------------------------------
@@ -1265,6 +1236,119 @@ CxxScoped* Class::FindName(const string& name, const Class* base) const
    auto s = BaseClass();
    if((s == nullptr) || (s == base)) return nullptr;
    return s->FindName(name, base);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Class_GetUsageAttrs = "Class.GetUsageAttrs";
+
+Class::UsageAttributes Class::GetUsageAttrs() const
+{
+   Debug::ft(Class_GetUsageAttrs);
+
+   UsageAttributes attrs;
+
+   if(!subs_.empty()) attrs.set(IsBase);
+   if(!tmplts_.empty()) attrs.set(HasInstantiations);
+
+   auto classes = Classes();
+   for(auto c = classes->cbegin(); c != classes->cend(); ++c)
+   {
+      if(!(*c)->IsUnused())
+      {
+         if((*c)->GetAccess() == Cxx::Public)
+            attrs.set(HasPublicInnerClass);
+         else
+            attrs.set(HasNonPublicInnerClass);
+      }
+   }
+
+   auto opers = Opers();
+   for(auto o = opers->cbegin(); o != opers->cend(); ++o)
+   {
+      if((*o)->HasInvokers())
+      {
+         if((*o)->GetAccess() == Cxx::Public)
+         {
+            if((*o)->IsStatic())
+               attrs.set(HasPublicStaticFunction);
+            else
+               attrs.set(HasPublicMemberFunction);
+         }
+         else
+         {
+            if((*o)->IsStatic())
+               attrs.set(HasNonPublicStaticFunction);
+            else
+               attrs.set(HasNonPublicMemberFunction);
+         }
+      }
+   }
+
+   auto funcs = Funcs();
+   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
+   {
+      if((*f)->HasInvokers())
+      {
+         if((*f)->FuncType() == FuncCtor)
+         {
+            attrs.set(IsConstructed);
+         }
+         else
+         {
+            if((*f)->GetAccess() == Cxx::Public)
+            {
+               if((*f)->IsStatic())
+                  attrs.set(HasPublicStaticFunction);
+               else
+                  attrs.set(HasPublicMemberFunction);
+            }
+            else
+            {
+               if((*f)->IsStatic())
+                  attrs.set(HasNonPublicStaticFunction);
+               else
+                  attrs.set(HasNonPublicMemberFunction);
+            }
+         }
+      }
+   }
+
+   auto data = Datas();
+   for(auto d = data->cbegin(); d != data->cend(); ++d)
+   {
+      if(!(*d)->IsUnused())
+      {
+         if((*d)->GetAccess() == Cxx::Public)
+         {
+            if((*d)->IsStatic())
+               attrs.set(HasPublicStaticData);
+            else
+               attrs.set(HasPublicMemberData);
+         }
+         else
+         {
+            if((*d)->IsStatic())
+               attrs.set(HasNonPublicStaticData);
+            else
+               attrs.set(HasNonPublicMemberData);
+         }
+      }
+   }
+
+   auto enums = Enums();
+   for(auto e = enums->cbegin(); e != enums->cend(); ++e)
+   {
+      if(!(*e)->IsUnused()) attrs.set(HasEnum);
+   }
+
+   auto types = Types();
+   for(auto t = types->cbegin(); t != types->cend(); ++t)
+   {
+      if(!(*t)->IsUnused()) attrs.set(HasTypedef);
+   }
+
+   return attrs;
 }
 
 //------------------------------------------------------------------------------

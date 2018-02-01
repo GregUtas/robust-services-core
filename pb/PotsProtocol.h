@@ -38,7 +38,7 @@
 
 namespace CallBase
 {
-   struct DigitString;
+   class DigitString;
    struct ProgressInfo;
 }
 

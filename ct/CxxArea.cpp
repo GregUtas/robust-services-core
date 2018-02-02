@@ -1240,6 +1240,14 @@ CxxScoped* Class::FindName(const string& name, const Class* base) const
 
 //------------------------------------------------------------------------------
 
+Class* Class::GetClassTemplate() const
+{
+   if(!IsTemplate()) return nullptr;
+   return const_cast< Class* >(this);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Class_GetUsageAttrs = "Class.GetUsageAttrs";
 
 Class::UsageAttributes Class::GetUsageAttrs() const
@@ -1349,14 +1357,6 @@ Class::UsageAttributes Class::GetUsageAttrs() const
    }
 
    return attrs;
-}
-
-//------------------------------------------------------------------------------
-
-Class* Class::GetClassTemplate() const
-{
-   if(!IsTemplate()) return nullptr;
-   return const_cast< Class* >(this);
 }
 
 //------------------------------------------------------------------------------

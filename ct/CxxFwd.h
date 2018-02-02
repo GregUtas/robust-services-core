@@ -82,6 +82,7 @@ class TypeName;
 class TypeSpec;
 class Undef;
 class Using;
+struct WarningLog;
 
 //------------------------------------------------------------------------------
 //
@@ -167,6 +168,7 @@ typedef std::vector< StackArg > StackArgVector;
 typedef std::vector< Typedef* > TypedefVector;
 typedef std::vector< Using* > UsingVector;
 typedef std::vector< const CodeFile* > CodeFileVector;
+typedef std::vector< WarningLog > WarningLogVector;
 
 typedef std::set< std::string > stringSet;
 typedef std::set< const CxxNamed* > CxxNamedSet;

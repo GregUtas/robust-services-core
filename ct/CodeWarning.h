@@ -25,7 +25,6 @@
 #include <cstddef>
 #include <iosfwd>
 #include <string>
-#include <vector>
 #include "CodeTypes.h"
 #include "CxxFwd.h"
 #include "LibraryTypes.h"
@@ -62,17 +61,13 @@ namespace CodeTools
       //
       static void GenerateReport(std::ostream* stream, const SetOfIds& set);
 
-      //  Returns LOG's index if it has already been reported, else -1.
+      //  Adds LOG to the global set of warnings.
       //
-      static word FindWarning(const WarningLog& log);
+      static void AddWarning(const WarningLog& log);
 
-      //  The number of lines of each type, globally.
+      //  Updates WARNINGS with those that were logged in FILE.
       //
-      static size_t LineTypeCounts[LineType_N];
-
-      //  Warnings found in all files.
-      //
-      static std::vector< WarningLog > Warnings;
+      static void GetWarnings(const CodeFile* file, WarningLogVector& warnings);
 
       //  Returns true if LOG2 > LOG1 when sorting by file/line/warning.
       //
@@ -83,14 +78,30 @@ namespace CodeTools
       //
       static bool IsSortedByWarning
          (const WarningLog& log1, const WarningLog& log2);
+
+      //  Adds N to the number of line types of type T.
+      //
+      static void AddLineType(LineType t, size_t n) { LineTypeCounts_[t] += n; }
    private:
+      //  Returns LOG's index if it has already been reported, else -1.
+      //
+      static word FindWarning(const WarningLog& log);
+
       //  Returns the string "Wnnn", where nnn is WARNING's integer value.
       //
       static std::string WarningCode(Warning warning);
 
+      //  Warnings found in all files.
+      //
+      static WarningLogVector Warnings_;
+
       //  The total number of warnings of each type, globally.
       //
-      static size_t WarningCounts[Warning_N];
-   };
+      static size_t WarningCounts_[Warning_N];
+
+      //  The number of lines of each type, globally.
+      //
+      static size_t LineTypeCounts_[LineType_N];
+};
 }
 #endif

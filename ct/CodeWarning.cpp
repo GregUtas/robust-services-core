@@ -24,6 +24,7 @@
 #include <iomanip>
 #include <iterator>
 #include <sstream>
+#include <vector>
 #include "CodeFile.h"
 #include "CodeFileSet.h"
 #include "CxxArea.h"
@@ -61,11 +62,30 @@ bool WarningLog::operator!=(const WarningLog& that) const
 
 //==============================================================================
 
-size_t CodeInfo::LineTypeCounts[] = { };
+size_t CodeInfo::LineTypeCounts_[] = { };
 
-size_t CodeInfo::WarningCounts[] = { };
+size_t CodeInfo::WarningCounts_[] = { };
 
-std::vector< WarningLog > CodeInfo::Warnings = std::vector< WarningLog >();
+std::vector< WarningLog > CodeInfo::Warnings_ = std::vector< WarningLog >();
+
+//------------------------------------------------------------------------------
+
+void CodeInfo::AddWarning(const WarningLog& log)
+{
+   if(FindWarning(log) < 0) Warnings_.push_back(log);
+}
+
+//------------------------------------------------------------------------------
+
+word CodeInfo::FindWarning(const WarningLog& log)
+{
+   for(size_t i = 0; i < Warnings_.size(); ++i)
+   {
+      if(Warnings_.at(i) == log) return i;
+   }
+
+   return -1;
+}
 
 //------------------------------------------------------------------------------
 
@@ -77,8 +97,8 @@ void CodeInfo::GenerateReport(ostream* stream, const SetOfIds& set)
 
    //  Clear any previous report's global counts.
    //
-   for(auto t = 0; t < LineType_N; ++t) LineTypeCounts[t] = 0;
-   for(auto w = 0; w < Warning_N; ++w) WarningCounts[w] = 0;
+   for(auto t = 0; t < LineType_N; ++t) LineTypeCounts_[t] = 0;
+   for(auto w = 0; w < Warning_N; ++w) WarningCounts_[w] = 0;
 
    //  Sort the files to be checked in build order.  This is important because
    //  recommendations about adding and removing #include directives and using
@@ -118,11 +138,11 @@ void CodeInfo::GenerateReport(ostream* stream, const SetOfIds& set)
    //  belonging to the original SET, extracing them into the local set of
    //  warnings.
    //
-   for(auto item = Warnings.cbegin(); item != Warnings.cend(); ++item)
+   for(auto item = Warnings_.cbegin(); item != Warnings_.cend(); ++item)
    {
       if(set.find(item->file->Fid()) != set.cend())
       {
-         ++WarningCounts[item->warning];
+         ++WarningCounts_[item->warning];
          warnings.push_back(*item);
       }
    }
@@ -134,7 +154,7 @@ void CodeInfo::GenerateReport(ostream* stream, const SetOfIds& set)
    for(auto t = 0; t < LineType_N; ++t)
    {
       *stream << setw(12) << LineType(t)
-         << spaces(2) << setw(6) << LineTypeCounts[t] << CRLF;
+         << spaces(2) << setw(6) << LineTypeCounts_[t] << CRLF;
    }
 
    //  Display the total number of warnings of each type.
@@ -143,10 +163,10 @@ void CodeInfo::GenerateReport(ostream* stream, const SetOfIds& set)
 
    for(auto w = 0; w < Warning_N; ++w)
    {
-      if(WarningCounts[w] != 0)
+      if(WarningCounts_[w] != 0)
       {
-         *stream << setw(6) << WarningCode(Warning(w))
-            << setw(6) << WarningCounts[w] << spaces(2) << Warning(w) << CRLF;
+         *stream << setw(6) << WarningCode(Warning(w)) << setw(6)
+            << WarningCounts_[w] << spaces(2) << Warning(w) << CRLF;
       }
    }
 
@@ -225,6 +245,19 @@ void CodeInfo::GenerateReport(ostream* stream, const SetOfIds& set)
 
 //------------------------------------------------------------------------------
 
+void CodeInfo::GetWarnings(const CodeFile* file, WarningLogVector& warnings)
+{
+   for(auto w = Warnings_.cbegin(); w != Warnings_.cend(); ++w)
+   {
+      if(w->file == file)
+      {
+         warnings.push_back(*w);
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 bool CodeInfo::IsSortedByFile(const WarningLog& log1, const WarningLog& log2)
 {
    auto result = strCompare(log1.file->FullName(), log2.file->FullName());
@@ -253,22 +286,6 @@ bool CodeInfo::IsSortedByWarning(const WarningLog& log1, const WarningLog& log2)
    if(log1.info < log2.info) return true;
    if(log1.info > log2.info) return false;
    return (&log1 < &log2);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CodeInfo_FindWarning = "CodeInfo.FindWarning";
-
-word CodeInfo::FindWarning(const WarningLog& log)
-{
-   Debug::ft(CodeInfo_FindWarning);
-
-   for(size_t i = 0; i < Warnings.size(); ++i)
-   {
-      if(Warnings.at(i) == log) return i;
-   }
-
-   return -1;
 }
 
 //------------------------------------------------------------------------------

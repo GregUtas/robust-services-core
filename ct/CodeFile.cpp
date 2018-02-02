@@ -695,6 +695,7 @@ void CodeFile::CheckFunctionOrder() const
       //
       if((*f)->GetScope() != scope)
       {
+         scope = (*f)->GetScope();
          state = FuncCtor;
          prev = nullptr;
          curr = nullptr;
@@ -705,7 +706,7 @@ void CodeFile::CheckFunctionOrder() const
       //  the first time (its declaration) so that it can be handled when
       //  its definition appears.
       //
-      if(((*f)->GetDefnFile() == this) &&
+      if(((*f)->GetDeclFile() == this) &&
          (forwards.find(*f) == forwards.end()))
       {
          forwards.insert(*f);
@@ -1451,14 +1452,29 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user,
    //  from CxxScoped.NameRefersToItem, simplified to handle only the case of a
    //  symbol that needs to be resolved by a using statement.
    //
-   auto found = false;
-   auto name = user->QualifiedName(true, false);
-   string fqName;
-   size_t i = 0;
-   auto ref = user->DirectType();
+   string name;
+   CxxNamed* ref;
+   auto qname = user->GetQualName();
+
+   if(qname != nullptr)
+   {
+      auto first = qname->First();
+      name = first->QualifiedName(true, false);
+      ref = first->DirectType();
+   }
+   else
+   {
+      name = user->QualifiedName(true, false);
+      ref = user->DirectType();
+   }
+
    if(ref == nullptr) return;
    auto tmplt = ref->GetTemplate();
    if(tmplt != nullptr) ref = tmplt;
+
+   auto found = false;
+   string fqName;
+   size_t i = 0;
 
    while(!found && ref->GetScopedName(fqName, i))
    {
@@ -1485,14 +1501,14 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user,
             //  twice, by both Check() and Trim().  Using statements added
             //  to the file (this occurs below) must therefore be added to
             //  the set addUsing so that they will be logged as needing to
-            //  be added, because they are not yet part of the ource code.
+            //  be added, because they are not yet part of the source code.
             //
             auto u = GetUsingFor(fqName, pos - 4);
 
             if(u != nullptr)
             {
                u->MarkForRetention();
-               if(u->WasAdded()) addUsing.insert(ref);
+               if(u->WasAdded()) addUsing.insert(u->Referent());
                found = true;
             }
          }
@@ -1585,20 +1601,8 @@ word CodeFile::Fix(CliThread& cli, string& expl)
 {
    Debug::ft(CodeFile_Fix);
 
-   auto& Warnings = CodeInfo::Warnings;
-
-   std::vector< WarningLog > warnings;
-
-   //  Extract the warnings associated with this file.
-   //
-   for(auto item = Warnings.cbegin(); item != Warnings.cend(); ++item)
-   {
-      if(item->file == this)
-      {
-         warnings.push_back(*item);
-      }
-   }
-
+   WarningLogVector warnings;
+   CodeInfo::GetWarnings(this, warnings);
    if(warnings.empty()) return 0;
 
    //  Create an editor for the file.
@@ -1807,11 +1811,11 @@ void CodeFile::GetLineCounts() const
    //
    if(isSubsFile_) return;
 
-   CodeInfo::LineTypeCounts[AnyLine] += lineType_.size();
+   CodeInfo::AddLineType(AnyLine, lineType_.size());
 
    for(size_t n = 0; n < lineType_.size(); ++n)
    {
-      ++CodeInfo::LineTypeCounts[lineType_[n]];
+      CodeInfo::AddLineType(lineType_[n], 1);
    }
 }
 
@@ -2221,7 +2225,7 @@ void CodeFile::LogLine
       log.offset = offset;
       log.info = info;
 
-      if(CodeInfo::FindWarning(log) < 0) CodeInfo::Warnings.push_back(log);
+      CodeInfo::AddWarning(log);
    }
 }
 

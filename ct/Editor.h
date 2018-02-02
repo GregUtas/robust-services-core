@@ -29,11 +29,6 @@
 #include "SysFile.h"
 #include "SysTypes.h"
 
-namespace CodeTools
-{
-   struct WarningLog;
-}
-
 using namespace NodeBase;
 
 //------------------------------------------------------------------------------

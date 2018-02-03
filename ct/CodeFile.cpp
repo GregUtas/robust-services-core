@@ -207,7 +207,7 @@ void FindForwardCandidates(const CxxUsageSets& symbols, CxxNamedSet& addForws)
 
 fn_name CodeTools_GetTransitiveBases = "CodeTools.GetTransitiveBases";
 
-void GetTransitiveBases(const CxxNamedSet& bases, SetOfIds& baseIds_)
+void GetTransitiveBases(const CxxNamedSet& bases, SetOfIds& tBaseIds)
 {
    Debug::ft(CodeTools_GetTransitiveBases);
 
@@ -217,7 +217,7 @@ void GetTransitiveBases(const CxxNamedSet& bases, SetOfIds& baseIds_)
 
       for(auto c = base; c != nullptr; c = c->BaseClass())
       {
-         baseIds_.insert(c->GetDeclFid());
+         tBaseIds.insert(c->GetDeclFid());
       }
    }
 }
@@ -968,6 +968,8 @@ void CodeFile::CheckSeparation()
       //  Based on the type of line just found, look for warnings that can
       //  only be found based on the type of line that preceded this one.
       //
+      auto nextType = (n == lineType_.size() - 1 ? Blank : lineType_[n + 1]);
+
       switch(lineType_[n])
       {
       case Code:
@@ -1005,11 +1007,18 @@ void CodeFile::CheckSeparation()
          {
          case Blank:
          case EmptyComment:
-         case TaggedComment:
-         case TextComment:
             break;
          default:
             LogLine(n, InsertBlankLine);
+         }
+
+         switch(nextType)
+         {
+         case Blank:
+         case EmptyComment:
+            break;
+         default:
+            LogLine(n + 1, InsertBlankLine);
          }
          break;
 
@@ -1419,8 +1428,9 @@ void CodeFile::FindDeclIds()
 {
    Debug::ft(CodeFile_FindDeclIds);
 
-   //  If this is a .cpp, find the headers that declare
-   //  items that the .cpp defines.
+   //  If this is a .cpp, find declIds_, the headers that declare items that
+   //  the .cpp defines.  Also find classIds_, the transitive base classes of
+   //  the classes that the .cpp implements.
    //
    if(!IsCpp()) return;
 
@@ -1428,12 +1438,30 @@ void CodeFile::FindDeclIds()
    {
       auto fid = (*f)->GetDistinctDeclFid();
       if(fid != NIL_ID) declIds_.insert(fid);
+
+      auto c = (*f)->GetClass();
+      if(c != nullptr)
+      {
+         for(auto b = c->BaseClass(); b != nullptr; b = b->BaseClass())
+         {
+            classIds_.insert(b->GetDeclFid());
+         }
+      }
    }
 
    for(auto d = data_.cbegin(); d != data_.cend(); ++d)
    {
       auto fid = (*d)->GetDistinctDeclFid();
       if(fid != NIL_ID) declIds_.insert(fid);
+
+      auto c = (*d)->GetClass();
+      if(c != nullptr)
+      {
+         for(auto b = c->BaseClass(); b != nullptr; b = b->BaseClass())
+         {
+            classIds_.insert(b->GetDeclFid());
+         }
+      }
    }
 }
 
@@ -2485,6 +2513,21 @@ void CodeFile::RemoveHeaderIds(SetOfIds& inclIds) const
 
 //------------------------------------------------------------------------------
 
+fn_name CodeFile_SaveBaseIds = "CodeFile.SaveBaseIds";
+
+void CodeFile::SaveBaseIds(const CxxNamedSet& bases)
+{
+   Debug::ft(CodeFile_SaveBaseIds);
+
+   for(auto b = bases.cbegin(); b != bases.cend(); ++b)
+   {
+      auto base = static_cast< const Class* >(*b);
+      baseIds_.insert(base->GetDeclFid());
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeFile_Scan = "CodeFile.Scan";
 
 void CodeFile::Scan()
@@ -2637,15 +2680,16 @@ void CodeFile::Trim(ostream* stream)
    Debug::Progress(Name(), true);
 
    CxxUsageSets symbols;
-   FindDeclIds();
    GetUsageInfo(symbols);
-
    auto& bases = symbols.bases;
    auto& directs = symbols.directs;
    auto& indirects = symbols.indirects;
    auto& forwards = symbols.forwards;
    auto& friends = symbols.friends;
    auto& users = symbols.users;
+
+   FindDeclIds();
+   SaveBaseIds(bases);
 
    //  Remove direct and indirect symbols declared by the file itself.
    //  Find inclSet, the types that were used directly or in executable
@@ -2685,11 +2729,11 @@ void CodeFile::Trim(ostream* stream)
    //  Regenerate it so that it is limited to base classes for those
    //  declared in the .cpp.  Before doing this, find the files that
    //  define base classes, including transitive base classes, of
-   //  classes defined or implemented in this file.  This set (baseIds_)
+   //  classes defined or implemented in this file.  This set (tBaseIds)
    //  will be needed later, when analyzing using statements.
    //
-   SetOfIds baseIds_;
-   GetTransitiveBases(bases, baseIds_);
+   SetOfIds tBaseIds;
+   GetTransitiveBases(bases, tBaseIds);
    if(IsCpp()) GetDeclaredBaseClasses(bases);
 
    //  An #include should always appear for a base class.  Add them to
@@ -2752,13 +2796,14 @@ void CodeFile::Trim(ostream* stream)
 
    //  Create usingFiles, the files that this file can rely on for accessing
    //  using statements.  This set consists of transitive base class files
-   //  (baseIds_) and files that declare what this file defines (declIds_).
+   //  (tBaseIds), files that declare what this file defines (declIds_), and
+   //  transitive base classes of classes that this file defines (classIds_).
    //
    CodeFileVector usingFiles;
 
    auto& files = Singleton< Library >::Instance()->Files();
 
-   for(auto b = baseIds_.cbegin(); b != baseIds_.cend(); ++b)
+   for(auto b = tBaseIds.cbegin(); b != tBaseIds.cend(); ++b)
    {
       usingFiles.push_back(files.At(*b));
    }
@@ -2766,6 +2811,11 @@ void CodeFile::Trim(ostream* stream)
    for(auto d = declIds_.cbegin(); d != declIds_.cend(); ++d)
    {
       usingFiles.push_back(files.At(*d));
+   }
+
+   for(auto c = classIds_.cbegin(); c != classIds_.cend(); ++c)
+   {
+      usingFiles.push_back(files.At(*c));
    }
 
    //  Look at each name (N) that was resolved by a using statement, and

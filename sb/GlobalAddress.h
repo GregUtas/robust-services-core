@@ -28,7 +28,6 @@
 #include "SbTypes.h"
 
 using namespace NetworkBase;
-using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 

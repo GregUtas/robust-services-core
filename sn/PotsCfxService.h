@@ -39,7 +39,6 @@ namespace PotsBase
    class DnRouteFeatureProfile;
 }
 
-using namespace NodeBase;
 using namespace SessionBase;
 using namespace CallBase;
 

@@ -1571,7 +1571,7 @@ private:
    virtual void SetPtrs(TagCount ptrs) override;
    virtual void SetRefDetached(bool on) override;
    virtual void SetRefs(TagCount refs) override;
-   virtual void SetReferent(CxxNamed* ref, bool use) override;
+   virtual void SetReferent(CxxNamed* ref, bool use) override;  //*
 
    //  The following is not supported.  It generates a log and returns
    //  nullptr.

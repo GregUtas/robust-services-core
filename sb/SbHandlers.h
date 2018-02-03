@@ -29,8 +29,6 @@ namespace NodeBase
    template< typename T > class Singleton;
 }
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase

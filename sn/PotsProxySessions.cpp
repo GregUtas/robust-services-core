@@ -28,6 +28,8 @@
 #include "Singleton.h"
 #include "SysTypes.h"
 
+using namespace SessionBase;
+
 //------------------------------------------------------------------------------
 
 namespace PotsBase

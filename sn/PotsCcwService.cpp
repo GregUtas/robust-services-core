@@ -38,6 +38,9 @@
 #include "SysTypes.h"
 #include "Tones.h"
 
+using namespace CallBase;
+using namespace MediaBase;
+
 //------------------------------------------------------------------------------
 
 namespace PotsBase

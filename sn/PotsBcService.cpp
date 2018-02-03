@@ -25,6 +25,8 @@
 #include "SbAppIds.h"
 #include "Singleton.h"
 
+using namespace SessionBase;
+
 //------------------------------------------------------------------------------
 
 namespace PotsBase

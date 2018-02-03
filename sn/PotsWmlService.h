@@ -26,7 +26,6 @@
 #include "NbTypes.h"
 #include "Service.h"
 
-using namespace NodeBase;
 using namespace SessionBase;
 
 //------------------------------------------------------------------------------

@@ -50,8 +50,6 @@ namespace CallBase
    class CipPsm;
 }
 
-using namespace NodeBase;
-using namespace SessionBase;
 using namespace MediaBase;
 
 //------------------------------------------------------------------------------

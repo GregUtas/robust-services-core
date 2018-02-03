@@ -26,7 +26,6 @@
 #include "NwTypes.h"
 
 using namespace NetworkBase;
-using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 

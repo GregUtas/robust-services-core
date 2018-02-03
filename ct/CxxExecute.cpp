@@ -1469,7 +1469,7 @@ bool StackArg::SetAutoTypeOn(const FuncData& data) const
    auto constauto = spec->IsConst();
    auto constautoptr = spec->IsConstPtr();
    auto ref = static_cast< CxxNamed* >(item);
-   spec->SetReferent(ref, false);
+   spec->SetReferent(ref, false);  //*
 
    //  RefCount() is the number of references that were attached to "auto"
    //  (usually 0, but 1 when "auto&" is used).  Unless "auto&" is used, the

@@ -35,8 +35,6 @@
 #include "Singleton.h"
 #include "Switch.h"
 
-using namespace MediaBase;
-
 //------------------------------------------------------------------------------
 
 namespace PotsBase

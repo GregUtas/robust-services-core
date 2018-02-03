@@ -28,7 +28,6 @@
 #include <string>
 #include "SbTypes.h"
 
-using namespace NodeBase;
 using namespace SessionBase;
 
 //------------------------------------------------------------------------------

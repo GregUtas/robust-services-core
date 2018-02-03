@@ -31,6 +31,7 @@
 #include "SbTypes.h"
 #include "SysSocket.h"
 
+using namespace NetworkBase;
 using namespace NodeBase;
 
 //------------------------------------------------------------------------------

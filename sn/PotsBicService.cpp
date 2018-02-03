@@ -35,6 +35,8 @@
 #include "State.h"
 #include "SysTypes.h"
 
+using namespace CallBase;
+
 //------------------------------------------------------------------------------
 
 namespace PotsBase

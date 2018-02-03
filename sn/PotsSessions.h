@@ -41,8 +41,6 @@ namespace PotsBase
    class PotsTreatment;
 }
 
-using namespace NodeBase;
-using namespace SessionBase;
 using namespace CallBase;
 
 //------------------------------------------------------------------------------

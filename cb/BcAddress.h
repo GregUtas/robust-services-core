@@ -31,7 +31,6 @@
 #include "SysTypes.h"
 #include "TlvParameter.h"
 
-using namespace NodeBase;
 using namespace SessionBase;
 
 //------------------------------------------------------------------------------

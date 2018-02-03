@@ -37,6 +37,7 @@
 #include "Tool.h"
 #include "TraceBuffer.h"
 
+using namespace NetworkBase;
 using std::ostream;
 
 //------------------------------------------------------------------------------

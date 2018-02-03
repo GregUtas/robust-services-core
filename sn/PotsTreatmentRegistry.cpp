@@ -27,6 +27,7 @@
 #include "SysTypes.h"
 #include "Tones.h"
 
+using namespace MediaBase;
 using std::ostream;
 using std::string;
 

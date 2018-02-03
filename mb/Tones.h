@@ -28,8 +28,6 @@
 #include "NbTypes.h"
 #include "RegCell.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace MediaBase

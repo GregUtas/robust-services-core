@@ -32,8 +32,6 @@
 using std::ostream;
 using std::setw;
 using std::string;
-using namespace SessionBase;
-using namespace MediaBase;
 
 //------------------------------------------------------------------------------
 

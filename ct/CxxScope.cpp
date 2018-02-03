@@ -1939,7 +1939,7 @@ void Function::AddThisArg()
    TypeSpecPtr typeSpec(new DataSpec(cls->Name()->c_str()));
    typeSpec->SetPtrs(1);
    typeSpec->SetConst(const_);
-   typeSpec->SetReferent(cls, false);
+   typeSpec->SetReferent(cls, false);  //*
    string argName(THIS_STR);
    ArgumentPtr arg(new Argument(argName, typeSpec));
    arg->SetScope(this);
@@ -4761,10 +4761,10 @@ void FuncSpec::SetRefDetached(bool on)
 
 //------------------------------------------------------------------------------
 
-void FuncSpec::SetReferent(CxxNamed* ref, bool use)
+void FuncSpec::SetReferent(CxxNamed* ref, bool use)  //*
 {
    Debug::SwErr(FuncSpec_Warning, "SetReferent", 0);
-   func_->GetTypeSpec()->SetReferent(ref, use);
+   func_->GetTypeSpec()->SetReferent(ref, use);  //*
 }
 
 //------------------------------------------------------------------------------

@@ -28,7 +28,6 @@
 #include "SysTypes.h"
 
 using namespace NetworkBase;
-using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 

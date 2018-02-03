@@ -46,6 +46,7 @@
 #include "TlvParameter.h"
 #include "Tones.h"
 
+using namespace NetworkBase;
 using std::ostream;
 using std::string;
 using namespace MediaBase;

@@ -878,7 +878,7 @@ bool DataSpec::FindReferent()
 
    if(item != nullptr)
    {
-      SetReferent(item, view.using_);
+      SetReferent(item, view.using_);  //*
       return true;
    }
 
@@ -908,7 +908,7 @@ bool DataSpec::FindReferent()
       //
       view = NotAccessible;
       item = syms->FindSymbol(file, scope, qname, VALUE_REFS, &view);
-      if(item != nullptr) SetReferent(item, view.using_);
+      if(item != nullptr) SetReferent(item, view.using_);  //*
    case TemplateParameter:
    case TemplateClass:
       //
@@ -1481,7 +1481,7 @@ bool DataSpec::ResolveTemplateArgument()
    auto item = parser->ResolveInstanceArgument(name_.get());
    if(item == nullptr) return false;
 
-   SetReferent(item, false);
+   SetReferent(item, false);  //*
    return true;
 }
 
@@ -1556,7 +1556,7 @@ void DataSpec::SetLocale(Cxx::ItemType locale)
 
 fn_name DataSpec_SetReferent = "DataSpec.SetReferent";
 
-void DataSpec::SetReferent(CxxNamed* ref, bool use)
+void DataSpec::SetReferent(CxxNamed* ref, bool use)  //*
 {
    Debug::ft(DataSpec_SetReferent);
 
@@ -1572,7 +1572,13 @@ void DataSpec::SetReferent(CxxNamed* ref, bool use)
    else
    {
       name_->SetReferent(ref);
-      if(use) using_ = true;
+      if(use)
+      {
+         auto file = GetFile();
+         if((file != nullptr) && (file->Name() == "Factory.h") && (*Name() == "Message"))
+            Debug::noop();  //* this is where Message has using_ set
+         using_ = true;
+      }
 
       if(ref->Type() != Cxx::Typedef)
       {
@@ -2744,8 +2750,22 @@ void TypeName::SetReferent(CxxNamed* item, const SymbolView* view) const
 {
    Debug::ft(TypeName_SetReferent);
 
+   if(*Name() == "Message")
+   {
+      auto file = GetFile();
+      if((file != nullptr) && (file->Name() == "Factory.h") &&
+         (view != nullptr) && view->using_)
+      Debug::noop();  //x
+   }
+
+   //  This can be invoked more than once, when a class template name clears
+   //  its referent, instead of leaving it as a forward declaration, so that
+   //  the referent can later be set to a class template instance.  When this
+   //  occurs, this function is also reinvoked on template arguments.  If the
+   //  name was already resolved, however, its using_ flag should not change.
+   //
+   if((view != nullptr) && view->using_ && (ref_ == nullptr)) using_ = true;
    ref_ = item;
-   if((view != nullptr) && view->using_) using_ = true;
 }
 
 //------------------------------------------------------------------------------
@@ -3088,7 +3108,7 @@ void TypeSpec::SetRefDetached(bool on)
 
 //------------------------------------------------------------------------------
 
-void TypeSpec::SetReferent(CxxNamed* ref, bool use)
+void TypeSpec::SetReferent(CxxNamed* ref, bool use)  //*
 {
    Debug::SwErr(TypeSpec_PureVirtualFunction, "SetReferent", 0);
 }

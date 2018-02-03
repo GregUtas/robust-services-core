@@ -38,6 +38,8 @@
 #include "TimerRegistry.h"
 #include "TimerThread.h"
 
+using namespace NetworkBase;
+
 //------------------------------------------------------------------------------
 
 namespace SessionBase

@@ -888,7 +888,7 @@ public:
    //  Sets what the type refers to.  USE is set if a using statement made
    //  the type visible.
    //
-   virtual void SetReferent(CxxNamed* ref, bool use) = 0;
+   virtual void SetReferent(CxxNamed* ref, bool use) = 0;  //*
 
    //  Returns the number of pointer tags attached to the type.  It follows
    //  the type to its root (a class or terminal), adding up pointer tags
@@ -1303,7 +1303,7 @@ private:
 
    //  Overridden to set what the type refers to.
    //
-   virtual void SetReferent(CxxNamed* ref, bool use) override;
+   virtual void SetReferent(CxxNamed* ref, bool use) override;  //*
 
    //  Overridden to set the level of reference indirection to the type.
    //

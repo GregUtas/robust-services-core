@@ -26,7 +26,6 @@
 #include "SbTypes.h"
 #include "Switch.h"
 
-using namespace NodeBase;
 using namespace SessionBase;
 
 //------------------------------------------------------------------------------

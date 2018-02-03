@@ -46,6 +46,7 @@
 #include "SysTypes.h"
 
 using namespace PotsBase;
+using namespace SessionBase;
 
 //------------------------------------------------------------------------------
 

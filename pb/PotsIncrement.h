@@ -26,7 +26,6 @@
 #include "NbTypes.h"
 #include "StIncrement.h"
 
-using namespace NodeBase;
 using namespace SessionTools;
 
 //------------------------------------------------------------------------------

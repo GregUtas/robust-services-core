@@ -396,7 +396,7 @@ public:
 private:
    //  Overridden to find the base class's class.
    //
-   virtual bool FindReferent() override;
+   virtual void FindReferent() override;
 
    //  The (possibly) qualified name of the base class.
    //
@@ -855,7 +855,7 @@ public:
 private:
    //  Overridden to find the item that the declaration refers to.
    //
-   virtual bool FindReferent() override;
+   virtual void FindReferent() override;
 
    //  Overridden to record DECL and update the friend's scope.
    //
@@ -865,15 +865,15 @@ private:
    //
    virtual CxxToken* RootType() const override { return Referent(); }
 
+   //  Overridden to record what the item refers to.
+   //
+   virtual void SetReferent
+      (CxxNamed* item, const SymbolView* view) const override;
+
    //  Finds the item that the declaration refers to when it was not
    //  visible from the scope where the declaration appeared.
    //
    CxxNamed* FindForward() const;
-
-   //  If REF is valid, sets it as the referent and returns true, else
-   //  returns false.
-   //
-   bool SetReferent(CxxNamed* ref) const;
 
    //  Returns the referent.
    //
@@ -1223,7 +1223,7 @@ public:
 private:
    //  Overridden to find the item that the declaration refers to.
    //
-   virtual bool FindReferent() override;
+   virtual void FindReferent() override;
 
    //  The declaration's (possibly) qualified name.
    //

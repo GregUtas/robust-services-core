@@ -72,8 +72,6 @@ std::vector< WarningLog > CodeInfo::Warnings_ = std::vector< WarningLog >();
 
 void CodeInfo::AddWarning(const WarningLog& log)
 {
-   if(log.warning == UsingAdd)
-      Debug::noop();  //x
    if(FindWarning(log) < 0) Warnings_.push_back(log);
 }
 

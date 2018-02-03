@@ -35,8 +35,6 @@
 #include "Singleton.h"
 #include "TlvParameter.h"
 
-using namespace SessionBase;
-
 //------------------------------------------------------------------------------
 
 namespace PotsBase

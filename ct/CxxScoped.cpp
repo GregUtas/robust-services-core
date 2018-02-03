@@ -258,7 +258,8 @@ bool BaseDecl::EnterScope()
    //  object will be deleted.  Otherwise, record our new subclass.
    //
    Context::SetPos(GetPos());
-   if(!FindReferent()) return false;
+   FindReferent();
+   if(Referent() == nullptr) return false;
    GetClass()->AddSubclass(static_cast< Class* >(Context::Scope()));
    return true;
 }
@@ -267,7 +268,7 @@ bool BaseDecl::EnterScope()
 
 fn_name BaseDecl_FindReferent = "BaseDecl.FindReferent";
 
-bool BaseDecl::FindReferent()
+void BaseDecl::FindReferent()
 {
    Debug::ft(BaseDecl_FindReferent);
 
@@ -280,14 +281,13 @@ bool BaseDecl::FindReferent()
    {
       using_ = view.using_;
       item->SetAsReferent(this);
-      return true;
+      return;
    }
 
    //  The base class wasn't found.
    //
    auto log = "Unknown base class: " + *Name() + " [" + strLocation() + ']';
    Debug::SwErr(BaseDecl_FindReferent, log, 0, InfoLog);
-   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -1253,7 +1253,7 @@ CxxNamed* Forward::Referent() const
 
    auto name = QualifiedName(false, true);
    ref = GetArea()->FindClass(name);
-   name_->SetReferent(ref);
+   name_->SetReferent(ref, nullptr);
    return ref;
 }
 
@@ -1509,7 +1509,7 @@ CxxNamed* Friend::FindForward() const
             if(func != nullptr) item = space->MatchFunc(func, false);
          }
          if(item == nullptr) item = space->FindItem(name);
-         qname->SetReferent(idx - 1, item, nullptr);
+         qname->SetReferentN(idx - 1, item, nullptr);
          if(item == nullptr) return nullptr;
          break;
 
@@ -1529,7 +1529,7 @@ CxxNamed* Friend::FindForward() const
             if(!ResolveTemplate(cls, args, (idx >= size))) break;
             cls = cls->EnsureInstance(args);
             item = cls;
-            qname->SetReferent(idx - 1, item, nullptr);  // updated value
+            qname->SetReferentN(idx - 1, item, nullptr);  // updated value
             if(item == nullptr) return nullptr;
          }
          while(false);
@@ -1545,7 +1545,7 @@ CxxNamed* Friend::FindForward() const
             if(func != nullptr) item = cls->MatchFunc(func, true);
          }
          if(item == nullptr) item = cls->FindMember(name, true);
-         qname->SetReferent(idx - 1, item, nullptr);
+         qname->SetReferentN(idx - 1, item, nullptr);
          if(item == nullptr) return nullptr;
          break;
 
@@ -1559,7 +1559,7 @@ CxxNamed* Friend::FindForward() const
             auto root = tdef->Root();
             if(root == nullptr) return tdef;
             item = static_cast< CxxScoped* >(root);
-            qname->SetReferent(idx - 1, item, nullptr);  // updated value
+            qname->SetReferentN(idx - 1, item, nullptr);  // updated value
          }
          break;
 
@@ -1577,7 +1577,7 @@ CxxNamed* Friend::FindForward() const
 
 fn_name Friend_FindReferent = "Friend.FindReferent";
 
-bool Friend::FindReferent()
+void Friend::FindReferent()
 {
    Debug::ft(Friend_FindReferent);
 
@@ -1592,7 +1592,7 @@ bool Friend::FindReferent()
    //    Even if the referent is not found, SetReferent(nullptr) must be invoked
    //  to reset searching_ and Depth_, which reenables this function.
    //
-   if(searching_ || (Depth_ > 1)) return false;
+   if(searching_ || (Depth_ > 1)) return;
    searching_ = true;
    ++Depth_;
 
@@ -1620,7 +1620,7 @@ bool Friend::FindReferent()
    //
    auto forw = name_->GetForward();
    if((ref == nullptr) || (ref == this) || (ref == forw)) ref = FindForward();
-   return SetReferent(ref);
+   SetReferent(ref, nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -1834,7 +1834,7 @@ void Friend::SetFunc(FunctionPtr& func)
       inline_->SetTemplateParms(parms_);
       inline_->SetFriend();
       static_cast< CxxArea* >(scope)->AddFunc(func);
-      GetQualName()->SetReferent(inline_);
+      GetQualName()->SetReferent(inline_, nullptr);
       inline_->SetAsReferent(this);
    }
    else
@@ -1858,16 +1858,16 @@ void Friend::SetName(QualNamePtr& name)
 
 fn_name Friend_SetReferent = "Friend.SetReferent";
 
-bool Friend::SetReferent(CxxNamed* ref) const
+void Friend::SetReferent(CxxNamed* item, const SymbolView* view) const
 {
    Debug::ft(Friend_SetReferent);
 
    searching_ = false;
    --Depth_;
 
-   if(ref == nullptr) return false;
+   if(item == nullptr) return;
 
-   auto type = ref->Type();
+   auto type = item->Type();
 
    switch(type)
    {
@@ -1875,14 +1875,13 @@ bool Friend::SetReferent(CxxNamed* ref) const
    case Cxx::Function:
       break;
    default:
-      auto expl = ref->ScopedName(true) + " is an invalid friend";
+      auto expl = item->ScopedName(true) + " is an invalid friend";
       Context::SwErr(Friend_SetReferent, expl, type);
-      return false;
+      return;
    }
 
-   ref->SetAsReferent(this);
-   GetQualName()->SetReferent(ref);
-   return true;
+   item->SetAsReferent(this);
+   GetQualName()->SetReferent(item, view);
 }
 
 //------------------------------------------------------------------------------
@@ -2289,19 +2288,18 @@ void Using::ExitBlock()
 
 fn_name Using_FindReferent = "Using.FindReferent";
 
-bool Using::FindReferent()
+void Using::FindReferent()
 {
    Debug::ft(Using_FindReferent);
 
    //  If the symbol table doesn't know what this using statement refers to,
    //  log it.  Template arguments are not supported in a using statement.
    //
-   if(Referent() != nullptr) return true;
+   if(Referent() != nullptr) return;
 
    auto qname = QualifiedName(true, false);
    auto log = "Unknown using: " + qname + " [" + strLocation() + ']';
    Debug::SwErr(Using_FindReferent, log, 0, InfoLog);
-   return false;
 }
 
 //------------------------------------------------------------------------------

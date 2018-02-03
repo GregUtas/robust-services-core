@@ -253,10 +253,15 @@ public:
    //
    virtual CxxNamed* DirectType() const { return Referent(); }
 
-   //  Finds what the item refers to.  The default version generates a log and
-   //  returns false.
+   //  Finds what the item refers to.  The default version generates a log.
    //
-   virtual bool FindReferent();
+   virtual void FindReferent();
+
+   //  Sets the name's referent to ITEM.  VIEW (if not nullptr) provides
+   //  information about how the name was resolved.  The default version
+   //  generates a log.
+   //
+   virtual void SetReferent(CxxNamed* item, const SymbolView* view) const;
 
    //  Invoked when the item is found to be the referent of USER.
    //
@@ -529,11 +534,6 @@ public:
    //
    CxxScoped* GetForward() const { return forw_; }
 
-   //  Sets the name's referent to ITEM.  VIEW provides information about
-   //  how the name was resolved.
-   //
-   void SetReferent(CxxNamed* item, const SymbolView* view) const;
-
    //  Overridden to check template arguments.
    //
    virtual void Check() const override;
@@ -544,7 +544,7 @@ public:
 
    //  Overridden to invoke FindReferent on each template argument.
    //
-   virtual bool FindReferent() override;
+   virtual void FindReferent() override;
 
    //  Overridden to return this item if it has template arguments.
    //
@@ -576,6 +576,11 @@ public:
    //  Overridden to record and resolve the typedef.
    //
    virtual bool ResolveTypedef(Typedef* type, size_t n) const override;
+
+   //  Overridden to record what the item refers to.
+   //
+   virtual void SetReferent
+      (CxxNamed* item, const SymbolView* view) const override;
 
    //  Overridden to shrink containers.
    //
@@ -699,16 +704,7 @@ public:
    //  be nullptr.  If whoever requested name resolution did not provide a
    //  SymbolView, VIEW will be nullptr.
    //
-   void SetReferent(size_t n, CxxNamed* item, const SymbolView* view) const;
-
-   //  Sets the last name's referent.  This is used by QualName.EnterBlock and
-   //  Operation.PushMember when a name appears in executable code.  It is also
-   //  used by classes that contain a QualName member and that find a referent.
-   //  Those classes do not contain executable code, so they can safely use the
-   //  last name's ref_ field because it is normally used only when it appears
-   //  in executable code.
-   //
-   bool SetReferent(CxxNamed* ref) const;
+   void SetReferentN(size_t n, CxxNamed* item, const SymbolView* view) const;
 
    //  Returns the last name's referent.  This is used in conjunction with
    //  SetReferent.  A class that contains a QualName instance cannot use the
@@ -789,6 +785,16 @@ public:
    //
    virtual bool ResolveTemplate
       (Class* cls, const TypeName* args, bool end) const override;
+
+   //  Sets the last name's referent.  This is used by QualName.EnterBlock and
+   //  Operation.PushMember when a name appears in executable code.  It is also
+   //  used by classes that contain a QualName member and that find a referent.
+   //  Those classes do not contain executable code, so they can safely use the
+   //  last name's ref_ field because it is normally used only when it appears
+   //  in executable code.
+   //
+   virtual void SetReferent
+      (CxxNamed* item, const SymbolView* view) const override;
 
    //  Overridden to shrink containers.
    //
@@ -884,11 +890,6 @@ public:
    //  Invoked when a reference tag is detached from the type name.
    //
    virtual void SetRefDetached(bool on) = 0;
-
-   //  Sets what the type refers to.  USE is set if a using statement made
-   //  the type visible.
-   //
-   virtual void SetReferent(CxxNamed* ref, bool use) = 0;  //*
 
    //  Returns the number of pointer tags attached to the type.  It follows
    //  the type to its root (a class or terminal), adding up pointer tags
@@ -1143,7 +1144,7 @@ private:
    //  Overridden to find the type's referent, as well as the referent for
    //  each template argument used in the type.
    //
-   virtual bool FindReferent() override;
+   virtual void FindReferent() override;
 
    //  Overridden to return the type's attributes.
    //
@@ -1301,9 +1302,10 @@ private:
    //
    virtual void SetRefDetached(bool on) override { refDet_ = on; }
 
-   //  Overridden to set what the type refers to.
+   //  Overridden to record what the item refers to.
    //
-   virtual void SetReferent(CxxNamed* ref, bool use) override;  //*
+   virtual void SetReferent
+      (CxxNamed* item, const SymbolView* view) const override;
 
    //  Overridden to set the level of reference indirection to the type.
    //
@@ -1359,15 +1361,11 @@ private:
 
    //  Set if the type is const.
    //
-   bool const_ : 1;
+   mutable bool const_ : 1;
 
    //  Set if the type is a const pointer.
    //
-   bool constptr_ : 1;
-
-   //  Set if a using statement resolved this name.
-   //
-   bool using_ : 1;
+   mutable bool constptr_ : 1;
 
    //  Set if a pointer tag was detached.
    //

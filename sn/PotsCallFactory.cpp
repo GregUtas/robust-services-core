@@ -35,6 +35,8 @@
 #include "Singleton.h"
 #include "Switch.h"
 
+using namespace SessionBase;
+
 //------------------------------------------------------------------------------
 
 namespace PotsBase

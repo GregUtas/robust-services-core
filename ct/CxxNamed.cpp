@@ -148,13 +148,12 @@ void CxxNamed::DisplayReferent(ostream& stream, bool fq) const
 
 fn_name CxxNamed_FindReferent = "CxxNamed.FindReferent";
 
-bool CxxNamed::FindReferent()
+void CxxNamed::FindReferent()
 {
    Debug::ft(CxxNamed_FindReferent);
 
    auto expl = "FindReferent() not implemented by " + strClass(this, false);
    Context::SwErr(CxxNamed_FindReferent, expl, 0);
-   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -303,7 +302,7 @@ CxxNamed* CxxNamed::ResolveLocal(SymbolView* view) const
 
       if(item != nullptr)
       {
-         qname->SetReferent(0, item, view);
+         qname->SetReferentN(0, item, view);
          return item;
       }
    }
@@ -347,7 +346,7 @@ CxxNamed* CxxNamed::ResolveName(const CodeFile* file,
       //
       name = *qname->At(0)->Name();
       item = syms->FindSymbol(file, scope, name, selector, view);
-      qname->SetReferent(0, item, view);
+      qname->SetReferentN(0, item, view);
       if(item == this) return item;
    }
 
@@ -391,7 +390,7 @@ CxxNamed* CxxNamed::ResolveName(const CodeFile* file,
             item = syms->FindSymbol(file, scope, name, selector, view, space);
             if(name.find(SCOPE_STR) != string::npos) view->using_ = false;
          }
-         qname->SetReferent(idx - 1, item, view);
+         qname->SetReferentN(idx - 1, item, view);
          if(item == nullptr) return nullptr;
          break;
 
@@ -413,7 +412,7 @@ CxxNamed* CxxNamed::ResolveName(const CodeFile* file,
             if(!ResolveTemplate(cls, args, (idx >= size))) break;
             cls = cls->EnsureInstance(args);
             item = cls;
-            qname->SetReferent(idx - 1, item, view);  // updated value
+            qname->SetReferentN(idx - 1, item, view);  // updated value
             if(item == nullptr) return nullptr;
             if(idx < size) cls->Instantiate();
          }
@@ -438,7 +437,7 @@ CxxNamed* CxxNamed::ResolveName(const CodeFile* file,
             *view = NotAccessible;
             item = cls->FindMember(name, true, scope, view);
          }
-         qname->SetReferent(idx - 1, item, view);
+         qname->SetReferentN(idx - 1, item, view);
          if(item == nullptr) return nullptr;
          if(item->GetClass() != cls) qname->At(idx - 1)->SubclassAccess(cls);
          break;
@@ -452,7 +451,7 @@ CxxNamed* CxxNamed::ResolveName(const CodeFile* file,
          name = *qname->At(idx)->Name();
          item = static_cast< Enum* >(item)->FindEnumerator(name);
          *view = DeclaredLocally;
-         qname->SetReferent(idx, item, view);
+         qname->SetReferentN(idx, item, view);
          return item;
 
       case Cxx::Typedef:
@@ -467,7 +466,7 @@ CxxNamed* CxxNamed::ResolveName(const CodeFile* file,
             auto root = tdef->Root();
             if(root == nullptr) return tdef;
             item = static_cast< CxxScoped* >(root);
-            qname->SetReferent(idx - 1, item, view);  // updated value
+            qname->SetReferentN(idx - 1, item, view);  // updated value
             if(idx < size) item->Instantiate();
          }
          break;
@@ -479,7 +478,7 @@ CxxNamed* CxxNamed::ResolveName(const CodeFile* file,
             auto ref = item->Referent();
             if(ref == nullptr) return item;
             item = static_cast< CxxScoped* >(ref);
-            qname->SetReferent(idx - 1, item, view);  // updated value
+            qname->SetReferentN(idx - 1, item, view);  // updated value
          }
          break;
 
@@ -510,6 +509,18 @@ string CxxNamed::ScopedName(bool templates) const
    auto qname = QualifiedName(false, templates);
    if(qname.empty()) return scope->ScopedName(templates);
    return Prefix(scope->ScopedName(templates)) + qname;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CxxNamed_SetReferent = "CxxNamed.SetReferent";
+
+void CxxNamed::SetReferent(CxxNamed* item, const SymbolView* view) const
+{
+   Debug::ft(CxxNamed_SetReferent);
+
+   auto expl = "SetReferent() not implemented by " + strClass(this, false);
+   Context::SwErr(CxxNamed_FindReferent, expl, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -559,7 +570,6 @@ DataSpec::DataSpec(QualNamePtr& name) :
    arrayPos_(INT8_MAX),
    const_(false),
    constptr_(false),
-   using_(false),
    ptrDet_(false),
    refDet_(false)
 {
@@ -579,7 +589,6 @@ DataSpec::DataSpec(const char* name) :
    arrayPos_(INT8_MAX),
    const_(false),
    constptr_(false),
-   using_(false),
    ptrDet_(false),
    refDet_(false)
 {
@@ -600,7 +609,6 @@ DataSpec::DataSpec(const DataSpec& that) : TypeSpec(that),
    arrayPos_(that.arrayPos_),
    const_(that.const_),
    constptr_(that.constptr_),
-   using_(that.using_),
    ptrDet_(that.ptrDet_),
    refDet_(that.refDet_)
 {
@@ -850,7 +858,7 @@ void DataSpec::EnteringScope(const CxxScope* scope)
 
 fn_name DataSpec_FindReferent = "DataSpec.FindReferent";
 
-bool DataSpec::FindReferent()
+void DataSpec::FindReferent()
 {
    Debug::ft(DataSpec_FindReferent);
 
@@ -867,19 +875,19 @@ bool DataSpec::FindReferent()
    //  file.  If it isn't found then, it's pointless to look later.
    //
    auto file = Context::File();
-   if(file == nullptr) return false;
+   if(file == nullptr) return;
    auto scope = Context::Scope();
-   if(scope == nullptr) return false;
+   if(scope == nullptr) return;
 
-   if(ResolveTemplateArgument()) return true;
+   if(ResolveTemplateArgument()) return;
 
    SymbolView view;
    auto item = ResolveName(file, scope, TYPESPEC_REFS, &view);
 
    if(item != nullptr)
    {
-      SetReferent(item, view.using_);  //*
-      return true;
+      SetReferent(item, &view);
+      return;
    }
 
    //  The referent wasn't found.  If this is a template parameter (the "T"
@@ -893,7 +901,7 @@ bool DataSpec::FindReferent()
    if(scope->NameIsTemplateParm(qname))
    {
       SetTemplateRole(TemplateParameter);
-      return true;
+      return;
    }
 
    auto syms = Singleton< CxxSymbols >::Instance();
@@ -908,7 +916,7 @@ bool DataSpec::FindReferent()
       //
       view = NotAccessible;
       item = syms->FindSymbol(file, scope, qname, VALUE_REFS, &view);
-      if(item != nullptr) SetReferent(item, view.using_);  //*
+      if(item != nullptr) SetReferent(item, &view);
    case TemplateParameter:
    case TemplateClass:
       //
@@ -918,20 +926,19 @@ bool DataSpec::FindReferent()
       //  In this case, the class template may not even be visible in the scope
       //  where the possibility of the overload is being checked.
       //
-      return true;
+      return;
    }
 
    //  When parsing a template instance, the arguments may not be visible,
    //  because the scope is the template instance itself.  For example, the
    //  type A is often not visible in the scope std::unique_ptr<A>.
    //
-   if(scope->IsInTemplateInstance()) return true;
+   if(scope->IsInTemplateInstance()) return;
 
    //  The referent couldn't be found.
    //
    auto expl = "Failed to find referent for " + qname;
    Context::SwErr(DataSpec_FindReferent, expl, 0);
-   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -1057,10 +1064,6 @@ void DataSpec::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
       else
          symbols.AddDirect(ref);
    }
-
-   //  Indicate whether our referent was made visible by a using statement.
-   //
-   if(using_) symbols.AddUser(this);
 }
 
 //------------------------------------------------------------------------------
@@ -1481,7 +1484,7 @@ bool DataSpec::ResolveTemplateArgument()
    auto item = parser->ResolveInstanceArgument(name_.get());
    if(item == nullptr) return false;
 
-   SetReferent(item, false);  //*
+   SetReferent(item, nullptr);
    return true;
 }
 
@@ -1556,43 +1559,36 @@ void DataSpec::SetLocale(Cxx::ItemType locale)
 
 fn_name DataSpec_SetReferent = "DataSpec.SetReferent";
 
-void DataSpec::SetReferent(CxxNamed* ref, bool use)  //*
+void DataSpec::SetReferent(CxxNamed* item, const SymbolView* view) const
 {
    Debug::ft(DataSpec_SetReferent);
 
-   //  If REF is an unresolved forward declaration for a template, our referent
+   //  If ITEM is an unresolved forward declaration for a template, our referent
    //  needs to be a template instance instantiated from that template.  This is
    //  not yet possible, so make sure that our referent is empty so that we will
    //  revisit it.
    //
-   if((ref->IsTemplate() && ref->Referent() == nullptr))
+   if((item->IsTemplate() && item->Referent() == nullptr))
    {
-      name_->SetReferent(nullptr);
+      name_->SetReferent(nullptr, nullptr);
    }
    else
    {
-      name_->SetReferent(ref);
-      if(use)
-      {
-         auto file = GetFile();
-         if((file != nullptr) && (file->Name() == "Factory.h") && (*Name() == "Message"))
-            Debug::noop();  //* this is where Message has using_ set
-         using_ = true;
-      }
+      name_->SetReferent(item, view);
 
-      if(ref->Type() != Cxx::Typedef)
+      if(item->Type() != Cxx::Typedef)
       {
          //  SetAsReferent has already been invoked if our referent is a
          //  typedef, so don't invoke it again.
          //
-         ref->SetAsReferent(this);
+         item->SetAsReferent(this);
       }
       else
       {
          //  If our referent is a pointer typedef, "const" applies to the
          //  pointer, not its target.
          //
-         if(const_ && (ref->GetTypeSpec()->Ptrs(false) > 0))
+         if(const_ && (item->GetTypeSpec()->Ptrs(false) > 0))
          {
             const_ = false;
             constptr_ = true;
@@ -2166,20 +2162,21 @@ void QualName::SetOperator(Cxx::Operator oper) const
 
 fn_name QualName_SetReferent = "QualName.SetReferent";
 
-bool QualName::SetReferent(CxxNamed* ref) const
+void QualName::SetReferent(CxxNamed* item, const SymbolView* view) const
 {
    Debug::ft(QualName_SetReferent);
 
-   Last()->SetReferent(ref, nullptr);
-   return true;
+   Last()->SetReferent(item, view);
 }
 
 //------------------------------------------------------------------------------
 
-void QualName::SetReferent
+fn_name QualName_SetReferentN = "QualName.SetReferentN";
+
+void QualName::SetReferentN
    (size_t n, CxxNamed* item, const SymbolView* view) const
 {
-   Debug::ft(QualName_SetReferent);
+   Debug::ft(QualName_SetReferentN);
 
    At(n)->SetReferent(item, view);
 }
@@ -2480,7 +2477,7 @@ CxxNamed* TypeName::DirectType() const
 
 fn_name TypeName_FindReferent = "TypeName.FindReferent";
 
-bool TypeName::FindReferent()
+void TypeName::FindReferent()
 {
    Debug::ft(TypeName_FindReferent);
 
@@ -2491,8 +2488,6 @@ bool TypeName::FindReferent()
          (*a)->FindReferent();
       }
    }
-
-   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -2750,19 +2745,12 @@ void TypeName::SetReferent(CxxNamed* item, const SymbolView* view) const
 {
    Debug::ft(TypeName_SetReferent);
 
-   if(*Name() == "Message")
-   {
-      auto file = GetFile();
-      if((file != nullptr) && (file->Name() == "Factory.h") &&
-         (view != nullptr) && view->using_)
-      Debug::noop();  //x
-   }
-
-   //  This can be invoked more than once, when a class template name clears
+   //  This can be invoked more than once when a class template name clears
    //  its referent, instead of leaving it as a forward declaration, so that
    //  the referent can later be set to a class template instance.  When this
-   //  occurs, this function is also reinvoked on template arguments.  If the
-   //  name was already resolved, however, its using_ flag should not change.
+   //  occurs, this function is also reinvoked on template arguments.  If an
+   //  argument's name was already resolved, however, its using_ flag should
+   //  not be set by a subsequent invocation.
    //
    if((view != nullptr) && view->using_ && (ref_ == nullptr)) using_ = true;
    ref_ = item;
@@ -3107,11 +3095,6 @@ void TypeSpec::SetRefDetached(bool on)
 }
 
 //------------------------------------------------------------------------------
-
-void TypeSpec::SetReferent(CxxNamed* ref, bool use)  //*
-{
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "SetReferent", 0);
-}
 
 //------------------------------------------------------------------------------
 

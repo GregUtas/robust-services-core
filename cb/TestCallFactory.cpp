@@ -25,6 +25,7 @@
 #include "SbAppIds.h"
 #include "TestSessions.h"
 
+using namespace SessionBase;
 using namespace SessionTools;
 
 //------------------------------------------------------------------------------

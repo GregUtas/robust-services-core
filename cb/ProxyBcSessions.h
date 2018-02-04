@@ -31,9 +31,6 @@
 #include "SbTypes.h"
 #include "Trigger.h"
 
-using namespace NodeBase;
-using namespace SessionBase;
-
 //------------------------------------------------------------------------------
 
 namespace CallBase

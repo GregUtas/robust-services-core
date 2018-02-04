@@ -40,14 +40,12 @@
 
 namespace CallBase
 {
-   struct DigitString;
+   class DigitString;
    struct ProgressInfo;
    struct CauseInfo;
    struct RouteResult;
 }
 
-using namespace NodeBase;
-using namespace SessionBase;
 using namespace MediaBase;
 
 //------------------------------------------------------------------------------

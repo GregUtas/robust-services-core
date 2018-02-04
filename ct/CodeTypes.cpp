@@ -223,6 +223,7 @@ fixed_string WarningStrings[Warning_N + 1] =
    "Member hides inherited name",
    "Class could be namespace",
    "Class could be struct",
+   "Struct could be class",
    "Redundant access control",
    "Member could be private",
    "Member could be protected",

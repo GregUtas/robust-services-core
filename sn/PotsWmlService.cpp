@@ -47,6 +47,8 @@
 #include "TlvMessage.h"
 #include "Tones.h"
 
+using namespace CallBase;
+using namespace MediaBase;
 using std::ostream;
 using std::string;
 

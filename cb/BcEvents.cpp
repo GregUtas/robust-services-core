@@ -23,6 +23,7 @@
 #include <ostream>
 #include "Debug.h"
 
+using namespace SessionBase;
 using std::ostream;
 using std::string;
 

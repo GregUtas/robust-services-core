@@ -25,8 +25,6 @@
 #include "SbInputHandler.h"
 #include "NwTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase

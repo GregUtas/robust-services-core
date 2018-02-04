@@ -77,6 +77,7 @@
 #include "TraceBuffer.h"
 #include "Trigger.h"
 
+using namespace NetworkBase;
 using std::string;
 using namespace SessionBase;
 

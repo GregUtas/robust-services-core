@@ -578,6 +578,38 @@ private:
    //
    static size_t CreateCodeError(const std::string& name, debug32_t offset);
 
+   //  Class attributes and the types of items that it defines.
+   //
+   enum Attributes
+   {
+      IsBase,
+      IsConstructed,
+      HasInstantiations,
+      HasPublicInnerClass,
+      HasNonPublicInnerClass,
+      HasPublicMemberFunction,
+      HasNonPublicMemberFunction,
+      HasPublicStaticFunction,
+      HasNonPublicStaticFunction,
+      HasPublicMemberData,
+      HasNonPublicMemberData,
+      HasPublicStaticData,
+      HasNonPublicStaticData,
+      HasEnum,
+      HasTypedef,
+      Attribute_N
+   };
+
+   //  The attributes of a class, used to analyze if it is unused, or should
+   //  be a namespace or struct, or a struct should be a class.
+   //
+   typedef std::bitset< Attribute_N > UsageAttributes;
+
+   //  Returns a class's attributes.  Only sets flags in UsageAttributes for
+   //  items that are actually used.
+   //
+   UsageAttributes GetUsageAttrs() const;
+
    //  Checks that the class follows the Rule of Three and its variants.
    //
    void CheckRuleOfThree() const;

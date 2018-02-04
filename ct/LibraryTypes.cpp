@@ -44,7 +44,7 @@ fixed_string LibExprErrStrings[LibExprErr_N + 1] =
    ERROR_STR
 };
 
-const char* CodeTools::strError(LibExprErr err)
+const char* strError(LibExprErr err)
 {
    if((err >= 0) && (err < LibExprErr_N)) return LibExprErrStrings[err];
    return LibExprErrStrings[LibExprErr_N];

@@ -35,6 +35,7 @@
 #include "SymbolRegistry.h"
 #include "SysTypes.h"
 
+using namespace SessionBase;
 using namespace SessionTools;
 using namespace MediaBase;
 

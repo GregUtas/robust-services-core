@@ -182,6 +182,7 @@ bool Parser::CheckType(QualNamePtr& name)
    if(name->Size() != 1) return true;
 
    auto type = Lexer::GetType(*name->Name());
+   auto root = Singleton< CxxRoot >::Instance();
 
    switch(type)
    {
@@ -191,28 +192,28 @@ bool Parser::CheckType(QualNamePtr& name)
       //
       return true;
    case Cxx::AUTO_TYPE:
-      name->SetReferent(Singleton< CxxRoot >::Instance()->AutoTerm());
+      name->SetReferent(root->AutoTerm(), nullptr);
       return true;
    case Cxx::BOOL:
-      name->SetReferent(Singleton< CxxRoot >::Instance()->BoolTerm());
+      name->SetReferent(root->BoolTerm(), nullptr);
       return true;
    case Cxx::CHAR:
-      name->SetReferent(Singleton< CxxRoot >::Instance()->CharTerm());
+      name->SetReferent(root->CharTerm(), nullptr);
       return true;
    case Cxx::DOUBLE:
-      name->SetReferent(Singleton< CxxRoot >::Instance()->DoubleTerm());
+      name->SetReferent(root->DoubleTerm(), nullptr);
       return true;
    case Cxx::FLOAT:
-      name->SetReferent(Singleton< CxxRoot >::Instance()->FloatTerm());
+      name->SetReferent(root->FloatTerm(), nullptr);
       return true;
    case Cxx::INT:
-      name->SetReferent(Singleton< CxxRoot >::Instance()->IntTerm());
+      name->SetReferent(root->IntTerm(), nullptr);
       return true;
    case Cxx::NULLPTR_TYPE:
-      name->SetReferent(Singleton< CxxRoot >::Instance()->NullptrtTerm());
+      name->SetReferent(root->NullptrtTerm(), nullptr);
       return true;
    case Cxx::VOID:
-      name->SetReferent(Singleton< CxxRoot >::Instance()->VoidTerm());
+      name->SetReferent(root->VoidTerm(), nullptr);
       return true;
    case Cxx::LONG:
    case Cxx::SHORT:
@@ -4233,48 +4234,48 @@ bool Parser::SetCompoundType
          switch(size)
          {
          case -1:
-            name->SetReferent(base->uShortTerm());
+            name->SetReferent(base->uShortTerm(), nullptr);
             return true;
          case 1:
-            name->SetReferent(base->uLongTerm());
+            name->SetReferent(base->uLongTerm(), nullptr);
             return true;
          case 2:
-            name->SetReferent(base->uLongLongTerm());
+            name->SetReferent(base->uLongLongTerm(), nullptr);
             return true;
          }
 
-         name->SetReferent(base->uIntTerm());
+         name->SetReferent(base->uIntTerm(), nullptr);
          return true;
       }
 
       switch(size)
       {
       case -1:
-         name->SetReferent(base->ShortTerm());
+         name->SetReferent(base->ShortTerm(), nullptr);
          return true;
       case 1:
-         name->SetReferent(base->LongTerm());
+         name->SetReferent(base->LongTerm(), nullptr);
          return true;
       case 2:
-         name->SetReferent(base->LongLongTerm());
+         name->SetReferent(base->LongLongTerm(), nullptr);
          return true;
       }
 
-      name->SetReferent(base->IntTerm());
+      name->SetReferent(base->IntTerm(), nullptr);
       return true;
 
    case Cxx::CHAR:
       if(sign > 0)
-         name->SetReferent(base->uCharTerm());
+         name->SetReferent(base->uCharTerm(), nullptr);
       else
-         name->SetReferent(base->CharTerm());
+         name->SetReferent(base->CharTerm(), nullptr);
       return true;
 
    case Cxx::DOUBLE:
       if(size == 0)
-         name->SetReferent(base->DoubleTerm());
+         name->SetReferent(base->DoubleTerm(), nullptr);
       else
-         name->SetReferent(base->LongDoubleTerm());
+         name->SetReferent(base->LongDoubleTerm(), nullptr);
       return true;
 
    default:

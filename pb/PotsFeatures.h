@@ -26,7 +26,6 @@
 #include "BcAddress.h"
 #include "PotsFeature.h"
 
-using namespace NodeBase;
 using namespace CallBase;
 
 //------------------------------------------------------------------------------

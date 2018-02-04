@@ -1576,8 +1576,7 @@ void Lexer::Preprocess()
    Debug::ft(Lexer_Preprocess);
 
    //  Keep fetching identifiers, erasing any that are #defined symbols that
-   //  map to empty strings.  Stop when a #define is reached, and skip other
-   //  directives.
+   //  map to empty strings.  Skip preprocessor directives.
    //
    auto syms = Singleton< CxxSymbols >::Instance();
    auto file = Context::File();
@@ -1586,8 +1585,6 @@ void Lexer::Preprocess()
 
    while(FindIdentifier(id))
    {
-      if(id == HASH_DEFINE_STR) return;
-
       if(id.front() == '#')
       {
          Reposition(FindLineEnd(curr_));

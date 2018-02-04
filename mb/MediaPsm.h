@@ -34,7 +34,6 @@ namespace MediaBase
    class MediaSsm;
 }
 
-using namespace NodeBase;
 using namespace SessionBase;
 
 //------------------------------------------------------------------------------

@@ -38,12 +38,10 @@
 
 namespace CallBase
 {
-   struct DigitString;
+   class DigitString;
    struct ProgressInfo;
 }
 
-using namespace NodeBase;
-using namespace SessionBase;
 using namespace MediaBase;
 using namespace CallBase;
 

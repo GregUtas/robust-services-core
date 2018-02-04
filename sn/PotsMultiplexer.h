@@ -42,8 +42,6 @@ namespace PotsBase
    class PotsProfile;
 }
 
-using namespace NodeBase;
-using namespace SessionBase;
 using namespace MediaBase;
 using namespace CallBase;
 

@@ -322,6 +322,11 @@ private:
    //
    void FindDeclIds();
 
+   //  Saves the identifiers of files that define direct base classes used
+   //  by this file.  BASES is from CxxUsageSets.bases.
+   //
+   void SaveBaseIds(const CxxNamedSet& bases);
+
    //  Updates SYMBOLS with information about symbols used in this file.
    //
    void GetUsageInfo(CxxUsageSets& symbols) const;
@@ -461,6 +466,11 @@ private:
    //  The identifiers of files that declare items that this file defines.
    //
    SetOfIds declIds_;
+
+   //  The identifiers of files that define transitive base classes of the
+   //  classes implemented in this file.
+   //
+   SetOfIds classIds_;
 
    //  The files that affect this one (those that it transitively #includes).
    //  Computed when first needed, after which the cached result is returned.

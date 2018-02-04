@@ -31,7 +31,6 @@
 #include "SysTypes.h"
 #include "UdpIpService.h"
 
-using namespace NodeBase;
 using namespace SessionBase;
 using namespace MediaBase;
 
@@ -79,6 +78,7 @@ private:
 };
 
 //------------------------------------------------------------------------------
+//
 //  Input handler for a message to a POTS circuit.
 //
 class PotsShelfHandler : public SbExtInputHandler

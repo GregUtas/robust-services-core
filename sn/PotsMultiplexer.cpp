@@ -39,7 +39,6 @@
 
 using std::ostream;
 using std::string;
-using namespace CallBase;
 
 //------------------------------------------------------------------------------
 

@@ -42,7 +42,7 @@ fixed_string BlockingReasonStrings[BlockingReason_N + 1] =
    "???"
 };
 
-char NodeBase::BlockingReasonChar(BlockingReason reason)
+char BlockingReasonChar(BlockingReason reason)
 {
    std::ostringstream stream;
    stream << reason;
@@ -73,7 +73,7 @@ fixed_string FactionStrings[Faction_N + 1] =
    ERROR_STR
 };
 
-char NodeBase::FactionChar(Faction faction)
+char FactionChar(Faction faction)
 {
    std::ostringstream stream;
    stream << faction;

@@ -30,8 +30,6 @@
 #include "Signal.h"
 #include "TlvParameter.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase

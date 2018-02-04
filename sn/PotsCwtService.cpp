@@ -50,6 +50,8 @@
 #include "TimerProtocol.h"
 #include "Tones.h"
 
+using namespace MediaBase;
+using namespace NetworkBase;
 using std::ostream;
 using std::string;
 using namespace CallBase;

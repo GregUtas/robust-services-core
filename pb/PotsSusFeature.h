@@ -25,8 +25,6 @@
 #include "PotsFeature.h"
 #include "NbTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace PotsBase

@@ -35,7 +35,7 @@
 #include "Singleton.h"
 #include "Switch.h"
 
-using namespace MediaBase;
+using namespace SessionBase;
 
 //------------------------------------------------------------------------------
 

@@ -24,16 +24,15 @@
 #include <cctype>
 #include <cstdio>
 #include <cstring>
-#include <iomanip>
 #include <istream>
 #include <iterator>
-#include <list>
 #include <sstream>
 #include <utility>
 #include "Algorithms.h"
 #include "CliThread.h"
 #include "CodeDir.h"
 #include "CodeFileSet.h"
+#include "CodeWarning.h"
 #include "Cxx.h"
 #include "CxxArea.h"
 #include "CxxDirective.h"
@@ -45,6 +44,7 @@
 #include "CxxString.h"
 #include "CxxToken.h"
 #include "Debug.h"
+#include "Editor.h"
 #include "Formatters.h"
 #include "FunctionName.h"
 #include "Library.h"
@@ -55,1071 +55,12 @@
 #include "Singleton.h"
 
 using std::ostream;
-using std::setw;
 using std::string;
 
 //------------------------------------------------------------------------------
 
 namespace CodeTools
 {
-//  Used to log a warning.
-//
-struct WarningLog
-{
-   const CodeFile* file;  // file where warning occurred
-   size_t line;           // line where warning occurred
-   Warning warning;       // type of warning
-   size_t offset;         // warning-specific; displayed if non-zero
-   string info;           // warning-specific
-
-   bool operator==(const WarningLog& that) const;
-   bool operator!=(const WarningLog& that) const;
-};
-
-//------------------------------------------------------------------------------
-
-bool WarningLog::operator==(const WarningLog& that) const
-{
-   if(this->file != that.file) return false;
-   if(this->line != that.line) return false;
-   if(this->warning != that.warning) return false;
-   if(this->offset != that.offset) return false;
-   return (this->info == that.info);
-}
-
-//------------------------------------------------------------------------------
-
-bool WarningLog::operator!=(const WarningLog& that) const
-{
-   return !(*this == that);
-}
-
-//==============================================================================
-//
-//  Information generated when analyzing, parsing, and executing code.
-//
-class CodeInfo
-{
-public:
-   //  Generates a report in STREAM for the files in SET.  The report includes
-   //  line type counts and warnings found during parsing and "execution".
-   //
-   static void GenerateReport(ostream* stream, const SetOfIds& set);
-
-   //  Returns LOG's index if it has already been reported, else -1.
-   //
-   static word FindWarning(const WarningLog& log);
-
-   //  The number of lines of each type, globally.
-   //
-   static size_t LineTypeCounts[LineType_N];
-
-   //  Warnings found in all files.
-   //
-   static std::vector< WarningLog > Warnings;
-
-   //  Returns true if LOG2 > LOG1 when sorting by file/line/warning.
-   //
-   static bool IsSortedByFile
-      (const WarningLog& log1, const WarningLog& log2);
-
-   //  Returns true if LOG2 > LOG1 when sorting by warning/file/line.
-   //
-   static bool IsSortedByWarning
-      (const WarningLog& log1, const WarningLog& log2);
-private:
-   //  Returns the string "Wnnn", where nnn is WARNING's integer value.
-   //
-   static string WarningCode(Warning warning);
-
-   //  The total number of warnings of each type, globally.
-   //
-   static size_t WarningCounts[Warning_N];
-};
-
-//------------------------------------------------------------------------------
-
-size_t CodeInfo::LineTypeCounts[] = { };
-
-size_t CodeInfo::WarningCounts[] = { };
-
-std::vector< WarningLog > CodeInfo::Warnings = std::vector< WarningLog >();
-
-//------------------------------------------------------------------------------
-
-fn_name CodeInfo_GenerateReport = "CodeInfo.GenerateReport";
-
-void CodeInfo::GenerateReport(ostream* stream, const SetOfIds& set)
-{
-   Debug::ft(CodeInfo_GenerateReport);
-
-   //  Clear any previous report's global counts.
-   //
-   for(auto t = 0; t < LineType_N; ++t) LineTypeCounts[t] = 0;
-   for(auto w = 0; w < Warning_N; ++w) WarningCounts[w] = 0;
-
-   //  Run a check on each file in SET, as well as on each C++ item.
-   //
-   auto& files = Singleton< Library >::Instance()->Files();
-
-   for(auto f = set.cbegin(); f != set.cend(); ++f)
-   {
-      files.At(*f)->Check();
-   }
-
-   Singleton< CxxRoot >::Instance()->GlobalNamespace()->Check();
-
-   //  Return if a report is not required.
-   //
-   if(stream == nullptr) return;
-
-   //  Count the lines of each type.
-   //
-   for(auto f = set.cbegin(); f != set.cend(); ++f)
-   {
-      files.At(*f)->GetLineCounts();
-   }
-
-   std::vector< WarningLog > warnings;
-
-   //  Count the total number of warnings of each type that appear in files
-   //  belonging to SET, extracing them into the local set of warnings.
-   //
-   for(auto item = Warnings.cbegin(); item != Warnings.cend(); ++item)
-   {
-      if(set.find(item->file->Fid()) != set.cend())
-      {
-         ++WarningCounts[item->warning];
-         warnings.push_back(*item);
-      }
-   }
-
-   //  Display the total number of lines of each type.
-   //
-   *stream << "LINE COUNTS" << CRLF;
-
-   for(auto t = 0; t < LineType_N; ++t)
-   {
-      *stream << setw(12) << LineType(t)
-         << spaces(2) << setw(6) << LineTypeCounts[t] << CRLF;
-   }
-
-   //  Display the total number of warnings of each type.
-   //
-   *stream << CRLF << "WARNING COUNTS" << CRLF;
-
-   for(auto w = 0; w < Warning_N; ++w)
-   {
-      if(WarningCounts[w] != 0)
-      {
-         *stream << setw(6) << WarningCode(Warning(w))
-            << setw(6) << WarningCounts[w] << spaces(2) << Warning(w) << CRLF;
-      }
-   }
-
-   *stream << string(120, '=') << CRLF;
-   *stream << "WARNINGS SORTED BY TYPE/FILE/LINE" << CRLF;
-
-   //  Sort and output the warnings by warning type/file/line.
-   //
-   std::sort(warnings.begin(), warnings.end(), IsSortedByWarning);
-
-   auto item = warnings.cbegin();
-   auto last = warnings.cend();
-
-   while(item != last)
-   {
-      auto w = item->warning;
-      *stream << WarningCode(w) << SPACE << w << CRLF;
-
-      do
-      {
-         *stream << spaces(2) << item->file->FullName();
-         *stream << '(' << item->line + 1;
-         if(item->offset != 0) *stream << '/' << item->offset;
-         *stream << "): ";
-
-         if((item->line != 0) || item->info.empty())
-         {
-            *stream << item->file->GetLexer().GetNthLine(item->line);
-         }
-
-         *stream << item->info << CRLF;
-         ++item;
-      }
-      while((item != last) && (item->warning == w));
-   }
-
-   *stream << string(120, '=') << CRLF;
-   *stream << "WARNINGS SORTED BY FILE/TYPE/LINE" << CRLF;
-
-   //  Sort and output the warnings by file/warning type/line.
-   //
-   std::sort(warnings.begin(), warnings.end(), IsSortedByFile);
-
-   item = warnings.cbegin();
-   last = warnings.cend();
-
-   while(item != last)
-   {
-      auto f = item->file;
-      *stream << f->FullName() << CRLF;
-
-      do
-      {
-         auto w = item->warning;
-         *stream << spaces(2) << WarningCode(w) << SPACE << w << CRLF;
-
-         do
-         {
-            *stream << spaces(4) << item->line + 1;
-            if(item->offset != 0) *stream << '/' << item->offset;
-            *stream << ": ";
-
-            if((item->line != 0) || item->info.empty())
-            {
-               *stream << f->GetLexer().GetNthLine(item->line);
-            }
-
-            *stream << item->info << CRLF;
-            ++item;
-         }
-         while((item != last) && (item->warning == w) && (item->file == f));
-      }
-      while((item != last) && (item->file == f));
-   }
-}
-
-//------------------------------------------------------------------------------
-
-bool CodeInfo::IsSortedByFile(const WarningLog& log1, const WarningLog& log2)
-{
-   auto result = strCompare(log1.file->FullName(), log2.file->FullName());
-   if(result == -1) return true;
-   if(result == 1) return false;
-   if(log1.warning < log2.warning) return true;
-   if(log1.warning > log2.warning) return false;
-   if(log1.line < log2.line) return true;
-   if(log1.line > log2.line) return false;
-   if(log1.info < log2.info) return true;
-   if(log1.info > log2.info) return false;
-   return (&log1 < &log2);
-}
-
-//------------------------------------------------------------------------------
-
-bool CodeInfo::IsSortedByWarning(const WarningLog& log1, const WarningLog& log2)
-{
-   if(log1.warning < log2.warning) return true;
-   if(log1.warning > log2.warning) return false;
-   auto result = strCompare(log1.file->FullName(), log2.file->FullName());
-   if(result == -1) return true;
-   if(result == 1) return false;
-   if(log1.line < log2.line) return true;
-   if(log1.line > log2.line) return false;
-   if(log1.info < log2.info) return true;
-   if(log1.info > log2.info) return false;
-   return (&log1 < &log2);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CodeInfo_FindWarning = "CodeInfo.FindWarning";
-
-word CodeInfo::FindWarning(const WarningLog& log)
-{
-   Debug::ft(CodeInfo_FindWarning);
-
-   for(size_t i = 0; i < Warnings.size(); ++i)
-   {
-      if(Warnings.at(i) == log) return i;
-   }
-
-   return -1;
-}
-
-//------------------------------------------------------------------------------
-
-string CodeInfo::WarningCode(Warning warning)
-{
-   std::ostringstream stream;
-
-   stream << 'W' << setw(3) << std::setfill('0') << int(warning);
-   return stream.str();
-}
-
-//==============================================================================
-//
-//  Source code editor.
-//
-//  A source code file must be laid out as follows:
-//
-//  <heading>         file name and copyright notice
-//  <blank-line>
-//  <#include-guard>  for a .h
-//  <#include-bases>  #includes for baseIds_ and declIds_
-//  <#include-exts>   #includes for other external headers
-//  <#include-ints>   #includes for other internal headers
-//  <blank-line>
-//  <forwards>        forward declarations
-//  <blank-line>
-//  <usings>          using statements
-//  <blank-line>
-//  <rule>            single rule (or double rule)
-//  <blank-line>
-//  <code>            declarations and/or definitions
-//
-class Editor
-{
-public:
-   //  Creates an editor for the source code in FILE, which is read from INPUT.
-   //
-   explicit Editor(CodeFile* file, istreamPtr& input);
-
-   //  All of the public editing functions attempt to fix the warning reported
-   //  in LOG.  They return 0 on success.  Any other result indicates an error,
-   //  in which case EXPL provides an explanation.
-   //
-   word Read(string& expl);
-   word SortIncludes(const WarningLog& log, string& expl);
-   word AddInclude(const WarningLog& log, string& expl);
-   word RemoveInclude(const WarningLog& log, string& expl);
-   word AddForward(const WarningLog& log, string& expl);
-   word RemoveForward(const WarningLog& log, string& expl);
-   word AddUsing(const WarningLog& log, string& expl);
-   word RemoveUsing(const WarningLog& log, string& expl);
-
-   //  Writes out the file to PATH if it was changed during editing.  Returns 0
-   //  if the file had not been changed, 1 if it was successfully written, and a
-   //  negative value if an error occurred.
-   //
-   word Write(const string& path, string& expl);
-private:
-   struct SourceLine
-   {
-      //  Stores a line of code.
-      //
-      SourceLine(const string& code, size_t line) : code(code), line(line) { }
-
-      //  The code.
-      //
-      string code;
-
-      //  Its line number (the first line is #1, as in a *.check.txt file).
-      //
-      const size_t line;
-   };
-
-   //  The code is kept in a list.
-   //
-   typedef std::list< SourceLine > SourceList;
-
-   //  Iterator for the source code.  This is an editor, so it doesn't bother
-   //  with const iterators.
-   //
-   typedef std::list< SourceLine >::iterator Iter;
-
-   //  Reads in the file's prolog (everything up to, and including, the first
-   //  #include directive.
-   //
-   word GetProlog(string& expl);
-
-   //  Reads in the remaining #include directives.
-   //
-   word GetIncludes(string& expl);
-
-   //  Reads in the rest of the file.
-   //
-   word GetEpilog();
-
-   //  Adds a line of source code from the file.  NEVER used to add new code.
-   //
-   void PushBack(SourceList& list, const string& source);
-
-   //  Searches LIST, starting at ITER, for a line of code that matches SOURCE.
-   //  If a match is found, its location is returned, else end() is returned.
-   //
-   Iter Find(SourceList& list, const Iter& iter, const string& source) const;
-
-   //  Inserts SOURCE into LIST at ITER.  Its new location is returned.
-   //
-   Iter Insert(SourceList& list, Iter& iter, const string& source);
-
-   //  If LIST contains LINE from the original source, erases that line and
-   //  returns its location (it is now an empty string).  Returns end() if
-   //  LINE was not found.
-   //
-   Iter Erase(SourceList& list, size_t line, string& expl);
-
-   //  If LIST contains a line of code that matches SOURCE, erase that line
-   //  and returns its location (it is now an empty string).  Returns end() if
-   //  a match was not found.
-   //
-   Iter Erase(SourceList& list, const string& source, string& expl);
-
-   //  Inserts an INCLUDE directive into LIST.
-   //
-   word InsertInclude(SourceList& list, const string& include);
-
-   //  Inserts a FORWARD declaration at ITER.
-   //
-   word InsertForward(const Iter& iter, const string& forward, string& expl);
-
-   //  Insers a FORWARD declaration at ITER.  It is the first declaration in
-   //  namespace NSPACE, so it must be surrounded by a new namespace scope.
-   //
-   word InsertForward(Iter& iter, const string& nspace,
-      const string& forward, string& expl);
-
-   //  Invoked after removing a forward declaration.  If the declaration was
-   //  in a namespace that is now empty, erases the "namespace <name> { }".
-   //
-   word EraseEmptyNamespace(const Iter& iter);
-
-   //  Invoked before writing the file.  Replaces multiple blank lines with a
-   //  single blank line.
-   //
-   void EraseBlankLinePairs();
-
-   //  Invoked to report TEXT, which is assigned to EXPL.  Returns RC.
-   //
-   static word Report(string& expl, fixed_string text, word rc = 0);
-
-   //  Comparison function for sorting code.  Ignores line numbers and sorts
-   //  alphabetically, ignoring case.
-   //
-   static bool IsSorted(const SourceLine& line1, const SourceLine& line2);
-
-   //  The file from which the source code was obtained.
-   //
-   CodeFile* file_;
-
-   //  The stream for reading the source coe.
-   //
-   istreamPtr input_;
-
-   //  The number of lines read so far.
-   //
-   size_t line_;
-
-   //  Set if the source code has been altered.
-   //
-   bool changed_;
-
-   //  The lines of source up to, and including, the first #include directive.
-   //
-   SourceList prolog_;
-
-   //  The #include directives for external files (in angle brackets).
-   //
-   SourceList extIncls_;
-
-   //  The #include directives for internal files (in quotes).
-   //
-   SourceList intIncls_;
-
-   //  The rest of the source code.
-   //
-   SourceList epilog_;
-};
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_ctor = "Editor.ctor";
-
-Editor::Editor(CodeFile* file, istreamPtr& input) :
-   file_(file),
-   input_(std::move(input)),
-   line_(0),
-   changed_(false)
-{
-   Debug::ft(Editor_ctor);
-
-   input_->clear();
-   input_->seekg(0);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_AddForward = "Editor.AddForward";
-
-word Editor::AddForward(const WarningLog& log, string& expl)
-{
-   Debug::ft(Editor_AddForward);
-
-   //  LOG must provide the namespace for the forward declaration.
-   //
-   auto qname = log.info;
-   auto pos = qname.find(SCOPE_STR);
-   if(pos == string::npos) return Report(expl, "Symbol's namespace required.");
-
-   //  LOG must also specify whether the forward declaration is for a class,
-   //  struct, or union (unlikely).
-   //
-   string areaStr;
-
-   if(qname.find(CLASS_STR) == 0)
-      areaStr = CLASS_STR;
-   else if(qname.find(STRUCT_STR) == 0)
-      areaStr = STRUCT_STR;
-   else if(qname.find(UNION_STR) == 0)
-      areaStr = UNION_STR;
-   else
-      return Report(expl, "Symbol must specify \"class\" or \"struct\".");
-
-   string forward = spaces(Indent_Size);
-   forward += areaStr;
-   forward.push_back(SPACE);
-   forward += qname.substr(pos + 2);
-   forward.push_back(';');
-
-   //  Set NSPACE to "namespace <ns>", where <ns> is the symbol's namespace.
-   //  Then decide where to insert the forward declaration.
-   //
-   string nspace = NAMESPACE_STR;
-   nspace += qname.substr(areaStr.size(), pos - areaStr.size());
-
-   for(auto i = epilog_.begin(); i != epilog_.end(); ++i)
-   {
-      if(i->code.find(NAMESPACE_STR) == 0)
-      {
-         //  If this namespace matches NSPACE, add the declaration to it.
-         //  If this namespace's name is alphabetically after NSPACE, add
-         //  the declaration before it, along with its namespace.
-         //
-         auto comp = strCompare(i->code, nspace);
-         if(comp == 0) return InsertForward(i, forward, expl);
-         if(comp > 0) return InsertForward(i, nspace, forward, expl);
-      }
-      else if((i->code.find(USING_STR) == 0) ||
-         (i->code.find(SingleRule) == 0) ||
-         (i->code.find(DoubleRule) == 0))
-      {
-         //  We have now passed any existing forward declarations, so add
-         //  the new declaration here, along with its namespace.
-         //
-         i = epilog_.insert(i, SourceLine(EMPTY_STR, 0));
-         return InsertForward(i, nspace, forward, expl);
-      }
-   }
-
-   return Report(expl, "Failed to insert forward declaration.");
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_AddInclude = "Editor.AddInclude";
-
-word Editor::AddInclude(const WarningLog& log, string& expl)
-{
-   Debug::ft(Editor_AddInclude);
-
-   //  Create the new #include directive and add it to the appropriate list.
-   //
-   string include = HASH_INCLUDE_STR;
-   include.push_back(SPACE);
-   include += log.info;
-   auto& incls = (include.back() == '>' ? extIncls_ : intIncls_);
-   return InsertInclude(incls, include);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_AddUsing = "Editor.AddUsing";
-
-word Editor::AddUsing(const WarningLog& log, string& expl)
-{
-   Debug::ft(Editor_AddUsing);
-
-   //  Create the new using statement and decide where to insert it.
-   //
-   string statement = USING_STR;
-   statement.push_back(SPACE);
-   statement += log.info;
-   statement.push_back(';');
-
-   auto usings = false;
-
-   for(auto i = epilog_.begin(); i != epilog_.end(); ++i)
-   {
-      if(i->code.find(USING_STR) == 0)
-      {
-         //  If this using statement is alphabetically after STATEMENT,
-         //  add the new statement before it.
-         //
-         usings = true;
-
-         if(strCompare(i->code, statement) > 0)
-         {
-            Insert(epilog_, i, statement);
-            return 0;
-         }
-      }
-      else if((usings && i->code.empty()) ||
-         (i->code.find(SingleRule) == 0) ||
-         (i->code.find(DoubleRule) == 0))
-      {
-         //  We have now passed any existing usings statements, so add
-         //  the new statement here.
-         //
-         i = epilog_.insert(i, SourceLine(EMPTY_STR, 0));
-         i = Insert(epilog_, i, statement);
-         return 0;
-      }
-   }
-
-   return Report(expl, "Failed to insert using statement.");
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_Erase1 = "Editor.Erase[line]";
-
-Editor::Iter Editor::Erase(SourceList& list, size_t line, string& expl)
-{
-   Debug::ft(Editor_Erase1);
-
-   for(auto i = list.begin(); i != list.end(); ++i)
-   {
-      if(i->line == line)
-      {
-         i->code.erase();
-         changed_ = true;
-         return i;
-      }
-   }
-
-   expl = "Line not found: " + std::to_string(line);
-   return list.end();
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_Erase2 = "Editor.Erase[source]";
-
-Editor::Iter Editor::Erase(SourceList& list, const string& source, string& expl)
-{
-   Debug::ft(Editor_Erase2);
-
-   for(auto i = list.begin(); i != list.end(); ++i)
-   {
-      if(i->code == source)
-      {
-         i->code.erase();
-         changed_ = true;
-         return i;
-      }
-   }
-
-   expl = "Statement not found: " + source;
-   return list.end();
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_EraseBlankLinePairs = "Editor.EraseBlankLinePairs";
-
-void Editor::EraseBlankLinePairs()
-{
-   Debug::ft(Editor_EraseBlankLinePairs);
-
-   auto i1 = epilog_.begin();
-   if(i1 == epilog_.end()) return;
-
-   for(auto i2 = std::next(i1); i2 != epilog_.end(); i2 = std::next(i1))
-   {
-      if(i1->code.empty() && i2->code.empty())
-      {
-         i1 = epilog_.erase(i1);
-         changed_ = true;
-      }
-      else
-      {
-         i1 = i2;
-      }
-   }
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_EraseEmptyNamespace = "Editor.EraseEmptyNamespace";
-
-word Editor::EraseEmptyNamespace(const Iter& iter)
-{
-   Debug::ft(Editor_EraseEmptyNamespace);
-
-   //  ITER references the line that follows a forward declaration which was
-   //  just deleted.  If this left an empty "namespace <ns> { }", remove it.
-   //
-   if(iter == epilog_.end()) return 0;
-   if(iter->code.find('}') != 0) return 0;
-
-   auto up1 = std::prev(iter);
-   if(up1 == epilog_.begin()) return 0;
-   auto up2 = std::prev(up1);
-
-   if((up2->code.find(NAMESPACE_STR) == 0) && (up1->code.find('{') == 0))
-   {
-      epilog_.erase(up2, std::next(iter));
-      changed_ = true;
-   }
-
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_Find = "Editor.Find";
-
-Editor::Iter Editor::Find
-   (SourceList& list, const Iter& iter, const string& source) const
-{
-   Debug::ft(Editor_Find);
-
-   for(auto i = iter; i != list.end(); ++i)
-   {
-      if(i->code == source) return i;
-   }
-
-   return list.end();
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_GetEpilog = "Editor.GetEpilog";
-
-word Editor::GetEpilog()
-{
-   Debug::ft(Editor_GetEpilog);
-
-   string str;
-
-   //  Read the remaining lines in the file.
-   //
-   while(input_->peek() != EOF)
-   {
-      std::getline(*input_, str);
-      PushBack(epilog_, str);
-   }
-
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_GetIncludes = "Editor.GetIncludes";
-
-word Editor::GetIncludes(string& expl)
-{
-   Debug::ft(Editor_GetIncludes);
-
-   string str;
-
-   //  Resuming after the first #include, add #include directives to one of
-   //  two sets, one for external files (e.g. #include <f.h>), and the other
-   //  for internal files (e.g. #include "f.h").
-   //
-   while(input_->peek() != EOF)
-   {
-      std::getline(*input_, str);
-
-      if(str.find(HASH_INCLUDE_STR) != 0)
-      {
-         PushBack(epilog_, str);
-         return 0;
-      }
-
-      auto next = str.find_first_not_of(SPACE, strlen(HASH_INCLUDE_STR));
-      if(next == string::npos) return Report(expl, "Empty #include directive.");
-
-      auto& incls = (str[next] == '<' ? extIncls_ : intIncls_);
-      PushBack(incls, str);
-   }
-
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_GetProlog = "Editor.GetProlog";
-
-word Editor::GetProlog(string& expl)
-{
-   Debug::ft(Editor_GetProlog);
-
-   string str;
-
-   //  Read lines up to, and including, the first #include directive.  The
-   //  first #include is not moved, under the assumption that it is either
-   //  o for a .h*, the base class for the case defined in this file, or
-   //  o for a .c*, the .h* that the .c* implements.
-   //
-   while(input_->peek() != EOF)
-   {
-      std::getline(*input_, str);
-      PushBack(prolog_, str);
-      if(str.find(HASH_INCLUDE_STR) == 0) return 0;
-   }
-
-   return Report(expl, "File contains no #include statements");
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_Insert = "Editor.Insert";
-
-Editor::Iter Editor::Insert(SourceList& list, Iter& iter, const string& source)
-{
-   Debug::ft(Editor_Insert);
-
-   changed_ = true;
-   return list.insert(iter, SourceLine(source, 0));
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_InsertForward1 = "Editor.InsertForward";
-
-word Editor::InsertForward
-   (const Iter& iter, const string& forward, string& expl)
-{
-   Debug::ft(Editor_InsertForward1);
-
-   //  ITER references a namespace that matches the one for a new forward
-   //  declaration.  Insert the new declaration alphabetically within the
-   //  declarations that already appear in this namespace.
-   //
-   for(auto i = std::next(iter, 2); i != epilog_.end(); ++i)
-   {
-      if((strCompare(i->code, forward) > 0) ||
-         (i->code.find('}') != string::npos))
-      {
-         Insert(epilog_, i, forward);
-         return 0;
-      }
-   }
-
-   return Report(expl, "Failed to insert forward declaration");
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_InsertForward2 = "Editor.InsertForward[ns]";
-
-word Editor::InsertForward
-   (Iter& iter, const string& nspace, const string& forward, string& expl)
-{
-   Debug::ft(Editor_InsertForward2);
-
-   //  Insert a new forward declaration, along with an enclosing namespace,
-   //  at ITER.
-   //
-   auto i = Insert(epilog_, iter, "}");
-   i = Insert(epilog_, i, forward);
-   i = Insert(epilog_, i, "{");
-   i = Insert(epilog_, i, nspace);
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_InsertInclude = "Editor.InsertInclude";
-
-word Editor::InsertInclude(SourceList& list, const string& include)
-{
-   Debug::ft(Editor_InsertInclude);
-
-   //  If LIST contains no #include directives, or if its last #include is
-   //  alphabetically before the one to be added, insert the new #include
-   //  at the end of LIST, else traverse LIST and insert it alphabetically.
-   //
-   if(list.empty() || strCompare(list.back().code, include) < 0)
-   {
-      Insert(list, list.end(), include);
-   }
-   else
-   {
-      for(auto i = list.begin(); i != list.end(); ++i)
-      {
-         if(strCompare(i->code, include) > 0)
-         {
-            Insert(list, i, include);
-            break;
-         }
-      }
-   }
-
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-
-bool Editor::IsSorted(const SourceLine& line1, const SourceLine& line2)
-{
-   return (strCompare(line1.code, line2.code) <= 0);
-}
-
-//------------------------------------------------------------------------------
-
-void Editor::PushBack(SourceList& list, const string& source)
-{
-   ++line_;
-   list.push_back(SourceLine(source, line_));
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_Read = "Editor.Read";
-
-word Editor::Read(string& expl)
-{
-   Debug::ft(Editor_Read);
-
-   auto rc = GetProlog(expl);
-   if(rc != 0) return rc;
-   rc = GetIncludes(expl);
-   if(rc != 0) return rc;
-   return GetEpilog();
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_RemoveForward = "Editor.RemoveForward";
-
-word Editor::RemoveForward(const WarningLog& log, string& expl)
-{
-   Debug::ft(Editor_RemoveForward);
-
-   //  Erase the line where the forward declaration appears.
-   //  If this succeeds, delete the line entirely, and then
-   //  delete the enclosing namespace if it is now empty.
-   //
-   auto iter = Erase(epilog_, log.line + 1, expl);
-   if(iter != epilog_.end()) iter = epilog_.erase(iter);
-   return EraseEmptyNamespace(iter);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_RemoveInclude = "Editor.RemoveInclude";
-
-word Editor::RemoveInclude(const WarningLog& log, string& expl)
-{
-   Debug::ft(Editor_RemoveInclude);
-
-   //  Extract the code where the #include directive appears in
-   //  order to determine which list to remove it from.  If it
-   //  appeared in that list, delete its line entirely.
-   //
-   auto source = file_->GetLexer().GetNthLine(log.line);
-   if(source.empty()) return Report(expl, "#include not found");
-   auto& incls = (source.back() == '>' ? extIncls_ : intIncls_);
-   auto iter = Erase(incls, source, expl);
-   if(iter != incls.end()) incls.erase(iter);
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_RemoveUsing = "Editor.RemoveUsing";
-
-word Editor::RemoveUsing(const WarningLog& log, string& expl)
-{
-   Debug::ft(Editor_RemoveUsing);
-
-   //  Erase the line where the using statement appears.  If the
-   //  statement appeared there, delete its line entirely.
-   //
-   auto iter = Erase(epilog_, log.line + 1, expl);
-   if(iter != epilog_.end()) epilog_.erase(iter);
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_Report = "Editor.Report";
-
-word Editor::Report(string& expl, fixed_string text, word rc)
-{
-   Debug::ft(Editor_Report);
-
-   expl = text;
-   return rc;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_SortIncludes = "Editor.SortIncludes";
-
-word Editor::SortIncludes(const WarningLog& log, string& expl)
-{
-   Debug::ft(Editor_SortIncludes);
-
-   //  LOG specifies an unsorted #include directive.  Just sort all of the
-   //  #includes in its group.
-   //
-   auto source = file_->GetLexer().GetNthLine(log.line);
-   if(source.find(HASH_INCLUDE_STR) != 0)
-      return Report(expl, "No \"#include\" in unsorted #include directive");
-   auto& incls = (source.find('<') != string::npos ? extIncls_ : intIncls_);
-   incls.sort(IsSorted);
-   changed_ = true;
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_Write = "Editor.Write";
-
-word Editor::Write(const string& path, string& expl)
-{
-   Debug::ft(Editor_Write);
-
-   //  Return if nothing has changeed.
-   //
-   if(!changed_) return 0;
-
-   //  Create a new file to hold the reformatted version.
-   //
-   auto file = path + ".tmp";
-   auto output = ostreamPtr(SysFile::CreateOstream(file.c_str(), true));
-   if(output == nullptr) return Report(expl, "Failed to open output file.", -7);
-
-   for(auto s = prolog_.cbegin(); s != prolog_.cend(); ++s)
-   {
-      *output << s->code << CRLF;
-   }
-
-   for(auto s = extIncls_.cbegin(); s != extIncls_.cend(); ++s)
-   {
-      *output << s->code << CRLF;
-   }
-
-   for(auto s = intIncls_.cbegin(); s != intIncls_.cend(); ++s)
-   {
-      *output << s->code << CRLF;
-   }
-
-   EraseBlankLinePairs();
-
-   for(auto s = epilog_.cbegin(); s != epilog_.cend(); ++s)
-   {
-      *output << s->code << CRLF;
-   }
-
-   //  Close both files, delete the original, and replace it with the new one.
-   //
-   input_.reset();
-   output.reset();
-   remove(path.c_str());
-   auto err = rename(file.c_str(), path.c_str());
-   if(err != 0) return Report(expl, "Failed to rename new file to old.", -6);
-   file_->SetModified();
-   return 1;
-}
-
-//==============================================================================
-
 fn_name CodeTools_AddForwardDependencies = "CodeTools.AddForwardDependencies";
 
 void AddForwardDependencies(const CxxUsageSets& symbols, CxxNamedSet& inclSet)
@@ -1266,7 +207,7 @@ void FindForwardCandidates(const CxxUsageSets& symbols, CxxNamedSet& addForws)
 
 fn_name CodeTools_GetTransitiveBases = "CodeTools.GetTransitiveBases";
 
-void GetTransitiveBases(const CxxNamedSet& bases, SetOfIds& baseIds_)
+void GetTransitiveBases(const CxxNamedSet& bases, SetOfIds& tBaseIds)
 {
    Debug::ft(CodeTools_GetTransitiveBases);
 
@@ -1276,7 +217,7 @@ void GetTransitiveBases(const CxxNamedSet& bases, SetOfIds& baseIds_)
 
       for(auto c = base; c != nullptr; c = c->BaseClass())
       {
-         baseIds_.insert(c->GetDeclFid());
+         tBaseIds.insert(c->GetDeclFid());
       }
    }
 }
@@ -1754,6 +695,7 @@ void CodeFile::CheckFunctionOrder() const
       //
       if((*f)->GetScope() != scope)
       {
+         scope = (*f)->GetScope();
          state = FuncCtor;
          prev = nullptr;
          curr = nullptr;
@@ -1764,7 +706,7 @@ void CodeFile::CheckFunctionOrder() const
       //  the first time (its declaration) so that it can be handled when
       //  its definition appears.
       //
-      if(((*f)->GetDefnFile() == this) &&
+      if(((*f)->GetDeclFile() == this) &&
          (forwards.find(*f) == forwards.end()))
       {
          forwards.insert(*f);
@@ -2026,6 +968,8 @@ void CodeFile::CheckSeparation()
       //  Based on the type of line just found, look for warnings that can
       //  only be found based on the type of line that preceded this one.
       //
+      auto nextType = (n == lineType_.size() - 1 ? Blank : lineType_[n + 1]);
+
       switch(lineType_[n])
       {
       case Code:
@@ -2063,11 +1007,18 @@ void CodeFile::CheckSeparation()
          {
          case Blank:
          case EmptyComment:
-         case TaggedComment:
-         case TextComment:
             break;
          default:
             LogLine(n, InsertBlankLine);
+         }
+
+         switch(nextType)
+         {
+         case Blank:
+         case EmptyComment:
+            break;
+         default:
+            LogLine(n + 1, InsertBlankLine);
          }
          break;
 
@@ -2477,8 +1428,9 @@ void CodeFile::FindDeclIds()
 {
    Debug::ft(CodeFile_FindDeclIds);
 
-   //  If this is a .cpp, find the headers that declare
-   //  items that the .cpp defines.
+   //  If this is a .cpp, find declIds_, the headers that declare items that
+   //  the .cpp defines.  Also find classIds_, the transitive base classes of
+   //  the classes that the .cpp implements.
    //
    if(!IsCpp()) return;
 
@@ -2486,12 +1438,30 @@ void CodeFile::FindDeclIds()
    {
       auto fid = (*f)->GetDistinctDeclFid();
       if(fid != NIL_ID) declIds_.insert(fid);
+
+      auto c = (*f)->GetClass();
+      if(c != nullptr)
+      {
+         for(auto b = c->BaseClass(); b != nullptr; b = b->BaseClass())
+         {
+            classIds_.insert(b->GetDeclFid());
+         }
+      }
    }
 
    for(auto d = data_.cbegin(); d != data_.cend(); ++d)
    {
       auto fid = (*d)->GetDistinctDeclFid();
       if(fid != NIL_ID) declIds_.insert(fid);
+
+      auto c = (*d)->GetClass();
+      if(c != nullptr)
+      {
+         for(auto b = c->BaseClass(); b != nullptr; b = b->BaseClass())
+         {
+            classIds_.insert(b->GetDeclFid());
+         }
+      }
    }
 }
 
@@ -2510,14 +1480,29 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user,
    //  from CxxScoped.NameRefersToItem, simplified to handle only the case of a
    //  symbol that needs to be resolved by a using statement.
    //
-   auto found = false;
-   auto name = user->QualifiedName(true, false);
-   string fqName;
-   size_t i = 0;
-   auto ref = user->DirectType();
+   string name;
+   CxxNamed* ref;
+   auto qname = user->GetQualName();
+
+   if(qname != nullptr)
+   {
+      auto first = qname->First();
+      name = first->QualifiedName(true, false);
+      ref = first->DirectType();
+   }
+   else
+   {
+      name = user->QualifiedName(true, false);
+      ref = user->DirectType();
+   }
+
    if(ref == nullptr) return;
    auto tmplt = ref->GetTemplate();
    if(tmplt != nullptr) ref = tmplt;
+
+   auto found = false;
+   string fqName;
+   size_t i = 0;
 
    while(!found && ref->GetScopedName(fqName, i))
    {
@@ -2544,14 +1529,14 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user,
             //  twice, by both Check() and Trim().  Using statements added
             //  to the file (this occurs below) must therefore be added to
             //  the set addUsing so that they will be logged as needing to
-            //  be added, because they are not yet part of the ource code.
+            //  be added, because they are not yet part of the source code.
             //
             auto u = GetUsingFor(fqName, pos - 4);
 
             if(u != nullptr)
             {
                u->MarkForRetention();
-               if(u->WasAdded()) addUsing.insert(ref);
+               if(u->WasAdded()) addUsing.insert(u->Referent());
                found = true;
             }
          }
@@ -2563,8 +1548,16 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user,
    if(!found)
    {
       //  Neither a file in usingFiles nor this file had a suitable using
-      //  statement.  This file should therefore add one.
+      //  statement.  This file should therefore add one.  If REF is external,
+      //  add a using declaration (for a specific symbol).  If it is internal,
+      //  add a using directive (for a namespace).
       //
+      if(!ref->GetFile()->IsSubsFile())
+      {
+         auto space = ref->GetSpace();
+         if(space != nullptr) ref = space;
+      }
+
       addUsing.insert(ref);
 
       QualNamePtr qualName;
@@ -2573,7 +1566,7 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user,
       auto parser = std::unique_ptr< Parser >(new Parser(scope));
       parser->ParseQualName(name, qualName);
       parser.reset();
-      qualName->SetReferent(ref);
+      qualName->SetReferent(ref, nullptr);
       auto u = UsingPtr(new Using(qualName, false, true));
       InsertUsing(u);
    }
@@ -2636,20 +1629,8 @@ word CodeFile::Fix(CliThread& cli, string& expl)
 {
    Debug::ft(CodeFile_Fix);
 
-   auto& Warnings = CodeInfo::Warnings;
-
-   std::vector< WarningLog > warnings;
-
-   //  Extract the warnings associated with this file.
-   //
-   for(auto item = Warnings.cbegin(); item != Warnings.cend(); ++item)
-   {
-      if(item->file == this)
-      {
-         warnings.push_back(*item);
-      }
-   }
-
+   WarningLogVector warnings;
+   CodeInfo::GetWarnings(this, warnings);
    if(warnings.empty()) return 0;
 
    //  Create an editor for the file.
@@ -2684,6 +1665,8 @@ word CodeFile::Fix(CliThread& cli, string& expl)
       case ForwardRemove:
       case UsingAdd:
       case UsingRemove:
+      case TrailingSpace:
+      case RemoveBlankLine:
          ++found;
          break;
       default:
@@ -2740,6 +1723,12 @@ word CodeFile::Fix(CliThread& cli, string& expl)
          case UsingRemove:
             rc = editor->RemoveUsing(*item, expl);
             break;
+         case TrailingSpace:
+            rc = editor->EraseTrailingBlanks();
+            break;
+         case RemoveBlankLine:
+            rc = editor->EraseBlankLinePairs();
+            break;
          default:
             expl = "Fixing this type of warning is not supported.";
          }
@@ -2794,6 +1783,9 @@ word CodeFile::Format(string& expl)
 
    rc = editor->Read(expl);
    if(rc != 0) return rc;
+
+   editor->EraseTrailingBlanks();
+   editor->EraseBlankLinePairs();
    return editor->Write(FullName(), expl);
 }
 
@@ -2847,11 +1839,11 @@ void CodeFile::GetLineCounts() const
    //
    if(isSubsFile_) return;
 
-   CodeInfo::LineTypeCounts[AnyLine] += lineType_.size();
+   CodeInfo::AddLineType(AnyLine, lineType_.size());
 
    for(size_t n = 0; n < lineType_.size(); ++n)
    {
-      ++CodeInfo::LineTypeCounts[lineType_[n]];
+      CodeInfo::AddLineType(lineType_[n], 1);
    }
 }
 
@@ -3261,7 +2253,7 @@ void CodeFile::LogLine
       log.offset = offset;
       log.info = info;
 
-      if(CodeInfo::FindWarning(log) < 0) CodeInfo::Warnings.push_back(log);
+      CodeInfo::AddWarning(log);
    }
 }
 
@@ -3521,6 +2513,21 @@ void CodeFile::RemoveHeaderIds(SetOfIds& inclIds) const
 
 //------------------------------------------------------------------------------
 
+fn_name CodeFile_SaveBaseIds = "CodeFile.SaveBaseIds";
+
+void CodeFile::SaveBaseIds(const CxxNamedSet& bases)
+{
+   Debug::ft(CodeFile_SaveBaseIds);
+
+   for(auto b = bases.cbegin(); b != bases.cend(); ++b)
+   {
+      auto base = static_cast< const Class* >(*b);
+      baseIds_.insert(base->GetDeclFid());
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeFile_Scan = "CodeFile.Scan";
 
 void CodeFile::Scan()
@@ -3673,15 +2680,16 @@ void CodeFile::Trim(ostream* stream)
    Debug::Progress(Name(), true);
 
    CxxUsageSets symbols;
-   FindDeclIds();
    GetUsageInfo(symbols);
-
    auto& bases = symbols.bases;
    auto& directs = symbols.directs;
    auto& indirects = symbols.indirects;
    auto& forwards = symbols.forwards;
    auto& friends = symbols.friends;
    auto& users = symbols.users;
+
+   FindDeclIds();
+   SaveBaseIds(bases);
 
    //  Remove direct and indirect symbols declared by the file itself.
    //  Find inclSet, the types that were used directly or in executable
@@ -3721,11 +2729,11 @@ void CodeFile::Trim(ostream* stream)
    //  Regenerate it so that it is limited to base classes for those
    //  declared in the .cpp.  Before doing this, find the files that
    //  define base classes, including transitive base classes, of
-   //  classes defined or implemented in this file.  This set (baseIds_)
+   //  classes defined or implemented in this file.  This set (tBaseIds)
    //  will be needed later, when analyzing using statements.
    //
-   SetOfIds baseIds_;
-   GetTransitiveBases(bases, baseIds_);
+   SetOfIds tBaseIds;
+   GetTransitiveBases(bases, tBaseIds);
    if(IsCpp()) GetDeclaredBaseClasses(bases);
 
    //  An #include should always appear for a base class.  Add them to
@@ -3788,13 +2796,14 @@ void CodeFile::Trim(ostream* stream)
 
    //  Create usingFiles, the files that this file can rely on for accessing
    //  using statements.  This set consists of transitive base class files
-   //  (baseIds_) and files that declare what this file defines (declIds_).
+   //  (tBaseIds), files that declare what this file defines (declIds_), and
+   //  transitive base classes of classes that this file defines (classIds_).
    //
    CodeFileVector usingFiles;
 
    auto& files = Singleton< Library >::Instance()->Files();
 
-   for(auto b = baseIds_.cbegin(); b != baseIds_.cend(); ++b)
+   for(auto b = tBaseIds.cbegin(); b != tBaseIds.cend(); ++b)
    {
       usingFiles.push_back(files.At(*b));
    }
@@ -3802,6 +2811,11 @@ void CodeFile::Trim(ostream* stream)
    for(auto d = declIds_.cbegin(); d != declIds_.cend(); ++d)
    {
       usingFiles.push_back(files.At(*d));
+   }
+
+   for(auto c = classIds_.cbegin(); c != classIds_.cend(); ++c)
+   {
+      usingFiles.push_back(files.At(*c));
    }
 
    //  Look at each name (N) that was resolved by a using statement, and

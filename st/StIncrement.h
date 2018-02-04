@@ -26,7 +26,6 @@
 #include "NbTypes.h"
 #include "NtIncrement.h"
 
-using namespace NodeBase;
 using namespace NodeTools;
 
 //------------------------------------------------------------------------------

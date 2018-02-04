@@ -24,8 +24,6 @@
 #include "SysTypes.h"
 #include "UdpIpPort.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace NetworkBase

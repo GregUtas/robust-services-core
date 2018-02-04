@@ -102,14 +102,14 @@ public:
    //  Trims the code files in the set.
    //
    virtual word Trim(std::ostream& stream, std::string& expl) const override;
-private:
-   //  Private to restrict deletion.  Not subclassed.
-   //
-   ~CodeFileSet();
 
    //  Returns the build order of the set.
    //
    BuildOrderPtr SortInBuildOrder() const;
+private:
+   //  Private to restrict deletion.  Not subclassed.
+   //
+   ~CodeFileSet();
 };
 }
 #endif

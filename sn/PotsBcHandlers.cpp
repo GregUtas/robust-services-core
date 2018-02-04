@@ -44,6 +44,7 @@
 #include "Tones.h"
 
 using namespace CallBase;
+using namespace MediaBase;
 
 //------------------------------------------------------------------------------
 

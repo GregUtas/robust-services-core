@@ -31,7 +31,6 @@
 #include "SysTypes.h"
 #include "TlvParameter.h"
 
-using namespace NodeBase;
 using namespace SessionBase;
 
 //------------------------------------------------------------------------------
@@ -138,7 +137,7 @@ std::ostream& operator<<(std::ostream& stream, Address::Type type);
 //  A digit string typically serves to specify an Address.  Digit strings are
 //  included in protocols, so this class (struct) must not be subclassed.
 //
-struct DigitString
+class DigitString
 {
 public:
    //  The number of digits in a string.

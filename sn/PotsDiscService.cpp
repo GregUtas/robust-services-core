@@ -28,7 +28,7 @@
 #include "Singleton.h"
 #include "SysTypes.h"
 
-using namespace CallBase;
+using namespace SessionBase;
 
 //------------------------------------------------------------------------------
 

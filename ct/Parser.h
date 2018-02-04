@@ -40,12 +40,15 @@ using namespace NodeBase;
 
 namespace CodeTools
 {
-//  C++ parser, implemented using recursive descent.  Its purpose is to support
-//  software analysis, so it assumes that it is parsing code that successfully
-//  compiles and links.  It can therefore accept constructs that would actually
-//  be illegal.  Conversely, it can reject legal constructs that the code base
-//  does not use.  This keeps the grammar manageable and, in some cases, rejects
-//  unwanted constructs.
+//  C++ parser.  Its purpose is to support software analysis, so it assumes that
+//  it is parsing code that successfully compiles and links.  It may therefore
+//  accept constructs that would actually be illegal.  Conversely, it can reject
+//  legal constructs that the code base does not use.  This keeps the grammar
+//  manageable and, in some cases, rejects unwanted constructs.
+//
+//  The parser is implemented using recursive descent.  Except for the analysis
+//  of #include lists (CodeFile.ClassifyLine) and handling of empty macro names
+//  (Lexer.Preprocess), it is a single-pass compiler.
 //
 //  NOT SUPPORTED
 //  -------------
@@ -63,11 +66,17 @@ namespace CodeTools
 //    o #if, #elif (the conditional that follows the directive is ignored)
 //    o elaborated type specifiers (class, struct, union, or enum prefixed to
 //      resolve a type ambiguity caused by overloading an identifier)
+//  identifiers:
+//    o unnecessary name qualification, such as declaring a function using
+//      ClassName::FunctionName, may cause the parser to fail
 //  character and string literals (GetCxxExpr, GetCxxAlpha, GetChar, GetStr):
 //    o type tags (u8, u, U, L, R)
 //  namespaces:
 //    o anonymous and inline namespaces (GetNamespace and symbol resolution)
 //    o namespace aliases (GetNamespace)
+//    o inserting a using statement in ns2 to import a symbol defined in ns1,
+//      and then referencing the symbol as ns2::symbol, as if it was actually
+//      defined in ns2
 //  classes:
 //    o multiple inheritance (GetBaseDecl)
 //    o tagging a base class as virtual (GetBaseDecl)
@@ -82,6 +91,7 @@ namespace CodeTools
 //    o the order of tags is inflexible: "extern inline static virtual explicit
 //      constexpr <function-definition> const noexcept override" (GetFuncDecl)
 //    o "=default" and "=delete"
+//    o const&, &, and && as member function suffix tags
 //    o using a different type (an alias) for an argument in the definition of
 //      a previously declared function (DataSpec.MatchesExactly)
 //    o argument-dependent lookup of regular functions (done only for operator
@@ -89,6 +99,7 @@ namespace CodeTools
 //    o constructor inheritance (GetUsing, Class.FindCtor, and others)
 //    o defining a class or function within a function (ParseInBlock and others)
 //    o range-based for loops (GetFor and many others)
+//    o multiple declarations of an extern function
 //    o overloading the function call or comma operator (the parser allows it,
 //      but calls to the overload won't be registered because Operator.Execute
 //      doesn't look for it)

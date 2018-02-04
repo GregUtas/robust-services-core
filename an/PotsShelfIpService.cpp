@@ -30,6 +30,8 @@
 #include "IpPortCfgParm.h"
 #include "Singleton.h"
 
+using namespace NetworkBase;
+
 //------------------------------------------------------------------------------
 
 namespace PotsBase

@@ -100,7 +100,7 @@ fixed_string RestartStrings[RestartLevel_N + 1] =
    ERROR_STR
 };
 
-const char* NodeBase::strRestartLevel(RestartLevel level)
+const char* strRestartLevel(RestartLevel level)
 {
    if((level >= 0) && (level < RestartLevel_N)) return RestartStrings[level];
    return RestartStrings[RestartLevel_N];

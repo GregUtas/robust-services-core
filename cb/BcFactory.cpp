@@ -22,6 +22,8 @@
 #include "BcSessions.h"
 #include "Debug.h"
 
+using namespace SessionBase;
+
 //------------------------------------------------------------------------------
 
 namespace CallBase

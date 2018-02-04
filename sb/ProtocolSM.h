@@ -34,8 +34,6 @@ namespace SessionBase
    class PsmContext;
 }
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase

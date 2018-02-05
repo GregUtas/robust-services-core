@@ -20,9 +20,9 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsMultiplexer.h"
+#include "CliText.h"
 #include <ostream>
 #include <string>
-#include "CliText.h"
 #include "Context.h"
 #include "Debug.h"
 #include "Formatters.h"

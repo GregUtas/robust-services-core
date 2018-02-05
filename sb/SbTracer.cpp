@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "SbTracer.h"
+#include "Tool.h"
 #include <ostream>
 #include <string>
 #include "Debug.h"
@@ -34,7 +35,6 @@
 #include "Signal.h"
 #include "Singleton.h"
 #include "Thread.h"
-#include "Tool.h"
 #include "TraceBuffer.h"
 
 using namespace NetworkBase;

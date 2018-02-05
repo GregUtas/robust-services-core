@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "NwTracer.h"
+#include "Tool.h"
 #include <ostream>
 #include <string>
 #include "Debug.h"
@@ -27,7 +28,6 @@
 #include "IpBuffer.h"
 #include "NbTracer.h"
 #include "Singleton.h"
-#include "Tool.h"
 #include "TraceBuffer.h"
 
 using std::ostream;

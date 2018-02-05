@@ -20,15 +20,13 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsMultiplexer.h"
+#include "ServiceSM.h"
 #include "BcSessions.h"
 #include "Context.h"
 #include "Debug.h"
 #include "SbAppIds.h"
-#include "ServiceSM.h"
 #include "Singleton.h"
 #include "SysTypes.h"
-
-using namespace SessionBase;
 
 //------------------------------------------------------------------------------
 

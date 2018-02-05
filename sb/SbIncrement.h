@@ -23,8 +23,8 @@
 #define SBINCREMENT_H_INCLUDED
 
 #include "CliIncrement.h"
-#include "NbTypes.h"
 #include "NwIncrement.h"
+#include "NbTypes.h"
 #include "SysTypes.h"
 
 using namespace NetworkBase;

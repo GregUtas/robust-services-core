@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "FactoryRegistry.h"
+#include "StatisticsGroup.h"
 #include <memory>
 #include <ostream>
 #include <string>
@@ -28,7 +29,6 @@
 #include "Formatters.h"
 #include "SbCliParms.h"
 #include "Singleton.h"
-#include "StatisticsGroup.h"
 #include "SysTypes.h"
 
 using std::ostream;

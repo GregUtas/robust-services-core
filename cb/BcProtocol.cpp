@@ -20,19 +20,20 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "BcProtocol.h"
+#include "BcAddress.h"
+#include "BcCause.h"
+#include "BcProgress.h"
+#include "CliIntParm.h"
+#include "CliText.h"
+#include "CliTextParm.h"
+#include "MediaParameter.h"
 #include <memory>
 #include <sstream>
 #include <string>
 #include "Algorithms.h"
-#include "BcAddress.h"
-#include "BcCause.h"
-#include "BcProgress.h"
 #include "BcRouting.h"
 #include "CfgParmRegistry.h"
 #include "CliCommand.h"
-#include "CliIntParm.h"
-#include "CliText.h"
-#include "CliTextParm.h"
 #include "CliThread.h"
 #include "Debug.h"
 #include "FactoryRegistry.h"
@@ -41,7 +42,6 @@
 #include "IpPort.h"
 #include "IpPortCfgParm.h"
 #include "IpPortRegistry.h"
-#include "MediaParameter.h"
 #include "NbAppIds.h"
 #include "RootServiceSM.h"
 #include "SbAppIds.h"

@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "NbTracer.h"
+#include "Tool.h"
 #include <ostream>
 #include <string>
 #include "Debug.h"
@@ -29,7 +30,6 @@
 #include "Singleton.h"
 #include "Thread.h"
 #include "ThreadRegistry.h"
-#include "Tool.h"
 #include "TraceBuffer.h"
 
 using std::ostream;

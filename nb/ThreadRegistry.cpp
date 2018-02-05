@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "ThreadRegistry.h"
+#include "StatisticsGroup.h"
 #include <memory>
 #include <ostream>
 #include <string>
@@ -27,7 +28,6 @@
 #include "Formatters.h"
 #include "NbCliParms.h"
 #include "Singleton.h"
-#include "StatisticsGroup.h"
 #include "Thread.h"
 
 using std::ostream;

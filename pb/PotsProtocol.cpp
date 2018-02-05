@@ -20,19 +20,19 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsProtocol.h"
-#include <cstddef>
-#include <sstream>
 #include "BcAddress.h"
 #include "BcProgress.h"
 #include "CliBoolParm.h"
-#include "CliCommand.h"
 #include "CliIntParm.h"
 #include "CliText.h"
 #include "CliTextParm.h"
+#include "MediaParameter.h"
+#include <cstddef>
+#include <sstream>
+#include "CliCommand.h"
 #include "CliThread.h"
 #include "Debug.h"
 #include "Formatters.h"
-#include "MediaParameter.h"
 #include "PotsCliParms.h"
 #include "SbAppIds.h"
 #include "SbCliParms.h"

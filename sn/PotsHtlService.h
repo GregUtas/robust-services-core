@@ -23,8 +23,8 @@
 #define POTSHTLSERVICE_H_INCLUDED
 
 #include "Initiator.h"
-#include "NbTypes.h"
 #include "Service.h"
+#include "NbTypes.h"
 
 using namespace SessionBase;
 

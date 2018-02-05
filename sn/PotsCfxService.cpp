@@ -20,6 +20,8 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsCfxService.h"
+#include "Event.h"
+#include "State.h"
 #include <ostream>
 #include <string>
 #include "BcAddress.h"
@@ -28,7 +30,6 @@
 #include "BcSessions.h"
 #include "Context.h"
 #include "Debug.h"
-#include "Event.h"
 #include "PotsCfnFeature.h"
 #include "PotsFeatures.h"
 #include "PotsProfile.h"
@@ -38,7 +39,6 @@
 #include "SbAppIds.h"
 #include "SbEvents.h"
 #include "Singleton.h"
-#include "State.h"
 #include "SysTypes.h"
 #include "TimerProtocol.h"
 #include "Tones.h"

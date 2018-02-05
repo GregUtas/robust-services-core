@@ -228,11 +228,11 @@ enum FunctionDefinition
 //  and, for a header, indicates whether it contains function templates or an
 //  entire class template.
 //
-enum TemplateLocation
+enum TemplateType
 {
-   FuncNoTemplate,  // no template involvement
-   FuncIsTemplate,  // a function template
-   FuncInTemplate   // a function in a class template
+   NonTemplate,   // not a template (or a function not in a template)
+   FuncTemplate,  // a function template
+   ClassTemplate  // a class template (or a function in a class template)
 };
 
 //------------------------------------------------------------------------------

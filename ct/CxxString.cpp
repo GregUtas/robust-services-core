@@ -292,6 +292,30 @@ size_t FindTemplateEnd(const string& name, size_t pos)
 
 //------------------------------------------------------------------------------
 
+fn_name CodeTools_GetFileName = "CodeTools.GetFileName";
+
+std::string GetFileName(const std::string& path)
+{
+   Debug::ft(CodeTools_GetFileName);
+
+   auto file = path;
+   auto pos = file.rfind('/');
+
+   if(pos != string::npos)
+   {
+      file = file.substr(pos + 1);
+   }
+   else
+   {
+      pos = file.rfind(BACKSLASH);
+      if(pos != string::npos) file = file.substr(pos + 1);
+   }
+
+   return file;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeTools_NameCouldReferTo = "CodeTools.NameCouldReferTo";
 
 size_t NameCouldReferTo(const string& fqName, const string& name)

@@ -20,6 +20,10 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsCwtService.h"
+#include "Event.h"
+#include "EventHandler.h"
+#include "ServiceSM.h"
+#include "State.h"
 #include <cstddef>
 #include <ostream>
 #include <string>
@@ -27,8 +31,6 @@
 #include "Clock.h"
 #include "Context.h"
 #include "Debug.h"
-#include "Event.h"
-#include "EventHandler.h"
 #include "GlobalAddress.h"
 #include "IpPortRegistry.h"
 #include "NwTypes.h"
@@ -38,9 +40,7 @@
 #include "SbAppIds.h"
 #include "SbEvents.h"
 #include "SbTypes.h"
-#include "ServiceSM.h"
 #include "Singleton.h"
-#include "State.h"
 #include "SysTypes.h"
 #include "TimerProtocol.h"
 #include "TlvParameter.h"
@@ -49,8 +49,6 @@
 using namespace NetworkBase;
 using std::ostream;
 using std::string;
-using namespace MediaBase;
-using namespace CallBase;
 
 //------------------------------------------------------------------------------
 

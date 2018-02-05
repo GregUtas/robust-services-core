@@ -20,10 +20,10 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsCfuFeature.h"
+#include "CliText.h"
 #include <sstream>
 #include <string>
 #include "CliCommand.h"
-#include "CliText.h"
 #include "CliThread.h"
 #include "Debug.h"
 #include "Formatters.h"

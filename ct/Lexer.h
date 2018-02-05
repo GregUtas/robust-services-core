@@ -22,8 +22,8 @@
 #ifndef LEXER_H_INCLUDED
 #define LEXER_H_INCLUDED
 
-#include <cstdint>
 #include <cstddef>
+#include <cstdint>
 #include <string>
 #include <unordered_map>
 #include <utility>

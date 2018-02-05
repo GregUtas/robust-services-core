@@ -20,12 +20,13 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "NwIncrement.h"
-#include <iomanip>
-#include <sstream>
-#include <string>
 #include "CliCommand.h"
 #include "CliText.h"
 #include "CliTextParm.h"
+#include "NwCliParms.h"
+#include <iomanip>
+#include <sstream>
+#include <string>
 #include "CliThread.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -33,7 +34,6 @@
 #include "IpPortRegistry.h"
 #include "IpService.h"
 #include "NbCliParms.h"
-#include "NwCliParms.h"
 #include "NwTracer.h"
 #include "NwTypes.h"
 #include "Q1Way.h"

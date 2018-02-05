@@ -20,8 +20,8 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsSessions.h"
-#include "BcCause.h"
 #include "CliText.h"
+#include "BcCause.h"
 #include "Debug.h"
 #include "LocalAddress.h"
 #include "MsgHeader.h"
@@ -34,8 +34,6 @@
 #include "SbAppIds.h"
 #include "Singleton.h"
 #include "Switch.h"
-
-using namespace SessionBase;
 
 //------------------------------------------------------------------------------
 

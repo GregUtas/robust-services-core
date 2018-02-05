@@ -37,7 +37,6 @@
 namespace CodeTools
 {
    class CodeDir;
-   class Editor;
    struct CxxUsageSets;
 }
 
@@ -93,14 +92,14 @@ public:
    bool IsCpp() const { return !isHeader_; }
 
    //  Returns true if this is an external file.  An external file is one that
-   //  appears in an #include but was not parsed because its directory was not
-   //  added to the build by an >import command.
+   //  appears in an #include but whose directory has not yet been added to the
+   //  build by an >import command.
    //
    bool IsExtFile() const { return dir_ == nullptr; }
 
    //  Returns true if this is a substitute file.  A substitute file resides in
    //  the subs/ directory and declares a subset of the items that the code base
-   //  uses from an external file.
+   //  uses from files that are external to RSC.
    //
    bool IsSubsFile() const { return isSubsFile_; }
 
@@ -188,17 +187,31 @@ public:
    //  Invoked when the file defines a function template or a function
    //  in a class template.
    //
-   void SetLocation(TemplateLocation loc);
-
-   //  Checks the file after it has been parsed, looking for additional
-   //  warnings when a report is to be generated.
-   //
-   void Check();
+   void SetTemplate(TemplateType type);
 
    //  Returns the LineType for line N.  Returns LineType_N if N is out
    //  of range.
    //
    LineType GetLineType(size_t n) const;
+
+   //  Returns the group to which the file specified by FILE, FN, or
+   //  INCL belongs:
+   //    group 1: an external file in declIds_
+   //    group 2: an interal file in declIds_
+   //    group 3: an external file in baseIds_
+   //    group 4: an interal file in baseIds_
+   //    group 5: an external file (one in angle brackets)
+   //    group 6: an internal file (one in quotes)
+   //  Returns 0 if an error occurred.
+   //
+   int CalcGroup(const CodeFile* file) const;
+   int CalcGroup(const std::string& fn) const;
+   int CalcGroup(const Include& incl) const;
+
+   //  Checks the file after it has been parsed, looking for additional
+   //  warnings when a report is to be generated.
+   //
+   void Check();
 
    //  Generates a report in STREAM about which #include statements are
    //  required and which symbols require qualification to remove using
@@ -408,10 +421,11 @@ private:
    //
    void LogRemoveUsings(std::ostream* stream) const;
 
-   //  Creates an Editor object.  Returns nullptr on failure, updating RC
-   //  and EXPL with an explanation.
+   //  Creates an Editor object.  On failure, returns a non-zero value and
+   //  updates EXPL with an explanation.  A result of -1 indicates that the
+   //  file should be skipped; other values are more serious.
    //
-   Editor* CreateEditor(word& rc, std::string& expl);
+   word CreateEditor(EditorPtr& editor, std::string& expl);
 
    //  The file's identifier in the code base.
    //
@@ -458,14 +472,14 @@ private:
    //
    SetOfIds implIds_;
 
-   //  The identifiers of files that define direct base classes used by this
-   //  file.
-   //
-   SetOfIds baseIds_;
-
    //  The identifiers of files that declare items that this file defines.
    //
    SetOfIds declIds_;
+
+   //  The identifiers of files that define direct base classes that this
+   //  file uses or implements.
+   //
+   SetOfIds baseIds_;
 
    //  The identifiers of files that define transitive base classes of the
    //  classes implemented in this file.
@@ -513,7 +527,7 @@ private:
 
    //  Whether any of the file's functions involve templates.
    //
-   TemplateLocation location_;
+   TemplateType template_;
 
    //  Set if >check was run on the file.
    //

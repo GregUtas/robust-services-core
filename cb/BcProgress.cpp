@@ -20,8 +20,8 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "BcProgress.h"
-#include <ostream>
 #include "CliIntParm.h"
+#include <ostream>
 #include "Debug.h"
 #include "SysTypes.h"
 

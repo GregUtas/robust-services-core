@@ -20,16 +20,16 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CodeIncrement.h"
+#include "CliCommand.h"
+#include "CliIntParm.h"
+#include "CliText.h"
+#include "CliTextParm.h"
 #include <cstddef>
 #include <iomanip>
 #include <memory>
 #include <sstream>
 #include <string>
 #include "CliBuffer.h"
-#include "CliCommand.h"
-#include "CliIntParm.h"
-#include "CliText.h"
-#include "CliTextParm.h"
 #include "CliThread.h"
 #include "CodeDir.h"
 #include "CodeFile.h"

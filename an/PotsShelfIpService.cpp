@@ -20,17 +20,15 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsShelf.h"
+#include "CliText.h"
 #include <memory>
 #include <string>
 #include "CfgParmRegistry.h"
-#include "CliText.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "IoThread.h"
 #include "IpPortCfgParm.h"
 #include "Singleton.h"
-
-using namespace NetworkBase;
 
 //------------------------------------------------------------------------------
 

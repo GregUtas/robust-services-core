@@ -610,6 +610,20 @@ void Include::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
+fn_name Include_FindFile = "Include.FindFile";
+
+CodeFile* Include::FindFile() const
+{
+   Debug::ft(Include_FindFile);
+
+   auto lib = Singleton< Library >::Instance();
+   auto name = Name();
+   if(name == nullptr) return nullptr;
+   return lib->FindFile(*name);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Include_SetScope = "Include.SetScope";
 
 void Include::SetScope(CxxScope* scope) const

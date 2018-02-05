@@ -389,7 +389,7 @@ CodeFile::CodeFile(const string& name, CodeDir* dir) : LibraryItem(name),
    isSubsFile_(false),
    slashAsterisk_(false),
    parsed_(Unparsed),
-   location_(FuncNoTemplate),
+   template_(NonTemplate),
    checked_(false),
    modified_(false)
 {
@@ -524,6 +524,44 @@ const SetOfIds& CodeFile::Affecters() const
 
 //------------------------------------------------------------------------------
 
+fn_name CodeFile_CalcGroup1 = "CodeFile.CalcGroup[file]";
+
+int CodeFile::CalcGroup(const CodeFile* file) const
+{
+   Debug::ft(CodeFile_CalcGroup1);
+
+   if(file == nullptr) return 0;
+   auto ext = file->IsSubsFile();
+   auto fid = file->Fid();
+   if(declIds_.find(fid) != declIds_.cend()) return (ext ? 1 : 2);
+   if(baseIds_.find(fid) != baseIds_.cend()) return (ext ? 3 : 4);
+   return (ext ? 5 : 6);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeFile_CalcGroup2 = "CodeFile.CalcGroup[fn]";
+
+int CodeFile::CalcGroup(const std::string& fn) const
+{
+   Debug::ft(CodeFile_CalcGroup2);
+
+   return CalcGroup(Singleton< Library >::Instance()->FindFile(fn));
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeFile_CalcGroup3 = "CodeFile.CalcGroup[incl]";
+
+int CodeFile::CalcGroup(const Include& incl) const
+{
+   Debug::ft(CodeFile_CalcGroup3);
+
+   return CalcGroup(incl.FindFile());
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeFile_CanBeTrimmed = "CodeFile.CanBeTrimmed";
 
 bool CodeFile::CanBeTrimmed(ostream* stream) const
@@ -535,16 +573,16 @@ bool CodeFile::CanBeTrimmed(ostream* stream) const
    //
    if(code_.empty()) return false;
    if(isSubsFile_) return false;
-   if(stream == nullptr) return (location_ != FuncInTemplate);
+   if(stream == nullptr) return (template_ != ClassTemplate);
 
    *stream << Name() << CRLF;
 
-   switch(location_)
+   switch(template_)
    {
-   case FuncInTemplate:
+   case ClassTemplate:
       *stream << spaces(3) << "OMITTED: mostly unexecuted." << CRLF;
       return false;
-   case FuncIsTemplate:
+   case FuncTemplate:
       *stream << spaces(3) << "WARNING: partially unexecuted." << CRLF;
    }
 
@@ -587,12 +625,12 @@ void CodeFile::Check()
 
    CheckProlog();
    CheckIncludeGuard();
-   CheckIncludeOrder();
    CheckUsings();
    CheckSeparation();
    CheckFunctionOrder();
    CheckDebugFt();
    Trim(nullptr);
+   CheckIncludeOrder();
    checked_ = true;
 }
 
@@ -827,49 +865,57 @@ void CodeFile::CheckIncludeOrder() const
 {
    Debug::ft(CodeFile_CheckIncludeOrder);
 
-   const Include* prev = nullptr;
+   //  Class templates are currently not executed, which means that Trim() does
+   //  not evaluate them.  This, in turn, means that their baseIds_ and declIds_
+   //  are empty, and so their #include order cannot be properly checked.
+   //
+   if(template_ == ClassTemplate) return;
 
-   for(auto i1 = incls_.cbegin(); i1 != incls_.cend(); ++i1)
+   //  The desired order for #include directives is
+   //    1. files in declIds_ or baseIds_
+   //    2. external files
+   //    3. internal files
+   //  with each group in alphabetical order.  External and internal files are
+   //  distinguished by whether they appear in angle brackets or quotes, but it
+   //  is necessary to identify the file associated with each #include directive
+   //  to determine which belong to group 1.  Directives in this group are also
+   //  tagged so that the Editor can sort them.
+   //
+   auto i1 = incls_.cbegin();
+   if(i1 == incls_.cend()) return;
+   auto group1 = CalcGroup(**i1);
+   auto name1 = (*i1)->Name();
+
+   for(auto i2 = std::next(i1); i2 != incls_.cend(); ++i2)
    {
-      auto i2 = std::next(i1);
+      auto group2 = CalcGroup(**i2);
+      auto name2 = (*i2)->Name();
 
-      //  After the first #include, they should be sorted alphabetically,
-      //  with those in angle brackets first.
+      //  After the first #include, they should be sorted by group,
+      //  and alphabetically within each group.
       //
-      if(i2 != incls_.cend())
+      if(group1 > group2)
       {
-         //  PREV is the #include directive preceding this one.  This one
-         //  is not in the desired sort order if
-         //  o it is in angle brackets, whereas PREV is in quotes;
-         //  o it precedes PREV alphabetically, unless PREV is in angle
-         //    brackets and this one is in quotes.
-         //
-         if(prev != nullptr)
-         {
-            auto a1 = prev->InAngleBrackets();
-            auto a2 = (*i2)->InAngleBrackets();
-            auto err = !a1 && a2;
-
-            if(a1 == a2)
-            {
-               err = err || (strCompare(*(*i2)->Name(), *prev->Name()) < 0);
-            }
-
-            if(err) LogPos((*i2)->GetPos(), IncludeNotSorted);
-         }
-
-         prev = i2->get();
+         LogPos((*i2)->GetPos(), IncludeNotSorted);
+      }
+      else if(group1 == group2)
+      {
+         if(strCompare(*name1, *name2) > 0)
+            LogPos((*i2)->GetPos(), IncludeNotSorted);
       }
 
       //  Look for a duplicated #include.
       //
-      for(NO_OP; i2 != incls_.cend(); ++i2)
+      for(auto i3 = i2; i3 != incls_.cend(); ++i3)
       {
-         if(*(*i1)->Name() == *(*i2)->Name())
+         if(*name1 == *(*i3)->Name())
          {
-            LogPos((*i2)->GetPos(), IncludeDuplicated);
+            LogPos((*i3)->GetPos(), IncludeDuplicated);
          }
       }
+
+      group1 = group2;
+      name1 = name2;
    }
 }
 
@@ -1263,7 +1309,7 @@ LineType CodeFile::ClassifyLine(size_t n)
 
 fn_name CodeFile_CreateEditor = "CodeFile.CreateEditor";
 
-Editor* CodeFile::CreateEditor(word& rc, string& expl)
+word CodeFile::CreateEditor(EditorPtr& editor, string& expl)
 {
    Debug::ft(CodeFile_CreateEditor);
 
@@ -1272,29 +1318,36 @@ Editor* CodeFile::CreateEditor(word& rc, string& expl)
    //  (b) its directory is unknown
    //  (c) the file can't be opened.
    //
+   editor = nullptr;
+
    if(modified_)
    {
       expl = "This file has already been modified.";
-      rc = -1;
-      return nullptr;
+      return -1;
    }
 
    if(dir_ == nullptr)
    {
       expl = "Directory not specified.";
-      rc = -2;
-      return nullptr;
+      return -1;
    }
 
    auto input = InputStream();
    if(input == nullptr)
    {
       expl = "Failed to open source code file.";
-      rc = -7;
-      return nullptr;
+      return -1;
    }
 
-   return new Editor(this, input);
+   editor.reset(new Editor(this, input));
+
+   if(editor == nullptr)
+   {
+      expl = "Failed to allocate editor.";
+      return -7;
+   }
+
+   return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -1633,22 +1686,15 @@ word CodeFile::Fix(CliThread& cli, string& expl)
    CodeInfo::GetWarnings(this, warnings);
    if(warnings.empty()) return 0;
 
-   //  Create an editor for the file.
-   //
-   word rc = 0;
-   auto editor = std::unique_ptr< Editor >(CreateEditor(rc, expl));
-   if(editor == nullptr) return rc;
-
-   rc = editor->Read(expl);
-   if(rc != 0) return rc;
-
-   char reply = 'y';
-
-   //  Sort the warnings by warning type/file/line.
+   //  Sort the warnings by warning type/line.
    //
    std::sort(warnings.begin(), warnings.end(), CodeInfo::IsSortedByWarning);
 
    size_t found = 0;
+   EditorPtr editor = nullptr;
+   word rc = 0;
+   char reply = 'y';
+   auto sorted = false;
    auto exit = false;
 
    //  Run through all the warnings.  If fixing a warning is not supported,
@@ -1659,6 +1705,8 @@ word CodeFile::Fix(CliThread& cli, string& expl)
       switch(item->warning)
       {
       case IncludeNotSorted:
+         if(sorted) continue;
+         //  [[fallthrough]]
       case IncludeAdd:
       case IncludeRemove:
       case ForwardAdd:
@@ -1673,9 +1721,19 @@ word CodeFile::Fix(CliThread& cli, string& expl)
          continue;
       }
 
-      //  Fixing this warning is supported, so display what can be fixed.
+      if(found == 1)
+      {
+         //  Create an editor for the file and display its name.
+         //
+         rc = CreateEditor(editor, expl);
+         if(rc != 0) break;
+         rc = editor->Read(expl);
+         if(rc != 0) break;
+         *cli.obuf << item->file->Name() << ':' << CRLF;
+      }
+
+      //  Display the next line that can be fixed.
       //
-      if(found == 1) *cli.obuf << item->file->Name() << ':' << CRLF;
       *cli.obuf << spaces(2) << "Line " << item->line + 1;
       if(item->offset != 0) *cli.obuf << '/' << item->offset;
       *cli.obuf << ": " << Warning(item->warning);
@@ -1704,6 +1762,7 @@ word CodeFile::Fix(CliThread& cli, string& expl)
          {
          case IncludeNotSorted:
             rc = editor->SortIncludes(*item, expl);
+            sorted = true;
             break;
          case IncludeAdd:
             rc = editor->AddInclude(*item, expl);
@@ -1747,24 +1806,33 @@ word CodeFile::Fix(CliThread& cli, string& expl)
       }
 
       cli.Flush();
+      if(exit || (rc != 0)) break;
    }
 
-   if((found > 0) && !exit)
+   if((found > 0) && (rc == 0))
    {
       *cli.obuf << spaces(2) << "End of supported warnings." << CRLF;
    }
 
-   //  Write out the file.  The possible outcomes are
-   //  o < 0: an error occurred.  Return this result to stop fixing files.
-   //  o = 0: the file wasn't changed.
-   //  o = 1: the file was changed.  Inform the user.
+   //  Write out the file if it was opened.  The possible outcomes are
+   //    < 0: an error occurred.
+   //    = 0: the file wasn't changed.
+   //    = 1: the file was changed.  Inform the user.
    //  If the user entered 'q', return -1 to stop fixing files unless an
    //  error occurred.
    //
-   rc = editor->Write(FullName(), expl);
-   if(rc == 1) *cli.obuf << spaces(2) << "...committed." << CRLF;
-   if(rc >= 0) rc = (reply == 'q' ? -1 : 0);
-   return rc;
+   if(editor != nullptr)
+   {
+      rc = editor->Write(FullName(), expl);
+      if(rc == 1) *cli.obuf << spaces(2) << "...committed." << CRLF;
+      if(rc >= 0) rc = (reply == 'q' ? -2 : 0);
+      editor.reset();
+   }
+
+   //  A result of -1 or greater indicates that the next file can still be
+   //  processed, so don't report an error value.
+   //
+   return (rc < -1 ? rc : 0);
 }
 
 //------------------------------------------------------------------------------
@@ -1777,16 +1845,16 @@ word CodeFile::Format(string& expl)
 
    Debug::Progress(Name(), false, true);
 
-   word rc = 0;
-   auto editor = std::unique_ptr< Editor >(CreateEditor(rc, expl));
-   if(editor == nullptr) return rc;
-
+   EditorPtr editor = nullptr;
+   auto rc = CreateEditor(editor, expl);
+   if(rc != 0) return rc;
    rc = editor->Read(expl);
    if(rc != 0) return rc;
 
    editor->EraseTrailingBlanks();
    editor->EraseBlankLinePairs();
-   return editor->Write(FullName(), expl);
+   rc = editor->Write(FullName(), expl);
+   return (rc >= 0 ? 0 : rc);
 }
 
 //------------------------------------------------------------------------------
@@ -2612,13 +2680,13 @@ void CodeFile::SetDir(CodeDir* dir)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_SetLocation = "CodeFile.SetLocation";
+fn_name CodeFile_SetTemplate = "CodeFile.SetTemplate";
 
-void CodeFile::SetLocation(TemplateLocation loc)
+void CodeFile::SetTemplate(TemplateType type)
 {
-   Debug::ft(CodeFile_SetLocation);
+   Debug::ft(CodeFile_SetTemplate);
 
-   if(loc > location_) location_ = loc;
+   if(type > template_) template_ = type;
 }
 
 //------------------------------------------------------------------------------
@@ -2674,10 +2742,13 @@ void CodeFile::Trim(ostream* stream)
 
    //  If this file should be trimmed, find the headers that declare items
    //  that this file defines, and assemble information about the symbols
-   //  that this file uses.
+   //  that this file uses.  FindDeclIds must be invoked before GetUsageInfo
+   //  because the latter uses declIds_.
    //
    if(!CanBeTrimmed(stream)) return;
    Debug::Progress(Name(), true);
+
+   FindDeclIds();
 
    CxxUsageSets symbols;
    GetUsageInfo(symbols);
@@ -2688,7 +2759,6 @@ void CodeFile::Trim(ostream* stream)
    auto& friends = symbols.friends;
    auto& users = symbols.users;
 
-   FindDeclIds();
    SaveBaseIds(bases);
 
    //  Remove direct and indirect symbols declared by the file itself.

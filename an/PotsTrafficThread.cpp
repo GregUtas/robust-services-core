@@ -20,11 +20,11 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsTrafficThread.h"
+#include "Dynamic.h"
 #include <iomanip>
 #include <sstream>
 #include "Algorithms.h"
 #include "Debug.h"
-#include "Dynamic.h"
 #include "Formatters.h"
 #include "Log.h"
 #include "Memory.h"

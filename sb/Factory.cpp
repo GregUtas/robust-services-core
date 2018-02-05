@@ -20,11 +20,11 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Factory.h"
+#include "Dynamic.h"
 #include <ostream>
 #include <string>
 #include "Algorithms.h"
 #include "Debug.h"
-#include "Dynamic.h"
 #include "FactoryRegistry.h"
 #include "Formatters.h"
 #include "Singleton.h"

@@ -22,19 +22,19 @@
 #ifndef POTSPROTOCOL_H_INCLUDED
 #define POTSPROTOCOL_H_INCLUDED
 
+#include "MediaPsm.h"
+#include "Signal.h"
+#include "TlvMessage.h"
+#include "TlvParameter.h"
+#include "TlvProtocol.h"
 #include <cstdint>
 #include <iosfwd>
 #include <string>
 #include "BcCause.h"
 #include "Clock.h"
-#include "MediaPsm.h"
 #include "NbTypes.h"
 #include "SbTypes.h"
-#include "Signal.h"
 #include "Switch.h"
-#include "TlvMessage.h"
-#include "TlvParameter.h"
-#include "TlvProtocol.h"
 
 namespace CallBase
 {

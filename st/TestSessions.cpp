@@ -20,12 +20,13 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "TestSessions.h"
+#include "Event.h"
+#include "EventHandler.h"
+#include "State.h"
 #include <ostream>
 #include <string>
 #include "Context.h"
 #include "Debug.h"
-#include "Event.h"
-#include "EventHandler.h"
 #include "FactoryRegistry.h"
 #include "GlobalAddress.h"
 #include "IpPortRegistry.h"
@@ -37,7 +38,6 @@
 #include "SbEvents.h"
 #include "SbTrace.h"
 #include "Singleton.h"
-#include "State.h"
 #include "StTestData.h"
 #include "SysTypes.h"
 

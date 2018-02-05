@@ -20,18 +20,18 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "IpPortRegistry.h"
+#include "CfgStrParm.h"
+#include "StatisticsGroup.h"
 #include <memory>
 #include <ostream>
 #include "Algorithms.h"
 #include "CfgParmRegistry.h"
-#include "CfgStrParm.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "IpPort.h"
 #include "IpService.h"
 #include "NwCliParms.h"
 #include "Singleton.h"
-#include "StatisticsGroup.h"
 #include "SysIpL3Addr.h"
 #include "SysTypes.h"
 

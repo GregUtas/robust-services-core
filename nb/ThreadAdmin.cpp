@@ -20,21 +20,21 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "ThreadAdmin.h"
+#include "CfgBoolParm.h"
+#include "Dynamic.h"
+#include "StatisticsGroup.h"
 #include <bitset>
 #include <ostream>
 #include <string>
-#include "CfgBoolParm.h"
 #include "CfgFlagParm.h"
 #include "CfgIntParm.h"
 #include "CfgParmRegistry.h"
 #include "Debug.h"
-#include "Dynamic.h"
 #include "Element.h"
 #include "Formatters.h"
 #include "InitThread.h"
 #include "Singleton.h"
 #include "Statistics.h"
-#include "StatisticsGroup.h"
 #include "SymbolRegistry.h"
 #include "ToolTypes.h"
 #include "TraceBuffer.h"

@@ -39,9 +39,6 @@
 #include "Switch.h"
 #include "TlvParameter.h"
 
-using namespace MediaBase;
-using namespace SessionBase;
-
 //------------------------------------------------------------------------------
 
 namespace PotsBase

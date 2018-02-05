@@ -116,7 +116,13 @@ void CodeInfo::GenerateReport(ostream* stream, const SetOfIds& set)
    for(auto f = order->cbegin(); f != order->cend(); ++f)
    {
       auto file = files.At(f->fid);
-      file->Check();
+      if(file->IsHeader()) file->Check();
+   }
+
+   for(auto f = order->cbegin(); f != order->cend(); ++f)
+   {
+      auto file = files.At(f->fid);
+      if(file->IsCpp()) file->Check();
    }
 
    Singleton< CxxRoot >::Instance()->GlobalNamespace()->Check();

@@ -23,10 +23,10 @@
 #define POTSCFNFEATURE_H_INCLUDED
 
 #include "PotsFeature.h"
+#include "PotsFeatures.h"
 #include "BcAddress.h"
 #include "Clock.h"
 #include "NbTypes.h"
-#include "PotsFeatures.h"
 
 //------------------------------------------------------------------------------
 

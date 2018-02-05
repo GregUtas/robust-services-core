@@ -20,8 +20,8 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "NbSignals.h"
-#include "Debug.h"
 #include "PosixSignal.h"
+#include "Debug.h"
 #include "Singleton.h"
 #include "SysSignals.h"
 #include "SysTypes.h"

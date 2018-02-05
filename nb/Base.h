@@ -22,8 +22,8 @@
 #ifndef BASE_H_INCLUDED
 #define BASE_H_INCLUDED
 
-#include <cstdint>
 #include <cstddef>
+#include <cstdint>
 #include <iosfwd>
 #include <string>
 #include "SysTypes.h"

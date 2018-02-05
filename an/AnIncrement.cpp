@@ -20,12 +20,12 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "AnIncrement.h"
-#include <sstream>
-#include "BcSessions.h"
 #include "CliCommand.h"
 #include "CliIntParm.h"
 #include "CliText.h"
 #include "CliTextParm.h"
+#include <sstream>
+#include "BcSessions.h"
 #include "CliThread.h"
 #include "Debug.h"
 #include "Formatters.h"

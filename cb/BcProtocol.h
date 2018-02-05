@@ -23,20 +23,20 @@
 #define BCPROTOCOL_H_INCLUDED
 
 #include "MediaPsm.h"
-#include <cstddef>
-#include "Clock.h"
-#include "NbTypes.h"
-#include "NwTypes.h"
 #include "SbInputHandler.h"
-#include "SbTypes.h"
 #include "Signal.h"
 #include "SsmFactory.h"
-#include "SysTypes.h"
 #include "TcpIpService.h"
 #include "TlvMessage.h"
 #include "TlvParameter.h"
 #include "TlvProtocol.h"
 #include "UdpIpService.h"
+#include <cstddef>
+#include "Clock.h"
+#include "NbTypes.h"
+#include "NwTypes.h"
+#include "SbTypes.h"
+#include "SysTypes.h"
 
 namespace CallBase
 {

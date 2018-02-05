@@ -211,7 +211,7 @@ private:
 
    //  A variable for the set of all external files.  An external
    //  file is a header that was #included but whose directory is
-   //  not in dirs_ because it was not defined using >import.
+   //  not in dirs_ because it has yet to be defined using >import.
    //
    CodeFileSet* extSet_;
 

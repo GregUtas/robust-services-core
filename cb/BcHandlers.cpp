@@ -26,8 +26,6 @@
 #include "NbAppIds.h"
 #include "SbEvents.h"
 
-using namespace SessionBase;
-
 //------------------------------------------------------------------------------
 
 namespace CallBase

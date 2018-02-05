@@ -20,6 +20,9 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Thread.h"
+#include "Dynamic.h"
+#include "FunctionTrace.h"
+#include "Permanent.h"
 #include <bitset>
 #include <cctype>
 #include <csignal>
@@ -33,12 +36,10 @@
 #include "CliThread.h"
 #include "CoutThread.h"
 #include "Debug.h"
-#include "Dynamic.h"
 #include "Element.h"
 #include "ElementException.h"
 #include "Formatters.h"
 #include "FunctionName.h"
-#include "FunctionTrace.h"
 #include "InitThread.h"
 #include "LeakyBucketCounter.h"
 #include "Log.h"
@@ -47,7 +48,6 @@
 #include "NbPools.h"
 #include "NbSignals.h"
 #include "NbTracer.h"
-#include "Permanent.h"
 #include "PosixSignal.h"
 #include "PosixSignalRegistry.h"
 #include "Registry.h"

@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "TraceBuffer.h"
+#include "TraceRecord.h"
 #include <memory>
 #include <sstream>
 #include "Debug.h"
@@ -32,7 +33,6 @@
 #include "Tool.h"
 #include "ToolRegistry.h"
 #include "TraceDump.h"
-#include "TraceRecord.h"
 
 using std::ostream;
 using std::string;

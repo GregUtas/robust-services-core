@@ -88,7 +88,8 @@ public:
 
    //  All of the public editing functions attempt to fix the warning reported
    //  in LOG.  They return 0 on success.  Any other result indicates an error,
-   //  in which case EXPL provides an explanation.
+   //  in which case EXPL provides an explanation.  A return value of -1 means
+   //  that the file should be skipped; other values denote more serious errors.
    //
    word Read(std::string& expl);
    word SortIncludes(const WarningLog& log, std::string& expl);
@@ -115,8 +116,7 @@ public:
    //
    word Write(const std::string& path, std::string& expl);
 private:
-   //  Reads in the file's prolog (everything up to, and including, the first
-   //  #include directive.
+   //  Reads in the file's prolog (everything up to the first #include.)
    //
    word GetProlog(std::string& expl);
 
@@ -132,11 +132,9 @@ private:
    //
    void PushBack(SourceList& list, const std::string& source);
 
-   //  Searches LIST, starting at ITER, for a line of code that matches SOURCE.
-   //  If a match is found, its location is returned, else end() is returned.
+   //  Adds an #include from the file.  NEVER used to add a new #include.
    //
-   Iter Find
-      (SourceList& list, const Iter& iter, const std::string& source) const;
+   word PushInclude(std::string& source, std::string& expl);
 
    //  Inserts SOURCE into LIST at ITER.  Its new location is returned.
    //
@@ -154,20 +152,26 @@ private:
    //
    Iter Erase(SourceList& list, const std::string& source, std::string& expl);
 
-   //  Inserts an INCLUDE directive into LIST.
+   //  If INCLUDE specifies a file in groups 1 to 4 (see CodeFile.CalcGroup),
+   //  this simplifies sorting by replacing the characters that enclose the
+   //  file name.
    //
-   word InsertInclude(SourceList& list, const std::string& include);
+   word MangleInclude(std::string& include, std::string& expl) const;
+
+   //  Inserts an INCLUDE directive.
+   //
+   word InsertInclude(std::string& include, std::string& expl);
 
    //  Inserts a FORWARD declaration at ITER.
    //
    word InsertForward
       (const Iter& iter, const std::string& forward, std::string& expl);
 
-   //  Insers a FORWARD declaration at ITER.  It is the first declaration in
-   //  namespace NSPACE, so it must be surrounded by a new namespace scope.
+   //  Inserts a FORWARD declaration at ITER.  It is the first declaration in
+   //  namespace NSPACE, so it must be enclosed in a new namespace scope.
    //
-   word InsertForward(Iter& iter, const std::string& nspace,
-      const std::string& forward, std::string& expl);
+   word InsertNamespaceForward(Iter& iter,
+      const std::string& nspace, const std::string& forward);
 
    //  Invoked after removing a forward declaration.  If the declaration was
    //  in a namespace that is now empty, erases the "namespace <name> { }".
@@ -178,16 +182,16 @@ private:
    //
    static word Report(std::string& expl, fixed_string text, word rc = 0);
 
-   //  Comparison function for sorting code.  Ignores line numbers and sorts
-   //  alphabetically, ignoring case.
+   //  Comparison functions for sorting #include directives.
    //
-   static bool IsSorted(const SourceLine& line1, const SourceLine& line2);
+   static bool IsSorted1(const SourceLine& line1, const SourceLine& line2);
+   static bool IsSorted2(const std::string& line1, const std::string& line2);
 
    //  The file from which the source code was obtained.
    //
    CodeFile* file_;
 
-   //  The stream for reading the source coe.
+   //  The stream for reading the source code.
    //
    istreamPtr input_;
 
@@ -199,21 +203,23 @@ private:
    //
    bool changed_;
 
-   //  The lines of source up to, and including, the first #include directive.
+   //  The lines of source that precede the first #include directive.
    //
    SourceList prolog_;
 
-   //  The #include directives for external files (in angle brackets).
+   //  The #include directives.
    //
-   SourceList extIncls_;
-
-   //  The #include directives for internal files (in quotes).
-   //
-   SourceList intIncls_;
+   SourceList includes_;
 
    //  The rest of the source code.
    //
    SourceList epilog_;
+
+   //  Characters that enclose the file name in an #include directive,
+   //  depending on the group to which it belongs.
+   //
+   static const std::string FrontChars;
+   static const std::string BackChars;
 };
 }
 #endif

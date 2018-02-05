@@ -22,10 +22,10 @@
 #ifndef BCROUTING_H_INCLUDED
 #define BCROUTING_H_INCLUDED
 
-#include "BcAddress.h"
 #include <cstdint>
 #include <iosfwd>
 #include <string>
+#include "BcAddress.h"
 #include "SbTypes.h"
 
 using namespace SessionBase;

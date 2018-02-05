@@ -825,7 +825,6 @@ BuildOrderPtr CodeFileSet::SortInBuildOrder() const
    auto size = files.Size();
    auto incls = std::unique_ptr< SetOfIds[] >(new SetOfIds[size]);
    auto fids = std::unique_ptr< id_t[] >(new id_t[size]);
-
    size_t n = 0;
 
    for(CodeFile* f = files.First(); f != nullptr; files.Next(f))
@@ -931,14 +930,12 @@ word CodeFileSet::Trim(ostream& stream, string& expl) const
    for(auto f = order->cbegin(); f != order->cend(); ++f)
    {
       auto file = files.At(f->fid);
-
       if(file->IsHeader()) file->Trim(&stream);
    }
 
    for(auto f = order->cbegin(); f != order->cend(); ++f)
    {
       auto file = files.At(f->fid);
-
       if(file->IsCpp()) file->Trim(&stream);
    }
 

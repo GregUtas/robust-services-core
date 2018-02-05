@@ -22,8 +22,8 @@
 #ifndef TRACERECORD_H_INCLUDED
 #define TRACERECORD_H_INCLUDED
 
-#include <cstdint>
 #include <cstddef>
+#include <cstdint>
 #include <iosfwd>
 #include "SysTypes.h"
 

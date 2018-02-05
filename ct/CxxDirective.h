@@ -23,12 +23,12 @@
 #define CXXDIRECTIVE_H_INCLUDED
 
 #include "CxxNamed.h"
+#include "CxxScoped.h"
 #include <cstddef>
 #include <string>
 #include <utility>
 #include "Cxx.h"
 #include "CxxFwd.h"
-#include "CxxScoped.h"
 
 //------------------------------------------------------------------------------
 
@@ -101,9 +101,9 @@ public:
    //
    ~Include() { CxxStats::Decr(CxxStats::INCLUDE_DIRECTIVE); }
 
-   //  Returns true if the file to be included appeared within angle brackets.
+   //  Returns the file associated with the directive.
    //
-   bool InAngleBrackets() const { return angle_; }
+   CodeFile* FindFile() const;
 
    //  Overridden to display the directive.
    //

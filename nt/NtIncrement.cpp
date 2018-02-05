@@ -20,6 +20,12 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "NtIncrement.h"
+#include "CliBoolParm.h"
+#include "CliCommandSet.h"
+#include "CliIntParm.h"
+#include "CliText.h"
+#include "Temporary.h"
+#include "Thread.h"
 #include <csignal>
 #include <cstddef>
 #include <cstdlib>
@@ -28,10 +34,6 @@
 #include <sstream>
 #include "Algorithms.h"
 #include "Class.h"
-#include "CliBoolParm.h"
-#include "CliCommandSet.h"
-#include "CliIntParm.h"
-#include "CliText.h"
 #include "CliThread.h"
 #include "Clock.h"
 #include "Debug.h"
@@ -60,9 +62,7 @@
 #include "Singleton.h"
 #include "SysThread.h"
 #include "SysTime.h"
-#include "Temporary.h"
 #include "ThisThread.h"
-#include "Thread.h"
 #include "ToolTypes.h"
 
 using std::ostream;

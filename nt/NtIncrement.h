@@ -23,10 +23,10 @@
 #define NTINCREMENT_H_INCLUDED
 
 #include "CliCommand.h"
-#include <string>
 #include "CliIncrement.h"
 #include "CliTextParm.h"
 #include "NbIncrement.h"
+#include <string>
 #include "NbTypes.h"
 #include "SysTypes.h"
 

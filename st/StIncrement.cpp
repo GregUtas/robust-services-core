@@ -20,15 +20,15 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "StIncrement.h"
-#include <iosfwd>
-#include <memory>
-#include <sstream>
-#include <string>
 #include "CliBoolParm.h"
 #include "CliCommand.h"
 #include "CliIntParm.h"
 #include "CliText.h"
 #include "CliTextParm.h"
+#include <iosfwd>
+#include <memory>
+#include <sstream>
+#include <string>
 #include "CliThread.h"
 #include "Debug.h"
 #include "Element.h"

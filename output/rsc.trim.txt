@@ -81,6 +81,7 @@ CxxFwd.h
       CodeTools::CxxToken [CxxFwd.h]
       CodeTools::Data [CxxFwd.h]
       CodeTools::Define [CxxFwd.h]
+      CodeTools::Editor [CxxFwd.h]
       CodeTools::Elif [CxxFwd.h]
       CodeTools::Else [CxxFwd.h]
       CodeTools::Endif [CxxFwd.h]
@@ -112,6 +113,7 @@ CxxFwd.h
       CodeTools::Typedef [CxxFwd.h]
       CodeTools::Undef [CxxFwd.h]
       CodeTools::Using [CxxFwd.h]
+      CodeTools::WarningLog [CxxFwd.h]
 SysTypes.h
    Direct usage:
       INT32_MAX [cstdint]
@@ -243,6 +245,21 @@ LibraryTypes.h
       std::vector [vector]
    Indirect usage:
       NodeBase::id_t [SysTypes.h]
+Editor.h
+   Direct usage:
+      NodeBase::istreamPtr [SysFile.h]
+      size_t [cstddef]
+      std::list [list]
+      std::string [string]
+   Indirect usage:
+      NodeBase::fixed_string [SysTypes.h]
+      NodeBase::istreamPtr [SysFile.h]
+      NodeBase::word [SysTypes.h]
+      size_t [cstddef]
+      std::string [string]
+   Forward usage:
+      CodeTools::CodeFile [CxxFwd.h]
+      CodeTools::WarningLog [CxxFwd.h]
 CodeTypes.h
    WARNING: partially unexecuted.
    Direct usage:
@@ -334,6 +351,25 @@ CxxString.h
       CodeTools::TagCount [CodeTypes.h]
       size_t [cstddef]
       std::string [string]
+CodeWarning.h
+   Direct usage:
+      CodeTools::LineType::LineType_N [CodeTypes.h]
+      CodeTools::Warning [CodeTypes.h]
+      CodeTools::Warning::Warning_N [CodeTypes.h]
+      CodeTools::WarningLogVector [CxxFwd.h]
+      size_t [cstddef]
+      std::string [string]
+   Indirect usage:
+      CodeTools::LineType [CodeTypes.h]
+      CodeTools::SetOfIds [LibraryTypes.h]
+      CodeTools::Warning [CodeTypes.h]
+      CodeTools::WarningLogVector [CxxFwd.h]
+      NodeBase::word [SysTypes.h]
+      size_t [cstddef]
+      std::ostream [iosfwd]
+      std::string [string]
+   Forward usage:
+      CodeTools::CodeFile [CxxFwd.h]
 Cxx.h
    Direct usage:
       UINT8_MAX [cstdint]
@@ -1071,8 +1107,6 @@ SysIpL3Addr.h
       std::string [string]
    Forward usage:
       NetworkBase::SysSocket [NwTypes.h]
-   Remove the using statement for
-      NodeBase
 Signal.h
    Base usage:
       NodeBase::Protected [Protected.h]
@@ -1441,7 +1475,7 @@ CodeFile.h
       CodeTools::MacroVector [CxxFwd.h]
       CodeTools::NamedVector [CxxFwd.h]
       CodeTools::SetOfIds [LibraryTypes.h]
-      CodeTools::TemplateLocation [CodeTypes.h]
+      CodeTools::TemplateType [CodeTypes.h]
       CodeTools::TypedefVector [CxxFwd.h]
       CodeTools::UsingPtrVector [CxxFwd.h]
       NodeBase::EMPTY_STR [SysTypes.h]
@@ -1454,11 +1488,12 @@ CodeFile.h
       CodeTools::CodeFileVector [CxxFwd.h]
       CodeTools::CxxNamedSet [CxxFwd.h]
       CodeTools::DirectivePtr [CxxFwd.h]
+      CodeTools::EditorPtr [CxxFwd.h]
       CodeTools::IncludePtr [CxxFwd.h]
       CodeTools::Lexer [Lexer.h]
       CodeTools::LineType [CodeTypes.h]
       CodeTools::SetOfIds [LibraryTypes.h]
-      CodeTools::TemplateLocation [CodeTypes.h]
+      CodeTools::TemplateType [CodeTypes.h]
       CodeTools::UsingPtr [CxxFwd.h]
       CodeTools::Warning [CodeTypes.h]
       NodeBase::id_t [SysTypes.h]
@@ -1476,7 +1511,6 @@ CodeFile.h
       CodeTools::CxxScoped [CxxFwd.h]
       CodeTools::CxxUsageSets [CodeFile.h]
       CodeTools::Data [CxxFwd.h]
-      CodeTools::Editor [CodeFile.h]
       CodeTools::Enum [CxxFwd.h]
       CodeTools::Forward [CxxFwd.h]
       CodeTools::Function [CxxFwd.h]
@@ -1695,8 +1729,6 @@ SysUdpSocket.h
       size_t [cstddef]
    Forward usage:
       NetworkBase::SysIpL3Addr [NwTypes.h]
-   Remove the using statement for
-      NodeBase
 TcpIpPort.h
    Base usage:
       NetworkBase::IpPort [IpPort.h]
@@ -1795,8 +1827,6 @@ Factory.h
       SessionBase::FactoryStats [Factory.h]
       SessionBase::Message [SbTypes.h]
       SessionBase::TransTrace [Factory.h]
-   Add a using statement for
-      SessionBase
 Event.h
    Base usage:
       NodeBase::Pooled [Pooled.h]
@@ -1845,22 +1875,16 @@ SbHandlers.h
       SessionBase::EventHandler [EventHandler.h]
    Forward usage:
       NodeBase::Singleton [SbHandlers.h]
-   Remove the using statement for
-      NodeBase
 PotsBcHandlers.h
    Base usage:
       SessionBase::EventHandler [EventHandler.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
 PotsProxyHandlers.h
    Base usage:
       SessionBase::EventHandler [EventHandler.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
 CfgBoolParm.h
    Base usage:
       NodeBase::CfgBitParm [CfgBitParm.h]
@@ -1977,6 +2001,7 @@ CxxDirective.h
       size_t [cstddef]
       std::string [string]
    Forward usage:
+      CodeTools::CodeFile [CxxFwd.h]
       CodeTools::Elif [CxxFwd.h]
       CodeTools::Else [CxxFwd.h]
 CxxScope.h
@@ -2041,7 +2066,7 @@ CxxScope.h
       CodeTools::QualNamePtr [CxxFwd.h]
       CodeTools::StackArgVector [CxxFwd.h]
       CodeTools::SymbolView [CodeTypes.h]
-      CodeTools::TemplateLocation [CodeTypes.h]
+      CodeTools::TemplateType [CodeTypes.h]
       CodeTools::TokenPtr [CxxFwd.h]
       CodeTools::TypeMatch [CodeTypes.h]
       CodeTools::TypeName [CxxNamed.h]
@@ -2119,8 +2144,6 @@ TcpIpService.h
       NetworkBase::IpProtocol::IpTcp [NwTypes.h]
    Indirect usage:
       size_t [cstddef]
-   Remove the using statement for
-      NodeBase
 UdpIpService.h
    Base usage:
       NetworkBase::IpService [IpService.h]
@@ -2145,8 +2168,6 @@ SbEvents.h
       SessionBase::Initiator [SbTypes.h]
       SessionBase::Message [SbTypes.h]
       SessionBase::ServiceSM [EventHandler.h]
-   Remove the using statement for
-      NodeBase
 SbTrace.h
    Base usage:
       NodeBase::TimedRecord [TimedRecord.h]
@@ -2214,8 +2235,6 @@ GlobalAddress.h
       NetworkBase::ipport_t [NwTypes.h]
       SessionBase::FactoryId [SbTypes.h]
       SessionBase::LocalAddress [LocalAddress.h]
-   Remove the using statement for
-      NodeBase
 MsgHeader.h
    Direct usage:
       NetworkBase::SysSocket::MaxMsgSize [SysSocket.h]
@@ -2229,8 +2248,6 @@ MsgHeader.h
    Indirect usage:
       std::ostream [iosfwd]
       std::string [string]
-   Add a using statement for
-      NetworkBase
 SbCliParms.h
    Base usage:
       NodeBase::CliIntParm [CliIntParm.h]
@@ -2249,8 +2266,6 @@ SbIpBuffer.h
       size_t [cstddef]
    Forward usage:
       SessionBase::MsgHeader [SbTypes.h]
-   Remove the using statement for
-      NodeBase
 MsgFactory.h
    Base usage:
       SessionBase::Factory [Factory.h]
@@ -2302,8 +2317,6 @@ SbInputHandler.h
       NetworkBase::InputHandler [InputHandler.h]
    Forward usage:
       NetworkBase::IpPort [NwTypes.h]
-   Remove the using statement for
-      NodeBase
 SbModule.h
    Base usage:
       NodeBase::Module [Module.h]
@@ -2339,8 +2352,6 @@ MediaFailureEvent.h
    Forward usage:
       MediaBase::MediaEndpt [MediaFailureEvent.h]
       SessionBase::ServiceSM [EventHandler.h]
-   Remove the using statement for
-      NodeBase
 CbModule.h
    Base usage:
       NodeBase::Module [Module.h]
@@ -2758,6 +2769,7 @@ CxxArea.h
       CodeTools::UsingPtrVector [CxxFwd.h]
       NodeBase::stringPtr [SysTypes.h]
       size_t [cstddef]
+      std::bitset [bitset]
       std::string [string]
       std::unique_ptr [memory]
       std::unique_ptr::get [memory]
@@ -2865,8 +2877,6 @@ SysTcpSocket.h
    Forward usage:
       NetworkBase::IpBuffer [NwTypes.h]
       NetworkBase::SysIpL3Addr [NwTypes.h]
-   Remove the using statement for
-      NodeBase
 ProtocolSM.h
    Base usage:
       SessionBase::ProtocolLayer [ProtocolLayer.h]
@@ -2890,8 +2900,6 @@ ProtocolSM.h
    Forward usage:
       SessionBase::Event [SbTypes.h]
       SessionBase::Timer [SbTypes.h]
-   Remove the using statement for
-      NodeBase
 Context.h
    Base usage:
       NodeBase::Pooled [Pooled.h]
@@ -2995,8 +3003,6 @@ MsgPort.h
       size_t [cstddef]
    Forward usage:
       SessionBase::Context [SbTypes.h]
-   Remove the using statement for
-      NodeBase
 TlvParameter.h
    Base usage:
       SessionBase::Parameter [Parameter.h]
@@ -3008,8 +3014,6 @@ TlvParameter.h
    Indirect usage:
       SessionBase::Parameter::Id [Parameter.h]
       SessionBase::ProtocolId [SbTypes.h]
-   Remove the using statement for
-      NodeBase
 FactoryRegistry.h
    Base usage:
       NodeBase::Protected [Protected.h]
@@ -3116,8 +3120,6 @@ SbExtInputHandler.h
       SessionBase::SbInputHandler [SbInputHandler.h]
    Forward usage:
       NetworkBase::IpPort [NwTypes.h]
-   Remove the using statement for
-      NodeBase
 TimerRegistry.h
    Base usage:
       NodeBase::Dynamic [Dynamic.h]
@@ -3175,29 +3177,21 @@ PotsBicFeature.h
       PotsBase::PotsFeature [PotsFeature.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
 PotsBocFeature.h
    Base usage:
       PotsBase::PotsFeature [PotsFeature.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
 PotsCwtFeature.h
    Base usage:
       PotsBase::PotsFeature [PotsFeature.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
 PotsCxfFeature.h
    Base usage:
       PotsBase::PotsFeature [PotsFeature.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
 PotsFeatureRegistry.h
    Base usage:
       NodeBase::Protected [Protected.h]
@@ -3215,15 +3209,11 @@ PotsSusFeature.h
       PotsBase::PotsFeature [PotsFeature.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
 PotsTwcFeature.h
    Base usage:
       PotsBase::PotsFeature [PotsFeature.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
 PotsFeatureProfile.h
    Base usage:
       NodeBase::Protected [Protected.h]
@@ -3498,8 +3488,6 @@ TlvMessage.h
       SessionBase::TlvMessage::ParmIterator [TlvMessage.h]
    Remove the #include for
       Debug.h
-   Remove the using statement for
-      NodeBase
 ServiceSM.h
    Base usage:
       NodeBase::Pooled [Pooled.h]
@@ -3533,8 +3521,6 @@ MsgContext.h
       SessionBase::ContextType::SingleMsg [SbTypes.h]
    Indirect usage:
       NodeBase::Faction [NbTypes.h]
-   Remove the using statement for
-      NodeBase
 SbInvokerPools.h
    Base usage:
       SessionBase::InvokerPool [InvokerPool.h]
@@ -3543,8 +3529,6 @@ SbInvokerPools.h
       NodeBase::word [SysTypes.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
 TimerThread.h
    Base usage:
       NodeBase::Thread [Thread.h]
@@ -3600,63 +3584,47 @@ BcAddress.h
       std::string [string]
       uint32_t [cstdint]
       uint8_t [cstdint]
-   Remove the using statement for
-      NodeBase
 PotsBicService.h
    Base usage:
       SessionBase::Initiator [Initiator.h]
       SessionBase::Service [Service.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
 PotsBocService.h
    Base usage:
       SessionBase::Initiator [Initiator.h]
       SessionBase::Service [Service.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
 PotsCcwService.h
    Base usage:
       SessionBase::Service [Service.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
 PotsCfbService.h
    Base usage:
       SessionBase::Initiator [Initiator.h]
       SessionBase::Service [Service.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
 PotsCfnService.h
    Base usage:
       SessionBase::Initiator [Initiator.h]
       SessionBase::Service [Service.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
 PotsCfuService.h
    Base usage:
       SessionBase::Initiator [Initiator.h]
       SessionBase::Service [Service.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
 PotsHtlService.h
    Base usage:
       SessionBase::Initiator [Initiator.h]
       SessionBase::Service [Service.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
 PotsSusService.h
    Base usage:
       PotsBase::PotsSusInitiator [PotsSusService.h]
@@ -3667,16 +3635,12 @@ PotsSusService.h
       SessionBase::TriggerId [SbTypes.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
 PotsWmlService.h
    Base usage:
       SessionBase::Initiator [Initiator.h]
       SessionBase::Service [Service.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
 SnIncrement.h
    Base usage:
       NodeBase::CliIncrement [CliIncrement.h]
@@ -3701,8 +3665,6 @@ PotsShelf.h
       NetworkBase::IpPort [NwTypes.h]
       NodeBase::Singleton [NbTypes.h]
       SessionBase::Message [SbTypes.h]
-   Remove the using statement for
-      NodeBase
 CliCommandSet.h
    Base usage:
       NodeBase::CliCommand [CliCommand.h]
@@ -3735,8 +3697,6 @@ TcpIoThread.h
       size_t [cstddef]
    Forward usage:
       NetworkBase::SysTcpSocket [NwTypes.h]
-   Remove the using statement for
-      NodeBase
 UdpIoThread.h
    Base usage:
       NetworkBase::IoThread [IoThread.h]
@@ -3745,8 +3705,6 @@ UdpIoThread.h
       NodeBase::Faction [NbTypes.h]
       NodeBase::debug32_t [SysTypes.h]
       size_t [cstddef]
-   Remove the using statement for
-      NodeBase
 RootServiceSM.h
    Base usage:
       SessionBase::ServiceSM [ServiceSM.h]
@@ -3757,8 +3715,6 @@ RootServiceSM.h
       SessionBase::ServiceId [SbTypes.h]
    Forward usage:
       SessionBase::SsmContext [SbTypes.h]
-   Remove the using statement for
-      NodeBase
 TimerProtocol.h
    Base usage:
       SessionBase::Signal [Signal.h]
@@ -3772,8 +3728,6 @@ TimerProtocol.h
       std::string [string]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
 PsmContext.h
    Base usage:
       SessionBase::MsgContext [MsgContext.h]
@@ -3789,8 +3743,6 @@ PsmContext.h
    Forward usage:
       SessionBase::MsgPort [SbTypes.h]
       SessionBase::ProtocolSM [SbTypes.h]
-   Remove the using statement for
-      NodeBase
 TextTlvMessage.h
    Base usage:
       SessionBase::TlvMessage [TlvMessage.h]
@@ -3799,8 +3751,6 @@ TextTlvMessage.h
       SessionBase::SbIpBufferPtr [SbTypes.h]
    Forward usage:
       SessionBase::ProtocolSM [SbTypes.h]
-   Remove the using statement for
-      NodeBase
 TlvIntParameter.h
    OMITTED: mostly unexecuted.
 Tones.h
@@ -3817,8 +3767,6 @@ Tones.h
       uint8_t [cstdint]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
 BcRouting.h
    Direct usage:
       CallBase::Address::Type [BcAddress.h]
@@ -3840,8 +3788,6 @@ ServiceCodeRegistry.h
       SessionBase::ServiceId [SbTypes.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Add a using statement for
-      SessionBase
 PotsHtlFeature.h
    Base usage:
       PotsBase::PotsFeature [PotsFeature.h]
@@ -3852,8 +3798,6 @@ PotsHtlFeature.h
       CallBase::Address::DN [BcAddress.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
 PotsProfileRegistry.h
    Base usage:
       NodeBase::Protected [Protected.h]
@@ -3872,8 +3816,6 @@ PotsFeatures.h
    Indirect usage:
       CallBase::Address::DN [BcAddress.h]
       PotsBase::PotsFeature::Id [PotsFeature.h]
-   Remove the using statement for
-      NodeBase
 PotsProfile.h
    Base usage:
       CallBase::Address [BcAddress.h]
@@ -3897,8 +3839,6 @@ PotsProfile.h
       PotsBase::PotsFeatureProfile [PotsFeature.h]
       SessionBase::MsgPort [SbTypes.h]
       SessionBase::ProtocolSM [SbTypes.h]
-   Remove the using statement for
-      SessionBase
 PotsTrafficThread.h
    Base usage:
       NodeBase::Thread [Thread.h]
@@ -3968,8 +3908,6 @@ SsmContext.h
    Forward usage:
       SessionBase::ProtocolSM [SbTypes.h]
       SessionBase::RootServiceSM [SbTypes.h]
-   Remove the using statement for
-      NodeBase
 TestSessions.h
    Base usage:
       NodeBase::Dynamic [Dynamic.h]
@@ -4004,8 +3942,6 @@ TestSessions.h
       SessionBase::BuffTrace [Message.h]
       SessionBase::MsgPort [SbTypes.h]
       SessionTools::StTestData [TestSessions.h]
-   Remove the using statement for
-      NodeBase
 ToneRegistry.h
    Base usage:
       NodeBase::Dynamic [Dynamic.h]
@@ -4024,8 +3960,6 @@ MediaSsm.h
       MediaBase::Switch::PortId [Switch.h]
       SessionBase::ProtocolSM [ProtocolSM.h]
       SessionBase::ServiceId [SbTypes.h]
-   Remove the using statement for
-      NodeBase
 MediaParameter.h
    Base usage:
       SessionBase::TlvIntParameter<unsigned short> [TlvIntParameter.h]
@@ -4036,8 +3970,6 @@ MediaParameter.h
       SessionBase::ProtocolId [SbTypes.h]
       std::ostream [iosfwd]
       std::string [string]
-   Remove the using statement for
-      NodeBase
 BcCause.h
    Base usage:
       SessionBase::TlvIntParameter<unsigned char> [TlvIntParameter.h]
@@ -4047,8 +3979,6 @@ BcCause.h
       std::ostream [iosfwd]
       std::string [string]
       uint8_t [cstdint]
-   Remove the using statement for
-      NodeBase
 BcProgress.h
    Base usage:
       SessionBase::TlvIntParameter<unsigned char> [TlvIntParameter.h]
@@ -4058,8 +3988,6 @@ BcProgress.h
       std::ostream [iosfwd]
       std::string [string]
       uint8_t [cstdint]
-   Remove the using statement for
-      NodeBase
 PotsCfbFeature.h
    Base usage:
       PotsBase::DnRouteFeatureProfile [PotsFeatures.h]
@@ -4068,9 +3996,6 @@ PotsCfbFeature.h
       CallBase::Address::DN [BcAddress.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      CallBase
-      NodeBase
 PotsCfnFeature.h
    Base usage:
       PotsBase::DnRouteFeatureProfile [PotsFeatures.h]
@@ -4082,9 +4007,6 @@ PotsCfnFeature.h
       NodeBase::secs_t [Clock.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      CallBase
-      NodeBase
 PotsCfuFeature.h
    Base usage:
       PotsBase::DnRouteFeatureProfile [PotsFeatures.h]
@@ -4093,9 +4015,6 @@ PotsCfuFeature.h
       CallBase::Address::DN [BcAddress.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      CallBase
-      NodeBase
 PotsWmlFeature.h
    Base usage:
       PotsBase::DnRouteFeatureProfile [PotsFeatures.h]
@@ -4107,9 +4026,6 @@ PotsWmlFeature.h
       NodeBase::secs_t [Clock.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      CallBase
-      NodeBase
 PotsTreatments.h
    Base usage:
       NodeBase::Protected [Protected.h]
@@ -4147,16 +4063,12 @@ SbIncrement.h
       NodeBase::id_t [SysTypes.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
 StIncrement.h
    Base usage:
       NodeBase::CliIncrement [CliIncrement.h]
       NodeTools::SizesCommand [NtIncrement.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
 StTestData.h
    Base usage:
       NodeBase::CliAppData [CliAppData.h]
@@ -4190,8 +4102,6 @@ MediaPsm.h
    Forward usage:
       MediaBase::MediaEndpt [MediaPsm.h]
       MediaBase::MediaSsm [MediaPsm.h]
-   Remove the using statement for
-      NodeBase
 BcSessions.h
    Base usage:
       CallBase::BcEvent [BcSessions.h]
@@ -4246,9 +4156,6 @@ BcSessions.h
       CallBase::CipPsm [BcSessions.h]
       MediaBase::MediaPsm [BcSessions.h]
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
-      SessionBase
 PotsStatistics.h
    Base usage:
       NodeBase::StatisticsGroup [StatisticsGroup.h]
@@ -4286,8 +4193,6 @@ PotsCfxService.h
       CallBase::CipMessage [PotsCfxService.h]
       NodeBase::Singleton [NbTypes.h]
       PotsBase::DnRouteFeatureProfile [PotsCfxService.h]
-   Remove the using statement for
-      NodeBase
 BcProtocol.h
    Base usage:
       CallBase::BcPsm [BcProtocol.h]
@@ -4330,17 +4235,12 @@ BcProtocol.h
       CallBase::RouteResult [BcProtocol.h]
       NetworkBase::IpPort [NwTypes.h]
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
-      SessionBase
 PotsIncrement.h
    Base usage:
       NodeBase::CliIncrement [CliIncrement.h]
       SessionTools::StSizesCommand [StIncrement.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
 PotsProtocol.h
    Base usage:
       MediaBase::MediaPsm [MediaPsm.h]
@@ -4382,9 +4282,6 @@ PotsProtocol.h
       CallBase::DigitString [PotsProtocol.h]
       CallBase::ProgressInfo [PotsProtocol.h]
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
-      SessionBase
 ProxyBcSessions.h
    Base usage:
       CallBase::BcActive [BcSessions.h]
@@ -4438,9 +4335,6 @@ ProxyBcSessions.h
       size_t [cstddef]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
-      SessionBase
 PotsCircuit.h
    Base usage:
       MediaBase::Circuit [Circuit.h]
@@ -4461,11 +4355,6 @@ PotsCircuit.h
       std::string [string]
    Forward usage:
       PotsBase::PotsProfile [PotsCircuit.h]
-   Add a using statement for
-      MediaBase
-   Remove the using statement for
-      NodeBase
-      SessionBase
 PotsCwtService.h
    Base usage:
       PotsBase::Facility [PotsProtocol.h]
@@ -4479,8 +4368,6 @@ PotsCwtService.h
       SessionBase::Service::Id [Service.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
 PotsMultiplexer.h
    Base usage:
       MediaBase::MediaPsm [MediaPsm.h]
@@ -4524,9 +4411,6 @@ PotsMultiplexer.h
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
       PotsBase::PotsProfile [PotsMultiplexer.h]
-   Remove the using statement for
-      NodeBase
-      SessionBase
 PotsSessions.h
    Base usage:
       CallBase::BcFactory [BcSessions.h]
@@ -4573,9 +4457,6 @@ PotsSessions.h
       PotsBase::PotsProfile [PotsSessions.h]
       PotsBase::PotsTreatment [PotsSessions.h]
       SessionBase::AnalyzeMsgEvent [ServiceSM.h]
-   Remove the using statement for
-      NodeBase
-      SessionBase
 PotsProxySessions.h
    Base usage:
       CallBase::ProxyBcActive [ProxyBcSessions.h]
@@ -4597,8 +4478,6 @@ PotsProxySessions.h
       CallBase::ProxyBcTermAlerting [ProxyBcSessions.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Remove the using statement for
-      NodeBase
 InitFlags.cpp
    Direct usage:
       NodeBase::InitFlags::AllowBreak [InitFlags.h]
@@ -5399,6 +5278,7 @@ CxxString.cpp
       CodeTools::FileExtensionIs [CxxString.h]
       CodeTools::FindIndex [CxxString.h]
       CodeTools::FindSubstr [CxxString.h]
+      CodeTools::GetFileName [CxxString.h]
       CodeTools::NameCouldReferTo [CxxString.h]
       CodeTools::NameIsSuperscopeOf [CxxString.h]
       CodeTools::Normalize [CxxString.h]
@@ -6047,6 +5927,122 @@ SysSignals.cpp
       SIGSEGV [csignal]
       SIGTERM [csignal]
       std::bitset [bitset]
+Editor.cpp
+   Base usage:
+      CodeTools::Editor [Editor.h]
+   Direct usage:
+      CodeTools::CLASS_STR [CodeTypes.h]
+      CodeTools::CodeFile [CodeFile.h]
+      CodeTools::CodeFile::CalcGroup [CodeFile.h]
+      CodeTools::CodeFile::GetLexer [CodeFile.h]
+      CodeTools::CodeFile::SetModified [CodeFile.h]
+      CodeTools::DoubleRule [CodeTypes.h]
+      CodeTools::Editor [Editor.h]
+      CodeTools::Editor::AddForward [Editor.h]
+      CodeTools::Editor::AddInclude [Editor.h]
+      CodeTools::Editor::AddUsing [Editor.h]
+      CodeTools::Editor::BackChars [Editor.h]
+      CodeTools::Editor::Editor [Editor.h]
+      CodeTools::Editor::Erase [Editor.h]
+      CodeTools::Editor::EraseBlankLinePairs [Editor.h]
+      CodeTools::Editor::EraseEmptyNamespace [Editor.h]
+      CodeTools::Editor::EraseTrailingBlanks [Editor.h]
+      CodeTools::Editor::FrontChars [Editor.h]
+      CodeTools::Editor::GetEpilog [Editor.h]
+      CodeTools::Editor::GetIncludes [Editor.h]
+      CodeTools::Editor::GetProlog [Editor.h]
+      CodeTools::Editor::Insert [Editor.h]
+      CodeTools::Editor::InsertForward [Editor.h]
+      CodeTools::Editor::InsertInclude [Editor.h]
+      CodeTools::Editor::InsertNamespaceForward [Editor.h]
+      CodeTools::Editor::IsSorted1 [Editor.h]
+      CodeTools::Editor::IsSorted2 [Editor.h]
+      CodeTools::Editor::MangleInclude [Editor.h]
+      CodeTools::Editor::PushBack [Editor.h]
+      CodeTools::Editor::PushInclude [Editor.h]
+      CodeTools::Editor::Read [Editor.h]
+      CodeTools::Editor::RemoveForward [Editor.h]
+      CodeTools::Editor::RemoveInclude [Editor.h]
+      CodeTools::Editor::RemoveUsing [Editor.h]
+      CodeTools::Editor::Report [Editor.h]
+      CodeTools::Editor::SortIncludes [Editor.h]
+      CodeTools::Editor::SourceLine [Editor.h]
+      CodeTools::Editor::SourceLine::code [Editor.h]
+      CodeTools::Editor::SourceLine::line [Editor.h]
+      CodeTools::Editor::Write [Editor.h]
+      CodeTools::Editor::changed_ [Editor.h]
+      CodeTools::Editor::epilog_ [Editor.h]
+      CodeTools::Editor::file_ [Editor.h]
+      CodeTools::Editor::includes_ [Editor.h]
+      CodeTools::Editor::input_ [Editor.h]
+      CodeTools::Editor::line_ [Editor.h]
+      CodeTools::Editor::prolog_ [Editor.h]
+      CodeTools::HASH_INCLUDE_STR [CodeTypes.h]
+      CodeTools::Indent_Size [CodeTypes.h]
+      CodeTools::Lexer [Lexer.h]
+      CodeTools::Lexer::GetNthLine [Lexer.h]
+      CodeTools::NAMESPACE_STR [CodeTypes.h]
+      CodeTools::STRUCT_STR [CodeTypes.h]
+      CodeTools::SingleRule [CodeTypes.h]
+      CodeTools::UNION_STR [CodeTypes.h]
+      CodeTools::USING_STR [CodeTypes.h]
+      CodeTools::WarningLog [CodeWarning.h]
+      CodeTools::WarningLog::info [CodeWarning.h]
+      CodeTools::WarningLog::line [CodeWarning.h]
+      EOF [cstdio]
+      NodeBase::CRLF [SysTypes.h]
+      NodeBase::Debug::ft [Debug.h]
+      NodeBase::EMPTY_STR [SysTypes.h]
+      NodeBase::QUOTE [SysTypes.h]
+      NodeBase::SCOPE_STR [SysTypes.h]
+      NodeBase::SPACE [SysTypes.h]
+      NodeBase::SysFile::CreateOstream [SysFile.h]
+      NodeBase::fn_name [SysTypes.h]
+      NodeBase::ostreamPtr [SysFile.h]
+      NodeBase::spaces [Formatters.h]
+      NodeBase::strCompare [Formatters.h]
+      remove [cstdio]
+      rename [cstdio]
+      std::basic_ios::clear [ios]
+      std::basic_istream [istream]
+      std::basic_istream::peek [istream]
+      std::basic_istream::seekg [istream]
+      std::basic_ostream [ostream]
+      std::basic_string [string]
+      std::basic_string::back [string]
+      std::basic_string::c_str [string]
+      std::basic_string::empty [string]
+      std::basic_string::erase [string]
+      std::basic_string::find [string]
+      std::basic_string::find_first_not_of [string]
+      std::basic_string::find_first_of [string]
+      std::basic_string::npos [string]
+      std::basic_string::pop_back [string]
+      std::basic_string::push_back [string]
+      std::basic_string::size [string]
+      std::basic_string::substr [string]
+      std::getline [string]
+      std::iterator_t [iterator]
+      std::list [list]
+      std::list::back [list]
+      std::list::begin [list]
+      std::list::cbegin [list]
+      std::list::cend [list]
+      std::list::empty [list]
+      std::list::end [list]
+      std::list::erase [list]
+      std::list::insert [list]
+      std::list::pop_back [list]
+      std::list::push_back [list]
+      std::list::sort [list]
+      std::move [utility]
+      std::next [iterator]
+      std::prev [iterator]
+      std::string [string]
+      std::to_string [string]
+      std::unique_ptr [memory]
+      std::unique_ptr::reset [memory]
+      strlen [cstring]
 InputHandler.cpp
    Base usage:
       NetworkBase::InputHandler [InputHandler.h]
@@ -7083,8 +7079,6 @@ UdpIpService.cpp
       NodeBase::Debug::ft [Debug.h]
       NodeBase::Object::Patch [Object.h]
       NodeBase::fn_name [SysTypes.h]
-   Remove the using statement for
-      NodeBase
 AnalyzeSnpEvent.cpp
    Base usage:
       SessionBase::AnalyzeMsgEvent [SbEvents.h]
@@ -9155,6 +9149,88 @@ CodeDir.cpp
       size_t [cstddef]
       std::basic_ostream [ostream]
       std::basic_string [string]
+CodeWarning.cpp
+   Base usage:
+      CodeTools::CodeInfo [CodeWarning.h]
+      CodeTools::WarningLog [CodeWarning.h]
+   Direct usage:
+      CodeTools::CodeFile [CodeFile.h]
+      CodeTools::CodeFile::Check [CodeFile.h]
+      CodeTools::CodeFile::Fid [CodeFile.h]
+      CodeTools::CodeFile::FullName [CodeFile.h]
+      CodeTools::CodeFile::GetLexer [CodeFile.h]
+      CodeTools::CodeFile::GetLineCounts [CodeFile.h]
+      CodeTools::CodeFile::IsCpp [CodeFile.h]
+      CodeTools::CodeFile::IsHeader [CodeFile.h]
+      CodeTools::CodeFileSet [CodeFileSet.h]
+      CodeTools::CodeFileSet::SortInBuildOrder [CodeFileSet.h]
+      CodeTools::CodeInfo::AddWarning [CodeWarning.h]
+      CodeTools::CodeInfo::FindWarning [CodeWarning.h]
+      CodeTools::CodeInfo::GenerateReport [CodeWarning.h]
+      CodeTools::CodeInfo::GetWarnings [CodeWarning.h]
+      CodeTools::CodeInfo::IsSortedByFile [CodeWarning.h]
+      CodeTools::CodeInfo::IsSortedByWarning [CodeWarning.h]
+      CodeTools::CodeInfo::LineTypeCounts_ [CodeWarning.h]
+      CodeTools::CodeInfo::WarningCode [CodeWarning.h]
+      CodeTools::CodeInfo::WarningCounts_ [CodeWarning.h]
+      CodeTools::CodeInfo::Warnings_ [CodeWarning.h]
+      CodeTools::CxxRoot [CxxRoot.h]
+      CodeTools::CxxRoot::GlobalNamespace [CxxRoot.h]
+      CodeTools::CxxToken::Check [CxxToken.h]
+      CodeTools::FileLevel [LibraryTypes.h]
+      CodeTools::FileLevel::fid [LibraryTypes.h]
+      CodeTools::Lexer [Lexer.h]
+      CodeTools::Lexer::GetNthLine [Lexer.h]
+      CodeTools::Library [Library.h]
+      CodeTools::Library::Files [Library.h]
+      CodeTools::LibrarySet::TemporaryName [LibrarySet.h]
+      CodeTools::LineType [CodeTypes.h]
+      CodeTools::LineType::LineType_N [CodeTypes.h]
+      CodeTools::Namespace [CxxArea.h]
+      CodeTools::SetOfIds [LibraryTypes.h]
+      CodeTools::Warning [CodeTypes.h]
+      CodeTools::Warning::Warning_N [CodeTypes.h]
+      CodeTools::WarningLog [CodeWarning.h]
+      CodeTools::WarningLog::file [CodeWarning.h]
+      CodeTools::WarningLog::info [CodeWarning.h]
+      CodeTools::WarningLog::line [CodeWarning.h]
+      CodeTools::WarningLog::offset [CodeWarning.h]
+      CodeTools::WarningLog::operator!= [CodeWarning.h]
+      CodeTools::WarningLog::operator== [CodeWarning.h]
+      CodeTools::WarningLog::warning [CodeWarning.h]
+      NodeBase::CRLF [SysTypes.h]
+      NodeBase::Debug::ft [Debug.h]
+      NodeBase::Registry [Registry.h]
+      NodeBase::Registry::At [Registry.h]
+      NodeBase::SPACE [SysTypes.h]
+      NodeBase::Singleton::Instance [Singleton.h]
+      NodeBase::fn_name [SysTypes.h]
+      NodeBase::spaces [Formatters.h]
+      NodeBase::strCompare [Formatters.h]
+      size_t [cstddef]
+      std::basic_ostream [ostream]
+      std::basic_ostringstream [sstream]
+      std::basic_ostringstream::str [sstream]
+      std::basic_string [string]
+      std::basic_string::empty [string]
+      std::iterator_t [iterator]
+      std::ostringstream [iosfwd]
+      std::set [set]
+      std::set::cbegin [set]
+      std::set::cend [set]
+      std::set::find [set]
+      std::setfill [iomanip]
+      std::setw [iomanip]
+      std::sort [algorithm]
+      std::string [string]
+      std::vector [vector]
+      std::vector::at [vector]
+      std::vector::begin [vector]
+      std::vector::cbegin [vector]
+      std::vector::cend [vector]
+      std::vector::end [vector]
+      std::vector::push_back [vector]
+      std::vector::size [vector]
 Cxx.cpp
    Base usage:
       CodeTools::CxxChar [Cxx.h]
@@ -9396,6 +9472,21 @@ CxxArea.cpp
       CodeTools::Class::AddItem [CxxArea.h]
       CodeTools::Class::AddSubclass [CxxArea.h]
       CodeTools::Class::AddUsing [CxxArea.h]
+      CodeTools::Class::Attributes::HasEnum [CxxArea.h]
+      CodeTools::Class::Attributes::HasInstantiations [CxxArea.h]
+      CodeTools::Class::Attributes::HasNonPublicInnerClass [CxxArea.h]
+      CodeTools::Class::Attributes::HasNonPublicMemberData [CxxArea.h]
+      CodeTools::Class::Attributes::HasNonPublicMemberFunction [CxxArea.h]
+      CodeTools::Class::Attributes::HasNonPublicStaticData [CxxArea.h]
+      CodeTools::Class::Attributes::HasNonPublicStaticFunction [CxxArea.h]
+      CodeTools::Class::Attributes::HasPublicInnerClass [CxxArea.h]
+      CodeTools::Class::Attributes::HasPublicMemberData [CxxArea.h]
+      CodeTools::Class::Attributes::HasPublicMemberFunction [CxxArea.h]
+      CodeTools::Class::Attributes::HasPublicStaticData [CxxArea.h]
+      CodeTools::Class::Attributes::HasPublicStaticFunction [CxxArea.h]
+      CodeTools::Class::Attributes::HasTypedef [CxxArea.h]
+      CodeTools::Class::Attributes::IsBase [CxxArea.h]
+      CodeTools::Class::Attributes::IsConstructed [CxxArea.h]
       CodeTools::Class::BaseClass [CxxArea.h]
       CodeTools::Class::BlockCopied [CxxArea.h]
       CodeTools::Class::CanConstructFrom [CxxArea.h]
@@ -9432,6 +9523,7 @@ CxxArea.cpp
       CodeTools::Class::GetFuncIndex [CxxArea.h]
       CodeTools::Class::GetMemberInitAttrs [CxxArea.h]
       CodeTools::Class::GetTemplate [CxxArea.h]
+      CodeTools::Class::GetUsageAttrs [CxxArea.h]
       CodeTools::Class::GetUsages [CxxArea.h]
       CodeTools::Class::GetUsingFor [CxxArea.h]
       CodeTools::Class::HasPODMember [CxxArea.h]
@@ -9446,6 +9538,7 @@ CxxArea.cpp
       CodeTools::Class::SetTemplateParms [CxxArea.h]
       CodeTools::Class::Shrink [CxxArea.h]
       CodeTools::Class::TypeString [CxxArea.h]
+      CodeTools::Class::UsageAttributes [CxxArea.h]
       CodeTools::Class::Usings [CxxArea.h]
       CodeTools::Class::base_ [CxxArea.h]
       CodeTools::Class::code_ [CxxArea.h]
@@ -9500,6 +9593,7 @@ CxxArea.cpp
       CodeTools::Cxx::Access::Protected [Cxx.h]
       CodeTools::Cxx::Access::Public [Cxx.h]
       CodeTools::Cxx::ClassTag::ClassType [Cxx.h]
+      CodeTools::Cxx::ClassTag::StructType [Cxx.h]
       CodeTools::Cxx::ClassTag::UnionType [Cxx.h]
       CodeTools::Cxx::ItemType::Class [Cxx.h]
       CodeTools::Cxx::ItemType::Forward [Cxx.h]
@@ -9740,6 +9834,7 @@ CxxArea.cpp
       CodeTools::Warning::RuleOf3CopyOperNoCtor [CodeTypes.h]
       CodeTools::Warning::RuleOf3DtorNoCopyCtor [CodeTypes.h]
       CodeTools::Warning::RuleOf3DtorNoCopyOper [CodeTypes.h]
+      CodeTools::Warning::StructCouldBeClass [CodeTypes.h]
       CodeTools::Warning::VirtualOverloading [CodeTypes.h]
       CodeTools::stringVector [CxxString.h]
       NodeBase::Base::Display [Base.h]
@@ -9961,6 +10056,7 @@ CxxDirective.cpp
       CodeTools::Ifndef::Ifndef [CxxDirective.h]
       CodeTools::Include [CxxDirective.h]
       CodeTools::Include::Display [CxxDirective.h]
+      CodeTools::Include::FindFile [CxxDirective.h]
       CodeTools::Include::Include [CxxDirective.h]
       CodeTools::Include::SetScope [CxxDirective.h]
       CodeTools::Include::Shrink [CxxDirective.h]
@@ -9968,6 +10064,7 @@ CxxDirective.cpp
       CodeTools::Indent_Size [CodeTypes.h]
       CodeTools::Library [Library.h]
       CodeTools::Library::Files [Library.h]
+      CodeTools::Library::FindFile [Library.h]
       CodeTools::Line [CxxDirective.h]
       CodeTools::Line::Display [CxxDirective.h]
       CodeTools::Line::Line [CxxDirective.h]
@@ -10128,6 +10225,7 @@ CxxExecute.cpp
       CodeTools::CxxNamed::GetPos [CxxNamed.h]
       CodeTools::CxxNamed::Instantiate [CxxNamed.h]
       CodeTools::CxxNamed::ScopedName [CxxNamed.h]
+      CodeTools::CxxNamed::SetReferent [CxxNamed.h]
       CodeTools::CxxScope [CxxScope.h]
       CodeTools::CxxScoped [CxxScoped.h]
       CodeTools::CxxSymbols [CxxSymbols.h]
@@ -10282,7 +10380,6 @@ CxxExecute.cpp
       CodeTools::TypeSpec::RemoveRefs [CxxNamed.h]
       CodeTools::TypeSpec::SetConst [CxxNamed.h]
       CodeTools::TypeSpec::SetConstPtr [CxxNamed.h]
-      CodeTools::TypeSpec::SetReferent [CxxNamed.h]
       CodeTools::Using [CxxScoped.h]
       CodeTools::Warning::NonBooleanConditional [CodeTypes.h]
       NodeBase::CRLF [SysTypes.h]
@@ -10438,6 +10535,7 @@ CxxNamed.cpp
       CodeTools::CxxNamed::ResolveTypedef [CxxNamed.h]
       CodeTools::CxxNamed::ScopedName [CxxNamed.h]
       CodeTools::CxxNamed::SetAsReferent [CxxNamed.h]
+      CodeTools::CxxNamed::SetReferent [CxxNamed.h]
       CodeTools::CxxNamed::SetTemplateParms [CxxNamed.h]
       CodeTools::CxxNamed::loc_ [CxxNamed.h]
       CodeTools::CxxNamed::strLocation [CxxNamed.h]
@@ -10548,7 +10646,6 @@ CxxNamed.cpp
       CodeTools::DataSpec::ptrs_ [CxxNamed.h]
       CodeTools::DataSpec::refDet_ [CxxNamed.h]
       CodeTools::DataSpec::refs_ [CxxNamed.h]
-      CodeTools::DataSpec::using_ [CxxNamed.h]
       CodeTools::DataSpec::~DataSpec [CxxNamed.h]
       CodeTools::DeclaredGlobally [CodeTypes.h]
       CodeTools::DeclaredLocally [CodeTypes.h]
@@ -10607,6 +10704,7 @@ CxxNamed.cpp
       CodeTools::QualName::SetLocale [CxxNamed.h]
       CodeTools::QualName::SetOperator [CxxNamed.h]
       CodeTools::QualName::SetReferent [CxxNamed.h]
+      CodeTools::QualName::SetReferentN [CxxNamed.h]
       CodeTools::QualName::Shrink [CxxNamed.h]
       CodeTools::QualName::Size [CxxNamed.h]
       CodeTools::QualName::TypeString [CxxNamed.h]
@@ -10727,7 +10825,6 @@ CxxNamed.cpp
       CodeTools::TypeSpec::SetPtrDetached [CxxNamed.h]
       CodeTools::TypeSpec::SetPtrs [CxxNamed.h]
       CodeTools::TypeSpec::SetRefDetached [CxxNamed.h]
-      CodeTools::TypeSpec::SetReferent [CxxNamed.h]
       CodeTools::TypeSpec::SetRefs [CxxNamed.h]
       CodeTools::TypeSpec::SetTemplateRole [CxxNamed.h]
       CodeTools::TypeSpec::TypeSpec [CxxNamed.h]
@@ -11024,7 +11121,7 @@ CxxScope.cpp
       CodeTools::CodeFile::IsCpp [CodeFile.h]
       CodeTools::CodeFile::IsHeader [CodeFile.h]
       CodeTools::CodeFile::IsSubsFile [CodeFile.h]
-      CodeTools::CodeFile::SetLocation [CodeFile.h]
+      CodeTools::CodeFile::SetTemplate [CodeFile.h]
       CodeTools::Code_Mask [CodeTypes.h]
       CodeTools::Context::Clear [CxxExecute.h]
       CodeTools::Context::Enter [CxxExecute.h]
@@ -11094,6 +11191,7 @@ CxxScope.cpp
       CodeTools::CxxNamed::ScopedName [CxxNamed.h]
       CodeTools::CxxNamed::SetAccess [CxxNamed.h]
       CodeTools::CxxNamed::SetPos [CxxNamed.h]
+      CodeTools::CxxNamed::SetReferent [CxxNamed.h]
       CodeTools::CxxNamed::SetScope [CxxNamed.h]
       CodeTools::CxxNamed::strName [CxxNamed.h]
       CodeTools::CxxOp::UpdateOperator [Cxx.h]
@@ -11350,7 +11448,7 @@ CxxScope.cpp
       CodeTools::Function::GetDefnRange [CxxScope.h]
       CodeTools::Function::GetScope [CxxScope.h]
       CodeTools::Function::GetTemplate [CxxScope.h]
-      CodeTools::Function::GetTemplateLocation [CxxScope.h]
+      CodeTools::Function::GetTemplateType [CxxScope.h]
       CodeTools::Function::GetUsages [CxxScope.h]
       CodeTools::Function::HasInvokers [CxxScope.h]
       CodeTools::Function::IncrThisReads [CxxScope.h]
@@ -11514,14 +11612,14 @@ CxxScope.cpp
       CodeTools::SymbolView::accessibility [CodeTypes.h]
       CodeTools::SymbolView::distance [CodeTypes.h]
       CodeTools::THIS_STR [CodeTypes.h]
-      CodeTools::TemplateLocation::FuncInTemplate [CodeTypes.h]
-      CodeTools::TemplateLocation::FuncIsTemplate [CodeTypes.h]
-      CodeTools::TemplateLocation::FuncNoTemplate [CodeTypes.h]
       CodeTools::TemplateParm [CxxNamed.h]
       CodeTools::TemplateParm::Default [CxxNamed.h]
       CodeTools::TemplateParms [CxxNamed.h]
       CodeTools::TemplateParms::Parms [CxxNamed.h]
       CodeTools::TemplateRole::TemplateClass [CodeTypes.h]
+      CodeTools::TemplateType::ClassTemplate [CodeTypes.h]
+      CodeTools::TemplateType::FuncTemplate [CodeTypes.h]
+      CodeTools::TemplateType::NonTemplate [CodeTypes.h]
       CodeTools::Terminal [CxxScoped.h]
       CodeTools::TokenPtr [CxxFwd.h]
       CodeTools::TypeMatch::Compatible [CodeTypes.h]
@@ -11560,7 +11658,6 @@ CxxScope.cpp
       CodeTools::TypeSpec::SetPtrDetached [CxxNamed.h]
       CodeTools::TypeSpec::SetPtrs [CxxNamed.h]
       CodeTools::TypeSpec::SetRefDetached [CxxNamed.h]
-      CodeTools::TypeSpec::SetReferent [CxxNamed.h]
       CodeTools::TypeSpec::SetRefs [CxxNamed.h]
       CodeTools::TypeSpec::SetTemplateRole [CxxNamed.h]
       CodeTools::TypeSpec::TypeTagsString [CxxNamed.h]
@@ -11811,6 +11908,7 @@ CxxScoped.cpp
       CodeTools::CxxNamed::SetAccess [CxxNamed.h]
       CodeTools::CxxNamed::SetAsReferent [CxxNamed.h]
       CodeTools::CxxNamed::SetPos [CxxNamed.h]
+      CodeTools::CxxNamed::SetReferent [CxxNamed.h]
       CodeTools::CxxNamed::SetScope [CxxNamed.h]
       CodeTools::CxxNamed::SetTemplateParms [CxxNamed.h]
       CodeTools::CxxNamed::strLocation [CxxNamed.h]
@@ -12021,7 +12119,7 @@ CxxScoped.cpp
       CodeTools::QualName::First [CxxNamed.h]
       CodeTools::QualName::GetForward [CxxNamed.h]
       CodeTools::QualName::GetReferent [CxxNamed.h]
-      CodeTools::QualName::SetReferent [CxxNamed.h]
+      CodeTools::QualName::SetReferentN [CxxNamed.h]
       CodeTools::QualName::Size [CxxNamed.h]
       CodeTools::StackArg [CxxExecute.h]
       CodeTools::StackArg::NumericType [CxxExecute.h]
@@ -16979,8 +17077,6 @@ NtTestData.cpp
       std::basic_string [string]
       std::basic_string::empty [string]
       std::ostringstream [iosfwd]
-   Remove the using statement for
-      NodeBase
 CodeDir.win.cpp
    Base usage:
       CodeTools::CodeDir [CodeDir.h]
@@ -17060,7 +17156,6 @@ CodeFile.cpp
    Base usage:
       CodeTools::CodeFile [CodeFile.h]
    Direct usage:
-      CodeTools::CLASS_STR [CodeTypes.h]
       CodeTools::COMMENT_END_STR [CodeTypes.h]
       CodeTools::COMMENT_START_STR [CodeTypes.h]
       CodeTools::COMMENT_STR [CodeTypes.h]
@@ -17080,6 +17175,7 @@ CodeFile.cpp
       CodeTools::CodeFile::AddUsage [CodeFile.h]
       CodeTools::CodeFile::AddUser [CodeFile.h]
       CodeTools::CodeFile::Affecters [CodeFile.h]
+      CodeTools::CodeFile::CalcGroup [CodeFile.h]
       CodeTools::CodeFile::CanBeTrimmed [CodeFile.h]
       CodeTools::CodeFile::CellDiff [CodeFile.h]
       CodeTools::CodeFile::Check [CodeFile.h]
@@ -17141,15 +17237,17 @@ CodeFile.cpp
       CodeTools::CodeFile::PruneForwardCandidates [CodeFile.h]
       CodeTools::CodeFile::PruneLocalForwards [CodeFile.h]
       CodeTools::CodeFile::RemoveHeaderIds [CodeFile.h]
+      CodeTools::CodeFile::SaveBaseIds [CodeFile.h]
       CodeTools::CodeFile::Scan [CodeFile.h]
       CodeTools::CodeFile::SetDir [CodeFile.h]
-      CodeTools::CodeFile::SetLocation [CodeFile.h]
-      CodeTools::CodeFile::SetModified [CodeFile.h]
+      CodeTools::CodeFile::SetTemplate [CodeFile.h]
       CodeTools::CodeFile::Shrink [CodeFile.h]
       CodeTools::CodeFile::Trim [CodeFile.h]
       CodeTools::CodeFile::TrimList [CodeFile.h]
       CodeTools::CodeFile::affecterIds_ [CodeFile.h]
+      CodeTools::CodeFile::baseIds_ [CodeFile.h]
       CodeTools::CodeFile::checked_ [CodeFile.h]
+      CodeTools::CodeFile::classIds_ [CodeFile.h]
       CodeTools::CodeFile::classes_ [CodeFile.h]
       CodeTools::CodeFile::code_ [CodeFile.h]
       CodeTools::CodeFile::data_ [CodeFile.h]
@@ -17168,12 +17266,12 @@ CodeFile.cpp
       CodeTools::CodeFile::items_ [CodeFile.h]
       CodeTools::CodeFile::lexer_ [CodeFile.h]
       CodeTools::CodeFile::lineType_ [CodeFile.h]
-      CodeTools::CodeFile::location_ [CodeFile.h]
       CodeTools::CodeFile::macros_ [CodeFile.h]
       CodeTools::CodeFile::modified_ [CodeFile.h]
       CodeTools::CodeFile::parsed_ [CodeFile.h]
       CodeTools::CodeFile::qualify_ [CodeFile.h]
       CodeTools::CodeFile::slashAsterisk_ [CodeFile.h]
+      CodeTools::CodeFile::template_ [CodeFile.h]
       CodeTools::CodeFile::trimIds_ [CodeFile.h]
       CodeTools::CodeFile::types_ [CodeFile.h]
       CodeTools::CodeFile::usages_ [CodeFile.h]
@@ -17182,6 +17280,11 @@ CodeFile.cpp
       CodeTools::CodeFile::~CodeFile [CodeFile.h]
       CodeTools::CodeFileSet [CodeFileSet.h]
       CodeTools::CodeFileVector [CxxFwd.h]
+      CodeTools::CodeInfo::AddLineType [CodeWarning.h]
+      CodeTools::CodeInfo::AddWarning [CodeWarning.h]
+      CodeTools::CodeInfo::GenerateReport [CodeWarning.h]
+      CodeTools::CodeInfo::GetWarnings [CodeWarning.h]
+      CodeTools::CodeInfo::IsSortedByWarning [CodeWarning.h]
       CodeTools::CodeSet::Set [CodeSet.h]
       CodeTools::Context::ParsingTemplateInstance [CxxExecute.h]
       CodeTools::Context::Scope [CxxExecute.h]
@@ -17195,7 +17298,7 @@ CodeFile.cpp
       CodeTools::CxxNamed [CxxNamed.h]
       CodeTools::CxxNamed::DirectType [CxxNamed.h]
       CodeTools::CxxNamed::GetDeclFid [CxxNamed.h]
-      CodeTools::CxxNamed::GetDefnFile [CxxNamed.h]
+      CodeTools::CxxNamed::GetDeclFile [CxxNamed.h]
       CodeTools::CxxNamed::GetFile [CxxNamed.h]
       CodeTools::CxxNamed::GetPos [CxxNamed.h]
       CodeTools::CxxNamed::GetScope [CxxNamed.h]
@@ -17207,6 +17310,7 @@ CodeFile.cpp
       CodeTools::CxxNamed::QualifiedName [CxxNamed.h]
       CodeTools::CxxNamed::ScopedName [CxxNamed.h]
       CodeTools::CxxNamed::SetPos [CxxNamed.h]
+      CodeTools::CxxNamed::SetReferent [CxxNamed.h]
       CodeTools::CxxNamed::SetScope [CxxNamed.h]
       CodeTools::CxxNamedSet [CxxFwd.h]
       CodeTools::CxxRoot [CxxRoot.h]
@@ -17224,6 +17328,7 @@ CodeFile.cpp
       CodeTools::CxxStats::Vectors [Cxx.h]
       CodeTools::CxxToken::Check [CxxToken.h]
       CodeTools::CxxToken::GetClass [CxxToken.h]
+      CodeTools::CxxToken::GetQualName [CxxToken.h]
       CodeTools::CxxToken::GetSpace [CxxToken.h]
       CodeTools::CxxToken::GetUsages [CxxToken.h]
       CodeTools::CxxToken::Name [CxxToken.h]
@@ -17243,6 +17348,19 @@ CodeFile.cpp
       CodeTools::DirectivePtr [CxxFwd.h]
       CodeTools::DisplayObjects [CodeTypes.h]
       CodeTools::DoubleRule [CodeTypes.h]
+      CodeTools::Editor [Editor.h]
+      CodeTools::Editor::AddForward [Editor.h]
+      CodeTools::Editor::AddInclude [Editor.h]
+      CodeTools::Editor::AddUsing [Editor.h]
+      CodeTools::Editor::EraseBlankLinePairs [Editor.h]
+      CodeTools::Editor::EraseTrailingBlanks [Editor.h]
+      CodeTools::Editor::Read [Editor.h]
+      CodeTools::Editor::RemoveForward [Editor.h]
+      CodeTools::Editor::RemoveInclude [Editor.h]
+      CodeTools::Editor::RemoveUsing [Editor.h]
+      CodeTools::Editor::SortIncludes [Editor.h]
+      CodeTools::Editor::Write [Editor.h]
+      CodeTools::EditorPtr [CxxFwd.h]
       CodeTools::Enum [CxxScoped.h]
       CodeTools::FQ_Mask [CodeTypes.h]
       CodeTools::FindSubstr [CxxString.h]
@@ -17258,7 +17376,7 @@ CodeFile.cpp
       CodeTools::HASH_IFNDEF_STR [CodeTypes.h]
       CodeTools::HASH_INCLUDE_STR [CodeTypes.h]
       CodeTools::Include [CxxDirective.h]
-      CodeTools::Include::InAngleBrackets [CxxDirective.h]
+      CodeTools::Include::FindFile [CxxDirective.h]
       CodeTools::IncludePtr [CxxFwd.h]
       CodeTools::Indent_Size [CodeTypes.h]
       CodeTools::ItemStatistics [LibraryTypes.h]
@@ -17275,6 +17393,7 @@ CodeFile.cpp
       CodeTools::Library::AddFile [Library.h]
       CodeTools::Library::EnsureFile [Library.h]
       CodeTools::Library::Files [Library.h]
+      CodeTools::Library::FindFile [Library.h]
       CodeTools::LibraryItem [LibraryItem.h]
       CodeTools::LibraryItem::Name [LibraryItem.h]
       CodeTools::LibrarySet [LibrarySet.h]
@@ -17310,19 +17429,16 @@ CodeFile.cpp
       CodeTools::Parser [Parser.h]
       CodeTools::Parser::ParseQualName [Parser.h]
       CodeTools::QualName [CxxNamed.h]
-      CodeTools::QualName::SetReferent [CxxNamed.h]
+      CodeTools::QualName::First [CxxNamed.h]
       CodeTools::QualNamePtr [CxxFwd.h]
-      CodeTools::STRUCT_STR [CodeTypes.h]
       CodeTools::SetDifference [SetOperations.h]
       CodeTools::SetOfIds [LibraryTypes.h]
       CodeTools::SetUnion [SetOperations.h]
-      CodeTools::SingleRule [CodeTypes.h]
-      CodeTools::TemplateLocation::FuncInTemplate [CodeTypes.h]
-      CodeTools::TemplateLocation::FuncIsTemplate [CodeTypes.h]
-      CodeTools::TemplateLocation::FuncNoTemplate [CodeTypes.h]
+      CodeTools::TemplateType::ClassTemplate [CodeTypes.h]
+      CodeTools::TemplateType::FuncTemplate [CodeTypes.h]
+      CodeTools::TemplateType::NonTemplate [CodeTypes.h]
+      CodeTools::TypeName [CxxNamed.h]
       CodeTools::Typedef [CxxScoped.h]
-      CodeTools::UNION_STR [CodeTypes.h]
-      CodeTools::USING_STR [CodeTypes.h]
       CodeTools::Using [CxxScoped.h]
       CodeTools::Using::IsToBeRemoved [CxxScoped.h]
       CodeTools::Using::IsUsingFor [CxxScoped.h]
@@ -17357,6 +17473,13 @@ CodeFile.cpp
       CodeTools::Warning::UsingDuplicated [CodeTypes.h]
       CodeTools::Warning::UsingRemove [CodeTypes.h]
       CodeTools::Warning::Warning_N [CodeTypes.h]
+      CodeTools::WarningLog [CodeWarning.h]
+      CodeTools::WarningLog::file [CodeWarning.h]
+      CodeTools::WarningLog::info [CodeWarning.h]
+      CodeTools::WarningLog::line [CodeWarning.h]
+      CodeTools::WarningLog::offset [CodeWarning.h]
+      CodeTools::WarningLog::warning [CodeWarning.h]
+      CodeTools::WarningLogVector [CxxFwd.h]
       CodeTools::stringSet [CxxFwd.h]
       EOF [cstdio]
       NodeBase::Base::Display [Base.h]
@@ -17379,24 +17502,19 @@ CodeFile.cpp
       NodeBase::RegCell::to_str [RegCell.h]
       NodeBase::Registry [Registry.h]
       NodeBase::Registry::At [Registry.h]
-      NodeBase::SCOPE_STR [SysTypes.h]
       NodeBase::SPACE [SysTypes.h]
       NodeBase::Singleton::Instance [Singleton.h]
       NodeBase::SuccessExpl [NbCliParms.h]
       NodeBase::SysFile::CreateIstream [SysFile.h]
-      NodeBase::SysFile::CreateOstream [SysFile.h]
       NodeBase::TAB [SysTypes.h]
       NodeBase::fixed_string [SysTypes.h]
       NodeBase::fn_name [SysTypes.h]
       NodeBase::istreamPtr [SysFile.h]
-      NodeBase::ostreamPtr [SysFile.h]
       NodeBase::ptrdiff [Algorithms.h]
       NodeBase::spaces [Formatters.h]
       NodeBase::strCompare [Formatters.h]
       NodeBase::strIndex [Formatters.h]
       NodeBase::word [SysTypes.h]
-      remove [cstdio]
-      rename [cstdio]
       size_t [cstddef]
       std::basic_ios::clear [ios]
       std::basic_istream [istream]
@@ -17406,7 +17524,6 @@ CodeFile.cpp
       std::basic_ostringstream [sstream]
       std::basic_ostringstream::str [sstream]
       std::basic_string [string]
-      std::basic_string::back [string]
       std::basic_string::c_str [string]
       std::basic_string::capacity [string]
       std::basic_string::clear [string]
@@ -17426,22 +17543,10 @@ CodeFile.cpp
       std::bitset::set [bitset]
       std::getline [string]
       std::iterator_t [iterator]
-      std::list [list]
-      std::list::back [list]
-      std::list::begin [list]
-      std::list::cbegin [list]
-      std::list::cend [list]
-      std::list::empty [list]
-      std::list::end [list]
-      std::list::erase [list]
-      std::list::insert [list]
-      std::list::push_back [list]
-      std::list::sort [list]
       std::move [utility]
       std::next [iterator]
       std::ostream [iosfwd]
       std::ostringstream [iosfwd]
-      std::prev [iterator]
       std::set [set]
       std::set::begin [set]
       std::set::cbegin [set]
@@ -17453,16 +17558,12 @@ CodeFile.cpp
       std::set::find [set]
       std::set::insert [set]
       std::set::size [set]
-      std::setfill [iomanip]
-      std::setw [iomanip]
       std::sort [algorithm]
       std::string [string]
-      std::to_string [string]
       std::unique_ptr [memory]
       std::unique_ptr::get [memory]
       std::unique_ptr::reset [memory]
       std::vector [vector]
-      std::vector::at [vector]
       std::vector::begin [vector]
       std::vector::capacity [vector]
       std::vector::cbegin [vector]
@@ -17781,6 +17882,7 @@ Library.cpp
       CodeTools::CxxRoot [CxxRoot.h]
       CodeTools::CxxRoot::GlobalNamespace [CxxRoot.h]
       CodeTools::FQ_Mask [CodeTypes.h]
+      CodeTools::GetFileName [CxxString.h]
       CodeTools::Interpreter [Interpreter.h]
       CodeTools::Interpreter::Evaluate [Interpreter.h]
       CodeTools::Interpreter::IsOperator [Interpreter.h]
@@ -18152,6 +18254,7 @@ Parser.cpp
       CodeTools::CxxNamed::SetAccess [CxxNamed.h]
       CodeTools::CxxNamed::SetInternal [CxxNamed.h]
       CodeTools::CxxNamed::SetPos [CxxNamed.h]
+      CodeTools::CxxNamed::SetReferent [CxxNamed.h]
       CodeTools::CxxNamed::SetScope [CxxNamed.h]
       CodeTools::CxxNamed::SetTemplateParms [CxxNamed.h]
       CodeTools::CxxRoot [CxxRoot.h]
@@ -18521,7 +18624,6 @@ Parser.cpp
       CodeTools::QualName::Operator [CxxNamed.h]
       CodeTools::QualName::PushBack [CxxNamed.h]
       CodeTools::QualName::SetOperator [CxxNamed.h]
-      CodeTools::QualName::SetReferent [CxxNamed.h]
       CodeTools::QualName::Size [CxxNamed.h]
       CodeTools::QualNamePtr [CxxFwd.h]
       CodeTools::Return [CxxStatement.h]
@@ -19489,8 +19591,6 @@ MsgFactory.cpp
       SessionBase::TransTrace [SbTrace.h]
       SessionBase::TransTrace::EndOfTransaction [SbTrace.h]
       SessionBase::TransTrace::ResumeTime [SbTrace.h]
-   Remove the using statement for
-      NodeBase
 MsgPort.cpp
    Base usage:
       SessionBase::MsgPort [MsgPort.h]
@@ -19849,8 +19949,6 @@ SbTracer.cpp
       std::basic_string [string]
    Indirect usage:
       NodeBase::Singleton [Singleton.h]
-   Add a using statement for
-      NetworkBase
 ServiceSM.cpp
    Base usage:
       SessionBase::ServiceSM [ServiceSM.h]
@@ -20244,8 +20342,6 @@ TlvProtocol.cpp
       size_t [cstddef]
       std::basic_ostream [ostream]
       std::basic_string [string]
-   Remove the using statement for
-      NodeBase
 Circuit.cpp
    Base usage:
       MediaBase::Circuit [Circuit.h]
@@ -21348,8 +21444,6 @@ TcpIpPort.cpp
       std::unique_ptr [memory]
       std::unique_ptr::get [memory]
       std::unique_ptr::release [memory]
-   Remove the using statement for
-      NodeBase
 UdpIoThread.cpp
    Base usage:
       NetworkBase::UdpIoThread [UdpIoThread.h]
@@ -21432,8 +21526,6 @@ UdpIpPort.cpp
       NodeBase::Debug::ft [Debug.h]
       NodeBase::Object::Patch [Object.h]
       NodeBase::fn_name [SysTypes.h]
-   Remove the using statement for
-      NodeBase
 AnalyzeMsgEvent.cpp
    Base usage:
       SessionBase::AnalyzeMsgEvent [SbEvents.h]
@@ -21967,8 +22059,6 @@ PsmFactory.cpp
       SessionBase::PsmFactory::PsmFactory [PsmFactory.h]
       SessionBase::PsmFactory::ReceiveMsg [PsmFactory.h]
       SessionBase::PsmFactory::~PsmFactory [PsmFactory.h]
-   Remove the using statement for
-      NodeBase
 SbTrace.cpp
    Base usage:
       SessionBase::BuffTrace [SbTrace.h]
@@ -22410,8 +22500,6 @@ BcRouting.cpp
       SessionBase::FactoryRegistry::GetFactory [FactoryRegistry.h]
       std::basic_ostream [ostream]
       std::basic_string [string]
-   Add a using statement for
-      NodeBase
 ServiceCodeRegistry.cpp
    Base usage:
       CallBase::ServiceCodeRegistry [ServiceCodeRegistry.h]
@@ -23436,8 +23524,6 @@ SsmFactory.cpp
       SessionBase::SsmFactory::ReceiveMsg [SsmFactory.h]
       SessionBase::SsmFactory::SsmFactory [SsmFactory.h]
       SessionBase::SsmFactory::~SsmFactory [SsmFactory.h]
-   Remove the using statement for
-      NodeBase
 MbModule.cpp
    Base usage:
       MediaBase::MbModule [MbModule.h]
@@ -24074,8 +24160,6 @@ SbModule.cpp
       SessionBase::TimerProtocol [TimerProtocol.h]
       SessionBase::TimerRegistry [TimerRegistry.h]
       SessionBase::TimerThread [TimerThread.h]
-   Add a using statement for
-      NetworkBase
 StIncrement.cpp
    Base usage:
       NodeBase::CliBoolParm [CliBoolParm.h]
@@ -24290,8 +24374,6 @@ StIncrement.cpp
       std::string [string]
       std::unique_ptr [memory]
       std::unique_ptr::reset [memory]
-   Add a using statement for
-      NetworkBase
 StModule.cpp
    Base usage:
       SessionTools::StModule [StModule.h]
@@ -25573,8 +25655,6 @@ PotsTreatmentRegistry.cpp
       PotsBase::PotsTreatmentRegistry::~PotsTreatmentRegistry [PotsTreatmentRegistry.h]
       std::basic_ostream [ostream]
       std::basic_string [string]
-   Add a using statement for
-      MediaBase
 BcHandlers.cpp
    Base usage:
       CallBase::BcAcAnalyzeRemoteMessage [BcSessions.h]
@@ -26974,8 +27054,6 @@ CbModule.cpp
       SessionBase::FactoryIds::ProxyCallFactoryId [SbAppIds.h]
       SessionBase::FactoryIds::TestCallFactoryId [SbAppIds.h]
       SessionTools::StModule [StModule.h]
-   Add a using statement for
-      SessionBase
 ProxyBcSessions.cpp
    Base usage:
       CallBase::ProxyBcActive [ProxyBcSessions.h]
@@ -27368,8 +27446,6 @@ PotsCircuit.cpp
       std::setw [iomanip]
       std::string [string]
       std::to_string [string]
-   Remove the using statement for
-      SessionBase
 PotsIncrement.cpp
    Base usage:
       NodeBase::CliCommand [CliCommand.h]
@@ -27816,11 +27892,6 @@ PotsCwmService.cpp
       std::basic_string [string]
    Indirect usage:
       NodeBase::Singleton [Singleton.h]
-   Add a using statement for
-      NetworkBase
-   Remove the using statement for
-      CallBase
-      MediaBase
 PotsDiscService.cpp
    Base usage:
       PotsBase::PotsDiscService [PotsMultiplexer.h]
@@ -27862,8 +27933,6 @@ PotsDiscService.cpp
       SessionBase::TlvMessage::FindType [TlvMessage.h]
    Indirect usage:
       NodeBase::Singleton [Singleton.h]
-   Remove the using statement for
-      CallBase
 PotsMultiplexer.cpp
    Base usage:
       NodeBase::CliText [CliText.h]
@@ -28077,8 +28146,6 @@ PotsMultiplexer.cpp
       std::basic_string [string]
    Indirect usage:
       NodeBase::Singleton [Singleton.h]
-   Remove the using statement for
-      CallBase
 AnIncrement.cpp
    Base usage:
       NodeBase::CliCommand [CliCommand.h]
@@ -28122,8 +28189,6 @@ AnIncrement.cpp
       PotsBase::PotsTrafficThread::Query [PotsTrafficThread.h]
       PotsBase::PotsTrafficThread::SetRate [PotsTrafficThread.h]
       std::basic_ostringstream [sstream]
-   Add a using statement for
-      CallBase
 PotsShelfFactory.cpp
    Base usage:
       NodeBase::CliText [CliText.h]
@@ -28322,8 +28387,6 @@ PotsTrafficThread.cpp
       std::string [string]
    Indirect usage:
       NodeBase::Singleton [Singleton.h]
-   Add a using statement for
-      MediaBase
 PotsBcHandlers.cpp
    Base usage:
       PotsBase::PotsBcAcAnalyzeLocalMessage [PotsBcHandlers.h]
@@ -28596,8 +28659,6 @@ PotsBcHandlers.cpp
       SessionBase::TimeoutInfo::tid [TimerProtocol.h]
       SessionBase::TlvMessage [TlvMessage.h]
       SessionBase::TlvMessage::FindType [TlvMessage.h]
-   Add a using statement for
-      MediaBase
 PotsBcService.cpp
    Base usage:
       PotsBase::PotsAuthorizeOriginationSap [PotsSessions.h]
@@ -29130,9 +29191,6 @@ PotsBicService.cpp
       SessionBase::State [State.h]
    Indirect usage:
       NodeBase::Singleton [Singleton.h]
-   Add a using statement for
-      CallBase
-      CallBase::Cause
 PotsBocService.cpp
    Base usage:
       PotsBase::PotsBocInitiator [PotsBocService.h]
@@ -29181,9 +29239,6 @@ PotsBocService.cpp
       SessionBase::State [State.h]
    Indirect usage:
       NodeBase::Singleton [Singleton.h]
-   Add a using statement for
-      CallBase
-      CallBase::Cause
 PotsCallFactory.cpp
    Base usage:
       NodeBase::CliText [CliText.h]
@@ -29296,8 +29351,6 @@ PotsCallFactory.cpp
       SessionBase::ServiceIds::PotsProxyServiceId [SbAppIds.h]
       SessionBase::Signal::Timeout [Signal.h]
       SessionBase::TlvMessage::FindType [TlvMessage.h]
-   Remove the using statement for
-      MediaBase
 PotsCallHandler.cpp
    Base usage:
       PotsBase::PotsAuthorizeOriginationSap [PotsSessions.h]
@@ -29516,10 +29569,6 @@ PotsCcwService.cpp
       SessionBase::State::Id [State.h]
    Indirect usage:
       NodeBase::Singleton [Singleton.h]
-   Add a using statement for
-      CallBase
-      CallBase::Cause
-      MediaBase
 PotsCfbService.cpp
    Base usage:
       PotsBase::PotsCfbInitiator [PotsCfbService.h]
@@ -29551,8 +29600,6 @@ PotsCfbService.cpp
       SessionBase::Service [Service.h]
       SessionBase::ServiceIds::PotsCallServiceId [SbAppIds.h]
       SessionBase::ServiceIds::PotsCfbServiceId [SbAppIds.h]
-   Add a using statement for
-      CallBase
 PotsCfnService.cpp
    Base usage:
       PotsBase::PotsCfnInitiator [PotsCfnService.h]
@@ -29584,8 +29631,6 @@ PotsCfnService.cpp
       SessionBase::Service [Service.h]
       SessionBase::ServiceIds::PotsCallServiceId [SbAppIds.h]
       SessionBase::ServiceIds::PotsCfnServiceId [SbAppIds.h]
-   Add a using statement for
-      CallBase
 PotsCfuService.cpp
    Base usage:
       PotsBase::PotsCfuActivate [PotsCfuService.h]
@@ -29627,8 +29672,6 @@ PotsCfuService.cpp
       SessionBase::ServiceIds::PotsCfuActivation [SbAppIds.h]
       SessionBase::ServiceIds::PotsCfuDeactivation [SbAppIds.h]
       SessionBase::ServiceIds::PotsCfuServiceId [SbAppIds.h]
-   Add a using statement for
-      CallBase
 PotsCfxService.cpp
    Base usage:
       PotsBase::PotsCfxEvent [PotsCfxService.cpp]
@@ -29798,8 +29841,6 @@ PotsCfxService.cpp
       std::basic_string [string]
    Indirect usage:
       NodeBase::Singleton [Singleton.h]
-   Add a using statement for
-      MediaBase
 PotsCwtService.cpp
    Base usage:
       PotsBase::PotsCwaService [PotsCwtService.h]
@@ -29984,10 +30025,6 @@ PotsCwtService.cpp
       std::basic_string [string]
    Indirect usage:
       NodeBase::Singleton [Singleton.h]
-   Add a using statement for
-      NetworkBase
-   Remove the using statement for
-      CallBase
 PotsHtlService.cpp
    Base usage:
       PotsBase::PotsHtlInitiator [PotsHtlService.h]
@@ -30042,8 +30079,6 @@ PotsHtlService.cpp
       SessionBase::State [State.h]
    Indirect usage:
       NodeBase::Singleton [Singleton.h]
-   Add a using statement for
-      CallBase
 PotsProxyHandlers.cpp
    Base usage:
       PotsBase::PotsProxyAcAnalyzeLocalMessage [PotsProxyHandlers.h]
@@ -30194,8 +30229,6 @@ PotsProxyHandlers.cpp
       SessionBase::ServiceSM::SetNextState [ServiceSM.h]
       SessionBase::TlvMessage::CopyType [TlvMessage.h]
       SessionBase::TlvMessage::FindType [TlvMessage.h]
-   Add a using statement for
-      MediaBase
 PotsProxySessions.cpp
    Base usage:
       PotsBase::PotsProxyActive [PotsProxySessions.h]
@@ -30389,8 +30422,6 @@ PotsProxySessions.cpp
       SessionBase::Service::BindHandler [Service.h]
       SessionBase::Service::BindTrigger [Service.h]
       SessionBase::ServiceIds::PotsProxyServiceId [SbAppIds.h]
-   Add a using statement for
-      SessionBase
 PotsSusService.cpp
    Base usage:
       PotsBase::PotsOSusInitiator [PotsSusService.h]
@@ -30450,9 +30481,6 @@ PotsSusService.cpp
       SessionBase::State [State.h]
    Indirect usage:
       NodeBase::Singleton [Singleton.h]
-   Add a using statement for
-      CallBase
-      CallBase::Cause
 PotsTreatments.cpp
    Base usage:
       PotsBase::PotsIdleTreatment [PotsTreatments.h]
@@ -30686,10 +30714,6 @@ PotsWmlService.cpp
       std::basic_string [string]
    Indirect usage:
       NodeBase::Singleton [Singleton.h]
-   Add a using statement for
-      CallBase
-      CallBase::Cause
-      MediaBase
 SnIncrement.cpp
    Base usage:
       NodeBase::CliCommand [CliCommand.h]
@@ -30813,5 +30837,3 @@ SnModule.cpp
       SessionBase::ServiceIds::PotsCwbServiceId [SbAppIds.h]
       SessionBase::ServiceIds::PotsCwmServiceId [SbAppIds.h]
       SessionBase::ServiceIds::PotsDiscServiceId [SbAppIds.h]
-   Add a using statement for
-      SessionBase

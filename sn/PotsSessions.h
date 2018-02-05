@@ -23,16 +23,16 @@
 #define POTSSESSIONS_H_INCLUDED
 
 #include "BcSessions.h"
+#include "ProxyBcSessions.h"
+#include "SbExtInputHandler.h"
+#include "UdpIpService.h"
 #include "Clock.h"
 #include "EventHandler.h"
 #include "Initiator.h"
 #include "NbTypes.h"
 #include "NwTypes.h"
-#include "ProxyBcSessions.h"
-#include "SbExtInputHandler.h"
 #include "SbTypes.h"
 #include "SysTypes.h"
-#include "UdpIpService.h"
 
 namespace PotsBase
 {

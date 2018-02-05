@@ -20,13 +20,13 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsIncrement.h"
+#include "CliCommand.h"
+#include "CliIntParm.h"
 #include <sstream>
 #include <string>
 #include "BcAddress.h"
 #include "BcCause.h"
 #include "BcProgress.h"
-#include "CliCommand.h"
-#include "CliIntParm.h"
 #include "CliTextParm.h"
 #include "CliThread.h"
 #include "Debug.h"

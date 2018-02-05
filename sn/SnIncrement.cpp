@@ -20,16 +20,16 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "SnIncrement.h"
-#include <sstream>
-#include <string>
 #include "CliCommand.h"
 #include "CliIntParm.h"
+#include "PotsIncrement.h"
+#include <sstream>
+#include <string>
 #include "CliThread.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "NbCliParms.h"
 #include "PotsCliParms.h"
-#include "PotsIncrement.h"
 #include "PotsSessions.h"
 #include "PotsTreatmentRegistry.h"
 #include "PotsTreatments.h"

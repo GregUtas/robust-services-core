@@ -22,8 +22,6 @@
 #include "PotsSessions.h"
 #include "SbAppIds.h"
 
-using namespace SessionBase;
-
 //------------------------------------------------------------------------------
 
 namespace PotsBase

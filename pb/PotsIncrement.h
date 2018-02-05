@@ -23,8 +23,8 @@
 #define POTSINCREMENT_H_INCLUDED
 
 #include "CliIncrement.h"
-#include "NbTypes.h"
 #include "StIncrement.h"
+#include "NbTypes.h"
 
 using namespace SessionTools;
 

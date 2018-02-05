@@ -21,9 +21,9 @@
 //
 #include "PotsCwtFeature.h"
 #include "CliText.h"
+#include "PotsFeatureProfile.h"
 #include "CliThread.h"
 #include "Debug.h"
-#include "PotsFeatureProfile.h"
 #include "PotsFeatures.h"
 #include "SysTypes.h"
 

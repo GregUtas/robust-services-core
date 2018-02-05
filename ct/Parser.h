@@ -22,10 +22,10 @@
 #ifndef PARSER_H_INCLUDED
 #define PARSER_H_INCLUDED
 
-#include <string>
 #include <cstddef>
 #include <cstdint>
 #include <iosfwd>
+#include <string>
 #include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxFwd.h"

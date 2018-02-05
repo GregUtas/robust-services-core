@@ -22,14 +22,14 @@
 #ifndef POTSTRAFFICTHREAD_H_INCLUDED
 #define POTSTRAFFICTHREAD_H_INCLUDED
 
-#include "BcAddress.h"
+#include "Thread.h"
 #include <cstddef>
 #include <iosfwd>
 #include <string>
+#include "BcAddress.h"
 #include "Clock.h"
 #include "NbTypes.h"
 #include "SysTypes.h"
-#include "Thread.h"
 
 using namespace NodeBase;
 using namespace CallBase;

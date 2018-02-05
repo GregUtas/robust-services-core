@@ -20,13 +20,13 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "SbIncrement.h"
+#include "CliCommand.h"
+#include "CliPtrParm.h"
+#include "CliText.h"
 #include <iomanip>
 #include <iosfwd>
 #include <sstream>
 #include <string>
-#include "CliCommand.h"
-#include "CliPtrParm.h"
-#include "CliText.h"
 #include "CliThread.h"
 #include "Debug.h"
 #include "Event.h"

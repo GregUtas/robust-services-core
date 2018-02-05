@@ -20,6 +20,8 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CxxRoot.h"
+#include "CxxDirective.h"
+#include "Tool.h"
 #include <bitset>
 #include <cstdio>
 #include <istream>
@@ -31,7 +33,6 @@
 #include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxArea.h"
-#include "CxxDirective.h"
 #include "CxxExecute.h"
 #include "CxxScoped.h"
 #include "CxxToken.h"
@@ -41,7 +42,6 @@
 #include "Singleton.h"
 #include "SysTime.h"
 #include "SysTypes.h"
-#include "Tool.h"
 #include "ToolTypes.h"
 
 using std::ostream;

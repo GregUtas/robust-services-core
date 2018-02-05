@@ -2929,13 +2929,13 @@ void Function::EnterBlock()
    //  Don't execute a function template or a function in a class template.
    //  A function in a class template *instance*, however, is executed.
    //
-   auto loc = GetTemplateLocation();
+   auto type = GetTemplateType();
 
-   if(loc != FuncNoTemplate)
+   if(type != NonTemplate)
    {
       if(Context::ParsingTemplateInstance()) return;
       auto file = GetImplFile();
-      if(file != nullptr) file->SetLocation(loc);
+      if(file != nullptr) file->SetTemplate(type);
       return;
    }
 
@@ -3325,23 +3325,23 @@ CxxScope* Function::GetTemplate() const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_GetTemplateLocation = "Function.GetTemplateLocation";
+fn_name Function_GetTemplateType = "Function.GetTemplateType";
 
-TemplateLocation Function::GetTemplateLocation() const
+TemplateType Function::GetTemplateType() const
 {
-   Debug::ft(Function_GetTemplateLocation);
+   Debug::ft(Function_GetTemplateType);
 
-   if(IsTemplate()) return FuncIsTemplate;
+   if(IsTemplate()) return FuncTemplate;
 
    auto cls = GetClass();
 
    if(cls != nullptr)
    {
-      if(cls->IsTemplate()) return FuncInTemplate;
+      if(cls->IsTemplate()) return ClassTemplate;
    }
 
-   if(friend_) return FuncInTemplate;
-   return FuncNoTemplate;
+   if(friend_) return ClassTemplate;
+   return NonTemplate;
 }
 
 //------------------------------------------------------------------------------
@@ -3355,7 +3355,7 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    //  Do not report usages in unexecuted or internally generated code, such
    //  as function templates and their instances.
    //
-   if((GetTemplateLocation() != FuncNoTemplate) || IsInternal()) return;
+   if((GetTemplateType() != NonTemplate) || IsInternal()) return;
 
    //  Place the symbols used in the function's signature in a local variable.
    //  The reason for this is discussed below.

@@ -22,8 +22,8 @@
 #ifndef POTSCCWSERVICE_H_INCLUDED
 #define POTSCCWSERVICE_H_INCLUDED
 
-#include "NbTypes.h"
 #include "Service.h"
+#include "NbTypes.h"
 
 using namespace SessionBase;
 

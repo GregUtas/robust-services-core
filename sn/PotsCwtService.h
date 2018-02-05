@@ -23,9 +23,9 @@
 #define POTSCWTSERVICE_H_INCLUDED
 
 #include "Initiator.h"
-#include "NbTypes.h"
 #include "PotsProtocol.h"
 #include "Service.h"
+#include "NbTypes.h"
 
 using namespace SessionBase;
 

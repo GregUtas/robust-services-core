@@ -22,14 +22,14 @@
 #ifndef PROXYBCSESSIONS_H_INCLUDED
 #define PROXYBCSESSIONS_H_INCLUDED
 
+#include "BcProtocol.h"
 #include "BcSessions.h"
+#include "Trigger.h"
 #include <cstddef>
 #include "BcCause.h"
 #include "BcProgress.h"
-#include "BcProtocol.h"
 #include "NbTypes.h"
 #include "SbTypes.h"
-#include "Trigger.h"
 
 //------------------------------------------------------------------------------
 

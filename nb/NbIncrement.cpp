@@ -20,6 +20,9 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "NbIncrement.h"
+#include "CliBoolParm.h"
+#include "CliIntParm.h"
+#include "CliText.h"
 #include <cctype>
 #include <cstddef>
 #include <cstdint>
@@ -33,12 +36,9 @@
 #include <string>
 #include "CfgParm.h"
 #include "CfgParmRegistry.h"
-#include "CliBoolParm.h"
 #include "CliBuffer.h"
-#include "CliIntParm.h"
 #include "CliRegistry.h"
 #include "CliStack.h"
-#include "CliText.h"
 #include "CliThread.h"
 #include "Clock.h"
 #include "CoutThread.h"

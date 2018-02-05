@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Context.h"
+#include "SoftwareException.h"
 #include <iosfwd>
 #include <sstream>
 #include "Algorithms.h"
@@ -41,7 +42,6 @@
 #include "SbTracer.h"
 #include "Signal.h"
 #include "Singleton.h"
-#include "SoftwareException.h"
 #include "ThisThread.h"
 #include "TimerProtocol.h"
 #include "TlvMessage.h"

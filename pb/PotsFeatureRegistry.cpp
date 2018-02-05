@@ -20,10 +20,10 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsFeatureRegistry.h"
+#include "CliTextParm.h"
 #include <ostream>
 #include <string>
 #include "CliText.h"
-#include "CliTextParm.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "SysTypes.h"

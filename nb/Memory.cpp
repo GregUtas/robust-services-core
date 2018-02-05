@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Memory.h"
+#include "SysHeap.h"
 #include <cstring>
 #include "Algorithms.h"
 #include "AllocationException.h"
@@ -27,7 +28,6 @@
 #include "MemoryTrace.h"
 #include "PermanentHeap.h"
 #include "Singleton.h"
-#include "SysHeap.h"
 #include "ToolTypes.h"
 #include "TraceBuffer.h"
 

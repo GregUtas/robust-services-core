@@ -20,6 +20,8 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "ObjectPoolRegistry.h"
+#include "StatisticsGroup.h"
+#include "Tool.h"
 #include <memory>
 #include <ostream>
 #include <string>
@@ -31,10 +33,8 @@
 #include "ObjectPool.h"
 #include "ObjectPoolAudit.h"
 #include "Singleton.h"
-#include "StatisticsGroup.h"
 #include "SysTypes.h"
 #include "ThisThread.h"
-#include "Tool.h"
 #include "ToolTypes.h"
 
 using std::ostream;

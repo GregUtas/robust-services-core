@@ -23,9 +23,9 @@
 #define POTSSUSSERVICE_H_INCLUDED
 
 #include "Initiator.h"
+#include "Service.h"
 #include "NbTypes.h"
 #include "SbTypes.h"
-#include "Service.h"
 
 using namespace SessionBase;
 

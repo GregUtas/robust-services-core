@@ -23,13 +23,13 @@
 #define BCADDRESS_H_INCLUDED
 
 #include "Protected.h"
+#include "TlvParameter.h"
 #include <cstddef>
 #include <cstdint>
 #include <iosfwd>
 #include <string>
 #include "SbTypes.h"
 #include "SysTypes.h"
-#include "TlvParameter.h"
 
 using namespace SessionBase;
 

@@ -22,13 +22,13 @@
 #ifndef TIMERPROTOCOL_H_INCLUDED
 #define TIMERPROTOCOL_H_INCLUDED
 
+#include "Signal.h"
+#include "TlvParameter.h"
 #include "TlvProtocol.h"
 #include <iosfwd>
 #include <string>
 #include "NbTypes.h"
 #include "SbTypes.h"
-#include "Signal.h"
-#include "TlvParameter.h"
 
 //------------------------------------------------------------------------------
 

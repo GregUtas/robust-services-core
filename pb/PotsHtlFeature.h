@@ -23,9 +23,9 @@
 #define POTSHTLFEATURE_H_INCLUDED
 
 #include "PotsFeature.h"
+#include "PotsFeatureProfile.h"
 #include "BcAddress.h"
 #include "NbTypes.h"
-#include "PotsFeatureProfile.h"
 
 using namespace CallBase;
 

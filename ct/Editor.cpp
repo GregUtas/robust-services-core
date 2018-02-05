@@ -39,6 +39,11 @@ using std::string;
 
 namespace CodeTools
 {
+const string Editor::FrontChars = "$%@!<\"";
+const string Editor::BackChars = "$%@!>\"";
+
+//------------------------------------------------------------------------------
+
 fn_name Editor_ctor = "Editor.ctor";
 
 Editor::Editor(CodeFile* file, istreamPtr& input) :
@@ -65,7 +70,8 @@ word Editor::AddForward(const WarningLog& log, string& expl)
    //
    auto qname = log.info;
    auto pos = qname.find(SCOPE_STR);
-   if(pos == string::npos) return Report(expl, "Symbol's namespace required.");
+   if(pos == string::npos)
+      return Report(expl, "Symbol's namespace not provided.");
 
    //  LOG must also specify whether the forward declaration is for a class,
    //  struct, or union (unlikely).
@@ -103,7 +109,7 @@ word Editor::AddForward(const WarningLog& log, string& expl)
          //
          auto comp = strCompare(i->code, nspace);
          if(comp == 0) return InsertForward(i, forward, expl);
-         if(comp > 0) return InsertForward(i, nspace, forward, expl);
+         if(comp > 0) return InsertNamespaceForward(i, nspace, forward);
       }
       else if((i->code.find(USING_STR) == 0) ||
          (i->code.find(SingleRule) == 0) ||
@@ -113,7 +119,7 @@ word Editor::AddForward(const WarningLog& log, string& expl)
          //  the new declaration here, along with its namespace.
          //
          i = epilog_.insert(i, SourceLine(EMPTY_STR, 0));
-         return InsertForward(i, nspace, forward, expl);
+         return InsertNamespaceForward(i, nspace, forward);
       }
    }
 
@@ -128,13 +134,13 @@ word Editor::AddInclude(const WarningLog& log, string& expl)
 {
    Debug::ft(Editor_AddInclude);
 
-   //  Create the new #include directive and add it to the appropriate list.
+   //  Create the new #include directive and add it to the list.
+   //  Its file name appears in log.info.
    //
    string include = HASH_INCLUDE_STR;
    include.push_back(SPACE);
    include += log.info;
-   auto& incls = (include.back() == '>' ? extIncls_ : intIncls_);
-   return InsertInclude(incls, include);
+   return InsertInclude(include, expl);
 }
 
 //------------------------------------------------------------------------------
@@ -301,8 +307,7 @@ word Editor::EraseTrailingBlanks()
    Debug::ft(Editor_EraseTrailingBlanks1);
 
    EraseTrailingBlanks(prolog_);
-   EraseTrailingBlanks(extIncls_);
-   EraseTrailingBlanks(intIncls_);
+   EraseTrailingBlanks(includes_);
    EraseTrailingBlanks(epilog_);
    return 0;
 }
@@ -319,23 +324,6 @@ void Editor::EraseTrailingBlanks(SourceList& list)
    {
       while(!i->code.empty() && (i->code.back() == SPACE)) i->code.pop_back();
    }
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_Find = "Editor.Find";
-
-Editor::Iter Editor::Find
-   (SourceList& list, const Iter& iter, const string& source) const
-{
-   Debug::ft(Editor_Find);
-
-   for(auto i = iter; i != list.end(); ++i)
-   {
-      if(i->code == source) return i;
-   }
-
-   return list.end();
 }
 
 //------------------------------------------------------------------------------
@@ -369,9 +357,8 @@ word Editor::GetIncludes(string& expl)
 
    string str;
 
-   //  Resuming after the first #include, add #include directives to one of
-   //  two sets, one for external files (e.g. #include <f.h>), and the other
-   //  for internal files (e.g. #include "f.h").
+   //  Resuming after the first #include, add #include directives until
+   //  something else is reached.
    //
    while(input_->peek() != EOF)
    {
@@ -384,10 +371,9 @@ word Editor::GetIncludes(string& expl)
       }
 
       auto next = str.find_first_not_of(SPACE, strlen(HASH_INCLUDE_STR));
-      if(next == string::npos) return Report(expl, "Empty #include directive.");
-
-      auto& incls = (str[next] == '<' ? extIncls_ : intIncls_);
-      PushBack(incls, str);
+      if(next == string::npos)
+         return Report(expl, "Empty #include directive in file.", -1);
+      PushInclude(str, expl);
    }
 
    return 0;
@@ -403,19 +389,22 @@ word Editor::GetProlog(string& expl)
 
    string str;
 
-   //  Read lines up to, and including, the first #include directive.  The
-   //  first #include is not moved, under the assumption that it is either
-   //  o for a .h*, the base class for the case defined in this file, or
-   //  o for a .c*, the .h* that the .c* implements.
+   //  Read lines up to the first #include directive.
    //
    while(input_->peek() != EOF)
    {
       std::getline(*input_, str);
+
+      if(str.find(HASH_INCLUDE_STR) == 0)
+      {
+         PushInclude(str, expl);
+         return 0;
+      }
+
       PushBack(prolog_, str);
-      if(str.find(HASH_INCLUDE_STR) == 0) return 0;
    }
 
-   return Report(expl, "File contains no #include statements");
+   return Report(expl, "No #include directives in file.");
 }
 
 //------------------------------------------------------------------------------
@@ -432,12 +421,12 @@ Editor::Iter Editor::Insert(SourceList& list, Iter& iter, const string& source)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_InsertForward1 = "Editor.InsertForward";
+fn_name Editor_InsertForward = "Editor.InsertForward";
 
 word Editor::InsertForward
    (const Iter& iter, const string& forward, string& expl)
 {
-   Debug::ft(Editor_InsertForward1);
+   Debug::ft(Editor_InsertForward);
 
    //  ITER references a namespace that matches the one for a new forward
    //  declaration.  Insert the new declaration alphabetically within the
@@ -453,17 +442,53 @@ word Editor::InsertForward
       }
    }
 
-   return Report(expl, "Failed to insert forward declaration");
+   return Report(expl, "Failed to insert forward declaration.");
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_InsertForward2 = "Editor.InsertForward[ns]";
+fn_name Editor_InsertInclude = "Editor.InsertInclude";
 
-word Editor::InsertForward
-   (Iter& iter, const string& nspace, const string& forward, string& expl)
+word Editor::InsertInclude(string& include, string& expl)
 {
-   Debug::ft(Editor_InsertForward2);
+   Debug::ft(Editor_InsertInclude);
+
+   //  Modify the characters that surround the #include's file name
+   //  based on the group to which it belongs.
+   //
+   if(MangleInclude(include, expl) != 0) return 0;
+
+   //  If there are no #include directives, or if the last one should
+   //  precede the new one, insert the new #include at the end of the
+   //  list, else traverse the list and insert it in its proper place.
+   //
+   if(includes_.empty() || IsSorted2(includes_.back().code, include))
+   {
+      Insert(includes_, includes_.end(), include);
+   }
+   else
+   {
+      for(auto i = includes_.begin(); i != includes_.end(); ++i)
+      {
+         if(!IsSorted2(i->code, include))
+         {
+            Insert(includes_, i, include);
+            break;
+         }
+      }
+   }
+
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_InsertNamespaceForward = "Editor.InsertNamespaceForward";
+
+word Editor::InsertNamespaceForward
+   (Iter& iter, const string& nspace, const string& forward)
+{
+   Debug::ft(Editor_InsertNamespaceForward);
 
    //  Insert a new forward declaration, along with an enclosing namespace,
    //  at ITER.
@@ -477,40 +502,62 @@ word Editor::InsertForward
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_InsertInclude = "Editor.InsertInclude";
-
-word Editor::InsertInclude(SourceList& list, const string& include)
+bool Editor::IsSorted1(const SourceLine& line1, const SourceLine& line2)
 {
-   Debug::ft(Editor_InsertInclude);
-
-   //  If LIST contains no #include directives, or if its last #include is
-   //  alphabetically before the one to be added, insert the new #include
-   //  at the end of LIST, else traverse LIST and insert it alphabetically.
-   //
-   if(list.empty() || strCompare(list.back().code, include) < 0)
-   {
-      Insert(list, list.end(), include);
-   }
-   else
-   {
-      for(auto i = list.begin(); i != list.end(); ++i)
-      {
-         if(strCompare(i->code, include) > 0)
-         {
-            Insert(list, i, include);
-            break;
-         }
-      }
-   }
-
-   return 0;
+   return IsSorted2(line1.code, line2.code);
 }
 
 //------------------------------------------------------------------------------
 
-bool Editor::IsSorted(const SourceLine& line1, const SourceLine& line2)
+bool Editor::IsSorted2(const string& line1, const string& line2)
 {
-   return (strCompare(line1.code, line2.code) <= 0);
+   //  #includes are sorted by group, then alphabetically.  The characters
+   //  that enclose the filename distinguish the groups: [] for group 1,
+   //  () for group 2, <> for group 3, and "" for group 4.
+   //
+   auto pos1 = line1.find_first_of(FrontChars);
+   auto pos2 = line2.find_first_of(FrontChars);
+   if(pos2 == string::npos) return true;
+   if(pos1 == string::npos) return false;
+   auto c1 = line1[pos1];
+   auto c2 = line2[pos2];
+   auto group1 = FrontChars.find(c1);
+   auto group2 = FrontChars.find(c2);
+   if(group1 < group2) return true;
+   if(group1 == group2) return (strCompare(line1, line2) <= 0);
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_MangleInclude = "Editor.MangleInclude";
+
+word Editor::MangleInclude(string& include, string& expl) const
+{
+   Debug::ft(Editor_MangleInclude);
+
+   //  INCLUDE is enclosed in angle brackets or quotes.  To simplify
+   //  sorting, the following substitutions are made:
+   //  o group 1: enclosed in [ ]
+   //  o group 2: enclosed in ' '
+   //  o group 3: enclosed in ( )
+   //  o group 4: enclosed in ` `
+   //  This is fixed when the #include is written out.
+   //
+   if(include.find(HASH_INCLUDE_STR) != 0)
+      return Report(expl, "#include not at front of directive.", -1);
+   auto first = include.find_first_of(FrontChars);
+   if(first == string::npos)
+      return Report(expl, "Failed to extract file name from #include.", -1);
+   auto last = include.find_first_of(BackChars, first + 1);
+   if(last == string::npos)
+      return Report(expl, "Failed to extract file name from #include.", -1);
+   auto name = include.substr(first + 1, last - first - 1);
+   auto group = file_->CalcGroup(name);
+   if(group == 0) return Report(expl, "#include specified unknown file.", -1);
+   include[first] = FrontChars[group - 1];
+   include[last] = BackChars[group - 1];
+   return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -519,6 +566,16 @@ void Editor::PushBack(SourceList& list, const string& source)
 {
    ++line_;
    list.push_back(SourceLine(source, line_));
+}
+
+//------------------------------------------------------------------------------
+
+word Editor::PushInclude(string& source, string& expl)
+{
+   if(MangleInclude(source, expl) != 0) return 0;
+   ++line_;
+   includes_.push_back(SourceLine(source, line_));
+   return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -567,9 +624,9 @@ word Editor::RemoveInclude(const WarningLog& log, string& expl)
    //
    auto source = file_->GetLexer().GetNthLine(log.line);
    if(source.empty()) return Report(expl, "#include not found");
-   auto& incls = (source.back() == '>' ? extIncls_ : intIncls_);
-   auto iter = Erase(incls, source, expl);
-   if(iter != incls.end()) incls.erase(iter);
+   if(MangleInclude(source, expl) != 0) return 0;
+   auto iter = Erase(includes_, source, expl);
+   if(iter != includes_.end()) includes_.erase(iter);
    return 0;
 }
 
@@ -610,15 +667,14 @@ word Editor::SortIncludes(const WarningLog& log, string& expl)
    Debug::ft(Editor_SortIncludes);
 
    //  LOG specifies an unsorted #include directive.  Just sort all of the
-   //  #includes in its group.
+   //  #includes.
    //
    auto source = file_->GetLexer().GetNthLine(log.line);
    if(source.find(HASH_INCLUDE_STR) != 0)
-      return Report(expl, "No \"#include\" in unsorted #include directive");
-   auto& incls = (source.find('<') != string::npos ? extIncls_ : intIncls_);
-   incls.sort(IsSorted);
+      return Report(expl, "No \"#include\" in unsorted #include directive.");
+   includes_.sort(IsSorted1);
    changed_ = true;
-   return 0;
+   return Report(expl, "All #includes sorted.");
 }
 
 //------------------------------------------------------------------------------
@@ -637,7 +693,7 @@ word Editor::Write(const string& path, string& expl)
    //
    auto file = path + ".tmp";
    auto output = ostreamPtr(SysFile::CreateOstream(file.c_str(), true));
-   if(output == nullptr) return Report(expl, "Failed to open output file.", -7);
+   if(output == nullptr) return Report(expl, "Failed to open output file.", -1);
 
    EraseBlankLinePairs();
    EraseTrailingBlanks();
@@ -647,13 +703,28 @@ word Editor::Write(const string& path, string& expl)
       *output << s->code << CRLF;
    }
 
-   for(auto s = extIncls_.cbegin(); s != extIncls_.cend(); ++s)
+   for(auto s = includes_.begin(); s != includes_.end(); ++s)
    {
-      *output << s->code << CRLF;
-   }
+      //  #includes belonging to declIds_ or baseIds_ had their angle
+      //  brackets or quotes replaced for sorting purposes.  Fix this.
+      //
+      auto pos = s->code.find_first_of(FrontChars);
+      if(pos == string::npos) return Report(expl, "Error in #include.", -1);
 
-   for(auto s = intIncls_.cbegin(); s != intIncls_.cend(); ++s)
-   {
+      switch(FrontChars.find_first_of(s->code[pos]))
+      {
+      case 0:
+      case 2:
+         s->code[pos] = '<';
+         s->code.back() = '>';
+         break;
+      case 1:
+      case 3:
+         s->code[pos] = QUOTE;
+         s->code.back() = QUOTE;
+         break;
+      }
+
       *output << s->code << CRLF;
    }
 
@@ -668,7 +739,7 @@ word Editor::Write(const string& path, string& expl)
    output.reset();
    remove(path.c_str());
    auto err = rename(file.c_str(), path.c_str());
-   if(err != 0) return Report(expl, "Failed to rename new file to old.", -6);
+   if(err != 0) return Report(expl, "Failed to rename new file to old.", -1);
    file_->SetModified();
    return 1;
 }

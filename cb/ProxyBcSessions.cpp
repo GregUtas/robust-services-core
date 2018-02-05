@@ -20,10 +20,10 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "ProxyBcSessions.h"
+#include "CliText.h"
 #include <ostream>
 #include <string>
 #include "BcRouting.h"
-#include "CliText.h"
 #include "Debug.h"
 #include "FactoryRegistry.h"
 #include "GlobalAddress.h"

@@ -32,6 +32,7 @@
 #include "CxxArea.h"
 #include "CxxFwd.h"
 #include "CxxRoot.h"
+#include "CxxString.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Interpreter.h"
@@ -477,9 +478,11 @@ CodeFile* Library::FindFile(const string& name) const
 {
    Debug::ft(Library_FindFile);
 
+   auto key = GetFileName(name);
+
    for(auto f = files_.First(); f != nullptr; files_.Next(f))
    {
-      if(f->Name() == name) return f;
+      if(f->Name() == key) return f;
    }
 
    return nullptr;

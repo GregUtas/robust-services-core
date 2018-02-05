@@ -23,13 +23,13 @@
 #define POTSSHELF_H_INCLUDED
 
 #include "MsgFactory.h"
+#include "SbExtInputHandler.h"
+#include "UdpIpService.h"
 #include "NbTypes.h"
 #include "NwTypes.h"
-#include "SbExtInputHandler.h"
 #include "SbTypes.h"
 #include "Switch.h"
 #include "SysTypes.h"
-#include "UdpIpService.h"
 
 using namespace SessionBase;
 using namespace MediaBase;

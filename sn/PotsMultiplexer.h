@@ -22,19 +22,19 @@
 #ifndef POTSMULTIPLEXER_H_INCLUDED
 #define POTSMULTIPLEXER_H_INCLUDED
 
-#include "BcCause.h"
-#include <cstddef>
-#include "BcProgress.h"
 #include "Event.h"
-#include "EventHandler.h"
 #include "MediaPsm.h"
 #include "MediaSsm.h"
-#include "NbTypes.h"
-#include "PotsProtocol.h"
-#include "SbTypes.h"
 #include "Service.h"
 #include "SsmFactory.h"
 #include "State.h"
+#include <cstddef>
+#include "BcCause.h"
+#include "BcProgress.h"
+#include "EventHandler.h"
+#include "NbTypes.h"
+#include "PotsProtocol.h"
+#include "SbTypes.h"
 #include "Switch.h"
 
 namespace PotsBase

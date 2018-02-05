@@ -23,17 +23,17 @@
 #define TESTSESSIONS_H_INCLUDED
 
 #include "Dynamic.h"
-#include <memory>
 #include "Message.h"
-#include "NbTypes.h"
-#include "Parameter.h"
 #include "ProtocolSM.h"
 #include "RootServiceSM.h"
-#include "SbTypes.h"
 #include "Service.h"
 #include "Signal.h"
 #include "SsmFactory.h"
 #include "TlvProtocol.h"
+#include <memory>
+#include "NbTypes.h"
+#include "Parameter.h"
+#include "SbTypes.h"
 
 namespace SessionTools
 {

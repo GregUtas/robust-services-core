@@ -22,12 +22,12 @@
 #ifndef POTSCFXSERVICE_H_INCLUDED
 #define POTSCFXSERVICE_H_INCLUDED
 
+#include "Service.h"
+#include "ServiceSM.h"
 #include "BcCause.h"
 #include "EventHandler.h"
 #include "NbTypes.h"
 #include "SbTypes.h"
-#include "Service.h"
-#include "ServiceSM.h"
 
 namespace CallBase
 {

@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "FileThread.h"
+#include "StreamRequest.h"
 #include <ios>
 #include <iosfwd>
 #include <sstream>
@@ -29,7 +30,6 @@
 #include "FunctionGuard.h"
 #include "Restart.h"
 #include "Singleton.h"
-#include "StreamRequest.h"
 #include "SysFile.h"
 
 using std::ostream;

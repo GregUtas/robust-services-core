@@ -23,21 +23,21 @@
 #define BCSESSIONS_H_INCLUDED
 
 #include "Event.h"
+#include "EventHandler.h"
+#include "MediaSsm.h"
+#include "Service.h"
+#include "SsmFactory.h"
+#include "State.h"
+#include "Trigger.h"
 #include <iosfwd>
 #include <string>
 #include "BcAddress.h"
 #include "BcCause.h"
 #include "BcProgress.h"
 #include "BcRouting.h"
-#include "EventHandler.h"
-#include "MediaSsm.h"
 #include "NbTypes.h"
 #include "SbTypes.h"
-#include "Service.h"
-#include "SsmFactory.h"
-#include "State.h"
 #include "SysTypes.h"
-#include "Trigger.h"
 
 namespace MediaBase
 {

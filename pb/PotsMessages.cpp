@@ -27,11 +27,8 @@
 #include "IpPortRegistry.h"
 #include "MediaParameter.h"
 #include "NwTypes.h"
-#include "ProtocolSM.h"
 #include "SbAppIds.h"
 #include "SysTypes.h"
-
-using namespace SessionBase;
 
 //------------------------------------------------------------------------------
 

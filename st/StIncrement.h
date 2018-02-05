@@ -23,8 +23,8 @@
 #define STINCREMENT_H_INCLUDED
 
 #include "CliIncrement.h"
-#include "NbTypes.h"
 #include "NtIncrement.h"
+#include "NbTypes.h"
 
 using namespace NodeTools;
 

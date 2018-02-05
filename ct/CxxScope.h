@@ -22,6 +22,7 @@
 #ifndef CXXSCOPE_H_INCLUDED
 #define CXXSCOPE_H_INCLUDED
 
+#include "CxxNamed.h"
 #include "CxxScoped.h"
 #include <cstddef>
 #include <cstdint>
@@ -30,7 +31,6 @@
 #include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxFwd.h"
-#include "CxxNamed.h"
 #include "CxxString.h"
 #include "SysTypes.h"
 
@@ -1344,7 +1344,7 @@ private:
 
    //  Determines how the function is associated with a template.
    //
-   TemplateLocation GetTemplateLocation() const;
+   TemplateType GetTemplateType() const;
 
    //  Displays the function's definition.
    //

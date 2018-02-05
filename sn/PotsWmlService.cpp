@@ -20,6 +20,10 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsWmlService.h"
+#include "Event.h"
+#include "EventHandler.h"
+#include "ServiceSM.h"
+#include "State.h"
 #include <ostream>
 #include <string>
 #include "BcAddress.h"
@@ -28,8 +32,6 @@
 #include "BcSessions.h"
 #include "Context.h"
 #include "Debug.h"
-#include "Event.h"
-#include "EventHandler.h"
 #include "Parameter.h"
 #include "PotsFeatures.h"
 #include "PotsProfile.h"
@@ -38,10 +40,8 @@
 #include "PotsWmlFeature.h"
 #include "SbAppIds.h"
 #include "SbEvents.h"
-#include "ServiceSM.h"
 #include "Signal.h"
 #include "Singleton.h"
-#include "State.h"
 #include "SysTypes.h"
 #include "TimerProtocol.h"
 #include "TlvMessage.h"

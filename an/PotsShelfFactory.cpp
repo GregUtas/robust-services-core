@@ -20,8 +20,8 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsShelf.h"
-#include <sstream>
 #include "CliText.h"
+#include <sstream>
 #include "Debug.h"
 #include "Log.h"
 #include "PotsCircuit.h"

@@ -40,6 +40,12 @@ namespace CodeTools
    //
    bool FileExtensionIs(const std::string& file, const std::string& ext);
 
+   //  Returns the filename in PATH.  If PATH contains a forward or backward
+   //  slash, the filename that follows it is extracted.  Any extension is
+   //  retained.
+   //
+   std::string GetFileName(const std::string& path);
+
    //  Returns true if DIR appears in PATH.  Prefixes a '/' to DIR before
    //  searching PATH.
    //

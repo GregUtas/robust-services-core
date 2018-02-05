@@ -20,6 +20,8 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsBocService.h"
+#include "ServiceSM.h"
+#include "State.h"
 #include "BcCause.h"
 #include "BcSessions.h"
 #include "Context.h"
@@ -30,9 +32,7 @@
 #include "PotsSessions.h"
 #include "SbAppIds.h"
 #include "SbEvents.h"
-#include "ServiceSM.h"
 #include "Singleton.h"
-#include "State.h"
 #include "SysTypes.h"
 
 using namespace CallBase;

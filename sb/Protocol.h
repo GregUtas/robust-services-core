@@ -135,10 +135,10 @@ protected:
    //
    virtual ~Protocol();
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
    Protocol(const Protocol& that);
-   void operator=(const Protocol& that);
+   Protocol& operator=(const Protocol& that);
 
    //  Adds SIGNAL to the protocol.  Invoked by Signal's base class
    //  constructor.

@@ -92,10 +92,10 @@ protected:
    //
    virtual ~Initiator();
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
    Initiator(const Initiator& that);
-   void operator=(const Initiator& that);
+   Initiator& operator=(const Initiator& that);
 
    //  The initiator's event handler, which receives either an SAP or SNP,
    //  depending on the trigger with which it has registered.  It can either

@@ -163,10 +163,10 @@ private:
    //
    virtual void Patch(sel_t selector, void* arguments) override;
 
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   SysThread(const SysThread& that);
-   void operator=(const SysThread& that);
+   SysThread(const SysThread& that) = delete;
+   SysThread& operator=(const SysThread& that) = delete;
 
    //  Reference to the native thread.
    //

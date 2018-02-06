@@ -69,9 +69,9 @@ protected:
    //
    virtual const char* what() const noexcept override;
 private:
-   //  Private to prohibit assignment.
+   //  Deleted to prohibit assignment.
    //
-   void operator=(const Exception& that);
+   Exception& operator=(const Exception& that) = delete;
 
    //  The function call stack at the time that the exception occurred.
    //  Mutable so that the copy constructor can transfer ownership if

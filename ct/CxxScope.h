@@ -911,6 +911,14 @@ public:
    //
    void SetOperator(Cxx::Operator oper);
 
+   //  Invoked if the function is defined as "=delete".
+   //
+   void SetDeleted() { deleted_ = true; }
+
+   //  Invoked if the function is defined as "=default".
+   //
+   void SetDefaulted() { defaulted_ = true; }
+
    //  Marks the function as an inline friend function.
    //
    void SetFriend() { friend_ = true; }
@@ -1430,11 +1438,19 @@ private:
 
    //  How many times the function was invoked.
    //
-   size_t calls_ : 15;
+   size_t calls_ : 13;
 
    //  Set if this is the definition of a previously declared function.
    //
    bool defn_ : 1;
+
+   //  Set if the function was defined as "=delete".
+   //
+   bool deleted_ : 1;
+
+   //  Set if the function was defined as "=default".
+   //
+   bool defaulted_ : 1;
 
    //  If defn_ is set, the function's declaration.  If defn_ is not set,
    //  the function's definition (if distinct from its declaration).

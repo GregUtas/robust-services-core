@@ -60,10 +60,10 @@ public:
    //
    void Display(std::ostream& stream, const std::string& prefix) const;
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   Q2Link(const Q2Link& that);
-   void operator=(const Q2Link& that);
+   Q2Link(const Q2Link& that) = delete;
+   Q2Link& operator=(const Q2Link& that) = delete;
 
    //  The next item in the queue.  Because Q2Way uses circular queues,
    //  a value of nullptr means that this item is not on a queue.

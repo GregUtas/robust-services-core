@@ -82,10 +82,10 @@ public:
    //
    virtual void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   SysMutex(const SysMutex& that);
-   void operator=(const SysMutex& that);
+   SysMutex(const SysMutex& that) = delete;
+   SysMutex& operator=(const SysMutex& that) = delete;
 
    //  A handle to the native mutex.
    //

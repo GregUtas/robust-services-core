@@ -256,10 +256,10 @@ private:
    //
    static ObjectBlock* ObjToBlock(const Pooled* obj);
 
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   ObjectPool(const ObjectPool& that);
-   void operator=(const ObjectPool& that);
+   ObjectPool(const ObjectPool& that) = delete;
+   ObjectPool& operator=(const ObjectPool& that) = delete;
 
    //  The pool's identifier.
    //

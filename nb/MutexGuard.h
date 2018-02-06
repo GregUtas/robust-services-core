@@ -45,10 +45,10 @@ public:
    //
    ~MutexGuard();
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   MutexGuard(const MutexGuard& that);
-   void operator=(const MutexGuard& that);
+   MutexGuard(const MutexGuard& that) = delete;
+   MutexGuard& operator=(const MutexGuard& that) = delete;
 
    //  The mutex.
    //

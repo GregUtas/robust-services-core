@@ -100,10 +100,10 @@ protected:
    //
    uint32_t divisor_;
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   Statistic(const Statistic& that);
-   void operator=(const Statistic& that);
+   Statistic(const Statistic& that) = delete;
+   Statistic& operator=(const Statistic& that) = delete;
 
    //  Invoked at regular intervals to start a new measurement period.
    //  If FIRST is true, previous values in total_ are discarded.  The

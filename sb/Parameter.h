@@ -177,10 +177,10 @@ protected:
    //
    bool BindUsage(SignalId sid, Usage usage);
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
    Parameter(const Parameter& that);
-   void operator=(const Parameter& that);
+   Parameter& operator=(const Parameter& that);
 
    //  The protocol to which the parameter belongs.
    //

@@ -112,10 +112,10 @@ protected:
    //
    SysHeap(MemoryType type, size_t bytes);
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   SysHeap(const SysHeap& that);
-   void operator=(const SysHeap& that);
+   SysHeap(const SysHeap& that) = delete;
+   SysHeap& operator=(const SysHeap& that) = delete;
 
    //  Overridden to prevent allocation on another heap.
    //

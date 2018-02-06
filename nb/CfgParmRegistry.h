@@ -114,10 +114,10 @@ private:
    //
    ~CfgParmRegistry();
 
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   CfgParmRegistry(const CfgParmRegistry& that);
-   void operator=(const CfgParmRegistry& that);
+   CfgParmRegistry(const CfgParmRegistry& that) = delete;
+   CfgParmRegistry& operator=(const CfgParmRegistry& that) = delete;
 
    //  Reads configuration tuples (key-value pairs) from ConfigFileName
    //  during system initialization.  Creates a CfgTuple instance for

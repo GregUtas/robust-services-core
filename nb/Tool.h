@@ -91,10 +91,10 @@ protected:
    //
    virtual ~Tool();
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   Tool(const Tool& that);
-   void operator=(const Tool& that);
+   Tool(const Tool& that) = delete;
+   Tool& operator=(const Tool& that) = delete;
 
    //  The tool's identifier.
    //

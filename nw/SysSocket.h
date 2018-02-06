@@ -198,10 +198,10 @@ protected:
    word SetError();
    word SetError(word errval);
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
    SysSocket(const SysSocket& that);
-   void operator=(const SysSocket& that);
+   SysSocket& operator=(const SysSocket& that);
 
    //  Sets or clears tracing_ and returns the new setting.
    //

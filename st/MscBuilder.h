@@ -230,10 +230,10 @@ private:
    //
    bool Error(debug64_t errval, debug32_t offset);
 
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
    MscBuilder(const MscBuilder& that);
-   void operator=(const MscBuilder& that);
+   MscBuilder& operator=(const MscBuilder& that);
 
    //  Set if internal data structures are to be displayed.
    //

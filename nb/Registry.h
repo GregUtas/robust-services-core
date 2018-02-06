@@ -615,10 +615,10 @@ private:
       }
    }
 
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   Registry(const Registry& that);
-   void operator=(const Registry& that);
+   Registry(const Registry& that) = delete;
+   Registry& operator=(const Registry& that) = delete;
 
    //  See the comment in Singleton.h about fn_name's in a template header.
    //

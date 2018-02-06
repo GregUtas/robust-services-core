@@ -108,10 +108,10 @@ private:
    //
    void UnbindInitiator(Initiator& init);
 
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
    Trigger(const Trigger& that);
-   void operator=(const Trigger& that);
+   Trigger& operator=(const Trigger& that);
 
    //  The identifier for this trigger.
    //

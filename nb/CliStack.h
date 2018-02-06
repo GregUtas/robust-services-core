@@ -87,10 +87,10 @@ private:
    //
    ~CliStack();
 
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   CliStack(const CliStack& that);
-   void operator=(const CliStack& that);
+   CliStack(const CliStack& that) = delete;
+   CliStack& operator=(const CliStack& that) = delete;
 
    //  Adds the CLI's NbIncrement to the stack.
    //

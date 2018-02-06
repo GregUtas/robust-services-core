@@ -86,10 +86,10 @@ private:
    //
    ~SymbolRegistry();
 
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   SymbolRegistry(const SymbolRegistry& that);
-   void operator=(const SymbolRegistry& that);
+   SymbolRegistry(const SymbolRegistry& that) = delete;
+   SymbolRegistry& operator=(const SymbolRegistry& that) = delete;
 
    //> The maximum number of symbols allowed in symbolq_.
    //

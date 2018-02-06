@@ -103,10 +103,10 @@ protected:
    //
    bool BindMsgAnalyzer(EventHandlerId ehid, ServicePortId pid);
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
    State(const State& that);
-   void operator=(const State& that);
+   State& operator=(const State& that);
 
    //  The state's identifier.
    //

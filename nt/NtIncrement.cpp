@@ -1038,8 +1038,8 @@ public:
 
    const id_t index_;
 private:
-   Q1WayItem(const Q1WayItem& that);
-   void operator=(const Q1WayItem& that);
+   Q1WayItem(const Q1WayItem& that) = delete;
+   Q1WayItem& operator=(const Q1WayItem& that) = delete;
    Q1Link link_;
 };
 
@@ -1550,8 +1550,8 @@ public:
 
    const id_t index_;
 private:
-   Q2WayItem(const Q2WayItem& that);
-   void operator=(const Q2WayItem& that);
+   Q2WayItem(const Q2WayItem& that) = delete;
+   Q2WayItem& operator=(const Q2WayItem& that) = delete;
    Q2Link link_;
 };
 
@@ -2116,8 +2116,8 @@ public:
 
    RegCell rid_;
 private:
-   RegistryItem(const RegistryItem& that);
-   void operator=(const RegistryItem& that);
+   RegistryItem(const RegistryItem& that) = delete;
+   RegistryItem& operator=(const RegistryItem& that) = delete;
    const id_t index_;
 };
 

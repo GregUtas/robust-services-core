@@ -75,10 +75,10 @@ protected:
    //
    virtual ~PotsFeatureProfile();
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
    PotsFeatureProfile(const PotsFeatureProfile& that);
-   void operator=(const PotsFeatureProfile& that);
+   PotsFeatureProfile& operator=(const PotsFeatureProfile& that);
 
    //  Deletes the user's subscription to the feature.  Deletion is actually
    //  performed by PotsProfile.Unsubscribe (see below), which also invokes

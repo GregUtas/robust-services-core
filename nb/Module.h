@@ -145,10 +145,10 @@ protected:
    //
    virtual ~Module();
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   Module(const Module& that);
-   void operator=(const Module& that);
+   Module(const Module& that) = delete;
+   Module& operator=(const Module& that) = delete;
 
    //  The module's identifier.
    //

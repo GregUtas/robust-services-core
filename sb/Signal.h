@@ -108,10 +108,10 @@ protected:
    //
    virtual ~Signal();
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
    Signal(const Signal& that);
-   void operator=(const Signal& that);
+   Signal& operator=(const Signal& that);
 
    //  The protocol to which the signal belongs.
    //

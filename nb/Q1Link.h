@@ -60,10 +60,10 @@ public:
    //
    std::string to_str() const;
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   Q1Link(const Q1Link& that);
-   void operator=(const Q1Link& that);
+   Q1Link(const Q1Link& that) = delete;
+   Q1Link& operator=(const Q1Link& that) = delete;
 
    //  The next item in the queue.  Because Q1Way uses circular queues, a
    //  value of nullptr means that the item is not on a queue.

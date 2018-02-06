@@ -1792,6 +1792,8 @@ Function::Function(QualNamePtr& name) :
    nonstatic_(false),
    calls_(0),
    defn_(false),
+   deleted_(false),
+   defaulted_(false),
    mate_(nullptr),
    pos_(string::npos),
    begin_(string::npos),
@@ -1832,6 +1834,8 @@ Function::Function(QualNamePtr& name, TypeSpecPtr& spec, bool type) :
    nonstatic_(false),
    calls_(0),
    defn_(false),
+   deleted_(false),
+   defaulted_(false),
    mate_(nullptr),
    spec_(spec.release()),
    pos_(string::npos),
@@ -2814,6 +2818,10 @@ void Function::DisplayDefn(ostream& stream,
    //
    if((impl == nullptr) || (!ns && (impl_ == nullptr)) || IsInternal())
    {
+      if(deleted_)
+         stream << " = " << DELETE_STR;
+      else if(defaulted_)
+         stream << " = " << DEFAULT_STR;
       stream << ';';
       DisplayInfo(stream, options);
       stream << CRLF;
@@ -2897,7 +2905,7 @@ void Function::DisplayInfo(ostream& stream, const Flags& options) const
    std::ostringstream buff;
    buff << " // ";
 
-   if(!impl && !inst && !subs)
+   if(!impl && !inst && !subs && !deleted_)
       buff << "<@unimpl" << SPACE;
    else
       calls = true;

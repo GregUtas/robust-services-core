@@ -104,10 +104,10 @@ protected:
    //
    virtual ~PosixSignal();
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   PosixSignal(const PosixSignal& that);
-   void operator=(const PosixSignal& that);
+   PosixSignal(const PosixSignal& that) = delete;
+   PosixSignal& operator=(const PosixSignal& that) = delete;
 
    //  The signal's value.
    //

@@ -86,10 +86,10 @@ public:
    //
    virtual void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   Symbol(const Symbol& that);
-   void operator=(const Symbol& that);
+   Symbol(const Symbol& that) = delete;
+   Symbol& operator=(const Symbol& that) = delete;
 
    //  The symbol's name.
    //

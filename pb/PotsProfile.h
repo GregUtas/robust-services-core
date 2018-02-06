@@ -151,10 +151,10 @@ protected:
    //
    virtual ~PotsProfile();
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
    PotsProfile(const PotsProfile& that);
-   void operator=(const PotsProfile& that);
+   PotsProfile& operator=(const PotsProfile& that);
 
    //  The profile's directory number.
    //

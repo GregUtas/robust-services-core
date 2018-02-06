@@ -93,14 +93,14 @@ protected:
    //
    Pooled();
 private:
-   //  Override vector operator new to prohibit array allocation.
+   //  Delete vector operator new to prohibit array allocation.
    //
-   static void* operator new[](size_t size, MemoryType type);
+   static void* operator new[](size_t size, MemoryType type) = delete;
 
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   Pooled(const Pooled& that);
-   void operator=(const Pooled& that);
+   Pooled(const Pooled& that) = delete;
+   Pooled& operator=(const Pooled& that) = delete;
 
    //  Link for queueing the object.
    //

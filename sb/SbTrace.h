@@ -198,10 +198,10 @@ private:
    //
    virtual void Shutdown(RestartLevel level) override;
 
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
    BuffTrace(const BuffTrace& that);
-   void operator=(const BuffTrace& that);
+   BuffTrace& operator=(const BuffTrace& that);
 
    //  A clone of the buffer being captured.
    //

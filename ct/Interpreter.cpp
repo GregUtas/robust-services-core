@@ -82,7 +82,7 @@ private:
    //  Define the copy operator to suppress the compiler warning caused
    //  by our const string member.
    //
-   void operator=(const OperatorInfo& that);
+   OperatorInfo& operator=(const OperatorInfo& that) = delete;
 };
 
 //------------------------------------------------------------------------------

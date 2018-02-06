@@ -130,10 +130,10 @@ protected:
    //
    virtual ~IpService();
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   IpService(const IpService& that);
-   void operator=(const IpService& that);
+   IpService(const IpService& that) = delete;
+   IpService& operator=(const IpService& that) = delete;
 
    //  Creates an InputHandler that will host the service on PORT.
    //

@@ -129,10 +129,10 @@ private:
    //
    bool SetFromTuple();
 
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   CfgParm(const CfgParm& that);
-   void operator=(const CfgParm& that);
+   CfgParm(const CfgParm& that) = delete;
+   CfgParm& operator=(const CfgParm& that);
 
    //  The parameter's tuple (its key and the string used to set its value).
    //

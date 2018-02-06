@@ -416,6 +416,10 @@ private:
    //
    bool GetFuncImpl(Function* func);
 
+   //  Returns true and updates FUNC if the function is deleted or defaulted.
+   //
+   bool GetFuncSpecial(FunctionPtr& func);
+
    //  Returns true and creates FUNC on finding
    //  o GetCtorDecl: a constructor declaration
    //  o GetCtorDefn: a constructor implementation

@@ -371,9 +371,9 @@ private:
    virtual bool ResolveForward
       (CxxScoped* decl, size_t n) const { return false; }
 
-   //  Overridden to prohibit copy assignment.
+   //  Deleted to prohibit copy assignment.
    //
-   void operator=(const CxxNamed& that);
+   CxxNamed& operator=(const CxxNamed& that) = delete;
 
    //  The location where the item appeared.
    //
@@ -591,9 +591,9 @@ public:
    //
    virtual std::string TypeString(bool arg) const override;
 private:
-   //  Overridden to prohibit copy assignment.
+   //  Deleted to prohibit copy assignment.
    //
-   void operator=(const TypeName& that);
+   TypeName& operator=(const TypeName& that) = delete;
 
    //  The name that appears in what could be a qualified name.
    //
@@ -808,9 +808,9 @@ public:
    //
    virtual std::string TypeString(bool arg) const override;
 private:
-   //  Overridden to prohibit copy assignment.
+   //  Deleted to prohibit copy assignment.
    //
-   void operator=(const QualName& that);
+   QualName& operator=(const QualName& that) = delete;
 
    //  Returns the last name.
    //
@@ -1015,9 +1015,9 @@ protected:
    //
    TypeSpec(const TypeSpec& that);
 private:
-   //  Overridden to prohibit copy assignment.
+   //  Deleted to prohibit copy assignment.
    //
-   void operator=(const TypeSpec& that);
+   TypeSpec& operator=(const TypeSpec& that) = delete;
 
    //  The item type to which the type belongs.  The default is Cxx::Operation.
    //
@@ -1055,9 +1055,9 @@ public:
    //
    ~DataSpec();
 private:
-   //  Overridden to prohibit copy assignment.
+   //  Deleted to prohibit copy assignment.
    //
-   void operator=(const DataSpec& that);
+   DataSpec& operator=(const DataSpec& that) = delete;
 
    //  Returns true if the type was declared as auto, even if (unlike IsAuto)
    //  its underlying type has been determined.

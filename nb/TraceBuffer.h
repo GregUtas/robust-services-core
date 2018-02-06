@@ -245,10 +245,10 @@ private:
    //
    ~TraceBuffer();
 
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   TraceBuffer(const TraceBuffer& that);
-   void operator=(const TraceBuffer& that);
+   TraceBuffer(const TraceBuffer& that) = delete;
+   TraceBuffer& operator=(const TraceBuffer& that) = delete;
 
    //  A tuple containing a function's name and how many times it was invoked.
    //

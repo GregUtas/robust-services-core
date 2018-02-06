@@ -87,10 +87,10 @@ private:
    //
    TraceRc Show(std::ostream& stream, Sort sort);
 
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   FunctionProfiler(const FunctionProfiler& that);
-   void operator=(const FunctionProfiler& that);
+   FunctionProfiler(const FunctionProfiler& that) = delete;
+   FunctionProfiler& operator=(const FunctionProfiler& that) = delete;
 
    //  The size (log2) of the functionq_ array.
    //

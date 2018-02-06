@@ -118,10 +118,10 @@ public:
    //
    static void operator delete(void* addr);
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
    TrafficCall(const TrafficCall& that);
-   void operator=(const TrafficCall& that);
+   TrafficCall& operator=(const TrafficCall& that);
 
    //> The size of the DelayMsecs_ array.
    //
@@ -241,10 +241,10 @@ private:
    //
    ~TrafficCallPool();
 
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
    TrafficCallPool(const TrafficCallPool& that);
-   void operator=(const TrafficCallPool& that);
+   TrafficCallPool& operator=(const TrafficCallPool& that);
 
    //  The free queue of calls, which minimizes use of the heap.
    //

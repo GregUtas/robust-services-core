@@ -79,10 +79,10 @@ protected:
    //
    virtual ~Tone();
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
    Tone(const Tone& that);
-   void operator=(const Tone& that);
+   Tone& operator=(const Tone& that);
 
    //  The tone's identifier.
    //

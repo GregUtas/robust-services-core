@@ -123,10 +123,10 @@ protected:
    //
    explicit InputHandler(IpPort* port);
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   InputHandler(const InputHandler& that);
-   void operator=(const InputHandler& that);
+   InputHandler(const InputHandler& that) = delete;
+   InputHandler& operator=(const InputHandler& that) = delete;
 
    //  The port where the input handler is registered.
    //

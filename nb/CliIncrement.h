@@ -95,10 +95,10 @@ protected:
    //
    bool BindCommand(CliCommand& comm);
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   CliIncrement(const CliIncrement& that);
-   void operator=(const CliIncrement& that);
+   CliIncrement(const CliIncrement& that) = delete;
+   CliIncrement& operator=(const CliIncrement& that) = delete;
 
    //  The increment's index in CliRegistry.
    //

@@ -285,7 +285,7 @@ private:
    //  Define the copy operator to suppress the compiler warning caused
    //  by our const string member.
    //
-   void operator=(const CxxWord& that);
+   CxxWord& operator=(const CxxWord& that) = delete;
 };
 
 //------------------------------------------------------------------------------
@@ -399,7 +399,7 @@ private:
    //  Define the copy operator to suppress the compiler warning caused
    //  by our const string member.
    //
-   void operator=(const CxxOp& that);
+   CxxOp& operator=(const CxxOp& that) = delete;
 };
 
 //------------------------------------------------------------------------------
@@ -575,7 +575,7 @@ private:
    //  Define the copy operator to suppress the compiler warning caused
    //  by our const string member.
    //
-   void operator=(const CxxStats& that);
+   CxxStats& operator=(const CxxStats& that) = delete;
 
    //  The item's name.
    //

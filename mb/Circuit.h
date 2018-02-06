@@ -80,10 +80,10 @@ protected:
    //
    Circuit();
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
    Circuit(const Circuit& that);
-   void operator=(const Circuit& that);
+   Circuit& operator=(const Circuit& that);
 
    //  The port where the circuit appears.
    //

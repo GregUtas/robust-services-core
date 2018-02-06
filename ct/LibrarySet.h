@@ -194,10 +194,10 @@ protected:
    //
    static word Shown(std::string& result);
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   LibrarySet(const LibrarySet& that);
-   void operator=(const LibrarySet& that);
+   LibrarySet(const LibrarySet& that) = delete;
+   LibrarySet& operator=(const LibrarySet& that) = delete;
 
    //  Returns 0 if this set can be assigned to a variable.  Returns another
    //  value and updates EXPL with an explanation if it cannot be assigned.

@@ -377,10 +377,10 @@ private:
    //
    ~ContextSwitches();
 
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   ContextSwitches(const ContextSwitches& that);
-   void operator=(const ContextSwitches& that);
+   ContextSwitches(const ContextSwitches& that) = delete;
+   ContextSwitches& operator=(const ContextSwitches& that) = delete;
 
    //  The size of the context switch array.
    //
@@ -625,10 +625,10 @@ private:
    //
    ~Orphans();
 
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   Orphans(const Orphans& that);
-   void operator=(const Orphans& that);
+   Orphans(const Orphans& that) = delete;
+   Orphans& operator=(const Orphans& that) = delete;
 
    //  The orphans array.
    //

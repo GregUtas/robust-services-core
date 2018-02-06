@@ -111,10 +111,10 @@ protected:
    //
    void SetIncompatible(PotsFeature::Id fid);
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
    PotsFeature(const PotsFeature& that);
-   void operator=(const PotsFeature& that);
+   PotsFeature& operator=(const PotsFeature& that);
 
    //  Returns the parameters used to provision the feature.
    //

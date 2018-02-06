@@ -82,10 +82,10 @@ protected:
    //
    explicit StatisticsGroup(const std::string& expl);
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   StatisticsGroup(const StatisticsGroup& that);
-   void operator=(const StatisticsGroup& that);
+   StatisticsGroup(const StatisticsGroup& that) = delete;
+   StatisticsGroup& operator=(const StatisticsGroup& that) = delete;
 
    //> The header for statistics reports.
    //

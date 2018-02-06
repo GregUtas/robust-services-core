@@ -171,10 +171,10 @@ private:
    //
    void UnbindHandler(const InputHandler& handler);
 
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   IpPort(const IpPort& that);
-   void operator=(const IpPort& that);
+   IpPort(const IpPort& that) = delete;
+   IpPort& operator=(const IpPort& that) = delete;
 
    //  The next entry in IpPortRegistry.
    //

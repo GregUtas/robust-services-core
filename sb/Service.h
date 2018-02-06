@@ -208,10 +208,10 @@ private:
    //
    bool BindSystemHandler(EventHandler& handler, EventHandlerId ehid);
 
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
    Service(const Service& that);
-   void operator=(const Service& that);
+   Service& operator=(const Service& that);
 
    //  The service's identifier.
    //

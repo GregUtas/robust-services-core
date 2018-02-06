@@ -47,10 +47,10 @@ public:
    //
    ~FunctionGuard();
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   FunctionGuard(const FunctionGuard& that);
-   void operator=(const FunctionGuard& that);
+   FunctionGuard(const FunctionGuard& that) = delete;
+   FunctionGuard& operator=(const FunctionGuard& that) = delete;
 
    //  The first function that was invoked.
    //

@@ -99,10 +99,10 @@ public:
    //
    HighWatermarkPtr maxDelay_;
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
    InvokerWork(const InvokerWork& that);
-   void operator=(const InvokerWork& that);
+   InvokerWork& operator=(const InvokerWork& that);
 };
 
 //------------------------------------------------------------------------------

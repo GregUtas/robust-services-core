@@ -99,10 +99,10 @@ public:
    //
    virtual void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   CfgTuple(const CfgTuple& that);
-   void operator=(const CfgTuple& that);
+   CfgTuple(const CfgTuple& that) = delete;
+   CfgTuple& operator=(const CfgTuple& that) = delete;
 
    //  The name of the parameter associated with the tuple.
    //

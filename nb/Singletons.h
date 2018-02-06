@@ -84,10 +84,10 @@ private:
    //
    ~Singletons();
 
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   Singletons(const Singletons& that);
-   void operator=(const Singletons& that);
+   Singletons(const Singletons& that) = delete;
+   Singletons& operator=(const Singletons& that) = delete;
 
    //  Information about each singleton.
    //

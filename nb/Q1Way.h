@@ -377,10 +377,10 @@ private:
       }
    }
 
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   Q1Way(const Q1Way& that);
-   void operator=(const Q1Way& that);
+   Q1Way(const Q1Way& that) = delete;
+   Q1Way& operator=(const Q1Way& that) = delete;
 
    //  See the comment in Singleton.h about fn_name's in a template header.
    //

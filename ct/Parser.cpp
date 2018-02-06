@@ -1843,36 +1843,38 @@ bool Parser::GetFuncDecl(Cxx::Keyword kwd, FunctionPtr& func)
    func->SetExtern(extn);
    func->SetInline(inln);
 
-   //  The next character should be a semicolon or left brace, depending
-   //  on whether the function is only declared here or also defined.
+   //  The next character should be a semicolon, equal sign, or left brace,
+   //  depending on whether the function is only declared here, is deleted
+   //  or defaulted, or is actually defined.
    //
    if(lexer_.NextCharIs(';'))
    {
       func->SetDefnRange(begin, lexer_.rfind(';'));
+      return Success(Parser_GetFuncDecl, start);
+   }
+
+   if(GetFuncSpecial(func)) return Success(Parser_GetFuncDecl, start);
+
+   auto pos = lexer_.Curr();
+   if(!lexer_.NextCharIs('{')) return Backup(start, func, 219);
+
+   auto end = lexer_.FindClosing('{', '}');
+   if(end == string::npos) return Backup(start, func, 220);
+   func->SetDefnRange(begin, end);
+
+   //  Wait to parse a class's inlines until the rest of the class has
+   //  been parsed.
+   //
+   if(func->AtFileScope())
+   {
+      lexer_.Reposition(pos);
+      if(!GetFuncImpl(func.get())) return Backup(start, func, 221);
    }
    else
    {
-      auto pos = lexer_.Curr();
-      if(!lexer_.NextCharIs('{')) return Backup(start, func, 219);
-
-      auto end = lexer_.FindClosing('{', '}');
-      if(end == string::npos) return Backup(start, func, 220);
-      func->SetDefnRange(begin, end);
-
-      //  Wait to parse a class's inlines until the rest of the
-      //  class has been parsed.
-      //
-      if(func->AtFileScope())
-      {
-         lexer_.Reposition(pos);
-         if(!GetFuncImpl(func.get())) return Backup(start, func, 221);
-      }
-      else
-      {
-         func->SetBracePos(pos);
-         lexer_.Reposition(end + 1);
-         if(lexer_.NextCharIs(';')) Log(RemoveSemicolon);
-      }
+      func->SetBracePos(pos);
+      lexer_.Reposition(end + 1);
+      if(lexer_.NextCharIs(';')) Log(RemoveSemicolon);
    }
 
    return Success(Parser_GetFuncDecl, start);
@@ -1916,6 +1918,7 @@ bool Parser::GetFuncDefn(Cxx::Keyword kwd, FunctionPtr& func)
    if(!found) return Backup(start, func, 222);
    func->SetTemplateParms(parms);
    func->SetInline(inln);
+   if(GetFuncSpecial(func)) return Success(Parser_GetFuncDecl, start);
 
    auto curr = lexer_.Curr();
    if(!lexer_.NextCharIs('{')) return Backup(start, func, 223);
@@ -1985,6 +1988,30 @@ bool Parser::GetFuncSpec(TypeSpecPtr& spec, FunctionPtr& func)
    SetContext(func.get(), start);
    if(!GetArguments(func)) return Backup(start, func, 225);
    return Success(Parser_GetFuncSpec, start);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Parser_GetFuncSpecial = "Parser.GetFuncSpecial";
+
+bool Parser::GetFuncSpecial(FunctionPtr& func)
+{
+   Debug::ft(Parser_GetFuncSpecial);
+
+   //  Look for "= delete;" or "= default; ".
+   //
+   if(!lexer_.NextCharIs('=')) return false;
+
+   string str;
+   lexer_.NextKeyword(str);
+   if(str == DEFAULT_STR)
+      func->SetDefaulted();
+   else if(str == DELETE_STR)
+      func->SetDeleted();
+   else return false;
+   lexer_.Advance(str.size());
+   if(!lexer_.NextCharIs(';')) return false;
+   return true;
 }
 
 //------------------------------------------------------------------------------

@@ -136,10 +136,10 @@ private:
    //
    bool VerifyClass(const Object& obj) const;
 
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   Class(const Class& that);
-   void operator=(const Class& that);
+   Class(const Class& that) = delete;
+   Class& operator=(const Class& that) = delete;
 
    //  The class's identifier.
    //

@@ -203,10 +203,10 @@ private:
    //
    virtual void ClaimBlocks() override;
 
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
    InvokerPool(const InvokerPool& that);
-   void operator=(const InvokerPool& that);
+   InvokerPool& operator=(const InvokerPool& that);
 
    //  The scheduler faction in which the pool's invokers run.
    //

@@ -366,10 +366,10 @@ private:
    //
    ~TestSession();
 
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
    TestSession(const TestSession& that);
-   void operator=(const TestSession& that);
+   TestSession& operator=(const TestSession& that);
 
    //  The instance of StTestData to which this session belongs.
    //

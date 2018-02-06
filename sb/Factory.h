@@ -231,10 +231,10 @@ protected:
    //
    void RecordDeletion(bool context) const;
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
    Factory(const Factory& that);
-   void operator=(const Factory& that);
+   Factory& operator=(const Factory& that);
 
    //  Allocates an incoming message to wrap BUFF and returns it in MSG.
    //  Returning nullptr indicates that BUFF should be discarded, either

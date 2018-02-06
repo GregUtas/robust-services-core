@@ -75,10 +75,10 @@ private:
    //
    void SendTimeout(Timer* tmr);
 
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
    TimerRegistry(const TimerRegistry& that);
-   void operator=(const TimerRegistry& that);
+   TimerRegistry& operator=(const TimerRegistry& that);
 
    //  timerq_[s] contains timers expiring in (s - nextQid_) seconds; the
    //  last queue is for timers of Timer::MaxQId seconds or more.

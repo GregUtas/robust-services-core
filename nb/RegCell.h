@@ -69,10 +69,10 @@ public:
    //
    std::string to_str() const;
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   RegCell(const RegCell& that);
-   void operator=(const RegCell& that);
+   RegCell(const RegCell& that) = delete;
+   RegCell& operator=(const RegCell& that) = delete;
 
    //  The object's index (identifier) within the registry's array.
    //

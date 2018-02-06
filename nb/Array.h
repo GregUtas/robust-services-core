@@ -217,10 +217,10 @@ public:
    //
    T* Items() { return array_; }
 private:
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
-   Array(const Array& that);
-   void operator=(const Array& that);
+   Array(const Array& that) = delete;
+   Array& operator=(const Array& that) = delete;
 
    //  Increases the size of the registry's array, up to its maximum, when
    //  more space is needed.  MIN is the minimum number of elements to be

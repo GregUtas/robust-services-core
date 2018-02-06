@@ -86,10 +86,10 @@ private:
    //
    ~StTestData();
 
-   //  Overridden to prohibit copying.
+   //  Deleted to prohibit copying.
    //
    StTestData(const StTestData& that);
-   void operator=(const StTestData& that);
+   StTestData& operator=(const StTestData& that);
 
    //  Whether the >verify command is currently enabled.
    //

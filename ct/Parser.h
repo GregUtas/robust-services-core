@@ -72,11 +72,9 @@ namespace CodeTools
 //  character and string literals (GetCxxExpr, GetCxxAlpha, GetChar, GetStr):
 //    o type tags (u8, u, U, L, R)
 //  namespaces:
-//    o anonymous and inline namespaces (GetNamespace and symbol resolution)
+//    o unnamed and inline namespaces (GetNamespace and symbol resolution)
 //    o namespace aliases (GetNamespace)
-//    o inserting a using statement in ns2 to import a symbol defined in ns1,
-//      and then referencing the symbol as ns2::symbol, as if it was actually
-//      defined in ns2
+//    o using statements in namespaces (currently seen as belonging to files)
 //  classes:
 //    o multiple inheritance (GetBaseDecl)
 //    o tagging a base class as virtual (GetBaseDecl)
@@ -85,12 +83,11 @@ namespace CodeTools
 //    o anonymous structs (GetClassDecl)
 //    o enums, typedefs, or functions in an anonymous union (allowed by parser,
 //      but CxxArea.FindEnum, FindFunc, and FindType do not look for them)
-//    o including a union instance immediately after declaring it (GetClassDecl)
+//    o including a union instance immediately after defining it (GetClassDecl)
 //    o pointer-to-member (the type "Class::*" and operators ".*" and "->*)
 //  functions:
 //    o the order of tags is inflexible: "extern inline static virtual explicit
-//      constexpr <function-definition> const noexcept override" (GetFuncDecl)
-//    o "=default" and "=delete"
+//      constexpr <function-signature> const noexcept override" (GetFuncDecl)
 //    o const&, &, and && as member function suffix tags
 //    o using a different type (an alias) for an argument in the definition of
 //      a previously declared function (DataSpec.MatchesExactly)
@@ -99,7 +96,7 @@ namespace CodeTools
 //    o constructor inheritance (GetUsing, Class.FindCtor, and others)
 //    o defining a class or function within a function (ParseInBlock and others)
 //    o range-based for loops (GetFor and many others)
-//    o multiple declarations of an extern function
+//    o multiple declarations of the same extern function
 //    o overloading the function call or comma operator (the parser allows it,
 //      but calls to the overload won't be registered because Operator.Execute
 //      doesn't look for it)
@@ -112,6 +109,7 @@ namespace CodeTools
 //    o declaring more than one data instance in the same statement, either at
 //      file scope or within a class (GetClassData and GetSpaceData)--note that
 //      this *is* supported within a function (e.g. int i = 0, *pi = nullptr)
+//    o multiple declarations of the same extern data
 //    o unnamed bit fields (GetClassData)
 //  enums:
 //    o accessing an enum or enumerator using "." or "->" instead of "::"

@@ -1343,7 +1343,7 @@ word CodeFile::CreateEditor(EditorPtr& editor, string& expl)
 
    if(editor == nullptr)
    {
-      expl = "Failed to allocate editor.";
+      expl = "Failed to create editor.";
       return -7;
    }
 
@@ -1566,7 +1566,7 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user,
       {
          for(auto i = usingFiles.cbegin(); i != usingFiles.cend(); ++i)
          {
-            auto u = (*i)->GetUsingFor(fqName, pos - 4);
+            auto u = (*i)->GetUsingFor(fqName, pos - 4, ref, user->GetScope());
 
             if((u != nullptr) && !u->IsToBeRemoved())
             {
@@ -1584,7 +1584,7 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user,
             //  the set addUsing so that they will be logged as needing to
             //  be added, because they are not yet part of the source code.
             //
-            auto u = GetUsingFor(fqName, pos - 4);
+            auto u = GetUsingFor(fqName, pos - 4, ref, user->GetScope());
 
             if(u != nullptr)
             {
@@ -1621,7 +1621,7 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user,
       parser.reset();
       qualName->SetReferent(ref, nullptr);
       auto u = UsingPtr(new Using(qualName, false, true));
-      InsertUsing(u);
+      Singleton< CxxRoot >::Instance()->GlobalNamespace()->AddUsing(u);
    }
 }
 
@@ -1636,9 +1636,9 @@ Using* CodeFile::FindUsingFor(const string& name, size_t prefix,
 
    //  It's easy if this file or SCOPE has a sufficient using statement.
    //
-   auto u = GetUsingFor(name, prefix);
+   auto u = GetUsingFor(name, prefix, item, scope);
    if(u != nullptr) return u;
-   u = scope->GetUsingFor(name, prefix);
+   u = scope->GetUsingFor(name, prefix, item, scope);
    if(u != nullptr) return u;
 
    //  Something that this file #includes (transitively) must make ITEM visible.
@@ -1663,7 +1663,7 @@ Using* CodeFile::FindUsingFor(const string& name, size_t prefix,
 
    for(auto f = search.cbegin(); f != search.cend(); ++f)
    {
-      u = files.At(*f)->GetUsingFor(name, prefix);
+      u = files.At(*f)->GetUsingFor(name, prefix, item, scope);
       if(u != nullptr) return u;
    }
 
@@ -1713,6 +1713,7 @@ word CodeFile::Fix(CliThread& cli, string& expl)
       case ForwardRemove:
       case UsingAdd:
       case UsingRemove:
+      case UsingInHeader:
       case TrailingSpace:
       case RemoveBlankLine:
          ++found;
@@ -1781,6 +1782,9 @@ word CodeFile::Fix(CliThread& cli, string& expl)
             break;
          case UsingRemove:
             rc = editor->RemoveUsing(*item, expl);
+            break;
+         case UsingInHeader:
+            rc = editor->ReplaceUsing(*item, expl);
             break;
          case TrailingSpace:
             rc = editor->EraseTrailingBlanks();
@@ -1982,13 +1986,14 @@ void CodeFile::GetUsageInfo(CxxUsageSets& symbols) const
 
 fn_name CodeFile_GetUsingFor = "CodeFile.GetUsingFor";
 
-Using* CodeFile::GetUsingFor(const string& name, size_t prefix) const
+Using* CodeFile::GetUsingFor(const string& name,
+   size_t prefix, const CxxNamed* item, const CxxScope* scope) const
 {
    Debug::ft(CodeFile_GetUsingFor);
 
    for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
    {
-      if((*u)->IsUsingFor(name, prefix)) return u->get();
+      if((*u)->IsUsingFor(name, prefix)) return *u;
    }
 
    return nullptr;
@@ -2159,10 +2164,10 @@ void CodeFile::InsertType(Typedef* type)
 
 //------------------------------------------------------------------------------
 
-void CodeFile::InsertUsing(UsingPtr& use)
+void CodeFile::InsertUsing(Using* use)
 {
-   items_.push_back(use.get());
-   usings_.push_back(std::move(use));
+   items_.push_back(use);
+   usings_.push_back(use);
 }
 
 //------------------------------------------------------------------------------
@@ -2199,11 +2204,11 @@ void CodeFile::LogAddForwards(ostream* stream, const CxxNamedSet& items) const
    //
    stringSet names;
 
-   for(auto a = items.cbegin(); a != items.cend(); ++a)
+   for(auto i = items.cbegin(); i != items.cend(); ++i)
    {
       std::ostringstream name;
 
-      auto cls = (*a)->GetClass();
+      auto cls = (*i)->GetClass();
 
       if(cls != nullptr)
       {
@@ -2213,10 +2218,10 @@ void CodeFile::LogAddForwards(ostream* stream, const CxxNamedSet& items) const
       else
       {
          Debug::SwErr(CodeFile_LogAddForwards,
-            "Non-class forward: " + (*a)->ScopedName(true), 0, InfoLog);
+            "Non-class forward: " + (*i)->ScopedName(true), 0, InfoLog);
       }
 
-      name << (*a)->ScopedName(true);
+      name << (*i)->ScopedName(true);
       names.insert(name.str());
    }
 
@@ -2242,10 +2247,10 @@ void CodeFile::LogAddIncludes(ostream* stream, const SetOfIds& fids) const
    //
    auto& files = Singleton< Library >::Instance()->Files();
 
-   for(auto a = fids.cbegin(); a != fids.cend(); ++a)
+   for(auto i = fids.cbegin(); i != fids.cend(); ++i)
    {
       string fn;
-      auto f = files.At(*a);
+      auto f = files.At(*i);
       auto x = f->IsSubsFile();
       fn.push_back(x ? '<' : QUOTE);
       fn += f->Name();
@@ -2270,18 +2275,18 @@ void CodeFile::LogAddUsings(ostream* stream, const CxxNamedSet& items) const
    //
    CxxNamedSet usings;
 
-   for(auto a = items.cbegin(); a != items.cend(); ++a)
+   for(auto i = items.cbegin(); i != items.cend(); ++i)
    {
       string name;
-      auto space = (*a)->GetSpace();
 
-      if(space->GetFile()->IsSubsFile())
+      if((*i)->GetFile()->IsSubsFile())
       {
-         name = (*a)->ScopedName(true);
-         usings.insert(*a);
+         name = (*i)->ScopedName(true);
+         usings.insert(*i);
       }
       else
       {
+         auto space = (*i)->GetSpace();
          name = NAMESPACE_STR;
          name.push_back(SPACE);
          name += *space->Name();
@@ -2350,10 +2355,10 @@ void CodeFile::LogRemoveForwards
    //  declaration cannot be found (something that shouldn't occur),
    //  just display its symbol.
    //
-   for(auto a = items.cbegin(); a != items.cend(); ++a)
+   for(auto i = items.cbegin(); i != items.cend(); ++i)
    {
       auto found = false;
-      auto name = (*a)->ScopedName(true);
+      auto name = (*i)->ScopedName(true);
 
       for(auto f = forws_.cbegin(); f != forws_.cend(); ++f)
       {
@@ -2385,10 +2390,10 @@ void CodeFile::LogRemoveIncludes
    //
    auto& files = Singleton< Library >::Instance()->Files();
 
-   for(auto a = fids.cbegin(); a != fids.cend(); ++a)
+   for(auto i = fids.cbegin(); i != fids.cend(); ++i)
    {
       string fn;
-      auto f = files.At(*a);
+      auto f = files.At(*i);
       auto x = f->IsSubsFile();
       fn.push_back(x ? '<' : QUOTE);
       fn += f->Name();
@@ -2421,7 +2426,7 @@ void CodeFile::LogRemoveUsings(ostream* stream) const
    {
       if((*u)->IsToBeRemoved() && !(*u)->WasAdded())
       {
-         delUsing.insert(u->get());
+         delUsing.insert(*u);
          LogPos((*u)->GetPos(), UsingRemove);
       }
    }
@@ -2916,13 +2921,14 @@ void CodeFile::Trim(ostream* stream)
    //
    if(IsHeader())
    {
+      CxxNamedSet qualify;
+
       for(auto u = users.cbegin(); u != users.cend(); ++u)
       {
-         if((*u)->GetFile()->IsSubsFile())
-            qualify_.insert((*u)->DirectType());
+         qualify.insert((*u)->DirectType());
       }
 
-      DisplaySymbolsAndFiles(stream, qualify_,
+      DisplaySymbolsAndFiles(stream, qualify,
          "To remove dependencies on using statements, qualify");
    }
 }

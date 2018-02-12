@@ -172,11 +172,11 @@ private:
    //
    Cxx::Access access_ : 8;
 
-   //  Set if the function required public access.
+   //  Set if the item required public access.
    //
    mutable bool public_;
 
-   //  Set if the function required protected access.
+   //  Set if the item required protected access.
    //
    mutable bool protected_;
 };

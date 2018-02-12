@@ -38,7 +38,7 @@ const string ValidIntChars("0123456789.XxUuLlEe");
 const string ValidIntDigits("0123456789");
 const string ValidHexDigits("0123456789abcdefABCDEF");
 const string ValidOctDigits("01234567");
-const string Whitespace(" \t\n\v\f\r");
+const string WhitespaceChars(" \t\n\v\f\r");
 const string SingleRule(COMMENT_STR + string(78, '-'));
 const string DoubleRule(COMMENT_STR + string(78, '='));
 

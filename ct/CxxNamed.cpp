@@ -2369,6 +2369,7 @@ fn_name TypeName_ctor1 = "TypeName.ctor";
 
 TypeName::TypeName(string& name) :
    args_(nullptr),
+   scope_(nullptr),
    ref_(nullptr),
    class_(nullptr),
    type_(nullptr),
@@ -2389,6 +2390,7 @@ fn_name TypeName_ctor2 = "TypeName.ctor(copy)";
 
 TypeName::TypeName(const TypeName& that) : CxxNamed(that),
    name_(that.name_),
+   scope_(that.scope_),
    ref_(that.ref_),
    class_(that.class_),
    type_(that.type_),

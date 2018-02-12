@@ -29,7 +29,6 @@
 #include "CxxArea.h"
 #include "CxxNamed.h"
 #include "CxxScope.h"
-#include "CxxScoped.h"
 #include "CxxString.h"
 #include "CxxSymbols.h"
 #include "CxxToken.h"
@@ -172,18 +171,6 @@ CodeFile* Context::File_ = nullptr;
 std::vector< ParseFramePtr > Context::Frames_ = std::vector< ParseFramePtr >();
 ParseFrame* Context::Frame_ = nullptr;
 bool Context::Tracing_ = false;
-
-//------------------------------------------------------------------------------
-
-fn_name Context_AddUsing = "Context.AddUsing";
-
-bool Context::AddUsing(UsingPtr& use)
-{
-   Debug::ft(Context_AddUsing);
-
-   if(use->EnterScope()) File_->InsertUsing(use);
-   return true;
-}
 
 //------------------------------------------------------------------------------
 

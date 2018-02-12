@@ -648,10 +648,6 @@ private:
    //
    static void SetFile(CodeFile* file);
 
-   //  Adds a using declaration to the file currently being parsed.
-   //
-   static bool AddUsing(UsingPtr& use);
-
    //  Logs ACT, which is associated with TOKEN, ARG, or FILE.  If ERR
    //  is not zero or EXPL is not empty, it indicates why ACT failed.
    //

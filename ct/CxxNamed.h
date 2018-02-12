@@ -582,6 +582,10 @@ public:
    virtual void SetReferent
       (CxxNamed* item, const SymbolView* view) const override;
 
+   //  Overridden to set the scope where the name appeared.
+   //
+   virtual void SetScope(CxxScope* scope) const override { scope_ = scope; }
+
    //  Overridden to shrink containers.
    //
    virtual void Shrink() override;
@@ -606,6 +610,10 @@ private:
    //  The next name in a qualified name.
    //
    TypeNamePtr next_;
+
+   //  The scope where the name appeared.
+   //
+   mutable CxxScope* scope_;
 
    //  What the name refers to.
    //

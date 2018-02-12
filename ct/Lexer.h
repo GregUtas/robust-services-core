@@ -307,6 +307,12 @@ public:
    //  set, the code following OPT is to be compiled, else it is to be skipped.
    //
    void FindCode(OptionalCode* opt, bool compile);
+
+   //  Advances curr_ to the start of the next identifier, which is supplied
+   //  in ID.  The identifier could be a keyword or preprocessor directive.
+   //  Returns true if an identifier was found, else false.
+   //
+   bool FindIdentifier(std::string& id);
 private:
    //  Used by PreprocessSource, which creates a clone of "this" lexer to
    //  do the work.
@@ -356,12 +362,6 @@ private:
    //  and adds them to NUM.
    //
    void GetFloat(long double& num);
-
-   //  Advances curr_ to the start of the next identifier, which is supplied
-   //  in ID.  The identifier could be a keyword or preprocessor directive.
-   //  Returns true if an identifier was found, else false.
-   //
-   bool FindIdentifier(std::string& id);
 
    //  Advances curr_ to the start of the next preprocessor directive, which
    //  is returned.

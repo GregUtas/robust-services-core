@@ -46,6 +46,10 @@ public:
    //
    virtual ~CxxArea();
 
+   //  Adds USE as a using declaration in the area's scope.
+   //
+   bool AddUsing(UsingPtr& use);
+
    //  Adds a class to the area.
    //
    bool AddClass(ClassPtr& cls);
@@ -147,6 +151,10 @@ protected:
    //
    CxxArea();
 
+   //  Returns the area's using declarations.
+   //
+   const UsingPtrVector* Usings() const { return &usings_; }
+
    //  The same as Datas(), but provides non-const access.
    //
    DataPtrVector* Datas() { return &data_; }
@@ -177,6 +185,10 @@ private:
    //
    static Function* FoundFunc
       (Function* func, SymbolView* view, TypeMatch match);
+
+   //  The area's using declarations.
+   //
+   UsingPtrVector usings_;
 
    //  The area's classes.
    //
@@ -250,10 +262,6 @@ public:
    //  Adds DECL as a friend of the class.
    //
    bool AddFriend(FriendPtr& decl);
-
-   //  Adds USE as a using declaration in the class's scope.
-   //
-   bool AddUsing(UsingPtr& use);
 
    //  Adds CLS as a direct subclass of the class.
    //
@@ -499,8 +507,8 @@ public:
 
    //  Overridden to look at using statements that are local to the class.
    //
-   virtual Using* GetUsingFor
-      (const std::string& name, size_t prefix) const override;
+   virtual Using* GetUsingFor(const std::string& name, size_t prefix,
+      const CxxNamed* item, const CxxScope* scope) const override;
 
    //  Overridden to look for an implemented function.
    //
@@ -549,10 +557,6 @@ protected:
    //  Displays the first line of the declaration (the name and base class).
    //
    void DisplayBase(std::ostream& stream, const Flags& options) const;
-
-   //  Returns the class's using declarations.
-   //
-   const UsingPtrVector* Usings() const { return &usings_; }
 private:
    //  Overridden to register ITEM in the order in which it was declared.
    //
@@ -655,10 +659,6 @@ private:
    //  The class's friends.
    //
    FriendPtrVector friends_;
-
-   //  The class's using declarations.
-   //
-   UsingPtrVector usings_;
 
    //  The class's preprocessor directives.
    //

@@ -2215,12 +2215,13 @@ void Using::Check() const
    if(added_) return;
    if(users_ == 0) Log(UsingUnused);
 
-   //  Do not log a using statement in a header file unless its referent is
-   //  external (e.g. is defined in the namespace std:: rather than in RSC).
+   //  A using statements should be avoided in a header unless its scope
+   //  is restricted to a class or function.
    //
-   auto ref = Referent();
-   if((ref != nullptr) && !ref->GetSpace()->GetFile()->IsSubsFile()) return;
-   if(GetFile()->IsHeader()) Log(UsingInHeader);
+   if(GetFile()->IsHeader() && (GetScope()->Type() == Cxx::Namespace))
+   {
+      Log(UsingInHeader);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -2268,6 +2269,7 @@ bool Using::EnterScope()
 {
    Debug::ft(Using_EnterScope);
 
+   if(AtFileScope()) GetFile()->InsertUsing(this);
    Context::SetPos(GetPos());
    FindReferent();
    return true;

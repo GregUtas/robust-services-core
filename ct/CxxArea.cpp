@@ -394,18 +394,6 @@ bool Class::AddSubclass(Class* cls)
 
 //------------------------------------------------------------------------------
 
-fn_name Class_AddUsing = "Class.AddUsing";
-
-bool Class::AddUsing(UsingPtr& use)
-{
-   Debug::ft(Class_AddUsing);
-
-   if(use->EnterScope()) usings_.push_back(std::move(use));
-   return true;
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Class_BlockCopied = "Class.BlockCopied";
 
 void Class::BlockCopied(const StackArg* arg)
@@ -926,7 +914,7 @@ void Class::Display(ostream& stream,
 
    stream << CRLF << prefix << '{' << CRLF;
    DisplayObjects(friends_, stream, lead, qual);
-   DisplayObjects(usings_, stream, lead, qual);
+   DisplayObjects(*Usings(), stream, lead, qual);
    DisplayObjects(*Forws(), stream, lead, qual);
    DisplayObjects(*Classes(), stream, lead, nonqual);
    DisplayObjects(*Enums(), stream, lead, nonqual);
@@ -1248,119 +1236,6 @@ Class* Class::GetClassTemplate() const
 
 //------------------------------------------------------------------------------
 
-fn_name Class_GetUsageAttrs = "Class.GetUsageAttrs";
-
-Class::UsageAttributes Class::GetUsageAttrs() const
-{
-   Debug::ft(Class_GetUsageAttrs);
-
-   UsageAttributes attrs;
-
-   if(!subs_.empty()) attrs.set(IsBase);
-   if(!tmplts_.empty()) attrs.set(HasInstantiations);
-
-   auto classes = Classes();
-   for(auto c = classes->cbegin(); c != classes->cend(); ++c)
-   {
-      if(!(*c)->IsUnused())
-      {
-         if((*c)->GetAccess() == Cxx::Public)
-            attrs.set(HasPublicInnerClass);
-         else
-            attrs.set(HasNonPublicInnerClass);
-      }
-   }
-
-   auto opers = Opers();
-   for(auto o = opers->cbegin(); o != opers->cend(); ++o)
-   {
-      if((*o)->HasInvokers())
-      {
-         if((*o)->GetAccess() == Cxx::Public)
-         {
-            if((*o)->IsStatic())
-               attrs.set(HasPublicStaticFunction);
-            else
-               attrs.set(HasPublicMemberFunction);
-         }
-         else
-         {
-            if((*o)->IsStatic())
-               attrs.set(HasNonPublicStaticFunction);
-            else
-               attrs.set(HasNonPublicMemberFunction);
-         }
-      }
-   }
-
-   auto funcs = Funcs();
-   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
-   {
-      if((*f)->HasInvokers())
-      {
-         if((*f)->FuncType() == FuncCtor)
-         {
-            attrs.set(IsConstructed);
-         }
-         else
-         {
-            if((*f)->GetAccess() == Cxx::Public)
-            {
-               if((*f)->IsStatic())
-                  attrs.set(HasPublicStaticFunction);
-               else
-                  attrs.set(HasPublicMemberFunction);
-            }
-            else
-            {
-               if((*f)->IsStatic())
-                  attrs.set(HasNonPublicStaticFunction);
-               else
-                  attrs.set(HasNonPublicMemberFunction);
-            }
-         }
-      }
-   }
-
-   auto data = Datas();
-   for(auto d = data->cbegin(); d != data->cend(); ++d)
-   {
-      if(!(*d)->IsUnused())
-      {
-         if((*d)->GetAccess() == Cxx::Public)
-         {
-            if((*d)->IsStatic())
-               attrs.set(HasPublicStaticData);
-            else
-               attrs.set(HasPublicMemberData);
-         }
-         else
-         {
-            if((*d)->IsStatic())
-               attrs.set(HasNonPublicStaticData);
-            else
-               attrs.set(HasNonPublicMemberData);
-         }
-      }
-   }
-
-   auto enums = Enums();
-   for(auto e = enums->cbegin(); e != enums->cend(); ++e)
-   {
-      if(!(*e)->IsUnused()) attrs.set(HasEnum);
-   }
-
-   auto types = Types();
-   for(auto t = types->cbegin(); t != types->cend(); ++t)
-   {
-      if(!(*t)->IsUnused()) attrs.set(HasTypedef);
-   }
-
-   return attrs;
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Class_GetConvertibleTypes = "Class.GetConvertibleTypes";
 
 void Class::GetConvertibleTypes(StackArgVector& types)
@@ -1475,6 +1350,119 @@ CxxScope* Class::GetTemplate() const
 
 //------------------------------------------------------------------------------
 
+fn_name Class_GetUsageAttrs = "Class.GetUsageAttrs";
+
+Class::UsageAttributes Class::GetUsageAttrs() const
+{
+   Debug::ft(Class_GetUsageAttrs);
+
+   UsageAttributes attrs;
+
+   if(!subs_.empty()) attrs.set(IsBase);
+   if(!tmplts_.empty()) attrs.set(HasInstantiations);
+
+   auto classes = Classes();
+   for(auto c = classes->cbegin(); c != classes->cend(); ++c)
+   {
+      if(!(*c)->IsUnused())
+      {
+         if((*c)->GetAccess() == Cxx::Public)
+            attrs.set(HasPublicInnerClass);
+         else
+            attrs.set(HasNonPublicInnerClass);
+      }
+   }
+
+   auto opers = Opers();
+   for(auto o = opers->cbegin(); o != opers->cend(); ++o)
+   {
+      if((*o)->HasInvokers())
+      {
+         if((*o)->GetAccess() == Cxx::Public)
+         {
+            if((*o)->IsStatic())
+               attrs.set(HasPublicStaticFunction);
+            else
+               attrs.set(HasPublicMemberFunction);
+         }
+         else
+         {
+            if((*o)->IsStatic())
+               attrs.set(HasNonPublicStaticFunction);
+            else
+               attrs.set(HasNonPublicMemberFunction);
+         }
+      }
+   }
+
+   auto funcs = Funcs();
+   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
+   {
+      if((*f)->HasInvokers())
+      {
+         if((*f)->FuncType() == FuncCtor)
+         {
+            attrs.set(IsConstructed);
+         }
+         else
+         {
+            if((*f)->GetAccess() == Cxx::Public)
+            {
+               if((*f)->IsStatic())
+                  attrs.set(HasPublicStaticFunction);
+               else
+                  attrs.set(HasPublicMemberFunction);
+            }
+            else
+            {
+               if((*f)->IsStatic())
+                  attrs.set(HasNonPublicStaticFunction);
+               else
+                  attrs.set(HasNonPublicMemberFunction);
+            }
+         }
+      }
+   }
+
+   auto data = Datas();
+   for(auto d = data->cbegin(); d != data->cend(); ++d)
+   {
+      if(!(*d)->IsUnused())
+      {
+         if((*d)->GetAccess() == Cxx::Public)
+         {
+            if((*d)->IsStatic())
+               attrs.set(HasPublicStaticData);
+            else
+               attrs.set(HasPublicMemberData);
+         }
+         else
+         {
+            if((*d)->IsStatic())
+               attrs.set(HasNonPublicStaticData);
+            else
+               attrs.set(HasNonPublicMemberData);
+         }
+      }
+   }
+
+   auto enums = Enums();
+   for(auto e = enums->cbegin(); e != enums->cend(); ++e)
+   {
+      if(!(*e)->IsUnused()) attrs.set(HasEnum);
+   }
+
+   auto types = Types();
+   for(auto t = types->cbegin(); t != types->cend(); ++t)
+   {
+      if(!(*t)->IsUnused()) attrs.set(HasTypedef);
+   }
+
+   return attrs;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Class_GetUsages = "Class.GetUsages";
 
 void Class::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
@@ -1530,11 +1518,14 @@ void Class::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 fn_name Class_GetUsingFor = "Class.GetUsingFor";
 
-Using* Class::GetUsingFor(const string& name, size_t prefix) const
+Using* Class::GetUsingFor(const std::string& name,
+   size_t prefix, const CxxNamed* item, const CxxScope* scope) const
 {
    Debug::ft(Class_GetUsingFor);
 
-   for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
+   auto usings = Usings();
+
+   for(auto u = usings->cbegin(); u != usings->cend(); ++u)
    {
       if((*u)->IsUsingFor(name, prefix)) return u->get();
    }
@@ -1772,11 +1763,6 @@ void Class::Shrink()
       (*f)->Shrink();
    }
 
-   for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
-   {
-      (*u)->Shrink();
-   }
-
    for(auto t = tmplts_.cbegin(); t != tmplts_.cend(); ++t)
    {
       (*t)->Shrink();
@@ -1785,7 +1771,6 @@ void Class::Shrink()
    subs_.shrink_to_fit();
 
    auto size = friends_.capacity() * sizeof(FriendPtr);
-   size += (usings_.capacity() * sizeof(UsingPtr));
    size += (tmplts_.capacity() * sizeof(ClassInstPtr));
    size += (subs_.capacity() * sizeof(Class*));
 
@@ -2197,6 +2182,18 @@ bool CxxArea::AddType(TypedefPtr& type)
 
 //------------------------------------------------------------------------------
 
+fn_name CxxArea_AddUsing = "CxxArea.AddUsing";
+
+bool CxxArea::AddUsing(UsingPtr& use)
+{
+   Debug::ft(CxxArea_AddUsing);
+
+   if(use->EnterScope()) usings_.push_back(std::move(use));
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CxxArea_Check = "CxxArea.Check";
 
 void CxxArea::Check() const
@@ -2479,6 +2476,11 @@ Function* CxxArea::MatchFunc(const Function* curr, bool base) const
 
 void CxxArea::Shrink()
 {
+   for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
+   {
+      (*u)->Shrink();
+   }
+
    for(auto c = classes_.cbegin(); c != classes_.cend(); ++c)
    {
       (*c)->Shrink();
@@ -2519,7 +2521,8 @@ void CxxArea::Shrink()
       (*d)->Shrink();
    }
 
-   auto size = classes_.capacity() * sizeof(ClassPtr);
+   auto size = usings_.capacity() * sizeof(UsingPtr);
+   size += (classes_.capacity() * sizeof(ClassPtr));
    size += (data_.capacity() * sizeof(DataPtr));
    size += (enums_.capacity() * sizeof(EnumPtr));
    size += (forws_.capacity() * sizeof(ForwardPtr));

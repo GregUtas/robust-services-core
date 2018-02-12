@@ -4169,7 +4169,7 @@ bool Parser::ParseInFile(Cxx::Keyword kwd, Namespace* space)
          if(GetTypedef(typeItem)) return space->AddType(typeItem);
          break;
       case 'U':
-         if(GetUsing(usingItem)) return Context::AddUsing(usingItem);
+         if(GetUsing(usingItem)) return space->AddUsing(usingItem);
          break;
       case '-':
          Debug::SwErr(Parser_ParseInFile, kwd, 0, InfoLog);

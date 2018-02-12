@@ -62,15 +62,16 @@ private:
       //  Stores a line of code.
       //
       SourceLine(const std::string& code, size_t line) :
-         code(code), line(line) { }
+         line(line), code(code) { }
+
+      //  The code's line number (the first line is 0, the same as CodeWarning
+      //  and Lexer.  A line added by the editor has a line number of SIZE_MAX.
+      //
+      const size_t line;
 
       //  The code.
       //
       std::string code;
-
-      //  Its line number (the first line is #1, as in a *.check.txt file).
-      //
-      const size_t line;
    };
 
    //  The code is kept in a list.
@@ -99,6 +100,7 @@ public:
    word RemoveForward(const WarningLog& log, std::string& expl);
    word AddUsing(const WarningLog& log, std::string& expl);
    word RemoveUsing(const WarningLog& log, std::string& expl);
+   word ReplaceUsing(const WarningLog& log, std::string& expl);
 
    //  Replaces multiple blank lines with a single blank line.  Always invoked
    //  on source that was changed.
@@ -136,19 +138,29 @@ private:
    //
    word PushInclude(std::string& source, std::string& expl);
 
+   //  Returns the location of LINE within LIST.  Returns the end of LIST
+   //  if LINE is not found.
+   //
+   static Iter Find(SourceList& list, size_t line);
+
+   //  Returns the location of SOURCE within LIST.  Returns the end of LIST
+   //  if SOURCE is not found.  SOURCE must match an entire line of code.
+   //
+   static Iter Find(SourceList& list, const std::string& source);
+
    //  Inserts SOURCE into LIST at ITER.  Its new location is returned.
    //
    Iter Insert(SourceList& list, Iter& iter, const std::string& source);
 
-   //  If LIST contains LINE from the original source, erases that line and
-   //  returns its location (it is now an empty string).  Returns end() if
-   //  LINE was not found.
+   //  If LIST contains LINE from the original source, deletes that line and
+   //  returns the line that followed it.  Returns the end of LIST if LINE
+   //  was not found.
    //
    Iter Erase(SourceList& list, size_t line, std::string& expl);
 
-   //  If LIST contains a line of code that matches SOURCE, erase that line
-   //  and returns its location (it is now an empty string).  Returns end() if
-   //  a match was not found.
+   //  If LIST contains a line of code that matches SOURCE, deletes that line
+   //  and returns the line that followed it.  Returns the end of LIST if LINE
+   //  was not found.
    //
    Iter Erase(SourceList& list, const std::string& source, std::string& expl);
 
@@ -178,6 +190,24 @@ private:
    //
    word EraseEmptyNamespace(const Iter& iter);
 
+   //  Adds type aliases at the start of each class for symbols in the class
+   //  definition that were resolved by using statements.
+   //
+   word InsertAliases(std::string& expl);
+
+   //  In CLS's definition, qualifies occurrences of SYMBOL with namespace NS.
+   //
+   void QualifySymbol
+      (const Class* cls, const std::string* ns, const std::string* symbol);
+
+   //  Qualifies CLS's base class if it was resolving by a using statement.
+   //
+   word QualifyBaseClass(const Class* cls, std::string& expl);
+
+   //  Returns the number of spaces that ITEM is indented.
+   //
+   size_t Indentation(const CxxNamed* item) const;
+
    //  Invoked to report TEXT, which is assigned to EXPL.  Returns RC.
    //
    static word Report(std::string& expl, fixed_string text, word rc = 0);
@@ -199,10 +229,6 @@ private:
    //
    size_t line_;
 
-   //  Set if the source code has been altered.
-   //
-   bool changed_;
-
    //  The lines of source that precede the first #include directive.
    //
    SourceList prolog_;
@@ -214,6 +240,15 @@ private:
    //  The rest of the source code.
    //
    SourceList epilog_;
+
+   //  Set if the source code has been altered.
+   //
+   bool changed_;
+
+   //  Set if type aliases for symbols that were resolved by a using
+   //  statement have been added to each class.
+   //
+   bool aliased_;
 
    //  Characters that enclose the file name in an #include directive,
    //  depending on the group to which it belongs.

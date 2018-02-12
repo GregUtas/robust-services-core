@@ -1727,7 +1727,7 @@ size_t Lexer::SkipStrLiteral(size_t pos, bool& fragmented) const
       switch(c)
       {
       case QUOTE:
-         next = source_->find_first_not_of(Whitespace, pos + 1);
+         next = source_->find_first_not_of(WhitespaceChars, pos + 1);
          if(next == string::npos) return pos;
          if(source_->at(next) != QUOTE) return pos;
          fragmented = true;

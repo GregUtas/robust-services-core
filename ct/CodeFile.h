@@ -155,7 +155,7 @@ public:
    void InsertFunc(Function* func);
    void InsertMacro(Macro* macro);
    void InsertType(Typedef* type);
-   void InsertUsing(UsingPtr& use);
+   void InsertUsing(Using* use);
 
    //  Records that ITEM was used in the file's executable code.
    //
@@ -310,10 +310,11 @@ private:
    //
    Data* FindData(const std::string& name) const;
 
-   //  Returns the file's using statement, if any, that makes NAME
-   //  visible by matching NAME at least to PREFIX.
+   //  Returns the using statement, if any, that makes ITEM visible within
+   //  SCOPE (in this file) because it matches NAME to at least PREFIX.
    //
-   Using* GetUsingFor(const std::string& name, size_t prefix) const;
+   Using* GetUsingFor(const std::string& name, size_t prefix,
+      const CxxNamed* item, const CxxScope* scope) const;
 
    //  Returns TRUE if the file has a forward declaration for ITEM.
    //
@@ -495,7 +496,7 @@ private:
    //
    IncludePtrVector incls_;
    DirectivePtrVector dirs_;
-   UsingPtrVector usings_;
+   UsingVector usings_;
    ForwardVector forws_;
    MacroVector macros_;
    ClassVector classes_;
@@ -511,11 +512,6 @@ private:
    //  The items used in the file's executable code.
    //
    CxxNamedSet usages_;
-
-   //  For a header, the names that need to be qualified in
-   //  order to remove using statements.
-   //
-   CxxNamedSet qualify_;
 
    //  Set if a /* comment is open during a lexical scan.
    //

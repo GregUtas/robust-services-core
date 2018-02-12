@@ -988,6 +988,7 @@ EventHandler::Rc PotsCwtPeAnalyzeUserMessage::ProcessEvent
             return Continue;
          }
       }
+      break;
 
    case Signal::Timeout:
       auto tmsg = static_cast< TlvMessage* >(ame.Msg());
@@ -1130,6 +1131,7 @@ EventHandler::Rc PotsCwtAcRelease::ProcessEvent
          upsm->SendSignal(PotsSignal::Release);
          upsm->SendCause(Cause::AnswerTimeout);
       }
+      //  [[fallthrough]]
    case PotsCwtFacility::Answered:
    case PotsCwtFacility::Retrieved:
    case PotsCwtFacility::Reconnected:

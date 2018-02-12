@@ -1908,6 +1908,7 @@ bool Parser::GetFuncDefn(Cxx::Keyword kwd, FunctionPtr& func)
    {
    case Cxx::INLINE:
       inln = true;
+      //  [[fallthrough]]
    case Cxx::NIL_KEYWORD:
       found = (GetCtorDefn(func) || GetDtorDefn(func) || GetProcDefn(func));
       break;

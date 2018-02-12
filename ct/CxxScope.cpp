@@ -130,6 +130,7 @@ bool Block::CrlfOver(Form form) const
          return true;
       case Unbraced:
          if(braced_) return true;
+         //  [[fallthrough]]
       default:
          return !statements_.front()->InLine();
       }
@@ -183,7 +184,7 @@ void Block::Display(ostream& stream,
             break;
          }
       }
-
+      //  [[fallthrough]]
    default:
       if(!nested_) stream << CRLF;
       stream << prefix << '{' << CRLF;
@@ -3880,7 +3881,7 @@ bool Function::IsTrivial() const
       case OpenBrace:
       case DebugFt:
          body = true;
-
+         //  [[fallthrough]]
       case Blank:
       case EmptyComment:
       case SeparatorComment:

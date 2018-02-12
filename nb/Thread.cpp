@@ -1259,7 +1259,7 @@ MsgBuffer* Thread::DeqMsg(msecs_t timeout)
       case DelayInterrupted:
          buff = msgq_.Deq();
          if(buff != nullptr) break;
-
+         //  [[fallthrough]]
       default:
          return nullptr;
       }
@@ -2774,7 +2774,7 @@ main_t Thread::Start()
                   ThreadAdmin::Incr(ThreadAdmin::Recoveries);
                   break;
                }
-
+               //  [[fallthrough]]
             case RecreateThread:
                //
                //  The thread must exit before it can be recreated.

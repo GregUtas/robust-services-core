@@ -1227,6 +1227,7 @@ void Operation::Execute() const
    {
    case 2:
       if(!Context::PopArg(arg2)) return;
+      //  [[fallthrough]]
    case 1:
       if(!Context::PopArg(arg1)) return;
    }
@@ -2418,6 +2419,7 @@ void Operation::PushResult(const StackArg& lhs, const StackArg& rhs) const
                diff = true;
                break;
             }
+            //  [[fallthrough]]
          case Cxx::ADD:
          case Cxx::ADD_ASSIGN:
          case Cxx::SUBTRACT_ASSIGN:
@@ -2448,6 +2450,7 @@ void Operation::PushResult(const StackArg& lhs, const StackArg& rhs) const
          PushType(INT_STR);
          break;
       }
+      //  [[fallthrough]]
    case Cxx::MULTIPLY:
    case Cxx::DIVIDE:
    case Cxx::MODULO:

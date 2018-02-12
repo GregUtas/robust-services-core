@@ -1091,7 +1091,7 @@ EventHandler::Rc PotsCwmSsm::Flipflop()
       //  (it is always done in case the original call has released).
       //
       UPsm()->SetOgTone(Tone::Media);
-
+      //  [[fallthrough]]
    case Notified:
    case Renotified:
       //
@@ -1538,7 +1538,7 @@ EventHandler::Rc PotsCwmSsm::ReleaseActive(Cause::Ind cause, Event*& nextEvent)
    case Notified:
    case Renotified:
       upsm->SetOgTone(Tone::Silence);
-
+      //  [[fallthrough]]
    case Notifying:
    case Renotifying:
       //
@@ -1653,7 +1653,7 @@ EventHandler::Rc PotsCwmSsm::ReleaseInactive
       //  Stop CWT tone (reconnect media) and continue...
       //
       upsm->SetOgTone(Tone::Media);
-
+      //  [[fallthrough]]
    case Notified:
    case Renotified:
       //
@@ -1762,7 +1762,7 @@ EventHandler::Rc PotsCwmSsm::Rering()
       //  media, so we must connect silence until reanswer.
       //
       StopTimer(ReconnectTimeoutId);
-
+      //  [[fallthrough]]
    case Answered:
       //
       //  The CWT subscriber just released the active call.  The remaining

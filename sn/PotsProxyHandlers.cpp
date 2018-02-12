@@ -378,6 +378,7 @@ EventHandler::Rc PotsProxyAcAnalyzeLocalMessage::ProcessEvent
       case Progress::EndOfSelection:
       case Progress::Alerting:
          if(pssm.ProxyCount() > 1) return Suspend;
+         //  [[fallthrough]]
       default:
          Debug::SwErr
             (PotsProxyAcAnalyzeLocalMessage_ProcessEvent, cpi->progress, 1);
@@ -390,7 +391,7 @@ EventHandler::Rc PotsProxyAcAnalyzeLocalMessage::ProcessEvent
 
    case CipSignal::ANM:
       if(pssm.ProxyCount() > 1) return pssm.RaiseLocalAnswer(nextEvent);
-
+      //  [[fallthrough]]
    default:
       Debug::SwErr(PotsProxyAcAnalyzeLocalMessage_ProcessEvent, sid, 0);
    }

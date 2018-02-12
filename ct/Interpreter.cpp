@@ -245,7 +245,7 @@ LibraryOpcode::LibraryOpcode(LibTokenType op, std::stack< LibrarySet* >& args) :
       }
       rhs2_ = args.top();
       args.pop();
-
+      //  [[fallthrough]]
    case 1:
       if(args.size() < 1)
       {
@@ -603,6 +603,7 @@ LibrarySet* Interpreter::Error(LibExprErr err) const
       //  If this was the error, it really meant...
       //
       err = EmptyExpression;
+      //  [fallthrough]]
    case EmptyExpression:
       loc = 1;
       break;

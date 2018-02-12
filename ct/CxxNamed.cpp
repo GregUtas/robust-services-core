@@ -917,6 +917,7 @@ void DataSpec::FindReferent()
       view = NotAccessible;
       item = syms->FindSymbol(file, scope, qname, VALUE_REFS, &view);
       if(item != nullptr) SetReferent(item, &view);
+      //  [[fallthrough]]
    case TemplateParameter:
    case TemplateClass:
       //
@@ -1051,6 +1052,7 @@ void DataSpec::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
          auto tmplt = cls->GetTemplate();
          if(tmplt != nullptr) ref = tmplt;
       }
+      //  [[fallthrough]]
    default:
       //  Although a .cpp can use a type indirectly, it is unusual.  In most
       //  cases, a pointer or reference type will be initialized, in which case

@@ -81,6 +81,7 @@ SysMutex::Rc SysMutex::Acquire(msecs_t timeout, Thread* owner)
       //  The thread holding the lock failed to release it before exiting.
       //
       ThreadAdmin::Incr(ThreadAdmin::Unreleased);
+      //  [fallthrough]
    case WAIT_OBJECT_0:
       //
       //  Success.

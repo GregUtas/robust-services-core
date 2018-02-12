@@ -1643,14 +1643,14 @@ Using* CodeFile::FindUsingFor(const string& name, size_t prefix,
 
    //  Something that this file #includes (transitively) must make ITEM visible.
    //  Search the files that affect this one.  A file in the resulting set must
-   //  have a using statment for NAME, at least up to PREFIX.
+   //  have a visible using statment for NAME, at least up to PREFIX.
    //
    auto search = this->Affecters();
 
    //  Omit files that also affect the one that defines NAME.  This removes the
    //  file that actually defines NAME, so add it back to the search.  Do not
-   //  exclude files, however, if ITEM is a forward or friend declaration, as
-   //  its actual definition could occur totally outside of the search area.
+   //  omit files, however, if ITEM is a forward or friend declaration, as its
+   //  actual definition could occur totally outside of the search area.
    //
    auto type = item->Type();
    if((type != Cxx::Forward) && (type != Cxx::Friend))

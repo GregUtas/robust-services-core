@@ -640,6 +640,7 @@ bool CxxScoped::NameRefersToItem(const std::string& name,
 
    case Restricted:
       if(file != itemFile) return false;
+      //  [[fallthrough]]
    case Unrestricted:
       break;
 

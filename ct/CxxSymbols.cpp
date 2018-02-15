@@ -460,7 +460,7 @@ CxxScoped* CxxSymbols::FindSymbol(const CodeFile* file,
    SymbolVector list1;
    ViewVector views1;
 
-   FindSymbols(file, scope, name, mask, list1, views1, area);
+   FindSymbols(file, scope, name, mask, list1, views1, area);  //*
 
    auto size = list1.size();
 
@@ -630,7 +630,7 @@ void CxxSymbols::FindSymbols(const CodeFile* file, const CxxScope* scope,
       {
          SymbolView view;
 
-         if((*i)->NameRefersToItem(name, scope, file, &view))
+         if((*i)->NameRefersToItem(name, scope, file, &view))  //*
          {
             list.push_back(*i);
             views.push_back(view);
@@ -651,7 +651,7 @@ void CxxSymbols::FindSymbols(const CodeFile* file, const CxxScope* scope,
       {
          SymbolView view;
 
-         if((*i)->NameRefersToItem(name, scope, file, &view))
+         if((*i)->NameRefersToItem(name, scope, file, &view))  //*
          {
             list.push_back(*i);
             views.push_back(view);

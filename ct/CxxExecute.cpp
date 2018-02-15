@@ -413,8 +413,12 @@ void Context::Trace(CxxTrace::Action act, const CxxToken* token)
 
 //------------------------------------------------------------------------------
 
+fn_name Context_WasCalled = "Context.WasCalled";
+
 void Context::WasCalled(Function* func)
 {
+   Debug::ft(Context_WasCalled);
+
    if(func == nullptr) return;
    func->WasCalled();
    auto arg = StackArg(func, 0);

@@ -145,7 +145,7 @@ public:
 
    //  Overridden to set the scope where the declaration appeared.
    //
-   virtual void SetScope(CxxScope* scope) const override { scope_ = scope; }
+   virtual void SetScope(CxxScope* scope) override { scope_ = scope; }
 protected:
    //  Protected because this class is virtual.
    //
@@ -166,7 +166,7 @@ protected:
 private:
    //  The scope where the item appeared.
    //
-   mutable CxxScope* scope_;
+   CxxScope* scope_;
 
    //  The access control level for the item.
    //
@@ -1213,9 +1213,9 @@ public:
    //
    virtual std::string ScopedName(bool templates) const override;
 
-   //  Overridden to set the scope where the declaration appeared.
+   //  Overridden to adjust the scope for a using statement within a class.
    //
-   virtual void SetScope(CxxScope* scope) const override;
+   virtual void SetScope(CxxScope* scope) override;
 
    //  Overridden to shrink the item's name.
    //

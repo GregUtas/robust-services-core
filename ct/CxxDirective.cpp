@@ -626,7 +626,7 @@ CodeFile* Include::FindFile() const
 
 fn_name Include_SetScope = "Include.SetScope";
 
-void Include::SetScope(CxxScope* scope) const
+void Include::SetScope(CxxScope* scope)
 {
    Debug::ft(Include_SetScope);
 
@@ -819,6 +819,13 @@ void MacroName::EnterBlock()
 
 //------------------------------------------------------------------------------
 
+CxxScope* MacroName::GetScope() const
+{
+   return Singleton< CxxRoot >::Instance()->GlobalNamespace();
+}
+
+//------------------------------------------------------------------------------
+
 fn_name MacroName_GetUsages = "MacroName.GetUsages";
 
 void MacroName::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
@@ -858,7 +865,7 @@ CxxNamed* MacroName::Referent() const
    auto file = Context::File();
    auto scope = Singleton< CxxRoot >::Instance()->GlobalNamespace();
    SymbolView view;
-   ref_ = syms->FindSymbol(file, scope, name_, MACRO_MASK, &view);
+   ref_ = syms->FindSymbol(file, scope, name_, MACRO_MASK, &view);  //*
 
    if(ref_ != nullptr)
    {

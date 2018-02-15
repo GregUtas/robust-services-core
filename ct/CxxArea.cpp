@@ -1015,7 +1015,7 @@ ClassInst* Class::EnsureInstance(const TypeName* type)
    auto name = *Name() + type->TypeString(true);
    auto area = static_cast< CxxArea* >(GetScope());
    SymbolView view;
-   auto inst = syms->FindSymbol(file, scope, name, CLASS_MASK, &view, area);
+   auto inst = syms->FindSymbol(file, scope, name, CLASS_MASK, &view, area);  //*
    if(inst != nullptr) return static_cast< ClassInst* >(inst);
 
    //  The instance doesn't exist, so create it.  If the template
@@ -1023,7 +1023,7 @@ ClassInst* Class::EnsureInstance(const TypeName* type)
    //
    SymbolVector list;
    ViewVector views;
-   syms->FindSymbols(file, scope, *Name(), CLASS_MASK, list, views, area);
+   syms->FindSymbols(file, scope, *Name(), CLASS_MASK, list, views, area);  //*
 
    Class* base = this;
 
@@ -1260,12 +1260,8 @@ void Class::GetConvertibleTypes(StackArgVector& types)
 
 //------------------------------------------------------------------------------
 
-fn_name Class_GetCurrAccess = "Class.GetCurrAccess";
-
 Cxx::Access Class::GetCurrAccess() const
 {
-   Debug::ft(Class_GetCurrAccess);
-
    //  When a class is created, currAccess_ is set to the out-of-bounds value
    //  Cxx::Access_N.  This prevents a RedundantAccessControl warning when the
    //  class's default value (e.g. "private:") is specified first.  However, it
@@ -1720,8 +1716,12 @@ Class* Class::OuterClass() const
 
 //------------------------------------------------------------------------------
 
+fn_name Class_SetCurrAccess = "Class.SetCurrAccess";
+
 bool Class::SetCurrAccess(Cxx::Access access)
 {
+   Debug::ft(Class_SetCurrAccess);
+
    if(currAccess_ == access)
    {
       auto parser = Context::GetParser();
@@ -2427,8 +2427,12 @@ Typedef* CxxArea::FindType(const string& name) const
 
 //------------------------------------------------------------------------------
 
+fn_name CxxArea_FoundFunc = "CxxArea.FoundFunc";
+
 Function* CxxArea::FoundFunc(Function* func, SymbolView* view, TypeMatch match)
 {
+   Debug::ft(CxxArea_FoundFunc);
+
    if(view != nullptr) view->match = match;
    return func;
 }

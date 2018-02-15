@@ -56,7 +56,7 @@ Argument::Argument(string& name, TypeSpecPtr& spec) :
    Debug::ft(Argument_ctor);
 
    std::swap(name_, name);
-   spec_->SetLocale(Cxx::Function);
+   spec_->SetUserType(Cxx::Function);
    CxxStats::Incr(CxxStats::ARG_DECL);
 }
 
@@ -275,7 +275,7 @@ void BaseDecl::FindReferent()
    //  Find the class to which this base class declaration refers.
    //
    SymbolView view;
-   auto item = ResolveName(GetFile(), GetScope(), CLASS_MASK, &view);
+   auto item = ResolveName(GetFile(), GetScope(), CLASS_MASK, &view);  //*
 
    if(item != nullptr)
    {
@@ -640,8 +640,6 @@ bool CxxScoped::NameRefersToItem(const std::string& name,
 
    case Restricted:
       if(file != itemFile) return false;
-      //  [[fallthrough]]
-   case Unrestricted:
       break;
 
    case Inherited:
@@ -704,7 +702,7 @@ bool CxxScoped::NameRefersToItem(const std::string& name,
          //  "a::b", the using statement must be for "a::b", "a::b::c",
          //  or "a::b::c::d".
          //
-         view->using_ = file->FindUsingFor(fqName, pos - 4, this, scope);
+         view->using_ = file->FindUsingFor(fqName, pos - 4, this, scope);  //*
          if(view->using_) return true;
       }
 
@@ -1612,7 +1610,7 @@ void Friend::FindReferent()
       //
       searched_ = true;
       SetScope(scope->GetSpace());
-      ref = ResolveName(GetFile(), scope, mask, &view);
+      ref = ResolveName(GetFile(), scope, mask, &view);  //*
       if(ref != nullptr) using_ = view.using_;
    }
 
@@ -1763,7 +1761,7 @@ bool Friend::ResolveForward(CxxScoped* decl, size_t n) const
    if(decl == this) return false;
    name_->At(n)->SetForward(decl);
    decl->SetAsReferent(this);
-   SetScope(decl->GetSpace());
+   const_cast< Friend* >(this)->SetScope(decl->GetSpace());
    return true;
 }
 
@@ -1775,7 +1773,7 @@ bool Friend::ResolveTemplate(Class* cls, const TypeName* args, bool end) const
 {
    Debug::ft(Friend_ResolveTemplate);
 
-   SetScope(cls->GetScope());
+   const_cast< Friend* >(this)->SetScope(cls->GetScope());
    return true;
 }
 
@@ -1898,8 +1896,6 @@ void Friend::SetTemplateParms(TemplateParmsPtr& parms)
 
 //------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-
 void Friend::Shrink()
 {
    if(name_ != nullptr) name_->Shrink();
@@ -2007,7 +2003,7 @@ Typedef::Typedef(string& name, TypeSpecPtr& spec) :
    Debug::ft(Typedef_ctor);
 
    std::swap(name_, name);
-   spec_->SetLocale(Cxx::Typedef);
+   spec_->SetUserType(Cxx::Typedef);
    Singleton< CxxSymbols >::Instance()->InsertType(this);
    CxxStats::Incr(CxxStats::TYPE_DECL);
 }
@@ -2130,12 +2126,8 @@ void Typedef::ExitBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name Typedef_GetTemplateArgs = "Typedef.GetTemplateArgs";
-
 TypeName* Typedef::GetTemplateArgs() const
 {
-   Debug::ft(Typedef_GetTemplateArgs);
-
    return spec_->GetTemplateArgs();
 }
 
@@ -2346,7 +2338,7 @@ CxxNamed* Using::Referent() const
    if(ref != nullptr) return ref;
 
    SymbolView view;
-   return ResolveName(GetFile(), GetScope(), USING_REFS, &view);
+   return ResolveName(GetFile(), GetScope(), USING_REFS, &view);  //*
 }
 
 //------------------------------------------------------------------------------
@@ -2369,7 +2361,7 @@ string Using::ScopedName(bool templates) const
 
 fn_name Using_SetScope = "Using.SetScope";
 
-void Using::SetScope(CxxScope* scope) const
+void Using::SetScope(CxxScope* scope)
 {
    Debug::ft(Using_SetScope);
 

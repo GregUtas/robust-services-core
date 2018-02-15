@@ -1523,7 +1523,7 @@ void CodeFile::FindDeclIds()
 fn_name CodeFile_FindOrAddUsing = "CodeFile.FindOrAddUsing";
 
 void CodeFile::FindOrAddUsing(const CxxNamed* user,
-   const CodeFileVector usingFiles, CxxNamedSet& addUsing)
+   const CodeFileVector usingFiles, CxxNamedSet& addUsing) const
 {
    Debug::ft(CodeFile_FindOrAddUsing);
 
@@ -1901,12 +1901,8 @@ void CodeFile::GetDeclaredBaseClasses(CxxNamedSet& bases) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_GetLineCounts = "CodeFile.GetLineCounts";
-
 void CodeFile::GetLineCounts() const
 {
-   Debug::ft(CodeFile_GetLineCounts);
-
    //  Don't count lines in substitute files.
    //
    if(isSubsFile_) return;
@@ -2128,10 +2124,12 @@ void CodeFile::InsertInclude(IncludePtr& incl)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_InsertInclude = "CodeFile.InsertInclude";
+fn_name CodeFile_InsertInclude = "CodeFile.InsertInclude[fn]";
 
 Include* CodeFile::InsertInclude(const string& fn)
 {
+   Debug::ft(CodeFile_InsertInclude);
+
    for(auto i = incls_.cbegin(); i != incls_.cend(); ++i)
    {
       if(*(*i)->Name() == fn)

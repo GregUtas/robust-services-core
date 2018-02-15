@@ -70,8 +70,12 @@ std::vector< WarningLog > CodeInfo::Warnings_ = std::vector< WarningLog >();
 
 //------------------------------------------------------------------------------
 
+fn_name CodeInfo_AddWarning = "CodeInfo.AddWarning";
+
 void CodeInfo::AddWarning(const WarningLog& log)
 {
+   Debug::ft(CodeInfo_AddWarning);
+
    if(FindWarning(log) < 0) Warnings_.push_back(log);
 }
 

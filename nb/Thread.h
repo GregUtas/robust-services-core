@@ -189,7 +189,7 @@ public:
    //  Starts tracing unless it is already on.  The thread must be unpreemptable
    //  and must enable the desired trace tools and select the items to be traced
    //  before invoking this function.  If IMMEDIATE is set, the trace is output
-   //  to a file as itis captured, which is useful when a crash is anticipated.
+   //  to a file as it is captured, which is useful when a crash is anticipated.
    //  If AUTOSTOP is set, tracing stops on the next context switch.
    //
    static TraceRc StartTracing(bool immediate, bool autostop);

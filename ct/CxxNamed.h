@@ -138,16 +138,20 @@ public:
    //
    virtual bool IsStatic() const { return true; }
 
-   //  Returns the scope (namespace, class, or block) where the item
-   //  was found.
+   //  Sets the scope where the item was found.  For classes derived from
+   //  CxxScoped, this is usually the scope where the item is declared.
+   //
+   virtual void SetScope(CxxScope* scope) { }
+
+   //  Returns the scope (namespace, class, or block) where the item is
+   //  declared.
    //
    virtual CxxScope* GetScope() const { return nullptr; }
 
-   //  Sets the scope where the item was found.  The scope is mutable to
-   //  support friend declarations and definitions, which sometimes need
-   //  to correct their scope within functions that are logically const.
+   //  Returns the scope where the item was found.  For classes derived
+   //  from CxxScoped, this is usually the scope where the item was found.
    //
-   virtual void SetScope(CxxScope* scope) const { }
+   virtual CxxScope* GetLocale() const { return GetScope(); }
 
    //  Sets the access control that applies to the item.
    //
@@ -488,9 +492,9 @@ public:
    //
    void Append(const std::string& name, bool space);
 
-   //  Invokes SetLocale on each template argument.
+   //  Invokes SetUserType on each template argument.
    //
-   void SetLocale(Cxx::ItemType locale) const;
+   void SetUserType(Cxx::ItemType user) const;
 
    //  Makes each template argument a template parameter.
    //
@@ -546,6 +550,10 @@ public:
    //
    virtual void FindReferent() override;
 
+   //  Overridden to return the scope where the name appeared.
+   //
+   virtual CxxScope* GetLocale() const override { return locale_; }
+
    //  Overridden to return this item if it has template arguments.
    //
    virtual TypeName* GetTemplateArgs() const override;
@@ -584,7 +592,7 @@ public:
 
    //  Overridden to set the scope where the name appeared.
    //
-   virtual void SetScope(CxxScope* scope) const override { scope_ = scope; }
+   virtual void SetScope(CxxScope* scope) override { locale_ = scope; }
 
    //  Overridden to shrink containers.
    //
@@ -613,7 +621,7 @@ private:
 
    //  The scope where the name appeared.
    //
-   mutable CxxScope* scope_;
+   CxxScope* locale_;
 
    //  What the name refers to.
    //
@@ -703,9 +711,9 @@ public:
    //
    Cxx::Operator Operator() const { return Last()->Operator(); }
 
-   //  Invokes SetLocale on each name.
+   //  Invokes SetUserType on each name.
    //
-   void SetLocale(Cxx::ItemType locale) const;
+   void SetUserType(Cxx::ItemType user) const;
 
    //  Sets the referent of the Nth name to ITEM.  VIEW provides information
    //  about how the name was resolved.  If name resolution failed, ITEM will
@@ -752,6 +760,10 @@ public:
    //  Overridden to find the referent and push it onto the argument stack.
    //
    virtual void EnterBlock() override;
+
+   //  Overridden to return the scope where the name appeared.
+   //
+   virtual CxxScope* GetLocale() const override { return Last()->GetLocale(); }
 
    //  Overridden to return the item itself.
    //
@@ -842,11 +854,11 @@ public:
 
    //  Sets the type of item to which the type belongs.
    //
-   virtual void SetLocale(Cxx::ItemType locale);
+   virtual void SetUserType(Cxx::ItemType user);
 
    //  Returns the type of item in which the type appears.
    //
-   Cxx::ItemType GetLocale() const { return locale_; }
+   Cxx::ItemType GetUserType() const { return user_; }
 
    //  Returns the type's role, if any, in a template.
    //
@@ -1029,7 +1041,7 @@ private:
 
    //  The item type to which the type belongs.  The default is Cxx::Operation.
    //
-   Cxx::ItemType locale_ : 8;
+   Cxx::ItemType user_ : 8;
 
    //  The type's role in a template.
    //
@@ -1166,10 +1178,6 @@ private:
    //
    virtual QualName* GetQualName() const override { return name_.get(); }
 
-   //  Overridden to return the referent's scope, if known.
-   //
-   virtual CxxScope* GetScope() const override;
-
    //  Overridden to return the type itself.
    //
    virtual TypeSpec* GetTypeSpec() const override;
@@ -1294,10 +1302,6 @@ private:
    //
    virtual void SetConstPtr(bool constptr) override { constptr_ = constptr; }
 
-   //  Overridden to propagate the locale to name_.
-   //
-   virtual void SetLocale(Cxx::ItemType locale) override;
-
    //  Overridden to record a pointer tag that is detached from the type name.
    //
    virtual void SetPtrDetached(bool on) override { ptrDet_ = on; }
@@ -1323,6 +1327,10 @@ private:
    //  as parameters.
    //
    virtual void SetTemplateRole(TemplateRole role) const override;
+
+   //  Overridden to propagate USER to name_.
+   //
+   virtual void SetUserType(Cxx::ItemType user) override;
 
    //  Overridden to shrink containers.
    //

@@ -130,24 +130,16 @@ OperatorInfo::OperatorInfo(const string& s, int args, LibSetType lhs,
 
 //------------------------------------------------------------------------------
 
-fn_name OperatorInfo_GetAttrs = "OperatorInfo.GetAttrs";
-
 const OperatorInfo* OperatorInfo::GetAttrs(LibTokenType type)
 {
-   Debug::ft(OperatorInfo_GetAttrs);
-
    if((type > 0) && (type < Operator_N)) return &Attrs[type];
    return nullptr;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name OperatorInfo_GetType = "OperatorInfo.GetType";
-
 bool OperatorInfo::GetType(const string& op, LibTokenType& type)
 {
-   Debug::ft(OperatorInfo_GetType);
-
    for(size_t i = 1; i < Operator_N; ++i)
    {
       if(Attrs[i].sym == op)

@@ -1024,7 +1024,7 @@ Data::Data(TypeSpecPtr& spec) :
 {
    Debug::ft(Data_ctor);
 
-   spec_->SetLocale(Cxx::Data);
+   spec_->SetUserType(Cxx::Data);
 }
 
 //------------------------------------------------------------------------------
@@ -1287,12 +1287,8 @@ void Data::GetInitName(QualNamePtr& qualName) const
 
 //------------------------------------------------------------------------------
 
-fn_name Data_GetTemplateArgs = "Data.GetTemplateArgs";
-
 TypeName* Data::GetTemplateArgs() const
 {
-   Debug::ft(Data_GetTemplateArgs);
-
    return spec_->GetTemplateArgs();
 }
 
@@ -1848,7 +1844,7 @@ Function::Function(QualNamePtr& name, TypeSpecPtr& spec, bool type) :
 {
    Debug::ft(Function_ctor2);
 
-   spec_->SetLocale(Cxx::Function);
+   spec_->SetUserType(Cxx::Function);
    if(type_) return;
 
    auto qname = name_->QualifiedName(true, false);
@@ -3199,9 +3195,13 @@ Function* Function::FirstInstanceInClass() const
 
 //------------------------------------------------------------------------------
 
+fn_name Function_FoundFunc = "Function.FoundFunc";
+
 Function* Function::FoundFunc
    (Function* func, const StackArgVector& args, TypeMatch& match)
 {
+   Debug::ft(Function_FoundFunc);
+
    //  If a function template has been instantiated, record that each of its
    //  arguments was used.  This ensures that >trim will ask for each type to
    //  be #included in the file that is using the function template.  Although
@@ -3319,12 +3319,8 @@ CxxScope* Function::GetScope() const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_GetTemplate = "Function.GetTemplate";
-
 CxxScope* Function::GetTemplate() const
 {
-   Debug::ft(Function_GetTemplate);
-
    if(tmplt_ != nullptr) return tmplt_;
    if(IsTemplate()) return static_cast< CxxScope* >
       (const_cast< Function* >(this));
@@ -3335,12 +3331,8 @@ CxxScope* Function::GetTemplate() const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_GetTemplateType = "Function.GetTemplateType";
-
 TemplateType Function::GetTemplateType() const
 {
-   Debug::ft(Function_GetTemplateType);
-
    if(IsTemplate()) return FuncTemplate;
 
    auto cls = GetClass();
@@ -4162,8 +4154,12 @@ void Function::SetDefn(Function* func)
 
 //------------------------------------------------------------------------------
 
+fn_name Function_SetDefnRange = "Function.SetDefnRange";
+
 void Function::SetDefnRange(size_t begin, size_t end)
 {
+   Debug::ft(Function_SetDefnRange);
+
    begin_ = begin;
    end_ = end;
 }

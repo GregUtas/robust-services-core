@@ -112,7 +112,7 @@ public:
 
    //  Overridden to log an #include that is not at file scope.
    //
-   virtual void SetScope(CxxScope* scope) const override;
+   virtual void SetScope(CxxScope* scope) override;
 
    //  Overridden to report the filename's length.
    //
@@ -170,6 +170,10 @@ public:
    //  Overridden to find the referent and push it onto the argument stack.
    //
    virtual void EnterBlock() override;
+
+   //  Overridden to return the global namespace.
+   //
+   virtual CxxScope* GetScope() const override;
 
    //  Overridden to update SYMBOLS with the name's type usage.
    //

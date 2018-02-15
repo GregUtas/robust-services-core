@@ -1108,7 +1108,7 @@ bool Parser::GetCtorInit(FunctionPtr& func)
             auto name = baseName->QualifiedName(true, true);
             auto file = Context::File();
             SymbolView view;
-            call = base->NameRefersToItem(name, func.get(), file, &view);
+            call = base->NameRefersToItem(name, func.get(), file, &view);  //*
          }
       }
 
@@ -4205,7 +4205,7 @@ bool Parser::ParseTypeSpec(const string& code, TypeSpecPtr& spec)
 
    Enter(IsTypeSpec, "internal TypeSpec", nullptr, code, false);
    auto parsed = GetTypeSpec(spec);
-   spec->SetLocale(Cxx::TypeSpec);
+   spec->SetUserType(Cxx::TypeSpec);
    return parsed;
 }
 
@@ -4230,13 +4230,13 @@ CxxNamed* Parser::ResolveInstanceArgument(const QualName* name) const
 
    if(!ParsingTemplateInstance()) return nullptr;
 
-   auto fqName = name->ScopedName(true);
+   auto qname = name->QualifiedName(true, true);
    auto args = inst_->Args();
 
    for(auto a = args->cbegin(); a != args->cend(); ++a)
    {
       auto ref = (*a)->Referent();
-      if((ref != nullptr) && (ref->ScopedName(true) == fqName)) return ref;
+      if((ref != nullptr) && (ref->ScopedName(true) == qname)) return ref;
    }
 
    return nullptr;

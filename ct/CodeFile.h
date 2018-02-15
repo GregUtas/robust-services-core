@@ -395,7 +395,7 @@ private:
    //  no such statement is found, one is created and added to addUsing.
    //
    void FindOrAddUsing(const CxxNamed* user,
-      const CodeFileVector usingFiles, CxxNamedSet& addUsing);
+      const CodeFileVector usingFiles, CxxNamedSet& addUsing) const;
 
    //  Logs an IncludeAdd for each file in FIDS.
    //

@@ -2644,7 +2644,7 @@ fixed_string CountExpl = "Returns the number of items in the registry.";
 
 CountCommand::CountCommand() : CliCommand(CountStr, CountExpl) { }
 
-fn_name CountCommand_ProcessCommand = "CountCommand.ProcessCommand";
+fn_name CountCommand_ProcessCommand = "CountCommand.ProcessCommand[nt]";
 
 word CountCommand::ProcessCommand(CliThread& cli) const
 {

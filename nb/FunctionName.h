@@ -23,17 +23,39 @@
 #define FUNCTIONNAME_H_INCLUDED
 
 #include <cstddef>
+#include <set>
+#include <string>
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
 namespace NodeBase
 {
-//  Provides analogs for the std::string functions used on function
-//  names (fn_name).
+//  Provides analogs for the std::string functions used on function names
+//  (fn_name), as well a database of functions that invoke Debug::ft.
 //
 namespace FunctionName
 {
+   struct DebugName
+   {
+      const std::string fn;  // name of function as passed to Debug::ft
+      const std::string ns;  // name of function's namespace
+   };
+
+   struct DebugNameCompare
+   {
+      //  Sort functions by namespace, then by name.
+      //
+      bool operator()(const DebugName& lhs, const DebugName& rhs) const
+      {
+         if(lhs.ns < rhs.ns) return true;
+         if(lhs.ns > rhs.ns) return false;
+         if(lhs.fn < rhs.fn) return true;
+         if(lhs.fn > rhs.fn) return false;
+         return (&lhs.fn < &rhs.fn);
+      }
+   };
+
    //  Returns the first location of STR in FUNC, else string::npos.
    //
    size_t find(fn_name_arg func, const char* str);
@@ -55,6 +77,18 @@ namespace FunctionName
    extern fixed_string DtorTag;   // in a destructor
    extern fixed_string OpNewTag;  // in operator new
    extern fixed_string OpDelTag;  // in operator delete
+
+   //  For tracking the functions that invoke Debug::ft.
+   //
+   typedef std::set< DebugName, DebugNameCompare > FunctionsTable;
+
+   //  Adds FN, in namespace NS, to the functions that invoke Debug::ft.
+   //
+   void Insert(const std::string& fn, const std::string& ns);
+
+   //  Returns the functions that invoke Debug::ft.
+   //
+   const FunctionsTable& GetDatabase();
 }
 }
 #endif

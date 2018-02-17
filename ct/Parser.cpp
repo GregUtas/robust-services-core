@@ -2957,14 +2957,14 @@ bool Parser::GetTemplateParm(TemplateParmPtr& parm)
 
    auto ptrs = GetPointers();
 
-   TypeNamePtr type;
+   QualNamePtr preset;
 
    if(lexer_.NextCharIs('='))
    {
-      if(!GetTypeName(type)) return Backup(start, 191);
+      if(!GetQualName(preset)) return Backup(start, 191);
    }
 
-   parm.reset(new TemplateParm(argName, tag, ptrs, type));
+   parm.reset(new TemplateParm(argName, tag, ptrs, preset));
    return Success(Parser_GetTemplateParm, start);
 }
 
@@ -3243,7 +3243,7 @@ bool Parser::GetTypeSpec(TypeSpecPtr& spec)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetTypeSpec2 = "Parser.GetTypeSpec";
+fn_name Parser_GetTypeSpec2 = "Parser.GetTypeSpec[name]";
 
 bool Parser::GetTypeSpec(TypeSpecPtr& spec, string& name)
 {

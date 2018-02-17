@@ -1404,7 +1404,7 @@ public:
    //  for template <class T*...), which may specify an optional default.
    //
    TemplateParm(std::string& name,
-      Cxx::ClassTag tag, size_t ptrs, TypeNamePtr& preset);
+      Cxx::ClassTag tag, size_t ptrs, QualNamePtr& preset);
 
    //  Not subclassed.
    //
@@ -1412,7 +1412,7 @@ public:
 
    //  Returns the parameter's default type.
    //
-   const TypeName* Default() const { return default_.get(); }
+   const QualName* Default() const { return default_.get(); }
 
    //  Overridden to check the default type.
    //
@@ -1447,9 +1447,9 @@ private:
    //
    const size_t ptrs_;
 
-   //  The default type, if any, for the parameter.
+   //  The parameter's default value, if any.
    //
-   TypeNamePtr default_;
+   QualNamePtr default_;
 };
 
 //------------------------------------------------------------------------------

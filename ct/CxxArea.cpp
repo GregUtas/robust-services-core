@@ -45,7 +45,7 @@ using std::string;
 
 namespace CodeTools
 {
-fn_name Class_ctor = "Class.ctor";
+fn_name Class_ctor = "Class.ctor[ct]";
 
 Class::Class(QualNamePtr& name, Cxx::ClassTag tag) :
    name_(name.release()),
@@ -61,7 +61,7 @@ Class::Class(QualNamePtr& name, Cxx::ClassTag tag) :
 
 //------------------------------------------------------------------------------
 
-fn_name Class_dtor = "Class.dtor";
+fn_name Class_dtor = "Class.dtor[ct]";
 
 Class::~Class()
 {

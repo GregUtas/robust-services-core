@@ -2227,7 +2227,7 @@ string QualName::TypeString(bool arg) const
 fn_name TemplateParm_ctor1 = "TemplateParm.ctor";
 
 TemplateParm::TemplateParm
-   (string& name, Cxx::ClassTag tag, size_t ptrs, TypeNamePtr& preset) :
+   (string& name, Cxx::ClassTag tag, size_t ptrs, QualNamePtr& preset) :
    tag_(tag),
    ptrs_(ptrs)
 {

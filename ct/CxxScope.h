@@ -326,10 +326,11 @@ public:
    virtual void Promote
       (Class* cls, Cxx::Access access, bool first, bool last) { }
 
-   //  Returns true if the member defines a const string that is suitable
-   //  for identifying FUNC when invoking Debug::ft.
+   //  If the data is a string literal, updates STR to its value (minus the
+   //  quotes) and returns true.  Returns false if the data is not a string
+   //  literal.
    //
-   bool CheckFunctionString(const Function* func) const;
+   bool GetStrValue(std::string& str) const;
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -1087,6 +1088,11 @@ public:
    //  Returns true if the function is exempt from invoking Debug::ft.
    //
    bool IsExemptFromTracing() const;
+
+   //  Returns true if STR is a suitable string for identifying the function
+   //  when invoking Debug::ft.
+   //
+   bool CheckDebugName(const std::string& str) const;
 
    //  Displays the function's declaration.
    //

@@ -1080,77 +1080,6 @@ void Data::CheckConstness(bool could) const
 
 //------------------------------------------------------------------------------
 
-const string LeftPunctuation("([<{");
-
-fn_name Data_CheckFunctionString = "Data.CheckFunctionString";
-
-bool Data::CheckFunctionString(const Function* func) const
-{
-   Debug::ft(Data_CheckFunctionString);
-
-   //  In order to find a string literal that identifies FUNC, this member
-   //  must have an initialization statement, and the line where it appears
-   //  should have been classified as one that defines a function name.
-   //
-   if(rhs_ == nullptr) return false;
-
-   //  Extract the string literal by displaying the member's initialization
-   //  statement.  Look for the "." between <scope> and <name>.
-   //
-   std::ostringstream stream;
-   rhs_->Print(stream, Flags());
-
-   auto str = stream.str();
-   auto quote = str.find(QUOTE);
-   if(quote == string::npos) return false;
-   str.erase(0, quote + 1);
-   quote = str.find(QUOTE);
-   str.erase(quote);
-
-   //  Check that the string literal is of the form
-   //     "<scope>.<name>"
-   //  where <scope> is the name of FUNC's scope and <name> is its name.
-   //  However
-   //  o If FUNC is defined in the global namespace, its name will have
-   //    no <scope> prefix.
-   //  o If FUNC is overloaded, "left punctuation" can follow <name> in
-   //    order to give a unique name to each of the function's overloads.
-   //
-   string name;
-
-   switch(func->FuncType())
-   {
-   case FuncCtor:
-      name = "ctor";
-      break;
-   case FuncDtor:
-      name = "dtor";
-      break;
-   default:
-      name = *func->Name();
-   }
-
-   auto scope = func->GetScope()->Name();
-
-   if(scope->empty())
-   {
-      if(str.find(name) != 0) return false;
-      auto size = name.size();
-      if(str.size() == size) return true;
-      return (LeftPunctuation.find(str[size]) != string::npos);
-   }
-
-   auto dot = str.find('.');
-   if(dot == string::npos) return false;
-   if(str.find(*scope) != 0) return false;
-   if(str.find(name, dot) != dot + 1) return false;
-   auto size = scope->size() + 1 + name.size();
-   if(str.size() == size) return true;
-   return (LeftPunctuation.find(str[size]) != string::npos);
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Data_CheckUsage = "Data.CheckUsage";
 
 void Data::CheckUsage() const
@@ -1290,6 +1219,33 @@ void Data::GetInitName(QualNamePtr& qualName) const
 TypeName* Data::GetTemplateArgs() const
 {
    return spec_->GetTemplateArgs();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Data_GetStrValue = "Data.GetStrValue";
+
+bool Data::GetStrValue(string& str) const
+{
+   Debug::ft(Data_GetStrValue);
+
+   //  In order to return a string, the data must have an initialization
+   //  statement.  Display the statement and look for the quotation marks
+   //  that denote a string literal.  Strip off everything outside the
+   //  quotes to generate STR.
+   //
+   if(rhs_ == nullptr) return false;
+
+   std::ostringstream stream;
+   rhs_->Print(stream, Flags());
+   str = stream.str();
+   auto quote = str.find(QUOTE);
+   if(quote == string::npos) return false;
+   str.erase(0, quote + 1);
+   quote = str.find(QUOTE);
+   if(quote == string::npos) return false;
+   str.erase(quote);
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -2459,6 +2415,58 @@ void Function::CheckCtor() const
          last = item->initOrder;
       }
    }
+}
+
+//------------------------------------------------------------------------------
+
+const string LeftPunctuation("([<{");
+
+fn_name Function_CheckDebugName = "Function.CheckDebugName";
+
+bool Function::CheckDebugName(const string& str) const
+{
+   Debug::ft(Function_CheckDebugName);
+
+   //  Check that STR is of the form
+   //     "<scope>.<name>"
+   //  where <scope> is the name of the function's scope and <name> is its
+   //  name.  However
+   //  o If the function is defined in the global namespace, its name will
+   //    have no <scope> prefix.
+   //  o If function is overloaded, "left punctuation" can follow <name> in
+   //    order to give a unique name to each of the function's overloads.
+   //
+   string name;
+
+   switch(FuncType())
+   {
+   case FuncCtor:
+      name = "ctor";
+      break;
+   case FuncDtor:
+      name = "dtor";
+      break;
+   default:
+      name = *Name();
+   }
+
+   auto scope = GetScope()->Name();
+
+   if(scope->empty())
+   {
+      if(str.find(name) != 0) return false;
+      auto size = name.size();
+      if(str.size() == size) return true;
+      return (LeftPunctuation.find(str[size]) != string::npos);
+   }
+
+   auto dot = str.find('.');
+   if(dot == string::npos) return false;
+   if(str.find(*scope) != 0) return false;
+   if(str.find(name, dot) != dot + 1) return false;
+   auto size = scope->size() + 1 + name.size();
+   if(str.size() == size) return true;
+   return (LeftPunctuation.find(str[size]) != string::npos);
 }
 
 //------------------------------------------------------------------------------

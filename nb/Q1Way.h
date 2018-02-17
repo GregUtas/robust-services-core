@@ -257,7 +257,7 @@ public:
    //
    size_t Size() const
    {
-      Debug::ft(Q1Way_Count());
+      Debug::ft(Q1Way_Size());
       if(diff_ == NilDiff) return 0;  // queue is not initialized
       Q1Link* item = tail_.next;      // start at the last item
       if(item == nullptr) return 0;   // check for an empty queue
@@ -393,7 +393,7 @@ private:
    inline static fn_name Q1Way_Deq()    { return "Q1Way.Deq"; }
    inline static fn_name Q1Way_Exq()    { return "Q1Way.Exq"; }
    inline static fn_name Q1Way_Next()   { return "Q1Way.Next"; }
-   inline static fn_name Q1Way_Count()  { return "Q1Way.Count"; }
+   inline static fn_name Q1Way_Size()   { return "Q1Way.Size"; }
    inline static fn_name Q1Way_Purge()  { return "Q1Way.Purge"; }
    inline static fn_name Q1Way_Item()   { return "Q1Way.Item"; }
 

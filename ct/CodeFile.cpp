@@ -648,7 +648,9 @@ void CodeFile::CheckDebugFt() const
    if(IsHeader() && !IsTemplateHeader()) return;
 
    size_t begin, end;
-   string s;
+   string statement;
+   string dname;
+   string fname;
 
    //  For each function in this file, find the lines on which it begins
    //  and ends.  Within those lines, look for invocations of Debug::ft.
@@ -678,17 +680,23 @@ void CodeFile::CheckDebugFt() const
             if(code) LogLine(n, DebugFtNotFirst);
             code = true;
 
-            if(lexer_.GetNthLine(n, s))
+            if(lexer_.GetNthLine(n, statement))
             {
-               auto prev = s.find('(');
+               auto prev = statement.find('(');
                if(prev == string::npos) break;
-               auto next = s.find(')', prev);
+               auto next = statement.find(')', prev);
                if(next == string::npos) break;
-               auto name = s.substr(prev + 1, next - prev - 1);
-               auto data = FindData(name);
+               dname = statement.substr(prev + 1, next - prev - 1);
+               auto data = FindData(dname);
                if(data == nullptr) break;
-               if(data->CheckFunctionString(*f)) break;
-               LogLine(n, DebugFtNameMismatch);
+               auto ok = data->GetStrValue(fname);
+               if(ok)
+               {
+                  ok = (*f)->CheckDebugName(fname);
+                  FunctionName::Insert(fname, *(*f)->GetSpace()->Name());
+               }
+
+               if(!ok) LogLine(n, DebugFtNameMismatch);
             }
             break;
 

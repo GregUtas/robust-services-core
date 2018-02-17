@@ -24,6 +24,7 @@
 
 #include "Temporary.h"
 #include <cstddef>
+#include <string>
 #include "Clock.h"
 #include "Q2Link.h"
 #include "SysTypes.h"
@@ -64,6 +65,15 @@ public:
    //
    void IncrCalls(usecs_t net);
 
+   //  Records the function's namespace.
+   //
+   void SetNamespace(const std::string& ns);
+
+   //  Returns -1, 0, or 1 if THAT is less than, equal to, or greater
+   //  than "this" when sorted by namespace and function name.
+   //
+   int Compare(const FunctionStats& that) const;
+
    //  Overridden to display the function's statistics.
    //
    virtual void Display(std::ostream& stream,
@@ -80,6 +90,10 @@ private:
    //  The function's name.
    //
    fn_name func_;
+
+   //  The function's namespace.
+   //
+   std::string ns_;
 
    //  The number of times that the function was invoked.
    //

@@ -50,11 +50,11 @@ public:
    //  The implementation is platform specific because C++ does not
    //  provide a way to iterate over the files in a directory.
    //
-   word Extract(std::string& expl);
+   NodeBase::word Extract(std::string& expl);
 
    //  Returns the directory's identifier.
    //
-   id_t Did() const { return did_.GetId(); }
+   NodeBase::id_t Did() const { return did_.GetId(); }
 
    //  Returns the directory's path.
    //
@@ -79,7 +79,7 @@ public:
    //  Overridden to display member variables.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 private:
    //  Returns true if NAME is a code file.
    //
@@ -87,7 +87,7 @@ private:
 
    //  The directory's identifier in the code base.
    //
-   const RegCell did_;
+   const NodeBase::RegCell did_;
 
    //  The directory's path.
    //

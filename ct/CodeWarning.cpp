@@ -36,6 +36,7 @@
 #include "Registry.h"
 #include "Singleton.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::setw;
 using std::string;
@@ -202,12 +203,13 @@ void CodeInfo::GenerateReport(ostream* stream, const SetOfIds& set)
          if(item->offset != 0) *stream << '/' << item->offset;
          *stream << "): ";
 
-         if((item->line != 0) || item->info.empty())
+         if(item->DisplayCode())
          {
             *stream << item->file->GetLexer().GetNthLine(item->line);
          }
 
-         *stream << item->info << CRLF;
+         if(item->DisplayInfo()) *stream << item->info;
+         *stream << CRLF;
          ++item;
       }
       while((item != last) && (item->warning == w));

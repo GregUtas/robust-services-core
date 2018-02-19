@@ -35,6 +35,7 @@
 #include "Debug.h"
 #include "Singleton.h"
 
+using namespace NodeBase;
 using std::string;
 
 //------------------------------------------------------------------------------

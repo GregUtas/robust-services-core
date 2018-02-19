@@ -21,6 +21,8 @@
 //
 #include "LibraryTypes.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
 namespace CodeTools

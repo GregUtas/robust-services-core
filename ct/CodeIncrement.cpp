@@ -48,6 +48,7 @@
 #include "SysFile.h"
 #include "SysTypes.h"
 
+using namespace NodeBase;
 using std::setw;
 using std::string;
 

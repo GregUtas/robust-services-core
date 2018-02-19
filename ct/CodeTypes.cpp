@@ -21,6 +21,7 @@
 //
 #include "CodeTypes.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 
@@ -201,6 +202,7 @@ fixed_string WarningStrings[Warning_N + 1] =
    "#include duplicated",
    "Add #include directive",
    "Remove #include directive",
+   "Header relies on using statement via #include",
    "Using statement in header",
    "Using statement duplicated",
    "Add using statement",

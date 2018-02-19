@@ -42,6 +42,7 @@
 #include "TraceBuffer.h"
 #include "TraceDump.h"
 
+using namespace NodeBase;
 using std::setw;
 using std::string;
 
@@ -299,6 +300,16 @@ void Context::SetFile(CodeFile* file)
    //
    Reset();
    File_ = file;
+}
+
+//------------------------------------------------------------------------------
+
+void Context::SetPos(size_t pos)
+{
+   //  This can be invoked when the Editor adds code, in which case
+   //  there will be no parse frame.
+   //
+   if(Frame_ != nullptr) Frame_->SetPos(pos);
 }
 
 //------------------------------------------------------------------------------

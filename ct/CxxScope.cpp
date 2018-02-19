@@ -37,6 +37,7 @@
 #include "Parser.h"
 #include "Singleton.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 
@@ -1216,13 +1217,6 @@ void Data::GetInitName(QualNamePtr& qualName) const
 
 //------------------------------------------------------------------------------
 
-TypeName* Data::GetTemplateArgs() const
-{
-   return spec_->GetTemplateArgs();
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Data_GetStrValue = "Data.GetStrValue";
 
 bool Data::GetStrValue(string& str) const
@@ -1246,6 +1240,13 @@ bool Data::GetStrValue(string& str) const
    if(quote == string::npos) return false;
    str.erase(quote);
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+TypeName* Data::GetTemplateArgs() const
+{
+   return spec_->GetTemplateArgs();
 }
 
 //------------------------------------------------------------------------------
@@ -1750,8 +1751,6 @@ Function::Function(QualNamePtr& name) :
    defaulted_(false),
    mate_(nullptr),
    pos_(string::npos),
-   begin_(string::npos),
-   end_(string::npos),
    base_(nullptr),
    tmplt_(nullptr)
 {
@@ -1793,8 +1792,6 @@ Function::Function(QualNamePtr& name, TypeSpecPtr& spec, bool type) :
    mate_(nullptr),
    spec_(spec.release()),
    pos_(string::npos),
-   begin_(string::npos),
-   end_(string::npos),
    base_(nullptr),
    tmplt_(nullptr)
 {
@@ -3307,10 +3304,18 @@ CodeFile* Function::GetDefnFile() const
 
 //------------------------------------------------------------------------------
 
-void Function::GetDefnRange(size_t& begin, size_t& end) const
+size_t Function::GetRange(size_t& begin, size_t& end) const
 {
-   begin = begin_;
-   end = end_;
+   //  If the function has an implementation, return the offset of the
+   //  left brace at the beginning of the function body, and set END to
+   //  the location of the matching right brace.
+   //
+   auto left = CxxScoped::GetRange(begin, end);
+   if(impl_ == nullptr) return string::npos;
+   auto lexer = GetFile()->GetLexer();
+   left = impl_->GetPos();
+   end = lexer.FindClosing('{', '}', left);
+   return left;
 }
 
 //------------------------------------------------------------------------------
@@ -3869,10 +3874,13 @@ bool Function::IsTrivial() const
    auto file = GetImplFile();
    if(file == nullptr) return true;
 
-   auto last = file->GetLexer().GetLineNum(end_);
+   size_t begin, end;
+   GetRange(begin, end);
+
+   auto last = file->GetLexer().GetLineNum(end);
    auto body = false;
 
-   for(auto n = file->GetLexer().GetLineNum(begin_); n < last; ++n)
+   for(auto n = file->GetLexer().GetLineNum(begin); n < last; ++n)
    {
       auto type = file->GetLineType(n);
 
@@ -4158,18 +4166,6 @@ void Function::SetDefn(Function* func)
    func->mate_ = this;
    func->defn_ = true;
    this->mate_ = func;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Function_SetDefnRange = "Function.SetDefnRange";
-
-void Function::SetDefnRange(size_t begin, size_t end)
-{
-   Debug::ft(Function_SetDefnRange);
-
-   begin_ = begin;
-   end_ = end;
 }
 
 //------------------------------------------------------------------------------

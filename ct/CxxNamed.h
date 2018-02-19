@@ -105,6 +105,10 @@ public:
    //
    virtual ~CxxNamed();
 
+   //  Sets the file and offset at which this item was found.
+   //
+   virtual void SetPos(CodeFile* file, size_t pos) { loc_.SetLoc(file, pos); }
+
    //  Returns the file in which this item was found.
    //
    CodeFile* GetFile() const { return loc_.file; }
@@ -113,9 +117,11 @@ public:
    //
    size_t GetPos() const { return loc_.GetPos(); }
 
-   //  Sets the file and offset at which this item was found.
+   //  Sets BEGIN and END to where the item begins and ends, and returns
+   //  the location of its opening left brace (if applicable).  The default
+   //  sets BEGIN and END to string::npos and also returns string::npos.
    //
-   virtual void SetPos(CodeFile* file, size_t pos) { loc_.SetLoc(file, pos); }
+   virtual size_t GetRange(size_t& begin, size_t& end) const;
 
    //  Indicates that the item appeared in internally generated code.
    //
@@ -217,7 +223,7 @@ public:
 
    //  Returns the identifier of the file in which the item was declared.
    //
-   virtual id_t GetDeclFid() const;
+   virtual NodeBase::id_t GetDeclFid() const;
 
    //  Returns the file that *defined* the item.  Returns nullptr if the
    //  item has no definition or if it was defined where it was declared.
@@ -341,7 +347,7 @@ protected:
    //  the same as the arguments for CxxSymbols::FindSymbol.
    //
    CxxNamed* ResolveName(const CodeFile* file, const CxxScope* scope,
-      const Flags& mask, SymbolView* view) const;
+      const NodeBase::Flags& mask, SymbolView* view) const;
 
    //  Resolves the item's qualified name within a function.
    //
@@ -417,7 +423,7 @@ public:
    //  Overridden to display the initialization statement.
    //
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to shrink containers.
    //
@@ -570,7 +576,7 @@ public:
    //  Overridden to display the name.
    //
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to return the name and, optionally, its template arguments.
    //
@@ -786,7 +792,7 @@ public:
    //  Overridden to display the name, including any template arguments.
    //
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to return the qualified name.
    //
@@ -1233,7 +1239,7 @@ private:
    //  Overridden to display the type.
    //
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to return the number of pointers associated with this type.
    //  Each array specification is counted as a pointer if ARRAYS is set.
@@ -1425,7 +1431,7 @@ public:
    //  Overridden to display the parameter.
    //
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to shrink the item's name.
    //
@@ -1485,7 +1491,7 @@ public:
    //  Overridden to display the template's full specification.
    //
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to shrink containers.
    //

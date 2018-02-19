@@ -26,19 +26,22 @@
 #include <istream>
 #include <iterator>
 #include <ostream>
-#include <set>
 #include <utility>
 #include <vector>
+#include "CliThread.h"
 #include "CodeFile.h"
 #include "CodeTypes.h"
 #include "CodeWarning.h"
 #include "Cxx.h"
 #include "CxxArea.h"
+#include "CxxScope.h"
+#include "CxxScoped.h"
 #include "CxxToken.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Lexer.h"
 
+using namespace NodeBase;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -352,6 +355,27 @@ Editor::Iter Editor::Find(SourceList& list, const string& source)
 
 //------------------------------------------------------------------------------
 
+fn_name Editor_FindUsingReferents = "Editor.FindUsingReferents";
+
+CxxNamedSet Editor::FindUsingReferents(const CxxNamed* item) const
+{
+   Debug::ft(Editor_FindUsingReferents);
+
+   CxxUsageSets symbols;
+   CxxNamedSet refs;
+
+   item->GetUsages(*file_, symbols);
+
+   for(auto u = symbols.users.cbegin(); u != symbols.users.cend(); ++u)
+   {
+      refs.insert((*u)->DirectType());
+   }
+
+   return refs;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Editor_GetEpilog = "Editor.GetEpilog";
 
 word Editor::GetEpilog()
@@ -433,6 +457,59 @@ word Editor::GetProlog(string& expl)
 
 //------------------------------------------------------------------------------
 
+fixed_string ResolutionChars = "qtu";
+fixed_string ResolutionHelp = "Enter q(ualify) t(ypedef) u(sing alias): ";
+
+Editor::UsingResolution Editor::GetResolution
+   (const CxxScoped* scope, const CxxNamed* ref, CliThread& cli)
+{
+   switch(ref->Type())
+   {
+   case Cxx::Namespace:
+      //
+      //  A type alias for a namespace is not allowed.  Occurrences of
+      //  the namespace's name within the class definition need to be
+      //  qualified.
+      //
+      return Qualification;
+
+   case Cxx::Class:
+      //
+      //  We are using the unqualified name as the alias.  For a class
+      //  template instance, this would result in
+      //    using Template = Namespace::Template<arguments>;
+      //  This would cause compile errors if the class references other
+      //  instantiations, so qualify occurrences of the template name.
+      //
+      if(ref->IsInTemplateInstance()) return Qualification;
+
+      //  A base class precedes the class definition, so qualify it.
+      //
+      if(scope->Type() == Cxx::Class)
+      {
+         auto cls = static_cast< Class* >(const_cast< CxxScoped* >(scope));
+         if(cls->BaseClass() == ref) return Qualification;
+      }
+   }
+
+   string prompt = "Resolution for " + *ref->Name();
+   prompt += " in " + *scope->Name() + '?';
+   auto reply = cli.CharPrompt(prompt, ResolutionChars, ResolutionHelp);
+
+   auto res = Qualification;
+
+   switch(reply)
+   {
+   case 'q': res = Qualification; break;
+   case 't': res = TypedefAlias; break;
+   case 'u': res = UsingAlias; break;
+   }
+
+   return res;
+}
+
+//------------------------------------------------------------------------------
+
 size_t Editor::Indentation(const CxxNamed* item) const
 {
    auto lexer = file_->GetLexer();
@@ -450,124 +527,6 @@ Editor::Iter Editor::Insert(SourceList& list, Iter& iter, const string& source)
 
    changed_ = true;
    return list.insert(iter, SourceLine(source, SIZE_MAX));
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_InsertAliases = "Editor.InsertAliases";
-
-word Editor::InsertAliases(string& expl)
-{
-   Debug::ft(Editor_InsertAliases);
-
-   //  This function only needs to be run once per file.
-   //
-   if(aliased_) return 0;
-
-   //  For each class in this file, see if any symbols in the class
-   //  definition were resolved by using statements.  If so, add a type
-   //  alias for each one so that the using statements can be removed.
-   //
-   auto lexer = file_->GetLexer();
-   auto classes = file_->Classes();
-
-   for(auto c = classes->cbegin(); c != classes->cend(); ++c)
-   {
-      CxxUsageSets symbols;
-      (*c)->GetUsages(*file_, symbols);
-      if(symbols.users.empty()) continue;
-
-      //  Qualify the base class name if it belongs to a different namespace.
-      //  Indent the type aliases one level beyond the "class" keyword.  Find
-      //  the LINE that follows the left brace at the beginning of the class
-      //  definition.  Insert new type aliases immediately after this, at the
-      //  beginning of the class definition.
-      //
-      if(QualifyBaseClass(*c, expl) != 0) return 0;
-      auto indent = Indentation(*c);
-      indent += Indent_Size;
-      lexer.Reposition((*c)->GetPos());
-      auto pos = lexer.FindFirstOf("{");
-      auto line = lexer.GetLineNum(pos);
-      auto start = Find(epilog_, line);
-      ++start;
-
-      //  If this is a base class, make the aliases protected so that derived
-      //  classes can use them.  Otherwise, leave the aliases private.
-      //
-      if(!(*c)->Subclasses()->empty())
-      {
-         auto access = spaces(indent - Indent_Size);
-         access.append(PROTECTED_STR);
-         access.push_back(':');
-         start = Insert(epilog_, start, access);
-         ++start;
-      }
-
-      //  Iterate over the symbols that the class uses and that were resolved
-      //  by using statements.  Insert a type alias for each of these symbols.
-      //
-      for(auto u = symbols.users.cbegin(); u != symbols.users.cend(); ++u)
-      {
-         auto ref = (*u)->DirectType();
-
-         switch(ref->Type())
-         {
-         case Cxx::Namespace:
-            //
-            //  A type alias for a namespace is not allowed.  Occurrences of
-            //  the namespace's name within the class definition need to be
-            //  qualified.
-            {
-               auto ns = static_cast< Namespace* >(ref);
-               QualifySymbol(*c, ns->OuterSpace()->Name(), ns->Name());
-               continue;
-            }
-         case Cxx::Class:
-            //
-            //  We are using the unqualified name as the alias.  But for a
-            //  class template instance, this would result in
-            //    using Template = Template<arguments>;
-            //  This is awkward at best, so qualify occurrences of the
-            //  template name.
-            //
-            if(ref->IsInTemplateInstance())
-            {
-               auto tmplt = ref->GetTemplate();
-               QualifySymbol(*c, tmplt->GetSpace()->Name(), tmplt->Name());
-               continue;
-            }
-         }
-
-         auto alias = spaces(indent);
-         alias.append(USING_STR);
-         alias.push_back(SPACE);
-         alias.append(*ref->Name());
-         alias.append(" = ");
-         alias.append(ref->ScopedName(false));
-         alias.push_back(';');
-
-         //  Insert the type alias in alphabetical order, but don't duplicate
-         //  an existing alias.
-         //
-         for(auto i = start; i != epilog_.end(); ++i)
-         {
-            if(i->code.find(alias) != string::npos) break;
-
-            if((i->code.find(USING_STR) == string::npos) ||
-               (strCompare(i->code, alias) > 0))
-            {
-               auto first = (start == i);
-               i = Insert(epilog_, i, alias);
-               if(first) start = i;
-               break;
-            }
-         }
-      }
-   }
-
-   aliased_ = true;
-   return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -730,63 +689,36 @@ word Editor::PushInclude(string& source, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_QualifyBaseClass = "Editor.QualifyBaseClass";
+fn_name Editor_QualifyReferent = "Editor.QualifyReferent";
 
-word Editor::QualifyBaseClass(const Class* cls, string& expl)
+void Editor::QualifyReferent(const CxxNamed* item, const CxxNamed* ref)
 {
-   Debug::ft(Editor_QualifyBaseClass);
+   Debug::ft(Editor_QualifyReferent);
 
-   auto base = cls->BaseClass();
-   if(base == nullptr) return 0;
-   if(base->GetSpace() == cls->GetSpace()) return 0;
+   //  Within ITEM, prefix NS wherever SYMBOL appears as an identifier.
+   //
+   auto ns = ref->GetSpace();
+   auto symbol = ref->Name();
 
-   auto lexer = file_->GetLexer();
-   lexer.Reposition(cls->GetPos());
-   auto pos = lexer.FindFirstOf(":");
-   if(pos == string::npos)
-      return Report(expl, "Failed to find base class colon", -1);
-   lexer.Reposition(pos + 1);
-   Cxx::Access acc;
-   if(!lexer.GetAccess(acc))
-      return Report(expl, "Failed to find base class access", -1);
-   string name(" ");
-   name.append(lexer.NextIdentifier());
-
-   while(lexer.NextStringIs(SCOPE_STR))
+   switch(ref->Type())
    {
-      name.append(SCOPE_STR);
-      name.append(lexer.NextIdentifier());
+   case Cxx::Namespace:
+      ns = static_cast< Namespace* >
+         (const_cast< CxxNamed* >(ref))->OuterSpace();
+      break;
+   case Cxx::Class:
+      if(ref->IsInTemplateInstance())
+      {
+         auto tmplt = ref->GetTemplate();
+         ns = tmplt->GetSpace();
+         symbol = tmplt->Name();
+      }
    }
 
-   auto line = lexer.GetLineNum(pos);
-   auto targ = Find(epilog_, line);
-   pos = targ->code.find(name);
-   if(pos == string::npos)
-      return Report(expl, "Failed to find base class name", -1);
-   targ->code.erase(pos, name.size());
-   targ->code.insert(pos, 1, SPACE);
-   targ->code.insert(pos + 1, base->ScopedName(false));
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_QualifySymbol = "Editor.QualifySymbol";
-
-void Editor::QualifySymbol
-   (const Class* cls, const std::string* ns, const std::string* symbol)
-{
-   Debug::ft(Editor_QualifySymbol);
-
-   //  Find the right brace at the end of CLS's definition.  Within the
-   //  definition, prefix NS wherever SYMBOL appears as an identifier.
-   //
+   size_t pos, end;
    auto lexer = file_->GetLexer();
-   lexer.Reposition(cls->GetPos());
-   auto pos = lexer.FindFirstOf("{");
-   auto end = lexer.FindClosing('{', '}', pos);
-   lexer.Reposition(pos + 1);
-
+   item->GetRange(pos, end);
+   lexer.Reposition(pos);
    string name;
 
    while((lexer.Curr() < end) && lexer.FindIdentifier(name))
@@ -812,9 +744,10 @@ void Editor::QualifySymbol
             (ValidNextChars.find(code[pos - 1]) == string::npos) &&
             (ValidNextChars.find(code[pos + name.size()]) == string::npos))
          {
-            auto qual = *ns;
+            auto qual = ns->ScopedName(false);
             qual.append(SCOPE_STR);
             code.insert(pos, qual);
+            changed_ = true;
             pos += qual.size();
          }
 
@@ -825,6 +758,22 @@ void Editor::QualifySymbol
       //
       pos = lexer.FindLineEnd(lexer.Curr());
       lexer.Reposition(pos);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_QualifyUsings = "Editor.QualifyUsings";
+
+void Editor::QualifyUsings(const CxxNamed* item)
+{
+   Debug::ft(Editor_QualifyUsings);
+
+   auto refs = FindUsingReferents(item);
+
+   for(auto r = refs.cbegin(); r != refs.cend(); ++r)
+   {
+      QualifyReferent(item, *r);
    }
 }
 
@@ -894,7 +843,7 @@ word Editor::RemoveUsing(const WarningLog& log, string& expl)
 
 fn_name Editor_ReplaceUsing = "Editor.ReplaceUsing";
 
-word Editor::ReplaceUsing(const WarningLog& log, string& expl)
+word Editor::ReplaceUsing(const WarningLog& log, string& expl, CliThread& cli)
 {
    Debug::ft(Editor_ReplaceUsing);
 
@@ -902,8 +851,7 @@ word Editor::ReplaceUsing(const WarningLog& log, string& expl)
    //  for symbols that appear in its definition and that were resolved by
    //  a using statement.
    //
-   auto rc = InsertAliases(expl);
-   if(rc != 0) return 0;
+   ResolveUsings(log, expl, cli);
    return RemoveUsing(log, expl);
 }
 
@@ -917,6 +865,142 @@ word Editor::Report(string& expl, fixed_string text, word rc)
 
    expl = text;
    return rc;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_ResolveUsings = "Editor.ResolveUsings";
+
+word Editor::ResolveUsings
+   (const WarningLog& log, std::string& expl, CliThread& cli)
+{
+   Debug::ft(Editor_ResolveUsings);
+
+   //  This function only needs to be run once per file.
+   //
+   if(aliased_) return 0;
+
+   //  Classes, data, functions, and typedefs can contain names resolved by
+   //  using statements.  Modify each of these so that using statements can
+   //  be removed.
+   //
+   auto lexer = file_->GetLexer();
+   auto classes = file_->Classes();
+
+   for(auto c = classes->cbegin(); c != classes->cend(); ++c)
+   {
+      auto refs = FindUsingReferents(*c);
+      if(refs.empty()) continue;
+
+      //  Indent any type aliases one level beyond the "class" keyword.  Find
+      //  the LINE that follows the left brace at the beginning of the class
+      //  definition.  Insert new type aliases immediately after this, at the
+      //  beginning of the class definition.
+      //
+      auto indent = Indentation(*c);
+      indent += Indent_Size;
+      lexer.Reposition((*c)->GetPos());
+      auto pos = lexer.FindFirstOf("{");
+      auto line = lexer.GetLineNum(pos);
+      auto start = Find(epilog_, line);
+      ++start;
+
+      string access;
+
+      //  If this is a base class, make the aliases protected so that derived
+      //  classes can use them.  Otherwise, leave the aliases private.
+      //
+      if(!(*c)->Subclasses()->empty())
+      {
+         access = spaces(indent - Indent_Size);
+         access.append(PROTECTED_STR);
+         access.push_back(':');
+      }
+
+      //  Iterate over the symbols that the class uses and that were resolved
+      //  by using statements.  Insert a type alias for each of these symbols.
+      //
+      for(auto r = refs.cbegin(); r != refs.cend(); ++r)
+      {
+         auto res = GetResolution(*c, *r, cli);
+         const char* key = nullptr;
+         auto alias = spaces(indent);
+
+         switch(res)
+         {
+         case TypedefAlias:
+            key = TYPEDEF_STR;
+            alias.append(TYPEDEF_STR);
+            alias.push_back(SPACE);
+            alias.append((*r)->ScopedName(false));
+            alias.push_back(SPACE);
+            alias.append(*(*r)->Name());
+            break;
+         case UsingAlias:
+            key = USING_STR;
+            alias.append(USING_STR);
+            alias.push_back(SPACE);
+            alias.append(*(*r)->Name());
+            alias.append(" = ");
+            alias.append((*r)->ScopedName(false));
+            break;
+         default:
+            QualifyReferent(*c, *r);
+            continue;
+         }
+
+         alias.push_back(';');
+
+         //  If protected access control has not been inserted, do it now.
+         //
+         if(!access.empty())
+         {
+            start = Insert(epilog_, start, access);
+            ++start;
+            access.clear();
+         }
+
+         //  Insert the type alias in alphabetical order, but don't duplicate
+         //  an existing alias.
+         //
+         for(auto i = start; i != epilog_.end(); ++i)
+         {
+            if(i->code.find(alias) != string::npos) break;
+
+            if((i->code.find(key) == string::npos) ||
+               (strCompare(i->code, alias) > 0))
+            {
+               auto first = (start == i);
+               i = Insert(epilog_, i, alias);
+               if(first) start = i;
+               break;
+            }
+         }
+      }
+   }
+
+   //  Qualify names in non-class items at file scope.
+   //
+   auto data = file_->Datas();
+   for(auto d = data->cbegin(); d != data->cend(); ++d)
+   {
+      QualifyUsings(*d);
+   }
+
+   auto funcs = file_->Funcs();
+   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
+   {
+      QualifyUsings(*f);
+   }
+
+   auto types = file_->Types();
+   for(auto t = types->cbegin(); t != types->cend(); ++t)
+   {
+      QualifyUsings(*t);
+   }
+
+   aliased_ = true;
+   return 0;
 }
 
 //------------------------------------------------------------------------------

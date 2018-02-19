@@ -54,6 +54,7 @@
 #include "SetOperations.h"
 #include "Singleton.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 
@@ -662,7 +663,7 @@ void CodeFile::CheckDebugFt() const
    for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
    {
       if((*f)->IsInTemplateInstance()) continue;
-      (*f)->GetDefnRange(begin, end);
+      (*f)->GetRange(begin, end);
       if(begin >= end) continue;
       auto last = lexer_.GetLineNum(end);
       auto open = false, debug = false, code = false;
@@ -1530,16 +1531,13 @@ void CodeFile::FindDeclIds()
 
 fn_name CodeFile_FindOrAddUsing = "CodeFile.FindOrAddUsing";
 
-void CodeFile::FindOrAddUsing(const CxxNamed* user,
-   const CodeFileVector usingFiles, CxxNamedSet& addUsing) const
+void CodeFile::FindOrAddUsing(const CxxNamed* user, CxxNamedSet& addUsing) const
 {
    Debug::ft(CodeFile_FindOrAddUsing);
 
-   //  See if a file in usingFiles has a using statement that would make USER
-   //  visible.  If so, this file does not need one.  Verify, however, that
-   //  such a using statement is not tagged for removal.  This code was adapted
-   //  from CxxScoped.NameRefersToItem, simplified to handle only the case of a
-   //  symbol that needs to be resolved by a using statement.
+   //  This code was adapted from CxxScoped.NameRefersToItem, simplified
+   //  to handle only the case where a symbol must be resolved by a using
+   //  statement.
    //
    string name;
    CxxNamed* ref;
@@ -1572,34 +1570,19 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user,
 
       if(pos != string::npos)
       {
-         for(auto i = usingFiles.cbegin(); i != usingFiles.cend(); ++i)
+         //  If this file has a suitable using statement, keep it.  Note that
+         //  this code can be run twice, by both Check() and Trim().  Using
+         //  statements added to the file (this occurs below) must therefore be
+         //  added to the set addUsing so that they will be logged as needing
+         //  to be added, because they are not yet part of the source code.
+         //
+         auto u = GetUsingFor(fqName, pos - 4, ref, user->GetScope());
+
+         if(u != nullptr)
          {
-            auto u = (*i)->GetUsingFor(fqName, pos - 4, ref, user->GetScope());
-
-            if((u != nullptr) && !u->IsToBeRemoved())
-            {
-               found = true;
-               break;
-            }
-         }
-
-         if(!found)
-         {
-            //  No file in usingFiles had a suitable using statement.  If
-            //  this file has one, keep it.  Note that this code can be run
-            //  twice, by both Check() and Trim().  Using statements added
-            //  to the file (this occurs below) must therefore be added to
-            //  the set addUsing so that they will be logged as needing to
-            //  be added, because they are not yet part of the source code.
-            //
-            auto u = GetUsingFor(fqName, pos - 4, ref, user->GetScope());
-
-            if(u != nullptr)
-            {
-               u->MarkForRetention();
-               if(u->WasAdded()) addUsing.insert(u->Referent());
-               found = true;
-            }
+            u->MarkForRetention();
+            if(u->WasAdded()) addUsing.insert(u->Referent());
+            found = true;
          }
       }
 
@@ -1721,6 +1704,7 @@ word CodeFile::Fix(CliThread& cli, string& expl)
       case ForwardRemove:
       case UsingAdd:
       case UsingRemove:
+      case HeaderReliesOnUsing:
       case UsingInHeader:
       case TrailingSpace:
       case RemoveBlankLine:
@@ -1746,10 +1730,10 @@ word CodeFile::Fix(CliThread& cli, string& expl)
       *cli.obuf << spaces(2) << "Line " << item->line + 1;
       if(item->offset != 0) *cli.obuf << '/' << item->offset;
       *cli.obuf << ": " << Warning(item->warning);
-      if(!item->info.empty()) *cli.obuf << ": " << item->info;
+      if(item->DisplayInfo()) *cli.obuf << ": " << item->info;
       *cli.obuf << CRLF;
 
-      if((item->line != 0) || item->info.empty())
+      if(item->DisplayCode())
       {
          *cli.obuf << spaces(2);
          *cli.obuf << item->file->GetLexer().GetNthLine(item->line) << CRLF;
@@ -1791,8 +1775,11 @@ word CodeFile::Fix(CliThread& cli, string& expl)
          case UsingRemove:
             rc = editor->RemoveUsing(*item, expl);
             break;
+         case HeaderReliesOnUsing:
+            rc = editor->ResolveUsings(*item, expl, cli);
+            break;
          case UsingInHeader:
-            rc = editor->ReplaceUsing(*item, expl);
+            rc = editor->ReplaceUsing(*item, expl, cli);
             break;
          case TrailingSpace:
             rc = editor->EraseTrailingBlanks();
@@ -1942,8 +1929,6 @@ void CodeFile::GetUsageInfo(CxxUsageSets& symbols) const
    //  Ask each of the code items in this file to provide information
    //  about the symbols that it uses.
    //
-   auto& files = Singleton< Library >::Instance()->Files();
-
    for(auto m = macros_.cbegin(); m != macros_.cend(); ++m)
    {
       (*m)->GetUsages(*this, symbols);
@@ -1974,6 +1959,8 @@ void CodeFile::GetUsageInfo(CxxUsageSets& symbols) const
    //
    if(IsCpp())
    {
+      auto& files = Singleton< Library >::Instance()->Files();
+
       for(auto d = declIds_.cbegin(); d != declIds_.cend(); ++d)
       {
          auto classes = files.At(*d)->Classes();
@@ -2875,30 +2862,6 @@ void CodeFile::Trim(ostream* stream)
    LogAddForwards(stream, addForws);
    LogRemoveForwards(stream, delForws);
 
-   //  Create usingFiles, the files that this file can rely on for accessing
-   //  using statements.  This set consists of transitive base class files
-   //  (tBaseIds), files that declare what this file defines (declIds_), and
-   //  transitive base classes of classes that this file defines (classIds_).
-   //
-   CodeFileVector usingFiles;
-
-   auto& files = Singleton< Library >::Instance()->Files();
-
-   for(auto b = tBaseIds.cbegin(); b != tBaseIds.cend(); ++b)
-   {
-      usingFiles.push_back(files.At(*b));
-   }
-
-   for(auto d = declIds_.cbegin(); d != declIds_.cend(); ++d)
-   {
-      usingFiles.push_back(files.At(*d));
-   }
-
-   for(auto c = classIds_.cbegin(); c != classIds_.cend(); ++c)
-   {
-      usingFiles.push_back(files.At(*c));
-   }
-
    //  Look at each name (N) that was resolved by a using statement, and
    //  determine if this file should have a using statement to resolve it.
    //  First, mark all of the using statements in this file for removal.
@@ -2914,7 +2877,7 @@ void CodeFile::Trim(ostream* stream)
 
    for(auto n = users.cbegin(); n != users.cend(); ++n)
    {
-      FindOrAddUsing(*n, usingFiles, addUsing);
+      FindOrAddUsing(*n, addUsing);
    }
 
    //  Output the using statements that should be added and removed.
@@ -2928,6 +2891,11 @@ void CodeFile::Trim(ostream* stream)
    if(IsHeader())
    {
       CxxNamedSet qualify;
+
+      if(!users.empty() && usings_.empty())
+      {
+         LogPos(0, HeaderReliesOnUsing, 0, spaces(1));
+      }
 
       for(auto u = users.cbegin(); u != users.cend(); ++u)
       {

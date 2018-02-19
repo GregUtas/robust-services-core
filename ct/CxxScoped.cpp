@@ -36,8 +36,10 @@
 #include "CxxToken.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "Lexer.h"
 #include "Singleton.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 
@@ -533,6 +535,17 @@ CodeFile* CxxScoped::GetImplFile() const
    auto file = GetDefnFile();
    if(file != nullptr) return file;
    return GetDeclFile();
+}
+
+//------------------------------------------------------------------------------
+
+size_t CxxScoped::GetRange(size_t& begin, size_t& end) const
+{
+   auto lexer = GetFile()->GetLexer();
+   begin = GetPos();
+   lexer.Reposition(begin);
+   end = lexer.FindFirstOf(";");
+   return string::npos;
 }
 
 //------------------------------------------------------------------------------
@@ -2208,10 +2221,10 @@ void Using::Check() const
    if(added_) return;
    if(users_ == 0) Log(UsingUnused);
 
-   //  A using statements should be avoided in a header unless its scope
-   //  is restricted to a class or function.
+   //  A using statement should be avoided in a header except to import
+   //  items from a base class.
    //
-   if(GetFile()->IsHeader() && (GetScope()->Type() == Cxx::Namespace))
+   if(GetFile()->IsHeader() && (GetScope()->Type() != Cxx::Class))
    {
       Log(UsingInHeader);
    }

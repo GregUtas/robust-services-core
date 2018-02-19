@@ -20,6 +20,8 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CodeDirSet.h"
+#include <iomanip>
+#include <ios>
 #include <ostream>
 #include <set>
 #include "CodeDir.h"
@@ -33,7 +35,9 @@
 #include "Singleton.h"
 #include "SysTypes.h"
 
+using namespace NodeBase;
 using std::ostream;
+using std::setw;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -120,7 +124,8 @@ word CodeDirSet::List(ostream& stream, string& expl) const
 
    for(auto d = dirSet.cbegin(); d != dirSet.cend(); ++d)
    {
-      stream << spaces(2) << dirs.At(*d)->Path() << CRLF;
+      stream << spaces(2) << setw(12) << std::right << dirs.At(*d)->Name();
+      stream << spaces(2) << std::left << dirs.At(*d)->Path() << CRLF;
    }
 
    return 0;

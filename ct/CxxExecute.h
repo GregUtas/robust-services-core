@@ -31,8 +31,6 @@
 #include "CxxFwd.h"
 #include "SysTypes.h"
 
-using namespace NodeBase;
-
 namespace CodeTools
 {
    class Parser;
@@ -44,7 +42,7 @@ namespace CodeTools
 {
 //  Base class for tracing execution.
 //
-class CxxTrace : public TraceRecord
+class CxxTrace : public NodeBase::TraceRecord
 {
 public:
    //  Actions that are traced during execution.
@@ -443,7 +441,7 @@ public:
 
    //  Clears the argument and operator stacks.
    //
-   void Clear(word from);
+   void Clear(NodeBase::word from);
 
    //  Reinitializes members in preparation for parsing a new file.
    //
@@ -552,7 +550,7 @@ public:
 
    //  Sets the current execution position in the source code.
    //
-   static void SetPos(size_t pos) { Frame_->SetPos(pos); }
+   static void SetPos(size_t pos);
 
    //  Executes pending operations before evaluating a new
    //  statement or expression.
@@ -564,7 +562,7 @@ public:
    //  o Discards any unused arguments.
    //  o Logs an error if any operators were not processed.
    //
-   static void Clear(word from) { Frame_->Clear(from); }
+   static void Clear(NodeBase::word from) { Frame_->Clear(from); }
 
    //  Returns the file in which execution is occurring.
    //
@@ -582,16 +580,16 @@ public:
    //  the log in the execution trace to make it easier to see where
    //  the error occurred.
    //
-   static void SwErr(fn_name_arg func, const std::string& expl,
-      word errval, LogLevel level = InfoLog);
+   static void SwErr(NodeBase::fn_name_arg func, const std::string& expl,
+      NodeBase::word errval, NodeBase::LogLevel level = NodeBase::InfoLog);
 
    //  Resets static data members when entering a restart at LEVEL.
    //
-   static void Shutdown(RestartLevel level);
+   static void Shutdown(NodeBase::RestartLevel level);
 
    //  Provided for symmetry with Shutdown.
    //
-   static void Startup(RestartLevel level) { }
+   static void Startup(NodeBase::RestartLevel level) { }
 private:
    //  Private because this class (basically a singleton) only has
    //  static members.
@@ -655,8 +653,8 @@ private:
    static void Trace(CxxTrace::Action act, const CxxToken* token);
    static void Trace(CxxTrace::Action act, const StackArg& arg);
    static void Trace(CxxTrace::Action act, const CodeFile& file);
-   static void Trace(CxxTrace::Action act, word err,
-      const std::string& expl = EMPTY_STR);
+   static void Trace(CxxTrace::Action act, NodeBase::word err,
+      const std::string& expl = NodeBase::EMPTY_STR);
 
    //  Returns a string containing File_ and the line number/offset for Pos_.
    //

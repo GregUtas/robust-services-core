@@ -39,6 +39,7 @@
 #include "Registry.h"
 #include "Singleton.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 
@@ -181,6 +182,15 @@ id_t CxxNamed::GetDeclFid() const
    auto file = GetDeclFile();
    if(file == nullptr) return NIL_ID;
    return file->Fid();
+}
+
+//------------------------------------------------------------------------------
+
+size_t CxxNamed::GetRange(size_t& begin, size_t& end) const
+{
+   begin = string::npos;
+   end = string::npos;
+   return string::npos;
 }
 
 //------------------------------------------------------------------------------
@@ -1043,8 +1053,7 @@ void DataSpec::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
    case Cxx::Class:
       {
-         auto cls = static_cast< Class* >(ref);
-         auto tmplt = cls->GetTemplate();
+         auto tmplt = ref->GetTemplate();
          if(tmplt != nullptr) ref = tmplt;
       }
       //  [[fallthrough]]
@@ -1194,9 +1203,8 @@ bool DataSpec::IsUsedInNameOnly() const
    if(ref == nullptr) ref = name_->GetReferent();
    if((ref != nullptr) && (ref->Type() == Cxx::Class))
    {
-      auto cls = static_cast< Class* >(ref);
-      if(cls->IsInTemplateInstance()) return false;
-      if(cls->GetTemplate() != nullptr) return false;
+      if(ref->IsInTemplateInstance()) return false;
+      if(ref->GetTemplate() != nullptr) return false;
    }
 
    return true;

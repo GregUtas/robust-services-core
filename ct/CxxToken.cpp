@@ -33,6 +33,7 @@
 #include "Formatters.h"
 #include "Singleton.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 
@@ -1588,7 +1589,7 @@ void Operation::ExecuteCall()
       auto log = (size == 1 ? DefaultConstructor : DefaultCopyConstructor);
       Context::Log(log);
       if(size > 1) args[1].WasRead();
-      Context::PushArg(StackArg(proc.item->GetClass(), 1));
+      Context::PushArg(StackArg(proc.item->GetClass(), 0));
       return;
    }
 

@@ -108,7 +108,7 @@ public:
    //  Overridden to display the directive.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to log an #include that is not at file scope.
    //
@@ -141,7 +141,7 @@ public:
    //  Overridden to display the directive.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to report the symbol's length.
    //
@@ -187,7 +187,7 @@ public:
    //  Overridden to display the name, including any template arguments.
    //
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to return the macro's name.
    //
@@ -253,7 +253,7 @@ public:
    //  Overridden to display the macro.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to invoke GetNumeric on the referent, if found.
    //
@@ -355,7 +355,7 @@ public:
    //  Overridden to display the directive.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to log a #define that is not at file scope.
    //
@@ -421,7 +421,7 @@ public:
    //  Overridden to display source code if it was not compiled.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to return true if compiled code follows this directive.
    //
@@ -471,7 +471,7 @@ public:
    //  Overridden to display the condition.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to return the result of evaluating the condition.
    //
@@ -513,7 +513,7 @@ public:
    //  Overridden to display the directive.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to update SYMBOLS with name_'s referent.
    //
@@ -564,7 +564,7 @@ public:
    //  Overridden to display the directive.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to handle the code that follows the #elif.
    //
@@ -589,7 +589,7 @@ public:
    //  Overridden to display the directive.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to handle the code that follows the #else.
    //
@@ -614,7 +614,7 @@ public:
    //  Overridden to display the directive.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -635,7 +635,7 @@ public:
    //  Overridden to display the directive.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to handle the code that follows the #ifdef.
    //
@@ -668,7 +668,7 @@ public:
    //  Overridden to display the directive.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to handle the code that follows the #if.
    //
@@ -710,7 +710,7 @@ public:
    //  Overridden to display the directive.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to handle the code that follows the #ifndef.
    //
@@ -764,7 +764,7 @@ public:
    //  Overridden to display the directive.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -785,7 +785,7 @@ public:
    //  Overridden to display the directive.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to generate a log.
    //
@@ -810,7 +810,7 @@ public:
    //  Overridden to display the directive.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 };
 }
 #endif

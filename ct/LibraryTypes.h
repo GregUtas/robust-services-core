@@ -28,15 +28,13 @@
 #include <vector>
 #include "SysTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace CodeTools
 {
 //  A synonym for a sorted list of unique file or directory identifiers.
 //
-typedef std::set< id_t > SetOfIds;
+typedef std::set< NodeBase::id_t > SetOfIds;
 
 //  What a SetOfIds represents.
 //
@@ -54,8 +52,8 @@ enum LibSetType
 //
 struct FileLevel
 {
-   id_t fid;      // the file's identifier
-   size_t level;  // the file's level in the build
+   NodeBase::id_t fid;  // the file's identifier
+   size_t level;        // the file's level in the build
 };
 
 typedef std::vector< FileLevel > BuildOrder;

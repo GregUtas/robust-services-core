@@ -375,6 +375,7 @@ enum Warning
    IncludeDuplicated,        // #include already exists for this file
    IncludeAdd,               // #include should be added
    IncludeRemove,            // #include should be removed
+   HeaderReliesOnUsing,      // header relies on using directive or declaration
    UsingInHeader,            // header contains using directive or declaration
    UsingDuplicated,          // using statement duplicated
    UsingAdd,                 // using statement should be added

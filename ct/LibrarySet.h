@@ -45,7 +45,7 @@ namespace CodeTools
 class LibrarySet : public LibraryItem
 {
    friend class Library;
-   friend class Q2Way< LibrarySet >;
+   friend class NodeBase::Q2Way< LibrarySet >;
 public:
    //> Prefix for a read-only set.
    //
@@ -75,35 +75,36 @@ public:
    //  C++ coding guidelines.  If STREAM is not nullptr, produces a report
    //  that contains line counts and warnings.
    //
-   virtual word Check(std::ostream* stream, std::string& expl) const;
+   virtual NodeBase::word Check(std::ostream* stream, std::string& expl) const;
 
    //  On success, returns 0 and updates RESULT with the number of items
    //  in the set.  Returns another value on failure and updates RESULT
    //  with an explanation.
    //
-   virtual word Count(std::string& result) const;
+   virtual NodeBase::word Count(std::string& result) const;
 
    //  On success, returns 0 and updates RESULT with the number of lines
    //  of code in the set.  Returns another value on failure and updates
    //  RESULT with an explanation.
    //
-   virtual word Countlines(std::string& result) const;
+   virtual NodeBase::word Countlines(std::string& result) const;
 
    //  Returns 0 after fixing warnings detected by Check() in the set.
    //  Returns another value on failure and updates EXPL with an explanation.
    //
-   virtual word Fix(CliThread& cli, std::string& expl) const;
+   virtual NodeBase::word Fix
+      (NodeBase::CliThread& cli, std::string& expl) const;
 
    //  On success, returns 0 after reformatting the file.  Returns another
    //  value on failure and updates EXPL with an explanation.
    //
-   virtual word Format(std::string& expl) const;
+   virtual NodeBase::word Format(std::string& expl) const;
 
    //  On success, returns 0 and updates STREAM with a list of the items in
    //  the set, one per line.  Returns another value on failure and updates
    //  EXPL with an explanation.
    //
-   virtual word List(std::ostream& stream, std::string& expl) const;
+   virtual NodeBase::word List(std::ostream& stream, std::string& expl) const;
 
    //  On success, returns 0 after parsing items in the set.  EXPL describes
    //  the outcome.  The first character in TRACE indicates whether to create
@@ -111,32 +112,33 @@ public:
    //  The second character indicates whether to create an execution file
    //  never ('n') or always ('a').
    //
-   virtual word Parse(std::string& expl, const std::string& opts) const;
+   virtual NodeBase::word Parse
+      (std::string& expl, const std::string& opts) const;
 
    //  On success, returns 0 and updates STREAM with lines in the set that
    //  match PATTERN.  Returns another value on failure and updates EXPL
    //  with an explanation.
    //
-   virtual word Scan(std::ostream& stream,
+   virtual NodeBase::word Scan(std::ostream& stream,
       const std::string& pattern, std::string& expl) const;
 
    //  On success, returns 0 and updates RESULT with the items in the set,
    //  separated by commas.  Returns another value on failure and updates
    //  RESULT with an explanation.
    //
-   virtual word Show(std::string& result) const;
+   virtual NodeBase::word Show(std::string& result) const;
 
    //  On success, returns 0 and updates STREAM with the build order of
    //  the set.  Returns another value on failure and updates EXPL with
    //  an explanation.
    //
-   virtual word Sort(std::ostream& stream, std::string& expl) const;
+   virtual NodeBase::word Sort(std::ostream& stream, std::string& expl) const;
 
    //  Returns 0 after producing, in STREAM, a report about the symbols used
    //  by each item in the set, along with the #includes, forwards and using
    //  statements that should be added or removed.
    //
-   virtual word Trim(std::ostream& stream, std::string& expl) const;
+   virtual NodeBase::word Trim(std::ostream& stream, std::string& expl) const;
 
    //  Deletes the set unless it is registered on the queue of sets.
    //
@@ -172,7 +174,7 @@ public:
    //  Overridden to display member variables.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 protected:
    //  Creates a set that with the identifier NAME.  If NAME is not prefixed
    //  by TemporaryChar, it is added to the set of library variables.  If it
@@ -187,12 +189,12 @@ protected:
 
    //  Reports COUNT items in RESULT and returns 0.
    //
-   static word Counted(std::string& result, const size_t* count);
+   static NodeBase::word Counted(std::string& result, const size_t* count);
 
    //  If RESULT is not empty, deletes a presumed trailing ", ", else sets
    //  RESULT to indicate that nothing was found.  Returns 0.
    //
-   static word Shown(std::string& result);
+   static NodeBase::word Shown(std::string& result);
 private:
    //  Deleted to prohibit copying.
    //
@@ -202,12 +204,12 @@ private:
    //  Returns 0 if this set can be assigned to a variable.  Returns another
    //  value and updates EXPL with an explanation if it cannot be assigned.
    //
-   virtual word PreAssign(std::string& expl) const;
+   virtual NodeBase::word PreAssign(std::string& expl) const;
 
    //  Update EXPL to indicate that this function is not implemented by the
    //  type of set in question.
    //
-   word NotImplemented(std::string& expl) const;
+   NodeBase::word NotImplemented(std::string& expl) const;
 
    //  Generates a log and returns nullptr.
    //
@@ -215,7 +217,7 @@ private:
 
    //  Link for the queue of sets.
    //
-   Q2Link link_;
+   NodeBase::Q2Link link_;
 
    //  Set for a temporary variable.
    //

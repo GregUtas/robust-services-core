@@ -30,6 +30,7 @@
 #include "Symbol.h"
 #include "SysTypes.h"
 
+using namespace NodeBase;
 using std::string;
 
 //------------------------------------------------------------------------------

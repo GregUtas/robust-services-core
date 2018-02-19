@@ -38,6 +38,7 @@
 #include "Parser.h"
 #include "Singleton.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 
@@ -819,7 +820,7 @@ size_t Class::CreateCode(const ClassInst* inst, stringPtr& code) const
       if(begin == string::npos) return CreateCodeError(tmpltName, 4);
       lexer.Initialize(code.get());
       lexer.Reposition(begin);
-      begin = lexer.FindClosing('{', '}', begin + 1);
+      begin = lexer.FindClosing('{', '}', begin);
       if(begin == string::npos) return CreateCodeError(tmpltName, 5);
    }
 
@@ -1334,6 +1335,21 @@ void Class::GetMemberInitAttrs(DataInitVector& members) const
 
       members.push_back(attrs);
    }
+}
+
+//------------------------------------------------------------------------------
+
+size_t Class::GetRange(size_t& begin, size_t& end) const
+{
+   //  Set BEGIN to where the class definition begins, and END to the offset of
+   //  its closing right brace.  Return the offset of the opening left brace.
+   //
+   auto lexer = GetFile()->GetLexer();
+   begin = GetPos();
+   lexer.Reposition(begin);
+   auto left = lexer.FindFirstOf("{");
+   end = lexer.FindClosing('{', '}', left);
+   return left;
 }
 
 //------------------------------------------------------------------------------

@@ -44,6 +44,7 @@
 #include "SysThreadStack.h"
 #include "ThisThread.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::setw;
 using std::string;
@@ -1790,7 +1791,6 @@ bool Parser::GetFuncDecl(Cxx::Keyword kwd, FunctionPtr& func)
    //               (<CtorDecl> | <DtorDecl> | <ProcDecl>) (<FuncImpl> | ";")
    //
    auto start = lexer_.Curr();
-   auto begin = start;
    auto found = false;
    auto extn = false;
    auto inln = false;
@@ -1801,11 +1801,10 @@ bool Parser::GetFuncDecl(Cxx::Keyword kwd, FunctionPtr& func)
    {
    case Cxx::EXTERN:
       extn = true;
-      if(GetTemplateParms(parms)) begin = lexer_.Curr();
+      GetTemplateParms(parms);
       break;
    case Cxx::TEMPLATE:
       if(!GetTemplateParms(parms)) return Backup(start, 131);
-      begin = lexer_.Curr();
       break;
    }
 
@@ -1847,12 +1846,7 @@ bool Parser::GetFuncDecl(Cxx::Keyword kwd, FunctionPtr& func)
    //  depending on whether the function is only declared here, is deleted
    //  or defaulted, or is actually defined.
    //
-   if(lexer_.NextCharIs(';'))
-   {
-      func->SetDefnRange(begin, lexer_.rfind(';'));
-      return Success(Parser_GetFuncDecl, start);
-   }
-
+   if(lexer_.NextCharIs(';')) return Success(Parser_GetFuncDecl, start);
    if(GetFuncSpecial(func)) return Success(Parser_GetFuncDecl, start);
 
    auto pos = lexer_.Curr();
@@ -1860,7 +1854,6 @@ bool Parser::GetFuncDecl(Cxx::Keyword kwd, FunctionPtr& func)
 
    auto end = lexer_.FindClosing('{', '}');
    if(end == string::npos) return Backup(start, func, 220);
-   func->SetDefnRange(begin, end);
 
    //  Wait to parse a class's inlines until the rest of the class has
    //  been parsed.
@@ -1892,7 +1885,6 @@ bool Parser::GetFuncDefn(Cxx::Keyword kwd, FunctionPtr& func)
    //               (<CtorDefn> | <DtorDefn> | <ProcDefn>) <FuncImpl>
    //
    auto start = lexer_.Curr();
-   auto begin = start;
    auto found = false;
    auto inln = false;
 
@@ -1901,7 +1893,6 @@ bool Parser::GetFuncDefn(Cxx::Keyword kwd, FunctionPtr& func)
    if(kwd == Cxx::TEMPLATE)
    {
       if(!GetTemplateParms(parms)) return Backup(start, 132);
-      begin = lexer_.Curr();
    }
 
    switch(kwd)
@@ -1925,7 +1916,6 @@ bool Parser::GetFuncDefn(Cxx::Keyword kwd, FunctionPtr& func)
    if(!lexer_.NextCharIs('{')) return Backup(start, func, 223);
    lexer_.Reposition(curr);
    if(!GetFuncImpl(func.get())) return Backup(start, func, 224);
-   func->SetDefnRange(begin, lexer_.rfind('}'));
    return Success(Parser_GetFuncDefn, start);
 }
 

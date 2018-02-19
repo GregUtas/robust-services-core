@@ -74,7 +74,7 @@ public:
    //  static data (an initialization) or a function (an implementation).
    //  Returns NIL_ID in all other cases.
    //
-   id_t GetDistinctDeclFid() const;
+   NodeBase::id_t GetDistinctDeclFid() const;
 
    //  Returns the current access control level when parsing within the scope.
    //
@@ -196,7 +196,7 @@ public:
    //  always inserted afterwards.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to invoke EnterBlock on each token in statements_, followed
    //  by ExitBlock after all the statements have been executed.
@@ -228,7 +228,7 @@ public:
    //  Overridden to display a block in-line if it has one statement or none.
    //
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to return the enclosing function's scoped name, followed by
    //  a string that signifies executable code rather than only the function.
@@ -452,15 +452,18 @@ protected:
 
    //  Displays any parenthesized expression that initializes the data.
    //
-   void DisplayExpression(std::ostream& stream, const Flags& options) const;
+   void DisplayExpression
+      (std::ostream& stream, const NodeBase::Flags& options) const;
 
    //  Displays any assignment statement that initializes the data.
    //
-   void DisplayAssignment(std::ostream& stream, const Flags& options) const;
+   void DisplayAssignment
+      (std::ostream& stream, const NodeBase::Flags& options) const;
 
    //  Displays read/write statistics.
    //
-   void DisplayStats(std::ostream& stream, const Flags& options) const;
+   void DisplayStats
+      (std::ostream& stream, const NodeBase::Flags& options) const;
 private:
    //  Returns the data's declaration.
    //
@@ -568,7 +571,7 @@ public:
    //  Overridden to display the data declaration and definition.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to add the item to the current scope.
    //
@@ -670,7 +673,7 @@ public:
    //  Overridden to display the data declaration and definition.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to invoke EnterBlock on any field width expression.
    //
@@ -790,7 +793,7 @@ public:
    //  Overridden to display the data declaration and definition.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to make the item visible as a local.
    //
@@ -816,7 +819,7 @@ public:
    //  Overridden to display the data declaration and definition.
    //
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to shrink containers.
    //
@@ -828,7 +831,7 @@ public:
 private:
    //  Invoked by Display on each declaration in a possible series.
    //
-   void DisplayItem(std::ostream& stream, const Flags& options) const;
+   void DisplayItem(std::ostream& stream, const NodeBase::Flags& options) const;
 
    //  The data item's name.
    //
@@ -936,10 +939,6 @@ public:
    //
    void SetBracePos(size_t pos) { pos_ = pos; }
 
-   //  Sets the start and end positions for the function's definition.
-   //
-   void SetDefnRange(size_t begin, size_t end);
-
    //  Sets the function's implementation, which is immediately executed.
    //
    void SetImpl(BlockPtr& block);
@@ -1022,10 +1021,6 @@ public:
    //
    size_t GetBracePos() const { return pos_; }
 
-   //  Returns the function's begin and end positions.
-   //
-   void GetDefnRange(size_t& begin, size_t& end) const;
-
    //  Decides if this function can be invoked with ARGS, whose TypeString
    //  results appear in argTypes.  Updates MATCH to indicate how well the
    //  arguments and the function match.  Returns the function itself--or,
@@ -1096,7 +1091,7 @@ public:
 
    //  Displays the function's declaration.
    //
-   void DisplayDecl(std::ostream& stream, const Flags& options) const;
+   void DisplayDecl(std::ostream& stream, const NodeBase::Flags& options) const;
 
    //  Overridden to log warnings associated with the function.
    //
@@ -1117,7 +1112,7 @@ public:
    //  Overridden to display the function.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to execute the function.
    //
@@ -1143,6 +1138,10 @@ public:
    //  Overridden to return the function's qualified name.
    //
    virtual QualName* GetQualName() const override { return name_.get(); }
+
+   //  Overridden to return the offset of the left brace (if any).
+   //
+   virtual size_t GetRange(size_t& begin, size_t& end) const override;
 
    //  Overridden to handle an inline friend function.
    //
@@ -1321,7 +1320,7 @@ private:
    //  Invoked when InstantiateFunction fails.
    //
    static Function* InstantiateError
-      (const std::string& instName, debug32_t offset);
+      (const std::string& instName, NodeBase::debug32_t offset);
 
    //  Sets the function template for a template instance.
    //
@@ -1363,12 +1362,12 @@ private:
    //  Displays the function's definition.
    //
    void DisplayDefn(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const;
+      const std::string& prefix, const NodeBase::Flags& options) const;
 
    //  Displays information about where the function is implemented, how many
    //  many times it was overridden, and how many times it was invoked.
    //
-   void DisplayInfo(std::ostream& stream, const Flags& options) const;
+   void DisplayInfo(std::ostream& stream, const NodeBase::Flags& options) const;
 
    //  The function's name.
    //
@@ -1488,14 +1487,6 @@ private:
    //
    size_t pos_;
 
-   //  Where the function's definition begins.
-   //
-   size_t begin_;
-
-   //  Where the function's definition ends.
-   //
-   size_t end_;
-
    //  The next function, up the class hierarchy, that this one overrides.
    //
    Function* base_;
@@ -1506,7 +1497,7 @@ private:
 
    //  The code for a function template.
    //
-   mutable stringPtr code_;
+   mutable NodeBase::stringPtr code_;
 
    //  A function template's instantiations.
    //
@@ -1541,7 +1532,7 @@ private:
    //  The following are forwarded to the function.
    //
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
    virtual void EnteringScope(const CxxScope* scope) override;
    virtual bool IsConst() const override;
    virtual const std::string* Name() const override;

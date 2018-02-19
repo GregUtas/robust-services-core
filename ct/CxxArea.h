@@ -390,7 +390,7 @@ public:
    //  Updates CODE with the code for the template instance INST, returning the
    //  location where parsing should begin.  Returns string::npos on an error.
    //
-   size_t CreateCode(const ClassInst* inst, stringPtr& code) const;
+   size_t CreateCode(const ClassInst* inst, NodeBase::stringPtr& code) const;
 
    //  Updates IDX to FUNC's index within its vector and return true.  Returns
    //  FALSE if FUNC was not found.
@@ -460,7 +460,7 @@ public:
    //  Overridden to display the class and its members.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to add the class to the current scope.
    //
@@ -489,6 +489,10 @@ public:
    //  Overridden to return the class's qualified name.
    //
    virtual QualName* GetQualName() const override { return name_.get(); }
+
+   //  Overridden to return the offset of the left brace.
+   //
+   virtual size_t GetRange(size_t& begin, size_t& end) const override;
 
    //  Overridden to return the class if it is a class template.
    //
@@ -556,7 +560,7 @@ public:
 protected:
    //  Displays the first line of the declaration (the name and base class).
    //
-   void DisplayBase(std::ostream& stream, const Flags& options) const;
+   void DisplayBase(std::ostream& stream, const NodeBase::Flags& options) const;
 private:
    //  Overridden to register ITEM in the order in which it was declared.
    //
@@ -580,7 +584,8 @@ private:
    //  Invoked when an error occurs in CreateCode.  NAME is the template
    //  whose code could not be found.
    //
-   static size_t CreateCodeError(const std::string& name, debug32_t offset);
+   static size_t CreateCodeError
+      (const std::string& name, NodeBase::debug32_t offset);
 
    //  Class attributes and the types of items that it defines.
    //
@@ -678,7 +683,7 @@ private:
 
    //  The source code if this is a class template.
    //
-   mutable stringPtr code_;
+   mutable NodeBase::stringPtr code_;
 };
 
 //------------------------------------------------------------------------------
@@ -728,7 +733,7 @@ public:
    //  its interface.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to return the class template instance when it already exists
    //  and is found as a referent by another user.
@@ -793,7 +798,7 @@ private:
 
    //  The instance's source code.
    //
-   stringPtr code_;
+   NodeBase::stringPtr code_;
 
    //  The number of references to the instance.
    //
@@ -845,7 +850,7 @@ public:
    //  Overridden to display the namespace and its declarations.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to support searching up the namespace hierarchy if a function
    //  matching the criteria is not found in this namespace.

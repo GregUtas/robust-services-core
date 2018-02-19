@@ -25,17 +25,15 @@
 #include "CliIncrement.h"
 #include "NbTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace CodeTools
 {
 //  Increment for source code analysis.
 //
-class CodeIncrement : public CliIncrement
+class CodeIncrement : public NodeBase::CliIncrement
 {
-   friend class Singleton< CodeIncrement >;
+   friend class NodeBase::Singleton< CodeIncrement >;
 private:
    //  Private because this singleton is not subclassed.
    //

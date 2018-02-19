@@ -102,6 +102,11 @@ public:
    //
    virtual Cxx::Access GetAccess() const override { return access_; }
 
+   //  Overridden to set BEGIN to GetPos(), END to the location of the
+   //  next semicolon, and to return string::npos.
+   //
+   virtual size_t GetRange(size_t& begin, size_t& end) const override;
+
    //  Overridden to return the scope where the declaration appeared.
    //
    virtual CxxScope* GetScope() const override { return scope_; }
@@ -265,7 +270,7 @@ public:
    //  Overridden to display the argument.
    //
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to record that the argument cannot be const.
    //
@@ -447,7 +452,7 @@ public:
    //  Overridden to display the enumeration.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to make the enumeration visible as a local.
    //
@@ -538,7 +543,7 @@ public:
    //  Overridden to display the enumeration.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to make the enumerator visible as a local and to execute
    //  its initialization statement.
@@ -644,7 +649,7 @@ public:
    //  Overridden to display the declaration.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to push the declaration's referent onto the argument stack.
    //
@@ -773,7 +778,7 @@ public:
    //  fully qualified name is displayed.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to push the declaration's referent onto the argument stack.
    //
@@ -932,7 +937,7 @@ public:
    //  TYPE is not supplied, TypeString() is NAME.
    //
    explicit Terminal
-      (const std::string& name, const std::string& type = EMPTY_STR);
+      (const std::string& name, const std::string& type = NodeBase::EMPTY_STR);
 
    //  Not subclassed.
    //
@@ -953,7 +958,7 @@ public:
    //  Overridden to display the terminal.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to push the terminal onto the stack.
    //
@@ -965,7 +970,8 @@ public:
 
    //  Overridden to indicate that a terminal does not appear in a file.
    //
-   virtual id_t GetDeclFid() const override { return NIL_ID; }
+   virtual NodeBase::id_t GetDeclFid() const override
+      { return NodeBase::NIL_ID; }
 
    //  Overridden to return the terminal's attributes as an integer.
    //
@@ -1033,12 +1039,12 @@ public:
    //  Overridden to display the typedef in a function.
    //
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to display the typedef.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to make the typedef visible as a local.
    //
@@ -1165,7 +1171,7 @@ public:
    //  qualified name is displayed.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to make the declaration available to the current block.
    //

@@ -34,8 +34,6 @@
 #include "SysTime.h"
 #include "SysTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace CodeTools
@@ -176,7 +174,7 @@ public:
    //  instance's template arguments and code.
    //
    bool ParseFuncInst(const std::string& name,
-      const TypeName* type, CxxArea* area, const stringPtr& code);
+      const TypeName* type, CxxArea* area, const NodeBase::stringPtr& code);
 
    //  Returns true and creates SPEC if CODE is a valid type specification.
    //
@@ -218,17 +216,13 @@ public:
 
    //  Returns the time when the parse originally started.
    //
-   static const SysTime* GetTime();
+   static const NodeBase::SysTime* GetTime();
 
    //  Returns a string that specifies the parser's current position for the
    //  __LINE__ macro.  If parsing source code, this will be a numeric.  If
    //  parsing a template, it prefixes the template's name.
    //
    std::string GetLINE() const;
-
-   //  Returns the parser's current position within its Lexer.
-   //
-   size_t GetCurr() const { return lexer_.Curr(); }
 
    //  Returns the parser's previous position within its Lexer.
    //
@@ -607,7 +601,7 @@ private:
 
    //  Returns true if the next keyword is STR.
    //
-   bool NextKeywordIs(fixed_string str);
+   bool NextKeywordIs(NodeBase::fixed_string str);
 
    //  Invokes SetScope, SetAccess, and SetPos on ITEM immediately after
    //  its creation.
@@ -656,7 +650,7 @@ private:
    //  START.  If the parse is being traced, the parsed string (from START
    //  to lexer_.Prev()) is added to the parse tree.
    //
-   bool Success(fn_name_arg func, size_t start) const;
+   bool Success(NodeBase::fn_name_arg func, size_t start) const;
 
    //  Returns a string of blanks based on the depth of parsing.
    //
@@ -684,7 +678,7 @@ private:
 
    //  The time when the parse started.
    //
-   const SysTime time_;
+   const NodeBase::SysTime time_;
 
    //  The stack depth at which Parse() was invoked.
    //
@@ -705,7 +699,7 @@ private:
 
    //  Output file for parse tracing, if any.
    //
-   ostreamPtr pTrace_;
+   NodeBase::ostreamPtr pTrace_;
 
    //  The highest legal cause_ value.
    //

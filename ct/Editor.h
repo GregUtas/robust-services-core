@@ -29,7 +29,10 @@
 #include "SysFile.h"
 #include "SysTypes.h"
 
-using namespace NodeBase;
+namespace NodeBase
+{
+   class CliThread;
+}
 
 //------------------------------------------------------------------------------
 
@@ -85,50 +88,62 @@ private:
 public:
    //  Creates an editor for the source code in FILE, which is read from INPUT.
    //
-   Editor(CodeFile* file, istreamPtr& input);
+   Editor(CodeFile* file, NodeBase::istreamPtr& input);
 
    //  All of the public editing functions attempt to fix the warning reported
    //  in LOG.  They return 0 on success.  Any other result indicates an error,
    //  in which case EXPL provides an explanation.  A return value of -1 means
    //  that the file should be skipped; other values denote more serious errors.
    //
-   word Read(std::string& expl);
-   word SortIncludes(const WarningLog& log, std::string& expl);
-   word AddInclude(const WarningLog& log, std::string& expl);
-   word RemoveInclude(const WarningLog& log, std::string& expl);
-   word AddForward(const WarningLog& log, std::string& expl);
-   word RemoveForward(const WarningLog& log, std::string& expl);
-   word AddUsing(const WarningLog& log, std::string& expl);
-   word RemoveUsing(const WarningLog& log, std::string& expl);
-   word ReplaceUsing(const WarningLog& log, std::string& expl);
+   NodeBase::word Read(std::string& expl);
+   NodeBase::word SortIncludes(const WarningLog& log, std::string& expl);
+   NodeBase::word AddInclude(const WarningLog& log, std::string& expl);
+   NodeBase::word RemoveInclude(const WarningLog& log, std::string& expl);
+   NodeBase::word AddForward(const WarningLog& log, std::string& expl);
+   NodeBase::word RemoveForward(const WarningLog& log, std::string& expl);
+   NodeBase::word AddUsing(const WarningLog& log, std::string& expl);
+   NodeBase::word RemoveUsing(const WarningLog& log, std::string& expl);
+   NodeBase::word ReplaceUsing
+      (const WarningLog& log, std::string& expl, NodeBase::CliThread& cli);
+   NodeBase::word ResolveUsings
+      (const WarningLog& log, std::string& expl, NodeBase::CliThread& cli);
 
    //  Replaces multiple blank lines with a single blank line.  Always invoked
    //  on source that was changed.
    //
-   word EraseBlankLinePairs();
+   NodeBase::word EraseBlankLinePairs();
 
    //  Removes trailing spaces.  Always invoked on source that was changed.
    //
    void EraseTrailingBlanks(SourceList& list);
-   word EraseTrailingBlanks();
+   NodeBase::word EraseTrailingBlanks();
 
    //  Writes out the file to PATH if it was changed during editing.  Returns 0
    //  if the file had not been changed, 1 if it was successfully written, and a
    //  negative value if an error occurred.
    //
-   word Write(const std::string& path, std::string& expl);
+   NodeBase::word Write(const std::string& path, std::string& expl);
 private:
+   //  Ways to eliminate a using statement.
+   //
+   enum UsingResolution
+   {
+      Qualification,  // qualify the symbol directly
+      TypedefAlias,   // add a typedef that qualifies the symbol
+      UsingAlias      // add a using alias that qualifies the symbol
+   };
+
    //  Reads in the file's prolog (everything up to the first #include.)
    //
-   word GetProlog(std::string& expl);
+   NodeBase::word GetProlog(std::string& expl);
 
    //  Reads in the remaining #include directives.
    //
-   word GetIncludes(std::string& expl);
+   NodeBase::word GetIncludes(std::string& expl);
 
    //  Reads in the rest of the file.
    //
-   word GetEpilog();
+   NodeBase::word GetEpilog();
 
    //  Adds a line of source code from the file.  NEVER used to add new code.
    //
@@ -136,7 +151,7 @@ private:
 
    //  Adds an #include from the file.  NEVER used to add a new #include.
    //
-   word PushInclude(std::string& source, std::string& expl);
+   NodeBase::word PushInclude(std::string& source, std::string& expl);
 
    //  Returns the location of LINE within LIST.  Returns the end of LIST
    //  if LINE is not found.
@@ -168,41 +183,45 @@ private:
    //  this simplifies sorting by replacing the characters that enclose the
    //  file name.
    //
-   word MangleInclude(std::string& include, std::string& expl) const;
+   NodeBase::word MangleInclude(std::string& include, std::string& expl) const;
 
    //  Inserts an INCLUDE directive.
    //
-   word InsertInclude(std::string& include, std::string& expl);
+   NodeBase::word InsertInclude(std::string& include, std::string& expl);
 
    //  Inserts a FORWARD declaration at ITER.
    //
-   word InsertForward
+   NodeBase::word InsertForward
       (const Iter& iter, const std::string& forward, std::string& expl);
 
    //  Inserts a FORWARD declaration at ITER.  It is the first declaration in
    //  namespace NSPACE, so it must be enclosed in a new namespace scope.
    //
-   word InsertNamespaceForward(Iter& iter,
+   NodeBase::word InsertNamespaceForward(Iter& iter,
       const std::string& nspace, const std::string& forward);
 
    //  Invoked after removing a forward declaration.  If the declaration was
    //  in a namespace that is now empty, erases the "namespace <name> { }".
    //
-   word EraseEmptyNamespace(const Iter& iter);
+   NodeBase::word EraseEmptyNamespace(const Iter& iter);
 
-   //  Adds type aliases at the start of each class for symbols in the class
-   //  definition that were resolved by using statements.
+   //  Asks the user how to remove a using statement that resolves REF,
+   //  which is used in SCOPE.
    //
-   word InsertAliases(std::string& expl);
+   static UsingResolution GetResolution
+      (const CxxScoped* scope, const CxxNamed* ref, NodeBase::CliThread& cli);
 
-   //  In CLS's definition, qualifies occurrences of SYMBOL with namespace NS.
+   //  Qualifies names used within ITEM in order to remove using statements.
    //
-   void QualifySymbol
-      (const Class* cls, const std::string* ns, const std::string* symbol);
+   void QualifyUsings(const CxxNamed* item);
 
-   //  Qualifies CLS's base class if it was resolving by a using statement.
+   //  Returns the items within ITEM that were accessed via a using statement.
    //
-   word QualifyBaseClass(const Class* cls, std::string& expl);
+   CxxNamedSet FindUsingReferents(const CxxNamed* item) const;
+
+   //  Within ITEM, qualifies occurrences of REF.
+   //
+   void QualifyReferent(const CxxNamed* item, const CxxNamed* ref);
 
    //  Returns the number of spaces that ITEM is indented.
    //
@@ -210,7 +229,8 @@ private:
 
    //  Invoked to report TEXT, which is assigned to EXPL.  Returns RC.
    //
-   static word Report(std::string& expl, fixed_string text, word rc = 0);
+   static NodeBase::word Report
+      (std::string& expl, NodeBase::fixed_string text, NodeBase::word rc = 0);
 
    //  Comparison functions for sorting #include directives.
    //
@@ -223,7 +243,7 @@ private:
 
    //  The stream for reading the source code.
    //
-   istreamPtr input_;
+   NodeBase::istreamPtr input_;
 
    //  The number of lines read so far.
    //

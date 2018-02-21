@@ -398,7 +398,7 @@ bool Parser::GetArgument(ArgumentPtr& arg)
       if(!lexer_.GetName(argName))
       {
          arg.reset(new Argument(argName, typeSpec));
-         SetContext(arg.get(), start);
+         arg->SetContext(start);
          return Success(Parser_GetArgument, start);
       }
    }
@@ -417,8 +417,8 @@ bool Parser::GetArgument(ArgumentPtr& arg)
    }
 
    arg.reset(new Argument(argName, typeSpec));
+   arg->SetContext(start);
    arg->SetDefault(preset);
-   SetContext(arg.get(), start);
    return Success(Parser_GetArgument, start);
 }
 
@@ -498,7 +498,7 @@ bool Parser::GetBaseDecl(BaseDeclPtr& base)
    if(!lexer_.GetAccess(access)) return Backup(start, 13);
    if(!GetQualName(baseName)) return Backup(start, 14);
    base.reset(new BaseDecl(baseName, access));
-   SetContext(base.get(), start);
+   base->SetContext(start);
    return Success(Parser_GetBaseDecl, start);
 }
 
@@ -545,7 +545,7 @@ bool Parser::GetBlock(BlockPtr& block)
 
    auto braced = lexer_.NextCharIs('{');
    block.reset(new Block(braced));
-   SetContext(block.get(), start);
+   block->SetContext(start);
    Context::PushScope(block.get());
 
    while(true)
@@ -820,7 +820,7 @@ bool Parser::GetClassData(DataPtr& data)
 
    if(!lexer_.NextCharIs(';')) return Backup(start, 42);
    data.reset(new ClassData(dataName, typeSpec));
-   SetContext(data.get(), start);
+   data->SetContext(start);
    data->SetStatic(stat);
    data->SetConstexpr(cexpr);
    static_cast< ClassData* >(data.get())->SetMutable(mute);
@@ -866,6 +866,7 @@ bool Parser::GetClassDecl(Cxx::Keyword kwd, ClassPtr& cls, ForwardPtr& forw)
    {
       if(tag != Cxx::UnionType) return Backup(start, 45);
       className.reset(new QualName(EMPTY_STR));
+      className->SetContext(lexer_.Curr());
    }
 
    if(lexer_.NextCharIs(';'))
@@ -873,8 +874,8 @@ bool Parser::GetClassDecl(Cxx::Keyword kwd, ClassPtr& cls, ForwardPtr& forw)
       //  A forward declaration.
       //
       forw.reset(new Forward(className, tag));
+      forw->SetContext(begin);
       forw->SetTemplateParms(parms);
-      SetContext(forw.get(), begin);
       return Success(Parser_GetClassDecl, begin);
    }
 
@@ -882,8 +883,8 @@ bool Parser::GetClassDecl(Cxx::Keyword kwd, ClassPtr& cls, ForwardPtr& forw)
    GetBaseDecl(base);
    if(!lexer_.NextCharIs('{')) return Backup(start, 46);
    cls.reset(new Class(className, tag));
+   cls->SetContext(begin);
    cls->SetTemplateParms(parms);
-   SetContext(cls.get(), begin);
    Context::PushScope(cls.get());
    cls->AddBase(base);
    GetMemberDecls(cls.get());
@@ -1027,11 +1028,13 @@ bool Parser::GetCtorDecl(FunctionPtr& func)
    string name;
    auto expl = NextKeywordIs(EXPLICIT_STR);
    auto cexpr = NextKeywordIs(CONSTEXPR_STR);
+   auto pos = lexer_.Curr();
    if(!GetName(name)) return Backup(start, 54);
    if(!lexer_.NextCharIs('(')) return Backup(start, 55);
    auto ctorName = QualNamePtr(new QualName(name));
+   ctorName->SetContext(pos);
    func.reset(new Function(ctorName));
-   SetContext(func.get(), start);
+   func->SetContext(start);
    func->SetExplicit(expl);
    func->SetConstexpr(cexpr);
    if(cexpr) func->SetInline(true);
@@ -1063,7 +1066,7 @@ bool Parser::GetCtorDefn(FunctionPtr& func)
    if(!lexer_.NextCharIs('(')) return Backup(start, 57);
    if(!ctorName->CheckCtorDefn()) return Backup(start, 58);
    func.reset(new Function(ctorName));
-   SetContext(func.get(), start);
+   func->SetContext(start);
    if(!GetArguments(func)) return Backup(start, func, 216);
    auto noex = NextKeywordIs(NOEXCEPT_STR);
    if(!GetCtorInit(func)) return Backup(start, func, 217);
@@ -1131,7 +1134,7 @@ bool Parser::GetCtorInit(FunctionPtr& func)
          if(!GetArgList(token)) return Backup(start, 64);
          memberName = *baseName->Name();
          auto mem = MemberInitPtr(new MemberInit(memberName, token));
-         mem->SetPos(Context::File(), begin);
+         mem->SetContext(begin);
          func->AddMemberInit(mem);
       }
    }
@@ -1145,7 +1148,7 @@ bool Parser::GetCtorInit(FunctionPtr& func)
       if(end == string::npos) return Backup(start, 67);
       if(!GetArgList(token)) return Backup(start, 68);
       auto mem = MemberInitPtr(new MemberInit(memberName, token));
-      mem->SetPos(Context::File(), begin);
+      mem->SetContext(begin);
       func->AddMemberInit(mem);
    }
 
@@ -1358,12 +1361,15 @@ bool Parser::GetDefined(ExprPtr& expr)
    string name;
 
    auto par = lexer_.NextCharIs('(');
+   auto pos = lexer_.Curr();
    if(!lexer_.GetName(name)) return Backup(start, 88);
    if(par && !lexer_.NextCharIs(')')) return Backup(start, 89);
 
    auto token = TokenPtr(new Operation(Cxx::DEFINED));
    auto op = static_cast< Operation* >(token.get());
-   TokenPtr arg = MacroNamePtr(new MacroName(name));
+   auto macro = MacroNamePtr(new MacroName(name));
+   macro->SetContext(pos);
+   TokenPtr arg = std::move(macro);
    op->AddArg(arg, false);
    expr->AddItem(token);
    return Success(Parser_GetDefined, start);
@@ -1434,6 +1440,7 @@ bool Parser::GetDtorDecl(FunctionPtr& func)
    if(!lexer_.NextCharIs('~')) return Backup(start, 95);
 
    string name;
+   auto pos = lexer_.Curr();
    if(!GetName(name)) return Backup(start, 96);
    if(!lexer_.NextCharIs('(')) return Backup(start, 97);
    if(!lexer_.NextCharIs(')')) return Backup(start, 98);
@@ -1441,10 +1448,11 @@ bool Parser::GetDtorDecl(FunctionPtr& func)
 
    name.insert(0, 1, '~');
    auto dtorName = QualNamePtr(new QualName(name));
+   dtorName->SetContext(pos);
    func.reset(new Function(dtorName));
+   func->SetContext(start);
    func->SetVirtual(virt);
    func->SetNoexcept(noex);
-   SetContext(func.get(), start);
    return Success(Parser_GetDtorDecl, start);
 }
 
@@ -1464,6 +1472,7 @@ bool Parser::GetDtorDefn(FunctionPtr& func)
    string name;
    if(!GetQualName(dtorName)) return Backup(start, 99);
    if(!lexer_.NextStringIs("::~")) return Backup(start, 100);
+   auto pos = lexer_.Curr();
    if(!lexer_.GetName(name)) return Backup(start, 101);
    if(!lexer_.NextCharIs('(')) return Backup(start, 102);
    if(!lexer_.NextCharIs(')')) return Backup(start, 103);
@@ -1471,11 +1480,12 @@ bool Parser::GetDtorDefn(FunctionPtr& func)
 
    name.insert(0, 1, '~');
    auto className = TypeNamePtr(new TypeName(name));
+   className->SetContext(pos);
    className->SetScoped();
    dtorName->PushBack(className);
    func.reset(new Function(dtorName));
+   func->SetContext(start);
    func->SetNoexcept(noex);
-   SetContext(func.get(), start);
    return Success(Parser_GetDtorDefn, start);
 }
 
@@ -1504,7 +1514,7 @@ bool Parser::GetEnum(EnumPtr& decl)
    auto etorPos = lexer_.Curr();
    if(!GetEnumerator(etorName, etorInit)) return Backup(start, 105);
    decl.reset(new Enum(enumName));
-   SetContext(decl.get(), begin);
+   decl->SetContext(begin);
    decl->AddEnumerator(etorName, etorInit, etorPos);
 
    while(true)
@@ -1640,7 +1650,7 @@ bool Parser::GetFriend(FriendPtr& decl)
    }
 
    decl.reset(new Friend);
-   SetContext(decl.get(), begin);
+   decl->SetContext(begin);
 
    string str;
    FunctionPtr func;
@@ -1705,11 +1715,10 @@ bool Parser::GetFuncData(DataPtr& data)
       if(!lexer_.NextCharIs(';')) return Backup(start, 125);
 
       data.reset(new FuncData(dataName, typeSpec));
-      SetContext(data.get(), start);
+      data->SetContext(start);
       data->SetStatic(stat);
       data->SetConstexpr(cexpr);
       static_cast< FuncData* >(data.get())->SetExpression(expr);
-      SetContext(data.get(), start);
       return Success(Parser_GetFuncData, start);
    }
 
@@ -1767,7 +1776,7 @@ bool Parser::GetFuncData(DataPtr& data)
          prev->SetNext(subseq);
       }
 
-      SetContext(curr, start);
+      curr->SetContext(start);
       curr->SetStatic(stat);
       curr->SetConstexpr(cexpr);
       curr->SetAssignment(init);
@@ -1968,6 +1977,7 @@ bool Parser::GetFuncSpec(TypeSpecPtr& spec, FunctionPtr& func)
    if(!lexer_.NextCharIs('*')) return Backup(start, 134);
 
    string name;
+   auto pos = lexer_.Curr();
    if(!lexer_.GetName(name)) return Backup(start, 135);
    if(!lexer_.NextCharIs(')')) return Backup(start, 136);
    if(!lexer_.NextCharIs('(')) return Backup(start, 137);
@@ -1975,8 +1985,9 @@ bool Parser::GetFuncSpec(TypeSpecPtr& spec, FunctionPtr& func)
    name.insert(0, "(*");
    name += ')';
    auto funcName = QualNamePtr(new QualName(name));
+   funcName->SetContext(pos);
    func.reset(new Function(funcName, spec, true));
-   SetContext(func.get(), start);
+   func->SetContext(start);
    if(!GetArguments(func)) return Backup(start, func, 225);
    return Success(Parser_GetFuncSpec, start);
 }
@@ -2200,7 +2211,7 @@ bool Parser::GetNamespace()
 
    auto outer = Context::Scope();
    auto inner = static_cast< Namespace* >(outer)->EnsureNamespace(name);
-   inner->SetPos(Context::File(), begin);
+   inner->SetLoc(Context::File(), begin);
    Context::PushScope(inner);
    GetFileDecls(inner);
    Context::PopScope();
@@ -2431,7 +2442,9 @@ bool Parser::GetPreAlpha(ExprPtr& expr)
       return Backup(start, 153);
    }
 
-   TokenPtr item = MacroNamePtr(new MacroName(name));
+   auto macro = MacroNamePtr(new MacroName(name));
+   macro->SetContext(start);
+   TokenPtr item = std::move(macro);
    if(expr->AddItem(item)) return true;
    return Backup(start, 154);
 }
@@ -2536,25 +2549,29 @@ bool Parser::GetProcDecl(FunctionPtr& func)
    auto oper = Cxx::NIL_OPERATOR;
    auto pure = false;
 
+   auto pos = start;
    TypeSpecPtr typeSpec;
    string name;
 
    if(NextKeywordIs(OPERATOR_STR))
    {
       if(!GetTypeSpec(typeSpec)) return Backup(start, 158);
+      pos = lexer_.Curr();
       name = OPERATOR_STR;
       oper = Cxx::CAST;
    }
    else
    {
       if(!GetTypeSpec(typeSpec)) return Backup(start, 159);
+      pos = lexer_.Curr();
       if(!lexer_.GetName(name, oper)) return Backup(start, 160);
    }
 
    if(!lexer_.NextCharIs('(')) return Backup(start, 161);
    auto funcName = QualNamePtr(new QualName(name));
+   funcName->SetContext(pos);
    func.reset(new Function(funcName, typeSpec));
-   SetContext(func.get(), start);
+   func->SetContext(start);
    if(!GetArguments(func)) return Backup(start, func, 226);
    func->SetOperator(oper);
 
@@ -2599,8 +2616,10 @@ bool Parser::GetProcDefn(FunctionPtr& func)
    {
       string name;
       Cxx::Operator oper;
+      auto pos = lexer_.Curr();
       if(!lexer_.GetName(name, oper)) return Backup(start, 163);
       funcName.reset(new QualName(name));
+      funcName->SetContext(pos);
       funcName->SetOperator(oper);
       string spec;
       if(!lexer_.GetTemplateSpec(spec)) return Backup(start, 164);
@@ -2614,7 +2633,7 @@ bool Parser::GetProcDefn(FunctionPtr& func)
 
    auto oper = funcName->Operator();
    func.reset(new Function(funcName, typeSpec));
-   SetContext(func.get(), start);
+   func->SetContext(start);
    if(!GetArguments(func)) return Backup(start, func, 227);
    func->SetOperator(oper);
 
@@ -2643,6 +2662,7 @@ bool Parser::GetQualName(QualNamePtr& name, Constraint constraint)
    if(!GetTypeName(type, constraint)) return Backup(start, 167);
    if(global) type->SetScoped();
    name.reset(new QualName(type));
+   name->SetContext(start);
 
    while(lexer_.NextStringIs(SCOPE_STR))
    {
@@ -2664,7 +2684,6 @@ bool Parser::GetQualName(QualNamePtr& name, Constraint constraint)
       name->SetOperator(oper);
    }
 
-   SetContext(name.get(), start);
    return true;
 }
 
@@ -2822,7 +2841,7 @@ bool Parser::GetSpaceData(Cxx::Keyword kwd, DataPtr& data)
 
    if(!lexer_.NextCharIs(';')) return Backup(start, 183);
    data.reset(new SpaceData(dataName, typeSpec));
-   SetContext(data.get(), start);
+   data->SetContext(start);
    data->SetTemplateParms(parms);
    data->SetExtern(extn);
    data->SetStatic(stat);
@@ -2955,6 +2974,7 @@ bool Parser::GetTemplateParm(TemplateParmPtr& parm)
    }
 
    parm.reset(new TemplateParm(argName, tag, ptrs, preset));
+   parm->SetContext(start);
    return Success(Parser_GetTemplateParm, start);
 }
 
@@ -3077,7 +3097,7 @@ bool Parser::GetTypedef(TypedefPtr& type)
    if(!lexer_.NextCharIs(';')) return Backup(start, 200);
 
    type.reset(new Typedef(typeName, typeSpec));
-   SetContext(type.get(), begin);
+   type->SetContext(begin);
    return Success(Parser_GetTypedef, begin);
 }
 
@@ -3119,7 +3139,7 @@ bool Parser::GetTypeName(TypeNamePtr& type, Constraint constraint)
    string name;
    if(!lexer_.GetName(name, constraint)) return Backup(202);
    type.reset(new TypeName(name));
-   SetContext(type.get(), start);
+   type->SetContext(start);
 
    //  Before looking for a template argument after a '<', see if the '<' is
    //  actually part of an operator.
@@ -3184,8 +3204,8 @@ bool Parser::GetTypeSpec(TypeSpecPtr& spec)
          readonly = true;
    }
    spec.reset(new DataSpec(typeName));
+   spec->SetContext(start);
    spec->SetConst(readonly);
-   SetContext(spec.get(), start);
 
    GetPointers(spec.get());
    if(NextKeywordIs(CONST_STR))
@@ -3227,7 +3247,13 @@ bool Parser::GetTypeSpec(TypeSpecPtr& spec)
    //  function signature.
    //
    FunctionPtr func;
-   if(GetFuncSpec(spec, func)) spec.reset(new FuncSpec(func));
+   auto pos = lexer_.Curr();
+   if(GetFuncSpec(spec, func))
+   {
+      spec.reset(new FuncSpec(func));
+      spec->SetContext(pos);
+   }
+
    return Success(Parser_GetTypeSpec1, start);
 }
 
@@ -3278,7 +3304,7 @@ bool Parser::GetUsing(UsingPtr& use)
    if(!GetQualName(usingName)) return Backup(start, 208);
    if(!lexer_.NextCharIs(';')) return Backup(start, 209);
    use.reset(new Using(usingName, space));
-   SetContext(use.get(), begin);
+   use->SetContext(begin);
    return Success(Parser_GetUsing, begin);
 }
 
@@ -3341,7 +3367,7 @@ bool Parser::HandleDefine()
       macro->SetExpr(expr);
    }
 
-   SetContext(macro, start);
+   macro->SetContext(start);
    lexer_.PreprocessSource();
    return true;
 }
@@ -3409,9 +3435,9 @@ bool Parser::HandleElif(DirectivePtr& dir)
    if(!GetPreExpr(expr, end)) return Fault(ConditionExpected);
 
    auto elif = ElifPtr(new Elif);
+   elif->SetContext(start);
    elif->AddCondition(expr);
    if(!iff->AddElif(elif.get())) return Fault(ElifUnexpected);
-   SetContext(elif.get(), start);
    lexer_.FindCode(elif.get(), elif->EnterScope());
    dir = std::move(elif);
    return true;
@@ -3434,8 +3460,8 @@ bool Parser::HandleElse(DirectivePtr& dir)
    if(ifx == nullptr) return Fault(ElseUnexpected);
 
    auto els = ElsePtr(new Else);
+   els->SetContext(start);
    if(!ifx->AddElse(els.get())) return Fault(ElseUnexpected);
-   SetContext(els.get(), start);
    lexer_.FindCode(els.get(), els->EnterScope());
    dir = std::move(els);
    return true;
@@ -3457,7 +3483,7 @@ bool Parser::HandleEndif(DirectivePtr& dir)
    if(!Context::PopOptional()) return Fault(EndifUnexpected);
 
    auto endif = EndifPtr(new Endif);
-   SetContext(endif.get(), start);
+   endif->SetContext(start);
    dir = std::move(endif);
    return true;
 }
@@ -3480,7 +3506,7 @@ bool Parser::HandleError(DirectivePtr& dir)
    auto text = lexer_.Extract(begin, end - begin);
 
    dir = ErrorPtr(new Error(text));
-   SetContext(dir.get(), start);
+   dir->SetContext(start);
    dir->EnterScope();
    return lexer_.Reposition(end);
 }
@@ -3503,8 +3529,8 @@ bool Parser::HandleIf(DirectivePtr& dir)
    if(!GetPreExpr(expr, end)) return Fault(ConditionExpected);
 
    auto iff = IffPtr(new Iff);
+   iff->SetContext(start);
    iff->AddCondition(expr);
-   SetContext(iff.get(), start);
    lexer_.FindCode(iff.get(), iff->EnterScope());
    dir = std::move(iff);
    return true;
@@ -3527,7 +3553,7 @@ bool Parser::HandleIfdef(DirectivePtr& dir)
    if(!lexer_.GetName(symbol)) return Fault(SymbolExpected);
 
    auto ifdef = IfdefPtr(new Ifdef(symbol));
-   SetContext(ifdef.get(), start);
+   ifdef->SetContext(start);
    lexer_.FindCode(ifdef.get(), ifdef->EnterScope());
    dir = std::move(ifdef);
    return true;
@@ -3550,7 +3576,7 @@ bool Parser::HandleIfndef(DirectivePtr& dir)
    if(!lexer_.GetName(symbol)) return Fault(SymbolExpected);
 
    auto ifndef = IfndefPtr(new Ifndef(symbol));
-   SetContext(ifndef.get(), start);
+   ifndef->SetContext(start);
    lexer_.FindCode(ifndef.get(), ifndef->EnterScope());
    dir = std::move(ifndef);
    return true;
@@ -3578,7 +3604,7 @@ bool Parser::HandleInclude()
    if(!lexer_.NextStringIs(HASH_INCLUDE_STR)) return Fault(DirectiveMismatch);
    if(!lexer_.GetIncludeFile(start, name, angle)) return Fault(FileExpected);
    auto incl = Context::File()->InsertInclude(name);
-   if(incl != nullptr) SetContext(incl, start);
+   if(incl != nullptr) incl->SetContext(start);
    return lexer_.Reposition(end);
 }
 
@@ -3600,7 +3626,7 @@ bool Parser::HandleLine(DirectivePtr& dir)
    auto text = lexer_.Extract(begin, end - begin);
 
    dir = LinePtr(new Line(text));
-   SetContext(dir.get(), start);
+   dir->SetContext(start);
    return lexer_.Reposition(end);
 }
 
@@ -3655,7 +3681,7 @@ bool Parser::HandlePragma(DirectivePtr& dir)
    auto text = lexer_.Extract(begin, end - begin);
 
    dir = PragmaPtr(new Pragma(text));
-   SetContext(dir.get(), start);
+   dir->SetContext(start);
    return lexer_.Reposition(end);
 }
 
@@ -3715,7 +3741,7 @@ bool Parser::HandleUndef(DirectivePtr& dir)
    if(!lexer_.GetName(name)) return Fault(SymbolExpected);
 
    UndefPtr undef = UndefPtr(new Undef(name));
-   SetContext(undef.get(), start);
+   undef->SetContext(start);
    dir = std::move(undef);
    return true;
 }
@@ -4301,29 +4327,6 @@ bool Parser::SetCompoundType
    }
 
    return false;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Parser_SetContext = "Parser.SetContext";
-
-void Parser::SetContext(CxxNamed* item, size_t pos) const
-{
-   Debug::ft(Parser_SetContext);
-
-   //  Don't overwrite the scope if the item has already set it.
-   //
-   auto scope = item->GetScope();
-
-   if(scope == nullptr)
-   {
-      scope = Context::Scope();
-      item->SetScope(scope);
-   }
-
-   if(scope != nullptr) item->SetAccess(scope->GetCurrAccess());
-   item->SetPos(Context::File(), pos);
-   if(ParsingTemplateInstance()) item->SetInternal();
 }
 
 //------------------------------------------------------------------------------

@@ -884,7 +884,7 @@ public:
 
    //  Overridden to preserve the location where the namespace first occurred.
    //
-   virtual void SetPos(CodeFile* file, size_t pos) override;
+   virtual void SetLoc(CodeFile* file, size_t pos) override;
 
    //  Overridden to handle the global namespace.
    //

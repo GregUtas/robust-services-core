@@ -752,7 +752,7 @@ bool CxxScoped::NameRefersToItem(const std::string& name,
          //  "a::b", the using statement must be for "a::b", "a::b::c",
          //  or "a::b::c::d".
          //
-         view->using_ = file->FindUsingFor(fqName, pos - 4, this, scope);  //*
+         view->using_ = file->FindUsingFor(fqName, pos - 4, this, scope);
          if(view->using_) return true;
       }
 
@@ -816,8 +816,8 @@ void Enum::AddEnumerator(string& name, ExprPtr& init, size_t pos)
    Debug::ft(Enum_AddEnumerator);
 
    auto etor = EnumeratorPtr(new Enumerator(name, init, this));
-   etor->SetPos(GetFile(), pos);
    etor->SetScope(GetScope());
+   etor->SetLoc(GetFile(), pos);
    etor->SetAccess(GetAccess());
    etors_.push_back(std::move(etor));
 }
@@ -920,7 +920,6 @@ void Enum::EnterBlock()
    Debug::ft(Enum_EnterBlock);
 
    Context::SetPos(GetPos());
-   SetScope(Context::Scope());
 
    for(auto e = etors_.cbegin(); e != etors_.cend(); ++e)
    {
@@ -1085,7 +1084,6 @@ void Enumerator::EnterBlock()
    Debug::ft(Enumerator_EnterBlock);
 
    Context::SetPos(GetPos());
-   SetScope(Context::Scope());
 
    if(init_ != nullptr)
    {
@@ -2143,7 +2141,6 @@ void Typedef::EnterBlock()
    Debug::ft(Typedef_EnterBlock);
 
    Context::SetPos(GetPos());
-   SetScope(Context::Scope());
    spec_->EnteringScope(GetScope());
    refs_ = 0;
 }
@@ -2299,7 +2296,6 @@ void Using::EnterBlock()
    Debug::ft(Using_EnterBlock);
 
    Context::SetPos(GetPos());
-   SetScope(Context::Scope());
    Block::AddUsing(this);
    FindReferent();
 }

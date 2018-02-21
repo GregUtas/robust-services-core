@@ -196,7 +196,7 @@ fixed_string WarningStrings[Warning_N + 1] =
    "Semicolon not required",
    "Redundant const in type specification",
    "#define appears within a class or function",
-   "#include appears within a class or function",
+   "#include appears outside of global namespace",
    "No #include guard found",
    "#include not sorted in standard order",
    "#include duplicated",

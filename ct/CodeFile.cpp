@@ -1601,7 +1601,7 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user)
       qualName->SetReferent(ref, nullptr);
       auto u = UsingPtr(new Using(qualName, false, true));
       u->SetScope(scope);
-      u->SetPos(this, string::npos);
+      u->SetLoc(this, CxxLocation::NOT_IN_SOURCE);
       scope->AddUsing(u);
 
       //  If this is a header, log the fact that it depends a using statement
@@ -2690,7 +2690,7 @@ void CodeFile::Scan()
          }
 
          auto incl = IncludePtr(new Include(file, angle));
-         incl->SetPos(this, lexer_.GetLineStart(n));
+         incl->SetLoc(this, lexer_.GetLineStart(n));
          InsertInclude(incl);
       }
    }

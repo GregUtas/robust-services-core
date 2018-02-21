@@ -603,11 +603,6 @@ private:
    //
    bool NextKeywordIs(NodeBase::fixed_string str);
 
-   //  Invokes SetScope, SetAccess, and SetPos on ITEM immediately after
-   //  its creation.
-   //
-   void SetContext(CxxNamed* item, size_t pos) const;
-
    //  Logs WARNING at POS.  If POS is not specified, the last position where
    //  parsing started is used.
    //

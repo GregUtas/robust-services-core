@@ -118,9 +118,9 @@ const OperatorInfo OperatorInfo::Attrs[Operator_N] =
 
 fn_name OperatorInfo_ctor = "OperatorInfo.ctor";
 
-OperatorInfo::OperatorInfo(const string& s, int args, LibSetType lhs,
+OperatorInfo::OperatorInfo(const string& sym, int args, LibSetType lhs,
    LibSetType rhs1, LibSetType rhs2) :
-   sym(s),
+   sym(sym),
    args(args),
    lhs(lhs),
    rhs1(rhs1),

@@ -523,6 +523,40 @@ string CxxNamed::ScopedName(bool templates) const
 
 //------------------------------------------------------------------------------
 
+fn_name CxxNamed_SetContext = "CxxNamed.SetContext";
+
+void CxxNamed::SetContext(size_t pos)
+{
+   Debug::ft(CxxNamed_SetContext);
+
+   //  If the item has already set its scope, don't overwrite it.
+   //
+   auto scope = GetScope();
+
+   if(scope == nullptr)
+   {
+      scope = Context::Scope();
+      SetScope(scope);
+   }
+
+   SetAccess(scope->GetCurrAccess());
+   loc_.SetLoc(Context::File(), pos);
+   if(Context::ParsingTemplateInstance()) SetInternal();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CxxNamed_SetLoc = "CxxNamed.SetLoc";
+
+void CxxNamed::SetLoc(CodeFile* file, size_t pos)
+{
+   Debug::ft(CxxNamed_SetLoc);
+
+   loc_.SetLoc(file, pos);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CxxNamed_SetReferent = "CxxNamed.SetReferent";
 
 void CxxNamed::SetReferent(CxxNamed* item, const SymbolView* view) const

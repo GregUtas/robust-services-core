@@ -187,6 +187,14 @@ void Context::Enter(const CxxScoped* owner)
 
 //------------------------------------------------------------------------------
 
+const Parser* Context::GetParser()
+{
+   if(Frame_ == nullptr) return nullptr;
+   return Frame_->GetParser();
+}
+
+//------------------------------------------------------------------------------
+
 string Context::Location()
 {
    auto parser = GetParser();

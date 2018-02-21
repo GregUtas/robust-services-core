@@ -369,7 +369,7 @@ enum Warning
    RemoveSemicolon,          // unnecessary semicolon
    RedundantConst,           // more than one const qualifier for same token
    DefineNotAtFileScope,     // #define appears within a class or function
-   IncludeNotAtFileScope,    // #include appears within a class or function
+   IncludeNotAtGlobalScope,  // #include appears outside of global namespace
    IncludeGuardMissing,      // no #include guard
    IncludeNotSorted,         // #include not sorted in standard order
    IncludeDuplicated,        // #include already exists for this file

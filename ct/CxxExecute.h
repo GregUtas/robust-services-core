@@ -504,7 +504,7 @@ public:
 
    //  Returns the current parser.
    //
-   static const Parser* GetParser() { return Frame_->GetParser(); }
+   static const Parser* GetParser();
 
    //  Sets the item in which execution is about to occur.  It is
    //  recorded in the trace, and SetPos(owner) is invoked.

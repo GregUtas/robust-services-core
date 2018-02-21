@@ -631,9 +631,8 @@ void Include::SetScope(CxxScope* scope)
 {
    Debug::ft(Include_SetScope);
 
-   if(scope == nullptr) return;
-   if(scope->Type() == Cxx::Namespace) return;
-   Log(IncludeNotAtFileScope);
+   if(scope == Singleton< CxxRoot >::Instance()->GlobalNamespace()) return;
+   Log(IncludeNotAtGlobalScope);
 }
 
 //------------------------------------------------------------------------------

@@ -211,7 +211,6 @@ void Block::EnterBlock()
    Debug::ft(Block_EnterBlock);
 
    Context::SetPos(GetPos());
-   SetScope(Context::Scope());
    Context::PushScope(this);
 
    for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
@@ -1650,7 +1649,6 @@ void FuncData::EnterBlock()
    auto anon = spec->IsAuto();
 
    Context::SetPos(GetPos());
-   SetScope(Context::Scope());
    Singleton< CxxSymbols >::Instance()->InsertLocal(this);
    spec->EnteringScope(this);
    ExecuteInit(false);
@@ -1898,7 +1896,7 @@ void Function::AddThisArg()
    string argName(THIS_STR);
    ArgumentPtr arg(new Argument(argName, typeSpec));
    arg->SetScope(this);
-   arg->SetPos(GetFile(), GetPos());
+   arg->SetLoc(GetFile(), GetPos());
    args_.insert(args_.begin(), std::move(arg));
    this_ = true;
 }

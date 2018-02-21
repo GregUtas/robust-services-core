@@ -191,7 +191,7 @@ private:
 
 fn_name TestSession_ctor = "TestSession.ctor";
 
-TestSession::TestSession(StTestData* data, TestSessionId tid) :
+TestSession::TestSession(const StTestData* data, TestSessionId tid) :
    sbData_(data),
    tid_(tid),
    testPsm_(nullptr),

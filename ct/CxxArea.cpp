@@ -858,7 +858,7 @@ ClassInst* Class::CreateInstance(const string& name, const TypeName* type)
    tmplts_.push_back(std::move(tmplt));
 
    inst->SetScope(GetScope());
-   inst->SetPos(GetFile(), GetPos());
+   inst->SetLoc(GetFile(), GetPos());
    return inst;
 }
 
@@ -2571,7 +2571,7 @@ Namespace::Namespace(const string& name, Namespace* space) : name_(name)
 {
    Debug::ft(Namespace_ctor);
 
-   SetScope(space);
+   CxxArea::SetScope(space);
    Singleton< CxxSymbols >::Instance()->InsertSpace(this);
    CxxStats::Incr(CxxStats::SPACE_DECL);
 }
@@ -2749,13 +2749,13 @@ string Namespace::ScopedName(bool templates) const
 
 //------------------------------------------------------------------------------
 
-fn_name Namespace_SetPos = "Namespace.SetPos";
+fn_name Namespace_SetLoc = "Namespace.SetLoc";
 
-void Namespace::SetPos(CodeFile* file, size_t pos)
+void Namespace::SetLoc(CodeFile* file, size_t pos)
 {
-   Debug::ft(Namespace_SetPos);
+   Debug::ft(Namespace_SetLoc);
 
-   if(GetFile() == nullptr) CxxNamed::SetPos(file, pos);
+   if(GetFile() == nullptr) CxxArea::SetLoc(file, pos);
 }
 
 //------------------------------------------------------------------------------

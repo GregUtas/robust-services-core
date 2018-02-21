@@ -43,16 +43,20 @@ class CxxLocation
 {
    friend class CxxNamed;
 public:
-   CxxLocation() : file(nullptr), pos(std::string::npos), internal(false) { }
+   static const size_t NOT_IN_SOURCE = 0x7fffffff;
 
    size_t GetPos() const
    {
-      if(pos == 0x7fffffff)
+      if(pos == NOT_IN_SOURCE)
          return std::string::npos;
       else
          return pos;
    }
 private:
+   //  Constructor.
+   //
+   CxxLocation() : file(nullptr), pos(std::string::npos), internal(false) { }
+
    //  Records an item's location in source code.
    //
    void SetLoc(CodeFile* f, size_t p) { file = f; pos = p; }
@@ -107,7 +111,15 @@ public:
 
    //  Sets the file and offset at which this item was found.
    //
-   virtual void SetPos(CodeFile* file, size_t pos) { loc_.SetLoc(file, pos); }
+   virtual void SetLoc(CodeFile* file, size_t pos);
+
+   //  Sets the context in which this item was found:
+   //  o Invokes SetScope(Context::Scope()) unless the item already has a scope
+   //  o invokes SetAccess(item's scope->GetCurrAccess())
+   //  o invokes SetLoc(Context::File(), pos)
+   //  o invokes SetInternal() if Context::ParsingTemplateInstance() is true
+   //
+   void SetContext(size_t pos);
 
    //  Returns the file in which this item was found.
    //
@@ -123,32 +135,6 @@ public:
    //
    virtual size_t GetRange(size_t& begin, size_t& end) const;
 
-   //  Indicates that the item appeared in internally generated code.
-   //
-   void SetInternal() { loc_.internal = true; }
-
-   //  Returns true if the item appeared in internally generated code.
-   //
-   bool IsInternal() const { return loc_.internal; }
-
-   //  Returns true if the item was declared in a function's code block
-   //  or argument list.
-   //
-   virtual bool IsDeclaredInFunction() const { return false; }
-
-   //  Returns true if the item is static.  Note that, for the purposes
-   //  of this function:
-   //  o only data and functions can be classified as non-static;
-   //  o class membership for non-static data and functions must be
-   //    checked separately, using if(item->GetClass() != nullptr).
-   //
-   virtual bool IsStatic() const { return true; }
-
-   //  Sets the scope where the item was found.  For classes derived from
-   //  CxxScoped, this is usually the scope where the item is declared.
-   //
-   virtual void SetScope(CxxScope* scope) { }
-
    //  Returns the scope (namespace, class, or block) where the item is
    //  declared.
    //
@@ -159,9 +145,22 @@ public:
    //
    virtual CxxScope* GetLocale() const { return GetScope(); }
 
-   //  Sets the access control that applies to the item.
+   //  Returns true if the item is static.  Note that, for the purposes
+   //  of this function:
+   //  o only data and functions can be classified as non-static;
+   //  o class membership for non-static data and functions must be
+   //    checked separately, using if(item->GetClass() != nullptr).
    //
-   virtual void SetAccess(Cxx::Access access) { }
+   virtual bool IsStatic() const { return true; }
+
+   //  Returns true if the item was declared in a function's code block
+   //  or argument list.
+   //
+   virtual bool IsDeclaredInFunction() const { return false; }
+
+   //  Returns true if the item appeared in internally generated code.
+   //
+   bool IsInternal() const { return loc_.internal; }
 
    //  Sets the template parameters when the item declares a template.
    //  The default version generates a log and must be overridden by an
@@ -351,6 +350,15 @@ protected:
    //
    CxxNamed(const CxxNamed& that);
 
+   //  Sets the scope where the item was found.  For classes derived from
+   //  CxxScoped, this is usually the scope where the item is declared.
+   //
+   virtual void SetScope(CxxScope* scope) { }
+
+   //  Sets the access control that applies to the item.
+   //
+   virtual void SetAccess(Cxx::Access access) { }
+
    //  Resolves the item's qualified name.  FILE, SCOPE, MASK, and VIEW are
    //  the same as the arguments for CxxSymbols::FindSymbol.
    //
@@ -380,6 +388,10 @@ protected:
    //
    void AddUsage() const;
 private:
+   //  Indicates that the item appeared in internally generated code.
+   //
+   void SetInternal() { loc_.internal = true; }
+
    //  Invoked when ResolveName finds DECL, a forward or friend declaration,
    //  when resolving the Nth name in a possibly qualified name.  If it
    //  returns false, ResolveName returns DECL.  Otherwise, name resolution
@@ -1180,9 +1192,9 @@ private:
    //
    virtual void FindReferent() override;
 
-   //  Overridden to return the type's attributes.
+   //  Overridden to return the scope where the type appeared.
    //
-   virtual TypeTags GetTags() const override;
+   virtual CxxScope* GetLocale() const override { return name_->GetLocale(); }
 
    //  Overridden to return the numeric type.
    //
@@ -1191,6 +1203,10 @@ private:
    //  Overridden to return the type's qualified name.
    //
    virtual QualName* GetQualName() const override { return name_.get(); }
+
+   //  Overridden to return the type's attributes.
+   //
+   virtual TypeTags GetTags() const override;
 
    //  Overridden to return the type itself.
    //

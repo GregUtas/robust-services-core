@@ -81,9 +81,9 @@ public:
    virtual Cxx::Access GetCurrAccess() const { return Cxx::Private; }
 
    //  Returns the using statement, if any, that makes ITEM visible within
-   //  SCOPE because it matches NAME to at least PREFIX.
+   //  SCOPE because it matches fqName to at least PREFIX.
    //
-   virtual Using* GetUsingFor(const std::string& name, size_t prefix,
+   virtual Using* GetUsingFor(const std::string& fqName, size_t prefix,
       const CxxNamed* item, const CxxScope* scope) const { return nullptr; }
 
    //  Updates VIEW to indicate the accessibility of ITEM, which was declared
@@ -214,7 +214,7 @@ public:
 
    //  Overridden to look at using statements that are local to a function.
    //
-   virtual Using* GetUsingFor(const std::string& name, size_t prefix,
+   virtual Using* GetUsingFor(const std::string& fqName, size_t prefix,
       const CxxNamed* item, const CxxScope* scope) const override;
 
    //  Overridden to determine if in-line display is possible.

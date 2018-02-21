@@ -264,14 +264,14 @@ void Block::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 fn_name Block_GetUsingFor = "Block.GetUsingFor";
 
-Using* Block::GetUsingFor(const std::string& name,
+Using* Block::GetUsingFor(const std::string& fqName,
    size_t prefix, const CxxNamed* item, const CxxScope* scope) const
 {
    Debug::ft(Block_GetUsingFor);
 
    for(auto u = Usings_.cbegin(); u != Usings_.cend(); ++u)
    {
-      if((*u)->IsUsingFor(name, prefix)) return *u;
+      if((*u)->IsUsingFor(fqName, prefix)) return *u;
    }
 
    return nullptr;

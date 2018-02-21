@@ -607,6 +607,27 @@ bool CxxScoped::IsIndirect() const
 
 //------------------------------------------------------------------------------
 
+bool CxxScoped::IsSuperscopeOf(const std::string& fqName, bool tmplt) const
+{
+   //  fqScope must match a head portion (or all of) fqName.  On a partial
+   //  match, check that the match actually reached a scope operator or, if
+   //  TMPLT is set, template specification.
+   //
+   auto fqScope = ScopedName(tmplt);
+   auto size = fqScope.size();
+
+   if(fqName.compare(0, size, fqScope) == 0)
+   {
+      if(fqName.size() == size) return true;
+      if(fqName.compare(size, 2, SCOPE_STR) == 0) return true;
+      if(fqName[size] == '<') return tmplt;
+   }
+
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CxxScoped_NameRefersToItem = "CxxScoped.NameRefersToItem";
 
 bool CxxScoped::NameRefersToItem(const std::string& name,
@@ -614,34 +635,49 @@ bool CxxScoped::NameRefersToItem(const std::string& name,
 {
    Debug::ft(CxxScoped_NameRefersToItem);
 
-   //  If this item was not declared in a file, it's a built-in type and is
-   //  therefore visible.  If NAME is a template specification, assume that
-   //  it is visible.
-   //c Verify the visibility of each component in a template specification.
-   //  Not doing so forced Lexer::TypesTable to be renamed from TypeTable so
-   //  that it could be distinguished from CxxSymbols::TypeTable, preventing
-   //  a false "doubly declared identifier" error.
+   //  If this item was not declared in a file, it must be a macro name that
+   //  was defined for the compile (e.g. OS_WIN).
    //
+   auto itemType = Type();
    auto itemFile = GetFile();
 
-   if((name.find('<') != string::npos) || (itemFile == nullptr))
+   if(itemFile == nullptr)
+   {
+      if(itemType == Cxx::Macro)
+      {
+         view->accessibility = Unrestricted;
+         return true;
+      }
+
+      auto expl = "No file for item: " + *Name();
+      Context::SwErr(CxxScoped_NameRefersToItem, expl, itemType);
+      return false;
+   }
+
+   //  If NAME is a template instance, assume that it is visible.
+   //c Verify the visibility of each name in a template instance.  Not doing
+   //  so forced Lexer::TypesTable to be renamed from TypeTable so that it
+   //  could be distinguished from CxxSymbols::TypeTable, preventing a false
+   //  "doubly declared identifier" error.
+   //
+   if(name.find('<') != string::npos)
    {
       view->accessibility = Unrestricted;
       return true;
    }
 
-   //  The file that declares ITEM must affect (that is, be in the transitive
-   //  #include of) this file.  The check can fail when looking up a namespace,
-   //  which is arbitrarily assigned to the first file where it appears, even
-   //  though it can appear in many others.
+   //  The file that declares this item must affect (that is, be in the
+   //  transitive #include of) FILE.  The check can fail when looking up a
+   //  namespace, which is arbitrarily assigned to the first file where it
+   //  appears, even though it can appear in many others.
    //
    SetOfIds::const_iterator it = file->Affecters().find(itemFile->Fid());
    auto affected = (it != file->Affecters().cend());
-   if(!affected && (Type() != Cxx::Namespace)) return false;
+   if(!affected && (itemType != Cxx::Namespace)) return false;
 
-   //  See how SCOPE can access ITEM: this information is provided in VIEW.
-   //  Set checkUsing if a using statement will be needed for ITEM if it is
-   //  in another namespace.
+   //  See how SCOPE can access this item: this information is provided in
+   //  VIEW.  Set checkUsing if a using statement will be needed for ITEM
+   //  if it is in another namespace.
    //
    auto checkUsing = true;
    AccessibilityTo(scope, view);
@@ -660,7 +696,7 @@ bool CxxScoped::NameRefersToItem(const std::string& name,
       checkUsing = false;
    }
 
-   //  To access ITEM, NAME must partially match its fully qualified name.
+   //  NAME must partially match this item's fully qualified name.
    //
    string fqName;
    size_t i = 0;
@@ -676,8 +712,9 @@ bool CxxScoped::NameRefersToItem(const std::string& name,
          case 0:
          case 2:
             //
-            //  NAME completely matches ITEM, with the possible exception of
-            //  a leading scope resolution operator.
+            //  NAME completely matches this item's fully qualified name,
+            //  with the possible exception of a leading scope resolution
+            //  operator.
             //
             return true;
          case 1:
@@ -689,16 +726,16 @@ bool CxxScoped::NameRefersToItem(const std::string& name,
             return false;
          }
 
-         //  NAME is a partial match for ITEM.  Report a match if SCOPE
-         //  is ITEM's declarer or one of its subclasses.
+         //  NAME is a partial match for this item.  Report a match if SCOPE
+         //  is this item's declarer or one of its subclasses.
          //
          if(!checkUsing) return true;
 
-         //  Report a match if SCOPE is already in ITEM's scope.
+         //  Report a match if SCOPE is already in this item's scope.
          //
          fqName.erase(0, 2);
          auto prefix = fqName.substr(0, pos - 4);
-         if(scope->IsSubscopeOf(prefix)) return true;
+         if(scope->IsSubscopeOf(prefix)) return true;  //^
 
          //  Report a match if SCOPE's class derives from this item's class.
          //
@@ -2314,25 +2351,25 @@ void Using::FindReferent()
 
 fn_name Using_IsUsingFor = "Using.IsUsingFor";
 
-bool Using::IsUsingFor(const string& name, size_t prefix) const
+bool Using::IsUsingFor(const string& fqName, size_t prefix) const
 {
    Debug::ft(Using_IsUsingFor);
 
-   //  Template arguments are not supported in a using statement.
-   //
    auto ref = Referent();
    if(ref == nullptr) return false;
 
+   //  See if the using statement's referent is a superscope of fqName.
+   //
    auto refname = ref->ScopedName(false);
-   auto pos = NameIsSuperscopeOf(name, refname);
+   auto pos = CodeTools::IsSuperscopeOf(fqName, refname);  //^
 
    if((pos != string::npos) && (pos >= prefix))
    {
-      //  If there is no context file, a parse is not in progress, in which
-      //  case a tool is invoking this after the parse was completed.
+      //  This can be invoked when >check or >trim adds a using statement.
+      //  In that case, the using statement was not part of the original
+      //  source, so don't claim that it has users.
       //
-      auto file = Context::File();
-      if(file != nullptr) ++users_;
+      if(Context::ParsingSourceCode()) ++users_;
       return true;
    }
 

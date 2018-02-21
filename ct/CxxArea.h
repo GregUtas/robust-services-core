@@ -365,8 +365,7 @@ public:
    //
    FunctionDefinition GetFuncDefinition(const Function* func) const;
 
-   //  Returns the friend declaration for SCOPE if one exists (CxxScope is
-   //  the common base class for functions and classes).
+   //  Returns the friend declaration for SCOPE if one exists.
    //
    Friend* FindFriend(const CxxScope* scope) const;
 
@@ -511,7 +510,7 @@ public:
 
    //  Overridden to look at using statements that are local to the class.
    //
-   virtual Using* GetUsingFor(const std::string& name, size_t prefix,
+   virtual Using* GetUsingFor(const std::string& fqName, size_t prefix,
       const CxxNamed* item, const CxxScope* scope) const override;
 
    //  Overridden to look for an implemented function.

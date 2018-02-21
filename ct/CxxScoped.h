@@ -140,6 +140,12 @@ public:
    //
    virtual bool IsIndirect() const override;
 
+   //  Overridden to use this item's fully qualified name to determine
+   //  if it is a superscope of fqName.
+   //
+   virtual bool IsSuperscopeOf
+      (const std::string& fqName, bool tmplt) const override;
+
    //  Overridden to return the item itself.
    //
    virtual CxxNamed* Referent() const override { return (CxxNamed*) this; }
@@ -1142,10 +1148,10 @@ public:
    //
    ~Using() { CxxStats::Decr(CxxStats::USING_DECL); }
 
-   //  Returns true if the declaration/directive makes NAME visible to
-   //  at least the position specified by PREFIX.
+   //  Returns true if the declaration/directive makes fqName visible
+   //  to at least the position specified by PREFIX.
    //
-   bool IsUsingFor(const std::string& name, size_t prefix) const;
+   bool IsUsingFor(const std::string& fqName, size_t prefix) const;
 
    //  Used by >trim when the statement should be removed.
    //

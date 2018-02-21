@@ -568,6 +568,10 @@ public:
    //
    static CodeFile* File() { return File_; }
 
+   //  Returns true if source code is being parsed.
+   //
+   static bool ParsingSourceCode() { return (File_ != nullptr); }
+
    //  Returns true if a template instance is currently being parsed.
    //
    static bool ParsingTemplateInstance();

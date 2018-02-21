@@ -108,9 +108,9 @@ public:
    bool IsTemplateHeader() const;
 
    //  Returns the using statement, if any, that makes ITEM visible within
-   //  this file or SCOPE because it matches NAME to at least PREFIX.
+   //  this file or SCOPE because it matches fqName to at least PREFIX.
    //
-   Using* FindUsingFor(const std::string& name, size_t prefix,
+   Using* FindUsingFor(const std::string& fqName, size_t prefix,
       const CxxScoped* item, const CxxScope* scope) const;
 
    //  Returns a pointer to the original source code.
@@ -314,9 +314,9 @@ private:
    Data* FindData(const std::string& name) const;
 
    //  Returns the using statement, if any, that makes ITEM visible within
-   //  SCOPE (in this file) because it matches NAME to at least PREFIX.
+   //  SCOPE (in this file) because it matches fqName to at least PREFIX.
    //
-   Using* GetUsingFor(const std::string& name, size_t prefix,
+   Using* GetUsingFor(const std::string& fqName, size_t prefix,
       const CxxNamed* item, const CxxScope* scope) const;
 
    //  Returns TRUE if the file has a forward declaration for ITEM.
@@ -395,9 +395,9 @@ private:
    void PruneLocalForwards(CxxNamedSet& addForws, CxxNamedSet& delForws) const;
 
    //  Searches the file for a using statement that makes USER visible.  If
-   //  no such statement is found, one is created and added to addUsing.
+   //  no such statement is found, one is created and added to the file.
    //
-   void FindOrAddUsing(const CxxNamed* user, CxxNamedSet& addUsing) const;
+   void FindOrAddUsing(const CxxNamed* user);
 
    //  Logs an IncludeAdd for each file in FIDS.
    //
@@ -415,9 +415,9 @@ private:
    //
    void LogRemoveForwards(std::ostream* stream, const CxxNamedSet& items) const;
 
-   //  Logs a UsingAdd for each item in ITEMS.
+   //  Logs a UsingAdd for using statements that were added by FindOrAddUsing.
    //
-   void LogAddUsings(std::ostream* stream, const CxxNamedSet& items) const;
+   void LogAddUsings(std::ostream* stream) const;
 
    //  Logs a UsingRemove for each of the file's using statements that is
    //  marked for removal.

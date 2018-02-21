@@ -316,6 +316,30 @@ std::string GetFileName(const std::string& path)
 
 //------------------------------------------------------------------------------
 
+fn_name CodeTools_IsSuperscopeOf = "CodeTools.IsSuperscopeOf";
+
+size_t IsSuperscopeOf(const string& fqName, const string& fqScope)
+{
+   Debug::ft(CodeTools_IsSuperscopeOf);
+
+   //  fqScope must match a head portion (or all of) fqName.  On a partial
+   //  match, check that the match actually reached a scope operator or
+   //  template specification.
+   //
+   auto size = fqScope.size();
+
+   if(fqName.compare(0, size, fqScope) == 0)
+   {
+      if(fqName.size() == size) return size;
+      if(fqName.compare(size, 2, SCOPE_STR) == 0) return size;
+      if(fqName[size] == '<') return size;
+   }
+
+   return string::npos;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeTools_NameCouldReferTo = "CodeTools.NameCouldReferTo";
 
 size_t NameCouldReferTo(const string& fqName, const string& name)
@@ -332,30 +356,6 @@ size_t NameCouldReferTo(const string& fqName, const string& name)
    {
       if(pos == 0) return 0;
       if(fqName.compare(pos - 2, 2, SCOPE_STR) == 0) return pos;
-   }
-
-   return string::npos;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CodeTools_NameIsSuperscopeOf = "CodeTools.NameIsSuperscopeOf";
-
-size_t NameIsSuperscopeOf(const string& fqName, const string& name)
-{
-   Debug::ft(CodeTools_NameIsSuperscopeOf);
-
-   //  NAME must match a head portion (or all of) fqName.  On a partial
-   //  match, check that the match actually reached a scope operator or
-   //  template specification.
-   //
-   auto size = name.size();
-
-   if(fqName.compare(0, size, name) == 0)
-   {
-      if(fqName.size() == size) return size;
-      if(fqName.compare(size, 2, SCOPE_STR) == 0) return size;
-      if(fqName[size] == '<') return size;
    }
 
    return string::npos;

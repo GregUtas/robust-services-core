@@ -1119,8 +1119,7 @@ Friend* Class::FindFriend(const CxxScope* scope) const
 
    for(auto f = friends_.cbegin(); f != friends_.cend(); ++f)
    {
-      auto fqFriend = (*f)->ScopedName(true);
-      if(NameIsSuperscopeOf(fqScope, fqFriend) != string::npos) return f->get();
+      if((*f)->IsSuperscopeOf(fqScope, true)) return f->get();
    }
 
    return nullptr;
@@ -1530,7 +1529,7 @@ void Class::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 fn_name Class_GetUsingFor = "Class.GetUsingFor";
 
-Using* Class::GetUsingFor(const std::string& name,
+Using* Class::GetUsingFor(const std::string& fqName,
    size_t prefix, const CxxNamed* item, const CxxScope* scope) const
 {
    Debug::ft(Class_GetUsingFor);
@@ -1539,7 +1538,7 @@ Using* Class::GetUsingFor(const std::string& name,
 
    for(auto u = usings->cbegin(); u != usings->cend(); ++u)
    {
-      if((*u)->IsUsingFor(name, prefix)) return u->get();
+      if((*u)->IsUsingFor(fqName, prefix)) return u->get();
    }
 
    return nullptr;

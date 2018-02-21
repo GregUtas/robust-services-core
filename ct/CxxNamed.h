@@ -200,6 +200,14 @@ public:
    //
    virtual bool GetScopedName(std::string& name, size_t n) const;
 
+   //  Returns true if this item is a superscope of fqName.  TMPLT is set if
+   //  a template should be considered a superscope of one of its instances.
+   //  This version returns false because the superscope's fully qualified name
+   //  is required, but it is only available in classes derived from CxxScoped.
+   //
+   virtual bool IsSuperscopeOf(const std::string& fqName, bool tmplt) const
+      { return false; }
+
    //  Returns the area (namespace or class) in which the item was declared.
    //  Returns (because of an override) the item itself if it is an area.
    //

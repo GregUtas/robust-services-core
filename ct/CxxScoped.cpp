@@ -607,23 +607,26 @@ bool CxxScoped::IsIndirect() const
 
 //------------------------------------------------------------------------------
 
-bool CxxScoped::IsSuperscopeOf(const std::string& fqName, bool tmplt) const
+fn_name CxxScoped_IsSubscopeOf = "CxxScoped.IsSubscopeOf";
+
+bool CxxScoped::IsSubscopeOf(const string& fqSuper) const
 {
-   //  fqScope must match a head portion (or all of) fqName.  On a partial
-   //  match, check that the match actually reached a scope operator or, if
-   //  TMPLT is set, template specification.
-   //
-   auto fqScope = ScopedName(tmplt);
-   auto size = fqScope.size();
+   Debug::ft(CxxScoped_IsSubscopeOf);
 
-   if(fqName.compare(0, size, fqScope) == 0)
-   {
-      if(fqName.size() == size) return true;
-      if(fqName.compare(size, 2, SCOPE_STR) == 0) return true;
-      if(fqName[size] == '<') return tmplt;
-   }
+   auto fqSub = ScopedName(false);
+   return (CompareScopes(fqSub, fqSuper, false) != string::npos);
+}
 
-   return false;
+//------------------------------------------------------------------------------
+
+fn_name CxxScoped_IsSuperscopeOf = "CxxScoped.IsSuperscopeOf";
+
+bool CxxScoped::IsSuperscopeOf(const string& fqSub, bool tmplt) const
+{
+   Debug::ft(CxxScoped_IsSuperscopeOf);
+
+   auto fqSuper = ScopedName(tmplt);
+   return (CompareScopes(fqSub, fqSuper, tmplt) != string::npos);
 }
 
 //------------------------------------------------------------------------------
@@ -735,7 +738,7 @@ bool CxxScoped::NameRefersToItem(const std::string& name,
          //
          fqName.erase(0, 2);
          auto prefix = fqName.substr(0, pos - 4);
-         if(scope->IsSubscopeOf(prefix)) return true;  //^
+         if(scope->IsSubscopeOf(prefix)) return true;
 
          //  Report a match if SCOPE's class derives from this item's class.
          //
@@ -2356,8 +2359,8 @@ bool Using::IsUsingFor(const string& fqName, size_t prefix) const
 
    //  See if the using statement's referent is a superscope of fqName.
    //
-   auto refname = ref->ScopedName(false);
-   auto pos = CodeTools::IsSuperscopeOf(fqName, refname);  //^
+   auto fqSuper = ref->ScopedName(false);
+   auto pos = CompareScopes(fqName, fqSuper, false);
 
    if((pos != string::npos) && (pos >= prefix))
    {

@@ -818,30 +818,6 @@ id_t CxxScope::GetDistinctDeclFid() const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxScope_IsSubscopeOf = "CxxScope.IsSubscopeOf";
-
-bool CxxScope::IsSubscopeOf(const string& name) const
-{
-   Debug::ft(CxxScope_IsSubscopeOf);
-
-   //  This scope is a subscope of NAME if its fully qualified name is equal
-   //  to, or a subset of, NAME.  Template arguments are ignored because the
-   //  subclassing of a template instance is not supported.
-   //
-   auto fqName = ScopedName(false);
-   auto size = name.size();
-
-   if(name.compare(0, size, fqName, 0, size) == 0)
-   {
-      if(size == fqName.size()) return true;
-      if(fqName.compare(size, 2, SCOPE_STR) == 0) return true;
-   }
-
-   return false;
-}
-
-//------------------------------------------------------------------------------
-
 fn_name CxxScope_NameIsTemplateParm = "CxxScope.NameIsTemplateParm";
 
 bool CxxScope::NameIsTemplateParm(const string& name) const

@@ -140,11 +140,15 @@ public:
    //
    virtual bool IsIndirect() const override;
 
+   //  Returns true if this scope is either fqSuper or a subscope of it.
+   //
+   bool IsSubscopeOf(const std::string& fqSuper) const;
+
    //  Overridden to use this item's fully qualified name to determine
-   //  if it is a superscope of fqName.
+   //  if it is a superscope of fqSub.
    //
    virtual bool IsSuperscopeOf
-      (const std::string& fqName, bool tmplt) const override;
+      (const std::string& fqSub, bool tmplt) const override;
 
    //  Overridden to return the item itself.
    //

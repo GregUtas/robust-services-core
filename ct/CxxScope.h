@@ -53,10 +53,6 @@ public:
    //
    void CloseScope();
 
-   //  Returns true if NAME is either this scope or a subscope of it.
-   //
-   bool IsSubscopeOf(const std::string& name) const;
-
    //  Returns the distance to the superscope SCOPE.  Returns 0 if SCOPE is
    //  the same as this scope.  Returns NOT_A_SUBSCOPE if this scope is not
    //  a subcope of SCOPE.

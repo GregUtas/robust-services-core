@@ -29,11 +29,6 @@
 #include "SysFile.h"
 #include "SysTypes.h"
 
-namespace NodeBase
-{
-   class CliThread;
-}
-
 //------------------------------------------------------------------------------
 
 namespace CodeTools
@@ -103,10 +98,8 @@ public:
    NodeBase::word RemoveForward(const WarningLog& log, std::string& expl);
    NodeBase::word AddUsing(const WarningLog& log, std::string& expl);
    NodeBase::word RemoveUsing(const WarningLog& log, std::string& expl);
-   NodeBase::word ReplaceUsing
-      (const WarningLog& log, std::string& expl, NodeBase::CliThread& cli);
-   NodeBase::word ResolveUsings
-      (const WarningLog& log, std::string& expl, NodeBase::CliThread& cli);
+   NodeBase::word ReplaceUsing(const WarningLog& log, std::string& expl);
+   NodeBase::word ResolveUsings(const WarningLog& log, std::string& expl);
 
    //  Replaces multiple blank lines with a single blank line.  Always invoked
    //  on source that was changed.
@@ -124,15 +117,6 @@ public:
    //
    NodeBase::word Write(const std::string& path, std::string& expl);
 private:
-   //  Ways to eliminate a using statement.
-   //
-   enum UsingResolution
-   {
-      Qualification,  // qualify the symbol directly
-      TypedefAlias,   // add a typedef that qualifies the symbol
-      UsingAlias      // add a using alias that qualifies the symbol
-   };
-
    //  Reads in the file's prolog (everything up to the first #include.)
    //
    NodeBase::word GetProlog(std::string& expl);
@@ -205,12 +189,6 @@ private:
    //
    NodeBase::word EraseEmptyNamespace(const Iter& iter);
 
-   //  Asks the user how to remove a using statement that resolves REF,
-   //  which is used in SCOPE.
-   //
-   static UsingResolution GetResolution
-      (const CxxScoped* scope, const CxxNamed* ref, NodeBase::CliThread& cli);
-
    //  Qualifies names used within ITEM in order to remove using statements.
    //
    void QualifyUsings(const CxxNamed* item);
@@ -222,10 +200,6 @@ private:
    //  Within ITEM, qualifies occurrences of REF.
    //
    void QualifyReferent(const CxxNamed* item, const CxxNamed* ref);
-
-   //  Returns the number of spaces that ITEM is indented.
-   //
-   size_t Indentation(const CxxNamed* item) const;
 
    //  Invoked to report TEXT, which is assigned to EXPL.  Returns RC.
    //

@@ -1535,10 +1535,6 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user)
 {
    Debug::ft(CodeFile_FindOrAddUsing);
 
-   //  This code was adapted from CxxScoped.NameRefersToItem, simplified
-   //  to handle only the case where a symbol must be resolved by a using
-   //  statement.
-   //
    string name;
    CxxNamed* ref;
    auto qname = user->GetQualName();
@@ -1559,25 +1555,24 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user)
    auto tmplt = ref->GetTemplate();
    if(tmplt != nullptr) ref = tmplt;
 
+   //  This loop was adapted from CxxScoped.NameRefersToItem, simplified
+   //  to handle only the case where a symbol must be resolved by a using
+   //  statement.
+   //
    Using* u = nullptr;
-   string fqName;
-   size_t i = 0;
+   stringVector fqNames;
+   ref->GetScopedNames(fqNames);
 
-   while((u == nullptr) && ref->GetScopedName(fqName, i))
+   for(auto fqn = fqNames.begin(); fqn != fqNames.end() && u == nullptr; ++fqn)
    {
-      auto pos = NameCouldReferTo(fqName, name);
-      fqName.erase(0, 2);
+      auto pos = NameCouldReferTo(*fqn, name);
+      if(pos == string::npos) continue;
+      fqn->erase(0, 2);
 
-      if(pos != string::npos)
-      {
-         //  If this file has a suitable using statement, keep it.  Note that
-         //  this code can be run twice, by both Check() and Trim().
-         //
-         u = GetUsingFor(fqName, pos - 4, ref, user->GetScope());
-         if(u != nullptr) u->MarkForRetention();
-      }
-
-      ++i;
+      //  If this file has a suitable using statement, keep it.
+      //
+      u = GetUsingFor(*fqn, pos - 4, ref, user->GetScope());
+      if(u != nullptr) u->MarkForRetention();
    }
 
    if(u == nullptr)
@@ -1773,10 +1768,10 @@ word CodeFile::Fix(CliThread& cli, string& expl)
             rc = editor->RemoveUsing(*item, expl);
             break;
          case HeaderReliesOnUsing:
-            rc = editor->ResolveUsings(*item, expl, cli);
+            rc = editor->ResolveUsings(*item, expl);
             break;
          case UsingInHeader:
-            rc = editor->ReplaceUsing(*item, expl, cli);
+            rc = editor->ReplaceUsing(*item, expl);
             break;
          case TrailingSpace:
             rc = editor->EraseTrailingBlanks();

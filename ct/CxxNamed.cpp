@@ -195,11 +195,9 @@ size_t CxxNamed::GetRange(size_t& begin, size_t& end) const
 
 //------------------------------------------------------------------------------
 
-bool CxxNamed::GetScopedName(string& name, size_t n) const
+void CxxNamed::GetScopedNames(stringVector& names) const
 {
-   if(n != 0) return false;
-   name = SCOPE_STR + ScopedName(false);
-   return true;
+   names.push_back(SCOPE_STR + ScopedName(false));
 }
 
 //------------------------------------------------------------------------------

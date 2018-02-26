@@ -28,7 +28,6 @@
 #include <ostream>
 #include <utility>
 #include <vector>
-#include "CliThread.h"
 #include "CodeFile.h"
 #include "CodeTypes.h"
 #include "CodeWarning.h"
@@ -457,68 +456,6 @@ word Editor::GetProlog(string& expl)
 
 //------------------------------------------------------------------------------
 
-fixed_string ResolutionChars = "qtu";
-fixed_string ResolutionHelp = "Enter q(ualify) t(ypedef) u(sing alias): ";
-
-Editor::UsingResolution Editor::GetResolution
-   (const CxxScoped* scope, const CxxNamed* ref, CliThread& cli)
-{
-   switch(ref->Type())
-   {
-   case Cxx::Namespace:
-      //
-      //  A type alias for a namespace is not allowed.  Occurrences of
-      //  the namespace's name within the class definition need to be
-      //  qualified.
-      //
-      return Qualification;
-
-   case Cxx::Class:
-      //
-      //  We are using the unqualified name as the alias.  For a class
-      //  template instance, this would result in
-      //    using Template = Namespace::Template<arguments>;
-      //  This would cause compile errors if the class references other
-      //  instantiations, so qualify occurrences of the template name.
-      //
-      if(ref->IsInTemplateInstance()) return Qualification;
-
-      //  A base class precedes the class definition, so qualify it.
-      //
-      if(scope->Type() == Cxx::Class)
-      {
-         auto cls = static_cast< Class* >(const_cast< CxxScoped* >(scope));
-         if(cls->BaseClass() == ref) return Qualification;
-      }
-   }
-
-   string prompt = "Resolution for " + *ref->Name();
-   prompt += " in " + *scope->Name() + '?';
-   auto reply = cli.CharPrompt(prompt, ResolutionChars, ResolutionHelp);
-
-   auto res = Qualification;
-
-   switch(reply)
-   {
-   case 'q': res = Qualification; break;
-   case 't': res = TypedefAlias; break;
-   case 'u': res = UsingAlias; break;
-   }
-
-   return res;
-}
-
-//------------------------------------------------------------------------------
-
-size_t Editor::Indentation(const CxxNamed* item) const
-{
-   auto lexer = file_->GetLexer();
-   auto line = lexer.GetLineNum(item->GetPos());
-   return lexer.GetNthLine(line).find_first_not_of(WhitespaceChars);
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Editor_Insert = "Editor.Insert";
 
 Editor::Iter Editor::Insert(SourceList& list, Iter& iter, const string& source)
@@ -843,7 +780,7 @@ word Editor::RemoveUsing(const WarningLog& log, string& expl)
 
 fn_name Editor_ReplaceUsing = "Editor.ReplaceUsing";
 
-word Editor::ReplaceUsing(const WarningLog& log, string& expl, CliThread& cli)
+word Editor::ReplaceUsing(const WarningLog& log, string& expl)
 {
    Debug::ft(Editor_ReplaceUsing);
 
@@ -851,7 +788,7 @@ word Editor::ReplaceUsing(const WarningLog& log, string& expl, CliThread& cli)
    //  for symbols that appear in its definition and that were resolved by
    //  a using statement.
    //
-   ResolveUsings(log, expl, cli);
+   ResolveUsings(log, expl);
    return RemoveUsing(log, expl);
 }
 
@@ -871,8 +808,7 @@ word Editor::Report(string& expl, fixed_string text, word rc)
 
 fn_name Editor_ResolveUsings = "Editor.ResolveUsings";
 
-word Editor::ResolveUsings
-   (const WarningLog& log, std::string& expl, CliThread& cli)
+word Editor::ResolveUsings(const WarningLog& log, std::string& expl)
 {
    Debug::ft(Editor_ResolveUsings);
 
@@ -884,98 +820,15 @@ word Editor::ResolveUsings
    //  using statements.  Modify each of these so that using statements can
    //  be removed.
    //
-   auto lexer = file_->GetLexer();
    auto classes = file_->Classes();
 
    for(auto c = classes->cbegin(); c != classes->cend(); ++c)
    {
       auto refs = FindUsingReferents(*c);
-      if(refs.empty()) continue;
 
-      //  Indent any type aliases one level beyond the "class" keyword.  Find
-      //  the LINE that follows the left brace at the beginning of the class
-      //  definition.  Insert new type aliases immediately after this, at the
-      //  beginning of the class definition.
-      //
-      auto indent = Indentation(*c);
-      indent += Indent_Size;
-      lexer.Reposition((*c)->GetPos());
-      auto pos = lexer.FindFirstOf("{");
-      auto line = lexer.GetLineNum(pos);
-      auto start = Find(epilog_, line);
-      ++start;
-
-      string access;
-
-      //  If this is a base class, make the aliases protected so that derived
-      //  classes can use them.  Otherwise, leave the aliases private.
-      //
-      if(!(*c)->Subclasses()->empty())
-      {
-         access = spaces(indent - Indent_Size);
-         access.append(PROTECTED_STR);
-         access.push_back(':');
-      }
-
-      //  Iterate over the symbols that the class uses and that were resolved
-      //  by using statements.  Insert a type alias for each of these symbols.
-      //
       for(auto r = refs.cbegin(); r != refs.cend(); ++r)
       {
-         auto res = GetResolution(*c, *r, cli);
-         const char* key = nullptr;
-         auto alias = spaces(indent);
-
-         switch(res)
-         {
-         case TypedefAlias:
-            key = TYPEDEF_STR;
-            alias.append(TYPEDEF_STR);
-            alias.push_back(SPACE);
-            alias.append((*r)->ScopedName(false));
-            alias.push_back(SPACE);
-            alias.append(*(*r)->Name());
-            break;
-         case UsingAlias:
-            key = USING_STR;
-            alias.append(USING_STR);
-            alias.push_back(SPACE);
-            alias.append(*(*r)->Name());
-            alias.append(" = ");
-            alias.append((*r)->ScopedName(false));
-            break;
-         default:
-            QualifyReferent(*c, *r);
-            continue;
-         }
-
-         alias.push_back(';');
-
-         //  If protected access control has not been inserted, do it now.
-         //
-         if(!access.empty())
-         {
-            start = Insert(epilog_, start, access);
-            ++start;
-            access.clear();
-         }
-
-         //  Insert the type alias in alphabetical order, but don't duplicate
-         //  an existing alias.
-         //
-         for(auto i = start; i != epilog_.end(); ++i)
-         {
-            if(i->code.find(alias) != string::npos) break;
-
-            if((i->code.find(key) == string::npos) ||
-               (strCompare(i->code, alias) > 0))
-            {
-               auto first = (start == i);
-               i = Insert(epilog_, i, alias);
-               if(first) start = i;
-               break;
-            }
-         }
+         QualifyReferent(*c, *r);
       }
    }
 

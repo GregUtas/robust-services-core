@@ -576,9 +576,10 @@ public:
    //
    virtual Numeric GetNumeric() const override { return Numeric::Enum; }
 
-   //  Overridden to enable promotion of the enumerator to its enum's scope.
+   //  Overridden to enable promotion of the enumerator to its enum's scope
+   //  (that is, <scope>::enumerator as well as <scope>::enum::enumerator).
    //
-   virtual bool GetScopedName(std::string& name, size_t n) const override;
+   virtual void GetScopedNames(stringVector& names) const override;
 
    //  Overridden to determine if the enumerator is unused.
    //

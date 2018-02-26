@@ -701,65 +701,64 @@ bool CxxScoped::NameRefersToItem(const std::string& name,
 
    //  NAME must partially match this item's fully qualified name.
    //
-   string fqName;
-   size_t i = 0;
+   stringVector fqNames;
+   GetScopedNames(fqNames);
 
-   while(GetScopedName(fqName, i))
+   for(auto fqn = fqNames.begin(); fqn != fqNames.end(); ++fqn)
    {
-      auto pos = NameCouldReferTo(fqName, name);
+      auto pos = NameCouldReferTo(*fqn, name);
+      if(pos == string::npos) continue;
 
-      if(pos != string::npos)
+      switch(pos)
       {
-         switch(pos)
-         {
-         case 0:
-         case 2:
-            //
-            //  NAME completely matches this item's fully qualified name,
-            //  with the possible exception of a leading scope resolution
-            //  operator.
-            //
-            return true;
-         case 1:
-         case 3:
-            //
-            //  These shouldn't occur, because fqName has a "::" prefix.
-            //
-            Debug::SwErr(CxxScoped_NameRefersToItem, fqName, pos);
-            return false;
-         }
-
-         //  NAME is a partial match for this item.  Report a match if SCOPE
-         //  is this item's declarer or one of its subclasses.
+      case 0:
+      case 2:
          //
-         if(!checkUsing) return true;
-
-         //  Report a match if SCOPE is already in this item's scope.
+         //  NAME completely matches this item's fully qualified name,
+         //  with the possible exception of a leading scope resolution
+         //  operator.
          //
-         fqName.erase(0, 2);
-         auto prefix = fqName.substr(0, pos - 4);
-         if(scope->IsSubscopeOf(prefix)) return true;
-
-         //  Report a match if SCOPE's class derives from this item's class.
+         return true;
+      case 1:
+      case 3:
          //
-         auto itemClass = Declarer();
-         if(itemClass != nullptr)
-         {
-            auto usingClass = scope->GetClass();
-            if((usingClass != nullptr) && usingClass->DerivesFrom(itemClass))
-               return true;
-         }
-
-         //  Look for a using statement that matches at least the PREFIX
-         //  of fqName.  That is, if fqName is "a::b::c::d" and PREFIX is
-         //  "a::b", the using statement must be for "a::b", "a::b::c",
-         //  or "a::b::c::d".
+         //  These shouldn't occur, because fqName has a "::" prefix.
          //
-         view->using_ = file->FindUsingFor(fqName, pos - 4, this, scope);
-         if(view->using_) return true;
+         Debug::SwErr(CxxScoped_NameRefersToItem, *fqn, pos);
+         return false;
       }
 
-      ++i;
+      //  NAME is a partial match for this item.  Report a match if SCOPE
+      //  is this item's declarer or one of its subclasses.
+      //
+      if(!checkUsing) return true;
+
+      //  Report a match if SCOPE is already in this item's scope.
+      //
+      fqn->erase(0, 2);
+      auto prefix = fqn->substr(0, pos - 4);
+      if(scope->IsSubscopeOf(prefix)) return true;
+
+      //  Report a match if SCOPE's class derives from this item's class.
+      //
+      auto itemClass = Declarer();
+      if(itemClass != nullptr)
+      {
+         auto usingClass = scope->GetClass();
+         if((usingClass != nullptr) && usingClass->DerivesFrom(itemClass))
+            return true;
+      }
+
+      //  Look for a using statement that matches at least the PREFIX
+      //  of fqName.  That is, if fqName is "a::b::c::d" and PREFIX is
+      //  "a::b", the using statement must be for "a::b", "a::b::c",
+      //  or "a::b::c::d".
+      //
+      if(file->FindUsingFor(*fqn, pos - 4, this, scope) != nullptr)
+      {
+         view->using_ = true;
+         return true;
+      }
    }
 
    return false;
@@ -1127,25 +1126,25 @@ void Enumerator::ExitBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name Enumerator_GetScopedName = "Enumerator.GetScopedName";
+fn_name Enumerator_GetScopedNames = "Enumerator.GetScopedNames";
 
-bool Enumerator::GetScopedName(string& name, size_t n) const
+void Enumerator::GetScopedNames(stringVector& names) const
 {
-   Debug::ft(Enumerator_GetScopedName);
+   Debug::ft(Enumerator_GetScopedNames);
 
-   //  Start by providing the enumerator's fully qualified name, which includes
-   //  that of its enum.  Then, unless the enum is anonymous, delete the enum's
-   //  name from the fully qualified name, and provide that as an alternative.
+   //  The superclass version provides the enumerator's fully qualified name,
+   //  which includes that of its enum.  Then, unless the enum is anonymous,
+   //  delete the enum's name from the fully qualified name, and provide that
+   //  as an alternative.
    //
-   if(n > 1) return false;
-   CxxScoped::GetScopedName(name, 0);
-   if(n == 0) return true;
+   CxxScoped::GetScopedNames(names);
    auto prev = *enum_->Name();
-   if(prev.empty()) return false;
+   if(prev.empty()) return;
    prev += SCOPE_STR;
+   auto name = names.front();
    auto pos = name.rfind(prev);
    name.erase(pos, prev.size());
-   return true;
+   names.push_back(name);
 }
 
 //------------------------------------------------------------------------------

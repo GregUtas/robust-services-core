@@ -853,12 +853,11 @@ ClassInst* Class::CreateInstance(const string& name, const TypeName* type)
    Debug::ft(Class_CreateInstance);
 
    auto newName = QualNamePtr(new QualName(name));
+   newName->CopyContext(this);
    auto tmplt = ClassInstPtr(new ClassInst(newName, this, type));
    auto inst = tmplt.get();
+   inst->CopyContext(this);
    tmplts_.push_back(std::move(tmplt));
-
-   inst->SetScope(GetScope());
-   inst->SetLoc(GetFile(), GetPos());
    return inst;
 }
 
@@ -1016,7 +1015,7 @@ ClassInst* Class::EnsureInstance(const TypeName* type)
    auto name = *Name() + type->TypeString(true);
    auto area = static_cast< CxxArea* >(GetScope());
    SymbolView view;
-   auto inst = syms->FindSymbol(file, scope, name, CLASS_MASK, &view, area);  //*
+   auto inst = syms->FindSymbol(file, scope, name, CLASS_MASK, &view, area);
    if(inst != nullptr) return static_cast< ClassInst* >(inst);
 
    //  The instance doesn't exist, so create it.  If the template
@@ -1024,7 +1023,7 @@ ClassInst* Class::EnsureInstance(const TypeName* type)
    //
    SymbolVector list;
    ViewVector views;
-   syms->FindSymbols(file, scope, *Name(), CLASS_MASK, list, views, area);  //*
+   syms->FindSymbols(file, scope, *Name(), CLASS_MASK, list, views, area);
 
    Class* base = this;
 
@@ -1538,7 +1537,7 @@ Using* Class::GetUsingFor(const std::string& fqName,
 
    for(auto u = usings->cbegin(); u != usings->cend(); ++u)
    {
-      if((*u)->IsUsingFor(fqName, prefix)) return u->get();
+      if((*u)->IsUsingFor(fqName, prefix, scope)) return u->get();
    }
 
    return nullptr;
@@ -1817,6 +1816,7 @@ ClassInst::ClassInst(QualNamePtr& name, Class* tmplt, const TypeName* spec) :
    Debug::ft(ClassInst_ctor);
 
    spec_.reset(new TypeName(*spec));
+   spec_->CopyContext(spec);
    CxxStats::Incr(CxxStats::CLASS_INST);
    CxxStats::Decr(CxxStats::CLASS_DECL);
 }

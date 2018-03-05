@@ -277,7 +277,7 @@ void BaseDecl::FindReferent()
    //  Find the class to which this base class declaration refers.
    //
    SymbolView view;
-   auto item = ResolveName(GetFile(), GetScope(), CLASS_MASK, &view);  //*
+   auto item = ResolveName(GetFile(), GetScope(), CLASS_MASK, &view);
 
    if(item != nullptr)
    {
@@ -1660,7 +1660,7 @@ void Friend::FindReferent()
       //
       searched_ = true;
       SetScope(scope->GetSpace());
-      ref = ResolveName(GetFile(), scope, mask, &view);  //*
+      ref = ResolveName(GetFile(), scope, mask, &view);
       if(ref != nullptr) using_ = view.using_;
    }
 
@@ -2349,7 +2349,8 @@ void Using::FindReferent()
 
 fn_name Using_IsUsingFor = "Using.IsUsingFor";
 
-bool Using::IsUsingFor(const string& fqName, size_t prefix) const
+bool Using::IsUsingFor
+   (const string& fqName, size_t prefix, const CxxScope* scope) const
 {
    Debug::ft(Using_IsUsingFor);
 
@@ -2386,7 +2387,7 @@ CxxNamed* Using::Referent() const
    if(ref != nullptr) return ref;
 
    SymbolView view;
-   return ResolveName(GetFile(), GetScope(), USING_REFS, &view);  //*
+   return ResolveName(GetFile(), GetScope(), USING_REFS, &view);
 }
 
 //------------------------------------------------------------------------------

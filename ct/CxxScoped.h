@@ -1154,9 +1154,10 @@ public:
    ~Using() { CxxStats::Decr(CxxStats::USING_DECL); }
 
    //  Returns true if the declaration/directive makes fqName visible
-   //  to at least the position specified by PREFIX.
+   //  within SCOPE to at least the position specified by PREFIX.
    //
-   bool IsUsingFor(const std::string& fqName, size_t prefix) const;
+   bool IsUsingFor
+      (const std::string& fqName, size_t prefix, const CxxScope* scope) const;
 
    //  Used by >trim when the statement should be removed.
    //

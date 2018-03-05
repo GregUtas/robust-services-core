@@ -1140,7 +1140,7 @@ void StackArg::CheckIfBool() const
 {
    Debug::ft(StackArg_CheckIfBool);
 
-   switch(DataSpec(BOOL_STR).MustMatchWith(*this))
+   switch(DataSpec::Bool->MustMatchWith(*this))
    {
    case Compatible:
    case Incompatible:

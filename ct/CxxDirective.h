@@ -528,10 +528,10 @@ public:
    //
    virtual void Shrink() override;
 protected:
-   //  NAME is the symbol whose existence an #ifdef or #ifndef is checking.
+   //  MACRO is the symbol whose existence an #ifdef or #ifndef is checking.
    //  Protected because this class is virtual.
    //
-   explicit Existential(std::string& name);
+   explicit Existential(MacroNamePtr& macro);
 
    //  Returns true if name_ has been defined.
    //
@@ -624,9 +624,9 @@ public:
 class Ifdef : public Existential
 {
 public:
-   //  Creates an #ifdef directive that checks for the existence of SYMBOL.
+   //  Creates an #ifdef directive that checks for the existence of MACRO.
    //
-   explicit Ifdef(std::string& symbol);
+   explicit Ifdef(MacroNamePtr& macro);
 
    //  Not subclassed.
    //
@@ -699,9 +699,9 @@ private:
 class Ifndef : public Existential
 {
 public:
-   //  Creates an #ifndef directive that checks for the existence of SYMBOL.
+   //  Creates an #ifndef directive that checks for the existence of MACRO.
    //
-   explicit Ifndef(std::string& symbol);
+   explicit Ifndef(MacroNamePtr& macro);
 
    //  Not subclassed.
    //

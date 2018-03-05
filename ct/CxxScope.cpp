@@ -270,7 +270,7 @@ Using* Block::GetUsingFor(const std::string& fqName,
 
    for(auto u = Usings_.cbegin(); u != Usings_.cend(); ++u)
    {
-      if((*u)->IsUsingFor(fqName, prefix)) return *u;
+      if((*u)->IsUsingFor(fqName, prefix, scope)) return *u;
    }
 
    return nullptr;
@@ -1437,6 +1437,7 @@ void Data::SetAssignment(ExprPtr& expr)
 
    QualNamePtr name;
    GetInitName(name);
+   name->CopyContext(this);
    auto arg1 = TokenPtr(name.release());
    rhs_->AddItem(arg1);
    auto op = TokenPtr(new Operation(Cxx::ASSIGN));
@@ -1866,13 +1867,13 @@ void Function::AddThisArg()
    //  defined as const.
    //
    TypeSpecPtr typeSpec(new DataSpec(cls->Name()->c_str()));
+   typeSpec->CopyContext(this);
    typeSpec->SetPtrs(1);
    typeSpec->SetConst(const_);
    typeSpec->SetReferent(cls, nullptr);
    string argName(THIS_STR);
    ArgumentPtr arg(new Argument(argName, typeSpec));
-   arg->SetScope(this);
-   arg->SetLoc(GetFile(), GetPos());
+   arg->CopyContext(this);
    args_.insert(args_.begin(), std::move(arg));
    this_ = true;
 }

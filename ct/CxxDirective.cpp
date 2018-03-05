@@ -364,12 +364,12 @@ bool Error::EnterScope()
 
 fn_name Existential_ctor = "Existential.ctor";
 
-Existential::Existential(string& name) :
+Existential::Existential(MacroNamePtr& macro) :
    else_(nullptr)
 {
    Debug::ft(Existential_ctor);
 
-   name_ = MacroNamePtr(new MacroName(name));
+   name_ = std::move(macro);
 }
 
 //------------------------------------------------------------------------------
@@ -417,7 +417,7 @@ void Existential::Shrink()
 
 fn_name Ifdef_ctor = "Ifdef.ctor";
 
-Ifdef::Ifdef(string& symbol) : Existential(symbol)
+Ifdef::Ifdef(MacroNamePtr& macro) : Existential(macro)
 {
    Debug::ft(Ifdef_ctor);
 
@@ -549,7 +549,7 @@ void Iff::Shrink()
 
 fn_name Ifndef_ctor = "Ifndef.ctor";
 
-Ifndef::Ifndef(string& symbol) : Existential(symbol)
+Ifndef::Ifndef(MacroNamePtr& macro) : Existential(macro)
 {
    Debug::ft(Ifndef_ctor);
 
@@ -865,7 +865,7 @@ CxxNamed* MacroName::Referent() const
    auto file = Context::File();
    auto scope = Singleton< CxxRoot >::Instance()->GlobalNamespace();
    SymbolView view;
-   ref_ = syms->FindSymbol(file, scope, name_, MACRO_MASK, &view);  //*
+   ref_ = syms->FindSymbol(file, scope, name_, MACRO_MASK, &view);
 
    if(ref_ != nullptr)
    {

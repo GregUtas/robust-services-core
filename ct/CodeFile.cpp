@@ -1974,9 +1974,13 @@ Using* CodeFile::GetUsingFor(const string& fqName,
 {
    Debug::ft(CodeFile_GetUsingFor);
 
+   //c Verify that the using statement is visible to SCOPE.  Files don't have
+   //  using statements: namespaces, classes, and function blocks do, although
+   //  trying usings in the same file first is a good performance strategy.
+   //
    for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
    {
-      if((*u)->IsUsingFor(fqName, prefix)) return *u;
+      if((*u)->IsUsingFor(fqName, prefix, scope)) return *u;
    }
 
    return nullptr;

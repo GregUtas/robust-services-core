@@ -90,7 +90,7 @@ void Case::EnterBlock()
 
    expr_->EnterBlock();
    auto result = Context::PopArg(true);
-   DataSpec(INT_STR).MustMatchWith(result);
+   DataSpec::Int->MustMatchWith(result);
 }
 
 //------------------------------------------------------------------------------
@@ -890,7 +890,7 @@ void Switch::EnterBlock()
 
    expr_->EnterBlock();
    auto result = Context::PopArg(true);
-   DataSpec(INT_STR).MustMatchWith(result);
+   DataSpec::Int->MustMatchWith(result);
    cases_->EnterBlock();
 }
 

@@ -2515,7 +2515,7 @@ void Operation::PushType(const string& name)
    auto file = Context::File();
    auto scope = Context::Scope();
    SymbolView view;
-   auto item = syms->FindSymbol(file, scope, name, TYPE_REFS, &view);  //*
+   auto item = syms->FindSymbol(file, scope, name, TYPE_REFS, &view);
 
    if(item != nullptr)
    {

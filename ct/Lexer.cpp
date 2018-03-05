@@ -1597,7 +1597,7 @@ void Lexer::Preprocess()
       }
 
       SymbolView view;
-      auto item = syms->FindSymbol(file, scope, id, MACRO_MASK, &view);  //*
+      auto item = syms->FindSymbol(file, scope, id, MACRO_MASK, &view);
 
       if(item != nullptr)
       {

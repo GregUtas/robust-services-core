@@ -121,6 +121,11 @@ public:
    //
    void SetContext(size_t pos);
 
+   //  Sets the item's context based on THAT.  Used when an item is created
+   //  internally (e.g. a "this" argument).
+   //
+   virtual void CopyContext(const CxxNamed* that);
+
    //  Returns the file in which this item was found.
    //
    CodeFile* GetFile() const { return loc_.file; }
@@ -363,10 +368,6 @@ protected:
    //
    CxxNamed* ResolveName(const CodeFile* file, const CxxScope* scope,
       const NodeBase::Flags& mask, SymbolView* view) const;
-
-   //  Resolves the item's qualified name within a function.
-   //
-   CxxNamed* ResolveLocal(SymbolView* view) const;
 
    //  Invoked when ResolveName finds TYPE, a typedef.  If it returns false,
    //  ResolveName returns TYPE.  Otherwise, name resolution continues with
@@ -777,6 +778,10 @@ public:
    //
    virtual void Check() const override;
 
+   //  Overridden to propagate the context to each name.
+   //
+   virtual void CopyContext(const CxxNamed* that) override;
+
    //  Overridden to forward to the last name.
    //
    virtual CxxNamed* DirectType() const
@@ -831,6 +836,10 @@ public:
    virtual bool ResolveTemplate
       (Class* cls, const TypeName* args, bool end) const override;
 
+   //  Overridden to set the scope where the name appeared.
+   //
+   virtual void SetScope(CxxScope* scope) override { first_->SetScope(scope); }
+
    //  Sets the last name's referent.  This is used by QualName.EnterBlock and
    //  Operation.PushMember when a name appears in executable code.  It is also
    //  used by classes that contain a QualName member and that find a referent.
@@ -860,6 +869,10 @@ private:
    //  Returns the last name.
    //
    TypeName* Last() const;
+
+   //  Resolves the item's qualified name within a function.
+   //
+   CxxNamed* ResolveLocal(SymbolView* view) const;
 
    //  The first name in what might be a qualified name.
    //
@@ -1099,6 +1112,14 @@ public:
    //  Not subclassed.
    //
    ~DataSpec();
+
+   //  A DataSpec for a bool.
+   //
+   static const TypeSpecPtr Bool;
+
+   //  A DataSpec for an int.
+   //
+   static const TypeSpecPtr Int;
 private:
    //  Deleted to prohibit copy assignment.
    //
@@ -1155,6 +1176,10 @@ private:
    //  Overridden to create and return a copy of the type.
    //
    virtual TypeSpec* Clone() const override;
+
+   //  Overridden to propagate the context to the type's qualified name.
+   //
+   virtual void CopyContext(const CxxNamed* that) override;
 
    //  Overridden to return the class, if any, to which the type ultimately
    //  refers, provided that it is not a pointer or reference to that class.

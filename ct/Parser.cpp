@@ -1112,7 +1112,7 @@ bool Parser::GetCtorInit(FunctionPtr& func)
             auto name = baseName->QualifiedName(true, true);
             auto file = Context::File();
             SymbolView view;
-            call = base->NameRefersToItem(name, func.get(), file, &view);  //*
+            call = base->NameRefersToItem(name, func.get(), file, &view);
          }
       }
 
@@ -1738,6 +1738,7 @@ bool Parser::GetFuncData(DataPtr& data)
          //  is cloned and modified to create the subsequent declaration.
          //
          typeSpec.reset(prev->GetTypeSpec()->Clone());
+         typeSpec->CopyContext(prev);
          GetPointers(typeSpec.get());
          GetReferences(typeSpec.get());
          if(!lexer_.GetName(dataName)) return Backup(start, 126);
@@ -3359,15 +3360,15 @@ bool Parser::HandleDefine()
    if(macro == nullptr)
    {
       auto def = MacroPtr(new Define(name, expr));
-      macro = def.get();
+      def->SetContext(start);
       Singleton< CxxRoot >::Instance()->AddMacro(def);
    }
    else
    {
       macro->SetExpr(expr);
+      macro->SetContext(start);
    }
 
-   macro->SetContext(start);
    lexer_.PreprocessSource();
    return true;
 }
@@ -3550,9 +3551,12 @@ bool Parser::HandleIfdef(DirectivePtr& dir)
    string symbol;
 
    if(!lexer_.NextStringIs(HASH_IFDEF_STR)) return Fault(DirectiveMismatch);
+   auto pos = lexer_.Curr();
    if(!lexer_.GetName(symbol)) return Fault(SymbolExpected);
+   auto macro = MacroNamePtr(new MacroName(symbol));
+   macro->SetContext(pos);
 
-   auto ifdef = IfdefPtr(new Ifdef(symbol));
+   auto ifdef = IfdefPtr(new Ifdef(macro));
    ifdef->SetContext(start);
    lexer_.FindCode(ifdef.get(), ifdef->EnterScope());
    dir = std::move(ifdef);
@@ -3573,9 +3577,12 @@ bool Parser::HandleIfndef(DirectivePtr& dir)
    string symbol;
 
    if(!lexer_.NextStringIs(HASH_IFNDEF_STR)) return Fault(DirectiveMismatch);
+   auto pos = lexer_.Curr();
    if(!lexer_.GetName(symbol)) return Fault(SymbolExpected);
+   auto macro = MacroNamePtr(new MacroName(symbol));
+   macro->SetContext(pos);
 
-   auto ifndef = IfndefPtr(new Ifndef(symbol));
+   auto ifndef = IfndefPtr(new Ifndef(macro));
    ifndef->SetContext(start);
    lexer_.FindCode(ifndef.get(), ifndef->EnterScope());
    dir = std::move(ifndef);

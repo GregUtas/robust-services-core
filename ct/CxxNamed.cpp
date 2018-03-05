@@ -130,6 +130,21 @@ bool CxxNamed::AtFileScope() const
 
 //------------------------------------------------------------------------------
 
+fn_name CxxNamed_CopyContext = "CxxNamed.CopyContext";
+
+void CxxNamed::CopyContext(const CxxNamed* that)
+{
+   Debug::ft(CxxNamed_CopyContext);
+
+   auto scope = that->GetScope();
+   SetScope(scope);
+   SetAccess(that->GetAccess());
+   loc_.SetLoc(that->GetFile(), that->GetPos());
+   SetInternal();
+}
+
+//------------------------------------------------------------------------------
+
 void CxxNamed::DisplayReferent(ostream& stream, bool fq) const
 {
    auto ref = Referent();
@@ -295,31 +310,6 @@ StackArg CxxNamed::NameToArg(Cxx::Operator op)
 
 //------------------------------------------------------------------------------
 
-fn_name CxxNamed_ResolveLocal = "CxxNamed.ResolveLocal";
-
-CxxNamed* CxxNamed::ResolveLocal(SymbolView* view) const
-{
-   Debug::ft(CxxNamed_ResolveLocal);
-
-   auto syms = Singleton< CxxSymbols >::Instance();
-   auto qname = GetQualName();
-
-   if((qname->Size() == 1) && !qname->IsGlobal())
-   {
-      auto item = syms->FindLocal(*Name(), view);
-
-      if(item != nullptr)
-      {
-         qname->SetReferentN(0, item, view);
-         return item;
-      }
-   }
-
-   return ResolveName(Context::File(), Context::Scope(), CODE_REFS, view);  //*
-}
-
-//------------------------------------------------------------------------------
-
 fn_name CxxNamed_ResolveName = "CxxNamed.ResolveName";
 
 CxxNamed* CxxNamed::ResolveName(const CodeFile* file,
@@ -336,7 +326,6 @@ CxxNamed* CxxNamed::ResolveName(const CodeFile* file,
    auto size = qname->Size();
    auto syms = Singleton< CxxSymbols >::Instance();
    auto selector = (size == 1 ? mask : SCOPE_REFS);
-
    size_t idx = (qname->IsGlobal() ? 0 : 1);
 
    if(idx == 0)
@@ -353,7 +342,7 @@ CxxNamed* CxxNamed::ResolveName(const CodeFile* file,
       //  it refers to itself, which can occur for a friend declaration.
       //
       name = *qname->At(0)->Name();
-      item = syms->FindSymbol(file, scope, name, selector, view);  //*
+      item = syms->FindSymbol(file, scope, name, selector, view);
       qname->SetReferentN(0, item, view);
       if(item == this) return item;
    }
@@ -395,7 +384,7 @@ CxxNamed* CxxNamed::ResolveName(const CodeFile* file,
          if(item == nullptr)
          {
             *view = NotAccessible;
-            item = syms->FindSymbol(file, scope, name, selector, view, space);  //*
+            item = syms->FindSymbol(file, scope, name, selector, view, space);
             if(name.find(SCOPE_STR) != string::npos) view->using_ = false;
          }
          qname->SetReferentN(idx - 1, item, view);
@@ -602,6 +591,11 @@ void CxxNamed::strName(ostream& stream, bool fq, const QualName* name) const
 
 //==============================================================================
 
+const TypeSpecPtr DataSpec::Bool = TypeSpecPtr(new DataSpec(BOOL_STR));
+const TypeSpecPtr DataSpec::Int = TypeSpecPtr(new DataSpec(INT_STR));
+
+//------------------------------------------------------------------------------
+
 fn_name DataSpec_ctor1 = "DataSpec.ctor";
 
 DataSpec::DataSpec(QualNamePtr& name) :
@@ -793,6 +787,19 @@ TypeSpec* DataSpec::Clone() const
 
 //------------------------------------------------------------------------------
 
+fn_name DataSpec_CopyContext = "DataSpec.CopyContext";
+
+void DataSpec::CopyContext(const CxxNamed* that)
+{
+   Debug::ft(DataSpec_CopyContext);
+
+   CxxNamed::CopyContext(that);
+
+   name_->CopyContext(that);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name DataSpec_DirectClass = "DataSpec.DirectClass";
 
 Class* DataSpec::DirectClass() const
@@ -924,7 +931,7 @@ void DataSpec::FindReferent()
    if(ResolveTemplateArgument()) return;
 
    SymbolView view;
-   auto item = ResolveName(file, scope, TYPESPEC_REFS, &view);  //*
+   auto item = ResolveName(file, scope, TYPESPEC_REFS, &view);
 
    if(item != nullptr)
    {
@@ -957,7 +964,7 @@ void DataSpec::FindReferent()
       //  case, report that the referent was found.
       //
       view = NotAccessible;
-      item = syms->FindSymbol(file, scope, qname, VALUE_REFS, &view);  //*
+      item = syms->FindSymbol(file, scope, qname, VALUE_REFS, &view);
       if(item != nullptr) SetReferent(item, &view);
       //  [[fallthrough]]
    case TemplateParameter:
@@ -1893,6 +1900,22 @@ bool QualName::CheckCtorDefn() const
 
 //------------------------------------------------------------------------------
 
+fn_name QualName_CopyContext = "QualName.CopyContext";
+
+void QualName::CopyContext(const CxxNamed* that)
+{
+   Debug::ft(QualName_CopyContext);
+
+   CxxNamed::CopyContext(that);
+
+   for(auto n = First(); n != nullptr; n = n->Next())
+   {
+      n->CopyContext(that);
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name QualName_EnterBlock = "QualName.EnterBlock";
 
 void QualName::EnterBlock()
@@ -2130,7 +2153,7 @@ CxxNamed* QualName::Referent() const
    if(ref != nullptr) return ref;
 
    SymbolView view;
-   auto item = ResolveLocal(&view);  //*
+   auto item = ResolveLocal(&view);
    if(item == nullptr) return ReferentError(QualifiedName(true, true), 0);
 
    //  Verify that the item has a referent in case it's a typedef or a
@@ -2139,6 +2162,31 @@ CxxNamed* QualName::Referent() const
    ref = item->Referent();
    if(ref == nullptr) return ReferentError(item->Trace(), item->Type());
    return ref;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name QualName_ResolveLocal = "QualName.ResolveLocal";
+
+CxxNamed* QualName::ResolveLocal(SymbolView* view) const
+{
+   Debug::ft(QualName_ResolveLocal);
+
+   auto syms = Singleton< CxxSymbols >::Instance();
+   auto qname = GetQualName();
+
+   if((qname->Size() == 1) && !qname->IsGlobal())
+   {
+      auto item = syms->FindLocal(*Name(), view);
+
+      if(item != nullptr)
+      {
+         qname->SetReferentN(0, item, view);
+         return item;
+      }
+   }
+
+   return ResolveName(Context::File(), Context::Scope(), CODE_REFS, view);
 }
 
 //------------------------------------------------------------------------------
@@ -2445,6 +2493,7 @@ TypeName::TypeName(const TypeName& that) : CxxNamed(that),
       for(auto a = that.args_->cbegin(); a != that.args_->cend(); ++a)
       {
          auto arg = TypeSpecPtr((*a)->Clone());
+         arg->CopyContext(a->get());
          args_->push_back(std::move(arg));
       }
    }

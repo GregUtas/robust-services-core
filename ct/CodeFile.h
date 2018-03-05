@@ -66,7 +66,7 @@ public:
 
    //  Returns the file's identifier.
    //
-   id_t Fid() const { return fid_.GetId(); }
+   NodeBase::id_t Fid() const { return fid_.GetId(); }
 
    //  Returns the file's name, including its path.
    //
@@ -108,9 +108,9 @@ public:
    bool IsTemplateHeader() const;
 
    //  Returns the using statement, if any, that makes ITEM visible within
-   //  this file or SCOPE because it matches NAME to at least PREFIX.
+   //  this file or SCOPE because it matches fqName to at least PREFIX.
    //
-   Using* FindUsingFor(const std::string& name, size_t prefix,
+   Using* FindUsingFor(const std::string& fqName, size_t prefix,
       const CxxScoped* item, const CxxScope* scope) const;
 
    //  Returns a pointer to the original source code.
@@ -139,9 +139,12 @@ public:
    //
    const SetOfIds& Affecters() const;
 
-   //  Returns the file's classes.
+   //  Returns the file's code items.
    //
    const ClassVector* Classes() const { return &classes_; }
+   const DataVector* Datas() const { return &data_; }
+   const FunctionVector* Funcs() const { return &funcs_; }
+   const TypedefVector* Types() const { return &types_; }
 
    //  Adds the item to those defined in this file.
    //
@@ -155,7 +158,7 @@ public:
    void InsertFunc(Function* func);
    void InsertMacro(Macro* macro);
    void InsertType(Typedef* type);
-   void InsertUsing(UsingPtr& use);
+   void InsertUsing(Using* use);
 
    //  Records that ITEM was used in the file's executable code.
    //
@@ -223,19 +226,19 @@ public:
    //  an error occurs, a non-zero value is returned and EXPL is updated
    //  to provide an explanation.
    //
-   word Fix(CliThread& cli, std::string& expl);
+   NodeBase::word Fix(NodeBase::CliThread& cli, std::string& expl);
 
    //  Formats the file.  Returns 0 if the file was unchanged, a positive
    //  number after successful changes, and a negative number on failure,
    //  in which case EXPL provides an explanation.
    //
-   word Format(std::string& expl);
+   NodeBase::word Format(std::string& expl);
 
    //  Logs WARNING, which occurred at POS.  OFFSET and INFO are specific to
    //  WARNING.
    //
    void LogPos(size_t pos, Warning warning, size_t offset = 0,
-      const std::string& info = std::string(EMPTY_STR)) const;
+      const std::string& info = std::string(NodeBase::EMPTY_STR)) const;
 
    //  Generates a report in STREAM (if not nullptr) for the files in SET.  The
    //  report includes line type counts and warnings found during parsing and
@@ -263,11 +266,11 @@ public:
    //  Overridden to display member variables.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 private:
    //  Returns a stream for reading the file.
    //
-   istreamPtr InputStream() const;
+   NodeBase::istreamPtr InputStream() const;
 
    //  Adds FILE as one that #includes this file.
    //
@@ -310,10 +313,11 @@ private:
    //
    Data* FindData(const std::string& name) const;
 
-   //  Returns the file's using statement, if any, that makes NAME
-   //  visible by matching NAME at least to PREFIX.
+   //  Returns the using statement, if any, that makes ITEM visible within
+   //  SCOPE (in this file) because it matches fqName to at least PREFIX.
    //
-   Using* GetUsingFor(const std::string& name, size_t prefix) const;
+   Using* GetUsingFor(const std::string& fqName, size_t prefix,
+      const CxxNamed* item, const CxxScope* scope) const;
 
    //  Returns TRUE if the file has a forward declaration for ITEM.
    //
@@ -323,7 +327,7 @@ private:
    //  to WARNING.
    //
    void LogLine(size_t n, Warning warning, size_t offset = 0,
-      const std::string& info = std::string(EMPTY_STR)) const;
+      const std::string& info = std::string(NodeBase::EMPTY_STR)) const;
 
    //  Returns false if >trim does not apply to this file (e.g. a template
    //  header).  STREAM is where the output for >trim is being directed.
@@ -390,11 +394,10 @@ private:
    //
    void PruneLocalForwards(CxxNamedSet& addForws, CxxNamedSet& delForws) const;
 
-   //  Searches usingFiles for a using statement that makes USER visible.  If
-   //  no such statement is found, one is created and added to addUsing.
+   //  Searches the file for a using statement that makes USER visible.  If
+   //  no such statement is found, one is created and added to the file.
    //
-   void FindOrAddUsing(const CxxNamed* user,
-      const CodeFileVector usingFiles, CxxNamedSet& addUsing);
+   void FindOrAddUsing(const CxxNamed* user);
 
    //  Logs an IncludeAdd for each file in FIDS.
    //
@@ -412,9 +415,9 @@ private:
    //
    void LogRemoveForwards(std::ostream* stream, const CxxNamedSet& items) const;
 
-   //  Logs a UsingAdd for each item in ITEMS.
+   //  Logs a UsingAdd for using statements that were added by FindOrAddUsing.
    //
-   void LogAddUsings(std::ostream* stream, const CxxNamedSet& items) const;
+   void LogAddUsings(std::ostream* stream) const;
 
    //  Logs a UsingRemove for each of the file's using statements that is
    //  marked for removal.
@@ -425,11 +428,11 @@ private:
    //  updates EXPL with an explanation.  A result of -1 indicates that the
    //  file should be skipped; other values are more serious.
    //
-   word CreateEditor(EditorPtr& editor, std::string& expl);
+   NodeBase::word CreateEditor(EditorPtr& editor, std::string& expl);
 
    //  The file's identifier in the code base.
    //
-   const RegCell fid_;
+   const NodeBase::RegCell fid_;
 
    //  The file's directory.
    //
@@ -495,7 +498,7 @@ private:
    //
    IncludePtrVector incls_;
    DirectivePtrVector dirs_;
-   UsingPtrVector usings_;
+   UsingVector usings_;
    ForwardVector forws_;
    MacroVector macros_;
    ClassVector classes_;
@@ -511,11 +514,6 @@ private:
    //  The items used in the file's executable code.
    //
    CxxNamedSet usages_;
-
-   //  For a header, the names that need to be qualified in
-   //  order to remove using statements.
-   //
-   CxxNamedSet qualify_;
 
    //  Set if a /* comment is open during a lexical scan.
    //

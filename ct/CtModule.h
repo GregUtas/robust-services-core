@@ -25,25 +25,23 @@
 #include "Module.h"
 #include "NbTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace CodeTools
 {
 //  Module for initializing CodeTools.
 //
-class CtModule : public Module
+class CtModule : public NodeBase::Module
 {
-   friend class Singleton< CtModule >;
+   friend class NodeBase::Singleton< CtModule >;
 public:
    //  Overridden for restarts.
    //
-   virtual void Shutdown(RestartLevel level) override;
+   virtual void Shutdown(NodeBase::RestartLevel level) override;
 
    //  Overridden for restarts.
    //
-   virtual void Startup(RestartLevel level) override;
+   virtual void Startup(NodeBase::RestartLevel level) override;
 private:
    //  Private because this singleton is not subclassed.
    //

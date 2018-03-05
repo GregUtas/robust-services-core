@@ -38,6 +38,7 @@
 #include "Parser.h"
 #include "Singleton.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 
@@ -45,7 +46,7 @@ using std::string;
 
 namespace CodeTools
 {
-fn_name Class_ctor = "Class.ctor";
+fn_name Class_ctor = "Class.ctor[ct]";
 
 Class::Class(QualNamePtr& name, Cxx::ClassTag tag) :
    name_(name.release()),
@@ -61,7 +62,7 @@ Class::Class(QualNamePtr& name, Cxx::ClassTag tag) :
 
 //------------------------------------------------------------------------------
 
-fn_name Class_dtor = "Class.dtor";
+fn_name Class_dtor = "Class.dtor[ct]";
 
 Class::~Class()
 {
@@ -389,18 +390,6 @@ bool Class::AddSubclass(Class* cls)
    Debug::ft(Class_AddSubclass);
 
    subs_.push_back(cls);
-   return true;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Class_AddUsing = "Class.AddUsing";
-
-bool Class::AddUsing(UsingPtr& use)
-{
-   Debug::ft(Class_AddUsing);
-
-   if(use->EnterScope()) usings_.push_back(std::move(use));
    return true;
 }
 
@@ -831,7 +820,7 @@ size_t Class::CreateCode(const ClassInst* inst, stringPtr& code) const
       if(begin == string::npos) return CreateCodeError(tmpltName, 4);
       lexer.Initialize(code.get());
       lexer.Reposition(begin);
-      begin = lexer.FindClosing('{', '}', begin + 1);
+      begin = lexer.FindClosing('{', '}', begin);
       if(begin == string::npos) return CreateCodeError(tmpltName, 5);
    }
 
@@ -864,12 +853,11 @@ ClassInst* Class::CreateInstance(const string& name, const TypeName* type)
    Debug::ft(Class_CreateInstance);
 
    auto newName = QualNamePtr(new QualName(name));
+   newName->CopyContext(this);
    auto tmplt = ClassInstPtr(new ClassInst(newName, this, type));
    auto inst = tmplt.get();
+   inst->CopyContext(this);
    tmplts_.push_back(std::move(tmplt));
-
-   inst->SetScope(GetScope());
-   inst->SetPos(GetFile(), GetPos());
    return inst;
 }
 
@@ -926,7 +914,7 @@ void Class::Display(ostream& stream,
 
    stream << CRLF << prefix << '{' << CRLF;
    DisplayObjects(friends_, stream, lead, qual);
-   DisplayObjects(usings_, stream, lead, qual);
+   DisplayObjects(*Usings(), stream, lead, qual);
    DisplayObjects(*Forws(), stream, lead, qual);
    DisplayObjects(*Classes(), stream, lead, nonqual);
    DisplayObjects(*Enums(), stream, lead, nonqual);
@@ -1130,8 +1118,7 @@ Friend* Class::FindFriend(const CxxScope* scope) const
 
    for(auto f = friends_.cbegin(); f != friends_.cend(); ++f)
    {
-      auto fqFriend = (*f)->ScopedName(true);
-      if(NameIsSuperscopeOf(fqScope, fqFriend) != string::npos) return f->get();
+      if((*f)->IsSuperscopeOf(fqScope, true)) return f->get();
    }
 
    return nullptr;
@@ -1244,6 +1231,131 @@ Class* Class::GetClassTemplate() const
 {
    if(!IsTemplate()) return nullptr;
    return const_cast< Class* >(this);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Class_GetConvertibleTypes = "Class.GetConvertibleTypes";
+
+void Class::GetConvertibleTypes(StackArgVector& types)
+{
+   Debug::ft(Class_GetConvertibleTypes);
+
+   Instantiate();
+
+   auto opers = Opers();
+
+   for(auto o = opers->cbegin(); o != opers->cend(); ++o)
+   {
+      auto oper = o->get();
+
+      if((oper->Operator() == Cxx::CAST) && !oper->IsExplicit())
+      {
+         auto spec = (*o)->GetTypeSpec();
+         types.push_back(spec->ResultType());
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
+Cxx::Access Class::GetCurrAccess() const
+{
+   //  When a class is created, currAccess_ is set to the out-of-bounds value
+   //  Cxx::Access_N.  This prevents a RedundantAccessControl warning when the
+   //  class's default value (e.g. "private:") is specified first.  However, it
+   //  also means that the default value must be correctly determined.
+   //
+   if(currAccess_ == Cxx::Access_N)
+   {
+      return (tag_ == Cxx::ClassType ? Cxx::Private : Cxx::Public);
+   }
+
+   return currAccess_;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Class_GetFuncDefinition = "Class.GetFuncDefinition";
+
+FunctionDefinition Class::GetFuncDefinition(const Function* func) const
+{
+   Debug::ft(Class_GetFuncDefinition);
+
+   if(func == nullptr) return NotDeclared;
+   if(func->GetScope() == this) return LocalDeclared;
+
+   if(!func->IsImplemented() || (func->GetAccess() == Cxx::Private))
+   {
+      return BaseDeleted;
+   }
+
+   return BaseDefined;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Class_GetFuncIndex = "Class.GetFuncIndex";
+
+bool Class::GetFuncIndex(const Function* func, size_t& idx) const
+{
+   Debug::ft(Class_GetFuncIndex);
+
+   auto list = FuncVector(*func->Name());
+
+   for(idx = 0; idx < list->size(); ++idx)
+   {
+      if(list->at(idx).get() == func) return true;
+   }
+
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Class_GetMemberInitAttrs = "Class.GetMemberInitAttrs";
+
+void Class::GetMemberInitAttrs(DataInitVector& members) const
+{
+   Debug::ft(Class_GetMemberInitAttrs);
+
+   DataInitAttrs attrs;
+
+   auto data = Datas();
+
+   for(size_t i = 0; i < data->size(); ++i)
+   {
+      auto mem = data->at(i).get();
+
+      attrs.member = mem;
+      attrs.initNeeded = !mem->IsDefaultConstructible();
+      attrs.initOrder = 0;
+
+      members.push_back(attrs);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+size_t Class::GetRange(size_t& begin, size_t& end) const
+{
+   //  Set BEGIN to where the class definition begins, and END to the offset of
+   //  its closing right brace.  Return the offset of the opening left brace.
+   //
+   auto lexer = GetFile()->GetLexer();
+   begin = GetPos();
+   lexer.Reposition(begin);
+   auto left = lexer.FindFirstOf("{");
+   end = lexer.FindClosing('{', '}', left);
+   return left;
+}
+
+//------------------------------------------------------------------------------
+
+CxxScope* Class::GetTemplate() const
+{
+   if(!IsTemplate()) return nullptr;
+   return static_cast< CxxScope* >(const_cast< Class* >(this));
 }
 
 //------------------------------------------------------------------------------
@@ -1361,120 +1473,6 @@ Class::UsageAttributes Class::GetUsageAttrs() const
 
 //------------------------------------------------------------------------------
 
-fn_name Class_GetConvertibleTypes = "Class.GetConvertibleTypes";
-
-void Class::GetConvertibleTypes(StackArgVector& types)
-{
-   Debug::ft(Class_GetConvertibleTypes);
-
-   Instantiate();
-
-   auto opers = Opers();
-
-   for(auto o = opers->cbegin(); o != opers->cend(); ++o)
-   {
-      auto oper = o->get();
-
-      if((oper->Operator() == Cxx::CAST) && !oper->IsExplicit())
-      {
-         auto spec = (*o)->GetTypeSpec();
-         types.push_back(spec->ResultType());
-      }
-   }
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Class_GetCurrAccess = "Class.GetCurrAccess";
-
-Cxx::Access Class::GetCurrAccess() const
-{
-   Debug::ft(Class_GetCurrAccess);
-
-   //  When a class is created, currAccess_ is set to the out-of-bounds value
-   //  Cxx::Access_N.  This prevents a RedundantAccessControl warning when the
-   //  class's default value (e.g. "private:") is specified first.  However, it
-   //  also means that the default value must be correctly determined.
-   //
-   if(currAccess_ == Cxx::Access_N)
-   {
-      return (tag_ == Cxx::ClassType ? Cxx::Private : Cxx::Public);
-   }
-
-   return currAccess_;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Class_GetFuncDefinition = "Class.GetFuncDefinition";
-
-FunctionDefinition Class::GetFuncDefinition(const Function* func) const
-{
-   Debug::ft(Class_GetFuncDefinition);
-
-   if(func == nullptr) return NotDeclared;
-   if(func->GetScope() == this) return LocalDeclared;
-
-   if(!func->IsImplemented() || (func->GetAccess() == Cxx::Private))
-   {
-      return BaseDeleted;
-   }
-
-   return BaseDefined;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Class_GetFuncIndex = "Class.GetFuncIndex";
-
-bool Class::GetFuncIndex(const Function* func, size_t& idx) const
-{
-   Debug::ft(Class_GetFuncIndex);
-
-   auto list = FuncVector(*func->Name());
-
-   for(idx = 0; idx < list->size(); ++idx)
-   {
-      if(list->at(idx).get() == func) return true;
-   }
-
-   return false;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Class_GetMemberInitAttrs = "Class.GetMemberInitAttrs";
-
-void Class::GetMemberInitAttrs(DataInitVector& members) const
-{
-   Debug::ft(Class_GetMemberInitAttrs);
-
-   DataInitAttrs attrs;
-
-   auto data = Datas();
-
-   for(size_t i = 0; i < data->size(); ++i)
-   {
-      auto mem = data->at(i).get();
-
-      attrs.member = mem;
-      attrs.initNeeded = !mem->IsDefaultConstructible();
-      attrs.initOrder = 0;
-
-      members.push_back(attrs);
-   }
-}
-
-//------------------------------------------------------------------------------
-
-CxxScope* Class::GetTemplate() const
-{
-   if(!IsTemplate()) return nullptr;
-   return static_cast< CxxScope* >(const_cast< Class* >(this));
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Class_GetUsages = "Class.GetUsages";
 
 void Class::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
@@ -1530,13 +1528,16 @@ void Class::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 fn_name Class_GetUsingFor = "Class.GetUsingFor";
 
-Using* Class::GetUsingFor(const string& name, size_t prefix) const
+Using* Class::GetUsingFor(const std::string& fqName,
+   size_t prefix, const CxxNamed* item, const CxxScope* scope) const
 {
    Debug::ft(Class_GetUsingFor);
 
-   for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
+   auto usings = Usings();
+
+   for(auto u = usings->cbegin(); u != usings->cend(); ++u)
    {
-      if((*u)->IsUsingFor(name, prefix)) return u->get();
+      if((*u)->IsUsingFor(fqName, prefix, scope)) return u->get();
    }
 
    return nullptr;
@@ -1729,8 +1730,12 @@ Class* Class::OuterClass() const
 
 //------------------------------------------------------------------------------
 
+fn_name Class_SetCurrAccess = "Class.SetCurrAccess";
+
 bool Class::SetCurrAccess(Cxx::Access access)
 {
+   Debug::ft(Class_SetCurrAccess);
+
    if(currAccess_ == access)
    {
       auto parser = Context::GetParser();
@@ -1772,11 +1777,6 @@ void Class::Shrink()
       (*f)->Shrink();
    }
 
-   for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
-   {
-      (*u)->Shrink();
-   }
-
    for(auto t = tmplts_.cbegin(); t != tmplts_.cend(); ++t)
    {
       (*t)->Shrink();
@@ -1785,7 +1785,6 @@ void Class::Shrink()
    subs_.shrink_to_fit();
 
    auto size = friends_.capacity() * sizeof(FriendPtr);
-   size += (usings_.capacity() * sizeof(UsingPtr));
    size += (tmplts_.capacity() * sizeof(ClassInstPtr));
    size += (subs_.capacity() * sizeof(Class*));
 
@@ -1817,6 +1816,7 @@ ClassInst::ClassInst(QualNamePtr& name, Class* tmplt, const TypeName* spec) :
    Debug::ft(ClassInst_ctor);
 
    spec_.reset(new TypeName(*spec));
+   spec_->CopyContext(spec);
    CxxStats::Incr(CxxStats::CLASS_INST);
    CxxStats::Decr(CxxStats::CLASS_DECL);
 }
@@ -2197,6 +2197,18 @@ bool CxxArea::AddType(TypedefPtr& type)
 
 //------------------------------------------------------------------------------
 
+fn_name CxxArea_AddUsing = "CxxArea.AddUsing";
+
+bool CxxArea::AddUsing(UsingPtr& use)
+{
+   Debug::ft(CxxArea_AddUsing);
+
+   if(use->EnterScope()) usings_.push_back(std::move(use));
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CxxArea_Check = "CxxArea.Check";
 
 void CxxArea::Check() const
@@ -2430,8 +2442,12 @@ Typedef* CxxArea::FindType(const string& name) const
 
 //------------------------------------------------------------------------------
 
+fn_name CxxArea_FoundFunc = "CxxArea.FoundFunc";
+
 Function* CxxArea::FoundFunc(Function* func, SymbolView* view, TypeMatch match)
 {
+   Debug::ft(CxxArea_FoundFunc);
+
    if(view != nullptr) view->match = match;
    return func;
 }
@@ -2479,6 +2495,11 @@ Function* CxxArea::MatchFunc(const Function* curr, bool base) const
 
 void CxxArea::Shrink()
 {
+   for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
+   {
+      (*u)->Shrink();
+   }
+
    for(auto c = classes_.cbegin(); c != classes_.cend(); ++c)
    {
       (*c)->Shrink();
@@ -2519,7 +2540,8 @@ void CxxArea::Shrink()
       (*d)->Shrink();
    }
 
-   auto size = classes_.capacity() * sizeof(ClassPtr);
+   auto size = usings_.capacity() * sizeof(UsingPtr);
+   size += (classes_.capacity() * sizeof(ClassPtr));
    size += (data_.capacity() * sizeof(DataPtr));
    size += (enums_.capacity() * sizeof(EnumPtr));
    size += (forws_.capacity() * sizeof(ForwardPtr));
@@ -2549,7 +2571,7 @@ Namespace::Namespace(const string& name, Namespace* space) : name_(name)
 {
    Debug::ft(Namespace_ctor);
 
-   SetScope(space);
+   CxxArea::SetScope(space);
    Singleton< CxxSymbols >::Instance()->InsertSpace(this);
    CxxStats::Incr(CxxStats::SPACE_DECL);
 }
@@ -2727,13 +2749,13 @@ string Namespace::ScopedName(bool templates) const
 
 //------------------------------------------------------------------------------
 
-fn_name Namespace_SetPos = "Namespace.SetPos";
+fn_name Namespace_SetLoc = "Namespace.SetLoc";
 
-void Namespace::SetPos(CodeFile* file, size_t pos)
+void Namespace::SetLoc(CodeFile* file, size_t pos)
 {
-   Debug::ft(Namespace_SetPos);
+   Debug::ft(Namespace_SetLoc);
 
-   if(GetFile() == nullptr) CxxNamed::SetPos(file, pos);
+   if(GetFile() == nullptr) CxxArea::SetLoc(file, pos);
 }
 
 //------------------------------------------------------------------------------

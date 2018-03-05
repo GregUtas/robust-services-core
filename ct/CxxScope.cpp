@@ -37,6 +37,7 @@
 #include "Parser.h"
 #include "Singleton.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 
@@ -130,6 +131,7 @@ bool Block::CrlfOver(Form form) const
          return true;
       case Unbraced:
          if(braced_) return true;
+         //  [[fallthrough]]
       default:
          return !statements_.front()->InLine();
       }
@@ -183,7 +185,7 @@ void Block::Display(ostream& stream,
             break;
          }
       }
-
+      //  [[fallthrough]]
    default:
       if(!nested_) stream << CRLF;
       stream << prefix << '{' << CRLF;
@@ -209,7 +211,6 @@ void Block::EnterBlock()
    Debug::ft(Block_EnterBlock);
 
    Context::SetPos(GetPos());
-   SetScope(Context::Scope());
    Context::PushScope(this);
 
    for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
@@ -262,13 +263,14 @@ void Block::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 fn_name Block_GetUsingFor = "Block.GetUsingFor";
 
-Using* Block::GetUsingFor(const string& name, size_t prefix) const
+Using* Block::GetUsingFor(const std::string& fqName,
+   size_t prefix, const CxxNamed* item, const CxxScope* scope) const
 {
    Debug::ft(Block_GetUsingFor);
 
    for(auto u = Usings_.cbegin(); u != Usings_.cend(); ++u)
    {
-      if((*u)->IsUsingFor(name, prefix)) return *u;
+      if((*u)->IsUsingFor(fqName, prefix, scope)) return *u;
    }
 
    return nullptr;
@@ -816,30 +818,6 @@ id_t CxxScope::GetDistinctDeclFid() const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxScope_IsSubscopeOf = "CxxScope.IsSubscopeOf";
-
-bool CxxScope::IsSubscopeOf(const string& name) const
-{
-   Debug::ft(CxxScope_IsSubscopeOf);
-
-   //  This scope is a subscope of NAME if its fully qualified name is equal
-   //  to, or a subset of, NAME.  Template arguments are ignored because the
-   //  subclassing of a template instance is not supported.
-   //
-   auto fqName = ScopedName(false);
-   auto size = name.size();
-
-   if(name.compare(0, size, fqName, 0, size) == 0)
-   {
-      if(size == fqName.size()) return true;
-      if(fqName.compare(size, 2, SCOPE_STR) == 0) return true;
-   }
-
-   return false;
-}
-
-//------------------------------------------------------------------------------
-
 fn_name CxxScope_NameIsTemplateParm = "CxxScope.NameIsTemplateParm";
 
 bool CxxScope::NameIsTemplateParm(const string& name) const
@@ -1022,7 +1000,7 @@ Data::Data(TypeSpecPtr& spec) :
 {
    Debug::ft(Data_ctor);
 
-   spec_->SetLocale(Cxx::Data);
+   spec_->SetUserType(Cxx::Data);
 }
 
 //------------------------------------------------------------------------------
@@ -1074,77 +1052,6 @@ void Data::CheckConstness(bool could) const
          if(nonconstptr_) Log(DataCannotBeConstPtr);
       }
    }
-}
-
-//------------------------------------------------------------------------------
-
-const string LeftPunctuation("([<{");
-
-fn_name Data_CheckFunctionString = "Data.CheckFunctionString";
-
-bool Data::CheckFunctionString(const Function* func) const
-{
-   Debug::ft(Data_CheckFunctionString);
-
-   //  In order to find a string literal that identifies FUNC, this member
-   //  must have an initialization statement, and the line where it appears
-   //  should have been classified as one that defines a function name.
-   //
-   if(rhs_ == nullptr) return false;
-
-   //  Extract the string literal by displaying the member's initialization
-   //  statement.  Look for the "." between <scope> and <name>.
-   //
-   std::ostringstream stream;
-   rhs_->Print(stream, Flags());
-
-   auto str = stream.str();
-   auto quote = str.find(QUOTE);
-   if(quote == string::npos) return false;
-   str.erase(0, quote + 1);
-   quote = str.find(QUOTE);
-   str.erase(quote);
-
-   //  Check that the string literal is of the form
-   //     "<scope>.<name>"
-   //  where <scope> is the name of FUNC's scope and <name> is its name.
-   //  However
-   //  o If FUNC is defined in the global namespace, its name will have
-   //    no <scope> prefix.
-   //  o If FUNC is overloaded, "left punctuation" can follow <name> in
-   //    order to give a unique name to each of the function's overloads.
-   //
-   string name;
-
-   switch(func->FuncType())
-   {
-   case FuncCtor:
-      name = "ctor";
-      break;
-   case FuncDtor:
-      name = "dtor";
-      break;
-   default:
-      name = *func->Name();
-   }
-
-   auto scope = func->GetScope()->Name();
-
-   if(scope->empty())
-   {
-      if(str.find(name) != 0) return false;
-      auto size = name.size();
-      if(str.size() == size) return true;
-      return (LeftPunctuation.find(str[size]) != string::npos);
-   }
-
-   auto dot = str.find('.');
-   if(dot == string::npos) return false;
-   if(str.find(*scope) != 0) return false;
-   if(str.find(name, dot) != dot + 1) return false;
-   auto size = scope->size() + 1 + name.size();
-   if(str.size() == size) return true;
-   return (LeftPunctuation.find(str[size]) != string::npos);
 }
 
 //------------------------------------------------------------------------------
@@ -1285,12 +1192,35 @@ void Data::GetInitName(QualNamePtr& qualName) const
 
 //------------------------------------------------------------------------------
 
-fn_name Data_GetTemplateArgs = "Data.GetTemplateArgs";
+fn_name Data_GetStrValue = "Data.GetStrValue";
+
+bool Data::GetStrValue(string& str) const
+{
+   Debug::ft(Data_GetStrValue);
+
+   //  In order to return a string, the data must have an initialization
+   //  statement.  Display the statement and look for the quotation marks
+   //  that denote a string literal.  Strip off everything outside the
+   //  quotes to generate STR.
+   //
+   if(rhs_ == nullptr) return false;
+
+   std::ostringstream stream;
+   rhs_->Print(stream, Flags());
+   str = stream.str();
+   auto quote = str.find(QUOTE);
+   if(quote == string::npos) return false;
+   str.erase(0, quote + 1);
+   quote = str.find(QUOTE);
+   if(quote == string::npos) return false;
+   str.erase(quote);
+   return true;
+}
+
+//------------------------------------------------------------------------------
 
 TypeName* Data::GetTemplateArgs() const
 {
-   Debug::ft(Data_GetTemplateArgs);
-
    return spec_->GetTemplateArgs();
 }
 
@@ -1507,6 +1437,7 @@ void Data::SetAssignment(ExprPtr& expr)
 
    QualNamePtr name;
    GetInitName(name);
+   name->CopyContext(this);
    auto arg1 = TokenPtr(name.release());
    rhs_->AddItem(arg1);
    auto op = TokenPtr(new Operation(Cxx::ASSIGN));
@@ -1695,7 +1626,6 @@ void FuncData::EnterBlock()
    auto anon = spec->IsAuto();
 
    Context::SetPos(GetPos());
-   SetScope(Context::Scope());
    Singleton< CxxSymbols >::Instance()->InsertLocal(this);
    spec->EnteringScope(this);
    ExecuteInit(false);
@@ -1796,8 +1726,6 @@ Function::Function(QualNamePtr& name) :
    defaulted_(false),
    mate_(nullptr),
    pos_(string::npos),
-   begin_(string::npos),
-   end_(string::npos),
    base_(nullptr),
    tmplt_(nullptr)
 {
@@ -1839,14 +1767,12 @@ Function::Function(QualNamePtr& name, TypeSpecPtr& spec, bool type) :
    mate_(nullptr),
    spec_(spec.release()),
    pos_(string::npos),
-   begin_(string::npos),
-   end_(string::npos),
    base_(nullptr),
    tmplt_(nullptr)
 {
    Debug::ft(Function_ctor2);
 
-   spec_->SetLocale(Cxx::Function);
+   spec_->SetUserType(Cxx::Function);
    if(type_) return;
 
    auto qname = name_->QualifiedName(true, false);
@@ -1941,13 +1867,13 @@ void Function::AddThisArg()
    //  defined as const.
    //
    TypeSpecPtr typeSpec(new DataSpec(cls->Name()->c_str()));
+   typeSpec->CopyContext(this);
    typeSpec->SetPtrs(1);
    typeSpec->SetConst(const_);
    typeSpec->SetReferent(cls, nullptr);
    string argName(THIS_STR);
    ArgumentPtr arg(new Argument(argName, typeSpec));
-   arg->SetScope(this);
-   arg->SetPos(GetFile(), GetPos());
+   arg->CopyContext(this);
    args_.insert(args_.begin(), std::move(arg));
    this_ = true;
 }
@@ -2461,6 +2387,58 @@ void Function::CheckCtor() const
          last = item->initOrder;
       }
    }
+}
+
+//------------------------------------------------------------------------------
+
+const string LeftPunctuation("([<{");
+
+fn_name Function_CheckDebugName = "Function.CheckDebugName";
+
+bool Function::CheckDebugName(const string& str) const
+{
+   Debug::ft(Function_CheckDebugName);
+
+   //  Check that STR is of the form
+   //     "<scope>.<name>"
+   //  where <scope> is the name of the function's scope and <name> is its
+   //  name.  However
+   //  o If the function is defined in the global namespace, its name will
+   //    have no <scope> prefix.
+   //  o If function is overloaded, "left punctuation" can follow <name> in
+   //    order to give a unique name to each of the function's overloads.
+   //
+   string name;
+
+   switch(FuncType())
+   {
+   case FuncCtor:
+      name = "ctor";
+      break;
+   case FuncDtor:
+      name = "dtor";
+      break;
+   default:
+      name = *Name();
+   }
+
+   auto scope = GetScope()->Name();
+
+   if(scope->empty())
+   {
+      if(str.find(name) != 0) return false;
+      auto size = name.size();
+      if(str.size() == size) return true;
+      return (LeftPunctuation.find(str[size]) != string::npos);
+   }
+
+   auto dot = str.find('.');
+   if(dot == string::npos) return false;
+   if(str.find(*scope) != 0) return false;
+   if(str.find(name, dot) != dot + 1) return false;
+   auto size = scope->size() + 1 + name.size();
+   if(str.size() == size) return true;
+   return (LeftPunctuation.find(str[size]) != string::npos);
 }
 
 //------------------------------------------------------------------------------
@@ -3197,9 +3175,13 @@ Function* Function::FirstInstanceInClass() const
 
 //------------------------------------------------------------------------------
 
+fn_name Function_FoundFunc = "Function.FoundFunc";
+
 Function* Function::FoundFunc
    (Function* func, const StackArgVector& args, TypeMatch& match)
 {
+   Debug::ft(Function_FoundFunc);
+
    //  If a function template has been instantiated, record that each of its
    //  arguments was used.  This ensures that >trim will ask for each type to
    //  be #included in the file that is using the function template.  Although
@@ -3297,10 +3279,18 @@ CodeFile* Function::GetDefnFile() const
 
 //------------------------------------------------------------------------------
 
-void Function::GetDefnRange(size_t& begin, size_t& end) const
+size_t Function::GetRange(size_t& begin, size_t& end) const
 {
-   begin = begin_;
-   end = end_;
+   //  If the function has an implementation, return the offset of the
+   //  left brace at the beginning of the function body, and set END to
+   //  the location of the matching right brace.
+   //
+   auto left = CxxScoped::GetRange(begin, end);
+   if(impl_ == nullptr) return string::npos;
+   auto lexer = GetFile()->GetLexer();
+   left = impl_->GetPos();
+   end = lexer.FindClosing('{', '}', left);
+   return left;
 }
 
 //------------------------------------------------------------------------------
@@ -3317,12 +3307,8 @@ CxxScope* Function::GetScope() const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_GetTemplate = "Function.GetTemplate";
-
 CxxScope* Function::GetTemplate() const
 {
-   Debug::ft(Function_GetTemplate);
-
    if(tmplt_ != nullptr) return tmplt_;
    if(IsTemplate()) return static_cast< CxxScope* >
       (const_cast< Function* >(this));
@@ -3333,12 +3319,8 @@ CxxScope* Function::GetTemplate() const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_GetTemplateType = "Function.GetTemplateType";
-
 TemplateType Function::GetTemplateType() const
 {
-   Debug::ft(Function_GetTemplateType);
-
    if(IsTemplate()) return FuncTemplate;
 
    auto cls = GetClass();
@@ -3867,10 +3849,13 @@ bool Function::IsTrivial() const
    auto file = GetImplFile();
    if(file == nullptr) return true;
 
-   auto last = file->GetLexer().GetLineNum(end_);
+   size_t begin, end;
+   GetRange(begin, end);
+
+   auto last = file->GetLexer().GetLineNum(end);
    auto body = false;
 
-   for(auto n = file->GetLexer().GetLineNum(begin_); n < last; ++n)
+   for(auto n = file->GetLexer().GetLineNum(begin); n < last; ++n)
    {
       auto type = file->GetLineType(n);
 
@@ -3879,7 +3864,7 @@ bool Function::IsTrivial() const
       case OpenBrace:
       case DebugFt:
          body = true;
-
+         //  [[fallthrough]]
       case Blank:
       case EmptyComment:
       case SeparatorComment:
@@ -4156,14 +4141,6 @@ void Function::SetDefn(Function* func)
    func->mate_ = this;
    func->defn_ = true;
    this->mate_ = func;
-}
-
-//------------------------------------------------------------------------------
-
-void Function::SetDefnRange(size_t begin, size_t end)
-{
-   begin_ = begin;
-   end_ = end;
 }
 
 //------------------------------------------------------------------------------

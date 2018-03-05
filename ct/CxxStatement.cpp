@@ -31,6 +31,7 @@
 #include "Debug.h"
 #include "SysTypes.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 
@@ -89,7 +90,7 @@ void Case::EnterBlock()
 
    expr_->EnterBlock();
    auto result = Context::PopArg(true);
-   DataSpec(INT_STR).MustMatchWith(result);
+   DataSpec::Int->MustMatchWith(result);
 }
 
 //------------------------------------------------------------------------------
@@ -843,7 +844,7 @@ void Return::Print(ostream& stream, const Flags& options) const
 
 //==============================================================================
 
-fn_name Switch_ctor = "Switch.ctor";
+fn_name Switch_ctor = "Switch.ctor[ct]";
 
 Switch::Switch(size_t pos) : CxxStatement(pos)
 {
@@ -889,7 +890,7 @@ void Switch::EnterBlock()
 
    expr_->EnterBlock();
    auto result = Context::PopArg(true);
-   DataSpec(INT_STR).MustMatchWith(result);
+   DataSpec::Int->MustMatchWith(result);
    cases_->EnterBlock();
 }
 

@@ -59,19 +59,21 @@ public:
 
    //  Checks the code files in the set.
    //
-   virtual word Check(std::ostream* stream, std::string& expl) const override;
+   virtual NodeBase::word Check
+      (std::ostream* stream, std::string& expl) const override;
 
    //  Updates RESULT with the number of lines of code in the set.
    //
-   virtual word Countlines(std::string& result) const override;
+   virtual NodeBase::word Countlines(std::string& result) const override;
 
    //  Fixes warnings detected by >check.
    //
-   virtual word Fix(CliThread& cli, std::string& expl) const override;
+   virtual NodeBase::word Fix
+      (NodeBase::CliThread& cli, std::string& expl) const override;
 
    //  Formats the code files in the set.
    //
-   virtual word Format(std::string& expl) const override;
+   virtual NodeBase::word Format(std::string& expl) const override;
 
    //  Returns the type of set.
    //
@@ -79,29 +81,32 @@ public:
 
    //  Displays the full filenames in STREAM.
    //
-   virtual word List(std::ostream& stream, std::string& expl) const override;
+   virtual NodeBase::word List
+      (std::ostream& stream, std::string& expl) const override;
 
    //  Parses the code files in the set.
    //
-   virtual word Parse
+   virtual NodeBase::word Parse
       (std::string& expl, const std::string& opts) const override;
 
    //  Displays, in STREAM, lines from the code files that match PATTERN.
    //
-   virtual word Scan(std::ostream& stream,
+   virtual NodeBase::word Scan(std::ostream& stream,
       const std::string& pattern, std::string& expl) const override;
 
    //  Displays the build order in STREAM.
    //
-   virtual word Sort(std::ostream& stream, std::string& expl) const override;
+   virtual NodeBase::word Sort
+      (std::ostream& stream, std::string& expl) const override;
 
    //  Displays the filenames in RESULT.
    //
-   virtual word Show(std::string& result) const override;
+   virtual NodeBase::word Show(std::string& result) const override;
 
    //  Trims the code files in the set.
    //
-   virtual word Trim(std::ostream& stream, std::string& expl) const override;
+   virtual NodeBase::word Trim
+      (std::ostream& stream, std::string& expl) const override;
 
    //  Returns the build order of the set.
    //

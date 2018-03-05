@@ -360,7 +360,7 @@ public:
 private:
    //  Private to restrict creation to StTestData.
    //
-   TestSession(StTestData* data, TestSessionId tid);
+   TestSession(const StTestData* data, TestSessionId tid);
 
    //  Private to restrict deletion.  Not subclassed.
    //

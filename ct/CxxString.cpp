@@ -164,9 +164,33 @@ string& AdjustPtrs(string& type, TagCount ptrs)
 
 //------------------------------------------------------------------------------
 
+fn_name CodeTools_CompareScopes = "CodeTools.CompareScopes";
+
+size_t CompareScopes(const string& fqSub, const string& fqSuper, bool tmplt)
+{
+   Debug::ft(CodeTools_CompareScopes);
+
+   //  fqSuper is a superscope of fqSub if it matches all, or a front portion,
+   //  of fqSub.  On a partial match, check that the match actually reached a
+   //  scope operator or, if TMPLT is set, template arguments in fqSub.
+   //
+   auto size = fqSuper.size();
+
+   if(fqSub.compare(0, size, fqSuper) == 0)
+   {
+      if(size == fqSub.size()) return size;
+      if(fqSub.compare(size, 2, SCOPE_STR) == 0) return size;
+      if(tmplt && (fqSub[size] == '<')) return size;
+   }
+
+   return string::npos;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeTools_Concatenate = "CodeTools.Concatenate";
 
-void Concatenate(std::string& s)
+void Concatenate(string& s)
 {
    Debug::ft(CodeTools_Concatenate);
 
@@ -196,7 +220,7 @@ void Concatenate(std::string& s)
 
 //------------------------------------------------------------------------------
 
-bool FileExtensionIs(const std::string& file, const std::string& ext)
+bool FileExtensionIs(const string& file, const string& ext)
 {
    auto s = '.' + ext;
    auto pos = file.rfind(s);
@@ -294,7 +318,7 @@ size_t FindTemplateEnd(const string& name, size_t pos)
 
 fn_name CodeTools_GetFileName = "CodeTools.GetFileName";
 
-std::string GetFileName(const std::string& path)
+string GetFileName(const string& path)
 {
    Debug::ft(CodeTools_GetFileName);
 
@@ -339,30 +363,6 @@ size_t NameCouldReferTo(const string& fqName, const string& name)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeTools_NameIsSuperscopeOf = "CodeTools.NameIsSuperscopeOf";
-
-size_t NameIsSuperscopeOf(const string& fqName, const string& name)
-{
-   Debug::ft(CodeTools_NameIsSuperscopeOf);
-
-   //  NAME must match a head portion (or all of) fqName.  On a partial
-   //  match, check that the match actually reached a scope operator or
-   //  template specification.
-   //
-   auto size = name.size();
-
-   if(fqName.compare(0, size, name) == 0)
-   {
-      if(fqName.size() == size) return size;
-      if(fqName.compare(size, 2, SCOPE_STR) == 0) return size;
-      if(fqName[size] == '<') return size;
-   }
-
-   return string::npos;
-}
-
-//------------------------------------------------------------------------------
-
 string Normalize(const string& name)
 {
    //  See if NAME contains any spaces.  If it does, it needs to be normalized.
@@ -398,7 +398,7 @@ string Normalize(const string& name)
 
 //------------------------------------------------------------------------------
 
-bool PathIncludes(const std::string& path, const std::string& dir)
+bool PathIncludes(const string& path, const string& dir)
 {
    auto s = '/' + dir;
    auto pos = path.find(s);
@@ -429,7 +429,7 @@ string& Prefix(string&& scope)
 
 fn_name CodeTools_RemoveConsts = "CodeTools.RemoveConsts";
 
-string RemoveConsts(const std::string& type)
+string RemoveConsts(const string& type)
 {
    Debug::ft(CodeTools_RemoveConsts);
 

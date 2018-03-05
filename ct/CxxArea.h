@@ -46,6 +46,10 @@ public:
    //
    virtual ~CxxArea();
 
+   //  Adds USE as a using declaration in the area's scope.
+   //
+   bool AddUsing(UsingPtr& use);
+
    //  Adds a class to the area.
    //
    bool AddClass(ClassPtr& cls);
@@ -147,6 +151,10 @@ protected:
    //
    CxxArea();
 
+   //  Returns the area's using declarations.
+   //
+   const UsingPtrVector* Usings() const { return &usings_; }
+
    //  The same as Datas(), but provides non-const access.
    //
    DataPtrVector* Datas() { return &data_; }
@@ -177,6 +185,10 @@ private:
    //
    static Function* FoundFunc
       (Function* func, SymbolView* view, TypeMatch match);
+
+   //  The area's using declarations.
+   //
+   UsingPtrVector usings_;
 
    //  The area's classes.
    //
@@ -250,10 +262,6 @@ public:
    //  Adds DECL as a friend of the class.
    //
    bool AddFriend(FriendPtr& decl);
-
-   //  Adds USE as a using declaration in the class's scope.
-   //
-   bool AddUsing(UsingPtr& use);
 
    //  Adds CLS as a direct subclass of the class.
    //
@@ -357,8 +365,7 @@ public:
    //
    FunctionDefinition GetFuncDefinition(const Function* func) const;
 
-   //  Returns the friend declaration for SCOPE if one exists (CxxScope is
-   //  the common base class for functions and classes).
+   //  Returns the friend declaration for SCOPE if one exists.
    //
    Friend* FindFriend(const CxxScope* scope) const;
 
@@ -382,7 +389,7 @@ public:
    //  Updates CODE with the code for the template instance INST, returning the
    //  location where parsing should begin.  Returns string::npos on an error.
    //
-   size_t CreateCode(const ClassInst* inst, stringPtr& code) const;
+   size_t CreateCode(const ClassInst* inst, NodeBase::stringPtr& code) const;
 
    //  Updates IDX to FUNC's index within its vector and return true.  Returns
    //  FALSE if FUNC was not found.
@@ -452,7 +459,7 @@ public:
    //  Overridden to display the class and its members.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to add the class to the current scope.
    //
@@ -482,6 +489,10 @@ public:
    //
    virtual QualName* GetQualName() const override { return name_.get(); }
 
+   //  Overridden to return the offset of the left brace.
+   //
+   virtual size_t GetRange(size_t& begin, size_t& end) const override;
+
    //  Overridden to return the class if it is a class template.
    //
    virtual CxxScope* GetTemplate() const override;
@@ -499,8 +510,8 @@ public:
 
    //  Overridden to look at using statements that are local to the class.
    //
-   virtual Using* GetUsingFor
-      (const std::string& name, size_t prefix) const override;
+   virtual Using* GetUsingFor(const std::string& fqName, size_t prefix,
+      const CxxNamed* item, const CxxScope* scope) const override;
 
    //  Overridden to look for an implemented function.
    //
@@ -548,11 +559,7 @@ public:
 protected:
    //  Displays the first line of the declaration (the name and base class).
    //
-   void DisplayBase(std::ostream& stream, const Flags& options) const;
-
-   //  Returns the class's using declarations.
-   //
-   const UsingPtrVector* Usings() const { return &usings_; }
+   void DisplayBase(std::ostream& stream, const NodeBase::Flags& options) const;
 private:
    //  Overridden to register ITEM in the order in which it was declared.
    //
@@ -576,7 +583,8 @@ private:
    //  Invoked when an error occurs in CreateCode.  NAME is the template
    //  whose code could not be found.
    //
-   static size_t CreateCodeError(const std::string& name, debug32_t offset);
+   static size_t CreateCodeError
+      (const std::string& name, NodeBase::debug32_t offset);
 
    //  Class attributes and the types of items that it defines.
    //
@@ -656,10 +664,6 @@ private:
    //
    FriendPtrVector friends_;
 
-   //  The class's using declarations.
-   //
-   UsingPtrVector usings_;
-
    //  The class's preprocessor directives.
    //
    DirectivePtrVector dirs_;
@@ -678,7 +682,7 @@ private:
 
    //  The source code if this is a class template.
    //
-   mutable stringPtr code_;
+   mutable NodeBase::stringPtr code_;
 };
 
 //------------------------------------------------------------------------------
@@ -728,7 +732,7 @@ public:
    //  its interface.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to return the class template instance when it already exists
    //  and is found as a referent by another user.
@@ -793,7 +797,7 @@ private:
 
    //  The instance's source code.
    //
-   stringPtr code_;
+   NodeBase::stringPtr code_;
 
    //  The number of references to the instance.
    //
@@ -845,7 +849,7 @@ public:
    //  Overridden to display the namespace and its declarations.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to support searching up the namespace hierarchy if a function
    //  matching the criteria is not found in this namespace.
@@ -880,7 +884,7 @@ public:
 
    //  Overridden to preserve the location where the namespace first occurred.
    //
-   virtual void SetPos(CodeFile* file, size_t pos) override;
+   virtual void SetLoc(CodeFile* file, size_t pos) override;
 
    //  Overridden to handle the global namespace.
    //

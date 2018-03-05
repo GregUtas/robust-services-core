@@ -54,6 +54,7 @@
 #include "SetOperations.h"
 #include "Singleton.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 
@@ -648,7 +649,9 @@ void CodeFile::CheckDebugFt() const
    if(IsHeader() && !IsTemplateHeader()) return;
 
    size_t begin, end;
-   string s;
+   string statement;
+   string dname;
+   string fname;
 
    //  For each function in this file, find the lines on which it begins
    //  and ends.  Within those lines, look for invocations of Debug::ft.
@@ -660,7 +663,7 @@ void CodeFile::CheckDebugFt() const
    for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
    {
       if((*f)->IsInTemplateInstance()) continue;
-      (*f)->GetDefnRange(begin, end);
+      (*f)->GetRange(begin, end);
       if(begin >= end) continue;
       auto last = lexer_.GetLineNum(end);
       auto open = false, debug = false, code = false;
@@ -678,17 +681,23 @@ void CodeFile::CheckDebugFt() const
             if(code) LogLine(n, DebugFtNotFirst);
             code = true;
 
-            if(lexer_.GetNthLine(n, s))
+            if(lexer_.GetNthLine(n, statement))
             {
-               auto prev = s.find('(');
+               auto prev = statement.find('(');
                if(prev == string::npos) break;
-               auto next = s.find(')', prev);
+               auto next = statement.find(')', prev);
                if(next == string::npos) break;
-               auto name = s.substr(prev + 1, next - prev - 1);
-               auto data = FindData(name);
+               dname = statement.substr(prev + 1, next - prev - 1);
+               auto data = FindData(dname);
                if(data == nullptr) break;
-               if(data->CheckFunctionString(*f)) break;
-               LogLine(n, DebugFtNameMismatch);
+               auto ok = data->GetStrValue(fname);
+               if(ok)
+               {
+                  ok = (*f)->CheckDebugName(fname);
+                  FunctionName::Insert(fname, *(*f)->GetSpace()->Name());
+               }
+
+               if(!ok) LogLine(n, DebugFtNameMismatch);
             }
             break;
 
@@ -1343,7 +1352,7 @@ word CodeFile::CreateEditor(EditorPtr& editor, string& expl)
 
    if(editor == nullptr)
    {
-      expl = "Failed to allocate editor.";
+      expl = "Failed to create editor.";
       return -7;
    }
 
@@ -1522,17 +1531,10 @@ void CodeFile::FindDeclIds()
 
 fn_name CodeFile_FindOrAddUsing = "CodeFile.FindOrAddUsing";
 
-void CodeFile::FindOrAddUsing(const CxxNamed* user,
-   const CodeFileVector usingFiles, CxxNamedSet& addUsing)
+void CodeFile::FindOrAddUsing(const CxxNamed* user)
 {
    Debug::ft(CodeFile_FindOrAddUsing);
 
-   //  See if a file in usingFiles has a using statement that would make USER
-   //  visible.  If so, this file does not need one.  Verify, however, that
-   //  such a using statement is not tagged for removal.  This code was adapted
-   //  from CxxScoped.NameRefersToItem, simplified to handle only the case of a
-   //  symbol that needs to be resolved by a using statement.
-   //
    string name;
    CxxNamed* ref;
    auto qname = user->GetQualName();
@@ -1553,65 +1555,37 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user,
    auto tmplt = ref->GetTemplate();
    if(tmplt != nullptr) ref = tmplt;
 
-   auto found = false;
-   string fqName;
-   size_t i = 0;
+   //  This loop was adapted from CxxScoped.NameRefersToItem, simplified
+   //  to handle only the case where a symbol must be resolved by a using
+   //  statement.
+   //
+   Using* u = nullptr;
+   stringVector fqNames;
+   ref->GetScopedNames(fqNames);
 
-   while(!found && ref->GetScopedName(fqName, i))
+   for(auto fqn = fqNames.begin(); fqn != fqNames.end() && u == nullptr; ++fqn)
    {
-      auto pos = NameCouldReferTo(fqName, name);
-      fqName.erase(0, 2);
+      auto pos = NameCouldReferTo(*fqn, name);
+      if(pos == string::npos) continue;
+      fqn->erase(0, 2);
 
-      if(pos != string::npos)
-      {
-         for(auto i = usingFiles.cbegin(); i != usingFiles.cend(); ++i)
-         {
-            auto u = (*i)->GetUsingFor(fqName, pos - 4);
-
-            if((u != nullptr) && !u->IsToBeRemoved())
-            {
-               found = true;
-               break;
-            }
-         }
-
-         if(!found)
-         {
-            //  No file in usingFiles had a suitable using statement.  If
-            //  this file has one, keep it.  Note that this code can be run
-            //  twice, by both Check() and Trim().  Using statements added
-            //  to the file (this occurs below) must therefore be added to
-            //  the set addUsing so that they will be logged as needing to
-            //  be added, because they are not yet part of the source code.
-            //
-            auto u = GetUsingFor(fqName, pos - 4);
-
-            if(u != nullptr)
-            {
-               u->MarkForRetention();
-               if(u->WasAdded()) addUsing.insert(u->Referent());
-               found = true;
-            }
-         }
-      }
-
-      ++i;
+      //  If this file has a suitable using statement, keep it.
+      //
+      u = GetUsingFor(*fqn, pos - 4, ref, user->GetScope());
+      if(u != nullptr) u->MarkForRetention();
    }
 
-   if(!found)
+   if(u == nullptr)
    {
-      //  Neither a file in usingFiles nor this file had a suitable using
-      //  statement.  This file should therefore add one.  If REF is external,
-      //  add a using declaration (for a specific symbol).  If it is internal,
-      //  add a using directive (for a namespace).
+      //  This file did not have a suitable using statement, so it should add
+      //  one.  If REF is external, add a using declaration (for a specific
+      //  item).  If REF is internal, add a using directive (for a namespace).
       //
       if(!ref->GetFile()->IsSubsFile())
       {
          auto space = ref->GetSpace();
          if(space != nullptr) ref = space;
       }
-
-      addUsing.insert(ref);
 
       QualNamePtr qualName;
       auto name = ref->ScopedName(false);
@@ -1621,7 +1595,16 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user,
       parser.reset();
       qualName->SetReferent(ref, nullptr);
       auto u = UsingPtr(new Using(qualName, false, true));
-      InsertUsing(u);
+      u->SetScope(scope);
+      u->SetLoc(this, CxxLocation::NOT_IN_SOURCE);
+      scope->AddUsing(u);
+
+      //  If this is a header, log the fact that it depends a using statement
+      //  in another file.  This is necessary because, if the header has no
+      //  using statements of its own, >fix will skip it instead of trying to
+      //  eliminate its dependence on using statements.
+      //
+      if(IsHeader()) LogPos(0, HeaderReliesOnUsing, 0, spaces(1));
    }
 }
 
@@ -1629,28 +1612,28 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user,
 
 fn_name CodeFile_FindUsingFor = "CodeFile.FindUsingFor";
 
-Using* CodeFile::FindUsingFor(const string& name, size_t prefix,
+Using* CodeFile::FindUsingFor(const string& fqName, size_t prefix,
    const CxxScoped* item, const CxxScope* scope) const
 {
    Debug::ft(CodeFile_FindUsingFor);
 
    //  It's easy if this file or SCOPE has a sufficient using statement.
    //
-   auto u = GetUsingFor(name, prefix);
+   auto u = GetUsingFor(fqName, prefix, item, scope);
    if(u != nullptr) return u;
-   u = scope->GetUsingFor(name, prefix);
+   u = scope->GetUsingFor(fqName, prefix, item, scope);
    if(u != nullptr) return u;
 
    //  Something that this file #includes (transitively) must make ITEM visible.
    //  Search the files that affect this one.  A file in the resulting set must
-   //  have a using statment for NAME, at least up to PREFIX.
+   //  have a visible using statment for NAME, at least up to PREFIX.
    //
    auto search = this->Affecters();
 
    //  Omit files that also affect the one that defines NAME.  This removes the
    //  file that actually defines NAME, so add it back to the search.  Do not
-   //  exclude files, however, if ITEM is a forward or friend declaration, as
-   //  its actual definition could occur totally outside of the search area.
+   //  omit files, however, if ITEM is a forward or friend declaration, as its
+   //  actual definition could occur totally outside of the search area.
    //
    auto type = item->Type();
    if((type != Cxx::Forward) && (type != Cxx::Friend))
@@ -1663,7 +1646,7 @@ Using* CodeFile::FindUsingFor(const string& name, size_t prefix,
 
    for(auto f = search.cbegin(); f != search.cend(); ++f)
    {
-      u = files.At(*f)->GetUsingFor(name, prefix);
+      u = files.At(*f)->GetUsingFor(fqName, prefix, item, scope);
       if(u != nullptr) return u;
    }
 
@@ -1713,6 +1696,8 @@ word CodeFile::Fix(CliThread& cli, string& expl)
       case ForwardRemove:
       case UsingAdd:
       case UsingRemove:
+      case HeaderReliesOnUsing:
+      case UsingInHeader:
       case TrailingSpace:
       case RemoveBlankLine:
          ++found;
@@ -1737,10 +1722,10 @@ word CodeFile::Fix(CliThread& cli, string& expl)
       *cli.obuf << spaces(2) << "Line " << item->line + 1;
       if(item->offset != 0) *cli.obuf << '/' << item->offset;
       *cli.obuf << ": " << Warning(item->warning);
-      if(!item->info.empty()) *cli.obuf << ": " << item->info;
+      if(item->DisplayInfo()) *cli.obuf << ": " << item->info;
       *cli.obuf << CRLF;
 
-      if((item->line != 0) || item->info.empty())
+      if(item->DisplayCode())
       {
          *cli.obuf << spaces(2);
          *cli.obuf << item->file->GetLexer().GetNthLine(item->line) << CRLF;
@@ -1781,6 +1766,12 @@ word CodeFile::Fix(CliThread& cli, string& expl)
             break;
          case UsingRemove:
             rc = editor->RemoveUsing(*item, expl);
+            break;
+         case HeaderReliesOnUsing:
+            rc = editor->ResolveUsings(*item, expl);
+            break;
+         case UsingInHeader:
+            rc = editor->ReplaceUsing(*item, expl);
             break;
          case TrailingSpace:
             rc = editor->EraseTrailingBlanks();
@@ -1897,12 +1888,8 @@ void CodeFile::GetDeclaredBaseClasses(CxxNamedSet& bases) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_GetLineCounts = "CodeFile.GetLineCounts";
-
 void CodeFile::GetLineCounts() const
 {
-   Debug::ft(CodeFile_GetLineCounts);
-
    //  Don't count lines in substitute files.
    //
    if(isSubsFile_) return;
@@ -1934,8 +1921,6 @@ void CodeFile::GetUsageInfo(CxxUsageSets& symbols) const
    //  Ask each of the code items in this file to provide information
    //  about the symbols that it uses.
    //
-   auto& files = Singleton< Library >::Instance()->Files();
-
    for(auto m = macros_.cbegin(); m != macros_.cend(); ++m)
    {
       (*m)->GetUsages(*this, symbols);
@@ -1966,6 +1951,8 @@ void CodeFile::GetUsageInfo(CxxUsageSets& symbols) const
    //
    if(IsCpp())
    {
+      auto& files = Singleton< Library >::Instance()->Files();
+
       for(auto d = declIds_.cbegin(); d != declIds_.cend(); ++d)
       {
          auto classes = files.At(*d)->Classes();
@@ -1982,13 +1969,18 @@ void CodeFile::GetUsageInfo(CxxUsageSets& symbols) const
 
 fn_name CodeFile_GetUsingFor = "CodeFile.GetUsingFor";
 
-Using* CodeFile::GetUsingFor(const string& name, size_t prefix) const
+Using* CodeFile::GetUsingFor(const string& fqName,
+   size_t prefix, const CxxNamed* item, const CxxScope* scope) const
 {
    Debug::ft(CodeFile_GetUsingFor);
 
+   //c Verify that the using statement is visible to SCOPE.  Files don't have
+   //  using statements: namespaces, classes, and function blocks do, although
+   //  trying usings in the same file first is a good performance strategy.
+   //
    for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
    {
-      if((*u)->IsUsingFor(name, prefix)) return u->get();
+      if((*u)->IsUsingFor(fqName, prefix, scope)) return *u;
    }
 
    return nullptr;
@@ -2123,10 +2115,12 @@ void CodeFile::InsertInclude(IncludePtr& incl)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_InsertInclude = "CodeFile.InsertInclude";
+fn_name CodeFile_InsertInclude = "CodeFile.InsertInclude[fn]";
 
 Include* CodeFile::InsertInclude(const string& fn)
 {
+   Debug::ft(CodeFile_InsertInclude);
+
    for(auto i = incls_.cbegin(); i != incls_.cend(); ++i)
    {
       if(*(*i)->Name() == fn)
@@ -2159,10 +2153,10 @@ void CodeFile::InsertType(Typedef* type)
 
 //------------------------------------------------------------------------------
 
-void CodeFile::InsertUsing(UsingPtr& use)
+void CodeFile::InsertUsing(Using* use)
 {
-   items_.push_back(use.get());
-   usings_.push_back(std::move(use));
+   items_.push_back(use);
+   usings_.push_back(use);
 }
 
 //------------------------------------------------------------------------------
@@ -2199,11 +2193,11 @@ void CodeFile::LogAddForwards(ostream* stream, const CxxNamedSet& items) const
    //
    stringSet names;
 
-   for(auto a = items.cbegin(); a != items.cend(); ++a)
+   for(auto i = items.cbegin(); i != items.cend(); ++i)
    {
       std::ostringstream name;
 
-      auto cls = (*a)->GetClass();
+      auto cls = (*i)->GetClass();
 
       if(cls != nullptr)
       {
@@ -2212,11 +2206,11 @@ void CodeFile::LogAddForwards(ostream* stream, const CxxNamedSet& items) const
       }
       else
       {
-         Debug::SwErr(CodeFile_LogAddForwards,
-            "Non-class forward: " + (*a)->ScopedName(true), 0, InfoLog);
+         string expl = "Non-class forward: " + (*i)->ScopedName(true);
+         Debug::SwErr(CodeFile_LogAddForwards, expl, 0, InfoLog);
       }
 
-      name << (*a)->ScopedName(true);
+      name << (*i)->ScopedName(true);
       names.insert(name.str());
    }
 
@@ -2242,10 +2236,10 @@ void CodeFile::LogAddIncludes(ostream* stream, const SetOfIds& fids) const
    //
    auto& files = Singleton< Library >::Instance()->Files();
 
-   for(auto a = fids.cbegin(); a != fids.cend(); ++a)
+   for(auto i = fids.cbegin(); i != fids.cend(); ++i)
    {
       string fn;
-      auto f = files.At(*a);
+      auto f = files.At(*i);
       auto x = f->IsSubsFile();
       fn.push_back(x ? '<' : QUOTE);
       fn += f->Name();
@@ -2260,35 +2254,70 @@ void CodeFile::LogAddIncludes(ostream* stream, const SetOfIds& fids) const
 
 fn_name CodeFile_LogAddUsings = "CodeFile.LogAddUsings";
 
-void CodeFile::LogAddUsings(ostream* stream, const CxxNamedSet& items) const
+void CodeFile::LogAddUsings(ostream* stream) const
 {
    Debug::ft(CodeFile_LogAddUsings);
 
-   //  If an item is external (e.g. in namespace std::), provide its fully
+   //  Remove any redundant using statements.  These arise if, for example,
+   //  a using statment to resolve A::B::C is added before one for A::B.
+   //
+   for(auto u1 = usings_.cbegin(); u1 != usings_.cend(); ++u1)
+   {
+      if((*u1)->IsToBeRemoved()) continue;
+
+      for(auto u2 = std::next(u1); u2 != usings_.cend(); ++u2)
+      {
+         if((*u2)->IsToBeRemoved()) continue;
+
+         auto ref1 = (*u1)->Referent();
+         auto ref2 = (*u2)->Referent();
+
+         auto fqName2 = ref2->ScopedName(false);
+         if(ref1->IsSuperscopeOf(fqName2, false))
+         {
+            (*u2)->MarkForRemoval();
+            continue;
+         }
+
+         auto fqName1 = ref1->ScopedName(false);
+         if(ref2->IsSuperscopeOf(fqName1, false))
+         {
+            (*u1)->MarkForRemoval();
+         }
+      }
+   }
+
+   //  Log the using statements that should be added.  If a using statement
+   //  is for an external item (e.g. in namespace std::), provide its fully
    //  qualified name.  If it is internal (e.g. part of RSC), just provide
    //  its namespace.
    //
    CxxNamedSet usings;
 
-   for(auto a = items.cbegin(); a != items.cend(); ++a)
+   for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
    {
       string name;
-      auto space = (*a)->GetSpace();
 
-      if(space->GetFile()->IsSubsFile())
+      if((*u)->WasAdded() && !(*u)->IsToBeRemoved())
       {
-         name = (*a)->ScopedName(true);
-         usings.insert(*a);
-      }
-      else
-      {
-         name = NAMESPACE_STR;
-         name.push_back(SPACE);
-         name += *space->Name();
-         usings.insert(space);
-      }
+         auto ref = (*u)->Referent();
 
-      LogPos(0, UsingAdd, 0, name);
+         if(ref->GetFile()->IsSubsFile())
+         {
+            name = ref->ScopedName(true);
+            usings.insert(ref);
+         }
+         else
+         {
+            auto space = ref->GetSpace();
+            name = NAMESPACE_STR;
+            name.push_back(SPACE);
+            name += space->ScopedName(false);
+            usings.insert(space);
+         }
+
+         LogPos(0, UsingAdd, 0, name);
+      }
    }
 
    DisplaySymbols(stream, usings, "Add a using statement for");
@@ -2350,10 +2379,10 @@ void CodeFile::LogRemoveForwards
    //  declaration cannot be found (something that shouldn't occur),
    //  just display its symbol.
    //
-   for(auto a = items.cbegin(); a != items.cend(); ++a)
+   for(auto i = items.cbegin(); i != items.cend(); ++i)
    {
       auto found = false;
-      auto name = (*a)->ScopedName(true);
+      auto name = (*i)->ScopedName(true);
 
       for(auto f = forws_.cbegin(); f != forws_.cend(); ++f)
       {
@@ -2385,10 +2414,10 @@ void CodeFile::LogRemoveIncludes
    //
    auto& files = Singleton< Library >::Instance()->Files();
 
-   for(auto a = fids.cbegin(); a != fids.cend(); ++a)
+   for(auto i = fids.cbegin(); i != fids.cend(); ++i)
    {
       string fn;
-      auto f = files.At(*a);
+      auto f = files.At(*i);
       auto x = f->IsSubsFile();
       fn.push_back(x ? '<' : QUOTE);
       fn += f->Name();
@@ -2421,7 +2450,7 @@ void CodeFile::LogRemoveUsings(ostream* stream) const
    {
       if((*u)->IsToBeRemoved() && !(*u)->WasAdded())
       {
-         delUsing.insert(u->get());
+         delUsing.insert(*u);
          LogPos((*u)->GetPos(), UsingRemove);
       }
    }
@@ -2660,7 +2689,7 @@ void CodeFile::Scan()
          }
 
          auto incl = IncludePtr(new Include(file, angle));
-         incl->SetPos(this, lexer_.GetLineStart(n));
+         incl->SetLoc(this, lexer_.GetLineStart(n));
          InsertInclude(incl);
       }
    }
@@ -2864,38 +2893,12 @@ void CodeFile::Trim(ostream* stream)
    LogAddForwards(stream, addForws);
    LogRemoveForwards(stream, delForws);
 
-   //  Create usingFiles, the files that this file can rely on for accessing
-   //  using statements.  This set consists of transitive base class files
-   //  (tBaseIds), files that declare what this file defines (declIds_), and
-   //  transitive base classes of classes that this file defines (classIds_).
-   //
-   CodeFileVector usingFiles;
-
-   auto& files = Singleton< Library >::Instance()->Files();
-
-   for(auto b = tBaseIds.cbegin(); b != tBaseIds.cend(); ++b)
-   {
-      usingFiles.push_back(files.At(*b));
-   }
-
-   for(auto d = declIds_.cbegin(); d != declIds_.cend(); ++d)
-   {
-      usingFiles.push_back(files.At(*d));
-   }
-
-   for(auto c = classIds_.cbegin(); c != classIds_.cend(); ++c)
-   {
-      usingFiles.push_back(files.At(*c));
-   }
-
    //  Look at each name (N) that was resolved by a using statement, and
    //  determine if this file should have a using statement to resolve it.
    //  First, mark all of the using statements in this file for removal.
-   //  When it is determined that one is required, it will be marked for
-   //  retention.
+   //  When FindOrAddUsing determines that one is required, it will be
+   //  marked for retention.
    //
-   CxxNamedSet addUsing;
-
    for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
    {
       (*u)->MarkForRemoval();
@@ -2903,26 +2906,27 @@ void CodeFile::Trim(ostream* stream)
 
    for(auto n = users.cbegin(); n != users.cend(); ++n)
    {
-      FindOrAddUsing(*n, usingFiles, addUsing);
+      FindOrAddUsing(*n);
    }
 
    //  Output the using statements that should be added and removed.
    //
-   LogAddUsings(stream, addUsing);
+   LogAddUsings(stream);
    LogRemoveUsings(stream);
 
-   //  For a header, output the external symbols that were resolved by a
-   //  using statement.
+   //  For a header, output the symbols that were resolved by a using
+   //  statement.
    //
    if(IsHeader())
    {
+      CxxNamedSet qualify;
+
       for(auto u = users.cbegin(); u != users.cend(); ++u)
       {
-         if((*u)->GetFile()->IsSubsFile())
-            qualify_.insert((*u)->DirectType());
+         qualify.insert((*u)->DirectType());
       }
 
-      DisplaySymbolsAndFiles(stream, qualify_,
+      DisplaySymbolsAndFiles(stream, qualify,
          "To remove dependencies on using statements, qualify");
    }
 }

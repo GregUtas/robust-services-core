@@ -29,6 +29,7 @@
 #include "Registry.h"
 #include "Singleton.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 
@@ -115,8 +116,12 @@ size_t CodeDir::HeaderCount() const
 
 //------------------------------------------------------------------------------
 
+fn_name CodeDir_IsSubsDir = "CodeDir.IsSubsDir";
+
 bool CodeDir::IsSubsDir() const
 {
+   Debug::ft(CodeDir_IsSubsDir);
+
    return PathIncludes(path_, Library::SubsDir);
 }
 }

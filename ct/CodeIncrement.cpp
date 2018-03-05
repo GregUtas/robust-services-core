@@ -48,6 +48,7 @@
 #include "SysFile.h"
 #include "SysTypes.h"
 
+using namespace NodeBase;
 using std::setw;
 using std::string;
 
@@ -246,7 +247,7 @@ CountCommand::CountCommand() : LibraryCommand(CountStr, CountExpl)
    BindParm(*new SetExprParm);
 }
 
-fn_name CountCommand_ProcessCommand = "CountCommand.ProcessCommand";
+fn_name CountCommand_ProcessCommand = "CountCommand.ProcessCommand[ct]";
 
 word CountCommand::ProcessCommand(CliThread& cli) const
 {

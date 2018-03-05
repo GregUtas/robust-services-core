@@ -29,8 +29,6 @@
 #include "SysFile.h"
 #include "SysTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace CodeTools
@@ -62,15 +60,16 @@ private:
       //  Stores a line of code.
       //
       SourceLine(const std::string& code, size_t line) :
-         code(code), line(line) { }
+         line(line), code(code) { }
+
+      //  The code's line number (the first line is 0, the same as CodeWarning
+      //  and Lexer.  A line added by the editor has a line number of SIZE_MAX.
+      //
+      const size_t line;
 
       //  The code.
       //
       std::string code;
-
-      //  Its line number (the first line is #1, as in a *.check.txt file).
-      //
-      const size_t line;
    };
 
    //  The code is kept in a list.
@@ -84,49 +83,51 @@ private:
 public:
    //  Creates an editor for the source code in FILE, which is read from INPUT.
    //
-   Editor(CodeFile* file, istreamPtr& input);
+   Editor(CodeFile* file, NodeBase::istreamPtr& input);
 
    //  All of the public editing functions attempt to fix the warning reported
    //  in LOG.  They return 0 on success.  Any other result indicates an error,
    //  in which case EXPL provides an explanation.  A return value of -1 means
    //  that the file should be skipped; other values denote more serious errors.
    //
-   word Read(std::string& expl);
-   word SortIncludes(const WarningLog& log, std::string& expl);
-   word AddInclude(const WarningLog& log, std::string& expl);
-   word RemoveInclude(const WarningLog& log, std::string& expl);
-   word AddForward(const WarningLog& log, std::string& expl);
-   word RemoveForward(const WarningLog& log, std::string& expl);
-   word AddUsing(const WarningLog& log, std::string& expl);
-   word RemoveUsing(const WarningLog& log, std::string& expl);
+   NodeBase::word Read(std::string& expl);
+   NodeBase::word SortIncludes(const WarningLog& log, std::string& expl);
+   NodeBase::word AddInclude(const WarningLog& log, std::string& expl);
+   NodeBase::word RemoveInclude(const WarningLog& log, std::string& expl);
+   NodeBase::word AddForward(const WarningLog& log, std::string& expl);
+   NodeBase::word RemoveForward(const WarningLog& log, std::string& expl);
+   NodeBase::word AddUsing(const WarningLog& log, std::string& expl);
+   NodeBase::word RemoveUsing(const WarningLog& log, std::string& expl);
+   NodeBase::word ReplaceUsing(const WarningLog& log, std::string& expl);
+   NodeBase::word ResolveUsings(const WarningLog& log, std::string& expl);
 
    //  Replaces multiple blank lines with a single blank line.  Always invoked
    //  on source that was changed.
    //
-   word EraseBlankLinePairs();
+   NodeBase::word EraseBlankLinePairs();
 
    //  Removes trailing spaces.  Always invoked on source that was changed.
    //
    void EraseTrailingBlanks(SourceList& list);
-   word EraseTrailingBlanks();
+   NodeBase::word EraseTrailingBlanks();
 
    //  Writes out the file to PATH if it was changed during editing.  Returns 0
    //  if the file had not been changed, 1 if it was successfully written, and a
    //  negative value if an error occurred.
    //
-   word Write(const std::string& path, std::string& expl);
+   NodeBase::word Write(const std::string& path, std::string& expl);
 private:
    //  Reads in the file's prolog (everything up to the first #include.)
    //
-   word GetProlog(std::string& expl);
+   NodeBase::word GetProlog(std::string& expl);
 
    //  Reads in the remaining #include directives.
    //
-   word GetIncludes(std::string& expl);
+   NodeBase::word GetIncludes(std::string& expl);
 
    //  Reads in the rest of the file.
    //
-   word GetEpilog();
+   NodeBase::word GetEpilog();
 
    //  Adds a line of source code from the file.  NEVER used to add new code.
    //
@@ -134,21 +135,31 @@ private:
 
    //  Adds an #include from the file.  NEVER used to add a new #include.
    //
-   word PushInclude(std::string& source, std::string& expl);
+   NodeBase::word PushInclude(std::string& source, std::string& expl);
+
+   //  Returns the location of LINE within LIST.  Returns the end of LIST
+   //  if LINE is not found.
+   //
+   static Iter Find(SourceList& list, size_t line);
+
+   //  Returns the location of SOURCE within LIST.  Returns the end of LIST
+   //  if SOURCE is not found.  SOURCE must match an entire line of code.
+   //
+   static Iter Find(SourceList& list, const std::string& source);
 
    //  Inserts SOURCE into LIST at ITER.  Its new location is returned.
    //
    Iter Insert(SourceList& list, Iter& iter, const std::string& source);
 
-   //  If LIST contains LINE from the original source, erases that line and
-   //  returns its location (it is now an empty string).  Returns end() if
-   //  LINE was not found.
+   //  If LIST contains LINE from the original source, deletes that line and
+   //  returns the line that followed it.  Returns the end of LIST if LINE
+   //  was not found.
    //
    Iter Erase(SourceList& list, size_t line, std::string& expl);
 
-   //  If LIST contains a line of code that matches SOURCE, erase that line
-   //  and returns its location (it is now an empty string).  Returns end() if
-   //  a match was not found.
+   //  If LIST contains a line of code that matches SOURCE, deletes that line
+   //  and returns the line that followed it.  Returns the end of LIST if LINE
+   //  was not found.
    //
    Iter Erase(SourceList& list, const std::string& source, std::string& expl);
 
@@ -156,31 +167,44 @@ private:
    //  this simplifies sorting by replacing the characters that enclose the
    //  file name.
    //
-   word MangleInclude(std::string& include, std::string& expl) const;
+   NodeBase::word MangleInclude(std::string& include, std::string& expl) const;
 
    //  Inserts an INCLUDE directive.
    //
-   word InsertInclude(std::string& include, std::string& expl);
+   NodeBase::word InsertInclude(std::string& include, std::string& expl);
 
    //  Inserts a FORWARD declaration at ITER.
    //
-   word InsertForward
+   NodeBase::word InsertForward
       (const Iter& iter, const std::string& forward, std::string& expl);
 
    //  Inserts a FORWARD declaration at ITER.  It is the first declaration in
    //  namespace NSPACE, so it must be enclosed in a new namespace scope.
    //
-   word InsertNamespaceForward(Iter& iter,
+   NodeBase::word InsertNamespaceForward(Iter& iter,
       const std::string& nspace, const std::string& forward);
 
    //  Invoked after removing a forward declaration.  If the declaration was
    //  in a namespace that is now empty, erases the "namespace <name> { }".
    //
-   word EraseEmptyNamespace(const Iter& iter);
+   NodeBase::word EraseEmptyNamespace(const Iter& iter);
+
+   //  Qualifies names used within ITEM in order to remove using statements.
+   //
+   void QualifyUsings(const CxxNamed* item);
+
+   //  Returns the items within ITEM that were accessed via a using statement.
+   //
+   CxxNamedSet FindUsingReferents(const CxxNamed* item) const;
+
+   //  Within ITEM, qualifies occurrences of REF.
+   //
+   void QualifyReferent(const CxxNamed* item, const CxxNamed* ref);
 
    //  Invoked to report TEXT, which is assigned to EXPL.  Returns RC.
    //
-   static word Report(std::string& expl, fixed_string text, word rc = 0);
+   static NodeBase::word Report
+      (std::string& expl, NodeBase::fixed_string text, NodeBase::word rc = 0);
 
    //  Comparison functions for sorting #include directives.
    //
@@ -193,15 +217,11 @@ private:
 
    //  The stream for reading the source code.
    //
-   istreamPtr input_;
+   NodeBase::istreamPtr input_;
 
    //  The number of lines read so far.
    //
    size_t line_;
-
-   //  Set if the source code has been altered.
-   //
-   bool changed_;
 
    //  The lines of source that precede the first #include directive.
    //
@@ -214,6 +234,15 @@ private:
    //  The rest of the source code.
    //
    SourceList epilog_;
+
+   //  Set if the source code has been altered.
+   //
+   bool changed_;
+
+   //  Set if type aliases for symbols that were resolved by a using
+   //  statement have been added to each class.
+   //
+   bool aliased_;
 
    //  Characters that enclose the file name in an #include directive,
    //  depending on the group to which it belongs.

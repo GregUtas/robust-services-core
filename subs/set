@@ -6,12 +6,13 @@
 #define SET_INCLUDED
 
 #include "cstddef"
+#include "functional"
 #include "iterator"
 #include "utility"
 
 namespace std
 {
-   template< typename T > class set
+   template< typename T, typename C = std::less< T > > class set
    {
    public:
       typedef iterator_t< T > const_iterator;

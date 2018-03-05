@@ -20,19 +20,27 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Editor.h"
+#include <cstdint>
 #include <cstdio>
 #include <cstring>
 #include <istream>
 #include <iterator>
 #include <ostream>
 #include <utility>
+#include <vector>
 #include "CodeFile.h"
 #include "CodeTypes.h"
 #include "CodeWarning.h"
+#include "Cxx.h"
+#include "CxxArea.h"
+#include "CxxScope.h"
+#include "CxxScoped.h"
+#include "CxxToken.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Lexer.h"
 
+using namespace NodeBase;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -50,7 +58,8 @@ Editor::Editor(CodeFile* file, istreamPtr& input) :
    file_(file),
    input_(std::move(input)),
    line_(0),
-   changed_(false)
+   changed_(false),
+   aliased_(false)
 {
    Debug::ft(Editor_ctor);
 
@@ -118,7 +127,7 @@ word Editor::AddForward(const WarningLog& log, string& expl)
          //  We have now passed any existing forward declarations, so add
          //  the new declaration here, along with its namespace.
          //
-         i = epilog_.insert(i, SourceLine(EMPTY_STR, 0));
+         Insert(epilog_, i, EMPTY_STR);
          return InsertNamespaceForward(i, nspace, forward);
       }
    }
@@ -182,7 +191,7 @@ word Editor::AddUsing(const WarningLog& log, string& expl)
          //  We have now passed any existing usings statements, so add
          //  the new statement here.
          //
-         i = epilog_.insert(i, SourceLine(EMPTY_STR, 0));
+         i = Insert(epilog_, i, EMPTY_STR);
          i = Insert(epilog_, i, statement);
          return 0;
       }
@@ -199,18 +208,17 @@ Editor::Iter Editor::Erase(SourceList& list, size_t line, string& expl)
 {
    Debug::ft(Editor_Erase1);
 
-   for(auto i = list.begin(); i != list.end(); ++i)
+   auto iter = Find(list, line);
+
+   if(iter != list.end())
    {
-      if(i->line == line)
-      {
-         i->code.erase();
-         changed_ = true;
-         return i;
-      }
+      iter = list.erase(iter);
+      changed_ = true;
+      return iter;
    }
 
-   expl = "Line not found: " + std::to_string(line);
-   return list.end();
+   expl = "Line not found: " + std::to_string(line + 1);
+   return iter;
 }
 
 //------------------------------------------------------------------------------
@@ -221,23 +229,13 @@ Editor::Iter Editor::Erase(SourceList& list, const string& source, string& expl)
 {
    Debug::ft(Editor_Erase2);
 
-   for(auto i = list.begin(); i != list.end(); ++i)
-   {
-      if(i->code == source)
-      {
-         i->code.erase();
-         changed_ = true;
-         return i;
-      }
-   }
+   auto iter = Find(list, source);
 
-   //  If we get here, there is another possibility...
-   //
-   if(prolog_.back().code == source)
+   if(iter != list.end())
    {
-      prolog_.pop_back();
+      iter = list.erase(iter);
       changed_ = true;
-      return list.end();
+      return iter;
    }
 
    expl = "Statement not found: " + source;
@@ -322,8 +320,57 @@ void Editor::EraseTrailingBlanks(SourceList& list)
 
    for(auto i = list.begin(); i != list.end(); ++i)
    {
-      while(!i->code.empty() && (i->code.back() == SPACE)) i->code.pop_back();
+      while(!i->code.empty() && (i->code.back() == SPACE))
+      {
+         i->code.pop_back();
+         changed_ = true;
+      }
    }
+}
+
+//------------------------------------------------------------------------------
+
+Editor::Iter Editor::Find(SourceList& list, size_t line)
+{
+   for(auto i = list.begin(); i != list.end(); ++i)
+   {
+      if(i->line == line) return i;
+   }
+
+   return list.end();
+}
+
+//------------------------------------------------------------------------------
+
+Editor::Iter Editor::Find(SourceList& list, const string& source)
+{
+   for(auto i = list.begin(); i != list.end(); ++i)
+   {
+      if(i->code == source) return i;
+   }
+
+   return list.end();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_FindUsingReferents = "Editor.FindUsingReferents";
+
+CxxNamedSet Editor::FindUsingReferents(const CxxNamed* item) const
+{
+   Debug::ft(Editor_FindUsingReferents);
+
+   CxxUsageSets symbols;
+   CxxNamedSet refs;
+
+   item->GetUsages(*file_, symbols);
+
+   for(auto u = symbols.users.cbegin(); u != symbols.users.cend(); ++u)
+   {
+      refs.insert((*u)->DirectType());
+   }
+
+   return refs;
 }
 
 //------------------------------------------------------------------------------
@@ -416,7 +463,7 @@ Editor::Iter Editor::Insert(SourceList& list, Iter& iter, const string& source)
    Debug::ft(Editor_Insert);
 
    changed_ = true;
-   return list.insert(iter, SourceLine(source, 0));
+   return list.insert(iter, SourceLine(source, SIZE_MAX));
 }
 
 //------------------------------------------------------------------------------
@@ -564,8 +611,8 @@ word Editor::MangleInclude(string& include, string& expl) const
 
 void Editor::PushBack(SourceList& list, const string& source)
 {
-   ++line_;
    list.push_back(SourceLine(source, line_));
+   ++line_;
 }
 
 //------------------------------------------------------------------------------
@@ -573,9 +620,98 @@ void Editor::PushBack(SourceList& list, const string& source)
 word Editor::PushInclude(string& source, string& expl)
 {
    if(MangleInclude(source, expl) != 0) return 0;
-   ++line_;
-   includes_.push_back(SourceLine(source, line_));
+   PushBack(includes_, source);
    return 0;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_QualifyReferent = "Editor.QualifyReferent";
+
+void Editor::QualifyReferent(const CxxNamed* item, const CxxNamed* ref)
+{
+   Debug::ft(Editor_QualifyReferent);
+
+   //  Within ITEM, prefix NS wherever SYMBOL appears as an identifier.
+   //
+   auto ns = ref->GetSpace();
+   auto symbol = ref->Name();
+
+   switch(ref->Type())
+   {
+   case Cxx::Namespace:
+      ns = static_cast< Namespace* >
+         (const_cast< CxxNamed* >(ref))->OuterSpace();
+      break;
+   case Cxx::Class:
+      if(ref->IsInTemplateInstance())
+      {
+         auto tmplt = ref->GetTemplate();
+         ns = tmplt->GetSpace();
+         symbol = tmplt->Name();
+      }
+   }
+
+   size_t pos, end;
+   auto lexer = file_->GetLexer();
+   item->GetRange(pos, end);
+   lexer.Reposition(pos);
+   string name;
+
+   while((lexer.Curr() < end) && lexer.FindIdentifier(name))
+   {
+      if(name != *symbol)
+      {
+         lexer.Advance(name.size());
+         continue;
+      }
+
+      //  This line contains at least one occurrence of SYMBOL.  Qualify
+      //  each occurrence with NS if it is neither qualified nor part of
+      //  a longer identifer.
+      //
+      auto line = lexer.GetLineNum(lexer.Curr());
+      auto targ = Find(epilog_, line);
+      auto& code = targ->code;
+
+      for(pos = code.find(*symbol); pos != string::npos;
+         pos = code.find(*symbol, pos))
+      {
+         if((code.rfind(SCOPE_STR, pos) != pos - 2) &&
+            (ValidNextChars.find(code[pos - 1]) == string::npos) &&
+            (ValidNextChars.find(code[pos + name.size()]) == string::npos))
+         {
+            auto qual = ns->ScopedName(false);
+            qual.append(SCOPE_STR);
+            code.insert(pos, qual);
+            changed_ = true;
+            pos += qual.size();
+         }
+
+         pos += name.size();  // always bypass current occurrence of NAME
+      }
+
+      //  Advance to the next line.
+      //
+      pos = lexer.FindLineEnd(lexer.Curr());
+      lexer.Reposition(pos);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_QualifyUsings = "Editor.QualifyUsings";
+
+void Editor::QualifyUsings(const CxxNamed* item)
+{
+   Debug::ft(Editor_QualifyUsings);
+
+   auto refs = FindUsingReferents(item);
+
+   for(auto r = refs.cbegin(); r != refs.cend(); ++r)
+   {
+      QualifyReferent(item, *r);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -601,12 +737,10 @@ word Editor::RemoveForward(const WarningLog& log, string& expl)
 {
    Debug::ft(Editor_RemoveForward);
 
-   //  Erase the line where the forward declaration appears.
-   //  If this succeeds, delete the line entirely, and then
-   //  delete the enclosing namespace if it is now empty.
+   //  Erase the line where the forward declaration appears.  This
+   //  may leave an empty enclosing namespace that should be deleted.
    //
-   auto iter = Erase(epilog_, log.line + 1, expl);
-   if(iter != epilog_.end()) iter = epilog_.erase(iter);
+   auto iter = Erase(epilog_, log.line, expl);
    return EraseEmptyNamespace(iter);
 }
 
@@ -619,14 +753,12 @@ word Editor::RemoveInclude(const WarningLog& log, string& expl)
    Debug::ft(Editor_RemoveInclude);
 
    //  Extract the code where the #include directive appears in
-   //  order to determine which list to remove it from.  If it
-   //  appeared in that list, delete its line entirely.
+   //  order to determine which list to remove it from.
    //
    auto source = file_->GetLexer().GetNthLine(log.line);
    if(source.empty()) return Report(expl, "#include not found");
    if(MangleInclude(source, expl) != 0) return 0;
-   auto iter = Erase(includes_, source, expl);
-   if(iter != includes_.end()) includes_.erase(iter);
+   Erase(includes_, source, expl);
    return 0;
 }
 
@@ -638,12 +770,26 @@ word Editor::RemoveUsing(const WarningLog& log, string& expl)
 {
    Debug::ft(Editor_RemoveUsing);
 
-   //  Erase the line where the using statement appears.  If the
-   //  statement appeared there, delete its line entirely.
+   //  Erase the line where the using statement appears.
    //
-   auto iter = Erase(epilog_, log.line + 1, expl);
-   if(iter != epilog_.end()) epilog_.erase(iter);
+   Erase(epilog_, log.line, expl);
    return 0;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_ReplaceUsing = "Editor.ReplaceUsing";
+
+word Editor::ReplaceUsing(const WarningLog& log, string& expl)
+{
+   Debug::ft(Editor_ReplaceUsing);
+
+   //  Before removing the using statement, add type aliases to each class
+   //  for symbols that appear in its definition and that were resolved by
+   //  a using statement.
+   //
+   ResolveUsings(log, expl);
+   return RemoveUsing(log, expl);
 }
 
 //------------------------------------------------------------------------------
@@ -656,6 +802,58 @@ word Editor::Report(string& expl, fixed_string text, word rc)
 
    expl = text;
    return rc;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_ResolveUsings = "Editor.ResolveUsings";
+
+word Editor::ResolveUsings(const WarningLog& log, std::string& expl)
+{
+   Debug::ft(Editor_ResolveUsings);
+
+   //  This function only needs to be run once per file.
+   //
+   if(aliased_) return 0;
+
+   //  Classes, data, functions, and typedefs can contain names resolved by
+   //  using statements.  Modify each of these so that using statements can
+   //  be removed.
+   //
+   auto classes = file_->Classes();
+
+   for(auto c = classes->cbegin(); c != classes->cend(); ++c)
+   {
+      auto refs = FindUsingReferents(*c);
+
+      for(auto r = refs.cbegin(); r != refs.cend(); ++r)
+      {
+         QualifyReferent(*c, *r);
+      }
+   }
+
+   //  Qualify names in non-class items at file scope.
+   //
+   auto data = file_->Datas();
+   for(auto d = data->cbegin(); d != data->cend(); ++d)
+   {
+      QualifyUsings(*d);
+   }
+
+   auto funcs = file_->Funcs();
+   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
+   {
+      QualifyUsings(*f);
+   }
+
+   auto types = file_->Types();
+   for(auto t = types->cbegin(); t != types->cend(); ++t)
+   {
+      QualifyUsings(*t);
+   }
+
+   aliased_ = true;
+   return 0;
 }
 
 //------------------------------------------------------------------------------

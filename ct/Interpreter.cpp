@@ -30,6 +30,7 @@
 #include "Symbol.h"
 #include "SysTypes.h"
 
+using namespace NodeBase;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -117,9 +118,9 @@ const OperatorInfo OperatorInfo::Attrs[Operator_N] =
 
 fn_name OperatorInfo_ctor = "OperatorInfo.ctor";
 
-OperatorInfo::OperatorInfo(const string& s, int args, LibSetType lhs,
+OperatorInfo::OperatorInfo(const string& sym, int args, LibSetType lhs,
    LibSetType rhs1, LibSetType rhs2) :
-   sym(s),
+   sym(sym),
    args(args),
    lhs(lhs),
    rhs1(rhs1),
@@ -130,24 +131,16 @@ OperatorInfo::OperatorInfo(const string& s, int args, LibSetType lhs,
 
 //------------------------------------------------------------------------------
 
-fn_name OperatorInfo_GetAttrs = "OperatorInfo.GetAttrs";
-
 const OperatorInfo* OperatorInfo::GetAttrs(LibTokenType type)
 {
-   Debug::ft(OperatorInfo_GetAttrs);
-
    if((type > 0) && (type < Operator_N)) return &Attrs[type];
    return nullptr;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name OperatorInfo_GetType = "OperatorInfo.GetType";
-
 bool OperatorInfo::GetType(const string& op, LibTokenType& type)
 {
-   Debug::ft(OperatorInfo_GetType);
-
    for(size_t i = 1; i < Operator_N; ++i)
    {
       if(Attrs[i].sym == op)
@@ -245,7 +238,7 @@ LibraryOpcode::LibraryOpcode(LibTokenType op, std::stack< LibrarySet* >& args) :
       }
       rhs2_ = args.top();
       args.pop();
-
+      //  [[fallthrough]]
    case 1:
       if(args.size() < 1)
       {
@@ -603,6 +596,7 @@ LibrarySet* Interpreter::Error(LibExprErr err) const
       //  If this was the error, it really meant...
       //
       err = EmptyExpression;
+      //  [fallthrough]]
    case EmptyExpression:
       loc = 1;
       break;

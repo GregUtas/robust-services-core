@@ -290,9 +290,11 @@ word DnsCommand::ProcessCommand(CliThread& cli) const
 
    switch(GetIntParmRc(last, cli))
    {
-   case None: last = first;
-   case Ok: break;
-   default: return -1;
+   case None:
+      last = first;
+      break;
+   default:
+      return -1;
    }
 
    cli.EndOfInput(false);
@@ -743,9 +745,11 @@ word TsPortsCommand::ProcessCommand(CliThread& cli) const
 
    switch(GetIntParmRc(last, cli))
    {
-   case None: last = first;
-   case Ok: break;
-   default: return -1;
+   case None:
+      last = first;
+      break;
+   default:
+      return -1;
    }
 
    cli.EndOfInput(false);

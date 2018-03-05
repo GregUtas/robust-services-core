@@ -37,6 +37,7 @@
 #include "Singleton.h"
 #include "SysTypes.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 
@@ -126,7 +127,7 @@ Define::Define(string& name) : Macro(name),
 
 //------------------------------------------------------------------------------
 
-fn_name Define_ctor2 = "Define.ctor";
+fn_name Define_ctor2 = "Define.ctor[rhs]";
 
 Define::Define(string& name, ExprPtr& rhs) : Macro(name),
    rhs_(std::move(rhs)),
@@ -363,12 +364,12 @@ bool Error::EnterScope()
 
 fn_name Existential_ctor = "Existential.ctor";
 
-Existential::Existential(string& name) :
+Existential::Existential(MacroNamePtr& macro) :
    else_(nullptr)
 {
    Debug::ft(Existential_ctor);
 
-   name_ = MacroNamePtr(new MacroName(name));
+   name_ = std::move(macro);
 }
 
 //------------------------------------------------------------------------------
@@ -416,7 +417,7 @@ void Existential::Shrink()
 
 fn_name Ifdef_ctor = "Ifdef.ctor";
 
-Ifdef::Ifdef(string& symbol) : Existential(symbol)
+Ifdef::Ifdef(MacroNamePtr& macro) : Existential(macro)
 {
    Debug::ft(Ifdef_ctor);
 
@@ -548,7 +549,7 @@ void Iff::Shrink()
 
 fn_name Ifndef_ctor = "Ifndef.ctor";
 
-Ifndef::Ifndef(string& symbol) : Existential(symbol)
+Ifndef::Ifndef(MacroNamePtr& macro) : Existential(macro)
 {
    Debug::ft(Ifndef_ctor);
 
@@ -626,13 +627,12 @@ CodeFile* Include::FindFile() const
 
 fn_name Include_SetScope = "Include.SetScope";
 
-void Include::SetScope(CxxScope* scope) const
+void Include::SetScope(CxxScope* scope)
 {
    Debug::ft(Include_SetScope);
 
-   if(scope == nullptr) return;
-   if(scope->Type() == Cxx::Namespace) return;
-   Log(IncludeNotAtFileScope);
+   if(scope == Singleton< CxxRoot >::Instance()->GlobalNamespace()) return;
+   Log(IncludeNotAtGlobalScope);
 }
 
 //------------------------------------------------------------------------------
@@ -815,6 +815,13 @@ void MacroName::EnterBlock()
    Debug::ft(MacroName_EnterBlock);
 
    Context::PushArg(StackArg(Referent(), 0));
+}
+
+//------------------------------------------------------------------------------
+
+CxxScope* MacroName::GetScope() const
+{
+   return Singleton< CxxRoot >::Instance()->GlobalNamespace();
 }
 
 //------------------------------------------------------------------------------

@@ -353,28 +353,20 @@ msecs_t TrafficCall::Advance()
    {
    case Originating:
       return ProcessOriginating();
-
    case Dialing:
       return ProcessDialing();
-
    case Terminating:
       return ProcessTerminating();
-
    case Ringing:
       return ProcessRinging();
-
    case Connected:
       return ProcessConnected();
-
    case Suspended:
       return ProcessSuspended();
-
    case SingleEnded:
       return ProcessSingleEnded();
-
    case Releasing:
       return ProcessReleasing();
-
    default:
       Debug::SwErr(TrafficCall_Advance, int(state_), 0);
    }

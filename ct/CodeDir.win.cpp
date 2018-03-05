@@ -30,6 +30,7 @@
 #include "NbCliParms.h"
 #include "Singleton.h"
 
+using namespace NodeBase;
 using std::string;
 
 //------------------------------------------------------------------------------

@@ -25,15 +25,13 @@
 #include "Temporary.h"
 #include <string>
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace CodeTools
 {
 //  Base class for items in the code library (directories, files, variables).
 //
-class LibraryItem : public Temporary
+class LibraryItem : public NodeBase::Temporary
 {
 public:
    //  Virtual to allow subclassing.
@@ -47,7 +45,7 @@ public:
    //  Overridden to display member variables.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 protected:
    //  Creates an item that will be referred to by NAME.  Protected because
    //  this class is virtual.

@@ -35,8 +35,6 @@
 #include "CxxFwd.h"
 #include "SysTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace CodeTools
@@ -67,7 +65,7 @@ struct CxxUsageSets
 //
 //  The base class for all C++ entities created by the parser.
 //
-class CxxToken : public Base
+class CxxToken : public NodeBase::Base
 {
 public:
    //  Virtual to allow subclassing.
@@ -91,7 +89,8 @@ public:
    //  Converts a type to a string, expanding typedefs and preserving pointers.
    //  ARG is set if the string will be used to compare argument types.
    //
-   virtual std::string TypeString(bool arg) const { return ERROR_STR; }
+   virtual std::string TypeString(bool arg) const
+      { return NodeBase::ERROR_STR; }
 
    //  Returns the item's type specification.
    //
@@ -228,7 +227,7 @@ public:
 
    //  Returns a string that describes the item during an execution trace.
    //
-   virtual std::string Trace() const { return EMPTY_STR; }
+   virtual std::string Trace() const { return NodeBase::EMPTY_STR; }
 
    //  Returns true if the item can be displayed in-line.
    //
@@ -238,7 +237,7 @@ public:
    //  or an endline.  The output should be compilable.
    //
    virtual void Print
-      (std::ostream& stream, const Flags& options) const;
+      (std::ostream& stream, const NodeBase::Flags& options) const;
 
    //  Shrinks the item's containers (e.g. strings and vectors) to the minimum
    //  size required for their current contents.
@@ -262,7 +261,7 @@ public:
    //  displayed inline or separately.  See CodeDisplayOptions for OPTIONS.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 protected:
    //  Protected because this class is virtual.
    //
@@ -367,7 +366,7 @@ public:
       : num_(num), tags_(tags) { CxxStats::Incr(CxxStats::INT_LITERAL); }
    ~IntLiteral() { CxxStats::Decr(CxxStats::INT_LITERAL); }
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
    virtual CxxNamed* Referent() const override;
    virtual std::string TypeString(bool arg) const override;
 private:
@@ -404,7 +403,7 @@ public:
       : num_(num), tags_(tags) { CxxStats::Incr(CxxStats::FLOAT_LITERAL); }
    ~FloatLiteral() { CxxStats::Decr(CxxStats::FLOAT_LITERAL); }
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
    virtual CxxNamed* Referent() const override;
    virtual std::string TypeString(bool arg) const override;
 private:
@@ -423,8 +422,8 @@ public:
    explicit BoolLiteral(bool b)
       : b_(b) { CxxStats::Incr(CxxStats::BOOL_LITERAL); }
    ~BoolLiteral() { CxxStats::Decr(CxxStats::BOOL_LITERAL); }
-   virtual void Print(std::ostream& stream, const Flags& options) const
-      override { stream << std::boolalpha << b_; }
+   virtual void Print(std::ostream& stream, const NodeBase::Flags& options)
+      const override { stream << std::boolalpha << b_; }
    virtual CxxNamed* Referent() const override;
    virtual std::string TypeString(bool arg) const override { return BOOL_STR; }
 private:
@@ -443,7 +442,7 @@ public:
       : c_(c) { CxxStats::Incr(CxxStats::CHAR_LITERAL); }
    ~CharLiteral() { CxxStats::Decr(CxxStats::CHAR_LITERAL); }
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
    virtual CxxNamed* Referent() const override;
    virtual std::string TypeString(bool arg) const override { return CHAR_STR; }
 private:
@@ -463,8 +462,8 @@ public:
    ~StrLiteral() { CxxStats::Decr(CxxStats::STR_LITERAL); }
    std::string GetStr() const { return str_; }
    virtual TypeSpec* GetTypeSpec() const override;
-   virtual void Print(std::ostream& stream, const Flags& options) const
-      override { stream << QUOTE << str_ << QUOTE; }
+   virtual void Print(std::ostream& stream, const NodeBase::Flags& options)
+      const override { stream << NodeBase::QUOTE << str_ << NodeBase::QUOTE; }
    virtual CxxNamed* Referent() const override;
    virtual void Shrink() override;
    virtual std::string TypeString(bool arg) const override { return "char*"; }
@@ -485,8 +484,8 @@ class NullPtr : public Literal
 public:
    NullPtr() { CxxStats::Incr(CxxStats::NULLPTR); }
    ~NullPtr() { CxxStats::Decr(CxxStats::NULLPTR); }
-   virtual void Print(std::ostream& stream, const Flags& options) const
-      override { stream << NULLPTR_STR; }
+   virtual void Print(std::ostream& stream, const NodeBase::Flags& options)
+      const override { stream << NULLPTR_STR; }
    virtual bool IsConstPtr() const override { return true; }
    virtual CxxNamed* Referent() const override;
    virtual std::string TypeString(bool arg)
@@ -562,7 +561,7 @@ public:
    //  Overridden to display the operator and its arguments.
    //
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to push this operator and its arguments onto the stack.
    //
@@ -678,7 +677,7 @@ public:
    Elision() { CxxStats::Incr(CxxStats::ELISION); }
    ~Elision() { CxxStats::Decr(CxxStats::ELISION); }
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override { }
+      (std::ostream& stream, const NodeBase::Flags& options) const override { }
    virtual void EnterBlock() override { }
    virtual Cxx::ItemType Type() const override { return Cxx::Elision; }
 };
@@ -694,7 +693,7 @@ public:
       : expr_(std::move(expr)) { CxxStats::Incr(CxxStats::PRECEDENCE); }
    ~Precedence() { CxxStats::Decr(CxxStats::PRECEDENCE); }
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
    virtual void EnterBlock() override;
    virtual void GetUsages
       (const CodeFile& file, CxxUsageSets& symbols) const override;
@@ -715,7 +714,7 @@ public:
    ~BraceInit() { CxxStats::Decr(CxxStats::BRACE_INIT); }
    void AddItem(TokenPtr& item) { items_.push_back(std::move(item)); }
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
    virtual void EnterBlock() override;
    virtual void GetUsages
       (const CodeFile& file, CxxUsageSets& symbols) const override;
@@ -770,7 +769,7 @@ public:
    //  Overridden to display the expression.
    //
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to invoke Context::Execute after invoking EnterBlock on
    //  each token in items_.
@@ -838,7 +837,7 @@ public:
    //  Overridden to display the array's size within brackets.
    //
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to invoke EnterBlock on expr_.
    //

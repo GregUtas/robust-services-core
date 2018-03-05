@@ -57,7 +57,7 @@ public:
    virtual ~Condition() { }
    void AddCondition(ExprPtr& c) { condition_ = std::move(c); }
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
    virtual void EnterBlock() override;
    virtual void GetUsages
       (const CodeFile& file, CxxUsageSets& symbols) const override;
@@ -79,7 +79,7 @@ public:
    explicit Break(size_t pos);
    ~Break() { CxxStats::Decr(CxxStats::BREAK); }
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
    virtual void EnterBlock() override { }
 };
 
@@ -93,7 +93,7 @@ public:
    Case(ExprPtr& expression, size_t pos);
    ~Case() { CxxStats::Decr(CxxStats::CASE); }
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
    virtual void EnterBlock() override;
    virtual void GetUsages
       (const CodeFile& file, CxxUsageSets& symbols) const override;
@@ -116,7 +116,7 @@ public:
    void AddHandler(BlockPtr& b) { handler_ = std::move(b); }
    virtual void Check() const override;
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
    virtual void EnterBlock() override;
    virtual void ExitBlock() override;
    virtual void GetUsages
@@ -138,7 +138,7 @@ public:
    explicit Continue(size_t pos);
    ~Continue() { CxxStats::Decr(CxxStats::CONTINUE); }
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
    virtual void EnterBlock() override { }
 };
 
@@ -154,9 +154,9 @@ public:
    void AddLoop(BlockPtr& b) { loop_ = std::move(b); }
    virtual void Check() const override;
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
    virtual void EnterBlock() override;
    virtual void GetUsages
       (const CodeFile& file, CxxUsageSets& symbols) const override;
@@ -176,7 +176,7 @@ public:
    Expr(ExprPtr& expression, size_t pos);
    ~Expr() { CxxStats::Decr(CxxStats::EXPR); }
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
    virtual void EnterBlock() override;
    virtual void GetUsages
       (const CodeFile& file, CxxUsageSets& symbols) const override;
@@ -199,9 +199,9 @@ public:
    void AddLoop(BlockPtr& b) { loop_ = std::move(b); }
    virtual void Check() const override;
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
    virtual void EnterBlock() override;
    virtual void ExitBlock() override;
    virtual void GetUsages
@@ -228,9 +228,9 @@ public:
    void SetElseIf() { elseif_ = true; }
    virtual void Check() const override;
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
    virtual void EnterBlock() override;
    virtual void GetUsages
       (const CodeFile& file, CxxUsageSets& symbols) const override;
@@ -253,7 +253,7 @@ public:
    Label(std::string& name, size_t pos);
    ~Label() { CxxStats::Decr(CxxStats::LABEL); }
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
    virtual void EnterBlock() override;
    virtual void ExitBlock() override;
    virtual bool InLine() const override { return false; }
@@ -272,9 +272,9 @@ public:
    explicit NoOp(size_t pos);
    ~NoOp() { CxxStats::Decr(CxxStats::NOOP); }
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
    virtual void EnterBlock() override { }
    virtual bool InLine() const override { return true; }
    virtual Cxx::ItemType Type() const override { return Cxx::NoOp; }
@@ -291,7 +291,7 @@ public:
    ~Return() { CxxStats::Decr(CxxStats::RETURN); }
    void AddExpr(ExprPtr& e) { expr_ = std::move(e); }
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
    virtual void EnterBlock() override;
    virtual void GetUsages
       (const CodeFile& file, CxxUsageSets& symbols) const override;
@@ -313,7 +313,7 @@ public:
    void AddCases(BlockPtr& b) { cases_ = std::move(b); }
    virtual void Check() const override;
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
    virtual void EnterBlock() override;
    virtual void GetUsages
       (const CodeFile& file, CxxUsageSets& symbols) const override;
@@ -337,7 +337,7 @@ public:
    void AddCatch(TokenPtr& t) { catches_.push_back(std::move(t)); }
    virtual void Check() const override;
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
    virtual void EnterBlock() override;
    virtual void ExitBlock() override;
    virtual void GetUsages
@@ -361,9 +361,9 @@ public:
    void AddLoop(BlockPtr& b) { loop_ = std::move(b); }
    virtual void Check() const override;
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
    virtual void EnterBlock() override;
    virtual void GetUsages
       (const CodeFile& file, CxxUsageSets& symbols) const override;

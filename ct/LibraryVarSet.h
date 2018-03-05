@@ -41,7 +41,7 @@ public:
 
    //  Updates RESULT with the number of library variables and returns 0.
    //
-   virtual word Count(std::string& result) const override;
+   virtual NodeBase::word Count(std::string& result) const override;
 
    //  Returns the type of set.
    //
@@ -49,7 +49,7 @@ public:
 
    //  Displays library variable names in RESULT and returns 0.
    //
-   virtual word Show(std::string& result) const override;
+   virtual NodeBase::word Show(std::string& result) const override;
 private:
    //  Private to restrict deletion.  Not subclassed.
    //

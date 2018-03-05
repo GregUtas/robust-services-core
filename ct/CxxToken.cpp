@@ -33,6 +33,7 @@
 #include "Formatters.h"
 #include "Singleton.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 
@@ -1227,6 +1228,7 @@ void Operation::Execute() const
    {
    case 2:
       if(!Context::PopArg(arg2)) return;
+      //  [[fallthrough]]
    case 1:
       if(!Context::PopArg(arg1)) return;
    }
@@ -1587,7 +1589,7 @@ void Operation::ExecuteCall()
       auto log = (size == 1 ? DefaultConstructor : DefaultCopyConstructor);
       Context::Log(log);
       if(size > 1) args[1].WasRead();
-      Context::PushArg(StackArg(proc.item->GetClass(), 1));
+      Context::PushArg(StackArg(proc.item->GetClass(), 0));
       return;
    }
 
@@ -2418,6 +2420,7 @@ void Operation::PushResult(const StackArg& lhs, const StackArg& rhs) const
                diff = true;
                break;
             }
+            //  [[fallthrough]]
          case Cxx::ADD:
          case Cxx::ADD_ASSIGN:
          case Cxx::SUBTRACT_ASSIGN:
@@ -2448,6 +2451,7 @@ void Operation::PushResult(const StackArg& lhs, const StackArg& rhs) const
          PushType(INT_STR);
          break;
       }
+      //  [[fallthrough]]
    case Cxx::MULTIPLY:
    case Cxx::DIVIDE:
    case Cxx::MODULO:
@@ -2645,12 +2649,8 @@ TypeSpec* StrLiteral::GetTypeSpec() const
 
 //------------------------------------------------------------------------------
 
-fn_name StrLiteral_Referent = "StrLiteral.Referent";
-
 CxxNamed* StrLiteral::Referent() const
 {
-   Debug::ft(StrLiteral_Referent);
-
    return GetReferent();
 }
 

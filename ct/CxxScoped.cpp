@@ -36,8 +36,10 @@
 #include "CxxToken.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "Lexer.h"
 #include "Singleton.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 
@@ -56,7 +58,7 @@ Argument::Argument(string& name, TypeSpecPtr& spec) :
    Debug::ft(Argument_ctor);
 
    std::swap(name_, name);
-   spec_->SetLocale(Cxx::Function);
+   spec_->SetUserType(Cxx::Function);
    CxxStats::Incr(CxxStats::ARG_DECL);
 }
 
@@ -537,6 +539,17 @@ CodeFile* CxxScoped::GetImplFile() const
 
 //------------------------------------------------------------------------------
 
+size_t CxxScoped::GetRange(size_t& begin, size_t& end) const
+{
+   auto lexer = GetFile()->GetLexer();
+   begin = GetPos();
+   lexer.Reposition(begin);
+   end = lexer.FindFirstOf(";");
+   return string::npos;
+}
+
+//------------------------------------------------------------------------------
+
 bool CxxScoped::IsAuto() const
 {
    auto spec = GetTypeSpec();
@@ -594,6 +607,30 @@ bool CxxScoped::IsIndirect() const
 
 //------------------------------------------------------------------------------
 
+fn_name CxxScoped_IsSubscopeOf = "CxxScoped.IsSubscopeOf";
+
+bool CxxScoped::IsSubscopeOf(const string& fqSuper) const
+{
+   Debug::ft(CxxScoped_IsSubscopeOf);
+
+   auto fqSub = ScopedName(false);
+   return (CompareScopes(fqSub, fqSuper, false) != string::npos);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CxxScoped_IsSuperscopeOf = "CxxScoped.IsSuperscopeOf";
+
+bool CxxScoped::IsSuperscopeOf(const string& fqSub, bool tmplt) const
+{
+   Debug::ft(CxxScoped_IsSuperscopeOf);
+
+   auto fqSuper = ScopedName(tmplt);
+   return (CompareScopes(fqSub, fqSuper, tmplt) != string::npos);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CxxScoped_NameRefersToItem = "CxxScoped.NameRefersToItem";
 
 bool CxxScoped::NameRefersToItem(const std::string& name,
@@ -601,34 +638,49 @@ bool CxxScoped::NameRefersToItem(const std::string& name,
 {
    Debug::ft(CxxScoped_NameRefersToItem);
 
-   //  If this item was not declared in a file, it's a built-in type and is
-   //  therefore visible.  If NAME is a template specification, assume that
-   //  it is visible.
-   //c Verify the visibility of each component in a template specification.
-   //  Not doing so forced Lexer::TypesTable to be renamed from TypeTable so
-   //  that it could be distinguished from CxxSymbols::TypeTable, preventing
-   //  a false "doubly declared identifier" error.
+   //  If this item was not declared in a file, it must be a macro name that
+   //  was defined for the compile (e.g. OS_WIN).
    //
+   auto itemType = Type();
    auto itemFile = GetFile();
 
-   if((name.find('<') != string::npos) || (itemFile == nullptr))
+   if(itemFile == nullptr)
+   {
+      if(itemType == Cxx::Macro)
+      {
+         view->accessibility = Unrestricted;
+         return true;
+      }
+
+      auto expl = "No file for item: " + *Name();
+      Context::SwErr(CxxScoped_NameRefersToItem, expl, itemType);
+      return false;
+   }
+
+   //  If NAME is a template instance, assume that it is visible.
+   //c Verify the visibility of each name in a template instance.  Not doing
+   //  so forced Lexer::TypesTable to be renamed from TypeTable so that it
+   //  could be distinguished from CxxSymbols::TypeTable, preventing a false
+   //  "doubly declared identifier" error.
+   //
+   if(name.find('<') != string::npos)
    {
       view->accessibility = Unrestricted;
       return true;
    }
 
-   //  The file that declares ITEM must affect (that is, be in the transitive
-   //  #include of) this file.  The check can fail when looking up a namespace,
-   //  which is arbitrarily assigned to the first file where it appears, even
-   //  though it can appear in many others.
+   //  The file that declares this item must affect (that is, be in the
+   //  transitive #include of) FILE.  The check can fail when looking up a
+   //  namespace, which is arbitrarily assigned to the first file where it
+   //  appears, even though it can appear in many others.
    //
    SetOfIds::const_iterator it = file->Affecters().find(itemFile->Fid());
    auto affected = (it != file->Affecters().cend());
-   if(!affected && (Type() != Cxx::Namespace)) return false;
+   if(!affected && (itemType != Cxx::Namespace)) return false;
 
-   //  See how SCOPE can access ITEM: this information is provided in VIEW.
-   //  Set checkUsing if a using statement will be needed for ITEM if it is
-   //  in another namespace.
+   //  See how SCOPE can access this item: this information is provided in
+   //  VIEW.  Set checkUsing if a using statement will be needed for ITEM
+   //  if it is in another namespace.
    //
    auto checkUsing = true;
    AccessibilityTo(scope, view);
@@ -640,7 +692,6 @@ bool CxxScoped::NameRefersToItem(const std::string& name,
 
    case Restricted:
       if(file != itemFile) return false;
-   case Unrestricted:
       break;
 
    case Inherited:
@@ -648,66 +699,66 @@ bool CxxScoped::NameRefersToItem(const std::string& name,
       checkUsing = false;
    }
 
-   //  To access ITEM, NAME must partially match its fully qualified name.
+   //  NAME must partially match this item's fully qualified name.
    //
-   string fqName;
-   size_t i = 0;
+   stringVector fqNames;
+   GetScopedNames(fqNames);
 
-   while(GetScopedName(fqName, i))
+   for(auto fqn = fqNames.begin(); fqn != fqNames.end(); ++fqn)
    {
-      auto pos = NameCouldReferTo(fqName, name);
+      auto pos = NameCouldReferTo(*fqn, name);
+      if(pos == string::npos) continue;
 
-      if(pos != string::npos)
+      switch(pos)
       {
-         switch(pos)
-         {
-         case 0:
-         case 2:
-            //
-            //  NAME completely matches ITEM, with the possible exception of
-            //  a leading scope resolution operator.
-            //
-            return true;
-         case 1:
-         case 3:
-            //
-            //  These shouldn't occur, because fqName has a "::" prefix.
-            //
-            Debug::SwErr(CxxScoped_NameRefersToItem, fqName, pos);
-            return false;
-         }
-
-         //  NAME is a partial match for ITEM.  Report a match if SCOPE
-         //  is ITEM's declarer or one of its subclasses.
+      case 0:
+      case 2:
          //
-         if(!checkUsing) return true;
-
-         //  Report a match if SCOPE is already in ITEM's scope.
+         //  NAME completely matches this item's fully qualified name,
+         //  with the possible exception of a leading scope resolution
+         //  operator.
          //
-         fqName.erase(0, 2);
-         auto prefix = fqName.substr(0, pos - 4);
-         if(scope->IsSubscopeOf(prefix)) return true;
-
-         //  Report a match if SCOPE's class derives from this item's class.
+         return true;
+      case 1:
+      case 3:
          //
-         auto itemClass = Declarer();
-         if(itemClass != nullptr)
-         {
-            auto usingClass = scope->GetClass();
-            if((usingClass != nullptr) && usingClass->DerivesFrom(itemClass))
-               return true;
-         }
-
-         //  Look for a using statement that matches at least the PREFIX
-         //  of fqName.  That is, if fqName is "a::b::c::d" and PREFIX is
-         //  "a::b", the using statement must be for "a::b", "a::b::c",
-         //  or "a::b::c::d".
+         //  These shouldn't occur, because fqName has a "::" prefix.
          //
-         view->using_ = file->FindUsingFor(fqName, pos - 4, this, scope);
-         if(view->using_) return true;
+         Debug::SwErr(CxxScoped_NameRefersToItem, *fqn, pos);
+         return false;
       }
 
-      ++i;
+      //  NAME is a partial match for this item.  Report a match if SCOPE
+      //  is this item's declarer or one of its subclasses.
+      //
+      if(!checkUsing) return true;
+
+      //  Report a match if SCOPE is already in this item's scope.
+      //
+      fqn->erase(0, 2);
+      auto prefix = fqn->substr(0, pos - 4);
+      if(scope->IsSubscopeOf(prefix)) return true;
+
+      //  Report a match if SCOPE's class derives from this item's class.
+      //
+      auto itemClass = Declarer();
+      if(itemClass != nullptr)
+      {
+         auto usingClass = scope->GetClass();
+         if((usingClass != nullptr) && usingClass->DerivesFrom(itemClass))
+            return true;
+      }
+
+      //  Look for a using statement that matches at least the PREFIX
+      //  of fqName.  That is, if fqName is "a::b::c::d" and PREFIX is
+      //  "a::b", the using statement must be for "a::b", "a::b::c",
+      //  or "a::b::c::d".
+      //
+      if(file->FindUsingFor(*fqn, pos - 4, this, scope) != nullptr)
+      {
+         view->using_ = true;
+         return true;
+      }
    }
 
    return false;
@@ -767,8 +818,8 @@ void Enum::AddEnumerator(string& name, ExprPtr& init, size_t pos)
    Debug::ft(Enum_AddEnumerator);
 
    auto etor = EnumeratorPtr(new Enumerator(name, init, this));
-   etor->SetPos(GetFile(), pos);
    etor->SetScope(GetScope());
+   etor->SetLoc(GetFile(), pos);
    etor->SetAccess(GetAccess());
    etors_.push_back(std::move(etor));
 }
@@ -871,7 +922,6 @@ void Enum::EnterBlock()
    Debug::ft(Enum_EnterBlock);
 
    Context::SetPos(GetPos());
-   SetScope(Context::Scope());
 
    for(auto e = etors_.cbegin(); e != etors_.cend(); ++e)
    {
@@ -1036,7 +1086,6 @@ void Enumerator::EnterBlock()
    Debug::ft(Enumerator_EnterBlock);
 
    Context::SetPos(GetPos());
-   SetScope(Context::Scope());
 
    if(init_ != nullptr)
    {
@@ -1077,25 +1126,25 @@ void Enumerator::ExitBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name Enumerator_GetScopedName = "Enumerator.GetScopedName";
+fn_name Enumerator_GetScopedNames = "Enumerator.GetScopedNames";
 
-bool Enumerator::GetScopedName(string& name, size_t n) const
+void Enumerator::GetScopedNames(stringVector& names) const
 {
-   Debug::ft(Enumerator_GetScopedName);
+   Debug::ft(Enumerator_GetScopedNames);
 
-   //  Start by providing the enumerator's fully qualified name, which includes
-   //  that of its enum.  Then, unless the enum is anonymous, delete the enum's
-   //  name from the fully qualified name, and provide that as an alternative.
+   //  The superclass version provides the enumerator's fully qualified name,
+   //  which includes that of its enum.  Then, unless the enum is anonymous,
+   //  delete the enum's name from the fully qualified name, and provide that
+   //  as an alternative.
    //
-   if(n > 1) return false;
-   CxxScoped::GetScopedName(name, 0);
-   if(n == 0) return true;
+   CxxScoped::GetScopedNames(names);
    auto prev = *enum_->Name();
-   if(prev.empty()) return false;
+   if(prev.empty()) return;
    prev += SCOPE_STR;
+   auto name = names.front();
    auto pos = name.rfind(prev);
    name.erase(pos, prev.size());
-   return true;
+   names.push_back(name);
 }
 
 //------------------------------------------------------------------------------
@@ -1762,7 +1811,7 @@ bool Friend::ResolveForward(CxxScoped* decl, size_t n) const
    if(decl == this) return false;
    name_->At(n)->SetForward(decl);
    decl->SetAsReferent(this);
-   SetScope(decl->GetSpace());
+   const_cast< Friend* >(this)->SetScope(decl->GetSpace());
    return true;
 }
 
@@ -1774,7 +1823,7 @@ bool Friend::ResolveTemplate(Class* cls, const TypeName* args, bool end) const
 {
    Debug::ft(Friend_ResolveTemplate);
 
-   SetScope(cls->GetScope());
+   const_cast< Friend* >(this)->SetScope(cls->GetScope());
    return true;
 }
 
@@ -1897,8 +1946,6 @@ void Friend::SetTemplateParms(TemplateParmsPtr& parms)
 
 //------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-
 void Friend::Shrink()
 {
    if(name_ != nullptr) name_->Shrink();
@@ -2006,7 +2053,7 @@ Typedef::Typedef(string& name, TypeSpecPtr& spec) :
    Debug::ft(Typedef_ctor);
 
    std::swap(name_, name);
-   spec_->SetLocale(Cxx::Typedef);
+   spec_->SetUserType(Cxx::Typedef);
    Singleton< CxxSymbols >::Instance()->InsertType(this);
    CxxStats::Incr(CxxStats::TYPE_DECL);
 }
@@ -2096,7 +2143,6 @@ void Typedef::EnterBlock()
    Debug::ft(Typedef_EnterBlock);
 
    Context::SetPos(GetPos());
-   SetScope(Context::Scope());
    spec_->EnteringScope(GetScope());
    refs_ = 0;
 }
@@ -2129,12 +2175,8 @@ void Typedef::ExitBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name Typedef_GetTemplateArgs = "Typedef.GetTemplateArgs";
-
 TypeName* Typedef::GetTemplateArgs() const
 {
-   Debug::ft(Typedef_GetTemplateArgs);
-
    return spec_->GetTemplateArgs();
 }
 
@@ -2215,12 +2257,13 @@ void Using::Check() const
    if(added_) return;
    if(users_ == 0) Log(UsingUnused);
 
-   //  Do not log a using statement in a header file unless its referent is
-   //  external (e.g. is defined in the namespace std:: rather than in RSC).
+   //  A using statement should be avoided in a header except to import
+   //  items from a base class.
    //
-   auto ref = Referent();
-   if((ref != nullptr) && !ref->GetSpace()->GetFile()->IsSubsFile()) return;
-   if(GetFile()->IsHeader()) Log(UsingInHeader);
+   if(GetFile()->IsHeader() && (GetScope()->Type() != Cxx::Class))
+   {
+      Log(UsingInHeader);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -2255,7 +2298,6 @@ void Using::EnterBlock()
    Debug::ft(Using_EnterBlock);
 
    Context::SetPos(GetPos());
-   SetScope(Context::Scope());
    Block::AddUsing(this);
    FindReferent();
 }
@@ -2268,6 +2310,7 @@ bool Using::EnterScope()
 {
    Debug::ft(Using_EnterScope);
 
+   if(AtFileScope()) GetFile()->InsertUsing(this);
    Context::SetPos(GetPos());
    FindReferent();
    return true;
@@ -2306,25 +2349,26 @@ void Using::FindReferent()
 
 fn_name Using_IsUsingFor = "Using.IsUsingFor";
 
-bool Using::IsUsingFor(const string& name, size_t prefix) const
+bool Using::IsUsingFor
+   (const string& fqName, size_t prefix, const CxxScope* scope) const
 {
    Debug::ft(Using_IsUsingFor);
 
-   //  Template arguments are not supported in a using statement.
-   //
    auto ref = Referent();
    if(ref == nullptr) return false;
 
-   auto refname = ref->ScopedName(false);
-   auto pos = NameIsSuperscopeOf(name, refname);
+   //  See if the using statement's referent is a superscope of fqName.
+   //
+   auto fqSuper = ref->ScopedName(false);
+   auto pos = CompareScopes(fqName, fqSuper, false);
 
    if((pos != string::npos) && (pos >= prefix))
    {
-      //  If there is no context file, a parse is not in progress, in which
-      //  case a tool is invoking this after the parse was completed.
+      //  This can be invoked when >check or >trim adds a using statement.
+      //  In that case, the using statement was not part of the original
+      //  source, so don't claim that it has users.
       //
-      auto file = Context::File();
-      if(file != nullptr) ++users_;
+      if(Context::ParsingSourceCode()) ++users_;
       return true;
    }
 
@@ -2366,7 +2410,7 @@ string Using::ScopedName(bool templates) const
 
 fn_name Using_SetScope = "Using.SetScope";
 
-void Using::SetScope(CxxScope* scope) const
+void Using::SetScope(CxxScope* scope)
 {
    Debug::ft(Using_SetScope);
 

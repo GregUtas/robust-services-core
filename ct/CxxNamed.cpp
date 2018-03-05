@@ -39,6 +39,7 @@
 #include "Registry.h"
 #include "Singleton.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 
@@ -129,6 +130,21 @@ bool CxxNamed::AtFileScope() const
 
 //------------------------------------------------------------------------------
 
+fn_name CxxNamed_CopyContext = "CxxNamed.CopyContext";
+
+void CxxNamed::CopyContext(const CxxNamed* that)
+{
+   Debug::ft(CxxNamed_CopyContext);
+
+   auto scope = that->GetScope();
+   SetScope(scope);
+   SetAccess(that->GetAccess());
+   loc_.SetLoc(that->GetFile(), that->GetPos());
+   SetInternal();
+}
+
+//------------------------------------------------------------------------------
+
 void CxxNamed::DisplayReferent(ostream& stream, bool fq) const
 {
    auto ref = Referent();
@@ -185,11 +201,18 @@ id_t CxxNamed::GetDeclFid() const
 
 //------------------------------------------------------------------------------
 
-bool CxxNamed::GetScopedName(string& name, size_t n) const
+size_t CxxNamed::GetRange(size_t& begin, size_t& end) const
 {
-   if(n != 0) return false;
-   name = SCOPE_STR + ScopedName(false);
-   return true;
+   begin = string::npos;
+   end = string::npos;
+   return string::npos;
+}
+
+//------------------------------------------------------------------------------
+
+void CxxNamed::GetScopedNames(stringVector& names) const
+{
+   names.push_back(SCOPE_STR + ScopedName(false));
 }
 
 //------------------------------------------------------------------------------
@@ -287,31 +310,6 @@ StackArg CxxNamed::NameToArg(Cxx::Operator op)
 
 //------------------------------------------------------------------------------
 
-fn_name CxxNamed_ResolveLocal = "CxxNamed.ResolveLocal";
-
-CxxNamed* CxxNamed::ResolveLocal(SymbolView* view) const
-{
-   Debug::ft(CxxNamed_ResolveLocal);
-
-   auto syms = Singleton< CxxSymbols >::Instance();
-   auto qname = GetQualName();
-
-   if((qname->Size() == 1) && !qname->IsGlobal())
-   {
-      auto item = syms->FindLocal(*Name(), view);
-
-      if(item != nullptr)
-      {
-         qname->SetReferentN(0, item, view);
-         return item;
-      }
-   }
-
-   return ResolveName(Context::File(), Context::Scope(), CODE_REFS, view);
-}
-
-//------------------------------------------------------------------------------
-
 fn_name CxxNamed_ResolveName = "CxxNamed.ResolveName";
 
 CxxNamed* CxxNamed::ResolveName(const CodeFile* file,
@@ -328,7 +326,6 @@ CxxNamed* CxxNamed::ResolveName(const CodeFile* file,
    auto size = qname->Size();
    auto syms = Singleton< CxxSymbols >::Instance();
    auto selector = (size == 1 ? mask : SCOPE_REFS);
-
    size_t idx = (qname->IsGlobal() ? 0 : 1);
 
    if(idx == 0)
@@ -513,6 +510,40 @@ string CxxNamed::ScopedName(bool templates) const
 
 //------------------------------------------------------------------------------
 
+fn_name CxxNamed_SetContext = "CxxNamed.SetContext";
+
+void CxxNamed::SetContext(size_t pos)
+{
+   Debug::ft(CxxNamed_SetContext);
+
+   //  If the item has already set its scope, don't overwrite it.
+   //
+   auto scope = GetScope();
+
+   if(scope == nullptr)
+   {
+      scope = Context::Scope();
+      SetScope(scope);
+   }
+
+   SetAccess(scope->GetCurrAccess());
+   loc_.SetLoc(Context::File(), pos);
+   if(Context::ParsingTemplateInstance()) SetInternal();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CxxNamed_SetLoc = "CxxNamed.SetLoc";
+
+void CxxNamed::SetLoc(CodeFile* file, size_t pos)
+{
+   Debug::ft(CxxNamed_SetLoc);
+
+   loc_.SetLoc(file, pos);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CxxNamed_SetReferent = "CxxNamed.SetReferent";
 
 void CxxNamed::SetReferent(CxxNamed* item, const SymbolView* view) const
@@ -559,6 +590,11 @@ void CxxNamed::strName(ostream& stream, bool fq, const QualName* name) const
 }
 
 //==============================================================================
+
+const TypeSpecPtr DataSpec::Bool = TypeSpecPtr(new DataSpec(BOOL_STR));
+const TypeSpecPtr DataSpec::Int = TypeSpecPtr(new DataSpec(INT_STR));
+
+//------------------------------------------------------------------------------
 
 fn_name DataSpec_ctor1 = "DataSpec.ctor";
 
@@ -751,6 +787,19 @@ TypeSpec* DataSpec::Clone() const
 
 //------------------------------------------------------------------------------
 
+fn_name DataSpec_CopyContext = "DataSpec.CopyContext";
+
+void DataSpec::CopyContext(const CxxNamed* that)
+{
+   Debug::ft(DataSpec_CopyContext);
+
+   CxxNamed::CopyContext(that);
+
+   name_->CopyContext(that);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name DataSpec_DirectClass = "DataSpec.DirectClass";
 
 Class* DataSpec::DirectClass() const
@@ -917,6 +966,7 @@ void DataSpec::FindReferent()
       view = NotAccessible;
       item = syms->FindSymbol(file, scope, qname, VALUE_REFS, &view);
       if(item != nullptr) SetReferent(item, &view);
+      //  [[fallthrough]]
    case TemplateParameter:
    case TemplateClass:
       //
@@ -943,8 +993,12 @@ void DataSpec::FindReferent()
 
 //------------------------------------------------------------------------------
 
+fn_name DataSpec_GetNumeric = "DataSpec.GetNumeric";
+
 Numeric DataSpec::GetNumeric() const
 {
+   Debug::ft(DataSpec_GetNumeric);
+
    auto ptrs = Ptrs(true);
 
    if(ptrs > 0)
@@ -959,15 +1013,6 @@ Numeric DataSpec::GetNumeric() const
    auto root = Root();
    if(root == nullptr) return Numeric::Nil;
    return root->GetNumeric();
-}
-
-//------------------------------------------------------------------------------
-
-CxxScope* DataSpec::GetScope() const
-{
-   auto type = name_->DirectType();
-   if(type != nullptr) return type->GetScope();
-   return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -1047,10 +1092,10 @@ void DataSpec::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
    case Cxx::Class:
       {
-         auto cls = static_cast< Class* >(ref);
-         auto tmplt = cls->GetTemplate();
+         auto tmplt = ref->GetTemplate();
          if(tmplt != nullptr) ref = tmplt;
       }
+      //  [[fallthrough]]
    default:
       //  Although a .cpp can use a type indirectly, it is unusual.  In most
       //  cases, a pointer or reference type will be initialized, in which case
@@ -1180,8 +1225,8 @@ bool DataSpec::IsUsedInNameOnly() const
    if(count > 0) return true;
    if(Refs() > 0) return true;
 
-   auto loc = GetLocale();
-   if(loc == Cxx::Function) return true;
+   auto user = GetUserType();
+   if(user == Cxx::Function) return true;
 
    CxxNamed* ref = nullptr;
 
@@ -1189,17 +1234,16 @@ bool DataSpec::IsUsedInNameOnly() const
    {
       ref = name_->GetReferent();
       if((ref != nullptr) && ref->IsInTemplateInstance()) return false;
-      return (loc != Cxx::Operation);
+      return (user != Cxx::Operation);
    }
 
-   if(loc != Cxx::Typedef) return false;
+   if(user != Cxx::Typedef) return false;
 
    if(ref == nullptr) ref = name_->GetReferent();
    if((ref != nullptr) && (ref->Type() == Cxx::Class))
    {
-      auto cls = static_cast< Class* >(ref);
-      if(cls->IsInTemplateInstance()) return false;
-      if(cls->GetTemplate() != nullptr) return false;
+      if(ref->IsInTemplateInstance()) return false;
+      if(ref->GetTemplate() != nullptr) return false;
    }
 
    return true;
@@ -1236,7 +1280,7 @@ TypeMatch DataSpec::MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
    //  template argument.  If a template argument has already been found
    //  for the parameter, THAT must match it.
    //
-   auto parm = ScopedName(false);
+   auto parm = QualifiedName(true, false);
    auto idx = FindIndex(tmpltParms, parm);
    auto match = Compatible;
 
@@ -1545,18 +1589,6 @@ StackArg DataSpec::ResultType() const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_SetLocale = "DataSpec.SetLocale";
-
-void DataSpec::SetLocale(Cxx::ItemType locale)
-{
-   Debug::ft(DataSpec_SetLocale);
-
-   TypeSpec::SetLocale(locale);
-   name_->SetLocale(locale);
-}
-
-//------------------------------------------------------------------------------
-
 fn_name DataSpec_SetReferent = "DataSpec.SetReferent";
 
 void DataSpec::SetReferent(CxxNamed* item, const SymbolView* view) const
@@ -1614,6 +1646,18 @@ void DataSpec::SetTemplateRole(TemplateRole role) const
          n->SetTemplateRole(TemplateParameter);
       }
    }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name DataSpec_SetUserType = "DataSpec.SetUserType";
+
+void DataSpec::SetUserType(Cxx::ItemType user)
+{
+   Debug::ft(DataSpec_SetUserType);
+
+   TypeSpec::SetUserType(user);
+   name_->SetUserType(user);
 }
 
 //------------------------------------------------------------------------------
@@ -1856,6 +1900,22 @@ bool QualName::CheckCtorDefn() const
 
 //------------------------------------------------------------------------------
 
+fn_name QualName_CopyContext = "QualName.CopyContext";
+
+void QualName::CopyContext(const CxxNamed* that)
+{
+   Debug::ft(QualName_CopyContext);
+
+   CxxNamed::CopyContext(that);
+
+   for(auto n = First(); n != nullptr; n = n->Next())
+   {
+      n->CopyContext(that);
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name QualName_EnterBlock = "QualName.EnterBlock";
 
 void QualName::EnterBlock()
@@ -1889,8 +1949,12 @@ void QualName::EnterBlock()
 
 //------------------------------------------------------------------------------
 
+fn_name QualName_GetForward = "QualName.GetForward";
+
 CxxScoped* QualName::GetForward() const
 {
+   Debug::ft(QualName_GetForward);
+
    CxxScoped* forw = nullptr;
 
    for(auto n = First(); n != nullptr; n = n->Next())
@@ -1904,12 +1968,8 @@ CxxScoped* QualName::GetForward() const
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_GetTemplateArgs = "QualName.GetTemplateArgs";
-
 TypeName* QualName::GetTemplateArgs() const
 {
-   Debug::ft(QualName_GetTemplateArgs);
-
    for(auto n = First(); n != nullptr; n = n->Next())
    {
       auto spec = n->GetTemplateArgs();
@@ -2106,6 +2166,31 @@ CxxNamed* QualName::Referent() const
 
 //------------------------------------------------------------------------------
 
+fn_name QualName_ResolveLocal = "QualName.ResolveLocal";
+
+CxxNamed* QualName::ResolveLocal(SymbolView* view) const
+{
+   Debug::ft(QualName_ResolveLocal);
+
+   auto syms = Singleton< CxxSymbols >::Instance();
+   auto qname = GetQualName();
+
+   if((qname->Size() == 1) && !qname->IsGlobal())
+   {
+      auto item = syms->FindLocal(*Name(), view);
+
+      if(item != nullptr)
+      {
+         qname->SetReferentN(0, item, view);
+         return item;
+      }
+   }
+
+   return ResolveName(Context::File(), Context::Scope(), CODE_REFS, view);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name QualName_ResolveTemplate = "QualName.ResolveTemplate";
 
 bool QualName::ResolveTemplate(Class* cls, const TypeName* args, bool end) const
@@ -2131,20 +2216,6 @@ bool QualName::ResolveTypedef(Typedef* type, size_t n) const
    Debug::ft(QualName_ResolveTypedef);
 
    return At(n)->ResolveTypedef(type, n);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name QualName_SetLocale = "QualName.SetLocale";
-
-void QualName::SetLocale(Cxx::ItemType locale) const
-{
-   Debug::ft(QualName_SetLocale);
-
-   for(auto n = First(); n != nullptr; n = n->Next())
-   {
-      n->SetLocale(locale);
-   }
 }
 
 //------------------------------------------------------------------------------
@@ -2179,6 +2250,20 @@ void QualName::SetReferentN
    Debug::ft(QualName_SetReferentN);
 
    At(n)->SetReferent(item, view);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name QualName_SetUserType = "QualName.SetUserType";
+
+void QualName::SetUserType(Cxx::ItemType user) const
+{
+   Debug::ft(QualName_SetUserType);
+
+   for(auto n = First(); n != nullptr; n = n->Next())
+   {
+      n->SetUserType(user);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -2230,7 +2315,7 @@ string QualName::TypeString(bool arg) const
 fn_name TemplateParm_ctor1 = "TemplateParm.ctor";
 
 TemplateParm::TemplateParm
-   (string& name, Cxx::ClassTag tag, size_t ptrs, TypeNamePtr& preset) :
+   (string& name, Cxx::ClassTag tag, size_t ptrs, QualNamePtr& preset) :
    tag_(tag),
    ptrs_(ptrs)
 {
@@ -2369,6 +2454,7 @@ fn_name TypeName_ctor1 = "TypeName.ctor";
 
 TypeName::TypeName(string& name) :
    args_(nullptr),
+   locale_(nullptr),
    ref_(nullptr),
    class_(nullptr),
    type_(nullptr),
@@ -2389,6 +2475,7 @@ fn_name TypeName_ctor2 = "TypeName.ctor(copy)";
 
 TypeName::TypeName(const TypeName& that) : CxxNamed(that),
    name_(that.name_),
+   locale_(that.locale_),
    ref_(that.ref_),
    class_(that.class_),
    type_(that.type_),
@@ -2406,6 +2493,7 @@ TypeName::TypeName(const TypeName& that) : CxxNamed(that),
       for(auto a = that.args_->cbegin(); a != that.args_->cend(); ++a)
       {
          auto arg = TypeSpecPtr((*a)->Clone());
+         arg->CopyContext(a->get());
          args_->push_back(std::move(arg));
       }
    }
@@ -2492,12 +2580,8 @@ void TypeName::FindReferent()
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_GetTemplateArgs = "TypeName.GetTemplateArgs";
-
 TypeName* TypeName::GetTemplateArgs() const
 {
-   Debug::ft(TypeName_GetTemplateArgs);
-
    if(args_ == nullptr) return nullptr;
    return const_cast< TypeName* >(this);
 }
@@ -2683,23 +2767,6 @@ void TypeName::SetForward(CxxScoped* decl) const
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_SetLocale = "TypeName.SetLocale";
-
-void TypeName::SetLocale(Cxx::ItemType locale) const
-{
-   Debug::ft(TypeName_SetLocale);
-
-   if(args_ != nullptr)
-   {
-      for(auto a = args_->cbegin(); a != args_->cend(); ++a)
-      {
-         (*a)->SetLocale(locale);
-      }
-   }
-}
-
-//------------------------------------------------------------------------------
-
 fn_name TypeName_SetOperator = "TypeName.SetOperator";
 
 void TypeName::SetOperator(Cxx::Operator oper)
@@ -2775,6 +2842,23 @@ void TypeName::SetTemplateRole(TemplateRole role) const
 
 //------------------------------------------------------------------------------
 
+fn_name TypeName_SetUserType = "TypeName.SetUserType";
+
+void TypeName::SetUserType(Cxx::ItemType user) const
+{
+   Debug::ft(TypeName_SetUserType);
+
+   if(args_ != nullptr)
+   {
+      for(auto a = args_->cbegin(); a != args_->cend(); ++a)
+      {
+         (*a)->SetUserType(user);
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 void TypeName::Shrink()
 {
    name_.shrink_to_fit();
@@ -2826,7 +2910,7 @@ string TypeName::TypeString(bool arg) const
 fn_name TypeSpec_ctor1 = "TypeSpec.ctor";
 
 TypeSpec::TypeSpec() :
-   locale_(Cxx::Operation),
+   user_(Cxx::Operation),
    role_(TemplateNone)
 {
    Debug::ft(TypeSpec_ctor1);
@@ -2837,7 +2921,7 @@ TypeSpec::TypeSpec() :
 fn_name TypeSpec_ctor2 = "TypeSpec.ctor(copy)";
 
 TypeSpec::TypeSpec(const TypeSpec& that) : CxxNamed(that),
-   locale_(that.locale_),
+   user_(that.user_),
    role_(that.role_)
 {
    Debug::ft(TypeSpec_ctor2);
@@ -3064,17 +3148,6 @@ void TypeSpec::SetConstPtr(bool constptr)
 
 //------------------------------------------------------------------------------
 
-fn_name TypeSpec_SetLocale = "TypeSpec.SetLocale";
-
-void TypeSpec::SetLocale(Cxx::ItemType locale)
-{
-   Debug::ft(TypeSpec_SetLocale);
-
-   locale_ = locale;
-}
-
-//------------------------------------------------------------------------------
-
 void TypeSpec::SetPtrDetached(bool on)
 {
    Debug::SwErr(TypeSpec_PureVirtualFunction, "SetPtrDetached", 0);
@@ -3101,6 +3174,17 @@ void TypeSpec::SetRefDetached(bool on)
 void TypeSpec::SetRefs(TagCount refs)
 {
    Debug::SwErr(TypeSpec_PureVirtualFunction, "SetRefs", 0);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TypeSpec_SetUserType = "TypeSpec.SetUserType";
+
+void TypeSpec::SetUserType(Cxx::ItemType user)
+{
+   Debug::ft(TypeSpec_SetUserType);
+
+   user_ = user;
 }
 
 //------------------------------------------------------------------------------

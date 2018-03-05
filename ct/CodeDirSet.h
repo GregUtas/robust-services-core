@@ -51,11 +51,12 @@ public:
 
    //  Displays the full directory paths in STREAM and returns 0.
    //
-   virtual word List(std::ostream& stream, std::string& expl) const override;
+   virtual NodeBase::word List
+      (std::ostream& stream, std::string& expl) const override;
 
    //  Displays the directory names in RESULT and returns 0.
    //
-   virtual word Show(std::string& result) const override;
+   virtual NodeBase::word Show(std::string& result) const override;
 private:
    //  Private to restrict deletion.  Not subclassed.
    //

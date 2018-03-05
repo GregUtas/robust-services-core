@@ -192,7 +192,7 @@ ProtocolSM::IncomingRc PotsCallPsm::ProcessIcMsg(Message& msg, Event*& event)
          auto ppi = pmsg.FindType< ProgressInfo >(PotsParameter::Progress);
          if(ppi->progress == Progress::MediaUpdate) return DiscardMessage;
       }
-
+      //  [[fallthrough]]
    default:
       SetState(Active);
    }

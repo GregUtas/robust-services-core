@@ -36,8 +36,6 @@ namespace CodeTools
    struct SymbolView;
 }
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace CodeTools
@@ -49,17 +47,17 @@ typedef std::vector< SymbolView > ViewVector;
 
 //  Specifies the type of item that could resolve a symbol.
 //
-extern const Flags CLASS_MASK;   // class, struct, union
-extern const Flags DATA_MASK;    // data
-extern const Flags ETOR_MASK;    // enumerator
-extern const Flags ENUM_MASK;    // enum
-extern const Flags FORW_MASK;    // forward declaration
-extern const Flags FRIEND_MASK;  // friend declaration
-extern const Flags FUNC_MASK;    // function
-extern const Flags MACRO_MASK;   // #define
-extern const Flags SPACE_MASK;   // namespace
-extern const Flags TERM_MASK;    // terminal (built-in type)
-extern const Flags TYPE_MASK;    // typedef
+extern const NodeBase::Flags CLASS_MASK;   // class, struct, union
+extern const NodeBase::Flags DATA_MASK;    // data
+extern const NodeBase::Flags ETOR_MASK;    // enumerator
+extern const NodeBase::Flags ENUM_MASK;    // enum
+extern const NodeBase::Flags FORW_MASK;    // forward declaration
+extern const NodeBase::Flags FRIEND_MASK;  // friend declaration
+extern const NodeBase::Flags FUNC_MASK;    // function
+extern const NodeBase::Flags MACRO_MASK;   // #define
+extern const NodeBase::Flags SPACE_MASK;   // namespace
+extern const NodeBase::Flags TERM_MASK;    // terminal (built-in type)
+extern const NodeBase::Flags TYPE_MASK;    // typedef
 
 //  Combinations of the above, used when searching in various situations.
 //  o CODE_REFS includes all items except locals and terminals.
@@ -71,22 +69,22 @@ extern const Flags TYPE_MASK;    // typedef
 //  o USING_REFS are referents of a using statement.
 //  o VALUE_REFS are storage references or constants.
 //
-extern const Flags CODE_REFS;
-extern const Flags FRIEND_CLASSES;
-extern const Flags FRIEND_FUNCS;
-extern const Flags SCOPE_REFS;
-extern const Flags TYPE_REFS;
-extern const Flags TYPESPEC_REFS;
-extern const Flags USING_REFS;
-extern const Flags VALUE_REFS;
+extern const NodeBase::Flags CODE_REFS;
+extern const NodeBase::Flags FRIEND_CLASSES;
+extern const NodeBase::Flags FRIEND_FUNCS;
+extern const NodeBase::Flags SCOPE_REFS;
+extern const NodeBase::Flags TYPE_REFS;
+extern const NodeBase::Flags TYPESPEC_REFS;
+extern const NodeBase::Flags USING_REFS;
+extern const NodeBase::Flags VALUE_REFS;
 
 //------------------------------------------------------------------------------
 //
 //  Symbol database.
 //
-class CxxSymbols: public Temporary
+class CxxSymbols: public NodeBase::Temporary
 {
-   friend class Singleton< CxxSymbols >;
+   friend class NodeBase::Singleton< CxxSymbols >;
 public:
    //  Returns the item referred to by NAME, which was used in FILE and SCOPE.
    //  If AREA is provided, only items in that area are considered.  Returns
@@ -95,7 +93,7 @@ public:
    //  search for (see the constants defined above).
    //
    CxxScoped* FindSymbol(const CodeFile* file, const CxxScope* scope,
-      const std::string& name, const Flags& mask, SymbolView* view,
+      const std::string& name, const NodeBase::Flags& mask, SymbolView* view,
       const CxxArea* area = nullptr) const;
 
    //  Returns NAME if it is a terminal or a local variable in a function.
@@ -106,7 +104,7 @@ public:
    //  along with their VIEWS.
    //
    void FindSymbols(const CodeFile* file, const CxxScope* scope,
-      const std::string& name, const Flags& mask, SymbolVector& list,
+      const std::string& name, const NodeBase::Flags& mask, SymbolVector& list,
       ViewVector& views, const CxxArea* area = nullptr) const;
 
    //  Returns the scope (namespace, class, or function) referred to by
@@ -159,11 +157,11 @@ public:
 
    //  Overridden for restarts.
    //
-   virtual void Shutdown(RestartLevel level) override;
+   virtual void Shutdown(NodeBase::RestartLevel level) override;
 
    //  Overridden for restarts.
    //
-   virtual void Startup(RestartLevel level) override;
+   virtual void Startup(NodeBase::RestartLevel level) override;
 private:
    //  Adds any macros identified by NAME to LIST, but only those that
    //  have been defined.

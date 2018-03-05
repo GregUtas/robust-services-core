@@ -43,16 +43,20 @@ class CxxLocation
 {
    friend class CxxNamed;
 public:
-   CxxLocation() : file(nullptr), pos(std::string::npos), internal(false) { }
+   static const size_t NOT_IN_SOURCE = 0x7fffffff;
 
    size_t GetPos() const
    {
-      if(pos == 0x7fffffff)
+      if(pos == NOT_IN_SOURCE)
          return std::string::npos;
       else
          return pos;
    }
 private:
+   //  Constructor.
+   //
+   CxxLocation() : file(nullptr), pos(std::string::npos), internal(false) { }
+
    //  Records an item's location in source code.
    //
    void SetLoc(CodeFile* f, size_t p) { file = f; pos = p; }
@@ -105,6 +109,23 @@ public:
    //
    virtual ~CxxNamed();
 
+   //  Sets the file and offset at which this item was found.
+   //
+   virtual void SetLoc(CodeFile* file, size_t pos);
+
+   //  Sets the context in which this item was found:
+   //  o Invokes SetScope(Context::Scope()) unless the item already has a scope
+   //  o invokes SetAccess(item's scope->GetCurrAccess())
+   //  o invokes SetLoc(Context::File(), pos)
+   //  o invokes SetInternal() if Context::ParsingTemplateInstance() is true
+   //
+   void SetContext(size_t pos);
+
+   //  Sets the item's context based on THAT.  Used when an item is created
+   //  internally (e.g. a "this" argument).
+   //
+   virtual void CopyContext(const CxxNamed* that);
+
    //  Returns the file in which this item was found.
    //
    CodeFile* GetFile() const { return loc_.file; }
@@ -113,22 +134,21 @@ public:
    //
    size_t GetPos() const { return loc_.GetPos(); }
 
-   //  Sets the file and offset at which this item was found.
+   //  Sets BEGIN and END to where the item begins and ends, and returns
+   //  the location of its opening left brace (if applicable).  The default
+   //  sets BEGIN and END to string::npos and also returns string::npos.
    //
-   virtual void SetPos(CodeFile* file, size_t pos) { loc_.SetLoc(file, pos); }
+   virtual size_t GetRange(size_t& begin, size_t& end) const;
 
-   //  Indicates that the item appeared in internally generated code.
+   //  Returns the scope (namespace, class, or block) where the item is
+   //  declared.
    //
-   void SetInternal() { loc_.internal = true; }
+   virtual CxxScope* GetScope() const { return nullptr; }
 
-   //  Returns true if the item appeared in internally generated code.
+   //  Returns the scope where the item was found.  For classes derived
+   //  from CxxScoped, this is usually the scope where the item was found.
    //
-   bool IsInternal() const { return loc_.internal; }
-
-   //  Returns true if the item was declared in a function's code block
-   //  or argument list.
-   //
-   virtual bool IsDeclaredInFunction() const { return false; }
+   virtual CxxScope* GetLocale() const { return GetScope(); }
 
    //  Returns true if the item is static.  Note that, for the purposes
    //  of this function:
@@ -138,20 +158,14 @@ public:
    //
    virtual bool IsStatic() const { return true; }
 
-   //  Returns the scope (namespace, class, or block) where the item
-   //  was found.
+   //  Returns true if the item was declared in a function's code block
+   //  or argument list.
    //
-   virtual CxxScope* GetScope() const { return nullptr; }
+   virtual bool IsDeclaredInFunction() const { return false; }
 
-   //  Sets the scope where the item was found.  The scope is mutable to
-   //  support friend declarations and definitions, which sometimes need
-   //  to correct their scope within functions that are logically const.
+   //  Returns true if the item appeared in internally generated code.
    //
-   virtual void SetScope(CxxScope* scope) const { }
-
-   //  Sets the access control that applies to the item.
-   //
-   virtual void SetAccess(Cxx::Access access) { }
+   bool IsInternal() const { return loc_.internal; }
 
    //  Sets the template parameters when the item declares a template.
    //  The default version generates a log and must be overridden by an
@@ -184,11 +198,18 @@ public:
    //
    virtual std::string ScopedName(bool templates) const;
 
-   //  Updates NAME with the item's Nth fully qualified name.  The name omits
-   //  template arguments but prefixes a scope resolution operator.  Returns
-   //  false if no more names are available.
+   //  Updates NAMES with the item's fully qualified name(s).  Each name omits
+   //  template arguments but prefixes a scope resolution operator.
    //
-   virtual bool GetScopedName(std::string& name, size_t n) const;
+   virtual void GetScopedNames(stringVector& names) const;
+
+   //  Returns true if this item is a superscope of fqSub.  TMPLT is set if
+   //  a template should be considered a superscope of one of its instances.
+   //  This version returns false because the superscope's fully qualified name
+   //  is required but is only available in classes derived from CxxScoped.
+   //
+   virtual bool IsSuperscopeOf(const std::string& fqSub, bool tmplt) const
+      { return false; }
 
    //  Returns the area (namespace or class) in which the item was declared.
    //  Returns (because of an override) the item itself if it is an area.
@@ -213,7 +234,7 @@ public:
 
    //  Returns the identifier of the file in which the item was declared.
    //
-   virtual id_t GetDeclFid() const;
+   virtual NodeBase::id_t GetDeclFid() const;
 
    //  Returns the file that *defined* the item.  Returns nullptr if the
    //  item has no definition or if it was defined where it was declared.
@@ -333,15 +354,20 @@ protected:
    //
    CxxNamed(const CxxNamed& that);
 
+   //  Sets the scope where the item was found.  For classes derived from
+   //  CxxScoped, this is usually the scope where the item is declared.
+   //
+   virtual void SetScope(CxxScope* scope) { }
+
+   //  Sets the access control that applies to the item.
+   //
+   virtual void SetAccess(Cxx::Access access) { }
+
    //  Resolves the item's qualified name.  FILE, SCOPE, MASK, and VIEW are
    //  the same as the arguments for CxxSymbols::FindSymbol.
    //
    CxxNamed* ResolveName(const CodeFile* file, const CxxScope* scope,
-      const Flags& mask, SymbolView* view) const;
-
-   //  Resolves the item's qualified name within a function.
-   //
-   CxxNamed* ResolveLocal(SymbolView* view) const;
+      const NodeBase::Flags& mask, SymbolView* view) const;
 
    //  Invoked when ResolveName finds TYPE, a typedef.  If it returns false,
    //  ResolveName returns TYPE.  Otherwise, name resolution continues with
@@ -362,6 +388,10 @@ protected:
    //
    void AddUsage() const;
 private:
+   //  Indicates that the item appeared in internally generated code.
+   //
+   void SetInternal() { loc_.internal = true; }
+
    //  Invoked when ResolveName finds DECL, a forward or friend declaration,
    //  when resolving the Nth name in a possibly qualified name.  If it
    //  returns false, ResolveName returns DECL.  Otherwise, name resolution
@@ -413,7 +443,7 @@ public:
    //  Overridden to display the initialization statement.
    //
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to shrink containers.
    //
@@ -488,9 +518,9 @@ public:
    //
    void Append(const std::string& name, bool space);
 
-   //  Invokes SetLocale on each template argument.
+   //  Invokes SetUserType on each template argument.
    //
-   void SetLocale(Cxx::ItemType locale) const;
+   void SetUserType(Cxx::ItemType user) const;
 
    //  Makes each template argument a template parameter.
    //
@@ -546,6 +576,10 @@ public:
    //
    virtual void FindReferent() override;
 
+   //  Overridden to return the scope where the name appeared.
+   //
+   virtual CxxScope* GetLocale() const override { return locale_; }
+
    //  Overridden to return this item if it has template arguments.
    //
    virtual TypeName* GetTemplateArgs() const override;
@@ -562,7 +596,7 @@ public:
    //  Overridden to display the name.
    //
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to return the name and, optionally, its template arguments.
    //
@@ -581,6 +615,10 @@ public:
    //
    virtual void SetReferent
       (CxxNamed* item, const SymbolView* view) const override;
+
+   //  Overridden to set the scope where the name appeared.
+   //
+   virtual void SetScope(CxxScope* scope) override { locale_ = scope; }
 
    //  Overridden to shrink containers.
    //
@@ -606,6 +644,10 @@ private:
    //  The next name in a qualified name.
    //
    TypeNamePtr next_;
+
+   //  The scope where the name appeared.
+   //
+   CxxScope* locale_;
 
    //  What the name refers to.
    //
@@ -695,9 +737,9 @@ public:
    //
    Cxx::Operator Operator() const { return Last()->Operator(); }
 
-   //  Invokes SetLocale on each name.
+   //  Invokes SetUserType on each name.
    //
-   void SetLocale(Cxx::ItemType locale) const;
+   void SetUserType(Cxx::ItemType user) const;
 
    //  Sets the referent of the Nth name to ITEM.  VIEW provides information
    //  about how the name was resolved.  If name resolution failed, ITEM will
@@ -736,6 +778,10 @@ public:
    //
    virtual void Check() const override;
 
+   //  Overridden to propagate the context to each name.
+   //
+   virtual void CopyContext(const CxxNamed* that) override;
+
    //  Overridden to forward to the last name.
    //
    virtual CxxNamed* DirectType() const
@@ -744,6 +790,10 @@ public:
    //  Overridden to find the referent and push it onto the argument stack.
    //
    virtual void EnterBlock() override;
+
+   //  Overridden to return the scope where the name appeared.
+   //
+   virtual CxxScope* GetLocale() const override { return Last()->GetLocale(); }
 
    //  Overridden to return the item itself.
    //
@@ -766,7 +816,7 @@ public:
    //  Overridden to display the name, including any template arguments.
    //
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to return the qualified name.
    //
@@ -785,6 +835,10 @@ public:
    //
    virtual bool ResolveTemplate
       (Class* cls, const TypeName* args, bool end) const override;
+
+   //  Overridden to set the scope where the name appeared.
+   //
+   virtual void SetScope(CxxScope* scope) override { first_->SetScope(scope); }
 
    //  Sets the last name's referent.  This is used by QualName.EnterBlock and
    //  Operation.PushMember when a name appears in executable code.  It is also
@@ -816,6 +870,10 @@ private:
    //
    TypeName* Last() const;
 
+   //  Resolves the item's qualified name within a function.
+   //
+   CxxNamed* ResolveLocal(SymbolView* view) const;
+
    //  The first name in what might be a qualified name.
    //
    TypeNamePtr first_;
@@ -834,11 +892,11 @@ public:
 
    //  Sets the type of item to which the type belongs.
    //
-   virtual void SetLocale(Cxx::ItemType locale);
+   virtual void SetUserType(Cxx::ItemType user);
 
    //  Returns the type of item in which the type appears.
    //
-   Cxx::ItemType GetLocale() const { return locale_; }
+   Cxx::ItemType GetUserType() const { return user_; }
 
    //  Returns the type's role, if any, in a template.
    //
@@ -1021,7 +1079,7 @@ private:
 
    //  The item type to which the type belongs.  The default is Cxx::Operation.
    //
-   Cxx::ItemType locale_ : 8;
+   Cxx::ItemType user_ : 8;
 
    //  The type's role in a template.
    //
@@ -1054,6 +1112,14 @@ public:
    //  Not subclassed.
    //
    ~DataSpec();
+
+   //  A DataSpec for a bool.
+   //
+   static const TypeSpecPtr Bool;
+
+   //  A DataSpec for an int.
+   //
+   static const TypeSpecPtr Int;
 private:
    //  Deleted to prohibit copy assignment.
    //
@@ -1111,6 +1177,10 @@ private:
    //
    virtual TypeSpec* Clone() const override;
 
+   //  Overridden to propagate the context to the type's qualified name.
+   //
+   virtual void CopyContext(const CxxNamed* that) override;
+
    //  Overridden to return the class, if any, to which the type ultimately
    //  refers, provided that it is not a pointer or reference to that class.
    //
@@ -1146,9 +1216,9 @@ private:
    //
    virtual void FindReferent() override;
 
-   //  Overridden to return the type's attributes.
+   //  Overridden to return the scope where the type appeared.
    //
-   virtual TypeTags GetTags() const override;
+   virtual CxxScope* GetLocale() const override { return name_->GetLocale(); }
 
    //  Overridden to return the numeric type.
    //
@@ -1158,9 +1228,9 @@ private:
    //
    virtual QualName* GetQualName() const override { return name_.get(); }
 
-   //  Overridden to return the referent's scope, if known.
+   //  Overridden to return the type's attributes.
    //
-   virtual CxxScope* GetScope() const override;
+   virtual TypeTags GetTags() const override;
 
    //  Overridden to return the type itself.
    //
@@ -1217,7 +1287,7 @@ private:
    //  Overridden to display the type.
    //
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to return the number of pointers associated with this type.
    //  Each array specification is counted as a pointer if ARRAYS is set.
@@ -1286,10 +1356,6 @@ private:
    //
    virtual void SetConstPtr(bool constptr) override { constptr_ = constptr; }
 
-   //  Overridden to propagate the locale to name_.
-   //
-   virtual void SetLocale(Cxx::ItemType locale) override;
-
    //  Overridden to record a pointer tag that is detached from the type name.
    //
    virtual void SetPtrDetached(bool on) override { ptrDet_ = on; }
@@ -1315,6 +1381,10 @@ private:
    //  as parameters.
    //
    virtual void SetTemplateRole(TemplateRole role) const override;
+
+   //  Overridden to propagate USER to name_.
+   //
+   virtual void SetUserType(Cxx::ItemType user) override;
 
    //  Overridden to shrink containers.
    //
@@ -1388,7 +1458,7 @@ public:
    //  for template <class T*...), which may specify an optional default.
    //
    TemplateParm(std::string& name,
-      Cxx::ClassTag tag, size_t ptrs, TypeNamePtr& preset);
+      Cxx::ClassTag tag, size_t ptrs, QualNamePtr& preset);
 
    //  Not subclassed.
    //
@@ -1396,7 +1466,7 @@ public:
 
    //  Returns the parameter's default type.
    //
-   const TypeName* Default() const { return default_.get(); }
+   const QualName* Default() const { return default_.get(); }
 
    //  Overridden to check the default type.
    //
@@ -1409,7 +1479,7 @@ public:
    //  Overridden to display the parameter.
    //
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to shrink the item's name.
    //
@@ -1431,9 +1501,9 @@ private:
    //
    const size_t ptrs_;
 
-   //  The default type, if any, for the parameter.
+   //  The parameter's default value, if any.
    //
-   TypeNamePtr default_;
+   QualNamePtr default_;
 };
 
 //------------------------------------------------------------------------------
@@ -1469,7 +1539,7 @@ public:
    //  Overridden to display the template's full specification.
    //
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to shrink containers.
    //

@@ -492,6 +492,7 @@ string SysTime::to_str(Format format) const
       stream << time_[YearsField];
       if(format == HighAlpha) break;
       stream << SPACE;
+      //  [[fallthrough]]
    case LowAlpha:
       stream << setw(2) << time_[HoursField] << ':';
       stream << setw(2) << time_[MinsField] << ':';
@@ -506,6 +507,7 @@ string SysTime::to_str(Format format) const
       stream << setw(2) << time_[DaysField];
       if(format == HighNumeric) break;
       stream << '-';
+      //  [[fallthrough]]
    case LowNumeric:
       stream << setw(2) << time_[HoursField];
       stream << setw(2) << time_[MinsField];

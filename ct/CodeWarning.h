@@ -30,8 +30,6 @@
 #include "LibraryTypes.h"
 #include "SysTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace CodeTools
@@ -48,6 +46,10 @@ namespace CodeTools
 
       bool operator==(const WarningLog& that) const;
       bool operator!=(const WarningLog& that) const;
+      bool DisplayCode() const
+         { return ((line != 0) || info.empty()); }
+      bool DisplayInfo() const
+         { return (info.find_first_not_of(' ') != std::string::npos); }
    };
 
    //  Information generated when analyzing, parsing, and executing code.
@@ -85,7 +87,7 @@ namespace CodeTools
    private:
       //  Returns LOG's index if it has already been reported, else -1.
       //
-      static word FindWarning(const WarningLog& log);
+      static NodeBase::word FindWarning(const WarningLog& log);
 
       //  Returns the string "Wnnn", where nnn is WARNING's integer value.
       //

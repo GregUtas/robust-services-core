@@ -41,17 +41,15 @@ namespace CodeTools
    class LibraryVarSet;
 }
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace CodeTools
 {
 //  Provides access to the source code being analyzed by tools.
 //
-class Library : public Temporary
+class Library : public NodeBase::Temporary
 {
-   friend class Singleton< Library >;
+   friend class NodeBase::Singleton< Library >;
 public:
    //  Returns the path to the source directory, the root for all .h and
    //  .cpp files.  Does not include a trailing PATH_SEPARATOR character.
@@ -61,7 +59,7 @@ public:
    //  Adds PATH, which will be known by NAME, to the code base.  Updates
    //  EXPL to indicate success or failure.  Returns 0 on success.
    //
-   word Import
+   NodeBase::word Import
       (const std::string& name, const std::string& path, std::string& expl);
 
    //  Returns the directory identified by NAME.
@@ -103,18 +101,18 @@ public:
    //  input stream.  Updates EXPL to indicate success or failure.  Returns 0
    //  on success.
    //
-   word Assign(const std::string& name,
+   NodeBase::word Assign(const std::string& name,
       const std::string& expr, size_t pos, std::string& expl);
 
    //  Displays the library's contents in STREAM.  The characters in OPTS
    //  control formatting options.  Returns 0 on success.
    //
-   word Export(std::ostream& stream, const std::string& opts) const;
+   NodeBase::word Export(std::ostream& stream, const std::string& opts) const;
 
    //  Deletes the variable known by NAME.  Updates EXPL to indicate success
    //  or failure.  Returns 0 on success.
    //
-   word Purge(const std::string& name, std::string& expl) const;
+   NodeBase::word Purge(const std::string& name, std::string& expl) const;
 
    //  Returns the set associated with EXPR, which starts at offset POS of
    //  the input line.  The caller must invoke Release on the result after
@@ -124,11 +122,11 @@ public:
 
    //  Returns the registry of directories.  Used for iteration.
    //
-   const Registry< CodeDir >& Directories() const { return dirs_; }
+   const NodeBase::Registry< CodeDir >& Directories() const { return dirs_; }
 
    //  Returns the registry of files.  Used for iteration.
    //
-   const Registry< CodeFile >& Files() const { return files_; }
+   const NodeBase::Registry< CodeFile >& Files() const { return files_; }
 
    //> The maximum number of directories supported.
    //
@@ -141,7 +139,7 @@ public:
    //> The name for the directory that contains substitute files (see
    //  the definition of subsSet_, below).
    //
-   static fixed_string SubsDir;
+   static NodeBase::fixed_string SubsDir;
 
    //  Returns the identifiers of files that declare external types.
    //
@@ -149,20 +147,20 @@ public:
 
    //  Returns the queue of variables.  Used for iteration.
    //
-   const Q2Way< LibrarySet >& Variables() const { return vars_; }
+   const NodeBase::Q2Way< LibrarySet >& Variables() const { return vars_; }
 
    //  Overridden to display member variables.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for restarts.
    //
-   virtual void Shutdown(RestartLevel level) override;
+   virtual void Shutdown(NodeBase::RestartLevel level) override;
 
    //  Overridden for restarts.
    //
-   virtual void Startup(RestartLevel level) override;
+   virtual void Startup(NodeBase::RestartLevel level) override;
 private:
    //  Private because this singleton is not subclassed.
    //
@@ -179,19 +177,19 @@ private:
 
    //  Configuration parameter for the source code directory.
    //
-   CfgStrParmPtr sourcePathCfg_;
+   NodeBase::CfgStrParmPtr sourcePathCfg_;
 
    //  The directories in the code base.
    //
-   Registry< CodeDir > dirs_;
+   NodeBase::Registry< CodeDir > dirs_;
 
    //  The files in the code base.
    //
-   Registry< CodeFile > files_;
+   NodeBase::Registry< CodeFile > files_;
 
    //  The currently defined variables.
    //
-   Q2Way< LibrarySet > vars_;
+   NodeBase::Q2Way< LibrarySet > vars_;
 
    //  A variable for the set of all directories.
    //

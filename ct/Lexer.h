@@ -33,8 +33,6 @@
 #include "CxxFwd.h"
 #include "SysTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace CodeTools
@@ -99,7 +97,7 @@ public:
    //  Returns the current parse position.
    //
    //  NOTE: Unless stated otherwise, a non-const Lexer function advances
-   //  ====  curr_ to the next parse position after what was extracted.
+   //  ====  curr_ to the first parse position after what was extracted.
    //
    size_t Curr() const { return curr_; }
 
@@ -112,17 +110,17 @@ public:
    //
    bool Eof() const { return curr_ >= size_; }
 
-   //  Sets prev_ to curr_, moves to the next parse position from there,
+   //  Sets prev_ to curr_, finds the first parse position starting there,
    //  and returns true.
    //
    bool Advance();
 
-   //  Sets prev_ to curr_ + incr, moves to the next parse position from
+   //  Sets prev_ to curr_ + incr, finds the first parse position starting
    //  there, and returns true.
    //
    bool Advance(size_t incr);
 
-   //  Sets prev_ to POS, moves to the next parse position from there, and
+   //  Sets prev_ to POS, finds the first parse position starting there, and
    //  returns true.
    //
    bool Reposition(size_t pos);
@@ -132,8 +130,8 @@ public:
    //
    bool Retreat(size_t pos);
 
-   //  Skips the current line and moves to the next parse position starting
-   //  at the next line.  Returns true.
+   //  Skips the current line and moves to the first parse position starting
+   //  with the next line.  Returns true.
    //
    bool Skip();
 
@@ -150,12 +148,6 @@ public:
    //
    bool NextCharIs(char c);
 
-   //  The same as NextCharIs, but only advances curr_ to the character that
-   //  immediately follows C.  Used to parse literals, as it does not skip
-   //  over blanks and comments.
-   //
-   bool ThisCharIs(char c);
-
    //  Returns true if STR starts at curr_, advancing curr_ beyond STR.  Used
    //  when looking for a specific keyword or operator.  If CHECK isn't forced
    //  to false, then either
@@ -163,12 +155,7 @@ public:
    //  o if STR ends in a punctuation character, the next character must not
    //    be punctuation (and vice versa).
    //
-   bool NextStringIs(fixed_string str, bool check = true);
-
-   //  Returns the position of the first occurrence of C before the current
-   //  parse position.
-   //
-   size_t rfind(char c) const;
+   bool NextStringIs(NodeBase::fixed_string str, bool check = true);
 
    //  Returns the location where the line containing POS ends.  This is the
    //  location of the next CRLF that is not preceded by a '\'.
@@ -307,11 +294,30 @@ public:
    //  set, the code following OPT is to be compiled, else it is to be skipped.
    //
    void FindCode(OptionalCode* opt, bool compile);
+
+   //  Advances curr_ to the start of the next identifier, which is supplied
+   //  in ID.  The identifier could be a keyword or preprocessor directive.
+   //  Returns true if an identifier was found, else false.
+   //
+   bool FindIdentifier(std::string& id);
 private:
    //  Used by PreprocessSource, which creates a clone of "this" lexer to
    //  do the work.
    //
    void Preprocess();
+
+   //  The same as NextCharIs, but only advances curr_ to the character that
+   //  immediately follows C.  Used to parse literals, as it does not skip
+   //  over blanks and comments.
+   //
+   bool ThisCharIs(char c);
+
+   //  Returns the position of the next character to parse, starting at POS.
+   //  The result is POS unless characters are skipped (namely whitespace,
+   //  comments, and character and string literals).  Returns string::npos
+   //  if the end of source_ is reached.
+   //
+   size_t NextPos(size_t pos) const;
 
    //  Returns the next token.  This is a non-empty string from NextIdentifier
    //  or, failing that, a sequence of valid operator characters.  The first
@@ -330,12 +336,6 @@ private:
    //  is of the form ("<string>"<whitespace>)*"<string>".
    //
    size_t SkipStrLiteral(size_t pos, bool& fragmented) const;
-
-   //  Returns the position of the next character to parse, starting from POS.
-   //  Skips comments and character and string literals.  Returns string::npos
-   //  if the end of source_ is reached.
-   //
-   size_t NextPos(size_t pos) const;
 
    //  Parses an integer literal and returns it in NUM.  Returns the number
    //  of digits in NUM (zero if no literal was found).
@@ -356,12 +356,6 @@ private:
    //  and adds them to NUM.
    //
    void GetFloat(long double& num);
-
-   //  Advances curr_ to the start of the next identifier, which is supplied
-   //  in ID.  The identifier could be a keyword or preprocessor directive.
-   //  Returns true if an identifier was found, else false.
-   //
-   bool FindIdentifier(std::string& id);
 
    //  Advances curr_ to the start of the next preprocessor directive, which
    //  is returned.

@@ -22,6 +22,7 @@
 #include "FunctionProfiler.h"
 #include <map>
 #include <ostream>
+#include <set>
 #include <string>
 #include <utility>
 #include "Algorithms.h"
@@ -50,7 +51,8 @@ fn_name FunctionProfiler_ctor = "FunctionProfiler.ctor";
 
 FunctionProfiler::FunctionProfiler() :
    size_(1 << HashTableSizeLog2),
-   functionq_(nullptr)
+   functionq_(nullptr),
+   namespaces_(false)
 {
    Debug::ft(FunctionProfiler_ctor);
 
@@ -223,6 +225,21 @@ TraceRc FunctionProfiler::Generate(ostream& stream, Sort sort)
       return NothingToDisplay;
    }
 
+   //  If the database of all functions that invoke Debug::ft is available,
+   //  include all the functions that were not invoked during the trace.
+   //
+   if(!namespaces_)
+   {
+      auto& funcs = FunctionName::GetDatabase();
+      namespaces_ = !funcs.empty();
+
+      for(auto f = funcs.cbegin(); f != funcs.cend(); ++f)
+      {
+         auto rec = EnsureRecord(f->fn.c_str(), 0);
+         if(rec != nullptr) rec->SetNamespace(f->ns);
+      }
+   }
+
    rc = Show(stream, sort);
    return rc;
 }
@@ -284,7 +301,7 @@ TraceRc FunctionProfiler::Show(ostream& stream, Sort sort)
          else if(high->Time() < curr->Time())
             tsort = -1;
 
-         auto nsort = FunctionName::compare(curr->Func(), high->Func());
+         auto nsort = curr->Compare(*high);
 
          switch(sort)
          {

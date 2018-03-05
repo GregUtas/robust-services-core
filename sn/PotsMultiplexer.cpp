@@ -570,7 +570,7 @@ void PotsMuxPsm::SendSignal(PotsSignal::Id signal)
       //  continue on and send this as the signal.
       //
       if(header_.signal != NIL_ID) return;
-
+      //  [[fallthrough]]
    case PotsSignal::Offhook:
    case PotsSignal::Alerting:
    case PotsSignal::Facility:

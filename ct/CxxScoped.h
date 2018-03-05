@@ -102,6 +102,11 @@ public:
    //
    virtual Cxx::Access GetAccess() const override { return access_; }
 
+   //  Overridden to set BEGIN to GetPos(), END to the location of the
+   //  next semicolon, and to return string::npos.
+   //
+   virtual size_t GetRange(size_t& begin, size_t& end) const override;
+
    //  Overridden to return the scope where the declaration appeared.
    //
    virtual CxxScope* GetScope() const override { return scope_; }
@@ -135,6 +140,16 @@ public:
    //
    virtual bool IsIndirect() const override;
 
+   //  Returns true if this scope is either fqSuper or a subscope of it.
+   //
+   bool IsSubscopeOf(const std::string& fqSuper) const;
+
+   //  Overridden to use this item's fully qualified name to determine
+   //  if it is a superscope of fqSub.
+   //
+   virtual bool IsSuperscopeOf
+      (const std::string& fqSub, bool tmplt) const override;
+
    //  Overridden to return the item itself.
    //
    virtual CxxNamed* Referent() const override { return (CxxNamed*) this; }
@@ -145,7 +160,7 @@ public:
 
    //  Overridden to set the scope where the declaration appeared.
    //
-   virtual void SetScope(CxxScope* scope) const override { scope_ = scope; }
+   virtual void SetScope(CxxScope* scope) override { scope_ = scope; }
 protected:
    //  Protected because this class is virtual.
    //
@@ -166,17 +181,17 @@ protected:
 private:
    //  The scope where the item appeared.
    //
-   mutable CxxScope* scope_;
+   CxxScope* scope_;
 
    //  The access control level for the item.
    //
    Cxx::Access access_ : 8;
 
-   //  Set if the function required public access.
+   //  Set if the item required public access.
    //
    mutable bool public_;
 
-   //  Set if the function required protected access.
+   //  Set if the item required protected access.
    //
    mutable bool protected_;
 };
@@ -265,7 +280,7 @@ public:
    //  Overridden to display the argument.
    //
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to record that the argument cannot be const.
    //
@@ -447,7 +462,7 @@ public:
    //  Overridden to display the enumeration.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to make the enumeration visible as a local.
    //
@@ -538,7 +553,7 @@ public:
    //  Overridden to display the enumeration.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to make the enumerator visible as a local and to execute
    //  its initialization statement.
@@ -561,9 +576,10 @@ public:
    //
    virtual Numeric GetNumeric() const override { return Numeric::Enum; }
 
-   //  Overridden to enable promotion of the enumerator to its enum's scope.
+   //  Overridden to enable promotion of the enumerator to its enum's scope
+   //  (that is, <scope>::enumerator as well as <scope>::enum::enumerator).
    //
-   virtual bool GetScopedName(std::string& name, size_t n) const override;
+   virtual void GetScopedNames(stringVector& names) const override;
 
    //  Overridden to determine if the enumerator is unused.
    //
@@ -644,7 +660,7 @@ public:
    //  Overridden to display the declaration.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to push the declaration's referent onto the argument stack.
    //
@@ -773,7 +789,7 @@ public:
    //  fully qualified name is displayed.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to push the declaration's referent onto the argument stack.
    //
@@ -932,7 +948,7 @@ public:
    //  TYPE is not supplied, TypeString() is NAME.
    //
    explicit Terminal
-      (const std::string& name, const std::string& type = EMPTY_STR);
+      (const std::string& name, const std::string& type = NodeBase::EMPTY_STR);
 
    //  Not subclassed.
    //
@@ -953,7 +969,7 @@ public:
    //  Overridden to display the terminal.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to push the terminal onto the stack.
    //
@@ -965,7 +981,8 @@ public:
 
    //  Overridden to indicate that a terminal does not appear in a file.
    //
-   virtual id_t GetDeclFid() const override { return NIL_ID; }
+   virtual NodeBase::id_t GetDeclFid() const override
+      { return NodeBase::NIL_ID; }
 
    //  Overridden to return the terminal's attributes as an integer.
    //
@@ -1033,12 +1050,12 @@ public:
    //  Overridden to display the typedef in a function.
    //
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to display the typedef.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to make the typedef visible as a local.
    //
@@ -1136,10 +1153,11 @@ public:
    //
    ~Using() { CxxStats::Decr(CxxStats::USING_DECL); }
 
-   //  Returns true if the declaration/directive makes NAME visible to
-   //  at least the position specified by PREFIX.
+   //  Returns true if the declaration/directive makes fqName visible
+   //  within SCOPE to at least the position specified by PREFIX.
    //
-   bool IsUsingFor(const std::string& name, size_t prefix) const;
+   bool IsUsingFor
+      (const std::string& fqName, size_t prefix, const CxxScope* scope) const;
 
    //  Used by >trim when the statement should be removed.
    //
@@ -1165,7 +1183,7 @@ public:
    //  qualified name is displayed.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to make the declaration available to the current block.
    //
@@ -1213,9 +1231,9 @@ public:
    //
    virtual std::string ScopedName(bool templates) const override;
 
-   //  Overridden to set the scope where the declaration appeared.
+   //  Overridden to adjust the scope for a using statement within a class.
    //
-   virtual void SetScope(CxxScope* scope) const override;
+   virtual void SetScope(CxxScope* scope) override;
 
    //  Overridden to shrink the item's name.
    //

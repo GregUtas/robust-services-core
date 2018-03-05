@@ -33,6 +33,7 @@
 #include "Debug.h"
 #include "Singleton.h"
 
+using namespace NodeBase;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -139,7 +140,11 @@ size_t Lexer::FindClosing(char lhc, char rhc, size_t pos) const
    auto f = false;
    size_t level = 1;
 
-   if(pos == string::npos) pos = curr_;
+   if(pos == string::npos)
+      pos = curr_;
+   else
+      ++pos;
+
    pos = NextPos(pos);
 
    while(pos < size_)
@@ -273,13 +278,13 @@ size_t Lexer::FindFirstOf(const string& targs) const
          pos = SkipCharLiteral(pos);
          break;
       case '{':
-         pos = FindClosing('{', '}', pos + 1);
+         pos = FindClosing('{', '}', pos);
          break;
       case '(':
-         pos = FindClosing('(', ')', pos + 1);
+         pos = FindClosing('(', ')', pos);
          break;
       case '[':
-         pos = FindClosing('[', ']', pos + 1);
+         pos = FindClosing('[', ']', pos);
          break;
       }
 
@@ -1652,27 +1657,6 @@ bool Lexer::Retreat(size_t pos)
 
 //------------------------------------------------------------------------------
 
-fn_name Lexer_Rfind = "Lexer.rfind";
-
-size_t Lexer::rfind(char c) const
-{
-   Debug::ft(Lexer_Rfind);
-
-   if(curr_ == 0) return string::npos;
-   auto pos = (curr_ < size_ ? curr_ - 1 : size_ - 1);
-
-   while(true)
-   {
-      if(source_->at(pos) == c) return pos;
-      if(pos == 0) break;
-      --pos;
-   }
-
-   return string::npos;
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Lexer_Skip = "Lexer.Skip";
 
 bool Lexer::Skip()
@@ -1727,7 +1711,7 @@ size_t Lexer::SkipStrLiteral(size_t pos, bool& fragmented) const
       switch(c)
       {
       case QUOTE:
-         next = source_->find_first_not_of(Whitespace, pos + 1);
+         next = source_->find_first_not_of(WhitespaceChars, pos + 1);
          if(next == string::npos) return pos;
          if(source_->at(next) != QUOTE) return pos;
          fragmented = true;

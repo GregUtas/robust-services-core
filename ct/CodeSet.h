@@ -45,7 +45,7 @@ public:
    //  Overridden to display member variables.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Override the operators supported by both directories and files.
    //
@@ -56,7 +56,7 @@ public:
 
    //  Updates STREAM with the number of files in the set and returns 0.
    //
-   virtual word Count(std::string& result) const override;
+   virtual NodeBase::word Count(std::string& result) const override;
 protected:
    //  Creates a set that is identified by NAME.  SET is the actual set, if
    //  known.  Protected because this class is virtual.
@@ -69,7 +69,8 @@ protected:
 private:
    //  Overridden to allow assignment.
    //
-   virtual word PreAssign(std::string& expl) const override { return 0; }
+   virtual NodeBase::word PreAssign(std::string& expl) const override
+      { return 0; }
 
    //  The set's contents.
    //

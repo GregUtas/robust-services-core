@@ -855,6 +855,7 @@ SxpTrace::SxpTrace
    {
    case Event::AnalyzeSap:
       curr_ = static_cast< const AnalyzeSapEvent& >(sxp).CurrEvent()->Eid();
+      break;
    case Event::AnalyzeSnp:
       curr_ = static_cast< const AnalyzeSnpEvent& >(sxp).CurrEvent()->Eid();
    }

@@ -36,6 +36,7 @@
 #include "Registry.h"
 #include "Singleton.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::setw;
 using std::string;
@@ -70,8 +71,12 @@ std::vector< WarningLog > CodeInfo::Warnings_ = std::vector< WarningLog >();
 
 //------------------------------------------------------------------------------
 
+fn_name CodeInfo_AddWarning = "CodeInfo.AddWarning";
+
 void CodeInfo::AddWarning(const WarningLog& log)
 {
+   Debug::ft(CodeInfo_AddWarning);
+
    if(FindWarning(log) < 0) Warnings_.push_back(log);
 }
 
@@ -198,12 +203,13 @@ void CodeInfo::GenerateReport(ostream* stream, const SetOfIds& set)
          if(item->offset != 0) *stream << '/' << item->offset;
          *stream << "): ";
 
-         if((item->line != 0) || item->info.empty())
+         if(item->DisplayCode())
          {
             *stream << item->file->GetLexer().GetNthLine(item->line);
          }
 
-         *stream << item->info << CRLF;
+         if(item->DisplayInfo()) *stream << item->info;
+         *stream << CRLF;
          ++item;
       }
       while((item != last) && (item->warning == w));
@@ -273,6 +279,8 @@ bool CodeInfo::IsSortedByFile(const WarningLog& log1, const WarningLog& log2)
    if(log1.warning > log2.warning) return false;
    if(log1.line < log2.line) return true;
    if(log1.line > log2.line) return false;
+   if(log1.offset < log2.offset) return true;
+   if(log1.offset > log2.offset) return false;
    if(log1.info < log2.info) return true;
    if(log1.info > log2.info) return false;
    return (&log1 < &log2);
@@ -289,6 +297,8 @@ bool CodeInfo::IsSortedByWarning(const WarningLog& log1, const WarningLog& log2)
    if(result == 1) return false;
    if(log1.line < log2.line) return true;
    if(log1.line > log2.line) return false;
+   if(log1.offset < log2.offset) return true;
+   if(log1.offset > log2.offset) return false;
    if(log1.info < log2.info) return true;
    if(log1.info > log2.info) return false;
    return (&log1 < &log2);

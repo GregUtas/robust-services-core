@@ -81,12 +81,13 @@ namespace CodeTools
    //
    size_t NameCouldReferTo(const std::string& fqName, const std::string& name);
 
-   //  Returns the last location where NAME matches a front substring of fqName,
-   //  in which case NAME is a superscope of fqName.  Returns string::npos if
-   //  NAME cannot be a superscope of fqName.
+   //  Returns the last location where fqSuper matches a front substring of
+   //  fqSub, in which case fqSuper is a superscope of fqSub.  TMPLT is set if
+   //  a template should be considered a superscope of one of its instances.
+   //  Returns string::npos if fqSuper cannot be a superscope of fqSub.
    //
-   size_t NameIsSuperscopeOf
-      (const std::string& fqName, const std::string& name);
+   size_t CompareScopes
+      (const std::string& fqSub, const std::string& fqSuper, bool tmplt);
 
    //  Updates TYPE based on PTRS.  If PTRS is 0, S is unchanged.  If PTRS is
    //  positive, that number of asterisks are appended to TYPE.  If PTRS is

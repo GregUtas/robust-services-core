@@ -27,15 +27,13 @@
 #include "CxxFwd.h"
 #include "NbTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace CodeTools
 {
-class CxxRoot : public Temporary
+class CxxRoot : public NodeBase::Temporary
 {
-   friend class Singleton< CxxRoot >;
+   friend class NodeBase::Singleton< CxxRoot >;
    friend NamespacePtr::deleter_type;
 public:
    //  Returns the global namespace.
@@ -78,15 +76,15 @@ public:
    //  Overridden to display macros.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for restarts.
    //
-   virtual void Shutdown(RestartLevel level) override;
+   virtual void Shutdown(NodeBase::RestartLevel level) override;
 
    //  Overridden for restarts.
    //
-   virtual void Startup(RestartLevel level) override;
+   virtual void Startup(NodeBase::RestartLevel level) override;
 private:
    //  Private because this singleton is not subclassed.
    //

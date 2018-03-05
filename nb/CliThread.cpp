@@ -602,9 +602,10 @@ void CliThread::ReadCommands()
             }
 
             //  StreamEof and StreamFailure are not reported when reading from
-            //  the console.  Fall through and pause before continuing.
+            //  the console.  Pause before continuing.
             //
             Debug::SwErr(CliThread_ReadCommands, rc, 1);
+            //  [fallthrough]
          case StreamInterrupt:
          case StreamRestart:
             //

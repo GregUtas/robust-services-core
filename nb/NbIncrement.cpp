@@ -2782,9 +2782,9 @@ word ThreadsCommand::ProcessCommand(CliThread& cli) const
 //
 //  The TOOLS command.
 //
-fixed_string ToolHeaderStr = "  Tool Name           Abbr   Explanation";
-//                           0         1         2         3         4
-//                           01234567890123456789012345678901234567890
+fixed_string ToolHeaderStr = "  Tool Name          Abbr  Explanation";
+//                           0         1         2        3         4
+//                           0123456789012345678901345678901234567890
 
 class ToolsCommand : public CliCommand
 {
@@ -2820,13 +2820,13 @@ word ToolsCommand::ProcessCommand(CliThread& cli) const
       if(!t->IsSafe()) continue;
 
       string name(t->Name());
-      if(name.size() > 18) name.erase(18);
-      *cli.obuf << spaces(2) << std::left << setw(18) << name;
-      *cli.obuf << spaces(4) << std::right << c;
+      if(name.size() > 17) name.erase(17);
+      *cli.obuf << spaces(2) << std::left << setw(17) << name;
+      *cli.obuf << spaces(2) << std::right << setw(4) << c;
 
       string expl(t->Expl());
       if(expl.size() > 52) expl.erase(52);
-      *cli.obuf << spaces(4) << expl << CRLF;
+      *cli.obuf << spaces(2) << std::left << expl << CRLF;
    }
 
    return 0;

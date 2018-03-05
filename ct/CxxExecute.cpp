@@ -29,7 +29,6 @@
 #include "CxxArea.h"
 #include "CxxNamed.h"
 #include "CxxScope.h"
-#include "CxxScoped.h"
 #include "CxxString.h"
 #include "CxxSymbols.h"
 #include "CxxToken.h"
@@ -43,6 +42,7 @@
 #include "TraceBuffer.h"
 #include "TraceDump.h"
 
+using namespace NodeBase;
 using std::setw;
 using std::string;
 
@@ -175,18 +175,6 @@ bool Context::Tracing_ = false;
 
 //------------------------------------------------------------------------------
 
-fn_name Context_AddUsing = "Context.AddUsing";
-
-bool Context::AddUsing(UsingPtr& use)
-{
-   Debug::ft(Context_AddUsing);
-
-   if(use->EnterScope()) File_->InsertUsing(use);
-   return true;
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Context_Enter = "Context.Enter";
 
 void Context::Enter(const CxxScoped* owner)
@@ -195,6 +183,14 @@ void Context::Enter(const CxxScoped* owner)
 
    Trace(CxxTrace::START_SCOPE, 0, owner->ScopedName(true));
    SetPos(owner);
+}
+
+//------------------------------------------------------------------------------
+
+const Parser* Context::GetParser()
+{
+   if(Frame_ == nullptr) return nullptr;
+   return Frame_->GetParser();
 }
 
 //------------------------------------------------------------------------------
@@ -316,6 +312,16 @@ void Context::SetFile(CodeFile* file)
 
 //------------------------------------------------------------------------------
 
+void Context::SetPos(size_t pos)
+{
+   //  This can be invoked when the Editor adds code, in which case
+   //  there will be no parse frame.
+   //
+   if(Frame_ != nullptr) Frame_->SetPos(pos);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Context_SetPos = "Context.SetPos";
 
 void Context::SetPos(const CxxScoped* scope)
@@ -426,8 +432,12 @@ void Context::Trace(CxxTrace::Action act, const CxxToken* token)
 
 //------------------------------------------------------------------------------
 
+fn_name Context_WasCalled = "Context.WasCalled";
+
 void Context::WasCalled(Function* func)
 {
+   Debug::ft(Context_WasCalled);
+
    if(func == nullptr) return;
    func->WasCalled();
    auto arg = StackArg(func, 0);
@@ -1130,7 +1140,7 @@ void StackArg::CheckIfBool() const
 {
    Debug::ft(StackArg_CheckIfBool);
 
-   switch(DataSpec(BOOL_STR).MustMatchWith(*this))
+   switch(DataSpec::Bool->MustMatchWith(*this))
    {
    case Compatible:
    case Incompatible:

@@ -158,7 +158,7 @@ extern const std::string ValidOctDigits;
 
 //  Whitespace characters.
 //
-extern const std::string Whitespace;
+extern const std::string WhitespaceChars;
 
 //  Single (//------...) and double (///======...) rules.
 //
@@ -369,12 +369,13 @@ enum Warning
    RemoveSemicolon,          // unnecessary semicolon
    RedundantConst,           // more than one const qualifier for same token
    DefineNotAtFileScope,     // #define appears within a class or function
-   IncludeNotAtFileScope,    // #include appears within a class or function
+   IncludeNotAtGlobalScope,  // #include appears outside of global namespace
    IncludeGuardMissing,      // no #include guard
    IncludeNotSorted,         // #include not sorted in standard order
    IncludeDuplicated,        // #include already exists for this file
    IncludeAdd,               // #include should be added
    IncludeRemove,            // #include should be removed
+   HeaderReliesOnUsing,      // header relies on using directive or declaration
    UsingInHeader,            // header contains using directive or declaration
    UsingDuplicated,          // using statement duplicated
    UsingAdd,                 // using statement should be added

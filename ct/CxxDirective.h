@@ -108,11 +108,11 @@ public:
    //  Overridden to display the directive.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to log an #include that is not at file scope.
    //
-   virtual void SetScope(CxxScope* scope) const override;
+   virtual void SetScope(CxxScope* scope) override;
 
    //  Overridden to report the filename's length.
    //
@@ -141,7 +141,7 @@ public:
    //  Overridden to display the directive.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to report the symbol's length.
    //
@@ -171,6 +171,10 @@ public:
    //
    virtual void EnterBlock() override;
 
+   //  Overridden to return the global namespace.
+   //
+   virtual CxxScope* GetScope() const override;
+
    //  Overridden to update SYMBOLS with the name's type usage.
    //
    virtual void GetUsages
@@ -183,7 +187,7 @@ public:
    //  Overridden to display the name, including any template arguments.
    //
    virtual void Print
-      (std::ostream& stream, const Flags& options) const override;
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to return the macro's name.
    //
@@ -249,7 +253,7 @@ public:
    //  Overridden to display the macro.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to invoke GetNumeric on the referent, if found.
    //
@@ -351,7 +355,7 @@ public:
    //  Overridden to display the directive.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to log a #define that is not at file scope.
    //
@@ -417,7 +421,7 @@ public:
    //  Overridden to display source code if it was not compiled.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to return true if compiled code follows this directive.
    //
@@ -467,7 +471,7 @@ public:
    //  Overridden to display the condition.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to return the result of evaluating the condition.
    //
@@ -509,7 +513,7 @@ public:
    //  Overridden to display the directive.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to update SYMBOLS with name_'s referent.
    //
@@ -524,10 +528,10 @@ public:
    //
    virtual void Shrink() override;
 protected:
-   //  NAME is the symbol whose existence an #ifdef or #ifndef is checking.
+   //  MACRO is the symbol whose existence an #ifdef or #ifndef is checking.
    //  Protected because this class is virtual.
    //
-   explicit Existential(std::string& name);
+   explicit Existential(MacroNamePtr& macro);
 
    //  Returns true if name_ has been defined.
    //
@@ -560,7 +564,7 @@ public:
    //  Overridden to display the directive.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to handle the code that follows the #elif.
    //
@@ -585,7 +589,7 @@ public:
    //  Overridden to display the directive.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to handle the code that follows the #else.
    //
@@ -610,7 +614,7 @@ public:
    //  Overridden to display the directive.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -620,9 +624,9 @@ public:
 class Ifdef : public Existential
 {
 public:
-   //  Creates an #ifdef directive that checks for the existence of SYMBOL.
+   //  Creates an #ifdef directive that checks for the existence of MACRO.
    //
-   explicit Ifdef(std::string& symbol);
+   explicit Ifdef(MacroNamePtr& macro);
 
    //  Not subclassed.
    //
@@ -631,7 +635,7 @@ public:
    //  Overridden to display the directive.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to handle the code that follows the #ifdef.
    //
@@ -664,7 +668,7 @@ public:
    //  Overridden to display the directive.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to handle the code that follows the #if.
    //
@@ -695,9 +699,9 @@ private:
 class Ifndef : public Existential
 {
 public:
-   //  Creates an #ifndef directive that checks for the existence of SYMBOL.
+   //  Creates an #ifndef directive that checks for the existence of MACRO.
    //
-   explicit Ifndef(std::string& symbol);
+   explicit Ifndef(MacroNamePtr& macro);
 
    //  Not subclassed.
    //
@@ -706,7 +710,7 @@ public:
    //  Overridden to display the directive.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to handle the code that follows the #ifndef.
    //
@@ -760,7 +764,7 @@ public:
    //  Overridden to display the directive.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -781,7 +785,7 @@ public:
    //  Overridden to display the directive.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to generate a log.
    //
@@ -806,7 +810,7 @@ public:
    //  Overridden to display the directive.
    //
    virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 };
 }
 #endif

@@ -35,15 +35,13 @@ namespace CodeTools
    class LibrarySet;
 }
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace CodeTools
 {
 //  Used to evaluate the arguments to a library command.
 //
-class Interpreter : public Temporary
+class Interpreter : public NodeBase::Temporary
 {
 public:
    //  Sets the expression to be evaluated to EXPR, which

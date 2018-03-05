@@ -246,7 +246,7 @@ public:
    //
    size_t Size() const
    {
-      Debug::ft(Q2Way_Count());
+      Debug::ft(Q2Way_Size());
       if(diff_ == NilDiff) return 0;  // queue is not initialized
       size_t count = 0;               // initialize count
       Q2Link* item = head_.next;      // start at first item
@@ -366,7 +366,7 @@ private:
    inline static fn_name Q2Way_Exq()   { return "Q2Way.Exq"; }
    inline static fn_name Q2Way_Next()  { return "Q2Way.Next"; }
    inline static fn_name Q2Way_Prev()  { return "Q2Way.Prev"; }
-   inline static fn_name Q2Way_Count() { return "Q2Way.Count"; }
+   inline static fn_name Q2Way_Size()  { return "Q2Way.Size"; }
    inline static fn_name Q2Way_Purge() { return "Q2Way.Purge"; }
    inline static fn_name Q2Way_Item()  { return "Q2Way.Item"; }
 

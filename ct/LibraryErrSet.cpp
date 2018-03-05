@@ -27,6 +27,7 @@
 #include "Debug.h"
 #include "Formatters.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 

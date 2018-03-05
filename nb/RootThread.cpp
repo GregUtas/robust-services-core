@@ -211,12 +211,13 @@ void RootThread::Enter()
          }
 
          if(reason == NilRestart) break;
-         //
+
          //  Continue into the default clause to initiate a restart.  We also
          //  end up there if our state somehow gets corrupted.  Note that if
          //  InitThread interrupts us to initiate a restart, we loop back to
          //  the Initializing state.
          //
+         //  [fallthrough]
       default:
          //  A restart is necessary.  Generate a log.  If InitThread still
          //  exists, tell it to initiate a restart.  If it doesn't exist,

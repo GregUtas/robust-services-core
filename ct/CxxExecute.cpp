@@ -61,7 +61,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   virtual bool Display(std::ostream& stream) override;
+   virtual bool Display(std::ostream& stream, bool diff) override;
 };
 
 class ArgTrace : public CxxTrace
@@ -73,7 +73,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   virtual bool Display(std::ostream& stream) override;
+   virtual bool Display(std::ostream& stream, bool diff) override;
 private:
    //  The argument associated with the action.
    //
@@ -89,7 +89,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   virtual bool Display(std::ostream& stream) override;
+   virtual bool Display(std::ostream& stream, bool diff) override;
 private:
    //  The token associated with the action.
    //
@@ -105,7 +105,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   virtual bool Display(std::ostream& stream) override;
+   virtual bool Display(std::ostream& stream, bool diff) override;
 private:
    //  The file associated with the action.
    //
@@ -125,7 +125,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   virtual bool Display(std::ostream& stream) override;
+   virtual bool Display(std::ostream& stream, bool diff) override;
 private:
    //  If non-zero, the error associated with the action.
    //
@@ -142,9 +142,9 @@ ActTrace::ActTrace(Action action) : CxxTrace(sizeof(ActTrace), action) { }
 
 //------------------------------------------------------------------------------
 
-bool ActTrace::Display(std::ostream& stream)
+bool ActTrace::Display(std::ostream& stream, bool diff)
 {
-   CxxTrace::Display(stream);
+   CxxTrace::Display(stream, diff);
    return true;
 }
 
@@ -158,9 +158,9 @@ ArgTrace::ArgTrace(Action action, const StackArg& arg) :
 
 //------------------------------------------------------------------------------
 
-bool ArgTrace::Display(std::ostream& stream)
+bool ArgTrace::Display(std::ostream& stream, bool diff)
 {
-   CxxTrace::Display(stream);
+   CxxTrace::Display(stream, diff);
    stream << arg_.Trace();
    return true;
 }
@@ -484,13 +484,13 @@ CxxTrace::CxxTrace(size_t size, Action action) :
 
 //------------------------------------------------------------------------------
 
-bool CxxTrace::Display(std::ostream& stream)
+bool CxxTrace::Display(std::ostream& stream, bool diff)
 {
    auto buff = Singleton< TraceBuffer >::Instance();
 
    if(buff->ToolIsOn(FunctionTracer))
    {
-      TraceRecord::Display(stream);
+      TraceRecord::Display(stream, diff);
       stream << spaces(TraceDump::EvtToObj);
    }
 
@@ -529,9 +529,9 @@ ErrTrace::~ErrTrace()
 
 //------------------------------------------------------------------------------
 
-bool ErrTrace::Display(std::ostream& stream)
+bool ErrTrace::Display(std::ostream& stream, bool diff)
 {
-   CxxTrace::Display(stream);
+   CxxTrace::Display(stream, diff);
 
    if(rid_ == ERROR)
    {
@@ -557,9 +557,9 @@ FileTrace::FileTrace(Action action, const CodeFile& file) :
 
 //------------------------------------------------------------------------------
 
-bool FileTrace::Display(std::ostream& stream)
+bool FileTrace::Display(std::ostream& stream, bool diff)
 {
-   CxxTrace::Display(stream);
+   CxxTrace::Display(stream, diff);
    stream << file_->Name();
    return true;
 }
@@ -1651,9 +1651,9 @@ TokenTrace::TokenTrace(Action action, const CxxToken* token) :
 
 //------------------------------------------------------------------------------
 
-bool TokenTrace::Display(std::ostream& stream)
+bool TokenTrace::Display(std::ostream& stream, bool diff)
 {
-   CxxTrace::Display(stream);
+   CxxTrace::Display(stream, diff);
    stream << token_->Trace();
    return true;
 }

@@ -47,7 +47,7 @@ fixed_string BlockedStr = "Functions not captured because buffer was locked: ";
 
 fn_name TraceDump_Generate = "TraceDump.Generate";
 
-TraceRc TraceDump::Generate(ostream& stream)
+TraceRc TraceDump::Generate(ostream& stream, bool diff)
 {
    Debug::ft(TraceDump_Generate);
 
@@ -82,7 +82,7 @@ TraceRc TraceDump::Generate(ostream& stream)
       {
          if(buff->ToolIsOn(rec->Owner()))
          {
-            if(rec->Display(stream)) stream << CRLF;
+            if(rec->Display(stream, diff)) stream << CRLF;
          }
       }
    }

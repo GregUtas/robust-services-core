@@ -79,9 +79,9 @@ public:
    //
    static void Initiate(reinit_t reason, debug32_t errval);
 private:
-   //  Private because this class only has static members.
+   //  Deleted because this class only has static members.
    //
-   Restart();
+   Restart() = delete;
 
    //  The state of system initialization or shutdown.
    //

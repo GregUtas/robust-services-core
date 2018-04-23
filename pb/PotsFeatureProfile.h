@@ -77,8 +77,8 @@ protected:
 private:
    //  Deleted to prohibit copying.
    //
-   PotsFeatureProfile(const PotsFeatureProfile& that);
-   PotsFeatureProfile& operator=(const PotsFeatureProfile& that);
+   PotsFeatureProfile(const PotsFeatureProfile& that) = delete;
+   PotsFeatureProfile& operator=(const PotsFeatureProfile& that) = delete;
 
    //  Deletes the user's subscription to the feature.  Deletion is actually
    //  performed by PotsProfile.Unsubscribe (see below), which also invokes

@@ -2524,14 +2524,16 @@ void Function::CheckIfDefined() const
    Debug::ft(Function_CheckIfDefined);
 
    //  A function without an implementation is logged as undefined unless
-   //  o it's actually part of a function signature typedef, or
-   //  o it is deleting the default that the compiler would otherwise provide.
+   //  o it's actually part of a function signature typedef;
+   //  o it is deleting the default that the compiler would otherwise provide;
+   //  o it uses the compiler-generated default.
    //  Pure virtual functions are logged separately, because not providing an
    //  implementation may be intentional.
    //
    if(GetDefn()->impl_ != nullptr) return;
    if(type_) return;
    if(IsDeleted()) return;
+   if(defaulted_) return;
 
    if(pure_)
       Log(PureVirtualNotDefined);
@@ -3702,6 +3704,8 @@ fn_name Function_IsDeleted = "Function.IsDeleted";
 bool Function::IsDeleted() const
 {
    Debug::ft(Function_IsDeleted);
+
+   if(deleted_) return true;
 
    //  A private constructor, operator=, or operator new, usually serves to
    //  prohibit stack allocation, copying, or heap allocation, respectively.

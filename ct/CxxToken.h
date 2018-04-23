@@ -50,6 +50,8 @@ struct CxxUsageSets
    CxxNamedSet friends;    // types resolved via a friend declaration
    CxxNamedSet users;      // names resolved via a using statement
 
+   CxxUsageSets() = default;  // create empty CxxNamedSets
+
    //  Adds ITEM to the specified set (AddForward adds ITEM to FRIENDS if
    //  it is a friend declaration).  These functions exist so that a debug
    //  breakpoint can be set within them to find the origin of an item.
@@ -357,9 +359,11 @@ public:
    //
    struct Tags
    {
-      Radix radix_ : 8;
-      bool unsigned_ : 8;  // "U" suffix
-      Size size_ : 8;
+      const Radix radix_ : 8;
+      const bool unsigned_ : 8;  // "U" suffix
+      const Size size_ : 8;
+
+      Tags(Radix r, bool u, Size s) : radix_(r), unsigned_(u), size_(s) { }
    };
 
    IntLiteral(int64_t num, const Tags& tags)
@@ -397,6 +401,8 @@ public:
    {
       bool exp_ : 8;  // included an exponent
       Size size_ : 8;
+
+      Tags(bool e, Size s) : exp_(e), size_(s) { }
    };
 
    FloatLiteral(long double num, const Tags& tags)

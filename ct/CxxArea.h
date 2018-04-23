@@ -229,9 +229,12 @@ private:
 //
 struct DataInitAttrs
 {
-   const Data* member;  // a data member
-   bool initNeeded;     // set if it needs to be explicitly initialized
-   size_t initOrder;    // the order in which it was initialized
+   const Data* const member;  // a data member
+   const bool initNeeded;     // set if it needs to be explicitly initialized
+   size_t initOrder;          // the order in which it was initialized
+
+   DataInitAttrs(const Data* m, bool n, size_t o) :
+      member(m), initNeeded(n), initOrder(o) { }
 };
 
 typedef std::vector< DataInitAttrs > DataInitVector;

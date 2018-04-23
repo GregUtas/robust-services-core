@@ -113,8 +113,8 @@ protected:
 private:
    //  Deleted to prohibit copying.
    //
-   PotsFeature(const PotsFeature& that);
-   PotsFeature& operator=(const PotsFeature& that);
+   PotsFeature(const PotsFeature& that) = delete;
+   PotsFeature& operator=(const PotsFeature& that) = delete;
 
    //  Returns the parameters used to provision the feature.
    //

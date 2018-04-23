@@ -1319,18 +1319,12 @@ void Class::GetMemberInitAttrs(DataInitVector& members) const
 {
    Debug::ft(Class_GetMemberInitAttrs);
 
-   DataInitAttrs attrs;
-
    auto data = Datas();
 
    for(size_t i = 0; i < data->size(); ++i)
    {
       auto mem = data->at(i).get();
-
-      attrs.member = mem;
-      attrs.initNeeded = !mem->IsDefaultConstructible();
-      attrs.initOrder = 0;
-
+      auto attrs = DataInitAttrs(mem, !mem->IsDefaultConstructible(), 0);
       members.push_back(attrs);
    }
 }

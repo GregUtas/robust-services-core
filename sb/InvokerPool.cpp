@@ -101,8 +101,8 @@ public:
 private:
    //  Deleted to prohibit copying.
    //
-   InvokerWork(const InvokerWork& that);
-   InvokerWork& operator=(const InvokerWork& that);
+   InvokerWork(const InvokerWork& that) = delete;
+   InvokerWork& operator=(const InvokerWork& that) = delete;
 };
 
 //------------------------------------------------------------------------------

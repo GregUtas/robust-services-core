@@ -215,11 +215,11 @@ public:
    static const Id ProxyRelease  = FirstId + 3;
    static const Id NextId        = FirstId + 4;
 private:
-   //  Private because this class only has static members.  Its purpose is
+   //  Deleted because this class only has static members.  Its purpose is
    //  to define event identifiers, but the events themselves are derived
    //  from various basic call events.
    //
-   ProxyBcEvent();
+   ProxyBcEvent() = delete;
 };
 
 //  This event is used by services such as call transfer and call forwarding
@@ -384,11 +384,11 @@ public:
    static const Id ProxyAnswerSnp  = FirstId + 2;
    static const Id NextId          = FirstId + 3;
 private:
-   //  Private because this class only has static members.  It defines
+   //  Deleted because this class only has static members.  It defines
    //  trigger identifiers to which active modifier SSMs can react, but
    //  no actual triggers (for Initiators) use these identifiers as yet.
    //
-   ProxyBcTrigger();
+   ProxyBcTrigger() = delete;
 };
 
 //------------------------------------------------------------------------------

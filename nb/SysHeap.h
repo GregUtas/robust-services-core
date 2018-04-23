@@ -117,10 +117,10 @@ private:
    SysHeap(const SysHeap& that) = delete;
    SysHeap& operator=(const SysHeap& that) = delete;
 
-   //  Overridden to prevent allocation on another heap.
+   //  Deleted to prevent allocation on another heap.
    //
-   static void* operator new(size_t size, MemoryType type);
-   static void* operator new[](size_t size, MemoryType type);
+   static void* operator new(size_t size, MemoryType type) = delete;
+   static void* operator new[](size_t size, MemoryType type) = delete;
 
    //  The type of memory provided by the heap.
    //

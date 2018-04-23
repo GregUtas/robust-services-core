@@ -45,9 +45,9 @@ MemoryTrace::MemoryTrace(Id rid, const void* addr, MemoryType type,
 
 //------------------------------------------------------------------------------
 
-bool MemoryTrace::Display(ostream& stream)
+bool MemoryTrace::Display(ostream& stream, bool diff)
 {
-   if(!TimedRecord::Display(stream)) return false;
+   if(!TimedRecord::Display(stream, diff)) return false;
 
    stream << spaces(TraceDump::EvtToObj) << addr_ << TraceDump::Tab();
    stream << "type=" << TypeString(type_) << spaces(3);

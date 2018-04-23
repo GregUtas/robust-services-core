@@ -153,8 +153,8 @@ protected:
 private:
    //  Deleted to prohibit copying.
    //
-   PotsProfile(const PotsProfile& that);
-   PotsProfile& operator=(const PotsProfile& that);
+   PotsProfile(const PotsProfile& that) = delete;
+   PotsProfile& operator=(const PotsProfile& that) = delete;
 
    //  The profile's directory number.
    //

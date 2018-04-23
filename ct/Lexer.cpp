@@ -756,10 +756,7 @@ bool Lexer::GetNum(TokenPtr& item)
 
    if(!CxxChar::Attrs[c].validInt)
    {
-      IntLiteral::Tags tags;
-      tags.radix_ = IntLiteral::DEC;
-      tags.unsigned_ = false;
-      tags.size_ = IntLiteral::SIZE_I;
+      auto tags = IntLiteral::Tags(IntLiteral::DEC, false, IntLiteral::SIZE_I);
       auto value = CxxChar::Attrs[CurrChar()].intValue;
       if(value < 0) return false;
       item.reset(new IntLiteral(value, tags));
@@ -803,8 +800,7 @@ bool Lexer::GetNum(TokenPtr& item)
       long double fp = num;
       GetFloat(fp);
 
-      FloatLiteral::Tags tags;
-      tags.exp_ = false;
+      auto tags = FloatLiteral::Tags(false, FloatLiteral::SIZE_D);
 
       if(ThisCharIs('E') || ThisCharIs('e'))
       {
@@ -823,8 +819,6 @@ bool Lexer::GetNum(TokenPtr& item)
          tags.size_ = FloatLiteral::SIZE_L;
       else if(ThisCharIs('F') || ThisCharIs('f'))
          tags.size_ = FloatLiteral::SIZE_F;
-      else
-         tags.size_ = FloatLiteral::SIZE_D;
 
       item.reset(new FloatLiteral(fp, tags));
 
@@ -867,10 +861,7 @@ bool Lexer::GetNum(TokenPtr& item)
       }
    }
 
-   IntLiteral::Tags tags;
-   tags.radix_ = radix;
-   tags.unsigned_ = uns;
-   tags.size_ = size;
+   auto tags = IntLiteral::Tags(radix, uns, size);
    item.reset(new IntLiteral(num, tags));
    return Advance();
 }

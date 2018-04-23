@@ -45,6 +45,18 @@ using std::string;
 
 namespace CodeTools
 {
+WarningLog::WarningLog(const CodeFile* file, size_t line,
+   Warning warning, size_t offset, const std::string& info) :
+   file(file),
+   line(line),
+   warning(warning),
+   offset(offset),
+   info(info)
+{
+}
+
+//------------------------------------------------------------------------------
+
 bool WarningLog::operator==(const WarningLog& that) const
 {
    if(this->file != that.file) return false;

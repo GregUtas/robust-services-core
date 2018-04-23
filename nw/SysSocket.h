@@ -200,8 +200,8 @@ protected:
 private:
    //  Deleted to prohibit copying.
    //
-   SysSocket(const SysSocket& that);
-   SysSocket& operator=(const SysSocket& that);
+   SysSocket(const SysSocket& that) = delete;
+   SysSocket& operator=(const SysSocket& that) = delete;
 
    //  Sets or clears tracing_ and returns the new setting.
    //

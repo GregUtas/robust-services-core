@@ -52,8 +52,10 @@ enum LibSetType
 //
 struct FileLevel
 {
-   NodeBase::id_t fid;  // the file's identifier
-   size_t level;        // the file's level in the build
+   const NodeBase::id_t fid;  // the file's identifier
+   const size_t level;        // the file's level in the build
+
+   FileLevel(NodeBase::id_t f, size_t l) : fid(f), level(l) { }
 };
 
 typedef std::vector< FileLevel > BuildOrder;

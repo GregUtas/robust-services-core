@@ -38,6 +38,8 @@ struct SingletonTuple
 {
    const Base** addr;    // pointer to a singleton's Instance_ pointer
    MemoryType type;      // the type of memory that the singleton uses
+
+   SingletonTuple(const Base** a, MemoryType t) : addr(a), type(t) { }
 };
 
 //------------------------------------------------------------------------------
@@ -89,9 +91,7 @@ void Singletons::BindInstance(const Base** addr, MemoryType type)
 
    //  Add this singleton to the registry.
    //
-   SingletonTuple entry;
-   entry.addr = addr;
-   entry.type = type;
+   auto entry = SingletonTuple(addr, type);
    registry_.PushBack(entry);
 }
 

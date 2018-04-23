@@ -105,8 +105,8 @@ public:
 private:
    //  Deleted to prohibit copying.
    //
-   PotsTreatmentQueue(const PotsTreatmentQueue& that);
-   PotsTreatmentQueue& operator=(const PotsTreatmentQueue& that);
+   PotsTreatmentQueue(const PotsTreatmentQueue& that) = delete;
+   PotsTreatmentQueue& operator=(const PotsTreatmentQueue& that) = delete;
 
    //  The queue's index in PotsTreatmentRegistry.
    //
@@ -153,8 +153,8 @@ protected:
 private:
    //  Deleted to prohibit copying.
    //
-   PotsTreatment(const PotsTreatment& that);
-   PotsTreatment& operator=(const PotsTreatment& that);
+   PotsTreatment(const PotsTreatment& that) = delete;
+   PotsTreatment& operator=(const PotsTreatment& that) = delete;
 
    //  The identifier of the PotsTreatmentQueue in which the treatment appears.
    //

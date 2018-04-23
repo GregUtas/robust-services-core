@@ -36,9 +36,9 @@ public:
    //
    static void CreateNativeSignals();
 private:
-   //  Private because this class only has static members.
+   //  Deleted because this class only has static members.
    //
-   SysSignals();
+   SysSignals() = delete;
 
    //  Standard signals.  CreateNativeSignals instantiates a singleton for each
    //  one that this platform supports.  Other signals also exist, but their use

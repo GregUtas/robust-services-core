@@ -81,8 +81,8 @@ protected:
 private:
    //  Deleted to prohibit copying.
    //
-   Tone(const Tone& that);
-   Tone& operator=(const Tone& that);
+   Tone(const Tone& that) = delete;
+   Tone& operator=(const Tone& that) = delete;
 
    //  The tone's identifier.
    //

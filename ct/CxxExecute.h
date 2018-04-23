@@ -78,7 +78,7 @@ protected:
 
    //  Overridden to display the trace record.
    //
-   virtual bool Display(std::ostream& stream) override;
+   virtual bool Display(std::ostream& stream, bool diff) override;
 private:
    //  The line number associated with the trace record.
    //
@@ -595,10 +595,10 @@ public:
    //
    static void Startup(NodeBase::RestartLevel level) { }
 private:
-   //  Private because this class (basically a singleton) only has
+   //  Deleted because this class (basically a singleton) only has
    //  static members.
    //
-   Context();
+   Context() = delete;
 
    //  Pushes a parser onto the stack.
    //

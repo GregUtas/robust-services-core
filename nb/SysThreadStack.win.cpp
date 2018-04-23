@@ -76,9 +76,9 @@ public:
    //
    static const size_t MaxFrames = 2048;
 private:
-   //  Private because this class only has static members.
+   //  Deleted because this class only has static members.
    //
-   StackInfo();
+   StackInfo() = delete;
 
    //  A handle to our process.
    //

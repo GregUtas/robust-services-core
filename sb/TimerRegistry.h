@@ -77,8 +77,8 @@ private:
 
    //  Deleted to prohibit copying.
    //
-   TimerRegistry(const TimerRegistry& that);
-   TimerRegistry& operator=(const TimerRegistry& that);
+   TimerRegistry(const TimerRegistry& that) = delete;
+   TimerRegistry& operator=(const TimerRegistry& that) = delete;
 
    //  timerq_[s] contains timers expiring in (s - nextQid_) seconds; the
    //  last queue is for timers of Timer::MaxQId seconds or more.

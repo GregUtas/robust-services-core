@@ -179,8 +179,8 @@ protected:
 private:
    //  Deleted to prohibit copying.
    //
-   Parameter(const Parameter& that);
-   Parameter& operator=(const Parameter& that);
+   Parameter(const Parameter& that) = delete;
+   Parameter& operator=(const Parameter& that) = delete;
 
    //  The protocol to which the parameter belongs.
    //

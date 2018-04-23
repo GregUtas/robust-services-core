@@ -132,7 +132,7 @@ private:
    //  Deleted to prohibit copying.
    //
    CfgParm(const CfgParm& that) = delete;
-   CfgParm& operator=(const CfgParm& that);
+   CfgParm& operator=(const CfgParm& that) = delete;
 
    //  The parameter's tuple (its key and the string used to set its value).
    //

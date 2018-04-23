@@ -845,7 +845,6 @@ BuildOrderPtr CodeFileSet::SortInBuildOrder() const
    //
    size_t found = 0;
    SetOfIds build;
-   FileLevel item;
 
    BuildOrderPtr order(new BuildOrder);
 
@@ -865,8 +864,7 @@ BuildOrderPtr CodeFileSet::SortInBuildOrder() const
 
             if(it != fileSet.cend())
             {
-               item.fid = fids[i];
-               item.level = level;
+               auto item = FileLevel(fids[i], level);
                order->push_back(item);
             }
 

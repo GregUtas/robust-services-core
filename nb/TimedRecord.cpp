@@ -45,7 +45,7 @@ TimedRecord::TimedRecord(size_t size, FlagId owner) : TraceRecord(size, owner),
 
 //------------------------------------------------------------------------------
 
-bool TimedRecord::Display(ostream& stream)
+bool TimedRecord::Display(ostream& stream, bool diff)
 {
    auto reg = Singleton< ThreadRegistry >::Instance();
    auto tid = reg->FindThreadId(nid_);
@@ -54,7 +54,7 @@ bool TimedRecord::Display(ostream& stream)
    if((thr != nullptr) && (thr->CalcStatus(false) != TraceIncluded))
       return false;
 
-   stream << GetTime() << TraceDump::Tab();
+   stream << GetTime(diff) << TraceDump::Tab();
    stream << setw(TraceDump::TidWidth) << tid << TraceDump::Tab();
    stream << EventString() << TraceDump::Tab();
    return true;
@@ -62,10 +62,11 @@ bool TimedRecord::Display(ostream& stream)
 
 //------------------------------------------------------------------------------
 
-string TimedRecord::GetTime() const
+string TimedRecord::GetTime(bool diff) const
 {
    //  Convert our tick timestamp to hh:mm:ss.mmm and remove the hours.
    //
+   if(diff) return "00:00.000";
    return Clock::TicksToTime(ticks_, MinsField);
 }
 

@@ -2173,15 +2173,14 @@ CxxNamed* QualName::ResolveLocal(SymbolView* view) const
    Debug::ft(QualName_ResolveLocal);
 
    auto syms = Singleton< CxxSymbols >::Instance();
-   auto qname = GetQualName();
 
-   if((qname->Size() == 1) && !qname->IsGlobal())
+   if((Size() == 1) && !IsGlobal())
    {
       auto item = syms->FindLocal(*Name(), view);
 
       if(item != nullptr)
       {
-         qname->SetReferentN(0, item, view);
+         SetReferentN(0, item, view);
          return item;
       }
    }

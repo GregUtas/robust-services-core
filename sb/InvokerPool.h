@@ -205,8 +205,8 @@ private:
 
    //  Deleted to prohibit copying.
    //
-   InvokerPool(const InvokerPool& that);
-   InvokerPool& operator=(const InvokerPool& that);
+   InvokerPool(const InvokerPool& that) = delete;
+   InvokerPool& operator=(const InvokerPool& that) = delete;
 
    //  The scheduler faction in which the pool's invokers run.
    //

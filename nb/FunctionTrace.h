@@ -77,7 +77,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   virtual bool Display(std::ostream& stream) override;
+   virtual bool Display(std::ostream& stream, bool diff) override;
 
    //  Mask for selecting FunctionTrace records when using TraceBuffer::Next.
    //

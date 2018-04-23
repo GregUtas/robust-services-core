@@ -90,9 +90,9 @@ public:
    //
    static void Shutdown(RestartLevel level);
 private:
-   //  Private because this class only has static members.
+   //  Deleted because this class only has static members.
    //
-   Memory();
+   Memory() = delete;
 
    //  Returns the heap for TYPE.  If it doesn't exist, it is created.
    //

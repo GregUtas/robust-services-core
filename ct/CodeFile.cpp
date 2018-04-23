@@ -2342,14 +2342,7 @@ void CodeFile::LogLine
    //
    if((warning < Warning_N) && (n < lineType_.size()))
    {
-      WarningLog log;
-
-      log.file = this;
-      log.line = n;
-      log.warning = warning;
-      log.offset = offset;
-      log.info = info;
-
+      auto log = WarningLog(this, n, warning, offset, info);
       CodeInfo::AddWarning(log);
    }
 }

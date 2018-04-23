@@ -158,7 +158,7 @@ public:
    //  Displays all of the records in the trace buffer.  STREAM must be
    //  valid unless an immediate trace is in progress.
    //
-   TraceRc DisplayTrace(std::ostream* stream);
+   TraceRc DisplayTrace(std::ostream* stream, bool diff);
 
    //  Returns true if trace records are being output immediately.
    //

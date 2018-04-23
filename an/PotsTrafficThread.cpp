@@ -120,8 +120,8 @@ public:
 private:
    //  Deleted to prohibit copying.
    //
-   TrafficCall(const TrafficCall& that);
-   TrafficCall& operator=(const TrafficCall& that);
+   TrafficCall(const TrafficCall& that) = delete;
+   TrafficCall& operator=(const TrafficCall& that) = delete;
 
    //> The size of the DelayMsecs_ array.
    //
@@ -243,8 +243,8 @@ private:
 
    //  Deleted to prohibit copying.
    //
-   TrafficCallPool(const TrafficCallPool& that);
-   TrafficCallPool& operator=(const TrafficCallPool& that);
+   TrafficCallPool(const TrafficCallPool& that) = delete;
+   TrafficCallPool& operator=(const TrafficCallPool& that) = delete;
 
    //  The free queue of calls, which minimizes use of the heap.
    //

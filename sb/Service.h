@@ -210,8 +210,8 @@ private:
 
    //  Deleted to prohibit copying.
    //
-   Service(const Service& that);
-   Service& operator=(const Service& that);
+   Service(const Service& that) = delete;
+   Service& operator=(const Service& that) = delete;
 
    //  The service's identifier.
    //

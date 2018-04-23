@@ -88,8 +88,8 @@ private:
 
    //  Deleted to prohibit copying.
    //
-   StTestData(const StTestData& that);
-   StTestData& operator=(const StTestData& that);
+   StTestData(const StTestData& that) = delete;
+   StTestData& operator=(const StTestData& that) = delete;
 
    //  Whether the >verify command is currently enabled.
    //

@@ -66,9 +66,9 @@ NwTrace::NwTrace(Id rid, const SysSocket* socket, word data, ipport_t port,
 
 //------------------------------------------------------------------------------
 
-bool NwTrace::Display(ostream& stream)
+bool NwTrace::Display(ostream& stream, bool diff)
 {
-   if(!TimedRecord::Display(stream)) return false;
+   if(!TimedRecord::Display(stream, diff)) return false;
 
    stream << spaces(TraceDump::EvtToObj);
 

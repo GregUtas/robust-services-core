@@ -43,7 +43,7 @@ TraceRecord::TraceRecord(size_t size, FlagId owner) :
 
 //------------------------------------------------------------------------------
 
-bool TraceRecord::Display(ostream& stream)
+bool TraceRecord::Display(ostream& stream, bool diff)
 {
    stream << spaces(TraceDump::StartToEvt) << EventString() << TraceDump::Tab();
    return true;

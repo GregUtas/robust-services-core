@@ -82,8 +82,8 @@ protected:
 private:
    //  Deleted to prohibit copying.
    //
-   Circuit(const Circuit& that);
-   Circuit& operator=(const Circuit& that);
+   Circuit(const Circuit& that) = delete;
+   Circuit& operator=(const Circuit& that) = delete;
 
    //  The port where the circuit appears.
    //

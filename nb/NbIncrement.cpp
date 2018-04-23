@@ -1634,6 +1634,15 @@ word RestartCommand::ProcessCommand(CliThread& cli) const
 //
 //  The SAVE command.
 //
+class DiffParm : public CliBoolParm
+{
+public: DiffParm();
+};
+
+fixed_string DiffExpl = "suppress time values: useful for >diff (default=f)";
+
+DiffParm::DiffParm() : CliBoolParm(DiffExpl, true) { }
+
 class TraceText : public CliText
 {
 public: TraceText();
@@ -1645,6 +1654,7 @@ fixed_string TraceTextExpl = "events captured by tools that are currently ON";
 TraceText::TraceText() : CliText(TraceTextExpl, TraceTextStr)
 {
    BindParm(*new FileMandParm);
+   BindParm(*new DiffParm);
 }
 
 fixed_string SaveWhatExpl = "what to save...";
@@ -1685,8 +1695,10 @@ word SaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
    TraceRc rc;
    string title;
+   bool diff = false;
 
    if(!GetFileName(title, cli)) return -1;
+   if(GetBoolParmRc(diff, cli) == Error) return -1;
    cli.EndOfInput(false);
 
    auto stream = cli.FileStream();
@@ -1695,7 +1707,7 @@ word SaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    auto yield = cli.GenerateReportPreemptably();
    FunctionGuard guard(FunctionGuard::MakePreemptable, yield);
 
-   rc = Singleton< TraceBuffer >::Instance()->DisplayTrace(stream);
+   rc = Singleton< TraceBuffer >::Instance()->DisplayTrace(stream, diff);
 
    if(rc == TraceOk)
    {

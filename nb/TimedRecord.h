@@ -56,8 +56,9 @@ public:
    SysThreadId Nid() const { return nid_; }
 
    //  Returns the time (mins:secs.msecs) at which the event occurred.
+   //  Returns "00:00.000" if DIFF is set.
    //
-   std::string GetTime() const;
+   std::string GetTime(bool diff) const;
 
    //  Returns the thread identifier associated with the event.
    //
@@ -67,7 +68,7 @@ public:
    //  nothing and returns false if the thread is to be excluded from this
    //  trace.  May be overridden, but this version should be invoked first.
    //
-   virtual bool Display(std::ostream& stream) override;
+   virtual bool Display(std::ostream& stream, bool diff) override;
 protected:
    //  See TraceRecord for a description of the arguments.  Protected
    //  because this class is virtual.

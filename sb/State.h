@@ -105,8 +105,8 @@ protected:
 private:
    //  Deleted to prohibit copying.
    //
-   State(const State& that);
-   State& operator=(const State& that);
+   State(const State& that) = delete;
+   State& operator=(const State& that) = delete;
 
    //  The state's identifier.
    //

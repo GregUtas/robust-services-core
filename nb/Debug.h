@@ -131,9 +131,9 @@ private:
       StackChecking   // set when stack overflow prevention is active
    };
 
-   //  Private because this class only has static members.
+   //  Deleted because this class only has static members.
    //
-   Debug();
+   Debug() = delete;
 
    //  Used by the various versions of SwErr.
    //

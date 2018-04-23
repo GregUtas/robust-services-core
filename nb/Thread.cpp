@@ -89,7 +89,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   virtual bool Display(ostream& stream) override;
+   virtual bool Display(ostream& stream, bool diff) override;
 private:
    //  Private to restrict creation to CaptureEvent.
    //
@@ -186,9 +186,9 @@ void ThreadTrace::CaptureEvent(fn_name_arg func, Id rid, word info)
 
 //------------------------------------------------------------------------------
 
-bool ThreadTrace::Display(ostream& stream)
+bool ThreadTrace::Display(ostream& stream, bool diff)
 {
-   if(!FunctionTrace::Display(stream)) return false;
+   if(!FunctionTrace::Display(stream, diff)) return false;
 
    switch(rid_)
    {
@@ -1337,9 +1337,9 @@ fixed_string SchedHeader[SchedHeaderSize] =
 {
 // 0         1         2         3         4         5         6         7
 // 0123456789012345678901234567890123456789012345678901234567890123456789012
-   "      THREADS      |    SINCE START OF CURRENT 15-MIN INTERVAL    | LAST",
-   "                   |            rtc  max   max     max  total     |5 SEC",
-   "id    name host f b| ex yields  t/o msgs stack   usecs  msecs %cpu| %cpu"
+   "      THREADS       |    SINCE START OF CURRENT 15-MIN INTERVAL    | LAST",
+   "                    |            rtc  max   max     max  total     |5 SEC",
+   "id    name  host f b| ex yields  t/o msgs stack   usecs  msecs %cpu| %cpu"
 };
 
 void Thread::DisplaySummaries(ostream& stream)
@@ -1373,7 +1373,7 @@ void Thread::DisplaySummaries(ostream& stream)
    stream << line << CRLF;
 
    stream << setw(10) << "idle";
-   stream << setw(51) << (idle0 + 500) / 1000;
+   stream << setw(52) << (idle0 + 500) / 1000;
    stream << setw(5) << 100 * (double(idle0) / time0);
 
    //  Set TIME1 to the length of the previous short interval.
@@ -1409,7 +1409,7 @@ void Thread::DisplaySummary
 
    stream << setw(2) << Tid();
    stream << setw(8) << AbbrName() << SPACE;
-   stream << setw(4) << strHex(NativeThreadId(), 4, false);
+   stream << setw(5) << strHex(NativeThreadId(), 5, false);
 
    auto f = FactionChar(faction_);
    if(priv_->unpreempts_ == 0) f = tolower(f);

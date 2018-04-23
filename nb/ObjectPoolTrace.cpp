@@ -46,9 +46,9 @@ ObjectPoolTrace::ObjectPoolTrace(Id rid, const Pooled& obj) :
 
 //------------------------------------------------------------------------------
 
-bool ObjectPoolTrace::Display(ostream& stream)
+bool ObjectPoolTrace::Display(ostream& stream, bool diff)
 {
-   if(!TimedRecord::Display(stream)) return false;
+   if(!TimedRecord::Display(stream, diff)) return false;
 
    auto pool = Singleton< ObjectPoolRegistry >::Instance()->Pool(pid_);
 

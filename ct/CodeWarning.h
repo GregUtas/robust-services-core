@@ -44,6 +44,8 @@ namespace CodeTools
       size_t offset;         // warning-specific; displayed if non-zero
       std::string info;      // warning-specific
 
+      WarningLog(const CodeFile* file, size_t line,
+         Warning warning, size_t offset, const std::string& info);
       bool operator==(const WarningLog& that) const;
       bool operator!=(const WarningLog& that) const;
       bool DisplayCode() const

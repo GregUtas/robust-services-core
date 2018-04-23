@@ -226,9 +226,9 @@ public:
    //
    virtual ~Facility() { }
 private:
-   //  Private because this class is not intended to be instantiated.
+   //  Deleted because this class is not intended to be instantiated.
    //
-   Facility();
+   Facility() = delete;
 };
 
 //------------------------------------------------------------------------------

@@ -69,12 +69,13 @@ public:
    //
    void Nullify() { owner_ = NIL_ID; }
 
-   //  Invoked to display the record in STREAM when the trace is printed.
-   //  A subclass must begin by invoking TraceRecord::Display.  Returns
-   //  false if nothing was displayed, which suppresses insertion of an
-   //  endline.
+   //  Invoked to display the record in STREAM.  DIFF is set to suppress
+   //  output (e.g. timing information) that would result in undesirable
+   //  mismatches in a >diff between traces.  A subclass must begin by
+   //  invoking TraceRecord::Display.  Returns false if nothing was
+   //  displayed, which suppresses insertion of an endline.
    //
-   virtual bool Display(std::ostream& stream);
+   virtual bool Display(std::ostream& stream, bool diff);
 
    //  Overridden to allocate space in the trace buffer.
    //

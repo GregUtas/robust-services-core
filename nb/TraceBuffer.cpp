@@ -62,7 +62,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   virtual bool Display(std::ostream& stream) override;
+   virtual bool Display(std::ostream& stream, bool diff) override;
 };
 
 //------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ BufferTrace::BufferTrace() : TraceRecord(sizeof(BufferTrace), ToolBuffer)
 const string NilTraceStr("ERROR: invalid trace record");
 const string ResumeTraceStr("BREAK OF TRACE " + string(65,'='));
 
-bool BufferTrace::Display(ostream& stream)
+bool BufferTrace::Display(ostream& stream, bool diff)
 {
    switch(rid_)
    {
@@ -329,7 +329,7 @@ TraceRc TraceBuffer::ClearTools()
 
 fn_name TraceBuffer_DisplayTrace = "TraceBuffer.DisplayTrace";
 
-TraceRc TraceBuffer::DisplayTrace(ostream* stream)
+TraceRc TraceBuffer::DisplayTrace(ostream* stream, bool diff)
 {
    Debug::ft(TraceBuffer_DisplayTrace);
 
@@ -341,7 +341,7 @@ TraceRc TraceBuffer::DisplayTrace(ostream* stream)
       stream = stream_.get();
    }
 
-   auto rc = TraceDump::Generate(*stream);
+   auto rc = TraceDump::Generate(*stream, diff);
    stream_.reset();
    return rc;
 }
@@ -372,7 +372,7 @@ void TraceBuffer::ImmediateDisplay()
    while(lastRecord_ != nullptr)
    {
       if(lastRecord_->rid_ == TraceRecord::InvalidId) return;
-      if(lastRecord_->Display(*stream_)) *stream_ << CRLF;
+      if(lastRecord_->Display(*stream_, false)) *stream_ << CRLF;
       Next(lastRecord_, mask);
    }
 }

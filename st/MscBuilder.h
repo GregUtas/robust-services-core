@@ -232,8 +232,8 @@ private:
 
    //  Deleted to prohibit copying.
    //
-   MscBuilder(const MscBuilder& that);
-   MscBuilder& operator=(const MscBuilder& that);
+   MscBuilder(const MscBuilder& that) = delete;
+   MscBuilder& operator=(const MscBuilder& that) = delete;
 
    //  Set if internal data structures are to be displayed.
    //

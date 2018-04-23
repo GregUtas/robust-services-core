@@ -48,9 +48,9 @@ public:
    //
    static std::string FileName();
 private:
-   //  Private because this class only has static members.
+   //  Deleted because this class only has static members.
    //
-   Log();
+   Log() = delete;
 };
 }
 #endif

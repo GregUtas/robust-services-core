@@ -368,8 +368,8 @@ private:
 
    //  Deleted to prohibit copying.
    //
-   TestSession(const TestSession& that);
-   TestSession& operator=(const TestSession& that);
+   TestSession(const TestSession& that) = delete;
+   TestSession& operator=(const TestSession& that) = delete;
 
    //  The instance of StTestData to which this session belongs.
    //

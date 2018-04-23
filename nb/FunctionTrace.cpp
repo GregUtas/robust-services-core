@@ -206,12 +206,17 @@ void FunctionTrace::Capture(fn_name_arg func)
 
 //------------------------------------------------------------------------------
 
-bool FunctionTrace::Display(ostream& stream)
+bool FunctionTrace::Display(ostream& stream, bool diff)
 {
-   if(!TimedRecord::Display(stream)) return false;
+   if(!TimedRecord::Display(stream, diff)) return false;
 
-   stream << setw(TraceDump::TotWidth) << gross_ << TraceDump::Tab();
-   stream << setw(TraceDump::NetWidth) << net_ << TraceDump::Tab();
+   //  Suppress timing information if a >diff is planned.
+   //
+   usecs_t gross = (diff ? 0 : gross_);
+   usecs_t net = (diff ? 0 : net_);
+
+   stream << setw(TraceDump::TotWidth) << gross << TraceDump::Tab();
+   stream << setw(TraceDump::NetWidth) << net << TraceDump::Tab();
 
    auto dispDepth = std::min(depth_, MaxDispDepth);
 

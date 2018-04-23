@@ -110,8 +110,8 @@ private:
 
    //  Deleted to prohibit copying.
    //
-   Trigger(const Trigger& that);
-   Trigger& operator=(const Trigger& that);
+   Trigger(const Trigger& that) = delete;
+   Trigger& operator=(const Trigger& that) = delete;
 
    //  The identifier for this trigger.
    //

@@ -137,8 +137,8 @@ protected:
 private:
    //  Deleted to prohibit copying.
    //
-   Protocol(const Protocol& that);
-   Protocol& operator=(const Protocol& that);
+   Protocol(const Protocol& that) = delete;
+   Protocol& operator=(const Protocol& that) = delete;
 
    //  Adds SIGNAL to the protocol.  Invoked by Signal's base class
    //  constructor.

@@ -110,8 +110,8 @@ protected:
 private:
    //  Deleted to prohibit copying.
    //
-   Signal(const Signal& that);
-   Signal& operator=(const Signal& that);
+   Signal(const Signal& that) = delete;
+   Signal& operator=(const Signal& that) = delete;
 
    //  The protocol to which the signal belongs.
    //

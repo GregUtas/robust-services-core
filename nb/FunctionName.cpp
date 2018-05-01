@@ -21,6 +21,7 @@
 //
 #include "FunctionName.h"
 #include <cstring>
+#include <string>
 
 using std::string;
 
@@ -33,8 +34,6 @@ fixed_string FunctionName::CtorTag = ".ctor";
 fixed_string FunctionName::DtorTag = ".dtor";
 fixed_string FunctionName::OpNewTag = ".operator new";
 fixed_string FunctionName::OpDelTag = ".operator delete";
-
-FunctionName::FunctionsTable Functions;
 
 //------------------------------------------------------------------------------
 
@@ -49,21 +48,6 @@ size_t FunctionName::find(fn_name_arg func, const char* str)
 {
    string name(func);
    return name.find(str);
-}
-
-//------------------------------------------------------------------------------
-
-const FunctionName::FunctionsTable& FunctionName::GetDatabase()
-{
-   return Functions;
-}
-
-//------------------------------------------------------------------------------
-
-void FunctionName::Insert(const string& fn, const string& ns)
-{
-   DebugName dn = {fn, ns};
-   Functions.insert(dn);
 }
 
 //------------------------------------------------------------------------------

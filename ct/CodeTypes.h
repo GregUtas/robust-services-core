@@ -466,7 +466,8 @@ enum Warning
    IncludeGuardMisnamed,     // #include guard name is not based on filename
    DebugFtNotInvoked,        // function does not invoke Debug::ft
    DebugFtNotFirst,          // function invokes Debug::ft after first statement
-   DebugFtNameMismatch,      // function name string for Debug::ft is incorrect
+   DebugFtNameMismatch,      // function name for Debug::ft is incorrect
+   DebugFtNameDuplicated,    // function name for Debug::ft used previously
    DisplayNotOverridden,     // class should override Base.Display
    PatchNotOverridden,       // class should override Object.Patch
    Warning_N                 // number of warnings

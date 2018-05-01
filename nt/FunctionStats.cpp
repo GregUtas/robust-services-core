@@ -23,8 +23,8 @@
 #include <cstring>
 #include <iomanip>
 #include <ostream>
+#include <string>
 #include "Algorithms.h"
-#include "Debug.h"
 #include "Formatters.h"
 
 using std::ostream;
@@ -50,8 +50,6 @@ FunctionStats::~FunctionStats() { }
 
 int FunctionStats::Compare(const FunctionStats& that) const
 {
-   auto result = this->ns_.compare(that.ns_);
-   if(result != 0) return result;
    return strcmp(this->func_, that.func_);
 }
 
@@ -63,7 +61,6 @@ void FunctionStats::Display(ostream& stream,
    stream << setw(9) << calls_ << spaces(2);
    stream << setw(10) << time_ << spaces(3);
    stream << func_;
-   if(!ns_.empty()) stream << " (" << ns_ << ')';
    stream << CRLF;
 }
 
@@ -82,25 +79,5 @@ ptrdiff_t FunctionStats::LinkDiff()
    int local;
    auto fake = reinterpret_cast< const FunctionStats* >(&local);
    return ptrdiff(&fake->link_, fake);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name FunctionProfiler_SetNamespace = "FunctionProfiler.SetNamespace";
-
-void FunctionStats::SetNamespace(const string& ns)
-{
-   if(ns_.empty())
-   {
-      ns_ = ns;
-      return;
-   }
-
-   ns_.push_back('/');
-   ns_.append(ns);
-
-   string expl = "Duplicate function name: ";
-   expl.append(func_);
-   Debug::SwErr(FunctionProfiler_SetNamespace, expl, 0, InfoLog);
 }
 }

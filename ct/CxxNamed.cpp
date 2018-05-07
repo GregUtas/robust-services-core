@@ -1923,8 +1923,7 @@ void QualName::EnterBlock()
    Debug::ft(QualName_EnterBlock);
 
    Context::SetPos(GetPos());
-   auto name = *Name();
-   if(name == "NULL") Log(UseOfNull);
+   if(*Name() == "NULL") Log(UseOfNull);
 
    //  If a "." or "->" operator is waiting for its second argument,
    //  push this name and return so that the operator can be executed.

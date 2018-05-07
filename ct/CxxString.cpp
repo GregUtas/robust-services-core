@@ -340,6 +340,23 @@ string GetFileName(const string& path)
 
 //------------------------------------------------------------------------------
 
+fn_name CodeTools_GetString = "CodeTools.GetString";
+
+string CodeTools::GetString(string& input)
+{
+   Debug::ft(CodeTools_GetString);
+
+   if(input.empty()) return input;
+
+   auto begin = input.find_first_not_of(SPACE);
+   auto end = input.find_first_of(SPACE, begin);
+   auto str = input.substr(begin, end - begin + 1);
+   input.erase(0, end);
+   return str;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeTools_NameCouldReferTo = "CodeTools.NameCouldReferTo";
 
 size_t NameCouldReferTo(const string& fqName, const string& name)

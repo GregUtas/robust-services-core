@@ -35,6 +35,11 @@ namespace CodeTools
    //
    typedef std::vector< std::string > stringVector;
 
+   //  Returns the next string in INPUT, which ends at the next blank.
+   //  Removes the string any blanks that preceded it from INPUT.
+   //
+   std::string GetString(std::string& input);
+
    //  Returns true if FILE ends in EXT.  Prefixes a '.' to EXT before
    //  searching FILE.
    //

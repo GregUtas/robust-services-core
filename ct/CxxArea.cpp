@@ -224,7 +224,9 @@ void Class::AccessibilityOf
 
          for(auto a = args->cbegin(); a != args->cend(); ++a)
          {
-            if((*a)->Referent() == item)
+            auto ref = (*a)->Referent();
+
+            if(ref == item)
             {
                view->accessibility = Unrestricted;
                return;
@@ -525,7 +527,8 @@ void Class::CheckIfUsed(Warning warning) const
          return;
       }
 
-      if((attrs.test(HasNonPublicInnerClass)) ||
+      if((attrs.test(IsBase)) ||
+         (attrs.test(HasNonPublicInnerClass)) ||
          (attrs.test(HasNonPublicMemberFunction)) ||
          (attrs.test(HasNonPublicMemberData)) ||
          (attrs.test(HasNonPublicStaticFunction)) ||

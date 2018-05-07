@@ -3739,6 +3739,7 @@ bool Function::IsExemptFromTracing() const
 {
    Debug::ft(Function_IsExemptFromTracing);
 
+   if(GetDecl()->pure_) return true;
    if(tmplt_ != nullptr) return true;
 
    if((impl_ != nullptr) && (impl_->FirstStatement() == nullptr)) return true;

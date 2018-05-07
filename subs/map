@@ -6,6 +6,7 @@
 #define MAP_INCLUDED
 
 #include "cstddef"
+#include "iterator"
 #include "utility"
 
 namespace std
@@ -14,6 +15,7 @@ namespace std
    {
    public:
       typedef pair< T1, T2 > entry;
+      typedef iterator_t< entry > iterator;
       map();
       ~map();
       entry* begin();

@@ -397,7 +397,7 @@ enum Warning
    FriendAsForward,          // friend declaration is also forward declaration
    HidesInheritedName,       // member has the same name as a base class member
    ClassCouldBeNamespace,    // only has enums, typedefs, and static functions
-   ClassCouldBeStruct,       // has no private members
+   ClassCouldBeStruct,       // has no private members or subclasses
    StructCouldBeClass,       // has private members
    RedundantAccessControl,   // previous member already public/protected/private
    ItemCouldBePrivate,       // item only used within declarer

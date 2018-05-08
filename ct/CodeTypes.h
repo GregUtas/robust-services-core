@@ -335,7 +335,7 @@ enum TemplateRole
    TemplateNone,       // not part of a template
    TemplateArgument,   // e.g. int in vector< int >
    TemplateParameter,  // e.g. T in template< typename T > class vector{...};
-   TemplateClass       // a DataSpec created interally for template matching;
+   TemplateClass       // a DataSpec created internally for template matching;
                        // contains each of the parameters to a class template
 };
 

@@ -546,6 +546,10 @@ public:
    TypeMatch MatchTemplate(const TypeName* that,
       stringVector& tmpltParms, stringVector& tmpltArgs, bool& argFound) const;
 
+   //  Returns true if ITEM is the referent of a template argument.
+   //
+   bool ItemIsTemplageArg(const CxxScoped* item) const;
+
    //  Invoked when the name accesses MEM via CLS.  Sets the referent to MEM
    //  and records CLS as the type through which it was accessed.
    //
@@ -769,6 +773,10 @@ public:
    //
    TypeMatch MatchTemplate(const QualName* that,
       stringVector& tmpltParms, stringVector& tmpltArgs, bool& argFound) const;
+
+   //  Returns true if ITEM is the referent of a template argument.
+   //
+   bool ItemIsTemplageArg(const CxxScoped* item) const;
 
    //  Checks that the name is a valid constructor name ("...A::A").
    //
@@ -1055,6 +1063,10 @@ public:
    //
    virtual std::string AlignTemplateArg(const TypeSpec* thatArg) const = 0;
 
+   //  Returns true if ITEM is the referent of a template argument.
+   //
+   virtual bool ItemIsTemplageArg(const CxxScoped* item) const = 0;
+
    //  Invoked when the type is a template argument that is about to be used
    //  to instantiate a template.  Finds the type's referent and, if it is a
    //  template, also instantiates it.
@@ -1154,6 +1166,10 @@ private:
    //  template parameter that might be specialized.
    //
    virtual std::string AlignTemplateArg(const TypeSpec* thatArg) const override;
+
+   //  Overridden to return true if ITEM is the referent of a template argument.
+   //
+   virtual bool ItemIsTemplageArg(const CxxScoped* item) const override;
 
    //  Overridden to return the number of arrays associated with this type.
    //

@@ -319,7 +319,7 @@ private:
    Using* GetUsingFor(const std::string& fqName, size_t prefix,
       const CxxNamed* item, const CxxScope* scope) const;
 
-   //  Returns TRUE if the file has a forward declaration for ITEM.
+   //  Returns true if the file has a forward declaration for ITEM.
    //
    bool HasForwardFor(const CxxNamed* item) const;
 

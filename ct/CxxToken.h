@@ -640,7 +640,7 @@ private:
    bool ExecuteOverload
       (const std::string& name, StackArg& arg1, const StackArg* arg2) const;
 
-   //  If the operator is overloaded, returns TRUE after handling it.
+   //  If the operator is overloaded, returns true after handling it.
    //  The overloads are for unary and binary operators, respectively.
    //
    bool IsOverloaded(StackArg& arg) const;

@@ -220,17 +220,12 @@ void Class::AccessibilityOf
       //
       if(usingClass->IsInTemplateInstance())
       {
-         auto args = static_cast< ClassInst* >(usingClass)->GetSpec()->Args();
+         auto spec = static_cast< ClassInst* >(usingClass)->GetSpec();
 
-         for(auto a = args->cbegin(); a != args->cend(); ++a)
+         if(spec->ItemIsTemplageArg(item))
          {
-            auto ref = (*a)->Referent();
-
-            if(ref == item)
-            {
-               view->accessibility = Unrestricted;
-               return;
-            }
+            view->accessibility = Unrestricted;
+            return;
          }
       }
    }

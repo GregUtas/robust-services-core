@@ -35,8 +35,9 @@ namespace CodeTools
    //
    typedef std::vector< std::string > stringVector;
 
-   //  Returns the next string in INPUT, which ends at the next blank.
-   //  Removes the string any blanks that preceded it from INPUT.
+   //  Skips any leading blanks in INPUT and returns the next string, which
+   //  ends at the next blank.  Updates INPUT by removing the string and the
+   //  leading blanks.
    //
    std::string GetString(std::string& input);
 

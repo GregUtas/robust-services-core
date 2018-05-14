@@ -754,7 +754,7 @@ public:
    HelpCommand();
 private:
    virtual word ProcessCommand(CliThread& cli) const override;
-   static word DisplayHelpFile(CliThread& cli, const string& name);
+   static word DisplayHelpFile(const CliThread& cli, const string& name);
 };
 
 fixed_string HelpIncrExpl = "name of increment";
@@ -795,7 +795,7 @@ HelpCommand::HelpCommand() : CliCommand(HelpStr, HelpExpl)
    BindParm(*new HelpFullParm);
 }
 
-word HelpCommand::DisplayHelpFile(CliThread& cli, const string& name)
+word HelpCommand::DisplayHelpFile(const CliThread& cli, const string& name)
 {
    auto path = Element::HelpPath() + PATH_SEPARATOR + "cli";
 

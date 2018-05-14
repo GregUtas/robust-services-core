@@ -129,7 +129,7 @@ private:
    //  has been exhausted.  TYPE is the type of parameter that could not
    //  be obtained.
    //
-   static Rc Exhausted(CliThread& cli, const std::string& type);
+   static Rc Exhausted(const CliThread& cli, const std::string& type);
 };
 }
 #endif

@@ -123,7 +123,7 @@ CliParm::Rc GetCBV(const CliCommand& comm, CliThread& cli, bool& c, bool& v);
 //
 //  Free function for explaining a TraceRc result.
 //
-word ExplainTraceRc(CliThread& cli, TraceRc rc);
+word ExplainTraceRc(const CliThread& cli, TraceRc rc);
 
 //------------------------------------------------------------------------------
 //

@@ -356,8 +356,8 @@ string CodeTools::GetString(string& input)
    }
 
    auto end = input.find_first_of(SPACE, begin);
-   if(end == string::npos) end = input.size() - 1;
-   auto str = input.substr(begin, end - begin + 1);
+   if(end == string::npos) end = input.size();
+   auto str = input.substr(begin, end - begin);
    input.erase(0, end);
    return str;
 }

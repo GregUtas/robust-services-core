@@ -1564,7 +1564,7 @@ private:
    virtual TypeName* GetTemplateArgs() const override;
    virtual void Instantiating() const override;
    virtual TypeMatch MatchTemplateArg(const TypeSpec* that) const override;
-   virtual bool ItemIsTemplageArg(const CxxScoped* item) const override;
+   virtual bool ItemIsTemplateArg(const CxxScoped* item) const override;
    virtual bool MatchesExactly(const TypeSpec* that) const override;
    virtual TypeMatch MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
       stringVector& tmpltArgs, bool& argFound) const override;

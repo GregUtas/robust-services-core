@@ -1251,14 +1251,14 @@ bool DataSpec::IsUsedInNameOnly() const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_ItemIsTemplageArg = "DataSpec.ItemIsTemplageArg";
+fn_name DataSpec_ItemIsTemplateArg = "DataSpec.ItemIsTemplateArg";
 
-bool DataSpec::ItemIsTemplageArg(const CxxScoped* item) const
+bool DataSpec::ItemIsTemplateArg(const CxxScoped* item) const
 {
-   Debug::ft(DataSpec_ItemIsTemplageArg);
+   Debug::ft(DataSpec_ItemIsTemplateArg);
 
    if(Referent() == item) return true;
-   return name_->ItemIsTemplageArg(item);
+   return name_->ItemIsTemplateArg(item);
 }
 
 //------------------------------------------------------------------------------
@@ -2041,17 +2041,17 @@ void QualName::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_ItemIsTemplageArg = "QualName.ItemIsTemplageArg";
+fn_name QualName_ItemIsTemplateArg = "QualName.ItemIsTemplateArg";
 
-bool QualName::ItemIsTemplageArg(const CxxScoped* item) const
+bool QualName::ItemIsTemplateArg(const CxxScoped* item) const
 {
-   Debug::ft(QualName_ItemIsTemplageArg);
+   Debug::ft(QualName_ItemIsTemplateArg);
 
    //  Look for template arguments attached to each name.
    //
    for(auto n = First(); n != nullptr; n = n->Next())
    {
-      if(n->ItemIsTemplageArg(item)) return true;
+      if(n->ItemIsTemplateArg(item)) return true;
    }
 
    return false;
@@ -2685,23 +2685,23 @@ void TypeName::Instantiating() const
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_ItemIsTemplageArg = "TypeName.ItemIsTemplageArg";
+fn_name TypeName_ItemIsTemplateArg = "TypeName.ItemIsTemplateArg";
 
-bool TypeName::ItemIsTemplageArg(const CxxScoped* item) const
+bool TypeName::ItemIsTemplateArg(const CxxScoped* item) const
 {
-   Debug::ft(TypeName_ItemIsTemplageArg);
+   Debug::ft(TypeName_ItemIsTemplateArg);
 
    if(args_ != nullptr)
    {
       for(auto a = args_->cbegin(); a != args_->cend(); ++a)
       {
-         if((*a)->ItemIsTemplageArg(item)) return true;
+         if((*a)->ItemIsTemplateArg(item)) return true;
       }
    }
 
    if(type_ != nullptr)
    {
-      if(type_->GetTypeSpec()->ItemIsTemplageArg(item)) return true;
+      if(type_->GetTypeSpec()->ItemIsTemplateArg(item)) return true;
    }
 
    return false;
@@ -3084,9 +3084,9 @@ void TypeSpec::Instantiating() const
 
 //------------------------------------------------------------------------------
 
-bool TypeSpec::ItemIsTemplageArg(const CxxScoped* item) const
+bool TypeSpec::ItemIsTemplateArg(const CxxScoped* item) const
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "ItemIsTemplageArg", 0);
+   Debug::SwErr(TypeSpec_PureVirtualFunction, "ItemIsTemplateArg", 0);
    return false;
 }
 

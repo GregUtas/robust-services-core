@@ -4621,10 +4621,10 @@ bool FuncSpec::IsConstPtr() const
 
 //------------------------------------------------------------------------------
 
-bool FuncSpec::ItemIsTemplageArg(const CxxScoped* item) const
+bool FuncSpec::ItemIsTemplateArg(const CxxScoped* item) const
 {
-   Debug::SwErr(FuncSpec_Warning, "ItemIsTemplageArg", 0);
-   return func_->GetTypeSpec()->ItemIsTemplageArg(item);
+   Debug::SwErr(FuncSpec_Warning, "ItemIsTemplateArg", 0);
+   return func_->GetTypeSpec()->ItemIsTemplateArg(item);
 }
 
 //------------------------------------------------------------------------------

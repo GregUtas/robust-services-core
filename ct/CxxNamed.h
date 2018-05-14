@@ -548,7 +548,7 @@ public:
 
    //  Returns true if ITEM is the referent of a template argument.
    //
-   bool ItemIsTemplageArg(const CxxScoped* item) const;
+   bool ItemIsTemplateArg(const CxxScoped* item) const;
 
    //  Invoked when the name accesses MEM via CLS.  Sets the referent to MEM
    //  and records CLS as the type through which it was accessed.
@@ -776,7 +776,7 @@ public:
 
    //  Returns true if ITEM is the referent of a template argument.
    //
-   bool ItemIsTemplageArg(const CxxScoped* item) const;
+   bool ItemIsTemplateArg(const CxxScoped* item) const;
 
    //  Checks that the name is a valid constructor name ("...A::A").
    //
@@ -1065,7 +1065,7 @@ public:
 
    //  Returns true if ITEM is the referent of a template argument.
    //
-   virtual bool ItemIsTemplageArg(const CxxScoped* item) const = 0;
+   virtual bool ItemIsTemplateArg(const CxxScoped* item) const = 0;
 
    //  Invoked when the type is a template argument that is about to be used
    //  to instantiate a template.  Finds the type's referent and, if it is a
@@ -1169,7 +1169,7 @@ private:
 
    //  Overridden to return true if ITEM is the referent of a template argument.
    //
-   virtual bool ItemIsTemplageArg(const CxxScoped* item) const override;
+   virtual bool ItemIsTemplateArg(const CxxScoped* item) const override;
 
    //  Overridden to return the number of arrays associated with this type.
    //

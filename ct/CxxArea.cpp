@@ -222,7 +222,7 @@ void Class::AccessibilityOf
       {
          auto spec = static_cast< ClassInst* >(usingClass)->GetSpec();
 
-         if(spec->ItemIsTemplageArg(item))
+         if(spec->ItemIsTemplateArg(item))
          {
             view->accessibility = Unrestricted;
             return;

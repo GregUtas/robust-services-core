@@ -293,7 +293,8 @@ fixed_string WarningStrings[Warning_N + 1] =
    "Name of #include guard is not standard",
    "Function does not invoke Debug::ft",
    "Function does not invoke Debug::ft as first statement",
-   "Function name string for Debug::ft is not standard",
+   "Function name passed to Debug::ft is not standard",
+   "Function name passed to Debug::ft is already used by another function",
    "Override of Base.Display not found",
    "Override of Object.Patch not found",
    ERROR_STR

@@ -1251,6 +1251,18 @@ bool DataSpec::IsUsedInNameOnly() const
 
 //------------------------------------------------------------------------------
 
+fn_name DataSpec_ItemIsTemplateArg = "DataSpec.ItemIsTemplateArg";
+
+bool DataSpec::ItemIsTemplateArg(const CxxScoped* item) const
+{
+   Debug::ft(DataSpec_ItemIsTemplateArg);
+
+   if(Referent() == item) return true;
+   return name_->ItemIsTemplateArg(item);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name DataSpec_MatchesExactly = "DataSpec.MatchesExactly";
 
 bool DataSpec::MatchesExactly(const TypeSpec* that) const
@@ -1923,8 +1935,7 @@ void QualName::EnterBlock()
    Debug::ft(QualName_EnterBlock);
 
    Context::SetPos(GetPos());
-   auto name = *Name();
-   if(name == "NULL") Log(UseOfNull);
+   if(*Name() == "NULL") Log(UseOfNull);
 
    //  If a "." or "->" operator is waiting for its second argument,
    //  push this name and return so that the operator can be executed.
@@ -2026,6 +2037,24 @@ void QualName::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    }
 
    symbols.AddDirect(ref);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name QualName_ItemIsTemplateArg = "QualName.ItemIsTemplateArg";
+
+bool QualName::ItemIsTemplateArg(const CxxScoped* item) const
+{
+   Debug::ft(QualName_ItemIsTemplateArg);
+
+   //  Look for template arguments attached to each name.
+   //
+   for(auto n = First(); n != nullptr; n = n->Next())
+   {
+      if(n->ItemIsTemplateArg(item)) return true;
+   }
+
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -2656,6 +2685,37 @@ void TypeName::Instantiating() const
 
 //------------------------------------------------------------------------------
 
+fn_name TypeName_ItemIsTemplateArg = "TypeName.ItemIsTemplateArg";
+
+bool TypeName::ItemIsTemplateArg(const CxxScoped* item) const
+{
+   Debug::ft(TypeName_ItemIsTemplateArg);
+
+   if(args_ != nullptr)
+   {
+      for(auto a = args_->cbegin(); a != args_->cend(); ++a)
+      {
+         if((*a)->ItemIsTemplateArg(item)) return true;
+      }
+   }
+
+   auto ref = DirectType();
+
+   if(ref != nullptr)
+   {
+      auto type = ref->GetTypeSpec();
+
+      if(type != nullptr)
+      {
+         if(type->ItemIsTemplateArg(item)) return true;
+      }
+   }
+
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name TypeName_MatchTemplate = "TypeName.MatchTemplate";
 
 TypeMatch TypeName::MatchTemplate(const TypeName* that,
@@ -3027,6 +3087,14 @@ bool TypeSpec::HasArrayDefn() const
 void TypeSpec::Instantiating() const
 {
    Debug::SwErr(TypeSpec_PureVirtualFunction, "Instantiating", 0);
+}
+
+//------------------------------------------------------------------------------
+
+bool TypeSpec::ItemIsTemplateArg(const CxxScoped* item) const
+{
+   Debug::SwErr(TypeSpec_PureVirtualFunction, "ItemIsTemplateArg", 0);
+   return false;
 }
 
 //------------------------------------------------------------------------------

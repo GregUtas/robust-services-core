@@ -98,8 +98,8 @@ public:
    //  it.  Then output EXPL and, if input is being read from a file, add
    //  the line and column where the error occurred.
    //
-   void ErrorAtPos
-      (CliThread& cli, const std::string& expl, std::streamsize p = -1) const;
+   void ErrorAtPos(const CliThread& cli,
+      const std::string& expl, std::streamsize p = -1) const;
 
    //  Returns the rest (unread portion) of the input line in S.
    //
@@ -142,12 +142,12 @@ private:
    //  Reads an input line into buff_.  Any results are written to cli.obuf.
    //  Returns StreamOk on success.  See StreamRc for failure codes.
    //
-   std::streamsize GetLine(CliThread& cli);
+   std::streamsize GetLine(const CliThread& cli);
 
    //  Verifies that the current input line contains no illegal characters.
    //  Returns StreamOk or StreamBadChar.
    //
-   std::streamsize ScanLine(CliThread& cli);
+   std::streamsize ScanLine(const CliThread& cli);
 
    //  Returns a string that echoes the user's input.
    //
@@ -171,7 +171,7 @@ private:
    //  Treats INPUT as if it had been entered as a command.  Any results are
    //  written to cli.obuf.  Returns StreamOk, StreamEmpty, or StreamBadChar.
    //
-   std::streamsize PutLine(CliThread& cli, const std::string& input);
+   std::streamsize PutLine(const CliThread& cli, const std::string& input);
 
    //> The maximum number of characters in a line of user input.
    //

@@ -335,7 +335,7 @@ enum TemplateRole
    TemplateNone,       // not part of a template
    TemplateArgument,   // e.g. int in vector< int >
    TemplateParameter,  // e.g. T in template< typename T > class vector{...};
-   TemplateClass       // a DataSpec created interally for template matching;
+   TemplateClass       // a DataSpec created internally for template matching;
                        // contains each of the parameters to a class template
 };
 
@@ -397,7 +397,7 @@ enum Warning
    FriendAsForward,          // friend declaration is also forward declaration
    HidesInheritedName,       // member has the same name as a base class member
    ClassCouldBeNamespace,    // only has enums, typedefs, and static functions
-   ClassCouldBeStruct,       // has no private members
+   ClassCouldBeStruct,       // has no private members or subclasses
    StructCouldBeClass,       // has private members
    RedundantAccessControl,   // previous member already public/protected/private
    ItemCouldBePrivate,       // item only used within declarer
@@ -466,7 +466,8 @@ enum Warning
    IncludeGuardMisnamed,     // #include guard name is not based on filename
    DebugFtNotInvoked,        // function does not invoke Debug::ft
    DebugFtNotFirst,          // function invokes Debug::ft after first statement
-   DebugFtNameMismatch,      // function name string for Debug::ft is incorrect
+   DebugFtNameMismatch,      // function name for Debug::ft is incorrect
+   DebugFtNameDuplicated,    // function name for Debug::ft used previously
    DisplayNotOverridden,     // class should override Base.Display
    PatchNotOverridden,       // class should override Object.Patch
    Warning_N                 // number of warnings

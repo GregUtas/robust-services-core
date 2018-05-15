@@ -220,15 +220,12 @@ void Class::AccessibilityOf
       //
       if(usingClass->IsInTemplateInstance())
       {
-         auto args = static_cast< ClassInst* >(usingClass)->GetSpec()->Args();
+         auto spec = static_cast< ClassInst* >(usingClass)->GetSpec();
 
-         for(auto a = args->cbegin(); a != args->cend(); ++a)
+         if(spec->ItemIsTemplateArg(item))
          {
-            if((*a)->Referent() == item)
-            {
-               view->accessibility = Unrestricted;
-               return;
-            }
+            view->accessibility = Unrestricted;
+            return;
          }
       }
    }
@@ -525,7 +522,8 @@ void Class::CheckIfUsed(Warning warning) const
          return;
       }
 
-      if((attrs.test(HasNonPublicInnerClass)) ||
+      if((attrs.test(IsBase)) ||
+         (attrs.test(HasNonPublicInnerClass)) ||
          (attrs.test(HasNonPublicMemberFunction)) ||
          (attrs.test(HasNonPublicMemberData)) ||
          (attrs.test(HasNonPublicStaticFunction)) ||

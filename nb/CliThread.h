@@ -63,13 +63,13 @@ public:
    //  or warning message (as determined by ERROR) is output, indicating
    //  where the superfluous input starts.
    //
-   bool EndOfInput(bool error);
+   bool EndOfInput(bool error) const;
 
    //  Used to report the result of a command that returned RC.  EXPL is
    //  displayed as a success or failure explanation with INDENT leading
    //  blanks.  Returns RC.
    //
-   word Report(word rc, const std::string& expl, col_t indent = 2);
+   word Report(word rc, const std::string& expl, col_t indent = 2) const;
 
    //  Outputs and clears the output buffer (obuf) if it contains text.
    //
@@ -193,7 +193,7 @@ private:
    //  Parses user input and returns the command to be processed.
    //  Returns nullptr if no command is to be invoked.
    //
-   const CliCommand* ParseCommand();
+   const CliCommand* ParseCommand() const;
 
    //  Initializes the parser, invokes COMM, streams its output,
    //  and returns its result.
@@ -203,6 +203,11 @@ private:
    //  Sets the result of executing a command.
    //
    void SetResult(word result);
+
+   //  Used by Report to output EXPL[BEGIN to END], followed by an endline.
+   //
+   void Report1
+      (const std::string& expl, size_t begin, size_t end, col_t indent) const;
 
    //  Acquires resources when creating or recreating the thread.
    //

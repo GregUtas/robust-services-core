@@ -3739,6 +3739,7 @@ bool Function::IsExemptFromTracing() const
 {
    Debug::ft(Function_IsExemptFromTracing);
 
+   if(GetDecl()->pure_) return true;
    if(tmplt_ != nullptr) return true;
 
    if((impl_ != nullptr) && (impl_->FirstStatement() == nullptr)) return true;
@@ -4616,6 +4617,14 @@ bool FuncSpec::IsConst() const
 bool FuncSpec::IsConstPtr() const
 {
    return func_->GetTypeSpec()->IsConstPtr();
+}
+
+//------------------------------------------------------------------------------
+
+bool FuncSpec::ItemIsTemplateArg(const CxxScoped* item) const
+{
+   Debug::SwErr(FuncSpec_Warning, "ItemIsTemplateArg", 0);
+   return func_->GetTypeSpec()->ItemIsTemplateArg(item);
 }
 
 //------------------------------------------------------------------------------

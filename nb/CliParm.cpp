@@ -363,7 +363,7 @@ CliParm::Rc CliParm::GetTextParmRc(id_t& i, string& s, CliThread& cli) const
 
 fn_name CliParm_Mismatch = "CliParm.Mismatch";
 
-CliParm::Rc CliParm::Mismatch(CliThread& cli, const string& type)
+CliParm::Rc CliParm::Mismatch(const CliThread& cli, const string& type)
 {
    Debug::ft(CliParm_Mismatch);
 

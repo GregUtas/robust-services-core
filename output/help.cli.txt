@@ -1142,7 +1142,7 @@ nb>ct
 ct>help full
 import            : Adds a directory to the code base.
   <str>           : directory name
-  [<str>]         : path within SourcePath configuration parameter
+  <str>           : path within SourcePath configuration parameter
 
 show              : Displays library information.
 (                 : what to show...
@@ -1206,6 +1206,24 @@ format            : Reformats code files.
 export            : Exports library information.
   <str>           : filename for output
   [<str>]         : options (enter ">help export full" for details)
+
+coverage          : Supports code coverage.
+(                 : subcommand...
+  build           : adds functions in OutputPath/*.funcs.txt to database
+  load            : loads a previous database
+    <str>         : read from OutputPath/<str>.cover.txt
+  stats           : displays statistics for loaded database
+  under           : lists functions invoked by fewer than N testcases
+    (1:10)        : value of N+1
+  diff            : lists added/changed/deleted functions and testcases
+  retest          : lists testcases for added/changed/deleted functions
+  erase           : removes an item from a database
+    (p|c)         : 'p'=previous database 'c'=current database
+    (f|t)         : 'f'=function 't'=testcase
+    <str>         : name of function or testcase to remove
+  dump            : merges the databases and dumps the result
+    <str>         : write to <str>.cover.txt
+)
 
 shrink            : Shrinks the library's element containers.
 

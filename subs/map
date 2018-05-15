@@ -6,6 +6,7 @@
 #define MAP_INCLUDED
 
 #include "cstddef"
+#include "iterator"
 #include "utility"
 
 namespace std
@@ -14,28 +15,31 @@ namespace std
    {
    public:
       typedef pair< T1, T2 > entry;
+      typedef iterator_t< entry > iterator;
+      typedef iterator_t< const entry > const_iterator;
       map();
       ~map();
-      entry* begin();
-      entry* cbegin() const;
-      entry* cend() const;
+      iterator begin();
+      const_iterator cbegin() const;
+      const_iterator cend() const;
       void clear();
       size_t count(const T1& key) const;
-      entry* crbegin() const;
-      entry* crend() const;
+      const_iterator crbegin() const;
+      const_iterator crend() const;
       bool empty() const;
-      entry* end();
+      iterator end();
+      iterator erase(iterator pos);
       size_t erase(const T1& key);
-      entry* find(const T1& key) const;
-      entry* find(const T1& key);
-      pair< entry*, bool > insert(entry& item);
-      entry* lower_bound(const T1& key) const;
-      entry* lower_bound(const T1& key);
-      entry* rbegin();
-      entry* rend();
+      iterator find(const T1& key) const;
+      iterator find(const T1& key);
+      pair< iterator, bool > insert(entry& item);
+      iterator lower_bound(const T1& key) const;
+      iterator lower_bound(const T1& key);
+      const_iterator rbegin();
+      const_iterator rend();
       size_t size() const;
-      entry* upper_bound(const T1& key) const;
-      entry* upper_bound(const T1& key);
+      iterator upper_bound(const T1& key) const;
+      iterator upper_bound(const T1& key);
    };
 }
 

@@ -30,13 +30,61 @@
 
 namespace NodeBase
 {
+fn_name FileList_Advance = "FileList.Advance";
+
+bool FileList::Advance()
+{
+   //  This is a pure virtual function.
+   //
+   Debug::SwErr(FileList_Advance, 0, 0);
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name FileList_AtEnd = "FileList.AtEnd";
+
+bool FileList::AtEnd() const
+{
+   //  This is a pure virtual function.
+   //
+   Debug::SwErr(FileList_AtEnd, 0, 0);
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name FileList_GetName = "FileList.GetName";
+
+void FileList::GetName(std::string& fileName) const
+{
+   //  This is a pure virtual function.
+   //
+   Debug::SwErr(FileList_GetName, 0, 0);
+   fileName.clear();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name FileList_IsSubdir = "FileList.IsSubdir";
+
+bool FileList::IsSubdir() const
+{
+   //  This is a pure virtual function.
+   //
+   Debug::SwErr(FileList_IsSubdir, 0, 0);
+   return false;
+}
+
+//==============================================================================
+
 fn_name SysFile_CreateIstream = "SysFile.CreateIstream";
 
-istreamPtr SysFile::CreateIstream(const char* streamName)
+istreamPtr SysFile::CreateIstream(const char* fileName)
 {
    Debug::ft(SysFile_CreateIstream);
 
-   auto stream = istreamPtr(new std::ifstream(streamName));
+   auto stream = istreamPtr(new std::ifstream(fileName));
 
    if((stream != nullptr) && (stream->peek() == EOF))
    {
@@ -51,12 +99,12 @@ istreamPtr SysFile::CreateIstream(const char* streamName)
 
 fn_name SysFile_CreateOstream = "SysFile.CreateOstream";
 
-ostreamPtr SysFile::CreateOstream(const char* streamName, bool trunc)
+ostreamPtr SysFile::CreateOstream(const char* fileName, bool trunc)
 {
    Debug::ft(SysFile_CreateOstream);
 
    auto mode = (trunc ? std::ios::trunc : std::ios::app);
-   auto stream = ostreamPtr(new std::ofstream(streamName, mode));
+   auto stream = ostreamPtr(new std::ofstream(fileName, mode));
    if(stream != nullptr) *stream << std::boolalpha << std::nouppercase;
    return stream;
 }

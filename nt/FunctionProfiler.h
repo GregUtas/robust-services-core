@@ -116,10 +116,6 @@ private:
    //  The queue of sorted FunctionStats.
    //
    Q2Way< FunctionStats > sortq_;
-
-   //  Set if namespaces have been provided for functions.
-   //
-   bool namespaces_;
 };
 }
 #endif

@@ -238,7 +238,7 @@ void CliThread::Display(ostream& stream,
 
 fn_name CliThread_EndOfInput = "CliThread.EndOfInput";
 
-bool CliThread::EndOfInput(bool error)
+bool CliThread::EndOfInput(bool error) const
 {
    Debug::ft(CliThread_EndOfInput);
 
@@ -455,7 +455,7 @@ word CliThread::OpenInputFile(const string& name, string& expl)
 
 fn_name CliThread_ParseCommand = "CliThread.ParseCommand";
 
-const CliCommand* CliThread::ParseCommand()
+const CliCommand* CliThread::ParseCommand() const
 {
    Debug::ft(CliThread_ParseCommand);
 
@@ -675,61 +675,82 @@ void CliThread::ReleaseResources()
 
 fn_name CliThread_Report = "CliThread.Report";
 
-word CliThread::Report(word rc, const string& expl, col_t indent)
+word CliThread::Report(word rc, const string& expl, col_t indent) const
 {
    Debug::ft(CliThread_Report);
 
-   size_t maxlen = 79 - indent;  // maximum line length
-   size_t len = expl.size();     // length of EXPL
-   size_t pos = 0;               // current position in EXPL
+   //  If EXPL contains explicit endlines, output each substring
+   //  that ends with an endline individually.
+   //
+   size_t size = expl.size();
+   size_t begin = 0;
 
-   while(pos < len)
+   while(begin < size)
    {
-      //  If the rest of EXPL fits on a line, output it and return.
-      //
-      if((len - pos + 1) <= maxlen)
+      auto end = expl.find(CRLF, begin);
+
+      if(end == string::npos)
       {
-         *obuf << spaces(indent) << expl.substr(pos) << CRLF;
+         Report1(expl, begin, size - 1, indent);
          return rc;
       }
 
-      //  If the rest of EXPL contains an endline before reaching the
-      //  maximum line length, output everything up to the endline and
-      //  advance to the character aftere the endline.
-      //
-      auto ret = expl.find(CRLF, pos);
-
-      if((ret != string::npos) && ((ret - pos + 1) <= maxlen))
-      {
-         *obuf << spaces(indent) << expl.substr(pos, ret - pos + 1);
-         pos = ret + 1;
-      }
+      if(end == begin)
+         *obuf << CRLF;
       else
-      {
-         //  Starting at the last character that would fit on a line,
-         //  work backwards to find a blank, and insert an endline at
-         //  that point.
-         //
-         auto end = std::min(pos + maxlen - 1, len - 1);
-         auto blank = expl.rfind(SPACE, end);
+         Report1(expl, begin, end - 1, indent);
 
-         if(blank != string::npos)
-         {
-            *obuf << spaces(indent) << expl.substr(pos, blank - pos) << CRLF;
-            pos = blank + 1;
-         }
-         else
-         {
-            //  There are more characters without intervening blanks than
-            //  fit on a line.  Just output the rest of it all and quit.
-            //
-            *obuf << spaces(indent) << expl.substr(pos, string::npos) << CRLF;
-            return rc;
-         }
-      }
+      begin = end + 1;
    }
 
    return rc;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CliThread_Report1 = "CliThread.Report1";
+
+void CliThread::Report1
+   (const string& expl, size_t begin, size_t end, col_t indent) const
+{
+   Debug::ft(CliThread_Report1);
+
+   size_t maxlen = 79 - indent;  // maximum line length
+
+   while(begin <= end)
+   {
+      //  If the rest of EXPL fits on one line, output it and return.
+      //
+      auto size = end - begin + 1;
+
+      if(size <= maxlen)
+      {
+         *obuf << spaces(indent) << expl.substr(begin, size) << CRLF;
+         return;
+      }
+
+      //  Starting at the last character that would fit on a line,
+      //  work backwards to find a blank, and insert an endline at
+      //  that point.  Then continue with the remaining characters.
+      //
+      auto stop = std::min(begin + maxlen - 1, end);
+      auto blank = expl.rfind(SPACE, stop);
+
+      if(blank != string::npos)
+      {
+         *obuf << spaces(indent) << expl.substr(begin, blank - begin) << CRLF;
+         begin = blank + 1;
+      }
+      else
+      {
+         //  There are more characters without intervening blanks than
+         //  fit on one line.  Just output the entire substring and let
+         //  it wrap wherever.
+         //
+         *obuf << spaces(indent) << expl.substr(begin, size) << CRLF;
+         return;
+      }
+   }
 }
 
 //------------------------------------------------------------------------------

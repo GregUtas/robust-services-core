@@ -1,0 +1,20 @@
+ct>start
+  OK.
+ct>read lib.20
+ct>check rsctest $files
+  Total=747, failed=0
+ct>if &cli.result != 0 testcase failed
+  Result is false.
+ct>delay 1
+  OK.
+ct>testcase end
+  OK.
+read test.lib.epilog
+ct>stop
+  OK.
+ct>save funcs &testcase.name
+  OK.
+ct>clear buffer
+  OK.
+ct>send cout
+  OK.

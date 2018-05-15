@@ -111,7 +111,7 @@ DispCBVParm::DispCBVParm() : CliCharParm(DispCBVExpl, DispCBVStr, true) { }
 
 //------------------------------------------------------------------------------
 
-word ExplainTraceRc(CliThread& cli, TraceRc rc)
+word ExplainTraceRc(const CliThread& cli, TraceRc rc)
 {
    auto result = (rc == TraceOk ? 0 : -1);
    return cli.Report(result, strTraceRc(rc));

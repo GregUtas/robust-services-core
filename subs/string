@@ -112,6 +112,15 @@ namespace std
    string to_string(float n);
    string to_string(double n);
    string to_string(long double n);
+
+   int stoi(const string& s, size_t* len = nullptr, int base = 10);
+   long stol(const string& s, size_t* len = nullptr, int base = 10);
+   unsigned long stoul(const string& s, size_t* len = nullptr, int base = 10);
+   long long stoll(const string& s, size_t* len = nullptr, int base = 10);
+   unsigned long long stoull(const string& s, size_t* len = nullptr, int base = 10);
+   float stof(const string& s, size_t* len = nullptr);
+   double stod(const string& s, size_t* len = nullptr);
+   long double stold(const string& s, size_t* len = nullptr);
 }
 
 #endif

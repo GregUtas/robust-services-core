@@ -30,6 +30,7 @@
 #include <utility>
 #include "Algorithms.h"
 #include "CliThread.h"
+#include "CodeCoverage.h"
 #include "CodeDir.h"
 #include "CodeFileSet.h"
 #include "CodeWarning.h"
@@ -648,6 +649,7 @@ void CodeFile::CheckDebugFt() const
    //
    if(IsHeader() && !IsTemplateHeader()) return;
 
+   auto cover = Singleton< CodeCoverage >::Instance();
    size_t begin, end;
    string statement;
    string dname;
@@ -667,6 +669,9 @@ void CodeFile::CheckDebugFt() const
       if(begin >= end) continue;
       auto last = lexer_.GetLineNum(end);
       auto open = false, debug = false, code = false;
+      std::ostringstream source;
+      (*f)->Display(source, EMPTY_STR, Code_Mask);
+      auto hash = stringHash(source.str().c_str());
 
       for(auto n = lexer_.GetLineNum(begin); n < last; ++n)
       {
@@ -694,7 +699,8 @@ void CodeFile::CheckDebugFt() const
                if(ok)
                {
                   ok = (*f)->CheckDebugName(fname);
-                  FunctionName::Insert(fname, *(*f)->GetSpace()->Name());
+                  if(!cover->AddFunc(fname, hash, *(*f)->GetSpace()->Name()))
+                     LogLine(n, DebugFtNameDuplicated);
                }
 
                if(!ok) LogLine(n, DebugFtNameMismatch);

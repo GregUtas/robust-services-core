@@ -319,7 +319,7 @@ private:
    //  what the current parameter in the parse tree actually supports.
    //  TYPE is the type of incorrect parameter.
    //
-   static Rc Mismatch(CliThread& cli, const std::string& type);
+   static Rc Mismatch(const CliThread& cli, const std::string& type);
 
    //  The parameter's index in the instance of CliText.parms_ where it
    //  is registered.

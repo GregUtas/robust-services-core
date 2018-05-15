@@ -1,0 +1,26 @@
+ct>start
+  OK.
+ct>read lib.11
+ct>type us Service.h
+  SbTracer.h, Initiator.cpp, SbCliParms.cpp, SbHandlers.cpp, SbIncrement.cpp,
+  SbTrace.cpp, Service.cpp, ServiceRegistry.cpp, ServiceSM.cpp, State.cpp,
+  MscContext.cpp, StIncrement.cpp, TestSessions.h, BcSessions.h,
+  ServiceCodeRegistry.cpp, PotsProtocol.cpp, PotsBicService.h,
+  PotsBocService.h, PotsCcwService.h, PotsCfbService.h, PotsCfxService.h,
+  PotsCfnService.h, PotsCfuService.h, PotsCwtService.h, PotsMultiplexer.h,
+  PotsHtlService.h, PotsSusService.h, PotsWmlService.h
+ct>if &cli.result != 0 testcase failed &cli.result
+  Result is false.
+ct>delay 1
+  OK.
+ct>testcase end
+  OK.
+read test.lib.epilog
+ct>stop
+  OK.
+ct>save funcs &testcase.name
+  OK.
+ct>clear buffer
+  OK.
+ct>send cout
+  OK.

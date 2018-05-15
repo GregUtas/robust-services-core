@@ -1,0 +1,16 @@
+quit all
+nt
+sb
+st
+pots
+an
+
+read test.tools.setup
+read test.cp.tools.setup
+
+symbols set script.name traffic
+start
+/ swflags set &flag.cipalwaysoverip on
+testcase begin traffic
+delay 2
+traffic rate 600

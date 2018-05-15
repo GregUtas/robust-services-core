@@ -286,7 +286,7 @@ public:
 
    //  POS is the start of a line.  If the line is an #include directive, sets
    //  FILE to the included filename, sets ANGLE if FILE appeared within angle
-   //  brackets, and returns TRUE.
+   //  brackets, and returns true.
    //
    bool GetIncludeFile(size_t pos, std::string& file, bool& angle) const;
 

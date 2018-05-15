@@ -153,8 +153,8 @@ string CliBuffer::Echo() const
 
 fn_name CliBuffer_ErrorAtPos = "CliBuffer.ErrorAtPos";
 
-void CliBuffer::ErrorAtPos
-   (CliThread& cli, const string& expl, std::streamsize p) const
+void CliBuffer::ErrorAtPos(const CliThread& cli,
+   const string& expl, std::streamsize p) const
 {
    Debug::ft(CliBuffer_ErrorAtPos);
 
@@ -321,7 +321,7 @@ CliParm::Rc CliBuffer::GetInt(string& s, word& n, bool hex)
 
 fn_name CliBuffer_GetLine = "CliBuffer.GetLine";
 
-std::streamsize CliBuffer::GetLine(CliThread& cli)
+std::streamsize CliBuffer::GetLine(const CliThread& cli)
 {
    Debug::ft(CliBuffer_GetLine);
 
@@ -556,7 +556,7 @@ void CliBuffer::Print()
 
 fn_name CliBuffer_PutLine = "CliBuffer.PutLine";
 
-std::streamsize CliBuffer::PutLine(CliThread& cli, const string& input)
+std::streamsize CliBuffer::PutLine(const CliThread& cli, const string& input)
 {
    Debug::ft(CliBuffer_PutLine);
 
@@ -594,7 +594,7 @@ void CliBuffer::Read(string& s)
 
 fn_name CliBuffer_ScanLine = "CliBuffer.ScanLine";
 
-std::streamsize CliBuffer::ScanLine(CliThread& cli)
+std::streamsize CliBuffer::ScanLine(const CliThread& cli)
 {
    Debug::ft(CliBuffer_ScanLine);
 

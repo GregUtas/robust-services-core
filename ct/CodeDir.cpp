@@ -26,8 +26,10 @@
 #include "CxxString.h"
 #include "Debug.h"
 #include "Library.h"
+#include "NbCliParms.h"
 #include "Registry.h"
 #include "Singleton.h"
+#include "SysFile.h"
 
 using namespace NodeBase;
 using std::ostream;
@@ -96,6 +98,49 @@ void CodeDir::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
+fn_name CodeDir_Extract = "CodeDir.Extract";
+
+word CodeDir::Extract(string& expl)
+{
+   Debug::ft(CodeDir_Extract);
+
+   //  Set this as the current directory.
+   //
+   if(!SysFile::SetDir(path_.c_str()))
+   {
+      expl = "Could not open directory " + path_;
+      return -1;
+   }
+
+   auto list = SysFile::GetFileList(nullptr, "*");
+
+   if(list != nullptr)
+   {
+      auto lib = Singleton< Library >::Instance();
+      string name;
+
+      do
+      {
+         if(!list->IsSubdir())
+         {
+            list->GetName(name);
+
+            if(IsCodeFile(name))
+            {
+               auto f = lib->EnsureFile(name, this);
+               f->Scan();
+            }
+         }
+      }
+      while(list->Advance());
+   }
+
+   expl = SuccessExpl;
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeDir_HeaderCount = "CodeDir.HeaderCount";
 
 size_t CodeDir::HeaderCount() const
@@ -112,6 +157,27 @@ size_t CodeDir::HeaderCount() const
    }
 
    return count;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeDir_IsCodeFile = "CodeDir.IsCodeFile";
+
+bool CodeDir::IsCodeFile(const string& name)
+{
+   Debug::ft(CodeDir_IsCodeFile);
+
+   //  Besides the usual .h* and .c* extensions, treat a file with
+   //  no extension (e.g. <iosfwd>) as a code file.
+   //
+   if(name.find('.') == string::npos) return true;
+   if(FileExtensionIs(name, "h")) return true;
+   if(FileExtensionIs(name, "hpp")) return true;
+   if(FileExtensionIs(name, "hxx")) return true;
+   if(FileExtensionIs(name, "c")) return true;
+   if(FileExtensionIs(name, "cpp")) return true;
+   if(FileExtensionIs(name, "cxx")) return true;
+   return false;
 }
 
 //------------------------------------------------------------------------------

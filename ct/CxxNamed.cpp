@@ -2699,9 +2699,16 @@ bool TypeName::ItemIsTemplateArg(const CxxScoped* item) const
       }
    }
 
-   if(type_ != nullptr)
+   auto ref = DirectType();
+
+   if(ref != nullptr)
    {
-      if(type_->GetTypeSpec()->ItemIsTemplateArg(item)) return true;
+      auto type = ref->GetTypeSpec();
+
+      if(type != nullptr)
+      {
+         if(type->ItemIsTemplateArg(item)) return true;
+      }
    }
 
    return false;

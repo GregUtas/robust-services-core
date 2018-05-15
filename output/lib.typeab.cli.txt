@@ -1,0 +1,37 @@
+ct>start
+  OK.
+ct>read lib.05
+ct>type ab ServiceSM.h
+  AnalyzeMsgEvent.cpp, RootServiceSM.h, Event.cpp, EventHandler.cpp,
+  ServiceSM.h, Initiator.cpp, ProtocolSM.cpp, RootServiceSM.cpp,
+  SbHandlers.cpp, SbIncrement.cpp, SbPools.cpp, SbTrace.cpp, ServiceSM.cpp,
+  SsmContext.cpp, StIncrement.cpp, StTestData.h, TestSessions.h, StModule.cpp,
+  StTestData.cpp, TestSessions.cpp, MediaEndpt.cpp, MediaSsm.h, MediaPsm.cpp,
+  MediaSsm.cpp, BcEvents.cpp, BcSessions.h, BcFactory.cpp, BcHandlers.cpp,
+  BcProtocol.cpp, BcService.cpp, BcSsm.cpp, BcStates.cpp, BcTriggers.cpp,
+  CbModule.cpp, ProxyBcSessions.h, ProxyBcSessions.cpp, TestCallFactory.cpp,
+  PotsProfile.cpp, PotsBcHandlers.cpp, PotsSessions.h, PotsBcService.cpp,
+  PotsBcSsm.cpp, PotsBcStates.cpp, PotsBcTriggers.cpp, PotsBicService.cpp,
+  PotsBocService.cpp, PotsCallFactory.cpp, PotsCallHandler.cpp,
+  PotsCallIpService.cpp, PotsCcwService.cpp, PotsCfbService.cpp,
+  PotsCfxService.h, PotsCfnService.cpp, PotsCfuService.cpp,
+  PotsCfxService.cpp, PotsCwmService.cpp, PotsMultiplexer.h,
+  PotsCwtService.cpp, PotsDiscService.cpp, PotsHtlService.cpp,
+  PotsMultiplexer.cpp, PotsProxyHandlers.cpp, PotsProxySessions.cpp,
+  PotsProxySessions.h, PotsSusService.cpp, PotsTreatments.cpp,
+  PotsWmlService.cpp, SnIncrement.cpp, SnModule.cpp, AnIncrement.cpp
+ct>if &cli.result != 0 testcase failed &cli.result
+  Result is false.
+ct>delay 1
+  OK.
+ct>testcase end
+  OK.
+read test.lib.epilog
+ct>stop
+  OK.
+ct>save funcs &testcase.name
+  OK.
+ct>clear buffer
+  OK.
+ct>send cout
+  OK.

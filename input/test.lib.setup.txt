@@ -2,15 +2,12 @@ quit all
 nt
 ct
 
-stop
-clear buffer
-clear selections
-clear tools
-set tools fm on
-include all on
-exclude faction &faction.audit
-exclude faction &faction.bkgd
-sb exclude timers
+quit all
+nt
+ct
+
+read test.tools.setup
+read test.lib.tools.setup
 
 testcase prolog test.lib.prolog
 testcase epilog test.lib.epilog

@@ -1,16 +1,8 @@
 quit all
 nt
 
-stop
-clear buffer
-clear selections
-clear tools
-set tools f on
-include all on
-exclude faction &faction.audit
-exclude faction &faction.bkgd
-exclude faction &faction.oper
-sb exclude timers
+read test.tools.setup
+read test.trap.tools.setup
 
 testcase prolog test.trap.prolog
 testcase epilog test.trap.epilog

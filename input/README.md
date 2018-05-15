@@ -17,7 +17,6 @@ Script | Description
 ------ | -----------
 buildlib | builds CodeTools library
 debug | sets up environment before using breakpoint debugging
-finish | saves traffic, scheduler, and statistics reports in the file defined by `script.name` (`>set script.name <script>`)
 regression | reads all testcases and saves results in `regression.*` files when done
 restart.cold 1/2 | run to initiate cold restart and then to capture trace
 restart.warm 1/2 | run to initiate warm restart and then to capture trace
@@ -35,4 +34,4 @@ test.lib.setup | sets up environment for code library testcases
 test.trap.critical | reads all trap testcases, with recovery thread asking to be reentered after a trap; turns POSIX signals into C++ exceptions
 test.trap.non-critical | reads all trap testcases, with recovery thread asking to be exited after a trap
 test.trap.setup | sets up environment for running trap testcases
-traffic | starts to run POTS traffic; use `>read finish` to save summary of results in `traffic.*` files when done
+traffic.start | starts to run POTS traffic; use `>read traffic.stop` to save summary of results in `traffic.*` files when done

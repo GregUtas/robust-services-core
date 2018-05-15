@@ -1,0 +1,67 @@
+ct>start
+  OK.
+ct>read lib.16
+ct>assign sbdep (ab f nbase) & (as f sbase)
+  OK.
+ct>if &cli.result != 0 testcase failed &cli.result "assign failed"
+  Result is false.
+ct>type sbdep
+  Algorithms.h, SysTypes.h, AllocationException.h, Debug.h, Exception.h,
+  Allocators.h, Memory.h, Array.h, SysDecls.h, AssertionException.h, Base.h,
+  Formatters.h, NbTypes.h, CfgParm.h, CfgIntParm.h, CfgParmRegistry.h, Log.h,
+  Singleton.h, Protected.h, Q1Link.h, Q1Way.h, SysFile.h, Clock.h, Restart.h,
+  Thread.h, RegCell.h, Registry.h, CliAppData.h, CliThread.h, Temporary.h,
+  CliCookie.h, CliParm.h, SymbolRegistry.h, ThisThread.h, CliCharParm.h,
+  CliCommand.h, CliText.h, NbCliParms.h, Object.h, CliIncrement.h,
+  CliIntParm.h, CliPtrParm.h, CliTextParm.h, Element.h, NbIncrement.h,
+  TraceBuffer.h, SysTime.h, NbAppIds.h, SoftwareException.h, Dynamic.h,
+  TraceDump.h, TimedRecord.h, ToolTypes.h, Immutable.h, Module.h, MsgBuffer.h,
+  Pooled.h, SysMutex.h, ObjectPool.h, ObjectPoolRegistry.h, Singletons.h,
+  Statistics.h, StatisticsGroup.h, Tool.h, Permanent.h, Q2Link.h, Q2Way.h,
+  SysThread.h, TraceRecord.h, InputHandler.h, IpBuffer.h, IpPort.h,
+  SysSocket.h, SysIpL3Addr.h, IpPortRegistry.h, NwTracer.h, SysIpL2Addr.h,
+  NwIncrement.h, NwModule.h, AnalyzeMsgEvent.cpp, SbEvents.h, Message.h,
+  ProtocolSM.h, RootServiceSM.h, AnalyzeSapEvent.cpp, Context.h, SbTrace.h,
+  AnalyzeSnpEvent.cpp, Context.cpp, GlobalAddress.h, InvokerPool.h,
+  InvokerPoolRegistry.h, InvokerThread.h, MsgHeader.h, MsgPort.h, Parameter.h,
+  SbPools.h, SbTracer.h, Signal.h, TimerProtocol.h, TlvMessage.h,
+  TlvParameter.h, Factory.h, SbTypes.h, Event.cpp, Event.h, EventHandler.h,
+  EventHandler.cpp, ServiceSM.h, Factory.cpp, FactoryRegistry.h,
+  FactoryRegistry.cpp, SbCliParms.h, ForceTransitionEvent.cpp,
+  GlobalAddress.cpp, LocalAddress.h, InitiationReqEvent.cpp, Initiator.cpp,
+  Initiator.h, Service.h, ServiceRegistry.h, Trigger.h, InvokerPool.cpp,
+  SbIpBuffer.h, InvokerPoolRegistry.cpp, InvokerThread.cpp, LocalAddress.cpp,
+  Message.cpp, Protocol.h, MsgContext.cpp, MsgContext.h, MsgFactory.h,
+  MsgFactory.cpp, MsgHeader.cpp, ProtocolRegistry.h, MsgPort.cpp,
+  PsmFactory.h, ProtocolLayer.h, Parameter.cpp, Protocol.cpp,
+  ProtocolLayer.cpp, ProtocolRegistry.cpp, ProtocolSM.cpp, Timer.h,
+  PsmContext.cpp, PsmContext.h, PsmFactory.cpp, RootServiceSM.cpp,
+  SsmContext.h, SbCliParms.cpp, State.h, SbExtInputHandler.cpp,
+  SbExtInputHandler.h, SbInputHandler.h, SbHandlers.cpp, SbHandlers.h,
+  SbIncrement.cpp, SbIncrement.h, TimerRegistry.h, SbInputHandler.cpp,
+  SbInvokerPools.cpp, SbInvokerPools.h, SbIpBuffer.cpp, SbModule.cpp,
+  SbModule.h, TimerThread.h, SbPools.cpp, SbTrace.cpp, SbTracer.cpp,
+  SbTypes.cpp, Service.cpp, ServiceRegistry.cpp, ServiceSM.cpp, Signal.cpp,
+  SsmContext.cpp, SsmFactory.h, SsmFactory.cpp, State.cpp, TextTlvMessage.cpp,
+  TextTlvMessage.h, Timer.cpp, TimerProtocol.cpp, TlvProtocol.h,
+  TimerRegistry.cpp, TimerThread.cpp, TlvIntParameter.h, TlvMessage.cpp,
+  TlvParameter.cpp, TlvProtocol.cpp, Trigger.cpp
+ct>if &cli.result != 0 testcase failed &cli.result "type failed"
+  Result is false.
+ct>purge sbdep
+  OK.
+ct>if &cli.result != 0 testcase failed &cli.result "purge failed"
+  Result is false.
+ct>delay 1
+  OK.
+ct>testcase end
+  OK.
+read test.lib.epilog
+ct>stop
+  OK.
+ct>save funcs &testcase.name
+  OK.
+ct>clear buffer
+  OK.
+ct>send cout
+  OK.

@@ -20,17 +20,19 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CodeIncrement.h"
+#include "CliCharParm.h"
 #include "CliCommand.h"
 #include "CliIntParm.h"
 #include "CliText.h"
 #include "CliTextParm.h"
 #include <cstddef>
 #include <iomanip>
-#include <memory>
+#include <iosfwd>
 #include <sstream>
 #include <string>
 #include "CliBuffer.h"
 #include "CliThread.h"
+#include "CodeCoverage.h"
 #include "CodeDir.h"
 #include "CodeFile.h"
 #include "Cxx.h"
@@ -49,6 +51,7 @@
 #include "SysTypes.h"
 
 using namespace NodeBase;
+using std::ostream;
 using std::setw;
 using std::string;
 
@@ -108,7 +111,7 @@ public:
    //  Reads the rest of the input line and returns the result of
    //  evaluating it.
    //
-   static LibrarySet* Evaluate(CliThread& cli);
+   static LibrarySet* Evaluate(const CliThread& cli);
 protected:
    //  The arguments are from the base class.  Protected because this
    //  class is virtual.
@@ -123,7 +126,7 @@ LibraryCommand::~LibraryCommand() { }
 
 fn_name LibraryCommand_Evaluate = "LibraryCommand.Evaluate";
 
-LibrarySet* LibraryCommand::Evaluate(CliThread& cli)
+LibrarySet* LibraryCommand::Evaluate(const CliThread& cli)
 {
    Debug::ft(LibraryCommand_Evaluate);
 
@@ -222,6 +225,303 @@ word CheckCommand::ProcessCommand(CliThread& cli) const
    {
       title += ".check.txt";
       cli.SendToFile(title, true);
+   }
+
+   return cli.Report(rc, expl);
+}
+
+//------------------------------------------------------------------------------
+//
+//  The COVERAGE command.
+//
+class CoverageBuildText : public CliText
+{
+public: CoverageBuildText();
+};
+
+fixed_string CoverageBuildTextStr = "build";
+fixed_string CoverageBuildTextExpl =
+   "adds functions in OutputPath/*.funcs.txt to database";
+
+CoverageBuildText::CoverageBuildText() :
+   CliText(CoverageBuildTextExpl, CoverageBuildTextStr) { }
+
+class CoverageLoadText : public CliText
+{
+public: CoverageLoadText();
+};
+
+class LoadFileNameParm : public CliTextParm
+{
+public: LoadFileNameParm();
+};
+
+fixed_string LoadFileNameParmExpl =
+   "read from OutputPath/<str>.cover.txt";
+
+LoadFileNameParm::LoadFileNameParm() :
+   CliTextParm(LoadFileNameParmExpl) { }
+
+fixed_string CoverageLoadTextStr = "load";
+fixed_string CoverageLoadTextExpl = "loads a previous database";
+
+CoverageLoadText::CoverageLoadText() :
+   CliText(CoverageLoadTextExpl, CoverageLoadTextStr)
+{
+   BindParm(*new LoadFileNameParm);
+}
+
+class CoverageStatsText : public CliText
+{
+public: CoverageStatsText();
+};
+
+fixed_string CoverageStatsTextStr = "stats";
+fixed_string CoverageStatsTextExpl =
+   "displays statistics for loaded database";
+
+CoverageStatsText::CoverageStatsText() :
+   CliText(CoverageStatsTextExpl, CoverageStatsTextStr) { }
+
+class CoverageUnderText : public CliText
+{
+public: CoverageUnderText();
+};
+
+class MinTestsParm : public CliIntParm
+{
+public: MinTestsParm();
+};
+
+fixed_string MinTestsParmExpl = "value of N+1";
+
+MinTestsParm::MinTestsParm() :
+   CliIntParm(MinTestsParmExpl, 1, 10) { }
+
+fixed_string CoverageUnderTextStr = "under";
+fixed_string CoverageUnderTextExpl =
+   "lists functions invoked by fewer than N testcases";
+
+CoverageUnderText::CoverageUnderText() :
+   CliText(CoverageUnderTextExpl, CoverageUnderTextStr)
+{
+   BindParm(*new MinTestsParm);
+}
+
+class CoverageDiffText : public CliText
+{
+public: CoverageDiffText();
+};
+
+fixed_string CoverageDiffTextStr = "diff";
+fixed_string CoverageDiffTextExpl =
+   "lists added/changed/deleted functions and testcases";
+
+CoverageDiffText::CoverageDiffText() :
+   CliText(CoverageDiffTextExpl, CoverageDiffTextStr) { }
+
+class CoverageRetestText : public CliText
+{
+public: CoverageRetestText();
+};
+
+fixed_string CoverageRetestTextStr = "retest";
+fixed_string CoverageRetestTextExpl =
+   "lists testcases for added/changed/deleted functions";
+
+CoverageRetestText::CoverageRetestText() :
+   CliText(CoverageRetestTextExpl, CoverageRetestTextStr) { }
+
+class CoverageEraseText : public CliText
+{
+public: CoverageEraseText();
+};
+
+class PrevCurrParm : public CliCharParm
+{
+public: PrevCurrParm();
+};
+
+fixed_string PrevCurrParmStr = "pc";
+fixed_string PrevCurrParmExpl = "'p'=previous database 'c'=current database";
+
+PrevCurrParm::PrevCurrParm() :
+   CliCharParm(PrevCurrParmExpl, PrevCurrParmStr) { }
+
+class FuncTestParm : public CliCharParm
+{
+public: FuncTestParm();
+};
+
+fixed_string FuncTestParmStr = "ft";
+fixed_string FuncTestParmExpl = "'f'=function 't'=testcase";
+
+FuncTestParm::FuncTestParm() :
+   CliCharParm(FuncTestParmExpl, FuncTestParmStr) { }
+
+class ItemNameParm : public CliTextParm
+{
+public: ItemNameParm();
+};
+
+fixed_string ItemNameParmExpl =
+   "name of function or testcase to remove";
+
+ItemNameParm::ItemNameParm() : CliTextParm(ItemNameParmExpl) { }
+
+fixed_string CoverageEraseTextStr = "erase";
+fixed_string CoverageEraseTextExpl =
+   "removes an item from a database";
+
+CoverageEraseText::CoverageEraseText() :
+   CliText(CoverageEraseTextExpl, CoverageEraseTextStr)
+{
+   BindParm(*new PrevCurrParm);
+   BindParm(*new FuncTestParm);
+   BindParm(*new ItemNameParm);
+}
+
+class CoverageDumpText : public CliText
+{
+public: CoverageDumpText();
+};
+class DumpFileNameParm : public CliTextParm
+{
+public: DumpFileNameParm();
+};
+
+fixed_string DumpFileNameParmExpl = "write to <str>.cover.txt";
+
+DumpFileNameParm::DumpFileNameParm() :
+   CliTextParm(DumpFileNameParmExpl) { }
+
+fixed_string CoverageDumpStr = "dump";
+fixed_string CoverageDumpExpl = "merges the databases and dumps the result";
+
+CoverageDumpText::CoverageDumpText() :
+   CliText(CoverageDumpExpl, CoverageDumpStr)
+{
+   BindParm(*new DumpFileNameParm);
+}
+
+class CoverageAction : public CliTextParm
+{
+public: CoverageAction();
+};
+
+const id_t CoverageBuildIndex = 1;
+const id_t CoverageLoadIndex = 2;
+const id_t CoverageStatsIndex = 3;
+const id_t CoverageUnderIndex = 4;
+const id_t CoverageDiffIndex = 5;
+const id_t CoverageRetestIndex = 6;
+const id_t CoverageEraseIndex = 7;
+const id_t CoverageDumpIndex = 8;
+
+fixed_string CoverageActionExpl = "subcommand...";
+
+CoverageAction::CoverageAction() : CliTextParm(CoverageActionExpl)
+{
+   BindText(*new CoverageBuildText, CoverageBuildIndex);
+   BindText(*new CoverageLoadText, CoverageLoadIndex);
+   BindText(*new CoverageStatsText, CoverageStatsIndex);
+   BindText(*new CoverageUnderText, CoverageUnderIndex);
+   BindText(*new CoverageDiffText, CoverageDiffIndex);
+   BindText(*new CoverageRetestText, CoverageRetestIndex);
+   BindText(*new CoverageEraseText, CoverageEraseIndex);
+   BindText(*new CoverageDumpText, CoverageDumpIndex);
+}
+
+class CoverageCommand : public LibraryCommand
+{
+public:
+   CoverageCommand();
+private:
+   virtual word ProcessCommand(CliThread& cli) const override;
+};
+
+fixed_string CoverageStr = "coverage";
+fixed_string CoverageExpl = "Supports code coverage.";
+
+CoverageCommand::CoverageCommand() : LibraryCommand(CoverageStr, CoverageExpl)
+{
+   BindParm(*new CoverageAction);
+}
+
+fn_name CoverageCommand_ProcessCommand = "CoverageCommand.ProcessCommand";
+
+word CoverageCommand::ProcessCommand(CliThread& cli) const
+{
+   Debug::ft(CoverageCommand_ProcessCommand);
+
+   auto database = Singleton< CodeCoverage >::Instance();
+   id_t index;
+   word min;
+   char c;
+   bool p, f;
+   string name, path, expl;
+   istreamPtr input;
+   ostream* output;
+   word rc;
+
+   if(!GetTextIndex(index, cli)) return -1;
+
+   switch(index)
+   {
+   case CoverageBuildIndex:
+      cli.EndOfInput(false);
+      rc = database->Build(expl);
+      break;
+
+   case CoverageLoadIndex:
+      if(!GetFileName(name, cli)) return -1;
+      cli.EndOfInput(false);
+      path = Element::OutputPath() + PATH_SEPARATOR + name + ".cover.txt";
+      input = SysFile::CreateIstream(path.c_str());
+      if(input == nullptr) return cli.Report(-7, CreateStreamFailure);
+      rc = database->Load(*input, expl);
+      input.reset();
+      break;
+
+   case CoverageStatsIndex:
+      rc = database->Stats(expl);
+      break;
+
+   case CoverageUnderIndex:
+      if(!GetIntParm(min, cli)) return -1;
+      cli.EndOfInput(false);
+      rc = database->Under(min, expl);
+      break;
+
+   case CoverageDiffIndex:
+      cli.EndOfInput(false);
+      rc = database->Diff(expl);
+      break;
+
+   case CoverageRetestIndex:
+      cli.EndOfInput(false);
+      rc = database->Retest(expl);
+      break;
+
+   case CoverageEraseIndex:
+      if(!GetCharParm(c, cli)) return -1;
+      p = (c == 'p');
+      if(!GetCharParm(c, cli)) return -1;
+      f = (c == 'f');
+      if(!GetString(name, cli)) return -1;
+      cli.EndOfInput(false);
+      rc = database->Erase(name, p, f, expl);
+      break;
+
+   case CoverageDumpIndex:
+      if(!GetFileName(name, cli)) return -1;
+      cli.EndOfInput(false);
+      output = cli.FileStream();
+      if(output == nullptr) return cli.Report(-7, CreateStreamFailure);
+      rc = database->Dump(*output, expl);
+      name += ".cover.txt";
+      cli.SendToFile(name, true);
+      break;
    }
 
    return cli.Report(rc, expl);
@@ -533,9 +833,9 @@ class DirMandName : public CliTextParm
 public: DirMandName();
 };
 
-class PathOptParm : public CliTextParm
+class PathMandParm : public CliTextParm
 {
-public: PathOptParm();
+public: PathMandParm();
 };
 
 class ImportCommand : public CliCommand
@@ -550,9 +850,9 @@ fixed_string DirMandNameExpl = "directory name";
 
 DirMandName::DirMandName() : CliTextParm(DirMandNameExpl) { }
 
-fixed_string PathOptExpl = "path within SourcePath configuration parameter";
+fixed_string PathMandExpl = "path within SourcePath configuration parameter";
 
-PathOptParm::PathOptParm() : CliTextParm(PathOptExpl, true) { }
+PathMandParm::PathMandParm() : CliTextParm(PathMandExpl) { }
 
 fixed_string ImportStr = "import";
 fixed_string ImportExpl = "Adds a directory to the code base.";
@@ -560,7 +860,7 @@ fixed_string ImportExpl = "Adds a directory to the code base.";
 ImportCommand::ImportCommand() : CliCommand(ImportStr, ImportExpl)
 {
    BindParm(*new DirMandName);
-   BindParm(*new PathOptParm);
+   BindParm(*new PathMandParm);
 }
 
 fn_name ImportCommand_ProcessCommand = "ImportCommand.ProcessCommand";
@@ -573,7 +873,7 @@ word ImportCommand::ProcessCommand(CliThread& cli) const
 
    if(!GetIdentifier(name, cli, Symbol::ValidNameChars(),
       Symbol::InvalidInitialChars())) return -1;
-   GetStringRc(subdir, cli);
+   if(!GetString(subdir, cli)) return -1;
    cli.EndOfInput(false);
 
    auto path = Library::SourcePath();
@@ -1151,6 +1451,7 @@ CodeIncrement::CodeIncrement() : CliIncrement(CtStr, CtExpl)
    BindCommand(*new FixCommand);
    BindCommand(*new FormatCommand);
    BindCommand(*new ExportCommand);
+   BindCommand(*new CoverageCommand);
    BindCommand(*new ShrinkCommand);
    BindCommand(*new ExpCommand);
 

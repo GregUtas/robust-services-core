@@ -16,15 +16,16 @@ namespace std
    public:
       typedef pair< T1, T2 > entry;
       typedef iterator_t< entry > iterator;
+      typedef iterator_t< const entry > const_iterator;
       map();
       ~map();
       iterator begin();
-      iterator cbegin() const;
-      iterator cend() const;
+      const_iterator cbegin() const;
+      const_iterator cend() const;
       void clear();
       size_t count(const T1& key) const;
-      iterator crbegin() const;
-      iterator crend() const;
+      const_iterator crbegin() const;
+      const_iterator crend() const;
       bool empty() const;
       iterator end();
       iterator erase(iterator pos);
@@ -34,8 +35,8 @@ namespace std
       pair< iterator, bool > insert(entry& item);
       iterator lower_bound(const T1& key) const;
       iterator lower_bound(const T1& key);
-      iterator rbegin();
-      iterator rend();
+      const_iterator rbegin();
+      const_iterator rend();
       size_t size() const;
       iterator upper_bound(const T1& key) const;
       iterator upper_bound(const T1& key);

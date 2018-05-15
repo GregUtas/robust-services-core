@@ -1,0 +1,12 @@
+traffic rate 0
+delay 90
+contexts c
+if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+stop
+save funcs &script.name
+stats show &script.name
+
+send &script.name
+traffic query
+traffic profile
+send cout

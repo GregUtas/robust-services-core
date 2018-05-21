@@ -95,9 +95,10 @@ private:
 
 //------------------------------------------------------------------------------
 //
-//  Applications that register data with a CliThread.
+//  Identifiers for applications that register data with a CliThread.  Each is
+//  treated as a CliAppData::Id (an int) above.
 //
-enum CliAppIds
+enum CliAppId
 {
    TestcaseAppId,
    TestSessionAppId

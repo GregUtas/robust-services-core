@@ -179,11 +179,11 @@ word CodeCoverage::Build(string& expl)
          std::getline(*stream, input);
          if(discard++ < 0) continue;
 
-         str = GetString(input);
+         str = strGet(input);
          if(str.empty() || !isdigit(str.front())) break;
-         str = GetString(input);
+         str = strGet(input);
          if(str.empty() || !isdigit(str.front())) break;
-         str = GetString(input);
+         str = strGet(input);
          if(str.empty()) break;
 
          //  If INPUT isn't empty, append it to STR.  The function name
@@ -520,10 +520,10 @@ CodeCoverage::ImportState CodeCoverage::GetFunc
 {
    Debug::ft(CodeCoverage_GetFunc);
 
-   auto func = GetString(input);
+   auto func = strGet(input);
    if(func.empty()) return GetFunction;
    if(func.front() == DELIMITER) return GetTestcase;
-   auto hash = GetString(input);
+   auto hash = strGet(input);
    if(hash.empty() || !isxdigit(hash.front()))
       return GetError("Hash value for function missing", rc, expl);
    uint32_t n = std::stoul(hash, nullptr, 16);
@@ -544,10 +544,10 @@ CodeCoverage::ImportState CodeCoverage::GetTest
 {
    Debug::ft(CodeCoverage_GetTest);
 
-   auto test = GetString(input);
+   auto test = strGet(input);
    if(test.empty()) return GetTestcase;
    if(test.front() == DELIMITER) return ImportDone;
-   auto hash = GetString(input);
+   auto hash = strGet(input);
    if(hash.empty() || !isxdigit(hash.front()))
       return GetError("Hash value for testcase missing", rc, expl);
    uint32_t n = std::stoul(hash, nullptr, 16);
@@ -566,7 +566,7 @@ CodeCoverage::ImportState CodeCoverage::GetTests(string& input) const
 {
    Debug::ft(CodeCoverage_GetTests);
 
-   auto test = GetString(input);
+   auto test = strGet(input);
    if(test.empty()) return GetTestcases;
    if(test.front() == DELIMITER) return GetFunction;
    currFunc_->second.tests.insert(test);

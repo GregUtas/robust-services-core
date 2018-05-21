@@ -76,10 +76,12 @@ constexpr id_t NIL_ID = 0;
 //
 extern uintptr_t const BAD_POINTER;
 
-//  For wrapping dynamically allocated strings.
+//  For wrapping dynamically allocated strings and streams.
 //
-typedef std::unique_ptr< std::ostringstream > ostringstreamPtr;
 typedef std::unique_ptr< std::string > stringPtr;
+typedef std::unique_ptr< std::ostringstream > ostringstreamPtr;
+typedef std::unique_ptr< std::istream > istreamPtr;
+typedef std::unique_ptr< std::ostream > ostreamPtr;
 
 //  Used when char* is for pointer arithmetic.
 //

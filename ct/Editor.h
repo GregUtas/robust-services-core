@@ -26,7 +26,6 @@
 #include <list>
 #include <string>
 #include "CxxFwd.h"
-#include "SysFile.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------

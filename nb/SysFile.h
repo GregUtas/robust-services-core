@@ -25,6 +25,8 @@
 #include <iosfwd>
 #include <memory>
 #include <string>
+#include <set>
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -63,10 +65,8 @@ protected:
    FileList() { }
 };
 
-//  For wrapping input and output streams and iterating over files.
+//  For iterating over files.
 //
-typedef std::unique_ptr< std::istream > istreamPtr;
-typedef std::unique_ptr< std::ostream > ostreamPtr;
 typedef std::unique_ptr< FileList > FileListPtr;
 
 //  Operating system abstraction layer: file I/O and directory navigation.
@@ -93,8 +93,15 @@ namespace SysFile
    //
    bool SetDir(const char* dirName);
 
+   //  Adds a file in the directory specified by dirName to NAMES if its
+   //  extension matches fileExt, which should begin with a dot.  Returns
+   //  false if the directory does not exist.
+   //
+   bool FindFiles(const char* dirName,
+      const char* fileExt, std::set< std::string >& fileNames);
+
    //  Iterates over files whose name matches fileSpec (which can include
-   //  wildcard characters_ in the directory specified by dirName.  If
+   //  wildcard characters) in the directory specified by dirName.  If
    //  dirName is nullptr, the default directory is searched.  Returns
    //  nullptr if dirName does not exist or no files matched fileSpec.
    //

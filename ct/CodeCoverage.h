@@ -62,7 +62,7 @@ public:
 
    //  Displays database statistics in EXPL.
    //
-   NodeBase::word Stats(std::string& expl) const;
+   NodeBase::word Query(std::string& expl) const;
 
    //  Lists functions that are invoked by fewer than MIN testcases in EXPL.
    //
@@ -86,7 +86,7 @@ public:
       (std::string& item, bool prev, bool func, std::string& expl);
 
    //  Writes the current database to STREAM after including items that appear
-   //  only in the previous database.  On failure, returns a non-zero value and
+   //  only in the previous database.  Returns a non-zero value on failure and
    //  updates EXPL with an explanation.
    //
    NodeBase::word Dump(std::ostream& stream, std::string& expl);
@@ -95,13 +95,13 @@ private:
    //
    CodeCoverage();
 
-   enum ImportState
+   enum LoadState
    {
       GetFunction,
       GetTestcases,
       GetTestcase,
-      ImportDone,
-      ImportError
+      LoadDone,
+      LoadError
    };
 
    //  The following functions parse a code coverage database, which
@@ -114,34 +114,27 @@ private:
 
    //  Looks for a <FuncName> <FuncHash> pair.
    //
-   ImportState GetFunc(std::string& input,
+   LoadState GetFunc(std::string& input,
       NodeBase::word& rc, std::string& expl);
 
    //  Looks for the <TestName>* sequence that follows a function.
    //
-   ImportState GetTests(std::string& input) const;
+   LoadState GetTests(std::string& input) const;
 
    //  Looks for a <TestName> <TestHash> pair.
    //
-   ImportState GetTest(std::string& input,
+   LoadState GetTest(std::string& input,
       NodeBase::word& rc, std::string& expl);
 
    //  Invoked to report a parsing error.  Sets EXPL to REASON, RC to -1,
-   //  and returns ImportError.
+   //  and returns LoadError.
    //
-   static ImportState GetError(const std::string& reason,
+   static LoadState GetError(const std::string& reason,
       NodeBase::word& rc, std::string& expl);
 
    // '$' is used as an end-of-record delimiter in the database.
    //
    static const char DELIMITER = '$';
-
-   //  Adds the files that end in EXT, in directory DIR, to NAMES, after
-   //  stripping EXT from the file name.  Returns false if DIR could not
-   //  be accessed.
-   //
-   bool FindFiles
-      (const char* dir, const char* ext, std::set< std::string >& names);
 
    // '`' is used to replace a space in a function name.
    //

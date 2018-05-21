@@ -29,7 +29,6 @@
 #include "CliAppData.h"
 #include "CliCookie.h"
 #include "NbTypes.h"
-#include "SysFile.h"
 #include "SysTypes.h"
 
 namespace NodeBase

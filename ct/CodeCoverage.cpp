@@ -136,13 +136,13 @@ word CodeCoverage::Build(string& expl)
    std::set< string > traces;
    std::set< string > tests;
 
-   if(!FindFiles(outdir.c_str(), ".funcs.txt", traces))
+   if(!SysFile::FindFiles(outdir.c_str(), ".funcs.txt", traces))
    {
       expl = "Could not open directory " + outdir;
       return -1;
    }
 
-   if(!FindFiles(indir.c_str(), ".txt", tests))
+   if(!SysFile::FindFiles(indir.c_str(), ".txt", tests))
    {
       expl = "Could not open directory " + indir;
       return -1;
@@ -188,7 +188,7 @@ word CodeCoverage::Build(string& expl)
 
          //  If INPUT isn't empty, append it to STR.  The function name
          //  contains an embedded space (and might have more of them).
-         //  Mangle replace spaces with "BLANK" to simplify Import.
+         //  Mangle replace spaces with "BLANK" to simplify Load.
          //
          if(!input.empty())
          {
@@ -465,57 +465,23 @@ word CodeCoverage::Erase(string& item, bool prev, bool func, string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeCoverage_FindFiles = "CodeCoverage.FindFiles";
-
-bool CodeCoverage::FindFiles
-   (const char* dir, const char* ext, std::set< std::string >& names)
-{
-   Debug::ft(CodeCoverage_FindFiles);
-
-   if(!SysFile::SetDir(dir)) return false;
-
-   auto spec = "*" + string(ext);
-   auto list = SysFile::GetFileList(nullptr, spec.c_str());
-
-   if(list != nullptr)
-   {
-      string name;
-
-      do
-      {
-         if(!list->IsSubdir())
-         {
-            list->GetName(name);
-            auto pos = name.rfind(ext);
-            name.erase(pos);
-            names.insert(name);
-         }
-      }
-      while(list->Advance());
-   }
-
-   return true;
-}
-
-//------------------------------------------------------------------------------
-
 fn_name CodeCoverage_GetError = "CodeCoverage.GetError";
 
-CodeCoverage::ImportState CodeCoverage::GetError
+CodeCoverage::LoadState CodeCoverage::GetError
    (const string& reason, word& rc, string& expl)
 {
    Debug::ft(CodeCoverage_GetError);
 
    expl = reason;
    rc = -1;
-   return ImportError;
+   return LoadError;
 }
 
 //------------------------------------------------------------------------------
 
 fn_name CodeCoverage_GetFunc = "CodeCoverage.GetFunc";
 
-CodeCoverage::ImportState CodeCoverage::GetFunc
+CodeCoverage::LoadState CodeCoverage::GetFunc
    (string& input, word& rc, string& expl)
 {
    Debug::ft(CodeCoverage_GetFunc);
@@ -539,14 +505,14 @@ CodeCoverage::ImportState CodeCoverage::GetFunc
 
 fn_name CodeCoverage_GetTest = "CodeCoverage.GetTest";
 
-CodeCoverage::ImportState CodeCoverage::GetTest
+CodeCoverage::LoadState CodeCoverage::GetTest
    (string& input, word& rc, string& expl)
 {
    Debug::ft(CodeCoverage_GetTest);
 
    auto test = strGet(input);
    if(test.empty()) return GetTestcase;
-   if(test.front() == DELIMITER) return ImportDone;
+   if(test.front() == DELIMITER) return LoadDone;
    auto hash = strGet(input);
    if(hash.empty() || !isxdigit(hash.front()))
       return GetError("Hash value for testcase missing", rc, expl);
@@ -562,7 +528,7 @@ CodeCoverage::ImportState CodeCoverage::GetTest
 
 fn_name CodeCoverage_GetTests = "CodeCoverage.GetTests";
 
-CodeCoverage::ImportState CodeCoverage::GetTests(string& input) const
+CodeCoverage::LoadState CodeCoverage::GetTests(string& input) const
 {
    Debug::ft(CodeCoverage_GetTests);
 
@@ -605,17 +571,17 @@ word CodeCoverage::Load(std::istream& stream, string& expl)
          case GetTestcase:
             state = GetTest(input, rc, expl);
             break;
-         case ImportDone:
+         case LoadDone:
             expl = "Extra text in database: " + input;
             return -1;
-         case ImportError:
+         case LoadError:
          default:
             return rc;
          }
       }
    }
 
-   if(state != ImportDone)
+   if(state != LoadDone)
    {
       expl = "Parsing error: reached end of file unexpectedly";
       return -1;
@@ -736,11 +702,11 @@ word CodeCoverage::Retest(string& expl) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeCoverage_Stats = "CodeCoverage.Stats";
+fn_name CodeCoverage_Query = "CodeCoverage.Query";
 
-word CodeCoverage::Stats(string& expl) const
+word CodeCoverage::Query(string& expl) const
 {
-   Debug::ft(CodeCoverage_Stats);
+   Debug::ft(CodeCoverage_Query);
 
    if(prevFuncs_.empty())
    {

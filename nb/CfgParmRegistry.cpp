@@ -29,6 +29,7 @@
 #include "Debug.h"
 #include "Formatters.h"
 #include "Log.h"
+#include "SysFile.h"
 
 using std::ostream;
 using std::string;

@@ -39,6 +39,7 @@
 #include "Debug.h"
 #include "Formatters.h"
 #include "Lexer.h"
+#include "SysFile.h"
 
 using namespace NodeBase;
 using std::string;

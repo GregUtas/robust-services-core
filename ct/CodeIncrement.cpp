@@ -271,17 +271,17 @@ CoverageLoadText::CoverageLoadText() :
    BindParm(*new LoadFileNameParm);
 }
 
-class CoverageStatsText : public CliText
+class CoverageQueryText : public CliText
 {
-public: CoverageStatsText();
+public: CoverageQueryText();
 };
 
-fixed_string CoverageStatsTextStr = "stats";
-fixed_string CoverageStatsTextExpl =
-   "displays statistics for loaded database";
+fixed_string CoverageQueryTextStr = "query";
+fixed_string CoverageQueryTextExpl =
+   "displays information about the loaded database";
 
-CoverageStatsText::CoverageStatsText() :
-   CliText(CoverageStatsTextExpl, CoverageStatsTextStr) { }
+CoverageQueryText::CoverageQueryText() :
+   CliText(CoverageQueryTextExpl, CoverageQueryTextStr) { }
 
 class CoverageUnderText : public CliText
 {
@@ -411,7 +411,7 @@ public: CoverageAction();
 
 const id_t CoverageBuildIndex = 1;
 const id_t CoverageLoadIndex = 2;
-const id_t CoverageStatsIndex = 3;
+const id_t CoverageQueryIndex = 3;
 const id_t CoverageUnderIndex = 4;
 const id_t CoverageDiffIndex = 5;
 const id_t CoverageRetestIndex = 6;
@@ -424,7 +424,7 @@ CoverageAction::CoverageAction() : CliTextParm(CoverageActionExpl)
 {
    BindText(*new CoverageBuildText, CoverageBuildIndex);
    BindText(*new CoverageLoadText, CoverageLoadIndex);
-   BindText(*new CoverageStatsText, CoverageStatsIndex);
+   BindText(*new CoverageQueryText, CoverageQueryIndex);
    BindText(*new CoverageUnderText, CoverageUnderIndex);
    BindText(*new CoverageDiffText, CoverageDiffIndex);
    BindText(*new CoverageRetestText, CoverageRetestIndex);
@@ -483,8 +483,8 @@ word CoverageCommand::ProcessCommand(CliThread& cli) const
       input.reset();
       break;
 
-   case CoverageStatsIndex:
-      rc = database->Stats(expl);
+   case CoverageQueryIndex:
+      rc = database->Query(expl);
       break;
 
    case CoverageUnderIndex:

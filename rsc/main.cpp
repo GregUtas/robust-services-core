@@ -48,9 +48,9 @@
 //  RootThread is defined in NodeBase, so a using directive for NodeBase must
 //  be included here.  To build only NodeBase, create NbModule.  To include
 //  additional layers, add a using directive for the namespace, and create
-//  only the module, for the uppermost layer that is required in the build.
-//  That module's Register function will, in turn, pull in the modules that
-//  it requires, and so on transitively.
+//  only the module, for the uppermost layer (leaf library) that is required
+//  in the build.  That module's Register function will, in turn, pull in the
+//  modules that it requires, and so on transitively.
 //
 //  Compiler options (Windows)
 //  --------------------------
@@ -100,7 +100,7 @@
 //& #include "MbModule.h"
 //& #include "NbModule.h"
 //& #include "NwModule.h"
-#include "NtModule.h"
+//& #include "NtModule.h"
 #include "OnModule.h"
 //& #include "PbModule.h"
 #include "RnModule.h"
@@ -113,7 +113,7 @@ using std::string;
 //------------------------------------------------------------------------------
 
 using namespace NodeBase;
-using namespace NodeTools;
+//& using namespace NodeTools;
 using namespace CodeTools;
 //& using namespace NetworkBase;
 //& using namespace SessionBase;
@@ -154,7 +154,7 @@ main_t main(int argc, char* argv[])
    //  Instantiate the desired modules.
    //
 //& Singleton< NbModule >::Instance();
-   Singleton< NtModule >::Instance();
+//& Singleton< NtModule >::Instance();
    Singleton< CtModule >::Instance();
 //& Singleton< NwModule >::Instance();
 //& Singleton< SbModule >::Instance();

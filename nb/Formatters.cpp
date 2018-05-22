@@ -183,7 +183,7 @@ int strCompare(const string& s1, const string& s2)
 
 //------------------------------------------------------------------------------
 
-fn_name NodeBase_strGet = "CodeTools.strGet";
+fn_name NodeBase_strGet = "NodeBase.strGet";
 
 string strGet(string& input)
 {

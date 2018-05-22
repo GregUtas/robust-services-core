@@ -56,17 +56,9 @@ public:
    //
    void SetRecover(const std::string& recover) { recover_ = recover.c_str(); }
 
-   //  Sets the name of the current test.  The name is also saved in
-   //  the symbol "testcase.name" for use in prolog and epilog command
-   //  files (see below).
-   //
-   void SetName(const std::string& name) { name_ = name.c_str(); }
-
-   //  Returns the identifier of the current test.
-   //
-   std::string Name() const { return name_.c_str(); }
-
-   //  Initiates the testcase named TEST.  Returns 0.
+   //  Initiates the testcase named TEST.  This name is saved in the symbol
+   //  "testcase.name" for use in prolog and epilog command files (see below).
+   //  Returns 0.
    //
    word Initiate(const std::string& test);
 

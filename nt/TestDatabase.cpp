@@ -109,7 +109,7 @@ void TestDatabase::AddTest(const std::string& test, const std::string& dir)
 
 fn_name TestDatabase_Commit = "TestDatabase.Commit";
 
-void TestDatabase::Commit()
+void TestDatabase::Commit() const
 {
    Debug::ft(TestDatabase_Commit);
 

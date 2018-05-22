@@ -27,7 +27,6 @@
 #include <istream>
 #include <sstream>
 #include <vector>
-#include "Algorithms.h"
 #include "Debug.h"
 #include "Element.h"
 #include "Formatters.h"
@@ -320,7 +319,7 @@ word CodeCoverage::Dump(ostream& stream, string& expl)
 
 fn_name CodeCoverage_Erase = "CodeCoverage.Erase";
 
-word CodeCoverage::Erase(string& item, bool prev, string& expl)
+word CodeCoverage::Erase(string& func, bool prev, string& expl)
 {
    Debug::ft(CodeCoverage_Erase);
 
@@ -330,9 +329,8 @@ word CodeCoverage::Erase(string& item, bool prev, string& expl)
       return -1;
    }
 
-   size_t found = 0;
-   item = Mangle(item);
-   auto found = (prev ? prevFuncs_.erase(item) : currFuncs_.erase(item));
+   func = Mangle(func);
+   auto found = (prev ? prevFuncs_.erase(func) : currFuncs_.erase(func));
 
    if(found > 0)
    {
@@ -340,7 +338,7 @@ word CodeCoverage::Erase(string& item, bool prev, string& expl)
       return 0;
    }
 
-   expl = "No such entry: " + item;
+   expl = "No such entry: " + func;
    return -1;
 }
 
@@ -461,6 +459,52 @@ string CodeCoverage::Mangle(const string& s)
 
 //------------------------------------------------------------------------------
 
+fn_name CodeCoverage_Query = "CodeCoverage.Query";
+
+word CodeCoverage::Query(string& expl) const
+{
+   Debug::ft(CodeCoverage_Query);
+
+   if(prevFuncs_.empty())
+   {
+      expl = "Database is empty.  Run >coverage load first.";
+      return -1;
+   }
+
+   std::ostringstream stats;
+
+   stats << "Functions: " << prevFuncs_.size() << CRLF;
+   stats << "Testcases per function:" << CRLF;
+
+   const size_t MAX_TESTS = 10;
+   size_t histogram[MAX_TESTS + 1] = { 0 };
+
+   for(auto f = prevFuncs_.cbegin(); f != prevFuncs_.cend(); ++f)
+   {
+      if(f->second.tests.size() > MAX_TESTS)
+         histogram[MAX_TESTS]++;
+      else
+         histogram[f->second.tests.size()]++;
+   }
+
+   for(auto i = 0; i < MAX_TESTS; ++i)
+   {
+      stats << std::setw(6) << i;
+   }
+
+   stats << std::setw(5) << MAX_TESTS << '+' << CRLF;
+
+   for(auto i = 0; i <= MAX_TESTS; ++i)
+   {
+      stats << std::setw(6) << histogram[i];
+   }
+
+   expl = stats.str();
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeCoverage_Retest = "CodeCoverage.Retest";
 
 word CodeCoverage::Retest(string& expl) const
@@ -545,52 +589,6 @@ word CodeCoverage::Retest(string& expl) const
    }
 
    expl = report.str();
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CodeCoverage_Query = "CodeCoverage.Query";
-
-word CodeCoverage::Query(string& expl) const
-{
-   Debug::ft(CodeCoverage_Query);
-
-   if(prevFuncs_.empty())
-   {
-      expl = "Database is empty.  Run >coverage load first.";
-      return -1;
-   }
-
-   std::ostringstream stats;
-
-   stats << "Functions: " << prevFuncs_.size() << CRLF;
-   stats << "Testcases per function:" << CRLF;
-
-   const size_t MAX_TESTS = 10;
-   size_t histogram[MAX_TESTS + 1] = { 0 };
-
-   for(auto f = prevFuncs_.cbegin(); f != prevFuncs_.cend(); ++f)
-   {
-      if(f->second.tests.size() > MAX_TESTS)
-         histogram[MAX_TESTS]++;
-      else
-         histogram[f->second.tests.size()]++;
-   }
-
-   for(auto i = 0; i < MAX_TESTS; ++i)
-   {
-      stats << std::setw(6) << i;
-   }
-
-   stats << std::setw(5) << MAX_TESTS << '+' << CRLF;
-
-   for(auto i = 0; i <= MAX_TESTS; ++i)
-   {
-      stats << std::setw(6) << histogram[i];
-   }
-
-   expl = stats.str();
    return 0;
 }
 

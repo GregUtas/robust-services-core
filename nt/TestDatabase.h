@@ -95,7 +95,7 @@ private:
 
    //  Writes the database to InputPath/test.db.txt.
    //
-   void Commit();
+   void Commit() const;
 
    //  Parses a line (INPUT) in the testcase database, which has the form
    //    [<TestName> <TestState> <TestHash>]* "$"
@@ -112,10 +112,6 @@ private:
    //
    static const char DELIMITER = '$';
 
-   // '`' is used to replace a space in a function name.
-   //
-   static const char BLANK = '`';
-
    //  UINT32_MAX is used as the hash value for unhashed items.
    //
    static const uint32_t UNHASHED = UINT32_MAX;
@@ -129,10 +125,9 @@ private:
    //
    struct TestInfo
    {
-      TestcaseState  state;  // state of testcase
-      const uint32_t hash;   // hash value for testcase script
+      TestcaseState state;  // state of testcase
+      const uint32_t hash;  // hash value for testcase's script
 
-      explicit TestInfo(uint32_t hash): state(Unreported), hash(hash) { }
       TestInfo(TestcaseState state, uint32_t hash): state(state), hash(hash) { }
    };
 

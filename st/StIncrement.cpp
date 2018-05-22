@@ -607,7 +607,7 @@ word StTestcaseCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    }
 
    if(index == TestVerifyIndex)
-   {     
+   {
       id_t setHowIndex;
       bool flag = false;
 

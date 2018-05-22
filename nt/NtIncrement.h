@@ -26,7 +26,6 @@
 #include "CliIncrement.h"
 #include "CliTextParm.h"
 #include "NbIncrement.h"
-#include <string>
 #include "NbTypes.h"
 #include "SysTypes.h"
 
@@ -160,8 +159,6 @@ public:
    virtual ~TestcaseCommand() { }
 protected:
    virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
-   virtual void ConcludeTest(CliThread& cli) const;
-   virtual void InitiateTest(CliThread& cli, const std::string& curr) const;
 private:
    virtual word ProcessCommand(CliThread& cli) const override;
 };

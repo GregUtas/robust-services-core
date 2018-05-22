@@ -39,8 +39,8 @@ namespace NodeTools
 class NtTestData : public CliAppData
 {
 public:
-   //  Returns the test data registered against CLI.  If test data
-   //  does not exist, it is created.
+   //  Returns the test data registered against CLI.  If the data does not
+   //  exist, it is created.
    //
    static NtTestData* Access(CliThread& cli);
 
@@ -48,25 +48,13 @@ public:
    //
    void SetProlog(const std::string& prolog) { prolog_ = prolog.c_str(); }
 
-   //  Returns the file to be read before executing the >testcase command.
-   //
-   std::string Prolog() const { return prolog_.c_str(); }
-
    //  Sets the file to be read after a testcase passes.
    //
    void SetEpilog(const std::string& epilog) { epilog_ = epilog.c_str(); }
 
-   //  Returns the file to be read after a testcase passes.
-   //
-   std::string Epilog() const { return epilog_.c_str(); }
-
    //  Sets the file to be read after a testcase fails.
    //
    void SetRecover(const std::string& recover) { recover_ = recover.c_str(); }
-
-   //  Returns the file to be read after a testcase fails.
-   //
-   std::string Recover() const { return recover_.c_str(); }
 
    //  Sets the name of the current test.  The name is also saved in
    //  the symbol "testcase.name" for use in prolog and epilog command
@@ -78,42 +66,28 @@ public:
    //
    std::string Name() const { return name_.c_str(); }
 
-   //  Sets the flag which indicates that the current testcase failed.
-   //  EXPL explains why the testcase failed.  Returns RC.
+   //  Initiates the testcase named TEST.  Returns 0.
+   //
+   word Initiate(const std::string& test);
+
+   //  Concludes a testcase by invoking the script defined by SetEpilog or
+   //  SetRecover.
+   //
+   void Conclude();
+
+   //  Invoked to report a testcase failure.  Invokes CliThread.Report with
+   //  RC and a string that includes EXPL.  Returns RC.
    //
    word SetFailed(word rc, const std::string& expl);
 
-   //  Resets the flag which indicates that the current testcase failed.
+   //  Displays testcase statistics.
    //
-   void ResetFailed() { failed_ = false; }
+   void Query() const;
 
-   //  Returns true if the current testcase failed.
+   //  Resets the test environment by deleting the test data, which is
+   //  recreated by Access before running another series of testcases.
    //
-   bool HasFailed() const { return failed_; }
-
-   //  Increments the number of testcases that passed.
-   //
-   void IncrPassCount() { ++passCount_; }
-
-   //  Resets the number of testcases that passed.
-   //
-   void ResetPassCount() { passCount_ = 0; }
-
-   //  Returns the number of testcases that passed.
-   //
-   size_t PassCount() const { return passCount_; }
-
-   //  Increments the number of testcases that failed.
-   //
-   void IncrFailCount() { ++failCount_; }
-
-   //  Resets the number of testcases that failed.
-   //
-   void ResetFailCount() { failCount_ = 0; }
-
-   //  Returns the number of testcases that failed.
-   //
-   size_t FailCount() const { return failCount_; }
+   void Reset();
 
    //  Overridden to display member variables.
    //

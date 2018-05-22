@@ -560,8 +560,6 @@ public:
    StTestcaseCommand();
 private:
    virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
-   virtual void InitiateTest
-      (CliThread& cli, const string& curr) const override;
 };
 
 fixed_string TestVerifyTextStr = "verify";
@@ -583,18 +581,6 @@ StTestcaseCommand::StTestcaseCommand() : TestcaseCommand(false)
    BindParm(*new StTestcaseAction);
 }
 
-fn_name StTestcaseCommand_InitiateTest = "StTestcaseCommand.InitiateTest";
-
-void StTestcaseCommand::InitiateTest(CliThread& cli, const string& curr) const
-{
-   Debug::ft(StTestcaseCommand_InitiateTest);
-
-   auto test = StTestData::Access(cli);
-
-   test->SetVerify(true);
-   TestcaseCommand::InitiateTest(cli, curr);
-}
-
 fn_name StTestcaseCommand_ProcessSubcommand =
    "StTestcaseCommand.ProcessSubcommand";
 
@@ -602,22 +588,37 @@ word StTestcaseCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
    Debug::ft(StTestcaseCommand_ProcessSubcommand);
 
-   if(index != TestVerifyIndex)
+   switch(index)
    {
+   case TestBeginIndex:
+   case TestVerifyIndex:
+      break;
+   default:
       return TestcaseCommand::ProcessSubcommand(cli, index);
    }
 
    auto test = StTestData::Access(cli);
    if(test == nullptr) return cli.Report(-7, CreateStreamFailure);
 
-   id_t setHowIndex;
-   bool flag = false;
+   if(index == TestBeginIndex)
+   {
+      test->SetVerify(true);
+      return TestcaseCommand::ProcessSubcommand(cli, index);
+   }
 
-   if(!GetTextIndex(setHowIndex, cli)) return -1;
-   cli.EndOfInput(false);
-   flag = (setHowIndex == SetHowParm::On);
-   test->SetVerify(flag);
-   return cli.Report(0, SuccessExpl);
+   if(index == TestVerifyIndex)
+   {     
+      id_t setHowIndex;
+      bool flag = false;
+
+      if(!GetTextIndex(setHowIndex, cli)) return -1;
+      cli.EndOfInput(false);
+      flag = (setHowIndex == SetHowParm::On);
+      test->SetVerify(flag);
+      return cli.Report(0, SuccessExpl);
+   }
+
+   return TestcaseCommand::ProcessSubcommand(cli, index);
 }
 
 //------------------------------------------------------------------------------

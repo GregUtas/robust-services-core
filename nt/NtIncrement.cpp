@@ -32,6 +32,7 @@
 #include <exception>
 #include <memory>
 #include <sstream>
+#include <string>
 #include "Algorithms.h"
 #include "Class.h"
 #include "CliThread.h"
@@ -746,74 +747,6 @@ TestcaseCommand::TestcaseCommand(bool bind) :
    if(bind) BindParm(*new TestcaseAction);
 }
 
-fn_name TestcaseCommand_ConcludeTest = "TestcaseCommand.ConcludeTest";
-
-void TestcaseCommand::ConcludeTest(CliThread& cli) const
-{
-   Debug::ft(TestcaseCommand_ConcludeTest);
-
-   auto test = NtTestData::Access(cli);
-
-   auto prev = test->Name();
-   if(prev.empty()) return;
-
-   if(test->HasFailed())
-   {
-      auto recover = test->Recover();
-      if(!recover.empty())
-      {
-         auto command = "read " + recover;
-         cli.Execute(command);
-      }
-      else
-      {
-         auto epilog = test->Epilog();
-         if(!epilog.empty())
-         {
-            auto command = "read " + epilog;
-            cli.Execute(command);
-         }
-      }
-      test->IncrFailCount();
-   }
-   else
-   {
-      auto epilog = test->Epilog();
-      if(!epilog.empty())
-      {
-         auto command = "read " + epilog;
-         cli.Execute(command);
-      }
-      test->IncrPassCount();
-   }
-
-   test->SetName(EMPTY_STR);
-   cli.Notify(CliAppData::EndOfTest);
-}
-
-fn_name TestcaseCommand_InitiateTest = "TestcaseCommand.InitiateTest";
-
-void TestcaseCommand::InitiateTest(CliThread& cli, const string& curr) const
-{
-   Debug::ft(TestcaseCommand_InitiateTest);
-
-   auto test = NtTestData::Access(cli);
-
-   test->SetName(curr);
-   test->ResetFailed();
-
-   auto command = "symbols set testcase.name " + curr;
-   cli.Execute(command);
-
-   auto prolog = test->Prolog();
-
-   if(!prolog.empty())
-   {
-      command = "read " + prolog;
-      cli.Execute(command);
-   }
-}
-
 fn_name TestcaseCommand_ProcessCommand = "TestcaseCommand.ProcessCommand";
 
 word TestcaseCommand::ProcessCommand(CliThread& cli) const
@@ -862,15 +795,11 @@ word TestcaseCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    case TestBeginIndex:
       if(!GetString(text, cli)) return -1;
       cli.EndOfInput(false);
-      *cli.obuf << spaces(2) << SuccessExpl << CRLF;
-      ConcludeTest(cli);
-      InitiateTest(cli, text);
-      return 0;
+      return test->Initiate(text);
 
    case TestEndIndex:
       cli.EndOfInput(false);
-      *cli.obuf << spaces(2) << SuccessExpl << CRLF;
-      ConcludeTest(cli);
+      test->Conclude();
       return 0;
 
    case TestFailedIndex:
@@ -881,14 +810,12 @@ word TestcaseCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
    case TestQueryIndex:
       cli.EndOfInput(false);
-      *cli.obuf << spaces(2) << "Passed: " << test->PassCount() << CRLF;
-      *cli.obuf << spaces(2) << "Failed: " << test->FailCount() << CRLF;
-      return 0;
+      test->Query();
+      break;
 
    case TestResetIndex:
       cli.EndOfInput(false);
-      test->ResetPassCount();
-      test->ResetFailCount();
+      test->Reset();
       break;
 
    default:

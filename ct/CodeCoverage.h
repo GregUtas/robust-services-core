@@ -50,8 +50,9 @@ public:
    //
    bool AddFunc(const std::string& fn, uint32_t hash, const std::string& ns);
 
-   //  Adds testcase output in the output directory to the database.  Returns
-   //  a non-zero value on failure and updates EXPL with an explanation.
+   //  Adds testcase output (*.funcs.txt files) in the output directory to
+   //  the database.  Returns a non-zero value on failure and updates EXPL
+   //  with an explanation.
    //
    NodeBase::word Build(std::string& expl);
 
@@ -60,7 +61,7 @@ public:
    //
    NodeBase::word Load(std::istream& stream, std::string& expl);
 
-   //  Displays database statistics in EXPL.
+   //  Displays database information in EXPL.
    //
    NodeBase::word Query(std::string& expl) const;
 
@@ -68,8 +69,8 @@ public:
    //
    NodeBase::word Under(size_t min, std::string& expl) const;
 
-   //  Updates EXPL with a list of functions and testcases that have been
-   //  added, changed, or deleted.
+   //  Updates EXPL with a list of functions that have been added, changed,
+   //  or deleted.
    //
    NodeBase::word Diff(std::string& expl) const;
 
@@ -78,12 +79,10 @@ public:
    //
    NodeBase::word Retest(std::string& expl) const;
 
-   //  Erases ITEM (a function if FUNC is set, else a testcase) from a
-   //  database (the previous database if PREV is set, else the current
-   //  database).
+   //  Erases FUNC from a database (the previous database if PREV is set,
+   //  else the current database).
    //
-   NodeBase::word Erase
-      (std::string& item, bool prev, bool func, std::string& expl);
+   NodeBase::word Erase(std::string& func, bool prev, std::string& expl);
 
    //  Writes the current database to STREAM after including items that appear
    //  only in the previous database.  Returns a non-zero value on failure and
@@ -99,19 +98,17 @@ private:
    {
       GetFunction,
       GetTestcases,
-      GetTestcase,
       LoadDone,
       LoadError
    };
 
-   //  The following functions parse a code coverage database, which
+   //  The following functions parse the code coverage database, which
    //  has the form
-   //    [<FuncName> <FuncHash> [<TestName>]* "$"]*
-   //    [<TestName> <TestHash>]* "$"
+   //    [<FuncName> <FuncHash> [<TestName>]* "$"]* "$"
    //  Each function takes INPUT, which is what remains of the current
    //  line in the database, and it returns the next type of item to look
    //  for.  RC and EXPL are updated to report an error or success.
-
+   //
    //  Looks for a <FuncName> <FuncHash> pair.
    //
    LoadState GetFunc(std::string& input,
@@ -120,11 +117,6 @@ private:
    //  Looks for the <TestName>* sequence that follows a function.
    //
    LoadState GetTests(std::string& input) const;
-
-   //  Looks for a <TestName> <TestHash> pair.
-   //
-   LoadState GetTest(std::string& input,
-      NodeBase::word& rc, std::string& expl);
 
    //  Invoked to report a parsing error.  Sets EXPL to REASON, RC to -1,
    //  and returns LoadError.
@@ -144,18 +136,13 @@ private:
    //
    static const uint32_t UNHASHED = UINT32_MAX;
 
-   //  Replaces each space in S with Blank and returns the result.
+   //  Replaces each space in S with BLANK and returns the result.
    //
    static std::string Mangle(const std::string& s);
 
-   //  Replaces each Blank in S with a space and returns the result.
+   //  Replaces each BLANK in S with a space and returns the result.
    //
    static std::string Demangle(const std::string& s);
-
-   //  Adds TEST, whose script appears in DIR if FOUND is set, to the current
-   //  database.  Returns true on success.
-   //
-   bool AddTest(const std::string& test, bool found, const std::string& dir);
 
    //  Information about a function.
    //
@@ -182,23 +169,6 @@ private:
    typedef Functions::iterator FuncIter;
    typedef Functions::const_iterator ConstFuncIter;
 
-   //  Information about a testcase.
-   //
-   struct TestInfo
-   {
-      const uint32_t hash;  // hash value for testcase script
-
-      explicit TestInfo(uint32_t hash): hash(hash) { }
-   };
-
-   //  A tuple for a testcase's name and its associated information.
-   //
-   typedef std::pair< std::string, TestInfo > TestData;
-
-   //  A database of testcases.
-   //
-   typedef std::map< std::string, TestInfo > Testcases;
-
    //  Functions in the previous database.
    //
    Functions prevFuncs_;
@@ -206,14 +176,6 @@ private:
    //  Functions in the current database.
    //
    Functions currFuncs_;
-
-   //  Testcases in the previous database.
-   //
-   Testcases prevTests_;
-
-   //  Testcases in the current database.
-   //
-   Testcases currTests_;
 
    //  The current function whose testcase set is being loaded.
    //

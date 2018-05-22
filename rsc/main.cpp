@@ -31,8 +31,8 @@
 //  ---------       ------      -------  -----------------------------
 //  NodeBase        NbModule    nb
 //  NodeTools       NtModule    nt       **
-//  CodeTools       CtModule    ct       **
 //  NetworkBase     NwModule    nw       **
+//  CodeTools       CtModule    ct       ** **
 //  SessionBase     SbModule    sb       **       **
 //  SessionTools    StModule    st       ** **    ** **
 //  MediaBase       MbModule    mb       **       ** **
@@ -100,7 +100,7 @@
 //& #include "MbModule.h"
 //& #include "NbModule.h"
 //& #include "NwModule.h"
-//& #include "NtModule.h"
+#include "NtModule.h"
 #include "OnModule.h"
 //& #include "PbModule.h"
 #include "RnModule.h"
@@ -113,7 +113,7 @@ using std::string;
 //------------------------------------------------------------------------------
 
 using namespace NodeBase;
-//& using namespace NodeTools;
+using namespace NodeTools;
 using namespace CodeTools;
 //& using namespace NetworkBase;
 //& using namespace SessionBase;
@@ -154,7 +154,7 @@ main_t main(int argc, char* argv[])
    //  Instantiate the desired modules.
    //
 //& Singleton< NbModule >::Instance();
-//& Singleton< NtModule >::Instance();
+   Singleton< NtModule >::Instance();
    Singleton< CtModule >::Instance();
 //& Singleton< NwModule >::Instance();
 //& Singleton< SbModule >::Instance();

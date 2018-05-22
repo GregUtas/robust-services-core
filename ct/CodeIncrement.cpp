@@ -348,17 +348,6 @@ fixed_string PrevCurrParmExpl = "'p'=previous database 'c'=current database";
 PrevCurrParm::PrevCurrParm() :
    CliCharParm(PrevCurrParmExpl, PrevCurrParmStr) { }
 
-class FuncTestParm : public CliCharParm
-{
-public: FuncTestParm();
-};
-
-fixed_string FuncTestParmStr = "ft";
-fixed_string FuncTestParmExpl = "'f'=function 't'=testcase";
-
-FuncTestParm::FuncTestParm() :
-   CliCharParm(FuncTestParmExpl, FuncTestParmStr) { }
-
 class ItemNameParm : public CliTextParm
 {
 public: ItemNameParm();
@@ -377,7 +366,6 @@ CoverageEraseText::CoverageEraseText() :
    CliText(CoverageEraseTextExpl, CoverageEraseTextStr)
 {
    BindParm(*new PrevCurrParm);
-   BindParm(*new FuncTestParm);
    BindParm(*new ItemNameParm);
 }
 
@@ -506,11 +494,9 @@ word CoverageCommand::ProcessCommand(CliThread& cli) const
    case CoverageEraseIndex:
       if(!GetCharParm(c, cli)) return -1;
       p = (c == 'p');
-      if(!GetCharParm(c, cli)) return -1;
-      f = (c == 'f');
       if(!GetString(name, cli)) return -1;
       cli.EndOfInput(false);
-      rc = database->Erase(name, p, f, expl);
+      rc = database->Erase(name, p, expl);
       break;
 
    case CoverageDumpIndex:

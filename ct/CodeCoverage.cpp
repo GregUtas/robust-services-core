@@ -32,9 +32,12 @@
 #include "Element.h"
 #include "Formatters.h"
 #include "NbCliParms.h"
+#include "Singleton.h"
 #include "SysFile.h"
+#include "TestDatabase.h"
 
 using namespace NodeBase;
+using namespace NodeTools;
 using std::ostream;
 using std::string;
 
@@ -72,46 +75,6 @@ bool CodeCoverage::AddFunc(const string& fn, uint32_t hash, const string& ns)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeCoverage_AddTest = "CodeCoverage.AddTest";
-
-bool CodeCoverage::AddTest
-   (const std::string& test, bool found, const std::string& dir)
-{
-   Debug::ft(CodeCoverage_AddTest);
-
-   //  If the testcase's script was found, create a string containing its
-   //  contents and hash the string.  Remove any previous entry for the
-   //  testcase before adding the testcase name and its hash value.
-   //
-   uint32_t hash = UNHASHED;
-
-   if(found)
-   {
-      auto file = dir + PATH_SEPARATOR + test + ".txt";
-      auto stream = SysFile::CreateIstream(file.c_str());
-      if(stream == nullptr) return false;
-
-      string contents;
-      string input;
-
-      while(stream->peek() != EOF)
-      {
-         std::getline(*stream, input);
-         contents += input;
-      }
-
-      hash = stringHash(contents.c_str());
-   }
-
-   auto prev = currTests_.find(test);
-   if(prev != currTests_.cend()) currTests_.erase(prev);
-   auto info = TestInfo(hash);
-   currTests_.insert(TestData(test, info));
-   return true;
-}
-
-//------------------------------------------------------------------------------
-
 fn_name CodeCoverage_Build = "CodeCoverage.Build";
 
 word CodeCoverage::Build(string& expl)
@@ -124,16 +87,13 @@ word CodeCoverage::Build(string& expl)
       return -1;
    }
 
-   //  Find all *.funcs.txt files in the output directory and all *.txt
-   //  files in the input directory.  When the same file name appears in
-   //  both directories, add the testcase and its functions to the current
-   //  database.
+   //  Find all *.funcs.txt files in the output directory.  If a testcase
+   //  with the same file name exists, add the functions that it invoked
+   //  to the current database.
    //
    auto errors = 0;
    auto outdir = Element::OutputPath();
-   auto indir = Element::InputPath();
    std::set< string > traces;
-   std::set< string > tests;
 
    if(!SysFile::FindFiles(outdir.c_str(), ".funcs.txt", traces))
    {
@@ -141,22 +101,12 @@ word CodeCoverage::Build(string& expl)
       return -1;
    }
 
-   if(!SysFile::FindFiles(indir.c_str(), ".txt", tests))
-   {
-      expl = "Could not open directory " + indir;
-      return -1;
-   }
+   auto testdb = Singleton< TestDatabase >::Instance();
 
    for(auto trace = traces.cbegin(); trace != traces.cend(); ++trace)
    {
       auto test = *trace;
-      auto found = (tests.find(test) != tests.cend());
-
-      if(!AddTest(test, found, indir))
-      {
-         ++errors;
-         continue;
-      }
+      if(testdb->GetState(test) == TestDatabase::Invalid) continue;
 
       auto file = outdir + PATH_SEPARATOR + *trace + ".funcs.txt";
       auto stream = SysFile::CreateIstream(file.c_str());
@@ -246,12 +196,6 @@ word CodeCoverage::Diff(string& expl) const
       return -1;
    }
 
-   if(currTests_.empty())
-   {
-      expl = "No testcases in database.  Run >coverage build first.";
-      return -1;
-   }
-
    std::ostringstream report;
    report << "Added functions: ";
    auto found = false;
@@ -295,34 +239,6 @@ word CodeCoverage::Diff(string& expl) const
    }
 
    if(!found) report << "none";
-   report << CRLF << "Added testcases: ";
-   found = false;
-
-   for(auto c = currTests_.cbegin(); c != currTests_.cend(); ++c)
-   {
-      if(prevTests_.find(c->first) == prevTests_.cend())
-      {
-         report << CRLF << spaces(2) << c->first;
-         found = true;
-      }
-   }
-
-   if(!found) report << "none";
-   report << CRLF << "Changed testcases: ";
-   found = false;
-
-   for(auto c = currTests_.cbegin(); c != currTests_.cend(); ++c)
-   {
-      auto p = prevTests_.find(c->first);
-
-      if((p != prevTests_.cend()) && (c->second.hash != p->second.hash))
-      {
-         report << CRLF << spaces(2) << c->first;
-         found = true;
-      }
-   }
-
-   if(!found) report << "none";
 
    expl = report.str();
    return 0;
@@ -343,18 +259,6 @@ word CodeCoverage::Dump(ostream& stream, string& expl)
    }
 
    std::set< string > inclTests;
-
-   //  Update the current database with testcases that appear only in
-   //  the previous database.
-   //
-   for(auto p = prevTests_.cbegin(); p != prevTests_.cend(); ++p)
-   {
-      if(currTests_.find(p->first) == currTests_.cend())
-      {
-         currTests_.insert(*p);
-         inclTests.insert(p->first);
-      }
-   }
 
    //  If a function without a hash value appears only in the previous
    //  database, add it to the current database.  (A function *with* a
@@ -408,14 +312,6 @@ word CodeCoverage::Dump(ostream& stream, string& expl)
    }
 
    stream << DELIMITER << CRLF;
-
-   for(auto t = currTests_.cbegin(); t != currTests_.cend(); ++t)
-   {
-      stream << t->first << SPACE << std::hex << t->second.hash;
-      stream << std::dec << CRLF;
-   }
-
-   stream << DELIMITER << CRLF;
    expl = SuccessExpl;
    return 0;
 }
@@ -424,7 +320,7 @@ word CodeCoverage::Dump(ostream& stream, string& expl)
 
 fn_name CodeCoverage_Erase = "CodeCoverage.Erase";
 
-word CodeCoverage::Erase(string& item, bool prev, bool func, string& expl)
+word CodeCoverage::Erase(string& item, bool prev, string& expl)
 {
    Debug::ft(CodeCoverage_Erase);
 
@@ -435,22 +331,8 @@ word CodeCoverage::Erase(string& item, bool prev, bool func, string& expl)
    }
 
    size_t found = 0;
-   if(func) item = Mangle(item);
-
-   if(prev)
-   {
-      if(func)
-         found = prevFuncs_.erase(item);
-      else
-         found = prevTests_.erase(item);
-   }
-   else
-   {
-      if(func)
-         found = currFuncs_.erase(item);
-      else
-         found = currTests_.erase(item);
-   }
+   item = Mangle(item);
+   auto found = (prev ? prevFuncs_.erase(item) : currFuncs_.erase(item));
 
    if(found > 0)
    {
@@ -487,7 +369,7 @@ CodeCoverage::LoadState CodeCoverage::GetFunc
 
    auto func = strGet(input);
    if(func.empty()) return GetFunction;
-   if(func.front() == DELIMITER) return GetTestcase;
+   if(func.front() == DELIMITER) return LoadDone;
    auto hash = strGet(input);
    if(hash.empty() || !isxdigit(hash.front()))
       return GetError("Hash value for function missing", rc, expl);
@@ -498,29 +380,6 @@ CodeCoverage::LoadState CodeCoverage::GetFunc
       return GetError("Function name duplicated", rc, expl);
    currFunc_ = result.first;
    return GetTestcases;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CodeCoverage_GetTest = "CodeCoverage.GetTest";
-
-CodeCoverage::LoadState CodeCoverage::GetTest
-   (string& input, word& rc, string& expl)
-{
-   Debug::ft(CodeCoverage_GetTest);
-
-   auto test = strGet(input);
-   if(test.empty()) return GetTestcase;
-   if(test.front() == DELIMITER) return LoadDone;
-   auto hash = strGet(input);
-   if(hash.empty() || !isxdigit(hash.front()))
-      return GetError("Hash value for testcase missing", rc, expl);
-   uint32_t n = std::stoul(hash, nullptr, 16);
-   auto info = TestInfo(n);
-   auto result = prevTests_.insert(TestData(test, info));
-   if(!result.second)
-      return GetError("Testcase name duplicated", rc, expl);
-   return GetTestcase;
 }
 
 //------------------------------------------------------------------------------
@@ -551,7 +410,6 @@ word CodeCoverage::Load(std::istream& stream, string& expl)
    string input;
    auto state = GetFunction;
    prevFuncs_.clear();
-   prevTests_.clear();
 
    while(stream.peek() != EOF)
    {
@@ -566,9 +424,6 @@ word CodeCoverage::Load(std::istream& stream, string& expl)
             break;
          case GetTestcases:
             state = GetTests(input);
-            break;
-         case GetTestcase:
-            state = GetTest(input, rc, expl);
             break;
          case LoadDone:
             expl = "Extra text in database: " + input;
@@ -615,12 +470,6 @@ word CodeCoverage::Retest(string& expl) const
    if(prevFuncs_.empty())
    {
       expl = "Database is empty.  Run >coverage load first.";
-      return -1;
-   }
-
-   if(currTests_.empty())
-   {
-      expl = "No testcases in database.  Run >coverage build first.";
       return -1;
    }
 
@@ -716,7 +565,6 @@ word CodeCoverage::Query(string& expl) const
    std::ostringstream stats;
 
    stats << "Functions: " << prevFuncs_.size() << CRLF;
-   stats << "Testcases: " << prevTests_.size() << CRLF;
    stats << "Testcases per function:" << CRLF;
 
    const size_t MAX_TESTS = 10;

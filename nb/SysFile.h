@@ -22,10 +22,8 @@
 #ifndef SYSFILE_H_INCLUDED
 #define SYSFILE_H_INCLUDED
 
-#include <iosfwd>
-#include <memory>
-#include <string>
 #include <set>
+#include <string>
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------

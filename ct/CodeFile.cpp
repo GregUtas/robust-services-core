@@ -54,6 +54,7 @@
 #include "Registry.h"
 #include "SetOperations.h"
 #include "Singleton.h"
+#include "SysFile.h"
 
 using namespace NodeBase;
 using std::ostream;

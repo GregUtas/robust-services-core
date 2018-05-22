@@ -41,6 +41,7 @@
 #include "Element.h"
 #include "Formatters.h"
 #include "Singleton.h"
+#include "SysFile.h"
 #include "SysThreadStack.h"
 #include "ThisThread.h"
 

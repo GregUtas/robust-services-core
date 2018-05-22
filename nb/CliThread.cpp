@@ -40,6 +40,7 @@
 #include "Singleton.h"
 #include "Symbol.h"
 #include "SymbolRegistry.h"
+#include "SysFile.h"
 #include "TraceBuffer.h"
 
 using std::ostream;

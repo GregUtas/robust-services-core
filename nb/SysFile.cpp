@@ -23,8 +23,8 @@
 #include <cstdio>
 #include <fstream>
 #include <ios>
+#include <iosfwd>
 #include "Debug.h"
-#include "SysTypes.h"
 
 using std::string;
 

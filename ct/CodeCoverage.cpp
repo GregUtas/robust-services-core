@@ -28,7 +28,6 @@
 #include <sstream>
 #include <vector>
 #include "Algorithms.h"
-#include "CxxString.h"
 #include "Debug.h"
 #include "Element.h"
 #include "Formatters.h"

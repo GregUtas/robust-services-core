@@ -75,7 +75,7 @@ fixed_string TestFailedExpl       = "Test failed";
 fixed_string TooManyInputStreams  = "Exceeded nesting level of >read command.";
 fixed_string TooManyOutputStreams = "Exceeded nesting level of >send command.";
 fixed_string TraceReportPrompt    = "Trace generation of the trace report itself?";
-fixed_string UnknownSignalExpl    = "This kernel does not support that signal.";
+fixed_string UnknownSignalExpl    = "This platform does not support that signal.";
 
 //------------------------------------------------------------------------------
 

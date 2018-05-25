@@ -91,9 +91,10 @@ namespace SysFile
    //
    bool SetDir(const char* dirName);
 
-   //  Adds a file in the directory specified by dirName to NAMES if its
-   //  extension matches fileExt, which should begin with a dot.  Returns
-   //  false if the directory does not exist.
+   //  Adds a file in the directory specified by dirName to fileNames
+   //  if its extension matches fileExt, which should begin with a dot.
+   //  fileExt is erased from fileNames.  Returns false if the directory
+   //  does not exist.
    //
    bool FindFiles(const char* dirName,
       const char* fileExt, std::set< std::string >& fileNames);

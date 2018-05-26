@@ -2061,7 +2061,7 @@ istreamPtr CodeFile::InputStream() const
    //  result of parsing an #include directive.
    //
    if(dir_ == nullptr) return nullptr;
-   return istreamPtr(SysFile::CreateIstream(FullName().c_str()));
+   return SysFile::CreateIstream(FullName().c_str());
 }
 
 //------------------------------------------------------------------------------

@@ -40,7 +40,7 @@ fixed_string BadParameterValue    = "Rejected. Value must be ";
 fixed_string CommandAbortedExpl   = "Command aborted.";
 fixed_string ConsoleAutomaticExpl = "Reading from console is automatic at end of file.";
 fixed_string ContinuePrompt       = "Do you wish to continue?";
-fixed_string CreateStreamFailure  = "Could not create stream.";
+fixed_string CreateStreamFailure  = "Could not create output stream.";
 fixed_string DelayFailure         = "Delay failed: rc=";
 fixed_string EmptySet             = "NIL element list.";
 fixed_string EndOfFreeQueue       = "Failed: reached end of pool's free queue.";

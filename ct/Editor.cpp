@@ -25,6 +25,7 @@
 #include <cstring>
 #include <istream>
 #include <iterator>
+#include <memory>
 #include <ostream>
 #include <utility>
 #include <vector>

@@ -23,6 +23,7 @@
 #include <cstdio>
 #include <cstring>
 #include <ios>
+#include <memory>
 #include <ostream>
 #include <string>
 #include "CliBuffer.h"

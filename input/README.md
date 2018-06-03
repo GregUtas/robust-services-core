@@ -31,7 +31,6 @@ test.cp.setup | sets up environment for call processing testcases
 test.cp.ss | reads supplementary service testcases (BIC, BOC, HTL, SUS, WML)
 test.lib.all | reads all code library testcases
 test.lib.setup | sets up environment for code library testcases
-test.trap.critical | reads all trap testcases, with recovery thread asking to be reentered after a trap; turns POSIX signals into C++ exceptions
-test.trap.non-critical | reads all trap testcases, with recovery thread asking to be exited after a trap
+test.trap.all | reads all trap testcases, which turn POSIX signals and Windows structured exceptions into C++ exceptions
 test.trap.setup | sets up environment for running trap testcases
 traffic.start | starts to run POTS traffic; use `>read traffic.stop` to save summary of results in `traffic.*` files when done

@@ -29,6 +29,7 @@
 #include "Memory.h"
 #include "Registry.h"
 #include "Singleton.h"
+#include "SysFile.h"
 #include "ThisThread.h"
 #include "Tool.h"
 #include "ToolRegistry.h"

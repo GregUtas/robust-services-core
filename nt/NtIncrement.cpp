@@ -32,6 +32,7 @@
 #include <exception>
 #include <memory>
 #include <sstream>
+#include <string>
 #include "Algorithms.h"
 #include "Class.h"
 #include "CliThread.h"
@@ -62,6 +63,7 @@
 #include "Singleton.h"
 #include "SysThread.h"
 #include "SysTime.h"
+#include "TestDatabase.h"
 #include "ThisThread.h"
 #include "ToolTypes.h"
 
@@ -416,7 +418,7 @@ word SizesCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(SizesCommand_ProcessCommand);
 
-   bool all = false;
+   auto all = false;
 
    if(GetBoolParmRc(all, cli) == Error) return -1;
    cli.EndOfInput(false);
@@ -625,9 +627,24 @@ class TestFailedText : public CliText
 public: TestFailedText();
 };
 
+class TestRetestText : public CliText
+{
+public: TestRetestText();
+};
+
 class TestQueryText : public CliText
 {
 public: TestQueryText();
+};
+
+class TestEraseParm : public CliTextParm
+{
+public: TestEraseParm();
+};
+
+class TestEraseText : public CliText
+{
+public: TestEraseText();
 };
 
 class TestResetText : public CliText
@@ -711,14 +728,37 @@ TestFailedText::TestFailedText() :
    BindParm(*new TestFailExplParm);
 }
 
+fixed_string TestRetestTextStr = "retest";
+fixed_string TestRetestTextExpl =
+   "lists testcases that have not passed";
+
+TestRetestText::TestRetestText() :
+   CliText(TestRetestTextExpl, TestRetestTextStr) { }
+
 fixed_string TestQueryTextStr = "query";
-fixed_string TestQueryTextExpl = "shows the counts of passed/failed testcases";
+fixed_string TestQueryTextExpl =
+   "shows pass/fail counts and (if verbose) all testcases";
 
 TestQueryText::TestQueryText() :
-   CliText(TestQueryTextExpl, TestQueryTextStr) { }
+   CliText(TestQueryTextExpl, TestQueryTextStr)
+{
+   BindParm(*new DispBVParm);
+}
+
+fixed_string TestEraseExpl = "testcase name";
+
+TestEraseParm::TestEraseParm() : CliTextParm(TestEraseExpl) { }
+
+fixed_string TestEraseTextStr = "erase";
+fixed_string TestEraseTextExpl = "removes a testcase from the database";
+
+TestEraseText::TestEraseText() : CliText(TestEraseTextExpl, TestEraseTextStr)
+{
+   BindParm(*new TestEraseParm);
+}
 
 fixed_string TestResetTextStr = "reset";
-fixed_string TestResetTextExpl = "clears the counts of passed/failed testcases";
+fixed_string TestResetTextExpl = "resets the testing environment";
 
 TestResetText::TestResetText() :
    CliText(TestResetTextExpl, TestResetTextStr) { }
@@ -733,7 +773,9 @@ TestcaseAction::TestcaseAction() : CliTextParm(TestcaseActionExpl)
    BindText(*new TestBeginText, TestcaseCommand::TestBeginIndex);
    BindText(*new TestEndText, TestcaseCommand::TestEndIndex);
    BindText(*new TestFailedText, TestcaseCommand::TestFailedIndex);
+   BindText(*new TestRetestText, TestcaseCommand::TestRetestIndex);
    BindText(*new TestQueryText, TestcaseCommand::TestQueryIndex);
+   BindText(*new TestEraseText, TestcaseCommand::TestEraseIndex);
    BindText(*new TestResetText, TestcaseCommand::TestResetIndex);
 }
 
@@ -744,74 +786,6 @@ TestcaseCommand::TestcaseCommand(bool bind) :
    CliCommand(TestcaseStr, TestcaseExpl)
 {
    if(bind) BindParm(*new TestcaseAction);
-}
-
-fn_name TestcaseCommand_ConcludeTest = "TestcaseCommand.ConcludeTest";
-
-void TestcaseCommand::ConcludeTest(CliThread& cli) const
-{
-   Debug::ft(TestcaseCommand_ConcludeTest);
-
-   auto test = NtTestData::Access(cli);
-
-   auto prev = test->Name();
-   if(prev.empty()) return;
-
-   if(test->HasFailed())
-   {
-      auto recover = test->Recover();
-      if(!recover.empty())
-      {
-         auto command = "read " + recover;
-         cli.Execute(command);
-      }
-      else
-      {
-         auto epilog = test->Epilog();
-         if(!epilog.empty())
-         {
-            auto command = "read " + epilog;
-            cli.Execute(command);
-         }
-      }
-      test->IncrFailCount();
-   }
-   else
-   {
-      auto epilog = test->Epilog();
-      if(!epilog.empty())
-      {
-         auto command = "read " + epilog;
-         cli.Execute(command);
-      }
-      test->IncrPassCount();
-   }
-
-   test->SetName(EMPTY_STR);
-   cli.Notify(CliAppData::EndOfTest);
-}
-
-fn_name TestcaseCommand_InitiateTest = "TestcaseCommand.InitiateTest";
-
-void TestcaseCommand::InitiateTest(CliThread& cli, const string& curr) const
-{
-   Debug::ft(TestcaseCommand_InitiateTest);
-
-   auto test = NtTestData::Access(cli);
-
-   test->SetName(curr);
-   test->ResetFailed();
-
-   auto command = "symbols set testcase.name " + curr;
-   cli.Execute(command);
-
-   auto prolog = test->Prolog();
-
-   if(!prolog.empty())
-   {
-      command = "read " + prolog;
-      cli.Execute(command);
-   }
 }
 
 fn_name TestcaseCommand_ProcessCommand = "TestcaseCommand.ProcessCommand";
@@ -834,10 +808,12 @@ word TestcaseCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    Debug::ft(TestcaseCommand_ProcessSubcommand);
 
    auto test = NtTestData::Access(cli);
-   if(test == nullptr) return cli.Report(-7, CreateStreamFailure);
+   if(test == nullptr) return cli.Report(-7, AllocationError);
 
    word rc;
-   string text;
+   string text, expl;
+   auto v = false;
+   auto testdb = Singleton< TestDatabase >::Instance();
 
    switch(index)
    {
@@ -862,15 +838,11 @@ word TestcaseCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    case TestBeginIndex:
       if(!GetString(text, cli)) return -1;
       cli.EndOfInput(false);
-      *cli.obuf << spaces(2) << SuccessExpl << CRLF;
-      ConcludeTest(cli);
-      InitiateTest(cli, text);
-      return 0;
+      return test->Initiate(text);
 
    case TestEndIndex:
       cli.EndOfInput(false);
-      *cli.obuf << spaces(2) << SuccessExpl << CRLF;
-      ConcludeTest(cli);
+      test->Conclude();
       return 0;
 
    case TestFailedIndex:
@@ -879,16 +851,26 @@ word TestcaseCommand::ProcessSubcommand(CliThread& cli, id_t index) const
       cli.EndOfInput(false);
       return test->SetFailed(rc, text);
 
-   case TestQueryIndex:
+   case TestRetestIndex:
       cli.EndOfInput(false);
-      *cli.obuf << spaces(2) << "Passed: " << test->PassCount() << CRLF;
-      *cli.obuf << spaces(2) << "Failed: " << test->FailCount() << CRLF;
-      return 0;
+      rc = testdb->Retest(expl);
+      return cli.Report(rc, expl);
+
+   case TestQueryIndex:
+      if(GetBV(*this, cli, v) == Error) return -1;
+      cli.EndOfInput(false);
+      test->Query(v, expl);
+      return cli.Report(0, expl);
+
+   case TestEraseIndex:
+      if(!GetString(text, cli)) return -1;
+      cli.EndOfInput(false);
+      rc = testdb->Erase(text, expl);
+      return cli.Report(rc, expl);
 
    case TestResetIndex:
       cli.EndOfInput(false);
-      test->ResetPassCount();
-      test->ResetFailCount();
+      test->Reset();
       break;
 
    default:

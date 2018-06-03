@@ -40,9 +40,9 @@ fixed_string BadParameterValue    = "Rejected. Value must be ";
 fixed_string CommandAbortedExpl   = "Command aborted.";
 fixed_string ConsoleAutomaticExpl = "Reading from console is automatic at end of file.";
 fixed_string ContinuePrompt       = "Do you wish to continue?";
-fixed_string CreateStreamFailure  = "Could not create stream.";
+fixed_string CreateStreamFailure  = "Could not create output stream.";
 fixed_string DelayFailure         = "Delay failed: rc=";
-fixed_string EmptySet             = "NIL element list.";
+fixed_string EmptySet             = "No elements in set.";
 fixed_string EndOfFreeQueue       = "Failed: reached end of pool's free queue.";
 fixed_string NextRestartExpl      = "This change will take effect after the next restart.";
 fixed_string NoBuffersExpl        = "There were no buffers to display.";
@@ -75,7 +75,7 @@ fixed_string TestFailedExpl       = "Test failed";
 fixed_string TooManyInputStreams  = "Exceeded nesting level of >read command.";
 fixed_string TooManyOutputStreams = "Exceeded nesting level of >send command.";
 fixed_string TraceReportPrompt    = "Trace generation of the trace report itself?";
-fixed_string UnknownSignalExpl    = "This kernel does not support that signal.";
+fixed_string UnknownSignalExpl    = "This platform does not support that signal.";
 
 //------------------------------------------------------------------------------
 

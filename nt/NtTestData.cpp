@@ -24,7 +24,10 @@
 #include <sstream>
 #include "CliThread.h"
 #include "Debug.h"
+#include "Formatters.h"
 #include "NbCliParms.h"
+#include "Singleton.h"
+#include "TestDatabase.h"
 
 using std::ostream;
 using std::string;
@@ -67,6 +70,56 @@ NtTestData* NtTestData::Access(CliThread& cli)
 
 //------------------------------------------------------------------------------
 
+fn_name NtTestData_Conclude = "NtTestData.Conclude";
+
+void NtTestData::Conclude()
+{
+   Debug::ft(NtTestData_Conclude);
+
+   if(name_.empty()) return;
+
+   auto cli = Cli();
+   *cli->obuf << spaces(2) << SuccessExpl << CRLF;
+
+   auto tdb = Singleton< TestDatabase >::Instance();
+
+   if(failed_)
+   {
+      if(!recover_.empty())
+      {
+         auto command = string("read ") + recover_.c_str();
+         cli->Execute(command);
+      }
+      else
+      {
+         if(!epilog_.empty())
+         {
+            auto command = string("read ") + epilog_.c_str();
+            cli->Execute(command);
+         }
+      }
+
+      ++failCount_;
+      tdb->SetState(name_.c_str(), TestDatabase::Failed);
+   }
+   else
+   {
+      if(!epilog_.empty())
+      {
+         auto command = string("read ") + epilog_.c_str();
+         cli->Execute(command);
+      }
+
+      passCount_++;
+      tdb->SetState(name_.c_str(), TestDatabase::Passed);
+   }
+
+   cli->Notify(CliAppData::EndOfTest);
+   name_.clear();
+}
+
+//------------------------------------------------------------------------------
+
 void NtTestData::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -83,6 +136,66 @@ void NtTestData::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
+fn_name NtTestData_Initiate = "NtTestData.Initiate";
+
+word NtTestData::Initiate(const string& test)
+{
+   Debug::ft(NtTestData_Initiate);
+
+   //  If a testcase is currently running, wrap it up before starting
+   //  the new one.
+   //
+   Conclude();
+
+   name_ = test.c_str();
+   failed_ = false;
+
+   auto cli = Cli();
+   auto command = string("symbols set testcase.name ") + name_.c_str();
+   cli->Execute(command);
+
+   if(!prolog_.empty())
+   {
+      auto command = string("read ") + prolog_.c_str();
+      cli->Execute(command);
+   }
+
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name NtTestData_Query = "NtTestData.Query";
+
+void NtTestData::Query(bool verbose, string& expl) const
+{
+   Debug::ft(NtTestData_Query);
+
+   std::ostringstream stream;
+   stream << "Current test session:" << CRLF;
+   stream << spaces(2) << "Passed: " << passCount_ << CRLF;
+   stream << spaces(2) << "Failed: " << failCount_ << CRLF;
+   stream << "Testcase database:" << CRLF;
+
+   string info;
+   Singleton< TestDatabase >::Instance()->Query(verbose, info);
+   stream << info;
+   expl = stream.str();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name NtTestData_Reset = "NtTestData.Reset";
+
+void NtTestData::Reset()
+{
+   Debug::ft(NtTestData_Reset);
+
+   Cli()->SetAppData(nullptr, TestcaseAppId);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name NtTestData_SetFailed = "NtTestData.SetFailed";
 
 word NtTestData::SetFailed(word rc, const string& expl)
@@ -94,10 +207,7 @@ word NtTestData::SetFailed(word rc, const string& expl)
    std::ostringstream stream;
 
    stream << TestFailedExpl << " (rc=" << rc << ')';
-   if(expl.empty())
-      stream << '.';
-   else
-      stream << ": " << expl;
+   if(!expl.empty()) stream << ": " << expl;
    return Cli()->Report(rc, stream.str());
 }
 }

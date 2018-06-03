@@ -131,7 +131,7 @@ void LogThread::Spool(ostringstreamPtr& log)
    {
       auto path =
          Element::OutputPath() + PATH_SEPARATOR + Log::FileName() + ".txt";
-      auto file = ostreamPtr(SysFile::CreateOstream(path.c_str()));
+      auto file = SysFile::CreateOstream(path.c_str());
 
       if(file != nullptr)
       {

@@ -227,7 +227,7 @@ void FileThread::Enter()
       FunctionGuard guard(FunctionGuard::MakePreemptable);
 
       auto path = Element::OutputPath() + PATH_SEPARATOR + *name;
-      auto file = ostreamPtr(SysFile::CreateOstream(path.c_str(), trunc));
+      auto file = SysFile::CreateOstream(path.c_str(), trunc);
 
       if(file != nullptr)
       {
@@ -263,7 +263,7 @@ void FileThread::Spool
    if(Restart::GetStatus() != Running)
    {
       auto path = Element::OutputPath() + PATH_SEPARATOR + name;
-      auto file = ostreamPtr(SysFile::CreateOstream(path.c_str(), trunc));
+      auto file = SysFile::CreateOstream(path.c_str(), trunc);
 
       if(file != nullptr)
       {
@@ -323,6 +323,7 @@ void FileThread::Truncate(const string& name)
    Debug::ft(FileThread_Truncate);
 
    auto path = Element::OutputPath() + PATH_SEPARATOR + name;
-   SysFile::CreateOstream(path.c_str(), true);
+   auto file = SysFile::CreateOstream(path.c_str(), true);
+   file.reset();
 }
 }

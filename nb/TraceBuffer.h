@@ -30,7 +30,6 @@
 #include <string>
 #include <utility>
 #include "NbTypes.h"
-#include "SysFile.h"
 #include "SysTime.h"
 #include "SysTypes.h"
 #include "ToolTypes.h"

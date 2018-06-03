@@ -29,7 +29,6 @@
 #include <vector>
 #include "NbTypes.h"
 #include "Q1Way.h"
-#include "SysFile.h"
 #include "SysTypes.h"
 
 namespace NodeBase

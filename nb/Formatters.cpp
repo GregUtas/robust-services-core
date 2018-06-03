@@ -25,6 +25,7 @@
 #include <ios>
 #include <sstream>
 #include "Base.h"
+#include "Debug.h"
 
 using std::ostream;
 using std::setw;
@@ -178,6 +179,30 @@ int strCompare(const string& s1, const string& s2)
    if(size1 < size2) return -1;
    if(size1 > size2) return 1;
    return 0;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name NodeBase_strGet = "NodeBase.strGet";
+
+string strGet(string& input)
+{
+   Debug::ft(NodeBase_strGet);
+
+   if(input.empty()) return input;
+
+   auto begin = input.find_first_not_of(SPACE);
+   if(begin == string::npos)
+   {
+      input.clear();
+      return EMPTY_STR;
+   }
+
+   auto end = input.find_first_of(SPACE, begin);
+   if(end == string::npos) end = input.size();
+   auto str = input.substr(begin, end - begin);
+   input.erase(0, end);
+   return str;
 }
 
 //------------------------------------------------------------------------------

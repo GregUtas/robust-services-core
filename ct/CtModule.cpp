@@ -28,10 +28,12 @@
 #include "Library.h"
 #include "NbAppIds.h"
 #include "NbModule.h"
+#include "NtModule.h"
 #include "Singleton.h"
 #include "SysTypes.h"
 
 using namespace NodeBase;
+using namespace NodeTools;
 
 //------------------------------------------------------------------------------
 
@@ -68,6 +70,7 @@ bool CtModule::Register()
    //  Create the modules required by CodeTools.
    //
    Singleton< NbModule >::Instance();
+   Singleton< NtModule >::Instance();
    return true;
 }
 

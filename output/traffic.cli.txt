@@ -1,0 +1,46 @@
+/ save trace &testcase.name
+an>/ save msc &testcase.name
+an>clear buffer
+  OK.
+an>send cout
+  OK.
+an>traffic query
+Number of timewheel slots    1201
+Timewheel interval (msecs)   100
+Maximum calls per minute     48460
+Traffic rate (calls/min)     0
+Maximum calls per tick       2
+Millicalls per tick          0
+First DN added for traffic   30001
+Last DN added for traffic    30700
+Current timeslot             607
+Total calls created          549
+Number of active calls       2
+Number of DN overflows       0
+Total holding time reports   938
+Average holding time (secs)  33
+Average DNs/call * 100       170 ***
+First call after current timeslot:
+  [622]: 
+    PotsBase.TrafficCall
+    this : 0430C140
+    patchArea : 0x0
+    callid : 540    orig   : none
+    delay  : 0
+    dest   : 30225
+    term   : POTS 30225
+    state  : Rlsg
+an>traffic profile
+Basic call states:
+          AO   CI   AI   SR   AS   SC   OA        RS
+     Nu    0    0    0    0    0    0    0   Ac    0   Di   Ex
+      0   AT             SF        PC   TA    0   LS    0    0
+           0              0         0    0         0
+POTS circuit states:
+    Idle  Actv  Orig  Term  Lock
+     706     0     0     0     2
+Traffic call states:
+    Orig  Dial  Term  Ring  Conn  Susp  Disc  Rlsg
+       0     0     0     0     0     0     0     2
+an>send cout
+  OK.

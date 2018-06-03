@@ -31,7 +31,6 @@
 #include "Lexer.h"
 #include "LibraryTypes.h"
 #include "RegCell.h"
-#include "SysFile.h"
 #include "SysTypes.h"
 
 namespace CodeTools

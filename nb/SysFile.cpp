@@ -23,8 +23,10 @@
 #include <cstdio>
 #include <fstream>
 #include <ios>
+#include <iosfwd>
 #include "Debug.h"
-#include "SysTypes.h"
+
+using std::string;
 
 //------------------------------------------------------------------------------
 
@@ -107,5 +109,45 @@ ostreamPtr SysFile::CreateOstream(const char* fileName, bool trunc)
    auto stream = ostreamPtr(new std::ofstream(fileName, mode));
    if(stream != nullptr) *stream << std::boolalpha << std::nouppercase;
    return stream;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SysFile_FindFiles = "SysFile.FindFiles";
+
+bool SysFile::FindFiles
+   (const char* dirName, const char* fileExt, std::set< string >& fileNames)
+{
+   Debug::ft(SysFile_FindFiles);
+
+   if(!SetDir(dirName)) return false;
+
+   if(fileExt[0] != '.')
+   {
+      Debug::SwErr(SysFile_FindFiles, fileExt[0], 0);
+      return false;
+   }
+
+   auto spec = "*" + string(fileExt);
+   auto list = GetFileList(nullptr, spec.c_str());
+
+   if(list != nullptr)
+   {
+      string name;
+
+      do
+      {
+         if(!list->IsSubdir())
+         {
+            list->GetName(name);
+            auto pos = name.rfind(fileExt);
+            name.erase(pos);
+            fileNames.insert(name);
+         }
+      }
+      while(list->Advance());
+   }
+
+   return true;
 }
 }

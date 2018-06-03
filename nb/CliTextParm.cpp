@@ -23,6 +23,7 @@
 #include <cstdio>
 #include <cstring>
 #include <ios>
+#include <memory>
 #include <ostream>
 #include <string>
 #include "CliBuffer.h"
@@ -205,7 +206,7 @@ CliTextParm::Rc CliTextParm::GetFileNameRc(string& s, CliThread& cli) const
       //  Open the file without purging it to confirm that the name (and path,
       //  if any) are valid.  If the file is empty, erase it.
       //
-      auto stream = ostreamPtr(SysFile::CreateOstream(s.c_str()));
+      auto stream = SysFile::CreateOstream(s.c_str());
 
       if(stream == nullptr)
       {

@@ -26,7 +26,6 @@
 #include "CliIncrement.h"
 #include "CliTextParm.h"
 #include "NbIncrement.h"
-#include <string>
 #include "NbTypes.h"
 #include "SysTypes.h"
 
@@ -150,8 +149,10 @@ public:
    static const id_t TestBeginIndex   = 4;
    static const id_t TestEndIndex     = 5;
    static const id_t TestFailedIndex  = 6;
-   static const id_t TestQueryIndex   = 7;
-   static const id_t TestResetIndex   = 8;
+   static const id_t TestRetestIndex  = 7;
+   static const id_t TestQueryIndex   = 8;
+   static const id_t TestEraseIndex   = 9;
+   static const id_t TestResetIndex   = 10;
    static const id_t LastNtIndex = TestResetIndex;
 
    //  Set BIND to false if binding a subclass of TestcaseAction.
@@ -160,8 +161,6 @@ public:
    virtual ~TestcaseCommand() { }
 protected:
    virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
-   virtual void ConcludeTest(CliThread& cli) const;
-   virtual void InitiateTest(CliThread& cli, const std::string& curr) const;
 private:
    virtual word ProcessCommand(CliThread& cli) const override;
 };

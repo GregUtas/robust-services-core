@@ -25,7 +25,6 @@
 #include <direct.h>
 #include <io.h>
 #include "Debug.h"
-#include "SysTypes.h"
 
 using std::string;
 

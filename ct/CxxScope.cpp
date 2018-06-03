@@ -2194,7 +2194,8 @@ void Function::CheckArgs() const
       {
          if(*args_[i]->Name() != *mate_->args_[i]->Name())
          {
-            args_[i]->Log(DefinitionRenamesArgument, i + (this_ ? 0 : 1));
+            mate_->args_[i]->Log
+               (DefinitionRenamesArgument, i + (this_ ? 0 : 1));
          }
       }
    }

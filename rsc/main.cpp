@@ -31,8 +31,8 @@
 //  ---------       ------      -------  -----------------------------
 //  NodeBase        NbModule    nb
 //  NodeTools       NtModule    nt       **
-//  CodeTools       CtModule    ct       **
 //  NetworkBase     NwModule    nw       **
+//  CodeTools       CtModule    ct       ** **
 //  SessionBase     SbModule    sb       **       **
 //  SessionTools    StModule    st       ** **    ** **
 //  MediaBase       MbModule    mb       **       ** **
@@ -48,9 +48,9 @@
 //  RootThread is defined in NodeBase, so a using directive for NodeBase must
 //  be included here.  To build only NodeBase, create NbModule.  To include
 //  additional layers, add a using directive for the namespace, and create
-//  only the module, for the uppermost layer that is required in the build.
-//  That module's Register function will, in turn, pull in the modules that
-//  it requires, and so on transitively.
+//  only the module, for the uppermost layer (leaf library) that is required
+//  in the build.  That module's Register function will, in turn, pull in the
+//  modules that it requires, and so on transitively.
 //
 //  Compiler options (Windows)
 //  --------------------------

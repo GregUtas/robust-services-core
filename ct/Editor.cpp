@@ -25,6 +25,7 @@
 #include <cstring>
 #include <istream>
 #include <iterator>
+#include <memory>
 #include <ostream>
 #include <utility>
 #include <vector>
@@ -39,6 +40,7 @@
 #include "Debug.h"
 #include "Formatters.h"
 #include "Lexer.h"
+#include "SysFile.h"
 
 using namespace NodeBase;
 using std::string;
@@ -889,8 +891,8 @@ word Editor::Write(const string& path, string& expl)
 
    //  Create a new file to hold the reformatted version.
    //
-   auto file = path + ".tmp";
-   auto output = ostreamPtr(SysFile::CreateOstream(file.c_str(), true));
+   auto temp = path + ".tmp";
+   auto output = SysFile::CreateOstream(temp.c_str(), true);
    if(output == nullptr) return Report(expl, "Failed to open output file.", -1);
 
    EraseBlankLinePairs();
@@ -936,7 +938,7 @@ word Editor::Write(const string& path, string& expl)
    input_.reset();
    output.reset();
    remove(path.c_str());
-   auto err = rename(file.c_str(), path.c_str());
+   auto err = rename(temp.c_str(), path.c_str());
    if(err != 0) return Report(expl, "Failed to rename new file to old.", -1);
    file_->SetModified();
    return 1;

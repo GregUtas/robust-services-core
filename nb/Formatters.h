@@ -123,6 +123,12 @@ namespace NodeBase
    //  name as returned by strClass.
    //
    std::string strObj(const Base* obj, bool ns = true);
+
+   //  Skips any leading blanks in INPUT and returns the next string, which
+   //  ends at the next blank.  Updates INPUT by removing the string and the
+   //  leading blanks.
+   //
+   std::string strGet(std::string& input);
 }
 
 #endif

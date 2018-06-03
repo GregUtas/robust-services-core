@@ -167,13 +167,20 @@ word NtTestData::Initiate(const string& test)
 
 fn_name NtTestData_Query = "NtTestData.Query";
 
-void NtTestData::Query() const
+void NtTestData::Query(bool verbose, string& expl) const
 {
    Debug::ft(NtTestData_Query);
 
-   auto cli = Cli();
-   *cli->obuf << spaces(2) << "Passed: " << passCount_ << CRLF;
-   *cli->obuf << spaces(2) << "Failed: " << failCount_ << CRLF;
+   std::ostringstream stream;
+   stream << "Current test session:" << CRLF;
+   stream << spaces(2) << "Passed: " << passCount_ << CRLF;
+   stream << spaces(2) << "Failed: " << failCount_ << CRLF;
+   stream << "Testcase database:" << CRLF;
+
+   string info;
+   Singleton< TestDatabase >::Instance()->Query(verbose, info);
+   stream << info;
+   expl = stream.str();
 }
 
 //------------------------------------------------------------------------------

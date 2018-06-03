@@ -21,25 +21,51 @@
 //
 #include "TestDatabase.h"
 #include <cctype>
+#include <cstddef>
 #include <cstdio>
+#include <iomanip>
 #include <ios>
 #include <istream>
 #include <memory>
-#include <ostream>
 #include <set>
+#include <sstream>
 #include "Algorithms.h"
 #include "Debug.h"
 #include "Element.h"
 #include "Formatters.h"
+#include "NbCliParms.h"
 #include "SysFile.h"
 
 using namespace NodeBase;
+using std::ostream;
+using std::setw;
 using std::string;
 
 //------------------------------------------------------------------------------
 
 namespace NodeTools
 {
+fixed_string StateStrings[TestDatabase::State_N + 1] =
+{
+   "invalid",
+   "unreported",
+   "failed",
+   "re-execute",
+   "passed",
+   ERROR_STR
+};
+
+ostream& operator<<(ostream& stream, TestDatabase::State state)
+{
+   if((state >= 0) && (state < TestDatabase::State_N))
+      stream << StateStrings[state];
+   else
+      stream << StateStrings[TestDatabase::State_N];
+   return stream;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name TestDatabase_ctor = "TestDatabase.ctor";
 
 TestDatabase::TestDatabase()
@@ -52,69 +78,14 @@ TestDatabase::TestDatabase()
 
 //------------------------------------------------------------------------------
 
-fn_name TestDatabase_AddTest = "TestDatabase.AddTest";
-
-void TestDatabase::AddTest(const std::string& test, const std::string& dir)
-{
-   Debug::ft(TestDatabase_AddTest);
-
-   TestcaseState state = Invalid;
-   uint32_t hash = UNHASHED;
-
-   //  If a script named TEST exists, calculate its hash value.
-   //
-   auto file = dir + PATH_SEPARATOR + test + ".txt";
-   auto stream = SysFile::CreateIstream(file.c_str());
-   if(stream != nullptr)
-   {
-      string contents;
-      string input;
-
-      while(stream->peek() != EOF)
-      {
-         std::getline(*stream, input);
-         contents += input;
-      }
-
-      hash = stringHash(contents.c_str());
-      state = Unreported;
-   }
-
-   //  If TEST is already in the database, update its state:
-   //  o if its script was not found, invalidate it
-   //  o if its script was modified, flag it for rexecution
-   //  If TEST was not in the database, insert it.
-   //
-   auto prev = tests_.find(test);
-   if(prev != tests_.end())
-   {
-      if(stream == nullptr)
-      {
-         prev->second.state = Invalid;
-      }
-      else
-      {
-         if(prev->second.hash != hash)
-            prev->second.state = Reexecute;
-      }
-   }
-   else
-   {
-      auto info = TestInfo(state, hash);
-      tests_.insert(TestData(test, info));
-   }
-}
-
-//------------------------------------------------------------------------------
-
 fn_name TestDatabase_Commit = "TestDatabase.Commit";
 
 void TestDatabase::Commit() const
 {
    Debug::ft(TestDatabase_Commit);
 
-   auto file = Element::InputPath() + PATH_SEPARATOR + "test.db.txt";
-   auto stream = SysFile::CreateOstream(file.c_str(), false);
+   auto path = Element::InputPath() + PATH_SEPARATOR + "testcase.db.txt";
+   auto stream = SysFile::CreateOstream(path.c_str(), true);
 
    if(stream == nullptr)
    {
@@ -125,7 +96,7 @@ void TestDatabase::Commit() const
 
    for(auto t = tests_.cbegin(); t != tests_.cend(); ++t)
    {
-      *stream << t->first << SPACE << t->second.state << SPACE;
+      *stream << t->first << SPACE << int(t->second.state) << SPACE;
       *stream << std::hex << t->second.hash << std::dec << CRLF;
    }
 
@@ -136,22 +107,21 @@ void TestDatabase::Commit() const
 
 fn_name TestDatabase_Erase = "TestDatabase.Erase";
 
-word TestDatabase::Erase(string& expl)
+word TestDatabase::Erase(const string& test, string& expl)
 {
    Debug::ft(TestDatabase_Erase);
 
-   auto size = tests_.size();
-   auto t = tests_.cbegin();
+   auto item = tests_.find(test);
 
-   while(t != tests_.cend())
+   if(item != tests_.end())
    {
-      if(t->second.state == Invalid)
-         t = tests_.erase(t);
-      else
-         ++t;
+      tests_.erase(item);
+      Commit();
+      expl = SuccessExpl;
+      return 0;
    }
 
-   if(tests_.size() < size) Commit();
+   expl = "That testcase is not in the database.";
    return 0;
 }
 
@@ -169,7 +139,7 @@ TestDatabase::LoadState TestDatabase::GetError(const string& reason)
 
 //------------------------------------------------------------------------------
 
-TestDatabase::TestcaseState TestDatabase::GetState(const string& testcase)
+TestDatabase::State TestDatabase::GetState(const string& testcase)
 {
    auto test = tests_.find(testcase);
    if(test == tests_.cend()) return Invalid;
@@ -190,7 +160,7 @@ TestDatabase::LoadState TestDatabase::GetTest(string& input)
    auto state = strGet(input);
    if(state.empty()) return GetError("State not found");
    if(!isdigit(state.front())) return GetError("State corrupted");
-   TestcaseState s = static_cast< TestcaseState >(std::stol(state));
+   auto s = static_cast< State >(std::stoi(state));
    if((s <= Invalid) || (s > Passed)) return GetError("State out of range");
    auto hash = strGet(input);
    if(hash.empty() || !isxdigit(hash.front()))
@@ -204,14 +174,66 @@ TestDatabase::LoadState TestDatabase::GetTest(string& input)
 
 //------------------------------------------------------------------------------
 
+fn_name TestDatabase_Insert = "TestDatabase.Insert";
+
+void TestDatabase::Insert(const std::string& test, const std::string& dir)
+{
+   Debug::ft(TestDatabase_Insert);
+
+   auto state = Unreported;
+   uint32_t hash = UNHASHED;
+
+   //  If a script named TEST exists, calculate its hash value.
+   //
+   auto path = dir + PATH_SEPARATOR + test + ".txt";
+   auto stream = SysFile::CreateIstream(path.c_str());
+
+   if(stream != nullptr)
+   {
+      string contents;
+      string input;
+
+      while(stream->peek() != EOF)
+      {
+         std::getline(*stream, input);
+         contents += input;
+      }
+
+      hash = stringHash(contents.c_str());
+   }
+
+   auto prev = tests_.find(test);
+
+   if(prev != tests_.end())
+   {
+      //  TEST was already in the database.  If its hash value changed,
+      //  update it and mark it unreported if it had previously passed.
+      //
+      if(prev->second.hash != hash)
+      {
+         prev->second.hash = hash;
+         if(prev->second.state == Passed) prev->second.state = Reexecute;
+      }
+   }
+   else
+   {
+      //  TEST was not in the database, so add it.
+      //
+      auto info = TestInfo(state, hash);
+      tests_.insert(TestData(test, info));
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name TestDatabase_Load = "TestDatabase.Load";
 
 void TestDatabase::Load()
 {
    Debug::ft(TestDatabase_Load);
 
-   auto file = Element::InputPath() + PATH_SEPARATOR + "test.db.txt";
-   auto stream = SysFile::CreateIstream(file.c_str());
+   auto path = Element::InputPath() + PATH_SEPARATOR + "testcase.db.txt";
+   auto stream = SysFile::CreateIstream(path.c_str());
 
    if(stream == nullptr)
    {
@@ -249,12 +271,38 @@ void TestDatabase::Load()
 
 fn_name TestDatabase_Query = "TestDatabase.Query";
 
-word TestDatabase::Query(string& expl) const
+word TestDatabase::Query(bool verbose, string& expl) const
 {
    Debug::ft(TestDatabase_Query);
 
-   //* To be implemented.
+   size_t states[State_N] = { 0 };
 
+   for(auto t = tests_.cbegin(); t != tests_.cend(); ++t)
+   {
+      ++states[t->second.state];
+   }
+
+   std::ostringstream stream;
+
+   for(auto s = Invalid + 1; s < State_N; ++s)
+   {
+      auto state = static_cast< State >(s);
+      stream << spaces(2) << state << ": " << states[s];
+   }
+
+   stream << CRLF;
+
+   if(verbose)
+   {
+      stream << setw(40) << "Testcase" << spaces(3) << "State" << CRLF;
+
+      for(auto t = tests_.cbegin(); t != tests_.cend(); ++t)
+      {
+         stream << setw(40) << t->first << spaces(3) << t->second.state << CRLF;
+      }
+   }
+
+   expl = stream.str();
    return 0;
 }
 
@@ -266,23 +314,26 @@ word TestDatabase::Retest(string& expl) const
 {
    Debug::ft(TestDatabase_Retest);
 
+   size_t count = 0;
+   std::ostringstream stream;
+
    for(auto t = tests_.cbegin(); t != tests_.cend(); ++t)
    {
-      switch(t->second.state)
+      if(t->second.state != Passed)
       {
-      case Invalid:
-      case Passed:
-         break;
-      default:
-         expl.append(t->first + CRLF);
+         stream << t->first << CRLF;
+         ++count;
       }
    }
 
-   if(expl.empty())
+   if(count == 0)
+   {
       expl = "No testcases require retesting.";
-   else
-      expl.pop_back();
+      return 0;
+   }
 
+   stream << "...total=" << count;
+   expl = stream.str();
    return 0;
 }
 
@@ -290,7 +341,7 @@ word TestDatabase::Retest(string& expl) const
 
 fn_name TestDatabase_SetState = "TestDatabase.SetState";
 
-void TestDatabase::SetState(const string& testcase, TestcaseState state)
+void TestDatabase::SetState(const string& testcase, State next)
 {
    Debug::ft(TestDatabase_SetState);
 
@@ -303,8 +354,20 @@ void TestDatabase::SetState(const string& testcase, TestcaseState state)
       return;
    };
 
-   test->second.state = state;
-   Commit();
+   //  If the state has changed, update the database.  However,
+   //  a failed testcase remains failed rather than being marked
+   //  for re-execution.
+   //
+   auto curr = test->second.state;
+
+   if(curr != next)
+   {
+      if((curr != Failed) || (next != Reexecute))
+      {
+         test->second.state = next;
+         Commit();
+      }
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -333,29 +396,27 @@ void TestDatabase::Update()
    //
    for(auto f = files.cbegin(); f != files.cend(); ++f)
    {
-      auto file = indir + PATH_SEPARATOR + *f;
-      auto stream = SysFile::CreateIstream(file.c_str());
+      auto path = indir + PATH_SEPARATOR + *f + ".txt";
+      auto stream = SysFile::CreateIstream(path.c_str());
+
       if(stream == nullptr)
       {
          ++errors;
          continue;
       }
 
-      //  Extract the function names from STREAM.  They begin on the fourth
-      //  line, and each one is preceded by two integers.
-      //
       string input;
 
       while(stream->peek() != EOF)
       {
          std::getline(*stream, input);
          auto str = strGet(input);
-         if(str != "testcase") break;
+         if(str != "testcase") continue;
          str = strGet(input);
-         if(str != "begin") break;
+         if(str != "begin") continue;
          str = strGet(input);
-         if(str.empty()) break;
-         AddTest(str, indir);
+         if(str.empty()) continue;
+         Insert(str, indir);
       }
    }
 

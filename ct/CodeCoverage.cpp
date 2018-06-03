@@ -37,7 +37,6 @@
 
 using namespace NodeBase;
 using namespace NodeTools;
-using std::ostream;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -53,67 +52,49 @@ CodeCoverage::CodeCoverage()
 
 //------------------------------------------------------------------------------
 
-fn_name CodeCoverage_AddFunc = "CodeCoverage.AddFunc";
-
-bool CodeCoverage::AddFunc(const string& fn, uint32_t hash, const string& ns)
-{
-   Debug::ft(CodeCoverage_AddFunc);
-
-   auto name = Mangle(fn);
-   auto iter = currFuncs_.find(name);
-
-   if(iter != currFuncs_.cend())
-   {
-      return (iter->second.ns == ns);
-   }
-
-   auto info = FuncInfo(ns, hash);
-   auto result = currFuncs_.insert(FuncData(name, info));
-   return result.second;
-}
-
-//------------------------------------------------------------------------------
-
 fn_name CodeCoverage_Build = "CodeCoverage.Build";
 
-word CodeCoverage::Build(string& expl)
+word CodeCoverage::Build(std::ostringstream& expl)
 {
    Debug::ft(CodeCoverage_Build);
 
    if(currFuncs_.empty())
    {
-      expl = "Database is empty.  Run >check first.";
+      expl << "Must run >check on all code files before >coverage build.";
       return -1;
    }
 
    //  Find all *.funcs.txt files in the output directory.  If a testcase
-   //  with the same file name exists, add the functions that it invoked
-   //  to the current database.
+   //  with the same file name exists, add it, along with the functions
+   //  that it invoked, to the current database.
    //
-   auto errors = 0;
    auto outdir = Element::OutputPath();
    std::set< string > traces;
 
    if(!SysFile::FindFiles(outdir.c_str(), ".funcs.txt", traces))
    {
-      expl = "Could not open directory " + outdir;
+      expl << "Could not open directory " << outdir;
       return -1;
    }
 
    auto testdb = Singleton< TestDatabase >::Instance();
+   auto count = 0;
 
    for(auto trace = traces.cbegin(); trace != traces.cend(); ++trace)
    {
-      auto test = *trace;
-      if(testdb->GetState(test) == TestDatabase::Invalid) continue;
+      if(testdb->GetState(*trace) == TestDatabase::Invalid) continue;
 
-      auto file = outdir + PATH_SEPARATOR + *trace + ".funcs.txt";
-      auto stream = SysFile::CreateIstream(file.c_str());
+      auto path = outdir + PATH_SEPARATOR + *trace + ".funcs.txt";
+      auto stream = SysFile::CreateIstream(path.c_str());
+
       if(stream == nullptr)
       {
-         ++errors;
+         expl << "Failed to open " << path << CRLF << spaces(2);
          continue;
       }
+
+      currTests_.insert(*trace);
+      ++count;
 
       //  Extract the function names from STREAM.  They begin on the fourth
       //  line, and each one is preceded by two integers.
@@ -145,26 +126,57 @@ word CodeCoverage::Build(string& expl)
          }
 
          auto func = currFuncs_.find(str);
+
          if(func == currFuncs_.cend())
          {
-            //  This function was not in the database.  This occurs for a
-            //  function template or function in a class template.  Add the
-            //  function, assigning it a hash value that is easily noticed.
+            //  This function was not in the database.  This occurs in the
+            //  case of a function template or function in a class template,
+            //  since these are not parsed.  Add the function.
             //
             auto info = FuncInfo(UNHASHED);
             auto result = currFuncs_.insert(FuncData(str, info));
             func = result.first;
          }
 
-         func->second.tests.insert(test);
+         func->second.tests.insert(*trace);
       }
    }
 
-   if(errors == 0)
-      expl = SuccessExpl;
-   else
-      expl = "Errors: " + std::to_string(errors);
+   expl << count << " *.funcs.txt file(s) processed";
    return 0;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeCoverage_Commit = "CodeCoverage.Commit";
+
+bool CodeCoverage::Commit(const Functions& funcs)
+{
+   Debug::ft(CodeCoverage_Commit);
+
+   auto path = Element::InputPath() + PATH_SEPARATOR + "coverage.db.txt";
+   auto stream = SysFile::CreateOstream(path.c_str(), true);
+   if(stream == nullptr) return false;
+
+   for(auto f = funcs.cbegin(); f != funcs.cend(); ++f)
+   {
+      *stream << f->first << SPACE << std::hex << f->second.hash << std::dec;
+
+      auto& tests = f->second.tests;
+
+      if(!tests.empty())
+      {
+         for(auto t = tests.cbegin(); t != tests.cend(); ++t)
+         {
+            *stream << SPACE << *t;
+         }
+      }
+
+      *stream << SPACE << DELIMITER << CRLF;
+   }
+
+   *stream << DELIMITER << CRLF;
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -185,31 +197,24 @@ string CodeCoverage::Demangle(const string& s)
 
 fn_name CodeCoverage_Diff = "CodeCoverage.Diff";
 
-word CodeCoverage::Diff(string& expl) const
+word CodeCoverage::Diff(std::ostringstream& expl) const
 {
    Debug::ft(CodeCoverage_Diff);
 
-   if(prevFuncs_.empty())
-   {
-      expl = "Database is empty.  Run >coverage load first.";
-      return -1;
-   }
-
-   std::ostringstream report;
-   report << "Added functions: ";
+   expl << "Added functions: ";
    auto found = false;
 
    for(auto c = currFuncs_.cbegin(); c != currFuncs_.cend(); ++c)
    {
       if(prevFuncs_.find(c->first) == prevFuncs_.cend())
       {
-         report << CRLF << spaces(2) << c->first;
+         expl << CRLF << spaces(2) << c->first;
          found = true;
       }
    }
 
-   if(!found) report << "none";
-   report << CRLF << "Changed functions: ";
+   if(!found) expl << "none";
+   expl << CRLF << "Changed functions: ";
    found = false;
 
    for(auto c = currFuncs_.cbegin(); c != currFuncs_.cend(); ++c)
@@ -218,13 +223,13 @@ word CodeCoverage::Diff(string& expl) const
 
       if((p != prevFuncs_.cend()) && (c->second.hash != p->second.hash))
       {
-         report << CRLF << spaces(2) << c->first;
+         expl << CRLF << spaces(2) << c->first;
          found = true;
       }
    }
 
-   if(!found) report << "none";
-   report << CRLF << "Deleted functions: ";
+   if(!found) expl << "none";
+   expl << CRLF << "Deleted functions: ";
    found = false;
 
    for(auto p = prevFuncs_.cbegin(); p!= prevFuncs_.cend(); ++p)
@@ -232,86 +237,12 @@ word CodeCoverage::Diff(string& expl) const
       if((p->second.hash != UNHASHED) &&
          (currFuncs_.find(p->first) == currFuncs_.cend()))
       {
-         report << CRLF << spaces(2) << p->first;
+         expl << CRLF << spaces(2) << p->first;
          found = true;
       }
    }
 
-   if(!found) report << "none";
-
-   expl = report.str();
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CodeCoverage_Dump = "CodeCoverage.Dump";
-
-word CodeCoverage::Dump(ostream& stream, string& expl)
-{
-   Debug::ft(CodeCoverage_Dump);
-
-   if(currFuncs_.empty())
-   {
-      expl = "Database is empty.  Run >check first.";
-      return -1;
-   }
-
-   std::set< string > inclTests;
-
-   //  If a function without a hash value appears only in the previous
-   //  database, add it to the current database.  (A function *with* a
-   //  hash value must have been deleted from the code base if it only
-   //  appears in the previous database.)
-   //
-   for(auto p = prevFuncs_.cbegin(); p != prevFuncs_.cend(); ++p)
-   {
-      if((p->second.hash == UNHASHED) &&
-         (currFuncs_.find(p->first) == currFuncs_.cend()))
-      {
-         currFuncs_.insert(*p);
-      }
-   }
-
-   //  Look at functions that exist in both databases.  If a testcase invoked
-   //  a function in the previous database, insert it as an invoker of that
-   //  function in the current database *if the testcase was just added to the
-   //  current database, above*.  (If the testcase wasn't added to the current
-   //  database, it must have been re-executed, in which case it has already
-   //  been inserted as an invoker of all its functions.)
-   //
-   for(auto pf = prevFuncs_.cbegin(); pf != prevFuncs_.cend(); ++pf)
-   {
-      auto cf = currFuncs_.find(pf->first);
-      if(cf == currFuncs_.cend()) continue;
-
-      auto& tests = pf->second.tests;
-      for(auto pt = tests.cbegin(); pt != tests.cend(); ++pt)
-      {
-         if(inclTests.find(*pt) != inclTests.cend())
-            cf->second.tests.insert(*pt);
-      }
-   }
-
-   for(auto f = currFuncs_.cbegin(); f != currFuncs_.cend(); ++f)
-   {
-      stream << f->first << SPACE << std::hex << f->second.hash << std::dec;
-
-      auto& tests = f->second.tests;
-
-      if(!tests.empty())
-      {
-         for(auto t = tests.cbegin(); t != tests.cend(); ++t)
-         {
-            stream << SPACE << *t;
-         }
-      }
-
-      stream << SPACE << DELIMITER << CRLF;
-   }
-
-   stream << DELIMITER << CRLF;
-   expl = SuccessExpl;
+   if(!found) expl << "none";
    return 0;
 }
 
@@ -319,23 +250,29 @@ word CodeCoverage::Dump(ostream& stream, string& expl)
 
 fn_name CodeCoverage_Erase = "CodeCoverage.Erase";
 
-word CodeCoverage::Erase(string& func, bool prev, string& expl)
+word CodeCoverage::Erase(string& func, string& expl)
 {
    Debug::ft(CodeCoverage_Erase);
 
    if(prevFuncs_.empty())
    {
-      expl = "Database is empty.  Run >coverage load first.";
-      return -1;
+      auto rc = Load(expl);
+      if(rc != 0) return rc;
    }
 
    func = Mangle(func);
-   auto found = (prev ? prevFuncs_.erase(func) : currFuncs_.erase(func));
+   auto found = prevFuncs_.erase(func);
 
    if(found > 0)
    {
-      expl = SuccessExpl;
-      return 0;
+      if(Commit(prevFuncs_))
+      {
+         expl = SuccessExpl;
+         return 0;
+      }
+
+      expl = CreateStreamFailure;
+      return -7;
    }
 
    expl = "No such entry: " + func;
@@ -384,7 +321,7 @@ CodeCoverage::LoadState CodeCoverage::GetFunc
 
 fn_name CodeCoverage_GetTests = "CodeCoverage.GetTests";
 
-CodeCoverage::LoadState CodeCoverage::GetTests(string& input) const
+CodeCoverage::LoadState CodeCoverage::GetTests(string& input)
 {
    Debug::ft(CodeCoverage_GetTests);
 
@@ -392,26 +329,57 @@ CodeCoverage::LoadState CodeCoverage::GetTests(string& input) const
    if(test.empty()) return GetTestcases;
    if(test.front() == DELIMITER) return GetFunction;
    currFunc_->second.tests.insert(test);
+   currTests_.insert(test);
    return GetTestcases;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeCoverage_Insert = "CodeCoverage.Insert";
+
+bool CodeCoverage::Insert(const string& func, uint32_t hash, const string& file)
+{
+   Debug::ft(CodeCoverage_Insert);
+
+   auto name = Mangle(func);
+   auto iter = currFuncs_.find(name);
+
+   if(iter != currFuncs_.cend())
+   {
+      return (iter->second.file == file);
+   }
+
+   auto info = FuncInfo(file, hash);
+   auto result = currFuncs_.insert(FuncData(name, info));
+   return result.second;
 }
 
 //------------------------------------------------------------------------------
 
 fn_name CodeCoverage_Load = "CodeCoverage.Load";
 
-word CodeCoverage::Load(std::istream& stream, string& expl)
+word CodeCoverage::Load(string& expl)
 {
    Debug::ft(CodeCoverage_Load);
 
-   expl = "Error: explanation not provided";
+   auto path = Element::InputPath() + PATH_SEPARATOR + "coverage.db.txt";
+   auto stream = SysFile::CreateIstream(path.c_str());
+   if(stream == nullptr)
+   {
+      expl = NoFileExpl;
+      return -2;
+   }
+
+   expl = "Error: explanation not provided.";
    word rc = -1;
    string input;
    auto state = GetFunction;
    prevFuncs_.clear();
+   prevTests_.clear();
 
-   while(stream.peek() != EOF)
+   while(stream->peek() != EOF)
    {
-      std::getline(stream, input);
+      std::getline(*stream, input);
 
       while(!input.empty())
       {
@@ -435,7 +403,7 @@ word CodeCoverage::Load(std::istream& stream, string& expl)
 
    if(state != LoadDone)
    {
-      expl = "Parsing error: reached end of file unexpectedly";
+      expl = "Parsing error: reached end of file unexpectedly.";
       return -1;
    }
 
@@ -459,16 +427,91 @@ string CodeCoverage::Mangle(const string& s)
 
 //------------------------------------------------------------------------------
 
+fn_name CodeCoverage_Merge = "CodeCoverage.Merge";
+
+word CodeCoverage::Merge(std::ostringstream& expl)
+{
+   Debug::ft(CodeCoverage_Merge);
+
+   auto testdb = Singleton< TestDatabase >::Instance();
+   std::set< string > inclTests;
+
+   //  Update the current database with testcases that appear only in
+   //  the previous database.  Verify that a testcase is still in the
+   //  testcase database before adding it.
+   //
+   for(auto p = prevTests_.cbegin(); p != prevTests_.cend(); ++p)
+   {
+      if((currTests_.find(*p) == currTests_.cend()) &
+         (testdb->GetState(*p) != TestDatabase::Invalid))
+      {
+         currTests_.insert(*p);
+         inclTests.insert(*p);
+      }
+   }
+
+   //  If a function without a hash value appears only in the previous
+   //  database, add it to the current database.  (A function *with* a
+   //  hash value must have been deleted from the code base if it only
+   //  appears in the previous database.)
+   //
+   for(auto p = prevFuncs_.cbegin(); p != prevFuncs_.cend(); ++p)
+   {
+      if((p->second.hash == UNHASHED) &&
+         (currFuncs_.find(p->first) == currFuncs_.cend()))
+      {
+         currFuncs_.insert(*p);
+      }
+   }
+
+   //  Look at functions that exist in both databases.  If a testcase invoked
+   //  a function in the previous database, insert it as an invoker of that
+   //  function in the current database *if the testcase was just added to the
+   //  current database, above*.  (If the testcase wasn't added to the current
+   //  database, it must have been deleted or re-executed; in the latter case,
+   //  it has already been inserted as an invoker of all its functions.)
+   //
+   for(auto pf = prevFuncs_.cbegin(); pf != prevFuncs_.cend(); ++pf)
+   {
+      auto cf = currFuncs_.find(pf->first);
+      if(cf == currFuncs_.cend()) continue;
+
+      auto& tests = pf->second.tests;
+
+      for(auto pt = tests.cbegin(); pt != tests.cend(); ++pt)
+      {
+         if(inclTests.find(*pt) != inclTests.cend())
+            cf->second.tests.insert(*pt);
+      }
+   }
+
+   if(!Commit(currFuncs_))
+   {
+      expl << CreateStreamFailure;
+      return -7;
+   }
+
+   //  The latest functions and testcases have now been included, so the
+   //  current database is now also the "previous" one.
+   //
+   prevFuncs_ = currFuncs_;
+   prevTests_ = currTests_;
+   expl << SuccessExpl;
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeCoverage_Query = "CodeCoverage.Query";
 
-word CodeCoverage::Query(string& expl) const
+word CodeCoverage::Query(string& expl)
 {
    Debug::ft(CodeCoverage_Query);
 
    if(prevFuncs_.empty())
    {
-      expl = "Database is empty.  Run >coverage load first.";
-      return -1;
+      auto rc = Load(expl);
+      if(rc != 0) return rc;
    }
 
    std::ostringstream stats;
@@ -505,19 +548,26 @@ word CodeCoverage::Query(string& expl) const
 
 //------------------------------------------------------------------------------
 
+fn_name CodeCoverage_Report = "CodeCoverage.Report";
+
+word CodeCoverage::Report
+   (word rc, const std::ostringstream& stream, string& expl)
+{
+   Debug::ft(CodeCoverage_Report);
+
+   expl = stream.str();
+   return rc;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeCoverage_Retest = "CodeCoverage.Retest";
 
-word CodeCoverage::Retest(string& expl) const
+word CodeCoverage::Retest(std::ostringstream& expl) const
 {
    Debug::ft(CodeCoverage_Retest);
 
-   if(prevFuncs_.empty())
-   {
-      expl = "Database is empty.  Run >coverage load first.";
-      return -1;
-   }
-
-   std::vector< ConstFuncIter > modified;
+   std::vector< Functions::const_iterator > modified;
 
    for(auto c = currFuncs_.cbegin(); c != currFuncs_.cend(); ++c)
    {
@@ -548,7 +598,7 @@ word CodeCoverage::Retest(string& expl) const
 
    if(modified.empty())
    {
-      expl = "No functions require retesting";
+      expl << "No functions require retesting.";
       return 0;
    }
 
@@ -565,15 +615,17 @@ word CodeCoverage::Retest(string& expl) const
          for(auto t = ft.cbegin(); t != ft.cend(); ++t) tests.insert(*t);
    }
 
+   auto testdb = Singleton< TestDatabase >::Instance();
    std::ostringstream report;
 
    if(!tests.empty())
    {
-      report << "Testcases for modified functions:";
+      report << "Testcases to re-execute for modified functions:";
 
       for(auto t = tests.cbegin(); t != tests.cend(); ++t)
       {
          report << CRLF << spaces(2) << *t;
+         testdb->SetState(*t, TestDatabase::Reexecute);
       }
    }
 
@@ -588,7 +640,7 @@ word CodeCoverage::Retest(string& expl) const
       }
    }
 
-   expl = report.str();
+   expl << report.str();
    return 0;
 }
 
@@ -596,7 +648,7 @@ word CodeCoverage::Retest(string& expl) const
 
 fn_name CodeCoverage_Under = "CodeCoverage.Under";
 
-word CodeCoverage::Under(size_t min, string& expl) const
+word CodeCoverage::Under(size_t min, string& expl)
 {
    Debug::ft(CodeCoverage_Under);
 
@@ -604,8 +656,8 @@ word CodeCoverage::Under(size_t min, string& expl) const
 
    if(prevFuncs_.empty())
    {
-      expl = "Database is empty.  Run >coverage load first.";
-      return -1;
+      auto rc = Load(expl);
+      if(rc != 0) return rc;
    }
 
    for(auto f = prevFuncs_.cbegin(); f != prevFuncs_.cend(); ++f)
@@ -622,5 +674,40 @@ word CodeCoverage::Under(size_t min, string& expl) const
       expl.pop_back();
 
    return 0;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeCoverage_Update = "CodeCoverage.Update";
+
+word CodeCoverage::Update(string& expl)
+{
+   Debug::ft(CodeCoverage_Update);
+
+   std::ostringstream stream;
+
+   stream << "Importing previous database..." << CRLF;
+   auto rc = Load(expl);
+   stream << spaces(2) << expl;
+   expl.clear();
+   if(rc != 0) return Report(rc, stream, expl);
+   stream << CRLF;
+
+   stream << "Including OutputPath/*.funcs.txt files..." << CRLF << spaces(2);
+   rc = Build(stream);
+   if(rc != 0) return Report(rc, stream, expl);
+   stream << CRLF;
+
+   rc = Diff(stream);
+   if(rc != 0) return Report(rc, stream, expl);
+   stream << CRLF;
+
+   rc = Retest(stream);
+   if(rc != 0) return Report(rc, stream, expl);
+   stream << CRLF;
+
+   stream << "Exporting updated database..." << CRLF << spaces(2);
+   rc = Merge(stream);
+   return Report(rc, stream, expl);
 }
 }

@@ -284,7 +284,7 @@ word InjectCommand::ProcessCommand(CliThread& cli) const
 
    id_t fid, sid;
    word tid = 0;
-   bool failed = false;
+   auto failed = false;
 
    //  Find the factory associated with the message to be injected.
    //
@@ -439,7 +439,7 @@ word StSaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
    TraceRc rc;
    string title;
-   bool debug = false;
+   auto debug = false;
 
    if(!GetFileName(title, cli)) return -1;
    if(GetBoolParmRc(debug, cli) == Error) return -1;
@@ -529,7 +529,7 @@ word StSizesCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(StSizesCommand_ProcessCommand);
 
-   bool all = false;
+   auto all = false;
 
    if(GetBoolParmRc(all, cli) == Error) return -1;
    cli.EndOfInput(false);
@@ -598,7 +598,7 @@ word StTestcaseCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    }
 
    auto test = StTestData::Access(cli);
-   if(test == nullptr) return cli.Report(-7, CreateStreamFailure);
+   if(test == nullptr) return cli.Report(-7, AllocationError);
 
    if(index == TestBeginIndex)
    {
@@ -609,7 +609,7 @@ word StTestcaseCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    if(index == TestVerifyIndex)
    {
       id_t setHowIndex;
-      bool flag = false;
+      auto flag = false;
 
       if(!GetTextIndex(setHowIndex, cli)) return -1;
       cli.EndOfInput(false);
@@ -723,14 +723,14 @@ word VerifyCommand::ProcessCommand(CliThread& cli) const
    Debug::ft(VerifyCommand_ProcessCommand);
 
    auto ntest = NtTestData::Access(cli);
-   if(ntest == nullptr) return cli.Report(-7, CreateStreamFailure);
+   if(ntest == nullptr) return cli.Report(-7, AllocationError);
 
    auto stest = StTestData::Access(cli);
-   if(stest == nullptr) return cli.Report(-7, CreateStreamFailure);
+   if(stest == nullptr) return cli.Report(-7, AllocationError);
 
    id_t fid, sid;
    word tid = 0;
-   bool failed = false;
+   auto failed = false;
 
    //  Return if the command is currently disabled.
    //
@@ -783,7 +783,7 @@ word VerifyCommand::ProcessCommand(CliThread& cli) const
    if(tid != 0)
    {
       auto sess = stest->AccessSession(tid);
-      if(sess == nullptr) return ntest->SetFailed(-4, AllocationError);
+      if(sess == nullptr) return ntest->SetFailed(-7, AllocationError);
       msg = sess->NextIcMsg(fid, sid, skip);
    }
    else

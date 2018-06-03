@@ -522,7 +522,7 @@ private:
 
 fixed_string DelayTimeExpl = "time (secs)";
 
-DelayTimeParm::DelayTimeParm() : CliIntParm(DelayTimeExpl, 0, 90) { }
+DelayTimeParm::DelayTimeParm() : CliIntParm(DelayTimeExpl, 0, 120) { }
 
 fixed_string DelayStr = "delay";
 fixed_string DelayExpl = "Pauses before executing the next command.";

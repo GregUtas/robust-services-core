@@ -1,7 +1,8 @@
 traffic rate 0
-delay 90
+delay 120
 contexts c
 if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+testcase end
 stop
 save funcs &script.name
 stats show &script.name

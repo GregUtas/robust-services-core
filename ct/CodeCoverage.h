@@ -44,79 +44,90 @@ class CodeCoverage : public NodeBase::Temporary
 {
    friend class NodeBase::Singleton< CodeCoverage >;
 public:
-   //  Adds FN, in namespace NS, to the functions that invoke Debug::ft.
-   //  HASH is the hash value for its source code.  Returns FALSE if FN
-   //  is already in use within a different namespace.
+   //  Adds FUNC, located in FILE, to the functions that invoke Debug::ft.
+   //  HASH is the hash value for its source code.  Returns FALSE if FUNC
+   //  is already in use within a different file.
    //
-   bool AddFunc(const std::string& fn, uint32_t hash, const std::string& ns);
+   bool Insert(const std::string& func, uint32_t hash, const std::string& file);
 
-   //  Adds testcase output (*.funcs.txt files) in the output directory to
-   //  the database.  Returns a non-zero value on failure and updates EXPL
-   //  with an explanation.
+   //  Loads the code coverage database.  Returns a non-zero value on failure
+   //  and updates EXPL with an explanation.
    //
-   NodeBase::word Build(std::string& expl);
-
-   //  Reads a code coverage database from STREAM.  Returns a non-zero value
-   //  on failure and updates EXPL with an explanation.
-   //
-   NodeBase::word Load(std::istream& stream, std::string& expl);
+   NodeBase::word Load(std::string& expl);
 
    //  Displays database information in EXPL.
    //
-   NodeBase::word Query(std::string& expl) const;
+   NodeBase::word Query(std::string& expl);
 
    //  Lists functions that are invoked by fewer than MIN testcases in EXPL.
    //
-   NodeBase::word Under(size_t min, std::string& expl) const;
+   NodeBase::word Under(size_t min, std::string& expl);
 
-   //  Updates EXPL with a list of functions that have been added, changed,
-   //  or deleted.
+   //  Erases FUNC from the database.
    //
-   NodeBase::word Diff(std::string& expl) const;
+   NodeBase::word Erase(std::string& func, std::string& expl);
 
-   //  Updates EXPL with a list of testcases for functions that have been
-   //  added, changed, or deleted.
+   //  Updates the code coverage database by invoking Load (if necessary),
+   //  followed by Build, Diff, Retest, Merge, and Commit (see below).
+   //  Returns a non-zero value on failure and updates EXPL with details
+   //  about what changed.
    //
-   NodeBase::word Retest(std::string& expl) const;
-
-   //  Erases FUNC from a database (the previous database if PREV is set,
-   //  else the current database).
-   //
-   NodeBase::word Erase(std::string& func, bool prev, std::string& expl);
-
-   //  Writes the current database to STREAM after including items that appear
-   //  only in the previous database.  Returns a non-zero value on failure and
-   //  updates EXPL with an explanation.
-   //
-   NodeBase::word Dump(std::ostream& stream, std::string& expl);
+   NodeBase::word Update(std::string& expl);
 private:
    //  Private because this singleton is not subclassed.
    //
    CodeCoverage();
 
+   //  Adds testcase output (*.funcs.txt files) in the output directory to
+   //  the database.  Returns a non-zero value on failure and updates EXPL
+   //  with an explanation.
+   //
+   NodeBase::word Build(std::ostringstream& expl);
+
+   //  Updates EXPL with a list of functions that have been added, changed,
+   //  or deleted.
+   //
+   NodeBase::word Diff(std::ostringstream& expl) const;
+
+   //  Updates EXPL with a list of testcases for functions that have been
+   //  added, changed, or deleted.  Marks those testcases for re-execution
+   //  in the testcase database.
+   //
+   NodeBase::word Retest(std::ostringstream& expl) const;
+
+   //  Merges the databases and commits the result.
+   //
+   NodeBase::word Merge(std::ostringstream& expl);
+
+   //  Assigns STREAM.str() to EXPL and returns RC.
+   //
+   static NodeBase::word Report
+      (NodeBase::word rc, const std::ostringstream& stream, std::string& expl);
+
+   //  The code coverage database has the form
+   //    [<FuncName> <FuncHash> [<TestName>]* "$"]* "$"
+   //  The following enum is used when parsing the database:
+   //
    enum LoadState
    {
-      GetFunction,
-      GetTestcases,
-      LoadDone,
-      LoadError
+      GetFunction,   // look for a <FuncName> <FuncHash> pair
+      GetTestcases,  // look for a [<TestName>]* "$" sequence
+      LoadDone,      // final "$" encountered
+      LoadError      // error occurred
    };
 
-   //  The following functions parse the code coverage database, which
-   //  has the form
-   //    [<FuncName> <FuncHash> [<TestName>]* "$"]* "$"
-   //  Each function takes INPUT, which is what remains of the current
-   //  line in the database, and it returns the next type of item to look
-   //  for.  RC and EXPL are updated to report an error or success.
-   //
-   //  Looks for a <FuncName> <FuncHash> pair.
+   //  Looks for a <FuncName> <FuncHash> pair (or the final "$").  INPUT
+   //  is the current line in the database.  Returns the next item to
+   //  look for, and updates RC and EXPL to report an error or success.
    //
    LoadState GetFunc(std::string& input,
       NodeBase::word& rc, std::string& expl);
 
-   //  Looks for the <TestName>* sequence that follows a function.
+   //  Looks for a [<TestName>]* "$" sequence.  INPUT is what remains of
+   //  the current line in the database.  Returns the next item to look
+   //  for.
    //
-   LoadState GetTests(std::string& input) const;
+   LoadState GetTests(std::string& input);
 
    //  Invoked to report a parsing error.  Sets EXPL to REASON, RC to -1,
    //  and returns LoadError.
@@ -148,11 +159,12 @@ private:
    //
    struct FuncInfo
    {
-      const std::string ns;         // name of function's namespace
+      const std::string file;       // name of function's code file
       const uint32_t hash;          // hash value for function's code
       std::set<std::string> tests;  // tests that invoke the function
 
-      FuncInfo(const std::string& ns, uint32_t hash): ns(ns), hash(hash) { }
+      FuncInfo(const std::string& file, uint32_t hash):
+         file(file), hash(hash) { }
       explicit FuncInfo(uint32_t hash): hash(hash) { }
    };
 
@@ -164,10 +176,10 @@ private:
    //
    typedef std::map< std::string, FuncInfo > Functions;
 
-   //  Iterators for accessing functions.
+   //  Commits the database referenced by FUNCS.  Returns false if
+   //  the database could not be written.
    //
-   typedef Functions::iterator FuncIter;
-   typedef Functions::const_iterator ConstFuncIter;
+   static bool Commit(const Functions& funcs);
 
    //  Functions in the previous database.
    //
@@ -177,9 +189,17 @@ private:
    //
    Functions currFuncs_;
 
+   //  Testcases in the previous database.
+   //
+   std::set< std::string > prevTests_;
+
+   //  Testcases in the current database.
+   //
+   std::set< std::string > currTests_;
+
    //  The current function whose testcase set is being loaded.
    //
-   FuncIter currFunc_;
+   Functions::iterator currFunc_;
 };
 }
 #endif

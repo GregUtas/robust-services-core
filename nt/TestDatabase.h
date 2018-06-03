@@ -24,6 +24,7 @@
 
 #include "Temporary.h"
 #include <cstdint>
+#include <iosfwd>
 #include <map>
 #include <string>
 #include <utility>
@@ -43,35 +44,36 @@ class TestDatabase : public NodeBase::Temporary
 public:
    //  The state of a testcase.
    //
-   enum TestcaseState
+   enum State
    {
-      Invalid,     // not found in any "testcase begin" command
+      Invalid,     // not found in database
       Unreported,  // test outcome not yet reported
       Failed,      // test failed
       Reexecute,   // test passed but should be re-executed
-      Passed       // test passed
+      Passed,      // test passed
+      State_N      // number of states
    };
 
    //  Displays database statistics in EXPL.
    //
-   NodeBase::word Query(std::string& expl) const;
+   NodeBase::word Query(bool verbose, std::string& expl) const;
 
    //  Updates EXPL with a list of testcases that have not passed.
    //
    NodeBase::word Retest(std::string& expl) const;
 
-   //  Removes invalid testcases from the database.
+   //  Removes TEST from the database.
    //
-   NodeBase::word Erase(std::string& expl);
+   NodeBase::word Erase(const std::string& test, std::string& expl);
 
-   //  Updates the state of a testcase.
+   //  Sets the state of a testcase to NEXT.
    //
-   void SetState(const std::string& testcase, TestcaseState state);
+   void SetState(const std::string& testcase, State next);
 
    //  Returns the state of a testcase.  Returns Invalid if the testcase
    //  is not in the database.
    //
-   TestcaseState GetState(const std::string& testcase);
+   State GetState(const std::string& testcase);
 private:
    //  Private because this singleton is not subclassed.
    //
@@ -116,19 +118,19 @@ private:
    //
    static const uint32_t UNHASHED = UINT32_MAX;
 
-   //  Adds or updates a testcase when the command  "testcase begin TEST"
+   //  Adds or updates a testcase when the command "testcase begin TEST"
    //  is found in a script located in DIR.
    //
-   void AddTest(const std::string& test, const std::string& dir);
+   void Insert(const std::string& test, const std::string& dir);
 
    //  Information about a testcase.
    //
    struct TestInfo
    {
-      TestcaseState state;  // state of testcase
-      const uint32_t hash;  // hash value for testcase's script
+      State state;    // state of testcase
+      uint32_t hash;  // hash value for testcase's script
 
-      TestInfo(TestcaseState state, uint32_t hash): state(state), hash(hash) { }
+      TestInfo(State state, uint32_t hash): state(state), hash(hash) { }
    };
 
    //  A tuple for a testcase's name and its associated information.
@@ -139,9 +141,13 @@ private:
    //
    typedef std::map< std::string, TestInfo > Testcases;
 
-   //  Testcases in the previous database.
+   //  The testcases in the database.
    //
    Testcases tests_;
 };
+
+//  Inserts a string for STATE into STREAM.
+//
+std::ostream& operator<<(std::ostream& stream, TestDatabase::State state);
 }
 #endif

@@ -72,9 +72,9 @@ public:
    //
    word SetFailed(word rc, const std::string& expl);
 
-   //  Displays testcase statistics.
+   //  Displays testcase statistics in EXPL.
    //
-   void Query() const;
+   void Query(bool verbose, std::string& expl) const;
 
    //  Resets the test environment by deleting the test data, which is
    //  recreated by Access before running another series of testcases.

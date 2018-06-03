@@ -700,7 +700,7 @@ void CodeFile::CheckDebugFt() const
                if(ok)
                {
                   ok = (*f)->CheckDebugName(fname);
-                  if(!cover->AddFunc(fname, hash, *(*f)->GetSpace()->Name()))
+                  if(!cover->Insert(fname, hash, Name()))
                      LogLine(n, DebugFtNameDuplicated);
                }
 

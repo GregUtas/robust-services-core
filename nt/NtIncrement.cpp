@@ -63,6 +63,7 @@
 #include "Singleton.h"
 #include "SysThread.h"
 #include "SysTime.h"
+#include "TestDatabase.h"
 #include "ThisThread.h"
 #include "ToolTypes.h"
 
@@ -417,7 +418,7 @@ word SizesCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(SizesCommand_ProcessCommand);
 
-   bool all = false;
+   auto all = false;
 
    if(GetBoolParmRc(all, cli) == Error) return -1;
    cli.EndOfInput(false);
@@ -626,9 +627,24 @@ class TestFailedText : public CliText
 public: TestFailedText();
 };
 
+class TestRetestText : public CliText
+{
+public: TestRetestText();
+};
+
 class TestQueryText : public CliText
 {
 public: TestQueryText();
+};
+
+class TestEraseParm : public CliTextParm
+{
+public: TestEraseParm();
+};
+
+class TestEraseText : public CliText
+{
+public: TestEraseText();
 };
 
 class TestResetText : public CliText
@@ -712,14 +728,37 @@ TestFailedText::TestFailedText() :
    BindParm(*new TestFailExplParm);
 }
 
+fixed_string TestRetestTextStr = "retest";
+fixed_string TestRetestTextExpl =
+   "lists testcases that have not passed";
+
+TestRetestText::TestRetestText() :
+   CliText(TestRetestTextExpl, TestRetestTextStr) { }
+
 fixed_string TestQueryTextStr = "query";
-fixed_string TestQueryTextExpl = "shows the counts of passed/failed testcases";
+fixed_string TestQueryTextExpl =
+   "shows pass/fail counts and (if verbose) all testcases";
 
 TestQueryText::TestQueryText() :
-   CliText(TestQueryTextExpl, TestQueryTextStr) { }
+   CliText(TestQueryTextExpl, TestQueryTextStr)
+{
+   BindParm(*new DispBVParm);
+}
+
+fixed_string TestEraseExpl = "testcase name";
+
+TestEraseParm::TestEraseParm() : CliTextParm(TestEraseExpl) { }
+
+fixed_string TestEraseTextStr = "erase";
+fixed_string TestEraseTextExpl = "removes a testcase from the database";
+
+TestEraseText::TestEraseText() : CliText(TestEraseTextExpl, TestEraseTextStr)
+{
+   BindParm(*new TestEraseParm);
+}
 
 fixed_string TestResetTextStr = "reset";
-fixed_string TestResetTextExpl = "clears the counts of passed/failed testcases";
+fixed_string TestResetTextExpl = "resets the testing environment";
 
 TestResetText::TestResetText() :
    CliText(TestResetTextExpl, TestResetTextStr) { }
@@ -734,7 +773,9 @@ TestcaseAction::TestcaseAction() : CliTextParm(TestcaseActionExpl)
    BindText(*new TestBeginText, TestcaseCommand::TestBeginIndex);
    BindText(*new TestEndText, TestcaseCommand::TestEndIndex);
    BindText(*new TestFailedText, TestcaseCommand::TestFailedIndex);
+   BindText(*new TestRetestText, TestcaseCommand::TestRetestIndex);
    BindText(*new TestQueryText, TestcaseCommand::TestQueryIndex);
+   BindText(*new TestEraseText, TestcaseCommand::TestEraseIndex);
    BindText(*new TestResetText, TestcaseCommand::TestResetIndex);
 }
 
@@ -767,10 +808,12 @@ word TestcaseCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    Debug::ft(TestcaseCommand_ProcessSubcommand);
 
    auto test = NtTestData::Access(cli);
-   if(test == nullptr) return cli.Report(-7, CreateStreamFailure);
+   if(test == nullptr) return cli.Report(-7, AllocationError);
 
    word rc;
-   string text;
+   string text, expl;
+   auto v = false;
+   auto testdb = Singleton< TestDatabase >::Instance();
 
    switch(index)
    {
@@ -808,10 +851,22 @@ word TestcaseCommand::ProcessSubcommand(CliThread& cli, id_t index) const
       cli.EndOfInput(false);
       return test->SetFailed(rc, text);
 
-   case TestQueryIndex:
+   case TestRetestIndex:
       cli.EndOfInput(false);
-      test->Query();
-      break;
+      rc = testdb->Retest(expl);
+      return cli.Report(rc, expl);
+
+   case TestQueryIndex:
+      if(GetBV(*this, cli, v) == Error) return -1;
+      cli.EndOfInput(false);
+      test->Query(v, expl);
+      return cli.Report(0, expl);
+
+   case TestEraseIndex:
+      if(!GetString(text, cli)) return -1;
+      cli.EndOfInput(false);
+      rc = testdb->Erase(text, expl);
+      return cli.Report(rc, expl);
 
    case TestResetIndex:
       cli.EndOfInput(false);

@@ -1,71 +1,71 @@
-FUNCTION PROFILE: 14-May-2018 18:17:34.499 on Reigi
+FUNCTION PROFILE: 3-Jun-2018 12:17:18.999 on Reigi
 
     Calls       uSecs   Function
     -----       -----   --------
-     8833           0   CodeTools.SetDifference(-=)
-      744           0   Parser.Parse
-      122           0   Thread.RunningThread
+     8863           0   CodeTools.SetDifference(-=)
+      746           0   Parser.Parse
+      119           0   Thread.RunningThread
       116           0   CliBuffer.CalcType
        86           0   Base.ctor
        86           0   Object.ctor
        61           0   LibrarySet.Release
+       55           0   Memory.Alloc
+       55           0   Memory.Free
+       55           0   Object.operator delete
+       55           0   SysHeap.Alloc
+       55           0   SysHeap.Free
+       55           0   Temporary.ctor
+       55           0   Temporary.operator new
+       54           0   CodeFileSet.ctor
        54           0   CodeFileSet.dtor
+       54           0   CodeSet.ctor
        54           0   CodeSet.dtor
-       54           0   Memory.Alloc
-       54           0   Memory.Free
-       54           0   Object.operator delete
-       54           0   SysHeap.Alloc
-       54           0   SysHeap.Free
-       54           0   Temporary.ctor
-       54           0   Temporary.operator new
-       53           0   CodeFileSet.ctor
-       53           0   CodeSet.ctor
-       53           0   Library.AddVar
-       53           0   Library.EraseVar
-       53           0   LibraryItem.ctor
-       53           0   LibraryItem.dtor
-       53           0   LibrarySet.ctor
-       53           0   LibrarySet.dtor
-       53           0   Q2Way.Enq
-       53           0   Q2Way.Exq
-       52           0   LibrarySet.TemporaryName
+       54           0   Library.AddVar
+       54           0   Library.EraseVar
+       54           0   LibraryItem.ctor
+       54           0   LibraryItem.dtor
+       54           0   LibrarySet.ctor
+       54           0   LibrarySet.dtor
+       54           0   Q2Way.Enq
+       54           0   Q2Way.Exq
+       53           0   LibrarySet.TemporaryName
        40           0   Class.AddFiles
        38           0   CodeTools.SetUnion(|=)
        37           0   CodeFile.Implementers
-       31           0   FunctionGuard.ctor
-       31           0   MsgBuffer.ctor
-       31           0   MsgBuffer.operator new
-       31           0   ObjectPool.DeqBlock
-       31           0   Pooled.ctor
-       31           0   Q1Way.Deq
-       31           0   StreamRequest.ctor
-       31           0   Thread.MakeUnpreemptable
+       30           0   FunctionGuard.ctor
        30           0   FunctionGuard.dtor
+       30           0   MsgBuffer.ctor
+       30           0   MsgBuffer.operator new
+       30           0   ObjectPool.DeqBlock
+       30           0   Pooled.ctor
+       30           0   Q1Way.Deq
        30           0   Q1Way.Enq
        30           0   Q1Way.Size
+       30           0   StreamRequest.ctor
        30           0   SysThread.Interrupt
        30           0   Thread.EnqMsg
        30           0   Thread.Interrupt
        30           0   Thread.MakePreemptable
+       30           0   Thread.MakeUnpreemptable
        23           0   CliBuffer.FindNextNonBlank
        18           0   CliIncrement.FindCommand
-       18           0   FileRequest.ctor
-       18           0   FileThread.Spool(stream)
+       17           0   FileRequest.ctor
+       17           0   FileThread.Spool(stream)
        14           0   CliBuffer.GetStr
        14           0   CliStack.FindCommand
        14           0   SysMutex.Acquire
        14           0   SysMutex.Release
-       14           0   Thread.EnterBlockingOperation
        14           0   Thread.InitialMsecs
-       14           0   Thread.LogContextSwitch
        14           0   Thread.ResumeLocked
        14           0   ThreadAdmin.WarpFactor
-       13           0   CliThread.Flush
        13           0   CoutThread.Spool(stream)
        13           0   FileThread.Spool(string)
+       13           0   Thread.EnterBlockingOperation
+       13           0   Thread.LogContextSwitch
+       12           0   CliThread.Flush
+        8           0   CodeFileSet.UsedBy
         8           0   Registry.Size
         7           0   CliBuffer.Echo
-        7           0   CliBuffer.GetLine
         7           0   CliBuffer.ScanLine
         7           0   CliCookie.Advance
         7           0   CliCookie.Initialize
@@ -74,23 +74,21 @@ FUNCTION PROFILE: 14-May-2018 18:17:34.499 on Reigi
         7           0   CliThread.EndOfInput
         7           0   CliThread.InvokeCommand
         7           0   CliThread.ParseCommand
-        7           0   CodeFileSet.UsedBy
         7           0   CoutThread.Spool(string)
         7           0   SymbolRegistry.FindSymbol
-        6           0   CliThread.SetResult
+        6           0   CliBuffer.GetLine
         6           0   Symbol.SetValue
         6           0   SymbolRegistry.EnsureSymbol
-        5           0   Interpreter.SkipBlanks
+        5           0   CliThread.SetResult
         4           0   CliThread.Report
         4           0   CliThread.Report1
-        4           0   Interpreter.GetToken
         3           0   CliBuffer.GetInt
         3           0   CliCommand.GetIntParmRc
         3           0   CliIntParm.GetIntParmRc
         3           0   CliParm.GetIntParm
         3           0   CodeFileSet.Affecters
         3           0   CodeFileSet.Users
-        3           0   Interpreter.HandleToken
+        3           0   Interpreter.SkipBlanks
         2           0   CliBuffer.Read
         2           0   CliCommand.GetStringRc
         2           0   CliCommand.GetTextParmRc
@@ -102,17 +100,16 @@ FUNCTION PROFILE: 14-May-2018 18:17:34.499 on Reigi
         2           0   CliThread.OpenInputFile
         2           0   CliThread.ReadCommands
         2           0   CodeSet.Assign
+        2           0   Interpreter.GetToken
         2           0   LibraryOpcode.CheckArgType
         2           0   LibraryOpcode.Execute
         2           0   LibraryOpcode.ctor
         2           0   LibraryOpcode.dtor
-        2           0   NtTestData.Access
         2           0   ReadCommand.ProcessCommand
         2           0   Registry.Empty
         2           0   SysFile.CreateIstream
         1           0   CliBuffer.GetSymbol
         1           0   CliBuffer.PutLine
-        1           0   CliThread.Execute
         1           0   CodeFileSet.AffectedBy
         1           0   CodeFileSet.Implements
         1           0   CodeFileSet.Parse
@@ -130,24 +127,22 @@ FUNCTION PROFILE: 14-May-2018 18:17:34.499 on Reigi
         1           0   Interpreter.ctor
         1           0   Interpreter.dtor
         1           0   Lexer.ctor
-        1           0   Library.EnsureVar
         1           0   Library.Evaluate
-        1           0   Library.FindDir
         1           0   Library.FindFile
-        1           0   Library.FindVar
         1           0   LibraryCommand.Evaluate
         1           0   LibrarySet.Shown
+        1           0   NtTestData.Access
+        1           0   NtTestData.Conclude
         1           0   ParseFrame.Clear
         1           0   ParseFrame.ctor
         1           0   Parser.ctor(opts)
         1           0   Parser.dtor
         1           0   StopCommand.ProcessCommand
         1           0   SysTime.ctor(now)
-        1           0   TestcaseCommand.ConcludeTest
         1           0   TestcaseCommand.ProcessCommand
         1           0   TestcaseCommand.ProcessSubcommand
         1           0   TraceBuffer.SetTool
         1           0   TraceBuffer.StopTrace
         1           0   TypeCommand.ProcessCommand
 
-Total functions: 147
+Total functions: 142

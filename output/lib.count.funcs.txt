@@ -1,79 +1,82 @@
-FUNCTION PROFILE: 14-May-2018 18:17:23.064 on Reigi
+FUNCTION PROFILE: 3-Jun-2018 12:10:48.984 on Reigi
 
     Calls       uSecs   Function
     -----       -----   --------
-      113           0   Thread.RunningThread
-      112           0   CliBuffer.CalcType
-       29           0   Base.ctor
-       29           0   FunctionGuard.dtor
-       29           0   Object.ctor
-       29           0   SysThread.Interrupt
-       29           0   Thread.MakePreemptable
-       28           0   MsgBuffer.ctor
-       28           0   MsgBuffer.operator new
-       28           0   ObjectPool.DeqBlock
-       28           0   Pooled.ctor
-       28           0   Q1Way.Deq
-       28           0   Q1Way.Enq
-       28           0   Q1Way.Size
-       28           0   StreamRequest.ctor
-       28           0   Thread.EnqMsg
-       28           0   Thread.Interrupt
-       28           0   Thread.MakeUnpreemptable
-       27           0   FunctionGuard.ctor
-       22           0   CliBuffer.FindNextNonBlank
-       18           0   CliIncrement.FindCommand
-       15           0   FileRequest.ctor
-       15           0   FileThread.Spool(stream)
+      117           0   CliBuffer.CalcType
+      115           0   Thread.RunningThread
+       32           0   Base.ctor
+       32           0   Object.ctor
+       31           0   FunctionGuard.dtor
+       31           0   MsgBuffer.ctor
+       31           0   Pooled.ctor
+       31           0   Q1Way.Enq
+       31           0   Q1Way.Size
+       31           0   StreamRequest.ctor
+       31           0   SysThread.Interrupt
+       31           0   Thread.EnqMsg
+       31           0   Thread.Interrupt
+       31           0   Thread.MakePreemptable
+       30           0   FunctionGuard.ctor
+       30           0   MsgBuffer.operator new
+       30           0   ObjectPool.DeqBlock
+       30           0   Q1Way.Deq
+       30           0   Thread.MakeUnpreemptable
+       23           0   CliBuffer.FindNextNonBlank
+       18           0   FileThread.Spool(stream)
+       17           0   FileRequest.ctor
+       15           0   CliIncrement.FindCommand
        14           0   CliBuffer.GetStr
        14           0   CliStack.FindCommand
        13           0   CliThread.Flush
+       13           0   FileThread.Spool(string)
+       13           0   SysMutex.Acquire
        13           0   SysMutex.Release
        13           0   Thread.EnterBlockingOperation
-       13           0   Thread.LogContextSwitch
-       12           0   CoutThread.Spool(stream)
-       12           0   FileThread.Spool(string)
-       11           0   SysMutex.Acquire
-       11           0   Thread.InitialMsecs
-       11           0   Thread.ResumeLocked
-       11           0   ThreadAdmin.WarpFactor
+       13           0   Thread.InitialMsecs
+       13           0   Thread.ResumeLocked
+       13           0   ThreadAdmin.WarpFactor
+       12           0   Thread.LogContextSwitch
+       11           0   CoutThread.Spool(stream)
         8           0   LibrarySet.Release
+        7           0   CliBuffer.Echo
+        7           0   CliBuffer.GetLine
         7           0   CliBuffer.ScanLine
-        7           0   CliCookie.Initialize
+        7           0   CliCookie.Advance
         7           0   CliStack.Top
-        7           0   CliThread.InvokeCommand
+        7           0   CliText.AccessParm
+        7           0   CliThread.EndOfInput
         7           0   CliThread.ParseCommand
+        7           0   CoutThread.Spool(string)
+        7           0   Registry.Size
         7           0   SymbolRegistry.FindSymbol
-        6           0   CliBuffer.Echo
-        6           0   CliBuffer.GetLine
-        6           0   CliThread.EndOfInput
-        6           0   CliThread.SetResult
-        6           0   CoutThread.Spool(string)
         6           0   Symbol.SetValue
         6           0   SymbolRegistry.EnsureSymbol
-        5           0   CliCookie.Advance
-        5           0   CliText.AccessParm
-        5           0   Registry.Size
+        5           0   CliCookie.Initialize
+        5           0   CliThread.InvokeCommand
+        5           0   CliThread.SetResult
         4           0   CliThread.Report
         4           0   CliThread.Report1
         3           0   CliBuffer.GetInt
+        3           0   CliCommand.GetIntParmRc
+        3           0   CliIntParm.GetIntParmRc
+        3           0   CliParm.GetIntParm
         3           0   Interpreter.SkipBlanks
         2           0   CliBuffer.Read
-        2           0   CliCommand.GetIntParmRc
         2           0   CliCommand.GetStringRc
-        2           0   CliIntParm.GetIntParmRc
-        2           0   CliParm.GetIntParm
+        2           0   CliCommand.GetTextParmRc
         2           0   CliParm.GetString
+        2           0   CliParm.GetTextIndex
+        2           0   CliTextParm.Descend
         2           0   CliTextParm.GetStringRc
+        2           0   CliTextParm.GetTextParmRc
         2           0   CliThread.OpenInputFile
         2           0   CliThread.ReadCommands
         2           0   Interpreter.GetToken
         2           0   ReadCommand.ProcessCommand
+        2           0   Registry.Empty
         2           0   SysFile.CreateIstream
         1           0   CliBuffer.GetSymbol
-        1           0   CliCommand.GetTextParmRc
-        1           0   CliParm.GetTextIndex
-        1           0   CliTextParm.GetTextParmRc
+        1           0   CliBuffer.PutLine
         1           0   CliThread.Execute
         1           0   CodeSet.Count
         1           0   CountCommand.ProcessCommand[ct]
@@ -93,15 +96,16 @@ FUNCTION PROFILE: 14-May-2018 18:17:23.064 on Reigi
         1           0   Memory.Alloc
         1           0   Memory.Free
         1           0   NtTestData.Access
+        1           0   NtTestData.Conclude
         1           0   Object.operator delete
         1           0   StopCommand.ProcessCommand
         1           0   SysHeap.Alloc
         1           0   SysHeap.Free
         1           0   Temporary.ctor
         1           0   Temporary.operator new
-        1           0   TestcaseCommand.ConcludeTest
         1           0   TestcaseCommand.ProcessCommand
+        1           0   TestcaseCommand.ProcessSubcommand
         1           0   TraceBuffer.SetTool
         1           0   TraceBuffer.StopTrace
 
-Total functions: 101
+Total functions: 105

@@ -810,7 +810,7 @@ word Editor::Report(string& expl, fixed_string text, word rc)
 
 fn_name Editor_ResolveUsings = "Editor.ResolveUsings";
 
-word Editor::ResolveUsings(const WarningLog& log, std::string& expl)
+word Editor::ResolveUsings(const WarningLog& log, string& expl)
 {
    Debug::ft(Editor_ResolveUsings);
 

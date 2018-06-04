@@ -37,6 +37,7 @@
 
 using namespace NodeBase;
 using namespace NodeTools;
+using std::setw;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -532,14 +533,14 @@ word CodeCoverage::Query(string& expl)
 
    for(auto i = 0; i < MAX_TESTS; ++i)
    {
-      stats << std::setw(6) << i;
+      stats << setw(6) << i;
    }
 
-   stats << std::setw(5) << MAX_TESTS << '+' << CRLF;
+   stats << setw(5) << MAX_TESTS << '+' << CRLF;
 
    for(auto i = 0; i <= MAX_TESTS; ++i)
    {
-      stats << std::setw(6) << histogram[i];
+      stats << setw(6) << histogram[i];
    }
 
    expl = stats.str();

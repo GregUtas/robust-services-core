@@ -633,7 +633,7 @@ bool CxxScoped::IsSuperscopeOf(const string& fqSub, bool tmplt) const
 
 fn_name CxxScoped_NameRefersToItem = "CxxScoped.NameRefersToItem";
 
-bool CxxScoped::NameRefersToItem(const std::string& name,
+bool CxxScoped::NameRefersToItem(const string& name,
    const CxxScope* scope, const CodeFile* file, SymbolView* view) const
 {
    Debug::ft(CxxScoped_NameRefersToItem);
@@ -1063,7 +1063,7 @@ void Enumerator::Check() const
 //------------------------------------------------------------------------------
 
 void Enumerator::Display
-   (std::ostream& stream, const std::string& prefix, const Flags& options) const
+   (ostream& stream, const string& prefix, const Flags& options) const
 {
    stream << prefix << *Name();
 

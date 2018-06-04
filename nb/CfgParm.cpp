@@ -191,7 +191,7 @@ bool CfgParm::SetFromTuple()
 
 fn_name CfgParm_SetNext = "CfgParm.SetNext";
 
-bool CfgParm::SetNext(const std::string& input)
+bool CfgParm::SetNext(const string& input)
 {
    Debug::ft(CfgParm_SetNext);
 

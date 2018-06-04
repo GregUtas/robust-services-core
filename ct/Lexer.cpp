@@ -1309,7 +1309,7 @@ void Lexer::Initialize(const string* source)
 
 fn_name Lexer_IsValidIdentifier = "Lexer.IsValidIdentifier";
 
-bool Lexer::IsValidIdentifier(const std::string& id)
+bool Lexer::IsValidIdentifier(const string& id)
 {
    Debug::ft(Lexer_IsValidIdentifier);
 

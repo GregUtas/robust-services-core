@@ -53,7 +53,7 @@ void ReplaceScopeOperators(string& name)
 
 //------------------------------------------------------------------------------
 
-std::string spaces(int count)
+string spaces(int count)
 {
    if(count <= 0) count = 0;
    if(count > 511) count = 511;
@@ -154,7 +154,7 @@ string strClass(const Base* obj, bool ns)
    if(!ns)
    {
       auto pos = name.rfind(SCOPE_STR);
-      if(pos != std::string::npos) name.erase(0, pos + 2);
+      if(pos != string::npos) name.erase(0, pos + 2);
    }
 
    ReplaceScopeOperators(name);
@@ -281,7 +281,7 @@ string strName(const char* name, int value)
 
 //------------------------------------------------------------------------------
 
-std::string strObj(const Base* obj, bool ns)
+string strObj(const Base* obj, bool ns)
 {
    std::ostringstream stream;
 

@@ -58,7 +58,7 @@ bool FileList::AtEnd() const
 
 fn_name FileList_GetName = "FileList.GetName";
 
-void FileList::GetName(std::string& fileName) const
+void FileList::GetName(string& fileName) const
 {
    //  This is a pure virtual function.
    //

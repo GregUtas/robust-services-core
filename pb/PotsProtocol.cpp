@@ -206,7 +206,7 @@ class PotsFacilityParameter : public PotsParameter
 {
    friend class Singleton< PotsFacilityParameter >;
 private:
-   virtual void DisplayMsg(ostream& stream, const std::string& prefix,
+   virtual void DisplayMsg(ostream& stream, const string& prefix,
       const byte_t* bytes, size_t count) const override;
    virtual CliParm* CreateCliParm(Usage use) const override;
    virtual TestRc InjectMsg
@@ -240,7 +240,7 @@ class PotsHeaderParameter : public PotsParameter
 {
    friend class Singleton< PotsHeaderParameter >;
 private:
-   virtual void DisplayMsg(ostream& stream, const std::string& prefix,
+   virtual void DisplayMsg(ostream& stream, const string& prefix,
       const byte_t* bytes, size_t count) const override;
    virtual CliParm* CreateCliParm(Usage use) const override;
    virtual TestRc InjectMsg
@@ -273,7 +273,7 @@ class PotsRingParameter : public PotsParameter
 {
    friend class Singleton< PotsRingParameter >;
 private:
-   virtual void DisplayMsg(ostream& stream, const std::string& prefix,
+   virtual void DisplayMsg(ostream& stream, const string& prefix,
       const byte_t* bytes, size_t count) const override;
    virtual CliParm* CreateCliParm(Usage use) const override;
    virtual TestRc VerifyMsg
@@ -290,7 +290,7 @@ class PotsScanParameter : public PotsParameter
 {
    friend class Singleton< PotsScanParameter >;
 private:
-   virtual void DisplayMsg(ostream& stream, const std::string& prefix,
+   virtual void DisplayMsg(ostream& stream, const string& prefix,
       const byte_t* bytes, size_t count) const override;
    virtual CliParm* CreateCliParm(Usage use) const override;
    virtual TestRc VerifyMsg

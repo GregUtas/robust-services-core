@@ -1520,7 +1520,7 @@ void Class::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 fn_name Class_GetUsingFor = "Class.GetUsingFor";
 
-Using* Class::GetUsingFor(const std::string& fqName,
+Using* Class::GetUsingFor(const string& fqName,
    size_t prefix, const CxxNamed* item, const CxxScope* scope) const
 {
    Debug::ft(Class_GetUsingFor);

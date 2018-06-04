@@ -176,7 +176,7 @@ TestDatabase::LoadState TestDatabase::GetTest(string& input)
 
 fn_name TestDatabase_Insert = "TestDatabase.Insert";
 
-void TestDatabase::Insert(const std::string& test, const std::string& dir)
+void TestDatabase::Insert(const string& test, const string& dir)
 {
    Debug::ft(TestDatabase_Insert);
 

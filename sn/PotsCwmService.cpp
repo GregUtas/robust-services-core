@@ -176,8 +176,8 @@ class PotsCwmRemoteReleaseEvent : public PotsCwmEvent
 {
 public:
    Cause::Ind GetCause() const { return cause_; }
-   virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+   virtual void Display(ostream& stream,
+      const string& prefix, const Flags& options) const override;
 protected:
    PotsCwmRemoteReleaseEvent(Id eid, ServiceSM& owner, Cause::Ind cause);
    ~PotsCwmRemoteReleaseEvent();
@@ -441,8 +441,8 @@ public:
    EventHandler::Rc StopReringing();
    void ReleaseCwt(Facility::Ind ind);
    virtual void SetNextState(StateId stid) override;
-   virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+   virtual void Display(ostream& stream,
+      const string& prefix, const Flags& options) const override;
 private:
    PotsMuxSsm* Mux() const { return static_cast< PotsMuxSsm* >(Parent()); }
    PotsCallPsm* UPsm() const { return Mux()->UPsm(); }

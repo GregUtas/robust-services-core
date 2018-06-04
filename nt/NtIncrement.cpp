@@ -1014,8 +1014,8 @@ class Q1WayItem : public Temporary
 public:
    explicit Q1WayItem(word index);
    ~Q1WayItem();
-   virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+   virtual void Display(ostream& stream,
+      const string& prefix, const Flags& options) const override;
    static ptrdiff_t LinkDiff();
 
    const id_t index_;
@@ -1031,8 +1031,8 @@ class Q1WayPool : public Temporary
 public:
    static const size_t MaxItems = 8;
    void Reallocate();
-   virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+   virtual void Display(ostream& stream,
+      const string& prefix, const Flags& options) const override;
 
    std::unique_ptr< Q1WayItem > items_[MaxItems + 1];
    Q1Way< Q1WayItem > itemq_;
@@ -1526,8 +1526,8 @@ class Q2WayItem : public Temporary
 public:
    explicit Q2WayItem(word index);
    ~Q2WayItem();
-   virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+   virtual void Display(ostream& stream,
+      const string& prefix, const Flags& options) const override;
    static ptrdiff_t LinkDiff();
 
    const id_t index_;
@@ -1543,8 +1543,8 @@ class Q2WayPool : public Temporary
 public:
    static const size_t MaxItems = 8;
    void Reallocate();
-   virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+   virtual void Display(ostream& stream,
+      const string& prefix, const Flags& options) const override;
 
    std::unique_ptr< Q2WayItem > items_[MaxItems + 1];
    Q2Way< Q2WayItem > itemq_;
@@ -2092,8 +2092,8 @@ class RegistryItem : public Temporary
 public:
    explicit RegistryItem(word index);
    ~RegistryItem();
-   virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+   virtual void Display(ostream& stream,
+      const string& prefix, const Flags& options) const override;
    static ptrdiff_t CellDiff();
 
    RegCell rid_;
@@ -2108,8 +2108,8 @@ class RegistryPool : public Temporary
    friend class Singleton< RegistryPool >;
 public:
    static const size_t MaxItems = 8;
-   virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+   virtual void Display(ostream& stream,
+      const string& prefix, const Flags& options) const override;
 
    std::unique_ptr< RegistryItem > items_[MaxItems + 1];
    Registry< RegistryItem > registry_;
@@ -3274,8 +3274,8 @@ public:
 
    void SetTest(Test test) { test_ = test; }
    void SetTestSignal(signal_t signal) {signal_ = signal; }
-   virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+   virtual void Display(ostream& stream,
+      const string& prefix, const Flags& options) const override;
 private:
    RecoveryTestThread();
    ~RecoveryTestThread();

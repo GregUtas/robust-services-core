@@ -65,7 +65,7 @@ CliCommand::~CliCommand()
 
 fn_name CliCommand_Exhausted = "CliCommand.Exhausted";
 
-CliParm::Rc CliCommand::Exhausted(const CliThread& cli, const std::string& type)
+CliParm::Rc CliCommand::Exhausted(const CliThread& cli, const string& type)
 {
    Debug::ft(CliCommand_Exhausted);
 

@@ -115,7 +115,7 @@ class CipRouteParameter : public CipParameter
    friend class Singleton< CipRouteParameter >;
 private:
    CipRouteParameter();
-   virtual void DisplayMsg(ostream& stream, const std::string& prefix,
+   virtual void DisplayMsg(ostream& stream, const string& prefix,
       const byte_t* bytes, size_t count) const override;
    virtual CliParm* CreateCliParm(Usage use) const override;
    virtual TestRc InjectMsg

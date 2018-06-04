@@ -463,7 +463,7 @@ string SboTrace::OutputId(const string& label, id_t id)
 
    std::ostringstream stream;
    stream << label;
-   stream << std::left << std::setw(width) << std::setfill(SPACE) << id;
+   stream << std::left << setw(width) << std::setfill(SPACE) << id;
    return stream.str();
 }
 

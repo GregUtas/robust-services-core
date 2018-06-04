@@ -754,8 +754,8 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+   virtual void Display(ostream& stream,
+      const string& prefix, const Flags& options) const override;
 
    //  The thread's stack pointer after entering Thread::Start.
    //

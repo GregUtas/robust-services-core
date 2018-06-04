@@ -65,7 +65,7 @@ fixed_string StatusStrings[TraceStatus_N + 1] =
    ERROR_STR
 };
 
-ostream& operator<<(std::ostream& stream, TraceStatus status)
+ostream& operator<<(ostream& stream, TraceStatus status)
 {
    if((status >= 0) && (status < TraceStatus_N))
       stream << StatusStrings[status];

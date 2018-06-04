@@ -545,7 +545,7 @@ int CodeFile::CalcGroup(const CodeFile* file) const
 
 fn_name CodeFile_CalcGroup2 = "CodeFile.CalcGroup[fn]";
 
-int CodeFile::CalcGroup(const std::string& fn) const
+int CodeFile::CalcGroup(const string& fn) const
 {
    Debug::ft(CodeFile_CalcGroup2);
 

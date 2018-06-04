@@ -46,7 +46,7 @@ using std::string;
 namespace CodeTools
 {
 WarningLog::WarningLog(const CodeFile* file, size_t line,
-   Warning warning, size_t offset, const std::string& info) :
+   Warning warning, size_t offset, const string& info) :
    file(file),
    line(line),
    warning(warning),

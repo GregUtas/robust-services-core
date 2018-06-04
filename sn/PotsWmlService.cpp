@@ -150,8 +150,8 @@ public:
    PotsWmlSsm();
    ~PotsWmlSsm();
    PotsWmlFeatureProfile* Profile() const { return wmlp_; }
-   virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+   virtual void Display(ostream& stream,
+      const string& prefix, const Flags& options) const override;
 private:
    void Cancel();
    virtual ServicePortId CalcPort(const AnalyzeMsgEvent& ame) override;

@@ -123,7 +123,7 @@ cause a POSIX signal to be raised.  POSIX signals are handled by throwing a C++ 
 that is caught in `Thread.Start`, after which an appropriate recovery action is taken.
 Getting the safety net to work could be a challenge when porting RSC to another
 platform, which is why these tests are provided.  All of the safety net tests can be run
-with the command `>read test.trap.critical.`  During each test, the following are generated
+with the command `>read test.trap.all.`  During each test, the following are generated
 (see the `recover.*` files in the [`output`](/output) directory):
 
   * A function trace (`*.trace.txt`), as described above.

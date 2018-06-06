@@ -288,6 +288,7 @@ void FileThread::Spool
       guard(FunctionGuard::MakeUnpreemptable, faction <= PayloadFaction);
 
    auto request = new FileRequest(name, trunc);
+
    if(request != nullptr)
    {
       request->GiveStream(stream);

@@ -34,6 +34,8 @@ using std::string;
 
 namespace NodeBase
 {
+size_t Log::SeqNo_ = 0;
+
 fn_name Log_Create = "Log.Create";
 
 ostringstreamPtr Log::Create(fixed_string title)
@@ -48,7 +50,8 @@ ostringstreamPtr Log::Create(fixed_string title)
    if(stream != nullptr)
    {
       *stream << std::boolalpha << std::nouppercase << CRLF;
-      *stream << title << SPACE << Element::strTimePlace() << CRLF;
+      *stream << title << SPACE << Element::strTimePlace();
+      *stream << " {" << ++SeqNo_ << '}' << CRLF;
    }
 
    return stream;

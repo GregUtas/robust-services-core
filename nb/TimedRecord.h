@@ -77,7 +77,7 @@ protected:
 private:
    //  The thread that was running when the function was invoked.
    //
-   const SysThreadId nid_ : 16;
+   const SysThreadId nid_;
 
    //  The time when the record was created.
    //

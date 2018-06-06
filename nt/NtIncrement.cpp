@@ -26,13 +26,18 @@
 #include "CliText.h"
 #include "Temporary.h"
 #include "Thread.h"
+#include <cctype>
 #include <csignal>
 #include <cstddef>
+#include <cstdio>
 #include <cstdlib>
 #include <exception>
+#include <istream>
+#include <map>
 #include <memory>
 #include <sstream>
 #include <string>
+#include <utility>
 #include "Algorithms.h"
 #include "Class.h"
 #include "CliThread.h"
@@ -61,6 +66,7 @@
 #include "RegCell.h"
 #include "Registry.h"
 #include "Singleton.h"
+#include "SysFile.h"
 #include "SysThread.h"
 #include "SysTime.h"
 #include "TestDatabase.h"
@@ -151,6 +157,166 @@ word CorruptCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
 //------------------------------------------------------------------------------
 //
+//  The LOGS command.
+//
+class LogsSortText : public CliText
+{
+public: LogsSortText();
+};
+
+fixed_string LogsSortTextStr = "sort";
+fixed_string LogsSortTextExpl = "sorts the logs in a log file";
+
+LogsSortText::LogsSortText() : CliText(LogsSortTextExpl, LogsSortTextStr)
+{
+   BindParm(*new IstreamMandParm);
+   BindParm(*new OstreamMandParm);
+}
+
+class NtLogsAction : public LogsAction
+{
+public:
+   NtLogsAction();
+   virtual ~NtLogsAction() { }
+};
+
+class NtLogsCommand : public LogsCommand
+{
+public:
+   static const id_t SortIndex = LastNbIndex + 1;
+   static const id_t LastNtIndex = SortIndex;
+
+   //  Set BIND to false if binding a subclass of NtLogsAction.
+   //
+   explicit NtLogsCommand(bool bind = true);
+   virtual ~NtLogsCommand() { }
+protected:
+   virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
+private:
+   word Sort(const string& input, const string& output, string& expl) const;
+};
+
+NtLogsAction::NtLogsAction()
+{
+   BindText(*new LogsSortText, NtLogsCommand::SortIndex);
+}
+
+NtLogsCommand::NtLogsCommand(bool bind) : LogsCommand(false)
+{
+   if(bind) BindParm(*new NtLogsAction);
+}
+
+fn_name NtLogsCommand_ProcessSubcommand = "NtLogsCommand.ProcessSubcommand";
+
+word NtLogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
+{
+   Debug::ft(NtLogsCommand_ProcessSubcommand);
+
+   if(index != SortIndex) return LogsCommand::ProcessSubcommand(cli, index);
+
+   string input, output, expl;
+   word rc;
+
+   if(!GetFileName(input, cli)) return -1;
+   if(!GetFileName(output, cli)) return -1;
+   cli.EndOfInput(false);
+   rc = Sort(input, output, expl);
+   return cli.Report(rc, expl);
+}
+
+fn_name NtLogsCommand_Sort = "NtLogsCommand.Sort";
+
+word NtLogsCommand::Sort
+   (const string& input, const string& output, string& expl) const
+{
+   Debug::ft(NtLogsCommand_Sort);
+
+   FunctionGuard guard(FunctionGuard::MakePreemptable);
+
+   //  Each log is saved as a single string with embedded CRLFs.  The log's
+   //  sequence number, which appears at the end of the first line enclosed
+   //  in braces, serves to sort the logs as they are inserted into the map.
+   //  The first line of each log is found by looking for the string
+   //  "on <element-name>", which is immediately followed by the sequence
+   //  number.  A blank line follows each log (except for the last one) and
+   //  causes the accumulated log to be saved, as long as NUM (the sequence
+   //  number) is non-zero.  If NUM is zero, it means that a log has yet to
+   //  be found.
+   //
+   std::map< size_t, string > logs;
+   string line, log;
+   size_t num = 0;
+   string location = "on " + Element::Name();
+   auto dir = Element::OutputPath();
+   auto path = dir + PATH_SEPARATOR + input + ".txt";
+   auto infile = SysFile::CreateIstream(path.c_str());
+   if(infile == nullptr)
+   {
+      expl = "Could not open input file: " + path;
+      return -2;
+   }
+
+   while(infile->peek() != EOF)
+   {
+      std::getline(*infile, line);
+
+      if(line.empty())
+      {
+         if(!log.empty() & (num != 0))
+         {
+            logs.insert(std::pair< size_t, string >(num, log));
+         }
+
+         num = 0;
+         log.clear();
+      }
+      else
+      {
+         log += line + CRLF;
+         auto pos = line.find(location);
+
+         if(pos != string::npos)
+         {
+            pos = line.find_first_of('{', pos);
+
+            if(pos != string::npos)
+            {
+               num = 0;
+               for(auto c = line[++pos]; isdigit(c); c = line[++pos])
+               {
+                  num = (10 * num) + (c - '0');
+               }
+            }
+         }
+      }
+   }
+
+   if(!log.empty() & (num != 0))
+   {
+      logs.insert(std::pair< size_t, string >(num, log));
+   }
+
+   infile.reset();
+   path = dir + PATH_SEPARATOR + output + ".txt";
+   auto outfile = SysFile::CreateOstream(path.c_str(), true);
+   if(outfile == nullptr)
+   {
+      expl = "Could not open output file: " + path;
+      return -7;
+   }
+
+   for(auto i = logs.cbegin(); i != logs.cend(); ++i)
+   {
+      *outfile << i->second << CRLF;
+   }
+
+   outfile.reset();
+   expl = SuccessExpl;
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+//
 //  The SAVE command.
 //
 class FuncsSortByCalls : public CliText
@@ -214,7 +380,7 @@ fixed_string FuncsTextExpl = "function call statistics";
 
 FuncsText::FuncsText() : CliText(FuncsTextExpl, FuncsTextStr)
 {
-   BindParm(*new FileMandParm);
+   BindParm(*new OstreamMandParm);
    BindParm(*new FuncsSortHowParm);
 }
 
@@ -3784,6 +3950,7 @@ NtIncrement::NtIncrement() : CliIncrement(NtStr, NtExpl)
 {
    Debug::ft(NtIncrement_ctor);
 
+   BindCommand(*new NtLogsCommand);
    BindCommand(*new NtSetCommand);
    BindCommand(*new NtSaveCommand);
    BindCommand(*new TestcaseCommand);

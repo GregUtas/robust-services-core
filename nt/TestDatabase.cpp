@@ -33,6 +33,7 @@
 #include "Debug.h"
 #include "Element.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "NbCliParms.h"
 #include "SysFile.h"
 
@@ -83,6 +84,8 @@ fn_name TestDatabase_Commit = "TestDatabase.Commit";
 void TestDatabase::Commit() const
 {
    Debug::ft(TestDatabase_Commit);
+
+   FunctionGuard guard(FunctionGuard::MakePreemptable);
 
    auto path = Element::InputPath() + PATH_SEPARATOR + "testcase.db.txt";
    auto stream = SysFile::CreateOstream(path.c_str(), true);
@@ -232,6 +235,8 @@ void TestDatabase::Load()
 {
    Debug::ft(TestDatabase_Load);
 
+   FunctionGuard guard(FunctionGuard::MakePreemptable);
+
    auto path = Element::InputPath() + PATH_SEPARATOR + "testcase.db.txt";
    auto stream = SysFile::CreateIstream(path.c_str());
 
@@ -264,7 +269,6 @@ void TestDatabase::Load()
    }
 
    stream.reset();
-   Update();
 }
 
 //------------------------------------------------------------------------------
@@ -378,6 +382,8 @@ void TestDatabase::Update()
 {
    Debug::ft(TestDatabase_Update);
 
+   FunctionGuard guard(FunctionGuard::MakePreemptable);
+
    //  Find all *.txt files in the input directory.
    //
    auto errors = 0;
@@ -426,6 +432,7 @@ void TestDatabase::Update()
       Debug::SwErr(TestDatabase_Update, expl, 0);
    }
 
+   guard.~FunctionGuard();
    Commit();
 }
 }

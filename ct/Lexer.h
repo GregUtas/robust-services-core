@@ -203,10 +203,8 @@ public:
    //  Searches for the next occurrence of a character in TARGS.  Returns the
    //  position of the first character that was found, else string::npos.  The
    //  character must be at the same lexical level, meaning that when any of
-   //  { ( [ " ' are encountered, the parse "jumps" to the closing } ) ] " '.
-   //  To keep things simple, a < is not matched with a >.  A template could
-   //  therefore cause an error, in which case this function may need to be
-   //  enhanced.
+   //  { ( [ < " ' are encountered, the parse skips to the closing } ) ] > " '
+   //  (if, in the case of '<', a <...> pair enclose a template specification).
    //
    size_t FindFirstOf(const std::string& targs) const;
 
@@ -336,6 +334,12 @@ private:
    //  is of the form ("<string>"<whitespace>)*"<string>".
    //
    size_t SkipStrLiteral(size_t pos, bool& fragmented) const;
+
+   //  POS is the location of a '<'.  If a template specification follows,
+   //  returns the location of the '>' at the end of the specification, else
+   //  returns string::npos.
+   //
+   size_t SkipTemplateSpec(size_t pos) const;
 
    //  Parses an integer literal and returns it in NUM.  Returns the number
    //  of digits in NUM (zero if no literal was found).

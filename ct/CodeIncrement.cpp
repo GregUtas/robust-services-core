@@ -195,7 +195,7 @@ fixed_string CheckExpl = "Checks if code follows C++ guidelines.";
 
 CheckCommand::CheckCommand() : LibraryCommand(CheckStr, CheckExpl)
 {
-   BindParm(*new FileMandParm);
+   BindParm(*new OstreamMandParm);
    BindParm(*new FileSetExprParm);
 }
 
@@ -499,7 +499,7 @@ fixed_string ExportExpl = "Exports library information.";
 
 ExportCommand::ExportCommand() : CliCommand(ExportStr, ExportExpl)
 {
-   BindParm(*new FileMandParm);
+   BindParm(*new OstreamMandParm);
    BindParm(*new ViewsParm);
 }
 
@@ -1194,7 +1194,7 @@ fixed_string TrimExpl = "Analyzes #include and using statements.";
 
 TrimCommand::TrimCommand() : LibraryCommand(TrimStr, TrimExpl)
 {
-   BindParm(*new FileMandParm);
+   BindParm(*new OstreamMandParm);
    BindParm(*new FileSetExprParm);
 }
 

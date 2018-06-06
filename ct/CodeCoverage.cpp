@@ -30,6 +30,7 @@
 #include "Debug.h"
 #include "Element.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "NbCliParms.h"
 #include "Singleton.h"
 #include "SysFile.h"
@@ -65,6 +66,10 @@ word CodeCoverage::Build(std::ostringstream& expl)
       return -1;
    }
 
+   auto testdb = Singleton< TestDatabase >::Instance();
+
+   FunctionGuard guard(FunctionGuard::MakePreemptable);
+
    //  Find all *.funcs.txt files in the output directory.  If a testcase
    //  with the same file name exists, add it, along with the functions
    //  that it invoked, to the current database.
@@ -78,7 +83,6 @@ word CodeCoverage::Build(std::ostringstream& expl)
       return -1;
    }
 
-   auto testdb = Singleton< TestDatabase >::Instance();
    auto count = 0;
 
    for(auto trace = traces.cbegin(); trace != traces.cend(); ++trace)
@@ -154,6 +158,8 @@ fn_name CodeCoverage_Commit = "CodeCoverage.Commit";
 bool CodeCoverage::Commit(const Functions& funcs)
 {
    Debug::ft(CodeCoverage_Commit);
+
+   FunctionGuard guard(FunctionGuard::MakePreemptable);
 
    auto path = Element::InputPath() + PATH_SEPARATOR + "coverage.db.txt";
    auto stream = SysFile::CreateOstream(path.c_str(), true);
@@ -314,7 +320,7 @@ CodeCoverage::LoadState CodeCoverage::GetFunc
    auto result = prevFuncs_.insert(FuncData(func, info));
    if(!result.second)
       return GetError("Function name duplicated", rc, expl);
-   currFunc_ = result.first;
+   loadFunc_ = result.first;
    return GetTestcases;
 }
 
@@ -329,8 +335,8 @@ CodeCoverage::LoadState CodeCoverage::GetTests(string& input)
    auto test = strGet(input);
    if(test.empty()) return GetTestcases;
    if(test.front() == DELIMITER) return GetFunction;
-   currFunc_->second.tests.insert(test);
-   currTests_.insert(test);
+   loadFunc_->second.tests.insert(test);
+   prevTests_.insert(test);
    return GetTestcases;
 }
 
@@ -362,6 +368,8 @@ fn_name CodeCoverage_Load = "CodeCoverage.Load";
 word CodeCoverage::Load(string& expl)
 {
    Debug::ft(CodeCoverage_Load);
+
+   FunctionGuard guard(FunctionGuard::MakePreemptable);
 
    auto path = Element::InputPath() + PATH_SEPARATOR + "coverage.db.txt";
    auto stream = SysFile::CreateIstream(path.c_str());

@@ -199,7 +199,7 @@ private:
 
    //  The current function whose testcase set is being loaded.
    //
-   Functions::iterator currFunc_;
+   Functions::iterator loadFunc_;
 };
 }
 #endif

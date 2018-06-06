@@ -136,29 +136,20 @@ public: FactionMandParm();
 
 //------------------------------------------------------------------------------
 //
+//  Parameter for a mandatory filename for input.
+//
+class IstreamMandParm : public CliTextParm
+{
+public: IstreamMandParm();
+};
+
+//------------------------------------------------------------------------------
+//
 //  Parameter for an optional Faction.
 //
 class FactionOptParm : public CliIntParm
 {
 public: FactionOptParm();
-};
-
-//------------------------------------------------------------------------------
-//
-//  Parameter for a mandatory filename.
-//
-class FileMandParm : public CliTextParm
-{
-public: FileMandParm();
-};
-
-//------------------------------------------------------------------------------
-//
-//  Parameter for an optional filename.
-//
-class FileOptParm : public CliTextParm
-{
-public: FileOptParm();
 };
 
 //------------------------------------------------------------------------------
@@ -191,6 +182,24 @@ public: ObjPoolIdOptParm();
 class ObjPtrMandParm : public CliPtrParm
 {
 public: ObjPtrMandParm();
+};
+
+//------------------------------------------------------------------------------
+//
+//  Parameter for a mandatory filename for output.
+//
+class OstreamMandParm : public CliTextParm
+{
+public: OstreamMandParm();
+};
+
+//------------------------------------------------------------------------------
+//
+//  Parameter for an optional filename for output.
+//
+class OstreamOptParm : public CliTextParm
+{
+public: OstreamOptParm();
 };
 
 //------------------------------------------------------------------------------

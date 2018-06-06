@@ -1,7 +1,7 @@
 # CLI Documentation
 
 This directory contains supplementary help files for CLI increments.  Only the CLI
-itself, and the `>ct` increment and its `>export` and `>parse` commands, currently
+itself, as well as the `>ct` increment and a handful of commands, currently
 have such help files.  However, the CLI framework ensures that each command provides
 basic help information.
 

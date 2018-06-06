@@ -3,7 +3,9 @@ save trace init
 nt
 save funcs init
 clear buffer
-/ register as a passed testcase
+/ register as a testcase; the only log should be "NODE RUNNING"
 testcase begin init
+logs count
+if &cli.result > 1 testcase failure &cli.result "logs during system initialization"
 testcase end
 testcase reset

@@ -150,15 +150,9 @@ FactionsText::FactionsText() : CliText(FactionsTextExpl, FactionsTextStr) { }
 
 //------------------------------------------------------------------------------
 
-fixed_string FileMandExpl = "filename for output";
+fixed_string IstreamMandExpl = "filename for input (in OutputPath directory)";
 
-FileMandParm::FileMandParm() : CliTextParm(FileMandExpl) { }
-
-//------------------------------------------------------------------------------
-
-fixed_string FileOptExpl = "filename for output (default=console)";
-
-FileOptParm::FileOptParm() : CliTextParm(FileOptExpl, true) { }
+IstreamMandParm::IstreamMandParm() : CliTextParm(IstreamMandExpl) { }
 
 //------------------------------------------------------------------------------
 
@@ -222,6 +216,18 @@ ObjPoolIdOptParm::ObjPoolIdOptParm() :
 fixed_string ObjPtrMandText = "pointer to an Object";
 
 ObjPtrMandParm::ObjPtrMandParm() : CliPtrParm(ObjPtrMandText) { }
+
+//------------------------------------------------------------------------------
+
+fixed_string OstreamMandExpl = "filename for output";
+
+OstreamMandParm::OstreamMandParm() : CliTextParm(OstreamMandExpl) { }
+
+//------------------------------------------------------------------------------
+
+fixed_string OstreamOptExpl = "filename for output (default=console)";
+
+OstreamOptParm::OstreamOptParm() : CliTextParm(OstreamOptExpl, true) { }
 
 //------------------------------------------------------------------------------
 

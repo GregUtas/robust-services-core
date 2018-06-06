@@ -415,7 +415,7 @@ fixed_string MscTextExpl = "message sequence chart";
 
 MscText::MscText() : CliText(MscTextExpl, MscTextStr)
 {
-   BindParm(*new FileMandParm);
+   BindParm(*new OstreamMandParm);
    BindParm(*new DebugTraceParm);
 }
 

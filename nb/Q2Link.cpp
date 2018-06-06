@@ -25,6 +25,7 @@
 #include "SysTypes.h"
 
 using std::ostream;
+using std::string;
 
 //------------------------------------------------------------------------------
 
@@ -49,7 +50,7 @@ Q2Link::~Q2Link()
 
 //------------------------------------------------------------------------------
 
-void Q2Link::Display(ostream& stream, const std::string& prefix) const
+void Q2Link::Display(ostream& stream, const string& prefix) const
 {
    stream << prefix << "next : " << next << CRLF;
    stream << prefix << "prev : " << prev << CRLF;

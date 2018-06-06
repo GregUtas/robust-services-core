@@ -251,6 +251,7 @@ size_t Lexer::FindFirstOf(const string& targs) const
    //  comment.  Jump over any literals or nested expressions.
    //
    auto pos = NextPos(curr_);
+   size_t end;
 
    while(pos < size_)
    {
@@ -285,6 +286,10 @@ size_t Lexer::FindFirstOf(const string& targs) const
          break;
       case '[':
          pos = FindClosing('[', ']', pos);
+         break;
+      case '<':
+         end = SkipTemplateSpec(pos);
+         if(end != string::npos) pos = end;
          break;
       }
 
@@ -1043,34 +1048,10 @@ bool Lexer::GetTemplateSpec(string& spec)
 {
    Debug::ft(Lexer_GetTemplateSpec);
 
-   //  Extract the template specification, which must begin with a '<', end
-   //  with a balanced '>', and contain identifiers or template punctuation.
-   //
    spec.clear();
-
-   auto pos = curr_;
-   if(pos >= size_) return false;
-
-   auto c = source_->at(pos);
-   if(c != '<') return false;
-   spec += c;
-   ++pos;
-
-   size_t depth;
-
-   for(depth = 1; ((pos < size_) && (depth > 0)); ++pos)
-   {
-      c = source_->at(pos);
-      if(ValidTemplateSpecChars.find(c) == string::npos) return false;
-      spec += c;
-
-      if(c == '>')
-         --depth;
-      else if(c == '<')
-         ++depth;
-   }
-
-   if(depth != 0) return false;
+   auto end = SkipTemplateSpec(curr_);
+   if(end == string::npos) return false;
+   spec = source_->substr(curr_, end - curr_ + 1);
    return Advance(spec.size());
 }
 
@@ -1309,7 +1290,7 @@ void Lexer::Initialize(const string* source)
 
 fn_name Lexer_IsValidIdentifier = "Lexer.IsValidIdentifier";
 
-bool Lexer::IsValidIdentifier(const std::string& id)
+bool Lexer::IsValidIdentifier(const string& id)
 {
    Debug::ft(Lexer_IsValidIdentifier);
 
@@ -1714,6 +1695,40 @@ size_t Lexer::SkipStrLiteral(size_t pos, bool& fragmented) const
    }
 
    return string::npos;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Lexer_SkipTemplateSpec = "Lexer.SkipTemplateSpec";
+
+size_t Lexer::SkipTemplateSpec(size_t pos) const
+{
+   Debug::ft(Lexer_SkipTemplateSpec);
+
+   if(pos >= size_) return false;
+
+   //  Extract the template specification, which must begin with a '<', end
+   //  with a balanced '>', and contain identifiers or template punctuation.
+   //
+   auto c = source_->at(pos);
+   if(c != '<') return string::npos;
+   ++pos;
+
+   size_t depth;
+
+   for(depth = 1; ((pos < size_) && (depth > 0)); ++pos)
+   {
+      c = source_->at(pos);
+      if(ValidTemplateSpecChars.find(c) == string::npos) return string::npos;
+
+      if(c == '>')
+         --depth;
+      else if(c == '<')
+         ++depth;
+   }
+
+   if(depth != 0) return string::npos;
+   return --pos;
 }
 
 //------------------------------------------------------------------------------

@@ -49,7 +49,7 @@ char BlockingReasonChar(BlockingReason reason)
    return stream.str().front();
 }
 
-ostream& operator<<(std::ostream& stream, BlockingReason reason)
+ostream& operator<<(ostream& stream, BlockingReason reason)
 {
    if((reason >= 0) && (reason < BlockingReason_N))
       stream << BlockingReasonStrings[reason];
@@ -80,7 +80,7 @@ char FactionChar(Faction faction)
    return stream.str().front();
 }
 
-ostream& operator<<(std::ostream& stream, Faction faction)
+ostream& operator<<(ostream& stream, Faction faction)
 {
    if((faction >= 0) && (faction < Faction_N))
       stream << FactionStrings[faction];

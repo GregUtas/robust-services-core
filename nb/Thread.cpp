@@ -754,8 +754,8 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+   virtual void Display(ostream& stream,
+      const string& prefix, const Flags& options) const override;
 
    //  The thread's stack pointer after entering Thread::Start.
    //
@@ -1335,11 +1335,11 @@ const size_t SchedHeaderSize = 3;
 
 fixed_string SchedHeader[SchedHeaderSize] =
 {
-// 0         1         2         3         4         5         6         7
-// 0123456789012345678901234567890123456789012345678901234567890123456789012
-   "      THREADS       |    SINCE START OF CURRENT 15-MIN INTERVAL    | LAST",
-   "                    |            rtc  max   max     max  total     |5 SEC",
-   "id    name  host f b| ex yields  t/o msgs stack   usecs  msecs %cpu| %cpu"
+// 0      1         2         3         4         5         6         7
+// 34567890123456789012345678901234567890123456789012345678901234567890123456
+"      THREADS          |    SINCE START OF CURRENT 15-MIN INTERVAL    | LAST",
+"                       |            rtc  max   max     max  total     |5 SEC",
+"id    name     host f b| ex yields  t/o msgs stack   usecs  msecs %cpu| %cpu"
 };
 
 void Thread::DisplaySummaries(ostream& stream)
@@ -1373,7 +1373,7 @@ void Thread::DisplaySummaries(ostream& stream)
    stream << line << CRLF;
 
    stream << setw(10) << "idle";
-   stream << setw(52) << (idle0 + 500) / 1000;
+   stream << setw(55) << (idle0 + 500) / 1000;
    stream << setw(5) << 100 * (double(idle0) / time0);
 
    //  Set TIME1 to the length of the previous short interval.
@@ -1409,7 +1409,7 @@ void Thread::DisplaySummary
 
    stream << setw(2) << Tid();
    stream << setw(8) << AbbrName() << SPACE;
-   stream << setw(5) << strHex(NativeThreadId(), 5, false);
+   stream << setw(8) << std::hex << NativeThreadId() << std::dec;
 
    auto f = FactionChar(faction_);
    if(priv_->unpreempts_ == 0) f = tolower(f);

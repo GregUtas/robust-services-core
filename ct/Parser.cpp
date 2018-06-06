@@ -3756,7 +3756,7 @@ bool Parser::HandleUndef(DirectivePtr& dir)
 
 //------------------------------------------------------------------------------
 
-std::string Parser::Indent()
+string Parser::Indent()
 {
    return spaces(2 * (Context::ParseDepth() - 1));
 }

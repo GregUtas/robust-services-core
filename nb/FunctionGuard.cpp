@@ -59,7 +59,10 @@ FunctionGuard::~FunctionGuard()
 {
    Debug::ft(FunctionGuard_dtor);
 
-   switch(first_)
+   auto first = first_;
+   first_ = NilFunction;
+
+   switch(first)
    {
    case NilFunction:
       return;

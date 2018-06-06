@@ -170,7 +170,7 @@ fixed_string LineTypeStrings[LineType_N + 1] =
    ERROR_STR
 };
 
-ostream& operator<<(std::ostream& stream, LineType type)
+ostream& operator<<(ostream& stream, LineType type)
 {
    if((type >= 0) && (type < LineType_N))
       stream << LineTypeStrings[type];
@@ -324,7 +324,7 @@ bool IsUnusedItemWarning(Warning warning)
 
 //------------------------------------------------------------------------------
 
-ostream& operator<<(std::ostream& stream, Warning warning)
+ostream& operator<<(ostream& stream, Warning warning)
 {
    if((warning >= 0) && (warning < Warning_N))
       stream << WarningStrings[warning];

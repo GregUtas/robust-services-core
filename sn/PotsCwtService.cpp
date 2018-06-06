@@ -141,8 +141,8 @@ public:
    PotsCwtReleaseEvent(ServiceSM& owner, Facility::Ind ind);
    ~PotsCwtReleaseEvent();
    Facility::Ind Ind() const { return ind_; }
-   virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+   virtual void Display(ostream& stream,
+      const string& prefix, const Flags& options) const override;
 private:
    Facility::Ind ind_;
 };
@@ -255,8 +255,8 @@ public:
    void FreeContext();
    EventHandler::Rc RestoreContext(Event*& nextEvent);
    virtual void Cancel() override;
-   virtual void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+   virtual void Display(ostream& stream,
+      const string& prefix, const Flags& options) const override;
 private:
    virtual EventHandler::Rc ProcessInitAck
       (Event& currEvent, Event*& nextEvent) override;

@@ -22,6 +22,7 @@
 #ifndef LOG_H_INCLUDED
 #define LOG_H_INCLUDED
 
+#include <cstddef>
 #include <string>
 #include "SysTypes.h"
 
@@ -47,10 +48,18 @@ public:
    //  Returns the name of the log file.
    //
    static std::string FileName();
+
+   //  Returns the number of logs generated so far.
+   //
+   static size_t Count() { return SeqNo_; }
 private:
    //  Deleted because this class only has static members.
    //
    Log() = delete;
+
+   //  Incremented when a log is created; assigned to it as a sequence number.
+   //
+   static size_t SeqNo_;
 };
 }
 #endif

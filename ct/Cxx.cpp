@@ -78,7 +78,7 @@ fixed_string ClassTagStrings[Cxx::ClassTag_N + 1] =
    ERROR_STR
 };
 
-ostream& Cxx::operator<<(std::ostream& stream, ClassTag tag)
+ostream& Cxx::operator<<(ostream& stream, ClassTag tag)
 {
    if((tag >= 0) && (tag < Cxx::ClassTag_N))
       stream << ClassTagStrings[tag];

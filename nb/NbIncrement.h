@@ -46,6 +46,34 @@ protected:
 
 //------------------------------------------------------------------------------
 //
+//  Interfaces to the log subsystem.  Defined here so that other increments
+//  can subclass it.
+//
+class LogsAction : public CliTextParm
+{
+public:
+   LogsAction();
+   virtual ~LogsAction() { }
+};
+
+class LogsCommand : public CliCommand
+{
+public:
+   static const id_t CountIndex = 1;
+   static const id_t LastNbIndex = 1;
+
+   //  Set BIND to false if binding a subclass of LogsAction.
+   //
+   explicit LogsCommand(bool bind = true);
+   virtual ~LogsCommand() { }
+protected:
+   virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
+private:
+   virtual word ProcessCommand(CliThread& cli) const override;
+};
+
+//------------------------------------------------------------------------------
+//
 //  Configures trace tools.  Defined here so that other increments can
 //  subclass it.
 //

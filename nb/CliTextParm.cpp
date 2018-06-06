@@ -144,15 +144,16 @@ void CliTextParm::Explain(ostream& stream, col_t indent) const
 {
    Debug::ft(CliTextParm_Explain);
 
-   //  If any string is acceptable (size = 0), or only one string without
-   //  parameters is acceptable, our ShowValues function handles everything
-   //  when CliParm::Explain invokes it.
+   //  We allow CliParm::Explain to invoke our ShowValues function if
+   //  o any string is acceptable (size = 0), or
+   //  o only one string is acceptable, and it binds the *same* help
+   //    explanation as this parameter.
    //
    auto size = strings_.Size();
 
    if(size == 0) return CliParm::Explain(stream, indent);
 
-   if((size == 1) && strings_.First()->Parms().Empty())
+   if((size == 1) && (Help() == strings_.First()->Help()))
    {
       return CliParm::Explain(stream, indent);
    }

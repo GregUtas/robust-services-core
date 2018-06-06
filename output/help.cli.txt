@@ -72,6 +72,11 @@ cfgparms          : Supports configuration parameters.
     <str>         : value of configuration parameter
 )
 
+logs              : Interface to the log subsystem.
+(                 : subcommand...
+  count           : displays the number of logs reported so far
+)
+
 symbols           : Supports symbols.
 (                 : subcommand...
   list            : lists symbols
@@ -239,6 +244,14 @@ restart           : Shuts down the system.
   OK.
 nb>nt
 nt>help full
+logs              : Interface to the log subsystem.
+(                 : subcommand...
+  count           : displays the number of logs reported so far
+  sort            : sorts the logs in a log file
+    <str>         : filename for input (in OutputPath directory)
+    <str>         : filename for output
+)
+
 set               : Controls trace tool settings.
 (                 : what to set...
   tools           : trace tools: see >tools command for abbrevations

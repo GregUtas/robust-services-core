@@ -47,6 +47,7 @@
 #include "FileThread.h"
 #include "Formatters.h"
 #include "FunctionGuard.h"
+#include "Log.h"
 #include "Memory.h"
 #include "Module.h"
 #include "ModuleRegistry.h"
@@ -1130,6 +1131,62 @@ word IncrsCommand::ProcessCommand(CliThread& cli) const
 
 //------------------------------------------------------------------------------
 //
+//  The LOGS command.
+//
+class LogsCountText : public CliText
+{
+public: LogsCountText();
+};
+
+fixed_string LogsCountTextStr = "count";
+fixed_string LogsCountTextExpl = "displays the number of logs reported so far";
+
+LogsCountText::LogsCountText() :
+   CliText(LogsCountTextExpl, LogsCountTextStr) { }
+
+fixed_string LogsActionExpl = "subcommand...";
+
+LogsAction::LogsAction() : CliTextParm(LogsActionExpl)
+{
+   BindText(*new LogsCountText, LogsCommand::CountIndex);
+}
+
+fixed_string LogsStr = "logs";
+fixed_string LogsExpl = "Interface to the log subsystem.";
+
+LogsCommand::LogsCommand(bool bind) : CliCommand(LogsStr, LogsExpl)
+{
+   if(bind) BindParm(*new LogsAction);
+}
+
+fn_name LogsCommand_ProcessCommand = "LogsCommand.ProcessCommand";
+
+word LogsCommand::ProcessCommand(CliThread& cli) const
+{
+   Debug::ft(LogsCommand_ProcessCommand);
+
+   id_t index;
+
+   if(!GetTextIndex(index, cli)) return -1;
+
+   return ProcessSubcommand(cli, index);
+}
+
+fn_name LogsCommand_ProcessSubcommand = "LogsCommand.ProcessSubcommand";
+
+word LogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
+{
+   Debug::ft(LogsCommand_ProcessSubcommand);
+
+   if(index != CountIndex) return CliCommand::ProcessSubcommand(cli, index);
+
+   auto count = Log::Count();
+   *cli.obuf << count << CRLF;
+   return count;
+}
+
+//------------------------------------------------------------------------------
+//
 //  The MODULES command.
 //
 class ModulesCommand : public CliCommand
@@ -1653,7 +1710,7 @@ fixed_string TraceTextExpl = "events captured by tools that are currently ON";
 
 TraceText::TraceText() : CliText(TraceTextExpl, TraceTextStr)
 {
-   BindParm(*new FileMandParm);
+   BindParm(*new OstreamMandParm);
    BindParm(*new DiffParm);
 }
 
@@ -1760,7 +1817,7 @@ fixed_string SchedShowTextExpl = "displays thread statistics";
 
 SchedShowText::SchedShowText() : CliText(SchedShowTextExpl, SchedShowTextStr)
 {
-   BindParm(*new FileOptParm);
+   BindParm(*new OstreamOptParm);
 }
 
 fixed_string SchedStartTextStr = "start";
@@ -2300,7 +2357,7 @@ StatsShowText::StatsShowText() : CliText(StatsShowTextExpl, StatsShowTextStr)
 {
    BindParm(*new StatisticsGroupOptParm);
    BindParm(*new MemberIdOptParm);
-   BindParm(*new FileOptParm);
+   BindParm(*new OstreamOptParm);
 }
 
 fixed_string RolloverExpl = "end of first interval? (default=f)";
@@ -2674,7 +2731,7 @@ word SymbolsCommand::ProcessCommand(CliThread& cli) const
          if(++count >= 10)
          {
             ThisThread::PauseOver(90);
-            count = 0;
+            count = 1;
          }
       }
 
@@ -2864,6 +2921,7 @@ NbIncrement::NbIncrement() : CliIncrement(RootStr, RootExpl, 48)
    BindCommand(*new ReadCommand);
    BindCommand(*new PrintCommand);
    BindCommand(*new CfgParmsCommand);
+   BindCommand(*new LogsCommand);
    BindCommand(*new SymbolsCommand);
    BindCommand(*new StatisticsCommand);
    BindCommand(*new ModulesCommand);

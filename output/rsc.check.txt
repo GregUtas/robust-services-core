@@ -1,22 +1,22 @@
 LINE COUNTS
- source code   62502
-       blank   35555
-          //   14997
+ source code   62640
+       blank   35620
+          //   15011
   license //    8593
-separator //    6905
+separator //    6911
    tagged //     204
-     text //   16488
+     text //   16508
           /*       0
-           {   12252
-           }   10646
-          };    1609
-   Debug::ft    3946
-     fn_name    3928
+           {   12280
+           }   10667
+          };    1616
+   Debug::ft    3951
+     fn_name    3933
     ...split      94
-    #include    5235
+    #include    5245
     #<other>    1004
-       using     698
-       TOTAL  184656
+       using     701
+       TOTAL  184978
 
 WARNING COUNTS
   W004    76  C-style cast
@@ -33,18 +33,17 @@ WARNING COUNTS
   W022   381  Add using statement
   W026    29  Unused argument
   W027    10  Unused class
-  W028    19  Unused data
+  W028    20  Unused data
   W029     1  Unused enum
   W030    20  Unused enumerator
   W033   130  Unused function
   W034     3  Unused typedef
   W037     5  No referent for friend declaration
   W039     9  Member hides inherited name
-  W040     1  Class could be namespace
   W044   141  Member could be private
-  W045    59  Member could be protected
+  W045    58  Member could be protected
   W046    11  Typedef of pointer type
-  W049    29  Data is init-only
+  W049    35  Data is init-only
   W050     1  Data is write-only
   W052    24  Data is not private
   W055    77  Data could be const
@@ -53,13 +52,13 @@ WARNING COUNTS
   W059     1  Default constructor invoked
   W060    19  Default copy constructor invoked
   W061    15  Default assignment operator invoked
-  W062    65  Base class constructor is public
+  W062    67  Base class constructor is public
   W063     1  Single-argument constructor is not explicit
   W064     1  Member not included in member initialization list
   W067    27  Base class virtual destructor is not public
   W077   368  Virtual function is public
   W079    99  Virtual function has no overrides
-  W084    83  Adjacent arguments have the same type
+  W084    84  Adjacent arguments have the same type
   W090    32  Argument could be const
   W092    72  Function could be const
   W094   143  Function could be free
@@ -69,7 +68,7 @@ WARNING COUNTS
   W108   468  Function does not invoke Debug::ft
   W109    17  Function does not invoke Debug::ft as first statement
   W112    31  Override of Base.Display not found
-  W113    26  Override of Object.Patch not found
+  W113    27  Override of Object.Patch not found
 ========================================================================================================================
 WARNINGS SORTED BY TYPE/FILE/LINE
 W004 C-style cast
@@ -168,21 +167,21 @@ W005 Functional cast
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(1392):    if(arrays_ != nullptr) count += TagCount(arrays_->size());
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(823):          stream << uint64_t(num_);
   C:/Users/gregu/Documents/rsc/rsc/ct/Interpreter.cpp(148):          type = LibTokenType(i);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(923):          oper = Cxx::Operator(match->second);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(928):          oper = Cxx::Operator(match->second);
   C:/Users/gregu/Documents/rsc/rsc/mb/Tones.h(63):    Id Tid() const { return Id(tid_.GetId()); }
   C:/Users/gregu/Documents/rsc/rsc/nb/ModuleRegistry.cpp(106):          return RestartLevel(errval_);
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(484):       rc = nbt->SelectFaction(Faction(id), TraceDefault);
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(692):       rc = nbt->SelectFaction(Faction(id), TraceExcluded);
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(1089):       rc = nbt->SelectFaction(Faction(id), TraceIncluded);
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(2452):       auto heap = Memory::Heap(MemoryType(m));
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(485):       rc = nbt->SelectFaction(Faction(id), TraceDefault);
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(693):       rc = nbt->SelectFaction(Faction(id), TraceExcluded);
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(1090):       rc = nbt->SelectFaction(Faction(id), TraceIncluded);
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(2509):       auto heap = Memory::Heap(MemoryType(m));
   C:/Users/gregu/Documents/rsc/rsc/nb/NbTracer.cpp(207):             stream << Faction(f) << CRLF;
   C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.h(97):    ObjectPoolId Pid() const { return ObjectPoolId(pid_.GetId()); }
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTime.cpp(362):          Truncate(TimeField(int(field) + 1));
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTime.cpp(545):          return OutOfRange(TimeField(f));
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.h(158):    Id Tid() const { return Id(tid_.GetId()); }
   C:/Users/gregu/Documents/rsc/rsc/nb/TraceRecord.cpp(38):    size_(int16_t(size)),
-  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(3015):    pool->time_[id1].Truncate(TimeField(field - 1));
-  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(3046):    pool->time_[id1].Round(TimeField(field - 1), interval);
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(3181):    pool->time_[id1].Truncate(TimeField(field - 1));
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(3212):    pool->time_[id1].Round(TimeField(field - 1), interval);
   C:/Users/gregu/Documents/rsc/rsc/pb/PotsFeature.h(63):    Id Fid() const { return Id(fid_.GetId()); }
   C:/Users/gregu/Documents/rsc/rsc/sb/Factory.h(87):    Id Fid() const { return Id(fid_.GetId()); }
   C:/Users/gregu/Documents/rsc/rsc/sb/InvokerPool.h(70):    Faction GetFaction() const { return Faction(faction_.GetId()); }
@@ -234,10 +233,10 @@ W006 reinterpret_cast
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(1170):    auto fake = reinterpret_cast< const Thread* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/nb/Tool.cpp(67):    auto fake = reinterpret_cast< const Tool* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/nt/FunctionStats.cpp(80):    auto fake = reinterpret_cast< const FunctionStats* >(&local);
-  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(1161):    auto fake = reinterpret_cast< const Q1WayItem* >(&local);
-  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(1681):    auto fake = reinterpret_cast< const Q2WayItem* >(&local);
-  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(2242):    auto fake = reinterpret_cast< const RegistryItem* >(&local);
-  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(3476):    auto p = reinterpret_cast< char* >(BAD_POINTER);
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(1327):    auto fake = reinterpret_cast< const Q1WayItem* >(&local);
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(1847):    auto fake = reinterpret_cast< const Q2WayItem* >(&local);
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(2408):    auto fake = reinterpret_cast< const RegistryItem* >(&local);
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(3642):    auto p = reinterpret_cast< char* >(BAD_POINTER);
   C:/Users/gregu/Documents/rsc/rsc/nw/IpPort.cpp(276):    auto fake = reinterpret_cast< const IpPort* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/nw/IpService.cpp(69):    auto fake = reinterpret_cast< const IpService* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(206):    auto rcvd = recv(Socket(), reinterpret_cast< char* >(buff), max, 0);
@@ -354,11 +353,11 @@ W007 Cast down the inheritance hierarchy
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.h(841):       const { return static_cast< Namespace* >(GetScope()); }
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxDirective.cpp(872):       auto macro = static_cast< Macro* >(ref_);
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxDirective.cpp(885):       auto macro = static_cast< Macro* >(ref_);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(1294):       auto thisClass = static_cast< Class* >(thisRoot);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(1302):             auto thatClass = static_cast< Class* >(thatRoot);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(1437):    if(AutoType_.SetAutoTypeOn(*static_cast< FuncData* >(item)))
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(1481):    auto ref = static_cast< CxxNamed* >(item);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(1623):          static_cast< Class* >(root)->BlockCopied(this);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(1295):       auto thisClass = static_cast< Class* >(thisRoot);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(1303):             auto thatClass = static_cast< Class* >(thatRoot);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(1438):    if(AutoType_.SetAutoTypeOn(*static_cast< FuncData* >(item)))
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(1482):    auto ref = static_cast< CxxNamed* >(item);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(1624):          static_cast< Class* >(root)->BlockCopied(this);
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(371):          space = static_cast< Namespace* >(item);
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(395):          cls = static_cast< Class* >(item);
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(449):          item = static_cast< Enum* >(item)->FindEnumerator(name);
@@ -415,8 +414,8 @@ W007 Cast down the inheritance hierarchy
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(2309):       static_cast< QualName* >(arg2.item)->MemberAccessed(cls, mem);
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(2332):          mem = static_cast< Function* >(mem)->InstantiateFunction(tmplt);
   C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(646):          (const_cast< CxxNamed* >(ref))->OuterSpace();
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1595):          auto def = static_cast< Define* >(item);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1599):             auto code = const_cast< string* >(source_);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1576):          auto def = static_cast< Define* >(item);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1580):             auto code = const_cast< string* >(source_);
   C:/Users/gregu/Documents/rsc/rsc/ct/Library.cpp(95):       (static_cast< CfgStrParm* >(reg->FindParm("SourcePath")));
   C:/Users/gregu/Documents/rsc/rsc/ct/Parser.cpp(366):    auto op = static_cast< Operation* >(call.get());
   C:/Users/gregu/Documents/rsc/rsc/ct/Parser.cpp(618):    auto brace = static_cast< BraceInit* >(token.get());
@@ -833,7 +832,7 @@ W008 Cast removes const qualification
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(298):    CxxToken* prev = const_cast< CxxToken* >(this);
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(286):    virtual CxxToken* RootType() const { return const_cast< CxxToken* >(this); }
   C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(646):          (const_cast< CxxNamed* >(ref))->OuterSpace();
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1599):             auto code = const_cast< string* >(source_);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1580):             auto code = const_cast< string* >(source_);
   C:/Users/gregu/Documents/rsc/rsc/nb/Algorithms.cpp(33):    return (void*) ((const_ptr_t) ptr2 - diff);
   C:/Users/gregu/Documents/rsc/rsc/nb/Algorithms.cpp(40):    return (void*) ((const_ptr_t) ptr1 + diff);
   C:/Users/gregu/Documents/rsc/rsc/nb/Base.cpp(98):       objects[count++] = const_cast< Base* >(this);
@@ -1508,9 +1507,10 @@ W028 Unused data
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeTypes.h(536): extern const Flags Last_Mask;
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeTypes.h(540): extern const Flags Stats_Mask;
   C:/Users/gregu/Documents/rsc/rsc/nb/NbCliParms.h(68): extern fixed_string NotImplementedExpl;
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(153):    static const id_t LastNbIndex     = 3;
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(181):    static const id_t LastNbIndex     = 3;
   C:/Users/gregu/Documents/rsc/rsc/nb/ObjectPool.h(82):    static const Bid MaxBid = MaxSegments << ObjectsPerSegmentLog2;
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTypes.h(50): constexpr uword UWORD_MAX = (sizeof(word) == 8 ? UINT64_MAX : UINT32_MAX);
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(187):    static const id_t LastNtIndex = SortIndex;
   C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.h(80):    static const id_t LastNtIndex    = FuncTraceScope;
   C:/Users/gregu/Documents/rsc/rsc/pb/PotsProtocol.h(103):    static const Id LastId    = NextId + 9;  // range constant
   C:/Users/gregu/Documents/rsc/rsc/pb/PotsProtocol.h(131):    static const Id LastId   = NextId + 7;  // range constant
@@ -1693,8 +1693,6 @@ W039 Member hides inherited name
   C:/Users/gregu/Documents/rsc/rsc/mb/Tones.h(67):    static ptrdiff_t CellDiff();
   C:/Users/gregu/Documents/rsc/rsc/sb/Context.h(167):    static ptrdiff_t LinkDiff();
   C:/Users/gregu/Documents/rsc/rsc/sb/Timer.h(54):    static ptrdiff_t LinkDiff();
-W040 Class could be namespace
-  C:/Users/gregu/Documents/rsc/rsc/nb/Log.h(34): class Log
 W044 Member could be private
   C:/Users/gregu/Documents/rsc/rsc/cb/BcAddress.h(145):    typedef uint8_t DigitCount;
   C:/Users/gregu/Documents/rsc/rsc/cb/BcAddress.h(175):    static bool IsValidDigit(Digit d)
@@ -1752,7 +1750,7 @@ W044 Member could be private
   C:/Users/gregu/Documents/rsc/rsc/nb/Class.h(66):    virtual Object* GetQuasiSingleton();
   C:/Users/gregu/Documents/rsc/rsc/nb/Class.h(113):    virtual Object* New(size_t size);
   C:/Users/gregu/Documents/rsc/rsc/nb/CliText.h(61):    const char* HelpText() const;
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(1904):    static void SendAckToOutputFile(const CliThread& cli);
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(1961):    static void SendAckToOutputFile(const CliThread& cli);
   C:/Users/gregu/Documents/rsc/rsc/nb/NbTracer.h(77):    static bool ThreadsEmpty();
   C:/Users/gregu/Documents/rsc/rsc/nb/Object.h(70):    typedef uint32_t InstanceId;  // identifies an object within a Class
   C:/Users/gregu/Documents/rsc/rsc/nb/Object.h(71):    typedef uint32_t ObjectId;    // ClassId (12 bits) + InstanceId (20 bits)
@@ -1774,7 +1772,7 @@ W044 Member could be private
   C:/Users/gregu/Documents/rsc/rsc/nb/TraceBuffer.h(177):    typedef std::map< fn_name_arg, size_t > InvocationsTable;
   C:/Users/gregu/Documents/rsc/rsc/nb/TraceRecord.h(88):    static void operator delete(void* addr) { }
   C:/Users/gregu/Documents/rsc/rsc/nb/TraceRecord.h(92):    static void* operator new(size_t size, void* where);
-  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(3260):    typedef id_t Test;
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(3426):    typedef id_t Test;
   C:/Users/gregu/Documents/rsc/rsc/nw/IoThread.h(97):    virtual bool ExitOnRestart(RestartLevel level) const override;
   C:/Users/gregu/Documents/rsc/rsc/nw/IpBuffer.h(117):    virtual MsgSize PayloadSize() const;
   C:/Users/gregu/Documents/rsc/rsc/nw/IpService.h(97):    IpPort* Provision(ipport_t pid);
@@ -1871,7 +1869,6 @@ W045 Member could be protected
   C:/Users/gregu/Documents/rsc/rsc/nb/CliParm.h(177):    bool GetPtrParm(void*& p, CliThread& cli) const;
   C:/Users/gregu/Documents/rsc/rsc/nb/CliParm.h(203):    bool GetTextParm(id_t& i, std::string& s, CliThread& cli) const;
   C:/Users/gregu/Documents/rsc/rsc/nb/CliParm.h(237):    bool GetIdentifier(std::string& s, CliThread& cli,
-  C:/Users/gregu/Documents/rsc/rsc/nb/CliParm.h(248):    const char* Help() const { return help_; }
   C:/Users/gregu/Documents/rsc/rsc/nb/CliParm.h(252):    bool IsOptional() const { return opt_; }
   C:/Users/gregu/Documents/rsc/rsc/nb/CliPtrParm.h(38):    explicit CliPtrParm(const char* help,
   C:/Users/gregu/Documents/rsc/rsc/nb/CliText.h(65):    const Registry< CliParm >& Parms() const { return parms_; }
@@ -1913,8 +1910,11 @@ W049 Data is init-only
   C:/Users/gregu/Documents/rsc/rsc/an/AnModule.h(62):    static bool Registered;
   C:/Users/gregu/Documents/rsc/rsc/cb/CbModule.h(62):    static bool Registered;
   C:/Users/gregu/Documents/rsc/rsc/cn/CnModule.h(62):    static bool Registered;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeCoverage.cpp(71):    FunctionGuard guard(FunctionGuard::MakePreemptable);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeCoverage.cpp(162):    FunctionGuard guard(FunctionGuard::MakePreemptable);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeCoverage.cpp(372):    FunctionGuard guard(FunctionGuard::MakePreemptable);
   C:/Users/gregu/Documents/rsc/rsc/ct/CtModule.h(60):    static bool Registered;
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.h(430):    static bool Initialized;
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.h(434):    static bool Initialized;
   C:/Users/gregu/Documents/rsc/rsc/mb/MbModule.h(62):    static bool Registered;
   C:/Users/gregu/Documents/rsc/rsc/nb/CinThread.cpp(149):    FunctionGuard guard(FunctionGuard::MakeUnpreemptable);
   C:/Users/gregu/Documents/rsc/rsc/nb/CoutThread.cpp(92):       FunctionGuard guard(FunctionGuard::MakePreemptable);
@@ -1923,14 +1923,17 @@ W049 Data is init-only
   C:/Users/gregu/Documents/rsc/rsc/nb/FileThread.cpp(287):    FunctionGuard
   C:/Users/gregu/Documents/rsc/rsc/nb/InitThread.cpp(307):    FunctionGuard guard(FunctionGuard::MakeUnpreemptable);
   C:/Users/gregu/Documents/rsc/rsc/nb/LogThread.cpp(156):    FunctionGuard
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(1708):    FunctionGuard guard(FunctionGuard::MakePreemptable, yield);
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(1765):    FunctionGuard guard(FunctionGuard::MakePreemptable, yield);
   C:/Users/gregu/Documents/rsc/rsc/nb/NbModule.h(64):    static bool Registered;
   C:/Users/gregu/Documents/rsc/rsc/nb/Singleton.h(130):    static T* Instance_;
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(482):    MutexGuard guard(&lock_);
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(676):    MutexGuard guard(&lock_);
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(711):    MutexGuard guard(&lock_);
-  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(260):    FunctionGuard guard(FunctionGuard::MakePreemptable, yield);
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(234):    FunctionGuard guard(FunctionGuard::MakePreemptable);
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(426):    FunctionGuard guard(FunctionGuard::MakePreemptable, yield);
   C:/Users/gregu/Documents/rsc/rsc/nt/NtModule.h(62):    static bool Registered;
+  C:/Users/gregu/Documents/rsc/rsc/nt/TestDatabase.cpp(88):    FunctionGuard guard(FunctionGuard::MakePreemptable);
+  C:/Users/gregu/Documents/rsc/rsc/nt/TestDatabase.cpp(238):    FunctionGuard guard(FunctionGuard::MakePreemptable);
   C:/Users/gregu/Documents/rsc/rsc/nw/NwModule.h(66):    static bool Registered;
   C:/Users/gregu/Documents/rsc/rsc/on/OnModule.h(62):    static bool Registered;
   C:/Users/gregu/Documents/rsc/rsc/pb/PbModule.h(62):    static bool Registered;
@@ -2010,8 +2013,8 @@ W055 Data could be const
   C:/Users/gregu/Documents/rsc/rsc/nb/Tool.h(109):    bool safe_;
   C:/Users/gregu/Documents/rsc/rsc/nt/FunctionProfiler.h(105):    size_t size_;
   C:/Users/gregu/Documents/rsc/rsc/nt/FunctionStats.h(84):    Q2Link link_;
-  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(1025):    Q1Link link_;
-  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(1537):    Q2Link link_;
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(1191):    Q1Link link_;
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(1703):    Q2Link link_;
   C:/Users/gregu/Documents/rsc/rsc/nw/IpPort.h(181):    Q1Link link_;
   C:/Users/gregu/Documents/rsc/rsc/nw/IpPort.h(185):    ipport_t port_;
   C:/Users/gregu/Documents/rsc/rsc/nw/IpService.h(149):    RegCell sid_;
@@ -2088,7 +2091,7 @@ W058 Default constructor invoked: POD members not initialized
 W059 Default constructor invoked
   C:/Users/gregu/Documents/rsc/rsc/nw/SysTcpSocket.win.cpp(147):    auto list = std::unique_ptr< pollfd[] >(new pollfd[count]);
 W060 Default copy constructor invoked
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(155):    arg_(arg)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(156):    arg_(arg)
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScoped.cpp(1975):    attrs_(Numeric::Nil)
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(370):       : num_(num), tags_(tags) { CxxStats::Incr(CxxStats::INT_LITERAL); }
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(409):       : num_(num), tags_(tags) { CxxStats::Incr(CxxStats::FLOAT_LITERAL); }
@@ -2137,17 +2140,19 @@ W062 Base class constructor is public
   C:/Users/gregu/Documents/rsc/rsc/nb/MsgBuffer.h(41):    MsgBuffer();
   C:/Users/gregu/Documents/rsc/rsc/nb/MsgBuffer.h(45):    MsgBuffer(const MsgBuffer& that);
   C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(41):    StatusCommand();
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(55):    SetWhatParm();
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(68):    explicit SetCommand(bool bind = true);
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(84):    IncludeWhatParm();
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(98):    explicit IncludeCommand(bool bind = true);
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(114):    ExcludeWhatParm();
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(127):    explicit ExcludeCommand(bool bind = true);
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(157):    explicit QueryCommand(bool bind = true);
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(173):    SaveWhatParm();
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(185):    explicit SaveCommand(bool bind = true);
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(201):    ClearWhatParm();
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(219):    explicit ClearCommand(bool bind = true);
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(55):    LogsAction();
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(67):    explicit LogsCommand(bool bind = true);
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(83):    SetWhatParm();
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(96):    explicit SetCommand(bool bind = true);
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(112):    IncludeWhatParm();
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(126):    explicit IncludeCommand(bool bind = true);
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(142):    ExcludeWhatParm();
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(155):    explicit ExcludeCommand(bool bind = true);
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(185):    explicit QueryCommand(bool bind = true);
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(201):    SaveWhatParm();
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(213):    explicit SaveCommand(bool bind = true);
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(229):    ClearWhatParm();
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(247):    explicit ClearCommand(bool bind = true);
   C:/Users/gregu/Documents/rsc/rsc/nb/SoftwareException.h(41):    SoftwareException
   C:/Users/gregu/Documents/rsc/rsc/nb/SoftwareException.h(43):    SoftwareException
   C:/Users/gregu/Documents/rsc/rsc/nb/Statistics.h(134):    explicit Counter(const std::string& expl, uint32_t divisor = 1);
@@ -2289,11 +2294,11 @@ W077 Virtual function is public
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxDirective.h(419):    virtual bool AddElse(const Else* e) { return false; }
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxDirective.h(428):    virtual bool HasCompiledCode() const { return compile_; }
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxDirective.h(469):    virtual void AddCondition(ExprPtr& c) override { condition_ = std::move(c); }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(64):    virtual bool Display(std::ostream& stream, bool diff) override;
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(76):    virtual bool Display(std::ostream& stream, bool diff) override;
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(92):    virtual bool Display(std::ostream& stream, bool diff) override;
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(108):    virtual bool Display(std::ostream& stream, bool diff) override;
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(128):    virtual bool Display(std::ostream& stream, bool diff) override;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(65):    virtual bool Display(ostream& stream, bool diff) override;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(77):    virtual bool Display(ostream& stream, bool diff) override;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(93):    virtual bool Display(ostream& stream, bool diff) override;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(109):    virtual bool Display(ostream& stream, bool diff) override;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(129):    virtual bool Display(ostream& stream, bool diff) override;
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.h(114):    virtual void SetLoc(CodeFile* file, size_t pos);
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.h(127):    virtual void CopyContext(const CxxNamed* that);
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.h(141):    virtual size_t GetRange(size_t& begin, size_t& end) const;
@@ -2750,6 +2755,7 @@ W084 Adjacent arguments have the same type
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTime.h(71):    SysTime(int16_t year, int16_t month, int16_t day,
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.h(561):    void DisplaySummary
   C:/Users/gregu/Documents/rsc/rsc/nt/FunctionProfiler.h(83):    static void CheckHigh(FunctionStats*& high, FunctionStats* curr,
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(196):    word Sort(const string& input, const string& output, string& expl) const;
   C:/Users/gregu/Documents/rsc/rsc/nw/IoThread.h(77):    IoThread(Faction faction, ipport_t port, size_t rxSize, size_t txSize);
   C:/Users/gregu/Documents/rsc/rsc/nw/IpBuffer.h(51):    IpBuffer(MsgDirection dir, MsgSize header, MsgSize payload);
   C:/Users/gregu/Documents/rsc/rsc/nw/IpPortCfgParm.h(48):    IpPortCfgParm(const char* key, const char* def,
@@ -2938,9 +2944,8 @@ W094 Function could be free
   C:/Users/gregu/Documents/rsc/rsc/nb/FileThread.h(44):    static ostringstreamPtr CreateStream();
   C:/Users/gregu/Documents/rsc/rsc/nb/FileThread.h(57):    static void Spool(const std::string& name,
   C:/Users/gregu/Documents/rsc/rsc/nb/FileThread.h(62):    static void Truncate(const std::string& name);
-  C:/Users/gregu/Documents/rsc/rsc/nb/Log.h(40):    static ostringstreamPtr Create(fixed_string title);
-  C:/Users/gregu/Documents/rsc/rsc/nb/Log.h(45):    static void Spool(ostringstreamPtr& log);
-  C:/Users/gregu/Documents/rsc/rsc/nb/Log.h(49):    static std::string FileName();
+  C:/Users/gregu/Documents/rsc/rsc/nb/Log.h(46):    static void Spool(ostringstreamPtr& log);
+  C:/Users/gregu/Documents/rsc/rsc/nb/Log.h(50):    static std::string FileName();
   C:/Users/gregu/Documents/rsc/rsc/nb/Memory.cpp(151):    static size_t Size();
   C:/Users/gregu/Documents/rsc/rsc/nb/Memory.h(44):    static size_t Align(size_t size, size_t log2align = BYTES_PER_WORD_LOG2);
   C:/Users/gregu/Documents/rsc/rsc/nb/Memory.h(48):    static size_t Words(size_t nBytes);
@@ -2953,8 +2958,8 @@ W094 Function could be free
   C:/Users/gregu/Documents/rsc/rsc/nb/Memory.h(103):    static SysHeap* AccessHeap(MemoryType type);
   C:/Users/gregu/Documents/rsc/rsc/nb/MemoryTrace.h(57):    static const char* TypeString(MemoryType type);
   C:/Users/gregu/Documents/rsc/rsc/nb/ModuleRegistry.h(87):    static RestartLevel NextLevel();
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(757):    static word DisplayHelpFile(const CliThread& cli, const string& name);
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(1904):    static void SendAckToOutputFile(const CliThread& cli);
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(758):    static word DisplayHelpFile(const CliThread& cli, const string& name);
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp(1961):    static void SendAckToOutputFile(const CliThread& cli);
   C:/Users/gregu/Documents/rsc/rsc/nb/NbModule.h(60):    static bool Register();
   C:/Users/gregu/Documents/rsc/rsc/nb/NbTracer.h(73):    static TraceRc SelectThread(ThreadId tid, TraceStatus status);
   C:/Users/gregu/Documents/rsc/rsc/nb/NbTracer.h(77):    static bool ThreadsEmpty();
@@ -2981,8 +2986,9 @@ W094 Function could be free
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.h(439):    static SysThread::Priority FactionToPriority(Faction& faction);
   C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.h(90):    static int WarpFactor();
   C:/Users/gregu/Documents/rsc/rsc/nt/FunctionProfiler.h(83):    static void CheckHigh(FunctionStats*& high, FunctionStats* curr,
-  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(3282):    static void UseBadPointer();
-  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(3283):    static void LoopForever();
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(196):    word Sort(const string& input, const string& output, string& expl) const;
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(3448):    static void UseBadPointer();
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(3449):    static void LoopForever();
   C:/Users/gregu/Documents/rsc/rsc/nt/NtModule.h(58):    static bool Register();
   C:/Users/gregu/Documents/rsc/rsc/nt/NtTestData.h(45):    static NtTestData* Access(CliThread& cli);
   C:/Users/gregu/Documents/rsc/rsc/nw/IpBuffer.h(166):    static size_t BuffSize(size_t nBytes);
@@ -3313,7 +3319,7 @@ W104 Line length exceeds the standard maximum
 W105 Function not sorted in standard order
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeTypes.cpp(305): bool IsUnusedItemWarning(Warning warning)
   C:/Users/gregu/Documents/rsc/rsc/nb/NbTypes.cpp(76): char FactionChar(Faction faction)
-  C:/Users/gregu/Documents/rsc/rsc/nb/ToolTypes.cpp(68): ostream& operator<<(std::ostream& stream, TraceStatus status)
+  C:/Users/gregu/Documents/rsc/rsc/nb/ToolTypes.cpp(68): ostream& operator<<(ostream& stream, TraceStatus status)
 W108 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/an/PotsShelfIpService.cpp(98): Faction PotsShelfIpService::GetFaction() const { return PayloadFaction; }
   C:/Users/gregu/Documents/rsc/rsc/an/PotsShelfIpService.cpp(111): ipport_t PotsShelfIpService::Port() const { return ipport_t(port_); }
@@ -3369,17 +3375,17 @@ W108 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxDirective.cpp(48): void AlignLeft(ostream& stream, const string& prefix)
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxDirective.cpp(151): CxxToken* Define::AutoType() const
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxDirective.cpp(822): CxxScope* MacroName::GetScope() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(190): const Parser* Context::GetParser()
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(240): bool Context::OptionIsOn(char opt)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(247): bool Context::ParsingTemplateInstance()
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(315): void Context::SetPos(size_t pos)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(395): void Context::Trace(CxxTrace::Action act)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(403): void Context::Trace(CxxTrace::Action act, const StackArg& arg)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(411): void Context::Trace(CxxTrace::Action act, word err, const string& expl)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(419): void Context::Trace(CxxTrace::Action act, const CodeFile& file)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(427): void Context::Trace(CxxTrace::Action act, const CxxToken* token)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(625): OptionalCode* ParseFrame::Optional() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(812): CxxScope* ParseFrame::Scope() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(191): const Parser* Context::GetParser()
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(241): bool Context::OptionIsOn(char opt)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(248): bool Context::ParsingTemplateInstance()
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(316): void Context::SetPos(size_t pos)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(396): void Context::Trace(CxxTrace::Action act)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(404): void Context::Trace(CxxTrace::Action act, const StackArg& arg)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(412): void Context::Trace(CxxTrace::Action act, word err, const string& expl)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(420): void Context::Trace(CxxTrace::Action act, const CodeFile& file)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(428): void Context::Trace(CxxTrace::Action act, const CxxToken* token)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(626): OptionalCode* ParseFrame::Optional() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(813): CxxScope* ParseFrame::Scope() const
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(177): CxxArea* CxxNamed::GetArea() const
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(186): Class* CxxNamed::GetClass() const
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(195): id_t CxxNamed::GetDeclFid() const
@@ -3519,9 +3525,9 @@ W108 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(622): word Editor::PushInclude(string& source, string& expl)
   C:/Users/gregu/Documents/rsc/rsc/ct/Interpreter.cpp(134): const OperatorInfo* OperatorInfo::GetAttrs(LibTokenType type)
   C:/Users/gregu/Documents/rsc/rsc/ct/Interpreter.cpp(142): bool OperatorInfo::GetType(const string& op, LibTokenType& type)
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(618): size_t Lexer::GetLineNum(size_t pos) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(642): size_t Lexer::GetLineStart(size_t line) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(715): bool Lexer::GetNthLine(size_t n, string& s) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(623): size_t Lexer::GetLineNum(size_t pos) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(647): size_t Lexer::GetLineStart(size_t line) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(720): bool Lexer::GetNthLine(size_t n, string& s) const
   C:/Users/gregu/Documents/rsc/rsc/ct/LibraryErrSet.cpp(103): word LibraryErrSet::Error(string& expl) const
   C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.cpp(76): LibrarySet* LibrarySet::AffectedBy() const
   C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.cpp(83): LibrarySet* LibrarySet::Affecters() const
@@ -3611,7 +3617,7 @@ W108 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/nb/PosixSignalRegistry.cpp(90): PosixSignal* PosixSignalRegistry::Find(signal_t value) const
   C:/Users/gregu/Documents/rsc/rsc/nb/PosixSignalRegistry.cpp(102): PosixSignal* PosixSignalRegistry::Find(const string& name) const
   C:/Users/gregu/Documents/rsc/rsc/nb/PosixSignalRegistry.cpp(153): signal_t PosixSignalRegistry::Value(const string& name) const
-  C:/Users/gregu/Documents/rsc/rsc/nb/Q2Link.cpp(39): Q2Link::~Q2Link()
+  C:/Users/gregu/Documents/rsc/rsc/nb/Q2Link.cpp(40): Q2Link::~Q2Link()
   C:/Users/gregu/Documents/rsc/rsc/nb/RegCell.cpp(37): RegCell::~RegCell()
   C:/Users/gregu/Documents/rsc/rsc/nb/RegCell.cpp(49): void RegCell::SetId(id_t cid)
   C:/Users/gregu/Documents/rsc/rsc/nb/Singletons.cpp(125): Singletons* Singletons::Instance()
@@ -3622,7 +3628,7 @@ W108 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/nb/SysConsole.cpp(32): std::istream& SysConsole::In()
   C:/Users/gregu/Documents/rsc/rsc/nb/SysConsole.cpp(39): ostream& SysConsole::Out()
   C:/Users/gregu/Documents/rsc/rsc/nb/SysFile.win.cpp(99): bool FileWalker::AtEnd() const
-  C:/Users/gregu/Documents/rsc/rsc/nb/SysFile.win.cpp(106): void FileWalker::GetName(std::string& fileName) const
+  C:/Users/gregu/Documents/rsc/rsc/nb/SysFile.win.cpp(106): void FileWalker::GetName(string& fileName) const
   C:/Users/gregu/Documents/rsc/rsc/nb/SysFile.win.cpp(115): bool FileWalker::IsSubdir() const
   C:/Users/gregu/Documents/rsc/rsc/nb/SysMutex.cpp(48): Thread* SysMutex::Owner() const
   C:/Users/gregu/Documents/rsc/rsc/nb/SysThread.win.cpp(269): void SysThread::RegisterForSignal(signal_t sig, sighandler_t handler)
@@ -3689,15 +3695,15 @@ W108 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/nt/FunctionProfiler.cpp(97): void FunctionProfiler::CheckHigh(FunctionStats*& high,
   C:/Users/gregu/Documents/rsc/rsc/nt/FunctionStats.cpp(51): int FunctionStats::Compare(const FunctionStats& that) const
   C:/Users/gregu/Documents/rsc/rsc/nt/FunctionStats.cpp(69): void FunctionStats::IncrCalls(usecs_t net)
-  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(1140): Q1WayItem::~Q1WayItem()
-  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(1174): Q1WayPool::Q1WayPool()
-  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(1203): void Q1WayPool::Reallocate()
-  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(1660): Q2WayItem::~Q2WayItem()
-  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(1694): Q2WayPool::Q2WayPool()
-  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(1723): void Q2WayPool::Reallocate()
-  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(2224): RegistryItem::~RegistryItem()
-  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(2255): RegistryPool::RegistryPool()
-  C:/Users/gregu/Documents/rsc/rsc/nt/TestDatabase.cpp(142): TestDatabase::State TestDatabase::GetState(const string& testcase)
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(1306): Q1WayItem::~Q1WayItem()
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(1340): Q1WayPool::Q1WayPool()
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(1369): void Q1WayPool::Reallocate()
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(1826): Q2WayItem::~Q2WayItem()
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(1860): Q2WayPool::Q2WayPool()
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(1889): void Q2WayPool::Reallocate()
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(2390): RegistryItem::~RegistryItem()
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(2421): RegistryPool::RegistryPool()
+  C:/Users/gregu/Documents/rsc/rsc/nt/TestDatabase.cpp(145): TestDatabase::State TestDatabase::GetState(const string& testcase)
   C:/Users/gregu/Documents/rsc/rsc/nw/IpBuffer.cpp(205): TraceStatus IpBuffer::GetStatus() const
   C:/Users/gregu/Documents/rsc/rsc/nw/IpPort.cpp(205): size_t IpPort::Discards() const
   C:/Users/gregu/Documents/rsc/rsc/nw/IpPortRegistry.cpp(283): IpPort* IpPortRegistry::GetPort(ipport_t port, IpProtocol protocol) const
@@ -3798,8 +3804,8 @@ W109 Function does not invoke Debug::ft as first statement
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2645):    Debug::ft(Thread_SignalHandler);
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(2717):          Debug::ft(Thread_Start);
   C:/Users/gregu/Documents/rsc/rsc/nb/Thread.cpp(3230):       Debug::ft(Thread_Unlock);
-  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(3356):       Debug::ft(RecoveryTestThread_Enter);
-  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(3438):       Debug::ft(RecoveryTestThread_LoopForever);
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(3522):       Debug::ft(RecoveryTestThread_Enter);
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(3604):       Debug::ft(RecoveryTestThread_LoopForever);
   C:/Users/gregu/Documents/rsc/rsc/sb/Context.cpp(695):    Debug::ft(Context_ProcessWork);
 W112 Override of Base.Display not found
   C:/Users/gregu/Documents/rsc/rsc/an/PotsShelf.h(43): class PotsShelfIpService : public UdpIpService
@@ -3820,8 +3826,8 @@ W112 Override of Base.Display not found
   C:/Users/gregu/Documents/rsc/rsc/nb/ThreadAdmin.cpp(51): class ThreadsStats : public Dynamic
   C:/Users/gregu/Documents/rsc/rsc/nb/TraceBuffer.h(62): class TraceBuffer : public Permanent
   C:/Users/gregu/Documents/rsc/rsc/nt/FunctionProfiler.h(49): class FunctionProfiler : public Temporary
-  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(887): class LbcPool : public Temporary
-  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(2646): class SysTimePool : public Temporary
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(1053): class LbcPool : public Temporary
+  C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp(2812): class SysTimePool : public Temporary
   C:/Users/gregu/Documents/rsc/rsc/nt/TestDatabase.h(41): class TestDatabase : public NodeBase::Temporary
   C:/Users/gregu/Documents/rsc/rsc/nw/IpPort.cpp(49): class IpPortStats : public Dynamic
   C:/Users/gregu/Documents/rsc/rsc/nw/IpPortRegistry.cpp(47): class HostAddrCfg : public CfgStrParm
@@ -3835,12 +3841,13 @@ W112 Override of Base.Display not found
   C:/Users/gregu/Documents/rsc/rsc/sn/PotsSessions.h(52): class PotsCallIpService : public UdpIpService
 W113 Override of Object.Patch not found
   C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(38): class StatusCommand : public CliCommand
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(59): class SetCommand : public CliCommand
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(88): class IncludeCommand : public CliCommand
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(118): class ExcludeCommand : public CliCommand
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(147): class QueryCommand : public CliCommand
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(177): class SaveCommand : public CliCommand
-  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(205): class ClearCommand : public CliCommand
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(59): class LogsCommand : public CliCommand
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(87): class SetCommand : public CliCommand
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(116): class IncludeCommand : public CliCommand
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(146): class ExcludeCommand : public CliCommand
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(175): class QueryCommand : public CliCommand
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(205): class SaveCommand : public CliCommand
+  C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h(233): class ClearCommand : public CliCommand
   C:/Users/gregu/Documents/rsc/rsc/nb/NbTracer.h(63): class NbTracer : public Permanent
   C:/Users/gregu/Documents/rsc/rsc/nb/PermanentHeap.h(36): class PermanentHeap : public SysHeap
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTickTimer.h(41): class SysTickTimer : public Immutable
@@ -4378,6 +4385,11 @@ C:/Users/gregu/Documents/rsc/rsc/cn/CnModule.h
     62:    static bool Registered;
   W094 Function could be free
     58:    static bool Register();
+C:/Users/gregu/Documents/rsc/rsc/ct/CodeCoverage.cpp
+  W049 Data is init-only
+    71:    FunctionGuard guard(FunctionGuard::MakePreemptable);
+    162:    FunctionGuard guard(FunctionGuard::MakePreemptable);
+    372:    FunctionGuard guard(FunctionGuard::MakePreemptable);
 C:/Users/gregu/Documents/rsc/rsc/ct/CodeCoverage.h
   W033 Unused function
     156:    static std::string Demangle(const std::string& s);
@@ -4700,31 +4712,31 @@ C:/Users/gregu/Documents/rsc/rsc/ct/CxxDirective.h
     469:    virtual void AddCondition(ExprPtr& c) override { condition_ = std::move(c); }
 C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp
   W007 Cast down the inheritance hierarchy
-    1294:       auto thisClass = static_cast< Class* >(thisRoot);
-    1302:             auto thatClass = static_cast< Class* >(thatRoot);
-    1437:    if(AutoType_.SetAutoTypeOn(*static_cast< FuncData* >(item)))
-    1481:    auto ref = static_cast< CxxNamed* >(item);
-    1623:          static_cast< Class* >(root)->BlockCopied(this);
+    1295:       auto thisClass = static_cast< Class* >(thisRoot);
+    1303:             auto thatClass = static_cast< Class* >(thatRoot);
+    1438:    if(AutoType_.SetAutoTypeOn(*static_cast< FuncData* >(item)))
+    1482:    auto ref = static_cast< CxxNamed* >(item);
+    1624:          static_cast< Class* >(root)->BlockCopied(this);
   W060 Default copy constructor invoked
-    155:    arg_(arg)
+    156:    arg_(arg)
   W077 Virtual function is public
-    64:    virtual bool Display(std::ostream& stream, bool diff) override;
-    76:    virtual bool Display(std::ostream& stream, bool diff) override;
-    92:    virtual bool Display(std::ostream& stream, bool diff) override;
-    108:    virtual bool Display(std::ostream& stream, bool diff) override;
-    128:    virtual bool Display(std::ostream& stream, bool diff) override;
+    65:    virtual bool Display(ostream& stream, bool diff) override;
+    77:    virtual bool Display(ostream& stream, bool diff) override;
+    93:    virtual bool Display(ostream& stream, bool diff) override;
+    109:    virtual bool Display(ostream& stream, bool diff) override;
+    129:    virtual bool Display(ostream& stream, bool diff) override;
   W108 Function does not invoke Debug::ft
-    190: const Parser* Context::GetParser()
-    240: bool Context::OptionIsOn(char opt)
-    247: bool Context::ParsingTemplateInstance()
-    315: void Context::SetPos(size_t pos)
-    395: void Context::Trace(CxxTrace::Action act)
-    403: void Context::Trace(CxxTrace::Action act, const StackArg& arg)
-    411: void Context::Trace(CxxTrace::Action act, word err, const string& expl)
-    419: void Context::Trace(CxxTrace::Action act, const CodeFile& file)
-    427: void Context::Trace(CxxTrace::Action act, const CxxToken* token)
-    625: OptionalCode* ParseFrame::Optional() const
-    812: CxxScope* ParseFrame::Scope() const
+    191: const Parser* Context::GetParser()
+    241: bool Context::OptionIsOn(char opt)
+    248: bool Context::ParsingTemplateInstance()
+    316: void Context::SetPos(size_t pos)
+    396: void Context::Trace(CxxTrace::Action act)
+    404: void Context::Trace(CxxTrace::Action act, const StackArg& arg)
+    412: void Context::Trace(CxxTrace::Action act, word err, const string& expl)
+    420: void Context::Trace(CxxTrace::Action act, const CodeFile& file)
+    428: void Context::Trace(CxxTrace::Action act, const CxxToken* token)
+    626: OptionalCode* ParseFrame::Optional() const
+    813: CxxScope* ParseFrame::Scope() const
 C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.h
   W026 Unused argument
     592/1:    static void Shutdown(NodeBase::RestartLevel level);
@@ -5282,21 +5294,21 @@ C:/Users/gregu/Documents/rsc/rsc/ct/Interpreter.h
     44: class Interpreter : public NodeBase::Temporary
 C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp
   W005 Functional cast
-    923:          oper = Cxx::Operator(match->second);
+    928:          oper = Cxx::Operator(match->second);
   W007 Cast down the inheritance hierarchy
-    1595:          auto def = static_cast< Define* >(item);
-    1599:             auto code = const_cast< string* >(source_);
+    1576:          auto def = static_cast< Define* >(item);
+    1580:             auto code = const_cast< string* >(source_);
   W008 Cast removes const qualification
-    1599:             auto code = const_cast< string* >(source_);
+    1580:             auto code = const_cast< string* >(source_);
   W108 Function does not invoke Debug::ft
-    618: size_t Lexer::GetLineNum(size_t pos) const
-    642: size_t Lexer::GetLineStart(size_t line) const
-    715: bool Lexer::GetNthLine(size_t n, string& s) const
+    623: size_t Lexer::GetLineNum(size_t pos) const
+    647: size_t Lexer::GetLineStart(size_t line) const
+    720: bool Lexer::GetNthLine(size_t n, string& s) const
 C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.h
   W044 Member could be private
     193:    std::string NextOperator() const;
   W049 Data is init-only
-    430:    static bool Initialized;
+    434:    static bool Initialized;
   W084 Adjacent arguments have the same type
     201:    size_t FindClosing(char lhc, char rhc, size_t pos = std::string::npos) const;
   W094 Function could be free
@@ -5891,7 +5903,6 @@ C:/Users/gregu/Documents/rsc/rsc/nb/CliParm.h
     177:    bool GetPtrParm(void*& p, CliThread& cli) const;
     203:    bool GetTextParm(id_t& i, std::string& s, CliThread& cli) const;
     237:    bool GetIdentifier(std::string& s, CliThread& cli,
-    248:    const char* Help() const { return help_; }
     252:    bool IsOptional() const { return opt_; }
   W056 Data could be const pointer
     331:    const char* help_;
@@ -6050,12 +6061,9 @@ C:/Users/gregu/Documents/rsc/rsc/nb/InitThread.cpp
   W049 Data is init-only
     307:    FunctionGuard guard(FunctionGuard::MakeUnpreemptable);
 C:/Users/gregu/Documents/rsc/rsc/nb/Log.h
-  W040 Class could be namespace
-    34: class Log
   W094 Function could be free
-    40:    static ostringstreamPtr Create(fixed_string title);
-    45:    static void Spool(ostringstreamPtr& log);
-    49:    static std::string FileName();
+    46:    static void Spool(ostringstreamPtr& log);
+    50:    static std::string FileName();
 C:/Users/gregu/Documents/rsc/rsc/nb/LogThread.cpp
   W007 Cast down the inheritance hierarchy
     89:       auto req = static_cast< StreamRequest* >(msg);
@@ -6140,41 +6148,44 @@ C:/Users/gregu/Documents/rsc/rsc/nb/NbCliParms.h
     120: CliParm::Rc GetCBV(const CliCommand& comm, CliThread& cli, bool& c, bool& v);
 C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.cpp
   W005 Functional cast
-    484:       rc = nbt->SelectFaction(Faction(id), TraceDefault);
-    692:       rc = nbt->SelectFaction(Faction(id), TraceExcluded);
-    1089:       rc = nbt->SelectFaction(Faction(id), TraceIncluded);
-    2452:       auto heap = Memory::Heap(MemoryType(m));
+    485:       rc = nbt->SelectFaction(Faction(id), TraceDefault);
+    693:       rc = nbt->SelectFaction(Faction(id), TraceExcluded);
+    1090:       rc = nbt->SelectFaction(Faction(id), TraceIncluded);
+    2509:       auto heap = Memory::Heap(MemoryType(m));
   W044 Member could be private
-    1904:    static void SendAckToOutputFile(const CliThread& cli);
+    1961:    static void SendAckToOutputFile(const CliThread& cli);
   W049 Data is init-only
-    1708:    FunctionGuard guard(FunctionGuard::MakePreemptable, yield);
+    1765:    FunctionGuard guard(FunctionGuard::MakePreemptable, yield);
   W094 Function could be free
-    757:    static word DisplayHelpFile(const CliThread& cli, const string& name);
-    1904:    static void SendAckToOutputFile(const CliThread& cli);
+    758:    static word DisplayHelpFile(const CliThread& cli, const string& name);
+    1961:    static void SendAckToOutputFile(const CliThread& cli);
 C:/Users/gregu/Documents/rsc/rsc/nb/NbIncrement.h
   W028 Unused data
-    153:    static const id_t LastNbIndex     = 3;
+    181:    static const id_t LastNbIndex     = 3;
   W062 Base class constructor is public
     41:    StatusCommand();
-    55:    SetWhatParm();
-    68:    explicit SetCommand(bool bind = true);
-    84:    IncludeWhatParm();
-    98:    explicit IncludeCommand(bool bind = true);
-    114:    ExcludeWhatParm();
-    127:    explicit ExcludeCommand(bool bind = true);
-    157:    explicit QueryCommand(bool bind = true);
-    173:    SaveWhatParm();
-    185:    explicit SaveCommand(bool bind = true);
-    201:    ClearWhatParm();
-    219:    explicit ClearCommand(bool bind = true);
+    55:    LogsAction();
+    67:    explicit LogsCommand(bool bind = true);
+    83:    SetWhatParm();
+    96:    explicit SetCommand(bool bind = true);
+    112:    IncludeWhatParm();
+    126:    explicit IncludeCommand(bool bind = true);
+    142:    ExcludeWhatParm();
+    155:    explicit ExcludeCommand(bool bind = true);
+    185:    explicit QueryCommand(bool bind = true);
+    201:    SaveWhatParm();
+    213:    explicit SaveCommand(bool bind = true);
+    229:    ClearWhatParm();
+    247:    explicit ClearCommand(bool bind = true);
   W113 Override of Object.Patch not found
     38: class StatusCommand : public CliCommand
-    59: class SetCommand : public CliCommand
-    88: class IncludeCommand : public CliCommand
-    118: class ExcludeCommand : public CliCommand
-    147: class QueryCommand : public CliCommand
-    177: class SaveCommand : public CliCommand
-    205: class ClearCommand : public CliCommand
+    59: class LogsCommand : public CliCommand
+    87: class SetCommand : public CliCommand
+    116: class IncludeCommand : public CliCommand
+    146: class ExcludeCommand : public CliCommand
+    175: class QueryCommand : public CliCommand
+    205: class SaveCommand : public CliCommand
+    233: class ClearCommand : public CliCommand
 C:/Users/gregu/Documents/rsc/rsc/nb/NbModule.h
   W049 Data is init-only
     64:    static bool Registered;
@@ -6401,7 +6412,7 @@ C:/Users/gregu/Documents/rsc/rsc/nb/Q1Way.h
     398:    inline static fn_name Q1Way_Item()   { return "Q1Way.Item"; }
 C:/Users/gregu/Documents/rsc/rsc/nb/Q2Link.cpp
   W108 Function does not invoke Debug::ft
-    39: Q2Link::~Q2Link()
+    40: Q2Link::~Q2Link()
 C:/Users/gregu/Documents/rsc/rsc/nb/Q2Link.h
   W033 Unused function
     57:    bool IsQueued() const { return next != nullptr; }
@@ -6561,7 +6572,7 @@ C:/Users/gregu/Documents/rsc/rsc/nb/SysFile.win.cpp
     57:    _finddata_t attributes_;
   W108 Function does not invoke Debug::ft
     99: bool FileWalker::AtEnd() const
-    106: void FileWalker::GetName(std::string& fileName) const
+    106: void FileWalker::GetName(string& fileName) const
     115: bool FileWalker::IsSubdir() const
 C:/Users/gregu/Documents/rsc/rsc/nb/SysHeap.h
   W033 Unused function
@@ -6852,7 +6863,7 @@ C:/Users/gregu/Documents/rsc/rsc/nb/ToolRegistry.cpp
     117: Tool* ToolRegistry::GetTool(FlagId id) const
 C:/Users/gregu/Documents/rsc/rsc/nb/ToolTypes.cpp
   W105 Function not sorted in standard order
-    68: ostream& operator<<(std::ostream& stream, TraceStatus status)
+    68: ostream& operator<<(ostream& stream, TraceStatus status)
 C:/Users/gregu/Documents/rsc/rsc/nb/TraceBuffer.cpp
   W004 C-style cast
     126:    buff_ = (uword*) Memory::Alloc(InitialSize << BYTES_PER_WORD_LOG2, MemPerm);
@@ -6935,40 +6946,46 @@ C:/Users/gregu/Documents/rsc/rsc/nt/FunctionStats.h
     84:    Q2Link link_;
 C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.cpp
   W005 Functional cast
-    3015:    pool->time_[id1].Truncate(TimeField(field - 1));
-    3046:    pool->time_[id1].Round(TimeField(field - 1), interval);
+    3181:    pool->time_[id1].Truncate(TimeField(field - 1));
+    3212:    pool->time_[id1].Round(TimeField(field - 1), interval);
   W006 reinterpret_cast
-    1161:    auto fake = reinterpret_cast< const Q1WayItem* >(&local);
-    1681:    auto fake = reinterpret_cast< const Q2WayItem* >(&local);
-    2242:    auto fake = reinterpret_cast< const RegistryItem* >(&local);
-    3476:    auto p = reinterpret_cast< char* >(BAD_POINTER);
+    1327:    auto fake = reinterpret_cast< const Q1WayItem* >(&local);
+    1847:    auto fake = reinterpret_cast< const Q2WayItem* >(&local);
+    2408:    auto fake = reinterpret_cast< const RegistryItem* >(&local);
+    3642:    auto p = reinterpret_cast< char* >(BAD_POINTER);
   W022 Add using statement
     1: namespace NodeBase
+  W028 Unused data
+    187:    static const id_t LastNtIndex = SortIndex;
   W044 Member could be private
-    3260:    typedef id_t Test;
+    3426:    typedef id_t Test;
   W049 Data is init-only
-    260:    FunctionGuard guard(FunctionGuard::MakePreemptable, yield);
+    234:    FunctionGuard guard(FunctionGuard::MakePreemptable);
+    426:    FunctionGuard guard(FunctionGuard::MakePreemptable, yield);
   W055 Data could be const
-    1025:    Q1Link link_;
-    1537:    Q2Link link_;
+    1191:    Q1Link link_;
+    1703:    Q2Link link_;
+  W084 Adjacent arguments have the same type
+    196:    word Sort(const string& input, const string& output, string& expl) const;
   W094 Function could be free
-    3282:    static void UseBadPointer();
-    3283:    static void LoopForever();
+    196:    word Sort(const string& input, const string& output, string& expl) const;
+    3448:    static void UseBadPointer();
+    3449:    static void LoopForever();
   W108 Function does not invoke Debug::ft
-    1140: Q1WayItem::~Q1WayItem()
-    1174: Q1WayPool::Q1WayPool()
-    1203: void Q1WayPool::Reallocate()
-    1660: Q2WayItem::~Q2WayItem()
-    1694: Q2WayPool::Q2WayPool()
-    1723: void Q2WayPool::Reallocate()
-    2224: RegistryItem::~RegistryItem()
-    2255: RegistryPool::RegistryPool()
+    1306: Q1WayItem::~Q1WayItem()
+    1340: Q1WayPool::Q1WayPool()
+    1369: void Q1WayPool::Reallocate()
+    1826: Q2WayItem::~Q2WayItem()
+    1860: Q2WayPool::Q2WayPool()
+    1889: void Q2WayPool::Reallocate()
+    2390: RegistryItem::~RegistryItem()
+    2421: RegistryPool::RegistryPool()
   W109 Function does not invoke Debug::ft as first statement
-    3356:       Debug::ft(RecoveryTestThread_Enter);
-    3438:       Debug::ft(RecoveryTestThread_LoopForever);
+    3522:       Debug::ft(RecoveryTestThread_Enter);
+    3604:       Debug::ft(RecoveryTestThread_LoopForever);
   W112 Override of Base.Display not found
-    887: class LbcPool : public Temporary
-    2646: class SysTimePool : public Temporary
+    1053: class LbcPool : public Temporary
+    2812: class SysTimePool : public Temporary
 C:/Users/gregu/Documents/rsc/rsc/nt/NtIncrement.h
   W020 Using statement in header
     32: using namespace NodeBase;
@@ -7005,8 +7022,11 @@ C:/Users/gregu/Documents/rsc/rsc/nt/NtTestData.h
   W094 Function could be free
     45:    static NtTestData* Access(CliThread& cli);
 C:/Users/gregu/Documents/rsc/rsc/nt/TestDatabase.cpp
+  W049 Data is init-only
+    88:    FunctionGuard guard(FunctionGuard::MakePreemptable);
+    238:    FunctionGuard guard(FunctionGuard::MakePreemptable);
   W108 Function does not invoke Debug::ft
-    142: TestDatabase::State TestDatabase::GetState(const string& testcase)
+    145: TestDatabase::State TestDatabase::GetState(const string& testcase)
 C:/Users/gregu/Documents/rsc/rsc/nt/TestDatabase.h
   W112 Override of Base.Display not found
     41: class TestDatabase : public NodeBase::Temporary

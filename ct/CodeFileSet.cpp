@@ -311,7 +311,7 @@ LibrarySet* CodeFileSet::FileType(const LibrarySet* that) const
 
 fn_name CodeFileSet_Fix = "CodeFileSet.Fix";
 
-word CodeFileSet::Fix(CliThread& cli, std::string& expl) const
+word CodeFileSet::Fix(CliThread& cli, string& expl) const
 {
    Debug::ft(CodeFileSet_Fix);
 

@@ -39,7 +39,7 @@ class FileWalker : public FileList
 public:
    FileWalker(const char* dirName, const char* fileSpec);
    ~FileWalker();
-   virtual void GetName(std::string& fileName) const override;
+   virtual void GetName(string& fileName) const override;
    virtual bool IsSubdir() const override;
    virtual bool AtEnd() const override;
    virtual bool Advance() override;
@@ -103,7 +103,7 @@ bool FileWalker::AtEnd() const
 
 //------------------------------------------------------------------------------
 
-void FileWalker::GetName(std::string& fileName) const
+void FileWalker::GetName(string& fileName) const
 {
    fileName.clear();
    if(iterator_ == -1) return;

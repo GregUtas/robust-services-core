@@ -263,7 +263,7 @@ void Block::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 fn_name Block_GetUsingFor = "Block.GetUsingFor";
 
-Using* Block::GetUsingFor(const std::string& fqName,
+Using* Block::GetUsingFor(const string& fqName,
    size_t prefix, const CxxNamed* item, const CxxScope* scope) const
 {
    Debug::ft(Block_GetUsingFor);
@@ -900,7 +900,7 @@ void CxxScope::OpenScope(string& name)
 fn_name CxxScope_ReplaceTemplateParms = "CxxScope.ReplaceTemplateParms";
 
 void CxxScope::ReplaceTemplateParms
-   (std::string& code, const TypeSpecPtrVector* args, size_t begin) const
+   (string& code, const TypeSpecPtrVector* args, size_t begin) const
 {
    Debug::ft(CxxScope_ReplaceTemplateParms);
 
@@ -4495,7 +4495,7 @@ void FuncSpec::AdjustPtrs(TagCount count)
 
 //------------------------------------------------------------------------------
 
-std::string FuncSpec::AlignTemplateArg(const TypeSpec* thatArg) const
+string FuncSpec::AlignTemplateArg(const TypeSpec* thatArg) const
 {
    return func_->GetTypeSpec()->AlignTemplateArg(thatArg);
 }

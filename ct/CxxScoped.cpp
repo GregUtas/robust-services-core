@@ -24,7 +24,6 @@
 #include <set>
 #include <sstream>
 #include <utility>
-#include <vector>
 #include "CodeFile.h"
 #include "CodeSet.h"
 #include "CxxArea.h"

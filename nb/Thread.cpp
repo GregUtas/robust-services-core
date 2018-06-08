@@ -3041,8 +3041,7 @@ string Thread::to_str() const
 
 //------------------------------------------------------------------------------
 
-void Thread::Trace
-   (Thread* thr, fn_name_arg func, TraceRecord::Id rid, word info)
+void Thread::Trace(Thread* thr, fn_name_arg func, TraceRecordId rid, word info)
 {
    if(thr == nullptr) thr = RunningThread(false);
    if(thr == nullptr) return;

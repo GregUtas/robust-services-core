@@ -27,6 +27,7 @@
 #include "Singleton.h"
 #include "SymbolRegistry.h"
 #include "SysTypes.h"
+#include "TestDatabase.h"
 
 //------------------------------------------------------------------------------
 
@@ -74,6 +75,9 @@ fn_name NtModule_Shutdown = "NtModule.Shutdown";
 void NtModule::Shutdown(RestartLevel level)
 {
    Debug::ft(NtModule_Shutdown);
+
+   auto testdb = Singleton< TestDatabase >::Extant();
+   if(testdb != nullptr) testdb->Shutdown(level);
 
    Singleton< NtIncrement >::Instance()->Shutdown(level);
 }

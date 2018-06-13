@@ -222,7 +222,7 @@ if                : Executes rest of input line if condition is true.
   <int>           : value for comparison
 
 delay             : Pauses before executing the next command.
-  (0:120)         : time (secs)
+  (0:180)         : time (secs)
 
 display           : Displays an object.
   <hex>           : pointer to an Object
@@ -297,9 +297,9 @@ testcase          : Configures or executes testcases.
   failed          : records that the current testcase failed
     <int>         : failure code
     [<str>]       : explanation for failure
-  retest          : lists testcases that have not passed
   query           : shows pass/fail counts and (if verbose) all testcases
     [b|v]         : 'b'=brief 'v'=verbose (default='b')
+  retest          : lists testcases that have not passed
   erase           : removes a testcase from the database
     <str>         : testcase name
   reset           : resets the testing environment
@@ -747,9 +747,9 @@ testcase          : Configures or executes testcases.
   failed          : records that the current testcase failed
     <int>         : failure code
     [<str>]       : explanation for failure
-  retest          : lists testcases that have not passed
   query           : shows pass/fail counts and (if verbose) all testcases
     [b|v]         : 'b'=brief 'v'=verbose (default='b')
+  retest          : lists testcases that have not passed
   erase           : removes a testcase from the database
     <str>         : testcase name
   reset           : resets the testing environment

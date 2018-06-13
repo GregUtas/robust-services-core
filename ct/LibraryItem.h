@@ -22,7 +22,7 @@
 #ifndef LIBRARYITEM_H_INCLUDED
 #define LIBRARYITEM_H_INCLUDED
 
-#include "Temporary.h"
+#include "Base.h"
 #include <string>
 
 //------------------------------------------------------------------------------
@@ -31,7 +31,7 @@ namespace CodeTools
 {
 //  Base class for items in the code library (directories, files, variables).
 //
-class LibraryItem : public NodeBase::Temporary
+class LibraryItem : public NodeBase::Base
 {
 public:
    //  Virtual to allow subclassing.

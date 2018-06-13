@@ -79,6 +79,15 @@ TestDatabase::TestDatabase()
 
 //------------------------------------------------------------------------------
 
+fn_name TestDatabase_dtor = "TestDatabase.dtor";
+
+TestDatabase::~TestDatabase()
+{
+   Debug::ft(TestDatabase_dtor);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name TestDatabase_Commit = "TestDatabase.Commit";
 
 void TestDatabase::Commit() const
@@ -372,6 +381,17 @@ void TestDatabase::SetState(const string& testcase, State next)
          Commit();
       }
    }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TestDatabase_Shutdown = "TestDatabase.Shutdown";
+
+void TestDatabase::Shutdown(RestartLevel level)
+{
+   Debug::ft(TestDatabase_Shutdown);
+
+   tests_.clear();
 }
 
 //------------------------------------------------------------------------------

@@ -137,7 +137,7 @@ main_t main(int argc, char* argv[])
 
    //  Echo and save the arguments.
    //
-   std::cout << "ENTERING main()" << CRLF;
+   std::cout << "ENTERING main(int argc, char* argv[])" << CRLF;
    std::cout << "  argc: " << argc << CRLF;
 
    auto reg = Singleton< CfgParmRegistry >::Instance();

@@ -149,8 +149,8 @@ public:
    static const id_t TestBeginIndex   = 4;
    static const id_t TestEndIndex     = 5;
    static const id_t TestFailedIndex  = 6;
-   static const id_t TestRetestIndex  = 7;
-   static const id_t TestQueryIndex   = 8;
+   static const id_t TestQueryIndex   = 7;
+   static const id_t TestRetestIndex  = 8;
    static const id_t TestEraseIndex   = 9;
    static const id_t TestResetIndex   = 10;
    static const id_t LastNtIndex = TestResetIndex;

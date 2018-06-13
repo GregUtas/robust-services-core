@@ -24,6 +24,7 @@
 
 #include "Thread.h"
 #include "NbTypes.h"
+#include "SysMutex.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -37,6 +38,11 @@ class LogThread : public Thread
    friend class Singleton< LogThread >;
    friend class Log;
 public:
+   //  Overridden to display member variables.
+   //
+   virtual void Display(std::ostream& stream,
+      const std::string& prefix, const Flags& options) const override;
+
    //  Overridden for patching.
    //
    virtual void Patch(sel_t selector, void* arguments) override;
@@ -65,6 +71,10 @@ private:
    //  Overridden to delete the singleton.
    //
    virtual void Destroy() override;
+
+   //  Critical section lock for the log file.
+   //
+   static SysMutex LogFileLock_;
 };
 }
 #endif

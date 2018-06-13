@@ -73,10 +73,18 @@ public:
    //  about what changed.
    //
    NodeBase::word Update(std::string& expl);
+
+   //  Overridden for restarts.
+   //
+   virtual void Shutdown(NodeBase::RestartLevel level) override;
 private:
    //  Private because this singleton is not subclassed.
    //
    CodeCoverage();
+
+   //  Private because this singleton is not subclassed.
+   //
+   ~CodeCoverage();
 
    //  Adds testcase output (*.funcs.txt files) in the output directory to
    //  the database.  Returns a non-zero value on failure and updates EXPL
@@ -159,9 +167,9 @@ private:
    //
    struct FuncInfo
    {
-      const std::string file;       // name of function's code file
-      const uint32_t hash;          // hash value for function's code
-      std::set<std::string> tests;  // tests that invoke the function
+      const std::string file;         // name of function's code file
+      const uint32_t hash;            // hash value for function's code
+      std::set< std::string > tests;  // tests that invoke the function
 
       FuncInfo(const std::string& file, uint32_t hash):
          file(file), hash(hash) { }

@@ -939,8 +939,8 @@ TestcaseAction::TestcaseAction() : CliTextParm(TestcaseActionExpl)
    BindText(*new TestBeginText, TestcaseCommand::TestBeginIndex);
    BindText(*new TestEndText, TestcaseCommand::TestEndIndex);
    BindText(*new TestFailedText, TestcaseCommand::TestFailedIndex);
-   BindText(*new TestRetestText, TestcaseCommand::TestRetestIndex);
    BindText(*new TestQueryText, TestcaseCommand::TestQueryIndex);
+   BindText(*new TestRetestText, TestcaseCommand::TestRetestIndex);
    BindText(*new TestEraseText, TestcaseCommand::TestEraseIndex);
    BindText(*new TestResetText, TestcaseCommand::TestResetIndex);
 }
@@ -979,7 +979,6 @@ word TestcaseCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    word rc;
    string text, expl;
    auto v = false;
-   auto testdb = Singleton< TestDatabase >::Instance();
 
    switch(index)
    {
@@ -1017,21 +1016,21 @@ word TestcaseCommand::ProcessSubcommand(CliThread& cli, id_t index) const
       cli.EndOfInput(false);
       return test->SetFailed(rc, text);
 
-   case TestRetestIndex:
-      cli.EndOfInput(false);
-      rc = testdb->Retest(expl);
-      return cli.Report(rc, expl);
-
    case TestQueryIndex:
       if(GetBV(*this, cli, v) == Error) return -1;
       cli.EndOfInput(false);
       test->Query(v, expl);
       return cli.Report(0, expl);
 
+   case TestRetestIndex:
+      cli.EndOfInput(false);
+      rc = Singleton< TestDatabase >::Instance()->Retest(expl);
+      return cli.Report(rc, expl);
+
    case TestEraseIndex:
       if(!GetString(text, cli)) return -1;
       cli.EndOfInput(false);
-      rc = testdb->Erase(text, expl);
+      rc = Singleton< TestDatabase >::Instance()->Erase(text, expl);
       return cli.Report(rc, expl);
 
    case TestResetIndex:

@@ -22,7 +22,7 @@
 #ifndef CXXSYMBOLS_H_INCLUDED
 #define CXXSYMBOLS_H_INCLUDED
 
-#include "Temporary.h"
+#include "Base.h"
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -82,7 +82,7 @@ extern const NodeBase::Flags VALUE_REFS;
 //
 //  Symbol database.
 //
-class CxxSymbols: public NodeBase::Temporary
+class CxxSymbols: public NodeBase::Base
 {
    friend class NodeBase::Singleton< CxxSymbols >;
 public:

@@ -53,7 +53,7 @@ LibraryItem::~LibraryItem()
 void LibraryItem::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Temporary::Display(stream, prefix, options);
+   Base::Display(stream, prefix, options);
 
    stream << prefix << "name : " << name_ << CRLF;
 }

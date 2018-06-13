@@ -54,6 +54,15 @@ CodeCoverage::CodeCoverage()
 
 //------------------------------------------------------------------------------
 
+fn_name CodeCoverage_dtor = "CodeCoverage.dtor";
+
+CodeCoverage::~CodeCoverage()
+{
+   Debug::ft(CodeCoverage_dtor);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeCoverage_Build = "CodeCoverage.Build";
 
 word CodeCoverage::Build(std::ostringstream& expl)
@@ -651,6 +660,20 @@ word CodeCoverage::Retest(std::ostringstream& expl) const
 
    expl << report.str();
    return 0;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeCoverage_Shutdown = "CodeCoverage.Shutdown";
+
+void CodeCoverage::Shutdown(RestartLevel level)
+{
+   Debug::ft(CodeCoverage_Shutdown);
+
+   prevFuncs_.clear();
+   currFuncs_.clear();
+   prevTests_.clear();
+   currTests_.clear();
 }
 
 //------------------------------------------------------------------------------

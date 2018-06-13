@@ -29,6 +29,7 @@
 #include "Debug.h"
 #include "Element.h"
 #include "FileThread.h"
+#include "Formatters.h"
 #include "FunctionGuard.h"
 #include "Log.h"
 #include "Restart.h"
@@ -37,10 +38,17 @@
 #include "SysConsole.h"
 #include "SysFile.h"
 
+using std::ostream;
+using std::string;
+
 //------------------------------------------------------------------------------
 
 namespace NodeBase
 {
+SysMutex LogThread::LogFileLock_;
+
+//------------------------------------------------------------------------------
+
 fn_name LogThread_ctor = "LogThread.ctor";
 
 LogThread::LogThread() : Thread(BackgroundFaction)
@@ -73,6 +81,18 @@ void LogThread::Destroy()
    Debug::ft(LogThread_Destroy);
 
    Singleton< LogThread >::Destroy();
+}
+
+//------------------------------------------------------------------------------
+
+void LogThread::Display(ostream& stream,
+   const string& prefix, const Flags& options) const
+{
+   Thread::Display(stream, prefix, options);
+
+   auto lead = prefix + spaces(2);
+   stream << "LogFileLock_ : " << CRLF;
+   LogFileLock_.Display(stream, lead, options);
 }
 
 //------------------------------------------------------------------------------
@@ -126,17 +146,26 @@ void LogThread::Spool(ostringstreamPtr& log)
    if(log == nullptr) return;
 
    //  During a restart, our thread won't run, so output the log directly.
+   //  This is done locked to avoid contention for the log file, since many
+   //  threads come through here while exiting.
    //
    if(Restart::GetStatus() != Running)
    {
-      auto path =
-         Element::OutputPath() + PATH_SEPARATOR + Log::FileName() + ".txt";
-      auto file = SysFile::CreateOstream(path.c_str());
+      auto rc = LogFileLock_.Acquire(TIMEOUT_NEVER);
 
-      if(file != nullptr)
+      if(rc == SysMutex::Acquired)
       {
-         *file << log->str();
-         file.reset();
+         auto path =
+            Element::OutputPath() + PATH_SEPARATOR + Log::FileName() + ".txt";
+         auto file = SysFile::CreateOstream(path.c_str());
+
+         if(file != nullptr)
+         {
+            *file << log->str();
+            file.reset();
+         }
+
+         LogFileLock_.Release();
       }
 
       if(Element::RunningInLab()) SysConsole::Out() << log->str() << std::flush;

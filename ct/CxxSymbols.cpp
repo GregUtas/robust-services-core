@@ -877,6 +877,10 @@ void CxxSymbols::Shutdown(RestartLevel level)
 {
    Debug::ft(CxxSymbols_Shutdown);
 
+   //  Symbol tables are now preserved during restarts.
+   //
+   if(level < RestartReboot) return;
+
    classes_.reset();
    data_.reset();
    enums_.reset();
@@ -898,6 +902,10 @@ fn_name CxxSymbols_Startup = "CxxSymbols.Startup";
 void CxxSymbols::Startup(RestartLevel level)
 {
    Debug::ft(CxxSymbols_Startup);
+
+   //  Symbol tables are now preserved during restarts.
+   //
+   if(level < RestartReboot) return;
 
    classes_.reset(new ClassTable);
    data_.reset(new DataTable);

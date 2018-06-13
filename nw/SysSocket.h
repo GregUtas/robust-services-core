@@ -24,11 +24,11 @@
 
 #include "Dynamic.h"
 #include <cstddef>
+#include "NbTypes.h"
 #include "NwTypes.h"
 #include "SysDecls.h"
 #include "SysTypes.h"
 #include "ToolTypes.h"
-#include "TraceRecord.h"
 
 using namespace NodeBase;
 
@@ -136,18 +136,18 @@ public:
    //  Returns a trace record for RID if tracing is enabled on this
    //  socket.  DATA is event specific.
    //
-   NwTrace* TraceEvent(TraceRecord::Id rid, word data);
+   NwTrace* TraceEvent(TraceRecordId rid, word data);
 
    //  Returns a trace record for RID if this socket should trace PORT
    //  on this node.  DATA contains event-specific information.
    //
-   NwTrace* TracePort(TraceRecord::Id rid, ipport_t port, word data);
+   NwTrace* TracePort(TraceRecordId rid, ipport_t port, word data);
 
    //  Returns a trace record for RID if this socket should trace PORT or PEER.
    //  DATA is event specific.
    //
    NwTrace* TracePeer
-      (TraceRecord::Id rid, ipport_t port, const SysIpL3Addr& peer, word data);
+      (TraceRecordId rid, ipport_t port, const SysIpL3Addr& peer, word data);
 
    //  Overridden to display member variables.
    //

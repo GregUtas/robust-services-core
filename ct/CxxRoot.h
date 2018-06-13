@@ -22,7 +22,7 @@
 #ifndef CXXROOT_H_INCLUDED
 #define CXXROOT_H_INCLUDED
 
-#include "Temporary.h"
+#include "Base.h"
 #include <iosfwd>
 #include "CxxFwd.h"
 #include "NbTypes.h"
@@ -31,7 +31,7 @@
 
 namespace CodeTools
 {
-class CxxRoot : public NodeBase::Temporary
+class CxxRoot : public NodeBase::Base
 {
    friend class NodeBase::Singleton< CxxRoot >;
    friend NamespacePtr::deleter_type;

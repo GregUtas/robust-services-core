@@ -74,10 +74,18 @@ public:
    //  is not in the database.
    //
    State GetState(const std::string& testcase);
+
+   //  Overridden for restarts.
+   //
+   virtual void Shutdown(NodeBase::RestartLevel level) override;
 private:
    //  Private because this singleton is not subclassed.
    //
    TestDatabase();
+
+   //  Private because this singleton is not subclassed.
+   //
+   ~TestDatabase();
 
    enum LoadState
    {

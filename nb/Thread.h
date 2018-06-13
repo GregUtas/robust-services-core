@@ -39,7 +39,6 @@
 #include "SysThread.h"
 #include "SysTypes.h"
 #include "ToolTypes.h"
-#include "TraceRecord.h"
 
 namespace NodeBase
 {
@@ -522,7 +521,7 @@ private:
    //  provides debugging information.
    //
    static void Trace(Thread* thr, fn_name_arg func,
-      TraceRecord::Id rid, word info = 0);
+      TraceRecordId rid, word info = 0);
 
    //  Sets the signal to be raised or that is being handled.
    //

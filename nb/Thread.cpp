@@ -2396,9 +2396,9 @@ void Thread::ReleaseResources()
    if(deleted_) return;
    deleted_ = true;
 
-   //  Remove the thread from the registry after voiding msgq_.  The thread
-   //  may have trapped because of corrupt message queue, so let the object
-   //  pool audit will recover any messages still queued against it.
+   //  Remove the thread from the registry after voiding its message queue.
+   //  The thread may have trapped because of a corrupt message queue, so
+   //  let the object pool audit recover any messages queued against it.
    //
    msgq_.Init(Pooled::LinkDiff());
    Singleton< ThreadRegistry >::Instance()->UnbindThread(*this);
@@ -3041,8 +3041,7 @@ string Thread::to_str() const
 
 //------------------------------------------------------------------------------
 
-void Thread::Trace
-   (Thread* thr, fn_name_arg func, TraceRecord::Id rid, word info)
+void Thread::Trace(Thread* thr, fn_name_arg func, TraceRecordId rid, word info)
 {
    if(thr == nullptr) thr = RunningThread(false);
    if(thr == nullptr) return;

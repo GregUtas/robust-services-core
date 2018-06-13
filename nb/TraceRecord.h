@@ -25,6 +25,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <iosfwd>
+#include "NbTypes.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -45,7 +46,7 @@ public:
    //  subclassing or to determine the correct subclass for a cast.  Values
    //  are specific to each trace tool.
    //
-   typedef uint8_t Id;
+   typedef TraceRecordId Id;
 
    //  Identifies a record that has not been fully constructed.
    //
@@ -71,9 +72,10 @@ public:
 
    //  Invoked to display the record in STREAM.  DIFF is set to suppress
    //  output (e.g. timing information) that would result in undesirable
-   //  mismatches in a >diff between traces.  A subclass must begin by
-   //  invoking TraceRecord::Display.  Returns false if nothing was
-   //  displayed, which suppresses insertion of an endline.
+   //  mismatches in a >diff between traces.  A subclass may invoke this
+   //  version, which displays EventString() (see below) followed by a
+   //  TraceDump::Tab.  Returns false if nothing was displayed, which
+   //  prevents the insertion of an endline.
    //
    virtual bool Display(std::ostream& stream, bool diff);
 

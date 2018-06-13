@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CtModule.h"
+#include "CodeCoverage.h"
 #include "CodeIncrement.h"
 #include "CxxExecute.h"
 #include "CxxRoot.h"
@@ -81,6 +82,9 @@ fn_name CtModule_Shutdown = "CtModule.Shutdown";
 void CtModule::Shutdown(RestartLevel level)
 {
    Debug::ft(CtModule_Shutdown);
+
+   auto coverdb = Singleton< CodeCoverage >::Extant();
+   if(coverdb != nullptr) coverdb->Shutdown(level);
 
    Context::Shutdown(level);
    Singleton< CxxRoot >::Instance()->Shutdown(level);

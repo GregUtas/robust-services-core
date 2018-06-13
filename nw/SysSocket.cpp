@@ -174,7 +174,7 @@ bool SysSocket::TraceEnabled()
 
 fn_name SysSocket_TraceEvent = "SysSocket.TraceEvent";
 
-NwTrace* SysSocket::TraceEvent(TraceRecord::Id rid, word data)
+NwTrace* SysSocket::TraceEvent(TraceRecordId rid, word data)
 {
    Debug::ft(SysSocket_TraceEvent);
 
@@ -188,7 +188,7 @@ NwTrace* SysSocket::TraceEvent(TraceRecord::Id rid, word data)
 fn_name SysSocket_TracePeer = "SysSocket.TracePeer";
 
 NwTrace* SysSocket::TracePeer
-   (TraceRecord::Id rid, ipport_t port, const SysIpL3Addr& peer, word data)
+   (TraceRecordId rid, ipport_t port, const SysIpL3Addr& peer, word data)
 {
    Debug::ft(SysSocket_TracePeer);
 
@@ -208,7 +208,7 @@ NwTrace* SysSocket::TracePeer
 
 fn_name SysSocket_TracePort = "SysSocket.TracePort";
 
-NwTrace* SysSocket::TracePort(TraceRecord::Id rid, ipport_t port, word data)
+NwTrace* SysSocket::TracePort(TraceRecordId rid, ipport_t port, word data)
 {
    Debug::ft(SysSocket_TracePort);
 

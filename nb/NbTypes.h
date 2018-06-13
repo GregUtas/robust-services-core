@@ -126,6 +126,10 @@ typedef uint16_t ModuleId;
 //
 typedef uint16_t ThreadId;
 
+//  An identifier for a trace record.
+//
+typedef uint8_t TraceRecordId;
+
 //  An identifier for an object pool.
 //
 typedef uint8_t ObjectPoolId;

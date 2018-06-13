@@ -1,0 +1,14 @@
+stop
+clear buffer
+clear tools
+set tools fmo on
+set scope full
+clear selections
+include all on
+send &testcase.name
+sched show
+sb status
+send cout
+testcase end
+delay 1
+start

@@ -1,0 +1,66 @@
+nt>sched show
+SCHEDULER REPORT: 13-Jun-2018 08:47:42.873 on Reigi
+for interval beginning at 08:45:15.875
+----------------------------------------------------------------------------
+      THREADS          |    SINCE START OF CURRENT 15-MIN INTERVAL    | LAST
+                       |            rtc  max   max     max  total     |5 SEC
+id    name     host f b| ex yields  t/o msgs stack   usecs  msecs %cpu| %cpu
+----------------------------------------------------------------------------
+      idle                                                 129538 88.1  95.7
+ 1    root      ff8 w S   0   4409    0    0   176  292278    544  0.4   0.1
+ 2    init     32b8 s S   0   4416    0    0   803  602916   1517  1.0   0.1
+ 3    file     4080 b     0     53    0   15   206      91    192  0.1   0.0
+ 4    cout     32a0 B     0     52    0   11   181      58     28  0.0   0.0
+ 5     cin     45e0 B C   0     17    0    0   143      46      0  0.0   0.0
+ 6  objaud     46f0 A     0     79    0    0   425   10391     46  0.0   0.5
+ 7   stats      548 B S   0      3    0    0   203      68      0  0.0   0.0
+ 8     log     47a4 B S   0      1    0    0   196      33      0  0.0   0.0
+ 9     cli     3a90 O     0     30    0    0   623   11705  13321  9.1   0.0
+10 invoker      860 P     0    641    0    0   374   36975    719  0.5   2.4
+11   timer     4628 P S   0     15    0    0   264     332      2  0.0   0.0
+12   tcpio     25f4 P N   0      1    0    0   178     337      0  0.0   0.0
+13   udpio     4370 P N   0    884    0    0   325    7726    248  0.2   0.3
+14   udpio     3324 P N   0    903    0    0   270    5244    245  0.2   0.3
+15 traffic     3540 P S   0    554    0    0   333   11492    598  0.4   0.5
+----------------------------------------------------------------------------
+nt>sb status
+STATUS REPORT: 13-Jun-2018 08:47:42.875 on Reigi
+MEMORY USAGE
+  Alloc                            Bytes        Max     Memory  Heap
+  Fails     Allocs      Frees     In Use     In Use       Type  Address
+      0        886        879        464      44200  temporary  04000000
+      0      21032      16707   29140848   29142784    dynamic  020F0000
+      0       3260         49     287636     287636  protected  020A0000
+      0         70         25    8728920    8730576  permanent  00AC0000
+      0         30          2       2864       2864  immutable  020C0000
+
+OBJECT POOLS
+  Alloc  Lowest    Curr    Curr
+  Fails   Avail   Avail  In Use   Allocs    Frees   Pool
+      0    1009    1009      15       23        8   Threads
+      0    6058    6131      13      274      261   MsgBuffers
+      0    8840    8865     351    16884    16533   SbIpBuffers
+      0       *   10240       0        0        0   BtIpBuffers
+      0   17594   17616     816     5470     4654   Contexts
+      0    7816    7841     351    16884    16533   Messages
+      0   29168   29202    1518     2631     1113   MsgPorts
+      0   29169   29202    1518     2631     1113   ProtocolSMs
+      0    8838    8845     371     3144     2773   Timers
+      0    2045    2048       0    21010    21010   Events
+      0   16579   16592     816     1436      620   ServiceSMs
+      0       *    1024       0        0        0   MediaEndpts
+
+CPU IDLE TIME: 95.7%
+
+IP PORT DISCARDS
+  There were no discards to display.
+
+INGRESS WORK QUEUES
+    Curr     Max     Max
+  Length  Length   Delay   Faction
+       0       3     891   Payload
+
+FACTORY DISCARDS
+  There were no discards to display.
+nt>send cout
+  OK.

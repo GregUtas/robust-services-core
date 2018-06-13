@@ -397,6 +397,10 @@ void CxxRoot::Shutdown(RestartLevel level)
 {
    Debug::ft(CxxRoot_Shutdown);
 
+   //  Parser output is now preserved during restarts.
+   //
+   if(level < RestartReboot) return;
+
    gns_.reset();
 }
 
@@ -407,6 +411,10 @@ fn_name CxxRoot_Startup = "CxxRoot.Startup";
 void CxxRoot::Startup(RestartLevel level)
 {
    Debug::ft(CxxRoot_Startup);
+
+   //  Parser output is now preserved during restarts.
+   //
+   if(level < RestartReboot) return;
 
    CxxChar::Initialize();
 

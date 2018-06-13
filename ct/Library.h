@@ -22,7 +22,7 @@
 #ifndef LIBRARY_H_INCLUDED
 #define LIBRARY_H_INCLUDED
 
-#include "Temporary.h"
+#include "Base.h"
 #include <cstddef>
 #include <iosfwd>
 #include <string>
@@ -47,7 +47,7 @@ namespace CodeTools
 {
 //  Provides access to the source code being analyzed by tools.
 //
-class Library : public NodeBase::Temporary
+class Library : public NodeBase::Base
 {
    friend class NodeBase::Singleton< Library >;
 public:

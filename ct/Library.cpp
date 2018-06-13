@@ -82,8 +82,8 @@ Library::Library() :
 {
    Debug::ft(Library_ctor);
 
-   dirs_.Init(MaxDirs, CodeDir::CellDiff(), MemTemp);
-   files_.Init(MaxFiles, CodeFile::CellDiff(), MemTemp);
+   dirs_.Init(MaxDirs, CodeDir::CellDiff(), MemPerm);
+   files_.Init(MaxFiles, CodeFile::CellDiff(), MemPerm);
    vars_.Init(LibrarySet::LinkDiff());
 
    //  After a restart, sourcePathCfg_ may still exist, so try to look it
@@ -263,7 +263,7 @@ word Library::Assign
 void Library::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Temporary::Display(stream, prefix, options);
+   Base::Display(stream, prefix, options);
 
    stream << prefix << "SourcePath    : " << SourcePath_ << CRLF;
    stream << prefix << "sourcePathCfg : " << sourcePathCfg_.get() << CRLF;
@@ -617,6 +617,10 @@ void Library::Shutdown(RestartLevel level)
 {
    Debug::ft(Library_Shutdown);
 
+   //  The library is now preserved during restarts.
+   //
+   if(level < RestartReboot) return;
+
    //  Delete variables, files, and directories.
    //
    vars_.Purge();
@@ -631,6 +635,10 @@ fn_name Library_Startup = "Library.Startup";
 void Library::Startup(RestartLevel level)
 {
    Debug::ft(Library_Startup);
+
+   //  The library is now preserved during restarts.
+   //
+   if(level < RestartReboot) return;
 
    //  Create the fixed sets.
    //

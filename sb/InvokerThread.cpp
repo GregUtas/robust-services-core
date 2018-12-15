@@ -188,18 +188,18 @@ Thread::RecoveryAction InvokerThread::Recover()
    {
       ctx_->Dump();
 
-      //  Stupid unique_ptr tricks #1.  The implementation of unique_ptr.reset()
-      //  may be equivalent to this:
+      //  The implementation of unique_ptr.reset may be equivalent to this:
       //    item = this->ptr_;
       //    this->ptr_ = nullptr;
       //    delete item;
       //  That is, the unique_ptr does not point to the item being deleted while
-      //  its destructor is executing.  Consequently, Context::RunningContext(),
+      //  its destructor is executing.  Consequently, Context::RunningContext,
       //  which depends on our ctx_ field, cannot find the running context (the
-      //  one being deleted).  So instead of simply invoking ctx_.reset(), we do
+      //  one being deleted).  So instead of simply invoking ctx_.reset, we do
       //  the following so that ctx_ will be valid during deletion:
       //
-      delete ctx_.get();
+      auto ctx = ctx_.get();
+      delete ctx;
       ctx_.release();
    }
 

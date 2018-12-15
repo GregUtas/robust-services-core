@@ -21,6 +21,7 @@
 //
 #include "Debug.h"
 #include <sstream>
+#include "AssertionException.h"
 #include "CoutThread.h"
 #include "Element.h"
 #include "Formatters.h"
@@ -40,6 +41,16 @@ namespace NodeBase
 std::atomic_flag Debug::FtLock_ = ATOMIC_FLAG_INIT;
 Flags Debug::FcFlags_ = Flags(InitFlags::TraceInit() ? 1 << TracingActive : 0);
 Flags Debug::SwFlags_ = Flags();
+
+//------------------------------------------------------------------------------
+
+void Debug::Assert(bool condition, debug32_t errval)
+{
+   if(!condition)
+   {
+      throw AssertionException(errval);
+   }
+}
 
 //------------------------------------------------------------------------------
 

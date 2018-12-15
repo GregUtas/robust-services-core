@@ -24,7 +24,6 @@
 
 #include <atomic>
 #include <string>
-#include "AssertionException.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -78,13 +77,7 @@ public:
 
    //  Throws an exception if CONDITION is false.  ERRVAL is for debugging.
    //
-   static void Assert(bool condition, debug32_t errval = 0)
-   {
-      if(!condition)
-      {
-         throw AssertionException(errval);
-      }
-   }
+   static void Assert(bool condition, debug32_t errval = 0);
 
    //  Invokes CoutThread::Spool(s, eol) if the flag ShowToolProgress
    //  or FORCE is set, followed by Thread::Pause(10).

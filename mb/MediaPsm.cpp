@@ -246,7 +246,7 @@ MediaSsm* MediaPsm::GetMediaSsm() const
 
    if(root == nullptr)
    {
-      Debug::SwErr(MediaPsm_GetMediaSsm, 0, 0);
+      Debug::SwLog(MediaPsm_GetMediaSsm, 0, 0);
       return nullptr;
    }
 
@@ -457,7 +457,7 @@ void MediaPsm::SetOgPsm(MediaPsm* ogPsm)
    //
    if(!IsUppermost())
    {
-      Debug::SwErr(MediaPsm_SetOgPsm, GetFactory(), 0);
+      Debug::SwLog(MediaPsm_SetOgPsm, GetFactory(), 0);
       return;
    }
 
@@ -490,7 +490,7 @@ void MediaPsm::SetOgTone(Tone::Id ogTone)
    //
    if(!IsUppermost())
    {
-      Debug::SwErr(MediaPsm_SetOgTone, GetFactory(), 0);
+      Debug::SwLog(MediaPsm_SetOgTone, GetFactory(), 0);
       return;
    }
 
@@ -533,7 +533,7 @@ void MediaPsm::SynchEdge(MediaPsm& psm) const
    {
       //  PSM should be in a stable state, so this is a problem.
       //
-      Debug::SwErr(MediaPsm_SynchEdge, psm.GetFactory(), GetFactory());
+      Debug::SwLog(MediaPsm_SynchEdge, psm.GetFactory(), GetFactory());
    }
 }
 

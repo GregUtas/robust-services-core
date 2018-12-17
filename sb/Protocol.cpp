@@ -126,7 +126,7 @@ SignalId Protocol::ExtractSignal(const SbIpBuffer& buff) const
 
    //  This is a pure virtual function.
    //
-   Debug::SwErr(Protocol_ExtractSignal, Prid(), 0, ErrorLog);
+   Debug::SwLog(Protocol_ExtractSignal, Prid(), 0);
    return NIL_ID;
 }
 

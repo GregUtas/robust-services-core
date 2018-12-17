@@ -75,7 +75,7 @@ EventHandler::Rc PotsProxyNuAnalyzeLocalMessage::ProcessEvent
       cause = Cause::UnallocatedNumber;
    }
 
-   Debug::SwErr(PotsProxyNuAnalyzeLocalMessage_ProcessEvent, sid, cause);
+   Debug::SwLog(PotsProxyNuAnalyzeLocalMessage_ProcessEvent, sid, cause);
    return pssm.RaiseReleaseCall(nextEvent, cause);
 }
 
@@ -117,7 +117,7 @@ EventHandler::Rc PotsProxyCiCollectInformation::ProcessEvent
       return pssm.RaiseAnalyzeInformation(nextEvent);
    }
 
-   Debug::SwErr(PotsProxyNuAnalyzeLocalMessage_ProcessEvent, sid, 0);
+   Debug::SwLog(PotsProxyNuAnalyzeLocalMessage_ProcessEvent, sid, 0);
    return pssm.RaiseReleaseCall(nextEvent, Cause::TemporaryFailure);
 }
 
@@ -147,7 +147,7 @@ EventHandler::Rc PotsProxyScAnalyzeLocalMessage::ProcessEvent
       //  some other progress indicator arrived.
       //
       cpi = msg->FindType< ProgressInfo >(CipParameter::Progress);
-      Debug::SwErr
+      Debug::SwLog
          (PotsProxyScAnalyzeLocalMessage_ProcessEvent, cpi->progress, 1);
       break;
 
@@ -156,7 +156,7 @@ EventHandler::Rc PotsProxyScAnalyzeLocalMessage::ProcessEvent
       return pssm.RaiseReleaseCall(nextEvent, cci->cause);
 
    default:
-      Debug::SwErr(PotsProxyScAnalyzeLocalMessage_ProcessEvent, sid, 0);
+      Debug::SwLog(PotsProxyScAnalyzeLocalMessage_ProcessEvent, sid, 0);
    }
 
    return pssm.RaiseReleaseCall(nextEvent, Cause::MessageInvalidForState);
@@ -263,7 +263,7 @@ EventHandler::Rc PotsProxyPcAnalyzeLocalMessage::ProcessEvent
       case Progress::Alerting:
          return pssm.RaiseLocalAlerting(nextEvent);
       default:
-         Debug::SwErr
+         Debug::SwLog
             (PotsProxyPcAnalyzeLocalMessage_ProcessEvent, cpi->progress, 1);
       }
       break;
@@ -276,7 +276,7 @@ EventHandler::Rc PotsProxyPcAnalyzeLocalMessage::ProcessEvent
       return pssm.RaiseLocalRelease(nextEvent, cci->cause);
 
    default:
-      Debug::SwErr(PotsProxyPcAnalyzeLocalMessage_ProcessEvent, sid, 0);
+      Debug::SwLog(PotsProxyPcAnalyzeLocalMessage_ProcessEvent, sid, 0);
    }
 
    return pssm.RaiseReleaseCall(nextEvent, Cause::MessageInvalidForState);
@@ -328,7 +328,7 @@ EventHandler::Rc PotsProxyTaAnalyzeLocalMessage::ProcessEvent
       case Progress::Alerting:
          return pssm.RaiseLocalAlerting(nextEvent);
       default:
-         Debug::SwErr
+         Debug::SwLog
             (PotsProxyTaAnalyzeLocalMessage_ProcessEvent, cpi->progress, 1);
       }
       break;
@@ -341,7 +341,7 @@ EventHandler::Rc PotsProxyTaAnalyzeLocalMessage::ProcessEvent
       return pssm.RaiseLocalRelease(nextEvent, cci->cause);
    }
 
-   Debug::SwErr(PotsProxyTaAnalyzeLocalMessage_ProcessEvent, sid, 0);
+   Debug::SwLog(PotsProxyTaAnalyzeLocalMessage_ProcessEvent, sid, 0);
    return pssm.RaiseReleaseCall(nextEvent, Cause::MessageInvalidForState);
 }
 
@@ -380,7 +380,7 @@ EventHandler::Rc PotsProxyAcAnalyzeLocalMessage::ProcessEvent
          if(pssm.ProxyCount() > 1) return Suspend;
          //  [[fallthrough]]
       default:
-         Debug::SwErr
+         Debug::SwLog
             (PotsProxyAcAnalyzeLocalMessage_ProcessEvent, cpi->progress, 1);
       }
       break;
@@ -393,7 +393,7 @@ EventHandler::Rc PotsProxyAcAnalyzeLocalMessage::ProcessEvent
       if(pssm.ProxyCount() > 1) return pssm.RaiseLocalAnswer(nextEvent);
       //  [[fallthrough]]
    default:
-      Debug::SwErr(PotsProxyAcAnalyzeLocalMessage_ProcessEvent, sid, 0);
+      Debug::SwLog(PotsProxyAcAnalyzeLocalMessage_ProcessEvent, sid, 0);
    }
 
    return pssm.RaiseReleaseCall(nextEvent, Cause::MessageInvalidForState);

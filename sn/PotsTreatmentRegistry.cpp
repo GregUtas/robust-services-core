@@ -79,7 +79,7 @@ PotsTreatmentQueue* PotsTreatmentRegistry::CauseToTreatmentQ
 
    if(cause > Cause::MaxInd)
    {
-      Debug::SwErr(PotsTreatmentRegistry_CauseToTreatmentQ, cause, 0);
+      Debug::SwLog(PotsTreatmentRegistry_CauseToTreatmentQ, cause, 0);
       return nullptr;
    }
 
@@ -121,7 +121,7 @@ void PotsTreatmentRegistry::SetCauseToTreatmentQ
 {
    if(cause > Cause::MaxInd)
    {
-      Debug::SwErr(PotsTreatmentRegistry_SetCauseToTreatmentQ, cause, 0);
+      Debug::SwLog(PotsTreatmentRegistry_SetCauseToTreatmentQ, cause, 0);
       return;
    }
 

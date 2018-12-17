@@ -215,7 +215,7 @@ void Message::ChangeDir(MsgDirection nextDir)
 
    if(currDir == nextDir)
    {
-      Debug::SwErr(Message_ChangeDir, currDir, 0);
+      Debug::SwLog(Message_ChangeDir, currDir, 0);
       return;
    }
 
@@ -276,7 +276,7 @@ void Message::Enqueue(Q1Way< Message >& whichq)
 
    if(!whichq.Enq(*this))
    {
-      Debug::SwErr(Message_Enqueue, pack2(GetProtocol(), GetSignal()), 0);
+      Debug::SwLog(Message_Enqueue, pack2(GetProtocol(), GetSignal()), 0);
       delete this;
       return;
    }
@@ -298,7 +298,7 @@ void Message::Exqueue()
    {
       //  The message wasn't where it claimed to be.
       //
-      Debug::SwErr(Message_Exqueue, 0, 0);
+      Debug::SwLog(Message_Exqueue, 0, 0);
       return;
    }
 
@@ -400,7 +400,7 @@ void Message::Handled(bool retain)
    //
    if(handled_)
    {
-      Debug::SwErr(Message_Handled, pack2(GetProtocol(), GetSignal()), 0);
+      Debug::SwLog(Message_Handled, pack2(GetProtocol(), GetSignal()), 0);
       return;
    }
 
@@ -439,7 +439,7 @@ void Message::Henqueue(Q1Way< Message >& whichq)
 
    if(!whichq.Henq(*this))
    {
-      Debug::SwErr(Message_Enqueue, pack2(GetProtocol(), GetSignal()), 0);
+      Debug::SwLog(Message_Enqueue, pack2(GetProtocol(), GetSignal()), 0);
       delete this;
       return;
    }
@@ -555,7 +555,7 @@ bool Message::Relay(ProtocolSM& ogPsm)
       return true;
    }
 
-   Debug::SwErr(Message_Relay, pack2(GetProtocol(), GetSignal()), error);
+   Debug::SwLog(Message_Relay, pack2(GetProtocol(), GetSignal()), error);
    return false;
 }
 
@@ -606,7 +606,7 @@ bool Message::Restore()
       return true;
    }
 
-   Debug::SwErr(Message_Restore, pack2(GetProtocol(), GetSignal()), error);
+   Debug::SwLog(Message_Restore, pack2(GetProtocol(), GetSignal()), error);
    return false;
 }
 
@@ -635,7 +635,7 @@ bool Message::Retrieve(ProtocolSM* psm)
       return true;
    }
 
-   Debug::SwErr(Message_Retrieve, pack2(GetProtocol(), GetSignal()), error);
+   Debug::SwLog(Message_Retrieve, pack2(GetProtocol(), GetSignal()), error);
    return false;
 }
 
@@ -713,7 +713,7 @@ bool Message::Send(Route route)
    {
       if((txport == nullptr) || (txpsm->Lower() != txport))
       {
-         Debug::SwErr(Message_Send, txpsm->GetFactory(), 1);
+         Debug::SwLog(Message_Send, txpsm->GetFactory(), 1);
          return txpsm->SendToLower(*this);
       }
    }
@@ -745,7 +745,7 @@ bool Message::Send(Route route)
          //
          if(!local || (txpsm == nullptr))
          {
-            Debug::SwErr(Message_Send, pack2(GetProtocol(), GetSignal()), 2);
+            Debug::SwLog(Message_Send, pack2(GetProtocol(), GetSignal()), 2);
             header->priority = Progress;
          }
          break;
@@ -845,7 +845,7 @@ bool Message::Send(Route route)
       auto fac = facreg->GetFactory(header->txAddr.fid);
 
       if(fac == nullptr)
-         Debug::SwErr(Message_Send, pack2(GetProtocol(), GetSignal()), 3);
+         Debug::SwLog(Message_Send, pack2(GetProtocol(), GetSignal()), 3);
       else
          fac->RecordMsg(false, !local, header->length);
 
@@ -867,7 +867,7 @@ bool Message::SendFailure(debug64_t errval, debug32_t offset)
 {
    Debug::ft(Message_SendFailure);
 
-   Debug::SwErr(Message_SendFailure, errval, offset);
+   Debug::SwLog(Message_SendFailure, errval, offset);
    Handled(false);
    return false;
 }
@@ -910,7 +910,7 @@ bool Message::SendToSelf()
       return Send(Internal);
    }
 
-   Debug::SwErr(Message_SendToSelf, pack2(GetProtocol(), GetSignal()), error);
+   Debug::SwLog(Message_SendToSelf, pack2(GetProtocol(), GetSignal()), error);
    return false;
 }
 
@@ -1067,7 +1067,7 @@ void Message::Unsave()
    if(saves_ > 0)
       --saves_;
    else
-      Debug::SwErr(Message_Unsave, pack2(GetProtocol(), GetSignal()), 0);
+      Debug::SwLog(Message_Unsave, pack2(GetProtocol(), GetSignal()), 0);
 
    if((saves_ == 0) && handled_) delete this;
 }

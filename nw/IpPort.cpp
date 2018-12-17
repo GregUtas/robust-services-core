@@ -196,7 +196,7 @@ IoThread* IpPort::CreateIoThread()
 
    //  This function must be overridden by ports with input handlers.
    //
-   Debug::SwErr(IpPort_CreateIoThread, service_->Name(), port_);
+   Debug::SwLog(IpPort_CreateIoThread, service_->Name(), port_);
    return nullptr;
 }
 
@@ -326,13 +326,13 @@ bool IpPort::SetSocket(SysSocket* socket)
    //
    if(handler_ == nullptr)
    {
-      Debug::SwErr(IpPort_SetSocket, port_, 0);
+      Debug::SwLog(IpPort_SetSocket, port_, 0);
       return false;
    }
 
    if(thread_ == nullptr)
    {
-      Debug::SwErr(IpPort_SetSocket, port_, 1);
+      Debug::SwLog(IpPort_SetSocket, port_, 1);
       return false;
    }
 
@@ -340,7 +340,7 @@ bool IpPort::SetSocket(SysSocket* socket)
    //
    if(socket_ != nullptr)
    {
-      Debug::SwErr(IpPort_SetSocket, port_, 2);
+      Debug::SwLog(IpPort_SetSocket, port_, 2);
    }
 
    socket_ = socket;
@@ -367,7 +367,7 @@ void IpPort::SetThread(IoThread* thread)
    //
    if(thread_ != nullptr)
    {
-      Debug::SwErr(IpPort_SetThread, port_, 0);
+      Debug::SwLog(IpPort_SetThread, port_, 0);
    }
 
    thread_ = thread;

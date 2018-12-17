@@ -158,7 +158,7 @@ word TrafficCommand::ProcessCommand(CliThread& cli) const
       break;
 
    default:
-      Debug::SwErr(TrafficCommand_ProcessCommand, index, 0);
+      Debug::SwLog(TrafficCommand_ProcessCommand, index, 0);
       return cli.Report(index, SystemErrorExpl);
    }
 

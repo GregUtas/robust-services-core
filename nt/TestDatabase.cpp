@@ -102,7 +102,7 @@ void TestDatabase::Commit() const
    if(stream == nullptr)
    {
       auto expl = "Failed to create testcase database";
-      Debug::SwErr(TestDatabase_Commit, expl, 0);
+      Debug::SwLog(TestDatabase_Commit, expl, 0);
       return;
    }
 
@@ -145,7 +145,7 @@ TestDatabase::LoadState TestDatabase::GetError(const string& reason)
 {
    Debug::ft(TestDatabase_GetError);
 
-   Debug::SwErr(TestDatabase_GetError, reason, 0);
+   Debug::SwLog(TestDatabase_GetError, reason, 0);
    return LoadError;
 }
 
@@ -252,7 +252,7 @@ void TestDatabase::Load()
    if(stream == nullptr)
    {
       auto expl = "Failed to load testcase database";
-      Debug::SwErr(TestDatabase_Load, expl, 0);
+      Debug::SwLog(TestDatabase_Load, expl, 0);
       return;
    }
 
@@ -274,7 +274,7 @@ void TestDatabase::Load()
    if(state == GetTestcase)
    {
       expl = "Reached end of database unexpectedly";
-      Debug::SwErr(TestDatabase_Load, expl, 0);
+      Debug::SwLog(TestDatabase_Load, expl, 0);
    }
 
    stream.reset();
@@ -363,7 +363,7 @@ void TestDatabase::SetState(const string& testcase, State next)
    if(test == tests_.end())
    {
       auto expl = "Non-existent testcase: " + testcase;
-      Debug::SwErr(TestDatabase_SetState, expl, 0);
+      Debug::SwLog(TestDatabase_SetState, expl, 0);
       return;
    };
 
@@ -413,7 +413,7 @@ void TestDatabase::Update()
    if(!SysFile::FindFiles(indir.c_str(), ".txt", files))
    {
       auto expl = "Could not open directory " + indir;
-      Debug::SwErr(TestDatabase_Update, expl, 0);
+      Debug::SwLog(TestDatabase_Update, expl, 0);
    }
 
    //  Search each *.txt file for the command "testcase begin", which
@@ -449,7 +449,7 @@ void TestDatabase::Update()
    if(errors > 0)
    {
       auto expl = "Errors opening files: " + std::to_string(errors);
-      Debug::SwErr(TestDatabase_Update, expl, 0);
+      Debug::SwLog(TestDatabase_Update, expl, 0);
    }
 
    guard.~FunctionGuard();

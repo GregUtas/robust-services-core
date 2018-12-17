@@ -409,7 +409,7 @@ void LibraryOpcode::Execute()
 
    if(result == nullptr)
    {
-      Debug::SwErr(LibraryOpcode_Execute, op_, 0);
+      Debug::SwLog(LibraryOpcode_Execute, op_, 0);
       err_ = InterpreterError;
    }
 }
@@ -494,7 +494,7 @@ LibExprErr Interpreter::ApplyOperator(bool operand)
          //
          //  These shouldn't be on the operator stack.
          //
-         Debug::SwErr(Interpreter_ApplyOperator, op, 1);
+         Debug::SwLog(Interpreter_ApplyOperator, op, 1);
          return InterpreterError;
 
       default:
@@ -522,7 +522,7 @@ LibExprErr Interpreter::ApplyOperator(bool operand)
       return ExpressionOk;
    }
 
-   Debug::SwErr(Interpreter_ApplyOperator, operands_.size(), 0);
+   Debug::SwLog(Interpreter_ApplyOperator, operands_.size(), 0);
    return InterpreterError;
 }
 
@@ -687,7 +687,7 @@ LibrarySet* Interpreter::Evaluate()
    case 1:
       break;
    default:
-      Debug::SwErr(Interpreter_Evaluate, operands_.size(), 1);
+      Debug::SwLog(Interpreter_Evaluate, operands_.size(), 1);
       return Error(InterpreterError);
    }
 
@@ -737,7 +737,7 @@ LibExprErr Interpreter::GetToken()
          return ExpressionOk;
       }
 
-      Debug::SwErr(Interpreter_GetToken, token_, 0);
+      Debug::SwLog(Interpreter_GetToken, token_, 0);
       return InterpreterError;
    }
 
@@ -876,7 +876,7 @@ LibExprErr Interpreter::HandleToken()
       }
    }
 
-   Debug::SwErr(Interpreter_HandleToken, type_, 0);
+   Debug::SwLog(Interpreter_HandleToken, type_, 0);
    return InterpreterError;
 }
 

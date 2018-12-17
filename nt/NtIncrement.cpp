@@ -3556,7 +3556,7 @@ void RecoveryTestThread::Enter()
       case Sleep:
          break;
       case Swerr:
-         Debug::SwErr(RecoveryTestThread_Enter, test, 1, ErrorLog);
+         Debug::SwLog(RecoveryTestThread_Enter, test, 1, SwError);
          break;
       case Terminate:
          std::terminate();
@@ -3565,7 +3565,7 @@ void RecoveryTestThread::Enter()
          Raise(signal_);
          break;
       default:
-         Debug::SwErr(RecoveryTestThread_Enter, test, 0);
+         Debug::SwLog(RecoveryTestThread_Enter, test, 0);
       }
 
       //  Sleep for 3 seconds or until interrupted to perform the next test.
@@ -3795,7 +3795,7 @@ StackText::StackText() : CliText(StackTextExpl, StackTextStr) { }
 //------------------------------------------------------------------------------
 
 fixed_string SwerrTextStr = "swerr";
-fixed_string SwerrTextExpl = "cause a software abort log";
+fixed_string SwerrTextExpl = "cause a software exception";
 
 SwerrText::SwerrText() : CliText(SwerrTextExpl, SwerrTextStr) { }
 
@@ -3929,7 +3929,7 @@ word RecoverCommand::ProcessCommand(CliThread& cli) const
       break;
 
    default:
-      Debug::SwErr(RecoverCommand_ProcessCommand, index, 0);
+      Debug::SwLog(RecoverCommand_ProcessCommand, index, 0);
       return cli.Report(index, SystemErrorExpl);
    }
 

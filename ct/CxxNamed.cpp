@@ -54,7 +54,7 @@ CxxNamed* ReferentError(const string& item, debug32_t offset)
    Debug::ft(CodeTools_ReferentError);
 
    auto expl = "Failed to find referent for " + item;
-   Context::SwErr(CodeTools_ReferentError, expl, offset);
+   Context::SwLog(CodeTools_ReferentError, expl, offset);
    return nullptr;
 }
 
@@ -169,7 +169,7 @@ void CxxNamed::FindReferent()
    Debug::ft(CxxNamed_FindReferent);
 
    auto expl = "FindReferent() not implemented by " + strClass(this, false);
-   Context::SwErr(CxxNamed_FindReferent, expl, 0);
+   Context::SwLog(CxxNamed_FindReferent, expl, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -291,7 +291,7 @@ StackArg CxxNamed::MemberToArg(StackArg& via, Cxx::Operator op)
    //  This should only be invoked on ClassData.
    //
    auto expl = "Unexpected member selection by " + *via.item->Name();
-   Context::SwErr(CxxNamed_MemberToArg, expl, op);
+   Context::SwLog(CxxNamed_MemberToArg, expl, op);
 
    return NameToArg(op);
 }
@@ -481,7 +481,7 @@ CxxNamed* CxxNamed::ResolveName(const CodeFile* file,
 
       default:
          auto expl = "Invalid type found while resolving " + name;
-         Context::SwErr(CxxNamed_ResolveName, expl, type);
+         Context::SwLog(CxxNamed_ResolveName, expl, type);
          return nullptr;
       }
    }
@@ -551,7 +551,7 @@ void CxxNamed::SetReferent(CxxNamed* item, const SymbolView* view) const
    Debug::ft(CxxNamed_SetReferent);
 
    auto expl = "SetReferent() not implemented by " + strClass(this, false);
-   Context::SwErr(CxxNamed_FindReferent, expl, 0);
+   Context::SwLog(CxxNamed_FindReferent, expl, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -563,7 +563,7 @@ void CxxNamed::SetTemplateParms(TemplateParmsPtr& parms)
    Debug::ft(CxxNamed_SetTemplateParms);
 
    auto expl = "Template parameters not supported by " + Trace();
-   Context::SwErr(CxxNamed_SetTemplateParms, expl, 0);
+   Context::SwLog(CxxNamed_SetTemplateParms, expl, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -691,7 +691,7 @@ void DataSpec::AdjustPtrs(TagCount count)
    if(!IsAutoDecl())
    {
       auto expl = "Adjusting pointers on non-auto type " + this->Trace();
-      Context::SwErr(DataSpec_AdjustPtrs, expl, 0);
+      Context::SwLog(DataSpec_AdjustPtrs, expl, 0);
       return;
    }
 
@@ -988,7 +988,7 @@ void DataSpec::FindReferent()
    //  The referent couldn't be found.
    //
    auto expl = "Failed to find referent for " + qname;
-   Context::SwErr(DataSpec_FindReferent, expl, 0);
+   Context::SwLog(DataSpec_FindReferent, expl, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -1072,7 +1072,7 @@ void DataSpec::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
       if((role == TemplateParameter) || (role == TemplateArgument)) return;
       auto qname = QualifiedName(true, false);
       auto log = "Unknown type for " + qname + " [" + strLocation() + ']';
-      Debug::SwErr(DataSpec_GetUsages, log, 0, InfoLog);
+      Debug::SwLog(DataSpec_GetUsages, log, 0, SwInfo);
       return;
    }
 
@@ -1133,7 +1133,7 @@ void DataSpec::Instantiating() const
    }
 
    auto expl = "Failed to find referent for " + TypeString(false);
-   Context::SwErr(DataSpec_Instantiating, expl, 0);
+   Context::SwLog(DataSpec_Instantiating, expl, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -1416,7 +1416,7 @@ TagCount DataSpec::Ptrs(bool arrays) const
    if(count >= 0) return count;
 
    auto expl = "Negative pointer count for " + Trace();
-   Context::SwErr(DataSpec_Ptrs, expl, count);
+   Context::SwLog(DataSpec_Ptrs, expl, count);
    return 0;
 }
 
@@ -1457,7 +1457,7 @@ TagCount DataSpec::Refs() const
    if(count >= 0) return count;
 
    auto expl = "Negative reference count for " + Trace();
-   Context::SwErr(DataSpec_Refs, expl, count);
+   Context::SwLog(DataSpec_Refs, expl, count);
    return 0;
 }
 
@@ -1472,7 +1472,7 @@ void DataSpec::RemoveRefs()
    if(!IsAutoDecl())
    {
       auto expl = "Removing references on non-auto type " + this->Trace();
-      Context::SwErr(DataSpec_RemoveRefs, expl, 0);
+      Context::SwLog(DataSpec_RemoveRefs, expl, 0);
       return;
    }
 
@@ -1481,7 +1481,7 @@ void DataSpec::RemoveRefs()
    if(refs_ != 0)
    {
       auto expl = "Removing references from auto& type " + this->Trace();
-      Context::SwErr(DataSpec_RemoveRefs, expl, 1);
+      Context::SwLog(DataSpec_RemoveRefs, expl, 1);
       return;
    }
 
@@ -1593,7 +1593,7 @@ StackArg DataSpec::ResultType() const
       break;
    default:
       auto expl = "Failed to find referent for " + QualifiedName(true, true);
-      Context::SwErr(DataSpec_ResultType, expl, 0);
+      Context::SwLog(DataSpec_ResultType, expl, 0);
    }
 
    return NilStackArg;
@@ -2118,7 +2118,7 @@ void QualName::MemberAccessed(Class* cls, CxxNamed* mem) const
    }
 
    auto expl = "Could not find member name for " + *mem->Name();
-   Context::SwErr(QualName_MemberAccessed, expl, 0);
+   Context::SwLog(QualName_MemberAccessed, expl, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -2334,7 +2334,7 @@ string QualName::TypeString(bool arg) const
    }
 
    auto expl = "Failed to find referent for " + QualifiedName(true, true);
-   Context::SwErr(QualName_TypeString, expl, 0);
+   Context::SwLog(QualName_TypeString, expl, 0);
    return ERROR_STR;
 }
 
@@ -2994,21 +2994,21 @@ fn_name TypeSpec_PureVirtualFunction = "TypeSpec.PureVirtualFunction";
 
 void TypeSpec::AddArray(ArraySpecPtr& array)
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "AddArray", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "AddArray", 0);
 }
 
 //------------------------------------------------------------------------------
 
 void TypeSpec::AdjustPtrs(TagCount count)
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "AdjustPtrs", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "AdjustPtrs", 0);
 }
 
 //------------------------------------------------------------------------------
 
 string TypeSpec::AlignTemplateArg(const TypeSpec* thatArg) const
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "AlignTemplateArg", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "AlignTemplateArg", 0);
    return ERROR_STR;
 }
 
@@ -3016,7 +3016,7 @@ string TypeSpec::AlignTemplateArg(const TypeSpec* thatArg) const
 
 TagCount TypeSpec::ArrayCount() const
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "ArrayCount", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "ArrayCount", 0);
    return 0;
 }
 
@@ -3024,7 +3024,7 @@ TagCount TypeSpec::ArrayCount() const
 
 TagCount TypeSpec::Arrays() const
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "Arrays", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "Arrays", 0);
    return 0;
 }
 
@@ -3032,7 +3032,7 @@ TagCount TypeSpec::Arrays() const
 
 TypeSpec* TypeSpec::Clone() const
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "Clone", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "Clone", 0);
    return nullptr;
 }
 
@@ -3040,28 +3040,28 @@ TypeSpec* TypeSpec::Clone() const
 
 void TypeSpec::DisplayArrays(ostream& stream) const
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "DisplayArrays", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "DisplayArrays", 0);
 }
 
 //------------------------------------------------------------------------------
 
 void TypeSpec::DisplayTags(ostream& stream) const
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "DisplayTags", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "DisplayTags", 0);
 }
 
 //------------------------------------------------------------------------------
 
 void TypeSpec::EnterArrays() const
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "EnterArrays", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "EnterArrays", 0);
 }
 
 //------------------------------------------------------------------------------
 
 void TypeSpec::EnteringScope(const CxxScope* scope)
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "EnteringScope", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "EnteringScope", 0);
 }
 
 //------------------------------------------------------------------------------
@@ -3070,7 +3070,7 @@ TypeTags TypeSpec::GetTags() const
 {
    TypeTags tags;
 
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "GetTags", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "GetTags", 0);
    return tags;
 }
 
@@ -3078,7 +3078,7 @@ TypeTags TypeSpec::GetTags() const
 
 bool TypeSpec::HasArrayDefn() const
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "HasArrayDefn", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "HasArrayDefn", 0);
    return false;
 }
 
@@ -3086,14 +3086,14 @@ bool TypeSpec::HasArrayDefn() const
 
 void TypeSpec::Instantiating() const
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "Instantiating", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "Instantiating", 0);
 }
 
 //------------------------------------------------------------------------------
 
 bool TypeSpec::ItemIsTemplateArg(const CxxScoped* item) const
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "ItemIsTemplateArg", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "ItemIsTemplateArg", 0);
    return false;
 }
 
@@ -3101,7 +3101,7 @@ bool TypeSpec::ItemIsTemplateArg(const CxxScoped* item) const
 
 bool TypeSpec::MatchesExactly(const TypeSpec* that) const
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "MatchesExactly", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "MatchesExactly", 0);
    return false;
 }
 
@@ -3110,7 +3110,7 @@ bool TypeSpec::MatchesExactly(const TypeSpec* that) const
 TypeMatch TypeSpec::MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
    stringVector& tmpltArgs, bool& argFound) const
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "MatchTemplate", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "MatchTemplate", 0);
    return Incompatible;
 }
 
@@ -3118,7 +3118,7 @@ TypeMatch TypeSpec::MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
 
 TypeMatch TypeSpec::MatchTemplateArg(const TypeSpec* that) const
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "MatchTemplateArg", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "MatchTemplateArg", 0);
    return Incompatible;
 }
 
@@ -3139,7 +3139,7 @@ TypeMatch TypeSpec::MustMatchWith(const StackArg& that, bool implicit) const
    if(match == Incompatible)
    {
       auto expl = thisType + " is incompatible with " + thatType;
-      Context::SwErr(TypeSpec_MustMatchWith, expl, 0);
+      Context::SwLog(TypeSpec_MustMatchWith, expl, 0);
    }
 
    return match;
@@ -3149,7 +3149,7 @@ TypeMatch TypeSpec::MustMatchWith(const StackArg& that, bool implicit) const
 
 TagCount TypeSpec::PtrCount(bool arrays) const
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "PtrCount", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "PtrCount", 0);
    return 0;
 }
 
@@ -3157,7 +3157,7 @@ TagCount TypeSpec::PtrCount(bool arrays) const
 
 TagCount TypeSpec::Ptrs(bool arrays) const
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "Ptrs", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "Ptrs", 0);
    return 0;
 }
 
@@ -3165,7 +3165,7 @@ TagCount TypeSpec::Ptrs(bool arrays) const
 
 TagCount TypeSpec::RefCount() const
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "RefCount", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "RefCount", 0);
    return 0;
 }
 
@@ -3173,7 +3173,7 @@ TagCount TypeSpec::RefCount() const
 
 TagCount TypeSpec::Refs() const
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "Refs", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "Refs", 0);
    return 0;
 }
 
@@ -3181,14 +3181,14 @@ TagCount TypeSpec::Refs() const
 
 void TypeSpec::RemoveRefs()
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "RemoveRefs", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "RemoveRefs", 0);
 }
 
 //------------------------------------------------------------------------------
 
 StackArg TypeSpec::ResultType() const
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "ResultType", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "ResultType", 0);
    return NilStackArg;
 }
 
@@ -3196,42 +3196,42 @@ StackArg TypeSpec::ResultType() const
 
 void TypeSpec::SetArrayPos(int8_t pos)
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "SetArrayPos", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "SetArrayPos", 0);
 }
 
 //------------------------------------------------------------------------------
 
 void TypeSpec::SetConst(bool readonly)
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "SetConst", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "SetConst", 0);
 }
 
 //------------------------------------------------------------------------------
 
 void TypeSpec::SetConstPtr(bool constptr)
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "SetConstPtr", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "SetConstPtr", 0);
 }
 
 //------------------------------------------------------------------------------
 
 void TypeSpec::SetPtrDetached(bool on)
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "SetPtrDetached", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "SetPtrDetached", 0);
 }
 
 //------------------------------------------------------------------------------
 
 void TypeSpec::SetPtrs(TagCount ptrs)
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "SetPtrs", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "SetPtrs", 0);
 }
 
 //------------------------------------------------------------------------------
 
 void TypeSpec::SetRefDetached(bool on)
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "SetRefDetached", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "SetRefDetached", 0);
 }
 
 //------------------------------------------------------------------------------
@@ -3240,7 +3240,7 @@ void TypeSpec::SetRefDetached(bool on)
 
 void TypeSpec::SetRefs(TagCount refs)
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "SetRefs", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "SetRefs", 0);
 }
 
 //------------------------------------------------------------------------------
@@ -3258,7 +3258,7 @@ void TypeSpec::SetUserType(Cxx::ItemType user)
 
 string TypeSpec::TypeTagsString(const TypeTags& tags) const
 {
-   Debug::SwErr(TypeSpec_PureVirtualFunction, "TypeTagsString", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "TypeTagsString", 0);
    return ERROR_STR;
 }
 

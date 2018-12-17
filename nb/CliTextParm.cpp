@@ -97,7 +97,7 @@ bool CliTextParm::BindText(CliText& text, id_t index)
 
       if((strlen(prev) == 0) || (strcmp(prev, s) == 0))
       {
-         Debug::SwErr(CliTextParm_BindText, t->GetId(), index);
+         Debug::SwLog(CliTextParm_BindText, t->GetId(), index);
          return false;
       }
    }
@@ -168,7 +168,7 @@ void CliTextParm::Explain(ostream& stream, col_t indent) const
 
    if(indent < 2)
    {
-      Debug::SwErr(CliTextParm_Explain, indent, 0);
+      Debug::SwLog(CliTextParm_Explain, indent, 0);
       indent = 2;
    }
 
@@ -432,7 +432,7 @@ bool CliTextParm::ShowValues(string& values) const
    //  Our Explain function handles other cases without
    //  invoking CliParm::Explain, so we shouldn't get here.
    //
-   Debug::SwErr(CliTextParm_ShowValues, size, 0);
+   Debug::SwLog(CliTextParm_ShowValues, size, 0);
    return true;
 }
 }

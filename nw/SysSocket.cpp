@@ -128,7 +128,7 @@ SysSocket::SendRc SysSocket::SendBuff(IpBuffer& buff)
 
    //  This is a pure virtual function.
    //
-   Debug::SwErr(SysSocket_SendBuff, 0, 0, ErrorLog);
+   Debug::SwLog(SysSocket_SendBuff, socket_, 0);
    return SendFailed;
 }
 

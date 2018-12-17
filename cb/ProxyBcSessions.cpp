@@ -442,7 +442,7 @@ EventHandler::Rc ProxyBcAnalyzeProxyMessage::ProcessEvent
       return pssm.RaiseProxyRelease(nextEvent, cci->cause);
    }
 
-   Debug::SwErr(ProxyBcAnalyzeProxyMessage_ProcessEvent, sid, 0);
+   Debug::SwLog(ProxyBcAnalyzeProxyMessage_ProcessEvent, sid, 0);
    return Suspend;
 }
 
@@ -908,7 +908,7 @@ void ProxyBcSsm::Relay(BcPsm& target) const
 
    if(&target == nullptr)
    {
-      Debug::SwErr(ProxyBcSsm_Relay, 0, 0);
+      Debug::SwLog(ProxyBcSsm_Relay, 0, 0);
       return;
    }
 
@@ -916,7 +916,7 @@ void ProxyBcSsm::Relay(BcPsm& target) const
 
    if(msg == nullptr)
    {
-      Debug::SwErr(ProxyBcSsm_Relay, 0, 1);
+      Debug::SwLog(ProxyBcSsm_Relay, 0, 1);
       return;
    }
 
@@ -924,7 +924,7 @@ void ProxyBcSsm::Relay(BcPsm& target) const
 
    if(prid != CipProtocolId)
    {
-      Debug::SwErr(ProxyBcSsm_Relay, prid, 2);
+      Debug::SwLog(ProxyBcSsm_Relay, prid, 2);
       return;
    }
 

@@ -306,7 +306,7 @@ word IpCommand::ProcessCommand(CliThread& cli) const
       *cli.obuf << CRLF;
       break;
    default:
-      Debug::SwErr(IpCommand_ProcessCommand, index, 0);
+      Debug::SwLog(IpCommand_ProcessCommand, index, 0);
       return cli.Report(index, SystemErrorExpl);
    }
 

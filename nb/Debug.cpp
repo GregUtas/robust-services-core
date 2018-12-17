@@ -67,23 +67,18 @@ void Debug::ft(fn_name_arg func)
 fn_name Debug_GenerateSwLog = "Debug.GenerateSwLog";
 
 void Debug::GenerateSwLog(fn_name_arg func, const string& errstr,
-      debug64_t offset, LogLevel level, fixed_string title)
+      debug64_t offset, SwLogLevel level)
 {
    if(!Thread::EnterSwLog()) return;
 
    Debug::ft(Debug_GenerateSwLog);
 
-   if(level == ErrorLog)
+   if(level == SwError)
    {
       throw SoftwareException(errstr, offset, 3);
    }
 
-   ostringstreamPtr log;
-
-   if(title == nullptr)
-      log = Log::Create("SOFTWARE ERROR");
-   else
-      log = Log::Create(title);
+   auto log = Log::Create("SOFTWARE ERROR");
 
    if(log != nullptr)
    {
@@ -97,7 +92,7 @@ void Debug::GenerateSwLog(fn_name_arg func, const string& errstr,
       *log << "errval=" << errstr;
       *log << " offset=" << strHex(offset) << CRLF;
 
-      if(level != InfoLog) SysThreadStack::Display(*log, 1);
+      if(level != SwInfo) SysThreadStack::Display(*log, 1);
       Log::Spool(log);
    }
 
@@ -175,30 +170,6 @@ void Debug::SetSwFlag(FlagId fid, bool value)
 
 //------------------------------------------------------------------------------
 
-fn_name Debug_SwErr1 = "Debug.SwErr(int)";
-
-void Debug::SwErr(fn_name_arg func, debug64_t errval, debug64_t offset,
-   LogLevel level, fixed_string title)
-{
-   Debug::ft(Debug_SwErr1);
-
-   GenerateSwLog(func, std::to_string(errval), offset, level, title);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Debug_SwErr2 = "Debug.SwErr(string)";
-
-void Debug::SwErr(fn_name_arg func, const string& errstr, debug64_t offset,
-   LogLevel level, fixed_string title)
-{
-   Debug::ft(Debug_SwErr2);
-
-   GenerateSwLog(func, errstr, offset, level, title);
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Debug_SwFlagOn = "Debug.SwFlagOn";
 
 bool Debug::SwFlagOn(FlagId fid)
@@ -211,5 +182,29 @@ bool Debug::SwFlagOn(FlagId fid)
    }
 
    return false;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Debug_SwLog1 = "Debug.SwLog(int)";
+
+void Debug::SwLog(fn_name_arg func, debug64_t errval,
+   debug64_t offset, SwLogLevel level)
+{
+   Debug::ft(Debug_SwLog1);
+
+   GenerateSwLog(func, std::to_string(errval), offset, level);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Debug_SwLog2 = "Debug.SwLog(string)";
+
+void Debug::SwLog(fn_name_arg func, const string& errstr,
+   debug64_t offset, SwLogLevel level)
+{
+   Debug::ft(Debug_SwLog1);
+
+   GenerateSwLog(func, errstr, offset, level);
 }
 }

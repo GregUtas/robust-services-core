@@ -50,7 +50,7 @@ Event::Event(Id eid, ServiceSM* owner, Location loc) :
    Debug::ft(Event_ctor);
 
    if(loc == Saved)
-      Debug::SwErr(Event_ctor, loc, 0);
+      Debug::SwLog(Event_ctor, loc, 0);
 
    if(owner_ != nullptr)
    {
@@ -62,7 +62,7 @@ Event::Event(Id eid, ServiceSM* owner, Location loc) :
 
       if(root != nullptr)
       {
-         Debug::SwErr(Event_ctor, root->Sid(), 0);
+         Debug::SwLog(Event_ctor, root->Sid(), 0);
       }
    }
 
@@ -169,7 +169,7 @@ void Event::Free()
       return;
    }
 
-   Debug::SwErr(Event_Free, eid_, location_);
+   Debug::SwLog(Event_Free, eid_, location_);
 }
 
 //------------------------------------------------------------------------------
@@ -182,7 +182,7 @@ void Event::FreeContext(bool freeMsg)
 
    //  Only certain events support this function.
    //
-   Debug::SwErr(Event_FreeContext, eid_, 0);
+   Debug::SwLog(Event_FreeContext, eid_, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -220,7 +220,7 @@ Event* Event::Restore(EventHandler::Rc& rc)
       return this;
    }
 
-   Debug::SwErr(Event_Restore, eid_, location_);
+   Debug::SwLog(Event_Restore, eid_, location_);
    rc = EventHandler::Suspend;
    return nullptr;
 }
@@ -235,7 +235,7 @@ Event* Event::RestoreContext(EventHandler::Rc& rc)
 
    //  Only certain events support this function.
    //
-   Debug::SwErr(Event_RestoreContext, eid_, 0);
+   Debug::SwLog(Event_RestoreContext, eid_, 0);
    return nullptr;
 }
 
@@ -255,7 +255,7 @@ bool Event::Save()
       return true;
    }
 
-   Debug::SwErr(Event_Save, eid_, location_);
+   Debug::SwLog(Event_Save, eid_, location_);
    return false;
 }
 
@@ -269,7 +269,7 @@ bool Event::SaveContext()
 
    //  Only certain events support this function.
    //
-   Debug::SwErr(Event_SaveContext, eid_, 0);
+   Debug::SwLog(Event_SaveContext, eid_, 0);
    return false;
 }
 
@@ -317,7 +317,7 @@ void Event::SetOwner(RootServiceSM& owner)
 
    if(owner_ != nullptr)
    {
-      Debug::SwErr(Event_SetOwner, owner.Sid(), Eid());
+      Debug::SwLog(Event_SetOwner, owner.Sid(), Eid());
       return;
    }
 

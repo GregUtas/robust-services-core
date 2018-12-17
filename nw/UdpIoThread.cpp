@@ -46,7 +46,7 @@ UdpIoThread::UdpIoThread(Faction faction, ipport_t port,
 
    if(ipPort_ == nullptr)
    {
-      Debug::SwErr(UdpIoThread_ctor, port_, 0);
+      Debug::SwLog(UdpIoThread_ctor, port_, 0);
    }
 }
 

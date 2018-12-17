@@ -94,6 +94,6 @@ void InputHandler::ReceiveBuff
 {
    Debug::ft(InputHandler_ReceiveBuff);
 
-   Debug::SwErr(InputHandler_ReceiveBuff, faction, 0);
+   Debug::SwLog(InputHandler_ReceiveBuff, faction, 0);
 }
 }

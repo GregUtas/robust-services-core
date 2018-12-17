@@ -58,7 +58,7 @@ EventHandler::Rc BcNuAnalyzeRemoteMessage::ProcessEvent
       return Continue;
    }
 
-   Debug::SwErr(BcNuAnalyzeRemoteMessage_ProcessEvent, sid, 0);
+   Debug::SwLog(BcNuAnalyzeRemoteMessage_ProcessEvent, sid, 0);
    return bcssm.RaiseReleaseCall(nextEvent, Cause::MessageInvalidForState);
 }
 
@@ -94,7 +94,7 @@ EventHandler::Rc BcScAnalyzeRemoteMessage::ProcessEvent
       case Progress::Alerting:
          return bcssm.RaiseRemoteAlerting(nextEvent);
       default:
-         Debug::SwErr(BcScAnalyzeRemoteMessage_ProcessEvent, cpi->progress, 0);
+         Debug::SwLog(BcScAnalyzeRemoteMessage_ProcessEvent, cpi->progress, 0);
       }
       break;
 
@@ -113,7 +113,7 @@ EventHandler::Rc BcScAnalyzeRemoteMessage::ProcessEvent
       return bcssm.AnalyzeNPsmTimeout(*msg, nextEvent);
 
    default:
-      Debug::SwErr(BcScAnalyzeRemoteMessage_ProcessEvent, sid, 0);
+      Debug::SwLog(BcScAnalyzeRemoteMessage_ProcessEvent, sid, 0);
    }
 
    return bcssm.RaiseReleaseCall(nextEvent, Cause::MessageInvalidForState);
@@ -160,7 +160,7 @@ EventHandler::Rc BcOaAnalyzeRemoteMessage::ProcessEvent
       return bcssm.AnalyzeNPsmTimeout(*msg, nextEvent);
    }
 
-   Debug::SwErr(BcOaAnalyzeRemoteMessage_ProcessEvent, sid, 0);
+   Debug::SwLog(BcOaAnalyzeRemoteMessage_ProcessEvent, sid, 0);
    return bcssm.RaiseReleaseCall(nextEvent, Cause::MessageInvalidForState);
 }
 
@@ -194,7 +194,7 @@ EventHandler::Rc BcPcAnalyzeRemoteMessage::ProcessEvent
       return bcssm.AnalyzeNPsmTimeout(*msg, nextEvent);
    }
 
-   Debug::SwErr(BcPcAnalyzeRemoteMessage_ProcessEvent, sid, 0);
+   Debug::SwLog(BcPcAnalyzeRemoteMessage_ProcessEvent, sid, 0);
    return bcssm.RaiseReleaseCall(nextEvent, Cause::MessageInvalidForState);
 }
 
@@ -230,7 +230,7 @@ EventHandler::Rc BcAcAnalyzeRemoteMessage::ProcessEvent
       case Progress::Resume:
          return bcssm.RaiseRemoteResume(nextEvent);
       default:
-         Debug::SwErr(BcAcAnalyzeRemoteMessage_ProcessEvent, cpi->progress, 1);
+         Debug::SwLog(BcAcAnalyzeRemoteMessage_ProcessEvent, cpi->progress, 1);
       }
       break;
 
@@ -242,7 +242,7 @@ EventHandler::Rc BcAcAnalyzeRemoteMessage::ProcessEvent
       return bcssm.AnalyzeNPsmTimeout(*msg, nextEvent);
 
    default:
-      Debug::SwErr(BcAcAnalyzeRemoteMessage_ProcessEvent, sid, 0);
+      Debug::SwLog(BcAcAnalyzeRemoteMessage_ProcessEvent, sid, 0);
    }
 
    return bcssm.RaiseReleaseCall(nextEvent, Cause::MessageInvalidForState);

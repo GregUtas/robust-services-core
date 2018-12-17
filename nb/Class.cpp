@@ -91,7 +91,7 @@ Object* Class::Create()
    //
    if(template_ == nullptr)
    {
-      Debug::SwErr(Class_Create, Cid(), 0);
+      Debug::SwLog(Class_Create, Cid(), 0);
       return nullptr;
    }
 
@@ -203,7 +203,7 @@ void Class::Initialize()
    //  Subclasses override this to call Set functions.  Consequently,
    //  it should not be called.
    //
-   Debug::SwErr(Class_Initialize, Cid(), 0);
+   Debug::SwLog(Class_Initialize, Cid(), 0);
 }
 
 //------------------------------------------------------------------------------
@@ -243,7 +243,7 @@ bool Class::SetQuasiSingleton(Object& obj)
 
    if(&obj == template_.get())
    {
-      Debug::SwErr(Class_SetQuasiSingleton, Cid(), 0);
+      Debug::SwLog(Class_SetQuasiSingleton, Cid(), 0);
       return false;
    }
 
@@ -267,7 +267,7 @@ bool Class::SetTemplate(Object& obj)
 
    if(&obj == singleton_.get())
    {
-      Debug::SwErr(Class_SetTemplate, Cid(), 0);
+      Debug::SwLog(Class_SetTemplate, Cid(), 0);
       return false;
    }
 
@@ -303,13 +303,13 @@ bool Class::VerifyClass(const Object& obj) const
 
    if(c == nullptr)
    {
-      Debug::SwErr(Class_VerifyClass, Cid(), 0);
+      Debug::SwLog(Class_VerifyClass, Cid(), 0);
       return false;
    }
 
    if(c != this)
    {
-      Debug::SwErr(Class_VerifyClass, Cid(), 1);
+      Debug::SwLog(Class_VerifyClass, Cid(), 1);
       return false;
    }
 

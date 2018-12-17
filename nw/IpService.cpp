@@ -78,7 +78,7 @@ InputHandler* IpService::CreateHandler(IpPort* port) const
 {
    Debug::ft(IpService_CreateHandler);
 
-   Debug::SwErr(IpService_CreateHandler, Name(), port->GetPort());
+   Debug::SwLog(IpService_CreateHandler, Name(), port->GetPort());
    return nullptr;
 }
 
@@ -90,7 +90,7 @@ IpPort* IpService::CreatePort(ipport_t pid)
 {
    Debug::ft(IpService_CreatePort);
 
-   Debug::SwErr(IpService_CreatePort, Name(), pid);
+   Debug::SwLog(IpService_CreatePort, Name(), pid);
    return nullptr;
 }
 
@@ -102,7 +102,7 @@ CliText* IpService::CreateText() const
 {
    Debug::ft(IpService_CreateText);
 
-   Debug::SwErr(IpService_CreateText, Name(), sid_.GetId());
+   Debug::SwLog(IpService_CreateText, Name(), sid_.GetId());
    return nullptr;
 }
 
@@ -132,7 +132,7 @@ void IpService::GetAppSocketSizes(size_t& rxSize, size_t& txSize) const
 
    rxSize = 0;
    txSize = 0;
-   Debug::SwErr(IpService_GetAppSocketSizes, Name(), sid_.GetId());
+   Debug::SwLog(IpService_GetAppSocketSizes, Name(), sid_.GetId());
 }
 
 //------------------------------------------------------------------------------
@@ -143,7 +143,7 @@ Faction IpService::GetFaction() const
 {
    Debug::ft(IpService_GetFaction);
 
-   Debug::SwErr(IpService_GetFaction, Name(), sid_.GetId());
+   Debug::SwLog(IpService_GetFaction, Name(), sid_.GetId());
    return OperationsFaction;
 }
 
@@ -155,7 +155,7 @@ const char* IpService::Name() const
 {
    Debug::ft(IpService_Name);
 
-   Debug::SwErr(IpService_Name, 0, sid_.GetId());
+   Debug::SwLog(IpService_Name, 0, sid_.GetId());
    return ERROR_STR;
 }
 
@@ -174,7 +174,7 @@ ipport_t IpService::Port() const
 {
    Debug::ft(IpService_Port);
 
-   Debug::SwErr(IpService_Port, Name(), sid_.GetId());
+   Debug::SwLog(IpService_Port, Name(), sid_.GetId());
    return NilIpPort;
 }
 
@@ -186,7 +186,7 @@ IpProtocol IpService::Protocol() const
 {
    Debug::ft(IpService_Protocol);
 
-   Debug::SwErr(IpService_Protocol, Name(), sid_.GetId());
+   Debug::SwLog(IpService_Protocol, Name(), sid_.GetId());
    return IpAny;
 }
 
@@ -222,7 +222,7 @@ IpPort* IpService::Provision(ipport_t pid)
    {
       string info(Name());
       info += " : failed to allocate IpPort";
-      Debug::SwErr(IpService_Provision, info, pid);
+      Debug::SwLog(IpService_Provision, info, pid);
       return nullptr;
    }
 
@@ -231,7 +231,7 @@ IpPort* IpService::Provision(ipport_t pid)
    {
       string info(Name());
       info += " : failed to allocate InputHandler";
-      Debug::SwErr(IpService_Provision, info, pid);
+      Debug::SwLog(IpService_Provision, info, pid);
       return nullptr;
    }
 
@@ -246,7 +246,7 @@ size_t IpService::RxSize() const
 {
    Debug::ft(IpService_RxSize);
 
-   Debug::SwErr(IpService_RxSize, Name(), sid_.GetId());
+   Debug::SwLog(IpService_RxSize, Name(), sid_.GetId());
    return 0;
 }
 
@@ -270,7 +270,7 @@ size_t IpService::TxSize() const
 {
    Debug::ft(IpService_TxSize);
 
-   Debug::SwErr(IpService_TxSize, Name(), sid_.GetId());
+   Debug::SwLog(IpService_TxSize, Name(), sid_.GetId());
    return 0;
 }
 }

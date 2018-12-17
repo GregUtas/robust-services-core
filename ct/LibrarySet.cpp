@@ -241,7 +241,7 @@ LibSetType LibrarySet::GetType() const
 {
    Debug::ft(LibrarySet_GetType);
 
-   Debug::SwErr(LibrarySet_GetType, 0, 0);
+   Debug::SwLog(LibrarySet_GetType, 0, 0);
    return ERR_SET;
 }
 
@@ -332,7 +332,7 @@ word LibrarySet::NotImplemented(string& expl) const
       expl = "This command is not implemented for variables.";
       break;
    default:
-      Debug::SwErr(LibrarySet_NotImplemented, GetType(), 0);
+      Debug::SwLog(LibrarySet_NotImplemented, GetType(), 0);
       expl = "Internal error.";
       return -8;
    }
@@ -346,7 +346,7 @@ fn_name LibrarySet_OpError = "LibrarySet.OpError";
 
 LibrarySet* LibrarySet::OpError() const
 {
-   Debug::SwErr(LibrarySet_OpError, GetType(), 0);
+   Debug::SwLog(LibrarySet_OpError, GetType(), 0);
    return nullptr;
 }
 

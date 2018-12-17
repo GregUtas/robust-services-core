@@ -166,7 +166,7 @@ void PsmContext::ExqPort(MsgPort& port)
 
    if(!portq_.Exq(port))
    {
-      Debug::SwErr(PsmContext_ExqPort, port.LocAddr().Fid(), 0);
+      Debug::SwLog(PsmContext_ExqPort, port.LocAddr().Fid(), 0);
    }
 }
 
@@ -180,7 +180,7 @@ void PsmContext::ExqPsm(ProtocolSM& psm)
 
    if(!psmq_.Exq(psm))
    {
-      Debug::SwErr(PsmContext_ExqPsm, psm.GetFactory(), 0);
+      Debug::SwLog(PsmContext_ExqPsm, psm.GetFactory(), 0);
    }
 }
 

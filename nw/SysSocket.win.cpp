@@ -62,7 +62,7 @@ SysSocket::SysSocket(ipport_t port, IpProtocol proto,
       socket_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
       break;
    default:
-      Debug::SwErr(SysSocket_ctor2, proto, 0);
+      Debug::SwLog(SysSocket_ctor2, proto, 0);
       SetError(WSAENOPROTOOPT);
       rc = AllocFailed;
       return;
@@ -217,7 +217,7 @@ SysSocket::AllocRc SysSocket::SetBuffSizes(size_t rxSize, size_t txSize)
    }
 
    if(max < rxSize)
-      Debug::SwErr(SysSocket_SetBuffSizes, max, rxSize);
+      Debug::SwLog(SysSocket_SetBuffSizes, max, rxSize);
 
    if(setsockopt(socket_, SOL_SOCKET, SO_SNDBUF,
       (const char*) &txSize, sizeof(txSize)) == SOCKET_ERROR)
@@ -234,7 +234,7 @@ SysSocket::AllocRc SysSocket::SetBuffSizes(size_t rxSize, size_t txSize)
    }
 
    if(max < txSize)
-      Debug::SwErr(SysSocket_SetBuffSizes, max, txSize);
+      Debug::SwLog(SysSocket_SetBuffSizes, max, txSize);
    return rc;
 }
 

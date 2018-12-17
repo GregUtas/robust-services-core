@@ -38,7 +38,7 @@ bool FileList::Advance()
 {
    //  This is a pure virtual function.
    //
-   Debug::SwErr(FileList_Advance, 0, 0);
+   Debug::SwLog(FileList_Advance, 0, 0);
    return false;
 }
 
@@ -50,7 +50,7 @@ bool FileList::AtEnd() const
 {
    //  This is a pure virtual function.
    //
-   Debug::SwErr(FileList_AtEnd, 0, 0);
+   Debug::SwLog(FileList_AtEnd, 0, 0);
    return true;
 }
 
@@ -62,7 +62,7 @@ void FileList::GetName(string& fileName) const
 {
    //  This is a pure virtual function.
    //
-   Debug::SwErr(FileList_GetName, 0, 0);
+   Debug::SwLog(FileList_GetName, 0, 0);
    fileName.clear();
 }
 
@@ -74,7 +74,7 @@ bool FileList::IsSubdir() const
 {
    //  This is a pure virtual function.
    //
-   Debug::SwErr(FileList_IsSubdir, 0, 0);
+   Debug::SwLog(FileList_IsSubdir, 0, 0);
    return false;
 }
 
@@ -124,7 +124,7 @@ bool SysFile::FindFiles
 
    if(fileExt[0] != '.')
    {
-      Debug::SwErr(SysFile_FindFiles, fileExt[0], 0);
+      Debug::SwLog(SysFile_FindFiles, fileExt[0], 0);
       return false;
    }
 

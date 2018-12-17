@@ -396,7 +396,7 @@ BuffTrace* BuffTrace::NextIcMsg
 
          if(--max <= 0)
          {
-            Debug::SwErr(BuffTrace_NextIcMsg, 200, 0);
+            Debug::SwLog(BuffTrace_NextIcMsg, 200, 0);
             break;
          }
       }

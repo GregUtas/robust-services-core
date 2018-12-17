@@ -881,7 +881,7 @@ BuildOrderPtr CodeFileSet::SortInBuildOrder() const
       {
          if(found != size)
          {
-            Debug::SwErr(CodeFileSet_SortInBuildOrder, found, size);
+            Debug::SwLog(CodeFileSet_SortInBuildOrder, found, size);
          }
          break;
       }

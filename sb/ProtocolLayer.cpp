@@ -79,7 +79,7 @@ ProtocolLayer::~ProtocolLayer()
    //
    if(upper_ != nullptr)
    {
-      Debug::SwErr(ProtocolLayer_dtor, 0, 0);
+      Debug::SwLog(ProtocolLayer_dtor, 0, 0);
       upper_->AdjacentDeleted(false);
       upper_ = nullptr;
    }
@@ -160,7 +160,7 @@ bool ProtocolLayer::DropPeer(const GlobalAddress& peerPrevRemAddr)
 
    //  This is a pure virtual function.
    //
-   Context::Kill(ProtocolLayer_DropPeer, 0, 0);
+   Context::Kill(ProtocolLayer_DropPeer, GetFactory(), 0);
    return false;
 }
 
@@ -216,7 +216,7 @@ FactoryId ProtocolLayer::GetFactory() const
 
    //  This is a pure virtual function.
    //
-   Context::Kill(ProtocolLayer_DropPeer, 0, 0);
+   Debug::SwLog(ProtocolLayer_GetFactory, 0, 0);
    return NIL_ID;
 }
 
@@ -231,7 +231,7 @@ ProtocolLayer* ProtocolLayer::JoinPeer
 
    //  This is a pure virtual function.
    //
-   Context::Kill(ProtocolLayer_JoinPeer, 0, 0);
+   Context::Kill(ProtocolLayer_JoinPeer, GetFactory(), 0);
    return nullptr;
 }
 
@@ -252,7 +252,7 @@ MsgPort* ProtocolLayer::Port() const
 
    //  This is a pure virtual function.
    //
-   Context::Kill(ProtocolLayer_Port, 0, 0);
+   Debug::SwLog(ProtocolLayer_Port, GetFactory(), 0);
    return nullptr;
 }
 
@@ -266,7 +266,7 @@ Event* ProtocolLayer::ReceiveMsg(Message& msg)
 
    //  This is a pure virtual function.
    //
-   Context::Kill(ProtocolLayer_ReceiveMsg, 0, 0);
+   Context::Kill(ProtocolLayer_ReceiveMsg, GetFactory(), 0);
    return nullptr;
 }
 
@@ -292,7 +292,7 @@ Message::Route ProtocolLayer::Route() const
 
    //  This is a pure virtual function.
    //
-   Context::Kill(ProtocolLayer_Route, 0, 0);
+   Debug::SwLog(ProtocolLayer_Route, GetFactory(), 0);
    return Message::External;
 }
 
@@ -306,7 +306,7 @@ bool ProtocolLayer::SendMsg(Message& msg)
 
    //  This is a pure virtual function.
    //
-   Context::Kill(ProtocolLayer_SendMsg, 0, 0);
+   Context::Kill(ProtocolLayer_SendMsg, GetFactory(), 0);
    return false;
 }
 
@@ -372,7 +372,7 @@ Message* ProtocolLayer::UnwrapMsg(Message& msg)
    //  A layer that is not at the bottom of a stack must implement
    //  this function.
    //
-   Context::Kill(ProtocolLayer_UnwrapMsg, 0, 0);
+   Context::Kill(ProtocolLayer_UnwrapMsg, GetFactory(), 0);
    return nullptr;
 }
 
@@ -386,7 +386,7 @@ ProtocolSM* ProtocolLayer::UppermostPsm() const
 
    //  This is a pure virtual function.
    //
-   Context::Kill(ProtocolLayer_UppermostPsm, 0, 0);
+   Debug::SwLog(ProtocolLayer_UppermostPsm, GetFactory(), 0);
    return nullptr;
 }
 
@@ -401,7 +401,7 @@ Message* ProtocolLayer::WrapMsg(Message& msg)
    //  A layer that is not at the bottom of a stack must implement
    //  this function.
    //
-   Context::Kill(ProtocolLayer_WrapMsg, 0, 0);
+   Context::Kill(ProtocolLayer_WrapMsg, GetFactory(), 0);
    return nullptr;
 }
 }

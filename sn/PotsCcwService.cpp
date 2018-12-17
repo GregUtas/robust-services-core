@@ -273,7 +273,7 @@ EventHandler::Rc PotsCcwSsm::ProcessSip(Event& currEvent, Event*& nextEvent)
       return EventHandler::Pass;
    }
 
-   Debug::SwErr(PotsCcwSsm_ProcessSip, stid, 0);
+   Debug::SwLog(PotsCcwSsm_ProcessSip, stid, 0);
    SetNextState(PotsCcwState::Null);
    return EventHandler::Pass;
 }

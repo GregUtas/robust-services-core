@@ -611,7 +611,7 @@ EventHandler::Rc PotsWmlSsm::ProcessSip(Event& currEvent, Event*& nextEvent)
       return EventHandler::Revert;
    }
 
-   Debug::SwErr(PotsWmlSsm_ProcessSip, stid, 0);
+   Debug::SwLog(PotsWmlSsm_ProcessSip, stid, 0);
    SetNextState(PotsWmlState::Null);
    return EventHandler::Pass;
 }

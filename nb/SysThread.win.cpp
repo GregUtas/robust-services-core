@@ -175,7 +175,7 @@ DelayRc SysThread::Delay(msecs_t msecs)
    //
    if(RunningThreadId() != nid_)
    {
-      Debug::SwErr(SysThread_Delay, 0, 0);
+      Debug::SwLog(SysThread_Delay, 0, 0);
       return DelayError;
    }
 
@@ -201,10 +201,10 @@ DelayRc SysThread::Delay(msecs_t msecs)
       //
       //  We're the only thread that waits on sentry_, so this shouldn't occur.
       //
-      Debug::SwErr(SysThread_Delay, 0, rc);
+      Debug::SwLog(SysThread_Delay, 0, rc);
       return DelayInterrupted;
    default:
-      Debug::SwErr(SysThread_Delay, GetLastError(), rc);
+      Debug::SwLog(SysThread_Delay, GetLastError(), rc);
    }
 
    return DelayError;
@@ -253,7 +253,7 @@ bool SysThread::Interrupt()
    //  the thread the next time it tries to sleep.
    //
    if(SetEvent(sentry_) != 0) return true;
-   Debug::SwErr(SysThread_Interrupt, GetLastError(), 1);
+   Debug::SwLog(SysThread_Interrupt, GetLastError(), 1);
    return false;
 }
 
@@ -332,7 +332,7 @@ signal_t SysThread::Start()
    {
       if(_resetstkoflw() == 0)
       {
-         Debug::SwErr(SysThread_Start, status_.to_string(), nid_);
+         Debug::SwLog(SysThread_Start, status_.to_string(), nid_);
          return SIGSTACK2;
       }
 

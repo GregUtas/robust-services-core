@@ -68,7 +68,7 @@ public:
       Debug::ft(Array_Init());
       if(array_ != nullptr)
       {
-         Debug::SwErr(Array_Init(), cap_, max_);
+         Debug::SwLog(Array_Init(), cap_, max_);
          return false;
       }
       mem_ = mem;
@@ -92,7 +92,7 @@ public:
    {
       if(&item == nullptr)
       {
-         Debug::SwErr(Array_PushBack(), 0, 0);
+         Debug::SwLog(Array_PushBack(), 0, 0);
          return false;
       }
       if(size_ >= cap_)
@@ -111,7 +111,7 @@ public:
    {
       if(index >= size_)
       {
-         Debug::SwErr(Array_Erase(), index, size_);
+         Debug::SwLog(Array_Erase(), index, size_);
          return;
       }
       if(--size_ == 0) return;
@@ -125,12 +125,12 @@ public:
    {
       if(&item == nullptr)
       {
-         Debug::SwErr(Array_Replace(), 0, 0);
+         Debug::SwLog(Array_Replace(), 0, 0);
          return false;
       }
       if(index >= size_)
       {
-         Debug::SwErr(Array_Replace(), index, size_);
+         Debug::SwLog(Array_Replace(), index, size_);
          return false;
       }
       array_[index] = item;

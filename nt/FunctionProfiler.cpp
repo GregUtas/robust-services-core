@@ -219,7 +219,7 @@ TraceRc FunctionProfiler::Generate(ostream& stream, Sort sort)
       break;
 
    default:
-      Debug::SwErr(FunctionProfiler_Generate, FunctionTrace::GetScope(), 0);
+      Debug::SwLog(FunctionProfiler_Generate, FunctionTrace::GetScope(), 0);
       return NothingToDisplay;
    }
 

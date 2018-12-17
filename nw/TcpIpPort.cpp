@@ -65,7 +65,7 @@ SysSocket* TcpIpPort::CreateAppSocket(size_t rxSize, size_t txSize)
 
    if(thread == nullptr)
    {
-      Debug::SwErr(TcpIpPort_CreateAppSocket, 0, 0);
+      Debug::SwLog(TcpIpPort_CreateAppSocket, 0, 0);
       thread = CreateIoThread();
       if(thread == nullptr) return nullptr;
    }

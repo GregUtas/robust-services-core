@@ -99,7 +99,7 @@ void Base::GetSubtended(Base* objects[], size_t& count) const
       return;
    }
 
-   Debug::SwErr(Base_GetSubtended, count, 0);
+   Debug::SwLog(Base_GetSubtended, count, 0);
 }
 
 //------------------------------------------------------------------------------

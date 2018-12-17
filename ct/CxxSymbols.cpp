@@ -353,7 +353,7 @@ CxxScoped* CxxSymbols::FindLocal(const string& name, SymbolView* view) const
          auto idx = FindNearestItem(list);
          if(idx != SIZE_MAX) return list[idx];
          auto expl = name + " has more than one definition";
-         Context::SwErr(CxxSymbols_FindLocal, expl, list.size());
+         Context::SwLog(CxxSymbols_FindLocal, expl, list.size());
       }
 
       return list.front();
@@ -378,7 +378,7 @@ Macro* CxxSymbols::FindMacro(const string& name) const
    if(macros.size() > 1)
    {
       auto expl = name + " has more than one definition";
-      Context::SwErr(CxxSymbols_FindMacro, expl, macros.size());
+      Context::SwLog(CxxSymbols_FindMacro, expl, macros.size());
    }
 
    return static_cast< Macro* >(macros.front());
@@ -576,7 +576,7 @@ CxxScoped* CxxSymbols::FindSymbol(const CodeFile* file,
          if(log)
          {
             auto expl = name + " has more than one definition";
-            Context::SwErr(CxxSymbols_FindSymbol, expl, size);
+            Context::SwLog(CxxSymbols_FindSymbol, expl, size);
             break;
          }
       }

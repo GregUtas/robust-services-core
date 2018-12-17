@@ -97,7 +97,7 @@ string Circuit::Name() const
 
    //  This is a pure virtual function.
    //
-   Debug::SwErr(Circuit_Name, 0, 0, ErrorLog);
-   return "Nil circuit";
+   Debug::SwLog(Circuit_Name, port_.GetId(), 0);
+   return "Unknown circuit";
 }
 }

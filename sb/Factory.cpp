@@ -130,7 +130,7 @@ void Factory::AddIncomingSignal(SignalId sid)
 
    if(!Signal::IsValidId(sid))
    {
-      Debug::SwErr(Factory_AddIncomingSignal, sid, 0);
+      Debug::SwLog(Factory_AddIncomingSignal, sid, 0);
    }
 
    icSignals_[sid] = true;
@@ -146,7 +146,7 @@ void Factory::AddOutgoingSignal(SignalId sid)
 
    if(!Signal::IsValidId(sid))
    {
-      Debug::SwErr(Factory_AddOutgoingSignal, sid, 0);
+      Debug::SwLog(Factory_AddOutgoingSignal, sid, 0);
    }
 
    ogSignals_[sid] = true;
@@ -162,7 +162,7 @@ Context* Factory::AllocContext() const
 
    //  This must be implemented by subclasses.
    //
-   Debug::SwErr(Factory_AllocContext, Fid(), 0);
+   Debug::SwLog(Factory_AllocContext, Fid(), 0);
    return nullptr;
 }
 
@@ -176,7 +176,7 @@ Message* Factory::AllocIcMsg(SbIpBufferPtr& buff) const
 
    //  This must be implemented by a subclass if required.
    //
-   Debug::SwErr(Factory_AllocIcMsg, Fid(), 0);
+   Debug::SwLog(Factory_AllocIcMsg, Fid(), 0);
    return nullptr;
 }
 
@@ -190,7 +190,7 @@ Message* Factory::AllocOgMsg(SignalId sid) const
 
    //  This must be implemented by a subclass if required.
    //
-   Debug::SwErr(Factory_AllocOgMsg, Fid(), 0);
+   Debug::SwLog(Factory_AllocOgMsg, Fid(), 0);
    return nullptr;
 }
 
@@ -300,7 +300,7 @@ bool Factory::InjectMsg(Message& msg) const
 
    //  This must be implemented by a subclass if required.
    //
-   Debug::SwErr(Factory_InjectMsg, Fid(), 0);
+   Debug::SwLog(Factory_InjectMsg, Fid(), 0);
    return false;
 }
 
@@ -345,7 +345,7 @@ Message* Factory::ReallocOgMsg(SbIpBufferPtr& buff) const
 
    //  This must be implemented by a subclass if required.
    //
-   Debug::SwErr(Factory_ReallocOgMsg, Fid(), 0);
+   Debug::SwLog(Factory_ReallocOgMsg, Fid(), 0);
    return nullptr;
 }
 
@@ -360,7 +360,7 @@ Factory::Rc Factory::ReceiveMsg
 
    //  This must be implemented by a subclass if required.
    //
-   Debug::SwErr(Factory_ReceiveMsg, Fid(), 0);
+   Debug::SwLog(Factory_ReceiveMsg, Fid(), 0);
    return FactoryNotReceiving;
 }
 

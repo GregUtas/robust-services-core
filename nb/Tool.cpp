@@ -89,7 +89,7 @@ fn_name Tool_Expl = "Tool.Expl";
 
 const char* Tool::Expl() const
 {
-   Debug::SwErr(Tool_Expl, Tid(), 0);
+   Debug::SwLog(Tool_Expl, Tid(), 0);
    return EMPTY_STR;
 }
 
@@ -111,7 +111,7 @@ fn_name Tool_Name = "Tool.Name";
 
 const char* Tool::Name() const
 {
-   Debug::SwErr(Tool_Name, Tid(), 0);
+   Debug::SwLog(Tool_Name, Tid(), 0);
    return EMPTY_STR;
 }
 

@@ -106,7 +106,7 @@ bool PooledClass::SetPool(ObjectPool& pool)
    //
    if((pool_ != nullptr) && (pool_ != &pool))
    {
-      Debug::SwErr(PooledClass_SetPool, pool_->Pid(), pool.Pid());
+      Debug::SwLog(PooledClass_SetPool, pool_->Pid(), pool.Pid());
       return false;
    }
 

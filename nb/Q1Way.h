@@ -205,7 +205,7 @@ public:
    {
       if(diff_ == NilDiff)
       {
-         Debug::SwErr(Q1Way_Next(), 0, 0);  // queue is not initialized
+         Debug::SwLog(Q1Way_Next(), 0, 0);  // queue is not initialized
          return false;
       }
       Q1Link* item;                         // item will hold result
@@ -327,7 +327,7 @@ public:
       }
       if(diff_ == NilDiff)
       {
-         Debug::SwErr(Q1Way_Next(), 0, 0);    // queue is not initialized
+         Debug::SwLog(Q1Way_Next(), 0, 0);    // queue is not initialized
          return;
       }
       auto item = (Q1Link*)                   // start at the current item
@@ -341,12 +341,12 @@ private:
    {
       if(diff_ == NilDiff)
       {
-         Debug::SwErr(Q1Way_Item(), 0, 0);  // queue is not initialized
+         Debug::SwLog(Q1Way_Item(), 0, 0);  // queue is not initialized
          return nullptr;
       }
       if(&elem == nullptr)
       {
-         Debug::SwErr(Q1Way_Item(), 0, 1);  // ELEM is invalid
+         Debug::SwLog(Q1Way_Item(), 0, 1);  // ELEM is invalid
          return nullptr;
       }
 

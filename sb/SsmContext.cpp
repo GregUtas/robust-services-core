@@ -79,7 +79,7 @@ RootServiceSM* SsmContext::AllocRoot(const Message& msg, ProtocolSM& psm)
 
    if(!header->initial)
    {
-      Debug::SwErr
+      Debug::SwLog
          (SsmContext_AllocRoot, pack2(header->protocol, header->signal), 0);
       return nullptr;
    }
@@ -89,7 +89,7 @@ RootServiceSM* SsmContext::AllocRoot(const Message& msg, ProtocolSM& psm)
 
    if(fac == nullptr)
    {
-      Debug::SwErr
+      Debug::SwLog
          (SsmContext_AllocRoot, pack2(header->protocol, header->signal), fid);
       return nullptr;
    }

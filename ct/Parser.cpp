@@ -231,7 +231,7 @@ bool Parser::CheckType(QualNamePtr& name)
       return false;
 
    default:
-      Debug::SwErr(Parser_CheckType, *name->Name(), type, InfoLog);
+      Debug::SwLog(Parser_CheckType, *name->Name(), type, SwInfo);
    }
 
    return false;
@@ -286,7 +286,7 @@ void Parser::Failure(const string& venue) const
    auto line = lexer_.GetLineNum(farthest_);
    std::ostringstream text;
    text << venue << ", line " << line + 1 << ": " << code;
-   Debug::SwErr(Parser_Failure, text.str(), cause_, InfoLog);
+   Debug::SwLog(Parser_Failure, text.str(), cause_, SwInfo);
 }
 
 //------------------------------------------------------------------------------
@@ -302,7 +302,7 @@ bool Parser::Fault(DirectiveError err) const
    auto line = lexer_.GetLineNum(curr);
    std::ostringstream text;
    text << venue_ << ", line " << line + 1 << ':' << CRLF << code;
-   Debug::SwErr(Parser_Fault, text.str(), err, InfoLog);
+   Debug::SwLog(Parser_Fault, text.str(), err, SwInfo);
    return false;
 }
 
@@ -1230,7 +1230,7 @@ bool Parser::GetCxxAlpha(ExprPtr& expr)
          return Backup(start, 78);
 
       default:
-         Debug::SwErr(Parser_GetCxxAlpha, op, 0, InfoLog);
+         Debug::SwLog(Parser_GetCxxAlpha, op, 0, SwInfo);
          return Backup(start, 79);
       }
    }
@@ -2679,7 +2679,7 @@ bool Parser::GetQualName(QualNamePtr& name, Constraint constraint)
 
       if(!lexer_.GetOpOverride(oper))
       {
-         Debug::SwErr(Parser_GetQualName, 0, 0, InfoLog);
+         Debug::SwLog(Parser_GetQualName, 0, 0, SwInfo);
          return Backup(start, 169);
       }
 
@@ -4047,7 +4047,7 @@ bool Parser::ParseInBlock(Cxx::Keyword kwd, Block* block)
             return block->AddStatement(usingItem.release());
          break;
       case '-':
-         Debug::SwErr(Parser_ParseInBlock, kwd, 0, InfoLog);
+         Debug::SwLog(Parser_ParseInBlock, kwd, 0, SwInfo);
          return false;
       }
 
@@ -4121,7 +4121,7 @@ bool Parser::ParseInClass(Cxx::Keyword kwd, Class* cls)
          if(GetUsing(usingItem)) return cls->AddUsing(usingItem);
          break;
       case '-':
-         Debug::SwErr(Parser_ParseInClass, kwd, 0, InfoLog);
+         Debug::SwLog(Parser_ParseInClass, kwd, 0, SwInfo);
          return false;
       }
 
@@ -4197,7 +4197,7 @@ bool Parser::ParseInFile(Cxx::Keyword kwd, Namespace* space)
          if(GetUsing(usingItem)) return space->AddUsing(usingItem);
          break;
       case '-':
-         Debug::SwErr(Parser_ParseInFile, kwd, 0, InfoLog);
+         Debug::SwLog(Parser_ParseInFile, kwd, 0, SwInfo);
          return false;
       }
 
@@ -4331,7 +4331,7 @@ bool Parser::SetCompoundType
       return true;
 
    default:
-      Debug::SwErr(Parser_SetCompoundType, *name->Name(), type, InfoLog);
+      Debug::SwLog(Parser_SetCompoundType, *name->Name(), type, SwInfo);
    }
 
    return false;
@@ -4353,7 +4353,7 @@ bool Parser::Skip(size_t end, const ExprPtr& expr, size_t cause)
    auto line = lexer_.GetLineNum(start);
    std::ostringstream text;
    text << venue_ << ", line " << line + 1 << ": " << code;
-   Debug::SwErr(Parser_Skip, text.str(), cause, InfoLog);
+   Debug::SwLog(Parser_Skip, text.str(), cause, SwInfo);
 
    auto item = TokenPtr(new StrLiteral(code));
    expr->AddItem(item);

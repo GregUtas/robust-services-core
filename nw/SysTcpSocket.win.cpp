@@ -88,7 +88,7 @@ bool SysTcpSocket::Listen(int backlog)
 
    if(backlog > SOMAXCONN)
    {
-      Debug::SwErr(SysTcpSocket_Listen, SOMAXCONN, backlog);
+      Debug::SwLog(SysTcpSocket_Listen, SOMAXCONN, backlog);
       backlog = SOMAXCONN;
    }
 
@@ -199,7 +199,7 @@ word SysTcpSocket::Recv(byte_t* buff, size_t max)
 
    if((buff == nullptr) || (max == 0))
    {
-      Debug::SwErr(SysTcpSocket_Recv, max, 0);
+      Debug::SwLog(SysTcpSocket_Recv, max, 0);
       return -1;
    }
 
@@ -244,7 +244,7 @@ word SysTcpSocket::Send(const byte_t* data, size_t len)
 
    if((data == nullptr) || (len == 0))
    {
-      Debug::SwErr(SysTcpSocket_Send, len, 0);
+      Debug::SwLog(SysTcpSocket_Send, len, 0);
       return -1;
    }
 

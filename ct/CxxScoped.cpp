@@ -288,7 +288,7 @@ void BaseDecl::FindReferent()
    //  The base class wasn't found.
    //
    auto log = "Unknown base class: " + *Name() + " [" + strLocation() + ']';
-   Debug::SwErr(BaseDecl_FindReferent, log, 0, InfoLog);
+   Debug::SwLog(BaseDecl_FindReferent, log, 0, SwInfo);
 }
 
 //------------------------------------------------------------------------------
@@ -652,7 +652,7 @@ bool CxxScoped::NameRefersToItem(const string& name,
       }
 
       auto expl = "No file for item: " + *Name();
-      Context::SwErr(CxxScoped_NameRefersToItem, expl, itemType);
+      Context::SwLog(CxxScoped_NameRefersToItem, expl, itemType);
       return false;
    }
 
@@ -723,7 +723,7 @@ bool CxxScoped::NameRefersToItem(const string& name,
          //
          //  These shouldn't occur, because fqName has a "::" prefix.
          //
-         Debug::SwErr(CxxScoped_NameRefersToItem, *fqn, pos);
+         Debug::SwLog(CxxScoped_NameRefersToItem, *fqn, pos);
          return false;
       }
 
@@ -774,7 +774,7 @@ void CxxScoped::RecordAccess(Cxx::Access access) const
    if(access > access_)
    {
       auto expl = "Member should be inaccessible: " + ScopedName(true);
-      Context::SwErr(CxxScoped_RecordAccess, expl, access);
+      Context::SwLog(CxxScoped_RecordAccess, expl, access);
    }
 
    if(access == Cxx::Public)
@@ -1095,7 +1095,7 @@ void Enumerator::EnterBlock()
       if((numeric.Type() != Numeric::INT) && (numeric.Type() != Numeric::ENUM))
       {
          auto expl = "Non-numeric value for enumerator";
-         Context::SwErr(Enumerator_EnterBlock, expl, numeric.Type());
+         Context::SwLog(Enumerator_EnterBlock, expl, numeric.Type());
       }
    }
 }
@@ -1613,7 +1613,7 @@ CxxNamed* Friend::FindForward() const
 
       default:
          auto expl = name + " is an invalid friend";
-         Context::SwErr(Friend_FindForward, expl, type);
+         Context::SwLog(Friend_FindForward, expl, type);
          return nullptr;
       }
    }
@@ -1924,7 +1924,7 @@ void Friend::SetReferent(CxxNamed* item, const SymbolView* view) const
       break;
    default:
       auto expl = item->ScopedName(true) + " is an invalid friend";
-      Context::SwErr(Friend_SetReferent, expl, type);
+      Context::SwLog(Friend_SetReferent, expl, type);
       return;
    }
 
@@ -2341,7 +2341,7 @@ void Using::FindReferent()
 
    auto qname = QualifiedName(true, false);
    auto log = "Unknown using: " + qname + " [" + strLocation() + ']';
-   Debug::SwErr(Using_FindReferent, log, 0, InfoLog);
+   Debug::SwLog(Using_FindReferent, log, 0, SwInfo);
 }
 
 //------------------------------------------------------------------------------
@@ -2401,7 +2401,7 @@ string Using::ScopedName(bool templates) const
    if(ref != nullptr) return ref->ScopedName(templates);
 
    auto expl = "using " + QualifiedName(true, false) + ": symbol not found";
-   Context::SwErr(Using_ScopedName, expl, 0);
+   Context::SwLog(Using_ScopedName, expl, 0);
    return ERROR_STR;
 }
 

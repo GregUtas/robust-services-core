@@ -423,7 +423,7 @@ ProtocolSM::OutgoingRc PotsMuxPsm::ProcessOgMsg(Message& msg)
       //
       if(ogMsg_ != nullptr)
       {
-         Debug::SwErr(PotsMuxPsm_ProcessOgMsg, msg.GetSignal(), 0);
+         Debug::SwLog(PotsMuxPsm_ProcessOgMsg, msg.GetSignal(), 0);
       }
 
       return SendMessage;
@@ -465,7 +465,7 @@ ProtocolSM::OutgoingRc PotsMuxPsm::ProcessOgMsg(Message& msg)
       //
       //  Other signals should only occur when being relayed (see SetSignal).
       //
-      Debug::SwErr(PotsMuxPsm_ProcessOgMsg, header_.signal, 1);
+      Debug::SwLog(PotsMuxPsm_ProcessOgMsg, header_.signal, 1);
       return PurgeMessage;
    }
 
@@ -582,7 +582,7 @@ void PotsMuxPsm::SendSignal(PotsSignal::Id signal)
       //
       //  Other messages are relayed instead of being built explicitly.
       //
-      Debug::SwErr(PotsMuxPsm_SendSignal, signal, 0);
+      Debug::SwLog(PotsMuxPsm_SendSignal, signal, 0);
    }
 }
 
@@ -961,7 +961,7 @@ void PotsMuxSsm::SetNPsm(CallId cid, PotsMuxPsm& psm)
 
    if(nPsm_[cid] != nullptr)
    {
-      Debug::SwErr(PotsMuxSsm_SetNPsm, cid, 0);
+      Debug::SwLog(PotsMuxSsm_SetNPsm, cid, 0);
       return;
    }
 

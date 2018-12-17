@@ -51,7 +51,7 @@ SysMutex::~SysMutex()
 
    if(nid_ != NIL_ID)
    {
-      Debug::SwErr(SysMutex_dtor, debug64_t(mutex_), nid_);
+      Debug::SwLog(SysMutex_dtor, debug64_t(mutex_), nid_);
    }
 
    if(mutex_ != nullptr)
@@ -59,7 +59,7 @@ SysMutex::~SysMutex()
       if(CloseHandle(mutex_))
          mutex_ = nullptr;
       else
-         Debug::SwErr(SysMutex_dtor, debug64_t(mutex_), GetLastError());
+         Debug::SwLog(SysMutex_dtor, debug64_t(mutex_), GetLastError());
    }
 }
 
@@ -97,7 +97,7 @@ SysMutex::Rc SysMutex::Acquire(msecs_t timeout, Thread* owner)
       result = TimedOut;
       break;
    default:
-      Debug::SwErr(SysMutex_Acquire, debug64_t(mutex_), GetLastError());
+      Debug::SwLog(SysMutex_Acquire, debug64_t(mutex_), GetLastError());
    }
 
    //  Debug::ft is deferred because Windows threads sometimes run *before*
@@ -126,7 +126,7 @@ void SysMutex::Release()
    {
       nid_ = nid;
       owner_ = owner;
-      Debug::SwErr(SysMutex_Release, debug64_t(mutex_), GetLastError());
+      Debug::SwLog(SysMutex_Release, debug64_t(mutex_), GetLastError());
    }
 }
 }

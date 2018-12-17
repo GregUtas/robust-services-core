@@ -199,6 +199,8 @@ void* Memory::Alloc(size_t nBytes, MemoryType type, bool ex)
 {
    Debug::ft(Memory_Alloc);
 
+   if(nBytes == 0) return nullptr;
+
    //  Access the heap that manages the type of memory being requested.
    //
    auto heap = EnsureHeap(type);
@@ -285,7 +287,7 @@ void Memory::Free(const void* addr)
 
    if(heap == nullptr)
    {
-      Debug::SwErr(Memory_Free, header->size, header->type);
+      Debug::SwLog(Memory_Free, header->size, header->type);
       return;
    }
 
@@ -326,7 +328,7 @@ void* Memory::Realloc(void* addr, size_t nBytes)
    //
    if(addr == nullptr)
    {
-      Debug::SwErr(Memory_Realloc, nBytes, 0);
+      Debug::SwLog(Memory_Realloc, nBytes, 0);
       return nullptr;
    }
 
@@ -377,7 +379,7 @@ MemoryType Memory::Type(const void* addr)
 
    if(addr == nullptr)
    {
-      Debug::SwErr(Memory_Type, 0, 0);
+      Debug::SwLog(Memory_Type, 0, 0);
       return MemNull;
    }
 

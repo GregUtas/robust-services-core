@@ -306,7 +306,7 @@ CodeFile* Library::EnsureFile(const string& file, CodeDir* dir)
          {
             //c The same filename in different directories is not supported.
             //
-            Debug::SwErr(Library_EnsureFile, file, f->Fid());
+            Debug::SwLog(Library_EnsureFile, file, f->Fid());
             return nullptr;
          }
       }

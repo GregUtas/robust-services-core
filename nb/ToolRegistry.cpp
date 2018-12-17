@@ -74,7 +74,7 @@ bool ToolRegistry::BindTool(Tool& tool)
       {
          if(t->CliChar() == c)
          {
-            Debug::SwErr(ToolRegistry_BindTool, int(c), tool.Tid());
+            Debug::SwLog(ToolRegistry_BindTool, int(c), tool.Tid());
             return false;
          }
       }

@@ -368,7 +368,7 @@ msecs_t TrafficCall::Advance()
    case Releasing:
       return ProcessReleasing();
    default:
-      Debug::SwErr(TrafficCall_Advance, int(state_), 0);
+      Debug::SwLog(TrafficCall_Advance, int(state_), 0);
    }
 
    return 0;
@@ -1221,7 +1221,7 @@ void PotsTrafficThread::Enter()
          break;
 
       default:
-         Debug::SwErr(PotsTrafficThread_Enter, int(rc), 0);
+         Debug::SwLog(PotsTrafficThread_Enter, int(rc), 0);
       }
 
       //  Unless we're supposed to sleep forever, adjust our sleep
@@ -1293,7 +1293,7 @@ Address::DN PotsTrafficThread::FindDn(DnStatus status) const
       break;
 
    default:
-      Debug::SwErr(PotsTrafficThread_FindDn, int(status), 0);
+      Debug::SwLog(PotsTrafficThread_FindDn, int(status), 0);
    }
 
    return Address::NilDN;

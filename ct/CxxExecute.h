@@ -584,8 +584,8 @@ public:
    //  the log in the execution trace to make it easier to see where
    //  the error occurred.
    //
-   static void SwErr(NodeBase::fn_name_arg func, const std::string& expl,
-      NodeBase::word errval, NodeBase::LogLevel level = NodeBase::InfoLog);
+   static void SwLog(NodeBase::fn_name_arg func, const std::string& expl,
+      NodeBase::word errval, NodeBase::SwLogLevel level = NodeBase::SwInfo);
 
    //  Resets static data members when entering a restart at LEVEL.
    //

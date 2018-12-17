@@ -159,7 +159,7 @@ size_t IpBuffer::BuffSize(size_t nBytes)
       if(BuffSizes[i] >= nBytes) return BuffSizes[i];
    }
 
-   Debug::SwErr(IpBuffer_BuffSize, nBytes, 0, ErrorLog);
+   Debug::SwLog(IpBuffer_BuffSize, nBytes, 0, SwError);
    return 0;
 }
 
@@ -286,7 +286,7 @@ bool IpBuffer::Send(bool external)
 
    if(buff_ == nullptr)
    {
-      Debug::SwErr(IpBuffer_Send, txAddr_.GetPort(), 0);
+      Debug::SwLog(IpBuffer_Send, txAddr_.GetPort(), 0);
       return false;
    }
 
@@ -313,7 +313,7 @@ bool IpBuffer::Send(bool external)
 
       if(ipPort == nullptr)
       {
-         Debug::SwErr(IpBuffer_Send, txPort, 1);
+         Debug::SwLog(IpBuffer_Send, txPort, 1);
          return false;
       }
 
@@ -321,7 +321,7 @@ bool IpBuffer::Send(bool external)
 
       if(svc == nullptr)
       {
-         Debug::SwErr(IpBuffer_Send, txPort, 2);
+         Debug::SwLog(IpBuffer_Send, txPort, 2);
          return false;
       }
 
@@ -335,7 +335,7 @@ bool IpBuffer::Send(bool external)
          {
             if(Restart::GetStatus() != ShuttingDown)
             {
-               Debug::SwErr(IpBuffer_Send, txPort, 3);
+               Debug::SwLog(IpBuffer_Send, txPort, 3);
             }
 
             return false;

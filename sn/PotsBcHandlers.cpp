@@ -206,7 +206,7 @@ EventHandler::Rc PotsBcCiAnalyzeLocalMessage::ProcessEvent
          return pssm.RaiseCollectionTimeout(nextEvent);
       }
 
-      Debug::SwErr(PotsBcCiAnalyzeLocalMessage_ProcessEvent, toi->tid, 0);
+      Debug::SwLog(PotsBcCiAnalyzeLocalMessage_ProcessEvent, toi->tid, 0);
       return Suspend;
    }
 
@@ -780,7 +780,7 @@ EventHandler::Rc PotsBcAcAnalyzeLocalMessage::ProcessEvent
          return pssm.RaiseLocalRelease(nextEvent, Cause::NormalCallClearing);
       }
 
-      Debug::SwErr(PotsBcAcAnalyzeLocalMessage_ProcessEvent, toi->tid, 0);
+      Debug::SwLog(PotsBcAcAnalyzeLocalMessage_ProcessEvent, toi->tid, 0);
       return Suspend;
    }
 
@@ -901,7 +901,7 @@ EventHandler::Rc PotsBcExAnalyzeLocalMessage::ProcessEvent
          return pssm.RaiseApplyTreatment(nextEvent, Cause::NilInd);
       }
 
-      Debug::SwErr(PotsBcExAnalyzeLocalMessage_ProcessEvent, toi->tid, 0);
+      Debug::SwLog(PotsBcExAnalyzeLocalMessage_ProcessEvent, toi->tid, 0);
       return Suspend;
    }
 

@@ -202,7 +202,7 @@ void* TraceBuffer::AddRecord(size_t nBytes)
       //
       if(buff_[end_] != EndMarker)
       {
-         Debug::SwErr(TraceBuffer_AddRecord, start_, end_);
+         Debug::SwLog(TraceBuffer_AddRecord, start_, end_);
          buff_[end_] = EndMarker;
       }
 
@@ -265,7 +265,7 @@ void TraceBuffer::ClaimBlocks()
 
          if(--count <= 0)
          {
-            Debug::SwErr(TraceBuffer_ClaimBlocks, MaxRecords(), 0);
+            Debug::SwLog(TraceBuffer_ClaimBlocks, MaxRecords(), 0);
             break;
          }
       }
@@ -654,7 +654,7 @@ void TraceBuffer::Shutdown(RestartLevel level)
 
          if(--count <= 0)
          {
-            Debug::SwErr(TraceBuffer_Shutdown, MaxRecords(), 0);
+            Debug::SwLog(TraceBuffer_Shutdown, MaxRecords(), 0);
             break;
          }
       }
@@ -711,7 +711,7 @@ void TraceBuffer::StopTrace()
 
    if(hardLock_.exchange(false))
    {
-      Debug::SwErr(TraceBuffer_StopTrace, 0, 0);
+      Debug::SwLog(TraceBuffer_StopTrace, 0, 0);
    }
 
    //  If trace records are being output immediately, display the last
@@ -746,6 +746,6 @@ void TraceBuffer::Unlock()
    if(softLocks_.load() > 0)
       softLocks_.fetch_sub(1);
    else
-      Debug::SwErr(TraceBuffer_Unlock, 0, 1);
+      Debug::SwLog(TraceBuffer_Unlock, 0, 1);
 }
 }

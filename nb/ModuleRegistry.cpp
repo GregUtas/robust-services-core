@@ -95,7 +95,7 @@ RestartLevel ModuleRegistry::CalcLevel() const
       switch(errval_)
       {
       case RestartNil:
-         Debug::SwErr(ModuleRegistry_CalcLevel, reason_, errval_);
+         Debug::SwLog(ModuleRegistry_CalcLevel, reason_, errval_);
          return RestartNil;
 
       case RestartWarm:
@@ -106,7 +106,7 @@ RestartLevel ModuleRegistry::CalcLevel() const
          return RestartLevel(errval_);
 
       default:
-         Debug::SwErr(ModuleRegistry_CalcLevel, reason_, errval_);
+         Debug::SwLog(ModuleRegistry_CalcLevel, reason_, errval_);
          return RestartWarm;
       }
    }
@@ -121,7 +121,7 @@ RestartLevel ModuleRegistry::CalcLevel() const
    {
       //  These reasons should not occur when the system is in service.
       //
-      Debug::SwErr(ModuleRegistry_CalcLevel, reason_, errval_);
+      Debug::SwLog(ModuleRegistry_CalcLevel, reason_, errval_);
       return RestartReboot;
    }
 

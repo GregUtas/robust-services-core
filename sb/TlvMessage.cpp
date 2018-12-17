@@ -148,7 +148,7 @@ TlvParmPtr TlvMessage::AddParm(ParameterId pid, MsgSize plen)
 
    if(Dir() == MsgIncoming)
    {
-      Debug::SwErr(TlvMessage_AddParm, layout->header.signal, pid);
+      Debug::SwLog(TlvMessage_AddParm, layout->header.signal, pid);
       return nullptr;
    }
 
@@ -500,7 +500,7 @@ TlvParmPtr TlvMessage::Wrap(const TlvMessage& msg, ParameterId pid)
 
    if(plen > MsgHeader::MaxMsgSize)
    {
-      Debug::SwErr(TlvMessage_Wrap, plen, 0);
+      Debug::SwLog(TlvMessage_Wrap, plen, 0);
       return nullptr;
    }
 

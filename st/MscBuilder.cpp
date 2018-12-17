@@ -531,7 +531,7 @@ bool MscBuilder::Error(debug64_t errval, debug32_t offset)
 {
    Debug::ft(MscBuilder_Error);
 
-   Debug::SwErr(MscBuilder_Error, errval, offset);
+   Debug::SwLog(MscBuilder_Error, errval, offset);
    *stream_ << ErrorFlag;
    *stream_ << " errval=" << strHex(errval);
    *stream_ << " offset=" << strHex(offset);
@@ -1428,7 +1428,7 @@ void MscBuilder::SetContextColumns()
    //
    if(nextCol_ != (FirstCol + (lines_ * ColWidth)))
    {
-      Debug::SwErr(MscBuilder_SetContextColumns, nextCol_, lines_);
+      Debug::SwLog(MscBuilder_SetContextColumns, nextCol_, lines_);
    }
 }
 

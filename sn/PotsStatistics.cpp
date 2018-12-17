@@ -115,7 +115,7 @@ void PotsStatistics::Incr(Id id)
       return;
    }
 
-   Debug::SwErr(PotsStatistics_Incr, id, 0);
+   Debug::SwLog(PotsStatistics_Incr, id, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -132,6 +132,6 @@ void PotsStatistics::IncrCause(Cause::Ind cause)
       return;
    }
 
-   Debug::SwErr(PotsStatistics_IncrCause, cause, 0);
+   Debug::SwLog(PotsStatistics_IncrCause, cause, 0);
 }
 }

@@ -30,13 +30,13 @@
 
 namespace NodeBase
 {
-//  Debug::SwErr throws this when an application decides to abort work in
+//  Debug::SwLog throws this when an application decides to abort work in
 //  progress.
 //
 class SoftwareException : public Exception
 {
 public:
-   //  ERRVAL/ERRSTR and OFFSET are the arguments to Debug::SwErr.
+   //  ERRVAL/ERRSTR and OFFSET are the arguments to Debug::SwLog.
    //
    SoftwareException
       (debug64_t errval, debug32_t offset, fn_depth depth = 1);

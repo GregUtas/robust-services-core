@@ -62,7 +62,7 @@ IoThread::IoThread(Faction faction, ipport_t port,
 
    if(rxSize_ > MaxRxBuffSize)
    {
-      Debug::SwErr(IoThread_ctor, rxSize_, 0);
+      Debug::SwLog(IoThread_ctor, rxSize_, 0);
       rxSize_ = MaxRxBuffSize;
    }
 
@@ -70,7 +70,7 @@ IoThread::IoThread(Faction faction, ipport_t port,
 
    if(txSize_ > MaxTxBuffSize)
    {
-      Debug::SwErr(IoThread_ctor, txSize_, 1);
+      Debug::SwLog(IoThread_ctor, txSize_, 1);
       txSize_ = MaxTxBuffSize;
    }
 

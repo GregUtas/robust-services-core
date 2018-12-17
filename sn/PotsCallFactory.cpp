@@ -155,7 +155,7 @@ RootServiceSM* PotsCallFactory::AllocRoot
       break;
 
    default:
-      Debug::SwErr(PotsCallFactory_AllocRoot, fid, 0);
+      Debug::SwLog(PotsCallFactory_AllocRoot, fid, 0);
    }
 
    return root;

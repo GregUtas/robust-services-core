@@ -76,7 +76,7 @@ CipPsm* BcSsm::AllocNPsm()
 
    if(nPsm_ != nullptr)
    {
-      Debug::SwErr(BcSsm_AllocNPsm, Sid(), 0);
+      Debug::SwLog(BcSsm_AllocNPsm, Sid(), 0);
       return nPsm_;
    }
 
@@ -118,7 +118,7 @@ EventHandler::Rc BcSsm::AnalyzeNPsmTimeout
 
    //  This must be overridden by a subclass that runs a timer on the CIP PSM.
    //
-   Debug::SwErr(BcSsm_AnalyzeNPsmTimeout, Sid(), 0);
+   Debug::SwLog(BcSsm_AnalyzeNPsmTimeout, Sid(), 0);
    return RaiseReleaseCall(nextEvent, Cause::MessageInvalidForState);
 }
 
@@ -132,7 +132,7 @@ CipMessage* BcSsm::BuildCipCpg(Progress::Ind progress)
 
    if(nPsm_ == nullptr)
    {
-      Debug::SwErr(BcSsm_BuildCipCpg, Sid(), progress);
+      Debug::SwLog(BcSsm_BuildCipCpg, Sid(), progress);
       return nullptr;
    }
 
@@ -160,7 +160,7 @@ CipMessage* BcSsm::BuildCipIam()
    //
    if(uPsm_ == nullptr)
    {
-      Debug::SwErr(BcSsm_BuildCipIam, Sid(), 0);
+      Debug::SwLog(BcSsm_BuildCipIam, Sid(), 0);
       return nullptr;
    }
 
@@ -207,7 +207,7 @@ CipMessage* BcSsm::BuildCipRel(Cause::Ind cause)
    //
    if(nPsm_ == nullptr)
    {
-      Debug::SwErr(BcSsm_BuildCipRel, Sid(), 0);
+      Debug::SwLog(BcSsm_BuildCipRel, Sid(), 0);
       return nullptr;
    }
 
@@ -335,7 +335,7 @@ EventHandler::Rc BcSsm::HandleLocalAlerting()
    //
    if(nPsm_ == nullptr)
    {
-      Debug::SwErr(BcSsm_HandleLocalAlerting, Sid(), 0);
+      Debug::SwLog(BcSsm_HandleLocalAlerting, Sid(), 0);
       return EventHandler::Suspend;
    }
 
@@ -350,7 +350,7 @@ EventHandler::Rc BcSsm::HandleLocalAlerting()
 
    if(uPsm_ == nullptr)
    {
-      Debug::SwErr(BcSsm_HandleLocalAlerting, Sid(), 1);
+      Debug::SwLog(BcSsm_HandleLocalAlerting, Sid(), 1);
       return EventHandler::Suspend;
    }
 
@@ -373,7 +373,7 @@ EventHandler::Rc BcSsm::HandleLocalAnswer()
    //
    if(nPsm_ == nullptr)
    {
-      Debug::SwErr(BcSsm_HandleLocalAnswer, Sid(), 0);
+      Debug::SwLog(BcSsm_HandleLocalAnswer, Sid(), 0);
       return EventHandler::Suspend;
    }
 
@@ -384,7 +384,7 @@ EventHandler::Rc BcSsm::HandleLocalAnswer()
 
    if(uPsm_ == nullptr)
    {
-      Debug::SwErr(BcSsm_HandleLocalAnswer, Sid(), 1);
+      Debug::SwLog(BcSsm_HandleLocalAnswer, Sid(), 1);
       return EventHandler::Suspend;
    }
 
@@ -932,7 +932,7 @@ EventHandler::Rc BcSsm::SelectRoute(Event*& nextEvent)
       }
    }
 
-   Debug::SwErr(BcSsm_SelectRoute, route_.selector, 0);
+   Debug::SwLog(BcSsm_SelectRoute, route_.selector, 0);
    return RaiseReleaseCall(nextEvent, Cause::ExchangeRoutingError);
 }
 
@@ -971,7 +971,7 @@ void BcSsm::SetNPsm(CipPsm& psm)
 
    if(nPsm_ != nullptr)
    {
-      Debug::SwErr(BcSsm_SetNPsm, Sid(), 0);
+      Debug::SwLog(BcSsm_SetNPsm, Sid(), 0);
       return;
    }
 
@@ -988,7 +988,7 @@ void BcSsm::SetUPsm(MediaPsm& psm)
 
    if(uPsm_ != nullptr)
    {
-      Debug::SwErr(BcSsm_SetUPsm, Sid(), uPsm_->GetFactory());
+      Debug::SwLog(BcSsm_SetUPsm, Sid(), uPsm_->GetFactory());
       return;
    }
 

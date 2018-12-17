@@ -141,20 +141,19 @@ extern fixed_string EMPTY_STR;
 extern fixed_string ERROR_STR;
 extern fixed_string SCOPE_STR;
 
-//  Severity of logs.
+//  Severity of software logs.  See Debug::SwLog.
 //
-enum LogLevel
+enum SwLogLevel
 {
-   InfoLog,     // no action required
-   DebugLog,    // only useful to software designers
-   WarningLog,  // should be investigated
-   ErrorLog,    // requires attention
-   LogLevel_N   // number of log levels
+   SwInfo,     // a basic debug log
+   SwWarning,  // a log that includes a stack trace
+   SwError,    // a log that raises an exception
+   LogLevel_N  // number of software log levels
 };
 
 //  Inserts a string for LEVEL into STREAM.
 //
-std::ostream& operator<<(std::ostream& stream, LogLevel level);
+std::ostream& operator<<(std::ostream& stream, SwLogLevel level);
 
 //  Types for debug error codes.
 //

@@ -180,7 +180,7 @@ void ThreadTrace::CaptureEvent(fn_name_arg func, Id rid, word info)
       new ThreadTrace(func, depth - 3, rid, info);
       break;
    default:
-      Debug::SwErr(ThreadTrace_CaptureEvent, rid, 0);
+      Debug::SwLog(ThreadTrace_CaptureEvent, rid, 0);
    }
 }
 
@@ -690,7 +690,7 @@ bool Orphans::ExitNow()
          orphans_.Erase(i);
          ThreadAdmin::Incr(ThreadAdmin::Orphans);
          delete orphan;
-         Debug::SwErr(Orphans_ExitNow, pid, 0, WarningLog, "ORPHAN EXITED");
+         Debug::SwLog(Orphans_ExitNow, "ORPHAN EXITED", pid);
          return true;
       }
    }
@@ -712,7 +712,7 @@ void Orphans::Register(SysThread* thr)
 
    if(!orphans_.PushBack(thr))
    {
-      Debug::SwErr(Orphans_Register, thr->Nid(), 0);
+      Debug::SwLog(Orphans_Register, thr->Nid(), 0);
    }
 }
 
@@ -1142,7 +1142,7 @@ const char* Thread::AbbrName() const
 
    //  This is a pure virtual function.
    //
-   Debug::SwErr(Thread_AbbrName, Tid(), faction_, ErrorLog);
+   Debug::SwLog(Thread_AbbrName, Tid(), faction_);
    return "unknown";
 }
 
@@ -1472,7 +1472,7 @@ void Thread::Enter()
 
    //  This is a pure virtual function.
    //
-   Debug::SwErr(Thread_Enter, Tid(), faction_, ErrorLog);
+   Debug::SwLog(Thread_Enter, AbbrName(), faction_);
 }
 
 //------------------------------------------------------------------------------
@@ -1485,7 +1485,7 @@ bool Thread::EnterBlockingOperation(BlockingReason why, fn_name_arg func)
 
    if(why == NotBlocked)
    {
-      Debug::SwErr(Thread_EnterBlockingOperation, why, 0);
+      Debug::SwLog(Thread_EnterBlockingOperation, why, 0);
       return false;
    }
 
@@ -1726,7 +1726,7 @@ SysThread::Priority Thread::FactionToPriority(Faction& faction)
 
    if(faction < Faction_N) return FactionMap[faction];
 
-   Debug::SwErr(Thread_FactionToPriority, faction, 0);
+   Debug::SwLog(Thread_FactionToPriority, faction, 0);
    faction = BackgroundFaction;
    return SysThread::DefaultPriority;
 }
@@ -2006,7 +2006,7 @@ void Thread::MakePreemptable()
    //
    if(thr->priv_->unpreempts_ == 0)
    {
-      Debug::SwErr(Thread_MakePreemptable, thr->Tid(), thr->GetFaction());
+      Debug::SwLog(Thread_MakePreemptable, thr->Tid(), thr->GetFaction());
       return;
    }
 
@@ -2028,7 +2028,7 @@ void Thread::MakeUnpreemptable()
    //
    if(thr->priv_->unpreempts_ >= 0x0f)
    {
-      Debug::SwErr(Thread_MakeUnpreemptable, thr->Tid(), thr->GetFaction());
+      Debug::SwLog(Thread_MakeUnpreemptable, thr->Tid(), thr->GetFaction());
       return;
    }
 
@@ -2049,7 +2049,7 @@ void Thread::MemProtect()
 
    if(thr->priv_->unprotects_ == 0)
    {
-      Debug::SwErr(Thread_MemProtect, thr->Tid(), thr->GetFaction());
+      Debug::SwLog(Thread_MemProtect, thr->Tid(), thr->GetFaction());
       return;
    }
 
@@ -2070,7 +2070,7 @@ void Thread::MemUnprotect()
 
    if(thr->priv_->unprotects_ >= 0x0f)
    {
-      Debug::SwErr(Thread_MemUnprotect, thr->Tid(), thr->GetFaction());
+      Debug::SwLog(Thread_MemUnprotect, thr->Tid(), thr->GetFaction());
       return;
    }
 
@@ -2183,7 +2183,7 @@ void Thread::Raise(signal_t sig)
 
    if(ps1 == nullptr)
    {
-      Debug::SwErr(Thread_Raise, sig, 0);
+      Debug::SwLog(Thread_Raise, sig, 0);
       return;
    }
 
@@ -2211,7 +2211,7 @@ void Thread::Raise(signal_t sig)
    //
    if(ps1->Severity() == 0)
    {
-      Debug::SwErr(Thread_Raise, sig, 1);
+      Debug::SwLog(Thread_Raise, sig, 1);
       return;
    }
 
@@ -2228,7 +2228,7 @@ void Thread::Raise(signal_t sig)
       if(ps0 != nullptr)
          install = (ps1->Severity() > ps0->Severity());
       else
-         Debug::SwErr(Thread_Raise, sig, 2);
+         Debug::SwLog(Thread_Raise, sig, 2);
    }
 
    //  If the signal will force the thread to exit, try to unblock it.
@@ -2304,13 +2304,13 @@ bool Thread::Recreate()
    //
    if(systhrd_ != nullptr)
    {
-      Debug::SwErr(Thread_Recreate, pack2(faction_, Tid()), 0);
+      Debug::SwLog(Thread_Recreate, pack2(faction_, Tid()), 0);
       return true;
    }
 
    if(!IsCritical())
    {
-      Debug::SwErr(Thread_Recreate, pack2(faction_, Tid()), 1);
+      Debug::SwLog(Thread_Recreate, pack2(faction_, Tid()), 1);
       return true;
    }
 
@@ -2346,7 +2346,7 @@ bool Thread::Recreate()
 
    if(systhrd_->status_.any())
    {
-      Debug::SwErr(Thread_Recreate, systhrd_->status_.to_string(), Tid());
+      Debug::SwLog(Thread_Recreate, systhrd_->status_.to_string(), Tid());
    }
 
    ThreadAdmin::Incr(ThreadAdmin::Recreations);

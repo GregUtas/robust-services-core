@@ -106,7 +106,7 @@ void Trigger::UnbindInitiator(Initiator& init)
 
    if(!initq_.Exq(init))
    {
-      Debug::SwErr(Trigger_UnbindInitiator, tid_, init.Sid());
+      Debug::SwLog(Trigger_UnbindInitiator, tid_, init.Sid());
    }
 }
 }

@@ -56,7 +56,7 @@ SysHeap::SysHeap(MemoryType type, size_t bytes) :
 
    if(heap_ == nullptr)
    {
-      Debug::SwErr(SysHeap_ctor, 0, GetLastError(), ErrorLog);
+      Debug::SwLog(SysHeap_ctor, 0, GetLastError(), SwError);
    }
 }
 
@@ -76,13 +76,13 @@ SysHeap::~SysHeap()
    //
    if(type_ == MemPerm)
    {
-      Debug::SwErr(SysHeap_dtor, debug64_t(heap_), 0);
+      Debug::SwLog(SysHeap_dtor, debug64_t(heap_), 0);
       return;
    }
 
    if(!HeapDestroy(heap_))
    {
-      Debug::SwErr(SysHeap_dtor, debug64_t(heap_), GetLastError());
+      Debug::SwLog(SysHeap_dtor, debug64_t(heap_), GetLastError());
    }
 
    heap_ = nullptr;
@@ -229,7 +229,7 @@ void SysHeap::Free(void* addr, size_t size)
    }
    else
    {
-      Debug::SwErr(SysHeap_Free, debug64_t(addr), GetLastError());
+      Debug::SwLog(SysHeap_Free, debug64_t(addr), GetLastError());
    }
 }
 

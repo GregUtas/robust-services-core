@@ -271,7 +271,7 @@ Message* TestSession::NextIcMsg(FactoryId fid, SignalId sid, SkipInfo& skip)
             testPsm_ = TestPsm::Find(*psm);
 
             if(testPsm_ == nullptr)
-               Debug::SwErr(TestSession_NextIcMsg, appFid_, 0);
+               Debug::SwLog(TestSession_NextIcMsg, appFid_, 0);
             else
                testPsm_->SetCliId(*sbData_->Cli(), tid_);
          }
@@ -605,7 +605,7 @@ ProtocolSM::OutgoingRc TestPsm::ProcessOgMsg(Message& msg)
 
    //  A test PSM does not send messages.
    //
-   Debug::SwErr(TestPsm_ProcessOgMsg, msg.GetSignal(), 0);
+   Debug::SwLog(TestPsm_ProcessOgMsg, msg.GetSignal(), 0);
    return PurgeMessage;
 }
 
@@ -619,7 +619,7 @@ Message::Route TestPsm::Route() const
 
    //  A test PSM does not send messages.
    //
-   Debug::SwErr(TestPsm_Route, 0, 0);
+   Debug::SwLog(TestPsm_Route, 0, 0);
    return Message::Internal;
 }
 

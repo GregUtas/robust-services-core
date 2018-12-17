@@ -88,12 +88,12 @@ public:
       Debug::ft(Registry_Init());
       if(registry_ != nullptr)
       {
-         Debug::SwErr(Registry_Init(), capacity_, max_);
+         Debug::SwLog(Registry_Init(), capacity_, max_);
          return false;
       }
       if(diff == NilDiff)
       {
-         Debug::SwErr(Registry_Init(), diff, max);
+         Debug::SwLog(Registry_Init(), diff, max);
          return false;
       }
       max_ = (max == 0 ? 0 : max + 1);
@@ -122,7 +122,7 @@ public:
       if(cell == nullptr) return false;
       if(cell->bound)
       {
-         Debug::SwErr(Registry_Insert(), cell->id, 2);
+         Debug::SwLog(Registry_Insert(), cell->id, 2);
          if((cell->id == NIL_ID) || (cell->id >= capacity_)) return false;
          return (registry_[cell->id] == &item);
       }
@@ -165,7 +165,7 @@ public:
          {
             if(delete_)
             {
-               Debug::SwErr(Registry_Insert(), cell->id, 4);
+               Debug::SwLog(Registry_Insert(), cell->id, 4);
                delete registry_[cell->id];
             }
             else
@@ -198,12 +198,12 @@ public:
       //
       if(&item == nullptr)
       {
-         Debug::SwErr(Registry_Insert(), 0, 0);
+         Debug::SwLog(Registry_Insert(), 0, 0);
          return false;
       }
       if(id > max_)
       {
-         Debug::SwErr(Registry_Insert(), id, 1);
+         Debug::SwLog(Registry_Insert(), id, 1);
          return false;
       }
       //  If ID is the nil identifier, assign ITEM to any available slot.
@@ -243,7 +243,7 @@ public:
          {
             if(delete_)
             {
-               Debug::SwErr(Registry_Insert(), id, 2);
+               Debug::SwLog(Registry_Insert(), id, 2);
                delete registry_[id];
             }
             else
@@ -273,12 +273,12 @@ public:
       if(cell == nullptr) return false;
       if((cell->id == NIL_ID) || (cell->id >= capacity_))
       {
-         Debug::SwErr(Registry_Erase(), cell->id, 2);
+         Debug::SwLog(Registry_Erase(), cell->id, 2);
          return false;
       }
       if(registry_[cell->id] != &item)
       {
-         Debug::SwErr(Registry_Erase(), cell->id, 3);
+         Debug::SwLog(Registry_Erase(), cell->id, 3);
          return false;
       }
       registry_[cell->id] = nullptr;
@@ -296,17 +296,17 @@ public:
       Debug::ft(Registry_Erase());
       if(&item == nullptr)
       {
-         Debug::SwErr(Registry_Erase(), 0, 0);
+         Debug::SwLog(Registry_Erase(), 0, 0);
          return false;
       }
       if((id == NIL_ID) || (id >= capacity_))
       {
-         Debug::SwErr(Registry_Erase(), id, 1);
+         Debug::SwLog(Registry_Erase(), id, 1);
          return false;
       }
       if(registry_[id] != &item)
       {
-         Debug::SwErr(Registry_Erase(), id, 2);
+         Debug::SwLog(Registry_Erase(), id, 2);
          return false;
       }
       registry_[id] = nullptr;
@@ -358,7 +358,7 @@ public:
       if(cell == nullptr) return;
       if((cell->id == NIL_ID) || (cell->id >= capacity_))
       {
-         Debug::SwErr(Registry_Next(), cell->id, capacity_);
+         Debug::SwLog(Registry_Next(), cell->id, capacity_);
          return;
       }
       for(auto i = cell->id + 1; i < capacity_; ++i)
@@ -379,7 +379,7 @@ public:
       if(cell == nullptr) return nullptr;
       if((cell->id == NIL_ID) || (cell->id >= capacity_))
       {
-         Debug::SwErr(Registry_Next(), cell->id, capacity_);
+         Debug::SwLog(Registry_Next(), cell->id, capacity_);
          return nullptr;
       }
       for(auto i = cell->id + 1; i < capacity_; ++i)
@@ -395,7 +395,7 @@ public:
    {
       if((id == NIL_ID) || (id >= capacity_))
       {
-         Debug::SwErr(Registry_Next(), id, capacity_);
+         Debug::SwLog(Registry_Next(), id, capacity_);
          return nullptr;
       }
       for(auto i = id + 1; i < capacity_; ++i)
@@ -431,7 +431,7 @@ public:
       if(cell == nullptr) return;
       if((cell->id == NIL_ID) || (cell->id >= capacity_))
       {
-         Debug::SwErr(Registry_Prev(), cell->id, capacity_);
+         Debug::SwLog(Registry_Prev(), cell->id, capacity_);
          return;
       }
       for(auto i = cell->id - 1; i > 0; --i)
@@ -452,7 +452,7 @@ public:
       if(cell == nullptr) return nullptr;
       if((cell->id == NIL_ID) || (cell->id >= capacity_))
       {
-         Debug::SwErr(Registry_Prev(), cell->id, capacity_);
+         Debug::SwLog(Registry_Prev(), cell->id, capacity_);
          return nullptr;
       }
       for(auto i = cell->id - 1; i > 0; --i)
@@ -546,14 +546,14 @@ private:
       //
       if(diff_ == NilDiff)
       {
-         Debug::SwErr(Registry_Cell(), 0, 0);
+         Debug::SwLog(Registry_Cell(), 0, 0);
          return nullptr;
       }
       //  Ensure that ITEM is valid.
       //
       if(&item == nullptr)
       {
-         Debug::SwErr(Registry_Cell(), 0, 1);
+         Debug::SwLog(Registry_Cell(), 0, 1);
          return nullptr;
       }
       return (RegCell*) getptr2(&item, diff_);

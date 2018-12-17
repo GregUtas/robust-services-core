@@ -135,7 +135,7 @@ ServiceSM::~ServiceSM()
    {
       if(!parentSsm_->ssmq_.Exq(*this))
       {
-         Debug::SwErr(ServiceSM_dtor, parentSsm_->Sid(), sid_);
+         Debug::SwLog(ServiceSM_dtor, parentSsm_->Sid(), sid_);
       }
    }
 }
@@ -247,13 +247,13 @@ void ServiceSM::EnqEvent(Event& evt, Event::Location loc)
 
    if(loc >= Event::Location_N)
    {
-      Debug::SwErr(ServiceSM_EnqEvent, pack3(sid_, evt.Eid(), loc), 0);
+      Debug::SwLog(ServiceSM_EnqEvent, pack3(sid_, evt.Eid(), loc), 0);
       return;
    }
 
    if(!eventq_[loc].Enq(evt))
    {
-      Debug::SwErr(ServiceSM_EnqEvent, pack3(sid_, evt.Eid(), loc), 1);
+      Debug::SwLog(ServiceSM_EnqEvent, pack3(sid_, evt.Eid(), loc), 1);
    }
 }
 
@@ -265,7 +265,7 @@ void ServiceSM::EventError1(Event*& evt) const
 {
    Debug::ft(ServiceSM_EventError1);
 
-   Debug::SwErr(ServiceSM_EventError1, sid_, evt->Eid());
+   Debug::SwLog(ServiceSM_EventError1, sid_, evt->Eid());
    delete evt;
    evt = nullptr;
 }
@@ -278,7 +278,7 @@ EventHandler::Rc ServiceSM::EventError2(Event*& evt, EventHandler::Rc rc) const
 {
    Debug::ft(ServiceSM_EventError2);
 
-   Debug::SwErr(ServiceSM_EventError2, sid_, evt->Eid());
+   Debug::SwLog(ServiceSM_EventError2, sid_, evt->Eid());
    delete evt;
    evt = nullptr;
    return rc;
@@ -294,13 +294,13 @@ bool ServiceSM::ExqEvent(Event& evt, Event::Location loc)
 
    if(loc >= Event::Location_N)
    {
-      Debug::SwErr(ServiceSM_ExqEvent, pack3(sid_, evt.Eid(), loc), 0);
+      Debug::SwLog(ServiceSM_ExqEvent, pack3(sid_, evt.Eid(), loc), 0);
       return false;
    }
 
    if(!eventq_[loc].Exq(evt))
    {
-      Debug::SwErr(ServiceSM_EnqEvent, pack3(sid_, evt.Eid(), loc), 1);
+      Debug::SwLog(ServiceSM_EnqEvent, pack3(sid_, evt.Eid(), loc), 1);
       return false;
    }
 
@@ -582,7 +582,7 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* currEvent, Event*& nextEvent)
 
             if(nextSap_ != NIL_ID)
             {
-               Debug::SwErr(ServiceSM_ProcessEvent, pack2(nextSap_, sid_), rc);
+               Debug::SwLog(ServiceSM_ProcessEvent, pack2(nextSap_, sid_), rc);
                nextSap_ = NIL_ID;
             }
             break;
@@ -598,7 +598,7 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* currEvent, Event*& nextEvent)
             }
             else
             {
-               Debug::SwErr(ServiceSM_ProcessEvent, sid_, rc);
+               Debug::SwLog(ServiceSM_ProcessEvent, sid_, rc);
                rc = EventHandler::Suspend;
             }
             break;
@@ -623,7 +623,7 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* currEvent, Event*& nextEvent)
             }
             else
             {
-               Debug::SwErr(ServiceSM_ProcessEvent, sid_, rc);
+               Debug::SwLog(ServiceSM_ProcessEvent, sid_, rc);
                rc = EventHandler::Suspend;
             }
             break;
@@ -654,7 +654,7 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* currEvent, Event*& nextEvent)
             }
             else
             {
-               Debug::SwErr(ServiceSM_ProcessEvent, sid_, rc);
+               Debug::SwLog(ServiceSM_ProcessEvent, sid_, rc);
                rc = EventHandler::Suspend;
             }
             break;
@@ -944,11 +944,11 @@ void ServiceSM::ProcessInitqSnp
             //
             auto sibling = static_cast< InitiationReqEvent* >
                (initEvent)->GetModifier();
-            Debug::SwErr(ServiceSM_ProcessInitqSnp, sibling, rc);
+            Debug::SwLog(ServiceSM_ProcessInitqSnp, sibling, rc);
 
             if(nextEvent != nullptr)
             {
-               Debug::SwErr(ServiceSM_ProcessInitqSnp,
+               Debug::SwLog(ServiceSM_ProcessInitqSnp,
                   sibling, nextEvent->Eid());
                delete nextEvent;
                nextEvent = nullptr;
@@ -1006,7 +1006,7 @@ EventHandler::Rc ServiceSM::ProcessInitReq
          break;
 
       default:
-         Debug::SwErr(ServiceSM_ProcessInitReq, curr->Sid(), rc);
+         Debug::SwLog(ServiceSM_ProcessInitReq, curr->Sid(), rc);
          rc = EventHandler::Pass;
       }
 
@@ -1056,7 +1056,7 @@ EventHandler::Rc ServiceSM::ProcessInitReq
       //    usual path, it should probably trigger at an SNP, not an SAP.
       //  o EventHandler::Initiate would be a request to initiate a sibling.
       //
-      Debug::SwErr(ServiceSM_ProcessInitReq, modifier->Sid(), rc);
+      Debug::SwLog(ServiceSM_ProcessInitReq, modifier->Sid(), rc);
       delete nextEvent;
       nextEvent = nullptr;
       rc = EventHandler::Resume;
@@ -1144,7 +1144,7 @@ EventHandler::Rc ServiceSM::ProcessSsmqSap
          //  Other return codes are illegal.  Treat them as
          //  EventHandler::Pass after deleting any next event.
          //
-         Debug::SwErr(ServiceSM_ProcessSsmqSap, curr->Sid(), rc);
+         Debug::SwLog(ServiceSM_ProcessSsmqSap, curr->Sid(), rc);
          if(nextEvent != nullptr) curr->EventError1(nextEvent);
          rc = EventHandler::Pass;
       }
@@ -1177,7 +1177,7 @@ void ServiceSM::ProcessSsmqSnp(ServiceSM* modifier, Event& snpEvent)
       auto rc = curr->ProcessEvent(&snpEvent, nextEvent);
       if(rc != EventHandler::Pass)
       {
-         Debug::SwErr(ServiceSM_ProcessSsmqSnp, curr->Sid(), rc);
+         Debug::SwLog(ServiceSM_ProcessSsmqSnp, curr->Sid(), rc);
       }
       if(nextEvent != nullptr) curr->EventError1(nextEvent);
       curr->DeleteIdleModifier();

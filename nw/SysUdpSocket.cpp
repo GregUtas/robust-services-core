@@ -64,7 +64,7 @@ SysSocket::SendRc SysUdpSocket::SendBuff(IpBuffer& buff)
 
    if(size > SysUdpSocket::MaxUdpSize_)
    {
-      Debug::SwErr(SysUdpSocket_dtor, buff.TxAddr().GetPort(), size);
+      Debug::SwLog(SysUdpSocket_dtor, buff.TxAddr().GetPort(), size);
       return SendFailed;
    }
 

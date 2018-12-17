@@ -59,7 +59,7 @@ MediaEndpt::~MediaEndpt()
 
    if(state_ != Idle)
    {
-      Debug::SwErr(MediaEndpt_dtor, state_, 0);
+      Debug::SwLog(MediaEndpt_dtor, state_, 0);
    }
 
    //  Deregister from the PSM.
@@ -113,7 +113,7 @@ ProtocolSM* MediaEndpt::MgwPsm() const
    //
    if(psm_ == nullptr)
    {
-      Debug::SwErr(MediaEndpt_MgwPsm, 0, 0);
+      Debug::SwLog(MediaEndpt_MgwPsm, 0, 0);
       return nullptr;
    }
 

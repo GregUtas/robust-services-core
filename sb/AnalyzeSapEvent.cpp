@@ -142,7 +142,7 @@ void AnalyzeSapEvent::FreeContext(bool freeMsg)
       return;
    }
 
-   Debug::SwErr(AnalyzeSapEvent_FreeContext, location_, 0);
+   Debug::SwLog(AnalyzeSapEvent_FreeContext, location_, 0);
 }
 
 //------------------------------------------------------------------------------

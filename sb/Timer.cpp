@@ -177,7 +177,7 @@ void Timer::Exqueue()
 
    if(!psm_->timerq_.Exq(*this))
    {
-      Debug::SwErr(Timer_Exqueue, 0, 0);
+      Debug::SwLog(Timer_Exqueue, 0, 0);
    }
 
    psm_ = nullptr;
@@ -277,7 +277,7 @@ void Timer::SendTimeout()
 
    if(!msg->SendToSelf())
    {
-      Debug::SwErr(Timer_SendTimeout, debug64_t(psm), psm->GetFactory());
+      Debug::SwLog(Timer_SendTimeout, debug64_t(psm), psm->GetFactory());
    }
 
    //  If the timer isn't repetitive, delete it.

@@ -332,7 +332,7 @@ void Context::SetPos(const CxxScoped* scope)
    if(scope->GetFile() == File_)
       SetPos(scope->GetPos());
    else
-      Context::SwErr(Context_SetPos, scope->Trace(), 0);
+      Context::SwLog(Context_SetPos, scope->Trace(), 0);
 }
 
 //------------------------------------------------------------------------------
@@ -378,17 +378,17 @@ bool Context::StartTracing()
 
 //------------------------------------------------------------------------------
 
-fn_name Context_SwErr = "Context.SwErr";
+fn_name Context_SwLog = "Context.SwLog";
 
-void Context::SwErr
-   (fn_name_arg func, const string& expl, word errval, LogLevel level)
+void Context::SwLog
+   (fn_name_arg func, const string& expl, word errval, SwLogLevel level)
 {
-   Debug::ft(Context_SwErr);
+   Debug::ft(Context_SwLog);
 
    auto info = expl + Location();
    Trace(CxxTrace::ERROR, errval, info);
-   if(Tracing_ && (level == InfoLog)) return;
-   Debug::SwErr(func, info, errval, level);
+   if(Tracing_ && (level == SwInfo)) return;
+   Debug::SwLog(func, info, errval, level);
 }
 
 //------------------------------------------------------------------------------
@@ -592,7 +592,7 @@ void ParseFrame::Clear(word from)
       arg.WasRead();
    }
    if(ops_.empty()) return;
-   Context::SwErr(ParseFrame_Clear, "Operator stack not empty", ops_.size());
+   Context::SwLog(ParseFrame_Clear, "Operator stack not empty", ops_.size());
    ops_.clear();
 }
 
@@ -642,7 +642,7 @@ StackArg ParseFrame::PopArg(bool read)
       if(Context::Tracing_)
          new ErrTrace(CxxTrace::POP_ARG, -1);
       else
-         Context::SwErr(ParseFrame_PopArg1, "Empty argument stack", 0);
+         Context::SwLog(ParseFrame_PopArg1, "Empty argument stack", 0);
       return NilStackArg;
    }
 
@@ -666,7 +666,7 @@ bool ParseFrame::PopArg(StackArg& arg)
       if(Context::Tracing_)
          new ErrTrace(CxxTrace::POP_ARG, -1);
       else
-         Context::SwErr(ParseFrame_PopArg2, "Empty argument stack", 0);
+         Context::SwLog(ParseFrame_PopArg2, "Empty argument stack", 0);
       return false;
    }
 
@@ -689,7 +689,7 @@ const Operation* ParseFrame::PopOp()
       if(Context::Tracing_)
          new ErrTrace(CxxTrace::POP_OP, -1);
       else
-         Context::SwErr(ParseFrame_PopOp, "Empty operator stack", 0);
+         Context::SwLog(ParseFrame_PopOp, "Empty operator stack", 0);
       return nullptr;
    }
 
@@ -723,7 +723,7 @@ void ParseFrame::PopScope()
    if(!scopes_.empty())
       scopes_.pop_back();
    else
-      Context::SwErr(ParseFrame_PopScope, "Empty scope stack", 0);
+      Context::SwLog(ParseFrame_PopScope, "Empty scope stack", 0);
 }
 
 //------------------------------------------------------------------------------
@@ -739,7 +739,7 @@ void ParseFrame::PushArg(const StackArg& arg)
       if(Context::Tracing_)
          new ErrTrace(CxxTrace::PUSH_ARG, -1);
       else
-         Context::SwErr(ParseFrame_PushArg, "Push null argument", 0);
+         Context::SwLog(ParseFrame_PushArg, "Push null argument", 0);
       return;
    }
 
@@ -763,7 +763,7 @@ void ParseFrame::PushOp(const Operation* op)
       if(Context::Tracing_)
          new ErrTrace(CxxTrace::PUSH_OP, -1);
       else
-         Context::SwErr(ParseFrame_PushOp, "Push null operator", 0);
+         Context::SwLog(ParseFrame_PushOp, "Push null operator", 0);
       return;
    }
 
@@ -972,7 +972,7 @@ void StackArg::AssignedTo(const StackArg& that, AssignmentType type) const
    {
       auto expl = this->TypeString(true);
       expl += " (const) assigned to " + that.TypeString(true);
-      Context::SwErr(StackArg_AssignedTo, expl, 0);
+      Context::SwLog(StackArg_AssignedTo, expl, 0);
       return;
    }
 
@@ -1360,7 +1360,7 @@ size_t StackArg::Ptrs(bool arrays) const
    if(count >= 0) return count;
 
    auto expl = "Negative pointer count for " + item->Trace();
-   Context::SwErr(StackArg_Ptrs, expl, count);
+   Context::SwLog(StackArg_Ptrs, expl, count);
    return 0;
 }
 
@@ -1394,7 +1394,7 @@ void StackArg::SetAsAutoType() const
    }
 
    auto expl = "Auto type not set for " + Trace();
-   Context::SwErr(StackArg_SetAsAutoType, expl, 0);
+   Context::SwLog(StackArg_SetAsAutoType, expl, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -1445,7 +1445,7 @@ void StackArg::SetAutoType()
    }
 
    auto expl = "Failed to set auto type for " + *item->Name();
-   Context::SwErr(StackArg_SetAutoType, expl, 0);
+   Context::SwLog(StackArg_SetAutoType, expl, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -1542,7 +1542,7 @@ void StackArg::SetNonConst(size_t index) const
    if(token->SetNonConst()) return;
 
    auto expl = "const " + *token->Name() + " cannot be const";
-   Context::SwErr(StackArg_SetNonConst, expl, 0);
+   Context::SwLog(StackArg_SetNonConst, expl, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -1628,7 +1628,7 @@ void StackArg::WasWritten() const
    if(!mutable_ && (ptrs > 0 ? constptr_ : const_))
    {
       auto expl = "Write to const " + *item->Name();
-      Context::SwErr(StackArg_WasWritten, expl, 0);
+      Context::SwLog(StackArg_WasWritten, expl, 0);
    }
    else
    {

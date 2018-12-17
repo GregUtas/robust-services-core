@@ -354,7 +354,7 @@ string Block::ScopedName(bool templates) const
       }
    }
 
-   Debug::SwErr(Block_ScopedName, 0, 0);
+   Debug::SwLog(Block_ScopedName, 0, 0);
    return ERROR_STR;
 }
 
@@ -561,7 +561,7 @@ void ClassData::EnterBlock()
    {
       auto expl = string("Improper initialization of static member ");
       expl += ScopedName(true);
-      Context::SwErr(ClassData_EnterBlock, expl, 0);
+      Context::SwLog(ClassData_EnterBlock, expl, 0);
       return;
    }
 
@@ -606,7 +606,7 @@ bool ClassData::EnterScope()
       if(numeric.Type() != Numeric::INT)
       {
          auto expl = "Non-numeric value for field width";
-         Context::SwErr(ClassData_EnterBlock, expl, numeric.Type());
+         Context::SwLog(ClassData_EnterBlock, expl, numeric.Type());
       }
    }
 
@@ -884,7 +884,7 @@ void CxxScope::OpenScope(string& name)
          else
          {
             auto expl = "Could not find scope " + name;
-            Context::SwErr(CxxScope_OpenScope, expl, 0);
+            Context::SwLog(CxxScope_OpenScope, expl, 0);
             scope = Context::Scope();
          }
       }
@@ -1353,13 +1353,13 @@ bool Data::InitByExpr(CxxToken* expr)
          else
          {
             auto expl = "Invalid arguments for " + *spec_->Name();
-            Context::SwErr(Data_InitByExpr, expl, op->ArgsSize());
+            Context::SwLog(Data_InitByExpr, expl, op->ArgsSize());
          }
       }
       else
       {
          auto expl = "Invalid expression for " + *spec_->Name();
-         Context::SwErr(Data_InitByExpr, expl, expr->Type());
+         Context::SwLog(Data_InitByExpr, expl, expr->Type());
       }
    }
 
@@ -2968,7 +2968,7 @@ void Function::EnterBlock()
          {
             auto expl = string("Failed to find member ");
             expl += *cls->Name() + SCOPE_STR + *(*m)->Name();
-            Context::SwErr(Function_EnterBlock, expl, 0);
+            Context::SwLog(Function_EnterBlock, expl, 0);
          }
       }
 
@@ -3469,7 +3469,7 @@ void Function::IncrThisWrites() const
 
    if(arg->IsConst())
    {
-      Context::SwErr(Function_IncrThisWrites, "Function cannot be const", 0);
+      Context::SwLog(Function_IncrThisWrites, "Function cannot be const", 0);
    }
 }
 
@@ -3482,7 +3482,7 @@ Function* Function::InstantiateError(const string& instName, debug32_t offset)
    Debug::ft(Function_InstantiateError);
 
    auto expl = "Failed to instantiate " + instName;
-   Context::SwErr(Function_InstantiateError, expl, offset);
+   Context::SwLog(Function_InstantiateError, expl, offset);
    return nullptr;
 }
 
@@ -3589,7 +3589,7 @@ Function* Function::InstantiateFunction(stringVector& tmpltArgs) const
    if(tmpltArgs.size() != parms->size())
    {
       auto expl = "Invalid number of template arguments for " + *Name();
-      Context::SwErr(Function_InstantiateFunction2, expl, tmpltArgs.size());
+      Context::SwLog(Function_InstantiateFunction2, expl, tmpltArgs.size());
       return nullptr;
    }
 
@@ -3631,7 +3631,7 @@ void Function::Invoke(StackArgVector* args)
    if(size1 > size2)
    {
       auto expl = "Too many arguments for " + *Name();
-      Context::SwErr(Function_Invoke, expl, pack2(size1, size2));
+      Context::SwLog(Function_Invoke, expl, pack2(size1, size2));
       size1 = size2;
    }
 
@@ -4335,7 +4335,7 @@ string Function::TypeString(bool arg) const
          break;
       default:
          auto expl = "Return type not found for " + *Name();
-         Context::SwErr(Function_TypeString, expl, ft);
+         Context::SwLog(Function_TypeString, expl, ft);
          return ERROR_STR;
       }
    }
@@ -4525,7 +4525,7 @@ void FuncSpec::Check() const
 
 TypeSpec* FuncSpec::Clone() const
 {
-   Debug::SwErr(FuncSpec_Warning, "Clone", 0);
+   Debug::SwLog(FuncSpec_Warning, "Clone", 0);
    return nullptr;
 }
 
@@ -4547,7 +4547,7 @@ void FuncSpec::DisplayTags(ostream& stream) const
 
 void FuncSpec::EnterArrays() const
 {
-   Debug::SwErr(FuncSpec_Warning, "EnterArrays", 0);
+   Debug::SwLog(FuncSpec_Warning, "EnterArrays", 0);
    func_->GetTypeSpec()->EnterArrays();
 }
 
@@ -4566,7 +4566,7 @@ void FuncSpec::EnteringScope(const CxxScope* scope)
 
 void FuncSpec::FindReferent()
 {
-   Debug::SwErr(FuncSpec_Warning, "FindReferent", 0);
+   Debug::SwLog(FuncSpec_Warning, "FindReferent", 0);
    func_->GetTypeSpec()->FindReferent();
 }
 
@@ -4602,7 +4602,7 @@ bool FuncSpec::HasArrayDefn() const
 
 void FuncSpec::Instantiating() const
 {
-   Debug::SwErr(FuncSpec_Warning, "Instantiating", 0);
+   Debug::SwLog(FuncSpec_Warning, "Instantiating", 0);
    func_->GetTypeSpec()->Instantiating();
 }
 
@@ -4624,7 +4624,7 @@ bool FuncSpec::IsConstPtr() const
 
 bool FuncSpec::ItemIsTemplateArg(const CxxScoped* item) const
 {
-   Debug::SwErr(FuncSpec_Warning, "ItemIsTemplateArg", 0);
+   Debug::SwLog(FuncSpec_Warning, "ItemIsTemplateArg", 0);
    return func_->GetTypeSpec()->ItemIsTemplateArg(item);
 }
 
@@ -4632,7 +4632,7 @@ bool FuncSpec::ItemIsTemplateArg(const CxxScoped* item) const
 
 bool FuncSpec::MatchesExactly(const TypeSpec* that) const
 {
-   Debug::SwErr(FuncSpec_Warning, "MatchesExactly", 0);
+   Debug::SwLog(FuncSpec_Warning, "MatchesExactly", 0);
    return func_->GetTypeSpec()->MatchesExactly(that);
 }
 
@@ -4641,7 +4641,7 @@ bool FuncSpec::MatchesExactly(const TypeSpec* that) const
 TypeMatch FuncSpec::MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
    stringVector& tmpltArgs, bool& argFound) const
 {
-   Debug::SwErr(FuncSpec_Warning, "MatchTemplate", 0);
+   Debug::SwLog(FuncSpec_Warning, "MatchTemplate", 0);
    return func_->GetTypeSpec()->MatchTemplate
       (that, tmpltParms, tmpltArgs, argFound);
 }
@@ -4650,7 +4650,7 @@ TypeMatch FuncSpec::MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
 
 TypeMatch FuncSpec::MatchTemplateArg(const TypeSpec* that) const
 {
-   Debug::SwErr(FuncSpec_Warning, "MatchTemplateArg", 0);
+   Debug::SwLog(FuncSpec_Warning, "MatchTemplateArg", 0);
    return func_->GetTypeSpec()->MatchTemplateArg(that);
 }
 
@@ -4714,7 +4714,7 @@ StackArg FuncSpec::ResultType() const
 
 void FuncSpec::SetArrayPos(int8_t pos)
 {
-   Debug::SwErr(FuncSpec_Warning, "SetArrayPos", 0);
+   Debug::SwLog(FuncSpec_Warning, "SetArrayPos", 0);
    func_->GetTypeSpec()->SetArrayPos(pos);
 }
 
@@ -4722,7 +4722,7 @@ void FuncSpec::SetArrayPos(int8_t pos)
 
 void FuncSpec::SetConst(bool readonly)
 {
-   Debug::SwErr(FuncSpec_Warning, "SetConst", 0);
+   Debug::SwLog(FuncSpec_Warning, "SetConst", 0);
    func_->GetTypeSpec()->SetConst(readonly);
 }
 
@@ -4730,7 +4730,7 @@ void FuncSpec::SetConst(bool readonly)
 
 void FuncSpec::SetConstPtr(bool constptr)
 {
-   Debug::SwErr(FuncSpec_Warning, "SetConstPtr", 0);
+   Debug::SwLog(FuncSpec_Warning, "SetConstPtr", 0);
    func_->GetTypeSpec()->SetConst(constptr);
 }
 
@@ -4738,7 +4738,7 @@ void FuncSpec::SetConstPtr(bool constptr)
 
 void FuncSpec::SetPtrDetached(bool on)
 {
-   Debug::SwErr(FuncSpec_Warning, "SetPtrDetached", 0);
+   Debug::SwLog(FuncSpec_Warning, "SetPtrDetached", 0);
    func_->GetTypeSpec()->SetPtrDetached(on);
 }
 
@@ -4746,7 +4746,7 @@ void FuncSpec::SetPtrDetached(bool on)
 
 void FuncSpec::SetPtrs(TagCount ptrs)
 {
-   Debug::SwErr(FuncSpec_Warning, "SetPtrs", 0);
+   Debug::SwLog(FuncSpec_Warning, "SetPtrs", 0);
    func_->GetTypeSpec()->SetPtrs(ptrs);
 }
 
@@ -4754,7 +4754,7 @@ void FuncSpec::SetPtrs(TagCount ptrs)
 
 void FuncSpec::SetRefDetached(bool on)
 {
-   Debug::SwErr(FuncSpec_Warning, "SetRefDetached", 0);
+   Debug::SwLog(FuncSpec_Warning, "SetRefDetached", 0);
    func_->GetTypeSpec()->SetRefDetached(on);
 }
 
@@ -4762,7 +4762,7 @@ void FuncSpec::SetRefDetached(bool on)
 
 void FuncSpec::SetReferent(CxxNamed* item, const SymbolView* view) const
 {
-   Debug::SwErr(FuncSpec_Warning, "SetReferent", 0);
+   Debug::SwLog(FuncSpec_Warning, "SetReferent", 0);
    func_->GetTypeSpec()->SetReferent(item, view);
 }
 
@@ -4770,7 +4770,7 @@ void FuncSpec::SetReferent(CxxNamed* item, const SymbolView* view) const
 
 void FuncSpec::SetRefs(TagCount refs)
 {
-   Debug::SwErr(FuncSpec_Warning, "SetRefs", 0);
+   Debug::SwLog(FuncSpec_Warning, "SetRefs", 0);
    func_->GetTypeSpec()->SetRefs(refs);
 }
 

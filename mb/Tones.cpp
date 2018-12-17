@@ -176,7 +176,7 @@ ToneSilent::ToneSilent() : Tone(Silence)
 
    if(p != Switch::SilentPort)
    {
-      Debug::SwErr(ToneSilent_ctor, p, 0);
+      Debug::SwLog(ToneSilent_ctor, p, 0);
    }
 }
 

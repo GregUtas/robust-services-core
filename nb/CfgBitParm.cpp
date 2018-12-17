@@ -79,7 +79,7 @@ bool CfgBitParm::GetCurrValue() const
 
    //  This is a pure virtual function.
    //
-   Debug::SwErr(CfgBitParm_GetCurrValue, 0, 0);
+   Debug::SwLog(CfgBitParm_GetCurrValue, 0, 0);
    return false;
 }
 
@@ -129,7 +129,7 @@ bool CfgBitParm::SetNextValue(bool value)
 
    //  This is a pure virtual function.
    //
-   Debug::SwErr(CfgBitParm_SetNextValue, 0, 0);
+   Debug::SwLog(CfgBitParm_SetNextValue, 0, 0);
    return false;
 }
 

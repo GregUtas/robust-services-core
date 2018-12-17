@@ -83,7 +83,7 @@ SysTcpSocket::~SysTcpSocket()
    //
    if(appActive_ || iotActive_)
    {
-      Debug::SwErr(SysTcpSocket_dtor, appActive_, iotActive_);
+      Debug::SwLog(SysTcpSocket_dtor, appActive_, iotActive_);
    }
 
    ogMsgq_.Purge();
@@ -300,7 +300,7 @@ SysSocket::SendRc SysTcpSocket::SendBuff(IpBuffer& buff)
    //
    if(state_ != Connected)
    {
-      Debug::SwErr(SysTcpSocket_SendBuff, txport, state_);
+      Debug::SwLog(SysTcpSocket_SendBuff, txport, state_);
       return SendFailed;
    }
 
@@ -311,7 +311,7 @@ SysSocket::SendRc SysTcpSocket::SendBuff(IpBuffer& buff)
 
    if(!RemAddr(peer))
    {
-      Debug::SwErr(SysTcpSocket_SendBuff, txport, Connected);
+      Debug::SwLog(SysTcpSocket_SendBuff, txport, Connected);
       Disconnect();
       return SendFailed;
    }

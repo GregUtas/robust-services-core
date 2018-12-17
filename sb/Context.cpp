@@ -156,7 +156,7 @@ Context::Context(Faction faction) :
 
    if(pool_ == nullptr)
    {
-      Debug::SwErr(Context_ctor, faction_, 0);
+      Debug::SwLog(Context_ctor, faction_, 0);
    }
 
    for(size_t i = 0; i < TraceSize; ++i) trace_[i] = NilMessageEntry;
@@ -319,7 +319,7 @@ void Context::Dump(fn_name_arg func, debug64_t errval, debug32_t offset)
 
    if(ctx != nullptr)
    {
-      Debug::SwErr(func, errval, offset);
+      Debug::SwLog(func, errval, offset);
       ctx->Dump();
    }
 }
@@ -465,7 +465,7 @@ void Context::Enqueue(Q2Way< Context >& whichq, Message::Priority prio)
       //
       //  An unknown state.
       //
-      Debug::SwErr(Context_Enqueue, debug64_t(this), state_);
+      Debug::SwLog(Context_Enqueue, debug64_t(this), state_);
       delete this;
    }
 }
@@ -507,12 +507,12 @@ void Context::Exqueue()
    if(whichq_ == nullptr)
    {
       if(state_ == Ready)
-         Debug::SwErr(Context_Exqueue, debug64_t(this), state_);
+         Debug::SwLog(Context_Exqueue, debug64_t(this), state_);
       return;
    }
 
    if(state_ != Ready)
-      Debug::SwErr(Context_Exqueue, debug64_t(this), state_);
+      Debug::SwLog(Context_Exqueue, debug64_t(this), state_);
 
    whichq_->Exq(*this);
    whichq_ = nullptr;
@@ -775,12 +775,12 @@ void Context::ProcessWork(InvokerThread* inv)
          //
          if(IsIdle())
          {
-            Debug::SwErr(Context_ProcessWork, pack2(faction_, state_), 0);
+            Debug::SwLog(Context_ProcessWork, pack2(faction_, state_), 0);
             delete this;
          }
          else
          {
-            Debug::SwErr(Context_ProcessWork, pack2(faction_, state_), 1);
+            Debug::SwLog(Context_ProcessWork, pack2(faction_, state_), 1);
             SetState(Dormant);
          }
 
@@ -857,7 +857,7 @@ void Context::SetState(State state)
       //
       //  An unknown state.
       //
-      Debug::SwErr(Context_SetState, debug64_t(this), state_);
+      Debug::SwLog(Context_SetState, debug64_t(this), state_);
       delete this;
       return;
    }
@@ -893,7 +893,7 @@ bool Context::StopTimer(const Base& owner, TimerId tid)
          }
          else
          {
-            Debug::SwErr(Context_StopTimer, debug64_t(m), tid);
+            Debug::SwLog(Context_StopTimer, debug64_t(m), tid);
          }
       }
    }
@@ -977,7 +977,7 @@ ContextType Context::Type() const
 
    //  This is a pure virtual function.
    //
-   Kill(Context_Type, 0, 0);
+   Debug::SwLog(Context_Type, faction_, 0);
    return SingleMsg;
 }
 }

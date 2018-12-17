@@ -242,7 +242,7 @@ void CxxToken::EnterBlock()
    Debug::ft(CxxToken_EnterBlock);
 
    auto expl = "EnterBlock() not implemented by " + strClass(this, false);
-   Context::SwErr(CxxToken_EnterBlock, expl, 0);
+   Context::SwLog(CxxToken_EnterBlock, expl, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -264,7 +264,7 @@ fn_name CxxToken_Name = "CxxToken.Name";
 const string* CxxToken::Name() const
 {
    auto expl = "Name() not implemented by " + strClass(this, false);
-   Context::SwErr(CxxToken_Name, expl, 0);
+   Context::SwLog(CxxToken_Name, expl, 0);
    return nullptr;
 }
 
@@ -283,7 +283,7 @@ CxxNamed* CxxToken::Referent() const
 {
    Debug::ft(CxxToken_Referent);
 
-   Debug::SwErr(CxxToken_Referent, strClass(this, false), 0);
+   Debug::SwLog(CxxToken_Referent, strClass(this, false), 0);
    return nullptr;
 }
 
@@ -334,7 +334,7 @@ bool CxxToken::WasWritten(const StackArg* arg, bool passed)
    Debug::ft(CxxToken_WasWritten);
 
    auto expl = "Write not supported to " + Trace();
-   Context::SwErr(CxxToken_WasWritten, expl, Type());
+   Context::SwLog(CxxToken_WasWritten, expl, Type());
    return false;
 }
 
@@ -514,7 +514,7 @@ bool Expression::AddItem(TokenPtr& item)
 
    if(type != Cxx::Operation)
    {
-      Debug::SwErr(Expression_AddItem, 0, type);
+      Debug::SwLog(Expression_AddItem, 0, type);
       return false;
    }
 
@@ -533,7 +533,7 @@ bool Expression::AddItem(TokenPtr& item)
    //  operators of this type (function calls, new, and new[]) by assembling
    //  all of the arguments itself, in GetArgList and GetNew.
    //
-   Debug::SwErr(Expression_AddItem, oper->Op(), type);
+   Debug::SwLog(Expression_AddItem, oper->Op(), type);
    return false;
 }
 
@@ -555,7 +555,7 @@ bool Expression::AddUnaryOp(TokenPtr& item)
       {
       case Cxx::OBJECT_DELETE:
       case Cxx::OBJECT_DELETE_ARRAY:
-         Debug::SwErr(Expression_AddUnaryOp, oper->Op(), items_.size());
+         Debug::SwLog(Expression_AddUnaryOp, oper->Op(), items_.size());
          return false;
       }
 
@@ -619,11 +619,11 @@ bool Expression::AddVariableOp(TokenPtr& item)
          return true;
       }
 
-      Debug::SwErr(Expression_AddVariableOp, ante->Op(), 0);
+      Debug::SwLog(Expression_AddVariableOp, ante->Op(), 0);
       return false;
    }
 
-   Debug::SwErr(Expression_AddVariableOp, prev->Type(), op);
+   Debug::SwLog(Expression_AddVariableOp, prev->Type(), op);
    return false;
 }
 
@@ -967,13 +967,13 @@ void Operation::AddArg(TokenPtr& arg, bool prefixed)
 
    if(arg == nullptr)
    {
-      Debug::SwErr(Operation_AddArg, op_, 0);
+      Debug::SwLog(Operation_AddArg, op_, 0);
       return;
    }
 
    if((attrs.arguments != 0) && (args_.size() >= attrs.arguments))
    {
-      Debug::SwErr(Operation_AddArg, op_, arg->Type());
+      Debug::SwLog(Operation_AddArg, op_, arg->Type());
    }
 
    args_.push_back(std::move(arg));
@@ -1015,7 +1015,7 @@ bool Operation::AppendUnary()
    //
    if(ElideForward()) return true;
 
-   Debug::SwErr(Operation_AppendUnary, op_, args_.size());
+   Debug::SwLog(Operation_AppendUnary, op_, args_.size());
    return false;
 }
 
@@ -1360,7 +1360,7 @@ void Operation::Execute() const
       //
       //c Support the .* and ->* operators.
       //
-      Debug::SwErr(Operation_Execute, "Unsupported operator", op_);
+      Debug::SwLog(Operation_Execute, "Unsupported operator", op_);
       return;
 
    case Cxx::MULTIPLY:
@@ -1468,7 +1468,7 @@ void Operation::Execute() const
       return;
 
    default:
-      Debug::SwErr(Operation_Execute, op_, 0);
+      Debug::SwLog(Operation_Execute, op_, 0);
    }
 }
 
@@ -1553,7 +1553,7 @@ void Operation::ExecuteCall()
       if((args.size() != 1) || (dstNum.Type() == Numeric::NIL))
       {
          auto expl = "Invalid type conversion: " + proc.Trace();
-         Context::SwErr(Operation_ExecuteCall, expl, proc.item->Type());
+         Context::SwLog(Operation_ExecuteCall, expl, proc.item->Type());
          return;
       }
 
@@ -1600,7 +1600,7 @@ void Operation::ExecuteCall()
       if(i < size - 1) expl += ',';
    }
    expl += ')';
-   Context::SwErr(Operation_ExecuteCall, expl, proc.item->Type());
+   Context::SwLog(Operation_ExecuteCall, expl, proc.item->Type());
 }
 
 //------------------------------------------------------------------------------
@@ -1764,7 +1764,7 @@ bool Operation::ExecuteOverload
       if((op_ != Cxx::ASSIGN) || (arg2 == nullptr))
       {
          auto expl = "Invalid auto assignment for " + arg1.Trace();
-         Context::SwErr(Operation_ExecuteOverload, expl, (arg2 == nullptr));
+         Context::SwLog(Operation_ExecuteOverload, expl, (arg2 == nullptr));
          return false;
       }
 
@@ -1940,7 +1940,7 @@ Function* Operation::FindNewOrDelete
    if(area == nullptr)
    {
       auto expl = "Failed to find area for " + targ->Trace();
-      Context::SwErr(Operation_FindNewOrDelete, expl, 0);
+      Context::SwLog(Operation_FindNewOrDelete, expl, 0);
       return nullptr;
    }
 
@@ -1979,7 +1979,7 @@ Function* Operation::FindNewOrDelete
    if(oper == nullptr)
    {
       auto expl = "Failed to find operator new/delete for " + targ->Trace();
-      Context::SwErr(Operation_FindNewOrDelete, expl, op_);
+      Context::SwLog(Operation_FindNewOrDelete, expl, op_);
    }
 
    return oper;
@@ -2063,7 +2063,7 @@ bool Operation::MakeBinary()
       return true;
    }
 
-   Debug::SwErr(Operation_MakeBinary, op_, 0);
+   Debug::SwLog(Operation_MakeBinary, op_, 0);
    return false;
 }
 
@@ -2171,7 +2171,7 @@ void Operation::Print(ostream& stream, const Flags& options) const
          break;
 
       default:
-         Debug::SwErr(Operation_Print, op_, 0);
+         Debug::SwLog(Operation_Print, op_, 0);
          stream << ERROR_STR << "(op=" << op_ << ')';
       }
    }
@@ -2214,7 +2214,7 @@ void Operation::Push() const
       if(top == nullptr)
       {
          auto expl = "No function name for function call operator";
-         Context::SwErr(Operation_Push, expl, 0);
+         Context::SwLog(Operation_Push, expl, 0);
          return;
       }
 
@@ -2263,7 +2263,7 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
    if(type != Cxx::Class)
    {
       auto expl = arg1.Trace() + " is not a class";
-      Context::SwErr(Operation_PushMember, expl, type);
+      Context::SwLog(Operation_PushMember, expl, type);
       return;
    }
 
@@ -2276,7 +2276,7 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
    if(err)
    {
       auto expl = "Invalid indirection count to member of " + arg1.Trace();
-      Context::SwErr(Operation_PushMember, expl, (op_ << 4) + ptrs);
+      Context::SwLog(Operation_PushMember, expl, (op_ << 4) + ptrs);
    }
 
    auto name = arg2.item->Name();
@@ -2284,7 +2284,7 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
    if(name == nullptr)
    {
       auto expl = "Name not found for " + arg2.Trace();
-      Context::SwErr(Operation_PushMember, expl, 0);
+      Context::SwLog(Operation_PushMember, expl, 0);
       return;
    }
 
@@ -2295,7 +2295,7 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
    if(mem == nullptr)
    {
       auto expl = "Member " + *cls->Name() + SCOPE_STR + *name + " not found";
-      Context::SwErr(Operation_PushMember, expl, 0);
+      Context::SwLog(Operation_PushMember, expl, 0);
       return;
    }
 
@@ -2317,7 +2317,7 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
    else
    {
       auto expl = "Unexpected access to " + *cls->Name() + SCOPE_STR + *name;
-      Context::SwErr(Operation_PushMember, expl, arg2.item->Type());
+      Context::SwLog(Operation_PushMember, expl, arg2.item->Type());
    }
 
    //  If ARG2 specified template arguments, use them to find (or instantiate)
@@ -2334,7 +2334,7 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
       else
       {
          auto expl = "Invalid type for " + *cls->Name() + SCOPE_STR + *name;
-         Context::SwErr(Operation_PushMember, expl, mem->Type());
+         Context::SwLog(Operation_PushMember, expl, mem->Type());
       }
    }
 
@@ -2439,7 +2439,7 @@ void Operation::PushResult(const StackArg& lhs, const StackArg& rhs) const
       if(err)
       {
          auto expl = lhsType + " is incompatible with " + rhsType;
-         Context::SwErr(Operation_PushResult, expl, op_);
+         Context::SwLog(Operation_PushResult, expl, op_);
       }
    }
 
@@ -2497,7 +2497,7 @@ void Operation::PushResult(const StackArg& lhs, const StackArg& rhs) const
 
    default:
       auto expl = "Unknown operator";
-      Context::SwErr(Operation_PushResult, expl, op_);
+      Context::SwLog(Operation_PushResult, expl, op_);
    }
 }
 
@@ -2524,7 +2524,7 @@ void Operation::PushType(const string& name)
    }
 
    auto expl = "Failed to find type for " + name;
-   Context::SwErr(Operation_PushType, expl, 0);
+   Context::SwLog(Operation_PushType, expl, 0);
 }
 
 //------------------------------------------------------------------------------

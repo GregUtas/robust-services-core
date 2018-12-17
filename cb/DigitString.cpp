@@ -194,7 +194,7 @@ bool DigitString::IsCompleteAddress() const
 
    case NilDigit:
    case Digit_Hash:
-      Debug::SwErr(DigitString_IsCompleteAddress, digits_[0], 0);
+      Debug::SwLog(DigitString_IsCompleteAddress, digits_[0], 0);
       return true;
    }
 

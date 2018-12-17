@@ -59,17 +59,17 @@ TcpIoThread::TcpIoThread(Faction faction, ipport_t port, size_t rxSize,
 
    if(ipPort_ == nullptr)
    {
-      Debug::SwErr(TcpIoThread_ctor, port_, 0);
+      Debug::SwLog(TcpIoThread_ctor, port_, 0);
    }
 
    if(fdSize > MaxConns)
    {
-      Debug::SwErr(TcpIoThread_ctor, fdSize, MaxConns);
+      Debug::SwLog(TcpIoThread_ctor, fdSize, MaxConns);
       fdSize = MaxConns;
    }
    else if(fdSize == 0)
    {
-      Debug::SwErr(TcpIoThread_ctor, fdSize, MaxConns);
+      Debug::SwLog(TcpIoThread_ctor, fdSize, MaxConns);
       fdSize = 16;
    }
 
@@ -277,7 +277,7 @@ SysTcpSocket* TcpIoThread::EnsureListener()
 
       //  Our listener isn't registered with our port.
       //
-      Debug::SwErr(TcpIoThread_EnsureListener, port_, 0);
+      Debug::SwLog(TcpIoThread_EnsureListener, port_, 0);
       if(ListenerHasFailed(listener)) return AllocateListener();
       Debug::Assert(ipPort_->SetSocket(listener));
       return listener;
@@ -298,7 +298,7 @@ SysTcpSocket* TcpIoThread::EnsureListener()
    {
       //  A different listener is registered with our port.
       //
-      Debug::SwErr(TcpIoThread_EnsureListener, port_, 1);
+      Debug::SwLog(TcpIoThread_EnsureListener, port_, 1);
       ipPort_->SetSocket(nullptr);
       Debug::Assert(ipPort_->SetSocket(listener));
    }
@@ -383,7 +383,7 @@ void TcpIoThread::EraseSocket(size_t& index)
    //
    if(index == 0)
    {
-      Debug::SwErr(TcpIoThread_EraseSocket, 0, 0);
+      Debug::SwLog(TcpIoThread_EraseSocket, 0, 0);
       return;
    }
 

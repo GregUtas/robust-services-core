@@ -59,7 +59,7 @@ bool PotsFeatureProfile::Activate(PotsProfile& profile, CliThread& cli)
 {
    Debug::ft(PotsFeatureProfile_Activate);
 
-   Debug::SwErr(PotsFeatureProfile_Activate, fid_, 0);
+   Debug::SwLog(PotsFeatureProfile_Activate, fid_, 0);
    return false;
 }
 
@@ -71,7 +71,7 @@ bool PotsFeatureProfile::Deactivate(PotsProfile& profile)
 {
    Debug::ft(PotsFeatureProfile_Deactivate);
 
-   Debug::SwErr(PotsFeatureProfile_Deactivate, fid_, 0);
+   Debug::SwLog(PotsFeatureProfile_Deactivate, fid_, 0);
    return false;
 }
 

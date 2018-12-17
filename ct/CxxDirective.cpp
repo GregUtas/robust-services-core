@@ -356,7 +356,7 @@ bool Error::EnterScope()
    Debug::ft(Error_EnterScope);
 
    Context::SetPos(GetPos());
-   Context::SwErr(Error_EnterScope, GetText(), 0);
+   Context::SwLog(Error_EnterScope, GetText(), 0);
    return true;
 }
 
@@ -743,7 +743,7 @@ CxxToken* Macro::GetValue() const
 
    //  This is a pure virtual function.
    //
-   Debug::SwErr(Macro_GetValue, 0, 0);
+   Debug::SwLog(Macro_GetValue, 0, 0);
    return nullptr;
 }
 
@@ -757,7 +757,7 @@ void Macro::SetExpr(ExprPtr& rhs)
 
    //  This shouldn't be invoked on a built-in macro.
    //
-   Debug::SwErr(Macro_SetExpr, 0, 0);
+   Debug::SwLog(Macro_SetExpr, 0, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -916,7 +916,7 @@ string MacroName::TypeString(bool arg) const
    if(ref != nullptr) return ref->TypeString(arg);
 
    auto expl = "Failed to find referent for " + name_;
-   Context::SwErr(MacroName_TypeString, expl, 0);
+   Context::SwLog(MacroName_TypeString, expl, 0);
    return ERROR_STR;
 }
 

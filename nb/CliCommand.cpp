@@ -48,7 +48,7 @@ CliCommand::CliCommand(const char* comm, const char* help, size_t size) :
 
    if((comm != nullptr) && (strlen(comm) > CommandWidth))
    {
-      Debug::SwErr(CliCommand_ctor, strlen(comm), 0);
+      Debug::SwLog(CliCommand_ctor, strlen(comm), 0);
    }
 }
 
@@ -241,7 +241,7 @@ word CliCommand::ProcessCommand(CliThread& cli) const
 
    //  This is a pure virtual function.
    //
-   Debug::SwErr(CliCommand_ProcessCommand, 0, 0, ErrorLog);
+   Debug::SwLog(CliCommand_ProcessCommand, Text(), 0);
    return -1;
 }
 
@@ -255,7 +255,7 @@ word CliCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
    //  This can be invoked to generate a log.
    //
-   Debug::SwErr(CliCommand_ProcessSubcommand, index, 0);
+   Debug::SwLog(CliCommand_ProcessSubcommand, index, 0);
    return -1;
 }
 }

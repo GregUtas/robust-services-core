@@ -131,7 +131,7 @@ ServiceSM* Service::AllocModifier() const
    //  It is either illegal to allocate this service as a modifier, or it
    //  should have overridden this function.
    //
-   Debug::SwErr(Service_AllocModifier, Sid(), modifier_);
+   Debug::SwLog(Service_AllocModifier, Sid(), modifier_);
    return nullptr;
 }
 
@@ -150,13 +150,13 @@ bool Service::BindEventName(const char* name, EventId eid)
    //
    if(status_ == NotRegistered)
    {
-      Debug::SwErr(Service_BindEventName, Sid(), 0);
+      Debug::SwLog(Service_BindEventName, Sid(), 0);
       return false;
    }
 
    if(!Event::IsValidId(eid))
    {
-      Debug::SwErr(Service_BindEventName, eid, 1);
+      Debug::SwLog(Service_BindEventName, eid, 1);
       return false;
    }
 
@@ -165,7 +165,7 @@ bool Service::BindEventName(const char* name, EventId eid)
    //
    if(eventNames_[eid] != nullptr)
    {
-      Debug::SwErr(Service_BindEventName, eid, 2);
+      Debug::SwLog(Service_BindEventName, eid, 2);
    }
 
    eventNames_[eid] = name;
@@ -187,13 +187,13 @@ bool Service::BindHandler(EventHandler& handler, EventHandlerId ehid)
    //
    if(status_ == NotRegistered)
    {
-      Debug::SwErr(Service_BindHandler, pack2(Sid(), ehid), 0);
+      Debug::SwLog(Service_BindHandler, pack2(Sid(), ehid), 0);
       return false;
    }
 
    if(!EventHandler::AppCanRegister(ehid))
    {
-      Debug::SwErr(Service_BindHandler, pack2(Sid(), ehid), 1);
+      Debug::SwLog(Service_BindHandler, pack2(Sid(), ehid), 1);
       return false;
    }
 
@@ -210,7 +210,7 @@ bool Service::BindState(State& state)
 
    if(status_ == NotRegistered)
    {
-      Debug::SwErr(Service_BindState, Sid(), 0);
+      Debug::SwLog(Service_BindState, Sid(), 0);
       return false;
    }
 
@@ -231,13 +231,13 @@ bool Service::BindSystemHandler(EventHandler& handler, EventHandlerId ehid)
    //
    if(status_ == NotRegistered)
    {
-      Debug::SwErr(Service_BindSystemHandler, Sid(), 0);
+      Debug::SwLog(Service_BindSystemHandler, Sid(), 0);
       return false;
    }
 
    if(ehid >= EventHandler::NextId)
    {
-      Debug::SwErr(Service_BindSystemHandler, ehid, 1);
+      Debug::SwLog(Service_BindSystemHandler, ehid, 1);
       return false;
    }
 
@@ -262,13 +262,13 @@ bool Service::BindTrigger(Trigger& trigger)
    //
    if(status_ == NotRegistered)
    {
-      Debug::SwErr(Service_BindTrigger, Sid(), 0);
+      Debug::SwLog(Service_BindTrigger, Sid(), 0);
       return false;
    }
 
    if(!modifiable_)
    {
-      Debug::SwErr(Service_BindTrigger, Sid(), 1);
+      Debug::SwLog(Service_BindTrigger, Sid(), 1);
       return false;
    }
 
@@ -296,7 +296,7 @@ bool Service::Disable()
    //
    if(status_ == NotRegistered)
    {
-      Debug::SwErr(Service_Disable, Sid(), 0);
+      Debug::SwLog(Service_Disable, Sid(), 0);
       return false;
    }
 
@@ -349,7 +349,7 @@ bool Service::Enable()
    //
    if(status_ == NotRegistered)
    {
-      Debug::SwErr(Service_Enable, Sid(), 0);
+      Debug::SwLog(Service_Enable, Sid(), 0);
       return false;
    }
 

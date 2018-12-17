@@ -38,7 +38,7 @@ RegCell::~RegCell()
 {
    if(bound)
    {
-      Debug::SwErr(RegCell_dtor, id, 0);
+      Debug::SwLog(RegCell_dtor, id, 0);
    }
 }
 
@@ -49,7 +49,7 @@ fn_name RegCell_SetId = "RegCell.SetId";
 void RegCell::SetId(id_t cid)
 {
    if(bound)
-      Debug::SwErr(RegCell_SetId, id, cid);
+      Debug::SwLog(RegCell_SetId, id, cid);
    else
       id = cid;
 }

@@ -296,13 +296,13 @@ int32_t SysTime::MsecsUntil(const SysTime& time) const
    {
       auto diff = ms1 - ms0;
       if(diff <= WORD_MAX) return diff;
-      Debug::SwErr(SysTime_MsecsUntil, 0, 0);
+      Debug::SwLog(SysTime_MsecsUntil, 0, 0);
       return WORD_MAX;
    }
 
    auto diff = ms0 - ms1;
    if(diff >= WORD_MIN) return diff;
-   Debug::SwErr(SysTime_MsecsUntil, 0, 1);
+   Debug::SwLog(SysTime_MsecsUntil, 0, 1);
    return WORD_MIN;
 }
 
@@ -314,7 +314,7 @@ bool SysTime::OutOfRange(TimeField field)
 {
    Debug::ft(SysTime_OutOfRange);
 
-   Debug::SwErr(SysTime_OutOfRange, time_[field], field);
+   Debug::SwLog(SysTime_OutOfRange, time_[field], field);
    for(auto f = 0; f < TimeField_N; ++f) time_[f] = 0;
    return false;
 }
@@ -370,12 +370,12 @@ void SysTime::Round(TimeField field, int16_t interval)
       }
       else
       {
-         Debug::SwErr(SysTime_Round, field, interval);
+         Debug::SwLog(SysTime_Round, field, interval);
       }
       return;
 
    default:
-      Debug::SwErr(SysTime_Round, field, 0);
+      Debug::SwLog(SysTime_Round, field, 0);
       return;
    }
 }

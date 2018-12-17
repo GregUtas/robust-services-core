@@ -97,7 +97,7 @@ ServiceId ServiceCodeRegistry::GetService(Address::SC sc) const
 
    if(Address::IsValidSC(sc)) return codeToService_[sc];
 
-   Debug::SwErr(ServiceCodeRegistry_GetService, sc, 0);
+   Debug::SwLog(ServiceCodeRegistry_GetService, sc, 0);
    return NIL_ID;
 }
 
@@ -111,7 +111,7 @@ void ServiceCodeRegistry::SetService(Address::SC sc, ServiceId sid)
 
    if(!Address::IsValidSC(sc))
    {
-      Debug::SwErr(ServiceCodeRegistry_SetService, sc, 0);
+      Debug::SwLog(ServiceCodeRegistry_SetService, sc, 0);
       return;
    }
 

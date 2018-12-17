@@ -87,7 +87,7 @@ TestSession* StTestData::AccessSession(TestSessionId tid)
       return session_[tid].get();
    }
 
-   Debug::SwErr(StTestData_AccessSession, tid, 0);
+   Debug::SwLog(StTestData_AccessSession, tid, 0);
    return nullptr;
 }
 

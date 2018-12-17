@@ -56,24 +56,20 @@ public:
    //
    static void ft(fn_name_arg func);
 
-   //  Generates a software error log.  FUNC is the function's exact name, in
-   //  the same form as that used for Debug::ft above.  ERRVAL/ERRSTR provides
+   //  Generates a software log.  FUNC is the function's exact name, in the
+   //  same form as that used for Debug::ft above.  ERRVAL/ERRSTR provides
    //  debug information.  OFFSET is often a sequence number within a function,
-   //  which makes it easy to see which occurrence of SwErr was invoked, but in
+   //  which makes it easy to see which occurrence of SwLog was invoked, but in
    //  some cases it provides debug information instead.  LEVEL specifies the
-   //  severity of the error:
-   //  o DebugLog and InfoLog generate a log
-   //  o WarningLog includes a stack trace in the log
-   //  o ErrorLog also throws an exception to clean up the work in progress
-   //  If TITLE is provided, it replaces the usual title for software logs;
-   //  this capability is used sparingly.
+   //  severity of the log:
+   //  o SwInfo generates a basic log
+   //  o SwWarning includes a stack trace in the log
+   //  o SwError throws an exception to clean up the work in progress
    //
-   static void SwErr
-      (fn_name_arg func, debug64_t errval, debug64_t offset,
-      LogLevel level = WarningLog, fixed_string title = nullptr);
-   static void SwErr
-      (fn_name_arg func, const std::string& errstr, debug64_t offset,
-      LogLevel level = WarningLog, fixed_string title = nullptr);
+   static void SwLog(fn_name_arg func, debug64_t errval,
+      debug64_t offset, SwLogLevel level = SwWarning);
+   static void SwLog(fn_name_arg func, const std::string& errstr,
+      debug64_t offset, SwLogLevel level = SwWarning);
 
    //  Throws an exception if CONDITION is false.  ERRVAL is for debugging.
    //
@@ -94,7 +90,7 @@ public:
 
    //  Clears status flags that prevent infinite recursion.  This function
    //  is invoked during exception and signal handling so that Debug::ft
-   //  and Debug::SwErr do not remain permanently disabled.
+   //  and Debug::SwLog do not remain permanently disabled.
    //
    static void Reset();
 
@@ -128,10 +124,10 @@ private:
    //
    Debug() = delete;
 
-   //  Used by the various versions of SwErr.
+   //  Used by the various versions of SwLog.
    //
    static void GenerateSwLog(fn_name_arg func, const std::string& errstr,
-      debug64_t offset, LogLevel level, fixed_string title);
+      debug64_t offset, SwLogLevel level);
 
    //  Prevents reentry to Debug::ft.
    //

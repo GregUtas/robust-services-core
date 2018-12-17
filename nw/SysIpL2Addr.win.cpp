@@ -59,10 +59,10 @@ SysIpL2Addr::SysIpL2Addr(const string& text) : v4Addr_(INADDR_NONE)
       v4Addr_ = ntohl(result.s_addr);
       break;
    case 0:
-      Debug::SwErr(SysIpL2Addr_ctor4, text, 0);
+      Debug::SwLog(SysIpL2Addr_ctor4, text, 0);
       break;
    default:
-      Debug::SwErr(SysIpL2Addr_ctor4, WSAGetLastError(), 0);
+      Debug::SwLog(SysIpL2Addr_ctor4, WSAGetLastError(), 0);
    }
 }
 

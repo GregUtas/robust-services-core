@@ -143,7 +143,7 @@ bool PotsShelfFactory::InjectMsg(Message& msg) const
    //
    if(phi == nullptr)
    {
-      Debug::SwErr(PotsShelfFactory_InjectMsg, pmsg.GetSignal(), 0);
+      Debug::SwLog(PotsShelfFactory_InjectMsg, pmsg.GetSignal(), 0);
       return false;
    }
 
@@ -152,7 +152,7 @@ bool PotsShelfFactory::InjectMsg(Message& msg) const
 
    if(cct == nullptr)
    {
-      Debug::SwErr(PotsShelfFactory_InjectMsg, pmsg.GetSignal(), phi->port);
+      Debug::SwLog(PotsShelfFactory_InjectMsg, pmsg.GetSignal(), phi->port);
       return false;
    }
 

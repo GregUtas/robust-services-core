@@ -429,7 +429,7 @@ bool PotsCircuit::SendMsg(PotsSignal::Id sid)
       //
       //  This includes PotsSignal::Digits, which needs a parameter.
       //
-      Debug::SwErr(PotsCircuit_SendMsg2, TsPort(), sid);
+      Debug::SwLog(PotsCircuit_SendMsg2, TsPort(), sid);
       return false;
    }
 

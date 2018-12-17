@@ -117,7 +117,7 @@ public:
       Debug::ft(Q2Way_Deq());
       if(diff_ == NilDiff)
       {
-         Debug::SwErr(Q2Way_Deq(), 0, 0);  // queue is not initialized
+         Debug::SwLog(Q2Way_Deq(), 0, 0);  // queue is not initialized
          return nullptr;
       }
       if(head_.next == &head_)             // if head points to itself
@@ -163,7 +163,7 @@ public:
    {
       if(diff_ == NilDiff)
       {
-         Debug::SwErr(Q2Way_Next(), 0, 0);  // queue is not initialized
+         Debug::SwLog(Q2Way_Next(), 0, 0);  // queue is not initialized
          return false;
       }
       const Q2Link* item;                   // item will hold result
@@ -207,7 +207,7 @@ public:
    {
       if(diff_ == NilDiff)
       {
-         Debug::SwErr(Q2Way_Prev(), 0, 0);  // queue is not initialized
+         Debug::SwLog(Q2Way_Prev(), 0, 0);  // queue is not initialized
          return false;
       }
       const Q2Link* item;                   // item will hold result
@@ -265,7 +265,7 @@ public:
       Debug::ft(Q2Way_Purge());
       if(diff_ == NilDiff)
       {
-         Debug::SwErr(Q2Way_Purge(), 0, 0);  // queue is not initialized
+         Debug::SwLog(Q2Way_Purge(), 0, 0);  // queue is not initialized
          return;
       }
       while(head_.next != &head_)
@@ -313,12 +313,12 @@ private:
    {
       if(diff_ == NilDiff)
       {
-         Debug::SwErr(Q2Way_Item(), 0, 0);  // queue is not initialized
+         Debug::SwLog(Q2Way_Item(), 0, 0);  // queue is not initialized
          return nullptr;
       }
       if(&elem == nullptr)
       {
-         Debug::SwErr(Q2Way_Item(), 0, 1);  // ELEM is invalid
+         Debug::SwLog(Q2Way_Item(), 0, 1);  // ELEM is invalid
          return nullptr;
       }
 

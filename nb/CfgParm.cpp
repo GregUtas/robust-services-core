@@ -107,7 +107,7 @@ string CfgParm::GetCurr() const
 
    //  This is a pure virtual function.
    //
-   Debug::SwErr(CfgParm_GetCurr, Key(), 0);
+   Debug::SwLog(CfgParm_GetCurr, Key(), 0);
    return EMPTY_STR;
 }
 
@@ -197,7 +197,7 @@ bool CfgParm::SetNext(const string& input)
 
    //  This is a pure virtual function.
    //
-   Debug::SwErr(CfgParm_SetNext, Key(), 0);
+   Debug::SwLog(CfgParm_SetNext, Key(), 0);
    return false;
 }
 

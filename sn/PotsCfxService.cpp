@@ -645,7 +645,7 @@ EventHandler::Rc PotsCfxSsm::ProcessSip(Event& currEvent, Event*& nextEvent)
    auto& ire = static_cast< InitiationReqEvent& >(currEvent);
 
    ire.DenyRequest();
-   Debug::SwErr(PotsCfxSsm_ProcessSip, stid, ire.GetModifier());
+   Debug::SwLog(PotsCfxSsm_ProcessSip, stid, ire.GetModifier());
    return EventHandler::Pass;
 }
 

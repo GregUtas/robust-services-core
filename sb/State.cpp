@@ -64,7 +64,7 @@ State::State(ServiceId sid, Id stid) : sid_(sid)
 
    if(svc == nullptr)
    {
-      Debug::SwErr(State_ctor, sid, stid);
+      Debug::SwLog(State_ctor, sid, stid);
       return;
    }
 
@@ -131,19 +131,19 @@ bool State::BindEventHandler(EventHandlerId ehid, EventId eid)
    //
    if(!EventHandler::AppCanUse(ehid))
    {
-      Debug::SwErr(State_BindEventHandler, pack3(sid_, Stid(), ehid), 0);
+      Debug::SwLog(State_BindEventHandler, pack3(sid_, Stid(), ehid), 0);
       return false;
    }
 
    if(!Event::AppCanHandle(eid))
    {
-      Debug::SwErr(State_BindEventHandler, pack3(sid_, Stid(), ehid), 1);
+      Debug::SwLog(State_BindEventHandler, pack3(sid_, Stid(), ehid), 1);
       return false;
    }
 
    if(handlers_[eid] != NIL_ID)
    {
-      Debug::SwErr(State_BindEventHandler, pack3(sid_, Stid(), ehid), 2);
+      Debug::SwLog(State_BindEventHandler, pack3(sid_, Stid(), ehid), 2);
    }
 
    handlers_[eid] = ehid;
@@ -163,19 +163,19 @@ bool State::BindMsgAnalyzer(EventHandlerId ehid, ServicePortId pid)
    //
    if(!EventHandler::AppCanUse(ehid))
    {
-      Debug::SwErr(State_BindMsgAnalyzer, pack4(sid_, Stid(), ehid, pid), 0);
+      Debug::SwLog(State_BindMsgAnalyzer, pack4(sid_, Stid(), ehid, pid), 0);
       return false;
    }
 
    if(!Service::IsValidPortId(pid))
    {
-      Debug::SwErr(State_BindMsgAnalyzer, pack4(sid_, Stid(), ehid, pid), 1);
+      Debug::SwLog(State_BindMsgAnalyzer, pack4(sid_, Stid(), ehid, pid), 1);
       return false;
    }
 
    if(msgAnalyzers_[pid] != NIL_ID)
    {
-      Debug::SwErr(State_BindMsgAnalyzer, pack4(sid_, Stid(), ehid, pid), 2);
+      Debug::SwLog(State_BindMsgAnalyzer, pack4(sid_, Stid(), ehid, pid), 2);
    }
 
    msgAnalyzers_[pid] = ehid;

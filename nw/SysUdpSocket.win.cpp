@@ -68,7 +68,7 @@ word SysUdpSocket::RecvFrom(byte_t* buff, size_t max, SysIpL3Addr& remAddr)
 
    if((buff == nullptr) || (max == 0))
    {
-      Debug::SwErr(SysUdpSocket_RecvFrom, max, 0);
+      Debug::SwLog(SysUdpSocket_RecvFrom, max, 0);
       return 0;
    }
 
@@ -100,7 +100,7 @@ word SysUdpSocket::SendTo
 
    if((data == nullptr) || (len == 0))
    {
-      Debug::SwErr(SysUdpSocket_SendTo, len, 0);
+      Debug::SwLog(SysUdpSocket_SendTo, len, 0);
       return 0;
    }
 

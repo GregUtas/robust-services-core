@@ -762,7 +762,7 @@ void PotsCwbSsm::ClearTimer(TimerId tid)
 
    if(tid_ != tid)
    {
-      Debug::SwErr(PotsCwbSsm_ClearTimer, tid_, tid);
+      Debug::SwLog(PotsCwbSsm_ClearTimer, tid_, tid);
       return;
    }
 
@@ -795,7 +795,7 @@ void PotsCwbSsm::FreeContext()
    }
    else
    {
-      Debug::SwErr(PotsCwbSsm_FreeContext, 0, 0);
+      Debug::SwLog(PotsCwbSsm_FreeContext, 0, 0);
    }
 }
 
@@ -891,7 +891,7 @@ EventHandler::Rc PotsCwbSsm::RestoreContext(Event*& nextEvent)
    }
    else
    {
-      Debug::SwErr(PotsCwbSsm_RestoreContext, 0, 0);
+      Debug::SwLog(PotsCwbSsm_RestoreContext, 0, 0);
    }
 
    return rc;
@@ -910,7 +910,7 @@ void PotsCwbSsm::StartTimer(TimerId tid, secs_t duration)
 
    if(tid_ != NIL_ID)
    {
-      Debug::SwErr(PotsCwbSsm_StartTimer, tid_, tid);
+      Debug::SwLog(PotsCwbSsm_StartTimer, tid_, tid);
 
       upsm->StopTimer(*this, tid_);
       tid_ = NIL_ID;
@@ -932,7 +932,7 @@ void PotsCwbSsm::StopTimer(TimerId tid)
 
    if(tid_ != tid)
    {
-      Debug::SwErr(PotsCwbSsm_StopTimer, tid_, tid);
+      Debug::SwLog(PotsCwbSsm_StopTimer, tid_, tid);
       return;
    }
 
@@ -1088,7 +1088,7 @@ EventHandler::Rc PotsCwtAcAnalyzeUserMessage::ProcessEvent
             nextEvent = new PotsCwtReleaseEvent(cwtssm, pfi->ind);
             return Continue;
          default:
-            Debug::SwErr(PotsCwtAcAnalyzeUserMessage_ProcessEvent, pfi->ind, 0);
+            Debug::SwLog(PotsCwtAcAnalyzeUserMessage_ProcessEvent, pfi->ind, 0);
          }
 
          return Suspend;
@@ -1141,7 +1141,7 @@ EventHandler::Rc PotsCwtAcRelease::ProcessEvent
       cwtssm.SetNextState(ServiceSM::Null);
       break;
    default:
-      Debug::SwErr(PotsCwtAcRelease_ProcessEvent, ind, 0);
+      Debug::SwLog(PotsCwtAcRelease_ProcessEvent, ind, 0);
    }
 
    return Suspend;

@@ -153,7 +153,7 @@ TraceRc NwTracer::ClearSelections(FlagId filter)
       break;
 
    default:
-      Debug::SwErr(NwTracer_ClearSelections, filter, 0);
+      Debug::SwLog(NwTracer_ClearSelections, filter, 0);
    }
 
    return TraceOk;

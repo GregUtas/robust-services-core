@@ -51,7 +51,7 @@ Cause::Ind BcFactory::VerifyRoute(RouteResult::Id rid) const
 {
    Debug::ft(BcFactory_VerifyRoute);
 
-   Debug::SwErr(BcFactory_VerifyRoute, Fid(), 0);
+   Debug::SwLog(BcFactory_VerifyRoute, Fid(), 0);
    return Cause::ExchangeRoutingError;
 }
 }

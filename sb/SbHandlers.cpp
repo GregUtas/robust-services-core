@@ -75,7 +75,7 @@ EventHandler::Rc SbAnalyzeMessage::ProcessEvent
    //
    if(ssm.CurrState() != stid)
    {
-      Debug::SwErr(SbAnalyzeMessage_ProcessEvent,
+      Debug::SwLog(SbAnalyzeMessage_ProcessEvent,
          pack3(ssm.Sid(), state->Stid(), ssm.CurrState()), 1);
    }
 
@@ -179,7 +179,7 @@ EventHandler::Rc SbInitiationReq::ProcessEvent
 
       if(svc == nullptr)
       {
-         Debug::SwErr(SbInitiationReq_ProcessEvent, ire.GetModifier(), 0);
+         Debug::SwLog(SbInitiationReq_ProcessEvent, ire.GetModifier(), 0);
          return Suspend;
       }
 
@@ -215,7 +215,7 @@ EventHandler::Rc SbInitiationReq::ProcessEvent
       //  Other results are unlikely.  We are here because an SSM raised
       //  an initiation event after handling some other event.
       //
-      Debug::SwErr(SbInitiationReq_ProcessEvent, ire.GetModifier(), rc);
+      Debug::SwLog(SbInitiationReq_ProcessEvent, ire.GetModifier(), rc);
       delete nextEvent;
       nextEvent = nullptr;
       rc = Suspend;

@@ -451,7 +451,7 @@ CliParm::Rc CliBuffer::GetStr(string& t, string& s)
          return CliParm::Error;
 
       default:
-         Debug::SwErr(CliBuffer_GetStr, pos_, type);
+         Debug::SwLog(CliBuffer_GetStr, pos_, type);
          return CliParm::Error;
       }
 

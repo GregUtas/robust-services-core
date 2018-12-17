@@ -67,7 +67,7 @@ CfgParmRegistry::~CfgParmRegistry()
    //  parameters and tuples should be freed together, when the protected
    //  heap is deallocated.
    //
-   Debug::SwErr(CfgParmRegistry_dtor, 0, 0);
+   Debug::SwLog(CfgParmRegistry_dtor, 0, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -135,7 +135,7 @@ bool CfgParmRegistry::BindParm(CfgParm& parm)
 
       if(key0 == key1)
       {
-         Debug::SwErr(CfgParmRegistry_BindParm, key0, 0);
+         Debug::SwLog(CfgParmRegistry_BindParm, key0, 0);
          return false;
       }
 
@@ -320,7 +320,7 @@ bool CfgParmRegistry::LoadNextTuple(string& key, string& value)
 
       if(keyEnd == keyBeg)
       {
-         BadLine("CFGPARM KEY INVALID", input);  // first character is invalid
+         BadLine("CFGPARM KEY INVALID", input);  // first character invalid
          continue;
       }
 

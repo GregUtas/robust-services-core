@@ -239,7 +239,7 @@ void ProtocolSM::EndOfTransaction()
             //  The message was not deleted or moved as claimed.  Delete it
             //  to prevent what will probably end up being an infinite loop.
             //
-            Debug::SwErr(ProtocolSM_EndOfTransaction,
+            Debug::SwLog(ProtocolSM_EndOfTransaction,
                pack2(fid_, state_), m->GetSignal());
             delete m;
          }
@@ -294,7 +294,7 @@ ProtocolId ProtocolSM::GetProtocol() const
 
    if(fac != nullptr) return fac->GetProtocol();
 
-   Debug::SwErr(ProtocolSM_GetProtocol, fid_, 0);
+   Debug::SwLog(ProtocolSM_GetProtocol, fid_, 0);
    return NIL_ID;
 }
 
@@ -458,7 +458,7 @@ void ProtocolSM::Kill()
 
    if(!msg->SendToSelf())
    {
-      Debug::SwErr(ProtocolSM_Kill, fid_, 0);
+      Debug::SwLog(ProtocolSM_Kill, fid_, 0);
    }
 }
 
@@ -552,15 +552,15 @@ Event* ProtocolSM::ReceiveMsg(Message& msg)
    {
    case EventRaised:
       if(evt == nullptr)
-         Debug::SwErr(ProtocolSM_ReceiveMsg, fid_, rc);
+         Debug::SwLog(ProtocolSM_ReceiveMsg, fid_, rc);
       break;
    case DiscardMessage:
       if(evt != nullptr)
-         Debug::SwErr(ProtocolSM_ReceiveMsg, fid_, rc);
+         Debug::SwLog(ProtocolSM_ReceiveMsg, fid_, rc);
       break;
    case ReceiveMessage:
       if(evt != nullptr)
-         Debug::SwErr(ProtocolSM_ReceiveMsg, fid_, rc);
+         Debug::SwLog(ProtocolSM_ReceiveMsg, fid_, rc);
       return SendToUpper(msg);
    }
 
@@ -591,7 +591,7 @@ void ProtocolSM::SendFinalMsg()
 
    //  This is a pure virtual function.
    //
-   Context::Kill(ProtocolSM_SendFinalMsg, fid_, 0);
+   Debug::SwLog(ProtocolSM_SendFinalMsg, fid_, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -638,7 +638,7 @@ bool ProtocolSM::StartTimer
    //
    if(FindTimer(owner, tid) != nullptr)
    {
-      Debug::SwErr(ProtocolSM_StartTimer, fid_, tid);
+      Debug::SwLog(ProtocolSM_StartTimer, fid_, tid);
       return false;
    }
 

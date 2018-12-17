@@ -41,7 +41,7 @@ Q2Link::~Q2Link()
 {
    if(next != nullptr)
    {
-      Debug::SwErr(Q2Link_dtor, 0, 0);
+      Debug::SwLog(Q2Link_dtor, 0, 0);
 
       next->prev = prev;
       prev->next = next;

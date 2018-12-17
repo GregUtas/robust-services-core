@@ -91,7 +91,7 @@ PotsBcSsm::PotsBcSsm(ServiceId sid, const Message& msg, ProtocolSM& psm) :
       break;
 
    default:
-      Debug::SwErr(PotsBcSsm_ctor, fid, 0);
+      Debug::SwLog(PotsBcSsm_ctor, fid, 0);
    }
 }
 
@@ -327,7 +327,7 @@ EventHandler::Rc PotsBcSsm::AnalyzeNPsmTimeout
       }
    }
 
-   Debug::SwErr(PotsBcSsm_AnalyzeNPsmTimeout, toi->tid, 0);
+   Debug::SwLog(PotsBcSsm_AnalyzeNPsmTimeout, toi->tid, 0);
    return EventHandler::Suspend;
 }
 
@@ -361,7 +361,7 @@ void PotsBcSsm::ClearTimer(TimerId tid)
 
    if(tid_ != tid)
    {
-      Debug::SwErr(PotsBcSsm_ClearTimer, tid_, tid);
+      Debug::SwLog(PotsBcSsm_ClearTimer, tid_, tid);
       return;
    }
 
@@ -483,7 +483,7 @@ void PotsBcSsm::SetProfile(PotsProfile* prof)
 
    if(prof == nullptr)
    {
-      Debug::SwErr(PotsBcSsm_SetProfile, 0, 0);
+      Debug::SwLog(PotsBcSsm_SetProfile, 0, 0);
       return;
    }
 
@@ -502,12 +502,12 @@ void PotsBcSsm::StartTimer(TimerId tid, secs_t duration)
 
    if(tid_ != NIL_ID)
    {
-      Debug::SwErr(PotsBcSsm_StartTimer, tid_, tid);
+      Debug::SwLog(PotsBcSsm_StartTimer, tid_, tid);
 
       psm = TimerPsm(tid_);
 
       if(psm == nullptr)
-         Debug::SwErr(PotsBcSsm_StartTimer, tid_, 0);
+         Debug::SwLog(PotsBcSsm_StartTimer, tid_, 0);
       else
          psm->StopTimer(*this, tid_);
 
@@ -518,7 +518,7 @@ void PotsBcSsm::StartTimer(TimerId tid, secs_t duration)
 
    if(psm == nullptr)
    {
-      Debug::SwErr(PotsBcSsm_StartTimer, 0, tid);
+      Debug::SwLog(PotsBcSsm_StartTimer, 0, tid);
       return;
    }
 
@@ -535,7 +535,7 @@ void PotsBcSsm::StopTimer(TimerId tid)
 
    if(tid_ != tid)
    {
-      Debug::SwErr(PotsBcSsm_StopTimer, tid_, tid);
+      Debug::SwLog(PotsBcSsm_StopTimer, tid_, tid);
       return;
    }
 
@@ -543,7 +543,7 @@ void PotsBcSsm::StopTimer(TimerId tid)
 
    if(psm == nullptr)
    {
-      Debug::SwErr(PotsBcSsm_StopTimer, tid_, 0);
+      Debug::SwLog(PotsBcSsm_StopTimer, tid_, 0);
       return;
    }
 

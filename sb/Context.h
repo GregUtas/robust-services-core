@@ -122,7 +122,7 @@ public:
    static void Kill(fn_name_arg func, debug64_t errval, debug32_t offset);
 
    //  Logs the objects in the context for debugging purposes.  FUNC,
-   //  ERRVAL, and OFFSET are passed to Debug::SwErr.
+   //  ERRVAL, and OFFSET are passed to Debug::SwLog.
    //
    static void Dump(fn_name_arg func, debug64_t errval, debug32_t offset);
 

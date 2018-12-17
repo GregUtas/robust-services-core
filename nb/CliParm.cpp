@@ -60,7 +60,7 @@ CliParm::CliParm(const char* help, bool opt, const char* tag) :
 
    if((len == 0) || (len >= 80))
    {
-      Debug::SwErr(CliParm_ctor, len, 0);
+      Debug::SwLog(CliParm_ctor, len, 0);
    }
 }
 
@@ -389,7 +389,7 @@ bool CliParm::ShowValues(string& values) const
 
    //  This is a pure virtual function.
    //
-   Debug::SwErr(CliParm_ShowValues, 0, 0, ErrorLog);
+   Debug::SwLog(CliParm_ShowValues, GetId(), 0);
    return false;
 }
 }

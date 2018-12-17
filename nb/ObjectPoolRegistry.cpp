@@ -239,7 +239,7 @@ void ObjectPoolRegistry::AuditPools() const
          //
          //  An unknown phase.
          //
-         Debug::SwErr
+         Debug::SwLog
             (ObjectPoolRegistry_AuditPools, thread->phase_, thread->pid_);
          thread->phase_ = ObjectPoolAudit::CheckingFreeq;
          thread->pid_ = NIL_ID;

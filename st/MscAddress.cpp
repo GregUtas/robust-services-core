@@ -129,7 +129,7 @@ void MscAddress::SetPeer(const MsgTrace& mt, MscContext* context)
    }
    else if(extFid_ != mt.RemAddr().fid)
    {
-      Debug::SwErr(MscAddress_SetPeer,
+      Debug::SwLog(MscAddress_SetPeer,
          pack2(extFid_, mt.RemAddr().fid), locAddr_.fid);
    }
 }

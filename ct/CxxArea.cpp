@@ -126,7 +126,7 @@ void Class::AccessibilityOf
    if(itemClasses.empty())
    {
       auto expl = "Item is not a class member: " + item->ScopedName(true);
-      Context::SwErr(Class_AccessibilityOf, expl, 0);
+      Context::SwLog(Class_AccessibilityOf, expl, 0);
       return;
    }
 
@@ -838,7 +838,7 @@ size_t Class::CreateCodeError(const string& name, debug32_t offset)
    Debug::ft(Class_CreateCodeError);
 
    auto expl = "Could not find code for " + name;
-   Context::SwErr(Class_CreateCodeError, expl, offset);
+   Context::SwLog(Class_CreateCodeError, expl, offset);
    return string::npos;
 }
 
@@ -1000,7 +1000,7 @@ ClassInst* Class::EnsureInstance(const TypeName* type)
    if(!IsTemplate())
    {
       auto expl = *Name() + " is not a class template";
-      Context::SwErr(Class_EnsureInstance, expl, 0);
+      Context::SwLog(Class_EnsureInstance, expl, 0);
       return nullptr;
    }
 
@@ -1641,7 +1641,7 @@ TypeMatch Class::MatchTemplate(const TypeName& type) const
    if(!IsTemplate())
    {
       auto expl = *Name() + " is not a class template";
-      Context::SwErr(Class_MatchTemplate, expl, 0);
+      Context::SwLog(Class_MatchTemplate, expl, 0);
       return Incompatible;
    }
 
@@ -1656,7 +1656,7 @@ TypeMatch Class::MatchTemplate(const TypeName& type) const
    if(thisArgs->size() != thatArgs->size())
    {
       auto expl = "Invalid number of template arguments for " + *Name();
-      Context::SwErr(Class_MatchTemplate, expl, thatArgs->size());
+      Context::SwLog(Class_MatchTemplate, expl, thatArgs->size());
       return Incompatible;
    }
 
@@ -1692,7 +1692,7 @@ bool Class::MemberIsAccessibleTo
    //  accessible.
    //
    auto expl = member->ScopedName(true) + " is inaccessible";
-   Context::SwErr(Class_MemberIsAccessibleTo, expl, 0);
+   Context::SwLog(Class_MemberIsAccessibleTo, expl, 0);
    return true;
 }
 

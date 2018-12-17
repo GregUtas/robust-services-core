@@ -1000,7 +1000,7 @@ void PotsCwmSsm::ClearTimer(TimerId tid)
 
    if(tid_ != tid)
    {
-      Debug::SwErr(PotsCwmSsm_ClearTimer, tid_, tid);
+      Debug::SwLog(PotsCwmSsm_ClearTimer, tid_, tid);
       return;
    }
 
@@ -1139,7 +1139,7 @@ PotsMuxPsm* PotsCwmSsm::OtherNPsm(const ProtocolSM* npsm) const
 
    if(fid != PotsMuxFactoryId)
    {
-      Debug::SwErr(PotsCwmSsm_OtherNPsm, fid, 0);
+      Debug::SwLog(PotsCwmSsm_OtherNPsm, fid, 0);
       return nullptr;
    }
 
@@ -1185,7 +1185,7 @@ EventHandler::Rc PotsCwmSsm::ProcessInitAck
 
       if(actNPsm == nullptr)
       {
-         Debug::SwErr(PotsCwmSsm_ProcessInitAck, 0, 1);
+         Debug::SwLog(PotsCwmSsm_ProcessInitAck, 0, 1);
          SendFacilityNack(hldNPsm, PotsCwbServiceId);
          return EventHandler::Suspend;
       }
@@ -1244,7 +1244,7 @@ EventHandler::Rc PotsCwmSsm::ProcessInitAck
       }
       else
       {
-         Debug::SwErr(PotsCwmSsm_ProcessInitAck, 0, 2);
+         Debug::SwLog(PotsCwmSsm_ProcessInitAck, 0, 2);
          SendFacilityNack(hldNPsm, PotsCwbServiceId);
          return EventHandler::Suspend;
       }
@@ -1871,7 +1871,7 @@ void PotsCwmSsm::StartTimer(TimerId tid, secs_t duration)
 
    if(tid_ != NIL_ID)
    {
-      Debug::SwErr(PotsCwmSsm_StartTimer, tid_, tid);
+      Debug::SwLog(PotsCwmSsm_StartTimer, tid_, tid);
 
       upsm->StopTimer(*this, tid_);
       tid_ = NIL_ID;
@@ -1946,7 +1946,7 @@ void PotsCwmSsm::StopTimer(TimerId tid)
 
    if(tid_ != tid)
    {
-      Debug::SwErr(PotsCwmSsm_StopTimer, tid_, tid);
+      Debug::SwLog(PotsCwmSsm_StopTimer, tid_, tid);
       return;
    }
 

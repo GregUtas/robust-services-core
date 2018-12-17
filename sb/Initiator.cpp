@@ -54,7 +54,7 @@ Initiator::Initiator
 
    if(trg == nullptr)
    {
-      Debug::SwErr(Initiator_ctor, pack3(sid_, aid_, tid_), 0);
+      Debug::SwLog(Initiator_ctor, pack3(sid_, aid_, tid_), 0);
       return;
    }
 
@@ -73,7 +73,7 @@ Initiator::~Initiator()
 
    if(trg == nullptr)
    {
-      Debug::SwErr(Initiator_dtor, pack3(sid_, aid_, tid_), 0);
+      Debug::SwLog(Initiator_dtor, pack3(sid_, aid_, tid_), 0);
       return;
    }
 
@@ -102,7 +102,7 @@ EventHandler::Rc Initiator::EventError(Event*& evt, EventHandler::Rc rc) const
 {
    Debug::ft(Initiator_EventError);
 
-   Debug::SwErr(Initiator_EventError, evt->Eid(), sid_);
+   Debug::SwLog(Initiator_EventError, evt->Eid(), sid_);
    delete evt;
    evt = nullptr;
    return rc;
@@ -120,7 +120,7 @@ Trigger* Initiator::GetTrigger() const
 
    if(svc == nullptr)
    {
-      Debug::SwErr(Initiator_GetTrigger, pack3(sid_, aid_, tid_), 0);
+      Debug::SwLog(Initiator_GetTrigger, pack3(sid_, aid_, tid_), 0);
       return nullptr;
    }
 
@@ -128,7 +128,7 @@ Trigger* Initiator::GetTrigger() const
 
    if(anc == nullptr)
    {
-      Debug::SwErr(Initiator_GetTrigger, pack3(sid_, aid_, tid_), 1);
+      Debug::SwLog(Initiator_GetTrigger, pack3(sid_, aid_, tid_), 1);
       return nullptr;
    }
 
@@ -136,7 +136,7 @@ Trigger* Initiator::GetTrigger() const
 
    if(trg == nullptr)
    {
-      Debug::SwErr(Initiator_GetTrigger, pack3(sid_, aid_, tid_), 2);
+      Debug::SwLog(Initiator_GetTrigger, pack3(sid_, aid_, tid_), 2);
       return nullptr;
    }
 
@@ -179,7 +179,7 @@ EventHandler::Rc Initiator::InvokeHandler
       //
       if(nextEvent == nullptr)
       {
-         Debug::SwErr(Initiator_InvokeHandler, parentSsm.Sid(), sid_);
+         Debug::SwLog(Initiator_InvokeHandler, parentSsm.Sid(), sid_);
          return EventHandler::Pass;
       }
 
@@ -190,7 +190,7 @@ EventHandler::Rc Initiator::InvokeHandler
       break;
 
    default:
-      Debug::SwErr(Initiator_InvokeHandler, sid_, rc);
+      Debug::SwLog(Initiator_InvokeHandler, sid_, rc);
 
       if(nextEvent != nullptr)
       {
@@ -227,7 +227,7 @@ EventHandler::Rc Initiator::ProcessEvent
 {
    Debug::ft(Initiator_ProcessEvent);
 
-   Debug::SwErr(Initiator_ProcessEvent, parentSsm.Sid(), sid_);
+   Debug::SwLog(Initiator_ProcessEvent, parentSsm.Sid(), sid_);
    return EventHandler::Pass;
 }
 }

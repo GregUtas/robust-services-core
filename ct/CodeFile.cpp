@@ -2138,7 +2138,7 @@ Include* CodeFile::InsertInclude(const string& fn)
       }
    }
 
-   Context::SwErr(CodeFile_InsertInclude, fn, 0);
+   Context::SwLog(CodeFile_InsertInclude, fn, 0);
    return nullptr;
 }
 
@@ -2214,7 +2214,7 @@ void CodeFile::LogAddForwards(ostream* stream, const CxxNamedSet& items) const
       else
       {
          string expl = "Non-class forward: " + (*i)->ScopedName(true);
-         Debug::SwErr(CodeFile_LogAddForwards, expl, 0, InfoLog);
+         Debug::SwLog(CodeFile_LogAddForwards, expl, 0, SwInfo);
       }
 
       name << (*i)->ScopedName(true);

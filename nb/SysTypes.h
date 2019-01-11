@@ -138,6 +138,7 @@ constexpr char TAB = '\t';
 //  String constants.
 //
 extern fixed_string EMPTY_STR;
+extern fixed_string CRLF_STR;
 extern fixed_string ERROR_STR;
 extern fixed_string SCOPE_STR;
 

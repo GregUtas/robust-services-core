@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  NwTypes.cpp
+//  SysConsole.cpp
 //
 //  Copyright (C) 2017  Greg Utas
 //
@@ -19,43 +19,38 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-#include "NwTypes.h"
-#include <winsock2.h>
+#include "SysConsole.h"
+#include <windows.h>
+#include "Debug.h"
 #include "SysTypes.h"
 
-using std::ostream;
-using namespace NodeBase;
+using std::string;
+using std::wstring;
 
 //------------------------------------------------------------------------------
 
-namespace NetworkBase
+namespace NodeBase
 {
-uint32_t htonl(uint32_t hostlong) { return ::htonl(hostlong); }
+fn_name SysConsole_Minimize = "SysConsole.Minimize";
 
-uint64_t htonll(uint64_t hostllong) { return ::htonll(hostllong); }
-
-uint16_t htons(uint16_t hostshort) { return ::htons(hostshort); }
-
-uint32_t ntohl(uint32_t netlong) { return ::ntohl(netlong); }
-
-uint64_t ntohll(uint32_t netllong) { return ::ntohll(netllong); }
-
-uint16_t ntohs(uint16_t netshort) { return ::ntohs(netshort); }
-
-fixed_string ProtocolStrings[IpProtocol_N + 1] =
+bool SysConsole::Minimize(bool minimize)
 {
-   "Any",
-   "UDP",
-   "TCP",
-   ERROR_STR
-};
+   Debug::ft(SysConsole_Minimize);
 
-ostream& operator<<(ostream& stream, IpProtocol proto)
+   auto window = GetConsoleWindow();
+   auto mode = (minimize ? SW_MINIMIZE : SW_RESTORE);
+   return ShowWindow(window, mode);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SysConsole_SetTitle = "SysConsole.SetTitle";
+
+bool SysConsole::SetTitle(const string& title)
 {
-   if((proto >= 0) && (proto < IpProtocol_N))
-      stream << ProtocolStrings[proto];
-   else
-      stream << ProtocolStrings[IpProtocol_N];
-   return stream;
+   Debug::ft(SysConsole_SetTitle);
+
+   auto wtitle = wstring(title.begin(), title.end());
+   return SetConsoleTitle(wtitle.c_str());
 }
 }

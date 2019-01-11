@@ -273,12 +273,13 @@ private:
    //
    static const size_t OutSize = 8;
 
-   //  Where to send output (the default is the console transcript file).
+   //  Where to send output (the default is to CoutThread, which copies it
+   //  to the console transcript file).
    //
    stringPtr outName_[OutSize];
 
-   //  The index into out_ that references the output stream (if zero, then
-   //  output is sent to CoutThread and copied to a console transcript file).
+   //  The index into out_ that references the name of the output stream
+   //  (if zero, output is sent to CoutThread).
    //
    size_t outIndex_;
 

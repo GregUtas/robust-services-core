@@ -74,11 +74,11 @@ bool SysIpL2Addr::HostName(string& name)
 {
    Debug::ft(SysIpL2Addr_HostName);
 
-   char buff[64];
+   char buff[256];
 
    name.clear();
 
-   if(gethostname(buff, 64) == SOCKET_ERROR)
+   if(gethostname(buff, 256) == SOCKET_ERROR)
    {
       auto log = Log::Create("IP GETHOSTNAME ERROR");
 

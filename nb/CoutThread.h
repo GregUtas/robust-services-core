@@ -38,11 +38,12 @@ class CoutThread : public Thread
    friend class Singleton< CoutThread >;
 public:
    //  Queues STREAM for output to the console.  CoutThread takes ownership
-   //  of STREAM, which is set to nullptr before returning.
+   //  of STREAM, which is set to nullptr before returning.  STREAM is also
+   //  copied and sent to the console transcript file.
    //
    static void Spool(ostringstreamPtr& stream);
 
-   //  Queues STR for output to the console.  Adds an "CRLF" if EOL is set.
+   //  Queues STR for output to the console.  Adds a "CRLF" if EOL is set.
    //
    static void Spool(const char* s, bool eol = false);
 

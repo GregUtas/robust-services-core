@@ -24,6 +24,7 @@ namespace std
       basic_string(const basic_string& that);
       basic_string(const charT* that);
       basic_string(size_t count, charT c);
+      basic_string(const charT* begin, const charT* end);
       ~basic_string();
       basic_string& operator=(const basic_string& s);
       basic_string& operator=(const charT* s);
@@ -40,6 +41,7 @@ namespace std
       charT& at(size_t pos);
       const charT& back() const;
       charT& back();
+      const charT* begin() const;
       const charT* c_str() const;
       size_t capacity() const;
       void clear();
@@ -48,6 +50,7 @@ namespace std
       int compare(size_t p, size_t n, const basic_string& s) const;
       int compare(size_t p1, size_t n1, const basic_string& s, size_t p2, size_t n2) const;
       bool empty() const;
+      const charT* end() const;
       basic_string& erase(size_t pos = 0, size_t num = npos);
       size_t find(const basic_string& s, size_t pos = 0) const;
       size_t find(const charT* s, size_t pos = 0) const;
@@ -102,6 +105,7 @@ namespace std
       (basic_istream& i, const basic_string< E, T, A >& s);
 
    typedef basic_string< char, char_traits<char>, allocator<char>> string;
+   typedef basic_string< wchar_t, char_traits<wchar_t>, allocator<wchar_t>> wstring;
 
    string to_string(int n);
    string to_string(unsigned int n);

@@ -74,7 +74,9 @@ public:
    virtual size_t TxSize() const = 0;
 
    //  Creates a subclass of CliText for provisioning the service through
-   //  the CLI.
+   //  the CLI.  [This is not currently invoked but has few overrides that
+   //  illustrate its purpose, which is to name a protocol whose port, and
+   //  possibly other attributes, could be configured via a CLI command.]
    //
    virtual CliText* CreateText() const = 0;
 

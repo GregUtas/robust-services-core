@@ -15,28 +15,38 @@ namespace std
    template< typename T, typename C = std::less< T > > class set
    {
    public:
-      typedef iterator_t< T > const_iterator;
+      typedef iterator_t< T > iterator;
+      typedef iterator_t< const T > const_iterator;
       set();
       set(const set& that);
       ~set();
-      const_iterator begin();
+      iterator begin();
+      iterator end();
+      iterator rbegin();
+      iterator rend();
+      const_iterator begin() const;
       const_iterator cbegin() const;
       const_iterator cend() const;
-      void clear();
-      size_t count(const T& key) const;
       const_iterator crbegin() const;
       const_iterator crend() const;
+      const_iterator end() const;
+      const_iterator rbegin() const;
+      const_iterator rend() const;
+      void clear();
       bool empty() const;
-      const_iterator end();
-      const_iterator erase(const_iterator& where);
-      size_t erase(const T& key);
-      const_iterator find(const T& key) const;
-      const_iterator find(const T& key);
-      pair< const_iterator, bool > insert(const T& key);
-      const_iterator rbegin();
-      const_iterator rend();
       size_t size() const;
       void swap(set& that);
+      iterator erase(const_iterator& where);
+      iterator erase(const_iterator& first, const_iterator& last);
+      size_t erase(const T& key);
+      pair< iterator, bool > insert(const T& key);
+      size_t count(const T& key) const;
+      const_iterator find(const T& key) const;
+      iterator find(const T& key);
+      const_iterator lower_bound(const T& key) const;
+      iterator lower_bound(const T& key);
+      const_iterator upper_bound(const T& key) const;
+      iterator upper_bound(const T& key);
    };
 
    template< typename T > iterator_t< T > inserter(set< T >& items, iterator_t< T >& iter);

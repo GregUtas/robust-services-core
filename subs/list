@@ -12,33 +12,44 @@ namespace std
    template< typename T > class list
    {
    public:
-      typedef iterator_t< const T > iterator;
+      typedef iterator_t< T > iterator;
+      typedef iterator_t< const T > const_iterator;
       list();
+      list(size_t count, const T& value);
       list(const list& that);
       ~list();
-      const T& back() const;
       iterator begin();
-      iterator cbegin() const;
-      iterator cend() const;
-      void clear();
-      iterator crbegin() const;
-      iterator crend() const;
-      bool empty() const;
       iterator end();
-      iterator erase(iterator& where);
-      iterator erase(iterator& first, iterator& last);
-      const T& front() const;
-      iterator insert(iterator& where, const T& value);
-      void pop_back();
-      void pop_front();
-      void push_back(const T& value);
-      void push_front(const T& value);
       iterator rbegin();
       iterator rend();
+      const_iterator begin() const;
+      const_iterator cbegin() const;
+      const_iterator cend() const;
+      const_iterator crbegin() const;
+      const_iterator crend() const;
+      const_iterator end() const;
+      const_iterator rbegin() const;
+      const_iterator rend() const;
+      void clear();
+      bool empty() const;
+      void resize(size_t count);
+      void resize(size_t count, const T& value);
       size_t size() const;
+      void swap(list& that);
+      const T& back() const;
+      T& back();
+      const T& front() const;
+      T& front();
+      iterator erase(const_iterator& where);
+      iterator erase(const_iterator& first, const_iterator& last);
+      iterator insert(iterator& where, const T& value);
+      iterator insert(const_iterator& where, size_t count, const T& value);
+      void push_back(const T& value);
+      void push_front(const T& value);
+      void pop_back();
+      void pop_front();
       void sort();
       void sort(const bool (*sorted)(T& first, T& second));
-      void swap(list& that);
    };
 }
 

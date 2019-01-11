@@ -65,6 +65,15 @@ enum IpProtocol
 //
 std::ostream& operator<<(std::ostream& stream, IpProtocol proto);
 
+//  The standard functions for converting to/from network order.
+//
+uint64_t htonll(uint64_t hostllong);
+uint32_t htonl(uint32_t hostlong);
+uint16_t htons(uint16_t hostshort);
+uint64_t ntohll(uint32_t netllong);
+uint32_t ntohl(uint32_t netlong);
+uint16_t ntohs(uint16_t netshort);
+
 //  Forward declarations.
 //
 class InputHandler;

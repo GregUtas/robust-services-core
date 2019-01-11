@@ -138,4 +138,14 @@ typedef void (*_se_translator_function)(uint32_t ErrVal, void* ExceptionPointers
 _se_translator_function _set_se_translator(_se_translator_function NewPtFunc);
 int _resetstkoflw();
 
+//------------------------------------------------------------------------------
+//
+//  Windows console
+//
+const int SW_MINIMIZE = 6;
+const int SW_RESTORE = 9;
+
+HANDLE GetConsoleWindow();
+bool ShowWindow(HANDLE window, int mode);
+bool SetConsoleTitle(const wchar_t* title);
 #endif

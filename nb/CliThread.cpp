@@ -102,7 +102,6 @@ void CliThread::AllocResources()
    *obuf << std::boolalpha << std::nouppercase;
    stack_.reset(new CliStack);
    prompt_.reset(new string);
-   outName_[0].reset(new string(CliRegistry::ConsoleFileName() + ".txt"));
 }
 
 //------------------------------------------------------------------------------
@@ -310,22 +309,14 @@ void CliThread::Flush()
 {
    Debug::ft(CliThread_Flush);
 
-   //  If output is being sent to the console transcript file, send it to
-   //  the console before sending it to the destination file.
+   //  Send output to either the console or a separate file.
    //
    if((obuf != nullptr) && (obuf->tellp() > 0))
    {
       if(outIndex_ == 0)
-      {
-         auto stream =
-            ostringstreamPtr(new std::ostringstream(obuf->str()));
          CoutThread::Spool(obuf);
-         FileThread::Spool(*outName_[0], stream);
-      }
       else
-      {
          FileThread::Spool(*outName_[outIndex_], obuf);
-      }
    }
 
    //  Create a new output buffer for the next command's results.
@@ -465,10 +456,14 @@ const CliCommand* CliThread::ParseCommand() const
    string tag;
    bool inIncr;
 
-   //  Record the user's input in the output file.
+   //  Record the command in any output file.  (CliBuffer.GetLine copies
+   //  each input to the console and/or the console transcript file.)
    //
-   auto input = ibuf->Echo();
-   FileThread::Spool(*outName_[outIndex_], input, true);
+   if(outIndex_ > 0)
+   {
+      auto input = ibuf->Echo();
+      FileThread::Spool(*outName_[outIndex_], input, true);
+   }
 
    //  Get the first token, which must be the name of a command or
    //  increment.
@@ -557,7 +552,11 @@ void CliThread::ReadCommands()
       if(!skip_)
       {
          CoutThread::Spool(prompt_->c_str());
-         FileThread::Spool(*outName_[outIndex_], *prompt_, false);
+
+         if(outIndex_ > 0)
+         {
+            FileThread::Spool(*outName_[outIndex_], *prompt_, false);
+         }
       }
 
       skip_ = false;

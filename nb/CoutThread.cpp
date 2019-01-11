@@ -24,8 +24,10 @@
 #include <ostream>
 #include <sstream>
 #include <string>
+#include "CliRegistry.h"
 #include "Clock.h"
 #include "Debug.h"
+#include "FileThread.h"
 #include "FunctionGuard.h"
 #include "Restart.h"
 #include "Singleton.h"
@@ -120,6 +122,12 @@ void CoutThread::Spool(ostringstreamPtr& stream)
       stream.reset();
       return;
    }
+
+   //  Send a copy of the output to the console transcript file.
+   //
+   auto filename = CliRegistry::ConsoleFileName() + ".txt";
+   ostringstreamPtr clone(new std::ostringstream(stream->str()));
+   FileThread::Spool(filename, clone);
 
    //  Forward the stream to our thread.  This must be done unpreemptably
    //  because both this function (which runs on the client thread) and

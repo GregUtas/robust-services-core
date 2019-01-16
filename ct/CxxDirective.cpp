@@ -127,7 +127,7 @@ Define::Define(string& name) : Macro(name),
 
 //------------------------------------------------------------------------------
 
-fn_name Define_ctor2 = "Define.ctor[rhs]";
+fn_name Define_ctor2 = "Define.ctor(rhs)";
 
 Define::Define(string& name, ExprPtr& rhs) : Macro(name),
    rhs_(std::move(rhs)),

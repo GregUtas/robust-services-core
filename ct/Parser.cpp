@@ -128,7 +128,7 @@ Parser::~Parser()
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_Backup1 = "Parser.Backup[none]";
+fn_name Parser_Backup1 = "Parser.Backup(cause)";
 
 bool Parser::Backup(size_t cause)
 {
@@ -140,7 +140,7 @@ bool Parser::Backup(size_t cause)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_Backup2 = "Parser.Backup";
+fn_name Parser_Backup2 = "Parser.Backup(pos, cause)";
 
 bool Parser::Backup(size_t pos, size_t cause)
 {
@@ -160,7 +160,7 @@ bool Parser::Backup(size_t pos, size_t cause)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_Backup3 = "Parser.Backup[func]";
+fn_name Parser_Backup3 = "Parser.Backup(pos, cause, func)";
 
 bool Parser::Backup(size_t pos, FunctionPtr& func, size_t cause)
 {
@@ -3269,7 +3269,7 @@ bool Parser::GetTypeSpec(TypeSpecPtr& spec)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetTypeSpec2 = "Parser.GetTypeSpec[name]";
+fn_name Parser_GetTypeSpec2 = "Parser.GetTypeSpec(name)";
 
 bool Parser::GetTypeSpec(TypeSpecPtr& spec, string& name)
 {

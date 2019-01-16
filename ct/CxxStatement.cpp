@@ -844,7 +844,7 @@ void Return::Print(ostream& stream, const Flags& options) const
 
 //==============================================================================
 
-fn_name Switch_ctor = "Switch.ctor[ct]";
+fn_name Switch_ctor = "Switch.ctor[>ct]";
 
 Switch::Switch(size_t pos) : CxxStatement(pos)
 {

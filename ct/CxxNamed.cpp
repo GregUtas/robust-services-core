@@ -3223,11 +3223,11 @@ TypeTags::TypeTags(const TypeSpec& spec) :
 
 //------------------------------------------------------------------------------
 
-fn_name TypeTags_AlignTemplateArg = "TypeTags.AlignTemplateArg";
+fn_name TypeTags_AlignTemplateTag = "TypeTags.AlignTemplateTag";
 
 bool TypeTags::AlignTemplateTag(TypeTags& that) const
 {
-   Debug::ft(TypeTags_AlignTemplateArg);
+   Debug::ft(TypeTags_AlignTemplateTag);
 
    if(that.ptrs_ < this->ptrs_) return false;
    if(that.arrays_ < this->arrays_) return false;
@@ -3266,11 +3266,11 @@ bool TypeTags::IsConstPtr(size_t n) const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_MatchTemplateTags = "DataSpec.MatchTemplateTags";
+fn_name TypeTags_MatchTemplateTags = "TypeTags.MatchTemplateTags";
 
 TypeMatch TypeTags::MatchTemplateTags(const TypeTags& that) const
 {
-   Debug::ft(DataSpec_MatchTemplateTags);
+   Debug::ft(TypeTags_MatchTemplateTags);
 
    if(this->ptrs_ > that.ptrs_) return Incompatible;
    if(this->arrays_ > that.arrays_) return Incompatible;

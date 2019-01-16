@@ -26,7 +26,6 @@
 #include <sstream>
 #include <utility>
 #include "CodeFile.h"
-#include "CoutThread.h"
 #include "CxxArea.h"
 #include "CxxDirective.h"
 #include "CxxExecute.h"
@@ -1507,7 +1506,14 @@ bool Parser::GetEnum(EnumPtr& decl)
    auto start = lexer_.Curr();
 
    string enumName;
+   TypeSpecPtr typeSpec;
    lexer_.GetName(enumName);
+
+   if(lexer_.NextCharIs(':'))
+   {
+      if(!GetTypeSpec(typeSpec)) return Backup(start, 214);
+   }
+
    if(!lexer_.NextCharIs('{')) return Backup(start, 104);
 
    string etorName;
@@ -1516,6 +1522,7 @@ bool Parser::GetEnum(EnumPtr& decl)
    if(!GetEnumerator(etorName, etorInit)) return Backup(start, 105);
    decl.reset(new Enum(enumName));
    decl->SetContext(begin);
+   if(typeSpec != nullptr) decl->AddType(typeSpec);
    decl->AddEnumerator(etorName, etorInit, etorPos);
 
    while(true)
@@ -1740,8 +1747,8 @@ bool Parser::GetFuncData(DataPtr& data)
          //
          typeSpec.reset(prev->GetTypeSpec()->Clone());
          typeSpec->CopyContext(prev);
-         GetPointers(typeSpec.get());
-         GetReferences(typeSpec.get());
+         *typeSpec->Tags() = TypeTags();
+         GetTags(typeSpec.get());
          if(!lexer_.GetName(dataName)) return Backup(start, 126);
       }
 
@@ -1971,7 +1978,7 @@ bool Parser::GetFuncSpec(TypeSpecPtr& spec, FunctionPtr& func)
 {
    Debug::ft(Parser_GetFuncSpec);
 
-   //  <FuncSpec> = "(" "*" <Name> ")" <Argument>
+   //  <FuncSpec> = "(" "*" <Name> ")" <Arguments>
    //  GetTypeSpec has already parsed the function's return type.
    //
    auto start = lexer_.Curr();
@@ -2396,31 +2403,14 @@ bool Parser::GetParExpr(ExprPtr& expr, bool omit, bool opt)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetPointers1 = "Parser.GetPointers";
+fn_name Parser_GetPointers = "Parser.GetPointers";
 
 size_t Parser::GetPointers()
 {
-   Debug::ft(Parser_GetPointers1);
+   Debug::ft(Parser_GetPointers);
 
    bool space;
    return lexer_.GetIndirectionLevel('*', space);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Parser_GetPointers2 = "Parser.GetPointers(spec)";
-
-void Parser::GetPointers(TypeSpec* spec)
-{
-   Debug::ft(Parser_GetPointers2);
-
-   bool space1, space2;
-   auto ptrs1 = lexer_.GetIndirectionLevel('*', space1);
-   auto array = lexer_.NextStringIs(ARRAY_STR, false);
-   auto ptrs2 = lexer_.GetIndirectionLevel('*', space2);
-   if(space1 || space2) spec->SetPtrDetached(true);
-   spec->SetPtrs(ptrs1 + ptrs2);
-   if(array) spec->SetArrayPos(ptrs1);
 }
 
 //------------------------------------------------------------------------------
@@ -2691,20 +2681,6 @@ bool Parser::GetQualName(QualNamePtr& name, Constraint constraint)
 
 //------------------------------------------------------------------------------
 
-fn_name Parser_GetReferences = "Parser.GetReferences";
-
-void Parser::GetReferences(TypeSpec* spec)
-{
-   Debug::ft(Parser_GetReferences);
-
-   bool space;
-   auto refs = lexer_.GetIndirectionLevel('&', space);
-   if(space) spec->SetRefDetached(true);
-   spec->SetRefs(refs);
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Parser_GetReturn = "Parser.GetReturn";
 
 bool Parser::GetReturn(TokenPtr& statement)
@@ -2946,6 +2922,70 @@ bool Parser::GetSwitch(TokenPtr& statement)
    s->AddExpr(value);
    s->AddCases(cases);
    return Success(Parser_GetSwitch, begin);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Parser_GetTags = "Parser.GetTags";
+
+bool Parser::GetTags(TypeSpec* spec)
+{
+   Debug::ft(Parser_GetTags);
+
+   auto tags = spec->Tags();
+
+   //  Start by looking for an unbounded array tag.  This is only
+   //  supported in isolation.
+   //
+   if(lexer_.NextStringIs(ARRAY_STR, false))
+   {
+      tags->SetUnboundedArray();
+      return true;
+   }
+
+   //  Now look for pointers.
+   //
+   bool space;
+   TagCount ptrs = 0;
+
+   while(true)
+   {
+      //  Keep looking for a series of one or more pointer tags.
+      //
+      auto n = lexer_.GetIndirectionLevel('*', space);
+      if(n == 0) break;
+      if(space) spec->SetPtrDetached(true);
+
+      //  Mark each pointer non-const and update the count of pointers.
+      //  If the next keyword is "const", mark the last pointer const.
+      //
+      for(auto i = ptrs; i < ptrs + n; ++i)
+      {
+         if(!tags->SetPointer(i, false)) return false;
+      }
+
+      ptrs += n;
+      auto readonly = NextKeywordIs(CONST_STR);
+      tags->SetPointer(ptrs - 1, readonly);
+   }
+
+   //  Now look for references.
+   //
+   auto refs = lexer_.GetIndirectionLevel('&', space);
+   if(space) spec->SetRefDetached(true);
+   tags->SetRefs(refs);
+
+   //  Now look for a trailing "const" that applies to the underlying type.
+   //
+   if(NextKeywordIs(CONST_STR))
+   {
+      if(tags->IsConst())
+         Log(RedundantConst);
+      else
+         tags->SetConst(true);
+   }
+
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -3198,6 +3238,9 @@ bool Parser::GetTypeSpec(TypeSpecPtr& spec)
    auto readonly = NextKeywordIs(CONST_STR);
    if(!GetQualName(typeName, TypeKeyword)) return Backup(start, 206);
    if(!CheckType(typeName)) return Backup(start, 207);
+   spec.reset(new DataSpec(typeName));
+   spec->SetContext(start);
+
    if(NextKeywordIs(CONST_STR))
    {
       if(readonly)
@@ -3205,44 +3248,9 @@ bool Parser::GetTypeSpec(TypeSpecPtr& spec)
       else
          readonly = true;
    }
-   spec.reset(new DataSpec(typeName));
-   spec->SetContext(start);
-   spec->SetConst(readonly);
 
-   GetPointers(spec.get());
-   if(NextKeywordIs(CONST_STR))
-   {
-      if(spec->PtrCount(false) > 0)
-      {
-         spec->SetConstPtr(true);
-      }
-      else
-      {
-         if(spec->IsConst())
-            Log(RedundantConst);
-         else
-            spec->SetConst(true);
-      }
-   }
-
-   GetReferences(spec.get());
-   if(NextKeywordIs(CONST_STR))
-   {
-      if(spec->PtrCount(false) > 0)
-      {
-         if(spec->IsConstPtr())
-            Log(RedundantConst);
-         else
-            spec->SetConstPtr(true);
-      }
-      else
-      {
-         if(spec->IsConst())
-            Log(RedundantConst);
-         else
-            spec->SetConst(true);
-      }
-   }
+   spec->Tags()->SetConst(readonly);
+   GetTags(spec.get());
 
    //  Check if this is a function type.  If it is, it assumes ownership
    //  of SPEC as its return type.  Create a FuncSpec to wrap the entire
@@ -3366,8 +3374,8 @@ bool Parser::HandleDefine()
    }
    else
    {
-      macro->SetExpr(expr);
       macro->SetContext(start);
+      macro->SetExpr(expr);
    }
 
    lexer_.PreprocessSource();
@@ -3811,7 +3819,7 @@ bool Parser::Parse(CodeFile& file)
    //  the console.
    //
    if(file.ParseStatus() != CodeFile::Unparsed) return true;
-   Debug::Progress(file.Name(), false, true);
+   Debug::Progress(file.Name(), true);
 
    //  Create a parse trace file if requested.
    //
@@ -3847,7 +3855,7 @@ bool Parser::Parse(CodeFile& file)
    auto parsed = lexer_.Eof();
    Context::SetFile(nullptr);
    file.SetParsed(parsed);
-   Debug::Progress((parsed ? EMPTY_STR : " **FAILED** "), true, true);
+   Debug::Progress((parsed ? CRLF_STR : " **FAILED** " + CRLF), true);
    if(!parsed) Failure(venue_);
 
    //  On success, delete the parse file if it is not supposed to be retained.
@@ -3866,8 +3874,7 @@ bool Parser::ParseClassInst(ClassInst* inst, size_t pos)
    Debug::ft(Parser_ParseClassInst);
 
    auto name = inst->ScopedName(true);
-   CoutThread::Spool(EMPTY_STR, true);
-   Debug::Progress(Indent() + name, false, true);
+   Debug::Progress(CRLF + Indent() + name, true);
 
    //  Initialize the parser.  If an "object code" file is being produced,
    //  insert the instance name.
@@ -3898,7 +3905,7 @@ bool Parser::ParseClassInst(ClassInst* inst, size_t pos)
    //  is being produced, indicate that parsing of the template is complete.
    //
    auto parsed = lexer_.Eof();
-   Debug::Progress((parsed ? EMPTY_STR : " **FAILED** "), false, true);
+   Debug::Progress((parsed ? EMPTY_STR : " **FAILED** "), true);
    if(!parsed) Failure(venue_);
    Context::Trace(CxxTrace::END_TEMPLATE);
    return parsed;
@@ -3913,8 +3920,7 @@ bool Parser::ParseFuncInst(const string& name,
 {
    Debug::ft(Parser_ParseFuncInst);
 
-   CoutThread::Spool(EMPTY_STR, true);
-   Debug::Progress(Indent() + name, false, true);
+   Debug::Progress(CRLF + Indent() + name, true);
 
    //  Initialize the parser.  If an "object code" file is being produced,
    //  insert the instance name.
@@ -3941,7 +3947,7 @@ bool Parser::ParseFuncInst(const string& name,
    //  is being produced, indicate that parsing of the template is complete.
    //
    auto parsed = lexer_.Eof();
-   Debug::Progress((parsed ? EMPTY_STR : " **FAILED** "), false, true);
+   Debug::Progress((parsed ? EMPTY_STR : " **FAILED** "), true);
    if(!parsed) Failure(venue_);
    Context::Trace(CxxTrace::END_TEMPLATE);
    return parsed;

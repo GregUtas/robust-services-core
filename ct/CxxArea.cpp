@@ -416,18 +416,34 @@ void Class::BlockCopied(const StackArg* arg)
 
 fn_name Class_CanConstructFrom = "Class.CanConstructFrom";
 
-bool Class::CanConstructFrom
-   (const StackArg& that, const string& thatType, bool implicit) const
+bool Class::CanConstructFrom(const StackArg& that, const string& thatType) const
 {
    Debug::ft(Class_CanConstructFrom);
 
    //  Visit our functions to see if one of them is a suitable constructor.
    //
    auto funcs = Funcs();
+   TypeMatch result = Incompatible;
+   Function* ctor = nullptr;
 
    for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
    {
-      if((*f)->CanConstructFrom(that, thatType, implicit)) return true;
+      auto match = (*f)->CalcConstructibilty(that, thatType);
+
+      if(match > result)
+      {
+         result = match;
+         ctor = f->get();
+      }
+   }
+
+   //  For implicit construction, thatType must at least be convertible
+   //  to the constructor's argument.
+   //
+   if(result >= Convertible)
+   {
+      ctor->SetImplicit();
+      return true;
    }
 
    return false;
@@ -1859,7 +1875,7 @@ bool ClassInst::DerivesFrom(const Class* cls) const
       auto thatType = (*a2)->TypeString(true);
       auto thisArg = (*a1)->ResultType();
       auto thatArg = (*a2)->ResultType();
-      auto match = thatArg.CalcMatchWith(thisArg, thatType, thisType, false);
+      auto match = thatArg.CalcMatchWith(thisArg, thatType, thisType);
       if(match == Incompatible) return false;
       ++a1;
       ++a2;

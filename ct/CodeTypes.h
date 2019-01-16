@@ -28,7 +28,8 @@
 #include <vector>
 #include "SysTypes.h"
 
-using namespace NodeBase;
+using NodeBase::fixed_string;
+using NodeBase::Flags;
 
 //------------------------------------------------------------------------------
 
@@ -387,11 +388,9 @@ enum Warning
    DataUnused,               // data is neither read nor written
    EnumUnused,               // enum not referenced
    EnumeratorUnused,         // enumerator not referenced
-   ForwardUnused,            // forward declaration did not resolve a symbol
    FriendUnused,             // friend did not access a restricted member
    FunctionUnused,           // function not invoked
    TypedefUnused,            // typedef not referenced
-   UsingUnused,              // using statement did not resolve a symbol
    ForwardUnresolved,        // no referent found for forward declaration
    FriendUnresolved,         // no referent found for friend declaration
    FriendAsForward,          // friend declaration is also forward declaration

@@ -194,7 +194,7 @@ bool Define::EnterScope()
    if(!defined_) return true;
 
    Context::File()->InsertMacro(this);
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    if(!AtFileScope()) Log(DefineNotAtFileScope);
 
    if(rhs_ != nullptr)
@@ -262,7 +262,7 @@ bool Elif::EnterScope()
    //  Compile the code that follows the #elif if its #if has not yet compiled
    //  any code and the condition following the #elif evaluates to true.
    //
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    auto iff = Context::Optional();
    if(iff->HasCompiledCode()) return false;
    if(!Conditional::EnterScope()) return false;
@@ -302,7 +302,7 @@ bool Else::EnterScope()
    //  Compile the code that follows the #else if its #if/#ifdef/#ifndef has
    //  not yet compiled any code.
    //
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    auto ifx = Context::Optional();
    return !ifx->HasCompiledCode();
 }
@@ -355,7 +355,7 @@ bool Error::EnterScope()
 {
    Debug::ft(Error_EnterScope);
 
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    Context::SwLog(Error_EnterScope, GetText(), 0);
    return true;
 }
@@ -445,7 +445,7 @@ bool Ifdef::EnterScope()
    //  Compile the code that follows the #ifdef if the symbol that follows
    //  it has been defined.
    //
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    Context::PushOptional(this);
    if(!Existential::SymbolDefined()) return false;
    SetCompile();
@@ -511,7 +511,7 @@ bool Iff::EnterScope()
    //  Compile the code that follows the #if if the condition that follows
    //  evalutes to true.
    //
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    Context::PushOptional(this);
    if(!Conditional::EnterScope()) return false;
    SetCompile();
@@ -577,7 +577,7 @@ bool Ifndef::EnterScope()
    //  Compile the code that follows the #ifdef if the symbol that follows
    //  it has not been defined.
    //
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    Context::PushOptional(this);
    if(Existential::SymbolDefined()) return false;
    SetCompile();

@@ -210,7 +210,7 @@ void Block::EnterBlock()
 {
    Debug::ft(Block_EnterBlock);
 
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    Context::PushScope(this);
 
    for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
@@ -551,8 +551,6 @@ void ClassData::EnterBlock()
 {
    Debug::ft(ClassData_EnterBlock);
 
-   Context::SetPos(GetPos());
-
    //  The initialization of a static member is handled by
    //  o ClassData.EnterScope, if initialized where declared, or
    //  o SpaceData.EnterScope, if initialized separately.
@@ -573,7 +571,7 @@ void ClassData::EnterBlock()
    //
    if(init_ != nullptr)
    {
-      Context::SetPos(init_->GetPos());
+      Context::SetPos(init_->GetLoc());
       InitByExpr(init_->GetInit());
       init_ = nullptr;
       return;
@@ -594,7 +592,7 @@ bool ClassData::EnterScope()
    //  A static const POD member (unless its a pointer) could also be
    //  initialized at this point.
    //
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    GetTypeSpec()->EnteringScope(this);
 
    if(width_ != nullptr)
@@ -617,7 +615,7 @@ bool ClassData::EnterScope()
    //  restrictions or type compatibility, such as the one above for field
    //  width.
    //
-   if(IsStatic() && IsConst() && IsPOD() && !IsPointer())
+   if(IsStatic() && IsConst() && IsPOD() && !IsPointer(true))
    {
       ExecuteInit(false);
    }
@@ -1045,7 +1043,12 @@ void Data::CheckConstness(bool could) const
 
       if(!IsConstPtr())
       {
-         if(!nonconstptr_ && IsPointer() && could) Log(DataCouldBeConstPtr);
+         if(!nonconstptr_ && could)
+         {
+            //  Only log this for pointers, not arrays.
+            //
+            if(spec_->Ptrs(false) > 0) Log(DataCouldBeConstPtr);
+         }
       }
       else
       {
@@ -1377,14 +1380,6 @@ bool Data::IsConst() const
 
 //------------------------------------------------------------------------------
 
-bool Data::IsConstPtr() const
-{
-   if(constexpr_) return true;
-   return spec_->IsConstPtr();
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Data_IsDefaultConstructible = "Data.IsDefaultConstructible";
 
 bool Data::IsDefaultConstructible() const
@@ -1625,7 +1620,7 @@ void FuncData::EnterBlock()
    auto spec = GetTypeSpec();
    auto anon = spec->IsAuto();
 
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    Singleton< CxxSymbols >::Instance()->InsertLocal(this);
    spec->EnteringScope(this);
    ExecuteInit(false);
@@ -1720,6 +1715,7 @@ Function::Function(QualNamePtr& name) :
    this_(false),
    nonpublic_(false),
    nonstatic_(false),
+   implicit_(false),
    calls_(0),
    defn_(false),
    deleted_(false),
@@ -1760,6 +1756,7 @@ Function::Function(QualNamePtr& name, TypeSpecPtr& spec, bool type) :
    this_(false),
    nonpublic_(false),
    nonstatic_(false),
+   implicit_(false),
    calls_(0),
    defn_(false),
    deleted_(false),
@@ -1868,8 +1865,8 @@ void Function::AddThisArg()
    //
    TypeSpecPtr typeSpec(new DataSpec(cls->Name()->c_str()));
    typeSpec->CopyContext(this);
-   typeSpec->SetPtrs(1);
-   typeSpec->SetConst(const_);
+   typeSpec->Tags()->SetConst(const_);
+   typeSpec->Tags()->SetPointer(0, true);
    typeSpec->SetReferent(cls, nullptr);
    string argName(THIS_STR);
    ArgumentPtr arg(new Argument(argName, typeSpec));
@@ -1968,31 +1965,29 @@ bool Function::ArgumentsMatch(const Function* that) const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_CanConstructFrom = "Function.CanConstructFrom";
+fn_name Function_CalcConstructibilty = "Function.CalcConstructibilty";
 
-bool Function::CanConstructFrom
-   (const StackArg& that, const string& thatType, bool implicit) const
+TypeMatch Function::CalcConstructibilty
+   (const StackArg& that, const string& thatType) const
 {
-   Debug::ft(Function_CanConstructFrom);
+   Debug::ft(Function_CalcConstructibilty);
 
-   //  Return true if this is a constructor that is not explicit, that can
-   //  take one argument (after "this"), and that can be invoked with THAT.
+   //  If this function must be invoked explicitly or is not even a
+   //  constructor, there is no compatibility.
    //
-   if((!explicit_ || implicit) && (FuncRole() == PureCtor))
-   {
-      auto min = MinArgs();
-      auto max = MaxArgs();
+   if(explicit_ || (FuncRole() != PureCtor)) return Incompatible;
 
-      if((min <= 2) && (max == 2))
-      {
-         auto thisArg = args_[1].get();
-         auto thisType = thisArg->TypeString(true);
-         return (StackArg(thisArg, 0).CalcMatchWith
-            (that, thisType, thatType, implicit) == Compatible);
-      }
+   //  If this constructor can be invoked with a single argument, find
+   //  out how well THAT matches with the constructor's argument.
+   //
+   if((MinArgs() <= 2) && (MaxArgs() == 2))
+   {
+      auto thisArg = args_[1].get();
+      auto thisType = thisArg->TypeString(true);
+      return StackArg(thisArg, 0).CalcMatchWith(that, thisType, thatType);
    }
 
-   return false;
+   return Incompatible;
 }
 
 //------------------------------------------------------------------------------
@@ -2320,10 +2315,11 @@ void Function::CheckCtor() const
       if(!GetClass()->Subclasses()->empty()) Log(PublicConstructor);
    }
 
-   //  A constructor should be tagged explicit if it can take a single
-   //  argument (besides "this") and is not a copy or move constructor.
+   //  A constructor should probably be tagged explicit if it is not invoked
+   //  implicitly, can take a single argument (besides "this"), and is not a
+   //  copy or move constructor.
    //
-   if(!explicit_)
+   if(!explicit_ && !implicit_)
    {
       auto min = MinArgs();
       auto max = MaxArgs();
@@ -2373,6 +2369,10 @@ void Function::CheckCtor() const
       {
          if(item->initNeeded)
          {
+            //  Log both the missing member and the suspicious constructor.
+            //  This will help to better pinpoint where the concern exists.
+            //
+            Log(MemberInitMissing);
             item->member->Log(MemberInitMissing);
          }
       }
@@ -3849,6 +3849,7 @@ bool Function::IsTrivial() const
 {
    Debug::ft(Function_IsTrivial);
 
+   if(defaulted_) return true;
    if(tmplt_ != nullptr) return false;
    if(GetDefn()->impl_ == nullptr) return false;
 
@@ -4488,23 +4489,9 @@ void FuncSpec::AddArray(ArraySpecPtr& array)
 
 //------------------------------------------------------------------------------
 
-void FuncSpec::AdjustPtrs(TagCount count)
-{
-   func_->GetTypeSpec()->AdjustPtrs(count);
-}
-
-//------------------------------------------------------------------------------
-
 string FuncSpec::AlignTemplateArg(const TypeSpec* thatArg) const
 {
    return func_->GetTypeSpec()->AlignTemplateArg(thatArg);
-}
-
-//------------------------------------------------------------------------------
-
-TagCount FuncSpec::ArrayCount() const
-{
-   return func_->GetTypeSpec()->ArrayCount();
 }
 
 //------------------------------------------------------------------------------
@@ -4572,9 +4559,9 @@ void FuncSpec::FindReferent()
 
 //------------------------------------------------------------------------------
 
-TypeTags FuncSpec::GetTags() const
+TypeTags FuncSpec::GetAllTags() const
 {
-   return func_->GetTypeSpec()->GetTags();
+   return func_->GetTypeSpec()->GetAllTags();
 }
 
 //------------------------------------------------------------------------------
@@ -4611,13 +4598,6 @@ void FuncSpec::Instantiating() const
 bool FuncSpec::IsConst() const
 {
    return func_->IsConst();
-}
-
-//------------------------------------------------------------------------------
-
-bool FuncSpec::IsConstPtr() const
-{
-   return func_->GetTypeSpec()->IsConstPtr();
 }
 
 //------------------------------------------------------------------------------
@@ -4670,23 +4650,9 @@ void FuncSpec::Print(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-TagCount FuncSpec::PtrCount(bool arrays) const
-{
-   return func_->GetTypeSpec()->PtrCount(arrays);
-}
-
-//------------------------------------------------------------------------------
-
 TagCount FuncSpec::Ptrs(bool arrays) const
 {
    return func_->GetTypeSpec()->Ptrs(arrays);
-}
-
-//------------------------------------------------------------------------------
-
-TagCount FuncSpec::RefCount() const
-{
-   return func_->GetTypeSpec()->RefCount();
 }
 
 //------------------------------------------------------------------------------
@@ -4712,30 +4678,6 @@ StackArg FuncSpec::ResultType() const
 
 //------------------------------------------------------------------------------
 
-void FuncSpec::SetArrayPos(int8_t pos)
-{
-   Debug::SwLog(FuncSpec_Warning, "SetArrayPos", 0);
-   func_->GetTypeSpec()->SetArrayPos(pos);
-}
-
-//------------------------------------------------------------------------------
-
-void FuncSpec::SetConst(bool readonly)
-{
-   Debug::SwLog(FuncSpec_Warning, "SetConst", 0);
-   func_->GetTypeSpec()->SetConst(readonly);
-}
-
-//------------------------------------------------------------------------------
-
-void FuncSpec::SetConstPtr(bool constptr)
-{
-   Debug::SwLog(FuncSpec_Warning, "SetConstPtr", 0);
-   func_->GetTypeSpec()->SetConst(constptr);
-}
-
-//------------------------------------------------------------------------------
-
 void FuncSpec::SetPtrDetached(bool on)
 {
    Debug::SwLog(FuncSpec_Warning, "SetPtrDetached", 0);
@@ -4744,10 +4686,9 @@ void FuncSpec::SetPtrDetached(bool on)
 
 //------------------------------------------------------------------------------
 
-void FuncSpec::SetPtrs(TagCount ptrs)
+void FuncSpec::SetPtrs(TagCount count)
 {
-   Debug::SwLog(FuncSpec_Warning, "SetPtrs", 0);
-   func_->GetTypeSpec()->SetPtrs(ptrs);
+   func_->GetTypeSpec()->SetPtrs(count);
 }
 
 //------------------------------------------------------------------------------
@@ -4768,17 +4709,23 @@ void FuncSpec::SetReferent(CxxNamed* item, const SymbolView* view) const
 
 //------------------------------------------------------------------------------
 
-void FuncSpec::SetRefs(TagCount refs)
+void FuncSpec::Shrink()
 {
-   Debug::SwLog(FuncSpec_Warning, "SetRefs", 0);
-   func_->GetTypeSpec()->SetRefs(refs);
+   func_->Shrink();
 }
 
 //------------------------------------------------------------------------------
 
-void FuncSpec::Shrink()
+const TypeTags* FuncSpec::Tags() const
 {
-   func_->Shrink();
+   return func_->GetTypeSpec()->Tags();
+}
+
+//------------------------------------------------------------------------------
+
+TypeTags* FuncSpec::Tags()
+{
+   return func_->GetTypeSpec()->Tags();
 }
 
 //------------------------------------------------------------------------------
@@ -4926,7 +4873,7 @@ bool SpaceData::EnterScope()
 {
    Debug::ft(SpaceData_EnterScope);
 
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    GetTypeSpec()->EnteringScope(this);
    CloseScope();
 

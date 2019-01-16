@@ -376,7 +376,7 @@ word CodeFileSet::Format(string& expl) const
                ++changed;
          }
 
-         Debug::Progress((rc >= 0 ? EMPTY_STR : " ERROR: " + err), true, true);
+         Debug::Progress((rc >= 0 ? CRLF_STR : " ERROR: " + err + CRLF), true);
       }
    }
 

@@ -184,7 +184,7 @@ ostream& operator<<(ostream& stream, LineType type)
 fixed_string WarningStrings[Warning_N + 1] =
 {
    "C-style comment",
-   "NULL",
+   "Use of NULL",
    "Pointer tag ('*') detached from type",
    "Reference tag ('&') detached from type",
    "C-style cast",
@@ -214,11 +214,9 @@ fixed_string WarningStrings[Warning_N + 1] =
    "Unused data",
    "Unused enum",
    "Unused enumerator",
-   "Unused forward declaration",
    "Unused friend declaration",
    "Unused function",
    "Unused typedef",
-   "Unused using statement",
    "No referent for forward declaration",
    "No referent for friend declaration",
    "Indirect reference relies on friend, not forward, declaration",
@@ -281,7 +279,7 @@ fixed_string WarningStrings[Warning_N + 1] =
    "Static function invoked via operator \".\" or \"->\"",
    "Non-boolean in conditional expression",
    "Arguments to binary operator have different enum types",
-   "Tab character",
+   "Tab character in source code",
    "Line indentation is not a multiple of the standard value",
    "Line contains trailing space",
    "Line contains adjacent spaces",
@@ -311,11 +309,9 @@ bool IsUnusedItemWarning(Warning warning)
    case DataUnused:
    case EnumUnused:
    case EnumeratorUnused:
-   case ForwardUnused:
    case FriendUnused:
    case FunctionUnused:
    case TypedefUnused:
-   case UsingUnused:
       return true;
    }
 

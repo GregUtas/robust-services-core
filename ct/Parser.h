@@ -488,15 +488,16 @@ private:
    //
    bool GetName(std::string& name);
 
-   //  Updates SPEC with pointers ('*') that follow the current parse
-   //  location.
+   //  Updates SPEC with tags that follow the current parse location.  These
+   //  include
+   //  o an unbounded array tag ("[]")
+   //  o pointer tags ("*"), each of which may be const
+   //  o reference tags ("&" or "&&")
+   //  o trailing "const" for the underlying type (any "const" that precedes
+   //    or immediately follows the underlying type has already been parsed)
+   //  Returns false if an error was detected.
    //
-   void GetPointers(TypeSpec* spec);
-
-   //  Updates SPEC with references ('&') that follow the current parse
-   //  location.
-   //
-   void GetReferences(TypeSpec* spec);
+   bool GetTags(TypeSpec* spec);
 
    //  Returns the number of pointers ('*') that follow the current parse
    //  location.

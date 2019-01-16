@@ -259,6 +259,16 @@ TypeName* CxxToken::GetTemplateArgs() const
 
 //------------------------------------------------------------------------------
 
+bool CxxToken::IsPointer(bool arrays) const
+{
+   auto spec = GetTypeSpec();
+   if(spec == nullptr) return (GetNumeric().Type() == Numeric::PTR);
+   auto ptrs = spec->Ptrs(arrays);
+   return (ptrs > 0);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CxxToken_Name = "CxxToken.Name";
 
 const string* CxxToken::Name() const
@@ -782,7 +792,7 @@ string FloatLiteral::TypeString(bool arg) const
 
 //==============================================================================
 
-Numeric IntLiteral::GetNumeric() const
+Numeric IntLiteral::BaseNumeric() const
 {
    if(tags_.unsigned_)
    {
@@ -804,6 +814,44 @@ Numeric IntLiteral::GetNumeric() const
    }
 
    return Numeric::Nil;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name IntLiteral_GetNumeric = "IntLiteral.GetNumeric";
+
+Numeric IntLiteral::GetNumeric() const
+{
+   Debug::ft(IntLiteral_GetNumeric);
+
+   //  Get the default numeric type for this constant and adjust its width
+   //  to what is actually needed to represent the constant.  In this way,
+   //  Numeric::CalcMatchWith can determine that a "0", for example, is
+   //  Convertible (rather than Abridgeable) to a function argument with a
+   //  type of uint8_t, even though the default type for "0" is a full int.
+   //
+   auto numeric = BaseNumeric();
+
+   if(tags_.unsigned_)
+   {
+      if(num_ <= UINT8_MAX)
+         numeric.SetWidth(sizeof(uint8_t) << 3);
+      else if(num_ <= UINT16_MAX)
+         numeric.SetWidth(sizeof(uint16_t) << 3);
+      else if(num_ <= UINT32_MAX)
+         numeric.SetWidth(sizeof(uint32_t) << 3);
+   }
+   else
+   {
+      if((num_ >= INT8_MIN) && (num_ <= INT8_MAX))
+         numeric.SetWidth(sizeof(int8_t) << 3);
+      else if((num_ >= INT16_MIN) && (num_ <= INT16_MAX))
+         numeric.SetWidth(sizeof(int16_t) << 3);
+      else if((num_ >= INT32_MIN) && (num_ <= INT32_MAX))
+         numeric.SetWidth(sizeof(int32_t) << 3);
+   }
+
+   return numeric;
 }
 
 //------------------------------------------------------------------------------
@@ -2620,12 +2668,12 @@ TypeSpecPtr StrLiteral::CreateRef()
 {
    Debug::ft(StrLiteral_CreateRef);
 
-   //  Create Ref_, which represents the type "const char*".
+   //  Create Ref_, which represents the type "const char* const".
    //
    auto qual = QualNamePtr(new QualName(CHAR_STR));
    auto ref = TypeSpecPtr(new DataSpec(qual));
-   ref->SetConst(true);
-   ref->SetPtrs(1);
+   ref->Tags()->SetConst(true);
+   ref->Tags()->SetPointer(0, true);
    return ref;
 }
 

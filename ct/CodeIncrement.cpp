@@ -25,6 +25,7 @@
 #include "CliText.h"
 #include "CliTextParm.h"
 #include <cstddef>
+#include <cstdint>
 #include <iomanip>
 #include <memory>
 #include <sstream>
@@ -34,11 +35,14 @@
 #include "CodeCoverage.h"
 #include "CodeDir.h"
 #include "CodeFile.h"
+#include "CodeTypes.h"
 #include "Cxx.h"
+#include "CxxExecute.h"
 #include "CxxRoot.h"
 #include "Debug.h"
 #include "Element.h"
 #include "Formatters.h"
+#include "Lexer.h"
 #include "Library.h"
 #include "LibrarySet.h"
 #include "NbCliParms.h"
@@ -176,6 +180,186 @@ word AssignCommand::ProcessCommand(CliThread& cli) const
 
    auto rc = Singleton< Library >::Instance()->Assign(name, expr, pos, expl);
    return cli.Report(rc, expl);
+}
+
+//------------------------------------------------------------------------------
+//
+//  The BREAK command.
+//
+class BreakCommand : public CliCommand
+{
+public:
+   BreakCommand();
+private:
+   virtual word ProcessCommand(CliThread& cli) const override;
+};
+
+fixed_string BreakStr = "break";
+fixed_string BreakExpl =
+   "Manage breakpoints used during parser's 'execution'.";
+
+class InsertText : public CliText
+{
+public: InsertText();
+};
+
+class RemoveText : public CliText
+{
+public: RemoveText();
+};
+
+class ClearText : public CliText
+{
+public: ClearText();
+};
+
+class ShowText : public CliText
+{
+public: ShowText();
+};
+
+class ActionParm : public CliTextParm
+{
+public:
+   ActionParm();
+
+   //  Values for the parameter.
+   //
+   static const id_t Insert = 1;
+   static const id_t Remove = 2;
+   static const id_t Clear = 3;
+   static const id_t Show = 4;
+};
+
+fixed_string InsertTextStr = "insert";
+fixed_string InsertTextExpl = "add breakpoint";
+
+InsertText::InsertText() : CliText(InsertTextExpl, InsertTextStr) { }
+
+fixed_string RemoveTextStr = "remove";
+fixed_string RemoveTextExpl = "delete breakpoint";
+
+RemoveText::RemoveText() : CliText(RemoveTextExpl, RemoveTextStr) { }
+
+fixed_string ClearTextStr = "clear";
+fixed_string ClearTextExpl = "clear all breakpoints";
+
+ClearText::ClearText() : CliText(ClearTextExpl, ClearTextStr) { }
+
+fixed_string ShowTextStr = "show";
+fixed_string ShowTextExpl = "show breakpoints";
+
+ShowText::ShowText() : CliText(ShowTextExpl, ShowTextStr) { }
+
+fixed_string ActionExpl = "action...";
+
+ActionParm::ActionParm() : CliTextParm(ActionExpl)
+{
+   BindText(*new InsertText, ActionParm::Insert);
+   BindText(*new RemoveText, ActionParm::Remove);
+   BindText(*new ClearText, ActionParm::Clear);
+   BindText(*new ShowText, ActionParm::Show);
+}
+
+class FileNameParm : public CliTextParm
+{
+public: FileNameParm();
+};
+
+fixed_string FileNameExpl = "name of source code file";
+
+FileNameParm::FileNameParm() : CliTextParm(FileNameExpl) { }
+
+class LineNumberParm : public CliIntParm
+{
+public: LineNumberParm();
+};
+
+fixed_string LineNumberExpl = "line number (must contain source code)";
+
+LineNumberParm::LineNumberParm() : CliIntParm(LineNumberExpl, 0, INT32_MAX) { }
+
+BreakCommand::BreakCommand() : CliCommand(BreakStr, BreakExpl)
+{
+   BindParm(*new ActionParm);
+   BindParm(*new FileNameParm);
+   BindParm(*new LineNumberParm);
+}
+
+fn_name BreakCommand_ProcessCommand = "BreakCommand.ProcessCommand";
+
+word BreakCommand::ProcessCommand(CliThread& cli) const
+{
+   Debug::ft(BreakCommand_ProcessCommand);
+
+   id_t index;
+   string filename;
+   word line;
+
+   if(!GetTextIndex(index, cli)) return -1;
+
+   switch(index)
+   {
+   case ActionParm::Insert:
+   case ActionParm::Remove:
+      break;
+
+   case ActionParm::Clear:
+      cli.EndOfInput(false);
+      Context::ClearBreakpoints();
+      return cli.Report(0, SuccessExpl);
+
+   case ActionParm::Show:
+      cli.EndOfInput(false);
+      Context::DisplayBreakpoints(*cli.obuf, spaces(2));
+      return 0;
+
+   default:
+      return cli.Report(index, SystemErrorExpl);
+   }
+
+   if(!GetString(filename, cli)) return -1;
+   if(!GetIntParm(line, cli)) return -1;
+   cli.EndOfInput(false);
+
+   auto lib = Singleton< Library >::Instance();
+   auto file = lib->FindFile(filename);
+
+   if(file == nullptr)
+   {
+      return cli.Report(-2, "Source code file not found.");
+   }
+
+   if(index == ActionParm::Remove)
+   {
+      Context::EraseBreakpoint(file, line - 1);
+      return cli.Report(0, SuccessExpl);
+   }
+
+   auto source = file->GetLexer().GetNthLine(line - 1);
+
+   switch(file->GetLineType(line - 1))
+   {
+   case Blank:
+   case EmptyComment:
+   case LicenseComment:
+   case SeparatorComment:
+   case TaggedComment:
+   case TextComment:
+   case SlashAsteriskComment:
+   case OpenBrace:
+   case CloseBrace:
+   case CloseBraceSemicolon:
+      *cli.obuf << source << CRLF;
+      return cli.Report(-3, "That line does not contain source code.");
+
+   case LineType_N:
+      return cli.Report(-3, "The file does not contain that many lines.");
+   }
+
+   *cli.obuf << spaces(2) << source << CRLF;
+   Context::InsertBreakpoint(file, line - 1);
+   return cli.Report(0, SuccessExpl);
 }
 
 //------------------------------------------------------------------------------
@@ -657,7 +841,7 @@ word FixCommand::ProcessCommand(CliThread& cli) const
    string expl;
    auto rc = set->Fix(cli, expl);
    set->Release();
-   if(rc == 0) expl = SuccessExpl;
+   if(rc == 0) return 0;
    return cli.Report(rc, expl);
 }
 
@@ -1265,7 +1449,7 @@ word TypeCommand::ProcessCommand(CliThread& cli) const
 
 //------------------------------------------------------------------------------
 //
-//  Command for experimental testing.
+//  The EXP command (for experimental testing).
 //
 class ExpCommand : public CliCommand
 {
@@ -1318,6 +1502,7 @@ CodeIncrement::CodeIncrement() : CliIncrement(CtStr, CtExpl)
    BindCommand(*new SortCommand);
    BindCommand(*new FileInfoCommand);
    BindCommand(*new FileIdCommand);
+   BindCommand(*new BreakCommand);
    BindCommand(*new ParseCommand);
    BindCommand(*new CheckCommand);
    BindCommand(*new TrimCommand);

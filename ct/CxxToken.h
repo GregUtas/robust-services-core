@@ -102,9 +102,13 @@ public:
    //
    virtual bool IsConst() const { return false; }
 
-   //  Returns true if the item is a const pointer.
+   //  Returns true if the item's outermost pointer is const.
    //
    virtual bool IsConstPtr() const { return false; }
+
+   //  Returns true if the item's Nth (0<=n<=2) pointer is const.
+   //
+   virtual bool IsConstPtr(size_t n) const { return false; }
 
    //  Returns true if the item's type is "auto" and its actual type has
    //  yet to be determined.
@@ -119,10 +123,6 @@ public:
    //  Returns true if the item is undergoing initialization.
    //
    virtual bool IsInitializing() const { return false; }
-
-   //  Returns true if the item is a pointer.
-   //
-   bool IsPointer() const { return (GetNumeric().Type() == Numeric::PTR); }
 
    //  Returns the type to assign to an "auto" variable when the item is
    //  the result of an expression.
@@ -254,6 +254,11 @@ public:
    //
    CxxToken* Root() const;
 
+   //  Returns true if the item is a pointer.  ARRAYS is set if an array
+   //  should be considered a pointer.
+   //
+   bool IsPointer(bool arrays) const;
+
    //  Returns true if the item's type is POD.
    //
    bool IsPOD() const { return GetNumeric().IsPOD(); }
@@ -375,6 +380,7 @@ public:
    virtual std::string TypeString(bool arg) const override;
 private:
    virtual Numeric GetNumeric() const override;
+   Numeric BaseNumeric() const;
    const int64_t num_;
    const Tags tags_;
 };
@@ -493,6 +499,7 @@ public:
    virtual void Print(std::ostream& stream, const NodeBase::Flags& options)
       const override { stream << NULLPTR_STR; }
    virtual bool IsConstPtr() const override { return true; }
+   virtual bool IsConstPtr(size_t n) const override { return true; }
    virtual CxxNamed* Referent() const override;
    virtual std::string TypeString(bool arg)
       const override { return NULLPTR_T_STR; }

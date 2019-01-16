@@ -315,18 +315,18 @@ public:
    //
    bool IsDefaultConstructible() const;
 
+   //  If the data is a string literal, updates STR to its value (minus the
+   //  quotes) and returns true.  Returns false if the data is not a string
+   //  literal.
+   //
+   bool GetStrValue(std::string& str) const;
+
    //  Invoked when promoting a member of an anonymous union to CLS, its
    //  outer scope.  ACCESS is the union's access control.  FIRST and LAST
    //  are set if the member is the first and/or last member of the union.
    //
    virtual void Promote
       (Class* cls, Cxx::Access access, bool first, bool last) { }
-
-   //  If the data is a string literal, updates STR to its value (minus the
-   //  quotes) and returns true.  Returns false if the data is not a string
-   //  literal.
-   //
-   bool GetStrValue(std::string& str) const;
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -365,10 +365,6 @@ public:
    //  Overridden to indicate whether the data is const.
    //
    virtual bool IsConst() const override;
-
-   //  Overridden to indicate whether the data is a const pointer.
-   //
-   virtual bool IsConstPtr() const override;
 
    //  Returns true if the data's initialization is currently being executed.
    //
@@ -874,7 +870,7 @@ public:
    //
    void SetInline(bool inln) { inline_ = inln; }
 
-   //  Specifies whether the function is tagged as inline.
+   //  Specifies whether the function is tagged as constexpr.
    //
    void SetConstexpr(bool cexpr) { constexpr_ = cexpr; }
 
@@ -922,6 +918,10 @@ public:
    //  Marks the function as an inline friend function.
    //
    void SetFriend() { friend_ = true; }
+
+   //  Marks the function as being an implicitly invoked constructor.
+   //
+   void SetImplicit() { implicit_ = true; }
 
    //  Sets the base class constructor call.
    //
@@ -1026,12 +1026,12 @@ public:
    Function* CanInvokeWith
       (StackArgVector& args, stringVector& argTypes, TypeMatch& match) const;
 
-   //  Returns true if this is a constructor that can be invoked implicitly
-   //  with the argument THAT, whose type is thatType.  Setting IMPLICIT
-   //  considers a constructor even if it is tagged "explicit".
+   //  THAT is an argument whose type is thatType.  If this is a constructor
+   //  that can be invoked implicitly with THAT, deterimes how compatible THAT
+   //  is with the constructor's argument.
    //
-   bool CanConstructFrom(const StackArg& that,
-      const std::string& thatType, bool implicit = false) const;
+   TypeMatch CalcConstructibilty
+      (const StackArg& that, const std::string& thatType) const;
 
    //  Returns true if this function matches THAT on constness, return types,
    //  and arguments.  If BASE is set, this function's "this" argument can be
@@ -1437,6 +1437,10 @@ private:
    //
    bool nonstatic_ : 1;
 
+   //  Set for a constructor that was invoked implicitly.
+   //
+   bool implicit_ : 1;
+
    //  How many times the function was invoked.
    //
    size_t calls_ : 13;
@@ -1539,22 +1543,20 @@ private:
    //  The following are forwarded to the function's return type.
    //
    virtual void AddArray(ArraySpecPtr& array) override;
-   virtual void AdjustPtrs(TagCount count) override;
-   virtual TagCount ArrayCount() const override;
    virtual TagCount Arrays() const override;
    virtual std::string AlignTemplateArg(const TypeSpec* thatArg) const override;
    virtual void DisplayArrays(std::ostream& stream) const override;
    virtual void DisplayTags(std::ostream& stream) const override;
-   virtual TypeTags GetTags() const override;
+   virtual TypeTags GetAllTags() const override;
    virtual TypeSpec* GetTypeSpec() const override;
    virtual bool HasArrayDefn() const override;
-   virtual bool IsConstPtr() const override;
-   virtual TagCount PtrCount(bool arrays) const override;
    virtual TagCount Ptrs(bool arrays) const override;
-   virtual TagCount RefCount() const override;
    virtual TagCount Refs() const override;
    virtual void RemoveRefs() override;
    virtual StackArg ResultType() const override;
+   virtual void SetPtrs(TagCount count) override;
+   virtual TypeTags* Tags() override;
+   virtual const TypeTags* Tags() const override;
    virtual std::string TypeTagsString(const TypeTags& tags) const override;
 
    //  The following are forwarded to the function's return type but also
@@ -1574,13 +1576,8 @@ private:
    //
    virtual void Check() const override;
    virtual void EnterArrays() const override;
-   virtual void SetArrayPos(int8_t pos) override;
-   virtual void SetConst(bool readonly) override;
-   virtual void SetConstPtr(bool constptr) override;
    virtual void SetPtrDetached(bool on) override;
-   virtual void SetPtrs(TagCount ptrs) override;
    virtual void SetRefDetached(bool on) override;
-   virtual void SetRefs(TagCount refs) override;
    virtual void SetReferent
       (CxxNamed* item, const SymbolView* view) const override;
 

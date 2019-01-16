@@ -69,9 +69,9 @@ namespace CodeTools
    std::string& Prefix(std::string& scope);
    std::string& Prefix(std::string&& scope);
 
-   //  Removes spaces and leading qualifiers from NAME, leaving only the name
-   //  after the last scope resolution operator.  Does the same to any template
-   //  arguments embedded in the name.  Returns the resulting string.
+   //  Modifies NAME by stripping off a scope resolution operator and whatever
+   //  precedes it.  Does the same to any template arguments embedded in NAME.
+   //  Returns the resulting string.
    //
    std::string Normalize(const std::string& name);
 
@@ -93,9 +93,8 @@ namespace CodeTools
    //  positive, that number of asterisks are appended to TYPE.  If PTRS is
    //  negative, that number of asterisks are removed from TYPE.  If TYPE has
    //  fewer than PTRS asterisks, a '@' is added for each "negative" pointer.
-   //  Returns the resulting string.
    //
-   std::string& AdjustPtrs(std::string& type, TagCount ptrs);
+   void AdjustPtrs(std::string& type, TagCount ptrs);
 
    //  Removes tags from TYPE (excluding any tags in template types).  This
    //  includes occurrences of "const", '*', and '&'.

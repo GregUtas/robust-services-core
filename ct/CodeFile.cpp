@@ -610,8 +610,7 @@ void CodeFile::Check()
    Debug::ft(CodeFile_Check);
 
    if(checked_) return;
-
-   Debug::Progress(Name(), true);
+   Debug::Progress(Name() + CRLF);
 
    //  Don't check an empty file or a substitute file.
    //
@@ -1705,6 +1704,8 @@ word CodeFile::Fix(CliThread& cli, string& expl)
       case UsingRemove:
       case HeaderReliesOnUsing:
       case UsingInHeader:
+      case UseOfTab:
+      case InsertBlankLine:
       case TrailingSpace:
       case RemoveBlankLine:
          ++found;
@@ -1780,8 +1781,14 @@ word CodeFile::Fix(CliThread& cli, string& expl)
          case UsingInHeader:
             rc = editor->ReplaceUsing(*item, expl);
             break;
+         case UseOfTab:
+            rc = editor->ConvertTabsToBlanks();
+            break;
          case TrailingSpace:
             rc = editor->EraseTrailingBlanks();
+            break;
+         case InsertBlankLine:
+            rc = editor->InsertBlankLine(*item, expl);
             break;
          case RemoveBlankLine:
             rc = editor->EraseBlankLinePairs();
@@ -1841,7 +1848,7 @@ word CodeFile::Format(string& expl)
 {
    Debug::ft(CodeFile_Format);
 
-   Debug::Progress(Name(), false, true);
+   Debug::Progress(Name(), true);
 
    EditorPtr editor = nullptr;
    auto rc = CreateEditor(editor, expl);
@@ -1851,6 +1858,7 @@ word CodeFile::Format(string& expl)
 
    editor->EraseTrailingBlanks();
    editor->EraseBlankLinePairs();
+   editor->ConvertTabsToBlanks();
    rc = editor->Write(FullName(), expl);
    return (rc >= 0 ? 0 : rc);
 }
@@ -2775,7 +2783,7 @@ void CodeFile::Trim(ostream* stream)
    //  because the latter uses declIds_.
    //
    if(!CanBeTrimmed(stream)) return;
-   Debug::Progress(Name(), true);
+   Debug::Progress(Name() + CRLF);
 
    FindDeclIds();
 

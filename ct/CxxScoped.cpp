@@ -114,7 +114,7 @@ bool Argument::EnterScope()
 {
    Debug::ft(Argument_EnterScope);
 
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    spec_->EnteringScope(GetScope());
 
    if(default_ != nullptr)
@@ -258,7 +258,7 @@ bool BaseDecl::EnterScope()
    //  If the base class cannot be found, return false so that this
    //  object will be deleted.  Otherwise, record our new subclass.
    //
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    FindReferent();
    if(Referent() == nullptr) return false;
    GetClass()->AddSubclass(static_cast< Class* >(Context::Scope()));
@@ -576,6 +576,15 @@ bool CxxScoped::IsConstPtr() const
 
 //------------------------------------------------------------------------------
 
+bool CxxScoped::IsConstPtr(size_t n) const
+{
+   auto spec = GetTypeSpec();
+   if(spec == nullptr) return false;
+   return spec->IsConstPtr(n);
+}
+
+//------------------------------------------------------------------------------
+
 bool CxxScoped::IsDeclaredInFunction() const
 {
    auto type = scope_->Type();
@@ -825,6 +834,17 @@ void Enum::AddEnumerator(string& name, ExprPtr& init, size_t pos)
 
 //------------------------------------------------------------------------------
 
+fn_name Enum_AddType = "Enum.AddType";
+
+void Enum::AddType(TypeSpecPtr& type)
+{
+   Debug::ft(Enum_AddType);
+
+   spec_ = std::move(type);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Enum_Check = "Enum.Check";
 
 void Enum::Check() const
@@ -887,6 +907,12 @@ void Enum::Display(ostream& stream,
    stream << ENUM_STR;
    if(!anon) stream << SPACE << (fq ? ScopedName(true) : name_);
 
+   if(spec_ != nullptr)
+   {
+      stream << " : ";
+      spec_->Print(stream, options);
+   }
+
    if(!options.test(DispCode))
    {
       std::ostringstream buff;
@@ -920,7 +946,9 @@ void Enum::EnterBlock()
 {
    Debug::ft(Enum_EnterBlock);
 
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
+
+   if(spec_ != nullptr) spec_->EnteringScope(GetScope());
 
    for(auto e = etors_.cbegin(); e != etors_.cend(); ++e)
    {
@@ -938,11 +966,7 @@ bool Enum::EnterScope()
 
    if(AtFileScope()) GetFile()->InsertEnum(this);
 
-   for(auto e = etors_.cbegin(); e != etors_.cend(); ++e)
-   {
-      (*e)->EnterScope();
-   }
-
+   EnterBlock();
    return true;
 }
 
@@ -976,6 +1000,13 @@ Enumerator* Enum::FindEnumerator(const string& name) const
    }
 
    return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+TypeSpec* Enum::GetTypeSpec() const
+{
+   return (spec_ != nullptr ? spec_.get() : DataSpec::Int.get());
 }
 
 //------------------------------------------------------------------------------
@@ -1084,7 +1115,7 @@ void Enumerator::EnterBlock()
 {
    Debug::ft(Enumerator_EnterBlock);
 
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
 
    if(init_ != nullptr)
    {
@@ -1108,7 +1139,7 @@ bool Enumerator::EnterScope()
 {
    Debug::ft(Enumerator_EnterScope);
 
-   if(init_ != nullptr) init_->EnterBlock();
+   EnterBlock();
    return true;
 }
 
@@ -1234,8 +1265,6 @@ void Forward::Check() const
       Log(ForwardUnresolved);
       return;
    }
-
-   if(users_ == 0) Log(ForwardUnused);
 }
 
 //------------------------------------------------------------------------------
@@ -1272,7 +1301,7 @@ void Forward::EnterBlock()
 {
    Debug::ft(Forward_EnterBlock);
 
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    Context::PushArg(StackArg(Referent(), 0));
 }
 
@@ -1491,7 +1520,7 @@ void Friend::EnterBlock()
 {
    Debug::ft(Friend_EnterBlock);
 
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    Context::PushArg(StackArg(Referent(), 0));
 }
 
@@ -1507,7 +1536,7 @@ bool Friend::EnterScope()
    //  to the symbol table.  This was not done in the constructor because the
    //  friend's name was not yet known.  Look for what the friend refers to.
    //
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    Singleton< CxxSymbols >::Instance()->InsertFriend(this);
    FindReferent();
    return true;
@@ -2141,7 +2170,7 @@ void Typedef::EnterBlock()
 {
    Debug::ft(Typedef_EnterBlock);
 
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    spec_->EnteringScope(GetScope());
    refs_ = 0;
 }
@@ -2254,7 +2283,6 @@ void Using::Check() const
    Debug::ft(Using_Check);
 
    if(added_) return;
-   if(users_ == 0) Log(UsingUnused);
 
    //  A using statement should be avoided in a header except to import
    //  items from a base class.
@@ -2296,7 +2324,7 @@ void Using::EnterBlock()
 {
    Debug::ft(Using_EnterBlock);
 
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    Block::AddUsing(this);
    FindReferent();
 }
@@ -2310,7 +2338,7 @@ bool Using::EnterScope()
    Debug::ft(Using_EnterScope);
 
    if(AtFileScope()) GetFile()->InsertUsing(this);
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    FindReferent();
    return true;
 }

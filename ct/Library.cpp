@@ -479,11 +479,14 @@ CodeFile* Library::FindFile(const string& name) const
 {
    Debug::ft(Library_FindFile);
 
-   auto key = GetFileName(name);
+   //  Case is ignored in source code file names, so convert NAME and
+   //  candidate file names to lower case before comparing them.
+   //
+   auto key = strLower(GetFileName(name));
 
    for(auto f = files_.First(); f != nullptr; files_.Next(f))
    {
-      if(f->Name() == key) return f;
+      if(strLower(f->Name()) == key) return f;
    }
 
    return nullptr;

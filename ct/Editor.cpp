@@ -190,16 +190,87 @@ word Editor::AddUsing(const WarningLog& log, string& expl)
          (i->code.find(SingleRule) == 0) ||
          (i->code.find(DoubleRule) == 0))
       {
-         //  We have now passed any existing usings statements, so add
-         //  the new statement here.
+         //  We have now passed any existing using statements, so add
+         //  the new statement here.  If it is the first one, precede
+         //  it with a blank line.
          //
          i = Insert(epilog_, i, EMPTY_STR);
          i = Insert(epilog_, i, statement);
+         if(!usings) i = Insert(epilog_, i, EMPTY_STR);
          return 0;
       }
    }
 
    return Report(expl, "Failed to insert using statement.");
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_ConvertTabsToBlanks1 = "Editor.ConvertTabsToBlanks";
+
+word Editor::ConvertTabsToBlanks()
+{
+   Debug::ft(Editor_ConvertTabsToBlanks1);
+
+   ConvertTabsToBlanks(prolog_);
+   ConvertTabsToBlanks(includes_);
+   ConvertTabsToBlanks(epilog_);
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_ConvertTabsToBlanks2 = "Editor.ConvertTabsToBlanks[list]";
+
+void Editor::ConvertTabsToBlanks(SourceList& list)
+{
+   Debug::ft(Editor_ConvertTabsToBlanks2);
+
+   //  Run through LIST, looking for a line of code that contains a tab.
+   //
+   for(auto i = list.begin(); i != list.end(); ++i)
+   {
+      auto n = i->code.find_first_of(TAB);
+
+      if(n != string::npos)
+      {
+         //  A tab has been found.  Copy the characters that precede it
+         //  into UNTABBED.  Run through the rest of the line, copying
+         //  non-tab characters to UNTABBED.  Replace each tab with the
+         //  number of spaces needed to reach the next tab stop, namely
+         //  the next even multiple of Indent_Size.  This code doesn't
+         //  bother to skip over character and string literals, which
+         //  should use \t or TAB or something that is actually visible.
+         //
+         string untabbed = i->code.substr(0, n);
+
+         for(NO_OP; n < i->code.size(); ++n)
+         {
+            auto c = i->code.at(n);
+
+            if(c != TAB)
+            {
+               untabbed.push_back(c);
+            }
+            else
+            {
+               int s = untabbed.size() % Indent_Size;
+               if(s == 0) s = Indent_Size;
+
+               for(NO_OP; s > 0; --s)
+               {
+                  untabbed.push_back(SPACE);
+               }
+            }
+         }
+
+         //  Replace this line of code with its tabless equivalent and
+         //  mark the file as modified.
+         //
+         i->code = untabbed;
+         changed_ = true;
+      }
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -328,6 +399,19 @@ void Editor::EraseTrailingBlanks(SourceList& list)
          changed_ = true;
       }
    }
+}
+
+//------------------------------------------------------------------------------
+
+Editor::SourceList* Editor::Find(size_t line, Iter& iter)
+{
+   iter = Find(prolog_, line);
+   if(iter != prolog_.end()) return &prolog_;
+   iter = Find(includes_, line);
+   if(iter != includes_.end()) return &includes_;
+   iter = Find(epilog_, line);
+   if(iter != epilog_.end()) return &epilog_;
+   return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -466,6 +550,26 @@ Editor::Iter Editor::Insert(SourceList& list, Iter& iter, const string& source)
 
    changed_ = true;
    return list.insert(iter, SourceLine(source, SIZE_MAX));
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_InsertBlankLine = "Editor.InsertBlankLine";
+
+word Editor::InsertBlankLine(const WarningLog& log, std::string& expl)
+{
+   Debug::ft(Editor_InsertBlankLine);
+
+   Editor::Iter iter;
+   auto list = Find(log.line, iter);
+
+   if(list != nullptr)
+   {
+      Insert(*list, iter, EMPTY_STR);
+      return 0;
+   }
+
+   return Report(expl, "Failed to insert blank line.");
 }
 
 //------------------------------------------------------------------------------
@@ -897,6 +1001,7 @@ word Editor::Write(const string& path, string& expl)
 
    EraseBlankLinePairs();
    EraseTrailingBlanks();
+   ConvertTabsToBlanks();
 
    for(auto s = prolog_.cbegin(); s != prolog_.cend(); ++s)
    {

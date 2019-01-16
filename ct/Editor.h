@@ -53,11 +53,51 @@ namespace CodeTools
 //
 class Editor
 {
+public:
+   //  Creates an editor for the source code in FILE, which is read from INPUT.
+   //
+   Editor(CodeFile* file, NodeBase::istreamPtr& input);
+
+   //  All of the public editing functions attempt to fix the warning reported
+   //  in LOG.  They return 0 on success.  Any other result indicates an error,
+   //  in which case EXPL provides an explanation.  A return value of -1 means
+   //  that the file should be skipped; other values denote more serious errors.
+   //
+   NodeBase::word Read(std::string& expl);
+   NodeBase::word SortIncludes(const WarningLog& log, std::string& expl);
+   NodeBase::word AddInclude(const WarningLog& log, std::string& expl);
+   NodeBase::word RemoveInclude(const WarningLog& log, std::string& expl);
+   NodeBase::word AddForward(const WarningLog& log, std::string& expl);
+   NodeBase::word RemoveForward(const WarningLog& log, std::string& expl);
+   NodeBase::word AddUsing(const WarningLog& log, std::string& expl);
+   NodeBase::word RemoveUsing(const WarningLog& log, std::string& expl);
+   NodeBase::word ReplaceUsing(const WarningLog& log, std::string& expl);
+   NodeBase::word ResolveUsings(const WarningLog& log, std::string& expl);
+   NodeBase::word InsertBlankLine(const WarningLog& log, std::string& expl);
+
+   //  Replaces multiple blank lines with a single blank line.  Always invoked
+   //  on source that was changed.
+   //
+   NodeBase::word EraseBlankLinePairs();
+
+   //  Removes trailing spaces.  Always invoked on source that was changed.
+   //
+   NodeBase::word EraseTrailingBlanks();
+
+   //  Converts tabs to blanks.  Always invoked on source that was changed.
+   //
+   NodeBase::word ConvertTabsToBlanks();
+
+   //  Writes out the file to PATH if it was changed during editing.  Returns 0
+   //  if the file had not been changed, 1 if it was successfully written, and a
+   //  negative value if an error occurred.
+   //
+   NodeBase::word Write(const std::string& path, std::string& expl);
 private:
+   //  Stores a line of code.
+   //
    struct SourceLine
    {
-      //  Stores a line of code.
-      //
       SourceLine(const std::string& code, size_t line) :
          line(line), code(code) { }
 
@@ -79,43 +119,7 @@ private:
    //  with const iterators.
    //
    typedef std::list< SourceLine >::iterator Iter;
-public:
-   //  Creates an editor for the source code in FILE, which is read from INPUT.
-   //
-   Editor(CodeFile* file, NodeBase::istreamPtr& input);
 
-   //  All of the public editing functions attempt to fix the warning reported
-   //  in LOG.  They return 0 on success.  Any other result indicates an error,
-   //  in which case EXPL provides an explanation.  A return value of -1 means
-   //  that the file should be skipped; other values denote more serious errors.
-   //
-   NodeBase::word Read(std::string& expl);
-   NodeBase::word SortIncludes(const WarningLog& log, std::string& expl);
-   NodeBase::word AddInclude(const WarningLog& log, std::string& expl);
-   NodeBase::word RemoveInclude(const WarningLog& log, std::string& expl);
-   NodeBase::word AddForward(const WarningLog& log, std::string& expl);
-   NodeBase::word RemoveForward(const WarningLog& log, std::string& expl);
-   NodeBase::word AddUsing(const WarningLog& log, std::string& expl);
-   NodeBase::word RemoveUsing(const WarningLog& log, std::string& expl);
-   NodeBase::word ReplaceUsing(const WarningLog& log, std::string& expl);
-   NodeBase::word ResolveUsings(const WarningLog& log, std::string& expl);
-
-   //  Replaces multiple blank lines with a single blank line.  Always invoked
-   //  on source that was changed.
-   //
-   NodeBase::word EraseBlankLinePairs();
-
-   //  Removes trailing spaces.  Always invoked on source that was changed.
-   //
-   void EraseTrailingBlanks(SourceList& list);
-   NodeBase::word EraseTrailingBlanks();
-
-   //  Writes out the file to PATH if it was changed during editing.  Returns 0
-   //  if the file had not been changed, 1 if it was successfully written, and a
-   //  negative value if an error occurred.
-   //
-   NodeBase::word Write(const std::string& path, std::string& expl);
-private:
    //  Reads in the file's prolog (everything up to the first #include.)
    //
    NodeBase::word GetProlog(std::string& expl);
@@ -135,6 +139,11 @@ private:
    //  Adds an #include from the file.  NEVER used to add a new #include.
    //
    NodeBase::word PushInclude(std::string& source, std::string& expl);
+
+   //  Returns the list that contains LINE and updates ITER to reference
+   //  that line.  Returns nullptr if LINE is not found.
+   //
+   SourceList* Find(size_t line, Iter& iter);
 
    //  Returns the location of LINE within LIST.  Returns the end of LIST
    //  if LINE is not found.
@@ -199,6 +208,14 @@ private:
    //  Within ITEM, qualifies occurrences of REF.
    //
    void QualifyReferent(const CxxNamed* item, const CxxNamed* ref);
+
+   //  Removes trailing spaces within code in LIST.
+   //
+   void EraseTrailingBlanks(SourceList& list);
+
+   //  Converts tabs to blanks within code in LIST.
+   //
+   void ConvertTabsToBlanks(SourceList& list);
 
    //  Invoked to report TEXT, which is assigned to EXPL.  Returns RC.
    //

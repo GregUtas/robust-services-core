@@ -204,6 +204,10 @@ namespace Cxx
       Access_N
    };
 
+   //  The maximum number of pointers that can be attached to a type.
+   //
+   constexpr size_t MAX_PTRS = 3;
+
    //  C++ item types (subclasses of CxxToken).  Unless a subclass has a value
    //  here, it is "Undefined".  This type is used to avoid dynamic casts and,
    //  sometimes, to determine policy when defining a virtual function for that
@@ -430,6 +434,10 @@ public:
    //  Returns true if this is a POD type.
    //
    bool IsPOD() const { return (type_ != NIL); }
+
+   //  Sets the width required for the value.
+   //
+   void SetWidth(size_t width) { bitWidth_ = width; }
 
    //  Returns the level of compatibility when assigning THAT to this item.
    //

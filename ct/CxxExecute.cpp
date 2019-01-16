@@ -20,9 +20,9 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CxxExecute.h"
+#include <algorithm>
 #include <cstring>
 #include <iomanip>
-#include <iosfwd>
 #include <sstream>
 #include <utility>
 #include "CodeFile.h"
@@ -34,6 +34,7 @@
 #include "CxxToken.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "Lexer.h"
 #include "NbTracer.h"
 #include "Parser.h"
 #include "Singleton.h"
@@ -173,6 +174,32 @@ CodeFile* Context::File_ = nullptr;
 std::vector< ParseFramePtr > Context::Frames_ = std::vector< ParseFramePtr >();
 ParseFrame* Context::Frame_ = nullptr;
 bool Context::Tracing_ = false;
+string Context::LastLogLoc_ = EMPTY_STR;
+std::set< SourceLoc > Context::Breakpoints_ = std::set< SourceLoc >();
+bool Context::CheckPos_ = false;
+
+//------------------------------------------------------------------------------
+
+void Context::ClearBreakpoints()
+{
+   Breakpoints_.clear();
+}
+
+//------------------------------------------------------------------------------
+
+void Context::DisplayBreakpoints(ostream& stream, const string& prefix)
+{
+   if(Breakpoints_.empty())
+   {
+      stream << prefix << "No breakpoints inserted." << CRLF;
+      return;
+   }
+
+   for(auto b = Breakpoints_.cbegin(); b != Breakpoints_.cend(); ++b)
+   {
+      stream << prefix << b->file->Name() << ": line " << b->line + 1 << CRLF;
+   }
+}
 
 //------------------------------------------------------------------------------
 
@@ -188,10 +215,26 @@ void Context::Enter(const CxxScoped* owner)
 
 //------------------------------------------------------------------------------
 
+void Context::EraseBreakpoint(const CodeFile* file, size_t line)
+{
+   auto loc = SourceLoc(file, line);
+   Breakpoints_.erase(loc);
+}
+
+//------------------------------------------------------------------------------
+
 const Parser* Context::GetParser()
 {
    if(Frame_ == nullptr) return nullptr;
    return Frame_->GetParser();
+}
+
+//------------------------------------------------------------------------------
+
+void Context::InsertBreakpoint(const CodeFile* file, size_t line)
+{
+   auto loc = SourceLoc(file, line);
+   Breakpoints_.insert(loc);
 }
 
 //------------------------------------------------------------------------------
@@ -293,6 +336,7 @@ void Context::Reset()
 
    Frame_->Reset();
    File_ = nullptr;
+   CheckPos_ = false;
    Block::ResetUsings();
    Singleton< CxxSymbols >::Instance()->EraseLocals();
 }
@@ -309,6 +353,15 @@ void Context::SetFile(CodeFile* file)
    //
    Reset();
    File_ = file;
+
+   for(auto b = Breakpoints_.cbegin(); b != Breakpoints_.cend(); ++b)
+   {
+      if(b->file == file)
+      {
+         CheckPos_ = true;
+         return;
+      }
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -319,6 +372,35 @@ void Context::SetPos(size_t pos)
    //  there will be no parse frame.
    //
    if(Frame_ != nullptr) Frame_->SetPos(pos);
+
+   if(CheckPos_)
+   {
+      auto parser = GetParser();
+      if(parser == nullptr) return;
+      if(parser->GetSourceType() != Parser::IsFile) return;
+
+      for(auto b = Breakpoints_.cbegin(); b != Breakpoints_.cend(); ++b)
+      {
+         if(b->file == File_)
+         {
+            if(b->file->GetLexer().GetLineNum(GetPos()) == b->line)
+            {
+               //  Set breakpoint here to break when the parser "executes"
+               //  source code at a specified file and line.
+               //
+               Debug::noop();
+               return;
+            }
+         }
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void Context::SetPos(const CxxLocation& loc)
+{
+   SetPos(loc.GetPos());
 }
 
 //------------------------------------------------------------------------------
@@ -344,10 +426,12 @@ void Context::Shutdown(RestartLevel level)
    Debug::ft(Context_Shutdown);
 
    Options_ = EMPTY_STR;
+   LastLogLoc_ = EMPTY_STR;
    File_ = nullptr;
    Frames_.clear();
    Frame_ = nullptr;
    Tracing_ = false;
+   CheckPos_ = false;
 }
 
 //------------------------------------------------------------------------------
@@ -385,7 +469,18 @@ void Context::SwLog
 {
    Debug::ft(Context_SwLog);
 
-   auto info = expl + Location();
+   auto loc = Location();
+
+   //  Suppress noise that occurs after logging another error.
+   //
+   if(loc == LastLogLoc_)
+   {
+      if(expl == "Empty argument stack") return;
+      if(expl.find("is incompatible with #ERR!") != string::npos) return;
+   }
+
+   LastLogLoc_ = loc;
+   auto info = expl + loc;
    Trace(CxxTrace::ERROR, errval, info);
    if(Tracing_ && (level == SwInfo)) return;
    Debug::SwLog(func, info, errval, level);
@@ -507,7 +602,8 @@ bool CxxTrace::Display(ostream& stream, bool diff)
    }
 
    auto& s = ActionStrings[rid_];
-   stream << string(10 - strlen(s), SPACE) << s << TraceDump::Tab();
+   auto indent = std::max< int >(10 - strlen(s), 0);
+   stream << string(indent, SPACE) << s << TraceDump::Tab();
    return true;
 }
 
@@ -592,7 +688,8 @@ void ParseFrame::Clear(word from)
       arg.WasRead();
    }
    if(ops_.empty()) return;
-   Context::SwLog(ParseFrame_Clear, "Operator stack not empty", ops_.size());
+   Debug::SwLog(ParseFrame_Clear,
+      "Operator stack not empty", ops_.size(), SwInfo);
    ops_.clear();
 }
 
@@ -841,6 +938,17 @@ const Operation* ParseFrame::TopOp() const
 
 //==============================================================================
 
+bool SourceLoc::operator<(const SourceLoc& that) const
+{
+   auto name1 = this->file->Name();
+   auto name2 = that.file->Name();
+   if(name1 < name2) return true;
+   if(name2 < name1) return false;
+   return (this->line < that.line);
+}
+
+//==============================================================================
+
 const StackArg NilStackArg = StackArg(nullptr, 0);
 
 StackArg StackArg::AutoType_ = NilStackArg;
@@ -985,11 +1093,11 @@ void StackArg::AssignedTo(const StackArg& that, AssignmentType type) const
    //  the context class or the via_ itself.
    //
    auto notMutable = this->member_ && !this->mutable_;
-   auto notPointer = !this->item->IsPointer();
+   auto notPointer = !this->item->IsPointer(false);
 
    if((this->via_ != nullptr) && notPointer)
    {
-      if(notMutable || !this->via_->IsPointer())
+      if(notMutable || !this->via_->IsPointer(false))
       {
          this->SetNonConst(1);
       }
@@ -1055,11 +1163,11 @@ void StackArg::AssignedTo(const StackArg& that, AssignmentType type) const
 fn_name StackArg_CalcMatchWith = "StackArg.CalcMatchWith";
 
 TypeMatch StackArg::CalcMatchWith(const StackArg& that,
-   const string& thisType, const string& thatType, bool implicit) const
+   const string& thisType, const string& thatType) const
 {
    Debug::ft(StackArg_CalcMatchWith);
 
-   auto best = MatchWith(that, thisType, thatType, implicit);
+   auto best = MatchWith(that, thisType, thatType);
    if(best == Compatible) return best;
    if(that.item == nullptr) return Incompatible;
 
@@ -1110,7 +1218,7 @@ TypeMatch StackArg::CalcMatchWith(const StackArg& that,
             ts2 = arg2.TypeString(true);
          }
 
-         auto match = arg1.MatchWith(arg2, ts1, ts2, implicit);
+         auto match = arg1.MatchWith(arg2, ts1, ts2);
          if(match == Compatible) return Compatible;
          if(match > best) best = match;
       }
@@ -1220,11 +1328,11 @@ TypeMatch StackArg::MatchConst(const StackArg& that, TypeMatch match) const
    //  o A non-const object can be passed to a const function, but only if
    //    there isn't another overload of the function that is non-const.
    //  Note that this function can be invoked merely to check if two operands
-   //  were compatible.  Consequently, if it is being invoked during argument
-   //  matching, it does not reject passing a const argument to a non-const
-   //  pointer or reference.  Instead, it returns Adaptable, which satisifies
-   //  operand compatibility checks.  Later on, StackArg.AssignedTo verifies
-   //  whether constness was properly interpreted.
+   //  are compatible.  Therefore, if it is invoked during argument matching,
+   //  it does not reject passing a const argument to a non-const pointer or
+   //  reference.  Instead, it returns Adaptable, which satisifies operand
+   //  compatibility checks.  Later on, StackArg.AssignedTo verifies whether
+   //  constness was properly interpreted.
    //
    if(this->IsIndirect())
    {
@@ -1246,7 +1354,7 @@ TypeMatch StackArg::MatchConst(const StackArg& that, TypeMatch match) const
 fn_name StackArg_MatchWith = "StackArg.MatchWith";
 
 TypeMatch StackArg::MatchWith(const StackArg& that,
-   const string& thisType, const string& thatType, bool implicit) const
+   const string& thisType, const string& thatType) const
 {
    Debug::ft(StackArg_MatchWith);
 
@@ -1309,8 +1417,7 @@ TypeMatch StackArg::MatchWith(const StackArg& that,
          }
       }
 
-      if(thisClass->CanConstructFrom(that, thatType, implicit))
-         return Constructible;
+      if(thisClass->CanConstructFrom(that, thatType)) return Constructible;
    }
 
    return match;
@@ -1326,6 +1433,13 @@ Numeric StackArg::NumericType() const
 
    if(item == nullptr) return Numeric::Nil;
    if(Ptrs(true) > 0) return Numeric::Pointer;
+
+   //  Find the item's numeric type.  If it claims to be a pointer, find
+   //  its underlying type.
+   //
+   auto numeric = item->GetNumeric();
+   if(numeric.Type() != Numeric::PTR) return numeric;
+
    auto root = item->Root();
    if(root == nullptr) return Numeric::Nil;
    return root->GetNumeric();
@@ -1405,7 +1519,7 @@ void StackArg::SetAsReadOnly()
 {
    Debug::ft(StackArg_SetAsReadOnly);
 
-   if(!item->IsPointer())
+   if(!item->IsPointer(false))
       const_ = true;
    else
       constptr_ = true;
@@ -1419,7 +1533,7 @@ void StackArg::SetAsWriteable()
 {
    Debug::ft(StackArg_SetAsWriteable);
 
-   if(!item->IsPointer())
+   if(!item->IsPointer(false))
       const_ = false;
    else
       constptr_ = false;
@@ -1486,7 +1600,7 @@ bool StackArg::SetAutoTypeOn(const FuncData& data) const
    //  (usually 0, but 1 when "auto&" is used).  Unless "auto&" is used, the
    //  auto variable is a copy of, not a reference to, the right-hand side.
    //
-   auto refs = spec->RefCount();
+   auto refs = spec->Tags()->RefCount();
    if(refs == 0) spec->RemoveRefs();
 
    //  ptrs_ tracked any indirection, address of, or array subscript operators
@@ -1494,7 +1608,7 @@ bool StackArg::SetAutoTypeOn(const FuncData& data) const
    //  the right-hand side will be reused by the auto variable, but it must be
    //  adjusted by ptrs_.
    //
-   spec->AdjustPtrs(ptrs_);
+   spec->SetPtrs(ptrs_);
    auto ptrs = Ptrs(true);
 
    //  If "const auto" was used, it applies to the pointer, rather than the
@@ -1503,19 +1617,19 @@ bool StackArg::SetAutoTypeOn(const FuncData& data) const
    if(constauto)
    {
       if(ptrs == 0)
-         spec->SetConst(true);
+         spec->Tags()->SetConst(true);
       else
-         spec->SetConstPtr(true);
+         spec->Tags()->SetConstPtr();
    }
 
-   if(constautoptr) spec->SetConstPtr(true);
+   if(constautoptr) spec->Tags()->SetConstPtr();
 
    //  If the right-hand side was const, it carries over to the auto variable
    //  if it is a pointer or reference type.
    //
    if(const_)
    {
-      if((spec->Ptrs(true) > 0) || (refs > 0)) spec->SetConst(true);
+      if((spec->Ptrs(true) > 0) || (refs > 0)) spec->Tags()->SetConst(true);
    }
 
    Context::Trace(CxxTrace::SET_AUTO, *this);
@@ -1563,6 +1677,23 @@ string StackArg::TypeString(bool arg) const
    if(item == nullptr) return ERROR_STR;
    auto ts = item->TypeString(arg);
    AdjustPtrs(ts, ptrs_);
+
+   //  Now include constness in the result:
+   //  o Prefix "const" if the item isn't const but this argument is.
+   //  o Suffix "const" if the item isn't a const pointer but this argument is.
+   //
+   if(const_ && (ts.find(CONST_STR) != 0))
+   {
+      ts.insert(0, "const ");
+   }
+
+   if(constptr_)
+   {
+      auto pos = ts.rfind('*');
+      if((pos != string::npos) && (ts.find(CONST_STR, pos) == string::npos))
+         ts.insert(pos + 1, " const");
+   }
+
    return ts;
 }
 
@@ -1580,7 +1711,13 @@ void StackArg::WasIndexed()
    //  via a pointer, and its target is no longer a member for constness
    //  purposes.
    //
-   if(item->GetTypeSpec()->PtrCount(false) >= Ptrs(true)) member_ = false;
+   if(item->GetTypeSpec()->Tags()->PtrCount(false) >= Ptrs(true))
+   {
+      member_ = false;
+   }
+
+   //  We are now at one less level of indirection.
+   //
    DecrPtrs();
 }
 

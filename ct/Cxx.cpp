@@ -420,7 +420,8 @@ TypeMatch Numeric::CalcMatchWith(const Numeric* that) const
          }
          else if(this->bitWidth_ > that->bitWidth_)
          {
-            if(this->signed_ || !that->signed_) return Promotable;
+            if(that->signed_ && !this->signed_) return Convertible;
+            return Promotable;
          }
          return Abridgeable;
 

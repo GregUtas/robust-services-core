@@ -39,7 +39,7 @@ const string ValidIntChars("0123456789.XxUuLlEe");
 const string ValidIntDigits("0123456789");
 const string ValidHexDigits("0123456789abcdefABCDEF");
 const string ValidOctDigits("01234567");
-const string WhitespaceChars(" \t\n\v\f\r");
+const string WhitespaceChars(" \n\t\v\f\r");
 const string SingleRule(COMMENT_STR + string(78, '-'));
 const string DoubleRule(COMMENT_STR + string(78, '='));
 
@@ -126,10 +126,11 @@ fixed_string HASH_UNDEF_STR   = "#undef";
 
 fixed_string ARRAY_STR         = "[]";
 fixed_string COMMENT_END_STR   = "*/";
-fixed_string COMMENT_START_STR = "/*";
+fixed_string COMMENT_BEGIN_STR = "/*";
 fixed_string COMMENT_STR       = "//";
 fixed_string ELLIPSES_STR      = "...";
 fixed_string LOCALS_STR        = "$locals";  // name for code blocks
+fixed_string NULL_STR          = "NULL";
 
 //------------------------------------------------------------------------------
 
@@ -143,8 +144,6 @@ const Flags NoAC_Mask = Flags(1 << DispNoAC);
 const Flags NoTP_Mask = Flags(1 << DispNoTP);
 const Flags Stats_Mask = Flags(1 << DispStats);
 
-const uint8_t Indent_Size = 3;
-
 //------------------------------------------------------------------------------
 
 fixed_string LineTypeStrings[LineType_N + 1] =
@@ -156,7 +155,7 @@ fixed_string LineTypeStrings[LineType_N + 1] =
    "separator //",
    "tagged //",
    "text //",
-   COMMENT_START_STR,
+   COMMENT_BEGIN_STR,
    "{",
    "}",
    "};",

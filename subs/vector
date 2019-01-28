@@ -43,6 +43,7 @@ namespace std
       T& front();
       iterator erase(const_iterator& which);
       iterator erase(const_iterator& begin, const_iterator& end);
+      iterator insert(iterator& where, const T& value);
       iterator insert(const_iterator& where, const T& value);
       iterator insert(const_iterator& where, size_t count, const T& value);
       const T& operator[](size_t pos) const;

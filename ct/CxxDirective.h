@@ -298,7 +298,7 @@ protected:
    //  Creates a macro for the symbol identified by NAME.  Protected
    //  because this class is virtual.
    //
-   explicit Macro(std::string& name);
+   explicit Macro(std::string name);
 
    //  How many times the macro was referenced.
    //
@@ -323,13 +323,13 @@ public:
    //  for <name> is created while processing the #ifndef, even though <name>
    //  is not defined until the next statement.
    //
-   explicit Define(std::string& name);
+   explicit Define(const std::string& name);
 
    //  Creates a #define directive for the macro identified by NAME, which
    //  has the value associated with RHS.  This constructor is used when NAME
    //  appears in a #define, and must be used even if RHS is empty.
    //
-   Define(std::string& name, ExprPtr& rhs);
+   Define(const std::string& name, ExprPtr& rhs);
 
    //  Not subclassed.
    //

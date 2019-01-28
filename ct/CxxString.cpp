@@ -50,7 +50,7 @@ size_t FindTemplateEnd(const string& name, size_t pos);
 
 fn_name CodeTools_AdjustPtrs = "CodeTools.AdjustPtrs";
 
-void AdjustPtrs(string& type, TagCount ptrs) //* reassess: multiple const ptrs
+void AdjustPtrs(string& type, TagCount ptrs) //* reassess for >1 const pointer
 {
    Debug::ft(CodeTools_AdjustPtrs);
 
@@ -164,6 +164,27 @@ size_t CompareScopes(const string& fqSub, const string& fqSuper, bool tmplt)
    }
 
    return string::npos;
+}
+
+//------------------------------------------------------------------------------
+
+string Compress(const string& s)
+{
+   //  Copy S to T, converting endlines to blanks and removing multiple blanks.
+   //
+   string t;
+   auto prev = SPACE;
+
+   for(size_t i = 0; i < s.size(); ++i)
+   {
+      auto c = s[i];
+      if(c == CRLF) c = SPACE;
+      if((c == SPACE) && (prev == SPACE)) continue;
+      t += c;
+      prev = c;
+   }
+
+   return t;
 }
 
 //------------------------------------------------------------------------------

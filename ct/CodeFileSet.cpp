@@ -24,6 +24,7 @@
 #include <iosfwd>
 #include <memory>
 #include <sstream>
+#include "CliThread.h"
 #include "CodeDir.h"
 #include "CodeDirSet.h"
 #include "CodeFile.h"
@@ -147,7 +148,13 @@ word CodeFileSet::Check(ostream* stream, string& expl) const
    //
    auto rc = Parse(expl, "-");
    if(rc != 0) return rc;
+   expl.clear();
+
    CodeFile::GenerateReport(stream, fileSet);
+
+   std::ostringstream summary;
+   summary << fileSet.size() << " file(s) checked.";
+   expl = summary.str();
    return 0;
 }
 
@@ -322,6 +329,15 @@ word CodeFileSet::Fix(CliThread& cli, string& expl) const
       expl = EmptySet;
       return 0;
    }
+
+   *cli.obuf << "The code editor has NOT been rigorously tested.  It is" << CRLF;
+   *cli.obuf << "highly recommended that you check diffs.  The following" << CRLF;
+   *cli.obuf << "changes also occur automatically in any modified file:" << CRLF;
+   *cli.obuf << "  o Whitespace at the end of a line is deleted." << CRLF;
+   *cli.obuf << "  o A repeated blank line is deleted." << CRLF;
+   *cli.obuf << "  o Tabs are replaced by spaces based on INDENT_SIZE." << CRLF;
+   auto proceed = cli.BoolPrompt(ContinuePrompt);
+   if(!proceed) return 0;
 
    //  In order to fix warnings in a file, it must have been checked.
    //
@@ -510,8 +526,7 @@ LibrarySet* CodeFileSet::MatchString(const LibrarySet* that) const
    {
       auto file = files.At(*f);
       auto code = file->GetCode();
-      if(code == nullptr) continue;
-      if(code->find(s) != string::npos) msSet.insert(*f);
+      if(code.find(s) != string::npos) msSet.insert(*f);
    }
 
    return result;
@@ -690,9 +705,8 @@ word CodeFileSet::Scan
    {
       auto file = files.At(*f);
       auto code = file->GetCode();
-      if(code == nullptr) continue;
 
-      auto pos = code->find(pattern);
+      auto pos = code.find(pattern);
       auto shown = false;
 
       while(pos != string::npos)
@@ -707,7 +721,7 @@ word CodeFileSet::Scan
          auto str = file->GetLexer().GetNthLine(line);
 
          stream << spaces(2) << line + 1 << ": " << str << CRLF;
-         pos = code->find(pattern, pos + pattern.size());
+         pos = code.find(pattern, pos + pattern.size());
       }
    }
 
@@ -764,7 +778,7 @@ word CodeFileSet::Sort(ostream& stream, string& expl) const
    for(auto f = order->cbegin(); f != order->cend(); ++f)
    {
       //  List the files that were just included in the build.  Limit
-      //  each line to 80 characters.
+      //  each line to COUT_LENGTH_MAX characters.
       //
       if(f->level != level)
       {
@@ -779,7 +793,7 @@ word CodeFileSet::Sort(ostream& stream, string& expl) const
       {
          stream << "LEVEL " << level << ':';
          heading = false;
-         room = 69;
+         room = COUT_LENGTH_MAX - 11;
       }
       else
       {
@@ -793,7 +807,7 @@ word CodeFileSet::Sort(ostream& stream, string& expl) const
       {
          stream << CRLF;
          stream << spaces(2) << name;
-         room = 78 - (size + 2);
+         room = COUT_LENGTH_MAX - 2 - (size + 2);
       }
       else
       {
@@ -921,6 +935,7 @@ word CodeFileSet::Trim(ostream& stream, string& expl) const
    //
    auto rc = Parse(expl, "-");
    if(rc != 0) return rc;
+   expl.clear();
 
    auto& files = Singleton< Library >::Instance()->Files();
 
@@ -938,6 +953,9 @@ word CodeFileSet::Trim(ostream& stream, string& expl) const
       if(file->IsCpp()) file->Trim(&stream);
    }
 
+   std::ostringstream summary;
+   summary << order->size() << " file(s) analyzed.";
+   expl = summary.str();
    return 0;
 }
 

@@ -58,7 +58,7 @@ CliParm::CliParm(const char* help, bool opt, const char* tag) :
 
    auto len = ParmWidth + strlen(ParmExplPrefix) + strlen(help_);
 
-   if((len == 0) || (len >= 80))
+   if((len == 0) || (len >= COUT_LENGTH_MAX))
    {
       Debug::SwLog(CliParm_ctor, len, 0);
    }

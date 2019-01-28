@@ -436,7 +436,7 @@ class Enum : public CxxScoped
 public:
    //  Creates an enumeration for NAME.
    //
-   Enum(std::string& name);
+   explicit Enum(std::string& name);
 
    //  Not subclassed.
    //
@@ -1278,7 +1278,7 @@ private:
 
    //  Set if the declaration was added by >trim.
    //
-   bool added_ : 1;
+   const bool added_ : 1;
 
    //  Set if the declaration is to be removed.
    //

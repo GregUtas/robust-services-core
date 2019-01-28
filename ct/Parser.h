@@ -56,16 +56,16 @@ namespace CodeTools
 //
 //  reserved words:
 //    o asm, alignas, alignof, char16_t, char32_t, concept, decltype, export,
-//      final, goto, register, requires, static_assert, thread_local, volatile,
-//      wchar_t
+//      final, goto, register, requires, static_assert, thread_local, volatile
+//    o wchar_t (supported by a typedef)
 //    o and, and_eq, bitand, bitor, compl, not, not_eq, or, or_eq, xor, xor_eq
 //    o #undef, #line, #pragma (parsed but have no effect)
 //    o #if, #elif (the conditional that follows the directive is ignored)
 //    o elaborated type specifiers (class, struct, union, or enum prefixed to
 //      resolve a type ambiguity caused by overloading an identifier)
 //  identifiers:
-//    o unnecessary name qualification, such as declaring a function using
-//      ClassName::FunctionName, may cause the parser to fail
+//    o declaring a function as ClassName::FunctionName will cause the parser
+//      to fail (there are situations in which it expects unqualified names)
 //  character and string literals (GetCxxExpr, GetCxxAlpha, GetChar, GetStr):
 //    o type tags (u8, u, U, L, R)
 //  namespaces:
@@ -497,7 +497,7 @@ private:
    //    or immediately follows the underlying type has already been parsed)
    //  Returns false if an error was detected.
    //
-   bool GetTags(TypeSpec* spec);
+   bool GetTypeTags(TypeSpec* spec);
 
    //  Returns the number of pointers ('*') that follow the current parse
    //  location.

@@ -328,6 +328,10 @@ public:
    virtual void Promote
       (Class* cls, Cxx::Access access, bool first, bool last) { }
 
+   //  Returns true if the member appears in a union.
+   //
+   virtual bool IsUnionMember() const { return false; }
+
    //  Overridden to set the type for an "auto" variable.
    //
    virtual CxxToken* AutoType() const override { return (CxxToken*) this; }
@@ -680,6 +684,10 @@ public:
    virtual void GetUsages
       (const CodeFile& file, CxxUsageSets& symbols) const override;
 
+   //  Overridden to return true if the member appears in a union.
+   //
+   virtual bool IsUnionMember() const override;
+
    //  Overridden to return the item's name.
    //
    virtual const std::string* Name() const override { return &name_; }
@@ -951,6 +959,10 @@ public:
    //
    bool IsExplicit() const { return explicit_; }
 
+   //  Returns true if the function is tagged as constexpr.
+   //
+   bool IsConstexpr() const { return constexpr_; }
+
    //  Returns the function's operator (Cxx::NIL_OPERATOR if not an operator).
    //
    Cxx::Operator Operator() const { return name_->Operator(); }
@@ -960,6 +972,19 @@ public:
    //  be used, and which is internally set for a function that omits it.
    //
    bool IsOverride() const { return override_; }
+
+   //  Returns the function's arguments.
+   //
+   const ArgumentPtrVector& GetArgs() const { return args_; }
+
+   //  Returns the function's declaration.
+   //
+   const Function* GetDecl() const { return (defn_ ? mate_ : this); }
+   Function* GetDecl() { return (defn_ ? mate_ : this); }
+
+   //  Returns the function that this one overrides.
+   //
+   Function* GetBase() const { return base_; }
 
    //  Deletes the single argument "(void)", which simplifies the comparison
    //  of function signatures.
@@ -1080,6 +1105,10 @@ public:
    //
    bool IsExemptFromTracing() const;
 
+   //  Returns the function's name for Debug::ft purposes.
+   //
+   std::string DebugName() const;
+
    //  Returns true if STR is a suitable string for identifying the function
    //  when invoking Debug::ft.
    //
@@ -1135,7 +1164,8 @@ public:
    //
    virtual QualName* GetQualName() const override { return name_.get(); }
 
-   //  Overridden to return the offset of the left brace (if any).
+   //  Overridden to return the offset of the left brace (if any),
+   //  in which case END is updated to the location of the right brace.
    //
    virtual size_t GetRange(size_t& begin, size_t& end) const override;
 
@@ -1228,11 +1258,6 @@ public:
    //
    virtual bool WasRead() override { ++calls_; return true; }
 private:
-   //  Returns the function's declaration.
-   //
-   const Function* GetDecl() const { return (defn_ ? mate_ : this); }
-   Function* GetDecl() { return (defn_ ? mate_ : this); }
-
    //  Adds a "this" argument to the function if required.  This occurs
    //  immediately before executing the function's code (in EnterBlock).
    //
@@ -1350,6 +1375,12 @@ private:
    void CheckIfOverridden() const;
    void CheckIfCouldBeConst() const;
    void CheckMemberUsage() const;
+
+   //  Logs WARNING on both the function's declaration and its definition.
+   //  When INDEX is provided, the log is for argument[index] rather than
+   //  the function itself.
+   //
+   void LogToBoth(Warning warning, size_t index = SIZE_MAX) const;
 
    //  Determines how the function is associated with a template.
    //
@@ -1576,8 +1607,6 @@ private:
    //
    virtual void Check() const override;
    virtual void EnterArrays() const override;
-   virtual void SetPtrDetached(bool on) override;
-   virtual void SetRefDetached(bool on) override;
    virtual void SetReferent
       (CxxNamed* item, const SymbolView* view) const override;
 

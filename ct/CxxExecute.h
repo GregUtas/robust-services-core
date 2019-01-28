@@ -474,8 +474,8 @@ private:
 //
 struct SourceLoc
 {
-   const CodeFile* file;  // file where code is located
-   size_t line;           // line number within file (first line is 0)
+   const CodeFile* const file;  // file where code is located
+   const size_t line;           // line number within file (first line is 0)
 
    SourceLoc(const CodeFile* f, size_t n) : file(f), line(n) { }
    bool operator<(const SourceLoc& that) const;

@@ -180,7 +180,7 @@ void Block::Display(ostream& stream,
                return;
             }
 
-            stream << CRLF << prefix << spaces(Indent_Size);
+            stream << CRLF << prefix << spaces(INDENT_SIZE);
             statements_.front()->Print(stream, options);
             break;
          }
@@ -189,7 +189,7 @@ void Block::Display(ostream& stream,
    default:
       if(!nested_) stream << CRLF;
       stream << prefix << '{' << CRLF;
-      auto lead = prefix + spaces(Indent_Size);
+      auto lead = prefix + spaces(INDENT_SIZE);
 
       for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
       {
@@ -494,12 +494,12 @@ void ClassData::Display(ostream& stream,
       //
       if(first_)
       {
-         auto lead = spaces(Indent_Size * (depth_ - 1));
+         auto lead = spaces(INDENT_SIZE * (depth_ - 1));
          stream << prefix << lead << access << ": " << UNION_STR << CRLF;
          stream << prefix << lead << '{' << CRLF;
       }
 
-      stream << spaces(Indent_Size * depth_);
+      stream << spaces(INDENT_SIZE * depth_);
       access = Cxx::Public;
    }
 
@@ -539,7 +539,7 @@ void ClassData::Display(ostream& stream,
 
    if(last_)
    {
-      stream << prefix << spaces(Indent_Size * (depth_ - 1)) << "};" << CRLF;
+      stream << prefix << spaces(INDENT_SIZE * (depth_ - 1)) << "};" << CRLF;
    }
 }
 
@@ -635,6 +635,29 @@ void ClassData::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    Data::GetUsages(file, symbols);
 
    if(width_ != nullptr) width_->GetUsages(file, symbols);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name ClassData_IsUnionMember = "ClassData.IsUnionMember";
+
+bool ClassData::IsUnionMember() const
+{
+   Debug::ft(ClassData_IsUnionMember);
+
+   //  Look for an anonymous union as well as a named union.
+   //
+   if(depth_ > 0) return true;
+
+   auto scope = GetScope();
+
+   if(scope->Type() == Cxx::Class)
+   {
+      auto cls = static_cast<const Class*>(scope);
+      return (cls->GetClassTag() == Cxx::UnionType);
+   }
+
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -1098,7 +1121,7 @@ void Data::DisplayAssignment(ostream& stream, const Flags& options) const
 
    auto expr = buffer.str();
 
-   if(expr.size() <= 80)
+   if(expr.size() <= LINE_LENGTH_MAX)
       stream << expr;
    else
       stream << "{ /*" << expr.size() << " characters */ }";
@@ -1678,8 +1701,6 @@ void FuncData::SetNext(DataPtr& next)
    next_.reset(next.release());
    auto data = static_cast< FuncData* >(next_.get());
    data->SetFirst(first_);
-   data->GetTypeSpec()->SetPtrDetached(false);
-   data->GetTypeSpec()->SetRefDetached(false);
 }
 
 //------------------------------------------------------------------------------
@@ -2179,9 +2200,39 @@ void Function::CheckArgs() const
    auto type = FuncType();
    if(type == FuncOperator) return;
 
+   //  If the function is an override, look for arguments that were renamed
+   //  from the direct base class.  This is the only check that is applied
+   //  to an overridden function.
+   //
+   if(override_)
+   {
+      auto base = FindBaseFunc();
+
+      for(size_t i = 0; i < n; ++i)
+      {
+         if(*args_[i]->Name() != *base->args_[i]->Name())
+         {
+            args_[i]->Log(OverrideRenamesArgument, i + (this_ ? 0 : 1));
+         }
+      }
+
+      if(mate_ != nullptr)
+      {
+         for(size_t i = 0; i < n; ++i)
+         {
+            if(*mate_->args_[i]->Name() != *base->args_[i]->Name())
+            {
+               mate_->args_[i]->Log
+                  (OverrideRenamesArgument, i + (this_ ? 0 : 1));
+            }
+         }
+      }
+
+      return;
+   }
+
    //  If the function is defined separately from its declaration, look
-   //  for renamed arguments.  If the function is an override, look for
-   //  arguments that were renamed from the direct base class.
+   //  for renamed arguments.
    //
    if(mate_ != nullptr)
    {
@@ -2195,23 +2246,6 @@ void Function::CheckArgs() const
       }
    }
 
-   if(override_)
-   {
-      auto base = FindBaseFunc();
-
-      for(size_t i = 0; i < n; ++i)
-      {
-         if(*args_[i]->Name() != *base->args_[i]->Name())
-         {
-            args_[i]->Log(OverrideRenamesArgument, i + (this_ ? 0 : 1));
-         }
-      }
-
-      //  The remaining checks are not applied to an override.
-      //
-      return;
-   }
-
    //  Look for unused arguments and arguments that could be const.
    //
    for(size_t i = 0; i < n; ++i)
@@ -2222,7 +2256,7 @@ void Function::CheckArgs() const
       {
          if((i != 0) || !this_)
          {
-            arg->Log(ArgumentUnused, i + (this_ ? 0 : 1));
+            LogToBoth(ArgumentUnused, i);
          }
       }
       else
@@ -2264,11 +2298,11 @@ void Function::CheckArgs() const
                if(arg->IsPassedByValue())
                {
                   if(arg->Root()->Type() == Cxx::Class)
-                     arg->Log(ArgumentCouldBeConstRef, i + (this_ ? 0 : 1));
+                     LogToBoth(ArgumentCouldBeConstRef, i);
                }
                else
                {
-                  arg->Log(ArgumentCouldBeConst, i + (this_ ? 0 : 1));
+                  LogToBoth(ArgumentCouldBeConst, i);
                }
             }
          }
@@ -2409,20 +2443,7 @@ bool Function::CheckDebugName(const string& str) const
    //  o If function is overloaded, "left punctuation" can follow <name> in
    //    order to give a unique name to each of the function's overloads.
    //
-   string name;
-
-   switch(FuncType())
-   {
-   case FuncCtor:
-      name = "ctor";
-      break;
-   case FuncDtor:
-      name = "dtor";
-      break;
-   default:
-      name = *Name();
-   }
-
+   auto name = DebugName();
    auto scope = GetScope()->Name();
 
    if(scope->empty())
@@ -2513,7 +2534,7 @@ void Function::CheckIfCouldBeConst() const
       if((func != this) && (*func->Name() == *Name())) return;
    }
 
-   Log(FunctionCouldBeConst);
+   LogToBoth(FunctionCouldBeConst);
 }
 
 //------------------------------------------------------------------------------
@@ -2618,7 +2639,7 @@ void Function::CheckIfUsed(Warning warning) const
    Debug::ft(Function_CheckIfUsed);
 
    if(type_) return;
-   CxxScoped::CheckIfUsed(warning);
+   if(IsUnused()) LogToBoth(warning);
 }
 
 //------------------------------------------------------------------------------
@@ -2656,8 +2677,8 @@ void Function::CheckMemberUsage() const
    //  If the function accessed only public members, it could be free.
    //  Otherwise, it could be static.
    //
-   if(!GetDefn()->nonpublic_) Log(FunctionCouldBeFree);
-   else if(!static_) Log(FunctionCouldBeStatic);
+   if(!GetDefn()->nonpublic_) LogToBoth(FunctionCouldBeFree);
+   else if(!static_) LogToBoth(FunctionCouldBeStatic);
 }
 
 //------------------------------------------------------------------------------
@@ -2681,6 +2702,25 @@ void Function::CheckOverride()
    if(!override_) Log(OverrideTagMissing);
    virtual_ = true;
    override_ = true;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Function_DebugName = "Function.DebugName";
+
+string Function::DebugName() const
+{
+   Debug::ft(Function_DebugName);
+
+   switch(FuncType())
+   {
+   case FuncCtor:
+      return "ctor";
+   case FuncDtor:
+      return "dtor";
+   }
+
+   return *Name();
 }
 
 //------------------------------------------------------------------------------
@@ -2715,7 +2755,7 @@ void Function::Display(ostream& stream,
    if(!options.test(DispCode) & !tmplts_.empty())
    {
       stream << prefix << "instantiations (" << tmplts_.size() << "):" << CRLF;
-      auto lead = prefix + spaces(Indent_Size);
+      auto lead = prefix + spaces(INDENT_SIZE);
 
       for(auto t = tmplts_.cbegin(); t != tmplts_.cend(); ++t)
       {
@@ -2831,7 +2871,7 @@ void Function::DisplayDefn(ostream& stream,
       stream << " :";
       DisplayInfo(stream, options);
       stream << CRLF;
-      auto lead = prefix + spaces(Indent_Size);
+      auto lead = prefix + spaces(INDENT_SIZE);
 
       if(call != nullptr)
       {
@@ -3740,10 +3780,11 @@ bool Function::IsExemptFromTracing() const
 {
    Debug::ft(Function_IsExemptFromTracing);
 
-   if(GetDecl()->pure_) return true;
-   if(tmplt_ != nullptr) return true;
+   if(impl_ == nullptr) return true;   // declaration only
+   if(GetDecl()->pure_) return true;   // pure virtual
+   if(tmplt_ != nullptr) return true;  // in a template
 
-   if((impl_ != nullptr) && (impl_->FirstStatement() == nullptr)) return true;
+   if(impl_->FirstStatement() == nullptr) return true;
 
    auto file = GetImplFile();
    if(file != nullptr)
@@ -3874,6 +3915,7 @@ bool Function::IsTrivial() const
          //  [[fallthrough]]
       case Blank:
       case EmptyComment:
+      case LicenseComment:
       case SeparatorComment:
       case TaggedComment:
       case TextComment:
@@ -3985,6 +4027,32 @@ void Function::ItemAccessed(const CxxNamed* item)
    if(item->IsDeclaredInFunction()) return;
    if(item->GetAccess() != Cxx::Public) nonpublic_ = true;
    if(!item->IsStatic()) nonstatic_ = true;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Function_LogToBoth = "Function.LogToBoth";
+
+void Function::LogToBoth(Warning warning, size_t index) const
+{
+   Debug::ft(Function_LogToBoth);
+
+   if(index == SIZE_MAX)
+   {
+      this->Log(warning);
+      if(mate_ != nullptr) mate_->Log(warning, 0, true);
+   }
+   else
+   {
+      auto arg = args_.at(index).get();
+      arg->Log(warning, index + (this_ ? 0 : 1));
+
+      if(mate_ != nullptr)
+      {
+         arg = mate_->args_.at(index).get();
+         arg->Log(warning, index + (this_ ? 0 : 1), true);
+      }
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -4678,25 +4746,9 @@ StackArg FuncSpec::ResultType() const
 
 //------------------------------------------------------------------------------
 
-void FuncSpec::SetPtrDetached(bool on)
-{
-   Debug::SwLog(FuncSpec_Warning, "SetPtrDetached", 0);
-   func_->GetTypeSpec()->SetPtrDetached(on);
-}
-
-//------------------------------------------------------------------------------
-
 void FuncSpec::SetPtrs(TagCount count)
 {
    func_->GetTypeSpec()->SetPtrs(count);
-}
-
-//------------------------------------------------------------------------------
-
-void FuncSpec::SetRefDetached(bool on)
-{
-   Debug::SwLog(FuncSpec_Warning, "SetRefDetached", 0);
-   func_->GetTypeSpec()->SetRefDetached(on);
 }
 
 //------------------------------------------------------------------------------

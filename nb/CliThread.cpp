@@ -134,7 +134,7 @@ char CliThread::CharPrompt
    if(inIndex_ > 0) return chars.front();
 
    auto first = true;
-   char text[80];
+   char text[COUT_LENGTH_MAX];
 
    //  Output the query until the user enters a character in CHARS.
    //
@@ -151,7 +151,7 @@ char CliThread::CharPrompt
       CoutThread::Spool(stream);
       first = false;
 
-      auto count = CinThread::GetLine(text, 80);
+      auto count = CinThread::GetLine(text, COUT_LENGTH_MAX);
 
       if(count < 0) return '\0';
 

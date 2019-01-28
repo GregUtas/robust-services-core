@@ -1403,7 +1403,7 @@ void PotsTrafficThread::SendMessages()
       auto n = rand(0, maxCallsPerTick_);
       if(rand(0, 999) < milCallsPerTick_) ++n;
 
-      for(auto i = 0; i < n; ++i)
+      for(size_t i = 0; i < n; ++i)
       {
          auto dn = FindDn(Idle);
 

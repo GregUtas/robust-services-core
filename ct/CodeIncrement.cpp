@@ -579,6 +579,9 @@ word CoverageCommand::ProcessCommand(CliThread& cli) const
       cli.EndOfInput(false);
       rc = database->Update(expl);
       break;
+
+   default:
+      return cli.Report(index, SystemErrorExpl);
    }
 
    return cli.Report(rc, expl);

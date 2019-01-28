@@ -34,18 +34,32 @@
 
 namespace CodeTools
 {
+   //  Whether a warning has been fixed.
+   //
+   enum WarningStatus
+   {
+      NotFixed,  // no code changes
+      Pending,   // code changed but not written to file
+      Fixed      // code changed and written to file
+   };
+
    //  Used to log a warning.
    //
    struct WarningLog
    {
+      Warning warning;       // type of warning
       const CodeFile* file;  // file where warning occurred
       size_t line;           // line where warning occurred
-      Warning warning;       // type of warning
+      size_t pos;            // position in FILE where warning occurred
+      const CxxNamed* item;  // item associated with warning
       size_t offset;         // warning-specific; displayed if non-zero
       std::string info;      // warning-specific
+      bool hide;             // set to stop warning from being displayed
+      WarningStatus status;  // whether warning has been fixed/committed
 
-      WarningLog(const CodeFile* file, size_t line,
-         Warning warning, size_t offset, const std::string& info);
+      WarningLog(Warning warning, const CodeFile* file,
+         size_t line, size_t pos, const CxxNamed* item,
+         size_t offset, const std::string& info, bool hide = false);
       bool operator==(const WarningLog& that) const;
       bool operator!=(const WarningLog& that) const;
       bool DisplayCode() const
@@ -73,9 +87,14 @@ namespace CodeTools
       //
       static void GetWarnings(const CodeFile* file, WarningLogVector& warnings);
 
-      //  Returns true if LOG2 > LOG1 when sorting by file/line/warning.
+      //  Returns true if LOG2 > LOG1 when sorting by file/warning/line.
       //
       static bool IsSortedByFile
+         (const WarningLog& log1, const WarningLog& log2);
+
+      //  Returns true if LOG2 > LOG1 when sorting by file/line/reverse pos.
+      //
+      static bool IsSortedByLine
          (const WarningLog& log1, const WarningLog& log2);
 
       //  Returns true if LOG2 > LOG1 when sorting by warning/file/line.

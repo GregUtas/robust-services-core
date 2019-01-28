@@ -56,6 +56,11 @@ namespace CodeTools
    //
    size_t FindIndex(const stringVector& sv, const std::string& s);
 
+   //  Returns S after converting endlines to spaces and compressing adjacent
+   //  spaces.
+   //
+   std::string Compress(const std::string& s);
+
    //  Concatentates a string of the form ("<string>"<whitespace>)*"<string>"
    //  by removing the quotation marks and whitespace between the strings.
    //  The quotation marks originally at the beginning and end of the string

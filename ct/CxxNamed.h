@@ -313,10 +313,11 @@ public:
    //
    void Accessed() const;
 
-   //  Logs WARNING at the position where this item is located.  OFFSET
-   //  is specific to WARNING.
+   //  Logs WARNING at the position where this item is located.  OFFSET is
+   //  specific to WARNING, and HIDE is set to prevent the warning from
+   //  being displayed.
    //
-   void Log(Warning warning, size_t offset = 0) const;
+   void Log(Warning warning, size_t offset = 0, bool hide = false) const;
 
    //  Displays the item's referent in STREAM.  If FQ is set, the item's
    //  fully qualified name is displayed.
@@ -965,6 +966,13 @@ public:
    //
    void TypeString(std::string& name, bool arg) const;
 
+   //  Set if a pointer tag was detached from the type.
+   //
+   bool ptrDet_: 1;
+
+   //  Set if the reference tag was detached from the type.
+   //
+   bool refDet_: 1;
 private:
    //  Set if the type is const.
    //
@@ -1037,14 +1045,6 @@ public:
    //  Adds a bounded array specification to the type.
    //
    virtual void AddArray(ArraySpecPtr& array) = 0;
-
-   //  Invoked when a pointer tag is detached from the type name.
-   //
-   virtual void SetPtrDetached(bool on) = 0;
-
-   //  Invoked when a reference tag is detached from the type name.
-   //
-   virtual void SetRefDetached(bool on) = 0;
 
    //  Returns the number of pointer tags attached to the type.  It follows
    //  the type to its root (a class or terminal), adding up pointer tags
@@ -1228,7 +1228,7 @@ private:
    //  Resolves a template argument when parsing a template instance.  Returns
    //  false if this is not a template argument in a template instance.
    //
-   bool ResolveTemplateArgument();
+   bool ResolveTemplateArgument() const;
 
    //  Overridden to add a bounded array specification to the type.
    //
@@ -1419,18 +1419,10 @@ private:
    //
    virtual CxxToken* RootType() const override { return Referent(); }
 
-   //  Overridden to record a pointer tag that is detached from the type name.
-   //
-   virtual void SetPtrDetached(bool on) override { ptrDet_ = on; }
-
    //  Overridden to reset the number of pointer tags when the type is assigned
    //  to an auto type.
    //
    virtual void SetPtrs(TagCount count) override;
-
-   //  Overridden to record a reference tag that is detached from the type name.
-   //
-   virtual void SetRefDetached(bool on) override { refDet_ = on; }
 
    //  Overridden to record what the item refers to.
    //
@@ -1452,8 +1444,8 @@ private:
 
    //  Overridden to provide access to the type's tags.
    //
-   virtual TypeTags* Tags() { return &tags_; }
-   virtual const TypeTags* Tags() const { return &tags_; }
+   virtual TypeTags* Tags() override { return &tags_; }
+   virtual const TypeTags* Tags() const override { return &tags_; }
 
    //  Overridden to return the base class default (the scoped name) unless the
    //  type is "auto", in which case the referent (if known) is returned.
@@ -1485,14 +1477,6 @@ private:
    //  The type's tags.
    //
    TypeTags tags_;
-
-   //  Set if a pointer tag was detached.
-   //
-   bool ptrDet_ : 1;
-
-   //  Set if a reference tag was detached.
-   //
-   bool refDet_ : 1;
 };
 
 //------------------------------------------------------------------------------

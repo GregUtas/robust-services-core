@@ -362,7 +362,8 @@ void CxxRoot::DefineSymbols(std::istream& stream)
 
       if(Lexer::IsValidIdentifier(input))
       {
-         auto def = DefinePtr(new Define(input, ExprPtr(nullptr)));
+         ExprPtr exp(nullptr);
+         DefinePtr def(new Define(input, exp));
          macros_.push_back(std::move(def));
       }
    }
@@ -487,7 +488,9 @@ void CxxRoot::Startup(RestartLevel level)
 
    //  #define CT_COMPILER for subs/cstddef.
    //
-   auto def = DefinePtr(new Define(string("CT_COMPILER"), ExprPtr(nullptr)));
+   ExprPtr exp(nullptr);
+   string str("CT_COMPILER");
+   DefinePtr def(new Define(str, exp));
    macros_.push_back(std::move(def));
 
    //  Create the parser trace tool.

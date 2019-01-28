@@ -288,12 +288,12 @@ bool BuffTrace::Display(ostream& stream, bool diff)
    if(!TimedRecord::Display(stream, diff)) return false;
 
    stream << CRLF;
-   stream << string(80, '-') << CRLF;
+   stream << string(COUT_LENGTH_MAX, '-') << CRLF;
 
    if(buff_ == nullptr)
    {
       stream << "No buffer found." << CRLF;
-      stream << string(80, '-');
+      stream << string(COUT_LENGTH_MAX, '-');
       return true;
    }
 
@@ -303,7 +303,7 @@ bool BuffTrace::Display(ostream& stream, bool diff)
    stream << " (" << strClass(fac, false) << ')' << CRLF;
 
    if(!buff_->IsInvalid()) buff_->Display(stream, spaces(2), Flags(Vb_Mask));
-   stream << string(80, '-');
+   stream << string(COUT_LENGTH_MAX, '-');
    return true;
 }
 

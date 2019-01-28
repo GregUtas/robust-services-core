@@ -411,7 +411,7 @@ word Library::Export(ostream& stream, const string& opts) const
       stream << "NAMESPACE VIEW" << CRLF << CRLF;
       root->Display(stream, EMPTY_STR, options);
       gns->Display(stream, EMPTY_STR, options);
-      stream << string(80, '=') << CRLF;
+      stream << string(LINE_LENGTH_MAX, '=') << CRLF;
    }
 
    auto rule = false;
@@ -431,7 +431,7 @@ word Library::Export(ostream& stream, const string& opts) const
 
    if(opts.find(ClassHierarchyView) != string::npos)
    {
-      if(rule) stream << string(80, '=') << CRLF;
+      if(rule) stream << string(LINE_LENGTH_MAX, '=') << CRLF;
       stream << "CLASS VIEW" << CRLF << CRLF;
 
       ClassVector roots;

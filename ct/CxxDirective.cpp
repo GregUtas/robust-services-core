@@ -49,10 +49,10 @@ void AlignLeft(ostream& stream, const string& prefix)
 {
    //  If PREFIX is more than one indentation, indent one level less.
    //
-   if(prefix.size() < Indent_Size)
+   if(prefix.size() < INDENT_SIZE)
       stream << prefix;
    else
-      stream << prefix.substr(Indent_Size);
+      stream << prefix.substr(INDENT_SIZE);
 }
 
 //------------------------------------------------------------------------------
@@ -117,7 +117,7 @@ CxxDirective::CxxDirective()
 
 fn_name Define_ctor1 = "Define.ctor";
 
-Define::Define(string& name) : Macro(name),
+Define::Define(const string& name) : Macro(name),
    rhs_(nullptr),
    value_(nullptr),
    defined_(false)
@@ -129,7 +129,7 @@ Define::Define(string& name) : Macro(name),
 
 fn_name Define_ctor2 = "Define.ctor(rhs)";
 
-Define::Define(string& name, ExprPtr& rhs) : Macro(name),
+Define::Define(const string& name, ExprPtr& rhs) : Macro(name),
    rhs_(std::move(rhs)),
    value_(nullptr),
    defined_(true)
@@ -667,12 +667,12 @@ void Line::Display(ostream& stream,
 
 fn_name Macro_ctor = "Macro.ctor";
 
-Macro::Macro(string& name) :
-   refs_(0)
+Macro::Macro(string name) :
+   refs_(0),
+   name_(name)
 {
    Debug::ft(Macro_ctor);
 
-   std::swap(name_, name);
    SetScope(Singleton< CxxRoot >::Instance()->GlobalNamespace());
    Singleton< CxxSymbols >::Instance()->InsertMacro(this);
    CxxStats::Incr(CxxStats::DEFINE_DIRECTIVE);
@@ -974,7 +974,7 @@ void OptionalCode::Display(ostream& stream,
 
    auto code = file->GetCode();
 
-   if(code->size() < end_)
+   if(code.size() < end_)
    {
       stream << "ERROR: CODE NOT FOUND" << CRLF;
       return;
@@ -984,8 +984,8 @@ void OptionalCode::Display(ostream& stream,
 
    for(auto i = begin_; i < end_; ++i)
    {
-      stream << code->at(i);
-      if(code->at(i) == CRLF) stream << prefix;
+      stream << code.at(i);
+      if(code.at(i) == CRLF) stream << prefix;
    }
 
    stream << CRLF;

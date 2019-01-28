@@ -109,6 +109,7 @@
     <ClCompile Include="Symbol.cpp" />
     <ClCompile Include="SymbolRegistry.cpp" />
     <ClCompile Include="SysConsole.cpp" />
+    <ClCompile Include="SysConsole.win.cpp" />
     <ClCompile Include="SysFile.cpp" />
     <ClCompile Include="SysFile.win.cpp" />
     <ClCompile Include="SysHeap.cpp" />
@@ -323,6 +324,7 @@
     <ClCompile>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <EnablePREfast>false</EnablePREfast>
+      <WarningLevel>Level4</WarningLevel>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -335,6 +337,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level4</WarningLevel>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

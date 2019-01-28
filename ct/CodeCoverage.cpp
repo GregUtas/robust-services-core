@@ -201,7 +201,7 @@ string CodeCoverage::Demangle(const string& s)
 {
    string result(s);
 
-   for(auto i = 0; i < result.size(); ++i)
+   for(size_t i = 0; i < result.size(); ++i)
    {
       if(result[i] == BLANK) result[i] = SPACE;
    }
@@ -435,7 +435,7 @@ string CodeCoverage::Mangle(const string& s)
 {
    string result(s);
 
-   for(auto i = 0; i < result.size(); ++i)
+   for(size_t i = 0; i < result.size(); ++i)
    {
       if(result[i] == SPACE) result[i] = BLANK;
    }

@@ -282,7 +282,7 @@ bool CxxNamed::IsPreviousDeclOf(const CxxNamed* item) const
 
 fn_name CxxNamed_Log = "CxxNamed.Log";
 
-void CxxNamed::Log(Warning warning, size_t offset) const
+void CxxNamed::Log(Warning warning, size_t offset, bool hide) const
 {
    Debug::ft(CxxNamed_Log);
 
@@ -301,7 +301,7 @@ void CxxNamed::Log(Warning warning, size_t offset) const
       }
    }
 
-   GetFile()->LogPos(GetPos(), warning, offset);
+   GetFile()->LogPos(GetPos(), warning, this, offset, EMPTY_STR, hide);
 }
 
 //------------------------------------------------------------------------------
@@ -624,9 +624,7 @@ fn_name DataSpec_ctor1 = "DataSpec.ctor";
 
 DataSpec::DataSpec(QualNamePtr& name) :
    name_(name.release()),
-   arrays_(nullptr),
-   ptrDet_(false),
-   refDet_(false)
+   arrays_(nullptr)
 {
    Debug::ft(DataSpec_ctor1);
 
@@ -637,10 +635,7 @@ DataSpec::DataSpec(QualNamePtr& name) :
 
 fn_name DataSpec_ctor2 = "DataSpec.ctor(string)";
 
-DataSpec::DataSpec(const char* name) :
-   arrays_(nullptr),
-   ptrDet_(false),
-   refDet_(false)
+DataSpec::DataSpec(const char* name) : arrays_(nullptr)
 {
    Debug::ft(DataSpec_ctor2);
 
@@ -654,9 +649,7 @@ fn_name DataSpec_ctor3 = "DataSpec.ctor(copy)";
 
 DataSpec::DataSpec(const DataSpec& that) : TypeSpec(that),
    arrays_(nullptr),
-   tags_(that.tags_),
-   ptrDet_(that.ptrDet_),
-   refDet_(that.refDet_)
+   tags_(that.tags_)
 {
    Debug::ft(DataSpec_ctor3);
 
@@ -743,8 +736,8 @@ void DataSpec::Check() const
 {
    Debug::ft(DataSpec_Check);
 
-   if(ptrDet_) Log(PtrTagDetached);
-   if(refDet_) Log(RefTagDetached);
+   if(tags_.ptrDet_) Log(PtrTagDetached);
+   if(tags_.refDet_) Log(RefTagDetached);
 }
 
 //------------------------------------------------------------------------------
@@ -1342,7 +1335,7 @@ void DataSpec::Print(ostream& stream, const Flags& options) const
 
    if(IsAutoDecl())
    {
-      stream << SPACE << COMMENT_START_STR << SPACE;
+      stream << SPACE << COMMENT_BEGIN_STR << SPACE;
       stream << TypeString(true) << SPACE << COMMENT_END_STR;
    }
 }
@@ -1500,7 +1493,7 @@ bool DataSpec::ResolveTemplate(Class* cls, const TypeName* args, bool end) const
 
 fn_name DataSpec_ResolveTemplateArgument = "DataSpec.ResolveTemplateArgument";
 
-bool DataSpec::ResolveTemplateArgument()
+bool DataSpec::ResolveTemplateArgument() const
 {
    Debug::ft(DataSpec_ResolveTemplateArgument);
 
@@ -1806,8 +1799,8 @@ QualName::QualName(const QualName& that) : CxxNamed(that)
 
    for(auto n = that.First(); n != nullptr; n = n->Next())
    {
-      auto thisName = new TypeName(*n);
-      PushBack(TypeNamePtr(thisName));
+      TypeNamePtr thisName(new TypeName(*n));
+      PushBack(thisName);
    }
 
    CxxStats::Incr(CxxStats::QUAL_NAME);
@@ -1902,7 +1895,7 @@ void QualName::EnterBlock()
    Debug::ft(QualName_EnterBlock);
 
    Context::SetPos(GetLoc());
-   if(*Name() == "NULL") Log(UseOfNull);
+   if(*Name() == NULL_STR) Log(UseOfNull);
 
    //  If a "." or "->" operator is waiting for its second argument,
    //  push this name and return so that the operator can be executed.
@@ -3129,23 +3122,9 @@ StackArg TypeSpec::ResultType() const
 
 //------------------------------------------------------------------------------
 
-void TypeSpec::SetPtrDetached(bool on)
-{
-   Debug::SwLog(TypeSpec_PureVirtualFunction, "SetPtrDetached", 0);
-}
-
-//------------------------------------------------------------------------------
-
 void TypeSpec::SetPtrs(TagCount count)
 {
    Debug::SwLog(TypeSpec_PureVirtualFunction, "SetPtrs", 0);
-}
-
-//------------------------------------------------------------------------------
-
-void TypeSpec::SetRefDetached(bool on)
-{
-   Debug::SwLog(TypeSpec_PureVirtualFunction, "SetRefDetached", 0);
 }
 
 //------------------------------------------------------------------------------
@@ -3188,6 +3167,8 @@ string TypeSpec::TypeTagsString(const TypeTags& tags) const
 fn_name TypeTags_ctor1 = "TypeTags.ctor";
 
 TypeTags::TypeTags() :
+   ptrDet_(false),
+   refDet_(false),
    const_(false),
    array_(false),
    arrays_(0),
@@ -3204,6 +3185,8 @@ TypeTags::TypeTags() :
 fn_name TypeTags_ctor2 = "TypeTags.ctor(TypeSpec)";
 
 TypeTags::TypeTags(const TypeSpec& spec) :
+   ptrDet_(false),
+   refDet_(false),
    const_(spec.IsConst()),
    array_(spec.Tags()->IsUnboundedArray()),
    arrays_(spec.Arrays()),

@@ -709,7 +709,7 @@ public:
 
    //  Returns the instance's source code.
    //
-   const std::string* GetCode() const { return code_.get(); }
+   const std::string& GetCode() const { return *code_; }
 
    //  Returns the template item that corresponds to ITEM in the instance class.
    //

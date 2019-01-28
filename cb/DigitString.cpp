@@ -101,7 +101,7 @@ DigitString::Rc DigitString::AddDigits(const string& s)
    DigitString::Rc rc;
    auto len = s.size();
 
-   for(auto i = 0; i < len; ++i)
+   for(size_t i = 0; i < len; ++i)
    {
       switch(s[i])
       {

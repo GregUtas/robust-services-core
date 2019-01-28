@@ -738,7 +738,7 @@ void InvokerPool::Startup(RestartLevel level)
 
    //  Create invoker threads until the target number is reached.
    //
-   for(auto i = invokers_.Size(); i < poolSize_; ++i)
+   for(size_t i = invokers_.Size(); i < poolSize_; ++i)
    {
       if(new InvokerThread(GetFaction()) == nullptr)
       {

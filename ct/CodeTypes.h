@@ -22,6 +22,7 @@
 #ifndef CODETYPES_H_INCLUDED
 #define CODETYPES_H_INCLUDED
 
+#include <cstddef>
 #include <cstdint>
 #include <iosfwd>
 #include <string>
@@ -122,10 +123,11 @@ extern fixed_string HASH_UNDEF_STR;
 //
 extern fixed_string ARRAY_STR;
 extern fixed_string COMMENT_END_STR;
-extern fixed_string COMMENT_START_STR;
+extern fixed_string COMMENT_BEGIN_STR;
 extern fixed_string COMMENT_STR;
 extern fixed_string ELLIPSES_STR;
 extern fixed_string LOCALS_STR;
+extern fixed_string NULL_STR;
 
 //------------------------------------------------------------------------------
 //
@@ -367,7 +369,7 @@ enum Warning
    Downcasting,              // use of cast down inheritance hierarchy
    CastingAwayConstness,     // use of cast to remove const qualifier
    PointerArithmetic,        // use of pointer arithmetic
-   RemoveSemicolon,          // unnecessary semicolon
+   RedundantSemicolon,       // unnecessary semicolon
    RedundantConst,           // more than one const qualifier for same token
    DefineNotAtFileScope,     // #define appears within a class or function
    IncludeNotAtGlobalScope,  // #include appears outside of global namespace
@@ -454,12 +456,12 @@ enum Warning
    NonBooleanConditional,    // conditional expression is not a boolean
    EnumTypesDiffer,          // binary operator uses two different enum types
    UseOfTab,                 // tab character in line
-   Indentation,              // indentation not a multiple of Indent_Size spaces
+   Indentation,              // indentation not a multiple of INDENT_SIZE spaces
    TrailingSpace,            // space after last non-blank character
    AdjacentSpaces,           // extra embedded space in source code
-   InsertBlankLine,          // add blank line
+   AddBlankLine,             // add blank line
    RemoveBlankLine,          // adjacent blank lines
-   LineLength,               // line length exceeds 80 characters
+   LineLength,               // line length exceeds LINE_LENGTH_MAX characters
    FunctionNotSorted,        // function does not appear in alphabetical order
    HeadingNotStandard,       // lines at top of file do not follow template
    IncludeGuardMisnamed,     // #include guard name is not based on filename
@@ -490,7 +492,7 @@ enum LineType
    Blank,                 // blank lines
    EmptyComment,          // //
    LicenseComment,        // //  FileName.ext or license information
-   SeparatorComment,      // //+ (+ = repeated -, =, or /)
+   SeparatorComment,      // //# (# = repeated -, =, or /)
    TaggedComment,         // //@ (@ = any character except -, =, or /)
    TextComment,           // //  text
    SlashAsteriskComment,  // /*
@@ -538,7 +540,8 @@ extern const Flags NoAC_Mask;
 extern const Flags NoTP_Mask;
 extern const Flags Stats_Mask;
 
-extern const uint8_t Indent_Size;
+constexpr uint8_t INDENT_SIZE = 3;
+constexpr size_t LINE_LENGTH_MAX = 80;
 
 //------------------------------------------------------------------------------
 //

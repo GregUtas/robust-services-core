@@ -214,7 +214,7 @@ ObjectPool::~ObjectPool()
 {
    Debug::ft(ObjectPool_dtor);
 
-   for(size_t i = 0; i < currSegments_; ++i)
+   for(auto i = 0; i < currSegments_; ++i)
    {
       Memory::Free(blocks_[i]);
       blocks_[i] = nullptr;
@@ -304,7 +304,7 @@ void ObjectPool::AuditFreeq()
 
    buff->Lock();
    {
-      for(size_t i = 0; i < currSegments_; ++i)
+      for(auto i = 0; i < currSegments_; ++i)
       {
          auto seg = blocks_[i];
 
@@ -574,7 +574,7 @@ void ObjectPool::Display(ostream& stream,
    auto lead = prefix + spaces(2);
    stream << prefix << "blocks [segment]" << CRLF;
 
-   for(size_t i = 0; i < currSegments_; ++i)
+   for(auto i = 0; i < currSegments_; ++i)
    {
       stream << lead << strIndex(i) << blocks_[i] << CRLF;
    }
@@ -841,7 +841,7 @@ PooledObjectId ObjectPool::ObjBid(const Pooled* obj, bool inUseOnly) const
    auto block = (const_ptr_t) ObjToBlock(obj);
    auto maxdiff = (ptrdiff_t) (blockSize_ * (ObjectsPerSegment - 1));
 
-   for(size_t i = 0; i < currSegments_; ++i)
+   for(auto i = 0; i < currSegments_; ++i)
    {
       auto b0 = (const_ptr_t) &blocks_[i][0];
 
@@ -910,7 +910,7 @@ void ObjectPool::RecoverBlocks()
 
    //  Run through all of the blocks, recovering orphans.
    //
-   for(size_t i = 0; i < currSegments_; ++i)
+   for(auto i = 0; i < currSegments_; ++i)
    {
       auto seg = blocks_[i];
 

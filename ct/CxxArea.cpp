@@ -919,7 +919,7 @@ void Class::Display(ostream& stream,
       DisplayFiles(stream);
    }
 
-   auto lead = prefix + spaces(Indent_Size);
+   auto lead = prefix + spaces(INDENT_SIZE);
    auto qual = options;
    auto nonqual = options;
    qual.set(DispFQ);
@@ -940,11 +940,11 @@ void Class::Display(ostream& stream,
 
    if(!code)
    {
-      lead += spaces(Indent_Size);
+      lead += spaces(INDENT_SIZE);
 
       if(!subs_.empty())
       {
-         stream << prefix << spaces(Indent_Size) << "subclasses:" << CRLF;
+         stream << prefix << spaces(INDENT_SIZE) << "subclasses:" << CRLF;
 
          for(auto s = subs_.cbegin(); s != subs_.cend(); ++s)
          {
@@ -954,7 +954,7 @@ void Class::Display(ostream& stream,
 
       if(!tmplts_.empty())
       {
-         stream << prefix << spaces(Indent_Size)
+         stream << prefix << spaces(INDENT_SIZE)
             << "instantiations (" << tmplts_.size() << "):" << CRLF;
 
          for(auto t = tmplts_.cbegin(); t != tmplts_.cend(); ++t)
@@ -995,7 +995,7 @@ void Class::DisplayHierarchy(ostream& stream, const string& prefix) const
 {
    stream << prefix << ScopedName(true) << CRLF;
 
-   auto lead = prefix + spaces(Indent_Size);
+   auto lead = prefix + spaces(INDENT_SIZE);
 
    for(auto s = subs_.cbegin(); s != subs_.cend(); ++s)
    {
@@ -1337,8 +1337,12 @@ void Class::GetMemberInitAttrs(DataInitVector& members) const
 
    for(size_t i = 0; i < data->size(); ++i)
    {
+      //  The member should be initialized if it is not default constructible.
+      //  However, exempt a member that appears in a union.
+      //
       auto mem = data->at(i).get();
-      auto attrs = DataInitAttrs(mem, !mem->IsDefaultConstructible(), 0);
+      auto init = (!mem->IsDefaultConstructible() && !mem->IsUnionMember());
+      auto attrs = DataInitAttrs(mem, init, 0);
       members.push_back(attrs);
    }
 }
@@ -1927,7 +1931,7 @@ void ClassInst::Display(ostream& stream,
    }
    else
    {
-      auto lead = prefix + spaces(Indent_Size);
+      auto lead = prefix + spaces(INDENT_SIZE);
       auto qual = options;
       auto opts = options;
       qual.set(DispFQ);
@@ -2642,7 +2646,7 @@ void Namespace::Display(ostream& stream,
    stream << prefix << NAMESPACE_STR << SPACE << name << CRLF;
    stream << prefix << '{' << CRLF;
 
-   auto lead = prefix + spaces(Indent_Size);
+   auto lead = prefix + spaces(INDENT_SIZE);
    auto nonqual = options;
    nonqual.reset(DispFQ);
 

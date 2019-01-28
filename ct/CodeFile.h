@@ -24,6 +24,7 @@
 
 #include "LibraryItem.h"
 #include <cstddef>
+#include <cstdint>
 #include <iosfwd>
 #include <string>
 #include "CodeTypes.h"
@@ -114,7 +115,7 @@ public:
 
    //  Returns a pointer to the original source code.
    //
-   const std::string* GetCode() const { return &code_; }
+   const std::string& GetCode() const { return code_; }
 
    //  Provides read-only access to the lexer.
    //
@@ -142,6 +143,7 @@ public:
    //
    const ClassVector* Classes() const { return &classes_; }
    const DataVector* Datas() const { return &data_; }
+   const EnumVector* Enums() const { return &enums_; }
    const FunctionVector* Funcs() const { return &funcs_; }
    const TypedefVector* Types() const { return &types_; }
 
@@ -182,10 +184,6 @@ public:
    //
    void SetParsed(bool passed) { parsed_ = (passed ? Passed : Failed); }
 
-   //  Marks the source code as having been edited.
-   //
-   void SetModified() { modified_ = true; }
-
    //  Invoked when the file defines a function template or a function
    //  in a class template.
    //
@@ -195,6 +193,11 @@ public:
    //  of range.
    //
    LineType GetLineType(size_t n) const;
+
+   //  Returns a standard name for an #include guard.  Returns EMPTY_STR
+   //  if the file is not a header file.
+   //
+   std::string MakeGuardName() const;
 
    //  Returns the group to which the file specified by FILE, FN, or
    //  INCL belongs:
@@ -221,23 +224,31 @@ public:
    //
    void Trim(std::ostream* stream);
 
-   //  Interactively fixes warnings in the file detected by Check().  If
-   //  an error occurs, a non-zero value is returned and EXPL is updated
-   //  to provide an explanation.
+   //  Invokes the editor to interactively fix warnings found by Check().
    //
    NodeBase::word Fix(NodeBase::CliThread& cli, std::string& expl);
 
-   //  Formats the file.  Returns 0 if the file was unchanged, a positive
-   //  number after successful changes, and a negative number on failure,
-   //  in which case EXPL provides an explanation.
+   //  Invokes the editor to format the file's source code.
    //
    NodeBase::word Format(std::string& expl);
+
+   //  Returns the level of indentation for a line.
+   //
+   int8_t GetDepth(size_t line) const;
 
    //  Logs WARNING, which occurred at POS.  OFFSET and INFO are specific to
    //  WARNING.
    //
-   void LogPos(size_t pos, Warning warning, size_t offset = 0,
-      const std::string& info = std::string(NodeBase::EMPTY_STR)) const;
+   void LogPos(size_t pos, Warning warning,
+      const CxxNamed* item = nullptr, size_t offset = 0,
+      const std::string& info = std::string(NodeBase::EMPTY_STR),
+      bool hide = false) const;
+
+   //  Classifies a line of code (S) and updates WARNINGS with any warnings
+   //  that were found.
+   //
+   static LineType ClassifyLine
+      (std::string s, std::set< Warning >& warnings);
 
    //  Generates a report in STREAM (if not nullptr) for the files in SET.  The
    //  report includes line type counts and warnings found during parsing and
@@ -322,11 +333,20 @@ private:
    //
    bool HasForwardFor(const CxxNamed* item) const;
 
-   //  Logs WARNING, which occurred on line N.  OFFSET and INFO are specific
+   //  Logs WARNING, which occurred on LINE.  OFFSET and INFO are specific
    //  to WARNING.
    //
-   void LogLine(size_t n, Warning warning, size_t offset = 0,
-      const std::string& info = std::string(NodeBase::EMPTY_STR)) const;
+   void LogLine(size_t line, Warning warning, size_t offset = 0,
+      const std::string& info = std::string(NodeBase::EMPTY_STR),
+      bool hide = false) const;
+
+   //  Logs WARNING, which occurred on LINE and POS within ITEM (which may be
+   //  nullptr).  OFFSET and INFO arespecific to WARNING.
+   //
+   void LogCode(Warning warning, size_t line, size_t pos,
+      const CxxNamed* item, size_t offset = 0,
+      const std::string& info = std::string(NodeBase::EMPTY_STR),
+      bool hide = false) const;
 
    //  Returns false if >trim does not apply to this file (e.g. a template
    //  header).  STREAM is where the output for >trim is being directed.
@@ -423,11 +443,10 @@ private:
    //
    void LogRemoveUsings(std::ostream* stream) const;
 
-   //  Creates an Editor object.  On failure, returns a non-zero value and
-   //  updates EXPL with an explanation.  A result of -1 indicates that the
-   //  file should be skipped; other values are more serious.
+   //  Creates the editor.  On failure, returns a non-zero value and updates
+   //  EXPL with an explanation.
    //
-   NodeBase::word CreateEditor(EditorPtr& editor, std::string& expl);
+   NodeBase::word CreateEditor(std::string& expl);
 
    //  The file's identifier in the code base.
    //
@@ -530,9 +549,9 @@ private:
    //
    bool checked_;
 
-   //  Set if >fix changed the file's source code
+   //  For editing the file's source code.
    //
-   bool modified_;
+   EditorPtr editor_;
 };
 }
 #endif

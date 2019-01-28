@@ -50,7 +50,7 @@ size_t FindTemplateEnd(const string& name, size_t pos);
 
 fn_name CodeTools_AdjustPtrs = "CodeTools.AdjustPtrs";
 
-void AdjustPtrs(string& type, TagCount ptrs) //* reassess for >1 const pointer
+void AdjustPtrs(string& type, TagCount ptrs) //c reassess for >1 const pointer
 {
    Debug::ft(CodeTools_AdjustPtrs);
 

@@ -131,7 +131,7 @@ word CodeCoverage::Build(std::ostringstream& expl)
 
          //  If INPUT isn't empty, append it to STR.  The function name
          //  contains an embedded space (and might have more of them).
-         //  Mangle replace spaces with "BLANK" to simplify Load.
+         //  Replace spaces with "BLANK" to simplify Load.
          //
          if(!input.empty())
          {

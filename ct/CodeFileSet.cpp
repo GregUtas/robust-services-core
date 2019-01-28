@@ -330,9 +330,9 @@ word CodeFileSet::Fix(CliThread& cli, string& expl) const
       return 0;
    }
 
-   *cli.obuf << "The code editor has NOT been rigorously tested.  It is" << CRLF;
-   *cli.obuf << "highly recommended that you check diffs.  The following" << CRLF;
-   *cli.obuf << "changes also occur automatically in any modified file:" << CRLF;
+   *cli.obuf << "The code editor has NOT been rigorously tested. The" << CRLF;
+   *cli.obuf << "checking of diffs is recommended. The following also" << CRLF;
+   *cli.obuf << "occur automatically in each modified file:" << CRLF;
    *cli.obuf << "  o Whitespace at the end of a line is deleted." << CRLF;
    *cli.obuf << "  o A repeated blank line is deleted." << CRLF;
    *cli.obuf << "  o Tabs are replaced by spaces based on INDENT_SIZE." << CRLF;

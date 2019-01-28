@@ -959,10 +959,6 @@ public:
    //
    bool IsExplicit() const { return explicit_; }
 
-   //  Returns true if the function is tagged as constexpr.
-   //
-   bool IsConstexpr() const { return constexpr_; }
-
    //  Returns the function's operator (Cxx::NIL_OPERATOR if not an operator).
    //
    Cxx::Operator Operator() const { return name_->Operator(); }

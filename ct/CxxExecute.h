@@ -66,7 +66,7 @@ public:
 
    //  Virtual to allow subclassing.
    //
-   virtual ~CxxTrace() { }
+   virtual ~CxxTrace() = default;
 protected:
    //  Creates a trace record of SIZE, for ACTION.  Protected because this
    //  class is virtual.
@@ -94,8 +94,9 @@ class StackArg
 {
 public:
    //  Constructs an argument for T.  Constructs a pointer to P if T is 1.
+   //  CTOR indicates that the argument was created by a constructor call.
    //
-   StackArg(CxxToken* t, TagCount p);
+   StackArg(CxxToken* t, TagCount p, bool ctor = false);
 
    //  Constructs an argument for a function that will be invoked.
    //
@@ -195,6 +196,10 @@ public:
    //  Returns true if the argument is an implicit "this" argument.
    //
    bool IsImplicitThis() const { return (this_ && implicit_); }
+
+   //  Returns true if the argument was created by a constructor.
+   //
+   bool WasConstructed() const { return ctor_; }
 
    //  Returns the numeric type associated with the item's root type.
    //
@@ -330,6 +335,10 @@ private:
    //  Set if the argument was created as an implicit "this".
    //
    bool implicit_ : 1;
+
+   //  Set if the argument was created by a constructor.
+   //
+   bool ctor_ : 1;
 
    //  Set if WasRead has been invoked on the argument.  This prevents further
    //  invocations of WasRead when the argument is reused by pushing it as the

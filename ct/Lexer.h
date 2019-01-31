@@ -46,7 +46,7 @@ public:
 
    //  Not subclassed.
    //
-   ~Lexer() { }
+   ~Lexer() = default;
 
    //  Initializes the lexer to assist with parsing SOURCE, which must not
    //  be nullptr.  Also invokes Advance() to position curr_ at the first
@@ -295,11 +295,12 @@ public:
 
    //  Advances curr_ to the start of the next identifier, which is supplied
    //  in ID.  The identifier could be a keyword or preprocessor directive.
-   //  Returns true if an identifier was found, else false.  If NUMERIC is
-   //  set, true is returned if a number is found, in which case ID is set
-   //  to "0" and curr_ advances to the first position after the number.
+   //  Returns true if an identifier was found, else false.  If TOKENIZE is
+   //  set, true is returned if a numeric or punctuation is found, in which
+   //  case ID is set to "$" and curr_ advances to the first position after
+   //  a numeric, whereas it remains at punctuation.
    //
-   bool FindIdentifier(std::string& id, bool numeric = false);
+   bool FindIdentifier(std::string& id, bool tokenize);
 
    //  Scans the code to determine lexical levels for indentation.
    //
@@ -377,16 +378,21 @@ private:
    //
    Cxx::Directive FindDirective();
 
-   //  Sets all lines from positions START to the one above the next parse
-   //  position to DEPTH.  If this spans multiple lines, subsequent lines
-   //  are marked as continuations of the first one.  Updates START to the
-   //  next parse position (after curr_) before returning.
+   //  Sets all lines from positions START to curr_ to DEPTH1, and all lines
+   //  after curr_ to the next parse position to DEPTH2.  If either range spans
+   //  multiple lines, subsequent lines are marked as continuations of the first
+   //  line in the range.  Updates START to the next parse position after curr_
+   //  before returning.
    //
-   void SetDepth(int8_t depth, size_t& start);
+   void SetDepth(size_t& start, int8_t depth1, int8_t depth2);
 
    //  Initializes the keyword and operator hash tables.
    //
    static bool Initialize();
+
+   //  Indicates that the depth of a line of code has not yet been determined.
+   //
+   static const int8_t DEPTH_NOT_SET = -1;
 
    //  Information about a line of source code.
    //
@@ -398,7 +404,7 @@ private:
 
       explicit LineInfo(size_t start) :
          start(start),
-         depth(-1),
+         depth(DEPTH_NOT_SET),
          cont(false)
       {
       }

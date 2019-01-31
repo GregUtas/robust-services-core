@@ -129,7 +129,7 @@ void BraceInit::EnterBlock()
    //  type of structure being initialized, but we'll just return "auto",
    //  which acts as a wildcard when checking LHS and RHS compatibility.
    //
-   auto arg = StackArg(Singleton< CxxRoot >::Instance()->AutoTerm(), 0);
+   StackArg arg(Singleton< CxxRoot >::Instance()->AutoTerm(), 0);
    Context::PushArg(arg);
 }
 
@@ -1204,7 +1204,7 @@ bool Operation::ElideForward()
    //
    if(ArgCapacity() != 1) return false;
 
-   auto arg = TokenPtr(new Elision);
+   TokenPtr arg(new Elision);
    args_.push_back(std::move(arg));
    return true;
 }
@@ -1637,7 +1637,7 @@ void Operation::ExecuteCall()
       auto log = (size == 1 ? DefaultConstructor : DefaultCopyConstructor);
       Context::Log(log);
       if(size > 1) args[1].WasRead();
-      Context::PushArg(StackArg(proc.item->GetClass(), 0));
+      Context::PushArg(StackArg(proc.item->GetClass(), 0, true));
       return;
    }
 
@@ -1714,7 +1714,7 @@ void Operation::ExecuteNew() const
    //  The second argument is the type for which to allocate memory.
    //  Look for its operator new.
    //
-   auto spec = StackArg(args_[1].get(), 0);
+   StackArg spec(args_[1].get(), 0);
    auto pod = false;
    auto opNew = FindNewOrDelete(spec, false, pod);
 
@@ -2410,9 +2410,9 @@ void Operation::PushResult(const StackArg& lhs, const StackArg& rhs) const
 
    auto diff = false;
 
-   if(match == Incompatible)
+   if(match <= Convertible)  // allows detection of pointer arithmetic
    {
-      auto err = true;
+      auto err = (match == Incompatible);
 
       switch(lhs.NumericType().Type())
       {
@@ -2670,8 +2670,8 @@ TypeSpecPtr StrLiteral::CreateRef()
 
    //  Create Ref_, which represents the type "const char* const".
    //
-   auto qual = QualNamePtr(new QualName(CHAR_STR));
-   auto ref = TypeSpecPtr(new DataSpec(qual));
+   QualNamePtr qual(new QualName(CHAR_STR));
+   TypeSpecPtr ref(new DataSpec(qual));
    ref->Tags()->SetConst(true);
    ref->Tags()->SetPointer(0, true);
    return ref;

@@ -144,8 +144,30 @@ word CodeFileSet::Check(ostream* stream, string& expl) const
       return 0;
    }
 
+   auto& files = Singleton< Library >::Instance()->Files();
+   auto found = false;
+
    //  In order to generate a report for a file, it must have been parsed.
+   //  As long as one of the files has been parsed, we can parse the others
+   //  because the target (operating system and word size) is already known.
    //
+   for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
+   {
+      auto file = files.At(*f);
+
+      if(file->ParseStatus() != CodeFile::Unparsed)
+      {
+         found = true;
+         break;
+      }
+   }
+
+   if(!found)
+   {
+      expl = "No files have been parsed.  This must be done first.";
+      return 0;
+   }
+
    auto rc = Parse(expl, "-");
    if(rc != 0) return rc;
    expl.clear();
@@ -628,7 +650,7 @@ word CodeFileSet::Parse(string& expl, const string& opts) const
    auto order = static_cast< CodeFileSet* >(affects)->SortInBuildOrder();
 
    auto& files = library->Files();
-   auto parser = std::unique_ptr< Parser >(new Parser(opts));
+   std::unique_ptr< Parser > parser(new Parser(opts));
    size_t total = 0;
    size_t failed = 0;
 
@@ -838,8 +860,8 @@ BuildOrderPtr CodeFileSet::SortInBuildOrder() const
    auto fileSet = Set();
    auto& files = Singleton< Library >::Instance()->Files();
    auto size = files.Size();
-   auto incls = std::unique_ptr< SetOfIds[] >(new SetOfIds[size]);
-   auto fids = std::unique_ptr< id_t[] >(new id_t[size]);
+   std::unique_ptr< SetOfIds[] > incls(new SetOfIds[size]);
+   std::unique_ptr< id_t[] > fids(new id_t[size]);
    size_t n = 0;
 
    for(CodeFile* f = files.First(); f != nullptr; files.Next(f))
@@ -878,7 +900,7 @@ BuildOrderPtr CodeFileSet::SortInBuildOrder() const
 
             if(it != fileSet.cend())
             {
-               auto item = FileLevel(fids[i], level);
+               FileLevel item(fids[i], level);
                order->push_back(item);
             }
 

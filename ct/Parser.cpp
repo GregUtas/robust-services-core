@@ -53,7 +53,7 @@ using std::string;
 
 namespace CodeTools
 {
-uint32_t Parser::Backups[] = {0};
+uint32_t Parser::Backups[] = { 0 };
 
 //------------------------------------------------------------------------------
 
@@ -1444,16 +1444,15 @@ bool Parser::GetDtorDecl(FunctionPtr& func)
    string name;
    auto pos = lexer_.Curr();
    if(!GetName(name)) return Backup(start, 96);
-   if(!lexer_.NextCharIs('(')) return Backup(start, 97);
-   if(!lexer_.NextCharIs(')')) return Backup(start, 98);
-   auto noex = NextKeywordIs(NOEXCEPT_STR);
-
    name.insert(0, 1, '~');
    auto dtorName = QualNamePtr(new QualName(name));
    dtorName->SetContext(pos);
    func.reset(new Function(dtorName));
    func->SetContext(start);
    func->SetVirtual(virt);
+   if(!lexer_.NextCharIs('(')) return Backup(start, 97);
+   if(!GetArguments(func)) return Backup(start, func, 98);
+   auto noex = NextKeywordIs(NOEXCEPT_STR);
    func->SetNoexcept(noex);
    return Success(Parser_GetDtorDecl, start);
 }
@@ -1476,10 +1475,6 @@ bool Parser::GetDtorDefn(FunctionPtr& func)
    if(!lexer_.NextStringIs("::~")) return Backup(start, 100);
    auto pos = lexer_.Curr();
    if(!lexer_.GetName(name)) return Backup(start, 101);
-   if(!lexer_.NextCharIs('(')) return Backup(start, 102);
-   if(!lexer_.NextCharIs(')')) return Backup(start, 103);
-   auto noex = NextKeywordIs(NOEXCEPT_STR);
-
    name.insert(0, 1, '~');
    auto className = TypeNamePtr(new TypeName(name));
    className->SetContext(pos);
@@ -1487,6 +1482,9 @@ bool Parser::GetDtorDefn(FunctionPtr& func)
    dtorName->PushBack(className);
    func.reset(new Function(dtorName));
    func->SetContext(start);
+   if(!lexer_.NextCharIs('(')) return Backup(start, 102);
+   if(!GetArguments(func)) return Backup(start, func, 103);
+   auto noex = NextKeywordIs(NOEXCEPT_STR);
    func->SetNoexcept(noex);
    return Success(Parser_GetDtorDefn, start);
 }

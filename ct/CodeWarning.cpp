@@ -81,9 +81,9 @@ bool WarningLog::operator!=(const WarningLog& that) const
 
 //==============================================================================
 
-size_t CodeInfo::LineTypeCounts_[] = { };
+size_t CodeInfo::LineTypeCounts_[] = { 0 };
 
-size_t CodeInfo::WarningCounts_[] = { };
+size_t CodeInfo::WarningCounts_[] = { 0 };
 
 std::vector< WarningLog > CodeInfo::Warnings_ = std::vector< WarningLog >();
 
@@ -275,8 +275,12 @@ void CodeInfo::GenerateReport(ostream* stream, const SetOfIds& set)
 
 //------------------------------------------------------------------------------
 
+fn_name CodeInfo_GetWarnings = "CodeInfo.GetWarnings";
+
 void CodeInfo::GetWarnings(const CodeFile* file, WarningLogVector& warnings)
 {
+   Debug::ft(CodeInfo_GetWarnings);
+
    for(auto w = Warnings_.cbegin(); w != Warnings_.cend(); ++w)
    {
       if(w->file == file)

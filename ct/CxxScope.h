@@ -1365,7 +1365,7 @@ private:
    void CheckArgs() const;
    void CheckCtor() const;
    void CheckDtor() const;
-   void CheckIfDefined() const;
+   Warning CheckIfDefined() const;
    void CheckIfPublicVirtual() const;
    void CheckForVirtualDefault() const;
    void CheckIfOverridden() const;

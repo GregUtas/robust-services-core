@@ -151,7 +151,7 @@ fixed_string LineTypeStrings[LineType_N + 1] =
    "source code",
    "blank",
    COMMENT_STR,
-   "license //",
+   "leading //",
    "separator //",
    "tagged //",
    "text //",
@@ -177,6 +177,45 @@ ostream& operator<<(ostream& stream, LineType type)
       stream << LineTypeStrings[LineType_N];
    return stream;
 }
+
+//------------------------------------------------------------------------------
+
+LineTypeAttr::LineTypeAttr(bool code, bool exe, bool merge, bool blank) :
+   isCode(code),
+   isExecutable(exe),
+   isMergeable(merge),
+   isBlank(blank)
+{
+}
+
+//------------------------------------------------------------------------------
+
+const bool F = false;
+const bool T = true;
+
+const LineTypeAttr LineTypeAttr::Attrs[LineType_N + 1] =
+{
+   //           c  x  m  b
+   LineTypeAttr(T, T, T, F),  // Code
+   LineTypeAttr(F, F, F, T),  // Blank
+   LineTypeAttr(F, F, F, T),  // EmptyComment
+   LineTypeAttr(F, F, F, F),  // LeadingComment
+   LineTypeAttr(F, F, F, F),  // SeparatorComment
+   LineTypeAttr(F, F, F, F),  // TaggedComment
+   LineTypeAttr(F, F, F, F),  // TextComment
+   LineTypeAttr(F, F, F, F),  // SlashAsteriskComment
+   LineTypeAttr(T, F, F, F),  // OpenBrace
+   LineTypeAttr(T, F, F, F),  // CloseBrace
+   LineTypeAttr(T, F, F, F),  // CloseBraceSemicolon
+   LineTypeAttr(T, T, T, F),  // DebugFt
+   LineTypeAttr(T, T, T, F),  // FunctionName
+   LineTypeAttr(T, T, T, F),  // FunctionNameSplit
+   LineTypeAttr(T, T, F, F),  // IncludeDirective
+   LineTypeAttr(T, T, F, F),  // HashDirective
+   LineTypeAttr(T, T, F, F),  // UsingDirective
+   LineTypeAttr(F, F, F, F),  // AnyLne
+   LineTypeAttr(F, F, F, F)   // LineType_N
+};
 
 //------------------------------------------------------------------------------
 
@@ -294,6 +333,8 @@ fixed_string WarningStrings[Warning_N + 1] =
    "Function name passed to Debug::ft is already used by another function",
    "Override of Base.Display not found",
    "Override of Object.Patch not found",
+   "Function could be defaulted",
+   "Initialization uses assignment operator",
    ERROR_STR
 };
 

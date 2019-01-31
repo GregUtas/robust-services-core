@@ -64,7 +64,7 @@ public:
       head_.next = nullptr;              // expected by Q2Link destructor
    }
 
-   //  Initalizes the queue so that it is ready for use.
+   //  Initializes the queue so that it is ready for use.
    //
    void Init(ptrdiff_t diff)
    {

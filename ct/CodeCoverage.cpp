@@ -147,7 +147,7 @@ word CodeCoverage::Build(std::ostringstream& expl)
             //  case of a function template or function in a class template,
             //  since these are not parsed.  Add the function.
             //
-            auto info = FuncInfo(UNHASHED);
+            FuncInfo info(UNHASHED);
             auto result = currFuncs_.insert(FuncData(str, info));
             func = result.first;
          }
@@ -325,7 +325,7 @@ CodeCoverage::LoadState CodeCoverage::GetFunc
    if(hash.empty() || !isxdigit(hash.front()))
       return GetError("Hash value for function missing", rc, expl);
    uint32_t n = std::stoul(hash, nullptr, 16);
-   auto info = FuncInfo(n);
+   FuncInfo info(n);
    auto result = prevFuncs_.insert(FuncData(func, info));
    if(!result.second)
       return GetError("Function name duplicated", rc, expl);
@@ -365,7 +365,7 @@ bool CodeCoverage::Insert(const string& func, uint32_t hash, const string& file)
       return (iter->second.file == file);
    }
 
-   auto info = FuncInfo(file, hash);
+   FuncInfo info(file, hash);
    auto result = currFuncs_.insert(FuncData(name, info));
    return result.second;
 }

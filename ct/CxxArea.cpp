@@ -866,9 +866,9 @@ ClassInst* Class::CreateInstance(const string& name, const TypeName* type)
 {
    Debug::ft(Class_CreateInstance);
 
-   auto newName = QualNamePtr(new QualName(name));
+   QualNamePtr newName(new QualName(name));
    newName->CopyContext(this);
-   auto tmplt = ClassInstPtr(new ClassInst(newName, this, type));
+   ClassInstPtr tmplt(new ClassInst(newName, this, type));
    auto inst = tmplt.get();
    inst->CopyContext(this);
    tmplts_.push_back(std::move(tmplt));
@@ -1342,7 +1342,7 @@ void Class::GetMemberInitAttrs(DataInitVector& members) const
       //
       auto mem = data->at(i).get();
       auto init = (!mem->IsDefaultConstructible() && !mem->IsUnionMember());
-      auto attrs = DataInitAttrs(mem, init, 0);
+      DataInitAttrs attrs(mem, init, 0);
       members.push_back(attrs);
    }
 }
@@ -1728,7 +1728,7 @@ StackArg Class::NameToArg(Cxx::Operator op)
    //  looked up.  Set the "invoke" flag on the argument, which will be
    //  used to invoke a constructor.
    //
-   auto arg = StackArg(this, 0);
+   StackArg arg(this, 0);
    if(op != Cxx::SIZEOF_TYPE) arg.SetInvoke();
    return arg;
 }
@@ -2040,7 +2040,7 @@ bool ClassInst::Instantiate()
    //
    code_.reset();
    auto begin = tmplt_->CreateCode(this, code_);
-   auto parser = std::unique_ptr< Parser >(new Parser(EMPTY_STR));
+   std::unique_ptr< Parser > parser(new Parser(EMPTY_STR));
    compiled_ = parser->ParseClassInst(this, begin);
    parser.reset();
    if(compiled_) code_.reset();
@@ -2673,7 +2673,7 @@ Namespace* Namespace::EnsureNamespace(const string& name)
    auto s = FindNamespace(name);
    if(s != nullptr) return s;
 
-   auto space = NamespacePtr(new Namespace(name, this));
+   NamespacePtr space(new Namespace(name, this));
    spaces_.push_back(std::move(space));
    return spaces_.back().get();
 }

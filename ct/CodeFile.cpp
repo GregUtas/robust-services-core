@@ -605,8 +605,10 @@ void CodeFile::Check()
 {
    Debug::ft(CodeFile_Check);
 
+   //  We don't do a Debug::Progress on our file name, because Trim
+   //  (invoked below) already does it.
+   //
    if(checked_) return;
-   Debug::Progress(Name() + CRLF, true);
 
    //  Don't check an empty file or a substitute file.
    //
@@ -823,16 +825,10 @@ void CodeFile::CheckIncludeGuard()
 
    for(n = 0; (n < lineType_.size()) && (pos == string::npos); ++n)
    {
+      if(!LineTypeAttr::Attrs[lineType_[n]].isCode) continue;
+
       switch(lineType_[n])
       {
-      case Blank:
-      case EmptyComment:
-      case LicenseComment:
-      case SeparatorComment:
-      case TaggedComment:
-      case TextComment:
-      case SlashAsteriskComment:
-         continue;
       case HashDirective:
          pos = lexer_.GetLineStart(n);
          break;
@@ -972,7 +968,6 @@ void CodeFile::CheckProlog()
    ok = ok && (code_.find(COMMENT_STR, pos) == pos);
    ok = ok && (code_.find(Name(), pos) == pos + 4);
    if(!ok) return LogLine(2, HeadingNotStandard);
-   lineType_[2] = LicenseComment;
 
    size_t line = 3;
 
@@ -982,14 +977,9 @@ void CodeFile::CheckProlog()
       ok = ok && (code_.find(COMMENT_STR, pos) == pos);
 
       if(FileProlog[i] == EMPTY_STR)
-      {
          ok = ok && (lineType_[line] == EmptyComment);
-      }
       else
-      {
          ok = ok && (code_.find(FileProlog[i], pos) == pos + 4);
-         if(ok) lineType_[line] = LicenseComment;
-      }
 
       if(!ok) return LogLine(line, HeadingNotStandard);
       ++line;
@@ -1022,7 +1012,7 @@ void CodeFile::CheckSeparation()
       case Code:
          switch(prevType)
          {
-         case SeparatorComment:
+         case LeadingComment:
          case FunctionName:
          case IncludeDirective:
          case UsingDirective:
@@ -1050,38 +1040,17 @@ void CodeFile::CheckSeparation()
          break;
 
       case SeparatorComment:
-         switch(prevType)
-         {
-         case Blank:
-         case EmptyComment:
-            break;
-         default:
+         if(!LineTypeAttr::Attrs[prevType].isBlank)
             LogLine(n, AddBlankLine);
-         }
-
-         switch(nextType)
-         {
-         case Blank:
-         case EmptyComment:
-            break;
-         default:
+         if(!LineTypeAttr::Attrs[nextType].isBlank)
             LogLine(n + 1, AddBlankLine);
-         }
          break;
 
       case OpenBrace:
       case CloseBrace:
       case CloseBraceSemicolon:
-         switch(prevType)
-         {
-         case Blank:
-         case EmptyComment:
+         if(LineTypeAttr::Attrs[prevType].isBlank)
             LogLine(n - 1, RemoveBlankLine);
-            break;
-         case SeparatorComment:
-            LogLine(n, AddBlankLine);
-            break;
-         }
          break;
 
       case FunctionName:
@@ -1419,7 +1388,7 @@ void CodeFile::Display(ostream& stream,
       stream << lead << strIndex(*u) << f->Name() << CRLF;
    }
 
-   auto none = Flags();
+   Flags none;
 
    stream << prefix << "#includes : " << incls_.size() << CRLF;
 
@@ -1448,7 +1417,7 @@ void CodeFile::DisplayItems(ostream& stream, const string& opts) const
    if(parsed_ == Unparsed) return;
 
    auto lead = spaces(INDENT_SIZE);
-   auto options = Flags(FQ_Mask);
+   Flags options(FQ_Mask);
    if(opts.find(ItemStatistics) != string::npos) options.set(DispStats);
 
    if(opts.find(CanonicalFileView) != string::npos)
@@ -1615,11 +1584,11 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user)
       QualNamePtr qualName;
       name = ref->ScopedName(false);
       auto scope = Singleton< CxxRoot >::Instance()->GlobalNamespace();
-      auto parser = std::unique_ptr< Parser >(new Parser(scope));
+      std::unique_ptr< Parser > parser(new Parser(scope));
       parser->ParseQualName(name, qualName);
       parser.reset();
       qualName->SetReferent(ref, nullptr);
-      auto use = UsingPtr(new Using(qualName, false, true));
+      UsingPtr use(new Using(qualName, false, true));
       use->SetScope(scope);
       use->SetLoc(this, CxxLocation::NOT_IN_SOURCE);
       scope->AddUsing(use);
@@ -1627,9 +1596,11 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user)
       //  If this is a header, log the fact that it depends a using statement
       //  in another file.  This is necessary because, if the header has no
       //  using statements of its own, >fix will skip it instead of trying to
-      //  eliminate its dependence on using statements.
+      //  eliminate its dependence on using statements.  The spaces(1) argument
+      //  is a hack that prevents line#1 (which has nothing to do with the log)
+      //  from being displayed.
       //
-      if(IsHeader()) LogPos(0, HeaderReliesOnUsing, nullptr, 0);
+      if(IsHeader()) LogPos(0, HeaderReliesOnUsing, nullptr, 0, spaces(1));
    }
 }
 
@@ -1756,20 +1727,10 @@ int8_t CodeFile::GetDepth(size_t line) const
 
    if(line >= lineType_.size()) return depth;
 
+   if(!LineTypeAttr::Attrs[lineType_[line]].isCode) return depth;
+
    switch(lineType_[line])
    {
-   case Blank:
-   case EmptyComment:
-   case LicenseComment:
-   case SeparatorComment:
-   case TaggedComment:
-   case TextComment:
-   case SlashAsteriskComment:
-      //
-      //  Ignore CONT.
-      //
-      return depth;
-
    case IncludeDirective:
    case HashDirective:
       //
@@ -2242,7 +2203,7 @@ void CodeFile::LogCode(Warning warning, size_t line, size_t pos,
       (line < lineType_.size()) &&
       (pos < code_.size()))
    {
-      auto log = WarningLog(warning, this, line, pos, item, offset, info, hide);
+      WarningLog log(warning, this, line, pos, item, offset, info, hide);
       CodeInfo::AddWarning(log);
    }
 }
@@ -2590,6 +2551,18 @@ void CodeFile::Scan()
       {
          lineType_[n] = ClassifyLine(n);
       }
+
+      for(size_t n = 0; n < lines; ++n)
+      {
+         auto t = lineType_[n];
+
+         if(LineTypeAttr::Attrs[t].isCode) break;
+
+         if((t != EmptyComment) && (t != SlashAsteriskComment))
+         {
+            t = LeadingComment;
+         }
+      }
    }
 
    //  Preprocess #include directives.
@@ -2612,7 +2585,7 @@ void CodeFile::Scan()
             used->AddUser(this);
          }
 
-         auto incl = IncludePtr(new Include(file, angle));
+         IncludePtr incl(new Include(file, angle));
          incl->SetLoc(this, lexer_.GetLineStart(n));
          InsertInclude(incl);
       }

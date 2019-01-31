@@ -891,7 +891,7 @@ CxxNamed* MacroName::Referent() const
    //  for it.
    //
    auto name = name_;
-   auto macro = MacroPtr(new Define(name));
+   MacroPtr macro(new Define(name));
    ref_ = macro.get();
    Singleton< CxxRoot >::Instance()->AddMacro(macro);
    ref_->WasRead();

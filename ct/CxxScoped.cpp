@@ -825,7 +825,7 @@ void Enum::AddEnumerator(string& name, ExprPtr& init, size_t pos)
 {
    Debug::ft(Enum_AddEnumerator);
 
-   auto etor = EnumeratorPtr(new Enumerator(name, init, this));
+   EnumeratorPtr etor(new Enumerator(name, init, this));
    etor->SetScope(GetScope());
    etor->SetLoc(GetFile(), pos);
    etor->SetAccess(GetAccess());

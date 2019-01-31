@@ -61,6 +61,10 @@ public:
    //
    Editor(const CodeFile* file, NodeBase::istreamPtr& input);
 
+   //  Not subclassed.
+   //
+   ~Editor() = default;
+
    //  Interactively fixes warnings in the code detected by Check().  If
    //  an error occurs, a non-zero value is returned and EXPL is updated
    //  with an explanation.
@@ -142,10 +146,13 @@ private:
    word AdjustLineIndentation(const WarningLog& log, string& expl);
    word EraseAdjacentSpaces(const WarningLog& log, string& expl);
    word InsertBlankLine(const WarningLog& log, string& expl);
+   word EraseBlankLine(const WarningLog& log, string& expl);
    word InsertLineBreak(const WarningLog& log, string& expl);
    word RenameIncludeGuard(const WarningLog& log, string& expl);
    word InsertDebugFtCall(const WarningLog& log, string& expl);
    word ChangeDebugFtName(const WarningLog& log, string& expl);
+   word TagAsDefaulted(const WarningLog& log, string& expl);
+   word InitByConstructor(const WarningLog& log, string& expl);
 
    //  Replaces multiple blank lines with a single blank line.  Always invoked
    //  on source that was changed.
@@ -281,6 +288,12 @@ private:
    //  empty.
    //
    Iter InsertLineBreak(const Iter& iter, size_t pos);
+
+   //  Deletes the line break at the end of the line referenced by ITER if
+   //  the following line will also fit within LINE_LENGTH_MAX.  Returns
+   //  true if the line break was deleted.
+   //
+   bool DeleteLineBreak(const Iter& iter);
 
    //  Returns the first line that follows comments and blanks.
    //

@@ -42,10 +42,11 @@ namespace CodeTools
 {
 //  Indentation cases.
 //
-enum IndentCase
+enum IndentRule
 {
    IndentStandard,   // standard rules
-   IndentNumeric,    // numeric constant
+   IndentResume,     // numeric constant or punctuation
+   IndentCase,       // case label
    IndentDirective,  // preprocessor directive
    IndentFor,        // for statement
    IndentEnum,       // enumeration
@@ -53,9 +54,11 @@ enum IndentCase
    IndentNamespace   // namespace enclosure
 };
 
-IndentCase ClassifyIndent(string& id)
+IndentRule ClassifyIndent(string& id)
 {
-   if(id == "0") return IndentNumeric;
+   if(id == "$") return IndentResume;
+   if(id == CASE_STR) return IndentCase;
+   if(id == DEFAULT_STR) return IndentCase;
    if(id == FOR_STR) return IndentFor;
    if(id.front() == '#') return IndentDirective;
    if(id == ENUM_STR) return IndentEnum;
@@ -134,6 +137,7 @@ void Lexer::CalcDepths()
    auto ns = false;   // set when "namespace" keyword is encountered
    auto en = false;   // set when "enum" keyword is encountered
    int8_t depth = 0;  // current depth for indentation
+   int8_t next = 0;   // next depth for indentation
    size_t start = 0;  // last position whose depth was set
    size_t right;      // position of right brace that matches left brace
    string id;         // identifier extracted from source code
@@ -147,29 +151,33 @@ void Lexer::CalcDepths()
       {
       case '{':
          //
-         //  Finalize the depth of lines since START.  This will mark this
-         //  this line as a continuation, since there isn't an immediately
-         //  preceding semicolon.  Undo this.  Find the matching right brace
-         //  and place it at the same depth.  Unless the brace followed the
-         //  keyword "namespace", increase the depth.
+         //  Finalize the depth of lines since START.  Comments between curr_
+         //  and the next parse position will be at depth NEXT.  The { gets
+         //  marked as a continuation because a semicolon doesn't immediately
+         //  precede it.  Fix this.  Find the matching right brace and put it
+         //  at the same depth.  Increase the depth unless the { followed the
+         //  keyword "namespace".
          //
-         SetDepth(depth, start);
+         next = (ns ? depth : depth + 1);
+         ns = false;
+         SetDepth(start, depth, next);
          line_[GetLineNum(curr_)].cont = false;
          right = FindClosing('{', '}', curr_ + 1);
          line_[GetLineNum(right)].depth = depth;
-         if(!ns) ++depth;
-         ns = false;
+         depth = next;
          Advance(1);
          break;
 
       case '}':
          //
-         //  Finalize the depth of lines since START.  Continue at the depth
-         //  of this brace, which was set when its left brace was encountered.
+         //  Finalize the depth of lines since START.  Comments between curr_
+         //  and the next parse position will be at the depth of the }, which
+         //  was set when its left brace was encountered.
          //
+         next = line_[GetLineNum(curr_)].depth;
          en = false;
-         SetDepth(depth, start);
-         depth = line_[GetLineNum(curr_)].depth;
+         SetDepth(start, depth, next);
+         depth = next;
          Advance(1);
          break;
 
@@ -178,7 +186,7 @@ void Lexer::CalcDepths()
          //  Finalize the depth of lines since START unless a for statement is
          //  open.  Clear NS to handle the case "using namespace <name>".
          //
-         SetDepth(depth, start);
+         SetDepth(start, depth, depth);
          ns = false;
          Advance(1);
          break;
@@ -187,8 +195,8 @@ void Lexer::CalcDepths()
          //
          //  Take operators one character at a time so as not to skip over a
          //  brace or semicolon.  If this isn't an operator character, bypass
-         //  it using FindIdentifier, which also skips over numeric, string,
-         //  and character literals.
+         //  it using FindIdentifier, which also skips string and character
+         //  literals.
          //
          if(ValidOpChars.find_first_of(c) != string::npos)
          {
@@ -198,11 +206,27 @@ void Lexer::CalcDepths()
          {
             switch(ClassifyIndent(id))
             {
-            case IndentNumeric:
+            case IndentResume:
                //
-               //  The parse position has already advanced to the next position
-               //  after the numeric.
+               //  The parse position has already advanced to the next parse
+               //  position.
                //
+               continue;
+
+            case IndentCase:
+               //
+               //  "default:" is also treated as a case label, but continue
+               //  if the keyword is specifying a defaulted function.  Put a
+               //  case label at DEPTH - 1 and treat it as if it ends with a
+               //  semicolon so that the code that follows will not be seen
+               //  as a continuation.
+               //
+               Advance(id.size());
+               if(CurrChar() == ';') continue;
+               curr_ = FindFirstOf(":");
+               line_[GetLineNum(curr_)].depth = depth - 1;
+               SetDepth(start, depth, depth);
+               Advance(1);
                continue;
 
             case IndentFor:
@@ -215,7 +239,7 @@ void Lexer::CalcDepths()
                if(NextCharIs('('))
                {
                   curr_ = FindClosing('(', ')');
-                  SetDepth(depth, start);
+                  SetDepth(start, depth, depth);
                   Advance(1);
                }
                continue;
@@ -230,28 +254,24 @@ void Lexer::CalcDepths()
                line_[line].depth = 0;
                curr_ = source_->find(CRLF, curr_);
                if(curr_ == string::npos) curr_ = size_ - 1;
-               SetDepth(depth, start);
+               SetDepth(start, depth, depth);
                Advance(1);
                continue;
             }
 
             case IndentControl:
             {
-               //
-               //  If this keyword is not followed by a colon, it is controlling
-               //  the visiblity of a base class and can be handled like a normal
-               //  identifier.  If it is followed by a colon, it controls the
-               //  visibility of the following members.  Put it at DEPTH - 1 and
-               //  treat it as if it ends with a semicolon so that the code that
-               //  follows will not be treated as a continuation.
+               //  If this keyword is not followed by a colon, it controls the
+               //  visiblity of a base class and can be handled like a normal
+               //  identifier.  If it *is* followed by a colon, it controls the
+               //  visibility of the members that follow.  Put it at DEPTH - 1
+               //  and treat it as if it ends with a semicolon so that the code
+               //  that follows will not be treated as a continuation.
                //
                Advance(id.size());
-               auto pos = curr_;
-               if(!NextCharIs(':')) continue;
-               curr_ = pos;
-               auto line = GetLineNum(curr_);
-               line_[line].depth = depth - 1;
-               SetDepth(depth, start);
+               if(CurrChar() != ':') continue;
+               line_[GetLineNum(curr_)].depth = depth - 1;
+               SetDepth(start, depth, depth);
                Advance(1);
                continue;
             }
@@ -265,14 +285,13 @@ void Lexer::CalcDepths()
 
             case IndentEnum:
             {
-               //
                //  Set this flag to prevent enumerators from being treated as
                //  continuations and advance to the left brace.
                //
                en = true;
                auto left = FindFirstOf("{");
                curr_ = left - 1;
-               SetDepth(depth, start);
+               SetDepth(start, depth, depth);
                Advance(1);
                continue;
             }
@@ -287,7 +306,7 @@ void Lexer::CalcDepths()
                {
                   auto end = FindFirstOf(",}");
                   curr_ = (source_->at(end) == ',' ? end : end - 1);
-                  SetDepth(depth, start);
+                  SetDepth(start, depth, depth);
                   Advance(1);
                   continue;
                }
@@ -301,7 +320,7 @@ void Lexer::CalcDepths()
    //  Set the depth for any remaining lines and reinitialize the lexer.
    //
    curr_ = size_ - 1;
-   SetDepth(depth, start);
+   SetDepth(start, depth, depth);
    Reposition(0);
 }
 
@@ -507,9 +526,11 @@ size_t Lexer::FindFirstOf(const string& targs) const
 
 fn_name Lexer_FindIdentifier = "Lexer.FindIdentifier";
 
-bool Lexer::FindIdentifier(string& id, bool numeric)
+bool Lexer::FindIdentifier(string& id, bool tokenize)
 {
    Debug::ft(Lexer_FindIdentifier);
+
+   if(tokenize) id = "$";  // returned if non-identifier found
 
    while(curr_ < size_)
    {
@@ -521,11 +542,13 @@ bool Lexer::FindIdentifier(string& id, bool numeric)
       case QUOTE:
          curr_ = SkipStrLiteral(curr_, f);
          Advance(1);
+         if(tokenize) return true;
          continue;
 
       case APOSTROPHE:
          curr_ = SkipCharLiteral(curr_);
          Advance(1);
+         if(tokenize) return true;
          continue;
 
       default:
@@ -537,6 +560,7 @@ bool Lexer::FindIdentifier(string& id, bool numeric)
 
          if(CxxChar::Attrs[c].validOp)
          {
+            if(tokenize) return true;
             id = NextOperator();
             Advance(id.size());
             continue;
@@ -549,9 +573,8 @@ bool Lexer::FindIdentifier(string& id, bool numeric)
             if(GetNum(num))
             {
                num.release();
-               if(!numeric) continue;
-               id = "0";
-               return true;
+               if(tokenize) return true;
+               continue;
             }
          }
 
@@ -989,7 +1012,7 @@ bool Lexer::GetNum(TokenPtr& item)
 
    if(!CxxChar::Attrs[c].validInt)
    {
-      auto tags = IntLiteral::Tags(IntLiteral::DEC, false, IntLiteral::SIZE_I);
+      IntLiteral::Tags tags(IntLiteral::DEC, false, IntLiteral::SIZE_I);
       auto value = CxxChar::Attrs[CurrChar()].intValue;
       if(value < 0) return false;
       item.reset(new IntLiteral(value, tags));
@@ -1033,7 +1056,7 @@ bool Lexer::GetNum(TokenPtr& item)
       long double fp = num;
       GetFloat(fp);
 
-      auto tags = FloatLiteral::Tags(false, FloatLiteral::SIZE_D);
+      FloatLiteral::Tags tags(false, FloatLiteral::SIZE_D);
 
       if(ThisCharIs('E') || ThisCharIs('e'))
       {
@@ -1094,7 +1117,7 @@ bool Lexer::GetNum(TokenPtr& item)
       }
    }
 
-   auto tags = IntLiteral::Tags(radix, uns, size);
+   IntLiteral::Tags tags(radix, uns, size);
    item.reset(new IntLiteral(num, tags));
    return Advance();
 }
@@ -1790,7 +1813,7 @@ void Lexer::Preprocess()
    auto scope = Singleton< CxxRoot >::Instance()->GlobalNamespace();
    string id;
 
-   while(FindIdentifier(id))
+   while(FindIdentifier(id, false))
    {
       if(id.front() == '#')
       {
@@ -1859,7 +1882,7 @@ bool Lexer::Retreat(size_t pos)
 
 //------------------------------------------------------------------------------
 
-void Lexer::SetDepth(int8_t depth, size_t& start)
+void Lexer::SetDepth(size_t& start, int8_t depth1, int8_t depth2)
 {
    //  START is the last position where a new line of code started, and curr_
    //  has finalized the depth of that code.  Each line from START to the one
@@ -1868,16 +1891,26 @@ void Lexer::SetDepth(int8_t depth, size_t& start)
    //  range, the subsequent ones are continuations of the first.
    //
    auto begin = GetLineNum(start);
+   auto mid = GetLineNum(curr_);
    start = NextPos(curr_ + 1);
    if(start == string::npos) start = size_ - 1;
    auto end = GetLineNum(start);
 
-   for(auto i = begin; i < end; ++i)
+   for(auto i = begin; i <= mid; ++i)
    {
-      if(line_[i].depth == -1)
+      if(line_[i].depth == DEPTH_NOT_SET)
       {
-         line_[i].depth = depth;
+         line_[i].depth = depth1;
          line_[i].cont = (i != begin);
+      }
+   }
+
+   for(auto i = mid + 1; i < end; ++i)
+   {
+      if(line_[i].depth == DEPTH_NOT_SET)
+      {
+         line_[i].depth = depth2;
+         line_[i].cont = (i != mid + 1);
       }
    }
 }

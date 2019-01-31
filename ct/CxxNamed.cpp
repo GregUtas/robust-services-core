@@ -1543,7 +1543,7 @@ StackArg DataSpec::ResultType() const
          if(target != nullptr) result = target;
       }
 
-      auto arg = StackArg(result, tags_.PtrCount(true));
+      StackArg arg(result, tags_.PtrCount(true));
       if(tags_.IsConst()) arg.SetAsConst();
       if(tags_.IsConstPtr() == 1) arg.SetAsConstPtr();
       return arg;
@@ -2479,7 +2479,7 @@ TypeName::TypeName(const TypeName& that) : CxxNamed(that),
 
       for(auto a = that.args_->cbegin(); a != that.args_->cend(); ++a)
       {
-         auto arg = TypeSpecPtr((*a)->Clone());
+         TypeSpecPtr arg((*a)->Clone());
          arg->CopyContext(a->get());
          args_->push_back(std::move(arg));
       }

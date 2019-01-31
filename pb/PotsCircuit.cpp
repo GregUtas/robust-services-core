@@ -39,7 +39,7 @@ namespace PotsBase
 {
 const PotsCircuit::SignalEntry PotsCircuit::NilSignalEntry = { };
 
-int PotsCircuit::StateCount_[] = { };
+int PotsCircuit::StateCount_[] = { 0 };
 
 //------------------------------------------------------------------------------
 

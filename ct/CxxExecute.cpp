@@ -180,8 +180,12 @@ bool Context::CheckPos_ = false;
 
 //------------------------------------------------------------------------------
 
+fn_name Context_ClearBreakpoints = "Context.ClearBreakpoints";
+
 void Context::ClearBreakpoints()
 {
+   Debug::ft(Context_ClearBreakpoints);
+
    Breakpoints_.clear();
 }
 
@@ -198,6 +202,8 @@ void Context::DisplayBreakpoints(ostream& stream, const string& prefix)
    for(auto b = Breakpoints_.cbegin(); b != Breakpoints_.cend(); ++b)
    {
       stream << prefix << b->file->Name() << ": line " << b->line + 1 << CRLF;
+      auto source = b->file->GetLexer().GetNthLine(b->line);
+      stream << spaces(2) << source << CRLF;
    }
 }
 
@@ -215,9 +221,13 @@ void Context::Enter(const CxxScoped* owner)
 
 //------------------------------------------------------------------------------
 
+fn_name Context_EraseBreakpoint = "Context.EraseBreakpoint";
+
 void Context::EraseBreakpoint(const CodeFile* file, size_t line)
 {
-   auto loc = SourceLoc(file, line);
+   Debug::ft(Context_EraseBreakpoint);
+
+   SourceLoc loc(file, line);
    Breakpoints_.erase(loc);
 }
 
@@ -231,9 +241,13 @@ const Parser* Context::GetParser()
 
 //------------------------------------------------------------------------------
 
+fn_name Context_InsertBreakpoint = "Context.InsertBreakpoint";
+
 void Context::InsertBreakpoint(const CodeFile* file, size_t line)
 {
-   auto loc = SourceLoc(file, line);
+   Debug::ft(Context_InsertBreakpoint);
+
+   SourceLoc loc(file, line);
    Breakpoints_.insert(loc);
 }
 
@@ -321,7 +335,7 @@ void Context::PushParser(const Parser* parser)
 {
    Debug::ft(Context_PushParser);
 
-   auto frame = ParseFramePtr(new ParseFrame(parser));
+   ParseFramePtr frame(new ParseFrame(parser));
    Frame_ = frame.get();
    Frames_.push_back(std::move(frame));
 }
@@ -536,7 +550,7 @@ void Context::WasCalled(Function* func)
 
    if(func == nullptr) return;
    func->WasCalled();
-   auto arg = StackArg(func, 0);
+   StackArg arg(func, 0);
    Trace(CxxTrace::INCR_CALLS, arg);
 }
 
@@ -957,7 +971,7 @@ StackArg StackArg::AutoType_ = NilStackArg;
 
 fn_name StackArg_ctor1 = "StackArg.ctor";
 
-StackArg::StackArg(CxxToken* t, TagCount p) :
+StackArg::StackArg(CxxToken* t, TagCount p, bool ctor) :
    item(t),
    via_(nullptr),
    ptrs_(p),
@@ -968,6 +982,7 @@ StackArg::StackArg(CxxToken* t, TagCount p) :
    invoke_(false),
    this_(false),
    implicit_(false),
+   ctor_(ctor),
    read_(false)
 {
    Debug::ft(StackArg_ctor1);
@@ -988,6 +1003,7 @@ StackArg::StackArg(Function* f) :
    invoke_(true),
    this_(false),
    implicit_(false),
+   ctor_(false),
    read_(false)
 {
    Debug::ft(StackArg_ctor2);
@@ -1008,6 +1024,7 @@ StackArg::StackArg(CxxToken* t, const StackArg& via, Cxx::Operator op) :
    invoke_(false),
    this_(false),
    implicit_(false),
+   ctor_(false),
    read_(false)
 {
    Debug::ft(StackArg_ctor3);
@@ -1070,7 +1087,7 @@ void StackArg::AssignedTo(const StackArg& that, AssignmentType type) const
    auto restricted = false;
 
    if(thatPtrs > 0)
-      restricted = true;
+      restricted = (this->Ptrs(true) > 0);  // allows const int to pointer
    else if(thatRefs > 0)
       restricted = ((type != Copied) || that.item->IsInitializing());
 

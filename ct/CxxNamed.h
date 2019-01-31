@@ -1009,7 +1009,7 @@ class TypeSpec : public CxxNamed
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~TypeSpec() { }
+   virtual ~TypeSpec() = default;
 
    //  Sets the type of item to which the type belongs.
    //

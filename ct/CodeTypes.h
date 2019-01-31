@@ -469,8 +469,10 @@ enum Warning
    DebugFtNotFirst,          // function invokes Debug::ft after first statement
    DebugFtNameMismatch,      // function name for Debug::ft is incorrect
    DebugFtNameDuplicated,    // function name for Debug::ft used previously
-   DisplayNotOverridden,     // class should override Base.Display
-   PatchNotOverridden,       // class should override Object.Patch
+   DisplayNotOverridden,     // class does not override Base.Display
+   PatchNotOverridden,       // class does not override Object.Patch
+   FunctionCouldBeDefaulted, // empty special member function defined
+   InitCouldUseConstructor,  // initialization uses oper= instead of constructor
    Warning_N                 // number of warnings
 };
 
@@ -491,7 +493,7 @@ enum LineType
    Code,                  // source code
    Blank,                 // blank lines
    EmptyComment,          // //
-   LicenseComment,        // //  FileName.ext or license information
+   LeadingComment,        // comment at top of file, before any code
    SeparatorComment,      // //# (# = repeated -, =, or /)
    TaggedComment,         // //@ (@ = any character except -, =, or /)
    TextComment,           // //  text
@@ -512,6 +514,35 @@ enum LineType
 //  Inserts a string for TYPE into STREAM.
 //
 std::ostream& operator<<(std::ostream& stream, LineType type);
+
+//  Attributes of a line type.
+//
+struct LineTypeAttr
+{
+   //  The line contains code.
+   //
+   const bool isCode;
+
+   //  The line contains code that is "executed" after it is parsed.
+   //
+   const bool isExecutable;
+
+   //  The line can be merged with another line.
+   //
+   const bool isMergeable;
+
+   //  The lne is considered to be blank.
+   //
+   const bool isBlank;
+
+   //  The array that contains the above attributes for each line type.
+   //
+   static const LineTypeAttr Attrs[LineType_N + 1];
+private:
+   //  Constructs a line type with the specified attributes.
+   //
+   LineTypeAttr(bool code, bool exe, bool merge, bool blank);
+};
 
 //------------------------------------------------------------------------------
 //

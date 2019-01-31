@@ -77,7 +77,7 @@ public:
    //
    void Deregister();
 
-   //  Initates connection setup to remAdddr.  Returns 0 on success.  If
+   //  Initiates connection setup to remAdddr.  Returns 0 on success.  If
    //  the socket is non-blocking, reports success immediately; the socket
    //  then queues outgoing messages until the connection is accepted.
    //

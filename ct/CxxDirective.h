@@ -41,7 +41,7 @@ class CxxDirective : public CxxNamed
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~CxxDirective() { }
+   virtual ~CxxDirective() = default;
 
    //  Overridden to prevent a log when a directive appears inside a function.
    //
@@ -65,7 +65,7 @@ class SymbolDirective : public CxxDirective
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~SymbolDirective() { }
+   virtual ~SymbolDirective() = default;
 
    //  Overridden to return the symbol's name.
    //
@@ -387,7 +387,7 @@ class Optional : public CxxDirective
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~Optional() { }
+   virtual ~Optional() = default;
 protected:
    //  Protected because this class is virtual.
    //
@@ -403,7 +403,7 @@ class OptionalCode : public Optional
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~OptionalCode() { }
+   virtual ~OptionalCode() = default;
 
    //  Invoked when it is determined that the code following the directive
    //  should not be compiled.
@@ -462,7 +462,7 @@ class Conditional : public OptionalCode
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~Conditional() { }
+   virtual ~Conditional() = default;
 
    //  Overridden to add a condition to the directive.
    //
@@ -504,7 +504,7 @@ class Existential : public OptionalCode
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~Existential() { }
+   virtual ~Existential() = default;
 
    //  Overridden to add an #else to the directive.
    //
@@ -726,7 +726,7 @@ class StringDirective : public CxxDirective
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~StringDirective() { }
+   virtual ~StringDirective() = default;
 
    //  Returns the text that follows the directive.
    //

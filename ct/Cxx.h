@@ -326,7 +326,7 @@ struct CxxChar
    //
    int8_t octValue;
 
-   //  Initalizes Attrs.
+   //  Initializes Attrs.
    //
    static void Initialize();
 
@@ -381,7 +381,7 @@ struct CxxOp
    const bool overloadable;
 
    //  Set if the operator is pushed when the operator on top of the stack
-   //  hasthe same priority.  This is known as right-to-left associativity
+   //  has the same priority.  This is known as right-to-left associativity
    //  and prevents, for example, **a from trying to execute the first *
    //  before an argument has been pushed onto the stack.
    //
@@ -424,8 +424,8 @@ public:
 
    //  Sets each attribute.
    //
-   Numeric(NumericType type, size_t width, bool sign)
-      : type_(type), bitWidth_(width), signed_(sign) { }
+   Numeric(NumericType type, size_t width, bool sign) :
+      type_(type), bitWidth_(width), signed_(sign) { }
 
    //  Returns the basic type.
    //

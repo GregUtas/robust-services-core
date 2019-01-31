@@ -104,7 +104,7 @@ private:
 HANDLE StackInfo::Process = nullptr;
 SYMBOL_INFO* StackInfo::Symbols = nullptr;
 WORD StackInfo::Depth = 0;
-void* StackInfo::Frames[MaxFrames] = { };
+void* StackInfo::Frames[MaxFrames] = { nullptr };
 IMAGEHLP_LINE64 StackInfo::Source = { };
 
 //------------------------------------------------------------------------------

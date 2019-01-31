@@ -304,7 +304,7 @@ class Literal : public CxxToken
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~Literal() { }
+   virtual ~Literal() = default;
 
    //  Overridden to set the type for an "auto" variable.
    //

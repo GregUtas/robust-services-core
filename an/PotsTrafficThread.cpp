@@ -282,7 +282,7 @@ TrafficCallPool::~TrafficCallPool()
 //==============================================================================
 
 const msecs_t TrafficCall::DelayMsecs_[] = {2000, 3500, 5000, 7500};
-int TrafficCall::StateCount_[] = { };
+int TrafficCall::StateCount_[] = { 0 };
 size_t TrafficCall::CallId_ = 1;
 
 //------------------------------------------------------------------------------

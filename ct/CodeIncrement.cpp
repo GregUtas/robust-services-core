@@ -108,7 +108,7 @@ class LibraryCommand : public CliCommand
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~LibraryCommand();
+   virtual ~LibraryCommand() = default;
 
    //  Reads the rest of the input line and returns the result of
    //  evaluating it.
@@ -123,8 +123,6 @@ protected:
 
 LibraryCommand::LibraryCommand(const char* comm, const char* help) :
    CliCommand(comm, help) { }
-
-LibraryCommand::~LibraryCommand() { }
 
 fn_name LibraryCommand_Evaluate = "LibraryCommand.Evaluate";
 
@@ -213,9 +211,9 @@ class ClearText : public CliText
 public: ClearText();
 };
 
-class ShowText : public CliText
+class ListText : public CliText
 {
-public: ShowText();
+public: ListText();
 };
 
 class ActionParm : public CliTextParm
@@ -228,7 +226,7 @@ public:
    static const id_t Insert = 1;
    static const id_t Remove = 2;
    static const id_t Clear = 3;
-   static const id_t Show = 4;
+   static const id_t List = 4;
 };
 
 fixed_string InsertTextStr = "insert";
@@ -242,14 +240,14 @@ fixed_string RemoveTextExpl = "delete breakpoint";
 RemoveText::RemoveText() : CliText(RemoveTextExpl, RemoveTextStr) { }
 
 fixed_string ClearTextStr = "clear";
-fixed_string ClearTextExpl = "clear all breakpoints";
+fixed_string ClearTextExpl = "delete all breakpoints";
 
 ClearText::ClearText() : CliText(ClearTextExpl, ClearTextStr) { }
 
-fixed_string ShowTextStr = "show";
-fixed_string ShowTextExpl = "show breakpoints";
+fixed_string ListTextStr = "list";
+fixed_string ListTextExpl = "list breakpoints";
 
-ShowText::ShowText() : CliText(ShowTextExpl, ShowTextStr) { }
+ListText::ListText() : CliText(ListTextExpl, ListTextStr) { }
 
 fixed_string ActionExpl = "action...";
 
@@ -258,7 +256,7 @@ ActionParm::ActionParm() : CliTextParm(ActionExpl)
    BindText(*new InsertText, ActionParm::Insert);
    BindText(*new RemoveText, ActionParm::Remove);
    BindText(*new ClearText, ActionParm::Clear);
-   BindText(*new ShowText, ActionParm::Show);
+   BindText(*new ListText, ActionParm::List);
 }
 
 class FileNameParm : public CliTextParm
@@ -309,7 +307,7 @@ word BreakCommand::ProcessCommand(CliThread& cli) const
       Context::ClearBreakpoints();
       return cli.Report(0, SuccessExpl);
 
-   case ActionParm::Show:
+   case ActionParm::List:
       cli.EndOfInput(false);
       Context::DisplayBreakpoints(*cli.obuf, spaces(2));
       return 0;
@@ -337,24 +335,12 @@ word BreakCommand::ProcessCommand(CliThread& cli) const
    }
 
    auto source = file->GetLexer().GetNthLine(line - 1);
+   auto type =file->GetLineType(line - 1);
 
-   switch(file->GetLineType(line - 1))
+   if(!LineTypeAttr::Attrs[type].isExecutable)
    {
-   case Blank:
-   case EmptyComment:
-   case LicenseComment:
-   case SeparatorComment:
-   case TaggedComment:
-   case TextComment:
-   case SlashAsteriskComment:
-   case OpenBrace:
-   case CloseBrace:
-   case CloseBraceSemicolon:
       *cli.obuf << source << CRLF;
-      return cli.Report(-3, "That line does not contain source code.");
-
-   case LineType_N:
-      return cli.Report(-3, "The file does not contain that many lines.");
+      return cli.Report(-3, "That line does not contain executable code.");
    }
 
    *cli.obuf << spaces(2) << source << CRLF;

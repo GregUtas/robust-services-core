@@ -386,8 +386,7 @@ LibrarySet* Library::Evaluate(const string& expr, size_t pos) const
       curr = next;
    }
 
-   auto interpreter =
-      std::unique_ptr< Interpreter >(new Interpreter(expr, pos));
+   std::unique_ptr< Interpreter > interpreter(new Interpreter(expr, pos));
    auto set = interpreter->Evaluate();
    interpreter.reset();
    return set;
@@ -405,7 +404,7 @@ word Library::Export(ostream& stream, const string& opts) const
    {
       auto root = Singleton< CxxRoot >::Instance();
       auto gns = root->GlobalNamespace();
-      auto options = Flags(FQ_Mask | NS_Mask);
+      Flags options(FQ_Mask | NS_Mask);
       if(opts.find(ItemStatistics) != string::npos) options.set(DispStats);
 
       stream << "NAMESPACE VIEW" << CRLF << CRLF;

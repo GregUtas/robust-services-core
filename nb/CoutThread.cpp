@@ -123,11 +123,9 @@ void CoutThread::Spool(ostringstreamPtr& stream)
       return;
    }
 
-   //  Send a copy of the output to the console transcript file.
+   //  Copy the output to the console transcript file.
    //
-   auto filename = CliRegistry::ConsoleFileName() + ".txt";
-   ostringstreamPtr clone(new std::ostringstream(stream->str()));
-   FileThread::Spool(filename, clone);
+   FileThread::Record(stream->str());
 
    //  Forward the stream to our thread.  This must be done unpreemptably
    //  because both this function (which runs on the client thread) and

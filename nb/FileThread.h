@@ -51,11 +51,14 @@ public:
    static void Spool(const std::string& name,
       ostringstreamPtr& stream, bool trunc = false);
 
-   //  Outputs STR to the file identified by NAME.  Adds an "CRLF" if EOL
-   //  is set.
+   //  Outputs S to the file identified by NAME.  Adds an "CRLF" if EOL is set.
    //
    static void Spool(const std::string& name,
       const std::string& s, bool eol = false);
+
+   //  Outputs S to the console transcript file.  Adds an "CRLF" if EOL is set.
+   //
+   static void Record(const std::string& s, bool eol = false);
 
    //  Clears the contents of the file identified by NAME.
    //

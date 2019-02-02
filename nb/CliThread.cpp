@@ -137,6 +137,7 @@ char CliThread::CharPrompt
    char text[COUT_LENGTH_MAX];
 
    //  Output the query until the user enters a character in CHARS.
+   //  Echo the user's input to the console transcript file.
    //
    while(true)
    {
@@ -154,6 +155,8 @@ char CliThread::CharPrompt
       auto count = CinThread::GetLine(text, COUT_LENGTH_MAX);
 
       if(count < 0) return '\0';
+
+      FileThread::Record(text, true);
 
       if(count == 1)
       {
@@ -427,20 +430,21 @@ fn_name CliThread_OpenInputFile = "CliThread.OpenInputFile";
 word CliThread::OpenInputFile(const string& name, string& expl)
 {
    Debug::ft(CliThread_OpenInputFile);
-
-   if(++inIndex_ < InSize)
+   
+   if(++inIndex_ >= InSize)
    {
-      auto path = Element::InputPath() + PATH_SEPARATOR + name + ".txt";
-      in_[inIndex_] = SysFile::CreateIstream(path.c_str());
-      if(in_[inIndex_] != nullptr) return 0;
-
-      expl = NoFileExpl;
-      return -2;
+      --inIndex_;
+      expl = TooManyInputStreams;
+      return -7;
    }
 
+   auto path = Element::InputPath() + PATH_SEPARATOR + name + ".txt";
+   in_[inIndex_] = SysFile::CreateIstream(path.c_str());
+   if(in_[inIndex_] != nullptr) return 0;
+
    --inIndex_;
-   expl = TooManyInputStreams;
-   return -7;
+   expl = NoFileExpl;
+   return -2;
 }
 
 //------------------------------------------------------------------------------

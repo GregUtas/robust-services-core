@@ -339,7 +339,7 @@ std::streamsize CliBuffer::GetLine(const CliThread& cli)
    {
       size_ = CinThread::GetLine(buff_, BuffSize);
       if(size_ <= 0) return size_;
-      FileThread::Spool(CliRegistry::ConsoleFileName() + ".txt", buff_, true);
+      FileThread::Record(buff_, true);
       return ScanLine(cli);
    }
 

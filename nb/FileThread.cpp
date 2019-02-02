@@ -24,6 +24,7 @@
 #include <ios>
 #include <iosfwd>
 #include <sstream>
+#include "CliRegistry.h"
 #include "Clock.h"
 #include "Debug.h"
 #include "Element.h"
@@ -245,6 +246,16 @@ void FileThread::Enter()
 void FileThread::Patch(sel_t selector, void* arguments)
 {
    Thread::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name FileThread_Record = "FileThread.Record";
+
+void FileThread::Record(const std::string& s, bool eol)
+{
+   auto name = CliRegistry::ConsoleFileName() + ".txt";
+   Spool(name, s, eol);
 }
 
 //------------------------------------------------------------------------------

@@ -555,20 +555,31 @@ void Editor::DebugFtCode
    Debug::ft(Editor_DebugFtCode);
 
    //  Assemble the following:
-   //  fname: the function's name
-   //  sname: the name of the scope in which the function appears
-   //  dname: the name for the fn_name string literal
-   //  dslit: the string literal that identifies the function
+   //  o fname: the function's name
+   //  o sname: the name of the scope in which the function appears
+   //  o dslit: the string literal that identifies the function
+   //  o dname: the name for the fn_name string literal
    //
    auto fname = func->DebugName();
    auto sname = *func->GetScope()->Name();
-   auto dname = sname;
-   if(!sname.empty()) dname.push_back('_');
-   dname.append(fname);
+
    string dslit = QUOTE + sname;
    if(!sname.empty()) dslit.push_back('.');
    dslit.append(fname);
    dslit.push_back(QUOTE);
+
+   auto dname = sname;
+   if(!sname.empty()) dname.push_back('_');
+   if(func->FuncType() == FuncOperator)
+   {
+      //  Something like "class_operator=" won't pass as an identifier, so use
+      //  "class_operatorN", where N is the integer value of the Operator enum.
+      //
+      auto oper = CxxOp::NameToOperator(fname);
+      fname.erase(strlen(OPERATOR_STR));
+      fname.append(std::to_string(oper));
+   }
+   dname.append(fname);
    defn = "fn_name";
    defn.push_back(SPACE);
    defn.append(dname);
@@ -758,14 +769,41 @@ word Editor::EraseAdjacentSpaces(const WarningLog& log, string& expl)
    auto pos = code.find_first_not_of(WhitespaceChars);
    if(pos == string::npos) return 0;
 
+   //  If this line has a trailing comment that is aligned with one on the
+   //  previous or the next line, keep the comments aligned by moving the
+   //  erased spaces immediately to the left of the comment.
+   //
+   auto move = false;
+   auto comm = code.find_first_of("//");
+
+   if(comm != string::npos)
+   {
+      if(s != source_.begin())
+      {
+         auto prev = std::prev(s);
+         move = (comm == prev->code.find_first_of("//"));
+      }
+
+      if(!move)
+      {
+         auto next = std::next(s);
+         if(next != source_.end())
+         {
+            move = (comm == next->code.find_first_of("//"));
+         }
+      }
+   }
+
    //  Don't erase adjacent spaces that precede a trailing comment.
    //
-   auto stop = code.find_first_of("//");
+   auto stop = comm;
 
    if(stop != string::npos)
       while(IsBlank(code[stop - 1])) --stop;
    else
       stop = code.size();
+
+   comm = stop;  // (comm - stop) will be number of erased spaces
 
    while(pos + 1 < stop)
    {
@@ -780,6 +818,7 @@ word Editor::EraseAdjacentSpaces(const WarningLog& log, string& expl)
       }
    }
 
+   if(move) code.insert(stop, string(comm - stop, SPACE));
    return Changed(s, expl);
 }
 
@@ -2103,15 +2142,18 @@ bool Editor::IsSorted2(const string& line1, const string& line2)
    //
    auto pos1 = line1.find_first_of(FrontChars);
    auto pos2 = line2.find_first_of(FrontChars);
-   if(pos2 == string::npos) return true;
-   if(pos1 == string::npos) return false;
+   if((pos2 == string::npos) && (pos1 != string::npos)) return true;
+   if((pos1 == string::npos) && (pos2 != string::npos)) return false;
    auto c1 = line1[pos1];
    auto c2 = line2[pos2];
    auto group1 = FrontChars.find(c1);
    auto group2 = FrontChars.find(c2);
    if(group1 < group2) return true;
-   if(group1 == group2) return (strCompare(line1, line2) <= 0);
-   return false;
+   if(group1 > group2) return false;
+   auto cmp = strCompare(line1, line2);
+   if(cmp < 0) return true;
+   if(cmp > 0) return false;
+   return (&line1 < &line2);
 }
 
 //------------------------------------------------------------------------------

@@ -2560,7 +2560,7 @@ void CodeFile::Scan()
 
          if((t != EmptyComment) && (t != SlashAsteriskComment))
          {
-            t = LeadingComment;
+            lineType_[n] = LeadingComment;
          }
       }
    }

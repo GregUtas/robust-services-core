@@ -430,7 +430,7 @@ fn_name CliThread_OpenInputFile = "CliThread.OpenInputFile";
 word CliThread::OpenInputFile(const string& name, string& expl)
 {
    Debug::ft(CliThread_OpenInputFile);
-   
+
    if(++inIndex_ >= InSize)
    {
       --inIndex_;

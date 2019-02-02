@@ -25,7 +25,6 @@
 #include <istream>
 #include <sstream>
 #include "CinThread.h"
-#include "CliRegistry.h"
 #include "CliThread.h"
 #include "CoutThread.h"
 #include "Debug.h"

@@ -254,6 +254,8 @@ fn_name FileThread_Record = "FileThread.Record";
 
 void FileThread::Record(const std::string& s, bool eol)
 {
+   Debug::ft(FileThread_Record);
+
    auto name = CliRegistry::ConsoleFileName() + ".txt";
    Spool(name, s, eol);
 }

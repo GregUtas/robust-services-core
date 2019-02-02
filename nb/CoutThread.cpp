@@ -24,7 +24,6 @@
 #include <ostream>
 #include <sstream>
 #include <string>
-#include "CliRegistry.h"
 #include "Clock.h"
 #include "Debug.h"
 #include "FileThread.h"

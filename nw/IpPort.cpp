@@ -97,7 +97,7 @@ IpPortStats::~IpPortStats()
 
 fn_name IpPort_ctor = "IpPort.ctor";
 
-IpPort::IpPort(ipport_t port, IpService* service) :
+IpPort::IpPort(ipport_t port, const IpService* service) :
    port_(port),
    service_(service),
    handler_(nullptr),
@@ -177,7 +177,7 @@ void IpPort::BytesSent(size_t count) const
 
 fn_name IpPort_CreateAppSocket = "IpPort.CreateAppSocket";
 
-SysSocket* IpPort::CreateAppSocket(size_t rxSize, size_t txSize)
+SysSocket* IpPort::CreateAppSocket()
 {
    Debug::ft(IpPort_CreateAppSocket);
 

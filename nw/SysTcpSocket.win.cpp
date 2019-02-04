@@ -26,6 +26,7 @@
 #include "Debug.h"
 #include "NwTrace.h"
 #include "SysIpL3Addr.h"
+#include "TcpIpService.h"
 
 //------------------------------------------------------------------------------
 
@@ -144,7 +145,7 @@ word SysTcpSocket::Poll(SysTcpSocket* sockets[], size_t count, msecs_t msecs)
 
    //  Create an array for the sockets and their flags.
    //
-   auto list = std::unique_ptr< pollfd[] >(new pollfd[count]);
+   std::unique_ptr< pollfd[] > list(new pollfd[count]);
 
    if(list == nullptr) return sockets[0]->SetError(WSA_NOT_ENOUGH_MEMORY);
 
@@ -258,6 +259,45 @@ word SysTcpSocket::Send(const byte_t* data, size_t len)
 
    TraceEvent(NwTrace::Send, sent);
    return sent;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SysTcpSocket_SetService = "SysTcpSocket.SetService";
+
+SysSocket::AllocRc SysTcpSocket::SetService
+   (const IpService* service, bool shared)
+{
+   Debug::ft(SysTcpSocket_SetService);
+
+   //  Configure SERVICE's socket settings followed by its TCP settings.
+   //
+   auto rc = SysSocket::SetService(service, shared);
+   if(rc != AllocOk) return rc;
+
+   bool alive = static_cast< const TcpIpService* >(service)->Keepalive();
+
+   if(setsockopt(Socket(), SOL_SOCKET, SO_KEEPALIVE,
+      (const char*) &alive, sizeof(alive)) == SOCKET_ERROR)
+   {
+      SetError();
+      return SetOptionError;
+   }
+
+   bool val;
+   int valsize = sizeof(val);
+
+   if(getsockopt(Socket(), SOL_SOCKET, SO_KEEPALIVE,
+      (char*) &val, &valsize) == SOCKET_ERROR)
+   {
+      SetError();
+      return GetOptionError;
+   }
+
+   if(val != alive)
+      Debug::SwLog(SysTcpSocket_SetService, val, alive);
+
+   return AllocOk;
 }
 }
 #endif

@@ -22,9 +22,13 @@
 #ifndef NWTYPES_H_INCLUDED
 #define NWTYPES_H_INCLUDED
 
+#include <cstddef>
 #include <cstdint>
 #include <iosfwd>
 #include <memory>
+#include "SysTypes.h"
+
+using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 
@@ -73,6 +77,18 @@ uint16_t htons(uint16_t hostshort);
 uint64_t ntohll(uint32_t netllong);
 uint32_t ntohl(uint32_t netlong);
 uint16_t ntohs(uint16_t netshort);
+
+//  Converts SIZE bytes, starting at SRC, to network order.  WORD is the
+//  number of bytes in the application protocol's alignment size: 0 or 1
+//  (unchanged), 2 (htons), 4 (htonl), or 8 (htonll).
+//
+void HostToNetwork(byte_t* start, size_t size, uint8_t word);
+
+//  Copies SIZE bytes from SRC to DEST, converting them from network to host
+//  order.  WORD is number of bytes in the application protocol's alignment
+//  size: 0 or 1 (memcpy), 2 (ntohs), 4 (ntohl), or 8 (ntohll).
+//
+void NetworkToHost(byte_t* dest, const byte_t* src, size_t size, uint8_t word);
 
 //  Forward declarations.
 //

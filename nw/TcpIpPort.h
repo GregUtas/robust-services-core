@@ -36,7 +36,7 @@ class TcpIpPort : public IpPort
 public:
    //  See IpPort's constructor.
    //
-   TcpIpPort(ipport_t port, IpService* service);
+   TcpIpPort(ipport_t port, const IpService* service);
 
    //  Not subclassed.
    //
@@ -51,9 +51,8 @@ private:
    virtual IoThread* CreateIoThread() override;
 
    //  Overridden to create a TCP socket for an application instance.
-   //  Setting txSize to zero disables buffering of outgoing messages.
    //
-   virtual SysSocket* CreateAppSocket(size_t rxSize, size_t txSize) override;
+   virtual SysSocket* CreateAppSocket() override;
 };
 }
 #endif

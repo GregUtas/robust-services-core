@@ -25,9 +25,13 @@
 #include "IoThread.h"
 #include <cstddef>
 #include "Array.h"
-#include "NbTypes.h"
 #include "NwTypes.h"
 #include "SysTypes.h"
+
+namespace NetworkBase
+{
+   class TcpIpService;
+}
 
 //------------------------------------------------------------------------------
 
@@ -42,12 +46,10 @@ public:
    //
    static const size_t MaxConns;
 
-   //  Creates an I/O thread that will receive TCP messages.  fdSize is the
-   //  number of simultaneous connections to support.  The other arguments
-   //  are described in the base class.
+   //  Creates an I/O thread that will receive TCP messages on
+   //  behalf of SERVICE.
    //
-   TcpIoThread(Faction faction, ipport_t port,
-      size_t rxSize, size_t txSize, size_t fdSize);
+   TcpIoThread(const TcpIpService* service, ipport_t port);
 
    //  Overridden to claim IpBuffers queued for output.
    //

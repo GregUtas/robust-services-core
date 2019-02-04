@@ -58,7 +58,7 @@ public:
 
    //  Returns the port's service.
    //
-   IpService* GetService() const { return service_; }
+   const IpService* GetService() const { return service_; }
 
    //  Returns the port's input handler.
    //
@@ -81,13 +81,12 @@ public:
    //
    bool SetSocket(SysSocket* socket);
 
-   //  Creates a socket for an application instance.  rxSize and txSize specify
-   //  the size of the incoming and outgoing buffers, respectively.  The socket
-   //  is registered with the port's I/O thread, which uses Poll() to receive
-   //  its messages.  The default version returns nullptr and is overridden by
-   //  a port that supports a socket for each application instance.
+   //  Creates a socket for an application instance.  The socket is registered
+   //  with the port's I/O thread, which uses Poll() to receive its messages.
+   //  The default version returns nullptr and is overridden by a port that
+   //  supports a socket for each application instance.
    //
-   virtual SysSocket* CreateAppSocket(size_t rxSize, size_t txSize);
+   virtual SysSocket* CreateAppSocket();
 
    //  Invoked after COUNT bytes were received.
    //
@@ -153,7 +152,7 @@ protected:
    //  passes them to an input handler created by SERVICE.  Protected because
    //  this class is virtual.
    //
-   IpPort(ipport_t port, IpService* service);
+   IpPort(ipport_t port, const IpService* service);
 
    //  Creates an I/O thread for the port.  The default version
    //  generates a fatal log and must be overridden by a subclass
@@ -182,11 +181,11 @@ private:
 
    //  The port number associated with this entry.
    //
-   ipport_t port_;
+   const ipport_t port_;
 
    //  The port's service.
    //
-   IpService* service_;
+   const IpService* const service_;
 
    //  The port's input handler.
    //

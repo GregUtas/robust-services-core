@@ -141,7 +141,6 @@ void Lexer::CalcDepths()
    size_t start = 0;  // last position whose depth was set
    size_t right;      // position of right brace that matches left brace
    string id;         // identifier extracted from source code
-   TokenPtr token;    // for GetNum
 
    while(curr_ < size_)
    {
@@ -1536,24 +1535,6 @@ void Lexer::Initialize(const string* source)
    }
 
    Advance();
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Lexer_IsValidIdentifier = "Lexer.IsValidIdentifier";
-
-bool Lexer::IsValidIdentifier(const string& id)
-{
-   Debug::ft(Lexer_IsValidIdentifier);
-
-   if(!CxxChar::Attrs[id.front()].validFirst) return false;
-
-   for(size_t i = 1; i < id.size(); ++i)
-   {
-      if(!CxxChar::Attrs[id.at(i)].validNext) return false;
-   }
-
-   return true;
 }
 
 //------------------------------------------------------------------------------

@@ -27,6 +27,11 @@
 #include "NwTypes.h"
 #include "SysTypes.h"
 
+namespace NetworkBase
+{
+   class UdpIpService;
+}
+
 //------------------------------------------------------------------------------
 
 namespace NetworkBase
@@ -44,11 +49,10 @@ public:
    //
    static size_t MaxUdpSize() { return MaxUdpSize_; }
 
-   //  Allocates a socket that will send and receive on PORT.  RXSIZE and
-   //  TXSIZE specify the size of the socket's receive and send buffers.
-   //  RC is updated to indicate success or failure.
+   //  Allocates a socket that will send and receive on PORT, on behalf
+   //  of SERVICE.  RC is updated to indicate success or failure.
    //
-   SysUdpSocket(ipport_t port, size_t rxSize, size_t txSize, AllocRc& rc);
+   SysUdpSocket(ipport_t port, const UdpIpService* service, AllocRc& rc);
 
    //  Closes the socket.  Not subclassed.
    //

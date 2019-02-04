@@ -23,10 +23,13 @@
 #define UDPIOTHREAD_H_INCLUDED
 
 #include "IoThread.h"
-#include <cstddef>
-#include "NbTypes.h"
 #include "NwTypes.h"
 #include "SysTypes.h"
+
+namespace NetworkBase
+{
+   class UdpIpService;
+}
 
 //------------------------------------------------------------------------------
 
@@ -37,10 +40,10 @@ namespace NetworkBase
 class UdpIoThread : public IoThread
 {
 public:
-   //  Creates an I/O thread that will receive UDP messages.  The arguments
-   //  are described in the base class.
+   //  Creates an I/O thread that will receive UDP messages on
+   //  behalf of SERVICE.
    //
-   UdpIoThread(Faction faction, ipport_t port, size_t rxSize, size_t txSize);
+   UdpIoThread(const UdpIpService* service, ipport_t port);
 
    //  Overridden for patching.
    //

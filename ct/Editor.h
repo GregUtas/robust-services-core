@@ -119,10 +119,8 @@ private:
    word EraseSemicolon(const WarningLog& log, string& expl);
    word EraseConst(const WarningLog& log, string& expl);
    word InsertIncludeGuard(const WarningLog& log, string& expl);
-   word SortIncludes(const WarningLog& log, string& expl);
    word InsertInclude(const WarningLog& log, string& expl);
    word EraseInclude(const WarningLog& log, string& expl);
-   word ResolveUsings(const WarningLog& log, string& expl);
    word ReplaceUsing(const WarningLog& log, string& expl);
    word InsertUsing(const WarningLog& log, string& expl);
    word EraseUsing(const WarningLog& log, string& expl);
@@ -153,6 +151,14 @@ private:
    word ChangeDebugFtName(const WarningLog& log, string& expl);
    word TagAsDefaulted(const WarningLog& log, string& expl);
    word InitByConstructor(const WarningLog& log, string& expl);
+
+   //  Sorts #include directives in standard order.
+   //
+   word SortIncludes(string& expl);
+
+   //  Qualifies symbols so that using statements can be removed.
+   //
+   word ResolveUsings();
 
    //  Replaces multiple blank lines with a single blank line.  Always invoked
    //  on source that was changed.
@@ -199,6 +205,7 @@ private:
       Iter iter;   // location in SourceList
       size_t pos;  // position in iter->code
 
+      explicit CodeLocation(const Iter& i) : iter(i), pos(string::npos) { }
       CodeLocation(const Iter& i, size_t p) : iter(i), pos(p) { }
    };
 
@@ -283,11 +290,11 @@ private:
    void InsertPrefix(const Iter& iter, size_t pos, const string& prefix);
 
    //  Inserts a line break before POS, indents the new line accordingly,
-   //  and returns the location of the new line.  Returns source_.end() if
-   //  a line break was not inserted because the new line would have been
-   //  empty.
+   //  and returns the location of the first non-blank character on the new
+   //  line.  Returns {iter, pos} if a line break was not inserted because
+   //  the new line would have been empty.
    //
-   Iter InsertLineBreak(const Iter& iter, size_t pos);
+   CodeLocation InsertLineBreak(const Iter& iter, size_t pos);
 
    //  Deletes the line break at the end of the line referenced by ITER if
    //  the following line will also fit within LINE_LENGTH_MAX.  Returns
@@ -308,15 +315,6 @@ private:
    //  Returns source_.end() if the last line was an #include.
    //
    Iter IncludesEnd();
-
-   //  Returns true if the file contains no #include.
-   //
-   bool IncludesEmpty();
-
-   //  Returns the location of the last #include.  Returns source_end() if
-   //  no #includ was found.
-   //
-   Iter IncludesBack();
 
    //  Find the first line of code (other than #include directives, forward
    //  declarations, and using statements).  Moves up past any comments that
@@ -368,9 +366,10 @@ private:
    void QualifyReferent(const CxxNamed* item, const CxxNamed* ref);
 
    //  Indents the code referenced by ITER.  SPLIT is set a line break was
-   //  just inserted to create a new line.
+   //  just inserted to create a new line.  Returns the new position of the
+   //  first non-blank character.
    //
-   void Indent(const Iter& iter, bool split);
+   size_t Indent(const Iter& iter, bool split);
 
    //  Supplies the code for a Debug::Ft fn_name definition and invocation.
    //

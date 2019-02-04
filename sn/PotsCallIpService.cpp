@@ -26,7 +26,6 @@
 #include "CfgParmRegistry.h"
 #include "Debug.h"
 #include "Formatters.h"
-#include "IoThread.h"
 #include "IpPortCfgParm.h"
 #include "Singleton.h"
 
@@ -92,26 +91,4 @@ CliText* PotsCallIpService::CreateText() const
 
    return new PotsCallServiceText;
 }
-
-//------------------------------------------------------------------------------
-
-Faction PotsCallIpService::GetFaction() const { return PayloadFaction; }
-
-//------------------------------------------------------------------------------
-
-fixed_string PotsCallIpServiceName = "POTS Call";
-
-const char* PotsCallIpService::Name() const { return PotsCallIpServiceName; }
-
-//------------------------------------------------------------------------------
-
-ipport_t PotsCallIpService::Port() const { return ipport_t(port_); }
-
-//------------------------------------------------------------------------------
-
-size_t PotsCallIpService::RxSize() const { return IoThread::MaxRxBuffSize; }
-
-//------------------------------------------------------------------------------
-
-size_t PotsCallIpService::TxSize() const { return IoThread::MaxTxBuffSize; }
 }

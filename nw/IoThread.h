@@ -69,12 +69,10 @@ public:
    //
    virtual void Patch(sel_t selector, void* arguments) override;
 protected:
-   //  Creates an I/O thread that runs in FACTION and receives messages on
-   //  PORT.  PORT's socket will have a receive buffer of RXSIZE bytes and
-   //  a transmit buffer of TXSIZE bytes.  Protected because this class is
-   //  virtual.
+   //  Creates an I/O thread that receives messages on PORT, on behalf of
+   //  SERVICE.  Protected because this class is virtual.
    //
-   IoThread(Faction faction, ipport_t port, size_t rxSize, size_t txSize);
+   IoThread(const IpService* service, ipport_t port);
 
    //  Protected to restrict deletion.  Virtual to allow subclassing.
    //

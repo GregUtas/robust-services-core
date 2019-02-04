@@ -35,10 +35,10 @@ namespace CodeTools
    //
    typedef std::vector< std::string > stringVector;
 
-   //  Returns true if FILE ends in EXT.  Prefixes a '.' to EXT before
-   //  searching FILE.
+   //  Returns the last string that follows a '.' in FILE.  Returns an empty
+   //  strng if FILE contains no '.'
    //
-   bool FileExtensionIs(const std::string& file, const std::string& ext);
+   std::string GetFileExtension(const std::string& file);
 
    //  Returns the filename in PATH.  If PATH contains a forward or backward
    //  slash, the filename that follows it is extracted.  Any extension is
@@ -51,10 +51,18 @@ namespace CodeTools
    //
    bool PathIncludes(const std::string& path, const std::string& dir);
 
+   //  Returns true if FILE is a code file.
+   //
+   bool IsCodeFile(const std::string& name);
+
    //  Returns the index of the string in SV that matches S.  If no string
    //  in SV matches S, returns string::npos.
    //
    size_t FindIndex(const stringVector& sv, const std::string& s);
+
+   //  Returns true if ID, in its entirety, is a valid identifier.
+   //
+   bool IsValidIdentifier(const std::string& id);
 
    //  Returns S after converting endlines to spaces and compressing adjacent
    //  spaces.

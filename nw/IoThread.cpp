@@ -46,12 +46,12 @@ const size_t IoThread::MaxTxBuffSize = 64 * 1024;  // 64KB
 
 fn_name IoThread_ctor = "IoThread.ctor";
 
-IoThread::IoThread(Faction faction, ipport_t port,
-   size_t rxSize, size_t txSize) : Thread(faction),
+IoThread::IoThread(const IpService* service, ipport_t port) :
+   Thread(service->GetFaction()),
    port_(port),
    ipPort_(nullptr),
-   rxSize_(rxSize),
-   txSize_(txSize),
+   rxSize_(service->RxSize()),
+   txSize_(service->TxSize()),
    recvs_(0),
    ticks0_(0),
    buffer_(nullptr)
@@ -167,7 +167,7 @@ void IoThread::InvokeHandler(const IpPort& port,
    {
       byte_t* dest = nullptr;
       MsgSize rcvd = size;
-      auto buff = IpBufferPtr(handler->AllocBuff(source, size, dest, rcvd));
+      IpBufferPtr buff(handler->AllocBuff(source, size, dest, rcvd));
       if(buff == nullptr) return;
       if(rcvd == 0) return;
 
@@ -195,7 +195,7 @@ void IoThread::InvokeHandler(const IpPort& port,
       //  Copy RCVD bytes from SOURCE to DEST and pass the message to
       //  the input handler.
       //
-      Memory::Copy(dest, source, rcvd);
+      NetworkToHost(dest, source, rcvd, port.GetService()->WordSize());
       buff->SetRxAddr(rxAddr_);
       buff->SetTxAddr(txAddr_);
       buff->SetRxTicks(ticks0_);

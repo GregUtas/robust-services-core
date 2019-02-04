@@ -13,32 +13,33 @@
 //
 //  Windows sockets and networking
 //
-const uint16_t AF_INET = 2;
-const int      SOCK_STREAM = 1;
-const int      SOCK_DGRAM = 2;
-const uint32_t IPPROTO_TCP = 6;
-const uint32_t IPPROTO_UDP = 17;
-const uint32_t INADDR_ANY = 0x0;
-const uint32_t INADDR_LOOPBACK = 0x7f000001;
-const uint32_t INADDR_NONE = 0xffffffff;
+constexpr uint16_t AF_INET = 2;
+constexpr int      SOCK_STREAM = 1;
+constexpr int      SOCK_DGRAM = 2;
+constexpr uint32_t IPPROTO_TCP = 6;
+constexpr uint32_t IPPROTO_UDP = 17;
+constexpr uint32_t INADDR_ANY = 0x0;
+constexpr uint32_t INADDR_LOOPBACK = 0x7f000001;
+constexpr uint32_t INADDR_NONE = 0xffffffff;
 
 typedef uintptr_t SOCKET;
-const SOCKET INVALID_SOCKET = 0;
+constexpr SOCKET INVALID_SOCKET = 0;
 
-const int NO_ERROR = 0;
-const int SOCKET_ERROR = -1;
+constexpr int NO_ERROR = 0;
+constexpr int SOCKET_ERROR = -1;
 
-const int SD_SEND = 1;
-const int SD_BOTH = 2;
-const int SOMAXCONN = 0x7fffffff;
+constexpr int SD_SEND = 1;
+constexpr int SD_BOTH = 2;
+constexpr int SOMAXCONN = 0x7fffffff;
 
-const uint16_t SOL_SOCKET = 0xffff;
-const uint16_t SO_SNDBUF = 0x1001;
-const uint16_t SO_RCVBUF = 0x1002;
-const uint16_t SO_MAX_MSG_SIZE = 0x2003;
+constexpr uint16_t SOL_SOCKET = 0xffff;
+constexpr uint16_t SO_KEEPALIVE = 0x0008;
+constexpr uint16_t SO_SNDBUF = 0x1001;
+constexpr uint16_t SO_RCVBUF = 0x1002;
+constexpr uint16_t SO_MAX_MSG_SIZE = 0x2003;
 
-const u_long FIONBIO = 126;
-const u_long FIONREAD = 127;
+constexpr u_long FIONBIO = 126;
+constexpr u_long FIONREAD = 127;
 
 struct sockaddr
 { 
@@ -71,13 +72,13 @@ struct addrinfo
    addrinfo* ai_next;
 };
 
-const int POLLERR = 0x0001;
-const int POLLHUP = 0x0002;
-const int POLLNVAL = 0x0004;
-const int POLLWRNORM = 0x0010;
-const int POLLWRBAND = 0x0020;
-const int POLLRDNORM = 0x0100;
-const int POLLRDBAND = 0x0200;
+constexpr int POLLERR = 0x0001;
+constexpr int POLLHUP = 0x0002;
+constexpr int POLLNVAL = 0x0004;
+constexpr int POLLWRNORM = 0x0010;
+constexpr int POLLWRBAND = 0x0020;
+constexpr int POLLRDNORM = 0x0100;
+constexpr int POLLRDBAND = 0x0200;
 
 struct pollfd
 {
@@ -123,9 +124,9 @@ struct WSAData
    char* lpVendorInfo;
 };
 
-const int WSA_NOT_ENOUGH_MEMORY = 8;
-const int WSAEWOULDBLOCK = 10035;
-const int WSAENOPROTOOPT = 10042;
+constexpr int WSA_NOT_ENOUGH_MEMORY = 8;
+constexpr int WSAEWOULDBLOCK = 10035;
+constexpr int WSAENOPROTOOPT = 10042;
 
 int WSAStartup(WORD versionRequested, WSAData* data);
 int WSAGetLastError();

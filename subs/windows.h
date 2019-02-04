@@ -25,8 +25,8 @@ uint8_t LOBYTE(WORD w);
 uint8_t HIBYTE(WORD w);
 DWORD   GetLastError();
 
-const int ERROR_NOT_ENOUGH_MEMORY = 8;
-const int ERROR_NOT_OWNER = 288;
+constexpr int ERROR_NOT_ENOUGH_MEMORY = 8;
+constexpr int ERROR_NOT_OWNER = 288;
 
 //------------------------------------------------------------------------------
 //
@@ -55,7 +55,7 @@ errno_t localtime_s(tm* Tm, const time_t* Time);
 //  Windows heaps
 //
 typedef int32_t HRESULT;
-const   HRESULT S_OK = 0;
+constexpr HRESULT S_OK = 0;
 typedef uint64_t SIZE_T;
 
 HANDLE  GetProcessHeap();
@@ -70,10 +70,10 @@ bool    HeapDestroy(HANDLE heap);
 //
 //  Windows synchronization
 //
-const uint32_t INFINITE = 0xffffffff;
-const uint32_t WAIT_OBJECT_0 = 0;
-const uint32_t WAIT_ABANDONED = 0x80;
-const uint32_t WAIT_TIMEOUT = 258;
+constexpr uint32_t INFINITE = 0xffffffff;
+constexpr uint32_t WAIT_OBJECT_0 = 0;
+constexpr uint32_t WAIT_ABANDONED = 0x80;
+constexpr uint32_t WAIT_TIMEOUT = 258;
 
 DWORD  WaitForSingleObject(HANDLE handle, DWORD msecs);
 HANDLE CreateMutex(void* EventAttributes, bool initialOwner, const wchar_t* name);
@@ -86,13 +86,13 @@ bool   SetEvent(HANDLE Event);
 //
 //  Windows threads
 //
-const int32_t THREAD_PRIORITY_BELOW_NORMAL = -1;
-const int32_t THREAD_PRIORITY_NORMAL = 0;
-const int32_t THREAD_PRIORITY_ABOVE_NORMAL = 1;
-const int32_t THREAD_PRIORITY_HIGHEST = 2;
+constexpr int32_t THREAD_PRIORITY_BELOW_NORMAL = -1;
+constexpr int32_t THREAD_PRIORITY_NORMAL = 0;
+constexpr int32_t THREAD_PRIORITY_ABOVE_NORMAL = 1;
+constexpr int32_t THREAD_PRIORITY_HIGHEST = 2;
 
-const DWORD DUPLICATE_SAME_ACCESS = 0x00000002;
-const DWORD HIGH_PRIORITY_CLASS = 0x00000080;
+constexpr DWORD DUPLICATE_SAME_ACCESS = 0x00000002;
+constexpr DWORD HIGH_PRIORITY_CLASS = 0x00000080;
 
 HANDLE  GetCurrentProcess();
 bool    DuplicateHandle(HANDLE SourceProcessHandle, HANDLE SourceHandle,
@@ -111,28 +111,28 @@ bool    SetThreadPriority(HANDLE Thread, int Priority);
 //
 //  Windows structured exceptions
 //
-const uint32_t DBG_CONTROL_C                   = 0x40010005;
-const uint32_t DBG_CONTROL_BREAK               = 0x40010008;
-const uint32_t STATUS_DATATYPE_MISALIGNMENT    = 0x80000002;
-const uint32_t STATUS_ACCESS_VIOLATION         = 0xC0000005;
-const uint32_t STATUS_IN_PAGE_ERROR            = 0xC0000006;
-const uint32_t STATUS_INVALID_HANDLE           = 0xC0000008;
-const uint32_t STATUS_NO_MEMORY                = 0xC0000017;
-const uint32_t STATUS_ILLEGAL_INSTRUCTION      = 0xC000001D;
-const uint32_t STATUS_NONCONTINUABLE_EXCEPTION = 0xC0000025;
-const uint32_t STATUS_INVALID_DISPOSITION      = 0xC0000026;
-const uint32_t STATUS_ARRAY_BOUNDS_EXCEEDED    = 0xC000008C;
-const uint32_t STATUS_FLOAT_DENORMAL_OPERAND   = 0xC000008D;
-const uint32_t STATUS_FLOAT_DIVIDE_BY_ZERO     = 0xC000008E;
-const uint32_t STATUS_FLOAT_INEXACT_RESULT     = 0xC000008F;
-const uint32_t STATUS_FLOAT_INVALID_OPERATION  = 0xC0000090;
-const uint32_t STATUS_FLOAT_OVERFLOW           = 0xC0000091;
-const uint32_t STATUS_FLOAT_STACK_CHECK        = 0xC0000092;
-const uint32_t STATUS_FLOAT_UNDERFLOW          = 0xC0000093;
-const uint32_t STATUS_INTEGER_DIVIDE_BY_ZERO   = 0xC0000094;
-const uint32_t STATUS_INTEGER_OVERFLOW         = 0xC0000095;
-const uint32_t STATUS_PRIVILEGED_INSTRUCTION   = 0xC0000096;
-const uint32_t STATUS_STACK_OVERFLOW           = 0xC00000FD;
+constexpr uint32_t DBG_CONTROL_C                   = 0x40010005;
+constexpr uint32_t DBG_CONTROL_BREAK               = 0x40010008;
+constexpr uint32_t STATUS_DATATYPE_MISALIGNMENT    = 0x80000002;
+constexpr uint32_t STATUS_ACCESS_VIOLATION         = 0xC0000005;
+constexpr uint32_t STATUS_IN_PAGE_ERROR            = 0xC0000006;
+constexpr uint32_t STATUS_INVALID_HANDLE           = 0xC0000008;
+constexpr uint32_t STATUS_NO_MEMORY                = 0xC0000017;
+constexpr uint32_t STATUS_ILLEGAL_INSTRUCTION      = 0xC000001D;
+constexpr uint32_t STATUS_NONCONTINUABLE_EXCEPTION = 0xC0000025;
+constexpr uint32_t STATUS_INVALID_DISPOSITION      = 0xC0000026;
+constexpr uint32_t STATUS_ARRAY_BOUNDS_EXCEEDED    = 0xC000008C;
+constexpr uint32_t STATUS_FLOAT_DENORMAL_OPERAND   = 0xC000008D;
+constexpr uint32_t STATUS_FLOAT_DIVIDE_BY_ZERO     = 0xC000008E;
+constexpr uint32_t STATUS_FLOAT_INEXACT_RESULT     = 0xC000008F;
+constexpr uint32_t STATUS_FLOAT_INVALID_OPERATION  = 0xC0000090;
+constexpr uint32_t STATUS_FLOAT_OVERFLOW           = 0xC0000091;
+constexpr uint32_t STATUS_FLOAT_STACK_CHECK        = 0xC0000092;
+constexpr uint32_t STATUS_FLOAT_UNDERFLOW          = 0xC0000093;
+constexpr uint32_t STATUS_INTEGER_DIVIDE_BY_ZERO   = 0xC0000094;
+constexpr uint32_t STATUS_INTEGER_OVERFLOW         = 0xC0000095;
+constexpr uint32_t STATUS_PRIVILEGED_INSTRUCTION   = 0xC0000096;
+constexpr uint32_t STATUS_STACK_OVERFLOW           = 0xC00000FD;
 
 typedef void (*_se_translator_function)(uint32_t ErrVal, void* ExceptionPointers);
 _se_translator_function _set_se_translator(_se_translator_function NewPtFunc);
@@ -142,8 +142,8 @@ int _resetstkoflw();
 //
 //  Windows console
 //
-const int SW_MINIMIZE = 6;
-const int SW_RESTORE = 9;
+constexpr int SW_MINIMIZE = 6;
+constexpr int SW_RESTORE = 9;
 
 HANDLE GetConsoleWindow();
 bool ShowWindow(HANDLE window, int mode);

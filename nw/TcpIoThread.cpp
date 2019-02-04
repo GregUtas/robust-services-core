@@ -29,6 +29,7 @@
 #include "IpPort.h"
 #include "IpPortRegistry.h"
 #include "Log.h"
+#include "NbTypes.h"
 #include "NwTrace.h"
 #include "Singleton.h"
 #include "SysIpL3Addr.h"
@@ -48,8 +49,8 @@ const size_t TcpIoThread::MaxConns = 48 * 1024;  // 48K
 
 fn_name TcpIoThread_ctor = "TcpIoThread.ctor";
 
-TcpIoThread::TcpIoThread(Faction faction, ipport_t port, size_t rxSize,
-   size_t txSize, size_t fdSize) : IoThread(faction, port, rxSize, txSize),
+TcpIoThread::TcpIoThread(const TcpIpService* service, ipport_t port) :
+   IoThread(service, port),
    ready_(0),
    curr_(0)
 {
@@ -61,6 +62,8 @@ TcpIoThread::TcpIoThread(Faction faction, ipport_t port, size_t rxSize,
    {
       Debug::SwLog(TcpIoThread_ctor, port_, 0);
    }
+
+   auto fdSize = service->MaxConns();
 
    if(fdSize > MaxConns)
    {
@@ -129,14 +132,11 @@ bool TcpIoThread::AcceptConn()
 
    //  A socket was created for a new connection.  A unique_ptr owns it, so
    //  returning without invoking socket.release() will cause its deletion.
-   //  This occurs if it its buffer sizes cannot be set or if our socket
+   //  This occurs if it cannot be configured for its service or if our socket
    //  array is full.  In those cases, the socket will be immediately closed.
    //  However, a connection request was pending, so return true nonetheless.
    //
-   auto svc = ipPort_->GetService();
-   size_t rxSize, txSize;
-   svc->GetAppSocketSizes(rxSize, txSize);
-   auto rc = socket->SetBuffSizes(rxSize, txSize);
+   auto rc = socket->SetService(ipPort_->GetService(), false);
    if(rc != SysSocket::AllocOk) return true;
    if(!InsertSocket(socket.get())) return true;
    socket.release();
@@ -163,16 +163,15 @@ SysTcpSocket* TcpIoThread::AllocateListener()
 
    //  Allocate a new listener.
    //
+   auto svc = static_cast< const TcpIpService* >(ipPort_->GetService());
    auto rc = SysSocket::AllocFailed;
-   auto socket = SysTcpSocketPtr(new SysTcpSocket(port_, rxSize_, txSize_, rc));
+   SysTcpSocketPtr socket(new SysTcpSocket(port_, svc, rc));
 
    if(socket == nullptr)
       return ListenerError(0);
 
    if(rc != SysSocket::AllocOk)
       return ListenerError(socket->GetError());
-
-   auto svc = static_cast< TcpIpService* >(ipPort_->GetService());
 
    socket->TracePort(NwTrace::Listen, port_, svc->MaxBacklog());
 

@@ -24,6 +24,7 @@
 #include "IpBuffer.h"
 #include "IpPort.h"
 #include "IpPortRegistry.h"
+#include "IpService.h"
 #include "NwTrace.h"
 #include "Singleton.h"
 #include "SysIpL3Addr.h"
@@ -68,10 +69,12 @@ SysSocket::SendRc SysUdpSocket::SendBuff(IpBuffer& buff)
       return SendFailed;
    }
 
-   auto port = buff.TxAddr().GetPort();
+   auto txport = buff.TxAddr().GetPort();
+   auto port = Singleton< IpPortRegistry >::Instance()->GetPort(txport);
    auto& peer = buff.RxAddr();
+   HostToNetwork(start, size, port->GetService()->WordSize());
    auto sent = SendTo(start, size, peer);
-   TracePeer(NwTrace::SendTo, port, peer, sent);
+   TracePeer(NwTrace::SendTo, txport, peer, sent);
 
    if(sent <= 0)
    {
@@ -81,7 +84,7 @@ SysSocket::SendRc SysUdpSocket::SendBuff(IpBuffer& buff)
       return SendFailed;
    }
 
-   Singleton< IpPortRegistry >::Instance()->GetPort(port)->BytesSent(size);
+   port->BytesSent(size);
    return SendOk;
 }
 }

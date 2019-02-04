@@ -31,6 +31,11 @@
 #include "SysDecls.h"
 #include "SysTypes.h"
 
+namespace NetworkBase
+{
+   class TcpIpService;
+}
+
 //------------------------------------------------------------------------------
 
 namespace NetworkBase
@@ -61,12 +66,11 @@ class SysTcpSocket : public SysSocket
 {
    friend SysTcpSocketPtr::deleter_type;
 public:
-   //  Allocates a socket that will send and receive on PORT.  RXSIZE and
-   //  TXSIZE specify the size of the socket's receive and send buffers.
-   //  The socket is made non-blocking.  RC is updated to indicate success
-   //  or failure.
+   //  Allocates a socket that will send and receive on PORT, on behalf of
+   //  SERVICE.  The socket is made non-blocking.  RC is updated to indicate
+   //  success or failure.
    //
-   SysTcpSocket(ipport_t port, size_t rxSize, size_t txSize, AllocRc& rc);
+   SysTcpSocket(ipport_t port, const TcpIpService* service, AllocRc& rc);
 
    //  Invoked by an I/O thread when it adds the socket to its poll array.
    //
@@ -145,6 +149,10 @@ public:
    //  Overridden to indicate that this socket is running TCP.
    //
    virtual IpProtocol Protocol() const override { return IpTcp; }
+
+   //  Overridden to configure the socket for a keepalive if required.
+   //
+   virtual AllocRc SetService(const IpService* service, bool shared) override;
 
    //  Overridden to record that an application has begun to use the socket.
    //

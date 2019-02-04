@@ -31,12 +31,12 @@
 #include "TlvParameter.h"
 #include "TlvProtocol.h"
 #include "UdpIpService.h"
-#include <cstddef>
 #include "Clock.h"
 #include "NbTypes.h"
 #include "NwTypes.h"
 #include "SbTypes.h"
 #include "SysTypes.h"
+#include "TcpIoThread.h"
 
 namespace CallBase
 {
@@ -98,7 +98,7 @@ protected:
 
    //  Protected because subclasses should be singletons.
    //
-   virtual ~CipSignal();
+   virtual ~CipSignal() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -123,7 +123,7 @@ protected:
 
    //  Protected because subclasses should be singletons.
    //
-   virtual ~CipParameter();
+   virtual ~CipParameter() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -297,11 +297,9 @@ class CipUdpService : public UdpIpService
 public:
    //  Overridden to return the service's attributes.
    //
-   virtual const char* Name() const override;
-   virtual ipport_t Port() const override;
-   virtual Faction GetFaction() const override;
-   virtual size_t RxSize() const override;
-   virtual size_t TxSize() const override;
+   virtual const char* Name() const override { return "Call Interworking"; }
+   virtual ipport_t Port() const override { return ipport_t(port_); }
+   virtual Faction GetFaction() const override { return PayloadFaction; }
 private:
    //  Private because this singleton is not subclassed.
    //
@@ -336,20 +334,13 @@ class CipTcpService : public TcpIpService
 {
    friend class Singleton< CipTcpService >;
 public:
-   //> The size of the receive and transmit buffers for an application socket.
-   //
-   static const size_t RxBuffSize = 2048;
-   static const size_t TxBuffSize = 0;
-
    //  Overridden to return the service's attributes.
    //
-   virtual const char* Name() const override;
-   virtual ipport_t Port() const override;
-   virtual Faction GetFaction() const override;
-   virtual size_t RxSize() const override;
-   virtual size_t TxSize() const override;
-   virtual size_t MaxConns() const override;
-   virtual size_t MaxBacklog() const override;
+   virtual const char* Name() const override { return "Call Interworking"; }
+   virtual ipport_t Port() const override { return ipport_t(port_); }
+   virtual Faction GetFaction() const override { return PayloadFaction; }
+   virtual size_t MaxConns() const override { return TcpIoThread::MaxConns; }
+   virtual size_t MaxBacklog() const override { return 200; }
 private:
    //  Private because this singleton is not subclassed.
    //

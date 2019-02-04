@@ -81,10 +81,6 @@ public:
    virtual void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 private:
-   //  Returns true if NAME is a code file.
-   //
-   static bool IsCodeFile(const std::string& name);
-
    //  The directory's identifier in the code base.
    //
    const NodeBase::RegCell did_;

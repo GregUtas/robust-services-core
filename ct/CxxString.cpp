@@ -221,16 +221,6 @@ void Concatenate(string& s)
 
 //------------------------------------------------------------------------------
 
-bool FileExtensionIs(const string& file, const string& ext)
-{
-   auto s = '.' + ext;
-   auto pos = file.rfind(s);
-   if(pos == string::npos) return false;
-   return (pos == file.size() - s.size());
-}
-
-//------------------------------------------------------------------------------
-
 size_t FindIndex(const stringVector& sv, const string& s)
 {
    for(size_t i = 0; i < sv.size(); ++i)
@@ -317,6 +307,16 @@ size_t FindTemplateEnd(const string& name, size_t pos)
 
 //------------------------------------------------------------------------------
 
+string GetFileExtension(const string& file)
+{
+   auto pos = file.rfind('.');
+   if(pos == string::npos) return EMPTY_STR;
+   if(file.back() == '.') return EMPTY_STR;
+   return file.substr(pos + 1);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeTools_GetFileName = "CodeTools.GetFileName";
 
 string GetFileName(const string& path)
@@ -337,6 +337,46 @@ string GetFileName(const string& path)
    }
 
    return file;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeTools_IsCodeFile = "CodeTools.IsCodeFile";
+
+bool IsCodeFile(const string& file)
+{
+   Debug::ft(CodeTools_IsCodeFile);
+
+   //  Besides the usual .h* and .c* extensions, treat a file with
+   //  no extension (e.g. <iosfwd>) as a code file.
+   //
+   auto ext = GetFileExtension(file);
+   if(ext.empty()) return true;
+   if(ext == "h") return true;
+   if(ext == "cpp") return true;
+   if(ext == "c") return true;
+   if(ext == "hxx") return true;
+   if(ext == "cxx") return true;
+   if(ext == "hpp") return true;
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeTools_IsValidIdentifier = "CodeTools.IsValidIdentifier";
+
+bool IsValidIdentifier(const string& id)
+{
+   Debug::ft(CodeTools_IsValidIdentifier);
+
+   if(!CxxChar::Attrs[id.front()].validFirst) return false;
+
+   for(size_t i = 1; i < id.size(); ++i)
+   {
+      if(!CxxChar::Attrs[id.at(i)].validNext) return false;
+   }
+
+   return true;
 }
 
 //------------------------------------------------------------------------------

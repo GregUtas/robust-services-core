@@ -30,6 +30,7 @@
 #include "NwTrace.h"
 #include "Singleton.h"
 #include "SysIpL3Addr.h"
+#include "TcpIpService.h"
 
 using std::ostream;
 using std::string;
@@ -40,8 +41,8 @@ namespace NetworkBase
 {
 fn_name SysTcpSocket_ctor1 = "SysTcpSocket.ctor";
 
-SysTcpSocket::SysTcpSocket(ipport_t port, size_t rxSize, size_t txSize,
-   AllocRc& rc) : SysSocket(port, IpTcp, rxSize, txSize, rc),
+SysTcpSocket::SysTcpSocket(ipport_t port,
+   const TcpIpService* service, AllocRc& rc) : SysSocket(port, service, rc),
    state_(Idle),
    iotActive_(false),
    appActive_(false)
@@ -321,8 +322,10 @@ SysSocket::SendRc SysTcpSocket::SendBuff(IpBuffer& buff)
    //  If no bytes get sent, queue the buffer if the socket was blocked,
    //  else report an error.
    //
+   auto port = Singleton< IpPortRegistry >::Instance()->GetPort(txport);
    byte_t* start = nullptr;
    auto size = buff.OutgoingBytes(start);
+   HostToNetwork(start, size, port->GetService()->WordSize());
    auto sent = Send(start, size);
 
    if(sent <= 0)
@@ -335,8 +338,6 @@ SysSocket::SendRc SysTcpSocket::SendBuff(IpBuffer& buff)
       return SendFailed;
    }
 
-   auto reg = Singleton< IpPortRegistry >::Instance();
-   auto port = reg->GetPort(txport);
    port->BytesSent(size);
    return SendOk;
 }

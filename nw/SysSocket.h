@@ -107,9 +107,14 @@ public:
    //
    bool SetBlocking(bool blocking);
 
-   //  Sets the size of the socket's receive and transmit buffers.
+   //  Configures the socket for use by SERVICE.  SHARED is set if the
+   //  socket is shared by all instances of SERVICE rather than being
+   //  dedicated to a single instance.  The default version sets the
+   //  size of the socket's receive and transmit buffers based on
+   //  o RxSize and TxSize if SHARED is set, and
+   //  o GetAppSocketSizes if SHARED is not set.
    //
-   AllocRc SetBuffSizes(size_t rxSize, size_t txSize);
+   virtual AllocRc SetService(const IpService* service, bool shared);
 
    //  Sends BUFF from the socket.
    //
@@ -158,14 +163,12 @@ public:
    //
    virtual void Patch(sel_t selector, void* arguments) override;
 protected:
-   //  Allocates a socket that will send and receive on PORT, using PROTO.
-   //  If PORT is NilIpPort, the socket is created but is not bound to a
-   //  port.  rxSize and txSize specify the size of the receive and send
-   //  buffers.  RC is updated to indicate success or failure.  Protected
+   //  Allocates a socket that will send and receive on PORT, on behalf of
+   //  SERVICE.  If PORT is NilIpPort, the socket is created but is not bound
+   //  to a port.  RC is updated to indicate success or failure.  Protected
    //  because this class is virtual.
    //
-   SysSocket(ipport_t port, IpProtocol proto,
-      size_t rxSize, size_t txSize, AllocRc& rc);
+   SysSocket(ipport_t port, const IpService* service, AllocRc& rc);
 
    //  Invoked by SysTcpSocket::Accept to wrap a socket that was created
    //  for a new connection.

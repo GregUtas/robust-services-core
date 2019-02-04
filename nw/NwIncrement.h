@@ -39,7 +39,7 @@ class NwClearWhatParm : public ClearWhatParm
 {
 public:
    NwClearWhatParm();
-   virtual ~NwClearWhatParm() { }
+   virtual ~NwClearWhatParm() = default;
 };
 
 class NwClearCommand : public ClearCommand
@@ -54,7 +54,7 @@ public:
    //  Set BIND to false if binding a subclass of NwClearWhatParm.
    //
    explicit NwClearCommand(bool bind = true);
-   virtual ~NwClearCommand() { }
+   virtual ~NwClearCommand() = default;
 protected:
    virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
 };
@@ -67,7 +67,7 @@ class NwExcludeWhatParm : public ExcludeWhatParm
 {
 public:
    NwExcludeWhatParm();
-   virtual ~NwExcludeWhatParm() { }
+   virtual ~NwExcludeWhatParm() = default;
 };
 
 class NwExcludeCommand : public ExcludeCommand
@@ -80,7 +80,7 @@ public:
    //  Set BIND to false if binding a subclass of NwExcludeWhatParm
    //
    explicit NwExcludeCommand(bool bind = true);
-   virtual ~NwExcludeCommand() { }
+   virtual ~NwExcludeCommand() = default;
 protected:
    virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
 };
@@ -93,7 +93,7 @@ class NwIncludeWhatParm : public IncludeWhatParm
 {
 public:
    NwIncludeWhatParm();
-   virtual ~NwIncludeWhatParm() { }
+   virtual ~NwIncludeWhatParm() = default;
 };
 
 class NwIncludeCommand : public IncludeCommand
@@ -106,7 +106,7 @@ public:
    //  Set BIND to false if binding a subclass of NwIncludeWhatParm.
    //
    explicit NwIncludeCommand(bool bind = true);
-   virtual ~NwIncludeCommand() { }
+   virtual ~NwIncludeCommand() = default;
 protected:
    virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
 };
@@ -121,7 +121,7 @@ public:
    //  Set BIND to false if binding a subclass of QueryWhatParm.
    //
    explicit NwQueryCommand(bool bind = true);
-   virtual ~NwQueryCommand() { }
+   virtual ~NwQueryCommand() = default;
 protected:
    virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
 };
@@ -133,8 +133,8 @@ protected:
 class NwStatusCommand : public StatusCommand
 {
 public:
-   NwStatusCommand() { }
-   virtual ~NwStatusCommand() { }
+   NwStatusCommand() = default;
+   virtual ~NwStatusCommand() = default;
 protected:
    virtual word ProcessCommand(CliThread& cli) const override;
 };

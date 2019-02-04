@@ -36,7 +36,7 @@ class UdpIpPort : public IpPort
 public:
    //  See IpPort's constructor.
    //
-   UdpIpPort(ipport_t port, IpService* service);
+   UdpIpPort(ipport_t port, const IpService* service);
 
    //  Not subclassed.
    //

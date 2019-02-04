@@ -167,10 +167,6 @@ public:
    //
    void PreprocessSource() const;
 
-   //  Returns true if ID, in its entirety, is a valid identifier.
-   //
-   static bool IsValidIdentifier(const std::string& id);
-
    //  Returns the next identifier (which could be a keyword).  The first
    //  character not allowed in an identifier finalizes the string.
    //

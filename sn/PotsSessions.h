@@ -55,11 +55,9 @@ class PotsCallIpService : public UdpIpService
 public:
    //  Overridden to return the service's attributes.
    //
-   virtual const char* Name() const override;
-   virtual ipport_t Port() const override;
-   virtual Faction GetFaction() const override;
-   virtual size_t RxSize() const override;
-   virtual size_t TxSize() const override;
+   virtual const char* Name() const override { return "POTS Call"; }
+   virtual ipport_t Port() const override { return ipport_t(port_); }
+   virtual Faction GetFaction() const override { return PayloadFaction; }
 private:
    //  Private because this singleton is not subclassed.
    //

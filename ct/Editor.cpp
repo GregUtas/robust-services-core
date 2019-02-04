@@ -995,14 +995,14 @@ word Editor::EraseSemicolon(const WarningLog& log, string& expl)
    //
    auto s = FindLine(log.line, expl);
    if(s == source_.end()) return 0;
-   auto semi = Find(s, ";");
-   if(semi.pos == string::npos) return NotFound(expl, "Semicolon");
-   auto brace = RfindNonBlank(semi.iter, semi.pos - 1);
+   auto semi = s->code.rfind(';');
+   if(semi == string::npos) return NotFound(expl, "Semicolon");
+   auto brace = RfindNonBlank(s, semi - 1);
    if(brace.pos == string::npos) return NotFound(expl, "Right brace");
    if(brace.iter->code[brace.pos] == '}')
    {
-      semi.iter->code.erase(semi.pos, 1);
-      return Changed(semi.iter, expl);
+      s->code.erase(semi, 1);
+      return Changed(s, expl);
    }
    return NotFound(expl, "Right brace");
 }
@@ -1091,7 +1091,7 @@ Editor::CodeLocation Editor::Find(Iter iter, const string& str, size_t off)
       off = 0;
    }
 
-   return CodeLocation(iter, string::npos);
+   return CodeLocation(iter);
 }
 
 //------------------------------------------------------------------------------
@@ -1107,7 +1107,7 @@ Editor::CodeLocation Editor::FindFirstOf
       off = 0;
    }
 
-   return CodeLocation(iter, string::npos);
+   return CodeLocation(iter);
 }
 
 //------------------------------------------------------------------------------
@@ -1155,7 +1155,7 @@ Editor::CodeLocation Editor::FindNonBlank(Iter iter, size_t pos)
       pos = 0;
    }
 
-   return CodeLocation(iter, string::npos);
+   return CodeLocation(iter);
 }
 
 //------------------------------------------------------------------------------
@@ -1171,9 +1171,9 @@ Editor::CodeLocation Editor::FindPos(size_t pos)
    //
    auto& lexer = file_->GetLexer();
    auto line = lexer.GetLineNum(pos);
-   if(line == string::npos) return CodeLocation(source_.end(), string::npos);
+   if(line == string::npos) return CodeLocation(source_.end());
    auto iter = FindLine(line);
-   if(iter == source_.end()) return CodeLocation(iter, string::npos);
+   if(iter == source_.end()) return CodeLocation(iter);
    auto start = lexer.GetLineStart(line);
    return CodeLocation(iter, pos - start);
 }
@@ -1231,12 +1231,12 @@ Editor::CodeLocation Editor::FindWord
       }
 
       if((range == nullptr) || (--*range == 0))
-         return CodeLocation(source_.end(), string::npos);
+         return CodeLocation(source_.end());
       ++iter;
       pos = 0;
    }
 
-   return CodeLocation(source_.end(), string::npos);
+   return CodeLocation(source_.end());
 }
 
 //------------------------------------------------------------------------------
@@ -1441,14 +1441,14 @@ word Editor::FixWarning(const WarningLog& log, string& expl)
    case IncludeGuardMissing:
       return InsertIncludeGuard(log, expl);
    case IncludeNotSorted:
-      return SortIncludes(log, expl);
+      return SortIncludes(expl);
    case IncludeAdd:
       return InsertInclude(log, expl);
    case IncludeDuplicated:
    case IncludeRemove:
       return EraseInclude(log, expl);
    case HeaderReliesOnUsing:
-      return ResolveUsings(log, expl);
+      return ResolveUsings();
    case UsingInHeader:
       return ReplaceUsing(log, expl);
    case UsingAdd:
@@ -1581,20 +1581,6 @@ LineType Editor::GetLineType(const Iter& iter) const
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_IncludesBack = "Editor.IncludesBack";
-
-Editor::Iter Editor::IncludesBack()
-{
-   Debug::ft(Editor_IncludesBack);
-
-   if(IncludesBegin() == source_.end()) return source_.end();
-   auto s = IncludesEnd();
-   if(s == source_.begin()) return s;
-   return std::prev(s);
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Editor_IncludesBegin = "Editor.IncludesBegin";
 
 Editor::Iter Editor::IncludesBegin()
@@ -1611,13 +1597,6 @@ Editor::Iter Editor::IncludesBegin()
 
 //------------------------------------------------------------------------------
 
-bool Editor::IncludesEmpty()
-{
-   return (IncludesBegin() == source_.end());
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Editor_IncludesEnd = "Editor.IncludesEnd";
 
 Editor::Iter Editor::IncludesEnd()
@@ -1628,7 +1607,13 @@ Editor::Iter Editor::IncludesEnd()
    {
       if(s->code.find(HASH_INCLUDE_STR) == 0) continue;
       if(s->code.find_first_not_of(WhitespaceChars) == string::npos) continue;
-      return s;
+
+      //  We have found something else.  Back up to the last #include
+      //  and return the line that follows it.
+      //
+      --s;
+      while(s->code.find_first_not_of(WhitespaceChars) == string::npos) --s;
+      return ++s;
    }
 
    return source_.end();
@@ -1638,40 +1623,49 @@ Editor::Iter Editor::IncludesEnd()
 
 fn_name Editor_Indent = "Editor.Indent";
 
-void Editor::Indent(const Iter& iter, bool split)
+size_t Editor::Indent(const Iter& iter, bool split)
 {
    Debug::ft(Editor_Indent);
 
    //  Start by erasing all blanks at the beginning of this line.
    //
    auto pos = iter->code.find_first_not_of(WhitespaceChars);
-   if(pos == string::npos) return;
+   if(pos == string::npos) return string::npos;
    iter->code.erase(0, pos);
    if(pos > 0) Changed();
 
    //  Get the line's depth.  If it isn't part of the original code,
    //  consult previous lines until one known to the lexer is found.
    //
-   size_t indent = SIZE_MAX;
+   size_t depth = SIZE_MAX;
    auto curr = iter;
 
    for(NO_OP; curr->line == SIZE_MAX; --curr)
    {
       if(curr == source_.begin())
       {
-         indent = 0;
+         depth = 0;
          break;
       }
    }
 
-   if(indent == SIZE_MAX)
+   if(depth == SIZE_MAX)
    {
-      indent = file_->GetDepth(curr->line);
+      depth = file_->GetDepth(curr->line);
    }
 
-   if(split) ++indent;
-   iter->code.insert(0, indent * INDENT_SIZE, SPACE);
+   if(split)
+   {
+      //  Indent one level unless the new line starts with a left brace.
+      //
+      auto first = iter->code.find_first_not_of(WhitespaceChars);
+      if((first != string::npos) && (iter->code[first] != '{')) ++depth;
+   }
+
+   auto indent = depth * INDENT_SIZE;
+   iter->code.insert(0, indent, SPACE);
    Changed();
+   return indent;
 }
 
 //------------------------------------------------------------------------------
@@ -1816,10 +1810,13 @@ word Editor::InsertDebugFtCall(const WarningLog& log, string& expl)
       }
    }
 
-   //  Insert CALL and a blank line after the left brace.  If something
-   //  followed the left brace, push it down first.
+   //  Insert CALL and a blank line after the left brace.  If the left brace
+   //  wasn't on a new line, push it down first.  If something followed the
+   //  left brace, push it down as well.
    //
-   if(extra) InsertLineBreak(left.iter, left.pos);
+   if(left.iter->code.find_first_not_of(WhitespaceChars) != left.pos)
+      left = InsertLineBreak(left.iter, left.pos);
+   if(extra) InsertLineBreak(left.iter, left.pos + 1);
    auto below = std::next(left.iter);
    below = Insert(below, EMPTY_STR);
    below = Insert(below, call);
@@ -1948,16 +1945,8 @@ word Editor::InsertInclude(string& include, string& expl)
    //
    if(MangleInclude(include, expl) != 0) return 0;
 
-   //  If there are no #include directives, or if the last one should
-   //  precede the new one, insert the new #include at the end of the
-   //  list, else traverse the list and insert it in its proper place.
+   //  Insert the new #include in its sort order.
    //
-   if(IncludesEmpty() || IsSorted2(IncludesBack()->code, include))
-   {
-      auto s = Insert(IncludesEnd(), include);
-      return Changed(s, expl);
-   }
-
    auto end = IncludesEnd();
 
    for(auto s = IncludesBegin(); s != end; ++s)
@@ -1974,7 +1963,18 @@ word Editor::InsertInclude(string& include, string& expl)
       }
    }
 
-   return Report(expl, "Failed to insert #include directive.");
+   //  Add the new #include to the end of the list.  If there is no
+   //  blank line at the end of the list, add one.
+   //
+   auto s = end;
+
+   if(end->code.find_first_not_of(WhitespaceChars) != string::npos)
+   {
+      s = Insert(end, EMPTY_STR);
+   }
+
+   s = Insert(s, include);
+   return Changed(s, expl);
 }
 
 //------------------------------------------------------------------------------
@@ -2005,18 +2005,18 @@ word Editor::InsertIncludeGuard(const WarningLog& log, string& expl)
 
 fn_name Editor_InsertLineBreak1 = "Editor.InsertLineBreak(pos)";
 
-Editor::Iter Editor::InsertLineBreak(const Iter& iter, size_t pos)
+Editor::CodeLocation Editor::InsertLineBreak(const Iter& iter, size_t pos)
 {
    Debug::ft(Editor_InsertLineBreak1);
 
-   if(iter->code.size() <= pos) return source_.end();
+   if(iter->code.size() <= pos) return CodeLocation(source_.end());
    if(iter->code.find_first_not_of(WhitespaceChars, pos) == string::npos)
-      return source_.end();
+      return CodeLocation(iter, pos);
    auto code = iter->code.substr(pos);
    iter->code.erase(pos);
    auto next = Insert(std::next(iter), code);
-   Indent(next, true);
-   return next;
+   auto indent = Indent(next, true);
+   return CodeLocation(next, indent);
 }
 
 //------------------------------------------------------------------------------
@@ -2142,8 +2142,14 @@ bool Editor::IsSorted2(const string& line1, const string& line2)
    //
    auto pos1 = line1.find_first_of(FrontChars);
    auto pos2 = line2.find_first_of(FrontChars);
-   if((pos2 == string::npos) && (pos1 != string::npos)) return true;
-   if((pos1 == string::npos) && (pos2 != string::npos)) return false;
+
+   if(pos2 == string::npos)
+   {
+      if(pos1 == string::npos) return (&line1 < &line2);
+      return true;
+   }
+   else if(pos1 == string::npos) return false;
+
    auto c1 = line1[pos1];
    auto c2 = line2[pos2];
    auto group1 = FrontChars.find(c1);
@@ -2218,7 +2224,7 @@ Editor::CodeLocation Editor::PrevPos(const CodeLocation& curr)
 
    if(prev.iter == source_.begin())
    {
-      return CodeLocation(source_.end(), string::npos);
+      return CodeLocation(source_.end());
    }
 
    while(--prev.iter != source_.begin())
@@ -2228,7 +2234,7 @@ Editor::CodeLocation Editor::PrevPos(const CodeLocation& curr)
       return prev;
    }
 
-   if(prev.iter->code.empty()) return CodeLocation(source_.end(), string::npos);
+   if(prev.iter->code.empty()) return CodeLocation(source_.end());
    prev.pos = prev.iter->code.size() - 1;
    return prev;
 }
@@ -2505,8 +2511,8 @@ word Editor::ReplaceSlashAsterisk(const WarningLog& log, string& expl)
       {
          s->code.erase(pos2, strlen(COMMENT_END_STR));
          Changed();
-         s = InsertLineBreak(s, pos2);
-         return Changed(s, expl);
+         auto loc = InsertLineBreak(s, pos2);
+         return Changed(loc.iter, expl);
       }
       else if((pos3 != string::npos) && (pos4 == string::npos))  // [4]
       {
@@ -2540,7 +2546,7 @@ word Editor::ReplaceUsing(const WarningLog& log, string& expl)
    //  for symbols that appear in its definition and that were resolved by
    //  a using statement.
    //
-   ResolveUsings(log, expl);
+   ResolveUsings();
    return EraseUsing(log, expl);
 }
 
@@ -2548,7 +2554,7 @@ word Editor::ReplaceUsing(const WarningLog& log, string& expl)
 
 fn_name Editor_ResolveUsings = "Editor.ResolveUsings";
 
-word Editor::ResolveUsings(const WarningLog& log, string& expl)
+word Editor::ResolveUsings()
 {
    Debug::ft(Editor_ResolveUsings);
 
@@ -2600,13 +2606,13 @@ word Editor::ResolveUsings(const WarningLog& log, string& expl)
 
 Editor::CodeLocation Editor::Rfind(Iter iter, const string& str, size_t off)
 {
-   if(iter == source_.end()) return CodeLocation(iter, string::npos);
+   if(iter == source_.end()) return CodeLocation(iter);
 
    auto pos = iter->code.rfind(str, off);
 
    while(pos == string::npos)
    {
-      if(iter == source_.begin()) return CodeLocation(source_.end(), pos);
+      if(iter == source_.begin()) return CodeLocation(source_.end());
       --iter;
       pos = iter->code.rfind(str);
    }
@@ -2622,7 +2628,7 @@ Editor::CodeLocation Editor::RfindNonBlank(Iter iter, size_t pos)
 {
    Debug::ft(Editor_RfindNonBlank);
 
-   if(iter == source_.end()) return CodeLocation(iter, string::npos);
+   if(iter == source_.end()) return CodeLocation(iter);
    if(pos == string::npos) pos = iter->code.size();
 
    while(true)
@@ -2637,19 +2643,18 @@ Editor::CodeLocation Editor::RfindNonBlank(Iter iter, size_t pos)
       pos = iter->code.size();
    }
 
-   return CodeLocation(source_.end(), string::npos);
+   return CodeLocation(source_.end());
 }
 
 //------------------------------------------------------------------------------
 
 fn_name Editor_SortIncludes = "Editor.SortIncludes";
 
-word Editor::SortIncludes(const WarningLog& log, string& expl)
+word Editor::SortIncludes(string& expl)
 {
    Debug::ft(Editor_SortIncludes);
 
-   //  LOG specifies an unsorted #include directive.  Just sort all of the
-   //  #includes.
+   //  Just sort the #include directives.
    //
    auto begin = IncludesBegin();
    if(begin == source_.end()) return NotFound(expl, HASH_INCLUDE_STR);

@@ -43,6 +43,10 @@ public:
    //
    virtual size_t MaxBacklog() const = 0;
 
+   //  Returns true if keepalive messages should be used.
+   //
+   virtual bool Keepalive() const { return false; }
+
    //  Overridden to indicate that this service runs over TCP.
    //
    virtual IpProtocol Protocol() const override { return IpTcp; }

@@ -24,6 +24,8 @@
 
 #include "Protected.h"
 #include <cstddef>
+#include <cstdint>
+#include "IoThread.h"
 #include "NbTypes.h"
 #include "NwTypes.h"
 #include "RegCell.h"
@@ -65,13 +67,22 @@ public:
    //
    virtual Faction GetFaction() const = 0;
 
+   //  Returns the protocol's word size in bytes:
+   //  o 0: the protocol itself will convert between network and host order
+   //  o 1: a byte-oriented protocol that does not require conversion
+   //  o 2: a 16-bit protocol for which the base will invoke nthos and htons
+   //  o 4: a 32-bit protocol for which the base will invoke nthol and htonl
+   //  o 8: a 64-bit protocol for which the base will invoke ntholl and htonll
+   //
+   virtual uint8_t WordSize() const { return 0; }
+
    //  Returns the size of the receive buffer for the service's I/O thread.
    //
-   virtual size_t RxSize() const = 0;
+   virtual size_t RxSize() const { return IoThread::MaxRxBuffSize; }
 
    //  Returns the size of the transmit buffer for the service's I/O thread.
    //
-   virtual size_t TxSize() const = 0;
+   virtual size_t TxSize() const { return IoThread::MaxTxBuffSize; }
 
    //  Creates a subclass of CliText for provisioning the service through
    //  the CLI.  [This is not currently invoked but has few overrides that

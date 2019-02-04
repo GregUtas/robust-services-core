@@ -298,7 +298,7 @@ protected:
    //  Creates a macro for the symbol identified by NAME.  Protected
    //  because this class is virtual.
    //
-   explicit Macro(std::string name);
+   explicit Macro(const std::string& name);
 
    //  How many times the macro was referenced.
    //

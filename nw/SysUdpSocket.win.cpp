@@ -24,6 +24,7 @@
 #include <winsock2.h>
 #include "Debug.h"
 #include "SysIpL3Addr.h"
+#include "UdpIpService.h"
 
 //------------------------------------------------------------------------------
 
@@ -31,8 +32,8 @@ namespace NetworkBase
 {
 fn_name SysUdpSocket_ctor = "SysUdpSocket.ctor";
 
-SysUdpSocket::SysUdpSocket(ipport_t port, size_t rxSize, size_t txSize,
-   AllocRc& rc) : SysSocket(port, IpUdp, rxSize, txSize, rc)
+SysUdpSocket::SysUdpSocket(ipport_t port,
+   const UdpIpService* service, AllocRc& rc) : SysSocket(port, service, rc)
 {
    Debug::ft(SysUdpSocket_ctor);
 

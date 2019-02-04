@@ -35,6 +35,7 @@
 #include "CxxArea.h"
 #include "CxxExecute.h"
 #include "CxxScoped.h"
+#include "CxxString.h"
 #include "CxxToken.h"
 #include "Debug.h"
 #include "Lexer.h"
@@ -360,7 +361,7 @@ void CxxRoot::DefineSymbols(std::istream& stream)
    {
       std::getline(stream, input);
 
-      if(Lexer::IsValidIdentifier(input))
+      if(IsValidIdentifier(input))
       {
          ExprPtr exp(nullptr);
          DefinePtr def(new Define(input, exp));

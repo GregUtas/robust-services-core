@@ -99,7 +99,7 @@ bool HostAddrCfg::SetNext(const string& input)
 {
    Debug::ft(HostAddrCfg_SetNext);
 
-   auto addr = SysIpL2Addr(input);
+   SysIpL2Addr addr(input);
    if(!addr.IsValid()) return false;
    return CfgStrParm::SetNext(input);
 }
@@ -310,7 +310,7 @@ SysIpL2Addr IpPortRegistry::HostAddress()
 
    if(SysIpL2Addr::HostName(name))
    {
-      auto host = SysIpL3Addr(name, service, proto);
+      SysIpL3Addr host(name, service, proto);
       HostAddr_ = host;
       return HostAddr_;
    }

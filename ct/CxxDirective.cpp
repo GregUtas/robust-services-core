@@ -667,7 +667,7 @@ void Line::Display(ostream& stream,
 
 fn_name Macro_ctor = "Macro.ctor";
 
-Macro::Macro(string name) :
+Macro::Macro(const string& name) :
    refs_(0),
    name_(name)
 {

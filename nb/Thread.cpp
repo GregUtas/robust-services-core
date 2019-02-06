@@ -999,7 +999,7 @@ fixed_string UnknownExceptionStr = "unknown exception";
 fixed_string ThreadDataStr = "Thread Data:";
 fixed_string TrapDuringRecoveryStr = "Trap during recovery.";
 fixed_string TrapLimitReachedStr = "Trap limit exceeded.";
-fixed_string ClosingConsoleStr = "Closing console in 30 seconds...";
+fixed_string ClosingConsoleStr = "Closing console in 10 seconds...";
 
 //------------------------------------------------------------------------------
 //
@@ -2806,11 +2806,11 @@ main_t Thread::Start()
          if((reason == ManualRestart) &&
             (code == RestartExit) && Element::RunningInLab())
          {
-            //  This shuts the system down.  Wait for 30 seconds
+            //  This shuts the system down.  Wait for 10 seconds
             //  instead of letting the console suddenly vanish.
             //
             CoutThread::Spool(ClosingConsoleStr, true);
-            Pause(30 * TIMEOUT_1_SEC);
+            Pause(10 * TIMEOUT_1_SEC);
             Unlock();
             exit(reason);
          }

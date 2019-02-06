@@ -154,13 +154,17 @@ public:
    //
    virtual AllocRc SetService(const IpService* service, bool shared) override;
 
-   //  Overridden to record that an application has begun to use the socket.
+   //  Invoked by an application when it begins to use the socket.
    //
-   virtual void Acquire() override;
+   virtual void Acquire();
 
-   //  Overridden to record that an application no longer needs the socket.
+   //  Invoked by an application when it no longer requires the socket.
    //
-   virtual void Release() override;
+   virtual void Release();
+
+   //  Returns true if the socket is valid and has not initiated a disconnect.
+   //
+   bool IsOpen() const;
 
    //  Overridden to send BUFF.
    //
@@ -178,6 +182,16 @@ public:
    //  Overridden for patching.
    //
    virtual void Patch(sel_t selector, void* arguments) override;
+protected:
+   //  Initiates a disconnect and disables further sends on the socket.
+   //  Protected so that subclasses can decide how to expose this function.
+   //
+   void Disconnect();
+
+   //  Closes the socket.  Protected so that subclasses can decide how to
+   //  expose this function.
+   //
+   void Close();
 private:
    //  States for TCP sockets.
    //
@@ -207,6 +221,10 @@ private:
    //  The socket's state.
    //
    State state_ : 8;
+
+   //  Set if the socket has initiated a disconnect.
+   //
+   bool disconnecting_;
 
    //  Set if the socket is registered with an I/O thread.
    //

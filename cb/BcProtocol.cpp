@@ -1166,7 +1166,7 @@ CipPsm::~CipPsm()
 
 fn_name CipPsm_CreateAppSocket = "CipPsm.CreateAppSocket";
 
-SysSocket* CipPsm::CreateAppSocket()
+SysTcpSocket* CipPsm::CreateAppSocket()
 {
    Debug::ft(CipPsm_CreateAppSocket);
 

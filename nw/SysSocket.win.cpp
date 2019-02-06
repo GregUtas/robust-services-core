@@ -27,7 +27,6 @@
 #include "Debug.h"
 #include "IpService.h"
 #include "Log.h"
-#include "NwTrace.h"
 
 //------------------------------------------------------------------------------
 
@@ -43,7 +42,6 @@ fn_name SysSocket_ctor2 = "SysSocket.ctor";
 SysSocket::SysSocket(ipport_t port, const IpService* service, AllocRc& rc) :
    socket_(INVALID_SOCKET),
    blocking_(true),
-   disconnecting_(false),
    tracing_(false),
    error_(0)
 {
@@ -89,38 +87,6 @@ SysSocket::SysSocket(ipport_t port, const IpService* service, AllocRc& rc) :
    {
       SetError();
       rc = BindError;
-   }
-}
-
-//------------------------------------------------------------------------------
-
-fn_name SysSocket_Close = "SysSocket.Close";
-
-void SysSocket::Close()
-{
-   Debug::ft(SysSocket_Close);
-
-   if(socket_ != INVALID_SOCKET)
-   {
-      TraceEvent(NwTrace::Close, disconnecting_);
-      if(closesocket(socket_) == SOCKET_ERROR) SetError();
-      socket_ = INVALID_SOCKET;
-   }
-}
-
-//------------------------------------------------------------------------------
-
-fn_name SysSocket_Disconnect = "SysSocket.Disconnect";
-
-void SysSocket::Disconnect()
-{
-   Debug::ft(SysSocket_Disconnect);
-
-   if(!disconnecting_ && (socket_ != INVALID_SOCKET))
-   {
-      TraceEvent(NwTrace::Disconnect, 0);
-      if(shutdown(socket_, SD_SEND) == SOCKET_ERROR) SetError();
-      disconnecting_ = true;
    }
 }
 

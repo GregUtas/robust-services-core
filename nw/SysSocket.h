@@ -77,14 +77,6 @@ public:
    //
    virtual IpProtocol Protocol() const { return IpAny; }
 
-   //  Invoked by an application when it begins to use the socket.
-   //
-   virtual void Acquire() { }
-
-   //  Invoked by an application when it no longer requires the socket.
-   //
-   virtual void Release() { }
-
    //  Nullifies the socket if it is no longer valid.
    //
    void Invalidate();
@@ -92,11 +84,6 @@ public:
    //  Returns true if the socket is valid.
    //
    bool IsValid() const;
-
-   //  Returns true if the socket is valid and has not initiated a
-   //  disconnect sequence.
-   //
-   bool IsOpen() const;
 
    //  Returns true if no bytes are waiting to be read from the socket.
    //
@@ -184,16 +171,6 @@ protected:
    //
    SysSocket_t Socket() const { return socket_; }
 
-   //  Initiates a disconnect and disables further sends on the socket.
-   //  Protected so that subclasses can decide how to expose this function.
-   //
-   void Disconnect();
-
-   //  Closes the socket.  Protected so that subclasses can decide how to
-   //  expose this function.
-   //
-   void Close();
-
    //  Sets the error code for the socket so that it can be obtained for
    //  logging purposes.  If the value is not provided explicitly, it is
    //  obtained from the underlying platform.  Returns -1.
@@ -227,10 +204,6 @@ private:
    //  avoid unnecessary work.
    //
    bool blocking_;
-
-   //  Set if the socket has initiated a disconnect.
-   //
-   bool disconnecting_;
 
    //  Set if this socket is being traced.
    //

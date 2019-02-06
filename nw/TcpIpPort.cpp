@@ -53,7 +53,7 @@ TcpIpPort::~TcpIpPort()
 
 fn_name TcpIpPort_CreateAppSocket = "TcpIpPort.CreateAppSocket";
 
-SysSocket* TcpIpPort::CreateAppSocket()
+SysTcpSocket* TcpIpPort::CreateAppSocket()
 {
    Debug::ft(TcpIpPort_CreateAppSocket);
 

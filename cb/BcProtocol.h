@@ -280,7 +280,7 @@ private:
 
    //  Overridden to create a TCP socket if CIP is using TCP.
    //
-   virtual SysSocket* CreateAppSocket() override;
+   virtual SysTcpSocket* CreateAppSocket() override;
 
    //  Overridden to specify that messages can bypass the IP stack.
    //

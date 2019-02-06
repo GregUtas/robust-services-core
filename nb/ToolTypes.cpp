@@ -21,7 +21,6 @@
 //
 #include "ToolTypes.h"
 #include "NbCliParms.h"
-#include "SysTypes.h"
 
 using std::ostream;
 

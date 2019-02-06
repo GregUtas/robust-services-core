@@ -177,7 +177,7 @@ void IpPort::BytesSent(size_t count) const
 
 fn_name IpPort_CreateAppSocket = "IpPort.CreateAppSocket";
 
-SysSocket* IpPort::CreateAppSocket()
+SysTcpSocket* IpPort::CreateAppSocket()
 {
    Debug::ft(IpPort_CreateAppSocket);
 

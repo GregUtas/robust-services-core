@@ -33,6 +33,12 @@ namespace NetworkBase
 class TcpIpService : public IpService
 {
 public:
+   //  Returns true if the service implements a server capability.
+   //  Overridden to return false if the service does not accept
+   //  incoming connections.
+   //
+   virtual bool AcceptsConns() const { return true; }
+
    //  Returns the maximum number of simultaneous connections for
    //  the service's I/O thread.
    //

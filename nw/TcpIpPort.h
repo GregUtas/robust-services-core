@@ -52,7 +52,7 @@ private:
 
    //  Overridden to create a TCP socket for an application instance.
    //
-   virtual SysSocket* CreateAppSocket() override;
+   virtual SysTcpSocket* CreateAppSocket() override;
 };
 }
 #endif

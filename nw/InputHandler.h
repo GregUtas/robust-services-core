@@ -27,6 +27,11 @@
 #include "NwTypes.h"
 #include "SysTypes.h"
 
+namespace NetworkBase
+{
+   class SysSocket;
+}
+
 using namespace NodeBase;
 
 //------------------------------------------------------------------------------
@@ -108,6 +113,11 @@ public:
    //
    virtual void ReceiveBuff
       (MsgSize size, IpBufferPtr& buff, Faction faction) const;
+
+   //  Invoked by an I/O thread to inform the input handler that SOCKET has
+   //  failed.
+   //
+   virtual void SocketFailed(SysSocket* socket) const { }
 
    //  Overridden to display member variables.
    //

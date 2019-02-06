@@ -44,6 +44,7 @@ fn_name SysTcpSocket_ctor1 = "SysTcpSocket.ctor";
 SysTcpSocket::SysTcpSocket(ipport_t port,
    const TcpIpService* service, AllocRc& rc) : SysSocket(port, service, rc),
    state_(Idle),
+   disconnecting_(false),
    iotActive_(false),
    appActive_(false)
 {
@@ -62,6 +63,7 @@ fn_name SysTcpSocket_ctor2 = "SysTcpSocket.ctor(wrap)";
 
 SysTcpSocket::SysTcpSocket(SysSocket_t socket) : SysSocket(socket),
    state_(Connected),
+   disconnecting_(false),
    iotActive_(false),
    appActive_(false)
 {
@@ -88,6 +90,7 @@ SysTcpSocket::~SysTcpSocket()
    }
 
    ogMsgq_.Purge();
+   Close();
 }
 
 //------------------------------------------------------------------------------
@@ -175,13 +178,25 @@ void SysTcpSocket::Display(ostream& stream,
 {
    SysSocket::Display(stream, prefix, options);
 
-   stream << prefix << "state     : " << state_ << CRLF;
-   stream << prefix << "iotActive : " << iotActive_ << CRLF;
-   stream << prefix << "appActive : " << appActive_ << CRLF;
-   stream << prefix << "inFlags   : " << inFlags_.to_string() << CRLF;
-   stream << prefix << "outFlags  : " << outFlags_.to_string() << CRLF;
-   stream << prefix << "ogMsgq    : " << CRLF;
+   stream << prefix << "state         : " << state_ << CRLF;
+   stream << prefix << "disconnecting : " << disconnecting_ << CRLF;
+   stream << prefix << "iotActive     : " << iotActive_ << CRLF;
+   stream << prefix << "appActive     : " << appActive_ << CRLF;
+   stream << prefix << "inFlags       : " << inFlags_.to_string() << CRLF;
+   stream << prefix << "outFlags      : " << outFlags_.to_string() << CRLF;
+   stream << prefix << "ogMsgq        : " << CRLF;
    ogMsgq_.Display(stream, prefix + spaces(2), options);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SysTcpSocket_IsOpen = "SysTcpSocket.IsOpen";
+
+bool SysTcpSocket::IsOpen() const
+{
+   Debug::ft(SysTcpSocket_IsOpen);
+
+   return (!disconnecting_ && IsValid());
 }
 
 //------------------------------------------------------------------------------

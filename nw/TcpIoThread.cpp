@@ -20,12 +20,12 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "TcpIoThread.h"
-#include <bitset>
 #include <sstream>
 #include <string>
 #include "Clock.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "InputHandler.h"
 #include "IpPort.h"
 #include "IpPortRegistry.h"
 #include "Log.h"
@@ -51,6 +51,7 @@ fn_name TcpIoThread_ctor = "TcpIoThread.ctor";
 
 TcpIoThread::TcpIoThread(const TcpIpService* service, ipport_t port) :
    IoThread(service, port),
+   listen_(true),
    ready_(0),
    curr_(0)
 {
@@ -63,6 +64,8 @@ TcpIoThread::TcpIoThread(const TcpIpService* service, ipport_t port) :
       Debug::SwLog(TcpIoThread_ctor, port_, 0);
    }
 
+   listen_ = service->AcceptsConns();
+
    auto fdSize = service->MaxConns();
 
    if(fdSize > MaxConns)
@@ -70,10 +73,13 @@ TcpIoThread::TcpIoThread(const TcpIpService* service, ipport_t port) :
       Debug::SwLog(TcpIoThread_ctor, fdSize, MaxConns);
       fdSize = MaxConns;
    }
-   else if(fdSize == 0)
+   else if(fdSize < 2)
    {
-      Debug::SwLog(TcpIoThread_ctor, fdSize, MaxConns);
-      fdSize = 16;
+      //  sockets_[0] is reserved for the listener, even if one isn't
+      //  allocated, so we need space for at least two sockets.
+      //
+      if(fdSize == 0) Debug::SwLog(TcpIoThread_ctor, fdSize, MaxConns);
+      fdSize = 2;
    }
 
    sockets_.Init(fdSize, MemDyn);
@@ -106,6 +112,7 @@ bool TcpIoThread::AcceptConn()
 {
    Debug::ft(TcpIoThread_AcceptConn);
 
+   if(!listen_) return false;
    auto listener = Listener();
    auto flags = listener->OutFlags();
 
@@ -233,6 +240,7 @@ void TcpIoThread::Display(ostream& stream,
 {
    IoThread::Display(stream, prefix, options);
 
+   stream << prefix << "listen   : " << listen_ << CRLF;
    stream << prefix << "listener : " << Listener() << CRLF;
    stream << prefix << "curr     : " << curr_ << CRLF;
    stream << prefix << "ready    : " << ready_ << CRLF;
@@ -253,7 +261,7 @@ void TcpIoThread::Display(ostream& stream,
 
 fn_name TcpIoThread_EnsureListener = "TcpIoThread.EnsureListener";
 
-SysTcpSocket* TcpIoThread::EnsureListener()
+bool TcpIoThread::EnsureListener()
 {
    Debug::ft(TcpIoThread_EnsureListener);
 
@@ -262,6 +270,7 @@ SysTcpSocket* TcpIoThread::EnsureListener()
    //  o to allocate a listener if one is not registered with our port
    //  o to replace the listener if it has failed
    //
+   if(!listen_) return true;
    auto registrant = static_cast< SysTcpSocket* >(ipPort_->GetSocket());
    auto listener = Listener();
 
@@ -314,9 +323,11 @@ void TcpIoThread::Enter()
 {
    Debug::ft(TcpIoThread_Enter);
 
+   PollFlags* flags = nullptr;
+
    //  Exit if a listener socket cannot be created.
    //
-   if(EnsureListener() == nullptr) return;
+   if(!EnsureListener()) return;
 
    while(true)
    {
@@ -337,8 +348,11 @@ void TcpIoThread::Enter()
       //  that servicing of application sockets will stop as soon as the
       //  last application socket with a pending event has been handled.
       //
-      auto flags = Listener()->OutFlags();
-      if(flags->any()) --ready_;
+      if(listen_)
+      {
+         flags = Listener()->OutFlags();
+         if(flags->any()) --ready_;
+      }
 
       //  Before looking for new connection requests on the listener,
       //  service the application sockets with pending events.  This
@@ -363,9 +377,9 @@ void TcpIoThread::Enter()
 
       //  If the listener has another flag set, it is probably an error.
       //
-      if(flags->any())
+      if((flags != nullptr) && (flags->any()))
       {
-         if(EnsureListener() == nullptr) return;
+         if(!EnsureListener()) return;
       }
    }
 }
@@ -393,9 +407,15 @@ void TcpIoThread::EraseSocket(size_t& index)
    --index;
 
    if(socket->OutFlags()->test(PollInvalid))
+   {
       socket->Invalidate();
+   }
    else
+   {
+      auto handler = ipPort_->GetHandler();
       socket->Deregister();
+      handler->SocketFailed(socket);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -546,6 +566,7 @@ void TcpIoThread::ReleaseResources()
    for(auto size = sockets_.Size(); size > 0; size = sockets_.Size())
    {
       auto socket = sockets_[size - 1];
+      if(socket == nullptr) continue;
       sockets_.Erase(size - 1);
       socket->Purge();
    }
@@ -562,6 +583,7 @@ void TcpIoThread::ServiceSocket()
    Debug::ft(TcpIoThread_ServiceSocket);
 
    auto socket = sockets_[curr_];
+   if(socket == nullptr) return;
 
    //  Return if this socket hasn't reported an event.
    //

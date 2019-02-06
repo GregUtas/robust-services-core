@@ -86,7 +86,7 @@ public:
    //  The default version returns nullptr and is overridden by a port that
    //  supports a socket for each application instance.
    //
-   virtual SysSocket* CreateAppSocket();
+   virtual SysTcpSocket* CreateAppSocket();
 
    //  Invoked after COUNT bytes were received.
    //

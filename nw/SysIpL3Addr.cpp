@@ -23,7 +23,7 @@
 #include <iosfwd>
 #include <sstream>
 #include "Debug.h"
-#include "SysSocket.h"
+#include "SysTcpSocket.h"
 #include "SysTypes.h"
 
 using std::ostream;
@@ -48,7 +48,7 @@ SysIpL3Addr::SysIpL3Addr() :
 fn_name SysIpL3Addr_ctor2 = "SysIpL3Addr.ctor(IPv4addr)";
 
 SysIpL3Addr::SysIpL3Addr(ipv4addr_t v4Addr, ipport_t port,
-   IpProtocol proto, SysSocket* socket) : SysIpL2Addr(v4Addr),
+   IpProtocol proto, SysTcpSocket* socket) : SysIpL2Addr(v4Addr),
    port_(port),
    proto_(proto),
    socket_(socket)
@@ -63,7 +63,7 @@ SysIpL3Addr::SysIpL3Addr(ipv4addr_t v4Addr, ipport_t port,
 fn_name SysIpL3Addr_ctor3 = "SysIpL3Addr.ctor(L2addr)";
 
 SysIpL3Addr::SysIpL3Addr(const SysIpL2Addr& l2Addr, ipport_t port,
-   IpProtocol proto, SysSocket* socket) : SysIpL2Addr(l2Addr),
+   IpProtocol proto, SysTcpSocket* socket) : SysIpL2Addr(l2Addr),
    port_(port),
    proto_(proto),
    socket_(socket)
@@ -139,7 +139,7 @@ bool SysIpL3Addr::operator!=(const SysIpL3Addr& that) const
 
 fn_name SysIpL3Addr_SetSocket = "SysIpL3Addr.SetSocket";
 
-void SysIpL3Addr::SetSocket(SysSocket* socket)
+void SysIpL3Addr::SetSocket(SysTcpSocket* socket)
 {
    Debug::ft(SysIpL3Addr_SetSocket);
 

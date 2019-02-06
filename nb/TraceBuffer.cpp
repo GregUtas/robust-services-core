@@ -252,11 +252,13 @@ void TraceBuffer::ClaimBlocks()
 
    auto count = MaxRecords();
 
-   //  Only BuffTracer entries contains objects that must be claimed,
-   //  so skip all others.
+   //  Function trace records don't need to claim anything, so skip
+   //  them for efficiency.
    //
    TraceRecord* record = nullptr;
-   auto mask = Flags(1 << BufferTracer);
+   Flags mask;
+   mask.set();
+   mask.reset(FunctionTracer);
 
    Lock();
       for(Next(record, mask); record != nullptr; Next(record, mask))

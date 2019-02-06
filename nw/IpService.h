@@ -85,7 +85,7 @@ public:
    virtual size_t TxSize() const { return IoThread::MaxTxBuffSize; }
 
    //  Creates a subclass of CliText for provisioning the service through
-   //  the CLI.  [This is not currently invoked but has few overrides that
+   //  the CLI.  [This is not currently invoked but has a few overrides that
    //  illustrate its purpose, which is to name a protocol whose port, and
    //  possibly other attributes, could be configured via a CLI command.]
    //
@@ -95,7 +95,7 @@ public:
    //  Overridden by services that support a dedicated socket for each
    //  application instance.
    //
-   virtual SysSocket* CreateAppSocket() const { return nullptr; }
+   virtual SysTcpSocket* CreateAppSocket() const { return nullptr; }
 
    //  Provides sizes of the receive and transmit buffers for application
    //  sockets.  Invoked to configure the socket when the service's I/O

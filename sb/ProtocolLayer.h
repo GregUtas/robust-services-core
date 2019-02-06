@@ -28,7 +28,7 @@
 
 namespace NetworkBase
 {
-   class SysSocket;
+   class SysTcpSocket;
 }
 
 using namespace NetworkBase;
@@ -106,7 +106,7 @@ public:
    //  sends an initial message.  If a socket is allocated, it must be
    //  registered with the PSM's peer GlobalAddress.
    //
-   virtual SysSocket* CreateAppSocket();
+   virtual SysTcpSocket* CreateAppSocket();
 
    //  Used during multiplexer insertion and deletion.  It configures this
    //  layer and the port identified by PEER so that they will communicate

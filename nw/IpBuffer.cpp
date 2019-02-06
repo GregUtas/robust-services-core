@@ -31,7 +31,7 @@
 #include "NwTracer.h"
 #include "Restart.h"
 #include "Singleton.h"
-#include "SysSocket.h"
+#include "SysTcpSocket.h"
 
 using std::ostream;
 using std::string;
@@ -302,7 +302,7 @@ bool IpBuffer::Send(bool external)
    //  ask it to create a socket (e.g. for TCP).  If it doesn't, try to use
    //  the port's socket, the assumption being it is shared (e.g. for UDP).
    //
-   auto socket = rxAddr_.GetSocket();
+   SysSocket* socket = rxAddr_.GetSocket();
 
    if(socket == nullptr)
    {

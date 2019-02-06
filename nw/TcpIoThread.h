@@ -88,11 +88,11 @@ private:
    //
    SysTcpSocket* Listener() const;
 
-   //  Ensures that the listener socket exists upon entering the thread
-   //  or after the listener socket encounters an error.  Returns nullptr
-   //  on failure.
+   //  Ensures that the listener socket (if required) exists upon entering
+   //  the thread or after the listener socket encounters an error.  Returns
+   //  false on failure.
    //
-   SysTcpSocket* EnsureListener();
+   bool EnsureListener();
 
    //  Allocates or replaces the listener socket.
    //
@@ -158,6 +158,11 @@ private:
    //  handles an individual connection.
    //
    Array< SysTcpSocket* > sockets_;
+
+   //  Set if the underlying service accepts connections.  If not set,
+   //  a listener socket is not allocated, and sockets_[0] is not used.
+   //
+   bool listen_;
 
    //  The number of sockets with events that still need to be serviced.
    //

@@ -131,7 +131,7 @@ ProtocolLayer* ProtocolLayer::AllocUpper(const Message& msg)
 
 fn_name ProtocolLayer_CreateAppSocket = "ProtocolLayer.CreateAppSocket";
 
-SysSocket* ProtocolLayer::CreateAppSocket()
+SysTcpSocket* ProtocolLayer::CreateAppSocket()
 {
    Debug::ft(ProtocolLayer_CreateAppSocket);
 

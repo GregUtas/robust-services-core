@@ -38,7 +38,7 @@
 #include "SbPools.h"
 #include "SbTrace.h"
 #include "Singleton.h"
-#include "SysSocket.h"
+#include "SysTcpSocket.h"
 #include "SysTypes.h"
 #include "ToolTypes.h"
 #include "TraceBuffer.h"

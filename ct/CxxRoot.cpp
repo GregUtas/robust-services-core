@@ -38,7 +38,6 @@
 #include "CxxString.h"
 #include "CxxToken.h"
 #include "Debug.h"
-#include "Lexer.h"
 #include "Parser.h"
 #include "Singleton.h"
 #include "SysTime.h"

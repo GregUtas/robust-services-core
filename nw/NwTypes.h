@@ -22,13 +22,9 @@
 #ifndef NWTYPES_H_INCLUDED
 #define NWTYPES_H_INCLUDED
 
-#include <cstddef>
 #include <cstdint>
 #include <iosfwd>
 #include <memory>
-#include "SysTypes.h"
-
-using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 
@@ -40,16 +36,13 @@ typedef uint16_t ipport_t;
 
 //  IP port constants.
 //
-enum IpPortIds
-{
-   NilIpPort = 0,
-   FirstAppIpPort = 1024,
-   CipIpPort = 40000,
-   PotsShelfIpPort = 40001,
-   PotsCallIpPort = 40002,
-   MaxIpPort = UINT16_MAX,
-   LastAppIpPort = MaxIpPort
-};
+constexpr ipport_t NilIpPort = 0;
+constexpr ipport_t FirstAppIpPort = 1024;
+constexpr ipport_t CipIpPort = 40000;
+constexpr ipport_t PotsShelfIpPort = 40001;
+constexpr ipport_t PotsCallIpPort = 40002;
+constexpr ipport_t MaxIpPort = UINT16_MAX;
+constexpr ipport_t LastAppIpPort = MaxIpPort;
 
 //  An IPv4 address.  Interally, an IP address should be stored in host order.
 //
@@ -68,27 +61,6 @@ enum IpProtocol
 //  Inserts a string for PROTO into STREAM.
 //
 std::ostream& operator<<(std::ostream& stream, IpProtocol proto);
-
-//  The standard functions for converting to/from network order.
-//
-uint64_t htonll(uint64_t hostllong);
-uint32_t htonl(uint32_t hostlong);
-uint16_t htons(uint16_t hostshort);
-uint64_t ntohll(uint32_t netllong);
-uint32_t ntohl(uint32_t netlong);
-uint16_t ntohs(uint16_t netshort);
-
-//  Converts SIZE bytes, starting at SRC, to network order.  WORD is the
-//  number of bytes in the application protocol's alignment size: 0 or 1
-//  (unchanged), 2 (htons), 4 (htonl), or 8 (htonll).
-//
-void HostToNetwork(byte_t* start, size_t size, uint8_t word);
-
-//  Copies SIZE bytes from SRC to DEST, converting them from network to host
-//  order.  WORD is number of bytes in the application protocol's alignment
-//  size: 0 or 1 (memcpy), 2 (ntohs), 4 (ntohl), or 8 (ntohll).
-//
-void NetworkToHost(byte_t* dest, const byte_t* src, size_t size, uint8_t word);
 
 //  Forward declarations.
 //

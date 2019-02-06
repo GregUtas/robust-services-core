@@ -32,6 +32,20 @@
 
 namespace NetworkBase
 {
+uint32_t htonl(uint32_t hostlong) { return ::htonl(hostlong); }
+
+uint64_t htonll(uint64_t hostllong) { return ::htonll(hostllong); }
+
+uint16_t htons(uint16_t hostshort) { return ::htons(hostshort); }
+
+uint32_t ntohl(uint32_t netlong) { return ::ntohl(netlong); }
+
+uint64_t ntohll(uint32_t netllong) { return ::ntohll(netllong); }
+
+uint16_t ntohs(uint16_t netshort) { return ::ntohs(netshort); }
+
+//------------------------------------------------------------------------------
+
 const u_long IO_Blocking = 0;
 const u_long IO_NonBlocking = 1;
 

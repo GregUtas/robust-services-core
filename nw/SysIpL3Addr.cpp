@@ -137,6 +137,21 @@ bool SysIpL3Addr::operator!=(const SysIpL3Addr& that) const
 
 //------------------------------------------------------------------------------
 
+fn_name SysIpL3Addr_ReleaseSocket = "SysIpL3Addr.ReleaseSocket";
+
+void SysIpL3Addr::ReleaseSocket()
+{
+   Debug::ft(SysIpL3Addr_ReleaseSocket);
+
+   if(socket_ != nullptr)
+   {
+      socket_->Release();
+      socket_ = nullptr;
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name SysIpL3Addr_SetSocket = "SysIpL3Addr.SetSocket";
 
 void SysIpL3Addr::SetSocket(SysTcpSocket* socket)

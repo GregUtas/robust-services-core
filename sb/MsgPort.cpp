@@ -105,8 +105,7 @@ MsgPort::~MsgPort()
       if(trans != nullptr) trans->ResumeTime(warp);
    }
 
-   auto socket = remAddr_.GetSocket();
-   if(socket != nullptr) socket->Release();
+   remAddr_.ReleaseSocket();
 
    auto ctx = GetContext();
    if(ctx != nullptr) ctx->ExqPort(*this);
@@ -162,9 +161,7 @@ void MsgPort::Cleanup()
 {
    Debug::ft(MsgPort_Cleanup);
 
-   auto socket = remAddr_.GetSocket();
-   if(socket != nullptr) socket->Release();
-
+   remAddr_.ReleaseSocket();
    ProtocolLayer::Cleanup();
 }
 

@@ -87,6 +87,11 @@ public:
    //
    SysTcpSocket* GetSocket() const { return socket_; }
 
+   //  If the address has a dedicated socket_, releases it and sets
+   //  it to nullptr.
+   //
+   void ReleaseSocket();
+
    //  Updates NAME and SERVICE to the standard host name and port
    //  service name of the host identified by this address.
    //

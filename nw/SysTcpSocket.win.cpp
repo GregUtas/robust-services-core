@@ -173,19 +173,16 @@ word SysTcpSocket::Poll(SysTcpSocket* sockets[], size_t count, msecs_t msecs)
    Debug::ft(SysTcpSocket_Poll);
 
    if(count == 0) return 0;
-   auto prime = (sockets[0] != nullptr ? sockets[0] : sockets[1]);
    int timeout = (msecs != TIMEOUT_NEVER ? msecs : -1);
 
    //  Create an array for the sockets and their flags.
    //
    std::unique_ptr< pollfd[] > list(new pollfd[count]);
 
-   if(list == nullptr) return prime->SetError(WSA_NOT_ENOUGH_MEMORY);
+   if(list == nullptr) return sockets[0]->SetError(WSA_NOT_ENOUGH_MEMORY);
 
    for(size_t i = 0; i < count; ++i)
    {
-      if(sockets[i] == nullptr) continue;
-
       list[i].fd = sockets[i]->Socket();
       auto& inFlags = sockets[i]->inFlags_;
       auto& requests = list[i].events;
@@ -201,15 +198,13 @@ word SysTcpSocket::Poll(SysTcpSocket* sockets[], size_t count, msecs_t msecs)
 
    if(ready == SOCKET_ERROR)
    {
-      return prime->SetError();
+      return sockets[0]->SetError();
    }
 
    //  Save the status of each socket before LIST gets deleted.
    //
    for(size_t i = 0; i < count; ++i)
    {
-      if(sockets[i] == nullptr) continue;
-
       auto results = list[i].revents;
       auto& outFlags = sockets[i]->outFlags_;
 

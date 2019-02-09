@@ -338,10 +338,10 @@ SysSocket::SendRc SysTcpSocket::SendBuff(IpBuffer& buff)
    //  else report an error.
    //
    auto port = Singleton< IpPortRegistry >::Instance()->GetPort(txport);
-   byte_t* start = nullptr;
-   auto size = buff.OutgoingBytes(start);
-   HostToNetwork(start, size, port->GetService()->WordSize());
-   auto sent = Send(start, size);
+   byte_t* src = nullptr;
+   auto size = buff.OutgoingBytes(src);
+   auto dest = port->GetService()->HostToNetwork(src, size);
+   auto sent = Send(dest, size);
 
    if(sent <= 0)
    {

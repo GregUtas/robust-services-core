@@ -55,11 +55,6 @@ public:
    //
    static const size_t MaxTxBuffSize;
 
-   //  Adds SOCKET to those served by the thread.  The default version returns
-   //  false and must be overridden by a thread that uses Poll().
-   //
-   virtual bool InsertSocket(SysSocket* socket);
-
    //  Overridden to display member variables.
    //
    virtual void Display(std::ostream& stream,

@@ -62,12 +62,12 @@ SysTcpSocket* TcpIpPort::CreateAppSocket()
    //  If there is no I/O thread running on this port, create it after
    //  generating a log.
    //
-   auto thread = GetThread();
+   auto thread = static_cast< TcpIoThread* >(GetThread());
 
    if(thread == nullptr)
    {
       Debug::SwLog(TcpIpPort_CreateAppSocket, 0, 0);
-      thread = CreateIoThread();
+      thread = static_cast< TcpIoThread* >(CreateIoThread());
       if(thread == nullptr) return nullptr;
    }
 

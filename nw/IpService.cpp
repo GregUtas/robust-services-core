@@ -28,6 +28,7 @@
 #include "IpPortRegistry.h"
 #include "IpServiceRegistry.h"
 #include "Log.h"
+#include "Memory.h"
 #include "Singleton.h"
 
 using std::ostream;
@@ -149,6 +150,17 @@ Faction IpService::GetFaction() const
 
 //------------------------------------------------------------------------------
 
+fn_name IpService_HostToNetwork = "IpService.HostToNetwork";
+
+byte_t* IpService::HostToNetwork(byte_t* src, size_t size) const
+{
+   Debug::ft(IpService_HostToNetwork);
+
+   return src;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name IpService_Name = "IpService.Name";
 
 const char* IpService::Name() const
@@ -157,6 +169,18 @@ const char* IpService::Name() const
 
    Debug::SwLog(IpService_Name, 0, sid_.GetId());
    return ERROR_STR;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name IpService_NetworkToHost = "IpService.NetworkToHost";
+
+void IpService::NetworkToHost
+   (byte_t* dest, const byte_t* src, size_t size) const
+{
+   Debug::ft(IpService_NetworkToHost);
+
+   Memory::Copy(dest, src, size);
 }
 
 //------------------------------------------------------------------------------

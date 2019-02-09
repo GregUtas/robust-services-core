@@ -59,9 +59,9 @@ SysSocket::SendRc SysUdpSocket::SendBuff(IpBuffer& buff)
 {
    Debug::ft(SysUdpSocket_SendBuff);
 
-   byte_t* start = nullptr;
+   byte_t* src = nullptr;
 
-   auto size = buff.OutgoingBytes(start);
+   auto size = buff.OutgoingBytes(src);
 
    if(size > SysUdpSocket::MaxUdpSize_)
    {
@@ -72,8 +72,8 @@ SysSocket::SendRc SysUdpSocket::SendBuff(IpBuffer& buff)
    auto txport = buff.TxAddr().GetPort();
    auto port = Singleton< IpPortRegistry >::Instance()->GetPort(txport);
    auto& peer = buff.RxAddr();
-   HostToNetwork(start, size, port->GetService()->WordSize());
-   auto sent = SendTo(start, size, peer);
+   auto dest = port->GetService()->HostToNetwork(src, size);
+   auto sent = SendTo(dest, size, peer);
    TracePeer(NwTrace::SendTo, txport, peer, sent);
 
    if(sent <= 0)

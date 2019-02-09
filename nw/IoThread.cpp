@@ -143,17 +143,6 @@ bool IoThread::ExitOnRestart(RestartLevel level) const
 
 //------------------------------------------------------------------------------
 
-fn_name IoThread_InsertSocket = "IoThread.InsertSocket";
-
-bool IoThread::InsertSocket(SysSocket* socket)
-{
-   Debug::ft(IoThread_InsertSocket);
-
-   return false;
-}
-
-//------------------------------------------------------------------------------
-
 fn_name IoThread_InvokeHandler = "IoThread.InvokeHandler";
 
 void IoThread::InvokeHandler(const IpPort& port,
@@ -195,7 +184,7 @@ void IoThread::InvokeHandler(const IpPort& port,
       //  Copy RCVD bytes from SOURCE to DEST and pass the message to
       //  the input handler.
       //
-      NetworkToHost(dest, source, rcvd, port.GetService()->WordSize());
+      port.GetService()->NetworkToHost(dest, source, rcvd);
       buff->SetRxAddr(rxAddr_);
       buff->SetTxAddr(txAddr_);
       buff->SetRxTicks(ticks0_);

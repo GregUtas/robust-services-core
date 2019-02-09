@@ -51,6 +51,10 @@ public:
    //
    TcpIoThread(const TcpIpService* service, ipport_t port);
 
+   //  Adds SOCKET to the list of sockets when accepting a new connection.
+   //
+   bool InsertSocket(SysSocket* socket);
+
    //  Overridden to claim IpBuffers queued for output.
    //
    virtual void ClaimBlocks() override;
@@ -122,10 +126,6 @@ private:
    //  accepted.
    //
    bool AcceptConn();
-
-   //  Adds SOCKET to the list of sockets when accepting a new connection.
-   //
-   virtual bool InsertSocket(SysSocket* socket) override;
 
    //  Removes sockets_[index] from the list of sockets.  If it contains a
    //  valid socket, that socket is released.  Because the last socket moves

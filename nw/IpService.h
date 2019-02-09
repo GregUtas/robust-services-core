@@ -24,7 +24,6 @@
 
 #include "Protected.h"
 #include <cstddef>
-#include <cstdint>
 #include "IoThread.h"
 #include "NbTypes.h"
 #include "NwTypes.h"
@@ -67,15 +66,6 @@ public:
    //
    virtual Faction GetFaction() const = 0;
 
-   //  Returns the protocol's word size in bytes:
-   //  o 0: the protocol itself will convert between network and host order
-   //  o 1: a byte-oriented protocol that does not require conversion
-   //  o 2: a 16-bit protocol for which the base will invoke nthos and htons
-   //  o 4: a 32-bit protocol for which the base will invoke nthol and htonl
-   //  o 8: a 64-bit protocol for which the base will invoke ntholl and htonll
-   //
-   virtual uint8_t WordSize() const { return 0; }
-
    //  Returns the size of the receive buffer for the service's I/O thread.
    //
    virtual size_t RxSize() const { return IoThread::MaxRxBuffSize; }
@@ -104,6 +94,22 @@ public:
    //  each application instance.
    //
    virtual void GetAppSocketSizes(size_t& rxSize, size_t& txSize) const;
+
+   //  Converts a message from host to network order when it is being
+   //  transmitted.  The message begins at SRC and is SIZE bytes long.
+   //  Returns the location of the converted message, which could be SRC
+   //  if no conversion occurred.  The default verison simply returns SRC.
+   //
+   virtual byte_t* HostToNetwork(byte_t* src, size_t size) const;
+
+   //  Converts a message from network to host order when it is received.
+   //  The message begins at SRC, is SIZE bytes long, and is to be placed
+   //  at DEST, which is located in the buffer that the service's input
+   //  handler already allocated.  The default version simply copies SIZE
+   //  bytes from SRC to DEST.
+   //
+   virtual void NetworkToHost
+      (byte_t* dest, const byte_t* src, size_t size) const;
 
    //  Provisions the service on PID.
    //

@@ -73,13 +73,15 @@ TcpIoThread::TcpIoThread(const TcpIpService* service, ipport_t port) :
       Debug::SwLog(TcpIoThread_ctor, fdSize, MaxConns);
       fdSize = MaxConns;
    }
-   else if(fdSize < 2)
+   else if(listen_)
    {
-      //  sockets_[0] is reserved for the listener, even if one isn't
-      //  allocated, so we need space for at least two sockets.
-      //
-      if(fdSize == 0) Debug::SwLog(TcpIoThread_ctor, fdSize, MaxConns);
+      if(fdSize < 2) Debug::SwLog(TcpIoThread_ctor, fdSize, 2);
       fdSize = 2;
+   }
+   else
+   {
+      if(fdSize < 1) Debug::SwLog(TcpIoThread_ctor, fdSize, 1);
+      fdSize = 1;
    }
 
    sockets_.Init(fdSize, MemDyn);
@@ -215,7 +217,7 @@ void TcpIoThread::ClaimBlocks()
 
    IoThread::ClaimBlocks();
 
-   for(size_t i = 1; i < sockets_.Size(); ++i)
+   for(size_t i = 0; i < sockets_.Size(); ++i)
    {
       sockets_[i]->ClaimBlocks();
    }
@@ -240,18 +242,17 @@ void TcpIoThread::Display(ostream& stream,
 {
    IoThread::Display(stream, prefix, options);
 
-   stream << prefix << "listen   : " << listen_ << CRLF;
-   stream << prefix << "listener : " << Listener() << CRLF;
-   stream << prefix << "curr     : " << curr_ << CRLF;
-   stream << prefix << "ready    : " << ready_ << CRLF;
-   stream << prefix << "size     : " << sockets_.Size() << CRLF;
+   stream << prefix << "listen : " << listen_ << CRLF;
+   stream << prefix << "curr   : " << curr_ << CRLF;
+   stream << prefix << "ready  : " << ready_ << CRLF;
+   stream << prefix << "size   : " << sockets_.Size() << CRLF;
 
    if(!options.test(DispVerbose)) return;
 
    auto lead = prefix + spaces(2);
    stream << prefix << "sockets  : " << CRLF;
 
-   for(size_t i = 1; i < sockets_.Size(); ++i)
+   for(size_t i = 0; i < sockets_.Size(); ++i)
    {
       stream << lead << strIndex(i) << sockets_[i] << CRLF;
    }
@@ -324,6 +325,7 @@ void TcpIoThread::Enter()
    Debug::ft(TcpIoThread_Enter);
 
    PollFlags* flags = nullptr;
+   size_t first = (listen_ ? 1 : 0);
 
    //  Exit if a listener socket cannot be created.
    //
@@ -331,15 +333,18 @@ void TcpIoThread::Enter()
 
    while(true)
    {
-      //  Wait for socket events.
+      //  Wait for socket events.  If we have no sockets, sleep until
+      //  InsertSocket wakes us.
       //
+      if(sockets_.Empty()) Pause(TIMEOUT_NEVER);
+
       ready_ = PollSockets();
 
       if(ready_ < 0)
       {
          //s Handle Poll() error.
          //
-         OutputLog("TCP POLL ERROR", SocketError, Listener());
+         OutputLog("TCP POLL ERROR", SocketError, sockets_.Front());
          Pause(20);
          continue;
       }
@@ -361,7 +366,7 @@ void TcpIoThread::Enter()
       //
       host_ = IpPortRegistry::HostAddress();
 
-      for(curr_ = 1; ((ready_ > 0) && (curr_ < sockets_.Size())); ++curr_)
+      for(curr_ = first; ((ready_ > 0) && (curr_ < sockets_.Size())); ++curr_)
       {
          ServiceSocket();
          ConditionalPause(90);
@@ -394,7 +399,7 @@ void TcpIoThread::EraseSocket(size_t& index)
 
    //  Release the socket unless it's the listening socket.
    //
-   if(index == 0)
+   if(listen_ && (index == 0))
    {
       Debug::SwLog(TcpIoThread_EraseSocket, 0, 0);
       return;
@@ -432,9 +437,14 @@ bool TcpIoThread::InsertSocket(SysSocket* socket)
 
    if(sockets_.PushBack(sock))
    {
+      //  If the thread had no sockets, it is sleeping forever
+      //  and must be woken up to service its new socket.
+      //
+      auto interrupt = sockets_.Empty();
       auto flags = sock->InFlags();
       flags->set(PollRead);
       sock->Register();
+      if(interrupt) Interrupt();
       return true;
    }
 
@@ -529,9 +539,12 @@ word TcpIoThread::PollSockets()
 {
    Debug::ft(TcpIoThread_PollSockets);
 
-   auto listener = Listener();
-   listener->SetBlocking(true);
-   listener->InFlags()->set(PollRead);
+   if(listen_)
+   {
+      auto listener = Listener();
+      listener->SetBlocking(true);
+      listener->InFlags()->set(PollRead);
+   }
 
    auto sockets = sockets_.Items();
    auto size = sockets_.Size();
@@ -551,7 +564,7 @@ word TcpIoThread::PollSockets()
       recvs_ = 0;
    }
 
-   listener->TraceEvent(NwTrace::Poll, ready);
+   sockets_.Front()->TraceEvent(NwTrace::Poll, ready);
    return ready;
 }
 

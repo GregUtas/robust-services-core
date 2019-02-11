@@ -120,7 +120,6 @@ bool IpBuffer::AddBytes(const byte_t* source, MsgSize size, bool& moved)
    //  If the buffer can't hold SIZE more bytes, extend its size.
    //
    moved = false;
-
    if(buff_ == nullptr) return false;
 
    MsgSize paySize = PayloadSize();
@@ -217,7 +216,6 @@ void IpBuffer::InvalidDiscarded() const
 
    auto reg = Singleton< IpPortRegistry >::Instance();
    auto port = reg->GetPort(rxAddr_.GetPort());
-
    if(port != nullptr) port->InvalidDiscarded();
 }
 
@@ -255,11 +253,9 @@ MsgSize IpBuffer::Payload(byte_t*& bytes) const
    Debug::ft(IpBuffer_Payload);
 
    bytes = buff_;
-
    if(bytes == nullptr) return 0;
 
    bytes += hdrSize_;
-
    return PayloadSize();
 }
 

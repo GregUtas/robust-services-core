@@ -61,7 +61,7 @@ PotsShelfHandler::~PotsShelfHandler()
 fn_name PotsShelfHandler_ReceiveBuff = "PotsShelfHandler.ReceiveBuff";
 
 void PotsShelfHandler::ReceiveBuff
-   (MsgSize size, IpBufferPtr& buff, Faction faction) const
+   (IpBufferPtr& buff, MsgSize size, Faction faction) const
 {
    Debug::ft(PotsShelfHandler_ReceiveBuff);
 
@@ -117,6 +117,6 @@ void PotsShelfHandler::ReceiveBuff
    //  class assumes that SIZE includes a header.  The original message didn't
    //  have the header, but now it does, so adjust the length accordingly.
    //
-   SbExtInputHandler::ReceiveBuff(sizeof(MsgHeader) + size, buff, faction);
+   SbExtInputHandler::ReceiveBuff(buff, sizeof(MsgHeader) + size, faction);
 }
 }

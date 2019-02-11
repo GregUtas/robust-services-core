@@ -34,9 +34,9 @@ using namespace NodeBase;
 
 namespace NetworkBase
 {
-//  IpBuffer wraps a message that passes between NodeBase and the IP stack.
-//  It allocates a buffer for a contiguous message that may include an
-//  internal header.
+//  IpBuffer wraps a message that passes between an application and the IP
+//  stack.  It allocates a buffer for a contiguous message that may include
+//  an internal header.
 //
 class IpBuffer : public MsgBuffer
 {
@@ -75,18 +75,12 @@ public:
    void SetDir(MsgDirection dir) { dir_ = dir; }
 
    //  Sets the destination IP address/port.  When using TCP, the socket
-   //  bound to the host's ephemeral port is placed in rxAddr_.socket.
+   //  dedicated to the connection must be placed in rxAddr_.socket.
    //
    void SetRxAddr(const SysIpL3Addr& addr) { rxAddr_ = addr; }
 
-   //  Sets the source IP address/port.
-   //
-   //  NOTE: The port must always be the well-known port for the IpService
-   //  ====  that is sending the message, whether using TCP or UDP.  This
-   //        is obviously for UDP but is also the case for TCP, even after
-   //        Connect or Accept allocates an ephemeral port.  The ephemeral
-   //        port is only identified indirectly, through its socket, which
-   //        is actually placed in rxAddr_.socket (see above).
+   //  Sets the source IP address/port.  The port must be the well-known
+   //  port for the IpService that is sending the message.
    //
    void SetTxAddr(const SysIpL3Addr& addr) { txAddr_ = addr; }
 
@@ -107,12 +101,16 @@ public:
    //
    byte_t* PayloadPtr() const { return buff_ + hdrSize_; }
 
-   //  Returns the number of bytes in the payload.  This may be less than
-   //  what the buffer can actually hold, because outgoing messages are
-   //  usually constructed by estimating the space that will be needed by
-   //  the payload and then gradually filling it.  The default version
-   //  returns the total buffer size minus the header size, which should
-   //  be correct for an *incoming* message.
+   //  Returns the number of bytes in the payload.  The default version
+   //  returns the total buffer size minus the header size, as it doesn't
+   //  know how many bytes have been copied into the buffer.  An override
+   //  will return the actual number of bytes in the payload, which will
+   //  usually be less than what the buffer can hold.  The reason for this
+   //  is that, internally, a handful of buffer sizes are used to reduce
+   //  heap fragmentation.  This function is invoked by AddBytes (to see if
+   //  a larger buffer should be allocated), OutgoingBytes (to provide a
+   //  pointer to the message and return its size), and Send (to determine
+   //  the number of bytes to send).
    //
    virtual MsgSize PayloadSize() const;
 

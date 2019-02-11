@@ -107,8 +107,12 @@ bool SysIpL2Addr::IsValid() const
 
 //------------------------------------------------------------------------------
 
+fn_name SysIpL2Addr_LoopbackAddr = "SysIpL2Addr.LoopbackAddr";
+
 SysIpL2Addr SysIpL2Addr::LoopbackAddr()
 {
+   Debug::ft(SysIpL2Addr_LoopbackAddr);
+
    return SysIpL2Addr(INADDR_LOOPBACK);
 }
 

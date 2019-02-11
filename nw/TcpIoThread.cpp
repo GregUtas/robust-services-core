@@ -660,7 +660,7 @@ void TcpIoThread::ServiceSocket()
       return;
    }
 
-   rxAddr_ = SysIpL3Addr(host_, port_, IpTcp, nullptr);
+   rxAddr_ = SysIpL3Addr(host_, port_, IpTcp, socket);
    InvokeHandler(*ipPort_, buffer_, rcvd);
 }
 

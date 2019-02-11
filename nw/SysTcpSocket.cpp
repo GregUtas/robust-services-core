@@ -24,6 +24,7 @@
 #include <string>
 #include "Debug.h"
 #include "Formatters.h"
+#include "InputHandler.h"
 #include "IpBuffer.h"
 #include "IpPort.h"
 #include "IpPortRegistry.h"
@@ -46,7 +47,8 @@ SysTcpSocket::SysTcpSocket(ipport_t port,
    state_(Idle),
    disconnecting_(false),
    iotActive_(false),
-   appActive_(false)
+   appActive_(false),
+   icMsg_(nullptr)
 {
    Debug::ft(SysTcpSocket_ctor1);
 
@@ -65,7 +67,8 @@ SysTcpSocket::SysTcpSocket(SysSocket_t socket) : SysSocket(socket),
    state_(Connected),
    disconnecting_(false),
    iotActive_(false),
-   appActive_(false)
+   appActive_(false),
+   icMsg_(nullptr)
 {
    Debug::ft(SysTcpSocket_ctor2);
 
@@ -89,6 +92,12 @@ SysTcpSocket::~SysTcpSocket()
       Debug::SwLog(SysTcpSocket_dtor, appActive_, iotActive_);
    }
 
+   if(icMsg_ != nullptr)
+   {
+      delete icMsg_;
+      icMsg_ = nullptr;
+   }
+
    ogMsgq_.Purge();
    Close();
 }
@@ -107,6 +116,19 @@ void SysTcpSocket::Acquire()
 
 //------------------------------------------------------------------------------
 
+fn_name SysTcpSocket_AcquireIcMsg = "SysTcpSocket.AcquireIcMsg";
+
+IpBuffer* SysTcpSocket::AcquireIcMsg()
+{
+   Debug::ft(SysTcpSocket_AcquireIcMsg);
+
+   auto buff = icMsg_;
+   icMsg_ = nullptr;
+   return buff;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name SysTcpSocket_ClaimBlocks = "SysTcpSocket.ClaimBlocks";
 
 void SysTcpSocket::ClaimBlocks()
@@ -117,6 +139,8 @@ void SysTcpSocket::ClaimBlocks()
    {
       buff->Claim();
    }
+
+   if(icMsg_ != nullptr) icMsg_->Claim();
 }
 
 //------------------------------------------------------------------------------
@@ -184,6 +208,7 @@ void SysTcpSocket::Display(ostream& stream,
    stream << prefix << "appActive     : " << appActive_ << CRLF;
    stream << prefix << "inFlags       : " << inFlags_.to_string() << CRLF;
    stream << prefix << "outFlags      : " << outFlags_.to_string() << CRLF;
+   stream << prefix << "icMsg         : " << icMsg_ << CRLF;
    stream << prefix << "ogMsgq        : " << CRLF;
    ogMsgq_.Display(stream, prefix + spaces(2), options);
 }
@@ -340,7 +365,7 @@ SysSocket::SendRc SysTcpSocket::SendBuff(IpBuffer& buff)
    auto port = Singleton< IpPortRegistry >::Instance()->GetPort(txport);
    byte_t* src = nullptr;
    auto size = buff.OutgoingBytes(src);
-   auto dest = port->GetService()->HostToNetwork(src, size);
+   auto dest = port->GetHandler()->HostToNetwork(buff, src, size);
    auto sent = Send(dest, size);
 
    if(sent <= 0)
@@ -355,5 +380,21 @@ SysSocket::SendRc SysTcpSocket::SendBuff(IpBuffer& buff)
 
    port->BytesSent(size);
    return SendOk;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SysTcpSocket_SetIcMsg = "SysTcpSocket.SetIcMsg";
+
+void SysTcpSocket::SetIcMsg(IpBuffer* buff)
+{
+   Debug::ft(SysTcpSocket_SetIcMsg);
+
+   if((icMsg_ != nullptr) && (icMsg_ != buff))
+   {
+      delete icMsg_;
+   }
+
+   icMsg_ = buff;
 }
 }

@@ -4468,7 +4468,19 @@ void Function::UpdateThisArg(StackArgVector& args) const
          //  corrects this to the static function, it discards the "this"
          //  argument here.
          //
-         if(!args.front().IsImplicitThis()) Log(StaticFunctionViaMember);
+         if(!args.front().IsImplicitThis())
+         {
+            auto file = Context::File();
+
+            if(file != nullptr)
+            {
+               auto pos = Context::GetPos();
+               auto item = static_cast< CxxNamed* >(args.front().item);
+               file->LogPos
+                  (pos, StaticFunctionViaMember, item, 0, *GetClass()->Name());
+            }
+         }
+
          args.erase(args.cbegin());
       }
    }

@@ -73,15 +73,15 @@ const char* strTraceRc(TraceRc rc);
 
 //  Trace tool identifiers.
 //
-constexpr id_t ToolBuffer = 1;       // internal use
-constexpr id_t FunctionTracer = 2;   // function calls
-constexpr id_t MemoryTracer = 3;     // memory allocations/deallocations
-constexpr id_t ObjPoolTracer = 4;    // pooled objects
-constexpr id_t NetworkTracer = 5;    // socket events
-constexpr id_t TransTracer = 6;      // SessionBase transactions
-constexpr id_t BufferTracer = 7;     // SessionBase IpBuffers
-constexpr id_t ContextTracer = 8;    // SessionBase contexts
-constexpr id_t ParserTracer = 9;     // parser "object code generation"
-constexpr id_t FirstAppTracer = 10;  // start of application-specific tracers
+constexpr FlagId ToolBuffer = 1;       // internal use
+constexpr FlagId FunctionTracer = 2;   // function calls
+constexpr FlagId MemoryTracer = 3;     // memory allocations/deallocations
+constexpr FlagId ObjPoolTracer = 4;    // pooled objects
+constexpr FlagId NetworkTracer = 5;    // socket events
+constexpr FlagId TransTracer = 6;      // SessionBase transactions
+constexpr FlagId BufferTracer = 7;     // SessionBase IpBuffers
+constexpr FlagId ContextTracer = 8;    // SessionBase contexts
+constexpr FlagId ParserTracer = 9;     // parser "object code generation"
+constexpr FlagId FirstAppTracer = 10;  // start of application-specific tracers
 }
 #endif

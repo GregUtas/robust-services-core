@@ -94,7 +94,7 @@ private:
    //  IP stack.
    //
    virtual void ReceiveBuff
-      (MsgSize size, IpBufferPtr& buff, Faction faction) const override;
+      (IpBufferPtr& buff, MsgSize size, Faction faction) const override;
 };
 
 //------------------------------------------------------------------------------

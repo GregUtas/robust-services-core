@@ -77,13 +77,13 @@ protected:
    //  ticks0_ accordingly, it invokes this to wrap the message and pass it to
    //  PORT's input handler.  SOURCE and SIZE identify the message's location.
    //
-   void InvokeHandler(const IpPort& port,
-      const byte_t* source, MsgSize size) const;
+   void InvokeHandler
+      (const IpPort& port, const byte_t* source, MsgSize size) const;
 
    //  Returns true after pausing when the thread has run locked for more
    //  than PERCENT of the maximum time allowed.
    //
-   virtual bool ConditionalPause(word percent);
+   bool ConditionalPause(word percent);
 
    //  Overridden to survive warm restarts.
    //
@@ -98,14 +98,6 @@ protected:
    //
    IpPort* ipPort_;
 
-   //  The size of the receive buffer for the socket bound against port_.
-   //
-   size_t rxSize_;
-
-   //  The size of the transmit buffer for the socket bound against port_.
-   //
-   size_t txSize_;
-
    //  The host address.
    //
    SysIpL2Addr host_;
@@ -118,7 +110,8 @@ protected:
    //
    SysIpL3Addr txAddr_;
 
-   //  The (host) address on which the current message arrived.
+   //  The (host) address on which the current message arrived.  When
+   //  TCP is used, rxAddr_.socket_ identifies the connection's socket.
    //
    SysIpL3Addr rxAddr_;
 
@@ -129,6 +122,14 @@ protected:
    //  The buffer for receiving messages.
    //
    byte_t* buffer_;
+private:
+   //  The size of the receive buffer for the socket bound against port_.
+   //
+   size_t rxSize_;
+
+   //  The size of the transmit buffer for the socket bound against port_.
+   //
+   size_t txSize_;
 };
 }
 #endif

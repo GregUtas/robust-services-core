@@ -25,6 +25,7 @@
 #include "Debug.h"
 #include "IpBuffer.h"
 #include "IpPort.h"
+#include "Memory.h"
 
 using std::ostream;
 using std::string;
@@ -57,8 +58,8 @@ InputHandler::~InputHandler()
 
 fn_name InputHandler_AllocBuff = "InputHandler.AllocBuff";
 
-IpBuffer* InputHandler::AllocBuff
-   (const byte_t* source, MsgSize size, byte_t*& dest, MsgSize& rcvd) const
+IpBuffer* InputHandler::AllocBuff(const byte_t* source,
+   MsgSize size, byte_t*& dest, MsgSize& rcvd, SysTcpSocket* socket) const
 {
    Debug::ft(InputHandler_AllocBuff);
 
@@ -80,6 +81,30 @@ void InputHandler::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
+fn_name InputHandler_HostToNetwork = "InputHandler.HostToNetwork";
+
+byte_t* InputHandler::HostToNetwork
+   (IpBuffer& buff, byte_t* src, size_t size) const
+{
+   Debug::ft(InputHandler_HostToNetwork);
+
+   return src;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name InputHandler_NetworkToHost = "InputHandler.NetworkToHost";
+
+void InputHandler::NetworkToHost
+   (IpBufferPtr& buff, byte_t* dest, const byte_t* src, size_t size) const
+{
+   Debug::ft(InputHandler_NetworkToHost);
+
+   Memory::Copy(dest, src, size);
+}
+
+//------------------------------------------------------------------------------
+
 void InputHandler::Patch(sel_t selector, void* arguments)
 {
    Protected::Patch(selector, arguments);
@@ -90,7 +115,7 @@ void InputHandler::Patch(sel_t selector, void* arguments)
 fn_name InputHandler_ReceiveBuff = "InputHandler.ReceiveBuff";
 
 void InputHandler::ReceiveBuff
-   (MsgSize size, IpBufferPtr& buff, Faction faction) const
+   (IpBufferPtr& buff, MsgSize size, Faction faction) const
 {
    Debug::ft(InputHandler_ReceiveBuff);
 

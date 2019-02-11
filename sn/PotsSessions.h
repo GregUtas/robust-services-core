@@ -103,7 +103,7 @@ private:
    //  IP stack.
    //
    virtual void ReceiveBuff
-      (MsgSize size, IpBufferPtr& buff, Faction faction) const override;
+      (IpBufferPtr& buff, MsgSize size, Faction faction) const override;
 
    //  Discards BUFF when it is invalid.  ERRVAL is included in the log.
    //

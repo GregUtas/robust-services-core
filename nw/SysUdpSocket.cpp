@@ -21,13 +21,16 @@
 //
 #include "SysUdpSocket.h"
 #include "Debug.h"
+#include "InputHandler.h"
 #include "IpBuffer.h"
 #include "IpPort.h"
 #include "IpPortRegistry.h"
-#include "IpService.h"
 #include "NwTrace.h"
 #include "Singleton.h"
 #include "SysIpL3Addr.h"
+
+using std::ostream;
+using std::string;
 
 //------------------------------------------------------------------------------
 
@@ -53,6 +56,16 @@ void SysUdpSocket::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
+void SysUdpSocket::Display(ostream& stream,
+   const string& prefix, const Flags& options) const
+{
+   SysSocket::Display(stream, prefix, options);
+
+   stream << prefix << "MaxUdpSize : " << MaxUdpSize_ << CRLF;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name SysUdpSocket_SendBuff = "SysUdpSocket.SendBuff";
 
 SysSocket::SendRc SysUdpSocket::SendBuff(IpBuffer& buff)
@@ -72,7 +85,7 @@ SysSocket::SendRc SysUdpSocket::SendBuff(IpBuffer& buff)
    auto txport = buff.TxAddr().GetPort();
    auto port = Singleton< IpPortRegistry >::Instance()->GetPort(txport);
    auto& peer = buff.RxAddr();
-   auto dest = port->GetService()->HostToNetwork(src, size);
+   auto dest = port->GetHandler()->HostToNetwork(buff, src, size);
    auto sent = SendTo(dest, size, peer);
    TracePeer(NwTrace::SendTo, txport, peer, sent);
 

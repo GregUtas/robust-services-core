@@ -57,8 +57,8 @@ SbInputHandler::~SbInputHandler()
 
 fn_name SbInputHandler_AllocBuff = "SbInputHandler.AllocBuff";
 
-IpBuffer* SbInputHandler::AllocBuff
-   (const byte_t* source, MsgSize size, byte_t*& dest, MsgSize& rcvd) const
+IpBuffer* SbInputHandler::AllocBuff(const byte_t* source,
+   MsgSize size, byte_t*& dest, MsgSize& rcvd, SysTcpSocket* socket) const
 {
    Debug::ft(SbInputHandler_AllocBuff);
 
@@ -95,7 +95,7 @@ void SbInputHandler::Patch(sel_t selector, void* arguments)
 fn_name SbInputHandler_ReceiveBuff = "SbInputHandler.ReceiveBuff";
 
 void SbInputHandler::ReceiveBuff
-   (MsgSize size, IpBufferPtr& buff, Faction faction) const
+   (IpBufferPtr& buff, MsgSize size, Faction faction) const
 {
    Debug::ft(SbInputHandler_ReceiveBuff);
 

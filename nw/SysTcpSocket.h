@@ -166,6 +166,19 @@ public:
    //
    bool IsOpen() const;
 
+   //  Sets the incoming message buffer.  If a different buffer is already
+   //  present, it is deleted.  If BUFF is nullptr, the buffer is deleted.
+   //
+   void SetIcMsg(IpBuffer* buff);
+
+   //  Returns the incoming message buffer.
+   //
+   IpBuffer* IcMsg() const { return icMsg_; }
+
+   //  Returns the incoming message buffer and sets it to nullptr.
+   //
+   IpBuffer* AcquireIcMsg();
+
    //  Overridden to send BUFF.
    //
    virtual SendRc SendBuff(IpBuffer& buff) override;
@@ -241,6 +254,10 @@ private:
    //  Flags that report the socket's status after invoking Poll.
    //
    PollFlags outFlags_;
+
+   //  An incoming message that is being assembled because it was segmented.
+   //
+   IpBuffer* icMsg_;
 
    //  Pending outgoing messages.  Outgoing messages are queued while the
    //  socket is waiting for a reply to a Connect or is otherwise blocked.

@@ -23,14 +23,10 @@
 #define INPUTHANDLER_H_INCLUDED
 
 #include "Protected.h"
+#include <cstddef>
 #include "NbTypes.h"
 #include "NwTypes.h"
 #include "SysTypes.h"
-
-namespace NetworkBase
-{
-   class SysSocket;
-}
 
 using namespace NodeBase;
 
@@ -75,11 +71,12 @@ public:
    //  into separate buffers by setting RCVD (which is set to SIZE before
    //  invoking this function) to the number of bytes to be read from SOURCE.
    //  The function is then invoked again, after adjusting SOURCE and SIZE.
+   //  SOCKET is the connection's socket when TCP is being used.
    //
    //  The default version allocates an IpBuffer and sets DEST to the top of
    //  that buffer in order to receive all of SOURCE.  It must therefore be
    //  overridden if any of the following is true:
-   //  o SOURCE can contain multiple messages (e.g. if using TCP)
+   //  o SOURCE can contain partial or multiple messages (e.g. if using TCP)
    //  o the port receiving the message uses a subclass of IpBuffer
    //  o the port receiving the message needs to build an internal header
    //
@@ -95,15 +92,26 @@ public:
    //  however, even when sent interprocessor between different nodes in the
    //  same network.  See MsgHeader for an example of such a header.
    //
-   virtual IpBuffer* AllocBuff
-      (const byte_t* source, MsgSize size, byte_t*& dest, MsgSize& rcvd) const;
+   virtual IpBuffer* AllocBuff(const byte_t* source, MsgSize size,
+      byte_t*& dest, MsgSize& rcvd, SysTcpSocket* socket) const;
+
+   //  Converts a message from network to host order when it is received.
+   //  The message begins at SRC, is SIZE bytes long, and is to be placed
+   //  at DEST, which is located in the BUFF that AllocBuff allocated.
+   //   The default version simply copies SIZE bytes from SRC to DEST.
+   //
+   virtual void NetworkToHost
+      (IpBufferPtr& buff, byte_t* dest, const byte_t* src, size_t size) const;
 
    //  This function is invoked after a message of SIZE bytes has been copied
    //  into a BUFFER returned by AllocBuff.  FACTION is the scheduler faction
-   //  for the IP port on which the message arrived.  If AllocBuff reserved
-   //  space for a header, it can now be filled in.  The message should then
-   //  be scheduled for processing, usually by queueing it on an application
-   //  object which is, in turn, placed on a work queue.
+   //  for the IP port on which the message arrived.  The TCP socket (if any)
+   //  passed to AllocBuff is now available from buff->RxAddr().GetSocket().
+   //
+   //  If AllocBuff reserved space for a header, it can now be filled in.
+   //  The message should then be scheduled for processing, either by queueing
+   //  it on a thread or by queueing it on an application object which is, in
+   //  turn, placed on a work queue.
    //
    //  In rare situations (e.g. a garbled message), ReceiveBuff may need to
    //  discard a message.  When this occurs, it should generate a log.
@@ -112,7 +120,16 @@ public:
    //  the buffer to be deleted.
    //
    virtual void ReceiveBuff
-      (MsgSize size, IpBufferPtr& buff, Faction faction) const;
+      (IpBufferPtr& buff, MsgSize size, Faction faction) const;
+
+   //  Converts a message from host to network order when it is transmitted.
+   //  (InputHandler has also become an output handler.)  The message begins
+   //  at SRC, is SIZE bytes long, and is located in the BUFF being sent.
+   //  Returns the location of the converted message, which could be SRC if
+   //  no conversion occurred.  The default verison simply returns SRC.
+   //
+   virtual byte_t* HostToNetwork
+      (IpBuffer& buff, byte_t* src, size_t size) const;
 
    //  Invoked by an I/O thread to inform the input handler that SOCKET has
    //  failed.

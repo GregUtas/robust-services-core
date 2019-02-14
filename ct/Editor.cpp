@@ -1371,7 +1371,15 @@ WarningStatus Editor::FixStatus(const WarningLog& log) const
    case PtrTagDetached:
    case RefTagDetached:
    case RedundantSemicolon:
+// case UseOfCast:
+// case FunctionalCast:
+// case ReinterpretCast:
+// case Downcasting:
+// case CastingAwayConstness:
+// case PointerArithmetic:
    case RedundantConst:
+// case DefineNotAtFileScope:
+// case IncludeNotAtGlobalScope:
    case IncludeGuardMissing:
    case IncludeDuplicated:
    case IncludeAdd:
@@ -1383,32 +1391,92 @@ WarningStatus Editor::FixStatus(const WarningLog& log) const
    case UsingRemove:
    case ForwardAdd:
    case ForwardRemove:
+// case ArgumentUnused:
+// case ClassUnused:
+// case DataUnused:
+// case EnumUnused:
+// case EnumeratorUnused:
+// case FriendUnused:
+// case FunctionUnused:
+// case TypedefUnused:
+// case ForwardUnresolved:
+// case FriendUnresolved:
+// case FriendAsForward:
+// case HidesInheritedName:
+// case ClassCouldBeNamespace:
    case ClassCouldBeStruct:
    case StructCouldBeClass:
    case RedundantAccessControl:
+// case ItemCouldBePrivate:
+// case ItemCouldBeProtected:
+// case PointerTypedef:
+// case AnonymousEnum:
+// case DataUninitialized:
+// case DataInitOnly:
+// case DataWriteOnly:
+// case GlobalStaticData:
+// case DataNotPrivate:
+// case DataCannotBeConst:
+// case DataCannotBeConstPtr:
    case DataCouldBeConst:
    case DataCouldBeConstPtr:
    case DataNeedNotBeMutable:
+// case DefaultPODConstructor:
+// case DefaultConstructor:
+// case DefaultCopyConstructor:
+// case DefaultAssignment:
+// case PublicConstructor:
    case NonExplicitConstructor:
+// case MemberInitMissing:
+// case MemberInitNotSorted:
+// case DefaultDestructor:
+// case VirtualDestructor:
+// case NonVirtualDestructor:
+// case VirtualFunctionInvoked:
+// case RuleOf3DtorNoCopyCtor:
+// case RuleOf3DtorNoCopyOper:
+// case RuleOf3CopyCtorNoOper:
+// case RuleOf3CopyOperNoCtor:
+// case OperatorOverloaded:
+// case FunctionNotDefined:
+// case PureVirtualNotDefined:
+// case VirtualAndPublic:
+// case VirtualOverloading:
+// case FunctionNotOverridden:
    case VirtualTagMissing:
    case OverrideTagMissing:
    case VoidAsArgument:
+// case AnonymousArgument:
+// case AdjacentArgumentTypes:
    case DefinitionRenamesArgument:
    case OverrideRenamesArgument:
+// case VirtualDefaultArgument:
+// case ArgumentCannotBeConst:
    case ArgumentCouldBeConstRef:
    case ArgumentCouldBeConst:
+// case FunctionCannotBeConst:
    case FunctionCouldBeConst:
    case FunctionCouldBeStatic:
+// case FunctionCouldBeFree:
+// case StaticFunctionViaMember:
+// case NonBooleanConditional:
+// case EnumTypesDiffer:
    case UseOfTab:
    case Indentation:
    case TrailingSpace:
    case AdjacentSpaces:
    case AddBlankLine:
    case RemoveBlankLine:
-//c   case LineLength:
+// case LineLength:
+// case FunctionNotSorted:
+// case HeadingNotStandard:
    case IncludeGuardMisnamed:
    case DebugFtNotInvoked:
+// case DebugFtNotFirst:
    case DebugFtNameMismatch:
+// case DebugFtNameDuplicated:
+// case DisplayNotOverridden:
+// case PatchNotOverridden:
    case FunctionCouldBeDefaulted:
    case InitCouldUseConstructor:
       return NotFixed;

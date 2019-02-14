@@ -20,6 +20,8 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "SysUdpSocket.h"
+#include <ostream>
+#include <string>
 #include "Debug.h"
 #include "InputHandler.h"
 #include "IpBuffer.h"
@@ -49,19 +51,19 @@ SysUdpSocket::~SysUdpSocket()
 
 //------------------------------------------------------------------------------
 
-void SysUdpSocket::Patch(sel_t selector, void* arguments)
-{
-   SysSocket::Patch(selector, arguments);
-}
-
-//------------------------------------------------------------------------------
-
 void SysUdpSocket::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
    SysSocket::Display(stream, prefix, options);
 
    stream << prefix << "MaxUdpSize : " << MaxUdpSize_ << CRLF;
+}
+
+//------------------------------------------------------------------------------
+
+void SysUdpSocket::Patch(sel_t selector, void* arguments)
+{
+   SysSocket::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

@@ -241,7 +241,7 @@ class PotsCwmInAnalyzeNetworkMessage : public PotsCwmEventHandler
 {
    friend class Singleton< PotsCwmInAnalyzeNetworkMessage >;
 private:
-   PotsCwmInAnalyzeNetworkMessage() { }
+   PotsCwmInAnalyzeNetworkMessage() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -250,7 +250,7 @@ class PotsCwmInFacility : public PotsCwmEventHandler
 {
    friend class Singleton< PotsCwmInFacility >;
 private:
-   PotsCwmInFacility() { }
+   PotsCwmInFacility() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -259,7 +259,7 @@ class PotsCwmAcAnalyzeUserMessage : public PotsCwmEventHandler
 {
    friend class Singleton< PotsCwmAcAnalyzeUserMessage >;
 private:
-   PotsCwmAcAnalyzeUserMessage() { }
+   PotsCwmAcAnalyzeUserMessage() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -268,7 +268,7 @@ class PotsCwmAcAnalyzeNetworkMessage : public PotsCwmEventHandler
 {
    friend class Singleton< PotsCwmAcAnalyzeNetworkMessage >;
 private:
-   PotsCwmAcAnalyzeNetworkMessage() { }
+   PotsCwmAcAnalyzeNetworkMessage() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -277,7 +277,7 @@ class PotsCwmAcNotify : public PotsCwmEventHandler
 {
    friend class Singleton< PotsCwmAcNotify >;
 private:
-   PotsCwmAcNotify() { }
+   PotsCwmAcNotify() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -286,7 +286,7 @@ class PotsCwmAcToneTimeout : public PotsCwmEventHandler
 {
    friend class Singleton< PotsCwmAcToneTimeout >;
 private:
-   PotsCwmAcToneTimeout() { }
+   PotsCwmAcToneTimeout() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -295,7 +295,7 @@ class PotsCwmAcRenotify : public PotsCwmEventHandler
 {
    friend class Singleton< PotsCwmAcRenotify >;
 private:
-   PotsCwmAcRenotify() { }
+   PotsCwmAcRenotify() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -304,7 +304,7 @@ class PotsCwmAcFlipflop : public PotsCwmEventHandler
 {
    friend class Singleton< PotsCwmAcFlipflop >;
 private:
-   PotsCwmAcFlipflop() { }
+   PotsCwmAcFlipflop() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -313,7 +313,7 @@ class PotsCwmAcReanswer : public PotsCwmEventHandler
 {
    friend class Singleton< PotsCwmAcReanswer >;
 private:
-   PotsCwmAcReanswer() { }
+   PotsCwmAcReanswer() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -322,7 +322,7 @@ class PotsCwmAcReanswerTimeout : public PotsCwmEventHandler
 {
    friend class Singleton< PotsCwmAcReanswerTimeout >;
 private:
-   PotsCwmAcReanswerTimeout() { }
+   PotsCwmAcReanswerTimeout() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -331,7 +331,7 @@ class PotsCwmAcReconnect : public PotsCwmEventHandler
 {
    friend class Singleton< PotsCwmAcReconnect >;
 private:
-   PotsCwmAcReconnect() { }
+   PotsCwmAcReconnect() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -340,7 +340,7 @@ class PotsCwmAcLocalRelease : public PotsCwmEventHandler
 {
    friend class Singleton< PotsCwmAcLocalRelease >;
 private:
-   PotsCwmAcLocalRelease() { }
+   PotsCwmAcLocalRelease() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -349,7 +349,7 @@ class PotsCwmAcActiveRelease : public PotsCwmEventHandler
 {
    friend class Singleton< PotsCwmAcActiveRelease >;
 private:
-   PotsCwmAcActiveRelease() { }
+   PotsCwmAcActiveRelease() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -358,7 +358,7 @@ class PotsCwmAcInactiveRelease : public PotsCwmEventHandler
 {
    friend class Singleton< PotsCwmAcInactiveRelease >;
 private:
-   PotsCwmAcInactiveRelease() { }
+   PotsCwmAcInactiveRelease() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -367,7 +367,7 @@ class PotsCwmAcQuiesce : public PotsCwmEventHandler
 {
    friend class Singleton< PotsCwmAcQuiesce >;
 private:
-   PotsCwmAcQuiesce() { }
+   PotsCwmAcQuiesce() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -376,7 +376,7 @@ class PotsCwmAcRelay : public PotsCwmEventHandler
 {
    friend class Singleton< PotsCwmAcRelay >;
 private:
-   PotsCwmAcRelay() { }
+   PotsCwmAcRelay() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -1192,7 +1192,7 @@ EventHandler::Rc PotsCwmSsm::ProcessInitAck
 
       auto prof = mux->Profile();
       auto peer = prof->ObjAddr();
-      auto peerPrevRemAddr = GlobalAddress::NilAddr;
+      GlobalAddress peerPrevRemAddr;
       auto psm = actNPsm->JoinPeer(peer, peerPrevRemAddr);
 
       //  If we rerouted the active call's UPSM, create our own UPSM, which
@@ -1513,8 +1513,8 @@ EventHandler::Rc PotsCwmSsm::RelayMsg()
    {
       auto host = IpPortRegistry::HostAddress();
       auto peer = IpPortRegistry::HostAddress();
-      auto locAddr = GlobalAddress(host, PotsCallIpPort, PotsCallFactoryId);
-      auto remAddr = GlobalAddress(peer, PotsShelfIpPort, PotsShelfFactoryId);
+      GlobalAddress locAddr(host, PotsCallIpPort, PotsCallFactoryId);
+      GlobalAddress remAddr(peer, PotsShelfIpPort, PotsShelfFactoryId);
 
       pmsg->SetSender(locAddr);
       pmsg->SetReceiver(remAddr);

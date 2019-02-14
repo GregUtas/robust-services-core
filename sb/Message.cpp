@@ -548,8 +548,8 @@ bool Message::Relay(ProtocolSM& ogPsm)
       //
       ChangeDir(MsgOutgoing);
       ogPsm.HenqOgMsg(*this);
-      SetReceiver(GlobalAddress::NilAddr);
-      SetSender(GlobalAddress::NilAddr);
+      SetReceiver(GlobalAddress());
+      SetSender(GlobalAddress());
       Header()->injected = false;
       handled_ = false;
       return true;
@@ -816,7 +816,7 @@ bool Message::Send(Route route)
       }
       else
       {
-         auto buff = SbIpBufferPtr(new SbIpBuffer(*buff_));
+         SbIpBufferPtr buff(new SbIpBuffer(*buff_));
          buff->SetDir(MsgIncoming);
          sent = pool->ReceiveBuff(buff, false);
       }

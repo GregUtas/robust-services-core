@@ -22,28 +22,27 @@
 #ifndef NBSIGNALS_H_INCLUDED
 #define NBSIGNALS_H_INCLUDED
 
+#include "SysTypes.h"
+
 //------------------------------------------------------------------------------
 
 namespace NodeBase
 {
-   //  The following signals are proprietary and are used to throw a
-   //  SignalException outside the signal handler.
-   //
-   enum NbSignalIds
-   {
-      SIGNIL = 0,       // nil signal
-      SIGCLOSE = 120,   // exit thread (non-error)
-      SIGYIELD = 121,   // ran unpreemptably too long
-      SIGTRAPS = 122,   // trapped too many times
-      SIGRETRAP = 123,  // trapped during recovery
-      SIGSTACK1 = 124,  // stack overflow: attempt recovery
-      SIGSTACK2 = 125,  // stack overflow: exit and recreate thread
-      SIGPURGE = 126,   // thread killed or suicided
-      SIGDELETED = 127  // thread unexpectedly deleted
-   };
+//  The following signals are proprietary and are used to throw a
+//  SignalException outside the signal handler.
+//
+constexpr signal_t SIGNIL = 0;        // nil signal
+constexpr signal_t SIGCLOSE = 120;    // exit thread (non-error)
+constexpr signal_t SIGYIELD = 121;    // ran unpreemptably too long
+constexpr signal_t SIGTRAPS = 122;    // trapped too many times
+constexpr signal_t SIGRETRAP = 123;   // trapped during recovery
+constexpr signal_t SIGSTACK1 = 124;   // stack overflow: attempt recovery
+constexpr signal_t SIGSTACK2 = 125;   // stack overflow: recreate thread
+constexpr signal_t SIGPURGE = 126;    // thread killed or suicided
+constexpr signal_t SIGDELETED = 127;  // thread unexpectedly deleted
 
-   //  Creates signals during system initialization.
-   //
-   void CreatePosixSignals();
+//  Creates signals during system initialization.
+//
+void CreatePosixSignals();
 }
 #endif

@@ -58,7 +58,7 @@ bool MemoryTrace::Display(ostream& stream, bool diff)
    //  If there is no record of this memory being freed, flag it.
    //
    auto buff = Singleton< TraceBuffer >::Instance();
-   auto mask = Flags(1 << MemoryTracer);
+   Flags mask(1 << MemoryTracer);
    TraceRecord* rec  = this;
 
    for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))

@@ -34,20 +34,17 @@ namespace PotsBase
 {
 //  Identifiers for POTS features.
 //
-enum PotsFeatureIds
-{
-   SUS = 1,   // Suspended service
-   BOC = 2,   // Barring of Outcoming Calls
-   HTL = 3,   // Hot Line
-   WML = 4,   // Warm Line
-   BIC = 5,   // Barring of Incoming Calls
-   CFU = 6,   // Call Forwarding Unconditional
-   CFB = 7,   // Call Forwarding Busy
-   CFN = 8,   // Call Forwarding Don't Answer
-   CWT = 9,   // Call Waiting
-   TWC = 10,  // Three-Way Calling
-   CXF = 11   // Call Transfer
-};
+constexpr PotsFeature::Id SUS = 1;   // Suspended service
+constexpr PotsFeature::Id BOC = 2;   // Barring of Outcoming Calls
+constexpr PotsFeature::Id HTL = 3;   // Hot Line
+constexpr PotsFeature::Id WML = 4;   // Warm Line
+constexpr PotsFeature::Id BIC = 5;   // Barring of Incoming Calls
+constexpr PotsFeature::Id CFU = 6;   // Call Forwarding Unconditional
+constexpr PotsFeature::Id CFB = 7;   // Call Forwarding Busy
+constexpr PotsFeature::Id CFN = 8;   // Call Forwarding Don't Answer
+constexpr PotsFeature::Id CWT = 9;   // Call Waiting
+constexpr PotsFeature::Id TWC = 10;  // Three-Way Calling
+constexpr PotsFeature::Id CXF = 11;  // Call Transfer
 
 //------------------------------------------------------------------------------
 

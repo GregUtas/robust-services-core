@@ -68,8 +68,6 @@ MsgPort::MsgPort(const Message& msg, Context& ctx) : ProtocolLayer(&ctx),
 fn_name MsgPort_ctor2 = "MsgPort.ctor(o/g)";
 
 MsgPort::MsgPort(ProtocolLayer& upper) : ProtocolLayer(upper, true),
-   locAddr_(GlobalAddress::NilAddr),
-   remAddr_(GlobalAddress::NilAddr),
    msgRcvd_(false),
    msgSent_(false)
 {
@@ -199,7 +197,7 @@ bool MsgPort::DropPeer(const GlobalAddress& peerPrevRemAddr)
    //  and modify this port so that it has no peer.
    //
    peerPort->remAddr_ = peerPrevRemAddr;
-   remAddr_ = GlobalAddress::NilAddr;
+   remAddr_ = GlobalAddress();
    return true;
 }
 

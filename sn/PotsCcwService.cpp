@@ -77,7 +77,7 @@ class PotsCcwAcCollectInformation : public EventHandler
 private:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
-   PotsCcwAcCollectInformation() { }
+   PotsCcwAcCollectInformation() = default;
 };
 
 class PotsCcwSsm : public ServiceSM

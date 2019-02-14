@@ -53,7 +53,7 @@ namespace CodeTools
 
    //  Returns true if FILE is a code file.
    //
-   bool IsCodeFile(const std::string& name);
+   bool IsCodeFile(const std::string& file);
 
    //  Returns the index of the string in SV that matches S.  If no string
    //  in SV matches S, returns string::npos.

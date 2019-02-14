@@ -116,7 +116,7 @@ class PotsCfxUnAnalyzeMessage : public PotsCfxEventHandler
 {
    friend class Singleton< PotsCfxUnAnalyzeMessage >;
 private:
-   PotsCfxUnAnalyzeMessage() { }
+   PotsCfxUnAnalyzeMessage() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -125,7 +125,7 @@ class PotsCfbTiAnalyzeMessage : public PotsCfxEventHandler
 {
    friend class Singleton< PotsCfbTiAnalyzeMessage >;
 private:
-   PotsCfbTiAnalyzeMessage() { }
+   PotsCfbTiAnalyzeMessage() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -134,7 +134,7 @@ class PotsCfbTiTimeout : public PotsCfxEventHandler
 {
    friend class Singleton< PotsCfbTiTimeout >;
 private:
-   PotsCfbTiTimeout() { }
+   PotsCfbTiTimeout() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };

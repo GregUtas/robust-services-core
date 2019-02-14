@@ -41,7 +41,7 @@ class SbAnalyzeMessage : public EventHandler
 {
    friend class Singleton< SbAnalyzeMessage >;
 private:
-   SbAnalyzeMessage() { }
+   SbAnalyzeMessage() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -55,7 +55,7 @@ class SbAnalyzeSap : public EventHandler
 {
    friend class Singleton< SbAnalyzeSap >;
 private:
-   SbAnalyzeSap() { }
+   SbAnalyzeSap() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -69,7 +69,7 @@ class SbAnalyzeSnp : public EventHandler
 {
    friend class Singleton< SbAnalyzeSnp >;
 private:
-   SbAnalyzeSnp() { }
+   SbAnalyzeSnp() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -83,7 +83,7 @@ class SbForceTransition : public EventHandler
 {
    friend class Singleton< SbForceTransition >;
 private:
-   SbForceTransition() { }
+   SbForceTransition() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -97,7 +97,7 @@ class SbInitiationReq : public EventHandler
 {
    friend class Singleton< SbInitiationReq >;
 private:
-   SbInitiationReq() { }
+   SbInitiationReq() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };

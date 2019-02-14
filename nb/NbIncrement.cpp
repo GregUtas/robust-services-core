@@ -227,7 +227,7 @@ word BuffersCommand::ProcessCommand(CliThread& cli) const
 
    auto pool = Singleton< MsgBufferPool >::Instance();
    auto num = pool->InUseCount();
-   auto opts = Flags();
+   Flags opts;
    if(v) opts.set(DispVerbose);
 
    if(c)
@@ -871,7 +871,7 @@ word HelpCommand::ProcessCommand(CliThread& cli) const
       {
          cli.EndOfInput(false);
          comm->ExplainCommand(*cli.obuf, true);
-         auto file = string(incr->Name());
+         string file(incr->Name());
          file.push_back('.');
          file.append(comm->Text());
          return DisplayHelpFile(cli, file);  // [3]
@@ -921,7 +921,7 @@ word HelpCommand::ProcessCommand(CliThread& cli) const
    {
       cli.EndOfInput(false);
       comm->ExplainCommand(*cli.obuf, true);
-      auto file = string(incr->Name());
+      string file(incr->Name());
       file.push_back('.');
       file.append(comm->Text());
       return DisplayHelpFile(cli, file);  // [10]

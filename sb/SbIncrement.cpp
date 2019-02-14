@@ -295,7 +295,7 @@ word ContextsCommand::ProcessCommand(CliThread& cli) const
 
    auto pool = Singleton< ContextPool >::Instance();
    auto num = pool->InUseCount();
-   auto opts = Flags();
+   Flags opts;
    if(v) opts.set(DispVerbose);
 
    if(c)

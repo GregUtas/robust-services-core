@@ -1196,9 +1196,9 @@ public:
    //
    virtual bool IsConst() const override { return const_; }
 
-   //  Overridden to look for an implemented function.
+   //  Overridden to look for an implemented or defaulted function.
    //
-   virtual bool IsImplemented() const override { return impl_ != nullptr; }
+   virtual bool IsImplemented() const override;
 
    //  Overridden to return true if this is an instance of a function template.
    //

@@ -2349,7 +2349,7 @@ void Function::CheckCtor() const
    if(FuncType() != FuncCtor) return;
    auto defn = GetDefn();
    auto impl = defn->impl_.get();
-   if(impl == nullptr) return;
+   if(!IsImplemented()) return;
 
    //  A base class constructor should not be public.
    //
@@ -2378,7 +2378,7 @@ void Function::CheckCtor() const
    //
    auto& mems = defn->mems_;
 
-   if((impl->FirstStatement() == nullptr) &&
+   if((impl != nullptr) && (impl->FirstStatement() == nullptr) &&
       (defn->call_ == nullptr) && mems.empty())
    {
       LogToBoth(FunctionCouldBeDefaulted);
@@ -2408,10 +2408,11 @@ void Function::CheckCtor() const
       }
    }
 
-   //  All members that need initialization should have been initialized in
-   //  order of declaration.  If a member should have been initialized but
-   //  was not, log this against the member.  If a member was initialized
-   //  out of order, log this against the initialization statement.
+   //  All members that require initialization should be initialized in order
+   //  of declaration.  If a member should be initialized but was not, log it
+   //  unless this is a default copy constructor, which effectively does a
+   //  bitwise copy.  If a member was initialized out of order, log it against
+   //  the initialization statement.
    //
    size_t last = 0;
 
@@ -2419,10 +2420,10 @@ void Function::CheckCtor() const
    {
       if(item->initOrder == 0)
       {
-         if(item->initNeeded)
+         if((item->initNeeded) && (!defn->defaulted_ || FuncRole() != CopyCtor))
          {
             //  Log both the missing member and the suspicious constructor.
-            //  This will help to better pinpoint where the concern exists.
+            //  This helps to pinpoint where the concern lies.
             //
             Log(MemberInitMissing);
             item->member->Log(MemberInitMissing);
@@ -2976,8 +2977,9 @@ void Function::EnterBlock()
 
    //  If the function has no implementation, do nothing.  An empty function
    //  (just the braces) has an empty code block, so it will get past this.
+   //  Treat a defaulted function as having an empty code block.
    //
-   if(impl_ == nullptr) return;
+   if(!IsImplemented()) return;
 
    //  Don't execute a function template or a function in a class template.
    //  A function in a class template *instance*, however, is executed.
@@ -3045,7 +3047,7 @@ void Function::EnterBlock()
       }
    }
 
-   impl_->EnterBlock();
+   if(impl_ != nullptr) impl_->EnterBlock();
 
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
    {
@@ -3078,7 +3080,7 @@ bool Function::EnterScope()
    //
    auto defn = false;
 
-   if((impl_ != nullptr) || defaulted_)
+   if(IsImplemented())
    {
       auto decl = GetArea()->MatchFunc(this, false);
 
@@ -3300,6 +3302,7 @@ FunctionRole Function::FuncRole() const
       {
          arg = args_[1].get();
          if(arg->Root() != GetClass()) return FuncOther;
+         if(parms_ != nullptr) return FuncOther;
          refs = arg->GetTypeSpec()->Refs();
          if(refs == 2) return MoveOper;
          return CopyOper;
@@ -3316,6 +3319,7 @@ FunctionType Function::FuncType() const
    if(Operator() != Cxx::NIL_OPERATOR) return FuncOperator;
    if(spec_ != nullptr) return FuncStandard;
    if(Name()->find('~') != string::npos) return FuncDtor;
+   if(parms_ != nullptr) return FuncStandard;
    return FuncCtor;
 }
 
@@ -3862,6 +3866,14 @@ bool Function::IsExemptFromTracing() const
    }
 
    return false;
+}
+
+//------------------------------------------------------------------------------
+
+bool Function::IsImplemented() const
+{
+   auto defn = GetDefn();
+   return ((defn->impl_ != nullptr) || defn->defaulted_);
 }
 
 //------------------------------------------------------------------------------

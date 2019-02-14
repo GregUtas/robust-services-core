@@ -44,10 +44,6 @@ public:
    //
    GlobalAddress();
 
-   //  The nil global address.
-   //
-   static const GlobalAddress NilAddr;
-
    //  Specifies an IP layer 3 address and factory.
    //
    GlobalAddress(const SysIpL3Addr& l3Addr, FactoryId fid);
@@ -63,6 +59,14 @@ public:
    //  Not subclassed.
    //
    ~GlobalAddress();
+
+   //  Copy constructor.
+   //
+   GlobalAddress(const GlobalAddress& that) = default;
+
+   //  Copy operator.
+   //
+   GlobalAddress& operator=(const GlobalAddress& that) = default;
 
    //  Returns the local address.
    //

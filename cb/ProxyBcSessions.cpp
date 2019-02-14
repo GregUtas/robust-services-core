@@ -606,7 +606,7 @@ ProtocolSM::OutgoingRc ProxyBcPsm::ProcessOgMsg(Message& msg)
    if(AddressesUnknown(&msg))
    {
       auto host = IpPortRegistry::HostAddress();
-      auto addr = GlobalAddress(host, NilIpPort, ProxyCallFactoryId);
+      GlobalAddress addr(host, NilIpPort, ProxyCallFactoryId);
 
       msg.SetSender(addr);
       msg.SetReceiver(addr);

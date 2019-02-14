@@ -142,7 +142,7 @@ Pots_UN_Message::Pots_UN_Message(ProtocolSM* psm, MsgSize size) :
       auto peer = IpPortRegistry::HostAddress();
 
       SetProtocol(PotsProtocolId);
-      auto addr = GlobalAddress(host, PotsShelfIpPort, PotsShelfFactoryId);
+      GlobalAddress addr(host, PotsShelfIpPort, PotsShelfFactoryId);
       SetSender(addr);
       addr = GlobalAddress(peer, PotsCallIpPort, PotsCallFactoryId);
       SetReceiver(addr);
@@ -197,7 +197,7 @@ Pots_NU_Message::Pots_NU_Message(ProtocolSM* psm, MsgSize size) :
       auto peer = IpPortRegistry::HostAddress();
 
       SetProtocol(PotsProtocolId);
-      auto addr = GlobalAddress(host, PotsCallIpPort, PotsCallFactoryId);
+      GlobalAddress addr(host, PotsCallIpPort, PotsCallFactoryId);
       SetSender(addr);
       addr = GlobalAddress(peer, PotsShelfIpPort, PotsShelfFactoryId);
       SetReceiver(addr);

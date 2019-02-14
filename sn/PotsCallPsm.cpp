@@ -326,8 +326,8 @@ ProtocolSM::OutgoingRc PotsCallPsm::ProcessOgMsg(Message& msg)
    {
       auto host = IpPortRegistry::HostAddress();
       auto peer = IpPortRegistry::HostAddress();
-      auto locAddr = GlobalAddress(host, PotsCallIpPort, PotsCallFactoryId);
-      auto remAddr = GlobalAddress(peer, PotsShelfIpPort, PotsShelfFactoryId);
+      GlobalAddress locAddr(host, PotsCallIpPort, PotsCallFactoryId);
+      GlobalAddress remAddr(peer, PotsShelfIpPort, PotsShelfFactoryId);
 
       msg.SetSender(locAddr);
       msg.SetReceiver(remAddr);

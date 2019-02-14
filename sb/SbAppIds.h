@@ -22,6 +22,8 @@
 #ifndef SBAPPIDS_H_INCLUDED
 #define SBAPPIDS_H_INCLUDED
 
+#include "SbTypes.h"
+
 //------------------------------------------------------------------------------
 
 namespace SessionBase
@@ -32,50 +34,41 @@ namespace SessionBase
 //  o FactoryId
 //  o ServiceId
 //
-enum ProtocolIds
-{
-   TimerProtocolId = 1,
-   TestProtocolId = 2,
-   CipProtocolId = 3,
-   PotsProtocolId = 4
-};
+constexpr ProtocolId TimerProtocolId = 1;
+constexpr ProtocolId TestProtocolId = 2;
+constexpr ProtocolId CipProtocolId = 3;
+constexpr ProtocolId PotsProtocolId = 4;
 
-enum FactoryIds
-{
-   TestFactoryId = 1,
-   CipObcFactoryId = 2,
-   CipTbcFactoryId = 3,
-   ProxyCallFactoryId = 4,
-   TestCallFactoryId = 5,
-   PotsShelfFactoryId = 6,
-   PotsCallFactoryId = 7,
-   PotsMuxFactoryId = 8
-};
+constexpr FactoryId TestFactoryId = 1;
+constexpr FactoryId CipObcFactoryId = 2;
+constexpr FactoryId CipTbcFactoryId = 3;
+constexpr FactoryId ProxyCallFactoryId = 4;
+constexpr FactoryId TestCallFactoryId = 5;
+constexpr FactoryId PotsShelfFactoryId = 6;
+constexpr FactoryId PotsCallFactoryId = 7;
+constexpr FactoryId PotsMuxFactoryId = 8;
 
-enum ServiceIds
-{
-   TestServiceId = 1,
-   PotsCallServiceId = 2,
-   PotsSusServiceId = 3,
-   PotsBocServiceId = 4,
-   PotsBicServiceId = 5,
-   PotsHtlServiceId = 6,
-   PotsWmlActivation = 7,
-   PotsWmlDeactivation = 8,
-   PotsWmlServiceId = 9,
-   PotsCcwServiceId = 10,
-   PotsCwbServiceId = 11,
-   PotsCwmServiceId = 12,
-   PotsCwaServiceId = 13,
-   PotsMuxServiceId = 14,
-   PotsDiscServiceId = 15,
-   PotsCfuActivation = 16,
-   PotsCfuDeactivation = 17,
-   PotsCfuServiceId = 18,
-   PotsCfbServiceId = 19,
-   PotsCfnServiceId = 20,
-   PotsCfxServiceId = 21,
-   PotsProxyServiceId = 22
-};
+constexpr ServiceId TestServiceId = 1;
+constexpr ServiceId PotsCallServiceId = 2;
+constexpr ServiceId PotsSusServiceId = 3;
+constexpr ServiceId PotsBocServiceId = 4;
+constexpr ServiceId PotsBicServiceId = 5;
+constexpr ServiceId PotsHtlServiceId = 6;
+constexpr ServiceId PotsWmlActivation = 7;
+constexpr ServiceId PotsWmlDeactivation = 8;
+constexpr ServiceId PotsWmlServiceId = 9;
+constexpr ServiceId PotsCcwServiceId = 10;
+constexpr ServiceId PotsCwbServiceId = 11;
+constexpr ServiceId PotsCwmServiceId = 12;
+constexpr ServiceId PotsCwaServiceId = 13;
+constexpr ServiceId PotsMuxServiceId = 14;
+constexpr ServiceId PotsDiscServiceId = 15;
+constexpr ServiceId PotsCfuActivation = 16;
+constexpr ServiceId PotsCfuDeactivation = 17;
+constexpr ServiceId PotsCfuServiceId = 18;
+constexpr ServiceId PotsCfbServiceId = 19;
+constexpr ServiceId PotsCfnServiceId = 20;
+constexpr ServiceId PotsCfxServiceId = 21;
+constexpr ServiceId PotsProxyServiceId = 22;
 }
 #endif

@@ -224,7 +224,7 @@ public:
 
    //  Allow subclasses to define application-specific service indicators.
    //
-   virtual ~Facility() { }
+   virtual ~Facility() = default;
 private:
    //  Deleted because this class is not intended to be instantiated.
    //

@@ -42,7 +42,7 @@ class CorruptWhatParm : public CliTextParm
 {
 public:
    CorruptWhatParm();
-   virtual ~CorruptWhatParm() { }
+   virtual ~CorruptWhatParm() = default;
 };
 
 class CorruptCommand : public CliCommand
@@ -54,7 +54,7 @@ public:
    //  Set BIND to false if binding a subclass of CorruptWhatParm.
    //
    explicit CorruptCommand(bool bind = true);
-   virtual ~CorruptCommand() { }
+   virtual ~CorruptCommand() = default;
 protected:
    virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
 private:
@@ -70,7 +70,7 @@ class NtSetWhatParm : public SetWhatParm
 {
 public:
    NtSetWhatParm();
-   virtual ~NtSetWhatParm() { }
+   virtual ~NtSetWhatParm() = default;
 };
 
 class NtSetCommand : public SetCommand
@@ -82,7 +82,7 @@ public:
    //  Set BIND to false if binding a subclass of NtSetWhatParm.
    //
    explicit NtSetCommand(bool bind = true);
-   virtual ~NtSetCommand() { }
+   virtual ~NtSetCommand() = default;
 protected:
    virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
 };
@@ -96,7 +96,7 @@ class NtSaveWhatParm : public SaveWhatParm
 {
 public:
    NtSaveWhatParm();
-   virtual ~NtSaveWhatParm() { }
+   virtual ~NtSaveWhatParm() = default;
 };
 
 class NtSaveCommand : public SaveCommand
@@ -108,7 +108,7 @@ public:
    //  Set BIND to false if binding a subclass of NtSaveWhatParm.
    //
    explicit NtSaveCommand(bool bind = true);
-   virtual ~NtSaveCommand() { }
+   virtual ~NtSaveCommand() = default;
 protected:
    virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
 };
@@ -122,7 +122,7 @@ class SizesCommand : public CliCommand
 {
 public:
    SizesCommand();
-   virtual ~SizesCommand() { }
+   virtual ~SizesCommand() = default;
 protected:
    virtual void DisplaySizes(CliThread& cli, bool all) const;
 private:
@@ -137,7 +137,7 @@ class TestcaseAction : public CliTextParm
 {
 public:
    TestcaseAction();
-   virtual ~TestcaseAction() { }
+   virtual ~TestcaseAction() = default;
 };
 
 class TestcaseCommand : public CliCommand
@@ -158,7 +158,7 @@ public:
    //  Set BIND to false if binding a subclass of TestcaseAction.
    //
    explicit TestcaseCommand(bool bind = true);
-   virtual ~TestcaseCommand() { }
+   virtual ~TestcaseCommand() = default;
 protected:
    virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
 private:

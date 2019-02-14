@@ -177,7 +177,7 @@ class NtLogsAction : public LogsAction
 {
 public:
    NtLogsAction();
-   virtual ~NtLogsAction() { }
+   virtual ~NtLogsAction() = default;
 };
 
 class NtLogsCommand : public LogsCommand
@@ -189,7 +189,7 @@ public:
    //  Set BIND to false if binding a subclass of NtLogsAction.
    //
    explicit NtLogsCommand(bool bind = true);
-   virtual ~NtLogsCommand() { }
+   virtual ~NtLogsCommand() = default;
 protected:
    virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
 private:
@@ -426,7 +426,7 @@ word NtSaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    FunctionGuard guard(FunctionGuard::MakePreemptable, yield);
 
    FunctionTrace::Postprocess();
-   auto fp = std::unique_ptr< FunctionProfiler >(new FunctionProfiler);
+   std::unique_ptr< FunctionProfiler > fp(new FunctionProfiler);
    if(fp == nullptr) return cli.Report(-7, AllocationError);
    rc = fp->Generate(*stream, sort);
    fp.reset();
@@ -1055,8 +1055,8 @@ class LbcPool : public Temporary
 public:
    LeakyBucketCounter lbc_;
 private:
-   LbcPool() { }
-   ~LbcPool() { }
+   LbcPool() = default;
+   ~LbcPool() = default;
 };
 
 class LbcLimitParm : public CliIntParm
@@ -2816,8 +2816,8 @@ public:
 
    SysTime time_[MaxIndex + 1];
 private:
-   SysTimePool() { }
-   ~SysTimePool() { }
+   SysTimePool() = default;
+   ~SysTimePool() = default;
 };
 
 class SysTimeIndexParm : public CliIntParm

@@ -55,7 +55,7 @@ enum IpProtocol
    IpAny,        // wildcard
    IpUdp,
    IpTcp,
-   IpProtocol_N  // numer of IP protocols
+   IpProtocol_N  // number of IP protocols
 };
 
 //  Inserts a string for PROTO into STREAM.

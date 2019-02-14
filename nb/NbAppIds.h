@@ -23,6 +23,7 @@
 #define NBAPPIDS_H_INCLUDED
 
 #include "NbTypes.h"
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -72,19 +73,17 @@ constexpr ObjectPoolId FirstAppObjPoolId = 13;    // start of application pools
 
 //------------------------------------------------------------------------------
 //
-//  Reserved software debugging flags.  Ad hoc usage should begin after the
+//  Reserved software debugging flags.  Ad hoc usage should begin with the
 //  last FlagId defined here.
 //
-enum SwFlagIds
-{
-   ThreadCriticalFlag,
-   ThreadCtorTrapFlag,
-   ThreadRecoveryTrapFlag,
-   ShowToolProgress,
-   CallTrapFlag,
-   CipAlwaysOverIpFlag,
-   CipIamTimeoutFlag,
-   CipAlertingTimeoutFlag
-};
+constexpr FlagId ThreadCriticalFlag = 0;
+constexpr FlagId ThreadCtorTrapFlag = 1;
+constexpr FlagId ThreadRecoveryTrapFlag = 2;
+constexpr FlagId ShowToolProgress = 3;
+constexpr FlagId CallTrapFlag = 4;
+constexpr FlagId CipAlwaysOverIpFlag = 5;
+constexpr FlagId CipIamTimeoutFlag = 6;
+constexpr FlagId CipAlertingTimeoutFlag = 7;
+constexpr FlagId FirstAppDebugFlag = 8;
 }
 #endif

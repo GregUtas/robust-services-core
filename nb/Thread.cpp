@@ -1159,7 +1159,7 @@ TraceStatus Thread::CalcStatus(bool dynamic) const
 
    auto buff = Singleton< TraceBuffer >::Instance();
    if(buff->FilterIsOn(TraceAll)) return TraceIncluded;
-   return TraceDefault;
+   return TraceExcluded;
 }
 
 //------------------------------------------------------------------------------
@@ -1344,7 +1344,7 @@ fixed_string SchedHeader[SchedHeaderSize] =
 
 void Thread::DisplaySummaries(ostream& stream)
 {
-   auto line = string(strlen(SchedHeader[0]), '-');
+   string line(strlen(SchedHeader[0]), '-');
 
    ticks_t ticks;      // start of current interval
    usecs_t time0;      // duration of current interval

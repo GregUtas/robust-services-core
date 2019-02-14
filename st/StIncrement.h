@@ -37,8 +37,8 @@ namespace SessionTools
 class StSizesCommand : public SizesCommand
 {
 public:
-   StSizesCommand() { }
-   virtual ~StSizesCommand() { }
+   StSizesCommand() = default;
+   virtual ~StSizesCommand() = default;
 protected:
    virtual void DisplaySizes(CliThread& cli, bool all) const override;
 private:

@@ -556,7 +556,7 @@ word ResetCommand::ProcessCommand(CliThread& cli) const
    msg->AddHeader(phi);
    msg->AddCause(cci);
 
-   cct->Profile()->ClearObjAddr(NilLocalAddress);
+   cct->Profile()->ClearObjAddr(LocalAddress());
 
    if(!msg->Send(Message::External)) return cli.Report(-6, SendFailure);
    return cli.Report(0, SuccessExpl);

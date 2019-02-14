@@ -121,7 +121,7 @@ class PotsWmlAcAnalyzeMessage : public PotsWmlEventHandler
 {
    friend class Singleton< PotsWmlAcAnalyzeMessage >;
 private:
-   PotsWmlAcAnalyzeMessage() { }
+   PotsWmlAcAnalyzeMessage() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -130,7 +130,7 @@ class PotsWmlTiAnalyzeMessage : public PotsWmlEventHandler
 {
    friend class Singleton< PotsWmlTiAnalyzeMessage >;
 private:
-   PotsWmlTiAnalyzeMessage() { }
+   PotsWmlTiAnalyzeMessage() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -139,7 +139,7 @@ class PotsWmlTiTimeout : public PotsWmlEventHandler
 {
    friend class Singleton< PotsWmlTiTimeout >;
 private:
-   PotsWmlTiTimeout() { }
+   PotsWmlTiTimeout() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -693,7 +693,7 @@ EventHandler::Rc PotsWmlTiTimeout::ProcessEvent
    auto& pssm = static_cast< PotsBcSsm& >(*wssm.Parent());
    auto wmlp = wssm.Profile();
    auto dn = wmlp->GetDN();
-   auto ds = DigitString(dn);
+   DigitString ds(dn);
    auto dsrc = pssm.DialedDigits().AddDigits(ds);
 
    pssm.StopTimer(PotsProtocol::CollectionTimeoutId);

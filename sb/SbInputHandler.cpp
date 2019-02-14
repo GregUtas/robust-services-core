@@ -105,7 +105,7 @@ void SbInputHandler::ReceiveBuff
    auto pool = Singleton< InvokerPoolRegistry >::Instance()->Pool(faction);
    if(pool == nullptr) return;
 
-   auto sbbuff = SbIpBufferPtr(static_cast< SbIpBuffer* >(buff.release()));
+   SbIpBufferPtr sbbuff(static_cast< SbIpBuffer* >(buff.release()));
    pool->ReceiveBuff(sbbuff, true);
 }
 }

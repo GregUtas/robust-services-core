@@ -40,8 +40,6 @@ namespace SessionBase
 fn_name MsgHeader_ctor = "MsgHeader.ctor";
 
 MsgHeader::MsgHeader() :
-   txAddr(NilLocalAddress),
-   rxAddr(NilLocalAddress),
    priority(Message::Ingress),
    initial(false),
    final(false),

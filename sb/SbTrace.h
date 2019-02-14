@@ -225,7 +225,7 @@ class SboTrace : public TimedRecord
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~SboTrace() { }
+   virtual ~SboTrace() = default;
 
    //  Overridden to display the trace record.
    //
@@ -469,7 +469,7 @@ public:
 
    //  Public to allow subclassing.
    //
-   virtual ~EventTrace() { }
+   virtual ~EventTrace() = default;
 
    //  Overridden to display the trace record.
    //
@@ -505,7 +505,7 @@ class HandlerTrace : public EventTrace
 public:
    //  Public to allow subclassing.
    //
-   virtual ~HandlerTrace() { }
+   virtual ~HandlerTrace() = default;
 
    //  Creates a trace record when the service identified by SID, in
    //  STATE, has processed EVT, with the event handler returning RC.

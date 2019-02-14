@@ -275,7 +275,7 @@ void BuffTrace::ClaimBlocks()
 {
    Debug::ft(BuffTrace_ClaimBlocks);
 
-   if((buff_ != nullptr) && !buff_->IsInvalid() && !corrupt_)
+   if((buff_ != nullptr) && !corrupt_ && !buff_->IsInvalid())
    {
       buff_->Claim();
    }
@@ -346,7 +346,7 @@ BuffTrace* BuffTrace::NextIcMsg
    {
       TraceRecord* rec = bt;
       auto max = 200;
-      auto mask = Flags(1 << BufferTracer);
+      Flags mask(1 << BufferTracer);
 
       for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
       {
@@ -417,7 +417,7 @@ Message* BuffTrace::Rewrap()
 
    auto reg = Singleton< FactoryRegistry >::Instance();
    auto fac = reg->GetFactory(Header()->rxAddr.fid);
-   auto ipb = SbIpBufferPtr(new (ToolUser) SbIpBuffer(*buff_));
+   SbIpBufferPtr ipb(new (ToolUser) SbIpBuffer(*buff_));
 
    verified_ = true;
    if(ipb == nullptr) return nullptr;
@@ -594,8 +594,6 @@ MsgTrace::MsgTrace(Id rid, const Message& msg, Message::Route route) :
    SboTrace(sizeof(MsgTrace), msg),
    prid_(msg.GetProtocol()),
    sid_(msg.GetSignal()),
-   locAddr_(NilLocalAddress),
-   remAddr_(NilLocalAddress),
    route_(route),
    noCtx_(Context::RunningContext() == nullptr),
    self_(msg.Header()->self)

@@ -82,7 +82,7 @@ msecs_t StatisticsThread::CalcFirstDelay()
 {
    Debug::ft(StatisticsThread_CalcFirstDelay);
 
-   auto timeNow = SysTime();
+   SysTime timeNow;
    auto ticksNow = Clock::TicksNow();
 
    //  Start the first short interval for thread statistics at the next

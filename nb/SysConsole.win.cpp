@@ -50,7 +50,7 @@ bool SysConsole::SetTitle(const string& title)
 {
    Debug::ft(SysConsole_SetTitle);
 
-   auto wtitle = wstring(title.begin(), title.end());
+   wstring wtitle(title.begin(), title.end());
    return SetConsoleTitle(wtitle.c_str());
 }
 }

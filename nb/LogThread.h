@@ -55,8 +55,9 @@ private:
    //
    ~LogThread();
 
-   //  Writes LOG to the log file and, if appropriate, the console.  LogThread
-   //  takes ownership of LOG, which is set to nullptr before returning.
+   //  Adds a CRLF to LOG unless it already ends in one.  Writes LOG to
+   //  the log file and, if appropriate, the console.  LogThread takes
+   //  ownership of LOG, which is set to nullptr before returning.
    //
    static void Spool(ostringstreamPtr& log);
 

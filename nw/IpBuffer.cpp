@@ -295,8 +295,7 @@ bool IpBuffer::Send(bool external)
 
    //  If there is a dedicated socket for the destination, send the message
    //  over it.  If not, find the IP service associated with the sender and
-   //  ask it to create a socket (e.g. for TCP).  If it doesn't, try to use
-   //  the port's socket, the assumption being it is shared (e.g. for UDP).
+   //  see if it shares the I/O thread's primary socket (e.g. for UDP).
    //
    SysSocket* socket = rxAddr_.GetSocket();
 
@@ -321,21 +320,22 @@ bool IpBuffer::Send(bool external)
          return false;
       }
 
-      socket = svc->CreateAppSocket();
+      if(!svc->HasSharedSocket())
+      {
+         Debug::SwLog(IpBuffer_Send, txPort, 3);
+         return false;
+      }
+
+      socket = ipPort->GetSocket();
 
       if(socket == nullptr)
       {
-         socket = ipPort->GetSocket();
-
-         if(socket == nullptr)
+         if(Restart::GetStatus() != ShuttingDown)
          {
-            if(Restart::GetStatus() != ShuttingDown)
-            {
-               Debug::SwLog(IpBuffer_Send, txPort, 3);
-            }
-
-            return false;
+            Debug::SwLog(IpBuffer_Send, txPort, 4);
          }
+
+         return false;
       }
    }
 

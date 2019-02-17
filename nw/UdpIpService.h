@@ -36,6 +36,11 @@ public:
    //
    virtual IpProtocol Protocol() const override { return IpUdp; }
 
+   //  Overridden to indicate that applications share the I/O
+   //  thread's primary socket when sending messages.
+   //
+   virtual bool HasSharedSocket() const override { return true; }
+
    //  Overridden for patching.
    //
    virtual void Patch(sel_t selector, void* arguments) override;

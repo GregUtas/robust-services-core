@@ -57,6 +57,12 @@ public:
    //
    virtual IpProtocol Protocol() const override { return IpTcp; }
 
+   //  Overridden to indicate that applications do not use the I/O
+   //  thread's primary socket (the listener socket, if it exists)
+   //  when sending messages.
+   //
+   virtual bool HasSharedSocket() const override { return false; }
+
    //  Overridden to display member variables.
    //
    virtual void Display(std::ostream& stream,

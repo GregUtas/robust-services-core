@@ -149,6 +149,18 @@ Faction IpService::GetFaction() const
 
 //------------------------------------------------------------------------------
 
+fn_name IpService_HasSharedSocket = "IpService.HasSharedSocket";
+
+bool IpService::HasSharedSocket() const
+{
+   Debug::ft(IpService_HasSharedSocket);
+
+   Debug::SwLog(IpService_HasSharedSocket, Name(), sid_.GetId());
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name IpService_Name = "IpService.Name";
 
 const char* IpService::Name() const

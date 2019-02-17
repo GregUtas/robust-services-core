@@ -431,7 +431,7 @@ Editor::Iter Editor::CodeBegin()
    {
       auto type = GetLineType(s);
 
-      if(!LineTypeAttr::Attrs[type].isCode && (type != LeadingComment))
+      if(!LineTypeAttr::Attrs[type].isCode && (type != FileComment))
       {
          //  Keep moving up the file.  The idea is to stop at an
          //  #include, forward declaration, or using statement.
@@ -470,7 +470,7 @@ Editor::Iter Editor::CodeBegin()
          //
          Debug::SwLog(Editor_CodeBegin, "Unexpected line type", type);
          // [[fallthrough]]
-      case LeadingComment:
+      case FileComment:
       case CloseBrace:
       case CloseBraceSemicolon:
       case IncludeDirective:

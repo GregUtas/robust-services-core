@@ -81,11 +81,11 @@ public:
    //
    virtual CliText* CreateText() const = 0;
 
-   //  Allocates an application socket when sending an initial message.
-   //  Overridden by services that support a dedicated socket for each
-   //  application instance.
+   //  Returns true if applications share the I/O thread's primary socket.
+   //  If it returns false, as it does for TCP-based services, application
+   //  instances must allocate a socket before sending a message.
    //
-   virtual SysTcpSocket* CreateAppSocket() const { return nullptr; }
+   virtual bool HasSharedSocket() const = 0;
 
    //  Provides sizes of the receive and transmit buffers for application
    //  sockets.  Invoked to configure the socket when the service's I/O

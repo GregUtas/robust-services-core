@@ -144,6 +144,7 @@ void LogThread::Spool(ostringstreamPtr& log)
    Debug::ft(LogThread_Spool);
 
    if(log == nullptr) return;
+   if(log->str().back() != CRLF) *log << CRLF;
 
    //  During a restart, our thread won't run, so output the log directly.
    //  This is done locked to avoid contention for the log file, since many

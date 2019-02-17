@@ -493,7 +493,7 @@ enum LineType
    Code,                  // source code
    Blank,                 // blank lines
    EmptyComment,          // //
-   LeadingComment,        // comment at top of file, before any code
+   FileComment,           // comment at top of file, before any code
    SeparatorComment,      // //# (# = repeated -, =, or /)
    TaggedComment,         // //@ (@ = any character except -, =, or /)
    TextComment,           // //  text

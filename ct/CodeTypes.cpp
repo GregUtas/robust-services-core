@@ -151,7 +151,7 @@ fixed_string LineTypeStrings[LineType_N + 1] =
    "source code",
    "blank",
    COMMENT_STR,
-   "leading //",
+   "file //",
    "separator //",
    "tagged //",
    "text //",
@@ -199,7 +199,7 @@ const LineTypeAttr LineTypeAttr::Attrs[LineType_N + 1] =
    LineTypeAttr(T, T, T, F),  // Code
    LineTypeAttr(F, F, F, T),  // Blank
    LineTypeAttr(F, F, F, T),  // EmptyComment
-   LineTypeAttr(F, F, F, F),  // LeadingComment
+   LineTypeAttr(F, F, F, F),  // FileComment
    LineTypeAttr(F, F, F, F),  // SeparatorComment
    LineTypeAttr(F, F, F, F),  // TaggedComment
    LineTypeAttr(F, F, F, F),  // TextComment

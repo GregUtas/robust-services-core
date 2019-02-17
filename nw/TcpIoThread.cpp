@@ -366,7 +366,7 @@ void TcpIoThread::Enter()
       //
       host_ = IpPortRegistry::HostAddress();
 
-      for(curr_ = first; ((ready_ > 0) && (curr_ < sockets_.Size())); ++curr_)
+      for(curr_ = first; curr_ < sockets_.Size(); ++curr_)
       {
          ServiceSocket();
          ConditionalPause(90);
@@ -411,16 +411,21 @@ void TcpIoThread::EraseSocket(size_t& index)
    sockets_.Erase(index);
    --index;
 
+   auto handler = ipPort_->GetHandler();
+   auto deleted = false;
+
+   //  If the socket was invalid, nullify it, otherwise release it
+   //  (which deletes it if the application has also released it).
+   //
    if(socket->OutFlags()->test(PollInvalid))
-   {
       socket->Invalidate();
-   }
    else
-   {
-      auto handler = ipPort_->GetHandler();
-      socket->Deregister();
-      handler->SocketFailed(socket);
-   }
+      deleted = socket->Deregister();
+
+   //  If the socket has not been deleted, the application has not
+   //  yet released it, so inform it that the socket has failed.
+   //
+   if(!deleted) handler->SocketFailed(socket);
 }
 
 //------------------------------------------------------------------------------
@@ -433,6 +438,7 @@ bool TcpIoThread::InsertSocket(SysSocket* socket)
 
    if(socket->Protocol() != IpTcp) return false;
 
+   auto interrupt = sockets_.Empty();
    auto sock = static_cast< SysTcpSocket* >(socket);
 
    if(sockets_.PushBack(sock))
@@ -440,7 +446,6 @@ bool TcpIoThread::InsertSocket(SysSocket* socket)
       //  If the thread had no sockets, it is sleeping forever
       //  and must be woken up to service its new socket.
       //
-      auto interrupt = sockets_.Empty();
       auto flags = sock->InFlags();
       flags->set(PollRead);
       sock->Register();
@@ -548,23 +553,23 @@ word TcpIoThread::PollSockets()
 
    auto sockets = sockets_.Items();
    auto size = sockets_.Size();
-   Debug::Assert(size > 0);
+   if(size == 0) return 0;
    auto ready = SysTcpSocket::Poll(sockets, size, TIMEOUT_IMMED);
 
-   while(ready == 0)
+   if(ready == 0)
    {
       ipPort_->RecvsInSequence(recvs_);
 
       EnterBlockingOperation(BlockedOnNetwork, TcpIoThread_Enter);
       {
-         ready = SysTcpSocket::Poll(sockets, size, TIMEOUT_NEVER);
+         ready = SysTcpSocket::Poll(sockets, size, 2 * TIMEOUT_1_SEC);
       }
       ExitBlockingOperation(TcpIoThread_Enter);
 
       recvs_ = 0;
    }
 
-   sockets_.Front()->TraceEvent(NwTrace::Poll, ready);
+   if(ready > 0) sockets_.Front()->TraceEvent(NwTrace::Poll, ready);
    return ready;
 }
 
@@ -598,8 +603,15 @@ void TcpIoThread::ServiceSocket()
    auto socket = sockets_[curr_];
    if(socket == nullptr) return;
 
-   //  Return if this socket hasn't reported an event.
+   //  Return if this socket has neither reported an event nor
+   //  been released by the application.
    //
+   if(socket->GetAppState() == SysTcpSocket::Released)
+   {
+      EraseSocket(curr_);
+      return;
+   }
+
    auto flags = socket->OutFlags();
    if(flags->none()) return;
 
@@ -609,9 +621,7 @@ void TcpIoThread::ServiceSocket()
    ConditionalPause(90);
    --ready_;
 
-   //  Erase the socket if it has disconnected or is no longer
-   //  valid.  These are not hard errors, because a socket is
-   //  closed as soon as the application relinquishes it.
+   //  Erase the socket if it has disconnected or is no longer valid.
    //
    if(flags->test(PollHungUp) || flags->test(PollError) ||
       flags->test(PollInvalid))

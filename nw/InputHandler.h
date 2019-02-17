@@ -98,10 +98,10 @@ public:
    //  Converts a message from network to host order when it is received.
    //  The message begins at SRC, is SIZE bytes long, and is to be placed
    //  at DEST, which is located in the BUFF that AllocBuff allocated.
-   //   The default version simply copies SIZE bytes from SRC to DEST.
+   //  The default version simply copies SIZE bytes from SRC to DEST.
    //
    virtual void NetworkToHost
-      (IpBufferPtr& buff, byte_t* dest, const byte_t* src, size_t size) const;
+      (IpBuffer& buff, byte_t* dest, const byte_t* src, size_t size) const;
 
    //  This function is invoked after a message of SIZE bytes has been copied
    //  into a BUFFER returned by AllocBuff.  FACTION is the scheduler faction

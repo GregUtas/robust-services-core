@@ -1012,7 +1012,7 @@ void CodeFile::CheckSeparation()
       case Code:
          switch(prevType)
          {
-         case LeadingComment:
+         case FileComment:
          case FunctionName:
          case IncludeDirective:
          case UsingDirective:
@@ -2560,7 +2560,7 @@ void CodeFile::Scan()
 
          if((t != EmptyComment) && (t != SlashAsteriskComment))
          {
-            lineType_[n] = LeadingComment;
+            lineType_[n] = FileComment;
          }
       }
    }

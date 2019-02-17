@@ -96,7 +96,7 @@ byte_t* InputHandler::HostToNetwork
 fn_name InputHandler_NetworkToHost = "InputHandler.NetworkToHost";
 
 void InputHandler::NetworkToHost
-   (IpBufferPtr& buff, byte_t* dest, const byte_t* src, size_t size) const
+   (IpBuffer& buff, byte_t* dest, const byte_t* src, size_t size) const
 {
    Debug::ft(InputHandler_NetworkToHost);
 

@@ -185,7 +185,7 @@ void IoThread::InvokeHandler
       //  Copy RCVD bytes from SOURCE to DEST and pass the message to
       //  the input handler.
       //
-      handler->NetworkToHost(buff, dest, source, rcvd);
+      handler->NetworkToHost(*buff, dest, source, rcvd);
       buff->SetRxAddr(rxAddr_);
       buff->SetTxAddr(txAddr_);
       buff->SetRxTicks(ticks0_);

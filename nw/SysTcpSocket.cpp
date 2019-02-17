@@ -47,7 +47,7 @@ SysTcpSocket::SysTcpSocket(ipport_t port,
    state_(Idle),
    disconnecting_(false),
    iotActive_(false),
-   appActive_(false),
+   appState_(Initial),
    icMsg_(nullptr)
 {
    Debug::ft(SysTcpSocket_ctor1);
@@ -67,7 +67,7 @@ SysTcpSocket::SysTcpSocket(SysSocket_t socket) : SysSocket(socket),
    state_(Connected),
    disconnecting_(false),
    iotActive_(false),
-   appActive_(false),
+   appState_(Initial),
    icMsg_(nullptr)
 {
    Debug::ft(SysTcpSocket_ctor2);
@@ -85,11 +85,11 @@ SysTcpSocket::~SysTcpSocket()
 {
    Debug::ft(SysTcpSocket_dtor);
 
-   //  Both the application and I/O thread should have released the socket.
+   //  Neither the application nor the I/O thread should be using the socket.
    //
-   if(appActive_ || iotActive_)
+   if((appState_ != Released) || iotActive_)
    {
-      Debug::SwLog(SysTcpSocket_dtor, appActive_, iotActive_);
+      Debug::SwLog(SysTcpSocket_dtor, appState_, iotActive_);
    }
 
    if(icMsg_ != nullptr)
@@ -111,7 +111,7 @@ void SysTcpSocket::Acquire()
    Debug::ft(SysTcpSocket_Acquire);
 
    TraceEvent(NwTrace::Acquire, state_);
-   appActive_ = true;
+   appState_ = Acquired;
 }
 
 //------------------------------------------------------------------------------
@@ -147,18 +147,25 @@ void SysTcpSocket::ClaimBlocks()
 
 fn_name SysTcpSocket_Deregister = "SysTcpSocket.Deregister";
 
-void SysTcpSocket::Deregister()
+bool SysTcpSocket::Deregister()
 {
    Debug::ft(SysTcpSocket_Deregister);
 
-   //  If the application has not relinquished the socket, close it
-   //  without deleting its wrapper object.  It will be deleted when
-   //  the application invokes Release().
+   //  If the application has not released the socket, close it without
+   //  deleting its wrapper object.  It will be deleted when the
+   //  application invokes Release().
    //
    TraceEvent(NwTrace::Deregister, state_);
    iotActive_ = false;
-   if(!appActive_) delete this;
+
+   if(appState_ == Released)
+   {
+      delete this;
+      return true;
+   }
+
    Disconnect();
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -205,7 +212,7 @@ void SysTcpSocket::Display(ostream& stream,
    stream << prefix << "state         : " << state_ << CRLF;
    stream << prefix << "disconnecting : " << disconnecting_ << CRLF;
    stream << prefix << "iotActive     : " << iotActive_ << CRLF;
-   stream << prefix << "appActive     : " << appActive_ << CRLF;
+   stream << prefix << "appState      : " << int(appState_) << CRLF;
    stream << prefix << "inFlags       : " << inFlags_.to_string() << CRLF;
    stream << prefix << "outFlags      : " << outFlags_.to_string() << CRLF;
    stream << prefix << "icMsg         : " << icMsg_ << CRLF;
@@ -234,7 +241,7 @@ void SysTcpSocket::Purge()
 
    TraceEvent(NwTrace::Purge, state_);
    iotActive_ = false;
-   appActive_ = false;
+   appState_ = Released;
    delete this;
 }
 
@@ -296,9 +303,12 @@ void SysTcpSocket::Release()
    //  occurs, Deregister() will delete the wrapper.
    //
    TraceEvent(NwTrace::Release, state_);
-   appActive_ = false;
-   if(!iotActive_) delete this;
-   Disconnect();
+   appState_ = Released;
+
+   if(!iotActive_)
+      delete this;
+   else
+      Disconnect();
 }
 
 //------------------------------------------------------------------------------

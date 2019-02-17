@@ -77,9 +77,10 @@ public:
    void Register();
 
    //  Invoked by an I/O thread when it removes the socket from its poll
-   //  array.
+   //  array.  Returns true if the application was not using the socket,
+   //  in which case it has been deleted.
    //
-   void Deregister();
+   bool Deregister();
 
    //  Initiates connection setup to remAdddr.  Returns 0 on success.  If
    //  the socket is non-blocking, reports success immediately; the socket
@@ -153,6 +154,19 @@ public:
    //  Overridden to configure the socket for a keepalive if required.
    //
    virtual AllocRc SetService(const IpService* service, bool shared) override;
+
+   //  The socket's state with respect to the application.
+   //
+   enum AppState
+   {
+      Initial,   // socket allocated
+      Acquired,  // application has invoked Acquire()
+      Released   // application has invoked Release()
+   };
+
+   //  Returns the socket's application state.
+   //
+   AppState GetAppState() const { return appState_; }
 
    //  Invoked by an application when it begins to use the socket.
    //
@@ -245,7 +259,7 @@ private:
 
    //  Set if an application is using the socket.
    //
-   bool appActive_ : 8;
+   AppState appState_ : 8;
 
    //  Flags that query the socket's status before invoking Poll.
    //

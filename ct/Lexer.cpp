@@ -161,7 +161,7 @@ void Lexer::CalcDepths()
          ns = false;
          SetDepth(start, depth, next);
          line_[GetLineNum(curr_)].cont = false;
-         right = FindClosing('{', '}', curr_ + 1);
+         right = FindClosing('{', '}', curr_);
          line_[GetLineNum(right)].depth = depth;
          depth = next;
          Advance(1);

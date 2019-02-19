@@ -22,17 +22,16 @@
 #ifndef MSGHEADER_H_INCLUDED
 #define MSGHEADER_H_INCLUDED
 
+#include <cstddef>
 #include <cstdint>
 #include <iosfwd>
 #include <string>
 #include "LocalAddress.h"
 #include "Message.h"
-#include "NbTypes.h"
 #include "SbTypes.h"
 #include "SysSocket.h"
 
 using namespace NetworkBase;
-using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 
@@ -55,12 +54,7 @@ struct MsgHeader
    Message::Route    route    : 2;   // the route that the message took
    ProtocolId        protocol : 16;  // message's protocol
    SignalId          signal   : 16;  // message's signal
-   MsgSize           length   : 16;  // total bytes in all parameters
-
-   //  The maximum size of the payload portion of a SessionBase message.
-   //  The magic "32" must be sizeof(MsgHeader) or greater.
-   //
-   static const MsgSize MaxMsgSize = (SysSocket::MaxMsgSize - 32);
+   uint16_t          length   : 16;  // total bytes in all parameters
 
    //  Initializes all fields.
    //
@@ -70,5 +64,10 @@ struct MsgHeader
    //
    void Display(std::ostream& stream, const std::string& prefix) const;
 };
+
+//  The maximum size of the payload portion of a SessionBase message.
+//  The magic "32" must be the size of MsgHeader or greater.
+//
+constexpr size_t MaxSbMsgSize = SysSocket::MaxMsgSize - sizeof(MsgHeader);
 }
 #endif

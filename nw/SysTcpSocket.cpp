@@ -86,8 +86,11 @@ SysTcpSocket::~SysTcpSocket()
    Debug::ft(SysTcpSocket_dtor);
 
    //  Neither the application nor the I/O thread should be using the socket.
+   //  If the socket has just received a message, the socket should not be
+   //  deleted until the application has had a chance to process it.
    //
-   if((appState_ != Released) || iotActive_)
+   if(iotActive_ || (appState_ == Acquired ) ||
+      ((appState_ == Initial) && (state_ != Idle)))
    {
       Debug::SwLog(SysTcpSocket_dtor, appState_, iotActive_);
    }
@@ -158,7 +161,7 @@ bool SysTcpSocket::Deregister()
    TraceEvent(NwTrace::Deregister, state_);
    iotActive_ = false;
 
-   if(appState_ == Released)
+   if((appState_ == Released) || ((appState_ == Initial) && (state_ == Idle)))
    {
       delete this;
       return true;
@@ -218,6 +221,26 @@ void SysTcpSocket::Display(ostream& stream,
    stream << prefix << "icMsg         : " << icMsg_ << CRLF;
    stream << prefix << "ogMsgq        : " << CRLF;
    ogMsgq_.Display(stream, prefix + spaces(2), options);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SysTcpSocket_FindSocket = "SysTcpSocket.FindSocket";
+
+size_t SysTcpSocket::FindSocket
+   (SysTcpSocket* sockets[], size_t size, SysSocket_t socket)
+{
+   Debug::ft(SysTcpSocket_FindSocket);
+
+   for(size_t i = 0; i < size; ++i)
+   {
+      if((sockets[i] != nullptr) && (sockets[i]->Socket() == socket))
+      {
+         return i;
+      }
+   }
+
+   return SIZE_MAX;
 }
 
 //------------------------------------------------------------------------------

@@ -83,7 +83,7 @@ public:
    //  Alternatively, the second version of the Insert function could be used,
    //  as it does not require a RegCell member.
    //
-   bool Init(size_t max, ptrdiff_t diff, MemoryType mem, bool del = true)
+   bool Init(id_t max, ptrdiff_t diff, MemoryType mem, bool del = true)
    {
       Debug::ft(Registry_Init());
       if(registry_ != nullptr)
@@ -464,7 +464,7 @@ public:
 
    //  Returns the number of items in the registry.
    //
-   size_t Size() const
+   id_t Size() const
    {
       Debug::ft(Registry_Size());
       return size_;
@@ -562,7 +562,7 @@ private:
    //  Increases the size of the registry's array, up to its limit, when more
    //  space is needed.  MIN is the minimum id_t to be supported.
    //
-   bool Extend(size_t min)
+   bool Extend(id_t min)
    {
       Debug::ft(Registry_Extend());
       if(capacity_ >= max_) return false;
@@ -641,11 +641,11 @@ private:
 
    //  The number of items currently in the registry.
    //
-   size_t size_;
+   id_t size_;
 
    //  The current size of the registry.
    //
-   size_t capacity_;
+   id_t capacity_;
 
    //  The type of memory used by the registry's array.
    //
@@ -653,7 +653,7 @@ private:
 
    //  The maximum size allowed for the registry.
    //
-   size_t max_;
+   id_t max_;
 
    //  The distance from a pointer to an item in the registry and its RegCell
    //  member.

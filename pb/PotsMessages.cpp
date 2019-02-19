@@ -45,7 +45,7 @@ PotsMessage::PotsMessage(SbIpBufferPtr& buff) : TlvMessage(buff)
 
 fn_name PotsMessage_ctor2 = "PotsMessage.ctor(o/g)";
 
-PotsMessage::PotsMessage(ProtocolSM* psm, MsgSize size) : TlvMessage(psm, size)
+PotsMessage::PotsMessage(ProtocolSM* psm, size_t size) : TlvMessage(psm, size)
 {
    Debug::ft(PotsMessage_ctor2);
 }
@@ -128,7 +128,7 @@ Pots_UN_Message::Pots_UN_Message(SbIpBufferPtr& buff) : PotsMessage(buff)
 
 fn_name Pots_UN_Message_ctor2 = "Pots_UN_Message.ctor(o/g)";
 
-Pots_UN_Message::Pots_UN_Message(ProtocolSM* psm, MsgSize size) :
+Pots_UN_Message::Pots_UN_Message(ProtocolSM* psm, size_t size) :
    PotsMessage(psm, size)
 {
    Debug::ft(Pots_UN_Message_ctor2);
@@ -183,7 +183,7 @@ Pots_NU_Message::Pots_NU_Message(SbIpBufferPtr& buff) : PotsMessage(buff)
 
 fn_name Pots_NU_Message_ctor2 = "Pots_NU_Message.ctor(o/g)";
 
-Pots_NU_Message::Pots_NU_Message(ProtocolSM* psm, MsgSize size) :
+Pots_NU_Message::Pots_NU_Message(ProtocolSM* psm, size_t size) :
    PotsMessage(psm, size)
 {
    Debug::ft(Pots_NU_Message_ctor2);

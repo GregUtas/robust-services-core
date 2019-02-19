@@ -1346,10 +1346,10 @@ void Thread::DisplaySummaries(ostream& stream)
 {
    string line(strlen(SchedHeader[0]), '-');
 
-   ticks_t ticks;      // start of current interval
-   usecs_t time0;      // duration of current interval
-   usecs_t idle0;      // idle time during current interval
-   usecs_t used0 = 0;  // time in all threads during current interval
+   ticks_t ticks;     // start of current interval
+   usecs_t time0;     // duration of current interval
+   size_t idle0;      // idle time during current interval
+   size_t used0 = 0;  // time in all threads during current interval
 
    auto& threads = Singleton< ThreadRegistry >::Instance()->Threads();
 

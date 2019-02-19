@@ -83,6 +83,7 @@
 
 #include "Protected.h"
 #include <cstddef>
+#include <cstdint>
 #include <iosfwd>
 #include <string>
 #include "RegCell.h"
@@ -131,7 +132,7 @@ public:
    //  nullptr and must be overridden by subclasses associated with strings.
    //  COOKIE and DEPTH identify the current location in the parse tree.
    //
-   virtual CliParm* AccessParm(CliCookie& cookie, size_t depth) const;
+   virtual CliParm* AccessParm(CliCookie& cookie, uint32_t depth) const;
 
    //  Used by the >help command to provide information about this object.
    //  STREAM is where to output the information, and INDENT is how far to

@@ -24,6 +24,7 @@
 
 #include "Object.h"
 #include <cstddef>
+#include <cstdint>
 
 //------------------------------------------------------------------------------
 
@@ -54,7 +55,7 @@ public:
 
    //  Returns the index associated with the parameter at DEPTH.
    //
-   size_t Index(size_t depth) const;
+   uint32_t Index(uint32_t depth) const;
 
    //  Proceeds to the next parameter at the same depth.
    //
@@ -68,7 +69,7 @@ public:
    //  Increases the parse depth when the current parameter (at
    //  offset INDEX) has its own parameters.
    //
-   void Descend(size_t index);
+   void Descend(uint32_t index);
 
    //  Proceeds to the next parameter when all of the parameters
    //  at the current depth have been found.
@@ -86,11 +87,11 @@ public:
 private:
    //  The current location at each level in the parameter tree.
    //
-   size_t index_[MaxParmDepth];
+   uint32_t index_[MaxParmDepth];
 
    //  The current depth in the parameter tree.
    //
-   size_t depth_;
+   uint32_t depth_;
 };
 }
 #endif

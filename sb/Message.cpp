@@ -71,7 +71,7 @@ Message::Message(SbIpBufferPtr& buff) :
 
 fn_name Message_ctor2 = "Message.ctor(o/g)";
 
-Message::Message(ProtocolSM* psm, MsgSize size) :
+Message::Message(ProtocolSM* psm, size_t size) :
    buff_(nullptr),
    bt_(nullptr),
    handled_(false),
@@ -506,7 +506,7 @@ void Message::Patch(sel_t selector, void* arguments)
 
 fn_name Message_Payload = "Message.Payload";
 
-MsgSize Message::Payload(byte_t*& bytes) const
+size_t Message::Payload(byte_t*& bytes) const
 {
    Debug::ft(Message_Payload);
 
@@ -853,9 +853,14 @@ bool Message::Send(Route route)
    }
 
    //  If the message was moved to its destination, ChangeDir already invoked
-   //  Handled.
+   //  Handled.  However, the messsage needs to clear its PSM now that it is
+   //  queued on the destination context.  This was deferred until now so that
+   //  trace tools could record the message's PSM.
    //
-   if(!moved) Handled(false);
+   if(!moved)
+      Handled(false);
+   else
+      psm_ = nullptr;
    return sent;
 }
 
@@ -984,7 +989,17 @@ void Message::SetRxAddr(const LocalAddress& rxaddr)
    if(buff_->Dir() == MsgIncoming)
    {
       buff_->Header()->rxAddr = rxaddr;
-      if(bt_ != nullptr) bt_->Header()->rxAddr = rxaddr;
+
+      if(bt_ != nullptr)
+      {
+         //  A buffer that captures a message is freed when TraceBuffer wraps
+         //  around.  Under heavy load, this could occur before its ingress
+         //  message actually gets processed, in which case bt_ now points to
+         //  a trace record that has been overwritten.
+         //
+         auto bt = dynamic_cast< const BuffTrace* >(bt_);
+         if(bt != nullptr) bt->Header()->rxAddr = rxaddr;
+      }
    }
 }
 

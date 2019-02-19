@@ -57,7 +57,7 @@ const size_t BuffSizes[nSizes + 1] =
 
 fn_name IpBuffer_ctor1 = "IpBuffer.ctor";
 
-IpBuffer::IpBuffer(MsgDirection dir, MsgSize header, MsgSize payload) :
+IpBuffer::IpBuffer(MsgDirection dir, size_t header, size_t payload) :
    MsgBuffer(),
    buff_(nullptr),
    hdrSize_(header),
@@ -113,7 +113,7 @@ IpBuffer::~IpBuffer()
 
 fn_name IpBuffer_AddBytes = "IpBuffer.AddBytes";
 
-bool IpBuffer::AddBytes(const byte_t* source, MsgSize size, bool& moved)
+bool IpBuffer::AddBytes(const byte_t* source, size_t size, bool& moved)
 {
    Debug::ft(IpBuffer_AddBytes);
 
@@ -122,8 +122,8 @@ bool IpBuffer::AddBytes(const byte_t* source, MsgSize size, bool& moved)
    moved = false;
    if(buff_ == nullptr) return false;
 
-   MsgSize paySize = PayloadSize();
-   MsgSize newSize = hdrSize_ + paySize + size;
+   auto paySize = PayloadSize();
+   auto newSize = hdrSize_ + paySize + size;
 
    if(newSize > buffSize_)
    {
@@ -223,7 +223,7 @@ void IpBuffer::InvalidDiscarded() const
 
 fn_name IpBuffer_OutgoingBytes = "IpBuffer.OutgoingBytes";
 
-MsgSize IpBuffer::OutgoingBytes(byte_t*& bytes) const
+size_t IpBuffer::OutgoingBytes(byte_t*& bytes) const
 {
    Debug::ft(IpBuffer_OutgoingBytes);
 
@@ -248,7 +248,7 @@ void IpBuffer::Patch(sel_t selector, void* arguments)
 
 fn_name IpBuffer_Payload = "IpBuffer.Payload";
 
-MsgSize IpBuffer::Payload(byte_t*& bytes) const
+size_t IpBuffer::Payload(byte_t*& bytes) const
 {
    Debug::ft(IpBuffer_Payload);
 
@@ -263,7 +263,7 @@ MsgSize IpBuffer::Payload(byte_t*& bytes) const
 
 fn_name IpBuffer_PayloadSize = "IpBuffer.PayloadSize";
 
-MsgSize IpBuffer::PayloadSize() const
+size_t IpBuffer::PayloadSize() const
 {
    Debug::ft(IpBuffer_PayloadSize);
 

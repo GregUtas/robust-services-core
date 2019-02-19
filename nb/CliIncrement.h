@@ -24,6 +24,7 @@
 
 #include "Protected.h"
 #include <cstddef>
+#include <cstdint>
 #include <iosfwd>
 #include <string>
 #include "RegCell.h"
@@ -89,7 +90,7 @@ protected:
    //  Sets the corresponding member variables and adds the increment to
    //  CliRegistry.  Protected because this class is virtual.
    //
-   CliIncrement(const char* name, const char* help, size_t size = 32);
+   CliIncrement(const char* name, const char* help, uint32_t size = 32);
 
    //  Adds COMM to the increment's dictionary of commands.
    //

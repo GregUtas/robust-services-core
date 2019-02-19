@@ -60,21 +60,21 @@ SysUdpSocket::SysUdpSocket(ipport_t port,
 
 fn_name SysUdpSocket_RecvFrom = "SysUdpSocket.RecvFrom";
 
-word SysUdpSocket::RecvFrom(byte_t* buff, size_t max, SysIpL3Addr& remAddr)
+word SysUdpSocket::RecvFrom(byte_t* buff, size_t size, SysIpL3Addr& remAddr)
 {
    Debug::ft(SysUdpSocket_RecvFrom);
 
    sockaddr_in peer;
    int peersize = sizeof(peer);
 
-   if((buff == nullptr) || (max == 0))
+   if((buff == nullptr) || (size == 0))
    {
-      Debug::SwLog(SysUdpSocket_RecvFrom, max, 0);
+      Debug::SwLog(SysUdpSocket_RecvFrom, size, 0);
       return 0;
    }
 
    auto rcvd = recvfrom(Socket(), reinterpret_cast< char* >(buff),
-      max, 0, (sockaddr*) &peer, &peersize);
+      size, 0, (sockaddr*) &peer, &peersize);
 
    if(rcvd == SOCKET_ERROR)
    {
@@ -92,16 +92,16 @@ word SysUdpSocket::RecvFrom(byte_t* buff, size_t max, SysIpL3Addr& remAddr)
 fn_name SysUdpSocket_SendTo = "SysUdpSocket.SendTo";
 
 word SysUdpSocket::SendTo
-   (const byte_t* data, size_t len, const SysIpL3Addr& remAddr)
+   (const byte_t* data, size_t size, const SysIpL3Addr& remAddr)
 {
    Debug::ft(SysUdpSocket_SendTo);
 
    sockaddr_in peer;
    int peersize = sizeof(peer);
 
-   if((data == nullptr) || (len == 0))
+   if((data == nullptr) || (size == 0))
    {
-      Debug::SwLog(SysUdpSocket_SendTo, len, 0);
+      Debug::SwLog(SysUdpSocket_SendTo, size, 0);
       return 0;
    }
 
@@ -112,7 +112,7 @@ word SysUdpSocket::SendTo
    peer.sin_port = htons(remAddr.GetPort());
 
    auto sent = sendto(Socket(), reinterpret_cast< const char* >(data),
-      len, 0, (sockaddr*) &peer, peersize);
+      size, 0, (sockaddr*) &peer, peersize);
 
    if(sent == SOCKET_ERROR) return SetError();
    return sent;

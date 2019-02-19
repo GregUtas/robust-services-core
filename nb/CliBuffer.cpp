@@ -234,8 +234,8 @@ CliParm::Rc CliBuffer::GetInt(string& s, word& n, bool hex)
 {
    Debug::ft(CliBuffer_GetInt);
 
-   int count = s.size();
-   int start = 0;
+   auto count = s.size();
+   size_t start = 0;
    bool minus = false;
    int base;
    int digit;

@@ -22,6 +22,7 @@
 #include "TlvMessage.h"
 #include "Context.h"
 #include "MsgPort.h"
+#include "NbTypes.h"
 #include "ProtocolSM.h"
 
 //------------------------------------------------------------------------------
@@ -39,7 +40,7 @@ TlvMessage::TlvMessage(SbIpBufferPtr& buff) : Message(buff)
 
 fn_name TlvMessage_ctor2 = "TlvMessage.ctor(o/g)";
 
-TlvMessage::TlvMessage(ProtocolSM* psm, MsgSize size) :
+TlvMessage::TlvMessage(ProtocolSM* psm, size_t size) :
    Message(psm, Pad(size) + FenceSize)
 {
    Debug::ft(TlvMessage_ctor2);
@@ -111,7 +112,7 @@ TlvMessage::~TlvMessage()
 fn_name TlvMessage_AddBytes = "TlvMessage.AddBytes";
 
 TlvParmPtr TlvMessage::AddBytes
-   (const byte_t* src, MsgSize size, ParameterId pid)
+   (const byte_t* src, size_t size, ParameterId pid)
 {
    Debug::ft(TlvMessage_AddBytes);
 
@@ -138,7 +139,7 @@ void TlvMessage::AddFence()
 
 fn_name TlvMessage_AddParm = "TlvMessage.AddParm";
 
-TlvParmPtr TlvMessage::AddParm(ParameterId pid, MsgSize plen)
+TlvParmPtr TlvMessage::AddParm(ParameterId pid, size_t plen)
 {
    Debug::ft(TlvMessage_AddParm);
 
@@ -263,7 +264,7 @@ void TlvMessage::DeleteParm(TlvParmLayout& parm)
 
 fn_name TlvMessage_ExpandParm = "TlvMessage.ExpandParm";
 
-TlvParmPtr TlvMessage::ExpandParm(TlvParmLayout& parm, MsgSize plen)
+TlvParmPtr TlvMessage::ExpandParm(TlvParmLayout& parm, size_t plen)
 {
    Debug::ft(TlvMessage_ExpandParm);
 
@@ -289,7 +290,7 @@ TlvMessage::Fence* TlvMessage::FencePtr() const
 
 fn_name TlvMessage_FindBytes = "TlvMessage.FindBytes";
 
-byte_t* TlvMessage::FindBytes(MsgSize& size, ParameterId pid) const
+byte_t* TlvMessage::FindBytes(size_t& size, ParameterId pid) const
 {
    Debug::ft(TlvMessage_FindBytes);
 
@@ -427,7 +428,7 @@ TlvParmPtr TlvMessage::NextParm(ParmIterator& pit) const
 {
    Debug::ft(TlvMessage_NextParm);
 
-   MsgSize nextIndex;
+   size_t nextIndex;
 
    //  Find the next parameter after PIT.PPTR and update PIT.  If PIT.PPTR
    //  is nullptr or the last parameter, return nullptr without changing PIT.
@@ -449,7 +450,7 @@ TlvParmPtr TlvMessage::NextParm(ParmIterator& pit) const
 
 fn_name TlvMessage_ParmOffset = "TlvMessage.ParmOffset";
 
-int TlvMessage::ParmOffset(ParmIterator& pit) const
+size_t TlvMessage::ParmOffset(ParmIterator& pit) const
 {
    Debug::ft(TlvMessage_ParmOffset);
 
@@ -458,7 +459,7 @@ int TlvMessage::ParmOffset(ParmIterator& pit) const
       if(pit.pptr != nullptr) return pit.pindex;
    }
 
-   return -1;
+   return SIZE_MAX;
 }
 
 //------------------------------------------------------------------------------
@@ -498,7 +499,7 @@ TlvParmPtr TlvMessage::Wrap(const TlvMessage& msg, ParameterId pid)
    msg.Payload(src);
    auto plen = sizeof(MsgHeader) + msg.Header()->length;
 
-   if(plen > MsgHeader::MaxMsgSize)
+   if(plen > MaxSbMsgSize)
    {
       Debug::SwLog(TlvMessage_Wrap, plen, 0);
       return nullptr;

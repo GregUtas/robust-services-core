@@ -48,7 +48,7 @@ public:
    //  Allocates a buffer of size HEADER + PAYLOAD.  DIR specifies whether
    //  the buffer will receive or send a message.
    //
-   IpBuffer(MsgDirection dir, MsgSize header, MsgSize payload);
+   IpBuffer(MsgDirection dir, size_t header, size_t payload);
 
    //  Copy constructor.
    //
@@ -112,18 +112,18 @@ public:
    //  pointer to the message and return its size), and Send (to determine
    //  the number of bytes to send).
    //
-   virtual MsgSize PayloadSize() const;
+   virtual size_t PayloadSize() const;
 
    //  Returns the number of bytes in the payload and updates BYTES to
    //  reference it.  The payload excludes the message header.
    //
-   MsgSize Payload(byte_t*& bytes) const;
+   size_t Payload(byte_t*& bytes) const;
 
    //  Returns the number of bytes in an outgoing message and updates BYTES
    //  to reference it.  The size of the message, and where it starts, depend
    //  on whether it is being sent externally.
    //
-   MsgSize OutgoingBytes(byte_t*& bytes) const;
+   size_t OutgoingBytes(byte_t*& bytes) const;
 
    //  Adds SIZE bytes to the buffer, copying them from SOURCE.  If SOURCE
    //  is nullptr, nothing is copied into the buffer, but a larger buffer
@@ -131,7 +131,7 @@ public:
    //  Returns true on success, setting MOVED if the location of the message
    //  changed as a result of obtaining a larger buffer.
    //
-   virtual bool AddBytes(const byte_t* source, MsgSize size, bool& moved);
+   virtual bool AddBytes(const byte_t* source, size_t size, bool& moved);
 
    //  Sends the message.  If EXTERNAL is true, the message header is dropped.
    //
@@ -169,11 +169,11 @@ private:
 
    //  The size of the header.
    //
-   const MsgSize hdrSize_;
+   const size_t hdrSize_;
 
    //  The size of buff_ (which includes any header).
    //
-   MsgSize buffSize_;
+   size_t buffSize_;
 
    //  The source IP address.
    //

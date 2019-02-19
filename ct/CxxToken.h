@@ -598,10 +598,10 @@ public:
    virtual Cxx::ItemType Type() const override { return Cxx::Operation; }
 private:
    //  Returns the number of arguments that the operator can still accept.
-   //  Returns -1 if the operator takes a variable number of arguments and
-   //  has the minimum number required.
+   //  Returns SIZE_MAX if the operator takes a variable number of arguments
+   //  and has the minimum number required.
    //
-   int ArgCapacity() const;
+   size_t ArgCapacity() const;
 
    //  Pushes the operator onto the stack after executing any operators
    //  that are already on the stack and that have priority.

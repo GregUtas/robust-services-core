@@ -40,7 +40,7 @@ namespace NodeBase
 {
 fn_name CliCommandSet_ctor = "CliCommandSet.ctor";
 
-CliCommandSet::CliCommandSet(const char* comm, const char* help, size_t size) :
+CliCommandSet::CliCommandSet(const char* comm, const char* help, uint32_t size) :
    CliCommand(comm, help, size)
 {
    Debug::ft(CliCommandSet_ctor);
@@ -108,7 +108,7 @@ bool CliCommandSet::BindParm(CliParm& parm)
 
 fn_name CliCommandSet_DescendTo = "CliCommandSet.DescendTo";
 
-void CliCommandSet::DescendTo(CliCookie& cookie, size_t index)
+void CliCommandSet::DescendTo(CliCookie& cookie, uint32_t index)
 {
    Debug::ft(CliCommandSet_DescendTo);
 

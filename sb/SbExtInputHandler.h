@@ -57,8 +57,8 @@ protected:
    //  Overridden to allocate an SbIpBuffer for an incoming external message
    //  whose MsgHeader must be built.
    //
-   virtual IpBuffer* AllocBuff(const byte_t* source, MsgSize size,
-      byte_t*& dest, MsgSize& rcvd, SysTcpSocket* socket) const override;
+   virtual IpBuffer* AllocBuff(const byte_t* source, size_t size,
+      byte_t*& dest, size_t& rcvd, SysTcpSocket* socket) const override;
 };
 }
 #endif

@@ -1071,12 +1071,12 @@ bool Operation::AppendUnary()
 
 fn_name Operation_ArgCapacity = "Operation.ArgCapacity";
 
-int Operation::ArgCapacity() const
+size_t Operation::ArgCapacity() const
 {
    Debug::ft(Operation_ArgCapacity);
 
    auto& attrs = CxxOp::Attrs[op_];
-   if(attrs.arguments == 0) return -1;
+   if(attrs.arguments == 0) return SIZE_MAX;
    auto curr = args_.size();
    if(curr >= attrs.arguments) return 0;
    return attrs.arguments - curr;

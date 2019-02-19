@@ -434,11 +434,11 @@ word MepsCommand::ProcessCommand(CliThread& cli) const
       return num;
    }
 
-   ObjectPool::Bid i;
+   PooledObjectId id;
    auto count = 0;
    auto time = 200;
 
-   for(auto obj = pool->FirstUsed(i); obj != nullptr; obj = pool->NextUsed(i))
+   for(auto obj = pool->FirstUsed(id); obj != nullptr; obj = pool->NextUsed(id))
    {
       auto mep = static_cast< MediaEndpt* >(obj);
 

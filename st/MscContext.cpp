@@ -29,7 +29,6 @@
 #include "Service.h"
 #include "ServiceRegistry.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 
 using std::ostream;
 using std::string;

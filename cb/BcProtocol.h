@@ -31,6 +31,7 @@
 #include "TlvParameter.h"
 #include "TlvProtocol.h"
 #include "UdpIpService.h"
+#include <cstddef>
 #include "Clock.h"
 #include "NbTypes.h"
 #include "NwTypes.h"
@@ -46,6 +47,9 @@ namespace CallBase
    struct RouteResult;
 }
 
+using namespace NodeBase;
+using namespace NetworkBase;
+using namespace SessionBase;
 using namespace MediaBase;
 
 //------------------------------------------------------------------------------
@@ -140,7 +144,7 @@ public:
    //  Constructs an outgoing message, initially of SIZE bytes, to
    //  be sent from PSM.
    //
-   CipMessage(ProtocolSM* psm, MsgSize size);
+   CipMessage(ProtocolSM* psm, size_t size);
 
    //  Public because applications may create and destroy instances.
    //

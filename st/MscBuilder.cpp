@@ -256,7 +256,7 @@ void MscBuilder::Compress()
 
    //  Most of the work involves compressing the space between contexts.
    //
-   for(auto ctx = 0; ctx < lines_ - 1; ++ctx)
+   for(size_t ctx = 0; ctx < lines_ - 1; ++ctx)
    {
       start = columns_[ctx];
       end = columns_[ctx + 1];
@@ -382,7 +382,7 @@ void MscBuilder::Display(ostream& stream,
    stream << prefix << "nextRow   : " << nextRow_ << CRLF;
 
    stream << prefix << "columns   : ";
-   for(auto i = 0; i < lines_; ++i) stream << columns_[i] << SPACE;
+   for(size_t i = 0; i < lines_; ++i) stream << columns_[i] << SPACE;
    stream << CRLF;
 
    auto lead1 = prefix + spaces(2);
@@ -911,7 +911,7 @@ void MscBuilder::OutputChart()
    //
    if((lines_ <= 1) || (lines_ > MaxCols))
    {
-      Error(group_, lines_);
+      Error(lines_, group_);
       AddRow(OutputFiller(nullptr));
       return;
    }
@@ -921,7 +921,7 @@ void MscBuilder::OutputChart()
    //
    SetContextColumns();
 
-   for(auto i = 0, col = FirstCol; i < lines_; ++i, col += ColWidth)
+   for(size_t i = 0, col = FirstCol; i < lines_; ++i, col += ColWidth)
    {
       columns_[i] = col;
    }
@@ -1009,9 +1009,9 @@ string MscBuilder::OutputFiller(const MscContext* active) const
    //  Generate a "blank" line in the MSC.  It contains a vertical line for
    //  each context, with a different type of line for the ACTIVE context.
    //
-   string line(spaces(FirstCol + ((lines_ - 1) * ColWidth) + 1));
+   string line(FirstCol + ((lines_ - 1) * ColWidth) + 1, SPACE);
 
-   for(auto col = FirstCol, n = lines_; n > 0; col += ColWidth, --n)
+   for(size_t col = FirstCol, n = lines_; n > 0; col += ColWidth, --n)
    {
       if((active != nullptr) && (active->Column() == col))
          line[col] = ActiveCtx;
@@ -1047,11 +1047,11 @@ void MscBuilder::OutputGroup()
    auto right1 = line1.tellp();
    auto right2 = line2.tellp();
    lastCol_ = std::max(right1, right2);
-   line1 << spaces(lastCol_ - right1 + TimeGap);
+   line1 << string(lastCol_ - right1 + TimeGap, SPACE);
    line1 << "    txmsg" << spaces(TimeGap);
    line1 << "    RXNET" << spaces(TimeGap);
    line1 << "    TRANS";
-   line2 << spaces(lastCol_ - right2 + TimeGap);
+   line2 << string(lastCol_ - right2 + TimeGap, SPACE);
    line2 << "     time" << spaces(TimeGap);
    line2 << "     time" << spaces(TimeGap);
    line2 << "     time";
@@ -1295,7 +1295,7 @@ bool MscBuilder::OutputMessage
    auto gap = spaces(TimeGap);
    auto fill = spaces(TimeLen);
 
-   line += spaces(lastCol_ - line.size());
+   line += string(lastCol_ - line.size(), SPACE);
    line += gap;
 
    if(!txmsgTime.empty())
@@ -1352,7 +1352,7 @@ void MscBuilder::ReduceColumns(MscColumn start, MscColumn count)
 
    //  All columns beyond START have moved COUNT columns to the left.
    //
-   for(auto i = 0; i < lines_; ++i)
+   for(size_t i = 0; i < lines_; ++i)
    {
       if(columns_[i] > start) columns_[i] -= count;
    }

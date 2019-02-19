@@ -92,18 +92,18 @@ public:
    //  requests that can be queued, waiting to be processed by Accept.
    //  Returns true on success.
    //
-   bool Listen(int backlog);
+   bool Listen(size_t backlog);
 
    //  Accesses the flags that request the socket's status when invoking
    //  Poll.  Only the read and write flags should be set.
    //
    PollFlags* InFlags() { return &inFlags_; }
 
-   //  Waits for events on SOCKETS, which is COUNT in length.  MSECS
+   //  Waits for events on SOCKETS, which is SIZE in length.  MSECS
    //  specifies how long to wait.  Returns the number of sockets on
    //  which events have occurred, and -1 on failure.
    //
-   static word Poll(SysTcpSocket* sockets[], size_t count, msecs_t msecs);
+   static word Poll(SysTcpSocket* sockets[], size_t size, msecs_t msecs);
 
    //  Returns the flags that reported the socket's status after invoking
    //  Poll.  Any of the flags could have been set.
@@ -117,16 +117,16 @@ public:
    //
    SysTcpSocketPtr Accept(SysIpL3Addr& remAddr);
 
-   //  Reads up to MAX bytes into BUFF.  Returns the number of bytes read.
+   //  Reads up to SIZE bytes into BUFF.  Returns the number of bytes read.
    //  Returns 0 if the socket was gracefully closed, and -1 on failure.
    //
-   word Recv(byte_t* buff, size_t max);
+   word Recv(byte_t* buff, size_t size);
 
-   //  Sends LEN bytes, starting at DATA, to the address to which the socket
+   //  Sends SIZE bytes, starting at DATA, to the address to which the socket
    //  is bound.  Returns the number of bytes sent.  Returns 0 if the socket
    //  would block, and -1 on failure.
    //
-   word Send(const byte_t* data, size_t len);
+   word Send(const byte_t* data, size_t size);
 
    //  Sets locAddr to the host address of this socket.  Returns false
    //  on failure.
@@ -244,6 +244,10 @@ private:
    //  If HENQ is set, the buffer is placed at the front of the queue.
    //
    SendRc QueueBuff(IpBuffer* buff, bool henq = false);
+
+   //  Returns the entry in SOCKETS whose native socket identifier matches SOCKET.
+
+   static size_t FindSocket(SysTcpSocket* sockets[], size_t size, SysSocket_t socket);
 
    //  The socket's state.
    //

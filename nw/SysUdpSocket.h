@@ -58,18 +58,18 @@ public:
    //
    ~SysUdpSocket();
 
-   //  Reads up to MAX bytes into BUFF.  Updates remAddr with the source of
+   //  Reads up to SIZE bytes into BUFF.  Updates remAddr with the source of
    //  the bytes.  Returns the number of bytes read, or -1 on failure.  On
    //  an empty packet, returns 0.  If the socket is non-blocking, returns
    //  -2 if there was nothing to read.
    //
-   word RecvFrom(byte_t* buff, size_t max, SysIpL3Addr& remAddr);
+   word RecvFrom(byte_t* buff, size_t size, SysIpL3Addr& remAddr);
 
-   //  Makes the socket non-blocking and sends DATA, of length LEN, to the
+   //  Makes the socket non-blocking and sends DATA, of length SIZE, to the
    //  destination specified by remAddr. Returns the number of bytes sent,
    //  or -1 on failure.
    //
-   word SendTo(const byte_t* data, size_t len, const SysIpL3Addr& remAddr);
+   word SendTo(const byte_t* data, size_t size, const SysIpL3Addr& remAddr);
 
    //  Overridden to indicate that this socket is running UDP.
    //

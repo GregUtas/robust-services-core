@@ -587,7 +587,7 @@ LibrarySet* Interpreter::Error(LibExprErr err) const
 {
    Debug::ft(Interpreter_Error);
 
-   int loc = 0;
+   size_t loc = 0;
 
    switch(err)
    {
@@ -633,8 +633,8 @@ LibrarySet* Interpreter::Error(LibExprErr err) const
       if(prev_ > 0)
       {
          loc = prev_ - 1;
-         while((loc >= 0) && (expr_[loc] == SPACE)) --loc;
-         while((loc >= 0) && (expr_[loc] != SPACE)) --loc;
+         while((loc > 0) && (expr_[loc] == SPACE)) --loc;
+         while((loc > 0) && (expr_[loc] != SPACE)) --loc;
          ++loc;
       }
    }

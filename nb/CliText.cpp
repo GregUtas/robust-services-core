@@ -39,7 +39,7 @@ namespace NodeBase
 {
 fn_name CliText_ctor = "CliText.ctor";
 
-CliText::CliText(const char* help, const char* text, bool opt, size_t size) :
+CliText::CliText(const char* help, const char* text, bool opt, uint32_t size) :
    CliParm(help, opt, nullptr),
    text_(text)
 {
@@ -62,7 +62,7 @@ CliText::~CliText()
 
 fn_name CliText_AccessParm = "CliText.AccessParm";
 
-CliParm* CliText::AccessParm(CliCookie& cookie, size_t depth) const
+CliParm* CliText::AccessParm(CliCookie& cookie, uint32_t depth) const
 {
    Debug::ft(CliText_AccessParm);
 

@@ -59,7 +59,7 @@ InputHandler::~InputHandler()
 fn_name InputHandler_AllocBuff = "InputHandler.AllocBuff";
 
 IpBuffer* InputHandler::AllocBuff(const byte_t* source,
-   MsgSize size, byte_t*& dest, MsgSize& rcvd, SysTcpSocket* socket) const
+   size_t size, byte_t*& dest, size_t& rcvd, SysTcpSocket* socket) const
 {
    Debug::ft(InputHandler_AllocBuff);
 
@@ -115,7 +115,7 @@ void InputHandler::Patch(sel_t selector, void* arguments)
 fn_name InputHandler_ReceiveBuff = "InputHandler.ReceiveBuff";
 
 void InputHandler::ReceiveBuff
-   (IpBufferPtr& buff, MsgSize size, Faction faction) const
+   (IpBufferPtr& buff, size_t size, Faction faction) const
 {
    Debug::ft(InputHandler_ReceiveBuff);
 

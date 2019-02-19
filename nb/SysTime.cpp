@@ -295,15 +295,15 @@ int32_t SysTime::MsecsUntil(const SysTime& time) const
    if(ms0 <= ms1)
    {
       auto diff = ms1 - ms0;
-      if(diff <= WORD_MAX) return diff;
+      if(diff <= INT32_MAX) return diff;
       Debug::SwLog(SysTime_MsecsUntil, 0, 0);
-      return WORD_MAX;
+      return INT32_MAX;
    }
 
    auto diff = ms0 - ms1;
-   if(diff >= WORD_MIN) return diff;
+   if(diff >= INT32_MIN) return diff;
    Debug::SwLog(SysTime_MsecsUntil, 0, 1);
-   return WORD_MIN;
+   return INT32_MIN;
 }
 
 //------------------------------------------------------------------------------

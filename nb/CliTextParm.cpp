@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CliTextParm.h"
+#include <cstddef>
 #include <cstdio>
 #include <cstring>
 #include <ios>
@@ -43,7 +44,7 @@ namespace NodeBase
 {
 fn_name CliTextParm_ctor = "CliTextParm.ctor";
 
-CliTextParm::CliTextParm(const char* help, bool opt, size_t size,
+CliTextParm::CliTextParm(const char* help, bool opt, uint32_t size,
    const char* tag) : CliParm(help, opt, tag)
 {
    Debug::ft(CliTextParm_ctor);
@@ -64,7 +65,7 @@ CliTextParm::~CliTextParm()
 
 fn_name CliTextParm_AccessParm = "CliTextParm.AccessParm";
 
-CliParm* CliTextParm::AccessParm(CliCookie& cookie, size_t depth) const
+CliParm* CliTextParm::AccessParm(CliCookie& cookie, uint32_t depth) const
 {
    Debug::ft(CliTextParm_AccessParm);
 
@@ -111,7 +112,7 @@ bool CliTextParm::BindText(CliText& text, id_t index)
 
 fn_name CliTextParm_Descend = "CliTextParm.Descend";
 
-void CliTextParm::Descend(CliCookie& cookie, size_t index) const
+void CliTextParm::Descend(CliCookie& cookie, uint32_t index) const
 {
    Debug::ft(CliTextParm_Descend);
 
@@ -176,9 +177,9 @@ void CliTextParm::Explain(ostream& stream, col_t indent) const
    if(opt && (tag != nullptr)) stream << tag << CliBuffer::OptTagChar;
    if(opt) stream << OptParmBegin; else stream << MandParmBegin;
 
-   auto w = indent - 1;
+   size_t w = indent - 1;
    if(opt && (tag != nullptr)) w += strlen(tag) + 1;
-   if(w < ParmWidth) stream << spaces(ParmWidth - w);
+   stream << spaces(ParmWidth - w);
    stream << ParmExplPrefix;
    stream << Help() << CRLF;
 

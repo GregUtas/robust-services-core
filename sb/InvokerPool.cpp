@@ -41,6 +41,7 @@
 #include "SbTracer.h"
 #include "Singleton.h"
 #include "Statistics.h"
+#include "SysTypes.h"
 #include "ThisThread.h"
 #include "ToolTypes.h"
 #include "TraceBuffer.h"
@@ -182,8 +183,9 @@ InvokerPool::InvokerPool(Faction faction, const string& parmKey) :
 
    if(cfgInvokers_ == nullptr)
    {
-      cfgInvokers_.reset(new CfgIntParm(parmKey.c_str(),
-         "1", &poolSize_, 1, 10, "number of invokers in pool"));
+      cfgInvokers_.reset(new CfgIntParm(parmKey.c_str(), "1",
+         reinterpret_cast< word* >(&poolSize_), 1,
+         10, "number of invokers in pool"));
       reg->BindParm(*cfgInvokers_);
    }
 

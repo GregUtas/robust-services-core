@@ -69,9 +69,9 @@ TransTrace::TransTrace(const Message& msg, const Factory& fac) :
    prid_(msg.GetProtocol()),
    sid_(msg.GetSignal())
 {
+   rid_ = RxNet;
    ticks0_ = msg.Buffer()->RxTicks();
    ticks1_ = ticks0_;
-   rid_ = RxNet;
 }
 
 //------------------------------------------------------------------------------
@@ -90,6 +90,7 @@ TransTrace::TransTrace
    prid_(msg.GetProtocol()),
    sid_(msg.GetSignal())
 {
+   rid_ = Trans;
    auto fac = msg.RxFactory();
    cid_ = fac->Fid();
 
@@ -111,7 +112,6 @@ TransTrace::TransTrace
 
    ticks0_ = inv->Ticks0();
    ticks1_ = ticks0_;
-   rid_ = Trans;
 }
 
 //------------------------------------------------------------------------------
@@ -226,8 +226,8 @@ BuffTrace::BuffTrace(Id rid, const SbIpBuffer& buff) :
    verified_(false),
    corrupt_(false)
 {
-   buff_ = new (ToolUser) SbIpBuffer(buff);
    rid_ = rid;
+   buff_ = new (ToolUser) SbIpBuffer(buff);
 }
 
 //------------------------------------------------------------------------------
@@ -513,9 +513,9 @@ PsmTrace::PsmTrace(Id rid, const ProtocolSM& psm) :
    fid_(psm.GetFactory()),
    bid_(NIL_ID)
 {
+   rid_ = rid;
    auto port = psm.Port();
    if(port != nullptr) bid_ = port->LocAddr().SbAddr().bid;
-   rid_ = rid;
 }
 
 //------------------------------------------------------------------------------
@@ -598,6 +598,8 @@ MsgTrace::MsgTrace(Id rid, const Message& msg, Message::Route route) :
    noCtx_(Context::RunningContext() == nullptr),
    self_(msg.Header()->self)
 {
+   rid_ = rid;
+
    ProtocolSM* psm;
 
    switch(rid)
@@ -625,8 +627,6 @@ MsgTrace::MsgTrace(Id rid, const Message& msg, Message::Route route) :
          remAddr_ = msg.RxSbAddr();
       }
    }
-
-   rid_ = rid;
 }
 
 //------------------------------------------------------------------------------
@@ -724,9 +724,9 @@ EventTrace::EventTrace(Id rid, const Event& evt) :
    owner_(NIL_ID),
    eid_(evt.Eid())
 {
+   rid_ = rid;
    auto ssm = evt.Owner();
    if(ssm != nullptr) owner_ = ssm->Sid();
-   rid_ = rid;
 }
 
 //------------------------------------------------------------------------------
@@ -849,6 +849,8 @@ SxpTrace::SxpTrace
    HandlerTrace(sizeof(SxpTrace), sid, state, sxp, rc),
    curr_(0)
 {
+   rid_ = SxpEvent;
+
    switch(sxp.Eid())
    {
    case Event::AnalyzeSap:
@@ -857,8 +859,6 @@ SxpTrace::SxpTrace
    case Event::AnalyzeSnp:
       curr_ = static_cast< const AnalyzeSnpEvent& >(sxp).CurrEvent()->Eid();
    }
-
-   rid_ = SxpEvent;
 }
 
 //------------------------------------------------------------------------------

@@ -69,16 +69,16 @@ void MsgHeader::Display(ostream& stream, const string& prefix) const
    stream << "  initial=" << initial;
    stream << "  final=" << final;
    stream << "  join=" << join;
-   stream << "  self=" << self << CRLF;
+   stream << "  self=" << self;
+   stream << CRLF << prefix;
    stream << "  injected=" << injected;
    stream << "  kill=" << kill;
    stream << "  route=" << int(route);
    stream << "  length=" << length;
    stream << "  spare=" << strHex(spare);
-   stream << CRLF;
    stream << std::boolalpha;
 
-   stream << prefix;
+   stream << CRLF << prefix;
    stream << "protocol=" << protocol;
    auto pro = Singleton< ProtocolRegistry >::Instance()->GetProtocol(protocol);
    stream << " (" << strClass(pro, false) << ")  signal=" << signal;

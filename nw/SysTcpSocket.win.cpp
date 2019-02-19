@@ -103,7 +103,7 @@ void SysTcpSocket::Disconnect()
 {
    Debug::ft(SysTcpSocket_Disconnect);
 
-   if(!disconnecting_ && IsValid())
+   if(!disconnecting_ && (state_ != Idle) && IsValid())
    {
       TraceEvent(NwTrace::Disconnect, 0);
       if(shutdown(Socket(), SD_SEND) == SOCKET_ERROR) SetError();
@@ -115,7 +115,7 @@ void SysTcpSocket::Disconnect()
 
 fn_name SysTcpSocket_Listen = "SysTcpSocket.Listen";
 
-bool SysTcpSocket::Listen(int backlog)
+bool SysTcpSocket::Listen(size_t backlog)
 {
    Debug::ft(SysTcpSocket_Listen);
 
@@ -168,20 +168,20 @@ void SysTcpSocket::Patch(sel_t selector, void* arguments)
 
 fn_name SysTcpSocket_Poll = "SysTcpSocket.Poll";
 
-word SysTcpSocket::Poll(SysTcpSocket* sockets[], size_t count, msecs_t msecs)
+word SysTcpSocket::Poll(SysTcpSocket* sockets[], size_t size, msecs_t msecs)
 {
    Debug::ft(SysTcpSocket_Poll);
 
-   if(count == 0) return 0;
+   if(size == 0) return 0;
    int timeout = (msecs != TIMEOUT_NEVER ? msecs : -1);
 
    //  Create an array for the sockets and their flags.
    //
-   std::unique_ptr< pollfd[] > list(new pollfd[count]);
+   std::unique_ptr< pollfd[] > list(new pollfd[size]);
 
    if(list == nullptr) return sockets[0]->SetError(WSA_NOT_ENOUGH_MEMORY);
 
-   for(size_t i = 0; i < count; ++i)
+   for(size_t i = 0; i < size; ++i)
    {
       list[i].fd = sockets[i]->Socket();
       auto& inFlags = sockets[i]->inFlags_;
@@ -194,19 +194,34 @@ word SysTcpSocket::Poll(SysTcpSocket* sockets[], size_t count, msecs_t msecs)
       if(inFlags.test(PollReadOob)) requests |= POLLRDBAND;
    }
 
-   auto ready = WSAPoll(list.get(), count, timeout);
+   auto ready = WSAPoll(list.get(), size, timeout);
 
    if(ready == SOCKET_ERROR)
    {
       return sockets[0]->SetError();
    }
 
-   //  Save the status of each socket before LIST gets deleted.
+   //  Save the status of each socket before LIST gets deleted.  SOCKETS
+   //  is the TcpIoThread's array of sockets, which might change during
+   //  WSAPoll if TIMEOUT was not 0.  In particular, a socket can be
+   //  deleted or moved to another slot to take the place of a socket
+   //  that was deleted (this is done to eliminate gaps in the list).
+   //  Consequently, it is necessary to verify that an entry has not
+   //  changed. If it has, we need to look for it.
    //
-   for(size_t i = 0; i < count; ++i)
+   for(size_t i = 0; i < size; ++i)
    {
+      auto index = i;
+
+      if((sockets[i] == nullptr) || (sockets[i]->Socket() != list[i].fd))
+      {
+         index = FindSocket(sockets, size, list[i].fd);
+      }
+
+      if(index == SIZE_MAX) continue;
+
       auto results = list[i].revents;
-      auto& outFlags = sockets[i]->outFlags_;
+      auto& outFlags = sockets[index]->outFlags_;
 
       outFlags.reset();
       if((results & POLLERR) != 0) outFlags.set(PollError);
@@ -225,17 +240,17 @@ word SysTcpSocket::Poll(SysTcpSocket* sockets[], size_t count, msecs_t msecs)
 
 fn_name SysTcpSocket_Recv = "SysTcpSocket.Recv";
 
-word SysTcpSocket::Recv(byte_t* buff, size_t max)
+word SysTcpSocket::Recv(byte_t* buff, size_t size)
 {
    Debug::ft(SysTcpSocket_Recv);
 
-   if((buff == nullptr) || (max == 0))
+   if((buff == nullptr) || (size == 0))
    {
-      Debug::SwLog(SysTcpSocket_Recv, max, 0);
+      Debug::SwLog(SysTcpSocket_Recv, size, 0);
       return -1;
    }
 
-   auto rcvd = recv(Socket(), reinterpret_cast< char* >(buff), max, 0);
+   auto rcvd = recv(Socket(), reinterpret_cast< char* >(buff), size, 0);
    TraceEvent(NwTrace::Recv, rcvd);
 
    if(rcvd == SOCKET_ERROR) return SetError();
@@ -270,17 +285,17 @@ bool SysTcpSocket::RemAddr(SysIpL3Addr& remAddr)
 
 fn_name SysTcpSocket_Send = "SysTcpSocket.Send";
 
-word SysTcpSocket::Send(const byte_t* data, size_t len)
+word SysTcpSocket::Send(const byte_t* data, size_t size)
 {
    Debug::ft(SysTcpSocket_Send);
 
-   if((data == nullptr) || (len == 0))
+   if((data == nullptr) || (size == 0))
    {
-      Debug::SwLog(SysTcpSocket_Send, len, 0);
+      Debug::SwLog(SysTcpSocket_Send, size, 0);
       return -1;
    }
 
-   auto sent = send(Socket(), reinterpret_cast< const char* >(data), len, 0);
+   auto sent = send(Socket(), reinterpret_cast< const char* >(data), size, 0);
 
    if(sent == SOCKET_ERROR)
    {

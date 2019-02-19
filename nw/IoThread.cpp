@@ -30,8 +30,10 @@
 #include "IpService.h"
 #include "Log.h"
 #include "Memory.h"
+#include "NbTypes.h"
 #include "SysSocket.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 
@@ -146,7 +148,7 @@ bool IoThread::ExitOnRestart(RestartLevel level) const
 fn_name IoThread_InvokeHandler = "IoThread.InvokeHandler";
 
 void IoThread::InvokeHandler
-   (const IpPort& port, const byte_t* source, MsgSize size) const
+   (const IpPort& port, const byte_t* source, size_t size) const
 {
    Debug::ft(IoThread_InvokeHandler);
 
@@ -155,7 +157,7 @@ void IoThread::InvokeHandler
    while(size > 0)
    {
       byte_t* dest = nullptr;
-      MsgSize rcvd = size;
+      auto rcvd = size;
       auto socket = rxAddr_.GetSocket();
       IpBufferPtr buff(handler->AllocBuff(source, size, dest, rcvd, socket));
       if(buff == nullptr) return;

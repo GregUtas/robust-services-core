@@ -24,7 +24,6 @@
 #include <set>
 #include <sstream>
 #include <utility>
-#include "Algorithms.h"
 #include "CodeFile.h"
 #include "CxxArea.h"
 #include "CxxExecute.h"
@@ -3699,7 +3698,7 @@ void Function::Invoke(StackArgVector* args)
    if(size1 > size2)
    {
       auto expl = "Too many arguments for " + *Name();
-      Context::SwLog(Function_Invoke, expl, pack2(size1, size2));
+      Context::SwLog(Function_Invoke, expl, size1 - size2);
       size1 = size2;
    }
 

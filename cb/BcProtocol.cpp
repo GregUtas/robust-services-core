@@ -683,7 +683,7 @@ CipMessage::CipMessage(SbIpBufferPtr& buff) : TlvMessage(buff)
 
 fn_name CipMessage_ctor2 = "CipMessage.ctor(o/g)";
 
-CipMessage::CipMessage(ProtocolSM* psm, MsgSize size) : TlvMessage(psm, size)
+CipMessage::CipMessage(ProtocolSM* psm, size_t size) : TlvMessage(psm, size)
 {
    Debug::ft(CipMessage_ctor2);
 }

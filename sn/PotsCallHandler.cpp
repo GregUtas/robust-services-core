@@ -87,7 +87,7 @@ void PotsCallHandler::DiscardBuff
 fn_name PotsCallHandler_ReceiveBuff = "PotsCallHandler.ReceiveBuff";
 
 void PotsCallHandler::ReceiveBuff
-   (IpBufferPtr& buff, MsgSize size, Faction faction) const
+   (IpBufferPtr& buff, size_t size, Faction faction) const
 {
    Debug::ft(PotsCallHandler_ReceiveBuff);
 

@@ -288,7 +288,7 @@ private:
 
 //------------------------------------------------------------------------------
 //
-//  Pool for BtIpBuffer objects.  These are used by the BuffTracer tool and
+//  Pool for BtIpBuffer objects.  These are used by the BufferTracer tool and
 //  are identical to SbIpBuffers.  A separate pool is used so that tracing
 //  cannot interfere with regular work.
 //

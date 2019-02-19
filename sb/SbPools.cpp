@@ -208,7 +208,7 @@ MsgPort* MsgPortPool::FindPeerPort(const GlobalAddress& remAddr) const
 {
    Debug::ft(MsgPortPool_FindPeerPort);
 
-   Bid bid;
+   PooledObjectId bid;
 
    //e This could be sped up by placing each in-use MsgPort in a queue selected
    //  by, say, the last 10 bits of its PooledObjectId.  Only MsgPorts created

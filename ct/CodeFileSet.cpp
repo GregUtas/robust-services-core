@@ -790,7 +790,7 @@ word CodeFileSet::Sort(ostream& stream, string& expl) const
    //  List the files in the original set, showing their build level.
    //
    auto heading = false;
-   int room = 65;
+   word room = 65;
 
    auto fileSet = Set();
    auto& files = Singleton< Library >::Instance()->Files();
@@ -823,7 +823,7 @@ word CodeFileSet::Sort(ostream& stream, string& expl) const
       }
 
       auto& name = files.At(f->fid)->Name();
-      int size = name.size();
+      auto size = name.size();
 
       if(room - size < 2)
       {

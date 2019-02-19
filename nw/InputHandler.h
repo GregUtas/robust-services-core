@@ -92,8 +92,8 @@ public:
    //  however, even when sent interprocessor between different nodes in the
    //  same network.  See MsgHeader for an example of such a header.
    //
-   virtual IpBuffer* AllocBuff(const byte_t* source, MsgSize size,
-      byte_t*& dest, MsgSize& rcvd, SysTcpSocket* socket) const;
+   virtual IpBuffer* AllocBuff(const byte_t* source, size_t size,
+      byte_t*& dest, size_t& rcvd, SysTcpSocket* socket) const;
 
    //  Converts a message from network to host order when it is received.
    //  The message begins at SRC, is SIZE bytes long, and is to be placed
@@ -120,7 +120,7 @@ public:
    //  the buffer to be deleted.
    //
    virtual void ReceiveBuff
-      (IpBufferPtr& buff, MsgSize size, Faction faction) const;
+      (IpBufferPtr& buff, size_t size, Faction faction) const;
 
    //  Converts a message from host to network order when it is transmitted.
    //  (InputHandler has also become an output handler.)  The message begins

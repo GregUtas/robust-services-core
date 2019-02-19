@@ -48,7 +48,7 @@ public:
    //  The MsgHeader is initialized, but the user of this interface is
    //  responsible for updating its contents (including the length).
    //
-   SbIpBuffer(MsgDirection dir, MsgSize payload);
+   SbIpBuffer(MsgDirection dir, size_t payload);
 
    //  Copy constructor.
    //
@@ -86,7 +86,7 @@ public:
 protected:
    //  Overridden to return the size of Header()->length.
    //
-   virtual MsgSize PayloadSize() const override;
+   virtual size_t PayloadSize() const override;
 };
 }
 #endif

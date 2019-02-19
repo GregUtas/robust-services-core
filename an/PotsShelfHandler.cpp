@@ -61,7 +61,7 @@ PotsShelfHandler::~PotsShelfHandler()
 fn_name PotsShelfHandler_ReceiveBuff = "PotsShelfHandler.ReceiveBuff";
 
 void PotsShelfHandler::ReceiveBuff
-   (IpBufferPtr& buff, MsgSize size, Faction faction) const
+   (IpBufferPtr& buff, size_t size, Faction faction) const
 {
    Debug::ft(PotsShelfHandler_ReceiveBuff);
 

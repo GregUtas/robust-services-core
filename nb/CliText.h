@@ -23,7 +23,7 @@
 #define CLITEXT_H_INCLUDED
 
 #include "CliParm.h"
-#include <cstddef>
+#include <cstdint>
 #include "Registry.h"
 
 //------------------------------------------------------------------------------
@@ -46,7 +46,7 @@ public:
    //  see FileText (used by SendWhereParm).
    //
    CliText(const char* help, const char* text,
-      bool opt = false, size_t size = 32);
+      bool opt = false, uint32_t size = 32);
 
    //  Virtual to allow subclassing.
    //
@@ -83,7 +83,8 @@ protected:
 
    //  Overridden to access parameters that follow the string.
    //
-   virtual CliParm* AccessParm(CliCookie& cookie, size_t depth) const override;
+   virtual CliParm* AccessParm
+      (CliCookie& cookie, uint32_t depth) const override;
 
    //  Overridden to display parameters that can follow the string.
    //

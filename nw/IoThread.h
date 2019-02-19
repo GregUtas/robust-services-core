@@ -25,7 +25,6 @@
 #include "Thread.h"
 #include <cstddef>
 #include "Clock.h"
-#include "NbTypes.h"
 #include "NwTypes.h"
 #include "SysIpL3Addr.h"
 #include "SysTypes.h"
@@ -78,7 +77,7 @@ protected:
    //  PORT's input handler.  SOURCE and SIZE identify the message's location.
    //
    void InvokeHandler
-      (const IpPort& port, const byte_t* source, MsgSize size) const;
+      (const IpPort& port, const byte_t* source, size_t size) const;
 
    //  Returns true after pausing when the thread has run locked for more
    //  than PERCENT of the maximum time allowed.

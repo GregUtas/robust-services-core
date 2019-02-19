@@ -75,8 +75,11 @@ TcpIoThread::TcpIoThread(const TcpIpService* service, ipport_t port) :
    }
    else if(listen_)
    {
-      if(fdSize < 2) Debug::SwLog(TcpIoThread_ctor, fdSize, 2);
-      fdSize = 2;
+      if(fdSize < 2)
+      {
+         Debug::SwLog(TcpIoThread_ctor, fdSize, 2);
+         fdSize = 2;
+      }
    }
    else
    {
@@ -84,6 +87,11 @@ TcpIoThread::TcpIoThread(const TcpIpService* service, ipport_t port) :
       fdSize = 1;
    }
 
+   //  Allocate the maximum size of the sockets_ array immediately.  This is
+   //  important because if the array gets extended (and therefore moves) at
+   //  run-time, SysTcpSocket::Poll will fail spectacularly if it was blocked
+   //  on its polling operation when the resizing occurred.
+   //
    sockets_.Init(fdSize, MemDyn);
    sockets_.Reserve(fdSize);
 }

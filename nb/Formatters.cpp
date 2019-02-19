@@ -53,10 +53,9 @@ void ReplaceScopeOperators(string& name)
 
 //------------------------------------------------------------------------------
 
-string spaces(int count)
+string spaces(size_t count)
 {
-   if(count <= 0) count = 0;
-   if(count > 511) count = 511;
+   if(count >= COUT_LENGTH_MAX) return EMPTY_STR;
    return string(count, SPACE);
 }
 
@@ -125,11 +124,11 @@ void strBytes(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-string strCenter(const string& s, int breadth, int blanks)
+string strCenter(const string& s, size_t breadth, size_t blanks)
 {
+   if(blanks >= breadth) return EMPTY_STR;
    auto width = breadth - blanks;
-   if(width <= 0) return EMPTY_STR;
-   int size = s.size();
+   auto size = s.size();
    if(size < width) width = size;
 
    std::ostringstream stream;
@@ -244,7 +243,7 @@ string strHex(uint8_t n, int width, bool prefix)
 
 //------------------------------------------------------------------------------
 
-string strIndex(int n, int width, bool colon)
+string strIndex(size_t n, int width, bool colon)
 {
    std::ostringstream stream;
 

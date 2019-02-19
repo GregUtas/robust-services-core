@@ -28,6 +28,7 @@
 #include <string>
 #include "Q1Link.h"
 #include "SbTypes.h"
+#include "SysTypes.h"
 
 using namespace NodeBase;
 using namespace SessionBase;
@@ -38,7 +39,7 @@ namespace SessionTools
 {
 //  A column in a message sequence chart (MSC).
 //
-typedef int MscColumn;
+typedef word MscColumn;
 
 //  Nil column.
 //

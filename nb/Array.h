@@ -230,19 +230,17 @@ private:
    {
       Debug::ft(Array_Extend());
       if(cap_ >= max_) return false;
-      if(min >= max_) return false;
-      auto count = cap_ << 1;
-      if(count == 0)
-         count = 2;
-      else if(count < min)
-         count = min;
-      else if(count > max_)
-         count = max_;
-      auto bytes = sizeof(T) * count;
+      if(min > max_) return false;
+      auto size = cap_ << 1;
+      if(size < min)
+         size = min;
+      else if(size > max_)
+         size = max_;
+      auto bytes = sizeof(T) * size;
       auto table = (T*) Memory::Alloc(bytes, mem_, false);
       if(table == nullptr) return false;
       for(size_t i = 0; i < size_; ++i) table[i] = std::move(array_[i]);
-      cap_ = count;
+      cap_ = size;
       Memory::Free(array_);
       array_ = table;
       return true;

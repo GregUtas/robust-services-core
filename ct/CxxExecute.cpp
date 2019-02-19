@@ -20,7 +20,6 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CxxExecute.h"
-#include <algorithm>
 #include <cstring>
 #include <iomanip>
 #include <sstream>
@@ -616,8 +615,7 @@ bool CxxTrace::Display(ostream& stream, bool diff)
    }
 
    auto& s = ActionStrings[rid_];
-   auto indent = std::max< int >(10 - strlen(s), 0);
-   stream << string(indent, SPACE) << s << TraceDump::Tab();
+   stream << spaces(10 - strlen(s)) << s << TraceDump::Tab();
    return true;
 }
 

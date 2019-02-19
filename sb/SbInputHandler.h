@@ -54,8 +54,8 @@ protected:
    //  that already has a MsgHeader.  Supports unbundling (e.g. for messages
    //  arriving over TCP).
    //
-   virtual IpBuffer* AllocBuff(const byte_t* source, MsgSize size,
-      byte_t*& dest, MsgSize& rcvd, SysTcpSocket* socket) const override;
+   virtual IpBuffer* AllocBuff(const byte_t* source, size_t size,
+      byte_t*& dest, size_t& rcvd, SysTcpSocket* socket) const override;
 
    //  Overridden to queue the message for an invoker thread.  Invoked by
    //  a subclass implementation of this function after it has filled in
@@ -85,7 +85,7 @@ protected:
    //    SbInputHandler::ReceiveBuff(buffer, size, faction);
    //
    virtual void ReceiveBuff
-      (IpBufferPtr& buff, MsgSize size, Faction faction) const override;
+      (IpBufferPtr& buff, size_t size, Faction faction) const override;
 };
 }
 #endif

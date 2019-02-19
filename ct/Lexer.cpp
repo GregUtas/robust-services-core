@@ -729,7 +729,7 @@ void Lexer::GetFloat(long double& num)
    //  Any exponent is parsed after returning.
    //
    int64_t frac;
-   int digits = GetInt(frac);
+   word digits = GetInt(frac);
    if((digits == 0) || (frac == 0)) return;
    num += (frac * pow(10.0, -digits));
 }
@@ -876,8 +876,8 @@ size_t Lexer::GetLineNum(size_t pos) const
 
    //  Do a binary search over the lines' starting positions.
    //
-   int min = 0;
-   int max = lines_ - 1;
+   word min = 0;
+   word max = lines_ - 1;
 
    while(min < max)
    {

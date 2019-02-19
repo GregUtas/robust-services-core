@@ -34,6 +34,9 @@
     <ProjectReference Include="..\ct\ct.vcxproj">
       <Project>{57309c43-59ce-40e0-be61-cf240edb14ef}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\dip\dip.vcxproj">
+      <Project>{aabffebe-972c-490b-a12c-15e2880020a3}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\mb\mb.vcxproj">
       <Project>{d3133157-1e87-42bf-84f2-61140dc2b773}</Project>
     </ProjectReference>
@@ -123,7 +126,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <CodeAnalysisRuleSet>C:\Program Files\Microsoft Visual Studio 14.0\Team Tools\Static Analysis Tools\Rule Sets\NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>CppCoreCheckRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -138,7 +141,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\gregu\Documents\rsc\rsc\nb;C:\Users\gregu\Documents\rsc\rsc\nt;C:\Users\gregu\Documents\rsc\rsc\ct;C:\Users\greguDocuments\rsc\rsc\nw;C:\Users\gregu\Documents\rsc\rsc\sb;C:\Users\gregu\Documents\rsc\rsc\st;C:\Users\gregu\Documents\rsc\rsc\mb;C:\Users\gregu\Documents\rsc\rsc\cb;C:\Users\gregu\Documents\rsc\rsc\pb;C:\Users\gregu\Documents\rsc\rsc\on;C:\Users\gregu\Documents\rsc\rsc\cn;C:\Users\gregu\Documents\rsc\rsc\rn;C:\Users\gregu\Documents\rsc\rsc\an;C:\Users\gregu\Documents\rsc\rsc\sn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\gregu\Documents\rsc\rsc\nb;C:\Users\gregu\Documents\rsc\rsc\nt;C:\Users\gregu\Documents\rsc\rsc\ct;C:\Users\greguDocuments\rsc\rsc\nw;C:\Users\gregu\Documents\rsc\rsc\sb;C:\Users\gregu\Documents\rsc\rsc\st;C:\Users\gregu\Documents\rsc\rsc\mb;C:\Users\gregu\Documents\rsc\rsc\cb;C:\Users\gregu\Documents\rsc\rsc\pb;C:\Users\gregu\Documents\rsc\rsc\on;C:\Users\gregu\Documents\rsc\rsc\cn;C:\Users\gregu\Documents\rsc\rsc\rn;C:\Users\gregu\Documents\rsc\rsc\an;C:\Users\gregu\Documents\rsc\rsc\sn;C:\Users\gregu\Documents\rsc\rsc\dip;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnablePREfast>false</EnablePREfast>
       <WarningLevel>Level4</WarningLevel>
     </ClCompile>
@@ -150,7 +153,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\gregu\Documents\rsc\rsc\nb;C:\Users\gregu\Documents\rsc\rsc\nt;C:\Users\gregu\Documents\rsc\rsc\ct;C:\Users\greguDocuments\rsc\rsc\nw;C:\Users\gregu\Documents\rsc\rsc\sb;C:\Users\gregu\Documents\rsc\rsc\st;C:\Users\gregu\Documents\rsc\rsc\mb;C:\Users\gregu\Documents\rsc\rsc\cb;C:\Users\gregu\Documents\rsc\rsc\pb;C:\Users\gregu\Documents\rsc\rsc\on;C:\Users\gregu\Documents\rsc\rsc\cn;C:\Users\gregu\Documents\rsc\rsc\rn;C:\Users\gregu\Documents\rsc\rsc\an;C:\Users\gregu\Documents\rsc\rsc\sn;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\gregu\Documents\rsc\rsc\nb;C:\Users\gregu\Documents\rsc\rsc\nt;C:\Users\gregu\Documents\rsc\rsc\ct;C:\Users\greguDocuments\rsc\rsc\nw;C:\Users\gregu\Documents\rsc\rsc\sb;C:\Users\gregu\Documents\rsc\rsc\st;C:\Users\gregu\Documents\rsc\rsc\mb;C:\Users\gregu\Documents\rsc\rsc\cb;C:\Users\gregu\Documents\rsc\rsc\pb;C:\Users\gregu\Documents\rsc\rsc\on;C:\Users\gregu\Documents\rsc\rsc\cn;C:\Users\gregu\Documents\rsc\rsc\rn;C:\Users\gregu\Documents\rsc\rsc\an;C:\Users\gregu\Documents\rsc\rsc\sn;C:\Users\gregu\Documents\rsc\rsc\dip;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WarningLevel>Level4</WarningLevel>
     </ClCompile>
     <Link>

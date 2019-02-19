@@ -10,7 +10,7 @@ read test.cp.tools.setup
 
 symbols set script.name traffic
 start
-/ swflags set &flag.cipalwaysoverip on
+/ swflags set &flag.cipalwaysoverip on  / CIP messages can bypass IP stack if commented out
 testcase begin traffic
 delay 2
 traffic rate 600

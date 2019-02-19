@@ -62,7 +62,7 @@ public:
       Purge();
    }
 
-   //  Initalizes the queue so that it can be used.
+   //  Initializes the queue so that it can be used.
    //
    void Init(ptrdiff_t diff)
    {

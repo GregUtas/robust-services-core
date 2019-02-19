@@ -23,10 +23,13 @@
 #define TLVPARAMETER_H_INCLUDED
 
 #include "Parameter.h"
+#include <cstddef>
+#include <cstdint>
 #include "MsgHeader.h"
-#include "NbTypes.h"
 #include "SbTypes.h"
 #include "SysTypes.h"
+
+using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 
@@ -37,12 +40,12 @@ namespace SessionBase
 struct TlvParmHeader
 {
    ParameterId pid : 16;  // parameter identifier
-   MsgSize plen : 16;     // parameter length
-
-   //  The magic "8" must be sizeof(TlvParmHeader) or greater.
-   //
-   static const MsgSize MaxParmSize = (MsgHeader::MaxMsgSize - 4);
+   uint16_t plen : 16;    // parameter length
 };
+
+//  The magic "4" must be sizeof(TlvParmHeader) or greater.
+//
+constexpr size_t MaxTlvParmSize = MaxSbMsgSize - sizeof(TlvParmHeader);
 
 //------------------------------------------------------------------------------
 //
@@ -50,8 +53,8 @@ struct TlvParmHeader
 //
 struct TlvParmLayout
 {
-   TlvParmHeader header;                          // parameter header
-   byte_t bytes[TlvParmHeader::MaxParmSize - 1];  // parameter contents
+   TlvParmHeader header;              // parameter header
+   byte_t bytes[MaxTlvParmSize - 1];  // parameter contents
 };
 
 typedef TlvParmLayout* TlvParmPtr;  // pointer to a parameter

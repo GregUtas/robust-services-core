@@ -25,9 +25,13 @@
 #include "IoThread.h"
 #include <cstddef>
 #include "Array.h"
-#include "NbTypes.h"
 #include "NwTypes.h"
 #include "SysTypes.h"
+
+namespace NetworkBase
+{
+   class TcpIpService;
+}
 
 //------------------------------------------------------------------------------
 
@@ -42,12 +46,14 @@ public:
    //
    static const size_t MaxConns;
 
-   //  Creates an I/O thread that will receive TCP messages.  fdSize is the
-   //  number of simultaneous connections to support.  The other arguments
-   //  are described in the base class.
+   //  Creates an I/O thread that will receive TCP messages on
+   //  behalf of SERVICE.
    //
-   TcpIoThread(Faction faction, ipport_t port,
-      size_t rxSize, size_t txSize, size_t fdSize);
+   TcpIoThread(const TcpIpService* service, ipport_t port);
+
+   //  Adds SOCKET to the list of sockets when accepting a new connection.
+   //
+   bool InsertSocket(SysSocket* socket);
 
    //  Overridden to claim IpBuffers queued for output.
    //
@@ -86,11 +92,11 @@ private:
    //
    SysTcpSocket* Listener() const;
 
-   //  Ensures that the listener socket exists upon entering the thread
-   //  or after the listener socket encounters an error.  Returns nullptr
-   //  on failure.
+   //  Ensures that the listener socket (if required) exists upon entering
+   //  the thread or after the listener socket encounters an error.  Returns
+   //  false on failure.
    //
-   SysTcpSocket* EnsureListener();
+   bool EnsureListener();
 
    //  Allocates or replaces the listener socket.
    //
@@ -120,10 +126,6 @@ private:
    //  accepted.
    //
    bool AcceptConn();
-
-   //  Adds SOCKET to the list of sockets when accepting a new connection.
-   //
-   virtual bool InsertSocket(SysSocket* socket) override;
 
    //  Removes sockets_[index] from the list of sockets.  If it contains a
    //  valid socket, that socket is released.  Because the last socket moves
@@ -156,6 +158,11 @@ private:
    //  handles an individual connection.
    //
    Array< SysTcpSocket* > sockets_;
+
+   //  Set if the underlying service accepts connections.  If not set,
+   //  a listener socket is not allocated, and sockets_[0] is not used.
+   //
+   bool listen_;
 
    //  The number of sockets with events that still need to be serviced.
    //

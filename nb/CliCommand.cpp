@@ -41,7 +41,7 @@ const char CliCommand::CommandSeparator = '.';
 
 fn_name CliCommand_ctor = "CliCommand.ctor";
 
-CliCommand::CliCommand(const char* comm, const char* help, size_t size) :
+CliCommand::CliCommand(const char* comm, const char* help, uint32_t size) :
    CliText(help, comm, false, size)
 {
    Debug::ft(CliCommand_ctor);
@@ -94,10 +94,8 @@ word CliCommand::ExplainCommand(ostream& stream, bool verbose) const
       //  We are listing all of the commands in the increment.  Display only
       //  each command's name and its purpose.
       //
-      auto indent = CommandWidth - strlen(Text());
-      if(indent > 0) stream << spaces(indent);
-      stream << Text() << ParmExplPrefix;
-      stream << Help() << CRLF;
+      stream << spaces(CommandWidth - strlen(Text()));
+      stream << Text() << ParmExplPrefix << Help() << CRLF;
    }
 
    return 0;

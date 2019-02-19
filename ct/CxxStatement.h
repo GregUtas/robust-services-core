@@ -39,7 +39,7 @@ namespace CodeTools
 class CxxStatement : public CxxToken
 {
 public:
-   virtual ~CxxStatement() { }
+   virtual ~CxxStatement() = default;
    virtual void EnterBlock() override;
 protected:
    explicit CxxStatement(size_t pos);
@@ -54,7 +54,7 @@ private:
 class Condition : public CxxStatement
 {
 public:
-   virtual ~Condition() { }
+   virtual ~Condition() = default;
    void AddCondition(ExprPtr& c) { condition_ = std::move(c); }
    virtual void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;

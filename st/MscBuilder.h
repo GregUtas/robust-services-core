@@ -265,7 +265,7 @@ private:
 
    //  The number of vertical lines (contexts) in the current MSC.
    //
-   int lines_;
+   size_t lines_;
 
    //  The columns assigned to contexts, in left to right order.
    //

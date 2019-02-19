@@ -71,9 +71,9 @@ template< typename T > struct DynAllocator
 {
    typedef T value_type;
 
-   DynAllocator() { }
+   DynAllocator() = default;
 
-   ~DynAllocator() { }
+   ~DynAllocator() = default;
 
    template< typename U > DynAllocator
       (const DynAllocator< U >& that) noexcept { }
@@ -114,9 +114,9 @@ template< typename T > struct ImmAllocator
 {
    typedef T value_type;
 
-   ImmAllocator() { }
+   ImmAllocator() = default;
 
-   ~ImmAllocator() { }
+   ~ImmAllocator() = default;
 
    template< typename U > ImmAllocator
       (const ImmAllocator< U >& that) noexcept { }
@@ -157,9 +157,9 @@ template< typename T > struct PermAllocator
 {
    typedef T value_type;
 
-   PermAllocator() { }
+   PermAllocator() = default;
 
-   ~PermAllocator() { }
+   ~PermAllocator() = default;
 
    template< typename U > PermAllocator
       (const PermAllocator< U >& that) noexcept { }
@@ -200,9 +200,9 @@ template< typename T > struct ProtAllocator
 {
    typedef T value_type;
 
-   ProtAllocator() { }
+   ProtAllocator() = default;
 
-   ~ProtAllocator() { }
+   ~ProtAllocator() = default;
 
    template< typename U > ProtAllocator
       (const ProtAllocator< U >& that) noexcept { }
@@ -243,9 +243,9 @@ template< typename T > struct TempAllocator
 {
    typedef T value_type;
 
-   TempAllocator() { }
+   TempAllocator() = default;
 
-   ~TempAllocator() { }
+   ~TempAllocator() = default;
 
    template< typename U > TempAllocator
       (const TempAllocator< U >& that) noexcept { }

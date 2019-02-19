@@ -87,7 +87,7 @@ void PotsCallHandler::DiscardBuff
 fn_name PotsCallHandler_ReceiveBuff = "PotsCallHandler.ReceiveBuff";
 
 void PotsCallHandler::ReceiveBuff
-   (MsgSize size, IpBufferPtr& buff, Faction faction) const
+   (IpBufferPtr& buff, size_t size, Faction faction) const
 {
    Debug::ft(PotsCallHandler_ReceiveBuff);
 
@@ -163,6 +163,6 @@ void PotsCallHandler::ReceiveBuff
    //  class assumes that SIZE includes a header.  The original message didn't
    //  have the header, but now it does, so adjust the size accordingly.
    //
-   SbExtInputHandler::ReceiveBuff(sizeof(MsgHeader) + size, buff, faction);
+   SbExtInputHandler::ReceiveBuff(buff, sizeof(MsgHeader) + size, faction);
 }
 }

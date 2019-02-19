@@ -33,7 +33,6 @@
 #include "RegCell.h"
 #include "Registry.h"
 #include "SbTypes.h"
-#include "SysTypes.h"
 
 namespace SessionBase
 {
@@ -214,7 +213,7 @@ private:
 
    //  The desired number of invokers in the pool.
    //
-   word poolSize_;
+   size_t poolSize_;
 
    //  The configuration parameter for the number of invokers in the pool.
    //

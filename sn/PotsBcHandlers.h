@@ -38,7 +38,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcNuAnalyzeLocalMessage() { }
+   PotsBcNuAnalyzeLocalMessage() = default;
 };
 
 class PotsBcNuOriginate : public EventHandler
@@ -48,7 +48,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcNuOriginate() { }
+   PotsBcNuOriginate() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcAoAnalyzeLocalMessage() { }
+   PotsBcAoAnalyzeLocalMessage() = default;
 };
 
 class PotsBcAoAuthorizeOrigination : public EventHandler
@@ -70,7 +70,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcAoAuthorizeOrigination() { }
+   PotsBcAoAuthorizeOrigination() = default;
 };
 
 class PotsBcAoOriginationDenied : public EventHandler
@@ -80,7 +80,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcAoOriginationDenied() { }
+   PotsBcAoOriginationDenied() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -92,7 +92,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcCiAnalyzeLocalMessage() { }
+   PotsBcCiAnalyzeLocalMessage() = default;
 };
 
 class PotsBcCiCollectInformation : public EventHandler
@@ -102,7 +102,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcCiCollectInformation() { }
+   PotsBcCiCollectInformation() = default;
 };
 
 class PotsBcCiLocalInformation : public EventHandler
@@ -112,7 +112,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcCiLocalInformation() { }
+   PotsBcCiLocalInformation() = default;
 };
 
 class PotsBcCiCollectionTimeout : public EventHandler
@@ -122,7 +122,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcCiCollectionTimeout() { }
+   PotsBcCiCollectionTimeout() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -134,7 +134,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcAiAnalyzeInformation() { }
+   PotsBcAiAnalyzeInformation() = default;
 };
 
 class PotsBcAiInvalidInformation : public EventHandler
@@ -144,7 +144,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcAiInvalidInformation() { }
+   PotsBcAiInvalidInformation() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -156,7 +156,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcSrSelectRoute() { }
+   PotsBcSrSelectRoute() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -168,7 +168,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcAsAuthorizeCallSetup() { }
+   PotsBcAsAuthorizeCallSetup() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -180,7 +180,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcScAnalyzeLocalMessage() { }
+   PotsBcScAnalyzeLocalMessage() = default;
 };
 
 class PotsBcScSendCall : public EventHandler
@@ -190,7 +190,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcScSendCall() { }
+   PotsBcScSendCall() = default;
 };
 
 class PotsBcScRemoteBusy : public EventHandler
@@ -200,7 +200,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcScRemoteBusy() { }
+   PotsBcScRemoteBusy() = default;
 };
 
 class PotsBcScRemoteProgress : public EventHandler
@@ -210,7 +210,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcScRemoteProgress() { }
+   PotsBcScRemoteProgress() = default;
 };
 
 class PotsBcScRemoteAlerting : public EventHandler
@@ -220,7 +220,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcScRemoteAlerting() { }
+   PotsBcScRemoteAlerting() = default;
 };
 
 class PotsBcScRemoteRelease : public EventHandler
@@ -230,7 +230,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcScRemoteRelease() { }
+   PotsBcScRemoteRelease() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -242,7 +242,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcOaRemoteNoAnswer() { }
+   PotsBcOaRemoteNoAnswer() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -254,7 +254,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcNuTerminate() { }
+   PotsBcNuTerminate() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -266,7 +266,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcAtAuthorizeTermination() { }
+   PotsBcAtAuthorizeTermination() = default;
 };
 
 class PotsBcAtTerminationDenied : public EventHandler
@@ -276,7 +276,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcAtTerminationDenied() { }
+   PotsBcAtTerminationDenied() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -288,7 +288,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcSfAnalyzeLocalMessage() { }
+   PotsBcSfAnalyzeLocalMessage() = default;
 };
 
 class PotsBcSfSelectFacility : public EventHandler
@@ -298,7 +298,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcSfSelectFacility() { }
+   PotsBcSfSelectFacility() = default;
 };
 
 class PotsBcSfLocalBusy : public EventHandler
@@ -308,7 +308,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcSfLocalBusy() { }
+   PotsBcSfLocalBusy() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -320,7 +320,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcPcAnalyzeLocalMessage() { }
+   PotsBcPcAnalyzeLocalMessage() = default;
 };
 
 class PotsBcPcPresentCall : public EventHandler
@@ -330,7 +330,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcPcPresentCall() { }
+   PotsBcPcPresentCall() = default;
 };
 
 class PotsBcPcFacilityFailure : public EventHandler
@@ -340,7 +340,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcPcFacilityFailure() { }
+   PotsBcPcFacilityFailure() = default;
 };
 
 class PotsBcPcLocalAlerting : public EventHandler
@@ -350,7 +350,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcPcLocalAlerting() { }
+   PotsBcPcLocalAlerting() = default;
 };
 
 class PotsBcPcRemoteRelease : public EventHandler
@@ -360,7 +360,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcPcRemoteRelease() { }
+   PotsBcPcRemoteRelease() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -372,7 +372,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcTaAnalyzeLocalMessage() { }
+   PotsBcTaAnalyzeLocalMessage() = default;
 };
 
 class PotsBcTaLocalNoAnswer : public EventHandler
@@ -382,7 +382,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcTaLocalNoAnswer() { }
+   PotsBcTaLocalNoAnswer() = default;
 };
 
 class PotsBcTaRemoteRelease : public EventHandler
@@ -392,7 +392,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcTaRemoteRelease() { }
+   PotsBcTaRemoteRelease() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -404,7 +404,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcAcAnalyzeLocalMessage() { }
+   PotsBcAcAnalyzeLocalMessage() = default;
 };
 
 class PotsBcAcLocalSuspend : public EventHandler
@@ -414,7 +414,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcAcLocalSuspend() { }
+   PotsBcAcLocalSuspend() = default;
 };
 
 class PotsBcAcRemoteSuspend : public EventHandler
@@ -424,7 +424,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcAcRemoteSuspend() { }
+   PotsBcAcRemoteSuspend() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -436,7 +436,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcLsLocalResume() { }
+   PotsBcLsLocalResume() = default;
 };
 
 class PotsBcLsRemoteRelease : public EventHandler
@@ -446,7 +446,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcLsRemoteRelease() { }
+   PotsBcLsRemoteRelease() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -458,7 +458,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcRsRemoteResume() { }
+   PotsBcRsRemoteResume() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -470,7 +470,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcExAnalyzeLocalMessage() { }
+   PotsBcExAnalyzeLocalMessage() = default;
 };
 
 class PotsBcExApplyTreatment : public EventHandler
@@ -480,7 +480,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcExApplyTreatment() { }
+   PotsBcExApplyTreatment() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -492,7 +492,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcLocalAnswer() { }
+   PotsBcLocalAnswer() = default;
 };
 
 class PotsBcRemoteAnswer : public EventHandler
@@ -502,7 +502,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcRemoteAnswer() { }
+   PotsBcRemoteAnswer() = default;
 };
 
 class PotsBcLocalRelease : public EventHandler
@@ -512,7 +512,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcLocalRelease() { }
+   PotsBcLocalRelease() = default;
 };
 
 class PotsBcReleaseCall : public EventHandler
@@ -522,7 +522,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcReleaseCall() { }
+   PotsBcReleaseCall() = default;
 };
 
 class PotsBcReleaseUser : public EventHandler
@@ -532,7 +532,7 @@ protected:
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 private:
-   PotsBcReleaseUser() { }
+   PotsBcReleaseUser() = default;
 };
 }
 #endif

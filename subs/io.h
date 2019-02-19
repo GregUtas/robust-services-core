@@ -21,7 +21,7 @@ struct _finddata_t
    char     name[260];
 };
 
-const int _A_SUBDIR = 0x10;
+constexpr int _A_SUBDIR = 0x10;
 
 int*     _errno();
 intptr_t _findfirst(const char* Filename, _finddata_t* FindData);

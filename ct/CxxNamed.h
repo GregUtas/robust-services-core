@@ -24,7 +24,6 @@
 
 #include "CxxToken.h"
 #include <cstddef>
-#include <cstdint>
 #include <iosfwd>
 #include <string>
 #include "CodeTypes.h"
@@ -43,59 +42,59 @@ class CxxLocation
 {
    friend class CxxNamed;
 public:
+   //  Returns the file in which the item is located.  A template
+   //  instance belongs to the file that caused its instantiation.
+   //  An item added by the Editor belongs to the file to which it
+   //  was added.
+   //
+   CodeFile* GetFile() const { return file_; }
+
+   //  Returns the start of the item's position within its file, which
+   //  is an index into a string that contains the file's contents.
+   //  For a template instance, this is an offset into its internally
+   //  generated code.  For an item added by the Editor, string::npos
+   //  is returned.
+   //
+   size_t GetPos() const;
+
+   //  Returns true for an internally generated item, such as the code
+   //  for a template instance.
+   //
+   bool IsInternal() const { return internal_; }
+
+   //  A position that indicates that the item was not found in the
+   //  original source code.  This is used when the Editor creates
+   //  an item, for example.
+   //
    static const size_t NOT_IN_SOURCE = 0x7fffffff;
-
-   size_t GetPos() const
-   {
-      if(pos == NOT_IN_SOURCE)
-         return std::string::npos;
-      else
-         return pos;
-   }
 private:
-   //  Constructor.
+   //  Initializes fields to default values.  Private because this class
+   //  only appears as a private member of the friend class CxxNamed.
    //
-   CxxLocation() : file(nullptr), pos(std::string::npos), internal(false) { }
+   CxxLocation();
 
-   //  Records an item's location in source code.
+   //  Records the item's location in source code.
    //
-   void SetLoc(CodeFile* f, size_t p) { file = f; pos = p; }
+   void SetLoc(CodeFile* file, size_t pos);
+
+   //  Marks the item as internally generated.
+   //
+   void SetInternal() { internal_ = true; }
 
    //  The file in which the item appeared.
    //
-   CodeFile* file;
+   CodeFile* file_;
 
    //  The item's location in FILE.  The file has a string member which
    //  contains the code, and this is an index into that string.
    //
-   size_t pos : 31;
+   size_t pos_ : 31;
 
    //  Set if the item appeared in internally generated code, which currently
    //  means in a template instance.
    //
-   bool internal : 1;
-};
-
-//------------------------------------------------------------------------------
-//
-//  Tags that can be applied to a type.
-//
-struct TypeTags
-{
-   bool const_ : 1;       // type is const
-   bool constptr_ : 1;    // pointer is const
-   TagCount arrays_ : 8;  // number of arrays
-   TagCount ptrs_ : 8;    // number of pointers
-   TagCount refs_ : 8;    // number of references
-
-   //  Creates a nil instance.
-   //
-   TypeTags();
-
-   //  Creates an instance using SPEC's attributes.
-   //
-   explicit TypeTags(const TypeSpec& spec);
-};
+   bool internal_ : 1;
+   };
 
 //------------------------------------------------------------------------------
 //
@@ -126,9 +125,13 @@ public:
    //
    virtual void CopyContext(const CxxNamed* that);
 
+   //  Returns the item's location information.
+   //
+   const CxxLocation& GetLoc() const { return loc_; }
+
    //  Returns the file in which this item was found.
    //
-   CodeFile* GetFile() const { return loc_.file; }
+   CodeFile* GetFile() const { return loc_.GetFile(); }
 
    //  Returns the offset at which the item was found.
    //
@@ -145,11 +148,6 @@ public:
    //
    virtual CxxScope* GetScope() const { return nullptr; }
 
-   //  Returns the scope where the item was found.  For classes derived
-   //  from CxxScoped, this is usually the scope where the item was found.
-   //
-   virtual CxxScope* GetLocale() const { return GetScope(); }
-
    //  Returns true if the item is static.  Note that, for the purposes
    //  of this function:
    //  o only data and functions can be classified as non-static;
@@ -165,7 +163,7 @@ public:
 
    //  Returns true if the item appeared in internally generated code.
    //
-   bool IsInternal() const { return loc_.internal; }
+   bool IsInternal() const { return loc_.IsInternal(); }
 
    //  Sets the template parameters when the item declares a template.
    //  The default version generates a log and must be overridden by an
@@ -315,10 +313,11 @@ public:
    //
    void Accessed() const;
 
-   //  Logs WARNING at the position where this item is located.  OFFSET
-   //  is specific to WARNING.
+   //  Logs WARNING at the position where this item is located.  OFFSET is
+   //  specific to WARNING, and HIDE is set to prevent the warning from
+   //  being displayed.
    //
-   void Log(Warning warning, size_t offset = 0) const;
+   void Log(Warning warning, size_t offset = 0, bool hide = false) const;
 
    //  Displays the item's referent in STREAM.  If FQ is set, the item's
    //  fully qualified name is displayed.
@@ -390,7 +389,7 @@ protected:
 private:
    //  Indicates that the item appeared in internally generated code.
    //
-   void SetInternal() { loc_.internal = true; }
+   void SetInternal() { loc_.SetInternal(); }
 
    //  Invoked when ResolveName finds DECL, a forward or friend declaration,
    //  when resolving the Nth name in a possibly qualified name.  If it
@@ -580,10 +579,6 @@ public:
    //
    virtual void FindReferent() override;
 
-   //  Overridden to return the scope where the name appeared.
-   //
-   virtual CxxScope* GetLocale() const override { return locale_; }
-
    //  Overridden to return this item if it has template arguments.
    //
    virtual TypeName* GetTemplateArgs() const override;
@@ -620,10 +615,6 @@ public:
    virtual void SetReferent
       (CxxNamed* item, const SymbolView* view) const override;
 
-   //  Overridden to set the scope where the name appeared.
-   //
-   virtual void SetScope(CxxScope* scope) override { locale_ = scope; }
-
    //  Overridden to shrink containers.
    //
    virtual void Shrink() override;
@@ -648,10 +639,6 @@ private:
    //  The next name in a qualified name.
    //
    TypeNamePtr next_;
-
-   //  The scope where the name appeared.
-   //
-   CxxScope* locale_;
 
    //  What the name refers to.
    //
@@ -799,10 +786,6 @@ public:
    //
    virtual void EnterBlock() override;
 
-   //  Overridden to return the scope where the name appeared.
-   //
-   virtual CxxScope* GetLocale() const override { return Last()->GetLocale(); }
-
    //  Overridden to return the item itself.
    //
    virtual QualName* GetQualName() const
@@ -843,10 +826,6 @@ public:
    //
    virtual bool ResolveTemplate
       (Class* cls, const TypeName* args, bool end) const override;
-
-   //  Overridden to set the scope where the name appeared.
-   //
-   virtual void SetScope(CxxScope* scope) override { first_->SetScope(scope); }
 
    //  Sets the last name's referent.  This is used by QualName.EnterBlock and
    //  Operation.PushMember when a name appears in executable code.  It is also
@@ -889,6 +868,140 @@ private:
 
 //------------------------------------------------------------------------------
 //
+//  Tags that can be applied to a type.
+//
+class TypeTags
+{
+public:
+   //  Creates a default instance.
+   //
+   TypeTags();
+
+   //  Creates an instance using SPEC's attributes.
+   //
+   explicit TypeTags(const TypeSpec& spec);
+
+   //  Sets the type's constness to READONLY.
+   //
+   void SetConst(bool readonly) const { const_ = readonly; }
+
+   //  Returns true if the type is const.
+   //
+   bool IsConst() const { return const_; }
+
+   //  Sets the Nth pointer (0<=n<=2) as const if READONLY is set.  Also
+   //  updates the number of pointers if N is greater than the current
+   //  number.  Returns false if N is out of range.
+   //
+   bool SetPointer(size_t n, bool readonly);
+
+   //  Resets the number of pointers to COUNT.
+   //
+   void SetPtrs(TagCount count);
+
+   //  Returns the number of pointers attached to this type.  If ARRAYS
+   //  is set, each [] also counts as a pointer.
+   //
+   TagCount PtrCount(bool arrays) const;
+
+   //  Sets the outermost (last) pointer as const.
+   //
+   void SetConstPtr() const;
+
+   //  Returns 1 if the outermost pointer is const.  Returns 0 if the tag
+   //  has no pointers.  Returns -1 if the outermost pointer is not const.
+   //
+   int IsConstPtr() const;
+
+   //  Returns true if the Nth pointer (0<=n<=2) is const.
+   //
+   bool IsConstPtr(size_t n) const;
+
+   //  Specifies that the type is followed by an unbounded array tag.
+   //
+   void SetUnboundedArray() { array_ = true; }
+
+   //  Returns true if the type has an unbounded array tag.
+   //
+   bool IsUnboundedArray() const { return array_; }
+
+   //  Adds a bounded array to the type.
+   //
+   void AddArray() { ++arrays_; }
+
+   //  Returns the number of arrays associated with the type.
+   //
+   TagCount ArrayCount() const;
+
+   //  Sets the level of reference indirection to the type.
+   //
+   void SetRefs(TagCount refs) { refs_ = refs; }
+
+   //  Returns the level of reference indirection to the type.
+   //
+   TagCount RefCount() const { return refs_; }
+
+   //  If THAT has as many or more pointers and arrays as these tags do,
+   //  modifies THAT by removing the number of pointers and arrays in
+   //  these tags and returns true.  Returns false if these tags have
+   //  more pointers or arrays than THAT.
+   //
+   bool AlignTemplateTag(TypeTags& that) const;
+
+   //  Returns Compatible if these tags have the same number of pointers
+   //  and arrays as THAT.  Returns Convertible if these tags have less
+   //  pointers and less arrays than THAT.  Returns Incompatible if THIS
+   //  has more pointers or more arrays than THAT.
+   //
+   TypeMatch MatchTemplateTags(const TypeTags& that) const;
+
+   //  Displays the tags in STREAM.  Any leading "const" is not displayed
+   //  because it is output before the type name, and before this function
+   //  is invoked.
+   //
+   void Print(std::ostream& stream) const;
+
+   //  Adds the tags to NAME.  Prefixes any leading "const".  Omits reference
+   //  tags ('&') if ARG is set.
+   //
+   void TypeString(std::string& name, bool arg) const;
+
+   //  Set if a pointer tag was detached from the type.
+   //
+   bool ptrDet_: 1;
+
+   //  Set if the reference tag was detached from the type.
+   //
+   bool refDet_: 1;
+private:
+   //  Set if the type is const.
+   //
+   mutable bool const_ : 1;
+
+   //  Set if the type is an unbounded array (e.g. table[]).
+   //
+   bool array_ : 1;
+
+   //  The number of bounded arrays associated with the type.
+   //
+   TagCount arrays_ : 8;
+
+   //  The number of pointers associated with the type.  NOTE: This value can
+   //  be *negative* for an auto type.  See the comment in TypeTags.TypeString.
+   //
+   TagCount ptrs_ : 8;
+
+   //  The number of reference tags associated with the type.
+   //
+   TagCount refs_ : 8;
+
+   //  Set if pointer[n] is const.
+   //
+   mutable bool constptr_[Cxx::MAX_PTRS];
+};
+
+//------------------------------------------------------------------------------
+//
 //  An item's underlying type.
 //
 class TypeSpec : public CxxNamed
@@ -896,7 +1009,7 @@ class TypeSpec : public CxxNamed
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~TypeSpec() { }
+   virtual ~TypeSpec() = default;
 
    //  Sets the type of item to which the type belongs.
    //
@@ -915,47 +1028,23 @@ public:
    virtual Function* GetFuncSpec() const { return nullptr; }
 
    //  Returns the level of compatibility when assigning THAT to this type.
-   //  If IMPLICIT is set, the "explicit" keyword is ignored.  Generates a
-   //  log if the types are Incompatible.
+   //  Generates a log if the types are Incompatible.
    //
-   TypeMatch MustMatchWith(const StackArg& that, bool implicit = false) const;
+   TypeMatch MustMatchWith(const StackArg& that) const;
 
    //  Creates and returns a copy of the type.  Serves as a copy constructor,
    //  which cannot be invoked directly on this class (because it is virtual).
    //
    virtual TypeSpec* Clone() const = 0;
 
+   //  Provides acccess to the type's tags.
+   //
+   virtual TypeTags* Tags() = 0;
+   virtual const TypeTags* Tags() const = 0;
+
    //  Adds a bounded array specification to the type.
    //
    virtual void AddArray(ArraySpecPtr& array) = 0;
-
-   //  Sets the type's constness.
-   //
-   virtual void SetConst(bool readonly) = 0;
-
-   //  Sets any pointer's constness.
-   //
-   virtual void SetConstPtr(bool constptr) = 0;
-
-   //  Sets the level of pointer indirection to the type.
-   //
-   virtual void SetPtrs(TagCount ptrs) = 0;
-
-   //  Sets the level of reference indirection to the type.
-   //
-   virtual void SetRefs(TagCount refs) = 0;
-
-   //  Specifies the location of an unbounded array tag.
-   //
-   virtual void SetArrayPos(int8_t pos) = 0;
-
-   //  Invoked when a pointer tag is detached from the type name.
-   //
-   virtual void SetPtrDetached(bool on) = 0;
-
-   //  Invoked when a reference tag is detached from the type name.
-   //
-   virtual void SetRefDetached(bool on) = 0;
 
    //  Returns the number of pointer tags attached to the type.  It follows
    //  the type to its root (a class or terminal), adding up pointer tags
@@ -986,9 +1075,10 @@ public:
    //
    virtual void EnterArrays() const = 0;
 
-   //  Returns the type's attributes.
+   //  Returns the type's cumulative tags by following it to its root
+   //  definition (e.g. through typedefs).
    //
-   virtual TypeTags GetTags() const = 0;
+   virtual TypeTags GetAllTags() const = 0;
 
    //  The same as TypeString, except it applies TAGS instead of the
    //  type's actual attributes.
@@ -1004,29 +1094,16 @@ public:
    //
    virtual void DisplayArrays(std::ostream& stream) const = 0;
 
-   //  Adjusts the number of pointer tags when the type is assigned to an
-   //  auto type.  For example, when auto a = *p; finds the type for P and
-   //  assigns it to A, the level of pointer indirection is decremented.
+   //  Resets the number of pointer tags when the type is assigned to an
+   //  auto type.  For example, in auto a = *p; P's type is assigned to
+   //  A, but with a pointer count of -1.
    //
-   virtual void AdjustPtrs(TagCount count) = 0;
+   virtual void SetPtrs(TagCount count) = 0;
 
    //  Eliminates references.  Used when the right-hand side of an auto
    //  type is a reference, but "auto" is used instead of "auto&".
    //
    virtual void RemoveRefs() = 0;
-
-   //  Returns the number of pointers associated with this individual type.
-   //  If ARRAYS is set, each [] counts as a pointer.
-   //
-   virtual TagCount PtrCount(bool arrays) const = 0;
-
-   //  Returns the number of references associated with this individual type.
-   //
-   virtual TagCount RefCount() const = 0;
-
-   //  Returns the number of arrays associated with this individual type.
-   //
-   virtual TagCount ArrayCount() const = 0;
 
    //  Returns true if the types of "this" and THAT match exactly, including
    //  all tags (constness, pointers, arrays, and references).
@@ -1151,29 +1228,16 @@ private:
    //  Resolves a template argument when parsing a template instance.  Returns
    //  false if this is not a template argument in a template instance.
    //
-   bool ResolveTemplateArgument();
+   bool ResolveTemplateArgument() const;
 
    //  Overridden to add a bounded array specification to the type.
    //
    virtual void AddArray(ArraySpecPtr& array) override;
 
-   //  Overridden to adjust the number of pointer tags when the type is assigned
-   //  to an auto type.
-   //
-   virtual void AdjustPtrs(TagCount count) override;
-
    //  Overridden to align thatArg's type with the this type, which is that of a
    //  template parameter that might be specialized.
    //
    virtual std::string AlignTemplateArg(const TypeSpec* thatArg) const override;
-
-   //  Overridden to return true if ITEM is the referent of a template argument.
-   //
-   virtual bool ItemIsTemplateArg(const CxxScoped* item) const override;
-
-   //  Overridden to return the number of arrays associated with this type.
-   //
-   virtual TagCount ArrayCount() const override;
 
    //  Overridden to return the number of arrays attached to the type, following
    //  the type to its root.
@@ -1232,10 +1296,6 @@ private:
    //
    virtual void FindReferent() override;
 
-   //  Overridden to return the scope where the type appeared.
-   //
-   virtual CxxScope* GetLocale() const override { return name_->GetLocale(); }
-
    //  Overridden to return the numeric type.
    //
    virtual Numeric GetNumeric() const override;
@@ -1246,7 +1306,7 @@ private:
 
    //  Overridden to return the type's attributes.
    //
-   virtual TypeTags GetTags() const override;
+   virtual TypeTags GetAllTags() const override;
 
    //  Overridden to return the type itself.
    //
@@ -1270,13 +1330,21 @@ private:
    //
    virtual bool IsAuto() const override;
 
+   //  Overridden to return true if ITEM is the referent of a template argument.
+   //
+   virtual bool ItemIsTemplateArg(const CxxScoped* item) const override;
+
    //  Overridden to return true if the type is const.
    //
    virtual bool IsConst() const override;
 
-   //  Overridden to return true if the type is a const pointer.
+   //  Overridden to return true if the type's outermost pointer is const.
    //
    virtual bool IsConstPtr() const override;
+
+   //  Overridden to return true if the type's Nth pointer is const.
+   //
+   virtual bool IsConstPtr(size_t n) const override;
 
    //  Overridden to return true if the type has pointer or reference tags.
    //
@@ -1305,11 +1373,6 @@ private:
    virtual void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
 
-   //  Overridden to return the number of pointers associated with this type.
-   //  Each array specification is counted as a pointer if ARRAYS is set.
-   //
-   virtual TagCount PtrCount(bool arrays) const override;
-
    //  Overridden to return the number of pointer tags attached to the type,
    //  following the type to its root.
    //
@@ -1319,10 +1382,6 @@ private:
    //
    virtual std::string QualifiedName(bool scopes, bool templates) const
       override { return name_->QualifiedName(scopes, templates); }
-
-   //  Overridden to return the number of references associated with this type.
-   //
-   virtual TagCount RefCount() const override { return refs_; }
 
    //  Overridden to return what the type refers to.
    //
@@ -1360,38 +1419,15 @@ private:
    //
    virtual CxxToken* RootType() const override { return Referent(); }
 
-   //  Overridden to set the location of an unbounded array tag.
+   //  Overridden to reset the number of pointer tags when the type is assigned
+   //  to an auto type.
    //
-   virtual void SetArrayPos(int8_t pos) override { arrayPos_ = pos; }
-
-   //  Overridden to set the type's constness.
-   //
-   virtual void SetConst(bool readonly) override { const_ = readonly; }
-
-   //  Overridden to set a pointer type's constness.
-   //
-   virtual void SetConstPtr(bool constptr) override { constptr_ = constptr; }
-
-   //  Overridden to record a pointer tag that is detached from the type name.
-   //
-   virtual void SetPtrDetached(bool on) override { ptrDet_ = on; }
-
-   //  Overridden to set the level of pointer indirection to the type.
-   //
-   virtual void SetPtrs(TagCount ptrs) override { ptrs_ = ptrs; }
-
-   //  Overridden to record a reference tag that is detached from the type name.
-   //
-   virtual void SetRefDetached(bool on) override { refDet_ = on; }
+   virtual void SetPtrs(TagCount count) override;
 
    //  Overridden to record what the item refers to.
    //
    virtual void SetReferent
       (CxxNamed* item, const SymbolView* view) const override;
-
-   //  Overridden to set the level of reference indirection to the type.
-   //
-   virtual void SetRefs(TagCount refs) override { refs_ = refs; }
 
    //  Overridden so that when ROLE is TemplateClass, its arguments are treated
    //  as parameters.
@@ -1405,6 +1441,11 @@ private:
    //  Overridden to shrink containers.
    //
    virtual void Shrink() override;
+
+   //  Overridden to provide access to the type's tags.
+   //
+   virtual TypeTags* Tags() override { return &tags_; }
+   virtual const TypeTags* Tags() const override { return &tags_; }
 
    //  Overridden to return the base class default (the scoped name) unless the
    //  type is "auto", in which case the referent (if known) is returned.
@@ -1433,33 +1474,9 @@ private:
    //
    std::unique_ptr< ArraySpecPtrVector > arrays_;
 
-   //  The level of pointer indirection to the type.
+   //  The type's tags.
    //
-   TagCount ptrs_ : 8;
-
-   //  The level of reference indirection to the type.
-   //
-   TagCount refs_ : 8;
-
-   //  The position of any unbounded array tag ("[]"), else INT8_MAX.
-   //
-   int8_t arrayPos_ : 8;
-
-   //  Set if the type is const.
-   //
-   mutable bool const_ : 1;
-
-   //  Set if the type is a const pointer.
-   //
-   mutable bool constptr_ : 1;
-
-   //  Set if a pointer tag was detached.
-   //
-   bool ptrDet_ : 1;
-
-   //  Set if a reference tag was detached.
-   //
-   bool refDet_ : 1;
+   TypeTags tags_;
 };
 
 //------------------------------------------------------------------------------

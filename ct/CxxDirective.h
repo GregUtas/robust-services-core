@@ -41,7 +41,7 @@ class CxxDirective : public CxxNamed
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~CxxDirective() { }
+   virtual ~CxxDirective() = default;
 
    //  Overridden to prevent a log when a directive appears inside a function.
    //
@@ -65,7 +65,7 @@ class SymbolDirective : public CxxDirective
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~SymbolDirective() { }
+   virtual ~SymbolDirective() = default;
 
    //  Overridden to return the symbol's name.
    //
@@ -298,7 +298,7 @@ protected:
    //  Creates a macro for the symbol identified by NAME.  Protected
    //  because this class is virtual.
    //
-   explicit Macro(std::string& name);
+   explicit Macro(const std::string& name);
 
    //  How many times the macro was referenced.
    //
@@ -323,13 +323,13 @@ public:
    //  for <name> is created while processing the #ifndef, even though <name>
    //  is not defined until the next statement.
    //
-   explicit Define(std::string& name);
+   explicit Define(const std::string& name);
 
    //  Creates a #define directive for the macro identified by NAME, which
    //  has the value associated with RHS.  This constructor is used when NAME
    //  appears in a #define, and must be used even if RHS is empty.
    //
-   Define(std::string& name, ExprPtr& rhs);
+   Define(const std::string& name, ExprPtr& rhs);
 
    //  Not subclassed.
    //
@@ -387,7 +387,7 @@ class Optional : public CxxDirective
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~Optional() { }
+   virtual ~Optional() = default;
 protected:
    //  Protected because this class is virtual.
    //
@@ -403,7 +403,7 @@ class OptionalCode : public Optional
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~OptionalCode() { }
+   virtual ~OptionalCode() = default;
 
    //  Invoked when it is determined that the code following the directive
    //  should not be compiled.
@@ -462,7 +462,7 @@ class Conditional : public OptionalCode
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~Conditional() { }
+   virtual ~Conditional() = default;
 
    //  Overridden to add a condition to the directive.
    //
@@ -504,7 +504,7 @@ class Existential : public OptionalCode
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~Existential() { }
+   virtual ~Existential() = default;
 
    //  Overridden to add an #else to the directive.
    //
@@ -726,7 +726,7 @@ class StringDirective : public CxxDirective
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~StringDirective() { }
+   virtual ~StringDirective() = default;
 
    //  Returns the text that follows the directive.
    //

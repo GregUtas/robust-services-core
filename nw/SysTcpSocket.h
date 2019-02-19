@@ -31,6 +31,11 @@
 #include "SysDecls.h"
 #include "SysTypes.h"
 
+namespace NetworkBase
+{
+   class TcpIpService;
+}
+
 //------------------------------------------------------------------------------
 
 namespace NetworkBase
@@ -61,23 +66,23 @@ class SysTcpSocket : public SysSocket
 {
    friend SysTcpSocketPtr::deleter_type;
 public:
-   //  Allocates a socket that will send and receive on PORT.  RXSIZE and
-   //  TXSIZE specify the size of the socket's receive and send buffers.
-   //  The socket is made non-blocking.  RC is updated to indicate success
-   //  or failure.
+   //  Allocates a socket that will send and receive on PORT, on behalf of
+   //  SERVICE.  The socket is made non-blocking.  RC is updated to indicate
+   //  success or failure.
    //
-   SysTcpSocket(ipport_t port, size_t rxSize, size_t txSize, AllocRc& rc);
+   SysTcpSocket(ipport_t port, const TcpIpService* service, AllocRc& rc);
 
    //  Invoked by an I/O thread when it adds the socket to its poll array.
    //
    void Register();
 
    //  Invoked by an I/O thread when it removes the socket from its poll
-   //  array.
+   //  array.  Returns true if the application was not using the socket,
+   //  in which case it has been deleted.
    //
-   void Deregister();
+   bool Deregister();
 
-   //  Initates connection setup to remAdddr.  Returns 0 on success.  If
+   //  Initiates connection setup to remAdddr.  Returns 0 on success.  If
    //  the socket is non-blocking, reports success immediately; the socket
    //  then queues outgoing messages until the connection is accepted.
    //
@@ -87,18 +92,18 @@ public:
    //  requests that can be queued, waiting to be processed by Accept.
    //  Returns true on success.
    //
-   bool Listen(int backlog);
+   bool Listen(size_t backlog);
 
    //  Accesses the flags that request the socket's status when invoking
    //  Poll.  Only the read and write flags should be set.
    //
    PollFlags* InFlags() { return &inFlags_; }
 
-   //  Waits for events on SOCKETS, which is COUNT in length.  MSECS
+   //  Waits for events on SOCKETS, which is SIZE in length.  MSECS
    //  specifies how long to wait.  Returns the number of sockets on
    //  which events have occurred, and -1 on failure.
    //
-   static word Poll(SysTcpSocket* sockets[], size_t count, msecs_t msecs);
+   static word Poll(SysTcpSocket* sockets[], size_t size, msecs_t msecs);
 
    //  Returns the flags that reported the socket's status after invoking
    //  Poll.  Any of the flags could have been set.
@@ -112,16 +117,16 @@ public:
    //
    SysTcpSocketPtr Accept(SysIpL3Addr& remAddr);
 
-   //  Reads up to MAX bytes into BUFF.  Returns the number of bytes read.
+   //  Reads up to SIZE bytes into BUFF.  Returns the number of bytes read.
    //  Returns 0 if the socket was gracefully closed, and -1 on failure.
    //
-   word Recv(byte_t* buff, size_t max);
+   word Recv(byte_t* buff, size_t size);
 
-   //  Sends LEN bytes, starting at DATA, to the address to which the socket
+   //  Sends SIZE bytes, starting at DATA, to the address to which the socket
    //  is bound.  Returns the number of bytes sent.  Returns 0 if the socket
    //  would block, and -1 on failure.
    //
-   word Send(const byte_t* data, size_t len);
+   word Send(const byte_t* data, size_t size);
 
    //  Sets locAddr to the host address of this socket.  Returns false
    //  on failure.
@@ -146,13 +151,47 @@ public:
    //
    virtual IpProtocol Protocol() const override { return IpTcp; }
 
-   //  Overridden to record that an application has begun to use the socket.
+   //  Overridden to configure the socket for a keepalive if required.
    //
-   virtual void Acquire() override;
+   virtual AllocRc SetService(const IpService* service, bool shared) override;
 
-   //  Overridden to record that an application no longer needs the socket.
+   //  The socket's state with respect to the application.
    //
-   virtual void Release() override;
+   enum AppState
+   {
+      Initial,   // socket allocated
+      Acquired,  // application has invoked Acquire()
+      Released   // application has invoked Release()
+   };
+
+   //  Returns the socket's application state.
+   //
+   AppState GetAppState() const { return appState_; }
+
+   //  Invoked by an application when it begins to use the socket.
+   //
+   virtual void Acquire();
+
+   //  Invoked by an application when it no longer requires the socket.
+   //
+   virtual void Release();
+
+   //  Returns true if the socket is valid and has not initiated a disconnect.
+   //
+   bool IsOpen() const;
+
+   //  Sets the incoming message buffer.  If a different buffer is already
+   //  present, it is deleted.  If BUFF is nullptr, the buffer is deleted.
+   //
+   void SetIcMsg(IpBuffer* buff);
+
+   //  Returns the incoming message buffer.
+   //
+   IpBuffer* IcMsg() const { return icMsg_; }
+
+   //  Returns the incoming message buffer and sets it to nullptr.
+   //
+   IpBuffer* AcquireIcMsg();
 
    //  Overridden to send BUFF.
    //
@@ -170,6 +209,16 @@ public:
    //  Overridden for patching.
    //
    virtual void Patch(sel_t selector, void* arguments) override;
+protected:
+   //  Initiates a disconnect and disables further sends on the socket.
+   //  Protected so that subclasses can decide how to expose this function.
+   //
+   void Disconnect();
+
+   //  Closes the socket.  Protected so that subclasses can decide how to
+   //  expose this function.
+   //
+   void Close();
 private:
    //  States for TCP sockets.
    //
@@ -200,13 +249,17 @@ private:
    //
    State state_ : 8;
 
+   //  Set if the socket has initiated a disconnect.
+   //
+   bool disconnecting_;
+
    //  Set if the socket is registered with an I/O thread.
    //
    bool iotActive_ : 8;
 
    //  Set if an application is using the socket.
    //
-   bool appActive_ : 8;
+   AppState appState_ : 8;
 
    //  Flags that query the socket's status before invoking Poll.
    //
@@ -215,6 +268,10 @@ private:
    //  Flags that report the socket's status after invoking Poll.
    //
    PollFlags outFlags_;
+
+   //  An incoming message that is being assembled because it was segmented.
+   //
+   IpBuffer* icMsg_;
 
    //  Pending outgoing messages.  Outgoing messages are queued while the
    //  socket is waiting for a reply to a Connect or is otherwise blocked.

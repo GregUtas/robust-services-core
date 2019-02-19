@@ -147,7 +147,7 @@ void Base::Nullify(size_t n)
 
 void Base::Output(ostream& stream, col_t indent, bool verbose) const
 {
-   auto opts = Flags();
+   Flags opts;
    if(verbose) opts.set(DispVerbose);
    Display(stream, spaces(indent), opts);
 }

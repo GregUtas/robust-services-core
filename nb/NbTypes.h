@@ -90,10 +90,6 @@ std::ostream& operator<<(std::ostream& stream, Faction faction);
 //
 char FactionChar(Faction faction);
 
-//  The length of a message's payload in bytes.
-//
-typedef uint16_t MsgSize;
-
 //  The direction of a message.
 //
 enum MsgDirection
@@ -136,7 +132,7 @@ typedef uint8_t ObjectPoolId;
 
 //  An identifier for an object block.
 //
-typedef id_t PooledObjectId;
+typedef uint32_t PooledObjectId;
 
 //  A sequence number for an object block.
 //

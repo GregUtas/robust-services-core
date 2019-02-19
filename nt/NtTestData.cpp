@@ -156,7 +156,7 @@ word NtTestData::Initiate(const string& test)
 
    if(!prolog_.empty())
    {
-      auto command = string("read ") + prolog_.c_str();
+      command = string("read ") + prolog_.c_str();
       cli->Execute(command);
    }
 

@@ -23,6 +23,7 @@
 #define TOOLTYPES_H_INCLUDED
 
 #include <iosfwd>
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 //
@@ -70,19 +71,17 @@ enum TraceRc
 //
 const char* strTraceRc(TraceRc rc);
 
-//  Trace tool identifiers.  A new trace tool must define an entry here.
+//  Trace tool identifiers.
 //
-enum ToolIds
-{
-   ToolBuffer = 1,      // internal use
-   FunctionTracer = 2,  // function calls
-   MemoryTracer = 3,    // memory allocations/deallocations
-   ObjPoolTracer = 4,   // pooled objects
-   NetworkTracer = 5,   // socket events
-   TransTracer = 6,     // SessionBase transactions
-   BufferTracer = 7,    // SessionBase IpBuffers
-   ContextTracer = 8,   // SessionBase contexts
-   ParserTracer = 9     // parser "object code generation"
-};
+constexpr FlagId ToolBuffer = 1;       // internal use
+constexpr FlagId FunctionTracer = 2;   // function calls
+constexpr FlagId MemoryTracer = 3;     // memory allocations/deallocations
+constexpr FlagId ObjPoolTracer = 4;    // pooled objects
+constexpr FlagId NetworkTracer = 5;    // socket events
+constexpr FlagId TransTracer = 6;      // SessionBase transactions
+constexpr FlagId BufferTracer = 7;     // SessionBase IpBuffers
+constexpr FlagId ContextTracer = 8;    // SessionBase contexts
+constexpr FlagId ParserTracer = 9;     // parser "object code generation"
+constexpr FlagId FirstAppTracer = 10;  // start of application-specific tracers
 }
 #endif

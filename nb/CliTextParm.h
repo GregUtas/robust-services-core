@@ -23,7 +23,7 @@
 #define CLITEXTPARM_H_INCLUDED
 
 #include "CliParm.h"
-#include <cstddef>
+#include <cstdint>
 #include "Registry.h"
 #include "SysTypes.h"
 
@@ -47,7 +47,7 @@ public:
    //  arbitrary string may be entered.
    //
    explicit CliTextParm(const char* help, bool opt = false,
-      size_t size = 32, const char* tag = nullptr);
+      uint32_t size = 32, const char* tag = nullptr);
 
    //  Virtual to allow subclassing.
    //
@@ -70,7 +70,8 @@ public:
 protected:
    //  Overridden to access parameters associated with a specific string.
    //
-   virtual CliParm* AccessParm(CliCookie& cookie, size_t depth) const override;
+   virtual CliParm* AccessParm
+      (CliCookie& cookie, uint32_t depth) const override;
 
    //  Overridden to show the strings that are acceptable inputs.
    //
@@ -101,7 +102,7 @@ private:
    //  Used while parsing a command.  INDEX is the offset within
    //  strings_ where a valid string was found.
    //
-   void Descend(CliCookie& cookie, size_t index) const;
+   void Descend(CliCookie& cookie, uint32_t index) const;
 
    //  The strings that are legal for the text parameter.
    //

@@ -39,7 +39,7 @@ using std::string;
 
 namespace CallBase
 {
-int BcSsm::StateCount_[] = { };
+int BcSsm::StateCount_[] = { 0 };
 
 //------------------------------------------------------------------------------
 

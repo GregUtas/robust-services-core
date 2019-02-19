@@ -28,10 +28,11 @@
 #include "IpPortRegistry.h"
 #include "IpService.h"
 #include "Memory.h"
+#include "NbAppIds.h"
 #include "NwTracer.h"
 #include "Restart.h"
 #include "Singleton.h"
-#include "SysSocket.h"
+#include "SysTcpSocket.h"
 
 using std::ostream;
 using std::string;
@@ -57,7 +58,7 @@ const size_t BuffSizes[nSizes + 1] =
 
 fn_name IpBuffer_ctor1 = "IpBuffer.ctor";
 
-IpBuffer::IpBuffer(MsgDirection dir, MsgSize header, MsgSize payload) :
+IpBuffer::IpBuffer(MsgDirection dir, size_t header, size_t payload) :
    MsgBuffer(),
    buff_(nullptr),
    hdrSize_(header),
@@ -113,18 +114,17 @@ IpBuffer::~IpBuffer()
 
 fn_name IpBuffer_AddBytes = "IpBuffer.AddBytes";
 
-bool IpBuffer::AddBytes(const byte_t* source, MsgSize size, bool& moved)
+bool IpBuffer::AddBytes(const byte_t* source, size_t size, bool& moved)
 {
    Debug::ft(IpBuffer_AddBytes);
 
    //  If the buffer can't hold SIZE more bytes, extend its size.
    //
    moved = false;
-
    if(buff_ == nullptr) return false;
 
-   MsgSize paySize = PayloadSize();
-   MsgSize newSize = hdrSize_ + paySize + size;
+   auto paySize = PayloadSize();
+   auto newSize = hdrSize_ + paySize + size;
 
    if(newSize > buffSize_)
    {
@@ -217,15 +217,25 @@ void IpBuffer::InvalidDiscarded() const
 
    auto reg = Singleton< IpPortRegistry >::Instance();
    auto port = reg->GetPort(rxAddr_.GetPort());
-
    if(port != nullptr) port->InvalidDiscarded();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name IpBuffer_new = "IpBuffer.operator new";
+
+void* IpBuffer::operator new(size_t size)
+{
+   Debug::ft(IpBuffer_new);
+
+   return Singleton< IpBufferPool >::Instance()->DeqBlock(size);
 }
 
 //------------------------------------------------------------------------------
 
 fn_name IpBuffer_OutgoingBytes = "IpBuffer.OutgoingBytes";
 
-MsgSize IpBuffer::OutgoingBytes(byte_t*& bytes) const
+size_t IpBuffer::OutgoingBytes(byte_t*& bytes) const
 {
    Debug::ft(IpBuffer_OutgoingBytes);
 
@@ -250,16 +260,14 @@ void IpBuffer::Patch(sel_t selector, void* arguments)
 
 fn_name IpBuffer_Payload = "IpBuffer.Payload";
 
-MsgSize IpBuffer::Payload(byte_t*& bytes) const
+size_t IpBuffer::Payload(byte_t*& bytes) const
 {
    Debug::ft(IpBuffer_Payload);
 
    bytes = buff_;
-
    if(bytes == nullptr) return 0;
 
    bytes += hdrSize_;
-
    return PayloadSize();
 }
 
@@ -267,7 +275,7 @@ MsgSize IpBuffer::Payload(byte_t*& bytes) const
 
 fn_name IpBuffer_PayloadSize = "IpBuffer.PayloadSize";
 
-MsgSize IpBuffer::PayloadSize() const
+size_t IpBuffer::PayloadSize() const
 {
    Debug::ft(IpBuffer_PayloadSize);
 
@@ -299,10 +307,9 @@ bool IpBuffer::Send(bool external)
 
    //  If there is a dedicated socket for the destination, send the message
    //  over it.  If not, find the IP service associated with the sender and
-   //  ask it to create a socket (e.g. for TCP).  If it doesn't, try to use
-   //  the port's socket, the assumption being it is shared (e.g. for UDP).
+   //  see if it shares the I/O thread's primary socket (e.g. for UDP).
    //
-   auto socket = rxAddr_.GetSocket();
+   SysSocket* socket = rxAddr_.GetSocket();
 
    if(socket == nullptr)
    {
@@ -325,24 +332,48 @@ bool IpBuffer::Send(bool external)
          return false;
       }
 
-      socket = svc->CreateAppSocket();
+      if(!svc->HasSharedSocket())
+      {
+         Debug::SwLog(IpBuffer_Send, txPort, 3);
+         return false;
+      }
+
+      socket = ipPort->GetSocket();
 
       if(socket == nullptr)
       {
-         socket = ipPort->GetSocket();
-
-         if(socket == nullptr)
+         if(Restart::GetStatus() != ShuttingDown)
          {
-            if(Restart::GetStatus() != ShuttingDown)
-            {
-               Debug::SwLog(IpBuffer_Send, txPort, 3);
-            }
-
-            return false;
+            Debug::SwLog(IpBuffer_Send, txPort, 4);
          }
+
+         return false;
       }
    }
 
    return (socket->SendBuff(*this) != SysSocket::SendFailed);
+}
+
+//==============================================================================
+
+const size_t IpBufferPool::BlockSize = sizeof(IpBuffer);
+
+//------------------------------------------------------------------------------
+
+fn_name IpBufferPool_ctor = "IpBufferPool.ctor";
+
+IpBufferPool::IpBufferPool() :
+   ObjectPool(IpBufferObjPoolId, MemDyn, BlockSize, "IpBuffers")
+{
+   Debug::ft(IpBufferPool_ctor);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name IpBufferPool_dtor = "IpBufferPool.dtor";
+
+IpBufferPool::~IpBufferPool()
+{
+   Debug::ft(IpBufferPool_dtor);
 }
 }

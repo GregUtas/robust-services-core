@@ -175,7 +175,7 @@ private:
 
    //> The maximum number of characters in a line of user input.
    //
-   static const size_t BuffSize = 132;
+   static const size_t BuffSize = 2 * COUT_LENGTH_MAX;
 
    //  Buffer for user input.
    //

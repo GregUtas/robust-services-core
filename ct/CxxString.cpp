@@ -46,34 +46,16 @@ size_t FindTemplateBegin(const string& name, size_t pos, size_t depth);
 //
 size_t FindTemplateEnd(const string& name, size_t pos);
 
-//  Removes any spaces before or after an angle bracket or comma within NAME
-//  and returns the result.
-//
-string RemoveTemplateSpaces(const string& name);
-
-//  Returns the position of the last scope resolution operator between
-//  BEGIN and END of NAME.  Ignores any operator that appears within a
-//  template specification.
-//
-size_t RfindScopeOperator(const string& name, size_t begin, size_t end);
-
-//  Finds substrings of NAME at DEPTH (the level of template nesting) and
-//  deletes what precedes the last scope resolution operator in each one.
-//  Returns false if no substring at DEPTH was found, which means that NAME
-//  has been unqualified at all levels.
-//
-bool Unqualify(string& name, size_t depth);
-
 //------------------------------------------------------------------------------
 
 fn_name CodeTools_AdjustPtrs = "CodeTools.AdjustPtrs";
 
-string& AdjustPtrs(string& type, TagCount ptrs)
+void AdjustPtrs(string& type, TagCount ptrs) //c reassess for >1 const pointer
 {
    Debug::ft(CodeTools_AdjustPtrs);
 
-   if(ptrs == 0) return type;
-   if(type.empty()) return type;
+   if(ptrs == 0) return;
+   if(type.empty()) return;
 
    //  Back up to where TYPE's pointer tags, if any, are located.  Start by
    //  backing up over references and spaces.  There shouldn't be any spaces,
@@ -158,8 +140,6 @@ string& AdjustPtrs(string& type, TagCount ptrs)
          if(pos != string::npos) type.erase(pos, 6);
       }
    }
-
-   return type;
 }
 
 //------------------------------------------------------------------------------
@@ -184,6 +164,27 @@ size_t CompareScopes(const string& fqSub, const string& fqSuper, bool tmplt)
    }
 
    return string::npos;
+}
+
+//------------------------------------------------------------------------------
+
+string Compress(const string& s)
+{
+   //  Copy S to T, converting endlines to blanks and removing multiple blanks.
+   //
+   string t;
+   auto prev = SPACE;
+
+   for(size_t i = 0; i < s.size(); ++i)
+   {
+      auto c = s[i];
+      if(c == CRLF) c = SPACE;
+      if((c == SPACE) && (prev == SPACE)) continue;
+      t += c;
+      prev = c;
+   }
+
+   return t;
 }
 
 //------------------------------------------------------------------------------
@@ -216,16 +217,6 @@ void Concatenate(string& s)
 
    s.clear();
    for(pos = 0; pos < chars.size(); ++pos) s.push_back(chars[pos]);
-}
-
-//------------------------------------------------------------------------------
-
-bool FileExtensionIs(const string& file, const string& ext)
-{
-   auto s = '.' + ext;
-   auto pos = file.rfind(s);
-   if(pos == string::npos) return false;
-   return (pos == file.size() - s.size());
 }
 
 //------------------------------------------------------------------------------
@@ -316,6 +307,16 @@ size_t FindTemplateEnd(const string& name, size_t pos)
 
 //------------------------------------------------------------------------------
 
+string GetFileExtension(const string& file)
+{
+   auto pos = file.rfind('.');
+   if(pos == string::npos) return EMPTY_STR;
+   if(file.back() == '.') return EMPTY_STR;
+   return file.substr(pos + 1);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeTools_GetFileName = "CodeTools.GetFileName";
 
 string GetFileName(const string& path)
@@ -336,6 +337,46 @@ string GetFileName(const string& path)
    }
 
    return file;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeTools_IsCodeFile = "CodeTools.IsCodeFile";
+
+bool IsCodeFile(const string& file)
+{
+   Debug::ft(CodeTools_IsCodeFile);
+
+   //  Besides the usual .h* and .c* extensions, treat a file with
+   //  no extension (e.g. <iosfwd>) as a code file.
+   //
+   auto ext = GetFileExtension(file);
+   if(ext.empty()) return true;
+   if(ext == "h") return true;
+   if(ext == "cpp") return true;
+   if(ext == "c") return true;
+   if(ext == "hxx") return true;
+   if(ext == "cxx") return true;
+   if(ext == "hpp") return true;
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeTools_IsValidIdentifier = "CodeTools.IsValidIdentifier";
+
+bool IsValidIdentifier(const string& id)
+{
+   Debug::ft(CodeTools_IsValidIdentifier);
+
+   if(!CxxChar::Attrs[id.front()].validFirst) return false;
+
+   for(size_t i = 1; i < id.size(); ++i)
+   {
+      if(!CxxChar::Attrs[id.at(i)].validNext) return false;
+   }
+
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -365,34 +406,35 @@ size_t NameCouldReferTo(const string& fqName, const string& name)
 
 string Normalize(const string& name)
 {
-   //  See if NAME contains any spaces.  If it does, it needs to be normalized.
+   string result;
+   string next;
+
+   //  Go through NAME, extracting each individual name and adding it
+   //  to the result.  Remove any qualifying scopes before each name.
+   //  Preserve angle brackets, commas, and spaces, which delimit names.
+   //  It is assumed that NAME, which is internally generated, does not
+   //  contain unnecessary blanks.
    //
-   size_t space = name.find(SPACE);
-
-   if(space == string::npos)
+   for(size_t i = 0; i < name.size(); ++i)
    {
-      //  Return NAME if it contains no ":".
-      //
-      size_t scope = name.rfind(SCOPE_STR);
-      if(scope == string::npos) return name;
+      switch(name[i])
+      {
+      case '<':
+      case '>':
+      case ',':
+      case SPACE:
+         result += next + name[i];
+         //  [fallthrough]
+      case ':':
+         next.clear();
+         break;
 
-      //  If NAME has no "<", return the name after the last scope resolution
-      //  operator.
-      //
-      size_t tmplt = name.find('<');
-      if(tmplt == string::npos) return name.substr(scope + 2);
+      default:
+         next.push_back(name[i]);
+      }
    }
 
-   //  Remove spaces from NAME.  Then, at successive template depths, find the
-   //  last scope resolution operator and delete any qualifiers that precede it.
-   //
-   auto result = RemoveTemplateSpaces(name);
-
-   for(size_t depth = 0; true; ++depth)
-   {
-      if(!Unqualify(result, depth)) break;
-   }
-
+   result += next;
    return result;
 }
 
@@ -497,22 +539,40 @@ string& RemoveTags(string& type)
 {
    Debug::ft(CodeTools_RemoveTags);
 
+   //  Erase any leading "const" and then any trailing ones.  When searching
+   //  backwards for trailing ones, make sure that we don't erase a "const"
+   //  in a template specification.
+   //
    if(type.find("const ") == 0) type.erase(0, 6);
-   while(type.back() == '&') type.pop_back();
-   while(type.back() == SPACE) type.pop_back();
 
-   auto n = type.size();
-   if(n >= 7)
+   while(true)
    {
-      n -= 5;
-      if(type.rfind("const") == n)
+      auto pos = type.rfind(" const");
+
+      if((pos != string::npos) && (type.find('>', pos) == string::npos))
+         type.erase(pos, 6);
+      else
+         break;
+   }
+
+   //  Erase trailing tags and spaces.
+   //
+   for(auto tags = true; tags; NO_OP)
+   {
+      switch(type.back())
       {
-         type.erase(n);
-         while(type.back() == SPACE) type.pop_back();
+      case SPACE:
+      case '*':
+      case '&':
+      case '[':
+      case ']':
+         type.pop_back();
+         break;
+      default:
+         tags = false;
       }
    }
 
-   while(type.back() == '*') type.pop_back();
    return type;
 }
 
@@ -534,55 +594,6 @@ string& RemoveTemplates(string&& type)
    }
 
    return type;
-}
-
-//------------------------------------------------------------------------------
-
-string RemoveTemplateSpaces(const string& name)
-{
-   string result;
-
-   //  It's easy if NAME contains no spaces.
-   //
-   auto pos = name.find(SPACE);
-
-   if(pos == string::npos)
-   {
-      result = name;
-      return result;
-   }
-
-   //  Step back to the character before the first space.
-   //
-   if(pos > 0)
-   {
-      result = name.substr(0, pos - 1);
-      pos -= 1;
-   }
-
-   //  Erase any spaces before or after each angle bracket and comma.
-   //
-   while(pos < name.size())
-   {
-      auto c = name[pos];
-
-      switch(c)
-      {
-      case '<':
-      case '>':
-      case ',':
-         if(!name.empty()) while(result.back() == SPACE) result.pop_back();
-         ++pos;
-         if(pos < name.size()) pos = name.find_first_not_of(SPACE, pos);
-         break;
-      default:
-         ++pos;
-      }
-
-      result.push_back(c);
-   }
-
-   return result;
 }
 
 //------------------------------------------------------------------------------
@@ -620,65 +631,5 @@ size_t Replace
    }
 
    return end;
-}
-
-//------------------------------------------------------------------------------
-
-size_t RfindScopeOperator(const string& name, size_t begin, size_t end)
-{
-   size_t level = 0;
-
-   for(size_t pos = end; pos != begin - 1; --pos)
-   {
-      switch(name[pos])
-      {
-      case '<':
-         --level;
-         break;
-      case '>':
-         ++level;
-         break;
-      case ':':
-         if(level == 0) return pos - 1;
-      }
-   }
-
-   return string::npos;
-}
-
-//------------------------------------------------------------------------------
-
-bool Unqualify(string& name, size_t depth)
-{
-   if(depth == 0)
-   {
-      auto spos = RfindScopeOperator(name, 0, name.size() - 1);
-      if(spos != string::npos) name.erase(0, spos + 2);
-      return true;
-   }
-
-   auto found = false;
-
-   for(size_t lpos = 0; lpos != string::npos; NO_OP)
-   {
-      lpos = FindTemplateBegin(name, lpos, depth);
-      if(lpos == string::npos) break;
-      auto rpos = FindTemplateEnd(name, lpos + 1);
-      if(rpos == string::npos) break;
-
-      found = true;
-      auto spos = RfindScopeOperator(name, lpos + 1, rpos - 1);
-
-      if(spos != string::npos)
-      {
-         auto count = spos - lpos + 1;
-         name.erase(lpos + 1, count);
-         rpos -= count;
-      }
-
-      lpos = rpos + 1;
-   }
-
-   return found;
 }
 }

@@ -34,7 +34,8 @@ namespace NetworkBase
 {
 fn_name TcpIpPort_ctor = "TcpIpPort.ctor";
 
-TcpIpPort::TcpIpPort(ipport_t port, IpService* service) : IpPort(port, service)
+TcpIpPort::TcpIpPort(ipport_t port, const IpService* service) :
+   IpPort(port, service)
 {
    Debug::ft(TcpIpPort_ctor);
 }
@@ -52,7 +53,7 @@ TcpIpPort::~TcpIpPort()
 
 fn_name TcpIpPort_CreateAppSocket = "TcpIpPort.CreateAppSocket";
 
-SysSocket* TcpIpPort::CreateAppSocket(size_t rxSize, size_t txSize)
+SysTcpSocket* TcpIpPort::CreateAppSocket()
 {
    Debug::ft(TcpIpPort_CreateAppSocket);
 
@@ -61,19 +62,19 @@ SysSocket* TcpIpPort::CreateAppSocket(size_t rxSize, size_t txSize)
    //  If there is no I/O thread running on this port, create it after
    //  generating a log.
    //
-   auto thread = GetThread();
+   auto thread = static_cast< TcpIoThread* >(GetThread());
 
    if(thread == nullptr)
    {
       Debug::SwLog(TcpIpPort_CreateAppSocket, 0, 0);
-      thread = CreateIoThread();
+      thread = static_cast< TcpIoThread* >(CreateIoThread());
       if(thread == nullptr) return nullptr;
    }
 
    //  Create the socket and register it with the I/O thread.
    //
-   auto socket = SysTcpSocketPtr
-      (new SysTcpSocket(NilIpPort, rxSize, txSize, rc));
+   auto svc = static_cast< const TcpIpService* >(GetService());
+   SysTcpSocketPtr socket(new SysTcpSocket(NilIpPort, svc, rc));
    if(socket == nullptr) return nullptr;
 
    if(rc != SysSocket::AllocOk)
@@ -102,10 +103,8 @@ IoThread* TcpIpPort::CreateIoThread()
 {
    Debug::ft(TcpIpPort_CreateIoThread);
 
-   auto svc = static_cast< TcpIpService* >(GetService());
-
-   return new TcpIoThread(svc->GetFaction(), GetPort(),
-      svc->RxSize(), svc->TxSize(), svc->MaxConns());
+   auto svc = static_cast< const TcpIpService* >(GetService());
+   return new TcpIoThread(svc, GetPort());
 }
 
 //------------------------------------------------------------------------------

@@ -30,6 +30,7 @@
 #include "Registry.h"
 #include "Singleton.h"
 #include "SysFile.h"
+#include "ThisThread.h"
 
 using namespace NodeBase;
 using std::ostream;
@@ -129,6 +130,7 @@ word CodeDir::Extract(string& expl)
             {
                auto f = lib->EnsureFile(name, this);
                f->Scan();
+               ThisThread::Pause();
             }
          }
       }
@@ -157,27 +159,6 @@ size_t CodeDir::HeaderCount() const
    }
 
    return count;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CodeDir_IsCodeFile = "CodeDir.IsCodeFile";
-
-bool CodeDir::IsCodeFile(const string& name)
-{
-   Debug::ft(CodeDir_IsCodeFile);
-
-   //  Besides the usual .h* and .c* extensions, treat a file with
-   //  no extension (e.g. <iosfwd>) as a code file.
-   //
-   if(name.find('.') == string::npos) return true;
-   if(FileExtensionIs(name, "h")) return true;
-   if(FileExtensionIs(name, "hpp")) return true;
-   if(FileExtensionIs(name, "hxx")) return true;
-   if(FileExtensionIs(name, "c")) return true;
-   if(FileExtensionIs(name, "cpp")) return true;
-   if(FileExtensionIs(name, "cxx")) return true;
-   return false;
 }
 
 //------------------------------------------------------------------------------

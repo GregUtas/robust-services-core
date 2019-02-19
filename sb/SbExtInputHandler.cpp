@@ -49,8 +49,8 @@ SbExtInputHandler::~SbExtInputHandler()
 
 fn_name SbExtInputHandler_AllocBuff = "SbExtInputHandler.AllocBuff";
 
-IpBuffer* SbExtInputHandler::AllocBuff
-   (const byte_t* source, MsgSize size, byte_t*& dest, MsgSize& rcvd) const
+IpBuffer* SbExtInputHandler::AllocBuff(const byte_t* source,
+   size_t size, byte_t*& dest, size_t& rcvd, SysTcpSocket* socket) const
 {
    Debug::ft(SbExtInputHandler_AllocBuff);
 

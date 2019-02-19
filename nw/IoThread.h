@@ -25,7 +25,6 @@
 #include "Thread.h"
 #include <cstddef>
 #include "Clock.h"
-#include "NbTypes.h"
 #include "NwTypes.h"
 #include "SysIpL3Addr.h"
 #include "SysTypes.h"
@@ -55,11 +54,6 @@ public:
    //
    static const size_t MaxTxBuffSize;
 
-   //  Adds SOCKET to those served by the thread.  The default version returns
-   //  false and must be overridden by a thread that uses Poll().
-   //
-   virtual bool InsertSocket(SysSocket* socket);
-
    //  Overridden to display member variables.
    //
    virtual void Display(std::ostream& stream,
@@ -69,12 +63,10 @@ public:
    //
    virtual void Patch(sel_t selector, void* arguments) override;
 protected:
-   //  Creates an I/O thread that runs in FACTION and receives messages on
-   //  PORT.  PORT's socket will have a receive buffer of RXSIZE bytes and
-   //  a transmit buffer of TXSIZE bytes.  Protected because this class is
-   //  virtual.
+   //  Creates an I/O thread that receives messages on PORT, on behalf of
+   //  SERVICE.  Protected because this class is virtual.
    //
-   IoThread(Faction faction, ipport_t port, size_t rxSize, size_t txSize);
+   IoThread(const IpService* service, ipport_t port);
 
    //  Protected to restrict deletion.  Virtual to allow subclassing.
    //
@@ -84,13 +76,13 @@ protected:
    //  ticks0_ accordingly, it invokes this to wrap the message and pass it to
    //  PORT's input handler.  SOURCE and SIZE identify the message's location.
    //
-   void InvokeHandler(const IpPort& port,
-      const byte_t* source, MsgSize size) const;
+   void InvokeHandler
+      (const IpPort& port, const byte_t* source, size_t size) const;
 
    //  Returns true after pausing when the thread has run locked for more
    //  than PERCENT of the maximum time allowed.
    //
-   virtual bool ConditionalPause(word percent);
+   bool ConditionalPause(word percent);
 
    //  Overridden to survive warm restarts.
    //
@@ -105,14 +97,6 @@ protected:
    //
    IpPort* ipPort_;
 
-   //  The size of the receive buffer for the socket bound against port_.
-   //
-   size_t rxSize_;
-
-   //  The size of the transmit buffer for the socket bound against port_.
-   //
-   size_t txSize_;
-
    //  The host address.
    //
    SysIpL2Addr host_;
@@ -125,7 +109,8 @@ protected:
    //
    SysIpL3Addr txAddr_;
 
-   //  The (host) address on which the current message arrived.
+   //  The (host) address on which the current message arrived.  When
+   //  TCP is used, rxAddr_.socket_ identifies the connection's socket.
    //
    SysIpL3Addr rxAddr_;
 
@@ -136,6 +121,14 @@ protected:
    //  The buffer for receiving messages.
    //
    byte_t* buffer_;
+private:
+   //  The size of the receive buffer for the socket bound against port_.
+   //
+   size_t rxSize_;
+
+   //  The size of the transmit buffer for the socket bound against port_.
+   //
+   size_t txSize_;
 };
 }
 #endif

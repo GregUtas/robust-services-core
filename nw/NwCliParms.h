@@ -67,7 +67,7 @@ public: HostNameMandParm();
 class IpAddrParm : public CliText
 {
 public:
-   virtual ~IpAddrParm() { }
+   virtual ~IpAddrParm() = default;
 protected:
    IpAddrParm(const char* help, const char* text);
 };

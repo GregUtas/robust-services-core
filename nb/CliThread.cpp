@@ -102,7 +102,6 @@ void CliThread::AllocResources()
    *obuf << std::boolalpha << std::nouppercase;
    stack_.reset(new CliStack);
    prompt_.reset(new string);
-   outName_[0].reset(new string(CliRegistry::ConsoleFileName() + ".txt"));
 }
 
 //------------------------------------------------------------------------------
@@ -135,9 +134,10 @@ char CliThread::CharPrompt
    if(inIndex_ > 0) return chars.front();
 
    auto first = true;
-   char text[80];
+   char text[COUT_LENGTH_MAX];
 
    //  Output the query until the user enters a character in CHARS.
+   //  Echo the user's input to the console transcript file.
    //
    while(true)
    {
@@ -152,9 +152,11 @@ char CliThread::CharPrompt
       CoutThread::Spool(stream);
       first = false;
 
-      auto count = CinThread::GetLine(text, 80);
+      auto count = CinThread::GetLine(text, COUT_LENGTH_MAX);
 
       if(count < 0) return '\0';
+
+      FileThread::Record(text, true);
 
       if(count == 1)
       {
@@ -310,22 +312,14 @@ void CliThread::Flush()
 {
    Debug::ft(CliThread_Flush);
 
-   //  If output is being sent to the console transcript file, send it to
-   //  the console before sending it to the destination file.
+   //  Send output to either the console or a separate file.
    //
    if((obuf != nullptr) && (obuf->tellp() > 0))
    {
       if(outIndex_ == 0)
-      {
-         auto stream =
-            ostringstreamPtr(new std::ostringstream(obuf->str()));
          CoutThread::Spool(obuf);
-         FileThread::Spool(*outName_[0], stream);
-      }
       else
-      {
          FileThread::Spool(*outName_[outIndex_], obuf);
-      }
    }
 
    //  Create a new output buffer for the next command's results.
@@ -437,19 +431,20 @@ word CliThread::OpenInputFile(const string& name, string& expl)
 {
    Debug::ft(CliThread_OpenInputFile);
 
-   if(++inIndex_ < InSize)
+   if(++inIndex_ >= InSize)
    {
-      auto path = Element::InputPath() + PATH_SEPARATOR + name + ".txt";
-      in_[inIndex_] = SysFile::CreateIstream(path.c_str());
-      if(in_[inIndex_] != nullptr) return 0;
-
-      expl = NoFileExpl;
-      return -2;
+      --inIndex_;
+      expl = TooManyInputStreams;
+      return -7;
    }
 
+   auto path = Element::InputPath() + PATH_SEPARATOR + name + ".txt";
+   in_[inIndex_] = SysFile::CreateIstream(path.c_str());
+   if(in_[inIndex_] != nullptr) return 0;
+
    --inIndex_;
-   expl = TooManyInputStreams;
-   return -7;
+   expl = NoFileExpl;
+   return -2;
 }
 
 //------------------------------------------------------------------------------
@@ -465,10 +460,14 @@ const CliCommand* CliThread::ParseCommand() const
    string tag;
    bool inIncr;
 
-   //  Record the user's input in the output file.
+   //  Record the command in any output file.  (CliBuffer.GetLine copies
+   //  each input to the console and/or the console transcript file.)
    //
-   auto input = ibuf->Echo();
-   FileThread::Spool(*outName_[outIndex_], input, true);
+   if(outIndex_ > 0)
+   {
+      auto input = ibuf->Echo();
+      FileThread::Spool(*outName_[outIndex_], input, true);
+   }
 
    //  Get the first token, which must be the name of a command or
    //  increment.
@@ -557,7 +556,11 @@ void CliThread::ReadCommands()
       if(!skip_)
       {
          CoutThread::Spool(prompt_->c_str());
-         FileThread::Spool(*outName_[outIndex_], *prompt_, false);
+
+         if(outIndex_ > 0)
+         {
+            FileThread::Spool(*outName_[outIndex_], *prompt_, false);
+         }
       }
 
       skip_ = false;

@@ -27,6 +27,7 @@
 #include "TlvMessage.h"
 #include "TlvParameter.h"
 #include "TlvProtocol.h"
+#include <cstddef>
 #include <cstdint>
 #include <iosfwd>
 #include <string>
@@ -42,6 +43,8 @@ namespace CallBase
    struct ProgressInfo;
 }
 
+using namespace NodeBase;
+using namespace SessionBase;
 using namespace MediaBase;
 using namespace CallBase;
 
@@ -224,7 +227,7 @@ public:
 
    //  Allow subclasses to define application-specific service indicators.
    //
-   virtual ~Facility() { }
+   virtual ~Facility() = default;
 private:
    //  Deleted because this class is not intended to be instantiated.
    //
@@ -267,7 +270,7 @@ public:
 
    //  Constructs a message, initially of SIZE bytes, to be sent by PSM.
    //
-   PotsMessage(ProtocolSM* psm, MsgSize size);
+   PotsMessage(ProtocolSM* psm, size_t size);
 
    //  Virtual to allow subclassing.
    //
@@ -307,7 +310,7 @@ public:
 
    //  Constructs a message, initially of SIZE bytes, to be sent by PSM.
    //
-   Pots_UN_Message(ProtocolSM* psm, MsgSize size);
+   Pots_UN_Message(ProtocolSM* psm, size_t size);
 
    //  Not subclassed.
    //
@@ -331,7 +334,7 @@ public:
 
    //  Constructs a message, initially of SIZE bytes, to be sent by PSM.
    //
-   Pots_NU_Message(ProtocolSM* psm, MsgSize size);
+   Pots_NU_Message(ProtocolSM* psm, size_t size);
 
    //  Not subclassed.
    //

@@ -48,7 +48,6 @@
 #include "SbCliParms.h"
 #include "SbEvents.h"
 #include "Singleton.h"
-#include "TcpIoThread.h"
 #include "TimerProtocol.h"
 
 using std::ostream;
@@ -260,28 +259,6 @@ CliText* CipUdpService::CreateText() const
    return new CipUdpServiceText;
 }
 
-//------------------------------------------------------------------------------
-
-Faction CipUdpService::GetFaction() const { return PayloadFaction; }
-
-//------------------------------------------------------------------------------
-
-fixed_string CipUdpServiceName = "Call Interworking";
-
-const char* CipUdpService::Name() const { return CipUdpServiceName; }
-
-//------------------------------------------------------------------------------
-
-ipport_t CipUdpService::Port() const { return ipport_t(port_); }
-
-//------------------------------------------------------------------------------
-
-size_t CipUdpService::RxSize() const { return IoThread::MaxRxBuffSize; }
-
-//------------------------------------------------------------------------------
-
-size_t CipUdpService::TxSize() const { return IoThread::MaxTxBuffSize; }
-
 //==============================================================================
 
 class CipTcpServiceText : public CliText
@@ -351,39 +328,11 @@ void CipTcpService::GetAppSocketSizes(size_t& rxSize, size_t& txSize) const
 {
    Debug::ft(CipTcpService_GetAppSocketSizes);
 
-   rxSize = RxBuffSize;
-   txSize = TxBuffSize;
+   //  Setting txSize to 0 prevents buffering of outgoing messages.
+   //
+   rxSize = 2048;
+   txSize = 0;
 }
-
-//------------------------------------------------------------------------------
-
-Faction CipTcpService::GetFaction() const { return PayloadFaction; }
-
-//------------------------------------------------------------------------------
-
-size_t CipTcpService::MaxBacklog() const { return 200; }
-
-//------------------------------------------------------------------------------
-
-size_t CipTcpService::MaxConns() const { return TcpIoThread::MaxConns; }
-
-//------------------------------------------------------------------------------
-
-fixed_string CipTcpServiceName = "Call Interworking";
-
-const char* CipTcpService::Name() const { return CipTcpServiceName; }
-
-//------------------------------------------------------------------------------
-
-ipport_t CipTcpService::Port() const { return ipport_t(port_); }
-
-//------------------------------------------------------------------------------
-
-size_t CipTcpService::RxSize() const { return IoThread::MaxRxBuffSize; }
-
-//------------------------------------------------------------------------------
-
-size_t CipTcpService::TxSize() const { return IoThread::MaxTxBuffSize; }
 
 //==============================================================================
 
@@ -422,8 +371,6 @@ CipProtocol::~CipProtocol()
 //==============================================================================
 
 CipSignal::CipSignal(Id sid) : Signal(CipProtocolId, sid) { }
-
-CipSignal::~CipSignal() { }
 
 //------------------------------------------------------------------------------
 
@@ -484,10 +431,6 @@ RelText::RelText() : CliText(RelTextExpl, RelTextStr) { }
 //==============================================================================
 
 CipParameter::CipParameter(Id pid) : TlvParameter(CipProtocolId, pid) { }
-
-//------------------------------------------------------------------------------
-
-CipParameter::~CipParameter() { }
 
 //==============================================================================
 
@@ -598,7 +541,7 @@ CipAddressParameter::CipAddressParameter(Id pid) :
 
 //------------------------------------------------------------------------------
 
-CipAddressParameter::~CipAddressParameter() { }
+CipAddressParameter::~CipAddressParameter() = default;
 
 //==============================================================================
 
@@ -740,7 +683,7 @@ CipMessage::CipMessage(SbIpBufferPtr& buff) : TlvMessage(buff)
 
 fn_name CipMessage_ctor2 = "CipMessage.ctor(o/g)";
 
-CipMessage::CipMessage(ProtocolSM* psm, MsgSize size) : TlvMessage(psm, size)
+CipMessage::CipMessage(ProtocolSM* psm, size_t size) : TlvMessage(psm, size)
 {
    Debug::ft(CipMessage_ctor2);
 }
@@ -1161,8 +1104,8 @@ ProtocolSM::OutgoingRc BcPsm::ProcessOgMsg(Message& msg)
       auto peer = IpPortRegistry::HostAddress();
 //s   auto cip = Singleton< CipUdpService >::Instance();
       auto cip = Singleton< CipTcpService >::Instance();
-      auto locAddr = GlobalAddress(host, cip->Port(), CipObcFactoryId);
-      auto remAddr = GlobalAddress(peer, cip->Port(), CipTbcFactoryId);
+      GlobalAddress locAddr(host, cip->Port(), CipObcFactoryId);
+      GlobalAddress remAddr(peer, cip->Port(), CipTbcFactoryId);
 
       msg.SetSender(locAddr);
       msg.SetReceiver(remAddr);
@@ -1223,15 +1166,14 @@ CipPsm::~CipPsm()
 
 fn_name CipPsm_CreateAppSocket = "CipPsm.CreateAppSocket";
 
-SysSocket* CipPsm::CreateAppSocket()
+SysTcpSocket* CipPsm::CreateAppSocket()
 {
    Debug::ft(CipPsm_CreateAppSocket);
 
    auto reg = Singleton< IpPortRegistry >::Instance();
    auto port = reg->GetPort(CipIpPort, IpTcp);
    if(port == nullptr) return nullptr;
-   return port->CreateAppSocket
-      (CipTcpService::RxBuffSize, CipTcpService::TxBuffSize);
+   return port->CreateAppSocket();
 }
 
 //------------------------------------------------------------------------------

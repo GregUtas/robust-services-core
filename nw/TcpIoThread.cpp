@@ -20,15 +20,16 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "TcpIoThread.h"
-#include <bitset>
 #include <sstream>
 #include <string>
 #include "Clock.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "InputHandler.h"
 #include "IpPort.h"
 #include "IpPortRegistry.h"
 #include "Log.h"
+#include "NbTypes.h"
 #include "NwTrace.h"
 #include "Singleton.h"
 #include "SysIpL3Addr.h"
@@ -48,8 +49,9 @@ const size_t TcpIoThread::MaxConns = 48 * 1024;  // 48K
 
 fn_name TcpIoThread_ctor = "TcpIoThread.ctor";
 
-TcpIoThread::TcpIoThread(Faction faction, ipport_t port, size_t rxSize,
-   size_t txSize, size_t fdSize) : IoThread(faction, port, rxSize, txSize),
+TcpIoThread::TcpIoThread(const TcpIpService* service, ipport_t port) :
+   IoThread(service, port),
+   listen_(true),
    ready_(0),
    curr_(0)
 {
@@ -62,17 +64,34 @@ TcpIoThread::TcpIoThread(Faction faction, ipport_t port, size_t rxSize,
       Debug::SwLog(TcpIoThread_ctor, port_, 0);
    }
 
+   listen_ = service->AcceptsConns();
+
+   auto fdSize = service->MaxConns();
+
    if(fdSize > MaxConns)
    {
       Debug::SwLog(TcpIoThread_ctor, fdSize, MaxConns);
       fdSize = MaxConns;
    }
-   else if(fdSize == 0)
+   else if(listen_)
    {
-      Debug::SwLog(TcpIoThread_ctor, fdSize, MaxConns);
-      fdSize = 16;
+      if(fdSize < 2)
+      {
+         Debug::SwLog(TcpIoThread_ctor, fdSize, 2);
+         fdSize = 2;
+      }
+   }
+   else
+   {
+      if(fdSize < 1) Debug::SwLog(TcpIoThread_ctor, fdSize, 1);
+      fdSize = 1;
    }
 
+   //  Allocate the maximum size of the sockets_ array immediately.  This is
+   //  important because if the array gets extended (and therefore moves) at
+   //  run-time, SysTcpSocket::Poll will fail spectacularly if it was blocked
+   //  on its polling operation when the resizing occurred.
+   //
    sockets_.Init(fdSize, MemDyn);
    sockets_.Reserve(fdSize);
 }
@@ -103,6 +122,7 @@ bool TcpIoThread::AcceptConn()
 {
    Debug::ft(TcpIoThread_AcceptConn);
 
+   if(!listen_) return false;
    auto listener = Listener();
    auto flags = listener->OutFlags();
 
@@ -129,14 +149,11 @@ bool TcpIoThread::AcceptConn()
 
    //  A socket was created for a new connection.  A unique_ptr owns it, so
    //  returning without invoking socket.release() will cause its deletion.
-   //  This occurs if it its buffer sizes cannot be set or if our socket
+   //  This occurs if it cannot be configured for its service or if our socket
    //  array is full.  In those cases, the socket will be immediately closed.
    //  However, a connection request was pending, so return true nonetheless.
    //
-   auto svc = ipPort_->GetService();
-   size_t rxSize, txSize;
-   svc->GetAppSocketSizes(rxSize, txSize);
-   auto rc = socket->SetBuffSizes(rxSize, txSize);
+   auto rc = socket->SetService(ipPort_->GetService(), false);
    if(rc != SysSocket::AllocOk) return true;
    if(!InsertSocket(socket.get())) return true;
    socket.release();
@@ -163,16 +180,15 @@ SysTcpSocket* TcpIoThread::AllocateListener()
 
    //  Allocate a new listener.
    //
+   auto svc = static_cast< const TcpIpService* >(ipPort_->GetService());
    auto rc = SysSocket::AllocFailed;
-   auto socket = SysTcpSocketPtr(new SysTcpSocket(port_, rxSize_, txSize_, rc));
+   SysTcpSocketPtr socket(new SysTcpSocket(port_, svc, rc));
 
    if(socket == nullptr)
       return ListenerError(0);
 
    if(rc != SysSocket::AllocOk)
       return ListenerError(socket->GetError());
-
-   auto svc = static_cast< TcpIpService* >(ipPort_->GetService());
 
    socket->TracePort(NwTrace::Listen, port_, svc->MaxBacklog());
 
@@ -209,7 +225,7 @@ void TcpIoThread::ClaimBlocks()
 
    IoThread::ClaimBlocks();
 
-   for(size_t i = 1; i < sockets_.Size(); ++i)
+   for(size_t i = 0; i < sockets_.Size(); ++i)
    {
       sockets_[i]->ClaimBlocks();
    }
@@ -234,17 +250,17 @@ void TcpIoThread::Display(ostream& stream,
 {
    IoThread::Display(stream, prefix, options);
 
-   stream << prefix << "listener : " << Listener() << CRLF;
-   stream << prefix << "curr     : " << curr_ << CRLF;
-   stream << prefix << "ready    : " << ready_ << CRLF;
-   stream << prefix << "size     : " << sockets_.Size() << CRLF;
+   stream << prefix << "listen : " << listen_ << CRLF;
+   stream << prefix << "curr   : " << curr_ << CRLF;
+   stream << prefix << "ready  : " << ready_ << CRLF;
+   stream << prefix << "size   : " << sockets_.Size() << CRLF;
 
    if(!options.test(DispVerbose)) return;
 
    auto lead = prefix + spaces(2);
    stream << prefix << "sockets  : " << CRLF;
 
-   for(size_t i = 1; i < sockets_.Size(); ++i)
+   for(size_t i = 0; i < sockets_.Size(); ++i)
    {
       stream << lead << strIndex(i) << sockets_[i] << CRLF;
    }
@@ -254,7 +270,7 @@ void TcpIoThread::Display(ostream& stream,
 
 fn_name TcpIoThread_EnsureListener = "TcpIoThread.EnsureListener";
 
-SysTcpSocket* TcpIoThread::EnsureListener()
+bool TcpIoThread::EnsureListener()
 {
    Debug::ft(TcpIoThread_EnsureListener);
 
@@ -263,6 +279,7 @@ SysTcpSocket* TcpIoThread::EnsureListener()
    //  o to allocate a listener if one is not registered with our port
    //  o to replace the listener if it has failed
    //
+   if(!listen_) return true;
    auto registrant = static_cast< SysTcpSocket* >(ipPort_->GetSocket());
    auto listener = Listener();
 
@@ -315,21 +332,22 @@ void TcpIoThread::Enter()
 {
    Debug::ft(TcpIoThread_Enter);
 
+   PollFlags* flags = nullptr;
+   size_t first = (listen_ ? 1 : 0);
+
    //  Exit if a listener socket cannot be created.
    //
-   if(EnsureListener() == nullptr) return;
+   if(!EnsureListener()) return;
 
    while(true)
    {
-      //  Wait for socket events.
-      //
       ready_ = PollSockets();
 
       if(ready_ < 0)
       {
          //s Handle Poll() error.
          //
-         OutputLog("TCP POLL ERROR", SocketError, Listener());
+         OutputLog("TCP POLL ERROR", SocketError, sockets_.Front());
          Pause(20);
          continue;
       }
@@ -338,8 +356,11 @@ void TcpIoThread::Enter()
       //  that servicing of application sockets will stop as soon as the
       //  last application socket with a pending event has been handled.
       //
-      auto flags = Listener()->OutFlags();
-      if(flags->any()) --ready_;
+      if(listen_)
+      {
+         flags = Listener()->OutFlags();
+         if(flags->any()) --ready_;
+      }
 
       //  Before looking for new connection requests on the listener,
       //  service the application sockets with pending events.  This
@@ -348,7 +369,7 @@ void TcpIoThread::Enter()
       //
       host_ = IpPortRegistry::HostAddress();
 
-      for(curr_ = 1; ((ready_ > 0) && (curr_ < sockets_.Size())); ++curr_)
+      for(curr_ = first; curr_ < sockets_.Size(); ++curr_)
       {
          ServiceSocket();
          ConditionalPause(90);
@@ -364,9 +385,10 @@ void TcpIoThread::Enter()
 
       //  If the listener has another flag set, it is probably an error.
       //
-      if(flags->any())
+      if((flags != nullptr) && (flags->any()))
       {
-         if(EnsureListener() == nullptr) return;
+         if(!EnsureListener()) return;
+         ConditionalPause(90);
       }
    }
 }
@@ -381,7 +403,7 @@ void TcpIoThread::EraseSocket(size_t& index)
 
    //  Release the socket unless it's the listening socket.
    //
-   if(index == 0)
+   if(listen_ && (index == 0))
    {
       Debug::SwLog(TcpIoThread_EraseSocket, 0, 0);
       return;
@@ -393,10 +415,21 @@ void TcpIoThread::EraseSocket(size_t& index)
    sockets_.Erase(index);
    --index;
 
+   auto handler = ipPort_->GetHandler();
+   auto deleted = false;
+
+   //  If the socket was invalid, nullify it, otherwise release it
+   //  (which deletes it if the application has also released it).
+   //
    if(socket->OutFlags()->test(PollInvalid))
       socket->Invalidate();
    else
-      socket->Deregister();
+      deleted = socket->Deregister();
+
+   //  If the socket has not been deleted, the application has not
+   //  yet released it, so inform it that the socket has failed.
+   //
+   if(!deleted) handler->SocketFailed(socket);
 }
 
 //------------------------------------------------------------------------------
@@ -409,13 +442,18 @@ bool TcpIoThread::InsertSocket(SysSocket* socket)
 
    if(socket->Protocol() != IpTcp) return false;
 
+   auto interrupt = sockets_.Empty();
    auto sock = static_cast< SysTcpSocket* >(socket);
 
    if(sockets_.PushBack(sock))
    {
+      //  If the thread had no sockets, it is sleeping forever
+      //  and must be woken up to service its new socket.
+      //
       auto flags = sock->InFlags();
       flags->set(PollRead);
       sock->Register();
+      if(interrupt) Interrupt();
       return true;
    }
 
@@ -510,29 +548,45 @@ word TcpIoThread::PollSockets()
 {
    Debug::ft(TcpIoThread_PollSockets);
 
-   auto listener = Listener();
-   listener->SetBlocking(true);
-   listener->InFlags()->set(PollRead);
-
-   auto sockets = sockets_.Items();
+   //  If we have no sockets, sleep until InsertSocket wakes us.
+   //
    auto size = sockets_.Size();
-   Debug::Assert(size > 0);
-   auto ready = SysTcpSocket::Poll(sockets, size, TIMEOUT_IMMED);
+   if(size == 0) Pause(TIMEOUT_NEVER);
 
-   while(ready == 0)
+   //  If there is a listener socket, set it up to report incoming
+   //  connection attempts and to block.
+   //
+   if(listen_)
    {
-      ipPort_->RecvsInSequence(recvs_);
-
-      EnterBlockingOperation(BlockedOnNetwork, TcpIoThread_Enter);
-      {
-         ready = SysTcpSocket::Poll(sockets, size, TIMEOUT_NEVER);
-      }
-      ExitBlockingOperation(TcpIoThread_Enter);
-
-      recvs_ = 0;
+      auto listener = Listener();
+      listener->SetBlocking(true);
+      listener->InFlags()->set(PollRead);
    }
 
-   listener->TraceEvent(NwTrace::Poll, ready);
+   //  Record the number of sockets on which messages were read since
+   //  the last polling operation.
+   //
+   ipPort_->RecvsInSequence(recvs_);
+   auto sockets = sockets_.Items();
+   word ready = 0;
+
+   //  Poll the sockets for new events.  The timeout of 2 seconds is
+   //  chosen so that even if no events are reported, we can delete
+   //  any sockets that applications released while we were blocked.
+   //
+   EnterBlockingOperation(BlockedOnNetwork, TcpIoThread_Enter);
+   {
+      ready = SysTcpSocket::Poll(sockets, size, 2 * TIMEOUT_1_SEC);
+   }
+   ExitBlockingOperation(TcpIoThread_Enter);
+
+   //  Reset the number of reads performed since the last poll.  If
+   //  any socket had a pending event, record the polling operation
+   //  if network activity is being traced, and return the number of
+   //  pending events.
+   //
+   recvs_ = 0;
+   if(ready > 0) sockets_.Front()->TraceEvent(NwTrace::Poll, ready);
    return ready;
 }
 
@@ -547,6 +601,7 @@ void TcpIoThread::ReleaseResources()
    for(auto size = sockets_.Size(); size > 0; size = sockets_.Size())
    {
       auto socket = sockets_[size - 1];
+      if(socket == nullptr) continue;
       sockets_.Erase(size - 1);
       socket->Purge();
    }
@@ -563,21 +618,23 @@ void TcpIoThread::ServiceSocket()
    Debug::ft(TcpIoThread_ServiceSocket);
 
    auto socket = sockets_[curr_];
+   if(socket == nullptr) return;
 
-   //  Return if this socket hasn't reported an event.
+   //  Return if this socket has neither reported an event nor
+   //  been released by the application.
    //
+   if(socket->GetAppState() == SysTcpSocket::Released)
+   {
+      EraseSocket(curr_);
+      return;
+   }
+
    auto flags = socket->OutFlags();
    if(flags->none()) return;
 
-   //  Before servicing the socket, pause if at risk of running
-   //  locked too long.
-   //
-   ConditionalPause(90);
    --ready_;
 
-   //  Erase the socket if it has disconnected or is no longer
-   //  valid.  These are not hard errors, because a socket is
-   //  closed as soon as the application relinquishes it.
+   //  Erase the socket if it has disconnected or is no longer valid.
    //
    if(flags->test(PollHungUp) || flags->test(PollError) ||
       flags->test(PollInvalid))
@@ -626,7 +683,7 @@ void TcpIoThread::ServiceSocket()
       return;
    }
 
-   rxAddr_ = SysIpL3Addr(host_, port_, IpTcp, nullptr);
+   rxAddr_ = SysIpL3Addr(host_, port_, IpTcp, socket);
    InvokeHandler(*ipPort_, buffer_, rcvd);
 }
 

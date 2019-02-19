@@ -373,11 +373,10 @@ public:
    Friend* FindFriend(const CxxScope* scope) const;
 
    //  Returns true if this class has a non-explicit constructor that can
-   //  be invoked with THAT, whose type is thatType.  Setting IMPLICIT
-   //  overrides the "explicit" keyword by considering all constructors.
+   //  be invoked with THAT, whose type is thatType.
    //
-   bool CanConstructFrom(const StackArg& that,
-      const std::string& thatType, bool implicit = false) const;
+   bool CanConstructFrom
+      (const StackArg& that, const std::string& thatType) const;
 
    //  Returns the item known by NAME within this class, even if inherited.
    //  If BASE is not nullptr, the search stops once BASE is reached, and
@@ -710,7 +709,7 @@ public:
 
    //  Returns the instance's source code.
    //
-   const std::string* GetCode() const { return code_.get(); }
+   const std::string& GetCode() const { return *code_; }
 
    //  Returns the template item that corresponds to ITEM in the instance class.
    //

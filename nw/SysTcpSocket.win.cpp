@@ -26,6 +26,7 @@
 #include "Debug.h"
 #include "NwTrace.h"
 #include "SysIpL3Addr.h"
+#include "TcpIpService.h"
 
 //------------------------------------------------------------------------------
 
@@ -56,6 +57,22 @@ SysTcpSocketPtr SysTcpSocket::Accept(SysIpL3Addr& remAddr)
 
 //------------------------------------------------------------------------------
 
+fn_name SysTcpSocket_Close = "SysTcpSocket.Close";
+
+void SysTcpSocket::Close()
+{
+   Debug::ft(SysTcpSocket_Close);
+
+   if(IsValid())
+   {
+      TraceEvent(NwTrace::Close, disconnecting_);
+      if(closesocket(Socket()) == SOCKET_ERROR) SetError();
+      Invalidate();
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name SysTcpSocket_Connect = "SysTcpSocket.Connect";
 
 word SysTcpSocket::Connect(const SysIpL3Addr& remAddr)
@@ -80,9 +97,25 @@ word SysTcpSocket::Connect(const SysIpL3Addr& remAddr)
 
 //------------------------------------------------------------------------------
 
+fn_name SysTcpSocket_Disconnect = "SysTcpSocket.Disconnect";
+
+void SysTcpSocket::Disconnect()
+{
+   Debug::ft(SysTcpSocket_Disconnect);
+
+   if(!disconnecting_ && (state_ != Idle) && IsValid())
+   {
+      TraceEvent(NwTrace::Disconnect, 0);
+      if(shutdown(Socket(), SD_SEND) == SOCKET_ERROR) SetError();
+      disconnecting_ = true;
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name SysTcpSocket_Listen = "SysTcpSocket.Listen";
 
-bool SysTcpSocket::Listen(int backlog)
+bool SysTcpSocket::Listen(size_t backlog)
 {
    Debug::ft(SysTcpSocket_Listen);
 
@@ -135,23 +168,22 @@ void SysTcpSocket::Patch(sel_t selector, void* arguments)
 
 fn_name SysTcpSocket_Poll = "SysTcpSocket.Poll";
 
-word SysTcpSocket::Poll(SysTcpSocket* sockets[], size_t count, msecs_t msecs)
+word SysTcpSocket::Poll(SysTcpSocket* sockets[], size_t size, msecs_t msecs)
 {
    Debug::ft(SysTcpSocket_Poll);
 
-   if(count == 0) return 0;
+   if(size == 0) return 0;
    int timeout = (msecs != TIMEOUT_NEVER ? msecs : -1);
 
    //  Create an array for the sockets and their flags.
    //
-   auto list = std::unique_ptr< pollfd[] >(new pollfd[count]);
+   std::unique_ptr< pollfd[] > list(new pollfd[size]);
 
    if(list == nullptr) return sockets[0]->SetError(WSA_NOT_ENOUGH_MEMORY);
 
-   for(size_t i = 0; i < count; ++i)
+   for(size_t i = 0; i < size; ++i)
    {
       list[i].fd = sockets[i]->Socket();
-
       auto& inFlags = sockets[i]->inFlags_;
       auto& requests = list[i].events;
 
@@ -162,7 +194,7 @@ word SysTcpSocket::Poll(SysTcpSocket* sockets[], size_t count, msecs_t msecs)
       if(inFlags.test(PollReadOob)) requests |= POLLRDBAND;
    }
 
-   auto ready = WSAPoll(list.get(), count, timeout);
+   auto ready = WSAPoll(list.get(), size, timeout);
 
    if(ready == SOCKET_ERROR)
    {
@@ -171,7 +203,7 @@ word SysTcpSocket::Poll(SysTcpSocket* sockets[], size_t count, msecs_t msecs)
 
    //  Save the status of each socket before LIST gets deleted.
    //
-   for(size_t i = 0; i < count; ++i)
+   for(size_t i = 0; i < size; ++i)
    {
       auto results = list[i].revents;
       auto& outFlags = sockets[i]->outFlags_;
@@ -186,6 +218,7 @@ word SysTcpSocket::Poll(SysTcpSocket* sockets[], size_t count, msecs_t msecs)
       if((results & POLLRDBAND) != 0) outFlags.set(PollReadOob);
    }
 
+   list.reset();
    return ready;
 }
 
@@ -193,17 +226,17 @@ word SysTcpSocket::Poll(SysTcpSocket* sockets[], size_t count, msecs_t msecs)
 
 fn_name SysTcpSocket_Recv = "SysTcpSocket.Recv";
 
-word SysTcpSocket::Recv(byte_t* buff, size_t max)
+word SysTcpSocket::Recv(byte_t* buff, size_t size)
 {
    Debug::ft(SysTcpSocket_Recv);
 
-   if((buff == nullptr) || (max == 0))
+   if((buff == nullptr) || (size == 0))
    {
-      Debug::SwLog(SysTcpSocket_Recv, max, 0);
+      Debug::SwLog(SysTcpSocket_Recv, size, 0);
       return -1;
    }
 
-   auto rcvd = recv(Socket(), reinterpret_cast< char* >(buff), max, 0);
+   auto rcvd = recv(Socket(), reinterpret_cast< char* >(buff), size, 0);
    TraceEvent(NwTrace::Recv, rcvd);
 
    if(rcvd == SOCKET_ERROR) return SetError();
@@ -238,17 +271,17 @@ bool SysTcpSocket::RemAddr(SysIpL3Addr& remAddr)
 
 fn_name SysTcpSocket_Send = "SysTcpSocket.Send";
 
-word SysTcpSocket::Send(const byte_t* data, size_t len)
+word SysTcpSocket::Send(const byte_t* data, size_t size)
 {
    Debug::ft(SysTcpSocket_Send);
 
-   if((data == nullptr) || (len == 0))
+   if((data == nullptr) || (size == 0))
    {
-      Debug::SwLog(SysTcpSocket_Send, len, 0);
+      Debug::SwLog(SysTcpSocket_Send, size, 0);
       return -1;
    }
 
-   auto sent = send(Socket(), reinterpret_cast< const char* >(data), len, 0);
+   auto sent = send(Socket(), reinterpret_cast< const char* >(data), size, 0);
 
    if(sent == SOCKET_ERROR)
    {
@@ -258,6 +291,45 @@ word SysTcpSocket::Send(const byte_t* data, size_t len)
 
    TraceEvent(NwTrace::Send, sent);
    return sent;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SysTcpSocket_SetService = "SysTcpSocket.SetService";
+
+SysSocket::AllocRc SysTcpSocket::SetService
+   (const IpService* service, bool shared)
+{
+   Debug::ft(SysTcpSocket_SetService);
+
+   //  Configure SERVICE's socket settings followed by its TCP settings.
+   //
+   auto rc = SysSocket::SetService(service, shared);
+   if(rc != AllocOk) return rc;
+
+   bool alive = static_cast< const TcpIpService* >(service)->Keepalive();
+
+   if(setsockopt(Socket(), SOL_SOCKET, SO_KEEPALIVE,
+      (const char*) &alive, sizeof(alive)) == SOCKET_ERROR)
+   {
+      SetError();
+      return SetOptionError;
+   }
+
+   bool val;
+   int valsize = sizeof(val);
+
+   if(getsockopt(Socket(), SOL_SOCKET, SO_KEEPALIVE,
+      (char*) &val, &valsize) == SOCKET_ERROR)
+   {
+      SetError();
+      return GetOptionError;
+   }
+
+   if(val != alive)
+      Debug::SwLog(SysTcpSocket_SetService, val, alive);
+
+   return AllocOk;
 }
 }
 #endif

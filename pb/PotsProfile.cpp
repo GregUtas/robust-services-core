@@ -50,8 +50,7 @@ namespace PotsBase
 fn_name PotsProfile_ctor = "PotsProfile.ctor";
 
 PotsProfile::PotsProfile(DN dn) :
-   state_(Idle),
-   objAddr_(NilLocalAddress)
+   state_(Idle)
 {
    Debug::ft(PotsProfile_ctor);
 
@@ -97,11 +96,11 @@ bool PotsProfile::ClearObjAddr(const LocalAddress& addr)
    Debug::ft(PotsProfile_ClearObjAddr1);
 
    //  For purposes of error recovery, transition to the idle state
-   //  if the address is unknown (NilLocalAddress).
+   //  if the address is unknown.
    //
-   if((addr == NilLocalAddress) || (objAddr_ == addr))
+   if((addr == LocalAddress()) || (objAddr_ == addr))
    {
-      objAddr_ = NilLocalAddress;
+      objAddr_ = LocalAddress();
       if(state_ == Active) state_ = Idle;
       return true;
    }
@@ -271,7 +270,7 @@ void PotsProfile::Shutdown(RestartLevel level)
 
    state_ = Idle;
    circuit_.release();
-   objAddr_ = NilLocalAddress;
+   objAddr_ = LocalAddress();
 }
 
 //------------------------------------------------------------------------------

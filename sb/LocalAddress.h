@@ -25,6 +25,7 @@
 #include <string>
 #include "NbTypes.h"
 #include "SbTypes.h"
+#include "SysTypes.h"
 
 using namespace NodeBase;
 
@@ -43,6 +44,18 @@ struct LocalAddress
    ObjectPoolId pid : 8;       // the object pool associated with the object
    FactoryId fid : 16;         // the factory sending/receiving the message
 
+   //  Constructor.
+   //
+   LocalAddress() : bid(NIL_ID), seq(0), pid(NIL_ID), fid(NIL_ID) { }
+
+   //  Copy constructor.
+   //
+   LocalAddress(const LocalAddress& that) = default;
+
+   //  Copy operator.
+   //
+   LocalAddress& operator=(const LocalAddress& that) = default;
+
    //  Returns true if both addresses match.  FIDs only have to match if BID
    //  is NIL_ID.
    //
@@ -56,9 +69,5 @@ struct LocalAddress
    //
    std::string to_str() const;
 };
-
-//  Nil local address.
-//
-extern const LocalAddress NilLocalAddress;
 }
 #endif

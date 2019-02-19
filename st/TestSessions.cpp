@@ -137,7 +137,7 @@ class TestAnalyzeUserMessage : public TestEventHandler
 {
    friend class Singleton< TestAnalyzeUserMessage >;
 private:
-   TestAnalyzeUserMessage() { }
+   TestAnalyzeUserMessage() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -146,7 +146,7 @@ class TestAnalyzeNetworkMessage : public TestEventHandler
 {
    friend class Singleton< TestAnalyzeNetworkMessage >;
 private:
-   TestAnalyzeNetworkMessage() { }
+   TestAnalyzeNetworkMessage() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -155,7 +155,7 @@ class TestNuInject : public TestEventHandler
 {
    friend class Singleton< TestNuInject >;
 private:
-   TestNuInject() { }
+   TestNuInject() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -164,7 +164,7 @@ class TestNuVerify : public TestEventHandler
 {
    friend class Singleton< TestNuVerify >;
 private:
-   TestNuVerify() { }
+   TestNuVerify() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -173,7 +173,7 @@ class TestAcInject : public TestEventHandler
 {
    friend class Singleton< TestAcInject >;
 private:
-   TestAcInject() { }
+   TestAcInject() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -182,7 +182,7 @@ class TestAcVerify : public TestEventHandler
 {
    friend class Singleton< TestAcVerify >;
 private:
-   TestAcVerify() { }
+   TestAcVerify() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -411,7 +411,7 @@ TestMessage::TestMessage(ProtocolSM* dest) : Message(nullptr, 0),
    SetProtocol(TestProtocolId);
 
    auto host = IpPortRegistry::HostAddress();
-   auto addr = GlobalAddress(host, NilIpPort, TestFactoryId);
+   GlobalAddress addr(host, NilIpPort, TestFactoryId);
    SetSender(addr);
 
    if(dest != nullptr)

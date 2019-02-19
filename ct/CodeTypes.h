@@ -22,13 +22,15 @@
 #ifndef CODETYPES_H_INCLUDED
 #define CODETYPES_H_INCLUDED
 
+#include <cstddef>
 #include <cstdint>
 #include <iosfwd>
 #include <string>
 #include <vector>
 #include "SysTypes.h"
 
-using namespace NodeBase;
+using NodeBase::fixed_string;
+using NodeBase::Flags;
 
 //------------------------------------------------------------------------------
 
@@ -121,10 +123,11 @@ extern fixed_string HASH_UNDEF_STR;
 //
 extern fixed_string ARRAY_STR;
 extern fixed_string COMMENT_END_STR;
-extern fixed_string COMMENT_START_STR;
+extern fixed_string COMMENT_BEGIN_STR;
 extern fixed_string COMMENT_STR;
 extern fixed_string ELLIPSES_STR;
 extern fixed_string LOCALS_STR;
+extern fixed_string NULL_STR;
 
 //------------------------------------------------------------------------------
 //
@@ -366,7 +369,7 @@ enum Warning
    Downcasting,              // use of cast down inheritance hierarchy
    CastingAwayConstness,     // use of cast to remove const qualifier
    PointerArithmetic,        // use of pointer arithmetic
-   RemoveSemicolon,          // unnecessary semicolon
+   RedundantSemicolon,       // unnecessary semicolon
    RedundantConst,           // more than one const qualifier for same token
    DefineNotAtFileScope,     // #define appears within a class or function
    IncludeNotAtGlobalScope,  // #include appears outside of global namespace
@@ -387,11 +390,9 @@ enum Warning
    DataUnused,               // data is neither read nor written
    EnumUnused,               // enum not referenced
    EnumeratorUnused,         // enumerator not referenced
-   ForwardUnused,            // forward declaration did not resolve a symbol
    FriendUnused,             // friend did not access a restricted member
    FunctionUnused,           // function not invoked
    TypedefUnused,            // typedef not referenced
-   UsingUnused,              // using statement did not resolve a symbol
    ForwardUnresolved,        // no referent found for forward declaration
    FriendUnresolved,         // no referent found for friend declaration
    FriendAsForward,          // friend declaration is also forward declaration
@@ -455,12 +456,12 @@ enum Warning
    NonBooleanConditional,    // conditional expression is not a boolean
    EnumTypesDiffer,          // binary operator uses two different enum types
    UseOfTab,                 // tab character in line
-   Indentation,              // indentation not a multiple of Indent_Size spaces
+   Indentation,              // indentation not a multiple of INDENT_SIZE spaces
    TrailingSpace,            // space after last non-blank character
    AdjacentSpaces,           // extra embedded space in source code
-   InsertBlankLine,          // add blank line
+   AddBlankLine,             // add blank line
    RemoveBlankLine,          // adjacent blank lines
-   LineLength,               // line length exceeds 80 characters
+   LineLength,               // line length exceeds LINE_LENGTH_MAX characters
    FunctionNotSorted,        // function does not appear in alphabetical order
    HeadingNotStandard,       // lines at top of file do not follow template
    IncludeGuardMisnamed,     // #include guard name is not based on filename
@@ -468,8 +469,10 @@ enum Warning
    DebugFtNotFirst,          // function invokes Debug::ft after first statement
    DebugFtNameMismatch,      // function name for Debug::ft is incorrect
    DebugFtNameDuplicated,    // function name for Debug::ft used previously
-   DisplayNotOverridden,     // class should override Base.Display
-   PatchNotOverridden,       // class should override Object.Patch
+   DisplayNotOverridden,     // class does not override Base.Display
+   PatchNotOverridden,       // class does not override Object.Patch
+   FunctionCouldBeDefaulted, // empty special member function defined
+   InitCouldUseConstructor,  // initialization uses oper= instead of constructor
    Warning_N                 // number of warnings
 };
 
@@ -490,8 +493,8 @@ enum LineType
    Code,                  // source code
    Blank,                 // blank lines
    EmptyComment,          // //
-   LicenseComment,        // //  FileName.ext or license information
-   SeparatorComment,      // //+ (+ = repeated -, =, or /)
+   FileComment,           // comment at top of file, before any code
+   SeparatorComment,      // //# (# = repeated -, =, or /)
    TaggedComment,         // //@ (@ = any character except -, =, or /)
    TextComment,           // //  text
    SlashAsteriskComment,  // /*
@@ -511,6 +514,35 @@ enum LineType
 //  Inserts a string for TYPE into STREAM.
 //
 std::ostream& operator<<(std::ostream& stream, LineType type);
+
+//  Attributes of a line type.
+//
+struct LineTypeAttr
+{
+   //  The line contains code.
+   //
+   const bool isCode;
+
+   //  The line contains code that is "executed" after it is parsed.
+   //
+   const bool isExecutable;
+
+   //  The line can be merged with another line.
+   //
+   const bool isMergeable;
+
+   //  The lne is considered to be blank.
+   //
+   const bool isBlank;
+
+   //  The array that contains the above attributes for each line type.
+   //
+   static const LineTypeAttr Attrs[LineType_N + 1];
+private:
+   //  Constructs a line type with the specified attributes.
+   //
+   LineTypeAttr(bool code, bool exe, bool merge, bool blank);
+};
 
 //------------------------------------------------------------------------------
 //
@@ -539,7 +571,8 @@ extern const Flags NoAC_Mask;
 extern const Flags NoTP_Mask;
 extern const Flags Stats_Mask;
 
-extern const uint8_t Indent_Size;
+constexpr uint8_t INDENT_SIZE = 3;
+constexpr size_t LINE_LENGTH_MAX = 80;
 
 //------------------------------------------------------------------------------
 //

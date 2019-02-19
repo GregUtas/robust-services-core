@@ -60,6 +60,30 @@ CxxNamed* ReferentError(const string& item, debug32_t offset)
 
 //==============================================================================
 
+CxxLocation::CxxLocation() :
+   file_(nullptr),
+   pos_(NOT_IN_SOURCE),
+   internal_(false)
+{
+}
+
+//------------------------------------------------------------------------------
+
+size_t CxxLocation::GetPos() const
+{
+   return (pos_ != NOT_IN_SOURCE ? pos_ : std::string::npos);
+}
+
+//------------------------------------------------------------------------------
+
+void CxxLocation::SetLoc(CodeFile* file, size_t pos)
+{
+   file_ = file;
+   pos_ = pos;
+}
+
+//==============================================================================
+
 fn_name CxxNamed_ctor1 = "CxxNamed.ctor";
 
 CxxNamed::CxxNamed()
@@ -258,7 +282,7 @@ bool CxxNamed::IsPreviousDeclOf(const CxxNamed* item) const
 
 fn_name CxxNamed_Log = "CxxNamed.Log";
 
-void CxxNamed::Log(Warning warning, size_t offset) const
+void CxxNamed::Log(Warning warning, size_t offset, bool hide) const
 {
    Debug::ft(CxxNamed_Log);
 
@@ -277,7 +301,7 @@ void CxxNamed::Log(Warning warning, size_t offset) const
       }
    }
 
-   GetFile()->LogPos(GetPos(), warning, offset);
+   GetFile()->LogPos(GetPos(), warning, this, offset, EMPTY_STR, hide);
 }
 
 //------------------------------------------------------------------------------
@@ -600,14 +624,7 @@ fn_name DataSpec_ctor1 = "DataSpec.ctor";
 
 DataSpec::DataSpec(QualNamePtr& name) :
    name_(name.release()),
-   arrays_(nullptr),
-   ptrs_(0),
-   refs_(0),
-   arrayPos_(INT8_MAX),
-   const_(false),
-   constptr_(false),
-   ptrDet_(false),
-   refDet_(false)
+   arrays_(nullptr)
 {
    Debug::ft(DataSpec_ctor1);
 
@@ -618,15 +635,7 @@ DataSpec::DataSpec(QualNamePtr& name) :
 
 fn_name DataSpec_ctor2 = "DataSpec.ctor(string)";
 
-DataSpec::DataSpec(const char* name) :
-   arrays_(nullptr),
-   ptrs_(0),
-   refs_(0),
-   arrayPos_(INT8_MAX),
-   const_(false),
-   constptr_(false),
-   ptrDet_(false),
-   refDet_(false)
+DataSpec::DataSpec(const char* name) : arrays_(nullptr)
 {
    Debug::ft(DataSpec_ctor2);
 
@@ -640,13 +649,7 @@ fn_name DataSpec_ctor3 = "DataSpec.ctor(copy)";
 
 DataSpec::DataSpec(const DataSpec& that) : TypeSpec(that),
    arrays_(nullptr),
-   ptrs_(that.ptrs_),
-   refs_(that.refs_),
-   arrayPos_(that.arrayPos_),
-   const_(that.const_),
-   constptr_(that.constptr_),
-   ptrDet_(that.ptrDet_),
-   refDet_(that.refDet_)
+   tags_(that.tags_)
 {
    Debug::ft(DataSpec_ctor3);
 
@@ -675,28 +678,7 @@ void DataSpec::AddArray(ArraySpecPtr& array)
 
    if(arrays_ == nullptr) arrays_.reset(new ArraySpecPtrVector);
    arrays_->push_back(std::move(array));
-}
-
-//------------------------------------------------------------------------------
-
-fn_name DataSpec_AdjustPtrs = "DataSpec.AdjustPtrs";
-
-void DataSpec::AdjustPtrs(TagCount count)
-{
-   Debug::ft(DataSpec_AdjustPtrs);
-
-   //  This should only be invoked on an auto type.  After adjusting the
-   //  count, invoke Ptrs to cause a log if the overall count is invalid.
-   //
-   if(!IsAutoDecl())
-   {
-      auto expl = "Adjusting pointers on non-auto type " + this->Trace();
-      Context::SwLog(DataSpec_AdjustPtrs, expl, 0);
-      return;
-   }
-
-   ptrs_ = count;
-   Ptrs(true);
+   tags_.AddArray();
 }
 
 //------------------------------------------------------------------------------
@@ -712,32 +694,16 @@ string DataSpec::AlignTemplateArg(const TypeSpec* thatArg) const
    //
    if(GetTemplateRole() != TemplateArgument) return ERROR_STR;
 
-   auto thisTags = this->GetTags();
+   auto thisTags = this->GetAllTags();
 
-   if((thisTags.ptrs_ == 0) && (thisTags.arrays_ == 0))
+   if(thisTags.PtrCount(true) == 0)
    {
       return thatArg->TypeString(true);
    }
 
-   auto thatTags = thatArg->GetTags();
-   if(thatTags.ptrs_ < thisTags.ptrs_) return ERROR_STR;
-   if(thatTags.arrays_ < thisTags.arrays_) return ERROR_STR;
-   thatTags.ptrs_ -= thisTags.ptrs_;
-   thatTags.arrays_ -= thisTags.arrays_;
+   auto thatTags = thatArg->GetAllTags();
+   if(!thisTags.AlignTemplateTag(thatTags)) return ERROR_STR;
    return thatArg->TypeTagsString(thatTags);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name DataSpec_ArrayCount = "DataSpec.ArrayCount";
-
-TagCount DataSpec::ArrayCount() const
-{
-   Debug::ft(DataSpec_ArrayCount);
-
-   TagCount count = (arrayPos_ != INT8_MAX ? 1 : 0);
-   if(arrays_ != nullptr) count += TagCount(arrays_->size());
-   return count;
 }
 
 //------------------------------------------------------------------------------
@@ -753,7 +719,7 @@ TagCount DataSpec::Arrays() const
 
    while(spec != nullptr)
    {
-      count += spec->ArrayCount();
+      count += spec->Tags()->ArrayCount();
       auto ref = spec->Referent();
       if(ref == nullptr) break;
       spec = ref->GetTypeSpec();
@@ -770,8 +736,8 @@ void DataSpec::Check() const
 {
    Debug::ft(DataSpec_Check);
 
-   if(ptrDet_) Log(PtrTagDetached);
-   if(refDet_) Log(RefTagDetached);
+   if(tags_.ptrDet_) Log(PtrTagDetached);
+   if(tags_.refDet_) Log(RefTagDetached);
 }
 
 //------------------------------------------------------------------------------
@@ -840,20 +806,7 @@ void DataSpec::DisplayArrays(ostream& stream) const
 
 void DataSpec::DisplayTags(ostream& stream) const
 {
-   if(arrayPos_ != INT8_MAX)
-   {
-      if(arrayPos_ > 0) stream << string(arrayPos_, '*');
-      stream << ARRAY_STR;
-      auto after = ptrs_ - arrayPos_;
-      if(after > 0) stream << string(after, '*');
-   }
-   else
-   {
-      if(ptrs_ > 0) stream << string(ptrs_, '*');
-   }
-
-   if(constptr_) stream << " const";
-   if(refs_ > 0) stream << string(refs_, '&');
+   tags_.Print(stream);
 }
 
 //------------------------------------------------------------------------------
@@ -892,7 +845,7 @@ void DataSpec::EnteringScope(const CxxScope* scope)
 {
    Debug::ft(DataSpec_EnteringScope);
 
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
 
    if(scope->NameIsTemplateParm(*Name()))
    {
@@ -993,6 +946,13 @@ void DataSpec::FindReferent()
 
 //------------------------------------------------------------------------------
 
+TypeTags DataSpec::GetAllTags() const
+{
+   return TypeTags(*this);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name DataSpec_GetNumeric = "DataSpec.GetNumeric";
 
 Numeric DataSpec::GetNumeric() const
@@ -1000,26 +960,11 @@ Numeric DataSpec::GetNumeric() const
    Debug::ft(DataSpec_GetNumeric);
 
    auto ptrs = Ptrs(true);
-
-   if(ptrs > 0)
-   {
-      auto arrays = ArrayCount();
-      if(ptrs - arrays > 0) return Numeric::Pointer;
-      return Numeric::Nil;
-   }
-
-   if(Refs() > 0) return Numeric::Nil;
+   if(ptrs > 0) return Numeric::Pointer;
 
    auto root = Root();
    if(root == nullptr) return Numeric::Nil;
    return root->GetNumeric();
-}
-
-//------------------------------------------------------------------------------
-
-TypeTags DataSpec::GetTags() const
-{
-   return TypeTags(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -1166,9 +1111,9 @@ bool DataSpec::IsConst() const
 {
    Debug::ft(DataSpec_IsConst);
 
-   if(IsAutoDecl()) return const_;
+   if(IsAutoDecl()) return tags_.IsConst();
 
-   if(const_) return true;
+   if(tags_.IsConst()) return true;
    auto ref = Referent();
    if(ref == nullptr) return false;
    auto spec = ref->GetTypeSpec();
@@ -1184,14 +1129,35 @@ bool DataSpec::IsConstPtr() const
 {
    Debug::ft(DataSpec_IsConstPtr);
 
-   if(IsAutoDecl()) return constptr_;
+   auto cp = tags_.IsConstPtr();
 
-   if(constptr_) return true;
+   if(cp == 1) return true;
+   if(cp == -1) return false;
+   if(IsAutoDecl()) return false;
+
+   //  We have no pointers, so see if our referent has any.
+   //
    auto ref = Referent();
    if(ref == nullptr) return false;
    auto spec = ref->GetTypeSpec();
    if(spec == nullptr) return false;
    return spec->IsConstPtr();
+}
+
+//------------------------------------------------------------------------------
+
+bool DataSpec::IsConstPtr(size_t n) const
+{
+   Debug::ft(DataSpec_IsConstPtr);
+
+   if(IsAutoDecl()) return tags_.IsConstPtr(n);
+
+   if(tags_.IsConstPtr(n)) return true;
+   auto ref = Referent();
+   if(ref == nullptr) return false;
+   auto spec = ref->GetTypeSpec();
+   if(spec == nullptr) return false;
+   return spec->IsConstPtr(n);
 }
 
 //------------------------------------------------------------------------------
@@ -1348,14 +1314,9 @@ TypeMatch DataSpec::MatchTemplateArg(const TypeSpec* that) const
    //
    if(GetTemplateRole() == TemplateArgument)
    {
-      auto thisTags = this->GetTags();
-      auto thatTags = that->GetTags();
-
-      if(thisTags.ptrs_ > thatTags.ptrs_) return Incompatible;
-      if(thisTags.arrays_ > thatTags.arrays_) return Incompatible;
-      if(thisTags.ptrs_ < thatTags.ptrs_) return Convertible;
-      if(thisTags.arrays_ < thatTags.arrays_) return Convertible;
-      return Compatible;
+      auto thisTags = this->GetAllTags();
+      auto thatTags = that->GetAllTags();
+      return thisTags.MatchTemplateTags(thatTags);
    }
 
    //  This is not a template argument, so match on types.
@@ -1368,30 +1329,15 @@ TypeMatch DataSpec::MatchTemplateArg(const TypeSpec* that) const
 
 void DataSpec::Print(ostream& stream, const Flags& options) const
 {
-   if(const_) stream << CONST_STR << SPACE;
+   if(tags_.IsConst()) stream << CONST_STR << SPACE;
    name_->Print(stream, options);
-   DisplayTags(stream);
+   tags_.Print(stream);
 
    if(IsAutoDecl())
    {
-      stream << SPACE << COMMENT_START_STR << SPACE;
+      stream << SPACE << COMMENT_BEGIN_STR << SPACE;
       stream << TypeString(true) << SPACE << COMMENT_END_STR;
    }
-}
-
-//------------------------------------------------------------------------------
-
-fn_name DataSpec_PtrCount = "DataSpec.PtrCount";
-
-TagCount DataSpec::PtrCount(bool arrays) const
-{
-   Debug::ft(DataSpec_PtrCount);
-
-   auto count = ptrs_;
-   if(!arrays) return count;
-   if(arrays_ != nullptr) count += TagCount(arrays_->size());
-   if(arrayPos_ != INT8_MAX) ++count;
-   return count;
 }
 
 //------------------------------------------------------------------------------
@@ -1407,17 +1353,29 @@ TagCount DataSpec::Ptrs(bool arrays) const
 
    while(spec != nullptr)
    {
-      count += spec->PtrCount(arrays);
+      count += spec->Tags()->PtrCount(arrays);
       auto ref = spec->Referent();
       if(ref == nullptr) break;
       spec = ref->GetTypeSpec();
    }
 
-   if(count >= 0) return count;
+   //  COUNT can be negative if this is invoked on an auto type with ARRAYS
+   //  set to false.  Given
+   //     auto& entry = table[index];
+   //  ENTRY has a referent of TABLE, and ptrs_ = -1.  If arrays are then
+   //  excluded from ENTRY's pointer count, the result will be -1 because
+   //  TABLE's pointer count of 1 will not be included.
+   //
+   if(count < 0)
+   {
+      if(arrays || !IsAutoDecl())
+      {
+         auto expl = "Negative pointer count for " + Trace();
+         Context::SwLog(DataSpec_Ptrs, expl, count);
+      }
+   }
 
-   auto expl = "Negative pointer count for " + Trace();
-   Context::SwLog(DataSpec_Ptrs, expl, count);
-   return 0;
+   return count;
 }
 
 //------------------------------------------------------------------------------
@@ -1443,12 +1401,17 @@ TagCount DataSpec::Refs() const
 {
    Debug::ft(DataSpec_Refs);
 
+   //  An auto type can have a negative reference count that is eliminated
+   //  once its type is determined.  Stop as soon as the count is positive;
+   //  else an l-value reference (&) could become an r-value reference (&&).
+   //
    TagCount count = 0;
    auto spec = static_cast< const TypeSpec* >(this);
 
    while(spec != nullptr)
    {
-      count += spec->RefCount();
+      count += spec->Tags()->RefCount();
+      if(count > 0) return count;
       auto ref = spec->Referent();
       if(ref == nullptr) break;
       spec = ref->GetTypeSpec();
@@ -1478,7 +1441,7 @@ void DataSpec::RemoveRefs()
 
    if(Refs() == 0) return;
 
-   if(refs_ != 0)
+   if(tags_.RefCount() != 0)
    {
       auto expl = "Removing references from auto& type " + this->Trace();
       Context::SwLog(DataSpec_RemoveRefs, expl, 1);
@@ -1487,7 +1450,7 @@ void DataSpec::RemoveRefs()
 
    //  Negate any reference(s) on the referent's type.
    //
-   refs_ = -Refs();
+   tags_.SetRefs(-Refs());
 }
 
 //------------------------------------------------------------------------------
@@ -1530,7 +1493,7 @@ bool DataSpec::ResolveTemplate(Class* cls, const TypeName* args, bool end) const
 
 fn_name DataSpec_ResolveTemplateArgument = "DataSpec.ResolveTemplateArgument";
 
-bool DataSpec::ResolveTemplateArgument()
+bool DataSpec::ResolveTemplateArgument() const
 {
    Debug::ft(DataSpec_ResolveTemplateArgument);
 
@@ -1580,9 +1543,9 @@ StackArg DataSpec::ResultType() const
          if(target != nullptr) result = target;
       }
 
-      auto arg = StackArg(result, PtrCount(true));
-      if(const_) arg.SetAsConst();
-      if(constptr_) arg.SetAsConstPtr();
+      StackArg arg(result, tags_.PtrCount(true));
+      if(tags_.IsConst()) arg.SetAsConst();
+      if(tags_.IsConstPtr() == 1) arg.SetAsConstPtr();
       return arg;
    }
 
@@ -1597,6 +1560,28 @@ StackArg DataSpec::ResultType() const
    }
 
    return NilStackArg;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name DataSpec_SetPtrs = "DataSpec.SetPtrs";
+
+void DataSpec::SetPtrs(TagCount count)
+{
+   Debug::ft(DataSpec_SetPtrs);
+
+   //  This should only be invoked on an auto type.  After resetting the
+   //  count, invoke Ptrs to cause a log if the overall count is invalid.
+   //
+   if(!IsAutoDecl())
+   {
+      auto expl = "Resetting pointers on non-auto type " + this->Trace();
+      Context::SwLog(DataSpec_SetPtrs, expl, 0);
+      return;
+   }
+
+   tags_.SetPtrs(count);
+   Ptrs(true);
 }
 
 //------------------------------------------------------------------------------
@@ -1632,10 +1617,10 @@ void DataSpec::SetReferent(CxxNamed* item, const SymbolView* view) const
          //  If our referent is a pointer typedef, "const" applies to the
          //  pointer, not its target.
          //
-         if(const_ && (item->GetTypeSpec()->Ptrs(false) > 0))
+         if(tags_.IsConst() && (item->GetTypeSpec()->Ptrs(false) > 0))
          {
-            const_ = false;
-            constptr_ = true;
+            tags_.SetConst(false);
+            tags_.SetConstPtr();
          }
       }
    }
@@ -1711,7 +1696,7 @@ string DataSpec::TypeString(bool arg) const
    //  declaration.  In such cases, just use the full name.
    //
    auto ref = (role != TemplateParameter ? Referent() : nullptr);
-   auto tags = GetTags();
+   auto tags = GetAllTags();
 
    if(ref != nullptr)
    {
@@ -1726,25 +1711,7 @@ string DataSpec::TypeString(bool arg) const
    //  Remove any tags from TS and replace them with our own.
    //
    RemoveTags(ts);
-
-   if(tags.const_) ts = "const " + ts;
-
-   if(arg)
-   {
-      ts += string(tags.ptrs_ + tags.arrays_, '*');
-   }
-   else
-   {
-      ts += string(tags.ptrs_, '*');
-
-      if(tags.arrays_ > 0)
-      {
-         for(auto i = 0 ; i < tags.arrays_; ++i) ts += ARRAY_STR;
-      }
-   }
-
-   if(tags.constptr_) ts += " const";
-   if(!arg) ts += string(tags.refs_, '&');
+   tags.TypeString(ts, arg);
    return ts;
 }
 
@@ -1752,15 +1719,8 @@ string DataSpec::TypeString(bool arg) const
 
 string DataSpec::TypeTagsString(const TypeTags& tags) const
 {
-   string ts;
-
-   if(tags.const_)
-      ts += "const ";
-   ts += name_->TypeString(true);
-   if(tags.ptrs_ > 0) ts += string(tags.ptrs_, '*');
-   for(auto i = 0; i < tags.arrays_; ++i) ts += ARRAY_STR;
-   if(tags.constptr_) ts += " const";
-   if(tags.refs_ > 0) ts += string(tags.refs_, '&');
+   auto ts = name_->TypeString(true);
+   tags.TypeString(ts, false);
    return ts;
 }
 
@@ -1839,8 +1799,8 @@ QualName::QualName(const QualName& that) : CxxNamed(that)
 
    for(auto n = that.First(); n != nullptr; n = n->Next())
    {
-      auto thisName = new TypeName(*n);
-      PushBack(TypeNamePtr(thisName));
+      TypeNamePtr thisName(new TypeName(*n));
+      PushBack(thisName);
    }
 
    CxxStats::Incr(CxxStats::QUAL_NAME);
@@ -1934,8 +1894,8 @@ void QualName::EnterBlock()
 {
    Debug::ft(QualName_EnterBlock);
 
-   Context::SetPos(GetPos());
-   if(*Name() == "NULL") Log(UseOfNull);
+   Context::SetPos(GetLoc());
+   if(*Name() == NULL_STR) Log(UseOfNull);
 
    //  If a "." or "->" operator is waiting for its second argument,
    //  push this name and return so that the operator can be executed.
@@ -2372,6 +2332,7 @@ void TemplateParm::Print(ostream& stream, const Flags& options) const
    stream << tag_ << SPACE;
    stream << *Name();
    if(ptrs_ > 0) stream << string(ptrs_, '*');
+
    if(default_ != nullptr)
    {
       stream << " = ";
@@ -2482,7 +2443,6 @@ fn_name TypeName_ctor1 = "TypeName.ctor";
 
 TypeName::TypeName(string& name) :
    args_(nullptr),
-   locale_(nullptr),
    ref_(nullptr),
    class_(nullptr),
    type_(nullptr),
@@ -2503,7 +2463,6 @@ fn_name TypeName_ctor2 = "TypeName.ctor(copy)";
 
 TypeName::TypeName(const TypeName& that) : CxxNamed(that),
    name_(that.name_),
-   locale_(that.locale_),
    ref_(that.ref_),
    class_(that.class_),
    type_(that.type_),
@@ -2520,7 +2479,7 @@ TypeName::TypeName(const TypeName& that) : CxxNamed(that),
 
       for(auto a = that.args_->cbegin(); a != that.args_->cend(); ++a)
       {
-         auto arg = TypeSpecPtr((*a)->Clone());
+         TypeSpecPtr arg((*a)->Clone());
          arg->CopyContext(a->get());
          args_->push_back(std::move(arg));
       }
@@ -2999,25 +2958,10 @@ void TypeSpec::AddArray(ArraySpecPtr& array)
 
 //------------------------------------------------------------------------------
 
-void TypeSpec::AdjustPtrs(TagCount count)
-{
-   Debug::SwLog(TypeSpec_PureVirtualFunction, "AdjustPtrs", 0);
-}
-
-//------------------------------------------------------------------------------
-
 string TypeSpec::AlignTemplateArg(const TypeSpec* thatArg) const
 {
    Debug::SwLog(TypeSpec_PureVirtualFunction, "AlignTemplateArg", 0);
    return ERROR_STR;
-}
-
-//------------------------------------------------------------------------------
-
-TagCount TypeSpec::ArrayCount() const
-{
-   Debug::SwLog(TypeSpec_PureVirtualFunction, "ArrayCount", 0);
-   return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -3066,11 +3010,11 @@ void TypeSpec::EnteringScope(const CxxScope* scope)
 
 //------------------------------------------------------------------------------
 
-TypeTags TypeSpec::GetTags() const
+TypeTags TypeSpec::GetAllTags() const
 {
    TypeTags tags;
 
-   Debug::SwLog(TypeSpec_PureVirtualFunction, "GetTags", 0);
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "GetAllTags", 0);
    return tags;
 }
 
@@ -3126,7 +3070,7 @@ TypeMatch TypeSpec::MatchTemplateArg(const TypeSpec* that) const
 
 fn_name TypeSpec_MustMatchWith = "TypeSpec.MustMatchWith";
 
-TypeMatch TypeSpec::MustMatchWith(const StackArg& that, bool implicit) const
+TypeMatch TypeSpec::MustMatchWith(const StackArg& that) const
 {
    Debug::ft(TypeSpec_MustMatchWith);
 
@@ -3134,7 +3078,7 @@ TypeMatch TypeSpec::MustMatchWith(const StackArg& that, bool implicit) const
 
    auto thisType = this->TypeString(true);
    auto thatType = that.TypeString(true);
-   auto match = ResultType().CalcMatchWith(that, thisType, thatType, implicit);
+   auto match = ResultType().CalcMatchWith(that, thisType, thatType);
 
    if(match == Incompatible)
    {
@@ -3147,25 +3091,9 @@ TypeMatch TypeSpec::MustMatchWith(const StackArg& that, bool implicit) const
 
 //------------------------------------------------------------------------------
 
-TagCount TypeSpec::PtrCount(bool arrays) const
-{
-   Debug::SwLog(TypeSpec_PureVirtualFunction, "PtrCount", 0);
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-
 TagCount TypeSpec::Ptrs(bool arrays) const
 {
    Debug::SwLog(TypeSpec_PureVirtualFunction, "Ptrs", 0);
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-
-TagCount TypeSpec::RefCount() const
-{
-   Debug::SwLog(TypeSpec_PureVirtualFunction, "RefCount", 0);
    return 0;
 }
 
@@ -3194,53 +3122,9 @@ StackArg TypeSpec::ResultType() const
 
 //------------------------------------------------------------------------------
 
-void TypeSpec::SetArrayPos(int8_t pos)
-{
-   Debug::SwLog(TypeSpec_PureVirtualFunction, "SetArrayPos", 0);
-}
-
-//------------------------------------------------------------------------------
-
-void TypeSpec::SetConst(bool readonly)
-{
-   Debug::SwLog(TypeSpec_PureVirtualFunction, "SetConst", 0);
-}
-
-//------------------------------------------------------------------------------
-
-void TypeSpec::SetConstPtr(bool constptr)
-{
-   Debug::SwLog(TypeSpec_PureVirtualFunction, "SetConstPtr", 0);
-}
-
-//------------------------------------------------------------------------------
-
-void TypeSpec::SetPtrDetached(bool on)
-{
-   Debug::SwLog(TypeSpec_PureVirtualFunction, "SetPtrDetached", 0);
-}
-
-//------------------------------------------------------------------------------
-
-void TypeSpec::SetPtrs(TagCount ptrs)
+void TypeSpec::SetPtrs(TagCount count)
 {
    Debug::SwLog(TypeSpec_PureVirtualFunction, "SetPtrs", 0);
-}
-
-//------------------------------------------------------------------------------
-
-void TypeSpec::SetRefDetached(bool on)
-{
-   Debug::SwLog(TypeSpec_PureVirtualFunction, "SetRefDetached", 0);
-}
-
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-
-void TypeSpec::SetRefs(TagCount refs)
-{
-   Debug::SwLog(TypeSpec_PureVirtualFunction, "SetRefs", 0);
 }
 
 //------------------------------------------------------------------------------
@@ -3256,6 +3140,22 @@ void TypeSpec::SetUserType(Cxx::ItemType user)
 
 //------------------------------------------------------------------------------
 
+const TypeTags* TypeSpec::Tags() const
+{
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "Tags", 0);
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+TypeTags* TypeSpec::Tags()
+{
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "Tags", 1);
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
 string TypeSpec::TypeTagsString(const TypeTags& tags) const
 {
    Debug::SwLog(TypeSpec_PureVirtualFunction, "TypeTagsString", 0);
@@ -3264,23 +3164,208 @@ string TypeSpec::TypeTagsString(const TypeTags& tags) const
 
 //==============================================================================
 
+fn_name TypeTags_ctor1 = "TypeTags.ctor";
+
 TypeTags::TypeTags() :
+   ptrDet_(false),
+   refDet_(false),
    const_(false),
-   constptr_(false),
+   array_(false),
    arrays_(0),
    ptrs_(0),
    refs_(0)
 {
+   Debug::ft(TypeTags_ctor1);
+
+   for(auto i = 0; i < Cxx::MAX_PTRS; ++i) constptr_[i] = false;
 }
 
 //------------------------------------------------------------------------------
 
+fn_name TypeTags_ctor2 = "TypeTags.ctor(TypeSpec)";
+
 TypeTags::TypeTags(const TypeSpec& spec) :
+   ptrDet_(false),
+   refDet_(false),
    const_(spec.IsConst()),
-   constptr_(spec.IsConstPtr()),
+   array_(spec.Tags()->IsUnboundedArray()),
    arrays_(spec.Arrays()),
-   ptrs_(spec.Ptrs(true) - arrays_),
+   ptrs_(spec.Ptrs(false)),
    refs_(spec.Refs())
 {
+   Debug::ft(TypeTags_ctor2);
+
+   for(auto i = 0; i < Cxx::MAX_PTRS; ++i)
+   {
+      if(i < ptrs_)
+         constptr_[i] = spec.IsConstPtr(i);
+      else
+         constptr_[i] = false;
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TypeTags_AlignTemplateTag = "TypeTags.AlignTemplateTag";
+
+bool TypeTags::AlignTemplateTag(TypeTags& that) const
+{
+   Debug::ft(TypeTags_AlignTemplateTag);
+
+   if(that.ptrs_ < this->ptrs_) return false;
+   if(that.arrays_ < this->arrays_) return false;
+   that.ptrs_ -= this->ptrs_;
+   that.arrays_ -= this->arrays_;
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TypeTags_ArrayCount = "TypeTags.ArrayCount";
+
+TagCount TypeTags::ArrayCount() const
+{
+   Debug::ft(TypeTags_ArrayCount);
+
+   auto count = arrays_;
+   if(array_) ++count;
+   return count;
+}
+
+//------------------------------------------------------------------------------
+
+int TypeTags::IsConstPtr() const
+{
+   if(ptrs_ <= 0) return 0;
+   return (constptr_[ptrs_ - 1] ? 1 : -1);
+}
+
+//------------------------------------------------------------------------------
+
+bool TypeTags::IsConstPtr(size_t n) const
+{
+   return ((n >= 0) && (n < ptrs_) ? constptr_[n] : false);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TypeTags_MatchTemplateTags = "TypeTags.MatchTemplateTags";
+
+TypeMatch TypeTags::MatchTemplateTags(const TypeTags& that) const
+{
+   Debug::ft(TypeTags_MatchTemplateTags);
+
+   if(this->ptrs_ > that.ptrs_) return Incompatible;
+   if(this->arrays_ > that.arrays_) return Incompatible;
+   if(this->ptrs_ < that.ptrs_) return Convertible;
+   if(this->arrays_ < that.arrays_) return Convertible;
+   return Compatible;
+}
+
+//------------------------------------------------------------------------------
+
+void TypeTags::Print(ostream& stream) const
+{
+   //  This is used to display code, so arrays_ is ignored because
+   //  array specifications will follow the name of the data item.
+   //
+   if(array_) stream << ARRAY_STR;
+
+   for(auto i = 0; i < ptrs_; ++i)
+   {
+      stream << '*';
+      if(constptr_[i]) stream << " const";
+   }
+
+   if(refs_ > 0) stream << string(refs_, '&');
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TypeTags_PtrCount = "TypeTags.PtrCount";
+
+TagCount TypeTags::PtrCount(bool arrays) const
+{
+   Debug::ft(TypeTags_PtrCount);
+
+   if(!arrays) return ptrs_;
+   auto count = ptrs_ + arrays_;
+   if(array_) ++count;
+   return count;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TypeTags_SetConstPtr = "TypeTags.SetConstPtr";
+
+void TypeTags::SetConstPtr() const
+{
+   Debug::ft(TypeTags_SetConstPtr);
+
+   if(ptrs_ > 0)
+      constptr_[ptrs_ - 1] = true;
+   else
+      Context::SwLog(TypeTags_SetConstPtr, "No pointer tags", 0);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TypeTags_SetPointer = "TypeTags.SetPointer";
+
+bool TypeTags::SetPointer(size_t n, bool readonly)
+{
+   Debug::ft(TypeTags_SetPointer);
+
+   if((n >= 0) && (n < Cxx::MAX_PTRS))
+   {
+      if(n >= ptrs_) ptrs_ = n + 1;
+      constptr_[n] = readonly;
+      return true;
+   }
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TypeTags_SetPtrs = "TypeTags.SetPtrs";
+
+void TypeTags::SetPtrs(TagCount count)
+{
+   Debug::ft(TypeTags_SetPtrs);
+
+   ptrs_ = count;
+}
+
+//------------------------------------------------------------------------------
+
+void TypeTags::TypeString(std::string& name, bool arg) const
+{
+   if(const_) name = "const " + name;
+
+   for(auto i = 0; i < ptrs_; ++i)
+   {
+      name.push_back('*');
+      if(constptr_[i]) name += " const";
+   }
+
+   if(arg)
+   {
+      //  For an auto type, ptrs_ can be negative:
+      //     auto& entry = table[index];
+      //  ENTRY initially has ptrs_ = 0.  StackArg.WasIndexed, invoked on TABLE,
+      //  decrements its ptrs_ from 0 to -1.  The result is ENTRY's referent, so
+      //  ENTRY has ptrs_ = -1 and arrays_ = 1 (from TABLE's DataSpec).  These
+      //  must cancel each other out so that ENTRY doesn't masquerade as either
+      //  an array or a pointer.
+      //
+      auto count = (ptrs_ < 0 ? ptrs_ + arrays_ : arrays_);
+      if(count > 0) name += string(count, '*');
+   }
+   else
+   {
+      for(auto i = 0 ; i < arrays_; ++i) name += ARRAY_STR;
+   }
+
+   if(!arg && (refs_ > 0)) name += string(refs_, '&');
 }
 }

@@ -295,7 +295,7 @@ word ContextsCommand::ProcessCommand(CliThread& cli) const
 
    auto pool = Singleton< ContextPool >::Instance();
    auto num = pool->InUseCount();
-   auto opts = Flags();
+   Flags opts;
    if(v) opts.set(DispVerbose);
 
    if(c)
@@ -810,11 +810,11 @@ word MessagesCommand::ProcessCommand(CliThread& cli) const
       return num;
    }
 
-   ObjectPool::Bid i;
+   PooledObjectId id;
    auto time = 200;
    auto count = 0;
 
-   for(auto obj = pool->FirstUsed(i); obj != nullptr; obj = pool->NextUsed(i))
+   for(auto obj = pool->FirstUsed(id); obj != nullptr; obj = pool->NextUsed(id))
    {
       auto msg = static_cast< Message* >(obj);
       auto show = allProtocols || (msg->GetProtocol() == pid);
@@ -897,11 +897,11 @@ word MsgPortsCommand::ProcessCommand(CliThread& cli) const
       return num;
    }
 
-   ObjectPool::Bid i;
+   PooledObjectId id;
    auto count = 0;
    auto time = 200;
 
-   for(auto obj = pool->FirstUsed(i); obj != nullptr; obj = pool->NextUsed(i))
+   for(auto obj = pool->FirstUsed(id); obj != nullptr; obj = pool->NextUsed(id))
    {
       auto port = static_cast< MsgPort* >(obj);
 
@@ -1109,11 +1109,11 @@ word PsmsCommand::ProcessCommand(CliThread& cli) const
       return num;
    }
 
-   ObjectPool::Bid i;
+   PooledObjectId id;
    auto count = 0;
    auto time = 200;
 
-   for(auto obj = pool->FirstUsed(i); obj != nullptr; obj = pool->NextUsed(i))
+   for(auto obj = pool->FirstUsed(id); obj != nullptr; obj = pool->NextUsed(id))
    {
       auto psm = static_cast< ProtocolSM* >(obj);
 
@@ -1341,11 +1341,11 @@ word SsmsCommand::ProcessCommand(CliThread& cli) const
       return num;
    }
 
-   ObjectPool::Bid i;
+   PooledObjectId id;
    auto count = 0;
    auto time = 200;
 
-   for(auto obj = pool->FirstUsed(i); obj != nullptr; obj = pool->NextUsed(i))
+   for(auto obj = pool->FirstUsed(id); obj != nullptr; obj = pool->NextUsed(id))
    {
       auto ssm = static_cast< ServiceSM* >(obj);
 
@@ -1554,11 +1554,11 @@ word TimersCommand::ProcessCommand(CliThread& cli) const
 
    Singleton< TimerRegistry >::Instance()->Output(*cli.obuf, 2, false);
 
-   ObjectPool::Bid i;
+   PooledObjectId id;
    auto count = 0;
    auto time = 200;
 
-   for(auto obj = pool->FirstUsed(i); obj != nullptr; obj = pool->NextUsed(i))
+   for(auto obj = pool->FirstUsed(id); obj != nullptr; obj = pool->NextUsed(id))
    {
       auto tmr = static_cast< Timer* >(obj);
 

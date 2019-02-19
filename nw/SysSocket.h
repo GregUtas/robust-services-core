@@ -24,6 +24,7 @@
 
 #include "Dynamic.h"
 #include <cstddef>
+#include <cstdint>
 #include "NbTypes.h"
 #include "NwTypes.h"
 #include "SysDecls.h"
@@ -45,6 +46,17 @@ namespace NetworkBase
 //
 //  NOTE: IPv6 and out-of-band data are not currently supported.
 //
+//  The standard functions for converting to/from network order.
+//
+uint64_t htonll(uint64_t hostllong);
+uint32_t htonl(uint32_t hostlong);
+uint16_t htons(uint16_t hostshort);
+uint64_t ntohll(uint32_t netllong);
+uint32_t ntohl(uint32_t netlong);
+uint16_t ntohs(uint16_t netshort);
+
+//------------------------------------------------------------------------------
+
 class SysSocket : public Dynamic
 {
 public:
@@ -77,14 +89,6 @@ public:
    //
    virtual IpProtocol Protocol() const { return IpAny; }
 
-   //  Invoked by an application when it begins to use the socket.
-   //
-   virtual void Acquire() { }
-
-   //  Invoked by an application when it no longer requires the socket.
-   //
-   virtual void Release() { }
-
    //  Nullifies the socket if it is no longer valid.
    //
    void Invalidate();
@@ -92,11 +96,6 @@ public:
    //  Returns true if the socket is valid.
    //
    bool IsValid() const;
-
-   //  Returns true if the socket is valid and has not initiated a
-   //  disconnect sequence.
-   //
-   bool IsOpen() const;
 
    //  Returns true if no bytes are waiting to be read from the socket.
    //
@@ -107,9 +106,14 @@ public:
    //
    bool SetBlocking(bool blocking);
 
-   //  Sets the size of the socket's receive and transmit buffers.
+   //  Configures the socket for use by SERVICE.  SHARED is set if the
+   //  socket is shared by all instances of SERVICE rather than being
+   //  dedicated to a single instance.  The default version sets the
+   //  size of the socket's receive and transmit buffers based on
+   //  o RxSize and TxSize if SHARED is set, and
+   //  o GetAppSocketSizes if SHARED is not set.
    //
-   AllocRc SetBuffSizes(size_t rxSize, size_t txSize);
+   virtual AllocRc SetService(const IpService* service, bool shared);
 
    //  Sends BUFF from the socket.
    //
@@ -158,14 +162,12 @@ public:
    //
    virtual void Patch(sel_t selector, void* arguments) override;
 protected:
-   //  Allocates a socket that will send and receive on PORT, using PROTO.
-   //  If PORT is NilIpPort, the socket is created but is not bound to a
-   //  port.  rxSize and txSize specify the size of the receive and send
-   //  buffers.  RC is updated to indicate success or failure.  Protected
+   //  Allocates a socket that will send and receive on PORT, on behalf of
+   //  SERVICE.  If PORT is NilIpPort, the socket is created but is not bound
+   //  to a port.  RC is updated to indicate success or failure.  Protected
    //  because this class is virtual.
    //
-   SysSocket(ipport_t port, IpProtocol proto,
-      size_t rxSize, size_t txSize, AllocRc& rc);
+   SysSocket(ipport_t port, const IpService* service, AllocRc& rc);
 
    //  Invoked by SysTcpSocket::Accept to wrap a socket that was created
    //  for a new connection.
@@ -180,16 +182,6 @@ protected:
    //  Returns the native socket.
    //
    SysSocket_t Socket() const { return socket_; }
-
-   //  Initiates a disconnect and disables further sends on the socket.
-   //  Protected so that subclasses can decide how to expose this function.
-   //
-   void Disconnect();
-
-   //  Closes the socket.  Protected so that subclasses can decide how to
-   //  expose this function.
-   //
-   void Close();
 
    //  Sets the error code for the socket so that it can be obtained for
    //  logging purposes.  If the value is not provided explicitly, it is
@@ -224,10 +216,6 @@ private:
    //  avoid unnecessary work.
    //
    bool blocking_;
-
-   //  Set if the socket has initiated a disconnect.
-   //
-   bool disconnecting_;
 
    //  Set if this socket is being traced.
    //

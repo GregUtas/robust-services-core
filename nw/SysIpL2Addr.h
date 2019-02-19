@@ -37,7 +37,7 @@ namespace NetworkBase
 class SysIpL2Addr : public Object
 {
 public:
-   //  Constructs a nil address (all ones).
+   //  Constructs a nil address (255.255.255.255).
    //
    SysIpL2Addr();
 

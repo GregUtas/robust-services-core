@@ -179,12 +179,12 @@ private:
    //  The maximum number of calls to generate during each tick.  It
    //  is set to twice the target rate.
    //
-   word maxCallsPerTick_;
+   size_t maxCallsPerTick_;
 
    //  The fractional number of calls (in thousandths) to generate
    //  during each tick.
    //
-   word milCallsPerTick_;
+   size_t milCallsPerTick_;
 
    //  The first DN created for running traffic.
    //

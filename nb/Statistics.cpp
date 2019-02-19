@@ -44,7 +44,7 @@ const char Statistic::NotUpdated = '*';
 
 fn_name Statistic_ctor = "Statistic.ctor";
 
-Statistic::Statistic(const string& expl, uint32_t divisor) :
+Statistic::Statistic(const string& expl, size_t divisor) :
    curr_(0),
    prev_(0),
    total_(0),
@@ -135,7 +135,7 @@ void Statistic::StartInterval(bool first)
    Debug::ft(Statistic_StartInterval);
 
    if(first)
-      total_ = curr_;
+      total_ = curr_.load();
    else
       total_ += curr_;
 
@@ -147,7 +147,7 @@ void Statistic::StartInterval(bool first)
 
 fn_name Counter_ctor = "Counter.ctor";
 
-Counter::Counter(const string& expl, uint32_t divisor) :
+Counter::Counter(const string& expl, size_t divisor) :
    Statistic(expl, divisor)
 {
    Debug::ft(Counter_ctor);
@@ -187,7 +187,7 @@ void Counter::Patch(sel_t selector, void* arguments)
 
 fn_name Accumulator_ctor = "Accumulator.ctor";
 
-Accumulator::Accumulator(const string& expl, uint32_t divisor) :
+Accumulator::Accumulator(const string& expl, size_t divisor) :
    Counter(expl, divisor)
 {
    Debug::ft(Accumulator_ctor);
@@ -206,7 +206,7 @@ Accumulator::~Accumulator()
 
 fn_name HighWatermark_ctor = "HighWatermark.ctor";
 
-HighWatermark::HighWatermark(const string& expl, uint32_t divisor) :
+HighWatermark::HighWatermark(const string& expl, size_t divisor) :
    Statistic(expl, divisor)
 {
    Debug::ft(HighWatermark_ctor);
@@ -269,10 +269,10 @@ void HighWatermark::StartInterval(bool first)
 {
    Debug::ft(HighWatermark_StartInterval);
 
-   if(first)
-      total_ = curr_;
-   else if(curr_ > total_)
-      total_ = curr_;
+   if(first || (curr_ > total_))
+   {
+      total_ = curr_.load();
+   }
 
    prev_.store(curr_);
    curr_ = Initial;
@@ -282,7 +282,7 @@ void HighWatermark::StartInterval(bool first)
 
 fn_name LowWatermark_ctor = "LowWatermark.ctor";
 
-LowWatermark::LowWatermark(const string& expl, uint32_t divisor) :
+LowWatermark::LowWatermark(const string& expl, size_t divisor) :
    Statistic(expl, divisor)
 {
    Debug::ft(LowWatermark_ctor);
@@ -345,10 +345,10 @@ void LowWatermark::StartInterval(bool first)
 {
    Debug::ft(LowWatermark_StartInterval);
 
-   if(first)
-      total_ = curr_;
-   else if(curr_ < total_)
-      total_ = curr_;
+   if(first || (curr_ < total_))
+   {
+      total_ = curr_.load();
+   }
 
    prev_.store(curr_);
    curr_ = Initial;

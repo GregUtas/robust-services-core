@@ -23,7 +23,7 @@
 #define CLICOMMAND_H_INCLUDED
 
 #include "CliText.h"
-#include <cstddef>
+#include <cstdint>
 #include <iosfwd>
 #include <string>
 #include "SysTypes.h"
@@ -97,7 +97,7 @@ protected:
    //  of parameters that follow the command) are passed to CliText.
    //  Protected because this is class is virtual.
    //
-   CliCommand(const char* comm, const char* help, size_t size = 32);
+   CliCommand(const char* comm, const char* help, uint32_t size = 32);
 
    //  This version of ProcessCommand allows a command to appear in more
    //  than one module.  The command's first parameter is a CliTextParm

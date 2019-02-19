@@ -78,7 +78,7 @@ public:
    //  Originates a call, returning how long to wait until the next
    //  message will be sent.  Returns 0 if the call is over.
    //
-   msecs_t Originate();
+   msecs_t Originate() const;
 
    //  Selects the next action for a call in progress, returning how
    //  long to wait until the next message will be sent.  Returns 0
@@ -282,7 +282,7 @@ TrafficCallPool::~TrafficCallPool()
 //==============================================================================
 
 const msecs_t TrafficCall::DelayMsecs_[] = {2000, 3500, 5000, 7500};
-int TrafficCall::StateCount_[] = { };
+int TrafficCall::StateCount_[] = { 0 };
 size_t TrafficCall::CallId_ = 1;
 
 //------------------------------------------------------------------------------
@@ -519,7 +519,7 @@ void* TrafficCall::operator new(size_t size)
 
 fn_name TrafficCall_Originate = "TrafficCall.Originate";
 
-msecs_t TrafficCall::Originate()
+msecs_t TrafficCall::Originate() const
 {
    Debug::ft(TrafficCall_Originate);
 
@@ -613,7 +613,7 @@ msecs_t TrafficCall::ProcessDialing()
 
    auto msg = orig_->CreateMsg(PotsSignal::Digits);
    if(msg == nullptr) return 1000;
-   auto ds = DigitString(dest_ % 100);
+   DigitString ds(dest_ % 100);
 
    msg->AddDigits(ds);
    if(!orig_->SendMsg(*msg)) return 0;
@@ -730,7 +730,7 @@ msecs_t TrafficCall::ProcessOriginating()
 
       if(rnd <= 9)
       {
-         DigitString ds = DigitString("2000#");
+         DigitString ds("2000#");
          msg->AddDigits(ds);
          if(!orig_->SendMsg(*msg)) return 0;
          SetState(SingleEnded);
@@ -748,14 +748,14 @@ msecs_t TrafficCall::ProcessOriginating()
 
       if(rnd <= 88)
       {
-         auto ds = DigitString(dest_);
+         DigitString ds(dest_);
          msg->AddDigits(ds);
          if(!orig_->SendMsg(*msg)) return 0;
          SetState(Terminating);
          return 2000;
       }
 
-      auto ds = DigitString(dest_ / 100);
+      DigitString ds(dest_ / 100);
       msg->AddDigits(ds);
       if(!orig_->SendMsg(*msg)) return 0;
       SetState(Dialing);
@@ -1403,7 +1403,7 @@ void PotsTrafficThread::SendMessages()
       auto n = rand(0, maxCallsPerTick_);
       if(rand(0, 999) < milCallsPerTick_) ++n;
 
-      for(auto i = 0; i < n; ++i)
+      for(size_t i = 0; i < n; ++i)
       {
          auto dn = FindDn(Idle);
 
@@ -1488,8 +1488,8 @@ void PotsTrafficThread::SetRate(word rate)
 
    if(callsPerMin_ > 0)
    {
-      auto ticksPerMin = 60000 / MsecsPerTick;
-      auto CallsPerTick1000 = (1000 * rate) / ticksPerMin;
+      size_t ticksPerMin = 60000 / MsecsPerTick;
+      size_t CallsPerTick1000 = (1000 * rate) / ticksPerMin;
 
       milCallsPerTick_ = CallsPerTick1000 % 1000;
       maxCallsPerTick_ = (CallsPerTick1000 / 1000) << 1;

@@ -21,9 +21,9 @@
 //
 #include "UdpIpPort.h"
 #include "Debug.h"
-#include "IpService.h"
 #include "SysTypes.h"
 #include "UdpIoThread.h"
+#include "UdpIpService.h"
 
 //------------------------------------------------------------------------------
 
@@ -31,7 +31,8 @@ namespace NetworkBase
 {
 fn_name UdpIpPort_ctor = "UdpIpPort.ctor";
 
-UdpIpPort::UdpIpPort(ipport_t port, IpService* service) : IpPort(port, service)
+UdpIpPort::UdpIpPort(ipport_t port, const IpService* service) :
+   IpPort(port, service)
 {
    Debug::ft(UdpIpPort_ctor);
 }
@@ -53,10 +54,8 @@ IoThread* UdpIpPort::CreateIoThread()
 {
    Debug::ft(UdpIpPort_CreateIoThread);
 
-   auto svc = GetService();
-
-   return new UdpIoThread
-      (svc->GetFaction(), GetPort(), svc->RxSize(), svc->TxSize());
+   auto svc = static_cast< const UdpIpService* >(GetService());
+   return new UdpIoThread(svc, GetPort());
 }
 
 //------------------------------------------------------------------------------

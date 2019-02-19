@@ -26,6 +26,7 @@
 #include <string>
 #include "Clock.h"
 #include "Debug.h"
+#include "FileThread.h"
 #include "FunctionGuard.h"
 #include "Restart.h"
 #include "Singleton.h"
@@ -120,6 +121,10 @@ void CoutThread::Spool(ostringstreamPtr& stream)
       stream.reset();
       return;
    }
+
+   //  Copy the output to the console transcript file.
+   //
+   FileThread::Record(stream->str());
 
    //  Forward the stream to our thread.  This must be done unpreemptably
    //  because both this function (which runs on the client thread) and

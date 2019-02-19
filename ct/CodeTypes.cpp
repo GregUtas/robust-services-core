@@ -39,7 +39,7 @@ const string ValidIntChars("0123456789.XxUuLlEe");
 const string ValidIntDigits("0123456789");
 const string ValidHexDigits("0123456789abcdefABCDEF");
 const string ValidOctDigits("01234567");
-const string WhitespaceChars(" \t\n\v\f\r");
+const string WhitespaceChars(" \n\t\v\f\r");
 const string SingleRule(COMMENT_STR + string(78, '-'));
 const string DoubleRule(COMMENT_STR + string(78, '='));
 
@@ -126,10 +126,11 @@ fixed_string HASH_UNDEF_STR   = "#undef";
 
 fixed_string ARRAY_STR         = "[]";
 fixed_string COMMENT_END_STR   = "*/";
-fixed_string COMMENT_START_STR = "/*";
+fixed_string COMMENT_BEGIN_STR = "/*";
 fixed_string COMMENT_STR       = "//";
 fixed_string ELLIPSES_STR      = "...";
 fixed_string LOCALS_STR        = "$locals";  // name for code blocks
+fixed_string NULL_STR          = "NULL";
 
 //------------------------------------------------------------------------------
 
@@ -143,8 +144,6 @@ const Flags NoAC_Mask = Flags(1 << DispNoAC);
 const Flags NoTP_Mask = Flags(1 << DispNoTP);
 const Flags Stats_Mask = Flags(1 << DispStats);
 
-const uint8_t Indent_Size = 3;
-
 //------------------------------------------------------------------------------
 
 fixed_string LineTypeStrings[LineType_N + 1] =
@@ -152,11 +151,11 @@ fixed_string LineTypeStrings[LineType_N + 1] =
    "source code",
    "blank",
    COMMENT_STR,
-   "license //",
+   "file //",
    "separator //",
    "tagged //",
    "text //",
-   COMMENT_START_STR,
+   COMMENT_BEGIN_STR,
    "{",
    "}",
    "};",
@@ -181,10 +180,49 @@ ostream& operator<<(ostream& stream, LineType type)
 
 //------------------------------------------------------------------------------
 
+LineTypeAttr::LineTypeAttr(bool code, bool exe, bool merge, bool blank) :
+   isCode(code),
+   isExecutable(exe),
+   isMergeable(merge),
+   isBlank(blank)
+{
+}
+
+//------------------------------------------------------------------------------
+
+const bool F = false;
+const bool T = true;
+
+const LineTypeAttr LineTypeAttr::Attrs[LineType_N + 1] =
+{
+   //           c  x  m  b
+   LineTypeAttr(T, T, T, F),  // Code
+   LineTypeAttr(F, F, F, T),  // Blank
+   LineTypeAttr(F, F, F, T),  // EmptyComment
+   LineTypeAttr(F, F, F, F),  // FileComment
+   LineTypeAttr(F, F, F, F),  // SeparatorComment
+   LineTypeAttr(F, F, F, F),  // TaggedComment
+   LineTypeAttr(F, F, F, F),  // TextComment
+   LineTypeAttr(F, F, F, F),  // SlashAsteriskComment
+   LineTypeAttr(T, F, F, F),  // OpenBrace
+   LineTypeAttr(T, F, F, F),  // CloseBrace
+   LineTypeAttr(T, F, F, F),  // CloseBraceSemicolon
+   LineTypeAttr(T, T, T, F),  // DebugFt
+   LineTypeAttr(T, T, T, F),  // FunctionName
+   LineTypeAttr(T, T, T, F),  // FunctionNameSplit
+   LineTypeAttr(T, T, F, F),  // IncludeDirective
+   LineTypeAttr(T, T, F, F),  // HashDirective
+   LineTypeAttr(T, T, F, F),  // UsingDirective
+   LineTypeAttr(F, F, F, F),  // AnyLne
+   LineTypeAttr(F, F, F, F)   // LineType_N
+};
+
+//------------------------------------------------------------------------------
+
 fixed_string WarningStrings[Warning_N + 1] =
 {
    "C-style comment",
-   "NULL",
+   "Use of NULL",
    "Pointer tag ('*') detached from type",
    "Reference tag ('&') detached from type",
    "C-style cast",
@@ -214,11 +252,9 @@ fixed_string WarningStrings[Warning_N + 1] =
    "Unused data",
    "Unused enum",
    "Unused enumerator",
-   "Unused forward declaration",
    "Unused friend declaration",
    "Unused function",
    "Unused typedef",
-   "Unused using statement",
    "No referent for forward declaration",
    "No referent for friend declaration",
    "Indirect reference relies on friend, not forward, declaration",
@@ -281,7 +317,7 @@ fixed_string WarningStrings[Warning_N + 1] =
    "Static function invoked via operator \".\" or \"->\"",
    "Non-boolean in conditional expression",
    "Arguments to binary operator have different enum types",
-   "Tab character",
+   "Tab character in source code",
    "Line indentation is not a multiple of the standard value",
    "Line contains trailing space",
    "Line contains adjacent spaces",
@@ -297,6 +333,8 @@ fixed_string WarningStrings[Warning_N + 1] =
    "Function name passed to Debug::ft is already used by another function",
    "Override of Base.Display not found",
    "Override of Object.Patch not found",
+   "Function could be defaulted",
+   "Initialization uses assignment operator",
    ERROR_STR
 };
 
@@ -311,11 +349,9 @@ bool IsUnusedItemWarning(Warning warning)
    case DataUnused:
    case EnumUnused:
    case EnumeratorUnused:
-   case ForwardUnused:
    case FriendUnused:
    case FunctionUnused:
    case TypedefUnused:
-   case UsingUnused:
       return true;
    }
 

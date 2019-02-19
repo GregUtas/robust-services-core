@@ -47,9 +47,13 @@ namespace NodeBase
    //
    extern fixed_string ObjSeparatorStr;
 
-   //  Returns a string of COUNT spaces.
+   //  Returns a string of COUNT spaces.  If COUNT is COUT_LENGTH_MAX or more,
+   //  an empty string is returned under the assumption that COUNT was actually
+   //  negative.  The following can therefore be done with impunity:
+   //    stream << str << spaces(ColumnWidth - str.size());
+   //  If STR is longer than ColumnWidth, nothing gets appended.
    //
-   std::string spaces(int count);
+   std::string spaces(size_t count);
 
    //  Converts N to a string.
    //
@@ -73,7 +77,7 @@ namespace NodeBase
    //  Returns the string "[N]", followed by a ": " if COLON is set.  If WIDTH
    //  is non-zero, it specifies the width of N, which is padded with blanks.
    //
-   std::string strIndex(int n, int width = 0, bool colon = true);
+   std::string strIndex(size_t n, int width = 0, bool colon = true);
 
    //  Returns a string containing either NAME (if not nullptr), else VALUE.
    //
@@ -93,7 +97,7 @@ namespace NodeBase
    //  positions.  If S contains more than (BREADTH - BLANKS) characters,
    //  it is truncated.
    //
-   std::string strCenter(const std::string& s, int breadth, int blanks);
+   std::string strCenter(const std::string& s, size_t breadth, size_t blanks);
 
    //  Displays BYTES, which total COUNT, in STREAM, after PREFIX.  The bytes
    //  are separated by spaces, and their ASCII equivalents are shown to the

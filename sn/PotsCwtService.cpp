@@ -164,7 +164,7 @@ class PotsCwtAcAnalyzeUserMessage : public PotsCwtEventHandler
 {
    friend class Singleton< PotsCwtAcAnalyzeUserMessage >;
 private:
-   PotsCwtAcAnalyzeUserMessage() { }
+   PotsCwtAcAnalyzeUserMessage() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -173,7 +173,7 @@ class PotsCwtAcRelease : public PotsCwtEventHandler
 {
    friend class Singleton< PotsCwtAcRelease >;
 private:
-   PotsCwtAcRelease() { }
+   PotsCwtAcRelease() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -182,7 +182,7 @@ class PotsCwtPeAnalyzeUserMessage : public PotsCwtEventHandler
 {
    friend class Singleton< PotsCwtPeAnalyzeUserMessage >;
 private:
-   PotsCwtPeAnalyzeUserMessage() { }
+   PotsCwtPeAnalyzeUserMessage() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -191,7 +191,7 @@ class PotsCwtPeAck : public PotsCwtEventHandler
 {
    friend class Singleton< PotsCwtPeAck >;
 private:
-   PotsCwtPeAck() { }
+   PotsCwtPeAck() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -200,7 +200,7 @@ class PotsCwtPeRelease : public PotsCwtEventHandler
 {
    friend class Singleton< PotsCwtPeRelease >;
 private:
-   PotsCwtPeRelease() { }
+   PotsCwtPeRelease() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -209,7 +209,7 @@ class PotsCwtPrPresentCall : public PotsCwtEventHandler
 {
    friend class Singleton< PotsCwtPrPresentCall >;
 private:
-   PotsCwtPrPresentCall() { }
+   PotsCwtPrPresentCall() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -843,8 +843,8 @@ EventHandler::Rc PotsCwbSsm::ProcessInitAck
    //
    auto msg = upsm->AccessOgMsg();
    auto host = IpPortRegistry::HostAddress();
-   auto locAddr = GlobalAddress(host, NilIpPort, PotsCallFactoryId);
-   auto remAddr = GlobalAddress(host, NilIpPort, PotsMuxFactoryId);
+   GlobalAddress locAddr(host, NilIpPort, PotsCallFactoryId);
+   GlobalAddress remAddr(host, NilIpPort, PotsMuxFactoryId);
 
    msg->SetSender(locAddr);
    msg->SetReceiver(remAddr);

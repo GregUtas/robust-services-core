@@ -33,6 +33,12 @@ namespace NetworkBase
 class TcpIpService : public IpService
 {
 public:
+   //  Returns true if the service implements a server capability.
+   //  Overridden to return false if the service does not accept
+   //  incoming connections.
+   //
+   virtual bool AcceptsConns() const { return true; }
+
    //  Returns the maximum number of simultaneous connections for
    //  the service's I/O thread.
    //
@@ -43,9 +49,19 @@ public:
    //
    virtual size_t MaxBacklog() const = 0;
 
+   //  Returns true if keepalive messages should be used.
+   //
+   virtual bool Keepalive() const { return false; }
+
    //  Overridden to indicate that this service runs over TCP.
    //
    virtual IpProtocol Protocol() const override { return IpTcp; }
+
+   //  Overridden to indicate that applications do not use the I/O
+   //  thread's primary socket (the listener socket, if it exists)
+   //  when sending messages.
+   //
+   virtual bool HasSharedSocket() const override { return false; }
 
    //  Overridden to display member variables.
    //

@@ -182,7 +182,7 @@ EventHandler::Rc PotsHtlSsm::ProcessInitAck
       if(htlp == nullptr) Context::Kill(PotsHtlSsm_ProcessInitAck, stid, 1);
 
       auto dn = htlp->GetDN();
-      auto ds = DigitString(dn);
+      DigitString ds(dn);
       auto dsrc = pssm.DialedDigits().AddDigits(ds);
 
       if((dsrc == DigitString::IllegalDigit) ||

@@ -24,12 +24,14 @@
 #include <string>
 #include "Debug.h"
 #include "Formatters.h"
+#include "InputHandler.h"
 #include "IpBuffer.h"
 #include "IpPort.h"
 #include "IpPortRegistry.h"
 #include "NwTrace.h"
 #include "Singleton.h"
 #include "SysIpL3Addr.h"
+#include "TcpIpService.h"
 
 using std::ostream;
 using std::string;
@@ -40,11 +42,13 @@ namespace NetworkBase
 {
 fn_name SysTcpSocket_ctor1 = "SysTcpSocket.ctor";
 
-SysTcpSocket::SysTcpSocket(ipport_t port, size_t rxSize, size_t txSize,
-   AllocRc& rc) : SysSocket(port, IpTcp, rxSize, txSize, rc),
+SysTcpSocket::SysTcpSocket(ipport_t port,
+   const TcpIpService* service, AllocRc& rc) : SysSocket(port, service, rc),
    state_(Idle),
+   disconnecting_(false),
    iotActive_(false),
-   appActive_(false)
+   appState_(Initial),
+   icMsg_(nullptr)
 {
    Debug::ft(SysTcpSocket_ctor1);
 
@@ -61,8 +65,10 @@ fn_name SysTcpSocket_ctor2 = "SysTcpSocket.ctor(wrap)";
 
 SysTcpSocket::SysTcpSocket(SysSocket_t socket) : SysSocket(socket),
    state_(Connected),
+   disconnecting_(false),
    iotActive_(false),
-   appActive_(false)
+   appState_(Initial),
+   icMsg_(nullptr)
 {
    Debug::ft(SysTcpSocket_ctor2);
 
@@ -79,14 +85,24 @@ SysTcpSocket::~SysTcpSocket()
 {
    Debug::ft(SysTcpSocket_dtor);
 
-   //  Both the application and I/O thread should have released the socket.
+   //  Neither the application nor the I/O thread should be using the socket.
+   //  If the socket has just received a message, the socket should not be
+   //  deleted until the application has had a chance to process it.
    //
-   if(appActive_ || iotActive_)
+   if(iotActive_ || (appState_ == Acquired ) ||
+      ((appState_ == Initial) && (state_ != Idle)))
    {
-      Debug::SwLog(SysTcpSocket_dtor, appActive_, iotActive_);
+      Debug::SwLog(SysTcpSocket_dtor, appState_, iotActive_);
+   }
+
+   if(icMsg_ != nullptr)
+   {
+      delete icMsg_;
+      icMsg_ = nullptr;
    }
 
    ogMsgq_.Purge();
+   Close();
 }
 
 //------------------------------------------------------------------------------
@@ -98,7 +114,20 @@ void SysTcpSocket::Acquire()
    Debug::ft(SysTcpSocket_Acquire);
 
    TraceEvent(NwTrace::Acquire, state_);
-   appActive_ = true;
+   appState_ = Acquired;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SysTcpSocket_AcquireIcMsg = "SysTcpSocket.AcquireIcMsg";
+
+IpBuffer* SysTcpSocket::AcquireIcMsg()
+{
+   Debug::ft(SysTcpSocket_AcquireIcMsg);
+
+   auto buff = icMsg_;
+   icMsg_ = nullptr;
+   return buff;
 }
 
 //------------------------------------------------------------------------------
@@ -113,24 +142,33 @@ void SysTcpSocket::ClaimBlocks()
    {
       buff->Claim();
    }
+
+   if(icMsg_ != nullptr) icMsg_->Claim();
 }
 
 //------------------------------------------------------------------------------
 
 fn_name SysTcpSocket_Deregister = "SysTcpSocket.Deregister";
 
-void SysTcpSocket::Deregister()
+bool SysTcpSocket::Deregister()
 {
    Debug::ft(SysTcpSocket_Deregister);
 
-   //  If the application has not relinquished the socket, close it
-   //  without deleting its wrapper object.  It will be deleted when
-   //  the application invokes Release().
+   //  If the application has not released the socket, close it without
+   //  deleting its wrapper object.  It will be deleted when the
+   //  application invokes Release().
    //
    TraceEvent(NwTrace::Deregister, state_);
    iotActive_ = false;
-   if(!appActive_) delete this;
+
+   if((appState_ == Released) || ((appState_ == Initial) && (state_ == Idle)))
+   {
+      delete this;
+      return true;
+   }
+
    Disconnect();
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -174,13 +212,26 @@ void SysTcpSocket::Display(ostream& stream,
 {
    SysSocket::Display(stream, prefix, options);
 
-   stream << prefix << "state     : " << state_ << CRLF;
-   stream << prefix << "iotActive : " << iotActive_ << CRLF;
-   stream << prefix << "appActive : " << appActive_ << CRLF;
-   stream << prefix << "inFlags   : " << inFlags_.to_string() << CRLF;
-   stream << prefix << "outFlags  : " << outFlags_.to_string() << CRLF;
-   stream << prefix << "ogMsgq    : " << CRLF;
+   stream << prefix << "state         : " << state_ << CRLF;
+   stream << prefix << "disconnecting : " << disconnecting_ << CRLF;
+   stream << prefix << "iotActive     : " << iotActive_ << CRLF;
+   stream << prefix << "appState      : " << int(appState_) << CRLF;
+   stream << prefix << "inFlags       : " << inFlags_.to_string() << CRLF;
+   stream << prefix << "outFlags      : " << outFlags_.to_string() << CRLF;
+   stream << prefix << "icMsg         : " << icMsg_ << CRLF;
+   stream << prefix << "ogMsgq        : " << CRLF;
    ogMsgq_.Display(stream, prefix + spaces(2), options);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SysTcpSocket_IsOpen = "SysTcpSocket.IsOpen";
+
+bool SysTcpSocket::IsOpen() const
+{
+   Debug::ft(SysTcpSocket_IsOpen);
+
+   return (!disconnecting_ && IsValid());
 }
 
 //------------------------------------------------------------------------------
@@ -193,7 +244,7 @@ void SysTcpSocket::Purge()
 
    TraceEvent(NwTrace::Purge, state_);
    iotActive_ = false;
-   appActive_ = false;
+   appState_ = Released;
    delete this;
 }
 
@@ -212,7 +263,7 @@ SysSocket::SendRc SysTcpSocket::QueueBuff(IpBuffer* buff, bool henq)
    {
       //  This buffer is being queued for the first time, so make a copy of it.
       //  The sender retains ownership of the original buffer to keep things
-      //  simple.  Ownership need not be transferred; trace tools can still
+      //  simple: ownership need not be transferred; trace tools can still
       //  capture the buffer's contents; and the sender can free the buffer
       //  when it no longer requires access the outgoing message.
       //
@@ -255,9 +306,12 @@ void SysTcpSocket::Release()
    //  occurs, Deregister() will delete the wrapper.
    //
    TraceEvent(NwTrace::Release, state_);
-   appActive_ = false;
-   if(!iotActive_) delete this;
-   Disconnect();
+   appState_ = Released;
+
+   if(!iotActive_)
+      delete this;
+   else
+      Disconnect();
 }
 
 //------------------------------------------------------------------------------
@@ -321,9 +375,11 @@ SysSocket::SendRc SysTcpSocket::SendBuff(IpBuffer& buff)
    //  If no bytes get sent, queue the buffer if the socket was blocked,
    //  else report an error.
    //
-   byte_t* start = nullptr;
-   auto size = buff.OutgoingBytes(start);
-   auto sent = Send(start, size);
+   auto port = Singleton< IpPortRegistry >::Instance()->GetPort(txport);
+   byte_t* src = nullptr;
+   auto size = buff.OutgoingBytes(src);
+   auto dest = port->GetHandler()->HostToNetwork(buff, src, size);
+   auto sent = Send(dest, size);
 
    if(sent <= 0)
    {
@@ -335,9 +391,23 @@ SysSocket::SendRc SysTcpSocket::SendBuff(IpBuffer& buff)
       return SendFailed;
    }
 
-   auto reg = Singleton< IpPortRegistry >::Instance();
-   auto port = reg->GetPort(txport);
    port->BytesSent(size);
    return SendOk;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SysTcpSocket_SetIcMsg = "SysTcpSocket.SetIcMsg";
+
+void SysTcpSocket::SetIcMsg(IpBuffer* buff)
+{
+   Debug::ft(SysTcpSocket_SetIcMsg);
+
+   if((icMsg_ != nullptr) && (icMsg_ != buff))
+   {
+      delete icMsg_;
+   }
+
+   icMsg_ = buff;
 }
 }

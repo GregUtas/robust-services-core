@@ -124,13 +124,13 @@ void Debug::noop()
 
 fn_name Debug_Progress = "Debug.Progress";
 
-void Debug::Progress(const string& s, bool eol, bool force)
+void Debug::Progress(const string& s, bool force)
 {
    Debug::ft(Debug_Progress);
 
    if(force || SwFlagOn(ShowToolProgress))
    {
-      CoutThread::Spool(s.c_str(), eol);
+      CoutThread::Spool(s.c_str());
       ThisThread::Pause(10);
    }
 }
@@ -203,7 +203,7 @@ fn_name Debug_SwLog2 = "Debug.SwLog(string)";
 void Debug::SwLog(fn_name_arg func, const string& errstr,
    debug64_t offset, SwLogLevel level)
 {
-   Debug::ft(Debug_SwLog1);
+   Debug::ft(Debug_SwLog2);
 
    GenerateSwLog(func, errstr, offset, level);
 }

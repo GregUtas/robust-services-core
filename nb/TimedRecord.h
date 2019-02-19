@@ -41,7 +41,7 @@ class TimedRecord : public TraceRecord
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~TimedRecord() { }
+   virtual ~TimedRecord() = default;
 
    //  Returns the tick time at which the event occurred.
    //

@@ -129,7 +129,7 @@ void BraceInit::EnterBlock()
    //  type of structure being initialized, but we'll just return "auto",
    //  which acts as a wildcard when checking LHS and RHS compatibility.
    //
-   auto arg = StackArg(Singleton< CxxRoot >::Instance()->AutoTerm(), 0);
+   StackArg arg(Singleton< CxxRoot >::Instance()->AutoTerm(), 0);
    Context::PushArg(arg);
 }
 
@@ -255,6 +255,16 @@ TypeName* CxxToken::GetTemplateArgs() const
 
    auto name = GetQualName();
    return (name != nullptr ? name->GetTemplateArgs() : nullptr);
+}
+
+//------------------------------------------------------------------------------
+
+bool CxxToken::IsPointer(bool arrays) const
+{
+   auto spec = GetTypeSpec();
+   if(spec == nullptr) return (GetNumeric().Type() == Numeric::PTR);
+   auto ptrs = spec->Ptrs(arrays);
+   return (ptrs > 0);
 }
 
 //------------------------------------------------------------------------------
@@ -782,7 +792,7 @@ string FloatLiteral::TypeString(bool arg) const
 
 //==============================================================================
 
-Numeric IntLiteral::GetNumeric() const
+Numeric IntLiteral::BaseNumeric() const
 {
    if(tags_.unsigned_)
    {
@@ -804,6 +814,44 @@ Numeric IntLiteral::GetNumeric() const
    }
 
    return Numeric::Nil;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name IntLiteral_GetNumeric = "IntLiteral.GetNumeric";
+
+Numeric IntLiteral::GetNumeric() const
+{
+   Debug::ft(IntLiteral_GetNumeric);
+
+   //  Get the default numeric type for this constant and adjust its width
+   //  to what is actually needed to represent the constant.  In this way,
+   //  Numeric::CalcMatchWith can determine that a "0", for example, is
+   //  Convertible (rather than Abridgeable) to a function argument with a
+   //  type of uint8_t, even though the default type for "0" is a full int.
+   //
+   auto numeric = BaseNumeric();
+
+   if(tags_.unsigned_)
+   {
+      if(num_ <= UINT8_MAX)
+         numeric.SetWidth(sizeof(uint8_t) << 3);
+      else if(num_ <= UINT16_MAX)
+         numeric.SetWidth(sizeof(uint16_t) << 3);
+      else if(num_ <= UINT32_MAX)
+         numeric.SetWidth(sizeof(uint32_t) << 3);
+   }
+   else
+   {
+      if((num_ >= INT8_MIN) && (num_ <= INT8_MAX))
+         numeric.SetWidth(sizeof(int8_t) << 3);
+      else if((num_ >= INT16_MIN) && (num_ <= INT16_MAX))
+         numeric.SetWidth(sizeof(int16_t) << 3);
+      else if((num_ >= INT32_MIN) && (num_ <= INT32_MAX))
+         numeric.SetWidth(sizeof(int32_t) << 3);
+   }
+
+   return numeric;
 }
 
 //------------------------------------------------------------------------------
@@ -1023,12 +1071,12 @@ bool Operation::AppendUnary()
 
 fn_name Operation_ArgCapacity = "Operation.ArgCapacity";
 
-int Operation::ArgCapacity() const
+size_t Operation::ArgCapacity() const
 {
    Debug::ft(Operation_ArgCapacity);
 
    auto& attrs = CxxOp::Attrs[op_];
-   if(attrs.arguments == 0) return -1;
+   if(attrs.arguments == 0) return SIZE_MAX;
    auto curr = args_.size();
    if(curr >= attrs.arguments) return 0;
    return attrs.arguments - curr;
@@ -1156,7 +1204,7 @@ bool Operation::ElideForward()
    //
    if(ArgCapacity() != 1) return false;
 
-   auto arg = TokenPtr(new Elision);
+   TokenPtr arg(new Elision);
    args_.push_back(std::move(arg));
    return true;
 }
@@ -1589,7 +1637,7 @@ void Operation::ExecuteCall()
       auto log = (size == 1 ? DefaultConstructor : DefaultCopyConstructor);
       Context::Log(log);
       if(size > 1) args[1].WasRead();
-      Context::PushArg(StackArg(proc.item->GetClass(), 0));
+      Context::PushArg(StackArg(proc.item->GetClass(), 0, true));
       return;
    }
 
@@ -1666,7 +1714,7 @@ void Operation::ExecuteNew() const
    //  The second argument is the type for which to allocate memory.
    //  Look for its operator new.
    //
-   auto spec = StackArg(args_[1].get(), 0);
+   StackArg spec(args_[1].get(), 0);
    auto pod = false;
    auto opNew = FindNewOrDelete(spec, false, pod);
 
@@ -2362,9 +2410,9 @@ void Operation::PushResult(const StackArg& lhs, const StackArg& rhs) const
 
    auto diff = false;
 
-   if(match == Incompatible)
+   if(match <= Convertible)  // allows detection of pointer arithmetic
    {
-      auto err = true;
+      auto err = (match == Incompatible);
 
       switch(lhs.NumericType().Type())
       {
@@ -2620,12 +2668,12 @@ TypeSpecPtr StrLiteral::CreateRef()
 {
    Debug::ft(StrLiteral_CreateRef);
 
-   //  Create Ref_, which represents the type "const char*".
+   //  Create Ref_, which represents the type "const char* const".
    //
-   auto qual = QualNamePtr(new QualName(CHAR_STR));
-   auto ref = TypeSpecPtr(new DataSpec(qual));
-   ref->SetConst(true);
-   ref->SetPtrs(1);
+   QualNamePtr qual(new QualName(CHAR_STR));
+   TypeSpecPtr ref(new DataSpec(qual));
+   ref->Tags()->SetConst(true);
+   ref->Tags()->SetPointer(0, true);
    return ref;
 }
 

@@ -39,7 +39,6 @@ fn_name MscAddress_ctor = "MscAddress.ctor";
 
 MscAddress::MscAddress(const MsgTrace& mt, MscContext* context) :
    locAddr_(mt.LocAddr()),
-   remAddr_(NilLocalAddress),
    context_(context),
    external_(false),
    extFid_(NIL_ID)

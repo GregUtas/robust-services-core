@@ -22,6 +22,9 @@
 #ifndef NBAPPIDS_H_INCLUDED
 #define NBAPPIDS_H_INCLUDED
 
+#include "NbTypes.h"
+#include "SysTypes.h"
+
 //------------------------------------------------------------------------------
 
 namespace NodeBase
@@ -33,59 +36,55 @@ namespace NodeBase
 //  functions.  Until then, a new ModuleId must be inserted in the correct
 //  location.  Renumbering existing identifiers or leaving gaps is OK.
 //
-enum ModuleIds
-{                    // namespace:      Module:
-   NbModuleId = 1,   // NodeBase        NbModule
-   NtModuleId = 2,   // NodeTools       NtModule
-   CtModuleId = 3,   // CodeTools       CtModule
-   NwModuleId = 4,   // NetworkBase     NwModule
-   SbModuleId = 5,   // SessionBase     SbModule
-   StModuleId = 6,   // SessionTools    StModule
-   MbModuleId = 7,   // MediaBase       MbModule
-   CbModuleId = 8,   // CallBase        CbModule
-   PbModuleId = 9,   // PotsBase        PbModule
-   OnModuleId = 10,  // OperationsNode  OnModule
-   CnModuleId = 11,  // ControlNode     CnModule
-   RnModuleId = 12,  // RoutingNode     RnModule
-   SnModuleId = 13,  // ServiceNode     SnModule
-   AnModuleId = 14   // AccessNode      AnModule
-};
+                                           // namespace:      Module:
+constexpr ModuleId NbModuleId = 1;         // NodeBase        NbModule
+constexpr ModuleId NtModuleId = 2;         // NodeTools       NtModule
+constexpr ModuleId CtModuleId = 3;         // CodeTools       CtModule
+constexpr ModuleId NwModuleId = 4;         // NetworkBase     NwModule
+constexpr ModuleId SbModuleId = 5;         // SessionBase     SbModule
+constexpr ModuleId StModuleId = 6;         // SessionTools    StModule
+constexpr ModuleId MbModuleId = 7;         // MediaBase       MbModule
+constexpr ModuleId CbModuleId = 8;         // CallBase        CbModule
+constexpr ModuleId PbModuleId = 9;         // PotsBase        PbModule
+constexpr ModuleId OnModuleId = 10;        // OperationsNode  OnModule
+constexpr ModuleId CnModuleId = 11;        // ControlNode     CnModule
+constexpr ModuleId RnModuleId = 12;        // RoutingNode     RnModule
+constexpr ModuleId SnModuleId = 13;        // ServiceNode     SnModule
+constexpr ModuleId AnModuleId = 14;        // AccessNode      AnModule
+constexpr ModuleId FirstAppModuleId = 15;  // start of applicaton modules
 
 //------------------------------------------------------------------------------
 //
 //  Object pool identifiers.  A new object pool must define an identifier here.
 //
-enum ObjectPoolIds
-{
-   ThreadObjPoolId = 1,
-   MsgBufferObjPoolId = 2,
-   SbIpBufferObjPoolId = 3,
-   BtIpBufferObjPoolId = 4,
-   ContextObjPoolId = 5,
-   MessageObjPoolId = 6,
-   MsgPortObjPoolId = 7,
-   ProtocolSMObjPoolId = 8,
-   TimerObjPoolId = 9,
-   EventObjPoolId = 10,
-   ServiceSMObjPoolId = 11,
-   MediaEndptObjPoolId = 12
-};
+constexpr ObjectPoolId ThreadObjPoolId = 1;
+constexpr ObjectPoolId MsgBufferObjPoolId = 2;
+constexpr ObjectPoolId IpBufferObjPoolId = 3;
+constexpr ObjectPoolId SbIpBufferObjPoolId = 4;
+constexpr ObjectPoolId BtIpBufferObjPoolId = 5;
+constexpr ObjectPoolId ContextObjPoolId = 6;
+constexpr ObjectPoolId MessageObjPoolId = 7;
+constexpr ObjectPoolId MsgPortObjPoolId = 8;
+constexpr ObjectPoolId ProtocolSMObjPoolId = 9;
+constexpr ObjectPoolId TimerObjPoolId = 10;
+constexpr ObjectPoolId EventObjPoolId = 11;
+constexpr ObjectPoolId ServiceSMObjPoolId = 12;
+constexpr ObjectPoolId MediaEndptObjPoolId = 13;
+constexpr ObjectPoolId FirstAppObjPoolId = 14;    // start of application pools
 
 //------------------------------------------------------------------------------
 //
-//  Reserved software debugging flags.  Ad hoc usage should begin after the
+//  Reserved software debugging flags.  Ad hoc usage should begin with the
 //  last FlagId defined here.
 //
-enum SwFlagIds
-{
-   ThreadCriticalFlag,
-   ThreadCtorTrapFlag,
-   ThreadRecoveryTrapFlag,
-   ShowToolProgress,
-   CallTrapFlag,
-   CipAlwaysOverIpFlag,
-   CipIamTimeoutFlag,
-   CipAlertingTimeoutFlag
-};
+constexpr FlagId ThreadCriticalFlag = 0;
+constexpr FlagId ThreadCtorTrapFlag = 1;
+constexpr FlagId ThreadRecoveryTrapFlag = 2;
+constexpr FlagId ShowToolProgress = 3;
+constexpr FlagId CallTrapFlag = 4;
+constexpr FlagId CipAlwaysOverIpFlag = 5;
+constexpr FlagId CipIamTimeoutFlag = 6;
+constexpr FlagId CipAlertingTimeoutFlag = 7;
+constexpr FlagId FirstAppDebugFlag = 8;
 }
 #endif

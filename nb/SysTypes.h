@@ -121,6 +121,10 @@ extern const FlagId MaxFlagId;
 typedef std::bitset< BITS_PER_WORD > Flags;
 extern const Flags NoFlags;
 
+//  Maximum line length for formatted console output.
+//
+constexpr size_t COUT_LENGTH_MAX = 80;
+
 //  Identifier for a column when writing to the console or a text file.
 //
 typedef uint8_t col_t;
@@ -138,6 +142,7 @@ constexpr char TAB = '\t';
 //  String constants.
 //
 extern fixed_string EMPTY_STR;
+extern fixed_string CRLF_STR;
 extern fixed_string ERROR_STR;
 extern fixed_string SCOPE_STR;
 

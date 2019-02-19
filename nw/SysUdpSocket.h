@@ -27,6 +27,11 @@
 #include "NwTypes.h"
 #include "SysTypes.h"
 
+namespace NetworkBase
+{
+   class UdpIpService;
+}
+
 //------------------------------------------------------------------------------
 
 namespace NetworkBase
@@ -44,28 +49,27 @@ public:
    //
    static size_t MaxUdpSize() { return MaxUdpSize_; }
 
-   //  Allocates a socket that will send and receive on PORT.  RXSIZE and
-   //  TXSIZE specify the size of the socket's receive and send buffers.
-   //  RC is updated to indicate success or failure.
+   //  Allocates a socket that will send and receive on PORT, on behalf
+   //  of SERVICE.  RC is updated to indicate success or failure.
    //
-   SysUdpSocket(ipport_t port, size_t rxSize, size_t txSize, AllocRc& rc);
+   SysUdpSocket(ipport_t port, const UdpIpService* service, AllocRc& rc);
 
    //  Closes the socket.  Not subclassed.
    //
    ~SysUdpSocket();
 
-   //  Reads up to MAX bytes into BUFF.  Updates remAddr with the source of
+   //  Reads up to SIZE bytes into BUFF.  Updates remAddr with the source of
    //  the bytes.  Returns the number of bytes read, or -1 on failure.  On
    //  an empty packet, returns 0.  If the socket is non-blocking, returns
    //  -2 if there was nothing to read.
    //
-   word RecvFrom(byte_t* buff, size_t max, SysIpL3Addr& remAddr);
+   word RecvFrom(byte_t* buff, size_t size, SysIpL3Addr& remAddr);
 
-   //  Makes the socket non-blocking and sends DATA, of length LEN, to the
+   //  Makes the socket non-blocking and sends DATA, of length SIZE, to the
    //  destination specified by remAddr. Returns the number of bytes sent,
    //  or -1 on failure.
    //
-   word SendTo(const byte_t* data, size_t len, const SysIpL3Addr& remAddr);
+   word SendTo(const byte_t* data, size_t size, const SysIpL3Addr& remAddr);
 
    //  Overridden to indicate that this socket is running UDP.
    //
@@ -74,6 +78,11 @@ public:
    //  Overridden to send BUFF.
    //
    virtual SendRc SendBuff(IpBuffer& buff) override;
+
+   //  Overridden to display member variables.
+   //
+   virtual void Display(std::ostream& stream,
+      const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //

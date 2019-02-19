@@ -110,7 +110,7 @@ Parameter::TestRc AddressParameter::InjectMsg
    Debug::ft(AddressParameter_InjectMsg);
 
    string digits;
-   DigitString ds = DigitString();
+   DigitString ds;
    auto& tlvmsg = static_cast< TlvMessage& >(msg);
 
    switch(cli.Command()->GetStringRc(digits, cli))
@@ -165,7 +165,7 @@ Parameter::TestRc AddressParameter::VerifyMsg
    auto& tlvmsg = static_cast< const TlvMessage& >(msg);
    DigitString* info;
    string digits;
-   DigitString ds = DigitString();
+   DigitString ds;
 
    rc = tlvmsg.VerifyParm(Pid(), use, info);
    if(rc != Ok) return rc;

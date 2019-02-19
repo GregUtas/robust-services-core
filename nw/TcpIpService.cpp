@@ -69,6 +69,7 @@ void TcpIpService::Display(ostream& stream,
 
    stream << prefix << "MaxConns   : " << MaxConns() << CRLF;
    stream << prefix << "MaxBacklog : " << MaxBacklog() << CRLF;
+   stream << prefix << "Keepalive  : " << Keepalive() << CRLF;
 }
 
 //------------------------------------------------------------------------------

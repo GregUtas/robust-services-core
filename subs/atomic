@@ -7,7 +7,7 @@
 
 #include "cstdint"
 
-const long ATOMIC_FLAG_INIT = 0;
+constexpr long ATOMIC_FLAG_INIT = 0;
 
 namespace std
 {
@@ -64,12 +64,13 @@ namespace std
       T operator&=(T value);
       T operator|=(T value);
       T operator^=(T value);
-
    };
 
    typedef atomic< uint8_t > atomic_uint8_t;
+   typedef atomic< uint16_t > atomic_uint16_t;
    typedef atomic< uint32_t > atomic_uint32_t;
    typedef atomic< uint64_t > atomic_uint64_t;
+   typedef atomic< size_t > atomic_size_t;
 }
 
 #endif

@@ -49,10 +49,10 @@ void AlignLeft(ostream& stream, const string& prefix)
 {
    //  If PREFIX is more than one indentation, indent one level less.
    //
-   if(prefix.size() < Indent_Size)
+   if(prefix.size() < INDENT_SIZE)
       stream << prefix;
    else
-      stream << prefix.substr(Indent_Size);
+      stream << prefix.substr(INDENT_SIZE);
 }
 
 //------------------------------------------------------------------------------
@@ -117,7 +117,7 @@ CxxDirective::CxxDirective()
 
 fn_name Define_ctor1 = "Define.ctor";
 
-Define::Define(string& name) : Macro(name),
+Define::Define(const string& name) : Macro(name),
    rhs_(nullptr),
    value_(nullptr),
    defined_(false)
@@ -127,9 +127,9 @@ Define::Define(string& name) : Macro(name),
 
 //------------------------------------------------------------------------------
 
-fn_name Define_ctor2 = "Define.ctor[rhs]";
+fn_name Define_ctor2 = "Define.ctor(rhs)";
 
-Define::Define(string& name, ExprPtr& rhs) : Macro(name),
+Define::Define(const string& name, ExprPtr& rhs) : Macro(name),
    rhs_(std::move(rhs)),
    value_(nullptr),
    defined_(true)
@@ -194,7 +194,7 @@ bool Define::EnterScope()
    if(!defined_) return true;
 
    Context::File()->InsertMacro(this);
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    if(!AtFileScope()) Log(DefineNotAtFileScope);
 
    if(rhs_ != nullptr)
@@ -262,7 +262,7 @@ bool Elif::EnterScope()
    //  Compile the code that follows the #elif if its #if has not yet compiled
    //  any code and the condition following the #elif evaluates to true.
    //
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    auto iff = Context::Optional();
    if(iff->HasCompiledCode()) return false;
    if(!Conditional::EnterScope()) return false;
@@ -302,7 +302,7 @@ bool Else::EnterScope()
    //  Compile the code that follows the #else if its #if/#ifdef/#ifndef has
    //  not yet compiled any code.
    //
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    auto ifx = Context::Optional();
    return !ifx->HasCompiledCode();
 }
@@ -355,7 +355,7 @@ bool Error::EnterScope()
 {
    Debug::ft(Error_EnterScope);
 
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    Context::SwLog(Error_EnterScope, GetText(), 0);
    return true;
 }
@@ -445,7 +445,7 @@ bool Ifdef::EnterScope()
    //  Compile the code that follows the #ifdef if the symbol that follows
    //  it has been defined.
    //
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    Context::PushOptional(this);
    if(!Existential::SymbolDefined()) return false;
    SetCompile();
@@ -511,7 +511,7 @@ bool Iff::EnterScope()
    //  Compile the code that follows the #if if the condition that follows
    //  evalutes to true.
    //
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    Context::PushOptional(this);
    if(!Conditional::EnterScope()) return false;
    SetCompile();
@@ -577,7 +577,7 @@ bool Ifndef::EnterScope()
    //  Compile the code that follows the #ifdef if the symbol that follows
    //  it has not been defined.
    //
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    Context::PushOptional(this);
    if(Existential::SymbolDefined()) return false;
    SetCompile();
@@ -667,12 +667,12 @@ void Line::Display(ostream& stream,
 
 fn_name Macro_ctor = "Macro.ctor";
 
-Macro::Macro(string& name) :
-   refs_(0)
+Macro::Macro(const string& name) :
+   refs_(0),
+   name_(name)
 {
    Debug::ft(Macro_ctor);
 
-   std::swap(name_, name);
    SetScope(Singleton< CxxRoot >::Instance()->GlobalNamespace());
    Singleton< CxxSymbols >::Instance()->InsertMacro(this);
    CxxStats::Incr(CxxStats::DEFINE_DIRECTIVE);
@@ -891,7 +891,7 @@ CxxNamed* MacroName::Referent() const
    //  for it.
    //
    auto name = name_;
-   auto macro = MacroPtr(new Define(name));
+   MacroPtr macro(new Define(name));
    ref_ = macro.get();
    Singleton< CxxRoot >::Instance()->AddMacro(macro);
    ref_->WasRead();
@@ -974,7 +974,7 @@ void OptionalCode::Display(ostream& stream,
 
    auto code = file->GetCode();
 
-   if(code->size() < end_)
+   if(code.size() < end_)
    {
       stream << "ERROR: CODE NOT FOUND" << CRLF;
       return;
@@ -984,8 +984,8 @@ void OptionalCode::Display(ostream& stream,
 
    for(auto i = begin_; i < end_; ++i)
    {
-      stream << code->at(i);
-      if(code->at(i) == CRLF) stream << prefix;
+      stream << code.at(i);
+      if(code.at(i) == CRLF) stream << prefix;
    }
 
    stream << CRLF;

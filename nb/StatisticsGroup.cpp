@@ -101,8 +101,8 @@ void StatisticsGroup::DisplayStats(ostream& stream, id_t id) const
 {
    Debug::ft(StatisticsGroup_DisplayStats);
 
-   stream << expl_;
-   stream << spaces(MaxExplSize - expl_.size()) << ReportHeader << CRLF;
+   stream << expl_ << spaces(MaxExplSize - expl_.size());
+   stream << ReportHeader << CRLF;
 }
 
 //------------------------------------------------------------------------------

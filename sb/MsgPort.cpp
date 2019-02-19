@@ -38,7 +38,7 @@
 #include "SbPools.h"
 #include "SbTrace.h"
 #include "Singleton.h"
-#include "SysSocket.h"
+#include "SysTcpSocket.h"
 #include "SysTypes.h"
 #include "ToolTypes.h"
 #include "TraceBuffer.h"
@@ -68,8 +68,6 @@ MsgPort::MsgPort(const Message& msg, Context& ctx) : ProtocolLayer(&ctx),
 fn_name MsgPort_ctor2 = "MsgPort.ctor(o/g)";
 
 MsgPort::MsgPort(ProtocolLayer& upper) : ProtocolLayer(upper, true),
-   locAddr_(GlobalAddress::NilAddr),
-   remAddr_(GlobalAddress::NilAddr),
    msgRcvd_(false),
    msgSent_(false)
 {
@@ -105,8 +103,7 @@ MsgPort::~MsgPort()
       if(trans != nullptr) trans->ResumeTime(warp);
    }
 
-   auto socket = remAddr_.GetSocket();
-   if(socket != nullptr) socket->Release();
+   remAddr_.ReleaseSocket();
 
    auto ctx = GetContext();
    if(ctx != nullptr) ctx->ExqPort(*this);
@@ -162,9 +159,7 @@ void MsgPort::Cleanup()
 {
    Debug::ft(MsgPort_Cleanup);
 
-   auto socket = remAddr_.GetSocket();
-   if(socket != nullptr) socket->Release();
-
+   remAddr_.ReleaseSocket();
    ProtocolLayer::Cleanup();
 }
 
@@ -202,7 +197,7 @@ bool MsgPort::DropPeer(const GlobalAddress& peerPrevRemAddr)
    //  and modify this port so that it has no peer.
    //
    peerPort->remAddr_ = peerPrevRemAddr;
-   remAddr_ = GlobalAddress::NilAddr;
+   remAddr_ = GlobalAddress();
    return true;
 }
 

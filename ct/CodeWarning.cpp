@@ -35,6 +35,7 @@
 #include "Library.h"
 #include "Registry.h"
 #include "Singleton.h"
+#include "ThisThread.h"
 
 using namespace NodeBase;
 using std::ostream;
@@ -45,13 +46,18 @@ using std::string;
 
 namespace CodeTools
 {
-WarningLog::WarningLog(const CodeFile* file, size_t line,
-   Warning warning, size_t offset, const string& info) :
+WarningLog::WarningLog(Warning warning, const CodeFile* file,
+   size_t line, size_t pos, const CxxNamed* item, size_t offset,
+   const string& info, bool hide) :
+   warning(warning),
    file(file),
    line(line),
-   warning(warning),
+   pos(pos),
+   item(item),
    offset(offset),
-   info(info)
+   info(info),
+   hide(hide),
+   status(NotFixed)
 {
 }
 
@@ -61,6 +67,7 @@ bool WarningLog::operator==(const WarningLog& that) const
 {
    if(this->file != that.file) return false;
    if(this->line != that.line) return false;
+   if(this->pos != that.pos) return false;
    if(this->warning != that.warning) return false;
    if(this->offset != that.offset) return false;
    return (this->info == that.info);
@@ -75,9 +82,9 @@ bool WarningLog::operator!=(const WarningLog& that) const
 
 //==============================================================================
 
-size_t CodeInfo::LineTypeCounts_[] = { };
+size_t CodeInfo::LineTypeCounts_[] = { 0 };
 
-size_t CodeInfo::WarningCounts_[] = { };
+size_t CodeInfo::WarningCounts_[] = { 0 };
 
 std::vector< WarningLog > CodeInfo::Warnings_ = std::vector< WarningLog >();
 
@@ -134,12 +141,14 @@ void CodeInfo::GenerateReport(ostream* stream, const SetOfIds& set)
    {
       auto file = files.At(f->fid);
       if(file->IsHeader()) file->Check();
+      ThisThread::Pause();
    }
 
    for(auto f = order->cbegin(); f != order->cend(); ++f)
    {
       auto file = files.At(f->fid);
       if(file->IsCpp()) file->Check();
+      ThisThread::Pause();
    }
 
    Singleton< CxxRoot >::Instance()->GlobalNamespace()->Check();
@@ -159,11 +168,11 @@ void CodeInfo::GenerateReport(ostream* stream, const SetOfIds& set)
 
    //  Count the total number of warnings of each type that appear in files
    //  belonging to the original SET, extracing them into the local set of
-   //  warnings.
+   //  warnings.  Exclude warnings that are to be hidden.
    //
    for(auto item = Warnings_.cbegin(); item != Warnings_.cend(); ++item)
    {
-      if(set.find(item->file->Fid()) != set.cend())
+      if(!item->hide && (set.find(item->file->Fid()) != set.cend()))
       {
          ++WarningCounts_[item->warning];
          warnings.push_back(*item);
@@ -269,8 +278,12 @@ void CodeInfo::GenerateReport(ostream* stream, const SetOfIds& set)
 
 //------------------------------------------------------------------------------
 
+fn_name CodeInfo_GetWarnings = "CodeInfo.GetWarnings";
+
 void CodeInfo::GetWarnings(const CodeFile* file, WarningLogVector& warnings)
 {
+   Debug::ft(CodeInfo_GetWarnings);
+
    for(auto w = Warnings_.cbegin(); w != Warnings_.cend(); ++w)
    {
       if(w->file == file)
@@ -293,6 +306,26 @@ bool CodeInfo::IsSortedByFile(const WarningLog& log1, const WarningLog& log2)
    if(log1.line > log2.line) return false;
    if(log1.offset < log2.offset) return true;
    if(log1.offset > log2.offset) return false;
+   if(log1.info < log2.info) return true;
+   if(log1.info > log2.info) return false;
+   return (&log1 < &log2);
+}
+
+//------------------------------------------------------------------------------
+
+bool CodeInfo::IsSortedByLine(const WarningLog& log1, const WarningLog& log2)
+{
+   auto result = strCompare(log1.file->FullName(), log2.file->FullName());
+   if(result == -1) return true;
+   if(result == 1) return false;
+   if(log1.line < log2.line) return true;
+   if(log1.line > log2.line) return false;
+   if(log1.pos > log2.pos) return true;
+   if(log1.pos < log2.pos) return false;
+   if(log1.offset > log2.offset) return true;
+   if(log1.offset < log2.offset) return false;
+   if(log1.warning < log2.warning) return true;
+   if(log1.warning > log2.warning) return false;
    if(log1.info < log2.info) return true;
    if(log1.info > log2.info) return false;
    return (&log1 < &log2);

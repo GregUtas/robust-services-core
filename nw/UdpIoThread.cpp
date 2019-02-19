@@ -26,10 +26,12 @@
 #include "IpPort.h"
 #include "IpPortRegistry.h"
 #include "Log.h"
+#include "NbTypes.h"
 #include "NwTrace.h"
 #include "Singleton.h"
 #include "SysIpL3Addr.h"
 #include "SysUdpSocket.h"
+#include "UdpIpService.h"
 
 //------------------------------------------------------------------------------
 
@@ -37,8 +39,8 @@ namespace NetworkBase
 {
 fn_name UdpIoThread_ctor = "UdpIoThread.ctor";
 
-UdpIoThread::UdpIoThread(Faction faction, ipport_t port,
-   size_t rxSize, size_t txSize) : IoThread(faction, port, rxSize, txSize)
+UdpIoThread::UdpIoThread(const UdpIpService* service, ipport_t port) :
+   IoThread(service, port)
 {
    Debug::ft(UdpIoThread_ctor);
 
@@ -107,9 +109,10 @@ void UdpIoThread::Enter()
 
    if(socket == nullptr)
    {
+      auto svc = static_cast< const UdpIpService* >(ipPort_->GetService());
       auto rc = SysSocket::AllocOk;
 
-      socket = new SysUdpSocket(port_, rxSize_, txSize_, rc);
+      socket = new SysUdpSocket(port_, svc, rc);
 
       if(rc != SysSocket::AllocOk)
       {

@@ -57,7 +57,7 @@ TreatmentQIdOptParm::TreatmentQIdOptParm() :
 class SnSizesCommand : public PbSizesCommand
 {
 public:
-   SnSizesCommand() { }
+   SnSizesCommand() = default;
 private:
    virtual word ProcessCommand(CliThread& cli) const override;
    virtual void DisplaySizes(CliThread& cli, bool all) const override;

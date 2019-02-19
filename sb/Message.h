@@ -69,10 +69,10 @@ public:
    //
    typedef uint8_t Priority;
 
-   static const Priority Ingress     = 0;  // from user starting a new session
-   static const Priority Egress      = 1;  // to user receiving a new session
-   static const Priority Progress    = 2;  // to an existing session
-   static const Priority Immediate   = 3;  // between SSMs serving same user
+   static const Priority Ingress = 0;     // from user starting a new session
+   static const Priority Egress = 1;      // to user receiving a new session
+   static const Priority Progress = 2;    // to an existing session
+   static const Priority Immediate = 3;   // between SSMs serving same user
    static const Priority MaxPriority = 3;
 
    //  Message routes.  If a protocol is only used intraprocessor (Internal), it
@@ -235,7 +235,7 @@ public:
    //  reference that start of the payload.  BYTES is set to nullptr
    //  when returning 0.  The payload excludes the message header.
    //
-   MsgSize Payload(byte_t*& bytes) const;
+   size_t Payload(byte_t*& bytes) const;
 
    //  Sets the protocol for an outgoing message.
    //
@@ -324,7 +324,7 @@ protected:
    //  real-time performance improves if the buffer need not be expanded.
    //  Protected because this class is virtual.
    //
-   Message(ProtocolSM* psm, MsgSize size);
+   Message(ProtocolSM* psm, size_t size);
 
    //  Replaces the current buffer, which contains the payload, with BUFF.
    //

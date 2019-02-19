@@ -72,15 +72,6 @@ public:
    //
    static const size_t ObjectsPerSegmentLog2 = 10;
 
-   //  Allows "Bid" to refer to an object block identifier in this class
-   //  hierarchy.  The first block in a pool is #1.
-   //
-   typedef PooledObjectId Bid;
-
-   //  Highest valid object block identifier.
-   //
-   static const Bid MaxBid = MaxSegments << ObjectsPerSegmentLog2;
-
    //> Highest valid sequence number.  Sequence numbers distinguish a block's
    //  incarnations.  Their use is mandatory when a Pooled object can receive
    //  interprocessor messages, as they allow stale messages to be detected
@@ -115,12 +106,12 @@ public:
    //  Returns the pool's first in-use block and updates the iterator
    //  BID to reference it.
    //
-   Pooled* FirstUsed(Bid& bid) const;
+   Pooled* FirstUsed(PooledObjectId& bid) const;
 
    //  Returns the pool's next in-use block after the one referenced
    //  by the iterator BID.
    //
-   Pooled* NextUsed(Bid& bid) const;
+   Pooled* NextUsed(PooledObjectId& bid) const;
 
    //  Converts OBJ to an object block identifier.  Returns -1 if OBJ does
    //  not reference a block in the pool or if inUseOnly is true and the
@@ -139,7 +130,7 @@ public:
    //  Returns a pointer to the object identified by BID.  Returns nullptr if
    //  BID is invalid or the block identified by BID is currently unassigned.
    //
-   Pooled* BidToObj(Bid bid) const;
+   Pooled* BidToObj(PooledObjectId bid) const;
 
    //  Returns the total number of blocks on the free queue.
    //
@@ -224,23 +215,23 @@ private:
    //  Returns the first block in the pool and updates the iterator BID
    //  to reference it.
    //
-   ObjectBlock* First(Bid& bid) const;
+   ObjectBlock* First(PooledObjectId& bid) const;
 
    //  Returns the next block in the pool after the one referenced by the
    //  iterator BID.
    //
-   ObjectBlock* Next(Bid& bid) const;
+   ObjectBlock* Next(PooledObjectId& bid) const;
 
    //  Maps the block identifier BID to the first and second level indices
    //  that access it in blocks_.  Returns false if BID does not reference
    //  a block in the pool.
    //
-   bool BidToIndices(Bid bid, size_t& i, size_t& j) const;
+   bool BidToIndices(PooledObjectId bid, size_t& i, size_t& j) const;
 
    //  Maps the first and second level indices, I and J, to the block
    //  identifier BID.  Returns false if I or J is invalid.
    //
-   bool IndicesToBid(size_t i, size_t j, Bid& bid) const;
+   bool IndicesToBid(size_t i, size_t j, PooledObjectId& bid) const;
 
    //  Marks all blocks as orphaned and audits the free queue for sanity,
    //  unmarking its blocks so that they will not be recovered.
@@ -294,11 +285,11 @@ private:
 
    //  The current number of segments in the pool.
    //
-   word currSegments_;
+   size_t currSegments_;
 
    //  The desired number of segments in the pool.
    //
-   word targSegments_;
+   size_t targSegments_;
 
    //  The configuration parameter for the number of segments in the pool.
    //

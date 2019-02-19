@@ -151,7 +151,7 @@ CxxWord::CxxWord
 
 const CxxOp CxxOp::Attrs[Cxx::NIL_OPERATOR + 1] =
 {
-   //                     str arg pri ov rl sy
+   //                    str arg pri ovl rl sym
    CxxOp(           SCOPE_STR, 2, 18, F, F, F),  // SCOPE_RESOLUTION
    CxxOp(                 ".", 2, 17, F, F, F),  // REFERENCE_SELECT
    CxxOp(                "->", 2, 17, T, F, F),  // POINTER_SELECT
@@ -377,23 +377,23 @@ void CxxChar::Initialize()
 
 //==============================================================================
 
-const Numeric Numeric::Nil = {NIL, 0, F};
-const Numeric Numeric::Bool = {INT, 1, F};
-const Numeric Numeric::Char = {INT, sizeof(char) << 3, T};
-const Numeric Numeric::Double = {FLOAT, sizeof(double) << 3, T};
-const Numeric Numeric::Enum = {ENUM, sizeof(int) << 3, T};
-const Numeric Numeric::Float = {FLOAT, sizeof(float) << 3, T};
-const Numeric Numeric::Int = {INT, sizeof(int) << 3, T};
-const Numeric Numeric::Long = {INT, sizeof(long) << 3, T};
-const Numeric Numeric::LongDouble = {FLOAT, sizeof(long double) << 3, T};
-const Numeric Numeric::LongLong = {INT, sizeof(long long) << 3, T};
-const Numeric Numeric::Pointer = {PTR, sizeof(intptr_t), T};
-const Numeric Numeric::Short = {INT, sizeof(short) << 3, T};
-const Numeric Numeric::uChar = {INT, sizeof(char) << 3, F};
-const Numeric Numeric::uInt = {INT, sizeof(int) << 3, F};
-const Numeric Numeric::uLong = {INT, sizeof(long) << 3, F};
-const Numeric Numeric::uLongLong = {INT, sizeof(long long) << 3, F};
-const Numeric Numeric::uShort = {INT, sizeof(short) << 3, F};
+const Numeric Numeric::Nil(NIL, 0, F);
+const Numeric Numeric::Bool(INT, 1, F);
+const Numeric Numeric::Char(INT, sizeof(char) << 3, T);
+const Numeric Numeric::Double(FLOAT, sizeof(double) << 3, T);
+const Numeric Numeric::Enum(ENUM, sizeof(int) << 3, T);
+const Numeric Numeric::Float(FLOAT, sizeof(float) << 3, T);
+const Numeric Numeric::Int(INT, sizeof(int) << 3, T);
+const Numeric Numeric::Long(INT, sizeof(long) << 3, T);
+const Numeric Numeric::LongDouble(FLOAT, sizeof(long double) << 3, T);
+const Numeric Numeric::LongLong(INT, sizeof(long long) << 3, T);
+const Numeric Numeric::Pointer(PTR, sizeof(intptr_t), T);
+const Numeric Numeric::Short(INT, sizeof(short) << 3, T);
+const Numeric Numeric::uChar(INT, sizeof(char) << 3, F);
+const Numeric Numeric::uInt(INT, sizeof(int) << 3, F);
+const Numeric Numeric::uLong(INT, sizeof(long) << 3, F);
+const Numeric Numeric::uLongLong(INT, sizeof(long long) << 3, F);
+const Numeric Numeric::uShort(INT, sizeof(short) << 3, F);
 
 //------------------------------------------------------------------------------
 
@@ -420,7 +420,8 @@ TypeMatch Numeric::CalcMatchWith(const Numeric* that) const
          }
          else if(this->bitWidth_ > that->bitWidth_)
          {
-            if(this->signed_ || !that->signed_) return Promotable;
+            if(that->signed_ && !this->signed_) return Convertible;
+            return Promotable;
          }
          return Abridgeable;
 
@@ -438,10 +439,12 @@ TypeMatch Numeric::CalcMatchWith(const Numeric* that) const
       if(that->type_ == FLOAT) return Convertible;
       if(that->type_ == INT) return Convertible;
       return Incompatible;
+
+   case PTR:
+      if(that->type_ == INT) return Convertible;
+      return Incompatible;
    }
 
-   //  Assigning an integer to a pointer or an enum requires a cast.
-   //
    return Incompatible;
 }
 

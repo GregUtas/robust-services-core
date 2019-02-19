@@ -28,7 +28,6 @@
 #include "Debug.h"
 #include "Memory.h"
 #include "MsgHeader.h"
-#include "NbTypes.h"
 #include "SbIpBuffer.h"
 #include "SbTypes.h"
 #include "SysTypes.h"
@@ -51,7 +50,7 @@ public:
 
    //  Overridden to create an outgoing message.
    //
-   TlvMessage(ProtocolSM* psm, MsgSize size);
+   TlvMessage(ProtocolSM* psm, size_t size);
 
    //  Supports message decapsulation.  PARM is an encapsulated message
    //  that was created using WRAP (see below).  It has now arrived at its
@@ -179,12 +178,12 @@ public:
    //    auto info = reinterpret_cast< T* >(pptr->bytes);
    //  after which INFO's fields can be filled in.
    //
-   virtual TlvParmPtr AddParm(ParameterId pid, MsgSize plen);
+   virtual TlvParmPtr AddParm(ParameterId pid, size_t plen);
 
    //  Inserts a parameter identified by PID, filling it with SIZE bytes
    //  that are taken from SRC.
    //
-   TlvParmPtr AddBytes(const byte_t* src, MsgSize size, ParameterId pid);
+   TlvParmPtr AddBytes(const byte_t* src, size_t size, ParameterId pid);
 
    //  Copies the parameter SRC (in another message) into this message by
    //  creating a parameter identified by PID.  If PID is NIL_ID, SRCE's
@@ -194,7 +193,7 @@ public:
 
    //  Expands PARM, which already exists, by PLEN bytes.
    //
-   virtual TlvParmPtr ExpandParm(TlvParmLayout& parm, MsgSize plen);
+   virtual TlvParmPtr ExpandParm(TlvParmLayout& parm, size_t plen);
 
    //  Removes a parameter by changing its identifier to NIL_ID.
    //
@@ -220,9 +219,9 @@ public:
    //  Given a structure of SIZE bytes, this returns the value that rounds
    //  SIZE up to a multiple of 2^Log2Align ('^' meaning exponentiation).
    //
-   static MsgSize Pad(MsgSize size)
+   static size_t Pad(size_t size)
    {
-      return MsgSize(Memory::Align(size, Log2Align));
+      return Memory::Align(size, Log2Align);
    }
 protected:
    //  The physical layout of a TLV message's data.
@@ -232,8 +231,8 @@ protected:
       MsgHeader header;
       union
       {
-         TlvParmLayout firstParm;                  // first parameter
-         byte_t bytes[MsgHeader::MaxMsgSize - 1];  // payload as bytes
+         TlvParmLayout firstParm;         // first parameter
+         byte_t bytes[MaxSbMsgSize - 1];  // payload as bytes
       };
    };
 
@@ -246,7 +245,7 @@ protected:
    //  Finds a byte array that is identified by PID, and returns its
    //  length in SIZE.
    //
-   byte_t* FindBytes(MsgSize& size, ParameterId pid) const;
+   byte_t* FindBytes(size_t& size, ParameterId pid) const;
 
    //  Returns true if PPTR references a parameter within this message, in
    //  which case PIT is updated to reference the parameter that *follows*
@@ -266,9 +265,9 @@ protected:
       { return reinterpret_cast< TlvMsgLayout* >(Buffer()->HeaderPtr()); }
 
    //  Returns the number of bytes that precede the parameter referenced by
-   //  PPTR.  Returns -1 if PPTR is nullptr or is not within this message.
+   //  PPTR.  Returns SIZE_MAX if PPTR is nullptr or not within this message.
    //
-   int ParmOffset(ParmIterator& pit) const;
+   size_t ParmOffset(ParmIterator& pit) const;
 
    //  Returns a pointer to the message's fence, which follows the header
    //  and parameters in TlvLayout.
@@ -312,7 +311,7 @@ private:
    {
       const TlvMsgLayout* mptr;  // reference to message
       TlvParmPtr pptr;           // reference to current parameter
-      MsgSize pindex;            // parameter's offset within message
+      size_t pindex;             // parameter's offset within message
    };
 };
 }

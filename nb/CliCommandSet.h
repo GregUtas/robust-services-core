@@ -23,7 +23,7 @@
 #define CLICOMMANDSET_H_INCLUDED
 
 #include "CliCommand.h"
-#include <cstddef>
+#include <cstdint>
 
 //------------------------------------------------------------------------------
 
@@ -55,12 +55,12 @@ protected:
    //  of parameters that follow the command) are passed to CliCommand.
    //  Protected because this is class is virtual.
    //
-   CliCommandSet(const char* comm, const char* help, size_t size = 32);
+   CliCommandSet(const char* comm, const char* help, uint32_t size = 32);
 private:
    //  Used while parsing the command.  INDEX is the offset within
    //  Parms() where a valid subcommand was found.
    //
-   static void DescendTo(CliCookie& cookie, size_t index);
+   static void DescendTo(CliCookie& cookie, uint32_t index);
 
    //  Overridden to find and invoke a subcommand.
    //

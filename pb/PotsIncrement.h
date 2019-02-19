@@ -37,8 +37,8 @@ namespace PotsBase
 class PbSizesCommand : public StSizesCommand
 {
 public:
-   PbSizesCommand() { }
-   virtual ~PbSizesCommand() { }
+   PbSizesCommand() = default;
+   virtual ~PbSizesCommand() = default;
 protected:
    virtual void DisplaySizes(CliThread& cli, bool all) const override;
 private:

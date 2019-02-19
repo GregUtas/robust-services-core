@@ -25,13 +25,27 @@
 #include <winsock2.h>  // must precede windows.h
 #include <windows.h>
 #include "Debug.h"
+#include "IpService.h"
 #include "Log.h"
-#include "NwTrace.h"
 
 //------------------------------------------------------------------------------
 
 namespace NetworkBase
 {
+uint32_t htonl(uint32_t hostlong) { return ::htonl(hostlong); }
+
+uint64_t htonll(uint64_t hostllong) { return ::htonll(hostllong); }
+
+uint16_t htons(uint16_t hostshort) { return ::htons(hostshort); }
+
+uint32_t ntohl(uint32_t netlong) { return ::ntohl(netlong); }
+
+uint64_t ntohll(uint32_t netllong) { return ::ntohll(netllong); }
+
+uint16_t ntohs(uint16_t netshort) { return ::ntohs(netshort); }
+
+//------------------------------------------------------------------------------
+
 const u_long IO_Blocking = 0;
 const u_long IO_NonBlocking = 1;
 
@@ -39,11 +53,9 @@ const u_long IO_NonBlocking = 1;
 
 fn_name SysSocket_ctor2 = "SysSocket.ctor";
 
-SysSocket::SysSocket(ipport_t port, IpProtocol proto,
-   size_t rxSize, size_t txSize, AllocRc& rc) :
+SysSocket::SysSocket(ipport_t port, const IpService* service, AllocRc& rc) :
    socket_(INVALID_SOCKET),
    blocking_(true),
-   disconnecting_(false),
    tracing_(false),
    error_(0)
 {
@@ -52,6 +64,7 @@ SysSocket::SysSocket(ipport_t port, IpProtocol proto,
    sockaddr_in addr;
 
    rc = AllocOk;
+   auto proto = service->Protocol();
 
    switch(proto)
    {
@@ -75,7 +88,7 @@ SysSocket::SysSocket(ipport_t port, IpProtocol proto,
       return;
    }
 
-   rc = SetBuffSizes(rxSize, txSize);
+   rc = SetService(service, true);
    if(rc != AllocOk) return;
 
    if(port == NilIpPort) return;
@@ -88,38 +101,6 @@ SysSocket::SysSocket(ipport_t port, IpProtocol proto,
    {
       SetError();
       rc = BindError;
-   }
-}
-
-//------------------------------------------------------------------------------
-
-fn_name SysSocket_Close = "SysSocket.Close";
-
-void SysSocket::Close()
-{
-   Debug::ft(SysSocket_Close);
-
-   if(socket_ != INVALID_SOCKET)
-   {
-      TraceEvent(NwTrace::Close, disconnecting_);
-      if(closesocket(socket_) == SOCKET_ERROR) SetError();
-      socket_ = INVALID_SOCKET;
-   }
-}
-
-//------------------------------------------------------------------------------
-
-fn_name SysSocket_Disconnect = "SysSocket.Disconnect";
-
-void SysSocket::Disconnect()
-{
-   Debug::ft(SysSocket_Disconnect);
-
-   if(!disconnecting_ && (socket_ != INVALID_SOCKET))
-   {
-      TraceEvent(NwTrace::Disconnect, 0);
-      if(shutdown(socket_, SD_SEND) == SOCKET_ERROR) SetError();
-      disconnecting_ = true;
    }
 }
 
@@ -192,15 +173,37 @@ bool SysSocket::SetBlocking(bool blocking)
 
 //------------------------------------------------------------------------------
 
-fn_name SysSocket_SetBuffSizes = "SysSocket.SetBuffSizes";
+fn_name SysSocket_SetError = "SysSocket.SetError";
 
-SysSocket::AllocRc SysSocket::SetBuffSizes(size_t rxSize, size_t txSize)
+word SysSocket::SetError()
 {
-   Debug::ft(SysSocket_SetBuffSizes);
+   Debug::ft(SysSocket_SetError);
+
+   error_ = WSAGetLastError();
+   return -1;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SysSocket_SetService = "SysSocket.SetService";
+
+SysSocket::AllocRc SysSocket::SetService(const IpService* service, bool shared)
+{
+   Debug::ft(SysSocket_SetService);
 
    auto rc = SysSocket::AllocOk;
-   size_t max;
+   size_t max, rxSize, txSize;
    int maxsize = sizeof(max);
+
+   if(shared)
+   {
+      rxSize = service->RxSize();
+      txSize = service->TxSize();
+   }
+   else
+   {
+      service->GetAppSocketSizes(rxSize, txSize);
+   }
 
    if(setsockopt(socket_, SOL_SOCKET, SO_RCVBUF,
       (const char*) &rxSize, sizeof(rxSize)) == SOCKET_ERROR)
@@ -217,7 +220,7 @@ SysSocket::AllocRc SysSocket::SetBuffSizes(size_t rxSize, size_t txSize)
    }
 
    if(max < rxSize)
-      Debug::SwLog(SysSocket_SetBuffSizes, max, rxSize);
+      Debug::SwLog(SysSocket_SetService, max, rxSize);
 
    if(setsockopt(socket_, SOL_SOCKET, SO_SNDBUF,
       (const char*) &txSize, sizeof(txSize)) == SOCKET_ERROR)
@@ -234,20 +237,8 @@ SysSocket::AllocRc SysSocket::SetBuffSizes(size_t rxSize, size_t txSize)
    }
 
    if(max < txSize)
-      Debug::SwLog(SysSocket_SetBuffSizes, max, txSize);
+      Debug::SwLog(SysSocket_SetService, max, txSize);
    return rc;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name SysSocket_SetError2 = "SysSocket.SetError";
-
-word SysSocket::SetError()
-{
-   Debug::ft(SysSocket_SetError2);
-
-   error_ = WSAGetLastError();
-   return -1;
 }
 
 //------------------------------------------------------------------------------

@@ -98,10 +98,7 @@ private:
 //  Identifiers for applications that register data with a CliThread.  Each is
 //  treated as a CliAppData::Id (an int) above.
 //
-enum CliAppId
-{
-   TestcaseAppId,
-   TestSessionAppId
-};
+constexpr CliAppData::Id TestcaseAppId = 0;
+constexpr CliAppData::Id TestSessionAppId = 1;
 }
 #endif

@@ -22,7 +22,6 @@
 #include "LocalAddress.h"
 #include <iosfwd>
 #include <sstream>
-#include "SysTypes.h"
 
 using std::string;
 
@@ -30,10 +29,6 @@ using std::string;
 
 namespace SessionBase
 {
-const LocalAddress NilLocalAddress = {NIL_ID, 0, NIL_ID, NIL_ID};
-
-//------------------------------------------------------------------------------
-
 bool LocalAddress::operator==(const LocalAddress& that) const
 {
    if(bid == NIL_ID)

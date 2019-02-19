@@ -43,6 +43,7 @@
 //  AccessNode      AnModule    an       **       ** **    ** ** **
 //  ServiceNode     SnModule    sn       **       ** **    ** ** **
 //  OperationsNode  OnModule    on       **       ** **    ** ** ** **
+//  Diplomacy       DipModule   dip      **       **
 //  none            main.cpp    none     the desired subset of the above
 //
 //  RootThread is defined in NodeBase, so a using directive for NodeBase must
@@ -97,6 +98,7 @@
 //& #include "CbModule.h"
 #include "CnModule.h"
 #include "CtModule.h"
+//& #include "DipModule.h"
 //& #include "MbModule.h"
 //& #include "NbModule.h"
 //& #include "NwModule.h"
@@ -126,6 +128,7 @@ using namespace ControlNode;
 using namespace RoutingNode;
 using namespace ServiceNode;
 using namespace AccessNode;
+//& using namespace Diplomacy;
 
 //------------------------------------------------------------------------------
 
@@ -167,6 +170,7 @@ main_t main(int argc, char* argv[])
    Singleton< RnModule >::Instance();
    Singleton< SnModule >::Instance();
    Singleton< AnModule >::Instance();
+//& Singleton< DipModule >::Instance();
 
    return RootThread::Main();
 }

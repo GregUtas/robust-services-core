@@ -44,7 +44,6 @@ fn_name SysSocket_ctor1 = "SysSocket.ctor(wrap)";
 SysSocket::SysSocket(SysSocket_t socket) :
    socket_(socket),
    blocking_(true),
-   disconnecting_(false),
    tracing_(false),
    error_(0)
 {
@@ -59,7 +58,6 @@ SysSocket::~SysSocket()
 {
    Debug::ft(SysSocket_dtor);
 
-   Close();
    TraceEvent(NwTrace::Delete, 0);
 }
 
@@ -72,20 +70,8 @@ void SysSocket::Display(ostream& stream,
 
    stream << prefix << "socket        : " << socket_ << CRLF;
    stream << prefix << "blocking      : " << blocking_ << CRLF;
-   stream << prefix << "disconnecting : " << disconnecting_ << CRLF;
    stream << prefix << "tracing       : " << tracing_ << CRLF;
    stream << prefix << "error         : " << error_ << CRLF;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name SysSocket_IsOpen = "SysSocket.IsOpen";
-
-bool SysSocket::IsOpen() const
-{
-   Debug::ft(SysSocket_IsOpen);
-
-   return (IsValid() && !disconnecting_);
 }
 
 //------------------------------------------------------------------------------
@@ -99,7 +85,7 @@ void SysSocket::OutputLog(fixed_string expl, const IpBuffer* buff) const
    auto log = Log::Create(expl);
    if(log == nullptr) return;
 
-   *log << " errval=" << GetError();
+   *log << "errval=" << GetError();
 
    if(buff != nullptr)
    {

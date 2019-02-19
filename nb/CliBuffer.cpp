@@ -28,6 +28,7 @@
 #include "CliThread.h"
 #include "CoutThread.h"
 #include "Debug.h"
+#include "FileThread.h"
 #include "Formatters.h"
 #include "NbTypes.h"
 #include "Singleton.h"
@@ -233,8 +234,8 @@ CliParm::Rc CliBuffer::GetInt(string& s, word& n, bool hex)
 {
    Debug::ft(CliBuffer_GetInt);
 
-   int count = s.size();
-   int start = 0;
+   auto count = s.size();
+   size_t start = 0;
    bool minus = false;
    int base;
    int digit;
@@ -325,7 +326,11 @@ std::streamsize CliBuffer::GetLine(const CliThread& cli)
 {
    Debug::ft(CliBuffer_GetLine);
 
-   //  If input isn't being read from a file, read from the console.
+   //  If input isn't being read from a file, read from the console and copy
+   //  the input to the console transcript file.  This is the only time that
+   //  we directly write to this file, because CoutThread copies everything
+   //  to it.  Here, we don't want to copy console input back to the console,
+   //  so we must bypass CoutThread.
    //
    auto source = cli.InputFile();
 
@@ -333,6 +338,7 @@ std::streamsize CliBuffer::GetLine(const CliThread& cli)
    {
       size_ = CinThread::GetLine(buff_, BuffSize);
       if(size_ <= 0) return size_;
+      FileThread::Record(buff_, true);
       return ScanLine(cli);
    }
 
@@ -541,11 +547,13 @@ void CliBuffer::Print()
       {
       case EndOfLine:
          CoutThread::Spool(s.c_str(), true);
-         return CoutThread::Spool(s.c_str(), true);
+         return;
+
       case Symbol:
          if(GetSymbol(t) != CliParm::Ok) s += SymbolChar;
          s += t;
          break;
+
       default:
          s += buff_[pos_++];
       }

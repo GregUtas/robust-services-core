@@ -46,7 +46,7 @@ public:
 
    //  Not subclassed.
    //
-   ~Lexer() { }
+   ~Lexer() = default;
 
    //  Initializes the lexer to assist with parsing SOURCE, which must not
    //  be nullptr.  Also invokes Advance() to position curr_ at the first
@@ -167,10 +167,6 @@ public:
    //
    void PreprocessSource() const;
 
-   //  Returns true if ID, in its entirety, is a valid identifier.
-   //
-   static bool IsValidIdentifier(const std::string& id);
-
    //  Returns the next identifier (which could be a keyword).  The first
    //  character not allowed in an identifier finalizes the string.
    //
@@ -214,7 +210,7 @@ public:
    bool GetTemplateSpec(std::string& spec);
 
    //  Returns true and creates or updates NAME on finding an identifier that
-   //    Advances curr_ beyond NAME.
+   //  advances curr_ beyond NAME.
    //
    bool GetName(std::string& name, Constraint constraint = NonKeyword);
 
@@ -295,9 +291,21 @@ public:
 
    //  Advances curr_ to the start of the next identifier, which is supplied
    //  in ID.  The identifier could be a keyword or preprocessor directive.
-   //  Returns true if an identifier was found, else false.
+   //  Returns true if an identifier was found, else false.  If TOKENIZE is
+   //  set, true is returned if a numeric or punctuation is found, in which
+   //  case ID is set to "$" and curr_ advances to the first position after
+   //  a numeric, whereas it remains at punctuation.
    //
-   bool FindIdentifier(std::string& id);
+   bool FindIdentifier(std::string& id, bool tokenize);
+
+   //  Scans the code to determine lexical levels for indentation.
+   //
+   void CalcDepths();
+
+   //  Returns the DEPTH of indentation for a line.  Sets CONT if the line
+   //  continues a previous line.
+   //
+   void GetDepth(size_t line, int8_t& depth, bool& cont) const;
 private:
    //  Used by PreprocessSource, which creates a clone of "this" lexer to
    //  do the work.
@@ -366,9 +374,37 @@ private:
    //
    Cxx::Directive FindDirective();
 
+   //  Sets all lines from positions START to curr_ to DEPTH1, and all lines
+   //  after curr_ to the next parse position to DEPTH2.  If either range spans
+   //  multiple lines, subsequent lines are marked as continuations of the first
+   //  line in the range.  Updates START to the next parse position after curr_
+   //  before returning.
+   //
+   void SetDepth(size_t& start, int8_t depth1, int8_t depth2);
+
    //  Initializes the keyword and operator hash tables.
    //
    static bool Initialize();
+
+   //  Indicates that the depth of a line of code has not yet been determined.
+   //
+   static const int8_t DEPTH_NOT_SET = -1;
+
+   //  Information about a line of source code.
+   //
+   struct LineInfo
+   {
+      const size_t start;  // where line starts; it ends at a CRLF
+      int8_t depth;        // lexical level for indentation
+      bool cont;           // set if code continues from the previous line
+
+      explicit LineInfo(size_t start) :
+         start(start),
+         depth(DEPTH_NOT_SET),
+         cont(false)
+      {
+      }
+   };
 
    //  The code being analyzed.
    //
@@ -382,9 +418,9 @@ private:
    //
    size_t lines_;
 
-   //  The position where each line starts; it ends at a CRLF.
+   //  Information about each line.
    //
-   std::vector< size_t > start_;
+   std::vector< LineInfo > line_;
 
    //  The current position within source_.
    //
@@ -394,6 +430,11 @@ private:
    //  immediately after the last one that was parsed).
    //
    size_t prev_;
+
+   //  Set if the code has been scanned to determine the indentation level
+   //  for each line.
+   //
+   bool scanned_;
 
    //  Entries in the directive hash table map a string to a Cxx::Directive.
    //

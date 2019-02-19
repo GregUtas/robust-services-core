@@ -291,7 +291,7 @@ void ModuleRegistry::Shutdown(RestartLevel level)
    auto planned = reg->Restarting(level);
    size_t actual = 0;
 
-   //  Report PENDING, the number of threads that plan to exit.  Sleep and
+   //  Report PLANNED, the number of threads that plan to exit.  Sleep and
    //  check how many threads have exited upon waking up.  If any threads
    //  still plan to exit, sleep until TRIES expires before giving up.
    //

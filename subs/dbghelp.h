@@ -12,7 +12,7 @@
 //
 //  Windows thread stacks
 //
-const size_t MAX_SYM_NAME = 2000;
+constexpr size_t MAX_SYM_NAME = 2000;
 
 struct SYMBOL_INFO
 {
@@ -28,8 +28,8 @@ struct IMAGEHLP_LINE64
    size_t LineNumber;
 };
 
-const DWORD SYMOPT_UNDNAME = 0x00000002;
-const DWORD SYMOPT_LOAD_LINES = 0x00000010;
+constexpr DWORD SYMOPT_UNDNAME = 0x00000002;
+constexpr DWORD SYMOPT_LOAD_LINES = 0x00000010;
 
 WORD  RtlCaptureStackBackTrace(DWORD FramesToSkip, DWORD FramesToCapture, void* BackTrace, DWORD* BackTraceHash);
 bool  SymInitialize(HANDLE Process, const char* UserSearchPath, bool InvadeProcess);

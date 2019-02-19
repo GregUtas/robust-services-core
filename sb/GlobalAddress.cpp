@@ -32,13 +32,9 @@ using std::string;
 
 namespace SessionBase
 {
-const GlobalAddress GlobalAddress::NilAddr = GlobalAddress();
-
-//------------------------------------------------------------------------------
-
 fn_name GlobalAddress_ctor1 = "GlobalAddress.ctor";
 
-GlobalAddress::GlobalAddress() : sbAddr_(NilLocalAddress)
+GlobalAddress::GlobalAddress()
 {
    Debug::ft(GlobalAddress_ctor1);
 }
@@ -48,8 +44,7 @@ GlobalAddress::GlobalAddress() : sbAddr_(NilLocalAddress)
 fn_name GlobalAddress_ctor2 = "GlobalAddress.ctor(L3addr, factory)";
 
 GlobalAddress::GlobalAddress(const SysIpL3Addr& l3Addr, FactoryId fid) :
-   SysIpL3Addr(l3Addr),
-   sbAddr_(NilLocalAddress)
+   SysIpL3Addr(l3Addr)
 {
    Debug::ft(GlobalAddress_ctor2);
 
@@ -62,8 +57,7 @@ fn_name GlobalAddress_ctor3 = "GlobalAddress.ctor(L2addr, port, factory)";
 
 GlobalAddress::GlobalAddress
    (const SysIpL2Addr& l2Addr, ipport_t port, FactoryId fid) :
-   SysIpL3Addr(l2Addr, port),
-   sbAddr_(NilLocalAddress)
+   SysIpL3Addr(l2Addr, port)
 {
    Debug::ft(GlobalAddress_ctor3);
 

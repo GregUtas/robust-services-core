@@ -23,6 +23,7 @@
 #define SYSCONSOLE_H_INCLUDED
 
 #include <iosfwd>
+#include <string>
 
 //------------------------------------------------------------------------------
 
@@ -39,6 +40,14 @@ namespace SysConsole
    //  Returns the stream to which console output is sent.
    //
    std::ostream& Out();
+
+   //  Minimizes or restores the console window.
+   //
+   bool Minimize(bool minimize);
+
+   //  Sets the console window's title.
+   //
+   bool SetTitle(const std::string& title);
 }
 }
 #endif

@@ -386,8 +386,7 @@ LibrarySet* Library::Evaluate(const string& expr, size_t pos) const
       curr = next;
    }
 
-   auto interpreter =
-      std::unique_ptr< Interpreter >(new Interpreter(expr, pos));
+   std::unique_ptr< Interpreter > interpreter(new Interpreter(expr, pos));
    auto set = interpreter->Evaluate();
    interpreter.reset();
    return set;
@@ -405,13 +404,13 @@ word Library::Export(ostream& stream, const string& opts) const
    {
       auto root = Singleton< CxxRoot >::Instance();
       auto gns = root->GlobalNamespace();
-      auto options = Flags(FQ_Mask | NS_Mask);
+      Flags options(FQ_Mask | NS_Mask);
       if(opts.find(ItemStatistics) != string::npos) options.set(DispStats);
 
       stream << "NAMESPACE VIEW" << CRLF << CRLF;
       root->Display(stream, EMPTY_STR, options);
       gns->Display(stream, EMPTY_STR, options);
-      stream << string(80, '=') << CRLF;
+      stream << string(LINE_LENGTH_MAX, '=') << CRLF;
    }
 
    auto rule = false;
@@ -431,7 +430,7 @@ word Library::Export(ostream& stream, const string& opts) const
 
    if(opts.find(ClassHierarchyView) != string::npos)
    {
-      if(rule) stream << string(80, '=') << CRLF;
+      if(rule) stream << string(LINE_LENGTH_MAX, '=') << CRLF;
       stream << "CLASS VIEW" << CRLF << CRLF;
 
       ClassVector roots;
@@ -479,11 +478,14 @@ CodeFile* Library::FindFile(const string& name) const
 {
    Debug::ft(Library_FindFile);
 
-   auto key = GetFileName(name);
+   //  Case is ignored in source code file names, so convert NAME and
+   //  candidate file names to lower case before comparing them.
+   //
+   auto key = strLower(GetFileName(name));
 
    for(auto f = files_.First(); f != nullptr; files_.Next(f))
    {
-      if(f->Name() == key) return f;
+      if(strLower(f->Name()) == key) return f;
    }
 
    return nullptr;

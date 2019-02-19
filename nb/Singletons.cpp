@@ -91,7 +91,7 @@ void Singletons::BindInstance(const Base** addr, MemoryType type)
 
    //  Add this singleton to the registry.
    //
-   auto entry = SingletonTuple(addr, type);
+   SingletonTuple entry(addr, type);
    registry_.PushBack(entry);
 }
 

@@ -30,8 +30,10 @@
 #include "IpService.h"
 #include "Log.h"
 #include "Memory.h"
+#include "NbTypes.h"
 #include "SysSocket.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 
@@ -46,15 +48,15 @@ const size_t IoThread::MaxTxBuffSize = 64 * 1024;  // 64KB
 
 fn_name IoThread_ctor = "IoThread.ctor";
 
-IoThread::IoThread(Faction faction, ipport_t port,
-   size_t rxSize, size_t txSize) : Thread(faction),
+IoThread::IoThread(const IpService* service, ipport_t port) :
+   Thread(service->GetFaction()),
    port_(port),
    ipPort_(nullptr),
-   rxSize_(rxSize),
-   txSize_(txSize),
    recvs_(0),
    ticks0_(0),
-   buffer_(nullptr)
+   buffer_(nullptr),
+   rxSize_(service->RxSize()),
+   txSize_(service->TxSize())
 {
    Debug::ft(IoThread_ctor);
 
@@ -116,14 +118,14 @@ void IoThread::Display(ostream& stream,
 
    stream << prefix << "port   : " << port_ << CRLF;
    stream << prefix << "ipPort : " << ipPort_ << CRLF;
-   stream << prefix << "rxSize : " << rxSize_ << CRLF;
-   stream << prefix << "txSize : " << txSize_ << CRLF;
    stream << prefix << "host   : " << host_.to_str() << CRLF;
    stream << prefix << "recvs  : " << recvs_ << CRLF;
    stream << prefix << "txAddr : " << txAddr_.to_string() << CRLF;
    stream << prefix << "rxAddr : " << rxAddr_.to_string() << CRLF;
    stream << prefix << "ticks0 : " << ticks0_ << CRLF;
    stream << prefix << "buffer : " << strPtr(buffer_) << CRLF;
+   stream << prefix << "rxSize : " << rxSize_ << CRLF;
+   stream << prefix << "txSize : " << txSize_ << CRLF;
 }
 
 //------------------------------------------------------------------------------
@@ -143,21 +145,10 @@ bool IoThread::ExitOnRestart(RestartLevel level) const
 
 //------------------------------------------------------------------------------
 
-fn_name IoThread_InsertSocket = "IoThread.InsertSocket";
-
-bool IoThread::InsertSocket(SysSocket* socket)
-{
-   Debug::ft(IoThread_InsertSocket);
-
-   return false;
-}
-
-//------------------------------------------------------------------------------
-
 fn_name IoThread_InvokeHandler = "IoThread.InvokeHandler";
 
-void IoThread::InvokeHandler(const IpPort& port,
-   const byte_t* source, MsgSize size) const
+void IoThread::InvokeHandler
+   (const IpPort& port, const byte_t* source, size_t size) const
 {
    Debug::ft(IoThread_InvokeHandler);
 
@@ -166,8 +157,9 @@ void IoThread::InvokeHandler(const IpPort& port,
    while(size > 0)
    {
       byte_t* dest = nullptr;
-      MsgSize rcvd = size;
-      auto buff = IpBufferPtr(handler->AllocBuff(source, size, dest, rcvd));
+      auto rcvd = size;
+      auto socket = rxAddr_.GetSocket();
+      IpBufferPtr buff(handler->AllocBuff(source, size, dest, rcvd, socket));
       if(buff == nullptr) return;
       if(rcvd == 0) return;
 
@@ -195,11 +187,11 @@ void IoThread::InvokeHandler(const IpPort& port,
       //  Copy RCVD bytes from SOURCE to DEST and pass the message to
       //  the input handler.
       //
-      Memory::Copy(dest, source, rcvd);
+      handler->NetworkToHost(*buff, dest, source, rcvd);
       buff->SetRxAddr(rxAddr_);
       buff->SetTxAddr(txAddr_);
       buff->SetRxTicks(ticks0_);
-      handler->ReceiveBuff(rcvd, buff, port.GetService()->GetFaction());
+      handler->ReceiveBuff(buff, rcvd, port.GetService()->GetFaction());
 
       if(rcvd >= size) return;
       source += rcvd;

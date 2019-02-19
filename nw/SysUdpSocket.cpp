@@ -20,13 +20,19 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "SysUdpSocket.h"
+#include <ostream>
+#include <string>
 #include "Debug.h"
+#include "InputHandler.h"
 #include "IpBuffer.h"
 #include "IpPort.h"
 #include "IpPortRegistry.h"
 #include "NwTrace.h"
 #include "Singleton.h"
 #include "SysIpL3Addr.h"
+
+using std::ostream;
+using std::string;
 
 //------------------------------------------------------------------------------
 
@@ -45,6 +51,16 @@ SysUdpSocket::~SysUdpSocket()
 
 //------------------------------------------------------------------------------
 
+void SysUdpSocket::Display(ostream& stream,
+   const string& prefix, const Flags& options) const
+{
+   SysSocket::Display(stream, prefix, options);
+
+   stream << prefix << "MaxUdpSize : " << MaxUdpSize_ << CRLF;
+}
+
+//------------------------------------------------------------------------------
+
 void SysUdpSocket::Patch(sel_t selector, void* arguments)
 {
    SysSocket::Patch(selector, arguments);
@@ -58,9 +74,9 @@ SysSocket::SendRc SysUdpSocket::SendBuff(IpBuffer& buff)
 {
    Debug::ft(SysUdpSocket_SendBuff);
 
-   byte_t* start = nullptr;
+   byte_t* src = nullptr;
 
-   auto size = buff.OutgoingBytes(start);
+   auto size = buff.OutgoingBytes(src);
 
    if(size > SysUdpSocket::MaxUdpSize_)
    {
@@ -68,10 +84,12 @@ SysSocket::SendRc SysUdpSocket::SendBuff(IpBuffer& buff)
       return SendFailed;
    }
 
-   auto port = buff.TxAddr().GetPort();
+   auto txport = buff.TxAddr().GetPort();
+   auto port = Singleton< IpPortRegistry >::Instance()->GetPort(txport);
    auto& peer = buff.RxAddr();
-   auto sent = SendTo(start, size, peer);
-   TracePeer(NwTrace::SendTo, port, peer, sent);
+   auto dest = port->GetHandler()->HostToNetwork(buff, src, size);
+   auto sent = SendTo(dest, size, peer);
+   TracePeer(NwTrace::SendTo, txport, peer, sent);
 
    if(sent <= 0)
    {
@@ -81,7 +99,7 @@ SysSocket::SendRc SysUdpSocket::SendBuff(IpBuffer& buff)
       return SendFailed;
    }
 
-   Singleton< IpPortRegistry >::Instance()->GetPort(port)->BytesSent(size);
+   port->BytesSent(size);
    return SendOk;
 }
 }

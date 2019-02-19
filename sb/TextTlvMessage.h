@@ -23,8 +23,10 @@
 #define TEXTTLVMESSAGE_H_INCLUDED
 
 #include "TlvMessage.h"
-#include "NbTypes.h"
+#include <cstddef>
 #include "SbTypes.h"
+
+using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 
@@ -59,7 +61,7 @@ protected:
 
    //  Creates an outgoing message.  Protected because this class is virtual.
    //
-   TextTlvMessage(ProtocolSM* psm, MsgSize size);
+   TextTlvMessage(ProtocolSM* psm, size_t size);
 
    //  Invokes Parse and replaces the original text message with the TLV
    //  message created by Parse.  Returns false if Parse returned nullptr.

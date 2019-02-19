@@ -43,13 +43,13 @@ public:
    //  is valid, it determines PROTO.
    //
    SysIpL3Addr(ipv4addr_t v4Addr, ipport_t port,
-      IpProtocol proto = IpAny, SysSocket* socket = nullptr);
+      IpProtocol proto = IpAny, SysTcpSocket* socket = nullptr);
 
    //  Constructs an address from L2ADDR, PORT, PROTO, and SOCKET.  If SOCKET
    //  is valid, it determines PROTO.
    //
    SysIpL3Addr(const SysIpL2Addr& l2Addr, ipport_t port,
-      IpProtocol proto = IpAny, SysSocket* socket = nullptr);
+      IpProtocol proto = IpAny, SysTcpSocket* socket = nullptr);
 
    //  Constructs an address for the host identified by NAME.  SERVICE may be
    //  a port number or the name of a service associated with a well-known
@@ -73,7 +73,7 @@ public:
 
    //  Sets the socket for the address.
    //
-   void SetSocket(SysSocket* socket);
+   void SetSocket(SysTcpSocket* socket);
 
    //  Returns the port.
    //
@@ -85,7 +85,12 @@ public:
 
    //  Returns the dedicated socket assigned to the address.
    //
-   SysSocket* GetSocket() const { return socket_; }
+   SysTcpSocket* GetSocket() const { return socket_; }
+
+   //  If the address has a dedicated socket_, releases it and sets
+   //  it to nullptr.
+   //
+   void ReleaseSocket();
 
    //  Updates NAME and SERVICE to the standard host name and port
    //  service name of the host identified by this address.
@@ -128,7 +133,7 @@ private:
 
    //  The port's dedicated socket, if any.
    //
-   SysSocket* socket_;
+   SysTcpSocket* socket_;
 };
 }
 #endif

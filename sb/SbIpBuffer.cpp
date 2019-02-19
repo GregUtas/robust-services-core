@@ -41,7 +41,7 @@ namespace SessionBase
 {
 fn_name SbIpBuffer_ctor1 = "SbIpBuffer.ctor";
 
-SbIpBuffer::SbIpBuffer(MsgDirection dir, MsgSize payload) :
+SbIpBuffer::SbIpBuffer(MsgDirection dir, size_t payload) :
    IpBuffer(dir, sizeof(MsgHeader), payload)
 {
    Debug::ft(SbIpBuffer_ctor1);
@@ -142,7 +142,7 @@ void SbIpBuffer::Patch(sel_t selector, void* arguments)
 
 fn_name SbIpBuffer_PayloadSize = "SbIpBuffer.PayloadSize";
 
-MsgSize SbIpBuffer::PayloadSize() const
+size_t SbIpBuffer::PayloadSize() const
 {
    Debug::ft(SbIpBuffer_PayloadSize);
 

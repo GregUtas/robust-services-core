@@ -178,7 +178,7 @@ TestDatabase::LoadState TestDatabase::GetTest(string& input)
    if(hash.empty() || !isxdigit(hash.front()))
       return GetError("Testcase hash value not found");
    uint32_t n = std::stoul(hash, nullptr, 16);
-   auto info = TestInfo(s, n);
+   TestInfo info(s, n);
    auto result = tests_.insert(TestData(name, info));
    if(!result.second) return GetError("Testcase name duplicated");
    return GetTestcase;
@@ -231,7 +231,7 @@ void TestDatabase::Insert(const string& test, const string& dir)
    {
       //  TEST was not in the database, so add it.
       //
-      auto info = TestInfo(state, hash);
+      TestInfo info(state, hash);
       tests_.insert(TestData(test, info));
    }
 }

@@ -52,7 +52,7 @@ void SetDifference(SetOfIds& lhs, const SetOfIds& rhs)
 {
    Debug::ft(CodeTools_SetDifference2);
 
-   auto temp = std::unique_ptr< SetOfIds >(new SetOfIds);
+   std::unique_ptr< SetOfIds > temp(new SetOfIds);
    std::set_difference(lhs.cbegin(), lhs.cend(),
       rhs.cbegin(), rhs.cend(), std::inserter(*temp, temp->begin()));
    lhs.swap(*temp);
@@ -79,7 +79,7 @@ void SetIntersection(SetOfIds& lhs, const SetOfIds& rhs)
 {
    Debug::ft(CodeTools_SetIntersection2);
 
-   auto temp = std::unique_ptr< SetOfIds >(new SetOfIds);
+   std::unique_ptr< SetOfIds > temp(new SetOfIds);
    std::set_intersection(lhs.cbegin(), lhs.cend(),
       rhs.cbegin(), rhs.cend(), std::inserter(*temp, temp->begin()));
    lhs.swap(*temp);
@@ -106,7 +106,7 @@ void SetUnion(SetOfIds& lhs, const SetOfIds& rhs)
 {
    Debug::ft(CodeTools_SetUnion2);
 
-   auto temp = std::unique_ptr< SetOfIds >(new SetOfIds);
+   std::unique_ptr< SetOfIds > temp(new SetOfIds);
    std::set_union(lhs.cbegin(), lhs.cend(),
       rhs.cbegin(), rhs.cend(), std::inserter(*temp, temp->begin()));
    lhs.swap(*temp);

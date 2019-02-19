@@ -46,7 +46,7 @@ using std::string;
 
 namespace CodeTools
 {
-fn_name Class_ctor = "Class.ctor[ct]";
+fn_name Class_ctor = "Class.ctor[>ct]";
 
 Class::Class(QualNamePtr& name, Cxx::ClassTag tag) :
    name_(name.release()),
@@ -62,7 +62,7 @@ Class::Class(QualNamePtr& name, Cxx::ClassTag tag) :
 
 //------------------------------------------------------------------------------
 
-fn_name Class_dtor = "Class.dtor[ct]";
+fn_name Class_dtor = "Class.dtor[>ct]";
 
 Class::~Class()
 {
@@ -416,18 +416,34 @@ void Class::BlockCopied(const StackArg* arg)
 
 fn_name Class_CanConstructFrom = "Class.CanConstructFrom";
 
-bool Class::CanConstructFrom
-   (const StackArg& that, const string& thatType, bool implicit) const
+bool Class::CanConstructFrom(const StackArg& that, const string& thatType) const
 {
    Debug::ft(Class_CanConstructFrom);
 
    //  Visit our functions to see if one of them is a suitable constructor.
    //
    auto funcs = Funcs();
+   TypeMatch result = Incompatible;
+   Function* ctor = nullptr;
 
    for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
    {
-      if((*f)->CanConstructFrom(that, thatType, implicit)) return true;
+      auto match = (*f)->CalcConstructibilty(that, thatType);
+
+      if(match > result)
+      {
+         result = match;
+         ctor = f->get();
+      }
+   }
+
+   //  For implicit construction, thatType must at least be convertible
+   //  to the constructor's argument.
+   //
+   if(result >= Convertible)
+   {
+      ctor->SetImplicit();
+      return true;
    }
 
    return false;
@@ -850,9 +866,9 @@ ClassInst* Class::CreateInstance(const string& name, const TypeName* type)
 {
    Debug::ft(Class_CreateInstance);
 
-   auto newName = QualNamePtr(new QualName(name));
+   QualNamePtr newName(new QualName(name));
    newName->CopyContext(this);
-   auto tmplt = ClassInstPtr(new ClassInst(newName, this, type));
+   ClassInstPtr tmplt(new ClassInst(newName, this, type));
    auto inst = tmplt.get();
    inst->CopyContext(this);
    tmplts_.push_back(std::move(tmplt));
@@ -903,7 +919,7 @@ void Class::Display(ostream& stream,
       DisplayFiles(stream);
    }
 
-   auto lead = prefix + spaces(Indent_Size);
+   auto lead = prefix + spaces(INDENT_SIZE);
    auto qual = options;
    auto nonqual = options;
    qual.set(DispFQ);
@@ -924,11 +940,11 @@ void Class::Display(ostream& stream,
 
    if(!code)
    {
-      lead += spaces(Indent_Size);
+      lead += spaces(INDENT_SIZE);
 
       if(!subs_.empty())
       {
-         stream << prefix << spaces(Indent_Size) << "subclasses:" << CRLF;
+         stream << prefix << spaces(INDENT_SIZE) << "subclasses:" << CRLF;
 
          for(auto s = subs_.cbegin(); s != subs_.cend(); ++s)
          {
@@ -938,7 +954,7 @@ void Class::Display(ostream& stream,
 
       if(!tmplts_.empty())
       {
-         stream << prefix << spaces(Indent_Size)
+         stream << prefix << spaces(INDENT_SIZE)
             << "instantiations (" << tmplts_.size() << "):" << CRLF;
 
          for(auto t = tmplts_.cbegin(); t != tmplts_.cend(); ++t)
@@ -979,7 +995,7 @@ void Class::DisplayHierarchy(ostream& stream, const string& prefix) const
 {
    stream << prefix << ScopedName(true) << CRLF;
 
-   auto lead = prefix + spaces(Indent_Size);
+   auto lead = prefix + spaces(INDENT_SIZE);
 
    for(auto s = subs_.cbegin(); s != subs_.cend(); ++s)
    {
@@ -1321,8 +1337,12 @@ void Class::GetMemberInitAttrs(DataInitVector& members) const
 
    for(size_t i = 0; i < data->size(); ++i)
    {
+      //  The member should be initialized if it is not default constructible.
+      //  However, exempt a member that appears in a union.
+      //
       auto mem = data->at(i).get();
-      auto attrs = DataInitAttrs(mem, !mem->IsDefaultConstructible(), 0);
+      auto init = (!mem->IsDefaultConstructible() && !mem->IsUnionMember());
+      DataInitAttrs attrs(mem, init, 0);
       members.push_back(attrs);
    }
 }
@@ -1708,7 +1728,7 @@ StackArg Class::NameToArg(Cxx::Operator op)
    //  looked up.  Set the "invoke" flag on the argument, which will be
    //  used to invoke a constructor.
    //
-   auto arg = StackArg(this, 0);
+   StackArg arg(this, 0);
    if(op != Cxx::SIZEOF_TYPE) arg.SetInvoke();
    return arg;
 }
@@ -1859,7 +1879,7 @@ bool ClassInst::DerivesFrom(const Class* cls) const
       auto thatType = (*a2)->TypeString(true);
       auto thisArg = (*a1)->ResultType();
       auto thatArg = (*a2)->ResultType();
-      auto match = thatArg.CalcMatchWith(thisArg, thatType, thisType, false);
+      auto match = thatArg.CalcMatchWith(thisArg, thatType, thisType);
       if(match == Incompatible) return false;
       ++a1;
       ++a2;
@@ -1911,7 +1931,7 @@ void ClassInst::Display(ostream& stream,
    }
    else
    {
-      auto lead = prefix + spaces(Indent_Size);
+      auto lead = prefix + spaces(INDENT_SIZE);
       auto qual = options;
       auto opts = options;
       qual.set(DispFQ);
@@ -2020,7 +2040,7 @@ bool ClassInst::Instantiate()
    //
    code_.reset();
    auto begin = tmplt_->CreateCode(this, code_);
-   auto parser = std::unique_ptr< Parser >(new Parser(EMPTY_STR));
+   std::unique_ptr< Parser > parser(new Parser(EMPTY_STR));
    compiled_ = parser->ParseClassInst(this, begin);
    parser.reset();
    if(compiled_) code_.reset();
@@ -2626,7 +2646,7 @@ void Namespace::Display(ostream& stream,
    stream << prefix << NAMESPACE_STR << SPACE << name << CRLF;
    stream << prefix << '{' << CRLF;
 
-   auto lead = prefix + spaces(Indent_Size);
+   auto lead = prefix + spaces(INDENT_SIZE);
    auto nonqual = options;
    nonqual.reset(DispFQ);
 
@@ -2653,7 +2673,7 @@ Namespace* Namespace::EnsureNamespace(const string& name)
    auto s = FindNamespace(name);
    if(s != nullptr) return s;
 
-   auto space = NamespacePtr(new Namespace(name, this));
+   NamespacePtr space(new Namespace(name, this));
    spaces_.push_back(std::move(space));
    return spaces_.back().get();
 }

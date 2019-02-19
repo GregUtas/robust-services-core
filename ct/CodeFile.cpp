@@ -20,7 +20,6 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CodeFile.h"
-#include <algorithm>
 #include <cctype>
 #include <cstdio>
 #include <cstring>
@@ -29,7 +28,6 @@
 #include <sstream>
 #include <utility>
 #include "Algorithms.h"
-#include "CliThread.h"
 #include "CodeCoverage.h"
 #include "CodeDir.h"
 #include "CodeFileSet.h"
@@ -49,7 +47,6 @@
 #include "Formatters.h"
 #include "FunctionName.h"
 #include "Library.h"
-#include "NbCliParms.h"
 #include "Parser.h"
 #include "Registry.h"
 #include "SetOperations.h"
@@ -393,8 +390,7 @@ CodeFile::CodeFile(const string& name, CodeDir* dir) : LibraryItem(name),
    slashAsterisk_(false),
    parsed_(Unparsed),
    template_(NonTemplate),
-   checked_(false),
-   modified_(false)
+   checked_(false)
 {
    Debug::ft(CodeFile_ctor);
 
@@ -527,7 +523,7 @@ const SetOfIds& CodeFile::Affecters() const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_CalcGroup1 = "CodeFile.CalcGroup[file]";
+fn_name CodeFile_CalcGroup1 = "CodeFile.CalcGroup(file)";
 
 int CodeFile::CalcGroup(const CodeFile* file) const
 {
@@ -543,7 +539,7 @@ int CodeFile::CalcGroup(const CodeFile* file) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_CalcGroup2 = "CodeFile.CalcGroup[fn]";
+fn_name CodeFile_CalcGroup2 = "CodeFile.CalcGroup(fn)";
 
 int CodeFile::CalcGroup(const string& fn) const
 {
@@ -554,7 +550,7 @@ int CodeFile::CalcGroup(const string& fn) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_CalcGroup3 = "CodeFile.CalcGroup[incl]";
+fn_name CodeFile_CalcGroup3 = "CodeFile.CalcGroup(incl)";
 
 int CodeFile::CalcGroup(const Include& incl) const
 {
@@ -609,9 +605,10 @@ void CodeFile::Check()
 {
    Debug::ft(CodeFile_Check);
 
+   //  We don't do a Debug::Progress on our file name, because Trim
+   //  (invoked below) already does it.
+   //
    if(checked_) return;
-
-   Debug::Progress(Name(), true);
 
    //  Don't check an empty file or a substitute file.
    //
@@ -704,7 +701,7 @@ void CodeFile::CheckDebugFt() const
                      LogLine(n, DebugFtNameDuplicated);
                }
 
-               if(!ok) LogLine(n, DebugFtNameMismatch);
+               if(!ok) LogPos(begin, DebugFtNameMismatch, *f);
             }
             break;
 
@@ -716,7 +713,7 @@ void CodeFile::CheckDebugFt() const
 
       if(!debug && !((*f)->IsExemptFromTracing()))
       {
-         LogPos(begin, DebugFtNotInvoked);
+         LogPos(begin, DebugFtNotInvoked, *f);
       }
    }
 }
@@ -828,15 +825,10 @@ void CodeFile::CheckIncludeGuard()
 
    for(n = 0; (n < lineType_.size()) && (pos == string::npos); ++n)
    {
+      if(!LineTypeAttr::Attrs[lineType_[n]].isCode) continue;
+
       switch(lineType_[n])
       {
-      case EmptyComment:
-      case LicenseComment:
-      case TextComment:
-      case SeparatorComment:
-      case TaggedComment:
-      case Blank:
-         continue;
       case HashDirective:
          pos = lexer_.GetLineStart(n);
          break;
@@ -854,22 +846,11 @@ void CodeFile::CheckIncludeGuard()
 
    lexer_.Reposition(pos + strlen(HASH_IFNDEF_STR));
 
-   //  Assume that this is an include guard.  Check that its name is
-   //  derived from the filename. For FileName.h, the guard should
-   //  be FILENAME_H_INCLUDED.
+   //  Assume that this is an include guard.  Check its name
+   //  against the standard.
    //
-   auto name = Name();
+   auto name = MakeGuardName();
    auto symbol = lexer_.NextIdentifier();
-
-   for(size_t i = 0; i < name.size(); ++i)
-   {
-      if(name[i] == '.')
-         name[i] = '_';
-      else
-         name[i] = toupper(name[i]);
-   }
-
-   name += "_INCLUDED";
    if(symbol != name) LogLine(n, IncludeGuardMisnamed);
 }
 
@@ -987,7 +968,6 @@ void CodeFile::CheckProlog()
    ok = ok && (code_.find(COMMENT_STR, pos) == pos);
    ok = ok && (code_.find(Name(), pos) == pos + 4);
    if(!ok) return LogLine(2, HeadingNotStandard);
-   lineType_[2] = LicenseComment;
 
    size_t line = 3;
 
@@ -997,14 +977,9 @@ void CodeFile::CheckProlog()
       ok = ok && (code_.find(COMMENT_STR, pos) == pos);
 
       if(FileProlog[i] == EMPTY_STR)
-      {
          ok = ok && (lineType_[line] == EmptyComment);
-      }
       else
-      {
          ok = ok && (code_.find(FileProlog[i], pos) == pos + 4);
-         if(ok) lineType_[line] = LicenseComment;
-      }
 
       if(!ok) return LogLine(line, HeadingNotStandard);
       ++line;
@@ -1037,11 +1012,11 @@ void CodeFile::CheckSeparation()
       case Code:
          switch(prevType)
          {
-         case SeparatorComment:
+         case FileComment:
          case FunctionName:
          case IncludeDirective:
          case UsingDirective:
-            LogLine(n, InsertBlankLine);
+            LogLine(n, AddBlankLine);
             break;
          }
          break;
@@ -1065,38 +1040,17 @@ void CodeFile::CheckSeparation()
          break;
 
       case SeparatorComment:
-         switch(prevType)
-         {
-         case Blank:
-         case EmptyComment:
-            break;
-         default:
-            LogLine(n, InsertBlankLine);
-         }
-
-         switch(nextType)
-         {
-         case Blank:
-         case EmptyComment:
-            break;
-         default:
-            LogLine(n + 1, InsertBlankLine);
-         }
+         if(!LineTypeAttr::Attrs[prevType].isBlank)
+            LogLine(n, AddBlankLine);
+         if(!LineTypeAttr::Attrs[nextType].isBlank)
+            LogLine(n + 1, AddBlankLine);
          break;
 
       case OpenBrace:
       case CloseBrace:
       case CloseBraceSemicolon:
-         switch(prevType)
-         {
-         case Blank:
-         case EmptyComment:
+         if(LineTypeAttr::Attrs[prevType].isBlank)
             LogLine(n - 1, RemoveBlankLine);
-            break;
-         case SeparatorComment:
-            LogLine(n, InsertBlankLine);
-            break;
-         }
          break;
 
       case FunctionName:
@@ -1110,10 +1064,10 @@ void CodeFile::CheckSeparation()
          case FunctionNameSplit:
             break;
          case TextComment:
-            if(IsCpp()) LogLine(n, InsertBlankLine);
+            if(IsCpp()) LogLine(n, AddBlankLine);
             break;
          default:
-            LogLine(n, InsertBlankLine);
+            LogLine(n, AddBlankLine);
          }
          break;
       }
@@ -1146,17 +1100,11 @@ void CodeFile::CheckUsings() const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_ClassifyLine = "CodeFile.ClassifyLine";
+fn_name CodeFile_ClassifyLine1 = "CodeFile.ClassifyLine(string)";
 
-LineType CodeFile::ClassifyLine(size_t n)
+LineType CodeFile::ClassifyLine(string s, std::set< Warning >& warnings)
 {
-   Debug::ft(CodeFile_ClassifyLine);
-
-   //  Get the line's length.  An empty line can immediately be classified
-   //  as a Blank.
-   //
-   string s;
-   if(!lexer_.GetNthLine(n, s)) return LineType_N;
+   Debug::ft(CodeFile_ClassifyLine1);
 
    auto length = s.size();
    if(length == 0) return Blank;
@@ -1164,17 +1112,17 @@ LineType CodeFile::ClassifyLine(size_t n)
    //  If the line is too long, flag it unless it ends in a string literal
    //  (a quotation mark followed by a semicolon or, within a list, a comma).
    //
-   if(length > 80)
+   if(length > LINE_LENGTH_MAX)
    {
       auto end = s.substr(length - 2);
-      if((end != "\";") && (end != "\",")) LogLine(n, LineLength);
+      if((end != "\";") && (end != "\",")) warnings.insert(LineLength);
    }
 
    //  Flag any tabs and convert them to spaces.
    //
    for(auto pos = s.find(TAB); pos != string::npos; pos = s.find(TAB))
    {
-      LogLine(n, UseOfTab);
+      warnings.insert(UseOfTab);
       s[pos] = SPACE;
    }
 
@@ -1182,13 +1130,13 @@ LineType CodeFile::ClassifyLine(size_t n)
    //
    if(s.find_first_not_of(SPACE) == string::npos)
    {
-      LogLine(n, TrailingSpace);
+      warnings.insert(TrailingSpace);
       return Blank;
    }
 
    while(s.rfind(SPACE) == s.size() - 1)
    {
-      LogLine(n, TrailingSpace);
+      warnings.insert(TrailingSpace);
       s.pop_back();
    }
 
@@ -1199,23 +1147,14 @@ LineType CodeFile::ClassifyLine(size_t n)
    auto pos = s.find_first_not_of(SPACE);
    if(pos > 0) s.erase(0, pos);
 
-   if(pos % Indent_Size != 0)
+   if(pos % INDENT_SIZE != 0)
    {
-      if((s.front() != '/') && (s.front() != QUOTE)) LogLine(n, Indentation);
+      if((s.front() != '/') && (s.front() != QUOTE)) warnings.insert(Indentation);
    }
 
    //  Now that the line has been reformatted, recalculate its length.
    //
    length = s.size();
-
-   //  If a /* comment is open, check if this line closes it, and then
-   //  classify it as a text comment.
-   //
-   if(slashAsterisk_)
-   {
-      if(s.find(COMMENT_END_STR) != string::npos) slashAsterisk_ = false;
-      return TextComment;
-   }
 
    //  Look for lines that contain nothing but a brace (or brace and semicolon).
    //
@@ -1243,12 +1182,11 @@ LineType CodeFile::ClassifyLine(size_t n)
 
    //  Flag a /* comment and see if it ends on the same line.
    //
-   pos = FindSubstr(s, COMMENT_START_STR);
+   pos = FindSubstr(s, COMMENT_BEGIN_STR);
 
    if(pos != string::npos)
    {
-      LogLine(n, UseOfSlashAsterisk);
-      if(s.find(COMMENT_END_STR) == string::npos) slashAsterisk_ = true;
+      warnings.insert(UseOfSlashAsterisk);
       if(pos == 0) return SlashAsteriskComment;
    }
 
@@ -1272,7 +1210,8 @@ LineType CodeFile::ClassifyLine(size_t n)
    //  Look for strings that provide function names for Debug::ft.  These
    //  have the format
    //    fn_name ClassName_FunctionName = "ClassName.FunctionName";
-   //  with an endline after the '=' if the line would exceed 80 characters.
+   //  with an endline after the '=' if the line would exceed LINE_LENGTH_MAX
+   //  characters.
    //
    string type(FunctionName::TypeStr);
    type.push_back(SPACE);
@@ -1313,35 +1252,84 @@ LineType CodeFile::ClassifyLine(size_t n)
 
       if((next != string::npos) && (next != slashSlashPos) && (s[next] != '='))
       {
-         LogLine(n, AdjacentSpaces);
+         warnings.insert(AdjacentSpaces);
       }
    }
 
-   if((n > 0) && (lineType_[n - 1] == FunctionNameSplit)) return FunctionName;
    return Code;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeFile_ClassifyLine2 = "CodeFile.ClassifyLine(size_t)";
+
+LineType CodeFile::ClassifyLine(size_t n)
+{
+   Debug::ft(CodeFile_ClassifyLine2);
+
+   //  Get the code for line N and classify it.
+   //
+   string s;
+   if(!lexer_.GetNthLine(n, s)) return LineType_N;
+
+   std::set< Warning > warnings;
+   auto type = ClassifyLine(s, warnings);
+
+   //  A line within a /*  comment can be logged spuriously.
+   //
+   if(slashAsterisk_)
+   {
+      warnings.erase(Indentation);
+      warnings.erase(AdjacentSpaces);
+   }
+
+   //  Log any warnings that were reported.
+   //
+   for(auto w = warnings.cbegin(); w != warnings.cend(); ++w)
+   {
+      LogLine(n, *w);
+   }
+
+   //  There are some things that can only be determined by knowing what
+   //  happened on previous lines.  First, see if a /* comment ended.
+   //
+   if(slashAsterisk_)
+   {
+      auto pos = s.find(COMMENT_END_STR);
+      if(pos != string::npos) slashAsterisk_ = false;
+      return TextComment;
+   }
+
+   //  See if a /* comment began, and whether it is still open.  Note that
+   //  when a /* comment is used, a line that contains code after the */
+   //  is classified as a comment unless the /* occurred somewhere after
+   //  the start of that line.
+   //
+   if(warnings.find(UseOfSlashAsterisk) != warnings.end())
+   {
+      if(s.find(COMMENT_END_STR) == string::npos) slashAsterisk_ = true;
+      if(s.find(COMMENT_BEGIN_STR) == 0) return SlashAsteriskComment;
+   }
+
+   //  See if this is a fn_name definition split across two lines.
+   //
+   if((n > 0) && (lineType_[n - 1] == FunctionNameSplit)) return FunctionName;
+
+   return type;
 }
 
 //------------------------------------------------------------------------------
 
 fn_name CodeFile_CreateEditor = "CodeFile.CreateEditor";
 
-word CodeFile::CreateEditor(EditorPtr& editor, string& expl)
+word CodeFile::CreateEditor(string& expl)
 {
    Debug::ft(CodeFile_CreateEditor);
 
-   //  Fail if
-   //  (a) the file has already been modified
-   //  (b) its directory is unknown
-   //  (c) the file can't be opened.
+   if(editor_ != nullptr) return 0;
+
+   //  Fail if the file's directory is unknown or it can't be opened.
    //
-   editor = nullptr;
-
-   if(modified_)
-   {
-      expl = "This file has already been modified.";
-      return -1;
-   }
-
    if(dir_ == nullptr)
    {
       expl = "Directory not specified.";
@@ -1355,9 +1343,9 @@ word CodeFile::CreateEditor(EditorPtr& editor, string& expl)
       return -1;
    }
 
-   editor.reset(new Editor(this, input));
+   editor_.reset(new Editor(this, input));
 
-   if(editor == nullptr)
+   if(editor_ == nullptr)
    {
       expl = "Failed to create editor.";
       return -7;
@@ -1379,7 +1367,6 @@ void CodeFile::Display(ostream& stream,
    stream << prefix << "code      : " << &code_ << CRLF;
    stream << prefix << "parsed    : " << parsed_ << CRLF;
    stream << prefix << "checked   : " << checked_ << CRLF;
-   stream << prefix << "modified  : " << modified_ << CRLF;
 
    auto& files = Singleton< Library >::Instance()->Files();
 
@@ -1401,7 +1388,7 @@ void CodeFile::Display(ostream& stream,
       stream << lead << strIndex(*u) << f->Name() << CRLF;
    }
 
-   auto none = Flags();
+   Flags none;
 
    stream << prefix << "#includes : " << incls_.size() << CRLF;
 
@@ -1429,8 +1416,8 @@ void CodeFile::DisplayItems(ostream& stream, const string& opts) const
    stream << CRLF;
    if(parsed_ == Unparsed) return;
 
-   auto lead = spaces(Indent_Size);
-   auto options = Flags(FQ_Mask);
+   auto lead = spaces(INDENT_SIZE);
+   Flags options(FQ_Mask);
    if(opts.find(ItemStatistics) != string::npos) options.set(DispStats);
 
    if(opts.find(CanonicalFileView) != string::npos)
@@ -1595,23 +1582,25 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user)
       }
 
       QualNamePtr qualName;
-      auto name = ref->ScopedName(false);
+      name = ref->ScopedName(false);
       auto scope = Singleton< CxxRoot >::Instance()->GlobalNamespace();
-      auto parser = std::unique_ptr< Parser >(new Parser(scope));
+      std::unique_ptr< Parser > parser(new Parser(scope));
       parser->ParseQualName(name, qualName);
       parser.reset();
       qualName->SetReferent(ref, nullptr);
-      auto u = UsingPtr(new Using(qualName, false, true));
-      u->SetScope(scope);
-      u->SetLoc(this, CxxLocation::NOT_IN_SOURCE);
-      scope->AddUsing(u);
+      UsingPtr use(new Using(qualName, false, true));
+      use->SetScope(scope);
+      use->SetLoc(this, CxxLocation::NOT_IN_SOURCE);
+      scope->AddUsing(use);
 
       //  If this is a header, log the fact that it depends a using statement
       //  in another file.  This is necessary because, if the header has no
       //  using statements of its own, >fix will skip it instead of trying to
-      //  eliminate its dependence on using statements.
+      //  eliminate its dependence on using statements.  The spaces(1) argument
+      //  is a hack that prevents line#1 (which has nothing to do with the log)
+      //  from being displayed.
       //
-      if(IsHeader()) LogPos(0, HeaderReliesOnUsing, 0, spaces(1));
+      if(IsHeader()) LogPos(0, HeaderReliesOnUsing, nullptr, 0, spaces(1));
    }
 }
 
@@ -1662,175 +1651,16 @@ Using* CodeFile::FindUsingFor(const string& fqName, size_t prefix,
 
 //------------------------------------------------------------------------------
 
-fixed_string FixPrompt = "  Fix?";
-fixed_string FixChars = "ynsq";
-fixed_string FixHelp = "Enter y(yes) n(no) s(skip file) q(quit): ";
-
 fn_name CodeFile_Fix = "CodeFile.Fix";
 
 word CodeFile::Fix(CliThread& cli, string& expl)
 {
    Debug::ft(CodeFile_Fix);
 
-   WarningLogVector warnings;
-   CodeInfo::GetWarnings(this, warnings);
-   if(warnings.empty()) return 0;
+   auto rc = CreateEditor(expl);
+   if(rc != 0) return rc;
 
-   //  Sort the warnings by warning type/line.
-   //
-   std::sort(warnings.begin(), warnings.end(), CodeInfo::IsSortedByWarning);
-
-   size_t found = 0;
-   EditorPtr editor = nullptr;
-   word rc = 0;
-   char reply = 'y';
-   auto sorted = false;
-   auto exit = false;
-
-   //  Run through all the warnings.  If fixing a warning is not supported,
-   //  skip it.
-   //
-   for(auto item = warnings.cbegin(); item != warnings.cend(); ++item)
-   {
-      switch(item->warning)
-      {
-      case IncludeNotSorted:
-         if(sorted) continue;
-         //  [[fallthrough]]
-      case IncludeAdd:
-      case IncludeRemove:
-      case ForwardAdd:
-      case ForwardRemove:
-      case UsingAdd:
-      case UsingRemove:
-      case HeaderReliesOnUsing:
-      case UsingInHeader:
-      case TrailingSpace:
-      case RemoveBlankLine:
-         ++found;
-         break;
-      default:
-         continue;
-      }
-
-      if(found == 1)
-      {
-         //  Create an editor for the file and display its name.
-         //
-         rc = CreateEditor(editor, expl);
-         if(rc != 0) break;
-         rc = editor->Read(expl);
-         if(rc != 0) break;
-         *cli.obuf << item->file->Name() << ':' << CRLF;
-      }
-
-      //  Display the next line that can be fixed.
-      //
-      *cli.obuf << spaces(2) << "Line " << item->line + 1;
-      if(item->offset != 0) *cli.obuf << '/' << item->offset;
-      *cli.obuf << ": " << Warning(item->warning);
-      if(item->DisplayInfo()) *cli.obuf << ": " << item->info;
-      *cli.obuf << CRLF;
-
-      if(item->DisplayCode())
-      {
-         *cli.obuf << spaces(2);
-         *cli.obuf << item->file->GetLexer().GetNthLine(item->line) << CRLF;
-      }
-
-      //  See if the user wishes to fix the warning.  The valid responses are
-      //  o 'y' = fix it, which invokes the appropriate function
-      //  o 'n' = don't fix it
-      //  o 's' = skip this file
-      //  o 'q' = done fixing warnings
-      //
-      reply = cli.CharPrompt(FixPrompt, FixChars, FixHelp);
-      expl.clear();
-
-      switch(reply)
-      {
-      case 'y':
-         switch(item->warning)
-         {
-         case IncludeNotSorted:
-            rc = editor->SortIncludes(*item, expl);
-            sorted = true;
-            break;
-         case IncludeAdd:
-            rc = editor->AddInclude(*item, expl);
-            break;
-         case IncludeRemove:
-            rc = editor->RemoveInclude(*item, expl);
-            break;
-         case ForwardAdd:
-            rc = editor->AddForward(*item, expl);
-            break;
-         case ForwardRemove:
-            rc = editor->RemoveForward(*item, expl);
-            break;
-         case UsingAdd:
-            rc = editor->AddUsing(*item, expl);
-            break;
-         case UsingRemove:
-            rc = editor->RemoveUsing(*item, expl);
-            break;
-         case HeaderReliesOnUsing:
-            rc = editor->ResolveUsings(*item, expl);
-            break;
-         case UsingInHeader:
-            rc = editor->ReplaceUsing(*item, expl);
-            break;
-         case TrailingSpace:
-            rc = editor->EraseTrailingBlanks();
-            break;
-         case RemoveBlankLine:
-            rc = editor->EraseBlankLinePairs();
-            break;
-         default:
-            expl = "Fixing this type of warning is not supported.";
-         }
-
-         //  Display EXPL if it isn't empty, else assume that the fix succeeded.
-         //
-         *cli.obuf << spaces(2) << (expl.empty() ? SuccessExpl : expl) << CRLF;
-         break;
-
-      case 'n':
-         break;
-
-      case 's':
-      case 'q':
-         exit = true;
-      }
-
-      cli.Flush();
-      if(exit || (rc != 0)) break;
-   }
-
-   if((found > 0) && (rc == 0))
-   {
-      *cli.obuf << spaces(2) << "End of supported warnings." << CRLF;
-   }
-
-   //  Write out the file if it was opened.  The possible outcomes are
-   //    < 0: an error occurred.
-   //    = 0: the file wasn't changed.
-   //    = 1: the file was changed.  Inform the user.
-   //  If the user entered 'q', return -1 to stop fixing files unless an
-   //  error occurred.
-   //
-   if(editor != nullptr)
-   {
-      rc = editor->Write(FullName(), expl);
-      if(rc == 1) *cli.obuf << spaces(2) << "...committed." << CRLF;
-      if(rc >= 0) rc = (reply == 'q' ? -2 : 0);
-      editor.reset();
-   }
-
-   //  A result of -1 or greater indicates that the next file can still be
-   //  processed, so don't report an error value.
-   //
-   return (rc < -1 ? rc : 0);
+   return editor_->Fix(cli, expl);
 }
 
 //------------------------------------------------------------------------------
@@ -1841,18 +1671,12 @@ word CodeFile::Format(string& expl)
 {
    Debug::ft(CodeFile_Format);
 
-   Debug::Progress(Name(), false, true);
+   Debug::Progress(Name() + CRLF, true);
 
-   EditorPtr editor = nullptr;
-   auto rc = CreateEditor(editor, expl);
-   if(rc != 0) return rc;
-   rc = editor->Read(expl);
+   auto rc = CreateEditor(expl);
    if(rc != 0) return rc;
 
-   editor->EraseTrailingBlanks();
-   editor->EraseBlankLinePairs();
-   rc = editor->Write(FullName(), expl);
-   return (rc >= 0 ? 0 : rc);
+   return editor_->Format(expl);
 }
 
 //------------------------------------------------------------------------------
@@ -1890,6 +1714,35 @@ void CodeFile::GetDeclaredBaseClasses(CxxNamedSet& bases) const
    {
       auto base = (*c)->BaseClass();
       if(base != nullptr) bases.insert(base);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+int8_t CodeFile::GetDepth(size_t line) const
+{
+   int8_t depth;
+   bool cont;
+   lexer_.GetDepth(line, depth, cont);
+
+   if(line >= lineType_.size()) return depth;
+
+   if(!LineTypeAttr::Attrs[lineType_[line]].isCode) return depth;
+
+   switch(lineType_[line])
+   {
+   case IncludeDirective:
+   case HashDirective:
+      //
+      //  Don't indent these.
+      //
+      return 0;
+
+   default:
+      //
+      //  For code.
+      //
+      return (cont ? depth + 1 : depth);
    }
 }
 
@@ -2122,7 +1975,7 @@ void CodeFile::InsertInclude(IncludePtr& incl)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_InsertInclude = "CodeFile.InsertInclude[fn]";
+fn_name CodeFile_InsertInclude = "CodeFile.InsertInclude(fn)";
 
 Include* CodeFile::InsertInclude(const string& fn)
 {
@@ -2223,7 +2076,7 @@ void CodeFile::LogAddForwards(ostream* stream, const CxxNamedSet& items) const
 
    for(auto n = names.cbegin(); n != names.cend(); ++n)
    {
-      LogPos(0, ForwardAdd, 0, *n);
+      LogPos(0, ForwardAdd, nullptr, 0, *n);
    }
 
    DisplaySymbols(stream, items, "Add a forward declaration for");
@@ -2251,7 +2104,7 @@ void CodeFile::LogAddIncludes(ostream* stream, const SetOfIds& fids) const
       fn.push_back(x ? '<' : QUOTE);
       fn += f->Name();
       fn.push_back(x ? '>' : QUOTE);
-      LogPos(0, IncludeAdd, 0, fn);
+      LogPos(0, IncludeAdd, nullptr, 0, fn);
    }
 
    DisplayFileNames(stream, fids, "Add an #include for");
@@ -2323,7 +2176,7 @@ void CodeFile::LogAddUsings(ostream* stream) const
             usings.insert(space);
          }
 
-         LogPos(0, UsingAdd, 0, name);
+         LogPos(0, UsingAdd, nullptr, 0, name);
       }
    }
 
@@ -2332,38 +2185,53 @@ void CodeFile::LogAddUsings(ostream* stream) const
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_LogLine = "CodeFile.LogLine";
+fn_name CodeFile_LogCode = "CodeFile.LogCode";
 
-void CodeFile::LogLine
-   (size_t n, Warning warning, size_t offset, const string& info) const
+void CodeFile::LogCode(Warning warning, size_t line, size_t pos,
+   const CxxNamed* item, size_t offset, const string& info, bool hide) const
 {
-   Debug::ft(CodeFile_LogLine);
+   Debug::ft(CodeFile_LogCode);
 
    //  Don't log warnings in a substitute file or a template instance.
    //
    if(isSubsFile_) return;
    if(Context::ParsingTemplateInstance()) return;
 
-   //  Log the warning if it is valid, has a valid line number, and is
-   //  not a duplicate.
+   //  Log the warning if it is valid.
    //
-   if((warning < Warning_N) && (n < lineType_.size()))
+   if((warning < Warning_N) &&
+      (line < lineType_.size()) &&
+      (pos < code_.size()))
    {
-      auto log = WarningLog(this, n, warning, offset, info);
+      WarningLog log(warning, this, line, pos, item, offset, info, hide);
       CodeInfo::AddWarning(log);
    }
 }
 
 //------------------------------------------------------------------------------
 
+fn_name CodeFile_LogLine = "CodeFile.LogLine";
+
+void CodeFile::LogLine(size_t line, Warning warning,
+   size_t offset, const string& info, bool hide) const
+{
+   Debug::ft(CodeFile_LogLine);
+
+   auto pos = lexer_.GetLineStart(line);
+   LogCode(warning, line, pos, nullptr, offset, info, hide);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeFile_LogPos = "CodeFile.LogPos";
 
-void CodeFile::LogPos
-   (size_t pos, Warning warning, size_t offset, const string& info) const
+void CodeFile::LogPos(size_t pos, Warning warning,
+   const CxxNamed* item, size_t offset, const string& info, bool hide) const
 {
    Debug::ft(CodeFile_LogPos);
 
-   LogLine(lexer_.GetLineNum(pos), warning, offset, info);
+   auto line = lexer_.GetLineNum(pos);
+   LogCode(warning, line, pos, item, offset, info, hide);
 }
 
 //------------------------------------------------------------------------------
@@ -2381,7 +2249,6 @@ void CodeFile::LogRemoveForwards
    //
    for(auto i = items.cbegin(); i != items.cend(); ++i)
    {
-      auto found = false;
       auto name = (*i)->ScopedName(true);
 
       for(auto f = forws_.cbegin(); f != forws_.cend(); ++f)
@@ -2389,11 +2256,8 @@ void CodeFile::LogRemoveForwards
          if((*f)->ScopedName(true) == name)
          {
             LogPos((*f)->GetPos(), ForwardRemove);
-            found = true;
          }
       }
-
-      if(!found) LogPos(0, ForwardRemove, 0, name);
    }
 
    DisplaySymbols(stream, items, "Remove the forward declaration for");
@@ -2409,8 +2273,7 @@ void CodeFile::LogRemoveIncludes
    Debug::ft(CodeFile_LogRemoveIncludes);
 
    //  For each file in FIDS, generate a log saying that the #include for
-   //  it should be removed.  If the #include cannot be found (something
-   //  that shouldn't occur), just display its filename.
+   //  it should be removed.
    //
    auto& files = Singleton< Library >::Instance()->Files();
 
@@ -2423,11 +2286,7 @@ void CodeFile::LogRemoveIncludes
       fn += f->Name();
       fn.push_back(x ? '>' : QUOTE);
       auto pos = code_.find(fn);
-
-      if(pos == string::npos)
-         LogPos(0, IncludeRemove, 0, fn);
-      else
-         LogPos(pos, IncludeRemove);
+      LogPos(pos, IncludeRemove);
    }
 
    DisplayFileNames(stream, fids, "Remove the #include for");
@@ -2456,6 +2315,30 @@ void CodeFile::LogRemoveUsings(ostream* stream) const
    }
 
    DisplaySymbols(stream, delUsing, "Remove the using statement for");
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeFile_MakeGuardName = "CodeFile.MakeGuardName";
+
+string CodeFile::MakeGuardName() const
+{
+   Debug::ft(CodeFile_MakeGuardName);
+
+   if(IsCpp()) return EMPTY_STR;
+
+   auto name = Name();
+
+   for(size_t i = 0; i < name.size(); ++i)
+   {
+      if(name[i] == '.')
+         name[i] = '_';
+      else
+         name[i] = toupper(name[i]);
+   }
+
+   name += "_INCLUDED";
+   return name;
 }
 
 //------------------------------------------------------------------------------
@@ -2651,6 +2534,8 @@ void CodeFile::Scan()
 
    input.reset();
    lexer_.Initialize(&code_);
+   lexer_.CalcDepths();
+
    auto lines = lexer_.LineCount();
 
    for(size_t n = 0; n < lines; ++n)
@@ -2665,6 +2550,18 @@ void CodeFile::Scan()
       for(size_t n = 0; n < lines; ++n)
       {
          lineType_[n] = ClassifyLine(n);
+      }
+
+      for(size_t n = 0; n < lines; ++n)
+      {
+         auto t = lineType_[n];
+
+         if(LineTypeAttr::Attrs[t].isCode) break;
+
+         if((t != EmptyComment) && (t != SlashAsteriskComment))
+         {
+            lineType_[n] = FileComment;
+         }
       }
    }
 
@@ -2688,7 +2585,7 @@ void CodeFile::Scan()
             used->AddUser(this);
          }
 
-         auto incl = IncludePtr(new Include(file, angle));
+         IncludePtr incl(new Include(file, angle));
          incl->SetLoc(this, lexer_.GetLineStart(n));
          InsertInclude(incl);
       }
@@ -2775,7 +2672,7 @@ void CodeFile::Trim(ostream* stream)
    //  because the latter uses declIds_.
    //
    if(!CanBeTrimmed(stream)) return;
-   Debug::Progress(Name(), true);
+   Debug::Progress(Name() + CRLF, true);
 
    FindDeclIds();
 

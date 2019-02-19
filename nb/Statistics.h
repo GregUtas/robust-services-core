@@ -51,7 +51,7 @@ public:
 
    //  Returns the value during the current measurement period.
    //
-   uint32_t Curr() const { return curr_; }
+   size_t Curr() const { return curr_; }
 
    //  Returns the value over all measurement periods.
    //
@@ -78,7 +78,7 @@ protected:
    //  scaling, values are divided by DIVISOR before being displayed
    //  in statistics reports.  Protected because this class is virtual.
    //
-   Statistic(const std::string& expl, uint32_t divisor);
+   Statistic(const std::string& expl, size_t divisor);
 
    //  The string displayed when a value has not been set.
    //
@@ -86,11 +86,11 @@ protected:
 
    //  The statistic's value during the current measurement period.
    //
-   std::atomic_uint32_t curr_;
+   std::atomic_size_t curr_;
 
    //  The statistic's value during the previous measurement period.
    //
-   std::atomic_uint32_t prev_;
+   std::atomic_size_t prev_;
 
    //  The statistic's value over all measurement periods.
    //
@@ -98,7 +98,7 @@ protected:
 
    //  The divisor used when displaying totals.
    //
-   uint32_t divisor_;
+   size_t divisor_;
 private:
    //  Deleted to prohibit copying.
    //
@@ -131,7 +131,7 @@ class Counter : public Statistic
 public:
    //  Public so that instances can be created as members.
    //
-   explicit Counter(const std::string& expl, uint32_t divisor = 1);
+   explicit Counter(const std::string& expl, size_t divisor = 1);
 
    //  Virtual to allow subclassing.
    //
@@ -139,7 +139,7 @@ public:
 
    //  Increments the count and returns it.
    //
-   uint32_t Incr() { return ++curr_; }
+   size_t Incr() { return ++curr_; }
 
    //  Overridden to display the statistic.
    //
@@ -159,7 +159,7 @@ class Accumulator : public Counter
 public:
    //  Public so that instances can be created as members.
    //
-   explicit Accumulator(const std::string& expl, uint32_t divisor = 1);
+   explicit Accumulator(const std::string& expl, size_t divisor = 1);
 
    //  Virtual to allow subclassing.
    //
@@ -167,7 +167,7 @@ public:
 
    //  Updates the total and returns it.
    //
-   uint32_t Add(uint32_t amount) { return (curr_ += amount); }
+   size_t Add(size_t amount) { return (curr_ += amount); }
 };
 
 //------------------------------------------------------------------------------
@@ -179,11 +179,11 @@ class HighWatermark : public Statistic
 public:
    //  The initial value for the watermark.
    //
-   static const uint32_t Initial = 0;
+   static const size_t Initial = 0;
 
    //  Public so that instances can be created as members.
    //
-   explicit HighWatermark(const std::string& expl, uint32_t divisor = 1);
+   explicit HighWatermark(const std::string& expl, size_t divisor = 1);
 
    //  Virtual to allow subclassing.
    //
@@ -191,7 +191,7 @@ public:
 
    //  Updates the watermark.
    //
-   void Update(uint32_t count) { if(count > curr_) curr_ = count; }
+   void Update(size_t count) { if(count > curr_) curr_ = count; }
 
    //  Overridden to return the value over all measurement periods.
    //
@@ -215,11 +215,11 @@ class LowWatermark : public Statistic
 public:
    //  The initial value for the watermark.
    //
-   static const uint32_t Initial = UINT32_MAX;
+   static const size_t Initial = SIZE_MAX;
 
    //  Public so that instances can be created as members.
    //
-   explicit LowWatermark(const std::string& expl, uint32_t divisor = 1);
+   explicit LowWatermark(const std::string& expl, size_t divisor = 1);
 
    //  Virtual to allow subclassing.
    //
@@ -227,7 +227,7 @@ public:
 
    //  Updates the watermark.
    //
-   void Update(uint32_t count) { if(count < curr_) curr_ = count; }
+   void Update(size_t count) { if(count < curr_) curr_ = count; }
 
    //  Overridden to return the value over all measurement periods.
    //

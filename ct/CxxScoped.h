@@ -125,6 +125,11 @@ public:
    //
    virtual bool IsConstPtr() const override;
 
+   //  Overridden to invoke IsConstPtr on GetTypeSpec unless the latter
+   //  returns nullptr, in which case it returns false.
+   //
+   virtual bool IsConstPtr(size_t n) const override;
+
    //  Overridden to return true if the item is declared in a code block
    //  or argument list.
    //
@@ -437,6 +442,10 @@ public:
    //
    ~Enum();
 
+   //  Adds an underlying type for the enumeration.
+   //
+   void AddType(TypeSpecPtr& type);
+
    //  Adds an enumerator, with NAME and INIT, to the enumeration.  POS is
    //  its location within the source code file.
    //
@@ -472,13 +481,20 @@ public:
    //
    virtual bool EnterScope() override;
 
-   //  Overridden to remove the enumeration as a local.
+   //  Overridden to remove the enumeration from the global symbol table (its
+   //  constructor puts it there, and this removes it as soon as it goes out
+   //  of scope).
    //
    virtual void ExitBlock() override;
 
    //  Overridden to indicate that an enum can be converted to an integer.
    //
    virtual Numeric GetNumeric() const override { return Numeric::Enum; }
+
+   //  Overridden to return the enumeration's type.  Returns DataSpec::Int if
+   //  the underlying type was not specified.
+   //
+   virtual TypeSpec* GetTypeSpec() const override;
 
    //  Overridden to determine if the enum and all its enumerators are unused.
    //
@@ -518,6 +534,10 @@ private:
    //
    std::string name_;
 
+   //  The enum's underlying type, if specified.
+   //
+   TypeSpecPtr spec_;
+
    //  The enumerators.
    //
    EnumeratorPtrVector etors_;
@@ -555,8 +575,7 @@ public:
    virtual void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
-   //  Overridden to make the enumerator visible as a local and to execute
-   //  its initialization statement.
+   //  Overridden to execute the enumerator's initialization statement.
    //
    virtual void EnterBlock() override;
 
@@ -564,7 +583,9 @@ public:
    //
    virtual bool EnterScope() override;
 
-   //  Overridden to remove the enumerator as a local.
+   //  Overridden to remove the enumerator from the global symbol table (its
+   //  constructor puts it there, and this removes it as soon as it goes out
+   //  of scope).
    //
    virtual void ExitBlock() override;
 
@@ -1069,6 +1090,10 @@ public:
    //
    virtual void ExitBlock() override;
 
+   //  Overridden to return the definition's underlying numeric type.
+   //
+   virtual Numeric GetNumeric() const override { return spec_->GetNumeric(); }
+
    //  Overridden to return the underlying type.
    //
    virtual TypeSpec* GetTypeSpec() const override { return spec_.get(); }
@@ -1118,7 +1143,7 @@ public:
 private:
    //  Overridden to return the underlying type.
    //
-   virtual CxxToken* RootType() const override { return GetTypeSpec(); }
+   virtual CxxToken* RootType() const override { return spec_.get(); }
 
    //  Checks if the typedef is for a pointer type.
    //
@@ -1253,7 +1278,7 @@ private:
 
    //  Set if the declaration was added by >trim.
    //
-   bool added_ : 1;
+   const bool added_ : 1;
 
    //  Set if the declaration is to be removed.
    //

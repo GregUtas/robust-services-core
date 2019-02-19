@@ -54,7 +54,7 @@ public:
 
    //  Virtual to allow subclassing.
    //
-   virtual ~TraceRecord() { }
+   virtual ~TraceRecord() = default;
 
    //  Returns the trace tool that owns this record.  This allows records
    //  to be included or excluded based on which tools are enabled.

@@ -58,7 +58,7 @@ CliParm::CliParm(const char* help, bool opt, const char* tag) :
 
    auto len = ParmWidth + strlen(ParmExplPrefix) + strlen(help_);
 
-   if((len == 0) || (len >= 80))
+   if((len == 0) || (len >= COUT_LENGTH_MAX))
    {
       Debug::SwLog(CliParm_ctor, len, 0);
    }
@@ -77,7 +77,7 @@ CliParm::~CliParm()
 
 fn_name CliParm_AccessParm = "CliParm.AccessParm";
 
-CliParm* CliParm::AccessParm(CliCookie& cookie, size_t depth) const
+CliParm* CliParm::AccessParm(CliCookie& cookie, uint32_t depth) const
 {
    Debug::ft(CliParm_AccessParm);
 
@@ -148,11 +148,8 @@ void CliParm::Explain(ostream& stream, col_t indent) const
    else if(mand)
       buff << MandParmEnd;
 
-   stream << buff.str();
-   auto width = buff.str().size();
-   if(width < ParmWidth) stream << spaces(ParmWidth - width);
-   stream << ParmExplPrefix;
-   stream << Help() << CRLF;
+   stream << buff.str() << spaces(ParmWidth - buff.str().size());
+   stream << ParmExplPrefix << Help() << CRLF;
 }
 
 //------------------------------------------------------------------------------

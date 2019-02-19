@@ -462,7 +462,7 @@ recover           : Tests thread recovery.
   raise           : raise a signal
     <str>         : signal's name ('SIG...')
   return          : return from a thread
-  swerr           : cause a software abort log
+  swerr           : cause a software exception
   terminate       : call terminate()
   trap            : cause a trap
     (t|f)         : perform by 'this' (t) or by another thread (f)
@@ -1204,6 +1204,16 @@ fileinfo          : Displays information about a code file.
 
 fileid            : Displays information about a code file.
   (1:4095)        : file's identifier
+
+break             : Manage breakpoints used during parser's 'execution'.
+(                 : action...
+  insert          : add breakpoint
+  remove          : delete breakpoint
+  clear           : delete all breakpoints
+  list            : list breakpoints
+)
+  <str>           : name of source code file
+  (0:2147483647)  : line number (must contain source code)
 
 parse             : Parses code files.
   <str>           : options (enter ">help parse full" for details)

@@ -14,31 +14,79 @@ namespace std
    template< typename T1, typename T2 > class map
    {
    public:
-      typedef pair< T1, T2 > entry;
-      typedef iterator_t< entry > iterator;
-      typedef iterator_t< const entry > const_iterator;
+      typedef pair< T1, T2 > value_type;
+      typedef iterator_t< value_type > iterator;
+      typedef iterator_t< const value_type > const_iterator;
       map();
+      map(const map& that);
       ~map();
       iterator begin();
+      iterator end();
+      iterator rbegin();
+      iterator rend();
+      const_iterator begin() const;
       const_iterator cbegin() const;
       const_iterator cend() const;
-      void clear();
-      size_t count(const T1& key) const;
       const_iterator crbegin() const;
       const_iterator crend() const;
+      const_iterator end() const;
+      const_iterator rbegin() const;
+      const_iterator rend() const;
+      void clear();
       bool empty() const;
-      iterator end();
-      iterator erase(iterator pos);
-      size_t erase(const T1& key);
-      iterator find(const T1& key) const;
-      iterator find(const T1& key);
-      pair< iterator, bool > insert(entry& item);
-      iterator lower_bound(const T1& key) const;
-      iterator lower_bound(const T1& key);
-      const_iterator rbegin();
-      const_iterator rend();
       size_t size() const;
-      iterator upper_bound(const T1& key) const;
+      void swap(map& that);
+      T2& operator[](const T1& key);
+      const T2& at(const T1& key) const;
+      T2& at(const T1& key);
+      size_t count(const T1& key) const;
+      iterator erase(const_iterator& where);
+      iterator erase(const_iterator& first, const_iterator& last);
+      size_t erase(const T1& key);
+      const_iterator find(const T1& key) const;
+      iterator find(const T1& key);
+      pair< iterator, bool > insert(const value_type& item);
+      const_iterator lower_bound(const T1& key) const;
+      iterator lower_bound(const T1& key);
+      const_iterator upper_bound(const T1& key) const;
+      iterator upper_bound(const T1& key);
+   };
+
+   template< typename T1, typename T2 > class multimap
+   {
+   public:
+      typedef pair< T1, T2 > value_type;
+      typedef iterator_t< value_type > iterator;
+      typedef iterator_t< const value_type > const_iterator;
+      multimap();
+      multimap(const multimap& that);
+      ~multimap();
+      iterator begin();
+      iterator end();
+      iterator rbegin();
+      iterator rend();
+      const_iterator begin() const;
+      const_iterator cbegin() const;
+      const_iterator cend() const;
+      const_iterator crbegin() const;
+      const_iterator crend() const;
+      const_iterator end() const;
+      const_iterator rbegin() const;
+      const_iterator rend() const;
+      void clear();
+      bool empty() const;
+      size_t size() const;
+      void swap(map& that);
+      size_t count(const T1& key) const;
+      iterator erase(const_iterator& where);
+      iterator erase(const_iterator& first, const_iterator& last);
+      size_t erase(const T1& key);
+      const_iterator find(const T1& key) const;
+      iterator find(const T1& key);
+      pair< iterator, bool > insert(const value_type& item);
+      const_iterator lower_bound(const T1& key) const;
+      iterator lower_bound(const T1& key);
+      const_iterator upper_bound(const T1& key) const;
       iterator upper_bound(const T1& key);
    };
 }

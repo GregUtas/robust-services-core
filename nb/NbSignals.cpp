@@ -24,7 +24,6 @@
 #include "Debug.h"
 #include "Singleton.h"
 #include "SysSignals.h"
-#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 

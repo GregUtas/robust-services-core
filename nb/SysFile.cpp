@@ -86,7 +86,7 @@ istreamPtr SysFile::CreateIstream(const char* fileName)
 {
    Debug::ft(SysFile_CreateIstream);
 
-   auto stream = istreamPtr(new std::ifstream(fileName));
+   istreamPtr stream(new std::ifstream(fileName));
 
    if((stream != nullptr) && (stream->peek() == EOF))
    {
@@ -106,7 +106,7 @@ ostreamPtr SysFile::CreateOstream(const char* fileName, bool trunc)
    Debug::ft(SysFile_CreateOstream);
 
    auto mode = (trunc ? std::ios::trunc : std::ios::app);
-   auto stream = ostreamPtr(new std::ofstream(fileName, mode));
+   ostreamPtr stream(new std::ofstream(fileName, mode));
    if(stream != nullptr) *stream << std::boolalpha << std::nouppercase;
    return stream;
 }

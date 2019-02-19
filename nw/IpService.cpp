@@ -149,6 +149,18 @@ Faction IpService::GetFaction() const
 
 //------------------------------------------------------------------------------
 
+fn_name IpService_HasSharedSocket = "IpService.HasSharedSocket";
+
+bool IpService::HasSharedSocket() const
+{
+   Debug::ft(IpService_HasSharedSocket);
+
+   Debug::SwLog(IpService_HasSharedSocket, Name(), sid_.GetId());
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name IpService_Name = "IpService.Name";
 
 const char* IpService::Name() const
@@ -240,18 +252,6 @@ IpPort* IpService::Provision(ipport_t pid)
 
 //------------------------------------------------------------------------------
 
-fn_name IpService_RxSize = "IpService.RxSize";
-
-size_t IpService::RxSize() const
-{
-   Debug::ft(IpService_RxSize);
-
-   Debug::SwLog(IpService_RxSize, Name(), sid_.GetId());
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-
 fn_name IpService_Startup = "IpService.Startup";
 
 void IpService::Startup(RestartLevel level)
@@ -260,17 +260,5 @@ void IpService::Startup(RestartLevel level)
 
    auto pid = Port();
    if(pid != NilIpPort) Provision(pid);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name IpService_TxSize = "IpService.TxSize";
-
-size_t IpService::TxSize() const
-{
-   Debug::ft(IpService_TxSize);
-
-   Debug::SwLog(IpService_TxSize, Name(), sid_.GetId());
-   return 0;
 }
 }

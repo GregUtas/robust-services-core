@@ -46,7 +46,7 @@ TextTlvMessage::TextTlvMessage(SbIpBufferPtr& buff) :
 
 fn_name TextTlvMessage_ctor2 = "TextTlvMessage.ctor(o/g)";
 
-TextTlvMessage::TextTlvMessage(ProtocolSM* psm, MsgSize size) :
+TextTlvMessage::TextTlvMessage(ProtocolSM* psm, size_t size) :
    TlvMessage(psm, size),
    text_(false)
 {

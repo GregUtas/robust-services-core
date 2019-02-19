@@ -35,10 +35,10 @@ namespace CodeTools
    //
    typedef std::vector< std::string > stringVector;
 
-   //  Returns true if FILE ends in EXT.  Prefixes a '.' to EXT before
-   //  searching FILE.
+   //  Returns the last string that follows a '.' in FILE.  Returns an empty
+   //  strng if FILE contains no '.'
    //
-   bool FileExtensionIs(const std::string& file, const std::string& ext);
+   std::string GetFileExtension(const std::string& file);
 
    //  Returns the filename in PATH.  If PATH contains a forward or backward
    //  slash, the filename that follows it is extracted.  Any extension is
@@ -51,10 +51,23 @@ namespace CodeTools
    //
    bool PathIncludes(const std::string& path, const std::string& dir);
 
+   //  Returns true if FILE is a code file.
+   //
+   bool IsCodeFile(const std::string& file);
+
    //  Returns the index of the string in SV that matches S.  If no string
    //  in SV matches S, returns string::npos.
    //
    size_t FindIndex(const stringVector& sv, const std::string& s);
+
+   //  Returns true if ID, in its entirety, is a valid identifier.
+   //
+   bool IsValidIdentifier(const std::string& id);
+
+   //  Returns S after converting endlines to spaces and compressing adjacent
+   //  spaces.
+   //
+   std::string Compress(const std::string& s);
 
    //  Concatentates a string of the form ("<string>"<whitespace>)*"<string>"
    //  by removing the quotation marks and whitespace between the strings.
@@ -69,9 +82,9 @@ namespace CodeTools
    std::string& Prefix(std::string& scope);
    std::string& Prefix(std::string&& scope);
 
-   //  Removes spaces and leading qualifiers from NAME, leaving only the name
-   //  after the last scope resolution operator.  Does the same to any template
-   //  arguments embedded in the name.  Returns the resulting string.
+   //  Modifies NAME by stripping off a scope resolution operator and whatever
+   //  precedes it.  Does the same to any template arguments embedded in NAME.
+   //  Returns the resulting string.
    //
    std::string Normalize(const std::string& name);
 
@@ -93,9 +106,8 @@ namespace CodeTools
    //  positive, that number of asterisks are appended to TYPE.  If PTRS is
    //  negative, that number of asterisks are removed from TYPE.  If TYPE has
    //  fewer than PTRS asterisks, a '@' is added for each "negative" pointer.
-   //  Returns the resulting string.
    //
-   std::string& AdjustPtrs(std::string& type, TagCount ptrs);
+   void AdjustPtrs(std::string& type, TagCount ptrs);
 
    //  Removes tags from TYPE (excluding any tags in template types).  This
    //  includes occurrences of "const", '*', and '&'.

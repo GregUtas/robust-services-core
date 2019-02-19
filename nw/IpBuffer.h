@@ -23,6 +23,7 @@
 #define IPBUFFER_H_INCLUDED
 
 #include "MsgBuffer.h"
+#include "ObjectPool.h"
 #include <cstddef>
 #include "NbTypes.h"
 #include "SysIpL3Addr.h"
@@ -34,9 +35,9 @@ using namespace NodeBase;
 
 namespace NetworkBase
 {
-//  IpBuffer wraps a message that passes between NodeBase and the IP stack.
-//  It allocates a buffer for a contiguous message that may include an
-//  internal header.
+//  IpBuffer wraps a message that passes between an application and the IP
+//  stack.  It allocates a buffer for a contiguous message that may include
+//  an internal header.
 //
 class IpBuffer : public MsgBuffer
 {
@@ -48,7 +49,7 @@ public:
    //  Allocates a buffer of size HEADER + PAYLOAD.  DIR specifies whether
    //  the buffer will receive or send a message.
    //
-   IpBuffer(MsgDirection dir, MsgSize header, MsgSize payload);
+   IpBuffer(MsgDirection dir, size_t header, size_t payload);
 
    //  Copy constructor.
    //
@@ -75,18 +76,12 @@ public:
    void SetDir(MsgDirection dir) { dir_ = dir; }
 
    //  Sets the destination IP address/port.  When using TCP, the socket
-   //  bound to the host's ephemeral port is placed in rxAddr_.socket.
+   //  dedicated to the connection must be placed in rxAddr_.socket.
    //
    void SetRxAddr(const SysIpL3Addr& addr) { rxAddr_ = addr; }
 
-   //  Sets the source IP address/port.
-   //
-   //  NOTE: The port must always be the well-known port for the IpService
-   //  ====  that is sending the message, whether using TCP or UDP.  This
-   //        is obviously for UDP but is also the case for TCP, even after
-   //        Connect or Accept allocates an ephemeral port.  The ephemeral
-   //        port is only identified indirectly, through its socket, which
-   //        is actually placed in rxAddr_.socket (see above).
+   //  Sets the source IP address/port.  The port must be the well-known
+   //  port for the IpService that is sending the message.
    //
    void SetTxAddr(const SysIpL3Addr& addr) { txAddr_ = addr; }
 
@@ -107,25 +102,29 @@ public:
    //
    byte_t* PayloadPtr() const { return buff_ + hdrSize_; }
 
-   //  Returns the number of bytes in the payload.  This may be less than
-   //  what the buffer can actually hold, because outgoing messages are
-   //  usually constructed by estimating the space that will be needed by
-   //  the payload and then gradually filling it.  The default version
-   //  returns the total buffer size minus the header size, which should
-   //  be correct for an *incoming* message.
+   //  Returns the number of bytes in the payload.  The default version
+   //  returns the total buffer size minus the header size, as it doesn't
+   //  know how many bytes have been copied into the buffer.  An override
+   //  will return the actual number of bytes in the payload, which will
+   //  usually be less than what the buffer can hold.  The reason for this
+   //  is that, internally, a handful of buffer sizes are used to reduce
+   //  heap fragmentation.  This function is invoked by AddBytes (to see if
+   //  a larger buffer should be allocated), OutgoingBytes (to provide a
+   //  pointer to the message and return its size), and Send (to determine
+   //  the number of bytes to send).
    //
-   virtual MsgSize PayloadSize() const;
+   virtual size_t PayloadSize() const;
 
    //  Returns the number of bytes in the payload and updates BYTES to
    //  reference it.  The payload excludes the message header.
    //
-   MsgSize Payload(byte_t*& bytes) const;
+   size_t Payload(byte_t*& bytes) const;
 
    //  Returns the number of bytes in an outgoing message and updates BYTES
    //  to reference it.  The size of the message, and where it starts, depend
    //  on whether it is being sent externally.
    //
-   MsgSize OutgoingBytes(byte_t*& bytes) const;
+   size_t OutgoingBytes(byte_t*& bytes) const;
 
    //  Adds SIZE bytes to the buffer, copying them from SOURCE.  If SOURCE
    //  is nullptr, nothing is copied into the buffer, but a larger buffer
@@ -133,7 +132,7 @@ public:
    //  Returns true on success, setting MOVED if the location of the message
    //  changed as a result of obtaining a larger buffer.
    //
-   virtual bool AddBytes(const byte_t* source, MsgSize size, bool& moved);
+   virtual bool AddBytes(const byte_t* source, size_t size, bool& moved);
 
    //  Sends the message.  If EXTERNAL is true, the message header is dropped.
    //
@@ -155,6 +154,10 @@ public:
    //  Overridden for patching.
    //
    virtual void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden to obtain a buffer from its object pool.
+   //
+   static void* operator new(size_t size);
 protected:
    //  Overridden to free buff_ during recovery.
    //
@@ -171,11 +174,11 @@ private:
 
    //  The size of the header.
    //
-   const MsgSize hdrSize_;
+   const size_t hdrSize_;
 
    //  The size of buff_ (which includes any header).
    //
-   MsgSize buffSize_;
+   size_t buffSize_;
 
    //  The source IP address.
    //
@@ -196,6 +199,27 @@ private:
    //  Set if the buffer was queued for output.
    //
    bool queued_ : 8;
+};
+
+//------------------------------------------------------------------------------
+//
+//  Pool for IpBuffer objects.
+//
+class IpBufferPool : public ObjectPool
+{
+   friend class Singleton< IpBufferPool >;
+public:
+   //> The size of IpBuffer blocks.
+   //
+   static const size_t BlockSize;
+private:
+   //  Private because this singleton is not subclassed.
+   //
+   IpBufferPool();
+
+   //  Private because this singleton is not subclassed.
+   //
+   ~IpBufferPool();
 };
 }
 #endif

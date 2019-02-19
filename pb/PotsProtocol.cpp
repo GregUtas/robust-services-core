@@ -27,7 +27,6 @@
 #include "CliText.h"
 #include "CliTextParm.h"
 #include "MediaParameter.h"
-#include <cstddef>
 #include <sstream>
 #include "CliCommand.h"
 #include "CliThread.h"

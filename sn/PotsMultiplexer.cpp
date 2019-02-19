@@ -88,7 +88,7 @@ class PotsMuxNuAnalyzeNetworkMessage : public PotsMuxEventHandler
 {
    friend class Singleton< PotsMuxNuAnalyzeNetworkMessage >;
 private:
-   PotsMuxNuAnalyzeNetworkMessage() { }
+   PotsMuxNuAnalyzeNetworkMessage() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -97,7 +97,7 @@ class PotsMuxNuInitiate : public PotsMuxEventHandler
 {
    friend class Singleton< PotsMuxNuInitiate >;
 private:
-   PotsMuxNuInitiate() { }
+   PotsMuxNuInitiate() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -106,7 +106,7 @@ class PotsMuxPaAnalyzeUserMessage : public PotsMuxEventHandler
 {
    friend class Singleton< PotsMuxPaAnalyzeUserMessage >;
 private:
-   PotsMuxPaAnalyzeUserMessage() { }
+   PotsMuxPaAnalyzeUserMessage() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -115,7 +115,7 @@ class PotsMuxPaAnalyzeNetworkMessage : public PotsMuxEventHandler
 {
    friend class Singleton< PotsMuxPaAnalyzeNetworkMessage >;
 private:
-   PotsMuxPaAnalyzeNetworkMessage() { }
+   PotsMuxPaAnalyzeNetworkMessage() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -124,7 +124,7 @@ class PotsMuxPaRelay : public PotsMuxEventHandler
 {
    friend class Singleton< PotsMuxPaRelay >;
 private:
-   PotsMuxPaRelay() { }
+   PotsMuxPaRelay() = default;
    virtual Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
@@ -478,8 +478,8 @@ ProtocolSM::OutgoingRc PotsMuxPsm::ProcessOgMsg(Message& msg)
    if(AddressesUnknown(&msg))
    {
       auto host = IpPortRegistry::HostAddress();
-      auto locAddr = GlobalAddress(host, NilIpPort, PotsMuxFactoryId);
-      auto remAddr = GlobalAddress(host, NilIpPort, PotsCallFactoryId);
+      GlobalAddress locAddr(host, NilIpPort, PotsMuxFactoryId);
+      GlobalAddress remAddr(host, NilIpPort, PotsCallFactoryId);
 
       msg.SetSender(locAddr);
       msg.SetReceiver(remAddr);
@@ -941,8 +941,8 @@ EventHandler::Rc PotsMuxSsm::RelayMsg()
    {
       auto host = IpPortRegistry::HostAddress();
       auto peer = IpPortRegistry::HostAddress();
-      auto locAddr = GlobalAddress(host, PotsCallIpPort, PotsCallFactoryId);
-      auto remAddr = GlobalAddress(peer, PotsShelfIpPort, PotsShelfFactoryId);
+      GlobalAddress locAddr(host, PotsCallIpPort, PotsCallFactoryId);
+      GlobalAddress remAddr(peer, PotsShelfIpPort, PotsShelfFactoryId);
 
       pmsg->SetSender(locAddr);
       pmsg->SetReceiver(remAddr);

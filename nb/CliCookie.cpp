@@ -97,7 +97,7 @@ void CliCookie::Descend()
 
 fn_name CliCookie_Descend2 = "CliCookie.Descend(index)";
 
-void CliCookie::Descend(size_t index)
+void CliCookie::Descend(uint32_t index)
 {
    Debug::ft(CliCookie_Descend2);
 
@@ -133,7 +133,7 @@ void CliCookie::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-size_t CliCookie::Index(size_t depth) const
+uint32_t CliCookie::Index(uint32_t depth) const
 {
    if(depth <= depth_) return index_[depth];
    return 0;

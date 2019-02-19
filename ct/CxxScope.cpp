@@ -24,7 +24,6 @@
 #include <set>
 #include <sstream>
 #include <utility>
-#include "Algorithms.h"
 #include "CodeFile.h"
 #include "CxxArea.h"
 #include "CxxExecute.h"
@@ -180,7 +179,7 @@ void Block::Display(ostream& stream,
                return;
             }
 
-            stream << CRLF << prefix << spaces(Indent_Size);
+            stream << CRLF << prefix << spaces(INDENT_SIZE);
             statements_.front()->Print(stream, options);
             break;
          }
@@ -189,7 +188,7 @@ void Block::Display(ostream& stream,
    default:
       if(!nested_) stream << CRLF;
       stream << prefix << '{' << CRLF;
-      auto lead = prefix + spaces(Indent_Size);
+      auto lead = prefix + spaces(INDENT_SIZE);
 
       for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
       {
@@ -210,7 +209,7 @@ void Block::EnterBlock()
 {
    Debug::ft(Block_EnterBlock);
 
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    Context::PushScope(this);
 
    for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
@@ -494,12 +493,12 @@ void ClassData::Display(ostream& stream,
       //
       if(first_)
       {
-         auto lead = spaces(Indent_Size * (depth_ - 1));
+         auto lead = spaces(INDENT_SIZE * (depth_ - 1));
          stream << prefix << lead << access << ": " << UNION_STR << CRLF;
          stream << prefix << lead << '{' << CRLF;
       }
 
-      stream << spaces(Indent_Size * depth_);
+      stream << spaces(INDENT_SIZE * depth_);
       access = Cxx::Public;
    }
 
@@ -539,7 +538,7 @@ void ClassData::Display(ostream& stream,
 
    if(last_)
    {
-      stream << prefix << spaces(Indent_Size * (depth_ - 1)) << "};" << CRLF;
+      stream << prefix << spaces(INDENT_SIZE * (depth_ - 1)) << "};" << CRLF;
    }
 }
 
@@ -551,15 +550,13 @@ void ClassData::EnterBlock()
 {
    Debug::ft(ClassData_EnterBlock);
 
-   Context::SetPos(GetPos());
-
    //  The initialization of a static member is handled by
    //  o ClassData.EnterScope, if initialized where declared, or
    //  o SpaceData.EnterScope, if initialized separately.
    //
    if(IsStatic())
    {
-      auto expl = string("Improper initialization of static member ");
+      string expl("Improper initialization of static member ");
       expl += ScopedName(true);
       Context::SwLog(ClassData_EnterBlock, expl, 0);
       return;
@@ -573,7 +570,7 @@ void ClassData::EnterBlock()
    //
    if(init_ != nullptr)
    {
-      Context::SetPos(init_->GetPos());
+      Context::SetPos(init_->GetLoc());
       InitByExpr(init_->GetInit());
       init_ = nullptr;
       return;
@@ -594,7 +591,7 @@ bool ClassData::EnterScope()
    //  A static const POD member (unless its a pointer) could also be
    //  initialized at this point.
    //
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    GetTypeSpec()->EnteringScope(this);
 
    if(width_ != nullptr)
@@ -617,7 +614,7 @@ bool ClassData::EnterScope()
    //  restrictions or type compatibility, such as the one above for field
    //  width.
    //
-   if(IsStatic() && IsConst() && IsPOD() && !IsPointer())
+   if(IsStatic() && IsConst() && IsPOD() && !IsPointer(true))
    {
       ExecuteInit(false);
    }
@@ -641,6 +638,29 @@ void ClassData::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
+fn_name ClassData_IsUnionMember = "ClassData.IsUnionMember";
+
+bool ClassData::IsUnionMember() const
+{
+   Debug::ft(ClassData_IsUnionMember);
+
+   //  Look for an anonymous union as well as a named union.
+   //
+   if(depth_ > 0) return true;
+
+   auto scope = GetScope();
+
+   if(scope->Type() == Cxx::Class)
+   {
+      auto cls = static_cast<const Class*>(scope);
+      return (cls->GetClassTag() == Cxx::UnionType);
+   }
+
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name ClassData_MemberToArg = "ClassData.MemberToArg";
 
 StackArg ClassData::MemberToArg(StackArg& via, Cxx::Operator op)
@@ -650,7 +670,7 @@ StackArg ClassData::MemberToArg(StackArg& via, Cxx::Operator op)
    //  Create an argument for this member, which was accessed through VIA.
    //
    Accessed();
-   auto arg = StackArg(this, via, op);
+   StackArg arg(this, via, op);
    if(mutable_) arg.SetAsMutable();
    return arg;
 }
@@ -1045,7 +1065,12 @@ void Data::CheckConstness(bool could) const
 
       if(!IsConstPtr())
       {
-         if(!nonconstptr_ && IsPointer() && could) Log(DataCouldBeConstPtr);
+         if(!nonconstptr_ && could)
+         {
+            //  Only log this for pointers, not arrays.
+            //
+            if(spec_->Ptrs(false) > 0) Log(DataCouldBeConstPtr);
+         }
       }
       else
       {
@@ -1095,7 +1120,7 @@ void Data::DisplayAssignment(ostream& stream, const Flags& options) const
 
    auto expr = buffer.str();
 
-   if(expr.size() <= 80)
+   if(expr.size() <= LINE_LENGTH_MAX)
       stream << expr;
    else
       stream << "{ /*" << expr.size() << " characters */ }";
@@ -1251,6 +1276,13 @@ bool Data::InitByAssign()
    auto result = Context::PopArg(true);
    spec_->MustMatchWith(result);
    GetDecl()->inited_ = true;
+
+   if(result.WasConstructed() && (result.Ptrs(true) == 0) &&
+      (GetScope()->GetFunction() != nullptr))
+   {
+      Log(InitCouldUseConstructor);
+   }
+
    return true;
 }
 
@@ -1377,14 +1409,6 @@ bool Data::IsConst() const
 
 //------------------------------------------------------------------------------
 
-bool Data::IsConstPtr() const
-{
-   if(constexpr_) return true;
-   return spec_->IsConstPtr();
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Data_IsDefaultConstructible = "Data.IsDefaultConstructible";
 
 bool Data::IsDefaultConstructible() const
@@ -1438,11 +1462,11 @@ void Data::SetAssignment(ExprPtr& expr)
    QualNamePtr name;
    GetInitName(name);
    name->CopyContext(this);
-   auto arg1 = TokenPtr(name.release());
+   TokenPtr arg1(name.release());
    rhs_->AddItem(arg1);
-   auto op = TokenPtr(new Operation(Cxx::ASSIGN));
+   TokenPtr op(new Operation(Cxx::ASSIGN));
    rhs_->AddItem(op);
-   auto arg2 = TokenPtr(expr.release());
+   TokenPtr arg2(expr.release());
    rhs_->AddItem(arg2);
 }
 
@@ -1625,7 +1649,7 @@ void FuncData::EnterBlock()
    auto spec = GetTypeSpec();
    auto anon = spec->IsAuto();
 
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    Singleton< CxxSymbols >::Instance()->InsertLocal(this);
    spec->EnteringScope(this);
    ExecuteInit(false);
@@ -1683,8 +1707,6 @@ void FuncData::SetNext(DataPtr& next)
    next_.reset(next.release());
    auto data = static_cast< FuncData* >(next_.get());
    data->SetFirst(first_);
-   data->GetTypeSpec()->SetPtrDetached(false);
-   data->GetTypeSpec()->SetRefDetached(false);
 }
 
 //------------------------------------------------------------------------------
@@ -1720,6 +1742,7 @@ Function::Function(QualNamePtr& name) :
    this_(false),
    nonpublic_(false),
    nonstatic_(false),
+   implicit_(false),
    calls_(0),
    defn_(false),
    deleted_(false),
@@ -1760,6 +1783,7 @@ Function::Function(QualNamePtr& name, TypeSpecPtr& spec, bool type) :
    this_(false),
    nonpublic_(false),
    nonstatic_(false),
+   implicit_(false),
    calls_(0),
    defn_(false),
    deleted_(false),
@@ -1868,8 +1892,8 @@ void Function::AddThisArg()
    //
    TypeSpecPtr typeSpec(new DataSpec(cls->Name()->c_str()));
    typeSpec->CopyContext(this);
-   typeSpec->SetPtrs(1);
-   typeSpec->SetConst(const_);
+   typeSpec->Tags()->SetConst(const_);
+   typeSpec->Tags()->SetPointer(0, true);
    typeSpec->SetReferent(cls, nullptr);
    string argName(THIS_STR);
    ArgumentPtr arg(new Argument(argName, typeSpec));
@@ -1968,31 +1992,29 @@ bool Function::ArgumentsMatch(const Function* that) const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_CanConstructFrom = "Function.CanConstructFrom";
+fn_name Function_CalcConstructibilty = "Function.CalcConstructibilty";
 
-bool Function::CanConstructFrom
-   (const StackArg& that, const string& thatType, bool implicit) const
+TypeMatch Function::CalcConstructibilty
+   (const StackArg& that, const string& thatType) const
 {
-   Debug::ft(Function_CanConstructFrom);
+   Debug::ft(Function_CalcConstructibilty);
 
-   //  Return true if this is a constructor that is not explicit, that can
-   //  take one argument (after "this"), and that can be invoked with THAT.
+   //  If this function must be invoked explicitly or is not even a
+   //  constructor, there is no compatibility.
    //
-   if((!explicit_ || implicit) && (FuncRole() == PureCtor))
-   {
-      auto min = MinArgs();
-      auto max = MaxArgs();
+   if(explicit_ || (FuncRole() != PureCtor)) return Incompatible;
 
-      if((min <= 2) && (max == 2))
-      {
-         auto thisArg = args_[1].get();
-         auto thisType = thisArg->TypeString(true);
-         return (StackArg(thisArg, 0).CalcMatchWith
-            (that, thisType, thatType, implicit) == Compatible);
-      }
+   //  If this constructor can be invoked with a single argument, find
+   //  out how well THAT matches with the constructor's argument.
+   //
+   if((MinArgs() <= 2) && (MaxArgs() == 2))
+   {
+      auto thisArg = args_[1].get();
+      auto thisType = thisArg->TypeString(true);
+      return StackArg(thisArg, 0).CalcMatchWith(that, thisType, thatType);
    }
 
-   return false;
+   return Incompatible;
 }
 
 //------------------------------------------------------------------------------
@@ -2128,8 +2150,8 @@ void Function::Check() const
 
    if(!defn_)
    {
-      CheckIfDefined();
-      CheckIfUsed(FunctionUnused);
+      auto w = CheckIfDefined();
+      if(w != FunctionNotDefined) CheckIfUsed(FunctionUnused);
       CheckIfHiding();
       CheckArgs();
       CheckAccessControl();
@@ -2138,7 +2160,7 @@ void Function::Check() const
       CheckIfOverridden();
       CheckIfPublicVirtual();
       CheckForVirtualDefault();
-      CheckMemberUsage();
+      if(w != FunctionNotDefined) CheckMemberUsage();
       if(mate_ != nullptr) mate_->Check();
    }
 
@@ -2184,9 +2206,39 @@ void Function::CheckArgs() const
    auto type = FuncType();
    if(type == FuncOperator) return;
 
+   //  If the function is an override, look for arguments that were renamed
+   //  from the direct base class.  This is the only check that is applied
+   //  to an overridden function.
+   //
+   if(override_)
+   {
+      auto base = FindBaseFunc();
+
+      for(size_t i = 0; i < n; ++i)
+      {
+         if(*args_[i]->Name() != *base->args_[i]->Name())
+         {
+            args_[i]->Log(OverrideRenamesArgument, i + (this_ ? 0 : 1));
+         }
+      }
+
+      if(mate_ != nullptr)
+      {
+         for(size_t i = 0; i < n; ++i)
+         {
+            if(*mate_->args_[i]->Name() != *base->args_[i]->Name())
+            {
+               mate_->args_[i]->Log
+                  (OverrideRenamesArgument, i + (this_ ? 0 : 1));
+            }
+         }
+      }
+
+      return;
+   }
+
    //  If the function is defined separately from its declaration, look
-   //  for renamed arguments.  If the function is an override, look for
-   //  arguments that were renamed from the direct base class.
+   //  for renamed arguments.
    //
    if(mate_ != nullptr)
    {
@@ -2200,23 +2252,6 @@ void Function::CheckArgs() const
       }
    }
 
-   if(override_)
-   {
-      auto base = FindBaseFunc();
-
-      for(size_t i = 0; i < n; ++i)
-      {
-         if(*args_[i]->Name() != *base->args_[i]->Name())
-         {
-            args_[i]->Log(OverrideRenamesArgument, i + (this_ ? 0 : 1));
-         }
-      }
-
-      //  The remaining checks are not applied to an override.
-      //
-      return;
-   }
-
    //  Look for unused arguments and arguments that could be const.
    //
    for(size_t i = 0; i < n; ++i)
@@ -2227,7 +2262,7 @@ void Function::CheckArgs() const
       {
          if((i != 0) || !this_)
          {
-            arg->Log(ArgumentUnused, i + (this_ ? 0 : 1));
+            LogToBoth(ArgumentUnused, i);
          }
       }
       else
@@ -2269,11 +2304,11 @@ void Function::CheckArgs() const
                if(arg->IsPassedByValue())
                {
                   if(arg->Root()->Type() == Cxx::Class)
-                     arg->Log(ArgumentCouldBeConstRef, i + (this_ ? 0 : 1));
+                     LogToBoth(ArgumentCouldBeConstRef, i);
                }
                else
                {
-                  arg->Log(ArgumentCouldBeConst, i + (this_ ? 0 : 1));
+                  LogToBoth(ArgumentCouldBeConst, i);
                }
             }
          }
@@ -2311,7 +2346,9 @@ void Function::CheckCtor() const
    //  Check that this is a constructor and that it isn't deleted.
    //
    if(FuncType() != FuncCtor) return;
-   if(GetDefn()->impl_ == nullptr) return;
+   auto defn = GetDefn();
+   auto impl = defn->impl_.get();
+   if(!IsImplemented()) return;
 
    //  A base class constructor should not be public.
    //
@@ -2320,10 +2357,11 @@ void Function::CheckCtor() const
       if(!GetClass()->Subclasses()->empty()) Log(PublicConstructor);
    }
 
-   //  A constructor should be tagged explicit if it can take a single
-   //  argument (besides "this") and is not a copy or move constructor.
+   //  A constructor should probably be tagged explicit if it is not invoked
+   //  implicitly, can take a single argument (besides "this"), and is not a
+   //  copy or move constructor.
    //
-   if(!explicit_)
+   if(!explicit_ && !implicit_)
    {
       auto min = MinArgs();
       auto max = MaxArgs();
@@ -2334,6 +2372,17 @@ void Function::CheckCtor() const
       }
    }
 
+   //  An empty constructor that neither explicitly invoke a base class
+   //  constructor nor explicitly initializes a member can be defaulted.
+   //
+   auto& mems = defn->mems_;
+
+   if((impl != nullptr) && (impl->FirstStatement() == nullptr) &&
+      (defn->call_ == nullptr) && mems.empty())
+   {
+      LogToBoth(FunctionCouldBeDefaulted);
+   }
+
    //  Get ITEMS, a list of the class's data members.  This list contains the
    //  members in order of declaration and indicates how each member should be
    //  initialized. Go through the member initialization list, if any, find
@@ -2342,8 +2391,6 @@ void Function::CheckCtor() const
    DataInitVector items;
    auto cls = GetClass();
    cls->GetMemberInitAttrs(items);
-
-   auto& mems = GetDefn()->mems_;
 
    for(size_t i = 0; i < mems.size(); ++i)
    {
@@ -2360,10 +2407,11 @@ void Function::CheckCtor() const
       }
    }
 
-   //  All members that need initialization should have been initialized in
-   //  order of declaration.  If a member should have been initialized but
-   //  was not, log this against the member.  If a member was initialized
-   //  out of order, log this against the initialization statement.
+   //  All members that require initialization should be initialized in order
+   //  of declaration.  If a member should be initialized but was not, log it
+   //  unless this is a default copy constructor, which effectively does a
+   //  bitwise copy.  If a member was initialized out of order, log it against
+   //  the initialization statement.
    //
    size_t last = 0;
 
@@ -2371,8 +2419,12 @@ void Function::CheckCtor() const
    {
       if(item->initOrder == 0)
       {
-         if(item->initNeeded)
+         if((item->initNeeded) && (!defn->defaulted_ || FuncRole() != CopyCtor))
          {
+            //  Log both the missing member and the suspicious constructor.
+            //  This helps to pinpoint where the concern lies.
+            //
+            Log(MemberInitMissing);
             item->member->Log(MemberInitMissing);
          }
       }
@@ -2409,20 +2461,7 @@ bool Function::CheckDebugName(const string& str) const
    //  o If function is overloaded, "left punctuation" can follow <name> in
    //    order to give a unique name to each of the function's overloads.
    //
-   string name;
-
-   switch(FuncType())
-   {
-   case FuncCtor:
-      name = "ctor";
-      break;
-   case FuncDtor:
-      name = "dtor";
-      break;
-   default:
-      name = *Name();
-   }
-
+   auto name = DebugName();
    auto scope = GetScope()->Name();
 
    if(scope->empty())
@@ -2451,6 +2490,12 @@ void Function::CheckDtor() const
    Debug::ft(Function_CheckDtor);
 
    if(FuncType() != FuncDtor) return;
+
+   auto impl = GetDefn()->impl_.get();
+   if((impl != nullptr) && (impl->FirstStatement() == nullptr))
+   {
+      LogToBoth(FunctionCouldBeDefaulted);
+   }
 
    auto cls = GetClass();
    if(cls->Subclasses()->empty()) return;
@@ -2513,14 +2558,14 @@ void Function::CheckIfCouldBeConst() const
       if((func != this) && (*func->Name() == *Name())) return;
    }
 
-   Log(FunctionCouldBeConst);
+   LogToBoth(FunctionCouldBeConst);
 }
 
 //------------------------------------------------------------------------------
 
 fn_name Function_CheckIfDefined = "Function.CheckIfDefined";
 
-void Function::CheckIfDefined() const
+Warning Function::CheckIfDefined() const
 {
    Debug::ft(Function_CheckIfDefined);
 
@@ -2531,15 +2576,15 @@ void Function::CheckIfDefined() const
    //  Pure virtual functions are logged separately, because not providing an
    //  implementation may be intentional.
    //
-   if(GetDefn()->impl_ != nullptr) return;
-   if(type_) return;
-   if(IsDeleted()) return;
-   if(defaulted_) return;
+   if(GetDefn()->impl_ != nullptr) return Warning_N;
+   if(GetDefn()->defaulted_) return Warning_N;
+   if(type_) return Warning_N;
+   if(IsDeleted()) return Warning_N;
+   if(defaulted_) return Warning_N;
 
-   if(pure_)
-      Log(PureVirtualNotDefined);
-   else
-      Log(FunctionNotDefined);
+   auto w = (pure_ ? PureVirtualNotDefined : FunctionNotDefined);
+   Log(w);
+   return w;
 }
 
 //------------------------------------------------------------------------------
@@ -2618,7 +2663,7 @@ void Function::CheckIfUsed(Warning warning) const
    Debug::ft(Function_CheckIfUsed);
 
    if(type_) return;
-   CxxScoped::CheckIfUsed(warning);
+   if(IsUnused()) LogToBoth(warning);
 }
 
 //------------------------------------------------------------------------------
@@ -2656,8 +2701,8 @@ void Function::CheckMemberUsage() const
    //  If the function accessed only public members, it could be free.
    //  Otherwise, it could be static.
    //
-   if(!GetDefn()->nonpublic_) Log(FunctionCouldBeFree);
-   else if(!static_) Log(FunctionCouldBeStatic);
+   if(!GetDefn()->nonpublic_) LogToBoth(FunctionCouldBeFree);
+   else if(!static_) LogToBoth(FunctionCouldBeStatic);
 }
 
 //------------------------------------------------------------------------------
@@ -2681,6 +2726,25 @@ void Function::CheckOverride()
    if(!override_) Log(OverrideTagMissing);
    virtual_ = true;
    override_ = true;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Function_DebugName = "Function.DebugName";
+
+string Function::DebugName() const
+{
+   Debug::ft(Function_DebugName);
+
+   switch(FuncType())
+   {
+   case FuncCtor:
+      return "ctor";
+   case FuncDtor:
+      return "dtor";
+   }
+
+   return *Name();
 }
 
 //------------------------------------------------------------------------------
@@ -2715,7 +2779,7 @@ void Function::Display(ostream& stream,
    if(!options.test(DispCode) & !tmplts_.empty())
    {
       stream << prefix << "instantiations (" << tmplts_.size() << "):" << CRLF;
-      auto lead = prefix + spaces(Indent_Size);
+      auto lead = prefix + spaces(INDENT_SIZE);
 
       for(auto t = tmplts_.cbegin(); t != tmplts_.cend(); ++t)
       {
@@ -2831,7 +2895,7 @@ void Function::DisplayDefn(ostream& stream,
       stream << " :";
       DisplayInfo(stream, options);
       stream << CRLF;
-      auto lead = prefix + spaces(Indent_Size);
+      auto lead = prefix + spaces(INDENT_SIZE);
 
       if(call != nullptr)
       {
@@ -2912,8 +2976,9 @@ void Function::EnterBlock()
 
    //  If the function has no implementation, do nothing.  An empty function
    //  (just the braces) has an empty code block, so it will get past this.
+   //  Treat a defaulted function as having an empty code block.
    //
-   if(impl_ == nullptr) return;
+   if(!IsImplemented()) return;
 
    //  Don't execute a function template or a function in a class template.
    //  A function in a class template *instance*, however, is executed.
@@ -2966,7 +3031,7 @@ void Function::EnterBlock()
          }
          else
          {
-            auto expl = string("Failed to find member ");
+            string expl("Failed to find member ");
             expl += *cls->Name() + SCOPE_STR + *(*m)->Name();
             Context::SwLog(Function_EnterBlock, expl, 0);
          }
@@ -2981,7 +3046,7 @@ void Function::EnterBlock()
       }
    }
 
-   impl_->EnterBlock();
+   if(impl_ != nullptr) impl_->EnterBlock();
 
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
    {
@@ -3014,7 +3079,7 @@ bool Function::EnterScope()
    //
    auto defn = false;
 
-   if(impl_ != nullptr)
+   if(IsImplemented())
    {
       auto decl = GetArea()->MatchFunc(this, false);
 
@@ -3236,6 +3301,7 @@ FunctionRole Function::FuncRole() const
       {
          arg = args_[1].get();
          if(arg->Root() != GetClass()) return FuncOther;
+         if(parms_ != nullptr) return FuncOther;
          refs = arg->GetTypeSpec()->Refs();
          if(refs == 2) return MoveOper;
          return CopyOper;
@@ -3252,6 +3318,7 @@ FunctionType Function::FuncType() const
    if(Operator() != Cxx::NIL_OPERATOR) return FuncOperator;
    if(spec_ != nullptr) return FuncStandard;
    if(Name()->find('~') != string::npos) return FuncDtor;
+   if(parms_ != nullptr) return FuncStandard;
    return FuncCtor;
 }
 
@@ -3516,12 +3583,12 @@ Function* Function::InstantiateFunction(const TypeName* type) const
    if(code_ == nullptr)
    {
       std::ostringstream stream;
-      auto options = Flags(FQ_Mask | Code_Mask | NoAC_Mask | NoTP_Mask);
+      Flags options(FQ_Mask | Code_Mask | NoAC_Mask | NoTP_Mask);
       Display(stream, EMPTY_STR, options);
       code_.reset(new string(stream.str()));
    }
 
-   auto code = stringPtr(new string(*code_));
+   stringPtr code(new string(*code_));
    if((code == nullptr) || code->empty()) return InstantiateError(instName, 0);
 
    //  A function template in a substitute file (e.g. std::move) does not
@@ -3560,7 +3627,7 @@ Function* Function::InstantiateFunction(const TypeName* type) const
    //
    auto fullName = ScopedName(true) + ts;
    RemoveRefs(fullName);
-   auto parser = std::unique_ptr< Parser >(new Parser(EMPTY_STR));
+   std::unique_ptr< Parser > parser(new Parser(EMPTY_STR));
    parser->ParseFuncInst(fullName, type, area, code);
    parser.reset();
    code.reset();
@@ -3601,9 +3668,9 @@ Function* Function::InstantiateFunction(stringVector& tmpltArgs) const
    //  Build the TypeName for the function instance and instantiate it.
    //
    auto name = *Name();
-   auto type = TypeNamePtr(new TypeName(name));
+   TypeNamePtr type(new TypeName(name));
    auto scope = Context::Scope();
-   auto parser = std::unique_ptr< Parser >(new Parser(scope));
+   std::unique_ptr< Parser > parser(new Parser(scope));
 
    for(size_t i = 0; i < parms->size(); ++i)
    {
@@ -3631,7 +3698,7 @@ void Function::Invoke(StackArgVector* args)
    if(size1 > size2)
    {
       auto expl = "Too many arguments for " + *Name();
-      Context::SwLog(Function_Invoke, expl, pack2(size1, size2));
+      Context::SwLog(Function_Invoke, expl, size1 - size2);
       size1 = size2;
    }
 
@@ -3642,7 +3709,7 @@ void Function::Invoke(StackArgVector* args)
    {
       auto& sendArg = args->at(i);
       sendArg.WasRead();
-      auto recvArg = StackArg(args_.at(i).get(), 0);
+      StackArg recvArg(args_.at(i).get(), 0);
       sendArg.AssignedTo(recvArg, Passed);
    }
 
@@ -3740,10 +3807,11 @@ bool Function::IsExemptFromTracing() const
 {
    Debug::ft(Function_IsExemptFromTracing);
 
-   if(GetDecl()->pure_) return true;
-   if(tmplt_ != nullptr) return true;
+   if(impl_ == nullptr) return true;   // declaration only
+   if(GetDecl()->pure_) return true;   // pure virtual
+   if(tmplt_ != nullptr) return true;  // in a template
 
-   if((impl_ != nullptr) && (impl_->FirstStatement() == nullptr)) return true;
+   if(impl_->FirstStatement() == nullptr) return true;
 
    auto file = GetImplFile();
    if(file != nullptr)
@@ -3801,6 +3869,14 @@ bool Function::IsExemptFromTracing() const
 
 //------------------------------------------------------------------------------
 
+bool Function::IsImplemented() const
+{
+   auto defn = GetDefn();
+   return ((defn->impl_ != nullptr) || defn->defaulted_);
+}
+
+//------------------------------------------------------------------------------
+
 bool Function::IsInTemplateInstance() const
 {
    if(tmplt_ != nullptr) return true;
@@ -3849,6 +3925,7 @@ bool Function::IsTrivial() const
 {
    Debug::ft(Function_IsTrivial);
 
+   if(GetDefn()->defaulted_) return true;
    if(tmplt_ != nullptr) return false;
    if(GetDefn()->impl_ == nullptr) return false;
 
@@ -3865,18 +3942,13 @@ bool Function::IsTrivial() const
    {
       auto type = file->GetLineType(n);
 
+      if(!LineTypeAttr::Attrs[type].isCode) continue;
+
       switch(type)
       {
       case OpenBrace:
       case DebugFt:
          body = true;
-         //  [[fallthrough]]
-      case Blank:
-      case EmptyComment:
-      case SeparatorComment:
-      case TaggedComment:
-      case TextComment:
-      case SlashAsteriskComment:
          break;
 
       case CloseBrace:
@@ -3988,6 +4060,32 @@ void Function::ItemAccessed(const CxxNamed* item)
 
 //------------------------------------------------------------------------------
 
+fn_name Function_LogToBoth = "Function.LogToBoth";
+
+void Function::LogToBoth(Warning warning, size_t index) const
+{
+   Debug::ft(Function_LogToBoth);
+
+   if(index == SIZE_MAX)
+   {
+      this->Log(warning);
+      if(mate_ != nullptr) mate_->Log(warning, 0, true);
+   }
+   else
+   {
+      auto arg = args_.at(index).get();
+      arg->Log(warning, index + (this_ ? 0 : 1));
+
+      if(mate_ != nullptr)
+      {
+         arg = mate_->args_.at(index).get();
+         arg->Log(warning, index + (this_ ? 0 : 1), true);
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Function_MatchTemplate = "Function.MatchTemplate";
 
 TypeMatch Function::MatchTemplate
@@ -4005,7 +4103,7 @@ TypeMatch Function::MatchTemplate
    TypeSpecPtr thatSpec;
 
    auto scope = Context::Scope();
-   auto parser = std::unique_ptr< Parser >(new Parser(scope));
+   std::unique_ptr< Parser > parser(new Parser(scope));
    parser->ParseTypeSpec(thisType, thisSpec);
    parser->ParseTypeSpec(thatNonCVType, thatSpec);
    parser.reset();
@@ -4084,7 +4182,7 @@ void Function::PushThisArg(StackArgVector& args) const
       {
          auto func = Context::Scope()->GetFunction();
          if((func == nullptr) || !func->this_) return;
-         auto arg = StackArg(func->args_[0].get(), 0);
+         StackArg arg(func->args_[0].get(), 0);
          args.insert(args.cbegin(), arg);
       }
       else
@@ -4121,7 +4219,7 @@ StackArg Function::ResultType() const
    //  Constructors and destructors have no return type.
    //
    if(spec_ != nullptr) return spec_->ResultType();
-   if(FuncType() == FuncCtor) return StackArg(GetClass(), 0);
+   if(FuncType() == FuncCtor) return StackArg(GetClass(), 0, true);
    return StackArg(Singleton< CxxRoot >::Instance()->VoidTerm(), 0);
 }
 
@@ -4381,7 +4479,19 @@ void Function::UpdateThisArg(StackArgVector& args) const
          //  corrects this to the static function, it discards the "this"
          //  argument here.
          //
-         if(!args.front().IsImplicitThis()) Log(StaticFunctionViaMember);
+         if(!args.front().IsImplicitThis())
+         {
+            auto file = Context::File();
+
+            if(file != nullptr)
+            {
+               auto pos = Context::GetPos();
+               auto item = static_cast< CxxNamed* >(args.front().item);
+               file->LogPos
+                  (pos, StaticFunctionViaMember, item, 0, *GetClass()->Name());
+            }
+         }
+
          args.erase(args.cbegin());
       }
    }
@@ -4488,23 +4598,9 @@ void FuncSpec::AddArray(ArraySpecPtr& array)
 
 //------------------------------------------------------------------------------
 
-void FuncSpec::AdjustPtrs(TagCount count)
-{
-   func_->GetTypeSpec()->AdjustPtrs(count);
-}
-
-//------------------------------------------------------------------------------
-
 string FuncSpec::AlignTemplateArg(const TypeSpec* thatArg) const
 {
    return func_->GetTypeSpec()->AlignTemplateArg(thatArg);
-}
-
-//------------------------------------------------------------------------------
-
-TagCount FuncSpec::ArrayCount() const
-{
-   return func_->GetTypeSpec()->ArrayCount();
 }
 
 //------------------------------------------------------------------------------
@@ -4572,9 +4668,9 @@ void FuncSpec::FindReferent()
 
 //------------------------------------------------------------------------------
 
-TypeTags FuncSpec::GetTags() const
+TypeTags FuncSpec::GetAllTags() const
 {
-   return func_->GetTypeSpec()->GetTags();
+   return func_->GetTypeSpec()->GetAllTags();
 }
 
 //------------------------------------------------------------------------------
@@ -4611,13 +4707,6 @@ void FuncSpec::Instantiating() const
 bool FuncSpec::IsConst() const
 {
    return func_->IsConst();
-}
-
-//------------------------------------------------------------------------------
-
-bool FuncSpec::IsConstPtr() const
-{
-   return func_->GetTypeSpec()->IsConstPtr();
 }
 
 //------------------------------------------------------------------------------
@@ -4670,23 +4759,9 @@ void FuncSpec::Print(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-TagCount FuncSpec::PtrCount(bool arrays) const
-{
-   return func_->GetTypeSpec()->PtrCount(arrays);
-}
-
-//------------------------------------------------------------------------------
-
 TagCount FuncSpec::Ptrs(bool arrays) const
 {
    return func_->GetTypeSpec()->Ptrs(arrays);
-}
-
-//------------------------------------------------------------------------------
-
-TagCount FuncSpec::RefCount() const
-{
-   return func_->GetTypeSpec()->RefCount();
 }
 
 //------------------------------------------------------------------------------
@@ -4712,50 +4787,9 @@ StackArg FuncSpec::ResultType() const
 
 //------------------------------------------------------------------------------
 
-void FuncSpec::SetArrayPos(int8_t pos)
+void FuncSpec::SetPtrs(TagCount count)
 {
-   Debug::SwLog(FuncSpec_Warning, "SetArrayPos", 0);
-   func_->GetTypeSpec()->SetArrayPos(pos);
-}
-
-//------------------------------------------------------------------------------
-
-void FuncSpec::SetConst(bool readonly)
-{
-   Debug::SwLog(FuncSpec_Warning, "SetConst", 0);
-   func_->GetTypeSpec()->SetConst(readonly);
-}
-
-//------------------------------------------------------------------------------
-
-void FuncSpec::SetConstPtr(bool constptr)
-{
-   Debug::SwLog(FuncSpec_Warning, "SetConstPtr", 0);
-   func_->GetTypeSpec()->SetConst(constptr);
-}
-
-//------------------------------------------------------------------------------
-
-void FuncSpec::SetPtrDetached(bool on)
-{
-   Debug::SwLog(FuncSpec_Warning, "SetPtrDetached", 0);
-   func_->GetTypeSpec()->SetPtrDetached(on);
-}
-
-//------------------------------------------------------------------------------
-
-void FuncSpec::SetPtrs(TagCount ptrs)
-{
-   Debug::SwLog(FuncSpec_Warning, "SetPtrs", 0);
-   func_->GetTypeSpec()->SetPtrs(ptrs);
-}
-
-//------------------------------------------------------------------------------
-
-void FuncSpec::SetRefDetached(bool on)
-{
-   Debug::SwLog(FuncSpec_Warning, "SetRefDetached", 0);
-   func_->GetTypeSpec()->SetRefDetached(on);
+   func_->GetTypeSpec()->SetPtrs(count);
 }
 
 //------------------------------------------------------------------------------
@@ -4768,17 +4802,23 @@ void FuncSpec::SetReferent(CxxNamed* item, const SymbolView* view) const
 
 //------------------------------------------------------------------------------
 
-void FuncSpec::SetRefs(TagCount refs)
+void FuncSpec::Shrink()
 {
-   Debug::SwLog(FuncSpec_Warning, "SetRefs", 0);
-   func_->GetTypeSpec()->SetRefs(refs);
+   func_->Shrink();
 }
 
 //------------------------------------------------------------------------------
 
-void FuncSpec::Shrink()
+const TypeTags* FuncSpec::Tags() const
 {
-   func_->Shrink();
+   return func_->GetTypeSpec()->Tags();
+}
+
+//------------------------------------------------------------------------------
+
+TypeTags* FuncSpec::Tags()
+{
+   return func_->GetTypeSpec()->Tags();
 }
 
 //------------------------------------------------------------------------------
@@ -4926,7 +4966,7 @@ bool SpaceData::EnterScope()
 {
    Debug::ft(SpaceData_EnterScope);
 
-   Context::SetPos(GetPos());
+   Context::SetPos(GetLoc());
    GetTypeSpec()->EnteringScope(this);
    CloseScope();
 

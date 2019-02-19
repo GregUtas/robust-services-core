@@ -35,9 +35,9 @@
 #include "CxxArea.h"
 #include "CxxExecute.h"
 #include "CxxScoped.h"
+#include "CxxString.h"
 #include "CxxToken.h"
 #include "Debug.h"
-#include "Lexer.h"
 #include "Parser.h"
 #include "Singleton.h"
 #include "SysTime.h"
@@ -61,7 +61,7 @@ class MacroDATE : public Macro
 {
 public:
    MacroDATE();
-   ~MacroDATE() { }
+   ~MacroDATE() = default;
    virtual CxxToken* GetValue() const override;
    virtual CxxNamed* Referent() const
       override { return StrLiteral::GetReferent(); }
@@ -104,7 +104,7 @@ class MacroFILE : public Macro
 {
 public:
    MacroFILE();
-   ~MacroFILE() { }
+   ~MacroFILE() = default;
    virtual CxxToken* GetValue() const override;
    virtual CxxNamed* Referent() const
       override { return StrLiteral::GetReferent(); }
@@ -142,7 +142,7 @@ CxxToken* MacroFILE::GetValue() const
       if(files_.back()->GetStr() == fn) return files_.back().get();
    }
 
-   auto name = StrLiteralPtr(new StrLiteral(fn));
+   StrLiteralPtr name(new StrLiteral(fn));
    files_.push_back(std::move(name));
    return files_.back().get();
 }
@@ -153,7 +153,7 @@ class MacroFunc : public Macro
 {
 public:
    MacroFunc();
-   ~MacroFunc() { }
+   ~MacroFunc() = default;
    virtual CxxToken* GetValue() const override;
    virtual CxxNamed* Referent() const
       override { return StrLiteral::GetReferent(); }
@@ -191,7 +191,7 @@ CxxToken* MacroFunc::GetValue() const
       if(funcs_.back()->GetStr() == fn) return funcs_.back().get();
    }
 
-   auto name = StrLiteralPtr(new StrLiteral(fn));
+   StrLiteralPtr name(new StrLiteral(fn));
    funcs_.push_back(std::move(name));
    return funcs_.back().get();
 }
@@ -202,7 +202,7 @@ class MacroLINE : public Macro
 {
 public:
    MacroLINE();
-   ~MacroLINE() { }
+   ~MacroLINE() = default;
    virtual CxxToken* GetValue() const override;
    virtual CxxNamed* Referent() const
       override { return StrLiteral::GetReferent(); }
@@ -233,7 +233,7 @@ CxxToken* MacroLINE::GetValue() const
       return unknown_.get();
    }
 
-   auto line = StrLiteralPtr(new StrLiteral(parser->GetLINE()));
+   StrLiteralPtr line(new StrLiteral(parser->GetLINE()));
    lines_.push_back(std::move(line));
    return lines_.back().get();
 }
@@ -244,7 +244,7 @@ class MacroTIME : public Macro
 {
 public:
    MacroTIME();
-   ~MacroTIME() { }
+   ~MacroTIME() = default;
    virtual CxxToken* GetValue() const override;
    virtual CxxNamed* Referent() const
       override { return StrLiteral::GetReferent(); }
@@ -360,9 +360,10 @@ void CxxRoot::DefineSymbols(std::istream& stream)
    {
       std::getline(stream, input);
 
-      if(Lexer::IsValidIdentifier(input))
+      if(IsValidIdentifier(input))
       {
-         auto def = DefinePtr(new Define(input, ExprPtr(nullptr)));
+         ExprPtr exp(nullptr);
+         DefinePtr def(new Define(input, exp));
          macros_.push_back(std::move(def));
       }
    }
@@ -474,7 +475,7 @@ void CxxRoot::Startup(RestartLevel level)
 
    //  Define standard macros.
    //
-   auto macro = MacroPtr(new MacroDATE);
+   MacroPtr macro(new MacroDATE);
    macros_.push_back(std::move(macro));
    macro = MacroPtr(new MacroFILE);
    macros_.push_back(std::move(macro));
@@ -487,7 +488,9 @@ void CxxRoot::Startup(RestartLevel level)
 
    //  #define CT_COMPILER for subs/cstddef.
    //
-   auto def = DefinePtr(new Define(string("CT_COMPILER"), ExprPtr(nullptr)));
+   ExprPtr exp(nullptr);
+   string str("CT_COMPILER");
+   DefinePtr def(new Define(str, exp));
    macros_.push_back(std::move(def));
 
    //  Create the parser trace tool.

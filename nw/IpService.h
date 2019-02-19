@@ -24,6 +24,7 @@
 
 #include "Protected.h"
 #include <cstddef>
+#include "IoThread.h"
 #include "NbTypes.h"
 #include "NwTypes.h"
 #include "RegCell.h"
@@ -67,22 +68,24 @@ public:
 
    //  Returns the size of the receive buffer for the service's I/O thread.
    //
-   virtual size_t RxSize() const = 0;
+   virtual size_t RxSize() const { return IoThread::MaxRxBuffSize; }
 
    //  Returns the size of the transmit buffer for the service's I/O thread.
    //
-   virtual size_t TxSize() const = 0;
+   virtual size_t TxSize() const { return IoThread::MaxTxBuffSize; }
 
    //  Creates a subclass of CliText for provisioning the service through
-   //  the CLI.
+   //  the CLI.  [This is not currently invoked but has a few overrides that
+   //  illustrate its purpose, which is to name a protocol whose port, and
+   //  possibly other attributes, could be configured via a CLI command.]
    //
    virtual CliText* CreateText() const = 0;
 
-   //  Allocates an application socket when sending an initial message.
-   //  Overridden by services that support a dedicated socket for each
-   //  application instance.
+   //  Returns true if applications share the I/O thread's primary socket.
+   //  If it returns false, as it does for TCP-based services, application
+   //  instances must allocate a socket before sending a message.
    //
-   virtual SysSocket* CreateAppSocket() const { return nullptr; }
+   virtual bool HasSharedSocket() const = 0;
 
    //  Provides sizes of the receive and transmit buffers for application
    //  sockets.  Invoked to configure the socket when the service's I/O

@@ -49,7 +49,7 @@ class TraceBufferTool : public Tool
    friend class Singleton< TraceBufferTool >;
 private:
    TraceBufferTool() : Tool(ToolBuffer, 0, true) { }
-   ~TraceBufferTool() { }
+   ~TraceBufferTool() = default;
    virtual const char* Name() const override { return TraceBufferToolName; }
    virtual const char* Expl() const override { return TraceBufferToolExpl; }
 };
@@ -66,7 +66,7 @@ class FunctionTraceTool : public Tool
    friend class Singleton< FunctionTraceTool >;
 private:
    FunctionTraceTool() : Tool(FunctionTracer, 'f', true) { }
-   ~FunctionTraceTool() { }
+   ~FunctionTraceTool() = default;
    virtual const char* Name() const override { return FunctionTraceToolName; }
    virtual const char* Expl() const override { return FunctionTraceToolExpl; }
    virtual string Status() const override;
@@ -96,7 +96,7 @@ class MemoryTraceTool : public Tool
    friend class Singleton< MemoryTraceTool >;
 private:
    MemoryTraceTool() : Tool(MemoryTracer, 'm', true) { }
-   ~MemoryTraceTool() { }
+   ~MemoryTraceTool() = default;
    virtual const char* Name() const override { return MemoryTraceToolName; }
    virtual const char* Expl() const override { return MemoryTraceToolExpl; }
 };

@@ -108,7 +108,8 @@ const size_t BlockHeader::Size = Memory::Align(sizeof(BlockHeader));
 fn_name ObjectPoolSizeCfg_ctor = "ObjectPoolSizeCfg.ctor";
 
 ObjectPoolSizeCfg::ObjectPoolSizeCfg(ObjectPool* pool) :
-   CfgIntParm(pool->key_.c_str(), "1", &pool->targSegments_, 0,
+   CfgIntParm(pool->key_.c_str(), "1",
+      reinterpret_cast< word* >(&pool->targSegments_), 0,
       ObjectPool::MaxSegments, "number of segments of 1K objects"),
    pool_(pool)
 {
@@ -440,7 +441,7 @@ void ObjectPool::AuditFreeq()
 
 //------------------------------------------------------------------------------
 
-bool ObjectPool::BidToIndices(Bid bid, size_t& i, size_t& j) const
+bool ObjectPool::BidToIndices(PooledObjectId bid, size_t& i, size_t& j) const
 {
    if(bid == NIL_ID) return false;
 
@@ -456,7 +457,7 @@ bool ObjectPool::BidToIndices(Bid bid, size_t& i, size_t& j) const
 
 fn_name ObjectPool_BidToObj = "ObjectPool.BidToObj";
 
-Pooled* ObjectPool::BidToObj(Bid bid) const
+Pooled* ObjectPool::BidToObj(PooledObjectId bid) const
 {
    Debug::ft(ObjectPool_BidToObj);
 
@@ -603,7 +604,7 @@ void ObjectPool::DisplayStats(ostream& stream) const
 bool ObjectPool::DisplayUsed(ostream& stream,
       const string& prefix, const Flags& options) const
 {
-   Bid bid;
+   PooledObjectId bid;
    auto time = 200;
    auto count = 0;
 
@@ -704,7 +705,7 @@ size_t ObjectPool::FailCount() const
 
 fn_name ObjectPool_First = "ObjectPool.First";
 
-ObjectBlock* ObjectPool::First(Bid& bid) const
+ObjectBlock* ObjectPool::First(PooledObjectId& bid) const
 {
    Debug::ft(ObjectPool_First);
 
@@ -722,7 +723,7 @@ ObjectBlock* ObjectPool::First(Bid& bid) const
 
 fn_name ObjectPool_FirstUsed = "ObjectPool.FirstUsed";
 
-Pooled* ObjectPool::FirstUsed(Bid& bid) const
+Pooled* ObjectPool::FirstUsed(PooledObjectId& bid) const
 {
    Debug::ft(ObjectPool_FirstUsed);
 
@@ -747,7 +748,7 @@ size_t ObjectPool::FreeCount() const
 
 //------------------------------------------------------------------------------
 
-bool ObjectPool::IndicesToBid(size_t i, size_t j, Bid& bid) const
+bool ObjectPool::IndicesToBid(size_t i, size_t j, PooledObjectId& bid) const
 {
    if(i >= currSegments_) return false;
    if(j >= segSize_) return false;
@@ -773,7 +774,7 @@ size_t ObjectPool::LowAvailCount() const
 
 //------------------------------------------------------------------------------
 
-ObjectBlock* ObjectPool::Next(Bid& bid) const
+ObjectBlock* ObjectPool::Next(PooledObjectId& bid) const
 {
    size_t i, j;
 
@@ -792,7 +793,7 @@ ObjectBlock* ObjectPool::Next(Bid& bid) const
 
 fn_name ObjectPool_NextUsed = "ObjectPool.NextUsed";
 
-Pooled* ObjectPool::NextUsed(Bid& bid) const
+Pooled* ObjectPool::NextUsed(PooledObjectId& bid) const
 {
    size_t m, n;
 

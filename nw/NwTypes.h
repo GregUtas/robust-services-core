@@ -36,16 +36,13 @@ typedef uint16_t ipport_t;
 
 //  IP port constants.
 //
-enum IpPortIds
-{
-   NilIpPort = 0,
-   FirstAppIpPort = 1024,
-   CipIpPort = 40000,
-   PotsShelfIpPort = 40001,
-   PotsCallIpPort = 40002,
-   MaxIpPort = UINT16_MAX,
-   LastAppIpPort = MaxIpPort
-};
+constexpr ipport_t NilIpPort = 0;
+constexpr ipport_t FirstAppIpPort = 1024;
+constexpr ipport_t CipIpPort = 40000;
+constexpr ipport_t PotsShelfIpPort = 40001;
+constexpr ipport_t PotsCallIpPort = 40002;
+constexpr ipport_t MaxIpPort = UINT16_MAX;
+constexpr ipport_t LastAppIpPort = MaxIpPort;
 
 //  An IPv4 address.  Interally, an IP address should be stored in host order.
 //
@@ -58,7 +55,7 @@ enum IpProtocol
    IpAny,        // wildcard
    IpUdp,
    IpTcp,
-   IpProtocol_N  // numer of IP protocols
+   IpProtocol_N  // number of IP protocols
 };
 
 //  Inserts a string for PROTO into STREAM.

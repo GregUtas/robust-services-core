@@ -1488,8 +1488,8 @@ void PotsTrafficThread::SetRate(word rate)
 
    if(callsPerMin_ > 0)
    {
-      auto ticksPerMin = 60000 / MsecsPerTick;
-      auto CallsPerTick1000 = (1000 * rate) / ticksPerMin;
+      size_t ticksPerMin = 60000 / MsecsPerTick;
+      size_t CallsPerTick1000 = (1000 * rate) / ticksPerMin;
 
       milCallsPerTick_ = CallsPerTick1000 % 1000;
       maxCallsPerTick_ = (CallsPerTick1000 / 1000) << 1;

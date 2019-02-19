@@ -201,27 +201,12 @@ word SysTcpSocket::Poll(SysTcpSocket* sockets[], size_t size, msecs_t msecs)
       return sockets[0]->SetError();
    }
 
-   //  Save the status of each socket before LIST gets deleted.  SOCKETS
-   //  is the TcpIoThread's array of sockets, which might change during
-   //  WSAPoll if TIMEOUT was not 0.  In particular, a socket can be
-   //  deleted or moved to another slot to take the place of a socket
-   //  that was deleted (this is done to eliminate gaps in the list).
-   //  Consequently, it is necessary to verify that an entry has not
-   //  changed. If it has, we need to look for it.
+   //  Save the status of each socket before LIST gets deleted.
    //
    for(size_t i = 0; i < size; ++i)
    {
-      auto index = i;
-
-      if((sockets[i] == nullptr) || (sockets[i]->Socket() != list[i].fd))
-      {
-         index = FindSocket(sockets, size, list[i].fd);
-      }
-
-      if(index == SIZE_MAX) continue;
-
       auto results = list[i].revents;
-      auto& outFlags = sockets[index]->outFlags_;
+      auto& outFlags = sockets[i]->outFlags_;
 
       outFlags.reset();
       if((results & POLLERR) != 0) outFlags.set(PollError);
@@ -233,6 +218,7 @@ word SysTcpSocket::Poll(SysTcpSocket* sockets[], size_t size, msecs_t msecs)
       if((results & POLLRDBAND) != 0) outFlags.set(PollReadOob);
    }
 
+   list.reset();
    return ready;
 }
 

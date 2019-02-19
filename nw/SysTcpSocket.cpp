@@ -225,26 +225,6 @@ void SysTcpSocket::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name SysTcpSocket_FindSocket = "SysTcpSocket.FindSocket";
-
-size_t SysTcpSocket::FindSocket
-   (SysTcpSocket* sockets[], size_t size, SysSocket_t socket)
-{
-   Debug::ft(SysTcpSocket_FindSocket);
-
-   for(size_t i = 0; i < size; ++i)
-   {
-      if((sockets[i] != nullptr) && (sockets[i]->Socket() == socket))
-      {
-         return i;
-      }
-   }
-
-   return SIZE_MAX;
-}
-
-//------------------------------------------------------------------------------
-
 fn_name SysTcpSocket_IsOpen = "SysTcpSocket.IsOpen";
 
 bool SysTcpSocket::IsOpen() const
@@ -283,7 +263,7 @@ SysSocket::SendRc SysTcpSocket::QueueBuff(IpBuffer* buff, bool henq)
    {
       //  This buffer is being queued for the first time, so make a copy of it.
       //  The sender retains ownership of the original buffer to keep things
-      //  simple.  Ownership need not be transferred; trace tools can still
+      //  simple: ownership need not be transferred; trace tools can still
       //  capture the buffer's contents; and the sender can free the buffer
       //  when it no longer requires access the outgoing message.
       //

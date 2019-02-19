@@ -21,6 +21,7 @@
 //
 #include "NwModule.h"
 #include "Debug.h"
+#include "IpBuffer.h"
 #include "IpPortRegistry.h"
 #include "IpServiceRegistry.h"
 #include "NbAppIds.h"
@@ -86,6 +87,7 @@ void NwModule::Shutdown(RestartLevel level)
    Debug::ft(NwModule_Shutdown);
 
    Singleton< NwIncrement >::Instance()->Shutdown(level);
+   Singleton< IpBufferPool >::Instance()->Shutdown(level);
    Singleton< IpPortRegistry >::Instance()->Shutdown(level);
    Singleton< IpServiceRegistry >::Instance()->Shutdown(level);
    Singleton< NwTracer >::Instance()->Shutdown(level);
@@ -109,6 +111,7 @@ void NwModule::Startup(RestartLevel level)
    Singleton< NwTracer >::Instance()->Startup(level);
    Singleton< IpServiceRegistry >::Instance()->Startup(level);
    Singleton< IpPortRegistry >::Instance()->Startup(level);
+   Singleton< IpBufferPool >::Instance()->Startup(level);
    Singleton< NwIncrement >::Instance()->Startup(level);
 }
 }

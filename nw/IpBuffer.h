@@ -23,6 +23,7 @@
 #define IPBUFFER_H_INCLUDED
 
 #include "MsgBuffer.h"
+#include "ObjectPool.h"
 #include <cstddef>
 #include "NbTypes.h"
 #include "SysIpL3Addr.h"
@@ -153,6 +154,10 @@ public:
    //  Overridden for patching.
    //
    virtual void Patch(sel_t selector, void* arguments) override;
+
+   //  Overridden to obtain a buffer from its object pool.
+   //
+   static void* operator new(size_t size);
 protected:
    //  Overridden to free buff_ during recovery.
    //
@@ -194,6 +199,27 @@ private:
    //  Set if the buffer was queued for output.
    //
    bool queued_ : 8;
+};
+
+//------------------------------------------------------------------------------
+//
+//  Pool for IpBuffer objects.
+//
+class IpBufferPool : public ObjectPool
+{
+   friend class Singleton< IpBufferPool >;
+public:
+   //> The size of IpBuffer blocks.
+   //
+   static const size_t BlockSize;
+private:
+   //  Private because this singleton is not subclassed.
+   //
+   IpBufferPool();
+
+   //  Private because this singleton is not subclassed.
+   //
+   ~IpBufferPool();
 };
 }
 #endif

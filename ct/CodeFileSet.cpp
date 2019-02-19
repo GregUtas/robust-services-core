@@ -38,6 +38,7 @@
 #include "SetOperations.h"
 #include "Singleton.h"
 #include "SysTypes.h"
+#include "ThisThread.h"
 
 using namespace NodeBase;
 using std::ostream;
@@ -662,6 +663,7 @@ word CodeFileSet::Parse(string& expl, const string& opts) const
       {
          if(!parser->Parse(*file)) ++failed;
          ++total;
+         ThisThread::Pause();
       }
    }
 
@@ -673,6 +675,7 @@ word CodeFileSet::Parse(string& expl, const string& opts) const
       {
          if(!parser->Parse(*file)) ++failed;
          ++total;
+         ThisThread::Pause();
       }
    }
 
@@ -688,6 +691,7 @@ word CodeFileSet::Parse(string& expl, const string& opts) const
          {
             if(!parser->Parse(*file)) ++failed;
             ++total;
+            ThisThread::Pause();
          }
       }
    }
@@ -967,12 +971,14 @@ word CodeFileSet::Trim(ostream& stream, string& expl) const
    {
       auto file = files.At(f->fid);
       if(file->IsHeader()) file->Trim(&stream);
+      ThisThread::Pause();
    }
 
    for(auto f = order->cbegin(); f != order->cend(); ++f)
    {
       auto file = files.At(f->fid);
       if(file->IsCpp()) file->Trim(&stream);
+      ThisThread::Pause();
    }
 
    std::ostringstream summary;

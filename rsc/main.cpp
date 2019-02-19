@@ -118,7 +118,6 @@ using namespace NodeBase;
 //& using namespace NodeTools;
 using namespace CodeTools;
 //& using namespace NetworkBase;
-//& using namespace Diplomacy;
 //& using namespace SessionBase;
 //& using namespace MediaBase;
 //& using namespace CallBase;
@@ -129,6 +128,7 @@ using namespace ControlNode;
 using namespace RoutingNode;
 using namespace ServiceNode;
 using namespace AccessNode;
+//& using namespace Diplomacy;
 
 //------------------------------------------------------------------------------
 

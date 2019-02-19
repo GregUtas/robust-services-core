@@ -245,10 +245,6 @@ private:
    //
    SendRc QueueBuff(IpBuffer* buff, bool henq = false);
 
-   //  Returns the entry in SOCKETS whose native socket identifier matches SOCKET.
-
-   static size_t FindSocket(SysTcpSocket* sockets[], size_t size, SysSocket_t socket);
-
    //  The socket's state.
    //
    State state_ : 8;

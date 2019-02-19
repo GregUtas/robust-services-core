@@ -419,7 +419,6 @@ BaseBot::StartupResult BaseBot::initialise()
       buff->ClearTools();
       buff->SetTool(DipTracer, true);
       if(config_.log_level >= 2) buff->SetTool(NetworkTracer, true);
-      if(config_.log_level >= 3) buff->SetTool(MemoryTracer, true);
       if(config_.log_level >= 3) buff->SetTool(FunctionTracer, true);
 
       auto nbt = Singleton< NbTracer >::Instance();
@@ -2473,7 +2472,7 @@ bool BaseBot::send_to_server(const TokenMessage& message)
    }
 
    auto count = message.size();
-   uint16_t length = count * sizeof(Token);
+   auto length = count * sizeof(Token);
    DipIpBufferPtr buff(new DipIpBuffer(MsgOutgoing, DipHeaderSize + length));
    buff->SetTxAddr(client_addr_);
    buff->SetRxAddr(server_addr_);

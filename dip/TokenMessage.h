@@ -18,14 +18,11 @@
 #include <memory>
 #include <string>
 #include "DipTypes.h"
-#include "SysTypes.h"
 
 namespace Diplomacy
 {
    class Token;
 }
-
-using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 

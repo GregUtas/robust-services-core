@@ -35,6 +35,7 @@
 #include "Library.h"
 #include "Registry.h"
 #include "Singleton.h"
+#include "ThisThread.h"
 
 using namespace NodeBase;
 using std::ostream;
@@ -140,12 +141,14 @@ void CodeInfo::GenerateReport(ostream* stream, const SetOfIds& set)
    {
       auto file = files.At(f->fid);
       if(file->IsHeader()) file->Check();
+      ThisThread::Pause();
    }
 
    for(auto f = order->cbegin(); f != order->cend(); ++f)
    {
       auto file = files.At(f->fid);
       if(file->IsCpp()) file->Check();
+      ThisThread::Pause();
    }
 
    Singleton< CxxRoot >::Instance()->GlobalNamespace()->Check();

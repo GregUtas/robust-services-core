@@ -30,6 +30,7 @@
 #include "Registry.h"
 #include "Singleton.h"
 #include "SysFile.h"
+#include "ThisThread.h"
 
 using namespace NodeBase;
 using std::ostream;
@@ -129,6 +130,7 @@ word CodeDir::Extract(string& expl)
             {
                auto f = lib->EnsureFile(name, this);
                f->Scan();
+               ThisThread::Pause();
             }
          }
       }

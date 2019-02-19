@@ -177,8 +177,6 @@ void StatisticsThread::Enter()
             reg->DisplayStats(*stream);
             FileThread::Spool(name, stream);
             delayed_ = false;
-            auto log = Log::Create("STATISTICS REPORT GENERATED");
-            if(log != nullptr) Log::Spool(log);
          }
          else
          {
@@ -202,8 +200,6 @@ void StatisticsThread::Enter()
             //
             countdown_ = WakeupsBetweenReports;
             reg->StartInterval(false);
-            auto log = Log::Create("STATISTICS ROLLOVER PERFORMED");
-            if(log != nullptr) Log::Spool(log);
          }
       }
 

@@ -49,7 +49,7 @@ namespace Diplomacy
 class BaseBot : public Base
 {
 public:
-   //  Values returned from initialize().  Bot-specific values should start
+   //  Values returned from initialise().  Bot-specific values should start
    //  at FIRST_BOT_SPECIFIC_ERROR.
    //
    enum StartupResult

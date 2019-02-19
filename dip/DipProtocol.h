@@ -274,11 +274,7 @@ public:
    //
    ~DipInputHandler() = default;
 
-   //  Overridden for patching.
-   //
-   virtual void Patch(sel_t selector, void* arguments) override;
-
-   //  Overridden to allocate a MsgBuffer for a Diplomacy message that has
+   //  Overridden to allocate a DipIpBuffer for a Diplomacy message that has
    //  received over TCP.
    //
    virtual IpBuffer* AllocBuff(const byte_t* source, size_t size,

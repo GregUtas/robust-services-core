@@ -20,6 +20,7 @@
 #include <utility>
 #include "BaseBot.h"
 #include "Debug.h"
+#include "SysTypes.h"
 #include "Token.h"
 #include "TokenTextMap.h"
 

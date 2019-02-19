@@ -28,6 +28,7 @@
 #include "IpPortRegistry.h"
 #include "IpService.h"
 #include "Memory.h"
+#include "NbAppIds.h"
 #include "NwTracer.h"
 #include "Restart.h"
 #include "Singleton.h"
@@ -221,6 +222,17 @@ void IpBuffer::InvalidDiscarded() const
 
 //------------------------------------------------------------------------------
 
+fn_name IpBuffer_new = "IpBuffer.operator new";
+
+void* IpBuffer::operator new(size_t size)
+{
+   Debug::ft(IpBuffer_new);
+
+   return Singleton< IpBufferPool >::Instance()->DeqBlock(size);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name IpBuffer_OutgoingBytes = "IpBuffer.OutgoingBytes";
 
 size_t IpBuffer::OutgoingBytes(byte_t*& bytes) const
@@ -340,5 +352,28 @@ bool IpBuffer::Send(bool external)
    }
 
    return (socket->SendBuff(*this) != SysSocket::SendFailed);
+}
+
+//==============================================================================
+
+const size_t IpBufferPool::BlockSize = sizeof(IpBuffer);
+
+//------------------------------------------------------------------------------
+
+fn_name IpBufferPool_ctor = "IpBufferPool.ctor";
+
+IpBufferPool::IpBufferPool() :
+   ObjectPool(IpBufferObjPoolId, MemDyn, BlockSize, "IpBuffers")
+{
+   Debug::ft(IpBufferPool_ctor);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name IpBufferPool_dtor = "IpBufferPool.dtor";
+
+IpBufferPool::~IpBufferPool()
+{
+   Debug::ft(IpBufferPool_dtor);
 }
 }

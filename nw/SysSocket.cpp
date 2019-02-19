@@ -85,7 +85,7 @@ void SysSocket::OutputLog(fixed_string expl, const IpBuffer* buff) const
    auto log = Log::Create(expl);
    if(log == nullptr) return;
 
-   *log << " errval=" << GetError();
+   *log << "errval=" << GetError();
 
    if(buff != nullptr)
    {

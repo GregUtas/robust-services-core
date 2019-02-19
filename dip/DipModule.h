@@ -33,7 +33,7 @@ using namespace NodeBase;
 
 namespace Diplomacy
 {
-//  Module for initializing Diplomacy.
+//  Module for initialising Diplomacy.
 //
 class DipModule : public Module
 {

@@ -341,11 +341,6 @@ void TcpIoThread::Enter()
 
    while(true)
    {
-      //  Wait for socket events.  If we have no sockets, sleep until
-      //  InsertSocket wakes us.
-      //
-      if(sockets_.Empty()) Pause(TIMEOUT_NEVER);
-
       ready_ = PollSockets();
 
       if(ready_ < 0)
@@ -393,6 +388,7 @@ void TcpIoThread::Enter()
       if((flags != nullptr) && (flags->any()))
       {
          if(!EnsureListener()) return;
+         ConditionalPause(90);
       }
    }
 }
@@ -552,6 +548,14 @@ word TcpIoThread::PollSockets()
 {
    Debug::ft(TcpIoThread_PollSockets);
 
+   //  If we have no sockets, sleep until InsertSocket wakes us.
+   //
+   auto size = sockets_.Size();
+   if(size == 0) Pause(TIMEOUT_NEVER);
+
+   //  If there is a listener socket, set it up to report incoming
+   //  connection attempts and to block.
+   //
    if(listen_)
    {
       auto listener = Listener();
@@ -559,24 +563,29 @@ word TcpIoThread::PollSockets()
       listener->InFlags()->set(PollRead);
    }
 
+   //  Record the number of sockets on which messages were read since
+   //  the last polling operation.
+   //
+   ipPort_->RecvsInSequence(recvs_);
    auto sockets = sockets_.Items();
-   auto size = sockets_.Size();
-   if(size == 0) return 0;
-   auto ready = SysTcpSocket::Poll(sockets, size, TIMEOUT_IMMED);
+   word ready = 0;
 
-   if(ready == 0)
+   //  Poll the sockets for new events.  The timeout of 2 seconds is
+   //  chosen so that even if no events are reported, we can delete
+   //  any sockets that applications released while we were blocked.
+   //
+   EnterBlockingOperation(BlockedOnNetwork, TcpIoThread_Enter);
    {
-      ipPort_->RecvsInSequence(recvs_);
-
-      EnterBlockingOperation(BlockedOnNetwork, TcpIoThread_Enter);
-      {
-         ready = SysTcpSocket::Poll(sockets, size, 2 * TIMEOUT_1_SEC);
-      }
-      ExitBlockingOperation(TcpIoThread_Enter);
-
-      recvs_ = 0;
+      ready = SysTcpSocket::Poll(sockets, size, 2 * TIMEOUT_1_SEC);
    }
+   ExitBlockingOperation(TcpIoThread_Enter);
 
+   //  Reset the number of reads performed since the last poll.  If
+   //  any socket had a pending event, record the polling operation
+   //  if network activity is being traced, and return the number of
+   //  pending events.
+   //
+   recvs_ = 0;
    if(ready > 0) sockets_.Front()->TraceEvent(NwTrace::Poll, ready);
    return ready;
 }
@@ -623,10 +632,6 @@ void TcpIoThread::ServiceSocket()
    auto flags = socket->OutFlags();
    if(flags->none()) return;
 
-   //  Before servicing the socket, pause if at risk of running
-   //  locked too long.
-   //
-   ConditionalPause(90);
    --ready_;
 
    //  Erase the socket if it has disconnected or is no longer valid.

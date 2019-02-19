@@ -48,7 +48,7 @@ constexpr int16_t NIL_POWER = -1;
 constexpr size_t PROVINCE_MAX = 256;
 constexpr int16_t NIL_PROVINCE = -1;
 
-constexpr token_t INVALID_TOKEN = 0x2000;  // actually the token for -8192
+constexpr token_t INVALID_TOKEN = 0xFFFF;
 constexpr size_t NO_ERROR = SIZE_MAX;      // parsed message was error-free
 constexpr int NIL_MOVE_NUMBER = -1;        // a move that hasn't been numbered
 

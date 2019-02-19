@@ -114,6 +114,7 @@ void DM_Message::Display(ostream& stream) const
       auto begin = s * 10;
       auto end = begin + 10;
       if(count < end) end = count;
+      if(begin == end) break;
 
       for(auto t = begin; t < end; ++t)
       {
@@ -199,7 +200,7 @@ IpBuffer* DipInputHandler::AllocBuff(const byte_t* source,
       //  hold the entire message, even if it is segmented.
       //
       auto header = reinterpret_cast< const DipHeader* >(source);
-      auto pending = DipHeaderSize + ntohs(header->length);
+      size_t pending = DipHeaderSize + ntohs(header->length);
       rcvd = (pending < size ? pending : size);
       buff.reset(new DipIpBuffer(MsgIncoming, pending));
       if(buff == nullptr) return nullptr;
@@ -320,13 +321,6 @@ void DipInputHandler::NetworkToHost
       break;
    }
    }
-}
-
-//------------------------------------------------------------------------------
-
-void DipInputHandler::Patch(sel_t selector, void* arguments)
-{
-   InputHandler::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

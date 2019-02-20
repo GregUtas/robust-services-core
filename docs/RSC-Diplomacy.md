@@ -38,3 +38,8 @@ the one for `DipModule.h`.
 `namespace Diplomacy`.
 * In the list of `Singleton` invocations, comment out all of them and uncomment the one
 for `DipModule`.
+
+If you've already developed a bot, rebasing it onto RSC will require a bit of work because
+some of the interfaces have changed.  However, it shouldn't prove too difficult.  Note that
+only the software exercised by the observer bot has been tested; `adjudicator.cpp` probably
+contains a few surprises at this stage.

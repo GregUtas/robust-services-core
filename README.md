@@ -55,8 +55,9 @@ them to communicate with one another using the protocol, and adjudicates the mov
 they submit.  Their website also provides base software for developing bots.  It seemed
 that it would be interesting to refactor this software while decoupling it from Windows
 and bringing it more in line with C++11.  This would also force RSC to evolve to better
-support standalone clients that use IP (TCP, in this case).  The result is available in
-the [`dip`](/dip) directory.
+support standalone clients that use IP (TCP, in this case).  The resulting software is
+available in the [`dip`](/dip) directory and is described in some further detail
+[here](/docs/RSC-Diplomacy.md).
 
 ## Installing the repository
 

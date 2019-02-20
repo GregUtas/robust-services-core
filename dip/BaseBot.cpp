@@ -31,6 +31,7 @@
 #include "MapAndUnits.h"
 #include "NbTracer.h"
 #include "NbTypes.h"
+#include "NwTracer.h"
 #include "NwTypes.h"
 #include "Province.h"
 #include "Singleton.h"
@@ -354,12 +355,14 @@ BaseBot::StartupResult BaseBot::get_ipaddrs()
 
       port = service->Provision(ClientIpPort);
       if(port == nullptr) return FAILED_TO_ALLOCATE_PORT;
+   }
 
-      if(config_.log_level > 0)
-      {
-         auto iot = port->GetThread();
-         NbTracer::SelectThread(iot->Tid(), TraceIncluded);
-      }
+   if(config_.log_level >= 2)
+   {
+      auto iot = port->GetThread();
+      NbTracer::SelectThread(iot->Tid(), TraceIncluded);
+      auto nwt = Singleton< NwTracer >::Instance();
+      nwt->SelectPeer(server_addr_, TraceIncluded);
    }
 
    return STARTUP_OK;

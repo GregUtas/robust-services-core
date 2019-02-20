@@ -44,6 +44,20 @@ guidelines, such as those found in Scott Meyers' *Effective C++*.  It also analy
 you're not developing applications with RSC, you might find these tools useful.
 An overview of them is provided [here](docs/RSC-Cpp-Static-Analysis-Tools.md).
 
+## Diplomacy AI client
+
+In 2002, a group in the UK began to design a protocol that allows software bots to play
+the board game [*Diplomacy*](https://en.wikipedia.org/wiki/Diplomacy_(game)).  They have
+a [website](http://www.daide.org.uk) that provides
+various useful links and downloads.  Amongst these is the executable for a Diplomacy
+server.  Bots log into this server, which sends them the state of the game, allows
+them to communicate with one another using the protocol, and adjudicates the moves that
+they submit.  Their website also provides base software for developing bots.  It seemed
+that it would be interesting to refactor this software while decoupling it from Windows
+and bringing it more in line with C++11.  This would also force RSC to evolve to better
+support standalone clients that use IP (TCP, in this case).  The result is available in
+the [`dip`](/dip) directory.
+
 ## Installing the repository
 
 Download the repository to a directory named `rsc`, located directly within another

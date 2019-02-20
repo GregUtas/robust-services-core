@@ -362,8 +362,7 @@ const size_t IpBufferPool::BlockSize = sizeof(IpBuffer);
 
 fn_name IpBufferPool_ctor = "IpBufferPool.ctor";
 
-IpBufferPool::IpBufferPool() :
-   ObjectPool(IpBufferObjPoolId, MemDyn, BlockSize, "IpBuffers")
+IpBufferPool::IpBufferPool() : ObjectPool(MemDyn, BlockSize, "IpBuffers")
 {
    Debug::ft(IpBufferPool_ctor);
 }

@@ -54,8 +54,7 @@ const size_t SbIpBufferPool::BlockSize = sizeof(SbIpBuffer);
 
 fn_name SbIpBufferPool_ctor = "SbIpBufferPool.ctor";
 
-SbIpBufferPool::SbIpBufferPool() :
-   ObjectPool(SbIpBufferObjPoolId, MemDyn, BlockSize, "SbIpBuffers")
+SbIpBufferPool::SbIpBufferPool() : ObjectPool(MemDyn, BlockSize, "SbIpBuffers")
 {
    Debug::ft(SbIpBufferPool_ctor);
 }
@@ -84,8 +83,7 @@ const size_t ContextPool::BlockSize = sizeof(SsmContext);
 
 fn_name ContextPool_ctor = "ContextPool.ctor";
 
-ContextPool::ContextPool() :
-   ObjectPool(ContextObjPoolId, MemDyn, BlockSize, "Contexts")
+ContextPool::ContextPool() : ObjectPool(MemDyn, BlockSize, "Contexts")
 {
    Debug::ft(ContextPool_ctor);
 }
@@ -125,8 +123,7 @@ const size_t EventPool::BlockSize = sizeof(Event) + (20 * BYTES_PER_WORD);
 
 fn_name EventPool_ctor = "EventPool.ctor";
 
-EventPool::EventPool() :
-   ObjectPool(EventObjPoolId, MemDyn, BlockSize, "Events")
+EventPool::EventPool() : ObjectPool(MemDyn, BlockSize, "Events")
 {
    Debug::ft(EventPool_ctor);
 }
@@ -155,8 +152,7 @@ const size_t MessagePool::BlockSize = sizeof(Message) + (40 * BYTES_PER_WORD);
 
 fn_name MessagePool_ctor = "MessagePool.ctor";
 
-MessagePool::MessagePool() :
-   ObjectPool(MessageObjPoolId, MemDyn, BlockSize, "Messages")
+MessagePool::MessagePool() : ObjectPool(MemDyn, BlockSize, "Messages")
 {
    Debug::ft(MessagePool_ctor);
 }
@@ -185,8 +181,7 @@ const size_t MsgPortPool::BlockSize = sizeof(MsgPort);
 
 fn_name MsgPortPool_ctor = "MsgPortPool.ctor";
 
-MsgPortPool::MsgPortPool() :
-   ObjectPool(MsgPortObjPoolId, MemDyn, BlockSize, "MsgPorts")
+MsgPortPool::MsgPortPool() : ObjectPool(MemDyn, BlockSize, "MsgPorts")
 {
    Debug::ft(MsgPortPool_ctor);
 }
@@ -247,8 +242,7 @@ const size_t ProtocolSMPool::BlockSize =
 
 fn_name ProtocolSMPool_ctor = "ProtocolSMPool.ctor";
 
-ProtocolSMPool::ProtocolSMPool() :
-   ObjectPool(ProtocolSMObjPoolId, MemDyn, BlockSize, "ProtocolSMs"),
+ProtocolSMPool::ProtocolSMPool() : ObjectPool(MemDyn, BlockSize, "ProtocolSMs"),
    psmToAudit_(NIL_ID)
 {
    Debug::ft(ProtocolSMPool_ctor);
@@ -330,8 +324,7 @@ const size_t ServiceSMPool::BlockSize =
 
 fn_name ServiceSMPool_ctor = "ServiceSMPool.ctor";
 
-ServiceSMPool::ServiceSMPool() :
-   ObjectPool(ServiceSMObjPoolId, MemDyn, BlockSize, "ServiceSMs")
+ServiceSMPool::ServiceSMPool() : ObjectPool(MemDyn, BlockSize, "ServiceSMs")
 {
    Debug::ft(ServiceSMPool_ctor);
 }
@@ -360,8 +353,7 @@ const size_t TimerPool::BlockSize = sizeof(Timer);
 
 fn_name TimerPool_ctor = "TimerPool.ctor";
 
-TimerPool::TimerPool() :
-   ObjectPool(TimerObjPoolId, MemDyn, BlockSize, "Timers")
+TimerPool::TimerPool() : ObjectPool(MemDyn, BlockSize, "Timers")
 {
    Debug::ft(TimerPool_ctor);
 
@@ -452,8 +444,7 @@ const size_t BtIpBufferPool::BlockSize = sizeof(SbIpBuffer);
 
 fn_name BtIpBufferPool_ctor = "BtIpBufferPool.ctor";
 
-BtIpBufferPool::BtIpBufferPool() :
-   ObjectPool(BtIpBufferObjPoolId, MemDyn, BlockSize, "BtIpBuffers")
+BtIpBufferPool::BtIpBufferPool() : ObjectPool(MemDyn, BlockSize, "BtIpBuffers")
 {
    Debug::ft(BtIpBufferPool_ctor);
 }

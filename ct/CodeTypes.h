@@ -60,6 +60,7 @@ extern fixed_string ENUM_STR;
 extern fixed_string EXPLICIT_STR;
 extern fixed_string EXTERN_STR;
 extern fixed_string FALSE_STR;
+extern fixed_string FINAL_STR;
 extern fixed_string FLOAT_STR;
 extern fixed_string FOR_STR;
 extern fixed_string FRIEND_STR;
@@ -378,7 +379,7 @@ enum Warning
    IncludeDuplicated,        // #include already exists for this file
    IncludeAdd,               // #include should be added
    IncludeRemove,            // #include should be removed
-   HeaderReliesOnUsing,      // header relies on using directive or declaration
+   RemoveOverrideTag,        // function is also tagged final
    UsingInHeader,            // header contains using directive or declaration
    UsingDuplicated,          // using statement duplicated
    UsingAdd,                 // using statement should be added
@@ -437,7 +438,7 @@ enum Warning
    VirtualAndPublic,         // function is both public and virtual
    VirtualOverloading,       // function reuses name of virtual function
    FunctionNotOverridden,    // virtual function has no overrides
-   VirtualTagMissing,        // add virtual tag to function declaration
+   RemoveVirtualTag,         // function is an override or is tagged final
    OverrideTagMissing,       // add override tag to function declaration
    VoidAsArgument,           // use of (void) to specify function parameter
    AnonymousArgument,        // declaration of unnamed argument
@@ -473,6 +474,7 @@ enum Warning
    PatchNotOverridden,       // class does not override Object.Patch
    FunctionCouldBeDefaulted, // empty special member function defined
    InitCouldUseConstructor,  // initialization uses oper= instead of constructor
+   RemoveLineBreak,          // next line can be merged within length limit
    Warning_N                 // number of warnings
 };
 
@@ -543,6 +545,13 @@ private:
    //
    LineTypeAttr(bool code, bool exe, bool merge, bool blank);
 };
+
+//  Returns true if LINE1[BEGIN1..END1] and LINE2[BEGIN2..END2] can be
+//  merged.
+//
+bool LinesCanBeMerged
+   (const std::string& line1, size_t begin1, size_t end1,
+    const std::string& line2, size_t begin2, size_t end2);
 
 //------------------------------------------------------------------------------
 //

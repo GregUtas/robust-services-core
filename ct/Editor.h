@@ -113,44 +113,46 @@ private:
    //  case EXPL provides an explanation.  A return value of -1 means that the
    //  file should be skipped; other values denote more serious errors.
    //
-   word ReplaceSlashAsterisk(const WarningLog& log, string& expl);
-   word ReplaceNull(const WarningLog& log, string& expl);
-   word AdjustTags(const WarningLog& log, string& expl);
-   word EraseSemicolon(const WarningLog& log, string& expl);
-   word EraseConst(const WarningLog& log, string& expl);
-   word InsertIncludeGuard(const WarningLog& log, string& expl);
-   word InsertInclude(const WarningLog& log, string& expl);
-   word EraseInclude(const WarningLog& log, string& expl);
-   word ReplaceUsing(const WarningLog& log, string& expl);
-   word InsertUsing(const WarningLog& log, string& expl);
-   word EraseUsing(const WarningLog& log, string& expl);
-   word InsertForward(const WarningLog& log, string& expl);
-   word EraseForward(const WarningLog& log, string& expl);
-   word ChangeClassToStruct(const WarningLog& log, string& expl);
-   word ChangeStructToClass(const WarningLog& log, string& expl);
-   word EraseAccessControl(const WarningLog& log, string& expl);
-   word TagAsConstData(const WarningLog& log, string& expl);
-   word TagAsConstPointer(const WarningLog& log, string& expl);
-   word UntagAsMutable(const WarningLog& log, string& expl);
-   word TagAsExplicit(const WarningLog& log, string& expl);
-   word TagAsVirtual(const WarningLog& log, string& expl);
-   word TagAsOverride(const WarningLog& log, string& expl);
-   word EraseVoidArgument(const WarningLog& log, string& expl);
-   word AlignArgumentNames(const WarningLog& log, string& expl);
-   word TagAsConstReference(const WarningLog& log, string& expl);
-   word TagAsConstArgument(const WarningLog& log, string& expl);
-   word TagAsConstFunction(const WarningLog& log, string& expl);
-   word TagAsStaticFunction(const WarningLog& log, string& expl);
    word AdjustLineIndentation(const WarningLog& log, string& expl);
-   word EraseAdjacentSpaces(const WarningLog& log, string& expl);
-   word InsertBlankLine(const WarningLog& log, string& expl);
-   word EraseBlankLine(const WarningLog& log, string& expl);
-   word InsertLineBreak(const WarningLog& log, string& expl);
-   word RenameIncludeGuard(const WarningLog& log, string& expl);
-   word InsertDebugFtCall(const WarningLog& log, string& expl);
+   word AdjustTags(const WarningLog& log, string& expl);
+   word AlignArgumentNames(const WarningLog& log, string& expl);
+   word ChangeClassToStruct(const WarningLog& log, string& expl);
    word ChangeDebugFtName(const WarningLog& log, string& expl);
-   word TagAsDefaulted(const WarningLog& log, string& expl);
+   word ChangeStructToClass(const WarningLog& log, string& expl);
+   word EraseAdjacentSpaces(const WarningLog& log, string& expl);
+   word EraseAccessControl(const WarningLog& log, string& expl);
+   word EraseBlankLine(const WarningLog& log, string& expl);
+   word EraseConst(const WarningLog& log, string& expl);
+   word EraseForward(const WarningLog& log, string& expl);
+   word EraseInclude(const WarningLog& log, string& expl);
+   bool EraseLineBreak(const WarningLog& log, string& expl);
+   word EraseMutableTag(const WarningLog& log, string& expl);
+   word EraseOverrideTag(const WarningLog& log, string& expl);
+   word EraseSemicolon(const WarningLog& log, string& expl);
+   word EraseUsing(const WarningLog& log, string& expl);
+   word EraseVirtualTag(const WarningLog& log, string& expl);
+   word EraseVoidArgument(const WarningLog& log, string& expl);
    word InitByConstructor(const WarningLog& log, string& expl);
+   word InsertBlankLine(const WarningLog& log, string& expl);
+   word InsertDebugFtCall(const WarningLog& log, string& expl);
+   word InsertForward(const WarningLog& log, string& expl);
+   word InsertInclude(const WarningLog& log, string& expl);
+   word InsertIncludeGuard(const WarningLog& log, string& expl);
+   word InsertLineBreak(const WarningLog& log, string& expl);
+   word InsertUsing(const WarningLog& log, string& expl);
+   word RenameIncludeGuard(const WarningLog& log, string& expl);
+   word ReplaceNull(const WarningLog& log, string& expl);
+   word ReplaceSlashAsterisk(const WarningLog& log, string& expl);
+   word ReplaceUsing(const WarningLog& log, string& expl);
+   word TagAsConstArgument(const WarningLog& log, string& expl);
+   word TagAsConstData(const WarningLog& log, string& expl);
+   word TagAsConstFunction(const WarningLog& log, string& expl);
+   word TagAsConstPointer(const WarningLog& log, string& expl);
+   word TagAsConstReference(const WarningLog& log, string& expl);
+   word TagAsDefaulted(const WarningLog& log, string& expl);
+   word TagAsExplicit(const WarningLog& log, string& expl);
+   word TagAsOverride(const WarningLog& log, string& expl);
+   word TagAsStaticFunction(const WarningLog& log, string& expl);
 
    //  Sorts #include directives in standard order.
    //
@@ -296,11 +298,11 @@ private:
    //
    CodeLocation InsertLineBreak(const Iter& iter, size_t pos);
 
-   //  Deletes the line break at the end of the line referenced by ITER if
+   //  Deletes the line break at the end of the line referenced by CURR if
    //  the following line will also fit within LINE_LENGTH_MAX.  Returns
    //  true if the line break was deleted.
    //
-   bool DeleteLineBreak(const Iter& iter);
+   bool EraseLineBreak(const Iter& curr);
 
    //  Returns the first line that follows comments and blanks.
    //

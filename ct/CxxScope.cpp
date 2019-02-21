@@ -1735,6 +1735,7 @@ Function::Function(QualNamePtr& name) :
    const_(false),
    noexcept_(false),
    override_(false),
+   final_(false),
    pure_(false),
    type_(false),
    friend_(false),
@@ -1776,6 +1777,7 @@ Function::Function(QualNamePtr& name, TypeSpecPtr& spec, bool type) :
    const_(false),
    noexcept_(false),
    override_(false),
+   final_(false),
    pure_(false),
    type_(type),
    friend_(false),
@@ -2714,16 +2716,19 @@ void Function::CheckOverride()
    Debug::ft(Function_CheckOverride);
 
    //  If this function is an override, register it against the function that
-   //  it immediately overrides, and log it if it is missing the "virtual" or
-   //  "override" tag.  A destructor is neither registered nor logged.
+   //  it immediately overrides.  A destructor is neither registered nor logged.
+   //  It is also redundant (and can cause unintended consequences) to use more
+   //  than one of virtual, override, or final, so specify which of these should
+   //  be removed (or added, in the case of an unmarked override).
    //
    base_ = FindBaseFunc();
    if(base_ == nullptr) return;
    if(FuncType() == FuncDtor) return;
 
    base_->AddOverride(this);
-   if(!virtual_) Log(VirtualTagMissing);
-   if(!override_) Log(OverrideTagMissing);
+   if(virtual_ && (override_ || final_)) Log(RemoveVirtualTag);
+   if(override_ && final_) Log(RemoveOverrideTag);
+   if(!override_ && !final_) Log(OverrideTagMissing);
    virtual_ = true;
    override_ = true;
 }
@@ -2811,7 +2816,7 @@ void Function::DisplayDecl(ostream& stream, const Flags& options) const
    if(inline_) stream << INLINE_STR << SPACE;
    if(constexpr_) stream << CONSTEXPR_STR << SPACE;
    if(static_) stream << STATIC_STR << SPACE;
-   if(virtual_) stream << VIRTUAL_STR << SPACE;
+   if(virtual_ && !override_ && !final_) stream << VIRTUAL_STR << SPACE;
    if(explicit_) stream << EXPLICIT_STR << SPACE;
 
    if(Operator() == Cxx::CAST)
@@ -2843,7 +2848,8 @@ void Function::DisplayDecl(ostream& stream, const Flags& options) const
    stream << ')';
    if(const_) stream << SPACE << CONST_STR;
    if(noexcept_) stream << SPACE << NOEXCEPT_STR;
-   if(override_) stream << SPACE << OVERRIDE_STR;
+   if(override_ && !final_) stream << SPACE << OVERRIDE_STR;
+   if(final_) stream << SPACE << FINAL_STR;
    if(pure_) stream << " = 0";
 }
 

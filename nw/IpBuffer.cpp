@@ -28,7 +28,6 @@
 #include "IpPortRegistry.h"
 #include "IpService.h"
 #include "Memory.h"
-#include "NbAppIds.h"
 #include "NwTracer.h"
 #include "Restart.h"
 #include "Singleton.h"

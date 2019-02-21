@@ -627,6 +627,7 @@ void CodeFile::Check()
    CheckIncludeGuard();
    CheckUsings();
    CheckSeparation();
+   CheckLineBreaks();
    CheckFunctionOrder();
    CheckDebugFt();
    Trim(nullptr);
@@ -913,6 +914,32 @@ void CodeFile::CheckIncludeOrder() const
 
       group1 = group2;
       name1 = name2;
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeFile_CheckLineBreaks = "CodeFile.CheckLineBreaks";
+
+void CodeFile::CheckLineBreaks()
+{
+   Debug::ft(CodeFile_CheckLineBreaks);
+
+   //  Look for lines that could be combined and stay within the maximum
+   //  line length.
+   //
+   for(size_t n = 0; n < lineType_.size() - 1; ++n)
+   {
+      if(!LineTypeAttr::Attrs[lineType_[n]].isMergeable) continue;
+      if(!LineTypeAttr::Attrs[lineType_[n + 1]].isMergeable) continue;
+      auto begin1 = lexer_.GetLineStart(n);
+      auto end1 = code_.find(CRLF, begin1) - 1;
+      auto begin2 = lexer_.GetLineStart(n + 1);
+      auto end2 = code_.find(CRLF, begin2) - 1;
+      if(LinesCanBeMerged(code_, begin1, end1, code_, begin2, end2))
+      {
+         LogLine(n, RemoveLineBreak);
+      }
    }
 }
 
@@ -1592,15 +1619,6 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user)
       use->SetScope(scope);
       use->SetLoc(this, CxxLocation::NOT_IN_SOURCE);
       scope->AddUsing(use);
-
-      //  If this is a header, log the fact that it depends a using statement
-      //  in another file.  This is necessary because, if the header has no
-      //  using statements of its own, >fix will skip it instead of trying to
-      //  eliminate its dependence on using statements.  The spaces(1) argument
-      //  is a hack that prevents line#1 (which has nothing to do with the log)
-      //  from being displayed.
-      //
-      if(IsHeader()) LogPos(0, HeaderReliesOnUsing, nullptr, 0, spaces(1));
    }
 }
 

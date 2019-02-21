@@ -550,8 +550,7 @@ word Library::Import(const string& name, const string& path, string& expl)
       {
          std::ostringstream stream;
 
-         stream << path << " already exists for directory "
-            << d->Name() << '.';
+         stream << path << " already exists for directory " << d->Name() << '.';
          expl = stream.str();
          return -1;
       }

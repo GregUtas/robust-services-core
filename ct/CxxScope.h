@@ -907,6 +907,10 @@ public:
    //
    void SetOverride(bool over) { override_ = over; }
 
+   //  Specifies whether the function is tagged "override".
+   //
+   void SetFinal(bool final) { final_ = final; }
+
    //  Specifies whether the function is pure virtual.
    //
    void SetPure(bool pure) { pure_ = pure; }
@@ -951,7 +955,7 @@ public:
    //
    bool IsInline() const { return inline_; }
 
-   //  Returns true if the function was tagged "virtual".
+   //  Returns true if the function is virtual.
    //
    bool IsVirtual() const { return virtual_; }
 
@@ -963,9 +967,7 @@ public:
    //
    Cxx::Operator Operator() const { return name_->Operator(); }
 
-   //  Returns true if the function is an override.  This does not perform any
-   //  analysis, but simply relies on the "override" tag, which should always
-   //  be used, and which is internally set for a function that omits it.
+   //  Returns true if the function is an override.
    //
    bool IsOverride() const { return override_; }
 
@@ -1416,7 +1418,7 @@ private:
    //
    bool static_ : 1;
 
-   //  Set for a virtual function.
+   //  Set for a virtual function, even if it is not tagged "virtual".
    //
    bool virtual_ : 1;
 
@@ -1432,9 +1434,13 @@ private:
    //
    bool noexcept_ : 1;
 
-   //  Set for a function tagged "override".
+   //  Set for an override, even if it is not tagged "override".
    //
    bool override_ : 1;
+
+   //  Set for a function tagged "final".
+   //
+   bool final_ : 1;
 
    //  Set for a pure virtual function.
    //

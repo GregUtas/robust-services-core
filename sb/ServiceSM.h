@@ -192,8 +192,7 @@ private:
    //  EventHandler::Pass and must be overridden by a modifier that needs
    //  to observe the initiation of a sibling.
    //
-   virtual EventHandler::Rc ProcessSip
-      (Event& currEvent, Event*& nextEvent);
+   virtual EventHandler::Rc ProcessSip(Event& currEvent, Event*& nextEvent);
 
    //  Steps within the function ProcessEvent.
    //

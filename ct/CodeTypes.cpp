@@ -67,6 +67,7 @@ fixed_string ENUM_STR             = "enum";
 fixed_string EXPLICIT_STR         = "explicit";
 fixed_string EXTERN_STR           = "extern";
 fixed_string FALSE_STR            = "false";
+fixed_string FINAL_STR            = "final";
 fixed_string FLOAT_STR            = "float";
 fixed_string FOR_STR              = "for";
 fixed_string FRIEND_STR           = "friend";
@@ -240,7 +241,7 @@ fixed_string WarningStrings[Warning_N + 1] =
    "#include duplicated",
    "Add #include directive",
    "Remove #include directive",
-   "Header relies on using statement via #include",
+   "Remove override tag: function is final",
    "Using statement in header",
    "Using statement duplicated",
    "Add using statement",
@@ -299,7 +300,7 @@ fixed_string WarningStrings[Warning_N + 1] =
    "Virtual function is public",
    "Virtual function is overloaded",
    "Virtual function has no overrides",
-   "Function should be tagged as virtual",
+   "Remove virtual tag: function is an override or final",
    "Function should be tagged as override",
    "\"(void)\" as function argument",
    "Unnamed argument",
@@ -335,6 +336,7 @@ fixed_string WarningStrings[Warning_N + 1] =
    "Override of Object.Patch not found",
    "Function could be defaulted",
    "Initialization uses assignment operator",
+   "Line can be merged with the next one and stay within the length limit",
    ERROR_STR
 };
 
@@ -356,6 +358,31 @@ bool IsUnusedItemWarning(Warning warning)
    }
 
    return false;
+}
+
+//------------------------------------------------------------------------------
+
+bool LinesCanBeMerged
+   (const string& line1, size_t begin1, size_t end1,
+    const string& line2, size_t begin2, size_t end2)
+{
+   //  LINE1 must not end in a trailing comment, semicolon, colon, or right
+   //  brace and must not start with an "if" or "else".  LINE2 must end with
+   //  a semicolon.  If LINE2 doesn't start with a left parenthesis, a space
+   //  will also have to be inserted when merging.
+   //
+   if(line1.at(end1) == ';') return false;
+   if(line1.at(end1) == ':') return false;
+   if(line1.at(end1) == '}') return false;
+   if(line2.at(end2) != ';') return false;
+   if(line1.find(COMMENT_STR, begin1) < end1) return false;
+   auto first1 = line1.find_first_not_of(WhitespaceChars, begin1);
+   if(line1.find(IF_STR, first1) == first1) return false;
+   if(line1.find(ELSE_STR, first1) == first1) return false;
+   begin2 = line2.find_first_not_of(WhitespaceChars, begin2);
+   auto size = (end1 - begin1 + 1) + (end2 - begin2 + 1);
+   if(line2.at(begin2) != '(') ++size;
+   return (size <= LINE_LENGTH_MAX);
 }
 
 //------------------------------------------------------------------------------

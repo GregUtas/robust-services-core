@@ -2572,6 +2572,7 @@ bool Parser::GetProcDecl(FunctionPtr& func)
    auto readonly = NextKeywordIs(CONST_STR);
    auto noex = NextKeywordIs(NOEXCEPT_STR);
    auto over = NextKeywordIs(OVERRIDE_STR);
+   auto final = NextKeywordIs(FINAL_STR);
    if(virt) pure = (lexer_.NextStringIs("=") && lexer_.NextCharIs('0'));
 
    func->SetStatic(stat, oper);
@@ -2582,6 +2583,7 @@ bool Parser::GetProcDecl(FunctionPtr& func)
    func->SetConst(readonly);
    func->SetNoexcept(noex);
    func->SetOverride(over);
+   func->SetFinal(final);
    func->SetPure(pure);
    return Success(Parser_GetProcDecl, start);
 }

@@ -32,7 +32,6 @@
 #include "SbTracer.h"
 #include "ServiceRegistry.h"
 #include "Singleton.h"
-#include "SymbolRegistry.h"
 #include "SysTypes.h"
 #include "TimerProtocol.h"
 #include "TimerRegistry.h"

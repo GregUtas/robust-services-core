@@ -128,8 +128,7 @@ private:
    //  is the current line in the database.  Returns the next item to
    //  look for, and updates RC and EXPL to report an error or success.
    //
-   LoadState GetFunc(std::string& input,
-      NodeBase::word& rc, std::string& expl);
+   LoadState GetFunc(std::string& input, NodeBase::word& rc, std::string& expl);
 
    //  Looks for a [<TestName>]* "$" sequence.  INPUT is what remains of
    //  the current line in the database.  Returns the next item to look

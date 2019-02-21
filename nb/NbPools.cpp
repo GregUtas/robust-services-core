@@ -22,7 +22,6 @@
 #include "NbPools.h"
 #include "Debug.h"
 #include "MsgBuffer.h"
-#include "NbAppIds.h"
 #include "Singleton.h"
 #include "SysTypes.h"
 #include "Thread.h"

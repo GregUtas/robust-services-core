@@ -199,8 +199,7 @@ EventHandler::Rc PotsSusSsm::ProcessInitAck
    {
    case BcState::AuthorizingOrigination:
       pssm.SetNextSap(BcTrigger::OriginationDeniedSap);
-      nextEvent = new BcOriginationDeniedEvent
-         (pssm, Cause::FacilityRejected);
+      nextEvent = new BcOriginationDeniedEvent(pssm, Cause::FacilityRejected);
       return EventHandler::Revert;
 
    case BcState::AuthorizingTermination:

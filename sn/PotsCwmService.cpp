@@ -451,8 +451,7 @@ private:
    void StopTimer(TimerId tid);
    PotsMuxPsm* CreateNPsm() const;
    PotsMuxPsm* OtherNPsm(const ProtocolSM* npsm) const;
-   static EventHandler::Rc SendFacilityNack
-      (PotsMuxPsm* npsm, ServiceId sid);
+   static EventHandler::Rc SendFacilityNack(PotsMuxPsm* npsm, ServiceId sid);
    void SetSubstate(Substate state);
    void ConnectInactiveCall(Tone::Id tone);
    virtual ServicePortId CalcPort(const AnalyzeMsgEvent& ame) override;
@@ -1983,8 +1982,7 @@ EventHandler::Rc PotsCwmInAnalyzeNetworkMessage::ProcessEvent
          return Continue;
       }
 
-      Context::Kill
-         (PotsCwmInAnalyzeNetworkMessage_ProcessEvent, sid, pfi->ind);
+      Context::Kill(PotsCwmInAnalyzeNetworkMessage_ProcessEvent, sid, pfi->ind);
       return Suspend;
    }
 

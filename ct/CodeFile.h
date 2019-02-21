@@ -247,8 +247,7 @@ public:
    //  Classifies a line of code (S) and updates WARNINGS with any warnings
    //  that were found.
    //
-   static LineType ClassifyLine
-      (std::string s, std::set< Warning >& warnings);
+   static LineType ClassifyLine(std::string s, std::set< Warning >& warnings);
 
    //  Generates a report in STREAM (if not nullptr) for the files in SET.  The
    //  report includes line type counts and warnings found during parsing and
@@ -310,6 +309,10 @@ private:
    //  Checks vertical separation.
    //
    void CheckSeparation();
+
+   //  Checks for unnecessary line breaks.
+   //
+   void CheckLineBreaks();
 
    //  Checks if functions are implemented alphabetically.
    //

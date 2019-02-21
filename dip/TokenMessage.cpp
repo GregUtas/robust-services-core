@@ -256,8 +256,7 @@ void TokenMessage::find_parms() const
 
    if(parm_index != parm_count_)
    {
-      Debug::SwLog
-         (TokenMessage_find_parms, parm_count_, parm_index);
+      Debug::SwLog(TokenMessage_find_parms, parm_count_, parm_index);
    }
 
    parm_begins_[parm_count_] = length_;

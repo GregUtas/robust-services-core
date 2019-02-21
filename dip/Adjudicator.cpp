@@ -473,8 +473,7 @@ void MapAndUnits::apply_moves()
 
       if(unit.unit_moves)
       {
-         moved_units.insert
-            (UnitOrderMap::value_type(unit.dest.province, unit));
+         moved_units.insert(UnitOrderMap::value_type(unit.dest.province, unit));
          u = units.erase(u);
       }
       else if(unit.dislodged)

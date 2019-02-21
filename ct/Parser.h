@@ -84,7 +84,7 @@ namespace CodeTools
 //    o pointer-to-member (the type "Class::*" and operators ".*" and "->*)
 //  functions:
 //    o the order of tags is inflexible: "extern inline static virtual explicit
-//      constexpr <function-signature> const noexcept override" (GetFuncDecl)
+//      constexpr <signature> const noexcept override final" (GetFuncDecl)
 //    o const&, &, and && as member function suffix tags
 //    o using a different type (an alias) for an argument in the definition of
 //      a previously declared function (DataSpec.MatchesExactly)

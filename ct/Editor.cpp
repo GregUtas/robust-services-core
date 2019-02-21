@@ -593,41 +593,6 @@ void Editor::DebugFtCode
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_DeleteLineBreak = "Editor.DeleteLineBreak";
-
-bool Editor::DeleteLineBreak(const Iter& iter)
-{
-   Debug::ft(Editor_DeleteLineBreak);
-
-   auto next = std::next(iter);
-   if(next == source_.end()) return false;
-
-   //  Check that the lines can be merged.
-   //
-   auto type = GetLineType(iter);
-   if(!LineTypeAttr::Attrs[type].isMergeable) return false;
-   type = GetLineType(next);
-   if(!LineTypeAttr::Attrs[type].isMergeable) return false;
-   if(iter->code.find(COMMENT_STR) != string::npos) return false;
-   if(iter->code.find(';') != string::npos) return false;
-
-   //  Check that the merged line wouldn't be too long.
-   //
-   auto begin2 = next->code.find_first_not_of(WhitespaceChars);
-   auto size1 = iter->code.size();
-   auto size2 = next->code.size() - begin2;
-   if(size1 + size2 > LINE_LENGTH_MAX) return false;
-
-   //  Merge the lines.
-   //
-   next->code.erase(0, begin2);
-   iter->code.append(next->code);
-   source_.erase(next);
-   return true;
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Editor_DemangleInclude = "Editor.DemangleInclude";
 
 string Editor::DemangleInclude(string code) const
@@ -984,6 +949,101 @@ word Editor::EraseInclude(const WarningLog& log, string& expl)
 
 //------------------------------------------------------------------------------
 
+fn_name Editor_EraseLineBreak1 = "Editor.EraseLineBreak(iter)";
+
+bool Editor::EraseLineBreak(const Iter& curr)
+{
+   Debug::ft(Editor_EraseLineBreak1);
+
+   auto next = std::next(curr);
+   if(next == source_.end()) return false;
+
+   //  Check that the lines can be merged.
+   //
+   auto type = GetLineType(curr);
+   if(!LineTypeAttr::Attrs[type].isMergeable) return false;
+   type = GetLineType(next);
+   if(!LineTypeAttr::Attrs[type].isMergeable) return false;
+   if(!LinesCanBeMerged
+      (curr->code, 0, curr->code.size() - 1,
+       next->code, 0, next->code.size() - 1)) return false;
+
+   //  Merge the lines.
+   //
+   auto start = next->code.find_first_not_of(WhitespaceChars);
+   if(next->code.at(start) != '(')
+   {
+      curr->code.push_back(SPACE);
+   }
+
+   next->code.erase(0, start);
+   curr->code.append(next->code);
+   source_.erase(next);
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_EraseLineBreak2 = "Editor.EraseLineBreak(log)";
+
+bool Editor::EraseLineBreak(const WarningLog& log, string& expl)
+{
+   Debug::ft(Editor_EraseLineBreak2);
+
+   auto iter = FindLine(log.line, expl);
+   if(iter == source_.end()) return 0;
+   auto merged = EraseLineBreak(iter);
+   if(!merged) expl = "Line break was not removed.";
+   return Changed(iter, expl);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_EraseMutableTag = "Editor.EraseMutableTag";
+
+word Editor::EraseMutableTag(const WarningLog& log, string& expl)
+{
+   Debug::ft(Editor_EraseMutableTag);
+
+   //  Find the line on which the data's type appears, and erase the
+   //  "mutable" before that type.
+   //
+   auto type = FindPos(log.item->GetTypeSpec()->GetPos());
+   if(type.pos == string::npos) return NotFound(expl, "Data type");
+   auto tag = Rfind(type.iter, MUTABLE_STR, type.pos);
+   if(tag.pos == string::npos) return NotFound(expl, MUTABLE_STR, true);
+   tag.iter->code.erase(tag.pos, strlen(MUTABLE_STR) + 1);
+   return Changed(tag.iter, expl);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_EraseOverrideTag = "Editor.EraseOverrideTag";
+
+word Editor::EraseOverrideTag(const WarningLog& log, string& expl)
+{
+   Debug::ft(Editor_EraseOverrideTag);
+
+   //  Look for "override" just before the semicolon at the end of the
+   //  function's declaration or the left brace at the beginning of
+   //  its inline definition.
+   //
+   auto func = FindPos(log.item->GetPos());
+   if(func.pos == string::npos) return NotFound(expl, "Function name");
+   auto endsig = FindFirstOf(func.iter, func.pos, ";{");
+   if(endsig.pos == string::npos) return NotFound(expl, "Signature end");
+
+   //  Insert "override" after the previous non-blank character.
+   //
+   endsig = Rfind(endsig.iter, OVERRIDE_STR, endsig.pos - 1);
+   if(endsig.pos == string::npos) return NotFound(expl, OVERRIDE_STR, true);
+   auto start = (endsig.pos == 0 ? 0 : endsig.pos - 1);
+   endsig.iter->code.erase(start, strlen(OVERRIDE_STR) + 1);
+   return Changed(endsig.iter, expl);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Editor_EraseSemicolon = "Editor.EraseSemicolon";
 
 word Editor::EraseSemicolon(const WarningLog& log, string& expl)
@@ -1042,6 +1102,22 @@ word Editor::EraseUsing(const WarningLog& log, string& expl)
       return NotFound(expl, "Using declaration");
    source_.erase(use.iter);
    return Changed();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_EraseVirtualTag = "Editor.EraseVirtualTag";
+
+word Editor::EraseVirtualTag(const WarningLog& log, string& expl)
+{
+   Debug::ft(Editor_EraseVirtualTag);
+
+   auto type = FindPos(log.item->GetTypeSpec()->GetPos());
+   if(type.pos == string::npos) return NotFound(expl, "Function type");
+   auto virt = type.iter->code.rfind(VIRTUAL_STR, type.pos);
+   if(virt == string::npos) return NotFound(expl, VIRTUAL_STR, true);
+   type.iter->code.erase(virt, strlen(VIRTUAL_STR) + 1);
+   return Changed(type.iter, expl);
 }
 
 //------------------------------------------------------------------------------
@@ -1384,7 +1460,7 @@ WarningStatus Editor::FixStatus(const WarningLog& log) const
    case IncludeDuplicated:
    case IncludeAdd:
    case IncludeRemove:
-   case HeaderReliesOnUsing:
+   case RemoveOverrideTag:
    case UsingInHeader:
    case UsingDuplicated:
    case UsingAdd:
@@ -1443,7 +1519,7 @@ WarningStatus Editor::FixStatus(const WarningLog& log) const
 // case VirtualAndPublic:
 // case VirtualOverloading:
 // case FunctionNotOverridden:
-   case VirtualTagMissing:
+   case RemoveVirtualTag:
    case OverrideTagMissing:
    case VoidAsArgument:
 // case AnonymousArgument:
@@ -1479,6 +1555,7 @@ WarningStatus Editor::FixStatus(const WarningLog& log) const
 // case PatchNotOverridden:
    case FunctionCouldBeDefaulted:
    case InitCouldUseConstructor:
+   case RemoveLineBreak:
       return NotFixed;
    }
 
@@ -1515,8 +1592,8 @@ word Editor::FixWarning(const WarningLog& log, string& expl)
    case IncludeDuplicated:
    case IncludeRemove:
       return EraseInclude(log, expl);
-   case HeaderReliesOnUsing:
-      return ResolveUsings();
+   case RemoveOverrideTag:
+      return EraseOverrideTag(log, expl);
    case UsingInHeader:
       return ReplaceUsing(log, expl);
    case UsingAdd:
@@ -1539,11 +1616,11 @@ word Editor::FixWarning(const WarningLog& log, string& expl)
    case DataCouldBeConstPtr:
       return TagAsConstPointer(log, expl);
    case DataNeedNotBeMutable:
-      return UntagAsMutable(log, expl);
+      return EraseMutableTag(log, expl);
    case NonExplicitConstructor:
       return TagAsExplicit(log, expl);
-   case VirtualTagMissing:
-      return TagAsVirtual(log, expl);
+   case RemoveVirtualTag:
+      return EraseVirtualTag(log, expl);
    case OverrideTagMissing:
       return TagAsOverride(log, expl);
    case VoidAsArgument:
@@ -1583,6 +1660,8 @@ word Editor::FixWarning(const WarningLog& log, string& expl)
       return TagAsDefaulted(log, expl);
    case InitCouldUseConstructor:
       return InitByConstructor(log, expl);
+   case RemoveLineBreak:
+      return EraseLineBreak(log, expl);
    default:
       expl = "Fixing this type of warning is not supported.";
    }
@@ -1802,7 +1881,7 @@ word Editor::InitByConstructor(const WarningLog& log, string& expl)
       indent = name.iter->code.find_first_not_of(WhitespaceChars);
       name.iter->code.erase(indent);
       name.iter->code.append(code);
-      DeleteLineBreak(name.iter);
+      EraseLineBreak(name.iter);
    }
 
    return Changed(name.iter, expl);
@@ -2994,44 +3073,6 @@ word Editor::TagAsStaticFunction(const WarningLog& log, string& expl)
    }
 
    return Changed(type.iter, expl);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_TagAsVirtual = "Editor.TagAsVirtual";
-
-word Editor::TagAsVirtual(const WarningLog& log, string& expl)
-{
-   Debug::ft(Editor_TagAsVirtual);
-
-   //  A virtual function can be tagged "constexpr", which the parser looks for
-   //  only *after* "virtual".
-   //
-   auto type = FindPos(log.item->GetTypeSpec()->GetPos());
-   if(type.pos == string::npos) return NotFound(expl, "Function type");
-   auto prev = type.iter->code.rfind(CONSTEXPR_STR, type.pos);
-   if(prev != string::npos) type.pos = prev;
-   type.iter->code.insert(type.pos, "virtual ");
-   return Changed(type.iter, expl);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_UntagAsMutable = "Editor.UntagAsMutable";
-
-word Editor::UntagAsMutable(const WarningLog& log, string& expl)
-{
-   Debug::ft(Editor_UntagAsMutable);
-
-   //  Find the line on which the data's type appears, and erase the
-   //  "mutable" before that type.
-   //
-   auto type = FindPos(log.item->GetTypeSpec()->GetPos());
-   if(type.pos == string::npos) return NotFound(expl, "Data type");
-   auto tag = Rfind(type.iter, MUTABLE_STR, type.pos);
-   if(tag.pos == string::npos) return NotFound(expl, MUTABLE_STR, true);
-   tag.iter->code.erase(tag.pos, strlen(MUTABLE_STR) + 1);
-   return Changed(tag.iter, expl);
 }
 
 //------------------------------------------------------------------------------

@@ -31,7 +31,6 @@
 #include "IpPortRegistry.h"
 #include "Message.h"
 #include "MsgHeader.h"
-#include "NbAppIds.h"
 #include "ObjectPoolRegistry.h"
 #include "ProtocolSM.h"
 #include "PsmFactory.h"

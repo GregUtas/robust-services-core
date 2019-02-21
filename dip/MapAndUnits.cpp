@@ -765,8 +765,7 @@ TokenMessage MapAndUnits::encode_movement_result(const UnitOrder& unit) const
       result = result + Token(TOKEN_RESULT_RET);
    }
 
-   auto msg = TokenMessage(TOKEN_COMMAND_ORD) +
-      encode_turn() & order & result;
+   auto msg = TokenMessage(TOKEN_COMMAND_ORD) + encode_turn() & order & result;
    return msg;
 }
 
@@ -2370,8 +2369,7 @@ size_t MapAndUnits::process_sco(const TokenMessage& sco)
 
 //------------------------------------------------------------------------------
 
-fn_name MapAndUnits_process_sco_for_power =
-   "MapAndUnits.process_sco_for_power";
+fn_name MapAndUnits_process_sco_for_power = "MapAndUnits.process_sco_for_power";
 
 size_t MapAndUnits::process_sco_for_power(const TokenMessage& sco_parm)
 {

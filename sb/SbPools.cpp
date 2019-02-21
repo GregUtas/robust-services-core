@@ -28,7 +28,6 @@
 #include "InvokerPoolRegistry.h"
 #include "Message.h"
 #include "MsgPort.h"
-#include "NbAppIds.h"
 #include "ProtocolSM.h"
 #include "RootServiceSM.h"
 #include "SbIpBuffer.h"

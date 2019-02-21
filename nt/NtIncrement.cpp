@@ -895,8 +895,7 @@ TestFailedText::TestFailedText() :
 }
 
 fixed_string TestRetestTextStr = "retest";
-fixed_string TestRetestTextExpl =
-   "lists testcases that have not passed";
+fixed_string TestRetestTextExpl = "lists testcases that have not passed";
 
 TestRetestText::TestRetestText() :
    CliText(TestRetestTextExpl, TestRetestTextStr) { }

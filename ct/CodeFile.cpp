@@ -1359,14 +1359,14 @@ word CodeFile::CreateEditor(string& expl)
    //
    if(dir_ == nullptr)
    {
-      expl = "Directory not specified.";
+      expl = "Directory not specified for " + Name() + '.';
       return -1;
    }
 
    auto input = InputStream();
    if(input == nullptr)
    {
-      expl = "Failed to open source code file.";
+      expl = "Failed to open source code for " + Name() + '.';
       return -1;
    }
 
@@ -1374,7 +1374,7 @@ word CodeFile::CreateEditor(string& expl)
 
    if(editor_ == nullptr)
    {
-      expl = "Failed to create editor.";
+      expl = "Failed to create editor for " + Name() + '.';
       return -7;
    }
 
@@ -1388,12 +1388,12 @@ void CodeFile::Display(ostream& stream,
 {
    LibraryItem::Display(stream, prefix, options);
 
-   stream << prefix << "fid       : " << fid_.to_str() << CRLF;
-   stream << prefix << "dir       : " << dir_ << CRLF;
-   stream << prefix << "isHeader  : " << isHeader_ << CRLF;
-   stream << prefix << "code      : " << &code_ << CRLF;
-   stream << prefix << "parsed    : " << parsed_ << CRLF;
-   stream << prefix << "checked   : " << checked_ << CRLF;
+   stream << prefix << "fid        : " << fid_.to_str() << CRLF;
+   stream << prefix << "dir        : " << dir_ << CRLF;
+   stream << prefix << "isHeader   : " << isHeader_ << CRLF;
+   stream << prefix << "isSubsFile : " << isSubsFile_ << CRLF;
+   stream << prefix << "parsed     : " << parsed_ << CRLF;
+   stream << prefix << "checked    : " << checked_ << CRLF;
 
    auto& files = Singleton< Library >::Instance()->Files();
 
@@ -1671,14 +1671,19 @@ Using* CodeFile::FindUsingFor(const string& fqName, size_t prefix,
 
 fn_name CodeFile_Fix = "CodeFile.Fix";
 
-word CodeFile::Fix(CliThread& cli, string& expl)
+word CodeFile::Fix(CliThread& cli, const FixOptions& opts, string& expl)
 {
    Debug::ft(CodeFile_Fix);
 
    auto rc = CreateEditor(expl);
-   if(rc != 0) return rc;
 
-   return editor_->Fix(cli, expl);
+   if(rc < -1) return rc;  // don't continue with other files
+   if(rc == -1) return 0;  // continue with other files
+
+   rc = editor_->Fix(cli, opts, expl);
+
+   if(rc >= -1) return 0;  // continue with other files
+   return rc;              // don't continue with other files
 }
 
 //------------------------------------------------------------------------------

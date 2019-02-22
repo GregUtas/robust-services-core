@@ -42,9 +42,9 @@ public:
    //
    static fixed_string AnyHexParm;
 
-   //  HELP and OPT are passed to CliParm.  MIN and MAX define the legal
-   //  range for the integer parameter.  HEX is true if the parameter must
-   //  be entered in hex.
+   //  HELP, OPT, and TAG are passed to CliParm.  MIN and MAX define the
+   //  legal range for the integer value.  HEX is true if the parameter
+   //  must be entered in hex.
    //
    CliIntParm(const char* help, word min, word max,
       bool opt = false, const char* tag = nullptr, bool hex = false);

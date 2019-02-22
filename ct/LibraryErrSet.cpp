@@ -122,7 +122,8 @@ word LibraryErrSet::Error(string& expl) const
 
 fn_name LibraryErrSet_Fix = "LibraryErrSet.Fix";
 
-word LibraryErrSet::Fix(CliThread& cli, string& expl) const
+word LibraryErrSet::Fix
+   (CliThread& cli, const FixOptions& opts, string& expl) const
 {
    Debug::ft(LibraryErrSet_Fix);
 

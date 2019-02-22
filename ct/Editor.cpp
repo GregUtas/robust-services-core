@@ -1323,14 +1323,18 @@ fixed_string FixHelp = "Enter y(yes) n(no) s(skip file) q(quit): ";
 
 fn_name Editor_Fix = "Editor.Fix";
 
-word Editor::Fix(CliThread& cli, string& expl)
+word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
 {
    Debug::ft(Editor_Fix);
 
    //  Get the file's warnings and source code.
    //
    auto rc = Read(expl);
-   if(rc != 0) return rc;
+   if(rc != 0)
+   {
+      *cli.obuf << "Failed to load source code for " << file_->Name() << CRLF;
+      return -1;
+   }
 
    //  Run through all the warnings.  If fixing a warning is not supported,
    //  skip it.
@@ -1342,18 +1346,11 @@ word Editor::Fix(CliThread& cli, string& expl)
 
    for(auto item = warnings_.begin(); item != warnings_.end(); ++item)
    {
-      switch(FixStatus(*item))
-      {
-      case NotFixed:
-         found = true;
-         break;
-      case Pending:
-         found = true;
-         //  [[fallthrough]]
-      case Fixed:
-         continue;
-      }
+      if(FixStatus(*item) != NotFixed) continue;
+      if((opts.warning != AllWarnings) &&
+         (item->warning != opts.warning)) continue;
 
+      found = true;
       DisplayLog(cli, *item, first);
       first = false;
 
@@ -1364,17 +1361,22 @@ word Editor::Fix(CliThread& cli, string& expl)
       //  o 'q' = done fixing warnings
       //
       expl.clear();
-      reply = cli.CharPrompt(FixPrompt, FixChars, FixHelp);
+
+      if(opts.prompt)
+      {
+         reply = cli.CharPrompt(FixPrompt, FixChars, FixHelp);
+      }
 
       switch(reply)
       {
       case 'y':
          rc = FixWarning(*item, expl);
-         if(rc == 0) (item)->status = Pending;
+         if(rc == 0) item->status = Pending;
 
-         //  Display EXPL if it isn't empty, else assume that the fix succeeded.
+         //  Display EXPL if it isn't empty, else assume the fix succeeded.
          //
-         *cli.obuf << spaces(2) << (expl.empty() ? SuccessExpl : expl) << CRLF;
+         *cli.obuf << spaces(2) << (expl.empty() ? SuccessExpl : expl);
+         *cli.obuf << CRLF;
          break;
 
       case 'n':
@@ -1389,17 +1391,38 @@ word Editor::Fix(CliThread& cli, string& expl)
       if(exit || (rc != 0)) break;
    }
 
-   if(found && (rc == 0))
+   if(found)
    {
-      *cli.obuf << spaces(2) << "End of supported warnings." << CRLF;
+      if(exit || (rc != 0))
+         *cli.obuf << spaces(2) << "Remaining warnings skipped." << CRLF;
+      else
+         *cli.obuf << spaces(2) << "End of warnings." << CRLF;
+   }
+   else
+   {
+      //  If no warnings were found, don't write the file unless it has
+      //  pending edits.  These occur when a file is modified but the
+      //  editor traps before it commits the changes, and the file is
+      //  submitted for editing after trap recovery.
+      //
+      for(auto item = warnings_.begin(); item != warnings_.end(); ++item)
+      {
+         if(item->status == Pending)
+         {
+            *cli.obuf << spaces(2) << "Uncommitted changes found." << CRLF;
+            found = true;
+            break;
+         }
+      }
    }
 
-   //  Write out the file if it was opened.  The possible outcomes are
-   //    < 0: an error occurred.
-   //    = 0: the file wasn't changed.
-   //    = 1: the file was changed.  Inform the user.
-   //  If the user entered 'q', return -1 to stop fixing files unless an
-   //  error occurred.
+   if(!found) return 0;
+
+   //  Write out the file if it was modified.  The possible outcomes are
+   //    -1: an error occurred
+   //     0: the file wasn't changed
+   //     1: the file was changed
+   //  If the user entered 'q', return -2 to exit the >fix command.
    //
    rc = Write(file_->FullName(), expl);
 
@@ -1413,12 +1436,11 @@ word Editor::Fix(CliThread& cli, string& expl)
       }
    }
 
-   if(rc >= 0) rc = (reply == 'q' ? -2 : 0);
-
    //  A result of -1 or greater indicates that the next file can still be
-   //  processed, so don't report an error value.
+   //  processed, so return a lower value if the user wants to quit.
    //
-   return (rc < -1 ? rc : 0);
+   if((reply == 'q') && (rc >= -1)) rc = -2;
+   return rc;
 }
 
 //------------------------------------------------------------------------------
@@ -1429,137 +1451,15 @@ WarningStatus Editor::FixStatus(const WarningLog& log) const
 {
    Debug::ft(Editor_FixStatus);
 
-   switch(log.status)
+   if((log.warning == IncludeNotSorted) && (log.status == NotFixed))
    {
-   case Pending:
-      return Pending;
-   case Fixed:
-      return Fixed;
-   }
-
-   switch(log.warning)
-   {
-   case IncludeNotSorted:
+      //  If there are multiple warnings for unsorted #include directives,
+      //  they all gets fixed when the first one is fixed.
+      //
       if(sorted_) return Fixed;
-      //  [[fallthrough]]
-   case UseOfSlashAsterisk:
-   case UseOfNull:
-   case PtrTagDetached:
-   case RefTagDetached:
-   case RedundantSemicolon:
-// case UseOfCast:
-// case FunctionalCast:
-// case ReinterpretCast:
-// case Downcasting:
-// case CastingAwayConstness:
-// case PointerArithmetic:
-   case RedundantConst:
-// case DefineNotAtFileScope:
-// case IncludeNotAtGlobalScope:
-   case IncludeGuardMissing:
-   case IncludeDuplicated:
-   case IncludeAdd:
-   case IncludeRemove:
-   case RemoveOverrideTag:
-   case UsingInHeader:
-   case UsingDuplicated:
-   case UsingAdd:
-   case UsingRemove:
-   case ForwardAdd:
-   case ForwardRemove:
-// case ArgumentUnused:
-// case ClassUnused:
-// case DataUnused:
-// case EnumUnused:
-// case EnumeratorUnused:
-// case FriendUnused:
-// case FunctionUnused:
-// case TypedefUnused:
-// case ForwardUnresolved:
-// case FriendUnresolved:
-// case FriendAsForward:
-// case HidesInheritedName:
-// case ClassCouldBeNamespace:
-   case ClassCouldBeStruct:
-   case StructCouldBeClass:
-   case RedundantAccessControl:
-// case ItemCouldBePrivate:
-// case ItemCouldBeProtected:
-// case PointerTypedef:
-// case AnonymousEnum:
-// case DataUninitialized:
-// case DataInitOnly:
-// case DataWriteOnly:
-// case GlobalStaticData:
-// case DataNotPrivate:
-// case DataCannotBeConst:
-// case DataCannotBeConstPtr:
-   case DataCouldBeConst:
-   case DataCouldBeConstPtr:
-   case DataNeedNotBeMutable:
-// case DefaultPODConstructor:
-// case DefaultConstructor:
-// case DefaultCopyConstructor:
-// case DefaultAssignment:
-// case PublicConstructor:
-   case NonExplicitConstructor:
-// case MemberInitMissing:
-// case MemberInitNotSorted:
-// case DefaultDestructor:
-// case VirtualDestructor:
-// case NonVirtualDestructor:
-// case VirtualFunctionInvoked:
-// case RuleOf3DtorNoCopyCtor:
-// case RuleOf3DtorNoCopyOper:
-// case RuleOf3CopyCtorNoOper:
-// case RuleOf3CopyOperNoCtor:
-// case OperatorOverloaded:
-// case FunctionNotDefined:
-// case PureVirtualNotDefined:
-// case VirtualAndPublic:
-// case VirtualOverloading:
-// case FunctionNotOverridden:
-   case RemoveVirtualTag:
-   case OverrideTagMissing:
-   case VoidAsArgument:
-// case AnonymousArgument:
-// case AdjacentArgumentTypes:
-   case DefinitionRenamesArgument:
-   case OverrideRenamesArgument:
-// case VirtualDefaultArgument:
-// case ArgumentCannotBeConst:
-   case ArgumentCouldBeConstRef:
-   case ArgumentCouldBeConst:
-// case FunctionCannotBeConst:
-   case FunctionCouldBeConst:
-   case FunctionCouldBeStatic:
-// case FunctionCouldBeFree:
-// case StaticFunctionViaMember:
-// case NonBooleanConditional:
-// case EnumTypesDiffer:
-   case UseOfTab:
-   case Indentation:
-   case TrailingSpace:
-   case AdjacentSpaces:
-   case AddBlankLine:
-   case RemoveBlankLine:
-// case LineLength:
-// case FunctionNotSorted:
-// case HeadingNotStandard:
-   case IncludeGuardMisnamed:
-   case DebugFtNotInvoked:
-// case DebugFtNotFirst:
-   case DebugFtNameMismatch:
-// case DebugFtNameDuplicated:
-// case DisplayNotOverridden:
-// case PatchNotOverridden:
-   case FunctionCouldBeDefaulted:
-   case InitCouldUseConstructor:
-   case RemoveLineBreak:
-      return NotFixed;
    }
 
-   return Fixed;
+   return log.status;
 }
 
 //------------------------------------------------------------------------------
@@ -2508,14 +2408,11 @@ word Editor::Read(string& expl)
    if(read_ != 1) return read_;
    read_ = 0;
 
-   //  Get the file's warnings and sort those on the same line by reverse
-   //  position.  This reduces the chances of an item's position changing
-   //  before it is edited.
+   //  Get the file's warnings and sort them for fixing.  This order reduces
+   //  the chances of an item's position changing before it is edited.
    //
    CodeInfo::GetWarnings(file_, warnings_);
-   if(warnings_.empty()) return -1;
-
-   std::sort(warnings_.begin(), warnings_.end(), CodeInfo::IsSortedByLine);
+   std::sort(warnings_.begin(), warnings_.end(), CodeInfo::IsSortedForFixing);
 
    //  Get the file's source code.
    //

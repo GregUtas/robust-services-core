@@ -42,8 +42,8 @@ namespace NodeBase
 class CliTextParm : public CliParm
 {
 public:
-   //  HELP and OPT are passed to CliParm.  SIZE specifies the number of
-   //  strings in the list of valid inputs.  A SIZE of zero means that an
+   //  HELP, OPT, and TAG are passed to CliParm.  SIZE specifies the number
+   //  of strings in the list of valid inputs.  A SIZE of zero means that an
    //  arbitrary string may be entered.
    //
    explicit CliTextParm(const char* help, bool opt = false,

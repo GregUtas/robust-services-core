@@ -226,7 +226,8 @@ public:
 
    //  Invokes the editor to interactively fix warnings found by Check().
    //
-   NodeBase::word Fix(NodeBase::CliThread& cli, std::string& expl);
+   NodeBase::word Fix(NodeBase::CliThread& cli,
+      const FixOptions& opts, std::string& expl);
 
    //  Invokes the editor to format the file's source code.
    //

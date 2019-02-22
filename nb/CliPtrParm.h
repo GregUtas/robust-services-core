@@ -33,7 +33,7 @@ namespace NodeBase
 class CliPtrParm : public CliParm
 {
 public:
-   //  HELP and OPTIONAL are passed to CliParm.
+   //  HELP, OPT, and TAG are passed to CliParm.
    //
    explicit CliPtrParm(const char* help,
       bool opt = false, const char* tag = nullptr);

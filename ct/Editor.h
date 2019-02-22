@@ -69,7 +69,7 @@ public:
    //  an error occurs, a non-zero value is returned and EXPL is updated
    //  with an explanation.
    //
-   word Fix(NodeBase::CliThread& cli, string& expl);
+   word Fix(NodeBase::CliThread& cli, const FixOptions& opts, string& expl);
 
    //  Formats the code.  Returns 0 if the file was unchanged, a positive
    //  number after successful changes, and a negative number on failure,
@@ -83,8 +83,8 @@ private:
    word Read(string& expl);
 
    //  Writes out the file to PATH if it was changed during editing.  Returns 0
-   //  if the file had not been changed, 1 if it was successfully written, and a
-   //  negative value if an error occurred.
+   //  if the file had not been changed, 1 if it was successfully written, and
+   //  -1 if an error occurred.
    //
    word Write(const string& path, string& expl);
 

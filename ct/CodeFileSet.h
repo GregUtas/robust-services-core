@@ -68,8 +68,8 @@ public:
 
    //  Fixes warnings detected by >check.
    //
-   virtual NodeBase::word Fix
-      (NodeBase::CliThread& cli, std::string& expl) const override;
+   virtual NodeBase::word Fix(NodeBase::CliThread& cli,
+      const FixOptions& opts, std::string& expl) const override;
 
    //  Formats the code files in the set.
    //

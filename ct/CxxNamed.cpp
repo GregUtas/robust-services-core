@@ -20,11 +20,13 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CxxNamed.h"
+#include <map>
 #include <set>
 #include <sstream>
 #include <utility>
 #include "CodeFile.h"
 #include "CodeSet.h"
+#include "CodeWarning.h"
 #include "CxxArea.h"
 #include "CxxExecute.h"
 #include "CxxRoot.h"
@@ -290,7 +292,7 @@ void CxxNamed::Log(Warning warning, size_t offset, bool hide) const
    //  exception is a friend: although it may appear in such a class, it is
    //  declared in another.
    //
-   if(IsUnusedItemWarning(warning) && (Type() != Cxx::Friend))
+   if(CodeWarning::Attrs.at(warning).unusedItem && (Type() != Cxx::Friend))
    {
       auto cls = GetClass();
 

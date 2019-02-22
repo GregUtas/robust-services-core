@@ -360,7 +360,7 @@ enum AssignmentType
 //
 enum Warning
 {
-   UseOfSlashAsterisk,       // use of /* */ comment
+   AllWarnings,              // used as a wildcard when fixing warnings
    UseOfNull,                // use of NULL
    PtrTagDetached,           // <type> *<data> instead of <type>* data
    RefTagDetached,           // <type> &<data> instead of <type>& data
@@ -475,16 +475,17 @@ enum Warning
    FunctionCouldBeDefaulted, // empty special member function defined
    InitCouldUseConstructor,  // initialization uses oper= instead of constructor
    RemoveLineBreak,          // next line can be merged within length limit
+   UseOfSlashAsterisk,       // use of /* */ comment
    Warning_N                 // number of warnings
 };
 
-//  Inserts a string for WARNING into STREAM.
+//  Options for the >fix command.
 //
-std::ostream& operator<<(std::ostream& stream, Warning warning);
-
-//  Returns true if WARNING is associated with an unused item.
-//
-bool IsUnusedItemWarning(Warning warning);
+struct FixOptions
+{
+   Warning warning;  // type of warning to fix
+   bool prompt;      // whether to prompt before fixing a warning
+};
 
 //------------------------------------------------------------------------------
 //

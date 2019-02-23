@@ -4,6 +4,7 @@ This repository contains
 1. A framework for developing robust applications in C++.
 2. An application built using the framework.
 3. Tools for the static analysis of C++ software.
+4. A framework for developing a bot that can play the board game *Diplomacy*.
 
 ## Robust Services Core
 
@@ -47,14 +48,14 @@ An overview of them is provided [here](docs/RSC-Cpp-Static-Analysis-Tools.md).
 ## Diplomacy AI client
 
 In 2002, a group in the UK began to design a protocol that allows software bots to play
-the board game [*Diplomacy*](https://en.wikipedia.org/wiki/Diplomacy_(game)).  They have
-a [website](http://www.daide.org.uk) that provides
-various useful links and downloads.  Amongst these is the executable for a Diplomacy
+the board game [*Diplomacy*](https://en.wikipedia.org/wiki/Diplomacy_(game)).  See
+their [website](http://www.daide.org.uk) for
+various useful links and downloads, amongst which is the executable for a Diplomacy
 server.  Bots log into this server, which sends them the state of the game, allows
 them to communicate with one another using the protocol, and adjudicates the moves that
 they submit.  Their website also provides base software for developing bots.  It seemed
 that it would be interesting to refactor this software while decoupling it from Windows
-and bringing it more in line with C++11.  This would also force RSC to evolve to better
+and bringing it more in line with C++11.  This would help RSC evolve to better
 support standalone clients that use IP (TCP, in this case).  The resulting software is
 available in the [`dip`](/dip) directory and is described in some further detail
 [here](/docs/RSC-Diplomacy.md).

@@ -113,14 +113,6 @@ public:
    Using* FindUsingFor(const std::string& fqName, size_t prefix,
       const CxxScoped* item, const CxxScope* scope) const;
 
-   //  Returns a pointer to the original source code.
-   //
-   const std::string& GetCode() const { return code_; }
-
-   //  Provides read-only access to the lexer.
-   //
-   const Lexer& GetLexer() const { return lexer_; }
-
    //  Returns the files #included by this file.
    //
    const SetOfIds& InclList() const { return inclIds_; }
@@ -165,9 +157,10 @@ public:
    //
    void AddUsage(const CxxNamed* item);
 
-   //  Reads the file into code_ and preprocesses it.
+   //  Invoked when the file defines a function template or a function
+   //  in a class template.
    //
-   void Scan();
+   void SetTemplate(TemplateType type);
 
    enum ParseState
    {
@@ -184,15 +177,19 @@ public:
    //
    void SetParsed(bool passed) { parsed_ = (passed ? Passed : Failed); }
 
-   //  Invoked when the file defines a function template or a function
-   //  in a class template.
+   //  Classifies a line of code (S) and updates WARNINGS with any warnings
+   //  that were found.
    //
-   void SetTemplate(TemplateType type);
+   static LineType ClassifyLine(std::string s, std::set< Warning >& warnings);
 
    //  Returns the LineType for line N.  Returns LineType_N if N is out
    //  of range.
    //
    LineType GetLineType(size_t n) const;
+
+   //  Returns the level of indentation for a line.
+   //
+   int8_t GetDepth(size_t line) const;
 
    //  Returns a standard name for an #include guard.  Returns EMPTY_STR
    //  if the file is not a header file.
@@ -212,6 +209,10 @@ public:
    int CalcGroup(const CodeFile* file) const;
    int CalcGroup(const std::string& fn) const;
    int CalcGroup(const Include& incl) const;
+
+   //  Reads the file into code_ and preprocesses it.
+   //
+   void Scan();
 
    //  Checks the file after it has been parsed, looking for additional
    //  warnings when a report is to be generated.
@@ -233,9 +234,18 @@ public:
    //
    NodeBase::word Format(std::string& expl);
 
-   //  Returns the level of indentation for a line.
+   //  Returns a pointer to the original source code.
    //
-   int8_t GetDepth(size_t line) const;
+   const std::string& GetCode() const { return code_; }
+
+   //  Provides read-only access to the lexer.
+   //
+   const Lexer& GetLexer() const { return lexer_; }
+
+   //  Provides access to the editor, creating it if necessary.  If it can't
+   //  be created, EXPL is updated with an explanation.
+   //
+   Editor* GetEditor(std::string& expl);
 
    //  Logs WARNING, which occurred at POS.  OFFSET and INFO are specific to
    //  WARNING.
@@ -245,10 +255,14 @@ public:
       const std::string& info = std::string(NodeBase::EMPTY_STR),
       bool hide = false) const;
 
-   //  Classifies a line of code (S) and updates WARNINGS with any warnings
-   //  that were found.
+   //  Creates the editor if it doesn't exist and invokes FindLog(LOG1, ITEM)
+   //  on the editor to find the log whose .warning and .offset match LOG1 and
+   //  whose .item matches ITEM.  On success, returns the editor and updates
+   //  LOG2 to the matching log.  Returns nullptr if no matching log was found
+   //  or if the editor could not be created, updating EXPL with an explanation.
    //
-   static LineType ClassifyLine(std::string s, std::set< Warning >& warnings);
+   Editor* FindLog(const WarningLog& log1,
+      const CxxNamed* item, WarningLog*& log2, std::string& expl);
 
    //  Generates a report in STREAM (if not nullptr) for the files in SET.  The
    //  report includes line type counts and warnings found during parsing and

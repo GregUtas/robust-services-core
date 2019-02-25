@@ -1550,6 +1550,17 @@ void CodeFile::FindDeclIds()
 
 //------------------------------------------------------------------------------
 
+Editor* CodeFile::FindLog(const WarningLog& log1,
+   const CxxNamed* item, WarningLog*& log2, std::string& expl)
+{
+   if(CreateEditor(expl) != 0) return nullptr;
+   log2 = editor_->FindLog(log1, item);
+   if(log2 != nullptr) return editor_.get();
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeFile_FindOrAddUsing = "CodeFile.FindOrAddUsing";
 
 void CodeFile::FindOrAddUsing(const CxxNamed* user)
@@ -1767,6 +1778,18 @@ int8_t CodeFile::GetDepth(size_t line) const
       //
       return (cont ? depth + 1 : depth);
    }
+}
+
+//------------------------------------------------------------------------------
+
+Editor* CodeFile::GetEditor(string& expl)
+{
+   if(editor_ == nullptr)
+   {
+      CreateEditor(expl);
+   }
+
+   return editor_.get();
 }
 
 //------------------------------------------------------------------------------

@@ -419,7 +419,7 @@ enum Warning
    DefaultPODConstructor,    // use of default constructor; class has POD member
    DefaultConstructor,       // use of default constructor
    DefaultCopyConstructor,   // use of default copy constructor
-   DefaultAssignment,        // use of default assignment operator
+   DefaultCopyOperator,      // use of default copy (assignment) operator
    PublicConstructor,        // base class has public constructor
    NonExplicitConstructor,   // constructor should be tagged explicit
    MemberInitMissing,        // item missing from member initialization list
@@ -474,8 +474,9 @@ enum Warning
    PatchNotOverridden,       // class does not override Object.Patch
    FunctionCouldBeDefaulted, // empty special member function defined
    InitCouldUseConstructor,  // initialization uses oper= instead of constructor
-   RemoveLineBreak,          // next line can be merged within length limit
+   FunctionCouldBeNoexcept,  // function could be tagged noexcept
    UseOfSlashAsterisk,       // use of /* */ comment
+   RemoveLineBreak,          // next line can be merged within length limit
    Warning_N                 // number of warnings
 };
 

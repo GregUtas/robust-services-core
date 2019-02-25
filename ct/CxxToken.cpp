@@ -1634,10 +1634,12 @@ void Operation::ExecuteCall()
    auto size = args.size();
    if(proc.IsDefaultCtor(args))
    {
-      auto log = (size == 1 ? DefaultConstructor : DefaultCopyConstructor);
-      Context::Log(log);
+      cls = proc.item->GetClass();
+      auto warning = (size == 1 ? DefaultConstructor : DefaultCopyConstructor);
+      Context::Log(warning, cls);
+      cls->Log(warning);
       if(size > 1) args[1].WasRead();
-      Context::PushArg(StackArg(proc.item->GetClass(), 0, true));
+      Context::PushArg(StackArg(cls, 0, true));
       return;
    }
 
@@ -1678,8 +1680,8 @@ void Operation::ExecuteDelete(const StackArg& arg) const
    if(pod) return;
    arg.item->RecordUsage();
 
-   auto dtor = static_cast< Class* >
-      (arg.item->Root())->FindDtor(Context::Scope());
+   auto cls = static_cast< Class* >(arg.item->Root());
+   auto dtor = cls->FindDtor(Context::Scope());
 
    if(dtor != nullptr)
    {
@@ -1688,7 +1690,8 @@ void Operation::ExecuteDelete(const StackArg& arg) const
       return;
    }
 
-   Context::Log(DefaultDestructor);
+   Context::Log(DefaultDestructor, cls);
+   cls->Log(DefaultDestructor);
 }
 
 //------------------------------------------------------------------------------
@@ -1751,7 +1754,8 @@ void Operation::ExecuteNew() const
    auto ctor = cls->FindCtor(nullptr, Context::Scope());
    if(ctor == nullptr)
    {
-      Context::Log(DefaultConstructor);
+      Context::Log(DefaultConstructor, cls);
+      cls->Log(DefaultConstructor);
       return;
    }
 
@@ -1945,7 +1949,8 @@ bool Operation::ExecuteOverload
    //
    if((op_ == Cxx::ASSIGN) && (oper->GetClass() != cls))
    {
-      Context::Log(DefaultAssignment);
+      Context::Log(DefaultCopyOperator, cls);
+      cls->Log(DefaultCopyOperator);
       Context::PopArg(false);
       Context::PushArg(StackArg(cls, 0));
    }

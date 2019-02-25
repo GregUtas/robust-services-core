@@ -138,7 +138,7 @@ private:
       State state;    // state of testcase
       uint32_t hash;  // hash value for testcase's script
 
-      TestInfo(State state, uint32_t hash): state(state), hash(hash) { }
+      TestInfo(State state, uint32_t hash) : state(state), hash(hash) { }
    };
 
    //  A tuple for a testcase's name and its associated information.

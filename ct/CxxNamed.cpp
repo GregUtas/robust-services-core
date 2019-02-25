@@ -284,7 +284,8 @@ bool CxxNamed::IsPreviousDeclOf(const CxxNamed* item) const
 
 fn_name CxxNamed_Log = "CxxNamed.Log";
 
-void CxxNamed::Log(Warning warning, size_t offset, bool hide) const
+void CxxNamed::Log
+   (Warning warning, const CxxNamed* item, word offset, bool hide) const
 {
    Debug::ft(CxxNamed_Log);
 
@@ -303,7 +304,8 @@ void CxxNamed::Log(Warning warning, size_t offset, bool hide) const
       }
    }
 
-   GetFile()->LogPos(GetPos(), warning, this, offset, EMPTY_STR, hide);
+   if(item == nullptr) item = this;
+   GetFile()->LogPos(GetPos(), warning, item, offset, EMPTY_STR, hide);
 }
 
 //------------------------------------------------------------------------------

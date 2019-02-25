@@ -170,9 +170,9 @@ private:
       const uint32_t hash;            // hash value for function's code
       std::set< std::string > tests;  // tests that invoke the function
 
-      FuncInfo(const std::string& file, uint32_t hash):
+      FuncInfo(const std::string& file, uint32_t hash) :
          file(file), hash(hash) { }
-      explicit FuncInfo(uint32_t hash): hash(hash) { }
+      explicit FuncInfo(uint32_t hash) : hash(hash) { }
    };
 
    //  A tuple for a function's name and its associated information.

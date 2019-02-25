@@ -705,6 +705,10 @@ void Class::CheckRuleOfThree() const
    auto moveCtorLoc = GetFuncDefinition(moveCtor);
    auto copyOperLoc = GetFuncDefinition(copyOper);
    auto moveOperLoc = GetFuncDefinition(moveOper);
+   word copyCtorTrivial = -1;
+   word copyOperTrivial = -1;
+   if((copyCtor != nullptr) && copyCtor->IsTrivial()) copyCtorTrivial = 0;
+   if((copyOper != nullptr) && copyOper->IsTrivial()) copyOperTrivial = 0;
 
    //  The copy constructor and copy operator should be declared together.
    //  However, a non-static, const data member causes a compiler warning
@@ -716,13 +720,13 @@ void Class::CheckRuleOfThree() const
    case NotDeclared:
       if((copyOperLoc == LocalDeclared) && copyOper->IsImplemented())
       {
-         Log(RuleOf3CopyOperNoCtor);
+         Log(RuleOf3CopyOperNoCtor, this, copyOperTrivial);
       }
       break;
    case LocalDeclared:
       if(copyOperLoc == LocalDeclared) break;
       if(copyOperLoc == BaseDeleted) break;
-      Log(RuleOf3CopyCtorNoOper);
+      Log(RuleOf3CopyCtorNoOper, this, copyCtorTrivial);
    }
 
    switch(copyOperLoc)
@@ -731,7 +735,7 @@ void Class::CheckRuleOfThree() const
       if(!copyOper->IsImplemented()) break;
       if(copyCtorLoc == LocalDeclared) break;
       if(copyCtorLoc == BaseDeleted) break;
-      Log(RuleOf3CopyOperNoCtor);
+      Log(RuleOf3CopyOperNoCtor, this, copyOperTrivial);
    }
 
    //  If the destructor is not trivial, then the copy constructor and copy

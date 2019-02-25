@@ -1319,11 +1319,11 @@ bool Data::InitByDefault()
    else
    {
       decl->inited_ = (!cls->HasPODMember());
+      auto warning =
+         (decl->inited_ ? DefaultConstructor : DefaultPODConstructor);
 
-      if(decl->inited_)
-         Log(DefaultConstructor);
-      else
-         Log(DefaultPODConstructor);
+      Log(warning, cls);
+      cls->Log(warning);
    }
 
    return decl->inited_;
@@ -2154,6 +2154,7 @@ void Function::Check() const
    {
       auto w = CheckIfDefined();
       if(w != FunctionNotDefined) CheckIfUsed(FunctionUnused);
+      if(w != FunctionNotDefined) CheckNoexcept();
       CheckIfHiding();
       CheckArgs();
       CheckAccessControl();
@@ -2220,7 +2221,7 @@ void Function::CheckArgs() const
       {
          if(*args_[i]->Name() != *base->args_[i]->Name())
          {
-            args_[i]->Log(OverrideRenamesArgument, i + (this_ ? 0 : 1));
+            args_[i]->Log(OverrideRenamesArgument, this, i + (this_ ? 0 : 1));
          }
       }
 
@@ -2231,7 +2232,7 @@ void Function::CheckArgs() const
             if(*mate_->args_[i]->Name() != *base->args_[i]->Name())
             {
                mate_->args_[i]->Log
-                  (OverrideRenamesArgument, i + (this_ ? 0 : 1));
+                  (OverrideRenamesArgument, this, i + (this_ ? 0 : 1));
             }
          }
       }
@@ -2249,7 +2250,7 @@ void Function::CheckArgs() const
          if(*args_[i]->Name() != *mate_->args_[i]->Name())
          {
             mate_->args_[i]->Log
-               (DefinitionRenamesArgument, i + (this_ ? 0 : 1));
+               (DefinitionRenamesArgument, this, i + (this_ ? 0 : 1));
          }
       }
    }
@@ -2282,7 +2283,7 @@ void Function::CheckArgs() const
                }
                else
                {
-                  arg->Log(ArgumentCannotBeConst, i + (this_ ? 0 : 1));
+                  arg->Log(ArgumentCannotBeConst, this, i + (this_ ? 0 : 1));
                }
             }
 
@@ -2705,6 +2706,40 @@ void Function::CheckMemberUsage() const
    //
    if(!GetDefn()->nonpublic_) LogToBoth(FunctionCouldBeFree);
    else if(!static_) LogToBoth(FunctionCouldBeStatic);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Function_CheckNoexcept = "Function.CheckNoexcept";
+
+void Function::CheckNoexcept() const
+{
+   Debug::ft(Function_CheckNoexcept);
+
+   //  This is deliberately simple, only suggesting that a defaulted or empty
+   //  function in a non-base class, or a simple destructor, be noexcept.
+   //
+   if(!noexcept_)
+   {
+      if(FuncType() != FuncDtor)
+      {
+         auto cls = GetClass();
+         if((cls != nullptr) && !cls->Subclasses()->empty()) return;
+      }
+
+      auto defn = GetDefn();
+
+      if(defn->defaulted_)
+      {
+         LogToBoth(FunctionCouldBeNoexcept);
+         return;
+      }
+
+      if((defn->impl_ != nullptr) && (defn->impl_->FirstStatement() == nullptr))
+      {
+         LogToBoth(FunctionCouldBeNoexcept);
+      }
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -4075,17 +4110,17 @@ void Function::LogToBoth(Warning warning, size_t index) const
    if(index == SIZE_MAX)
    {
       this->Log(warning);
-      if(mate_ != nullptr) mate_->Log(warning, 0, true);
+      if(mate_ != nullptr) mate_->Log(warning, mate_, 0, true);
    }
    else
    {
       auto arg = args_.at(index).get();
-      arg->Log(warning, index + (this_ ? 0 : 1));
+      arg->Log(warning, this, index + (this_ ? 0 : 1));
 
       if(mate_ != nullptr)
       {
          arg = mate_->args_.at(index).get();
-         arg->Log(warning, index + (this_ ? 0 : 1), true);
+         arg->Log(warning, mate_, index + (this_ ? 0 : 1), true);
       }
    }
 }

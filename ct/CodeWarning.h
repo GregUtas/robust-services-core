@@ -83,8 +83,7 @@ struct CodeWarning
 private:
    //  Constructs a warning with the specified attributes.
    //
-   CodeWarning(bool fix, uint8_t order,
-      bool unused, bool suppress, fixed_string title);
+   CodeWarning(bool fix, uint8_t order, bool unused, fixed_string title);
 };
 
 //------------------------------------------------------------------------------
@@ -114,14 +113,14 @@ struct WarningLog
    size_t line;           // line where warning occurred
    size_t pos;            // position in FILE where warning occurred
    const CxxNamed* item;  // item associated with warning
-   size_t offset;         // warning-specific; displayed if non-zero
+   word offset;           // warning-specific; displayed if > 0
    std::string info;      // warning-specific
    bool hide;             // set to stop warning from being displayed
    WarningStatus status;  // whether warning has been fixed/committed
 
    WarningLog(Warning warning, const CodeFile* file,
       size_t line, size_t pos, const CxxNamed* item,
-      size_t offset, const std::string& info, bool hide = false);
+      word offset, const std::string& info, bool hide = false);
    bool operator==(const WarningLog& that) const;
    bool operator!=(const WarningLog& that) const;
    bool DisplayCode() const

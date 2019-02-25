@@ -57,7 +57,7 @@ struct Location
    //
    Location(const TokenMessage& where, const Token& unit_type);
 
-   //  Construcxts UNIT's location from a message (e.g. from the tokens
+   //  Constructs UNIT's location from a message (e.g. from the tokens
    //  (TOKEN_UNIT_FLT (TOKEN_PROVINCE_STP TOKEN_COAST_NCS)).
    //
    Location(const TokenMessage& unit);

@@ -243,6 +243,11 @@ public:
    //
    bool AtFileScope() const;
 
+   //  Returns the item's mate.  Returns nullptr unless the item is declared
+   //  and defined separately, in which case it returns the other instance.
+   //
+   virtual CxxNamed* GetMate() const { return nullptr; }
+
    //  Invoked before adding the item to the current scope (Context::Scope()).
    //  Returning false indicates that
    //  o for a C++ item, that it is a definition of a previous declaration;
@@ -313,11 +318,13 @@ public:
    //
    void Accessed() const;
 
-   //  Logs WARNING at the position where this item is located.  OFFSET is
-   //  specific to WARNING, and HIDE is set to prevent the warning from
-   //  being displayed.
+   //  Logs WARNING at the position where this item is located.  ITEM
+   //  and OFFSET are specific to WARNING, and HIDE is set to prevent
+   //  the warning from being displayed.  If ITEM is nullptr, "this" is
+   //  included in the log.
    //
-   void Log(Warning warning, size_t offset = 0, bool hide = false) const;
+   void Log(Warning warning, const CxxNamed* item = nullptr,
+      NodeBase::word offset = 0, bool hide = false) const;
 
    //  Displays the item's referent in STREAM.  If FQ is set, the item's
    //  fully qualified name is displayed.

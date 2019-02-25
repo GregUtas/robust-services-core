@@ -349,6 +349,11 @@ public:
    //
    virtual CodeFile* GetDefnFile() const override;
 
+   //  Overridden to return the definition if it is distinct from the
+   //  declaration, and vice versa.
+   //
+   virtual CxxNamed* GetMate() const override { return mate_; }
+
    //  Overridden to return the data's underlying numeric type.
    //
    virtual Numeric GetNumeric() const override { return spec_->GetNumeric(); }
@@ -1158,6 +1163,11 @@ public:
    virtual Function* GetFunction()
       const override { return const_cast< Function* >(this); }
 
+   //  Overridden to return the definition if it is distinct from the
+   //  declaration, and vice versa.
+   //
+   virtual CxxNamed* GetMate() const override { return mate_; }
+
    //  Overridden to return the function's qualified name.
    //
    virtual QualName* GetQualName() const override { return name_.get(); }
@@ -1260,6 +1270,10 @@ private:
    //  immediately before executing the function's code (in EnterBlock).
    //
    void AddThisArg();
+
+   //  Checks if the function could be tagged "noexcept".
+   //
+   void CheckNoexcept() const;
 
    //  If the function is an override, registers it with its base class and
    //  logs a warning if the "virtual" or "override" tags are absent.
@@ -1375,8 +1389,9 @@ private:
    void CheckMemberUsage() const;
 
    //  Logs WARNING on both the function's declaration and its definition.
-   //  When INDEX is provided, the log is for argument[index] rather than
-   //  the function itself.
+   //  When INDEX is provided, WarningLog.pos will be that of args_[INDEX]
+   //  rather than the function itself, but WarningLog.item will still be
+   //  the function.
    //
    void LogToBoth(Warning warning, size_t index = SIZE_MAX) const;
 

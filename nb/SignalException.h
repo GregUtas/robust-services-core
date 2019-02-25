@@ -44,7 +44,7 @@ public:
 
    //  Returns the signal that occurred.
    //
-   signal_t GetSignal() const { return signal_; }
+   signal_t GetSignal() const noexcept { return signal_; }
 
    //  Overridden to display member variables.
    //

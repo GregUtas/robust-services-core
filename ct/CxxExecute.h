@@ -595,9 +595,10 @@ public:
    //
    static bool ParsingTemplateInstance();
 
-   //  Logs WARNING at the current execution position.
+   //  Logs WARNING at the current execution position.  ITEM is included
+   //  as additional information for the log.
    //
-   static void Log(Warning warning);
+   static void Log(Warning warning, const CxxNamed* item = nullptr);
 
    //  The following invokes its Debug counterpart but also inserts
    //  the log in the execution trace to make it easier to see where

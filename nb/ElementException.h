@@ -50,11 +50,11 @@ public:
 
    //  Returns the reason for the restart.
    //
-   reinit_t Reason() const { return reason_; }
+   reinit_t Reason() const noexcept { return reason_; }
 
    //  Returns the error value.
    //
-   debug32_t Errval() const { return errval_; }
+   debug32_t Errval() const noexcept { return errval_; }
 private:
    //  Overridden to identify the type of exception.
    //

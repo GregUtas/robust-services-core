@@ -290,7 +290,7 @@ public:
    virtual void ReceiveBuff
       (IpBufferPtr& buff, size_t size, Faction faction) const override;
 
-   //  Overridden to convert an outgiong message from host to network order.
+   //  Overridden to convert an outgoing message from host to network order.
    //
    virtual byte_t* HostToNetwork(IpBuffer& buff,
       byte_t* src, size_t size) const override;

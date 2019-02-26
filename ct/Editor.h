@@ -57,7 +57,8 @@ namespace CodeTools
 class Editor
 {
 public:
-   //  Creates an editor for the source code in FILE, which is read from INPUT.
+   //  Creates an editor for the source code in FILE, which is read from INPUT,
+   //  and then loads the file's code and warnings.
    //
    Editor(const CodeFile* file, NodeBase::istreamPtr& input);
 
@@ -76,17 +77,17 @@ public:
    //  in which case EXPL provides an explanation.
    //
    word Format(string& expl);
-private:
-   //  Reads the source code.  If an error occurs, a non-zero value is returned
-   //  and EXPL is updated with an explanation.
-   //
-   word Read(string& expl);
 
-   //  Writes out the file to PATH if it was changed during editing.  Returns 0
-   //  if the file had not been changed, 1 if it was successfully written, and
-   //  -1 if an error occurred.
+   //  Returns the log, if any, whoe .warning and .offset match those of LOG
+   //  and whose .item matches ITEM.
    //
-   word Write(const string& path, string& expl);
+   WarningLog* FindLog(const WarningLog& log, const CxxNamed* item);
+private:
+   //  Writes out the editor's file.  Returns 0 if the file was successfully
+   //  written; other values indicate failure.  Updates EXPL with a reason
+   //  for any failure or a message that indicates which file was written.
+   //
+   word Write(string& expl);
 
    //  Returns the status of LOG.
    //  o NotFixed: will try to fix
@@ -108,6 +109,11 @@ private:
    //
    word FixWarning(const WarningLog& log, string& expl);
 
+   //  Invokes FixWarning if LOG's status is NotFixed and updates its status
+   //  to Pending on success.
+   //
+   word FixLog(WarningLog& log, string& expl);
+
    //  Most of the editing functions attempt to fix the warning reported in LOG,
    //  returning 0 on success.  Any other result indicates an error, in which
    //  case EXPL provides an explanation.  A return value of -1 means that the
@@ -123,18 +129,19 @@ private:
    word EraseAccessControl(const WarningLog& log, string& expl);
    word EraseBlankLine(const WarningLog& log, string& expl);
    word EraseConst(const WarningLog& log, string& expl);
+   word EraseEnumerator(const WarningLog& log, string& expl);
    word EraseForward(const WarningLog& log, string& expl);
-   word EraseInclude(const WarningLog& log, string& expl);
    bool EraseLineBreak(const WarningLog& log, string& expl);
    word EraseMutableTag(const WarningLog& log, string& expl);
+   word EraseNoexceptTag(const WarningLog& log, string& expl);
    word EraseOverrideTag(const WarningLog& log, string& expl);
    word EraseSemicolon(const WarningLog& log, string& expl);
-   word EraseUsing(const WarningLog& log, string& expl);
    word EraseVirtualTag(const WarningLog& log, string& expl);
    word EraseVoidArgument(const WarningLog& log, string& expl);
    word InitByConstructor(const WarningLog& log, string& expl);
    word InsertBlankLine(const WarningLog& log, string& expl);
    word InsertDebugFtCall(const WarningLog& log, string& expl);
+   word InsertDefaultFunction(const WarningLog& log, string& expl);
    word InsertForward(const WarningLog& log, string& expl);
    word InsertInclude(const WarningLog& log, string& expl);
    word InsertIncludeGuard(const WarningLog& log, string& expl);
@@ -151,8 +158,41 @@ private:
    word TagAsConstReference(const WarningLog& log, string& expl);
    word TagAsDefaulted(const WarningLog& log, string& expl);
    word TagAsExplicit(const WarningLog& log, string& expl);
+   word TagAsNoexcept(const WarningLog& log, string& expl);
    word TagAsOverride(const WarningLog& log, string& expl);
    word TagAsStaticFunction(const WarningLog& log, string& expl);
+
+   //  If LOG.ITEM is data or a function that has both a declaration and a
+   //  definition, returns the editor for the mate's file and updates mateLog
+   //  to the corresponding log on the mate.  This is used when both the
+   //  declaration and definition must be changed to fix a log (e.g. when
+   //  making a function const).
+   //
+   Editor* FindMateLog
+      (const WarningLog& log, WarningLog*& mateLog, std::string& expl) const;
+
+   //  Fixes LOG in LOG.ITEM's other appearance when a declaration and
+   //  definition are distinct.  Updates EXPL with the result.  EXPL
+   //  should already explain the outcome of fixing LOG.
+   //
+   word FixMate(const WarningLog& log, std::string& expl) const;
+
+   //  If LOG.ITEM is not in this file, invokes Fix on the editor for
+   //  its file.  Returns WORD_MAX if LOG.ITEM *is* in this file.
+   //
+   word FixRoot(const WarningLog& log, std::string& expl) const;
+
+   //  Erases the line of code referenced by LOG.
+   //
+   word EraseCode(const WarningLog& log, string& expl);
+
+   //  Erases the line of code referenced by LOG.  Comments on preceding
+   //  lines, up to the next line of code, are also erased if a comment or
+   //  right brace follows the erased code.  DELIMITERS are the characters
+   //  where the code ends.
+   //
+   word EraseCode
+      (const WarningLog& log, const std::string& delimiters, string& expl);
 
    //  Sorts #include directives in standard order.
    //
@@ -225,7 +265,7 @@ private:
 
    //  Reads in the file's source code.
    //
-   word GetCode(string& expl);
+   word GetCode();
 
    //  Adds a line of source code from the file.  NEVER used to add new code.
    //
@@ -281,6 +321,22 @@ private:
    //
    CodeLocation FindFirstOf(Iter iter, size_t off, const string& chars);
 
+   //  If LOG.ITEM is a function, returns the location of the right
+   //  parenthesis at the end of the function's argument list.  Returns
+   //  {source_.end(), string::npos} on failure.
+   //
+   CodeLocation FindArgsEnd(const WarningLog& log);
+
+   //  If LOG.ITEM is a function, returns the location of the semicolon
+   //  at the end of its declaration or the left brace at the end of its
+   //  signature.  Returns {source_.end(), string::npos} on failure.
+   //
+   CodeLocation FindSigEnd(const WarningLog& log);
+
+   //  Returns the line that follows FUNC.
+   //
+   Iter FindFuncEnd(const Function* func);
+
    //  Inserts CODE at ITER and returns its location.
    //
    Iter Insert(Iter iter, const string& code);
@@ -304,6 +360,22 @@ private:
    //
    bool EraseLineBreak(const Iter& curr);
 
+   //  Indicates where a blank line should be added when inserting new code.
+   //
+   enum BlankLineLocation
+   {
+      BlankNone,
+      BlankBefore,
+      BlankAfter
+   };
+
+   //  Returns the location where code to fix LOG should be inserted.  Sets
+   //  INDENT to the number of spaces that the code should be indented and
+   //  BLANK to where a blank line should be added to set off the code.
+   //
+   Iter FindInsertionPoint
+      (const WarningLog& log, size_t& indent, BlankLineLocation& blank);
+
    //  Returns the first line that follows comments and blanks.
    //
    Iter PrologEnd();
@@ -324,6 +396,10 @@ private:
    //  begin.
    //
    Iter CodeBegin();
+
+   //  Returns true if a comment or brace follows the code referenced by ITER.
+   //
+   const bool CommentOrBraceFollows(Iter iter) const;
 
    //  If INCLUDE specifies a file in groups 1 to 4 (see CodeFile.CalcGroup),
    //  this simplifies sorting by replacing the characters that enclose the
@@ -378,11 +454,11 @@ private:
    static void DebugFtCode
       (const Function* func, std::string& defn, std::string& call);
 
-   //  Sets changed_ and returns 0.
+   //  Adds the editor to Editors_ and returns 0.
    //
    word Changed();
 
-   //  Sets EXPL to iter->code, sets changed_, and returns 0.
+   //  Sets EXPL to iter->code, adds the editor to Editors_, and returns 0.
    //
    word Changed(const Iter& iter, std::string& expl);
 
@@ -407,16 +483,10 @@ private:
    //
    SourceList source_;
 
-   //  The result of loading the source code and warnings:
-   //  o 1: source code and warnings have not been Read()
-   //  o 0: Read() was successful
-   //  o others: result of unsuccessful Read()
+   //  The result of reading the source code.  A non-zero value
+   //  indicates that an error occurred when reading the code.
    //
    word read_;
-
-   //  Set if the source code has been altered.
-   //
-   bool changed_;
 
    //  Set if the #include directives have been sorted.
    //
@@ -430,6 +500,13 @@ private:
    //  The file's warnings.
    //
    WarningLogVector warnings_;
+
+   //  The editors that have modified their original code.  This allows an
+   //  editor to modify other files (e.g. when a fix requires changes in
+   //  both a function's declaration and definition).  After the changes
+   //  have been made, all modified files can be committed.
+   //
+   static std::set< Editor* > Editors_;
 };
 }
 #endif

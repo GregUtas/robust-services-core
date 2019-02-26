@@ -109,6 +109,7 @@ namespace Cxx
       REINTERPRET_CAST,         // reinterpret_cast< t >(a)
       STATIC_CAST,              // static_cast< t >(a)
       SIZEOF_TYPE,              // sizeof(a)
+      NOEXCEPT,                 // noexcept(expr)
       PREFIX_INCREMENT,         // ++i
       PREFIX_DECREMENT,         // --i
       ONES_COMPLEMENT,          // ~i

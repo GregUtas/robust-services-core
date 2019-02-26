@@ -57,7 +57,7 @@ class ObjectPool : public Protected
 public:
    //> Highest valid object pool identifier.
    //
-   static const ObjectPoolId MaxId = UINT8_MAX;
+   static const ObjectPoolId MaxId = 250;
 
    //> The maximum number of segments in an object pool.
    //

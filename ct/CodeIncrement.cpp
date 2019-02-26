@@ -819,7 +819,7 @@ public: PromptParm();
 
 fixed_string PromptExpl = "prompt before fixing?";
 
-PromptParm::PromptParm() : CliBoolParm(PromptExpl, true) { }
+PromptParm::PromptParm() : CliBoolParm(PromptExpl) { }
 
 class FixCommand : public LibraryCommand
 {

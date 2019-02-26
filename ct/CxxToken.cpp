@@ -1352,6 +1352,14 @@ void Operation::Execute() const
       PushType("size_t");
       return;
 
+   case Cxx::NOEXCEPT:
+      //
+      //  Push a bool result.
+      //
+      arg1.WasRead();
+      PushType("bool");
+      return;
+
    case Cxx::ONES_COMPLEMENT:
    case Cxx::UNARY_PLUS:
    case Cxx::UNARY_MINUS:
@@ -2185,6 +2193,7 @@ void Operation::Print(ostream& stream, const Flags& options) const
 
    case Cxx::TYPE_NAME:
    case Cxx::SIZEOF_TYPE:
+   case Cxx::NOEXCEPT:
       stream << attrs.symbol;
       stream << '(';
       DisplayArg(stream, 0);

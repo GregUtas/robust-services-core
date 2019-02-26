@@ -10,8 +10,8 @@ namespace std
    class exception
    {
    public:
-      exception();
-      virtual ~exception();
+      exception() noexcept;
+      virtual ~exception() noexcept;
       virtual const char* what() const noexcept;
    };
 

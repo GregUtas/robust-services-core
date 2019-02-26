@@ -1271,6 +1271,10 @@ private:
    //
    void AddThisArg();
 
+   //  Returns true if the function could be "noexcept".
+   //
+   bool CanBeNoexcept() const;
+
    //  Checks if the function could be tagged "noexcept".
    //
    void CheckNoexcept() const;

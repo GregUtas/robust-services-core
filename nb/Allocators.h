@@ -102,7 +102,7 @@ template< typename T > struct DynAllocator
       return static_cast< T* >(addr);
    }
 
-   void deallocate(T* const addr, size_t n) const noexcept
+   void deallocate(T* const addr, size_t n) const
    {
       Memory::Free(addr);
    }
@@ -145,7 +145,7 @@ template< typename T > struct ImmAllocator
       return static_cast< T* >(addr);
    }
 
-   void deallocate(T* const addr, size_t n) const noexcept
+   void deallocate(T* const addr, size_t n) const
    {
       Memory::Free(addr);
    }
@@ -188,7 +188,7 @@ template< typename T > struct PermAllocator
       return static_cast< T* >(addr);
    }
 
-   void deallocate(T* const addr, size_t n) const noexcept
+   void deallocate(T* const addr, size_t n) const
    {
       Memory::Free(addr);
    }
@@ -231,7 +231,7 @@ template< typename T > struct ProtAllocator
       return static_cast< T* >(addr);
    }
 
-   void deallocate(T* const addr, size_t n) const noexcept
+   void deallocate(T* const addr, size_t n) const
    {
       Memory::Free(addr);
    }
@@ -274,7 +274,7 @@ template< typename T > struct TempAllocator
       return static_cast< T* >(addr);
    }
 
-   void deallocate(T* const addr, size_t n) const noexcept
+   void deallocate(T* const addr, size_t n) const
    {
       Memory::Free(addr);
    }

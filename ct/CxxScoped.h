@@ -455,6 +455,10 @@ public:
    //
    Enumerator* FindEnumerator(const std::string& name) const;
 
+   //  Returns all of the enumerators.
+   //
+   const EnumeratorPtrVector& Etors() const { return etors_; }
+
    //  Overridden to set the type for an "auto" variable.
    //
    virtual CxxToken* AutoType() const override { return (CxxToken*) this; }
@@ -564,7 +568,7 @@ public:
 
    //  Overridden to set the type for an "auto" variable.
    //
-   virtual CxxToken* AutoType() const override { return (CxxNamed*) enum_; }
+   virtual CxxToken* AutoType() const override { return (CxxToken*) enum_; }
 
    //  Overridden to log warnings associated with the enumerator.
    //

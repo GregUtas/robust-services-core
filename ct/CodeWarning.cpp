@@ -428,9 +428,12 @@ void CodeWarning::Initialize()
    Attrs.insert(WarningPair(InitCouldUseConstructor,
       CodeWarning(T, R, F,
       "Initialization uses assignment operator")));
-   Attrs.insert(WarningPair(FunctionCouldBeNoexcept,
+   Attrs.insert(WarningPair(CouldBeNoexcept,
       CodeWarning(T, I, F,
       "Function could be tagged noexcept")));
+   Attrs.insert(WarningPair(ShouldNotBeNoexcept,
+      CodeWarning(T, I, F,
+      "Function should not be tagged noexcept")));
    Attrs.insert(WarningPair(UseOfSlashAsterisk,
       CodeWarning(T, R, F,
       "C-style comment")));

@@ -46,7 +46,7 @@ public:
 
    //  Returns the stream that contains the call stack.
    //
-   std::ostringstream* Stack() const noexcept { return stack_.get(); }
+   std::ostringstream* Stack() const { return stack_.get(); }
 protected:
    //  Captures the call stack in stack_ if STACK is true.  DEPTH is the level
    //  of subclassing (1 for a direct subclass from Exception), which is used

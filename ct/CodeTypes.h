@@ -474,7 +474,8 @@ enum Warning
    PatchNotOverridden,       // class does not override Object.Patch
    FunctionCouldBeDefaulted, // empty special member function defined
    InitCouldUseConstructor,  // initialization uses oper= instead of constructor
-   FunctionCouldBeNoexcept,  // function could be tagged noexcept
+   CouldBeNoexcept,          // function could be tagged noexcept
+   ShouldNotBeNoexcept,      // function should not be tagged noexcept
    UseOfSlashAsterisk,       // use of /* */ comment
    RemoveLineBreak,          // next line can be merged within length limit
    Warning_N                 // number of warnings

@@ -2021,6 +2021,46 @@ TypeMatch Function::CalcConstructibilty
 
 //------------------------------------------------------------------------------
 
+fn_name Function_CanBeNoexcept = "Function.CanBeNoexcept";
+
+bool Function::CanBeNoexcept() const
+{
+   Debug::ft(Function_CanBeNoexcept);
+
+   //  This is deliberately simple, only suggesting that a defaulted or empty
+   //  function can be noexcept.  If the function is in a derived class, then
+   //  it must also be noexcept in the base class, transitively.
+   //
+   auto defn = GetDefn();
+   auto can = defn->defaulted_;
+
+   if(!can && (defn->impl_ != nullptr))
+   {
+      can = (defn->impl_->FirstStatement() == nullptr);
+   }
+
+   if(!can) return false;
+
+   auto role = FuncRole();
+
+   for(auto f = FindBaseFunc(); f != nullptr; f = f->FindBaseFunc())
+   {
+      //  If a virtual function is noexcept, derived functions *must* either
+      //  be noexcept or deleted.
+      //
+      if(f->noexcept_)
+      {
+         if((role == PureDtor) || (role == FuncOther)) return true;
+      }
+
+      if(!f->CanBeNoexcept()) return false;
+   }
+
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Function_CanInvokeWith = "Function.CanInvokeWith";
 
 Function* Function::CanInvokeWith
@@ -2716,29 +2756,15 @@ void Function::CheckNoexcept() const
 {
    Debug::ft(Function_CheckNoexcept);
 
-   //  This is deliberately simple, only suggesting that a defaulted or empty
-   //  function in a non-base class, or a simple destructor, be noexcept.
-   //
-   if(!noexcept_)
+   auto can = CanBeNoexcept();
+
+   if(noexcept_)
    {
-      if(FuncType() != FuncDtor)
-      {
-         auto cls = GetClass();
-         if((cls != nullptr) && !cls->Subclasses()->empty()) return;
-      }
-
-      auto defn = GetDefn();
-
-      if(defn->defaulted_)
-      {
-         LogToBoth(FunctionCouldBeNoexcept);
-         return;
-      }
-
-      if((defn->impl_ != nullptr) && (defn->impl_->FirstStatement() == nullptr))
-      {
-         LogToBoth(FunctionCouldBeNoexcept);
-      }
+      if(!can) LogToBoth(ShouldNotBeNoexcept);
+   }
+   else
+   {
+      if(can) LogToBoth(CouldBeNoexcept);
    }
 }
 
@@ -3186,7 +3212,8 @@ Function* Function::FindBaseFunc() const
    if(cls == nullptr) return nullptr;
 
    //  For a constructor, base_ is set to the constructor invoked in the
-   //  member initialization list (see WasCalled).
+   //  member initialization list or the base constructor that is invoked
+   //  implicitly (see WasCalled).
    //
    switch(FuncType())
    {

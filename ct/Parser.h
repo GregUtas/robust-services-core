@@ -572,6 +572,7 @@ private:
    bool GetDefined(ExprPtr& expr);
    bool GetDelete(ExprPtr& expr, Cxx::Operator op);
    bool GetNew(ExprPtr& expr, Cxx::Operator op);
+   bool GetNoExcept(ExprPtr& expr);
    bool GetSizeOf(ExprPtr& expr);
    bool GetThrow(ExprPtr& expr);
    bool GetTypeId(ExprPtr& expr);

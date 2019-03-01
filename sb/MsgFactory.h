@@ -38,7 +38,7 @@ class MsgFactory : public Factory
 public:
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Protected because this is class is virtual.
    //
@@ -50,7 +50,7 @@ protected:
 
    //  Overridden to create a MsgContext.
    //
-   virtual Context* AllocContext() const override;
+   Context* AllocContext() const override;
 
    //  Captures the arrival of MSG at CTX.  TT is the record, if any, that
    //  was created to record the work.
@@ -61,7 +61,7 @@ protected:
    //  Must NOT be overridden by applications.  Protected to restrict
    //  usage.
    //
-   virtual Rc ReceiveMsg
+   Rc ReceiveMsg
       (Message& msg, bool atIoLevel, TransTrace* tt, Context*& ctx) override;
 private:
    //  Handles an incoming message in a stateless context.  The default

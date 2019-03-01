@@ -71,11 +71,11 @@ public:
 
    //  Overridden to clean up at the end of a test.
    //
-   virtual void EventOccurred(Event evt) override;
+   void EventOccurred(Event evt) override;
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
    //  Private to restrict creation to the Access function.

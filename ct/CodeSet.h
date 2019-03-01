@@ -44,19 +44,19 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Override the operators supported by both directories and files.
    //
-   virtual LibrarySet* Assign(LibrarySet* rhs) override;
-   virtual LibrarySet* Difference(const LibrarySet* rhs) const override;
-   virtual LibrarySet* Intersection(const LibrarySet* rhs) const override;
-   virtual LibrarySet* Union(const LibrarySet* rhs) const override;
+   LibrarySet* Assign(LibrarySet* rhs) override;
+   LibrarySet* Difference(const LibrarySet* rhs) const override;
+   LibrarySet* Intersection(const LibrarySet* rhs) const override;
+   LibrarySet* Union(const LibrarySet* rhs) const override;
 
    //  Updates STREAM with the number of files in the set and returns 0.
    //
-   virtual NodeBase::word Count(std::string& result) const override;
+   NodeBase::word Count(std::string& result) const override;
 protected:
    //  Creates a set that is identified by NAME.  SET is the actual set, if
    //  known.  Protected because this class is virtual.
@@ -69,7 +69,7 @@ protected:
 private:
    //  Overridden to allow assignment.
    //
-   virtual NodeBase::word PreAssign(std::string& expl) const override
+   NodeBase::word PreAssign(std::string& expl) const override
       { return 0; }
 
    //  The set's contents.

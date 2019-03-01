@@ -73,7 +73,7 @@ class TrafficCommand : public CliCommand
 public:
    TrafficCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string TrafficProfileTextStr = "profile";

@@ -52,8 +52,8 @@ class TransTraceTool : public Tool
    friend class Singleton< TransTraceTool >;
 private:
    TransTraceTool() : Tool(TransTracer, 't', true) { }
-   virtual const char* Name() const override { return TransTraceToolName; }
-   virtual const char* Expl() const override { return TransTraceToolExpl; }
+   const char* Name() const override { return TransTraceToolName; }
+   const char* Expl() const override { return TransTraceToolExpl; }
 };
 
 //------------------------------------------------------------------------------
@@ -66,8 +66,8 @@ class BufferTraceTool : public Tool
    friend class Singleton< BufferTraceTool >;
 private:
    BufferTraceTool() : Tool(BufferTracer, 'b', true) { }
-   virtual const char* Name() const override { return BufferTraceToolName; }
-   virtual const char* Expl() const override { return BufferTraceToolExpl; }
+   const char* Name() const override { return BufferTraceToolName; }
+   const char* Expl() const override { return BufferTraceToolExpl; }
 };
 
 //------------------------------------------------------------------------------
@@ -80,8 +80,8 @@ class ContextTraceTool : public Tool
    friend class Singleton< ContextTraceTool >;
 private:
    ContextTraceTool() : Tool(ContextTracer, 'c', true) { }
-   virtual const char* Name() const override { return ContextTraceToolName; }
-   virtual const char* Expl() const override { return ContextTraceToolExpl; }
+   const char* Name() const override { return ContextTraceToolName; }
+   const char* Expl() const override { return ContextTraceToolExpl; }
 };
 
 //------------------------------------------------------------------------------

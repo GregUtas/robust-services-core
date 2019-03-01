@@ -71,12 +71,12 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Sets the corresponding member variables and initializes all other
    //  fields to default values.  Registers the state against SID and

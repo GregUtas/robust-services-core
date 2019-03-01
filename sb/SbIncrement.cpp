@@ -271,7 +271,7 @@ class ContextsCommand : public CliCommand
 public:
    ContextsCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string ContextsStr = "contexts";
@@ -315,7 +315,7 @@ class EventsCommand : public CliCommand
 public:
    EventsCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string EventsStr = "events";
@@ -462,7 +462,7 @@ class FactoriesCommand : public CliCommand
 public:
    FactoriesCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string FactoriesStr = "factories";
@@ -518,7 +518,7 @@ class HandlersCommand : public CliCommand
 public:
    HandlersCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string HandlersStr = "handlers";
@@ -659,7 +659,7 @@ class InvPoolsCommand : public CliCommand
 public:
    InvPoolsCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string InvPoolsStr = "invpools";
@@ -720,7 +720,7 @@ class KillCommand : public CliCommand
 public:
    KillCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string PsmPtrText = "pointer to a PSM";
@@ -762,7 +762,7 @@ class MessagesCommand : public CliCommand
 public:
    MessagesCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string MessagesStr = "messages";
@@ -857,7 +857,7 @@ class MsgPortsCommand : public CliCommand
 public:
    MsgPortsCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string MsgPortsStr = "msgports";
@@ -941,7 +941,7 @@ class ParametersCommand : public CliCommand
 public:
    ParametersCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string ParametersStr = "parameters";
@@ -1013,7 +1013,7 @@ class ProtocolsCommand : public CliCommand
 public:
    ProtocolsCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string ProtocolsStr = "protocols";
@@ -1069,7 +1069,7 @@ class PsmsCommand : public CliCommand
 public:
    PsmsCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string PsmsStr = "psms";
@@ -1174,7 +1174,7 @@ class ServicesCommand : public CliCommand
 public:
    ServicesCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string ServicesStr = "services";
@@ -1230,7 +1230,7 @@ class SignalsCommand : public CliCommand
 public:
    SignalsCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string SignalsStr = "signals";
@@ -1301,7 +1301,7 @@ class SsmsCommand : public CliCommand
 public:
    SsmsCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string SsmsStr = "ssms";
@@ -1385,7 +1385,7 @@ class StatesCommand : public CliCommand
 public:
    StatesCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string StatesStr = "states";
@@ -1512,7 +1512,7 @@ class TimersCommand : public CliCommand
 public:
    TimersCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string TimersStr = "timers";
@@ -1598,7 +1598,7 @@ class TriggersCommand : public CliCommand
 public:
    TriggersCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string TriggersStr = "triggers";

@@ -55,12 +55,12 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Starts a timer on PSM, owned by OWNER, identified by TID, that will
    //  expire in SECS, and repeatedly if REPEAT is true.  Private because
@@ -101,7 +101,7 @@ private:
    //  Overridden to remove the timer from the timer registry during error
    //  recovery.
    //
-   virtual void Cleanup() override;
+   void Cleanup() override;
 
    //  Overridden to obtain a timer from its object pool.
    //

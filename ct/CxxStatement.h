@@ -40,7 +40,7 @@ class CxxStatement : public CxxToken
 {
 public:
    virtual ~CxxStatement() = default;
-   virtual void EnterBlock() override;
+   void EnterBlock() override;
 protected:
    explicit CxxStatement(size_t pos);
 private:
@@ -56,12 +56,11 @@ class Condition : public CxxStatement
 public:
    virtual ~Condition() = default;
    void AddCondition(ExprPtr& c) { condition_ = std::move(c); }
-   virtual void Print
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   virtual void EnterBlock() override;
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
-   virtual void Shrink() override { ShrinkExpression(condition_); }
+   void EnterBlock() override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void Shrink() override { ShrinkExpression(condition_); }
 protected:
    explicit Condition(size_t pos);
    bool Show(std::ostream& stream) const;
@@ -78,9 +77,9 @@ class Break : public CxxStatement
 public:
    explicit Break(size_t pos);
    ~Break() { CxxStats::Decr(CxxStats::BREAK); }
-   virtual void Print
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   virtual void EnterBlock() override { }
+   void EnterBlock() override { }
 };
 
 //------------------------------------------------------------------------------
@@ -92,13 +91,12 @@ class Case : public CxxStatement
 public:
    Case(ExprPtr& expression, size_t pos);
    ~Case() { CxxStats::Decr(CxxStats::CASE); }
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
-   virtual void EnterBlock() override;
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
-   virtual bool InLine() const override { return false; }
-   virtual void Shrink() override { ShrinkExpression(expr_); }
+   void EnterBlock() override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   bool InLine() const override { return false; }
+   void Shrink() override { ShrinkExpression(expr_); }
 private:
    const ExprPtr expr_;
 };
@@ -114,15 +112,14 @@ public:
    ~Catch() { CxxStats::Decr(CxxStats::CATCH); }
    void AddArg(ArgumentPtr& a) { arg_ = std::move(a); }
    void AddHandler(BlockPtr& b) { handler_ = std::move(b); }
-   virtual void Check() const override;
-   virtual void Display(std::ostream& stream,
+   void Check() const override;
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
-   virtual void EnterBlock() override;
-   virtual void ExitBlock() override;
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
-   virtual bool InLine() const override { return false; }
-   virtual void Shrink() override;
+   void EnterBlock() override;
+   void ExitBlock() override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   bool InLine() const override { return false; }
+   void Shrink() override;
 private:
    ArgumentPtr arg_;
    BlockPtr handler_;
@@ -137,9 +134,9 @@ class Continue : public CxxStatement
 public:
    explicit Continue(size_t pos);
    ~Continue() { CxxStats::Decr(CxxStats::CONTINUE); }
-   virtual void Print
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   virtual void EnterBlock() override { }
+   void EnterBlock() override { }
 };
 
 //------------------------------------------------------------------------------
@@ -152,16 +149,15 @@ public:
    explicit Do(size_t pos);
    ~Do() { CxxStats::Decr(CxxStats::DO); }
    void AddLoop(BlockPtr& b) { loop_ = std::move(b); }
-   virtual void Check() const override;
-   virtual void Print
+   void Check() const override;
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
-   virtual void EnterBlock() override;
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
-   virtual bool InLine() const override;
-   virtual void Shrink() override;
+   void EnterBlock() override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   bool InLine() const override;
+   void Shrink() override;
 private:
    BlockPtr loop_;
 };
@@ -175,12 +171,11 @@ class Expr : public CxxStatement
 public:
    Expr(ExprPtr& expression, size_t pos);
    ~Expr() { CxxStats::Decr(CxxStats::EXPR); }
-   virtual void Print
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   virtual void EnterBlock() override;
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
-   virtual void Shrink() override { ShrinkExpression(expr_); }
+   void EnterBlock() override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void Shrink() override { ShrinkExpression(expr_); }
 private:
    const ExprPtr expr_;
 };
@@ -197,17 +192,16 @@ public:
    void AddInitial(TokenPtr& i) { initial_ = std::move(i); }
    void AddSubsequent(ExprPtr& s) { subsequent_ = std::move(s); }
    void AddLoop(BlockPtr& b) { loop_ = std::move(b); }
-   virtual void Check() const override;
-   virtual void Print
+   void Check() const override;
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
-   virtual void EnterBlock() override;
-   virtual void ExitBlock() override;
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
-   virtual bool InLine() const override;
-   virtual void Shrink() override;
+   void EnterBlock() override;
+   void ExitBlock() override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   bool InLine() const override;
+   void Shrink() override;
 private:
    TokenPtr initial_;
    ExprPtr subsequent_;
@@ -226,17 +220,16 @@ public:
    void AddThen(BlockPtr& b) { then_ = std::move(b); }
    void AddElse(BlockPtr& b) { else_ = std::move(b); }
    void SetElseIf() { elseif_ = true; }
-   virtual void Check() const override;
-   virtual void Print
+   void Check() const override;
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
-   virtual void EnterBlock() override;
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
-   virtual bool InLine() const override;
-   virtual void Shrink() override;
-   virtual Cxx::ItemType Type() const override { return Cxx::If; }
+   void EnterBlock() override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   bool InLine() const override;
+   void Shrink() override;
+   Cxx::ItemType Type() const override { return Cxx::If; }
 private:
    BlockPtr then_;
    BlockPtr else_;
@@ -252,12 +245,12 @@ class Label : public CxxStatement
 public:
    Label(std::string& name, size_t pos);
    ~Label() { CxxStats::Decr(CxxStats::LABEL); }
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
-   virtual void EnterBlock() override;
-   virtual void ExitBlock() override;
-   virtual bool InLine() const override { return false; }
-   virtual void Shrink() override { name_.shrink_to_fit(); }
+   void EnterBlock() override;
+   void ExitBlock() override;
+   bool InLine() const override { return false; }
+   void Shrink() override { name_.shrink_to_fit(); }
 private:
    std::string name_;
 };
@@ -271,13 +264,13 @@ class NoOp : public CxxStatement
 public:
    explicit NoOp(size_t pos);
    ~NoOp() { CxxStats::Decr(CxxStats::NOOP); }
-   virtual void Print
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
-   virtual void EnterBlock() override { }
-   virtual bool InLine() const override { return true; }
-   virtual Cxx::ItemType Type() const override { return Cxx::NoOp; }
+   void EnterBlock() override { }
+   bool InLine() const override { return true; }
+   Cxx::ItemType Type() const override { return Cxx::NoOp; }
 };
 
 //------------------------------------------------------------------------------
@@ -290,12 +283,11 @@ public:
    explicit Return(size_t pos);
    ~Return() { CxxStats::Decr(CxxStats::RETURN); }
    void AddExpr(ExprPtr& e) { expr_ = std::move(e); }
-   virtual void Print
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   virtual void EnterBlock() override;
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
-   virtual void Shrink() override { ShrinkExpression(expr_); }
+   void EnterBlock() override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void Shrink() override { ShrinkExpression(expr_); }
 private:
    ExprPtr expr_;
 };
@@ -311,14 +303,13 @@ public:
    ~Switch() { CxxStats::Decr(CxxStats::SWITCH); }
    void AddExpr(ExprPtr& e) { expr_ = std::move(e); }
    void AddCases(BlockPtr& b) { cases_ = std::move(b); }
-   virtual void Check() const override;
-   virtual void Display(std::ostream& stream,
+   void Check() const override;
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
-   virtual void EnterBlock() override;
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
-   virtual bool InLine() const override { return false; }
-   virtual void Shrink() override;
+   void EnterBlock() override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   bool InLine() const override { return false; }
+   void Shrink() override;
 private:
    ExprPtr expr_;
    BlockPtr cases_;
@@ -335,15 +326,14 @@ public:
    ~Try() { CxxStats::Decr(CxxStats::TRY); }
    void AddTry(BlockPtr& b) { try_ = std::move(b); }
    void AddCatch(TokenPtr& t) { catches_.push_back(std::move(t)); }
-   virtual void Check() const override;
-   virtual void Display(std::ostream& stream,
+   void Check() const override;
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
-   virtual void EnterBlock() override;
-   virtual void ExitBlock() override;
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
-   virtual bool InLine() const override { return false; }
-   virtual void Shrink() override;
+   void EnterBlock() override;
+   void ExitBlock() override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   bool InLine() const override { return false; }
+   void Shrink() override;
 private:
    BlockPtr try_;
    TokenPtrVector catches_;
@@ -359,16 +349,15 @@ public:
    explicit While(size_t pos);
    ~While() { CxxStats::Decr(CxxStats::WHILE); }
    void AddLoop(BlockPtr& b) { loop_ = std::move(b); }
-   virtual void Check() const override;
-   virtual void Print
+   void Check() const override;
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
-   virtual void EnterBlock() override;
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
-   virtual bool InLine() const override;
-   virtual void Shrink() override;
+   void EnterBlock() override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   bool InLine() const override;
+   void Shrink() override;
 private:
    BlockPtr loop_;
 };

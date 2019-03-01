@@ -201,15 +201,15 @@ public:
 
    //  Overridden to inspect the message's contents.
    //
-   virtual InspectRc InspectMsg(debug32_t& errval) const override;
+   InspectRc InspectMsg(debug32_t& errval) const override;
 
    //  Overridden to check the fence pattern before sending the message.
    //
-   virtual bool Send(Message::Route route) override;
+   bool Send(Message::Route route) override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 
    //> The byte alignment used for messages in this network.  The default
    //  value pads the header and parameters to a multiple of four bytes.
@@ -292,7 +292,7 @@ protected:
 private:
    //  Overridden to change the message's direction.
    //
-   virtual void ChangeDir(MsgDirection nextDir) override;
+   void ChangeDir(MsgDirection nextDir) override;
 
    //  See the comment in Singleton.h about an fn_name in a template header.
    //

@@ -56,18 +56,18 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
    //  Overridden to return the event itself: a Media Failure event is
    //  passed to modifiers in its original form.
    //
-   virtual Event* BuildSap(ServiceSM& owner, TriggerId tid) override;
+   Event* BuildSap(ServiceSM& owner, TriggerId tid) override;
 
    //  Overridden to return nullptr: notification is not provided after
    //  a media failure.
    //
-   virtual Event* BuildSnp(ServiceSM& owner, TriggerId tid) override;
+   Event* BuildSnp(ServiceSM& owner, TriggerId tid) override;
 
    //  The MEP on which the media failure occurred.
    //

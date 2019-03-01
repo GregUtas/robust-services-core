@@ -38,7 +38,7 @@ class FileList
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~FileList() { }
+   virtual ~FileList() = default;
 
    //  Sets fileName to the name of the current file (without a path prefix).
    //  Clears fileName if NextFile has returned false because no files remain.
@@ -60,7 +60,7 @@ public:
 protected:
    //  Protected because this class is virtual.
    //
-   FileList() { }
+   FileList() = default;
 };
 
 //  For iterating over files.

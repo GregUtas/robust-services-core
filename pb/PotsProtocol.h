@@ -111,7 +111,7 @@ protected:
 
    //  Protected because subclasses should be singletons.
    //
-   virtual ~PotsSignal();
+   virtual ~PotsSignal() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -139,7 +139,7 @@ protected:
 
    //  Protected because subclasses should be singletons.
    //
-   virtual ~PotsParameter();
+   virtual ~PotsParameter() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -415,7 +415,7 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
    //  Private to restrict deletion.  Not subclassed.
@@ -424,27 +424,27 @@ private:
 
    //  Overridden to allocate a message when a media update is required.
    //
-   virtual void EnsureMediaMsg() override;
+   void EnsureMediaMsg() override;
 
    //  Overridden to return the route for outgoing messages.
    //
-   virtual Message::Route Route() const override;
+   Message::Route Route() const override;
 
    //  Overridden to handle an incoming message.
    //
-   virtual IncomingRc ProcessIcMsg(Message& msg, Event*& event) override;
+   IncomingRc ProcessIcMsg(Message& msg, Event*& event) override;
 
    //  Overridden to handle an outgoing message.
    //
-   virtual OutgoingRc ProcessOgMsg(Message& msg) override;
+   OutgoingRc ProcessOgMsg(Message& msg) override;
 
    //  Overridden to send a final message if the PSM's context dies.
    //
-   virtual void SendFinalMsg() override;
+   void SendFinalMsg() override;
 
    //  Overridden to inject a final message if the PSM's peer dies.
    //
-   virtual void InjectFinalMsg() override;
+   void InjectFinalMsg() override;
 
    //  An empty message that will be finalized and sent at the end
    //  of the transaction.

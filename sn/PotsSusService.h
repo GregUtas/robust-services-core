@@ -37,9 +37,9 @@ class PotsSusInitiator : public Initiator
 {
 protected:
    PotsSusInitiator(TriggerId tid, Initiator::Priority prio);
-   virtual ~PotsSusInitiator() { }
+   virtual ~PotsSusInitiator() = default;
 private:
-   virtual EventHandler::Rc ProcessEvent(const ServiceSM& parentSsm,
+   EventHandler::Rc ProcessEvent(const ServiceSM& parentSsm,
       Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -61,7 +61,7 @@ class PotsSusService : public Service
 private:
    PotsSusService();
    ~PotsSusService();
-   virtual ServiceSM* AllocModifier() const override;
+   ServiceSM* AllocModifier() const override;
 };
 }
 #endif

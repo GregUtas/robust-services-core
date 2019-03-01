@@ -223,7 +223,7 @@ class IpCommand : public CliCommand
 public:
    IpCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string AddrToNameTextStr = "addrtoname";
@@ -322,7 +322,7 @@ class IpPortsCommand : public CliCommand
 public:
    IpPortsCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string IpPortsStr = "ipports";

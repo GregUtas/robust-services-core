@@ -39,7 +39,7 @@ class MsgContext : public Context
 public:
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Protected to restrict creation.
    //
@@ -51,15 +51,15 @@ protected:
 
    //  Returns the type of context.
    //
-   virtual ContextType Type() const override { return SingleMsg; }
+   ContextType Type() const override { return SingleMsg; }
 
    //  Overridden to flag the context message as handled.
    //
-   virtual void EndOfTransaction() override;
+   void EndOfTransaction() override;
 private:
    //  Overridden to handle the arrival of MSG.
    //
-   virtual void ProcessIcMsg(Message& msg) override;
+   void ProcessIcMsg(Message& msg) override;
 };
 }
 #endif

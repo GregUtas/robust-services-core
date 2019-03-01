@@ -109,7 +109,7 @@ class ActivateCommand : public CliCommand
 public:
    ActivateCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string ActivateStr = "activate";
@@ -152,7 +152,7 @@ class CodesCommand : public CliCommand
 public:
    CodesCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string CodesStr = "codes";
@@ -181,7 +181,7 @@ class DeactivateCommand : public CliCommand
 public:
    DeactivateCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string DeactivateStr = "deactivate";
@@ -227,7 +227,7 @@ class DeregisterCommand : public CliCommand
 public:
    DeregisterCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string DeregisterStr = "deregister";
@@ -265,7 +265,7 @@ class DnsCommand : public CliCommand
 public:
    DnsCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string DnsStr = "dns";
@@ -338,7 +338,7 @@ class FeaturesCommand : public CliCommand
 public:
    FeaturesCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string FeaturesStr = "features";
@@ -394,7 +394,7 @@ class MepsCommand : public CliCommand
 public:
    MepsCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string MepsStr = "meps";
@@ -478,7 +478,7 @@ class RegisterCommand : public CliCommand
 public:
    RegisterCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string RegisterStr = "register";
@@ -516,7 +516,7 @@ class ResetCommand : public CliCommand
 public:
    ResetCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string ResetStr = "reset";
@@ -619,7 +619,7 @@ class SubscribeCommand : public CliCommand
 public:
    SubscribeCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string SubscribeStr = "subscribe";
@@ -663,7 +663,7 @@ class TonesCommand : public CliCommand
 public:
    TonesCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string TonesStr = "tones";
@@ -719,7 +719,7 @@ class TsPortsCommand : public CliCommand
 public:
    TsPortsCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string TsPortsStr = "tsports";
@@ -790,7 +790,7 @@ class UnsubscribeCommand : public CliCommand
 public:
    UnsubscribeCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string UnsubscribeStr = "unsubscribe";

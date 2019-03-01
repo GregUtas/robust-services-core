@@ -37,8 +37,8 @@ class PotsCfuFeature : public PotsFeature
 private:
    PotsCfuFeature();
    ~PotsCfuFeature();
-   virtual CliText* Attrs() const override;
-   virtual PotsFeatureProfile* Subscribe
+   CliText* Attrs() const override;
+   PotsFeatureProfile* Subscribe
       (PotsProfile& profile, CliThread& cli) const override;
 };
 
@@ -50,7 +50,7 @@ public:
    explicit PotsCfuFeatureProfile(Address::DN dn);
    ~PotsCfuFeatureProfile();
 private:
-   virtual bool Activate(PotsProfile& profile, CliThread& cli) override;
+   bool Activate(PotsProfile& profile, CliThread& cli) override;
 };
 }
 #endif

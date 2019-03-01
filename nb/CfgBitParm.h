@@ -40,7 +40,7 @@ public:
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Creates a parameter with the specified attributes.  Protected
    //  because this class is virtual.
@@ -53,17 +53,17 @@ protected:
 
    //  Overridden to prefix the parameter's type and allowed values.
    //
-   virtual void Explain(std::string& expl) const override;
+   void Explain(std::string& expl) const override;
 
    //  Calls GetCurrValue and maps the result to ValidTrueChars[0]
    //  or ValidFalseChars[0].
    //
-   virtual std::string GetCurr() const override;
+   std::string GetCurr() const override;
 
    //  Calls SetNextValue based on the value of INPUT, which must
    //  be a character in ValidTrueChars or ValidFalseChars.
    //
-   virtual bool SetNext(const std::string& input) override;
+   bool SetNext(const std::string& input) override;
 private:
    //  Sets the parameter's next value.  Returns false if VALUE
    //  is invalid.

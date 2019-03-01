@@ -100,50 +100,50 @@ public:
 
    //  Overridden to return the access control level for the item.
    //
-   virtual Cxx::Access GetAccess() const override { return access_; }
+   Cxx::Access GetAccess() const override { return access_; }
 
    //  Overridden to set BEGIN to GetPos(), END to the location of the
    //  next semicolon, and to return string::npos.
    //
-   virtual size_t GetRange(size_t& begin, size_t& end) const override;
+   size_t GetRange(size_t& begin, size_t& end) const override;
 
    //  Overridden to return the scope where the declaration appeared.
    //
-   virtual CxxScope* GetScope() const override { return scope_; }
+   CxxScope* GetScope() const override { return scope_; }
 
    //  Overridden to indicate that inline display is not supported.
    //
-   virtual bool InLine() const override { return false; }
+   bool InLine() const override { return false; }
 
    //  Overridden to invoke IsConst on GetTypeSpec unless the latter
    //  returns nullptr, in which case it returns false.
    //
-   virtual bool IsConst() const override;
+   bool IsConst() const override;
 
    //  Overridden to invoke IsConstPtr on GetTypeSpec unless the latter
    //  returns nullptr, in which case it returns false.
    //
-   virtual bool IsConstPtr() const override;
+   bool IsConstPtr() const override;
 
    //  Overridden to invoke IsConstPtr on GetTypeSpec unless the latter
    //  returns nullptr, in which case it returns false.
    //
-   virtual bool IsConstPtr(size_t n) const override;
+   bool IsConstPtr(size_t n) const override;
 
    //  Overridden to return true if the item is declared in a code block
    //  or argument list.
    //
-   virtual bool IsDeclaredInFunction() const override;
+   bool IsDeclaredInFunction() const override;
 
    //  Overridden to invoke IsAuto on GetTypeSpec unless the latter
    //  returns nullptr, in which case it returns false.
    //
-   virtual bool IsAuto() const override;
+   bool IsAuto() const override;
 
    //  Overridden to invoke IsIndirect on GetTypeSpec unless the latter
    //  returns nullptr, in which case it returns false.
    //
-   virtual bool IsIndirect() const override;
+   bool IsIndirect() const override;
 
    //  Returns true if this scope is either fqSuper or a subscope of it.
    //
@@ -152,20 +152,19 @@ public:
    //  Overridden to use this item's fully qualified name to determine
    //  if it is a superscope of fqSub.
    //
-   virtual bool IsSuperscopeOf
-      (const std::string& fqSub, bool tmplt) const override;
+   bool IsSuperscopeOf(const std::string& fqSub, bool tmplt) const override;
 
    //  Overridden to return the item itself.
    //
-   virtual CxxNamed* Referent() const override { return (CxxNamed*) this; }
+   CxxNamed* Referent() const override { return (CxxNamed*) this; }
 
    //  Overridden to set the access control level for the item.
    //
-   virtual void SetAccess(Cxx::Access access) override { access_ = access; }
+   void SetAccess(Cxx::Access access) override { access_ = access; }
 
    //  Overridden to set the scope where the declaration appeared.
    //
-   virtual void SetScope(CxxScope* scope) override { scope_ = scope; }
+   void SetScope(CxxScope* scope) override { scope_ = scope; }
 protected:
    //  Protected because this class is virtual.
    //
@@ -234,86 +233,85 @@ public:
 
    //  Overridden to set the type for an "auto" variable.
    //
-   virtual CxxToken* AutoType() const override { return spec_.get(); }
+   CxxToken* AutoType() const override { return spec_.get(); }
 
    //  Overridden to log warnings associated with the argument.
    //
-   virtual void Check() const override;
+   void Check() const override;
 
    //  Overridden to make the argument visible within its function.
    //
-   virtual void EnterBlock() override;
+   void EnterBlock() override;
 
    //  Overridden to remove the argument as a local.
    //
-   virtual void ExitBlock() override;
+   void ExitBlock() override;
 
    //  Overridden to invoke EnterBlock on the argument's type (spec_) and
    //  any default value (default_).
    //
-   virtual bool EnterScope() override;
+   bool EnterScope() override;
 
    //  Overridden to return the argument's underlying numeric type.
    //
-   virtual Numeric GetNumeric() const override { return spec_->GetNumeric(); }
+   Numeric GetNumeric() const override { return spec_->GetNumeric(); }
 
    //  Overridden to return the argument's type.
    //
-   virtual TypeSpec* GetTypeSpec() const override { return spec_.get(); }
+   TypeSpec* GetTypeSpec() const override { return spec_.get(); }
 
    //  Overridden to update SYMBOLS with the argument's type usage.
    //
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
    //  Overridden to indicate that inline display is supported.
    //
-   virtual bool InLine() const override { return true; }
+   bool InLine() const override { return true; }
 
    //  Overridden to return false for a "this" argument.
    //
-   virtual bool IsStatic() const override { return (name_ != THIS_STR); }
+   bool IsStatic() const override { return (name_ != THIS_STR); }
 
    //  Overridden to determine if the argument is unused.
    //
-   virtual bool IsUnused() const override { return ((reads_ + writes_) == 0); }
+   bool IsUnused() const override { return ((reads_ + writes_) == 0); }
 
    //  Overridden to return the argument's name, if any.
    //
-   virtual const std::string* Name() const override { return &name_; }
+   const std::string* Name() const override { return &name_; }
 
    //  Overridden to display the argument.
    //
-   virtual void Print
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to record that the argument cannot be const.
    //
-   virtual bool SetNonConst() override;
+   bool SetNonConst() override;
 
    //  Overridden to shrink containers.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 
    //  Overridden to reveal that this is an argument.
    //
-   virtual Cxx::ItemType Type() const override { return Cxx::Argument; }
+   Cxx::ItemType Type() const override { return Cxx::Argument; }
 
    //  Overridden to return the argument's full root type.
    //
-   virtual std::string TypeString(bool arg) const override;
+   std::string TypeString(bool arg) const override;
 
    //  Overridden to increment the number of reads.
    //
-   virtual bool WasRead() override { ++reads_; return true; }
+   bool WasRead() override { ++reads_; return true; }
 
    //  Overridden to increment the number of writes.
    //
-   virtual bool WasWritten(const StackArg* arg, bool passed) override;
+   bool WasWritten(const StackArg* arg, bool passed) override;
 private:
    //  Overridden to return the argument's type.
    //
-   virtual CxxToken* RootType() const override { return spec_.get(); }
+   CxxToken* RootType() const override { return spec_.get(); }
 
    //  Checks for a "(void)" argument.
    //
@@ -366,57 +364,56 @@ public:
 
    //  Overridden to record the current scope as a subclass of the base class.
    //
-   virtual bool EnterScope() override;
+   bool EnterScope() override;
 
    //  Overridden to return the class that the declaration refers to.
    //
-   virtual Class* GetClass() const override;
+   Class* GetClass() const override;
 
    //  Overridden to return the base class's qualified name.
    //
-   virtual QualName* GetQualName() const override { return name_.get(); }
+   QualName* GetQualName() const override { return name_.get(); }
 
    //  Overridden to update SYMBOLS with the declaration's type usage.
    //
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
    //  Overridden to indicate that inline display is supported.
    //
-   virtual bool InLine() const override { return true; }
+   bool InLine() const override { return true; }
 
    //  Overridden to return the base class's name.
    //
-   virtual const std::string* Name() const override { return name_->Name(); }
+   const std::string* Name() const override { return name_->Name(); }
 
    //  Overridden to return the base class's qualified name.
    //
-   virtual std::string QualifiedName(bool scopes, bool templates) const
+   std::string QualifiedName(bool scopes, bool templates) const
       override { return name_->QualifiedName(scopes, templates); }
 
    //  Overridden to return the base class.
    //
-   virtual CxxNamed* Referent() const override;
+   CxxNamed* Referent() const override;
 
    //  Overridden to return the base class's scoped name.
    //
-   virtual std::string ScopedName(bool templates) const override;
+   std::string ScopedName(bool templates) const override;
 
    //  Overridden to preserve the access control set by the constructor.
    //
-   virtual void SetAccess(Cxx::Access access) override;
+   void SetAccess(Cxx::Access access) override;
 
    //  Overridden to shrink containers.
    //
-   virtual void Shrink() override{ name_->Shrink(); }
+   void Shrink() override{ name_->Shrink(); }
 
    //  Overridden to return the declaration's full root type.
    //
-   virtual std::string TypeString(bool arg) const override;
+   std::string TypeString(bool arg) const override;
 private:
    //  Overridden to find the base class's class.
    //
-   virtual void FindReferent() override;
+   void FindReferent() override;
 
    //  The (possibly) qualified name of the base class.
    //
@@ -461,77 +458,77 @@ public:
 
    //  Overridden to set the type for an "auto" variable.
    //
-   virtual CxxToken* AutoType() const override { return (CxxToken*) this; }
+   CxxToken* AutoType() const override { return (CxxToken*) this; }
 
    //  Overridden to log warnings associated with the enumeration.
    //
-   virtual void Check() const override;
+   void Check() const override;
 
    //  Overridden to check each enumerator before suggesting a more
    //  restrictive access control.
    //
-   virtual void CheckAccessControl() const override;
+   void CheckAccessControl() const override;
 
    //  Overridden to display the enumeration.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to make the enumeration visible as a local.
    //
-   virtual void EnterBlock() override;
+   void EnterBlock() override;
 
    //  Overridden to add the enumeration to the current scope.
    //
-   virtual bool EnterScope() override;
+   bool EnterScope() override;
 
    //  Overridden to remove the enumeration from the global symbol table (its
    //  constructor puts it there, and this removes it as soon as it goes out
    //  of scope).
    //
-   virtual void ExitBlock() override;
+   void ExitBlock() override;
 
    //  Overridden to indicate that an enum can be converted to an integer.
    //
-   virtual Numeric GetNumeric() const override { return Numeric::Enum; }
+   Numeric GetNumeric() const override { return Numeric::Enum; }
 
    //  Overridden to return the enumeration's type.  Returns DataSpec::Int if
    //  the underlying type was not specified.
    //
-   virtual TypeSpec* GetTypeSpec() const override;
+   TypeSpec* GetTypeSpec() const override;
 
    //  Overridden to determine if the enum and all its enumerators are unused.
    //
-   virtual bool IsUnused() const override;
+   bool IsUnused() const override;
 
    //  Overridden to return the enumeration's name.
    //
-   virtual const std::string* Name() const override { return &name_; }
+   const std::string* Name() const override { return &name_; }
 
    //  Overridden to record usage of the enumeration.
    //
-   virtual void RecordUsage() const override { AddUsage(); }
+   void RecordUsage() const override { AddUsage(); }
 
    //  Overridden to count references.
    //
-   virtual void SetAsReferent(const CxxNamed* user) override { ++refs_; }
+   void SetAsReferent(const CxxNamed* user) override { ++refs_; }
 
    //  Overridden to shrink containers.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 
    //  Overridden to reveal that this is an enumeration.
    //
-   virtual Cxx::ItemType Type() const override { return Cxx::Enum; }
+   Cxx::ItemType Type() const override { return Cxx::Enum; }
 
    //  Overridden to return an enumeration's fully qualified name.
    //
-   virtual std::string TypeString(bool arg) const override;
+   std::string TypeString(bool arg) const override;
 
    //  Overridden to support, for example, writing to an enum in a std::vector
    //  or passing an enum as an argument.
    //
-   virtual bool WasWritten(const StackArg* arg, bool passed)
+   bool WasWritten(const StackArg* arg, bool passed)
       override { return false; }
 private:
    //  The enumeration's name.
@@ -568,79 +565,79 @@ public:
 
    //  Overridden to set the type for an "auto" variable.
    //
-   virtual CxxToken* AutoType() const override { return (CxxToken*) enum_; }
+   CxxToken* AutoType() const override { return (CxxToken*) enum_; }
 
    //  Overridden to log warnings associated with the enumerator.
    //
-   virtual void Check() const override;
+   void Check() const override;
 
    //  Overridden to display the enumeration.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to execute the enumerator's initialization statement.
    //
-   virtual void EnterBlock() override;
+   void EnterBlock() override;
 
    //  Overridden to execute the enumerator's initialization statement.
    //
-   virtual bool EnterScope() override;
+   bool EnterScope() override;
 
    //  Overridden to remove the enumerator from the global symbol table (its
    //  constructor puts it there, and this removes it as soon as it goes out
    //  of scope).
    //
-   virtual void ExitBlock() override;
+   void ExitBlock() override;
 
    //  Overridden to count references to the enumerator.
    //
-   virtual bool WasRead() override { ++refs_; return true; }
+   bool WasRead() override { ++refs_; return true; }
 
    //  Overridden to indicate that an enum can be converted to an integer.
    //
-   virtual Numeric GetNumeric() const override { return Numeric::Enum; }
+   Numeric GetNumeric() const override { return Numeric::Enum; }
 
    //  Overridden to enable promotion of the enumerator to its enum's scope
    //  (that is, <scope>::enumerator as well as <scope>::enum::enumerator).
    //
-   virtual void GetScopedNames(stringVector& names) const override;
+   void GetScopedNames(stringVector& names) const override;
 
    //  Overridden to determine if the enumerator is unused.
    //
-   virtual bool IsUnused() const override { return (refs_ == 0); }
+   bool IsUnused() const override { return (refs_ == 0); }
 
    //  Overridden to return the enumerator's name.
    //
-   virtual const std::string* Name() const override { return &name_; }
+   const std::string* Name() const override { return &name_; }
 
    //  Overridden to prefix the enum as a scope.
    //
-   virtual std::string ScopedName(bool templates) const override;
+   std::string ScopedName(bool templates) const override;
 
    //  Overridden to note that the enumeration required ACCESS.
    //
-   virtual void RecordAccess(Cxx::Access access) const override;
+   void RecordAccess(Cxx::Access access) const override;
 
    //  Overridden to record usage of the enumerator.
    //
-   virtual void RecordUsage() const override { AddUsage(); }
+   void RecordUsage() const override { AddUsage(); }
 
    //  Overridden to count references.
    //
-   virtual void SetAsReferent(const CxxNamed* user) override { ++refs_; }
+   void SetAsReferent(const CxxNamed* user) override { ++refs_; }
 
    //  Overridden to shrink containers.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 
    //  Overridden to reveal that this is an enumerator.
    //
-   virtual Cxx::ItemType Type() const override { return Cxx::Enumerator; }
+   Cxx::ItemType Type() const override { return Cxx::Enumerator; }
 
    //  Overridden to return the enumeration's type.
    //
-   virtual std::string TypeString(bool arg) const override;
+   std::string TypeString(bool arg) const override;
 private:
    //  The enumerator's name.
    //
@@ -676,73 +673,73 @@ public:
 
    //  Overridden to return the referent if known, else the forward declaration.
    //
-   virtual CxxToken* AutoType() const override;
+   CxxToken* AutoType() const override;
 
    //  Overridden to log warnings associated with the declaration.
    //
-   virtual void Check() const override;
+   void Check() const override;
 
    //  Overridden to display the declaration.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to push the declaration's referent onto the argument stack.
    //
-   virtual void EnterBlock() override;
+   void EnterBlock() override;
 
    //  Overridden to add the declaration to the current scope.
    //
-   virtual bool EnterScope() override;
+   bool EnterScope() override;
 
    //  Overridden to return the class's qualified name.
    //
-   virtual QualName* GetQualName() const override { return name_.get(); }
+   QualName* GetQualName() const override { return name_.get(); }
 
    //  Overriden to support the forward declaration of templates.
    //
-   virtual const TemplateParms* GetTemplateParms() const
+   const TemplateParms* GetTemplateParms() const
       override { return parms_.get(); }
 
    //  Overridden to determine if the declaration is unused.
    //
-   virtual bool IsUnused() const override { return (users_ == 0); }
+   bool IsUnused() const override { return (users_ == 0); }
 
    //  Overridden to returns the class's name.
    //
-   virtual const std::string* Name() const override { return name_->Name(); }
+   const std::string* Name() const override { return name_->Name(); }
 
    //  Overridden to return the class.
    //
-   virtual CxxNamed* Referent() const override;
+   CxxNamed* Referent() const override;
 
    //  Overridden to return the class's scoped name.
    //
-   virtual std::string ScopedName(bool templates) const override;
+   std::string ScopedName(bool templates) const override;
 
    //  Overridden to count usages.
    //
-   virtual void SetAsReferent(const CxxNamed* user) override { ++users_; }
+   void SetAsReferent(const CxxNamed* user) override { ++users_; }
 
    //  Overriden to support the forward declaration of templates.
    //
-   virtual void SetTemplateParms(TemplateParmsPtr& parms) override;
+   void SetTemplateParms(TemplateParmsPtr& parms) override;
 
    //  Overridden to shrink containers.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 
    //  Overridden to reveal that this is a forward declaration.
    //
-   virtual Cxx::ItemType Type() const override { return Cxx::Forward; }
+   Cxx::ItemType Type() const override { return Cxx::Forward; }
 
    //  Overridden to return the class's full type.
    //
-   virtual std::string TypeString(bool arg) const override;
+   std::string TypeString(bool arg) const override;
 private:
    //  Overridden to return the class.
    //
-   virtual CxxToken* RootType() const override { return Referent(); }
+   CxxToken* RootType() const override { return Referent(); }
 
    //  The class's type.
    //
@@ -804,112 +801,109 @@ public:
 
    //  Overridden to return the referent if known, else the friend declaration.
    //
-   virtual CxxToken* AutoType() const override;
+   CxxToken* AutoType() const override;
 
    //  Overridden to log warnings associated with the declaration.
    //
-   virtual void Check() const override;
+   void Check() const override;
 
    //  Overridden to display the declaration.  If FQ is set, the friend's
    //  fully qualified name is displayed.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to push the declaration's referent onto the argument stack.
    //
-   virtual void EnterBlock() override;
+   void EnterBlock() override;
 
    //  Overridden to add the declaration to the current scope.
    //
-   virtual bool EnterScope() override;
+   bool EnterScope() override;
 
    //  Overridden to return the friend if it is a function.
    //
-   virtual Function* GetFunction() const override;
+   Function* GetFunction() const override;
 
    //  Overridden to return the declaration's qualified name.
    //
-   virtual QualName* GetQualName() const override;
+   QualName* GetQualName() const override;
 
    //  Overriden to support templates as friends.
    //
-   virtual const TemplateParms* GetTemplateParms() const
+   const TemplateParms* GetTemplateParms() const
       override { return parms_.get(); }
 
    //  Overridden to update SYMBOLS with the declaration's type usage.
    //
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
    //  Overridden to indicate that inline display is not supported.
    //
-   virtual bool InLine() const override { return false; }
+   bool InLine() const override { return false; }
 
    //  Overridden to determine if the declaration is unused.
    //
-   virtual bool IsUnused() const override { return (users_ == 0); }
+   bool IsUnused() const override { return (users_ == 0); }
 
    //  Overridden to return the friend's name.
    //
-   virtual const std::string* Name() const override;
+   const std::string* Name() const override;
 
    //  Overridden to return the friend's qualified name.
    //
-   virtual std::string QualifiedName
-      (bool scopes, bool templates) const override;
+   std::string QualifiedName(bool scopes, bool templates) const override;
 
    //  Overridden to return the friend.
    //
-   virtual CxxNamed* Referent() const override;
+   CxxNamed* Referent() const override;
 
    //  Overridden to apply the arguments after updating the scope to that
    //  of the class template.
    //
-   virtual bool ResolveTemplate
+   bool ResolveTemplate
       (Class* cls, const TypeName* args, bool end) const override;
 
    //  Overridden to return the friend's scoped name.
    //
-   virtual std::string ScopedName(bool templates) const override;
+   std::string ScopedName(bool templates) const override;
 
    //  Overridden to log a warning.  A forward declaration, not a friend
    //  declaration, should be used to resolve an indirect type.
    //
-   virtual void SetAsReferent(const CxxNamed* user) override;
+   void SetAsReferent(const CxxNamed* user) override;
 
    //  Overriden to support templates as friends.
    //
-   virtual void SetTemplateParms(TemplateParmsPtr& parms) override;
+   void SetTemplateParms(TemplateParmsPtr& parms) override;
 
    //  Overridden to shrink containers.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 
    //  Overridden to reveal that this is a friend declaration.
    //
-   virtual Cxx::ItemType Type() const override { return Cxx::Friend; }
+   Cxx::ItemType Type() const override { return Cxx::Friend; }
 
    //  Overridden to return the friend's full type.
    //
-   virtual std::string TypeString(bool arg) const override;
+   std::string TypeString(bool arg) const override;
 private:
    //  Overridden to find the item that the declaration refers to.
    //
-   virtual void FindReferent() override;
+   void FindReferent() override;
 
    //  Overridden to record DECL and update the friend's scope.
    //
-   virtual bool ResolveForward(CxxScoped* decl, size_t n) const override;
+   bool ResolveForward(CxxScoped* decl, size_t n) const override;
 
    //  Overridden to return the friend.
    //
-   virtual CxxToken* RootType() const override { return Referent(); }
+   CxxToken* RootType() const override { return Referent(); }
 
    //  Overridden to record what the item refers to.
    //
-   virtual void SetReferent
-      (CxxNamed* item, const SymbolView* view) const override;
+   void SetReferent(CxxNamed* item, const SymbolView* view) const override;
 
    //  Finds the item that the declaration refers to when it was not
    //  visible from the scope where the declaration appeared.
@@ -985,54 +979,54 @@ public:
 
    //  Overridden to return true if the terminal is "auto".
    //
-   virtual bool IsAuto() const override;
+   bool IsAuto() const override;
 
    //  Overridden to set the type for an "auto" variable.
    //
-   virtual CxxToken* AutoType() const override { return (CxxToken*) this; }
+   CxxToken* AutoType() const override { return (CxxToken*) this; }
 
    //  Overridden to display the terminal.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to push the terminal onto the stack.
    //
-   virtual void EnterBlock() override;
+   void EnterBlock() override;
 
    //  Overridden to indicate that a terminal is always in scope.
    //
-   virtual bool EnterScope() override { return true; }
+   bool EnterScope() override { return true; }
 
    //  Overridden to indicate that a terminal does not appear in a file.
    //
-   virtual NodeBase::id_t GetDeclFid() const override
+   NodeBase::id_t GetDeclFid() const override
       { return NodeBase::NIL_ID; }
 
    //  Overridden to return the terminal's attributes as an integer.
    //
-   virtual Numeric GetNumeric() const override { return attrs_; }
+   Numeric GetNumeric() const override { return attrs_; }
 
    //  Overridden to return the terminal's name.
    //
-   virtual const std::string* Name() const override { return &name_; }
+   const std::string* Name() const override { return &name_; }
 
    //  Overridden to shrink containers.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 
    //  Overridden to reveal that this is a terminal.
    //
-   virtual Cxx::ItemType Type() const override { return Cxx::Terminal; }
+   Cxx::ItemType Type() const override { return Cxx::Terminal; }
 
    //  Overridden to return the terminal's root type.
    //
-   virtual std::string TypeString(bool arg) const override { return type_; }
+   std::string TypeString(bool arg) const override { return type_; }
 
    //  Overridden to support, for example, writing to a char in a std::string
    //  or passing an int as an argument.
    //
-   virtual bool WasWritten(const StackArg* arg, bool passed)
+   bool WasWritten(const StackArg* arg, bool passed)
       override { return false; }
 private:
    //  The terminal's name.
@@ -1066,88 +1060,87 @@ public:
 
    //  Overridden to set the type for an "auto" variable.
    //
-   virtual CxxToken* AutoType() const override { return (CxxToken*) this; }
+   CxxToken* AutoType() const override { return (CxxToken*) this; }
 
    //  Overridden to log warnings associated with the typedef.
    //
-   virtual void Check() const override;
+   void Check() const override;
 
    //  Overridden to display the typedef in a function.
    //
-   virtual void Print
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to display the typedef.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to make the typedef visible as a local.
    //
-   virtual void EnterBlock() override;
+   void EnterBlock() override;
 
    //  Overridden to add the typedef to the current scope.
    //
-   virtual bool EnterScope() override;
+   bool EnterScope() override;
 
    //  Overridden to remove the typedef as a local.
    //
-   virtual void ExitBlock() override;
+   void ExitBlock() override;
 
    //  Overridden to return the definition's underlying numeric type.
    //
-   virtual Numeric GetNumeric() const override { return spec_->GetNumeric(); }
+   Numeric GetNumeric() const override { return spec_->GetNumeric(); }
 
    //  Overridden to return the underlying type.
    //
-   virtual TypeSpec* GetTypeSpec() const override { return spec_.get(); }
+   TypeSpec* GetTypeSpec() const override { return spec_.get(); }
 
    //  Overridden to search the underlying type for template arguments.
    //
-   virtual TypeName* GetTemplateArgs() const override;
+   TypeName* GetTemplateArgs() const override;
 
    //  Overridden to update SYMBOLS with the typedef's type usage.
    //
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
    //  Overridden to determine if the typedef is unused.
    //
-   virtual bool IsUnused() const override { return (refs_ == 0); }
+   bool IsUnused() const override { return (refs_ == 0); }
 
    //  Overridden to return the alias introduced by the typedef.
    //
-   virtual const std::string* Name() const override { return &name_; }
+   const std::string* Name() const override { return &name_; }
 
    //  Overridden to return the referent of GetTypeSpec().
    //
-   virtual CxxNamed* Referent() const override;
+   CxxNamed* Referent() const override;
 
    //  Overridden to count references.
    //
-   virtual void SetAsReferent(const CxxNamed* user) override { ++refs_; }
+   void SetAsReferent(const CxxNamed* user) override { ++refs_; }
 
    //  Overridden to shrink containers.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 
    //  Overridden to reveal that this is a typedef.
    //
-   virtual Cxx::ItemType Type() const override { return Cxx::Typedef; }
+   Cxx::ItemType Type() const override { return Cxx::Typedef; }
 
    //  Overridden to return the typedef's full root type.
    //
-   virtual std::string TypeString(bool arg) const override;
+   std::string TypeString(bool arg) const override;
 
    //  Overridden to support a temporary variable represented by a typedef
    //  that was, for example, returned by one function and passed to another.
    //
-   virtual bool WasWritten(const StackArg* arg, bool passed)
+   bool WasWritten(const StackArg* arg, bool passed)
       override { return false; }
 private:
    //  Overridden to return the underlying type.
    //
-   virtual CxxToken* RootType() const override { return spec_.get(); }
+   CxxToken* RootType() const override { return spec_.get(); }
 
    //  Checks if the typedef is for a pointer type.
    //
@@ -1206,71 +1199,71 @@ public:
 
    //  Overridden to log warnings associated with the declaration.
    //
-   virtual void Check() const override;
+   void Check() const override;
 
    //  Overridden to display the declaration.  If FQ is set, the fully
    //  qualified name is displayed.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to make the declaration available to the current block.
    //
-   virtual void EnterBlock() override;
+   void EnterBlock() override;
 
    //  Overridden to add the declaration to the current scope.
    //
-   virtual bool EnterScope() override;
+   bool EnterScope() override;
 
    //  Overridden to make the declaration unavailable.
    //
-   virtual void ExitBlock() override;
+   void ExitBlock() override;
 
    //  Overridden to return the declaration's qualified name.
    //
-   virtual QualName* GetQualName() const override { return name_.get(); }
+   QualName* GetQualName() const override { return name_.get(); }
 
    //  Overridden to indicate that inline display is not supported.
    //
-   virtual bool InLine() const override { return false; }
+   bool InLine() const override { return false; }
 
    //  Overridden to determine if the declaration is unused.
    //
-   virtual bool IsUnused() const override { return (users_ == 0); }
+   bool IsUnused() const override { return (users_ == 0); }
 
    //  Overridden to return the name of what is being used.
    //
-   virtual const std::string* Name() const override { return name_->Name(); }
+   const std::string* Name() const override { return name_->Name(); }
 
    //  Overridden to return the qualified name of what is being used.
    //
-   virtual std::string QualifiedName(bool scopes, bool templates) const
+   std::string QualifiedName(bool scopes, bool templates) const
       override { return name_->QualifiedName(scopes, templates); }
 
    //  Overridden to return what the declaration refers to.
    //
-   virtual CxxNamed* Referent() const override;
+   CxxNamed* Referent() const override;
 
    //  Overridden to stop at a typedef.
    //
-   virtual bool ResolveTypedef(Typedef* type, size_t n) const
+   bool ResolveTypedef(Typedef* type, size_t n) const
       override { return false; }
 
    //  Overridden to return the scoped name of what is being used.
    //
-   virtual std::string ScopedName(bool templates) const override;
+   std::string ScopedName(bool templates) const override;
 
    //  Overridden to adjust the scope for a using statement within a class.
    //
-   virtual void SetScope(CxxScope* scope) override;
+   void SetScope(CxxScope* scope) override;
 
    //  Overridden to shrink the item's name.
    //
-   virtual void Shrink() override { name_->Shrink(); }
+   void Shrink() override { name_->Shrink(); }
 private:
    //  Overridden to find the item that the declaration refers to.
    //
-   virtual void FindReferent() override;
+   void FindReferent() override;
 
    //  The declaration's (possibly) qualified name.
    //

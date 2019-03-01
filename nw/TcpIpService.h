@@ -55,22 +55,22 @@ public:
 
    //  Overridden to indicate that this service runs over TCP.
    //
-   virtual IpProtocol Protocol() const override { return IpTcp; }
+   IpProtocol Protocol() const override { return IpTcp; }
 
    //  Overridden to indicate that applications do not use the I/O
    //  thread's primary socket (the listener socket, if it exists)
    //  when sending messages.
    //
-   virtual bool HasSharedSocket() const override { return false; }
+   bool HasSharedSocket() const override { return false; }
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Creates a service that runs over TCP.  Protected because
    //  this class is virtual.
@@ -83,7 +83,7 @@ protected:
 
    //  Overridden to create a PORT for PID.
    //
-   virtual IpPort* CreatePort(ipport_t pid) override;
+   IpPort* CreatePort(ipport_t pid) override;
 };
 }
 #endif

@@ -38,7 +38,7 @@ class PotsCwtInitiator : public Initiator
 public:
    PotsCwtInitiator();
 private:
-   virtual EventHandler::Rc ProcessEvent(const ServiceSM& parentSsm,
+   EventHandler::Rc ProcessEvent(const ServiceSM& parentSsm,
       Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -55,7 +55,7 @@ class PotsCwaService : public PotsCwtService
 private:
    PotsCwaService();
    ~PotsCwaService();
-   virtual ServiceSM* AllocModifier() const override;
+   ServiceSM* AllocModifier() const override;
 };
 
 class PotsCwbService : public PotsCwtService
@@ -64,7 +64,7 @@ class PotsCwbService : public PotsCwtService
 private:
    PotsCwbService();
    ~PotsCwbService();
-   virtual ServiceSM* AllocModifier() const override;
+   ServiceSM* AllocModifier() const override;
 };
 
 class PotsCwmService : public Service
@@ -73,7 +73,7 @@ class PotsCwmService : public Service
 private:
    PotsCwmService();
    ~PotsCwmService();
-   virtual ServiceSM* AllocModifier() const override;
+   ServiceSM* AllocModifier() const override;
 };
 
 class PotsCwtFacility : public Facility

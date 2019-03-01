@@ -37,7 +37,7 @@ class PotsCcwService : public Service
 private:
    PotsCcwService();
    ~PotsCcwService();
-   virtual ServiceSM* AllocModifier() const override;
+   ServiceSM* AllocModifier() const override;
 };
 }
 #endif

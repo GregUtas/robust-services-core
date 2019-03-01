@@ -38,8 +38,8 @@ class PotsWmlFeature : public PotsFeature
 private:
    PotsWmlFeature();
    ~PotsWmlFeature();
-   virtual CliText* Attrs() const override;
-   virtual PotsFeatureProfile* Subscribe
+   CliText* Attrs() const override;
+   PotsFeatureProfile* Subscribe
       (PotsProfile& profile, CliThread& cli) const override;
 };
 
@@ -51,10 +51,10 @@ public:
    PotsWmlFeatureProfile(Address::DN dn, secs_t timeout);
    ~PotsWmlFeatureProfile();
    secs_t Timeout() const { return timeout_; }
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
-   virtual bool Activate(PotsProfile& profile, CliThread& cli) override;
+   bool Activate(PotsProfile& profile, CliThread& cli) override;
 
    secs_t timeout_;
 };

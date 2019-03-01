@@ -50,11 +50,11 @@ public:
 
    //  Overridden to display the trace record.
    //
-   virtual bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, bool diff) override;
 private:
    //  Overridden to return a string explaining the event.
    //
-   virtual const char* EventString() const override;
+   const char* EventString() const override;
 
    //  The object for which the event occurred.
    //

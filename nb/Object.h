@@ -41,7 +41,7 @@ class Object : public Base
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~Object() { }
+   virtual ~Object() = default;
 
    //  Selector for the Patch function.
    //
@@ -58,7 +58,7 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    ////////////////////////////////////////////////////////////////////////////
@@ -114,7 +114,7 @@ public:
 
    //  Overridden to return the type of memory used by the object.
    //
-   virtual MemoryType MemType() const override;
+   MemoryType MemType() const override;
 
    //  Overridden to support memory types.
    //

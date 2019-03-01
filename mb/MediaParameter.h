@@ -77,12 +77,12 @@ protected:
 
    //  Overridden to invoke MediaInfo::Display.
    //
-   virtual void DisplayMsg(std::ostream& stream, const std::string& prefix,
+   void DisplayMsg(std::ostream& stream, const std::string& prefix,
       const byte_t* bytes, size_t count) const override;
 
    //  Overridden to create a CLI parameter for MediaInfo.
    //
-   virtual CliParm* CreateCliParm(Usage use) const override;
+   CliParm* CreateCliParm(Usage use) const override;
 };
 }
 #endif

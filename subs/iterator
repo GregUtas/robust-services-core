@@ -12,6 +12,8 @@ namespace std
    template< typename T > struct iterator_t
    {
       iterator_t();
+      iterator_t(const iterator_t& that);
+      iterator_t& operator=(const iterator_t& that);
       iterator_t& operator++();
       iterator_t& operator++(int);
       iterator_t& operator--();

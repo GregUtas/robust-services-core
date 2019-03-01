@@ -91,35 +91,35 @@ public:
 
    //  Overridden to return this port.
    //
-   virtual MsgPort* Port() const override;
+   MsgPort* Port() const override;
 
    //  Overridden to return the PSM at the top of the stack.
    //
-   virtual ProtocolSM* UppermostPsm() const override;
+   ProtocolSM* UppermostPsm() const override;
 
    //  Returns the ports's factory.
    //
-   virtual FactoryId GetFactory()
+   FactoryId GetFactory()
       const override { return locAddr_.sbAddr_.fid; }
 
    //  Overridden to modify the addresses in this port and PEER.  Returns
    //  the peer port on success.
    //
-   virtual ProtocolLayer* JoinPeer
+   ProtocolLayer* JoinPeer
       (const LocalAddress& peer, GlobalAddress& peerPrevRemAddr) override;
 
    //  Overridden to modify the addresses in this port and PEER.
    //
-   virtual bool DropPeer(const GlobalAddress& peerPrevRemAddr) override;
+   bool DropPeer(const GlobalAddress& peerPrevRemAddr) override;
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 
    //  Overridden to obtain a port from its object pool.
    //
@@ -127,15 +127,15 @@ public:
 protected:
    //  Returns the route over which an outgoing message should be sent.
    //
-   virtual Message::Route Route() const override;
+   Message::Route Route() const override;
 
    //  Overridden to handle deletion of the layer above this one.
    //
-   virtual void AdjacentDeleted(bool upper) override;
+   void AdjacentDeleted(bool upper) override;
 
    //  Overridden to relinquish any socket during error recovery.
    //
-   virtual void Cleanup() override;
+   void Cleanup() override;
 private:
    //> Highest valid port identifier.
    //
@@ -143,21 +143,21 @@ private:
 
    //  Overridden to create the layer above for an incoming message.
    //
-   virtual ProtocolLayer* AllocUpper(const Message& msg) override;
+   ProtocolLayer* AllocUpper(const Message& msg) override;
 
    //  Overridden to receive MSG when a transaction begins.
    //
-   virtual Event* ReceiveMsg(Message& msg) override;
+   Event* ReceiveMsg(Message& msg) override;
 
    //  Overridden to send MSG.  If a message has neither been sent nor
    //  received, MSG must contain the source and destination addresses.
    //
-   virtual bool SendMsg(Message& msg) override;
+   bool SendMsg(Message& msg) override;
 
    //  Overridden to return MSG as is, which will then be passed to the
    //  port and sent.
    //
-   virtual Message* WrapMsg(Message& msg) override;
+   Message* WrapMsg(Message& msg) override;
 
    //  Performs initialization that is common to all constructors.
    //  MSG is the incoming message, if any.

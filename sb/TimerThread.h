@@ -40,7 +40,7 @@ class TimerThread : public Thread
 public:
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Private because this singleton is not subclassed.
    //
@@ -48,7 +48,7 @@ private:
 
    //  Overridden to return a name for the thread.
    //
-   virtual const char* AbbrName() const override;
+   const char* AbbrName() const override;
 
    //  Private because this singleton is not subclassed.
    //
@@ -56,16 +56,16 @@ private:
 
    //  Overridden to support excluding or including all timer threads.
    //
-   virtual TraceStatus CalcStatus(bool dynamic) const override;
+   TraceStatus CalcStatus(bool dynamic) const override;
 
    //  Overridden to enter a loop that tells the timer registry, once per
    //  second, to send timeout messages on behalf of expired timers.
    //
-   virtual void Enter() override;
+   void Enter() override;
 
    //  Overridden to delete the singleton.
    //
-   virtual void Destroy() override;
+   void Destroy() override;
 };
 }
 #endif

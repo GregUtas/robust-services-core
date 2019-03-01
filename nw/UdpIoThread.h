@@ -47,7 +47,7 @@ public:
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Protected to restrict deletion.
    //
@@ -55,19 +55,19 @@ protected:
 
    //  Overridden to release resources in order to unblock.
    //
-   virtual void Unblock() override;
+   void Unblock() override;
 
    //  Overridden to release resources during error recovery.
    //
-   virtual void Cleanup() override;
+   void Cleanup() override;
 private:
    //  Overridden to return a name for the thread.
    //
-   virtual const char* AbbrName() const override;
+   const char* AbbrName() const override;
 
    //  Overridden to receive UDP messages on PORT.
    //
-   virtual void Enter() override;
+   void Enter() override;
 
    //  Generates a log when an error forces the thread to exit.
    //

@@ -37,7 +37,7 @@ class PotsCfnInitiator : public Initiator
 public:
    PotsCfnInitiator();
 private:
-   virtual EventHandler::Rc ProcessEvent(const ServiceSM& parentSsm,
+   EventHandler::Rc ProcessEvent(const ServiceSM& parentSsm,
       Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -49,7 +49,7 @@ class PotsCfnService : public Service
 private:
    PotsCfnService();
    ~PotsCfnService();
-   virtual ServiceSM* AllocModifier() const override;
+   ServiceSM* AllocModifier() const override;
 };
 }
 #endif

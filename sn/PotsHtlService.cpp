@@ -55,10 +55,10 @@ public:
    PotsHtlSsm();
    ~PotsHtlSsm();
 private:
-   virtual ServicePortId CalcPort(const AnalyzeMsgEvent& ame) override;
-   virtual EventHandler::Rc ProcessInitAck
+   ServicePortId CalcPort(const AnalyzeMsgEvent& ame) override;
+   EventHandler::Rc ProcessInitAck
       (Event& currEvent, Event*& nextEvent) override;
-   virtual EventHandler::Rc ProcessInitNack
+   EventHandler::Rc ProcessInitNack
       (Event& currEvent, Event*& nextEvent) override;
 };
 

@@ -40,9 +40,9 @@ public:
    StSizesCommand() = default;
    virtual ~StSizesCommand() = default;
 protected:
-   virtual void DisplaySizes(CliThread& cli, bool all) const override;
+   void DisplaySizes(CliThread& cli, bool all) const override;
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ private:
 
    //  Overridden to enter the increment.
    //
-   virtual void Enter() override;
+   void Enter() override;
 };
 }
 #endif

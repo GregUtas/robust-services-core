@@ -74,7 +74,7 @@ public:
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Passes the arguments to the base class constructor.  Protected because
    //  this class is virtual.
@@ -91,7 +91,7 @@ protected:
    //  either invoke it or TlvMessage::VerifyParm first, before verifying each
    //  parameter field.
    //
-   virtual TestRc VerifyMsg
+   TestRc VerifyMsg
       (CliThread& cli, const Message& msg, Usage use) const override;
 };
 }

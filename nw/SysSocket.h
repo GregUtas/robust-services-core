@@ -155,12 +155,12 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Allocates a socket that will send and receive on PORT, on behalf of
    //  SERVICE.  If PORT is NilIpPort, the socket is created but is not bound

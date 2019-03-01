@@ -65,19 +65,19 @@ public:
 
    //  Overridden to display the trace record.
    //
-   virtual bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, bool diff) override;
 private:
    //  Overridden to claim buff_.
    //
-   virtual void ClaimBlocks() override;
+   void ClaimBlocks() override;
 
    //  Overridden to return a string for displaying this type of record.
    //
-   virtual const char* EventString() const override;
+   const char* EventString() const override;
 
    //  Overridden to nullify the record if buff_ will vanish.
    //
-   virtual void Shutdown(RestartLevel level) override;
+   void Shutdown(RestartLevel level) override;
 
    //  Deleted to prohibit copying.
    //

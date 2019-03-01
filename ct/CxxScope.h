@@ -184,60 +184,59 @@ public:
 
    //  Overridden to log warnings within the code.
    //
-   virtual void Check() const override;
+   void Check() const override;
 
    //  Overridden to display the block.  If CRLF is set, a block that contains
    //  one statement is displayed on a new line, else it is displayed in-line.
    //  A space or endline is inserted first, as appropriate, and an endline is
    //  always inserted afterwards.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to invoke EnterBlock on each token in statements_, followed
    //  by ExitBlock after all the statements have been executed.
    //
-   virtual void EnterBlock() override;
+   void EnterBlock() override;
 
    //  Overridden to return the function in which the block appears.
    //
-   virtual Function* GetFunction() const override;
+   Function* GetFunction() const override;
 
    //  Overridden to update SYMBOLS with each statement's type usage.
    //
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
    //  Overridden to look at using statements that are local to a function.
    //
-   virtual Using* GetUsingFor(const std::string& fqName, size_t prefix,
+   Using* GetUsingFor(const std::string& fqName, size_t prefix,
       const CxxNamed* item, const CxxScope* scope) const override;
 
    //  Overridden to determine if in-line display is possible.
    //
-   virtual bool InLine() const override;
+   bool InLine() const override;
 
    //  Overridden to return the block's name.
    //
-   virtual const std::string* Name() const override { return &name_; }
+   const std::string* Name() const override { return &name_; }
 
    //  Overridden to display a block in-line if it has one statement or none.
    //
-   virtual void Print
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to return the enclosing function's scoped name, followed by
    //  a string that signifies executable code rather than only the function.
    //
-   virtual std::string ScopedName(bool templates) const override;
+   std::string ScopedName(bool templates) const override;
 
    //  Overridden to shrink containers.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 
    //  Overridden to reveal that this is a code block.
    //
-   virtual Cxx::ItemType Type() const override { return Cxx::Block; }
+   Cxx::ItemType Type() const override { return Cxx::Block; }
 private:
    //  The statements in the block.
    //
@@ -334,87 +333,86 @@ public:
 
    //  Overridden to set the type for an "auto" variable.
    //
-   virtual CxxToken* AutoType() const override { return (CxxToken*) this; }
+   CxxToken* AutoType() const override { return (CxxToken*) this; }
 
    //  Overridden to log warnings associated with the data's type.
    //
-   virtual void Check() const override;
+   void Check() const override;
 
    //  Overridden to return the file that declared the data.
    //
-   virtual CodeFile* GetDeclFile() const override;
+   CodeFile* GetDeclFile() const override;
 
    //  Overridden to return the file (if any) that defined (initialized) the
    //  data.
    //
-   virtual CodeFile* GetDefnFile() const override;
+   CodeFile* GetDefnFile() const override;
 
    //  Overridden to return the definition if it is distinct from the
    //  declaration, and vice versa.
    //
-   virtual CxxNamed* GetMate() const override { return mate_; }
+   CxxNamed* GetMate() const override { return mate_; }
 
    //  Overridden to return the data's underlying numeric type.
    //
-   virtual Numeric GetNumeric() const override { return spec_->GetNumeric(); }
+   Numeric GetNumeric() const override { return spec_->GetNumeric(); }
 
    //  Overridden to return the data's type.
    //
-   virtual TypeSpec* GetTypeSpec() const override { return spec_.get(); }
+   TypeSpec* GetTypeSpec() const override { return spec_.get(); }
 
    //  Overridden to search the data's type for template arguments.
    //
-   virtual TypeName* GetTemplateArgs() const override;
+   TypeName* GetTemplateArgs() const override;
 
    //  Overridden to update SYMBOLS with the data's type usage.
    //
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
    //  Overridden to indicate whether the data is const.
    //
-   virtual bool IsConst() const override;
+   bool IsConst() const override;
 
    //  Returns true if the data's initialization is currently being executed.
    //
-   virtual bool IsInitializing() const override { return initing_; }
+   bool IsInitializing() const override { return initing_; }
 
    //  Overridden to return true if the data is static.
    //
-   virtual bool IsStatic() const override { return static_; }
+   bool IsStatic() const override { return static_; }
 
    //  Overridden to determine if the data is unused.
    //
-   virtual bool IsUnused() const
+   bool IsUnused() const
       override { return ((reads_ == 0) && (writes_ == 0)); }
 
    //  Overridden to make const data writeable during initialization.
    //
-   virtual StackArg NameToArg(Cxx::Operator op) override;
+   StackArg NameToArg(Cxx::Operator op) override;
 
    //  Overridden to record that the data cannot be const.
    //
-   virtual bool SetNonConst() override;
+   bool SetNonConst() override;
 
    //  Overridden to shrink containers.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 
    //  Overridden to reveal that this is a data item.
    //
-   virtual Cxx::ItemType Type() const override { return Cxx::Data; }
+   Cxx::ItemType Type() const override { return Cxx::Data; }
 
    //  Overridden to return the data's full root type.
    //
-   virtual std::string TypeString(bool arg) const override;
+   std::string TypeString(bool arg) const override;
 
    //  Overridden to increment the number of times the data was read.
    //
-   virtual bool WasRead() override;
+   bool WasRead() override;
 
    //  Overridden to increment the number of times the data was written.
    //
-   virtual bool WasWritten(const StackArg* arg, bool passed) override;
+   bool WasWritten(const StackArg* arg, bool passed) override;
 protected:
    //  Creates a data item with SPEC.  Protected because this class is virtual.
    //
@@ -482,7 +480,7 @@ private:
 
    //  Overridden to return the data's type.
    //
-   virtual CxxToken* RootType() const override { return spec_.get(); }
+   CxxToken* RootType() const override { return spec_.get(); }
 
    //  Executes the assignment statement that initializes the data.
    //  Returns true if such a statement existed.
@@ -567,50 +565,50 @@ public:
 
    //  Overridden to log warnings associated with the declaration.
    //
-   virtual void Check() const override;
+   void Check() const override;
 
    //  Overridden to display the data declaration and definition.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to add the item to the current scope.
    //
-   virtual bool EnterScope() override;
+   bool EnterScope() override;
 
    //  Overridden to return the item's qualified name.
    //
-   virtual QualName* GetQualName() const override { return name_.get(); }
+   QualName* GetQualName() const override { return name_.get(); }
 
    //  Overriden to support static member data in a template.
    //
-   virtual const TemplateParms* GetTemplateParms() const
+   const TemplateParms* GetTemplateParms() const
       override { return parms_.get(); }
 
    //  Overridden to return the item's name.
    //
-   virtual const std::string* Name() const override { return name_->Name(); }
+   const std::string* Name() const override { return name_->Name(); }
 
    //  Overridden to return the item's qualified name.
    //
-   virtual std::string QualifiedName(bool scopes, bool templates) const
+   std::string QualifiedName(bool scopes, bool templates) const
       override { return name_->QualifiedName(scopes, templates); }
 
    //  Overridden to record usage of the item.
    //
-   virtual void RecordUsage() const override { AddUsage(); }
+   void RecordUsage() const override { AddUsage(); }
 
    //  Overriden to support static member data in a template.
    //
-   virtual void SetTemplateParms(TemplateParmsPtr& parms) override;
+   void SetTemplateParms(TemplateParmsPtr& parms) override;
 
    //  Overridden to shrink containers.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 private:
    //  Overridden to clone the qualified name.
    //
-   virtual void GetInitName(QualNamePtr& qualName) const override;
+   void GetInitName(QualNamePtr& qualName) const override;
 
    //  Checks for static data in a header.
    //
@@ -660,72 +658,70 @@ public:
 
    //  Overridden to support an implicit "this".
    //
-   virtual StackArg NameToArg(Cxx::Operator op) override;
+   StackArg NameToArg(Cxx::Operator op) override;
 
    //  Overridden to mark the item as a member of the context class if
    //  it was pushed via "this".
    //
-   virtual StackArg MemberToArg(StackArg& via, Cxx::Operator op) override;
+   StackArg MemberToArg(StackArg& via, Cxx::Operator op) override;
 
    //  Overridden to log warnings associated with the declaration.
    //
-   virtual void Check() const override;
+   void Check() const override;
 
    //  Overridden to display the data declaration and definition.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to invoke EnterBlock on any field width expression.
    //
-   virtual void EnterBlock() override;
+   void EnterBlock() override;
 
    //  Overridden to add the item to the current scope.
    //
-   virtual bool EnterScope() override;
+   bool EnterScope() override;
 
    //  Overridden to update SYMBOLS with the data's type usage.
    //
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
    //  Overridden to return true if the member appears in a union.
    //
-   virtual bool IsUnionMember() const override;
+   bool IsUnionMember() const override;
 
    //  Overridden to return the item's name.
    //
-   virtual const std::string* Name() const override { return &name_; }
+   const std::string* Name() const override { return &name_; }
 
    //  Overridden to promote the member, which currently belongs to
    //  an anonymous union, to CLS, the union's outer scope.
    //
-   virtual void Promote
-      (Class* cls, Cxx::Access access, bool first, bool last) override;
+   void Promote(Class* cls, Cxx::Access access, bool first, bool last) override;
 
    //  Overridden to record usage of the item.
    //
-   virtual void RecordUsage() const override { AddUsage(); }
+   void RecordUsage() const override { AddUsage(); }
 
    //  Overridden to track usage of the "mutable" attribute.
    //
-   virtual void WasMutated(const StackArg* arg) override;
+   void WasMutated(const StackArg* arg) override;
 
    //  Overridden to shrink containers.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 
    //  Overridden to return the item's name.
    //
-   virtual std::string Trace() const override {return *Name(); }
+   std::string Trace() const override {return *Name(); }
 
    //  Overridden to track usage of the "mutable" attribute.
    //
-   virtual bool WasWritten(const StackArg* arg, bool passed) override;
+   bool WasWritten(const StackArg* arg, bool passed) override;
 private:
    //  Overridden to check that data members are private.
    //
-   virtual void CheckAccessControl() const override;
+   void CheckAccessControl() const override;
 
    //  Checks that static data has an initialization statement.
    //
@@ -793,46 +789,45 @@ public:
 
    //  Overridden to log warnings associated with the data.
    //
-   virtual void Check() const override;
+   void Check() const override;
 
    //  Overridden to display the data declaration and definition.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to make the item visible as a local.
    //
-   virtual void EnterBlock() override;
+   void EnterBlock() override;
 
    //  Overridden to remove the item as a local.
    //
-   virtual void ExitBlock() override;
+   void ExitBlock() override;
 
    //  Overridden to update SYMBOLS with the data's type usage.
    //
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
    //  Overridden to indicate that inline display is supported.
    //
-   virtual bool InLine() const override { return true; }
+   bool InLine() const override { return true; }
 
    //  Overridden to return the item's name.
    //
-   virtual const std::string* Name() const override { return &name_; }
+   const std::string* Name() const override { return &name_; }
 
    //  Overridden to display the data declaration and definition.
    //
-   virtual void Print
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to shrink containers.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 
    //  Overridden to return the item's name.
    //
-   virtual std::string Trace() const override {return *Name(); }
+   std::string Trace() const override {return *Name(); }
 private:
    //  Invoked by Display on each declaration in a possible series.
    //
@@ -1123,63 +1118,63 @@ public:
 
    //  Overridden to log warnings associated with the function.
    //
-   virtual void Check() const override;
+   void Check() const override;
 
    //  Overridden to skip destructors.
    //
-   virtual void CheckAccessControl() const override;
+   void CheckAccessControl() const override;
 
    //  Overridden to not log an override for hiding an inherited name.
    //
-   virtual void CheckIfHiding() const override;
+   void CheckIfHiding() const override;
 
    //  Overridden to determine if the function is used.
    //
-   virtual void CheckIfUsed(Warning warning) const override;
+   void CheckIfUsed(Warning warning) const override;
 
    //  Overridden to display the function.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to execute the function.
    //
-   virtual void EnterBlock() override;
+   void EnterBlock() override;
 
    //  Overridden to add the function to the current scope.
    //
-   virtual bool EnterScope() override;
+   bool EnterScope() override;
 
    //  Overridden to return the file that declared the function.
    //
-   virtual CodeFile* GetDeclFile() const override;
+   CodeFile* GetDeclFile() const override;
 
    //  Overridden to return the file (if any) that defined the function.
    //
-   virtual CodeFile* GetDefnFile() const override;
+   CodeFile* GetDefnFile() const override;
 
    //  Overridden to return the function itself.
    //
-   virtual Function* GetFunction()
+   Function* GetFunction()
       const override { return const_cast< Function* >(this); }
 
    //  Overridden to return the definition if it is distinct from the
    //  declaration, and vice versa.
    //
-   virtual CxxNamed* GetMate() const override { return mate_; }
+   CxxNamed* GetMate() const override { return mate_; }
 
    //  Overridden to return the function's qualified name.
    //
-   virtual QualName* GetQualName() const override { return name_.get(); }
+   QualName* GetQualName() const override { return name_.get(); }
 
    //  Overridden to return the offset of the left brace (if any),
    //  in which case END is updated to the location of the right brace.
    //
-   virtual size_t GetRange(size_t& begin, size_t& end) const override;
+   size_t GetRange(size_t& begin, size_t& end) const override;
 
    //  Overridden to handle an inline friend function.
    //
-   virtual CxxScope* GetScope() const override;
+   CxxScope* GetScope() const override;
 
    //  Overridden to return a template if this function
    //  (a) is a function template
@@ -1187,84 +1182,83 @@ public:
    //  (c) is a function in a class template
    //  (d) is a function in a class template instance
    //
-   virtual CxxScope* GetTemplate() const override;
+   CxxScope* GetTemplate() const override;
 
    //  Overriden to support function templates.
    //
-   virtual const TemplateParms* GetTemplateParms() const
+   const TemplateParms* GetTemplateParms() const
       override { return parms_.get(); }
 
    //  Overridden to return the function's return type.
    //
-   virtual TypeSpec* GetTypeSpec() const override { return spec_.get(); }
+   TypeSpec* GetTypeSpec() const override { return spec_.get(); }
 
    //  Overridden to update SYMBOLS with the type usage of each of the
    //  function's components.
    //
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
    //  Overridden to indicate whether the function itself is const.
    //
-   virtual bool IsConst() const override { return const_; }
+   bool IsConst() const override { return const_; }
 
    //  Overridden to look for an implemented or defaulted function.
    //
-   virtual bool IsImplemented() const override;
+   bool IsImplemented() const override;
 
    //  Overridden to return true if this is an instance of a function template.
    //
-   virtual bool IsInTemplateInstance() const override;
+   bool IsInTemplateInstance() const override;
 
    //  Overridden to return true if the function is static.
    //
-   virtual bool IsStatic() const override { return static_; }
+   bool IsStatic() const override { return static_; }
 
    //  Overridden to determine if the function is unused.
    //
-   virtual bool IsUnused() const override;
+   bool IsUnused() const override;
 
    //  Overriden to include VIA as a "this" argument.
    //
-   virtual StackArg MemberToArg(StackArg& via, Cxx::Operator op) override;
+   StackArg MemberToArg(StackArg& via, Cxx::Operator op) override;
 
    //  Overridden to return the function's name.
    //
-   virtual const std::string* Name() const override { return name_->Name(); }
+   const std::string* Name() const override { return name_->Name(); }
 
    //  Overridden to return the function's qualified name.
    //
-   virtual std::string QualifiedName(bool scopes, bool templates) const
+   std::string QualifiedName(bool scopes, bool templates) const
       override { return name_->QualifiedName(scopes, templates); }
 
    //  Overridden to record usage of the function.
    //
-   virtual void RecordUsage() const override;
+   void RecordUsage() const override;
 
    //  Overriden to support function templates.
    //
-   virtual void SetTemplateParms(TemplateParmsPtr& parms) override;
+   void SetTemplateParms(TemplateParmsPtr& parms) override;
 
    //  Overridden to shrink containers.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 
    //  Overridden to reveal that this is a function.
    //
-   virtual Cxx::ItemType Type() const override { return Cxx::Function; }
+   Cxx::ItemType Type() const override { return Cxx::Function; }
 
    //  Overridden to return the function's full root signature.  The
    //  function's name is omitted if ARG is set.
    //
-   virtual std::string TypeString(bool arg) const override;
+   std::string TypeString(bool arg) const override;
 
    //  Overridden to track how many times the function was invoked.
    //
-   virtual void WasCalled() override;
+   void WasCalled() override;
 
    //  Overridden to count a read as an invocation.
    //
-   virtual bool WasRead() override { ++calls_; return true; }
+   bool WasRead() override { ++calls_; return true; }
 private:
    //  Adds a "this" argument to the function if required.  This occurs
    //  immediately before executing the function's code (in EnterBlock).
@@ -1577,64 +1571,63 @@ public:
 private:
    //  The following are overridden to return the function signature.
    //
-   virtual Function* GetFuncSpec() const override { return func_.get(); }
-   virtual CxxNamed* Referent() const override { return func_.get(); }
-   virtual CxxToken* RootType() const override { return func_.get(); }
+   Function* GetFuncSpec() const override { return func_.get(); }
+   CxxNamed* Referent() const override { return func_.get(); }
+   CxxToken* RootType() const override { return func_.get(); }
 
    //  The following are forwarded to the function.
    //
-   virtual void Print
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   virtual void EnteringScope(const CxxScope* scope) override;
-   virtual bool IsConst() const override;
-   virtual const std::string* Name() const override;
-   virtual std::string Trace() const override;
-   virtual std::string TypeString(bool arg) const override;
-   virtual void Shrink() override;
+   void EnteringScope(const CxxScope* scope) override;
+   bool IsConst() const override;
+   const std::string* Name() const override;
+   std::string Trace() const override;
+   std::string TypeString(bool arg) const override;
+   void Shrink() override;
 
    //  The following are forwarded to the function's return type.
    //
-   virtual void AddArray(ArraySpecPtr& array) override;
-   virtual TagCount Arrays() const override;
-   virtual std::string AlignTemplateArg(const TypeSpec* thatArg) const override;
-   virtual void DisplayArrays(std::ostream& stream) const override;
-   virtual void DisplayTags(std::ostream& stream) const override;
-   virtual TypeTags GetAllTags() const override;
-   virtual TypeSpec* GetTypeSpec() const override;
-   virtual bool HasArrayDefn() const override;
-   virtual TagCount Ptrs(bool arrays) const override;
-   virtual TagCount Refs() const override;
-   virtual void RemoveRefs() override;
-   virtual StackArg ResultType() const override;
-   virtual void SetPtrs(TagCount count) override;
-   virtual TypeTags* Tags() override;
-   virtual const TypeTags* Tags() const override;
-   virtual std::string TypeTagsString(const TypeTags& tags) const override;
+   void AddArray(ArraySpecPtr& array) override;
+   TagCount Arrays() const override;
+   std::string AlignTemplateArg(const TypeSpec* thatArg) const override;
+   void DisplayArrays(std::ostream& stream) const override;
+   void DisplayTags(std::ostream& stream) const override;
+   TypeTags GetAllTags() const override;
+   TypeSpec* GetTypeSpec() const override;
+   bool HasArrayDefn() const override;
+   TagCount Ptrs(bool arrays) const override;
+   TagCount Refs() const override;
+   void RemoveRefs() override;
+   StackArg ResultType() const override;
+   void SetPtrs(TagCount count) override;
+   TypeTags* Tags() override;
+   const TypeTags* Tags() const override;
+   std::string TypeTagsString(const TypeTags& tags) const override;
 
    //  The following are forwarded to the function's return type but also
    //  generate a log because they may not be properly supported.
    //
-   virtual void FindReferent() override;
-   virtual TypeName* GetTemplateArgs() const override;
-   virtual void Instantiating() const override;
-   virtual TypeMatch MatchTemplateArg(const TypeSpec* that) const override;
-   virtual bool ItemIsTemplateArg(const CxxScoped* item) const override;
-   virtual bool MatchesExactly(const TypeSpec* that) const override;
-   virtual TypeMatch MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
+   void FindReferent() override;
+   TypeName* GetTemplateArgs() const override;
+   void Instantiating() const override;
+   TypeMatch MatchTemplateArg(const TypeSpec* that) const override;
+   bool ItemIsTemplateArg(const CxxScoped* item) const override;
+   bool MatchesExactly(const TypeSpec* that) const override;
+   TypeMatch MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
       stringVector& tmpltArgs, bool& argFound) const override;
 
    //  The following are forwarded to the function's return type but also
    //  generate a log because they should not be invoked.
    //
-   virtual void Check() const override;
-   virtual void EnterArrays() const override;
-   virtual void SetReferent
-      (CxxNamed* item, const SymbolView* view) const override;
+   void Check() const override;
+   void EnterArrays() const override;
+   void SetReferent(CxxNamed* item, const SymbolView* view) const override;
 
    //  The following is not supported.  It generates a log and returns
    //  nullptr.
    //
-   virtual TypeSpec* Clone() const override;
+   TypeSpec* Clone() const override;
 
    //  The function signature.
    //

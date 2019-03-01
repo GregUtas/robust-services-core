@@ -45,11 +45,11 @@ public:
    //  Overridden to prevent anything other than a command from
    //  being added as a parameter.
    //
-   virtual bool BindParm(CliParm& parm) override;
+   bool BindParm(CliParm& parm) override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  HELP, COMM (the command's name), and SIZE (the maximum number
    //  of parameters that follow the command) are passed to CliCommand.
@@ -64,7 +64,7 @@ private:
 
    //  Overridden to find and invoke a subcommand.
    //
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 }
 #endif

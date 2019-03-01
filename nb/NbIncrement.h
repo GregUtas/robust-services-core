@@ -39,9 +39,9 @@ class StatusCommand : public CliCommand
 {
 public:
    StatusCommand();
-   virtual ~StatusCommand() { }
+   virtual ~StatusCommand() = default;
 protected:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ class LogsAction : public CliTextParm
 {
 public:
    LogsAction();
-   virtual ~LogsAction() { }
+   virtual ~LogsAction() = default;
 };
 
 class LogsCommand : public CliCommand
@@ -65,11 +65,11 @@ public:
    //  Set BIND to false if binding a subclass of LogsAction.
    //
    explicit LogsCommand(bool bind = true);
-   virtual ~LogsCommand() { }
+   virtual ~LogsCommand() = default;
 protected:
-   virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   word ProcessSubcommand(CliThread& cli, id_t index) const override;
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ class SetWhatParm : public CliTextParm
 {
 public:
    SetWhatParm();
-   virtual ~SetWhatParm() { }
+   virtual ~SetWhatParm() = default;
 };
 
 class SetCommand : public CliCommand
@@ -94,11 +94,11 @@ public:
    //  Set BIND to false if binding a subclass of SetWhatParm.
    //
    explicit SetCommand(bool bind = true);
-   virtual ~SetCommand() { }
+   virtual ~SetCommand() = default;
 protected:
-   virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   word ProcessSubcommand(CliThread& cli, id_t index) const override;
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -110,7 +110,7 @@ class IncludeWhatParm : public CliTextParm
 {
 public:
    IncludeWhatParm();
-   virtual ~IncludeWhatParm() { }
+   virtual ~IncludeWhatParm() = default;
 };
 
 class IncludeCommand : public CliCommand
@@ -124,11 +124,11 @@ public:
    //  Set BIND to false if binding a subclass of IncludeWhatParm.
    //
    explicit IncludeCommand(bool bind = true);
-   virtual ~IncludeCommand() { }
+   virtual ~IncludeCommand() = default;
 protected:
-   virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   word ProcessSubcommand(CliThread& cli, id_t index) const override;
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -140,7 +140,7 @@ class ExcludeWhatParm : public CliTextParm
 {
 public:
    ExcludeWhatParm();
-   virtual ~ExcludeWhatParm() { }
+   virtual ~ExcludeWhatParm() = default;
 };
 
 class ExcludeCommand : public CliCommand
@@ -153,11 +153,11 @@ public:
    //  Set BIND to false if binding a subclass of ExcludeWhatParm.
    //
    explicit ExcludeCommand(bool bind = true);
-   virtual ~ExcludeCommand() { }
+   virtual ~ExcludeCommand() = default;
 protected:
-   virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   word ProcessSubcommand(CliThread& cli, id_t index) const override;
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -169,7 +169,7 @@ class QueryWhatParm : public CliTextParm
 {
 public:
    QueryWhatParm();
-   virtual ~QueryWhatParm() { }
+   virtual ~QueryWhatParm() = default;
 };
 
 class QueryCommand : public CliCommand
@@ -183,11 +183,11 @@ public:
    //  Set BIND to false if binding a subclass of QueryWhatParm.
    //
    explicit QueryCommand(bool bind = true);
-   virtual ~QueryCommand() { }
+   virtual ~QueryCommand() = default;
 protected:
-   virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   word ProcessSubcommand(CliThread& cli, id_t index) const override;
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -199,7 +199,7 @@ class SaveWhatParm : public CliTextParm
 {
 public:
    SaveWhatParm();
-   virtual ~SaveWhatParm() { }
+   virtual ~SaveWhatParm() = default;
 };
 
 class SaveCommand : public CliCommand
@@ -211,11 +211,11 @@ public:
    //  Set BIND to false if binding a subclass of SaveWhatParm.
    //
    explicit SaveCommand(bool bind = true);
-   virtual ~SaveCommand() { }
+   virtual ~SaveCommand() = default;
 protected:
-   virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   word ProcessSubcommand(CliThread& cli, id_t index) const override;
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -227,7 +227,7 @@ class ClearWhatParm : public CliTextParm
 {
 public:
    ClearWhatParm();
-   virtual ~ClearWhatParm() { }
+   virtual ~ClearWhatParm() = default;
 };
 
 class ClearCommand : public CliCommand
@@ -245,11 +245,11 @@ public:
    //  Set BIND to false if binding a subclass of ClearWhatParm.
    //
    explicit ClearCommand(bool bind = true);
-   virtual ~ClearCommand() { }
+   virtual ~ClearCommand() = default;
 protected:
-   virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   word ProcessSubcommand(CliThread& cli, id_t index) const override;
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 //------------------------------------------------------------------------------

@@ -89,7 +89,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   virtual bool Display(ostream& stream, bool diff) override;
+   bool Display(ostream& stream, bool diff) override;
 private:
    //  Private to restrict creation to CaptureEvent.
    //
@@ -97,11 +97,11 @@ private:
 
    //  Overridden to return true for LockAcquired and ScheduledIn events.
    //
-   virtual bool IsFirstAfterContextSwitch() const override;
+   bool IsFirstAfterContextSwitch() const override;
 
    //  Overridden to return a string that explains an event.
    //
-   virtual const char* EventString() const override;
+   const char* EventString() const override;
 
    //  Additional debug information.
    //
@@ -754,7 +754,7 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(ostream& stream,
+   void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
 
    //  The thread's stack pointer after entering Thread::Start.

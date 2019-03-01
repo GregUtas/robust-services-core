@@ -42,8 +42,8 @@ class BotTraceTool : public Tool
    friend class Singleton< BotTraceTool >;
 private:
    BotTraceTool() : Tool(DipTracer, 'd', true) { }
-   virtual const char* Name() const override { return BotTraceToolName; }
-   virtual const char* Expl() const override { return BotTraceToolExpl; }
+   const char* Name() const override { return BotTraceToolName; }
+   const char* Expl() const override { return BotTraceToolExpl; }
 };
 
 //------------------------------------------------------------------------------

@@ -47,7 +47,7 @@ public:
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Registers the input handler against PORT.  Protected because this
    //  class is virtual.
@@ -57,7 +57,7 @@ protected:
    //  Overridden to allocate an SbIpBuffer for an incoming external message
    //  whose MsgHeader must be built.
    //
-   virtual IpBuffer* AllocBuff(const byte_t* source, size_t size,
+   IpBuffer* AllocBuff(const byte_t* source, size_t size,
       byte_t*& dest, size_t& rcvd, SysTcpSocket* socket) const override;
 };
 }

@@ -99,7 +99,7 @@ public:
 
    //  Returns the address as a string ("a.b.c.d:port").
    //
-   virtual std::string to_str() const override;
+   std::string to_str() const override;
 
    //  The same as to_str(), but also displays proto_ and socket_ unless
    //  both still have their default values (IpAny and nullptr).
@@ -116,12 +116,12 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  The port number associated with the address.
    //

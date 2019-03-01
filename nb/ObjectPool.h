@@ -183,20 +183,20 @@ public:
 
    //  Overridden for restarts.
    //
-   virtual void Startup(RestartLevel level) override;
+   void Startup(RestartLevel level) override;
 
    //  Overridden for restarts.
    //
-   virtual void Shutdown(RestartLevel level) override;
+   void Shutdown(RestartLevel level) override;
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Defines a pool, identified by NAME, that allocates blocks of TYPE,
    //  with a size of nBytes.  Protected because this class is virtual.

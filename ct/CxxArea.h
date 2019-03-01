@@ -136,16 +136,16 @@ public:
 
    //  Overridden to log warnings associated with the area's declarations.
    //
-   virtual void Check() const override;
+   void Check() const override;
 
    //  Overridden to return the area itself.
    //
-   virtual CxxArea* GetArea() const
+   CxxArea* GetArea() const
       override { return const_cast< CxxArea* >(this); }
 
    //  Overridden to shrink containers.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 protected:
    //  Protected because this class is virtual.
    //
@@ -424,144 +424,142 @@ public:
    //  scope (usually a namespace), which is what would occur in the default
    //  version.  This is done to see if SCOPE is a subclass of the class.
    //
-   virtual void AccessibilityTo
-      (const CxxScope* scope, SymbolView* view) const override;
+   void AccessibilityTo(const CxxScope* scope, SymbolView* view) const override;
 
    //  Overridden to determine how ITEM, which is declared in this class, is
    //  visible to SCOPE.
    //
-   virtual void AccessibilityOf(const CxxScope* scope,
+   void AccessibilityOf(const CxxScope* scope,
       const CxxScoped* item, SymbolView* view) const override;
 
    //  Overridden to promote CLS's members to their outer scope if CLS is
    //  an anonymous union.
    //
-   virtual bool AddAnonymousUnion(const ClassPtr& cls) override;
+   bool AddAnonymousUnion(const ClassPtr& cls) override;
 
    //  Overridden to update imSet with files that declare or define any of
    //  the class's members.
    //
-   virtual void AddFiles(SetOfIds& imSet) const override;
+   void AddFiles(SetOfIds& imSet) const override;
 
    //  Overridden to set the type for an "auto" variable.
    //
-   virtual CxxToken* AutoType() const override { return (CxxToken*) this; }
+   CxxToken* AutoType() const override { return (CxxToken*) this; }
 
    //  Overridden to log warnings associated with the class's declarations.
    //
-   virtual void Check() const override;
+   void Check() const override;
 
    //  Overridden to determine if the class is used.
    //
-   virtual void CheckIfUsed(Warning warning) const override;
+   void CheckIfUsed(Warning warning) const override;
 
    //  Overridden to return the outer class.
    //
-   virtual Class* Declarer() const override { return OuterClass(); }
+   Class* Declarer() const override { return OuterClass(); }
 
    //  Overridden to return the class itself.
    //
-   virtual Class* DirectClass() const override { return GetClass(); }
+   Class* DirectClass() const override { return GetClass(); }
 
    //  Overridden to display the class and its members.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to add the class to the current scope.
    //
-   virtual bool EnterScope() override;
+   bool EnterScope() override;
 
    //  Overridden to support searching up the class and namespace hierarchy
    //  if a function matching the criteria is not found in this class.
    //
-   virtual Function* FindFunc(const std::string& name, StackArgVector* args,
+   Function* FindFunc(const std::string& name, StackArgVector* args,
       bool base, const CxxScope* scope, SymbolView* view) const override;
 
    //  Overridden to return the class.
    //
-   virtual Class* GetClass() const
+   Class* GetClass() const
       override { return const_cast< Class* >(this); }
 
    //  Overridden to return the types for which the class has conversion
    //  operators.
    //
-   virtual void GetConvertibleTypes(StackArgVector& types) override;
+   void GetConvertibleTypes(StackArgVector& types) override;
 
    //  Returns the current access control level when parsing the class.
    //
-   virtual Cxx::Access GetCurrAccess() const override;
+   Cxx::Access GetCurrAccess() const override;
 
    //  Overridden to return the class's qualified name.
    //
-   virtual QualName* GetQualName() const override { return name_.get(); }
+   QualName* GetQualName() const override { return name_.get(); }
 
    //  Overridden to return the offset of the left brace.
    //
-   virtual size_t GetRange(size_t& begin, size_t& end) const override;
+   size_t GetRange(size_t& begin, size_t& end) const override;
 
    //  Overridden to return the class if it is a class template.
    //
-   virtual CxxScope* GetTemplate() const override;
+   CxxScope* GetTemplate() const override;
 
    //  Overriden to support class templates.
    //
-   virtual const TemplateParms* GetTemplateParms() const
+   const TemplateParms* GetTemplateParms() const
       override { return parms_.get(); }
 
    //  Overridden to update SYMBOLS with the type usage of each of the
    //  class's components.
    //
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
    //  Overridden to look at using statements that are local to the class.
    //
-   virtual Using* GetUsingFor(const std::string& fqName, size_t prefix,
+   Using* GetUsingFor(const std::string& fqName, size_t prefix,
       const CxxNamed* item, const CxxScope* scope) const override;
 
    //  Overridden to look for an implemented function.
    //
-   virtual bool IsImplemented() const override;
+   bool IsImplemented() const override;
 
    //  Overridden to support BASE.
    //
-   virtual Function* MatchFunc(const Function* curr, bool base) const override;
+   Function* MatchFunc(const Function* curr, bool base) const override;
 
    //  Overridden to return the class's name.
    //
-   virtual const std::string* Name() const override { return name_->Name(); }
+   const std::string* Name() const override { return name_->Name(); }
 
    //  Overridden to create an argument when the class is used to access a
    //  constructor.
    //
-   virtual StackArg NameToArg(Cxx::Operator op) override;
+   StackArg NameToArg(Cxx::Operator op) override;
 
    //  Overridden to record usage of the class.
    //
-   virtual void RecordUsage() const override { AddUsage(); }
+   void RecordUsage() const override { AddUsage(); }
 
    //  Overriden to support class templates.
    //
-   virtual void SetTemplateParms(TemplateParmsPtr& parms) override;
+   void SetTemplateParms(TemplateParmsPtr& parms) override;
 
    //  Overridden to shrink containers.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 
    //  Overridden to reveal that this is a class.
    //
-   virtual Cxx::ItemType Type() const override { return Cxx::Class; }
+   Cxx::ItemType Type() const override { return Cxx::Class; }
 
    //  Overridden to return the class's fully qualified name plus any template
    //  specification.
    //
-   virtual std::string TypeString(bool arg) const override;
+   std::string TypeString(bool arg) const override;
 
    //  Overridden to support, for example, passing a "this" argument or writing
    //  to a class object in an array.
    //
-   virtual bool WasWritten(const StackArg* arg, bool passed)
+   bool WasWritten(const StackArg* arg, bool passed)
       override { return false; }
 protected:
    //  Displays the first line of the declaration (the name and base class).
@@ -570,7 +568,7 @@ protected:
 private:
    //  Overridden to register ITEM in the order in which it was declared.
    //
-   virtual void AddItem(CxxNamed* item) override;
+   void AddItem(CxxNamed* item) override;
 
    //  Determines if MEMBER is accessible to SCOPE, updating VIEW with details
    //  on its visibility.
@@ -726,73 +724,72 @@ public:
 
    //  Overridden to return the class template's base class.
    //
-   virtual Class* BaseClass() const override { return tmplt_->BaseClass(); }
+   Class* BaseClass() const override { return tmplt_->BaseClass(); }
 
    //  Overridden to check if CLS if of the form T<args2>, where this class
    //  is of the form T<args1>.  If so, return true if args2 are compatible
    //  with args1.  If CLS is not a class template instance of T, returns the
    //  result of the superclass version.
    //
-   virtual bool DerivesFrom(const Class* cls) const override;
+   bool DerivesFrom(const Class* cls) const override;
 
    //  Overridden to display the name, the number of references to it, and
    //  its interface.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to return the class template instance when it already exists
    //  and is found as a referent by another user.
    //
-   virtual ClassInst* EnsureInstance(const TypeName* type)
+   ClassInst* EnsureInstance(const TypeName* type)
       override { return this; }
 
    //  Overridden to return the template's base class declaration.
    //
-   virtual BaseDecl* GetBaseDecl() const
+   BaseDecl* GetBaseDecl() const
       override { return tmplt_->GetBaseDecl(); }
 
    //  Overridden to return the instance's class template.
    //
-   virtual Class* GetClassTemplate() const override { return tmplt_; }
+   Class* GetClassTemplate() const override { return tmplt_; }
 
    //  Overridden to return the instance's class template.
    //
-   virtual CxxScope* GetTemplate() const override { return tmplt_; }
+   CxxScope* GetTemplate() const override { return tmplt_; }
 
    //  Overridden to return the instance's template arguments.
    //
-   virtual TypeName* GetTemplateArgs() const override { return spec_.get(); }
+   TypeName* GetTemplateArgs() const override { return spec_.get(); }
 
    //  Overridden to ignore usages in the instance.
    //
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
    //  Overridden to instantiate the class template instance.
    //
-   virtual bool Instantiate() override;
+   bool Instantiate() override;
 
    //  Overridden to indicate that this is a class template instance.
    //
-   virtual bool IsInTemplateInstance() const override { return true; }
+   bool IsInTemplateInstance() const override { return true; }
 
    //  Overridden to record usage of the instance's template.
    //
-   virtual void RecordUsage() const override { tmplt_->RecordUsage(); }
+   void RecordUsage() const override { tmplt_->RecordUsage(); }
 
    //  Overridden to count references.
    //
-   virtual void SetAsReferent(const CxxNamed* user) override { ++refs_; }
+   void SetAsReferent(const CxxNamed* user) override { ++refs_; }
 
    //  Overridden to shrink containers.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 
    //  Overridden to return a string containing a fully qualified class name
    //  and fully qualified template arguments.
    //
-   virtual std::string TypeString(bool arg) const override;
+   std::string TypeString(bool arg) const override;
 private:
    //  The class template of which this is an instance.
    //
@@ -851,68 +848,68 @@ public:
 
    //  Overridden to log warnings associated with the namespace's declarations.
    //
-   virtual void Check() const override;
+   void Check() const override;
 
    //  Overridden to display the namespace and its declarations.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to support searching up the namespace hierarchy if a function
    //  matching the criteria is not found in this namespace.
    //
-   virtual Function* FindFunc(const std::string& name, StackArgVector* args,
+   Function* FindFunc(const std::string& name, StackArgVector* args,
       bool base, const CxxScope* scope, SymbolView* view) const override;
 
    //  Overridden to also look for an inner namespace.
    //
-   virtual CxxScoped* FindItem(const std::string& name) const override;
+   CxxScoped* FindItem(const std::string& name) const override;
 
    //  Overridden to indicate that an enclosing scope cannot be a class.
    //
-   virtual Class* GetClass() const override { return nullptr; }
+   Class* GetClass() const override { return nullptr; }
 
    //  All items at file scope are public.
    //
-   virtual Cxx::Access GetCurrAccess() const override { return Cxx::Public; }
+   Cxx::Access GetCurrAccess() const override { return Cxx::Public; }
 
    //  Overridden to return the namespace.
    //
-   virtual Namespace* GetSpace() const
+   Namespace* GetSpace() const
       override { return const_cast< Namespace* >(this); }
 
    //  Overridden to indicate that we cannot be in a template instance.
    //
-   virtual bool IsInTemplateInstance() const override { return false; }
+   bool IsInTemplateInstance() const override { return false; }
 
    //  Overridden to return the namespace's name.
    //
-   virtual const std::string* Name() const override { return &name_; }
+   const std::string* Name() const override { return &name_; }
 
    //  Overridden to preserve the location where the namespace first occurred.
    //
-   virtual void SetLoc(CodeFile* file, size_t pos) override;
+   void SetLoc(CodeFile* file, size_t pos) override;
 
    //  Overridden to handle the global namespace.
    //
-   virtual std::string ScopedName(bool templates) const override;
+   std::string ScopedName(bool templates) const override;
 
    //  Overridden to shrink containers.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 
    //  Overridden to reveal that this is a namespace.
    //
-   virtual Cxx::ItemType Type() const override { return Cxx::Namespace; }
+   Cxx::ItemType Type() const override { return Cxx::Namespace; }
 
    //  Overridden to return the namespace's fully qualified name.
    //
-   virtual std::string TypeString(bool arg) const override;
+   std::string TypeString(bool arg) const override;
 
    //  Overridden to determine how ITEM, which is declared in this namespace,
    //  is accessible to SCOPE.
    //
-   virtual void AccessibilityOf(const CxxScope* scope,
+   void AccessibilityOf(const CxxScope* scope,
       const CxxScoped* item, SymbolView* view) const override;
 private:
    //  The namespace's name.

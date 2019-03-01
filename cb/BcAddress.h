@@ -263,17 +263,16 @@ protected:
 
    //  Overridden to invoke DigitString::Display.
    //
-   virtual void DisplayMsg(std::ostream& stream, const std::string& prefix,
+   void DisplayMsg(std::ostream& stream, const std::string& prefix,
       const byte_t* bytes, size_t count) const override;
 
    //  Overridden to add a DigitString to MSG.
    //
-   virtual TestRc InjectMsg
-      (CliThread& cli, Message& msg, Usage use) const override;
+   TestRc InjectMsg(CliThread& cli, Message& msg, Usage use) const override;
 
    //  Overridden to check a DigitString in MSG against an expected value.
    //
-   virtual TestRc VerifyMsg
+   TestRc VerifyMsg
       (CliThread& cli, const Message& msg, Usage use) const override;
 };
 }

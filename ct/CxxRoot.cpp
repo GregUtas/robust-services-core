@@ -62,8 +62,8 @@ class MacroDATE : public Macro
 public:
    MacroDATE();
    ~MacroDATE() = default;
-   virtual CxxToken* GetValue() const override;
-   virtual CxxNamed* Referent() const
+   CxxToken* GetValue() const override;
+   CxxNamed* Referent() const
       override { return StrLiteral::GetReferent(); }
 private:
    mutable StrLiteralPtr unknown_;
@@ -105,8 +105,8 @@ class MacroFILE : public Macro
 public:
    MacroFILE();
    ~MacroFILE() = default;
-   virtual CxxToken* GetValue() const override;
-   virtual CxxNamed* Referent() const
+   CxxToken* GetValue() const override;
+   CxxNamed* Referent() const
       override { return StrLiteral::GetReferent(); }
 private:
    mutable StrLiteralPtr unknown_;
@@ -154,8 +154,8 @@ class MacroFunc : public Macro
 public:
    MacroFunc();
    ~MacroFunc() = default;
-   virtual CxxToken* GetValue() const override;
-   virtual CxxNamed* Referent() const
+   CxxToken* GetValue() const override;
+   CxxNamed* Referent() const
       override { return StrLiteral::GetReferent(); }
 private:
    mutable StrLiteralPtr unknown_;
@@ -203,8 +203,8 @@ class MacroLINE : public Macro
 public:
    MacroLINE();
    ~MacroLINE() = default;
-   virtual CxxToken* GetValue() const override;
-   virtual CxxNamed* Referent() const
+   CxxToken* GetValue() const override;
+   CxxNamed* Referent() const
       override { return StrLiteral::GetReferent(); }
 private:
    mutable StrLiteralPtr unknown_;
@@ -245,8 +245,8 @@ class MacroTIME : public Macro
 public:
    MacroTIME();
    ~MacroTIME() = default;
-   virtual CxxToken* GetValue() const override;
-   virtual CxxNamed* Referent() const
+   CxxToken* GetValue() const override;
+   CxxNamed* Referent() const
       override { return StrLiteral::GetReferent(); }
 private:
    mutable StrLiteralPtr unknown_;
@@ -291,8 +291,8 @@ class ParserTraceTool : public Tool
    friend class Singleton< ParserTraceTool >;
 private:
    ParserTraceTool() : Tool(ParserTracer, 'p', false) { }
-   virtual const char* Name() const override { return ParserTraceToolName; }
-   virtual const char* Expl() const override { return ParserTraceToolExpl; }
+   const char* Name() const override { return ParserTraceToolName; }
+   const char* Expl() const override { return ParserTraceToolExpl; }
 };
 
 //==============================================================================

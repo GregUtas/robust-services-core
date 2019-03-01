@@ -59,8 +59,8 @@ class SnSizesCommand : public PbSizesCommand
 public:
    SnSizesCommand() = default;
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
-   virtual void DisplaySizes(CliThread& cli, bool all) const override;
+   word ProcessCommand(CliThread& cli) const override;
+   void DisplaySizes(CliThread& cli, bool all) const override;
 };
 
 void SnSizesCommand::DisplaySizes(CliThread& cli, bool all) const
@@ -99,7 +99,7 @@ class TreatmentsCommand : public CliCommand
 public:
    TreatmentsCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string TreatmentsStr = "treatments";

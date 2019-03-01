@@ -47,12 +47,11 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
-      const std::string& prefix) const override;
+   void Display(std::ostream& stream, const std::string& prefix) const override;
 private:
    //  Overridden to identify the type of exception.
    //
-   virtual const char* what() const noexcept override;
+   const char* what() const noexcept override;
 
    //  The type of memory requested.
    //

@@ -575,7 +575,6 @@ std::vector< WarningLog* > WarningLog::LogsToFix(std::string& expl)
    case ArgumentCouldBeConst:
    case FunctionCouldBeConst:
    case FunctionCouldBeStatic:
-   case FunctionCouldBeDefaulted:
    case CouldBeNoexcept:
    case ShouldNotBeNoexcept:
       if(static_cast< const Function* >(item)->IsVirtual())
@@ -583,7 +582,8 @@ std::vector< WarningLog* > WarningLog::LogsToFix(std::string& expl)
          expl = "Changing a virtual function's signature is not supported.";
          return logs;
       }
-
+      //  [[fallthrough]]
+   case FunctionCouldBeDefaulted:
       logs.push_back(this);
       log = FindMateLog(expl);
       if(log != nullptr) logs.push_back(log);

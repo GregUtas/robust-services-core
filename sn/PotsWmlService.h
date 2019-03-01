@@ -37,7 +37,7 @@ class PotsWmlInitiator : public Initiator
 public:
    PotsWmlInitiator();
 private:
-   virtual EventHandler::Rc ProcessEvent(const ServiceSM& parentSsm,
+   EventHandler::Rc ProcessEvent(const ServiceSM& parentSsm,
       Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -47,7 +47,7 @@ class PotsWmlService : public Service
 private:
    PotsWmlService();
    ~PotsWmlService();
-   virtual ServiceSM* AllocModifier() const override;
+   ServiceSM* AllocModifier() const override;
 };
 
 class PotsWmlActivate : public Service
@@ -56,7 +56,7 @@ class PotsWmlActivate : public Service
 private:
    PotsWmlActivate();
    ~PotsWmlActivate();
-   virtual ServiceSM* AllocModifier() const override;
+   ServiceSM* AllocModifier() const override;
 };
 
 class PotsWmlDeactivate : public Service
@@ -65,7 +65,7 @@ class PotsWmlDeactivate : public Service
 private:
    PotsWmlDeactivate();
    ~PotsWmlDeactivate();
-   virtual ServiceSM* AllocModifier() const override;
+   ServiceSM* AllocModifier() const override;
 };
 }
 #endif

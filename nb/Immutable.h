@@ -39,15 +39,15 @@ class Immutable : public Object
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~Immutable() { }
+   virtual ~Immutable() = default;
 
    //  Overridden to return the type of memory used by subclasses.
    //
-   virtual MemoryType MemType() const override { return MemImm; }
+   MemoryType MemType() const override { return MemImm; }
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 
    //  Overridden to allocate memory from the immutable heap.
    //

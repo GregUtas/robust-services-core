@@ -141,7 +141,7 @@ public:
    PotsCwtReleaseEvent(ServiceSM& owner, Facility::Ind ind);
    ~PotsCwtReleaseEvent();
    Facility::Ind Ind() const { return ind_; }
-   virtual void Display(ostream& stream,
+   void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
 private:
    Facility::Ind ind_;
@@ -156,8 +156,8 @@ public:
    static const Id AcAnalyzeUserMessage = NextId + 3;
    static const Id AcRelease            = NextId + 4;
 protected:
-   PotsCwtEventHandler();
-   virtual ~PotsCwtEventHandler();
+   PotsCwtEventHandler() = default;
+   virtual ~PotsCwtEventHandler() = default;
 };
 
 class PotsCwtAcAnalyzeUserMessage : public PotsCwtEventHandler
@@ -165,7 +165,7 @@ class PotsCwtAcAnalyzeUserMessage : public PotsCwtEventHandler
    friend class Singleton< PotsCwtAcAnalyzeUserMessage >;
 private:
    PotsCwtAcAnalyzeUserMessage() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -174,7 +174,7 @@ class PotsCwtAcRelease : public PotsCwtEventHandler
    friend class Singleton< PotsCwtAcRelease >;
 private:
    PotsCwtAcRelease() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -183,7 +183,7 @@ class PotsCwtPeAnalyzeUserMessage : public PotsCwtEventHandler
    friend class Singleton< PotsCwtPeAnalyzeUserMessage >;
 private:
    PotsCwtPeAnalyzeUserMessage() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -192,7 +192,7 @@ class PotsCwtPeAck : public PotsCwtEventHandler
    friend class Singleton< PotsCwtPeAck >;
 private:
    PotsCwtPeAck() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -201,7 +201,7 @@ class PotsCwtPeRelease : public PotsCwtEventHandler
    friend class Singleton< PotsCwtPeRelease >;
 private:
    PotsCwtPeRelease() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -210,7 +210,7 @@ class PotsCwtPrPresentCall : public PotsCwtEventHandler
    friend class Singleton< PotsCwtPrPresentCall >;
 private:
    PotsCwtPrPresentCall() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -221,11 +221,9 @@ public:
 protected:
    explicit PotsCwtSsm(ServiceId sid);
    virtual void Cancel();
-   virtual ServicePortId CalcPort(const AnalyzeMsgEvent& ame) override;
-   virtual EventHandler::Rc ProcessSap
-      (Event& currEvent, Event*& nextEvent) override;
-   virtual EventHandler::Rc ProcessSnp
-      (Event& currEvent, Event*& nextEvent) override;
+   ServicePortId CalcPort(const AnalyzeMsgEvent& ame) override;
+   EventHandler::Rc ProcessSap(Event& currEvent, Event*& nextEvent) override;
+   EventHandler::Rc ProcessSnp(Event& currEvent, Event*& nextEvent) override;
 };
 
 class PotsCwaSsm : public PotsCwtSsm
@@ -234,9 +232,9 @@ public:
    PotsCwaSsm();
    ~PotsCwaSsm();
 private:
-   virtual EventHandler::Rc ProcessInitAck
+   EventHandler::Rc ProcessInitAck
       (Event& currEvent, Event*& nextEvent) override;
-   virtual EventHandler::Rc ProcessInitNack
+   EventHandler::Rc ProcessInitNack
       (Event& currEvent, Event*& nextEvent) override;
 };
 
@@ -254,13 +252,13 @@ public:
    void ClearTimer(TimerId tid);
    void FreeContext();
    EventHandler::Rc RestoreContext(Event*& nextEvent);
-   virtual void Cancel() override;
-   virtual void Display(ostream& stream,
+   void Cancel() override;
+   void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
 private:
-   virtual EventHandler::Rc ProcessInitAck
+   EventHandler::Rc ProcessInitAck
       (Event& currEvent, Event*& nextEvent) override;
-   virtual EventHandler::Rc ProcessInitNack
+   EventHandler::Rc ProcessInitNack
       (Event& currEvent, Event*& nextEvent) override;
 
    AnalyzeSapEvent* sap_;
@@ -941,14 +939,6 @@ void PotsCwbSsm::StopTimer(TimerId tid)
 }
 
 //==============================================================================
-
-PotsCwtEventHandler::PotsCwtEventHandler() { }
-
-//------------------------------------------------------------------------------
-
-PotsCwtEventHandler::~PotsCwtEventHandler() { }
-
-//------------------------------------------------------------------------------
 
 fn_name PotsCwtPeAnalyzeUserMessage_ProcessEvent =
    "PotsCwtPeAnalyzeUserMessage.ProcessEvent";

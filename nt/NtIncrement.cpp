@@ -191,7 +191,7 @@ public:
    explicit NtLogsCommand(bool bind = true);
    virtual ~NtLogsCommand() = default;
 protected:
-   virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   word ProcessSubcommand(CliThread& cli, id_t index) const override;
 private:
    word Sort(const string& input, const string& output, string& expl) const;
 };
@@ -631,7 +631,7 @@ public:
 
    SwFlagsCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string FlagIdExpl = "flag identifier";
@@ -1079,7 +1079,7 @@ class LbcInitCommand : public CliCommand
 public:
    LbcInitCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class LbcEventCommand : public CliCommand
@@ -1087,7 +1087,7 @@ class LbcEventCommand : public CliCommand
 public:
    LbcEventCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -1178,7 +1178,7 @@ class Q1WayItem : public Temporary
 public:
    explicit Q1WayItem(word index);
    ~Q1WayItem();
-   virtual void Display(ostream& stream,
+   void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
    static ptrdiff_t LinkDiff();
 
@@ -1195,7 +1195,7 @@ class Q1WayPool : public Temporary
 public:
    static const size_t MaxItems = 8;
    void Reallocate();
-   virtual void Display(ostream& stream,
+   void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
 
    std::unique_ptr< Q1WayItem > items_[MaxItems + 1];
@@ -1220,7 +1220,7 @@ class Countq1Command : public CliCommand
 public:
    Countq1Command();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class Deq1Command : public CliCommand
@@ -1228,7 +1228,7 @@ class Deq1Command : public CliCommand
 public:
    Deq1Command();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class Emptyq1Command : public CliCommand
@@ -1236,7 +1236,7 @@ class Emptyq1Command : public CliCommand
 public:
    Emptyq1Command();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class Enq1Command : public CliCommand
@@ -1244,7 +1244,7 @@ class Enq1Command : public CliCommand
 public:
    Enq1Command();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class Exq1Command : public CliCommand
@@ -1252,7 +1252,7 @@ class Exq1Command : public CliCommand
 public:
    Exq1Command();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class Firstq1Command : public CliCommand
@@ -1260,7 +1260,7 @@ class Firstq1Command : public CliCommand
 public:
    Firstq1Command();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class Henq1Command : public CliCommand
@@ -1268,7 +1268,7 @@ class Henq1Command : public CliCommand
 public:
    Henq1Command();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class Insertq1Command : public CliCommand
@@ -1276,7 +1276,7 @@ class Insertq1Command : public CliCommand
 public:
    Insertq1Command();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class Nextq1Command : public CliCommand
@@ -1284,7 +1284,7 @@ class Nextq1Command : public CliCommand
 public:
    Nextq1Command();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class Purgeq1Command : public CliCommand
@@ -1292,7 +1292,7 @@ class Purgeq1Command : public CliCommand
 public:
    Purgeq1Command();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -1690,7 +1690,7 @@ class Q2WayItem : public Temporary
 public:
    explicit Q2WayItem(word index);
    ~Q2WayItem();
-   virtual void Display(ostream& stream,
+   void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
    static ptrdiff_t LinkDiff();
 
@@ -1707,7 +1707,7 @@ class Q2WayPool : public Temporary
 public:
    static const size_t MaxItems = 8;
    void Reallocate();
-   virtual void Display(ostream& stream,
+   void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
 
    std::unique_ptr< Q2WayItem > items_[MaxItems + 1];
@@ -1732,7 +1732,7 @@ class Countq2Command : public CliCommand
 public:
    Countq2Command();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class Deq2Command : public CliCommand
@@ -1740,7 +1740,7 @@ class Deq2Command : public CliCommand
 public:
    Deq2Command();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class Emptyq2Command : public CliCommand
@@ -1748,7 +1748,7 @@ class Emptyq2Command : public CliCommand
 public:
    Emptyq2Command();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class Enq2Command : public CliCommand
@@ -1756,7 +1756,7 @@ class Enq2Command : public CliCommand
 public:
    Enq2Command();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class Exq2Command : public CliCommand
@@ -1764,7 +1764,7 @@ class Exq2Command : public CliCommand
 public:
    Exq2Command();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class Firstq2Command : public CliCommand
@@ -1772,7 +1772,7 @@ class Firstq2Command : public CliCommand
 public:
    Firstq2Command();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class Henq2Command : public CliCommand
@@ -1780,7 +1780,7 @@ class Henq2Command : public CliCommand
 public:
    Henq2Command();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class Lastq2Command : public CliCommand
@@ -1788,7 +1788,7 @@ class Lastq2Command : public CliCommand
 public:
    Lastq2Command();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class Nextq2Command : public CliCommand
@@ -1796,7 +1796,7 @@ class Nextq2Command : public CliCommand
 public:
    Nextq2Command();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class Prevq2Command : public CliCommand
@@ -1804,7 +1804,7 @@ class Prevq2Command : public CliCommand
 public:
    Prevq2Command();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class Purgeq2Command : public CliCommand
@@ -1812,7 +1812,7 @@ class Purgeq2Command : public CliCommand
 public:
    Purgeq2Command();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -2256,7 +2256,7 @@ class RegistryItem : public Temporary
 public:
    explicit RegistryItem(word index);
    ~RegistryItem();
-   virtual void Display(ostream& stream,
+   void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
    static ptrdiff_t CellDiff();
 
@@ -2272,7 +2272,7 @@ class RegistryPool : public Temporary
    friend class Singleton< RegistryPool >;
 public:
    static const size_t MaxItems = 8;
-   virtual void Display(ostream& stream,
+   void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
 
    std::unique_ptr< RegistryItem > items_[MaxItems + 1];
@@ -2312,7 +2312,7 @@ class InitCommand : public CliCommand
 public:
    InitCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class InsertCommand : public CliCommand
@@ -2320,7 +2320,7 @@ class InsertCommand : public CliCommand
 public:
    InsertCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class RemoveCommand : public CliCommand
@@ -2328,7 +2328,7 @@ class RemoveCommand : public CliCommand
 public:
    RemoveCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class AtCommand : public CliCommand
@@ -2336,7 +2336,7 @@ class AtCommand : public CliCommand
 public:
    AtCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class FirstCommand : public CliCommand
@@ -2344,7 +2344,7 @@ class FirstCommand : public CliCommand
 public:
    FirstCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class NextCommand : public CliCommand
@@ -2352,7 +2352,7 @@ class NextCommand : public CliCommand
 public:
    NextCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class LastCommand : public CliCommand
@@ -2360,7 +2360,7 @@ class LastCommand : public CliCommand
 public:
    LastCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class PrevCommand : public CliCommand
@@ -2368,7 +2368,7 @@ class PrevCommand : public CliCommand
 public:
    PrevCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class CountCommand : public CliCommand
@@ -2376,7 +2376,7 @@ class CountCommand : public CliCommand
 public:
    CountCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -2850,7 +2850,7 @@ class TimeCtor1Command : public CliCommand
 public:
    TimeCtor1Command();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class TimeCtor2Command : public CliCommand
@@ -2858,7 +2858,7 @@ class TimeCtor2Command : public CliCommand
 public:
    TimeCtor2Command();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class DayOfWeekCommand : public CliCommand
@@ -2866,7 +2866,7 @@ class DayOfWeekCommand : public CliCommand
 public:
    DayOfWeekCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class DayOfYearCommand : public CliCommand
@@ -2874,7 +2874,7 @@ class DayOfYearCommand : public CliCommand
 public:
    DayOfYearCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class IsLeapYearCommand : public CliCommand
@@ -2882,7 +2882,7 @@ class IsLeapYearCommand : public CliCommand
 public:
    IsLeapYearCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class TruncateCommand : public CliCommand
@@ -2890,7 +2890,7 @@ class TruncateCommand : public CliCommand
 public:
    TruncateCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class RoundCommand : public CliCommand
@@ -2898,7 +2898,7 @@ class RoundCommand : public CliCommand
 public:
    RoundCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class AddMsecsCommand : public CliCommand
@@ -2906,7 +2906,7 @@ class AddMsecsCommand : public CliCommand
 public:
    AddMsecsCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class SubMsecsCommand : public CliCommand
@@ -2914,7 +2914,7 @@ class SubMsecsCommand : public CliCommand
 public:
    SubMsecsCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class MsecsFromNowCommand : public CliCommand
@@ -2922,7 +2922,7 @@ class MsecsFromNowCommand : public CliCommand
 public:
    MsecsFromNowCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class MsecsUntilCommand : public CliCommand
@@ -2930,7 +2930,7 @@ class MsecsUntilCommand : public CliCommand
 public:
    MsecsUntilCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class AddDaysCommand : public CliCommand
@@ -2938,7 +2938,7 @@ class AddDaysCommand : public CliCommand
 public:
    AddDaysCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class SubDaysCommand : public CliCommand
@@ -2946,7 +2946,7 @@ class SubDaysCommand : public CliCommand
 public:
    SubDaysCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 class StrTimeCommand : public CliCommand
@@ -2954,7 +2954,7 @@ class StrTimeCommand : public CliCommand
 public:
    StrTimeCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -3438,7 +3438,7 @@ public:
 
    void SetTest(Test test) { test_ = test; }
    void SetTestSignal(signal_t signal) {signal_ = signal; }
-   virtual void Display(ostream& stream,
+   void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
 private:
    RecoveryTestThread();
@@ -3446,11 +3446,11 @@ private:
    static void UseBadPointer();
    static void LoopForever();
    static void RecurseForever(size_t depth);
-   virtual const char* AbbrName() const override;
-   virtual bool IsCritical() const override;
-   virtual void Enter() override;
-   virtual RecoveryAction Recover() override;
-   virtual void Destroy() override;
+   const char* AbbrName() const override;
+   bool IsCritical() const override;
+   void Enter() override;
+   RecoveryAction Recover() override;
+   void Destroy() override;
 
    Test test_;
    signal_t signal_;
@@ -3720,7 +3720,7 @@ class RecoverCommand : public CliCommand
 public:
    RecoverCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 //------------------------------------------------------------------------------

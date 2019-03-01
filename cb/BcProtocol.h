@@ -213,7 +213,7 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 protected:
    //  Creates a PSM from an adjacent layer.  The arguments are the same as
@@ -233,20 +233,20 @@ protected:
 
    //  Overridden to create an outgoing message for a media parameter.
    //
-   virtual void EnsureMediaMsg() override;
+   void EnsureMediaMsg() override;
 
    //  Overridden to update the PSM's state when a message is received.
    //
-   virtual IncomingRc ProcessIcMsg(Message& msg, Event*& event) override;
+   IncomingRc ProcessIcMsg(Message& msg, Event*& event) override;
 
    //  Overridden to update the PSM's state when a message is sent.
    //
-   virtual OutgoingRc ProcessOgMsg(Message& msg) override;
+   OutgoingRc ProcessOgMsg(Message& msg) override;
 
    //  Overridden to inject a REL if the node associated with the PSM's
    //  peer goes out of service.
    //
-   virtual void InjectFinalMsg() override;
+   void InjectFinalMsg() override;
 private:
    //  Determines whether a timer is started when sending an IAM.
    //
@@ -255,7 +255,7 @@ private:
    //  Overridden to send a REL if the PSM is not idle when its context
    //  is destroyed.
    //
-   virtual void SendFinalMsg() override;
+   void SendFinalMsg() override;
 
    //  Set if the IAM timer is running.
    //
@@ -284,11 +284,11 @@ private:
 
    //  Overridden to create a TCP socket if CIP is using TCP.
    //
-   virtual SysTcpSocket* CreateAppSocket() override;
+   SysTcpSocket* CreateAppSocket() override;
 
    //  Overridden to specify that messages can bypass the IP stack.
    //
-   virtual Message::Route Route() const override;
+   Message::Route Route() const override;
 };
 
 //------------------------------------------------------------------------------
@@ -301,9 +301,9 @@ class CipUdpService : public UdpIpService
 public:
    //  Overridden to return the service's attributes.
    //
-   virtual const char* Name() const override { return "Call Interworking"; }
-   virtual ipport_t Port() const override { return ipport_t(port_); }
-   virtual Faction GetFaction() const override { return PayloadFaction; }
+   const char* Name() const override { return "Call Interworking"; }
+   ipport_t Port() const override { return ipport_t(port_); }
+   Faction GetFaction() const override { return PayloadFaction; }
 private:
    //  Private because this singleton is not subclassed.
    //
@@ -315,11 +315,11 @@ private:
 
    //  Overridden to create a CLI parameter for identifying the protocol.
    //
-   virtual CliText* CreateText() const override;
+   CliText* CreateText() const override;
 
    //  Overridden to create the CIP input handler.
    //
-   virtual InputHandler* CreateHandler(IpPort* port) const override;
+   InputHandler* CreateHandler(IpPort* port) const override;
 
    //  The port on which the protocol is running.
    //
@@ -340,11 +340,11 @@ class CipTcpService : public TcpIpService
 public:
    //  Overridden to return the service's attributes.
    //
-   virtual const char* Name() const override { return "Call Interworking"; }
-   virtual ipport_t Port() const override { return ipport_t(port_); }
-   virtual Faction GetFaction() const override { return PayloadFaction; }
-   virtual size_t MaxConns() const override { return TcpIoThread::MaxConns; }
-   virtual size_t MaxBacklog() const override { return 200; }
+   const char* Name() const override { return "Call Interworking"; }
+   ipport_t Port() const override { return ipport_t(port_); }
+   Faction GetFaction() const override { return PayloadFaction; }
+   size_t MaxConns() const override { return TcpIoThread::MaxConns; }
+   size_t MaxBacklog() const override { return 200; }
 private:
    //  Private because this singleton is not subclassed.
    //
@@ -356,16 +356,15 @@ private:
 
    //  Overridden to return the buffer sizes for an application socket.
    //
-   virtual void GetAppSocketSizes
-      (size_t& rxSize, size_t& txSize) const override;
+   void GetAppSocketSizes(size_t& rxSize, size_t& txSize) const override;
 
    //  Overridden to create a CLI parameter for identifying the protocol.
    //
-   virtual CliText* CreateText() const override;
+   CliText* CreateText() const override;
 
    //  Overridden to create the CIP input handler.
    //
-   virtual InputHandler* CreateHandler(IpPort* port) const override;
+   InputHandler* CreateHandler(IpPort* port) const override;
 
    //  The port on which the protocol is running.
    //
@@ -409,15 +408,15 @@ protected:
 
    //  Overridden to allocate a message to receive BUFF.
    //
-   virtual Message* AllocIcMsg(SbIpBufferPtr& buff) const override;
+   Message* AllocIcMsg(SbIpBufferPtr& buff) const override;
 
    //  Overridden to allocate a message that will be sent by a test tool.
    //
-   virtual Message* AllocOgMsg(SignalId sid) const override;
+   Message* AllocOgMsg(SignalId sid) const override;
 
    //  Overridden to allocate a message to save BUFF.
    //
-   virtual Message* ReallocOgMsg(SbIpBufferPtr& buff) const override;
+   Message* ReallocOgMsg(SbIpBufferPtr& buff) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -438,11 +437,11 @@ private:
 
    //  Overridden to create a PSM to support InjectCommand.
    //
-   virtual ProtocolSM* AllocOgPsm(const Message& msg) const override;
+   ProtocolSM* AllocOgPsm(const Message& msg) const override;
 
    //  Overridden to return a CLI parameter that identifies the factory.
    //
-   virtual CliText* CreateText() const override;
+   CliText* CreateText() const override;
 };
 
 //------------------------------------------------------------------------------
@@ -463,18 +462,17 @@ private:
 
    //  Overridden to return a CLI parameter that identifies the factory.
    //
-   virtual CliText* CreateText() const override;
+   CliText* CreateText() const override;
 
    //  Overridden to create a CIP PSM when a CIP IAM arrives.
    //
-   virtual ProtocolSM* AllocIcPsm
+   ProtocolSM* AllocIcPsm
       (const Message& msg, ProtocolLayer& lower) const override;
 
    //  Overridden to create the root SSM when a CIP IAM arrives on PSM
    //  to create the recipient's half of a new session.
    //
-   virtual RootServiceSM* AllocRoot
-      (const Message& msg, ProtocolSM& psm) const override;
+   RootServiceSM* AllocRoot(const Message& msg, ProtocolSM& psm) const override;
 };
 }
 #endif

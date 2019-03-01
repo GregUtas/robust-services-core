@@ -179,7 +179,7 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 protected:
    //  Creates a set that with the identifier NAME.  If NAME is not prefixed

@@ -75,16 +75,16 @@ public:
 
    //  Overridden to display macros.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for restarts.
    //
-   virtual void Shutdown(NodeBase::RestartLevel level) override;
+   void Shutdown(NodeBase::RestartLevel level) override;
 
    //  Overridden for restarts.
    //
-   virtual void Startup(NodeBase::RestartLevel level) override;
+   void Startup(NodeBase::RestartLevel level) override;
 private:
    //  Private because this singleton is not subclassed.
    //

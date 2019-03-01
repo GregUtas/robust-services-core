@@ -45,11 +45,11 @@ public:
 
    //  Overridden to prevent a log when a directive appears inside a function.
    //
-   virtual void EnterBlock() override { }
+   void EnterBlock() override { }
 
    //  Overridden to indicate that directives cannot be displayed inline.
    //
-   virtual bool InLine() const override { return false; }
+   bool InLine() const override { return false; }
 protected:
    //  Protected because this class is virtual.
    //
@@ -69,11 +69,11 @@ public:
 
    //  Overridden to return the symbol's name.
    //
-   virtual const std::string* Name() const override { return &name_; }
+   const std::string* Name() const override { return &name_; }
 
    //  Overridden to shrink the item's name.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 protected:
    //  Creates a directive that defines or references NAME.  Protected because
    //  this class is virtual.
@@ -107,16 +107,16 @@ public:
 
    //  Overridden to display the directive.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to log an #include that is not at file scope.
    //
-   virtual void SetScope(CxxScope* scope) override;
+   void SetScope(CxxScope* scope) override;
 
    //  Overridden to report the filename's length.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 private:
    //  Set if the filename appeared in angle brackets.
    //
@@ -140,12 +140,12 @@ public:
 
    //  Overridden to display the directive.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to report the symbol's length.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 };
 
 //------------------------------------------------------------------------------
@@ -169,42 +169,41 @@ public:
 
    //  Overridden to find the referent and push it onto the argument stack.
    //
-   virtual void EnterBlock() override;
+   void EnterBlock() override;
 
    //  Overridden to return the global namespace.
    //
-   virtual CxxScope* GetScope() const override;
+   CxxScope* GetScope() const override;
 
    //  Overridden to update SYMBOLS with the name's type usage.
    //
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
    //  Overridden to return the macro's name.
    //
-   virtual const std::string* Name() const override { return &name_; }
+   const std::string* Name() const override { return &name_; }
 
    //  Overridden to display the name, including any template arguments.
    //
-   virtual void Print
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to return the macro's name.
    //
-   virtual std::string QualifiedName
+   std::string QualifiedName
       (bool scopes, bool templates) const override { return name_; }
 
    //  Overridden to return what the name refers to.
    //
-   virtual CxxNamed* Referent() const override;
+   CxxNamed* Referent() const override;
 
    //  Overridden to shrink containers.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 
    //  Overridden to return the referent's full root type.
    //
-   virtual std::string TypeString(bool arg) const override;
+   std::string TypeString(bool arg) const override;
 private:
    //  The macro's name.
    //
@@ -252,48 +251,48 @@ public:
 
    //  Overridden to display the macro.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to invoke GetNumeric on the referent, if found.
    //
-   virtual Numeric GetNumeric() const override;
+   Numeric GetNumeric() const override;
 
    //  Overridden to indicate that a #define cannot be displayed inline.
    //
-   virtual bool InLine() const override { return false; }
+   bool InLine() const override { return false; }
 
    //  Overridden to determine if the macro is unused.
    //
-   virtual bool IsUnused() const override { return (refs_ == 0); }
+   bool IsUnused() const override { return (refs_ == 0); }
 
    //  Overridden to return the macro's name.
    //
-   virtual const std::string* Name() const override { return &name_; }
+   const std::string* Name() const override { return &name_; }
 
    //  Overridden to record usage of the macro.
    //
-   virtual void RecordUsage() const override { AddUsage(); }
+   void RecordUsage() const override { AddUsage(); }
 
    //  Overridden to return the underlying type.
    //
-   virtual CxxToken* RootType() const override { return GetValue(); }
+   CxxToken* RootType() const override { return GetValue(); }
 
    //  Overridden to shrink the item's name.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 
    //  Overridden to reveal that this is a macro.
    //
-   virtual Cxx::ItemType Type() const override { return Cxx::Macro; }
+   Cxx::ItemType Type() const override { return Cxx::Macro; }
 
    //  Overridden to invoke TypeString on the referent, if found.
    //
-   virtual std::string TypeString(bool arg) const override;
+   std::string TypeString(bool arg) const override;
 
    //  Overridden to count references to the macro.
    //
-   virtual bool WasRead() override { ++refs_; return true; }
+   bool WasRead() override { ++refs_; return true; }
 protected:
    //  Creates a macro for the symbol identified by NAME.  Protected
    //  because this class is virtual.
@@ -337,33 +336,33 @@ public:
 
    //  Overridden to return the type associated with the macro.
    //
-   virtual CxxToken* AutoType() const override;
+   CxxToken* AutoType() const override;
 
    //  Overridden to return true if the macro name has appeared in a #define.
    //
-   virtual bool IsDefined() const override { return defined_; }
+   bool IsDefined() const override { return defined_; }
 
    //  Overridden to set RHS as the macro's definition when the macro name
    //  appears in a #define after its name was already used.
    //
-   virtual void SetExpr(ExprPtr& rhs) override;
+   void SetExpr(ExprPtr& rhs) override;
 
    //  Returns the macro's underlying value.
    //
-   virtual CxxToken* GetValue() const override { return value_; }
+   CxxToken* GetValue() const override { return value_; }
 
    //  Overridden to display the directive.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to log a #define that is not at file scope.
    //
-   virtual bool EnterScope() override;
+   bool EnterScope() override;
 
    //  Overridden to shrink containers.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 private:
    //  The expression, if any, that assigns a value to the macro.
    //
@@ -420,7 +419,7 @@ public:
 
    //  Overridden to display source code if it was not compiled.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to return true if compiled code follows this directive.
@@ -466,25 +465,24 @@ public:
 
    //  Overridden to add a condition to the directive.
    //
-   virtual void AddCondition(ExprPtr& c) override { condition_ = std::move(c); }
+   void AddCondition(ExprPtr& c) override { condition_ = std::move(c); }
 
    //  Overridden to display the condition.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to return the result of evaluating the condition.
    //
-   virtual bool EnterScope() override;
+   bool EnterScope() override;
 
    //  Overridden to include symbols that appear in the condition.
    //
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
    //  Overridden to shrink the conditional expression.
    //
-   virtual void Shrink() override { ShrinkExpression(condition_); }
+   void Shrink() override { ShrinkExpression(condition_); }
 protected:
    //  Protected because this class is virtual.
    //
@@ -508,25 +506,24 @@ public:
 
    //  Overridden to add an #else to the directive.
    //
-   virtual bool AddElse(const Else* e) override;
+   bool AddElse(const Else* e) override;
 
    //  Overridden to display the directive.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to update SYMBOLS with name_'s referent.
    //
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
    //  Overridden to return the symbol's name.
    //
-   virtual const std::string* Name() const override { return name_->Name(); }
+   const std::string* Name() const override { return name_->Name(); }
 
    //  Overridden to shrink the item's name.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 protected:
    //  MACRO is the symbol whose existence an #ifdef or #ifndef is checking.
    //  Protected because this class is virtual.
@@ -563,12 +560,12 @@ public:
 
    //  Overridden to display the directive.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to handle the code that follows the #elif.
    //
-   virtual bool EnterScope() override;
+   bool EnterScope() override;
 };
 
 //------------------------------------------------------------------------------
@@ -588,12 +585,12 @@ public:
 
    //  Overridden to display the directive.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to handle the code that follows the #else.
    //
-   virtual bool EnterScope() override;
+   bool EnterScope() override;
 };
 
 //------------------------------------------------------------------------------
@@ -613,7 +610,7 @@ public:
 
    //  Overridden to display the directive.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 };
 
@@ -634,12 +631,12 @@ public:
 
    //  Overridden to display the directive.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to handle the code that follows the #ifdef.
    //
-   virtual bool EnterScope() override;
+   bool EnterScope() override;
 };
 
 //------------------------------------------------------------------------------
@@ -659,29 +656,29 @@ public:
 
    //  Overridden to add an #elif.
    //
-   virtual bool AddElif(Elif* e) override;
+   bool AddElif(Elif* e) override;
 
    //  Overridden to add an #else.
    //
-   virtual bool AddElse(const Else* e) override;
+   bool AddElse(const Else* e) override;
 
    //  Overridden to display the directive.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to handle the code that follows the #if.
    //
-   virtual bool EnterScope() override;
+   bool EnterScope() override;
 
    //  Overridden to return true if compile code follows this directive
    //  or an #elif.
    //
-   virtual bool HasCompiledCode() const override;
+   bool HasCompiledCode() const override;
 
    //  Overridden to shrink containers.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 private:
    //  Any #elifs that follow the #if.
    //
@@ -709,12 +706,12 @@ public:
 
    //  Overridden to display the directive.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to handle the code that follows the #ifndef.
    //
-   virtual bool EnterScope() override;
+   bool EnterScope() override;
 };
 
 //------------------------------------------------------------------------------
@@ -734,7 +731,7 @@ public:
 
    //  Overridden to shrink the item's string.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 protected:
    //  Creates a directive that is followed by TEXT.  Protected because
    //  this class is virtual.
@@ -763,7 +760,7 @@ public:
 
    //  Overridden to display the directive.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 };
 
@@ -784,12 +781,12 @@ public:
 
    //  Overridden to display the directive.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to generate a log.
    //
-   virtual bool EnterScope() override;
+   bool EnterScope() override;
 };
 
 //------------------------------------------------------------------------------
@@ -809,7 +806,7 @@ public:
 
    //  Overridden to display the directive.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 };
 }

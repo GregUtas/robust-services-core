@@ -41,15 +41,15 @@ class Permanent : public Object
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~Permanent() { }
+   virtual ~Permanent() = default;
 
    //  Overridden to return the type of memory used by subclasses.
    //
-   virtual MemoryType MemType() const override { return MemPerm; }
+   MemoryType MemType() const override { return MemPerm; }
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 
    //  Overridden to allocate memory from the permanent heap.
    //

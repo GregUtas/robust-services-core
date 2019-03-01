@@ -49,7 +49,7 @@ public:
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Private because this singleton is not subclassed.
    //
@@ -61,15 +61,15 @@ private:
 
    //  Overridden to return a name for the thread.
    //
-   virtual const char* AbbrName() const override;
+   const char* AbbrName() const override;
 
    //  Overridden to dequeue console output requests.
    //
-   virtual void Enter() override;
+   void Enter() override;
 
    //  Overridden to delete the singleton.
    //
-   virtual void Destroy() override;
+   void Destroy() override;
 };
 }
 #endif

@@ -44,15 +44,15 @@ public:
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Overridden to look for a valid pointer.
    //
-   virtual Rc GetPtrParmRc(void*& p, CliThread& cli) const override;
+   Rc GetPtrParmRc(void*& p, CliThread& cli) const override;
 private:
    //  Overridden to show that a hex value is expected.
    //
-   virtual bool ShowValues(std::string& values) const override;
+   bool ShowValues(std::string& values) const override;
 };
 }
 #endif

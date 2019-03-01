@@ -61,7 +61,7 @@ public:
 
    //  Overridden to provide a name for proxy ports.
    //
-   virtual const char* PortName(PortId pid) const override;
+   const char* PortName(PortId pid) const override;
 protected:
    //  Protected because this class is virtual.  By default, basic calls
    //  support modifier services.  The constructor registers event names
@@ -85,119 +85,119 @@ class ProxyBcNull : public BcNull
 {
 protected:
    explicit ProxyBcNull(ServiceId sid);
-   virtual ~ProxyBcNull();
+   virtual ~ProxyBcNull() = default;
 };
 
 class ProxyBcAuthorizingOrigination : public BcAuthorizingOrigination
 {
 protected:
    explicit ProxyBcAuthorizingOrigination(ServiceId sid);
-   virtual ~ProxyBcAuthorizingOrigination();
+   virtual ~ProxyBcAuthorizingOrigination() = default;
 };
 
 class ProxyBcCollectingInformation : public BcCollectingInformation
 {
 protected:
    explicit ProxyBcCollectingInformation(ServiceId sid);
-   virtual ~ProxyBcCollectingInformation();
+   virtual ~ProxyBcCollectingInformation() = default;
 };
 
 class ProxyBcAnalyzingInformation : public BcAnalyzingInformation
 {
 protected:
    explicit ProxyBcAnalyzingInformation(ServiceId sid);
-   virtual ~ProxyBcAnalyzingInformation();
+   virtual ~ProxyBcAnalyzingInformation() = default;
 };
 
 class ProxyBcSelectingRoute : public BcSelectingRoute
 {
 protected:
    explicit ProxyBcSelectingRoute(ServiceId sid);
-   virtual ~ProxyBcSelectingRoute();
+   virtual ~ProxyBcSelectingRoute() = default;
 };
 
 class ProxyBcAuthorizingCallSetup : public BcAuthorizingCallSetup
 {
 protected:
    explicit ProxyBcAuthorizingCallSetup(ServiceId sid);
-   virtual ~ProxyBcAuthorizingCallSetup();
+   virtual ~ProxyBcAuthorizingCallSetup() = default;
 };
 
 class ProxyBcSendingCall : public BcSendingCall
 {
 protected:
    explicit ProxyBcSendingCall(ServiceId sid);
-   virtual ~ProxyBcSendingCall();
+   virtual ~ProxyBcSendingCall() = default;
 };
 
 class ProxyBcOrigAlerting : public BcOrigAlerting
 {
 protected:
    explicit ProxyBcOrigAlerting(ServiceId sid);
-   virtual ~ProxyBcOrigAlerting();
+   virtual ~ProxyBcOrigAlerting() = default;
 };
 
 class ProxyBcAuthorizingTermination : public BcAuthorizingTermination
 {
 protected:
    explicit ProxyBcAuthorizingTermination(ServiceId sid);
-   virtual ~ProxyBcAuthorizingTermination();
+   virtual ~ProxyBcAuthorizingTermination() = default;
 };
 
 class ProxyBcSelectingFacility : public BcSelectingFacility
 {
 protected:
    explicit ProxyBcSelectingFacility(ServiceId sid);
-   virtual ~ProxyBcSelectingFacility();
+   virtual ~ProxyBcSelectingFacility() = default;
 };
 
 class ProxyBcPresentingCall : public BcPresentingCall
 {
 protected:
    explicit ProxyBcPresentingCall(ServiceId sid);
-   virtual ~ProxyBcPresentingCall();
+   virtual ~ProxyBcPresentingCall() = default;
 };
 
 class ProxyBcTermAlerting : public BcTermAlerting
 {
 protected:
    explicit ProxyBcTermAlerting(ServiceId sid);
-   virtual ~ProxyBcTermAlerting();
+   virtual ~ProxyBcTermAlerting() = default;
 };
 
 class ProxyBcActive : public BcActive
 {
 protected:
    explicit ProxyBcActive(ServiceId sid);
-   virtual ~ProxyBcActive();
+   virtual ~ProxyBcActive() = default;
 };
 
 class ProxyBcLocalSuspending : public BcLocalSuspending
 {
 protected:
    explicit ProxyBcLocalSuspending(ServiceId sid);
-   virtual ~ProxyBcLocalSuspending();
+   virtual ~ProxyBcLocalSuspending() = default;
 };
 
 class ProxyBcRemoteSuspending : public BcRemoteSuspending
 {
 protected:
    explicit ProxyBcRemoteSuspending(ServiceId sid);
-   virtual ~ProxyBcRemoteSuspending();
+   virtual ~ProxyBcRemoteSuspending() = default;
 };
 
 class ProxyBcDisconnecting : public BcDisconnecting
 {
 protected:
    explicit ProxyBcDisconnecting(ServiceId sid);
-   virtual ~ProxyBcDisconnecting();
+   virtual ~ProxyBcDisconnecting() = default;
 };
 
 class ProxyBcException : public BcException
 {
 protected:
    explicit ProxyBcException(ServiceId sid);
-   virtual ~ProxyBcException();
+   virtual ~ProxyBcException() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -299,8 +299,8 @@ public:
    static const Id ProxyRelease        = FirstId + 6;
    static const Id NextId              = FirstId + 7;
 protected:
-   ProxyBcEventHandler();
-   virtual ~ProxyBcEventHandler();
+   ProxyBcEventHandler() = default;
+   virtual ~ProxyBcEventHandler() = default;
 };
 
 //  When a proxy call contains only proxy UPSMs, the message analyzer for
@@ -318,9 +318,9 @@ class ProxyBcAnalyzeProxyMessage : public ProxyBcEventHandler
 {
    friend class Singleton< ProxyBcAnalyzeProxyMessage >;
 private:
-   ProxyBcAnalyzeProxyMessage();
-   ~ProxyBcAnalyzeProxyMessage();
-   virtual Rc ProcessEvent
+   ProxyBcAnalyzeProxyMessage() = default;
+   ~ProxyBcAnalyzeProxyMessage() = default;
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -328,9 +328,9 @@ class ProxyBcProgressHandler : public ProxyBcEventHandler
 {
    friend class Singleton< ProxyBcProgressHandler >;
 private:
-   ProxyBcProgressHandler();
-   ~ProxyBcProgressHandler();
-   virtual Rc ProcessEvent
+   ProxyBcProgressHandler() = default;
+   ~ProxyBcProgressHandler() = default;
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -338,9 +338,9 @@ class ProxyBcAnswerHandler : public ProxyBcEventHandler
 {
    friend class Singleton< ProxyBcAnswerHandler >;
 private:
-   ProxyBcAnswerHandler();
-   ~ProxyBcAnswerHandler();
-   virtual Rc ProcessEvent
+   ProxyBcAnswerHandler() = default;
+   ~ProxyBcAnswerHandler() = default;
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -348,9 +348,9 @@ class ProxyBcReleaseHandler : public ProxyBcEventHandler
 {
    friend class Singleton< ProxyBcReleaseHandler >;
 private:
-   ProxyBcReleaseHandler();
-   ~ProxyBcReleaseHandler();
-   virtual Rc ProcessEvent
+   ProxyBcReleaseHandler() = default;
+   ~ProxyBcReleaseHandler() = default;
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -430,20 +430,20 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
    //  Overridden to not start a timer when sending an IAM.
    //
-   virtual bool UsesIamTimer() const override { return false; }
+   bool UsesIamTimer() const override { return false; }
 
    //  Overridden to support broadcasting when a message is sent.
    //
-   virtual OutgoingRc ProcessOgMsg(Message& msg) override;
+   OutgoingRc ProcessOgMsg(Message& msg) override;
 
    //  Overridden to indicate that all messages should be internal.
    //
-   virtual Message::Route Route() const override;
+   Message::Route Route() const override;
 
    //  Set to remove the PSM from the broadcast group during the current
    //  transaction.
@@ -506,11 +506,11 @@ public:
 
    //  Overridden to set proxyCount_ to 1 when registering a proxy OBC's UPSM.
    //
-   virtual void SetUPsm(MediaPsm& psm) override;
+   void SetUPsm(MediaPsm& psm) override;
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 protected:
    //  Protected because this class is virtual.
@@ -524,16 +524,16 @@ protected:
    //  Overridden to return ProxyBcService::ProxyPort if the message arrived
    //  on a proxy UPSM when the subscriber's UPSM also exists.
    //
-   virtual ServicePortId CalcPort(const AnalyzeMsgEvent& ame) override;
+   ServicePortId CalcPort(const AnalyzeMsgEvent& ame) override;
 
    //  Overridden to re-include any excluded proxy PSM in the next message
    //  broadcast.
    //
-   virtual void EndOfTransaction() override;
+   void EndOfTransaction() override;
 
    //  Overridden to handle deletion of a proxy PSM.
    //
-   virtual void PsmDeleted(ProtocolSM& exPsm) override;
+   void PsmDeleted(ProtocolSM& exPsm) override;
 private:
    //  The number of proxy PSMs on the call.
    //
@@ -558,18 +558,17 @@ private:
 
    //  Overridden to return a CLI parameter that identifies this factory.
    //
-   virtual CliText* CreateText() const override;
+   CliText* CreateText() const override;
 
    //  Overridden to create the type of root SSM associated with the
    //  RouteResult parameter in MSG, which must be an incoming CIP IAM.
    //
-   virtual RootServiceSM* AllocRoot
-      (const Message& msg, ProtocolSM& psm) const override;
+   RootServiceSM* AllocRoot(const Message& msg, ProtocolSM& psm) const override;
 
    //  Overridden to create a ProxyBcPsm when a CIP IAM arrives to
    //  originate a new proxy call.
    //
-   virtual ProtocolSM* AllocIcPsm
+   ProtocolSM* AllocIcPsm
       (const Message& msg, ProtocolLayer& lower) const override;
 };
 }

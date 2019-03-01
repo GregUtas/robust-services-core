@@ -61,7 +61,7 @@ public:
 
    //  Virtual to allow subclassing.
    //
-   virtual ~Base() { }
+   virtual ~Base() = default;
 
    //  Displays the object in STREAM.  The default implementation displays
    //  the object's class name and its "this" pointer, using the typical

@@ -50,22 +50,22 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  The Analyze Message event is passed to modifiers as is, so this
    //  returns the event itself.
    //
-   virtual Event* BuildSap(ServiceSM& owner, TriggerId tid) override;
+   Event* BuildSap(ServiceSM& owner, TriggerId tid) override;
 
    //  The Analyze Message event does not have an SNP.  Notification is
    //  not provided after message analysis, so this returns nullptr.
    //
-   virtual Event* BuildSnp(ServiceSM& owner, TriggerId tid) override;
+   Event* BuildSnp(ServiceSM& owner, TriggerId tid) override;
 
    //  The message to be analyzed.
    //
@@ -105,36 +105,36 @@ public:
 
    //  Overridden to support asynchronous modifier requests.
    //
-   virtual bool SaveContext() override;
+   bool SaveContext() override;
 
    //  Overridden to support asynchronous modifier requests.
    //
-   virtual Event* RestoreContext(EventHandler::Rc& rc) override;
+   Event* RestoreContext(EventHandler::Rc& rc) override;
 
    //  Overridden to support asynchronous modifier requests.
    //
-   virtual void FreeContext(bool freeMsg) override;
+   void FreeContext(bool freeMsg) override;
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Overridden to support asynchronous modifier requests.
    //
-   virtual bool Save() override;
+   bool Save() override;
 
    //  Overridden to support asynchronous modifier requests.
    //
-   virtual Event* Restore(EventHandler::Rc& rc) override;
+   Event* Restore(EventHandler::Rc& rc) override;
 
    //  Overridden to support asynchronous modifier requests.
    //
-   virtual void Free() override;
+   void Free() override;
 private:
    //  Uses OWNER to initialize the base class event and the other arguments
    //  to initialize the Analyze SAP event.  Private to restrict creation.
@@ -145,25 +145,25 @@ private:
    //  Overridden to return the event itself, because an Analyze SAP event
    //  is passed to modifiers (of modifiers) in its original form.
    //
-   virtual Event* BuildSap(ServiceSM& owner, TriggerId tid) override;
+   Event* BuildSap(ServiceSM& owner, TriggerId tid) override;
 
    //  Overridden to return nullptr, because notification (SNP processing)
    //  is not supported after SAP processing.
    //
-   virtual Event* BuildSnp(ServiceSM& owner, TriggerId tid) override;
+   Event* BuildSnp(ServiceSM& owner, TriggerId tid) override;
 
    //  Overridden to remember the SSM that is processing this event.
    //
-   virtual void SetCurrSsm(ServiceSM* ssm) override { currSsm_ = ssm; }
+   void SetCurrSsm(ServiceSM* ssm) override { currSsm_ = ssm; }
 
    //  Overridden to remember the initiator that is processing this event.
    //
-   virtual void SetCurrInitiator(const Initiator* init) override
+   void SetCurrInitiator(const Initiator* init) override
       { currInit_ = init; }
 
    //  Overridden to capture the underlying event associated with the SAP.
    //
-   virtual void Capture
+   void Capture
       (ServiceId sid, const State& state, EventHandler::Rc rc) const override;
 
    //  Returns the SSM that is processing this event.
@@ -230,12 +230,12 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Uses OWNER to initialize the base class event and the other arguments
    //  to initialize the Analyze SNP event.  Private to restrict creation.
@@ -246,16 +246,16 @@ private:
    //  Overridden to return nullptr, because SAP analysis is not provided
    //  before SNP processing.
    //
-   virtual Event* BuildSap(ServiceSM& owner, TriggerId tid) override;
+   Event* BuildSap(ServiceSM& owner, TriggerId tid) override;
 
    //  Overridden to return the event itself, because an Analyze SNP event
    //  is passed to modifiers (of modifiers) in its original form.
    //
-   virtual Event* BuildSnp(ServiceSM& owner, TriggerId tid) override;
+   Event* BuildSnp(ServiceSM& owner, TriggerId tid) override;
 
    //  Overridden to capture the underlying event associated with the SNP.
    //
-   virtual void Capture
+   void Capture
       (ServiceId sid, const State& state, EventHandler::Rc rc) const override;
 
    //  The ancestor's current state.
@@ -303,17 +303,17 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Overridden to return nullptr, because a Force Transition event cannot
    //  be analyzed or intercepted.
    //
-   virtual Event* BuildSap(ServiceSM& owner, TriggerId tid) override;
+   Event* BuildSap(ServiceSM& owner, TriggerId tid) override;
 
    //  The event handler supplied by the modifier.
    //
@@ -400,26 +400,26 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Overridden to return the event itself, because an initiation request
    //  event is passed to modifiers (of modifiers) in its original form.
    //
-   virtual Event* BuildSap(ServiceSM& owner, TriggerId tid) override;
+   Event* BuildSap(ServiceSM& owner, TriggerId tid) override;
 
    //  Overridden to return nullptr, because notification (SNP processing)
    //  is not supported after an initiation request event is processed.
    //
-   virtual Event* BuildSnp(ServiceSM& owner, TriggerId tid) override;
+   Event* BuildSnp(ServiceSM& owner, TriggerId tid) override;
 
    //  Overridden to capture the service associated with the event.
    //
-   virtual void Capture
+   void Capture
       (ServiceId sid, const State& state, EventHandler::Rc rc) const override;
 
    //  The modifier that will process the event.

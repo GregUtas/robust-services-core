@@ -75,7 +75,7 @@ class ThreadsStatsGroup : public StatisticsGroup
 public:
    ThreadsStatsGroup();
    ~ThreadsStatsGroup();
-   virtual void DisplayStats(ostream& stream, id_t id) const override;
+   void DisplayStats(ostream& stream, id_t id) const override;
 };
 
 //  Configuration parameter to allow breakpoint debugging.
@@ -86,7 +86,7 @@ public:
    explicit BreakEnabledCfg(bool* field);
    ~BreakEnabledCfg();
 protected:
-   virtual void SetCurr() override;
+   void SetCurr() override;
 };
 
 //==============================================================================

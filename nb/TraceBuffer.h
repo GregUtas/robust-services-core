@@ -225,15 +225,15 @@ public:
 
    //  Marks objects held by trace buffer records as being in use.
    //
-   virtual void ClaimBlocks() override;
+   void ClaimBlocks() override;
 
    //  Overridden for restarts.
    //
-   virtual void Shutdown(RestartLevel level) override;
+   void Shutdown(RestartLevel level) override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Creates a buffer of InitialSize.  Private because this singleton is
    //  not subclassed.

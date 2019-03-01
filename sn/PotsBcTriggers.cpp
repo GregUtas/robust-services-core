@@ -28,33 +28,23 @@ namespace PotsBase
 PotsAuthorizeOriginationSap::PotsAuthorizeOriginationSap() :
    BcTrigger(AuthorizeOriginationSap) { }
 
-PotsAuthorizeOriginationSap::~PotsAuthorizeOriginationSap() { }
-
 //------------------------------------------------------------------------------
 
 PotsCollectInformationSap::PotsCollectInformationSap() :
    BcTrigger(CollectInformationSap) { }
-
-PotsCollectInformationSap::~PotsCollectInformationSap() { }
 
 //------------------------------------------------------------------------------
 
 PotsAuthorizeTerminationSap::PotsAuthorizeTerminationSap() :
    BcTrigger(AuthorizeTerminationSap) { }
 
-PotsAuthorizeTerminationSap::~PotsAuthorizeTerminationSap() { }
-
 //------------------------------------------------------------------------------
 
 PotsLocalBusySap::PotsLocalBusySap() :
    BcTrigger(LocalBusySap) { }
 
-PotsLocalBusySap::~PotsLocalBusySap() { }
-
 //------------------------------------------------------------------------------
 
 PotsLocalAlertingSnp::PotsLocalAlertingSnp() :
    BcTrigger(LocalAlertingSnp) { }
-
-PotsLocalAlertingSnp::~PotsLocalAlertingSnp() { }
 }

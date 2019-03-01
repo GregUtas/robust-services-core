@@ -48,7 +48,7 @@ public:
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Protected because this class is virtual.
    //
@@ -60,12 +60,12 @@ protected:
 
    //  Overridden to create an SsmContext.
    //
-   virtual Context* AllocContext() const override;
+   Context* AllocContext() const override;
 private:
    //  Overridden to handle an incoming message.  Must NOT be overridden by
    //  applications.  Protected to restrict usage.
    //
-   virtual Rc ReceiveMsg
+   Rc ReceiveMsg
       (Message& msg, bool atIoLevel, TransTrace* tt, Context*& ctx) override;
 
    //  Invoked to find the context to which MSG should be delivered when

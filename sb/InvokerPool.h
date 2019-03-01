@@ -92,16 +92,16 @@ public:
 
    //  Overridden for restarts.
    //
-   virtual void Startup(RestartLevel level) override;
+   void Startup(RestartLevel level) override;
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Defines a pool of invoker threads that will run in FACTION and adds
    //  it to the global registry of invoker pools.  parmKey is the key for
@@ -200,7 +200,7 @@ private:
 
    //  Overridden to mark objects in the work queues as being in use.
    //
-   virtual void ClaimBlocks() override;
+   void ClaimBlocks() override;
 
    //  Deleted to prohibit copying.
    //

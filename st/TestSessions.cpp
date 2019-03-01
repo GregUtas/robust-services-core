@@ -138,7 +138,7 @@ class TestAnalyzeUserMessage : public TestEventHandler
    friend class Singleton< TestAnalyzeUserMessage >;
 private:
    TestAnalyzeUserMessage() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -147,7 +147,7 @@ class TestAnalyzeNetworkMessage : public TestEventHandler
    friend class Singleton< TestAnalyzeNetworkMessage >;
 private:
    TestAnalyzeNetworkMessage() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -156,7 +156,7 @@ class TestNuInject : public TestEventHandler
    friend class Singleton< TestNuInject >;
 private:
    TestNuInject() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -165,7 +165,7 @@ class TestNuVerify : public TestEventHandler
    friend class Singleton< TestNuVerify >;
 private:
    TestNuVerify() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -174,7 +174,7 @@ class TestAcInject : public TestEventHandler
    friend class Singleton< TestAcInject >;
 private:
    TestAcInject() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -183,7 +183,7 @@ class TestAcVerify : public TestEventHandler
    friend class Singleton< TestAcVerify >;
 private:
    TestAcVerify() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 

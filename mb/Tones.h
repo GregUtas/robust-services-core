@@ -68,7 +68,7 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 protected:
    //  Protected because this class is virtual.
@@ -96,8 +96,8 @@ class ToneSilent : public Tone
    friend class Singleton< ToneSilent >;
 private:
    ToneSilent();
-   ~ToneSilent();
-   virtual std::string Name() const override;
+   ~ToneSilent() = default;
+   std::string Name() const override;
 };
 
 class ToneDial : public Tone
@@ -105,8 +105,8 @@ class ToneDial : public Tone
    friend class Singleton< ToneDial >;
 private:
    ToneDial();
-   ~ToneDial();
-   virtual std::string Name() const override;
+   ~ToneDial() = default;
+   std::string Name() const override;
 };
 
 class ToneStutteredDial : public Tone
@@ -114,8 +114,8 @@ class ToneStutteredDial : public Tone
    friend class Singleton< ToneStutteredDial >;
 private:
    ToneStutteredDial();
-   ~ToneStutteredDial();
-   virtual std::string Name() const override;
+   ~ToneStutteredDial() = default;
+   std::string Name() const override;
 };
 
 class ToneConfirmation : public Tone
@@ -123,8 +123,8 @@ class ToneConfirmation : public Tone
    friend class Singleton< ToneConfirmation >;
 private:
    ToneConfirmation();
-   ~ToneConfirmation();
-   virtual std::string Name() const override;
+   ~ToneConfirmation() = default;
+   std::string Name() const override;
 };
 
 class ToneRingback : public Tone
@@ -132,8 +132,8 @@ class ToneRingback : public Tone
    friend class Singleton< ToneRingback >;
 private:
    ToneRingback();
-   ~ToneRingback();
-   virtual std::string Name() const override;
+   ~ToneRingback() = default;
+   std::string Name() const override;
 };
 
 class ToneBusy : public Tone
@@ -141,8 +141,8 @@ class ToneBusy : public Tone
    friend class Singleton< ToneBusy >;
 private:
    ToneBusy();
-   ~ToneBusy();
-   virtual std::string Name() const override;
+   ~ToneBusy() = default;
+   std::string Name() const override;
 };
 
 class ToneCallWaiting : public Tone
@@ -150,8 +150,8 @@ class ToneCallWaiting : public Tone
    friend class Singleton< ToneCallWaiting >;
 private:
    ToneCallWaiting();
-   ~ToneCallWaiting();
-   virtual std::string Name() const override;
+   ~ToneCallWaiting() = default;
+   std::string Name() const override;
 };
 
 class ToneReorder : public Tone
@@ -159,8 +159,8 @@ class ToneReorder : public Tone
    friend class Singleton< ToneReorder >;
 private:
    ToneReorder();
-   ~ToneReorder();
-   virtual std::string Name() const override;
+   ~ToneReorder() = default;
+   std::string Name() const override;
 };
 
 class ToneReceiverOffHook : public Tone
@@ -168,8 +168,8 @@ class ToneReceiverOffHook : public Tone
    friend class Singleton< ToneReceiverOffHook >;
 private:
    ToneReceiverOffHook();
-   ~ToneReceiverOffHook();
-   virtual std::string Name() const override;
+   ~ToneReceiverOffHook() = default;
+   std::string Name() const override;
 };
 
 class ToneHeld : public Tone
@@ -177,8 +177,8 @@ class ToneHeld : public Tone
    friend class Singleton< ToneHeld >;
 private:
    ToneHeld();
-   ~ToneHeld();
-   virtual std::string Name() const override;
+   ~ToneHeld() = default;
+   std::string Name() const override;
 };
 }
 #endif

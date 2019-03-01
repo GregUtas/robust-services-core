@@ -267,7 +267,7 @@ public:
    //  endline.  This is the appropriate implementation for items that can be
    //  displayed inline or separately.  See CodeDisplayOptions for OPTIONS.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 protected:
    //  Protected because this class is virtual.
@@ -308,23 +308,23 @@ public:
 
    //  Overridden to set the type for an "auto" variable.
    //
-   virtual CxxToken* AutoType() const override;
+   CxxToken* AutoType() const override;
 
    //  Overridden to push the literal onto the stack.
    //
-   virtual void EnterBlock() override;
+   void EnterBlock() override;
 
    //  Overridden to return the referent's name.
    //
-   virtual const std::string* Name() const override;
+   const std::string* Name() const override;
 
    //  Overridden to return the output of the literal's Print function.
    //
-   virtual std::string Trace() const override;
+   std::string Trace() const override;
 
    //  Overridden to treat a literal as its underlying type.
    //
-   virtual Cxx::ItemType Type() const override;
+   Cxx::ItemType Type() const override;
 protected:
    //  Protected because this class is virtual.
    //
@@ -332,7 +332,7 @@ protected:
 private:
    //  Overridden to return the literal's underlying type.
    //
-   virtual CxxToken* RootType() const override;
+   CxxToken* RootType() const override;
 };
 
 //------------------------------------------------------------------------------
@@ -376,12 +376,12 @@ public:
    IntLiteral(int64_t num, const Tags& tags)
       : num_(num), tags_(tags) { CxxStats::Incr(CxxStats::INT_LITERAL); }
    ~IntLiteral() { CxxStats::Decr(CxxStats::INT_LITERAL); }
-   virtual void Print
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   virtual CxxNamed* Referent() const override;
-   virtual std::string TypeString(bool arg) const override;
+   CxxNamed* Referent() const override;
+   std::string TypeString(bool arg) const override;
 private:
-   virtual Numeric GetNumeric() const override;
+   Numeric GetNumeric() const override;
    Numeric BaseNumeric() const;
    const int64_t num_;
    const Tags tags_;
@@ -418,12 +418,12 @@ public:
    FloatLiteral(long double num, const Tags& tags)
       : num_(num), tags_(tags) { CxxStats::Incr(CxxStats::FLOAT_LITERAL); }
    ~FloatLiteral() { CxxStats::Decr(CxxStats::FLOAT_LITERAL); }
-   virtual void Print
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   virtual CxxNamed* Referent() const override;
-   virtual std::string TypeString(bool arg) const override;
+   CxxNamed* Referent() const override;
+   std::string TypeString(bool arg) const override;
 private:
-   virtual Numeric GetNumeric() const override;
+   Numeric GetNumeric() const override;
    const long double num_;
    const Tags tags_;
 };
@@ -438,12 +438,12 @@ public:
    explicit BoolLiteral(bool b)
       : b_(b) { CxxStats::Incr(CxxStats::BOOL_LITERAL); }
    ~BoolLiteral() { CxxStats::Decr(CxxStats::BOOL_LITERAL); }
-   virtual void Print(std::ostream& stream, const NodeBase::Flags& options)
+   void Print(std::ostream& stream, const NodeBase::Flags& options)
       const override { stream << std::boolalpha << b_; }
-   virtual CxxNamed* Referent() const override;
-   virtual std::string TypeString(bool arg) const override { return BOOL_STR; }
+   CxxNamed* Referent() const override;
+   std::string TypeString(bool arg) const override { return BOOL_STR; }
 private:
-   virtual Numeric GetNumeric() const override { return Numeric::Bool; }
+   Numeric GetNumeric() const override { return Numeric::Bool; }
    const bool b_;
 };
 
@@ -457,12 +457,12 @@ public:
    explicit CharLiteral(char c)
       : c_(c) { CxxStats::Incr(CxxStats::CHAR_LITERAL); }
    ~CharLiteral() { CxxStats::Decr(CxxStats::CHAR_LITERAL); }
-   virtual void Print
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   virtual CxxNamed* Referent() const override;
-   virtual std::string TypeString(bool arg) const override { return CHAR_STR; }
+   CxxNamed* Referent() const override;
+   std::string TypeString(bool arg) const override { return CHAR_STR; }
 private:
-   virtual Numeric GetNumeric() const override { return Numeric::Char; }
+   Numeric GetNumeric() const override { return Numeric::Char; }
    const char c_;
 };
 
@@ -477,16 +477,16 @@ public:
       : str_(s) { CxxStats::Incr(CxxStats::STR_LITERAL); }
    ~StrLiteral() { CxxStats::Decr(CxxStats::STR_LITERAL); }
    std::string GetStr() const { return str_; }
-   virtual TypeSpec* GetTypeSpec() const override;
-   virtual void Print(std::ostream& stream, const NodeBase::Flags& options)
+   TypeSpec* GetTypeSpec() const override;
+   void Print(std::ostream& stream, const NodeBase::Flags& options)
       const override { stream << NodeBase::QUOTE << str_ << NodeBase::QUOTE; }
-   virtual CxxNamed* Referent() const override;
-   virtual void Shrink() override;
-   virtual std::string TypeString(bool arg) const override { return "char*"; }
+   CxxNamed* Referent() const override;
+   void Shrink() override;
+   std::string TypeString(bool arg) const override { return "char*"; }
    static CxxNamed* GetReferent();
 private:
    static TypeSpecPtr CreateRef();
-   virtual Numeric GetNumeric() const override { return Numeric::Pointer; }
+   Numeric GetNumeric() const override { return Numeric::Pointer; }
    std::string str_;
    static const TypeSpecPtr Ref_;
 };
@@ -500,15 +500,15 @@ class NullPtr : public Literal
 public:
    NullPtr() { CxxStats::Incr(CxxStats::NULLPTR); }
    ~NullPtr() { CxxStats::Decr(CxxStats::NULLPTR); }
-   virtual void Print(std::ostream& stream, const NodeBase::Flags& options)
+   void Print(std::ostream& stream, const NodeBase::Flags& options)
       const override { stream << NULLPTR_STR; }
-   virtual bool IsConstPtr() const override { return true; }
-   virtual bool IsConstPtr(size_t n) const override { return true; }
-   virtual CxxNamed* Referent() const override;
-   virtual std::string TypeString(bool arg)
+   bool IsConstPtr() const override { return true; }
+   bool IsConstPtr(size_t n) const override { return true; }
+   CxxNamed* Referent() const override;
+   std::string TypeString(bool arg)
       const override { return NULLPTR_T_STR; }
 private:
-   virtual Numeric GetNumeric() const override { return Numeric::Pointer; }
+   Numeric GetNumeric() const override { return Numeric::Pointer; }
 };
 
 //------------------------------------------------------------------------------
@@ -568,38 +568,37 @@ public:
    //  true if it will elide forward to the unary, and false if the new
    //  operator must actually be binary.
    //
-   virtual bool AppendUnary() override;
+   bool AppendUnary() override;
 
    //  Overridden to return the operator, when it can accept more arguments,
    //  or the last argument, when no more arguments can be accepted.
    //
-   virtual CxxToken* Back() override;
+   CxxToken* Back() override;
 
    //  Overridden to display the operator and its arguments.
    //
-   virtual void Print
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to push this operator and its arguments onto the stack.
    //
-   virtual void EnterBlock() override;
+   void EnterBlock() override;
 
    //  Overridden to update SYMBOLS with each argument's type usage.
    //
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
    //  Overridden to shrink the tokens.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 
    //  Overridden to return the operator's symbol.
    //
-   virtual std::string Trace() const override;
+   std::string Trace() const override;
 
    //  Overridden to reveal that this is an operation.
    //
-   virtual Cxx::ItemType Type() const override { return Cxx::Operation; }
+   Cxx::ItemType Type() const override { return Cxx::Operation; }
 private:
    //  Returns the number of arguments that the operator can still accept.
    //  Returns SIZE_MAX if the operator takes a variable number of arguments
@@ -693,10 +692,10 @@ class Elision : public CxxToken
 public:
    Elision() { CxxStats::Incr(CxxStats::ELISION); }
    ~Elision() { CxxStats::Decr(CxxStats::ELISION); }
-   virtual void Print
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override { }
-   virtual void EnterBlock() override { }
-   virtual Cxx::ItemType Type() const override { return Cxx::Elision; }
+   void EnterBlock() override { }
+   Cxx::ItemType Type() const override { return Cxx::Elision; }
 };
 
 //------------------------------------------------------------------------------
@@ -709,12 +708,11 @@ public:
    explicit Precedence(ExprPtr& expr)
       : expr_(std::move(expr)) { CxxStats::Incr(CxxStats::PRECEDENCE); }
    ~Precedence() { CxxStats::Decr(CxxStats::PRECEDENCE); }
-   virtual void Print
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   virtual void EnterBlock() override;
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
-   virtual void Shrink() override { ShrinkExpression(expr_); }
+   void EnterBlock() override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void Shrink() override { ShrinkExpression(expr_); }
 private:
    const ExprPtr expr_;
 };
@@ -730,12 +728,11 @@ public:
    BraceInit();
    ~BraceInit() { CxxStats::Decr(CxxStats::BRACE_INIT); }
    void AddItem(TokenPtr& item) { items_.push_back(std::move(item)); }
-   virtual void Print
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   virtual void EnterBlock() override;
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
-   virtual void Shrink() override;
+   void EnterBlock() override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void Shrink() override;
 private:
    TokenPtrVector items_;
 };
@@ -781,30 +778,29 @@ public:
 
    //  Overridden to return the last item in the expression.
    //
-   virtual CxxToken* Back() override;
+   CxxToken* Back() override;
 
    //  Overridden to display the expression.
    //
-   virtual void Print
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to invoke Context::Execute after invoking EnterBlock on
    //  each token in items_.
    //
-   virtual void EnterBlock() override;
+   void EnterBlock() override;
 
    //  Overridden to update SYMBOLS with each token's type usage.
    //
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
    //  Overridden to shrink the tokens.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 
    //  Overridden to display the expression.
    //
-   virtual std::string Trace() const override;
+   std::string Trace() const override;
 private:
    //  Adds ITEM to the expression when it is known to be a unary operator.
    //
@@ -853,25 +849,24 @@ public:
 
    //  Overridden to display the array's size within brackets.
    //
-   virtual void Print
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to invoke EnterBlock on expr_.
    //
-   virtual void EnterBlock() override;
+   void EnterBlock() override;
 
    //  Overridden to update SYMBOLS with the specification's type usage.
    //
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
    //  Overridden to shrink the array expression.
    //
-   virtual void Shrink() override { ShrinkExpression(expr_); }
+   void Shrink() override { ShrinkExpression(expr_); }
 
    //  Overridden to return "[]" if ARG is false and "*" if it is true.
    //
-   virtual std::string TypeString(bool arg) const override;
+   std::string TypeString(bool arg) const override;
 private:
    //  The expression that specifies the array's size.
    //

@@ -113,8 +113,8 @@ public:
    static const Id TiAnalyzeMessage = NextId + 1;
    static const Id TiTimeout        = NextId + 2;
 protected:
-   PotsWmlEventHandler();
-   virtual ~PotsWmlEventHandler();
+   PotsWmlEventHandler() = default;
+   virtual ~PotsWmlEventHandler() = default;
 };
 
 class PotsWmlAcAnalyzeMessage : public PotsWmlEventHandler
@@ -122,7 +122,7 @@ class PotsWmlAcAnalyzeMessage : public PotsWmlEventHandler
    friend class Singleton< PotsWmlAcAnalyzeMessage >;
 private:
    PotsWmlAcAnalyzeMessage() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -131,7 +131,7 @@ class PotsWmlTiAnalyzeMessage : public PotsWmlEventHandler
    friend class Singleton< PotsWmlTiAnalyzeMessage >;
 private:
    PotsWmlTiAnalyzeMessage() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -140,7 +140,7 @@ class PotsWmlTiTimeout : public PotsWmlEventHandler
    friend class Singleton< PotsWmlTiTimeout >;
 private:
    PotsWmlTiTimeout() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -150,21 +150,18 @@ public:
    PotsWmlSsm();
    ~PotsWmlSsm();
    PotsWmlFeatureProfile* Profile() const { return wmlp_; }
-   virtual void Display(ostream& stream,
+   void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
 private:
    void Cancel();
-   virtual ServicePortId CalcPort(const AnalyzeMsgEvent& ame) override;
-   virtual EventHandler::Rc ProcessInitAck
+   ServicePortId CalcPort(const AnalyzeMsgEvent& ame) override;
+   EventHandler::Rc ProcessInitAck
       (Event& currEvent, Event*& nextEvent) override;
-   virtual EventHandler::Rc ProcessInitNack
+   EventHandler::Rc ProcessInitNack
       (Event& currEvent, Event*& nextEvent) override;
-   virtual EventHandler::Rc ProcessSap
-      (Event& currEvent, Event*& nextEvent) override;
-   virtual EventHandler::Rc ProcessSip
-      (Event& currEvent, Event*& nextEvent) override;
-   virtual EventHandler::Rc ProcessSnp
-      (Event& currEvent, Event*& nextEvent) override;
+   EventHandler::Rc ProcessSap(Event& currEvent, Event*& nextEvent) override;
+   EventHandler::Rc ProcessSip(Event& currEvent, Event*& nextEvent) override;
+   EventHandler::Rc ProcessSnp(Event& currEvent, Event*& nextEvent) override;
 
    PotsWmlFeatureProfile* wmlp_;
    bool timer_;
@@ -629,14 +626,6 @@ EventHandler::Rc PotsWmlSsm::ProcessSnp(Event& currEvent, Event*& nextEvent)
    if(pssm->HasIdled()) Cancel();
    return EventHandler::Pass;
 }
-
-//==============================================================================
-
-PotsWmlEventHandler::PotsWmlEventHandler() { }
-
-//------------------------------------------------------------------------------
-
-PotsWmlEventHandler::~PotsWmlEventHandler() { }
 
 //------------------------------------------------------------------------------
 

@@ -108,8 +108,8 @@ public:
    static const Id TiAnalyzeMessage = NextId + 1;
    static const Id TiTimeout        = NextId + 2;
 protected:
-   PotsCfxEventHandler();
-   virtual ~PotsCfxEventHandler();
+   PotsCfxEventHandler() = default;
+   virtual ~PotsCfxEventHandler() = default;
 };
 
 class PotsCfxUnAnalyzeMessage : public PotsCfxEventHandler
@@ -117,7 +117,7 @@ class PotsCfxUnAnalyzeMessage : public PotsCfxEventHandler
    friend class Singleton< PotsCfxUnAnalyzeMessage >;
 private:
    PotsCfxUnAnalyzeMessage() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -126,7 +126,7 @@ class PotsCfbTiAnalyzeMessage : public PotsCfxEventHandler
    friend class Singleton< PotsCfbTiAnalyzeMessage >;
 private:
    PotsCfbTiAnalyzeMessage() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -135,7 +135,7 @@ class PotsCfbTiTimeout : public PotsCfxEventHandler
    friend class Singleton< PotsCfbTiTimeout >;
 private:
    PotsCfbTiTimeout() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -260,14 +260,6 @@ PotsCfbTimeoutEvent::~PotsCfbTimeoutEvent()
 }
 
 //==============================================================================
-
-PotsCfxEventHandler::PotsCfxEventHandler() { }
-
-//------------------------------------------------------------------------------
-
-PotsCfxEventHandler::~PotsCfxEventHandler() { }
-
-//------------------------------------------------------------------------------
 
 fn_name PotsCfxUnAnalyzeMessage_ProcessEvent =
    "PotsCfxUnAnalyzeMessage.ProcessEvent";

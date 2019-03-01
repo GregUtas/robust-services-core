@@ -56,7 +56,7 @@ public:
    explicit NwClearCommand(bool bind = true);
    virtual ~NwClearCommand() = default;
 protected:
-   virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   word ProcessSubcommand(CliThread& cli, id_t index) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ public:
    explicit NwExcludeCommand(bool bind = true);
    virtual ~NwExcludeCommand() = default;
 protected:
-   virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   word ProcessSubcommand(CliThread& cli, id_t index) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -108,7 +108,7 @@ public:
    explicit NwIncludeCommand(bool bind = true);
    virtual ~NwIncludeCommand() = default;
 protected:
-   virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   word ProcessSubcommand(CliThread& cli, id_t index) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -123,7 +123,7 @@ public:
    explicit NwQueryCommand(bool bind = true);
    virtual ~NwQueryCommand() = default;
 protected:
-   virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   word ProcessSubcommand(CliThread& cli, id_t index) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -136,7 +136,7 @@ public:
    NwStatusCommand() = default;
    virtual ~NwStatusCommand() = default;
 protected:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 //------------------------------------------------------------------------------

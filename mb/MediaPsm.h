@@ -137,11 +137,11 @@ public:
 
    //  Overridden to enumerate all objects that the PSM owns.
    //
-   virtual void GetSubtended(Base* objects[], size_t& count) const override;
+   void GetSubtended(Base* objects[], size_t& count) const override;
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 protected:
    //  Creates a PSM that will send an initial message.  The arguments are
@@ -185,15 +185,15 @@ protected:
 
    //  Overridden to invoke ProcessIcMsg on the MEP.
    //
-   virtual Event* ReceiveMsg(Message& msg) override;
+   Event* ReceiveMsg(Message& msg) override;
 
    //  Overridden to invoke EnsureMediaMsg if a media update is pending.
    //
-   virtual void PrepareOgMsgq() override;
+   void PrepareOgMsgq() override;
 
    //  Overridden to invoke EndOfTransaction on the MEP.
    //
-   virtual void EndOfTransaction() override;
+   void EndOfTransaction() override;
 private:
    //  Invoked when outgoing media information has changed, which means
    //  that a MediaInfo parameter must be sent.  Unless one already exists,

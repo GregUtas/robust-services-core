@@ -43,7 +43,7 @@ class FactoryStatsGroup : public StatisticsGroup
 public:
    FactoryStatsGroup();
    ~FactoryStatsGroup();
-   virtual void DisplayStats(ostream& stream, id_t id) const override;
+   void DisplayStats(ostream& stream, id_t id) const override;
 };
 
 //------------------------------------------------------------------------------

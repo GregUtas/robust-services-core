@@ -45,8 +45,8 @@ public:
    PotsDiscSsm();
    ~PotsDiscSsm();
 private:
-   virtual ServicePortId CalcPort(const AnalyzeMsgEvent& ame) override;
-   virtual EventHandler::Rc ProcessInitAck
+   ServicePortId CalcPort(const AnalyzeMsgEvent& ame) override;
+   EventHandler::Rc ProcessInitAck
       (Event& currEvent, Event*& nextEvent) override;
 };
 

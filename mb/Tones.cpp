@@ -80,8 +80,6 @@ void Tone::Display(ostream& stream,
 
 ToneBusy::ToneBusy() : Tone(Busy) { }
 
-ToneBusy::~ToneBusy() { }
-
 string ToneBusy::Name() const
 {
    return "Busy tone";
@@ -90,8 +88,6 @@ string ToneBusy::Name() const
 //------------------------------------------------------------------------------
 
 ToneCallWaiting::ToneCallWaiting() : Tone(CallWaiting) { }
-
-ToneCallWaiting::~ToneCallWaiting() { }
 
 string ToneCallWaiting::Name() const
 {
@@ -102,8 +98,6 @@ string ToneCallWaiting::Name() const
 
 ToneConfirmation::ToneConfirmation() : Tone(Confirmation) { }
 
-ToneConfirmation::~ToneConfirmation() { }
-
 string ToneConfirmation::Name() const
 {
    return "Confirmation tone";
@@ -112,8 +106,6 @@ string ToneConfirmation::Name() const
 //------------------------------------------------------------------------------
 
 ToneDial::ToneDial() : Tone(Dial) { }
-
-ToneDial::~ToneDial() { }
 
 string ToneDial::Name() const
 {
@@ -124,8 +116,6 @@ string ToneDial::Name() const
 
 ToneHeld::ToneHeld() : Tone(Held) { }
 
-ToneHeld::~ToneHeld() { }
-
 string ToneHeld::Name() const
 {
    return "Held tone";
@@ -134,8 +124,6 @@ string ToneHeld::Name() const
 //------------------------------------------------------------------------------
 
 ToneReceiverOffHook::ToneReceiverOffHook() : Tone(ReceiverOffHook) { }
-
-ToneReceiverOffHook::~ToneReceiverOffHook() { }
 
 string ToneReceiverOffHook::Name() const
 {
@@ -146,8 +134,6 @@ string ToneReceiverOffHook::Name() const
 
 ToneReorder::ToneReorder() : Tone(Reorder) { }
 
-ToneReorder::~ToneReorder() { }
-
 string ToneReorder::Name() const
 {
    return "Reorder tone";
@@ -156,8 +142,6 @@ string ToneReorder::Name() const
 //------------------------------------------------------------------------------
 
 ToneRingback::ToneRingback() : Tone(Ringback) { }
-
-ToneRingback::~ToneRingback() { }
 
 string ToneRingback::Name() const
 {
@@ -180,8 +164,6 @@ ToneSilent::ToneSilent() : Tone(Silence)
    }
 }
 
-ToneSilent::~ToneSilent() { }
-
 string ToneSilent::Name() const
 {
    return "Silent tone";
@@ -190,8 +172,6 @@ string ToneSilent::Name() const
 //------------------------------------------------------------------------------
 
 ToneStutteredDial::ToneStutteredDial() : Tone(StutteredDial) { }
-
-ToneStutteredDial::~ToneStutteredDial() { }
 
 string ToneStutteredDial::Name() const
 {

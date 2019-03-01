@@ -37,7 +37,7 @@ class PotsCfuInitiator : public Initiator
 public:
    PotsCfuInitiator();
 private:
-   virtual EventHandler::Rc ProcessEvent(const ServiceSM& parentSsm,
+   EventHandler::Rc ProcessEvent(const ServiceSM& parentSsm,
       Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -49,7 +49,7 @@ class PotsCfuActivate : public Service
 private:
    PotsCfuActivate();
    ~PotsCfuActivate();
-   virtual ServiceSM* AllocModifier() const override;
+   ServiceSM* AllocModifier() const override;
 };
 
 //------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ class PotsCfuDeactivate : public Service
 private:
    PotsCfuDeactivate();
    ~PotsCfuDeactivate();
-   virtual ServiceSM* AllocModifier() const override;
+   ServiceSM* AllocModifier() const override;
 };
 
 //------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ class PotsCfuService : public Service
 private:
    PotsCfuService();
    ~PotsCfuService();
-   virtual ServiceSM* AllocModifier() const override;
+   ServiceSM* AllocModifier() const override;
 };
 }
 #endif

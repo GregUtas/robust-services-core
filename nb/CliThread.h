@@ -162,16 +162,16 @@ public:
 
    //  Overridden for restarts.
    //
-   virtual void Startup(RestartLevel level) override;
+   void Startup(RestartLevel level) override;
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 
    //  The input buffer.
    //
@@ -218,24 +218,24 @@ private:
 
    //  Overridden to return a name for the thread.
    //
-   virtual const char* AbbrName() const override;
+   const char* AbbrName() const override;
 
    //  Overridden to read commands from the console, invoke them, and
    //  display the results.
    //
-   virtual void Enter() override;
+   void Enter() override;
 
    //  Overridden to clean up when the thread is recreated.
    //
-   virtual void Recreated() override;
+   void Recreated() override;
 
    //  Overridden to delete the singleton.
    //
-   virtual void Destroy() override;
+   void Destroy() override;
 
    //  Overridden to release resources during error recovery.
    //
-   virtual void Cleanup() override;
+   void Cleanup() override;
 
    //> The default prompt for user input.
    //

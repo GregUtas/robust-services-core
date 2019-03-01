@@ -38,7 +38,7 @@ class PsmFactory : public MsgFactory
 public:
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Protected because this class is virtual.
    //
@@ -50,12 +50,12 @@ protected:
 
    //  Overridden to create a PsmContext.
    //
-   virtual Context* AllocContext() const override;
+   Context* AllocContext() const override;
 
    //  Overridden to handle an incoming message.  Must NOT be overridden by
    //  applications.  Protected to restrict usage.
    //
-   virtual Rc ReceiveMsg
+   Rc ReceiveMsg
       (Message& msg, bool atIoLevel, TransTrace* tt, Context*& ctx) override;
 private:
    //  Creates a PSM that will receive an initial message from LOWER.  The

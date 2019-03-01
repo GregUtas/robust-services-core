@@ -2658,10 +2658,10 @@ void Namespace::Check() const
    if(checked_) return;
    checked_ = true;
 
-   auto name = *Name();
+   auto name = ScopedName(false);
 
    if(name.empty())
-      name = "global namespace";
+      name = "namespace ::";
    else
       name = "namespace " + name;
 

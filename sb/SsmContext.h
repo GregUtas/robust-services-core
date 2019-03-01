@@ -41,28 +41,28 @@ class SsmContext : public PsmContext
 public:
    //  Returns the root SSM.
    //
-   virtual RootServiceSM* RootSsm() const override { return root_; }
+   RootServiceSM* RootSsm() const override { return root_; }
 
    //  Overridden to enumerate all objects that the context owns.
    //
-   virtual void GetSubtended(Base* objects[], size_t& count) const override;
+   void GetSubtended(Base* objects[], size_t& count) const override;
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Returns the type of context.
    //
-   virtual ContextType Type() const override { return MultiPort; }
+   ContextType Type() const override { return MultiPort; }
 
    //  Overridden to invoke EndOfTransaction on the root SSM.
    //
-   virtual void EndOfTransaction() override;
+   void EndOfTransaction() override;
 private:
    //  Private to restrict creation.
    //
@@ -74,11 +74,11 @@ private:
 
    //  Overridden to handle the arrival of MSG.
    //
-   virtual void ProcessIcMsg(Message& msg) override;
+   void ProcessIcMsg(Message& msg) override;
 
    //  Overridden to determine if the context should be deleted.
    //
-   virtual bool IsIdle() const override;
+   bool IsIdle() const override;
 
    //  Allocates the root SSM that will receive MSG.  PSM is the
    //  uppermost PSM in the stack that MSG just created.

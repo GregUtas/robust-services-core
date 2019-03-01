@@ -41,72 +41,67 @@ public:
 
    //  Override the operators supported by a set of code files.
    //
-   virtual LibrarySet* AffectedBy() const override;
-   virtual LibrarySet* Affecters() const override;
-   virtual LibrarySet* CommonAffecters() const override;
-   virtual LibrarySet* Create
-      (const std::string& name, SetOfIds* set) const override;
-   virtual LibrarySet* Directories() const override;
-   virtual LibrarySet* FileName(const LibrarySet* that) const override;
-   virtual LibrarySet* FileType(const LibrarySet* that) const override;
-   virtual LibrarySet* FoundIn(const LibrarySet* that) const override;
-   virtual LibrarySet* Implements() const override;
-   virtual LibrarySet* MatchString(const LibrarySet* that) const override;
-   virtual LibrarySet* NeededBy() const override;
-   virtual LibrarySet* Needers() const override;
-   virtual LibrarySet* UsedBy(bool self) const override;
-   virtual LibrarySet* Users(bool self) const override;
+   LibrarySet* AffectedBy() const override;
+   LibrarySet* Affecters() const override;
+   LibrarySet* CommonAffecters() const override;
+   LibrarySet* Create(const std::string& name, SetOfIds* set) const override;
+   LibrarySet* Directories() const override;
+   LibrarySet* FileName(const LibrarySet* that) const override;
+   LibrarySet* FileType(const LibrarySet* that) const override;
+   LibrarySet* FoundIn(const LibrarySet* that) const override;
+   LibrarySet* Implements() const override;
+   LibrarySet* MatchString(const LibrarySet* that) const override;
+   LibrarySet* NeededBy() const override;
+   LibrarySet* Needers() const override;
+   LibrarySet* UsedBy(bool self) const override;
+   LibrarySet* Users(bool self) const override;
 
    //  Checks the code files in the set.
    //
-   virtual NodeBase::word Check
-      (std::ostream* stream, std::string& expl) const override;
+   NodeBase::word Check(std::ostream* stream, std::string& expl) const override;
 
    //  Updates RESULT with the number of lines of code in the set.
    //
-   virtual NodeBase::word Countlines(std::string& result) const override;
+   NodeBase::word Countlines(std::string& result) const override;
 
    //  Fixes warnings detected by >check.
    //
-   virtual NodeBase::word Fix(NodeBase::CliThread& cli,
+   NodeBase::word Fix(NodeBase::CliThread& cli,
       const FixOptions& opts, std::string& expl) const override;
 
    //  Formats the code files in the set.
    //
-   virtual NodeBase::word Format(std::string& expl) const override;
+   NodeBase::word Format(std::string& expl) const override;
 
    //  Returns the type of set.
    //
-   virtual LibSetType GetType() const override { return FILE_SET; }
+   LibSetType GetType() const override { return FILE_SET; }
 
    //  Displays the full filenames in STREAM.
    //
-   virtual NodeBase::word List
-      (std::ostream& stream, std::string& expl) const override;
+   NodeBase::word List(std::ostream& stream, std::string& expl) const override;
 
    //  Parses the code files in the set.
    //
-   virtual NodeBase::word Parse
+   NodeBase::word Parse
       (std::string& expl, const std::string& opts) const override;
 
    //  Displays, in STREAM, lines from the code files that match PATTERN.
    //
-   virtual NodeBase::word Scan(std::ostream& stream,
+   NodeBase::word Scan(std::ostream& stream,
       const std::string& pattern, std::string& expl) const override;
 
    //  Displays the build order in STREAM.
    //
-   virtual NodeBase::word Sort
-      (std::ostream& stream, std::string& expl) const override;
+   NodeBase::word Sort(std::ostream& stream, std::string& expl) const override;
 
    //  Displays the filenames in RESULT.
    //
-   virtual NodeBase::word Show(std::string& result) const override;
+   NodeBase::word Show(std::string& result) const override;
 
    //  Trims the code files in the set.
    //
-   virtual NodeBase::word Trim
-      (std::ostream& stream, std::string& expl) const override;
+   NodeBase::word Trim(std::ostream& stream, std::string& expl) const override;
 
    //  Returns the build order of the set.
    //

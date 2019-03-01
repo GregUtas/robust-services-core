@@ -70,12 +70,12 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Returns the registry of parameters.
    //
@@ -83,21 +83,19 @@ protected:
 
    //  Overridden to access parameters that follow the string.
    //
-   virtual CliParm* AccessParm
-      (CliCookie& cookie, uint32_t depth) const override;
+   CliParm* AccessParm(CliCookie& cookie, uint32_t depth) const override;
 
    //  Overridden to display parameters that can follow the string.
    //
-   virtual void Explain(std::ostream& stream, col_t indent) const override;
+   void Explain(std::ostream& stream, col_t indent) const override;
 
    //  Overridden to look for a text parameter in parms_.
    //
-   virtual Rc GetTextParmRc
-      (id_t& i, std::string& s, CliThread& cli) const override;
+   Rc GetTextParmRc(id_t& i, std::string& s, CliThread& cli) const override;
 private:
    //  Overridden to display the string as the acceptable input.
    //
-   virtual bool ShowValues(std::string& values) const override;
+   bool ShowValues(std::string& values) const override;
 
    //  After matching a text string, this function prepares to look
    //  for parameters associated with the string.  If the string has

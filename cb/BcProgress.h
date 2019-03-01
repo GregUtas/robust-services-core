@@ -92,12 +92,12 @@ protected:
 
    //  Overridden to invoke Info::Display.
    //
-   virtual void DisplayMsg(std::ostream& stream, const std::string& prefix,
+   void DisplayMsg(std::ostream& stream, const std::string& prefix,
       const byte_t* bytes, size_t count) const override;
 
    //  Overridden to create a CLI parameter for ProgressInfo.
    //
-   virtual CliParm* CreateCliParm(Usage use) const override;
+   CliParm* CreateCliParm(Usage use) const override;
 };
 }
 #endif

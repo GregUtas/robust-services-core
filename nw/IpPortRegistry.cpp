@@ -51,9 +51,9 @@ public:
    ~HostAddrCfg();
    SysIpL2Addr Address() const { return addr_; }
 protected:
-   virtual void SetCurr() override;
+   void SetCurr() override;
 private:
-   virtual bool SetNext(const string& input) override;
+   bool SetNext(const string& input) override;
 
    //  Kept in synch with the string version of the element's address.
    //
@@ -111,7 +111,7 @@ class IpPortStatsGroup : public StatisticsGroup
 public:
    IpPortStatsGroup();
    ~IpPortStatsGroup();
-   virtual void DisplayStats(ostream& stream, id_t id) const override;
+   void DisplayStats(ostream& stream, id_t id) const override;
 };
 
 //------------------------------------------------------------------------------

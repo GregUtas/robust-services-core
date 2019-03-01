@@ -55,15 +55,14 @@ class PotsMuxFactory : public SsmFactory
 private:
    PotsMuxFactory();
    ~PotsMuxFactory();
-   virtual CliText* CreateText() const override;
-   virtual RootServiceSM* AllocRoot
-      (const Message& msg, ProtocolSM& psm) const override;
-   virtual ProtocolSM* AllocIcPsm
+   CliText* CreateText() const override;
+   RootServiceSM* AllocRoot(const Message& msg, ProtocolSM& psm) const override;
+   ProtocolSM* AllocIcPsm
       (const Message& msg, ProtocolLayer& lower) const override;
-   virtual SsmContext* FindContext(const Message& msg) const override;
-   virtual Message* AllocIcMsg(SbIpBufferPtr& buff) const override;
-   virtual Message* AllocOgMsg(SignalId sid) const override;
-   virtual Message* ReallocOgMsg(SbIpBufferPtr& buff) const override;
+   SsmContext* FindContext(const Message& msg) const override;
+   Message* AllocIcMsg(SbIpBufferPtr& buff) const override;
+   Message* AllocOgMsg(SignalId sid) const override;
+   Message* ReallocOgMsg(SbIpBufferPtr& buff) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -82,14 +81,14 @@ public:
    void SendFacility(ServiceId sid, Facility::Ind ind);
    void SendFacility(Facility::Ind ind);
    void SendCause(Cause::Ind cause);
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
-   virtual Message::Route Route() const override;
-   virtual IncomingRc ProcessIcMsg(Message& msg, Event*& event) override;
-   virtual OutgoingRc ProcessOgMsg(Message& msg) override;
-   virtual void SendFinalMsg() override;
-   virtual void EnsureMediaMsg() override;
+   Message::Route Route() const override;
+   IncomingRc ProcessIcMsg(Message& msg, Event*& event) override;
+   OutgoingRc ProcessOgMsg(Message& msg) override;
+   void SendFinalMsg() override;
+   void EnsureMediaMsg() override;
 
    ServiceId remSid_;
    const Pots_UN_Message* ogMsg_;
@@ -165,12 +164,12 @@ public:
    size_t CountCalls() const;
    EventHandler::Rc Initiate(Event*& nextEvent);
    EventHandler::Rc RelayMsg();
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
    PotsMuxPsm* NPsm() const;
-   virtual ServicePortId CalcPort(const AnalyzeMsgEvent& ame) override;
-   virtual void PsmDeleted(ProtocolSM& exPsm) override;
+   ServicePortId CalcPort(const AnalyzeMsgEvent& ame) override;
+   void PsmDeleted(ProtocolSM& exPsm) override;
 
    PotsProfile* prof_;
    PotsCallPsm* uPsm_;
@@ -185,7 +184,7 @@ class PotsDiscService : public Service
 private:
    PotsDiscService();
    ~PotsDiscService();
-   virtual ServiceSM* AllocModifier() const override;
+   ServiceSM* AllocModifier() const override;
 };
 }
 #endif

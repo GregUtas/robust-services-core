@@ -65,12 +65,12 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 
    //  Obtains a buffer from the object pool used by USER.
    //
@@ -86,7 +86,7 @@ public:
 protected:
    //  Overridden to return the size of Header()->length.
    //
-   virtual size_t PayloadSize() const override;
+   size_t PayloadSize() const override;
 };
 }
 #endif

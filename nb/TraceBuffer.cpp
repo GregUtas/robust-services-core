@@ -63,7 +63,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   virtual bool Display(ostream& stream, bool diff) override;
+   bool Display(ostream& stream, bool diff) override;
 };
 
 //------------------------------------------------------------------------------

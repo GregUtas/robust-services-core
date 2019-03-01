@@ -32,7 +32,6 @@
 #include "SbTracer.h"
 #include "ServiceRegistry.h"
 #include "Singleton.h"
-#include "SymbolRegistry.h"
 #include "SysTypes.h"
 #include "TimerProtocol.h"
 #include "TimerRegistry.h"
@@ -147,18 +146,5 @@ void SbModule::Startup(RestartLevel level)
    //
    Singleton< TimerThread >::Instance()->Startup(level);
    Singleton< InvokerPoolRegistry >::Instance()->Startup(level);
-
-   //  Define symbols.
-   //
-   if(level < RestartCold) return;
-
-   auto reg = Singleton< SymbolRegistry >::Instance();
-   reg->BindSymbol("pool.buffers", SbIpBufferObjPoolId);
-   reg->BindSymbol("pool.contexts", ContextObjPoolId);
-   reg->BindSymbol("pool.ssms", ServiceSMObjPoolId);
-   reg->BindSymbol("pool.events", EventObjPoolId);
-   reg->BindSymbol("pool.psms", ProtocolSMObjPoolId);
-   reg->BindSymbol("pool.messages", MessageObjPoolId);
-   reg->BindSymbol("pool.timers", TimerObjPoolId);
 }
 }

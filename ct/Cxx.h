@@ -109,6 +109,7 @@ namespace Cxx
       REINTERPRET_CAST,         // reinterpret_cast< t >(a)
       STATIC_CAST,              // static_cast< t >(a)
       SIZEOF_TYPE,              // sizeof(a)
+      NOEXCEPT,                 // noexcept(expr)
       PREFIX_INCREMENT,         // ++i
       PREFIX_DECREMENT,         // --i
       ONES_COMPLEMENT,          // ~i
@@ -424,8 +425,16 @@ public:
 
    //  Sets each attribute.
    //
-   Numeric(NumericType type, size_t width, bool sign) :
+   Numeric(NumericType type, size_t width, bool sign) noexcept :
       type_(type), bitWidth_(width), signed_(sign) { }
+
+   //  Copy constructor.
+   //
+   Numeric(const Numeric& that) noexcept = default;
+
+   //  Copy operator.
+   //
+   Numeric& operator=(const Numeric& that) noexcept = default;
 
    //  Returns the basic type.
    //

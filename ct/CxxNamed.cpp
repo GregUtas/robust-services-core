@@ -20,11 +20,13 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CxxNamed.h"
+#include <map>
 #include <set>
 #include <sstream>
 #include <utility>
 #include "CodeFile.h"
 #include "CodeSet.h"
+#include "CodeWarning.h"
 #include "CxxArea.h"
 #include "CxxExecute.h"
 #include "CxxRoot.h"
@@ -282,7 +284,8 @@ bool CxxNamed::IsPreviousDeclOf(const CxxNamed* item) const
 
 fn_name CxxNamed_Log = "CxxNamed.Log";
 
-void CxxNamed::Log(Warning warning, size_t offset, bool hide) const
+void CxxNamed::Log
+   (Warning warning, const CxxNamed* item, word offset, bool hide) const
 {
    Debug::ft(CxxNamed_Log);
 
@@ -290,7 +293,7 @@ void CxxNamed::Log(Warning warning, size_t offset, bool hide) const
    //  exception is a friend: although it may appear in such a class, it is
    //  declared in another.
    //
-   if(IsUnusedItemWarning(warning) && (Type() != Cxx::Friend))
+   if(CodeWarning::Attrs.at(warning).unusedItem && (Type() != Cxx::Friend))
    {
       auto cls = GetClass();
 
@@ -301,7 +304,8 @@ void CxxNamed::Log(Warning warning, size_t offset, bool hide) const
       }
    }
 
-   GetFile()->LogPos(GetPos(), warning, this, offset, EMPTY_STR, hide);
+   if(item == nullptr) item = this;
+   GetFile()->LogPos(GetPos(), warning, item, offset, EMPTY_STR, hide);
 }
 
 //------------------------------------------------------------------------------

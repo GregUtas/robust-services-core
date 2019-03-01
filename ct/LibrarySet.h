@@ -36,6 +36,11 @@ namespace NodeBase
    class CliThread;
 }
 
+namespace CodeTools
+{
+   struct FixOptions;
+}
+
 //------------------------------------------------------------------------------
 
 namespace CodeTools
@@ -89,11 +94,12 @@ public:
    //
    virtual NodeBase::word Countlines(std::string& result) const;
 
-   //  Returns 0 after fixing warnings detected by Check() in the set.
-   //  Returns another value on failure and updates EXPL with an explanation.
+   //  Returns 0 after fixing warnings detected by Check() in the set,
+   //  using OPTS.  Returns another value on failure and updates EXPL with
+   //  an explanation.
    //
-   virtual NodeBase::word Fix
-      (NodeBase::CliThread& cli, std::string& expl) const;
+   virtual NodeBase::word Fix(NodeBase::CliThread& cli,
+      const FixOptions& opts, std::string& expl) const;
 
    //  On success, returns 0 after reformatting the file.  Returns another
    //  value on failure and updates EXPL with an explanation.

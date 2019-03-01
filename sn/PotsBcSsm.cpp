@@ -247,8 +247,7 @@ EventHandler::Rc PotsBcSsm::AnalyzeMsg
       //
       //  In a basic call, this is only valid when it initiates a service.
       {
-         auto pfi = pmsg->FindType< PotsFacilityInfo >
-            (PotsParameter::Facility);
+         auto pfi = pmsg->FindType< PotsFacilityInfo >(PotsParameter::Facility);
 
          if(pfi != nullptr)
          {

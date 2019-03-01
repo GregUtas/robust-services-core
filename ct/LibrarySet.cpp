@@ -208,7 +208,7 @@ LibrarySet* LibrarySet::FileType(const LibrarySet* that) const
 
 fn_name LibrarySet_Fix = "LibrarySet.Fix";
 
-word LibrarySet::Fix(CliThread& cli, string& expl) const
+word LibrarySet::Fix(CliThread& cli, const FixOptions& opts, string& expl) const
 {
    Debug::ft(LibrarySet_Fix);
 

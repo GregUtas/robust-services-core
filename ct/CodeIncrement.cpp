@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CodeIncrement.h"
+#include "CliBoolParm.h"
 #include "CliCommand.h"
 #include "CliIntParm.h"
 #include "CliText.h"
@@ -802,6 +803,24 @@ word FileInfoCommand::ProcessCommand(CliThread& cli) const
 //
 //  The FIX command.
 //
+class WarningParm : public CliIntParm
+{
+public: WarningParm();
+};
+
+fixed_string WarningExpl = "warning number from Wnnn (0 = all warnings)";
+
+WarningParm::WarningParm() : CliIntParm(WarningExpl, 0, Warning_N - 1) { }
+
+class PromptParm : public CliBoolParm
+{
+public: PromptParm();
+};
+
+fixed_string PromptExpl = "prompt before fixing?";
+
+PromptParm::PromptParm() : CliBoolParm(PromptExpl) { }
+
 class FixCommand : public LibraryCommand
 {
 public:
@@ -815,6 +834,8 @@ fixed_string FixExpl = "Interactively fixes warnings detected by >check.";
 
 FixCommand::FixCommand() : LibraryCommand(FixStr, FixExpl)
 {
+   BindParm(*new WarningParm);
+   BindParm(*new PromptParm);
    BindParm(*new FileSetExprParm);
 }
 
@@ -824,11 +845,18 @@ word FixCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(FixCommand_ProcessCommand);
 
+   word warning;
+   FixOptions options;
+
+   if(!GetIntParm(warning, cli)) return -1;
+   if(!GetBoolParm(options.prompt, cli)) return -1;
+   options.warning = static_cast< Warning >(warning);
+
    auto set = LibraryCommand::Evaluate(cli);
    if(set == nullptr) return cli.Report(-7, AllocationError);
 
    string expl;
-   auto rc = set->Fix(cli, expl);
+   auto rc = set->Fix(cli, options, expl);
    set->Release();
    if(rc == 0) return 0;
    return cli.Report(rc, expl);

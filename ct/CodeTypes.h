@@ -60,6 +60,7 @@ extern fixed_string ENUM_STR;
 extern fixed_string EXPLICIT_STR;
 extern fixed_string EXTERN_STR;
 extern fixed_string FALSE_STR;
+extern fixed_string FINAL_STR;
 extern fixed_string FLOAT_STR;
 extern fixed_string FOR_STR;
 extern fixed_string FRIEND_STR;
@@ -359,7 +360,7 @@ enum AssignmentType
 //
 enum Warning
 {
-   UseOfSlashAsterisk,       // use of /* */ comment
+   AllWarnings,              // used as a wildcard when fixing warnings
    UseOfNull,                // use of NULL
    PtrTagDetached,           // <type> *<data> instead of <type>* data
    RefTagDetached,           // <type> &<data> instead of <type>& data
@@ -378,7 +379,7 @@ enum Warning
    IncludeDuplicated,        // #include already exists for this file
    IncludeAdd,               // #include should be added
    IncludeRemove,            // #include should be removed
-   HeaderReliesOnUsing,      // header relies on using directive or declaration
+   RemoveOverrideTag,        // function is also tagged final
    UsingInHeader,            // header contains using directive or declaration
    UsingDuplicated,          // using statement duplicated
    UsingAdd,                 // using statement should be added
@@ -418,7 +419,7 @@ enum Warning
    DefaultPODConstructor,    // use of default constructor; class has POD member
    DefaultConstructor,       // use of default constructor
    DefaultCopyConstructor,   // use of default copy constructor
-   DefaultAssignment,        // use of default assignment operator
+   DefaultCopyOperator,      // use of default copy (assignment) operator
    PublicConstructor,        // base class has public constructor
    NonExplicitConstructor,   // constructor should be tagged explicit
    MemberInitMissing,        // item missing from member initialization list
@@ -437,7 +438,7 @@ enum Warning
    VirtualAndPublic,         // function is both public and virtual
    VirtualOverloading,       // function reuses name of virtual function
    FunctionNotOverridden,    // virtual function has no overrides
-   VirtualTagMissing,        // add virtual tag to function declaration
+   RemoveVirtualTag,         // function is an override or is tagged final
    OverrideTagMissing,       // add override tag to function declaration
    VoidAsArgument,           // use of (void) to specify function parameter
    AnonymousArgument,        // declaration of unnamed argument
@@ -473,16 +474,20 @@ enum Warning
    PatchNotOverridden,       // class does not override Object.Patch
    FunctionCouldBeDefaulted, // empty special member function defined
    InitCouldUseConstructor,  // initialization uses oper= instead of constructor
+   CouldBeNoexcept,          // function could be tagged noexcept
+   ShouldNotBeNoexcept,      // function should not be tagged noexcept
+   UseOfSlashAsterisk,       // use of /* */ comment
+   RemoveLineBreak,          // next line can be merged within length limit
    Warning_N                 // number of warnings
 };
 
-//  Inserts a string for WARNING into STREAM.
+//  Options for the >fix command.
 //
-std::ostream& operator<<(std::ostream& stream, Warning warning);
-
-//  Returns true if WARNING is associated with an unused item.
-//
-bool IsUnusedItemWarning(Warning warning);
+struct FixOptions
+{
+   Warning warning;  // type of warning to fix
+   bool prompt;      // whether to prompt before fixing a warning
+};
 
 //------------------------------------------------------------------------------
 //
@@ -543,6 +548,13 @@ private:
    //
    LineTypeAttr(bool code, bool exe, bool merge, bool blank);
 };
+
+//  Returns true if LINE1[BEGIN1..END1] and LINE2[BEGIN2..END2] can be
+//  merged.
+//
+bool LinesCanBeMerged
+   (const std::string& line1, size_t begin1, size_t end1,
+    const std::string& line2, size_t begin2, size_t end2);
 
 //------------------------------------------------------------------------------
 //

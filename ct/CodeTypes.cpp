@@ -67,6 +67,7 @@ fixed_string ENUM_STR             = "enum";
 fixed_string EXPLICIT_STR         = "explicit";
 fixed_string EXTERN_STR           = "extern";
 fixed_string FALSE_STR            = "false";
+fixed_string FINAL_STR            = "final";
 fixed_string FLOAT_STR            = "float";
 fixed_string FOR_STR              = "for";
 fixed_string FRIEND_STR           = "friend";
@@ -180,6 +181,11 @@ ostream& operator<<(ostream& stream, LineType type)
 
 //------------------------------------------------------------------------------
 
+const bool F = false;
+const bool T = true;
+
+//------------------------------------------------------------------------------
+
 LineTypeAttr::LineTypeAttr(bool code, bool exe, bool merge, bool blank) :
    isCode(code),
    isExecutable(exe),
@@ -187,11 +193,6 @@ LineTypeAttr::LineTypeAttr(bool code, bool exe, bool merge, bool blank) :
    isBlank(blank)
 {
 }
-
-//------------------------------------------------------------------------------
-
-const bool F = false;
-const bool T = true;
 
 const LineTypeAttr LineTypeAttr::Attrs[LineType_N + 1] =
 {
@@ -219,154 +220,27 @@ const LineTypeAttr LineTypeAttr::Attrs[LineType_N + 1] =
 
 //------------------------------------------------------------------------------
 
-fixed_string WarningStrings[Warning_N + 1] =
+bool LinesCanBeMerged
+   (const string& line1, size_t begin1, size_t end1,
+    const string& line2, size_t begin2, size_t end2)
 {
-   "C-style comment",
-   "Use of NULL",
-   "Pointer tag ('*') detached from type",
-   "Reference tag ('&') detached from type",
-   "C-style cast",
-   "Functional cast",
-   "reinterpret_cast",
-   "Cast down the inheritance hierarchy",
-   "Cast removes const qualification",
-   "Pointer arithmetic",
-   "Semicolon not required",
-   "Redundant const in type specification",
-   "#define appears within a class or function",
-   "#include appears outside of global namespace",
-   "No #include guard found",
-   "#include not sorted in standard order",
-   "#include duplicated",
-   "Add #include directive",
-   "Remove #include directive",
-   "Header relies on using statement via #include",
-   "Using statement in header",
-   "Using statement duplicated",
-   "Add using statement",
-   "Remove using statement",
-   "Add forward declaration",
-   "Remove forward declaration",
-   "Unused argument",
-   "Unused class",
-   "Unused data",
-   "Unused enum",
-   "Unused enumerator",
-   "Unused friend declaration",
-   "Unused function",
-   "Unused typedef",
-   "No referent for forward declaration",
-   "No referent for friend declaration",
-   "Indirect reference relies on friend, not forward, declaration",
-   "Member hides inherited name",
-   "Class could be namespace",
-   "Class could be struct",
-   "Struct could be class",
-   "Redundant access control",
-   "Member could be private",
-   "Member could be protected",
-   "Typedef of pointer type",
-   "Unnamed enum",
-   "Global data initialization not found",
-   "Data is init-only",
-   "Data is write-only",
-   "Global static data",
-   "Data is not private",
-   "DATA CANNOT BE CONST",
-   "DATA CANNOT BE CONST POINTER",
-   "Data could be const",
-   "Data could be const pointer",
-   "Data need not be mutable",
-   "Default constructor invoked: POD members not initialized",
-   "Default constructor invoked",
-   "Default copy constructor invoked",
-   "Default assignment operator invoked",
-   "Base class constructor is public",
-   "Single-argument constructor is not explicit",
-   "Member not included in member initialization list",
-   "Member not sorted in standard order in member initialization list",
-   "Default destructor invoked",
-   "Base class virtual destructor is not public",
-   "Base class non-virtual destructor is public",
-   "Virtual function in own class invoked by constructor or destructor",
-   "Destructor defined, but not copy constructor",
-   "Destructor defined, but not copy operator",
-   "Copy constructor defined, but not copy operator",
-   "Copy operator defined, but not copy constructor",
-   "Overloading operator && or ||",
-   "Function not implemented",
-   "Pure virtual function not implemented",
-   "Virtual function is public",
-   "Virtual function is overloaded",
-   "Virtual function has no overrides",
-   "Function should be tagged as virtual",
-   "Function should be tagged as override",
-   "\"(void)\" as function argument",
-   "Unnamed argument",
-   "Adjacent arguments have the same type",
-   "Definition renames argument in declaration",
-   "Override renames argument in direct base class",
-   "Virtual function defines default argument",
-   "ARGUMENT CANNOT BE CONST",
-   "Object could be passed by const reference",
-   "Argument could be const",
-   "FUNCTION CANNOT BE CONST",
-   "Function could be const",
-   "Function could be static",
-   "Function could be free",
-   "Static function invoked via operator \".\" or \"->\"",
-   "Non-boolean in conditional expression",
-   "Arguments to binary operator have different enum types",
-   "Tab character in source code",
-   "Line indentation is not a multiple of the standard value",
-   "Line contains trailing space",
-   "Line contains adjacent spaces",
-   "Insertion of blank line recommended",
-   "Deletion of blank line recommended",
-   "Line length exceeds the standard maximum",
-   "Function not sorted in standard order",
-   "File heading is not standard",
-   "Name of #include guard is not standard",
-   "Function does not invoke Debug::ft",
-   "Function does not invoke Debug::ft as first statement",
-   "Function name passed to Debug::ft is not standard",
-   "Function name passed to Debug::ft is already used by another function",
-   "Override of Base.Display not found",
-   "Override of Object.Patch not found",
-   "Function could be defaulted",
-   "Initialization uses assignment operator",
-   ERROR_STR
-};
-
-//------------------------------------------------------------------------------
-
-bool IsUnusedItemWarning(Warning warning)
-{
-   switch(warning)
-   {
-   case ArgumentUnused:
-   case ClassUnused:
-   case DataUnused:
-   case EnumUnused:
-   case EnumeratorUnused:
-   case FriendUnused:
-   case FunctionUnused:
-   case TypedefUnused:
-      return true;
-   }
-
-   return false;
-}
-
-//------------------------------------------------------------------------------
-
-ostream& operator<<(ostream& stream, Warning warning)
-{
-   if((warning >= 0) && (warning < Warning_N))
-      stream << WarningStrings[warning];
-   else
-      stream << WarningStrings[Warning_N];
-   return stream;
+   //  LINE1 must not end in a trailing comment, semicolon, colon, or right
+   //  brace and must not start with an "if" or "else".  LINE2 must end with
+   //  a semicolon.  If LINE2 doesn't start with a left parenthesis, a space
+   //  will also have to be inserted when merging.
+   //
+   if(line1.at(end1) == ';') return false;
+   if(line1.at(end1) == ':') return false;
+   if(line1.at(end1) == '}') return false;
+   if(line2.at(end2) != ';') return false;
+   if(line1.find(COMMENT_STR, begin1) < end1) return false;
+   auto first1 = line1.find_first_not_of(WhitespaceChars, begin1);
+   if(line1.find(IF_STR, first1) == first1) return false;
+   if(line1.find(ELSE_STR, first1) == first1) return false;
+   begin2 = line2.find_first_not_of(WhitespaceChars, begin2);
+   auto size = (end1 - begin1 + 1) + (end2 - begin2 + 1);
+   if(line2.at(begin2) != '(') ++size;
+   return (size <= LINE_LENGTH_MAX);
 }
 
 //==============================================================================

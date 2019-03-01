@@ -122,9 +122,6 @@ void MbModule::Startup(RestartLevel level)
    if(level < RestartCold) return;
 
    auto reg = Singleton< SymbolRegistry >::Instance();
-
-   reg->BindSymbol("pool.meps", MediaEndptObjPoolId);
-
    reg->BindSymbol("port.silence", Tone::Silence);
    reg->BindSymbol("port.dial", Tone::Dial);
    reg->BindSymbol("port.stutter", Tone::StutteredDial);

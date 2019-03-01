@@ -1218,17 +1218,21 @@ bool Parser::GetCxxAlpha(ExprPtr& expr)
             return Backup(start, 75);
          }
 
-      case Cxx::THROW:
-         if(GetThrow(expr)) return true;
-         return Backup(start, 76);
-
       case Cxx::SIZEOF_TYPE:
          if(GetSizeOf(expr)) return true;
          return Backup(start, 77);
 
+      case Cxx::THROW:
+         if(GetThrow(expr)) return true;
+         return Backup(start, 76);
+
       case Cxx::TYPE_NAME:
          if(GetTypeId(expr)) return true;
          return Backup(start, 78);
+
+      case Cxx::NOEXCEPT:
+         if(GetNoExcept(expr)) return true;
+         return Backup(start, 228);
 
       default:
          Debug::SwLog(Parser_GetCxxAlpha, op, 0, SwInfo);
@@ -2324,6 +2328,29 @@ bool Parser::GetNew(ExprPtr& expr, Cxx::Operator op)
 
 //------------------------------------------------------------------------------
 
+fn_name Parser_GetNoExcept = "Parser.GetNoExcept";
+
+bool Parser::GetNoExcept(ExprPtr& expr)
+{
+   Debug::ft(Parser_GetNoExcept);
+
+   auto start = lexer_.Curr();
+
+   //  The noexcept operator has already been parsed.
+   //
+   ExprPtr item;
+   GetCxxExpr(item, expr->EndPos(), false);
+
+   TokenPtr token(new Operation(Cxx::NOEXCEPT));
+   auto op = static_cast< Operation* >(token.get());
+   TokenPtr arg(item.release());
+   if(arg != nullptr) op->AddArg(arg, false);
+   expr->AddItem(token);
+   return Success(Parser_GetNoExcept, start);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Parser_GetNum = "Parser.GetNum";
 
 bool Parser::GetNum(ExprPtr& expr)
@@ -2572,6 +2599,7 @@ bool Parser::GetProcDecl(FunctionPtr& func)
    auto readonly = NextKeywordIs(CONST_STR);
    auto noex = NextKeywordIs(NOEXCEPT_STR);
    auto over = NextKeywordIs(OVERRIDE_STR);
+   auto final = NextKeywordIs(FINAL_STR);
    if(virt) pure = (lexer_.NextStringIs("=") && lexer_.NextCharIs('0'));
 
    func->SetStatic(stat, oper);
@@ -2582,6 +2610,7 @@ bool Parser::GetProcDecl(FunctionPtr& func)
    func->SetConst(readonly);
    func->SetNoexcept(noex);
    func->SetOverride(over);
+   func->SetFinal(final);
    func->SetPure(pure);
    return Success(Parser_GetProcDecl, start);
 }

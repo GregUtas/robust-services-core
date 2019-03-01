@@ -57,7 +57,7 @@ class ObjectPool : public Protected
 public:
    //> Highest valid object pool identifier.
    //
-   static const ObjectPoolId MaxId = 63;
+   static const ObjectPoolId MaxId = 250;
 
    //> The maximum number of segments in an object pool.
    //
@@ -198,11 +198,10 @@ public:
    //
    virtual void Patch(sel_t selector, void* arguments) override;
 protected:
-   //  Defines a pool, identified by NAME and PID, that allocates blocks of
-   //  TYPE, with a size of nBytes.  Protected because this class is virtual.
+   //  Defines a pool, identified by NAME, that allocates blocks of TYPE,
+   //  with a size of nBytes.  Protected because this class is virtual.
    //
-   ObjectPool(ObjectPoolId pid, MemoryType type,
-      size_t nBytes, const std::string& name);
+   ObjectPool(MemoryType type, size_t nBytes, const std::string& name);
 
    //  Frees all blocks.  Protected because subclasses should be singletons.
    //

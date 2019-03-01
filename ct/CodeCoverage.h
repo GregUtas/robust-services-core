@@ -128,8 +128,7 @@ private:
    //  is the current line in the database.  Returns the next item to
    //  look for, and updates RC and EXPL to report an error or success.
    //
-   LoadState GetFunc(std::string& input,
-      NodeBase::word& rc, std::string& expl);
+   LoadState GetFunc(std::string& input, NodeBase::word& rc, std::string& expl);
 
    //  Looks for a [<TestName>]* "$" sequence.  INPUT is what remains of
    //  the current line in the database.  Returns the next item to look
@@ -171,9 +170,9 @@ private:
       const uint32_t hash;            // hash value for function's code
       std::set< std::string > tests;  // tests that invoke the function
 
-      FuncInfo(const std::string& file, uint32_t hash):
+      FuncInfo(const std::string& file, uint32_t hash) :
          file(file), hash(hash) { }
-      explicit FuncInfo(uint32_t hash): hash(hash) { }
+      explicit FuncInfo(uint32_t hash) : hash(hash) { }
    };
 
    //  A tuple for a function's name and its associated information.

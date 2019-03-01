@@ -22,6 +22,7 @@
 #include "CtModule.h"
 #include "CodeCoverage.h"
 #include "CodeIncrement.h"
+#include "CodeWarning.h"
 #include "CxxExecute.h"
 #include "CxxRoot.h"
 #include "CxxSymbols.h"
@@ -100,6 +101,8 @@ fn_name CtModule_Startup = "CtModule.Startup";
 void CtModule::Startup(RestartLevel level)
 {
    Debug::ft(CtModule_Startup);
+
+   CodeWarning::Initialize();
 
    //  Create/start singletons.
    //

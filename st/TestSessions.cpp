@@ -129,8 +129,8 @@ public:
    static const Id AcInject              = NextId + 4;
    static const Id AcVerify              = NextId + 5;
 protected:
-   TestEventHandler();
-   virtual ~TestEventHandler();
+   TestEventHandler() = default;
+   virtual ~TestEventHandler() = default;
 };
 
 class TestAnalyzeUserMessage : public TestEventHandler
@@ -388,10 +388,6 @@ TestProtocol::~TestProtocol()
 //==============================================================================
 
 TestSignal::TestSignal(Id sid) : Signal(TestProtocolId, sid) { }
-
-//------------------------------------------------------------------------------
-
-TestSignal::~TestSignal() { }
 
 //------------------------------------------------------------------------------
 
@@ -966,12 +962,6 @@ void TestSsm::UpdateTestPsm()
 
    if(testPsm_ != nullptr) testPsm_->SetAppPsm(appPsm_);
 }
-
-//==============================================================================
-
-TestEventHandler::TestEventHandler() { }
-
-TestEventHandler::~TestEventHandler() { }
 
 //------------------------------------------------------------------------------
 

@@ -140,26 +140,22 @@ TraceRc SbTracer::ClearSelections(FlagId filter)
    switch(filter)
    {
    case TraceFactory:
-      for(auto i = 0; i <= Factory::MaxId; ++i)
-         factories_[i] = TraceDefault;
+      for(auto i = 0; i <= Factory::MaxId; ++i) factories_[i] = TraceDefault;
       buff->ClearFilter(TraceFactory);
       break;
 
    case TraceProtocol:
-      for(auto i = 0; i <= Protocol::MaxId; ++i)
-         protocols_[i] = TraceDefault;
+      for(auto i = 0; i <= Protocol::MaxId; ++i) protocols_[i] = TraceDefault;
       buff->ClearFilter(TraceProtocol);
       break;
 
    case TraceSignal:
-      for(auto i = 0; i < MaxSignalEntries; ++i)
-         signals_[i] = SignalFilter();
+      for(auto i = 0; i < MaxSignalEntries; ++i) signals_[i] = SignalFilter();
       buff->ClearFilter(TraceSignal);
       break;
 
    case TraceService:
-      for(auto i = 0; i <= Service::MaxId; ++i)
-         services_[i] = TraceDefault;
+      for(auto i = 0; i <= Service::MaxId; ++i) services_[i] = TraceDefault;
       buff->ClearFilter(TraceService);
       break;
 

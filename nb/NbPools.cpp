@@ -22,7 +22,6 @@
 #include "NbPools.h"
 #include "Debug.h"
 #include "MsgBuffer.h"
-#include "NbAppIds.h"
 #include "Singleton.h"
 #include "SysTypes.h"
 #include "Thread.h"
@@ -40,8 +39,7 @@ const size_t MsgBufferPool::BlockSize =
 
 fn_name MsgBufferPool_ctor = "MsgBufferPool.ctor";
 
-MsgBufferPool::MsgBufferPool() :
-   ObjectPool(MsgBufferObjPoolId, MemDyn, BlockSize, "MsgBuffers")
+MsgBufferPool::MsgBufferPool() : ObjectPool(MemDyn, BlockSize, "MsgBuffers")
 {
    Debug::ft(MsgBufferPool_ctor);
 }
@@ -81,8 +79,7 @@ const size_t ThreadPool::BlockSize = sizeof(Thread) + (60 * BYTES_PER_WORD);
 
 fn_name ThreadPool_ctor = "ThreadPool.ctor";
 
-ThreadPool::ThreadPool() :
-   ObjectPool(ThreadObjPoolId, MemPerm, BlockSize, "Threads")
+ThreadPool::ThreadPool() : ObjectPool(MemPerm, BlockSize, "Threads")
 {
    Debug::ft(ThreadPool_ctor);
 }

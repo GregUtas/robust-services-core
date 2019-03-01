@@ -284,12 +284,12 @@ string Context::Location()
 
 fn_name Context_Log = "Context.Log";
 
-void Context::Log(Warning warning)
+void Context::Log(Warning warning, const CxxNamed* item, word offset)
 {
    Debug::ft(Context_Log);
 
    if(File_ == nullptr) return;
-   File_->LogPos(GetPos(), warning);
+   File_->LogPos(GetPos(), warning, item, offset);
 }
 
 //------------------------------------------------------------------------------

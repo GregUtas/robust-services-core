@@ -107,6 +107,14 @@ public:
    //
    StackArg(CxxToken* t, const StackArg& via, Cxx::Operator op);
 
+   //  Copy constructor.
+   //
+   StackArg(const StackArg& that) = default;
+
+   //  Copy operator.
+   //
+   StackArg& operator=(const StackArg& that) = default;
+
    //  Invokes TypeString on ITEM and adjusts the result based on PTRS.
    //
    std::string TypeString(bool arg) const;
@@ -595,9 +603,11 @@ public:
    //
    static bool ParsingTemplateInstance();
 
-   //  Logs WARNING at the current execution position.
+   //  Logs WARNING at the current execution position.  ITEM and OFFSET
+   //  are included as additional information for the log.
    //
-   static void Log(Warning warning);
+   static void Log(Warning warning,
+      const CxxNamed* item = nullptr, NodeBase::word offset = 0);
 
    //  The following invokes its Debug counterpart but also inserts
    //  the log in the execution trace to make it easier to see where

@@ -29,6 +29,7 @@
 #include "CodeDirSet.h"
 #include "CodeFile.h"
 #include "Debug.h"
+#include "Editor.h"
 #include "Formatters.h"
 #include "Lexer.h"
 #include "Library.h"
@@ -341,7 +342,8 @@ LibrarySet* CodeFileSet::FileType(const LibrarySet* that) const
 
 fn_name CodeFileSet_Fix = "CodeFileSet.Fix";
 
-word CodeFileSet::Fix(CliThread& cli, string& expl) const
+word CodeFileSet::Fix
+   (CliThread& cli, const FixOptions& opts, string& expl) const
 {
    Debug::ft(CodeFileSet_Fix);
 
@@ -353,28 +355,32 @@ word CodeFileSet::Fix(CliThread& cli, string& expl) const
       return 0;
    }
 
-   *cli.obuf << "The code editor has NOT been rigorously tested. The" << CRLF;
-   *cli.obuf << "checking of diffs is recommended. The following also" << CRLF;
-   *cli.obuf << "occur automatically in each modified file:" << CRLF;
+   *cli.obuf << "Checking diffs after modifying code is recommended." << CRLF;
+   *cli.obuf << "The following is also automatic in modified files:" << CRLF;
    *cli.obuf << "  o Whitespace at the end of a line is deleted." << CRLF;
    *cli.obuf << "  o A repeated blank line is deleted." << CRLF;
    *cli.obuf << "  o Tabs are replaced by spaces based on INDENT_SIZE." << CRLF;
-   auto proceed = cli.BoolPrompt(ContinuePrompt);
-   if(!proceed) return 0;
 
    //  In order to fix warnings in a file, it must have been checked.
    //
    auto rc = Check(nullptr, expl);
    if(rc != 0) return rc;
+   expl.clear();
 
    //  Iterate over the set of code files and fix them.
    //
+   auto prev = Editor::CommitCount();
    auto& files = Singleton< Library >::Instance()->Files();
 
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
    {
-      rc = files.At(*f)->Fix(cli, expl);
+      rc = files.At(*f)->Fix(cli, opts, expl);
       if(rc != 0) return rc;
+   }
+
+   if(Editor::CommitCount() == prev)
+   {
+      *cli.obuf << "No warnings that could be fixed were found." << CRLF;
    }
 
    return 0;

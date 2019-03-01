@@ -33,7 +33,7 @@ namespace NodeBase
 class CliCharParm : public CliParm
 {
 public:
-   //  HELP and OPT are passed to CliParm.  CHARS lists the characters
+   //  HELP, OPT, and TAG are passed to CliParm.  CHARS lists the characters
    //  that are valid for this parameter.
    //
    CliCharParm(const char* help, const char* chars,

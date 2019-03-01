@@ -55,25 +55,6 @@ constexpr ModuleId FirstAppModuleId = 15;  // start of applicaton modules
 
 //------------------------------------------------------------------------------
 //
-//  Object pool identifiers.  A new object pool must define an identifier here.
-//
-constexpr ObjectPoolId ThreadObjPoolId = 1;
-constexpr ObjectPoolId MsgBufferObjPoolId = 2;
-constexpr ObjectPoolId IpBufferObjPoolId = 3;
-constexpr ObjectPoolId SbIpBufferObjPoolId = 4;
-constexpr ObjectPoolId BtIpBufferObjPoolId = 5;
-constexpr ObjectPoolId ContextObjPoolId = 6;
-constexpr ObjectPoolId MessageObjPoolId = 7;
-constexpr ObjectPoolId MsgPortObjPoolId = 8;
-constexpr ObjectPoolId ProtocolSMObjPoolId = 9;
-constexpr ObjectPoolId TimerObjPoolId = 10;
-constexpr ObjectPoolId EventObjPoolId = 11;
-constexpr ObjectPoolId ServiceSMObjPoolId = 12;
-constexpr ObjectPoolId MediaEndptObjPoolId = 13;
-constexpr ObjectPoolId FirstAppObjPoolId = 14;    // start of application pools
-
-//------------------------------------------------------------------------------
-//
 //  Reserved software debugging flags.  Ad hoc usage should begin with the
 //  last FlagId defined here.
 //

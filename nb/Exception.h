@@ -64,15 +64,15 @@ protected:
    //
    virtual ~Exception() noexcept;
 
+   //  Deleted to prohibit assignment.
+   //
+   Exception& operator=(const Exception& that) = delete;
+
    //  Overridden so that Thread::Start can catch this exception.  Subclasses
    //  should override this implementation.
    //
    virtual const char* what() const noexcept override;
 private:
-   //  Deleted to prohibit assignment.
-   //
-   Exception& operator=(const Exception& that) = delete;
-
    //  The function call stack at the time that the exception occurred.
    //  Mutable so that the copy constructor can transfer ownership if
    //  an exception is caught and rethrown.

@@ -66,8 +66,7 @@ private:
    //  expire in SECS, and repeatedly if REPEAT is true.  Private because
    //  applications create timers via ProtocolSM::StartTimer.
    //
-   Timer(ProtocolSM& psm, Base& owner,
-      TimerId tid, secs_t secs, bool repeat);
+   Timer(ProtocolSM& psm, Base& owner, TimerId tid, secs_t secs, bool repeat);
 
    //  Private because applications delete timers via ProtocolSM::StopTimer.
    //  Not subclassed.

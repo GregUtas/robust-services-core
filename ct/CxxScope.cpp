@@ -1319,11 +1319,10 @@ bool Data::InitByDefault()
    else
    {
       decl->inited_ = (!cls->HasPODMember());
-
-      if(decl->inited_)
-         Log(DefaultConstructor);
-      else
-         Log(DefaultPODConstructor);
+      auto warning =
+         (decl->inited_ ? DefaultConstructor : DefaultPODConstructor);
+      Log(warning, cls, -1);
+      cls->Log(warning);
    }
 
    return decl->inited_;
@@ -1735,6 +1734,7 @@ Function::Function(QualNamePtr& name) :
    const_(false),
    noexcept_(false),
    override_(false),
+   final_(false),
    pure_(false),
    type_(false),
    friend_(false),
@@ -1776,6 +1776,7 @@ Function::Function(QualNamePtr& name, TypeSpecPtr& spec, bool type) :
    const_(false),
    noexcept_(false),
    override_(false),
+   final_(false),
    pure_(false),
    type_(type),
    friend_(false),
@@ -2019,6 +2020,58 @@ TypeMatch Function::CalcConstructibilty
 
 //------------------------------------------------------------------------------
 
+fn_name Function_CanBeNoexcept = "Function.CanBeNoexcept";
+
+bool Function::CanBeNoexcept() const
+{
+   Debug::ft(Function_CanBeNoexcept);
+
+   //  A deleted function need not be noexcept.
+   //
+   if(deleted_) return false;
+
+   //  A virtual function should not be noexcept because this forces all
+   //  overrides to be noexcept, which is dangerous for robust software
+   //  that needs to recover from unexpected errors.  The only exception
+   //  to this is in a derived class, when an external class has already
+   //  defined the function as noexcept.
+   //
+   auto bf = FindBaseFunc();
+
+   if(virtual_ || ((FuncType() == FuncDtor) && (bf != nullptr)))
+   {
+      for(NO_OP; bf != nullptr; bf = bf->FindBaseFunc())
+      {
+         if(bf->noexcept_ && bf->GetFile()->IsSubsFile()) return true;
+      }
+
+      return false;
+   }
+
+   //  It is dangerous for even an empty constructor to be noexcept if any
+   //  base constructor, up the class hierarchy, is not noexcept.  The
+   //  constructor is on the stack when the base constructors are invoked,
+   //  which opens the system to risk.  We therefore use noexcept only on
+   //  defaulted or empty functions that are outside a class or in a class
+   //  that has no base class and no subclasses.
+   //
+   auto defn = GetDefn();
+   auto can = defn->defaulted_;
+
+   if(!can && (defn->impl_ != nullptr))
+   {
+      can = (defn->impl_->FirstStatement() == nullptr);
+   }
+
+   if(!can) return false;
+
+   auto cls = GetClass();
+   if(cls == nullptr) return true;
+   return ((cls->BaseClass() == nullptr) && cls->Subclasses()->empty());
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Function_CanInvokeWith = "Function.CanInvokeWith";
 
 Function* Function::CanInvokeWith
@@ -2152,6 +2205,7 @@ void Function::Check() const
    {
       auto w = CheckIfDefined();
       if(w != FunctionNotDefined) CheckIfUsed(FunctionUnused);
+      if(w != FunctionNotDefined) CheckNoexcept();
       CheckIfHiding();
       CheckArgs();
       CheckAccessControl();
@@ -2218,7 +2272,7 @@ void Function::CheckArgs() const
       {
          if(*args_[i]->Name() != *base->args_[i]->Name())
          {
-            args_[i]->Log(OverrideRenamesArgument, i + (this_ ? 0 : 1));
+            args_[i]->Log(OverrideRenamesArgument, this, i + (this_ ? 0 : 1));
          }
       }
 
@@ -2229,7 +2283,7 @@ void Function::CheckArgs() const
             if(*mate_->args_[i]->Name() != *base->args_[i]->Name())
             {
                mate_->args_[i]->Log
-                  (OverrideRenamesArgument, i + (this_ ? 0 : 1));
+                  (OverrideRenamesArgument, this, i + (this_ ? 0 : 1));
             }
          }
       }
@@ -2247,7 +2301,7 @@ void Function::CheckArgs() const
          if(*args_[i]->Name() != *mate_->args_[i]->Name())
          {
             mate_->args_[i]->Log
-               (DefinitionRenamesArgument, i + (this_ ? 0 : 1));
+               (DefinitionRenamesArgument, this, i + (this_ ? 0 : 1));
          }
       }
    }
@@ -2280,7 +2334,7 @@ void Function::CheckArgs() const
                }
                else
                {
-                  arg->Log(ArgumentCannotBeConst, i + (this_ ? 0 : 1));
+                  arg->Log(ArgumentCannotBeConst, this, i + (this_ ? 0 : 1));
                }
             }
 
@@ -2707,6 +2761,26 @@ void Function::CheckMemberUsage() const
 
 //------------------------------------------------------------------------------
 
+fn_name Function_CheckNoexcept = "Function.CheckNoexcept";
+
+void Function::CheckNoexcept() const
+{
+   Debug::ft(Function_CheckNoexcept);
+
+   auto can = CanBeNoexcept();
+
+   if(noexcept_)
+   {
+      if(!can) LogToBoth(ShouldNotBeNoexcept);
+   }
+   else
+   {
+      if(can) LogToBoth(CouldBeNoexcept);
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Function_CheckOverride = "Function.CheckOverride";
 
 void Function::CheckOverride()
@@ -2714,16 +2788,19 @@ void Function::CheckOverride()
    Debug::ft(Function_CheckOverride);
 
    //  If this function is an override, register it against the function that
-   //  it immediately overrides, and log it if it is missing the "virtual" or
-   //  "override" tag.  A destructor is neither registered nor logged.
+   //  it immediately overrides.  A destructor is neither registered nor logged.
+   //  It is also redundant (and can cause unintended consequences) to use more
+   //  than one of virtual, override, or final, so specify which of these should
+   //  be removed (or added, in the case of an unmarked override).
    //
    base_ = FindBaseFunc();
    if(base_ == nullptr) return;
    if(FuncType() == FuncDtor) return;
 
    base_->AddOverride(this);
-   if(!virtual_) Log(VirtualTagMissing);
-   if(!override_) Log(OverrideTagMissing);
+   if(virtual_ && (override_ || final_)) Log(RemoveVirtualTag);
+   if(override_ && final_) Log(RemoveOverrideTag);
+   if(!override_ && !final_) Log(OverrideTagMissing);
    virtual_ = true;
    override_ = true;
 }
@@ -2811,7 +2888,7 @@ void Function::DisplayDecl(ostream& stream, const Flags& options) const
    if(inline_) stream << INLINE_STR << SPACE;
    if(constexpr_) stream << CONSTEXPR_STR << SPACE;
    if(static_) stream << STATIC_STR << SPACE;
-   if(virtual_) stream << VIRTUAL_STR << SPACE;
+   if(virtual_ && !override_ && !final_) stream << VIRTUAL_STR << SPACE;
    if(explicit_) stream << EXPLICIT_STR << SPACE;
 
    if(Operator() == Cxx::CAST)
@@ -2843,7 +2920,8 @@ void Function::DisplayDecl(ostream& stream, const Flags& options) const
    stream << ')';
    if(const_) stream << SPACE << CONST_STR;
    if(noexcept_) stream << SPACE << NOEXCEPT_STR;
-   if(override_) stream << SPACE << OVERRIDE_STR;
+   if(override_ && !final_) stream << SPACE << OVERRIDE_STR;
+   if(final_) stream << SPACE << FINAL_STR;
    if(pure_) stream << " = 0";
 }
 
@@ -3145,7 +3223,8 @@ Function* Function::FindBaseFunc() const
    if(cls == nullptr) return nullptr;
 
    //  For a constructor, base_ is set to the constructor invoked in the
-   //  member initialization list (see WasCalled).
+   //  member initialization list or the base constructor that is invoked
+   //  implicitly (see WasCalled).
    //
    switch(FuncType())
    {
@@ -4069,17 +4148,17 @@ void Function::LogToBoth(Warning warning, size_t index) const
    if(index == SIZE_MAX)
    {
       this->Log(warning);
-      if(mate_ != nullptr) mate_->Log(warning, 0, true);
+      if(mate_ != nullptr) mate_->Log(warning, mate_, 0, true);
    }
    else
    {
       auto arg = args_.at(index).get();
-      arg->Log(warning, index + (this_ ? 0 : 1));
+      arg->Log(warning, this, index + (this_ ? 0 : 1));
 
       if(mate_ != nullptr)
       {
          arg = mate_->args_.at(index).get();
-         arg->Log(warning, index + (this_ ? 0 : 1), true);
+         arg->Log(warning, mate_, index + (this_ ? 0 : 1), true);
       }
    }
 }

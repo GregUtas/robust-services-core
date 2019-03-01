@@ -128,8 +128,7 @@ public:
    //  a log and returns NotImplemented, and must be overridden by
    //  parameters that support InjectCommand.
    //
-   virtual TestRc InjectMsg
-      (CliThread& cli, Message& msg, Usage use) const;
+   virtual TestRc InjectMsg(CliThread& cli, Message& msg, Usage use) const;
 
    //  Invoked by VerifyCommand.  It gets CLI parameters that specify
    //  whether the parameter should be present in MSG and, if so, the

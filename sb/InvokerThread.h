@@ -113,8 +113,7 @@ private:
    //  Overridden to deny blocking by the last unblocked invoker and to track
    //  the currently running invoker.
    //
-   virtual bool BlockingAllowed
-      (BlockingReason why, fn_name_arg func) override;
+   virtual bool BlockingAllowed(BlockingReason why, fn_name_arg func) override;
 
    //  Overridden to track the currently running invoker.
    //

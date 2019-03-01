@@ -428,14 +428,12 @@ protected:
    //  Handles an incoming NOT that contains an unexpected parameter.  The
    //  default does nothing.
    //
-   virtual void process_unexpected_not_message
-      (const TokenMessage& message);
+   virtual void process_unexpected_not_message(const TokenMessage& message);
 
    //  Handles an incoming REJ that contains an unexpected parameter.  The
    //  default does nothing.
    //
-   virtual void process_unexpected_rej_message
-      (const TokenMessage& message);
+   virtual void process_unexpected_rej_message(const TokenMessage& message);
 
    //  Handles an incoming REJ(NOT()) that contains an unexpected parameter.
    //  The default does nothing.

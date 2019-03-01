@@ -166,13 +166,5 @@ void NbModule::Startup(RestartLevel level)
    Singleton< StatisticsThread >::Instance()->Startup(level);
    Singleton< LogThread >::Instance()->Startup(level);
    Singleton< CliThread >::Instance()->Startup(level);
-
-   //  Define symbols.
-   //
-   if(level < RestartCold) return;
-
-   auto reg = Singleton< SymbolRegistry >::Instance();
-   reg->BindSymbol("pool.threads", ThreadObjPoolId);
-   reg->BindSymbol("pool.msgbuffers", MsgBufferObjPoolId);
 }
 }

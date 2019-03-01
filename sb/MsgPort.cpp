@@ -31,7 +31,6 @@
 #include "IpPortRegistry.h"
 #include "Message.h"
 #include "MsgHeader.h"
-#include "NbAppIds.h"
 #include "ObjectPoolRegistry.h"
 #include "ProtocolSM.h"
 #include "PsmFactory.h"
@@ -209,9 +208,9 @@ MsgPort* MsgPort::Find(const LocalAddress& locAddr)
 {
    Debug::ft(MsgPort_Find);
 
-   if(locAddr.pid != MsgPortObjPoolId) return nullptr;
-
    auto pool = Singleton< MsgPortPool >::Instance();
+   if(locAddr.pid != pool->Pid()) return nullptr;
+
    auto port = static_cast< MsgPort* >(pool->BidToObj(locAddr.bid));
 
    if(port != nullptr)

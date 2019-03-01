@@ -967,9 +967,7 @@ EventHandler::Rc PotsCwtPeAnalyzeUserMessage::ProcessEvent
    case PotsSignal::Facility:
       {
          auto pmsg = static_cast< Pots_UN_Message* >(ame.Msg());
-
-         auto pfi = pmsg->FindType< PotsFacilityInfo >
-            (PotsParameter::Facility);
+         auto pfi = pmsg->FindType< PotsFacilityInfo >(PotsParameter::Facility);
 
          if(pfi->sid == PotsCwbServiceId)
          {

@@ -48,8 +48,7 @@ public:
    //  sets its value to VALUE, locking it if LOCK is set.  Returns false
    //  if the symbol is locked to a different value.
    //
-   bool BindSymbol
-      (const std::string& name, word value, bool lock = true);
+   bool BindSymbol(const std::string& name, word value, bool lock = true);
    bool BindSymbol
       (const std::string& name, const std::string& value, bool lock = true);
 

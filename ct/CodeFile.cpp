@@ -28,6 +28,7 @@
 #include <sstream>
 #include <utility>
 #include "Algorithms.h"
+#include "CliThread.h"
 #include "CodeCoverage.h"
 #include "CodeDir.h"
 #include "CodeFileSet.h"
@@ -627,6 +628,7 @@ void CodeFile::Check()
    CheckIncludeGuard();
    CheckUsings();
    CheckSeparation();
+   CheckLineBreaks();
    CheckFunctionOrder();
    CheckDebugFt();
    Trim(nullptr);
@@ -913,6 +915,32 @@ void CodeFile::CheckIncludeOrder() const
 
       group1 = group2;
       name1 = name2;
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeFile_CheckLineBreaks = "CodeFile.CheckLineBreaks";
+
+void CodeFile::CheckLineBreaks()
+{
+   Debug::ft(CodeFile_CheckLineBreaks);
+
+   //  Look for lines that could be combined and stay within the maximum
+   //  line length.
+   //
+   for(size_t n = 0; n < lineType_.size() - 1; ++n)
+   {
+      if(!LineTypeAttr::Attrs[lineType_[n]].isMergeable) continue;
+      if(!LineTypeAttr::Attrs[lineType_[n + 1]].isMergeable) continue;
+      auto begin1 = lexer_.GetLineStart(n);
+      auto end1 = code_.find(CRLF, begin1) - 1;
+      auto begin2 = lexer_.GetLineStart(n + 1);
+      auto end2 = code_.find(CRLF, begin2) - 1;
+      if(LinesCanBeMerged(code_, begin1, end1, code_, begin2, end2))
+      {
+         LogLine(n, RemoveLineBreak);
+      }
    }
 }
 
@@ -1322,7 +1350,7 @@ LineType CodeFile::ClassifyLine(size_t n)
 
 fn_name CodeFile_CreateEditor = "CodeFile.CreateEditor";
 
-word CodeFile::CreateEditor(string& expl)
+word CodeFile::CreateEditor(string& expl) const
 {
    Debug::ft(CodeFile_CreateEditor);
 
@@ -1332,22 +1360,21 @@ word CodeFile::CreateEditor(string& expl)
    //
    if(dir_ == nullptr)
    {
-      expl = "Directory not specified.";
+      expl = "Directory not specified for " + Name() + '.';
       return -1;
    }
 
    auto input = InputStream();
    if(input == nullptr)
    {
-      expl = "Failed to open source code file.";
+      expl = "Failed to open source code for " + Name() + '.';
       return -1;
    }
 
    editor_.reset(new Editor(this, input));
-
    if(editor_ == nullptr)
    {
-      expl = "Failed to create editor.";
+      expl = "Failed to create editor for " + Name() + '.';
       return -7;
    }
 
@@ -1361,12 +1388,12 @@ void CodeFile::Display(ostream& stream,
 {
    LibraryItem::Display(stream, prefix, options);
 
-   stream << prefix << "fid       : " << fid_.to_str() << CRLF;
-   stream << prefix << "dir       : " << dir_ << CRLF;
-   stream << prefix << "isHeader  : " << isHeader_ << CRLF;
-   stream << prefix << "code      : " << &code_ << CRLF;
-   stream << prefix << "parsed    : " << parsed_ << CRLF;
-   stream << prefix << "checked   : " << checked_ << CRLF;
+   stream << prefix << "fid        : " << fid_.to_str() << CRLF;
+   stream << prefix << "dir        : " << dir_ << CRLF;
+   stream << prefix << "isHeader   : " << isHeader_ << CRLF;
+   stream << prefix << "isSubsFile : " << isSubsFile_ << CRLF;
+   stream << prefix << "parsed     : " << parsed_ << CRLF;
+   stream << prefix << "checked    : " << checked_ << CRLF;
 
    auto& files = Singleton< Library >::Instance()->Files();
 
@@ -1523,6 +1550,19 @@ void CodeFile::FindDeclIds()
 
 //------------------------------------------------------------------------------
 
+fn_name CodeFile_FindLog = "CodeFile.FindLog";
+
+WarningLog* CodeFile::FindLog(const WarningLog& log,
+   const CxxNamed* item, word offset, std::string& expl) const
+{
+   Debug::ft(CodeFile_FindLog);
+
+   if(CreateEditor(expl) != 0) return nullptr;
+   return editor_->FindLog(log, item, offset);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeFile_FindOrAddUsing = "CodeFile.FindOrAddUsing";
 
 void CodeFile::FindOrAddUsing(const CxxNamed* user)
@@ -1592,15 +1632,6 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user)
       use->SetScope(scope);
       use->SetLoc(this, CxxLocation::NOT_IN_SOURCE);
       scope->AddUsing(use);
-
-      //  If this is a header, log the fact that it depends a using statement
-      //  in another file.  This is necessary because, if the header has no
-      //  using statements of its own, >fix will skip it instead of trying to
-      //  eliminate its dependence on using statements.  The spaces(1) argument
-      //  is a hack that prevents line#1 (which has nothing to do with the log)
-      //  from being displayed.
-      //
-      if(IsHeader()) LogPos(0, HeaderReliesOnUsing, nullptr, 0, spaces(1));
    }
 }
 
@@ -1653,21 +1684,31 @@ Using* CodeFile::FindUsingFor(const string& fqName, size_t prefix,
 
 fn_name CodeFile_Fix = "CodeFile.Fix";
 
-word CodeFile::Fix(CliThread& cli, string& expl)
+word CodeFile::Fix(CliThread& cli, const FixOptions& opts, string& expl) const
 {
    Debug::ft(CodeFile_Fix);
 
    auto rc = CreateEditor(expl);
-   if(rc != 0) return rc;
 
-   return editor_->Fix(cli, expl);
+   if(rc < -1) return rc;  // don't continue with other files
+
+   if(rc == -1)  // continue with other files
+   {
+      *cli.obuf << expl << CRLF;
+      return 0;
+   }
+
+   rc = editor_->Fix(cli, opts, expl);
+
+   if(rc >= -1) return 0;  // continue with other files
+   return rc;              // don't continue with other files
 }
 
 //------------------------------------------------------------------------------
 
 fn_name CodeFile_Format = "CodeFile.Format";
 
-word CodeFile::Format(string& expl)
+word CodeFile::Format(string& expl) const
 {
    Debug::ft(CodeFile_Format);
 
@@ -1744,6 +1785,22 @@ int8_t CodeFile::GetDepth(size_t line) const
       //
       return (cont ? depth + 1 : depth);
    }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeFile_GetEditor = "CodeFile.GetEditor";
+
+Editor* CodeFile::GetEditor(string& expl) const
+{
+   Debug::ft(CodeFile_GetEditor);
+
+   if(editor_ == nullptr)
+   {
+      CreateEditor(expl);
+   }
+
+   return editor_.get();
 }
 
 //------------------------------------------------------------------------------

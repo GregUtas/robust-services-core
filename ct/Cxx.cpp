@@ -166,6 +166,7 @@ const CxxOp CxxOp::Attrs[Cxx::NIL_OPERATOR + 1] =
    CxxOp(REINTERPRET_CAST_STR, 2, 17, F, F, F),  // REINTERPRET_CAST
    CxxOp(     STATIC_CAST_STR, 2, 17, F, F, F),  // STATIC_CAST
    CxxOp(          SIZEOF_STR, 1, 16, F, T, F),  // SIZEOF_TYPE
+   CxxOp(        NOEXCEPT_STR, 1, 16, F, T, F),  // NOEXCEPT
    CxxOp(                "++", 1, 16, T, T, F),  // PREFIX_INCREMENT
    CxxOp(                "--", 1, 16, T, T, F),  // PREFIX_DECREMENT
    CxxOp(                 "~", 1, 16, T, T, F),  // ONES_COMPLEMENT

@@ -349,6 +349,11 @@ public:
    //
    virtual CodeFile* GetDefnFile() const override;
 
+   //  Overridden to return the definition if it is distinct from the
+   //  declaration, and vice versa.
+   //
+   virtual CxxNamed* GetMate() const override { return mate_; }
+
    //  Overridden to return the data's underlying numeric type.
    //
    virtual Numeric GetNumeric() const override { return spec_->GetNumeric(); }
@@ -907,6 +912,10 @@ public:
    //
    void SetOverride(bool over) { override_ = over; }
 
+   //  Specifies whether the function is tagged "override".
+   //
+   void SetFinal(bool final) { final_ = final; }
+
    //  Specifies whether the function is pure virtual.
    //
    void SetPure(bool pure) { pure_ = pure; }
@@ -951,7 +960,7 @@ public:
    //
    bool IsInline() const { return inline_; }
 
-   //  Returns true if the function was tagged "virtual".
+   //  Returns true if the function is virtual.
    //
    bool IsVirtual() const { return virtual_; }
 
@@ -963,9 +972,7 @@ public:
    //
    Cxx::Operator Operator() const { return name_->Operator(); }
 
-   //  Returns true if the function is an override.  This does not perform any
-   //  analysis, but simply relies on the "override" tag, which should always
-   //  be used, and which is internally set for a function that omits it.
+   //  Returns true if the function is an override.
    //
    bool IsOverride() const { return override_; }
 
@@ -1156,6 +1163,11 @@ public:
    virtual Function* GetFunction()
       const override { return const_cast< Function* >(this); }
 
+   //  Overridden to return the definition if it is distinct from the
+   //  declaration, and vice versa.
+   //
+   virtual CxxNamed* GetMate() const override { return mate_; }
+
    //  Overridden to return the function's qualified name.
    //
    virtual QualName* GetQualName() const override { return name_.get(); }
@@ -1258,6 +1270,14 @@ private:
    //  immediately before executing the function's code (in EnterBlock).
    //
    void AddThisArg();
+
+   //  Returns true if the function could be "noexcept".
+   //
+   bool CanBeNoexcept() const;
+
+   //  Checks if the function could be tagged "noexcept".
+   //
+   void CheckNoexcept() const;
 
    //  If the function is an override, registers it with its base class and
    //  logs a warning if the "virtual" or "override" tags are absent.
@@ -1373,8 +1393,9 @@ private:
    void CheckMemberUsage() const;
 
    //  Logs WARNING on both the function's declaration and its definition.
-   //  When INDEX is provided, the log is for argument[index] rather than
-   //  the function itself.
+   //  When INDEX is provided, WarningLog.pos will be that of args_[INDEX]
+   //  rather than the function itself, but WarningLog.item will still be
+   //  the function.
    //
    void LogToBoth(Warning warning, size_t index = SIZE_MAX) const;
 
@@ -1416,7 +1437,7 @@ private:
    //
    bool static_ : 1;
 
-   //  Set for a virtual function.
+   //  Set for a virtual function, even if it is not tagged "virtual".
    //
    bool virtual_ : 1;
 
@@ -1432,9 +1453,13 @@ private:
    //
    bool noexcept_ : 1;
 
-   //  Set for a function tagged "override".
+   //  Set for an override, even if it is not tagged "override".
    //
    bool override_ : 1;
+
+   //  Set for a function tagged "final".
+   //
+   bool final_ : 1;
 
    //  Set for a pure virtual function.
    //

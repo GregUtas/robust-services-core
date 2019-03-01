@@ -1394,6 +1394,7 @@ bool Lexer::Initialize()
    CxxOps->insert(OperatorPair(REINTERPRET_CAST_STR, Cxx::REINTERPRET_CAST));
    CxxOps->insert(OperatorPair(STATIC_CAST_STR, Cxx::STATIC_CAST));
    CxxOps->insert(OperatorPair(SIZEOF_STR, Cxx::SIZEOF_TYPE));
+   CxxOps->insert(OperatorPair(NOEXCEPT_STR, Cxx::NOEXCEPT));
 // CxxOps->insert(OperatorPair("++", Cxx::PREFIX_INCREMENT));
 // CxxOps->insert(OperatorPair("--", Cxx::PREFIX_DECREMENT));
    CxxOps->insert(OperatorPair("~", Cxx::ONES_COMPLEMENT));
@@ -1476,6 +1477,7 @@ bool Lexer::Initialize()
    Reserved->insert(OperatorPair(DYNAMIC_CAST_STR, Cxx::DYNAMIC_CAST));
    Reserved->insert(OperatorPair(FALSE_STR, Cxx::FALSE));
    Reserved->insert(OperatorPair(NEW_STR, Cxx::OBJECT_CREATE));
+   Reserved->insert(OperatorPair(NOEXCEPT_STR, Cxx::NOEXCEPT));
    Reserved->insert(OperatorPair(NULLPTR_STR, Cxx::NULLPTR));
    Reserved->insert(OperatorPair(REINTERPRET_CAST_STR, Cxx::REINTERPRET_CAST));
    Reserved->insert(OperatorPair(SIZEOF_STR, Cxx::SIZEOF_TYPE));

@@ -79,7 +79,7 @@ protected:
 
    //  Protected because subclasses should be singletons.
    //
-   virtual ~TestSignal();
+   virtual ~TestSignal() = default;
 };
 
 //------------------------------------------------------------------------------

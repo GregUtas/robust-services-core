@@ -64,7 +64,7 @@ public:
 
    //  Not subclassed.
    //
-   ~Editor() = default;
+   ~Editor() noexcept = default;
 
    //  Interactively fixes warnings in the code detected by Check().  If
    //  an error occurs, a non-zero value is returned and EXPL is updated
@@ -78,10 +78,15 @@ public:
    //
    word Format(string& expl);
 
-   //  Returns the log, if any, whoe .warning and .offset match those of LOG
-   //  and whose .item matches ITEM.
+   //  Returns the number of commits made during >fix or >format commands.
    //
-   WarningLog* FindLog(const WarningLog& log, const CxxNamed* item);
+   static size_t CommitCount() { return Commits_; }
+
+   //  Returns the log, if any, whose .warning matches LOG, whose .offset
+   //  matches OFFSET, and whose .item matches ITEM.
+   //
+   WarningLog* FindLog
+      (const WarningLog& log, const CxxNamed* item, NodeBase::word offset);
 private:
    //  Writes out the editor's file.  Returns 0 if the file was successfully
    //  written; other values indicate failure.  Updates EXPL with a reason
@@ -162,26 +167,6 @@ private:
    word TagAsOverride(const WarningLog& log, string& expl);
    word TagAsStaticFunction(const WarningLog& log, string& expl);
 
-   //  If LOG.ITEM is data or a function that has both a declaration and a
-   //  definition, returns the editor for the mate's file and updates mateLog
-   //  to the corresponding log on the mate.  This is used when both the
-   //  declaration and definition must be changed to fix a log (e.g. when
-   //  making a function const).
-   //
-   Editor* FindMateLog
-      (const WarningLog& log, WarningLog*& mateLog, std::string& expl) const;
-
-   //  Fixes LOG in LOG.ITEM's other appearance when a declaration and
-   //  definition are distinct.  Updates EXPL with the result.  EXPL
-   //  should already explain the outcome of fixing LOG.
-   //
-   word FixMate(const WarningLog& log, std::string& expl) const;
-
-   //  If LOG.ITEM is not in this file, invokes Fix on the editor for
-   //  its file.  Returns WORD_MAX if LOG.ITEM *is* in this file.
-   //
-   word FixRoot(const WarningLog& log, std::string& expl) const;
-
    //  Erases the line of code referenced by LOG.
    //
    word EraseCode(const WarningLog& log, string& expl);
@@ -219,7 +204,8 @@ private:
    //
    struct SourceLine
    {
-      SourceLine(const string& code, size_t line) : line(line), code(code) { }
+      SourceLine(const string& code, size_t line) noexcept :
+         line(line), code(code) { }
 
       //  The code's line number (the first line is 0, the same as CodeWarning
       //  and Lexer).  A line added by the editor has a line number of SIZE_MAX.
@@ -247,8 +233,11 @@ private:
       Iter iter;   // location in SourceList
       size_t pos;  // position in iter->code
 
-      explicit CodeLocation(const Iter& i) : iter(i), pos(string::npos) { }
-      CodeLocation(const Iter& i, size_t p) : iter(i), pos(p) { }
+      explicit CodeLocation(const Iter& i) noexcept :
+         iter(i), pos(string::npos) { }
+
+      CodeLocation(const Iter& i, size_t p) noexcept :
+         iter(i), pos(p) { }
    };
 
    //  Returns the position after CURR.
@@ -370,11 +359,11 @@ private:
    };
 
    //  Returns the location where code to fix LOG should be inserted.  Sets
-   //  INDENT to the number of spaces that the code should be indented and
-   //  BLANK to where a blank line should be added to set off the code.
+   //  BLANK to where a blank line should be added to set off the code, and
+   //  sets COMMENT if the code should be commented.
    //
    Iter FindInsertionPoint
-      (const WarningLog& log, size_t& indent, BlankLineLocation& blank);
+      (const WarningLog& log, BlankLineLocation& blank, bool& comment);
 
    //  Returns the first line that follows comments and blanks.
    //
@@ -399,7 +388,7 @@ private:
 
    //  Returns true if a comment or brace follows the code referenced by ITER.
    //
-   const bool CommentOrBraceFollows(Iter iter) const;
+   const bool CommentOrBraceFollows(const Iter& iter) const;
 
    //  If INCLUDE specifies a file in groups 1 to 4 (see CodeFile.CalcGroup),
    //  this simplifies sorting by replacing the characters that enclose the
@@ -424,7 +413,7 @@ private:
    //  namespace NSPACE, so it must be enclosed in a new namespace scope.
    //
    word InsertNamespaceForward(const Iter& iter,
-      const string& nspace, const string& forward);
+      const string& nspace, const string& forward, string& expl);
 
    //  Invoked after removing a forward declaration.  If the declaration was
    //  in a namespace that is now empty, erases the "namespace <name> { }".
@@ -507,6 +496,10 @@ private:
    //  have been made, all modified files can be committed.
    //
    static std::set< Editor* > Editors_;
+
+   //  The number of files committed so far.
+   //
+   static size_t Commits_;
 };
 }
 #endif

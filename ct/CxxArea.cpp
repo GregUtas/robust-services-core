@@ -1111,6 +1111,26 @@ Function* Class::FindCtor
 
 //------------------------------------------------------------------------------
 
+fn_name Class_FindCtors = "Class.FindCtors";
+
+std::vector< Function* > Class::FindCtors() const
+{
+   Debug::ft(Class_FindCtors);
+
+   std::vector< Function* > ctors;
+   const FunctionPtrVector* funcs = Funcs();
+
+   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
+   {
+      if((*f)->FuncRole() == PureCtor) ctors.push_back(f->get());
+   }
+
+   if(ctors.empty()) ctors.push_back(nullptr);
+   return ctors;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Class_FindDtor = "Class.FindDtor";
 
 Function* Class::FindDtor(const CxxScope* scope, SymbolView* view) const
@@ -1171,6 +1191,14 @@ fn_name Class_FindFuncByRole = "Class.FindFuncByRole";
 Function* Class::FindFuncByRole(FunctionRole role, bool base) const
 {
    Debug::ft(Class_FindFuncByRole);
+
+   switch(role)
+   {
+   case FuncOther:
+   case PureCtor:
+      Context::SwLog(Class_FindFuncByRole, "Role not supported", role);
+      return nullptr;
+   }
 
    const FunctionPtrVector* funcs = nullptr;
 
@@ -2583,7 +2611,9 @@ void CxxArea::Shrink()
 
 fn_name Namespace_ctor = "Namespace.ctor";
 
-Namespace::Namespace(const string& name, Namespace* space) : name_(name)
+Namespace::Namespace(const string& name, Namespace* space) :
+   name_(name),
+   checked_(false)
 {
    Debug::ft(Namespace_ctor);
 
@@ -2624,6 +2654,19 @@ fn_name Namespace_Check = "Namespace.Check";
 void Namespace::Check() const
 {
    Debug::ft(Namespace_Check);
+
+   if(checked_) return;
+   checked_ = true;
+
+   auto name = *Name();
+
+   if(name.empty())
+      name = "global namespace";
+   else
+      name = "namespace " + name;
+
+   name.push_back(CRLF);
+   Debug::Progress(name, true);
 
    CxxArea::Check();
 

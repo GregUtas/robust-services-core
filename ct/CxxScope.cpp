@@ -1321,8 +1321,7 @@ bool Data::InitByDefault()
       decl->inited_ = (!cls->HasPODMember());
       auto warning =
          (decl->inited_ ? DefaultConstructor : DefaultPODConstructor);
-
-      Log(warning, cls);
+      Log(warning, cls, -1);
       cls->Log(warning);
    }
 
@@ -2027,9 +2026,34 @@ bool Function::CanBeNoexcept() const
 {
    Debug::ft(Function_CanBeNoexcept);
 
-   //  This is deliberately simple, only suggesting that a defaulted or empty
-   //  function can be noexcept.  If the function is in a derived class, then
-   //  it must also be noexcept in the base class, transitively.
+   //  A deleted function need not be noexcept.
+   //
+   if(deleted_) return false;
+
+   //  A virtual function should not be noexcept because this forces all
+   //  overrides to be noexcept, which is dangerous for robust software
+   //  that needs to recover from unexpected errors.  The only exception
+   //  to this is in a derived class, when an external class has already
+   //  defined the function as noexcept.
+   //
+   auto bf = FindBaseFunc();
+
+   if(virtual_ || ((FuncType() == FuncDtor) && (bf != nullptr)))
+   {
+      for(NO_OP; bf != nullptr; bf = bf->FindBaseFunc())
+      {
+         if(bf->noexcept_ && bf->GetFile()->IsSubsFile()) return true;
+      }
+
+      return false;
+   }
+
+   //  It is dangerous for even an empty constructor to be noexcept if any
+   //  base constructor, up the class hierarchy, is not noexcept.  The
+   //  constructor is on the stack when the base constructors are invoked,
+   //  which opens the system to risk.  We therefore use noexcept only on
+   //  defaulted or empty functions that are outside a class or in a class
+   //  that has no base class and no subclasses.
    //
    auto defn = GetDefn();
    auto can = defn->defaulted_;
@@ -2041,22 +2065,9 @@ bool Function::CanBeNoexcept() const
 
    if(!can) return false;
 
-   auto role = FuncRole();
-
-   for(auto f = FindBaseFunc(); f != nullptr; f = f->FindBaseFunc())
-   {
-      //  If a virtual function is noexcept, derived functions *must* either
-      //  be noexcept or deleted.
-      //
-      if(f->noexcept_)
-      {
-         if((role == PureDtor) || (role == FuncOther)) return true;
-      }
-
-      if(!f->CanBeNoexcept()) return false;
-   }
-
-   return true;
+   auto cls = GetClass();
+   if(cls == nullptr) return true;
+   return ((cls->BaseClass() == nullptr) && cls->Subclasses()->empty());
 }
 
 //------------------------------------------------------------------------------

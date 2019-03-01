@@ -29,6 +29,7 @@
 #include "CodeFileSet.h"
 #include "CxxArea.h"
 #include "CxxRoot.h"
+#include "CxxScope.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Lexer.h"
@@ -51,7 +52,7 @@ CodeWarning::AttrsMap CodeWarning::Attrs = AttrsMap();
 //------------------------------------------------------------------------------
 
 CodeWarning::CodeWarning
-   (bool fix, uint8_t order, bool unused, fixed_string title) :
+   (bool fix, uint8_t order, bool unused, fixed_string title) noexcept :
    fixable(fix),
    order(order),
    unusedItem(unused),
@@ -458,6 +459,8 @@ ostream& operator<<(ostream& stream, Warning warning)
 
 //==============================================================================
 
+fn_name WarningLog_ctor = "WarningLog.ctor";
+
 WarningLog::WarningLog(Warning warning, const CodeFile* file,
    size_t line, size_t pos, const CxxNamed* item, word offset,
    const string& info, bool hide) :
@@ -471,7 +474,126 @@ WarningLog::WarningLog(Warning warning, const CodeFile* file,
    hide(hide),
    status(NotSupported)
 {
+   Debug::ft(WarningLog_ctor);
+
    if(CodeWarning::Attrs.at(warning).fixable) status = NotFixed;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name WarningLog_FindMateLog = "WarningLog.FindMateLog";
+
+WarningLog* WarningLog::FindMateLog(std::string& expl) const
+{
+   Debug::ft(WarningLog_FindMateLog);
+
+   //  Look for the mate item associated with this log.  Find its file and
+   //  editor, and ask its editor find the log that corresponds to this one.
+   //
+   auto mate = item->GetMate();
+   if(mate == nullptr) return nullptr;
+   auto mateFile = mate->GetFile();
+   if(mateFile == nullptr)
+   {
+      expl = "Mate's file not found";
+      return nullptr;
+   }
+   return mateFile->FindLog(*this, mate, offset, expl);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name WarningLog_FindRootLog = "WarningLog.FindRootLog";
+
+WarningLog* WarningLog::FindRootLog(std::string& expl)
+{
+   Debug::ft(WarningLog_FindRootLog);
+
+   //  This warning is logged against the location that invokes a special
+   //  member function and that class that did not declare that function.
+   //  If its .offset specifies that it is the former (-1), find the log
+   //  associated with the class, which is the one to fix.  The logs could
+   //  both appear in the same file, so .offset is used to distinguish the
+   //  logs so that the fix is only applied once.
+   //
+   if(offset == 0) return this;
+
+   auto rootFile = item->GetFile();
+   if(rootFile == nullptr)
+   {
+      expl = "Class's file not found";
+      return nullptr;
+   }
+
+   auto log = rootFile->FindLog(*this, item, 0, expl);
+   if(log == nullptr)
+   {
+      if(rootFile->IsSubsFile())
+      {
+         expl = "Cannot add a special member function to external class ";
+         expl += *item->Name() + '.';
+      }
+      else
+      {
+         expl = "Class's log not found";
+      }
+      return nullptr;
+   }
+
+   return log;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name WarningLog_LogsToFix = "WarningLog.LogsToFix";
+
+std::vector< WarningLog* > WarningLog::LogsToFix(std::string& expl)
+{
+   Debug::ft(WarningLog_LogsToFix);
+
+   std::vector< WarningLog* > logs;
+   WarningLog* log = nullptr;
+
+   if(!CodeWarning::Attrs.at(warning).fixable)
+   {
+      expl = "Fixing this type of warning is not supported.";
+      return logs;
+   }
+
+   switch(warning)
+   {
+   case DefaultConstructor:
+   case DefaultCopyConstructor:
+   case DefaultCopyOperator:
+   case DefaultDestructor:
+      logs.push_back(this);
+      log = FindRootLog(expl);
+      if(log != nullptr) logs.push_back(log);
+      break;
+
+   case ArgumentCouldBeConstRef:
+   case ArgumentCouldBeConst:
+   case FunctionCouldBeConst:
+   case FunctionCouldBeStatic:
+   case FunctionCouldBeDefaulted:
+   case CouldBeNoexcept:
+   case ShouldNotBeNoexcept:
+      if(static_cast< const Function* >(item)->IsVirtual())
+      {
+         expl = "Changing a virtual function's signature is not supported.";
+         return logs;
+      }
+
+      logs.push_back(this);
+      log = FindMateLog(expl);
+      if(log != nullptr) logs.push_back(log);
+      break;
+
+   default:
+      logs.push_back(this);
+   }
+
+   return logs;
 }
 
 //------------------------------------------------------------------------------

@@ -228,11 +228,11 @@ public:
    //  Invokes the editor to interactively fix warnings found by Check().
    //
    NodeBase::word Fix(NodeBase::CliThread& cli,
-      const FixOptions& opts, std::string& expl);
+      const FixOptions& opts, std::string& expl) const;
 
    //  Invokes the editor to format the file's source code.
    //
-   NodeBase::word Format(std::string& expl);
+   NodeBase::word Format(std::string& expl) const;
 
    //  Returns a pointer to the original source code.
    //
@@ -242,10 +242,10 @@ public:
    //
    const Lexer& GetLexer() const { return lexer_; }
 
-   //  Provides access to the editor, creating it if necessary.  If it can't
-   //  be created, EXPL is updated with an explanation.
+   //  Provides access to the editor, creating it if necessary.  Updates
+   //  EXPL with an error message if the editor could not be created.
    //
-   Editor* GetEditor(std::string& expl);
+   Editor* GetEditor(std::string& expl) const;
 
    //  Logs WARNING, which occurred at POS.  OFFSET and INFO are specific to
    //  WARNING.
@@ -255,14 +255,13 @@ public:
       const std::string& info = std::string(NodeBase::EMPTY_STR),
       bool hide = false) const;
 
-   //  Creates the editor if it doesn't exist and invokes FindLog(LOG1, ITEM)
-   //  on the editor to find the log whose .warning and .offset match LOG1 and
-   //  whose .item matches ITEM.  On success, returns the editor and updates
-   //  LOG2 to the matching log.  Returns nullptr if no matching log was found
-   //  or if the editor could not be created, updating EXPL with an explanation.
+   //  Invokes FindLog(LOG, ITEM, OFFSET) on the file's editor to find the
+   //  log whose .warning matches LOG, whose .offset matches OFFSET, and
+   //  whose .item matches ITEM.  Returns that log.  Updates EXPL with an
+   //  error message if the editor could not be created.
    //
-   Editor* FindLog(const WarningLog& log1,
-      const CxxNamed* item, WarningLog*& log2, std::string& expl);
+   WarningLog* FindLog(const WarningLog& log,
+      const CxxNamed* item, NodeBase::word offset, std::string& expl) const;
 
    //  Generates a report in STREAM (if not nullptr) for the files in SET.  The
    //  report includes line type counts and warnings found during parsing and
@@ -464,7 +463,7 @@ private:
    //  Creates the editor.  On failure, returns a non-zero value and updates
    //  EXPL with an explanation.
    //
-   NodeBase::word CreateEditor(std::string& expl);
+   NodeBase::word CreateEditor(std::string& expl) const;
 
    //  The file's identifier in the code base.
    //
@@ -569,7 +568,7 @@ private:
 
    //  For editing the file's source code.
    //
-   EditorPtr editor_;
+   mutable EditorPtr editor_;
 };
 }
 #endif

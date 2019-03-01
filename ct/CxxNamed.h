@@ -888,6 +888,14 @@ public:
    //
    explicit TypeTags(const TypeSpec& spec);
 
+   //  Copy constructor.
+   //
+   TypeTags(const TypeTags& that) = default;
+
+   //  Copy operator.
+   //
+   TypeTags& operator=(const TypeTags& that) = default;
+
    //  Sets the type's constness to READONLY.
    //
    void SetConst(bool readonly) const { const_ = readonly; }

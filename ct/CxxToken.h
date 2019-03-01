@@ -369,6 +369,8 @@ public:
       const Size size_ : 8;
 
       Tags(Radix r, bool u, Size s) : radix_(r), unsigned_(u), size_(s) { }
+      Tags(const Tags& that) = default;
+      Tags& operator=(const Tags& that) = default;
    };
 
    IntLiteral(int64_t num, const Tags& tags)
@@ -409,6 +411,8 @@ public:
       Size size_ : 8;
 
       Tags(bool e, Size s) : exp_(e), size_(s) { }
+      Tags(const Tags& that) = default;
+      Tags& operator=(const Tags& that) = default;
    };
 
    FloatLiteral(long double num, const Tags& tags)

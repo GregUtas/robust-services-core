@@ -29,6 +29,7 @@
 #include "CodeDirSet.h"
 #include "CodeFile.h"
 #include "Debug.h"
+#include "Editor.h"
 #include "Formatters.h"
 #include "Lexer.h"
 #include "Library.h"
@@ -368,12 +369,18 @@ word CodeFileSet::Fix
 
    //  Iterate over the set of code files and fix them.
    //
+   auto prev = Editor::CommitCount();
    auto& files = Singleton< Library >::Instance()->Files();
 
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
    {
       rc = files.At(*f)->Fix(cli, opts, expl);
       if(rc != 0) return rc;
+   }
+
+   if(Editor::CommitCount() == prev)
+   {
+      *cli.obuf << "No warnings that could be fixed were found." << CRLF;
    }
 
    return 0;

@@ -28,6 +28,7 @@
 #include <sstream>
 #include <utility>
 #include "Algorithms.h"
+#include "CliThread.h"
 #include "CodeCoverage.h"
 #include "CodeDir.h"
 #include "CodeFileSet.h"
@@ -1349,7 +1350,7 @@ LineType CodeFile::ClassifyLine(size_t n)
 
 fn_name CodeFile_CreateEditor = "CodeFile.CreateEditor";
 
-word CodeFile::CreateEditor(string& expl)
+word CodeFile::CreateEditor(string& expl) const
 {
    Debug::ft(CodeFile_CreateEditor);
 
@@ -1371,7 +1372,6 @@ word CodeFile::CreateEditor(string& expl)
    }
 
    editor_.reset(new Editor(this, input));
-
    if(editor_ == nullptr)
    {
       expl = "Failed to create editor for " + Name() + '.';
@@ -1550,13 +1550,15 @@ void CodeFile::FindDeclIds()
 
 //------------------------------------------------------------------------------
 
-Editor* CodeFile::FindLog(const WarningLog& log1,
-   const CxxNamed* item, WarningLog*& log2, std::string& expl)
+fn_name CodeFile_FindLog = "CodeFile.FindLog";
+
+WarningLog* CodeFile::FindLog(const WarningLog& log,
+   const CxxNamed* item, word offset, std::string& expl) const
 {
+   Debug::ft(CodeFile_FindLog);
+
    if(CreateEditor(expl) != 0) return nullptr;
-   log2 = editor_->FindLog(log1, item);
-   if(log2 != nullptr) return editor_.get();
-   return nullptr;
+   return editor_->FindLog(log, item, offset);
 }
 
 //------------------------------------------------------------------------------
@@ -1682,14 +1684,19 @@ Using* CodeFile::FindUsingFor(const string& fqName, size_t prefix,
 
 fn_name CodeFile_Fix = "CodeFile.Fix";
 
-word CodeFile::Fix(CliThread& cli, const FixOptions& opts, string& expl)
+word CodeFile::Fix(CliThread& cli, const FixOptions& opts, string& expl) const
 {
    Debug::ft(CodeFile_Fix);
 
    auto rc = CreateEditor(expl);
 
    if(rc < -1) return rc;  // don't continue with other files
-   if(rc == -1) return 0;  // continue with other files
+
+   if(rc == -1)  // continue with other files
+   {
+      *cli.obuf << expl << CRLF;
+      return 0;
+   }
 
    rc = editor_->Fix(cli, opts, expl);
 
@@ -1701,7 +1708,7 @@ word CodeFile::Fix(CliThread& cli, const FixOptions& opts, string& expl)
 
 fn_name CodeFile_Format = "CodeFile.Format";
 
-word CodeFile::Format(string& expl)
+word CodeFile::Format(string& expl) const
 {
    Debug::ft(CodeFile_Format);
 
@@ -1782,8 +1789,12 @@ int8_t CodeFile::GetDepth(size_t line) const
 
 //------------------------------------------------------------------------------
 
-Editor* CodeFile::GetEditor(string& expl)
+fn_name CodeFile_GetEditor = "CodeFile.GetEditor";
+
+Editor* CodeFile::GetEditor(string& expl) const
 {
+   Debug::ft(CodeFile_GetEditor);
+
    if(editor_ == nullptr)
    {
       CreateEditor(expl);

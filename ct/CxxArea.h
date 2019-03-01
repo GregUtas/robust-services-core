@@ -352,6 +352,10 @@ public:
    Function* FindCtor(StackArgVector* args,
       const CxxScope* scope = nullptr, SymbolView* view = nullptr);
 
+   //  Returns all constructors.  Returns a nullptr entry if none are found.
+   //
+   std::vector< Function* > FindCtors() const;
+
    //  Returns the destructor.  Returns nullptr if the class doesn't define one,
    //  in which case it has a default, public destructor.  If SCOPE is provided,
    //  VIEW is updated with the destructor's accessibility to SCOPE.
@@ -359,8 +363,9 @@ public:
    Function* FindDtor
       (const CxxScope* scope = nullptr, SymbolView* view = nullptr) const;
 
-   //  Returns the function that provides ROLE.  If it is not found, the
-   //  search continues up the class hierarchy if BASE is set.
+   //  Returns the function that provides ROLE.  If not found, the search
+   //  continues up the class hierarchy if BASE is set.  Not supported for
+   //  FuncOther and PureCtor, since there can be multiple such functions.
    //
    Function* FindFuncByRole(FunctionRole role, bool base) const;
 
@@ -913,6 +918,10 @@ private:
    //  The namespace's name.
    //
    std::string name_;
+
+   //  Set if >check was run on the namespace.
+   //
+   mutable bool checked_;
 
    //  The namespaces nested inside this one.
    //

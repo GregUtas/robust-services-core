@@ -33,7 +33,9 @@
 #include "LibraryTypes.h"
 #include "SysTypes.h"
 
-using namespace NodeBase;
+using NodeBase::fixed_string;
+using NodeBase::SPACE;
+using NodeBase::word;
 
 //------------------------------------------------------------------------------
 
@@ -83,7 +85,8 @@ struct CodeWarning
 private:
    //  Constructs a warning with the specified attributes.
    //
-   CodeWarning(bool fix, uint8_t order, bool unused, fixed_string title);
+   CodeWarning(bool fix, uint8_t order,
+      bool unused, fixed_string title) noexcept;
 };
 
 //------------------------------------------------------------------------------
@@ -118,15 +121,43 @@ struct WarningLog
    bool hide;             // set to stop warning from being displayed
    WarningStatus status;  // whether warning has been fixed/committed
 
+   //  Almost every member is supplied to the constructor.
+   //
    WarningLog(Warning warning, const CodeFile* file,
       size_t line, size_t pos, const CxxNamed* item,
       word offset, const std::string& info, bool hide = false);
+
+   //  Comparision operators.
+   //
    bool operator==(const WarningLog& that) const;
    bool operator!=(const WarningLog& that) const;
+
+   //  Returns true if the log has code to display.
+   //
    bool DisplayCode() const
       { return ((line != 0) || info.empty()); }
+
+   //  Returns true if .info should be displayed.
+   //
    bool DisplayInfo() const
-      { return (info.find_first_not_of(' ') != std::string::npos); }
+      { return (info.find_first_not_of(SPACE) != std::string::npos); }
+
+   //  Returns the logs that need to be fixed to resolve this log.
+   //  The log itself is included in the result unless it does not
+   //  need to be fixed.
+   //
+   std::vector< WarningLog* > LogsToFix(std::string& expl);
+private:
+   //  Returns the other log associated with a warning that invovles
+   //  fixing both a declaration and a definition.
+   //
+   WarningLog* FindMateLog(std::string& expl) const;
+
+   //  If this log indicates that a compiler-provided special member
+   //  function was invoked, it returns the log associated with the
+   //  class that does not define that special member function.
+   //
+   WarningLog* FindRootLog(std::string& expl);
 };
 
 //------------------------------------------------------------------------------
@@ -150,18 +181,9 @@ public:
    //
    static void GetWarnings(const CodeFile* file, WarningLogVector& warnings);
 
-   //  Returns true if LOG2 > LOG1 when sorting by file/warning/line.
-   //
-   static bool IsSortedByFile(const WarningLog& log1, const WarningLog& log2);
-
    //  Returns true if LOG2 > LOG1 when sorting by file/line/reverse pos.
    //
    static bool IsSortedForFixing
-      (const WarningLog& log1, const WarningLog& log2);
-
-   //  Returns true if LOG2 > LOG1 when sorting by warning/file/line.
-   //
-   static bool IsSortedByWarning
       (const WarningLog& log1, const WarningLog& log2);
 
    //  Adds N to the number of line types of type T.
@@ -175,6 +197,15 @@ private:
    //  Returns the string "Wnnn", where nnn is WARNING's integer value.
    //
    static std::string WarningCode(Warning warning);
+
+   //  Returns true if LOG2 > LOG1 when sorting by file/warning/line.
+   //
+   static bool IsSortedByFile(const WarningLog& log1, const WarningLog& log2);
+
+   //  Returns true if LOG2 > LOG1 when sorting by warning/file/line.
+   //
+   static bool IsSortedByWarning
+      (const WarningLog& log1, const WarningLog& log2);
 
    //  Warnings found in all files.
    //

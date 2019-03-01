@@ -46,7 +46,7 @@ class Pooled : public Object
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~Pooled() { }
+   virtual ~Pooled() = default;
 
    //  Returns true if the object is marked corrupt.
    //
@@ -64,26 +64,26 @@ public:
    //  marked corrupt, it simply returns; otherwise, it surrounds a call
    //  to Base::ClaimBlocks by setting and clearing the corrupt_ flag.
    //
-   virtual void ClaimBlocks() override;
+   void ClaimBlocks() override;
 
    //  Clears the object's orphaned_ field so that the object pool audit
    //  will not reclaim it.  May be overridden, but the base class version
    //  must be invoked.
    //
-   virtual void Claim() override;
+   void Claim() override;
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden to return the type of memory used by subclasses.
    //
-   virtual MemoryType MemType() const override;
+   MemoryType MemType() const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 
    //  Overridden to return a block to its object pool.
    //

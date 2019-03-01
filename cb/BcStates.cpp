@@ -58,8 +58,6 @@ BcNull::BcNull(ServiceId sid) : BcState(sid, Null)
       (BcEventHandler::NuReleaseCall, BcEvent::ReleaseCall);
 }
 
-BcNull::~BcNull() { }
-
 //------------------------------------------------------------------------------
 
 BcAuthorizingOrigination::BcAuthorizingOrigination(ServiceId sid) :
@@ -78,8 +76,6 @@ BcAuthorizingOrigination::BcAuthorizingOrigination(ServiceId sid) :
    BindEventHandler
       (BcEventHandler::AoReleaseCall, BcEvent::ReleaseCall);
 }
-
-BcAuthorizingOrigination::~BcAuthorizingOrigination() { }
 
 //------------------------------------------------------------------------------
 
@@ -102,8 +98,6 @@ BcCollectingInformation::BcCollectingInformation(ServiceId sid) :
       (BcEventHandler::CiReleaseCall, BcEvent::ReleaseCall);
 }
 
-BcCollectingInformation::~BcCollectingInformation() { }
-
 //------------------------------------------------------------------------------
 
 BcAnalyzingInformation::BcAnalyzingInformation(ServiceId sid) :
@@ -124,8 +118,6 @@ BcAnalyzingInformation::BcAnalyzingInformation(ServiceId sid) :
    BindEventHandler
       (BcEventHandler::AiReleaseCall, BcEvent::ReleaseCall);
 }
-
-BcAnalyzingInformation::~BcAnalyzingInformation() { }
 
 //------------------------------------------------------------------------------
 
@@ -148,8 +140,6 @@ BcSelectingRoute::BcSelectingRoute(ServiceId sid) :
       (BcEventHandler::SrReleaseCall, BcEvent::ReleaseCall);
 }
 
-BcSelectingRoute::~BcSelectingRoute() { }
-
 //------------------------------------------------------------------------------
 
 BcAuthorizingCallSetup::BcAuthorizingCallSetup(ServiceId sid) :
@@ -168,8 +158,6 @@ BcAuthorizingCallSetup::BcAuthorizingCallSetup(ServiceId sid) :
    BindEventHandler
       (BcEventHandler::AsReleaseCall, BcEvent::ReleaseCall);
 }
-
-BcAuthorizingCallSetup::~BcAuthorizingCallSetup() { }
 
 //------------------------------------------------------------------------------
 
@@ -208,8 +196,6 @@ BcSendingCall::BcSendingCall(ServiceId sid) :
 //    (BcEventHandler::LocalProgress, BcEvent::LocalProgress);
 }
 
-BcSendingCall::~BcSendingCall() { }
-
 //------------------------------------------------------------------------------
 
 BcOrigAlerting::BcOrigAlerting(ServiceId sid) :
@@ -237,8 +223,6 @@ BcOrigAlerting::BcOrigAlerting(ServiceId sid) :
 //    (BcEventHandler::RemoteProgress, BcEvent::RemoteProgress);
 }
 
-BcOrigAlerting::~BcOrigAlerting() { }
-
 //------------------------------------------------------------------------------
 
 BcAuthorizingTermination::BcAuthorizingTermination(ServiceId sid) :
@@ -257,8 +241,6 @@ BcAuthorizingTermination::BcAuthorizingTermination(ServiceId sid) :
    BindEventHandler
       (BcEventHandler::AtReleaseCall, BcEvent::ReleaseCall);
 }
-
-BcAuthorizingTermination::~BcAuthorizingTermination() { }
 
 //------------------------------------------------------------------------------
 
@@ -282,8 +264,6 @@ BcSelectingFacility::BcSelectingFacility(ServiceId sid) :
    BindEventHandler
       (BcEventHandler::SfReleaseCall, BcEvent::ReleaseCall);
 }
-
-BcSelectingFacility::~BcSelectingFacility() { }
 
 //------------------------------------------------------------------------------
 
@@ -318,8 +298,6 @@ BcPresentingCall::BcPresentingCall(ServiceId sid) :
 //    (BcEventHandler::RemoteProgress, BcEvent::RemoteProgress);
 }
 
-BcPresentingCall::~BcPresentingCall() { }
-
 //------------------------------------------------------------------------------
 
 BcTermAlerting::BcTermAlerting(ServiceId sid) :
@@ -344,8 +322,6 @@ BcTermAlerting::BcTermAlerting(ServiceId sid) :
 // BindEventHandler
 //    (BcEventHandler::RemoteProgress, BcEvent::RemoteProgress);
 }
-
-BcTermAlerting::~BcTermAlerting() { }
 
 //------------------------------------------------------------------------------
 
@@ -373,8 +349,6 @@ BcActive::BcActive(ServiceId sid) : BcState(sid, Active)
 //    (BcEventHandler::RemoteProgress, BcEvent::RemoteProgress);
 }
 
-BcActive::~BcActive() { }
-
 //------------------------------------------------------------------------------
 
 BcLocalSuspending::BcLocalSuspending(ServiceId sid) :
@@ -397,8 +371,6 @@ BcLocalSuspending::BcLocalSuspending(ServiceId sid) :
 // BindEventHandler
 //    (BcEventHandler::RemoteProgress, BcEvent::RemoteProgress);
 }
-
-BcLocalSuspending::~BcLocalSuspending() { }
 
 //------------------------------------------------------------------------------
 
@@ -425,8 +397,6 @@ BcRemoteSuspending::BcRemoteSuspending(ServiceId sid) :
 //    (BcEventHandler::RemoteProgress, BcEvent::RemoteProgress);
 }
 
-BcRemoteSuspending::~BcRemoteSuspending() { }
-
 //------------------------------------------------------------------------------
 
 BcDisconnecting::BcDisconnecting(ServiceId sid) :
@@ -441,8 +411,6 @@ BcDisconnecting::BcDisconnecting(ServiceId sid) :
 // BindEventHandler
 //    (BcEventHandler::DiReleaseCall, BcEvent::ReleaseCall);
 }
-
-BcDisconnecting::~BcDisconnecting() { }
 
 //------------------------------------------------------------------------------
 
@@ -461,6 +429,4 @@ BcException::BcException(ServiceId sid) : BcState(sid, Exception)
 // BindEventHandler
 //    (BcEventHandler::LocalProgress, BcEvent::LocalProgress);
 }
-
-BcException::~BcException() { }
 }

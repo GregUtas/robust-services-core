@@ -62,7 +62,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   virtual bool Display(ostream& stream, bool diff) override;
+   bool Display(ostream& stream, bool diff) override;
 };
 
 class ArgTrace : public CxxTrace
@@ -74,7 +74,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   virtual bool Display(ostream& stream, bool diff) override;
+   bool Display(ostream& stream, bool diff) override;
 private:
    //  The argument associated with the action.
    //
@@ -90,7 +90,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   virtual bool Display(ostream& stream, bool diff) override;
+   bool Display(ostream& stream, bool diff) override;
 private:
    //  The token associated with the action.
    //
@@ -106,7 +106,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   virtual bool Display(ostream& stream, bool diff) override;
+   bool Display(ostream& stream, bool diff) override;
 private:
    //  The file associated with the action.
    //
@@ -126,7 +126,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   virtual bool Display(ostream& stream, bool diff) override;
+   bool Display(ostream& stream, bool diff) override;
 private:
    //  If non-zero, the error associated with the action.
    //

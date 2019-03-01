@@ -40,24 +40,24 @@ class PsmContext : public MsgContext
 public:
    //  Returns the first PSM in the PSM queue.
    //
-   virtual ProtocolSM* FirstPsm() const override { return psmq_.First(); }
+   ProtocolSM* FirstPsm() const override { return psmq_.First(); }
 
    //  Returns the next PSM in the PSM queue.
    //
-   virtual void NextPsm(ProtocolSM*& psm) const override { psmq_.Next(psm); }
+   void NextPsm(ProtocolSM*& psm) const override { psmq_.Next(psm); }
 
    //  Overridden to enumerate all objects that the context owns.
    //
-   virtual void GetSubtended(Base* objects[], size_t& count) const override;
+   void GetSubtended(Base* objects[], size_t& count) const override;
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Protected to restrict creation.
    //
@@ -73,48 +73,48 @@ protected:
 
    //  Returns the type of context.
    //
-   virtual ContextType Type() const override { return SinglePort; }
+   ContextType Type() const override { return SinglePort; }
 
    //  Returns the first port in the port queue.
    //
-   virtual MsgPort* FirstPort() const override { return portq_.First(); }
+   MsgPort* FirstPort() const override { return portq_.First(); }
 
    //  Returns the next port in the port queue.
    //
-   virtual void NextPort(MsgPort*& port) const override { portq_.Next(port); }
+   void NextPort(MsgPort*& port) const override { portq_.Next(port); }
 
    //  Overridden to invoke EndOfTransaction on all PSMs and then delete
    //  those in the idle state.
    //
-   virtual void EndOfTransaction() override;
+   void EndOfTransaction() override;
 
    //  Overridden to determine if the context should be deleted.
    //
-   virtual bool IsIdle() const override { return psmq_.Empty(); }
+   bool IsIdle() const override { return psmq_.Empty(); }
 private:
    //  Adds PSM to psmq_, after any PSMs of higher or equal priority.
    //
-   virtual void EnqPsm(ProtocolSM& psm) override;
+   void EnqPsm(ProtocolSM& psm) override;
 
    //  Adds PSM to psmq_, after any PSMs of higher priority.
    //
-   virtual void HenqPsm(ProtocolSM& psm) override;
+   void HenqPsm(ProtocolSM& psm) override;
 
    //  Removes PSM from psmq_.
    //
-   virtual void ExqPsm(ProtocolSM& psm) override;
+   void ExqPsm(ProtocolSM& psm) override;
 
    //  Adds PORT to portq_.
    //
-   virtual void EnqPort(MsgPort& port) override;
+   void EnqPort(MsgPort& port) override;
 
    //  Removes PORT from portq_.
    //
-   virtual void ExqPort(MsgPort& port) override;
+   void ExqPort(MsgPort& port) override;
 
    //  Overridden to handle the arrival of MSG.
    //
-   virtual void ProcessIcMsg(Message& msg) override;
+   void ProcessIcMsg(Message& msg) override;
 
    //  The ports that are running in this context.
    //

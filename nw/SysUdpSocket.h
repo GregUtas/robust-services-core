@@ -73,20 +73,20 @@ public:
 
    //  Overridden to indicate that this socket is running UDP.
    //
-   virtual IpProtocol Protocol() const override { return IpUdp; }
+   IpProtocol Protocol() const override { return IpUdp; }
 
    //  Overridden to send BUFF.
    //
-   virtual SendRc SendBuff(IpBuffer& buff) override;
+   SendRc SendBuff(IpBuffer& buff) override;
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  The maximum size of a UDP message.
    //

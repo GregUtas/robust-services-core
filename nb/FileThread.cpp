@@ -68,16 +68,16 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(ostream& stream,
+   void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Overridden to delete name_ during error recovery.
    //
-   virtual void Cleanup() override;
+   void Cleanup() override;
 
    //  The name of the file where the output is to be placed.
    //

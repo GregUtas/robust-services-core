@@ -61,43 +61,41 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Overridden to access parameters associated with a specific string.
    //
-   virtual CliParm* AccessParm
-      (CliCookie& cookie, uint32_t depth) const override;
+   CliParm* AccessParm(CliCookie& cookie, uint32_t depth) const override;
 
    //  Overridden to show the strings that are acceptable inputs.
    //
-   virtual void Explain(std::ostream& stream, col_t indent) const override;
+   void Explain(std::ostream& stream, col_t indent) const override;
 
    //  Overridden to look for a string from strings_.
    //
-   virtual Rc GetTextParmRc
-      (id_t& i, std::string& s, CliThread& cli) const override;
+   Rc GetTextParmRc(id_t& i, std::string& s, CliThread& cli) const override;
 
    //  Overridden to look for an arbitrary string.
    //
-   virtual Rc GetStringRc(std::string& s, CliThread& cli) const override;
+   Rc GetStringRc(std::string& s, CliThread& cli) const override;
 
    //  Overridden to look for a filename.
    //
-   virtual Rc GetFileNameRc(std::string& s, CliThread& cli) const override;
+   Rc GetFileNameRc(std::string& s, CliThread& cli) const override;
 
    //  Overridden to look for an identifier.
    //
-   virtual Rc GetIdentifierRc(std::string& s, CliThread& cli,
+   Rc GetIdentifierRc(std::string& s, CliThread& cli,
       const std::string& valid, const std::string& exclude) const override;
 private:
    //  Overridden to show the strings that are acceptable inputs.
    //
-   virtual bool ShowValues(std::string& values) const override;
+   bool ShowValues(std::string& values) const override;
 
    //  Used while parsing a command.  INDEX is the offset within
    //  strings_ where a valid string was found.

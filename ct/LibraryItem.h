@@ -44,7 +44,7 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 protected:
    //  Creates an item that will be referred to by NAME.  Protected because

@@ -83,16 +83,16 @@ public:
 
    //  Overridden to enumerate all objects that the class owns.
    //
-   virtual void GetSubtended(Base* objects[], size_t& count) const override;
+   void GetSubtended(Base* objects[], size_t& count) const override;
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Sets cid_ and size_.  SIZE is the size of the type of object that
    //  a subclass supports:

@@ -47,12 +47,12 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Private because this singleton is not subclassed.
    //
@@ -72,18 +72,18 @@ private:
 
    //  Overridden to return a name for the thread.
    //
-   virtual const char* AbbrName() const override;
+   const char* AbbrName() const override;
 
    //  Overridden to create InitThread, to ensure that InitThread finishes
    //  initializing the system, and to ensure that InitThread subsequently
    //  runs periodically.  This is indirectly invoked by our Main function,
    //  via Thread::Start.
    //
-   virtual void Enter() override;
+   void Enter() override;
 
    //  Overridden to delete the singleton.
    //
-   virtual void Destroy() override;
+   void Destroy() override;
 
    //  The thread's current state.
    //

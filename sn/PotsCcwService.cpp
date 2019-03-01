@@ -75,7 +75,7 @@ class PotsCcwAcCollectInformation : public EventHandler
 {
    friend class Singleton< PotsCcwAcCollectInformation >;
 private:
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
    PotsCcwAcCollectInformation() = default;
 };
@@ -86,15 +86,13 @@ public:
    PotsCcwSsm();
    ~PotsCcwSsm();
 private:
-   virtual ServicePortId CalcPort(const AnalyzeMsgEvent& ame) override;
-   virtual EventHandler::Rc ProcessInitAck
+   ServicePortId CalcPort(const AnalyzeMsgEvent& ame) override;
+   EventHandler::Rc ProcessInitAck
       (Event& currEvent, Event*& nextEvent) override;
-   virtual EventHandler::Rc ProcessInitNack
+   EventHandler::Rc ProcessInitNack
       (Event& currEvent, Event*& nextEvent) override;
-   virtual EventHandler::Rc ProcessSip
-      (Event& currEvent, Event*& nextEvent) override;
-   virtual EventHandler::Rc ProcessSnp
-      (Event& currEvent, Event*& nextEvent) override;
+   EventHandler::Rc ProcessSip(Event& currEvent, Event*& nextEvent) override;
+   EventHandler::Rc ProcessSnp(Event& currEvent, Event*& nextEvent) override;
 };
 
 //==============================================================================

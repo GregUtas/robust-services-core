@@ -131,7 +131,7 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
    //  Private to restrict deletion.  Not subclassed.
@@ -140,19 +140,19 @@ private:
 
    //  Overridden to handle an incoming message.
    //
-   virtual IncomingRc ProcessIcMsg(Message& msg, Event*& event) override;
+   IncomingRc ProcessIcMsg(Message& msg, Event*& event) override;
 
    //  Overridden to handle an outoing message.
    //
-   virtual OutgoingRc ProcessOgMsg(Message& msg) override;
+   OutgoingRc ProcessOgMsg(Message& msg) override;
 
    //  Overridden to return the route for outgoing messages.
    //
-   virtual Message::Route Route() const override;
+   Message::Route Route() const override;
 
    //  Overridden to send a final message if the PSM's context dies.
    //
-   virtual void SendFinalMsg() override;
+   void SendFinalMsg() override;
 
    //  The CLI thread that is using this PSM to run tests.
    //
@@ -199,11 +199,11 @@ public:
 
    //  Overridden to enumerate all objects that the message owns.
    //
-   virtual void GetSubtended(Base* objects[], size_t& count) const override;
+   void GetSubtended(Base* objects[], size_t& count) const override;
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
    //  The message to be injected.
@@ -265,11 +265,11 @@ public:
 
    //  Overridden to set the test PSM idle when entering the Null state.
    //
-   virtual void SetNextState(StateId stid) override;
+   void SetNextState(StateId stid) override;
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
    //  Private to restrict deletion.  Not subclassed.
@@ -279,11 +279,11 @@ private:
    //  Overridden to return Service::NetworkPort if the message arrived on the
    //  application PSM, and Service::UserPort if it arrived on the test PSM.
    //
-   virtual ServicePortId CalcPort(const AnalyzeMsgEvent& ame) override;
+   ServicePortId CalcPort(const AnalyzeMsgEvent& ame) override;
 
    //  Overridden to handle deletion of the test or application PSM.
    //
-   virtual void PsmDeleted(ProtocolSM& exPsm) override;
+   void PsmDeleted(ProtocolSM& exPsm) override;
 
    //  The test PSM.
    //
@@ -313,12 +313,11 @@ private:
    //  Overridden to allocate a test SSM when a message arrives to create a
    //  new test session.
    //
-   virtual RootServiceSM* AllocRoot
-      (const Message& msg, ProtocolSM& psm) const override;
+   RootServiceSM* AllocRoot(const Message& msg, ProtocolSM& psm) const override;
 
    //  Overridden to create a test PSM.
    //
-   virtual ProtocolSM* AllocIcPsm
+   ProtocolSM* AllocIcPsm
       (const Message& msg, ProtocolLayer& lower) const override;
 };
 
@@ -355,7 +354,7 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
    //  Private to restrict creation to StTestData.

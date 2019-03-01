@@ -34,16 +34,16 @@ class UdpIpService : public IpService
 public:
    //  Overridden to indicate that this service runs over UDP.
    //
-   virtual IpProtocol Protocol() const override { return IpUdp; }
+   IpProtocol Protocol() const override { return IpUdp; }
 
    //  Overridden to indicate that applications share the I/O
    //  thread's primary socket when sending messages.
    //
-   virtual bool HasSharedSocket() const override { return true; }
+   bool HasSharedSocket() const override { return true; }
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Creates a service that runs over UDP.  Protected because
    //  this class is virtual.
@@ -56,7 +56,7 @@ protected:
 
    //  Overridden to create a PORT for PID.
    //
-   virtual IpPort* CreatePort(ipport_t pid) override;
+   IpPort* CreatePort(ipport_t pid) override;
 };
 }
 #endif

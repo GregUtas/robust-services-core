@@ -45,7 +45,7 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 private:
    //  Private to restrict deletion.  Not subclassed.
@@ -58,62 +58,58 @@ private:
 
    //  Returns a non-zero value and updates EXPL with an explanation.
    //
-   virtual NodeBase::word Check
-      (std::ostream* stream, std::string& expl) const override;
+   NodeBase::word Check(std::ostream* stream, std::string& expl) const override;
 
    //  Returns a non-zero value and updates RESULT with an explanation.
    //
-   virtual NodeBase::word Count(std::string& result) const override;
+   NodeBase::word Count(std::string& result) const override;
 
    //  Returns a non-zero value and updates RESULT with an explanation.
    //
-   virtual NodeBase::word Countlines(std::string& result) const override;
+   NodeBase::word Countlines(std::string& result) const override;
 
    //  Returns a non-zero value and updates EXPL with an explanation.
    //
-   virtual NodeBase::word Fix(NodeBase::CliThread& cli,
+   NodeBase::word Fix(NodeBase::CliThread& cli,
       const FixOptions& opts, std::string& expl) const override;
 
    //  Returns a non-zero value and updates EXPL with an explanation.
    //
-   virtual NodeBase::word Format(std::string& expl) const override;
+   NodeBase::word Format(std::string& expl) const override;
 
    //  Returns the type of set.
    //
-   virtual LibSetType GetType() const override { return ERR_SET; }
+   LibSetType GetType() const override { return ERR_SET; }
 
    //  Returns a non-zero value and updates EXPL with an explanation.
    //
-   virtual NodeBase::word List
-      (std::ostream& stream, std::string& expl) const override;
+   NodeBase::word List(std::ostream& stream, std::string& expl) const override;
 
    //  Returns a non-zero value and updates EXPL with an explanation.
    //
-   virtual NodeBase::word Parse
+   NodeBase::word Parse
       (std::string& expl, const std::string& opts) const override;
 
    //  Returns a non-zero value and updates EXPL with an explanation.
    //
-   virtual NodeBase::word PreAssign(std::string& expl) const override;
+   NodeBase::word PreAssign(std::string& expl) const override;
 
    //  Returns a non-zero value and updates EXPL with an explanation.
    //
-   virtual NodeBase::word Scan(std::ostream& stream,
+   NodeBase::word Scan(std::ostream& stream,
       const std::string& pattern, std::string& expl) const override;
 
    //  Returns a non-zero value and updates RESULT with an explanation.
    //
-   virtual NodeBase::word Show(std::string& result) const override;
+   NodeBase::word Show(std::string& result) const override;
 
    //  Returns a non-zero value and updates EXPL with an explanation.
    //
-   virtual NodeBase::word Sort
-      (std::ostream& stream, std::string& expl) const override;
+   NodeBase::word Sort(std::ostream& stream, std::string& expl) const override;
 
    //  Returns a non-zero value and updates EXPL with an explanation.
    //
-   virtual NodeBase::word Trim
-      (std::ostream& stream, std::string& expl) const override;
+   NodeBase::word Trim(std::ostream& stream, std::string& expl) const override;
 
    //  The error to be reported.
    //

@@ -39,10 +39,10 @@ class FileWalker : public FileList
 public:
    FileWalker(const char* dirName, const char* fileSpec);
    ~FileWalker();
-   virtual void GetName(string& fileName) const override;
-   virtual bool IsSubdir() const override;
-   virtual bool AtEnd() const override;
-   virtual bool Advance() override;
+   void GetName(string& fileName) const override;
+   bool IsSubdir() const override;
+   bool AtEnd() const override;
+   bool Advance() override;
 private:
    //  Releases iterator_;
    //

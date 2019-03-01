@@ -91,7 +91,7 @@ class TimeoutParameter : public TlvParameter
 public:
    //  Overridden to display the parameter symbolically.
    //
-   virtual void DisplayMsg(std::ostream& stream, const std::string& prefix,
+   void DisplayMsg(std::ostream& stream, const std::string& prefix,
       const byte_t* bytes, size_t count) const override;
 private:
    //  Private because this singleton is not subclassed.

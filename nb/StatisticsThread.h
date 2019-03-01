@@ -40,12 +40,12 @@ class StatisticsThread : public Thread
 public:
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //> The number of seconds between statistics reports and the rollover
    //  of statistics (default = 15 minutes).
@@ -84,16 +84,16 @@ private:
 
    //  Overridden to return a name for the thread.
    //
-   virtual const char* AbbrName() const override;
+   const char* AbbrName() const override;
 
    //  Overridden to enter a loop that generates statistics reports and
    //  performs rollovers on statistics registers.
    //
-   virtual void Enter() override;
+   void Enter() override;
 
    //  Overridden to delete the singleton.
    //
-   virtual void Destroy() override;
+   void Destroy() override;
 
    //  The next time at which the thread wants to run.
    //

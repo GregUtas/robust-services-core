@@ -106,7 +106,7 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(ostream& stream,
+   void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
 
    //  Overridden to obtain a TrafficCall from its object pool if

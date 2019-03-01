@@ -39,8 +39,8 @@ class PotsHtlFeature : public PotsFeature
 private:
    PotsHtlFeature();
    ~PotsHtlFeature();
-   virtual CliText* Attrs() const override;
-   virtual PotsFeatureProfile* Subscribe
+   CliText* Attrs() const override;
+   PotsFeatureProfile* Subscribe
       (PotsProfile& profile, CliThread& cli) const override;
 };
 
@@ -52,7 +52,7 @@ public:
    explicit PotsHtlFeatureProfile(Address::DN dn);
    ~PotsHtlFeatureProfile();
    Address::DN GetDN() const { return dn_; }
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
    Address::DN dn_;

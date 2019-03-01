@@ -35,8 +35,8 @@ class PotsCxfFeature : public PotsFeature
 private:
    PotsCxfFeature();
    ~PotsCxfFeature();
-   virtual CliText* Attrs() const override;
-   virtual PotsFeatureProfile* Subscribe
+   CliText* Attrs() const override;
+   PotsFeatureProfile* Subscribe
       (PotsProfile& profile, CliThread& cli) const override;
 };
 }

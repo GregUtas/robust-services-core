@@ -52,36 +52,35 @@ public:
 
    //  Overridden to look for an integer as the next parameter.
    //
-   virtual Rc GetIntParmRc(word& n, CliThread& cli) const override;
+   Rc GetIntParmRc(word& n, CliThread& cli) const override;
 
    //  Overridden to look for a boolean as the next parameter.
    //
-   virtual Rc GetBoolParmRc(bool& b, CliThread& cli) const override;
+   Rc GetBoolParmRc(bool& b, CliThread& cli) const override;
 
    //  Overridden to look for a character as the next parameter.
    //
-   virtual Rc GetCharParmRc(char& c, CliThread& cli) const override;
+   Rc GetCharParmRc(char& c, CliThread& cli) const override;
 
    //  Overridden to look for a pointer as the next parameter.
    //
-   virtual Rc GetPtrParmRc(void*& p, CliThread& cli) const override;
+   Rc GetPtrParmRc(void*& p, CliThread& cli) const override;
 
    //  Overridden to look for a string as the next parameter.
    //
-   virtual Rc GetTextParmRc
-      (id_t& i, std::string& s, CliThread& cli) const override;
+   Rc GetTextParmRc(id_t& i, std::string& s, CliThread& cli) const override;
 
    //  Overridden to look for an arbitrary string as the next parameter.
    //
-   virtual Rc GetStringRc(std::string& s, CliThread& cli) const override;
+   Rc GetStringRc(std::string& s, CliThread& cli) const override;
 
    //  Overridden to look for a filename as the next parameter.
    //
-   virtual Rc GetFileNameRc(std::string& s, CliThread& cli) const override;
+   Rc GetFileNameRc(std::string& s, CliThread& cli) const override;
 
    //  Overridden to look for an identifier as the next parameter.
    //
-   virtual Rc GetIdentifierRc(std::string& s, CliThread& cli,
+   Rc GetIdentifierRc(std::string& s, CliThread& cli,
       const std::string& valid, const std::string& exclude) const override;
 
    //  Explains the command.  If VERBOSE is true, all of the command's
@@ -91,7 +90,7 @@ public:
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  HELP, COMM (the command's name), and SIZE (the maximum number
    //  of parameters that follow the command) are passed to CliText.
@@ -123,7 +122,7 @@ private:
    //  Overridden to stop looking for parameters if those below this
    //  command have been exhasted.
    //
-   virtual bool Ascend() const override { return false; }
+   bool Ascend() const override { return false; }
 
    //  Invoked if trying to obtain another parameter when the parse tree
    //  has been exhausted.  TYPE is the type of parameter that could not

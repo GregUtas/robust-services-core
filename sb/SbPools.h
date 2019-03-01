@@ -50,7 +50,7 @@ public:
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Private because this singleton is not subclassed.
    //
@@ -75,11 +75,11 @@ public:
 
    //  Overridden to claim blocks on work queues.
    //
-   virtual void ClaimBlocks() override;
+   void ClaimBlocks() override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Private because this singleton is not subclassed.
    //
@@ -104,7 +104,7 @@ public:
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Private because this singleton is not subclassed.
    //
@@ -138,7 +138,7 @@ public:
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Private because this singleton is not subclassed.
    //
@@ -163,16 +163,16 @@ public:
 
    //  Overridden to claim objects in the PSM's context.
    //
-   virtual void ClaimBlocks() override;
+   void ClaimBlocks() override;
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Private because this singleton is not subclassed.
    //
@@ -205,23 +205,23 @@ public:
 
    //  Overridden to display statistics.
    //
-   virtual void DisplayStats(std::ostream& stream) const override;
+   void DisplayStats(std::ostream& stream) const override;
 
    //  Overridden to claim blocks in the TimerRegistry.
    //
-   virtual void ClaimBlocks() override;
+   void ClaimBlocks() override;
 
    //  Overridden for restarts.
    //
-   virtual void Startup(RestartLevel level) override;
+   void Startup(RestartLevel level) override;
 
    //  Overridden for restarts.
    //
-   virtual void Shutdown(RestartLevel level) override;
+   void Shutdown(RestartLevel level) override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Private because this singleton is not subclassed.
    //
@@ -250,7 +250,7 @@ public:
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Private because this singleton is not subclassed.
    //
@@ -275,7 +275,7 @@ public:
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Private because this singleton is not subclassed.
    //
@@ -302,11 +302,11 @@ public:
 
    //  Overridden to claim blocks held by the trace buffer.
    //
-   virtual void ClaimBlocks() override;
+   void ClaimBlocks() override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Private because this singleton is not subclassed.
    //

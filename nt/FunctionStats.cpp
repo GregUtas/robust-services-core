@@ -44,10 +44,6 @@ FunctionStats::FunctionStats(fn_name_arg func, size_t calls) :
 
 //------------------------------------------------------------------------------
 
-FunctionStats::~FunctionStats() { }
-
-//------------------------------------------------------------------------------
-
 int FunctionStats::Compare(const FunctionStats& that) const
 {
    return strcmp(this->func_, that.func_);

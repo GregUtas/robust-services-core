@@ -56,7 +56,7 @@ class PotsProxyNull : public ProxyBcNull
    friend class Singleton< PotsProxyNull >;
 private:
    PotsProxyNull();
-   ~PotsProxyNull();
+   ~PotsProxyNull() = default;
 };
 
 class PotsProxyAuthorizingOrigination : public ProxyBcAuthorizingOrigination
@@ -64,7 +64,7 @@ class PotsProxyAuthorizingOrigination : public ProxyBcAuthorizingOrigination
    friend class Singleton< PotsProxyAuthorizingOrigination >;
 private:
    PotsProxyAuthorizingOrigination();
-   ~PotsProxyAuthorizingOrigination();
+   ~PotsProxyAuthorizingOrigination() = default;
 };
 
 class PotsProxyCollectingInformation : public ProxyBcCollectingInformation
@@ -72,7 +72,7 @@ class PotsProxyCollectingInformation : public ProxyBcCollectingInformation
    friend class Singleton< PotsProxyCollectingInformation >;
 private:
    PotsProxyCollectingInformation();
-   ~PotsProxyCollectingInformation();
+   ~PotsProxyCollectingInformation() = default;
 };
 
 class PotsProxyAnalyzingInformation : public ProxyBcAnalyzingInformation
@@ -80,7 +80,7 @@ class PotsProxyAnalyzingInformation : public ProxyBcAnalyzingInformation
    friend class Singleton< PotsProxyAnalyzingInformation >;
 private:
    PotsProxyAnalyzingInformation();
-   ~PotsProxyAnalyzingInformation();
+   ~PotsProxyAnalyzingInformation() = default;
 };
 
 class PotsProxySelectingRoute : public ProxyBcSelectingRoute
@@ -88,7 +88,7 @@ class PotsProxySelectingRoute : public ProxyBcSelectingRoute
    friend class Singleton< PotsProxySelectingRoute >;
 private:
    PotsProxySelectingRoute();
-   ~PotsProxySelectingRoute();
+   ~PotsProxySelectingRoute() = default;
 };
 
 class PotsProxyAuthorizingCallSetup : public ProxyBcAuthorizingCallSetup
@@ -96,7 +96,7 @@ class PotsProxyAuthorizingCallSetup : public ProxyBcAuthorizingCallSetup
    friend class Singleton< PotsProxyAuthorizingCallSetup >;
 private:
    PotsProxyAuthorizingCallSetup();
-   ~PotsProxyAuthorizingCallSetup();
+   ~PotsProxyAuthorizingCallSetup() = default;
 };
 
 class PotsProxySendingCall : public ProxyBcSendingCall
@@ -104,7 +104,7 @@ class PotsProxySendingCall : public ProxyBcSendingCall
    friend class Singleton< PotsProxySendingCall >;
 private:
    PotsProxySendingCall();
-   ~PotsProxySendingCall();
+   ~PotsProxySendingCall() = default;
 };
 
 class PotsProxyOrigAlerting : public ProxyBcOrigAlerting
@@ -112,7 +112,7 @@ class PotsProxyOrigAlerting : public ProxyBcOrigAlerting
    friend class Singleton< PotsProxyOrigAlerting >;
 private:
    PotsProxyOrigAlerting();
-   ~PotsProxyOrigAlerting();
+   ~PotsProxyOrigAlerting() = default;
 };
 
 class PotsProxyAuthorizingTermination : public ProxyBcAuthorizingTermination
@@ -120,7 +120,7 @@ class PotsProxyAuthorizingTermination : public ProxyBcAuthorizingTermination
    friend class Singleton< PotsProxyAuthorizingTermination >;
 private:
    PotsProxyAuthorizingTermination();
-   ~PotsProxyAuthorizingTermination();
+   ~PotsProxyAuthorizingTermination() = default;
 };
 
 class PotsProxySelectingFacility : public ProxyBcSelectingFacility
@@ -128,7 +128,7 @@ class PotsProxySelectingFacility : public ProxyBcSelectingFacility
    friend class Singleton< PotsProxySelectingFacility >;
 private:
    PotsProxySelectingFacility();
-   ~PotsProxySelectingFacility();
+   ~PotsProxySelectingFacility() = default;
 };
 
 class PotsProxyPresentingCall : public ProxyBcPresentingCall
@@ -136,7 +136,7 @@ class PotsProxyPresentingCall : public ProxyBcPresentingCall
    friend class Singleton< PotsProxyPresentingCall >;
 private:
    PotsProxyPresentingCall();
-   ~PotsProxyPresentingCall();
+   ~PotsProxyPresentingCall() = default;
 };
 
 class PotsProxyTermAlerting : public ProxyBcTermAlerting
@@ -144,7 +144,7 @@ class PotsProxyTermAlerting : public ProxyBcTermAlerting
    friend class Singleton< PotsProxyTermAlerting >;
 private:
    PotsProxyTermAlerting();
-   ~PotsProxyTermAlerting();
+   ~PotsProxyTermAlerting() = default;
 };
 
 class PotsProxyActive : public ProxyBcActive
@@ -152,7 +152,7 @@ class PotsProxyActive : public ProxyBcActive
    friend class Singleton< PotsProxyActive >;
 private:
    PotsProxyActive();
-   ~PotsProxyActive();
+   ~PotsProxyActive() = default;
 };
 
 class PotsProxyLocalSuspending : public ProxyBcLocalSuspending
@@ -160,7 +160,7 @@ class PotsProxyLocalSuspending : public ProxyBcLocalSuspending
    friend class Singleton< PotsProxyLocalSuspending >;
 private:
    PotsProxyLocalSuspending();
-   ~PotsProxyLocalSuspending();
+   ~PotsProxyLocalSuspending() = default;
 };
 
 class PotsProxyRemoteSuspending : public ProxyBcRemoteSuspending
@@ -168,7 +168,7 @@ class PotsProxyRemoteSuspending : public ProxyBcRemoteSuspending
    friend class Singleton< PotsProxyRemoteSuspending >;
 private:
    PotsProxyRemoteSuspending();
-   ~PotsProxyRemoteSuspending();
+   ~PotsProxyRemoteSuspending() = default;
 };
 
 class PotsProxyException : public ProxyBcException
@@ -176,7 +176,7 @@ class PotsProxyException : public ProxyBcException
    friend class Singleton< PotsProxyException >;
 private:
    PotsProxyException();
-   ~PotsProxyException();
+   ~PotsProxyException() = default;
 };
 }
 #endif

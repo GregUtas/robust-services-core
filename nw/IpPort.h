@@ -129,20 +129,20 @@ public:
 
    //  Overridden for restarts.
    //
-   virtual void Startup(RestartLevel level) override;
+   void Startup(RestartLevel level) override;
 
    //  Overridden for restarts.
    //
-   virtual void Shutdown(RestartLevel level) override;
+   void Shutdown(RestartLevel level) override;
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Assigns SERVICE to PORT, registering it with IpPortRegistry.  If PORT
    //  is available, this eventually results in the creation of an I/O thread

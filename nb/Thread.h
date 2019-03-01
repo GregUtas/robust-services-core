@@ -240,21 +240,21 @@ public:
    //  Overridden for restarts.  This is only invoked on threads that did
    //  not exit and survived the restart.
    //
-   virtual void Startup(RestartLevel level) override;
+   void Startup(RestartLevel level) override;
 
    //  Overridden for restarts.  This is only invoked on threads that did
    //  not exit when the restart began.
    //
-   virtual void Shutdown(RestartLevel level) override;
+   void Shutdown(RestartLevel level) override;
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 
    //  Overridden to obtain a thread from its object pool.
    //
@@ -300,12 +300,12 @@ protected:
    //  Overridden to claim queued messages.  May be overridden, but this
    //  version must be invoked.
    //
-   virtual void Claim() override;
+   void Claim() override;
 
    //  Overridden to release resources during error recovery.  May be
    //  overridden, but this version must be invoked.
    //
-   virtual void Cleanup() override;
+   void Cleanup() override;
 
    //  Starts the next short interval for thread statistics.
    //

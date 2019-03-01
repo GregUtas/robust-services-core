@@ -39,7 +39,7 @@ class SbClearWhatParm : public NwClearWhatParm
 {
 public:
    SbClearWhatParm();
-   virtual ~SbClearWhatParm() { }
+   virtual ~SbClearWhatParm() = default;
 };
 
 class SbClearCommand : public NwClearCommand
@@ -59,9 +59,9 @@ public:
    //  Set BIND to false if binding a subclass of NwClearWhatParm.
    //
    explicit SbClearCommand(bool bind = true);
-   virtual ~SbClearCommand() { }
+   virtual ~SbClearCommand() = default;
 protected:
-   virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   word ProcessSubcommand(CliThread& cli, id_t index) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -72,7 +72,7 @@ class SbExcludeWhatParm : public NwExcludeWhatParm
 {
 public:
    SbExcludeWhatParm();
-   virtual ~SbExcludeWhatParm() { }
+   virtual ~SbExcludeWhatParm() = default;
 };
 
 class SbExcludeCommand : public NwExcludeCommand
@@ -88,9 +88,9 @@ public:
    //  Set BIND to false if binding a subclass of SbExcludeWhatParm.
    //
    explicit SbExcludeCommand(bool bind = true);
-   virtual ~SbExcludeCommand() { }
+   virtual ~SbExcludeCommand() = default;
 protected:
-   virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   word ProcessSubcommand(CliThread& cli, id_t index) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -101,7 +101,7 @@ class SbIncludeWhatParm : public NwIncludeWhatParm
 {
 public:
    SbIncludeWhatParm();
-   virtual ~SbIncludeWhatParm() { }
+   virtual ~SbIncludeWhatParm() = default;
 };
 
 class SbIncludeCommand : public NwIncludeCommand
@@ -117,9 +117,9 @@ public:
    //  Set BIND to false if binding a subclass of SbIncludeWhatParm.
    //
    explicit SbIncludeCommand(bool bind = true);
-   virtual ~SbIncludeCommand() { }
+   virtual ~SbIncludeCommand() = default;
 protected:
-   virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   word ProcessSubcommand(CliThread& cli, id_t index) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -132,9 +132,9 @@ public:
    //  Set BIND to false if binding a subclass of QueryWhatParm.
    //
    explicit SbQueryCommand(bool bind = true);
-   virtual ~SbQueryCommand() { }
+   virtual ~SbQueryCommand() = default;
 protected:
-   virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   word ProcessSubcommand(CliThread& cli, id_t index) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -144,10 +144,10 @@ protected:
 class SbStatusCommand : public NwStatusCommand
 {
 public:
-   SbStatusCommand() { }
-   virtual ~SbStatusCommand() { }
+   SbStatusCommand() = default;
+   virtual ~SbStatusCommand() = default;
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 //------------------------------------------------------------------------------

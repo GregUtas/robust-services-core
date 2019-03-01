@@ -42,11 +42,11 @@ public:
 
    //  Overridden to claim blocks held by the trace buffer.
    //
-   virtual void ClaimBlocks() override;
+   void ClaimBlocks() override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Private because this singleton is not subclassed.
    //
@@ -69,11 +69,11 @@ public:
 
    //  Overridden to claim blocks held by NbTracer.
    //
-   virtual void ClaimBlocks() override;
+   void ClaimBlocks() override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Private because this singleton is not subclassed.
    //

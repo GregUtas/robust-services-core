@@ -43,7 +43,7 @@ class InvokerPoolStatsGroup : public StatisticsGroup
 public:
    InvokerPoolStatsGroup();
    ~InvokerPoolStatsGroup();
-   virtual void DisplayStats(ostream& stream, id_t id) const override;
+   void DisplayStats(ostream& stream, id_t id) const override;
 };
 
 //------------------------------------------------------------------------------

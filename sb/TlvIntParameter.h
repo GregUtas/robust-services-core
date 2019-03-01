@@ -55,11 +55,11 @@ protected:
 
    //  Protected because subclasses should be singletons.
    //
-   virtual ~TlvIntParameter() { }
+   virtual ~TlvIntParameter() = default;
 
    //  Overridden to add an integer to MSG.
    //
-   virtual TestRc InjectMsg
+   TestRc InjectMsg
       (CliThread& cli, Message& msg, Usage use) const override
    {
       Debug::ft(TlvIntParameter_InjectMsg());
@@ -93,7 +93,7 @@ protected:
 
    //  Overridden to check an integer in MSG against an expected value.
    //
-   virtual TestRc VerifyMsg
+   TestRc VerifyMsg
       (CliThread& cli, const Message& msg, Usage use) const override
    {
       Debug::ft(TlvIntParameter_VerifyMsg());

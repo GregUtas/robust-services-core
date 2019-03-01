@@ -55,13 +55,13 @@ public:
    void SetDN(Address::DN dn) { dn_ = dn; }
    bool IsActive() const { return on_; }
    void SetActive(bool on) { on_ = on; }
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 protected:
    DnRouteFeatureProfile(PotsFeature::Id fid, Address::DN dn);
    virtual ~DnRouteFeatureProfile();
-   virtual bool Activate(PotsProfile& profile, CliThread& cli) override;
-   virtual bool Deactivate(PotsProfile& profile) override;
+   bool Activate(PotsProfile& profile, CliThread& cli) override;
+   bool Deactivate(PotsProfile& profile) override;
 private:
    Address::DN dn_;
    bool on_;

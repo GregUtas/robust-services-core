@@ -42,7 +42,7 @@ class ThreadStatsGroup : public StatisticsGroup
 public:
    ThreadStatsGroup();
    ~ThreadStatsGroup();
-   virtual void DisplayStats(ostream& stream, id_t id) const override;
+   void DisplayStats(ostream& stream, id_t id) const override;
 };
 
 //------------------------------------------------------------------------------

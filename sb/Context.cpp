@@ -72,11 +72,11 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(ostream& stream, const string& prefix) const override;
+   void Display(ostream& stream, const string& prefix) const override;
 private:
    //  Overridden to identify the type of exception.
    //
-   virtual const char* what() const noexcept override;
+   const char* what() const noexcept override;
 
    //  The context that was running when the exception occurred.
    //

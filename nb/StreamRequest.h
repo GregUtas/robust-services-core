@@ -73,16 +73,16 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Overridden to delete stream_ during error recovery.
    //
-   virtual void Cleanup() override;
+   void Cleanup() override;
 private:
    //  The stream to be output.
    //

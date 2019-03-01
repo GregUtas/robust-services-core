@@ -46,7 +46,7 @@ public:
 
    //  Not subclassed.
    //
-   ~FunctionStats();
+   ~FunctionStats() = default;
 
    //  Returns a pointer to the function's name.
    //
@@ -72,7 +72,7 @@ public:
 
    //  Overridden to display the function's statistics.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Returns the offset to link_.

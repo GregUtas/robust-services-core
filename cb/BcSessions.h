@@ -130,119 +130,119 @@ class BcNull : public BcState
 {
 protected:
    explicit BcNull(ServiceId sid);
-   virtual ~BcNull();
+   virtual ~BcNull() = default;
 };
 
 class BcAuthorizingOrigination : public BcState
 {
 protected:
    explicit BcAuthorizingOrigination(ServiceId sid);
-   virtual ~BcAuthorizingOrigination();
+   virtual ~BcAuthorizingOrigination() = default;
 };
 
 class BcCollectingInformation : public BcState
 {
 protected:
    explicit BcCollectingInformation(ServiceId sid);
-   virtual ~BcCollectingInformation();
+   virtual ~BcCollectingInformation() = default;
 };
 
 class BcAnalyzingInformation : public BcState
 {
 protected:
    explicit BcAnalyzingInformation(ServiceId sid);
-   virtual ~BcAnalyzingInformation();
+   virtual ~BcAnalyzingInformation() = default;
 };
 
 class BcSelectingRoute : public BcState
 {
 protected:
    explicit BcSelectingRoute(ServiceId sid);
-   virtual ~BcSelectingRoute();
+   virtual ~BcSelectingRoute() = default;
 };
 
 class BcAuthorizingCallSetup : public BcState
 {
 protected:
    explicit BcAuthorizingCallSetup(ServiceId sid);
-   virtual ~BcAuthorizingCallSetup();
+   virtual ~BcAuthorizingCallSetup() = default;
 };
 
 class BcSendingCall : public BcState
 {
 protected:
    explicit BcSendingCall(ServiceId sid);
-   virtual ~BcSendingCall();
+   virtual ~BcSendingCall() = default;
 };
 
 class BcOrigAlerting : public BcState
 {
 protected:
    explicit BcOrigAlerting(ServiceId sid);
-   virtual ~BcOrigAlerting();
+   virtual ~BcOrigAlerting() = default;
 };
 
 class BcAuthorizingTermination : public BcState
 {
 protected:
    explicit BcAuthorizingTermination(ServiceId sid);
-   virtual ~BcAuthorizingTermination();
+   virtual ~BcAuthorizingTermination() = default;
 };
 
 class BcSelectingFacility : public BcState
 {
 protected:
    explicit BcSelectingFacility(ServiceId sid);
-   virtual ~BcSelectingFacility();
+   virtual ~BcSelectingFacility() = default;
 };
 
 class BcPresentingCall : public BcState
 {
 protected:
    explicit BcPresentingCall(ServiceId sid);
-   virtual ~BcPresentingCall();
+   virtual ~BcPresentingCall() = default;
 };
 
 class BcTermAlerting : public BcState
 {
 protected:
    explicit BcTermAlerting(ServiceId sid);
-   virtual ~BcTermAlerting();
+   virtual ~BcTermAlerting() = default;
 };
 
 class BcActive : public BcState
 {
 protected:
    explicit BcActive(ServiceId sid);
-   virtual ~BcActive();
+   virtual ~BcActive() = default;
 };
 
 class BcLocalSuspending : public BcState
 {
 protected:
    explicit BcLocalSuspending(ServiceId sid);
-   virtual ~BcLocalSuspending();
+   virtual ~BcLocalSuspending() = default;
 };
 
 class BcRemoteSuspending : public BcState
 {
 protected:
    explicit BcRemoteSuspending(ServiceId sid);
-   virtual ~BcRemoteSuspending();
+   virtual ~BcRemoteSuspending() = default;
 };
 
 class BcDisconnecting : public BcState
 {
 protected:
    explicit BcDisconnecting(ServiceId sid);
-   virtual ~BcDisconnecting();
+   virtual ~BcDisconnecting() = default;
 };
 
 class BcException : public BcState
 {
 protected:
    explicit BcException(ServiceId sid);
-   virtual ~BcException();
+   virtual ~BcException() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -330,7 +330,7 @@ class BcProgressEvent : public BcEvent
 public:
    virtual ~BcProgressEvent();
    Progress::Ind GetProgress() const { return progress_; }
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 protected:
    BcProgressEvent(Id eid, ServiceSM& owner, Progress::Ind progress);
@@ -346,7 +346,7 @@ class BcReleaseEvent : public BcEvent
 public:
    virtual ~BcReleaseEvent();
    Cause::Ind GetCause() const { return cause_; }
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 protected:
    BcReleaseEvent(Id eid, ServiceSM& owner, Cause::Ind cause);
@@ -880,8 +880,8 @@ public:
 
    static const Id NextId                 = FirstUn + 7;
 protected:
-   BcEventHandler();
-   virtual ~BcEventHandler();
+   BcEventHandler() = default;
+   virtual ~BcEventHandler() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -1119,16 +1119,15 @@ public:
 
    //  Overridden to track the number of calls in each state.
    //
-   virtual void SetNextState(StateId stid) override;
+   void SetNextState(StateId stid) override;
 
    //  Overridden to raise BcReleaseCallEvent when a protocol error occurs.
    //
-   virtual Event* RaiseProtocolError
-      (ProtocolSM& psm, ProtocolSM::Error err) override;
+   Event* RaiseProtocolError(ProtocolSM& psm, ProtocolSM::Error err) override;
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 protected:
    //  Protected because this class is virtual.
@@ -1143,7 +1142,7 @@ protected:
    //  the CIP PSM, and Service::UserPort if it arrived on the UPSM.  Must
    //  be overridden by a subclass that uses any other PSM.
    //
-   virtual ServicePortId CalcPort(const AnalyzeMsgEvent& ame) override;
+   ServicePortId CalcPort(const AnalyzeMsgEvent& ame) override;
 
    //  Allocates the CIP PSM.
    //
@@ -1159,7 +1158,7 @@ protected:
 
    //  Overridden to handle deletion of the CIP PSM.
    //
-   virtual void PsmDeleted(ProtocolSM& exPsm) override;
+   void PsmDeleted(ProtocolSM& exPsm) override;
 private:
    //  Builds a CIP REL containing CAUSE.
    //
@@ -1230,9 +1229,9 @@ class BcNuAnalyzeRemoteMessage : public BcEventHandler
 {
    friend class Singleton< BcNuAnalyzeRemoteMessage >;
 private:
-   BcNuAnalyzeRemoteMessage();
-   ~BcNuAnalyzeRemoteMessage();
-   virtual Rc ProcessEvent
+   BcNuAnalyzeRemoteMessage() = default;
+   ~BcNuAnalyzeRemoteMessage() = default;
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -1240,9 +1239,9 @@ class BcScAnalyzeRemoteMessage : public BcEventHandler
 {
    friend class Singleton< BcScAnalyzeRemoteMessage >;
 private:
-   BcScAnalyzeRemoteMessage();
-   ~BcScAnalyzeRemoteMessage();
-   virtual Rc ProcessEvent
+   BcScAnalyzeRemoteMessage() = default;
+   ~BcScAnalyzeRemoteMessage() = default;
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -1250,9 +1249,9 @@ class BcOaAnalyzeRemoteMessage : public BcEventHandler
 {
    friend class Singleton< BcOaAnalyzeRemoteMessage >;
 private:
-   BcOaAnalyzeRemoteMessage();
-   ~BcOaAnalyzeRemoteMessage();
-   virtual Rc ProcessEvent
+   BcOaAnalyzeRemoteMessage() = default;
+   ~BcOaAnalyzeRemoteMessage() = default;
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -1260,9 +1259,9 @@ class BcPcAnalyzeRemoteMessage : public BcEventHandler
 {
    friend class Singleton< BcPcAnalyzeRemoteMessage >;
 private:
-   BcPcAnalyzeRemoteMessage();
-   ~BcPcAnalyzeRemoteMessage();
-   virtual Rc ProcessEvent
+   BcPcAnalyzeRemoteMessage() = default;
+   ~BcPcAnalyzeRemoteMessage() = default;
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -1270,9 +1269,9 @@ class BcAcAnalyzeRemoteMessage : public BcEventHandler
 {
    friend class Singleton< BcAcAnalyzeRemoteMessage >;
 private:
-   BcAcAnalyzeRemoteMessage();
-   ~BcAcAnalyzeRemoteMessage();
-   virtual Rc ProcessEvent
+   BcAcAnalyzeRemoteMessage() = default;
+   ~BcAcAnalyzeRemoteMessage() = default;
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -1298,17 +1297,16 @@ private:
    //  Overridden to create the root SSM when MSG arrives on PSM to create a
    //  new test session.
    //
-   virtual RootServiceSM* AllocRoot
-      (const Message& msg, ProtocolSM& psm) const override;
+   RootServiceSM* AllocRoot(const Message& msg, ProtocolSM& psm) const override;
 
    //  Overridden to create a CIP PSM when a CIP IAM arrives.
    //
-   virtual ProtocolSM* AllocIcPsm
+   ProtocolSM* AllocIcPsm
       (const Message& msg, ProtocolLayer& lower) const override;
 
    //  Overridden to return Cause::NilInd when a call is routed to a test DN.
    //
-   virtual Cause::Ind VerifyRoute(RouteResult::Id rid) const override;
+   Cause::Ind VerifyRoute(RouteResult::Id rid) const override;
 };
 }
 #endif

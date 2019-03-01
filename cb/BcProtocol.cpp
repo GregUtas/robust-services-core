@@ -62,7 +62,7 @@ class CipIamSignal : public CipSignal
    friend class Singleton< CipIamSignal >;
 private:
    CipIamSignal();
-   virtual CliText* CreateText() const override;
+   CliText* CreateText() const override;
 };
 
 class IamText : public CliText
@@ -75,7 +75,7 @@ class CipCpgSignal : public CipSignal
    friend class Singleton< CipCpgSignal >;
 private:
    CipCpgSignal();
-   virtual CliText* CreateText() const override;
+   CliText* CreateText() const override;
 };
 
 class CpgText : public CliText
@@ -88,7 +88,7 @@ class CipAnmSignal : public CipSignal
    friend class Singleton< CipAnmSignal >;
 private:
    CipAnmSignal();
-   virtual CliText* CreateText() const override;
+   CliText* CreateText() const override;
 };
 
 class AnmText : public CliText
@@ -101,7 +101,7 @@ class CipRelSignal : public CipSignal
    friend class Singleton< CipRelSignal >;
 private:
    CipRelSignal();
-   virtual CliText* CreateText() const override;
+   CliText* CreateText() const override;
 };
 
 class RelText : public CliText
@@ -114,12 +114,11 @@ class CipRouteParameter : public CipParameter
    friend class Singleton< CipRouteParameter >;
 private:
    CipRouteParameter();
-   virtual void DisplayMsg(ostream& stream, const string& prefix,
+   void DisplayMsg(ostream& stream, const string& prefix,
       const byte_t* bytes, size_t count) const override;
-   virtual CliParm* CreateCliParm(Usage use) const override;
-   virtual TestRc InjectMsg
-      (CliThread& cli, Message& msg, Usage use) const override;
-   virtual TestRc VerifyMsg
+   CliParm* CreateCliParm(Usage use) const override;
+   TestRc InjectMsg(CliThread& cli, Message& msg, Usage use) const override;
+   TestRc VerifyMsg
       (CliThread& cli, const Message& msg, Usage use) const override;
 };
 
@@ -150,7 +149,7 @@ class CipCallingParameter : public CipAddressParameter
    friend class Singleton< CipCallingParameter >;
 private:
    CipCallingParameter();
-   virtual CliParm* CreateCliParm(Usage use) const override;
+   CliParm* CreateCliParm(Usage use) const override;
 };
 
 class CipCalledParameter : public CipAddressParameter
@@ -158,7 +157,7 @@ class CipCalledParameter : public CipAddressParameter
    friend class Singleton< CipCalledParameter >;
 private:
    CipCalledParameter();
-   virtual CliParm* CreateCliParm(Usage use) const override;
+   CliParm* CreateCliParm(Usage use) const override;
 };
 
 class CipOriginalCallingParameter : public CipAddressParameter
@@ -166,7 +165,7 @@ class CipOriginalCallingParameter : public CipAddressParameter
    friend class Singleton< CipOriginalCallingParameter >;
 private:
    CipOriginalCallingParameter();
-   virtual CliParm* CreateCliParm(Usage use) const override;
+   CliParm* CreateCliParm(Usage use) const override;
 };
 
 class CipOriginalCalledParameter : public CipAddressParameter
@@ -174,7 +173,7 @@ class CipOriginalCalledParameter : public CipAddressParameter
    friend class Singleton< CipOriginalCalledParameter >;
 private:
    CipOriginalCalledParameter();
-   virtual CliParm* CreateCliParm(Usage use) const override;
+   CliParm* CreateCliParm(Usage use) const override;
 };
 
 class CipProgressParameter : public ProgressParameter

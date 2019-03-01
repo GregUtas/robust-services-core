@@ -342,15 +342,15 @@ public:
 
    //  Overridden to invoke GetClass on the item's scope (GetScope).
    //
-   virtual Class* GetClass() const override;
+   Class* GetClass() const override;
 
    //  Overridden to use GetScope to find an item's namespace.
    //
-   virtual Namespace* GetSpace() const override;
+   Namespace* GetSpace() const override;
 
    //  Overridden to return the item's scoped name.
    //
-   virtual std::string Trace() const override { return ScopedName(true); }
+   std::string Trace() const override { return ScopedName(true); }
 protected:
    //  Protected because this class is virtual.
    //
@@ -439,25 +439,24 @@ public:
 
    //  Overridden to update SYMBOLS with the statement's type usage.
    //
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
    //  Overridden to return the member's name.
    //
-   virtual const std::string* Name() const override { return &name_; }
+   const std::string* Name() const override { return &name_; }
 
    //  Overridden to display the initialization statement.
    //
-   virtual void Print
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to shrink containers.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 
    //  Overridden to return the member's name.
    //
-   virtual std::string Trace() const override { return name_; }
+   std::string Trace() const override { return name_; }
 private:
    //  The name of the member being initialized.
    //
@@ -576,60 +575,57 @@ public:
 
    //  Overridden to check template arguments.
    //
-   virtual void Check() const override;
+   void Check() const override;
 
    //  Overridden to return type_ if it exists, else ref_.
    //
-   virtual CxxNamed* DirectType() const override;
+   CxxNamed* DirectType() const override;
 
    //  Overridden to invoke FindReferent on each template argument.
    //
-   virtual void FindReferent() override;
+   void FindReferent() override;
 
    //  Overridden to return this item if it has template arguments.
    //
-   virtual TypeName* GetTemplateArgs() const override;
+   TypeName* GetTemplateArgs() const override;
 
    //  Overridden to update SYMBOLS with the name's type usage.
    //
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
    //  Overridden to return the name.
    //
-   virtual const std::string* Name() const override { return &name_; }
+   const std::string* Name() const override { return &name_; }
 
    //  Overridden to display the name.
    //
-   virtual void Print
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to return the name and, optionally, its template arguments.
    //
-   virtual std::string QualifiedName
-      (bool scopes, bool templates) const override;
+   std::string QualifiedName(bool scopes, bool templates) const override;
 
    //  Overridden to return what the name refers to.
    //
-   virtual CxxNamed* Referent() const override { return ref_; }
+   CxxNamed* Referent() const override { return ref_; }
 
    //  Overridden to record and resolve the typedef.
    //
-   virtual bool ResolveTypedef(Typedef* type, size_t n) const override;
+   bool ResolveTypedef(Typedef* type, size_t n) const override;
 
    //  Overridden to record what the item refers to.
    //
-   virtual void SetReferent
-      (CxxNamed* item, const SymbolView* view) const override;
+   void SetReferent(CxxNamed* item, const SymbolView* view) const override;
 
    //  Overridden to shrink containers.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 
    //  Overridden to return the full type for template arguments.  Note that
    //  the name itself is omitted.
    //
-   virtual std::string TypeString(bool arg) const override;
+   std::string TypeString(bool arg) const override;
 private:
    //  Deleted to prohibit copy assignment.
    //
@@ -778,60 +774,58 @@ public:
 
    //  Overridden to check each name and any template parameters.
    //
-   virtual void Check() const override;
+   void Check() const override;
 
    //  Overridden to propagate the context to each name.
    //
-   virtual void CopyContext(const CxxNamed* that) override;
+   void CopyContext(const CxxNamed* that) override;
 
    //  Overridden to forward to the last name.
    //
-   virtual CxxNamed* DirectType() const
+   CxxNamed* DirectType() const
       override { return Last()->DirectType(); }
 
    //  Overridden to find the referent and push it onto the argument stack.
    //
-   virtual void EnterBlock() override;
+   void EnterBlock() override;
 
    //  Overridden to return the item itself.
    //
-   virtual QualName* GetQualName() const
+   QualName* GetQualName() const
       override { return const_cast< QualName* >(this); }
 
    //  Overridden to see if one of the names specifies a template instance.
    //
-   virtual TypeName* GetTemplateArgs() const override;
+   TypeName* GetTemplateArgs() const override;
 
    //  Overridden to update SYMBOLS with the name's type usage.
    //
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
    //  Overridden to return the last name.
    //
-   virtual const std::string* Name() const override { return Last()->Name(); }
+   const std::string* Name() const override { return Last()->Name(); }
 
    //  Overridden to display the name, including any template arguments.
    //
-   virtual void Print
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to return the qualified name.
    //
-   virtual std::string QualifiedName
-      (bool scopes, bool templates) const override;
+   std::string QualifiedName(bool scopes, bool templates) const override;
 
    //  Overridden to return the referent of the last name.
    //
-   virtual CxxNamed* Referent() const override;
+   CxxNamed* Referent() const override;
 
    //  Overridden to forward to the Nth name.
    //
-   virtual bool ResolveTypedef(Typedef* type, size_t n) const override;
+   bool ResolveTypedef(Typedef* type, size_t n) const override;
 
    //  Overridden to instantiate the template unless END is set.
    //
-   virtual bool ResolveTemplate
+   bool ResolveTemplate
       (Class* cls, const TypeName* args, bool end) const override;
 
    //  Sets the last name's referent.  This is used by QualName.EnterBlock and
@@ -841,20 +835,19 @@ public:
    //  last name's ref_ field because it is normally used only when it appears
    //  in executable code.
    //
-   virtual void SetReferent
-      (CxxNamed* item, const SymbolView* view) const override;
+   void SetReferent(CxxNamed* item, const SymbolView* view) const override;
 
    //  Overridden to shrink containers.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 
    //  Overridden to reveal that this is a qualified name.
    //
-   virtual Cxx::ItemType Type() const override { return Cxx::QualName; }
+   Cxx::ItemType Type() const override { return Cxx::QualName; }
 
    //  Overridden to return the referent's full root type.
    //
-   virtual std::string TypeString(bool arg) const override;
+   std::string TypeString(bool arg) const override;
 private:
    //  Deleted to prohibit copy assignment.
    //
@@ -1167,7 +1160,7 @@ public:
 
    //  Overridden to reveal that this is a type specification.
    //
-   virtual Cxx::ItemType Type() const override { return Cxx::TypeSpec; }
+   Cxx::ItemType Type() const override { return Cxx::TypeSpec; }
 protected:
    //  Protected because this class is virtual.
    //
@@ -1247,238 +1240,236 @@ private:
 
    //  Overridden to add a bounded array specification to the type.
    //
-   virtual void AddArray(ArraySpecPtr& array) override;
+   void AddArray(ArraySpecPtr& array) override;
 
    //  Overridden to align thatArg's type with the this type, which is that of a
    //  template parameter that might be specialized.
    //
-   virtual std::string AlignTemplateArg(const TypeSpec* thatArg) const override;
+   std::string AlignTemplateArg(const TypeSpec* thatArg) const override;
 
    //  Overridden to return the number of arrays attached to the type, following
    //  the type to its root.
    //
-   virtual TagCount Arrays() const override;
+   TagCount Arrays() const override;
 
    //  Overridden to set the type to assign to an "auto" variable.
    //
-   virtual CxxToken* AutoType() const override { return (CxxToken*) this; }
+   CxxToken* AutoType() const override { return (CxxToken*) this; }
 
    //  Overridden to verify that pointer and reference tags are attached to
    //  types, not names.
    //
-   virtual void Check() const override;
+   void Check() const override;
 
    //  Overridden to create and return a copy of the type.
    //
-   virtual TypeSpec* Clone() const override;
+   TypeSpec* Clone() const override;
 
    //  Overridden to propagate the context to the type's qualified name.
    //
-   virtual void CopyContext(const CxxNamed* that) override;
+   void CopyContext(const CxxNamed* that) override;
 
    //  Overridden to return the class, if any, to which the type ultimately
    //  refers, provided that it is not a pointer or reference to that class.
    //
-   virtual Class* DirectClass() const override;
+   Class* DirectClass() const override;
 
    //  Overridden to invoke DirectType on name_.
    //
-   virtual CxxNamed* DirectType() const override;
+   CxxNamed* DirectType() const override;
 
    //  Overridden to display the type's bounded array specifications.
    //
-   virtual void DisplayArrays(std::ostream& stream) const override;
+   void DisplayArrays(std::ostream& stream) const override;
 
    //  Overridden to display the type's pointer, array, and reference tags.
    //
-   virtual void DisplayTags(std::ostream& stream) const override;
+   void DisplayTags(std::ostream& stream) const override;
 
    //  Overridden to invoke EnterBlock on any bounded array specifications.
    //
-   virtual void EnterArrays() const override;
+   void EnterArrays() const override;
 
    //  Overridden to push the type's referent onto the argument stack.
    //
-   virtual void EnterBlock() override;
+   void EnterBlock() override;
 
    //  Overridden to see if the type is a template parameter in SCOPE and
    //  to invoke Check and EnterArrays.
    //
-   virtual void EnteringScope(const CxxScope* scope) override;
+   void EnteringScope(const CxxScope* scope) override;
 
    //  Overridden to find the type's referent, as well as the referent for
    //  each template argument used in the type.
    //
-   virtual void FindReferent() override;
+   void FindReferent() override;
 
    //  Overridden to return the numeric type.
    //
-   virtual Numeric GetNumeric() const override;
+   Numeric GetNumeric() const override;
 
    //  Overridden to return the type's qualified name.
    //
-   virtual QualName* GetQualName() const override { return name_.get(); }
+   QualName* GetQualName() const override { return name_.get(); }
 
    //  Overridden to return the type's attributes.
    //
-   virtual TypeTags GetAllTags() const override;
+   TypeTags GetAllTags() const override;
 
    //  Overridden to return the type itself.
    //
-   virtual TypeSpec* GetTypeSpec() const override;
+   TypeSpec* GetTypeSpec() const override;
 
    //  Overridden to update SYMBOLS with the specification's type usage.
    //
-   virtual void GetUsages
-      (const CodeFile& file, CxxUsageSets& symbols) const override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
    //  Overridden to return true if the type has a bounded array specification.
    //
-   virtual bool HasArrayDefn() const override { return (arrays_ == nullptr); }
+   bool HasArrayDefn() const override { return (arrays_ == nullptr); }
 
    //  Overridden to instantiate the type's referent if it is a template.
    //
-   virtual void Instantiating() const override;
+   void Instantiating() const override;
 
    //  Overridden to return true if the type is "auto" and the referent has
    //  yet to be determined.
    //
-   virtual bool IsAuto() const override;
+   bool IsAuto() const override;
 
    //  Overridden to return true if ITEM is the referent of a template argument.
    //
-   virtual bool ItemIsTemplateArg(const CxxScoped* item) const override;
+   bool ItemIsTemplateArg(const CxxScoped* item) const override;
 
    //  Overridden to return true if the type is const.
    //
-   virtual bool IsConst() const override;
+   bool IsConst() const override;
 
    //  Overridden to return true if the type's outermost pointer is const.
    //
-   virtual bool IsConstPtr() const override;
+   bool IsConstPtr() const override;
 
    //  Overridden to return true if the type's Nth pointer is const.
    //
-   virtual bool IsConstPtr(size_t n) const override;
+   bool IsConstPtr(size_t n) const override;
 
    //  Overridden to return true if the type has pointer or reference tags.
    //
-   virtual bool IsIndirect() const override;
+   bool IsIndirect() const override;
 
    //  Overridden to return true if the types of "this" and THAT match.
    //
-   virtual bool MatchesExactly(const TypeSpec* that) const override;
+   bool MatchesExactly(const TypeSpec* that) const override;
 
    //  Overridden to determine if THAT can instantiate a template for this type.
    //
-   virtual TypeMatch MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
+   TypeMatch MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
       stringVector& tmpltArgs, bool& argFound) const override;
 
    //  Overridden to determine how well THAT matches this type for the purpose
    //  of template instantiation.
    //
-   virtual TypeMatch MatchTemplateArg(const TypeSpec* that) const override;
+   TypeMatch MatchTemplateArg(const TypeSpec* that) const override;
 
    //  Overridden to return the type's name.
    //
-   virtual const std::string* Name() const override { return name_->Name(); }
+   const std::string* Name() const override { return name_->Name(); }
 
    //  Overridden to display the type.
    //
-   virtual void Print
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to return the number of pointer tags attached to the type,
    //  following the type to its root.
    //
-   virtual TagCount Ptrs(bool arrays) const override;
+   TagCount Ptrs(bool arrays) const override;
 
    //  Overridden to return the type's qualified name.
    //
-   virtual std::string QualifiedName(bool scopes, bool templates) const
+   std::string QualifiedName(bool scopes, bool templates) const
       override { return name_->QualifiedName(scopes, templates); }
 
    //  Overridden to return what the type refers to.
    //
-   virtual CxxNamed* Referent() const override;
+   CxxNamed* Referent() const override;
 
    //  Overridden to return the number of reference tags attached to the type,
    //  following the type to its root.
    //
-   virtual TagCount Refs() const override;
+   TagCount Refs() const override;
 
    //  Overridden to eliminate reference tags from an auto type.
    //
-   virtual void RemoveRefs() override;
+   void RemoveRefs() override;
 
    //  Overridden to resolve the forward declaration only if it has template
    //  arguments.
    //
-   virtual bool ResolveForward(CxxScoped* decl, size_t n) const override;
+   bool ResolveForward(CxxScoped* decl, size_t n) const override;
 
    //  Overridden to determine if EnsureInstance should be invoked.
    //
-   virtual bool ResolveTemplate
+   bool ResolveTemplate
       (Class* cls, const TypeName* args, bool end) const override;
 
    //  Overridden to resolve the typedef unless it has template arguments.
    //
-   virtual bool ResolveTypedef(Typedef* type, size_t n) const override;
+   bool ResolveTypedef(Typedef* type, size_t n) const override;
 
    //  Overridden to construct an argument based on the type of referent and
    //  the level of pointer indirection to it.
    //
-   virtual StackArg ResultType() const override;
+   StackArg ResultType() const override;
 
    //  Overridden to return the underlying type.
    //
-   virtual CxxToken* RootType() const override { return Referent(); }
+   CxxToken* RootType() const override { return Referent(); }
 
    //  Overridden to reset the number of pointer tags when the type is assigned
    //  to an auto type.
    //
-   virtual void SetPtrs(TagCount count) override;
+   void SetPtrs(TagCount count) override;
 
    //  Overridden to record what the item refers to.
    //
-   virtual void SetReferent
-      (CxxNamed* item, const SymbolView* view) const override;
+   void SetReferent(CxxNamed* item, const SymbolView* view) const override;
 
    //  Overridden so that when ROLE is TemplateClass, its arguments are treated
    //  as parameters.
    //
-   virtual void SetTemplateRole(TemplateRole role) const override;
+   void SetTemplateRole(TemplateRole role) const override;
 
    //  Overridden to propagate USER to name_.
    //
-   virtual void SetUserType(Cxx::ItemType user) override;
+   void SetUserType(Cxx::ItemType user) override;
 
    //  Overridden to shrink containers.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 
    //  Overridden to provide access to the type's tags.
    //
-   virtual TypeTags* Tags() override { return &tags_; }
-   virtual const TypeTags* Tags() const override { return &tags_; }
+   TypeTags* Tags() override { return &tags_; }
+   const TypeTags* Tags() const override { return &tags_; }
 
    //  Overridden to return the base class default (the scoped name) unless the
    //  type is "auto", in which case the referent (if known) is returned.
    //
-   virtual std::string Trace() const override;
+   std::string Trace() const override;
 
    //  Overridden to return the full root type.  Reference tags ('&') are
    //  omitted if ARG is set.
    //
-   virtual std::string TypeString(bool arg) const override;
+   std::string TypeString(bool arg) const override;
 
    //  Overridden to apply TAGS instead of the type's actual attributes.
    //
-   virtual std::string TypeTagsString(const TypeTags& tags) const override;
+   std::string TypeTagsString(const TypeTags& tags) const override;
 
    //  Overridden to support a temporary variable represented by a DataSpec.
    //
-   virtual bool WasWritten(const StackArg* arg, bool passed)
+   bool WasWritten(const StackArg* arg, bool passed)
       override { return false; }
 
    //  The qualified name for the type as it appeared in the source code.
@@ -1518,24 +1509,24 @@ public:
 
    //  Overridden to check the default type.
    //
-   virtual void Check() const override;
+   void Check() const override;
 
    //  Overridden to return the parameter's name.
    //
-   virtual const std::string* Name() const override { return &name_; }
+   const std::string* Name() const override { return &name_; }
 
    //  Overridden to display the parameter.
    //
-   virtual void Print
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to shrink the item's name.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 
    //  Overridden to return the parameter's name and pointers.
    //
-   virtual std::string TypeString(bool arg) const override;
+   std::string TypeString(bool arg) const override;
 private:
    //  The parameter's name.
    //
@@ -1582,20 +1573,20 @@ public:
 
    //  Overridden to check each parameter.
    //
-   virtual void Check() const override;
+   void Check() const override;
 
    //  Overridden to display the template's full specification.
    //
-   virtual void Print
+   void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to shrink containers.
    //
-   virtual void Shrink() override;
+   void Shrink() override;
 
    //  Overridden to return the template's parameter names in angle brackets.
    //
-   virtual std::string TypeString(bool arg) const override;
+   std::string TypeString(bool arg) const override;
 private:
    //  The template's parameters.
    //

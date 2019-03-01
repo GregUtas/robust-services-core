@@ -55,9 +55,9 @@ class PotsCallIpService : public UdpIpService
 public:
    //  Overridden to return the service's attributes.
    //
-   virtual const char* Name() const override { return "POTS Call"; }
-   virtual ipport_t Port() const override { return ipport_t(port_); }
-   virtual Faction GetFaction() const override { return PayloadFaction; }
+   const char* Name() const override { return "POTS Call"; }
+   ipport_t Port() const override { return ipport_t(port_); }
+   Faction GetFaction() const override { return PayloadFaction; }
 private:
    //  Private because this singleton is not subclassed.
    //
@@ -69,11 +69,11 @@ private:
 
    //  Overridden to create a CLI parameter for identifying the protocol.
    //
-   virtual CliText* CreateText() const override;
+   CliText* CreateText() const override;
 
    //  Overridden to create the POTS call input handler.
    //
-   virtual InputHandler* CreateHandler(IpPort* port) const override;
+   InputHandler* CreateHandler(IpPort* port) const override;
 
    //  The port on which the protocol is running.
    //
@@ -102,7 +102,7 @@ private:
    //  Overridden to add a SessionBase header to a message arriving over the
    //  IP stack.
    //
-   virtual void ReceiveBuff
+   void ReceiveBuff
       (IpBufferPtr& buff, size_t size, Faction faction) const override;
 
    //  Discards BUFF when it is invalid.  ERRVAL is included in the log.
@@ -134,44 +134,42 @@ private:
 
    //  Overridden to return a CLI parameter that identifies the factory.
    //
-   virtual CliText* CreateText() const override;
+   CliText* CreateText() const override;
 
    //  Overridden to create a root SSM when MSG arrives to create a new
    //  session.
    //
-   virtual RootServiceSM* AllocRoot
-      (const Message& msg, ProtocolSM& psm) const override;
+   RootServiceSM* AllocRoot(const Message& msg, ProtocolSM& psm) const override;
 
    //  Overridden to create a POTS call PSM.
    //
-   virtual ProtocolSM* AllocIcPsm
+   ProtocolSM* AllocIcPsm
       (const Message& msg, ProtocolLayer& lower) const override;
 
    //  Overridden to allocate a message to receive BUFF.
    //
-   virtual Message* AllocIcMsg(SbIpBufferPtr& buff) const override;
+   Message* AllocIcMsg(SbIpBufferPtr& buff) const override;
 
    //  Overridden to allocate a message that will be sent by a test tool.
    //
-   virtual Message* AllocOgMsg(SignalId sid) const override;
+   Message* AllocOgMsg(SignalId sid) const override;
 
    //  Overridden to allocate a message to save BUFF.
    //
-   virtual Message* ReallocOgMsg(SbIpBufferPtr& buff) const override;
+   Message* ReallocOgMsg(SbIpBufferPtr& buff) const override;
 
    //  Overridden to record PORT in the user's profile.
    //
-   virtual void PortAllocated
-      (const MsgPort& port, const Message* msg) const override;
+   void PortAllocated(const MsgPort& port, const Message* msg) const override;
 
    //  Overridden to screen subsequent messages received while an offhook
    //  is waiting on the ingress work queue.
    //
-   virtual bool ScreenIcMsgs(Q1Way< Message >& msgq) override;
+   bool ScreenIcMsgs(Q1Way< Message >& msgq) override;
 
    //  Overridden to verify that the DN referenced by RID is registered.
    //
-   virtual Cause::Ind VerifyRoute(RouteResult::Id rid) const override;
+   Cause::Ind VerifyRoute(RouteResult::Id rid) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -201,7 +199,7 @@ class PotsBcNull : public ProxyBcNull
    friend class Singleton< PotsBcNull >;
 private:
    PotsBcNull();
-   ~PotsBcNull();
+   ~PotsBcNull() = default;
 };
 
 class PotsBcAuthorizingOrigination : public ProxyBcAuthorizingOrigination
@@ -209,7 +207,7 @@ class PotsBcAuthorizingOrigination : public ProxyBcAuthorizingOrigination
    friend class Singleton< PotsBcAuthorizingOrigination >;
 private:
    PotsBcAuthorizingOrigination();
-   ~PotsBcAuthorizingOrigination();
+   ~PotsBcAuthorizingOrigination() = default;
 };
 
 class PotsBcCollectingInformation : public ProxyBcCollectingInformation
@@ -217,7 +215,7 @@ class PotsBcCollectingInformation : public ProxyBcCollectingInformation
    friend class Singleton< PotsBcCollectingInformation >;
 private:
    PotsBcCollectingInformation();
-   ~PotsBcCollectingInformation();
+   ~PotsBcCollectingInformation() = default;
 };
 
 class PotsBcAnalyzingInformation : public ProxyBcAnalyzingInformation
@@ -225,7 +223,7 @@ class PotsBcAnalyzingInformation : public ProxyBcAnalyzingInformation
    friend class Singleton< PotsBcAnalyzingInformation >;
 private:
    PotsBcAnalyzingInformation();
-   ~PotsBcAnalyzingInformation();
+   ~PotsBcAnalyzingInformation() = default;
 };
 
 class PotsBcSelectingRoute : public ProxyBcSelectingRoute
@@ -233,7 +231,7 @@ class PotsBcSelectingRoute : public ProxyBcSelectingRoute
    friend class Singleton< PotsBcSelectingRoute >;
 private:
    PotsBcSelectingRoute();
-   ~PotsBcSelectingRoute();
+   ~PotsBcSelectingRoute() = default;
 };
 
 class PotsBcAuthorizingCallSetup : public ProxyBcAuthorizingCallSetup
@@ -241,7 +239,7 @@ class PotsBcAuthorizingCallSetup : public ProxyBcAuthorizingCallSetup
    friend class Singleton< PotsBcAuthorizingCallSetup >;
 private:
    PotsBcAuthorizingCallSetup();
-   ~PotsBcAuthorizingCallSetup();
+   ~PotsBcAuthorizingCallSetup() = default;
 };
 
 class PotsBcSendingCall : public ProxyBcSendingCall
@@ -249,7 +247,7 @@ class PotsBcSendingCall : public ProxyBcSendingCall
    friend class Singleton< PotsBcSendingCall >;
 private:
    PotsBcSendingCall();
-   ~PotsBcSendingCall();
+   ~PotsBcSendingCall() = default;
 };
 
 class PotsBcOrigAlerting : public ProxyBcOrigAlerting
@@ -257,7 +255,7 @@ class PotsBcOrigAlerting : public ProxyBcOrigAlerting
    friend class Singleton< PotsBcOrigAlerting >;
 private:
    PotsBcOrigAlerting();
-   ~PotsBcOrigAlerting();
+   ~PotsBcOrigAlerting() = default;
 };
 
 class PotsBcAuthorizingTermination : public ProxyBcAuthorizingTermination
@@ -265,7 +263,7 @@ class PotsBcAuthorizingTermination : public ProxyBcAuthorizingTermination
    friend class Singleton< PotsBcAuthorizingTermination >;
 private:
    PotsBcAuthorizingTermination();
-   ~PotsBcAuthorizingTermination();
+   ~PotsBcAuthorizingTermination() = default;
 };
 
 class PotsBcSelectingFacility : public ProxyBcSelectingFacility
@@ -273,7 +271,7 @@ class PotsBcSelectingFacility : public ProxyBcSelectingFacility
    friend class Singleton< PotsBcSelectingFacility >;
 private:
    PotsBcSelectingFacility();
-   ~PotsBcSelectingFacility();
+   ~PotsBcSelectingFacility() = default;
 };
 
 class PotsBcPresentingCall : public ProxyBcPresentingCall
@@ -281,7 +279,7 @@ class PotsBcPresentingCall : public ProxyBcPresentingCall
    friend class Singleton< PotsBcPresentingCall >;
 private:
    PotsBcPresentingCall();
-   ~PotsBcPresentingCall();
+   ~PotsBcPresentingCall() = default;
 };
 
 class PotsBcTermAlerting : public ProxyBcTermAlerting
@@ -289,7 +287,7 @@ class PotsBcTermAlerting : public ProxyBcTermAlerting
    friend class Singleton< PotsBcTermAlerting >;
 private:
    PotsBcTermAlerting();
-   ~PotsBcTermAlerting();
+   ~PotsBcTermAlerting() = default;
 };
 
 class PotsBcActive : public ProxyBcActive
@@ -297,7 +295,7 @@ class PotsBcActive : public ProxyBcActive
    friend class Singleton< PotsBcActive >;
 private:
    PotsBcActive();
-   ~PotsBcActive();
+   ~PotsBcActive() = default;
 };
 
 class PotsBcLocalSuspending : public ProxyBcLocalSuspending
@@ -305,7 +303,7 @@ class PotsBcLocalSuspending : public ProxyBcLocalSuspending
    friend class Singleton< PotsBcLocalSuspending >;
 private:
    PotsBcLocalSuspending();
-   ~PotsBcLocalSuspending();
+   ~PotsBcLocalSuspending() = default;
 };
 
 class PotsBcRemoteSuspending : public ProxyBcRemoteSuspending
@@ -313,7 +311,7 @@ class PotsBcRemoteSuspending : public ProxyBcRemoteSuspending
    friend class Singleton< PotsBcRemoteSuspending >;
 private:
    PotsBcRemoteSuspending();
-   ~PotsBcRemoteSuspending();
+   ~PotsBcRemoteSuspending() = default;
 };
 
 class PotsBcException : public ProxyBcException
@@ -321,7 +319,7 @@ class PotsBcException : public ProxyBcException
    friend class Singleton< PotsBcException >;
 private:
    PotsBcException();
-   ~PotsBcException();
+   ~PotsBcException() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -338,7 +336,7 @@ public:
    static const Initiator::Priority PotsBocPriority = 45;
 private:
    PotsAuthorizeOriginationSap();
-   ~PotsAuthorizeOriginationSap();
+   ~PotsAuthorizeOriginationSap() = default;
 };
 
 class PotsCollectInformationSap : public BcTrigger
@@ -351,7 +349,7 @@ public:
    static const Initiator::Priority PotsWmlPriority = 50;
 private:
    PotsCollectInformationSap();
-   ~PotsCollectInformationSap();
+   ~PotsCollectInformationSap() = default;
 };
 
 class PotsAuthorizeTerminationSap : public BcTrigger
@@ -365,7 +363,7 @@ public:
    static const Initiator::Priority PotsCfuPriority = 40;
 private:
    PotsAuthorizeTerminationSap();
-   ~PotsAuthorizeTerminationSap();
+   ~PotsAuthorizeTerminationSap() = default;
 };
 
 class PotsLocalBusySap : public BcTrigger
@@ -378,7 +376,7 @@ public:
    static const Initiator::Priority PotsCfbPriority = 45;
 private:
    PotsLocalBusySap();
-   ~PotsLocalBusySap();
+   ~PotsLocalBusySap() = default;
 };
 
 class PotsLocalAlertingSnp : public BcTrigger
@@ -388,7 +386,7 @@ public:
    static const Initiator::Priority PotsCfnPriority = 50;
 private:
    PotsLocalAlertingSnp();
-   ~PotsLocalAlertingSnp();
+   ~PotsLocalAlertingSnp() = default;
 };
 
 //------------------------------------------------------------------------------
@@ -443,24 +441,24 @@ public:
 
    //  Clears the call for the reason specified by CAUSE.
    //
-   virtual EventHandler::Rc ClearCall(Cause::Ind cause) override;
+   EventHandler::Rc ClearCall(Cause::Ind cause) override;
 
    //  Overridden to observe the next service alteration point.
    //
-   virtual void SetNextSap(TriggerId sap) override;
+   void SetNextSap(TriggerId sap) override;
 
    //  Overridden to observe the next service notification point.
    //
-   virtual void SetNextSnp(TriggerId snp) override;
+   void SetNextSnp(TriggerId snp) override;
 
    //  Overridden to analyze timeout messages that can arrive on the CIP PSM.
    //
-   virtual EventHandler::Rc AnalyzeNPsmTimeout
+   EventHandler::Rc AnalyzeNPsmTimeout
       (const TlvMessage& msg, Event*& nextEvent) override;
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 protected:
    //  Protected to restrict deletion.  Virtual to allow subclassing.
@@ -469,7 +467,7 @@ protected:
 
    //  Overridden to handle deletion of the user-side PSM.
    //
-   virtual void PsmDeleted(ProtocolSM& exPsm) override;
+   void PsmDeleted(ProtocolSM& exPsm) override;
 private:
    //  The subscriber profile associated with the call.
    //

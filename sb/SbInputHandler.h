@@ -44,7 +44,7 @@ public:
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Protected because this is class is virtual.
    //
@@ -54,7 +54,7 @@ protected:
    //  that already has a MsgHeader.  Supports unbundling (e.g. for messages
    //  arriving over TCP).
    //
-   virtual IpBuffer* AllocBuff(const byte_t* source, size_t size,
+   IpBuffer* AllocBuff(const byte_t* source, size_t size,
       byte_t*& dest, size_t& rcvd, SysTcpSocket* socket) const override;
 
    //  Overridden to queue the message for an invoker thread.  Invoked by
@@ -84,7 +84,7 @@ protected:
    //    //
    //    SbInputHandler::ReceiveBuff(buffer, size, faction);
    //
-   virtual void ReceiveBuff
+   void ReceiveBuff
       (IpBufferPtr& buff, size_t size, Faction faction) const override;
 };
 }

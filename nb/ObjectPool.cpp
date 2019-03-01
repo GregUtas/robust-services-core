@@ -78,7 +78,7 @@ public:
    explicit ObjectPoolSizeCfg(ObjectPool* pool);
    ~ObjectPoolSizeCfg();
 protected:
-   virtual void SetCurr() override;
+   void SetCurr() override;
 private:
    ObjectPool* pool_;
 };

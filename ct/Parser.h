@@ -56,7 +56,7 @@ namespace CodeTools
 //
 //  reserved words:
 //    o asm, alignas, alignof, char16_t, char32_t, concept, decltype, export,
-//      final, goto, register, requires, static_assert, thread_local, volatile
+//      goto, register, requires, static_assert, thread_local, volatile
 //    o wchar_t (supported by a typedef)
 //    o and, and_eq, bitand, bitor, compl, not, not_eq, or, or_eq, xor, xor_eq
 //    o #undef, #line, #pragma (parsed but have no effect)

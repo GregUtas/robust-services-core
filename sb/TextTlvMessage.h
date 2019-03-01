@@ -45,12 +45,12 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Creates an incoming message.  Protected because this class is virtual.
    //  TEXT contains the incoming text message, which must be preceded by a
@@ -71,7 +71,7 @@ protected:
 
    //  Overridden to invoke Build before sending the message.
    //
-   virtual bool Send(Route route) override;
+   bool Send(Route route) override;
 private:
    //  Converts an incoming text message to TLV format.  Returns the TLV
    //  version of the message.  Invoked by Receive.

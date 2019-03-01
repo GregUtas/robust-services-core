@@ -30,16 +30,6 @@
 
 namespace CallBase
 {
-BcEventHandler::BcEventHandler() { }
-
-BcEventHandler::~BcEventHandler() { }
-
-//------------------------------------------------------------------------------
-
-BcNuAnalyzeRemoteMessage::BcNuAnalyzeRemoteMessage() { }
-
-BcNuAnalyzeRemoteMessage::~BcNuAnalyzeRemoteMessage() { }
-
 fn_name BcNuAnalyzeRemoteMessage_ProcessEvent =
    "BcNuAnalyzeRemoteMessage.ProcessEvent";
 
@@ -63,10 +53,6 @@ EventHandler::Rc BcNuAnalyzeRemoteMessage::ProcessEvent
 }
 
 //------------------------------------------------------------------------------
-
-BcScAnalyzeRemoteMessage::BcScAnalyzeRemoteMessage() { }
-
-BcScAnalyzeRemoteMessage::~BcScAnalyzeRemoteMessage() { }
 
 fn_name BcScAnalyzeRemoteMessage_ProcessEvent =
    "BcScAnalyzeRemoteMessage.ProcessEvent";
@@ -121,10 +107,6 @@ EventHandler::Rc BcScAnalyzeRemoteMessage::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-BcOaAnalyzeRemoteMessage::BcOaAnalyzeRemoteMessage() { }
-
-BcOaAnalyzeRemoteMessage::~BcOaAnalyzeRemoteMessage() { }
-
 fn_name BcOaAnalyzeRemoteMessage_ProcessEvent =
    "BcOaAnalyzeRemoteMessage.ProcessEvent";
 
@@ -166,10 +148,6 @@ EventHandler::Rc BcOaAnalyzeRemoteMessage::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-BcPcAnalyzeRemoteMessage::BcPcAnalyzeRemoteMessage() { }
-
-BcPcAnalyzeRemoteMessage::~BcPcAnalyzeRemoteMessage() { }
-
 fn_name BcPcAnalyzeRemoteMessage_ProcessEvent =
    "BcPcAnalyzeRemoteMessage.ProcessEvent";
 
@@ -199,10 +177,6 @@ EventHandler::Rc BcPcAnalyzeRemoteMessage::ProcessEvent
 }
 
 //------------------------------------------------------------------------------
-
-BcAcAnalyzeRemoteMessage::BcAcAnalyzeRemoteMessage() { }
-
-BcAcAnalyzeRemoteMessage::~BcAcAnalyzeRemoteMessage() { }
 
 fn_name BcAcAnalyzeRemoteMessage_ProcessEvent =
    "BcAcAnalyzeRemoteMessage.ProcessEvent";

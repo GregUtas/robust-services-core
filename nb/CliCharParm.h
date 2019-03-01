@@ -45,20 +45,20 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Overridden to look for a valid character.
    //
-   virtual Rc GetCharParmRc(char& c, CliThread& cli) const override;
+   Rc GetCharParmRc(char& c, CliThread& cli) const override;
 private:
    //  Overridden to show the acceptable character inputs.
    //
-   virtual bool ShowValues(std::string& values) const override;
+   bool ShowValues(std::string& values) const override;
 
    //> Separates valid input characters in parameter help text.
    //

@@ -216,13 +216,13 @@ class BotTcpService : public TcpIpService
 public:
    //  Overridden to return the service's attributes.
    //
-   virtual const char* Name() const override { return "Diplomacy"; }
-   virtual ipport_t Port() const override;
-   virtual Faction GetFaction() const override { return PayloadFaction; }
-   virtual bool AcceptsConns() const override { return false; }
-   virtual size_t MaxConns() const override { return 4; }
-   virtual size_t MaxBacklog() const override { return 0; }
-   virtual bool Keepalive() const override { return true; }
+   const char* Name() const override { return "Diplomacy"; }
+   ipport_t Port() const override;
+   Faction GetFaction() const override { return PayloadFaction; }
+   bool AcceptsConns() const override { return false; }
+   size_t MaxConns() const override { return 4; }
+   size_t MaxBacklog() const override { return 0; }
+   bool Keepalive() const override { return true; }
 
    //  Sets the service's port number.
    //
@@ -230,7 +230,7 @@ public:
 
    //  Overridden to display the service's data.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
    //  Private because this singleton is not subclassed.
@@ -243,16 +243,15 @@ private:
 
    //  Overridden to return the socket's buffer sizes.
    //
-   virtual void GetAppSocketSizes
-      (size_t& rxSize, size_t& txSize) const override;
+   void GetAppSocketSizes(size_t& rxSize, size_t& txSize) const override;
 
    //  Overridden to create a CLI parameter that identifies the protocol.
    //
-   virtual CliText* CreateText() const override;
+   CliText* CreateText() const override;
 
    //  Overridden to create the Diplomacy input handler.
    //
-   virtual InputHandler* CreateHandler(IpPort* port) const override;
+   InputHandler* CreateHandler(IpPort* port) const override;
 
    //  The port on which the protocol is running.
    //
@@ -277,27 +276,27 @@ public:
    //  Overridden to allocate a DipIpBuffer for a Diplomacy message that has
    //  received over TCP.
    //
-   virtual IpBuffer* AllocBuff(const byte_t* source, size_t size,
+   IpBuffer* AllocBuff(const byte_t* source, size_t size,
       byte_t*& dest, size_t& rcvd, SysTcpSocket* socket) const override;
 
    //  Overridden to convert an incoming message from network to host order.
    //
-   virtual void NetworkToHost(IpBuffer& buff,
+   void NetworkToHost(IpBuffer& buff,
       byte_t* dest, const byte_t* src, size_t size) const override;
 
    //  Overridden to queue an incoming message for BotThread.
    //
-   virtual void ReceiveBuff
+   void ReceiveBuff
       (IpBufferPtr& buff, size_t size, Faction faction) const override;
 
    //  Overridden to convert an outgoing message from host to network order.
    //
-   virtual byte_t* HostToNetwork(IpBuffer& buff,
+   byte_t* HostToNetwork(IpBuffer& buff,
       byte_t* src, size_t size) const override;
 
    //  Overridden to queue an incoming message for BotThread.
    //
-   virtual void SocketFailed(SysSocket* socket) const override;
+   void SocketFailed(SysSocket* socket) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -326,16 +325,15 @@ public:
 
    //  Overridden to return the number of bytes currently in the message.
    //
-   virtual size_t PayloadSize() const override { return currSize_; }
+   size_t PayloadSize() const override { return currSize_; }
 
    //  Overridden to track the number of bytes currently in the message.
    //
-   virtual bool AddBytes
-      (const byte_t* source, size_t size, bool& moved) override;
+   bool AddBytes(const byte_t* source, size_t size, bool& moved) override;
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden to obtain a buffer from its object pool.

@@ -100,7 +100,7 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
    //  Deleted to prohibit copying.
@@ -143,7 +143,7 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 protected:
    //  Adds the treatment against the queue identified by QID.  Protected
@@ -181,12 +181,12 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
    //  Applies tone_ and starts a timer that expires in duration_ seconds.
    //
-   virtual EventHandler::Rc ApplyTreatment
+   EventHandler::Rc ApplyTreatment
       (const BcApplyTreatmentEvent& ate) const override;
 
    //  The tone that the treatment applies.
@@ -213,7 +213,7 @@ public:
 private:
    //  Sends a Lockout message and puts the circuit in the lockout state.
    //
-   virtual EventHandler::Rc ApplyTreatment
+   EventHandler::Rc ApplyTreatment
       (const BcApplyTreatmentEvent& ate) const override;
 };
 
@@ -233,7 +233,7 @@ public:
 private:
    //  Sends a Release message and puts the circuit in the idle state.
    //
-   virtual EventHandler::Rc ApplyTreatment
+   EventHandler::Rc ApplyTreatment
       (const BcApplyTreatmentEvent& ate) const override;
 };
 }

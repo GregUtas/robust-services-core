@@ -234,80 +234,48 @@ PotsProxyService::~PotsProxyService()
 PotsProxyNull::PotsProxyNull() :
    ProxyBcNull(PotsProxyServiceId) { }
 
-PotsProxyNull::~PotsProxyNull() { }
-
 PotsProxyAuthorizingOrigination::PotsProxyAuthorizingOrigination() :
    ProxyBcAuthorizingOrigination(PotsProxyServiceId) { }
-
-PotsProxyAuthorizingOrigination::~PotsProxyAuthorizingOrigination() { }
 
 PotsProxyCollectingInformation::PotsProxyCollectingInformation() :
    ProxyBcCollectingInformation(PotsProxyServiceId) { }
 
-PotsProxyCollectingInformation::~PotsProxyCollectingInformation() { }
-
 PotsProxyAnalyzingInformation::PotsProxyAnalyzingInformation() :
    ProxyBcAnalyzingInformation(PotsProxyServiceId) { }
-
-PotsProxyAnalyzingInformation::~PotsProxyAnalyzingInformation() { }
 
 PotsProxySelectingRoute::PotsProxySelectingRoute() :
    ProxyBcSelectingRoute(PotsProxyServiceId) { }
 
-PotsProxySelectingRoute::~PotsProxySelectingRoute() { }
-
 PotsProxyAuthorizingCallSetup::PotsProxyAuthorizingCallSetup() :
    ProxyBcAuthorizingCallSetup(PotsProxyServiceId) { }
-
-PotsProxyAuthorizingCallSetup::~PotsProxyAuthorizingCallSetup() { }
 
 PotsProxySendingCall::PotsProxySendingCall() :
    ProxyBcSendingCall(PotsProxyServiceId) { }
 
-PotsProxySendingCall::~PotsProxySendingCall() { }
-
 PotsProxyOrigAlerting::PotsProxyOrigAlerting() :
    ProxyBcOrigAlerting(PotsProxyServiceId) { }
-
-PotsProxyOrigAlerting::~PotsProxyOrigAlerting() { }
 
 PotsProxyAuthorizingTermination::PotsProxyAuthorizingTermination() :
    ProxyBcAuthorizingTermination(PotsProxyServiceId) { }
 
-PotsProxyAuthorizingTermination::~PotsProxyAuthorizingTermination() { }
-
 PotsProxySelectingFacility::PotsProxySelectingFacility() :
    ProxyBcSelectingFacility(PotsProxyServiceId) { }
-
-PotsProxySelectingFacility::~PotsProxySelectingFacility() { }
 
 PotsProxyPresentingCall::PotsProxyPresentingCall() :
    ProxyBcPresentingCall(PotsProxyServiceId) { }
 
-PotsProxyPresentingCall::~PotsProxyPresentingCall() { }
-
 PotsProxyTermAlerting::PotsProxyTermAlerting() :
    ProxyBcTermAlerting(PotsProxyServiceId) { }
-
-PotsProxyTermAlerting::~PotsProxyTermAlerting() { }
 
 PotsProxyActive::PotsProxyActive() :
    ProxyBcActive(PotsProxyServiceId) { }
 
-PotsProxyActive::~PotsProxyActive() { }
-
 PotsProxyLocalSuspending::PotsProxyLocalSuspending() :
    ProxyBcLocalSuspending(PotsProxyServiceId) { }
-
-PotsProxyLocalSuspending::~PotsProxyLocalSuspending() { }
 
 PotsProxyRemoteSuspending::PotsProxyRemoteSuspending() :
    ProxyBcRemoteSuspending(PotsProxyServiceId) { }
 
-PotsProxyRemoteSuspending::~PotsProxyRemoteSuspending() { }
-
 PotsProxyException::PotsProxyException() :
    ProxyBcException(PotsProxyServiceId) { }
-
-PotsProxyException::~PotsProxyException() { }
 }

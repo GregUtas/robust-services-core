@@ -68,7 +68,7 @@ public:
    //  nothing and returns false if the thread is to be excluded from this
    //  trace.  May be overridden, but this version should be invoked first.
    //
-   virtual bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, bool diff) override;
 protected:
    //  See TraceRecord for a description of the arguments.  Protected
    //  because this class is virtual.

@@ -46,9 +46,9 @@ class PotsShelfIpService : public UdpIpService
 public:
    //  Overridden to return the service's attributes.
    //
-   virtual const char* Name() const override { return "POTS Shelf"; }
-   virtual ipport_t Port() const override { return ipport_t(port_); }
-   virtual Faction GetFaction() const override { return PayloadFaction; }
+   const char* Name() const override { return "POTS Shelf"; }
+   ipport_t Port() const override { return ipport_t(port_); }
+   Faction GetFaction() const override { return PayloadFaction; }
 private:
    //  Private because this singleton is not subclassed.
    //
@@ -60,11 +60,11 @@ private:
 
    //  Overridden to create a CLI parameter for identifying the protocol.
    //
-   virtual CliText* CreateText() const override;
+   CliText* CreateText() const override;
 
    //  Overridden to create the POTS shelf input handler.
    //
-   virtual InputHandler* CreateHandler(IpPort* port) const override;
+   InputHandler* CreateHandler(IpPort* port) const override;
 
    //  The port on which the protocol is running.
    //
@@ -93,7 +93,7 @@ private:
    //  Overridden to add a SessionBase header to a message arriving over the
    //  IP stack.
    //
-   virtual void ReceiveBuff
+   void ReceiveBuff
       (IpBufferPtr& buff, size_t size, Faction faction) const override;
 };
 
@@ -119,28 +119,28 @@ private:
 
    //  Overridden to return a CLI parameter that identifies the factory.
    //
-   virtual CliText* CreateText() const override;
+   CliText* CreateText() const override;
 
    //  Overridden to wrap an incoming message.
    //
-   virtual Message* AllocIcMsg(SbIpBufferPtr& buff) const override;
+   Message* AllocIcMsg(SbIpBufferPtr& buff) const override;
 
    //  Overridden to process an incoming message.
    //
-   virtual void ProcessIcMsg(Message& msg) const override;
+   void ProcessIcMsg(Message& msg) const override;
 
    //  Overridden to allocate an outgoing message that will be injected via
    //  a test tool.
    //
-   virtual Message* AllocOgMsg(SignalId sid) const override;
+   Message* AllocOgMsg(SignalId sid) const override;
 
    //  Overridden to inject a message on behalf of a test tool.
    //
-   virtual bool InjectMsg(Message& msg) const override;
+   bool InjectMsg(Message& msg) const override;
 
    //  Overridden to create a message wrapper when a test tool saves BUFF.
    //
-   virtual Message* ReallocOgMsg(SbIpBufferPtr& buff) const override;
+   Message* ReallocOgMsg(SbIpBufferPtr& buff) const override;
 };
 }
 #endif

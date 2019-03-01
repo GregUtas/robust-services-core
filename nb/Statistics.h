@@ -67,12 +67,12 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Creates a statistic which is explained by EXPL.  To support
    //  scaling, values are divided by DIVISOR before being displayed
@@ -143,11 +143,11 @@ public:
 
    //  Overridden to display the statistic.
    //
-   virtual void DisplayStat(std::ostream& stream) const override;
+   void DisplayStat(std::ostream& stream) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 };
 
 //------------------------------------------------------------------------------
@@ -195,15 +195,15 @@ public:
 
    //  Overridden to return the value over all measurement periods.
    //
-   virtual uint64_t Overall() const override;
+   uint64_t Overall() const override;
 
    //  Overridden to display the statistic.
    //
-   virtual void DisplayStat(std::ostream& stream) const override;
+   void DisplayStat(std::ostream& stream) const override;
 private:
    //  Overridden to start a new measurement interval.
    //
-   virtual void StartInterval(bool first) override;
+   void StartInterval(bool first) override;
 };
 
 //------------------------------------------------------------------------------
@@ -231,15 +231,15 @@ public:
 
    //  Overridden to return the value over all measurement periods.
    //
-   virtual uint64_t Overall() const override;
+   uint64_t Overall() const override;
 
    //  Overridden to display the statistic.
    //
-   virtual void DisplayStat(std::ostream& stream) const override;
+   void DisplayStat(std::ostream& stream) const override;
 private:
    //  Overridden to start a new measurement interval.
    //
-   virtual void StartInterval(bool first) override;
+   void StartInterval(bool first) override;
 };
 }
 #endif

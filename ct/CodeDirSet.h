@@ -41,22 +41,20 @@ public:
 
    //  Override the operators supported by a set of code directories.
    //
-   virtual LibrarySet* Create
-      (const std::string& name, SetOfIds* set) const override;
-   virtual LibrarySet* Files() const override;
+   LibrarySet* Create(const std::string& name, SetOfIds* set) const override;
+   LibrarySet* Files() const override;
 
    //  Returns the type of set.
    //
-   virtual LibSetType GetType() const override { return DIR_SET; }
+   LibSetType GetType() const override { return DIR_SET; }
 
    //  Displays the full directory paths in STREAM and returns 0.
    //
-   virtual NodeBase::word List
-      (std::ostream& stream, std::string& expl) const override;
+   NodeBase::word List(std::ostream& stream, std::string& expl) const override;
 
    //  Displays the directory names in RESULT and returns 0.
    //
-   virtual NodeBase::word Show(std::string& result) const override;
+   NodeBase::word Show(std::string& result) const override;
 private:
    //  Private to restrict deletion.  Not subclassed.
    //

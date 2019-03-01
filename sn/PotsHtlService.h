@@ -37,7 +37,7 @@ class PotsHtlInitiator : public Initiator
 public:
    PotsHtlInitiator();
 private:
-   virtual EventHandler::Rc ProcessEvent(const ServiceSM& parentSsm,
+   EventHandler::Rc ProcessEvent(const ServiceSM& parentSsm,
       Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -47,7 +47,7 @@ class PotsHtlService : public Service
 private:
    PotsHtlService();
    ~PotsHtlService();
-   virtual ServiceSM* AllocModifier() const override;
+   ServiceSM* AllocModifier() const override;
 };
 }
 #endif

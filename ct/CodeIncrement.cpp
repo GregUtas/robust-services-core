@@ -150,7 +150,7 @@ class AssignCommand : public CliCommand
 public:
    AssignCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string AssignStr = "assign";
@@ -190,7 +190,7 @@ class BreakCommand : public CliCommand
 public:
    BreakCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string BreakStr = "break";
@@ -358,7 +358,7 @@ class CheckCommand : public LibraryCommand
 public:
    CheckCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string CheckStr = "check";
@@ -514,7 +514,7 @@ class CoverageCommand : public LibraryCommand
 public:
    CoverageCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string CoverageStr = "coverage";
@@ -583,7 +583,7 @@ class CountCommand : public LibraryCommand
 public:
    CountCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string CountStr = "count";
@@ -619,7 +619,7 @@ class CountlinesCommand : public LibraryCommand
 public:
    CountlinesCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string CountlinesStr = "countlines";
@@ -665,7 +665,7 @@ class ExportCommand : public CliCommand
 public:
    ExportCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string ExportStr = "export";
@@ -720,7 +720,7 @@ class FileIdCommand : public CliCommand
 public:
    FileIdCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string FileIdMandExpl = "file's identifier";
@@ -767,7 +767,7 @@ class FileInfoCommand : public CliCommand
 public:
    FileInfoCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string CodeFileExpl = "filename (including extension)";
@@ -826,7 +826,7 @@ class FixCommand : public LibraryCommand
 public:
    FixCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string FixStr = "fix";
@@ -871,7 +871,7 @@ class FormatCommand : public LibraryCommand
 public:
    FormatCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string FormatStr = "format";
@@ -917,7 +917,7 @@ class ImportCommand : public CliCommand
 public:
    ImportCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string DirMandNameExpl = "directory name";
@@ -965,7 +965,7 @@ class ListCommand : public LibraryCommand
 public:
    ListCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string ListStr = "list";
@@ -1020,7 +1020,7 @@ class ParseCommand : public LibraryCommand
 public:
    ParseCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string ParseStr = "parse";
@@ -1068,7 +1068,7 @@ class PurgeCommand : public CliCommand
 public:
    PurgeCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string PurgeStr = "purge";
@@ -1109,7 +1109,7 @@ word PurgeCommand::ProcessCommand(CliThread& cli) const
    public:
       ScanCommand();
    private:
-      virtual word ProcessCommand(CliThread& cli) const override;
+      word ProcessCommand(CliThread& cli) const override;
    };
 
 fixed_string StringPatternExpl = "string to look for (quoted; '$' = wildcard)";
@@ -1195,7 +1195,7 @@ public:
 
    ShowCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string DirsTextStr = "dirs";
@@ -1319,7 +1319,7 @@ class ShrinkCommand : public CliCommand
 public:
    ShrinkCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -1350,7 +1350,7 @@ class SortCommand : public LibraryCommand
 public:
    SortCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string SortStr = "sort";
@@ -1387,7 +1387,7 @@ class TrimCommand : public LibraryCommand
 public:
    TrimCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string TrimStr = "trim";
@@ -1437,7 +1437,7 @@ class TypeCommand : public LibraryCommand
 public:
    TypeCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string TypeStr = "type";
@@ -1473,7 +1473,7 @@ class ExpCommand : public CliCommand
 public:
    ExpCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 //------------------------------------------------------------------------------

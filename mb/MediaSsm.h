@@ -48,11 +48,11 @@ public:
 
    //  Overridden to enumerate all objects that the SSM owns.
    //
-   virtual void GetSubtended(Base* objects[], size_t& count) const override;
+   void GetSubtended(Base* objects[], size_t& count) const override;
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 protected:
    //  Protected because this class is virtual.
@@ -67,7 +67,7 @@ protected:
    //  deletion of the media gateway PSM.  May be overridden, but the base
    //  class version must be invoked,
    //
-   virtual void PsmDeleted(ProtocolSM& exPsm) override;
+   void PsmDeleted(ProtocolSM& exPsm) override;
 private:
    //  Informs all PSMs that are listening to txPsm that they should now
    //  listen to txPort.

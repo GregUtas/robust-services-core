@@ -45,12 +45,12 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Returns the parameter's current value.
    //
@@ -64,21 +64,21 @@ protected:
 
    //  Overridden to prefix the parameter's type and allowed values.
    //
-   virtual void Explain(std::string& expl) const override;
+   void Explain(std::string& expl) const override;
 
    //  Calls GetCurrValue and maps the result to a string that corresponds
    //  to the parameter's current value.
    //
-   virtual std::string GetCurr() const override;
+   std::string GetCurr() const override;
 
    //  Overridden to transfer next_ to curr_.
    //
-   virtual void SetCurr() override;
+   void SetCurr() override;
 
    //  Calls SetNextValue based on the value of INPUT, which is converted
    //  to an integer by reading it from an istringstream.
    //
-   virtual bool SetNext(const std::string& input) override;
+   bool SetNext(const std::string& input) override;
 private:
    //  A pointer to the field that contains the parameter's value.
    //

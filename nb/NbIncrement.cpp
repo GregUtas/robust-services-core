@@ -112,7 +112,7 @@ class AuditCommand : public CliCommand
 public:
    AuditCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string AuditSecondsExpl = "seconds between audits (0 = disabled)";
@@ -203,7 +203,7 @@ class BuffersCommand : public CliCommand
 public:
    BuffersCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string BuffersStr = "buffers";
@@ -282,7 +282,7 @@ class CfgParmsCommand : public CliCommand
 public:
    CfgParmsCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string CfgParmNameExpl = "name of configuration parameter";
@@ -518,7 +518,7 @@ class DelayCommand : public CliCommand
 public:
    DelayCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string DelayTimeExpl = "time (secs)";
@@ -558,7 +558,7 @@ class DisplayCommand : public CliCommand
 public:
    DisplayCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string DisplayStr = "display";
@@ -605,7 +605,7 @@ class DumpCommand : public CliCommand
 public:
    DumpCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string ByteCountExpl = "number of bytes to display";
@@ -713,7 +713,7 @@ class HeapsCommand : public CliCommand
 public:
    HeapsCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string HeapsStr = "heaps";
@@ -754,7 +754,7 @@ class HelpCommand : public CliCommand
 public:
    HelpCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
    static word DisplayHelpFile(const CliThread& cli, const string& name);
 };
 
@@ -957,7 +957,7 @@ class IfCommand : public CliCommand
 public:
    IfCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string IfSymbolExpl = "symbol for an integer (e.g. &cli.result)";
@@ -1110,7 +1110,7 @@ class IncrsCommand : public CliCommand
 public:
    IncrsCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string IncrsStr = "incrs";
@@ -1194,7 +1194,7 @@ class ModulesCommand : public CliCommand
 public:
    ModulesCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string ModulesStr = "modules";
@@ -1250,7 +1250,7 @@ class PoolsCommand : public CliCommand
 public:
    PoolsCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string PoolsStr = "pools";
@@ -1311,7 +1311,7 @@ class PrintCommand : public CliCommand
 public:
    PrintCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string PrintParmExpl = "the string to be written to the console";
@@ -1345,7 +1345,7 @@ class PsignalsCommand : public CliCommand
 public:
    PsignalsCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string PsignalsStr = "psignals";
@@ -1449,7 +1449,7 @@ class QuitCommand : public CliCommand
 public:
    QuitCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string QuitAllStr = "all";
@@ -1508,7 +1508,7 @@ class ReadCommand : public CliCommand
 public:
    ReadCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string ReadWhereExpl = "read input from <str>.txt";
@@ -1589,7 +1589,7 @@ class RestartCommand : public CliCommand
 public:
    RestartCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string WarmTextStr = "warm";
@@ -1809,7 +1809,7 @@ class SchedCommand : public CliCommand
 public:
    SchedCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string SchedShowTextStr = "show";
@@ -1960,7 +1960,7 @@ public:
    SendCommand();
    static void SendAckToOutputFile(const CliThread& cli);
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string CoutTextStr = "cout";
@@ -2217,7 +2217,7 @@ class SingletonsCommand : public CliCommand
 public:
    SingletonsCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string SingletonsStr = "singletons";
@@ -2257,7 +2257,7 @@ class StartCommand : public CliCommand
 public:
    StartCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string ImmediateExpl = "immediate tracing? (default=f)";
@@ -2332,7 +2332,7 @@ class StatisticsCommand : public CliCommand
 public:
    StatisticsCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string GroupsTextStr = "groups";
@@ -2559,7 +2559,7 @@ class StopCommand : public CliCommand
 public:
    StopCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string StopStr = "stop";
@@ -2622,7 +2622,7 @@ class SymbolsCommand : public CliCommand
 public:
    SymbolsCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string SymbolOptNameExpl = "symbol's name (lists all if omitted)";
@@ -2791,7 +2791,7 @@ class ThreadsCommand : public CliCommand
 public:
    ThreadsCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string ThreadsStr = "threads";
@@ -2860,7 +2860,7 @@ class ToolsCommand : public CliCommand
 public:
    ToolsCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string ToolsStr = "tools";

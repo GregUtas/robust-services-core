@@ -72,12 +72,12 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Used by InvokerPool to create an invoker that runs in FACTION.
    //  Private to restrict creation.
@@ -103,30 +103,30 @@ private:
 
    //  Overridden to return a name for the thread.
    //
-   virtual const char* AbbrName() const override;
+   const char* AbbrName() const override;
 
    //  Overridden to dequeue work from the appropriate invoker pool and
    //  process it.
    //
-   virtual void Enter() override;
+   void Enter() override;
 
    //  Overridden to deny blocking by the last unblocked invoker and to track
    //  the currently running invoker.
    //
-   virtual bool BlockingAllowed(BlockingReason why, fn_name_arg func) override;
+   bool BlockingAllowed(BlockingReason why, fn_name_arg func) override;
 
    //  Overridden to track the currently running invoker.
    //
-   virtual void ScheduledIn(fn_name_arg func) override;
+   void ScheduledIn(fn_name_arg func) override;
 
    //  Overridden to support the tracing of individual contexts.
    //
-   virtual TraceStatus CalcStatus(bool dynamic) const override;
+   TraceStatus CalcStatus(bool dynamic) const override;
 
    //  Overridden to log and delete the objects involved in a serious
    //  error before reentering the thread.
    //
-   virtual RecoveryAction Recover() override;
+   RecoveryAction Recover() override;
 
    //  The thread's identifier in its InvokerPool.
    //

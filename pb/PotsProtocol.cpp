@@ -54,7 +54,7 @@ class PotsAlertingSignal : public PotsSignal
    friend class Singleton< PotsAlertingSignal >;
 private:
    PotsAlertingSignal();
-   virtual CliText* CreateText() const override;
+   CliText* CreateText() const override;
 };
 
 class AlertingText : public CliText
@@ -67,7 +67,7 @@ class PotsDigitsSignal : public PotsSignal
    friend class Singleton< PotsDigitsSignal >;
 private:
    PotsDigitsSignal();
-   virtual CliText* CreateText() const override;
+   CliText* CreateText() const override;
 };
 
 class DigitsText : public CliText
@@ -80,7 +80,7 @@ class PotsFacilitySignal : public PotsSignal
    friend class Singleton< PotsFacilitySignal >;
 private:
    PotsFacilitySignal();
-   virtual CliText* CreateText() const override;
+   CliText* CreateText() const override;
 };
 
 class FacilityText : public CliText
@@ -93,7 +93,7 @@ class PotsFlashSignal : public PotsSignal
    friend class Singleton< PotsFlashSignal >;
 private:
    PotsFlashSignal();
-   virtual CliText* CreateText() const override;
+   CliText* CreateText() const override;
 };
 
 class FlashText : public CliText
@@ -106,7 +106,7 @@ class PotsReleaseSignal : public PotsSignal
    friend class Singleton< PotsReleaseSignal >;
 private:
    PotsReleaseSignal();
-   virtual CliText* CreateText() const override;
+   CliText* CreateText() const override;
 };
 
 class ReleaseText : public CliText
@@ -119,7 +119,7 @@ class PotsLockoutSignal : public PotsSignal
    friend class Singleton< PotsLockoutSignal >;
 private:
    PotsLockoutSignal();
-   virtual CliText* CreateText() const override;
+   CliText* CreateText() const override;
 };
 
 class LockoutText : public CliText
@@ -132,7 +132,7 @@ class PotsOffhookSignal : public PotsSignal
    friend class Singleton< PotsOffhookSignal >;
 private:
    PotsOffhookSignal();
-   virtual CliText* CreateText() const override;
+   CliText* CreateText() const override;
 };
 
 class PotsOnhookSignal : public PotsSignal
@@ -140,7 +140,7 @@ class PotsOnhookSignal : public PotsSignal
    friend class Singleton< PotsOnhookSignal >;
 private:
    PotsOnhookSignal();
-   virtual CliText* CreateText() const override;
+   CliText* CreateText() const override;
 };
 
 class OffhookText : public CliText
@@ -158,7 +158,7 @@ class PotsProgressSignal : public PotsSignal
    friend class Singleton< PotsProgressSignal >;
 private:
    PotsProgressSignal();
-   virtual CliText* CreateText() const override;
+   CliText* CreateText() const override;
 };
 
 class ProgressText : public CliText
@@ -171,7 +171,7 @@ class PotsSuperviseSignal : public PotsSignal
    friend class Singleton< PotsSuperviseSignal >;
 private:
    PotsSuperviseSignal();
-   virtual CliText* CreateText() const override;
+   CliText* CreateText() const override;
 };
 
 class SuperviseText : public CliText
@@ -193,7 +193,7 @@ class PotsDigitsParameter : public AddressParameter
    friend class Singleton< PotsDigitsParameter >;
 private:
    PotsDigitsParameter();
-   virtual CliParm* CreateCliParm(Usage use) const override;
+   CliParm* CreateCliParm(Usage use) const override;
 };
 
 class DigitsParm : public CliTextParm
@@ -205,12 +205,11 @@ class PotsFacilityParameter : public PotsParameter
 {
    friend class Singleton< PotsFacilityParameter >;
 private:
-   virtual void DisplayMsg(ostream& stream, const string& prefix,
+   void DisplayMsg(ostream& stream, const string& prefix,
       const byte_t* bytes, size_t count) const override;
-   virtual CliParm* CreateCliParm(Usage use) const override;
-   virtual TestRc InjectMsg
-      (CliThread& cli, Message& msg, Usage use) const override;
-   virtual TestRc VerifyMsg
+   CliParm* CreateCliParm(Usage use) const override;
+   TestRc InjectMsg(CliThread& cli, Message& msg, Usage use) const override;
+   TestRc VerifyMsg
       (CliThread& cli, const Message& msg, Usage use) const override;
    PotsFacilityParameter();
 };
@@ -239,12 +238,11 @@ class PotsHeaderParameter : public PotsParameter
 {
    friend class Singleton< PotsHeaderParameter >;
 private:
-   virtual void DisplayMsg(ostream& stream, const string& prefix,
+   void DisplayMsg(ostream& stream, const string& prefix,
       const byte_t* bytes, size_t count) const override;
-   virtual CliParm* CreateCliParm(Usage use) const override;
-   virtual TestRc InjectMsg
-      (CliThread& cli, Message& msg, Usage use) const override;
-   virtual TestRc VerifyMsg
+   CliParm* CreateCliParm(Usage use) const override;
+   TestRc InjectMsg(CliThread& cli, Message& msg, Usage use) const override;
+   TestRc VerifyMsg
       (CliThread& cli, const Message& msg, Usage use) const override;
    PotsHeaderParameter();
 };
@@ -272,10 +270,10 @@ class PotsRingParameter : public PotsParameter
 {
    friend class Singleton< PotsRingParameter >;
 private:
-   virtual void DisplayMsg(ostream& stream, const string& prefix,
+   void DisplayMsg(ostream& stream, const string& prefix,
       const byte_t* bytes, size_t count) const override;
-   virtual CliParm* CreateCliParm(Usage use) const override;
-   virtual TestRc VerifyMsg
+   CliParm* CreateCliParm(Usage use) const override;
+   TestRc VerifyMsg
       (CliThread& cli, const Message& msg, Usage use) const override;
    PotsRingParameter();
 };
@@ -289,10 +287,10 @@ class PotsScanParameter : public PotsParameter
 {
    friend class Singleton< PotsScanParameter >;
 private:
-   virtual void DisplayMsg(ostream& stream, const string& prefix,
+   void DisplayMsg(ostream& stream, const string& prefix,
       const byte_t* bytes, size_t count) const override;
-   virtual CliParm* CreateCliParm(Usage use) const override;
-   virtual TestRc VerifyMsg
+   CliParm* CreateCliParm(Usage use) const override;
+   TestRc VerifyMsg
       (CliThread& cli, const Message& msg, Usage use) const override;
    PotsScanParameter();
 };
@@ -345,8 +343,6 @@ PotsProtocol::~PotsProtocol()
 //==============================================================================
 
 PotsSignal::PotsSignal(Id sid) : Signal(PotsProtocolId, sid) { }
-
-PotsSignal::~PotsSignal() { }
 
 //------------------------------------------------------------------------------
 
@@ -492,10 +488,6 @@ SuperviseText::SuperviseText() :
 //==============================================================================
 
 PotsParameter::PotsParameter(Id pid) : TlvParameter(PotsProtocolId, pid) { }
-
-//------------------------------------------------------------------------------
-
-PotsParameter::~PotsParameter() { }
 
 //==============================================================================
 

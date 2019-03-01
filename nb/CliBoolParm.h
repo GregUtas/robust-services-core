@@ -45,15 +45,15 @@ public:
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Overridden to look for a boolean.
    //
-   virtual Rc GetBoolParmRc(bool& b, CliThread& cli) const override;
+   Rc GetBoolParmRc(bool& b, CliThread& cli) const override;
 private:
    //  Overridden to show 't' and 'f' as acceptable inputs.
    //
-   virtual bool ShowValues(std::string& values) const override;
+   bool ShowValues(std::string& values) const override;
 
    //> Indicates a boolean value in parameter help text.
    //

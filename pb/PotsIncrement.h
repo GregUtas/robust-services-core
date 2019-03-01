@@ -40,9 +40,9 @@ public:
    PbSizesCommand() = default;
    virtual ~PbSizesCommand() = default;
 protected:
-   virtual void DisplaySizes(CliThread& cli, bool all) const override;
+   void DisplaySizes(CliThread& cli, bool all) const override;
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 //------------------------------------------------------------------------------

@@ -40,15 +40,15 @@ class Dynamic : public Object
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~Dynamic() { }
+   virtual ~Dynamic() = default;
 
    //  Overridden to return the type of memory used by subclasses.
    //
-   virtual MemoryType MemType() const override { return MemDyn; }
+   MemoryType MemType() const override { return MemDyn; }
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 
    //  Overridden to allocate memory from the dynamic heap.
    //

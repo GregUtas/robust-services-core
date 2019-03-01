@@ -1795,6 +1795,7 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
             if(editor != nullptr) rc = editor->FixLog(**log, expl);
             *cli.obuf << spaces(2) << (expl.empty() ? SuccessExpl : expl);
             *cli.obuf << CRLF;
+            expl.clear();
          }
 
          break;

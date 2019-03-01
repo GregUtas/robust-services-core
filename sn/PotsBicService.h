@@ -37,7 +37,7 @@ class PotsBicInitiator : public Initiator
 public:
    PotsBicInitiator();
 private:
-   virtual EventHandler::Rc ProcessEvent(const ServiceSM& parentSsm,
+   EventHandler::Rc ProcessEvent(const ServiceSM& parentSsm,
       Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -47,7 +47,7 @@ class PotsBicService : public Service
 private:
    PotsBicService();
    ~PotsBicService();
-   virtual ServiceSM* AllocModifier() const override;
+   ServiceSM* AllocModifier() const override;
 };
 }
 #endif

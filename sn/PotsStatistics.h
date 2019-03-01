@@ -68,7 +68,7 @@ public:
 
    //  Overridden to display the group's statistics.
    //
-   virtual void DisplayStats(std::ostream& stream, id_t id) const override;
+   void DisplayStats(std::ostream& stream, id_t id) const override;
 private:
    //  Private because this singleton is not subclassed.
    //

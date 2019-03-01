@@ -36,16 +36,16 @@ class TlvProtocol : public Protocol
 public:
    //  Overridden to return the signal in BUFF's message header.
    //
-   virtual SignalId ExtractSignal(const SbIpBuffer& buff) const override;
+   SignalId ExtractSignal(const SbIpBuffer& buff) const override;
 
    //  Overridden to display BUFF's contents.
    //
-   virtual void DisplayMsg(std::ostream& stream,
+   void DisplayMsg(std::ostream& stream,
       const std::string& prefix, const SbIpBuffer& buff) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  The arguments are for the base class constructor.  Protected because
    //  this class is virtual.

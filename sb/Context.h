@@ -168,16 +168,16 @@ public:
 
    //  Overridden to enumerate all objects that the context owns.
    //
-   virtual void GetSubtended(Base* objects[], size_t& count) const override;
+   void GetSubtended(Base* objects[], size_t& count) const override;
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Creates a context that will run in FACTION.  Protected because this
    //  class is virtual.
@@ -199,7 +199,7 @@ protected:
    //  Overridden to disassociate the context from any work queue and/or
    //  invoker thread during error recovery.
    //
-   virtual void Cleanup() override;
+   void Cleanup() override;
 
    //  Returns the trace record if the context's current transaction is
    //  being traced.

@@ -104,7 +104,7 @@ public:
 
    StCorruptCommand();
 private:
-   virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   word ProcessSubcommand(CliThread& cli, id_t index) const override;
 };
 
 fixed_string ContextTextStr = "context";
@@ -196,7 +196,7 @@ class InjectCommand : public CliCommand
 public:
    InjectCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string InjectStr = "inject";
@@ -403,7 +403,7 @@ public:
 
    StSaveCommand();
 private:
-   virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   word ProcessSubcommand(CliThread& cli, id_t index) const override;
 };
 
 fixed_string DebugTraceExpl = "include internal data structures? (default=f)";
@@ -559,7 +559,7 @@ public:
 
    StTestcaseCommand();
 private:
-   virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   word ProcessSubcommand(CliThread& cli, id_t index) const override;
 };
 
 fixed_string TestVerifyTextStr = "verify";
@@ -632,7 +632,7 @@ class VerifyCommand : public CliCommand
 public:
    VerifyCommand();
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 fixed_string VerifyStr = "verify";

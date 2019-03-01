@@ -44,15 +44,15 @@ public:
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Overridden to create a TcpIoThread for the port.
    //
-   virtual IoThread* CreateIoThread() override;
+   IoThread* CreateIoThread() override;
 
    //  Overridden to create a TCP socket for an application instance.
    //
-   virtual SysTcpSocket* CreateAppSocket() override;
+   SysTcpSocket* CreateAppSocket() override;
 };
 }
 #endif

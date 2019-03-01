@@ -157,11 +157,11 @@ public:
 
    //  Overridden for restarts.
    //
-   virtual void Shutdown(NodeBase::RestartLevel level) override;
+   void Shutdown(NodeBase::RestartLevel level) override;
 
    //  Overridden for restarts.
    //
-   virtual void Startup(NodeBase::RestartLevel level) override;
+   void Startup(NodeBase::RestartLevel level) override;
 private:
    //  Adds any macros identified by NAME to LIST, but only those that
    //  have been defined.

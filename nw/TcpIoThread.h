@@ -57,16 +57,16 @@ public:
 
    //  Overridden to claim IpBuffers queued for output.
    //
-   virtual void ClaimBlocks() override;
+   void ClaimBlocks() override;
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Protected to restrict deletion.
    //
@@ -74,19 +74,19 @@ protected:
 
    //  Overridden to release resources in order to unblock.
    //
-   virtual void Unblock() override;
+   void Unblock() override;
 
    //  Overridden to release resources during error recovery.
    //
-   virtual void Cleanup() override;
+   void Cleanup() override;
 private:
    //  Overridden to return a name for the thread.
    //
-   virtual const char* AbbrName() const override;
+   const char* AbbrName() const override;
 
    //  Overridden to receive TCP messages on PORT.
    //
-   virtual void Enter() override;
+   void Enter() override;
 
    //  Returns the listener socket.
    //

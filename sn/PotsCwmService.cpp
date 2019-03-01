@@ -176,7 +176,7 @@ class PotsCwmRemoteReleaseEvent : public PotsCwmEvent
 {
 public:
    Cause::Ind GetCause() const { return cause_; }
-   virtual void Display(ostream& stream,
+   void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
 protected:
    PotsCwmRemoteReleaseEvent(Id eid, ServiceSM& owner, Cause::Ind cause);
@@ -233,8 +233,8 @@ public:
    static const Id AcQuiesce               = NextId + 14;
    static const Id AcRelay                 = NextId + 15;
 protected:
-   PotsCwmEventHandler();
-   virtual ~PotsCwmEventHandler();
+   PotsCwmEventHandler() = default;
+   virtual ~PotsCwmEventHandler() = default;
 };
 
 class PotsCwmInAnalyzeNetworkMessage : public PotsCwmEventHandler
@@ -242,7 +242,7 @@ class PotsCwmInAnalyzeNetworkMessage : public PotsCwmEventHandler
    friend class Singleton< PotsCwmInAnalyzeNetworkMessage >;
 private:
    PotsCwmInAnalyzeNetworkMessage() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -251,7 +251,7 @@ class PotsCwmInFacility : public PotsCwmEventHandler
    friend class Singleton< PotsCwmInFacility >;
 private:
    PotsCwmInFacility() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -260,7 +260,7 @@ class PotsCwmAcAnalyzeUserMessage : public PotsCwmEventHandler
    friend class Singleton< PotsCwmAcAnalyzeUserMessage >;
 private:
    PotsCwmAcAnalyzeUserMessage() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -269,7 +269,7 @@ class PotsCwmAcAnalyzeNetworkMessage : public PotsCwmEventHandler
    friend class Singleton< PotsCwmAcAnalyzeNetworkMessage >;
 private:
    PotsCwmAcAnalyzeNetworkMessage() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -278,7 +278,7 @@ class PotsCwmAcNotify : public PotsCwmEventHandler
    friend class Singleton< PotsCwmAcNotify >;
 private:
    PotsCwmAcNotify() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -287,7 +287,7 @@ class PotsCwmAcToneTimeout : public PotsCwmEventHandler
    friend class Singleton< PotsCwmAcToneTimeout >;
 private:
    PotsCwmAcToneTimeout() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -296,7 +296,7 @@ class PotsCwmAcRenotify : public PotsCwmEventHandler
    friend class Singleton< PotsCwmAcRenotify >;
 private:
    PotsCwmAcRenotify() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -305,7 +305,7 @@ class PotsCwmAcFlipflop : public PotsCwmEventHandler
    friend class Singleton< PotsCwmAcFlipflop >;
 private:
    PotsCwmAcFlipflop() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -314,7 +314,7 @@ class PotsCwmAcReanswer : public PotsCwmEventHandler
    friend class Singleton< PotsCwmAcReanswer >;
 private:
    PotsCwmAcReanswer() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -323,7 +323,7 @@ class PotsCwmAcReanswerTimeout : public PotsCwmEventHandler
    friend class Singleton< PotsCwmAcReanswerTimeout >;
 private:
    PotsCwmAcReanswerTimeout() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -332,7 +332,7 @@ class PotsCwmAcReconnect : public PotsCwmEventHandler
    friend class Singleton< PotsCwmAcReconnect >;
 private:
    PotsCwmAcReconnect() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -341,7 +341,7 @@ class PotsCwmAcLocalRelease : public PotsCwmEventHandler
    friend class Singleton< PotsCwmAcLocalRelease >;
 private:
    PotsCwmAcLocalRelease() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -350,7 +350,7 @@ class PotsCwmAcActiveRelease : public PotsCwmEventHandler
    friend class Singleton< PotsCwmAcActiveRelease >;
 private:
    PotsCwmAcActiveRelease() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -359,7 +359,7 @@ class PotsCwmAcInactiveRelease : public PotsCwmEventHandler
    friend class Singleton< PotsCwmAcInactiveRelease >;
 private:
    PotsCwmAcInactiveRelease() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -368,7 +368,7 @@ class PotsCwmAcQuiesce : public PotsCwmEventHandler
    friend class Singleton< PotsCwmAcQuiesce >;
 private:
    PotsCwmAcQuiesce() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -377,7 +377,7 @@ class PotsCwmAcRelay : public PotsCwmEventHandler
    friend class Singleton< PotsCwmAcRelay >;
 private:
    PotsCwmAcRelay() = default;
-   virtual Rc ProcessEvent
+   Rc ProcessEvent
       (ServiceSM& ssm, Event& currEvent, Event*& nextEvent) const override;
 };
 
@@ -440,8 +440,8 @@ public:
    EventHandler::Rc Reanswer();
    EventHandler::Rc StopReringing();
    void ReleaseCwt(Facility::Ind ind);
-   virtual void SetNextState(StateId stid) override;
-   virtual void Display(ostream& stream,
+   void SetNextState(StateId stid) override;
+   void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
 private:
    PotsMuxSsm* Mux() const { return static_cast< PotsMuxSsm* >(Parent()); }
@@ -454,13 +454,12 @@ private:
    static EventHandler::Rc SendFacilityNack(PotsMuxPsm* npsm, ServiceId sid);
    void SetSubstate(Substate state);
    void ConnectInactiveCall(Tone::Id tone);
-   virtual ServicePortId CalcPort(const AnalyzeMsgEvent& ame) override;
-   virtual EventHandler::Rc ProcessInitAck
+   ServicePortId CalcPort(const AnalyzeMsgEvent& ame) override;
+   EventHandler::Rc ProcessInitAck
       (Event& currEvent, Event*& nextEvent) override;
-   virtual EventHandler::Rc ProcessInitNack
+   EventHandler::Rc ProcessInitNack
       (Event& currEvent, Event*& nextEvent) override;
-   virtual EventHandler::Rc ProcessSip
-      (Event& currEvent, Event*& nextEvent) override;
+   EventHandler::Rc ProcessSip(Event& currEvent, Event*& nextEvent) override;
 
    Substate substate_;
    PotsMuxSsm::CallId activeCall_;
@@ -1952,12 +1951,6 @@ void PotsCwmSsm::StopTimer(TimerId tid)
    UPsm()->StopTimer(*this, tid_);
    tid_ = NIL_ID;
 }
-
-//------------------------------------------------------------------------------
-
-PotsCwmEventHandler::PotsCwmEventHandler() { }
-
-PotsCwmEventHandler::~PotsCwmEventHandler() { }
 
 //------------------------------------------------------------------------------
 

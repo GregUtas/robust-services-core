@@ -52,8 +52,8 @@ class ObjPoolTraceTool : public Tool
    friend class Singleton< ObjPoolTraceTool >;
 private:
    ObjPoolTraceTool() : Tool(ObjPoolTracer, 'o', true) { }
-   virtual const char* Name() const override { return ObjPoolTraceToolName; }
-   virtual const char* Expl() const override { return ObjPoolTraceToolExpl; }
+   const char* Name() const override { return ObjPoolTraceToolName; }
+   const char* Expl() const override { return ObjPoolTraceToolExpl; }
 };
 
 //------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ class ObjectPoolStatsGroup : public StatisticsGroup
 public:
    ObjectPoolStatsGroup();
    ~ObjectPoolStatsGroup();
-   virtual void DisplayStats(ostream& stream, id_t id) const override;
+   void DisplayStats(ostream& stream, id_t id) const override;
 };
 
 //------------------------------------------------------------------------------

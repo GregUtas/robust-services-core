@@ -145,42 +145,30 @@ const char* ProxyBcService::PortName(PortId pid) const
 
 ProxyBcNull::ProxyBcNull(ServiceId sid) : BcNull(sid) { }
 
-ProxyBcNull::~ProxyBcNull() { }
-
 //------------------------------------------------------------------------------
 
 ProxyBcAuthorizingOrigination::ProxyBcAuthorizingOrigination(ServiceId sid) :
    BcAuthorizingOrigination(sid) { }
-
-ProxyBcAuthorizingOrigination::~ProxyBcAuthorizingOrigination() { }
 
 //------------------------------------------------------------------------------
 
 ProxyBcCollectingInformation::ProxyBcCollectingInformation(ServiceId sid) :
    BcCollectingInformation(sid) { }
 
-ProxyBcCollectingInformation::~ProxyBcCollectingInformation() { }
-
 //------------------------------------------------------------------------------
 
 ProxyBcAnalyzingInformation::ProxyBcAnalyzingInformation(ServiceId sid) :
    BcAnalyzingInformation(sid) { }
-
-ProxyBcAnalyzingInformation::~ProxyBcAnalyzingInformation() { }
 
 //------------------------------------------------------------------------------
 
 ProxyBcSelectingRoute::ProxyBcSelectingRoute(ServiceId sid) :
    BcSelectingRoute(sid) { }
 
-ProxyBcSelectingRoute::~ProxyBcSelectingRoute() { }
-
 //------------------------------------------------------------------------------
 
 ProxyBcAuthorizingCallSetup::ProxyBcAuthorizingCallSetup(ServiceId sid) :
    BcAuthorizingCallSetup(sid) { }
-
-ProxyBcAuthorizingCallSetup::~ProxyBcAuthorizingCallSetup() { }
 
 //------------------------------------------------------------------------------
 
@@ -190,8 +178,6 @@ ProxyBcSendingCall::ProxyBcSendingCall(ServiceId sid) : BcSendingCall(sid)
       (ProxyBcEventHandler::ReleaseUser, ProxyBcEvent::ReleaseUser);
 }
 
-ProxyBcSendingCall::~ProxyBcSendingCall() { }
-
 //------------------------------------------------------------------------------
 
 ProxyBcOrigAlerting::ProxyBcOrigAlerting(ServiceId sid) : BcOrigAlerting(sid)
@@ -200,21 +186,15 @@ ProxyBcOrigAlerting::ProxyBcOrigAlerting(ServiceId sid) : BcOrigAlerting(sid)
       (ProxyBcEventHandler::ReleaseUser, ProxyBcEvent::ReleaseUser);
 }
 
-ProxyBcOrigAlerting::~ProxyBcOrigAlerting() { }
-
 //------------------------------------------------------------------------------
 
 ProxyBcAuthorizingTermination::ProxyBcAuthorizingTermination(ServiceId sid) :
    BcAuthorizingTermination(sid) { }
 
-ProxyBcAuthorizingTermination::~ProxyBcAuthorizingTermination() { }
-
 //------------------------------------------------------------------------------
 
 ProxyBcSelectingFacility::ProxyBcSelectingFacility(ServiceId sid) :
    BcSelectingFacility(sid) { }
-
-ProxyBcSelectingFacility::~ProxyBcSelectingFacility() { }
 
 //------------------------------------------------------------------------------
 
@@ -232,8 +212,6 @@ ProxyBcPresentingCall::ProxyBcPresentingCall(ServiceId sid) :
    BindEventHandler
       (ProxyBcEventHandler::ProxyRelease, ProxyBcEvent::ProxyRelease);
 }
-
-ProxyBcPresentingCall::~ProxyBcPresentingCall() { }
 
 //------------------------------------------------------------------------------
 
@@ -253,8 +231,6 @@ ProxyBcTermAlerting::ProxyBcTermAlerting(ServiceId sid) : BcTermAlerting(sid)
       (ProxyBcEventHandler::ProxyRelease, ProxyBcEvent::ProxyRelease);
 }
 
-ProxyBcTermAlerting::~ProxyBcTermAlerting() { }
-
 //------------------------------------------------------------------------------
 
 ProxyBcActive::ProxyBcActive(ServiceId sid) : BcActive(sid)
@@ -273,8 +249,6 @@ ProxyBcActive::ProxyBcActive(ServiceId sid) : BcActive(sid)
       (ProxyBcEventHandler::ProxyRelease, ProxyBcEvent::ProxyRelease);
 }
 
-ProxyBcActive::~ProxyBcActive() { }
-
 //------------------------------------------------------------------------------
 
 ProxyBcLocalSuspending::ProxyBcLocalSuspending(ServiceId sid) :
@@ -291,8 +265,6 @@ ProxyBcLocalSuspending::ProxyBcLocalSuspending(ServiceId sid) :
    BindEventHandler
       (ProxyBcEventHandler::ProxyRelease, ProxyBcEvent::ProxyRelease);
 }
-
-ProxyBcLocalSuspending::~ProxyBcLocalSuspending() { }
 
 //------------------------------------------------------------------------------
 
@@ -311,14 +283,10 @@ ProxyBcRemoteSuspending::ProxyBcRemoteSuspending(ServiceId sid) :
       (ProxyBcEventHandler::ProxyRelease, ProxyBcEvent::ProxyRelease);
 }
 
-ProxyBcRemoteSuspending::~ProxyBcRemoteSuspending() { }
-
 //------------------------------------------------------------------------------
 
 ProxyBcDisconnecting::ProxyBcDisconnecting(ServiceId sid) :
    BcDisconnecting(sid) { }
-
-ProxyBcDisconnecting::~ProxyBcDisconnecting() { }
 
 //------------------------------------------------------------------------------
 
@@ -327,8 +295,6 @@ ProxyBcException::ProxyBcException(ServiceId sid) : BcException(sid)
    BindEventHandler
       (ProxyBcEventHandler::ReleaseUser, ProxyBcEvent::ReleaseUser);
 }
-
-ProxyBcException::~ProxyBcException() { }
 
 //==============================================================================
 
@@ -402,16 +368,6 @@ ProxyBcReleaseEvent::~ProxyBcReleaseEvent()
 
 //==============================================================================
 
-ProxyBcEventHandler::ProxyBcEventHandler() { }
-
-ProxyBcEventHandler::~ProxyBcEventHandler() { }
-
-//------------------------------------------------------------------------------
-
-ProxyBcAnalyzeProxyMessage::ProxyBcAnalyzeProxyMessage() { }
-
-ProxyBcAnalyzeProxyMessage::~ProxyBcAnalyzeProxyMessage() { }
-
 fn_name ProxyBcAnalyzeProxyMessage_ProcessEvent =
    "ProxyBcAnalyzeProxyMessage.ProcessEvent";
 
@@ -448,10 +404,6 @@ EventHandler::Rc ProxyBcAnalyzeProxyMessage::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-ProxyBcProgressHandler::ProxyBcProgressHandler() { }
-
-ProxyBcProgressHandler::~ProxyBcProgressHandler() { }
-
 fn_name ProxyBcProgressHandler_ProcessEvent =
    "ProxyBcProgressHandler.ProcessEvent";
 
@@ -487,10 +439,6 @@ EventHandler::Rc ProxyBcProgressHandler::ProcessEvent
 
 //------------------------------------------------------------------------------
 
-ProxyBcAnswerHandler::ProxyBcAnswerHandler() { }
-
-ProxyBcAnswerHandler::~ProxyBcAnswerHandler() { }
-
 fn_name ProxyBcAnswerHandler_ProcessEvent = "ProxyBcAnswerHandler.ProcessEvent";
 
 EventHandler::Rc ProxyBcAnswerHandler::ProcessEvent
@@ -518,10 +466,6 @@ EventHandler::Rc ProxyBcAnswerHandler::ProcessEvent
 }
 
 //------------------------------------------------------------------------------
-
-ProxyBcReleaseHandler::ProxyBcReleaseHandler() { }
-
-ProxyBcReleaseHandler::~ProxyBcReleaseHandler() { }
 
 fn_name ProxyBcReleaseHandler_ProcessEvent =
    "ProxyBcReleaseHandler.ProcessEvent";

@@ -48,8 +48,7 @@ namespace CodeTools
 
    //  Implements lhs = rhs1 | rhs2.
    //
-   void SetUnion
-      (SetOfIds& lhs, const SetOfIds& rhs1, const SetOfIds& rhs2);
+   void SetUnion(SetOfIds& lhs, const SetOfIds& rhs1, const SetOfIds& rhs2);
 
    //  Implements lhs = lhs | rhs.
    //

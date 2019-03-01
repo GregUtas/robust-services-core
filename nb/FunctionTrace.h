@@ -39,7 +39,7 @@ class FunctionTrace : public TimedRecord
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~FunctionTrace() { }
+   virtual ~FunctionTrace() = default;
 
    //  How functions are being traced.
    //
@@ -77,7 +77,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   virtual bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, bool diff) override;
 
    //  Mask for selecting FunctionTrace records when using TraceBuffer::Next.
    //

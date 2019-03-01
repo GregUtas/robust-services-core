@@ -102,7 +102,7 @@ public:
 
    //  Overridden to display the bot's data.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 protected:
    //  Sets report_ when a bot wants to enable/disable the output of game

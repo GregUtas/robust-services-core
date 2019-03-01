@@ -77,7 +77,7 @@ public:
 
    //  Overridden for restarts.
    //
-   virtual void Shutdown(NodeBase::RestartLevel level) override;
+   void Shutdown(NodeBase::RestartLevel level) override;
 private:
    //  Private because this singleton is not subclassed.
    //

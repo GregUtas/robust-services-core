@@ -149,11 +149,11 @@ public:
 
    //  Overridden to indicate that this socket is running TCP.
    //
-   virtual IpProtocol Protocol() const override { return IpTcp; }
+   IpProtocol Protocol() const override { return IpTcp; }
 
    //  Overridden to configure the socket for a keepalive if required.
    //
-   virtual AllocRc SetService(const IpService* service, bool shared) override;
+   AllocRc SetService(const IpService* service, bool shared) override;
 
    //  The socket's state with respect to the application.
    //
@@ -195,20 +195,20 @@ public:
 
    //  Overridden to send BUFF.
    //
-   virtual SendRc SendBuff(IpBuffer& buff) override;
+   SendRc SendBuff(IpBuffer& buff) override;
 
    //  Overridden to claim IpBuffers queued for output.
    //
-   virtual void ClaimBlocks() override;
+   void ClaimBlocks() override;
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Initiates a disconnect and disables further sends on the socket.
    //  Protected so that subclasses can decide how to expose this function.

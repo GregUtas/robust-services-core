@@ -51,12 +51,12 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Uses SID to invoke SetService.  Protected because this class is
    //  virtual.  A root SSM is constructed by SsmFactory::AllocRoot.
@@ -74,29 +74,26 @@ protected:
 private:
    //  A root service does not receive an SAP, so this kills the context.
    //
-   virtual EventHandler::Rc ProcessSap
-      (Event& currEvent, Event*& nextEvent) override;
+   EventHandler::Rc ProcessSap(Event& currEvent, Event*& nextEvent) override;
 
    //  A root service does not receive an SNP, so this kills the context.
    //
-   virtual EventHandler::Rc ProcessSnp
-      (Event& currEvent, Event*& nextEvent) override;
+   EventHandler::Rc ProcessSnp(Event& currEvent, Event*& nextEvent) override;
 
    //  A root service does not receive an SIP, so this kills the context.
    //
-   virtual EventHandler::Rc ProcessSip
-      (Event& currEvent, Event*& nextEvent) override;
+   EventHandler::Rc ProcessSip(Event& currEvent, Event*& nextEvent) override;
 
    //  A root service does not receive an initiation ack, so this kills
    //  the context.
    //
-   virtual EventHandler::Rc ProcessInitAck
+   EventHandler::Rc ProcessInitAck
       (Event& currEvent, Event*& nextEvent) override;
 
    //  A root service does not receive an initiation nack, so this kills
    //  the context.
    //
-   virtual EventHandler::Rc ProcessInitNack
+   EventHandler::Rc ProcessInitNack
       (Event& currEvent, Event*& nextEvent) override;
 
    //  The context in which the SSM is the root.

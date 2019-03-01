@@ -71,7 +71,7 @@ protected:
    //  Overridden so that Thread::Start can catch this exception.  Subclasses
    //  should override this implementation.
    //
-   virtual const char* what() const noexcept override;
+   const char* what() const noexcept override;
 private:
    //  The function call stack at the time that the exception occurred.
    //  Mutable so that the copy constructor can transfer ownership if

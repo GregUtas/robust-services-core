@@ -35,8 +35,8 @@ class PotsBocFeature : public PotsFeature
 private:
    PotsBocFeature();
    ~PotsBocFeature();
-   virtual CliText* Attrs() const override;
-   virtual PotsFeatureProfile* Subscribe
+   CliText* Attrs() const override;
+   PotsFeatureProfile* Subscribe
       (PotsProfile& profile, CliThread& cli) const override;
 };
 }

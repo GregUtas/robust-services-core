@@ -54,21 +54,21 @@ public:
 
    //  Overridden to display member variables.
    //
-   virtual void Display(std::ostream& stream,
+   void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
-   virtual void Patch(sel_t selector, void* arguments) override;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Overridden to check if VALUE (an IP port) is available.
    //
-   virtual bool SetNextValue(word value) override;
+   bool SetNextValue(word value) override;
 private:
    //  Overridden to indicate that a cold restart is required to move an IP
    //  service to a new port.
    //
-   virtual RestartLevel RestartRequired() const override { return RestartCold; }
+   RestartLevel RestartRequired() const override { return RestartCold; }
 
    //  The service running on the port.
    //

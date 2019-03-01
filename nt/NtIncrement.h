@@ -56,9 +56,9 @@ public:
    explicit CorruptCommand(bool bind = true);
    virtual ~CorruptCommand() = default;
 protected:
-   virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   word ProcessSubcommand(CliThread& cli, id_t index) const override;
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ public:
    explicit NtSetCommand(bool bind = true);
    virtual ~NtSetCommand() = default;
 protected:
-   virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   word ProcessSubcommand(CliThread& cli, id_t index) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -110,7 +110,7 @@ public:
    explicit NtSaveCommand(bool bind = true);
    virtual ~NtSaveCommand() = default;
 protected:
-   virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   word ProcessSubcommand(CliThread& cli, id_t index) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -126,7 +126,7 @@ public:
 protected:
    virtual void DisplaySizes(CliThread& cli, bool all) const;
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -160,9 +160,9 @@ public:
    explicit TestcaseCommand(bool bind = true);
    virtual ~TestcaseCommand() = default;
 protected:
-   virtual word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   word ProcessSubcommand(CliThread& cli, id_t index) const override;
 private:
-   virtual word ProcessCommand(CliThread& cli) const override;
+   word ProcessCommand(CliThread& cli) const override;
 };
 
 //------------------------------------------------------------------------------

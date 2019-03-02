@@ -36,7 +36,6 @@
 
 namespace CodeTools
 {
-   class CodeDir;
    struct CxxUsageSets;
 }
 
@@ -260,7 +259,7 @@ public:
    //  whose .item matches ITEM.  Returns that log.  Updates EXPL with an
    //  error message if the editor could not be created.
    //
-   WarningLog* FindLog(const WarningLog& log,
+   CodeWarning* FindLog(const CodeWarning& log,
       const CxxNamed* item, NodeBase::word offset, std::string& expl) const;
 
    //  Generates a report in STREAM (if not nullptr) for the files in SET.  The

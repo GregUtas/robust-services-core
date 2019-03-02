@@ -25,6 +25,7 @@
 #include <cstddef>
 #include <list>
 #include <string>
+#include <vector>
 #include "CodeTypes.h"
 #include "CodeWarning.h"
 #include "CxxFwd.h"
@@ -85,8 +86,8 @@ public:
    //  Returns the log, if any, whose .warning matches LOG, whose .offset
    //  matches OFFSET, and whose .item matches ITEM.
    //
-   WarningLog* FindLog
-      (const WarningLog& log, const CxxNamed* item, NodeBase::word offset);
+   CodeWarning* FindLog
+      (const CodeWarning& log, const CxxNamed* item, NodeBase::word offset);
 private:
    //  Writes out the editor's file.  Returns 0 if the file was successfully
    //  written; other values indicate failure.  Updates EXPL with a reason
@@ -99,77 +100,77 @@ private:
    //  o Pending: previously fixed but not committed
    //  o Fixed: previously fixed and committed, or fixing not supported
    //
-   WarningStatus FixStatus(const WarningLog& log) const;
+   WarningStatus FixStatus(const CodeWarning& log) const;
 
    //  Displays the code associated with LOG on the CLI.  FILE is set if the
    //  name of the file in which LOG occurs should be displayed.
    //
    void DisplayLog
-      (const NodeBase::CliThread& cli, const WarningLog& log, bool file);
+      (const NodeBase::CliThread& cli, const CodeWarning& log, bool file);
 
    //  Fixes LOG.  Returns 0 on success.  A return value of -1 means that the
    //  file should be skipped; other values denote more serious errors.  EXPL
    //  is updated to provide any explanation, even when returning 0.  When the
    //  code has been edited, EXPL usually contains the revised line of code.
    //
-   word FixWarning(const WarningLog& log, string& expl);
+   word FixWarning(const CodeWarning& log, string& expl);
 
    //  Invokes FixWarning if LOG's status is NotFixed and updates its status
    //  to Pending on success.
    //
-   word FixLog(WarningLog& log, string& expl);
+   word FixLog(CodeWarning& log, string& expl);
 
    //  Most of the editing functions attempt to fix the warning reported in LOG,
    //  returning 0 on success.  Any other result indicates an error, in which
    //  case EXPL provides an explanation.  A return value of -1 means that the
    //  file should be skipped; other values denote more serious errors.
    //
-   word AdjustLineIndentation(const WarningLog& log, string& expl);
-   word AdjustTags(const WarningLog& log, string& expl);
-   word AlignArgumentNames(const WarningLog& log, string& expl);
-   word ChangeClassToStruct(const WarningLog& log, string& expl);
-   word ChangeDebugFtName(const WarningLog& log, string& expl);
-   word ChangeStructToClass(const WarningLog& log, string& expl);
-   word EraseAdjacentSpaces(const WarningLog& log, string& expl);
-   word EraseAccessControl(const WarningLog& log, string& expl);
-   word EraseBlankLine(const WarningLog& log, string& expl);
-   word EraseConst(const WarningLog& log, string& expl);
-   word EraseEnumerator(const WarningLog& log, string& expl);
-   word EraseForward(const WarningLog& log, string& expl);
-   bool EraseLineBreak(const WarningLog& log, string& expl);
-   word EraseMutableTag(const WarningLog& log, string& expl);
-   word EraseNoexceptTag(const WarningLog& log, string& expl);
-   word EraseOverrideTag(const WarningLog& log, string& expl);
-   word EraseSemicolon(const WarningLog& log, string& expl);
-   word EraseVirtualTag(const WarningLog& log, string& expl);
-   word EraseVoidArgument(const WarningLog& log, string& expl);
-   word InitByConstructor(const WarningLog& log, string& expl);
-   word InsertBlankLine(const WarningLog& log, string& expl);
-   word InsertDebugFtCall(const WarningLog& log, string& expl);
-   word InsertDefaultFunction(const WarningLog& log, string& expl);
-   word InsertForward(const WarningLog& log, string& expl);
-   word InsertInclude(const WarningLog& log, string& expl);
-   word InsertIncludeGuard(const WarningLog& log, string& expl);
-   word InsertLineBreak(const WarningLog& log, string& expl);
-   word InsertUsing(const WarningLog& log, string& expl);
-   word RenameIncludeGuard(const WarningLog& log, string& expl);
-   word ReplaceNull(const WarningLog& log, string& expl);
-   word ReplaceSlashAsterisk(const WarningLog& log, string& expl);
-   word ReplaceUsing(const WarningLog& log, string& expl);
-   word TagAsConstArgument(const WarningLog& log, string& expl);
-   word TagAsConstData(const WarningLog& log, string& expl);
-   word TagAsConstFunction(const WarningLog& log, string& expl);
-   word TagAsConstPointer(const WarningLog& log, string& expl);
-   word TagAsConstReference(const WarningLog& log, string& expl);
-   word TagAsDefaulted(const WarningLog& log, string& expl);
-   word TagAsExplicit(const WarningLog& log, string& expl);
-   word TagAsNoexcept(const WarningLog& log, string& expl);
-   word TagAsOverride(const WarningLog& log, string& expl);
-   word TagAsStaticFunction(const WarningLog& log, string& expl);
+   word AdjustLineIndentation(const CodeWarning& log, string& expl);
+   word AdjustTags(const CodeWarning& log, string& expl);
+   word AlignArgumentNames(const CodeWarning& log, string& expl);
+   word ChangeClassToStruct(const CodeWarning& log, string& expl);
+   word ChangeDebugFtName(const CodeWarning& log, string& expl);
+   word ChangeStructToClass(const CodeWarning& log, string& expl);
+   word EraseAdjacentSpaces(const CodeWarning& log, string& expl);
+   word EraseAccessControl(const CodeWarning& log, string& expl);
+   word EraseBlankLine(const CodeWarning& log, string& expl);
+   word EraseConst(const CodeWarning& log, string& expl);
+   word EraseEnumerator(const CodeWarning& log, string& expl);
+   word EraseForward(const CodeWarning& log, string& expl);
+   bool EraseLineBreak(const CodeWarning& log, string& expl);
+   word EraseMutableTag(const CodeWarning& log, string& expl);
+   word EraseNoexceptTag(const CodeWarning& log, string& expl);
+   word EraseOverrideTag(const CodeWarning& log, string& expl);
+   word EraseSemicolon(const CodeWarning& log, string& expl);
+   word EraseVirtualTag(const CodeWarning& log, string& expl);
+   word EraseVoidArgument(const CodeWarning& log, string& expl);
+   word InitByConstructor(const CodeWarning& log, string& expl);
+   word InsertBlankLine(const CodeWarning& log, string& expl);
+   word InsertDebugFtCall(const CodeWarning& log, string& expl);
+   word InsertDefaultFunction(const CodeWarning& log, string& expl);
+   word InsertForward(const CodeWarning& log, string& expl);
+   word InsertInclude(const CodeWarning& log, string& expl);
+   word InsertIncludeGuard(const CodeWarning& log, string& expl);
+   word InsertLineBreak(const CodeWarning& log, string& expl);
+   word InsertUsing(const CodeWarning& log, string& expl);
+   word RenameIncludeGuard(const CodeWarning& log, string& expl);
+   word ReplaceNull(const CodeWarning& log, string& expl);
+   word ReplaceSlashAsterisk(const CodeWarning& log, string& expl);
+   word ReplaceUsing(const CodeWarning& log, string& expl);
+   word TagAsConstArgument(const CodeWarning& log, string& expl);
+   word TagAsConstData(const CodeWarning& log, string& expl);
+   word TagAsConstFunction(const CodeWarning& log, string& expl);
+   word TagAsConstPointer(const CodeWarning& log, string& expl);
+   word TagAsConstReference(const CodeWarning& log, string& expl);
+   word TagAsDefaulted(const CodeWarning& log, string& expl);
+   word TagAsExplicit(const CodeWarning& log, string& expl);
+   word TagAsNoexcept(const CodeWarning& log, string& expl);
+   word TagAsOverride(const CodeWarning& log, string& expl);
+   word TagAsStaticFunction(const CodeWarning& log, string& expl);
 
    //  Erases the line of code referenced by LOG.
    //
-   word EraseCode(const WarningLog& log, string& expl);
+   word EraseCode(const CodeWarning& log, string& expl);
 
    //  Erases the line of code referenced by LOG.  Comments on preceding
    //  lines, up to the next line of code, are also erased if a comment or
@@ -177,7 +178,7 @@ private:
    //  where the code ends.
    //
    word EraseCode
-      (const WarningLog& log, const std::string& delimiters, string& expl);
+      (const CodeWarning& log, const std::string& delimiters, string& expl);
 
    //  Sorts #include directives in standard order.
    //
@@ -314,13 +315,13 @@ private:
    //  parenthesis at the end of the function's argument list.  Returns
    //  {source_.end(), string::npos} on failure.
    //
-   CodeLocation FindArgsEnd(const WarningLog& log);
+   CodeLocation FindArgsEnd(const CodeWarning& log);
 
    //  If LOG.ITEM is a function, returns the location of the semicolon
    //  at the end of its declaration or the left brace at the end of its
    //  signature.  Returns {source_.end(), string::npos} on failure.
    //
-   CodeLocation FindSigEnd(const WarningLog& log);
+   CodeLocation FindSigEnd(const CodeWarning& log);
 
    //  Returns the line that follows FUNC.
    //
@@ -363,7 +364,7 @@ private:
    //  sets COMMENT if the code should be commented.
    //
    Iter FindInsertionPoint
-      (const WarningLog& log, BlankLineLocation& blank, bool& comment);
+      (const CodeWarning& log, BlankLineLocation& blank, bool& comment);
 
    //  Returns the first line that follows comments and blanks.
    //
@@ -488,7 +489,7 @@ private:
 
    //  The file's warnings.
    //
-   WarningLogVector warnings_;
+   std::vector< CodeWarning > warnings_;
 
    //  The editors that have modified their original code.  This allows an
    //  editor to modify other files (e.g. when a fix requires changes in

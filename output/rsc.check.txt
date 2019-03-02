@@ -1,22 +1,22 @@
 LINE COUNTS
- source code   70384
-       blank   39206
-          //   16244
+ source code   70387
+       blank   39216
+          //   16252
      file //    9739
-separator //    6757
+separator //    6755
    tagged //     208
-     text //   18101
+     text //   18109
           /*       0
-           {   13781
+           {   13780
            }   12111
-          };    1671
+          };    1670
    Debug::ft    4343
      fn_name    4326
     ...split     134
-    #include    5533
+    #include    5532
     #<other>    1058
        using     765
-       TOTAL  204361
+       TOTAL  204385
 
 WARNING COUNTS
   W004    81  C-style cast
@@ -39,8 +39,7 @@ WARNING COUNTS
   W032   183  Unused function
   W033     3  Unused typedef
   W037     9  Member hides inherited name
-  W040     1  Struct could be class
-  W042   255  Member could be private
+  W042   253  Member could be private
   W043    57  Member could be protected
   W044    11  Typedef of pointer type
   W047    38  Data is init-only
@@ -60,7 +59,7 @@ WARNING COUNTS
   W082    84  Adjacent arguments have the same type
   W088    35  Argument could be const
   W090    83  Function could be const
-  W092   157  Function could be free
+  W092   152  Function could be free
   W097    32  Line indentation is not a multiple of the standard value
   W099   284  Line contains adjacent spaces
   W102     3  Line length exceeds the standard maximum
@@ -72,7 +71,7 @@ WARNING COUNTS
   W111    27  Override of Object.Patch not found
   W114    72  Function could be tagged noexcept
   W115    10  Function should not be tagged noexcept
-  W117   217  Line can merge with the next line and be under the length limit
+  W117   215  Line can merge with the next line and be under the length limit
 ========================================================================================================================
 WARNINGS SORTED BY TYPE/FILE/LINE
 W004 C-style cast
@@ -163,15 +162,15 @@ W005 Functional cast
   C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(344):    ipport_t Port() const override { return ipport_t(port_); }
   C:/Users/gregu/Documents/rsc/rsc/cb/DigitString.cpp(139):       auto rc = AddDigit(Digit(ds.digits_[i]));
   C:/Users/gregu/Documents/rsc/rsc/cb/DigitString.cpp(171):    if(i < Size()) return Digit(digits_[i]);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(723):       *stream << setw(12) << LineType(t)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(735):          *stream << setw(6) << WarningCode(Warning(w)) << setw(6)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(736):             << WarningCounts_[w] << spaces(2) << Warning(w) << CRLF;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(263):       *stream << setw(12) << LineType(t)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(275):          *stream << setw(6) << WarningCode(Warning(w)) << setw(6)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(276):             << WarningCounts_[w] << spaces(2) << Warning(w) << CRLF;
   C:/Users/gregu/Documents/rsc/rsc/ct/Cxx.cpp(261):       if(Attrs[i].symbol.compare(sym) == 0) return Cxx::Operator(i);
   C:/Users/gregu/Documents/rsc/rsc/ct/Cxx.cpp(313):          oper = Cxx::Operator(i);
   C:/Users/gregu/Documents/rsc/rsc/ct/Cxx.cpp(364):       Attrs[ValidIntDigits[i]].intValue = int8_t(i);
   C:/Users/gregu/Documents/rsc/rsc/ct/Cxx.cpp(370):       Attrs[ValidHexDigits[i]].hexValue = int8_t(h);
   C:/Users/gregu/Documents/rsc/rsc/ct/Cxx.cpp(375):       Attrs[ValidOctDigits[i]].octValue = int8_t(i);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(697):    *cli.obuf << ": " << Warning(log.warning);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(696):    *cli.obuf << ": " << Warning(log.warning);
   C:/Users/gregu/Documents/rsc/rsc/ct/Interpreter.cpp(148):          type = LibTokenType(i);
   C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1178):          oper = Cxx::Operator(match->second);
   C:/Users/gregu/Documents/rsc/rsc/dip/DipProtocol.cpp(447): ipport_t BotTcpService::Port() const { return ipport_t(port_); }
@@ -382,7 +381,7 @@ W007 Cast down the inheritance hierarchy
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeSet.cpp(100):    auto that = static_cast< const CodeSet* >(rhs);
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeSet.cpp(137):    auto that = static_cast< const CodeSet* >(rhs);
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeSet.cpp(151):    auto that = static_cast< const CodeSet* >(rhs);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(580):       if(static_cast< const Function* >(item)->IsVirtual())
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(865):       if(static_cast< const Function* >(item)->IsVirtual())
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.cpp(211):          static_cast< const Function* >(item)->IsInline())
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.cpp(223):          auto spec = static_cast< ClassInst* >(usingClass)->GetSpec();
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.cpp(1034):    auto area = static_cast< CxxArea* >(GetScope());
@@ -398,15 +397,15 @@ W007 Cast down the inheritance hierarchy
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(1567):    if(AutoType_.SetAutoTypeOn(*static_cast< FuncData* >(item)))
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(1611):    auto ref = static_cast< CxxNamed* >(item);
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(1776):          static_cast< Class* >(root)->BlockCopied(this);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(399):          space = static_cast< Namespace* >(item);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(423):          cls = static_cast< Class* >(item);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(477):          item = static_cast< Enum* >(item)->FindEnumerator(name);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(488):             auto tdef = static_cast< Typedef* >(item);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(493):             item = static_cast< CxxScoped* >(root);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(505):             item = static_cast< CxxScoped* >(ref);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(782):    return static_cast< Class* >(root);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(1990):          ref = static_cast< ClassInst* >(cls)->FindTemplateAnalog(ref);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(2000):       ref = static_cast< Function* >(ref)->FindRootFunc();
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(398):          space = static_cast< Namespace* >(item);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(422):          cls = static_cast< Class* >(item);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(476):          item = static_cast< Enum* >(item)->FindEnumerator(name);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(487):             auto tdef = static_cast< Typedef* >(item);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(492):             item = static_cast< CxxScoped* >(root);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(504):             item = static_cast< CxxScoped* >(ref);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(781):    return static_cast< Class* >(root);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(1989):          ref = static_cast< ClassInst* >(cls)->FindTemplateAnalog(ref);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(1999):       ref = static_cast< Function* >(ref)->FindRootFunc();
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(655):       auto cls = static_cast<const Class*>(scope);
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(1308):    auto cls = static_cast< Class* >(root);
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(1375):          auto op = static_cast< Operation* >(expr);
@@ -455,17 +454,17 @@ W007 Cast down the inheritance hierarchy
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(2332):    auto cls = static_cast< Class* >(root);
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(2371):       static_cast< QualName* >(arg2.item)->MemberAccessed(cls, mem);
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(2394):          mem = static_cast< Function* >(mem)->InstantiateFunction(tmplt);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(231):    auto defn = static_cast< const Function* >(log.item);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(364):    DebugFtCode(static_cast< const Function* >(log.item), defn, call);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(1035):    auto etor = static_cast< const Enumerator* >(log.item);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(1077):    auto eNum = static_cast< const Enum* >(etor->AutoType());
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(1353):    auto func = static_cast< const Function* >(log.item);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(1428):    auto cls = static_cast< const Class* >(log.item);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(2300):    DebugFtCode(static_cast< const Function* >(log.item), defn, call);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(2935):       ns = static_cast< const Namespace* >(ref)->OuterSpace();
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(3327):    auto func = static_cast< const Function* >(log.item);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(3451):    auto defn = static_cast< const Function* >(log.item);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(3563):    auto func = static_cast< const Function* >(log.item);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(230):    auto defn = static_cast< const Function* >(log.item);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(363):    DebugFtCode(static_cast< const Function* >(log.item), defn, call);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(1034):    auto etor = static_cast< const Enumerator* >(log.item);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(1076):    auto eNum = static_cast< const Enum* >(etor->AutoType());
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(1352):    auto func = static_cast< const Function* >(log.item);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(1427):    auto cls = static_cast< const Class* >(log.item);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(2299):    DebugFtCode(static_cast< const Function* >(log.item), defn, call);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(2934):       ns = static_cast< const Namespace* >(ref)->OuterSpace();
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(3326):    auto func = static_cast< const Function* >(log.item);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(3450):    auto defn = static_cast< const Function* >(log.item);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(3562):    auto func = static_cast< const Function* >(log.item);
   C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1812):          auto def = static_cast< Define* >(item);
   C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1816):             auto code = const_cast< string* >(source_);
   C:/Users/gregu/Documents/rsc/rsc/ct/Library.cpp(95):       (static_cast< CfgStrParm* >(reg->FindParm("SourcePath")));
@@ -870,9 +869,9 @@ W008 Cast removes const qualification
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.h(447):    CxxToken* AutoType() const override { return (CxxToken*) this; }
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.h(483):       override { return const_cast< Class* >(this); }
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.h(879):       override { return const_cast< Namespace* >(this); }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(978):    return const_cast< DataSpec* >(this);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(1396):    const_cast< DataSpec* >(this)->FindReferent();
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(2577):    return const_cast< TypeName* >(this);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(977):    return const_cast< DataSpec* >(this);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(1395):    const_cast< DataSpec* >(this)->FindReferent();
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(2576):    return const_cast< TypeName* >(this);
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.h(795):       override { return const_cast< QualName* >(this); }
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.h(1257):    CxxToken* AutoType() const override { return (CxxToken*) this; }
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(2183):    return FoundFunc(const_cast< Function* >(this), args, match);
@@ -953,11 +952,11 @@ W020 Using statement in header
   C:/Users/gregu/Documents/rsc/rsc/cn/CnModule.h(28): using namespace NodeBase;
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeTypes.h(32): using NodeBase::fixed_string;
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeTypes.h(33): using NodeBase::Flags;
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(36): using NodeBase::fixed_string;
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(37): using NodeBase::SPACE;
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(38): using NodeBase::word;
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.h(38): using std::string;
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.h(39): using NodeBase::word;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(37): using NodeBase::fixed_string;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(38): using NodeBase::SPACE;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(39): using NodeBase::word;
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.h(39): using std::string;
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.h(40): using NodeBase::word;
   C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.h(40): using namespace NodeBase;
   C:/Users/gregu/Documents/rsc/rsc/dip/BotThread.h(38): using namespace NodeBase;
   C:/Users/gregu/Documents/rsc/rsc/dip/BotTrace.h(35): using namespace NodeBase;
@@ -1482,7 +1481,7 @@ W022 Add using statement
 W024 Add forward declaration
   C:/Users/gregu/Documents/rsc/rsc/dip/BotType.h(1): class Diplomacy::BaseBot
 W026 Unused argument
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.h(347/3):       const CxxNamed* item, const CxxScope* scope) const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.h(346/3):       const CxxNamed* item, const CxxScope* scope) const;
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.h(638/1):    static void Shutdown(NodeBase::RestartLevel level);
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.h(642/1):    static void Startup(NodeBase::RestartLevel level) { }
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(83/3):       const CxxNamed* item, const CxxScope* scope) const { return nullptr; }
@@ -1660,14 +1659,14 @@ W032 Unused function
   C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(363):    CliText* CreateText() const override;
   C:/Users/gregu/Documents/rsc/rsc/cb/ProxyBcSessions.h(192):    explicit ProxyBcDisconnecting(ServiceId sid);
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeCoverage.h(163):    static std::string Demangle(const std::string& s);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(133):    bool operator!=(const WarningLog& that) const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(135):    bool operator!=(const CodeWarning& that) const;
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.h(135):    size_t Arrays() const;
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.h(278):    bool operator!=(const StackArg& that) const;
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.h(498):    bool operator<(const SourceLoc& that) const;
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxString.h(83):    std::string& Prefix(std::string&& scope);
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(373):       Tags& operator=(const Tags& that) = default;
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(415):       Tags& operator=(const Tags& that) = default;
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.h(249):    CodeLocation PrevPos(const CodeLocation& curr);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.h(250):    CodeLocation PrevPos(const CodeLocation& curr);
   C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.h(111):    void set_report(bool onoff) { report_ = onoff; }
   C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.h(120):    void send_orders_to_server();
   C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.h(124):    void send_nme(fixed_string name, fixed_string version);
@@ -1849,8 +1848,6 @@ W037 Member hides inherited name
   C:/Users/gregu/Documents/rsc/rsc/mb/Tones.h(67):    static ptrdiff_t CellDiff();
   C:/Users/gregu/Documents/rsc/rsc/sb/Context.h(167):    static ptrdiff_t LinkDiff();
   C:/Users/gregu/Documents/rsc/rsc/sb/Timer.h(54):    static ptrdiff_t LinkDiff();
-W040 Struct could be class
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(112): struct WarningLog
 W042 Member could be private
   C:/Users/gregu/Documents/rsc/rsc/cb/BcAddress.h(145):    typedef uint8_t DigitCount;
   C:/Users/gregu/Documents/rsc/rsc/cb/BcAddress.h(175):    static bool IsValidDigit(Digit d)
@@ -1867,10 +1864,8 @@ W042 Member could be private
   C:/Users/gregu/Documents/rsc/rsc/cb/BcSessions.h(1149):    CipPsm* AllocNPsm();
   C:/Users/gregu/Documents/rsc/rsc/cb/ProxyBcSessions.h(492):    ProxyBcPsm* FirstBroadcast() const;
   C:/Users/gregu/Documents/rsc/rsc/cb/ServiceCodeRegistry.h(46):    void SetService(Address::SC sc, ServiceId sid);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.h(108):    bool IsTemplateHeader() const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.h(211):    int CalcGroup(const Include& incl) const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(72):    typedef std::pair< Warning, CodeWarning > WarningPair;
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(76):    typedef std::map< Warning, CodeWarning > AttrsMap;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.h(107):    bool IsTemplateHeader() const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.h(210):    int CalcGroup(const Include& incl) const;
   C:/Users/gregu/Documents/rsc/rsc/ct/Cxx.h(428):    Numeric(NumericType type, size_t width, bool sign) noexcept :
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.h(119):    Typedef* FindType(const std::string& name) const;
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.h(164):    Enum* FindEnum(const std::string& name) const;
@@ -2281,12 +2276,12 @@ W053 Data could be const
   C:/Users/gregu/Documents/rsc/rsc/an/PotsTrafficThread.cpp(172):    Q1Link link_;
   C:/Users/gregu/Documents/rsc/rsc/cb/BcSessions.h(338):    Progress::Ind progress_;
   C:/Users/gregu/Documents/rsc/rsc/cb/BcSessions.h(354):    Cause::Ind cause_;
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(114):    Warning warning;       // type of warning
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(116):    size_t line;           // line where warning occurred
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(117):    size_t pos;            // position in FILE where warning occurred
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(119):    word offset;           // warning-specific; displayed if > 0
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(120):    std::string info;      // warning-specific
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(121):    bool hide;             // set to stop warning from being displayed
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(195):    Warning warning;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(203):    size_t line;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(207):    size_t pos;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(215):    word offset;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(219):    std::string info;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(223):    bool hide;
   C:/Users/gregu/Documents/rsc/rsc/ct/Cxx.h(477):    NumericType type_ : 8;
   C:/Users/gregu/Documents/rsc/rsc/ct/Cxx.h(485):    bool signed_ : 8;
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.h(310):    CxxToken* via_;
@@ -2360,8 +2355,8 @@ W053 Data could be const
   C:/Users/gregu/Documents/rsc/rsc/st/MscContext.h(145):    Q1Link link_;
   C:/Users/gregu/Documents/rsc/rsc/st/MscContextPair.h(85):    Q1Link link_;
 W054 Data could be const pointer
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(115):    const CodeFile* file;  // file where warning occurred
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(118):    const CxxNamed* item;  // item associated with warning
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(199):    const CodeFile* file;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(211):    const CxxNamed* item;
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.h(310):    CxxToken* via_;
   C:/Users/gregu/Documents/rsc/rsc/nb/CfgParm.h(143):    const char* default_;
   C:/Users/gregu/Documents/rsc/rsc/nb/CfgParm.h(147):    const char* expl_;
@@ -3051,10 +3046,10 @@ W077 Virtual function has no overrides
   C:/Users/gregu/Documents/rsc/rsc/sb/TlvMessage.h(260):    virtual void AddFence();
 W082 Adjacent arguments have the same type
   C:/Users/gregu/Documents/rsc/rsc/cb/BcSessions.h(1214):    BcFactory(Id fid, ProtocolId prid, const char* name);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.h(363):    void LogCode(Warning warning, size_t line, size_t pos,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.h(362):    void LogCode(Warning warning, size_t line, size_t pos,
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeTypes.h(296):    SymbolView(Accessibility a, TypeMatch m, bool u, bool f, bool r, Distance d);
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeTypes.h(555): bool LinesCanBeMerged
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(126):    WarningLog(Warning warning, const CodeFile* file,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(102):    CodeWarning(Warning warning, const CodeFile* file,
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.h(244):    TypeMatch CalcMatchWith(const StackArg& that,
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.h(295):    TypeMatch MatchWith(const StackArg& that,
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.h(551):    TypeMatch MatchTemplate(const TypeName* that,
@@ -3067,8 +3062,8 @@ W082 Adjacent arguments have the same type
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxString.h(102):    size_t CompareScopes
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxString.h(140):    size_t Replace(std::string& code,
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(636):    Function* FindNewOrDelete(const StackArg& arg, bool del, bool& pod) const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.h(415):    word InsertNamespaceForward(const Iter& iter,
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.h(443):    static void DebugFtCode
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.h(416):    word InsertNamespaceForward(const Iter& iter,
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.h(444):    static void DebugFtCode
   C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.h(197):    size_t FindClosing(char lhc, char rhc, size_t pos = std::string::npos) const;
   C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.h(383):    void SetDepth(size_t& start, int8_t depth1, int8_t depth2);
   C:/Users/gregu/Documents/rsc/rsc/ct/Library.h(62):    NodeBase::word Import
@@ -3135,7 +3130,7 @@ W082 Adjacent arguments have the same type
   C:/Users/gregu/Documents/rsc/rsc/st/StTestData.h(70):    Message* NextIcMsg(FactoryId fid, SignalId sid, SkipInfo& skip);
   C:/Users/gregu/Documents/rsc/rsc/st/TestSessions.h(345):    Message* NextIcMsg(FactoryId fid, SignalId sid, SkipInfo& skip);
 W088 Argument could be const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.h(293/4):       (Iter iter, size_t pos, const string& id, size_t* range = nullptr);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.h(294/4):       (Iter iter, size_t pos, const string& id, size_t* range = nullptr);
   C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(323/1):    bool GetStatements(BlockPtr& block, bool braced);
   C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(412/1):    bool GetFuncSpecial(FunctionPtr& func);
   C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(425/1):    bool GetCtorInit(FunctionPtr& func);
@@ -3266,13 +3261,8 @@ W092 Function could be free
   C:/Users/gregu/Documents/rsc/rsc/cb/CbModule.h(58):    static bool Register();
   C:/Users/gregu/Documents/rsc/rsc/cn/CnModule.h(58):    static bool Register();
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeCoverage.h(112):    static NodeBase::word Report
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.h(270):    static void GenerateReport(std::ostream* stream, const SetOfIds& set);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.h(269):    static void GenerateReport(std::ostream* stream, const SetOfIds& set);
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeIncrement.cpp(117):    static LibrarySet* Evaluate(const CliThread& cli);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(84):    static void Initialize();
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(186):    static bool IsSortedForFixing
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(199):    static std::string WarningCode(Warning warning);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(203):    static bool IsSortedByFile(const WarningLog& log1, const WarningLog& log2);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(207):    static bool IsSortedByWarning
   C:/Users/gregu/Documents/rsc/rsc/ct/CtModule.h(56):    static bool Register();
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.h(186):    static Function* FoundFunc
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.h(591):    static size_t CreateCodeError
@@ -3285,8 +3275,8 @@ W092 Function could be free
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(285):    static void ShrinkExpression(const ExprPtr& expr);
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(488):    static TypeSpecPtr CreateRef();
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(625):    static void PushType(const std::string& name);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.h(402):    string DemangleInclude(string code) const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.h(457):    static bool IsSorted2(const string& line1, const string& line2);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.h(403):    string DemangleInclude(string code) const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.h(458):    static bool IsSorted2(const string& line1, const string& line2);
   C:/Users/gregu/Documents/rsc/rsc/ct/Interpreter.cpp(52):    static const OperatorInfo* GetAttrs(LibTokenType type);
   C:/Users/gregu/Documents/rsc/rsc/ct/Interpreter.h(62):    static bool IsOperator(const std::string& s);
   C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(198):    static NodeBase::word Counted(std::string& result, const size_t* count);
@@ -3415,14 +3405,14 @@ W092 Function could be free
 W097 Line indentation is not a multiple of the standard value
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeTypes.cpp(225):     const string& line2, size_t begin2, size_t end2)
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeTypes.h(557):     const std::string& line2, size_t begin2, size_t end2);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(191):        tagpos = loc.iter->code.find(tag, tagpos + 1))
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(266):        loc.pos != string::npos;
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(267):        loc = FindWord(loc.iter, loc.pos + 1, *defnName, &range))
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(967):        tag.pos != string::npos;
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(968):        tag = FindWord(tag.iter, tag.pos + 1, CONST_STR))
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(1137):        next->code, 0, next->code.size() - 1)) return false;
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(1303):        arg = FindWord(arg.iter, arg.pos + 1, VOID_STR))
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(2968):           loc = FindWord(loc.iter, loc.pos, name))
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(190):        tagpos = loc.iter->code.find(tag, tagpos + 1))
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(265):        loc.pos != string::npos;
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(266):        loc = FindWord(loc.iter, loc.pos + 1, *defnName, &range))
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(966):        tag.pos != string::npos;
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(967):        tag = FindWord(tag.iter, tag.pos + 1, CONST_STR))
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(1136):        next->code, 0, next->code.size() - 1)) return false;
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(1302):        arg = FindWord(arg.iter, arg.pos + 1, VOID_STR))
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(2967):           loc = FindWord(loc.iter, loc.pos, name))
   C:/Users/gregu/Documents/rsc/rsc/dip/Adjudicator.cpp(113):           a != orders.adjustments.end(); ++a)
   C:/Users/gregu/Documents/rsc/rsc/dip/Adjudicator.cpp(423):           a != orders.adjustments.end(); ++a)
   C:/Users/gregu/Documents/rsc/rsc/dip/Adjudicator.cpp(739):        a != attacks.upper_bound(to_prov); ++a)
@@ -3733,7 +3723,7 @@ W099 Line contains adjacent spaces
 W102 Line length exceeds the standard maximum
   C:/Users/gregu/Documents/rsc/rsc/cb/BcSsm.cpp(300):    for(auto s = BcState::AuthorizingOrigination; s <= BcState::OrigAlerting; ++s)
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(1180):       if((s.front() != '/') && (s.front() != QUOTE)) warnings.insert(Indentation);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(2229):       (lpar.iter->code.find_first_not_of(WhitespaceChars, lpar.pos + 1) == rpar))
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(2228):       (lpar.iter->code.find_first_not_of(WhitespaceChars, lpar.pos + 1) == rpar))
 W103 Function not sorted in standard order
   C:/Users/gregu/Documents/rsc/rsc/nb/NbTypes.cpp(76): char FactionChar(Faction faction)
   C:/Users/gregu/Documents/rsc/rsc/nb/ToolTypes.cpp(67): ostream& operator<<(ostream& stream, TraceStatus status)
@@ -3801,10 +3791,10 @@ W106 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(2065): void CodeFile::InsertType(Typedef* type)
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(2073): void CodeFile::InsertUsing(Using* use)
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeTypes.cpp(223): bool LinesCanBeMerged
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(639): word CodeInfo::FindWarning(const WarningLog& log)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(833): bool CodeInfo::IsSortedByFile(const WarningLog& log1, const WarningLog& log2)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(851): bool CodeInfo::IsSortedByWarning(const WarningLog& log1, const WarningLog& log2)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(869): bool CodeInfo::IsSortedForFixing(const WarningLog& log1, const WarningLog& log2)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(179): word CodeWarning::FindWarning(const CodeWarning& log)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(770): bool CodeWarning::IsSortedByFile
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(789): bool CodeWarning::IsSortedByType
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(808): bool CodeWarning::IsSortedToFix
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.cpp(376): void Class::AddItem(CxxNamed* item)
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.cpp(1276): Class* Class::GetClassTemplate() const
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.cpp(1308): Cxx::Access Class::GetCurrAccess() const
@@ -3828,28 +3818,28 @@ W106 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(735): OptionalCode* ParseFrame::Optional() const
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(922): CxxScope* ParseFrame::Scope() const
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.cpp(953): bool SourceLoc::operator<(const SourceLoc& that) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(74): size_t CxxLocation::GetPos() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(81): void CxxLocation::SetLoc(CodeFile* file, size_t pos)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(203): CxxArea* CxxNamed::GetArea() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(212): Class* CxxNamed::GetClass() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(221): id_t CxxNamed::GetDeclFid() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(230): size_t CxxNamed::GetRange(size_t& begin, size_t& end) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(239): void CxxNamed::GetScopedNames(stringVector& names) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(246): Namespace* CxxNamed::GetSpace() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(255): bool CxxNamed::IsInTemplateInstance() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(612): void CxxNamed::strName(ostream& stream, bool fq, const QualName* name) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(953): TypeTags DataSpec::GetAllTags() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(976): TypeSpec* DataSpec::GetTypeSpec() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(1105): bool DataSpec::IsAutoDecl() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(1837): TypeName* QualName::At(size_t n) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(1946): TypeName* QualName::GetTemplateArgs() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(2026): TypeName* QualName::Last() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(2273): size_t QualName::Size() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(2550): CxxNamed* TypeName::DirectType() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(2574): TypeName* TypeName::GetTemplateArgs() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(2742): void TypeName::PushBack(TypeNamePtr& type)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(3241): int TypeTags::IsConstPtr() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(3249): bool TypeTags::IsConstPtr(size_t n) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(73): size_t CxxLocation::GetPos() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(80): void CxxLocation::SetLoc(CodeFile* file, size_t pos)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(202): CxxArea* CxxNamed::GetArea() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(211): Class* CxxNamed::GetClass() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(220): id_t CxxNamed::GetDeclFid() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(229): size_t CxxNamed::GetRange(size_t& begin, size_t& end) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(238): void CxxNamed::GetScopedNames(stringVector& names) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(245): Namespace* CxxNamed::GetSpace() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(254): bool CxxNamed::IsInTemplateInstance() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(611): void CxxNamed::strName(ostream& stream, bool fq, const QualName* name) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(952): TypeTags DataSpec::GetAllTags() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(975): TypeSpec* DataSpec::GetTypeSpec() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(1104): bool DataSpec::IsAutoDecl() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(1836): TypeName* QualName::At(size_t n) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(1945): TypeName* QualName::GetTemplateArgs() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(2025): TypeName* QualName::Last() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(2272): size_t QualName::Size() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(2549): CxxNamed* TypeName::DirectType() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(2573): TypeName* TypeName::GetTemplateArgs() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(2741): void TypeName::PushBack(TypeNamePtr& type)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(3240): int TypeTags::IsConstPtr() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp(3248): bool TypeTags::IsConstPtr(size_t n) const
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(113): bool Block::CrlfOver(Form form) const
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(232): CxxToken* Block::FirstStatement() const
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(240): Function* Block::GetFunction() const
@@ -3957,12 +3947,12 @@ W106 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(979): Cxx::ItemType Literal::Type() const
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(2707): TypeSpec* StrLiteral::GetTypeSpec() const
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(2714): CxxNamed* StrLiteral::Referent() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(81): bool IsBlank(char c)
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(88): bool IsWordChar(char c)
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(2088): LineType Editor::GetLineType(const Iter& iter) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(2774): bool Editor::IsSorted1(const SourceLine& line1, const SourceLine& line2)
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(2781): bool Editor::IsSorted2(const string& line1, const string& line2)
-  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(2912): void Editor::PushBack(const string& code)
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(80): bool IsBlank(char c)
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(87): bool IsWordChar(char c)
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(2087): LineType Editor::GetLineType(const Iter& iter) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(2773): bool Editor::IsSorted1(const SourceLine& line1, const SourceLine& line2)
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(2780): bool Editor::IsSorted2(const string& line1, const string& line2)
+  C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(2911): void Editor::PushBack(const string& code)
   C:/Users/gregu/Documents/rsc/rsc/ct/Interpreter.cpp(134): const OperatorInfo* OperatorInfo::GetAttrs(LibTokenType type)
   C:/Users/gregu/Documents/rsc/rsc/ct/Interpreter.cpp(142): bool OperatorInfo::GetType(const string& op, LibTokenType& type)
   C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(57): IndentRule ClassifyIndent(string& id)
@@ -4508,112 +4498,110 @@ W117 Line can merge with the next line and be under the length limit
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeIncrement.cpp(197): fixed_string BreakExpl =
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeTypes.cpp(273): const SymbolView NotAccessible
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeTypes.cpp(277): const SymbolView DeclaredLocally
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(91):       CodeWarning(T, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(94):       CodeWarning(T, R, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(97):       CodeWarning(T, R, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(100):       CodeWarning(T, R, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(103):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(106):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(109):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(112):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(115):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(118):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(121):       CodeWarning(T, E, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(124):       CodeWarning(T, E, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(127):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(130):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(133):       CodeWarning(T, C, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(136):       CodeWarning(T, U, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(139):       CodeWarning(T, D, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(142):       CodeWarning(T, C, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(145):       CodeWarning(T, D, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(148):       CodeWarning(T, E, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(151):       CodeWarning(T, I, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(154):       CodeWarning(T, D, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(157):       CodeWarning(T, C, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(160):       CodeWarning(T, D, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(163):       CodeWarning(T, C, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(166):       CodeWarning(T, D, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(169):       CodeWarning(F, X, T,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(172):       CodeWarning(F, X, T,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(175):       CodeWarning(F, X, T,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(178):       CodeWarning(T, D, T,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(181):       CodeWarning(T, D, T,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(184):       CodeWarning(T, D, T,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(187):       CodeWarning(F, X, T,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(190):       CodeWarning(T, D, T,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(193):       CodeWarning(T, D, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(196):       CodeWarning(T, D, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(202):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(205):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(208):       CodeWarning(T, R, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(211):       CodeWarning(T, R, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(214):       CodeWarning(T, D, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(217):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(220):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(223):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(226):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(229):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(232):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(235):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(238):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(241):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(244):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(247):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(250):       CodeWarning(T, I, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(253):       CodeWarning(T, I, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(256):       CodeWarning(T, E, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(262):       CodeWarning(T, C, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(265):       CodeWarning(T, C, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(268):       CodeWarning(T, C, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(271):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(274):       CodeWarning(T, I, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(283):       CodeWarning(T, C, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(286):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(289):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(295):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(298):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(301):       CodeWarning(T, I, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(304):       CodeWarning(T, I, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(307):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(310):       CodeWarning(T, D, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(313):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(316):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(319):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(322):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(328):       CodeWarning(T, I, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(331):       CodeWarning(T, E, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(334):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(337):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(340):       CodeWarning(T, R, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(343):       CodeWarning(T, R, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(346):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(349):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(352):       CodeWarning(T, I, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(355):       CodeWarning(T, I, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(358):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(361):       CodeWarning(T, I, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(364):       CodeWarning(T, I, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(367):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(373):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(379):       CodeWarning(T, R, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(385):       CodeWarning(T, E, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(388):       CodeWarning(T, E, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(391):       CodeWarning(T, C, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(394):       CodeWarning(T, D, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(397):       CodeWarning(F, S, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(400):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(403):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(406):       CodeWarning(T, R, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(409):       CodeWarning(T, C, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(421):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(424):       CodeWarning(F, X, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(427):       CodeWarning(T, R, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(430):       CodeWarning(T, R, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(433):       CodeWarning(T, I, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(436):       CodeWarning(T, I, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(439):       CodeWarning(T, R, F,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(445):       CodeWarning(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(399):       WarningAttrs(T, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(402):       WarningAttrs(T, R, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(405):       WarningAttrs(T, R, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(408):       WarningAttrs(T, R, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(411):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(414):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(417):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(420):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(423):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(426):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(429):       WarningAttrs(T, E, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(432):       WarningAttrs(T, E, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(435):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(438):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(441):       WarningAttrs(T, C, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(444):       WarningAttrs(T, U, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(447):       WarningAttrs(T, D, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(450):       WarningAttrs(T, C, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(453):       WarningAttrs(T, D, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(456):       WarningAttrs(T, E, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(459):       WarningAttrs(T, I, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(462):       WarningAttrs(T, D, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(465):       WarningAttrs(T, C, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(468):       WarningAttrs(T, D, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(471):       WarningAttrs(T, C, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(474):       WarningAttrs(T, D, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(477):       WarningAttrs(F, X, T,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(480):       WarningAttrs(F, X, T,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(483):       WarningAttrs(F, X, T,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(486):       WarningAttrs(T, D, T,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(489):       WarningAttrs(T, D, T,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(492):       WarningAttrs(T, D, T,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(495):       WarningAttrs(F, X, T,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(498):       WarningAttrs(T, D, T,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(501):       WarningAttrs(T, D, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(504):       WarningAttrs(T, D, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(510):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(513):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(516):       WarningAttrs(T, R, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(519):       WarningAttrs(T, R, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(522):       WarningAttrs(T, D, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(525):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(528):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(531):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(534):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(537):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(540):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(543):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(546):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(549):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(552):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(555):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(558):       WarningAttrs(T, I, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(561):       WarningAttrs(T, I, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(564):       WarningAttrs(T, E, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(570):       WarningAttrs(T, C, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(573):       WarningAttrs(T, C, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(576):       WarningAttrs(T, C, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(579):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(582):       WarningAttrs(T, I, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(591):       WarningAttrs(T, C, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(594):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(597):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(603):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(606):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(615):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(618):       WarningAttrs(T, D, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(621):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(624):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(627):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(630):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(636):       WarningAttrs(T, I, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(639):       WarningAttrs(T, E, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(642):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(645):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(648):       WarningAttrs(T, R, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(651):       WarningAttrs(T, R, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(654):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(657):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(660):       WarningAttrs(T, I, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(663):       WarningAttrs(T, I, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(666):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(669):       WarningAttrs(T, I, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(672):       WarningAttrs(T, I, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(675):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(681):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(687):       WarningAttrs(T, R, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(693):       WarningAttrs(T, E, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(696):       WarningAttrs(T, E, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(699):       WarningAttrs(T, C, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(702):       WarningAttrs(T, D, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(705):       WarningAttrs(F, S, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(708):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(711):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(714):       WarningAttrs(T, R, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(717):       WarningAttrs(T, C, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(729):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(732):       WarningAttrs(F, X, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(735):       WarningAttrs(T, R, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(738):       WarningAttrs(T, R, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(741):       WarningAttrs(T, I, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(744):       WarningAttrs(T, I, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(747):       WarningAttrs(T, R, F,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(753):       WarningAttrs(F, X, F,
   C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(960):          (Keywords->lower_bound(name) == Keywords->cend()))
   C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.cpp(1855):          (press->message == contents))
   C:/Users/gregu/Documents/rsc/rsc/nb/CliRegistry.cpp(85):    stream << prefix
@@ -5255,14 +5243,14 @@ C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp
     2073: void CodeFile::InsertUsing(Using* use)
 C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.h
   W026 Unused argument
-    347/3:       const CxxNamed* item, const CxxScope* scope) const;
+    346/3:       const CxxNamed* item, const CxxScope* scope) const;
   W042 Member could be private
-    108:    bool IsTemplateHeader() const;
-    211:    int CalcGroup(const Include& incl) const;
+    107:    bool IsTemplateHeader() const;
+    210:    int CalcGroup(const Include& incl) const;
   W082 Adjacent arguments have the same type
-    363:    void LogCode(Warning warning, size_t line, size_t pos,
+    362:    void LogCode(Warning warning, size_t line, size_t pos,
   W092 Function could be free
-    270:    static void GenerateReport(std::ostream* stream, const SetOfIds& set);
+    269:    static void GenerateReport(std::ostream* stream, const SetOfIds& set);
 C:/Users/gregu/Documents/rsc/rsc/ct/CodeFileSet.cpp
   W004 C-style cast
     579:    LibrarySet* nbSet = (LibrarySet*) this;
@@ -5328,155 +5316,142 @@ C:/Users/gregu/Documents/rsc/rsc/ct/CodeTypes.h
     549:    LineTypeAttr(bool code, bool exe, bool merge, bool blank);
 C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp
   W005 Functional cast
-    723:       *stream << setw(12) << LineType(t)
-    735:          *stream << setw(6) << WarningCode(Warning(w)) << setw(6)
-    736:             << WarningCounts_[w] << spaces(2) << Warning(w) << CRLF;
+    263:       *stream << setw(12) << LineType(t)
+    275:          *stream << setw(6) << WarningCode(Warning(w)) << setw(6)
+    276:             << WarningCounts_[w] << spaces(2) << Warning(w) << CRLF;
   W007 Cast down the inheritance hierarchy
-    580:       if(static_cast< const Function* >(item)->IsVirtual())
+    865:       if(static_cast< const Function* >(item)->IsVirtual())
   W106 Function does not invoke Debug::ft
-    639: word CodeInfo::FindWarning(const WarningLog& log)
-    833: bool CodeInfo::IsSortedByFile(const WarningLog& log1, const WarningLog& log2)
-    851: bool CodeInfo::IsSortedByWarning(const WarningLog& log1, const WarningLog& log2)
-    869: bool CodeInfo::IsSortedForFixing(const WarningLog& log1, const WarningLog& log2)
+    179: word CodeWarning::FindWarning(const CodeWarning& log)
+    770: bool CodeWarning::IsSortedByFile
+    789: bool CodeWarning::IsSortedByType
+    808: bool CodeWarning::IsSortedToFix
   W117 Line can merge with the next line and be under the length limit
-    91:       CodeWarning(T, X, F,
-    94:       CodeWarning(T, R, F,
-    97:       CodeWarning(T, R, F,
-    100:       CodeWarning(T, R, F,
-    103:       CodeWarning(F, X, F,
-    106:       CodeWarning(F, X, F,
-    109:       CodeWarning(F, X, F,
-    112:       CodeWarning(F, X, F,
-    115:       CodeWarning(F, X, F,
-    118:       CodeWarning(F, X, F,
-    121:       CodeWarning(T, E, F,
-    124:       CodeWarning(T, E, F,
-    127:       CodeWarning(F, X, F,
-    130:       CodeWarning(F, X, F,
-    133:       CodeWarning(T, C, F,
-    136:       CodeWarning(T, U, F,
-    139:       CodeWarning(T, D, F,
-    142:       CodeWarning(T, C, F,
-    145:       CodeWarning(T, D, F,
-    148:       CodeWarning(T, E, F,
-    151:       CodeWarning(T, I, F,
-    154:       CodeWarning(T, D, F,
-    157:       CodeWarning(T, C, F,
-    160:       CodeWarning(T, D, F,
-    163:       CodeWarning(T, C, F,
-    166:       CodeWarning(T, D, F,
-    169:       CodeWarning(F, X, T,
-    172:       CodeWarning(F, X, T,
-    175:       CodeWarning(F, X, T,
-    178:       CodeWarning(T, D, T,
-    181:       CodeWarning(T, D, T,
-    184:       CodeWarning(T, D, T,
-    187:       CodeWarning(F, X, T,
-    190:       CodeWarning(T, D, T,
-    193:       CodeWarning(T, D, F,
-    196:       CodeWarning(T, D, F,
-    202:       CodeWarning(F, X, F,
-    205:       CodeWarning(F, X, F,
-    208:       CodeWarning(T, R, F,
-    211:       CodeWarning(T, R, F,
-    214:       CodeWarning(T, D, F,
-    217:       CodeWarning(F, X, F,
-    220:       CodeWarning(F, X, F,
-    223:       CodeWarning(F, X, F,
-    226:       CodeWarning(F, X, F,
-    229:       CodeWarning(F, X, F,
-    232:       CodeWarning(F, X, F,
-    235:       CodeWarning(F, X, F,
-    238:       CodeWarning(F, X, F,
-    241:       CodeWarning(F, X, F,
-    244:       CodeWarning(F, X, F,
-    247:       CodeWarning(F, X, F,
-    250:       CodeWarning(T, I, F,
-    253:       CodeWarning(T, I, F,
-    256:       CodeWarning(T, E, F,
-    262:       CodeWarning(T, C, F,
-    265:       CodeWarning(T, C, F,
-    268:       CodeWarning(T, C, F,
-    271:       CodeWarning(F, X, F,
-    274:       CodeWarning(T, I, F,
-    283:       CodeWarning(T, C, F,
-    286:       CodeWarning(F, X, F,
-    289:       CodeWarning(F, X, F,
-    295:       CodeWarning(F, X, F,
-    298:       CodeWarning(F, X, F,
-    301:       CodeWarning(T, I, F,
-    304:       CodeWarning(T, I, F,
-    307:       CodeWarning(F, X, F,
-    310:       CodeWarning(T, D, F,
-    313:       CodeWarning(F, X, F,
-    316:       CodeWarning(F, X, F,
-    319:       CodeWarning(F, X, F,
-    322:       CodeWarning(F, X, F,
-    328:       CodeWarning(T, I, F,
-    331:       CodeWarning(T, E, F,
-    334:       CodeWarning(F, X, F,
-    337:       CodeWarning(F, X, F,
-    340:       CodeWarning(T, R, F,
-    343:       CodeWarning(T, R, F,
-    346:       CodeWarning(F, X, F,
-    349:       CodeWarning(F, X, F,
-    352:       CodeWarning(T, I, F,
-    355:       CodeWarning(T, I, F,
-    358:       CodeWarning(F, X, F,
-    361:       CodeWarning(T, I, F,
-    364:       CodeWarning(T, I, F,
-    367:       CodeWarning(F, X, F,
-    373:       CodeWarning(F, X, F,
-    379:       CodeWarning(T, R, F,
-    385:       CodeWarning(T, E, F,
-    388:       CodeWarning(T, E, F,
-    391:       CodeWarning(T, C, F,
-    394:       CodeWarning(T, D, F,
-    397:       CodeWarning(F, S, F,
-    400:       CodeWarning(F, X, F,
-    403:       CodeWarning(F, X, F,
-    406:       CodeWarning(T, R, F,
-    409:       CodeWarning(T, C, F,
-    421:       CodeWarning(F, X, F,
-    424:       CodeWarning(F, X, F,
-    427:       CodeWarning(T, R, F,
-    430:       CodeWarning(T, R, F,
-    433:       CodeWarning(T, I, F,
-    436:       CodeWarning(T, I, F,
-    439:       CodeWarning(T, R, F,
-    445:       CodeWarning(F, X, F,
+    399:       WarningAttrs(T, X, F,
+    402:       WarningAttrs(T, R, F,
+    405:       WarningAttrs(T, R, F,
+    408:       WarningAttrs(T, R, F,
+    411:       WarningAttrs(F, X, F,
+    414:       WarningAttrs(F, X, F,
+    417:       WarningAttrs(F, X, F,
+    420:       WarningAttrs(F, X, F,
+    423:       WarningAttrs(F, X, F,
+    426:       WarningAttrs(F, X, F,
+    429:       WarningAttrs(T, E, F,
+    432:       WarningAttrs(T, E, F,
+    435:       WarningAttrs(F, X, F,
+    438:       WarningAttrs(F, X, F,
+    441:       WarningAttrs(T, C, F,
+    444:       WarningAttrs(T, U, F,
+    447:       WarningAttrs(T, D, F,
+    450:       WarningAttrs(T, C, F,
+    453:       WarningAttrs(T, D, F,
+    456:       WarningAttrs(T, E, F,
+    459:       WarningAttrs(T, I, F,
+    462:       WarningAttrs(T, D, F,
+    465:       WarningAttrs(T, C, F,
+    468:       WarningAttrs(T, D, F,
+    471:       WarningAttrs(T, C, F,
+    474:       WarningAttrs(T, D, F,
+    477:       WarningAttrs(F, X, T,
+    480:       WarningAttrs(F, X, T,
+    483:       WarningAttrs(F, X, T,
+    486:       WarningAttrs(T, D, T,
+    489:       WarningAttrs(T, D, T,
+    492:       WarningAttrs(T, D, T,
+    495:       WarningAttrs(F, X, T,
+    498:       WarningAttrs(T, D, T,
+    501:       WarningAttrs(T, D, F,
+    504:       WarningAttrs(T, D, F,
+    510:       WarningAttrs(F, X, F,
+    513:       WarningAttrs(F, X, F,
+    516:       WarningAttrs(T, R, F,
+    519:       WarningAttrs(T, R, F,
+    522:       WarningAttrs(T, D, F,
+    525:       WarningAttrs(F, X, F,
+    528:       WarningAttrs(F, X, F,
+    531:       WarningAttrs(F, X, F,
+    534:       WarningAttrs(F, X, F,
+    537:       WarningAttrs(F, X, F,
+    540:       WarningAttrs(F, X, F,
+    543:       WarningAttrs(F, X, F,
+    546:       WarningAttrs(F, X, F,
+    549:       WarningAttrs(F, X, F,
+    552:       WarningAttrs(F, X, F,
+    555:       WarningAttrs(F, X, F,
+    558:       WarningAttrs(T, I, F,
+    561:       WarningAttrs(T, I, F,
+    564:       WarningAttrs(T, E, F,
+    570:       WarningAttrs(T, C, F,
+    573:       WarningAttrs(T, C, F,
+    576:       WarningAttrs(T, C, F,
+    579:       WarningAttrs(F, X, F,
+    582:       WarningAttrs(T, I, F,
+    591:       WarningAttrs(T, C, F,
+    594:       WarningAttrs(F, X, F,
+    597:       WarningAttrs(F, X, F,
+    603:       WarningAttrs(F, X, F,
+    606:       WarningAttrs(F, X, F,
+    615:       WarningAttrs(F, X, F,
+    618:       WarningAttrs(T, D, F,
+    621:       WarningAttrs(F, X, F,
+    624:       WarningAttrs(F, X, F,
+    627:       WarningAttrs(F, X, F,
+    630:       WarningAttrs(F, X, F,
+    636:       WarningAttrs(T, I, F,
+    639:       WarningAttrs(T, E, F,
+    642:       WarningAttrs(F, X, F,
+    645:       WarningAttrs(F, X, F,
+    648:       WarningAttrs(T, R, F,
+    651:       WarningAttrs(T, R, F,
+    654:       WarningAttrs(F, X, F,
+    657:       WarningAttrs(F, X, F,
+    660:       WarningAttrs(T, I, F,
+    663:       WarningAttrs(T, I, F,
+    666:       WarningAttrs(F, X, F,
+    669:       WarningAttrs(T, I, F,
+    672:       WarningAttrs(T, I, F,
+    675:       WarningAttrs(F, X, F,
+    681:       WarningAttrs(F, X, F,
+    687:       WarningAttrs(T, R, F,
+    693:       WarningAttrs(T, E, F,
+    696:       WarningAttrs(T, E, F,
+    699:       WarningAttrs(T, C, F,
+    702:       WarningAttrs(T, D, F,
+    705:       WarningAttrs(F, S, F,
+    708:       WarningAttrs(F, X, F,
+    711:       WarningAttrs(F, X, F,
+    714:       WarningAttrs(T, R, F,
+    717:       WarningAttrs(T, C, F,
+    729:       WarningAttrs(F, X, F,
+    732:       WarningAttrs(F, X, F,
+    735:       WarningAttrs(T, R, F,
+    738:       WarningAttrs(T, R, F,
+    741:       WarningAttrs(T, I, F,
+    744:       WarningAttrs(T, I, F,
+    747:       WarningAttrs(T, R, F,
+    753:       WarningAttrs(F, X, F,
 C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h
   W020 Using statement in header
-    36: using NodeBase::fixed_string;
-    37: using NodeBase::SPACE;
-    38: using NodeBase::word;
+    37: using NodeBase::fixed_string;
+    38: using NodeBase::SPACE;
+    39: using NodeBase::word;
   W032 Unused function
-    133:    bool operator!=(const WarningLog& that) const;
-  W040 Struct could be class
-    112: struct WarningLog
-  W042 Member could be private
-    72:    typedef std::pair< Warning, CodeWarning > WarningPair;
-    76:    typedef std::map< Warning, CodeWarning > AttrsMap;
+    135:    bool operator!=(const CodeWarning& that) const;
   W047 Data is init-only
     64:    bool suppressed;
   W053 Data could be const
-    114:    Warning warning;       // type of warning
-    116:    size_t line;           // line where warning occurred
-    117:    size_t pos;            // position in FILE where warning occurred
-    119:    word offset;           // warning-specific; displayed if > 0
-    120:    std::string info;      // warning-specific
-    121:    bool hide;             // set to stop warning from being displayed
+    195:    Warning warning;
+    203:    size_t line;
+    207:    size_t pos;
+    215:    word offset;
+    219:    std::string info;
+    223:    bool hide;
   W054 Data could be const pointer
-    115:    const CodeFile* file;  // file where warning occurred
-    118:    const CxxNamed* item;  // item associated with warning
+    199:    const CodeFile* file;
+    211:    const CxxNamed* item;
   W082 Adjacent arguments have the same type
-    126:    WarningLog(Warning warning, const CodeFile* file,
-  W092 Function could be free
-    84:    static void Initialize();
-    186:    static bool IsSortedForFixing
-    199:    static std::string WarningCode(Warning warning);
-    203:    static bool IsSortedByFile(const WarningLog& log1, const WarningLog& log2);
-    207:    static bool IsSortedByWarning
+    102:    CodeWarning(Warning warning, const CodeFile* file,
 C:/Users/gregu/Documents/rsc/rsc/ct/CtModule.h
   W047 Data is init-only
     60:    static bool Registered;
@@ -5743,42 +5718,42 @@ C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.h
     642:    static void Startup(NodeBase::RestartLevel level) { }
 C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.cpp
   W007 Cast down the inheritance hierarchy
-    399:          space = static_cast< Namespace* >(item);
-    423:          cls = static_cast< Class* >(item);
-    477:          item = static_cast< Enum* >(item)->FindEnumerator(name);
-    488:             auto tdef = static_cast< Typedef* >(item);
-    493:             item = static_cast< CxxScoped* >(root);
-    505:             item = static_cast< CxxScoped* >(ref);
-    782:    return static_cast< Class* >(root);
-    1990:          ref = static_cast< ClassInst* >(cls)->FindTemplateAnalog(ref);
-    2000:       ref = static_cast< Function* >(ref)->FindRootFunc();
+    398:          space = static_cast< Namespace* >(item);
+    422:          cls = static_cast< Class* >(item);
+    476:          item = static_cast< Enum* >(item)->FindEnumerator(name);
+    487:             auto tdef = static_cast< Typedef* >(item);
+    492:             item = static_cast< CxxScoped* >(root);
+    504:             item = static_cast< CxxScoped* >(ref);
+    781:    return static_cast< Class* >(root);
+    1989:          ref = static_cast< ClassInst* >(cls)->FindTemplateAnalog(ref);
+    1999:       ref = static_cast< Function* >(ref)->FindRootFunc();
   W008 Cast removes const qualification
-    978:    return const_cast< DataSpec* >(this);
-    1396:    const_cast< DataSpec* >(this)->FindReferent();
-    2577:    return const_cast< TypeName* >(this);
+    977:    return const_cast< DataSpec* >(this);
+    1395:    const_cast< DataSpec* >(this)->FindReferent();
+    2576:    return const_cast< TypeName* >(this);
   W106 Function does not invoke Debug::ft
-    74: size_t CxxLocation::GetPos() const
-    81: void CxxLocation::SetLoc(CodeFile* file, size_t pos)
-    203: CxxArea* CxxNamed::GetArea() const
-    212: Class* CxxNamed::GetClass() const
-    221: id_t CxxNamed::GetDeclFid() const
-    230: size_t CxxNamed::GetRange(size_t& begin, size_t& end) const
-    239: void CxxNamed::GetScopedNames(stringVector& names) const
-    246: Namespace* CxxNamed::GetSpace() const
-    255: bool CxxNamed::IsInTemplateInstance() const
-    612: void CxxNamed::strName(ostream& stream, bool fq, const QualName* name) const
-    953: TypeTags DataSpec::GetAllTags() const
-    976: TypeSpec* DataSpec::GetTypeSpec() const
-    1105: bool DataSpec::IsAutoDecl() const
-    1837: TypeName* QualName::At(size_t n) const
-    1946: TypeName* QualName::GetTemplateArgs() const
-    2026: TypeName* QualName::Last() const
-    2273: size_t QualName::Size() const
-    2550: CxxNamed* TypeName::DirectType() const
-    2574: TypeName* TypeName::GetTemplateArgs() const
-    2742: void TypeName::PushBack(TypeNamePtr& type)
-    3241: int TypeTags::IsConstPtr() const
-    3249: bool TypeTags::IsConstPtr(size_t n) const
+    73: size_t CxxLocation::GetPos() const
+    80: void CxxLocation::SetLoc(CodeFile* file, size_t pos)
+    202: CxxArea* CxxNamed::GetArea() const
+    211: Class* CxxNamed::GetClass() const
+    220: id_t CxxNamed::GetDeclFid() const
+    229: size_t CxxNamed::GetRange(size_t& begin, size_t& end) const
+    238: void CxxNamed::GetScopedNames(stringVector& names) const
+    245: Namespace* CxxNamed::GetSpace() const
+    254: bool CxxNamed::IsInTemplateInstance() const
+    611: void CxxNamed::strName(ostream& stream, bool fq, const QualName* name) const
+    952: TypeTags DataSpec::GetAllTags() const
+    975: TypeSpec* DataSpec::GetTypeSpec() const
+    1104: bool DataSpec::IsAutoDecl() const
+    1836: TypeName* QualName::At(size_t n) const
+    1945: TypeName* QualName::GetTemplateArgs() const
+    2025: TypeName* QualName::Last() const
+    2272: size_t QualName::Size() const
+    2549: CxxNamed* TypeName::DirectType() const
+    2573: TypeName* TypeName::GetTemplateArgs() const
+    2741: void TypeName::PushBack(TypeNamePtr& type)
+    3240: int TypeTags::IsConstPtr() const
+    3248: bool TypeTags::IsConstPtr(size_t n) const
 C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.h
   W004 C-style cast
     1257:    CxxToken* AutoType() const override { return (CxxToken*) this; }
@@ -6224,53 +6199,53 @@ C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h
     415:       Tags& operator=(const Tags& that) = default;
 C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp
   W005 Functional cast
-    697:    *cli.obuf << ": " << Warning(log.warning);
+    696:    *cli.obuf << ": " << Warning(log.warning);
   W007 Cast down the inheritance hierarchy
-    231:    auto defn = static_cast< const Function* >(log.item);
-    364:    DebugFtCode(static_cast< const Function* >(log.item), defn, call);
-    1035:    auto etor = static_cast< const Enumerator* >(log.item);
-    1077:    auto eNum = static_cast< const Enum* >(etor->AutoType());
-    1353:    auto func = static_cast< const Function* >(log.item);
-    1428:    auto cls = static_cast< const Class* >(log.item);
-    2300:    DebugFtCode(static_cast< const Function* >(log.item), defn, call);
-    2935:       ns = static_cast< const Namespace* >(ref)->OuterSpace();
-    3327:    auto func = static_cast< const Function* >(log.item);
-    3451:    auto defn = static_cast< const Function* >(log.item);
-    3563:    auto func = static_cast< const Function* >(log.item);
+    230:    auto defn = static_cast< const Function* >(log.item);
+    363:    DebugFtCode(static_cast< const Function* >(log.item), defn, call);
+    1034:    auto etor = static_cast< const Enumerator* >(log.item);
+    1076:    auto eNum = static_cast< const Enum* >(etor->AutoType());
+    1352:    auto func = static_cast< const Function* >(log.item);
+    1427:    auto cls = static_cast< const Class* >(log.item);
+    2299:    DebugFtCode(static_cast< const Function* >(log.item), defn, call);
+    2934:       ns = static_cast< const Namespace* >(ref)->OuterSpace();
+    3326:    auto func = static_cast< const Function* >(log.item);
+    3450:    auto defn = static_cast< const Function* >(log.item);
+    3562:    auto func = static_cast< const Function* >(log.item);
   W022 Add using statement
     1: std::string
   W097 Line indentation is not a multiple of the standard value
-    191:        tagpos = loc.iter->code.find(tag, tagpos + 1))
-    266:        loc.pos != string::npos;
-    267:        loc = FindWord(loc.iter, loc.pos + 1, *defnName, &range))
-    967:        tag.pos != string::npos;
-    968:        tag = FindWord(tag.iter, tag.pos + 1, CONST_STR))
-    1137:        next->code, 0, next->code.size() - 1)) return false;
-    1303:        arg = FindWord(arg.iter, arg.pos + 1, VOID_STR))
-    2968:           loc = FindWord(loc.iter, loc.pos, name))
+    190:        tagpos = loc.iter->code.find(tag, tagpos + 1))
+    265:        loc.pos != string::npos;
+    266:        loc = FindWord(loc.iter, loc.pos + 1, *defnName, &range))
+    966:        tag.pos != string::npos;
+    967:        tag = FindWord(tag.iter, tag.pos + 1, CONST_STR))
+    1136:        next->code, 0, next->code.size() - 1)) return false;
+    1302:        arg = FindWord(arg.iter, arg.pos + 1, VOID_STR))
+    2967:           loc = FindWord(loc.iter, loc.pos, name))
   W102 Line length exceeds the standard maximum
-    2229:       (lpar.iter->code.find_first_not_of(WhitespaceChars, lpar.pos + 1) == rpar))
+    2228:       (lpar.iter->code.find_first_not_of(WhitespaceChars, lpar.pos + 1) == rpar))
   W106 Function does not invoke Debug::ft
-    81: bool IsBlank(char c)
-    88: bool IsWordChar(char c)
-    2088: LineType Editor::GetLineType(const Iter& iter) const
-    2774: bool Editor::IsSorted1(const SourceLine& line1, const SourceLine& line2)
-    2781: bool Editor::IsSorted2(const string& line1, const string& line2)
-    2912: void Editor::PushBack(const string& code)
+    80: bool IsBlank(char c)
+    87: bool IsWordChar(char c)
+    2087: LineType Editor::GetLineType(const Iter& iter) const
+    2773: bool Editor::IsSorted1(const SourceLine& line1, const SourceLine& line2)
+    2780: bool Editor::IsSorted2(const string& line1, const string& line2)
+    2911: void Editor::PushBack(const string& code)
 C:/Users/gregu/Documents/rsc/rsc/ct/Editor.h
   W020 Using statement in header
-    38: using std::string;
-    39: using NodeBase::word;
+    39: using std::string;
+    40: using NodeBase::word;
   W032 Unused function
-    249:    CodeLocation PrevPos(const CodeLocation& curr);
+    250:    CodeLocation PrevPos(const CodeLocation& curr);
   W082 Adjacent arguments have the same type
-    415:    word InsertNamespaceForward(const Iter& iter,
-    443:    static void DebugFtCode
+    416:    word InsertNamespaceForward(const Iter& iter,
+    444:    static void DebugFtCode
   W088 Argument could be const
-    293/4:       (Iter iter, size_t pos, const string& id, size_t* range = nullptr);
+    294/4:       (Iter iter, size_t pos, const string& id, size_t* range = nullptr);
   W092 Function could be free
-    402:    string DemangleInclude(string code) const;
-    457:    static bool IsSorted2(const string& line1, const string& line2);
+    403:    string DemangleInclude(string code) const;
+    458:    static bool IsSorted2(const string& line1, const string& line2);
 C:/Users/gregu/Documents/rsc/rsc/ct/Interpreter.cpp
   W005 Functional cast
     148:          type = LibTokenType(i);

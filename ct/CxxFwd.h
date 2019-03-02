@@ -39,7 +39,9 @@ class BaseDecl;
 class Block;
 class Class;
 class ClassInst;
+class CodeDir;
 class CodeFile;
+class CodeWarning;
 class CxxArea;
 class CxxDirective;
 class CxxLocation;
@@ -85,7 +87,6 @@ class TypeName;
 class TypeSpec;
 class Undef;
 class Using;
-struct WarningLog;
 
 //------------------------------------------------------------------------------
 //
@@ -171,7 +172,6 @@ typedef std::vector< Macro* > MacroVector;
 typedef std::vector< StackArg > StackArgVector;
 typedef std::vector< Typedef* > TypedefVector;
 typedef std::vector< Using* > UsingVector;
-typedef std::vector< WarningLog > WarningLogVector;
 
 typedef std::set< std::string > stringSet;
 typedef std::set< const CxxNamed* > CxxNamedSet;

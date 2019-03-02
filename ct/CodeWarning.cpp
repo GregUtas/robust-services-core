@@ -24,7 +24,6 @@
 #include <iomanip>
 #include <iterator>
 #include <sstream>
-#include <vector>
 #include "CodeFile.h"
 #include "CodeFileSet.h"
 #include "CxxArea.h"
@@ -47,421 +46,53 @@ using std::string;
 
 namespace CodeTools
 {
-CodeWarning::AttrsMap CodeWarning::Attrs = AttrsMap();
+ostream& operator<<(ostream& stream, Warning warning)
+{
+   if((warning >= 0) && (warning < Warning_N))
+      stream << CodeWarning::Expl(warning);
+   else
+      stream << CodeWarning::Expl(Warning_N);
+   return stream;
+}
 
 //------------------------------------------------------------------------------
 
-CodeWarning::CodeWarning
-   (bool fix, uint8_t order, bool unused, fixed_string title) noexcept :
+WarningAttrs::WarningAttrs
+   (bool fix, uint8_t order, bool unused, fixed_string expl) noexcept :
    fixable(fix),
    order(order),
    unusedItem(unused),
    suppressed(false),
-   title(title)
+   expl(expl)
 {
 }
 
 //------------------------------------------------------------------------------
 
-fn_name CodeWarning_Initialize = "CodeWarning.Initialize";
-
-void CodeWarning::Initialize()
+string WarningCode(Warning warning)
 {
-   Debug::ft(CodeWarning_Initialize);
+   std::ostringstream stream;
 
-   //  The following constants define how warnings will be sorted before the
-   //  editor fixes them.  Fixes that require more significant editing are
-   //  assigned higher numbers so that they will occur later.  For example,
-   //  inserting or removing a line feed no longer makes it possible to find
-   //  the location of a warning based on its line number.
-   //
-   const int U = 0;  // leaves code unchanged
-   const int D = 2;  // deletes one or more lines
-   const int C = 2;  // creates one or more lines
-   const int E = 4;  // erases within a line
-   const int R = 4;  // replaces within a line
-   const int I = 4;  // inserts within a line
-   const int J = 6;  // joins two lines by removing a line feed
-   const int S = 6;  // splits two lines by inserting a line feed
-   const int X = 8;  // editor does not support fixing this warning
-   const auto F = false;
-   const auto T = true;
-
-   Attrs.insert(WarningPair(AllWarnings,
-      CodeWarning(T, X, F,
-      "All warnings")));
-   Attrs.insert(WarningPair(UseOfNull,
-      CodeWarning(T, R, F,
-      "Use of NULL")));
-   Attrs.insert(WarningPair(PtrTagDetached,
-      CodeWarning(T, R, F,
-      "Pointer tag ('*') detached from type")));
-   Attrs.insert(WarningPair(RefTagDetached,
-      CodeWarning(T, R, F,
-      "Reference tag ('&') detached from type")));
-   Attrs.insert(WarningPair(UseOfCast,
-      CodeWarning(F, X, F,
-      "C-style cast")));
-   Attrs.insert(WarningPair(FunctionalCast,
-      CodeWarning(F, X, F,
-      "Functional cast")));
-   Attrs.insert(WarningPair(ReinterpretCast,
-      CodeWarning(F, X, F,
-      "reinterpret_cast")));
-   Attrs.insert(WarningPair(Downcasting,
-      CodeWarning(F, X, F,
-      "Cast down the inheritance hierarchy")));
-   Attrs.insert(WarningPair(CastingAwayConstness,
-      CodeWarning(F, X, F,
-      "Cast removes const qualification")));
-   Attrs.insert(WarningPair(PointerArithmetic,
-      CodeWarning(F, X, F,
-      "Pointer arithmetic")));
-   Attrs.insert(WarningPair(RedundantSemicolon,
-      CodeWarning(T, E, F,
-      "Semicolon not required")));
-   Attrs.insert(WarningPair(RedundantConst,
-      CodeWarning(T, E, F,
-      "Redundant const in type specification")));
-   Attrs.insert(WarningPair(DefineNotAtFileScope,
-      CodeWarning(F, X, F,
-      "#define appears within a class or function")));
-   Attrs.insert(WarningPair(IncludeNotAtGlobalScope,
-      CodeWarning(F, X, F,
-      "No #include guard found")));
-   Attrs.insert(WarningPair(IncludeGuardMissing,
-      CodeWarning(T, C, F,
-      "#include appears outside of global namespace")));
-   Attrs.insert(WarningPair(IncludeNotSorted,
-      CodeWarning(T, U, F,
-      "#include not sorted in standard order")));
-   Attrs.insert(WarningPair(IncludeDuplicated,
-      CodeWarning(T, D, F,
-      "#include duplicated")));
-   Attrs.insert(WarningPair(IncludeAdd,
-      CodeWarning(T, C, F,
-      "Add #include directive")));
-   Attrs.insert(WarningPair(IncludeRemove,
-      CodeWarning(T, D, F,
-      "Remove #include directive")));
-   Attrs.insert(WarningPair(RemoveOverrideTag,
-      CodeWarning(T, E, F,
-      "Remove override tag: function is final")));
-   Attrs.insert(WarningPair(UsingInHeader,
-      CodeWarning(T, I, F,
-      "Using statement in header")));
-   Attrs.insert(WarningPair(UsingDuplicated,
-      CodeWarning(T, D, F,
-      "Using statement duplicated")));
-   Attrs.insert(WarningPair(UsingAdd,
-      CodeWarning(T, C, F,
-      "Add using statement")));
-   Attrs.insert(WarningPair(UsingRemove,
-      CodeWarning(T, D, F,
-      "Remove using statement")));
-   Attrs.insert(WarningPair(ForwardAdd,
-      CodeWarning(T, C, F,
-      "Add forward declaration")));
-   Attrs.insert(WarningPair(ForwardRemove,
-      CodeWarning(T, D, F,
-      "Remove forward declaration")));
-   Attrs.insert(WarningPair(ArgumentUnused,
-      CodeWarning(F, X, T,
-      "Unused argument")));
-   Attrs.insert(WarningPair(ClassUnused,
-      CodeWarning(F, X, T,
-      "Unused class")));
-   Attrs.insert(WarningPair(DataUnused,
-      CodeWarning(F, X, T,
-      "Unused data")));
-   Attrs.insert(WarningPair(EnumUnused,
-      CodeWarning(T, D, T,
-      "Unused enum")));
-   Attrs.insert(WarningPair(EnumeratorUnused,
-      CodeWarning(T, D, T,
-      "Unused enumerator")));
-   Attrs.insert(WarningPair(FriendUnused,
-      CodeWarning(T, D, T,
-      "Unused friend declaration")));
-   Attrs.insert(WarningPair(FunctionUnused,
-      CodeWarning(F, X, T,
-      "Unused function")));
-   Attrs.insert(WarningPair(TypedefUnused,
-      CodeWarning(T, D, T,
-      "Unused typedef")));
-   Attrs.insert(WarningPair(ForwardUnresolved,
-      CodeWarning(T, D, F,
-      "No referent for forward declaration")));
-   Attrs.insert(WarningPair(FriendUnresolved,
-      CodeWarning(T, D, F,
-      "No referent for friend declaration")));
-   Attrs.insert(WarningPair(FriendAsForward,
-      CodeWarning(F, X, F,
-      "Indirect reference relies on friend, not forward, declaration")));
-   Attrs.insert(WarningPair(HidesInheritedName,
-      CodeWarning(F, X, F,
-      "Member hides inherited name")));
-   Attrs.insert(WarningPair(ClassCouldBeNamespace,
-      CodeWarning(F, X, F,
-      "Class could be namespace")));
-   Attrs.insert(WarningPair(ClassCouldBeStruct,
-      CodeWarning(T, R, F,
-      "Class could be struct")));
-   Attrs.insert(WarningPair(StructCouldBeClass,
-      CodeWarning(T, R, F,
-      "Struct could be class")));
-   Attrs.insert(WarningPair(RedundantAccessControl,
-      CodeWarning(T, D, F,
-      "Redundant access control")));
-   Attrs.insert(WarningPair(ItemCouldBePrivate,
-      CodeWarning(F, X, F,
-      "Member could be private")));
-   Attrs.insert(WarningPair(ItemCouldBeProtected,
-      CodeWarning(F, X, F,
-      "Member could be protected")));
-   Attrs.insert(WarningPair(PointerTypedef,
-      CodeWarning(F, X, F,
-      "Typedef of pointer type")));
-   Attrs.insert(WarningPair(AnonymousEnum,
-      CodeWarning(F, X, F,
-      "Unnamed enum")));
-   Attrs.insert(WarningPair(DataUninitialized,
-      CodeWarning(F, X, F,
-      "Global data initialization not found")));
-   Attrs.insert(WarningPair(DataInitOnly,
-      CodeWarning(F, X, F,
-      "Data is init-only")));
-   Attrs.insert(WarningPair(DataWriteOnly,
-      CodeWarning(F, X, F,
-      "Data is write-only")));
-   Attrs.insert(WarningPair(GlobalStaticData,
-      CodeWarning(F, X, F,
-      "Global static data")));
-   Attrs.insert(WarningPair(DataNotPrivate,
-      CodeWarning(F, X, F,
-      "Data is not private")));
-   Attrs.insert(WarningPair(DataCannotBeConst,
-      CodeWarning(F, X, F,
-      "DATA CANNOT BE CONST")));
-   Attrs.insert(WarningPair(DataCannotBeConstPtr,
-      CodeWarning(F, X, F,
-      "DATA CANNOT BE CONST POINTER")));
-   Attrs.insert(WarningPair(DataCouldBeConst,
-      CodeWarning(T, I, F,
-      "Data could be const")));
-   Attrs.insert(WarningPair(DataCouldBeConstPtr,
-      CodeWarning(T, I, F,
-      "Data could be const pointer")));
-   Attrs.insert(WarningPair(DataNeedNotBeMutable,
-      CodeWarning(T, E, F,
-      "Data need not be mutable")));
-   Attrs.insert(WarningPair(DefaultPODConstructor,
-      CodeWarning(F, X, F,
-      "Default constructor invoked: POD members not initialized")));
-   Attrs.insert(WarningPair(DefaultConstructor,
-      CodeWarning(T, C, F,
-      "Default constructor invoked")));
-   Attrs.insert(WarningPair(DefaultCopyConstructor,
-      CodeWarning(T, C, F,
-      "Default copy constructor invoked")));
-   Attrs.insert(WarningPair(DefaultCopyOperator,
-      CodeWarning(T, C, F,
-      "Default copy (assignment) operator invoked")));
-   Attrs.insert(WarningPair(PublicConstructor,
-      CodeWarning(F, X, F,
-      "Base class constructor is public")));
-   Attrs.insert(WarningPair(NonExplicitConstructor,
-      CodeWarning(T, I, F,
-      "Single-argument constructor is not explicit")));
-   Attrs.insert(WarningPair(MemberInitMissing,
-      CodeWarning(F, X, F,
-      "Member not included in member initialization list")));
-   Attrs.insert(WarningPair(MemberInitNotSorted,
-      CodeWarning(F, X, F,
-      "Member not sorted in standard order in member initialization list")));
-   Attrs.insert(WarningPair(DefaultDestructor,
-      CodeWarning(T, C, F,
-      "Default destructor invoked")));
-   Attrs.insert(WarningPair(VirtualDestructor,
-      CodeWarning(F, X, F,
-      "Base class virtual destructor is not public")));
-   Attrs.insert(WarningPair(NonVirtualDestructor,
-      CodeWarning(F, X, F,
-      "Base class non-virtual destructor is public")));
-   Attrs.insert(WarningPair(VirtualFunctionInvoked,
-      CodeWarning(F, X, F,
-      "Virtual function in own class invoked by constructor or destructor")));
-   Attrs.insert(WarningPair(RuleOf3DtorNoCopyCtor,
-      CodeWarning(F, X, F,
-      "Destructor defined, but not copy constructor")));
-   Attrs.insert(WarningPair(RuleOf3DtorNoCopyOper,
-      CodeWarning(F, X, F,
-      "Destructor defined, but not copy operator")));
-   Attrs.insert(WarningPair(RuleOf3CopyCtorNoOper,
-      CodeWarning(T, I, F,
-      "Copy constructor defined, but not copy operator")));
-   Attrs.insert(WarningPair(RuleOf3CopyOperNoCtor,
-      CodeWarning(T, I, F,
-      "Copy operator defined, but not copy constructor")));
-   Attrs.insert(WarningPair(OperatorOverloaded,
-      CodeWarning(F, X, F,
-      "Overloading operator && or ||")));
-   Attrs.insert(WarningPair(FunctionNotDefined,
-      CodeWarning(T, D, F,
-      "Function not implemented")));
-   Attrs.insert(WarningPair(PureVirtualNotDefined,
-      CodeWarning(F, X, F,
-      "Pure virtual function not implemented")));
-   Attrs.insert(WarningPair(VirtualAndPublic,
-      CodeWarning(F, X, F,
-      "Virtual function is public")));
-   Attrs.insert(WarningPair(VirtualOverloading,
-      CodeWarning(F, X, F,
-      "Virtual function is overloaded")));
-   Attrs.insert(WarningPair(FunctionNotOverridden,
-      CodeWarning(F, X, F,
-      "Virtual function has no overrides")));
-   Attrs.insert(WarningPair(RemoveVirtualTag,
-      CodeWarning(T, E, F,
-      "Remove virtual tag: function is an override or final")));
-   Attrs.insert(WarningPair(OverrideTagMissing,
-      CodeWarning(T, I, F,
-      "Function should be tagged as override")));
-   Attrs.insert(WarningPair(VoidAsArgument,
-      CodeWarning(T, E, F,
-      "\"(void)\" as function argument")));
-   Attrs.insert(WarningPair(AnonymousArgument,
-      CodeWarning(F, X, F,
-      "Unnamed argument")));
-   Attrs.insert(WarningPair(AdjacentArgumentTypes,
-      CodeWarning(F, X, F,
-      "Adjacent arguments have the same type")));
-   Attrs.insert(WarningPair(DefinitionRenamesArgument,
-      CodeWarning(T, R, F,
-      "Definition renames argument in declaration")));
-   Attrs.insert(WarningPair(OverrideRenamesArgument,
-      CodeWarning(T, R, F,
-      "Override renames argument in direct base class")));
-   Attrs.insert(WarningPair(VirtualDefaultArgument,
-      CodeWarning(F, X, F,
-      "Virtual function defines default argument")));
-   Attrs.insert(WarningPair(ArgumentCannotBeConst,
-      CodeWarning(F, X, F,
-      "ARGUMENT CANNOT BE CONST")));
-   Attrs.insert(WarningPair(ArgumentCouldBeConstRef,
-      CodeWarning(T, I, F,
-      "Object could be passed by const reference")));
-   Attrs.insert(WarningPair(ArgumentCouldBeConst,
-      CodeWarning(T, I, F,
-      "Argument could be const")));
-   Attrs.insert(WarningPair(FunctionCannotBeConst,
-      CodeWarning(F, X, F,
-      "FUNCTION CANNOT BE CONST")));
-   Attrs.insert(WarningPair(FunctionCouldBeConst,
-      CodeWarning(T, I, F,
-      "Function could be const")));
-   Attrs.insert(WarningPair(FunctionCouldBeStatic,
-      CodeWarning(T, I, F,
-      "Function could be static")));
-   Attrs.insert(WarningPair(FunctionCouldBeFree,
-      CodeWarning(F, X, F,
-      "Function could be free")));
-   Attrs.insert(WarningPair(StaticFunctionViaMember,
-      CodeWarning(F, X, F,
-      "Static function invoked via operator \".\" or \"->\"")));
-   Attrs.insert(WarningPair(NonBooleanConditional,
-      CodeWarning(F, X, F,
-      "Non-boolean in conditional expression")));
-   Attrs.insert(WarningPair(EnumTypesDiffer,
-      CodeWarning(F, X, F,
-      "Arguments to binary operator have different enum types")));
-   Attrs.insert(WarningPair(UseOfTab,
-      CodeWarning(T, R, F,
-      "Tab character in source code")));
-   Attrs.insert(WarningPair(Indentation,
-      CodeWarning(T, R, F,
-      "Line indentation is not a multiple of the standard value")));
-   Attrs.insert(WarningPair(TrailingSpace,
-      CodeWarning(T, E, F,
-      "Line contains trailing space")));
-   Attrs.insert(WarningPair(AdjacentSpaces,
-      CodeWarning(T, E, F,
-      "Line contains adjacent spaces")));
-   Attrs.insert(WarningPair(AddBlankLine,
-      CodeWarning(T, C, F,
-      "Insertion of blank line recommended")));
-   Attrs.insert(WarningPair(RemoveBlankLine,
-      CodeWarning(T, D, F,
-      "Deletion of blank line recommended")));
-   Attrs.insert(WarningPair(LineLength,
-      CodeWarning(F, S, F,
-      "Line length exceeds the standard maximum")));
-   Attrs.insert(WarningPair(FunctionNotSorted,
-      CodeWarning(F, X, F,
-      "Function not sorted in standard order")));
-   Attrs.insert(WarningPair(HeadingNotStandard,
-      CodeWarning(F, X, F,
-      "File heading is not standard")));
-   Attrs.insert(WarningPair(IncludeGuardMisnamed,
-      CodeWarning(T, R, F,
-      "Name of #include guard is not standard")));
-   Attrs.insert(WarningPair(DebugFtNotInvoked,
-      CodeWarning(T, C, F,
-      "Function does not invoke Debug::ft")));
-   Attrs.insert(WarningPair(DebugFtNotFirst,
-      CodeWarning(F, X, F,
-      "Function does not invoke Debug::ft as first statement")));
-   Attrs.insert(WarningPair(DebugFtNameMismatch,
-      CodeWarning(T, R, F,
-      "Function name passed to Debug::ft is not standard")));
-   Attrs.insert(WarningPair(DebugFtNameDuplicated,
-      CodeWarning(F, X, F,
-      "Function name passed to Debug::ft is used by another function")));
-   Attrs.insert(WarningPair(DisplayNotOverridden,
-      CodeWarning(F, X, F,
-      "Override of Base.Display not found")));
-   Attrs.insert(WarningPair(PatchNotOverridden,
-      CodeWarning(F, X, F,
-      "Override of Object.Patch not found")));
-   Attrs.insert(WarningPair(FunctionCouldBeDefaulted,
-      CodeWarning(T, R, F,
-      "Function could be defaulted")));
-   Attrs.insert(WarningPair(InitCouldUseConstructor,
-      CodeWarning(T, R, F,
-      "Initialization uses assignment operator")));
-   Attrs.insert(WarningPair(CouldBeNoexcept,
-      CodeWarning(T, I, F,
-      "Function could be tagged noexcept")));
-   Attrs.insert(WarningPair(ShouldNotBeNoexcept,
-      CodeWarning(T, I, F,
-      "Function should not be tagged noexcept")));
-   Attrs.insert(WarningPair(UseOfSlashAsterisk,
-      CodeWarning(T, R, F,
-      "C-style comment")));
-   Attrs.insert(WarningPair(RemoveLineBreak,
-      CodeWarning(T, J, F,
-      "Line can merge with the next line and be under the length limit")));
-   Attrs.insert(WarningPair(Warning_N,
-      CodeWarning(F, X, F,
-      ERROR_STR)));
-}
-
-//------------------------------------------------------------------------------
-
-ostream& operator<<(ostream& stream, Warning warning)
-{
-   if((warning >= 0) && (warning < Warning_N))
-      stream << CodeWarning::Attrs.at(warning).title;
-   else
-      stream << CodeWarning::Attrs.at(Warning_N).title;
-   return stream;
+   stream << 'W' << setw(3) << std::setfill('0') << int(warning);
+   return stream.str();
 }
 
 //==============================================================================
 
-fn_name WarningLog_ctor = "WarningLog.ctor";
+CodeWarning::AttrsMap CodeWarning::Attrs_ = AttrsMap();
 
-WarningLog::WarningLog(Warning warning, const CodeFile* file,
+size_t CodeWarning::LineTypeCounts_[] = { 0 };
+
+size_t CodeWarning::WarningCounts_[] = { 0 };
+
+std::vector< CodeWarning > CodeWarning::Warnings_ =
+   std::vector< CodeWarning >();
+
+//------------------------------------------------------------------------------
+
+fn_name CodeWarning_ctor = "CodeWarning.ctor";
+
+CodeWarning::CodeWarning(Warning warning, const CodeFile* file,
    size_t line, size_t pos, const CxxNamed* item, word offset,
    const string& info, bool hide) :
    warning(warning),
@@ -474,18 +105,18 @@ WarningLog::WarningLog(Warning warning, const CodeFile* file,
    hide(hide),
    status(NotSupported)
 {
-   Debug::ft(WarningLog_ctor);
+   Debug::ft(CodeWarning_ctor);
 
-   if(CodeWarning::Attrs.at(warning).fixable) status = NotFixed;
+   if(Attrs_.at(warning).fixable) status = NotFixed;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name WarningLog_FindMateLog = "WarningLog.FindMateLog";
+fn_name CodeWarning_FindMateLog = "CodeWarning.FindMateLog";
 
-WarningLog* WarningLog::FindMateLog(std::string& expl) const
+CodeWarning* CodeWarning::FindMateLog(std::string& expl) const
 {
-   Debug::ft(WarningLog_FindMateLog);
+   Debug::ft(CodeWarning_FindMateLog);
 
    //  Look for the mate item associated with this log.  Find its file and
    //  editor, and ask its editor find the log that corresponds to this one.
@@ -503,11 +134,11 @@ WarningLog* WarningLog::FindMateLog(std::string& expl) const
 
 //------------------------------------------------------------------------------
 
-fn_name WarningLog_FindRootLog = "WarningLog.FindRootLog";
+fn_name CodeWarning_FindRootLog = "CodeWarning.FindRootLog";
 
-WarningLog* WarningLog::FindRootLog(std::string& expl)
+CodeWarning* CodeWarning::FindRootLog(std::string& expl)
 {
-   Debug::ft(WarningLog_FindRootLog);
+   Debug::ft(CodeWarning_FindRootLog);
 
    //  This warning is logged against the location that invokes a special
    //  member function and that class that did not declare that function.
@@ -545,98 +176,7 @@ WarningLog* WarningLog::FindRootLog(std::string& expl)
 
 //------------------------------------------------------------------------------
 
-fn_name WarningLog_LogsToFix = "WarningLog.LogsToFix";
-
-std::vector< WarningLog* > WarningLog::LogsToFix(std::string& expl)
-{
-   Debug::ft(WarningLog_LogsToFix);
-
-   std::vector< WarningLog* > logs;
-   WarningLog* log = nullptr;
-
-   if(!CodeWarning::Attrs.at(warning).fixable)
-   {
-      expl = "Fixing this type of warning is not supported.";
-      return logs;
-   }
-
-   switch(warning)
-   {
-   case DefaultConstructor:
-   case DefaultCopyConstructor:
-   case DefaultCopyOperator:
-   case DefaultDestructor:
-      logs.push_back(this);
-      log = FindRootLog(expl);
-      if(log != nullptr) logs.push_back(log);
-      break;
-
-   case ArgumentCouldBeConstRef:
-   case ArgumentCouldBeConst:
-   case FunctionCouldBeConst:
-   case FunctionCouldBeStatic:
-   case CouldBeNoexcept:
-   case ShouldNotBeNoexcept:
-      if(static_cast< const Function* >(item)->IsVirtual())
-      {
-         expl = "Changing a virtual function's signature is not supported.";
-         return logs;
-      }
-      //  [[fallthrough]]
-   case FunctionCouldBeDefaulted:
-      logs.push_back(this);
-      log = FindMateLog(expl);
-      if(log != nullptr) logs.push_back(log);
-      break;
-
-   default:
-      logs.push_back(this);
-   }
-
-   return logs;
-}
-
-//------------------------------------------------------------------------------
-
-bool WarningLog::operator==(const WarningLog& that) const
-{
-   if(this->file != that.file) return false;
-   if(this->line != that.line) return false;
-   if(this->pos != that.pos) return false;
-   if(this->warning != that.warning) return false;
-   if(this->offset != that.offset) return false;
-   return (this->info == that.info);
-}
-
-//------------------------------------------------------------------------------
-
-bool WarningLog::operator!=(const WarningLog& that) const
-{
-   return !(*this == that);
-}
-
-//==============================================================================
-
-size_t CodeInfo::LineTypeCounts_[] = { 0 };
-
-size_t CodeInfo::WarningCounts_[] = { 0 };
-
-std::vector< WarningLog > CodeInfo::Warnings_ = std::vector< WarningLog >();
-
-//------------------------------------------------------------------------------
-
-fn_name CodeInfo_AddWarning = "CodeInfo.AddWarning";
-
-void CodeInfo::AddWarning(const WarningLog& log)
-{
-   Debug::ft(CodeInfo_AddWarning);
-
-   if(FindWarning(log) < 0) Warnings_.push_back(log);
-}
-
-//------------------------------------------------------------------------------
-
-word CodeInfo::FindWarning(const WarningLog& log)
+word CodeWarning::FindWarning(const CodeWarning& log)
 {
    for(size_t i = 0; i < Warnings_.size(); ++i)
    {
@@ -648,11 +188,11 @@ word CodeInfo::FindWarning(const WarningLog& log)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeInfo_GenerateReport = "CodeInfo.GenerateReport";
+fn_name CodeWarning_GenerateReport = "CodeWarning.GenerateReport";
 
-void CodeInfo::GenerateReport(ostream* stream, const SetOfIds& set)
+void CodeWarning::GenerateReport(ostream* stream, const SetOfIds& set)
 {
-   Debug::ft(CodeInfo_GenerateReport);
+   Debug::ft(CodeWarning_GenerateReport);
 
    //  Clear any previous report's global counts.
    //
@@ -699,7 +239,7 @@ void CodeInfo::GenerateReport(ostream* stream, const SetOfIds& set)
       files.At(*f)->GetLineCounts();
    }
 
-   std::vector< WarningLog > warnings;
+   std::vector< CodeWarning > warnings;
 
    //  Count the total number of warnings of each type that appear in files
    //  belonging to the original SET, extracing them into the local set of
@@ -742,7 +282,7 @@ void CodeInfo::GenerateReport(ostream* stream, const SetOfIds& set)
 
    //  Sort and output the warnings by warning type/file/line.
    //
-   std::sort(warnings.begin(), warnings.end(), IsSortedByWarning);
+   std::sort(warnings.begin(), warnings.end(), IsSortedByType);
 
    auto item = warnings.cbegin();
    auto last = warnings.cend();
@@ -759,12 +299,12 @@ void CodeInfo::GenerateReport(ostream* stream, const SetOfIds& set)
          if(item->offset > 0) *stream << '/' << item->offset;
          *stream << "): ";
 
-         if(item->DisplayCode())
+         if(item->HasCodeToDisplay())
          {
             *stream << item->file->GetLexer().GetNthLine(item->line);
          }
 
-         if(item->DisplayInfo()) *stream << item->info;
+         if(item->HasInfoToDisplay()) *stream << item->info;
          *stream << CRLF;
          ++item;
       }
@@ -813,11 +353,12 @@ void CodeInfo::GenerateReport(ostream* stream, const SetOfIds& set)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeInfo_GetWarnings = "CodeInfo.GetWarnings";
+fn_name CodeWarning_GetWarnings = "CodeWarning.GetWarnings";
 
-void CodeInfo::GetWarnings(const CodeFile* file, WarningLogVector& warnings)
+void CodeWarning::GetWarnings
+   (const CodeFile* file, std::vector< CodeWarning >& warnings)
 {
-   Debug::ft(CodeInfo_GetWarnings);
+   Debug::ft(CodeWarning_GetWarnings);
 
    for(auto w = Warnings_.cbegin(); w != Warnings_.cend(); ++w)
    {
@@ -830,7 +371,404 @@ void CodeInfo::GetWarnings(const CodeFile* file, WarningLogVector& warnings)
 
 //------------------------------------------------------------------------------
 
-bool CodeInfo::IsSortedByFile(const WarningLog& log1, const WarningLog& log2)
+fn_name CodeWarning_Initialize = "CodeWarning.Initialize";
+
+void CodeWarning::Initialize()
+{
+   Debug::ft(CodeWarning_Initialize);
+
+   //  The following constants define how warnings will be sorted before the
+   //  editor fixes them.  Fixes that require more significant editing are
+   //  assigned higher numbers so that they will occur later.  For example,
+   //  inserting or removing a line feed no longer makes it possible to find
+   //  the location of a warning based on its line number.
+   //
+   const int U = 0;  // leaves code unchanged
+   const int D = 2;  // deletes one or more lines
+   const int C = 2;  // creates one or more lines
+   const int E = 4;  // erases within a line
+   const int R = 4;  // replaces within a line
+   const int I = 4;  // inserts within a line
+   const int J = 6;  // joins two lines by removing a line feed
+   const int S = 6;  // splits two lines by inserting a line feed
+   const int X = 8;  // editor does not support fixing this warning
+   const auto F = false;
+   const auto T = true;
+
+   Attrs_.insert(WarningPair(AllWarnings,
+      WarningAttrs(T, X, F,
+      "All warnings")));
+   Attrs_.insert(WarningPair(UseOfNull,
+      WarningAttrs(T, R, F,
+      "Use of NULL")));
+   Attrs_.insert(WarningPair(PtrTagDetached,
+      WarningAttrs(T, R, F,
+      "Pointer tag ('*') detached from type")));
+   Attrs_.insert(WarningPair(RefTagDetached,
+      WarningAttrs(T, R, F,
+      "Reference tag ('&') detached from type")));
+   Attrs_.insert(WarningPair(UseOfCast,
+      WarningAttrs(F, X, F,
+      "C-style cast")));
+   Attrs_.insert(WarningPair(FunctionalCast,
+      WarningAttrs(F, X, F,
+      "Functional cast")));
+   Attrs_.insert(WarningPair(ReinterpretCast,
+      WarningAttrs(F, X, F,
+      "reinterpret_cast")));
+   Attrs_.insert(WarningPair(Downcasting,
+      WarningAttrs(F, X, F,
+      "Cast down the inheritance hierarchy")));
+   Attrs_.insert(WarningPair(CastingAwayConstness,
+      WarningAttrs(F, X, F,
+      "Cast removes const qualification")));
+   Attrs_.insert(WarningPair(PointerArithmetic,
+      WarningAttrs(F, X, F,
+      "Pointer arithmetic")));
+   Attrs_.insert(WarningPair(RedundantSemicolon,
+      WarningAttrs(T, E, F,
+      "Semicolon not required")));
+   Attrs_.insert(WarningPair(RedundantConst,
+      WarningAttrs(T, E, F,
+      "Redundant const in type specification")));
+   Attrs_.insert(WarningPair(DefineNotAtFileScope,
+      WarningAttrs(F, X, F,
+      "#define appears within a class or function")));
+   Attrs_.insert(WarningPair(IncludeNotAtGlobalScope,
+      WarningAttrs(F, X, F,
+      "No #include guard found")));
+   Attrs_.insert(WarningPair(IncludeGuardMissing,
+      WarningAttrs(T, C, F,
+      "#include appears outside of global namespace")));
+   Attrs_.insert(WarningPair(IncludeNotSorted,
+      WarningAttrs(T, U, F,
+      "#include not sorted in standard order")));
+   Attrs_.insert(WarningPair(IncludeDuplicated,
+      WarningAttrs(T, D, F,
+      "#include duplicated")));
+   Attrs_.insert(WarningPair(IncludeAdd,
+      WarningAttrs(T, C, F,
+      "Add #include directive")));
+   Attrs_.insert(WarningPair(IncludeRemove,
+      WarningAttrs(T, D, F,
+      "Remove #include directive")));
+   Attrs_.insert(WarningPair(RemoveOverrideTag,
+      WarningAttrs(T, E, F,
+      "Remove override tag: function is final")));
+   Attrs_.insert(WarningPair(UsingInHeader,
+      WarningAttrs(T, I, F,
+      "Using statement in header")));
+   Attrs_.insert(WarningPair(UsingDuplicated,
+      WarningAttrs(T, D, F,
+      "Using statement duplicated")));
+   Attrs_.insert(WarningPair(UsingAdd,
+      WarningAttrs(T, C, F,
+      "Add using statement")));
+   Attrs_.insert(WarningPair(UsingRemove,
+      WarningAttrs(T, D, F,
+      "Remove using statement")));
+   Attrs_.insert(WarningPair(ForwardAdd,
+      WarningAttrs(T, C, F,
+      "Add forward declaration")));
+   Attrs_.insert(WarningPair(ForwardRemove,
+      WarningAttrs(T, D, F,
+      "Remove forward declaration")));
+   Attrs_.insert(WarningPair(ArgumentUnused,
+      WarningAttrs(F, X, T,
+      "Unused argument")));
+   Attrs_.insert(WarningPair(ClassUnused,
+      WarningAttrs(F, X, T,
+      "Unused class")));
+   Attrs_.insert(WarningPair(DataUnused,
+      WarningAttrs(F, X, T,
+      "Unused data")));
+   Attrs_.insert(WarningPair(EnumUnused,
+      WarningAttrs(T, D, T,
+      "Unused enum")));
+   Attrs_.insert(WarningPair(EnumeratorUnused,
+      WarningAttrs(T, D, T,
+      "Unused enumerator")));
+   Attrs_.insert(WarningPair(FriendUnused,
+      WarningAttrs(T, D, T,
+      "Unused friend declaration")));
+   Attrs_.insert(WarningPair(FunctionUnused,
+      WarningAttrs(F, X, T,
+      "Unused function")));
+   Attrs_.insert(WarningPair(TypedefUnused,
+      WarningAttrs(T, D, T,
+      "Unused typedef")));
+   Attrs_.insert(WarningPair(ForwardUnresolved,
+      WarningAttrs(T, D, F,
+      "No referent for forward declaration")));
+   Attrs_.insert(WarningPair(FriendUnresolved,
+      WarningAttrs(T, D, F,
+      "No referent for friend declaration")));
+   Attrs_.insert(WarningPair(FriendAsForward,
+      WarningAttrs(F, X, F,
+      "Indirect reference relies on friend, not forward, declaration")));
+   Attrs_.insert(WarningPair(HidesInheritedName,
+      WarningAttrs(F, X, F,
+      "Member hides inherited name")));
+   Attrs_.insert(WarningPair(ClassCouldBeNamespace,
+      WarningAttrs(F, X, F,
+      "Class could be namespace")));
+   Attrs_.insert(WarningPair(ClassCouldBeStruct,
+      WarningAttrs(T, R, F,
+      "Class could be struct")));
+   Attrs_.insert(WarningPair(StructCouldBeClass,
+      WarningAttrs(T, R, F,
+      "Struct could be class")));
+   Attrs_.insert(WarningPair(RedundantAccessControl,
+      WarningAttrs(T, D, F,
+      "Redundant access control")));
+   Attrs_.insert(WarningPair(ItemCouldBePrivate,
+      WarningAttrs(F, X, F,
+      "Member could be private")));
+   Attrs_.insert(WarningPair(ItemCouldBeProtected,
+      WarningAttrs(F, X, F,
+      "Member could be protected")));
+   Attrs_.insert(WarningPair(PointerTypedef,
+      WarningAttrs(F, X, F,
+      "Typedef of pointer type")));
+   Attrs_.insert(WarningPair(AnonymousEnum,
+      WarningAttrs(F, X, F,
+      "Unnamed enum")));
+   Attrs_.insert(WarningPair(DataUninitialized,
+      WarningAttrs(F, X, F,
+      "Global data initialization not found")));
+   Attrs_.insert(WarningPair(DataInitOnly,
+      WarningAttrs(F, X, F,
+      "Data is init-only")));
+   Attrs_.insert(WarningPair(DataWriteOnly,
+      WarningAttrs(F, X, F,
+      "Data is write-only")));
+   Attrs_.insert(WarningPair(GlobalStaticData,
+      WarningAttrs(F, X, F,
+      "Global static data")));
+   Attrs_.insert(WarningPair(DataNotPrivate,
+      WarningAttrs(F, X, F,
+      "Data is not private")));
+   Attrs_.insert(WarningPair(DataCannotBeConst,
+      WarningAttrs(F, X, F,
+      "DATA CANNOT BE CONST")));
+   Attrs_.insert(WarningPair(DataCannotBeConstPtr,
+      WarningAttrs(F, X, F,
+      "DATA CANNOT BE CONST POINTER")));
+   Attrs_.insert(WarningPair(DataCouldBeConst,
+      WarningAttrs(T, I, F,
+      "Data could be const")));
+   Attrs_.insert(WarningPair(DataCouldBeConstPtr,
+      WarningAttrs(T, I, F,
+      "Data could be const pointer")));
+   Attrs_.insert(WarningPair(DataNeedNotBeMutable,
+      WarningAttrs(T, E, F,
+      "Data need not be mutable")));
+   Attrs_.insert(WarningPair(DefaultPODConstructor,
+      WarningAttrs(F, X, F,
+      "Default constructor invoked: POD members not initialized")));
+   Attrs_.insert(WarningPair(DefaultConstructor,
+      WarningAttrs(T, C, F,
+      "Default constructor invoked")));
+   Attrs_.insert(WarningPair(DefaultCopyConstructor,
+      WarningAttrs(T, C, F,
+      "Default copy constructor invoked")));
+   Attrs_.insert(WarningPair(DefaultCopyOperator,
+      WarningAttrs(T, C, F,
+      "Default copy (assignment) operator invoked")));
+   Attrs_.insert(WarningPair(PublicConstructor,
+      WarningAttrs(F, X, F,
+      "Base class constructor is public")));
+   Attrs_.insert(WarningPair(NonExplicitConstructor,
+      WarningAttrs(T, I, F,
+      "Single-argument constructor is not explicit")));
+   Attrs_.insert(WarningPair(MemberInitMissing,
+      WarningAttrs(F, X, F,
+      "Member not included in member initialization list")));
+   Attrs_.insert(WarningPair(MemberInitNotSorted,
+      WarningAttrs(F, X, F,
+      "Member not sorted in standard order in member initialization list")));
+   Attrs_.insert(WarningPair(DefaultDestructor,
+      WarningAttrs(T, C, F,
+      "Default destructor invoked")));
+   Attrs_.insert(WarningPair(VirtualDestructor,
+      WarningAttrs(F, X, F,
+      "Base class virtual destructor is not public")));
+   Attrs_.insert(WarningPair(NonVirtualDestructor,
+      WarningAttrs(F, X, F,
+      "Base class non-virtual destructor is public")));
+   Attrs_.insert(WarningPair(VirtualFunctionInvoked,
+      WarningAttrs(F, X, F,
+      "Virtual function in own class invoked by constructor or destructor")));
+   Attrs_.insert(WarningPair(RuleOf3DtorNoCopyCtor,
+      WarningAttrs(F, X, F,
+      "Destructor defined, but not copy constructor")));
+   Attrs_.insert(WarningPair(RuleOf3DtorNoCopyOper,
+      WarningAttrs(F, X, F,
+      "Destructor defined, but not copy operator")));
+   Attrs_.insert(WarningPair(RuleOf3CopyCtorNoOper,
+      WarningAttrs(T, I, F,
+      "Copy constructor defined, but not copy operator")));
+   Attrs_.insert(WarningPair(RuleOf3CopyOperNoCtor,
+      WarningAttrs(T, I, F,
+      "Copy operator defined, but not copy constructor")));
+   Attrs_.insert(WarningPair(OperatorOverloaded,
+      WarningAttrs(F, X, F,
+      "Overloading operator && or ||")));
+   Attrs_.insert(WarningPair(FunctionNotDefined,
+      WarningAttrs(T, D, F,
+      "Function not implemented")));
+   Attrs_.insert(WarningPair(PureVirtualNotDefined,
+      WarningAttrs(F, X, F,
+      "Pure virtual function not implemented")));
+   Attrs_.insert(WarningPair(VirtualAndPublic,
+      WarningAttrs(F, X, F,
+      "Virtual function is public")));
+   Attrs_.insert(WarningPair(VirtualOverloading,
+      WarningAttrs(F, X, F,
+      "Virtual function is overloaded")));
+   Attrs_.insert(WarningPair(FunctionNotOverridden,
+      WarningAttrs(F, X, F,
+      "Virtual function has no overrides")));
+   Attrs_.insert(WarningPair(RemoveVirtualTag,
+      WarningAttrs(T, E, F,
+      "Remove virtual tag: function is an override or final")));
+   Attrs_.insert(WarningPair(OverrideTagMissing,
+      WarningAttrs(T, I, F,
+      "Function should be tagged as override")));
+   Attrs_.insert(WarningPair(VoidAsArgument,
+      WarningAttrs(T, E, F,
+      "\"(void)\" as function argument")));
+   Attrs_.insert(WarningPair(AnonymousArgument,
+      WarningAttrs(F, X, F,
+      "Unnamed argument")));
+   Attrs_.insert(WarningPair(AdjacentArgumentTypes,
+      WarningAttrs(F, X, F,
+      "Adjacent arguments have the same type")));
+   Attrs_.insert(WarningPair(DefinitionRenamesArgument,
+      WarningAttrs(T, R, F,
+      "Definition renames argument in declaration")));
+   Attrs_.insert(WarningPair(OverrideRenamesArgument,
+      WarningAttrs(T, R, F,
+      "Override renames argument in direct base class")));
+   Attrs_.insert(WarningPair(VirtualDefaultArgument,
+      WarningAttrs(F, X, F,
+      "Virtual function defines default argument")));
+   Attrs_.insert(WarningPair(ArgumentCannotBeConst,
+      WarningAttrs(F, X, F,
+      "ARGUMENT CANNOT BE CONST")));
+   Attrs_.insert(WarningPair(ArgumentCouldBeConstRef,
+      WarningAttrs(T, I, F,
+      "Object could be passed by const reference")));
+   Attrs_.insert(WarningPair(ArgumentCouldBeConst,
+      WarningAttrs(T, I, F,
+      "Argument could be const")));
+   Attrs_.insert(WarningPair(FunctionCannotBeConst,
+      WarningAttrs(F, X, F,
+      "FUNCTION CANNOT BE CONST")));
+   Attrs_.insert(WarningPair(FunctionCouldBeConst,
+      WarningAttrs(T, I, F,
+      "Function could be const")));
+   Attrs_.insert(WarningPair(FunctionCouldBeStatic,
+      WarningAttrs(T, I, F,
+      "Function could be static")));
+   Attrs_.insert(WarningPair(FunctionCouldBeFree,
+      WarningAttrs(F, X, F,
+      "Function could be free")));
+   Attrs_.insert(WarningPair(StaticFunctionViaMember,
+      WarningAttrs(F, X, F,
+      "Static function invoked via operator \".\" or \"->\"")));
+   Attrs_.insert(WarningPair(NonBooleanConditional,
+      WarningAttrs(F, X, F,
+      "Non-boolean in conditional expression")));
+   Attrs_.insert(WarningPair(EnumTypesDiffer,
+      WarningAttrs(F, X, F,
+      "Arguments to binary operator have different enum types")));
+   Attrs_.insert(WarningPair(UseOfTab,
+      WarningAttrs(T, R, F,
+      "Tab character in source code")));
+   Attrs_.insert(WarningPair(Indentation,
+      WarningAttrs(T, R, F,
+      "Line indentation is not a multiple of the standard value")));
+   Attrs_.insert(WarningPair(TrailingSpace,
+      WarningAttrs(T, E, F,
+      "Line contains trailing space")));
+   Attrs_.insert(WarningPair(AdjacentSpaces,
+      WarningAttrs(T, E, F,
+      "Line contains adjacent spaces")));
+   Attrs_.insert(WarningPair(AddBlankLine,
+      WarningAttrs(T, C, F,
+      "Insertion of blank line recommended")));
+   Attrs_.insert(WarningPair(RemoveBlankLine,
+      WarningAttrs(T, D, F,
+      "Deletion of blank line recommended")));
+   Attrs_.insert(WarningPair(LineLength,
+      WarningAttrs(F, S, F,
+      "Line length exceeds the standard maximum")));
+   Attrs_.insert(WarningPair(FunctionNotSorted,
+      WarningAttrs(F, X, F,
+      "Function not sorted in standard order")));
+   Attrs_.insert(WarningPair(HeadingNotStandard,
+      WarningAttrs(F, X, F,
+      "File heading is not standard")));
+   Attrs_.insert(WarningPair(IncludeGuardMisnamed,
+      WarningAttrs(T, R, F,
+      "Name of #include guard is not standard")));
+   Attrs_.insert(WarningPair(DebugFtNotInvoked,
+      WarningAttrs(T, C, F,
+      "Function does not invoke Debug::ft")));
+   Attrs_.insert(WarningPair(DebugFtNotFirst,
+      WarningAttrs(F, X, F,
+      "Function does not invoke Debug::ft as first statement")));
+   Attrs_.insert(WarningPair(DebugFtNameMismatch,
+      WarningAttrs(T, R, F,
+      "Function name passed to Debug::ft is not standard")));
+   Attrs_.insert(WarningPair(DebugFtNameDuplicated,
+      WarningAttrs(F, X, F,
+      "Function name passed to Debug::ft is used by another function")));
+   Attrs_.insert(WarningPair(DisplayNotOverridden,
+      WarningAttrs(F, X, F,
+      "Override of Base.Display not found")));
+   Attrs_.insert(WarningPair(PatchNotOverridden,
+      WarningAttrs(F, X, F,
+      "Override of Object.Patch not found")));
+   Attrs_.insert(WarningPair(FunctionCouldBeDefaulted,
+      WarningAttrs(T, R, F,
+      "Function could be defaulted")));
+   Attrs_.insert(WarningPair(InitCouldUseConstructor,
+      WarningAttrs(T, R, F,
+      "Initialization uses assignment operator")));
+   Attrs_.insert(WarningPair(CouldBeNoexcept,
+      WarningAttrs(T, I, F,
+      "Function could be tagged noexcept")));
+   Attrs_.insert(WarningPair(ShouldNotBeNoexcept,
+      WarningAttrs(T, I, F,
+      "Function should not be tagged noexcept")));
+   Attrs_.insert(WarningPair(UseOfSlashAsterisk,
+      WarningAttrs(T, R, F,
+      "C-style comment")));
+   Attrs_.insert(WarningPair(RemoveLineBreak,
+      WarningAttrs(T, J, F,
+      "Line can merge with the next line and be under the length limit")));
+   Attrs_.insert(WarningPair(Warning_N,
+      WarningAttrs(F, X, F,
+      ERROR_STR)));
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeWarning_Insert = "CodeWarning.Insert";
+
+void CodeWarning::Insert(const CodeWarning& log)
+{
+   Debug::ft(CodeWarning_Insert);
+
+   if(FindWarning(log) < 0) Warnings_.push_back(log);
+}
+
+//------------------------------------------------------------------------------
+
+bool CodeWarning::IsSortedByFile
+   (const CodeWarning& log1, const CodeWarning& log2)
 {
    auto result = strCompare(log1.file->FullName(), log2.file->FullName());
    if(result == -1) return true;
@@ -848,7 +786,8 @@ bool CodeInfo::IsSortedByFile(const WarningLog& log1, const WarningLog& log2)
 
 //------------------------------------------------------------------------------
 
-bool CodeInfo::IsSortedByWarning(const WarningLog& log1, const WarningLog& log2)
+bool CodeWarning::IsSortedByType
+   (const CodeWarning& log1, const CodeWarning& log2)
 {
    if(log1.warning < log2.warning) return true;
    if(log1.warning > log2.warning) return false;
@@ -866,14 +805,16 @@ bool CodeInfo::IsSortedByWarning(const WarningLog& log1, const WarningLog& log2)
 
 //------------------------------------------------------------------------------
 
-bool CodeInfo::IsSortedForFixing(const WarningLog& log1, const WarningLog& log2)
+bool CodeWarning::IsSortedToFix
+   (const CodeWarning& log1, const CodeWarning& log2)
 {
    auto result = strCompare(log1.file->FullName(), log2.file->FullName());
    if(result == -1) return true;
    if(result == 1) return false;
-   auto& attrs = CodeWarning::Attrs;
-   if(attrs.at(log1.warning).order < attrs.at(log2.warning).order) return true;
-   if(attrs.at(log1.warning).order > attrs.at(log2.warning).order) return false;
+   if(Attrs_.at(log1.warning).order < Attrs_.at(log2.warning).order)
+      return true;
+   if(Attrs_.at(log1.warning).order > Attrs_.at(log2.warning).order)
+      return false;
    if(log1.line < log2.line) return true;
    if(log1.line > log2.line) return false;
    if(log1.pos > log2.pos) return true;
@@ -889,11 +830,73 @@ bool CodeInfo::IsSortedForFixing(const WarningLog& log1, const WarningLog& log2)
 
 //------------------------------------------------------------------------------
 
-string CodeInfo::WarningCode(Warning warning)
-{
-   std::ostringstream stream;
+fn_name CodeWarning_LogsToFix = "CodeWarning.LogsToFix";
 
-   stream << 'W' << setw(3) << std::setfill('0') << int(warning);
-   return stream.str();
+std::vector< CodeWarning* > CodeWarning::LogsToFix(std::string& expl)
+{
+   Debug::ft(CodeWarning_LogsToFix);
+
+   std::vector< CodeWarning* > logs;
+   CodeWarning* log = nullptr;
+
+   if(!Attrs_.at(warning).fixable)
+   {
+      expl = "Fixing this type of warning is not supported.";
+      return logs;
+   }
+
+   switch(warning)
+   {
+   case DefaultConstructor:
+   case DefaultCopyConstructor:
+   case DefaultCopyOperator:
+   case DefaultDestructor:
+      logs.push_back(this);
+      log = FindRootLog(expl);
+      if(log != nullptr) logs.push_back(log);
+      break;
+
+   case ArgumentCouldBeConstRef:
+   case ArgumentCouldBeConst:
+   case FunctionCouldBeConst:
+   case FunctionCouldBeStatic:
+   case CouldBeNoexcept:
+   case ShouldNotBeNoexcept:
+      if(static_cast< const Function* >(item)->IsVirtual())
+      {
+         expl = "Changing a virtual function's signature is not supported.";
+         return logs;
+      }
+      //  [[fallthrough]]
+   case FunctionCouldBeDefaulted:
+      logs.push_back(this);
+      log = FindMateLog(expl);
+      if(log != nullptr) logs.push_back(log);
+      break;
+
+   default:
+      logs.push_back(this);
+   }
+
+   return logs;
+}
+
+//------------------------------------------------------------------------------
+
+bool CodeWarning::operator==(const CodeWarning& that) const
+{
+   if(this->file != that.file) return false;
+   if(this->line != that.line) return false;
+   if(this->pos != that.pos) return false;
+   if(this->warning != that.warning) return false;
+   if(this->offset != that.offset) return false;
+   return (this->info == that.info);
+}
+
+//------------------------------------------------------------------------------
+
+bool CodeWarning::operator!=(const CodeWarning& that) const
+{
+   return !(*this == that);
 }
 }

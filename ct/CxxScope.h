@@ -1387,8 +1387,8 @@ private:
    void CheckMemberUsage() const;
 
    //  Logs WARNING on both the function's declaration and its definition.
-   //  When INDEX is provided, WarningLog.pos will be that of args_[INDEX]
-   //  rather than the function itself, but WarningLog.item will still be
+   //  When INDEX is provided, CodeWarning.pos will be that of args_[INDEX]
+   //  rather than the function itself, but CodeWarning.item will still be
    //  the function.
    //
    void LogToBoth(Warning warning, size_t index = SIZE_MAX) const;

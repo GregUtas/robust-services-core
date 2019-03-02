@@ -1552,7 +1552,7 @@ void CodeFile::FindDeclIds()
 
 fn_name CodeFile_FindLog = "CodeFile.FindLog";
 
-WarningLog* CodeFile::FindLog(const WarningLog& log,
+CodeWarning* CodeFile::FindLog(const CodeWarning& log,
    const CxxNamed* item, word offset, std::string& expl) const
 {
    Debug::ft(CodeFile_FindLog);
@@ -1736,7 +1736,7 @@ void CodeFile::GenerateReport(ostream* stream, const SetOfIds& set)
 {
    Debug::ft(CodeFile_GenerateReport);
 
-   CodeInfo::GenerateReport(stream, set);
+   CodeWarning::GenerateReport(stream, set);
 }
 
 //------------------------------------------------------------------------------
@@ -1811,11 +1811,11 @@ void CodeFile::GetLineCounts() const
    //
    if(isSubsFile_) return;
 
-   CodeInfo::AddLineType(AnyLine, lineType_.size());
+   CodeWarning::AddLineType(AnyLine, lineType_.size());
 
    for(size_t n = 0; n < lineType_.size(); ++n)
    {
-      CodeInfo::AddLineType(lineType_[n], 1);
+      CodeWarning::AddLineType(lineType_[n], 1);
    }
 }
 
@@ -2260,8 +2260,8 @@ void CodeFile::LogCode(Warning warning, size_t line, size_t pos,
       (line < lineType_.size()) &&
       (pos < code_.size()))
    {
-      WarningLog log(warning, this, line, pos, item, offset, info, hide);
-      CodeInfo::AddWarning(log);
+      CodeWarning log(warning, this, line, pos, item, offset, info, hide);
+      CodeWarning::Insert(log);
    }
 }
 

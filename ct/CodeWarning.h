@@ -28,6 +28,7 @@
 #include <map>
 #include <string>
 #include <utility>
+#include <vector>
 #include "CodeTypes.h"
 #include "CxxFwd.h"
 #include "LibraryTypes.h"
@@ -41,17 +42,16 @@ using NodeBase::word;
 
 namespace CodeTools
 {
-//  A code warning.
+//  Attributes of a Warning.
 //
-struct CodeWarning
+struct WarningAttrs
 {
    //  Set if the editor can fix the warning.
    //
    const bool fixable;
 
    //  The warning's sort order.  A warning with a lower value is fixed
-   //  before one with a higher value.  This can help to simplify the
-   //  editor.
+   //  before one with a higher value.  This helps simplify the editor.
    //
    const uint8_t order;
 
@@ -65,28 +65,12 @@ struct CodeWarning
 
    //  A string that explains the warning.
    //
-   fixed_string title;
+   fixed_string expl;
 
-   //  For inserting elements into the attributes map.
-   //
-   typedef std::pair< Warning, CodeWarning > WarningPair;
-
-   //  A type for mapping warnings to their attributes.
-   //
-   typedef std::map< Warning, CodeWarning > AttrsMap;
-
-   //  Maps a warning to its attributes.
-   //
-   static AttrsMap Attrs;
-
-   //  Initializes the Attrs map.
-   //
-   static void Initialize();
-private:
    //  Constructs a warning with the specified attributes.
    //
-   CodeWarning(bool fix, uint8_t order,
-      bool unused, fixed_string title) noexcept;
+   WarningAttrs(bool fix, uint8_t order,
+      bool unused, fixed_string expl) noexcept;
 };
 
 //------------------------------------------------------------------------------
@@ -109,107 +93,146 @@ enum WarningStatus
 //
 //  Used to log a warning.
 //
-struct WarningLog
+class CodeWarning
 {
-   Warning warning;       // type of warning
-   const CodeFile* file;  // file where warning occurred
-   size_t line;           // line where warning occurred
-   size_t pos;            // position in FILE where warning occurred
-   const CxxNamed* item;  // item associated with warning
-   word offset;           // warning-specific; displayed if > 0
-   std::string info;      // warning-specific
-   bool hide;             // set to stop warning from being displayed
-   WarningStatus status;  // whether warning has been fixed/committed
-
+   friend class Editor;
+public:
    //  Almost every member is supplied to the constructor.
    //
-   WarningLog(Warning warning, const CodeFile* file,
+   CodeWarning(Warning warning, const CodeFile* file,
       size_t line, size_t pos, const CxxNamed* item,
       word offset, const std::string& info, bool hide = false);
 
+   //  Initializes the Attrs map.
+   //
+   static void Initialize();
+
+   //  Returns true if W is a warning for an unused item.
+   //
+   static bool IsForUnusedItem(Warning w) { return Attrs_.at(w).unusedItem; }
+
+   //  Returns the explanation for warning W.
+   //
+   static fixed_string Expl(Warning w) { return Attrs_.at(w).expl; }
+
+   //  Adds LOG to the global set of warnings.
+   //
+   static void Insert(const CodeWarning& log);
+
+   //  Adds N to the number of line types of type T.
+   //
+   static void AddLineType(LineType t, size_t n) { LineTypeCounts_[t] += n; }
+
+   //  Generates a report in STREAM for the files in SET.  The report
+   //  includes line type counts and warnings found during parsing and
+   //  "execution".
+   //
+   static void GenerateReport(std::ostream* stream, const SetOfIds& set);
+private:
    //  Comparision operators.
    //
-   bool operator==(const WarningLog& that) const;
-   bool operator!=(const WarningLog& that) const;
+   bool operator==(const CodeWarning& that) const;
+   bool operator!=(const CodeWarning& that) const;
 
    //  Returns true if the log has code to display.
    //
-   bool DisplayCode() const
+   bool HasCodeToDisplay() const
       { return ((line != 0) || info.empty()); }
 
    //  Returns true if .info should be displayed.
    //
-   bool DisplayInfo() const
+   bool HasInfoToDisplay() const
       { return (info.find_first_not_of(SPACE) != std::string::npos); }
 
    //  Returns the logs that need to be fixed to resolve this log.
    //  The log itself is included in the result unless it does not
    //  need to be fixed.
    //
-   std::vector< WarningLog* > LogsToFix(std::string& expl);
-private:
+   std::vector< CodeWarning* > LogsToFix(std::string& expl);
+
    //  Returns the other log associated with a warning that invovles
    //  fixing both a declaration and a definition.
    //
-   WarningLog* FindMateLog(std::string& expl) const;
+   CodeWarning* FindMateLog(std::string& expl) const;
 
    //  If this log indicates that a compiler-provided special member
    //  function was invoked, it returns the log associated with the
    //  class that does not define that special member function.
    //
-   WarningLog* FindRootLog(std::string& expl);
-};
-
-//------------------------------------------------------------------------------
-//
-//  Information generated when analyzing, parsing, and executing code.
-//
-class CodeInfo
-{
-public:
-   //  Generates a report in STREAM for the files in SET.  The report
-   //  includes line type counts and warnings found during parsing and
-   //  "execution".
-   //
-   static void GenerateReport(std::ostream* stream, const SetOfIds& set);
-
-   //  Adds LOG to the global set of warnings.
-   //
-   static void AddWarning(const WarningLog& log);
+   CodeWarning* FindRootLog(std::string& expl);
 
    //  Updates WARNINGS with those that were logged in FILE.
    //
-   static void GetWarnings(const CodeFile* file, WarningLogVector& warnings);
+   static void GetWarnings
+      (const CodeFile* file, std::vector< CodeWarning >& warnings);
 
    //  Returns true if LOG2 > LOG1 when sorting by file/line/reverse pos.
    //
-   static bool IsSortedForFixing
-      (const WarningLog& log1, const WarningLog& log2);
+   static bool IsSortedToFix(const CodeWarning& log1, const CodeWarning& log2);
 
-   //  Adds N to the number of line types of type T.
-   //
-   static void AddLineType(LineType t, size_t n) { LineTypeCounts_[t] += n; }
-private:
    //  Returns LOG's index if it has already been reported, else -1.
    //
-   static NodeBase::word FindWarning(const WarningLog& log);
-
-   //  Returns the string "Wnnn", where nnn is WARNING's integer value.
-   //
-   static std::string WarningCode(Warning warning);
+   static NodeBase::word FindWarning(const CodeWarning& log);
 
    //  Returns true if LOG2 > LOG1 when sorting by file/warning/line.
    //
-   static bool IsSortedByFile(const WarningLog& log1, const WarningLog& log2);
+   static bool IsSortedByFile(const CodeWarning& log1, const CodeWarning& log2);
 
    //  Returns true if LOG2 > LOG1 when sorting by warning/file/line.
    //
-   static bool IsSortedByWarning
-      (const WarningLog& log1, const WarningLog& log2);
+   static bool IsSortedByType(const CodeWarning& log1, const CodeWarning& log2);
+
+   //  For inserting elements into the attributes map.
+   //
+   typedef std::pair< Warning, WarningAttrs > WarningPair;
+
+   //  A type for mapping warnings to their attributes.
+   //
+   typedef std::map< Warning, WarningAttrs > AttrsMap;
+
+   //  The type of warning.
+   //
+   Warning warning;
+
+   //  The file in which the warning occurred.
+   //
+   const CodeFile* file;
+
+   //  The line in FILE on which the warning occurred.
+   //
+   size_t line;
+
+   //  The position in FILE where the warning occurred.
+   //
+   size_t pos;
+
+   //  The C++ item associated with the warning.
+   //
+   const CxxNamed* item;
+
+   //  Warning specific; displayed if > 0.
+   //
+   word offset;
+
+   //  Warning specific.
+   //
+   std::string info;
+
+   //  If set, prevents a warning from being displayed.
+   //
+   bool hide;
+
+   //  Whether a warning can be, or has been, fixed by the Editor.
+   //
+   WarningStatus status;
+
+   //  Maps a warning to its attributes.
+   //
+   static AttrsMap Attrs_;
 
    //  Warnings found in all files.
    //
-   static WarningLogVector Warnings_;
+   static std::vector< CodeWarning > Warnings_;
 
    //  The total number of warnings of each type, globally.
    //

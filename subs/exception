@@ -11,6 +11,9 @@ namespace std
    {
    public:
       exception() noexcept;
+      exception(const exception& that) noexcept;
+      exception(const exception&& that) noexcept;
+      exception& operator=(const exception& that) noexcept;
       virtual ~exception() noexcept;
       virtual const char* what() const noexcept;
    };

@@ -86,6 +86,7 @@ namespace CodeTools
 //    o the order of tags is inflexible: "extern inline static virtual explicit
 //      constexpr <signature> const noexcept override final" (GetFuncDecl)
 //    o const&, &, and && as member function suffix tags
+//    o noexcept(<expr>) as a function tag (only "noexcept" is supported)
 //    o using a different type (an alias) for an argument in the definition of
 //      a previously declared function (DataSpec.MatchesExactly)
 //    o argument-dependent lookup of regular functions (done only for operator

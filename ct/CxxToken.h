@@ -274,6 +274,14 @@ protected:
    //
    CxxToken();
 
+   //  Copy constructor.
+   //
+   CxxToken(const CxxToken& that) = default;
+
+   //  Copy operator.
+   //
+   CxxToken& operator=(const CxxToken& that) = default;
+
    //  If the item is a class (and not a pointer or reference to a class),
    //  returns that class.  Returns nullptr otherwise.  The default version
    //  invokes DirectClass on GetTypeSpec.

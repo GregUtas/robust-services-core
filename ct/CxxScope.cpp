@@ -415,7 +415,17 @@ void ClassData::Check() const
    if(IsDecl())
    {
       CheckUsage();
-      CheckConstness();
+
+      //  If a class has a copy or move operator, it cannot have a const
+      //  member.
+      //
+      auto cls = GetClass();
+      auto copy = cls->FindFuncByRole(CopyOper, true);
+      auto move = cls->FindFuncByRole(MoveOper, true);
+      auto could = (((copy == nullptr) || copy->IsDeleted()) &&
+                    ((move == nullptr) || move->IsDeleted()));
+      CheckConstness(could);
+
       CheckIfInitialized();
       CheckIfHiding();
       CheckAccessControl();
@@ -2426,7 +2436,7 @@ void Function::CheckCtor() const
       }
    }
 
-   //  An empty constructor that neither explicitly invoke a base class
+   //  An empty constructor that neither explicitly invokes a base class
    //  constructor nor explicitly initializes a member can be defaulted.
    //
    auto& mems = defn->mems_;
@@ -2435,6 +2445,28 @@ void Function::CheckCtor() const
       (defn->call_ == nullptr) && mems.empty())
    {
       LogToBoth(FunctionCouldBeDefaulted);
+   }
+
+   //  The compiler default is for a copy or move constructor to invoke the
+   //  base class *constructor*, not its copy or move constructor.  This may
+   //  not be the desired behavior unless the base copy or move constructor
+   //  is deleted.
+   //
+   auto role = FuncRole();
+   if((role == CopyCtor) || (role == MoveCtor))
+   {
+      if(defn->call_ == nullptr)
+      {
+         auto base = GetClass()->BaseClass();
+         if(base != nullptr)
+         {
+            auto func = base->FindFuncByRole(role, true);
+            if((func == nullptr) || !func->IsDeleted())
+            {
+               defn->Log(CopyCtorConstructsBase);
+            }
+         }
+      }
    }
 
    //  Get ITEMS, a list of the class's data members.  This list contains the

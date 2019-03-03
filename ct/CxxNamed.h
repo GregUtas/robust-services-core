@@ -73,6 +73,14 @@ private:
    //
    CxxLocation();
 
+   //  Copy constructor.
+   //
+   CxxLocation(const CxxLocation& that) = default;
+
+   //  Copy operator.
+   //
+   CxxLocation& operator=(const CxxLocation& that) = default;
+
    //  Records the item's location in source code.
    //
    void SetLoc(CodeFile* file, size_t pos);

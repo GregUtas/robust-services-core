@@ -65,22 +65,22 @@ Exception::Exception(bool stack, fn_depth depth) : stack_(nullptr)
 
 fn_name Exception_ctor2 = "Exception.ctor(copy)";
 
-Exception::Exception(const Exception& that)
+Exception::Exception(const Exception& that) :
+   exception(that),
+   stack_(std::move(that.stack_))
 {
    Debug::ft(Exception_ctor2);
-
-   this->stack_ = std::move(that.stack_);
 }
 
 //------------------------------------------------------------------------------
 
 fn_name Exception_ctor3 = "Exception.ctor(move)";
 
-Exception::Exception(Exception&& that)
+Exception::Exception(Exception&& that) :
+   exception(that),
+   stack_(std::move(that.stack_))
 {
    Debug::ft(Exception_ctor3);
-
-   this->stack_ = std::move(that.stack_);
 }
 
 //------------------------------------------------------------------------------

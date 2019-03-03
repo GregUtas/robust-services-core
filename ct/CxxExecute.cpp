@@ -1297,23 +1297,32 @@ bool StackArg::IsDefaultCtor(const StackArgVector& args) const
 
    //  For this item to be a constructor, it must either *be* a class or its
    //  name must be that *of* its class.  The first can occur because, when
-   //  searching for a constructor, name resolution can return the class,
-   //  given that it and the constructor have the same name.
+   //  searching for a constructor, name resolution returns the class, given
+   //  that it and the constructor have the same name.
    //
    auto cls = item->GetClass();
    if(cls == nullptr) return false;
    if(*item->Name() != *cls->Name()) return false;
 
    //  A default constructor has one argument ("this").  A default copy
-   //  constructor has a second argument, namely a reference to the class.
+   //  constructor has a second argument, namely a reference to the class
+   //  (or a subclass, if the subclass copy constructor invokes a default
+   //  copy constructor in its base class).
    //
    switch(args.size())
    {
    case 1:
       return true;
    case 2:
-      auto argType = RemoveConsts(args[1].TypeString(true));
-      return (argType == cls->TypeString(true));
+   {
+      auto root = args[1].item->Root();
+      if(root == cls) return true;
+      if(root->Type() == Cxx::Class)
+      {
+         auto derived = static_cast< const Class* >(root);
+         return (derived->BaseClass() == cls);
+      }
+   }
    }
 
    return false;

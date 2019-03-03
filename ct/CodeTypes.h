@@ -478,6 +478,7 @@ enum Warning
    ShouldNotBeNoexcept,      // function should not be tagged noexcept
    UseOfSlashAsterisk,       // use of /* */ comment
    RemoveLineBreak,          // next line can be merged within length limit
+   CopyCtorConstructsBase,   // copy/move constructor relies on base constructor
    Warning_N                 // number of warnings
 };
 

@@ -606,10 +606,10 @@ void CodeWarning::Initialize()
       WarningAttrs(F, X, F,
       "Destructor defined, but not copy operator")));
    Attrs_.insert(WarningPair(RuleOf3CopyCtorNoOper,
-      WarningAttrs(T, I, F,
+      WarningAttrs(T, C, F,
       "Copy constructor defined, but not copy operator")));
    Attrs_.insert(WarningPair(RuleOf3CopyOperNoCtor,
-      WarningAttrs(T, I, F,
+      WarningAttrs(T, C, F,
       "Copy operator defined, but not copy constructor")));
    Attrs_.insert(WarningPair(OperatorOverloaded,
       WarningAttrs(F, X, F,
@@ -749,6 +749,9 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(RemoveLineBreak,
       WarningAttrs(T, J, F,
       "Line can merge with the next line and be under the length limit")));
+   Attrs_.insert(WarningPair(CopyCtorConstructsBase,
+      WarningAttrs(F, X, F,
+      "Copy/move constructor does not invoke base copy/move constructor")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(F, X, F,
       ERROR_STR)));

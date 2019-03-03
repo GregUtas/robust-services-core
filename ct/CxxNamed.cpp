@@ -96,11 +96,10 @@ CxxNamed::CxxNamed()
 
 fn_name CxxNamed_ctor2 = "CxxNamed.ctor(copy)";
 
-CxxNamed::CxxNamed(const CxxNamed& that)
+CxxNamed::CxxNamed(const CxxNamed& that) : CxxToken(that),
+   loc_(that.loc_)
 {
    Debug::ft(CxxNamed_ctor2);
-
-   this->loc_ = that.loc_;
 }
 
 //------------------------------------------------------------------------------

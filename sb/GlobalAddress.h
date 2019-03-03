@@ -62,7 +62,7 @@ public:
 
    //  Copy constructor.
    //
-   GlobalAddress(const GlobalAddress& that) = default;
+   GlobalAddress(const GlobalAddress& that);
 
    //  Copy operator.
    //

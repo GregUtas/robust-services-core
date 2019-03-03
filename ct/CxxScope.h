@@ -971,6 +971,11 @@ public:
    //
    bool IsOverride() const { return override_; }
 
+   //  Returns true if the function is deleted or declared private to make
+   //  it inaccessible (e.g. a private constructor or assignment operator).
+   //
+   bool IsDeleted() const;
+
    //  Returns the function's arguments.
    //
    const ArgumentPtrVector& GetArgs() const { return args_; }
@@ -1308,11 +1313,6 @@ private:
    //  subclasses.
    //
    bool IsOverriddenAtOrBelow(const Class* cls) const;
-
-   //  Returns true if the function's purpose is probably to delete its default
-   //  version (e.g. a private constructor or assignment operator).
-   //
-   bool IsDeleted() const;
 
    //  Returns true if the function is undefined (has no code, is deleted, or
    //  is part of a typedef for a function signature).

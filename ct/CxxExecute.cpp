@@ -1185,6 +1185,7 @@ TypeMatch StackArg::CalcMatchWith(const StackArg& that,
    auto best = MatchWith(that, thisType, thatType);
    if(best == Compatible) return best;
    if(that.item == nullptr) return Incompatible;
+   if(this->item == nullptr) return Incompatible;
 
    //  See if there is a match between any of the types to which the
    //  items can be converted.

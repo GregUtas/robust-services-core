@@ -1244,7 +1244,7 @@ private:
    //  Resolves a template argument when parsing a template instance.  Returns
    //  false if this is not a template argument in a template instance.
    //
-   bool ResolveTemplateArgument() const;
+   bool ResolveTemplateArg() const;
 
    //  Overridden to add a bounded array specification to the type.
    //

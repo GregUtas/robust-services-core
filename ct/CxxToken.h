@@ -666,7 +666,7 @@ private:
 
    //  Pushes the result of applying the operator to LHS and RHS.
    //
-   void PushResult(const StackArg& lhs, const StackArg& rhs) const;
+   void PushResult(StackArg& lhs, StackArg& rhs) const;
 
    //  Generates any log that applies to a cast operation from inArg to outArg.
    //

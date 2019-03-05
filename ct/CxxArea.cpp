@@ -1889,9 +1889,10 @@ bool ClassInst::DerivesFrom(const Class* cls) const
    Debug::ft(ClassInst_DerivesFrom);
 
    //  This is a class template instance, T<args1>.  If CLS is not a class
-   //  template, is not the same class template, or is not a class template
-   //  instance, see if T derives from CLS.
+   //  template instance or is not an instance of the same class template,
+   //  just invoke the base class version of the function.
    //
+   if(!cls->IsInTemplateInstance()) return Class::DerivesFrom(cls);
    if(cls->GetTemplate() != tmplt_) return Class::DerivesFrom(cls);
    auto thatSpec = cls->GetTemplateArgs();
    if(thatSpec == nullptr) return Class::DerivesFrom(cls);

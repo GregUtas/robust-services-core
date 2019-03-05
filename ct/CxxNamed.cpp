@@ -883,7 +883,7 @@ void DataSpec::FindReferent()
    auto scope = Context::Scope();
    if(scope == nullptr) return;
 
-   if(ResolveTemplateArgument()) return;
+   if(ResolveTemplateArg()) return;
 
    SymbolView view;
    auto item = ResolveName(file, scope, TYPESPEC_REFS, &view);
@@ -1493,11 +1493,11 @@ bool DataSpec::ResolveTemplate(Class* cls, const TypeName* args, bool end) const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_ResolveTemplateArgument = "DataSpec.ResolveTemplateArgument";
+fn_name DataSpec_ResolveTemplateArg = "DataSpec.ResolveTemplateArg";
 
-bool DataSpec::ResolveTemplateArgument() const
+bool DataSpec::ResolveTemplateArg() const
 {
-   Debug::ft(DataSpec_ResolveTemplateArgument);
+   Debug::ft(DataSpec_ResolveTemplateArg);
 
    if(GetTemplateRole() != TemplateArgument) return false;
 

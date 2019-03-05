@@ -2409,7 +2409,7 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
 
 fn_name Operation_PushResult = "Operation.PushResult";
 
-void Operation::PushResult(const StackArg& lhs, const StackArg& rhs) const
+void Operation::PushResult(StackArg& lhs, StackArg& rhs) const
 {
    Debug::ft(Operation_PushResult);
 
@@ -2523,10 +2523,19 @@ void Operation::PushResult(const StackArg& lhs, const StackArg& rhs) const
    case Cxx::BITWISE_AND:
    case Cxx::BITWISE_XOR:
    case Cxx::BITWISE_OR:
+      //
+      //  The result is a temporary, so it can no longer be const.
+      //
       if(lhs.item->Type() == Cxx::Terminal)
+      {
+         rhs.SetAsWriteable();
          Context::PushArg(rhs);
+      }
       else
+      {
+         lhs.SetAsWriteable();
          Context::PushArg(lhs);
+      }
       break;
 
    case Cxx::LESS:

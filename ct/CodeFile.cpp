@@ -421,7 +421,7 @@ void CodeFile::AddDirectTypes
 {
    Debug::ft(CodeFile_AddDirectTypes);
 
-   //  SYMBOLS contains types that were used directly.  Types in executable
+   //  DIRECTS contains types that were used directly.  Types in executable
    //  code are also considered to be used directly, except for terminals
    //  and types defined in this file.
    //
@@ -465,7 +465,7 @@ void CodeFile::AddIndirectExternalTypes
 {
    Debug::ft(CodeFile_AddIndirectExternalTypes);
 
-   //  SYMBOLS contains types that were used indirectly.  Filter out those
+   //  INDIRECTS contains types that were used indirectly.  Filter out those
    //  which are terminals (for which an #include is not required) or that
    //  are defined in the code base (for which an #include can be avoided
    //  by using a forward declaration).
@@ -1303,7 +1303,7 @@ LineType CodeFile::ClassifyLine(size_t n)
    std::set< Warning > warnings;
    auto type = ClassifyLine(s, warnings);
 
-   //  A line within a /*  comment can be logged spuriously.
+   //  A line within a /* comment can be logged spuriously.
    //
    if(slashAsterisk_)
    {
@@ -2600,25 +2600,22 @@ void CodeFile::Scan()
       lineType_.push_back(LineType_N);
    }
 
-   //  Categorize each line unless this is a substitute file.
+   //  Categorize each line.
    //
-   if(!isSubsFile_)
+   for(size_t n = 0; n < lines; ++n)
    {
-      for(size_t n = 0; n < lines; ++n)
+      lineType_[n] = ClassifyLine(n);
+   }
+
+   for(size_t n = 0; n < lines; ++n)
+   {
+      auto t = lineType_[n];
+
+      if(LineTypeAttr::Attrs[t].isCode) break;
+
+      if((t != EmptyComment) && (t != SlashAsteriskComment))
       {
-         lineType_[n] = ClassifyLine(n);
-      }
-
-      for(size_t n = 0; n < lines; ++n)
-      {
-         auto t = lineType_[n];
-
-         if(LineTypeAttr::Attrs[t].isCode) break;
-
-         if((t != EmptyComment) && (t != SlashAsteriskComment))
-         {
-            lineType_[n] = FileComment;
-         }
+         lineType_[n] = FileComment;
       }
    }
 

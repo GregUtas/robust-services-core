@@ -336,7 +336,7 @@ word BreakCommand::ProcessCommand(CliThread& cli) const
    }
 
    auto source = file->GetLexer().GetNthLine(line - 1);
-   auto type =file->GetLineType(line - 1);
+   auto type = file->GetLineType(line - 1);
 
    if(!LineTypeAttr::Attrs[type].isExecutable)
    {

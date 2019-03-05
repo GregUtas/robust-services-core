@@ -1589,8 +1589,8 @@ private:
    //  The following are forwarded to the function's return type.
    //
    void AddArray(ArraySpecPtr& array) override;
-   TagCount Arrays() const override;
    std::string AlignTemplateArg(const TypeSpec* thatArg) const override;
+   TagCount Arrays() const override;
    void DisplayArrays(std::ostream& stream) const override;
    void DisplayTags(std::ostream& stream) const override;
    TypeTags GetAllTags() const override;

@@ -23,8 +23,11 @@
 #define REGISTRY_H_INCLUDED
 
 #include <algorithm>
+#include <cstddef>
 #include <iosfwd>
+#include <string>
 #include "Algorithms.h"
+#include "Base.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Memory.h"

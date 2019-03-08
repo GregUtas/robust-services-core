@@ -28,6 +28,7 @@
 #include "Debug.h"
 #include "Memory.h"
 #include "MsgHeader.h"
+#include "Parameter.h"
 #include "SbIpBuffer.h"
 #include "SbTypes.h"
 #include "SysTypes.h"

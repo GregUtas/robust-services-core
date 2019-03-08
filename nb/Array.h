@@ -22,11 +22,10 @@
 #ifndef ARRAY_H_INCLUDED
 #define ARRAY_H_INCLUDED
 
-#include <iosfwd>
+#include <cstddef>
 #include <utility>
 #include "Debug.h"
 #include "Memory.h"
-#include "SysDecls.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------

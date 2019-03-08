@@ -58,10 +58,11 @@ namespace CodeTools
 class Editor
 {
 public:
-   //  Creates an editor for the source code in FILE, which is read from INPUT,
-   //  and then loads the file's code and warnings.
+   //  Creates an editor for the source code in FILE, whose code and
+   //  warnings are loaded.  If the code couldn't be loaded, EXPL is
+   //  updated with an explanation.
    //
-   Editor(const CodeFile* file, NodeBase::istreamPtr& input);
+   Editor(const CodeFile* file, std::string& expl);
 
    //  Not subclassed.
    //
@@ -253,9 +254,11 @@ private:
    //
    LineType GetLineType(const Iter& iter) const;
 
-   //  Reads in the file's source code.
+   //  Reads in the file's source code.  Returns 0 on success.  Any other
+   //  result indicates that the code could not be read, in which case EXPL
+   //  is updated with an explanation.
    //
-   word GetCode();
+   word GetCode(std::string& expl);
 
    //  Adds a line of source code from the file.  NEVER used to add new code.
    //
@@ -460,10 +463,6 @@ private:
    //  The file from which the source code was obtained.
    //
    const CodeFile* const file_;
-
-   //  The stream for reading the source code.
-   //
-   NodeBase::istreamPtr input_;
 
    //  The number of lines read so far.
    //

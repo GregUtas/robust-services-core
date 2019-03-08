@@ -849,7 +849,7 @@ void DataSpec::EnteringScope(const CxxScope* scope)
 
    Context::SetPos(GetLoc());
 
-   if(scope->NameIsTemplateParm(*Name()))
+   if(scope->NameToTemplateParm(*Name()) != nullptr)
    {
       SetTemplateRole(TemplateParameter);
    }
@@ -896,13 +896,10 @@ void DataSpec::FindReferent()
 
    //  The referent wasn't found.  If this is a template parameter (the "T"
    //  in "template< typename T >", for example) it never will be.
-   //c If templates were executed, some or all of the following might have
-   //  to move to ResolveName in order to identify locals that are template
-   //  parameters.
    //
    auto qname = QualifiedName(true, false);
 
-   if(scope->NameIsTemplateParm(qname))
+   if(scope->NameToTemplateParm(qname) != nullptr)
    {
       SetTemplateRole(TemplateParameter);
       return;
@@ -936,7 +933,7 @@ void DataSpec::FindReferent()
 
    //  When parsing a template instance, the arguments may not be visible,
    //  because the scope is the template instance itself.  For example, the
-   //  type A is often not visible in the scope std::unique_ptr<A>.
+   //  type A is rarely visible in the scope std::unique_ptr<A>.
    //
    if(scope->IsInTemplateInstance()) return;
 
@@ -1013,13 +1010,9 @@ void DataSpec::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
    if(ref == nullptr)
    {
-      //  The referent for this type was never found.  Log it.
+      //  The referent for this type was never found.  If this is actually
+      //  a problem, a log should have been produced during execution.
       //
-      auto role = GetTemplateRole();
-      if((role == TemplateParameter) || (role == TemplateArgument)) return;
-      auto qname = QualifiedName(true, false);
-      auto log = "Unknown type for " + qname + " [" + strLocation() + ']';
-      Debug::SwLog(DataSpec_GetUsages, log, 0, SwInfo);
       return;
    }
 
@@ -1221,11 +1214,26 @@ bool DataSpec::IsUsedInNameOnly() const
 
 fn_name DataSpec_ItemIsTemplateArg = "DataSpec.ItemIsTemplateArg";
 
-bool DataSpec::ItemIsTemplateArg(const CxxScoped* item) const
+bool DataSpec::ItemIsTemplateArg(const CxxNamed* item) const
 {
    Debug::ft(DataSpec_ItemIsTemplateArg);
 
-   if(Referent() == item) return true;
+   if(item == nullptr)
+   {
+      Debug::SwLog(DataSpec_ItemIsTemplateArg, 0, 0);
+      return false;
+   }
+
+   auto ref = Referent();
+
+   if(ref != nullptr)
+   {
+      if(ref == item) return true;
+      auto rname = ref->ScopedName(true);
+      auto iname = item->ScopedName(true);
+      if(rname == iname) return true;
+   }
+
    return name_->ItemIsTemplateArg(item);
 }
 
@@ -2005,7 +2013,7 @@ void QualName::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 fn_name QualName_ItemIsTemplateArg = "QualName.ItemIsTemplateArg";
 
-bool QualName::ItemIsTemplateArg(const CxxScoped* item) const
+bool QualName::ItemIsTemplateArg(const CxxNamed* item) const
 {
    Debug::ft(QualName_ItemIsTemplateArg);
 
@@ -2620,7 +2628,7 @@ bool TypeName::HasTemplateParmFor(const CxxScope* scope) const
    {
       for(auto a = args_->cbegin(); a != args_->cend(); ++a)
       {
-         if(scope->NameIsTemplateParm(*(*a)->Name())) return true;
+         if(scope->NameToTemplateParm(*(*a)->Name()) != nullptr) return true;
       }
    }
 
@@ -2648,7 +2656,7 @@ void TypeName::Instantiating() const
 
 fn_name TypeName_ItemIsTemplateArg = "TypeName.ItemIsTemplateArg";
 
-bool TypeName::ItemIsTemplateArg(const CxxScoped* item) const
+bool TypeName::ItemIsTemplateArg(const CxxNamed* item) const
 {
    Debug::ft(TypeName_ItemIsTemplateArg);
 
@@ -3037,7 +3045,7 @@ void TypeSpec::Instantiating() const
 
 //------------------------------------------------------------------------------
 
-bool TypeSpec::ItemIsTemplateArg(const CxxScoped* item) const
+bool TypeSpec::ItemIsTemplateArg(const CxxNamed* item) const
 {
    Debug::SwLog(TypeSpec_PureVirtualFunction, "ItemIsTemplateArg", 0);
    return false;

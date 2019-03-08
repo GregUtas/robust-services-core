@@ -29,7 +29,6 @@
 #include <iterator>
 #include <memory>
 #include <sstream>
-#include <utility>
 #include "CliThread.h"
 #include "CodeFile.h"
 #include "Cxx.h"
@@ -125,9 +124,8 @@ size_t Editor::Commits_ = 0;
 
 fn_name Editor_ctor = "Editor.ctor";
 
-Editor::Editor(const CodeFile* file, istreamPtr& input) :
+Editor::Editor(const CodeFile* file, string& expl) :
    file_(file),
-   input_(std::move(input)),
    line_(0),
    read_(1),
    sorted_(false),
@@ -135,18 +133,17 @@ Editor::Editor(const CodeFile* file, istreamPtr& input) :
 {
    Debug::ft(Editor_ctor);
 
-   input_->clear();
-   input_->seekg(0);
+   //  Get the file's source code.  If this fails, there is no point in
+   //  continuing.
+   //
+   read_ = GetCode(expl);
+   if(read_ != 0) return;
 
    //  Get the file's warnings and sort them for fixing.  The order reduces
    //  the chances of an item's position changing before it is edited.
    //
    CodeWarning::GetWarnings(file_, warnings_);
    std::sort(warnings_.begin(), warnings_.end(), CodeWarning::IsSortedToFix);
-
-   //  Get the file's source code.
-   //
-   read_ = GetCode();
 }
 
 //------------------------------------------------------------------------------
@@ -2057,29 +2054,41 @@ word Editor::Format(string& expl)
 
 fn_name Editor_GetCode = "Editor.GetCode";
 
-word Editor::GetCode()
+word Editor::GetCode(std::string& expl)
 {
    Debug::ft(Editor_GetCode);
 
-   string str, expl;
+   auto input = file_->InputStream();
+
+   if(input == nullptr)
+   {
+      expl = "Failed to open source code for " + file_->Name() + '.';
+      return -1;
+   }
+
+   input->clear();
+   input->seekg(0);
 
    //  Read each line of code and save it.  Before it is saved, an
    //  #include directive is mangled for sorting purposes.
    //
-   while(input_->peek() != EOF)
+   word rc = 0;
+   string str;
+
+   while((input->peek() != EOF) && (rc == 0))
    {
-      std::getline(*input_, str);
+      std::getline(*input, str);
 
       if(str.find(HASH_INCLUDE_STR) == 0)
       {
-         auto rc = MangleInclude(str, expl);
-         if(rc != 0) return rc;
+         rc = MangleInclude(str, expl);
       }
 
       PushBack(str);
    }
 
-   return 0;
+   input.reset();
+   return rc;
 }
 
 //------------------------------------------------------------------------------
@@ -3634,9 +3643,8 @@ word Editor::Write(string& expl)
       *output << s->code << CRLF;
    }
 
-   //  Close both files, delete the original, and replace it with the new one.
+   //  Delete the original file and replace it with the new one.
    //
-   input_.reset();
    output.reset();
    remove(path.c_str());
 

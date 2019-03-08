@@ -59,11 +59,11 @@ public:
    //
    Distance ScopeDistance(const CxxScope* scope) const;
 
-   //  Returns true if NAME is a template parameter.  For example, returns
-   //  true when "T" appears somewhere within
+   //  Returns the template paraemter that corresponds to NAME.  For example,
+   //  returns the template parameter for "T" when "T" appears somewhere in
    //    template< typename T > class <name> { ... };
    //
-   bool NameIsTemplateParm(const std::string& name) const;
+   TemplateParm* NameToTemplateParm(const std::string& name) const;
 
    //  Returns the identifier of the file that declares the item if it is
    //  *not* the file that also defines the item.  This can only occur for
@@ -1189,6 +1189,11 @@ public:
    //
    CxxScope* GetTemplate() const override;
 
+   //  Overridden to return the template arguments for a function
+   //  template instance.
+   //
+   TypeName* GetTemplateArgs() const override { return tspec_.get(); }
+
    //  Overriden to support function templates.
    //
    const TemplateParms* GetTemplateParms() const
@@ -1357,6 +1362,10 @@ private:
    //
    void SetTemplate(Function* func) { tmplt_ = func; }
 
+   //  Sets the name (with template arguments) for a template instance.
+   //
+   void SetTemplateArgs(const TypeName* spec);
+
    //  If this is a function template, returns its first instance.
    //
    Function* FirstInstance() const;
@@ -1414,6 +1423,13 @@ private:
    //  The template parameters for a function template.
    //
    TemplateParmsPtr parms_;
+
+   //  The name (with template arguments) of a function template instance.
+   //  This is saved because its actual name is a single string containing
+   //  the arguments.  The code supports such names rather than generating
+   //  an artificial but legal C++ identifier.
+   //
+   TypeNamePtr tspec_;
 
    //  Set for a function tagged as extern.
    //
@@ -1612,7 +1628,7 @@ private:
    TypeName* GetTemplateArgs() const override;
    void Instantiating() const override;
    TypeMatch MatchTemplateArg(const TypeSpec* that) const override;
-   bool ItemIsTemplateArg(const CxxScoped* item) const override;
+   bool ItemIsTemplateArg(const CxxNamed* item) const override;
    bool MatchesExactly(const TypeSpec* that) const override;
    TypeMatch MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
       stringVector& tmpltArgs, bool& argFound) const override;

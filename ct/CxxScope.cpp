@@ -848,11 +848,11 @@ id_t CxxScope::GetDistinctDeclFid() const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxScope_NameIsTemplateParm = "CxxScope.NameIsTemplateParm";
+fn_name CxxScope_NameToTemplateParm = "CxxScope.NameToTemplateParm";
 
-bool CxxScope::NameIsTemplateParm(const string& name) const
+TemplateParm* CxxScope::NameToTemplateParm(const string& name) const
 {
-   Debug::ft(CxxScope_NameIsTemplateParm);
+   Debug::ft(CxxScope_NameToTemplateParm);
 
    auto scope = this;
 
@@ -866,14 +866,14 @@ bool CxxScope::NameIsTemplateParm(const string& name) const
 
          for(auto p = parms->cbegin(); p != parms->cend(); ++p)
          {
-            if(*(*p)->Name() == name) return true;
+            if(*(*p)->Name() == name) return p->get();
          }
       }
 
       scope = scope->GetScope();
    }
 
-   return false;
+   return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -1583,13 +1583,18 @@ void FuncData::Check() const
 {
    Debug::ft(FuncData_Check);
 
-   Data::Check();
-
-   //  Don't check a variable in a function template, as it isn't executed.
-   //  Don't check a function's internal variables for potential constness.
+   //  Don't check a variable in a function template, because its code isn't
+   //  executed.  Don't check a variable in a template instance, because an
+   //  accurate picture could only be obtained by considering all instances
+   //  of the function.
    //
    auto func = GetScope()->GetFunction();
    if(func->IsTemplate()) return;
+   if(func->IsInTemplateInstance()) return;
+
+   //  Don't check a function's internal variables for potential constness.
+   //
+   Data::Check();
    CheckUsage();
    CheckConstness(false);
 }
@@ -1735,6 +1740,7 @@ fn_name Function_ctor1 = "Function.ctor";
 
 Function::Function(QualNamePtr& name) :
    name_(name.release()),
+   tspec_(nullptr),
    extern_(false),
    inline_(false),
    constexpr_(false),
@@ -1777,6 +1783,7 @@ fn_name Function_ctor2 = "Function.ctor(spec)";
 
 Function::Function(QualNamePtr& name, TypeSpecPtr& spec, bool type) :
    name_(name.release()),
+   tspec_(nullptr),
    extern_(false),
    inline_(false),
    constexpr_(false),
@@ -2768,10 +2775,10 @@ void Function::CheckMemberUsage() const
    //  However, the function would have to add the underlying object as an
    //  argument--essentially a "this" argument.  Some will argue that this
    //  improves encapsulation, but we will demur.]
-   //c To support this for templates, nonstatic_ and nonpublic_ would have to
+   //* To support this for templates, nonstatic_ and nonpublic_ would have to
    //  to be looked at over all instances of a function, whether instantiated
    //  in a class or function template, because these flags are never set in
-   //  a pure template.
+   //  a pure template, because it is neither executed nor invoked directly.
    //
    if(virtual_) return;
    if(type_) return;
@@ -3511,7 +3518,6 @@ TemplateType Function::GetTemplateType() const
       if(cls->IsTemplate()) return ClassTemplate;
    }
 
-   if(friend_) return ClassTemplate;
    return NonTemplate;
 }
 
@@ -3523,10 +3529,39 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
    Debug::ft(Function_GetUsages);
 
-   //  Do not report usages in unexecuted or internally generated code, such
-   //  as function templates and their instances.
+   //  See if this function appears in a function or class template.
    //
-   if((GetTemplateType() != NonTemplate) || IsInternal()) return;
+   auto type = GetTemplateType();
+
+   switch(type)
+   {
+   case NonTemplate:
+      break;
+
+   case FuncTemplate:
+      //
+      //  A function template cannot be executed by itself, so it must get its
+      //  symbol usage information from its instantiations.  They are all the
+      //  same, so it is sufficient to pull symbols from the first one.
+      //
+      if(!tmplts_.empty())
+      {
+         CxxUsageSets sets;
+         auto first = tmplts_.front();
+         first->GetUsages(file, sets);
+         sets.EraseTemplateArgs(first->GetTemplateArgs());
+         sets.EraseLocals();
+         symbols.Union(sets);
+      }
+      return;
+
+   case ClassTemplate:
+      //
+      //  This function appears in a class template, which is not executed,
+      //  so there will be no symbols to report.
+      //
+      return;
+   }
 
    //  Place the symbols used in the function's signature in a local variable.
    //  The reason for this is discussed below.
@@ -3746,6 +3781,7 @@ Function* Function::InstantiateFunction(const TypeName* type) const
    func = area->FindFunc(instName, nullptr, false, nullptr, nullptr);
    if(func == nullptr) return InstantiateError(instName, 3);
    func->SetAccess(GetAccess());
+   func->SetTemplateArgs(type);
    func->SetTemplate(const_cast< Function* >(this));
    tmplts_.push_back(func);
    return func;
@@ -4434,6 +4470,18 @@ void Function::SetStatic(bool stat, Cxx::Operator oper)
 
 //------------------------------------------------------------------------------
 
+fn_name Function_SetTemplateArgs = "Function.SetTemplateArgs";
+
+void Function::SetTemplateArgs(const TypeName* spec)
+{
+   Debug::ft(Function_SetTemplateArgs);
+
+   tspec_.reset(new TypeName(*spec));
+   tspec_->CopyContext(spec);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Function_SetTemplateParms = "Function.SetTemplateParms";
 
 void Function::SetTemplateParms(TemplateParmsPtr& parms)
@@ -4822,7 +4870,7 @@ bool FuncSpec::IsConst() const
 
 //------------------------------------------------------------------------------
 
-bool FuncSpec::ItemIsTemplateArg(const CxxScoped* item) const
+bool FuncSpec::ItemIsTemplateArg(const CxxNamed* item) const
 {
    Debug::SwLog(FuncSpec_Warning, "ItemIsTemplateArg", 0);
    return func_->GetTypeSpec()->ItemIsTemplateArg(item);

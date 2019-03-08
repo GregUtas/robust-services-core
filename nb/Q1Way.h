@@ -22,14 +22,16 @@
 #ifndef Q1WAY_H_INCLUDED
 #define Q1WAY_H_INCLUDED
 
+#include <cstddef>
 #include <iosfwd>
+#include <string>
 #include "Algorithms.h"
+#include "Base.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "NbTypes.h"
 #include "Q1Link.h"
 #include "Restart.h"
-#include "SysDecls.h"
 #include "SysTypes.h"
 #include "ThisThread.h"
 

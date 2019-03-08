@@ -20,7 +20,6 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CxxToken.h"
-#include <set>
 #include <sstream>
 #include "CxxArea.h"
 #include "CxxExecute.h"
@@ -349,6 +348,33 @@ bool CxxToken::WasWritten(const StackArg* arg, bool passed)
 }
 
 //==============================================================================
+//
+//  Removes, from SET, items that are template arguments for NAME.
+//
+void EraseTemplateArgs(CxxNamedSet& set, const TypeName* name)
+{
+   for(auto i = set.cbegin(); i != set.cend(); NO_OP)
+   {
+      if(name->ItemIsTemplateArg(*i))
+         i = set.erase(i);
+      else
+         ++i;
+   }
+}
+
+//------------------------------------------------------------------------------
+//
+//  LHS = LHS U RHS.
+//
+void Union(CxxNamedSet& lhs, const CxxNamedSet& rhs)
+{
+   for(auto i = rhs.cbegin(); i != rhs.cend(); ++i)
+   {
+      lhs.insert(*i);
+   }
+}
+
+//------------------------------------------------------------------------------
 
 void CxxUsageSets::AddBase(const CxxNamed* item)
 {
@@ -389,6 +415,52 @@ void CxxUsageSets::AddUser(const CxxNamed* item)
 {
    if(item->GetFile() == nullptr) return;
    users.insert(item);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CxxUsageSets_EraseLocals = "CxxUsageSets.EraseLocals";
+
+void CxxUsageSets::EraseLocals()
+{
+   Debug::ft(CxxUsageSets_EraseLocals);
+
+   for(auto d = directs.cbegin(); d != directs.cend(); NO_OP)
+   {
+      if((*d)->ScopedName(false).find(LOCALS_STR) != string::npos)
+         d = directs.erase(d);
+      else
+         ++d;
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CxxUsageSets_EraseTemplateArgs = "CxxUsageSets.EraseTemplateArgs";
+
+void CxxUsageSets::EraseTemplateArgs(const TypeName* name)
+{
+   Debug::ft(CxxUsageSets_EraseTemplateArgs);
+
+   CodeTools::EraseTemplateArgs(directs, name);
+   CodeTools::EraseTemplateArgs(indirects, name);
+   CodeTools::EraseTemplateArgs(forwards, name);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CxxUsageSets_Union = "CxxUsageSets.Union";
+
+void CxxUsageSets::Union(const CxxUsageSets& set)
+{
+   Debug::ft(CxxUsageSets_Union);
+
+   CodeTools::Union(bases, set.bases);
+   CodeTools::Union(directs, set.directs);
+   CodeTools::Union(indirects, set.indirects);
+   CodeTools::Union(forwards, set.forwards);
+   CodeTools::Union(friends, set.friends);
+   CodeTools::Union(users, set.users);
 }
 
 //==============================================================================
@@ -996,7 +1068,9 @@ CxxNamed* NullPtr::Referent() const
 
 fn_name Operation_ctor = "Operation.ctor";
 
-Operation::Operation(Cxx::Operator op) : op_(op)
+Operation::Operation(Cxx::Operator op) :
+   op_(op),
+   overload_(nullptr)
 {
    Debug::ft(Operation_ctor);
 
@@ -1683,6 +1757,7 @@ void Operation::ExecuteDelete(const StackArg& arg) const
       StackArgVector args;
       args.push_back(arg);
       opDel->Invoke(&args);
+      overload_ = opDel;
    }
 
    if(pod) return;
@@ -1751,6 +1826,7 @@ void Operation::ExecuteNew() const
       Context::PopArg(false);
       spec.IncrPtrs();
       Context::PushArg(spec);
+      overload_ = opNew;
    }
 
    //  If a class is being created, push its constructor onto the stack.
@@ -1943,6 +2019,7 @@ bool Operation::ExecuteOverload
    Context::PushArg(StackArg(oper));
    for(size_t i = 0; i < args.size(); ++i) Context::PushArg(args[i]);
    ExecuteCall();
+   overload_ = oper;
 
    if(autoAssign)
    {
@@ -2057,6 +2134,22 @@ void Operation::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
    {
       (*a)->GetUsages(file, symbols);
+   }
+
+   if(overload_ != nullptr)
+   {
+      //  The idea was to add overload_ to SYMBOLS, but this causes problems.
+      //  If overload_ is a member of a class template instance, it is "defined"
+      //  by the file that first caused its instantiation.  That file is usually
+      //  unrelated to other users of the overload, yet they will nonetheless be
+      //  told to #include it.  Even if overload_ is not in a class template
+      //  instance, it need not be included.  Either it will be available from
+      //  the class that defines or inherits it, or it will be found by argument
+      //  dependent lookup, even if it is defined in a different file than the
+      //  class.  As a result, overload_ is not added to SYMBOLS, but it has
+      //  been left as a write-only field in case it eventually proves useful.
+      //
+      //  if(!overload_->IsInternal()) symbols.AddDirect(overload_);
    }
 }
 

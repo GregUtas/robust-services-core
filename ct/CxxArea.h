@@ -706,10 +706,6 @@ public:
    //
    ~ClassInst();
 
-   //  Returns the instance's template arguments.
-   //
-   TypeName* GetSpec() const { return spec_.get(); }
-
    //  Returns the instance's source code.
    //
    const std::string& GetCode() const { return *code_; }
@@ -760,7 +756,7 @@ public:
 
    //  Overridden to return the instance's template arguments.
    //
-   TypeName* GetTemplateArgs() const override { return spec_.get(); }
+   TypeName* GetTemplateArgs() const override { return tspec_.get(); }
 
    //  Overridden to ignore usages in the instance.
    //
@@ -795,9 +791,12 @@ private:
    //
    Class* const tmplt_;
 
-   //  The instance's type.
+   //  The instance's name (with template arguments).  This is saved because
+   //  its actual name is a single string containing the arguments.  The code
+   //  supports such names rather than generating an artificial but legal C++
+   //  identifier.
    //
-   TypeNamePtr spec_;
+   TypeNamePtr tspec_;
 
    //  The instance's source code.
    //

@@ -246,6 +246,10 @@ public:
    //
    Editor* GetEditor(std::string& expl) const;
 
+   //  Returns a stream for reading the file.
+   //
+   NodeBase::istreamPtr InputStream() const;
+
    //  Logs WARNING, which occurred at POS.  OFFSET and INFO are specific to
    //  WARNING.
    //
@@ -290,10 +294,6 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 private:
-   //  Returns a stream for reading the file.
-   //
-   NodeBase::istreamPtr InputStream() const;
-
    //  Adds FILE as one that #includes this file.
    //
    void AddUser(const CodeFile* file);

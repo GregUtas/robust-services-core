@@ -29,7 +29,6 @@
 #include "Debug.h"
 #include "SbCliParms.h"
 #include "SbTypes.h"
-#include "SysDecls.h"
 #include "SysTypes.h"
 #include "TlvMessage.h"
 

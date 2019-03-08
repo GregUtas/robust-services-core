@@ -426,7 +426,7 @@ void CxxScoped::CheckAccessControl() const
 
    //  If an item is used, log it if its access control could be
    //  more restrictive.
-   //c Support this for templates, considering all instances/analogs.
+   //* Support this for templates, accounting for all instances.
    //
    auto cls = GetClass();
    if(cls == nullptr) return;
@@ -666,7 +666,7 @@ bool CxxScoped::NameRefersToItem(const string& name,
    }
 
    //  If NAME is a template instance, assume that it is visible.
-   //c Verify the visibility of each name in a template instance.  Not doing
+   //* Verify the visibility of each name in a template instance.  Not doing
    //  so forced Lexer::TypesTable to be renamed from TypeTable so that it
    //  could be distinguished from CxxSymbols::TypeTable, preventing a false
    //  "doubly declared identifier" error.

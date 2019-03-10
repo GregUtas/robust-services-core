@@ -581,6 +581,10 @@ public:
    //
    CxxScoped* GetForward() const { return forw_; }
 
+   //  Adds any template arguments to NAMES.
+   //
+   void GetNames(stringVector& names) const;
+
    //  Overridden to check template arguments.
    //
    void Check() const override;
@@ -775,6 +779,10 @@ public:
    //  Returns true if ITEM is the referent of a template argument.
    //
    bool ItemIsTemplateArg(const CxxNamed* item) const;
+
+   //  Adds the name and any template arguments to NAMES.
+   //
+   void GetNames(stringVector& names) const;
 
    //  Checks that the name is a valid constructor name ("...A::A").
    //
@@ -1166,6 +1174,10 @@ public:
    //
    virtual void Instantiating() const = 0;
 
+   //  Adds each scoped name in the type to NAMES.
+   //
+   virtual void GetNames(stringVector& names) const = 0;
+
    //  Overridden to reveal that this is a type specification.
    //
    Cxx::ItemType Type() const override { return Cxx::TypeSpec; }
@@ -1312,6 +1324,14 @@ private:
    //
    void FindReferent() override;
 
+   //  Overridden to return the type's attributes.
+   //
+   TypeTags GetAllTags() const override;
+
+   //  Overridden add the type's names to NAMES.
+   //
+   void GetNames(stringVector& names) const override;
+
    //  Overridden to return the numeric type.
    //
    Numeric GetNumeric() const override;
@@ -1319,10 +1339,6 @@ private:
    //  Overridden to return the type's qualified name.
    //
    QualName* GetQualName() const override { return name_.get(); }
-
-   //  Overridden to return the type's attributes.
-   //
-   TypeTags GetAllTags() const override;
 
    //  Overridden to return the type itself.
    //

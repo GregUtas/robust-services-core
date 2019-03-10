@@ -27,6 +27,7 @@
 #include "CxxRoot.h"
 #include "CxxScope.h"
 #include "CxxScoped.h"
+#include "CxxString.h"
 #include "CxxSymbols.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -349,13 +350,36 @@ bool CxxToken::WasWritten(const StackArg* arg, bool passed)
 
 //==============================================================================
 //
-//  Removes, from SET, items that are template arguments for NAME.
+//  Removes, from SET, an item that is a template argument in TYPE or whose
+//  name is found in NAMES.  Both of these techniques are used to filter out
+//  template arguments because there are situations in which one of them, but
+//  not the other, detects a template argument.  Ideally this would be cleaned
+//  up, but the effort does not seem worthwhile.
 //
-void EraseTemplateArgs(CxxNamedSet& set, const TypeName* name)
+void EraseTemplateArgs
+   (CxxNamedSet& set, const TypeName* type, const stringVector& names)
 {
    for(auto i = set.cbegin(); i != set.cend(); NO_OP)
    {
-      if(name->ItemIsTemplateArg(*i))
+      auto erase1 = false;
+      auto erase2 = false;
+      auto name = (*i)->ScopedName(true);
+
+      if(type->ItemIsTemplateArg(*i))
+      {
+         erase1 = true;
+      }
+
+      for(auto n = names.cbegin(); n != names.cend(); ++n)
+      {
+         if(name == *n)
+         {
+            erase2 = true;
+            break;
+         }
+      }
+
+      if(erase1 || erase2)
          i = set.erase(i);
       else
          ++i;
@@ -438,13 +462,15 @@ void CxxUsageSets::EraseLocals()
 
 fn_name CxxUsageSets_EraseTemplateArgs = "CxxUsageSets.EraseTemplateArgs";
 
-void CxxUsageSets::EraseTemplateArgs(const TypeName* name)
+void CxxUsageSets::EraseTemplateArgs(const TypeName* type)
 {
    Debug::ft(CxxUsageSets_EraseTemplateArgs);
 
-   CodeTools::EraseTemplateArgs(directs, name);
-   CodeTools::EraseTemplateArgs(indirects, name);
-   CodeTools::EraseTemplateArgs(forwards, name);
+   stringVector names;
+   type->GetNames(names);
+   CodeTools::EraseTemplateArgs(directs, type, names);
+   CodeTools::EraseTemplateArgs(indirects, type, names);
+   CodeTools::EraseTemplateArgs(forwards, type, names);
 }
 
 //------------------------------------------------------------------------------

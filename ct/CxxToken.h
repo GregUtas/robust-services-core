@@ -62,9 +62,9 @@ struct CxxUsageSets
    void AddForward(const CxxNamed* item);
    void AddUser(const CxxNamed* item);
 
-   //  Removes, from each set, items that are template arguments for NAME.
+   //  Removes, from each set, items that are template arguments for TYPE.
    //
-   void EraseTemplateArgs(const TypeName* name);
+   void EraseTemplateArgs(const TypeName* type);
 
    //  Removes local variables from DIRECTS.
    //

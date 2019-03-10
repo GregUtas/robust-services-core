@@ -1531,13 +1531,12 @@ void Class::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
       //  A class template cannot be executed by itself, so it must get its
       //  symbol usage information from its instantiations.  We compile the
       //  full template instead of instantiating each member when it is used,
-      //   so it is sufficient to pull symbols from the first instantiation.
+      //  so it is sufficient to pull symbols from the first instantiation.
       //
       if(!tmplts_.empty())
       {
          auto first = tmplts_.front().get();
          first->GetUsages(file, symbols);
-         return;
       }
    }
 
@@ -1569,8 +1568,8 @@ void Class::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
    {
       //  Unless this is a class template instance, bypass function
-      //  template instantiations, which are registered against a
-      //  class that defines a function template.
+      //  template instantiations, every one of which is registered
+      //  against the class that defines the function template.
       //
       if(!inst)
       {

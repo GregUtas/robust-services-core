@@ -952,6 +952,17 @@ TypeTags DataSpec::GetAllTags() const
 
 //------------------------------------------------------------------------------
 
+fn_name DataSpec_GetNames = "DataSpec.GetNames";
+
+void DataSpec::GetNames(stringVector& names) const
+{
+   Debug::ft(DataSpec_GetNames);
+
+   name_->GetNames(names);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name DataSpec_GetNumeric = "DataSpec.GetNumeric";
 
 Numeric DataSpec::GetNumeric() const
@@ -1949,6 +1960,26 @@ CxxScoped* QualName::GetForward() const
 
 //------------------------------------------------------------------------------
 
+fn_name QualName_GetNames = "QualName.GetNames";
+
+void QualName::GetNames(stringVector& names) const
+{
+   Debug::ft(QualName_GetNames);
+
+   //  Add this name, without template arguments, to the list.
+   //
+   names.push_back(ScopedName(false));
+
+   //  Include any template arguments attached to this name.
+   //
+   for(auto n = First(); n != nullptr; n = n->Next())
+   {
+      n->GetNames(names);
+   }
+}
+
+//------------------------------------------------------------------------------
+
 TypeName* QualName::GetTemplateArgs() const
 {
    for(auto n = First(); n != nullptr; n = n->Next())
@@ -2577,6 +2608,23 @@ void TypeName::FindReferent()
 
 //------------------------------------------------------------------------------
 
+fn_name TypeName_GetNames = "TypeName.GetNames";
+
+void TypeName::GetNames(stringVector& names) const
+{
+   Debug::ft(TypeName_GetNames);
+
+   if(args_ != nullptr)
+   {
+      for(auto a = args_->cbegin(); a != args_->cend(); ++a)
+      {
+         (*a)->GetNames(names);
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 TypeName* TypeName::GetTemplateArgs() const
 {
    if(args_ == nullptr) return nullptr;
@@ -3026,6 +3074,13 @@ TypeTags TypeSpec::GetAllTags() const
 
    Debug::SwLog(TypeSpec_PureVirtualFunction, "GetAllTags", 0);
    return tags;
+}
+
+//------------------------------------------------------------------------------
+
+void TypeSpec::GetNames(stringVector& names) const
+{
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "GetNames", 0);
 }
 
 //------------------------------------------------------------------------------

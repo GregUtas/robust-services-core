@@ -1593,14 +1593,15 @@ private:
 
    //  The following are forwarded to the function.
    //
-   void Print
-      (std::ostream& stream, const NodeBase::Flags& options) const override;
+   void Check() const override;
    void EnteringScope(const CxxScope* scope) override;
    bool IsConst() const override;
    const std::string* Name() const override;
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
+   void Shrink() override;
    std::string Trace() const override;
    std::string TypeString(bool arg) const override;
-   void Shrink() override;
 
    //  The following are forwarded to the function's return type.
    //
@@ -1610,6 +1611,7 @@ private:
    void DisplayArrays(std::ostream& stream) const override;
    void DisplayTags(std::ostream& stream) const override;
    TypeTags GetAllTags() const override;
+   TypeName* GetTemplateArgs() const override;
    TypeSpec* GetTypeSpec() const override;
    bool HasArrayDefn() const override;
    TagCount Ptrs(bool arrays) const override;
@@ -1625,7 +1627,7 @@ private:
    //  generate a log because they may not be properly supported.
    //
    void FindReferent() override;
-   TypeName* GetTemplateArgs() const override;
+   void GetNames(stringVector& names) const override;
    void Instantiating() const override;
    TypeMatch MatchTemplateArg(const TypeSpec* that) const override;
    bool ItemIsTemplateArg(const CxxNamed* item) const override;
@@ -1636,7 +1638,6 @@ private:
    //  The following are forwarded to the function's return type but also
    //  generate a log because they should not be invoked.
    //
-   void Check() const override;
    void EnterArrays() const override;
    void SetReferent(CxxNamed* item, const SymbolView* view) const override;
 

@@ -3098,7 +3098,13 @@ void Function::EnterBlock()
    if(!IsImplemented()) return;
 
    //  Don't execute a function template or a function in a class template.
-   //  A function in a class template *instance*, however, is executed.
+   //  Execution will fail because template arguments are untyped.  However:
+   //  o An inline function in a class template *is* executed (because it
+   //    is not included in template instances)
+   //  o A function in a class template instance *is* executed, and so is a
+   //    function template instance (GetTemplateType returns NonTemplate in
+   //    this case).
+   //  o A function template instance is also executed.
    //
    auto type = GetTemplateType();
 
@@ -3107,7 +3113,7 @@ void Function::EnterBlock()
       if(Context::ParsingTemplateInstance()) return;
       auto file = GetImplFile();
       if(file != nullptr) file->SetTemplate(type);
-      return;
+      if(!inline_) return;
    }
 
    //  Set up the "execution" context and add the function's arguments to the
@@ -3557,10 +3563,10 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
    case ClassTemplate:
       //
-      //  This function appears in a class template, which is not executed,
-      //  so there will be no symbols to report.
+      //  This function appears in a class template, which is not executed, so
+      //  there will be no symbols to report unless it is an inline function.
       //
-      return;
+      if(!inline_) return;
    }
 
    //  Place the symbols used in the function's signature in a local variable.
@@ -4830,6 +4836,14 @@ void FuncSpec::FindReferent()
 TypeTags FuncSpec::GetAllTags() const
 {
    return func_->GetTypeSpec()->GetAllTags();
+}
+
+//------------------------------------------------------------------------------
+
+void FuncSpec::GetNames(stringVector& names) const
+{
+   Debug::SwLog(FuncSpec_Warning, "GetNames", 0);
+   func_->GetTypeSpec()->GetNames(names);
 }
 
 //------------------------------------------------------------------------------

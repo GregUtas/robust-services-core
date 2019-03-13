@@ -692,6 +692,10 @@ public:
    //
    bool EnterScope() override;
 
+   //  Overriden to add the forward's referent to SYMBOLS.
+   //
+   void GetDirectForwards(CxxUsageSets& symbols) const override;
+
    //  Overridden to return the class's qualified name.
    //
    QualName* GetQualName() const override { return name_.get(); }
@@ -820,6 +824,10 @@ public:
    //  Overridden to add the declaration to the current scope.
    //
    bool EnterScope() override;
+
+   //  Overriden to add the friend's referent to SYMBOLS.
+   //
+   void GetDirectForwards(CxxUsageSets& symbols) const override;
 
    //  Overridden to return the friend if it is a function.
    //

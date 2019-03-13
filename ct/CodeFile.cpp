@@ -161,7 +161,7 @@ void DisplaySymbolsAndFiles
 
    for(auto i = set.cbegin(); i != set.cend(); ++i)
    {
-      auto name = (*i)->ScopedName(false);
+      auto name = (*i)->XrefName(true);
       auto file = (*i)->GetFile();
 
       if(file != nullptr)

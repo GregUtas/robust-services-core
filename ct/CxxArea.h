@@ -533,7 +533,7 @@ public:
    //  Overridden to create an argument when the class is used to access a
    //  constructor.
    //
-   StackArg NameToArg(Cxx::Operator op) override;
+   StackArg NameToArg(Cxx::Operator op, TypeName* name) override;
 
    //  Overridden to record usage of the class.
    //

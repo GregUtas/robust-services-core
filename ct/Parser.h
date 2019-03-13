@@ -44,8 +44,9 @@ namespace CodeTools
 //  manageable and, in some cases, rejects unwanted constructs.
 //
 //  The parser is implemented using recursive descent.  Except for the analysis
-//  of #include lists (CodeFile.ClassifyLine) and handling of empty macro names
-//  (Lexer.Preprocess), it is a single-pass compiler.
+//  of #include lists (CodeFile.Scan) and the preprocessing of empty macro names
+//  (Lexer.Preprocess), it is a single-pass compiler.  The grammar is documented
+//  in the relevant compiler functions.
 //
 //  NOT SUPPORTED
 //  -------------
@@ -61,9 +62,9 @@ namespace CodeTools
 //    o and, and_eq, bitand, bitor, compl, not, not_eq, or, or_eq, xor, xor_eq
 //    o #undef, #line, #pragma (parsed but have no effect)
 //    o #if, #elif (the conditional that follows the directive is ignored)
+//  identifiers:
 //    o elaborated type specifiers (class, struct, union, or enum prefixed to
 //      resolve a type ambiguity caused by overloading an identifier)
-//  identifiers:
 //    o declaring a function as ClassName::FunctionName will cause the parser
 //      to fail (there are situations in which it expects unqualified names)
 //  character and string literals (GetCxxExpr, GetCxxAlpha, GetChar, GetStr):
@@ -121,10 +122,15 @@ namespace CodeTools
 //      instead of bitset<size_t N>
 //    o template arguments other than qualified names: bitset<sizeof(uint8_t)>,
 //      for example, would have to be written as bitset<bytesize>, following
-//      the definition const size_t bytesize = sizeof(uint8_t)
+//      the definition constexpr size_t bytesize = sizeof(uint8_t);
 //    o a constructor call that requires template argument deduction when a
 //      template is a base class: need to include the template argument after
 //      the class template name
+//    o instantiation of the entire class template occurs when a member is
+//      referenced, and the definition of the template argument(s) must be
+//      visible at that point, even if they are not needed for a successful
+//      compile (e.g. if the template's code only used the type T*, not T)
+//    o explicit instantiation
 //    o "extern template"
 //
 //  Comments in the CodeTools namespace that begin with "//c" describe other

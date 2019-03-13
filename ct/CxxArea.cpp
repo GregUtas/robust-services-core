@@ -1104,7 +1104,7 @@ Function* Class::FindCtor
    //
    if(args->empty() || !args->front().IsThis())
    {
-      args->insert(args->begin(), StackArg(this, 1));
+      args->insert(args->begin(), StackArg(this, 1, false));
    }
 
    return FindFunc(*Name(), args, false, scope, view);
@@ -1778,7 +1778,7 @@ bool Class::MemberIsAccessibleTo
 
 fn_name Class_NameToArg = "Class.NameToArg";
 
-StackArg Class::NameToArg(Cxx::Operator op)
+StackArg Class::NameToArg(Cxx::Operator op, TypeName* name)
 {
    Debug::ft(Class_NameToArg);
 
@@ -1786,7 +1786,7 @@ StackArg Class::NameToArg(Cxx::Operator op)
    //  looked up.  Set the "invoke" flag on the argument, which will be
    //  used to invoke a constructor.
    //
-   StackArg arg(this, 0);
+   StackArg arg(this, name);
    if(op != Cxx::SIZEOF_TYPE) arg.SetInvoke();
    return arg;
 }

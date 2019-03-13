@@ -549,7 +549,7 @@ void Context::WasCalled(Function* func)
 
    if(func == nullptr) return;
    func->WasCalled();
-   StackArg arg(func, 0);
+   StackArg arg(func, 0, false);
    Trace(CxxTrace::INCR_CALLS, arg);
 }
 
@@ -961,16 +961,17 @@ bool SourceLoc::operator<(const SourceLoc& that) const
 
 //==============================================================================
 
-const StackArg NilStackArg = StackArg(nullptr, 0);
+const StackArg NilStackArg = StackArg(nullptr, 0, false);
 
 StackArg StackArg::AutoType_ = NilStackArg;
 
 //------------------------------------------------------------------------------
 
-fn_name StackArg_ctor1 = "StackArg.ctor";
+fn_name StackArg_ctor1 = "StackArg.ctor(ptrs)";
 
 StackArg::StackArg(CxxToken* t, TagCount p, bool ctor) :
    item(t),
+   name(nullptr),
    via_(nullptr),
    ptrs_(p),
    member_(false),
@@ -990,8 +991,9 @@ StackArg::StackArg(CxxToken* t, TagCount p, bool ctor) :
 
 fn_name StackArg_ctor2 = "StackArg.ctor(func)";
 
-StackArg::StackArg(Function* f) :
+StackArg::StackArg(Function* f, TypeName* name) :
    item(f),
+   name(name),
    via_(nullptr),
    ptrs_(0),
    member_(false),
@@ -1011,8 +1013,10 @@ StackArg::StackArg(Function* f) :
 
 fn_name StackArg_ctor3 = "StackArg.ctor(via)";
 
-StackArg::StackArg(CxxToken* t, const StackArg& via, Cxx::Operator op) :
+StackArg::StackArg(CxxToken* t, TypeName* name,
+   const StackArg& via, Cxx::Operator op) :
    item(t),
+   name(name),
    via_(via.item),
    ptrs_(0),
    member_(false),
@@ -1051,6 +1055,28 @@ StackArg::StackArg(CxxToken* t, const StackArg& via, Cxx::Operator op) :
          member_ = true;
       }
    }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name StackArg_ctor4 = "StackArg.ctor(name)";
+
+StackArg::StackArg(CxxToken* t, TypeName* name) :
+   item(t),
+   name(name),
+   via_(nullptr),
+   ptrs_(0),
+   member_(false),
+   const_(t != nullptr ? t->IsConst() : false),
+   constptr_(t != nullptr ? t->IsConstPtr() : false),
+   mutable_(false),
+   invoke_(false),
+   this_(false),
+   implicit_(false),
+   ctor_(false),
+   read_(false)
+{
+   Debug::ft(StackArg_ctor4);
 }
 
 //------------------------------------------------------------------------------
@@ -1183,7 +1209,7 @@ TypeMatch StackArg::CalcMatchWith(const StackArg& that,
    Debug::ft(StackArg_CalcMatchWith);
 
    auto best = MatchWith(that, thisType, thatType);
-   if(best == Compatible) return best;
+   if(best >= Derivable) return best;
    if(that.item == nullptr) return Incompatible;
    if(this->item == nullptr) return Incompatible;
 
@@ -1437,7 +1463,7 @@ TypeMatch StackArg::MatchWith(const StackArg& that,
             if(thatClass->DerivesFrom(thisClass))
             {
                thatClass->RecordUsage();
-               return MatchConst(that, Compatible);
+               return MatchConst(that, Derivable);
             }
          }
       }
@@ -1534,6 +1560,17 @@ void StackArg::SetAsAutoType() const
 
    auto expl = "Auto type not set for " + Trace();
    Context::SwLog(StackArg_SetAsAutoType, expl, 0);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name StackArg_SetAsDirect = "StackArg.SetAsDirect";
+
+void StackArg::SetAsDirect() const
+{
+   Debug::ft(StackArg_SetAsDirect);
+
+   if(name != nullptr) name->SetAsDirect();
 }
 
 //------------------------------------------------------------------------------
@@ -1736,13 +1773,18 @@ void StackArg::WasIndexed()
    //  via a pointer, and its target is no longer a member for constness
    //  purposes.
    //
-   if(item->GetTypeSpec()->Tags()->PtrCount(false) >= Ptrs(true))
+   auto ptrs = Ptrs(true);
+
+   if(item->GetTypeSpec()->Tags()->PtrCount(false) >= ptrs)
    {
       member_ = false;
    }
 
-   //  We are now at one less level of indirection.
+   //  We are now at one less level of indirection, so if the pointer count
+   //  before the decrement is 1 (or less, which would be an error), then
+   //  the underlying type is being referenced directly.
    //
+   if(ptrs <= 1) SetAsDirect();
    DecrPtrs();
 }
 
@@ -1769,11 +1811,12 @@ void StackArg::WasWritten() const
 {
    Debug::ft(StackArg_WasWritten);
 
+   auto ptrs = Ptrs(true);
+
    if(item == nullptr) return;
+   if(ptrs == 0) SetAsDirect();
    if(!item->WasWritten(this, false)) return;
    Context::Trace(CxxTrace::INCR_WRITES, *this);
-
-   auto ptrs = Ptrs(true);
 
    //  See if a class was just block-copied.
    //

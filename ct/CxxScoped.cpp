@@ -1302,7 +1302,7 @@ void Forward::EnterBlock()
    Debug::ft(Forward_EnterBlock);
 
    Context::SetPos(GetLoc());
-   Context::PushArg(StackArg(Referent(), 0));
+   Context::PushArg(StackArg(Referent(), 0, false));
 }
 
 //------------------------------------------------------------------------------
@@ -1315,6 +1315,18 @@ bool Forward::EnterScope()
 
    if(AtFileScope()) GetFile()->InsertForw(this);
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Forward_GetDirectForwards = "Forward.GetDirectForwards";
+
+void Forward::GetDirectForwards(CxxUsageSets& symbols) const
+{
+   Debug::ft(Forward_GetDirectForwards);
+
+   auto ref = Referent();
+   if(ref != nullptr) symbols.AddDirect(ref);
 }
 
 //------------------------------------------------------------------------------
@@ -1521,7 +1533,7 @@ void Friend::EnterBlock()
    Debug::ft(Friend_EnterBlock);
 
    Context::SetPos(GetLoc());
-   Context::PushArg(StackArg(Referent(), 0));
+   Context::PushArg(StackArg(Referent(), 0, false));
 }
 
 //------------------------------------------------------------------------------
@@ -1698,6 +1710,18 @@ void Friend::FindReferent()
    auto forw = name_->GetForward();
    if((ref == nullptr) || (ref == this) || (ref == forw)) ref = FindForward();
    SetReferent(ref, nullptr);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Friend_GetDirectForwards = "Friend.GetDirectForwards";
+
+void Friend::GetDirectForwards(CxxUsageSets& symbols) const
+{
+   Debug::ft(Friend_GetDirectForwards);
+
+   auto ref = Referent();
+   if(ref != nullptr) symbols.AddDirect(ref);
 }
 
 //------------------------------------------------------------------------------
@@ -2046,7 +2070,7 @@ void Terminal::EnterBlock()
 {
    Debug::ft(Terminal_EnterBlock);
 
-   Context::PushArg(StackArg(this, 0));
+   Context::PushArg(StackArg(this, 0, false));
 }
 
 //------------------------------------------------------------------------------

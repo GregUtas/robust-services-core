@@ -673,14 +673,14 @@ bool ClassData::IsUnionMember() const
 
 fn_name ClassData_MemberToArg = "ClassData.MemberToArg";
 
-StackArg ClassData::MemberToArg(StackArg& via, Cxx::Operator op)
+StackArg ClassData::MemberToArg(StackArg& via, TypeName* name, Cxx::Operator op)
 {
    Debug::ft(ClassData_MemberToArg);
 
    //  Create an argument for this member, which was accessed through VIA.
    //
    Accessed();
-   StackArg arg(this, via, op);
+   StackArg arg(this, name, via, op);
    if(mutable_) arg.SetAsMutable();
    return arg;
 }
@@ -689,7 +689,7 @@ StackArg ClassData::MemberToArg(StackArg& via, Cxx::Operator op)
 
 fn_name ClassData_NameToArg = "ClassData.NameToArg";
 
-StackArg ClassData::NameToArg(Cxx::Operator op)
+StackArg ClassData::NameToArg(Cxx::Operator op, TypeName* name)
 {
    Debug::ft(ClassData_NameToArg);
 
@@ -697,7 +697,7 @@ StackArg ClassData::NameToArg(Cxx::Operator op)
    //  noting if it is mutable.  Log a read on the implicit "this", and if
    //  the context function is const, also mark the item as const.
    //
-   auto arg = Data::NameToArg(op);
+   auto arg = Data::NameToArg(op, name);
    if(IsStatic()) return arg;
    arg.SetAsMember();
    if(mutable_) arg.SetAsMutable();
@@ -1366,9 +1366,9 @@ bool Data::InitByExpr(CxxToken* expr)
       //  is missing the antecedent, the class's name.  The constructor also
       //  requires a "this" argument.
       //
-      Context::PushArg(StackArg(cls, 0));
+      Context::PushArg(StackArg(cls, 0, false));
       Context::TopArg()->SetInvoke();
-      Context::PushArg(StackArg(cls, 1));
+      Context::PushArg(StackArg(cls, 1, false));
       Context::TopArg()->SetAsThis(true);
       Expression::Start();
       expr->EnterBlock();
@@ -1389,7 +1389,7 @@ bool Data::InitByExpr(CxxToken* expr)
             op->FrontArg()->EnterBlock();
             auto result = Context::PopArg(true);
             spec_->MustMatchWith(result);
-            result.AssignedTo(StackArg(this, 0), Copied);
+            result.AssignedTo(StackArg(this, 0, false), Copied);
          }
          else
          {
@@ -1443,13 +1443,13 @@ bool Data::IsDefaultConstructible() const
 
 fn_name Data_NameToArg = "Data.NameToArg";
 
-StackArg Data::NameToArg(Cxx::Operator op)
+StackArg Data::NameToArg(Cxx::Operator op, TypeName* name)
 {
    Debug::ft(Data_NameToArg);
 
    //  Make data writeable during its initialization.
    //
-   auto arg = CxxNamed::NameToArg(op);
+   auto arg = CxxNamed::NameToArg(op, name);
    if(initing_) arg.SetAsWriteable();
    return arg;
 }
@@ -1982,6 +1982,24 @@ bool Function::ArgIsUnused(size_t n) const
 
 //------------------------------------------------------------------------------
 
+string Function::ArgTypesString(bool arg) const
+{
+   //  Add the full type of each argument within parentheses,
+   //  using commas to separate them.
+   //
+   string types(1, '(');
+
+   for(auto a = args_.cbegin(); a != args_.cend(); ++a)
+   {
+      types += (*a)->TypeString(arg);
+      if(*a != args_.back()) types += ',';
+   }
+
+   return types + ')';
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Function_ArgumentsMatch = "Function.ArgumentsMatch";
 
 bool Function::ArgumentsMatch(const Function* that) const
@@ -2029,7 +2047,8 @@ TypeMatch Function::CalcConstructibilty
    {
       auto thisArg = args_[1].get();
       auto thisType = thisArg->TypeString(true);
-      return StackArg(thisArg, 0).CalcMatchWith(that, thisType, thatType);
+      return StackArg(thisArg, 0, false).CalcMatchWith
+         (that, thisType, thatType);
    }
 
    return Incompatible;
@@ -3535,6 +3554,8 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
    Debug::ft(Function_GetUsages);
 
+   if(deleted_) return;
+
    //  See if this function appears in a function or class template.
    //
    auto type = GetTemplateType();
@@ -3624,11 +3645,37 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    //
    if(defn_) symbols.AddDirect(mate_);
 
-   if(call_ != nullptr) call_->GetUsages(file, symbols);
-
-   for(auto m = mems_.cbegin(); m != mems_.cend(); ++m)
+   //  If this is a constructor, include usages from the base class constructor
+   //  call, the member initializations, and the default member initializations.
+   //  Only the constructor's definition has the first two, but make sure the
+   //  last one is only done for the definition, and only for non-POD members.
+   //
+   if(FuncType() == FuncCtor)
    {
-      (*m)->GetUsages(file, symbols);
+      const Class* cls = GetClass();
+
+      if(call_ != nullptr) call_->GetUsages(file, symbols);
+
+      for(auto m = mems_.cbegin(); m != mems_.cend(); ++m)
+      {
+         (*m)->GetUsages(file, symbols);
+      }
+
+      if(GetDefn() == this)
+      {
+         auto data = cls->Datas();
+
+         for(auto d = data->cbegin(); d != data->cend(); ++d)
+         {
+            auto item = d->get();
+
+            if(!item->IsStatic() && !item->IsPOD())
+            {
+               item->GetUsages(file, symbols);
+               item->GetDirectTemplateArgs(symbols);
+            }
+         }
+      }
    }
 
    if(impl_ != nullptr) impl_->GetUsages(file, symbols);
@@ -3862,7 +3909,7 @@ void Function::Invoke(StackArgVector* args)
    {
       auto& sendArg = args->at(i);
       sendArg.WasRead();
-      StackArg recvArg(args_.at(i).get(), 0);
+      StackArg recvArg(args_.at(i).get(), 0, false);
       sendArg.AssignedTo(recvArg, Passed);
    }
 
@@ -4272,7 +4319,7 @@ TypeMatch Function::MatchTemplate
 
 fn_name Function_MemberToArg = "Function.MemberToArg";
 
-StackArg Function::MemberToArg(StackArg& via, Cxx::Operator op)
+StackArg Function::MemberToArg(StackArg& via, TypeName* name, Cxx::Operator op)
 {
    Debug::ft(Function_MemberToArg);
 
@@ -4287,7 +4334,7 @@ StackArg Function::MemberToArg(StackArg& via, Cxx::Operator op)
    //    selected as the result of argument matching (see UpdateThisArg).
    //
    Accessed();
-   Context::PushArg(StackArg(this));
+   Context::PushArg(StackArg(this, name));
    if(op == Cxx::REFERENCE_SELECT) via.IncrPtrs();
    via.SetAsThis(true);
    return via;
@@ -4335,12 +4382,12 @@ void Function::PushThisArg(StackArgVector& args) const
       {
          auto func = Context::Scope()->GetFunction();
          if((func == nullptr) || !func->this_) return;
-         StackArg arg(func->args_[0].get(), 0);
+         StackArg arg(func->args_[0].get(), 0, false);
          args.insert(args.cbegin(), arg);
       }
       else
       {
-         args.insert(args.cbegin(), StackArg(GetClass(), 1));
+         args.insert(args.cbegin(), StackArg(GetClass(), 1, false));
       }
 
       args.front().SetAsImplicitThis();
@@ -4373,7 +4420,7 @@ StackArg Function::ResultType() const
    //
    if(spec_ != nullptr) return spec_->ResultType();
    if(FuncType() == FuncCtor) return StackArg(GetClass(), 0, true);
-   return StackArg(Singleton< CxxRoot >::Instance()->VoidTerm(), 0);
+   return StackArg(Singleton< CxxRoot >::Instance()->VoidTerm(), 0, false);
 }
 
 //------------------------------------------------------------------------------
@@ -4612,18 +4659,10 @@ string Function::TypeString(bool arg) const
       ts += SPACE + Prefix(GetScope()->TypeString(false)) + *Name();
    }
 
-   //  Add the full type of each argument within parentheses, using
-   //  commas to separate them.
+   //  Append the function's argument types.
    //
-   ts += '(';
-
-   for(auto a = args_.cbegin(); a != args_.cend(); ++a)
-   {
-      ts += (*a)->TypeString(arg);
-      if(*a != args_.back()) ts += ',';
-   }
-
-   return ts + ')';
+   ts += ArgTypesString(arg);
+   return ts;
 }
 
 //------------------------------------------------------------------------------
@@ -4666,7 +4705,10 @@ void Function::UpdateThisArg(StackArgVector& args) const
       //  A pointer to the class acts as the implicit "this" argument until
       //  the constructor is found.
       //
-      if(FuncType() == FuncCtor) args.front() = StackArg(args_[0].get(), 0);
+      if(FuncType() == FuncCtor)
+      {
+         args.front() = StackArg(args_[0].get(), 0, false);
+      }
    }
 }
 
@@ -4737,6 +4779,20 @@ void Function::WasCalled()
       auto func = static_cast< ClassInst* >(cls)->FindTemplateAnalog(this);
       if(func != nullptr) ++static_cast< Function* >(func)->calls_;
    }
+}
+
+//------------------------------------------------------------------------------
+
+string Function::XrefName(bool templates) const
+{
+   auto name = ScopedName(templates);
+
+   if(!Singleton< CxxSymbols >::Instance()->IsUniqueName(GetScope(), *Name()))
+   {
+      name += ArgTypesString(true);
+   }
+
+   return name;
 }
 
 //==============================================================================

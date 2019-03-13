@@ -279,6 +279,7 @@ enum TypeMatch
    Convertible,    // argument must be converted (e.g. enum to int)
    Constructible,  // argument must be passed to a constructor
    Promotable,     // argument can be promoted (numeric to one of greater range)
+   Derivable,      // argument is derived from expected argument
    Compatible      // argument matches without modification
 };
 

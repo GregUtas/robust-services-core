@@ -129,7 +129,7 @@ void BraceInit::EnterBlock()
    //  type of structure being initialized, but we'll just return "auto",
    //  which acts as a wildcard when checking LHS and RHS compatibility.
    //
-   StackArg arg(Singleton< CxxRoot >::Instance()->AutoTerm(), 0);
+   StackArg arg(Singleton< CxxRoot >::Instance()->AutoTerm(), 0, false);
    Context::PushArg(arg);
 }
 
@@ -1046,7 +1046,7 @@ void Literal::EnterBlock()
 {
    Debug::ft(Literal_EnterBlock);
 
-   Context::PushArg(StackArg(this, 0));
+   Context::PushArg(StackArg(this, 0, false));
 }
 
 //------------------------------------------------------------------------------
@@ -1403,7 +1403,7 @@ void Operation::Execute() const
       arg1.WasRead();
       arg2.WasRead();
       arg1.WasIndexed();
-      Context::PushArg(arg1);
+      Context::PushArg(arg1.EraseName());
       return;
 
    case Cxx::FUNCTION_CALL:
@@ -1420,7 +1420,7 @@ void Operation::Execute() const
       if(IsOverloaded(arg1)) return;
       arg1.WasRead();
       arg1.WasWritten();
-      Context::PushArg(arg1);
+      Context::PushArg(arg1.EraseName());
       return;
 
    case Cxx::TYPE_NAME:
@@ -1441,7 +1441,7 @@ void Operation::Execute() const
       //
       CheckCast(arg2, arg1);
       arg2.WasRead();
-      Context::PushArg(arg1);
+      Context::PushArg(arg1.EraseName());
       return;
 
    case Cxx::SIZEOF_TYPE:
@@ -1468,7 +1468,7 @@ void Operation::Execute() const
       //
       if(IsOverloaded(arg1)) return;
       arg1.WasRead();
-      Context::PushArg(arg1);
+      Context::PushArg(arg1.EraseName());
       return;
 
    case Cxx::LOGICAL_NOT:
@@ -1478,7 +1478,7 @@ void Operation::Execute() const
       if(IsOverloaded(arg1)) return;
       arg1.WasRead();
       arg1.CheckIfBool();
-      Context::PushArg(arg1);
+      Context::PushArg(arg1.EraseName());
       return;
 
    case Cxx::ADDRESS_OF:
@@ -1488,7 +1488,7 @@ void Operation::Execute() const
       if(IsOverloaded(arg1)) return;
       arg1.WasRead();
       arg1.IncrPtrs();
-      Context::PushArg(arg1);
+      Context::PushArg(arg1.EraseName());
       return;
 
    case Cxx::INDIRECTION:
@@ -1498,7 +1498,7 @@ void Operation::Execute() const
       if(IsOverloaded(arg1)) return;
       arg1.WasRead();
       arg1.DecrPtrs();
-      Context::PushArg(arg1);
+      Context::PushArg(arg1.EraseName());
       return;
 
    case Cxx::OBJECT_CREATE:
@@ -1575,9 +1575,9 @@ void Operation::Execute() const
          arg3.WasRead();
          arg1.CheckIfBool();
          if(arg2.item->TypeString(true) == NULLPTR_T_STR)
-            Context::PushArg(arg3);
+            Context::PushArg(arg3.EraseName());
          else
-            Context::PushArg(arg2);
+            Context::PushArg(arg2.EraseName());
       }
       return;
 
@@ -1620,7 +1620,7 @@ void Operation::Execute() const
       //  Push the result of the second statement.
       //
       arg2.WasRead();
-      Context::PushArg(arg2);
+      Context::PushArg(arg2.EraseName());
       return;
 
    default:
@@ -1723,7 +1723,7 @@ void Operation::ExecuteCall()
       }
 
       args.front().WasRead();
-      Context::PushArg(StackArg(proc.item->Referent(), 0));
+      Context::PushArg(StackArg(proc.item->Referent(), 0, false));
       return;
    }
 
@@ -1774,6 +1774,7 @@ void Operation::ExecuteDelete(const StackArg& arg) const
    //  its destructor and record it as a direct usage.
    //
    arg.WasRead();
+   arg.SetAsDirect();
 
    auto pod = false;
    auto opDel = FindNewOrDelete(arg, true, pod);
@@ -1826,7 +1827,7 @@ void Operation::ExecuteNew() const
    //  The second argument is the type for which to allocate memory.
    //  Look for its operator new.
    //
-   StackArg spec(args_[1].get(), 0);
+   StackArg spec(args_[1].get(), 0, false);
    auto pod = false;
    auto opNew = FindNewOrDelete(spec, false, pod);
 
@@ -1840,8 +1841,8 @@ void Operation::ExecuteNew() const
       //
       auto newArg = Singleton< CxxRoot >::Instance()->IntTerm();
       auto newCall = static_cast< Operation* >(args_.front().get());
-      Context::PushArg(StackArg(opNew));
-      Context::PushArg(StackArg(newArg, 0));
+      Context::PushArg(StackArg(opNew, nullptr));
+      Context::PushArg(StackArg(newArg, 0, false));
       newCall->PushArgs();
 
       //  Execute the call to the operator new function and pop the result,
@@ -1876,8 +1877,8 @@ void Operation::ExecuteNew() const
    //  and add a pointer to the result.
    //
    Context::PopArg(false);
-   Context::PushArg(StackArg(ctor));
-   Context::PushArg(StackArg(cls, 1));
+   Context::PushArg(StackArg(ctor, nullptr));
+   Context::PushArg(StackArg(cls, 1, false));
    Context::TopArg()->SetAsThis(true);
 
    if((op_ == Cxx::OBJECT_CREATE) && (args_.size() >= 3))
@@ -1946,7 +1947,7 @@ bool Operation::ExecuteOverload
    case Cxx::POSTFIX_DECREMENT:
       {
          auto dummyArg = Singleton< CxxRoot >::Instance()->IntTerm();
-         args.push_back(StackArg(dummyArg, 0));
+         args.push_back(StackArg(dummyArg, 0, false));
       }
       break;
    case Cxx::ASSIGN:
@@ -2037,13 +2038,21 @@ bool Operation::ExecuteOverload
    //  function was invoked.
    //
    if(oper == nullptr) return false;
+
    if(mem && !hasThis)
    {
       args.front().IncrPtrs();
       args.front().SetAsThis(true);
    }
-   Context::PushArg(StackArg(oper));
-   for(size_t i = 0; i < args.size(); ++i) Context::PushArg(args[i]);
+
+   arg1.SetAsDirect();
+   Context::PushArg(StackArg(oper, nullptr));
+
+   for(size_t i = 0; i < args.size(); ++i)
+   {
+      Context::PushArg(args[i].EraseName());
+   }
+
    ExecuteCall();
    overload_ = oper;
 
@@ -2063,7 +2072,7 @@ bool Operation::ExecuteOverload
       Context::Log(DefaultCopyOperator, cls, -1);
       cls->Log(DefaultCopyOperator);
       Context::PopArg(false);
-      Context::PushArg(StackArg(cls, 0));
+      Context::PushArg(StackArg(cls, 0, false));
    }
 
    return true;
@@ -2164,18 +2173,17 @@ void Operation::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
    if(overload_ != nullptr)
    {
-      //  The idea was to add overload_ to SYMBOLS, but this causes problems.
-      //  If overload_ is a member of a class template instance, it is "defined"
-      //  by the file that first caused its instantiation.  That file is usually
-      //  unrelated to other users of the overload, yet they will nonetheless be
-      //  told to #include it.  Even if overload_ is not in a class template
-      //  instance, it need not be included.  Either it will be available from
-      //  the class that defines or inherits it, or it will be found by argument
-      //  dependent lookup, even if it is defined in a different file than the
-      //  class.  As a result, overload_ is not added to SYMBOLS, but it has
-      //  been left as a write-only field in case it eventually proves useful.
-      //
-      //  if(!overload_->IsInternal()) symbols.AddDirect(overload_);
+      switch(op_)
+      {
+      case Cxx::OBJECT_CREATE:
+      case Cxx::OBJECT_CREATE_ARRAY:
+      case Cxx::OBJECT_DELETE:
+      case Cxx::OBJECT_DELETE_ARRAY:
+         break;
+
+      default:
+         if(!overload_->IsInternal()) symbols.AddDirect(overload_);
+      }
    }
 }
 
@@ -2480,14 +2488,14 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
       return;
    }
 
-   if(arg2.item->Type() == Cxx::QualName)
+   if(arg2.name != nullptr)
    {
       //  Record that MEM was accessed through CLS (cls.mem or cls->mem).  If
       //  MEM was Inherited, it must actually be public (rather than protected)
       //  if SCOPE was not a friend of its declarer and neither in CLS nor one
       //  of its subclasses.
       //
-      static_cast< QualName* >(arg2.item)->MemberAccessed(cls, mem);
+      arg2.name->MemberAccessed(cls, mem);
 
       if((view.accessibility == Inherited) && (!view.friend_) &&
          (cls->ClassDistance(scope->GetClass()) == NOT_A_SUBCLASS))
@@ -2519,9 +2527,10 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
       }
    }
 
-   //  Push MEM via ARG1 and op_.
+   //  Push MEM via ARG1 and op_ after recording that ARG1 was used directly.
    //
-   Context::PushArg(mem->MemberToArg(arg1, op_));
+   arg1.SetAsDirect();
+   Context::PushArg(mem->MemberToArg(arg1, arg2.name, op_));
 }
 
 //------------------------------------------------------------------------------
@@ -2648,12 +2657,12 @@ void Operation::PushResult(StackArg& lhs, StackArg& rhs) const
       if(lhs.item->Type() == Cxx::Terminal)
       {
          rhs.SetAsWriteable();
-         Context::PushArg(rhs);
+         Context::PushArg(rhs.EraseName());
       }
       else
       {
          lhs.SetAsWriteable();
-         Context::PushArg(lhs);
+         Context::PushArg(lhs.EraseName());
       }
       break;
 
@@ -2669,7 +2678,7 @@ void Operation::PushResult(StackArg& lhs, StackArg& rhs) const
       break;
 
    case Cxx::ASSIGN:
-      Context::PushArg(rhs);
+      Context::PushArg(rhs.EraseName());
       break;
 
    case Cxx::MULTIPLY_ASSIGN:
@@ -2682,7 +2691,7 @@ void Operation::PushResult(StackArg& lhs, StackArg& rhs) const
    case Cxx::BITWISE_AND_ASSIGN:
    case Cxx::BITWISE_XOR_ASSIGN:
    case Cxx::BITWISE_OR_ASSIGN:
-      Context::PushArg(lhs);
+      Context::PushArg(lhs.EraseName());
       break;
 
    default:
@@ -2709,7 +2718,7 @@ void Operation::PushType(const string& name)
 
    if(item != nullptr)
    {
-      Context::PushArg(StackArg(item, 0));
+      Context::PushArg(StackArg(item, 0, false));
       return;
    }
 

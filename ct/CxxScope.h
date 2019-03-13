@@ -388,7 +388,7 @@ public:
 
    //  Overridden to make const data writeable during initialization.
    //
-   StackArg NameToArg(Cxx::Operator op) override;
+   StackArg NameToArg(Cxx::Operator op, TypeName* name) override;
 
    //  Overridden to record that the data cannot be const.
    //
@@ -656,15 +656,6 @@ public:
    //
    void SetInit(const MemberInit* init) { init_ = init; }
 
-   //  Overridden to support an implicit "this".
-   //
-   StackArg NameToArg(Cxx::Operator op) override;
-
-   //  Overridden to mark the item as a member of the context class if
-   //  it was pushed via "this".
-   //
-   StackArg MemberToArg(StackArg& via, Cxx::Operator op) override;
-
    //  Overridden to log warnings associated with the declaration.
    //
    void Check() const override;
@@ -690,9 +681,19 @@ public:
    //
    bool IsUnionMember() const override;
 
+   //  Overridden to mark the item as a member of the context class if
+   //  it was pushed via "this".
+   //
+   StackArg MemberToArg
+      (StackArg& via, TypeName* name, Cxx::Operator op) override;
+
    //  Overridden to return the item's name.
    //
    const std::string* Name() const override { return &name_; }
+
+   //  Overridden to support an implicit "this".
+   //
+   StackArg NameToArg(Cxx::Operator op, TypeName* name) override;
 
    //  Overridden to promote the member, which currently belongs to
    //  an anonymous union, to CLS, the union's outer scope.
@@ -1230,7 +1231,8 @@ public:
 
    //  Overriden to include VIA as a "this" argument.
    //
-   StackArg MemberToArg(StackArg& via, Cxx::Operator op) override;
+   StackArg MemberToArg
+      (StackArg& via, TypeName* name, Cxx::Operator op) override;
 
    //  Overridden to return the function's name.
    //
@@ -1269,6 +1271,10 @@ public:
    //  Overridden to count a read as an invocation.
    //
    bool WasRead() override { ++calls_; return true; }
+
+   //  Overridden  to append argument types if the function's name is ambiguous.
+   //
+   std::string XrefName(bool templates) const override;
 private:
    //  Adds a "this" argument to the function if required.  This occurs
    //  immediately before executing the function's code (in EnterBlock).
@@ -1415,6 +1421,11 @@ private:
    //  many times it was overridden, and how many times it was invoked.
    //
    void DisplayInfo(std::ostream& stream, const NodeBase::Flags& options) const;
+
+   //  Returns the function's argument types enclosed in paretheses.  ARG
+   //  serves the same purpose as in TypeString(arg).
+   //
+   std::string ArgTypesString(bool arg) const;
 
    //  The function's name.
    //

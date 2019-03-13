@@ -117,6 +117,10 @@ public:
    //
    Macro* FindMacro(const std::string& name) const;
 
+   //  Returns true if SCOPE only contains one function with NAME.
+   //
+   bool IsUniqueName(const CxxScope* scope, const std::string& name) const;
+
    //  Adds the specified item to the symbol database.
    //
    void InsertClass(Class* cls);

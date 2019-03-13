@@ -225,6 +225,32 @@ id_t CxxNamed::GetDeclFid() const
 
 //------------------------------------------------------------------------------
 
+fn_name CxxNamed_GetDirectForwards = "CxxNamed.GetDirectForwards";
+
+void CxxNamed::GetDirectForwards(CxxUsageSets& symbols) const
+{
+   Debug::ft(CxxNamed_GetDirectForwards);
+
+   auto spec = GetTypeSpec();
+   if(spec == nullptr) return;
+   spec->GetDirectForwards(symbols);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CxxNamed_GetDirectTemplateArgs = "CxxNamed.GetDirectTemplateArgs";
+
+void CxxNamed::GetDirectTemplateArgs(CxxUsageSets& symbols) const
+{
+   Debug::ft(CxxNamed_GetDirectTemplateArgs);
+
+   auto spec = GetTypeSpec();
+   if(spec == nullptr) return;
+   spec->GetDirectTemplateArgs(symbols);
+}
+
+//------------------------------------------------------------------------------
+
 size_t CxxNamed::GetRange(size_t& begin, size_t& end) const
 {
    begin = string::npos;
@@ -310,7 +336,7 @@ void CxxNamed::Log
 
 fn_name CxxNamed_MemberToArg = "CxxNamed.MemberToArg";
 
-StackArg CxxNamed::MemberToArg(StackArg& via, Cxx::Operator op)
+StackArg CxxNamed::MemberToArg(StackArg& via, TypeName* name, Cxx::Operator op)
 {
    Debug::ft(CxxNamed_MemberToArg);
 
@@ -319,19 +345,19 @@ StackArg CxxNamed::MemberToArg(StackArg& via, Cxx::Operator op)
    auto expl = "Unexpected member selection by " + *via.item->Name();
    Context::SwLog(CxxNamed_MemberToArg, expl, op);
 
-   return NameToArg(op);
+   return NameToArg(op, nullptr);
 }
 
 //------------------------------------------------------------------------------
 
 fn_name CxxNamed_NameToArg = "CxxNamed.NameToArg";
 
-StackArg CxxNamed::NameToArg(Cxx::Operator op)
+StackArg CxxNamed::NameToArg(Cxx::Operator op, TypeName* name)
 {
    Debug::ft(CxxNamed_NameToArg);
 
    Accessed();
-   return StackArg(this, 0);
+   return StackArg(this, name);
 }
 
 //------------------------------------------------------------------------------
@@ -613,6 +639,13 @@ void CxxNamed::strName(ostream& stream, bool fq, const QualName* name) const
       stream << ScopedName(true);
    else
       name->Print(stream, Flags());
+}
+
+//------------------------------------------------------------------------------
+
+string CxxNamed::XrefName(bool templates) const
+{
+   return ScopedName(templates);
 }
 
 //==============================================================================
@@ -948,6 +981,50 @@ void DataSpec::FindReferent()
 TypeTags DataSpec::GetAllTags() const
 {
    return TypeTags(*this);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name DataSpec_GetDirectForwards = "DataSpec.GetDirectForwards";
+
+void DataSpec::GetDirectForwards(CxxUsageSets& symbols) const
+{
+   Debug::ft(DataSpec_GetDirectForwards);
+
+   name_->GetDirectForwards(symbols);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name DataSpec_GetDirectTemplateArgs = "DataSpec.GetDirectTemplateArgs";
+
+void DataSpec::GetDirectTemplateArgs(CxxUsageSets& symbols) const
+{
+   Debug::ft(DataSpec_GetDirectTemplateArgs);
+
+   auto ref = Referent();
+
+   if(ref != nullptr)
+   {
+      auto args = ref->GetTemplateArgs();
+
+      if(args != nullptr)
+      {
+         args->GetDirectTemplateArgs(symbols);
+      }
+
+      if((GetTemplateRole() == TemplateArgument) && (Ptrs(true) == 0))
+      {
+         auto type = ref->Type();
+
+         if((type == Cxx::Forward) || (type == Cxx::Friend))
+         {
+            ref->GetDirectForwards(symbols);
+         }
+      }
+   }
+
+   name_->GetDirectTemplateArgs(symbols);
 }
 
 //------------------------------------------------------------------------------
@@ -1564,7 +1641,7 @@ StackArg DataSpec::ResultType() const
          if(target != nullptr) result = target;
       }
 
-      StackArg arg(result, tags_.PtrCount(true));
+      StackArg arg(result, tags_.PtrCount(true), false);
       if(tags_.IsConst()) arg.SetAsConst();
       if(tags_.IsConstPtr() == 1) arg.SetAsConstPtr();
       return arg;
@@ -1916,7 +1993,8 @@ void QualName::EnterBlock()
    Debug::ft(QualName_EnterBlock);
 
    Context::SetPos(GetLoc());
-   if(*Name() == NULL_STR) Log(UseOfNull);
+   auto name = *Name();
+   if(name == NULL_STR) Log(UseOfNull);
 
    //  If a "." or "->" operator is waiting for its second argument,
    //  push this name and return so that the operator can be executed.
@@ -1930,13 +2008,38 @@ void QualName::EnterBlock()
 
       if((op == Cxx::REFERENCE_SELECT) || (op == Cxx::POINTER_SELECT))
       {
-         Context::PushArg(StackArg(this, 0));
+         Context::PushArg(StackArg(this, Last()));
          return;
       }
    }
 
    auto ref = Referent();
-   if(ref != nullptr) Context::PushArg(ref->NameToArg(op));
+   if(ref != nullptr) Context::PushArg(ref->NameToArg(op, Last()));
+}
+
+//------------------------------------------------------------------------------
+
+fn_name QualName_GetDirectForwards = "QualName.GetDirectForwards";
+
+void QualName::GetDirectForwards(CxxUsageSets& symbols) const
+{
+   Debug::ft(QualName_GetDirectForwards);
+
+   Last()->GetDirectForwards(symbols);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name QualName_GetDirectTemplateArgs = "QualName.GetDirectTemplateArgs";
+
+void QualName::GetDirectTemplateArgs(CxxUsageSets& symbols) const
+{
+   Debug::ft(QualName_GetDirectTemplateArgs);
+
+   for(auto n = First(); n != nullptr; n = n->Next())
+   {
+      n->GetDirectTemplateArgs(symbols);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -2096,30 +2199,6 @@ TypeMatch QualName::MatchTemplate(const QualName* that,
    }
 
    return match;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name QualName_MemberAccessed = "QualName.MemberAccessed";
-
-void QualName::MemberAccessed(Class* cls, CxxNamed* mem) const
-{
-   Debug::ft(QualName_MemberAccessed);
-
-   for(auto n = First(); n != nullptr; n = n->Next())
-   {
-      if(n->Referent() == nullptr)
-      {
-         if(*n->Name() == *mem->Name())
-         {
-            n->MemberAccessed(cls, mem);
-            return;
-         }
-      }
-   }
-
-   auto expl = "Could not find member name for " + *mem->Name();
-   Context::SwLog(QualName_MemberAccessed, expl, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -2490,7 +2569,8 @@ TypeName::TypeName(string& name) :
    forw_(nullptr),
    oper_(Cxx::NIL_OPERATOR),
    scoped_(false),
-   using_(false)
+   using_(false),
+   direct_(false)
 {
    Debug::ft(TypeName_ctor1);
 
@@ -2510,7 +2590,8 @@ TypeName::TypeName(const TypeName& that) : CxxNamed(that),
    forw_(that.forw_),
    oper_(that.oper_),
    scoped_(that.scoped_),
-   using_(that.using_)
+   using_(that.using_),
+   direct_(that.direct_)
 {
    Debug::ft(TypeName_ctor2);
 
@@ -2608,6 +2689,44 @@ void TypeName::FindReferent()
 
 //------------------------------------------------------------------------------
 
+fn_name TypeName_GetDirectForwards = "TypeName.GetDirectForwards";
+
+void TypeName::GetDirectForwards(CxxUsageSets& symbols) const
+{
+   Debug::ft(TypeName_GetDirectForwards);
+
+   auto ref = DirectType();
+
+   if(ref != nullptr) ref->GetDirectForwards(symbols);
+
+   if(args_ != nullptr)
+   {
+      for(auto a = args_->cbegin(); a != args_->cend(); ++a)
+      {
+         (*a)->GetDirectForwards(symbols);
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TypeName_GetDirectTemplateArgs = "TypeName.GetDirectTemplateArgs";
+
+void TypeName::GetDirectTemplateArgs(CxxUsageSets& symbols) const
+{
+   Debug::ft(TypeName_GetDirectTemplateArgs);
+
+   if(args_ != nullptr)
+   {
+      for(auto a = args_->cbegin(); a != args_->cend(); ++a)
+      {
+         (*a)->GetDirectTemplateArgs(symbols);
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name TypeName_GetNames = "TypeName.GetNames";
 
 void TypeName::GetNames(stringVector& names) const
@@ -2638,6 +2757,8 @@ fn_name TypeName_GetUsages = "TypeName.GetUsages";
 void TypeName::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
    Debug::ft(TypeName_GetUsages);
+
+   if(direct_) GetDirectForwards(symbols);
 
    //  Currently, this does not report usages based on ref_ or type_.
    //  If it did,  DataSpec.GetUsages would need a way to suppress or

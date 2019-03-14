@@ -426,7 +426,7 @@ void CxxScoped::CheckAccessControl() const
 
    //  If an item is used, log it if its access control could be
    //  more restrictive.
-   //c Support this for templates, considering all instances/analogs.
+   //c Support this for templates, accounting for all instances.
    //
    auto cls = GetClass();
    if(cls == nullptr) return;
@@ -667,9 +667,8 @@ bool CxxScoped::NameRefersToItem(const string& name,
 
    //  If NAME is a template instance, assume that it is visible.
    //c Verify the visibility of each name in a template instance.  Not doing
-   //  so forced Lexer::TypesTable to be renamed from TypeTable so that it
-   //  could be distinguished from CxxSymbols::TypeTable, preventing a false
-   //  "doubly declared identifier" error.
+   //  so can cause incorrect symbol matches that force template arguments in
+   //  unrelated templates to be renamed so that they have unique names.
    //
    if(name.find('<') != string::npos)
    {
@@ -710,7 +709,7 @@ bool CxxScoped::NameRefersToItem(const string& name,
    //  NAME must partially match this item's fully qualified name.
    //
    stringVector fqNames;
-   GetScopedNames(fqNames);
+   GetScopedNames(fqNames, false);
 
    for(auto fqn = fqNames.begin(); fqn != fqNames.end(); ++fqn)
    {
@@ -1158,7 +1157,7 @@ void Enumerator::ExitBlock()
 
 fn_name Enumerator_GetScopedNames = "Enumerator.GetScopedNames";
 
-void Enumerator::GetScopedNames(stringVector& names) const
+void Enumerator::GetScopedNames(stringVector& names, bool templates) const
 {
    Debug::ft(Enumerator_GetScopedNames);
 
@@ -1167,7 +1166,7 @@ void Enumerator::GetScopedNames(stringVector& names) const
    //  delete the enum's name from the fully qualified name, and provide that
    //  as an alternative.
    //
-   CxxScoped::GetScopedNames(names);
+   CxxScoped::GetScopedNames(names, templates);
    auto prev = *enum_->Name();
    if(prev.empty()) return;
    prev += SCOPE_STR;
@@ -1302,7 +1301,7 @@ void Forward::EnterBlock()
    Debug::ft(Forward_EnterBlock);
 
    Context::SetPos(GetLoc());
-   Context::PushArg(StackArg(Referent(), 0));
+   Context::PushArg(StackArg(Referent(), 0, false));
 }
 
 //------------------------------------------------------------------------------
@@ -1315,6 +1314,18 @@ bool Forward::EnterScope()
 
    if(AtFileScope()) GetFile()->InsertForw(this);
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Forward_GetDirectForwards = "Forward.GetDirectForwards";
+
+void Forward::GetDirectForwards(CxxUsageSets& symbols) const
+{
+   Debug::ft(Forward_GetDirectForwards);
+
+   auto ref = Referent();
+   if(ref != nullptr) symbols.AddDirect(ref);
 }
 
 //------------------------------------------------------------------------------
@@ -1521,7 +1532,7 @@ void Friend::EnterBlock()
    Debug::ft(Friend_EnterBlock);
 
    Context::SetPos(GetLoc());
-   Context::PushArg(StackArg(Referent(), 0));
+   Context::PushArg(StackArg(Referent(), 0, false));
 }
 
 //------------------------------------------------------------------------------
@@ -1698,6 +1709,18 @@ void Friend::FindReferent()
    auto forw = name_->GetForward();
    if((ref == nullptr) || (ref == this) || (ref == forw)) ref = FindForward();
    SetReferent(ref, nullptr);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Friend_GetDirectForwards = "Friend.GetDirectForwards";
+
+void Friend::GetDirectForwards(CxxUsageSets& symbols) const
+{
+   Debug::ft(Friend_GetDirectForwards);
+
+   auto ref = Referent();
+   if(ref != nullptr) symbols.AddDirect(ref);
 }
 
 //------------------------------------------------------------------------------
@@ -2046,7 +2069,7 @@ void Terminal::EnterBlock()
 {
    Debug::ft(Terminal_EnterBlock);
 
-   Context::PushArg(StackArg(this, 0));
+   Context::PushArg(StackArg(this, 0, false));
 }
 
 //------------------------------------------------------------------------------

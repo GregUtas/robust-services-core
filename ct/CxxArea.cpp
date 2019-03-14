@@ -32,6 +32,7 @@
 #include "CxxRoot.h"
 #include "CxxString.h"
 #include "CxxSymbols.h"
+#include "CxxToken.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Lexer.h"
@@ -220,7 +221,7 @@ void Class::AccessibilityOf
       //
       if(usingClass->IsInTemplateInstance())
       {
-         auto spec = static_cast< ClassInst* >(usingClass)->GetSpec();
+         auto spec = usingClass->GetTemplateArgs();
 
          if(spec->ItemIsTemplateArg(item))
          {
@@ -845,7 +846,7 @@ size_t Class::CreateCode(const ClassInst* inst, stringPtr& code) const
    //  Replace the template parameters with the instance arguments.
    //
    begin = code->find(instName) + instName.size();
-   ReplaceTemplateParms(*code, inst->GetSpec()->Args(), begin);
+   ReplaceTemplateParms(*code, inst->GetTemplateArgs()->Args(), begin);
    return begin;
 }
 
@@ -1103,7 +1104,7 @@ Function* Class::FindCtor
    //
    if(args->empty() || !args->front().IsThis())
    {
-      args->insert(args->begin(), StackArg(this, 1));
+      args->insert(args->begin(), StackArg(this, 1, false));
    }
 
    return FindFunc(*Name(), args, false, scope, view);
@@ -1523,6 +1524,22 @@ void Class::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
    Debug::ft(Class_GetUsages);
 
+   auto inst = IsInTemplateInstance();
+
+   if(IsTemplate())
+   {
+      //  A class template cannot be executed by itself, so it must get its
+      //  symbol usage information from its instantiations.  We compile the
+      //  full template instead of instantiating each member when it is used,
+      //  so it is sufficient to pull symbols from the first instantiation.
+      //
+      if(!tmplts_.empty())
+      {
+         auto first = tmplts_.front().get();
+         first->GetUsages(file, symbols);
+      }
+   }
+
    auto base = GetBaseDecl();
 
    if(base != nullptr) base->GetUsages(file, symbols);
@@ -1550,6 +1567,15 @@ void Class::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
    for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
    {
+      //  Unless this is a class template instance, bypass function
+      //  template instantiations, every one of which is registered
+      //  against the class that defines the function template.
+      //
+      if(!inst)
+      {
+         if((*f)->IsInTemplateInstance()) continue;
+      }
+
       (*f)->GetUsages(file, symbols);
    }
 
@@ -1752,7 +1778,7 @@ bool Class::MemberIsAccessibleTo
 
 fn_name Class_NameToArg = "Class.NameToArg";
 
-StackArg Class::NameToArg(Cxx::Operator op)
+StackArg Class::NameToArg(Cxx::Operator op, TypeName* name)
 {
    Debug::ft(Class_NameToArg);
 
@@ -1760,7 +1786,7 @@ StackArg Class::NameToArg(Cxx::Operator op)
    //  looked up.  Set the "invoke" flag on the argument, which will be
    //  used to invoke a constructor.
    //
-   StackArg arg(this, 0);
+   StackArg arg(this, name);
    if(op != Cxx::SIZEOF_TYPE) arg.SetInvoke();
    return arg;
 }
@@ -1852,15 +1878,15 @@ fn_name ClassInst_ctor = "ClassInst.ctor";
 ClassInst::ClassInst(QualNamePtr& name, Class* tmplt, const TypeName* spec) :
    Class(name, tmplt->GetClassTag()),
    tmplt_(tmplt),
-   spec_(nullptr),
+   tspec_(nullptr),
    refs_(0),
    created_(false),
    compiled_(false)
 {
    Debug::ft(ClassInst_ctor);
 
-   spec_.reset(new TypeName(*spec));
-   spec_->CopyContext(spec);
+   tspec_.reset(new TypeName(*spec));
+   tspec_->CopyContext(spec);
    CxxStats::Incr(CxxStats::CLASS_INST);
    CxxStats::Decr(CxxStats::CLASS_DECL);
 }
@@ -1889,16 +1915,17 @@ bool ClassInst::DerivesFrom(const Class* cls) const
    Debug::ft(ClassInst_DerivesFrom);
 
    //  This is a class template instance, T<args1>.  If CLS is not a class
-   //  template, is not the same class template, or is not a class template
-   //  instance, see if T derives from CLS.
+   //  template instance or is not an instance of the same class template,
+   //  just invoke the base class version of the function.
    //
+   if(!cls->IsInTemplateInstance()) return Class::DerivesFrom(cls);
    if(cls->GetTemplate() != tmplt_) return Class::DerivesFrom(cls);
    auto thatSpec = cls->GetTemplateArgs();
    if(thatSpec == nullptr) return Class::DerivesFrom(cls);
 
    //  CLS is of the form T<args2>.  See if args1 are compatible with args2.
    //
-   auto thisArgs = spec_->Args();
+   auto thisArgs = tspec_->Args();
    auto thatArgs = thatSpec->Args();
    if(thisArgs->size() != thatArgs->size()) return false;
 
@@ -2044,11 +2071,13 @@ void ClassInst::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
    Debug::ft(ClassInst_GetUsages);
 
-   //  Currently, this is not invoked for a class template instance, because
-   //  the instance is assigned to its underlying class template rather than
-   //  to the template's scope.  However, if it were to be assigned to the
-   //  template's scope, it would need to be ignored, because its template
-   //  argument(s) only need to be visible where it is used.
+   //  This is invoked by a class template in order to obtain symbol usage
+   //  information from one of its instances.
+   //
+   CxxUsageSets sets;
+   Class::GetUsages(file, sets);
+   sets.EraseTemplateArgs(tspec_.get());
+   symbols.Union(sets);
 }
 
 //------------------------------------------------------------------------------
@@ -2060,13 +2089,13 @@ bool ClassInst::Instantiate()
    Debug::ft(ClassInst_Instantiate);
 
    //  Return if the template has already been instantiated.  Otherwise,
-   //  notify spec_, which contains the template name and arguments, that
+   //  notify tspec_, which contains the template name and arguments, that
    //  its template is being instantiated.  This causes the instantiation
    //  of any templates that this one requires.
    //
    if(created_) return true;
    created_ = true;
-   spec_->Instantiating();
+   tspec_->Instantiating();
 
    //  Get the code for the template instance and parse it.
    //
@@ -2085,7 +2114,7 @@ void ClassInst::Shrink()
 {
    Class::Shrink();
 
-   spec_->Shrink();
+   tspec_->Shrink();
 }
 
 //------------------------------------------------------------------------------
@@ -2093,7 +2122,7 @@ void ClassInst::Shrink()
 string ClassInst::TypeString(bool arg) const
 {
    return Prefix(GetScope()->TypeString(arg)) +
-      *spec_->Name() + spec_->TypeString(arg);
+      *tspec_->Name() + tspec_->TypeString(arg);
 }
 
 //==============================================================================

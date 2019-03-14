@@ -812,7 +812,7 @@ void Return::EnterBlock()
       auto result = Context::PopArg(true);
       auto spec = Context::Scope()->GetFunction()->GetTypeSpec();
       Context::Scope()->GetFunction()->GetTypeSpec()->MustMatchWith(result);
-      result.AssignedTo(StackArg(spec, 0), Returned);
+      result.AssignedTo(StackArg(spec, 0, false), Returned);
    }
 }
 

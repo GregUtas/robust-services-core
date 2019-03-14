@@ -22,11 +22,10 @@
 #ifndef ARRAY_H_INCLUDED
 #define ARRAY_H_INCLUDED
 
-#include <iosfwd>
+#include <cstddef>
 #include <utility>
 #include "Debug.h"
 #include "Memory.h"
-#include "SysDecls.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -141,7 +140,7 @@ public:
    //
    size_t Size() const { return size_; }
 
-   //  Returns true if the registry is empty.
+   //  Returns true if the array is empty.
    //
    bool Empty() const { return (size_ == 0); }
 
@@ -222,9 +221,8 @@ private:
    Array(const Array& that) = delete;
    Array& operator=(const Array& that) = delete;
 
-   //  Increases the size of the registry's array, up to its maximum, when
-   //  more space is needed.  MIN is the minimum number of elements to be
-   //  supported.
+   //  Increases the size of the array, up to its maximum, when more space
+   //  is needed.  MIN is the minimum number of elements to be supported.
    //
    bool Extend(size_t min)
    {

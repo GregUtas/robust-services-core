@@ -59,11 +59,11 @@ public:
    //
    Distance ScopeDistance(const CxxScope* scope) const;
 
-   //  Returns true if NAME is a template parameter.  For example, returns
-   //  true when "T" appears somewhere within
+   //  Returns the template paraemter that corresponds to NAME.  For example,
+   //  returns the template parameter for "T" when "T" appears somewhere in
    //    template< typename T > class <name> { ... };
    //
-   bool NameIsTemplateParm(const std::string& name) const;
+   TemplateParm* NameToTemplateParm(const std::string& name) const;
 
    //  Returns the identifier of the file that declares the item if it is
    //  *not* the file that also defines the item.  This can only occur for
@@ -388,7 +388,7 @@ public:
 
    //  Overridden to make const data writeable during initialization.
    //
-   StackArg NameToArg(Cxx::Operator op) override;
+   StackArg NameToArg(Cxx::Operator op, TypeName* name) override;
 
    //  Overridden to record that the data cannot be const.
    //
@@ -656,15 +656,6 @@ public:
    //
    void SetInit(const MemberInit* init) { init_ = init; }
 
-   //  Overridden to support an implicit "this".
-   //
-   StackArg NameToArg(Cxx::Operator op) override;
-
-   //  Overridden to mark the item as a member of the context class if
-   //  it was pushed via "this".
-   //
-   StackArg MemberToArg(StackArg& via, Cxx::Operator op) override;
-
    //  Overridden to log warnings associated with the declaration.
    //
    void Check() const override;
@@ -690,9 +681,19 @@ public:
    //
    bool IsUnionMember() const override;
 
+   //  Overridden to mark the item as a member of the context class if
+   //  it was pushed via "this".
+   //
+   StackArg MemberToArg
+      (StackArg& via, TypeName* name, Cxx::Operator op) override;
+
    //  Overridden to return the item's name.
    //
    const std::string* Name() const override { return &name_; }
+
+   //  Overridden to support an implicit "this".
+   //
+   StackArg NameToArg(Cxx::Operator op, TypeName* name) override;
 
    //  Overridden to promote the member, which currently belongs to
    //  an anonymous union, to CLS, the union's outer scope.
@@ -1189,6 +1190,11 @@ public:
    //
    CxxScope* GetTemplate() const override;
 
+   //  Overridden to return the template arguments for a function
+   //  template instance.
+   //
+   TypeName* GetTemplateArgs() const override { return tspec_.get(); }
+
    //  Overriden to support function templates.
    //
    const TemplateParms* GetTemplateParms() const
@@ -1225,7 +1231,8 @@ public:
 
    //  Overriden to include VIA as a "this" argument.
    //
-   StackArg MemberToArg(StackArg& via, Cxx::Operator op) override;
+   StackArg MemberToArg
+      (StackArg& via, TypeName* name, Cxx::Operator op) override;
 
    //  Overridden to return the function's name.
    //
@@ -1264,6 +1271,10 @@ public:
    //  Overridden to count a read as an invocation.
    //
    bool WasRead() override { ++calls_; return true; }
+
+   //  Overridden  to append argument types if the function's name is ambiguous.
+   //
+   std::string XrefName(bool templates) const override;
 private:
    //  Adds a "this" argument to the function if required.  This occurs
    //  immediately before executing the function's code (in EnterBlock).
@@ -1357,6 +1368,10 @@ private:
    //
    void SetTemplate(Function* func) { tmplt_ = func; }
 
+   //  Sets the name (with template arguments) for a template instance.
+   //
+   void SetTemplateArgs(const TypeName* spec);
+
    //  If this is a function template, returns its first instance.
    //
    Function* FirstInstance() const;
@@ -1407,6 +1422,11 @@ private:
    //
    void DisplayInfo(std::ostream& stream, const NodeBase::Flags& options) const;
 
+   //  Returns the function's argument types enclosed in paretheses.  ARG
+   //  serves the same purpose as in TypeString(arg).
+   //
+   std::string ArgTypesString(bool arg) const;
+
    //  The function's name.
    //
    const QualNamePtr name_;
@@ -1414,6 +1434,13 @@ private:
    //  The template parameters for a function template.
    //
    TemplateParmsPtr parms_;
+
+   //  The name (with template arguments) of a function template instance.
+   //  This is saved because its actual name is a single string containing
+   //  the arguments.  The code supports such names rather than generating
+   //  an artificial but legal C++ identifier.
+   //
+   TypeNamePtr tspec_;
 
    //  Set for a function tagged as extern.
    //
@@ -1577,23 +1604,25 @@ private:
 
    //  The following are forwarded to the function.
    //
-   void Print
-      (std::ostream& stream, const NodeBase::Flags& options) const override;
+   void Check() const override;
    void EnteringScope(const CxxScope* scope) override;
    bool IsConst() const override;
    const std::string* Name() const override;
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
+   void Shrink() override;
    std::string Trace() const override;
    std::string TypeString(bool arg) const override;
-   void Shrink() override;
 
    //  The following are forwarded to the function's return type.
    //
    void AddArray(ArraySpecPtr& array) override;
-   TagCount Arrays() const override;
    std::string AlignTemplateArg(const TypeSpec* thatArg) const override;
+   TagCount Arrays() const override;
    void DisplayArrays(std::ostream& stream) const override;
    void DisplayTags(std::ostream& stream) const override;
    TypeTags GetAllTags() const override;
+   TypeName* GetTemplateArgs() const override;
    TypeSpec* GetTypeSpec() const override;
    bool HasArrayDefn() const override;
    TagCount Ptrs(bool arrays) const override;
@@ -1609,10 +1638,10 @@ private:
    //  generate a log because they may not be properly supported.
    //
    void FindReferent() override;
-   TypeName* GetTemplateArgs() const override;
+   void GetNames(stringVector& names) const override;
    void Instantiating() const override;
    TypeMatch MatchTemplateArg(const TypeSpec* that) const override;
-   bool ItemIsTemplateArg(const CxxScoped* item) const override;
+   bool ItemIsTemplateArg(const CxxNamed* item) const override;
    bool MatchesExactly(const TypeSpec* that) const override;
    TypeMatch MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
       stringVector& tmpltArgs, bool& argFound) const override;
@@ -1620,7 +1649,6 @@ private:
    //  The following are forwarded to the function's return type but also
    //  generate a log because they should not be invoked.
    //
-   void Check() const override;
    void EnterArrays() const override;
    void SetReferent(CxxNamed* item, const SymbolView* view) const override;
 

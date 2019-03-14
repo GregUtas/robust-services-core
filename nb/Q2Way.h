@@ -22,8 +22,11 @@
 #ifndef Q2WAY_H_INCLUDED
 #define Q2WAY_H_INCLUDED
 
+#include <cstddef>
 #include <iosfwd>
+#include <string>
 #include "Algorithms.h"
+#include "Base.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "NbTypes.h"

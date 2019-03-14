@@ -601,7 +601,7 @@ public:
    //  Overridden to enable promotion of the enumerator to its enum's scope
    //  (that is, <scope>::enumerator as well as <scope>::enum::enumerator).
    //
-   void GetScopedNames(stringVector& names) const override;
+   void GetScopedNames(stringVector& names, bool templates) const override;
 
    //  Overridden to determine if the enumerator is unused.
    //
@@ -691,6 +691,10 @@ public:
    //  Overridden to add the declaration to the current scope.
    //
    bool EnterScope() override;
+
+   //  Overriden to add the forward's referent to SYMBOLS.
+   //
+   void GetDirectForwards(CxxUsageSets& symbols) const override;
 
    //  Overridden to return the class's qualified name.
    //
@@ -820,6 +824,10 @@ public:
    //  Overridden to add the declaration to the current scope.
    //
    bool EnterScope() override;
+
+   //  Overriden to add the friend's referent to SYMBOLS.
+   //
+   void GetDirectForwards(CxxUsageSets& symbols) const override;
 
    //  Overridden to return the friend if it is a function.
    //

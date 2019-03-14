@@ -814,7 +814,7 @@ void MacroName::EnterBlock()
 {
    Debug::ft(MacroName_EnterBlock);
 
-   Context::PushArg(StackArg(Referent(), 0));
+   Context::PushArg(StackArg(Referent(), 0, false));
 }
 
 //------------------------------------------------------------------------------

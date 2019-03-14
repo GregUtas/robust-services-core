@@ -20,7 +20,6 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CxxToken.h"
-#include <set>
 #include <sstream>
 #include "CxxArea.h"
 #include "CxxExecute.h"
@@ -28,6 +27,7 @@
 #include "CxxRoot.h"
 #include "CxxScope.h"
 #include "CxxScoped.h"
+#include "CxxString.h"
 #include "CxxSymbols.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -129,7 +129,7 @@ void BraceInit::EnterBlock()
    //  type of structure being initialized, but we'll just return "auto",
    //  which acts as a wildcard when checking LHS and RHS compatibility.
    //
-   StackArg arg(Singleton< CxxRoot >::Instance()->AutoTerm(), 0);
+   StackArg arg(Singleton< CxxRoot >::Instance()->AutoTerm(), 0, false);
    Context::PushArg(arg);
 }
 
@@ -349,6 +349,56 @@ bool CxxToken::WasWritten(const StackArg* arg, bool passed)
 }
 
 //==============================================================================
+//
+//  Removes, from SET, an item that is a template argument in TYPE or whose
+//  name is found in NAMES.  Both of these techniques are used to filter out
+//  template arguments because there are situations in which one of them, but
+//  not the other, detects a template argument.  Ideally this would be cleaned
+//  up, but the effort does not seem worthwhile.
+//
+void EraseTemplateArgs
+   (CxxNamedSet& set, const TypeName* type, const stringVector& names)
+{
+   for(auto i = set.cbegin(); i != set.cend(); NO_OP)
+   {
+      auto erase1 = false;
+      auto erase2 = false;
+      auto name = (*i)->ScopedName(true);
+
+      if(type->ItemIsTemplateArg(*i))
+      {
+         erase1 = true;
+      }
+
+      for(auto n = names.cbegin(); n != names.cend(); ++n)
+      {
+         if(name == *n)
+         {
+            erase2 = true;
+            break;
+         }
+      }
+
+      if(erase1 || erase2)
+         i = set.erase(i);
+      else
+         ++i;
+   }
+}
+
+//------------------------------------------------------------------------------
+//
+//  LHS = LHS U RHS.
+//
+void Union(CxxNamedSet& lhs, const CxxNamedSet& rhs)
+{
+   for(auto i = rhs.cbegin(); i != rhs.cend(); ++i)
+   {
+      lhs.insert(*i);
+   }
+}
+
+//------------------------------------------------------------------------------
 
 void CxxUsageSets::AddBase(const CxxNamed* item)
 {
@@ -389,6 +439,54 @@ void CxxUsageSets::AddUser(const CxxNamed* item)
 {
    if(item->GetFile() == nullptr) return;
    users.insert(item);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CxxUsageSets_EraseLocals = "CxxUsageSets.EraseLocals";
+
+void CxxUsageSets::EraseLocals()
+{
+   Debug::ft(CxxUsageSets_EraseLocals);
+
+   for(auto d = directs.cbegin(); d != directs.cend(); NO_OP)
+   {
+      if((*d)->ScopedName(false).find(LOCALS_STR) != string::npos)
+         d = directs.erase(d);
+      else
+         ++d;
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CxxUsageSets_EraseTemplateArgs = "CxxUsageSets.EraseTemplateArgs";
+
+void CxxUsageSets::EraseTemplateArgs(const TypeName* type)
+{
+   Debug::ft(CxxUsageSets_EraseTemplateArgs);
+
+   stringVector names;
+   type->GetNames(names);
+   CodeTools::EraseTemplateArgs(directs, type, names);
+   CodeTools::EraseTemplateArgs(indirects, type, names);
+   CodeTools::EraseTemplateArgs(forwards, type, names);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CxxUsageSets_Union = "CxxUsageSets.Union";
+
+void CxxUsageSets::Union(const CxxUsageSets& set)
+{
+   Debug::ft(CxxUsageSets_Union);
+
+   CodeTools::Union(bases, set.bases);
+   CodeTools::Union(directs, set.directs);
+   CodeTools::Union(indirects, set.indirects);
+   CodeTools::Union(forwards, set.forwards);
+   CodeTools::Union(friends, set.friends);
+   CodeTools::Union(users, set.users);
 }
 
 //==============================================================================
@@ -948,7 +1046,7 @@ void Literal::EnterBlock()
 {
    Debug::ft(Literal_EnterBlock);
 
-   Context::PushArg(StackArg(this, 0));
+   Context::PushArg(StackArg(this, 0, false));
 }
 
 //------------------------------------------------------------------------------
@@ -996,7 +1094,9 @@ CxxNamed* NullPtr::Referent() const
 
 fn_name Operation_ctor = "Operation.ctor";
 
-Operation::Operation(Cxx::Operator op) : op_(op)
+Operation::Operation(Cxx::Operator op) :
+   op_(op),
+   overload_(nullptr)
 {
    Debug::ft(Operation_ctor);
 
@@ -1303,7 +1403,7 @@ void Operation::Execute() const
       arg1.WasRead();
       arg2.WasRead();
       arg1.WasIndexed();
-      Context::PushArg(arg1);
+      Context::PushArg(arg1.EraseName());
       return;
 
    case Cxx::FUNCTION_CALL:
@@ -1320,7 +1420,7 @@ void Operation::Execute() const
       if(IsOverloaded(arg1)) return;
       arg1.WasRead();
       arg1.WasWritten();
-      Context::PushArg(arg1);
+      Context::PushArg(arg1.EraseName());
       return;
 
    case Cxx::TYPE_NAME:
@@ -1341,7 +1441,7 @@ void Operation::Execute() const
       //
       CheckCast(arg2, arg1);
       arg2.WasRead();
-      Context::PushArg(arg1);
+      Context::PushArg(arg1.EraseName());
       return;
 
    case Cxx::SIZEOF_TYPE:
@@ -1368,7 +1468,7 @@ void Operation::Execute() const
       //
       if(IsOverloaded(arg1)) return;
       arg1.WasRead();
-      Context::PushArg(arg1);
+      Context::PushArg(arg1.EraseName());
       return;
 
    case Cxx::LOGICAL_NOT:
@@ -1378,7 +1478,7 @@ void Operation::Execute() const
       if(IsOverloaded(arg1)) return;
       arg1.WasRead();
       arg1.CheckIfBool();
-      Context::PushArg(arg1);
+      Context::PushArg(arg1.EraseName());
       return;
 
    case Cxx::ADDRESS_OF:
@@ -1388,7 +1488,7 @@ void Operation::Execute() const
       if(IsOverloaded(arg1)) return;
       arg1.WasRead();
       arg1.IncrPtrs();
-      Context::PushArg(arg1);
+      Context::PushArg(arg1.EraseName());
       return;
 
    case Cxx::INDIRECTION:
@@ -1398,7 +1498,7 @@ void Operation::Execute() const
       if(IsOverloaded(arg1)) return;
       arg1.WasRead();
       arg1.DecrPtrs();
-      Context::PushArg(arg1);
+      Context::PushArg(arg1.EraseName());
       return;
 
    case Cxx::OBJECT_CREATE:
@@ -1475,9 +1575,9 @@ void Operation::Execute() const
          arg3.WasRead();
          arg1.CheckIfBool();
          if(arg2.item->TypeString(true) == NULLPTR_T_STR)
-            Context::PushArg(arg3);
+            Context::PushArg(arg3.EraseName());
          else
-            Context::PushArg(arg2);
+            Context::PushArg(arg2.EraseName());
       }
       return;
 
@@ -1520,7 +1620,7 @@ void Operation::Execute() const
       //  Push the result of the second statement.
       //
       arg2.WasRead();
-      Context::PushArg(arg2);
+      Context::PushArg(arg2.EraseName());
       return;
 
    default:
@@ -1623,7 +1723,7 @@ void Operation::ExecuteCall()
       }
 
       args.front().WasRead();
-      Context::PushArg(StackArg(proc.item->Referent(), 0));
+      Context::PushArg(StackArg(proc.item->Referent(), 0, false));
       return;
    }
 
@@ -1674,6 +1774,7 @@ void Operation::ExecuteDelete(const StackArg& arg) const
    //  its destructor and record it as a direct usage.
    //
    arg.WasRead();
+   arg.SetAsDirect();
 
    auto pod = false;
    auto opDel = FindNewOrDelete(arg, true, pod);
@@ -1683,6 +1784,7 @@ void Operation::ExecuteDelete(const StackArg& arg) const
       StackArgVector args;
       args.push_back(arg);
       opDel->Invoke(&args);
+      overload_ = opDel;
    }
 
    if(pod) return;
@@ -1725,7 +1827,7 @@ void Operation::ExecuteNew() const
    //  The second argument is the type for which to allocate memory.
    //  Look for its operator new.
    //
-   StackArg spec(args_[1].get(), 0);
+   StackArg spec(args_[1].get(), 0, false);
    auto pod = false;
    auto opNew = FindNewOrDelete(spec, false, pod);
 
@@ -1739,8 +1841,8 @@ void Operation::ExecuteNew() const
       //
       auto newArg = Singleton< CxxRoot >::Instance()->IntTerm();
       auto newCall = static_cast< Operation* >(args_.front().get());
-      Context::PushArg(StackArg(opNew));
-      Context::PushArg(StackArg(newArg, 0));
+      Context::PushArg(StackArg(opNew, nullptr));
+      Context::PushArg(StackArg(newArg, 0, false));
       newCall->PushArgs();
 
       //  Execute the call to the operator new function and pop the result,
@@ -1751,6 +1853,7 @@ void Operation::ExecuteNew() const
       Context::PopArg(false);
       spec.IncrPtrs();
       Context::PushArg(spec);
+      overload_ = opNew;
    }
 
    //  If a class is being created, push its constructor onto the stack.
@@ -1774,8 +1877,8 @@ void Operation::ExecuteNew() const
    //  and add a pointer to the result.
    //
    Context::PopArg(false);
-   Context::PushArg(StackArg(ctor));
-   Context::PushArg(StackArg(cls, 1));
+   Context::PushArg(StackArg(ctor, nullptr));
+   Context::PushArg(StackArg(cls, 1, false));
    Context::TopArg()->SetAsThis(true);
 
    if((op_ == Cxx::OBJECT_CREATE) && (args_.size() >= 3))
@@ -1844,7 +1947,7 @@ bool Operation::ExecuteOverload
    case Cxx::POSTFIX_DECREMENT:
       {
          auto dummyArg = Singleton< CxxRoot >::Instance()->IntTerm();
-         args.push_back(StackArg(dummyArg, 0));
+         args.push_back(StackArg(dummyArg, 0, false));
       }
       break;
    case Cxx::ASSIGN:
@@ -1935,14 +2038,23 @@ bool Operation::ExecuteOverload
    //  function was invoked.
    //
    if(oper == nullptr) return false;
+
    if(mem && !hasThis)
    {
       args.front().IncrPtrs();
       args.front().SetAsThis(true);
    }
-   Context::PushArg(StackArg(oper));
-   for(size_t i = 0; i < args.size(); ++i) Context::PushArg(args[i]);
+
+   arg1.SetAsDirect();
+   Context::PushArg(StackArg(oper, nullptr));
+
+   for(size_t i = 0; i < args.size(); ++i)
+   {
+      Context::PushArg(args[i].EraseName());
+   }
+
    ExecuteCall();
+   overload_ = oper;
 
    if(autoAssign)
    {
@@ -1960,7 +2072,7 @@ bool Operation::ExecuteOverload
       Context::Log(DefaultCopyOperator, cls, -1);
       cls->Log(DefaultCopyOperator);
       Context::PopArg(false);
-      Context::PushArg(StackArg(cls, 0));
+      Context::PushArg(StackArg(cls, 0, false));
    }
 
    return true;
@@ -2057,6 +2169,21 @@ void Operation::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
    {
       (*a)->GetUsages(file, symbols);
+   }
+
+   if(overload_ != nullptr)
+   {
+      switch(op_)
+      {
+      case Cxx::OBJECT_CREATE:
+      case Cxx::OBJECT_CREATE_ARRAY:
+      case Cxx::OBJECT_DELETE:
+      case Cxx::OBJECT_DELETE_ARRAY:
+         break;
+
+      default:
+         if(!overload_->IsInternal()) symbols.AddDirect(overload_);
+      }
    }
 }
 
@@ -2361,14 +2488,14 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
       return;
    }
 
-   if(arg2.item->Type() == Cxx::QualName)
+   if(arg2.name != nullptr)
    {
       //  Record that MEM was accessed through CLS (cls.mem or cls->mem).  If
       //  MEM was Inherited, it must actually be public (rather than protected)
       //  if SCOPE was not a friend of its declarer and neither in CLS nor one
       //  of its subclasses.
       //
-      static_cast< QualName* >(arg2.item)->MemberAccessed(cls, mem);
+      arg2.name->MemberAccessed(cls, mem);
 
       if((view.accessibility == Inherited) && (!view.friend_) &&
          (cls->ClassDistance(scope->GetClass()) == NOT_A_SUBCLASS))
@@ -2400,16 +2527,17 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
       }
    }
 
-   //  Push MEM via ARG1 and op_.
+   //  Push MEM via ARG1 and op_ after recording that ARG1 was used directly.
    //
-   Context::PushArg(mem->MemberToArg(arg1, op_));
+   arg1.SetAsDirect();
+   Context::PushArg(mem->MemberToArg(arg1, arg2.name, op_));
 }
 
 //------------------------------------------------------------------------------
 
 fn_name Operation_PushResult = "Operation.PushResult";
 
-void Operation::PushResult(const StackArg& lhs, const StackArg& rhs) const
+void Operation::PushResult(StackArg& lhs, StackArg& rhs) const
 {
    Debug::ft(Operation_PushResult);
 
@@ -2523,10 +2651,19 @@ void Operation::PushResult(const StackArg& lhs, const StackArg& rhs) const
    case Cxx::BITWISE_AND:
    case Cxx::BITWISE_XOR:
    case Cxx::BITWISE_OR:
+      //
+      //  The result is a temporary, so it can no longer be const.
+      //
       if(lhs.item->Type() == Cxx::Terminal)
-         Context::PushArg(rhs);
+      {
+         rhs.SetAsWriteable();
+         Context::PushArg(rhs.EraseName());
+      }
       else
-         Context::PushArg(lhs);
+      {
+         lhs.SetAsWriteable();
+         Context::PushArg(lhs.EraseName());
+      }
       break;
 
    case Cxx::LESS:
@@ -2541,7 +2678,7 @@ void Operation::PushResult(const StackArg& lhs, const StackArg& rhs) const
       break;
 
    case Cxx::ASSIGN:
-      Context::PushArg(rhs);
+      Context::PushArg(rhs.EraseName());
       break;
 
    case Cxx::MULTIPLY_ASSIGN:
@@ -2554,7 +2691,7 @@ void Operation::PushResult(const StackArg& lhs, const StackArg& rhs) const
    case Cxx::BITWISE_AND_ASSIGN:
    case Cxx::BITWISE_XOR_ASSIGN:
    case Cxx::BITWISE_OR_ASSIGN:
-      Context::PushArg(lhs);
+      Context::PushArg(lhs.EraseName());
       break;
 
    default:
@@ -2581,7 +2718,7 @@ void Operation::PushType(const string& name)
 
    if(item != nullptr)
    {
-      Context::PushArg(StackArg(item, 0));
+      Context::PushArg(StackArg(item, 0, false));
       return;
    }
 

@@ -61,6 +61,18 @@ struct CxxUsageSets
    void AddIndirect(const CxxNamed* item);
    void AddForward(const CxxNamed* item);
    void AddUser(const CxxNamed* item);
+
+   //  Removes, from each set, items that are template arguments for TYPE.
+   //
+   void EraseTemplateArgs(const TypeName* type);
+
+   //  Removes local variables from DIRECTS.
+   //
+   void EraseLocals();
+
+   //  this = this U SET.
+   //
+   void Union(const CxxUsageSets& set);
 };
 
 //------------------------------------------------------------------------------
@@ -666,7 +678,7 @@ private:
 
    //  Pushes the result of applying the operator to LHS and RHS.
    //
-   void PushResult(const StackArg& lhs, const StackArg& rhs) const;
+   void PushResult(StackArg& lhs, StackArg& rhs) const;
 
    //  Generates any log that applies to a cast operation from inArg to outArg.
    //
@@ -684,6 +696,11 @@ private:
    //  The operator.
    //
    Cxx::Operator op_;
+
+   //  The overload that implemented the operator, if any.  Recorded for
+   //  symbol usage purposes.
+   //
+   mutable Function* overload_;
 
    //  The operator's arguments.
    //

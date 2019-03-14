@@ -204,10 +204,11 @@ public:
    //
    virtual std::string ScopedName(bool templates) const;
 
-   //  Updates NAMES with the item's fully qualified name(s).  Each name omits
-   //  template arguments but prefixes a scope resolution operator.
+   //  Updates NAMES with the item's fully qualified name(s), including
+   //  template arguments if TEMPLATE is set.  Each name is prefixed by a
+   //  scope resolution operator.
    //
-   virtual void GetScopedNames(stringVector& names) const;
+   virtual void GetScopedNames(stringVector& names, bool templates) const;
 
    //  Returns true if this item is a superscope of fqSub.  TMPLT is set if
    //  a template should be considered a superscope of one of its instances.
@@ -311,20 +312,39 @@ public:
    //  Constructs an argument for the item when it is named directly, perhaps
    //  through an implicit "this".  OP is the operator that is on top of the
    //  operator stack (Cxx::NIL_OPERATOR if the stack is empty).  The result
-   //  is pushed onto the argument stack.
+   //  is pushed onto the argument stack.  NAME was used to access the item.
    //
-   virtual StackArg NameToArg(Cxx::Operator op);
+   virtual StackArg NameToArg(Cxx::Operator op, TypeName* name);
 
-   //  Constructs an argument for the item when it was accessed through VIA
-   //  and OP (either "." or "->").  The result is pushed onto the argument
-   //  stack.
+   //  Constructs an argument for the item when it was accessed through VIA,
+   //  NAME, and OP (either "." or "->" in VIA OP NAME).
    //
-   virtual StackArg MemberToArg(StackArg& via, Cxx::Operator op);
+   virtual StackArg MemberToArg
+      (StackArg& via, TypeName* name, Cxx::Operator op);
 
    //  Invoked when the item is accessed.  Invokes ItemAccessed on the context
    //  function.
    //
    void Accessed() const;
+
+   //  Invoked on an item that was used directly (e.g. to invoke a function).
+   //  If the item's type is a forward declaration, its actual class is added
+   //  to SYMBOLS because that class must be #included by the file that used
+   //  this item.  For example, say that a class declares a pointer member
+   //  using a forward declaration.  If a client of that class invokes a
+   //  function through that pointer (a direct usage), it must #include the
+   //  definition of the pointer's class (or at least be certain that it will
+   //  be #included transitively).  The default version invokes the function
+   //  on GetTypeSpec().
+   //
+   virtual void GetDirectForwards(CxxUsageSets& symbols) const;
+
+   //  Invoked to add template arguments that are direct (that is, that don't
+   //  have a pointer) to SYMBOLS.  The definition of such arguments must be
+   //  available when instantiation occurs.  The default version invokes the
+   //  function on GetTypeSpec().
+   //
+   virtual void GetDirectTemplateArgs(CxxUsageSets& symbols) const;
 
    //  Logs WARNING at the position where this item is located.  ITEM
    //  and OFFSET are specific to WARNING, and HIDE is set to prevent
@@ -333,6 +353,11 @@ public:
    //
    void Log(Warning warning, const CxxNamed* item = nullptr,
       NodeBase::word offset = 0, bool hide = false) const;
+
+   //  The default returns ScopedName(templates).  Overridden by functions
+   //  to append argument types when the function's name is ambiguous.
+   //
+   virtual std::string XrefName(bool templates) const;
 
    //  Displays the item's referent in STREAM.  If FQ is set, the item's
    //  fully qualified name is displayed.
@@ -561,12 +586,16 @@ public:
 
    //  Returns true if ITEM is the referent of a template argument.
    //
-   bool ItemIsTemplateArg(const CxxScoped* item) const;
+   bool ItemIsTemplateArg(const CxxNamed* item) const;
 
    //  Invoked when the name accesses MEM via CLS.  Sets the referent to MEM
    //  and records CLS as the type through which it was accessed.
    //
    void MemberAccessed(Class* cls, CxxNamed* mem) const;
+
+   //  Invoked when the name was used directly.
+   //
+   void SetAsDirect() { direct_ = true; }
 
    //  Invoked when the name is that of a member which a qualified name
    //  accessed via a subclass (derived::member instead of base::member).
@@ -581,6 +610,10 @@ public:
    //
    CxxScoped* GetForward() const { return forw_; }
 
+   //  Adds any template arguments to NAMES.
+   //
+   void GetNames(stringVector& names) const;
+
    //  Overridden to check template arguments.
    //
    void Check() const override;
@@ -592,6 +625,16 @@ public:
    //  Overridden to invoke FindReferent on each template argument.
    //
    void FindReferent() override;
+
+   //  Overridden to invoke GetDirectForwards on DirectType() and on
+   //  each template argument.
+   //
+   void GetDirectForwards(CxxUsageSets& symbols) const override;
+
+   //  Overridden to invoke GetDirectTemplateArgs on each template
+   //  argument.
+   //
+   void GetDirectTemplateArgs(CxxUsageSets& symbols) const override;
 
    //  Overridden to return this item if it has template arguments.
    //
@@ -679,6 +722,11 @@ private:
    //  Set if ref_ was made visible by a using statement.
    //
    mutable bool using_ : 1;
+
+   //  Set if the name was used directly (e.g. to access a member, to
+   //  invoke a function, or as the target of an assignment).
+   //
+   bool direct_: 1;
 };
 
 //------------------------------------------------------------------------------
@@ -762,11 +810,6 @@ public:
    //
    CxxScoped* GetForward() const;
 
-   //  Invoked when the name accesses MEM via CLS.  Forwards to the first name
-   //  that has no referent and that matches MEM's name.
-   //
-   void MemberAccessed(Class* cls, CxxNamed* mem) const;
-
    //  Invokes MatchTemplate on each name, returning the least favorable result.
    //
    TypeMatch MatchTemplate(const QualName* that,
@@ -774,7 +817,11 @@ public:
 
    //  Returns true if ITEM is the referent of a template argument.
    //
-   bool ItemIsTemplateArg(const CxxScoped* item) const;
+   bool ItemIsTemplateArg(const CxxNamed* item) const;
+
+   //  Adds the name and any template arguments to NAMES.
+   //
+   void GetNames(stringVector& names) const;
 
    //  Checks that the name is a valid constructor name ("...A::A").
    //
@@ -796,6 +843,14 @@ public:
    //  Overridden to find the referent and push it onto the argument stack.
    //
    void EnterBlock() override;
+
+   //  Overridden to invoke GetDirectForwards on the last name.
+   //
+   void GetDirectForwards(CxxUsageSets& symbols) const override;
+
+   //  Overridden to invoke GetDirectTemplateArgs on each name.
+   //
+   void GetDirectTemplateArgs(CxxUsageSets& symbols) const override;
 
    //  Overridden to return the item itself.
    //
@@ -1158,13 +1213,17 @@ public:
 
    //  Returns true if ITEM is the referent of a template argument.
    //
-   virtual bool ItemIsTemplateArg(const CxxScoped* item) const = 0;
+   virtual bool ItemIsTemplateArg(const CxxNamed* item) const = 0;
 
    //  Invoked when the type is a template argument that is about to be used
    //  to instantiate a template.  Finds the type's referent and, if it is a
    //  template, also instantiates it.
    //
    virtual void Instantiating() const = 0;
+
+   //  Adds each scoped name in the type to NAMES.
+   //
+   virtual void GetNames(stringVector& names) const = 0;
 
    //  Overridden to reveal that this is a type specification.
    //
@@ -1244,7 +1303,7 @@ private:
    //  Resolves a template argument when parsing a template instance.  Returns
    //  false if this is not a template argument in a template instance.
    //
-   bool ResolveTemplateArgument() const;
+   bool ResolveTemplateArg() const;
 
    //  Overridden to add a bounded array specification to the type.
    //
@@ -1312,6 +1371,26 @@ private:
    //
    void FindReferent() override;
 
+   //  Overridden to return the type's attributes.
+   //
+   TypeTags GetAllTags() const override;
+
+   //  Overridden to invoke GetDirectForwards on its qualified name.
+   //
+   void GetDirectForwards(CxxUsageSets& symbols) const override;
+
+   //  If this is a direct template argument (i.e. one without pointer tags)
+   //  but it was only made visible by a forward or friend declaration, its
+   //  class definition is added to symbols.  If the type is to a template
+   //  instance, its direct template arguments are added to SYMBOLS.  Finally,
+   //  GetDirectTemplateArgs is also invoked on the type's qualified name.
+   //
+   void GetDirectTemplateArgs(CxxUsageSets& symbols) const override;
+
+   //  Overridden add the type's names to NAMES.
+   //
+   void GetNames(stringVector& names) const override;
+
    //  Overridden to return the numeric type.
    //
    Numeric GetNumeric() const override;
@@ -1319,10 +1398,6 @@ private:
    //  Overridden to return the type's qualified name.
    //
    QualName* GetQualName() const override { return name_.get(); }
-
-   //  Overridden to return the type's attributes.
-   //
-   TypeTags GetAllTags() const override;
 
    //  Overridden to return the type itself.
    //
@@ -1347,7 +1422,7 @@ private:
 
    //  Overridden to return true if ITEM is the referent of a template argument.
    //
-   bool ItemIsTemplateArg(const CxxScoped* item) const override;
+   bool ItemIsTemplateArg(const CxxNamed* item) const override;
 
    //  Overridden to return true if the type is const.
    //

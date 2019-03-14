@@ -22,7 +22,8 @@
 #ifndef ALLOCATORS_H_INCLUDED
 #define ALLOCATORS_H_INCLUDED
 
-#include <memory>
+#include <cstddef>
+#include <cstdint>
 #include "AllocationException.h"
 #include "Memory.h"
 #include "SysTypes.h"

@@ -673,14 +673,14 @@ bool ClassData::IsUnionMember() const
 
 fn_name ClassData_MemberToArg = "ClassData.MemberToArg";
 
-StackArg ClassData::MemberToArg(StackArg& via, Cxx::Operator op)
+StackArg ClassData::MemberToArg(StackArg& via, TypeName* name, Cxx::Operator op)
 {
    Debug::ft(ClassData_MemberToArg);
 
    //  Create an argument for this member, which was accessed through VIA.
    //
    Accessed();
-   StackArg arg(this, via, op);
+   StackArg arg(this, name, via, op);
    if(mutable_) arg.SetAsMutable();
    return arg;
 }
@@ -689,7 +689,7 @@ StackArg ClassData::MemberToArg(StackArg& via, Cxx::Operator op)
 
 fn_name ClassData_NameToArg = "ClassData.NameToArg";
 
-StackArg ClassData::NameToArg(Cxx::Operator op)
+StackArg ClassData::NameToArg(Cxx::Operator op, TypeName* name)
 {
    Debug::ft(ClassData_NameToArg);
 
@@ -697,7 +697,7 @@ StackArg ClassData::NameToArg(Cxx::Operator op)
    //  noting if it is mutable.  Log a read on the implicit "this", and if
    //  the context function is const, also mark the item as const.
    //
-   auto arg = Data::NameToArg(op);
+   auto arg = Data::NameToArg(op, name);
    if(IsStatic()) return arg;
    arg.SetAsMember();
    if(mutable_) arg.SetAsMutable();
@@ -848,11 +848,11 @@ id_t CxxScope::GetDistinctDeclFid() const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxScope_NameIsTemplateParm = "CxxScope.NameIsTemplateParm";
+fn_name CxxScope_NameToTemplateParm = "CxxScope.NameToTemplateParm";
 
-bool CxxScope::NameIsTemplateParm(const string& name) const
+TemplateParm* CxxScope::NameToTemplateParm(const string& name) const
 {
-   Debug::ft(CxxScope_NameIsTemplateParm);
+   Debug::ft(CxxScope_NameToTemplateParm);
 
    auto scope = this;
 
@@ -866,14 +866,14 @@ bool CxxScope::NameIsTemplateParm(const string& name) const
 
          for(auto p = parms->cbegin(); p != parms->cend(); ++p)
          {
-            if(*(*p)->Name() == name) return true;
+            if(*(*p)->Name() == name) return p->get();
          }
       }
 
       scope = scope->GetScope();
    }
 
-   return false;
+   return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -1366,9 +1366,9 @@ bool Data::InitByExpr(CxxToken* expr)
       //  is missing the antecedent, the class's name.  The constructor also
       //  requires a "this" argument.
       //
-      Context::PushArg(StackArg(cls, 0));
+      Context::PushArg(StackArg(cls, 0, false));
       Context::TopArg()->SetInvoke();
-      Context::PushArg(StackArg(cls, 1));
+      Context::PushArg(StackArg(cls, 1, false));
       Context::TopArg()->SetAsThis(true);
       Expression::Start();
       expr->EnterBlock();
@@ -1389,7 +1389,7 @@ bool Data::InitByExpr(CxxToken* expr)
             op->FrontArg()->EnterBlock();
             auto result = Context::PopArg(true);
             spec_->MustMatchWith(result);
-            result.AssignedTo(StackArg(this, 0), Copied);
+            result.AssignedTo(StackArg(this, 0, false), Copied);
          }
          else
          {
@@ -1443,13 +1443,13 @@ bool Data::IsDefaultConstructible() const
 
 fn_name Data_NameToArg = "Data.NameToArg";
 
-StackArg Data::NameToArg(Cxx::Operator op)
+StackArg Data::NameToArg(Cxx::Operator op, TypeName* name)
 {
    Debug::ft(Data_NameToArg);
 
    //  Make data writeable during its initialization.
    //
-   auto arg = CxxNamed::NameToArg(op);
+   auto arg = CxxNamed::NameToArg(op, name);
    if(initing_) arg.SetAsWriteable();
    return arg;
 }
@@ -1583,13 +1583,18 @@ void FuncData::Check() const
 {
    Debug::ft(FuncData_Check);
 
-   Data::Check();
-
-   //  Don't check a variable in a function template, as it isn't executed.
-   //  Don't check a function's internal variables for potential constness.
+   //  Don't check a variable in a function template, because its code isn't
+   //  executed.  Don't check a variable in a template instance, because an
+   //  accurate picture could only be obtained by considering all instances
+   //  of the function.
    //
    auto func = GetScope()->GetFunction();
    if(func->IsTemplate()) return;
+   if(func->IsInTemplateInstance()) return;
+
+   //  Don't check a function's internal variables for potential constness.
+   //
+   Data::Check();
    CheckUsage();
    CheckConstness(false);
 }
@@ -1735,6 +1740,7 @@ fn_name Function_ctor1 = "Function.ctor";
 
 Function::Function(QualNamePtr& name) :
    name_(name.release()),
+   tspec_(nullptr),
    extern_(false),
    inline_(false),
    constexpr_(false),
@@ -1777,6 +1783,7 @@ fn_name Function_ctor2 = "Function.ctor(spec)";
 
 Function::Function(QualNamePtr& name, TypeSpecPtr& spec, bool type) :
    name_(name.release()),
+   tspec_(nullptr),
    extern_(false),
    inline_(false),
    constexpr_(false),
@@ -1975,6 +1982,24 @@ bool Function::ArgIsUnused(size_t n) const
 
 //------------------------------------------------------------------------------
 
+string Function::ArgTypesString(bool arg) const
+{
+   //  Add the full type of each argument within parentheses,
+   //  using commas to separate them.
+   //
+   string types(1, '(');
+
+   for(auto a = args_.cbegin(); a != args_.cend(); ++a)
+   {
+      types += (*a)->TypeString(arg);
+      if(*a != args_.back()) types += ',';
+   }
+
+   return types + ')';
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Function_ArgumentsMatch = "Function.ArgumentsMatch";
 
 bool Function::ArgumentsMatch(const Function* that) const
@@ -2022,7 +2047,8 @@ TypeMatch Function::CalcConstructibilty
    {
       auto thisArg = args_[1].get();
       auto thisType = thisArg->TypeString(true);
-      return StackArg(thisArg, 0).CalcMatchWith(that, thisType, thatType);
+      return StackArg(thisArg, 0, false).CalcMatchWith
+         (that, thisType, thatType);
    }
 
    return Incompatible;
@@ -2771,7 +2797,7 @@ void Function::CheckMemberUsage() const
    //c To support this for templates, nonstatic_ and nonpublic_ would have to
    //  to be looked at over all instances of a function, whether instantiated
    //  in a class or function template, because these flags are never set in
-   //  a pure template.
+   //  a pure template, because it is neither executed nor invoked directly.
    //
    if(virtual_) return;
    if(type_) return;
@@ -3091,7 +3117,13 @@ void Function::EnterBlock()
    if(!IsImplemented()) return;
 
    //  Don't execute a function template or a function in a class template.
-   //  A function in a class template *instance*, however, is executed.
+   //  Execution will fail because template arguments are untyped.  However:
+   //  o An inline function in a class template *is* executed (because it
+   //    is not included in template instances)
+   //  o A function in a class template instance *is* executed, and so is a
+   //    function template instance (GetTemplateType returns NonTemplate in
+   //    this case).
+   //  o A function template instance is also executed.
    //
    auto type = GetTemplateType();
 
@@ -3100,7 +3132,7 @@ void Function::EnterBlock()
       if(Context::ParsingTemplateInstance()) return;
       auto file = GetImplFile();
       if(file != nullptr) file->SetTemplate(type);
-      return;
+      if(!inline_) return;
    }
 
    //  Set up the "execution" context and add the function's arguments to the
@@ -3511,7 +3543,6 @@ TemplateType Function::GetTemplateType() const
       if(cls->IsTemplate()) return ClassTemplate;
    }
 
-   if(friend_) return ClassTemplate;
    return NonTemplate;
 }
 
@@ -3523,10 +3554,41 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
    Debug::ft(Function_GetUsages);
 
-   //  Do not report usages in unexecuted or internally generated code, such
-   //  as function templates and their instances.
+   if(deleted_) return;
+
+   //  See if this function appears in a function or class template.
    //
-   if((GetTemplateType() != NonTemplate) || IsInternal()) return;
+   auto type = GetTemplateType();
+
+   switch(type)
+   {
+   case NonTemplate:
+      break;
+
+   case FuncTemplate:
+      //
+      //  A function template cannot be executed by itself, so it must get its
+      //  symbol usage information from its instantiations.  They are all the
+      //  same, so it is sufficient to pull symbols from the first one.
+      //
+      if(!tmplts_.empty())
+      {
+         CxxUsageSets sets;
+         auto first = tmplts_.front();
+         first->GetUsages(file, sets);
+         sets.EraseTemplateArgs(first->GetTemplateArgs());
+         sets.EraseLocals();
+         symbols.Union(sets);
+      }
+      return;
+
+   case ClassTemplate:
+      //
+      //  This function appears in a class template, which is not executed, so
+      //  there will be no symbols to report unless it is an inline function.
+      //
+      if(!inline_) return;
+   }
 
    //  Place the symbols used in the function's signature in a local variable.
    //  The reason for this is discussed below.
@@ -3583,11 +3645,37 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    //
    if(defn_) symbols.AddDirect(mate_);
 
-   if(call_ != nullptr) call_->GetUsages(file, symbols);
-
-   for(auto m = mems_.cbegin(); m != mems_.cend(); ++m)
+   //  If this is a constructor, include usages from the base class constructor
+   //  call, the member initializations, and the default member initializations.
+   //  Only the constructor's definition has the first two, but make sure the
+   //  last one is only done for the definition, and only for non-POD members.
+   //
+   if(FuncType() == FuncCtor)
    {
-      (*m)->GetUsages(file, symbols);
+      const Class* cls = GetClass();
+
+      if(call_ != nullptr) call_->GetUsages(file, symbols);
+
+      for(auto m = mems_.cbegin(); m != mems_.cend(); ++m)
+      {
+         (*m)->GetUsages(file, symbols);
+      }
+
+      if(GetDefn() == this)
+      {
+         auto data = cls->Datas();
+
+         for(auto d = data->cbegin(); d != data->cend(); ++d)
+         {
+            auto item = d->get();
+
+            if(!item->IsStatic() && !item->IsPOD())
+            {
+               item->GetUsages(file, symbols);
+               item->GetDirectTemplateArgs(symbols);
+            }
+         }
+      }
    }
 
    if(impl_ != nullptr) impl_->GetUsages(file, symbols);
@@ -3746,6 +3834,7 @@ Function* Function::InstantiateFunction(const TypeName* type) const
    func = area->FindFunc(instName, nullptr, false, nullptr, nullptr);
    if(func == nullptr) return InstantiateError(instName, 3);
    func->SetAccess(GetAccess());
+   func->SetTemplateArgs(type);
    func->SetTemplate(const_cast< Function* >(this));
    tmplts_.push_back(func);
    return func;
@@ -3820,7 +3909,7 @@ void Function::Invoke(StackArgVector* args)
    {
       auto& sendArg = args->at(i);
       sendArg.WasRead();
-      StackArg recvArg(args_.at(i).get(), 0);
+      StackArg recvArg(args_.at(i).get(), 0, false);
       sendArg.AssignedTo(recvArg, Passed);
    }
 
@@ -4230,7 +4319,7 @@ TypeMatch Function::MatchTemplate
 
 fn_name Function_MemberToArg = "Function.MemberToArg";
 
-StackArg Function::MemberToArg(StackArg& via, Cxx::Operator op)
+StackArg Function::MemberToArg(StackArg& via, TypeName* name, Cxx::Operator op)
 {
    Debug::ft(Function_MemberToArg);
 
@@ -4245,7 +4334,7 @@ StackArg Function::MemberToArg(StackArg& via, Cxx::Operator op)
    //    selected as the result of argument matching (see UpdateThisArg).
    //
    Accessed();
-   Context::PushArg(StackArg(this));
+   Context::PushArg(StackArg(this, name));
    if(op == Cxx::REFERENCE_SELECT) via.IncrPtrs();
    via.SetAsThis(true);
    return via;
@@ -4293,12 +4382,12 @@ void Function::PushThisArg(StackArgVector& args) const
       {
          auto func = Context::Scope()->GetFunction();
          if((func == nullptr) || !func->this_) return;
-         StackArg arg(func->args_[0].get(), 0);
+         StackArg arg(func->args_[0].get(), 0, false);
          args.insert(args.cbegin(), arg);
       }
       else
       {
-         args.insert(args.cbegin(), StackArg(GetClass(), 1));
+         args.insert(args.cbegin(), StackArg(GetClass(), 1, false));
       }
 
       args.front().SetAsImplicitThis();
@@ -4331,7 +4420,7 @@ StackArg Function::ResultType() const
    //
    if(spec_ != nullptr) return spec_->ResultType();
    if(FuncType() == FuncCtor) return StackArg(GetClass(), 0, true);
-   return StackArg(Singleton< CxxRoot >::Instance()->VoidTerm(), 0);
+   return StackArg(Singleton< CxxRoot >::Instance()->VoidTerm(), 0, false);
 }
 
 //------------------------------------------------------------------------------
@@ -4430,6 +4519,18 @@ void Function::SetStatic(bool stat, Cxx::Operator oper)
    case Cxx::OBJECT_DELETE_ARRAY:
       static_ = (Context::Scope()->GetClass() != nullptr);
    }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Function_SetTemplateArgs = "Function.SetTemplateArgs";
+
+void Function::SetTemplateArgs(const TypeName* spec)
+{
+   Debug::ft(Function_SetTemplateArgs);
+
+   tspec_.reset(new TypeName(*spec));
+   tspec_->CopyContext(spec);
 }
 
 //------------------------------------------------------------------------------
@@ -4558,18 +4659,10 @@ string Function::TypeString(bool arg) const
       ts += SPACE + Prefix(GetScope()->TypeString(false)) + *Name();
    }
 
-   //  Add the full type of each argument within parentheses, using
-   //  commas to separate them.
+   //  Append the function's argument types.
    //
-   ts += '(';
-
-   for(auto a = args_.cbegin(); a != args_.cend(); ++a)
-   {
-      ts += (*a)->TypeString(arg);
-      if(*a != args_.back()) ts += ',';
-   }
-
-   return ts + ')';
+   ts += ArgTypesString(arg);
+   return ts;
 }
 
 //------------------------------------------------------------------------------
@@ -4612,7 +4705,10 @@ void Function::UpdateThisArg(StackArgVector& args) const
       //  A pointer to the class acts as the implicit "this" argument until
       //  the constructor is found.
       //
-      if(FuncType() == FuncCtor) args.front() = StackArg(args_[0].get(), 0);
+      if(FuncType() == FuncCtor)
+      {
+         args.front() = StackArg(args_[0].get(), 0, false);
+      }
    }
 }
 
@@ -4683,6 +4779,20 @@ void Function::WasCalled()
       auto func = static_cast< ClassInst* >(cls)->FindTemplateAnalog(this);
       if(func != nullptr) ++static_cast< Function* >(func)->calls_;
    }
+}
+
+//------------------------------------------------------------------------------
+
+string Function::XrefName(bool templates) const
+{
+   auto name = ScopedName(templates);
+
+   if(!Singleton< CxxSymbols >::Instance()->IsUniqueName(GetScope(), *Name()))
+   {
+      name += ArgTypesString(true);
+   }
+
+   return name;
 }
 
 //==============================================================================
@@ -4786,6 +4896,14 @@ TypeTags FuncSpec::GetAllTags() const
 
 //------------------------------------------------------------------------------
 
+void FuncSpec::GetNames(stringVector& names) const
+{
+   Debug::SwLog(FuncSpec_Warning, "GetNames", 0);
+   func_->GetTypeSpec()->GetNames(names);
+}
+
+//------------------------------------------------------------------------------
+
 TypeName* FuncSpec::GetTemplateArgs() const
 {
    return func_->GetTypeSpec()->GetTemplateArgs();
@@ -4822,7 +4940,7 @@ bool FuncSpec::IsConst() const
 
 //------------------------------------------------------------------------------
 
-bool FuncSpec::ItemIsTemplateArg(const CxxScoped* item) const
+bool FuncSpec::ItemIsTemplateArg(const CxxNamed* item) const
 {
    Debug::SwLog(FuncSpec_Warning, "ItemIsTemplateArg", 0);
    return func_->GetTypeSpec()->ItemIsTemplateArg(item);

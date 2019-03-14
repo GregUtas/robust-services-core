@@ -225,6 +225,32 @@ id_t CxxNamed::GetDeclFid() const
 
 //------------------------------------------------------------------------------
 
+fn_name CxxNamed_GetDirectForwards = "CxxNamed.GetDirectForwards";
+
+void CxxNamed::GetDirectForwards(CxxUsageSets& symbols) const
+{
+   Debug::ft(CxxNamed_GetDirectForwards);
+
+   auto spec = GetTypeSpec();
+   if(spec == nullptr) return;
+   spec->GetDirectForwards(symbols);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CxxNamed_GetDirectTemplateArgs = "CxxNamed.GetDirectTemplateArgs";
+
+void CxxNamed::GetDirectTemplateArgs(CxxUsageSets& symbols) const
+{
+   Debug::ft(CxxNamed_GetDirectTemplateArgs);
+
+   auto spec = GetTypeSpec();
+   if(spec == nullptr) return;
+   spec->GetDirectTemplateArgs(symbols);
+}
+
+//------------------------------------------------------------------------------
+
 size_t CxxNamed::GetRange(size_t& begin, size_t& end) const
 {
    begin = string::npos;
@@ -234,9 +260,9 @@ size_t CxxNamed::GetRange(size_t& begin, size_t& end) const
 
 //------------------------------------------------------------------------------
 
-void CxxNamed::GetScopedNames(stringVector& names) const
+void CxxNamed::GetScopedNames(stringVector& names, bool templates) const
 {
-   names.push_back(SCOPE_STR + ScopedName(false));
+   names.push_back(SCOPE_STR + ScopedName(templates));
 }
 
 //------------------------------------------------------------------------------
@@ -310,7 +336,7 @@ void CxxNamed::Log
 
 fn_name CxxNamed_MemberToArg = "CxxNamed.MemberToArg";
 
-StackArg CxxNamed::MemberToArg(StackArg& via, Cxx::Operator op)
+StackArg CxxNamed::MemberToArg(StackArg& via, TypeName* name, Cxx::Operator op)
 {
    Debug::ft(CxxNamed_MemberToArg);
 
@@ -319,19 +345,19 @@ StackArg CxxNamed::MemberToArg(StackArg& via, Cxx::Operator op)
    auto expl = "Unexpected member selection by " + *via.item->Name();
    Context::SwLog(CxxNamed_MemberToArg, expl, op);
 
-   return NameToArg(op);
+   return NameToArg(op, nullptr);
 }
 
 //------------------------------------------------------------------------------
 
 fn_name CxxNamed_NameToArg = "CxxNamed.NameToArg";
 
-StackArg CxxNamed::NameToArg(Cxx::Operator op)
+StackArg CxxNamed::NameToArg(Cxx::Operator op, TypeName* name)
 {
    Debug::ft(CxxNamed_NameToArg);
 
    Accessed();
-   return StackArg(this, 0);
+   return StackArg(this, name);
 }
 
 //------------------------------------------------------------------------------
@@ -615,6 +641,13 @@ void CxxNamed::strName(ostream& stream, bool fq, const QualName* name) const
       name->Print(stream, Flags());
 }
 
+//------------------------------------------------------------------------------
+
+string CxxNamed::XrefName(bool templates) const
+{
+   return ScopedName(templates);
+}
+
 //==============================================================================
 
 const TypeSpecPtr DataSpec::Bool = TypeSpecPtr(new DataSpec(BOOL_STR));
@@ -849,7 +882,7 @@ void DataSpec::EnteringScope(const CxxScope* scope)
 
    Context::SetPos(GetLoc());
 
-   if(scope->NameIsTemplateParm(*Name()))
+   if(scope->NameToTemplateParm(*Name()) != nullptr)
    {
       SetTemplateRole(TemplateParameter);
    }
@@ -883,7 +916,7 @@ void DataSpec::FindReferent()
    auto scope = Context::Scope();
    if(scope == nullptr) return;
 
-   if(ResolveTemplateArgument()) return;
+   if(ResolveTemplateArg()) return;
 
    SymbolView view;
    auto item = ResolveName(file, scope, TYPESPEC_REFS, &view);
@@ -896,13 +929,10 @@ void DataSpec::FindReferent()
 
    //  The referent wasn't found.  If this is a template parameter (the "T"
    //  in "template< typename T >", for example) it never will be.
-   //c If templates were executed, some or all of the following might have
-   //  to move to ResolveName in order to identify locals that are template
-   //  parameters.
    //
    auto qname = QualifiedName(true, false);
 
-   if(scope->NameIsTemplateParm(qname))
+   if(scope->NameToTemplateParm(qname) != nullptr)
    {
       SetTemplateRole(TemplateParameter);
       return;
@@ -936,7 +966,7 @@ void DataSpec::FindReferent()
 
    //  When parsing a template instance, the arguments may not be visible,
    //  because the scope is the template instance itself.  For example, the
-   //  type A is often not visible in the scope std::unique_ptr<A>.
+   //  type A is rarely visible in the scope std::unique_ptr<A>.
    //
    if(scope->IsInTemplateInstance()) return;
 
@@ -951,6 +981,61 @@ void DataSpec::FindReferent()
 TypeTags DataSpec::GetAllTags() const
 {
    return TypeTags(*this);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name DataSpec_GetDirectForwards = "DataSpec.GetDirectForwards";
+
+void DataSpec::GetDirectForwards(CxxUsageSets& symbols) const
+{
+   Debug::ft(DataSpec_GetDirectForwards);
+
+   name_->GetDirectForwards(symbols);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name DataSpec_GetDirectTemplateArgs = "DataSpec.GetDirectTemplateArgs";
+
+void DataSpec::GetDirectTemplateArgs(CxxUsageSets& symbols) const
+{
+   Debug::ft(DataSpec_GetDirectTemplateArgs);
+
+   auto ref = Referent();
+
+   if(ref != nullptr)
+   {
+      auto args = ref->GetTemplateArgs();
+
+      if(args != nullptr)
+      {
+         args->GetDirectTemplateArgs(symbols);
+      }
+
+      if((GetTemplateRole() == TemplateArgument) && (Ptrs(true) == 0))
+      {
+         auto type = ref->Type();
+
+         if((type == Cxx::Forward) || (type == Cxx::Friend))
+         {
+            ref->GetDirectForwards(symbols);
+         }
+      }
+   }
+
+   name_->GetDirectTemplateArgs(symbols);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name DataSpec_GetNames = "DataSpec.GetNames";
+
+void DataSpec::GetNames(stringVector& names) const
+{
+   Debug::ft(DataSpec_GetNames);
+
+   name_->GetNames(names);
 }
 
 //------------------------------------------------------------------------------
@@ -1013,13 +1098,9 @@ void DataSpec::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
    if(ref == nullptr)
    {
-      //  The referent for this type was never found.  Log it.
+      //  The referent for this type was never found.  If this is actually
+      //  a problem, a log should have been produced during execution.
       //
-      auto role = GetTemplateRole();
-      if((role == TemplateParameter) || (role == TemplateArgument)) return;
-      auto qname = QualifiedName(true, false);
-      auto log = "Unknown type for " + qname + " [" + strLocation() + ']';
-      Debug::SwLog(DataSpec_GetUsages, log, 0, SwInfo);
       return;
    }
 
@@ -1221,11 +1302,26 @@ bool DataSpec::IsUsedInNameOnly() const
 
 fn_name DataSpec_ItemIsTemplateArg = "DataSpec.ItemIsTemplateArg";
 
-bool DataSpec::ItemIsTemplateArg(const CxxScoped* item) const
+bool DataSpec::ItemIsTemplateArg(const CxxNamed* item) const
 {
    Debug::ft(DataSpec_ItemIsTemplateArg);
 
-   if(Referent() == item) return true;
+   if(item == nullptr)
+   {
+      Debug::SwLog(DataSpec_ItemIsTemplateArg, 0, 0);
+      return false;
+   }
+
+   auto ref = Referent();
+
+   if(ref != nullptr)
+   {
+      if(ref == item) return true;
+      auto rname = ref->ScopedName(true);
+      auto iname = item->ScopedName(true);
+      if(rname == iname) return true;
+   }
+
    return name_->ItemIsTemplateArg(item);
 }
 
@@ -1493,11 +1589,11 @@ bool DataSpec::ResolveTemplate(Class* cls, const TypeName* args, bool end) const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_ResolveTemplateArgument = "DataSpec.ResolveTemplateArgument";
+fn_name DataSpec_ResolveTemplateArg = "DataSpec.ResolveTemplateArg";
 
-bool DataSpec::ResolveTemplateArgument() const
+bool DataSpec::ResolveTemplateArg() const
 {
-   Debug::ft(DataSpec_ResolveTemplateArgument);
+   Debug::ft(DataSpec_ResolveTemplateArg);
 
    if(GetTemplateRole() != TemplateArgument) return false;
 
@@ -1545,7 +1641,7 @@ StackArg DataSpec::ResultType() const
          if(target != nullptr) result = target;
       }
 
-      StackArg arg(result, tags_.PtrCount(true));
+      StackArg arg(result, tags_.PtrCount(true), false);
       if(tags_.IsConst()) arg.SetAsConst();
       if(tags_.IsConstPtr() == 1) arg.SetAsConstPtr();
       return arg;
@@ -1897,7 +1993,8 @@ void QualName::EnterBlock()
    Debug::ft(QualName_EnterBlock);
 
    Context::SetPos(GetLoc());
-   if(*Name() == NULL_STR) Log(UseOfNull);
+   auto name = *Name();
+   if(name == NULL_STR) Log(UseOfNull);
 
    //  If a "." or "->" operator is waiting for its second argument,
    //  push this name and return so that the operator can be executed.
@@ -1911,13 +2008,38 @@ void QualName::EnterBlock()
 
       if((op == Cxx::REFERENCE_SELECT) || (op == Cxx::POINTER_SELECT))
       {
-         Context::PushArg(StackArg(this, 0));
+         Context::PushArg(StackArg(this, Last()));
          return;
       }
    }
 
    auto ref = Referent();
-   if(ref != nullptr) Context::PushArg(ref->NameToArg(op));
+   if(ref != nullptr) Context::PushArg(ref->NameToArg(op, Last()));
+}
+
+//------------------------------------------------------------------------------
+
+fn_name QualName_GetDirectForwards = "QualName.GetDirectForwards";
+
+void QualName::GetDirectForwards(CxxUsageSets& symbols) const
+{
+   Debug::ft(QualName_GetDirectForwards);
+
+   Last()->GetDirectForwards(symbols);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name QualName_GetDirectTemplateArgs = "QualName.GetDirectTemplateArgs";
+
+void QualName::GetDirectTemplateArgs(CxxUsageSets& symbols) const
+{
+   Debug::ft(QualName_GetDirectTemplateArgs);
+
+   for(auto n = First(); n != nullptr; n = n->Next())
+   {
+      n->GetDirectTemplateArgs(symbols);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -1937,6 +2059,26 @@ CxxScoped* QualName::GetForward() const
    }
 
    return forw;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name QualName_GetNames = "QualName.GetNames";
+
+void QualName::GetNames(stringVector& names) const
+{
+   Debug::ft(QualName_GetNames);
+
+   //  Add this name, without template arguments, to the list.
+   //
+   names.push_back(ScopedName(false));
+
+   //  Include any template arguments attached to this name.
+   //
+   for(auto n = First(); n != nullptr; n = n->Next())
+   {
+      n->GetNames(names);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -2005,7 +2147,7 @@ void QualName::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 fn_name QualName_ItemIsTemplateArg = "QualName.ItemIsTemplateArg";
 
-bool QualName::ItemIsTemplateArg(const CxxScoped* item) const
+bool QualName::ItemIsTemplateArg(const CxxNamed* item) const
 {
    Debug::ft(QualName_ItemIsTemplateArg);
 
@@ -2057,30 +2199,6 @@ TypeMatch QualName::MatchTemplate(const QualName* that,
    }
 
    return match;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name QualName_MemberAccessed = "QualName.MemberAccessed";
-
-void QualName::MemberAccessed(Class* cls, CxxNamed* mem) const
-{
-   Debug::ft(QualName_MemberAccessed);
-
-   for(auto n = First(); n != nullptr; n = n->Next())
-   {
-      if(n->Referent() == nullptr)
-      {
-         if(*n->Name() == *mem->Name())
-         {
-            n->MemberAccessed(cls, mem);
-            return;
-         }
-      }
-   }
-
-   auto expl = "Could not find member name for " + *mem->Name();
-   Context::SwLog(QualName_MemberAccessed, expl, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -2451,7 +2569,8 @@ TypeName::TypeName(string& name) :
    forw_(nullptr),
    oper_(Cxx::NIL_OPERATOR),
    scoped_(false),
-   using_(false)
+   using_(false),
+   direct_(false)
 {
    Debug::ft(TypeName_ctor1);
 
@@ -2471,7 +2590,8 @@ TypeName::TypeName(const TypeName& that) : CxxNamed(that),
    forw_(that.forw_),
    oper_(that.oper_),
    scoped_(that.scoped_),
-   using_(that.using_)
+   using_(that.using_),
+   direct_(that.direct_)
 {
    Debug::ft(TypeName_ctor2);
 
@@ -2569,6 +2689,61 @@ void TypeName::FindReferent()
 
 //------------------------------------------------------------------------------
 
+fn_name TypeName_GetDirectForwards = "TypeName.GetDirectForwards";
+
+void TypeName::GetDirectForwards(CxxUsageSets& symbols) const
+{
+   Debug::ft(TypeName_GetDirectForwards);
+
+   auto ref = DirectType();
+
+   if(ref != nullptr) ref->GetDirectForwards(symbols);
+
+   if(args_ != nullptr)
+   {
+      for(auto a = args_->cbegin(); a != args_->cend(); ++a)
+      {
+         (*a)->GetDirectForwards(symbols);
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TypeName_GetDirectTemplateArgs = "TypeName.GetDirectTemplateArgs";
+
+void TypeName::GetDirectTemplateArgs(CxxUsageSets& symbols) const
+{
+   Debug::ft(TypeName_GetDirectTemplateArgs);
+
+   if(args_ != nullptr)
+   {
+      for(auto a = args_->cbegin(); a != args_->cend(); ++a)
+      {
+         (*a)->GetDirectTemplateArgs(symbols);
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TypeName_GetNames = "TypeName.GetNames";
+
+void TypeName::GetNames(stringVector& names) const
+{
+   Debug::ft(TypeName_GetNames);
+
+   if(args_ != nullptr)
+   {
+      for(auto a = args_->cbegin(); a != args_->cend(); ++a)
+      {
+         (*a)->GetNames(names);
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 TypeName* TypeName::GetTemplateArgs() const
 {
    if(args_ == nullptr) return nullptr;
@@ -2582,6 +2757,8 @@ fn_name TypeName_GetUsages = "TypeName.GetUsages";
 void TypeName::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
    Debug::ft(TypeName_GetUsages);
+
+   if(direct_) GetDirectForwards(symbols);
 
    //  Currently, this does not report usages based on ref_ or type_.
    //  If it did,  DataSpec.GetUsages would need a way to suppress or
@@ -2620,7 +2797,7 @@ bool TypeName::HasTemplateParmFor(const CxxScope* scope) const
    {
       for(auto a = args_->cbegin(); a != args_->cend(); ++a)
       {
-         if(scope->NameIsTemplateParm(*(*a)->Name())) return true;
+         if(scope->NameToTemplateParm(*(*a)->Name()) != nullptr) return true;
       }
    }
 
@@ -2648,7 +2825,7 @@ void TypeName::Instantiating() const
 
 fn_name TypeName_ItemIsTemplateArg = "TypeName.ItemIsTemplateArg";
 
-bool TypeName::ItemIsTemplateArg(const CxxScoped* item) const
+bool TypeName::ItemIsTemplateArg(const CxxNamed* item) const
 {
    Debug::ft(TypeName_ItemIsTemplateArg);
 
@@ -3022,6 +3199,13 @@ TypeTags TypeSpec::GetAllTags() const
 
 //------------------------------------------------------------------------------
 
+void TypeSpec::GetNames(stringVector& names) const
+{
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "GetNames", 0);
+}
+
+//------------------------------------------------------------------------------
+
 bool TypeSpec::HasArrayDefn() const
 {
    Debug::SwLog(TypeSpec_PureVirtualFunction, "HasArrayDefn", 0);
@@ -3037,7 +3221,7 @@ void TypeSpec::Instantiating() const
 
 //------------------------------------------------------------------------------
 
-bool TypeSpec::ItemIsTemplateArg(const CxxScoped* item) const
+bool TypeSpec::ItemIsTemplateArg(const CxxNamed* item) const
 {
    Debug::SwLog(TypeSpec_PureVirtualFunction, "ItemIsTemplateArg", 0);
    return false;

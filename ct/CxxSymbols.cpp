@@ -767,6 +767,32 @@ void CxxSymbols::InsertType(Typedef* type)
 
 //------------------------------------------------------------------------------
 
+fn_name CxxSymbols_IsUniqueName = "CxxSymbols.IsUniqueName";
+
+bool CxxSymbols::IsUniqueName
+   (const CxxScope* scope, const std::string& name) const
+{
+   Debug::ft(CxxSymbols_IsUniqueName);
+
+   //  This only needs to look for functions.
+   //
+   size_t count = 0;
+   auto key = Normalize(name);
+   SymbolVector items;
+
+   ListSymbols(key, *funcs_, items);
+
+   for(auto i = items.cbegin(); i != items.cend(); ++i)
+   {
+      if((*i)->GetScope() == scope) ++count;
+      if(count > 1) return false;
+   }
+
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CxxSymbols_ListMacros = "CxxSymbols.ListMacros";
 
 void CxxSymbols::ListMacros(const string& name, SymbolVector& list) const

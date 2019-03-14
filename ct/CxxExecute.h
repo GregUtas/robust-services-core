@@ -96,16 +96,21 @@ public:
    //  Constructs an argument for T.  Constructs a pointer to P if T is 1.
    //  CTOR indicates that the argument was created by a constructor call.
    //
-   StackArg(CxxToken* t, TagCount p, bool ctor = false);
+   StackArg(CxxToken* t, TagCount p, bool ctor);
 
-   //  Constructs an argument for a function that will be invoked.
+   //  Constructs an argument for T, which was just accessed by NAME.
    //
-   explicit StackArg(Function* f);
+   StackArg(CxxToken* t, TypeName* name);
 
-   //  Constructs an argument for T, which was accessed as VIA.T or VIA->T.
-   //  OP is the operator ("." or "->") through which VIA accessed T.
+   //  Constructs an argument for T, which was accessed as VIA.NAME or
+   //  VIA->NAME.  OP is the operator ("." or "->") that was used.
    //
-   StackArg(CxxToken* t, const StackArg& via, Cxx::Operator op);
+   StackArg(CxxToken* t, TypeName* name, const StackArg& via, Cxx::Operator op);
+
+   //  Constructs an argument for a function that will be invoked and
+   //  that was accessed by NAME.
+   //
+   StackArg(Function* f, TypeName* name);
 
    //  Copy constructor.
    //
@@ -141,6 +146,14 @@ public:
    //  Returns true if the argument is indirect.
    //
    bool IsIndirect() const { return ((Ptrs(true) > 0) || (Refs() > 0)); }
+
+   //  Clears name_ so that the argument can be pushed again.
+   //
+   StackArg& EraseName() { name = nullptr; return *this; }
+
+   //  Records that name_ (if it exists) was used directly.
+   //
+   void SetAsDirect() const;
 
    //  Tags the argument as a member of the context class (the class
    //  whose non-static member function is currently being executed).
@@ -284,6 +297,10 @@ public:
    //  What the argument refers to.
    //
    CxxToken* item;
+
+   //  The name through which the argument was accessed.
+   //
+   TypeName* name;
 private:
    //  Sets DATA's referent to this argument.  Returns FALSE on failure.
    //

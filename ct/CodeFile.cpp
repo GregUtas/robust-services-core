@@ -161,7 +161,7 @@ void DisplaySymbolsAndFiles
 
    for(auto i = set.cbegin(); i != set.cend(); ++i)
    {
-      auto name = (*i)->ScopedName(false);
+      auto name = (*i)->XrefName(true);
       auto file = (*i)->GetFile();
 
       if(file != nullptr)
@@ -421,7 +421,7 @@ void CodeFile::AddDirectTypes
 {
    Debug::ft(CodeFile_AddDirectTypes);
 
-   //  SYMBOLS contains types that were used directly.  Types in executable
+   //  DIRECTS contains types that were used directly.  Types in executable
    //  code are also considered to be used directly, except for terminals
    //  and types defined in this file.
    //
@@ -465,7 +465,7 @@ void CodeFile::AddIndirectExternalTypes
 {
    Debug::ft(CodeFile_AddIndirectExternalTypes);
 
-   //  SYMBOLS contains types that were used indirectly.  Filter out those
+   //  INDIRECTS contains types that were used indirectly.  Filter out those
    //  which are terminals (for which an #include is not required) or that
    //  are defined in the code base (for which an #include can be avoided
    //  by using a forward declaration).
@@ -568,24 +568,11 @@ bool CodeFile::CanBeTrimmed(ostream* stream) const
 {
    Debug::ft(CodeFile_CanBeTrimmed);
 
-   //  Don't trim empty files, substitute files, or unexecuted files
-   //  (template headers).
+   //  Don't trim empty files or substitute files.
    //
    if(code_.empty()) return false;
    if(isSubsFile_) return false;
-   if(stream == nullptr) return (template_ != ClassTemplate);
-
-   *stream << Name() << CRLF;
-
-   switch(template_)
-   {
-   case ClassTemplate:
-      *stream << spaces(3) << "OMITTED: mostly unexecuted." << CRLF;
-      return false;
-   case FuncTemplate:
-      *stream << spaces(3) << "WARNING: partially unexecuted." << CRLF;
-   }
-
+   if(stream != nullptr) *stream << Name() << CRLF;
    return true;
 }
 
@@ -619,11 +606,7 @@ void CodeFile::Check()
       return;
    }
 
-   for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
-   {
-      (*u)->Check();
-   }
-
+   Trim(nullptr);
    CheckProlog();
    CheckIncludeGuard();
    CheckUsings();
@@ -631,7 +614,6 @@ void CodeFile::Check()
    CheckLineBreaks();
    CheckFunctionOrder();
    CheckDebugFt();
-   Trim(nullptr);
    CheckIncludeOrder();
    checked_ = true;
 }
@@ -863,12 +845,6 @@ fn_name CodeFile_CheckIncludeOrder = "CodeFile.CheckIncludeOrder";
 void CodeFile::CheckIncludeOrder() const
 {
    Debug::ft(CodeFile_CheckIncludeOrder);
-
-   //  Class templates are currently not executed, which means that Trim() does
-   //  not evaluate them.  This, in turn, means that their baseIds_ and declIds_
-   //  are empty, and so their #include order cannot be properly checked.
-   //
-   if(template_ == ClassTemplate) return;
 
    //  The desired order for #include directives is
    //    1. files in declIds_ or baseIds_
@@ -1112,8 +1088,13 @@ void CodeFile::CheckUsings() const
 {
    Debug::ft(CodeFile_CheckUsings);
 
-   //  Look for duplicated using statements.
+   //  Check each using statement and then look for duplicates.
    //
+   for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
+   {
+      (*u)->Check();
+   }
+
    for(auto u1 = usings_.cbegin(); u1 != usings_.cend(); ++u1)
    {
       for(auto u2 = std::next(u1); u2 != usings_.cend(); ++u2)
@@ -1303,7 +1284,7 @@ LineType CodeFile::ClassifyLine(size_t n)
    std::set< Warning > warnings;
    auto type = ClassifyLine(s, warnings);
 
-   //  A line within a /*  comment can be logged spuriously.
+   //  A line within a /* comment can be logged spuriously.
    //
    if(slashAsterisk_)
    {
@@ -1354,9 +1335,10 @@ word CodeFile::CreateEditor(string& expl) const
 {
    Debug::ft(CodeFile_CreateEditor);
 
+   expl.clear();
    if(editor_ != nullptr) return 0;
 
-   //  Fail if the file's directory is unknown or it can't be opened.
+   //  Fail if the file's directory is unknown.
    //
    if(dir_ == nullptr)
    {
@@ -1364,20 +1346,18 @@ word CodeFile::CreateEditor(string& expl) const
       return -1;
    }
 
-   auto input = InputStream();
-   if(input == nullptr)
-   {
-      expl = "Failed to open source code for " + Name() + '.';
-      return -1;
-   }
-
-   editor_.reset(new Editor(this, input));
+   //  Fail if the editor can't be created.
+   //
+   editor_.reset(new Editor(this, expl));
    if(editor_ == nullptr)
    {
       expl = "Failed to create editor for " + Name() + '.';
       return -7;
    }
 
+   //  Fail if the editor set EXPL to explain an error.
+   //
+   if(!expl.empty()) return -1;
    return 0;
 }
 
@@ -1595,7 +1575,7 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user)
    //
    Using* u = nullptr;
    stringVector fqNames;
-   ref->GetScopedNames(fqNames);
+   ref->GetScopedNames(fqNames, false);
 
    for(auto fqn = fqNames.begin(); fqn != fqNames.end() && u == nullptr; ++fqn)
    {
@@ -1845,6 +1825,10 @@ void CodeFile::GetUsageInfo(CxxUsageSets& symbols) const
 
    for(auto c = classes_.cbegin(); c != classes_.cend(); ++c)
    {
+      //  Bypass a class template instantiation, which is registered
+      //  against the file that caused its instantiation.
+      //
+      if((*c)->IsInTemplateInstance()) continue;
       (*c)->GetUsages(*this, symbols);
    }
 
@@ -1855,6 +1839,10 @@ void CodeFile::GetUsageInfo(CxxUsageSets& symbols) const
 
    for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
    {
+      //  Bypass a function template instantiation, which is registered
+      //  against the file that caused its instantiation.
+      //
+      if((*f)->IsInTemplateInstance()) continue;
       (*f)->GetUsages(*this, symbols);
    }
 
@@ -2600,25 +2588,22 @@ void CodeFile::Scan()
       lineType_.push_back(LineType_N);
    }
 
-   //  Categorize each line unless this is a substitute file.
+   //  Categorize each line.
    //
-   if(!isSubsFile_)
+   for(size_t n = 0; n < lines; ++n)
    {
-      for(size_t n = 0; n < lines; ++n)
+      lineType_[n] = ClassifyLine(n);
+   }
+
+   for(size_t n = 0; n < lines; ++n)
+   {
+      auto t = lineType_[n];
+
+      if(LineTypeAttr::Attrs[t].isCode) break;
+
+      if((t != EmptyComment) && (t != SlashAsteriskComment))
       {
-         lineType_[n] = ClassifyLine(n);
-      }
-
-      for(size_t n = 0; n < lines; ++n)
-      {
-         auto t = lineType_[n];
-
-         if(LineTypeAttr::Attrs[t].isCode) break;
-
-         if((t != EmptyComment) && (t != SlashAsteriskComment))
-         {
-            lineType_[n] = FileComment;
-         }
+         lineType_[n] = FileComment;
       }
    }
 

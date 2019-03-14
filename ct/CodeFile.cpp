@@ -1575,7 +1575,7 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user)
    //
    Using* u = nullptr;
    stringVector fqNames;
-   ref->GetScopedNames(fqNames);
+   ref->GetScopedNames(fqNames, false);
 
    for(auto fqn = fqNames.begin(); fqn != fqNames.end() && u == nullptr; ++fqn)
    {

@@ -204,10 +204,11 @@ public:
    //
    virtual std::string ScopedName(bool templates) const;
 
-   //  Updates NAMES with the item's fully qualified name(s).  Each name omits
-   //  template arguments but prefixes a scope resolution operator.
+   //  Updates NAMES with the item's fully qualified name(s), including
+   //  template arguments if TEMPLATE is set.  Each name is prefixed by a
+   //  scope resolution operator.
    //
-   virtual void GetScopedNames(stringVector& names) const;
+   virtual void GetScopedNames(stringVector& names, bool templates) const;
 
    //  Returns true if this item is a superscope of fqSub.  TMPLT is set if
    //  a template should be considered a superscope of one of its instances.

@@ -426,7 +426,7 @@ void CxxScoped::CheckAccessControl() const
 
    //  If an item is used, log it if its access control could be
    //  more restrictive.
-   //* Support this for templates, accounting for all instances.
+   //c Support this for templates, accounting for all instances.
    //
    auto cls = GetClass();
    if(cls == nullptr) return;
@@ -666,10 +666,9 @@ bool CxxScoped::NameRefersToItem(const string& name,
    }
 
    //  If NAME is a template instance, assume that it is visible.
-   //* Verify the visibility of each name in a template instance.  Not doing
-   //  so forced Lexer::TypesTable to be renamed from TypeTable so that it
-   //  could be distinguished from CxxSymbols::TypeTable, preventing a false
-   //  "doubly declared identifier" error.
+   //c Verify the visibility of each name in a template instance.  Not doing
+   //  so can cause incorrect symbol matches that force template arguments in
+   //  unrelated templates to be renamed so that they have unique names.
    //
    if(name.find('<') != string::npos)
    {
@@ -710,7 +709,7 @@ bool CxxScoped::NameRefersToItem(const string& name,
    //  NAME must partially match this item's fully qualified name.
    //
    stringVector fqNames;
-   GetScopedNames(fqNames);
+   GetScopedNames(fqNames, false);
 
    for(auto fqn = fqNames.begin(); fqn != fqNames.end(); ++fqn)
    {
@@ -1158,7 +1157,7 @@ void Enumerator::ExitBlock()
 
 fn_name Enumerator_GetScopedNames = "Enumerator.GetScopedNames";
 
-void Enumerator::GetScopedNames(stringVector& names) const
+void Enumerator::GetScopedNames(stringVector& names, bool templates) const
 {
    Debug::ft(Enumerator_GetScopedNames);
 
@@ -1167,7 +1166,7 @@ void Enumerator::GetScopedNames(stringVector& names) const
    //  delete the enum's name from the fully qualified name, and provide that
    //  as an alternative.
    //
-   CxxScoped::GetScopedNames(names);
+   CxxScoped::GetScopedNames(names, templates);
    auto prev = *enum_->Name();
    if(prev.empty()) return;
    prev += SCOPE_STR;

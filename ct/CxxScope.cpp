@@ -2794,7 +2794,7 @@ void Function::CheckMemberUsage() const
    //  However, the function would have to add the underlying object as an
    //  argument--essentially a "this" argument.  Some will argue that this
    //  improves encapsulation, but we will demur.]
-   //* To support this for templates, nonstatic_ and nonpublic_ would have to
+   //c To support this for templates, nonstatic_ and nonpublic_ would have to
    //  to be looked at over all instances of a function, whether instantiated
    //  in a class or function template, because these flags are never set in
    //  a pure template, because it is neither executed nor invoked directly.

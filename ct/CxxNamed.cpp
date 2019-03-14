@@ -260,9 +260,9 @@ size_t CxxNamed::GetRange(size_t& begin, size_t& end) const
 
 //------------------------------------------------------------------------------
 
-void CxxNamed::GetScopedNames(stringVector& names) const
+void CxxNamed::GetScopedNames(stringVector& names, bool templates) const
 {
-   names.push_back(SCOPE_STR + ScopedName(false));
+   names.push_back(SCOPE_STR + ScopedName(templates));
 }
 
 //------------------------------------------------------------------------------

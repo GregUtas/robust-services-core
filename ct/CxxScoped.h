@@ -601,7 +601,7 @@ public:
    //  Overridden to enable promotion of the enumerator to its enum's scope
    //  (that is, <scope>::enumerator as well as <scope>::enum::enumerator).
    //
-   void GetScopedNames(stringVector& names) const override;
+   void GetScopedNames(stringVector& names, bool templates) const override;
 
    //  Overridden to determine if the enumerator is unused.
    //

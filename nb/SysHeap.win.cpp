@@ -23,6 +23,7 @@
 #include "SysHeap.h"
 #include <intsafe.h>
 #include <iomanip>
+#include <ostream>
 #include <windows.h>
 #include "Debug.h"
 

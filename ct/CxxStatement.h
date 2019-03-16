@@ -29,6 +29,8 @@
 #include <utility>
 #include "Cxx.h"
 #include "CxxFwd.h"
+#include "CxxScope.h"
+#include "CxxScoped.h"
 
 //------------------------------------------------------------------------------
 

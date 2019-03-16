@@ -26,16 +26,10 @@
 #include <cstddef>
 #include <memory>
 #include "Clock.h"
+#include "Context.h"
 #include "NbTypes.h"
 #include "RegCell.h"
 #include "SysTypes.h"
-
-namespace SessionBase
-{
-   class Context;
-   class InvokerPool;
-   class Message;
-}
 
 using namespace NodeBase;
 

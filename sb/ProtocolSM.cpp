@@ -31,7 +31,6 @@
 #include "Formatters.h"
 #include "GlobalAddress.h"
 #include "LocalAddress.h"
-#include "Message.h"
 #include "MsgHeader.h"
 #include "MsgPort.h"
 #include "RootServiceSM.h"

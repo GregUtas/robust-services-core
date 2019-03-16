@@ -38,7 +38,6 @@
 #include "Protocol.h"
 #include "ProtocolSM.h"
 #include "Q1Way.h"
-#include "SbIpBuffer.h"
 #include "SbPools.h"
 #include "SbTrace.h"
 #include "SbTracer.h"

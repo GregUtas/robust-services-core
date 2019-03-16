@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "SbTypes.h"
+#include <ostream>
 
 using std::ostream;
 

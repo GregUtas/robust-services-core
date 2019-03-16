@@ -29,7 +29,6 @@
 #include "Formatters.h"
 #include "MsgPort.h"
 #include "NbTypes.h"
-#include "PotsCircuit.h"
 #include "PotsCliParms.h"
 #include "PotsFeatureProfile.h"
 #include "PotsFeatureRegistry.h"

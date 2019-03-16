@@ -26,16 +26,11 @@
 #include <cstddef>
 #include <memory>
 #include "LocalAddress.h"
-#include "Parameter.h"
+#include "PotsCircuit.h"
 #include "PotsFeature.h"
 #include "Q1Way.h"
 #include "RegCell.h"
 #include "SbTypes.h"
-
-namespace PotsBase
-{
-   class PotsCircuit;
-}
 
 using namespace NodeBase;
 using namespace CallBase;

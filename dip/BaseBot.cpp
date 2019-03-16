@@ -28,6 +28,7 @@
 #include "IoThread.h"
 #include "IpPort.h"
 #include "IpPortRegistry.h"
+#include "Location.h"
 #include "MapAndUnits.h"
 #include "NbTracer.h"
 #include "NbTypes.h"
@@ -43,6 +44,8 @@
 #include "Tool.h"
 #include "ToolTypes.h"
 #include "TraceBuffer.h"
+#include "UnitOrder.h"
+#include "WinterOrders.h"
 
 using std::ostream;
 using std::string;

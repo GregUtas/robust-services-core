@@ -1323,6 +1323,17 @@ Cxx::Access Class::GetCurrAccess() const
 
 //------------------------------------------------------------------------------
 
+fn_name Class_GetDirectClasses = "Class.GetDirectClasses";
+
+void Class::GetDirectClasses(CxxUsageSets& symbols) const
+{
+   Debug::ft(Class_GetDirectClasses);
+
+   symbols.AddDirect(this);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Class_GetFuncDefinition = "Class.GetFuncDefinition";
 
 FunctionDefinition Class::GetFuncDefinition(const Function* func) const

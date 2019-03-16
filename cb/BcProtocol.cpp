@@ -27,7 +27,6 @@
 #include "CliText.h"
 #include "CliTextParm.h"
 #include "MediaParameter.h"
-#include <memory>
 #include <sstream>
 #include <string>
 #include "Algorithms.h"

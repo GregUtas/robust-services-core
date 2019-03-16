@@ -20,7 +20,6 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "StatisticsRegistry.h"
-#include <memory>
 #include <ostream>
 #include "CfgParmRegistry.h"
 #include "CfgStrParm.h"

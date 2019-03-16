@@ -13,9 +13,11 @@
 //
 #include "WinterOrders.h"
 #include <iterator>
+#include <ostream>
 #include <utility>
 #include "Location.h"
 #include "SysTypes.h"
+#include "Token.h"
 
 using std::ostream;
 

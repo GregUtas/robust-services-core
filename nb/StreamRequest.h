@@ -23,6 +23,7 @@
 #define STREAMREQUEST_H_INCLUDED
 
 #include "MsgBuffer.h"
+#include <sstream>
 #include <utility>
 #include "SysTypes.h"
 

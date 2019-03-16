@@ -13,8 +13,7 @@
 //
 #include "UnitOrder.h"
 #include <cstddef>
-#include <list>
-#include <set>
+#include <ostream>
 #include "Debug.h"
 #include "MapAndUnits.h"
 #include "SysTypes.h"

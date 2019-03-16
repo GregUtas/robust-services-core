@@ -26,10 +26,9 @@
 #include "Event.h"
 #include "Formatters.h"
 #include "GlobalAddress.h"
+#include "LocalAddress.h"
 #include "Message.h"
 #include "MsgHeader.h"
-#include "MsgPort.h"
-#include "ProtocolSM.h"
 #include "SysTypes.h"
 
 using std::ostream;

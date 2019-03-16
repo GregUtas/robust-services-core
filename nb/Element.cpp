@@ -20,7 +20,6 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Element.h"
-#include <memory>
 #include <ostream>
 #include "CfgBoolParm.h"
 #include "CfgParmRegistry.h"

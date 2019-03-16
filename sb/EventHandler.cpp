@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "EventHandler.h"
+#include <ostream>
 #include "Algorithms.h"
 #include "Context.h"
 #include "Debug.h"

@@ -337,7 +337,7 @@ public:
    //  be #included transitively).  The default version invokes the function
    //  on GetTypeSpec().
    //
-   virtual void GetDirectForwards(CxxUsageSets& symbols) const;
+   virtual void GetDirectClasses(CxxUsageSets& symbols) const;
 
    //  Invoked to add template arguments that are direct (that is, that don't
    //  have a pointer) to SYMBOLS.  The definition of such arguments must be
@@ -626,10 +626,10 @@ public:
    //
    void FindReferent() override;
 
-   //  Overridden to invoke GetDirectForwards on DirectType() and on
+   //  Overridden to invoke GetDirectClasses on DirectType() and on
    //  each template argument.
    //
-   void GetDirectForwards(CxxUsageSets& symbols) const override;
+   void GetDirectClasses(CxxUsageSets& symbols) const override;
 
    //  Overridden to invoke GetDirectTemplateArgs on each template
    //  argument.
@@ -844,9 +844,9 @@ public:
    //
    void EnterBlock() override;
 
-   //  Overridden to invoke GetDirectForwards on the last name.
+   //  Overridden to invoke GetDirectClasses on the last name.
    //
-   void GetDirectForwards(CxxUsageSets& symbols) const override;
+   void GetDirectClasses(CxxUsageSets& symbols) const override;
 
    //  Overridden to invoke GetDirectTemplateArgs on each name.
    //
@@ -1375,9 +1375,9 @@ private:
    //
    TypeTags GetAllTags() const override;
 
-   //  Overridden to invoke GetDirectForwards on its qualified name.
+   //  Overridden to invoke GetDirectClasses on its qualified name.
    //
-   void GetDirectForwards(CxxUsageSets& symbols) const override;
+   void GetDirectClasses(CxxUsageSets& symbols) const override;
 
    //  If this is a direct template argument (i.e. one without pointer tags)
    //  but it was only made visible by a forward or friend declaration, its

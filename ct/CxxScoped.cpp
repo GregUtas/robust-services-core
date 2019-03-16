@@ -32,7 +32,6 @@
 #include "CxxScope.h"
 #include "CxxString.h"
 #include "CxxSymbols.h"
-#include "CxxToken.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Lexer.h"
@@ -1318,11 +1317,11 @@ bool Forward::EnterScope()
 
 //------------------------------------------------------------------------------
 
-fn_name Forward_GetDirectForwards = "Forward.GetDirectForwards";
+fn_name Forward_GetDirectClasses = "Forward.GetDirectClasses";
 
-void Forward::GetDirectForwards(CxxUsageSets& symbols) const
+void Forward::GetDirectClasses(CxxUsageSets& symbols) const
 {
-   Debug::ft(Forward_GetDirectForwards);
+   Debug::ft(Forward_GetDirectClasses);
 
    auto ref = Referent();
    if(ref != nullptr) symbols.AddDirect(ref);
@@ -1713,11 +1712,11 @@ void Friend::FindReferent()
 
 //------------------------------------------------------------------------------
 
-fn_name Friend_GetDirectForwards = "Friend.GetDirectForwards";
+fn_name Friend_GetDirectClasses = "Friend.GetDirectClasses";
 
-void Friend::GetDirectForwards(CxxUsageSets& symbols) const
+void Friend::GetDirectClasses(CxxUsageSets& symbols) const
 {
-   Debug::ft(Friend_GetDirectForwards);
+   Debug::ft(Friend_GetDirectClasses);
 
    auto ref = Referent();
    if(ref != nullptr) symbols.AddDirect(ref);

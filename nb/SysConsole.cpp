@@ -22,6 +22,7 @@
 #include "SysConsole.h"
 #include <ios>
 #include <iostream>
+#include <ostream>
 
 using std::ostream;
 

@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CodeTypes.h"
+#include <ostream>
 
 using namespace NodeBase;
 using std::ostream;

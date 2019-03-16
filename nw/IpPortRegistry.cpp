@@ -22,7 +22,6 @@
 #include "IpPortRegistry.h"
 #include "CfgStrParm.h"
 #include "StatisticsGroup.h"
-#include <memory>
 #include <ostream>
 #include "Algorithms.h"
 #include "CfgParmRegistry.h"

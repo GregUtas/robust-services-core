@@ -21,7 +21,6 @@
 //
 #include "TraceBuffer.h"
 #include "TraceRecord.h"
-#include <memory>
 #include <sstream>
 #include "Debug.h"
 #include "Element.h"

@@ -26,6 +26,7 @@
 #include <cstddef>
 #include <iosfwd>
 #include <memory>
+#include "InputHandler.h"
 #include "NwTypes.h"
 #include "Q1Link.h"
 

@@ -28,13 +28,10 @@
 #include <ostream>
 #include <string>
 #include <utility>
-#include <vector>
 #include "CodeFile.h"
 #include "CodeTypes.h"
 #include "Cxx.h"
-#include "CxxArea.h"
 #include "CxxExecute.h"
-#include "CxxScoped.h"
 #include "CxxString.h"
 #include "CxxToken.h"
 #include "Debug.h"

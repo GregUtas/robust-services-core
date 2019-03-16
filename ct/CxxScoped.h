@@ -29,6 +29,7 @@
 #include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxFwd.h"
+#include "CxxToken.h"
 #include "LibraryTypes.h"
 #include "SysTypes.h"
 
@@ -694,7 +695,7 @@ public:
 
    //  Overriden to add the forward's referent to SYMBOLS.
    //
-   void GetDirectForwards(CxxUsageSets& symbols) const override;
+   void GetDirectClasses(CxxUsageSets& symbols) const override;
 
    //  Overridden to return the class's qualified name.
    //
@@ -827,7 +828,7 @@ public:
 
    //  Overriden to add the friend's referent to SYMBOLS.
    //
-   void GetDirectForwards(CxxUsageSets& symbols) const override;
+   void GetDirectClasses(CxxUsageSets& symbols) const override;
 
    //  Overridden to return the friend if it is a function.
    //

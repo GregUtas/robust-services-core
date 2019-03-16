@@ -32,6 +32,7 @@
 #include "Cxx.h"
 #include "CxxFwd.h"
 #include "CxxString.h"
+#include "CxxToken.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------

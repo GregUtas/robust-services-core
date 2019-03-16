@@ -20,11 +20,11 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "SbPools.h"
-#include <memory>
 #include <ostream>
 #include <string>
 #include "Debug.h"
 #include "Event.h"
+#include "GlobalAddress.h"
 #include "InvokerPoolRegistry.h"
 #include "Message.h"
 #include "MsgPort.h"

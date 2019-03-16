@@ -28,6 +28,7 @@
 #include "ObjectPoolRegistry.h"
 #include "ObjectPoolTrace.h"
 #include "Singleton.h"
+#include "SysTypes.h"
 #include "ToolTypes.h"
 #include "TraceBuffer.h"
 

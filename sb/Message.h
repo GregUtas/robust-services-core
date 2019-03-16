@@ -26,14 +26,9 @@
 #include <cstddef>
 #include <cstdint>
 #include "NbTypes.h"
-#include "Q1Link.h"
+#include "SbIpBuffer.h"
 #include "SbTypes.h"
 #include "SysTypes.h"
-
-namespace NetworkBase
-{
-   class SysIpL3Addr;
-}
 
 namespace SessionBase
 {

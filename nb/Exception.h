@@ -24,6 +24,7 @@
 
 #include <exception>
 #include <iosfwd>
+#include <sstream>
 #include <string>
 #include "SysTypes.h"
 

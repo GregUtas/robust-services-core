@@ -20,14 +20,10 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CxxStatement.h"
-#include <memory>
 #include <sstream>
-#include <vector>
 #include "CodeTypes.h"
 #include "CxxExecute.h"
 #include "CxxNamed.h"
-#include "CxxScope.h"
-#include "CxxScoped.h"
 #include "Debug.h"
 #include "SysTypes.h"
 

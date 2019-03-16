@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <cstddef>
 #include <iosfwd>
+#include <ostream>
 #include <string>
 #include "Algorithms.h"
 #include "Base.h"

@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "NwTypes.h"
+#include <ostream>
 #include "SysTypes.h"
 
 using std::ostream;

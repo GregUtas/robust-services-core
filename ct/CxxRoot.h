@@ -24,7 +24,9 @@
 
 #include "Base.h"
 #include <iosfwd>
+#include "CxxArea.h"
 #include "CxxFwd.h"
+#include "CxxScoped.h"
 #include "NbTypes.h"
 
 //------------------------------------------------------------------------------

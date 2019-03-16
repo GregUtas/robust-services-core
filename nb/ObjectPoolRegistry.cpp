@@ -22,7 +22,6 @@
 #include "ObjectPoolRegistry.h"
 #include "StatisticsGroup.h"
 #include "Tool.h"
-#include <memory>
 #include <ostream>
 #include <string>
 #include "CfgBoolParm.h"

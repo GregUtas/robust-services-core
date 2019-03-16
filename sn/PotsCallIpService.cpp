@@ -21,7 +21,6 @@
 //
 #include "PotsSessions.h"
 #include "CliText.h"
-#include <memory>
 #include <string>
 #include "CfgParmRegistry.h"
 #include "Debug.h"

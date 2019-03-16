@@ -25,6 +25,7 @@
 #include "Thread.h"
 #include <cstddef>
 #include <iosfwd>
+#include <istream>
 #include <string>
 #include "CliAppData.h"
 #include "CliCookie.h"

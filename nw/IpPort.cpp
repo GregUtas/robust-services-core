@@ -26,7 +26,6 @@
 #include "Algorithms.h"
 #include "Debug.h"
 #include "Formatters.h"
-#include "InputHandler.h"
 #include "IoThread.h"
 #include "IpPortRegistry.h"
 #include "IpService.h"

@@ -225,15 +225,15 @@ id_t CxxNamed::GetDeclFid() const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxNamed_GetDirectForwards = "CxxNamed.GetDirectForwards";
+fn_name CxxNamed_GetDirectClasses = "CxxNamed.GetDirectClasses";
 
-void CxxNamed::GetDirectForwards(CxxUsageSets& symbols) const
+void CxxNamed::GetDirectClasses(CxxUsageSets& symbols) const
 {
-   Debug::ft(CxxNamed_GetDirectForwards);
+   Debug::ft(CxxNamed_GetDirectClasses);
 
    auto spec = GetTypeSpec();
    if(spec == nullptr) return;
-   spec->GetDirectForwards(symbols);
+   spec->GetDirectClasses(symbols);
 }
 
 //------------------------------------------------------------------------------
@@ -985,13 +985,13 @@ TypeTags DataSpec::GetAllTags() const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_GetDirectForwards = "DataSpec.GetDirectForwards";
+fn_name DataSpec_GetDirectClasses = "DataSpec.GetDirectClasses";
 
-void DataSpec::GetDirectForwards(CxxUsageSets& symbols) const
+void DataSpec::GetDirectClasses(CxxUsageSets& symbols) const
 {
-   Debug::ft(DataSpec_GetDirectForwards);
+   Debug::ft(DataSpec_GetDirectClasses);
 
-   name_->GetDirectForwards(symbols);
+   name_->GetDirectClasses(symbols);
 }
 
 //------------------------------------------------------------------------------
@@ -1019,7 +1019,7 @@ void DataSpec::GetDirectTemplateArgs(CxxUsageSets& symbols) const
 
          if((type == Cxx::Forward) || (type == Cxx::Friend))
          {
-            ref->GetDirectForwards(symbols);
+            ref->GetDirectClasses(symbols);
          }
       }
    }
@@ -2019,13 +2019,13 @@ void QualName::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_GetDirectForwards = "QualName.GetDirectForwards";
+fn_name QualName_GetDirectClasses = "QualName.GetDirectClasses";
 
-void QualName::GetDirectForwards(CxxUsageSets& symbols) const
+void QualName::GetDirectClasses(CxxUsageSets& symbols) const
 {
-   Debug::ft(QualName_GetDirectForwards);
+   Debug::ft(QualName_GetDirectClasses);
 
-   Last()->GetDirectForwards(symbols);
+   Last()->GetDirectClasses(symbols);
 }
 
 //------------------------------------------------------------------------------
@@ -2689,21 +2689,21 @@ void TypeName::FindReferent()
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_GetDirectForwards = "TypeName.GetDirectForwards";
+fn_name TypeName_GetDirectClasses = "TypeName.GetDirectClasses";
 
-void TypeName::GetDirectForwards(CxxUsageSets& symbols) const
+void TypeName::GetDirectClasses(CxxUsageSets& symbols) const
 {
-   Debug::ft(TypeName_GetDirectForwards);
+   Debug::ft(TypeName_GetDirectClasses);
 
    auto ref = DirectType();
 
-   if(ref != nullptr) ref->GetDirectForwards(symbols);
+   if(ref != nullptr) ref->GetDirectClasses(symbols);
 
    if(args_ != nullptr)
    {
       for(auto a = args_->cbegin(); a != args_->cend(); ++a)
       {
-         (*a)->GetDirectForwards(symbols);
+         (*a)->GetDirectClasses(symbols);
       }
    }
 }
@@ -2758,7 +2758,7 @@ void TypeName::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
    Debug::ft(TypeName_GetUsages);
 
-   if(direct_) GetDirectForwards(symbols);
+   if(direct_) GetDirectClasses(symbols);
 
    //  Currently, this does not report usages based on ref_ or type_.
    //  If it did,  DataSpec.GetUsages would need a way to suppress or

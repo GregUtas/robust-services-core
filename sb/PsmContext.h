@@ -23,7 +23,9 @@
 #define PSMCONTEXT_H_INCLUDED
 
 #include "MsgContext.h"
+#include "MsgPort.h"
 #include "NbTypes.h"
+#include "ProtocolSM.h"
 #include "Q1Way.h"
 #include "SbTypes.h"
 

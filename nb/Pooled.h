@@ -26,7 +26,6 @@
 #include <cstddef>
 #include <cstdint>
 #include "Q1Link.h"
-#include "SysTypes.h"
 
 namespace NodeBase
 {

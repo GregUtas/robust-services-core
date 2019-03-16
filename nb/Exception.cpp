@@ -21,8 +21,6 @@
 //
 #include "Exception.h"
 #include <ios>
-#include <memory>
-#include <sstream>
 #include <utility>
 #include "Debug.h"
 #include "SysThreadStack.h"

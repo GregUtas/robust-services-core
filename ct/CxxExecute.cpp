@@ -26,6 +26,7 @@
 #include <utility>
 #include "CodeFile.h"
 #include "CxxArea.h"
+#include "CxxDirective.h"
 #include "CxxNamed.h"
 #include "CxxScope.h"
 #include "CxxString.h"

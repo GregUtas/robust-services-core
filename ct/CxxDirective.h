@@ -29,6 +29,7 @@
 #include <utility>
 #include "Cxx.h"
 #include "CxxFwd.h"
+#include "CxxToken.h"
 
 //------------------------------------------------------------------------------
 

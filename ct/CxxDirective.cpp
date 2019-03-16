@@ -23,14 +23,12 @@
 #include <bitset>
 #include <iosfwd>
 #include <sstream>
-#include <vector>
 #include "CodeFile.h"
 #include "CodeTypes.h"
 #include "CxxArea.h"
 #include "CxxExecute.h"
 #include "CxxRoot.h"
 #include "CxxSymbols.h"
-#include "CxxToken.h"
 #include "Debug.h"
 #include "Library.h"
 #include "Registry.h"

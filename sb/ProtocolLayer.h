@@ -24,12 +24,8 @@
 
 #include "Pooled.h"
 #include "Message.h"
+#include "NwTypes.h"
 #include "SbTypes.h"
-
-namespace NetworkBase
-{
-   class SysTcpSocket;
-}
 
 using namespace NetworkBase;
 using namespace NodeBase;

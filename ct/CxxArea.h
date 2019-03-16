@@ -487,6 +487,15 @@ public:
    //
    void GetConvertibleTypes(StackArgVector& types) override;
 
+   //  Overriden to add the class to SYMBOLS.  The purpose of this function is
+   //  to find a class that was resolved by a forward or friend declaration but
+   //  whose definition should be #included.  If the class is already #included,
+   //  it must add itself as a direct usage to ensure that >trim won't suggest
+   //  removing the #include for its definition when it isn't used directly in
+   //  any other situation.
+   //
+   void GetDirectClasses(CxxUsageSets& symbols) const override;
+
    //  Returns the current access control level when parsing the class.
    //
    Cxx::Access GetCurrAccess() const override;
@@ -749,6 +758,12 @@ public:
    //  Overridden to return the instance's class template.
    //
    Class* GetClassTemplate() const override { return tmplt_; }
+
+   //  Overriden to not add the class template instance to SYMBOLS, given
+   //  that each of its components (class template and template arguments)
+   //  is added individually.
+   //
+   void GetDirectClasses(CxxUsageSets& symbols) const override { }
 
    //  Overridden to return the instance's class template.
    //

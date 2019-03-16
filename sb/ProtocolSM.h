@@ -26,6 +26,7 @@
 #include <cstddef>
 #include <cstdint>
 #include "Clock.h"
+#include "Message.h"
 #include "Q1Way.h"
 #include "SbTypes.h"
 

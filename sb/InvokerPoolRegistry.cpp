@@ -21,7 +21,6 @@
 //
 #include "InvokerPoolRegistry.h"
 #include "StatisticsGroup.h"
-#include <memory>
 #include <ostream>
 #include <string>
 #include "Debug.h"

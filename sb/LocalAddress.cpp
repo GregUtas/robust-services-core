@@ -22,13 +22,25 @@
 #include "LocalAddress.h"
 #include <iosfwd>
 #include <sstream>
+#include "SysTypes.h"
 
+using namespace NodeBase;
 using std::string;
 
 //------------------------------------------------------------------------------
 
 namespace SessionBase
 {
+LocalAddress::LocalAddress() :
+   bid(NodeBase::NIL_ID),
+   seq(0),
+   pid(NodeBase::NIL_ID),
+   fid(NodeBase::NIL_ID)
+{
+}
+
+//------------------------------------------------------------------------------
+
 bool LocalAddress::operator==(const LocalAddress& that) const
 {
    if(bid == NIL_ID)

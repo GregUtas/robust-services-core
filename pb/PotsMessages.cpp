@@ -30,6 +30,8 @@
 #include "SbAppIds.h"
 #include "SysTypes.h"
 
+using namespace NetworkBase;
+
 //------------------------------------------------------------------------------
 
 namespace PotsBase

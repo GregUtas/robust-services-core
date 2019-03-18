@@ -39,7 +39,7 @@ namespace SessionBase
 //
 class SbAnalyzeMessage : public EventHandler
 {
-   friend class Singleton< SbAnalyzeMessage >;
+   friend class NodeBase::Singleton< SbAnalyzeMessage >;
 private:
    SbAnalyzeMessage() = default;
    Rc ProcessEvent
@@ -53,7 +53,7 @@ private:
 //
 class SbAnalyzeSap : public EventHandler
 {
-   friend class Singleton< SbAnalyzeSap >;
+   friend class NodeBase::Singleton< SbAnalyzeSap >;
 private:
    SbAnalyzeSap() = default;
    Rc ProcessEvent
@@ -67,7 +67,7 @@ private:
 //
 class SbAnalyzeSnp : public EventHandler
 {
-   friend class Singleton< SbAnalyzeSnp >;
+   friend class NodeBase::Singleton< SbAnalyzeSnp >;
 private:
    SbAnalyzeSnp() = default;
    Rc ProcessEvent
@@ -81,7 +81,7 @@ private:
 //
 class SbForceTransition : public EventHandler
 {
-   friend class Singleton< SbForceTransition >;
+   friend class NodeBase::Singleton< SbForceTransition >;
 private:
    SbForceTransition() = default;
    Rc ProcessEvent
@@ -95,7 +95,7 @@ private:
 //
 class SbInitiationReq : public EventHandler
 {
-   friend class Singleton< SbInitiationReq >;
+   friend class NodeBase::Singleton< SbInitiationReq >;
 private:
    SbInitiationReq() = default;
    Rc ProcessEvent

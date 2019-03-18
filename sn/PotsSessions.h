@@ -42,6 +42,9 @@ namespace PotsBase
 }
 
 using namespace CallBase;
+using namespace NetworkBase;
+using namespace NodeBase;
+using namespace SessionBase;
 
 //------------------------------------------------------------------------------
 

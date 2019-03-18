@@ -38,9 +38,6 @@ namespace SessionBase
    struct LocalAddress;
 }
 
-using namespace NetworkBase;
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
@@ -52,7 +49,7 @@ namespace SessionBase
 //
 //  The contents of an incoming message should be considered read-only.
 //
-class Message : public Pooled
+class Message : public NodeBase::Pooled
 {
    friend class Context;
    friend class MsgContext;
@@ -141,7 +138,7 @@ public:
    //  Scans a message to ensure that its signal and parameters are valid.
    //  Returns Ok on success.  On failure, updates ERRVAL with debug info.
    //
-   virtual InspectRc InspectMsg(debug32_t& errval) const;
+   virtual InspectRc InspectMsg(NodeBase::debug32_t& errval) const;
 
    //  Invoked when an incoming message is discarded.
    //
@@ -204,11 +201,11 @@ public:
 
    //  Returns the IP address of the message receiver.
    //
-   const SysIpL3Addr& RxIpAddr() const;
+   const NetworkBase::SysIpL3Addr& RxIpAddr() const;
 
    //  Returns the IP address of the message sender.
    //
-   const SysIpL3Addr& TxIpAddr() const;
+   const NetworkBase::SysIpL3Addr& TxIpAddr() const;
 
    //  Returns the local address of the message receiver.
    //
@@ -230,7 +227,7 @@ public:
    //  reference that start of the payload.  BYTES is set to nullptr
    //  when returning 0.  The payload excludes the message header.
    //
-   size_t Payload(byte_t*& bytes) const;
+   size_t Payload(NodeBase::byte_t*& bytes) const;
 
    //  Sets the protocol for an outgoing message.
    //
@@ -250,7 +247,7 @@ public:
 
    //  Returns the message's direction.
    //
-   MsgDirection Dir() const;
+   NodeBase::MsgDirection Dir() const;
 
    //  Frees the IP buffer and removes the message from its queue.  The
    //  framework deletes messages when appropriate, so an application
@@ -296,7 +293,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -334,7 +331,7 @@ protected:
    //  Converts an incoming message to an outgoing message or vice versa.
    //  May be overridden, but the base class version must be invoked.
    //
-   virtual void ChangeDir(MsgDirection nextDir);
+   virtual void ChangeDir(NodeBase::MsgDirection nextDir);
 
    //  Invoked on the context incoming message when its processing is finished
    //  (at the end of a transaction, or when another message is about to become
@@ -346,7 +343,8 @@ protected:
 
    //  Invoked when Send wants to log an error.  Also invokes Handled.
    //
-   virtual bool SendFailure(debug64_t errval, debug32_t offset);
+   virtual bool SendFailure
+      (NodeBase::debug64_t errval, NodeBase::debug32_t offset);
 
    //  Returns a non-const pointer to the message's buffer.
    //
@@ -358,11 +356,11 @@ private:
 
    //  Adds the message to the end of WHICHQ.
    //
-   void Enqueue(Q1Way< Message >& whichq);
+   void Enqueue(NodeBase::Q1Way< Message >& whichq);
 
    //  Adds the message to the beginning of WHICHQ.
    //
-   void Henqueue(Q1Way< Message >& whichq);
+   void Henqueue(NodeBase::Q1Way< Message >& whichq);
 
    //  Removes the message from its current queue.
    //
@@ -407,7 +405,7 @@ private:
 
    //  The queue where the message resides (may be nullptr).
    //
-   Q1Way< Message >* whichq_;
+   NodeBase::Q1Way< Message >* whichq_;
 };
 }
 #endif

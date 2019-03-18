@@ -48,6 +48,7 @@
 #include "TraceBuffer.h"
 #include "TraceDump.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::setw;
 using std::string;

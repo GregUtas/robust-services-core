@@ -34,7 +34,7 @@ namespace SessionBase
 //
 class PayloadInvokerPool : public InvokerPool
 {
-   friend class Singleton< PayloadInvokerPool >;
+   friend class NodeBase::Singleton< PayloadInvokerPool >;
 public:
    //  Overridden to reject ingress work when the ingress work queue gets
    //  too long or the number of available SpIpBuffers gets too low.
@@ -44,7 +44,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -61,20 +61,20 @@ private:
    //  The configuration parameter for the maximum length of
    //  this pool's ingress work queue.
    //
-   CfgIntParmPtr noIngressQueueLength_;
+   NodeBase::CfgIntParmPtr noIngressQueueLength_;
 
    //  The configuration parameter for the number of SbIpBuffers
    //  reserved for non-ingress work.
    //
-   CfgIntParmPtr noIngressMessageCount_;
+   NodeBase::CfgIntParmPtr noIngressMessageCount_;
 
    //  The maximum length allowed for the ingress work queue.
    //
-   static word NoIngressQueueLength_;
+   static NodeBase::word NoIngressQueueLength_;
 
    //  The number of SbIpBuffers reserved for non-ingress work.
    //
-   static word NoIngressMessageCount_;
+   static NodeBase::word NoIngressMessageCount_;
 };
 }
 #endif

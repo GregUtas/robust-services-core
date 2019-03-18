@@ -32,6 +32,7 @@
 #include "TlvMessage.h"
 #include "TlvParameter.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 

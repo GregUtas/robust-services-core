@@ -37,6 +37,7 @@
 #include "Singleton.h"
 #include "SsmFactory.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 

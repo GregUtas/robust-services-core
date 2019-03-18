@@ -33,8 +33,6 @@ namespace NodeBase
    template< typename T > class Registry;
 }
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
@@ -55,10 +53,10 @@ namespace SessionBase
 //  to be registered against this TriggerId, however, if an Initiator needs
 //  to *create* a modifier when the SAP or SNP occurs.
 //
-class Trigger : public Protected
+class Trigger : public NodeBase::Protected
 {
    friend class Initiator;
-   friend class Registry< Trigger >;
+   friend class NodeBase::Registry< Trigger >;
    friend class ServiceSM;
 public:
    //  Allows "Id" to refer to a trigger identifier in this class hierarchy.
@@ -73,7 +71,7 @@ public:
    //
    static bool IsValidId(Id tid)
    {
-      return ((tid != NIL_ID) && (tid <= MaxId));
+      return ((tid != NodeBase::NIL_ID) && (tid <= MaxId));
    }
 
    //  Returns the trigger's identifier.
@@ -83,7 +81,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -119,7 +117,7 @@ private:
 
    //  The queue of initiators registered with this trigger.
    //
-   Q1Way< Initiator > initq_;
+   NodeBase::Q1Way< Initiator > initq_;
 };
 }
 #endif

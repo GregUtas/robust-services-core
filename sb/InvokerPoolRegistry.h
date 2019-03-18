@@ -31,17 +31,15 @@ namespace SessionBase
    class InvokerPool;
 }
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
 {
 //  Global registry for invoker pools.
 //
-class InvokerPoolRegistry : public Dynamic
+class InvokerPoolRegistry : public NodeBase::Dynamic
 {
-   friend class Singleton< InvokerPoolRegistry >;
+   friend class NodeBase::Singleton< InvokerPoolRegistry >;
 public:
    //  Adds POOL to the registry against its scheduler faction.
    //
@@ -53,11 +51,11 @@ public:
 
    //  Returns the pool registered against FACTION.
    //
-   InvokerPool* Pool(Faction faction) const;
+   InvokerPool* Pool(NodeBase::Faction faction) const;
 
    //  Returns the registry of invoker pools.  Used for iteration.
    //
-   const Registry< InvokerPool >& Pools() const { return pools_; }
+   const NodeBase::Registry< InvokerPool >& Pools() const { return pools_; }
 
    //  Overridden to mark the objects in each pool as being in use.
    //
@@ -65,12 +63,12 @@ public:
 
    //  Overridden for restarts.
    //
-   void Startup(RestartLevel level) override;
+   void Startup(NodeBase::RestartLevel level) override;
 
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -86,11 +84,11 @@ private:
 
    //  The global registry of invoker pools.
    //
-   Registry< InvokerPool > pools_;
+   NodeBase::Registry< InvokerPool > pools_;
 
    //  The statistics group for invoker pools.
    //
-   StatisticsGroupPtr statsGroup_;
+   NodeBase::StatisticsGroupPtr statsGroup_;
 
    //  The pool currently being audited (cast as a Faction, but declared
    //  as an int to simplify incrementing).

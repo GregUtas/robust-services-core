@@ -22,6 +22,7 @@
 #include "SbTypes.h"
 #include <ostream>
 
+using namespace NodeBase;
 using std::ostream;
 
 //------------------------------------------------------------------------------

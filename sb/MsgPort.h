@@ -115,7 +115,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -139,7 +139,7 @@ protected:
 private:
    //> Highest valid port identifier.
    //
-   static const PooledObjectId MaxId = 0x40000;  // 2^18 = 256K
+   static const NodeBase::PooledObjectId MaxId = 0x40000;  // 2^18 = 256K
 
    //  Overridden to create the layer above for an incoming message.
    //

@@ -32,8 +32,6 @@
 #include "State.h"
 #include "SysTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
@@ -41,9 +39,9 @@ namespace SessionBase
 //  Each SessionBase application provides a singleton subclass, which contains
 //  other singletons that define the application's state machine.
 //
-class Service : public Protected
+class Service : public NodeBase::Protected
 {
-   friend class Registry< Service >;
+   friend class NodeBase::Registry< Service >;
    friend class State;
 public:
    //  Allows "Id" to refer to a service identifier in this class hierarchy.
@@ -72,7 +70,7 @@ public:
    //
    static bool IsValidPortId(PortId pid)
    {
-      return ((pid != NIL_ID) && (pid <= MaxServicePortId));
+      return ((pid != NodeBase::NIL_ID) && (pid <= MaxServicePortId));
    }
 
    //  Returns a symbolic name for the port identified by PID.  Should be
@@ -143,15 +141,16 @@ public:
 
    //  Returns the registry of states.  Used for iteration.
    //
-   const Registry< State >& States() const { return states_; }
+   const NodeBase::Registry< State >& States() const { return states_; }
 
    //  Returns the registry of event handlers.  Used for iteration.
    //
-   const Registry< EventHandler >& Handlers() const { return handlers_; }
+   const NodeBase::Registry< EventHandler >& Handlers() const
+      { return handlers_; }
 
    //  Returns the registry of triggers.  Used for iteration.
    //
-   const Registry< Trigger >& Triggers() const { return triggers_; }
+   const NodeBase::Registry< Trigger >& Triggers() const { return triggers_; }
 
    //  Returns the offset to sid_.
    //
@@ -160,7 +159,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -215,7 +214,7 @@ private:
 
    //  The service's identifier.
    //
-   RegCell sid_;
+   NodeBase::RegCell sid_;
 
    //  Whether the service is registered and, if so, whether it is enabled.
    //
@@ -223,11 +222,11 @@ private:
 
    //  Registry for the service's states.
    //
-   Registry< State > states_;
+   NodeBase::Registry< State > states_;
 
    //  Registry for the service's event handlers.
    //
-   Registry< EventHandler > handlers_;
+   NodeBase::Registry< EventHandler > handlers_;
 
    //  Registry for the service's event names.
    //
@@ -235,7 +234,7 @@ private:
 
    //  Registry for the service's triggers (if it is modifiable).
    //
-   Registry< Trigger > triggers_;
+   NodeBase::Registry< Trigger > triggers_;
 
    //  Set if the service suppports modifiers.
    //

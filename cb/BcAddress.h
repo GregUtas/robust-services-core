@@ -31,6 +31,7 @@
 #include "SbTypes.h"
 #include "SysTypes.h"
 
+using namespace NodeBase;
 using namespace SessionBase;
 
 //------------------------------------------------------------------------------

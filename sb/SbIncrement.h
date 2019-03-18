@@ -27,107 +27,107 @@
 #include "NbTypes.h"
 #include "SysTypes.h"
 
-using namespace NetworkBase;
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
 {
 //  SessionBase additions to the Clear command.
 //
-class SbClearWhatParm : public NwClearWhatParm
+class SbClearWhatParm : public NetworkBase::NwClearWhatParm
 {
 public:
    SbClearWhatParm();
    virtual ~SbClearWhatParm() = default;
 };
 
-class SbClearCommand : public NwClearCommand
+class SbClearCommand : public NetworkBase::NwClearCommand
 {
 public:
-   static const id_t FactoryIndex   = LastNwIndex + 1;
-   static const id_t FactoriesIndex = LastNwIndex + 2;
-   static const id_t ProtocolIndex  = LastNwIndex + 3;
-   static const id_t ProtocolsIndex = LastNwIndex + 4;
-   static const id_t SignalIndex    = LastNwIndex + 5;
-   static const id_t SignalsIndex   = LastNwIndex + 6;
-   static const id_t ServiceIndex   = LastNwIndex + 7;
-   static const id_t ServicesIndex  = LastNwIndex + 8;
-   static const id_t TimersIndex    = LastNwIndex + 9;
-   static const id_t LastSbIndex    = LastNwIndex + 9;
+   static const NodeBase::id_t FactoryIndex   = LastNwIndex + 1;
+   static const NodeBase::id_t FactoriesIndex = LastNwIndex + 2;
+   static const NodeBase::id_t ProtocolIndex  = LastNwIndex + 3;
+   static const NodeBase::id_t ProtocolsIndex = LastNwIndex + 4;
+   static const NodeBase::id_t SignalIndex    = LastNwIndex + 5;
+   static const NodeBase::id_t SignalsIndex   = LastNwIndex + 6;
+   static const NodeBase::id_t ServiceIndex   = LastNwIndex + 7;
+   static const NodeBase::id_t ServicesIndex  = LastNwIndex + 8;
+   static const NodeBase::id_t TimersIndex    = LastNwIndex + 9;
+   static const NodeBase::id_t LastSbIndex    = LastNwIndex + 9;
 
    //  Set BIND to false if binding a subclass of NwClearWhatParm.
    //
    explicit SbClearCommand(bool bind = true);
    virtual ~SbClearCommand() = default;
 protected:
-   word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   NodeBase::word ProcessSubcommand
+      (NodeBase::CliThread& cli, NodeBase::id_t index) const override;
 };
 
 //------------------------------------------------------------------------------
 //
 //  SessionBase additions to the Exclude command.
 //
-class SbExcludeWhatParm : public NwExcludeWhatParm
+class SbExcludeWhatParm : public NetworkBase::NwExcludeWhatParm
 {
 public:
    SbExcludeWhatParm();
    virtual ~SbExcludeWhatParm() = default;
 };
 
-class SbExcludeCommand : public NwExcludeCommand
+class SbExcludeCommand : public NetworkBase::NwExcludeCommand
 {
 public:
-   static const id_t FactoryIndex  = LastNwIndex + 1;
-   static const id_t ProtocolIndex = LastNwIndex + 2;
-   static const id_t SignalIndex   = LastNwIndex + 3;
-   static const id_t ServiceIndex  = LastNwIndex + 4;
-   static const id_t TimersIndex   = LastNwIndex + 5;
-   static const id_t LastSbIndex   = LastNwIndex + 6;
+   static const NodeBase::id_t FactoryIndex  = LastNwIndex + 1;
+   static const NodeBase::id_t ProtocolIndex = LastNwIndex + 2;
+   static const NodeBase::id_t SignalIndex   = LastNwIndex + 3;
+   static const NodeBase::id_t ServiceIndex  = LastNwIndex + 4;
+   static const NodeBase::id_t TimersIndex   = LastNwIndex + 5;
+   static const NodeBase::id_t LastSbIndex   = LastNwIndex + 6;
 
    //  Set BIND to false if binding a subclass of SbExcludeWhatParm.
    //
    explicit SbExcludeCommand(bool bind = true);
    virtual ~SbExcludeCommand() = default;
 protected:
-   word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   NodeBase::word ProcessSubcommand
+      (NodeBase::CliThread& cli, NodeBase::id_t index) const override;
 };
 
 //------------------------------------------------------------------------------
 //
 //  SessionBase additions to the Include command.
 //
-class SbIncludeWhatParm : public NwIncludeWhatParm
+class SbIncludeWhatParm : public NetworkBase::NwIncludeWhatParm
 {
 public:
    SbIncludeWhatParm();
    virtual ~SbIncludeWhatParm() = default;
 };
 
-class SbIncludeCommand : public NwIncludeCommand
+class SbIncludeCommand : public NetworkBase::NwIncludeCommand
 {
 public:
-   static const id_t FactoryIndex  = LastNwIndex + 1;
-   static const id_t ProtocolIndex = LastNwIndex + 2;
-   static const id_t SignalIndex   = LastNwIndex + 3;
-   static const id_t ServiceIndex  = LastNwIndex + 4;
-   static const id_t TimersIndex   = LastNwIndex + 5;
-   static const id_t LastSbIndex   = LastNwIndex + 5;
+   static const NodeBase::id_t FactoryIndex  = LastNwIndex + 1;
+   static const NodeBase::id_t ProtocolIndex = LastNwIndex + 2;
+   static const NodeBase::id_t SignalIndex   = LastNwIndex + 3;
+   static const NodeBase::id_t ServiceIndex  = LastNwIndex + 4;
+   static const NodeBase::id_t TimersIndex   = LastNwIndex + 5;
+   static const NodeBase::id_t LastSbIndex   = LastNwIndex + 5;
 
    //  Set BIND to false if binding a subclass of SbIncludeWhatParm.
    //
    explicit SbIncludeCommand(bool bind = true);
    virtual ~SbIncludeCommand() = default;
 protected:
-   word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   NodeBase::word ProcessSubcommand
+      (NodeBase::CliThread& cli, NodeBase::id_t index) const override;
 };
 
 //------------------------------------------------------------------------------
 //
 //  SessionBase additions to the Query command.
 //
-class SbQueryCommand : public NwQueryCommand
+class SbQueryCommand : public NetworkBase::NwQueryCommand
 {
 public:
    //  Set BIND to false if binding a subclass of QueryWhatParm.
@@ -135,29 +135,30 @@ public:
    explicit SbQueryCommand(bool bind = true);
    virtual ~SbQueryCommand() = default;
 protected:
-   word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   NodeBase::word ProcessSubcommand
+      (NodeBase::CliThread& cli, NodeBase::id_t index) const override;
 };
 
 //------------------------------------------------------------------------------
 //
 //  SessionBase additions to the Status command.
 //
-class SbStatusCommand : public NwStatusCommand
+class SbStatusCommand : public NetworkBase::NwStatusCommand
 {
 public:
    SbStatusCommand() = default;
    virtual ~SbStatusCommand() = default;
 private:
-   word ProcessCommand(CliThread& cli) const override;
+   NodeBase::word ProcessCommand(NodeBase::CliThread& cli) const override;
 };
 
 //------------------------------------------------------------------------------
 //
 //  The increment that provides commands for SessionBase.
 //
-class SbIncrement : public CliIncrement
+class SbIncrement : public NodeBase::CliIncrement
 {
-   friend class Singleton< SbIncrement >;
+   friend class NodeBase::Singleton< SbIncrement >;
 private:
    //  Private because this singleton is not subclassed.
    //

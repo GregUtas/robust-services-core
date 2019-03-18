@@ -61,6 +61,7 @@
 #include "ToolTypes.h"
 #include "Trigger.h"
 
+using namespace NodeBase;
 using std::setw;
 
 //------------------------------------------------------------------------------

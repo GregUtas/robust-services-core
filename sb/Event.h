@@ -29,15 +29,13 @@
 #include "SbTypes.h"
 #include "SysTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
 {
 //  Each subclass defines an event for a service's state machine.
 //
-class Event : public Pooled
+class Event : public NodeBase::Pooled
 {
    friend class AnalyzeSapEvent;
    friend class ServiceSM;
@@ -55,7 +53,7 @@ public:
    //
    static bool IsValidId(Id eid)
    {
-      return ((eid != NIL_ID) && (eid <= MaxId));
+      return ((eid != NodeBase::NIL_ID) && (eid <= MaxId));
    }
 
    //  Event identifiers used within the SessionBase framework.
@@ -133,7 +131,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //

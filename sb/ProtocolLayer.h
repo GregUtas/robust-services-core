@@ -27,9 +27,6 @@
 #include "NwTypes.h"
 #include "SbTypes.h"
 
-using namespace NetworkBase;
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
@@ -39,7 +36,7 @@ namespace SessionBase
 //  top to bottom.  Each stack has a MsgPort at its base, with one or more PSMs
 //  (ProtocolSMs) above.
 //
-class ProtocolLayer : public Pooled
+class ProtocolLayer : public NodeBase::Pooled
 {
 public:
    //  Invoked to pass MSG down the stack.
@@ -102,7 +99,7 @@ public:
    //  sends an initial message.  If a socket is allocated, it must be
    //  registered with the PSM's peer GlobalAddress.
    //
-   virtual SysTcpSocket* CreateAppSocket();
+   virtual NetworkBase::SysTcpSocket* CreateAppSocket();
 
    //  Used during multiplexer insertion and deletion.  It configures this
    //  layer and the port identified by PEER so that they will communicate
@@ -124,7 +121,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //

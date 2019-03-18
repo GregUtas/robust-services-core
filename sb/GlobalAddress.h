@@ -27,8 +27,6 @@
 #include "NwTypes.h"
 #include "SbTypes.h"
 
-using namespace NetworkBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
@@ -36,7 +34,7 @@ namespace SessionBase
 //  Address for a SessionBase interprocessor (but intrasystem) message, which
 //  includes an IP address and port in addition to a LocalAddress.
 //
-class GlobalAddress : public SysIpL3Addr
+class GlobalAddress : public NetworkBase::SysIpL3Addr
 {
    friend class MsgPort;
 public:
@@ -46,15 +44,17 @@ public:
 
    //  Specifies an IP layer 3 address and factory.
    //
-   GlobalAddress(const SysIpL3Addr& l3Addr, FactoryId fid);
+   GlobalAddress(const NetworkBase::SysIpL3Addr& l3Addr, FactoryId fid);
 
    //  Specifies an IP layer 2 address, port, and factory.
    //
-   GlobalAddress(const SysIpL2Addr& l2Addr, ipport_t port, FactoryId fid);
+   GlobalAddress
+      (const SysIpL2Addr& l2Addr, NetworkBase::ipport_t port, FactoryId fid);
 
    //  Specifies an IP layer 3 address and pooled object.
    //
-   GlobalAddress(const SysIpL3Addr& l3Addr, const LocalAddress& sbAddr);
+   GlobalAddress
+      (const NetworkBase::SysIpL3Addr& l3Addr, const LocalAddress& sbAddr);
 
    //  Not subclassed.
    //
@@ -87,7 +87,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //

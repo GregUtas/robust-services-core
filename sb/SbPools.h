@@ -32,17 +32,15 @@ namespace SessionBase
    class MsgPort;
 }
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
 {
 //  Pool for SbIpBuffer objects.
 //
-class SbIpBufferPool : public ObjectPool
+class SbIpBufferPool : public NodeBase::ObjectPool
 {
-   friend class Singleton< SbIpBufferPool >;
+   friend class NodeBase::Singleton< SbIpBufferPool >;
 public:
    //> The size of SbIpBuffer blocks.
    //
@@ -65,9 +63,9 @@ private:
 //
 //  Pool for Context objects.
 //
-class ContextPool : public ObjectPool
+class ContextPool : public NodeBase::ObjectPool
 {
-   friend class Singleton< ContextPool >;
+   friend class NodeBase::Singleton< ContextPool >;
 public:
    //> The size of Context blocks.
    //
@@ -94,9 +92,9 @@ private:
 //
 //  Pool for Message objects.
 //
-class MessagePool : public ObjectPool
+class MessagePool : public NodeBase::ObjectPool
 {
-   friend class Singleton< MessagePool >;
+   friend class NodeBase::Singleton< MessagePool >;
 public:
    //> The size of Message blocks.
    //
@@ -119,9 +117,9 @@ private:
 //
 //  Pool for MsgPort objects.
 //
-class MsgPortPool : public ObjectPool
+class MsgPortPool : public NodeBase::ObjectPool
 {
-   friend class Singleton< MsgPortPool >;
+   friend class NodeBase::Singleton< MsgPortPool >;
 public:
    //> The size of MsgPort blocks.
    //
@@ -153,9 +151,9 @@ private:
 //
 //  Pool for ProtocolSM objects.
 //
-class ProtocolSMPool : public ObjectPool
+class ProtocolSMPool : public NodeBase::ObjectPool
 {
-   friend class Singleton< ProtocolSMPool >;
+   friend class NodeBase::Singleton< ProtocolSMPool >;
 public:
    //> The size of ProtocolSM blocks.
    //
@@ -168,7 +166,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -184,16 +182,16 @@ private:
 
    //  The identifier of the PSM currently being audited.
    //
-   PooledObjectId psmToAudit_;
+   NodeBase::PooledObjectId psmToAudit_;
 };
 
 //------------------------------------------------------------------------------
 //
 //  Pool for Timer objects.
 //
-class TimerPool : public ObjectPool
+class TimerPool : public NodeBase::ObjectPool
 {
-   friend class Singleton< TimerPool >;
+   friend class NodeBase::Singleton< TimerPool >;
 public:
    //> The size of Timer blocks.
    //
@@ -213,11 +211,11 @@ public:
 
    //  Overridden for restarts.
    //
-   void Startup(RestartLevel level) override;
+   void Startup(NodeBase::RestartLevel level) override;
 
    //  Overridden for restarts.
    //
-   void Shutdown(RestartLevel level) override;
+   void Shutdown(NodeBase::RestartLevel level) override;
 
    //  Overridden for patching.
    //
@@ -233,16 +231,16 @@ private:
 
    //  The number of timeouts sent.
    //
-   CounterPtr timeouts_;
+   NodeBase::CounterPtr timeouts_;
 };
 
 //------------------------------------------------------------------------------
 //
 //  Pool for ServiceSM objects.
 //
-class ServiceSMPool : public ObjectPool
+class ServiceSMPool : public NodeBase::ObjectPool
 {
-   friend class Singleton< ServiceSMPool >;
+   friend class NodeBase::Singleton< ServiceSMPool >;
 public:
    //> The size of ServiceSM blocks.
    //
@@ -265,9 +263,9 @@ private:
 //
 //  Pool for Event objects.
 //
-class EventPool : public ObjectPool
+class EventPool : public NodeBase::ObjectPool
 {
-   friend class Singleton< EventPool >;
+   friend class NodeBase::Singleton< EventPool >;
 public:
    //> The size of Event blocks.
    //
@@ -292,9 +290,9 @@ private:
 //  are identical to SbIpBuffers.  A separate pool is used so that tracing
 //  cannot interfere with regular work.
 //
-class BtIpBufferPool : public ObjectPool
+class BtIpBufferPool : public NodeBase::ObjectPool
 {
-   friend class Singleton< BtIpBufferPool >;
+   friend class NodeBase::Singleton< BtIpBufferPool >;
 public:
    //> The size of BtIpBuffer blocks.
    //

@@ -25,6 +25,9 @@
 #include "SbIpBuffer.h"
 #include "SysTypes.h"
 
+using namespace NetworkBase;
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
 namespace SessionBase

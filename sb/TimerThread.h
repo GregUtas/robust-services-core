@@ -25,8 +25,6 @@
 #include "Thread.h"
 #include "NbTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
@@ -34,9 +32,9 @@ namespace SessionBase
 //  Services the timer queues (in TimerRegistry) by sending timeout messages
 //  to timers that have expired.
 //
-class TimerThread : public Thread
+class TimerThread : public NodeBase::Thread
 {
-   friend class Singleton< TimerThread >;
+   friend class NodeBase::Singleton< TimerThread >;
 public:
    //  Overridden for patching.
    //
@@ -56,7 +54,7 @@ private:
 
    //  Overridden to support excluding or including all timer threads.
    //
-   TraceStatus CalcStatus(bool dynamic) const override;
+   NodeBase::TraceStatus CalcStatus(bool dynamic) const override;
 
    //  Overridden to enter a loop that tells the timer registry, once per
    //  second, to send timeout messages on behalf of expired timers.

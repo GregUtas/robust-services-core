@@ -36,8 +36,9 @@ namespace NodeBase
    class CliThread;
 }
 
-using std::string;
+using NodeBase::CliThread;
 using NodeBase::word;
+using std::string;
 
 //------------------------------------------------------------------------------
 
@@ -72,7 +73,7 @@ public:
    //  an error occurs, a non-zero value is returned and EXPL is updated
    //  with an explanation.
    //
-   word Fix(NodeBase::CliThread& cli, const FixOptions& opts, string& expl);
+   word Fix(CliThread& cli, const FixOptions& opts, string& expl);
 
    //  Formats the code.  Returns 0 if the file was unchanged, a positive
    //  number after successful changes, and a negative number on failure,
@@ -88,7 +89,7 @@ public:
    //  matches OFFSET, and whose .item matches ITEM.
    //
    CodeWarning* FindLog
-      (const CodeWarning& log, const CxxNamed* item, NodeBase::word offset);
+      (const CodeWarning& log, const CxxNamed* item, word offset);
 private:
    //  Writes out the editor's file.  Returns 0 if the file was successfully
    //  written; other values indicate failure.  Updates EXPL with a reason
@@ -106,8 +107,7 @@ private:
    //  Displays the code associated with LOG on the CLI.  FILE is set if the
    //  name of the file in which LOG occurs should be displayed.
    //
-   void DisplayLog
-      (const NodeBase::CliThread& cli, const CodeWarning& log, bool file);
+   void DisplayLog(const CliThread& cli, const CodeWarning& log, bool file);
 
    //  Fixes LOG.  Returns 0 on success.  A return value of -1 means that the
    //  file should be skipped; other values denote more serious errors.  EXPL

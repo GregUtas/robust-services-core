@@ -43,7 +43,7 @@ public:
 protected:
    //  Protected to restrict creation.
    //
-   explicit MsgContext(Faction faction);
+   explicit MsgContext(NodeBase::Faction faction);
 
    //  Protected to restrict deletion.  Virtual to allow subclassing.
    //

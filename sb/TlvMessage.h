@@ -82,7 +82,7 @@ public:
    //
    template< typename T > T* FindType(ParameterId pid) const
    {
-      Debug::ft(TlvMessage_FindType());
+      NodeBase::Debug::ft(TlvMessage_FindType());
       auto pptr = FindParm(pid);
       if(pptr == nullptr) return nullptr;
       return reinterpret_cast< T* >(pptr->bytes);
@@ -96,7 +96,7 @@ public:
    //
    template< typename T > T* AddType(const T& parm, ParameterId pid)
    {
-      Debug::ft(TlvMessage_AddType());
+      NodeBase::Debug::ft(TlvMessage_AddType());
       auto pptr = AddParm(pid, sizeof(T));
       if(pptr == nullptr) return nullptr;
       auto dest = reinterpret_cast< T* >(pptr->bytes);
@@ -113,8 +113,8 @@ public:
    template< typename T > T* CopyType
       (const TlvMessage& icMsg, ParameterId icPid, ParameterId ogPid = 0)
    {
-      Debug::ft(TlvMessage_CopyType());
-      if(ogPid == NIL_ID) ogPid = icPid;
+      NodeBase::Debug::ft(TlvMessage_CopyType());
+      if(ogPid == NodeBase::NIL_ID) ogPid = icPid;
       auto pptr = icMsg.FindType< T >(icPid);
       if(pptr != nullptr) return AddType(*pptr, ogPid);
       return nullptr;
@@ -131,7 +131,7 @@ public:
    template< typename T > Parameter::TestRc VerifyParm
       (ParameterId pid, Parameter::Usage use, T*& parm) const
    {
-      Debug::ft(TlvMessage_VerifyParm());
+      NodeBase::Debug::ft(TlvMessage_VerifyParm());
 
       auto pptr = FindParm(pid);
       parm = (pptr == nullptr ? nullptr : reinterpret_cast< T* >(pptr->bytes));
@@ -184,13 +184,15 @@ public:
    //  Inserts a parameter identified by PID, filling it with SIZE bytes
    //  that are taken from SRC.
    //
-   TlvParmPtr AddBytes(const byte_t* src, size_t size, ParameterId pid);
+   TlvParmPtr AddBytes
+      (const NodeBase::byte_t* src, size_t size, ParameterId pid);
 
    //  Copies the parameter SRC (in another message) into this message by
    //  creating a parameter identified by PID.  If PID is NIL_ID, SRCE's
    //  parameter identifier is used.
    //
-   TlvParmPtr CopyParm(const TlvParmLayout& src, ParameterId pid = NIL_ID);
+   TlvParmPtr CopyParm
+      (const TlvParmLayout& src, ParameterId pid = NodeBase::NIL_ID);
 
    //  Expands PARM, which already exists, by PLEN bytes.
    //
@@ -202,7 +204,7 @@ public:
 
    //  Overridden to inspect the message's contents.
    //
-   InspectRc InspectMsg(debug32_t& errval) const override;
+   InspectRc InspectMsg(NodeBase::debug32_t& errval) const override;
 
    //  Overridden to check the fence pattern before sending the message.
    //
@@ -222,7 +224,7 @@ public:
    //
    static size_t Pad(size_t size)
    {
-      return Memory::Align(size, Log2Align);
+      return NodeBase::Memory::Align(size, Log2Align);
    }
 protected:
    //  The physical layout of a TLV message's data.
@@ -233,7 +235,7 @@ protected:
       union
       {
          TlvParmLayout firstParm;         // first parameter
-         byte_t bytes[MaxSbMsgSize - 1];  // payload as bytes
+         NodeBase::byte_t bytes[MaxSbMsgSize - 1];  // payload as bytes
       };
    };
 
@@ -246,7 +248,7 @@ protected:
    //  Finds a byte array that is identified by PID, and returns its
    //  length in SIZE.
    //
-   byte_t* FindBytes(size_t& size, ParameterId pid) const;
+   NodeBase::byte_t* FindBytes(size_t& size, ParameterId pid) const;
 
    //  Returns true if PPTR references a parameter within this message, in
    //  which case PIT is updated to reference the parameter that *follows*
@@ -293,17 +295,17 @@ protected:
 private:
    //  Overridden to change the message's direction.
    //
-   void ChangeDir(MsgDirection nextDir) override;
+   void ChangeDir(NodeBase::MsgDirection nextDir) override;
 
    //  See the comment in Singleton.h about an fn_name in a template header.
    //
-   inline static fn_name TlvMessage_FindType()
+   inline static NodeBase::fn_name TlvMessage_FindType()
       { return "TlvMessage.FindType"; }
-   inline static fn_name TlvMessage_AddType()
+   inline static NodeBase::fn_name TlvMessage_AddType()
       { return "TlvMessage.AddType"; }
-   inline static fn_name TlvMessage_CopyType()
+   inline static NodeBase::fn_name TlvMessage_CopyType()
       { return "TlvMessage.CopyType"; }
-   inline static fn_name TlvMessage_VerifyParm()
+   inline static NodeBase::fn_name TlvMessage_VerifyParm()
       { return "TlvMessage.VerifyParm"; }
 
    //  Iterator for a TLV message's parameters.

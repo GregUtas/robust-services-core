@@ -40,7 +40,7 @@ namespace SessionBase
 //
 class TimerProtocol : public TlvProtocol
 {
-   friend class Singleton< TimerProtocol >;
+   friend class NodeBase::Singleton< TimerProtocol >;
 private:
    //  Private because this singleton is not subclassed.
    //
@@ -57,7 +57,7 @@ private:
 //
 class TimeoutSignal : public Signal
 {
-   friend class Singleton< TimeoutSignal >;
+   friend class NodeBase::Singleton< TimeoutSignal >;
 private:
    //  Private because this singleton is not subclassed.
    //
@@ -74,8 +74,8 @@ private:
 //
 struct TimeoutInfo
 {
-   const Base* owner;    // as originally passed to ProtocolSM::StartTimer
-   TimerId tid;          // as originally passed to ProtocolSM::StartTimer
+   const NodeBase::Base* owner;  // as passed to ProtocolSM.StartTimer
+   TimerId tid;                  // as passed to ProtocolSM.StartTimer
 
    TimeoutInfo();
    void Display(std::ostream& stream, const std::string& prefix) const;
@@ -87,12 +87,12 @@ struct TimeoutInfo
 //
 class TimeoutParameter : public TlvParameter
 {
-   friend class Singleton< TimeoutParameter >;
+   friend class NodeBase::Singleton< TimeoutParameter >;
 public:
    //  Overridden to display the parameter symbolically.
    //
    void DisplayMsg(std::ostream& stream, const std::string& prefix,
-      const byte_t* bytes, size_t count) const override;
+      const NodeBase::byte_t* bytes, size_t count) const override;
 private:
    //  Private because this singleton is not subclassed.
    //

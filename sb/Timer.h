@@ -29,19 +29,17 @@
 #include "Q2Link.h"
 #include "SbTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
 {
 //  An instance of a timer running on a PSM.  See also TimerProtocol.h.
 //
-class Timer : public Pooled
+class Timer : public NodeBase::Pooled
 {
    friend class ProtocolSM;
-   friend class Q1Way< Timer >;
-   friend class Q2Way< Timer >;
+   friend class NodeBase::Q1Way< Timer >;
+   friend class NodeBase::Q2Way< Timer >;
    friend class TimerRegistry;
    friend class TimerTrace;
 public:
@@ -56,7 +54,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -66,7 +64,8 @@ private:
    //  expire in SECS, and repeatedly if REPEAT is true.  Private because
    //  applications create timers via ProtocolSM::StartTimer.
    //
-   Timer(ProtocolSM& psm, Base& owner, TimerId tid, secs_t secs, bool repeat);
+   Timer(ProtocolSM& psm, Base& owner,
+      TimerId tid, NodeBase::secs_t secs, bool repeat);
 
    //  Private because applications delete timers via ProtocolSM::StopTimer.
    //  Not subclassed.
@@ -144,15 +143,15 @@ private:
 
    //  The two-way queue link for the timer registry.
    //
-   Q2Link link_;
+   NodeBase::Q2Link link_;
 
    //  The length of the timer in seconds.
    //
-   const secs_t duration_;
+   const NodeBase::secs_t duration_;
 
    //  How long until the timer expires (only used for long timers).
    //
-   secs_t remaining_;
+   NodeBase::secs_t remaining_;
 };
 }
 #endif

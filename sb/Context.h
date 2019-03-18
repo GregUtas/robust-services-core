@@ -40,8 +40,6 @@ namespace SessionBase
    class InvokerPool;
 }
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
@@ -53,7 +51,7 @@ namespace SessionBase
 //  eventually tells the context to process the message, the context passes
 //  the message to an appropriate object for processing.
 //
-class Context : public Pooled
+class Context : public NodeBase::Pooled
 {
    friend std::unique_ptr< Context >::deleter_type;
    friend class InvokerPool;
@@ -62,7 +60,7 @@ class Context : public Pooled
    friend class MsgPort;
    friend class ProtocolSM;
    friend class PsmFactory;
-   friend class Q2Way< Context >;
+   friend class NodeBase::Q2Way< Context >;
    friend class SsmFactory;
 public:
    //  Returns the incoming message that is currently being processed.
@@ -119,18 +117,20 @@ public:
    //  Logs and deletes the objects in the current context when a fatal
    //  error occurs.  FUNC, ERRVAL, and OFFSET are included in the log.
    //
-   static void Kill(fn_name_arg func, debug64_t errval, debug32_t offset);
+   static void Kill(NodeBase::fn_name_arg func,
+      NodeBase::debug64_t errval, NodeBase::debug32_t offset);
 
    //  Logs the objects in the context for debugging purposes.  FUNC,
    //  ERRVAL, and OFFSET are passed to Debug::SwLog.
    //
-   static void Dump(fn_name_arg func, debug64_t errval, debug32_t offset);
+   static void Dump(NodeBase::fn_name_arg func,
+      NodeBase::debug64_t errval, NodeBase::debug32_t offset);
 
    //  Records a message with signal SID, in protocol PRID, travelling in
    //  direction DIR.  This allows the message history to be included in
    //  logs to aid in debugging.
    //
-   void TraceMsg(ProtocolId prid, SignalId sid, MsgDirection dir);
+   void TraceMsg(ProtocolId prid, SignalId sid, NodeBase::MsgDirection dir);
 
    //  Returns a string containing the message history.
    //
@@ -173,7 +173,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -182,7 +182,7 @@ protected:
    //  Creates a context that will run in FACTION.  Protected because this
    //  class is virtual.
    //
-   explicit Context(Faction faction);
+   explicit Context(NodeBase::Faction faction);
 
    //  Protected to restrict deletion.  Virtual to allow subclassing.
    //
@@ -224,7 +224,7 @@ private:
    //
    struct MessageEntry
    {
-      MsgDirection dir : 1;  // the message's direction
+      NodeBase::MsgDirection dir : 1;  // the message's direction
       ProtocolId prid : 7;   // the message's protocol
       SignalId sid : 8;      // the message's signal
    };
@@ -273,7 +273,7 @@ private:
 
    //  Adds the context to the work queue associated with PRIO.
    //
-   void Enqueue(Q2Way< Context >& whichq, Message::Priority prio);
+   void Enqueue(NodeBase::Q2Way< Context >& whichq, Message::Priority prio);
 
    //  Removes the context from its work queue.
    //
@@ -288,7 +288,7 @@ private:
    //  the thread running the transaction.  Returns true if the context still
    //  exists after processing the message, and false if it was deleted.
    //
-   bool ProcessMsg(Q1Way< Message >& msgq, const InvokerThread* inv);
+   bool ProcessMsg(NodeBase::Q1Way< Message >& msgq, const InvokerThread* inv);
 
    //  Invoked to record a transaction.  MSG is the message being processed,
    //  and START is when the transaction started.
@@ -305,23 +305,23 @@ private:
 
    //  The invoker pool work queue where the context resides.
    //
-   Q2Way< Context >* whichq_;
+   NodeBase::Q2Way< Context >* whichq_;
 
    //  The queue link for the invoker pool work queue.
    //
-   Q2Link link_;
+   NodeBase::Q2Link link_;
 
    //  The queue of incoming messages with immediate priority.
    //
-   Q1Way< Message > priMsgq_;
+   NodeBase::Q1Way< Message > priMsgq_;
 
    //  The queue of incoming messages of non-immediate priority.
    //
-   Q1Way< Message > stdMsgq_;
+   NodeBase::Q1Way< Message > stdMsgq_;
 
    //  The time when the context was enqueued.
    //
-   ticks_t enqTime_;
+   NodeBase::ticks_t enqTime_;
 
    //  The invoker pool that is managing this context.
    //
@@ -333,7 +333,7 @@ private:
 
    //  The context's scheduler faction.
    //
-   Faction faction_;
+   NodeBase::Faction faction_;
 
    //  The context's processing state.
    //

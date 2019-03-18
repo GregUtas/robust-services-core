@@ -51,7 +51,7 @@ class ProtocolSM : public ProtocolLayer
 {
    friend class Message;
    friend class PsmContext;
-   friend class Q1Way< ProtocolSM >;
+   friend class NodeBase::Q1Way< ProtocolSM >;
    friend class Timer;
 public:
    //  Initial state for PSMs.  If a PSM is in this state at the end of a
@@ -110,8 +110,8 @@ public:
    //  it expires and must be explicitly stopped.  Returns true if the timer
    //  was successfully started.
    //
-   bool StartTimer
-      (secs_t duration, Base& owner, TimerId tid, bool repeat = false);
+   bool StartTimer(NodeBase::secs_t duration,
+      Base& owner, TimerId tid, bool repeat = false);
 
    //  Stops the timer identified by OWNER and TID.
    //
@@ -201,7 +201,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -353,19 +353,19 @@ private:
 
    //  The queue of received messages (actually a stack).
    //
-   Q1Way< Message > rcvdMsgq_;
+   NodeBase::Q1Way< Message > rcvdMsgq_;
 
    //  The queue of pending outgoing messages.
    //
-   Q1Way< Message > ogMsgq_;
+   NodeBase::Q1Way< Message > ogMsgq_;
 
    //  The queue of sent outgoing messages (actually a stack).
    //
-   Q1Way< Message > sentMsgq_;
+   NodeBase::Q1Way< Message > sentMsgq_;
 
    //  The queue of timers running on this PSM.
    //
-   Q1Way< Timer > timerq_;
+   NodeBase::Q1Way< Timer > timerq_;
 
    //  The factory that created this PSM.
    //

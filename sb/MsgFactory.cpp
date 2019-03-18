@@ -32,6 +32,8 @@
 #include "ToolTypes.h"
 #include "TraceBuffer.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
 namespace SessionBase

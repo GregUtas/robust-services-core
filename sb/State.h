@@ -28,8 +28,6 @@
 #include "RegCell.h"
 #include "SbTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
@@ -37,9 +35,9 @@ namespace SessionBase
 //  Subclassed by a Service to define states for its state machine.  Each
 //  subclass must be a singleton.
 //
-class State : public Protected
+class State : public NodeBase::Protected
 {
-   friend class Registry< State >;
+   friend class NodeBase::Registry< State >;
 public:
    //  Allows "Id" to refer to a state identifier in this class hierarchy.
    //
@@ -72,7 +70,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -110,7 +108,7 @@ private:
 
    //  The state's identifier.
    //
-   RegCell stid_;
+   NodeBase::RegCell stid_;
 
    //  The service to which this state belongs.
    //

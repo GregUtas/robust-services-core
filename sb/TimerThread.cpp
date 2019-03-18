@@ -28,6 +28,8 @@
 #include "TimerRegistry.h"
 #include "ToolTypes.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
 namespace SessionBase

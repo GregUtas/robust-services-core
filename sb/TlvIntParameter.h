@@ -32,8 +32,6 @@
 #include "SysTypes.h"
 #include "TlvMessage.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
@@ -59,21 +57,21 @@ protected:
    //  Overridden to add an integer to MSG.
    //
    TestRc InjectMsg
-      (CliThread& cli, Message& msg, Usage use) const override
+      (NodeBase::CliThread& cli, Message& msg, Usage use) const override
    {
-      Debug::ft(TlvIntParameter_InjectMsg());
+      NodeBase::Debug::ft(TlvIntParameter_InjectMsg());
 
-      word value;
+      NodeBase::word value;
       T parmval;
       auto& tlvmsg = static_cast< TlvMessage& >(msg);
 
       switch(cli.Command()->GetIntParmRc(value, cli))
       {
-      case CliParm::None:
+      case NodeBase::CliParm::None:
          if(use == Mandatory) return StreamMissingMandatoryParm;
          return Ok;
          break;
-      case CliParm::Ok:
+      case NodeBase::CliParm::Ok:
          break;
       default:
          return IllegalValueInStream;
@@ -83,7 +81,7 @@ protected:
 
       if(tlvmsg.AddType(parmval, Pid()) == nullptr)
       {
-         *cli.obuf << ParameterNotAdded << CRLF;
+         *cli.obuf << ParameterNotAdded << NodeBase::CRLF;
          return MessageFailedToAddParm;
       }
 
@@ -93,14 +91,14 @@ protected:
    //  Overridden to check an integer in MSG against an expected value.
    //
    TestRc VerifyMsg
-      (CliThread& cli, const Message& msg, Usage use) const override
+      (NodeBase::CliThread& cli, const Message& msg, Usage use) const override
    {
-      Debug::ft(TlvIntParameter_VerifyMsg());
+      NodeBase::Debug::ft(TlvIntParameter_VerifyMsg());
 
       TestRc rc;
       auto& tlvmsg = static_cast< const TlvMessage& >(msg);
       T* parmval;
-      word value;
+      NodeBase::word value;
       auto exists = false;
 
       rc = tlvmsg.VerifyParm(Pid(), use, parmval);
@@ -109,10 +107,10 @@ protected:
 
       switch(cli.Command()->GetIntParmRc(value, cli))
       {
-      case CliParm::None:
+      case NodeBase::CliParm::None:
          if(use == Mandatory) return StreamMissingMandatoryParm;
          break;
-      case CliParm::Ok:
+      case NodeBase::CliParm::Ok:
          exists = true;
          break;
       default:
@@ -135,9 +133,9 @@ protected:
 
    //  See the comment in Singleton.h about fn_name's in a template header.
    //
-   inline static fn_name TlvIntParameter_InjectMsg()
+   inline static NodeBase::fn_name TlvIntParameter_InjectMsg()
       { return "TlvIntParameter.InjectMsg"; }
-   inline static fn_name TlvIntParameter_VerifyMsg()
+   inline static NodeBase::fn_name TlvIntParameter_VerifyMsg()
       { return "TlvIntParameter.VerifyMsg"; }
 };
 }

@@ -30,6 +30,7 @@ namespace MediaBase
    class MediaEndpt;
 }
 
+using namespace NodeBase;
 using namespace SessionBase;
 
 //------------------------------------------------------------------------------

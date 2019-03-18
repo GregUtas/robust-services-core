@@ -37,8 +37,6 @@ namespace SessionBase
    class Signal;
 }
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
@@ -52,10 +50,10 @@ namespace SessionBase
 //  signals and parameters into the subclass.  Each protocol should ultimately
 //  inherit from TimerProtocol, which defines TimeoutSignal.
 //
-class Protocol : public Protected
+class Protocol : public NodeBase::Protected
 {
    friend class Parameter;
-   friend class Registry< Protocol >;
+   friend class NodeBase::Registry< Protocol >;
    friend class Signal;
 public:
    //  Allows "Id" to refer to a protocol identifier in this class hierarchy.
@@ -119,7 +117,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -162,7 +160,7 @@ private:
 
    //  The protocol's identifier.
    //
-   RegCell prid_;
+   NodeBase::RegCell prid_;
 
    //  The identifier of the protocol's base class.
    //
@@ -170,11 +168,11 @@ private:
 
    //  The signals registered with the protocol.
    //
-   Registry< Signal > signals_;
+   NodeBase::Registry< Signal > signals_;
 
    //  The parameters registered with the protocol.
    //
-   Registry< Parameter > parameters_;
+   NodeBase::Registry< Parameter > parameters_;
 };
 }
 #endif

@@ -33,8 +33,6 @@
 #include "SysTypes.h"
 #include "ToolTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 //
 //  Interface for controlling SessionBase trace tools:
@@ -112,29 +110,31 @@ using namespace NodeBase;
 //
 namespace SessionBase
 {
-class SbTracer : public Permanent
+class SbTracer : public NodeBase::Permanent
 {
-   friend class Singleton< SbTracer >;
+   friend class NodeBase::Singleton< SbTracer >;
 public:
    //  Traces FID according to STATUS.
    //
-   TraceRc SelectFactory(FactoryId fid, TraceStatus status);
+   NodeBase::TraceRc SelectFactory(FactoryId fid, NodeBase::TraceStatus status);
 
    //  Traces PRID according to STATUS.
    //
-   TraceRc SelectProtocol(ProtocolId prid, TraceStatus status);
+   NodeBase::TraceRc SelectProtocol
+      (ProtocolId prid, NodeBase::TraceStatus status);
 
    //  Traces SID, which belongs to PRID, according to STATUS.
    //
-   TraceRc SelectSignal(ProtocolId prid, SignalId sid, TraceStatus status);
+   NodeBase::TraceRc SelectSignal
+      (ProtocolId prid, SignalId sid, NodeBase::TraceStatus status);
 
    //  Traces SID according to STATUS.
    //
-   TraceRc SelectService(ServiceId sid, TraceStatus status);
+   NodeBase::TraceRc SelectService(ServiceId sid, NodeBase::TraceStatus status);
 
    //  Traces the timer registry according to STATUS.
    //
-   TraceRc SelectTimers(TraceStatus status);
+   NodeBase::TraceRc SelectTimers(NodeBase::TraceStatus status);
 
    //  Displays, in STREAM, everything that has been included or excluded.
    //
@@ -142,11 +142,12 @@ public:
 
    //  Removes everything of type FILTER that has been included or excluded.
    //
-   TraceRc ClearSelections(FlagId filter);
+   NodeBase::TraceRc ClearSelections(NodeBase::FlagId filter);
 
    //  Determines whether MSG, travelling in DIR, should be traced.
    //
-   TraceStatus MsgStatus(const Message& msg, MsgDirection dir) const;
+   NodeBase::TraceStatus MsgStatus
+      (const Message& msg, NodeBase::MsgDirection dir) const;
 
    //  Returns true if SID should be traced.
    //
@@ -154,7 +155,7 @@ public:
 
    //  Determines if timer threads should be traced.
    //
-   TraceStatus TimersStatus() const { return timers_; }
+   NodeBase::TraceStatus TimersStatus() const { return timers_; }
 
    //  Overridden for patching.
    //
@@ -178,11 +179,11 @@ private:
    struct SignalFilter
    {
       SignalFilter();
-      SignalFilter(ProtocolId p, SignalId s, TraceStatus ts);
+      SignalFilter(ProtocolId p, SignalId s, NodeBase::TraceStatus ts);
 
       ProtocolId prid;     // protocol identifier
       SignalId sid;        // signal identifier
-      TraceStatus status;  // whether included or excluded
+      NodeBase::TraceStatus status;  // whether included or excluded
    };
 
    //  If PRID/SID is included or excluded, returns its index in signals_[].
@@ -192,7 +193,7 @@ private:
 
    //  Returns the trace status of PRID/SID.
    //
-   TraceStatus SignalStatus(ProtocolId prid, SignalId sid) const;
+   NodeBase::TraceStatus SignalStatus(ProtocolId prid, SignalId sid) const;
 
    //  Returns true if no factories are included or excluded.
    //
@@ -212,11 +213,11 @@ private:
 
    //  Whether a specific factory is included or excluded.
    //
-   TraceStatus factories_[Factory::MaxId + 1];
+   NodeBase::TraceStatus factories_[Factory::MaxId + 1];
 
    //  Whether a specific protocol is included or excluded.
    //
-   TraceStatus protocols_[Protocol::MaxId + 1];
+   NodeBase::TraceStatus protocols_[Protocol::MaxId + 1];
 
    //  A list of included or excluded signals.
    //
@@ -224,11 +225,11 @@ private:
 
    //  Whether a specific service is included or excluded.
    //
-   TraceStatus services_[Service::MaxId + 1];
+   NodeBase::TraceStatus services_[Service::MaxId + 1];
 
    //  Whether times are included or excluded.
    //
-   TraceStatus timers_;
+   NodeBase::TraceStatus timers_;
 };
 }
 #endif

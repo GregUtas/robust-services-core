@@ -37,8 +37,6 @@ namespace NodeBase
    class CliThread;
 }
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
@@ -46,9 +44,9 @@ namespace SessionBase
 //  Each protocol defines a singleton subclass for each of its parameters.
 //  A parameter that uses the TLV format should subclass from TlvParameter.
 //
-class Parameter : public Protected
+class Parameter : public NodeBase::Protected
 {
-   friend class Registry< Parameter >;
+   friend class NodeBase::Registry< Parameter >;
 public:
    //  Allows "Id" to refer to a parameter identifier in this class hierarchy.
    //
@@ -90,8 +88,8 @@ public:
    //  located at bytes[0 to count-1].  The default version outputs a string
    //  stating that symbolic display is not supported.
    //
-   virtual void DisplayMsg(std::ostream& stream,
-      const std::string& prefix, const byte_t* bytes, size_t count) const;
+   virtual void DisplayMsg(std::ostream& stream, const std::string& prefix,
+      const NodeBase::byte_t* bytes, size_t count) const;
 
    //  Creates a subclass of CliParm that allows the parameter's field(s) to
    //  be entered through the CLI.  USE indicates whether the parameter is
@@ -99,7 +97,7 @@ public:
    //  Verify.  The default version returns nullptr and must be overridden
    //  by parameters that support CLI commands.
    //
-   virtual CliParm* CreateCliParm(Usage use) const;
+   virtual NodeBase::CliParm* CreateCliParm(Usage use) const;
 
    //  Return codes for InjectMsg and VerifyMsg.
    //
@@ -128,7 +126,8 @@ public:
    //  a log and returns NotImplemented, and must be overridden by
    //  parameters that support InjectCommand.
    //
-   virtual TestRc InjectMsg(CliThread& cli, Message& msg, Usage use) const;
+   virtual TestRc InjectMsg
+      (NodeBase::CliThread& cli, Message& msg, Usage use) const;
 
    //  Invoked by VerifyCommand.  It gets CLI parameters that specify
    //  whether the parameter should be present in MSG and, if so, the
@@ -141,7 +140,7 @@ public:
    //  support VerifyCommand.
    //
    virtual TestRc VerifyMsg
-      (CliThread& cli, const Message& msg, Usage use) const;
+      (NodeBase::CliThread& cli, const Message& msg, Usage use) const;
 
    //  Returns a string that explains the above return codes.
    //
@@ -154,7 +153,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -187,7 +186,7 @@ private:
 
    //  The parameter's identifier.
    //
-   RegCell pid_;
+   NodeBase::RegCell pid_;
 
    //  The parameter's usage with respect to each signal.
    //

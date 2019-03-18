@@ -55,7 +55,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -63,7 +63,7 @@ public:
 protected:
    //  Protected to restrict creation.
    //
-   explicit PsmContext(Faction faction);
+   explicit PsmContext(NodeBase::Faction faction);
 
    //  Protected to restrict deletion.  Virtual to allow subclassing.
    //
@@ -120,11 +120,11 @@ private:
 
    //  The ports that are running in this context.
    //
-   Q1Way< MsgPort > portq_;
+   NodeBase::Q1Way< MsgPort > portq_;
 
    //  The PSMs that are running in this context.
    //
-   Q1Way< ProtocolSM > psmq_;
+   NodeBase::Q1Way< ProtocolSM > psmq_;
 };
 }
 #endif

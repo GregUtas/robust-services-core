@@ -32,6 +32,7 @@
 #include "ThisThread.h"
 #include "TimerThread.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 

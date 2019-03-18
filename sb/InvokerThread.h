@@ -31,8 +31,6 @@
 #include "RegCell.h"
 #include "SysTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
@@ -40,11 +38,11 @@ namespace SessionBase
 //  An InvokerThread calss InvokerPool::ProcessWork to dequeue and execute
 //  SessionBase application work.
 //
-class InvokerThread : public Thread
+class InvokerThread : public NodeBase::Thread
 {
    friend class Context;
    friend class InvokerPool;
-   friend class Registry< InvokerThread >;
+   friend class NodeBase::Registry< InvokerThread >;
    friend class SbException;
 public:
    //  After a transaction, Thread::RtcPercentUsed is called to see how long
@@ -54,11 +52,11 @@ public:
    //  This value should be based on how many transactions the invoker can
    //  usually handle each time it is scheduled in.
    //
-   static word RtcYieldPercent() { return RtcYieldPercent_; }
+   static NodeBase::word RtcYieldPercent() { return RtcYieldPercent_; }
 
    //  Returns the tick time when the current transaction started.
    //
-   ticks_t Ticks0() const { return ticks0_; }
+   NodeBase::ticks_t Ticks0() const { return ticks0_; }
 
    //  Returns the offset to iid_.
    //
@@ -67,7 +65,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -76,7 +74,7 @@ private:
    //  Used by InvokerPool to create an invoker that runs in FACTION.
    //  Private to restrict creation.
    //
-   explicit InvokerThread(Faction faction);
+   explicit InvokerThread(NodeBase::Faction faction);
 
    //  Private to restrict deletion.  Not subclassed.
    //
@@ -107,15 +105,16 @@ private:
    //  Overridden to deny blocking by the last unblocked invoker and to track
    //  the currently running invoker.
    //
-   bool BlockingAllowed(BlockingReason why, fn_name_arg func) override;
+   bool BlockingAllowed
+      (NodeBase::BlockingReason why, NodeBase::fn_name_arg func) override;
 
    //  Overridden to track the currently running invoker.
    //
-   void ScheduledIn(fn_name_arg func) override;
+   void ScheduledIn(NodeBase::fn_name_arg func) override;
 
    //  Overridden to support the tracing of individual contexts.
    //
-   TraceStatus CalcStatus(bool dynamic) const override;
+   NodeBase::TraceStatus CalcStatus(bool dynamic) const override;
 
    //  Overridden to log and delete the objects involved in a serious
    //  error before reentering the thread.
@@ -124,7 +123,7 @@ private:
 
    //  The thread's identifier in its InvokerPool.
    //
-   RegCell iid_;
+   NodeBase::RegCell iid_;
 
    //  The pool to which the thread belongs.
    //
@@ -145,12 +144,12 @@ private:
 
    //  The time when the current transaction began.
    //
-   ticks_t ticks0_;
+   NodeBase::ticks_t ticks0_;
 
    //  Percentage of run-to-completion timeout that must remain for invoker
    //  to begin another transaction instead of yielding.
    //
-   static word RtcYieldPercent_;
+   static NodeBase::word RtcYieldPercent_;
 
    //  The invoker that is currently running.
    //

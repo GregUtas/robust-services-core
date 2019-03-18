@@ -29,6 +29,7 @@
 #include "NwTypes.h"
 #include "SysIpL3Addr.h"
 
+using namespace NodeBase;
 using std::string;
 
 //------------------------------------------------------------------------------

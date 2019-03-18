@@ -27,8 +27,6 @@
 #include "NbTypes.h"
 #include "Registry.h"
 
-using namespace NodeBase;
-
 namespace NetworkBase
 {
    class IpService;
@@ -40,10 +38,10 @@ namespace NetworkBase
 {
 //  Global registry for protocols supported over IP.
 //
-class IpServiceRegistry : public Protected
+class IpServiceRegistry : public NodeBase::Protected
 {
    friend class IpService;
-   friend class Singleton< IpServiceRegistry >;
+   friend class NodeBase::Singleton< IpServiceRegistry >;
 public:
    //  Returns the service registered against NAME.
    //
@@ -51,12 +49,12 @@ public:
 
    //  Overridden for restarts.
    //
-   void Startup(RestartLevel level) override;
+   void Startup(NodeBase::RestartLevel level) override;
 
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -82,7 +80,7 @@ private:
 
    //  The global registry of IP services.
    //
-   Registry< IpService > services_;
+   NodeBase::Registry< IpService > services_;
 };
 }
 #endif

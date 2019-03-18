@@ -30,6 +30,7 @@
 #include "Singleton.h"
 #include "TraceBuffer.h"
 
+using namespace NodeBase;
 using std::ostream;
 
 //------------------------------------------------------------------------------

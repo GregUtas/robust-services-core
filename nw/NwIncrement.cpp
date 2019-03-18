@@ -42,6 +42,7 @@
 #include "Tool.h"
 #include "ToolTypes.h"
 
+using namespace NodeBase;
 using std::setw;
 using std::string;
 

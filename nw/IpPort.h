@@ -30,8 +30,6 @@
 #include "NwTypes.h"
 #include "Q1Link.h"
 
-using namespace NodeBase;
-
 namespace NetworkBase
 {
    class IpPortStats;
@@ -43,7 +41,7 @@ namespace NetworkBase
 {
 //  An IP port that supports a service (an application protocol).
 //
-class IpPort : public Protected
+class IpPort : public NodeBase::Protected
 {
    friend class InputHandler;
 public:
@@ -130,16 +128,16 @@ public:
 
    //  Overridden for restarts.
    //
-   void Startup(RestartLevel level) override;
+   void Startup(NodeBase::RestartLevel level) override;
 
    //  Overridden for restarts.
    //
-   void Shutdown(RestartLevel level) override;
+   void Shutdown(NodeBase::RestartLevel level) override;
 
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -178,7 +176,7 @@ private:
 
    //  The next entry in IpPortRegistry.
    //
-   Q1Link link_;
+   NodeBase::Q1Link link_;
 
    //  The port number associated with this entry.
    //

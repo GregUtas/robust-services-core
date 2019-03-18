@@ -27,15 +27,13 @@
 #include "SysIpL3Addr.h"
 #include "SysTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace NetworkBase
 {
 //  Records a TCP socket event.
 //
-class NwTrace : public TimedRecord
+class NwTrace : public NodeBase::TimedRecord
 {
 public:
    //  Types of socket trace records.
@@ -62,17 +60,17 @@ public:
    //  Creates a trace record of type RID, which is associated with SOCKET.
    //  DATA is event specific.
    //
-   NwTrace(Id rid, const SysSocket* socket, word data);
+   NwTrace(Id rid, const SysSocket* socket, NodeBase::word data);
 
    //  Creates a trace record of type RID, which is associated with SOCKET
    //  and PORT.  DATA is event specific.
    //
-   NwTrace(Id rid, const SysSocket* socket, word data, ipport_t port);
+   NwTrace(Id rid, const SysSocket* socket, NodeBase::word data, ipport_t port);
 
    //  Creates a trace record of type RID, which is associated with SOCKET,
    //  PORT, and PEER.  DATA is event specific.
    //
-   NwTrace(Id rid, const SysSocket* socket, word data, ipport_t port,
+   NwTrace(Id rid, const SysSocket* socket, NodeBase::word data, ipport_t port,
       const SysIpL3Addr& peer);
 
    //  Overridden to display the trace record.
@@ -89,7 +87,7 @@ private:
 
    //  Event-specific data.
    //
-   const word data_;
+   const NodeBase::word data_;
 
    //  The host IP port associated with the event.
    //

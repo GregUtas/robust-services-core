@@ -26,6 +26,7 @@
 #include "ToolTypes.h"
 #include "TraceDump.h"
 
+using namespace NodeBase;
 using std::ostream;
 
 //------------------------------------------------------------------------------

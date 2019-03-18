@@ -228,7 +228,7 @@ byte_t* DipInputHandler::HostToNetwork
 {
    Debug::ft(DipInputHandler_HostToNetwork);
 
-   //  Most fields are byte-oriented, but some are 16 bits long and
+   //  Some fields are byte-oriented, but most are 16 bits long and
    //  therefore need to be converted.  Conversion is done in place.
    //
    auto msg = reinterpret_cast< DipHeader* >(buff.PayloadPtr());

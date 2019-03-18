@@ -26,15 +26,13 @@
 #include <string>
 #include "NwTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace NetworkBase
 {
 //  Operating system abstraction layer: layer 2 IP address.
 //
-class SysIpL2Addr : public Object
+class SysIpL2Addr : public NodeBase::Object
 {
 public:
    //  Constructs a nil address (255.255.255.255).
@@ -85,7 +83,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //

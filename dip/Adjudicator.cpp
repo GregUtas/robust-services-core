@@ -75,7 +75,7 @@ void MapAndUnits::adjudicate_builds()
 {
    Debug::ft(MapAndUnits_adjudicate_builds);
 
-   //  Check that each power's has ordered enough builds or disbands.
+   //  Check that each power has ordered enough builds or disbands.
    //
    for(PowerId p = 0; p < number_of_powers; ++p)
    {
@@ -2230,7 +2230,7 @@ void MapAndUnits::resolve_unbalanced_head_to_head_battles()
          {
             //  No one dislodged the weaker unit, so the stronger unit's
             //  attack must have been equally matched by another.  The
-            //  weaker unit is a "beleaguered garrsion".
+            //  weaker unit is a "beleaguered garrison".
             //
             bounce_all_attacks_on_province(weaker.loc.province);
          }

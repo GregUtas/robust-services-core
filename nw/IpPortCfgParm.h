@@ -25,8 +25,6 @@
 #include "CfgIntParm.h"
 #include "SysTypes.h"
 
-using namespace NodeBase;
-
 namespace NetworkBase
 {
    class IpService;
@@ -38,7 +36,7 @@ namespace NetworkBase
 {
 //  Configuration parameter for IP ports.
 //
-class IpPortCfgParm : public CfgIntParm
+class IpPortCfgParm : public NodeBase::CfgIntParm
 {
 public:
    //  Creates a parameter with the specified attributes, which are described
@@ -46,7 +44,7 @@ public:
    //  the port.
    //
    IpPortCfgParm(const char* key, const char* def,
-      word* field, const char* expl, const IpService* service);
+      NodeBase::word* field, const char* expl, const IpService* service);
 
    //  Virtual to allow subclassing.
    //
@@ -55,7 +53,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -63,12 +61,13 @@ public:
 protected:
    //  Overridden to check if VALUE (an IP port) is available.
    //
-   bool SetNextValue(word value) override;
+   bool SetNextValue(NodeBase::word value) override;
 private:
    //  Overridden to indicate that a cold restart is required to move an IP
    //  service to a new port.
    //
-   RestartLevel RestartRequired() const override { return RestartCold; }
+   NodeBase::RestartLevel RestartRequired() const override
+      { return NodeBase::RestartCold; }
 
    //  The service running on the port.
    //

@@ -31,25 +31,24 @@
 #include "SysTypes.h"
 #include "ToolTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace NetworkBase
 {
 //  Interface for tracing messages to/from specific IP peers and ports.
 //
-class NwTracer : public Permanent
+class NwTracer : public NodeBase::Permanent
 {
-   friend class Singleton< NwTracer >;
+   friend class NodeBase::Singleton< NwTracer >;
 public:
    //  Traces PEER according to STATUS.
    //
-   TraceRc SelectPeer(const SysIpL3Addr& peer, TraceStatus status);
+   NodeBase::TraceRc SelectPeer
+      (const SysIpL3Addr& peer, NodeBase::TraceStatus status);
 
    //  Traces PORT according to STATUS.
    //
-   TraceRc SelectPort(ipport_t port, TraceStatus status);
+   NodeBase::TraceRc SelectPort(ipport_t port, NodeBase::TraceStatus status);
 
    //  Returns true if no peers are included or excluded.
    //
@@ -61,11 +60,11 @@ public:
 
    //  Returns the trace status of PEER.
    //
-   TraceStatus PeerStatus(const SysIpL3Addr& peer) const;
+   NodeBase::TraceStatus PeerStatus(const SysIpL3Addr& peer) const;
 
    //  Returns the trace status of PORT.
    //
-   TraceStatus PortStatus(ipport_t port) const;
+   NodeBase::TraceStatus PortStatus(ipport_t port) const;
 
    //  Displays, in STREAM, everything that has been included or excluded.
    //
@@ -73,11 +72,12 @@ public:
 
    //  Removes everything of type FILTER that has been included or excluded.
    //
-   TraceRc ClearSelections(FlagId filter);
+   NodeBase::TraceRc ClearSelections(NodeBase::FlagId filter);
 
    //  Determines wheter IPB, travelling in DIR, should be traced.
    //
-   TraceStatus BuffStatus(const IpBuffer& ipb, MsgDirection dir) const;
+   NodeBase::TraceStatus BuffStatus
+      (const IpBuffer& ipb, NodeBase::MsgDirection dir) const;
 private:
    //  Private because this singleton is not subclassed.
    //
@@ -102,10 +102,10 @@ private:
    struct PeerFilter
    {
       PeerFilter();
-      PeerFilter(const SysIpL3Addr& a, TraceStatus s);
+      PeerFilter(const SysIpL3Addr& a, NodeBase::TraceStatus s);
 
       SysIpL3Addr peer;    // peer
-      TraceStatus status;  // whether included or excluded
+      NodeBase::TraceStatus status;  // whether included or excluded
    };
 
    //  The trace status of a host IP port.
@@ -113,10 +113,10 @@ private:
    struct PortFilter
    {
       PortFilter();
-      PortFilter(ipport_t p, TraceStatus s);
+      PortFilter(ipport_t p, NodeBase::TraceStatus s);
 
       ipport_t port;        // host port
-      TraceStatus status;   // whether included or excluded
+      NodeBase::TraceStatus status;   // whether included or excluded
    };
 
    //  If PEER is included or excluded, returns its index in peers_.

@@ -30,106 +30,103 @@
 #include "Base.h"
 #include "SysTypes.h"
 
-using NodeBase::fixed_string;
-using NodeBase::Flags;
-
 //------------------------------------------------------------------------------
 
 namespace CodeTools
 {
 //  C++ keyword strings.
 //
-extern fixed_string AUTO_STR;
-extern fixed_string BOOL_STR;
-extern fixed_string BREAK_STR;
-extern fixed_string CATCH_STR;
-extern fixed_string CASE_STR;
-extern fixed_string CHAR_STR;
-extern fixed_string CLASS_STR;
-extern fixed_string CONST_STR;
-extern fixed_string CONST_CAST_STR;
-extern fixed_string CONSTEXPR_STR;
-extern fixed_string CONTINUE_STR;
-extern fixed_string DEFAULT_STR;
-extern fixed_string DELETE_STR;
-extern fixed_string DELETE_ARRAY_STR;
-extern fixed_string DOUBLE_STR;
-extern fixed_string DYNAMIC_CAST_STR;
-extern fixed_string DO_STR;
-extern fixed_string ELSE_STR;
-extern fixed_string ENUM_STR;
-extern fixed_string EXPLICIT_STR;
-extern fixed_string EXTERN_STR;
-extern fixed_string FALSE_STR;
-extern fixed_string FINAL_STR;
-extern fixed_string FLOAT_STR;
-extern fixed_string FOR_STR;
-extern fixed_string FRIEND_STR;
-extern fixed_string IF_STR;
-extern fixed_string INLINE_STR;
-extern fixed_string INT_STR;
-extern fixed_string LONG_STR;
-extern fixed_string MUTABLE_STR;
-extern fixed_string NAMESPACE_STR;
-extern fixed_string NEW_STR;
-extern fixed_string NEW_ARRAY_STR;
-extern fixed_string NOEXCEPT_STR;
-extern fixed_string NULLPTR_STR;
-extern fixed_string NULLPTR_T_STR;
-extern fixed_string OPERATOR_STR;
-extern fixed_string OVERRIDE_STR;
-extern fixed_string PRIVATE_STR;
-extern fixed_string PROTECTED_STR;
-extern fixed_string PUBLIC_STR;
-extern fixed_string REINTERPRET_CAST_STR;
-extern fixed_string RETURN_STR;
-extern fixed_string SHORT_STR;
-extern fixed_string SIGNED_STR;
-extern fixed_string SIZEOF_STR;
-extern fixed_string STATIC_STR;
-extern fixed_string STATIC_CAST_STR;
-extern fixed_string STRUCT_STR;
-extern fixed_string SWITCH_STR;
-extern fixed_string TEMPLATE_STR;
-extern fixed_string THIS_STR;
-extern fixed_string THROW_STR;
-extern fixed_string TRUE_STR;
-extern fixed_string TRY_STR;
-extern fixed_string TYPEDEF_STR;
-extern fixed_string TYPEID_STR;
-extern fixed_string TYPENAME_STR;
-extern fixed_string UNION_STR;
-extern fixed_string UNSIGNED_STR;
-extern fixed_string USING_STR;
-extern fixed_string VIRTUAL_STR;
-extern fixed_string VOID_STR;
-extern fixed_string WHILE_STR;
+extern NodeBase::fixed_string AUTO_STR;
+extern NodeBase::fixed_string BOOL_STR;
+extern NodeBase::fixed_string BREAK_STR;
+extern NodeBase::fixed_string CATCH_STR;
+extern NodeBase::fixed_string CASE_STR;
+extern NodeBase::fixed_string CHAR_STR;
+extern NodeBase::fixed_string CLASS_STR;
+extern NodeBase::fixed_string CONST_STR;
+extern NodeBase::fixed_string CONST_CAST_STR;
+extern NodeBase::fixed_string CONSTEXPR_STR;
+extern NodeBase::fixed_string CONTINUE_STR;
+extern NodeBase::fixed_string DEFAULT_STR;
+extern NodeBase::fixed_string DELETE_STR;
+extern NodeBase::fixed_string DELETE_ARRAY_STR;
+extern NodeBase::fixed_string DOUBLE_STR;
+extern NodeBase::fixed_string DYNAMIC_CAST_STR;
+extern NodeBase::fixed_string DO_STR;
+extern NodeBase::fixed_string ELSE_STR;
+extern NodeBase::fixed_string ENUM_STR;
+extern NodeBase::fixed_string EXPLICIT_STR;
+extern NodeBase::fixed_string EXTERN_STR;
+extern NodeBase::fixed_string FALSE_STR;
+extern NodeBase::fixed_string FINAL_STR;
+extern NodeBase::fixed_string FLOAT_STR;
+extern NodeBase::fixed_string FOR_STR;
+extern NodeBase::fixed_string FRIEND_STR;
+extern NodeBase::fixed_string IF_STR;
+extern NodeBase::fixed_string INLINE_STR;
+extern NodeBase::fixed_string INT_STR;
+extern NodeBase::fixed_string LONG_STR;
+extern NodeBase::fixed_string MUTABLE_STR;
+extern NodeBase::fixed_string NAMESPACE_STR;
+extern NodeBase::fixed_string NEW_STR;
+extern NodeBase::fixed_string NEW_ARRAY_STR;
+extern NodeBase::fixed_string NOEXCEPT_STR;
+extern NodeBase::fixed_string NULLPTR_STR;
+extern NodeBase::fixed_string NULLPTR_T_STR;
+extern NodeBase::fixed_string OPERATOR_STR;
+extern NodeBase::fixed_string OVERRIDE_STR;
+extern NodeBase::fixed_string PRIVATE_STR;
+extern NodeBase::fixed_string PROTECTED_STR;
+extern NodeBase::fixed_string PUBLIC_STR;
+extern NodeBase::fixed_string REINTERPRET_CAST_STR;
+extern NodeBase::fixed_string RETURN_STR;
+extern NodeBase::fixed_string SHORT_STR;
+extern NodeBase::fixed_string SIGNED_STR;
+extern NodeBase::fixed_string SIZEOF_STR;
+extern NodeBase::fixed_string STATIC_STR;
+extern NodeBase::fixed_string STATIC_CAST_STR;
+extern NodeBase::fixed_string STRUCT_STR;
+extern NodeBase::fixed_string SWITCH_STR;
+extern NodeBase::fixed_string TEMPLATE_STR;
+extern NodeBase::fixed_string THIS_STR;
+extern NodeBase::fixed_string THROW_STR;
+extern NodeBase::fixed_string TRUE_STR;
+extern NodeBase::fixed_string TRY_STR;
+extern NodeBase::fixed_string TYPEDEF_STR;
+extern NodeBase::fixed_string TYPEID_STR;
+extern NodeBase::fixed_string TYPENAME_STR;
+extern NodeBase::fixed_string UNION_STR;
+extern NodeBase::fixed_string UNSIGNED_STR;
+extern NodeBase::fixed_string USING_STR;
+extern NodeBase::fixed_string VIRTUAL_STR;
+extern NodeBase::fixed_string VOID_STR;
+extern NodeBase::fixed_string WHILE_STR;
 
-extern fixed_string DEFINED_STR;
-extern fixed_string HASH_DEFINE_STR;
-extern fixed_string HASH_ELIF_STR;
-extern fixed_string HASH_ELSE_STR;
-extern fixed_string HASH_ENDIF_STR;
-extern fixed_string HASH_ERROR_STR;
-extern fixed_string HASH_IF_STR;
-extern fixed_string HASH_IFDEF_STR;
-extern fixed_string HASH_IFNDEF_STR;
-extern fixed_string HASH_INCLUDE_STR;
-extern fixed_string HASH_LINE_STR;
-extern fixed_string HASH_PRAGMA_STR;
-extern fixed_string HASH_UNDEF_STR;
+extern NodeBase::fixed_string DEFINED_STR;
+extern NodeBase::fixed_string HASH_DEFINE_STR;
+extern NodeBase::fixed_string HASH_ELIF_STR;
+extern NodeBase::fixed_string HASH_ELSE_STR;
+extern NodeBase::fixed_string HASH_ENDIF_STR;
+extern NodeBase::fixed_string HASH_ERROR_STR;
+extern NodeBase::fixed_string HASH_IF_STR;
+extern NodeBase::fixed_string HASH_IFDEF_STR;
+extern NodeBase::fixed_string HASH_IFNDEF_STR;
+extern NodeBase::fixed_string HASH_INCLUDE_STR;
+extern NodeBase::fixed_string HASH_LINE_STR;
+extern NodeBase::fixed_string HASH_PRAGMA_STR;
+extern NodeBase::fixed_string HASH_UNDEF_STR;
 
 //------------------------------------------------------------------------------
 //
 //  Other parser strings.
 //
-extern fixed_string ARRAY_STR;
-extern fixed_string COMMENT_END_STR;
-extern fixed_string COMMENT_BEGIN_STR;
-extern fixed_string COMMENT_STR;
-extern fixed_string ELLIPSES_STR;
-extern fixed_string LOCALS_STR;
-extern fixed_string NULL_STR;
+extern NodeBase::fixed_string ARRAY_STR;
+extern NodeBase::fixed_string COMMENT_END_STR;
+extern NodeBase::fixed_string COMMENT_BEGIN_STR;
+extern NodeBase::fixed_string COMMENT_STR;
+extern NodeBase::fixed_string ELLIPSES_STR;
+extern NodeBase::fixed_string LOCALS_STR;
+extern NodeBase::fixed_string NULL_STR;
 
 //------------------------------------------------------------------------------
 //
@@ -576,15 +573,15 @@ enum CodeDisplayOptions
    DispStats  // include statistics (e.g. reads, writes)
 };
 
-extern const Flags FQ_Mask;
-extern const Flags NS_Mask;
-extern const Flags LF_Mask;
-extern const Flags NoLF_Mask;
-extern const Flags Last_Mask;
-extern const Flags Code_Mask;
-extern const Flags NoAC_Mask;
-extern const Flags NoTP_Mask;
-extern const Flags Stats_Mask;
+extern const NodeBase::Flags FQ_Mask;
+extern const NodeBase::Flags NS_Mask;
+extern const NodeBase::Flags LF_Mask;
+extern const NodeBase::Flags NoLF_Mask;
+extern const NodeBase::Flags Last_Mask;
+extern const NodeBase::Flags Code_Mask;
+extern const NodeBase::Flags NoAC_Mask;
+extern const NodeBase::Flags NoTP_Mask;
+extern const NodeBase::Flags Stats_Mask;
 
 constexpr uint8_t INDENT_SIZE = 3;
 constexpr size_t LINE_LENGTH_MAX = 80;
@@ -607,8 +604,9 @@ template< typename T > size_t IndexOf(const std::vector< T >& v, const T& item)
 //
 //  Displays the objects in a vector.
 //
-template< typename T > void DisplayObjects(const std::vector< T >& group,
-   std::ostream& stream, const std::string& prefix, const Flags& options)
+template< typename T > void DisplayObjects
+   (const std::vector< T >& group, std::ostream& stream,
+   const std::string& prefix, const NodeBase::Flags& options)
 {
    for(auto i = group.cbegin(); i != group.cend(); ++i)
    {

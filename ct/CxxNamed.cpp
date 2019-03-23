@@ -1195,7 +1195,6 @@ bool DataSpec::IsConst() const
    Debug::ft(DataSpec_IsConst);
 
    if(IsAutoDecl()) return tags_.IsConst();
-
    if(tags_.IsConst()) return true;
    auto ref = Referent();
    if(ref == nullptr) return false;

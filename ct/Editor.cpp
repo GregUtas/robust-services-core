@@ -43,6 +43,7 @@
 #include "NbCliParms.h"
 #include "SysFile.h"
 
+using std::string;
 using namespace NodeBase;
 
 //------------------------------------------------------------------------------
@@ -2482,39 +2483,29 @@ word Editor::InsertForward(const CodeWarning& log, string& expl)
 {
    Debug::ft(Editor_InsertForward1);
 
-   //  LOG must provide the namespace for the forward declaration.
+   //  LOGS provides the forward's namespace and any template parameters.
    //
-   auto qname = log.info;
-   auto pos = qname.find(SCOPE_STR);
-   if(pos == string::npos)
-      return Report(expl, "Symbol's namespace not provided.");
+   string forward = spaces(INDENT_SIZE) + log.info + ';';
+   auto srPos = forward.find(SCOPE_STR);
+   if(srPos == string::npos) return NotFound(expl, "Forward's namespace.");
 
-   //  LOG must also specify whether the forward declaration is for a class,
-   //  struct, or union (unlikely).
+   //  Extract the namespace.
    //
-   string areaStr;
-
-   if(qname.find(CLASS_STR) == 0)
-      areaStr = CLASS_STR;
-   else if(qname.find(STRUCT_STR) == 0)
-      areaStr = STRUCT_STR;
-   else if(qname.find(UNION_STR) == 0)
-      areaStr = UNION_STR;
-   else
-      return Report(expl, "Symbol must specify \"class\" or \"struct\".");
-
-   string forward = spaces(INDENT_SIZE);
-   forward += areaStr;
-   forward.push_back(SPACE);
-   forward += qname.substr(pos + 2);
-   forward.push_back(';');
+   auto areaPos = forward.find("class ");
+   if(areaPos == string::npos) areaPos = forward.find("struct ");
+   if(areaPos == string::npos) areaPos = forward.find("union ");
+   if(areaPos == string::npos) return NotFound(expl, "Forward's area type");
 
    //  Set NSPACE to "namespace <ns>", where <ns> is the symbol's namespace.
-   //  Then decide where to insert the forward declaration.
+   //  Erase <ns> from FORWARD and then decide where to insert the forward
+   //  declaration.
    //
    string nspace = NAMESPACE_STR;
-   nspace += qname.substr(areaStr.size(), pos - areaStr.size());
-   auto code = CodeBegin();
+   auto nsPos = forward.find(SPACE, areaPos);
+   auto nsName = forward.substr(nsPos, srPos - nsPos);
+   nspace += nsName;
+   forward.erase(nsPos + 1, srPos - nsPos + 1);
+   auto begin = CodeBegin();
 
    for(auto s = PrologEnd(); s != source_.end(); ++s)
    {
@@ -2528,7 +2519,7 @@ word Editor::InsertForward(const CodeWarning& log, string& expl)
          if(comp == 0) return InsertForward(s, forward, expl);
          if(comp > 0) return InsertNamespaceForward(s, nspace, forward, expl);
       }
-      else if((s->code.find(USING_STR) == 0) || (s == code))
+      else if((s->code.find(USING_STR) == 0) || (s == begin))
       {
          //  We have now passed any existing forward declarations, so add
          //  the new declaration here, along with its namespace.

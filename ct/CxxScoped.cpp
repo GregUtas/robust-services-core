@@ -540,7 +540,11 @@ CodeFile* CxxScoped::GetImplFile() const
 size_t CxxScoped::GetRange(size_t& begin, size_t& end) const
 {
    auto lexer = GetFile()->GetLexer();
-   begin = GetPos();
+   auto spec = GetTypeSpec();
+   if(spec == nullptr)
+      begin = GetPos();
+   else
+      begin = spec->GetPos();
    lexer.Reposition(begin);
    end = lexer.FindFirstOf(";");
    return string::npos;
@@ -962,8 +966,8 @@ bool Enum::EnterScope()
 {
    Debug::ft(Enum_EnterScope);
 
+   Context::SetPos(GetLoc());
    if(AtFileScope()) GetFile()->InsertEnum(this);
-
    EnterBlock();
    return true;
 }
@@ -1299,7 +1303,6 @@ void Forward::EnterBlock()
 {
    Debug::ft(Forward_EnterBlock);
 
-   Context::SetPos(GetLoc());
    Context::PushArg(StackArg(Referent(), 0, false));
 }
 
@@ -1311,6 +1314,7 @@ bool Forward::EnterScope()
 {
    Debug::ft(Forward_EnterScope);
 
+   Context::SetPos(GetLoc());
    if(AtFileScope()) GetFile()->InsertForw(this);
    return true;
 }
@@ -1530,7 +1534,6 @@ void Friend::EnterBlock()
 {
    Debug::ft(Friend_EnterBlock);
 
-   Context::SetPos(GetLoc());
    Context::PushArg(StackArg(Referent(), 0, false));
 }
 
@@ -2205,8 +2208,9 @@ bool Typedef::EnterScope()
 {
    Debug::ft(Typedef_EnterScope);
 
-   if(AtFileScope()) GetFile()->InsertType(this);
+   Context::SetPos(GetLoc());
    Context::Enter(this);
+   if(AtFileScope()) GetFile()->InsertType(this);
    spec_->EnteringScope(GetScope());
    refs_ = 0;
    return true;
@@ -2359,8 +2363,8 @@ bool Using::EnterScope()
 {
    Debug::ft(Using_EnterScope);
 
-   if(AtFileScope()) GetFile()->InsertUsing(this);
    Context::SetPos(GetLoc());
+   if(AtFileScope()) GetFile()->InsertUsing(this);
    FindReferent();
    return true;
 }

@@ -2121,6 +2121,40 @@ bool ClassInst::Instantiate()
 
 //------------------------------------------------------------------------------
 
+fn_name ClassInst_NameRefersToItem = "ClassInst.NameRefersToItem";
+
+bool ClassInst::NameRefersToItem(const string& name,
+   const CxxScope* scope, const CodeFile* file, SymbolView* view) const
+{
+   Debug::ft(ClassInst_NameRefersToItem);
+
+   //  Split NAME into its component (template name and arguments).  If it
+   //  refers to this class instance's template, see if also refers to its
+   //  template arguments.  Scoped names are compared in case NAME can only
+   //  see this class as a forward declaration.
+   //
+   auto names = GetNameAndArgs(name);
+   auto syms = Singleton< CxxSymbols >::Instance();
+   auto item = syms->FindSymbol
+      (file, scope, names.front().name, FRIEND_CLASSES, view);
+   if(item == nullptr) return false;
+
+   auto iname = item->ScopedName(false);
+   auto tname = tmplt_->ScopedName(false);
+
+   if(iname == tname)
+   {
+      size_t index = 1;
+      if(!tspec_->NamesReferToArgs(names, Context::PrevScope(), file, index))
+         return false;
+      return (index == names.size());
+   }
+
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
 void ClassInst::Shrink()
 {
    Class::Shrink();

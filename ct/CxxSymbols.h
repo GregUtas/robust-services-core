@@ -64,6 +64,7 @@ extern const NodeBase::Flags TYPE_MASK;    // typedef
 //  o FRIEND_CLASSES are used when a friend is a class.
 //  o FRIEND_FUNCS are used when a friend is a function.
 //  o SCOPE_REFS are items that can precede a scope resolution operator.
+//  o TARG_REFS finds a template argument.
 //  o TYPE_REFS finds the result of an operator (bool, size_t, or name_info).
 //  o TYPESPEC_REFS are referents of a TypeSpec.
 //  o USING_REFS are referents of a using statement.
@@ -73,6 +74,7 @@ extern const NodeBase::Flags CODE_REFS;
 extern const NodeBase::Flags FRIEND_CLASSES;
 extern const NodeBase::Flags FRIEND_FUNCS;
 extern const NodeBase::Flags SCOPE_REFS;
+extern const NodeBase::Flags TARG_REFS;
 extern const NodeBase::Flags TYPE_REFS;
 extern const NodeBase::Flags TYPESPEC_REFS;
 extern const NodeBase::Flags USING_REFS;

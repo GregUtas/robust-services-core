@@ -584,6 +584,12 @@ public:
    TypeMatch MatchTemplate(const TypeName* that,
       stringVector& tmpltParms, stringVector& tmpltArgs, bool& argFound) const;
 
+   //  Returns true if NAMES, used in SCOPE and FILE, could refer to this
+   //  name's template arguments.  INDEX is the current index into NAMES.
+   //
+   bool NamesReferToArgs(const NameVector& names, const CxxScope* scope,
+      const CodeFile* file, size_t& index) const;
+
    //  Returns true if ITEM is the referent of a template argument.
    //
    bool ItemIsTemplateArg(const CxxNamed* item) const;
@@ -1225,6 +1231,12 @@ public:
    //
    virtual void GetNames(stringVector& names) const = 0;
 
+   //  Returns true if NAMES, used in SCOPE and FILE, could refer to a type
+   //  and its template arguments.  INDEX is the current index into NAMES.
+   //
+   virtual bool NamesReferToArgs(const NameVector& names,
+      const CxxScope* scope, const CodeFile* file, size_t& index) const = 0;
+
    //  Overridden to reveal that this is a type specification.
    //
    Cxx::ItemType Type() const override { return Cxx::TypeSpec; }
@@ -1457,6 +1469,12 @@ private:
    //  Overridden to return the type's name.
    //
    const std::string* Name() const override { return name_->Name(); }
+
+   //  Returns true if NAMES, used in SCOPE and FILE, could refer to this type
+   //  and its template arguments.  INDEX is the current index into NAMES.
+   //
+   bool NamesReferToArgs(const NameVector& names, const CxxScope* scope,
+      const CodeFile* file, size_t& index) const override;
 
    //  Overridden to display the type.
    //

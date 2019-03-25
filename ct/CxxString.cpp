@@ -341,6 +341,157 @@ string GetFileName(const string& path)
 
 //------------------------------------------------------------------------------
 
+fn_name CodeTools_GetNameAndArgs = "CodeTools.GetNameAndArgs";
+
+NameVector GetNameAndArgs(const string& name)
+{
+   Debug::ft(CodeTools_GetNameAndArgs);
+
+   //  Put the outer name in NAMES[0] and its N template arguments in NAMES[1]
+   //  through NAMES[N].  Append any nested template arguments (DEPTH > 1) to
+   //  the template argument to which they belong.  This is necessary because
+   //  DataSpec.NamesReferToArgs invokes NameRefersToItem recursively, which
+   //  will unpack a nested template.  For example, A<B<C,D>,E> results in the
+   //  strings A, B<C,D>, and E, where B<C,D> will be unpacked recursively.
+   //
+   NameVector names;
+   NameAndPtrs curr;
+   size_t depth = 0;  // depth of angle brackets
+
+   for(size_t i = 0; i < name.size(); ++i)
+   {
+      auto c = name[i];
+
+      if(c == '<') ++depth;
+
+      //  Only the template name and its arguments are separated.  Any inner
+      //  templates and arguments remain together, so just append characters
+      //  when dealing with an inner name.
+      //
+      if(depth > 1)
+      {
+         curr.name.push_back(c);
+         if(c == '>') --depth;
+         continue;
+      }
+
+      switch(c)
+      {
+      case '<':
+         //
+         //  This is the start of the first template argument, so save the
+         //  template name that preceded it.
+         //
+         names.push_back(curr);
+         curr = NameAndPtrs();
+         break;
+
+      case '>':
+         //
+         //  This is the end of the last template argument, so save it.
+         //
+         --depth;
+         names.push_back(curr);
+         curr = NameAndPtrs();
+
+      case '*':
+         //
+         //  This is a pointer tag for a template argument.
+         //
+         ++curr.ptrs;
+         break;
+
+      case ',':
+         //
+         //  This ends one template argument and precedes another.
+         //
+         names.push_back(curr);
+         curr = NameAndPtrs();
+         break;
+
+      case '&':
+         //
+         //  Reference tags on template arguments disappear, but this
+         //  marks the end of a template argument unless another '&'
+         //  preceded it.
+         //
+         if(!curr.name.empty())
+         {
+            names.push_back(curr);
+            curr = NameAndPtrs();
+         }
+         break;
+
+      case '[':
+         //
+         //  This template argument has an array tag (for example, in a
+         //  unique_ptr[] specialization).
+         //
+         ++curr.ptrs;
+         break;
+
+      case ']':
+         //
+         //  This is the end of an array tag.
+         //
+         break;
+
+      case 'o':
+         //
+         //  Look for the keyword "operator", which can be used in a function
+         //  template.  It must be the first (perhaps qualified) name in NAME.
+         //
+         //  NOTE: This has not been tested.  Nothing in the code base caused
+         //  ====  its execution at the time it was written.
+         //
+         if((i == 0) || (name[i - 1] == ':'))
+         {
+            if((depth == 0) && (name.find(OPERATOR_STR, i) == i))
+            {
+               char op = SPACE;
+               size_t j = i + strlen(OPERATOR_STR);
+
+               for(NO_OP; j < name.size(); ++j)
+               {
+                  if(ValidOpChars.find(name.at(j)) == string::npos) break;
+                  op = name.at(j);
+               }
+
+               //  If no operator followed "operator", it must be an identifier
+               //  that simply begins with "operator".  Fall through and add C
+               //  to the current name.  If an operator was found, it should be
+               //  a function template, in which case OP should be a '<' that
+               //  introduces a template argument.  Extract the operator's name,
+               //  leaving the final '<' in place, and update I so that the '<'
+               //  label will be entered the next time through the loop.
+               //
+               if(op != SPACE)
+               {
+                  if(op == '<')
+                     --j;
+                  else
+                     Debug::SwLog(CodeTools_GetNameAndArgs, c, 0);
+
+                  curr.name = name.substr(i, j - i + 1);
+                  i = j + 1;
+                  break;
+               }
+            }
+         }
+         //  [[fallthrough]]
+      default:
+         //
+         //  Add C to the current name.
+         //
+         curr.name.push_back(c);
+      }
+   }
+
+   return names;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeTools_IsCodeFile = "CodeTools.IsCodeFile";
 
 bool IsCodeFile(const string& file)

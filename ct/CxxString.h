@@ -35,6 +35,19 @@ namespace CodeTools
    //
    typedef std::vector< std::string > stringVector;
 
+   //  For matching a name and template arguments, as they appears in source
+   //  code, to a template instance.
+   //
+   struct NameAndPtrs
+   {
+      std::string name;  // a name that may contain scope resolution operators
+      TagCount ptrs;     // the number of pointers attached to the name
+
+      NameAndPtrs(): ptrs(0) { }
+   };
+
+   typedef std::vector< NameAndPtrs> NameVector;
+
    //  Returns the last string that follows a '.' in FILE.  Returns an empty
    //  strng if FILE contains no '.'
    //
@@ -87,6 +100,11 @@ namespace CodeTools
    //  Returns the resulting string.
    //
    std::string Normalize(const std::string& name);
+
+   //  Splits NAME into its components.  Used when NAME refers to a template
+   //  instance (and therefore contains template arguments).
+   //
+   NameVector GetNameAndArgs(const std::string& name);
 
    //  Returns the location at which NAME matches a rear substring of fqName,
    //  in which case NAME could refer to fqName.  Returns string::npos if NAME

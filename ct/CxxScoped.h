@@ -56,7 +56,7 @@ public:
    //  portion of it that follows a scope qualifier.  Updates VIEW to specify
    //  how ITEM was accessed when true is returned.
    //
-   bool NameRefersToItem(const std::string& name,
+   virtual bool NameRefersToItem(const std::string& name,
       const CxxScope* scope, const CodeFile* file, SymbolView* view) const;
 
    //  Returns true if the item is a member of AREA.  The search stops after
@@ -1020,6 +1020,11 @@ public:
    //  Overridden to return the terminal's name.
    //
    const std::string* Name() const override { return &name_; }
+
+   //  Overridden for when NAME refers to a terminal.
+   //
+   bool NameRefersToItem(const std::string& name, const CxxScope* scope,
+      const CodeFile* file, SymbolView* view) const override;
 
    //  Overridden to shrink containers.
    //

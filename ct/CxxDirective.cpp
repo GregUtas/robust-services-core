@@ -572,7 +572,7 @@ bool Ifndef::EnterScope()
 {
    Debug::ft(Ifndef_EnterScope);
 
-   //  Compile the code that follows the #ifdef if the symbol that follows
+   //  Compile the code that follows the #ifndef if the symbol that follows
    //  it has not been defined.
    //
    Context::SetPos(GetLoc());
@@ -743,6 +743,27 @@ CxxToken* Macro::GetValue() const
    //
    Debug::SwLog(Macro_GetValue, 0, 0);
    return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Macro_NameRefersToItem = "Macro.NameRefersToItem";
+
+bool Macro::NameRefersToItem(const string& name,
+   const CxxScope* scope, const CodeFile* file, SymbolView* view) const
+{
+   Debug::ft(Macro_NameRefersToItem);
+
+   //  If this item was not declared in a file, it must be a macro name
+   //  that was defined for the compile (e.g. OS_WIN).
+   //
+   if(GetFile() == nullptr)
+   {
+      *view = DeclaredGlobally;
+      return true;
+   }
+
+   return CxxScoped::NameRefersToItem(name, scope, file, view);
 }
 
 //------------------------------------------------------------------------------

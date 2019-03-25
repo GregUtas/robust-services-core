@@ -649,34 +649,14 @@ bool CxxScoped::NameRefersToItem(const string& name,
 {
    Debug::ft(CxxScoped_NameRefersToItem);
 
-   //  If this item was not declared in a file, it must be a macro name that
-   //  was defined for the compile (e.g. OS_WIN).
-   //
    auto itemType = Type();
    auto itemFile = GetFile();
 
    if(itemFile == nullptr)
    {
-      if(itemType == Cxx::Macro)
-      {
-         view->accessibility = Unrestricted;
-         return true;
-      }
-
       auto expl = "No file for item: " + *Name();
       Context::SwLog(CxxScoped_NameRefersToItem, expl, itemType);
       return false;
-   }
-
-   //  If NAME is a template instance, assume that it is visible.
-   //c Verify the visibility of each name in a template instance.  Not doing
-   //  so can cause incorrect symbol matches that force template arguments in
-   //  unrelated templates to be renamed so that they have unique names.
-   //
-   if(name.find('<') != string::npos)
-   {
-      view->accessibility = Unrestricted;
-      return true;
    }
 
    //  The file that declares this item must affect (that is, be in the
@@ -2083,6 +2063,19 @@ bool Terminal::IsAuto() const
    Debug::ft(Terminal_IsAuto);
 
    return (*Name() == AUTO_STR);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Terminal_NameRefersToItem = "Terminal.NameRefersToItem";
+
+bool Terminal::NameRefersToItem(const string& name,
+   const CxxScope* scope, const CodeFile* file, SymbolView* view) const
+{
+   Debug::ft(Terminal_NameRefersToItem);
+
+   *view = DeclaredGlobally;
+   return true;
 }
 
 //------------------------------------------------------------------------------

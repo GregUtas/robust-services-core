@@ -1239,6 +1239,11 @@ public:
    //
    const std::string* Name() const override { return name_->Name(); }
 
+   //  Overridden for when NAME refers to a function template instance.
+   //
+   bool NameRefersToItem(const std::string& name, const CxxScope* scope,
+      const CodeFile* file, SymbolView* view) const override;
+
    //  Overridden to return the function's qualified name.
    //
    std::string QualifiedName(bool scopes, bool templates) const
@@ -1646,6 +1651,8 @@ private:
    bool MatchesExactly(const TypeSpec* that) const override;
    TypeMatch MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
       stringVector& tmpltArgs, bool& argFound) const override;
+   bool NamesReferToArgs(const NameVector& names, const CxxScope* scope,
+      const CodeFile* file, size_t& index) const override;
 
    //  The following are forwarded to the function's return type but also
    //  generate a log because they should not be invoked.

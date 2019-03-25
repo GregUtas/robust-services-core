@@ -29,8 +29,6 @@
 #include "SysIpL3Addr.h"
 #include "SysTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace NetworkBase
@@ -39,7 +37,7 @@ namespace NetworkBase
 //  stack.  It allocates a buffer for a contiguous message that may include
 //  an internal header.
 //
-class IpBuffer : public MsgBuffer
+class IpBuffer : public NodeBase::MsgBuffer
 {
 public:
    //> The maximum number of bytes that can be added to an IpBuffer.
@@ -49,7 +47,7 @@ public:
    //  Allocates a buffer of size HEADER + PAYLOAD.  DIR specifies whether
    //  the buffer will receive or send a message.
    //
-   IpBuffer(MsgDirection dir, size_t header, size_t payload);
+   IpBuffer(NodeBase::MsgDirection dir, size_t header, size_t payload);
 
    //  Copy constructor.
    //
@@ -69,11 +67,11 @@ public:
 
    //  Returns the buffer's direction (incoming or outgoing).
    //
-   MsgDirection Dir() const { return dir_; }
+   NodeBase::MsgDirection Dir() const { return dir_; }
 
    //  Updates the buffer's direction (incoming or outgoing).
    //
-   void SetDir(MsgDirection dir) { dir_ = dir; }
+   void SetDir(NodeBase::MsgDirection dir) { dir_ = dir; }
 
    //  Sets the destination IP address/port.  When using TCP, the socket
    //  dedicated to the connection must be placed in rxAddr_.socket.
@@ -96,11 +94,11 @@ public:
    //  Returns a pointer to the message header, which is also the start
    //  of the buffer.
    //
-   byte_t* HeaderPtr() const { return buff_; }
+   NodeBase::byte_t* HeaderPtr() const { return buff_; }
 
    //  Returns a pointer to the payload, skipping the message header.
    //
-   byte_t* PayloadPtr() const { return buff_ + hdrSize_; }
+   NodeBase::byte_t* PayloadPtr() const { return buff_ + hdrSize_; }
 
    //  Returns the number of bytes in the payload.  The default version
    //  returns the total buffer size minus the header size, as it doesn't
@@ -118,13 +116,13 @@ public:
    //  Returns the number of bytes in the payload and updates BYTES to
    //  reference it.  The payload excludes the message header.
    //
-   size_t Payload(byte_t*& bytes) const;
+   size_t Payload(NodeBase::byte_t*& bytes) const;
 
    //  Returns the number of bytes in an outgoing message and updates BYTES
    //  to reference it.  The size of the message, and where it starts, depend
    //  on whether it is being sent externally.
    //
-   size_t OutgoingBytes(byte_t*& bytes) const;
+   size_t OutgoingBytes(NodeBase::byte_t*& bytes) const;
 
    //  Adds SIZE bytes to the buffer, copying them from SOURCE.  If SOURCE
    //  is nullptr, nothing is copied into the buffer, but a larger buffer
@@ -132,7 +130,8 @@ public:
    //  Returns true on success, setting MOVED if the location of the message
    //  changed as a result of obtaining a larger buffer.
    //
-   virtual bool AddBytes(const byte_t* source, size_t size, bool& moved);
+   virtual bool AddBytes
+      (const NodeBase::byte_t* source, size_t size, bool& moved);
 
    //  Sends the message.  If EXTERNAL is true, the message header is dropped.
    //
@@ -144,12 +143,12 @@ public:
 
    //  Overridden to determine if the message should be traced.
    //
-   TraceStatus GetStatus() const override;
+   NodeBase::TraceStatus GetStatus() const override;
 
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -170,7 +169,7 @@ private:
 
    //  The buffer that holds the message.
    //
-   byte_t* buff_;
+   NodeBase::byte_t* buff_;
 
    //  The size of the header.
    //
@@ -190,7 +189,7 @@ private:
 
    //  Whether the buffer is incoming or outgoing.
    //
-   MsgDirection dir_ : 8;
+   NodeBase::MsgDirection dir_ : 8;
 
    //  Set if the buffer is being sent externally.
    //
@@ -205,9 +204,9 @@ private:
 //
 //  Pool for IpBuffer objects.
 //
-class IpBufferPool : public ObjectPool
+class IpBufferPool : public NodeBase::ObjectPool
 {
-   friend class Singleton< IpBufferPool >;
+   friend class NodeBase::Singleton< IpBufferPool >;
 public:
    //> The size of IpBuffer blocks.
    //

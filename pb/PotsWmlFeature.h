@@ -28,6 +28,8 @@
 #include "Clock.h"
 #include "NbTypes.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
 namespace PotsBase

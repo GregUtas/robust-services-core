@@ -35,8 +35,6 @@ namespace SessionBase
    class AnalyzeMsgEvent;
 }
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
@@ -47,10 +45,10 @@ namespace SessionBase
 //  from ServiceSM, whereas a root service (non-modifier) subclasses from
 //  RootServiceSM.
 //
-class ServiceSM : public Pooled
+class ServiceSM : public NodeBase::Pooled
 {
    friend class Event;
-   friend class Q1Way< ServiceSM >;
+   friend class NodeBase::Q1Way< ServiceSM >;
    friend class SbInitiationReq;
    friend class SsmContext;
 public:
@@ -147,7 +145,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -295,7 +293,7 @@ private:
 
    //  The queue of modifiers.
    //
-   Q1Way< ServiceSM > ssmq_;
+   NodeBase::Q1Way< ServiceSM > ssmq_;
 
    //  The parent SSM, if this SSM is a modifier.
    //
@@ -303,7 +301,7 @@ private:
 
    //  The events currently owned by the SSM.
    //
-   Q1Way< Event > eventq_[Event::Location_N];
+   NodeBase::Q1Way< Event > eventq_[Event::Location_N];
 };
 }
 #endif

@@ -31,6 +31,7 @@
 #include "Singleton.h"
 #include "SysIpL3Addr.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 

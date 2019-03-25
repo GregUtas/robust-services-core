@@ -28,6 +28,8 @@
 #include "TcpIoThread.h"
 #include "TcpIpService.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
 namespace NetworkBase

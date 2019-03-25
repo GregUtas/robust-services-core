@@ -25,17 +25,15 @@
 #include "Module.h"
 #include "NbTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace NetworkBase
 {
 //  Module for initializing NetworkBase.
 //
-class NwModule : public Module
+class NwModule : public NodeBase::Module
 {
-   friend class Singleton< NwModule >;
+   friend class NodeBase::Singleton< NwModule >;
 public:
    //  Overridden for patching.
    //
@@ -51,11 +49,11 @@ private:
 
    //  Overridden for restarts.
    //
-   void Startup(RestartLevel level) override;
+   void Startup(NodeBase::RestartLevel level) override;
 
    //  Overridden for restarts.
    //
-   void Shutdown(RestartLevel level) override;
+   void Shutdown(NodeBase::RestartLevel level) override;
 
    //  Registers the module before main() is entered.
    //

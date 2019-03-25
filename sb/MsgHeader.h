@@ -31,8 +31,6 @@
 #include "SbTypes.h"
 #include "SysSocket.h"
 
-using namespace NetworkBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
@@ -68,6 +66,7 @@ struct MsgHeader
 //  The maximum size of the payload portion of a SessionBase message.
 //  The magic "32" must be the size of MsgHeader or greater.
 //
-constexpr size_t MaxSbMsgSize = SysSocket::MaxMsgSize - sizeof(MsgHeader);
+constexpr size_t MaxSbMsgSize =
+   NetworkBase::SysSocket::MaxMsgSize - sizeof(MsgHeader);
 }
 #endif

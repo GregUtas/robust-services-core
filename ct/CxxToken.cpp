@@ -2179,6 +2179,12 @@ void Operation::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
       case Cxx::OBJECT_CREATE_ARRAY:
       case Cxx::OBJECT_DELETE:
       case Cxx::OBJECT_DELETE_ARRAY:
+         //
+         //  These are omitted because the appropriate version will be found
+         //  automatically.  The default versions are in the global namespace,
+         //  and adding them as usages causes >trim to generate unnecessary
+         //  recommendations to #include <new>.
+         //
          break;
 
       default:

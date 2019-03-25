@@ -27,8 +27,6 @@
 #include <memory>
 #include "SysTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 //
 //  A limited set of SessionBase types are defined here to insulate classes
@@ -61,7 +59,7 @@ typedef uint16_t ServiceId;
 //  Service port identifier (local to a service).  A service uses
 //  these to distinguish roles of ProtocolSMs.
 //
-typedef id_t ServicePortId;
+typedef NodeBase::id_t ServicePortId;
 
 //> Highest valid service port identifier.
 //
@@ -142,7 +140,7 @@ typedef std::unique_ptr< SbIpBuffer > SbIpBufferPtr;
 
 //  Test session identifier, used by InjectCommand and VerifyCommand.
 //
-typedef id_t TestSessionId;
+typedef NodeBase::id_t TestSessionId;
 
 //  Used by functions that support VerifyCommand.
 //

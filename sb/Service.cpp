@@ -30,6 +30,7 @@
 #include "Singleton.h"
 #include "Trigger.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 

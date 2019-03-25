@@ -34,8 +34,6 @@
 #include "SbTypes.h"
 #include "SysTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 //
 //  Trace records for SessionBase objects.
@@ -44,7 +42,7 @@ namespace SessionBase
 {
 //  Records a transaction.
 //
-class TransTrace : public TimedRecord
+class TransTrace : public NodeBase::TimedRecord
 {
 public:
    //  Types of transaction trace records.
@@ -66,7 +64,7 @@ public:
    //  can be excluded from the cost of the current transaction.  THEN
    //  was the value obtained from TicksNow.
    //
-   void ResumeTime(const ticks_t& then);
+   void ResumeTime(const NodeBase::ticks_t& then);
 
    //  Called to set the context once it is known.
    //
@@ -83,7 +81,7 @@ public:
    //  For accessing information captured by this record.
    //
    const void* Rcvr() const { return rcvr_; }
-   id_t Cid() const { return cid_; }
+   NodeBase::id_t Cid() const { return cid_; }
    bool Service() const { return service_; }
    const void* Buff() const { return buff_; }
    ContextType Type() const { return type_; }
@@ -110,15 +108,15 @@ private:
 
    //  The time when the transaction began.
    //
-   ticks_t ticks0_;
+   NodeBase::ticks_t ticks0_;
 
    //  The time when the transaction ended.
    //
-   ticks_t ticks1_;
+   NodeBase::ticks_t ticks1_;
 
    //  The FactoryId (or ServiceId, if known) involved in the transaction.
    //
-   id_t cid_;
+   NodeBase::id_t cid_;
 
    //  Set if cid_ is a ServiceId.
    //
@@ -145,7 +143,7 @@ private:
 //
 //  Records an entire incoming or outgoing message.
 //
-class BuffTrace : public TimedRecord
+class BuffTrace : public NodeBase::TimedRecord
 {
 public:
    //  Types of buffer trace records.
@@ -196,7 +194,7 @@ private:
 
    //  Overridden to nullify the record if buff_ will vanish.
    //
-   void Shutdown(RestartLevel level) override;
+   void Shutdown(NodeBase::RestartLevel level) override;
 
    //  Deleted to prohibit copying.
    //
@@ -220,7 +218,7 @@ private:
 //
 //  Records an event for a SessionBase object.
 //
-class SboTrace : public TimedRecord
+class SboTrace : public NodeBase::TimedRecord
 {
 public:
    //  Virtual to allow subclassing.
@@ -234,19 +232,19 @@ protected:
    //  Creates a trace record for SBO, with the SIZE specified.
    //  Protected because this class is virtual.
    //
-   SboTrace(size_t size, const Pooled& sbo);
+   SboTrace(size_t size, const NodeBase::Pooled& sbo);
 
    //  Displays ID in the trace's identifier column, preceded by LABEL.
    //  If ID is NIL_ID, it is not displayed.  Enough spaces to reach the
    //  description column are then inserted after the output.
    //
-   static std::string OutputId(const std::string& label, id_t id);
+   static std::string OutputId(const std::string& label, NodeBase::id_t id);
 private:
    //  The object associated with this trace record.  By the time the
    //  record is displayed, the object will have been deleted, so only
    //  the value of the pointer itself ("this") should be used.
    //
-   const Pooled* const sbo_;
+   const NodeBase::Pooled* const sbo_;
 };
 
 //------------------------------------------------------------------------------
@@ -308,7 +306,7 @@ private:
 
    //  The object block identifier of the PSM's port, if known.
    //
-   PooledObjectId bid_;
+   NodeBase::PooledObjectId bid_;
 };
 
 //------------------------------------------------------------------------------
@@ -341,7 +339,7 @@ private:
 
    //  The port's object block identifier.
    //
-   const PooledObjectId bid_;
+   const NodeBase::PooledObjectId bid_;
 };
 
 //------------------------------------------------------------------------------
@@ -440,11 +438,11 @@ private:
 
    //  The timer's duration.
    //
-   const secs_t secs_;
+   const NodeBase::secs_t secs_;
 
    //  The PSM associated with the timer.
    //
-   const Pooled* const psm_;
+   const NodeBase::Pooled* const psm_;
 };
 
 //------------------------------------------------------------------------------

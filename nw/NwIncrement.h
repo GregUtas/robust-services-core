@@ -27,95 +27,96 @@
 #include "NbTypes.h"
 #include "SysTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace NetworkBase
 {
 //  Network layer additions to the Clear command.
 //
-class NwClearWhatParm : public ClearWhatParm
+class NwClearWhatParm : public NodeBase::ClearWhatParm
 {
 public:
    NwClearWhatParm();
    virtual ~NwClearWhatParm() = default;
 };
 
-class NwClearCommand : public ClearCommand
+class NwClearCommand : public NodeBase::ClearCommand
 {
 public:
-   static const id_t PeerIndex   = LastNbIndex + 1;
-   static const id_t PeersIndex  = LastNbIndex + 2;
-   static const id_t PortIndex   = LastNbIndex + 3;
-   static const id_t PortsIndex  = LastNbIndex + 4;
-   static const id_t LastNwIndex = LastNbIndex + 4;
+   static const NodeBase::id_t PeerIndex   = LastNbIndex + 1;
+   static const NodeBase::id_t PeersIndex  = LastNbIndex + 2;
+   static const NodeBase::id_t PortIndex   = LastNbIndex + 3;
+   static const NodeBase::id_t PortsIndex  = LastNbIndex + 4;
+   static const NodeBase::id_t LastNwIndex = LastNbIndex + 4;
 
    //  Set BIND to false if binding a subclass of NwClearWhatParm.
    //
    explicit NwClearCommand(bool bind = true);
    virtual ~NwClearCommand() = default;
 protected:
-   word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   NodeBase::word ProcessSubcommand
+      (NodeBase::CliThread& cli, NodeBase::id_t index) const override;
 };
 
 //------------------------------------------------------------------------------
 //
 //  Network layer additions to the Exclude command.
 //
-class NwExcludeWhatParm : public ExcludeWhatParm
+class NwExcludeWhatParm : public NodeBase::ExcludeWhatParm
 {
 public:
    NwExcludeWhatParm();
    virtual ~NwExcludeWhatParm() = default;
 };
 
-class NwExcludeCommand : public ExcludeCommand
+class NwExcludeCommand : public NodeBase::ExcludeCommand
 {
 public:
-   static const id_t ExcludePeerIndex = LastNbIndex + 1;
-   static const id_t ExcludePortIndex = LastNbIndex + 2;
-   static const id_t LastNwIndex      = LastNbIndex + 2;
+   static const NodeBase::id_t ExcludePeerIndex = LastNbIndex + 1;
+   static const NodeBase::id_t ExcludePortIndex = LastNbIndex + 2;
+   static const NodeBase::id_t LastNwIndex      = LastNbIndex + 2;
 
    //  Set BIND to false if binding a subclass of NwExcludeWhatParm
    //
    explicit NwExcludeCommand(bool bind = true);
    virtual ~NwExcludeCommand() = default;
 protected:
-   word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   NodeBase::word ProcessSubcommand
+      (NodeBase::CliThread& cli, NodeBase::id_t index) const override;
 };
 
 //------------------------------------------------------------------------------
 //
 //  Network layer additions to the Include command.
 //
-class NwIncludeWhatParm : public IncludeWhatParm
+class NwIncludeWhatParm : public NodeBase::IncludeWhatParm
 {
 public:
    NwIncludeWhatParm();
    virtual ~NwIncludeWhatParm() = default;
 };
 
-class NwIncludeCommand : public IncludeCommand
+class NwIncludeCommand : public NodeBase::IncludeCommand
 {
 public:
-   static const id_t IncludePeerIndex = LastNbIndex + 1;
-   static const id_t IncludePortIndex = LastNbIndex + 2;
-   static const id_t LastNwIndex      = LastNbIndex + 2;
+   static const NodeBase::id_t IncludePeerIndex = LastNbIndex + 1;
+   static const NodeBase::id_t IncludePortIndex = LastNbIndex + 2;
+   static const NodeBase::id_t LastNwIndex      = LastNbIndex + 2;
 
    //  Set BIND to false if binding a subclass of NwIncludeWhatParm.
    //
    explicit NwIncludeCommand(bool bind = true);
    virtual ~NwIncludeCommand() = default;
 protected:
-   word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   NodeBase::word ProcessSubcommand
+      (NodeBase::CliThread& cli, NodeBase::id_t index) const override;
 };
 
 //------------------------------------------------------------------------------
 //
 //  Network layer additions to the Query command.
 //
-class NwQueryCommand : public QueryCommand
+class NwQueryCommand : public NodeBase::QueryCommand
 {
 public:
    //  Set BIND to false if binding a subclass of QueryWhatParm.
@@ -123,29 +124,30 @@ public:
    explicit NwQueryCommand(bool bind = true);
    virtual ~NwQueryCommand() = default;
 protected:
-   word ProcessSubcommand(CliThread& cli, id_t index) const override;
+   NodeBase::word ProcessSubcommand
+      (NodeBase::CliThread& cli, NodeBase::id_t index) const override;
 };
 
 //------------------------------------------------------------------------------
 //
 //  Network layer additions to the Status command.
 //
-class NwStatusCommand : public StatusCommand
+class NwStatusCommand : public NodeBase::StatusCommand
 {
 public:
    NwStatusCommand() = default;
    virtual ~NwStatusCommand() = default;
 protected:
-   word ProcessCommand(CliThread& cli) const override;
+   NodeBase::word ProcessCommand(NodeBase::CliThread& cli) const override;
 };
 
 //------------------------------------------------------------------------------
 //
 //  The increment that provides commands for the Network layer.
 //
-class NwIncrement : public CliIncrement
+class NwIncrement : public NodeBase::CliIncrement
 {
-   friend class Singleton< NwIncrement >;
+   friend class NodeBase::Singleton< NwIncrement >;
 private:
    //  Private because this singleton is not subclassed.
    //

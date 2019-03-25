@@ -28,17 +28,15 @@
 #include "Q2Way.h"
 #include "Timer.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
 {
 //  Global registry for timers.
 //
-class TimerRegistry : public Dynamic
+class TimerRegistry : public NodeBase::Dynamic
 {
-   friend class Singleton< TimerRegistry >;
+   friend class NodeBase::Singleton< TimerRegistry >;
    friend class Timer;
 public:
    //  Invokes SendTimeout on each timer that has expired.
@@ -52,7 +50,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -69,7 +67,7 @@ private:
    //  Determines the queue where a timer that will expire in SECS
    //  should be placed.
    //
-   Timer::QId CalcQId(secs_t secs) const;
+   Timer::QId CalcQId(NodeBase::secs_t secs) const;
 
    //  Sends a timeout on behalf of TMR.
    //
@@ -83,7 +81,7 @@ private:
    //  timerq_[s] contains timers expiring in (s - nextQid_) seconds; the
    //  last queue is for timers of Timer::MaxQId seconds or more.
    //
-   Q2Way< Timer > timerq_[Timer::MaxQId + 1];
+   NodeBase::Q2Way< Timer > timerq_[Timer::MaxQId + 1];
 
    //  The timer queue that will be serviced next.
    //

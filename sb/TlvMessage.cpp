@@ -25,6 +25,8 @@
 #include "NbTypes.h"
 #include "ProtocolSM.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
 namespace SessionBase

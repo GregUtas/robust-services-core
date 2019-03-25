@@ -60,11 +60,13 @@ const Flags FRIEND_CLASSES = Flags(CLASS_MASK | FORW_MASK |
    FRIEND_MASK | TYPE_MASK);
 const Flags FRIEND_FUNCS = Flags(FRIEND_CLASSES | FUNC_MASK);
 const Flags SCOPE_REFS = Flags(CLASS_MASK | ENUM_MASK | SPACE_MASK | TYPE_MASK);
+const Flags TARG_REFS = Flags(CLASS_MASK | DATA_MASK | ENUM_MASK |
+   ETOR_MASK | FORW_MASK | FRIEND_MASK | TERM_MASK | MACRO_MASK | TYPE_MASK);
 const Flags TYPE_REFS = Flags(CLASS_MASK | TERM_MASK | TYPE_MASK);
 const Flags TYPESPEC_REFS = Flags(CLASS_MASK | ENUM_MASK |
    FORW_MASK | FRIEND_MASK | TERM_MASK | TYPE_MASK);
 const Flags USING_REFS = Flags(CLASS_MASK | DATA_MASK | ENUM_MASK |
-   ETOR_MASK | FUNC_MASK | SPACE_MASK | TYPE_MASK);
+   ETOR_MASK | FORW_MASK | FRIEND_MASK | FUNC_MASK | SPACE_MASK | TYPE_MASK);
 const Flags VALUE_REFS = Flags(DATA_MASK | ETOR_MASK | MACRO_MASK | TERM_MASK);
 
 //------------------------------------------------------------------------------
@@ -644,6 +646,7 @@ void CxxSymbols::FindSymbols(const CodeFile* file, const CxxScope* scope,
    //  There was no match, so consider friend declarations, which
    //  can double as forward declarations.
    //
+   items.clear();
    if(mask.test(Cxx::Friend)) ListSymbols(key, *friends_, items);
 
    for(auto i = items.cbegin(); i != items.cend(); ++i)

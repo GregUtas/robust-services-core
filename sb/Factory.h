@@ -42,8 +42,6 @@ namespace SessionBase
    class TransTrace;
 }
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
@@ -52,10 +50,10 @@ namespace SessionBase
 //  or protocol.  This is a virtual base class.  Applications subclass from
 //  MsgFactory, PsmFactory, or SsmFactory.
 //
-class Factory : public Protected
+class Factory : public NodeBase::Protected
 {
    friend class InvokerPool;
-   friend class Registry< Factory >;
+   friend class NodeBase::Registry< Factory >;
 public:
    //  Allows "Id" to refer to a factory identifier in this class hierarchy.
    //
@@ -108,7 +106,7 @@ public:
    //  PayloadFaction and must be overridden by factories that wish to run
    //  in a different faction.
    //
-   Faction GetFaction() const { return faction_; }
+   NodeBase::Faction GetFaction() const { return faction_; }
 
    //  Returns a string that identifies the factory.
    //
@@ -118,7 +116,7 @@ public:
    //  with a string.  The default version returns nullptr and must be
    //  overridden by factories that support CLI commands.
    //
-   virtual CliText* CreateText() const;
+   virtual NodeBase::CliText* CreateText() const;
 
    //  Allocates an outgoing message that a test tool will inject after
    //  setting the signal to SID.  The default version returns nullptr
@@ -147,7 +145,7 @@ public:
    //  entire context is deleted (as the work is now a noop).  The default
    //  implementation simply returns true and may be overridden as required.
    //
-   virtual bool ScreenIcMsgs(Q1Way< Message >& msgq);
+   virtual bool ScreenIcMsgs(NodeBase::Q1Way< Message >& msgq);
 
    //  Generates statistics when a message associated with the factory is
    //  received or sent.  INCOMING is true for an incoming message, INTER
@@ -177,16 +175,16 @@ public:
 
    //  Overridden for restarts.
    //
-   void Startup(RestartLevel level) override;
+   void Startup(NodeBase::RestartLevel level) override;
 
    //  Overridden for restarts.
    //
-   void Shutdown(RestartLevel level) override;
+   void Shutdown(NodeBase::RestartLevel level) override;
 
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -216,7 +214,7 @@ protected:
    //  in PayloadFaction, so this is invoked by a constructor for a factory
    //  that needs to run in a different faction.
    //
-   void SetFaction(Faction faction) { faction_ = faction; }
+   void SetFaction(NodeBase::Faction faction) { faction_ = faction; }
 
    //  Creates the type of context that the factory uses.
    //
@@ -252,7 +250,7 @@ private:
 
    //  The factory's identifier.
    //
-   RegCell fid_;
+   NodeBase::RegCell fid_;
 
    //  The type of context that the factory uses.
    //
@@ -260,7 +258,7 @@ private:
 
    //  The scheduler faction in which the factory runs.
    //
-   Faction faction_;
+   NodeBase::Faction faction_;
 
    //  The protocol that the factory supports.
    //

@@ -271,6 +271,11 @@ public:
    //
    const std::string* Name() const override { return &name_; }
 
+   //  Overridden for when NAME refers to a macro set for the compiler.
+   //
+   bool NameRefersToItem(const std::string& name, const CxxScope* scope,
+      const CodeFile* file, SymbolView* view) const override;
+
    //  Overridden to record usage of the macro.
    //
    void RecordUsage() const override { AddUsage(); }

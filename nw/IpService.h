@@ -30,8 +30,6 @@
 #include "RegCell.h"
 #include "SysTypes.h"
 
-using namespace NodeBase;
-
 namespace NodeBase
 {
    class CliText;
@@ -41,13 +39,13 @@ namespace NodeBase
 
 namespace NetworkBase
 {
-class IpService : public Protected
+class IpService : public NodeBase::Protected
 {
-   friend class Registry< IpService >;
+   friend class NodeBase::Registry< IpService >;
 public:
    //> The maximum number of IP services.
    //
-   static const id_t MaxId;
+   static const NodeBase::id_t MaxId;
 
    //  Returns a string that identifies the service for display purposes.
    //
@@ -64,7 +62,7 @@ public:
 
    //  Returns the scheduler faction for the service's I/O thread.
    //
-   virtual Faction GetFaction() const = 0;
+   virtual NodeBase::Faction GetFaction() const = 0;
 
    //  Returns the size of the receive buffer for the service's I/O thread.
    //
@@ -79,7 +77,7 @@ public:
    //  illustrate its purpose, which is to name a protocol whose port, and
    //  possibly other attributes, could be configured via a CLI command.]
    //
-   virtual CliText* CreateText() const = 0;
+   virtual NodeBase::CliText* CreateText() const = 0;
 
    //  Returns true if applications share the I/O thread's primary socket.
    //  If it returns false, as it does for TCP-based services, application
@@ -101,7 +99,7 @@ public:
 
    //  Returns the service's identifier.
    //
-   id_t Sid() const { return sid_.GetId(); }
+   NodeBase::id_t Sid() const { return sid_.GetId(); }
 
    //  Returns the offset to sid_.
    //
@@ -112,12 +110,12 @@ public:
    //  be overridden if, for example, the service needs to be started on
    //  multiple ports.
    //
-   void Startup(RestartLevel level) override;
+   void Startup(NodeBase::RestartLevel level) override;
 
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -149,7 +147,7 @@ private:
 
    //  The service's identifier.
    //
-   RegCell sid_;
+   NodeBase::RegCell sid_;
 };
 }
 #endif

@@ -25,8 +25,6 @@
 #include "InputHandler.h"
 #include "NwTypes.h"
 
-using namespace NetworkBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
@@ -35,7 +33,7 @@ namespace SessionBase
 //  well-known port that receives or sends intra-network messages with a
 //  SessionBase header should define a subclass.
 //
-class SbInputHandler : public InputHandler
+class SbInputHandler : public NetworkBase::InputHandler
 {
 public:
    //  Virtual to allow subclassing.
@@ -48,14 +46,15 @@ public:
 protected:
    //  Protected because this is class is virtual.
    //
-   explicit SbInputHandler(IpPort* port);
+   explicit SbInputHandler(NetworkBase::IpPort* port);
 
    //  Overridden to allocate an SbIpBuffer for an incoming internal message
    //  that already has a MsgHeader.  Supports unbundling (e.g. for messages
    //  arriving over TCP).
    //
-   IpBuffer* AllocBuff(const byte_t* source, size_t size,
-      byte_t*& dest, size_t& rcvd, SysTcpSocket* socket) const override;
+   NetworkBase::IpBuffer* AllocBuff(const NodeBase::byte_t* source,
+      size_t size, NodeBase::byte_t*& dest, size_t& rcvd,
+      NetworkBase::SysTcpSocket* socket) const override;
 
    //  Overridden to queue the message for an invoker thread.  Invoked by
    //  a subclass implementation of this function after it has filled in
@@ -84,8 +83,8 @@ protected:
    //    //
    //    SbInputHandler::ReceiveBuff(buffer, size, faction);
    //
-   void ReceiveBuff
-      (IpBufferPtr& buff, size_t size, Faction faction) const override;
+   void ReceiveBuff(NetworkBase::IpBufferPtr& buff,
+      size_t size, NodeBase::Faction faction) const override;
 };
 }
 #endif

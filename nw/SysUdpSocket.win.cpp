@@ -26,6 +26,8 @@
 #include "SysIpL3Addr.h"
 #include "UdpIpService.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
 namespace NetworkBase

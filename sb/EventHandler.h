@@ -37,8 +37,6 @@ namespace SessionBase
    class ServiceSM;
 }
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
@@ -47,9 +45,9 @@ namespace SessionBase
 //  Event handlers include message analyzers, and each subclass must be a
 //  singleton.
 //
-class EventHandler : public Protected
+class EventHandler : public NodeBase::Protected
 {
-   friend class Registry< EventHandler >;
+   friend class NodeBase::Registry< EventHandler >;
 public:
    //  Allows "Id" to refer to an event handler identifier in this class
    //  hierarchy.

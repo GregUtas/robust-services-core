@@ -28,8 +28,6 @@
 #include "NwTypes.h"
 #include "SysTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace NetworkBase
@@ -53,7 +51,7 @@ namespace NetworkBase
 //  defined in SbInputHandler.h and must be subclassed for each well-known
 //  port that receives or sends messages with SessionBase headers.
 //
-class InputHandler : public Protected
+class InputHandler : public NodeBase::Protected
 {
 public:
    //  Virtual to allow subclassing.
@@ -92,16 +90,16 @@ public:
    //  however, even when sent interprocessor between different nodes in the
    //  same network.  See MsgHeader for an example of such a header.
    //
-   virtual IpBuffer* AllocBuff(const byte_t* source, size_t size,
-      byte_t*& dest, size_t& rcvd, SysTcpSocket* socket) const;
+   virtual IpBuffer* AllocBuff(const NodeBase::byte_t* source, size_t size,
+      NodeBase::byte_t*& dest, size_t& rcvd, SysTcpSocket* socket) const;
 
    //  Converts a message from network to host order when it is received.
    //  The message begins at SRC, is SIZE bytes long, and is to be placed
    //  at DEST, which is located in the BUFF that AllocBuff allocated.
    //  The default version simply copies SIZE bytes from SRC to DEST.
    //
-   virtual void NetworkToHost
-      (IpBuffer& buff, byte_t* dest, const byte_t* src, size_t size) const;
+   virtual void NetworkToHost(IpBuffer& buff, NodeBase::byte_t* dest,
+      const NodeBase::byte_t* src, size_t size) const;
 
    //  This function is invoked after a message of SIZE bytes has been copied
    //  into a BUFFER returned by AllocBuff.  FACTION is the scheduler faction
@@ -120,7 +118,7 @@ public:
    //  the buffer to be deleted.
    //
    virtual void ReceiveBuff
-      (IpBufferPtr& buff, size_t size, Faction faction) const;
+      (IpBufferPtr& buff, size_t size, NodeBase::Faction faction) const;
 
    //  Converts a message from host to network order when it is transmitted.
    //  (InputHandler has also become an output handler.)  The message begins
@@ -128,8 +126,8 @@ public:
    //  Returns the location of the converted message, which could be SRC if
    //  no conversion occurred.  The default verison simply returns SRC.
    //
-   virtual byte_t* HostToNetwork
-      (IpBuffer& buff, byte_t* src, size_t size) const;
+   virtual NodeBase::byte_t* HostToNetwork
+      (IpBuffer& buff, NodeBase::byte_t* src, size_t size) const;
 
    //  Invoked by an I/O thread to inform the input handler that SOCKET has
    //  failed.
@@ -139,7 +137,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //

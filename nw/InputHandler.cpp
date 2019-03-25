@@ -27,6 +27,7 @@
 #include "IpPort.h"
 #include "Memory.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 

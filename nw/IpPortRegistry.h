@@ -29,8 +29,6 @@
 #include "Q1Way.h"
 #include "SysIpL2Addr.h"
 
-using namespace NodeBase;
-
 namespace NetworkBase
 {
    class HostAddrCfg;
@@ -42,10 +40,10 @@ namespace NetworkBase
 {
 //  Global registry for IP ports that receive messages for applications.
 //
-class IpPortRegistry : public Protected
+class IpPortRegistry : public NodeBase::Protected
 {
    friend class IpPort;
-   friend class Singleton< IpPortRegistry >;
+   friend class NodeBase::Singleton< IpPortRegistry >;
 public:
    //  Returns the element's IP address (hostname).
    //
@@ -58,7 +56,7 @@ public:
 
    //  Returns the registry of ports.  Used for iteration.
    //
-   const Q1Way< IpPort >& Ports() const { return portq_; }
+   const NodeBase::Q1Way< IpPort >& Ports() const { return portq_; }
 
    //  Returns true if DEST.ADDR is either SRCE.ADDR, the loopback address,
    //  or the host IP address, *and* the destination port is either NilIpPort
@@ -68,16 +66,16 @@ public:
 
    //  Overridden for restarts.
    //
-   void Startup(RestartLevel level) override;
+   void Startup(NodeBase::RestartLevel level) override;
 
    //  Overridden for restarts.
    //
-   void Shutdown(RestartLevel level) override;
+   void Shutdown(NodeBase::RestartLevel level) override;
 
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -113,11 +111,11 @@ private:
 
    //  Information about each IP port that receives messages.
    //
-   Q1Way< IpPort > portq_;
+   NodeBase::Q1Way< IpPort > portq_;
 
    //  The statistics group for IP ports.
    //
-   StatisticsGroupPtr statsGroup_;
+   NodeBase::StatisticsGroupPtr statsGroup_;
 };
 }
 #endif

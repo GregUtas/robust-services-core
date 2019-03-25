@@ -38,6 +38,7 @@
 #include "TraceBuffer.h"
 
 using namespace NetworkBase;
+using namespace NodeBase;
 using std::ostream;
 
 //------------------------------------------------------------------------------

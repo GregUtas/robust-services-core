@@ -63,13 +63,15 @@ public:
    //  an empty packet, returns 0.  If the socket is non-blocking, returns
    //  -2 if there was nothing to read.
    //
-   word RecvFrom(byte_t* buff, size_t size, SysIpL3Addr& remAddr);
+   NodeBase::word RecvFrom
+      (NodeBase::byte_t* buff, size_t size, SysIpL3Addr& remAddr);
 
    //  Makes the socket non-blocking and sends DATA, of length SIZE, to the
    //  destination specified by remAddr. Returns the number of bytes sent,
    //  or -1 on failure.
    //
-   word SendTo(const byte_t* data, size_t size, const SysIpL3Addr& remAddr);
+   NodeBase::word SendTo
+      (const NodeBase::byte_t* data, size_t size, const SysIpL3Addr& remAddr);
 
    //  Overridden to indicate that this socket is running UDP.
    //
@@ -82,7 +84,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //

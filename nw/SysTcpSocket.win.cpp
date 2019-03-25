@@ -28,6 +28,8 @@
 #include "SysIpL3Addr.h"
 #include "TcpIpService.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
 namespace NetworkBase

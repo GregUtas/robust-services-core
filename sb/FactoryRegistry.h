@@ -27,18 +27,16 @@
 #include "Registry.h"
 #include "SbTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
 {
 //  Global registry for factories.
 //
-class FactoryRegistry : public Protected
+class FactoryRegistry : public NodeBase::Protected
 {
    friend class Factory;
-   friend class Singleton< FactoryRegistry >;
+   friend class NodeBase::Singleton< FactoryRegistry >;
 public:
    //  Returns the factory registered against FID.
    //
@@ -46,20 +44,20 @@ public:
 
    //  Returns the registry of factories.  Used for iteration.
    //
-   const Registry< Factory >& Factories() const { return factories_; }
+   const NodeBase::Registry< Factory >& Factories() const { return factories_; }
 
    //  Overridden for restarts.
    //
-   void Startup(RestartLevel level) override;
+   void Startup(NodeBase::RestartLevel level) override;
 
    //  Overridden for restarts.
    //
-   void Shutdown(RestartLevel level) override;
+   void Shutdown(NodeBase::RestartLevel level) override;
 
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -85,11 +83,11 @@ private:
 
    //  The global registry of factories.
    //
-   Registry< Factory > factories_;
+   NodeBase::Registry< Factory > factories_;
 
    //  The statistics group for factories.
    //
-   StatisticsGroupPtr statsGroup_;
+   NodeBase::StatisticsGroupPtr statsGroup_;
 };
 }
 #endif

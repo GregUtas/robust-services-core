@@ -56,7 +56,7 @@ public:
    //  portion of it that follows a scope qualifier.  Updates VIEW to specify
    //  how ITEM was accessed when true is returned.
    //
-   bool NameRefersToItem(const std::string& name,
+   virtual bool NameRefersToItem(const std::string& name,
       const CxxScope* scope, const CodeFile* file, SymbolView* view) const;
 
    //  Returns true if the item is a member of AREA.  The search stops after
@@ -103,8 +103,9 @@ public:
    //
    Cxx::Access GetAccess() const override { return access_; }
 
-   //  Overridden to set BEGIN to GetPos(), END to the location of the
-   //  next semicolon, and to return string::npos.
+   //  Sets BEGIN to GetPos() of the item or, if GetTypeSpec() returns a
+   //  valid type specification, then GetPos() of that specification.  Sets
+   //  END to the location of the next semicolon and returns string::npos.
    //
    size_t GetRange(size_t& begin, size_t& end) const override;
 
@@ -1019,6 +1020,11 @@ public:
    //  Overridden to return the terminal's name.
    //
    const std::string* Name() const override { return &name_; }
+
+   //  Overridden for when NAME refers to a terminal.
+   //
+   bool NameRefersToItem(const std::string& name, const CxxScope* scope,
+      const CodeFile* file, SymbolView* view) const override;
 
    //  Overridden to shrink containers.
    //

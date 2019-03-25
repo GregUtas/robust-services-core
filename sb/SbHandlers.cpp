@@ -31,6 +31,8 @@
 #include "State.h"
 #include "SysTypes.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
 namespace SessionBase

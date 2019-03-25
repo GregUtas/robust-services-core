@@ -25,9 +25,6 @@
 #include <string>
 #include "NbTypes.h"
 #include "SbTypes.h"
-#include "SysTypes.h"
-
-using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 
@@ -39,14 +36,14 @@ namespace SessionBase
 //
 struct LocalAddress
 {
-   PooledObjectId bid : 32;    // the object sending or receiving the message
-   PooledObjectSeqNo seq : 8;  // the object's incarnation number
-   ObjectPoolId pid : 8;       // the object pool associated with the object
+   NodeBase::PooledObjectId bid : 32;    // object sending or receiving message
+   NodeBase::PooledObjectSeqNo seq : 8;  // object's incarnation number
+   NodeBase::ObjectPoolId pid : 8;       // object pool associated with object
    FactoryId fid : 16;         // the factory sending/receiving the message
 
    //  Constructor.
    //
-   LocalAddress() : bid(NIL_ID), seq(0), pid(NIL_ID), fid(NIL_ID) { }
+   LocalAddress();
 
    //  Copy constructor.
    //

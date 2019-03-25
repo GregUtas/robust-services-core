@@ -785,6 +785,11 @@ public:
    //
    bool IsInTemplateInstance() const override { return true; }
 
+   //  Overridden for when NAME refers to a class template instance.
+   //
+   bool NameRefersToItem(const std::string& name, const CxxScope* scope,
+      const CodeFile* file, SymbolView* view) const override;
+
    //  Overridden to record usage of the instance's template.
    //
    void RecordUsage() const override { tmplt_->RecordUsage(); }

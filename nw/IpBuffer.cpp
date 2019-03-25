@@ -33,6 +33,7 @@
 #include "Singleton.h"
 #include "SysTcpSocket.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 

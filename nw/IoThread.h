@@ -29,8 +29,6 @@
 #include "SysIpL3Addr.h"
 #include "SysTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace NetworkBase
@@ -42,7 +40,7 @@ namespace NetworkBase
 //  using recvfrom (or something similar).  The recvfrom is performed by an
 //  I/O thread which then pushes messages into the appropriate input handler.
 //
-class IoThread : public Thread
+class IoThread : public NodeBase::Thread
 {
    friend class IpPort;
 public:
@@ -57,7 +55,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -77,16 +75,16 @@ protected:
    //  PORT's input handler.  SOURCE and SIZE identify the message's location.
    //
    void InvokeHandler
-      (const IpPort& port, const byte_t* source, size_t size) const;
+      (const IpPort& port, const NodeBase::byte_t* source, size_t size) const;
 
    //  Returns true after pausing when the thread has run locked for more
    //  than PERCENT of the maximum time allowed.
    //
-   bool ConditionalPause(word percent);
+   bool ConditionalPause(NodeBase::word percent);
 
    //  Overridden to survive warm restarts.
    //
-   bool ExitOnRestart(RestartLevel level) const override;
+   bool ExitOnRestart(NodeBase::RestartLevel level) const override;
 
    //  The port on which the thread receives messages.
    //
@@ -116,11 +114,11 @@ protected:
 
    //  The time when the current message arrived.
    //
-   ticks_t ticks0_;
+   NodeBase::ticks_t ticks0_;
 
    //  The buffer for receiving messages.
    //
-   byte_t* buffer_;
+   NodeBase::byte_t* buffer_;
 private:
    //  The size of the receive buffer for the socket bound against port_.
    //

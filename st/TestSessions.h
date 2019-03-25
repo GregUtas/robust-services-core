@@ -40,6 +40,7 @@ namespace SessionTools
    class StTestData;
 }
 
+using namespace NodeBase;
 using namespace SessionBase;
 
 //------------------------------------------------------------------------------

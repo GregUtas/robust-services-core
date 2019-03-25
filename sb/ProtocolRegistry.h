@@ -32,18 +32,16 @@ namespace SessionBase
    class Protocol;
 }
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
 {
 //  Global registry for protocols.
 //
-class ProtocolRegistry : public Protected
+class ProtocolRegistry : public NodeBase::Protected
 {
    friend class Protocol;
-   friend class Singleton< ProtocolRegistry >;
+   friend class NodeBase::Singleton< ProtocolRegistry >;
 public:
    //  Returns the protocol registered against PRID.
    //
@@ -52,7 +50,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -78,7 +76,7 @@ private:
 
    //  The global registry of protocols.
    //
-   Registry< Protocol > protocols_;
+   NodeBase::Registry< Protocol > protocols_;
 };
 }
 #endif

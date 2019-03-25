@@ -38,6 +38,7 @@
 #include "TimerThread.h"
 
 using namespace NetworkBase;
+using namespace NodeBase;
 
 //------------------------------------------------------------------------------
 

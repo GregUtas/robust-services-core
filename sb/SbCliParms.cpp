@@ -30,6 +30,8 @@
 #include "State.h"
 #include "Trigger.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
 namespace SessionBase

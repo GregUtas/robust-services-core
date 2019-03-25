@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CxxNamed.h"
+#include <cstring>
 #include <set>
 #include <sstream>
 #include <utility>
@@ -1195,7 +1196,6 @@ bool DataSpec::IsConst() const
    Debug::ft(DataSpec_IsConst);
 
    if(IsAutoDecl()) return tags_.IsConst();
-
    if(tags_.IsConst()) return true;
    auto ref = Referent();
    if(ref == nullptr) return false;
@@ -1421,6 +1421,95 @@ TypeMatch DataSpec::MatchTemplateArg(const TypeSpec* that) const
    //
    if(MatchesExactly(that)) return Compatible;
    return Incompatible;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name DataSpec_NamesReferToArgs = "DataSpec.NamesReferToArgs";
+
+bool DataSpec::NamesReferToArgs(const NameVector& names,
+   const CxxScope* scope, const CodeFile* file, size_t& index) const
+{
+   Debug::ft(DataSpec_NamesReferToArgs);
+
+   //  See if NAME matches this type in constness and level of
+   //  indirection while removing any "const" tags from NAME.
+   //  Any pointer tags on NAME have already been removed.
+   //
+   if(index >= names.size()) return false;
+
+   auto& element = names.at(index);
+   auto name = element.name;
+
+   auto readonly = IsConst();
+   auto pos = name.find("const ");
+
+   if(readonly)
+   {
+      if(pos == string::npos) return false;
+      name = name.erase(0, strlen("const "));
+   }
+   else
+   {
+      if(pos == 0) return false;
+   }
+
+   readonly = IsConstPtr();
+   pos = name.find(" const");
+
+   if(readonly)
+   {
+      if(pos == string::npos) return false;
+      name = name.erase(pos, strlen(" const"));
+   }
+   else
+   {
+      if(pos == 0) return false;
+   }
+
+   if(element.ptrs != Ptrs(true)) return false;
+
+   //  See if NAME refers to the same item as this type.  If this
+   //  type refers to data (a constant), use its underlying type.
+   //
+   auto ref = name_->Referent();
+   auto curr = dynamic_cast< CxxScoped* >(ref);
+   if(curr == nullptr) return false;
+
+   switch(curr->Type())
+   {
+   case Cxx::Data:
+      ref = curr->GetTypeSpec()->Referent();
+      curr = dynamic_cast< CxxScoped* >(ref);
+      if(curr == nullptr) return false;
+   }
+
+   while(curr != nullptr)
+   {
+      //  Look for all symbols that match NAME.  There are cases in
+      //  which NAME in FILE and SCOPE can see a class but not its
+      //  forward declaration(s), and vice versa.
+      //
+      SymbolVector items;
+      ViewVector views;
+
+      auto syms = Singleton< CxxSymbols >::Instance();
+      syms->FindSymbols(file, scope, name, TARG_REFS, items, views);
+
+      if(!items.empty())
+      {
+         ++index;
+         return true;
+      }
+
+      //  Keep looking while deeper underlying types exist.
+      //
+      auto next = dynamic_cast< CxxScoped* >(curr->Referent());
+      if(curr == next) break;
+      curr = next;
+   }
+
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -2893,6 +2982,26 @@ void TypeName::MemberAccessed(Class* cls, CxxNamed* mem) const
 
 //------------------------------------------------------------------------------
 
+fn_name TypeName_NamesReferToArgs = "TypeName.NamesReferToArgs";
+
+bool TypeName::NamesReferToArgs(const NameVector& names,
+   const CxxScope* scope, const CodeFile* file, size_t& index) const
+{
+   Debug::ft(TypeName_NamesReferToArgs);
+
+   if(args_ != nullptr)
+   {
+      for(auto a = args_->cbegin(); a != args_->cend(); ++a)
+      {
+         if(!(*a)->NamesReferToArgs(names, scope, file, index)) return false;
+      }
+   }
+
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
 void TypeName::Print(ostream& stream, const Flags& options) const
 {
    if(scoped_) stream << SCOPE_STR;
@@ -3273,6 +3382,15 @@ TypeMatch TypeSpec::MustMatchWith(const StackArg& that) const
    }
 
    return match;
+}
+
+//------------------------------------------------------------------------------
+
+bool TypeSpec::NamesReferToArgs(const NameVector& names,
+   const CxxScope* scope, const CodeFile* file, size_t& index) const
+{
+   Debug::SwLog(TypeSpec_PureVirtualFunction, "NamesReferToArgs", 0);
+   return false;
 }
 
 //------------------------------------------------------------------------------

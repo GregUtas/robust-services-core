@@ -29,6 +29,7 @@
 #include "Singleton.h"
 #include "ToolTypes.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 

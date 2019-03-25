@@ -46,6 +46,8 @@
 #include "ToolTypes.h"
 #include "TraceBuffer.h"
 
+using namespace NetworkBase;
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 

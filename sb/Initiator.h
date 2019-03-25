@@ -29,8 +29,6 @@
 #include "Q1Link.h"
 #include "SbTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
@@ -40,9 +38,9 @@ namespace SessionBase
 //  trigger (usually one) that it uses in order to observe its root service's
 //  behavior and create its own ServiceSM at the appropriate time.
 //
-class Initiator : public Protected
+class Initiator : public NodeBase::Protected
 {
-   friend class Q1Way< Initiator >;
+   friend class NodeBase::Q1Way< Initiator >;
 public:
    //  Each initiator specifies a priority when it registers with its trigger.
    //  The trigger queues initiators in descending order of priority, meaning
@@ -73,7 +71,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -133,7 +131,7 @@ private:
 
    //  The next initiator in the trigger's queue of initiators.
    //
-   Q1Link link_;
+   NodeBase::Q1Link link_;
 };
 }
 #endif

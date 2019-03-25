@@ -26,6 +26,7 @@
 #include "SysTypes.h"
 #include "TcpIpPort.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 

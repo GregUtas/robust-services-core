@@ -31,6 +31,7 @@
 #include "SbEvents.h"
 #include "SysTypes.h"
 
+using namespace NetworkBase;
 using std::ostream;
 using std::string;
 

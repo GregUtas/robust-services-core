@@ -279,8 +279,6 @@ SbTypes.h
       uint16_t [cstdint]
    Forward usage:
       SessionBase::SbIpBuffer [SbTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::id_t [SysTypes.h]
 AllocationException.h
    Base usage:
       NodeBase::Exception [Exception.h]
@@ -395,9 +393,6 @@ CodeTypes.h
       std::string [string]
       std::vector [vector]
       uint16_t [cstdint]
-   To remove dependencies on using statements, qualify
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::fixed_string [SysTypes.h]
 SbAppIds.h
    Direct usage:
       SessionBase::FactoryId [SbTypes.h]
@@ -514,6 +509,7 @@ CodeDir.h
       std::string [string]
 CxxString.h
    Direct usage:
+      CodeTools::TagCount [CodeTypes.h]
       std::string [string]
       std::vector [vector]
    Indirect usage:
@@ -593,9 +589,6 @@ SysIpL2Addr.h
    Indirect usage:
       NetworkBase::ipv4addr_t [NwTypes.h]
       std::string [string]
-   To remove dependencies on using statements, qualify
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::Object [Object.h]
 NbTypes.h
    Direct usage:
       NodeBase::DynAllocator [Allocators.h]
@@ -934,6 +927,7 @@ Editor.h
       CodeTools::Function [CxxFwd.h]
       NodeBase::CliThread [Editor.h]
    To remove dependencies on using statements, qualify
+      NodeBase::CliThread [Editor.h]
       NodeBase::word [SysTypes.h]
       std::string [string]
 Lexer.h
@@ -1017,10 +1011,6 @@ SysIpL3Addr.h
       std::string [string]
    Forward usage:
       NetworkBase::SysTcpSocket [NwTypes.h]
-   Add a using statement for
-      NodeBase
-   To remove dependencies on using statements, qualify
-      NodeBase::Flags [SysTypes.h]
 Signal.h
    Base usage:
       NodeBase::Protected [Protected.h]
@@ -1036,13 +1026,6 @@ Signal.h
    Forward usage:
       NodeBase::CliText [Signal.h]
       NodeBase::Registry [RegCell.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::CliText [Signal.h]
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::NIL_ID [SysTypes.h]
-      NodeBase::Protected [Protected.h]
-      NodeBase::RegCell [RegCell.h]
-      NodeBase::Registry<SessionBase::Signal> [Registry.h]
 EventHandler.h
    Base usage:
       NodeBase::Protected [Protected.h]
@@ -1055,9 +1038,6 @@ EventHandler.h
       NodeBase::Registry [EventHandler.h]
       SessionBase::Event [SbTypes.h]
       SessionBase::ServiceSM [EventHandler.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::Protected [Protected.h]
-      NodeBase::Registry<SessionBase::EventHandler> [Registry.h]
 Timer.h
    Base usage:
       NodeBase::Pooled [Pooled.h]
@@ -1075,13 +1055,6 @@ Timer.h
       NodeBase::Q1Way [Q1Link.h]
       NodeBase::Q2Way [Q2Link.h]
       SessionBase::ProtocolSM [SbTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::Pooled [Pooled.h]
-      NodeBase::Q1Way<SessionBase::Timer> [Q1Way.h]
-      NodeBase::Q2Link [Q2Link.h]
-      NodeBase::Q2Way<SessionBase::Timer> [Q2Way.h]
-      NodeBase::secs_t [Clock.h]
 MscContextPair.h
    Base usage:
       NodeBase::Temporary [Temporary.h]
@@ -1563,6 +1536,7 @@ CxxNamed.h
       CodeTools::Cxx::Operator [Cxx.h]
       CodeTools::CxxToken [CxxToken.h]
       CodeTools::CxxUsageSets [CxxToken.h]
+      CodeTools::NameVector [CxxString.h]
       CodeTools::QualNamePtr [CxxFwd.h]
       CodeTools::SymbolView [CodeTypes.h]
       CodeTools::TagCount [CodeTypes.h]
@@ -1697,11 +1671,6 @@ InputHandler.h
       NetworkBase::IpPort [NwTypes.h]
       NetworkBase::SysSocket [NwTypes.h]
       NetworkBase::SysTcpSocket [NwTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::Faction [NbTypes.h]
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::Protected [Protected.h]
-      NodeBase::byte_t [SysTypes.h]
 SysSocket.h
    Base usage:
       NodeBase::Dynamic [Dynamic.h]
@@ -1726,14 +1695,6 @@ SysSocket.h
       NetworkBase::IpService [NwTypes.h]
       NetworkBase::NwTrace [SysSocket.h]
       NetworkBase::SysIpL3Addr [NwTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::Dynamic [Dynamic.h]
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::SysSocket_t [SysDecls.h]
-      NodeBase::TraceRecordId [NbTypes.h]
-      NodeBase::TraceStatus [ToolTypes.h]
-      NodeBase::fixed_string [SysTypes.h]
-      NodeBase::word [SysTypes.h]
 NwTracer.h
    Base usage:
       NodeBase::Permanent [Permanent.h]
@@ -1753,13 +1714,6 @@ NwTracer.h
    Forward usage:
       NetworkBase::IpBuffer [NwTypes.h]
       NodeBase::Singleton [NbTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::FlagId [SysTypes.h]
-      NodeBase::MsgDirection [NbTypes.h]
-      NodeBase::Permanent [Permanent.h]
-      NodeBase::Singleton<NetworkBase::NwTracer> [Singleton.h]
-      NodeBase::TraceRc [ToolTypes.h]
-      NodeBase::TraceStatus [ToolTypes.h]
 Parameter.h
    Base usage:
       NodeBase::Protected [Protected.h]
@@ -1782,14 +1736,6 @@ Parameter.h
       NodeBase::CliThread [Parameter.h]
       NodeBase::Registry [RegCell.h]
       SessionBase::Message [SbTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::CliParm [Parameter.h]
-      NodeBase::CliThread [Parameter.h]
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::Protected [Protected.h]
-      NodeBase::RegCell [RegCell.h]
-      NodeBase::Registry<Parameter> [Registry.h]
-      NodeBase::byte_t [SysTypes.h]
 Factory.h
    Base usage:
       NodeBase::Protected [Protected.h]
@@ -1822,15 +1768,6 @@ Factory.h
       SessionBase::FactoryStats [Factory.h]
       SessionBase::Message [SbTypes.h]
       SessionBase::TransTrace [Factory.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::CliText [Signal.h]
-      NodeBase::Faction [NbTypes.h]
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::Protected [Protected.h]
-      NodeBase::Q1Way<SessionBase::Message> [Q1Way.h]
-      NodeBase::RegCell [RegCell.h]
-      NodeBase::Registry<SessionBase::Factory> [Registry.h]
-      NodeBase::RestartLevel [SysTypes.h]
 Event.h
    Base usage:
       NodeBase::Pooled [Pooled.h]
@@ -1848,24 +1785,14 @@ Event.h
       SessionBase::RootServiceSM [SbTypes.h]
       SessionBase::ServiceSM [EventHandler.h]
       SessionBase::State [SbTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::NIL_ID [SysTypes.h]
-      NodeBase::Pooled [Pooled.h]
 LocalAddress.h
    Direct usage:
-      NodeBase::NIL_ID [SysTypes.h]
       NodeBase::ObjectPoolId [NbTypes.h]
       NodeBase::PooledObjectId [NbTypes.h]
       NodeBase::PooledObjectSeqNo [NbTypes.h]
       SessionBase::FactoryId [SbTypes.h]
    Indirect usage:
       std::string [string]
-   To remove dependencies on using statements, qualify
-      NodeBase::NIL_ID [SysTypes.h]
-      NodeBase::ObjectPoolId [NbTypes.h]
-      NodeBase::PooledObjectId [NbTypes.h]
-      NodeBase::PooledObjectSeqNo [NbTypes.h]
 Initiator.h
    Base usage:
       NodeBase::Protected [Protected.h]
@@ -1884,31 +1811,16 @@ Initiator.h
       SessionBase::Event [SbTypes.h]
       SessionBase::ServiceSM [EventHandler.h]
       SessionBase::Trigger [SbTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::Protected [Protected.h]
-      NodeBase::Q1Link [Q1Link.h]
-      NodeBase::Q1Way<SessionBase::Initiator> [Q1Way.h]
 SbHandlers.h
    Base usage:
       SessionBase::EventHandler [EventHandler.h]
    Forward usage:
       NodeBase::Singleton [SbHandlers.h]
-   Add a using statement for
-      NodeBase
-   To remove dependencies on using statements, qualify
-      NodeBase::Singleton<SessionBase::SbAnalyzeMessage> [Singleton.h]
-      NodeBase::Singleton<SessionBase::SbAnalyzeSap> [Singleton.h]
-      NodeBase::Singleton<SessionBase::SbAnalyzeSnp> [Singleton.h]
-      NodeBase::Singleton<SessionBase::SbForceTransition> [Singleton.h]
-      NodeBase::Singleton<SessionBase::SbInitiationReq> [Singleton.h]
 PotsBcHandlers.h
    Base usage:
       SessionBase::EventHandler [EventHandler.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Add a using statement for
-      NodeBase
    To remove dependencies on using statements, qualify
       NodeBase::Singleton<PotsBase::PotsBcAcAnalyzeLocalMessage> [Singleton.h]
       NodeBase::Singleton<PotsBase::PotsBcAcLocalSuspend> [Singleton.h]
@@ -1965,8 +1877,6 @@ PotsProxyHandlers.h
       SessionBase::EventHandler [EventHandler.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Add a using statement for
-      NodeBase
    To remove dependencies on using statements, qualify
       NodeBase::Singleton<PotsBase::PotsProxyAcAnalyzeLocalMessage> [Singleton.h]
       NodeBase::Singleton<PotsBase::PotsProxyAcLocalSuspend> [Singleton.h]
@@ -2297,11 +2207,6 @@ IpPort.h
       NetworkBase::IpService [NwTypes.h]
       NetworkBase::SysSocket [NwTypes.h]
       NetworkBase::SysTcpSocket [NwTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::Protected [Protected.h]
-      NodeBase::Q1Link [Q1Link.h]
-      NodeBase::RestartLevel [SysTypes.h]
 IpPortCfgParm.h
    Base usage:
       NodeBase::CfgIntParm [CfgIntParm.h]
@@ -2311,21 +2216,11 @@ IpPortCfgParm.h
       NodeBase::word [SysTypes.h]
    Forward usage:
       NetworkBase::IpService [IpPortCfgParm.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::CfgIntParm [CfgIntParm.h]
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::RestartLevel [SysTypes.h]
-      NodeBase::RestartLevel::RestartCold [SysTypes.h]
-      NodeBase::word [SysTypes.h]
 NwModule.h
    Base usage:
       NodeBase::Module [Module.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::Module [Module.h]
-      NodeBase::RestartLevel [SysTypes.h]
-      NodeBase::Singleton<NetworkBase::NwModule> [Singleton.h]
 SysUdpSocket.h
    Base usage:
       NetworkBase::SysSocket [SysSocket.h]
@@ -2341,12 +2236,6 @@ SysUdpSocket.h
    Forward usage:
       NetworkBase::SysIpL3Addr [NwTypes.h]
       NetworkBase::UdpIpService [SysUdpSocket.h]
-   Add a using statement for
-      NodeBase
-   To remove dependencies on using statements, qualify
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::byte_t [SysTypes.h]
-      NodeBase::word [SysTypes.h]
 SbEvents.h
    Base usage:
       SessionBase::Event [Event.h]
@@ -2366,10 +2255,6 @@ SbEvents.h
       SessionBase::Initiator [SbTypes.h]
       SessionBase::Message [SbTypes.h]
       SessionBase::ServiceSM [EventHandler.h]
-   Add a using statement for
-      NodeBase
-   To remove dependencies on using statements, qualify
-      NodeBase::Flags [SysTypes.h]
 GlobalAddress.h
    Base usage:
       NetworkBase::SysIpL3Addr [SysIpL3Addr.h]
@@ -2382,19 +2267,10 @@ GlobalAddress.h
       NetworkBase::ipport_t [NwTypes.h]
       SessionBase::FactoryId [SbTypes.h]
       SessionBase::LocalAddress [LocalAddress.h]
-   Add a using statement for
-      NodeBase
-   To remove dependencies on using statements, qualify
-      NetworkBase::SysIpL3Addr [SysIpL3Addr.h]
-      NetworkBase::ipport_t [NwTypes.h]
-      NodeBase::Flags [SysTypes.h]
 SbCliParms.h
    Base usage:
       NodeBase::CliIntParm [CliIntParm.h]
    Indirect usage:
-      NodeBase::fixed_string [SysTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::CliIntParm [CliIntParm.h]
       NodeBase::fixed_string [SysTypes.h]
 MsgFactory.h
    Base usage:
@@ -2426,35 +2302,16 @@ State.h
       ptrdiff_t [cstddef]
    Forward usage:
       NodeBase::Registry [RegCell.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::Protected [Protected.h]
-      NodeBase::RegCell [RegCell.h]
-      NodeBase::Registry<SessionBase::State> [Registry.h]
 SbInputHandler.h
    Base usage:
       NetworkBase::InputHandler [InputHandler.h]
    Forward usage:
       NetworkBase::IpPort [NwTypes.h]
-   Add a using statement for
-      NodeBase
-   To remove dependencies on using statements, qualify
-      NetworkBase::InputHandler [InputHandler.h]
-      NetworkBase::IpBuffer [NwTypes.h]
-      NetworkBase::IpBufferPtr [NwTypes.h]
-      NetworkBase::IpPort [NwTypes.h]
-      NetworkBase::SysTcpSocket [NwTypes.h]
-      NodeBase::Faction [NbTypes.h]
-      NodeBase::byte_t [SysTypes.h]
 SbModule.h
    Base usage:
       NodeBase::Module [Module.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::Module [Module.h]
-      NodeBase::RestartLevel [SysTypes.h]
-      NodeBase::Singleton<SessionBase::SbModule> [Singleton.h]
 MscAddress.h
    Base usage:
       NodeBase::Temporary [Temporary.h]
@@ -2500,8 +2357,6 @@ MediaFailureEvent.h
    Forward usage:
       MediaBase::MediaEndpt [MediaFailureEvent.h]
       SessionBase::ServiceSM [EventHandler.h]
-   Add a using statement for
-      NodeBase
    To remove dependencies on using statements, qualify
       NodeBase::Flags [SysTypes.h]
       SessionBase::Event [Event.h]
@@ -3137,13 +2992,6 @@ IpPortRegistry.h
       NetworkBase::IpPort [NwTypes.h]
       NetworkBase::SysIpL3Addr [NwTypes.h]
       NodeBase::Singleton [NbTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::Protected [Protected.h]
-      NodeBase::Q1Way<NetworkBase::IpPort> [Q1Way.h]
-      NodeBase::RestartLevel [SysTypes.h]
-      NodeBase::Singleton<NetworkBase::IpPortRegistry> [Singleton.h]
-      NodeBase::StatisticsGroupPtr [NbTypes.h]
 SysTcpSocket.h
    Base usage:
       NetworkBase::SysSocket [SysSocket.h]
@@ -3166,15 +3014,6 @@ SysTcpSocket.h
       NetworkBase::IpBuffer [NwTypes.h]
       NetworkBase::SysIpL3Addr [NwTypes.h]
       NetworkBase::TcpIpService [SysTcpSocket.h]
-   Add a using statement for
-      NodeBase
-   To remove dependencies on using statements, qualify
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::Q1Way<NetworkBase::IpBuffer> [Q1Way.h]
-      NodeBase::SysSocket_t [SysDecls.h]
-      NodeBase::byte_t [SysTypes.h]
-      NodeBase::msecs_t [Clock.h]
-      NodeBase::word [SysTypes.h]
 IpServiceRegistry.h
    Base usage:
       NodeBase::Protected [Protected.h]
@@ -3185,12 +3024,6 @@ IpServiceRegistry.h
    Forward usage:
       NetworkBase::IpService [IpServiceRegistry.h]
       NodeBase::Singleton [NbTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::Protected [Protected.h]
-      NodeBase::Registry<NetworkBase::IpService> [Registry.h]
-      NodeBase::RestartLevel [SysTypes.h]
-      NodeBase::Singleton<NetworkBase::IpServiceRegistry> [Singleton.h]
 NwTrace.h
    Base usage:
       NodeBase::TimedRecord [TimedRecord.h]
@@ -3206,9 +3039,6 @@ NwTrace.h
       NodeBase::word [SysTypes.h]
    Forward usage:
       NetworkBase::SysSocket [NwTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::TimedRecord [TimedRecord.h]
-      NodeBase::word [SysTypes.h]
 TcpIpPort.h
    Base usage:
       NetworkBase::IpPort [IpPort.h]
@@ -3235,14 +3065,6 @@ InvokerPoolRegistry.h
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
       SessionBase::InvokerPool [InvokerPoolRegistry.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::Dynamic [Dynamic.h]
-      NodeBase::Faction [NbTypes.h]
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::Registry<SessionBase::InvokerPool> [Registry.h]
-      NodeBase::RestartLevel [SysTypes.h]
-      NodeBase::Singleton<SessionBase::InvokerPoolRegistry> [Singleton.h]
-      NodeBase::StatisticsGroupPtr [NbTypes.h]
 FactoryRegistry.h
    Base usage:
       NodeBase::Protected [Protected.h]
@@ -3255,13 +3077,6 @@ FactoryRegistry.h
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
       SessionBase::Factory [SbTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::Protected [Protected.h]
-      NodeBase::Registry<SessionBase::Factory> [Registry.h]
-      NodeBase::RestartLevel [SysTypes.h]
-      NodeBase::Singleton<SessionBase::FactoryRegistry> [Singleton.h]
-      NodeBase::StatisticsGroupPtr [NbTypes.h]
 Service.h
    Base usage:
       NodeBase::Protected [Protected.h]
@@ -3289,15 +3104,6 @@ Service.h
    Forward usage:
       SessionBase::ServiceSM [EventHandler.h]
       SessionBase::Trigger [SbTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::NIL_ID [SysTypes.h]
-      NodeBase::Protected [Protected.h]
-      NodeBase::RegCell [RegCell.h]
-      NodeBase::Registry<SessionBase::EventHandler> [Registry.h]
-      NodeBase::Registry<SessionBase::Service> [Registry.h]
-      NodeBase::Registry<SessionBase::State> [Registry.h]
-      NodeBase::Registry<SessionBase::Trigger> [Registry.h]
 ServiceRegistry.h
    Base usage:
       NodeBase::Protected [Protected.h]
@@ -3308,11 +3114,6 @@ ServiceRegistry.h
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
       SessionBase::Service [SbTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::Protected [Protected.h]
-      NodeBase::Registry<SessionBase::Service> [Registry.h]
-      NodeBase::Singleton<SessionBase::ServiceRegistry> [Singleton.h]
 Trigger.h
    Base usage:
       NodeBase::Protected [Protected.h]
@@ -3325,12 +3126,6 @@ Trigger.h
    Forward usage:
       NodeBase::Registry [Trigger.h]
       SessionBase::Initiator [SbTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::NIL_ID [SysTypes.h]
-      NodeBase::Protected [Protected.h]
-      NodeBase::Q1Way<SessionBase::Initiator> [Q1Way.h]
-      NodeBase::Registry<SessionBase::Trigger> [Registry.h]
 Protocol.h
    Base usage:
       NodeBase::Protected [Protected.h]
@@ -3351,13 +3146,6 @@ Protocol.h
       SessionBase::Parameter [Protocol.h]
       SessionBase::SbIpBuffer [SbTypes.h]
       SessionBase::Signal [Protocol.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::Protected [Protected.h]
-      NodeBase::RegCell [RegCell.h]
-      NodeBase::Registry<Parameter> [Registry.h]
-      NodeBase::Registry<SessionBase::Protocol> [Registry.h]
-      NodeBase::Registry<SessionBase::Signal> [Registry.h]
 ProtocolRegistry.h
    Base usage:
       NodeBase::Protected [Protected.h]
@@ -3368,11 +3156,6 @@ ProtocolRegistry.h
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
       SessionBase::Protocol [ProtocolRegistry.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::Protected [Protected.h]
-      NodeBase::Registry<SessionBase::Protocol> [Registry.h]
-      NodeBase::Singleton<SessionBase::ProtocolRegistry> [Singleton.h]
 PsmFactory.h
    Base usage:
       SessionBase::MsgFactory [MsgFactory.h]
@@ -3390,14 +3173,6 @@ SbExtInputHandler.h
       SessionBase::SbInputHandler [SbInputHandler.h]
    Forward usage:
       NetworkBase::IpPort [NwTypes.h]
-   Add a using statement for
-      NetworkBase
-      NodeBase
-   To remove dependencies on using statements, qualify
-      NetworkBase::IpBuffer [NwTypes.h]
-      NetworkBase::IpPort [NwTypes.h]
-      NetworkBase::SysTcpSocket [NwTypes.h]
-      NodeBase::byte_t [SysTypes.h]
 TimerRegistry.h
    Base usage:
       NodeBase::Dynamic [Dynamic.h]
@@ -3411,12 +3186,6 @@ TimerRegistry.h
       SessionBase::Timer::QId [Timer.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::Dynamic [Dynamic.h]
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::Q2Way<SessionBase::Timer> [Q2Way.h]
-      NodeBase::Singleton<SessionBase::TimerRegistry> [Singleton.h]
-      NodeBase::secs_t [Clock.h]
 MscBuilder.h
    Base usage:
       NodeBase::Temporary [Temporary.h]
@@ -3946,14 +3715,6 @@ IpBuffer.h
       size_t [cstddef]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::MsgBuffer [MsgBuffer.h]
-      NodeBase::MsgDirection [NbTypes.h]
-      NodeBase::ObjectPool [ObjectPool.h]
-      NodeBase::Singleton<NetworkBase::IpBufferPool> [Singleton.h]
-      NodeBase::TraceStatus [ToolTypes.h]
-      NodeBase::byte_t [SysTypes.h]
 IoThread.h
    Base usage:
       NodeBase::Thread [Thread.h]
@@ -3971,13 +3732,6 @@ IoThread.h
    Forward usage:
       NetworkBase::IpPort [NwTypes.h]
       NetworkBase::IpService [NwTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::RestartLevel [SysTypes.h]
-      NodeBase::Thread [Thread.h]
-      NodeBase::byte_t [SysTypes.h]
-      NodeBase::ticks_t [Clock.h]
-      NodeBase::word [SysTypes.h]
 NwCliParms.h
    Base usage:
       NetworkBase::IpAddrParm [NwCliParms.h]
@@ -3990,13 +3744,6 @@ NwCliParms.h
       NetworkBase::SysIpL3Addr [NwCliParms.h]
       NodeBase::CliCommand [NwCliParms.h]
       NodeBase::CliThread [CliParm.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::CliCommand [NwCliParms.h]
-      NodeBase::CliIntParm [CliIntParm.h]
-      NodeBase::CliText [CliText.h]
-      NodeBase::CliTextParm [CliTextParm.h]
-      NodeBase::CliThread [CliParm.h]
-      NodeBase::fixed_string [SysTypes.h]
 SbPools.h
    Base usage:
       NodeBase::ObjectPool [ObjectPool.h]
@@ -4008,21 +3755,6 @@ SbPools.h
       NodeBase::Singleton [NbTypes.h]
       SessionBase::GlobalAddress [SbPools.h]
       SessionBase::MsgPort [SbPools.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::CounterPtr [NbTypes.h]
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::ObjectPool [ObjectPool.h]
-      NodeBase::PooledObjectId [NbTypes.h]
-      NodeBase::RestartLevel [SysTypes.h]
-      NodeBase::Singleton<SessionBase::BtIpBufferPool> [Singleton.h]
-      NodeBase::Singleton<SessionBase::ContextPool> [Singleton.h]
-      NodeBase::Singleton<SessionBase::EventPool> [Singleton.h]
-      NodeBase::Singleton<SessionBase::MessagePool> [Singleton.h]
-      NodeBase::Singleton<SessionBase::MsgPortPool> [Singleton.h]
-      NodeBase::Singleton<SessionBase::ProtocolSMPool> [Singleton.h]
-      NodeBase::Singleton<SessionBase::SbIpBufferPool> [Singleton.h]
-      NodeBase::Singleton<SessionBase::ServiceSMPool> [Singleton.h]
-      NodeBase::Singleton<SessionBase::TimerPool> [Singleton.h]
 SbTracer.h
    Base usage:
       NodeBase::Permanent [Permanent.h]
@@ -4047,13 +3779,6 @@ SbTracer.h
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
       SessionBase::Message [SbTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::FlagId [SysTypes.h]
-      NodeBase::MsgDirection [NbTypes.h]
-      NodeBase::Permanent [Permanent.h]
-      NodeBase::Singleton<SessionBase::SbTracer> [Singleton.h]
-      NodeBase::TraceRc [ToolTypes.h]
-      NodeBase::TraceStatus [ToolTypes.h]
 ServiceSM.h
    Base usage:
       NodeBase::Pooled [Pooled.h]
@@ -4080,20 +3805,11 @@ ServiceSM.h
       SessionBase::Initiator [SbTypes.h]
       SessionBase::ProtocolSM [SbTypes.h]
       SessionBase::Service [SbTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::Pooled [Pooled.h]
-      NodeBase::Q1Way<SessionBase::Event> [Q1Way.h]
-      NodeBase::Q1Way<SessionBase::ServiceSM> [Q1Way.h]
 TimerThread.h
    Base usage:
       NodeBase::Thread [Thread.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::Singleton<SessionBase::TimerThread> [Singleton.h]
-      NodeBase::Thread [Thread.h]
-      NodeBase::TraceStatus [ToolTypes.h]
 SsmFactory.h
    Base usage:
       SessionBase::PsmFactory [PsmFactory.h]
@@ -4143,8 +3859,6 @@ PotsBicService.h
       SessionBase::Service [Service.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Add a using statement for
-      NodeBase
    To remove dependencies on using statements, qualify
       NodeBase::Singleton<PotsBase::PotsBicService> [Singleton.h]
       SessionBase::Event [Event.h]
@@ -4158,8 +3872,6 @@ PotsBocService.h
       SessionBase::Service [Service.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Add a using statement for
-      NodeBase
    To remove dependencies on using statements, qualify
       NodeBase::Singleton<PotsBase::PotsBocService> [Singleton.h]
       SessionBase::Event [Event.h]
@@ -4172,8 +3884,6 @@ PotsCcwService.h
       SessionBase::Service [Service.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Add a using statement for
-      NodeBase
    To remove dependencies on using statements, qualify
       NodeBase::Singleton<PotsBase::PotsCcwService> [Singleton.h]
       SessionBase::Service [Service.h]
@@ -4184,8 +3894,6 @@ PotsCfbService.h
       SessionBase::Service [Service.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Add a using statement for
-      NodeBase
    To remove dependencies on using statements, qualify
       NodeBase::Singleton<PotsBase::PotsCfbService> [Singleton.h]
       SessionBase::Event [Event.h]
@@ -4199,8 +3907,6 @@ PotsCfnService.h
       SessionBase::Service [Service.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Add a using statement for
-      NodeBase
    To remove dependencies on using statements, qualify
       NodeBase::Singleton<PotsBase::PotsCfnService> [Singleton.h]
       SessionBase::Event [Event.h]
@@ -4214,8 +3920,6 @@ PotsCfuService.h
       SessionBase::Service [Service.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Add a using statement for
-      NodeBase
    To remove dependencies on using statements, qualify
       NodeBase::Singleton<PotsBase::PotsCfuActivate> [Singleton.h]
       NodeBase::Singleton<PotsBase::PotsCfuDeactivate> [Singleton.h]
@@ -4231,8 +3935,6 @@ PotsHtlService.h
       SessionBase::Service [Service.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Add a using statement for
-      NodeBase
    To remove dependencies on using statements, qualify
       NodeBase::Singleton<PotsBase::PotsHtlService> [Singleton.h]
       SessionBase::Event [Event.h]
@@ -4250,8 +3952,6 @@ PotsSusService.h
       SessionBase::TriggerId [SbTypes.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Add a using statement for
-      NodeBase
    To remove dependencies on using statements, qualify
       NodeBase::Singleton<PotsBase::PotsSusService> [Singleton.h]
       SessionBase::Event [Event.h]
@@ -4266,8 +3966,6 @@ PotsWmlService.h
       SessionBase::Service [Service.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Add a using statement for
-      NodeBase
    To remove dependencies on using statements, qualify
       NodeBase::Singleton<PotsBase::PotsWmlActivate> [Singleton.h]
       NodeBase::Singleton<PotsBase::PotsWmlDeactivate> [Singleton.h]
@@ -4381,15 +4079,6 @@ IpService.h
       NetworkBase::IpPort [NwTypes.h]
       NodeBase::CliText [IpService.h]
       NodeBase::Registry [RegCell.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::CliText [IpService.h]
-      NodeBase::Faction [NbTypes.h]
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::Protected [Protected.h]
-      NodeBase::RegCell [RegCell.h]
-      NodeBase::Registry<NetworkBase::IpService> [Registry.h]
-      NodeBase::RestartLevel [SysTypes.h]
-      NodeBase::id_t [SysTypes.h]
 TcpIoThread.h
    Base usage:
       NetworkBase::IoThread [IoThread.h]
@@ -4406,14 +4095,6 @@ TcpIoThread.h
       NetworkBase::SysSocket [NwTypes.h]
       NetworkBase::SysTcpSocket [NwTypes.h]
       NetworkBase::TcpIpService [TcpIoThread.h]
-   Add a using statement for
-      NodeBase
-   To remove dependencies on using statements, qualify
-      NodeBase::Array<NetworkBase::SysTcpSocket*> [Array.h]
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::debug32_t [SysTypes.h]
-      NodeBase::fixed_string [SysTypes.h]
-      NodeBase::word [SysTypes.h]
 UdpIoThread.h
    Base usage:
       NetworkBase::IoThread [IoThread.h]
@@ -4422,10 +4103,6 @@ UdpIoThread.h
       NodeBase::debug32_t [SysTypes.h]
    Forward usage:
       NetworkBase::UdpIpService [UdpIoThread.h]
-   Add a using statement for
-      NodeBase
-   To remove dependencies on using statements, qualify
-      NodeBase::debug32_t [SysTypes.h]
 SbIpBuffer.h
    Base usage:
       NetworkBase::IpBuffer [IpBuffer.h]
@@ -4438,12 +4115,6 @@ SbIpBuffer.h
       size_t [cstddef]
    Forward usage:
       SessionBase::MsgHeader [SbTypes.h]
-   Add a using statement for
-      NodeBase
-   To remove dependencies on using statements, qualify
-      NetworkBase::IpBuffer [IpBuffer.h]
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::MsgDirection [NbTypes.h]
 Tones.h
    Base usage:
       MediaBase::Circuit [Circuit.h]
@@ -4458,8 +4129,6 @@ Tones.h
       uint8_t [cstdint]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Add a using statement for
-      NodeBase
    To remove dependencies on using statements, qualify
       NodeBase::Flags [SysTypes.h]
       NodeBase::RegCell [RegCell.h]
@@ -4547,20 +4216,6 @@ NwIncrement.h
       NodeBase::id_t [SysTypes.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::ClearCommand [NbIncrement.h]
-      NodeBase::ClearWhatParm [NbIncrement.h]
-      NodeBase::CliIncrement [CliIncrement.h]
-      NodeBase::CliThread [CliParm.h]
-      NodeBase::ExcludeCommand [NbIncrement.h]
-      NodeBase::ExcludeWhatParm [NbIncrement.h]
-      NodeBase::IncludeCommand [NbIncrement.h]
-      NodeBase::IncludeWhatParm [NbIncrement.h]
-      NodeBase::QueryCommand [NbIncrement.h]
-      NodeBase::Singleton<NetworkBase::NwIncrement> [Singleton.h]
-      NodeBase::StatusCommand [NbIncrement.h]
-      NodeBase::id_t [SysTypes.h]
-      NodeBase::word [SysTypes.h]
 TcpIpService.h
    Base usage:
       NetworkBase::IpService [IpService.h]
@@ -4568,10 +4223,6 @@ TcpIpService.h
       NetworkBase::IpProtocol::IpTcp [NwTypes.h]
    Indirect usage:
       size_t [cstddef]
-   Add a using statement for
-      NodeBase
-   To remove dependencies on using statements, qualify
-      NodeBase::Flags [SysTypes.h]
 UdpIpService.h
    Base usage:
       NetworkBase::IpService [IpService.h]
@@ -4606,15 +4257,6 @@ Message.h
       SessionBase::LocalAddress [Message.h]
       SessionBase::MsgHeader [SbTypes.h]
       SessionBase::ProtocolSM [SbTypes.h]
-   To remove dependencies on using statements, qualify
-      NetworkBase::SysIpL3Addr [SysIpL3Addr.h]
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::MsgDirection [NbTypes.h]
-      NodeBase::Pooled [Pooled.h]
-      NodeBase::Q1Way<SessionBase::Message> [Q1Way.h]
-      NodeBase::byte_t [SysTypes.h]
-      NodeBase::debug32_t [SysTypes.h]
-      NodeBase::debug64_t [SysTypes.h]
 ToneRegistry.h
    Base usage:
       NodeBase::Dynamic [Dynamic.h]
@@ -4735,18 +4377,6 @@ Context.h
       SessionBase::ProtocolSM [SbTypes.h]
       SessionBase::RootServiceSM [SbTypes.h]
       SessionBase::TransTrace [Factory.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::Faction [NbTypes.h]
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::MsgDirection [NbTypes.h]
-      NodeBase::Pooled [Pooled.h]
-      NodeBase::Q1Way<SessionBase::Message> [Q1Way.h]
-      NodeBase::Q2Link [Q2Link.h]
-      NodeBase::Q2Way<SessionBase::Context> [Q2Way.h]
-      NodeBase::debug32_t [SysTypes.h]
-      NodeBase::debug64_t [SysTypes.h]
-      NodeBase::fn_name_arg [SysTypes.h]
-      NodeBase::ticks_t [Clock.h]
 SbTrace.h
    Base usage:
       NodeBase::TimedRecord [TimedRecord.h]
@@ -4802,14 +4432,6 @@ SbTrace.h
       SessionBase::ServiceSM [EventHandler.h]
       SessionBase::State [SbTypes.h]
       SessionBase::Timer [SbTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::Pooled [Pooled.h]
-      NodeBase::PooledObjectId [NbTypes.h]
-      NodeBase::RestartLevel [SysTypes.h]
-      NodeBase::TimedRecord [TimedRecord.h]
-      NodeBase::id_t [SysTypes.h]
-      NodeBase::secs_t [Clock.h]
-      NodeBase::ticks_t [Clock.h]
 InvokerPool.h
    Base usage:
       NodeBase::Dynamic [Dynamic.h]
@@ -4843,16 +4465,6 @@ InvokerPool.h
       SessionBase::InvokerThread [SbTypes.h]
       SessionBase::InvokerWork [InvokerPool.h]
       SessionBase::TransTrace [Factory.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::CfgIntParmPtr [NbTypes.h]
-      NodeBase::Dynamic [Dynamic.h]
-      NodeBase::Faction [NbTypes.h]
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::RegCell [RegCell.h]
-      NodeBase::Registry<SessionBase::InvokerPool> [Registry.h]
-      NodeBase::Registry<SessionBase::InvokerThread> [Registry.h]
-      NodeBase::RestartLevel [SysTypes.h]
-      NodeBase::msecs_t [Clock.h]
 MsgHeader.h
    Direct usage:
       NetworkBase::SysSocket::MaxMsgSize [SysSocket.h]
@@ -4867,8 +4479,6 @@ MsgHeader.h
    Indirect usage:
       std::ostream [iosfwd]
       std::string [string]
-   To remove dependencies on using statements, qualify
-      NetworkBase::SysSocket [SysSocket.h]
 ProtocolLayer.h
    Base usage:
       NodeBase::Pooled [Pooled.h]
@@ -4885,10 +4495,6 @@ ProtocolLayer.h
       SessionBase::MsgPort [SbTypes.h]
       SessionBase::ProtocolSM [SbTypes.h]
       SessionBase::RootServiceSM [SbTypes.h]
-   To remove dependencies on using statements, qualify
-      NetworkBase::SysTcpSocket [NwTypes.h]
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::Pooled [Pooled.h]
 SbIncrement.h
    Base usage:
       NetworkBase::NwClearCommand [NwIncrement.h]
@@ -4907,22 +4513,6 @@ SbIncrement.h
       NodeBase::id_t [SysTypes.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Add a using statement for
-      NodeBase
-   To remove dependencies on using statements, qualify
-      NetworkBase::NwClearCommand [NwIncrement.h]
-      NetworkBase::NwClearWhatParm [NwIncrement.h]
-      NetworkBase::NwExcludeCommand [NwIncrement.h]
-      NetworkBase::NwExcludeWhatParm [NwIncrement.h]
-      NetworkBase::NwIncludeCommand [NwIncrement.h]
-      NetworkBase::NwIncludeWhatParm [NwIncrement.h]
-      NetworkBase::NwQueryCommand [NwIncrement.h]
-      NetworkBase::NwStatusCommand [NwIncrement.h]
-      NodeBase::CliIncrement [CliIncrement.h]
-      NodeBase::CliThread [CliParm.h]
-      NodeBase::Singleton<SessionBase::SbIncrement> [Singleton.h]
-      NodeBase::id_t [SysTypes.h]
-      NodeBase::word [SysTypes.h]
 StIncrement.h
    Base usage:
       NodeBase::CliIncrement [CliIncrement.h]
@@ -4954,7 +4544,6 @@ PotsShelf.h
       NodeBase::Singleton [NbTypes.h]
       SessionBase::Message [SbTypes.h]
    Add a using statement for
-      NetworkBase
       NodeBase
    To remove dependencies on using statements, qualify
       MediaBase::Switch [Switch.h]
@@ -5045,14 +4634,6 @@ ProtocolSM.h
    Forward usage:
       SessionBase::Event [SbTypes.h]
       SessionBase::Timer [SbTypes.h]
-   Add a using statement for
-      NodeBase
-   To remove dependencies on using statements, qualify
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::Q1Way<SessionBase::Message> [Q1Way.h]
-      NodeBase::Q1Way<SessionBase::ProtocolSM> [Q1Way.h]
-      NodeBase::Q1Way<SessionBase::Timer> [Q1Way.h]
-      NodeBase::secs_t [Clock.h]
 InvokerThread.h
    Base usage:
       NodeBase::Thread [Thread.h]
@@ -5074,17 +4655,6 @@ InvokerThread.h
    Forward usage:
       NodeBase::Registry [RegCell.h]
       SessionBase::InvokerPool [Context.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::BlockingReason [NbTypes.h]
-      NodeBase::Faction [NbTypes.h]
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::RegCell [RegCell.h]
-      NodeBase::Registry<SessionBase::InvokerThread> [Registry.h]
-      NodeBase::Thread [Thread.h]
-      NodeBase::TraceStatus [ToolTypes.h]
-      NodeBase::fn_name_arg [SysTypes.h]
-      NodeBase::ticks_t [Clock.h]
-      NodeBase::word [SysTypes.h]
 MsgPort.h
    Base usage:
       SessionBase::ProtocolLayer [ProtocolLayer.h]
@@ -5102,11 +4672,6 @@ MsgPort.h
       size_t [cstddef]
    Forward usage:
       SessionBase::Context [SbTypes.h]
-   Add a using statement for
-      NodeBase
-   To remove dependencies on using statements, qualify
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::PooledObjectId [NbTypes.h]
 TlvParameter.h
    Base usage:
       SessionBase::Parameter [Parameter.h]
@@ -5119,19 +4684,12 @@ TlvParameter.h
    Indirect usage:
       SessionBase::Parameter::Id [Parameter.h]
       SessionBase::ProtocolId [SbTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::CliThread [Parameter.h]
-      NodeBase::byte_t [SysTypes.h]
 MsgContext.h
    Base usage:
       SessionBase::Context [Context.h]
    Direct usage:
       SessionBase::ContextType::SingleMsg [SbTypes.h]
    Indirect usage:
-      NodeBase::Faction [NbTypes.h]
-   Add a using statement for
-      NodeBase
-   To remove dependencies on using statements, qualify
       NodeBase::Faction [NbTypes.h]
 SbInvokerPools.h
    Base usage:
@@ -5141,13 +4699,6 @@ SbInvokerPools.h
       NodeBase::word [SysTypes.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Add a using statement for
-      NodeBase
-   To remove dependencies on using statements, qualify
-      NodeBase::CfgIntParmPtr [NbTypes.h]
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::Singleton<SessionBase::PayloadInvokerPool> [Singleton.h]
-      NodeBase::word [SysTypes.h]
 PotsIncrement.h
    Base usage:
       NodeBase::CliIncrement [CliIncrement.h]
@@ -5213,10 +4764,6 @@ RootServiceSM.h
       SessionBase::ServiceId [SbTypes.h]
    Forward usage:
       SessionBase::SsmContext [SbTypes.h]
-   Add a using statement for
-      NodeBase
-   To remove dependencies on using statements, qualify
-      NodeBase::Flags [SysTypes.h]
 TimerProtocol.h
    Base usage:
       SessionBase::Signal [Signal.h]
@@ -5230,14 +4777,6 @@ TimerProtocol.h
       std::string [string]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Add a using statement for
-      NodeBase
-   To remove dependencies on using statements, qualify
-      NodeBase::Base [Base.h]
-      NodeBase::Singleton<SessionBase::TimeoutParameter> [Singleton.h]
-      NodeBase::Singleton<SessionBase::TimeoutSignal> [Singleton.h]
-      NodeBase::Singleton<SessionBase::TimerProtocol> [Singleton.h]
-      NodeBase::byte_t [SysTypes.h]
 TlvMessage.h
    Base usage:
       SessionBase::Message [Message.h]
@@ -5275,16 +4814,6 @@ TlvMessage.h
    Forward usage:
       SessionBase::ProtocolSM [SbTypes.h]
       SessionBase::TlvMessage::ParmIterator [TlvMessage.h]
-   Add a using statement for
-      NodeBase
-   To remove dependencies on using statements, qualify
-      NodeBase::Debug [Debug.h]
-      NodeBase::Memory [Memory.h]
-      NodeBase::MsgDirection [NbTypes.h]
-      NodeBase::NIL_ID [SysTypes.h]
-      NodeBase::byte_t [SysTypes.h]
-      NodeBase::debug32_t [SysTypes.h]
-      NodeBase::fn_name [SysTypes.h]
 PsmContext.h
    Base usage:
       SessionBase::MsgContext [MsgContext.h]
@@ -5301,13 +4830,6 @@ PsmContext.h
       SessionBase::Message [Message.h]
       SessionBase::MsgPort [MsgPort.h]
       SessionBase::ProtocolSM [ProtocolSM.h]
-   Add a using statement for
-      NodeBase
-   To remove dependencies on using statements, qualify
-      NodeBase::Faction [NbTypes.h]
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::Q1Way<SessionBase::MsgPort> [Q1Way.h]
-      NodeBase::Q1Way<SessionBase::ProtocolSM> [Q1Way.h]
 BcAddress.h
    Base usage:
       NodeBase::Protected [Protected.h]
@@ -5323,8 +4845,6 @@ BcAddress.h
       std::string [string]
       uint32_t [cstdint]
       uint8_t [cstdint]
-   Add a using statement for
-      NodeBase
    To remove dependencies on using statements, qualify
       NodeBase::CliThread [Parameter.h]
       NodeBase::Protected [Protected.h]
@@ -5353,12 +4873,6 @@ SsmContext.h
       SessionBase::ServiceId [SbTypes.h]
    Forward usage:
       SessionBase::RootServiceSM [SbTypes.h]
-   Add a using statement for
-      NodeBase
-   To remove dependencies on using statements, qualify
-      NodeBase::Faction [NbTypes.h]
-      NodeBase::Flags [SysTypes.h]
-      NodeBase::word [SysTypes.h]
 TextTlvMessage.h
    Base usage:
       SessionBase::TlvMessage [TlvMessage.h]
@@ -5367,8 +4881,6 @@ TextTlvMessage.h
       size_t [cstddef]
    Forward usage:
       SessionBase::ProtocolSM [SbTypes.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::Flags [SysTypes.h]
 TlvIntParameter.h
    Base usage:
       SessionBase::TlvParameter [TlvParameter.h]
@@ -5407,13 +4919,6 @@ TlvIntParameter.h
       SessionBase::Parameter::Id [Parameter.h]
       SessionBase::ProtocolId [SbTypes.h]
       SessionBase::TlvMessage [TlvMessage.h]
-   To remove dependencies on using statements, qualify
-      NodeBase::CRLF [SysTypes.h]
-      NodeBase::CliParm [CliParm.h]
-      NodeBase::CliThread [CliThread.h]
-      NodeBase::Debug [Debug.h]
-      NodeBase::fn_name [SysTypes.h]
-      NodeBase::word [SysTypes.h]
 TestSessions.h
    Base usage:
       NodeBase::Dynamic [Dynamic.h]
@@ -5448,8 +4953,6 @@ TestSessions.h
       SessionBase::BuffTrace [Message.h]
       SessionBase::MsgPort [SbTypes.h]
       SessionTools::StTestData [TestSessions.h]
-   Add a using statement for
-      NodeBase
    To remove dependencies on using statements, qualify
       NodeBase::CliThread [Parameter.h]
       NodeBase::Dynamic [Dynamic.h]
@@ -5529,8 +5032,6 @@ PotsHtlFeature.h
       CallBase::Address::DN [BcAddress.h]
    Forward usage:
       NodeBase::Singleton [NbTypes.h]
-   Add a using statement for
-      NodeBase
    To remove dependencies on using statements, qualify
       CallBase::Address [BcAddress.h]
       NodeBase::CliText [Signal.h]
@@ -5653,8 +5154,6 @@ BcCause.h
       std::ostream [iosfwd]
       std::string [string]
       uint8_t [cstdint]
-   Add a using statement for
-      NodeBase
    To remove dependencies on using statements, qualify
       NodeBase::CliParm [CliParm.h]
       NodeBase::byte_t [SysTypes.h]
@@ -5669,8 +5168,6 @@ BcProgress.h
       std::ostream [iosfwd]
       std::string [string]
       uint8_t [cstdint]
-   Add a using statement for
-      NodeBase
    To remove dependencies on using statements, qualify
       NodeBase::CliParm [CliParm.h]
       NodeBase::byte_t [SysTypes.h]
@@ -5686,7 +5183,6 @@ PotsCfbFeature.h
       NodeBase::Singleton [NbTypes.h]
    Add a using statement for
       CallBase
-      NodeBase
    To remove dependencies on using statements, qualify
       CallBase::Address [BcAddress.h]
       NodeBase::CliText [Signal.h]
@@ -5705,7 +5201,6 @@ PotsCfnFeature.h
       NodeBase::Singleton [NbTypes.h]
    Add a using statement for
       CallBase
-      NodeBase
    To remove dependencies on using statements, qualify
       CallBase::Address [BcAddress.h]
       NodeBase::CliText [Signal.h]
@@ -5723,7 +5218,6 @@ PotsCfuFeature.h
       NodeBase::Singleton [NbTypes.h]
    Add a using statement for
       CallBase
-      NodeBase
    To remove dependencies on using statements, qualify
       CallBase::Address [BcAddress.h]
       NodeBase::CliText [Signal.h]
@@ -5742,7 +5236,6 @@ PotsWmlFeature.h
       NodeBase::Singleton [NbTypes.h]
    Add a using statement for
       CallBase
-      NodeBase
    To remove dependencies on using statements, qualify
       CallBase::Address [BcAddress.h]
       NodeBase::CliText [Signal.h]
@@ -5912,8 +5405,6 @@ PotsCfxService.h
       CallBase::CipMessage [PotsCfxService.h]
       NodeBase::Singleton [NbTypes.h]
       PotsBase::DnRouteFeatureProfile [PotsCfxService.h]
-   Add a using statement for
-      NodeBase
    To remove dependencies on using statements, qualify
       CallBase::Cause [BcCause.h]
       CallBase::CipMessage [PotsCfxService.h]
@@ -6127,7 +5618,6 @@ ProxyBcSessions.h
       NodeBase::Singleton [NbTypes.h]
    Add a using statement for
       MediaBase
-      NodeBase
       SessionBase
    To remove dependencies on using statements, qualify
       MediaBase::MediaPsm [MediaPsm.h]
@@ -6363,10 +5853,6 @@ PotsSessions.h
       PotsBase::PotsProfile [PotsSessions.h]
       PotsBase::PotsTreatment [PotsSessions.h]
       SessionBase::AnalyzeMsgEvent [ServiceSM.h]
-   Add a using statement for
-      NetworkBase
-      NodeBase
-      SessionBase
    To remove dependencies on using statements, qualify
       CallBase::BcFactory [BcSessions.h]
       CallBase::BcTrigger [BcSessions.h]
@@ -6857,8 +6343,6 @@ SbTypes.cpp
       SessionBase::strContextType [SbTypes.h]
       std::basic_ostream [ostream]
       std::basic_ostream::operator<<(std::basic_ostream* const,const char*) [ostream]
-   Add a using statement for
-      NodeBase
 AllocationException.cpp
    Base usage:
       NodeBase::AllocationException [AllocationException.h]
@@ -7470,6 +6954,8 @@ Temporary.cpp
       NodeBase::Temporary::operator new[] [Temporary.h]
       NodeBase::fn_name [SysTypes.h]
 CxxString.cpp
+   Base usage:
+      CodeTools::NameAndPtrs [CxxString.h]
    Direct usage:
       CodeTools::AdjustPtrs [CxxString.h]
       CodeTools::COMMENT_STR [CodeTypes.h]
@@ -7485,10 +6971,16 @@ CxxString.cpp
       CodeTools::FindSubstr [CxxString.h]
       CodeTools::GetFileExtension [CxxString.h]
       CodeTools::GetFileName [CxxString.h]
+      CodeTools::GetNameAndArgs [CxxString.h]
       CodeTools::IsCodeFile [CxxString.h]
       CodeTools::IsValidIdentifier [CxxString.h]
+      CodeTools::NameAndPtrs [CxxString.h]
+      CodeTools::NameAndPtrs::name [CxxString.h]
+      CodeTools::NameAndPtrs::ptrs [CxxString.h]
       CodeTools::NameCouldReferTo [CxxString.h]
+      CodeTools::NameVector [CxxString.h]
       CodeTools::Normalize [CxxString.h]
+      CodeTools::OPERATOR_STR [CodeTypes.h]
       CodeTools::PathIncludes [CxxString.h]
       CodeTools::Prefix(std::basic_string<char,std::char_traits<char>,std::allocator<char>>) [CxxString.h]
       CodeTools::RemoveConsts [CxxString.h]
@@ -7496,8 +6988,10 @@ CxxString.cpp
       CodeTools::RemoveTags [CxxString.h]
       CodeTools::RemoveTemplates [CxxString.h]
       CodeTools::Replace [CxxString.h]
+      CodeTools::ValidOpChars [CodeTypes.h]
       NodeBase::BACKSLASH [SysTypes.h]
       NodeBase::CRLF [SysTypes.h]
+      NodeBase::Debug::SwLog(const char* const,unsigned long long,unsigned long long,NodeBase::SwLogLevel) [Debug.h]
       NodeBase::Debug::ft [Debug.h]
       NodeBase::EMPTY_STR [SysTypes.h]
       NodeBase::QUOTE [SysTypes.h]
@@ -7552,8 +7046,6 @@ SysIpL2Addr.cpp
       std::basic_ostringstream::str(const std::basic_ostringstream* const) [sstream]
       std::basic_string [string]
       std::ostringstream [iosfwd]
-   Add a using statement for
-      NodeBase
 SysIpL2Addr.win.cpp
    Base usage:
       NetworkBase::SysIpL2Addr [SysIpL2Addr.h]
@@ -7590,8 +7082,6 @@ SysIpL2Addr.win.cpp
       std::basic_string [string]
       std::basic_string::c_str [string]
       std::basic_string::clear [string]
-   Add a using statement for
-      NodeBase
 Base.cpp
    Base usage:
       NodeBase::Base [Base.h]
@@ -7929,8 +7419,6 @@ SysIpL3Addr.win.cpp
       std::basic_ostringstream [sstream]
       std::basic_string [string]
       std::basic_string::c_str [string]
-   Add a using statement for
-      NodeBase
 MscContextPair.cpp
    Base usage:
       SessionTools::MscContextPair [MscContextPair.h]
@@ -8324,6 +7812,7 @@ LocalAddress.cpp
    Direct usage:
       NodeBase::NIL_ID [SysTypes.h]
       SessionBase::LocalAddress [LocalAddress.h]
+      SessionBase::LocalAddress::LocalAddress(SessionBase::LocalAddress* const) [LocalAddress.h]
       SessionBase::LocalAddress::bid [LocalAddress.h]
       SessionBase::LocalAddress::fid [LocalAddress.h]
       SessionBase::LocalAddress::operator!= [LocalAddress.h]
@@ -8337,8 +7826,6 @@ LocalAddress.cpp
       std::basic_ostringstream [sstream]
       std::basic_ostringstream::str(const std::basic_ostringstream* const) [sstream]
       std::ostringstream [iosfwd]
-   Add a using statement for
-      NodeBase
 CfgBoolParm.cpp
    Base usage:
       NodeBase::CfgBoolParm [CfgBoolParm.h]
@@ -8422,8 +7909,6 @@ ForceTransitionEvent.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,const char*) [ostream]
       std::basic_ostream::operator<<(std::basic_ostream* const,const void*) [ostream]
       std::basic_string [string]
-   Add a using statement for
-      NodeBase
 GlobalAddress.cpp
    Base usage:
       SessionBase::GlobalAddress [GlobalAddress.h]
@@ -8456,9 +7941,6 @@ GlobalAddress.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,char) [ostream]
       std::basic_ostream::operator<<(std::basic_ostream* const,const char*) [ostream]
       std::basic_string [string]
-   Add a using statement for
-      NetworkBase
-      NodeBase
 MediaFailureEvent.cpp
    Base usage:
       MediaBase::MediaFailureEvent [MediaFailureEvent.h]
@@ -10926,8 +10408,6 @@ NwTrace.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,int) [ostream]
       std::basic_ostream::operator<<(std::basic_ostream* const,unsigned short) [ostream]
       std::basic_string [string]
-   Add a using statement for
-      NodeBase
 SysIpL3Addr.cpp
    Base usage:
       NetworkBase::SysIpL3Addr [SysIpL3Addr.h]
@@ -10972,8 +10452,6 @@ SysIpL3Addr.cpp
       std::basic_ostringstream::str(const std::basic_ostringstream* const) [sstream]
       std::basic_string [string]
       std::ostringstream [iosfwd]
-   Add a using statement for
-      NodeBase
 Factory.cpp
    Base usage:
       NodeBase::Dynamic [Dynamic.h]
@@ -11057,8 +10535,6 @@ Factory.cpp
       std::unique_ptr::reset [memory]
    Forward usage:
       SessionBase::FactoryStats [Factory.h]
-   Add a using statement for
-      NodeBase
 FactoryRegistry.cpp
    Base usage:
       NodeBase::StatisticsGroup [StatisticsGroup.h]
@@ -11118,8 +10594,6 @@ FactoryRegistry.cpp
       std::unique_ptr::reset [memory]
    Forward usage:
       SessionBase::Factory [SbTypes.h]
-   Add a using statement for
-      NodeBase
 Parameter.cpp
    Base usage:
       SessionBase::Parameter [Parameter.h]
@@ -11179,8 +10653,6 @@ Parameter.cpp
       std::basic_string [string]
       std::bitset [bitset]
       std::bitset::test [bitset]
-   Add a using statement for
-      NodeBase
 Protocol.cpp
    Base usage:
       SessionBase::Protocol [Protocol.h]
@@ -11251,8 +10723,6 @@ Protocol.cpp
    Forward usage:
       SessionBase::Parameter [Protocol.h]
       SessionBase::Signal [Protocol.h]
-   Add a using statement for
-      NodeBase
 ProtocolRegistry.cpp
    Base usage:
       SessionBase::ProtocolRegistry [ProtocolRegistry.h]
@@ -11289,8 +10759,6 @@ ProtocolRegistry.cpp
       std::basic_string [string]
    Forward usage:
       SessionBase::Protocol [ProtocolRegistry.h]
-   Add a using statement for
-      NodeBase
 SbCliParms.cpp
    Base usage:
       SessionBase::EventIdOptParm [SbCliParms.h]
@@ -11364,8 +10832,6 @@ SbCliParms.cpp
       SessionBase::StateIdOptParm::StateIdOptParm [SbCliParms.h]
       SessionBase::Trigger::MaxId [Trigger.h]
       SessionBase::TriggerIdOptParm::TriggerIdOptParm [SbCliParms.h]
-   Add a using statement for
-      NodeBase
 Service.cpp
    Base usage:
       SessionBase::Service [Service.h]
@@ -11464,8 +10930,6 @@ Service.cpp
       std::basic_string [string]
    Forward usage:
       SessionBase::Trigger [SbTypes.h]
-   Add a using statement for
-      NodeBase
 ServiceRegistry.cpp
    Base usage:
       SessionBase::ServiceRegistry [ServiceRegistry.h]
@@ -11502,8 +10966,6 @@ ServiceRegistry.cpp
       std::basic_string [string]
    Forward usage:
       SessionBase::Service [SbTypes.h]
-   Add a using statement for
-      NodeBase
 Signal.cpp
    Base usage:
       SessionBase::Signal [Signal.h]
@@ -11542,8 +11004,6 @@ Signal.cpp
       std::basic_string [string]
       std::bitset [bitset]
       std::bitset::test [bitset]
-   Add a using statement for
-      NodeBase
 State.cpp
    Base usage:
       SessionBase::State [State.h]
@@ -11619,8 +11079,6 @@ State.cpp
       std::basic_string [string]
       std::bitset [bitset]
       std::bitset::test [bitset]
-   Add a using statement for
-      NodeBase
 Trigger.cpp
    Base usage:
       SessionBase::Trigger [Trigger.h]
@@ -11664,8 +11122,6 @@ Trigger.cpp
       std::bitset::test [bitset]
    Forward usage:
       SessionBase::Initiator [SbTypes.h]
-   Add a using statement for
-      NodeBase
 MscContext.cpp
    Base usage:
       SessionTools::MscContext [MscContext.h]
@@ -14863,6 +14319,7 @@ CxxExecute.cpp
       CodeTools::Context::Options_ [CxxExecute.h]
       CodeTools::Context::ParsingTemplateInstance [CxxExecute.h]
       CodeTools::Context::PopParser [CxxExecute.h]
+      CodeTools::Context::PrevScope [CxxExecute.h]
       CodeTools::Context::PushParser [CxxExecute.h]
       CodeTools::Context::Reset [CxxExecute.h]
       CodeTools::Context::Scope [CxxExecute.h]
@@ -15138,6 +14595,7 @@ CxxExecute.cpp
       std::unique_ptr::get [memory]
       std::unique_ptr::reset [memory]
       std::vector [vector]
+      std::vector::at(const std::vector* const,unsigned int) [vector]
       std::vector::back(const std::vector* const) [vector]
       std::vector::clear [vector]
       std::vector::empty [vector]
@@ -15641,7 +15099,6 @@ Editor.cpp
       CodeTools::STRUCT_STR [CodeTypes.h]
       CodeTools::TypeSpec [CxxNamed.h]
       CodeTools::Typedef [CxxScoped.h]
-      CodeTools::UNION_STR [CodeTypes.h]
       CodeTools::USING_STR [CodeTypes.h]
       CodeTools::VIRTUAL_STR [CodeTypes.h]
       CodeTools::VOID_STR [CodeTypes.h]
@@ -15813,8 +15270,6 @@ Editor.cpp
       std::vector::rend(std::vector* const) [vector]
       std::vector::size [vector]
       strlen [cstring]
-   Add a using statement for
-      std::string
 LibrarySet.cpp
    Base usage:
       CodeTools::LibrarySet [LibrarySet.h]
@@ -15938,8 +15393,6 @@ InputHandler.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,const char*) [ostream]
       std::basic_ostream::operator<<(std::basic_ostream* const,const void*) [ostream]
       std::basic_string [string]
-   Add a using statement for
-      NodeBase
 NwCliParms.cpp
    Base usage:
       NetworkBase::HostNameMandParm [NwCliParms.h]
@@ -15992,8 +15445,6 @@ NwCliParms.cpp
       std::basic_istringstream [sstream]
       std::istringstream [iosfwd]
       std::string [string]
-   Add a using statement for
-      NodeBase
 NwTracer.cpp
    Base usage:
       NetworkBase::NwTracer [NwTracer.h]
@@ -16069,8 +15520,6 @@ NwTracer.cpp
       std::basic_string [string]
    Indirect usage:
       NodeBase::Singleton [Singleton.h]
-   Add a using statement for
-      NodeBase
 SysSocket.cpp
    Base usage:
       NetworkBase::SysSocket [SysSocket.h]
@@ -16132,8 +15581,6 @@ SysSocket.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,unsigned short) [ostream]
       std::basic_ostringstream [sstream]
       std::basic_string [string]
-   Add a using statement for
-      NodeBase
 SysUdpSocket.cpp
    Base usage:
       NetworkBase::SysUdpSocket [SysUdpSocket.h]
@@ -16177,8 +15624,6 @@ SysUdpSocket.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,const char*) [ostream]
       std::basic_ostream::operator<<(std::basic_ostream* const,unsigned int) [ostream]
       std::basic_string [string]
-   Add a using statement for
-      NodeBase
 Initiator.cpp
    Base usage:
       SessionBase::Initiator [Initiator.h]
@@ -16232,8 +15677,6 @@ Initiator.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,const char*) [ostream]
       std::basic_ostream::operator<<(std::basic_ostream* const,int) [ostream]
       std::basic_string [string]
-   Add a using statement for
-      NodeBase
 TimerRegistry.cpp
    Base usage:
       SessionBase::TimerRegistry [TimerRegistry.h]
@@ -16290,8 +15733,6 @@ TimerRegistry.cpp
       std::basic_string [string]
       std::bitset [bitset]
       std::bitset::test [bitset]
-   Add a using statement for
-      NodeBase
 TimerThread.cpp
    Base usage:
       SessionBase::TimerThread [TimerThread.h]
@@ -16321,8 +15762,6 @@ TimerThread.cpp
       SessionBase::TimerThread::Patch [TimerThread.h]
       SessionBase::TimerThread::TimerThread [TimerThread.h]
       SessionBase::TimerThread::~TimerThread [TimerThread.h]
-   Add a using statement for
-      NodeBase
 Circuit.cpp
    Base usage:
       MediaBase::Circuit [Circuit.h]
@@ -17338,6 +16777,7 @@ CodeFile.cpp
       CodeTools::CxxNamed::GetScope [CxxNamed.h]
       CodeTools::CxxNamed::GetScopedNames [CxxNamed.h]
       CodeTools::CxxNamed::GetTemplate [CxxNamed.h]
+      CodeTools::CxxNamed::GetTemplateParms [CxxNamed.h]
       CodeTools::CxxNamed::IsInTemplateInstance [CxxNamed.h]
       CodeTools::CxxNamed::IsSuperscopeOf [CxxNamed.h]
       CodeTools::CxxNamed::IsTemplate [CxxNamed.h]
@@ -17368,6 +16808,7 @@ CodeFile.cpp
       CodeTools::CxxToken::GetSpace [CxxToken.h]
       CodeTools::CxxToken::GetUsages [CxxToken.h]
       CodeTools::CxxToken::Name [CxxToken.h]
+      CodeTools::CxxToken::Print [CxxToken.h]
       CodeTools::CxxToken::Referent [CxxToken.h]
       CodeTools::CxxToken::Shrink [CxxToken.h]
       CodeTools::CxxToken::Type [CxxToken.h]
@@ -17479,6 +16920,7 @@ CodeFile.cpp
       CodeTools::SetDifference(std::set<unsigned int>,const std::set<unsigned int>,const std::set<unsigned int>) [SetOperations.h]
       CodeTools::SetOfIds [LibraryTypes.h]
       CodeTools::SetUnion(std::set<unsigned int>,const std::set<unsigned int>,const std::set<unsigned int>) [SetOperations.h]
+      CodeTools::TemplateParms [CxxNamed.h]
       CodeTools::TemplateType::NonTemplate [CodeTypes.h]
       CodeTools::TypeName [CxxNamed.h]
       CodeTools::Typedef [CxxScoped.h]
@@ -18356,6 +17798,7 @@ CxxArea.cpp
       CodeTools::ClassInst::FindTemplateAnalog [CxxArea.h]
       CodeTools::ClassInst::GetUsages [CxxArea.h]
       CodeTools::ClassInst::Instantiate [CxxArea.h]
+      CodeTools::ClassInst::NameRefersToItem [CxxArea.h]
       CodeTools::ClassInst::Shrink [CxxArea.h]
       CodeTools::ClassInst::TypeString [CxxArea.h]
       CodeTools::ClassInst::code_ [CxxArea.h]
@@ -18383,6 +17826,7 @@ CxxArea.cpp
       CodeTools::Code_Mask [CodeTypes.h]
       CodeTools::Context::File [CxxExecute.h]
       CodeTools::Context::GetParser [CxxExecute.h]
+      CodeTools::Context::PrevScope [CxxExecute.h]
       CodeTools::Context::SwLog [CxxExecute.h]
       CodeTools::Cxx::Access [Cxx.h]
       CodeTools::Cxx::Access::Access_N [Cxx.h]
@@ -18531,6 +17975,7 @@ CxxArea.cpp
       CodeTools::EnumPtr [CxxFwd.h]
       CodeTools::EnumPtrVector [CxxFwd.h]
       CodeTools::Enumerator [CxxScoped.h]
+      CodeTools::FRIEND_CLASSES [CxxSymbols.h]
       CodeTools::Forward [CxxScoped.h]
       CodeTools::ForwardPtr [CxxFwd.h]
       CodeTools::ForwardPtrVector [CxxFwd.h]
@@ -18569,6 +18014,7 @@ CxxArea.cpp
       CodeTools::FunctionType::FuncOperator [CodeTypes.h]
       CodeTools::FunctionType::FuncStandard [CodeTypes.h]
       CodeTools::FunctionVector [CxxFwd.h]
+      CodeTools::GetNameAndArgs [CxxString.h]
       CodeTools::INDENT_SIZE [CodeTypes.h]
       CodeTools::IndexOf [CodeTypes.h]
       CodeTools::Lexer [Lexer.h]
@@ -18579,6 +18025,8 @@ CxxArea.cpp
       CodeTools::NAMESPACE_STR [CodeTypes.h]
       CodeTools::NOT_A_SUBCLASS [CodeTypes.h]
       CodeTools::NS_Mask [CodeTypes.h]
+      CodeTools::NameAndPtrs [CxxString.h]
+      CodeTools::NameAndPtrs::name [CxxString.h]
       CodeTools::NamedVector [CxxFwd.h]
       CodeTools::Namespace [CxxArea.h]
       CodeTools::Namespace::AccessibilityOf [CxxArea.h]
@@ -18634,6 +18082,7 @@ CxxArea.cpp
       CodeTools::TypeName::Args [CxxNamed.h]
       CodeTools::TypeName::Instantiating [CxxNamed.h]
       CodeTools::TypeName::ItemIsTemplateArg [CxxNamed.h]
+      CodeTools::TypeName::NamesReferToArgs [CxxNamed.h]
       CodeTools::TypeNamePtr [CxxFwd.h]
       CodeTools::TypeSpec [CxxNamed.h]
       CodeTools::TypeSpec::MatchTemplateArg [CxxNamed.h]
@@ -18772,6 +18221,7 @@ CxxDirective.cpp
       CodeTools::CxxNamed::AtFileScope [CxxNamed.h]
       CodeTools::CxxNamed::EnterScope [CxxNamed.h]
       CodeTools::CxxNamed::GetDeclFid [CxxNamed.h]
+      CodeTools::CxxNamed::GetFile [CxxNamed.h]
       CodeTools::CxxNamed::GetLoc [CxxNamed.h]
       CodeTools::CxxNamed::Log [CxxNamed.h]
       CodeTools::CxxNamed::SetScope [CxxNamed.h]
@@ -18780,6 +18230,7 @@ CxxDirective.cpp
       CodeTools::CxxRoot::GlobalNamespace [CxxRoot.h]
       CodeTools::CxxScoped [CxxScoped.h]
       CodeTools::CxxScoped::DisplayFiles [CxxScoped.h]
+      CodeTools::CxxScoped::NameRefersToItem [CxxScoped.h]
       CodeTools::CxxStats::Decr [Cxx.h]
       CodeTools::CxxStats::Incr [Cxx.h]
       CodeTools::CxxStats::Item::DEFINE_DIRECTIVE [Cxx.h]
@@ -18816,6 +18267,7 @@ CxxDirective.cpp
       CodeTools::CxxToken::WasRead [CxxToken.h]
       CodeTools::CxxUsageSets [CxxToken.h]
       CodeTools::CxxUsageSets::AddDirect [CxxToken.h]
+      CodeTools::DeclaredGlobally [CodeTypes.h]
       CodeTools::Define [CxxDirective.h]
       CodeTools::Define::AutoType [CxxDirective.h]
       CodeTools::Define::Define(CodeTools::Define* const,const std::basic_string<char,std::char_traits<char>,std::allocator<char>>) [CxxDirective.h]
@@ -18906,6 +18358,7 @@ CxxDirective.cpp
       CodeTools::Macro::GetValue [CxxDirective.h]
       CodeTools::Macro::IsDefined [CxxDirective.h]
       CodeTools::Macro::Macro [CxxDirective.h]
+      CodeTools::Macro::NameRefersToItem [CxxDirective.h]
       CodeTools::Macro::SetExpr [CxxDirective.h]
       CodeTools::Macro::Shrink [CxxDirective.h]
       CodeTools::Macro::TypeString [CxxDirective.h]
@@ -19147,6 +18600,7 @@ CxxNamed.cpp
       CodeTools::CxxSymbols [CxxSymbols.h]
       CodeTools::CxxSymbols::FindLocal [CxxSymbols.h]
       CodeTools::CxxSymbols::FindSymbol [CxxSymbols.h]
+      CodeTools::CxxSymbols::FindSymbols [CxxSymbols.h]
       CodeTools::CxxToken [CxxToken.h]
       CodeTools::CxxToken::Check [CxxToken.h]
       CodeTools::CxxToken::EnterBlock [CxxToken.h]
@@ -19212,6 +18666,7 @@ CxxNamed.cpp
       CodeTools::DataSpec::MatchTemplate [CxxNamed.h]
       CodeTools::DataSpec::MatchTemplateArg [CxxNamed.h]
       CodeTools::DataSpec::MatchesExactly [CxxNamed.h]
+      CodeTools::DataSpec::NamesReferToArgs [CxxNamed.h]
       CodeTools::DataSpec::Print [CxxNamed.h]
       CodeTools::DataSpec::Ptrs [CxxNamed.h]
       CodeTools::DataSpec::Referent [CxxNamed.h]
@@ -19257,6 +18712,9 @@ CxxNamed.cpp
       CodeTools::MemberInit::init_ [CxxNamed.h]
       CodeTools::MemberInit::name_ [CxxNamed.h]
       CodeTools::NULL_STR [CodeTypes.h]
+      CodeTools::NameAndPtrs [CxxString.h]
+      CodeTools::NameAndPtrs::name [CxxString.h]
+      CodeTools::NameAndPtrs::ptrs [CxxString.h]
       CodeTools::Namespace [CxxArea.h]
       CodeTools::NilStackArg [CxxExecute.h]
       CodeTools::NotAccessible [CodeTypes.h]
@@ -19316,8 +18774,10 @@ CxxNamed.cpp
       CodeTools::StackArg::SetAsConstPtr [CxxExecute.h]
       CodeTools::StackArg::TypeString [CxxExecute.h]
       CodeTools::StackArg::item [CxxExecute.h]
+      CodeTools::SymbolVector [CxxSymbols.h]
       CodeTools::SymbolView [CodeTypes.h]
       CodeTools::SymbolView::using_ [CodeTypes.h]
+      CodeTools::TARG_REFS [CxxSymbols.h]
       CodeTools::TEMPLATE_STR [CodeTypes.h]
       CodeTools::TYPESPEC_REFS [CxxSymbols.h]
       CodeTools::TagCount [CodeTypes.h]
@@ -19367,6 +18827,7 @@ CxxNamed.cpp
       CodeTools::TypeName::ItemIsTemplateArg [CxxNamed.h]
       CodeTools::TypeName::MatchTemplate [CxxNamed.h]
       CodeTools::TypeName::MemberAccessed [CxxNamed.h]
+      CodeTools::TypeName::NamesReferToArgs [CxxNamed.h]
       CodeTools::TypeName::Next [CxxNamed.h]
       CodeTools::TypeName::Print [CxxNamed.h]
       CodeTools::TypeName::PushBack [CxxNamed.h]
@@ -19415,6 +18876,7 @@ CxxNamed.cpp
       CodeTools::TypeSpec::MatchTemplateArg [CxxNamed.h]
       CodeTools::TypeSpec::MatchesExactly [CxxNamed.h]
       CodeTools::TypeSpec::MustMatchWith [CxxNamed.h]
+      CodeTools::TypeSpec::NamesReferToArgs [CxxNamed.h]
       CodeTools::TypeSpec::Ptrs [CxxNamed.h]
       CodeTools::TypeSpec::Refs [CxxNamed.h]
       CodeTools::TypeSpec::RemoveRefs [CxxNamed.h]
@@ -19461,6 +18923,7 @@ CxxNamed.cpp
       CodeTools::TypeTags::refs_ [CxxNamed.h]
       CodeTools::Typedef [CxxScoped.h]
       CodeTools::VALUE_REFS [CxxSymbols.h]
+      CodeTools::ViewVector [CxxSymbols.h]
       CodeTools::Warning::PtrTagDetached [CodeTypes.h]
       CodeTools::Warning::RefTagDetached [CodeTypes.h]
       CodeTools::Warning::UseOfNull [CodeTypes.h]
@@ -19489,6 +18952,7 @@ CxxNamed.cpp
       std::basic_string::capacity [string]
       std::basic_string::compare(const std::basic_string* const,const std::basic_string) [string]
       std::basic_string::empty [string]
+      std::basic_string::erase [string]
       std::basic_string::find(const std::basic_string* const,const std::basic_string,unsigned int) [string]
       std::basic_string::npos [string]
       std::basic_string::push_back [string]
@@ -19512,8 +18976,10 @@ CxxNamed.cpp
       std::vector::capacity [vector]
       std::vector::cbegin [vector]
       std::vector::cend [vector]
+      std::vector::empty [vector]
       std::vector::push_back [vector]
       std::vector::size [vector]
+      strlen [cstring]
 CxxRoot.cpp
    Base usage:
       CodeTools::CxxRoot [CxxRoot.h]
@@ -19762,6 +19228,7 @@ CxxScope.cpp
       CodeTools::Context::ParsingTemplateInstance [CxxExecute.h]
       CodeTools::Context::PopArg(bool) [CxxExecute.h]
       CodeTools::Context::PopScope [CxxExecute.h]
+      CodeTools::Context::PrevScope [CxxExecute.h]
       CodeTools::Context::PushArg [CxxExecute.h]
       CodeTools::Context::PushScope [CxxExecute.h]
       CodeTools::Context::Scope [CxxExecute.h]
@@ -19854,6 +19321,7 @@ CxxScope.cpp
       CodeTools::CxxScoped::FindInheritedName [CxxScoped.h]
       CodeTools::CxxScoped::GetImplFile [CxxScoped.h]
       CodeTools::CxxScoped::IsUnused [CxxScoped.h]
+      CodeTools::CxxScoped::NameRefersToItem [CxxScoped.h]
       CodeTools::CxxScoped::RecordAccess [CxxScoped.h]
       CodeTools::CxxStats::Decr [Cxx.h]
       CodeTools::CxxStats::Incr [Cxx.h]
@@ -19870,6 +19338,7 @@ CxxScope.cpp
       CodeTools::CxxSymbols::EraseFunc [CxxSymbols.h]
       CodeTools::CxxSymbols::EraseLocal [CxxSymbols.h]
       CodeTools::CxxSymbols::FindScope [CxxSymbols.h]
+      CodeTools::CxxSymbols::FindSymbol [CxxSymbols.h]
       CodeTools::CxxSymbols::InsertData [CxxSymbols.h]
       CodeTools::CxxSymbols::InsertFunc [CxxSymbols.h]
       CodeTools::CxxSymbols::InsertLocal [CxxSymbols.h]
@@ -19986,6 +19455,7 @@ CxxScope.cpp
       CodeTools::Expression::Start [CxxToken.h]
       CodeTools::FINAL_STR [CodeTypes.h]
       CodeTools::FQ_Mask [CodeTypes.h]
+      CodeTools::FRIEND_CLASSES [CxxSymbols.h]
       CodeTools::FuncData [CxxScope.h]
       CodeTools::FuncData::Check [CxxScope.h]
       CodeTools::FuncData::Display [CxxScope.h]
@@ -20025,6 +19495,7 @@ CxxScope.cpp
       CodeTools::FuncSpec::MatchTemplateArg [CxxScope.h]
       CodeTools::FuncSpec::MatchesExactly [CxxScope.h]
       CodeTools::FuncSpec::Name [CxxScope.h]
+      CodeTools::FuncSpec::NamesReferToArgs [CxxScope.h]
       CodeTools::FuncSpec::Print [CxxScope.h]
       CodeTools::FuncSpec::Ptrs [CxxScope.h]
       CodeTools::FuncSpec::Refs [CxxScope.h]
@@ -20118,6 +19589,7 @@ CxxScope.cpp
       CodeTools::Function::MaxArgs [CxxScope.h]
       CodeTools::Function::MemberToArg [CxxScope.h]
       CodeTools::Function::MinArgs [CxxScope.h]
+      CodeTools::Function::NameRefersToItem [CxxScope.h]
       CodeTools::Function::Operator [CxxScope.h]
       CodeTools::Function::PushThisArg [CxxScope.h]
       CodeTools::Function::RecordUsage [CxxScope.h]
@@ -20186,6 +19658,7 @@ CxxScope.cpp
       CodeTools::FunctionType::FuncOperator [CodeTypes.h]
       CodeTools::FunctionType::FuncStandard [CodeTypes.h]
       CodeTools::FunctionVector [CxxFwd.h]
+      CodeTools::GetNameAndArgs [CxxString.h]
       CodeTools::INDENT_SIZE [CodeTypes.h]
       CodeTools::INLINE_STR [CodeTypes.h]
       CodeTools::LINE_LENGTH_MAX [CodeTypes.h]
@@ -20208,6 +19681,8 @@ CxxScope.cpp
       CodeTools::NOEXCEPT_STR [CodeTypes.h]
       CodeTools::NOT_A_SUBCLASS [CodeTypes.h]
       CodeTools::NOT_A_SUBSCOPE [CodeTypes.h]
+      CodeTools::NameAndPtrs [CxxString.h]
+      CodeTools::NameAndPtrs::name [CxxString.h]
       CodeTools::NoAC_Mask [CodeTypes.h]
       CodeTools::NoTP_Mask [CodeTypes.h]
       CodeTools::Numeric [Cxx.h]
@@ -20285,6 +19760,7 @@ CxxScope.cpp
       CodeTools::TypeName::AddTemplateArg [CxxNamed.h]
       CodeTools::TypeName::Args [CxxNamed.h]
       CodeTools::TypeName::Instantiating [CxxNamed.h]
+      CodeTools::TypeName::NamesReferToArgs [CxxNamed.h]
       CodeTools::TypeNamePtr [CxxFwd.h]
       CodeTools::TypeSpec [CxxNamed.h]
       CodeTools::TypeSpec::AddArray [CxxNamed.h]
@@ -20303,6 +19779,7 @@ CxxScope.cpp
       CodeTools::TypeSpec::MatchTemplateArg [CxxNamed.h]
       CodeTools::TypeSpec::MatchesExactly [CxxNamed.h]
       CodeTools::TypeSpec::MustMatchWith [CxxNamed.h]
+      CodeTools::TypeSpec::NamesReferToArgs [CxxNamed.h]
       CodeTools::TypeSpec::Ptrs [CxxNamed.h]
       CodeTools::TypeSpec::Refs [CxxNamed.h]
       CodeTools::TypeSpec::RemoveRefs [CxxNamed.h]
@@ -20539,7 +20016,6 @@ CxxScoped.cpp
       CodeTools::Cxx::ItemType::Forward [Cxx.h]
       CodeTools::Cxx::ItemType::Friend [Cxx.h]
       CodeTools::Cxx::ItemType::Function [Cxx.h]
-      CodeTools::Cxx::ItemType::Macro [Cxx.h]
       CodeTools::Cxx::ItemType::Namespace [Cxx.h]
       CodeTools::Cxx::ItemType::Typedef [Cxx.h]
       CodeTools::Cxx::operator<<(std::basic_ostream,CodeTools::Cxx::Access) [Cxx.h]
@@ -20818,6 +20294,7 @@ CxxScoped.cpp
       CodeTools::Terminal::Display [CxxScoped.h]
       CodeTools::Terminal::EnterBlock [CxxScoped.h]
       CodeTools::Terminal::IsAuto [CxxScoped.h]
+      CodeTools::Terminal::NameRefersToItem [CxxScoped.h]
       CodeTools::Terminal::Shrink [CxxScoped.h]
       CodeTools::Terminal::Terminal [CxxScoped.h]
       CodeTools::Terminal::name_ [CxxScoped.h]
@@ -20909,7 +20386,6 @@ CxxScoped.cpp
       std::basic_string::capacity [string]
       std::basic_string::empty [string]
       std::basic_string::erase [string]
-      std::basic_string::find(const std::basic_string* const,const std::basic_string,unsigned int) [string]
       std::basic_string::npos [string]
       std::basic_string::rfind(const std::basic_string* const,const std::basic_string,unsigned int) [string]
       std::basic_string::shrink_to_fit [string]
@@ -21086,6 +20562,7 @@ CxxSymbols.cpp
       CodeTools::SymbolView::accessibility [CodeTypes.h]
       CodeTools::SymbolView::distance [CodeTypes.h]
       CodeTools::SymbolView::resolved [CodeTypes.h]
+      CodeTools::TARG_REFS [CxxSymbols.h]
       CodeTools::TERM_MASK [CxxSymbols.h]
       CodeTools::TYPESPEC_REFS [CxxSymbols.h]
       CodeTools::TYPE_MASK [CxxSymbols.h]
@@ -21129,6 +20606,7 @@ CxxSymbols.cpp
       std::vector [vector]
       std::vector::cbegin [vector]
       std::vector::cend [vector]
+      std::vector::clear [vector]
       std::vector::empty [vector]
       std::vector::front(const std::vector* const) [vector]
       std::vector::push_back [vector]
@@ -23015,8 +22493,6 @@ IpBuffer.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,int) [ostream]
       std::basic_ostream::operator<<(std::basic_ostream* const,unsigned int) [ostream]
       std::basic_string [string]
-   Add a using statement for
-      NodeBase
 IpPort.cpp
    Base usage:
       NetworkBase::IpPort [IpPort.h]
@@ -23099,8 +22575,6 @@ IpPort.cpp
       std::unique_ptr::reset [memory]
    Forward usage:
       NetworkBase::IpPortStats [IpPort.h]
-   Add a using statement for
-      NodeBase
 IpPortCfgParm.cpp
    Base usage:
       NetworkBase::IpPortCfgParm [IpPortCfgParm.h]
@@ -23131,8 +22605,6 @@ IpPortCfgParm.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,char) [ostream]
       std::basic_ostream::operator<<(std::basic_ostream* const,const char*) [ostream]
       std::basic_string [string]
-   Add a using statement for
-      NodeBase
 IpPortRegistry.cpp
    Base usage:
       NetworkBase::IpPortRegistry [IpPortRegistry.h]
@@ -23220,8 +22692,6 @@ IpPortRegistry.cpp
    Forward usage:
       NetworkBase::HostAddrCfg [IpPortRegistry.h]
       NetworkBase::IpPort [NwTypes.h]
-   Add a using statement for
-      NodeBase
 IpService.cpp
    Base usage:
       NetworkBase::IpService [IpService.h]
@@ -23284,8 +22754,6 @@ IpService.cpp
       std::basic_ostringstream [sstream]
       std::basic_string [string]
       std::string [string]
-   Add a using statement for
-      NodeBase
 IpServiceRegistry.cpp
    Base usage:
       NetworkBase::IpServiceRegistry [IpServiceRegistry.h]
@@ -23326,8 +22794,6 @@ IpServiceRegistry.cpp
       std::basic_string [string]
    Forward usage:
       NetworkBase::IpService [IpServiceRegistry.h]
-   Add a using statement for
-      NodeBase
 SysSocket.win.cpp
    Base usage:
       NetworkBase::SysSocket [SysSocket.h]
@@ -23417,8 +22883,6 @@ SysSocket.win.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,unsigned char) [ostream]
       std::basic_ostringstream [sstream]
       u_long [windows.h]
-   Add a using statement for
-      NodeBase
 SbExtInputHandler.cpp
    Base usage:
       SessionBase::SbExtInputHandler [SbExtInputHandler.h]
@@ -23435,9 +22899,6 @@ SbExtInputHandler.cpp
       SessionBase::SbExtInputHandler::~SbExtInputHandler [SbExtInputHandler.h]
       SessionBase::SbInputHandler [SbInputHandler.h]
       SessionBase::SbIpBuffer [SbIpBuffer.h]
-   Add a using statement for
-      NetworkBase
-      NodeBase
 Province.cpp
    Base usage:
       Diplomacy::Province [Province.h]
@@ -23962,8 +23423,6 @@ NwIncrement.cpp
       std::basic_string::empty [string]
       std::setw [iomanip]
       std::string [string]
-   Add a using statement for
-      NodeBase
 NwModule.cpp
    Base usage:
       NetworkBase::NwModule [NwModule.h]
@@ -23995,8 +23454,6 @@ NwModule.cpp
       NodeBase::RestartReasons::SocketLayerUnavailable [Restart.h]
       NodeBase::Singleton::Instance [Singleton.h]
       NodeBase::fn_name [SysTypes.h]
-   Add a using statement for
-      NodeBase
 SysTcpSocket.cpp
    Base usage:
       NetworkBase::SysTcpSocket [SysTcpSocket.h]
@@ -24111,8 +23568,6 @@ SysTcpSocket.cpp
       std::bitset::to_string [bitset]
    Forward usage:
       NetworkBase::IpBuffer [NwTypes.h]
-   Add a using statement for
-      NodeBase
 SysTcpSocket.win.cpp
    Base usage:
       NetworkBase::SysTcpSocket [SysTcpSocket.h]
@@ -24221,8 +23676,6 @@ SysTcpSocket.win.cpp
       std::unique_ptr [memory]
       std::unique_ptr::get [memory]
       std::unique_ptr::reset [memory]
-   Add a using statement for
-      NodeBase
 SysUdpSocket.win.cpp
    Base usage:
       NetworkBase::SysUdpSocket [SysUdpSocket.h]
@@ -24268,8 +23721,6 @@ SysUdpSocket.win.cpp
       sockaddr_in::sin_addr [winsock2.h]
       sockaddr_in::sin_family [winsock2.h]
       sockaddr_in::sin_port [winsock2.h]
-   Add a using statement for
-      NodeBase
 TcpIoThread.cpp
    Base usage:
       NetworkBase::TcpIoThread [TcpIoThread.h]
@@ -24430,8 +23881,6 @@ TcpIoThread.cpp
       std::unique_ptr::release [memory]
    Forward usage:
       NetworkBase::SysTcpSocket [NwTypes.h]
-   Add a using statement for
-      NodeBase
 TcpIpPort.cpp
    Base usage:
       NetworkBase::TcpIpPort [TcpIpPort.h]
@@ -24470,8 +23919,6 @@ TcpIpPort.cpp
       std::unique_ptr [memory]
       std::unique_ptr::get [memory]
       std::unique_ptr::release [memory]
-   Add a using statement for
-      NodeBase
 TcpIpService.cpp
    Base usage:
       NetworkBase::TcpIpService [TcpIpService.h]
@@ -24500,8 +23947,6 @@ TcpIpService.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,const char*) [ostream]
       std::basic_ostream::operator<<(std::basic_ostream* const,unsigned int) [ostream]
       std::basic_string [string]
-   Add a using statement for
-      NodeBase
 UdpIoThread.cpp
    Base usage:
       NetworkBase::UdpIoThread [UdpIoThread.h]
@@ -24571,8 +24016,6 @@ UdpIoThread.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,unsigned int) [ostream]
       std::basic_ostream::operator<<(std::basic_ostream* const,unsigned short) [ostream]
       std::basic_ostringstream [sstream]
-   Add a using statement for
-      NodeBase
 UdpIpPort.cpp
    Base usage:
       NetworkBase::UdpIpPort [UdpIpPort.h]
@@ -24590,8 +24033,6 @@ UdpIpPort.cpp
       NodeBase::Debug::ft [Debug.h]
       NodeBase::Object::Patch [Object.h]
       NodeBase::fn_name [SysTypes.h]
-   Add a using statement for
-      NodeBase
 UdpIpService.cpp
    Base usage:
       NetworkBase::UdpIpService [UdpIpService.h]
@@ -24605,8 +24046,6 @@ UdpIpService.cpp
       NodeBase::Debug::ft [Debug.h]
       NodeBase::Object::Patch [Object.h]
       NodeBase::fn_name [SysTypes.h]
-   Add a using statement for
-      NodeBase
 SbTracer.cpp
    Base usage:
       NodeBase::Tool [Tool.h]
@@ -24712,8 +24151,6 @@ SbTracer.cpp
       std::basic_string [string]
    Indirect usage:
       NodeBase::Singleton [Singleton.h]
-   Add a using statement for
-      NodeBase
 MbModule.cpp
    Base usage:
       MediaBase::MbModule [MbModule.h]
@@ -25654,8 +25091,6 @@ AnalyzeSapEvent.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,const void*) [ostream]
       std::basic_ostream::operator<<(std::basic_ostream* const,int) [ostream]
       std::basic_string [string]
-   Add a using statement for
-      NodeBase
 AnalyzeSnpEvent.cpp
    Base usage:
       SessionBase::AnalyzeMsgEvent [SbEvents.h]
@@ -25690,8 +25125,6 @@ AnalyzeSnpEvent.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,const void*) [ostream]
       std::basic_ostream::operator<<(std::basic_ostream* const,int) [ostream]
       std::basic_string [string]
-   Add a using statement for
-      NodeBase
 EventHandler.cpp
    Base usage:
       SessionBase::EventHandler [EventHandler.h]
@@ -25715,8 +25148,6 @@ EventHandler.cpp
       SessionBase::operator<<(std::basic_ostream,SessionBase::EventHandler::Rc) [EventHandler.h]
       std::basic_ostream [ostream]
       std::basic_ostream::operator<<(std::basic_ostream* const,const char*) [ostream]
-   Add a using statement for
-      NodeBase
 InitiationReqEvent.cpp
    Base usage:
       SessionBase::AnalyzeMsgEvent [SbEvents.h]
@@ -25759,8 +25190,6 @@ InitiationReqEvent.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,const void*) [ostream]
       std::basic_ostream::operator<<(std::basic_ostream* const,int) [ostream]
       std::basic_string [string]
-   Add a using statement for
-      NodeBase
 InvokerPoolRegistry.cpp
    Base usage:
       NodeBase::StatisticsGroup [StatisticsGroup.h]
@@ -25819,8 +25248,6 @@ InvokerPoolRegistry.cpp
       std::unique_ptr::reset [memory]
    Forward usage:
       SessionBase::InvokerPool [InvokerPoolRegistry.h]
-   Add a using statement for
-      NodeBase
 MsgHeader.cpp
    Base usage:
       SessionBase::MsgHeader [MsgHeader.h]
@@ -25867,8 +25294,6 @@ MsgHeader.cpp
       std::basic_string [string]
       std::boolalpha [ios]
       std::noboolalpha [ios]
-   Add a using statement for
-      NodeBase
 ProtocolLayer.cpp
    Base usage:
       SessionBase::ProtocolLayer [ProtocolLayer.h]
@@ -25925,9 +25350,6 @@ ProtocolLayer.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,const char*) [ostream]
       std::basic_ostream::operator<<(std::basic_ostream* const,const void*) [ostream]
       std::basic_string [string]
-   Add a using statement for
-      NetworkBase
-      NodeBase
 SbHandlers.cpp
    Base usage:
       SessionBase::SbAnalyzeMessage [SbHandlers.h]
@@ -25992,8 +25414,6 @@ SbHandlers.cpp
       SessionBase::State [State.h]
       SessionBase::State::MsgAnalyzer [State.h]
       SessionBase::State::Stid [State.h]
-   Add a using statement for
-      NodeBase
 SbInputHandler.cpp
    Base usage:
       SessionBase::SbInputHandler [SbInputHandler.h]
@@ -26034,9 +25454,6 @@ SbInputHandler.cpp
       std::basic_ostringstream [sstream]
       std::unique_ptr [memory]
       std::unique_ptr::release [memory]
-   Add a using statement for
-      NetworkBase
-      NodeBase
 SbIpBuffer.cpp
    Base usage:
       SessionBase::SbIpBuffer [SbIpBuffer.h]
@@ -26079,8 +25496,6 @@ SbIpBuffer.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,char) [ostream]
       std::basic_ostream::operator<<(std::basic_ostream* const,const char*) [ostream]
       std::basic_string [string]
-   Add a using statement for
-      NodeBase
 ServiceSM.cpp
    Base usage:
       SessionBase::ServiceSM [ServiceSM.h]
@@ -26246,8 +25661,6 @@ ServiceSM.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,int) [ostream]
       std::basic_ostream::operator<<(std::basic_ostream* const,unsigned short) [ostream]
       std::basic_string [string]
-   Add a using statement for
-      NodeBase
 MscAddress.cpp
    Base usage:
       SessionTools::MscAddress [MscAddress.h]
@@ -26936,8 +26349,6 @@ InvokerPool.cpp
    Forward usage:
       SessionBase::InvokerPoolStats [InvokerPool.h]
       SessionBase::InvokerThread [SbTypes.h]
-   Add a using statement for
-      NodeBase
 InvokerThread.cpp
    Base usage:
       SessionBase::InvokerThread [InvokerThread.h]
@@ -27009,8 +26420,6 @@ InvokerThread.cpp
       std::unique_ptr::get [memory]
       std::unique_ptr::release [memory]
       std::unique_ptr::reset [memory]
-   Add a using statement for
-      NodeBase
 Message.cpp
    Base usage:
       SessionBase::Message [Message.h]
@@ -27209,9 +26618,6 @@ Message.cpp
       std::unique_ptr::get [memory]
       std::unique_ptr::release [memory]
       std::unique_ptr::reset [memory]
-   Add a using statement for
-      NetworkBase
-      NodeBase
 MsgContext.cpp
    Base usage:
       SessionBase::MsgContext [MsgContext.h]
@@ -27236,8 +26642,6 @@ MsgContext.cpp
       SessionBase::MsgContext::~MsgContext [MsgContext.h]
       SessionBase::MsgFactory [MsgFactory.h]
       SessionBase::MsgFactory::ProcessIcMsg [MsgFactory.h]
-   Add a using statement for
-      NodeBase
 MsgFactory.cpp
    Base usage:
       SessionBase::MsgFactory [MsgFactory.h]
@@ -27285,8 +26689,6 @@ MsgFactory.cpp
       SessionBase::TransTrace [SbTrace.h]
       SessionBase::TransTrace::EndOfTransaction [SbTrace.h]
       SessionBase::TransTrace::ResumeTime [SbTrace.h]
-   Add a using statement for
-      NodeBase
 MsgPort.cpp
    Base usage:
       SessionBase::MsgPort [MsgPort.h]
@@ -27411,9 +26813,6 @@ MsgPort.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,char) [ostream]
       std::basic_ostream::operator<<(std::basic_ostream* const,const char*) [ostream]
       std::basic_string [string]
-   Add a using statement for
-      NetworkBase
-      NodeBase
 SbIncrement.cpp
    Base usage:
       NodeBase::CliCommand [CliCommand.h]
@@ -27663,8 +27062,6 @@ SbIncrement.cpp
       std::bitset::set(std::bitset* const) [bitset]
       std::ostringstream [iosfwd]
       std::setw [iomanip]
-   Add a using statement for
-      NodeBase
 SbInvokerPools.cpp
    Base usage:
       SessionBase::PayloadInvokerPool [SbInvokerPools.h]
@@ -27707,8 +27104,6 @@ SbInvokerPools.cpp
       std::unique_ptr [memory]
       std::unique_ptr::get [memory]
       std::unique_ptr::reset [memory]
-   Add a using statement for
-      NodeBase
 BotThread.cpp
    Base usage:
       Diplomacy::BotThread [BotThread.h]
@@ -27965,8 +27360,6 @@ AnalyzeMsgEvent.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,const char*) [ostream]
       std::basic_ostream::operator<<(std::basic_ostream* const,const void*) [ostream]
       std::basic_string [string]
-   Add a using statement for
-      NodeBase
 Context.cpp
    Base usage:
       NodeBase::SoftwareException [SoftwareException.h]
@@ -28160,8 +27553,6 @@ Context.cpp
       std::basic_ostringstream::str(const std::basic_ostringstream* const) [sstream]
       std::basic_string [string]
       std::ostringstream [iosfwd]
-   Add a using statement for
-      NodeBase
 Event.cpp
    Base usage:
       SessionBase::Event [Event.h]
@@ -28229,8 +27620,6 @@ Event.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,const void*) [ostream]
       std::basic_ostream::operator<<(std::basic_ostream* const,int) [ostream]
       std::basic_string [string]
-   Add a using statement for
-      NodeBase
 ProtocolSM.cpp
    Base usage:
       SessionBase::ProtocolSM [ProtocolSM.h]
@@ -28381,8 +27770,6 @@ ProtocolSM.cpp
       std::basic_string [string]
    Forward usage:
       SessionBase::Timer [SbTypes.h]
-   Add a using statement for
-      NodeBase
 PsmContext.cpp
    Base usage:
       SessionBase::PsmContext [PsmContext.h]
@@ -28454,8 +27841,6 @@ PsmContext.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,char) [ostream]
       std::basic_ostream::operator<<(std::basic_ostream* const,const char*) [ostream]
       std::basic_string [string]
-   Add a using statement for
-      NodeBase
 PsmFactory.cpp
    Base usage:
       SessionBase::PsmFactory [PsmFactory.h]
@@ -28503,8 +27888,6 @@ PsmFactory.cpp
       SessionBase::PsmFactory::PsmFactory [PsmFactory.h]
       SessionBase::PsmFactory::ReceiveMsg [PsmFactory.h]
       SessionBase::PsmFactory::~PsmFactory [PsmFactory.h]
-   Add a using statement for
-      NodeBase
 SbModule.cpp
    Base usage:
       SessionBase::SbModule [SbModule.h]
@@ -28545,8 +27928,6 @@ SbModule.cpp
       SessionBase::TimerProtocol [TimerProtocol.h]
       SessionBase::TimerRegistry [TimerRegistry.h]
       SessionBase::TimerThread [TimerThread.h]
-   Add a using statement for
-      NodeBase
 SbTrace.cpp
    Base usage:
       SessionBase::BuffTrace [SbTrace.h]
@@ -28824,8 +28205,6 @@ SbTrace.cpp
       std::setfill [iomanip]
       std::setw [iomanip]
       std::string [string]
-   Add a using statement for
-      NodeBase
 Timer.cpp
    Base usage:
       SessionBase::Timer [Timer.h]
@@ -28912,8 +28291,6 @@ Timer.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,int) [ostream]
       std::basic_ostream::operator<<(std::basic_ostream* const,unsigned int) [ostream]
       std::basic_string [string]
-   Add a using statement for
-      NodeBase
 TimerProtocol.cpp
    Base usage:
       SessionBase::TimeoutInfo [TimerProtocol.h]
@@ -28954,8 +28331,6 @@ TimerProtocol.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,const void*) [ostream]
       std::basic_ostream::operator<<(std::basic_ostream* const,unsigned short) [ostream]
       std::basic_string [string]
-   Add a using statement for
-      NodeBase
 TlvMessage.cpp
    Base usage:
       SessionBase::TlvMessage [TlvMessage.h]
@@ -29045,8 +28420,6 @@ TlvMessage.cpp
       SessionBase::TlvParmLayout::header [TlvParameter.h]
       SessionBase::TlvParmPtr [TlvParameter.h]
       size_t [cstddef]
-   Add a using statement for
-      NodeBase
 TlvParameter.cpp
    Base usage:
       SessionBase::TlvParameter [TlvParameter.h]
@@ -29075,8 +28448,6 @@ TlvParameter.cpp
       SessionBase::TlvParmHeader::pid [TlvParameter.h]
       SessionBase::TlvParmLayout [TlvParameter.h]
       SessionBase::TlvParmLayout::header [TlvParameter.h]
-   Add a using statement for
-      NodeBase
 TlvProtocol.cpp
    Base usage:
       SessionBase::TlvProtocol [TlvProtocol.h]
@@ -29117,8 +28488,6 @@ TlvProtocol.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,const char*) [ostream]
       std::basic_ostream::operator<<(std::basic_ostream* const,unsigned short) [ostream]
       std::basic_string [string]
-   Add a using statement for
-      NodeBase
 BcAddress.cpp
    Base usage:
       CallBase::Address [BcAddress.h]
@@ -29777,8 +29146,6 @@ RootServiceSM.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,const char*) [ostream]
       std::basic_ostream::operator<<(std::basic_ostream* const,const void*) [ostream]
       std::basic_string [string]
-   Add a using statement for
-      NodeBase
 SbPools.cpp
    Base usage:
       SessionBase::BtIpBufferPool [SbPools.h]
@@ -29895,8 +29262,6 @@ SbPools.cpp
       std::basic_string [string]
       std::unique_ptr [memory]
       std::unique_ptr::reset [memory]
-   Add a using statement for
-      NodeBase
 SsmContext.cpp
    Base usage:
       SessionBase::SsmContext [SsmContext.h]
@@ -29969,8 +29334,6 @@ SsmContext.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,unsigned short) [ostream]
       std::basic_ostringstream [sstream]
       std::basic_string [string]
-   Add a using statement for
-      NodeBase
 SsmFactory.cpp
    Base usage:
       SessionBase::SsmFactory [SsmFactory.h]
@@ -30003,8 +29366,6 @@ SsmFactory.cpp
       SessionBase::SsmFactory::ReceiveMsg [SsmFactory.h]
       SessionBase::SsmFactory::SsmFactory [SsmFactory.h]
       SessionBase::SsmFactory::~SsmFactory [SsmFactory.h]
-   Add a using statement for
-      NodeBase
 TextTlvMessage.cpp
    Base usage:
       SessionBase::TextTlvMessage [TextTlvMessage.h]
@@ -30035,8 +29396,6 @@ TextTlvMessage.cpp
       std::basic_ostream::operator<<(std::basic_ostream* const,char) [ostream]
       std::basic_ostream::operator<<(std::basic_ostream* const,const char*) [ostream]
       std::basic_string [string]
-   Add a using statement for
-      NodeBase
 StModule.cpp
    Base usage:
       SessionTools::StModule [StModule.h]
@@ -30835,7 +30194,6 @@ TestSessions.cpp
    Indirect usage:
       NodeBase::Singleton [Singleton.h]
    Add a using statement for
-      NetworkBase
       NodeBase
       SessionBase
 MediaParameter.cpp
@@ -32896,7 +32254,6 @@ PotsMessages.cpp
    Add a using statement for
       CallBase
       MediaBase
-      NetworkBase
       NodeBase
       SessionBase
 PotsProtocol.cpp
@@ -33181,7 +32538,6 @@ PotsCallPsm.cpp
    Add a using statement for
       CallBase
       MediaBase
-      NetworkBase
       NodeBase
       SessionBase
 PotsShelfHandler.cpp
@@ -36612,7 +35968,6 @@ PotsMultiplexer.cpp
    Add a using statement for
       CallBase
       MediaBase
-      NetworkBase
       NodeBase
       SessionBase
 PotsProxyHandlers.cpp

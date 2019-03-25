@@ -40,8 +40,6 @@ namespace SessionBase
    class InvokerWork;
 }
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
@@ -51,13 +49,13 @@ namespace SessionBase
 //  InvokerPool is a singleton whose invokers run in the same scheduler
 //  faction.
 //
-class InvokerPool : public Dynamic
+class InvokerPool : public NodeBase::Dynamic
 {
    friend class Context;
    friend class InvokerPoolRegistry;
    friend class InvokerThread;
    friend class Message;
-   friend class Registry< InvokerPool >;
+   friend class NodeBase::Registry< InvokerPool >;
    friend class SbInputHandler;
 public:
    //> The maximum number of invoker threads allowed in a pool.
@@ -66,7 +64,8 @@ public:
 
    //  Returns the pool's scheduler faction.
    //
-   Faction GetFaction() const { return Faction(faction_.GetId()); }
+   NodeBase::Faction GetFaction() const
+      { return NodeBase::Faction(faction_.GetId()); }
 
    //  Returns the length of the work queue associated with PRIO.
    //
@@ -80,7 +79,7 @@ public:
    //  Returns a work queue's maximum delay during the current
    //  statistics interval.
    //
-   msecs_t WorkQMaxDelay(Message::Priority prio) const;
+   NodeBase::msecs_t WorkQMaxDelay(Message::Priority prio) const;
 
    //  Displays statistics.
    //
@@ -92,12 +91,12 @@ public:
 
    //  Overridden for restarts.
    //
-   void Startup(RestartLevel level) override;
+   void Startup(NodeBase::RestartLevel level) override;
 
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -108,7 +107,7 @@ protected:
    //  the configuration parameter that controls the number of threads.
    //  Protected because subclasses should be singletons.
    //
-   InvokerPool(Faction faction, const std::string& parmKey);
+   InvokerPool(NodeBase::Faction faction, const std::string& parmKey);
 
    //  Deletes all contexts in the work queues.  Protected because subclasses
    //  should be singletons.
@@ -167,7 +166,7 @@ private:
    //  Called to record the time that a message waited on a work queue
    //  before being processed.
    //
-   void RecordDelay(Message::Priority prio, msecs_t delay) const;
+   void RecordDelay(Message::Priority prio, NodeBase::msecs_t delay) const;
 
    //  Returns CTX to the progress work queue after it has processed
    //  messages of immediate priority.
@@ -209,7 +208,7 @@ private:
 
    //  The scheduler faction in which the pool's invokers run.
    //
-   RegCell faction_;
+   NodeBase::RegCell faction_;
 
    //  The desired number of invokers in the pool.
    //
@@ -217,7 +216,7 @@ private:
 
    //  The configuration parameter for the number of invokers in the pool.
    //
-   CfgIntParmPtr cfgInvokers_;
+   NodeBase::CfgIntParmPtr cfgInvokers_;
 
    //  The pool's pending work.
    //
@@ -225,7 +224,7 @@ private:
 
    //  The pool's invoker(s)
    //
-   Registry< InvokerThread > invokers_;
+   NodeBase::Registry< InvokerThread > invokers_;
 
    //  Used while the audit traverses the work queues.
    //

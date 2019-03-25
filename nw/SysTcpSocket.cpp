@@ -33,6 +33,7 @@
 #include "SysIpL3Addr.h"
 #include "TcpIpService.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 

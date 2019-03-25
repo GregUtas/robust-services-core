@@ -27,18 +27,16 @@
 #include "Registry.h"
 #include "SbTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
 {
 //  Global registry for services.
 //
-class ServiceRegistry : public Protected
+class ServiceRegistry : public NodeBase::Protected
 {
    friend class Service;
-   friend class Singleton< ServiceRegistry >;
+   friend class NodeBase::Singleton< ServiceRegistry >;
 public:
    //  Returns the service registered against SID.
    //
@@ -47,7 +45,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -71,7 +69,7 @@ private:
 
    //  The global registry of services.
    //
-   Registry< Service > services_;
+   NodeBase::Registry< Service > services_;
 };
 }
 #endif

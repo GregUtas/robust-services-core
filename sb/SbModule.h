@@ -25,17 +25,15 @@
 #include "Module.h"
 #include "NbTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
 {
 //  Module for initializing SessionBase.
 //
-class SbModule : public Module
+class SbModule : public NodeBase::Module
 {
-   friend class Singleton< SbModule >;
+   friend class NodeBase::Singleton< SbModule >;
 public:
    //  Overridden for patching.
    //
@@ -51,11 +49,11 @@ private:
 
    //  Overridden for restarts.
    //
-   void Startup(RestartLevel level) override;
+   void Startup(NodeBase::RestartLevel level) override;
 
    //  Overridden for restarts.
    //
-   void Shutdown(RestartLevel level) override;
+   void Shutdown(NodeBase::RestartLevel level) override;
 
    //  Registers the module before main() is entered.
    //

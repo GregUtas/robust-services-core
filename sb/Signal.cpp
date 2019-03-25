@@ -30,6 +30,7 @@
 #include "ProtocolRegistry.h"
 #include "Singleton.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 

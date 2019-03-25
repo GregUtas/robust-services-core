@@ -62,7 +62,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -110,12 +110,12 @@ private:
    //  Invoked when a listener could not be allocated.  ERRVAL is the
    //  reason for the failure.
    //
-   SysTcpSocket* ListenerError(word errval) const;
+   SysTcpSocket* ListenerError(NodeBase::word errval) const;
 
    //  Polls the sockets until at least one of them reports an event or
    //  an error occurs.  Returns the result of SysTcpSocket::Poll.
    //
-   word PollSockets();
+   NodeBase::word PollSockets();
 
    //  Services the socket at curr_.
    //
@@ -146,8 +146,8 @@ private:
    //  and ERROR is the general type of error.  SOCKET is where the error
    //  occurred, and ERRVAL is used if SOCKET is nullptr.
    //
-   void OutputLog(fixed_string expl, Error error,
-      SysTcpSocket* socket, debug32_t errval = 0) const;
+   void OutputLog(NodeBase::fixed_string expl, Error error,
+      SysTcpSocket* socket, NodeBase::debug32_t errval = 0) const;
 
    //  Releases resources when exiting or cleaning up the thread.
    //
@@ -157,7 +157,7 @@ private:
    //  first socket listens for new connections, and each of the others
    //  handles an individual connection.
    //
-   Array< SysTcpSocket* > sockets_;
+   NodeBase::Array< SysTcpSocket* > sockets_;
 
    //  Set if the underlying service accepts connections.  If not set,
    //  a listener socket is not allocated, and sockets_[0] is not used.

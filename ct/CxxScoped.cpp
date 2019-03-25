@@ -540,7 +540,11 @@ CodeFile* CxxScoped::GetImplFile() const
 size_t CxxScoped::GetRange(size_t& begin, size_t& end) const
 {
    auto lexer = GetFile()->GetLexer();
-   begin = GetPos();
+   auto spec = GetTypeSpec();
+   if(spec == nullptr)
+      begin = GetPos();
+   else
+      begin = spec->GetPos();
    lexer.Reposition(begin);
    end = lexer.FindFirstOf(";");
    return string::npos;
@@ -645,34 +649,14 @@ bool CxxScoped::NameRefersToItem(const string& name,
 {
    Debug::ft(CxxScoped_NameRefersToItem);
 
-   //  If this item was not declared in a file, it must be a macro name that
-   //  was defined for the compile (e.g. OS_WIN).
-   //
    auto itemType = Type();
    auto itemFile = GetFile();
 
    if(itemFile == nullptr)
    {
-      if(itemType == Cxx::Macro)
-      {
-         view->accessibility = Unrestricted;
-         return true;
-      }
-
       auto expl = "No file for item: " + *Name();
       Context::SwLog(CxxScoped_NameRefersToItem, expl, itemType);
       return false;
-   }
-
-   //  If NAME is a template instance, assume that it is visible.
-   //c Verify the visibility of each name in a template instance.  Not doing
-   //  so can cause incorrect symbol matches that force template arguments in
-   //  unrelated templates to be renamed so that they have unique names.
-   //
-   if(name.find('<') != string::npos)
-   {
-      view->accessibility = Unrestricted;
-      return true;
    }
 
    //  The file that declares this item must affect (that is, be in the
@@ -962,8 +946,8 @@ bool Enum::EnterScope()
 {
    Debug::ft(Enum_EnterScope);
 
+   Context::SetPos(GetLoc());
    if(AtFileScope()) GetFile()->InsertEnum(this);
-
    EnterBlock();
    return true;
 }
@@ -1299,7 +1283,6 @@ void Forward::EnterBlock()
 {
    Debug::ft(Forward_EnterBlock);
 
-   Context::SetPos(GetLoc());
    Context::PushArg(StackArg(Referent(), 0, false));
 }
 
@@ -1311,6 +1294,7 @@ bool Forward::EnterScope()
 {
    Debug::ft(Forward_EnterScope);
 
+   Context::SetPos(GetLoc());
    if(AtFileScope()) GetFile()->InsertForw(this);
    return true;
 }
@@ -1530,7 +1514,6 @@ void Friend::EnterBlock()
 {
    Debug::ft(Friend_EnterBlock);
 
-   Context::SetPos(GetLoc());
    Context::PushArg(StackArg(Referent(), 0, false));
 }
 
@@ -2084,6 +2067,19 @@ bool Terminal::IsAuto() const
 
 //------------------------------------------------------------------------------
 
+fn_name Terminal_NameRefersToItem = "Terminal.NameRefersToItem";
+
+bool Terminal::NameRefersToItem(const string& name,
+   const CxxScope* scope, const CodeFile* file, SymbolView* view) const
+{
+   Debug::ft(Terminal_NameRefersToItem);
+
+   *view = DeclaredGlobally;
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
 void Terminal::Shrink()
 {
    name_.shrink_to_fit();
@@ -2205,8 +2201,9 @@ bool Typedef::EnterScope()
 {
    Debug::ft(Typedef_EnterScope);
 
-   if(AtFileScope()) GetFile()->InsertType(this);
+   Context::SetPos(GetLoc());
    Context::Enter(this);
+   if(AtFileScope()) GetFile()->InsertType(this);
    spec_->EnteringScope(GetScope());
    refs_ = 0;
    return true;
@@ -2359,8 +2356,8 @@ bool Using::EnterScope()
 {
    Debug::ft(Using_EnterScope);
 
-   if(AtFileScope()) GetFile()->InsertUsing(this);
    Context::SetPos(GetLoc());
+   if(AtFileScope()) GetFile()->InsertUsing(this);
    FindReferent();
    return true;
 }

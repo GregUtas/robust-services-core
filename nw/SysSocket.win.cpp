@@ -28,6 +28,8 @@
 #include "IpService.h"
 #include "Log.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
 namespace NetworkBase

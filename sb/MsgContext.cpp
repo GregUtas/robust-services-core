@@ -25,6 +25,8 @@
 #include "MsgFactory.h"
 #include "SysTypes.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
 namespace SessionBase

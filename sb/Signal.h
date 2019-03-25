@@ -33,8 +33,6 @@ namespace NodeBase
    class CliText;
 }
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
@@ -43,9 +41,9 @@ namespace SessionBase
 //  of parameters that may be present in its message. Each protocol defines
 //  a singleton Signal subclass for each of its signals.
 //
-class Signal : public Protected
+class Signal : public NodeBase::Protected
 {
-   friend class Registry< Signal >;
+   friend class NodeBase::Registry< Signal >;
 public:
    //  Allows "Id" to refer to a signal identifier in this class hierarchy.
    //
@@ -59,7 +57,7 @@ public:
    //
    static bool IsValidId(Id sid)
    {
-      return ((sid != NIL_ID) && (sid <= MaxId));
+      return ((sid != NodeBase::NIL_ID) && (sid <= MaxId));
    }
 
    //  Identifier for timeout (timer expiry) signal.
@@ -83,7 +81,7 @@ public:
    //  default version returns nullptr and must be overridden by signals
    //  that support these CLI commands.
    //
-   virtual CliText* CreateText() const;
+   virtual NodeBase::CliText* CreateText() const;
 
    //  Returns the offset to sid_.
    //
@@ -92,7 +90,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -119,7 +117,7 @@ private:
 
    //  The signal's identifier.
    //
-   RegCell sid_;
+   NodeBase::RegCell sid_;
 };
 }
 #endif

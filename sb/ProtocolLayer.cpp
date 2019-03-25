@@ -26,6 +26,8 @@
 #include "Debug.h"
 #include "SysTypes.h"
 
+using namespace NetworkBase;
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 

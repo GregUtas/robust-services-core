@@ -31,8 +31,6 @@
 #include "SysTypes.h"
 #include "ToolTypes.h"
 
-using namespace NodeBase;
-
 namespace NetworkBase
 {
    class NwTrace;
@@ -57,7 +55,7 @@ uint16_t ntohs(uint16_t netshort);
 
 //------------------------------------------------------------------------------
 
-class SysSocket : public Dynamic
+class SysSocket : public NodeBase::Dynamic
 {
 public:
    //> Arbitrary limit on the size of IP messages (in bytes).
@@ -122,12 +120,12 @@ public:
    //  Generates a log when a socket operation fails.  EXPL explains the
    //  failure, and BUFF is any associated buffer.
    //
-   void OutputLog(fixed_string expl, const IpBuffer* buff) const;
+   void OutputLog(NodeBase::fixed_string expl, const IpBuffer* buff) const;
 
    //  Returns the last error report on the socket.  Its interpretation
    //  is platform specific.
    //
-   word GetError() const { return error_; }
+   NodeBase::word GetError() const { return error_; }
 
    //  Initializes the socket layer of the host O/S during startup.
    //
@@ -140,23 +138,24 @@ public:
    //  Returns a trace record for RID if tracing is enabled on this
    //  socket.  DATA is event specific.
    //
-   NwTrace* TraceEvent(TraceRecordId rid, word data);
+   NwTrace* TraceEvent(NodeBase::TraceRecordId rid, NodeBase::word data);
 
    //  Returns a trace record for RID if this socket should trace PORT
    //  on this node.  DATA contains event-specific information.
    //
-   NwTrace* TracePort(TraceRecordId rid, ipport_t port, word data);
+   NwTrace* TracePort
+      (NodeBase::TraceRecordId rid, ipport_t port, NodeBase::word data);
 
    //  Returns a trace record for RID if this socket should trace PORT or PEER.
    //  DATA is event specific.
    //
-   NwTrace* TracePeer
-      (TraceRecordId rid, ipport_t port, const SysIpL3Addr& peer, word data);
+   NwTrace* TracePeer(NodeBase::TraceRecordId rid, ipport_t port,
+         const SysIpL3Addr& peer, NodeBase::word data);
 
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -172,7 +171,7 @@ protected:
    //  Invoked by SysTcpSocket::Accept to wrap a socket that was created
    //  for a new connection.
    //
-   explicit SysSocket(SysSocket_t socket);
+   explicit SysSocket(NodeBase::SysSocket_t socket);
 
    //  Closes the socket.  Protected so that subclasses can control their
    //  deletion policy.  Virtual to allow subclassing.
@@ -181,14 +180,14 @@ protected:
 
    //  Returns the native socket.
    //
-   SysSocket_t Socket() const { return socket_; }
+   NodeBase::SysSocket_t Socket() const { return socket_; }
 
    //  Sets the error code for the socket so that it can be obtained for
    //  logging purposes.  If the value is not provided explicitly, it is
    //  obtained from the underlying platform.  Returns -1.
    //
-   word SetError();
-   word SetError(word errval);
+   NodeBase::word SetError();
+   NodeBase::word SetError(NodeBase::word errval);
 private:
    //  Deleted to prohibit copying.
    //
@@ -206,11 +205,11 @@ private:
    //  Returns true if tracing is enabled and STATUS indicates that this
    //  socket should be traced.
    //
-   bool Trace(TraceStatus status);
+   bool Trace(NodeBase::TraceStatus status);
 
    //  The actual native socket.
    //
-   SysSocket_t socket_;
+   NodeBase::SysSocket_t socket_;
 
    //  Set if operations on the socket can block.  Used by SetBlocking to
    //  avoid unnecessary work.
@@ -223,7 +222,7 @@ private:
 
    //  The last error reported on this socket by the underlying platform.
    //
-   word error_;
+   NodeBase::word error_;
 };
 }
 #endif

@@ -86,7 +86,7 @@ public:
    //  the socket is non-blocking, reports success immediately; the socket
    //  then queues outgoing messages until the connection is accepted.
    //
-   word Connect(const SysIpL3Addr& remAddr);
+   NodeBase::word Connect(const SysIpL3Addr& remAddr);
 
    //  Listens for Connect requests.  BACKLOG is the maximum number of
    //  requests that can be queued, waiting to be processed by Accept.
@@ -103,7 +103,8 @@ public:
    //  specifies how long to wait.  Returns the number of sockets on
    //  which events have occurred, and -1 on failure.
    //
-   static word Poll(SysTcpSocket* sockets[], size_t size, msecs_t msecs);
+   static NodeBase::word Poll
+      (SysTcpSocket* sockets[], size_t size, NodeBase::msecs_t msecs);
 
    //  Returns the flags that reported the socket's status after invoking
    //  Poll.  Any of the flags could have been set.
@@ -120,13 +121,13 @@ public:
    //  Reads up to SIZE bytes into BUFF.  Returns the number of bytes read.
    //  Returns 0 if the socket was gracefully closed, and -1 on failure.
    //
-   word Recv(byte_t* buff, size_t size);
+   NodeBase::word Recv(NodeBase::byte_t* buff, size_t size);
 
    //  Sends SIZE bytes, starting at DATA, to the address to which the socket
    //  is bound.  Returns the number of bytes sent.  Returns 0 if the socket
    //  would block, and -1 on failure.
    //
-   word Send(const byte_t* data, size_t size);
+   NodeBase::word Send(const NodeBase::byte_t* data, size_t size);
 
    //  Sets locAddr to the host address of this socket.  Returns false
    //  on failure.
@@ -204,7 +205,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -233,7 +234,7 @@ private:
    //  Invoked to wrap SOCKET, which was created to accept a connection.
    //  The socket is made non-blocking.
    //
-   explicit SysTcpSocket(SysSocket_t socket);
+   explicit SysTcpSocket(NodeBase::SysSocket_t socket);
 
    //  Closes the socket.  Private because sockets are closed and deleted
    //  using Release, Deregister, or Purge.
@@ -277,7 +278,7 @@ private:
    //  socket is waiting for a reply to a Connect or is otherwise blocked.
    //  The messages are sent when the socket becomes writeable.
    //
-   Q1Way< IpBuffer > ogMsgq_;
+   NodeBase::Q1Way< IpBuffer > ogMsgq_;
 };
 }
 #endif

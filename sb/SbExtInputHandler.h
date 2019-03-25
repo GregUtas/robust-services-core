@@ -52,13 +52,14 @@ protected:
    //  Registers the input handler against PORT.  Protected because this
    //  class is virtual.
    //
-   explicit SbExtInputHandler(IpPort* port);
+   explicit SbExtInputHandler(NetworkBase::IpPort* port);
 
    //  Overridden to allocate an SbIpBuffer for an incoming external message
    //  whose MsgHeader must be built.
    //
-   IpBuffer* AllocBuff(const byte_t* source, size_t size,
-      byte_t*& dest, size_t& rcvd, SysTcpSocket* socket) const override;
+   NetworkBase::IpBuffer* AllocBuff
+      (const NodeBase::byte_t* source, size_t size, NodeBase::byte_t*& dest,
+      size_t& rcvd, NetworkBase::SysTcpSocket* socket) const override;
 };
 }
 #endif

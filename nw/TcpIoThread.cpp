@@ -36,6 +36,7 @@
 #include "SysTcpSocket.h"
 #include "TcpIpService.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 

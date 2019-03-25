@@ -329,6 +329,21 @@ void Context::PopParser(const Parser* parser)
 
 //------------------------------------------------------------------------------
 
+fn_name Context_PrevScope = "Context.PrevScope";
+
+CxxScope* Context::PrevScope()
+{
+   Debug::ft(Context_PrevScope);
+
+   if(!ParsingTemplateInstance()) return Scope();
+
+   auto size = Frames_.size();
+   auto& frame = Frames_.at(size - 2);
+   return frame->Scope();
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Context_PushParser= "Context.PushParser";
 
 void Context::PushParser(const Parser* parser)

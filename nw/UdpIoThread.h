@@ -71,7 +71,7 @@ private:
 
    //  Generates a log when an error forces the thread to exit.
    //
-   void OutputLog(debug32_t errval) const;
+   void OutputLog(NodeBase::debug32_t errval) const;
 
    //  Releases resources when exiting or cleaning up the thread.
    //

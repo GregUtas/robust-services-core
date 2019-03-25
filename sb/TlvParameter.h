@@ -29,8 +29,6 @@
 #include "SbTypes.h"
 #include "SysTypes.h"
 
-using namespace NodeBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
@@ -54,7 +52,7 @@ constexpr size_t MaxTlvParmSize = MaxSbMsgSize - sizeof(TlvParmHeader);
 struct TlvParmLayout
 {
    TlvParmHeader header;              // parameter header
-   byte_t bytes[MaxTlvParmSize - 1];  // parameter contents
+   NodeBase::byte_t bytes[MaxTlvParmSize - 1];  // parameter contents
 };
 
 typedef TlvParmLayout* TlvParmPtr;  // pointer to a parameter
@@ -92,7 +90,7 @@ protected:
    //  parameter field.
    //
    TestRc VerifyMsg
-      (CliThread& cli, const Message& msg, Usage use) const override;
+      (NodeBase::CliThread& cli, const Message& msg, Usage use) const override;
 };
 }
 #endif

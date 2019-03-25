@@ -27,8 +27,6 @@
 #include "NbTypes.h"
 #include "SbTypes.h"
 
-using namespace NetworkBase;
-
 //------------------------------------------------------------------------------
 
 namespace SessionBase
@@ -40,7 +38,7 @@ namespace SessionBase
 //  This class is not intended to be subclassed.  Its use is restricted to
 //  input handlers and to Message and its subclasses.
 //
-class SbIpBuffer : public IpBuffer
+class SbIpBuffer : public NetworkBase::IpBuffer
 {
 public:
    //  Allocates a buffer that can accommodate a MsgHeader and PAYLOAD.
@@ -48,7 +46,7 @@ public:
    //  The MsgHeader is initialized, but the user of this interface is
    //  responsible for updating its contents (including the length).
    //
-   SbIpBuffer(MsgDirection dir, size_t payload);
+   SbIpBuffer(NodeBase::MsgDirection dir, size_t payload);
 
    //  Copy constructor.
    //
@@ -66,7 +64,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //

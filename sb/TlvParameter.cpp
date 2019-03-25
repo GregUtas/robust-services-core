@@ -23,6 +23,8 @@
 #include "Debug.h"
 #include "TlvMessage.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
 namespace SessionBase

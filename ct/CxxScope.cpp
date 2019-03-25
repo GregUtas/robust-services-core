@@ -4360,6 +4360,50 @@ size_t Function::MinArgs() const
 
 //------------------------------------------------------------------------------
 
+fn_name Function_NameRefersToItem = "Function.NameRefersToItem";
+
+bool Function::NameRefersToItem(const string& name,
+   const CxxScope* scope, const CodeFile* file, SymbolView* view) const
+{
+   Debug::ft(Function_NameRefersToItem);
+
+   //  If this isn't a function template instance, invoke the base class
+   //  version.
+   //
+   if(tspec_ == nullptr)
+   {
+      return CxxScoped::NameRefersToItem(name, scope, file, view);
+   }
+
+   //  Split NAME into its component (template name and arguments).  If it
+   //  refers to this function instance's template, see if also refers to
+   //  its template arguments.
+   //
+   //  NOTE: This has not been tested.  Nothing in the code base caused its
+   //  ====  execution, but it is identical to ClassInst.NameRefersToItem.
+   //
+   auto names = GetNameAndArgs(name);
+   auto syms = Singleton< CxxSymbols >::Instance();
+   auto item = syms->FindSymbol
+      (file, scope, names.front().name, FRIEND_CLASSES, view);
+   if(item == nullptr) return false;
+
+   auto iname = item->ScopedName(false);
+   auto tname = tmplt_->ScopedName(false);
+
+   if(iname == tname)
+   {
+      size_t index = 1;
+      if(!tspec_->NamesReferToArgs(names, Context::PrevScope(), file, index))
+         return false;
+      return (index == names.size());
+   }
+
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Function_PushThisArg = "Function.PushThisArg";
 
 void Function::PushThisArg(StackArgVector& args) const
@@ -4976,6 +5020,15 @@ TypeMatch FuncSpec::MatchTemplateArg(const TypeSpec* that) const
 const string* FuncSpec::Name() const
 {
    return func_->Name();
+}
+
+//------------------------------------------------------------------------------
+
+bool FuncSpec::NamesReferToArgs(const NameVector& names,
+   const CxxScope* scope, const CodeFile* file, size_t& index) const
+{
+   Debug::SwLog(FuncSpec_Warning, "NamesReferToArgs", 0);
+   return func_->GetTypeSpec()->NamesReferToArgs(names, scope, file, index);
 }
 
 //------------------------------------------------------------------------------

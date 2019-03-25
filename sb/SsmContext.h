@@ -50,7 +50,7 @@ public:
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
+      const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -66,7 +66,7 @@ protected:
 private:
    //  Private to restrict creation.
    //
-   explicit SsmContext(Faction faction);
+   explicit SsmContext(NodeBase::Faction faction);
 
    //  Private to restrict deletion.  Not subclassed.
    //
@@ -92,7 +92,7 @@ private:
    //  Generates a log containing SID, ERRVAL, and the context's
    //  message trace when an error occurs.
    //
-   void OutputLog(ServiceId sid, word errval) const;
+   void OutputLog(ServiceId sid, NodeBase::word errval) const;
 
    //  The root SSM.
    //

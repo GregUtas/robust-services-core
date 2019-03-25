@@ -33,6 +33,8 @@
 #include "SysUdpSocket.h"
 #include "UdpIpService.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
 namespace NetworkBase

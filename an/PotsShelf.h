@@ -33,6 +33,7 @@
 
 using namespace SessionBase;
 using namespace MediaBase;
+using namespace NetworkBase;
 
 //------------------------------------------------------------------------------
 

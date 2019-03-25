@@ -26,6 +26,7 @@
 #include "SysTcpSocket.h"
 #include "SysTypes.h"
 
+using namespace NodeBase;
 using std::ostream;
 using std::string;
 

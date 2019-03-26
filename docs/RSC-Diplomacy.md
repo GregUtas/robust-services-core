@@ -31,7 +31,7 @@ debug information.
 ## Building the executable
 
 To build the observer bot, or even subclass it to create a bot that plays the game, start
-with the instructions on the [main page](README.md).  However, the observer bot is not
+with the instructions on the [main page](/README.md).  However, the observer bot is not
 enabled in a default RSC build.  But it is easy to target the build for a bot by modifying
 [`main`](/rsc/main.cpp) as follows:
 

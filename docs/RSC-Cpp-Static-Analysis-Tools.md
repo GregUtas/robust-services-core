@@ -20,6 +20,8 @@ Windows).  If a file has not been parsed, parsing occurs when a command that
 requires it is used.  These commands include
 
 * `>check`, to look for violations of C++ design guidelines
+* `>fix`, which modifies source code files to eliminate some of the warnings
+found by `>check`
 * `>export`, to write out the code in a standard format
 * `>trim`, to determine which `#include` and `using` directives, and forward
 declarations, should be added or removed

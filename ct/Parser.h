@@ -139,12 +139,6 @@ namespace CodeTools
 //  WORKAROUNDS
 //  -----------
 //  o See the above comments, primarily for templates.
-//  o If two types with the same name are used as arguments to the same template
-//    class, name resolution can pick the wrong template instance.  For example,
-//    T<C1::A> and T<C2::A>, where A is defined in two different scopes.  This
-//    occurs because template arguments are not yet considered when determining
-//    the visibility of a template instance.  The workaround is to ensure that
-//    all template arguments to a given template have different names.
 //  o If template T with parameter P is instantiated with argument A, and T<P>
 //    appears within one of its functions, it causes a parse error because it
 //    gets expanded to T<A><A>.  This occurs because T is first replaced by

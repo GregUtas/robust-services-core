@@ -1605,7 +1605,7 @@ private:
    //  The following are overridden to return the function signature.
    //
    Function* GetFuncSpec() const override { return func_.get(); }
-   CxxNamed* Referent() const override { return func_.get(); }
+   CxxScoped* Referent() const override { return func_.get(); }
    CxxToken* RootType() const override { return func_.get(); }
 
    //  The following are forwarded to the function.
@@ -1633,7 +1633,6 @@ private:
    bool HasArrayDefn() const override;
    TagCount Ptrs(bool arrays) const override;
    TagCount Refs() const override;
-   void RemoveRefs() override;
    StackArg ResultType() const override;
    void SetPtrs(TagCount count) override;
    TypeTags* Tags() override;
@@ -1658,7 +1657,7 @@ private:
    //  generate a log because they should not be invoked.
    //
    void EnterArrays() const override;
-   void SetReferent(CxxNamed* item, const SymbolView* view) const override;
+   void SetReferent(CxxScoped* item, const SymbolView* view) const override;
 
    //  The following is not supported.  It generates a log and returns
    //  nullptr.

@@ -174,7 +174,7 @@ public:
    //  Returns what the item refers to.  The default version generates a
    //  log and returns nullptr.
    //
-   virtual CxxNamed* Referent() const;
+   virtual CxxScoped* Referent() const;
 
    //  If the item is located in a code block, this is invoked when analysis
    //  of the block begins, which corresponds to the block coming into scope.
@@ -398,7 +398,7 @@ public:
    ~IntLiteral() { CxxStats::Decr(CxxStats::INT_LITERAL); }
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   CxxNamed* Referent() const override;
+   CxxScoped* Referent() const override;
    std::string TypeString(bool arg) const override;
 private:
    Numeric GetNumeric() const override;
@@ -440,7 +440,7 @@ public:
    ~FloatLiteral() { CxxStats::Decr(CxxStats::FLOAT_LITERAL); }
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   CxxNamed* Referent() const override;
+   CxxScoped* Referent() const override;
    std::string TypeString(bool arg) const override;
 private:
    Numeric GetNumeric() const override;
@@ -460,7 +460,7 @@ public:
    ~BoolLiteral() { CxxStats::Decr(CxxStats::BOOL_LITERAL); }
    void Print(std::ostream& stream, const NodeBase::Flags& options)
       const override { stream << std::boolalpha << b_; }
-   CxxNamed* Referent() const override;
+   CxxScoped* Referent() const override;
    std::string TypeString(bool arg) const override { return BOOL_STR; }
 private:
    Numeric GetNumeric() const override { return Numeric::Bool; }
@@ -479,7 +479,7 @@ public:
    ~CharLiteral() { CxxStats::Decr(CxxStats::CHAR_LITERAL); }
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   CxxNamed* Referent() const override;
+   CxxScoped* Referent() const override;
    std::string TypeString(bool arg) const override { return CHAR_STR; }
 private:
    Numeric GetNumeric() const override { return Numeric::Char; }
@@ -500,15 +500,15 @@ public:
    TypeSpec* GetTypeSpec() const override;
    void Print(std::ostream& stream, const NodeBase::Flags& options)
       const override { stream << NodeBase::QUOTE << str_ << NodeBase::QUOTE; }
-   CxxNamed* Referent() const override;
+   CxxScoped* Referent() const override;
    void Shrink() override;
    std::string TypeString(bool arg) const override { return "char*"; }
-   static CxxNamed* GetReferent();
+   static CxxScoped* GetReferent();
 private:
-   static TypeSpecPtr CreateRef();
+   static DataPtr CreateRef();
    Numeric GetNumeric() const override { return Numeric::Pointer; }
    std::string str_;
-   static const TypeSpecPtr Ref_;
+   static const DataPtr Ref_;
 };
 
 //------------------------------------------------------------------------------
@@ -524,7 +524,7 @@ public:
       const override { stream << NULLPTR_STR; }
    bool IsConstPtr() const override { return true; }
    bool IsConstPtr(size_t n) const override { return true; }
-   CxxNamed* Referent() const override;
+   CxxScoped* Referent() const override;
    std::string TypeString(bool arg)
       const override { return NULLPTR_T_STR; }
 private:

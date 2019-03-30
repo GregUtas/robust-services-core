@@ -5054,13 +5054,6 @@ TagCount FuncSpec::Refs() const
 
 //------------------------------------------------------------------------------
 
-void FuncSpec::RemoveRefs()
-{
-   return func_->GetTypeSpec()->RemoveRefs();
-}
-
-//------------------------------------------------------------------------------
-
 StackArg FuncSpec::ResultType() const
 {
    return func_->ResultType();
@@ -5075,7 +5068,7 @@ void FuncSpec::SetPtrs(TagCount count)
 
 //------------------------------------------------------------------------------
 
-void FuncSpec::SetReferent(CxxNamed* item, const SymbolView* view) const
+void FuncSpec::SetReferent(CxxScoped* item, const SymbolView* view) const
 {
    Debug::SwLog(FuncSpec_Warning, "SetReferent", 0);
    func_->GetTypeSpec()->SetReferent(item, view);

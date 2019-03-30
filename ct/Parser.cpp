@@ -4290,7 +4290,7 @@ void Parser::ResetStats()
 
 fn_name Parser_ResolveInstanceArgument = "Parser.ResolveInstanceArgument";
 
-CxxNamed* Parser::ResolveInstanceArgument(const QualName* name) const
+CxxScoped* Parser::ResolveInstanceArgument(const QualName* name) const
 {
    Debug::ft(Parser_ResolveInstanceArgument);
 

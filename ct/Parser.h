@@ -187,7 +187,7 @@ public:
    //  If parsing a template instance for which NAME is an argument, returns
    //  that argument.
    //
-   CxxNamed* ResolveInstanceArgument(const QualName* name) const;
+   CxxScoped* ResolveInstanceArgument(const QualName* name) const;
 
    //  Things that can be parsed.
    //

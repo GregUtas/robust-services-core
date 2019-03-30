@@ -1671,23 +1671,37 @@ bool StackArg::SetAutoTypeOn(const FuncData& data) const
    auto spec = data.GetTypeSpec();
    auto constauto = spec->IsConst();
    auto constautoptr = spec->IsConstPtr();
-   auto ref = static_cast< CxxNamed* >(item);
-   spec->SetReferent(ref, nullptr);
 
-   //  RefCount() is the number of references that were attached to "auto"
-   //  (usually 0, but 1 when "auto&" is used).  Unless "auto&" is used, the
-   //  auto variable is a copy of, not a reference to, the right-hand side.
-   //
-   auto refs = spec->Tags()->RefCount();
-   if(refs == 0) spec->RemoveRefs();
-
-   //  ptrs_ tracked any indirection, address of, or array subscript operators
-   //  that were applied to the right-hand side.  The TypeSpec that underlies
+   //  this->ptrs_ tracked any indirection, address of, or array subscript
+   //  operators that were applied to the right-hand side, so it needs to be
+   //  carried over to the auto variable.  The TypeSpec that underlies
    //  the right-hand side will be reused by the auto variable, but it must be
    //  adjusted by ptrs_.
    //
-   spec->SetPtrs(ptrs_);
+   if(item->Type() == Cxx::TypeSpec)
+   {
+      //  Make the TypeSpec's referent the auto variable's referent and also
+      //  apply its pointers the auto variable.
+      //
+      auto type = static_cast< TypeSpec* >(item);
+      auto ptrs = ptrs_ + type->Tags()->PtrCount(true);
+      spec->SetReferent(type->Referent(), nullptr);
+      spec->SetPtrs(ptrs);
+   }
+   else
+   {
+      //  ITEM is derived from CxxScoped, so just make it the auto variable's
+      //  referent and apply this->ptrs_ to the auto variable.
+      //
+      spec->SetReferent(static_cast< CxxScoped* >(item), nullptr);
+      spec->SetPtrs(ptrs_);
+   }
+
+   //  Now that the auto variable's type has been set, look at its pointers
+   //  and references.
+   //
    auto ptrs = Ptrs(true);
+   auto refs = spec->Tags()->RefCount();
 
    //  If "const auto" was used, it applies to the pointer, rather than the
    //  type, if the auto variable is a pointer.  Handle const* auto as well.

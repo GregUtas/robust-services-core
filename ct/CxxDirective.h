@@ -196,7 +196,7 @@ public:
 
    //  Overridden to return what the name refers to.
    //
-   CxxNamed* Referent() const override;
+   CxxScoped* Referent() const override;
 
    //  Overridden to shrink containers.
    //
@@ -212,7 +212,7 @@ private:
 
    //  What the name refers to.
    //
-   mutable CxxNamed* ref_;
+   mutable CxxScoped* ref_;
 
    //  Whether the name was defined when it was encountered.
    //

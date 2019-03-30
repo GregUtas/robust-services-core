@@ -316,7 +316,7 @@ void BaseDecl::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 fn_name BaseDecl_Referent = "BaseDecl.Referent";
 
-CxxNamed* BaseDecl::Referent() const
+CxxScoped* BaseDecl::Referent() const
 {
    Debug::ft(BaseDecl_Referent);
 
@@ -1315,7 +1315,7 @@ void Forward::GetDirectClasses(CxxUsageSets& symbols) const
 
 fn_name Forward_Referent = "Forward.Referent";
 
-CxxNamed* Forward::Referent() const
+CxxScoped* Forward::Referent() const
 {
    Debug::ft(Forward_Referent);
 
@@ -1539,7 +1539,7 @@ bool Friend::EnterScope()
 
 fn_name Friend_FindForward = "Friend.FindForward";
 
-CxxNamed* Friend::FindForward() const
+CxxScoped* Friend::FindForward() const
 {
    Debug::ft(Friend_FindForward);
 
@@ -1669,7 +1669,7 @@ void Friend::FindReferent()
    SymbolView view = DeclaredGlobally;
    auto scope = GetScope();
    auto mask = (GetFunction() != nullptr ? FRIEND_FUNCS : FRIEND_CLASSES);
-   CxxNamed* ref = nullptr;
+   CxxScoped* ref = nullptr;
 
    if(!searched_)
    {
@@ -1725,7 +1725,7 @@ QualName* Friend::GetQualName() const
 
 //------------------------------------------------------------------------------
 
-CxxNamed* Friend::GetReferent() const
+CxxScoped* Friend::GetReferent() const
 {
    return GetQualName()->GetReferent();
 }
@@ -1819,7 +1819,7 @@ string Friend::QualifiedName(bool scopes, bool templates) const
 
 fn_name Friend_Referent = "Friend.Referent";
 
-CxxNamed* Friend::Referent() const
+CxxScoped* Friend::Referent() const
 {
    Debug::ft(Friend_Referent);
 
@@ -1940,7 +1940,7 @@ void Friend::SetName(QualNamePtr& name)
 
 fn_name Friend_SetReferent = "Friend.SetReferent";
 
-void Friend::SetReferent(CxxNamed* item, const SymbolView* view) const
+void Friend::SetReferent(CxxScoped* item, const SymbolView* view) const
 {
    Debug::ft(Friend_SetReferent);
 
@@ -2254,7 +2254,7 @@ void Typedef::Print(ostream& stream, const Flags& options) const
 
 fn_name Typedef_Referent = "Typedef.Referent";
 
-CxxNamed* Typedef::Referent() const
+CxxScoped* Typedef::Referent() const
 {
    Debug::ft(Typedef_Referent);
 
@@ -2425,7 +2425,7 @@ bool Using::IsUsingFor
 
 fn_name Using_Referent = "Using.Referent";
 
-CxxNamed* Using::Referent() const
+CxxScoped* Using::Referent() const
 {
    Debug::ft(Using_Referent);
 

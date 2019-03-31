@@ -653,10 +653,25 @@ bool Expression::AddUnaryOp(TokenPtr& item)
 {
    Debug::ft(Expression_AddUnaryOp);
 
-   if(!items_.empty())
-   {
-      auto oper = static_cast< Operation* >(item.get());
+   auto oper = static_cast< Operation* >(item.get());
 
+   if(items_.empty())
+   {
+      //  ++ and -- are initially parsed as postfix operators.  But
+      //  this operator begins an expression, so it must be prefix.
+      //
+      switch(oper->Op())
+      {
+      case Cxx::POSTFIX_INCREMENT:
+         oper->SetOp(Cxx::PREFIX_INCREMENT);
+         break;
+      case Cxx::POSTFIX_DECREMENT:
+         oper->SetOp(Cxx::PREFIX_DECREMENT);
+         break;
+      }
+   }
+   else
+   {
       //  It's an error if something precedes operator delete.
       //
       switch(oper->Op())

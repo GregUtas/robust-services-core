@@ -2284,7 +2284,7 @@ word StartCommand::ProcessCommand(CliThread& cli) const
    cli.EndOfInput(false);
 
    if(immed && !Element::RunningInLab()) return cli.Report(-5, NotInFieldExpl);
-   auto rc = Singleton< TraceBuffer >::Instance()->StartTrace(immed);
+   auto rc = Singleton< TraceBuffer >::Instance()->StartTracing(immed);
    return ExplainTraceRc(cli, rc);
 }
 
@@ -2574,7 +2574,7 @@ word StopCommand::ProcessCommand(CliThread& cli) const
    Debug::ft(StopCommand_ProcessCommand);
 
    cli.EndOfInput(false);
-   Singleton< TraceBuffer >::Instance()->StopTrace();
+   Singleton< TraceBuffer >::Instance()->StopTracing();
    return ExplainTraceRc(cli, TraceOk);
 }
 

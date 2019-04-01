@@ -2947,7 +2947,7 @@ TraceRc Thread::StartTracing(bool immediate, bool autostop)
    auto thr = RunningThread();
    if(thr != LockedThread()) return TraceFailed;
 
-   auto rc = Singleton< TraceBuffer >::Instance()->StartTrace(immediate);
+   auto rc = Singleton< TraceBuffer >::Instance()->StartTracing(immediate);
 
    if(rc == TraceOk)
    {
@@ -2985,7 +2985,7 @@ void Thread::StopTracing()
 
    if(thr->priv_->tracing_)
    {
-      Singleton< TraceBuffer >::Instance()->StopTrace();
+      Singleton< TraceBuffer >::Instance()->StopTracing();
       thr->priv_->tracing_ = false;
       thr->priv_->autostop_ = false;
    }

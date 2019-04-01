@@ -75,7 +75,7 @@ extern fixed_string ReturnFalse;
 extern fixed_string ReturnTrue;
 extern fixed_string SendingToConsoleExpl;
 extern fixed_string SizesHeader;
-extern fixed_string StopTracePrompt;
+extern fixed_string StopTracingPrompt;
 extern fixed_string SuccessExpl;
 extern fixed_string SymbolLockedExpl;
 extern fixed_string SymbolOverflowExpl;

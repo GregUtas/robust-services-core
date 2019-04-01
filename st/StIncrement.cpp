@@ -872,7 +872,7 @@ StIncrement::StIncrement() : CliIncrement(StIncrText, StIncrExpl)
          buff->SetTool(BufferTracer, true);
          buff->SetTool(ContextTracer, true);
          nbt->SelectFaction(PayloadFaction, TraceIncluded);
-         buff->StartTrace(InitFlags::ImmediateTrace());
+         buff->StartTracing(InitFlags::ImmediateTrace());
       }
    }
 }

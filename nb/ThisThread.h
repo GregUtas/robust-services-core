@@ -47,6 +47,7 @@ namespace NodeBase
       void ExitBlockingOperation(fn_name_arg func);
       void MemUnprotect();
       void MemProtect();
+      void IncludeInTrace();
       TraceRc StartTracing(bool immediate, bool autostop);
       void StopTracing();
    }

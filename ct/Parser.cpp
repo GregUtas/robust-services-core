@@ -146,7 +146,7 @@ bool Parser::Backup(size_t pos, size_t cause)
 {
    Debug::ft(Parser_Backup2);
 
-   auto curr = lexer_.Curr();
+   auto curr = CurrPos();
 
    if(curr >= farthest_)
    {
@@ -238,6 +238,22 @@ bool Parser::CheckType(QualNamePtr& name)
 
 //------------------------------------------------------------------------------
 
+size_t Parser::CurrPos() const
+{
+   auto curr = lexer_.Curr();
+
+   //  See if a tracepoint has been hit.
+   //
+   if(Context::CheckPos_)
+   {
+      Context::OnLine(lexer_.GetLineNum(curr), false);
+   }
+
+   return curr;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Parser_DisplayStats = "Parser.DisplayStats";
 
 void Parser::DisplayStats(ostream& stream)
@@ -296,7 +312,7 @@ bool Parser::Fault(DirectiveError err) const
 {
    Debug::ft(Parser_Fault);
 
-   auto curr = lexer_.Curr();
+   auto curr = CurrPos();
    auto code = lexer_.GetLine(curr);
    auto line = lexer_.GetLineNum(curr);
    std::ostringstream text;
@@ -340,7 +356,7 @@ bool Parser::GetArgList(TokenPtr& call)
 {
    Debug::ft(Parser_GetArgList);
 
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  The left parenthesis has already been parsed.
    //
@@ -383,13 +399,13 @@ bool Parser::GetArgument(ArgumentPtr& arg)
 
    //  <Argument> = <TypeSpec> [<Name>] [<ArraySpec>] ["=" <Expr>]
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    TypeSpecPtr typeSpec;
    string argName;
 
    if(!GetTypeSpec(typeSpec, argName)) return Backup(4);
-   auto pos = lexer_.Curr();
+   auto pos = CurrPos();
 
    //  If the argument was a function type, argName was set to its name,
    //  if any.  For other arguments, the name follows the TypeSpec.
@@ -435,7 +451,7 @@ bool Parser::GetArguments(FunctionPtr& func)
    //  The left parenthesis has already been parsed.  Looking for the right
    //  parenthesis immediately is an optimization for the no arguments case.
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
    if(lexer_.NextCharIs(')')) return Success(Parser_GetArguments, start);
 
    ArgumentPtr arg;
@@ -465,7 +481,7 @@ bool Parser::GetArraySpec(ArraySpecPtr& array)
 
    //  <ArraySpec> = "[" [<Expr>] "]"
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  If a left bracket is found, extract any expression between it
    //  and the right bracket.  Note that the expression can be empty.
@@ -491,7 +507,7 @@ bool Parser::GetBaseDecl(BaseDeclPtr& base)
 
    //  <BaseDecl> = ":" <Access> <QualName>
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
    if(!lexer_.NextStringIs(":")) return Backup(12);
 
    Cxx::Access access;
@@ -511,7 +527,7 @@ bool Parser::GetBasic(TokenPtr& statement)
 {
    Debug::ft(Parser_GetBasic);
 
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  An expression statement is an assignment, function call, or null
    //  statement.  The latter is a bare semicolon.
@@ -542,7 +558,7 @@ bool Parser::GetBlock(BlockPtr& block)
 
    //  <Block> = ["{"] [<Statement> ";"]* ["}"]
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    auto braced = lexer_.NextCharIs('{');
    block.reset(new Block(braced));
@@ -587,7 +603,7 @@ bool Parser::GetBraceInit(ExprPtr& expr)
 {
    Debug::ft(Parser_GetBraceInit);
 
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  The left brace has already been parsed.  A comma is actually allowed
    //  to follow the final item in the list, just before the closing brace.
@@ -637,7 +653,7 @@ bool Parser::GetBreak(TokenPtr& statement)
    Debug::ft(Parser_GetBreak);
 
    auto begin = kwdBegin_;
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  The "break" keyword has already been parsed.
    //
@@ -655,7 +671,7 @@ bool Parser::GetCase(TokenPtr& statement)
    Debug::ft(Parser_GetCase);
 
    auto begin = kwdBegin_;
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  The "case" keyword has already been parsed.
    //
@@ -677,7 +693,7 @@ bool Parser::GetCast(ExprPtr& expr)
 {
    Debug::ft(Parser_GetCast);
 
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  The left parenthesis has already been parsed.
    //
@@ -705,14 +721,14 @@ bool Parser::GetCatch(TokenPtr& statement)
 {
    Debug::ft(Parser_GetCatch);
 
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    ArgumentPtr arg;
    BlockPtr handler;
    if(!NextKeywordIs(CATCH_STR)) return Backup(start, 29);
    if(!lexer_.NextCharIs('(')) return Backup(start, 30);
 
-   if(lexer_.Extract(lexer_.Curr(), 3) == ELLIPSES_STR)
+   if(lexer_.Extract(CurrPos(), 3) == ELLIPSES_STR)
    {
       auto end = lexer_.FindClosing('(', ')');
       if(end == string::npos) return Backup(start, 31);
@@ -781,7 +797,7 @@ bool Parser::GetClassData(DataPtr& data)
    //  <ClassData> = ["static"] ["mutable"] ["constexpr"] <TypeSpec> <Name>
    //                [<ArraySpec>] [":" <Expr>] ["=" <Expr>] ";"
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    TypeSpecPtr typeSpec;
    string dataName;
@@ -793,7 +809,7 @@ bool Parser::GetClassData(DataPtr& data)
    auto mute = NextKeywordIs(MUTABLE_STR);
    auto cexpr = NextKeywordIs(CONSTEXPR_STR);
    if(!GetTypeSpec(typeSpec)) return Backup(start, 35);
-   auto pos = lexer_.Curr();
+   auto pos = CurrPos();
    if(!lexer_.GetName(dataName)) return Backup(start, 36);
    while(GetArraySpec(arraySpec)) typeSpec->AddArray(arraySpec);
 
@@ -844,7 +860,7 @@ bool Parser::GetClassDecl(Cxx::Keyword kwd, ClassPtr& cls, ForwardPtr& forw)
    //  The initial keyword has already been parsed unless it is "template".
    //
    auto begin = kwdBegin_;
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    TemplateParmsPtr parms;
    Cxx::ClassTag tag = Cxx::ClassType;
@@ -859,7 +875,7 @@ bool Parser::GetClassDecl(Cxx::Keyword kwd, ClassPtr& cls, ForwardPtr& forw)
       break;
    case Cxx::TEMPLATE:
       if(!GetTemplateParms(parms)) return Backup(start, 43);
-      begin = lexer_.Curr();
+      begin = CurrPos();
       if(!lexer_.GetClassTag(tag)) return Backup(start, 44);
    }
 
@@ -868,7 +884,7 @@ bool Parser::GetClassDecl(Cxx::Keyword kwd, ClassPtr& cls, ForwardPtr& forw)
    {
       if(tag != Cxx::UnionType) return Backup(start, 45);
       className.reset(new QualName(EMPTY_STR));
-      className->SetContext(lexer_.Curr());
+      className->SetContext(CurrPos());
    }
 
    if(lexer_.NextCharIs(';'))
@@ -972,7 +988,7 @@ bool Parser::GetConditional(ExprPtr& expr)
 {
    Debug::ft(Parser_GetConditional);
 
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  The "?" has already been parsed and should have beeen preceded by
    //  a valid expression.
@@ -1006,7 +1022,7 @@ bool Parser::GetContinue(TokenPtr& statement)
    Debug::ft(Parser_GetContinue);
 
    auto begin = kwdBegin_;
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  The "continue" keyword has already been parsed.
    //
@@ -1025,12 +1041,12 @@ bool Parser::GetCtorDecl(FunctionPtr& func)
 
    //  <CtorDecl> = ["explicit"] ["constexpr"] <Name> <Arguments> [<CtorInit>]
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    string name;
    auto expl = NextKeywordIs(EXPLICIT_STR);
    auto cexpr = NextKeywordIs(CONSTEXPR_STR);
-   auto pos = lexer_.Curr();
+   auto pos = CurrPos();
    if(!GetName(name)) return Backup(start, 54);
    if(!lexer_.NextCharIs('(')) return Backup(start, 55);
    QualNamePtr ctorName(new QualName(name));
@@ -1057,7 +1073,7 @@ bool Parser::GetCtorDefn(FunctionPtr& func)
 
    //  <CtorDefn> = <QualName> "::" <Name> <Arguments> <CtorInit>
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  Whether this is a constructor or not, GetQualName will parse the final
    //  scope qualifier and function name, so verify that the function name is
@@ -1087,7 +1103,7 @@ bool Parser::GetCtorInit(FunctionPtr& func)
    //  <CtorInit> = [ ":" [<QualName> "(" <Expr> ")"]
    //                     ["," <Name> "(" <Expr> ")"]* ]
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
    if(!lexer_.NextStringIs(":")) return Success(Parser_GetCtorInit, start);
 
    auto end = lexer_.FindFirstOf("{");
@@ -1103,7 +1119,7 @@ bool Parser::GetCtorInit(FunctionPtr& func)
       //  the expression in parentheses as an argument list in case it's a
       //  constructor call.
       //
-      begin = lexer_.Curr();
+      begin = CurrPos();
       auto call = false;
       auto cls = func->GetClass();
       if(cls != nullptr)
@@ -1143,7 +1159,7 @@ bool Parser::GetCtorInit(FunctionPtr& func)
 
    while(lexer_.NextCharIs(','))
    {
-      begin = lexer_.Curr();
+      begin = CurrPos();
       if(!lexer_.GetName(memberName)) return Backup(start, 65);
       if(!lexer_.NextCharIs('(')) return Backup(start, 66);
       end = lexer_.FindClosing('(', ')');
@@ -1165,7 +1181,7 @@ bool Parser::GetCxxAlpha(ExprPtr& expr)
 {
    Debug::ft(Parser_GetCxxAlpha);
 
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    TokenPtr item;
    QualNamePtr qualName;
@@ -1253,7 +1269,7 @@ bool Parser::GetCxxCast(ExprPtr& expr, Cxx::Operator op)
 {
    Debug::ft(Parser_GetCxxCast);
 
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  The cast operator has already been parsed.
    //
@@ -1282,7 +1298,7 @@ bool Parser::GetCxxExpr(ExprPtr& expr, size_t end, bool force)
 {
    Debug::ft(Parser_GetCxxExpr);
 
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    char c;
    expr.reset(new Expression(end, force));
@@ -1341,7 +1357,7 @@ bool Parser::GetDefault(TokenPtr& statement)
    Debug::ft(Parser_GetDefault);
 
    auto begin = kwdBegin_;
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  The "default" keyword has already been parsed.
    //
@@ -1359,7 +1375,7 @@ bool Parser::GetDefined(ExprPtr& expr)
 {
    Debug::ft(Parser_GetDefined);
 
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  The defined operator has already been parsed.  Parentheses
    //  around the argument are optional.
@@ -1367,7 +1383,7 @@ bool Parser::GetDefined(ExprPtr& expr)
    string name;
 
    auto par = lexer_.NextCharIs('(');
-   auto pos = lexer_.Curr();
+   auto pos = CurrPos();
    if(!lexer_.GetName(name)) return Backup(start, 88);
    if(par && !lexer_.NextCharIs(')')) return Backup(start, 89);
 
@@ -1389,7 +1405,7 @@ bool Parser::GetDelete(ExprPtr& expr, Cxx::Operator op)
 {
    Debug::ft(Parser_GetDelete);
 
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  The delete operator has already been parsed.
    //
@@ -1413,7 +1429,7 @@ bool Parser::GetDo(TokenPtr& statement)
    Debug::ft(Parser_GetDo);
 
    auto begin = kwdBegin_;
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  The "do" keyword has already been parsed.
    //
@@ -1441,12 +1457,12 @@ bool Parser::GetDtorDecl(FunctionPtr& func)
 
    //  <DtorDecl> = ["virtual"] "~" <Name> "(" ")" ["noexcept"]
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
    auto virt = NextKeywordIs(VIRTUAL_STR);
    if(!lexer_.NextCharIs('~')) return Backup(start, 95);
 
    string name;
-   auto pos = lexer_.Curr();
+   auto pos = CurrPos();
    if(!GetName(name)) return Backup(start, 96);
    name.insert(0, 1, '~');
    QualNamePtr dtorName(new QualName(name));
@@ -1471,13 +1487,13 @@ bool Parser::GetDtorDefn(FunctionPtr& func)
 
    //  <DtorDefn> = <QualName> "::~" <Name> "(" ")" ["noexcept"]
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    QualNamePtr dtorName;
    string name;
    if(!GetQualName(dtorName)) return Backup(start, 99);
    if(!lexer_.NextStringIs("::~")) return Backup(start, 100);
-   auto pos = lexer_.Curr();
+   auto pos = CurrPos();
    if(!lexer_.GetName(name)) return Backup(start, 101);
    name.insert(0, 1, '~');
    TypeNamePtr className(new TypeName(name));
@@ -1507,7 +1523,7 @@ bool Parser::GetEnum(EnumPtr& decl)
    //  the last enumerator, a comma can actually precede the brace.
    //
    auto begin = kwdBegin_;
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    string enumName;
    TypeSpecPtr typeSpec;
@@ -1515,14 +1531,14 @@ bool Parser::GetEnum(EnumPtr& decl)
 
    if(lexer_.NextCharIs(':'))
    {
-      if(!GetTypeSpec(typeSpec)) return Backup(start, 214);
+      if(!GetTypeSpec(typeSpec)) return Backup(start, 229);
    }
 
    if(!lexer_.NextCharIs('{')) return Backup(start, 104);
 
    string etorName;
    ExprPtr etorInit;
-   auto etorPos = lexer_.Curr();
+   auto etorPos = CurrPos();
    if(!GetEnumerator(etorName, etorInit)) return Backup(start, 105);
    decl.reset(new Enum(enumName));
    decl->SetContext(begin);
@@ -1532,7 +1548,7 @@ bool Parser::GetEnum(EnumPtr& decl)
    while(true)
    {
       if(!lexer_.NextCharIs(',')) break;
-      etorPos = lexer_.Curr();
+      etorPos = CurrPos();
       if(!GetEnumerator(etorName, etorInit)) break;
       decl->AddEnumerator(etorName, etorInit, etorPos);
    }
@@ -1550,7 +1566,7 @@ bool Parser::GetEnumerator(string& name, ExprPtr& init)
 {
    Debug::ft(Parser_GetEnumerator);
 
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  <Enumerator> = <Name> ["=" <Expr>]
    //
@@ -1598,7 +1614,7 @@ bool Parser::GetFor(TokenPtr& statement)
    Debug::ft(Parser_GetFor);
 
    auto begin = kwdBegin_;
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  The "for" keyword has already been parsed.
    //
@@ -1652,12 +1668,12 @@ bool Parser::GetFriend(FriendPtr& decl)
    //  precedes it.
    //
    auto begin = kwdBegin_;
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    TemplateParmsPtr parms;
    if(GetTemplateParms(parms))
    {
-      begin = lexer_.Curr();
+      begin = CurrPos();
       if(!NextKeywordIs(FRIEND_STR)) return Backup(start, 118);
    }
 
@@ -1706,7 +1722,7 @@ bool Parser::GetFuncData(DataPtr& data)
    //  in a list that separates each declaration with a comma:
    //    e.g. int i = 0, *j = nullptr, k[10] = { };
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    TypeSpecPtr typeSpec;
    string dataName;
@@ -1714,7 +1730,7 @@ bool Parser::GetFuncData(DataPtr& data)
    auto stat = NextKeywordIs(STATIC_STR);
    auto cexpr = NextKeywordIs(CONSTEXPR_STR);
    if(!GetTypeSpec(typeSpec)) return Backup(start, 121);
-   auto pos = lexer_.Curr();
+   auto pos = CurrPos();
    if(!lexer_.GetName(dataName)) return Backup(start, 122);
    if(lexer_.NextCharIs('('))
    {
@@ -1754,7 +1770,7 @@ bool Parser::GetFuncData(DataPtr& data)
          typeSpec->CopyContext(prev);
          *typeSpec->Tags() = TypeTags();
          GetTypeTags(typeSpec.get());
-         pos = lexer_.Curr();
+         pos = CurrPos();
          if(!lexer_.GetName(dataName)) return Backup(start, 126);
       }
 
@@ -1814,7 +1830,7 @@ bool Parser::GetFuncDecl(Cxx::Keyword kwd, FunctionPtr& func)
    //  <FuncDecl> = ["extern"] [<TemplateParms>] ["inline"]
    //               (<CtorDecl> | <DtorDecl> | <ProcDecl>) (<FuncImpl> | ";")
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
    auto found = false;
    auto extn = false;
    auto inln = false;
@@ -1873,7 +1889,7 @@ bool Parser::GetFuncDecl(Cxx::Keyword kwd, FunctionPtr& func)
    if(lexer_.NextCharIs(';')) return Success(Parser_GetFuncDecl, start);
    if(GetFuncSpecial(func)) return Success(Parser_GetFuncDecl, start);
 
-   auto pos = lexer_.Curr();
+   auto pos = CurrPos();
    if(!lexer_.NextCharIs('{')) return Backup(start, func, 219);
 
    auto end = lexer_.FindClosing('{', '}');
@@ -1908,7 +1924,7 @@ bool Parser::GetFuncDefn(Cxx::Keyword kwd, FunctionPtr& func)
    //  <FuncDefn> = [<TemplateParms>] ["inline"]
    //               (<CtorDefn> | <DtorDefn> | <ProcDefn>) <FuncImpl>
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
    auto found = false;
    auto inln = false;
 
@@ -1936,7 +1952,7 @@ bool Parser::GetFuncDefn(Cxx::Keyword kwd, FunctionPtr& func)
    func->SetInline(inln);
    if(GetFuncSpecial(func)) return Success(Parser_GetFuncDecl, start);
 
-   auto curr = lexer_.Curr();
+   auto curr = CurrPos();
    if(!lexer_.NextCharIs('{')) return Backup(start, func, 223);
    lexer_.Reposition(curr);
    if(!GetFuncImpl(func.get())) return Backup(start, func, 224);
@@ -1951,7 +1967,7 @@ bool Parser::GetFuncImpl(Function* func)
 {
    Debug::ft(Parser_GetFuncImpl);
 
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    Context::PushScope(func);
 
@@ -1987,12 +2003,12 @@ bool Parser::GetFuncSpec(TypeSpecPtr& spec, FunctionPtr& func)
    //  <FuncSpec> = "(" "*" <Name> ")" <Arguments>
    //  GetTypeSpec has already parsed the function's return type.
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
    if(!lexer_.NextCharIs('(')) return Backup(133);
    if(!lexer_.NextCharIs('*')) return Backup(start, 134);
 
    string name;
-   auto pos = lexer_.Curr();
+   auto pos = CurrPos();
    if(!lexer_.GetName(name)) return Backup(start, 135);
    if(!lexer_.NextCharIs(')')) return Backup(start, 136);
    if(!lexer_.NextCharIs('(')) return Backup(start, 137);
@@ -2040,7 +2056,7 @@ bool Parser::GetIf(TokenPtr& statement)
    Debug::ft(Parser_GetIf);
 
    auto begin = kwdBegin_;
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  The "if" keyword has already been parsed.
    //
@@ -2082,7 +2098,7 @@ bool Parser::GetInlines(Class* cls)
    //
    Context::PushScope(cls);
 
-   auto end = lexer_.Curr();
+   auto end = CurrPos();
    auto funcs = cls->Funcs();
 
    for(size_t i = 0; i < funcs->size(); ++i)
@@ -2147,7 +2163,7 @@ string Parser::GetLINE() const
    std::ostringstream stream;
 
    if(ParsingTemplateInstance()) stream << venue_ << SPACE;
-   stream << lexer_.GetLineNum(lexer_.Curr()) + 1;
+   stream << lexer_.GetLineNum(CurrPos()) + 1;
    return stream.str();
 }
 
@@ -2159,7 +2175,7 @@ size_t Parser::GetLineNum(size_t pos) const
 {
    Debug::ft(Parser_GetLineNum);
 
-   if(pos == string::npos) pos = lexer_.Curr();
+   if(pos == string::npos) pos = CurrPos();
    return lexer_.GetLineNum(pos);
 }
 
@@ -2218,7 +2234,7 @@ bool Parser::GetNamespace()
    //  The "namespace" keyword has already been parsed.
    //
    auto begin = kwdBegin_;
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    string name;
    if(!lexer_.GetName(name)) return Backup(start, 141);
@@ -2270,7 +2286,7 @@ bool Parser::GetNew(ExprPtr& expr, Cxx::Operator op)
    auto newOp = static_cast< Operation* >(token.get());
    expr->AddItem(token);
 
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  See if there are arguments for operator new itself.  If not, add an
    //  empty function call so that the TypeSpec will always be the second
@@ -2286,7 +2302,7 @@ bool Parser::GetNew(ExprPtr& expr, Cxx::Operator op)
    }
 
    newOp->AddArg(token, false);
-   start = lexer_.Curr();
+   start = CurrPos();
 
    //  Add the type that is being created.
    //
@@ -2295,7 +2311,7 @@ bool Parser::GetNew(ExprPtr& expr, Cxx::Operator op)
    token.reset(typeSpec.release());
    newOp->AddArg(token, false);
 
-   start = lexer_.Curr();
+   start = CurrPos();
 
    //  Look for an array spec.  If we find one, this is actually new[].
    //  It can have more array specs, but not constructor arguments.  If
@@ -2334,7 +2350,7 @@ bool Parser::GetNoExcept(ExprPtr& expr)
 {
    Debug::ft(Parser_GetNoExcept);
 
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  The noexcept operator has already been parsed.
    //
@@ -2371,7 +2387,7 @@ bool Parser::GetOp(ExprPtr& expr, bool cxx)
 {
    Debug::ft(Parser_GetOp);
 
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    auto op = cxx ? lexer_.GetCxxOp() : lexer_.GetPreOp();
    if(op == Cxx::NIL_OPERATOR) return false;
@@ -2418,7 +2434,7 @@ bool Parser::GetParExpr(ExprPtr& expr, bool omit, bool opt)
 {
    Debug::ft(Parser_GetParExpr);
 
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  Parse the expression inside the parentheses.
    //
@@ -2450,7 +2466,7 @@ bool Parser::GetPreAlpha(ExprPtr& expr)
 {
    Debug::ft(Parser_GetPreAlpha);
 
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  Look for "defined", which is actually an operator.
    //
@@ -2478,7 +2494,7 @@ bool Parser::GetPrecedence(ExprPtr& expr)
 {
    Debug::ft(Parser_GetPrecedence);
 
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  The left parenthesis has already been parsed.
    //
@@ -2498,7 +2514,7 @@ bool Parser::GetPreExpr(ExprPtr& expr, size_t end)
 {
    Debug::ft(Parser_GetPreExpr);
 
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    char c;
    expr.reset(new Expression(end, true));
@@ -2562,7 +2578,7 @@ bool Parser::GetProcDecl(FunctionPtr& func)
    //  <StdProc> = <TypeSpec> (<Name> | "operator" <Operator>)
    //  <ConvOper> = "operator" <TypeSpec>
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
    auto stat = NextKeywordIs(STATIC_STR);
    auto virt = NextKeywordIs(VIRTUAL_STR);
    auto expl = NextKeywordIs(EXPLICIT_STR);
@@ -2577,14 +2593,14 @@ bool Parser::GetProcDecl(FunctionPtr& func)
    if(NextKeywordIs(OPERATOR_STR))
    {
       if(!GetTypeSpec(typeSpec)) return Backup(start, 158);
-      pos = lexer_.Curr();
+      pos = CurrPos();
       name = OPERATOR_STR;
       oper = Cxx::CAST;
    }
    else
    {
       if(!GetTypeSpec(typeSpec)) return Backup(start, 159);
-      pos = lexer_.Curr();
+      pos = CurrPos();
       if(!lexer_.GetName(name, oper)) return Backup(start, 160);
    }
 
@@ -2625,11 +2641,11 @@ bool Parser::GetProcDefn(FunctionPtr& func)
 
    //  <ProcDefn> = <TypeSpec> <QualName> <Arguments> ["const"] ["noexcept"]
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    TypeSpecPtr typeSpec;
    if(!GetTypeSpec(typeSpec)) return Backup(start, 162);
-   auto pos = lexer_.Curr();
+   auto pos = CurrPos();
 
    //  If this is a function template instance, append the template
    //  arguments to the name.  GetQualName cannot be used because it
@@ -2678,7 +2694,7 @@ bool Parser::GetQualName(QualNamePtr& name, Constraint constraint)
    //  <QualName> = ["::"] [ <TypeName> "::" ]*
    //               (<TypeName> | "operator" <Operator>)
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    TypeNamePtr type;
    auto global = lexer_.NextStringIs(SCOPE_STR);
@@ -2719,7 +2735,7 @@ bool Parser::GetReturn(TokenPtr& statement)
    Debug::ft(Parser_GetReturn);
 
    auto begin = kwdBegin_;
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  The "return" keyword has already been parsed.
    //
@@ -2742,13 +2758,13 @@ bool Parser::GetSizeOf(ExprPtr& expr)
 {
    Debug::ft(Parser_GetSizeOf);
 
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  The sizeof operator has already been parsed.  Its argument can be a
    //  name (e.g. a local or argument), a type, or an expression.
    //
    if(!lexer_.NextCharIs('(')) return Backup(start, 172);
-   auto mark = lexer_.Curr();
+   auto mark = CurrPos();
    TokenPtr arg;
 
    do
@@ -2797,7 +2813,7 @@ bool Parser::GetSpaceData(Cxx::Keyword kwd, DataPtr& data)
    //  SpaceData1 initializes the data parenthesized expression that
    //  directly follows the name.
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    TemplateParmsPtr parms;
    TypeSpecPtr typeSpec;
@@ -2820,7 +2836,7 @@ bool Parser::GetSpaceData(Cxx::Keyword kwd, DataPtr& data)
    auto stat = NextKeywordIs(STATIC_STR);
    auto cexpr = NextKeywordIs(CONSTEXPR_STR);
    if(!GetTypeSpec(typeSpec)) return Backup(start, 175);
-   auto pos = lexer_.Curr();
+   auto pos = CurrPos();
    if(!GetQualName(dataName)) return Backup(start, 176);
    if(dataName->Operator() != Cxx::NIL_OPERATOR) return Backup(start, 177);
 
@@ -2909,7 +2925,7 @@ bool Parser::GetSubscript(ExprPtr& expr)
 {
    Debug::ft(Parser_GetSubscript);
 
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  The left bracket has already been parsed.
    //
@@ -2940,7 +2956,7 @@ bool Parser::GetSwitch(TokenPtr& statement)
    Debug::ft(Parser_GetSwitch);
 
    auto begin = kwdBegin_;
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  The "switch" keyword has already been parsed.
    //
@@ -2966,7 +2982,7 @@ bool Parser::GetTemplateParm(TemplateParmPtr& parm)
 
    //  <TemplateParm> = <ClassTag> <Name> ["*"]* ["=" <TypeName>]
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    Cxx::ClassTag tag;
    if(!lexer_.GetClassTag(tag, true)) return Backup(start, 189);
@@ -2998,7 +3014,7 @@ bool Parser::GetTemplateParms(TemplateParmsPtr& parms)
 
    //  <TemplateParms> = "template" "<" <TemplateParm> ["," <TemplateParm>]* ">"
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
    if(!NextKeywordIs(TEMPLATE_STR)) return Backup(192);
    if(!lexer_.NextCharIs('<')) return Backup(start, 193);
 
@@ -3025,7 +3041,7 @@ bool Parser::GetThrow(ExprPtr& expr)
 {
    Debug::ft(Parser_GetThrow);
 
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  The throw operator has already been parsed.
    //
@@ -3060,7 +3076,7 @@ bool Parser::GetTry(TokenPtr& statement)
    Debug::ft(Parser_GetTry);
 
    auto begin = kwdBegin_;
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  The "try" keyword has already been parsed.
    //
@@ -3088,12 +3104,12 @@ bool Parser::GetTypedef(TypedefPtr& type)
    //  (and only if) <TypeSpec> does not include a <FuncSpec> (function type).
    //
    auto begin = kwdBegin_;
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    TypeSpecPtr typeSpec;
    string typeName;
    if(!GetTypeSpec(typeSpec, typeName)) return Backup(start, 198);
-   auto pos = lexer_.Curr();
+   auto pos = CurrPos();
 
    //  If typeSpec was a function type, typeName was set to its name,
    //  if any.  For other typedefs, the name follows typeSpec.
@@ -3120,7 +3136,7 @@ bool Parser::GetTypeId(ExprPtr& expr)
 {
    Debug::ft(Parser_GetTypeId);
 
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  The typeid operator has already been parsed.
    //
@@ -3145,7 +3161,7 @@ bool Parser::GetTypeName(TypeNamePtr& type, Constraint constraint)
 
    //  <TypeName> = <Name> ["<" <TypeSpec> ["," <TypeSpec>]* ">"]
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    string name;
    if(!lexer_.GetName(name, constraint)) return Backup(202);
@@ -3155,7 +3171,7 @@ bool Parser::GetTypeName(TypeNamePtr& type, Constraint constraint)
    //  Before looking for a template argument after a '<', see if the '<' is
    //  actually part of an operator.
    //
-   auto mark = lexer_.Curr();
+   auto mark = CurrPos();
 
    if(lexer_.NextCharIs('<'))
    {
@@ -3200,7 +3216,7 @@ bool Parser::GetTypeSpec(TypeSpecPtr& spec)
    //  Template arguments can use pointer and array ("[]") tags.
    //  This is not enforced because the code is known to parse.
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    QualNamePtr typeName;
    auto readonly = NextKeywordIs(CONST_STR);
@@ -3209,7 +3225,7 @@ bool Parser::GetTypeSpec(TypeSpecPtr& spec)
    spec.reset(new DataSpec(typeName));
    spec->SetContext(start);
 
-   auto pos = lexer_.Curr();
+   auto pos = CurrPos();
    if(NextKeywordIs(CONST_STR))
    {
       if(readonly)
@@ -3226,7 +3242,7 @@ bool Parser::GetTypeSpec(TypeSpecPtr& spec)
    //  function signature.
    //
    FunctionPtr func;
-   pos = lexer_.Curr();
+   pos = CurrPos();
    if(GetFuncSpec(spec, func))
    {
       spec.reset(new FuncSpec(func));
@@ -3319,7 +3335,7 @@ bool Parser::GetTypeTags(TypeSpec* spec)
 
    //  Now look for a trailing "const" that applies to the underlying type.
    //
-   auto pos = lexer_.Curr();
+   auto pos = CurrPos();
    if(NextKeywordIs(CONST_STR))
    {
       if(tags->IsConst())
@@ -3343,7 +3359,7 @@ bool Parser::GetUsing(UsingPtr& use)
    //  The "using" keyword has already been parsed.
    //
    auto begin = kwdBegin_;
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    QualNamePtr usingName;
    auto space = NextKeywordIs(NAMESPACE_STR);
@@ -3363,7 +3379,7 @@ bool Parser::GetWhile(TokenPtr& statement)
    Debug::ft(Parser_GetWhile);
 
    auto begin = kwdBegin_;
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    //  The "while" keyword has already been parsed.
    //
@@ -3389,7 +3405,7 @@ bool Parser::HandleDefine()
 
    //  <Define> = "#define" <Name> [<Expr>]
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
    auto end = lexer_.FindLineEnd(start);
    string name;
 
@@ -3471,7 +3487,7 @@ bool Parser::HandleElif(DirectivePtr& dir)
 
    //  <Elif> = "#elif" <Expr>
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
    auto end = lexer_.FindLineEnd(start);
 
    if(!lexer_.NextStringIs(HASH_ELIF_STR)) return Fault(DirectiveMismatch);
@@ -3499,7 +3515,7 @@ bool Parser::HandleElse(DirectivePtr& dir)
 
    //  <Else> = "#else"
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    if(!lexer_.NextStringIs(HASH_ELSE_STR)) return Fault(DirectiveMismatch);
    auto ifx = Context::Optional();
@@ -3523,7 +3539,7 @@ bool Parser::HandleEndif(DirectivePtr& dir)
 
    //  <Endif> = "#endif"
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    if(!lexer_.NextStringIs(HASH_ENDIF_STR)) return Fault(DirectiveMismatch);
    if(!Context::PopOptional()) return Fault(EndifUnexpected);
@@ -3544,10 +3560,10 @@ bool Parser::HandleError(DirectivePtr& dir)
 
    //  <Error> = "#error" <Text>
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    if(!lexer_.NextStringIs(HASH_ERROR_STR)) return Fault(DirectiveMismatch);
-   auto begin = lexer_.Curr();
+   auto begin = CurrPos();
    auto end = lexer_.FindLineEnd(begin);
    auto text = lexer_.Extract(begin, end - begin);
 
@@ -3567,7 +3583,7 @@ bool Parser::HandleIf(DirectivePtr& dir)
 
    //  <If> = "#if" <Expr>
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
    auto end = lexer_.FindLineEnd(start);
 
    if(!lexer_.NextStringIs(HASH_IF_STR)) return Fault(DirectiveMismatch);
@@ -3592,11 +3608,11 @@ bool Parser::HandleIfdef(DirectivePtr& dir)
 
    //  <Ifdef> = "#ifdef" <Name>
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
    string symbol;
 
    if(!lexer_.NextStringIs(HASH_IFDEF_STR)) return Fault(DirectiveMismatch);
-   auto pos = lexer_.Curr();
+   auto pos = CurrPos();
    if(!lexer_.GetName(symbol)) return Fault(SymbolExpected);
    MacroNamePtr macro(new MacroName(symbol));
    macro->SetContext(pos);
@@ -3618,11 +3634,11 @@ bool Parser::HandleIfndef(DirectivePtr& dir)
 
    //  <Ifndef> = "#ifndef" <Name>
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
    string symbol;
 
    if(!lexer_.NextStringIs(HASH_IFNDEF_STR)) return Fault(DirectiveMismatch);
-   auto pos = lexer_.Curr();
+   auto pos = CurrPos();
    if(!lexer_.GetName(symbol)) return Fault(SymbolExpected);
    MacroNamePtr macro(new MacroName(symbol));
    macro->SetContext(pos);
@@ -3648,7 +3664,7 @@ bool Parser::HandleInclude()
    //  they allow the compile order to be calculated.  Here, we finally insert
    //  the #include as a statement in the code file.
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
    auto end = lexer_.FindLineEnd(start);
    string name;
    bool angle;
@@ -3670,10 +3686,10 @@ bool Parser::HandleLine(DirectivePtr& dir)
 
    //  <Line> = "#line" <Text>
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    if(!lexer_.NextStringIs(HASH_LINE_STR)) return Fault(DirectiveMismatch);
-   auto begin = lexer_.Curr();
+   auto begin = CurrPos();
    auto end = lexer_.FindLineEnd(begin);
    auto text = lexer_.Extract(begin, end - begin);
 
@@ -3725,10 +3741,10 @@ bool Parser::HandlePragma(DirectivePtr& dir)
 
    //  <Pragma> = "#pragma" <Text>
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
 
    if(!lexer_.NextStringIs(HASH_PRAGMA_STR)) return Fault(DirectiveMismatch);
-   auto begin = lexer_.Curr();
+   auto begin = CurrPos();
    auto end = lexer_.FindLineEnd(begin);
    auto text = lexer_.Extract(begin, end - begin);
 
@@ -3786,7 +3802,7 @@ bool Parser::HandleUndef(DirectivePtr& dir)
 
    //  <Undef> = "#undef" <Name>
    //
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
    string name;
 
    if(!lexer_.NextStringIs(HASH_UNDEF_STR)) return Fault(DirectiveMismatch);
@@ -3826,7 +3842,7 @@ Cxx::Keyword Parser::NextKeyword(string& str)
    Debug::ft(Parser_NextKeyword);
 
    auto kwd = lexer_.NextKeyword(str);
-   if(kwd != Cxx::NIL_KEYWORD) kwdBegin_ = lexer_.Curr();
+   if(kwd != Cxx::NIL_KEYWORD) kwdBegin_ = CurrPos();
    return kwd;
 }
 
@@ -4387,7 +4403,7 @@ bool Parser::Skip(size_t end, const ExprPtr& expr, size_t cause)
 {
    Debug::ft(Parser_Skip);
 
-   auto start = lexer_.Curr();
+   auto start = CurrPos();
    string code = "<@ ";
    code += lexer_.Extract(start, end - start);
    code += " @>";

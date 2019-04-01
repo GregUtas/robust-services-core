@@ -504,16 +504,64 @@ private:
 
 //------------------------------------------------------------------------------
 //
-//  The location of a line of source code.
+//  A source code tracepoint used to debug the >parse command.
 //
-struct SourceLoc
+class Tracepoint
 {
-   const CodeFile* const file;  // file where code is located
-   const size_t line;           // line number within file (first line is 0)
+public:
+   //  What to do when reaching the tracepoint.
+   //
+   enum Action
+   {
+      Break = 1,  // break (at Debug::noop in Tracepoint::Hit)
+      Start,      // start trace
+      Stop,       // stop trace
+      Action_N    // out of bounds value
+   };
 
-   SourceLoc(const CodeFile* f, size_t n) : file(f), line(n) { }
-   bool operator<(const SourceLoc& that) const;
+   //  Constructs a tracepoint to perform ACT when reaching FILE/LINE.
+   //
+   Tracepoint(const CodeFile* file, size_t line, Action act);
+
+   //  For supporting Context::Tracepoints_.
+   //
+   bool operator<(const Tracepoint& that) const;
+
+   //  Returns the file associated with the tracepoint.
+   //
+   const CodeFile* File() const { return file_; }
+
+   //  Invoked when FILE/LINE is reached.  EXECUTING is false during
+   //  parsing and true during execution.
+   //
+   void OnLine(const CodeFile* file, size_t line, bool executing) const;
+
+   //  Displays the tracepoint in STREAM, starting each line with PREFIX.
+   //
+   void Display(std::ostream& stream, const std::string& prefix) const;
+private:
+   //  The source code file where the tracepoint is set.
+   //
+   const CodeFile* const file_;
+
+   //  The line number within FILE (first line is 0).
+   //
+   const size_t line_;
+
+   //  What to do upon reaching FILE/LINE.
+   //
+   const Action action_;
+
+   //  Set if the tracepoint has been handled during parsing.
+   //
+   mutable bool parsed_;
+
+   //  Set if the tracepoint has been handled during execution.
+   //
+   mutable bool executed_;
 };
+
+std::ostream& operator<<(std::ostream& stream, Tracepoint::Action action);
 
 //------------------------------------------------------------------------------
 //
@@ -521,9 +569,7 @@ struct SourceLoc
 //
 class Context
 {
-   friend class ParseFrame;
    friend class Parser;
-   friend class StackArg;
 public:
    //  Enters a scope.
    //
@@ -625,6 +671,39 @@ public:
    //
    static bool ParsingTemplateInstance();
 
+   //  Returns true if the option identified by OPT is on.
+   //
+   static bool OptionIsOn(char opt);
+
+   //  Logs ACT, which is associated with TOKEN, ARG, or FILE.  If ERR
+   //  is not zero or EXPL is not empty, it indicates why ACT failed.
+   //
+   static void Trace(CxxTrace::Action act);
+   static void Trace(CxxTrace::Action act, const CxxToken* token);
+   static void Trace(CxxTrace::Action act, const StackArg& arg);
+   static void Trace(CxxTrace::Action act, const CodeFile& file);
+   static void Trace(CxxTrace::Action act, NodeBase::word err,
+      const std::string& expl = NodeBase::EMPTY_STR);
+
+   //  Inserts a tracepoint to perform ACTION at FILE and LINE.
+   //
+   static void InsertTracepoint
+      (const CodeFile* file, size_t line, Tracepoint::Action action);
+
+   //  Removes the tracepoint to perform ACTION at FILE and LINE.
+   //
+   static void EraseTracepoint
+      (const CodeFile* file, size_t line, Tracepoint::Action action);
+
+   //  Removes all tracepoint.
+   //
+   static void ClearTracepoints();
+
+   //  Displays current tracepoint in STREAM.  Each line starts with PREFIX.
+   //
+   static void DisplayTracepoints
+      (std::ostream& stream, const std::string& prefix);
+
    //  Logs WARNING at the current execution position.  ITEM and OFFSET
    //  are included as additional information for the log.
    //
@@ -638,23 +717,6 @@ public:
    static void SwLog(NodeBase::fn_name_arg func, const std::string& expl,
       NodeBase::word errval, NodeBase::SwLogLevel level = NodeBase::SwInfo);
 
-   //  Inserts a breakpoint at FILE and LINE.
-   //
-   static void InsertBreakpoint(const CodeFile* file, size_t line);
-
-   //  Removes the breakpoint at FILE and LINE.
-   //
-   static void EraseBreakpoint(const CodeFile* file, size_t line);
-
-   //  Removes all breakpoints.
-   //
-   static void ClearBreakpoints();
-
-   //  Displays current breakpoints in STREAM.  Each line starts with PREFIX.
-   //
-   static void DisplayBreakpoints
-      (std::ostream& stream, const std::string& prefix);
-
    //  Resets static data members when entering a restart at LEVEL.
    //
    static void Shutdown(NodeBase::RestartLevel level);
@@ -662,6 +724,10 @@ public:
    //  Provided for symmetry with Shutdown.
    //
    static void Startup(NodeBase::RestartLevel level) { }
+
+   //  Set if execution is being traced.
+   //
+   static bool Tracing;
 private:
    //  Deleted because this class (basically a singleton) only has
    //  static members.
@@ -692,10 +758,6 @@ private:
    //
    static std::string GetOptions() { return Options_; }
 
-   //  Returns true if the option identified by OPT is on.
-   //
-   static bool OptionIsOn(char opt);
-
    //  Sets the current execution position in the source code
    //  for a SCOPE that has both a declaration and definition.
    //
@@ -705,10 +767,14 @@ private:
    //
    static bool PopOptional() { return Frame_->PopOptional(); }
 
-   //  Configures the trace environment and returns true if function
-   //  tracing has been started.
+   //  Configures the trace environment and returns true if tracing has
+   //  been started.
    //
    static bool StartTracing();
+
+   //  Invoked when parsing or executing LINE.
+   //
+   static void OnLine(size_t line, bool executing);
 
    //  Reinitializes all members.
    //
@@ -717,16 +783,6 @@ private:
    //  Sets the file in which execution is occurring and invokes Reset.
    //
    static void SetFile(CodeFile* file);
-
-   //  Logs ACT, which is associated with TOKEN, ARG, or FILE.  If ERR
-   //  is not zero or EXPL is not empty, it indicates why ACT failed.
-   //
-   static void Trace(CxxTrace::Action act);
-   static void Trace(CxxTrace::Action act, const CxxToken* token);
-   static void Trace(CxxTrace::Action act, const StackArg& arg);
-   static void Trace(CxxTrace::Action act, const CodeFile& file);
-   static void Trace(CxxTrace::Action act, NodeBase::word err,
-      const std::string& expl = NodeBase::EMPTY_STR);
 
    //  Returns a string containing File_ and the line number/offset for Pos_.
    //
@@ -748,17 +804,13 @@ private:
    //
    static ParseFrame* Frame_;
 
-   //  Set if execution is being traced.
-   //
-   static bool Tracing_;
-
    //  The source code location of the last log generated by SwLog.
    //
    static std::string LastLogLoc_;
 
-   //  Execution breakpoints.
+   //  Execution tracepoints.
    //
-   static std::set< SourceLoc > Breakpoints_;
+   static std::set< Tracepoint > Tracepoints_;
 
    //  Whether invocations of SetPos should be checked for a breakpoint.
    //

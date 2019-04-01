@@ -605,6 +605,10 @@ private:
    //
    bool NextKeywordIs(NodeBase::fixed_string str);
 
+   //  Returns the current parse position.
+   //
+   size_t CurrPos() const;
+
    //  Logs WARNING at POS.  If POS is not specified, the last position where
    //  parsing started is used.
    //

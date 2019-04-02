@@ -2840,9 +2840,9 @@ DataPtr StrLiteral::CreateRef()
 {
    Debug::ft(StrLiteral_CreateRef);
 
-   //  Create a data item whose type is "const char* const".  FuncData
-   //  is used because SpaceData will ry to open a scope in the parser's
-   //  current scope, which doesn't exist.
+   //  Create a data item whose type is "const char* const".  FuncData is used
+   //  because SpaceData will try to open a scope in the parser's current scope,
+   //  which doesn't exist.
    //
    DataPtr data;
    string dataName("__string_literal_referent");

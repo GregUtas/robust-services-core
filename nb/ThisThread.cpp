@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "ThisThread.h"
+#include "NbTracer.h"
 #include "Thread.h"
 
 //------------------------------------------------------------------------------
@@ -36,6 +37,13 @@ bool ThisThread::EnterBlockingOperation(BlockingReason why, fn_name_arg func)
 void ThisThread::ExitBlockingOperation(fn_name_arg func)
 {
    return Thread::ExitBlockingOperation(func);
+}
+
+//------------------------------------------------------------------------------
+
+void ThisThread::IncludeInTrace()
+{
+   NbTracer::SelectThread(RunningThreadId(), TraceIncluded);
 }
 
 //------------------------------------------------------------------------------

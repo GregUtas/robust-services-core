@@ -158,7 +158,7 @@ public:
 
    //  Overridden to return the item itself.
    //
-   CxxNamed* Referent() const override { return (CxxNamed*) this; }
+   CxxScoped* Referent() const override { return (CxxScoped*) this; }
 
    //  Overridden to set the access control level for the item.
    //
@@ -395,7 +395,7 @@ public:
 
    //  Overridden to return the base class.
    //
-   CxxNamed* Referent() const override;
+   CxxScoped* Referent() const override;
 
    //  Overridden to return the base class's scoped name.
    //
@@ -717,7 +717,7 @@ public:
 
    //  Overridden to return the class.
    //
-   CxxNamed* Referent() const override;
+   CxxScoped* Referent() const override;
 
    //  Overridden to return the class's scoped name.
    //
@@ -866,7 +866,7 @@ public:
 
    //  Overridden to return the friend.
    //
-   CxxNamed* Referent() const override;
+   CxxScoped* Referent() const override;
 
    //  Overridden to apply the arguments after updating the scope to that
    //  of the class template.
@@ -913,16 +913,16 @@ private:
 
    //  Overridden to record what the item refers to.
    //
-   void SetReferent(CxxNamed* item, const SymbolView* view) const override;
+   void SetReferent(CxxScoped* item, const SymbolView* view) const override;
 
    //  Finds the item that the declaration refers to when it was not
    //  visible from the scope where the declaration appeared.
    //
-   CxxNamed* FindForward() const;
+   CxxScoped* FindForward() const;
 
    //  Returns the referent.
    //
-   CxxNamed* GetReferent() const;
+   CxxScoped* GetReferent() const;
 
    //  The friend's qualified name.
    //
@@ -1129,7 +1129,7 @@ public:
 
    //  Overridden to return the referent of GetTypeSpec().
    //
-   CxxNamed* Referent() const override;
+   CxxScoped* Referent() const override;
 
    //  Overridden to count references.
    //
@@ -1257,7 +1257,7 @@ public:
 
    //  Overridden to return what the declaration refers to.
    //
-   CxxNamed* Referent() const override;
+   CxxScoped* Referent() const override;
 
    //  Overridden to stop at a typedef.
    //

@@ -420,7 +420,7 @@ BaseBot::StartupResult BaseBot::initialise()
    if(config_.log_level > 0)
    {
       auto buff = Singleton< TraceBuffer >::Instance();
-      buff->StopTrace();
+      buff->StopTracing();
       buff->Clear();
       buff->ClearTools();
       buff->SetTool(DipTracer, true);
@@ -429,8 +429,8 @@ BaseBot::StartupResult BaseBot::initialise()
 
       auto nbt = Singleton< NbTracer >::Instance();
       nbt->ClearSelections(TraceAll);
-      NbTracer::SelectThread(ThisThread::RunningThreadId(), TraceIncluded);
-      buff->StartTrace(false);
+      ThisThread::IncludeInTrace();
+      ThisThread::StartTracing(false, false);
    }
 
    auto rc = get_ipaddrs();

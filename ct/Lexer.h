@@ -89,7 +89,7 @@ public:
    //
    std::string GetNthLine(size_t n) const;
 
-   //  Returns a string containing the next LEN characters, starting at POS.
+   //  Returns a string containing the next COUNT characters, starting at POS.
    //  Converts endlines to blanks and compresses adjacent blanks.
    //
    std::string Extract(size_t pos, size_t count) const;

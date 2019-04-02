@@ -2318,7 +2318,7 @@ void Function::CheckArgs() const
             if(*mate_->args_[i]->Name() != *base->args_[i]->Name())
             {
                mate_->args_[i]->Log
-                  (OverrideRenamesArgument, this, i + (this_ ? 0 : 1));
+                  (OverrideRenamesArgument, mate_, i + (this_ ? 0 : 1));
             }
          }
       }
@@ -2336,7 +2336,7 @@ void Function::CheckArgs() const
          if(*args_[i]->Name() != *mate_->args_[i]->Name())
          {
             mate_->args_[i]->Log
-               (DefinitionRenamesArgument, this, i + (this_ ? 0 : 1));
+               (DefinitionRenamesArgument, mate_, i + (this_ ? 0 : 1));
          }
       }
    }
@@ -5054,13 +5054,6 @@ TagCount FuncSpec::Refs() const
 
 //------------------------------------------------------------------------------
 
-void FuncSpec::RemoveRefs()
-{
-   return func_->GetTypeSpec()->RemoveRefs();
-}
-
-//------------------------------------------------------------------------------
-
 StackArg FuncSpec::ResultType() const
 {
    return func_->ResultType();
@@ -5075,7 +5068,7 @@ void FuncSpec::SetPtrs(TagCount count)
 
 //------------------------------------------------------------------------------
 
-void FuncSpec::SetReferent(CxxNamed* item, const SymbolView* view) const
+void FuncSpec::SetReferent(CxxScoped* item, const SymbolView* view) const
 {
    Debug::SwLog(FuncSpec_Warning, "SetReferent", 0);
    func_->GetTypeSpec()->SetReferent(item, view);

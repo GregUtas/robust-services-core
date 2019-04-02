@@ -284,7 +284,7 @@ public:
    //  declaration.  To follow either of these to the final underlying type,
    //  use CxxToken.Root.
    //
-   virtual CxxNamed* DirectType() const { return Referent(); }
+   virtual CxxScoped* DirectType() const { return Referent(); }
 
    //  Finds what the item refers to.  The default version generates a log.
    //
@@ -294,7 +294,7 @@ public:
    //  information about how the name was resolved.  The default version
    //  generates a log.
    //
-   virtual void SetReferent(CxxNamed* item, const SymbolView* view) const;
+   virtual void SetReferent(CxxScoped* item, const SymbolView* view) const;
 
    //  Invoked when the item is found to be the referent of USER.
    //
@@ -405,7 +405,7 @@ protected:
    //  Resolves the item's qualified name.  FILE, SCOPE, MASK, and VIEW are
    //  the same as the arguments for CxxSymbols::FindSymbol.
    //
-   CxxNamed* ResolveName(const CodeFile* file, const CxxScope* scope,
+   CxxScoped* ResolveName(const CodeFile* file, const CxxScope* scope,
       const NodeBase::Flags& mask, SymbolView* view) const;
 
    //  Invoked when ResolveName finds TYPE, a typedef.  If it returns false,
@@ -597,7 +597,7 @@ public:
    //  Invoked when the name accesses MEM via CLS.  Sets the referent to MEM
    //  and records CLS as the type through which it was accessed.
    //
-   void MemberAccessed(Class* cls, CxxNamed* mem) const;
+   void MemberAccessed(Class* cls, CxxScoped* mem) const;
 
    //  Invoked when the name was used directly.
    //
@@ -626,7 +626,7 @@ public:
 
    //  Overridden to return type_ if it exists, else ref_.
    //
-   CxxNamed* DirectType() const override;
+   CxxScoped* DirectType() const override;
 
    //  Overridden to invoke FindReferent on each template argument.
    //
@@ -665,7 +665,7 @@ public:
 
    //  Overridden to return what the name refers to.
    //
-   CxxNamed* Referent() const override { return ref_; }
+   CxxScoped* Referent() const override { return ref_; }
 
    //  Overridden to record and resolve the typedef.
    //
@@ -673,7 +673,7 @@ public:
 
    //  Overridden to record what the item refers to.
    //
-   void SetReferent(CxxNamed* item, const SymbolView* view) const override;
+   void SetReferent(CxxScoped* item, const SymbolView* view) const override;
 
    //  Overridden to shrink containers.
    //
@@ -702,7 +702,7 @@ private:
 
    //  What the name refers to.
    //
-   mutable CxxNamed* ref_;
+   mutable CxxScoped* ref_;
 
    //  The class, if any, through which the name was accessed.
    //
@@ -710,7 +710,7 @@ private:
 
    //  The typedef, if any, resolved via ResolveTypedef.
    //
-   mutable CxxNamed* type_;
+   mutable CxxScoped* type_;
 
    //  The forward declaration, if any, resolved via ResolveForward.
    //
@@ -802,7 +802,7 @@ public:
    //  be nullptr.  If whoever requested name resolution did not provide a
    //  SymbolView, VIEW will be nullptr.
    //
-   void SetReferentN(size_t n, CxxNamed* item, const SymbolView* view) const;
+   void SetReferentN(size_t n, CxxScoped* item, const SymbolView* view) const;
 
    //  Returns the last name's referent.  This is used in conjunction with
    //  SetReferent.  A class that contains a QualName instance cannot use the
@@ -810,7 +810,7 @@ public:
    //  if it is nullptr, the QualName will try to find it, starting with local
    //  variables.
    //
-   CxxNamed* GetReferent() const { return Last()->Referent(); }
+   CxxScoped* GetReferent() const { return Last()->Referent(); }
 
    //  Returns the last name that was resolved by a forward declaration.
    //
@@ -843,7 +843,7 @@ public:
 
    //  Overridden to forward to the last name.
    //
-   CxxNamed* DirectType() const
+   CxxScoped* DirectType() const
       override { return Last()->DirectType(); }
 
    //  Overridden to find the referent and push it onto the argument stack.
@@ -886,7 +886,7 @@ public:
 
    //  Overridden to return the referent of the last name.
    //
-   CxxNamed* Referent() const override;
+   CxxScoped* Referent() const override;
 
    //  Overridden to forward to the Nth name.
    //
@@ -904,7 +904,7 @@ public:
    //  last name's ref_ field because it is normally used only when it appears
    //  in executable code.
    //
-   void SetReferent(CxxNamed* item, const SymbolView* view) const override;
+   void SetReferent(CxxScoped* item, const SymbolView* view) const override;
 
    //  Overridden to shrink containers.
    //
@@ -1177,11 +1177,6 @@ public:
    //
    virtual void SetPtrs(TagCount count) = 0;
 
-   //  Eliminates references.  Used when the right-hand side of an auto
-   //  type is a reference, but "auto" is used instead of "auto&".
-   //
-   virtual void RemoveRefs() = 0;
-
    //  Returns true if the types of "this" and THAT match exactly, including
    //  all tags (constness, pointers, arrays, and references).
    //
@@ -1355,7 +1350,7 @@ private:
 
    //  Overridden to invoke DirectType on name_.
    //
-   CxxNamed* DirectType() const override;
+   CxxScoped* DirectType() const override;
 
    //  Overridden to display the type's bounded array specifications.
    //
@@ -1493,16 +1488,12 @@ private:
 
    //  Overridden to return what the type refers to.
    //
-   CxxNamed* Referent() const override;
+   CxxScoped* Referent() const override;
 
    //  Overridden to return the number of reference tags attached to the type,
    //  following the type to its root.
    //
    TagCount Refs() const override;
-
-   //  Overridden to eliminate reference tags from an auto type.
-   //
-   void RemoveRefs() override;
 
    //  Overridden to resolve the forward declaration only if it has template
    //  arguments.
@@ -1525,7 +1516,7 @@ private:
 
    //  Overridden to return the underlying type.
    //
-   CxxToken* RootType() const override { return Referent(); }
+   CxxToken* RootType() const override { return (CxxToken*) Referent(); }
 
    //  Overridden to reset the number of pointer tags when the type is assigned
    //  to an auto type.
@@ -1534,7 +1525,7 @@ private:
 
    //  Overridden to record what the item refers to.
    //
-   void SetReferent(CxxNamed* item, const SymbolView* view) const override;
+   void SetReferent(CxxScoped* item, const SymbolView* view) const override;
 
    //  Overridden so that when ROLE is TemplateClass, its arguments are treated
    //  as parameters.

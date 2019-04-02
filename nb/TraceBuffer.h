@@ -148,11 +148,11 @@ public:
    //  trace record is immediately written to the file "immed.trace.txt"
    //  as it is generated.
    //
-   TraceRc StartTrace(bool immediate);
+   TraceRc StartTracing(bool immediate);
 
    //  Invoked when stopping tracing.
    //
-   void StopTrace();
+   void StopTracing();
 
    //  Displays all of the records in the trace buffer.  STREAM must be
    //  valid unless an immediate trace is in progress.

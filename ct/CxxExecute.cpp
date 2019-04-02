@@ -35,7 +35,6 @@
 #include "Debug.h"
 #include "Formatters.h"
 #include "Lexer.h"
-#include "NbTracer.h"
 #include "Parser.h"
 #include "Singleton.h"
 #include "ThisThread.h"
@@ -169,41 +168,39 @@ bool ArgTrace::Display(ostream& stream, bool diff)
 
 //==============================================================================
 
+bool Context::Tracing = false;
 string Context::Options_ = EMPTY_STR;
 CodeFile* Context::File_ = nullptr;
 std::vector< ParseFramePtr > Context::Frames_ = std::vector< ParseFramePtr >();
 ParseFrame* Context::Frame_ = nullptr;
-bool Context::Tracing_ = false;
 string Context::LastLogLoc_ = EMPTY_STR;
-std::set< SourceLoc > Context::Breakpoints_ = std::set< SourceLoc >();
+std::set< Tracepoint > Context::Tracepoints_ = std::set< Tracepoint >();
 bool Context::CheckPos_ = false;
 
 //------------------------------------------------------------------------------
 
-fn_name Context_ClearBreakpoints = "Context.ClearBreakpoints";
+fn_name Context_ClearTracepoints = "Context.ClearTracepoints";
 
-void Context::ClearBreakpoints()
+void Context::ClearTracepoints()
 {
-   Debug::ft(Context_ClearBreakpoints);
+   Debug::ft(Context_ClearTracepoints);
 
-   Breakpoints_.clear();
+   Tracepoints_.clear();
 }
 
 //------------------------------------------------------------------------------
 
-void Context::DisplayBreakpoints(ostream& stream, const string& prefix)
+void Context::DisplayTracepoints(ostream& stream, const string& prefix)
 {
-   if(Breakpoints_.empty())
+   if(Tracepoints_.empty())
    {
-      stream << prefix << "No breakpoints inserted." << CRLF;
+      stream << prefix << "No tracepoints inserted." << CRLF;
       return;
    }
 
-   for(auto b = Breakpoints_.cbegin(); b != Breakpoints_.cend(); ++b)
+   for(auto b = Tracepoints_.cbegin(); b != Tracepoints_.cend(); ++b)
    {
-      stream << prefix << b->file->Name() << ": line " << b->line + 1 << CRLF;
-      auto source = b->file->GetLexer().GetNthLine(b->line);
-      stream << spaces(2) << source << CRLF;
+      b->Display(stream, prefix);
    }
 }
 
@@ -221,14 +218,15 @@ void Context::Enter(const CxxScoped* owner)
 
 //------------------------------------------------------------------------------
 
-fn_name Context_EraseBreakpoint = "Context.EraseBreakpoint";
+fn_name Context_EraseTracepoint = "Context.EraseTracepoint";
 
-void Context::EraseBreakpoint(const CodeFile* file, size_t line)
+void Context::EraseTracepoint
+   (const CodeFile* file, size_t line, Tracepoint::Action action)
 {
-   Debug::ft(Context_EraseBreakpoint);
+   Debug::ft(Context_EraseTracepoint);
 
-   SourceLoc loc(file, line);
-   Breakpoints_.erase(loc);
+   Tracepoint loc(file, line, action);
+   Tracepoints_.erase(loc);
 }
 
 //------------------------------------------------------------------------------
@@ -241,14 +239,15 @@ const Parser* Context::GetParser()
 
 //------------------------------------------------------------------------------
 
-fn_name Context_InsertBreakpoint = "Context.InsertBreakpoint";
+fn_name Context_InsertTracepoint = "Context.InsertTracepoint";
 
-void Context::InsertBreakpoint(const CodeFile* file, size_t line)
+void Context::InsertTracepoint
+   (const CodeFile* file, size_t line, Tracepoint::Action action)
 {
-   Debug::ft(Context_InsertBreakpoint);
+   Debug::ft(Context_InsertTracepoint);
 
-   SourceLoc loc(file, line);
-   Breakpoints_.insert(loc);
+   Tracepoint loc(file, line, action);
+   Tracepoints_.insert(loc);
 }
 
 //------------------------------------------------------------------------------
@@ -291,6 +290,20 @@ void Context::Log(Warning warning, const CxxNamed* item, word offset)
 
    if(File_ == nullptr) return;
    File_->LogPos(GetPos(), warning, item, offset);
+}
+
+//------------------------------------------------------------------------------
+
+void Context::OnLine(size_t line, bool executing)
+{
+   auto parser = GetParser();
+   if(parser == nullptr) return;
+   if(parser->GetSourceType() != Parser::IsFile) return;
+
+   for(auto b = Tracepoints_.cbegin(); b != Tracepoints_.cend(); ++b)
+   {
+      b->OnLine(File_, line, executing);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -383,9 +396,9 @@ void Context::SetFile(CodeFile* file)
    Reset();
    File_ = file;
 
-   for(auto b = Breakpoints_.cbegin(); b != Breakpoints_.cend(); ++b)
+   for(auto b = Tracepoints_.cbegin(); b != Tracepoints_.cend(); ++b)
    {
-      if(b->file == file)
+      if(b->File() == file)
       {
          CheckPos_ = true;
          return;
@@ -402,26 +415,9 @@ void Context::SetPos(size_t pos)
    //
    if(Frame_ != nullptr) Frame_->SetPos(pos);
 
-   if(CheckPos_)
+   if(CheckPos_ && (File_ != nullptr))
    {
-      auto parser = GetParser();
-      if(parser == nullptr) return;
-      if(parser->GetSourceType() != Parser::IsFile) return;
-
-      for(auto b = Breakpoints_.cbegin(); b != Breakpoints_.cend(); ++b)
-      {
-         if(b->file == File_)
-         {
-            if(b->file->GetLexer().GetLineNum(GetPos()) == b->line)
-            {
-               //  Set breakpoint here to break when the parser "executes"
-               //  source code at a specified file and line.
-               //
-               Debug::noop();
-               return;
-            }
-         }
-      }
+      OnLine(File_->GetLexer().GetLineNum(GetPos()), true);
    }
 }
 
@@ -454,12 +450,12 @@ void Context::Shutdown(RestartLevel level)
 {
    Debug::ft(Context_Shutdown);
 
+   Tracing = false;
    Options_ = EMPTY_STR;
    LastLogLoc_ = EMPTY_STR;
    File_ = nullptr;
    Frames_.clear();
    Frame_ = nullptr;
-   Tracing_ = false;
    CheckPos_ = false;
 }
 
@@ -473,16 +469,21 @@ bool Context::StartTracing()
 
    auto x = OptionIsOn(TraceExecution);
    auto f = OptionIsOn(TraceFunctions);
-
    if(!x && !f) return false;
 
-   Tracing_ = x;
-
    auto buff = Singleton< TraceBuffer >::Instance();
-   buff->SetTool(ParserTracer, x);
-   buff->SetTool(FunctionTracer, f);
 
-   if(f) NbTracer::SelectThread(ThisThread::RunningThreadId(), TraceIncluded);
+   if(x)
+   {
+      buff->SetTool(ParserTracer, true);
+      Tracing = true;
+   }
+
+   if(f)
+   {
+      buff->SetTool(FunctionTracer, true);
+      ThisThread::IncludeInTrace();
+   }
 
    auto immed = Context::OptionIsOn(TraceImmediate);
    ThisThread::StartTracing(immed, false);
@@ -511,7 +512,7 @@ void Context::SwLog
    LastLogLoc_ = loc;
    auto info = expl + loc;
    Trace(CxxTrace::ERROR, errval, info);
-   if(Tracing_ && (level == SwInfo)) return;
+   if(Tracing && (level == SwInfo)) return;
    Debug::SwLog(func, info, errval, level);
 }
 
@@ -519,7 +520,7 @@ void Context::SwLog
 
 void Context::Trace(CxxTrace::Action act)
 {
-   if(!Tracing_) return;
+   if(!Tracing) return;
    new ActTrace(act);
 }
 
@@ -527,7 +528,7 @@ void Context::Trace(CxxTrace::Action act)
 
 void Context::Trace(CxxTrace::Action act, const StackArg& arg)
 {
-   if(!Tracing_) return;
+   if(!Tracing) return;
    new ArgTrace(act, arg);
 }
 
@@ -535,7 +536,7 @@ void Context::Trace(CxxTrace::Action act, const StackArg& arg)
 
 void Context::Trace(CxxTrace::Action act, word err, const string& expl)
 {
-   if(!Tracing_) return;
+   if(!Tracing) return;
    new ErrTrace(act, err, expl);
 }
 
@@ -543,7 +544,7 @@ void Context::Trace(CxxTrace::Action act, word err, const string& expl)
 
 void Context::Trace(CxxTrace::Action act, const CodeFile& file)
 {
-   if(!Tracing_) return;
+   if(!Tracing) return;
    new FileTrace(act, file);
 }
 
@@ -551,7 +552,7 @@ void Context::Trace(CxxTrace::Action act, const CodeFile& file)
 
 void Context::Trace(CxxTrace::Action act, const CxxToken* token)
 {
-   if(!Tracing_) return;
+   if(!Tracing) return;
    new TokenTrace(act, token);
 }
 
@@ -764,7 +765,7 @@ StackArg ParseFrame::PopArg(bool read)
 
    if(args_.empty())
    {
-      if(Context::Tracing_)
+      if(Context::Tracing)
          new ErrTrace(CxxTrace::POP_ARG, -1);
       else
          Context::SwLog(ParseFrame_PopArg1, "Empty argument stack", 0);
@@ -788,7 +789,7 @@ bool ParseFrame::PopArg(StackArg& arg)
 
    if(args_.empty())
    {
-      if(Context::Tracing_)
+      if(Context::Tracing)
          new ErrTrace(CxxTrace::POP_ARG, -1);
       else
          Context::SwLog(ParseFrame_PopArg2, "Empty argument stack", 0);
@@ -811,7 +812,7 @@ const Operation* ParseFrame::PopOp()
 
    if(ops_.empty())
    {
-      if(Context::Tracing_)
+      if(Context::Tracing)
          new ErrTrace(CxxTrace::POP_OP, -1);
       else
          Context::SwLog(ParseFrame_PopOp, "Empty operator stack", 0);
@@ -861,7 +862,7 @@ void ParseFrame::PushArg(const StackArg& arg)
 
    if(arg.item == nullptr)
    {
-      if(Context::Tracing_)
+      if(Context::Tracing)
          new ErrTrace(CxxTrace::PUSH_ARG, -1);
       else
          Context::SwLog(ParseFrame_PushArg, "Push null argument", 0);
@@ -885,7 +886,7 @@ void ParseFrame::PushOp(const Operation* op)
 
    if(op == nullptr)
    {
-      if(Context::Tracing_)
+      if(Context::Tracing)
          new ErrTrace(CxxTrace::PUSH_OP, -1);
       else
          Context::SwLog(ParseFrame_PushOp, "Push null operator", 0);
@@ -962,17 +963,6 @@ const Operation* ParseFrame::TopOp() const
 
    if(ops_.empty()) return nullptr;
    return ops_.back();
-}
-
-//==============================================================================
-
-bool SourceLoc::operator<(const SourceLoc& that) const
-{
-   auto name1 = this->file->Name();
-   auto name2 = that.file->Name();
-   if(name1 < name2) return true;
-   if(name2 < name1) return false;
-   return (this->line < that.line);
 }
 
 //==============================================================================
@@ -1671,23 +1661,37 @@ bool StackArg::SetAutoTypeOn(const FuncData& data) const
    auto spec = data.GetTypeSpec();
    auto constauto = spec->IsConst();
    auto constautoptr = spec->IsConstPtr();
-   auto ref = static_cast< CxxNamed* >(item);
-   spec->SetReferent(ref, nullptr);
 
-   //  RefCount() is the number of references that were attached to "auto"
-   //  (usually 0, but 1 when "auto&" is used).  Unless "auto&" is used, the
-   //  auto variable is a copy of, not a reference to, the right-hand side.
-   //
-   auto refs = spec->Tags()->RefCount();
-   if(refs == 0) spec->RemoveRefs();
-
-   //  ptrs_ tracked any indirection, address of, or array subscript operators
-   //  that were applied to the right-hand side.  The TypeSpec that underlies
+   //  this->ptrs_ tracked any indirection, address of, or array subscript
+   //  operators that were applied to the right-hand side, so it needs to be
+   //  carried over to the auto variable.  The TypeSpec that underlies
    //  the right-hand side will be reused by the auto variable, but it must be
    //  adjusted by ptrs_.
    //
-   spec->SetPtrs(ptrs_);
+   if(item->Type() == Cxx::TypeSpec)
+   {
+      //  Make the TypeSpec's referent the auto variable's referent and also
+      //  apply its pointers the auto variable.
+      //
+      auto type = static_cast< TypeSpec* >(item);
+      auto ptrs = ptrs_ + type->Tags()->PtrCount(true);
+      spec->SetReferent(type->Referent(), nullptr);
+      spec->SetPtrs(ptrs);
+   }
+   else
+   {
+      //  ITEM is derived from CxxScoped, so just make it the auto variable's
+      //  referent and apply this->ptrs_ to the auto variable.
+      //
+      spec->SetReferent(static_cast< CxxScoped* >(item), nullptr);
+      spec->SetPtrs(ptrs_);
+   }
+
+   //  Now that the auto variable's type has been set, look at its pointers
+   //  and references.
+   //
    auto ptrs = Ptrs(true);
+   auto refs = spec->Tags()->RefCount();
 
    //  If "const auto" was used, it applies to the pointer, rather than the
    //  type, if the auto variable is a pointer.  Handle const* auto as well.
@@ -1878,5 +1882,103 @@ bool TokenTrace::Display(ostream& stream, bool diff)
    CxxTrace::Display(stream, diff);
    stream << token_->Trace();
    return true;
+}
+
+//==============================================================================
+
+Tracepoint::Tracepoint(const CodeFile* file, size_t line, Action act) :
+   file_(file),
+   line_(line),
+   action_(act),
+   parsed_(false),
+   executed_(false)
+{
+}
+
+//------------------------------------------------------------------------------
+
+void Tracepoint::Display(ostream& stream, const string& prefix) const
+{
+   stream << prefix << action_ << " at ";
+   stream << file_->Name() << ", line " << line_ + 1 << ':' << CRLF;
+   auto source = file_->GetLexer().GetNthLine(line_);
+   stream << spaces(2) << source << CRLF;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Tracepoint_OnLine = "Tracepoint.OnLine";
+
+void Tracepoint::OnLine(const CodeFile* file, size_t line, bool executing) const
+{
+   if(file_ != file) return;
+   if(line_ != line) return;
+   if(parsed_ && !executing) return;
+   if(executed_ && executing) return;
+
+   Debug::ft(Tracepoint_OnLine);
+
+   switch(action_)
+   {
+   case Break:
+      //
+      //  Set a breakpoint here to break when the parser reaches
+      //  a specified file and line in the source code.
+      //
+      Debug::noop();
+      break;
+
+   case Start:
+   {
+      auto buff = Singleton< TraceBuffer >::Instance();
+      auto immed = Context::OptionIsOn(TraceImmediate);
+      ThisThread::IncludeInTrace();
+      ThisThread::StartTracing(immed, false);
+      Context::Tracing = buff->ToolIsOn(ParserTracer);
+      break;
+   }
+
+   case Stop:
+      ThisThread::StopTracing();
+      Context::Tracing = false;
+      break;
+   }
+
+   if(executing)
+      executed_ = true;
+   else
+      parsed_ = true;
+}
+
+//------------------------------------------------------------------------------
+
+bool Tracepoint::operator<(const Tracepoint& that) const
+{
+   auto name1 = this->file_->Name();
+   auto name2 = that.file_->Name();
+   if(name1 < name2) return true;
+   if(name1 > name2) return false;
+   if(this->line_ < that.line_) return true;
+   if(this->line_ > that.line_) return false;
+   return(this->action_ < that.action_);
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string TraceActionStrings[Tracepoint::Action_N] =
+{
+   ERROR_STR,
+   "break",
+   "start",
+   "stop"
+};
+
+ostream& operator<<(ostream& stream, Tracepoint::Action action)
+{
+   if((action > 0) && (action < Tracepoint::Action_N))
+      stream << TraceActionStrings[action];
+   else
+      stream << TraceActionStrings[0];
+   return stream;
 }
 }

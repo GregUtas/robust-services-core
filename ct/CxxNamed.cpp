@@ -51,7 +51,7 @@ namespace CodeTools
 {
 fn_name CodeTools_ReferentError = "CodeTools.ReferentError";
 
-CxxNamed* ReferentError(const string& item, debug32_t offset)
+CxxScoped* ReferentError(const string& item, debug32_t offset)
 {
    Debug::ft(CodeTools_ReferentError);
 
@@ -365,7 +365,7 @@ StackArg CxxNamed::NameToArg(Cxx::Operator op, TypeName* name)
 
 fn_name CxxNamed_ResolveName = "CxxNamed.ResolveName";
 
-CxxNamed* CxxNamed::ResolveName(const CodeFile* file,
+CxxScoped* CxxNamed::ResolveName(const CodeFile* file,
    const CxxScope* scope, const Flags& mask, SymbolView* view) const
 {
    Debug::ft(CxxNamed_ResolveName);
@@ -527,7 +527,7 @@ CxxNamed* CxxNamed::ResolveName(const CodeFile* file,
             if(!ResolveForward(item, idx - 1)) return item;
             auto ref = item->Referent();
             if(ref == nullptr) return item;
-            item = static_cast< CxxScoped* >(ref);
+            item = ref;
             qname->SetReferentN(idx - 1, item, view);  // updated value
          }
          break;
@@ -599,7 +599,7 @@ void CxxNamed::SetLoc(CodeFile* file, size_t pos)
 
 fn_name CxxNamed_SetReferent = "CxxNamed.SetReferent";
 
-void CxxNamed::SetReferent(CxxNamed* item, const SymbolView* view) const
+void CxxNamed::SetReferent(CxxScoped* item, const SymbolView* view) const
 {
    Debug::ft(CxxNamed_SetReferent);
 
@@ -818,7 +818,7 @@ Class* DataSpec::DirectClass() const
 
 fn_name DataSpec_DirectType = "DataSpec.DirectType";
 
-CxxNamed* DataSpec::DirectType() const
+CxxScoped* DataSpec::DirectType() const
 {
    Debug::ft(DataSpec_DirectType);
 
@@ -1472,15 +1472,13 @@ bool DataSpec::NamesReferToArgs(const NameVector& names,
    //  See if NAME refers to the same item as this type.  If this
    //  type refers to data (a constant), use its underlying type.
    //
-   auto ref = name_->Referent();
-   auto curr = dynamic_cast< CxxScoped* >(ref);
+   auto curr = name_->Referent();
    if(curr == nullptr) return false;
 
    switch(curr->Type())
    {
    case Cxx::Data:
-      ref = curr->GetTypeSpec()->Referent();
-      curr = dynamic_cast< CxxScoped* >(ref);
+      curr = curr->GetTypeSpec()->Referent();
       if(curr == nullptr) return false;
    }
 
@@ -1504,7 +1502,7 @@ bool DataSpec::NamesReferToArgs(const NameVector& names,
 
       //  Keep looking while deeper underlying types exist.
       //
-      auto next = dynamic_cast< CxxScoped* >(curr->Referent());
+      auto next = curr->Referent();
       if(curr == next) break;
       curr = next;
    }
@@ -1569,7 +1567,7 @@ TagCount DataSpec::Ptrs(bool arrays) const
 
 fn_name DataSpec_Referent = "DataSpec.Referent";
 
-CxxNamed* DataSpec::Referent() const
+CxxScoped* DataSpec::Referent() const
 {
    Debug::ft(DataSpec_Referent);
 
@@ -1609,35 +1607,6 @@ TagCount DataSpec::Refs() const
    auto expl = "Negative reference count for " + Trace();
    Context::SwLog(DataSpec_Refs, expl, count);
    return 0;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name DataSpec_RemoveRefs = "DataSpec.RemoveRefs";
-
-void DataSpec::RemoveRefs()
-{
-   Debug::ft(DataSpec_RemoveRefs);
-
-   if(!IsAutoDecl())
-   {
-      auto expl = "Removing references on non-auto type " + this->Trace();
-      Context::SwLog(DataSpec_RemoveRefs, expl, 0);
-      return;
-   }
-
-   if(Refs() == 0) return;
-
-   if(tags_.RefCount() != 0)
-   {
-      auto expl = "Removing references from auto& type " + this->Trace();
-      Context::SwLog(DataSpec_RemoveRefs, expl, 1);
-      return;
-   }
-
-   //  Negate any reference(s) on the referent's type.
-   //
-   tags_.SetRefs(-Refs());
 }
 
 //------------------------------------------------------------------------------
@@ -1775,7 +1744,7 @@ void DataSpec::SetPtrs(TagCount count)
 
 fn_name DataSpec_SetReferent = "DataSpec.SetReferent";
 
-void DataSpec::SetReferent(CxxNamed* item, const SymbolView* view) const
+void DataSpec::SetReferent(CxxScoped* item, const SymbolView* view) const
 {
    Debug::ft(DataSpec_SetReferent);
 
@@ -2341,7 +2310,7 @@ string QualName::QualifiedName(bool scopes, bool templates) const
 
 fn_name QualName_Referent = "QualName.Referent";
 
-CxxNamed* QualName::Referent() const
+CxxScoped* QualName::Referent() const
 {
    Debug::ft(QualName_Referent);
 
@@ -2430,7 +2399,7 @@ void QualName::SetOperator(Cxx::Operator oper) const
 
 fn_name QualName_SetReferent = "QualName.SetReferent";
 
-void QualName::SetReferent(CxxNamed* item, const SymbolView* view) const
+void QualName::SetReferent(CxxScoped* item, const SymbolView* view) const
 {
    Debug::ft(QualName_SetReferent);
 
@@ -2442,7 +2411,7 @@ void QualName::SetReferent(CxxNamed* item, const SymbolView* view) const
 fn_name QualName_SetReferentN = "QualName.SetReferentN";
 
 void QualName::SetReferentN
-   (size_t n, CxxNamed* item, const SymbolView* view) const
+   (size_t n, CxxScoped* item, const SymbolView* view) const
 {
    Debug::ft(QualName_SetReferentN);
 
@@ -2754,7 +2723,7 @@ void TypeName::Check() const
 
 //------------------------------------------------------------------------------
 
-CxxNamed* TypeName::DirectType() const
+CxxScoped* TypeName::DirectType() const
 {
    return (type_ != nullptr ? type_ : ref_);
 }
@@ -2972,7 +2941,7 @@ TypeMatch TypeName::MatchTemplate(const TypeName* that,
 
 fn_name TypeName_MemberAccessed = "TypeName.MemberAccessed";
 
-void TypeName::MemberAccessed(Class* cls, CxxNamed* mem) const
+void TypeName::MemberAccessed(Class* cls, CxxScoped* mem) const
 {
    Debug::ft(TypeName_MemberAccessed);
 
@@ -3114,7 +3083,7 @@ void TypeName::SetOperator(Cxx::Operator oper)
 
 fn_name TypeName_SetReferent = "TypeName.SetReferent";
 
-void TypeName::SetReferent(CxxNamed* item, const SymbolView* view) const
+void TypeName::SetReferent(CxxScoped* item, const SymbolView* view) const
 {
    Debug::ft(TypeName_SetReferent);
 
@@ -3407,13 +3376,6 @@ TagCount TypeSpec::Refs() const
 {
    Debug::SwLog(TypeSpec_PureVirtualFunction, "Refs", 0);
    return 0;
-}
-
-//------------------------------------------------------------------------------
-
-void TypeSpec::RemoveRefs()
-{
-   Debug::SwLog(TypeSpec_PureVirtualFunction, "RemoveRefs", 0);
 }
 
 //------------------------------------------------------------------------------

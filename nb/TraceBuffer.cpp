@@ -130,7 +130,7 @@ TraceBuffer::TraceBuffer() :
    {
       SetTool(FunctionTracer, true);
       SetFilter(TraceAll);
-      StartTrace(InitFlags::ImmediateTrace());
+      StartTracing(InitFlags::ImmediateTrace());
    }
 }
 
@@ -664,11 +664,11 @@ void TraceBuffer::Shutdown(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name TraceBuffer_StartTrace = "TraceBuffer.StartTrace";
+fn_name TraceBuffer_StartTracing = "TraceBuffer.StartTracing";
 
-TraceRc TraceBuffer::StartTrace(bool immediate)
+TraceRc TraceBuffer::StartTracing(bool immediate)
 {
-   Debug::ft(TraceBuffer_StartTrace);
+   Debug::ft(TraceBuffer_StartTracing);
 
    if(Debug::TraceOn() && !Empty()) return AlreadyStarted;
 
@@ -699,11 +699,11 @@ TraceRc TraceBuffer::StartTrace(bool immediate)
 
 //------------------------------------------------------------------------------
 
-fn_name TraceBuffer_StopTrace = "TraceBuffer.StopTrace";
+fn_name TraceBuffer_StopTracing = "TraceBuffer.StopTracing";
 
-void TraceBuffer::StopTrace()
+void TraceBuffer::StopTracing()
 {
-   Debug::ft(TraceBuffer_StopTrace);
+   Debug::ft(TraceBuffer_StopTracing);
 
    if(!Debug::FcFlags_.test(Debug::TracingActive)) return;
 
@@ -712,7 +712,7 @@ void TraceBuffer::StopTrace()
 
    if(hardLock_.exchange(false))
    {
-      Debug::SwLog(TraceBuffer_StopTrace, 0, 0);
+      Debug::SwLog(TraceBuffer_StopTracing, 0, 0);
    }
 
    //  If trace records are being output immediately, display the last

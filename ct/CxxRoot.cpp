@@ -60,7 +60,7 @@ public:
    MacroDATE();
    ~MacroDATE() = default;
    CxxToken* GetValue() const override;
-   CxxNamed* Referent() const
+   CxxScoped* Referent() const
       override { return StrLiteral::GetReferent(); }
 private:
    mutable StrLiteralPtr unknown_;
@@ -103,7 +103,7 @@ public:
    MacroFILE();
    ~MacroFILE() = default;
    CxxToken* GetValue() const override;
-   CxxNamed* Referent() const
+   CxxScoped* Referent() const
       override { return StrLiteral::GetReferent(); }
 private:
    mutable StrLiteralPtr unknown_;
@@ -152,7 +152,7 @@ public:
    MacroFunc();
    ~MacroFunc() = default;
    CxxToken* GetValue() const override;
-   CxxNamed* Referent() const
+   CxxScoped* Referent() const
       override { return StrLiteral::GetReferent(); }
 private:
    mutable StrLiteralPtr unknown_;
@@ -201,7 +201,7 @@ public:
    MacroLINE();
    ~MacroLINE() = default;
    CxxToken* GetValue() const override;
-   CxxNamed* Referent() const
+   CxxScoped* Referent() const
       override { return StrLiteral::GetReferent(); }
 private:
    mutable StrLiteralPtr unknown_;
@@ -243,7 +243,7 @@ public:
    MacroTIME();
    ~MacroTIME() = default;
    CxxToken* GetValue() const override;
-   CxxNamed* Referent() const
+   CxxScoped* Referent() const
       override { return StrLiteral::GetReferent(); }
 private:
    mutable StrLiteralPtr unknown_;

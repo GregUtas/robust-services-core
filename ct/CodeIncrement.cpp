@@ -183,174 +183,6 @@ word AssignCommand::ProcessCommand(CliThread& cli) const
 
 //------------------------------------------------------------------------------
 //
-//  The BREAK command.
-//
-class BreakCommand : public CliCommand
-{
-public:
-   BreakCommand();
-private:
-   word ProcessCommand(CliThread& cli) const override;
-};
-
-fixed_string BreakStr = "break";
-fixed_string BreakExpl =
-   "Manage breakpoints used during parser's 'execution'.";
-
-class InsertText : public CliText
-{
-public: InsertText();
-};
-
-class RemoveText : public CliText
-{
-public: RemoveText();
-};
-
-class ClearText : public CliText
-{
-public: ClearText();
-};
-
-class ListText : public CliText
-{
-public: ListText();
-};
-
-class ActionParm : public CliTextParm
-{
-public:
-   ActionParm();
-
-   //  Values for the parameter.
-   //
-   static const id_t Insert = 1;
-   static const id_t Remove = 2;
-   static const id_t Clear = 3;
-   static const id_t List = 4;
-};
-
-fixed_string InsertTextStr = "insert";
-fixed_string InsertTextExpl = "add breakpoint";
-
-InsertText::InsertText() : CliText(InsertTextExpl, InsertTextStr) { }
-
-fixed_string RemoveTextStr = "remove";
-fixed_string RemoveTextExpl = "delete breakpoint";
-
-RemoveText::RemoveText() : CliText(RemoveTextExpl, RemoveTextStr) { }
-
-fixed_string ClearTextStr = "clear";
-fixed_string ClearTextExpl = "delete all breakpoints";
-
-ClearText::ClearText() : CliText(ClearTextExpl, ClearTextStr) { }
-
-fixed_string ListTextStr = "list";
-fixed_string ListTextExpl = "list breakpoints";
-
-ListText::ListText() : CliText(ListTextExpl, ListTextStr) { }
-
-fixed_string ActionExpl = "action...";
-
-ActionParm::ActionParm() : CliTextParm(ActionExpl)
-{
-   BindText(*new InsertText, ActionParm::Insert);
-   BindText(*new RemoveText, ActionParm::Remove);
-   BindText(*new ClearText, ActionParm::Clear);
-   BindText(*new ListText, ActionParm::List);
-}
-
-class FileNameParm : public CliTextParm
-{
-public: FileNameParm();
-};
-
-fixed_string FileNameExpl = "name of source code file";
-
-FileNameParm::FileNameParm() : CliTextParm(FileNameExpl) { }
-
-class LineNumberParm : public CliIntParm
-{
-public: LineNumberParm();
-};
-
-fixed_string LineNumberExpl = "line number (must contain source code)";
-
-LineNumberParm::LineNumberParm() : CliIntParm(LineNumberExpl, 0, INT32_MAX) { }
-
-BreakCommand::BreakCommand() : CliCommand(BreakStr, BreakExpl)
-{
-   BindParm(*new ActionParm);
-   BindParm(*new FileNameParm);
-   BindParm(*new LineNumberParm);
-}
-
-fn_name BreakCommand_ProcessCommand = "BreakCommand.ProcessCommand";
-
-word BreakCommand::ProcessCommand(CliThread& cli) const
-{
-   Debug::ft(BreakCommand_ProcessCommand);
-
-   id_t index;
-   string filename;
-   word line;
-
-   if(!GetTextIndex(index, cli)) return -1;
-
-   switch(index)
-   {
-   case ActionParm::Insert:
-   case ActionParm::Remove:
-      break;
-
-   case ActionParm::Clear:
-      cli.EndOfInput(false);
-      Context::ClearBreakpoints();
-      return cli.Report(0, SuccessExpl);
-
-   case ActionParm::List:
-      cli.EndOfInput(false);
-      Context::DisplayBreakpoints(*cli.obuf, spaces(2));
-      return 0;
-
-   default:
-      return cli.Report(index, SystemErrorExpl);
-   }
-
-   if(!GetString(filename, cli)) return -1;
-   if(!GetIntParm(line, cli)) return -1;
-   cli.EndOfInput(false);
-
-   auto lib = Singleton< Library >::Instance();
-   auto file = lib->FindFile(filename);
-
-   if(file == nullptr)
-   {
-      return cli.Report(-2, "Source code file not found.");
-   }
-
-   if(index == ActionParm::Remove)
-   {
-      Context::EraseBreakpoint(file, line - 1);
-      return cli.Report(0, SuccessExpl);
-   }
-
-   auto source = file->GetLexer().GetNthLine(line - 1);
-   auto type = file->GetLineType(line - 1);
-
-   if(!LineTypeAttr::Attrs[type].isExecutable)
-   {
-      *cli.obuf << source << CRLF;
-      return cli.Report(-3, "That line does not contain executable code.");
-   }
-
-   *cli.obuf << spaces(2) << source << CRLF;
-   Context::InsertBreakpoint(file, line - 1);
-   return cli.Report(0, SuccessExpl);
-}
-
-//------------------------------------------------------------------------------
-//
 //  The CHECK command.
 //
 class CheckCommand : public LibraryCommand
@@ -1380,6 +1212,234 @@ word SortCommand::ProcessCommand(CliThread& cli) const
 
 //------------------------------------------------------------------------------
 //
+//  The TRACE command.
+//
+class TraceCommand : public CliCommand
+{
+public:
+   TraceCommand();
+private:
+   word ProcessCommand(CliThread& cli) const override;
+};
+
+fixed_string TraceStr = "trace";
+fixed_string TraceExpl = "Manage tracepoints for >parse command.";
+
+class FileNameParm : public CliTextParm
+{
+public: FileNameParm();
+};
+
+fixed_string FileNameExpl = "name of source code file";
+
+FileNameParm::FileNameParm() : CliTextParm(FileNameExpl) { }
+
+class LineNumberParm : public CliIntParm
+{
+public: LineNumberParm();
+};
+
+fixed_string LineNumberExpl = "line number (must contain source code)";
+
+LineNumberParm::LineNumberParm() : CliIntParm(LineNumberExpl, 0, INT32_MAX) { }
+
+class BreakText : public CliText
+{
+public: BreakText();
+};
+
+class StartText : public CliText
+{
+public: StartText();
+};
+
+class StopText : public CliText
+{
+public: StopText();
+};
+
+class ModeParm : public CliTextParm
+{
+public:
+   ModeParm();
+
+   //  Values for the parameter.
+   //
+   static const id_t Break = Tracepoint::Break;
+   static const id_t Start = Tracepoint::Start;
+   static const id_t Stop = Tracepoint::Stop;
+};
+
+fixed_string BreakTextStr = "break";
+fixed_string BreakTextExpl = "breakpoint (at Debug::noop in Context::SetPos)";
+
+BreakText::BreakText() : CliText(BreakTextExpl, BreakTextStr) { }
+
+fixed_string StartTextStr = "start";
+fixed_string StartTextExpl = "start tracing (must preconfigure settings)";
+
+StartText::StartText() : CliText(StartTextExpl, StartTextStr) { }
+
+fixed_string StopTextStr = "stop";
+fixed_string StopTextExpl = "stop tracing";
+
+StopText::StopText() : CliText(StopTextExpl, StopTextStr) { }
+
+fixed_string ModeExpl = "action at tracepoint...";
+
+ModeParm::ModeParm() : CliTextParm(ModeExpl)
+{
+   BindText(*new BreakText, ModeParm::Break);
+   BindText(*new StartText, ModeParm::Start);
+   BindText(*new StopText, ModeParm::Stop);
+}
+
+class InsertText : public CliText
+{
+public: InsertText();
+};
+
+class RemoveText : public CliText
+{
+public: RemoveText();
+};
+
+class ClearText : public CliText
+{
+public: ClearText();
+};
+
+class ListText : public CliText
+{
+public: ListText();
+};
+
+class ActionParm : public CliTextParm
+{
+public:
+   ActionParm();
+
+   //  Values for the parameter.
+   //
+   static const id_t Insert = 1;
+   static const id_t Remove = 2;
+   static const id_t Clear = 3;
+   static const id_t List = 4;
+};
+
+fixed_string InsertTextStr = "insert";
+fixed_string InsertTextExpl = "add tracepoint";
+
+InsertText::InsertText() : CliText(InsertTextExpl, InsertTextStr)
+{
+   BindParm(*new ModeParm);
+   BindParm(*new FileNameParm);
+   BindParm(*new LineNumberParm);
+}
+
+fixed_string RemoveTextStr = "remove";
+fixed_string RemoveTextExpl = "delete tracepoint";
+
+RemoveText::RemoveText() : CliText(RemoveTextExpl, RemoveTextStr)
+{
+   BindParm(*new ModeParm);
+   BindParm(*new FileNameParm);
+   BindParm(*new LineNumberParm);
+}
+
+fixed_string ClearTextStr = "clear";
+fixed_string ClearTextExpl = "delete all tracepoints";
+
+ClearText::ClearText() : CliText(ClearTextExpl, ClearTextStr) { }
+
+fixed_string ListTextStr = "list";
+fixed_string ListTextExpl = "list tracepoints";
+
+ListText::ListText() : CliText(ListTextExpl, ListTextStr) { }
+
+fixed_string ActionExpl = "subcommand...";
+
+ActionParm::ActionParm() : CliTextParm(ActionExpl)
+{
+   BindText(*new InsertText, ActionParm::Insert);
+   BindText(*new RemoveText, ActionParm::Remove);
+   BindText(*new ClearText, ActionParm::Clear);
+   BindText(*new ListText, ActionParm::List);
+}
+
+TraceCommand::TraceCommand() : CliCommand(TraceStr, TraceExpl)
+{
+   BindParm(*new ActionParm);
+}
+
+fn_name TraceCommand_ProcessCommand = "TraceCommand.ProcessCommand";
+
+word TraceCommand::ProcessCommand(CliThread& cli) const
+{
+   Debug::ft(TraceCommand_ProcessCommand);
+
+   id_t action;
+   id_t mode;
+   string filename;
+   word line;
+
+   if(!GetTextIndex(action, cli)) return -1;
+
+   switch(action)
+   {
+   case ActionParm::Insert:
+   case ActionParm::Remove:
+      break;
+
+   case ActionParm::Clear:
+      cli.EndOfInput(false);
+      Context::ClearTracepoints();
+      return cli.Report(0, SuccessExpl);
+
+   case ActionParm::List:
+      cli.EndOfInput(false);
+      Context::DisplayTracepoints(*cli.obuf, spaces(2));
+      return 0;
+
+   default:
+      return cli.Report(action, SystemErrorExpl);
+   }
+
+   if(!GetTextIndex(mode, cli)) return -1;
+   if(!GetString(filename, cli)) return -1;
+   if(!GetIntParm(line, cli)) return -1;
+   cli.EndOfInput(false);
+
+   auto lib = Singleton< Library >::Instance();
+   auto file = lib->FindFile(filename);
+
+   if(file == nullptr)
+   {
+      return cli.Report(-2, "Source code file not found.");
+   }
+
+   if(action == ActionParm::Remove)
+   {
+      Context::EraseTracepoint(file, line - 1, Tracepoint::Action(mode));
+      return cli.Report(0, SuccessExpl);
+   }
+
+   auto source = file->GetLexer().GetNthLine(line - 1);
+   auto type = file->GetLineType(line - 1);
+
+   if(!LineTypeAttr::Attrs[type].isExecutable)
+   {
+      *cli.obuf << source << CRLF;
+      return cli.Report(-3, "That line does not contain executable code.");
+   }
+
+   *cli.obuf << spaces(2) << source << CRLF;
+   Context::InsertTracepoint(file, line - 1, Tracepoint::Action(mode));
+   return cli.Report(0, SuccessExpl);
+}
+
+//------------------------------------------------------------------------------
+//
 //  The TRIM command.
 //
 class TrimCommand : public LibraryCommand
@@ -1519,7 +1579,7 @@ CodeIncrement::CodeIncrement() : CliIncrement(CtStr, CtExpl)
    BindCommand(*new SortCommand);
    BindCommand(*new FileInfoCommand);
    BindCommand(*new FileIdCommand);
-   BindCommand(*new BreakCommand);
+   BindCommand(*new TraceCommand);
    BindCommand(*new ParseCommand);
    BindCommand(*new CheckCommand);
    BindCommand(*new TrimCommand);

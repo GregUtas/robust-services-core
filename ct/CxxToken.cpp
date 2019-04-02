@@ -92,7 +92,7 @@ string ArraySpec::TypeString(bool arg) const
 
 fn_name BoolLiteral_Referent = "BoolLiteral.Referent";
 
-CxxNamed* BoolLiteral::Referent() const
+CxxScoped* BoolLiteral::Referent() const
 {
    Debug::ft(BoolLiteral_Referent);
 
@@ -185,7 +185,7 @@ void CharLiteral::Print(ostream& stream, const Flags& options) const
 
 fn_name CharLiteral_Referent = "CharLiteral.Referent";
 
-CxxNamed* CharLiteral::Referent() const
+CxxScoped* CharLiteral::Referent() const
 {
    Debug::ft(CharLiteral_Referent);
 
@@ -289,7 +289,7 @@ void CxxToken::Print(ostream& stream, const Flags& options) const
 
 fn_name CxxToken_Referent = "CxxToken.Referent";
 
-CxxNamed* CxxToken::Referent() const
+CxxScoped* CxxToken::Referent() const
 {
    Debug::ft(CxxToken_Referent);
 
@@ -653,10 +653,25 @@ bool Expression::AddUnaryOp(TokenPtr& item)
 {
    Debug::ft(Expression_AddUnaryOp);
 
-   if(!items_.empty())
-   {
-      auto oper = static_cast< Operation* >(item.get());
+   auto oper = static_cast< Operation* >(item.get());
 
+   if(items_.empty())
+   {
+      //  ++ and -- are initially parsed as postfix operators.  But
+      //  this operator begins an expression, so it must be prefix.
+      //
+      switch(oper->Op())
+      {
+      case Cxx::POSTFIX_INCREMENT:
+         oper->SetOp(Cxx::PREFIX_INCREMENT);
+         break;
+      case Cxx::POSTFIX_DECREMENT:
+         oper->SetOp(Cxx::PREFIX_DECREMENT);
+         break;
+      }
+   }
+   else
+   {
       //  It's an error if something precedes operator delete.
       //
       switch(oper->Op())
@@ -865,7 +880,7 @@ void FloatLiteral::Print(ostream& stream, const Flags& options) const
 
 fn_name FloatLiteral_Referent = "FloatLiteral.Referent";
 
-CxxNamed* FloatLiteral::Referent() const
+CxxScoped* FloatLiteral::Referent() const
 {
    Debug::ft(FloatLiteral_Referent);
 
@@ -987,7 +1002,7 @@ void IntLiteral::Print(ostream& stream, const Flags& options) const
 
 fn_name IntLiteral_Referent = "IntLiteral.Referent";
 
-CxxNamed* IntLiteral::Referent() const
+CxxScoped* IntLiteral::Referent() const
 {
    Debug::ft(IntLiteral_Referent);
 
@@ -1083,7 +1098,7 @@ Cxx::ItemType Literal::Type() const
 
 fn_name NullPtr_Referent = "NullPtr.Referent";
 
-CxxNamed* NullPtr::Referent() const
+CxxScoped* NullPtr::Referent() const
 {
    Debug::ft(NullPtr_Referent);
 
@@ -2815,46 +2830,52 @@ void Precedence::Print(ostream& stream, const Flags& options) const
 
 //==============================================================================
 
-const TypeSpecPtr StrLiteral::Ref_ = StrLiteral::CreateRef();
+const DataPtr StrLiteral::Ref_ = StrLiteral::CreateRef();
 
 //------------------------------------------------------------------------------
 
 fn_name StrLiteral_CreateRef = "StrLiteral.CreateRef";
 
-TypeSpecPtr StrLiteral::CreateRef()
+DataPtr StrLiteral::CreateRef()
 {
    Debug::ft(StrLiteral_CreateRef);
 
-   //  Create Ref_, which represents the type "const char* const".
+   //  Create a data item whose type is "const char* const".  FuncData is used
+   //  because SpaceData will try to open a scope in the parser's current scope,
+   //  which doesn't exist.
    //
-   QualNamePtr qual(new QualName(CHAR_STR));
-   TypeSpecPtr ref(new DataSpec(qual));
-   ref->Tags()->SetConst(true);
-   ref->Tags()->SetPointer(0, true);
-   return ref;
+   DataPtr data;
+   string dataName("__string_literal_referent");
+   QualNamePtr typeName(new QualName(CHAR_STR));
+   TypeSpecPtr typeSpec(new DataSpec(typeName));
+   typeSpec->Tags()->SetConst(true);
+   typeSpec->Tags()->SetPointer(0, true);
+   data.reset(new FuncData(dataName, typeSpec));
+   data->SetScope(Singleton< CxxRoot >::Instance()->GlobalNamespace());
+   return data;
 }
 
 //------------------------------------------------------------------------------
 
 fn_name StrLiteral_GetReferent = "StrLiteral.GetReferent";
 
-CxxNamed* StrLiteral::GetReferent()
+CxxScoped* StrLiteral::GetReferent()
 {
    Debug::ft(StrLiteral_GetReferent);
 
-   return static_cast< CxxNamed* >(Ref_.get());
+   return Ref_.get();
 }
 
 //------------------------------------------------------------------------------
 
 TypeSpec* StrLiteral::GetTypeSpec() const
 {
-   return Ref_.get();
+   return Ref_->GetTypeSpec();
 }
 
 //------------------------------------------------------------------------------
 
-CxxNamed* StrLiteral::Referent() const
+CxxScoped* StrLiteral::Referent() const
 {
    return GetReferent();
 }

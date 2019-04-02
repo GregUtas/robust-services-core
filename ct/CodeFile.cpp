@@ -1550,7 +1550,7 @@ void CodeFile::FindOrAddUsing(const CxxNamed* user)
    Debug::ft(CodeFile_FindOrAddUsing);
 
    string name;
-   CxxNamed* ref;
+   CxxScoped* ref;
    auto qname = user->GetQualName();
 
    if(qname != nullptr)

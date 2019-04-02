@@ -344,9 +344,9 @@ bool CliThread::GenerateReportPreemptably()
    {
       if(!Element::RunningInLab()) return true;
 
-      if(BoolPrompt(StopTracePrompt))
+      if(BoolPrompt(StopTracingPrompt))
       {
-         Singleton< TraceBuffer >::Instance()->StopTrace();
+         Singleton< TraceBuffer >::Instance()->StopTracing();
          return true;
       }
 

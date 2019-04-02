@@ -105,7 +105,7 @@ modules           : Displays modules.
   [b|v]           : 'b'=brief 'v'=verbose (default='b')
 
 pools             : Displays object pools.
-  [0:63]          : ObjectPoolId (default=all)
+  [0:250]         : ObjectPoolId (default=all)
   [b|v]           : 'b'=brief 'v'=verbose (default='b')
 
 audit             : Controls the object pool audit.
@@ -323,7 +323,7 @@ sizes             : Displays class sizes.
 corrupt           : Corrupts a data structure for testing purposes.
 (                 : what to corrupt...
   pool            : object pool
-    (0:63)        : ObjectPoolId
+    (0:250)       : ObjectPoolId
     (0:1024)      : offset into free queue (0 = head)
 )
 
@@ -766,7 +766,7 @@ sizes             : Displays class sizes.
 corrupt           : Corrupts a data structure for testing purposes.
 (                 : what to corrupt...
   pool            : object pool
-    (0:63)        : ObjectPoolId
+    (0:250)       : ObjectPoolId
     (0:1024)      : offset into free queue (0 = head)
   context         : first in-use context
 )
@@ -1205,15 +1205,27 @@ fileinfo          : Displays information about a code file.
 fileid            : Displays information about a code file.
   (1:4095)        : file's identifier
 
-break             : Manage breakpoints used during parser's 'execution'.
-(                 : action...
-  insert          : add breakpoint
-  remove          : delete breakpoint
-  clear           : delete all breakpoints
-  list            : list breakpoints
+trace             : Manage tracepoints for >parse command.
+(                 : subcommand...
+  insert          : add tracepoint
+  (               : action at tracepoint...
+    break         : breakpoint (at Debug::noop in Context::SetPos)
+    start         : start tracing (must preconfigure settings)
+    stop          : stop tracing
+  )
+    <str>         : name of source code file
+    (0:2147483647) : line number (must contain source code)
+  remove          : delete tracepoint
+  (               : action at tracepoint...
+    break         : breakpoint (at Debug::noop in Context::SetPos)
+    start         : start tracing (must preconfigure settings)
+    stop          : stop tracing
+  )
+    <str>         : name of source code file
+    (0:2147483647) : line number (must contain source code)
+  clear           : delete all tracepoints
+  list            : list tracepoints
 )
-  <str>           : name of source code file
-  (0:2147483647)  : line number (must contain source code)
 
 parse             : Parses code files.
   <str>           : options (enter ">help parse full" for details)
@@ -1229,6 +1241,8 @@ trim              : Analyzes #include and using statements.
   <str>           : a set of code files
 
 fix               : Interactively fixes warnings detected by >check.
+  (0:118)         : warning number from Wnnn (0 = all warnings)
+  (t|f)           : prompt before fixing?
   <str>           : a set of code files
 
 format            : Reformats code files.

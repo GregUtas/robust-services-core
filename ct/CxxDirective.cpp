@@ -867,7 +867,7 @@ void MacroName::Print(ostream& stream, const Flags& options) const
 
 fn_name MacroName_Referent = "MacroName.Referent";
 
-CxxNamed* MacroName::Referent() const
+CxxScoped* MacroName::Referent() const
 {
    Debug::ft(MacroName_Referent);
 

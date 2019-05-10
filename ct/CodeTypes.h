@@ -478,6 +478,7 @@ enum Warning
    UseOfSlashAsterisk,       // use of /* */ comment
    RemoveLineBreak,          // next line can be merged within length limit
    CopyCtorConstructsBase,   // copy/move constructor relies on base constructor
+   ValueArgumentModified,    // argument passed by value is modified
    Warning_N                 // number of warnings
 };
 

@@ -752,6 +752,9 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(CopyCtorConstructsBase,
       WarningAttrs(F, X, F,
       "Copy/move constructor does not invoke base copy/move constructor")));
+   Attrs_.insert(WarningPair(ValueArgumentModified,
+      WarningAttrs(F, X, F,
+      "Argument passed by value is modified")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(F, X, F,
       ERROR_STR)));

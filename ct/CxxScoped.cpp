@@ -51,7 +51,8 @@ Argument::Argument(string& name, TypeSpecPtr& spec) :
    spec_(spec.release()),
    reads_(0),
    writes_(0),
-   nonconst_(false)
+   nonconst_(false),
+   modified_(false)
 {
    Debug::ft(Argument_ctor);
 
@@ -69,7 +70,8 @@ void Argument::Check() const
    Debug::ft(Argument_Check);
 
    spec_->Check();
-   if(name_.empty()) Log(AnonymousArgument);
+   if(name_.empty()) LogToFunc(AnonymousArgument);
+   if(modified_ && spec_->Refs() == 0) LogToFunc(ValueArgumentModified);
 }
 
 //------------------------------------------------------------------------------
@@ -153,13 +155,16 @@ void Argument::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
-fn_name Argument_IsPassedByValue = "Argument.IsPassedByValue";
+fn_name Argument_LogToFunc = "Argument.LogToFunc";
 
-bool Argument::IsPassedByValue() const
+void Argument::LogToFunc(Warning warning) const
 {
-   Debug::ft(Argument_IsPassedByValue);
+   Debug::ft(Argument_LogToFunc);
 
-   return ((spec_->Ptrs(true) == 0) && (spec_->Refs() == 0));
+   auto func = static_cast< Function* >(GetScope());
+   auto offset = func->FindArg(this);
+   if(offset == SIZE_MAX) offset = 0;
+   func->Log(warning, this, offset);
 }
 
 //------------------------------------------------------------------------------
@@ -221,6 +226,12 @@ bool Argument::WasWritten(const StackArg* arg, bool passed)
 
    ++writes_;
    if((arg == nullptr) || (arg->Ptrs(true) == 0)) nonconst_ = true;
+
+   if(!passed && (name_ != THIS_STR) && !arg->UsedIndirectly())
+   {
+      modified_ = true;
+   }
+
    return true;
 }
 

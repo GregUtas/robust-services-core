@@ -225,10 +225,6 @@ public:
    //
    bool HasDefault() const { return (default_ != nullptr); }
 
-   //  Returns true if the argument is passed by value.
-   //
-   bool IsPassedByValue() const;
-
    //  Returns true if the argument could be const.
    //
    bool CouldBeConst() const { return !nonconst_; }
@@ -319,6 +315,10 @@ private:
    //
    void CheckVoid() const;
 
+   //  Logs WARNING on the argument's function.
+   //
+   void LogToFunc(Warning warning) const;
+
    //  The argument's name, if any.
    //
    std::string name_;
@@ -333,7 +333,7 @@ private:
 
    //  How many times the argument was read.
    //
-   size_t reads_ : 16;
+   size_t reads_ : 15;
 
    //  How many times the argument was written.
    //
@@ -342,6 +342,10 @@ private:
    //  Set if the argument cannot be const.
    //
    bool nonconst_ : 1;
+
+   //  Set if the argument's value was directly modified.
+   //
+   bool modified_: 1;
 };
 
 //------------------------------------------------------------------------------

@@ -191,6 +191,10 @@ public:
    //
    void SetAsMutable() { mutable_ = true; }
 
+   //  Tags the argument as a temporary.
+   //
+   void SetAsTemporary();
+
    //  Returns true if the argument is read-only.  PASSED is set if the
    //  argument is being passed to a non-const reference or pointer.
    //  Returns const_ if PASSED is set or the argument is not a pointer,

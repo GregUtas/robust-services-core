@@ -2673,16 +2673,16 @@ void Operation::PushResult(StackArg& lhs, StackArg& rhs) const
    case Cxx::BITWISE_XOR:
    case Cxx::BITWISE_OR:
       //
-      //  The result is a temporary, so it can no longer be const.
+      //  The result is a temporary.
       //
       if(lhs.item->Type() == Cxx::Terminal)
       {
-         rhs.SetAsWriteable();
+         rhs.SetAsTemporary();
          Context::PushArg(rhs.EraseName());
       }
       else
       {
-         lhs.SetAsWriteable();
+         lhs.SetAsTemporary();
          Context::PushArg(lhs.EraseName());
       }
       break;

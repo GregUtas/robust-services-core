@@ -755,6 +755,9 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(ValueArgumentModified,
       WarningAttrs(F, X, F,
       "Argument passed by value is modified")));
+   Attrs_.insert(WarningPair(ReturnsNonConstMember,
+      WarningAttrs(F, X, F,
+      "Function returns non-const reference or pointer to member data")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(F, X, F,
       ERROR_STR)));

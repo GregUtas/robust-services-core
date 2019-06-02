@@ -741,7 +741,8 @@ private:
    //
    ExprPtr width_;
 
-   //  The member initialization statement.
+   //  The member initialization statement provided by the constructor
+   //  for which Function.EnterBlock is currently being executed.
    //
    const MemberInit* init_;
 

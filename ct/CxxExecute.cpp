@@ -1112,12 +1112,26 @@ void StackArg::AssignedTo(const StackArg& that, AssignmentType type) const
    if(this->item->Type() == Cxx::Terminal) return;
    if(that.item == nullptr) return;
 
+   auto thisPtrs = this->Ptrs(true);
    auto thatPtrs = that.Ptrs(true);
    auto thatRefs = that.Refs();
+
+   if((type == Returned) && member_ && !that.const_)
+   {
+      if((thatRefs > 0) || (thatPtrs > thisPtrs))
+      {
+         auto func = Context::Scope()->GetFunction();
+         if((func != nullptr) && (func->GetAccess() != Cxx::Private))
+         {
+            Context::Log(ReturnsNonConstMember);
+         }
+      }
+   }
+
    auto restricted = false;
 
    if(thatPtrs > 0)
-      restricted = (this->Ptrs(true) > 0);  // allows const int to pointer
+      restricted = (thisPtrs > 0);  // allows const int to pointer
    else if(thatRefs > 0)
       restricted = ((type != Copied) || that.item->IsInitializing());
 
@@ -1153,8 +1167,6 @@ void StackArg::AssignedTo(const StackArg& that, AssignmentType type) const
    //  A T** cannot be assigned to a const T**.
    //  A T* or T*& cannot be assigned to a const T*&.
    //
-   auto thisPtrs = this->Ptrs(true);
-
    if(thisPtrs > 1)
       that.SetNonConst(0);
    else if((thisPtrs == 1) && (thatRefs == 1))
@@ -1591,6 +1603,18 @@ void StackArg::SetAsReadOnly()
       const_ = true;
    else
       constptr_ = true;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name StackArg_SetAsTemporary = "StackArg.SetAsTemporary";
+
+void StackArg::SetAsTemporary()
+{
+   Debug::ft(StackArg_SetAsTemporary);
+
+   SetAsWriteable();
+   member_ = false;
 }
 
 //------------------------------------------------------------------------------

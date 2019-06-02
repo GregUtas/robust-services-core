@@ -479,6 +479,7 @@ enum Warning
    RemoveLineBreak,          // next line can be merged within length limit
    CopyCtorConstructsBase,   // copy/move constructor relies on base constructor
    ValueArgumentModified,    // argument passed by value is modified
+   ReturnsNonConstMember,    // returns non-const reference or pointer to member
    Warning_N                 // number of warnings
 };
 

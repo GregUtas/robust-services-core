@@ -260,8 +260,8 @@ void CodeWarning::GenerateReport(ostream* stream, const SetOfIds& set)
 
    for(auto t = 0; t < LineType_N; ++t)
    {
-      *stream << setw(12) << LineType(t)
-         << spaces(2) << setw(6) << LineTypeCounts_[t] << CRLF;
+      *stream << setw(8) << LineTypeCounts_[t]
+         << spaces(3) << LineType(t) << CRLF;
    }
 
    //  Display the total number of warnings of each type.

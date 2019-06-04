@@ -21,6 +21,7 @@
 //
 #include "CxxScoped.h"
 #include <bitset>
+#include <cstdint>
 #include <set>
 #include <sstream>
 #include <utility>
@@ -164,7 +165,7 @@ void Argument::LogToFunc(Warning warning) const
    auto func = static_cast< Function* >(GetScope());
    auto offset = func->FindArg(this);
    if(offset == SIZE_MAX) offset = 0;
-   func->Log(warning, this, offset);
+   Log(warning, func, offset);
 }
 
 //------------------------------------------------------------------------------

@@ -260,8 +260,8 @@ void CodeWarning::GenerateReport(ostream* stream, const SetOfIds& set)
 
    for(auto t = 0; t < LineType_N; ++t)
    {
-      *stream << setw(12) << LineType(t)
-         << spaces(2) << setw(6) << LineTypeCounts_[t] << CRLF;
+      *stream << setw(8) << LineTypeCounts_[t]
+         << spaces(3) << LineType(t) << CRLF;
    }
 
    //  Display the total number of warnings of each type.
@@ -752,6 +752,12 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(CopyCtorConstructsBase,
       WarningAttrs(F, X, F,
       "Copy/move constructor does not invoke base copy/move constructor")));
+   Attrs_.insert(WarningPair(ValueArgumentModified,
+      WarningAttrs(F, X, F,
+      "Argument passed by value is modified")));
+   Attrs_.insert(WarningPair(ReturnsNonConstMember,
+      WarningAttrs(F, X, F,
+      "Function returns non-const reference or pointer to member data")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(F, X, F,
       ERROR_STR)));

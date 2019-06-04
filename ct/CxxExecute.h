@@ -129,6 +129,11 @@ public:
    void DecrPtrs() { --ptrs_; }
    void IncrPtrs() { ++ptrs_; }
 
+   //  Returns true if the indirection, address of, or array subscript
+   //  operator was applied to the argument.
+   //
+   bool UsedIndirectly() const { return ptrs_ != 0; }
+
    //  Returns the level of indirection to the argument's underlying type.
    //  If ARRAYS is set, each array specification is treated as a pointer.
    //
@@ -185,6 +190,10 @@ public:
    //  Tags the argument as mutable.
    //
    void SetAsMutable() { mutable_ = true; }
+
+   //  Tags the argument as a temporary.
+   //
+   void SetAsTemporary();
 
    //  Returns true if the argument is read-only.  PASSED is set if the
    //  argument is being passed to a non-const reference or pointer.

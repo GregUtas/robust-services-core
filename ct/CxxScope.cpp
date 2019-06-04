@@ -2296,8 +2296,7 @@ void Function::CheckArgs() const
    if(type == FuncOperator) return;
 
    //  If the function is an override, look for arguments that were renamed
-   //  from the direct base class.  This is the only check that is applied
-   //  to an overridden function.
+   //  from the direct base class.
    //
    if(override_)
    {
@@ -2323,6 +2322,8 @@ void Function::CheckArgs() const
          }
       }
 
+      //  Other checks do not apply to an overridden function.
+      //
       return;
    }
 
@@ -2390,7 +2391,9 @@ void Function::CheckArgs() const
             }
             else
             {
-               if(arg->IsPassedByValue())
+               auto spec = arg->GetTypeSpec();
+
+               if((spec->Ptrs(true) == 0) && (spec->Refs() == 0))
                {
                   if(arg->Root()->Type() == Cxx::Class)
                      LogToBoth(ArgumentCouldBeConstRef, i);
@@ -3263,6 +3266,25 @@ void Function::EnterSignature()
    //  DeleteVoidArg, because this would cause the above iterator to fail.
    //
    if(!args_.empty() && (args_.back() == nullptr)) args_.pop_back();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Function_FindArg = "Function.FindArg";
+
+size_t Function::FindArg(const Argument* arg) const
+{
+   Debug::ft(Function_FindArg);
+
+   for(size_t i = 0; i < args_.size(); ++i)
+   {
+      if(args_[i].get() == arg)
+      {
+         return (this_ ? i : i + 1);
+      }
+   }
+
+   return SIZE_MAX;
 }
 
 //------------------------------------------------------------------------------

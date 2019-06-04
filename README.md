@@ -25,7 +25,7 @@ them are currently available in this repository and points to the primary code f
 that implement them, and this [tutorial](/docs/RCS-tutorial.pdf) provides more
 information about some of them.
 
-### POTS application
+## POTS application
 
 Including an application with a framework serves to test it and illustrate its use.
 This repository therefore includes a POTS (Plain Ordinary Telephone Service) application.
@@ -36,11 +36,11 @@ it does.  You should therefore be able to figure out what the POTS code is doing
 reading a large specification.  An overview of the POTS application is provided
 [here](/docs/RSC-POTS-Application.md).
 
-## C++ static analysis tool
+## C++ static analysis tools
 
-The development of RSC got sidetracked when the author decided to develop C++
-static analysis tools.  This toolset detects violations of various C++ design
-guidelines, such as those found in Scott Meyers' *Effective C++*.  It also analyzes
+The development of RSC has been somewhat sidetracked by the development of C++
+static analysis tools.  These tools detect violations of various C++ design
+guidelines, such as those found in Scott Meyers' *Effective C++*.  They also analyze
 `#include` directives to determine which ones should be added or deleted.  Even if
 you're not developing applications with RSC, you might find these tools useful.
 An overview of them is provided [here](docs/RSC-Cpp-Static-Analysis-Tools.md).
@@ -81,7 +81,7 @@ listed in the comments that precede the implementation of [`main`](/rsc/main.cpp
 Each of these directories is built as a separate static library, with `main`
 residing in its own directory.
 
-RSC was developed using Visual Studio 2017.  If that is also your development
+RSC is currently developed using Visual Studio 2017.  If that is also your development
 environment, the `.vcxproj` (project) files in this repository should already
 provide most of the build instructions that you need.  However, you will need
 to change the paths to where the source code is located.  It's probably

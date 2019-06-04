@@ -741,7 +741,8 @@ private:
    //
    ExprPtr width_;
 
-   //  The member initialization statement.
+   //  The member initialization statement provided by the constructor
+   //  for which Function.EnterBlock is currently being executed.
    //
    const MemberInit* init_;
 
@@ -981,6 +982,12 @@ public:
    //  Returns the function's arguments.
    //
    const ArgumentPtrVector& GetArgs() const { return args_; }
+
+   //  Returns the index of ARG in args_.  The index is incremented if the
+   //  function does not have an implicit "this" argument.  Returns SIZE_MAX
+   //  if ARG is not in args_.
+   //
+   size_t FindArg(const Argument* arg) const;
 
    //  Returns the function's declaration.
    //

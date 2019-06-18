@@ -294,7 +294,7 @@ void CodeWarning::GenerateReport(ostream* stream, const SetOfIds& set)
 
       do
       {
-         *stream << spaces(2) << item->file->FullName();
+         *stream << spaces(2) << item->file->Path();
          *stream << '(' << item->line + 1;
          if(item->offset > 0) *stream << '/' << item->offset;
          *stream << "): ";
@@ -324,7 +324,7 @@ void CodeWarning::GenerateReport(ostream* stream, const SetOfIds& set)
    while(item != last)
    {
       auto f = item->file;
-      *stream << f->FullName() << CRLF;
+      *stream << f->Path() << CRLF;
 
       do
       {
@@ -779,7 +779,7 @@ void CodeWarning::Insert(const CodeWarning& log)
 bool CodeWarning::IsSortedByFile
    (const CodeWarning& log1, const CodeWarning& log2)
 {
-   auto result = strCompare(log1.file->FullName(), log2.file->FullName());
+   auto result = strCompare(log1.file->Path(), log2.file->Path());
    if(result == -1) return true;
    if(result == 1) return false;
    if(log1.warning < log2.warning) return true;
@@ -800,7 +800,7 @@ bool CodeWarning::IsSortedByType
 {
    if(log1.warning < log2.warning) return true;
    if(log1.warning > log2.warning) return false;
-   auto result = strCompare(log1.file->FullName(), log2.file->FullName());
+   auto result = strCompare(log1.file->Path(), log2.file->Path());
    if(result == -1) return true;
    if(result == 1) return false;
    if(log1.line < log2.line) return true;
@@ -817,7 +817,7 @@ bool CodeWarning::IsSortedByType
 bool CodeWarning::IsSortedToFix
    (const CodeWarning& log1, const CodeWarning& log2)
 {
-   auto result = strCompare(log1.file->FullName(), log2.file->FullName());
+   auto result = strCompare(log1.file->Path(), log2.file->Path());
    if(result == -1) return true;
    if(result == 1) return false;
    if(Attrs_.at(log1.warning).order < Attrs_.at(log2.warning).order)

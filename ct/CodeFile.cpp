@@ -42,6 +42,7 @@
 #include "CxxScope.h"
 #include "CxxScoped.h"
 #include "CxxString.h"
+#include "CxxSymbols.h"
 #include "CxxToken.h"
 #include "Debug.h"
 #include "Editor.h"
@@ -564,15 +565,15 @@ int CodeFile::CalcGroup(const Include& incl) const
 
 fn_name CodeFile_CanBeTrimmed = "CodeFile.CanBeTrimmed";
 
-bool CodeFile::CanBeTrimmed(ostream* stream) const
+bool CodeFile::CanBeTrimmed() const
 {
    Debug::ft(CodeFile_CanBeTrimmed);
 
-   //  Don't trim empty files or substitute files.
+   //  Don't trim unparsed files, empty files; or substitute files.
    //
+   if(parsed_ == Unparsed) return false;
    if(code_.empty()) return false;
    if(isSubsFile_) return false;
-   if(stream != nullptr) *stream << Name() << CRLF;
    return true;
 }
 
@@ -606,6 +607,7 @@ void CodeFile::Check()
       return;
    }
 
+   Debug::Progress(Name() + CRLF, true);
    Trim(nullptr);
    CheckProlog();
    CheckIncludeGuard();
@@ -1019,7 +1021,7 @@ void CodeFile::CheckSeparation()
          case FileComment:
          case FunctionName:
          case IncludeDirective:
-         case UsingDirective:
+         case UsingStatement:
             LogLine(n, AddBlankLine);
             break;
          }
@@ -1208,9 +1210,9 @@ LineType CodeFile::ClassifyLine(string s, std::set< Warning >& warnings)
       return HashDirective;
    }
 
-   //  Looking for using directives.
+   //  Look for using statements.
    //
-   if(s.find("using ") == 0) return UsingDirective;
+   if(s.find("using ") == 0) return UsingStatement;
 
    //  Look for invocations of Debug::ft.
    //
@@ -1418,7 +1420,7 @@ void CodeFile::DisplayItems(ostream& stream, const string& opts) const
 {
    if(dir_ == nullptr) return;
 
-   stream << FullName();
+   stream << Path();
    if(parsed_ == Unparsed) stream << ": NOT PARSED";
    stream << CRLF;
    if(parsed_ == Unparsed) return;
@@ -1702,14 +1704,6 @@ word CodeFile::Format(string& expl) const
 
 //------------------------------------------------------------------------------
 
-string CodeFile::FullName() const
-{
-   if(dir_ == nullptr) return Name();
-   return dir_->Path() + PATH_SEPARATOR + Name();
-}
-
-//------------------------------------------------------------------------------
-
 fn_name CodeFile_GenerateReport = "CodeFile.GenerateReport";
 
 void CodeFile::GenerateReport(ostream* stream, const SetOfIds& set)
@@ -1959,7 +1953,7 @@ istreamPtr CodeFile::InputStream() const
    //  result of parsing an #include directive.
    //
    if(dir_ == nullptr) return nullptr;
-   return SysFile::CreateIstream(FullName().c_str());
+   return SysFile::CreateIstream(Path().c_str());
 }
 
 //------------------------------------------------------------------------------
@@ -2038,6 +2032,23 @@ Include* CodeFile::InsertInclude(const string& fn)
 
    Context::SwLog(CodeFile_InsertInclude, fn, 0);
    return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeFile_InsertInXref = "CodeFile.InsertInXref";
+
+void CodeFile::InsertInXref(const CxxNamedSet& items) const
+{
+   Debug::ft(CodeFile_InsertInXref);
+
+   auto symbols = Singleton< CxxSymbols >::Instance();
+   auto fid = Fid();
+
+   for(auto i = items.cbegin(); i != items.cend(); ++i)
+   {
+      symbols->RecordUsage(*i, fid);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -2391,6 +2402,27 @@ string CodeFile::MakeGuardName() const
 
 //------------------------------------------------------------------------------
 
+string CodeFile::Path(bool full) const
+{
+   if(dir_ == nullptr) return Name();
+   auto name = dir_->Path() + PATH_SEPARATOR + Name();
+
+   if(!full)
+   {
+      auto path = Library::SourcePath();
+      path.push_back(PATH_SEPARATOR);
+
+      if(name.find(path, 0) == 0)
+      {
+         name.erase(0, path.size());
+      }
+   }
+
+   return name;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeFile_PruneForwardCandidates = "CodeFile.PruneForwardCandidates";
 
 void CodeFile::PruneForwardCandidates(const CxxNamedSet& forwards,
@@ -2716,9 +2748,9 @@ void CodeFile::Trim(ostream* stream)
    //  that this file uses.  FindDeclIds must be invoked before GetUsageInfo
    //  because the latter uses declIds_.
    //
-   if(!CanBeTrimmed(stream)) return;
-   Debug::Progress(Name() + CRLF, true);
+   if(!CanBeTrimmed()) return;
 
+   if(stream != nullptr) *stream << Name() << CRLF;
    FindDeclIds();
 
    CxxUsageSets symbols;
@@ -2729,6 +2761,15 @@ void CodeFile::Trim(ostream* stream)
    auto& forwards = symbols.forwards;
    auto& friends = symbols.friends;
    auto& users = symbols.users;
+
+   //  Add the items that the files uses to the global cross-reference.
+   //
+   InsertInXref(bases);
+   InsertInXref(directs);
+   InsertInXref(indirects);
+   InsertInXref(forwards);
+   InsertInXref(friends);
+   InsertInXref(symbols.inherits);
 
    SaveBaseIds(bases);
 

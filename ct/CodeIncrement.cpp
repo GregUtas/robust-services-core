@@ -40,12 +40,14 @@
 #include "Cxx.h"
 #include "CxxExecute.h"
 #include "CxxRoot.h"
+#include "CxxSymbols.h"
 #include "Debug.h"
 #include "Element.h"
 #include "Formatters.h"
 #include "Lexer.h"
 #include "Library.h"
 #include "LibrarySet.h"
+#include "LibraryTypes.h"
 #include "NbCliParms.h"
 #include "Parser.h"
 #include "Registry.h"
@@ -516,26 +518,54 @@ word ExportCommand::ProcessCommand(CliThread& cli) const
    Debug::ft(ExportCommand_ProcessCommand);
 
    string title;
+   string opts;
 
    if(!GetFileName(title, cli)) return -1;
-
-   auto stream = cli.FileStream();
-   if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
-
-   string opts;
-   if(!GetString(opts, cli)) opts = "nchs";
+   if(!GetString(opts, cli))
+   {
+      opts.push_back(NamespaceView);
+      opts.push_back(CanonicalFileView);
+      opts.push_back(ClassHierarchyView);
+      opts.push_back(ItemStatistics);
+      opts.push_back(FileSymbolUsage);
+      opts.push_back(GlobalCrossReference);
+   }
    cli.EndOfInput(false);
 
-   auto lib = Singleton< Library >::Instance();
-   auto rc = lib->Export(*stream, opts);
-
-   if(rc == 0)
+   if((opts.find(NamespaceView) != string::npos) ||
+      (opts.find(CanonicalFileView) != string::npos) ||
+      (opts.find(OriginalFileView) != string::npos) ||
+      (opts.find(ClassHierarchyView) != string::npos))
    {
-      title += ".lib.txt";
-      cli.SendToFile(title, true);
+      Debug::Progress(string("Exporting parsed code...") + CRLF, true);
+      auto stream = cli.FileStream();
+      if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
+      Singleton< Library >::Instance()->Export(*stream, opts);
+      auto filename = title + ".lib.txt";
+      cli.SendToFile(filename, true);
    }
 
-   return rc;
+   if(opts.find(FileSymbolUsage) != string::npos)
+   {
+      Debug::Progress(string("Exporting file symbol usage...") + CRLF, true);
+      auto stream = cli.FileStream();
+      if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
+      auto filename = title + ".trim.txt";
+      Singleton< Library >::Instance()->Trim(*stream);
+      cli.SendToFile(filename, true);
+   }
+
+   if(opts.find(GlobalCrossReference) != string::npos)
+   {
+      Debug::Progress(string("Exporting cross-reference...") + CRLF, true);
+      auto stream = cli.FileStream();
+      if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
+      auto filename = title + ".xref.txt";
+      Singleton< CxxSymbols >::Instance()->DisplayXref(*stream);
+      cli.SendToFile(filename, true);
+   }
+
+   return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -1440,56 +1470,6 @@ word TraceCommand::ProcessCommand(CliThread& cli) const
 
 //------------------------------------------------------------------------------
 //
-//  The TRIM command.
-//
-class TrimCommand : public LibraryCommand
-{
-public:
-   TrimCommand();
-private:
-   word ProcessCommand(CliThread& cli) const override;
-};
-
-fixed_string TrimStr = "trim";
-fixed_string TrimExpl = "Analyzes #include and using statements.";
-
-TrimCommand::TrimCommand() : LibraryCommand(TrimStr, TrimExpl)
-{
-   BindParm(*new OstreamMandParm);
-   BindParm(*new FileSetExprParm);
-}
-
-fn_name TrimCommand_ProcessCommand = "TrimCommand.ProcessCommand";
-
-word TrimCommand::ProcessCommand(CliThread& cli) const
-{
-   Debug::ft(TrimCommand_ProcessCommand);
-
-   string title;
-
-   if(!GetFileName(title, cli)) return -1;
-
-   auto set = LibraryCommand::Evaluate(cli);
-   if(set == nullptr) return cli.Report(-7, AllocationError);
-
-   auto stream = cli.FileStream();
-   if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
-
-   string expl;
-   auto rc = set->Trim(*stream, expl);
-   set->Release();
-
-   if(rc == 0)
-   {
-      title += ".trim.txt";
-      cli.SendToFile(title, true);
-   }
-
-   return cli.Report(rc, expl);
-}
-
-//------------------------------------------------------------------------------
-//
 //  The TYPE command.
 //
 class TypeCommand : public LibraryCommand
@@ -1582,7 +1562,6 @@ CodeIncrement::CodeIncrement() : CliIncrement(CtStr, CtExpl)
    BindCommand(*new TraceCommand);
    BindCommand(*new ParseCommand);
    BindCommand(*new CheckCommand);
-   BindCommand(*new TrimCommand);
    BindCommand(*new FixCommand);
    BindCommand(*new FormatCommand);
    BindCommand(*new ExportCommand);

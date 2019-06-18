@@ -22,7 +22,9 @@
 #include "CxxSymbols.h"
 #include <cstddef>
 #include <cstdint>
+#include <ostream>
 #include <utility>
+#include "CodeFile.h"
 #include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxArea.h"
@@ -33,9 +35,13 @@
 #include "CxxScoped.h"
 #include "CxxString.h"
 #include "Debug.h"
+#include "Formatters.h"
+#include "Library.h"
+#include "Registry.h"
 #include "Singleton.h"
 
 using namespace NodeBase;
+using std::ostream;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -85,6 +91,7 @@ typedef std::pair< string, Macro* > MacroPair;
 typedef std::pair< string, Namespace* > SpacePair;
 typedef std::pair< string, Terminal* > TermPair;
 typedef std::pair< string, Typedef* > TypePair;
+typedef std::pair< const CxxNamed*, SetOfIds > XrefPair;
 
 //------------------------------------------------------------------------------
 //
@@ -221,6 +228,80 @@ CxxSymbols::~CxxSymbols()
    Debug::ft(CxxSymbols_dtor);
 
    CxxStats::Decr(CxxStats::CXX_SYMBOLS);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CxxSymbols_DisplayXref = "CxxSymbols.DisplayXref";
+
+void CxxSymbols::DisplayXref(ostream& stream) const
+{
+   typedef std::pair< string, XrefTable::const_iterator > SymbolFiles;
+   std::multimap< string, XrefTable::const_iterator > symbols;
+   std::set< string > filenames;
+
+   //  For each item in the cross-reference, create a key consisting of the
+   //  file that defines it and its fully qualified name.  Map this key to
+   //  the iterator that references the item in xref_.  This mapping causes
+   //  items to be sorted by the directory and file that defines them, and
+   //  then alphabetically within each file.  Don't include local variables.
+   //
+   for(auto x = xref_->cbegin(); x != xref_->cend(); ++x)
+   {
+      auto name = x->first->XrefName(false);
+      if(name.find(LOCALS_STR) != string::npos) continue;
+
+      auto file = x->first->GetFile();
+      auto key = (file != nullptr ? file->Path(false) : "unknown file");
+      key.push_back('$');
+      key.append(name);
+      symbols.insert(SymbolFiles(key, x));
+   }
+
+   auto& files = Singleton< Library >::Instance()->Files();
+
+   //  Display each symbol, followed by the file that defines it.  Strip
+   //  off the file name that was prefixed to each symbol.
+   //
+   for(auto s = symbols.cbegin(); s != symbols.cend(); ++s)
+   {
+      auto start = s->first.find('$');
+      auto symbol = s->first.substr(start + 1);
+      stream << symbol << " [";
+
+      auto file = s->second->first->GetFile();
+
+      if(file != nullptr)
+         stream << file->Path(false) << ']' << CRLF;
+      else
+         stream << "unknown file]" << CRLF;
+
+      //  Put the files that use the symbol in a set that will result in
+      //  them being sorted by directory and file name.
+      //
+      const auto& users = s->second->second;
+      filenames.clear();
+
+      for(auto u = users.cbegin(); u != users.cend(); ++u)
+      {
+         file = files.At(*u);
+
+         if(file != nullptr)
+         {
+            auto name = file->Path(false);
+            filenames.insert(name);
+         }
+         else
+         {
+            Debug::SwLog(CxxSymbols_DisplayXref, s->first, *u);
+         }
+      }
+
+      for(auto f = filenames.cbegin(); f != filenames.cend(); ++f)
+      {
+         stream << spaces(3) << *f << CRLF;
+      }
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -812,8 +893,26 @@ void CxxSymbols::ListMacros(const string& name, SymbolVector& list) const
 
 //------------------------------------------------------------------------------
 
+void CxxSymbols::RecordUsage(const CxxNamed* item, id_t fid)
+{
+   //  Drop terminals from the cross-reference.
+   //
+   if(item->Type() == Cxx::Terminal) return;
+
+   auto s = xref_->insert(XrefPair(item, SetOfIds()));
+
+   if(s.first != xref_->cend())
+   {
+      s.first->second.insert(fid);
+   }
+}
+
+//------------------------------------------------------------------------------
+
 void CxxSymbols::Shrink() const
 {
+   //c This does not yet shrink its containers.
+
    size_t ssize = 0;
    size_t vsize = 0;
 
@@ -894,6 +993,8 @@ void CxxSymbols::Shrink() const
       ssize += t->first.capacity();
    }
 
+   vsize += xref_->size() * sizeof(XrefPair);
+
    CxxStats::Strings(CxxStats::CXX_SYMBOLS, ssize);
    CxxStats::Vectors(CxxStats::CXX_SYMBOLS, vsize);
 }
@@ -922,6 +1023,7 @@ void CxxSymbols::Shutdown(RestartLevel level)
    spaces_.reset();
    terms_.reset();
    types_.reset();
+   xref_.reset();
 }
 
 //------------------------------------------------------------------------------
@@ -948,5 +1050,6 @@ void CxxSymbols::Startup(RestartLevel level)
    spaces_.reset(new SpaceTable);
    terms_.reset(new TermTable);
    types_.reset(new TypeTable);
+   xref_.reset(new XrefTable);
 }
 }

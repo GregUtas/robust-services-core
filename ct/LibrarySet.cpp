@@ -449,17 +449,6 @@ string LibrarySet::TemporaryName()
 
 //------------------------------------------------------------------------------
 
-fn_name LibrarySet_Trim = "LibrarySet.Trim";
-
-word LibrarySet::Trim(ostream& stream, string& expl) const
-{
-   Debug::ft(LibrarySet_Trim);
-
-   return NotImplemented(expl);
-}
-
-//------------------------------------------------------------------------------
-
 LibrarySet* LibrarySet::Union(const LibrarySet* rhs) const
 {
    return OpError();

@@ -140,12 +140,6 @@ public:
    //
    virtual NodeBase::word Sort(std::ostream& stream, std::string& expl) const;
 
-   //  Returns 0 after producing, in STREAM, a report about the symbols used
-   //  by each item in the set, along with the #includes, forwards and using
-   //  statements that should be added or removed.
-   //
-   virtual NodeBase::word Trim(std::ostream& stream, std::string& expl) const;
-
    //  Deletes the set unless it is registered on the queue of sets.
    //
    void Release();

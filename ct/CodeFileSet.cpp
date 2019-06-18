@@ -524,7 +524,7 @@ word CodeFileSet::List(ostream& stream, string& expl) const
 
    for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
    {
-      stream << spaces(2) << files.At(*f)->FullName() << CRLF;
+      stream << spaces(2) << files.At(*f)->Path() << CRLF;
    }
 
    return 0;
@@ -745,7 +745,7 @@ word CodeFileSet::Scan
       {
          if(!shown)
          {
-            stream << file->FullName() << ':' << CRLF;
+            stream << file->Path() << ':' << CRLF;
             shown = true;
          }
 
@@ -945,52 +945,6 @@ BuildOrderPtr CodeFileSet::SortInBuildOrder() const
    }
 
    return order;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CodeFileSet_Trim = "CodeFileSet.Trim";
-
-word CodeFileSet::Trim(ostream& stream, string& expl) const
-{
-   Debug::ft(CodeFileSet_Trim);
-
-   if(Set().empty())
-   {
-      expl = EmptySet;
-      return 0;
-   }
-
-   //  In order to trim a file, it must have been parsed.  Trim headers
-   //  in build order so that the recommendations for files built later
-   //  can take into account recommendations for headers built earlier.
-   //
-   auto rc = Parse(expl, "-");
-   if(rc != 0) return rc;
-   expl.clear();
-
-   auto& files = Singleton< Library >::Instance()->Files();
-
-   auto order = SortInBuildOrder();
-
-   for(auto f = order->cbegin(); f != order->cend(); ++f)
-   {
-      auto file = files.At(f->fid);
-      if(file->IsHeader()) file->Trim(&stream);
-      ThisThread::Pause();
-   }
-
-   for(auto f = order->cbegin(); f != order->cend(); ++f)
-   {
-      auto file = files.At(f->fid);
-      if(file->IsCpp()) file->Trim(&stream);
-      ThisThread::Pause();
-   }
-
-   std::ostringstream summary;
-   summary << order->size() << " file(s) analyzed.";
-   expl = summary.str();
-   return 0;
 }
 
 //------------------------------------------------------------------------------

@@ -23,11 +23,14 @@
 #define CXXSYMBOLS_H_INCLUDED
 
 #include "Base.h"
+#include <iosfwd>
+#include <map>
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
 #include "CxxFwd.h"
+#include "LibraryTypes.h"
 #include "NbTypes.h"
 #include "SysTypes.h"
 
@@ -157,6 +160,14 @@ public:
    //
    void EraseLocals();
 
+   //  Records that the file identified by FID uses ITEM.
+   //
+   void RecordUsage(const CxxNamed* item, NodeBase::id_t fid);
+
+   //  Outputs the global cross-reference to STREAM.
+   //
+   void DisplayXref(std::ostream& stream) const;
+
    //  Shrinks containers.
    //
    void Shrink() const;
@@ -188,6 +199,7 @@ private:
    typedef std::unordered_multimap< std::string, Namespace* > SpaceTable;
    typedef std::unordered_multimap< std::string, Terminal* > TermTable;
    typedef std::unordered_multimap< std::string, Typedef* > TypeTable;
+   typedef std::map< const CxxNamed*, SetOfIds > XrefTable;
 
    //  Types for unique_ptrs that own symbol tables.
    //
@@ -203,6 +215,7 @@ private:
    typedef std::unique_ptr< SpaceTable > SpaceTablePtr;
    typedef std::unique_ptr< TermTable > TermTablePtr;
    typedef std::unique_ptr< TypeTable > TypeTablePtr;
+   typedef std::unique_ptr< XrefTable > XrefTablePtr;
 
    //  Private because this singleton is not subclassed.
    //
@@ -226,6 +239,7 @@ private:
    TermTablePtr terms_;
    SpaceTablePtr spaces_;
    TypeTablePtr types_;
+   XrefTablePtr xref_;
 };
 }
 #endif

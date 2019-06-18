@@ -435,6 +435,14 @@ void CxxUsageSets::AddIndirect(const CxxNamed* item)
 
 //------------------------------------------------------------------------------
 
+void CxxUsageSets::AddInherit(const CxxNamed* item)
+{
+   if(item->GetFile() == nullptr) return;
+   inherits.insert(item);
+}
+
+//------------------------------------------------------------------------------
+
 void CxxUsageSets::AddUser(const CxxNamed* item)
 {
    if(item->GetFile() == nullptr) return;

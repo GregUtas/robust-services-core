@@ -105,9 +105,15 @@ public:
       const std::string& expr, size_t pos, std::string& expl);
 
    //  Displays the library's contents in STREAM.  The characters in OPTS
-   //  control formatting options.  Returns 0 on success.
+   //  control what information will be included.
    //
-   NodeBase::word Export(std::ostream& stream, const std::string& opts) const;
+   void Export(std::ostream& stream, const std::string& opts) const;
+
+   //  Displays each parsed file's symbol usage and recommended modifications
+   //  to its #include directives, using statements, and forward declarations
+   //  in STREAM.
+   //
+   void Trim(std::ostream& stream) const;
 
    //  Deletes the variable known by NAME.  Updates EXPL to indicate success
    //  or failure.  Returns 0 on success.

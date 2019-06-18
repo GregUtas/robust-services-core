@@ -207,15 +207,4 @@ word LibraryErrSet::Sort(ostream& stream, string& expl) const
 
    return Error(expl);
 }
-
-//------------------------------------------------------------------------------
-
-fn_name LibraryErrSet_Trim = "LibraryErrSet.Trim";
-
-word LibraryErrSet::Trim(ostream& stream, string& expl) const
-{
-   Debug::ft(LibraryErrSet_Trim);
-
-   return Error(expl);
-}
 }

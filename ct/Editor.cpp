@@ -494,7 +494,7 @@ Editor::Iter Editor::CodeBegin()
       case CloseBraceSemicolon:
       case IncludeDirective:
       case HashDirective:
-      case UsingDirective:
+      case UsingStatement:
       default:
          //
          //  We're now one line above what should be the start of the
@@ -3610,7 +3610,7 @@ word Editor::Write(string& expl)
 
    //  Create a new file to hold the reformatted version.
    //
-   auto path = file_->FullName();
+   auto path = file_->Path();
    auto temp = path + ".tmp";
    auto output = SysFile::CreateOstream(temp.c_str(), true);
    if(output == nullptr)

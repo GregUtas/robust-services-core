@@ -1,22 +1,22 @@
 LINE COUNTS
-   70989   source code not in one of the categories below
-   39479   blank line
-   16372   blank comment
+   71083   source code not in one of the categories below
+   39498   blank line
+   16376   blank comment
     9739   comment at the top of a file (e.g. for the file's name or license info)
-    6800   comment followed by repeated characters to draw a rule (e.g. //---- ...)
-     206   comment followed by a character that classifies it (e.g. //c <text>)
-   18324   comment not in one of the categories above (e.g. //  <text>)
+    6802   comment followed by repeated characters to draw a rule (e.g. //---- ...)
+     207   comment followed by a character that classifies it (e.g. //c <text>)
+   18361   comment not in one of the categories above (e.g. //  <text>)
        0   C-style comment
-   13899   bare left brace
-   12223   bare right brace
-    1677   bare right brace with semicolon
-    4374   invocation of Debug::ft
-    4357   definition of an fn_name
+   13911   bare left brace
+   12236   bare right brace
+    1676   bare right brace with semicolon
+    4372   invocation of Debug::ft
+    4356   definition of an fn_name
      134   definition of an fn_name continued on a subsequent line
-    5542   #include directive
+    5554   #include directive
     1058   preprocessor directive other than #include
-     833   using statement
-  206006   TOTAL
+     834   using statement
+  206197   TOTAL
 
 WARNING COUNTS
   W004    82  C-style cast
@@ -35,10 +35,10 @@ WARNING COUNTS
   W028    44  Unused data
   W029     1  Unused enum
   W030    20  Unused enumerator
-  W032   184  Unused function
+  W032   186  Unused function
   W033     3  Unused typedef
   W037     9  Member hides inherited name
-  W042   254  Member could be private
+  W042   255  Member could be private
   W043    55  Member could be protected
   W044    11  Typedef of pointer type
   W047    38  Data is init-only
@@ -52,19 +52,19 @@ WARNING COUNTS
   W060    67  Base class constructor is public
   W062     2  Member not included in member initialization list
   W065    27  Base class virtual destructor is not public
-  W075   372  Virtual function is public
+  W075   371  Virtual function is public
   W076     4  Virtual function is overloaded
   W077   166  Virtual function has no overrides
   W082    84  Adjacent arguments have the same type
   W088    34  Argument could be const
-  W090    83  Function could be const
+  W090    84  Function could be const
   W092   160  Function could be free
   W097    33  Line indentation is not a multiple of the standard value
   W099   284  Line contains adjacent spaces
   W102     3  Line length exceeds the standard maximum
   W103     2  Function not sorted in standard order
   W104    35  File heading is not standard
-  W106   498  Function does not invoke Debug::ft
+  W106   501  Function does not invoke Debug::ft
   W107    18  Function does not invoke Debug::ft as first statement
   W110    30  Override of Base.Display not found
   W111    27  Override of Object.Patch not found
@@ -165,8 +165,8 @@ W005 Functional cast
   C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(344):    ipport_t Port() const override { return ipport_t(port_); }
   C:/Users/gregu/Documents/rsc/rsc/cb/DigitString.cpp(139):       auto rc = AddDigit(Digit(ds.digits_[i]));
   C:/Users/gregu/Documents/rsc/rsc/cb/DigitString.cpp(171):    if(i < Size()) return Digit(digits_[i]);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeIncrement.cpp(1423):       Context::EraseTracepoint(file, line - 1, Tracepoint::Action(mode));
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeIncrement.cpp(1437):    Context::InsertTracepoint(file, line - 1, Tracepoint::Action(mode));
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeIncrement.cpp(1453):       Context::EraseTracepoint(file, line - 1, Tracepoint::Action(mode));
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeIncrement.cpp(1467):    Context::InsertTracepoint(file, line - 1, Tracepoint::Action(mode));
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(264):          << spaces(3) << LineType(t) << CRLF;
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(275):          *stream << setw(6) << WarningCode(Warning(w)) << setw(6)
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(276):             << WarningCounts_[w] << spaces(2) << Warning(w) << CRLF;
@@ -216,7 +216,7 @@ W006 reinterpret_cast
   C:/Users/gregu/Documents/rsc/rsc/cb/BcProgress.cpp(120):    reinterpret_cast< const ProgressInfo* >(bytes)->Display(stream, prefix);
   C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(469):    reinterpret_cast< const RouteResult* >(bytes)->Display(stream, prefix);
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeDir.cpp(65):    auto fake = reinterpret_cast< const CodeDir* >(&local);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(584):    auto fake = reinterpret_cast< const CodeFile* >(&local);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(585):    auto fake = reinterpret_cast< const CodeFile* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.cpp(281):    auto fake = reinterpret_cast< const LibrarySet* >(&local);
   C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.cpp(228):    auto em = reinterpret_cast< EM_Message* >(buff->PayloadPtr());
   C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.cpp(551):    auto& dm = reinterpret_cast< const DM_Message& >(message);
@@ -365,13 +365,13 @@ W007 Cast down the inheritance hierarchy
   C:/Users/gregu/Documents/rsc/rsc/cb/ProxyBcSessions.cpp(762):          ppsm = static_cast< ProxyBcPsm* >(psm);
   C:/Users/gregu/Documents/rsc/rsc/cb/ProxyBcSessions.cpp(988):    auto& tmsg = static_cast< const CipMessage& >(msg);
   C:/Users/gregu/Documents/rsc/rsc/cb/ProxyBcSessions.cpp(993):    auto fac = static_cast< SsmFactory* >(reg->GetFactory(rte->selector));
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(84):          auto base = static_cast< const Class* >(*b);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(217):       auto base = static_cast< const Class* >(*b);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(249):                auto type = static_cast< const Typedef* >(*item2);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(272):          auto type = static_cast< const Typedef* >(*item1);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(520):    affecterIds_ = static_cast< CodeFileSet* >(asSet)->Set();
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(2414):    auto& affecterIds = static_cast< CodeFileSet* >(affecterSet)->Set();
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(2552):       auto base = static_cast< const Class* >(*b);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(85):          auto base = static_cast< const Class* >(*b);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(218):       auto base = static_cast< const Class* >(*b);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(250):                auto type = static_cast< const Typedef* >(*item2);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(273):          auto type = static_cast< const Typedef* >(*item1);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(521):    affecterIds_ = static_cast< CodeFileSet* >(asSet)->Set();
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(2446):    auto& affecterIds = static_cast< CodeFileSet* >(affecterSet)->Set();
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(2584):       auto base = static_cast< const Class* >(*b);
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeFileSet.cpp(81):    auto curr = static_cast< CodeFileSet* >(Users(true));
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeFileSet.cpp(93):       curr = static_cast< CodeFileSet* >(prev->Users(true));
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeFileSet.cpp(113):    auto curr = static_cast< CodeFileSet* >(UsedBy(true));
@@ -416,12 +416,12 @@ W007 Cast down the inheritance hierarchy
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(1384):          auto op = static_cast< Operation* >(expr);
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(1675):       if(anon) StackArg::SetAutoTypeFor(static_cast< FuncData& >(*next_));
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(1721):    auto data = static_cast< FuncData* >(next_.get());
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(2723):       if(!static_cast< Function* >(item)->virtual_)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3174):             static_cast< ClassData* >(data)->SetInit(m->get());
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3405):    return static_cast< Function* >((*cti)->FindInstanceAnalog(this));
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(4758):                auto item = static_cast< CxxNamed* >(args.front().item);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(4844):       auto func = static_cast< ClassInst* >(cls)->FindTemplateAnalog(this);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(4845):       if(func != nullptr) ++static_cast< Function* >(func)->calls_;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(2739):       if(!static_cast< Function* >(item)->virtual_)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3202):             static_cast< ClassData* >(data)->SetInit(m->get());
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3439):    return static_cast< Function* >((*cti)->FindInstanceAnalog(this));
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(4824):                auto item = static_cast< CxxNamed* >(args.front().item);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(4910):       auto func = static_cast< ClassInst* >(cls)->FindTemplateAnalog(this);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(4911):       if(func != nullptr) ++static_cast< Function* >(func)->calls_;
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScoped.cpp(94):          auto func = static_cast< Function* >(GetScope());
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScoped.cpp(165):    auto func = static_cast< Function* >(GetScope());
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScoped.cpp(275):    GetClass()->AddSubclass(static_cast< Class* >(Context::Scope()));
@@ -432,33 +432,33 @@ W007 Cast down the inheritance hierarchy
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScoped.cpp(1638):             auto tdef = static_cast< Typedef* >(item);
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScoped.cpp(1643):             item = static_cast< CxxScoped* >(root);
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScoped.cpp(1930):       static_cast< CxxArea* >(scope)->AddFunc(func);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(386):    return static_cast< Macro* >(macros.front());
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(425):       if((*s)->ScopedName(false) == name) return static_cast< CxxScope* >(*s);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(433):       if((*c)->ScopedName(false) == name) return static_cast< CxxScope* >(*c);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(441):       if(pos != string::npos) return static_cast< CxxScope* >(*s);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(447):       if(pos != string::npos) return static_cast< CxxScope* >(*c);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(518):    auto oper = static_cast< Operation* >(item.get());
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(544):          auto ante = static_cast< Operation* >(prev.get());
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(596):       auto oper = static_cast< Operation* >(item.get());
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(629):    auto oper = static_cast< Operation* >(prev.get());
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(656):    auto oper = static_cast< Operation* >(item.get());
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(714):    auto oper = static_cast< Operation* >(item.get());
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(737):       auto ante = static_cast< Operation* >(prev.get());
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(833):    Context::PushOp(static_cast< Operation* >(StartOfExpr.get()));
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(1264):       inClass = static_cast< Class* >(inRoot);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(1269):       outClass = static_cast< Class* >(outRoot);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(1294):    auto call = static_cast< Operation* >(args_.front().get());
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(1690):       func = static_cast< Function* >(proc.item);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(1709):       cls = static_cast< Class* >(proc.item);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(1808):    auto cls = static_cast< Class* >(arg.item->Root());
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(1858):       auto newCall = static_cast< Operation* >(args_.front().get());
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(1879):    auto cls = static_cast< Class* >(spec.item->Root());
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(1901):       auto ctorCall = static_cast< Operation* >(args_[2].get());
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(1925):       cls = static_cast< Class* >(root);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(2118):       area = static_cast< Class* >(targ);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(2120):       static_cast< Class* >(targ)->Instantiate();
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(2480):    auto cls = static_cast< Class* >(root);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(2542):          mem = static_cast< Function* >(mem)->InstantiateFunction(tmplt);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(467):    return static_cast< Macro* >(macros.front());
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(506):       if((*s)->ScopedName(false) == name) return static_cast< CxxScope* >(*s);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(514):       if((*c)->ScopedName(false) == name) return static_cast< CxxScope* >(*c);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(522):       if(pos != string::npos) return static_cast< CxxScope* >(*s);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(528):       if(pos != string::npos) return static_cast< CxxScope* >(*c);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(526):    auto oper = static_cast< Operation* >(item.get());
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(552):          auto ante = static_cast< Operation* >(prev.get());
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(604):       auto oper = static_cast< Operation* >(item.get());
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(637):    auto oper = static_cast< Operation* >(prev.get());
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(664):    auto oper = static_cast< Operation* >(item.get());
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(722):    auto oper = static_cast< Operation* >(item.get());
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(745):       auto ante = static_cast< Operation* >(prev.get());
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(841):    Context::PushOp(static_cast< Operation* >(StartOfExpr.get()));
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(1272):       inClass = static_cast< Class* >(inRoot);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(1277):       outClass = static_cast< Class* >(outRoot);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(1302):    auto call = static_cast< Operation* >(args_.front().get());
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(1698):       func = static_cast< Function* >(proc.item);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(1717):       cls = static_cast< Class* >(proc.item);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(1816):    auto cls = static_cast< Class* >(arg.item->Root());
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(1866):       auto newCall = static_cast< Operation* >(args_.front().get());
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(1887):    auto cls = static_cast< Class* >(spec.item->Root());
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(1909):       auto ctorCall = static_cast< Operation* >(args_[2].get());
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(1933):       cls = static_cast< Class* >(root);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(2126):       area = static_cast< Class* >(targ);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(2128):       static_cast< Class* >(targ)->Instantiate();
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(2488):    auto cls = static_cast< Class* >(root);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(2550):          mem = static_cast< Function* >(mem)->InstantiateFunction(tmplt);
   C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(228):    auto defn = static_cast< const Function* >(log.item);
   C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(361):    DebugFtCode(static_cast< const Function* >(log.item), defn, call);
   C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(1032):    auto etor = static_cast< const Enumerator* >(log.item);
@@ -472,7 +472,7 @@ W007 Cast down the inheritance hierarchy
   C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(3562):    auto func = static_cast< const Function* >(log.item);
   C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1812):          auto def = static_cast< Define* >(item);
   C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1816):             auto code = const_cast< string* >(source_);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Library.cpp(94):       (static_cast< CfgStrParm* >(reg->FindParm("SourcePath")));
+  C:/Users/gregu/Documents/rsc/rsc/ct/Library.cpp(95):       (static_cast< CfgStrParm* >(reg->FindParm("SourcePath")));
   C:/Users/gregu/Documents/rsc/rsc/ct/Parser.cpp(381):    auto op = static_cast< Operation* >(call.get());
   C:/Users/gregu/Documents/rsc/rsc/ct/Parser.cpp(634):    auto brace = static_cast< BraceInit* >(token.get());
   C:/Users/gregu/Documents/rsc/rsc/ct/Parser.cpp(707):    auto cast = static_cast< Operation* >(token.get());
@@ -880,11 +880,11 @@ W008 Cast removes const qualification
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.h(864):       override { return const_cast< QualName* >(this); }
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.h(1331):    CxxToken* AutoType() const override { return (CxxToken*) this; }
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(2218):    return FoundFunc(const_cast< Function* >(this), args, match);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3369):    auto prev = const_cast< Function* >(this);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3548):       (const_cast< Function* >(this));
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3859):    func->SetTemplate(const_cast< Function* >(this));
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3403):    auto prev = const_cast< Function* >(this);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3590):       (const_cast< Function* >(this));
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3923):    func->SetTemplate(const_cast< Function* >(this));
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(337):    CxxToken* AutoType() const override { return (CxxToken*) this; }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(1173):       const override { return const_cast< Function* >(this); }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(1182):       const override { return const_cast< Function* >(this); }
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScoped.cpp(1244):    return (CxxToken*) this;
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScoped.cpp(1449):    return (CxxToken*) this;
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScoped.cpp(1840):    const_cast< Friend* >(this)->FindReferent();
@@ -896,7 +896,7 @@ W008 Cast removes const qualification
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScoped.h(1000):    CxxToken* AutoType() const override { return (CxxToken*) this; }
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScoped.h(1082):    CxxToken* AutoType() const override { return (CxxToken*) this; }
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(308):    CxxToken* prev = const_cast< CxxToken* >(this);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(311):    virtual CxxToken* RootType() const { return const_cast< CxxToken* >(this); }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(315):    virtual CxxToken* RootType() const { return const_cast< CxxToken* >(this); }
   C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.cpp(1816):             auto code = const_cast< string* >(source_);
   C:/Users/gregu/Documents/rsc/rsc/nb/Algorithms.cpp(33):    return (void*) ((const_ptr_t) ptr2 - diff);
   C:/Users/gregu/Documents/rsc/rsc/nb/Algorithms.cpp(40):    return (void*) ((const_ptr_t) ptr1 + diff);
@@ -1304,7 +1304,7 @@ W022 Add using statement
 W024 Add forward declaration
   C:/Users/gregu/Documents/rsc/rsc/dip/BotType.h(1): class Diplomacy::BaseBot
 W026 Unused argument
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.h(346/3):       const CxxNamed* item, const CxxScope* scope) const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.h(347/3):       const CxxNamed* item, const CxxScope* scope) const;
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.h(731/1):    static void Shutdown(NodeBase::RestartLevel level);
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.h(735/1):    static void Startup(NodeBase::RestartLevel level) { }
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(84/3):       const CxxNamed* item, const CxxScope* scope) const { return nullptr; }
@@ -1486,10 +1486,12 @@ W032 Unused function
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.h(145):    size_t Arrays() const;
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.h(300):    bool operator!=(const StackArg& that) const;
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.h(537):    bool operator<(const Tracepoint& that) const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(1001):    bool IsExtern() const { return GetDecl()->extern_; }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(1006):    bool IsFinal() const { return GetDecl()->final_; }
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxString.h(96):    std::string& Prefix(std::string&& scope);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(295):    CxxToken& operator=(const CxxToken& that) = default;
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(393):       Tags& operator=(const Tags& that) = default;
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(435):       Tags& operator=(const Tags& that) = default;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(299):    CxxToken& operator=(const CxxToken& that) = default;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(397):       Tags& operator=(const Tags& that) = default;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(439):       Tags& operator=(const Tags& that) = default;
   C:/Users/gregu/Documents/rsc/rsc/ct/Editor.h(251):    CodeLocation PrevPos(const CodeLocation& curr);
   C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.h(111):    void set_report(bool onoff) { report_ = onoff; }
   C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.h(120):    void send_orders_to_server();
@@ -1688,8 +1690,8 @@ W042 Member could be private
   C:/Users/gregu/Documents/rsc/rsc/cb/BcSessions.h(1149):    CipPsm* AllocNPsm();
   C:/Users/gregu/Documents/rsc/rsc/cb/ProxyBcSessions.h(494):    ProxyBcPsm* FirstBroadcast() const;
   C:/Users/gregu/Documents/rsc/rsc/cb/ServiceCodeRegistry.h(46):    void SetService(Address::SC sc, ServiceId sid);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.h(107):    bool IsTemplateHeader() const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.h(210):    int CalcGroup(const Include& incl) const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.h(108):    bool IsTemplateHeader() const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.h(211):    int CalcGroup(const Include& incl) const;
   C:/Users/gregu/Documents/rsc/rsc/ct/Cxx.h(428):    Numeric(NumericType type, size_t width, bool sign) noexcept :
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.h(119):    Typedef* FindType(const std::string& name) const;
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.h(164):    Enum* FindEnum(const std::string& name) const;
@@ -1701,16 +1703,17 @@ W042 Member could be private
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.h(299):    bool operator==(const StackArg& that) const;
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.h(218):    virtual bool IsSuperscopeOf(const std::string& fqSub, bool tmplt) const
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.h(1003):    bool IsUnboundedArray() const { return array_; }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(1014):    bool IsTemplateInstance() const { return tmplt_ != nullptr; }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(1042):    size_t MinArgs() const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(1047):    size_t MaxArgs() const { return args_.size(); }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(1105):    bool IsInvokedInBase() const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(1003):    bool IsPureVirtual() const { return GetDecl()->pure_; }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(1023):    bool IsTemplateInstance() const { return tmplt_ != nullptr; }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(1051):    size_t MinArgs() const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(1056):    size_t MaxArgs() const { return args_.size(); }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(1114):    bool IsInvokedInBase() const;
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScoped.h(152):    bool IsSubscopeOf(const std::string& fqSuper) const;
   C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.h(189):    std::string NextOperator() const;
   C:/Users/gregu/Documents/rsc/rsc/ct/Library.h(67):    CodeDir* FindDir(const std::string& name) const;
   C:/Users/gregu/Documents/rsc/rsc/ct/Library.h(88):    LibrarySet* FindVar(const std::string& name) const;
   C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(69):    bool IsReadOnly() const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(178):    static ptrdiff_t LinkDiff();
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(172):    static ptrdiff_t LinkDiff();
   C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.h(55):    enum StartupResult
   C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.h(67):    BaseBot();
   C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.h(116):    bool send_to_server(const TokenMessage& message);
@@ -1932,7 +1935,7 @@ W043 Member could be protected
   C:/Users/gregu/Documents/rsc/rsc/cb/BcSessions.h(1027):    virtual EventHandler::Rc RaiseFacilityFailure(Event*& nextEvent);
   C:/Users/gregu/Documents/rsc/rsc/cb/BcSessions.h(1032):    virtual EventHandler::Rc RaiseLocalNoAnswer(Event*& nextEvent);
   C:/Users/gregu/Documents/rsc/rsc/cb/BcSessions.h(1097):    virtual EventHandler::Rc ClearCall(Cause::Ind cause);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeIncrement.cpp(117):    static LibrarySet* Evaluate(const CliThread& cli);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeIncrement.cpp(119):    static LibrarySet* Evaluate(const CliThread& cli);
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.h(79):    const ClassPtrVector* Classes() const { return &classes_; }
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.h(87):    const EnumPtrVector* Enums() const { return &enums_; }
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.h(91):    const ForwardPtrVector* Forws() const { return &forws_; }
@@ -1952,7 +1955,7 @@ W043 Member could be protected
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScoped.h(87):    CxxScoped* FindInheritedName() const;
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScoped.h(92):    void DisplayFiles(std::ostream& stream) const;
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScoped.h(100):    virtual bool IsUnused() const { return false; }
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(156):    virtual LibrarySet* Create(const std::string& name, SetOfIds* set) const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(150):    virtual LibrarySet* Create(const std::string& name, SetOfIds* set) const;
   C:/Users/gregu/Documents/rsc/rsc/nb/Base.h(78):    virtual void Display(std::ostream& stream,
   C:/Users/gregu/Documents/rsc/rsc/nb/Base.h(102):    void LogSubtended(std::ostream& stream,
   C:/Users/gregu/Documents/rsc/rsc/nb/CliCharParm.h(39):    CliCharParm(const char* help, const char* chars,
@@ -2035,7 +2038,7 @@ W047 Data is init-only
   C:/Users/gregu/Documents/rsc/rsc/st/StIncrement.cpp(455):    FunctionGuard guard(FunctionGuard::MakePreemptable, yield);
   C:/Users/gregu/Documents/rsc/rsc/st/StModule.h(62):    static bool Registered;
 W048 Data is write-only
-  C:/Users/gregu/Documents/rsc/rsc/ct/Library.h(225):    LibraryVarSet* varSet_;
+  C:/Users/gregu/Documents/rsc/rsc/ct/Library.h(231):    LibraryVarSet* varSet_;
   C:/Users/gregu/Documents/rsc/rsc/dip/MapAndUnits.h(121):    bool game_started;                // set when the game has begun
   C:/Users/gregu/Documents/rsc/rsc/dip/MapAndUnits.h(147):    word our_number_of_disbands;    // disbands required (negative for builds)
 W050 Data is not private
@@ -2107,7 +2110,7 @@ W053 Data could be const
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(215):    word offset;
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(219):    std::string info;
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(223):    bool hide;
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(226):    NodeBase::Q2Link link_;
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(220):    NodeBase::Q2Link link_;
   C:/Users/gregu/Documents/rsc/rsc/dip/BotThread.h(112):       BotEvent event;       // event
   C:/Users/gregu/Documents/rsc/rsc/dip/DipProtocol.h(144):    DipHeader header;  // no parameters (length = 0)
   C:/Users/gregu/Documents/rsc/rsc/dip/DipProtocol.h(202):    byte_t first_payload_byte;  // for creating a pointer to the first byte
@@ -2195,7 +2198,7 @@ W054 Data could be const pointer
 W055 Data need not be mutable
   C:/Users/gregu/Documents/rsc/rsc/dip/BotThread.h(113):       mutable secs_t secs;  // delay
 W056 Default constructor invoked: POD members not initialized
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeIncrement.cpp(681):    FixOptions options;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeIncrement.cpp(711):    FixOptions options;
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeTypes.h(488): struct FixOptions
   C:/Users/gregu/Documents/rsc/rsc/nb/SysFile.win.cpp(57):    _finddata_t attributes_;
   C:/Users/gregu/Documents/rsc/rsc/nb/SysTickTimer.win.cpp(44):    LARGE_INTEGER frequency;
@@ -2297,7 +2300,7 @@ W062 Member not included in member initialization list
   C:/Users/gregu/Documents/rsc/rsc/nb/SysFile.win.cpp(40):    FileWalker(const char* dirName, const char* fileSpec);
   C:/Users/gregu/Documents/rsc/rsc/nb/SysFile.win.cpp(57):    _finddata_t attributes_;
 W065 Base class virtual destructor is not public
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(194):    virtual ~LibrarySet();
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(188):    virtual ~LibrarySet();
   C:/Users/gregu/Documents/rsc/rsc/mb/Tones.h(82):    virtual ~Tone();
   C:/Users/gregu/Documents/rsc/rsc/nb/Class.h(107):    virtual ~Class();
   C:/Users/gregu/Documents/rsc/rsc/nb/CliAppData.h(85):    virtual ~CliAppData();
@@ -2465,10 +2468,10 @@ W075 Virtual function is public
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(91):    virtual void AccessibilityOf
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(328):    virtual void Promote
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(333):    virtual bool IsUnionMember() const { return false; }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(1139):    void CheckAccessControl() const override;
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(1143):    void CheckIfHiding() const override;
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(1147):    void CheckIfUsed(Warning warning) const override;
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(1282):    void WasCalled() override;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(1148):    void CheckAccessControl() const override;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(1152):    void CheckIfHiding() const override;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(1156):    void CheckIfUsed(Warning warning) const override;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(1287):    void WasCalled() override;
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScoped.h(59):    virtual bool NameRefersToItem(const std::string& name,
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScoped.h(69):    virtual void AccessibilityTo(const CxxScope* scope, SymbolView* view) const;
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScoped.h(78):    virtual void RecordAccess(Cxx::Access access) const;
@@ -2479,40 +2482,40 @@ W075 Virtual function is public
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScoped.h(476):    void CheckAccessControl() const override;
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScoped.h(878):    bool ResolveTemplate
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScoped.h(1268):    bool ResolveTypedef(Typedef* type, size_t n) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(91):    virtual Cxx::ItemType Type() const { return Cxx::Undefined; }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(97):    virtual const std::string* Name() const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(101):    virtual QualName* GetQualName() const { return nullptr; }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(106):    virtual std::string TypeString(bool arg) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(111):    virtual TypeSpec* GetTypeSpec() const { return nullptr; }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(115):    virtual bool IsConst() const { return false; }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(119):    virtual bool IsConstPtr() const { return false; }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(123):    virtual bool IsConstPtr(size_t n) const { return false; }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(128):    virtual bool IsAuto() const { return false; }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(133):    virtual bool IsIndirect() const { return false; }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(137):    virtual bool IsInitializing() const { return false; }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(142):    virtual CxxToken* AutoType() const { return nullptr; }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(147):    virtual Namespace* GetSpace() const { return nullptr; }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(152):    virtual Class* GetClass() const { return nullptr; }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(157):    virtual Class* Declarer() const { return GetClass(); }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(163):    virtual TypeName* GetTemplateArgs() const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(168):    virtual Numeric GetNumeric() const { return Numeric::Nil; }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(172):    virtual void GetConvertibleTypes(StackArgVector& types) { }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(177):    virtual CxxScoped* Referent() const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(183):    virtual void EnterBlock();
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(188):    virtual void ExitBlock() { }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(194):    virtual bool AppendUnary() { return false; }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(198):    virtual CxxToken* Back() { return this; }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(203):    virtual bool WasRead() { return false; }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(215):    virtual bool WasWritten(const StackArg* arg, bool passed);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(220):    virtual bool SetNonConst() { return true; }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(225):    virtual void WasMutated(const StackArg* arg) { }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(231):    virtual void RecordUsage() const { }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(236):    virtual void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const { }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(240):    virtual void Check() const { }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(244):    virtual std::string Trace() const { return NodeBase::EMPTY_STR; }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(248):    virtual bool InLine() const { return true; }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(253):    virtual void Print
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(259):    virtual void Shrink() { }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(95):    virtual Cxx::ItemType Type() const { return Cxx::Undefined; }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(101):    virtual const std::string* Name() const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(105):    virtual QualName* GetQualName() const { return nullptr; }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(110):    virtual std::string TypeString(bool arg) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(115):    virtual TypeSpec* GetTypeSpec() const { return nullptr; }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(119):    virtual bool IsConst() const { return false; }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(123):    virtual bool IsConstPtr() const { return false; }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(127):    virtual bool IsConstPtr(size_t n) const { return false; }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(132):    virtual bool IsAuto() const { return false; }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(137):    virtual bool IsIndirect() const { return false; }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(141):    virtual bool IsInitializing() const { return false; }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(146):    virtual CxxToken* AutoType() const { return nullptr; }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(151):    virtual Namespace* GetSpace() const { return nullptr; }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(156):    virtual Class* GetClass() const { return nullptr; }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(161):    virtual Class* Declarer() const { return GetClass(); }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(167):    virtual TypeName* GetTemplateArgs() const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(172):    virtual Numeric GetNumeric() const { return Numeric::Nil; }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(176):    virtual void GetConvertibleTypes(StackArgVector& types) { }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(181):    virtual CxxScoped* Referent() const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(187):    virtual void EnterBlock();
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(192):    virtual void ExitBlock() { }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(198):    virtual bool AppendUnary() { return false; }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(202):    virtual CxxToken* Back() { return this; }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(207):    virtual bool WasRead() { return false; }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(219):    virtual bool WasWritten(const StackArg* arg, bool passed);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(224):    virtual bool SetNonConst() { return true; }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(229):    virtual void WasMutated(const StackArg* arg) { }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(235):    virtual void RecordUsage() const { }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(240):    virtual void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const { }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(244):    virtual void Check() const { }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(248):    virtual std::string Trace() const { return NodeBase::EMPTY_STR; }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(252):    virtual bool InLine() const { return true; }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(257):    virtual void Print
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(263):    virtual void Shrink() { }
   C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(77):    virtual LibSetType GetType() const;
   C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(83):    virtual NodeBase::word Check(std::ostream* stream, std::string& expl) const;
   C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(89):    virtual NodeBase::word Count(std::string& result) const;
@@ -2524,26 +2527,25 @@ W075 Virtual function is public
   C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(128):    virtual NodeBase::word Scan(std::ostream& stream,
   C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(135):    virtual NodeBase::word Show(std::string& result) const;
   C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(141):    virtual NodeBase::word Sort(std::ostream& stream, std::string& expl) const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(147):    virtual NodeBase::word Trim(std::ostream& stream, std::string& expl) const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(156):    virtual LibrarySet* Create(const std::string& name, SetOfIds* set) const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(157):    virtual LibrarySet* Assign(LibrarySet* rhs);
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(158):    virtual LibrarySet* Intersection(const LibrarySet* rhs) const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(159):    virtual LibrarySet* Difference(const LibrarySet* rhs) const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(160):    virtual LibrarySet* Union(const LibrarySet* rhs) const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(161):    virtual LibrarySet* Directories() const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(162):    virtual LibrarySet* Files() const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(163):    virtual LibrarySet* FileName(const LibrarySet* that) const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(164):    virtual LibrarySet* FileType(const LibrarySet* that) const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(165):    virtual LibrarySet* MatchString(const LibrarySet* that) const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(166):    virtual LibrarySet* FoundIn(const LibrarySet* that) const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(167):    virtual LibrarySet* Implements() const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(168):    virtual LibrarySet* UsedBy(bool self) const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(169):    virtual LibrarySet* Users(bool self) const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(170):    virtual LibrarySet* AffectedBy() const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(171):    virtual LibrarySet* Affecters() const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(172):    virtual LibrarySet* CommonAffecters() const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(173):    virtual LibrarySet* NeededBy() const;
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(174):    virtual LibrarySet* Needers() const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(150):    virtual LibrarySet* Create(const std::string& name, SetOfIds* set) const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(151):    virtual LibrarySet* Assign(LibrarySet* rhs);
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(152):    virtual LibrarySet* Intersection(const LibrarySet* rhs) const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(153):    virtual LibrarySet* Difference(const LibrarySet* rhs) const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(154):    virtual LibrarySet* Union(const LibrarySet* rhs) const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(155):    virtual LibrarySet* Directories() const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(156):    virtual LibrarySet* Files() const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(157):    virtual LibrarySet* FileName(const LibrarySet* that) const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(158):    virtual LibrarySet* FileType(const LibrarySet* that) const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(159):    virtual LibrarySet* MatchString(const LibrarySet* that) const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(160):    virtual LibrarySet* FoundIn(const LibrarySet* that) const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(161):    virtual LibrarySet* Implements() const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(162):    virtual LibrarySet* UsedBy(bool self) const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(163):    virtual LibrarySet* Users(bool self) const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(164):    virtual LibrarySet* AffectedBy() const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(165):    virtual LibrarySet* Affecters() const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(166):    virtual LibrarySet* CommonAffecters() const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(167):    virtual LibrarySet* NeededBy() const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(168):    virtual LibrarySet* Needers() const;
   C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.h(91):    virtual bool process_command_line_parameter(char token, std::string& value);
   C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.h(97):    virtual std::string report_command_line_parameters();
   C:/Users/gregu/Documents/rsc/rsc/mb/Circuit.h(64):    virtual std::string Name() const = 0;
@@ -2700,8 +2702,8 @@ W075 Virtual function is public
 W076 Virtual function is overloaded
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.h(1119):    virtual TypeTags* Tags() = 0;
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.h(1120):    virtual const TypeTags* Tags() const = 0;
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(119):    virtual bool IsConstPtr() const { return false; }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(123):    virtual bool IsConstPtr(size_t n) const { return false; }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(123):    virtual bool IsConstPtr() const { return false; }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(127):    virtual bool IsConstPtr(size_t n) const { return false; }
 W077 Virtual function has no overrides
   C:/Users/gregu/Documents/rsc/rsc/cb/BcSessions.h(1008):    virtual EventHandler::Rc RaiseAuthorizeOrigination(Event*& nextEvent);
   C:/Users/gregu/Documents/rsc/rsc/cb/BcSessions.h(1009):    virtual EventHandler::Rc RaiseCollectInformation(Event*& nextEvent);
@@ -2871,7 +2873,7 @@ W077 Virtual function has no overrides
   C:/Users/gregu/Documents/rsc/rsc/sb/TlvMessage.h(263):    virtual void AddFence();
 W082 Adjacent arguments have the same type
   C:/Users/gregu/Documents/rsc/rsc/cb/BcSessions.h(1214):    BcFactory(Id fid, ProtocolId prid, const char* name);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.h(362):    void LogCode(Warning warning, size_t line, size_t pos,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.h(363):    void LogCode(Warning warning, size_t line, size_t pos,
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeTypes.h(295):    SymbolView(Accessibility a, TypeMatch m, bool u, bool f, bool r, Distance d);
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeTypes.h(557): bool LinesCanBeMerged
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.h(102):    CodeWarning(Warning warning, const CodeFile* file,
@@ -2881,20 +2883,20 @@ W082 Adjacent arguments have the same type
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.h(821):    TypeMatch MatchTemplate(const QualName* that,
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.h(1202):    virtual TypeMatch MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(328):    virtual void Promote
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(1364):    static TypeMatch MatchTemplate
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(1369):    static TypeMatch MatchTemplate
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScoped.h(1191):    Using(QualNamePtr& name, bool space, bool added = false);
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxString.cpp(41): size_t FindTemplateBegin(const string& name, size_t pos, size_t depth);
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxString.h(120):    size_t CompareScopes
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxString.h(158):    size_t Replace(std::string& code,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(656):    Function* FindNewOrDelete(const StackArg& arg, bool del, bool& pod) const;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(660):    Function* FindNewOrDelete(const StackArg& arg, bool del, bool& pod) const;
   C:/Users/gregu/Documents/rsc/rsc/ct/Editor.h(419):    word InsertNamespaceForward(const Iter& iter,
   C:/Users/gregu/Documents/rsc/rsc/ct/Editor.h(447):    static void DebugFtCode
   C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.h(197):    size_t FindClosing(char lhc, char rhc, size_t pos = std::string::npos) const;
   C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.h(383):    void SetDepth(size_t& start, int8_t depth1, int8_t depth2);
   C:/Users/gregu/Documents/rsc/rsc/ct/Library.h(62):    NodeBase::word Import
   C:/Users/gregu/Documents/rsc/rsc/ct/Library.h(104):    NodeBase::word Assign(const std::string& name,
-  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(477):    static bool SetCompoundType
-  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(523):    bool GetParExpr(ExprPtr& expr, bool omit, bool opt = false);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(486):    static bool SetCompoundType
+  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(532):    bool GetParExpr(ExprPtr& expr, bool omit, bool opt = false);
   C:/Users/gregu/Documents/rsc/rsc/ct/SetOperations.h(33):    void SetDifference
   C:/Users/gregu/Documents/rsc/rsc/ct/SetOperations.h(42):    void SetIntersection
   C:/Users/gregu/Documents/rsc/rsc/ct/SetOperations.h(51):    void SetUnion(SetOfIds& lhs, const SetOfIds& rhs1, const SetOfIds& rhs2);
@@ -2955,27 +2957,27 @@ W082 Adjacent arguments have the same type
   C:/Users/gregu/Documents/rsc/rsc/st/StTestData.h(70):    Message* NextIcMsg(FactoryId fid, SignalId sid, SkipInfo& skip);
   C:/Users/gregu/Documents/rsc/rsc/st/TestSessions.h(346):    Message* NextIcMsg(FactoryId fid, SignalId sid, SkipInfo& skip);
 W088 Argument could be const
-  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(324/1):    bool GetStatements(BlockPtr& block, bool braced);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(413/1):    bool GetFuncSpecial(FunctionPtr& func);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(426/1):    bool GetCtorInit(FunctionPtr& func);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(445/1):    bool GetArguments(FunctionPtr& func);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(478/1):       (QualNamePtr& name, Cxx::Type type, int size, int sign);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(538/1):    bool GetNum(ExprPtr& expr);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(539/1):    bool GetChar(ExprPtr& expr);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(540/1):    bool GetStr(ExprPtr& expr);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(550/1):    bool GetCast(ExprPtr& expr);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(551/1):    bool GetPrecedence(ExprPtr& expr);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(558/1):    bool HandleTilde(ExprPtr& expr, size_t start);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(562/1):    bool GetSubscript(ExprPtr& expr);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(571/1):    bool GetCxxCast(ExprPtr& expr, Cxx::Operator op);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(572/1):    bool GetConditional(ExprPtr& expr);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(573/1):    bool GetDefined(ExprPtr& expr);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(574/1):    bool GetDelete(ExprPtr& expr, Cxx::Operator op);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(575/1):    bool GetNew(ExprPtr& expr, Cxx::Operator op);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(576/1):    bool GetNoExcept(ExprPtr& expr);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(577/1):    bool GetSizeOf(ExprPtr& expr);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(578/1):    bool GetThrow(ExprPtr& expr);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(579/1):    bool GetTypeId(ExprPtr& expr);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(333/1):    bool GetStatements(BlockPtr& block, bool braced);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(422/1):    bool GetFuncSpecial(FunctionPtr& func);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(435/1):    bool GetCtorInit(FunctionPtr& func);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(454/1):    bool GetArguments(FunctionPtr& func);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(487/1):       (QualNamePtr& name, Cxx::Type type, int size, int sign);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(547/1):    bool GetNum(ExprPtr& expr);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(548/1):    bool GetChar(ExprPtr& expr);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(549/1):    bool GetStr(ExprPtr& expr);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(559/1):    bool GetCast(ExprPtr& expr);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(560/1):    bool GetPrecedence(ExprPtr& expr);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(567/1):    bool HandleTilde(ExprPtr& expr, size_t start);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(571/1):    bool GetSubscript(ExprPtr& expr);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(580/1):    bool GetCxxCast(ExprPtr& expr, Cxx::Operator op);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(581/1):    bool GetConditional(ExprPtr& expr);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(582/1):    bool GetDefined(ExprPtr& expr);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(583/1):    bool GetDelete(ExprPtr& expr, Cxx::Operator op);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(584/1):    bool GetNew(ExprPtr& expr, Cxx::Operator op);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(585/1):    bool GetNoExcept(ExprPtr& expr);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(586/1):    bool GetSizeOf(ExprPtr& expr);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(587/1):    bool GetThrow(ExprPtr& expr);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(588/1):    bool GetTypeId(ExprPtr& expr);
   C:/Users/gregu/Documents/rsc/rsc/nb/Q1Way.h(82/1):    bool Enq(T& elem)
   C:/Users/gregu/Documents/rsc/rsc/nb/Q1Way.h(103/1):    bool Henq(T& elem)
   C:/Users/gregu/Documents/rsc/rsc/nb/Q1Way.h(125/1):    bool Insert(T* prev, T& elem)
@@ -2992,31 +2994,32 @@ W088 Argument could be const
 W090 Function could be const
   C:/Users/gregu/Documents/rsc/rsc/cb/BcSessions.h(1109):    virtual CipMessage* BuildCipCpg(Progress::Ind progress);
   C:/Users/gregu/Documents/rsc/rsc/cb/BcSessions.h(1165):    CipMessage* BuildCipRel(Cause::Ind cause);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(128):    void InsertClass(Class* cls);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(129):    void InsertData(Data* data);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(130):    void InsertEtor(Enumerator* etor);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(131):    void InsertEnum(Enum* item);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(132):    void InsertForw(Forward* forw);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(133):    void InsertFriend(Friend* frnd);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(134):    void InsertFunc(Function* func);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(135):    void InsertMacro(Macro* macro);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(136):    void InsertSpace(Namespace* space);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(137):    void InsertTerm(Terminal* term);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(138):    void InsertType(Typedef* type);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(143):    void EraseClass(const Class* cls);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(144):    void EraseData(const Data* data);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(145):    void EraseEtor(const Enumerator* etor);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(146):    void EraseEnum(const Enum* item);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(147):    void EraseForw(const Forward* forw);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(148):    void EraseFriend(const Friend* frnd);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(149):    void EraseFunc(const Function* func);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(150):    void EraseMacro(const Macro* macro);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(151):    void EraseSpace(const Namespace* space);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(152):    void EraseTerm(const Terminal* term);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(153):    void EraseType(const Typedef* type);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(154):    void EraseLocal(const CxxScoped* name);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(158):    void EraseLocals();
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(188):    virtual void ExitBlock() { }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(131):    void InsertClass(Class* cls);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(132):    void InsertData(Data* data);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(133):    void InsertEtor(Enumerator* etor);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(134):    void InsertEnum(Enum* item);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(135):    void InsertForw(Forward* forw);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(136):    void InsertFriend(Friend* frnd);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(137):    void InsertFunc(Function* func);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(138):    void InsertMacro(Macro* macro);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(139):    void InsertSpace(Namespace* space);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(140):    void InsertTerm(Terminal* term);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(141):    void InsertType(Typedef* type);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(146):    void EraseClass(const Class* cls);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(147):    void EraseData(const Data* data);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(148):    void EraseEtor(const Enumerator* etor);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(149):    void EraseEnum(const Enum* item);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(150):    void EraseForw(const Forward* forw);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(151):    void EraseFriend(const Friend* frnd);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(152):    void EraseFunc(const Function* func);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(153):    void EraseMacro(const Macro* macro);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(154):    void EraseSpace(const Namespace* space);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(155):    void EraseTerm(const Terminal* term);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(156):    void EraseType(const Typedef* type);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(157):    void EraseLocal(const CxxScoped* name);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(161):    void EraseLocals();
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(165):    void RecordUsage(const CxxNamed* item, NodeBase::id_t fid);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(192):    virtual void ExitBlock() { }
   C:/Users/gregu/Documents/rsc/rsc/ct/Library.h(72):    CodeFile* EnsureFile(const std::string& file, CodeDir* dir = nullptr);
   C:/Users/gregu/Documents/rsc/rsc/ct/Library.h(104):    NodeBase::word Assign(const std::string& name,
   C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.h(206):    virtual void process_ccd_message
@@ -3085,8 +3088,8 @@ W092 Function could be free
   C:/Users/gregu/Documents/rsc/rsc/cb/CbModule.h(58):    static bool Register();
   C:/Users/gregu/Documents/rsc/rsc/cn/CnModule.h(58):    static bool Register();
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeCoverage.h(112):    static NodeBase::word Report
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.h(273):    static void GenerateReport(std::ostream* stream, const SetOfIds& set);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeIncrement.cpp(117):    static LibrarySet* Evaluate(const CliThread& cli);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.h(274):    static void GenerateReport(std::ostream* stream, const SetOfIds& set);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeIncrement.cpp(119):    static LibrarySet* Evaluate(const CliThread& cli);
   C:/Users/gregu/Documents/rsc/rsc/ct/CtModule.h(56):    static bool Register();
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.h(186):    static Function* FoundFunc
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxArea.h(600):    static size_t CreateCodeError
@@ -3102,19 +3105,19 @@ W092 Function could be free
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.h(735):    static void Startup(NodeBase::RestartLevel level) { }
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.h(782):    static bool StartTracing();
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxExecute.h(798):    static std::string Location();
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(1364):    static TypeMatch MatchTemplate
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(1377):    static Function* InstantiateError
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(305):    static void ShrinkExpression(const ExprPtr& expr);
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(508):    static DataPtr CreateRef();
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(645):    static void PushType(const std::string& name);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(1369):    static TypeMatch MatchTemplate
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h(1382):    static Function* InstantiateError
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(309):    static void ShrinkExpression(const ExprPtr& expr);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(512):    static DataPtr CreateRef();
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(649):    static void PushType(const std::string& name);
   C:/Users/gregu/Documents/rsc/rsc/ct/Editor.h(406):    string DemangleInclude(string code) const;
   C:/Users/gregu/Documents/rsc/rsc/ct/Editor.h(461):    static bool IsSorted2(const string& line1, const string& line2);
   C:/Users/gregu/Documents/rsc/rsc/ct/Interpreter.cpp(52):    static const OperatorInfo* GetAttrs(LibTokenType type);
   C:/Users/gregu/Documents/rsc/rsc/ct/Interpreter.h(62):    static bool IsOperator(const std::string& s);
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(198):    static NodeBase::word Counted(std::string& result, const size_t* count);
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(203):    static NodeBase::word Shown(std::string& result);
-  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(477):    static bool SetCompoundType
-  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(658):    static std::string Indent();
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(192):    static NodeBase::word Counted(std::string& result, const size_t* count);
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h(197):    static NodeBase::word Shown(std::string& result);
+  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(486):    static bool SetCompoundType
+  C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h(667):    static std::string Indent();
   C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.h(75):    static BaseBot* instance();
   C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.h(101):    static void send_to_console(std::ostringstream& report);
   C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.h(179):    void cancel_event(BotEvent event);
@@ -3555,7 +3558,7 @@ W099 Line contains adjacent spaces
   C:/Users/gregu/Documents/rsc/rsc/sn/PotsProxyHandlers.cpp(363):    CauseInfo*    cci;
 W102 Line length exceeds the standard maximum
   C:/Users/gregu/Documents/rsc/rsc/cb/BcSsm.cpp(300):    for(auto s = BcState::AuthorizingOrigination; s <= BcState::OrigAlerting; ++s)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(1161):       if((s.front() != '/') && (s.front() != QUOTE)) warnings.insert(Indentation);
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(1163):       if((s.front() != '/') && (s.front() != QUOTE)) warnings.insert(Indentation);
   C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(2238):       (lpar.iter->code.find_first_not_of(WhitespaceChars, lpar.pos + 1) == rpar))
 W103 Function not sorted in standard order
   C:/Users/gregu/Documents/rsc/rsc/nb/NbTypes.cpp(76): char FactionChar(Faction faction)
@@ -3610,19 +3613,19 @@ W106 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(613): CliParm* CipOriginalCallingParameter::CreateCliParm(Usage use) const
   C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.cpp(639): CliParm* CipOriginalCalledParameter::CreateCliParm(Usage use) const
   C:/Users/gregu/Documents/rsc/rsc/cb/DigitString.cpp(169): Digit DigitString::GetDigit(DigitCount i) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(1743): int8_t CodeFile::GetDepth(size_t line) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(1788): void CodeFile::GetLineCounts() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(1804): LineType CodeFile::GetLineType(size_t n) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(1967): void CodeFile::InsertClass(Class* cls)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(1975): void CodeFile::InsertData(Data* data)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(1983): bool CodeFile::InsertDirective(DirectivePtr& dir)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(1992): void CodeFile::InsertEnum(Enum* item)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(2000): void CodeFile::InsertForw(Forward* forw)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(2008): void CodeFile::InsertFunc(Function* func)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(2016): void CodeFile::InsertInclude(IncludePtr& incl)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(2045): void CodeFile::InsertMacro(Macro* macro)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(2053): void CodeFile::InsertType(Typedef* type)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(2061): void CodeFile::InsertUsing(Using* use)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(1737): int8_t CodeFile::GetDepth(size_t line) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(1782): void CodeFile::GetLineCounts() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(1798): LineType CodeFile::GetLineType(size_t n) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(1961): void CodeFile::InsertClass(Class* cls)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(1969): void CodeFile::InsertData(Data* data)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(1977): bool CodeFile::InsertDirective(DirectivePtr& dir)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(1986): void CodeFile::InsertEnum(Enum* item)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(1994): void CodeFile::InsertForw(Forward* forw)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(2002): void CodeFile::InsertFunc(Function* func)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(2010): void CodeFile::InsertInclude(IncludePtr& incl)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(2056): void CodeFile::InsertMacro(Macro* macro)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(2064): void CodeFile::InsertType(Typedef* type)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp(2072): void CodeFile::InsertUsing(Using* use)
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeTypes.cpp(224): bool LinesCanBeMerged
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(179): word CodeWarning::FindWarning(const CodeWarning& log)
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeWarning.cpp(779): bool CodeWarning::IsSortedByFile
@@ -3685,42 +3688,43 @@ W106 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(1256): TypeName* Data::GetTemplateArgs() const
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(1412): bool Data::IsConst() const
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(1525): bool Data::WasRead()
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3443): FunctionRole Function::FuncRole() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3480): FunctionType Function::FuncType() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3491): CodeFile* Function::GetDeclFile() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3498): const Function* Function::GetDefn() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3507): CodeFile* Function::GetDefnFile() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3516): size_t Function::GetRange(size_t& begin, size_t& end) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3532): CxxScope* Function::GetScope() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3544): CxxScope* Function::GetTemplate() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3556): TemplateType Function::GetTemplateType() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(4093): bool Function::IsImplemented() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(4101): bool Function::IsInTemplateInstance() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(4880): void FuncSpec::AddArray(ArraySpecPtr& array)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(4894): TagCount FuncSpec::Arrays() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(4901): void FuncSpec::Check() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(4908): TypeSpec* FuncSpec::Clone() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(4930): void FuncSpec::EnterArrays() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(4949): void FuncSpec::FindReferent()
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(4957): TypeTags FuncSpec::GetAllTags() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(4964): void FuncSpec::GetNames(stringVector& names) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(4972): TypeName* FuncSpec::GetTemplateArgs() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(4979): TypeSpec* FuncSpec::GetTypeSpec() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(4986): bool FuncSpec::HasArrayDefn() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(4993): void FuncSpec::Instantiating() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5001): bool FuncSpec::IsConst() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5008): bool FuncSpec::ItemIsTemplateArg(const CxxNamed* item) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5016): bool FuncSpec::MatchesExactly(const TypeSpec* that) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5024): TypeMatch FuncSpec::MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5034): TypeMatch FuncSpec::MatchTemplateArg(const TypeSpec* that) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5049): bool FuncSpec::NamesReferToArgs(const NameVector& names,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5065): TagCount FuncSpec::Ptrs(bool arrays) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5072): TagCount FuncSpec::Refs() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5079): StackArg FuncSpec::ResultType() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5086): void FuncSpec::SetPtrs(TagCount count)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5093): void FuncSpec::SetReferent(CxxScoped* item, const SymbolView* view) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5108): const TypeTags* FuncSpec::Tags() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5115): TypeTags* FuncSpec::Tags()
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3477): FunctionRole Function::FuncRole() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3514): FunctionType Function::FuncType() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3525): Cxx::Access Function::GetAccess() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3533): CodeFile* Function::GetDeclFile() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3540): const Function* Function::GetDefn() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3549): CodeFile* Function::GetDefnFile() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3558): size_t Function::GetRange(size_t& begin, size_t& end) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3574): CxxScope* Function::GetScope() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3586): CxxScope* Function::GetTemplate() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(3598): TemplateType Function::GetTemplateType() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(4157): bool Function::IsImplemented() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(4165): bool Function::IsInTemplateInstance() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(4946): void FuncSpec::AddArray(ArraySpecPtr& array)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(4960): TagCount FuncSpec::Arrays() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(4967): void FuncSpec::Check() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(4974): TypeSpec* FuncSpec::Clone() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(4996): void FuncSpec::EnterArrays() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5015): void FuncSpec::FindReferent()
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5023): TypeTags FuncSpec::GetAllTags() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5030): void FuncSpec::GetNames(stringVector& names) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5038): TypeName* FuncSpec::GetTemplateArgs() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5045): TypeSpec* FuncSpec::GetTypeSpec() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5052): bool FuncSpec::HasArrayDefn() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5059): void FuncSpec::Instantiating() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5067): bool FuncSpec::IsConst() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5074): bool FuncSpec::ItemIsTemplateArg(const CxxNamed* item) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5082): bool FuncSpec::MatchesExactly(const TypeSpec* that) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5090): TypeMatch FuncSpec::MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5100): TypeMatch FuncSpec::MatchTemplateArg(const TypeSpec* that) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5115): bool FuncSpec::NamesReferToArgs(const NameVector& names,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5131): TagCount FuncSpec::Ptrs(bool arrays) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5138): TagCount FuncSpec::Refs() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5145): StackArg FuncSpec::ResultType() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5152): void FuncSpec::SetPtrs(TagCount count)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5159): void FuncSpec::SetReferent(CxxScoped* item, const SymbolView* view) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5174): const TypeTags* FuncSpec::Tags() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp(5181): TypeTags* FuncSpec::Tags()
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScoped.cpp(307): Class* BaseDecl::GetClass() const
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScoped.cpp(408): void CxxScoped::AddFiles(SetOfIds& imSet) const
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxScoped.cpp(543): CodeFile* CxxScoped::GetImplFile() const
@@ -3745,30 +3749,31 @@ W106 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxStatement.cpp(570): bool For::InLine() const
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxStatement.cpp(676): bool If::InLine() const
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxStatement.cpp(1078): bool While::InLine() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(93): template< typename T > void Erase(const CxxScoped* item,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(191): template< typename T > void ListSymbols(const string& name,
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(228): void CxxSymbols::EraseClass(const Class* cls)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(235): void CxxSymbols::EraseData(const Data* data)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(242): void CxxSymbols::EraseEnum(const Enum* item)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(249): void CxxSymbols::EraseEtor(const Enumerator* etor)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(256): void CxxSymbols::EraseForw(const Forward* forw)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(263): void CxxSymbols::EraseFriend(const Friend* frnd)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(270): void CxxSymbols::EraseFunc(const Function* func)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(299): void CxxSymbols::EraseMacro(const Macro* macro)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(306): void CxxSymbols::EraseSpace(const Namespace* space)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(313): void CxxSymbols::EraseTerm(const Terminal* term)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(320): void CxxSymbols::EraseType(const Typedef* type)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(669): void CxxSymbols::InsertClass(Class* cls)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(676): void CxxSymbols::InsertData(Data* data)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(683): void CxxSymbols::InsertEnum(Enum* item)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(690): void CxxSymbols::InsertEtor(Enumerator* etor)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(697): void CxxSymbols::InsertForw(Forward* forw)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(704): void CxxSymbols::InsertFriend(Friend* frnd)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(711): void CxxSymbols::InsertFunc(Function* func)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(745): void CxxSymbols::InsertMacro(Macro* macro)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(752): void CxxSymbols::InsertSpace(Namespace* space)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(759): void CxxSymbols::InsertTerm(Terminal* term)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(766): void CxxSymbols::InsertType(Typedef* type)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(100): template< typename T > void Erase(const CxxScoped* item,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(198): template< typename T > void ListSymbols(const string& name,
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(309): void CxxSymbols::EraseClass(const Class* cls)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(316): void CxxSymbols::EraseData(const Data* data)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(323): void CxxSymbols::EraseEnum(const Enum* item)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(330): void CxxSymbols::EraseEtor(const Enumerator* etor)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(337): void CxxSymbols::EraseForw(const Forward* forw)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(344): void CxxSymbols::EraseFriend(const Friend* frnd)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(351): void CxxSymbols::EraseFunc(const Function* func)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(380): void CxxSymbols::EraseMacro(const Macro* macro)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(387): void CxxSymbols::EraseSpace(const Namespace* space)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(394): void CxxSymbols::EraseTerm(const Terminal* term)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(401): void CxxSymbols::EraseType(const Typedef* type)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(750): void CxxSymbols::InsertClass(Class* cls)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(757): void CxxSymbols::InsertData(Data* data)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(764): void CxxSymbols::InsertEnum(Enum* item)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(771): void CxxSymbols::InsertEtor(Enumerator* etor)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(778): void CxxSymbols::InsertForw(Forward* forw)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(785): void CxxSymbols::InsertFriend(Friend* frnd)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(792): void CxxSymbols::InsertFunc(Function* func)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(826): void CxxSymbols::InsertMacro(Macro* macro)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(833): void CxxSymbols::InsertSpace(Namespace* space)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(840): void CxxSymbols::InsertTerm(Terminal* term)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(847): void CxxSymbols::InsertType(Typedef* type)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp(896): void CxxSymbols::RecordUsage(const CxxNamed* item, id_t fid)
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(262): bool CxxToken::IsPointer(bool arrays) const
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(359): void EraseTemplateArgs
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(393): void Union(CxxNamedSet& lhs, const CxxNamedSet& rhs)
@@ -3776,14 +3781,15 @@ W106 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(411): void CxxUsageSets::AddDirect(const CxxNamed* item)
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(419): void CxxUsageSets::AddForward(const CxxNamed* item)
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(430): void CxxUsageSets::AddIndirect(const CxxNamed* item)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(438): void CxxUsageSets::AddUser(const CxxNamed* item)
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(847): Numeric FloatLiteral::GetNumeric() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(908): Numeric IntLiteral::BaseNumeric() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(1051): CxxToken* Literal::AutoType() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(1076): CxxToken* Literal::RootType() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(1092): Cxx::ItemType Literal::Type() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(2871): TypeSpec* StrLiteral::GetTypeSpec() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(2878): CxxScoped* StrLiteral::Referent() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(438): void CxxUsageSets::AddInherit(const CxxNamed* item)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(446): void CxxUsageSets::AddUser(const CxxNamed* item)
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(855): Numeric FloatLiteral::GetNumeric() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(916): Numeric IntLiteral::BaseNumeric() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(1059): CxxToken* Literal::AutoType() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(1084): CxxToken* Literal::RootType() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(1100): Cxx::ItemType Literal::Type() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(2879): TypeSpec* StrLiteral::GetTypeSpec() const
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp(2886): CxxScoped* StrLiteral::Referent() const
   C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(80): bool IsBlank(char c)
   C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(87): bool IsWordChar(char c)
   C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp(2097): LineType Editor::GetLineType(const Iter& iter) const
@@ -3819,9 +3825,9 @@ W106 Function does not invoke Debug::ft
   C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.cpp(312): LibrarySet* LibrarySet::Needers() const
   C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.cpp(321): word LibrarySet::NotImplemented(string& expl) const
   C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.cpp(347): LibrarySet* LibrarySet::OpError() const
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.cpp(463): LibrarySet* LibrarySet::Union(const LibrarySet* rhs) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.cpp(470): LibrarySet* LibrarySet::UsedBy(bool self) const
-  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.cpp(477): LibrarySet* LibrarySet::Users(bool self) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.cpp(452): LibrarySet* LibrarySet::Union(const LibrarySet* rhs) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.cpp(459): LibrarySet* LibrarySet::UsedBy(bool self) const
+  C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.cpp(466): LibrarySet* LibrarySet::Users(bool self) const
   C:/Users/gregu/Documents/rsc/rsc/ct/Parser.cpp(241): size_t Parser::CurrPos() const
   C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.cpp(456): BaseBot::StartupResult BaseBot::initialise(const StartupParameters& parameters)
   C:/Users/gregu/Documents/rsc/rsc/dip/BaseBot.cpp(463): BaseBot* BaseBot::instance()
@@ -4120,7 +4126,7 @@ W110 Override of Base.Display not found
   C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(298): class CipUdpService : public UdpIpService
   C:/Users/gregu/Documents/rsc/rsc/cb/BcProtocol.h(337): class CipTcpService : public TcpIpService
   C:/Users/gregu/Documents/rsc/rsc/ct/CodeCoverage.h(43): class CodeCoverage : public NodeBase::Temporary
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(87): class CxxSymbols: public NodeBase::Base
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h(90): class CxxSymbols: public NodeBase::Base
   C:/Users/gregu/Documents/rsc/rsc/ct/Interpreter.h(44): class Interpreter : public NodeBase::Temporary
   C:/Users/gregu/Documents/rsc/rsc/nb/CfgStrParm.h(87): class CfgFileTimeParm : public CfgStrParm
   C:/Users/gregu/Documents/rsc/rsc/nb/NbTracer.h(63): class NbTracer : public Permanent
@@ -4190,13 +4196,13 @@ W114 Function could be tagged noexcept
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.h(955):    TypeTags(const TypeTags& that) = default;
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxNamed.h(959):    TypeTags& operator=(const TypeTags& that) = default;
   C:/Users/gregu/Documents/rsc/rsc/ct/CxxString.h(46):       NameAndPtrs(): ptrs(0) { }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(53):    CxxUsageSets() = default;  // create empty CxxNamedSets
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(391):       Tags(Radix r, bool u, Size s) : radix_(r), unsigned_(u), size_(s) { }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(392):       Tags(const Tags& that) = default;
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(393):       Tags& operator=(const Tags& that) = default;
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(433):       Tags(bool e, Size s) : exp_(e), size_(s) { }
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(434):       Tags(const Tags& that) = default;
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(435):       Tags& operator=(const Tags& that) = default;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(56):    CxxUsageSets() = default;  // create empty CxxNamedSets
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(395):       Tags(Radix r, bool u, Size s) : radix_(r), unsigned_(u), size_(s) { }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(396):       Tags(const Tags& that) = default;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(397):       Tags& operator=(const Tags& that) = default;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(437):       Tags(bool e, Size s) : exp_(e), size_(s) { }
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(438):       Tags(const Tags& that) = default;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(439):       Tags& operator=(const Tags& that) = default;
   C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.h(49):    ~Lexer() = default;
   C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.h(401):       explicit LineInfo(size_t start) :
   C:/Users/gregu/Documents/rsc/rsc/ct/LibraryTypes.h(58):    FileLevel(NodeBase::id_t f, size_t l) : fid(f), level(l) { }
@@ -4477,7 +4483,7 @@ W117 Line can merge with the next line and be under the length limit
   C:/Users/gregu/Documents/rsc/rsc/st/TestSessions.cpp(782):    BindEventHandler
   C:/Users/gregu/Documents/rsc/rsc/st/TestSessions.cpp(784):    BindEventHandler
 W118 Copy/move constructor does not invoke base copy/move constructor
-  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(291):    CxxToken(const CxxToken& that) = default;
+  C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h(295):    CxxToken(const CxxToken& that) = default;
   C:/Users/gregu/Documents/rsc/rsc/nw/SysIpL2Addr.cpp(47): SysIpL2Addr::SysIpL2Addr(const SysIpL2Addr& that) : v4Addr_(that.v4Addr_)
 W119 Argument passed by value is modified
   C:/Users/gregu/Documents/rsc/rsc/cb/DigitString.cpp(48/1): DigitString::DigitString(Address::DN dn) : size_(0)
@@ -5127,41 +5133,41 @@ C:/Users/gregu/Documents/rsc/rsc/ct/CodeDir.cpp
     65:    auto fake = reinterpret_cast< const CodeDir* >(&local);
 C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.cpp
   W006 reinterpret_cast
-    584:    auto fake = reinterpret_cast< const CodeFile* >(&local);
+    585:    auto fake = reinterpret_cast< const CodeFile* >(&local);
   W007 Cast down the inheritance hierarchy
-    84:          auto base = static_cast< const Class* >(*b);
-    217:       auto base = static_cast< const Class* >(*b);
-    249:                auto type = static_cast< const Typedef* >(*item2);
-    272:          auto type = static_cast< const Typedef* >(*item1);
-    520:    affecterIds_ = static_cast< CodeFileSet* >(asSet)->Set();
-    2414:    auto& affecterIds = static_cast< CodeFileSet* >(affecterSet)->Set();
-    2552:       auto base = static_cast< const Class* >(*b);
+    85:          auto base = static_cast< const Class* >(*b);
+    218:       auto base = static_cast< const Class* >(*b);
+    250:                auto type = static_cast< const Typedef* >(*item2);
+    273:          auto type = static_cast< const Typedef* >(*item1);
+    521:    affecterIds_ = static_cast< CodeFileSet* >(asSet)->Set();
+    2446:    auto& affecterIds = static_cast< CodeFileSet* >(affecterSet)->Set();
+    2584:       auto base = static_cast< const Class* >(*b);
   W102 Line length exceeds the standard maximum
-    1161:       if((s.front() != '/') && (s.front() != QUOTE)) warnings.insert(Indentation);
+    1163:       if((s.front() != '/') && (s.front() != QUOTE)) warnings.insert(Indentation);
   W106 Function does not invoke Debug::ft
-    1743: int8_t CodeFile::GetDepth(size_t line) const
-    1788: void CodeFile::GetLineCounts() const
-    1804: LineType CodeFile::GetLineType(size_t n) const
-    1967: void CodeFile::InsertClass(Class* cls)
-    1975: void CodeFile::InsertData(Data* data)
-    1983: bool CodeFile::InsertDirective(DirectivePtr& dir)
-    1992: void CodeFile::InsertEnum(Enum* item)
-    2000: void CodeFile::InsertForw(Forward* forw)
-    2008: void CodeFile::InsertFunc(Function* func)
-    2016: void CodeFile::InsertInclude(IncludePtr& incl)
-    2045: void CodeFile::InsertMacro(Macro* macro)
-    2053: void CodeFile::InsertType(Typedef* type)
-    2061: void CodeFile::InsertUsing(Using* use)
+    1737: int8_t CodeFile::GetDepth(size_t line) const
+    1782: void CodeFile::GetLineCounts() const
+    1798: LineType CodeFile::GetLineType(size_t n) const
+    1961: void CodeFile::InsertClass(Class* cls)
+    1969: void CodeFile::InsertData(Data* data)
+    1977: bool CodeFile::InsertDirective(DirectivePtr& dir)
+    1986: void CodeFile::InsertEnum(Enum* item)
+    1994: void CodeFile::InsertForw(Forward* forw)
+    2002: void CodeFile::InsertFunc(Function* func)
+    2010: void CodeFile::InsertInclude(IncludePtr& incl)
+    2056: void CodeFile::InsertMacro(Macro* macro)
+    2064: void CodeFile::InsertType(Typedef* type)
+    2072: void CodeFile::InsertUsing(Using* use)
 C:/Users/gregu/Documents/rsc/rsc/ct/CodeFile.h
   W026 Unused argument
-    346/3:       const CxxNamed* item, const CxxScope* scope) const;
+    347/3:       const CxxNamed* item, const CxxScope* scope) const;
   W042 Member could be private
-    107:    bool IsTemplateHeader() const;
-    210:    int CalcGroup(const Include& incl) const;
+    108:    bool IsTemplateHeader() const;
+    211:    int CalcGroup(const Include& incl) const;
   W082 Adjacent arguments have the same type
-    362:    void LogCode(Warning warning, size_t line, size_t pos,
+    363:    void LogCode(Warning warning, size_t line, size_t pos,
   W092 Function could be free
-    273:    static void GenerateReport(std::ostream* stream, const SetOfIds& set);
+    274:    static void GenerateReport(std::ostream* stream, const SetOfIds& set);
 C:/Users/gregu/Documents/rsc/rsc/ct/CodeFileSet.cpp
   W004 C-style cast
     579:    LibrarySet* nbSet = (LibrarySet*) this;
@@ -5182,14 +5188,14 @@ C:/Users/gregu/Documents/rsc/rsc/ct/CodeFileSet.cpp
     611:    LibrarySet* nsSet = (LibrarySet*) this;
 C:/Users/gregu/Documents/rsc/rsc/ct/CodeIncrement.cpp
   W005 Functional cast
-    1423:       Context::EraseTracepoint(file, line - 1, Tracepoint::Action(mode));
-    1437:    Context::InsertTracepoint(file, line - 1, Tracepoint::Action(mode));
+    1453:       Context::EraseTracepoint(file, line - 1, Tracepoint::Action(mode));
+    1467:    Context::InsertTracepoint(file, line - 1, Tracepoint::Action(mode));
   W043 Member could be protected
-    117:    static LibrarySet* Evaluate(const CliThread& cli);
+    119:    static LibrarySet* Evaluate(const CliThread& cli);
   W056 Default constructor invoked: POD members not initialized
-    681:    FixOptions options;
+    711:    FixOptions options;
   W092 Function could be free
-    117:    static LibrarySet* Evaluate(const CliThread& cli);
+    119:    static LibrarySet* Evaluate(const CliThread& cli);
 C:/Users/gregu/Documents/rsc/rsc/ct/CodeSet.cpp
   W007 Cast down the inheritance hierarchy
     64:    auto that = static_cast< CodeSet* >(rhs);
@@ -5780,17 +5786,17 @@ C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp
     1384:          auto op = static_cast< Operation* >(expr);
     1675:       if(anon) StackArg::SetAutoTypeFor(static_cast< FuncData& >(*next_));
     1721:    auto data = static_cast< FuncData* >(next_.get());
-    2723:       if(!static_cast< Function* >(item)->virtual_)
-    3174:             static_cast< ClassData* >(data)->SetInit(m->get());
-    3405:    return static_cast< Function* >((*cti)->FindInstanceAnalog(this));
-    4758:                auto item = static_cast< CxxNamed* >(args.front().item);
-    4844:       auto func = static_cast< ClassInst* >(cls)->FindTemplateAnalog(this);
-    4845:       if(func != nullptr) ++static_cast< Function* >(func)->calls_;
+    2739:       if(!static_cast< Function* >(item)->virtual_)
+    3202:             static_cast< ClassData* >(data)->SetInit(m->get());
+    3439:    return static_cast< Function* >((*cti)->FindInstanceAnalog(this));
+    4824:                auto item = static_cast< CxxNamed* >(args.front().item);
+    4910:       auto func = static_cast< ClassInst* >(cls)->FindTemplateAnalog(this);
+    4911:       if(func != nullptr) ++static_cast< Function* >(func)->calls_;
   W008 Cast removes const qualification
     2218:    return FoundFunc(const_cast< Function* >(this), args, match);
-    3369:    auto prev = const_cast< Function* >(this);
-    3548:       (const_cast< Function* >(this));
-    3859:    func->SetTemplate(const_cast< Function* >(this));
+    3403:    auto prev = const_cast< Function* >(this);
+    3590:       (const_cast< Function* >(this));
+    3923:    func->SetTemplate(const_cast< Function* >(this));
   W097 Line indentation is not a multiple of the standard value
     425:                     ((move == nullptr) || move->IsDeleted()));
   W106 Function does not invoke Debug::ft
@@ -5805,57 +5811,62 @@ C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.cpp
     1256: TypeName* Data::GetTemplateArgs() const
     1412: bool Data::IsConst() const
     1525: bool Data::WasRead()
-    3443: FunctionRole Function::FuncRole() const
-    3480: FunctionType Function::FuncType() const
-    3491: CodeFile* Function::GetDeclFile() const
-    3498: const Function* Function::GetDefn() const
-    3507: CodeFile* Function::GetDefnFile() const
-    3516: size_t Function::GetRange(size_t& begin, size_t& end) const
-    3532: CxxScope* Function::GetScope() const
-    3544: CxxScope* Function::GetTemplate() const
-    3556: TemplateType Function::GetTemplateType() const
-    4093: bool Function::IsImplemented() const
-    4101: bool Function::IsInTemplateInstance() const
-    4880: void FuncSpec::AddArray(ArraySpecPtr& array)
-    4894: TagCount FuncSpec::Arrays() const
-    4901: void FuncSpec::Check() const
-    4908: TypeSpec* FuncSpec::Clone() const
-    4930: void FuncSpec::EnterArrays() const
-    4949: void FuncSpec::FindReferent()
-    4957: TypeTags FuncSpec::GetAllTags() const
-    4964: void FuncSpec::GetNames(stringVector& names) const
-    4972: TypeName* FuncSpec::GetTemplateArgs() const
-    4979: TypeSpec* FuncSpec::GetTypeSpec() const
-    4986: bool FuncSpec::HasArrayDefn() const
-    4993: void FuncSpec::Instantiating() const
-    5001: bool FuncSpec::IsConst() const
-    5008: bool FuncSpec::ItemIsTemplateArg(const CxxNamed* item) const
-    5016: bool FuncSpec::MatchesExactly(const TypeSpec* that) const
-    5024: TypeMatch FuncSpec::MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
-    5034: TypeMatch FuncSpec::MatchTemplateArg(const TypeSpec* that) const
-    5049: bool FuncSpec::NamesReferToArgs(const NameVector& names,
-    5065: TagCount FuncSpec::Ptrs(bool arrays) const
-    5072: TagCount FuncSpec::Refs() const
-    5079: StackArg FuncSpec::ResultType() const
-    5086: void FuncSpec::SetPtrs(TagCount count)
-    5093: void FuncSpec::SetReferent(CxxScoped* item, const SymbolView* view) const
-    5108: const TypeTags* FuncSpec::Tags() const
-    5115: TypeTags* FuncSpec::Tags()
+    3477: FunctionRole Function::FuncRole() const
+    3514: FunctionType Function::FuncType() const
+    3525: Cxx::Access Function::GetAccess() const
+    3533: CodeFile* Function::GetDeclFile() const
+    3540: const Function* Function::GetDefn() const
+    3549: CodeFile* Function::GetDefnFile() const
+    3558: size_t Function::GetRange(size_t& begin, size_t& end) const
+    3574: CxxScope* Function::GetScope() const
+    3586: CxxScope* Function::GetTemplate() const
+    3598: TemplateType Function::GetTemplateType() const
+    4157: bool Function::IsImplemented() const
+    4165: bool Function::IsInTemplateInstance() const
+    4946: void FuncSpec::AddArray(ArraySpecPtr& array)
+    4960: TagCount FuncSpec::Arrays() const
+    4967: void FuncSpec::Check() const
+    4974: TypeSpec* FuncSpec::Clone() const
+    4996: void FuncSpec::EnterArrays() const
+    5015: void FuncSpec::FindReferent()
+    5023: TypeTags FuncSpec::GetAllTags() const
+    5030: void FuncSpec::GetNames(stringVector& names) const
+    5038: TypeName* FuncSpec::GetTemplateArgs() const
+    5045: TypeSpec* FuncSpec::GetTypeSpec() const
+    5052: bool FuncSpec::HasArrayDefn() const
+    5059: void FuncSpec::Instantiating() const
+    5067: bool FuncSpec::IsConst() const
+    5074: bool FuncSpec::ItemIsTemplateArg(const CxxNamed* item) const
+    5082: bool FuncSpec::MatchesExactly(const TypeSpec* that) const
+    5090: TypeMatch FuncSpec::MatchTemplate(TypeSpec* that, stringVector& tmpltParms,
+    5100: TypeMatch FuncSpec::MatchTemplateArg(const TypeSpec* that) const
+    5115: bool FuncSpec::NamesReferToArgs(const NameVector& names,
+    5131: TagCount FuncSpec::Ptrs(bool arrays) const
+    5138: TagCount FuncSpec::Refs() const
+    5145: StackArg FuncSpec::ResultType() const
+    5152: void FuncSpec::SetPtrs(TagCount count)
+    5159: void FuncSpec::SetReferent(CxxScoped* item, const SymbolView* view) const
+    5174: const TypeTags* FuncSpec::Tags() const
+    5181: TypeTags* FuncSpec::Tags()
 C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h
   W004 C-style cast
     337:    CxxToken* AutoType() const override { return (CxxToken*) this; }
   W008 Cast removes const qualification
     337:    CxxToken* AutoType() const override { return (CxxToken*) this; }
-    1173:       const override { return const_cast< Function* >(this); }
+    1182:       const override { return const_cast< Function* >(this); }
   W026 Unused argument
     84/3:       const CxxNamed* item, const CxxScope* scope) const { return nullptr; }
   W030 Unused enumerator
     145:       Multiple   // two statements or more
+  W032 Unused function
+    1001:    bool IsExtern() const { return GetDecl()->extern_; }
+    1006:    bool IsFinal() const { return GetDecl()->final_; }
   W042 Member could be private
-    1014:    bool IsTemplateInstance() const { return tmplt_ != nullptr; }
-    1042:    size_t MinArgs() const;
-    1047:    size_t MaxArgs() const { return args_.size(); }
-    1105:    bool IsInvokedInBase() const;
+    1003:    bool IsPureVirtual() const { return GetDecl()->pure_; }
+    1023:    bool IsTemplateInstance() const { return tmplt_ != nullptr; }
+    1051:    size_t MinArgs() const;
+    1056:    size_t MaxArgs() const { return args_.size(); }
+    1114:    bool IsInvokedInBase() const;
   W043 Member could be protected
     297:    bool IsExtern() const { return extern_; }
     301:    bool IsConstexpr() const { return constexpr_; }
@@ -5866,16 +5877,16 @@ C:/Users/gregu/Documents/rsc/rsc/ct/CxxScope.h
     91:    virtual void AccessibilityOf
     328:    virtual void Promote
     333:    virtual bool IsUnionMember() const { return false; }
-    1139:    void CheckAccessControl() const override;
-    1143:    void CheckIfHiding() const override;
-    1147:    void CheckIfUsed(Warning warning) const override;
-    1282:    void WasCalled() override;
+    1148:    void CheckAccessControl() const override;
+    1152:    void CheckIfHiding() const override;
+    1156:    void CheckIfUsed(Warning warning) const override;
+    1287:    void WasCalled() override;
   W082 Adjacent arguments have the same type
     328:    virtual void Promote
-    1364:    static TypeMatch MatchTemplate
+    1369:    static TypeMatch MatchTemplate
   W092 Function could be free
-    1364:    static TypeMatch MatchTemplate
-    1377:    static Function* InstantiateError
+    1369:    static TypeMatch MatchTemplate
+    1382:    static Function* InstantiateError
 C:/Users/gregu/Documents/rsc/rsc/ct/CxxScoped.cpp
   W004 C-style cast
     1244:    return (CxxToken*) this;
@@ -5978,88 +5989,90 @@ C:/Users/gregu/Documents/rsc/rsc/ct/CxxString.h
     46:       NameAndPtrs(): ptrs(0) { }
 C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.cpp
   W007 Cast down the inheritance hierarchy
-    386:    return static_cast< Macro* >(macros.front());
-    425:       if((*s)->ScopedName(false) == name) return static_cast< CxxScope* >(*s);
-    433:       if((*c)->ScopedName(false) == name) return static_cast< CxxScope* >(*c);
-    441:       if(pos != string::npos) return static_cast< CxxScope* >(*s);
-    447:       if(pos != string::npos) return static_cast< CxxScope* >(*c);
+    467:    return static_cast< Macro* >(macros.front());
+    506:       if((*s)->ScopedName(false) == name) return static_cast< CxxScope* >(*s);
+    514:       if((*c)->ScopedName(false) == name) return static_cast< CxxScope* >(*c);
+    522:       if(pos != string::npos) return static_cast< CxxScope* >(*s);
+    528:       if(pos != string::npos) return static_cast< CxxScope* >(*c);
   W106 Function does not invoke Debug::ft
-    93: template< typename T > void Erase(const CxxScoped* item,
-    191: template< typename T > void ListSymbols(const string& name,
-    228: void CxxSymbols::EraseClass(const Class* cls)
-    235: void CxxSymbols::EraseData(const Data* data)
-    242: void CxxSymbols::EraseEnum(const Enum* item)
-    249: void CxxSymbols::EraseEtor(const Enumerator* etor)
-    256: void CxxSymbols::EraseForw(const Forward* forw)
-    263: void CxxSymbols::EraseFriend(const Friend* frnd)
-    270: void CxxSymbols::EraseFunc(const Function* func)
-    299: void CxxSymbols::EraseMacro(const Macro* macro)
-    306: void CxxSymbols::EraseSpace(const Namespace* space)
-    313: void CxxSymbols::EraseTerm(const Terminal* term)
-    320: void CxxSymbols::EraseType(const Typedef* type)
-    669: void CxxSymbols::InsertClass(Class* cls)
-    676: void CxxSymbols::InsertData(Data* data)
-    683: void CxxSymbols::InsertEnum(Enum* item)
-    690: void CxxSymbols::InsertEtor(Enumerator* etor)
-    697: void CxxSymbols::InsertForw(Forward* forw)
-    704: void CxxSymbols::InsertFriend(Friend* frnd)
-    711: void CxxSymbols::InsertFunc(Function* func)
-    745: void CxxSymbols::InsertMacro(Macro* macro)
-    752: void CxxSymbols::InsertSpace(Namespace* space)
-    759: void CxxSymbols::InsertTerm(Terminal* term)
-    766: void CxxSymbols::InsertType(Typedef* type)
+    100: template< typename T > void Erase(const CxxScoped* item,
+    198: template< typename T > void ListSymbols(const string& name,
+    309: void CxxSymbols::EraseClass(const Class* cls)
+    316: void CxxSymbols::EraseData(const Data* data)
+    323: void CxxSymbols::EraseEnum(const Enum* item)
+    330: void CxxSymbols::EraseEtor(const Enumerator* etor)
+    337: void CxxSymbols::EraseForw(const Forward* forw)
+    344: void CxxSymbols::EraseFriend(const Friend* frnd)
+    351: void CxxSymbols::EraseFunc(const Function* func)
+    380: void CxxSymbols::EraseMacro(const Macro* macro)
+    387: void CxxSymbols::EraseSpace(const Namespace* space)
+    394: void CxxSymbols::EraseTerm(const Terminal* term)
+    401: void CxxSymbols::EraseType(const Typedef* type)
+    750: void CxxSymbols::InsertClass(Class* cls)
+    757: void CxxSymbols::InsertData(Data* data)
+    764: void CxxSymbols::InsertEnum(Enum* item)
+    771: void CxxSymbols::InsertEtor(Enumerator* etor)
+    778: void CxxSymbols::InsertForw(Forward* forw)
+    785: void CxxSymbols::InsertFriend(Friend* frnd)
+    792: void CxxSymbols::InsertFunc(Function* func)
+    826: void CxxSymbols::InsertMacro(Macro* macro)
+    833: void CxxSymbols::InsertSpace(Namespace* space)
+    840: void CxxSymbols::InsertTerm(Terminal* term)
+    847: void CxxSymbols::InsertType(Typedef* type)
+    896: void CxxSymbols::RecordUsage(const CxxNamed* item, id_t fid)
 C:/Users/gregu/Documents/rsc/rsc/ct/CxxSymbols.h
   W090 Function could be const
-    128:    void InsertClass(Class* cls);
-    129:    void InsertData(Data* data);
-    130:    void InsertEtor(Enumerator* etor);
-    131:    void InsertEnum(Enum* item);
-    132:    void InsertForw(Forward* forw);
-    133:    void InsertFriend(Friend* frnd);
-    134:    void InsertFunc(Function* func);
-    135:    void InsertMacro(Macro* macro);
-    136:    void InsertSpace(Namespace* space);
-    137:    void InsertTerm(Terminal* term);
-    138:    void InsertType(Typedef* type);
-    143:    void EraseClass(const Class* cls);
-    144:    void EraseData(const Data* data);
-    145:    void EraseEtor(const Enumerator* etor);
-    146:    void EraseEnum(const Enum* item);
-    147:    void EraseForw(const Forward* forw);
-    148:    void EraseFriend(const Friend* frnd);
-    149:    void EraseFunc(const Function* func);
-    150:    void EraseMacro(const Macro* macro);
-    151:    void EraseSpace(const Namespace* space);
-    152:    void EraseTerm(const Terminal* term);
-    153:    void EraseType(const Typedef* type);
-    154:    void EraseLocal(const CxxScoped* name);
-    158:    void EraseLocals();
+    131:    void InsertClass(Class* cls);
+    132:    void InsertData(Data* data);
+    133:    void InsertEtor(Enumerator* etor);
+    134:    void InsertEnum(Enum* item);
+    135:    void InsertForw(Forward* forw);
+    136:    void InsertFriend(Friend* frnd);
+    137:    void InsertFunc(Function* func);
+    138:    void InsertMacro(Macro* macro);
+    139:    void InsertSpace(Namespace* space);
+    140:    void InsertTerm(Terminal* term);
+    141:    void InsertType(Typedef* type);
+    146:    void EraseClass(const Class* cls);
+    147:    void EraseData(const Data* data);
+    148:    void EraseEtor(const Enumerator* etor);
+    149:    void EraseEnum(const Enum* item);
+    150:    void EraseForw(const Forward* forw);
+    151:    void EraseFriend(const Friend* frnd);
+    152:    void EraseFunc(const Function* func);
+    153:    void EraseMacro(const Macro* macro);
+    154:    void EraseSpace(const Namespace* space);
+    155:    void EraseTerm(const Terminal* term);
+    156:    void EraseType(const Typedef* type);
+    157:    void EraseLocal(const CxxScoped* name);
+    161:    void EraseLocals();
+    165:    void RecordUsage(const CxxNamed* item, NodeBase::id_t fid);
   W110 Override of Base.Display not found
-    87: class CxxSymbols: public NodeBase::Base
+    90: class CxxSymbols: public NodeBase::Base
 C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp
   W007 Cast down the inheritance hierarchy
-    518:    auto oper = static_cast< Operation* >(item.get());
-    544:          auto ante = static_cast< Operation* >(prev.get());
-    596:       auto oper = static_cast< Operation* >(item.get());
-    629:    auto oper = static_cast< Operation* >(prev.get());
-    656:    auto oper = static_cast< Operation* >(item.get());
-    714:    auto oper = static_cast< Operation* >(item.get());
-    737:       auto ante = static_cast< Operation* >(prev.get());
-    833:    Context::PushOp(static_cast< Operation* >(StartOfExpr.get()));
-    1264:       inClass = static_cast< Class* >(inRoot);
-    1269:       outClass = static_cast< Class* >(outRoot);
-    1294:    auto call = static_cast< Operation* >(args_.front().get());
-    1690:       func = static_cast< Function* >(proc.item);
-    1709:       cls = static_cast< Class* >(proc.item);
-    1808:    auto cls = static_cast< Class* >(arg.item->Root());
-    1858:       auto newCall = static_cast< Operation* >(args_.front().get());
-    1879:    auto cls = static_cast< Class* >(spec.item->Root());
-    1901:       auto ctorCall = static_cast< Operation* >(args_[2].get());
-    1925:       cls = static_cast< Class* >(root);
-    2118:       area = static_cast< Class* >(targ);
-    2120:       static_cast< Class* >(targ)->Instantiate();
-    2480:    auto cls = static_cast< Class* >(root);
-    2542:          mem = static_cast< Function* >(mem)->InstantiateFunction(tmplt);
+    526:    auto oper = static_cast< Operation* >(item.get());
+    552:          auto ante = static_cast< Operation* >(prev.get());
+    604:       auto oper = static_cast< Operation* >(item.get());
+    637:    auto oper = static_cast< Operation* >(prev.get());
+    664:    auto oper = static_cast< Operation* >(item.get());
+    722:    auto oper = static_cast< Operation* >(item.get());
+    745:       auto ante = static_cast< Operation* >(prev.get());
+    841:    Context::PushOp(static_cast< Operation* >(StartOfExpr.get()));
+    1272:       inClass = static_cast< Class* >(inRoot);
+    1277:       outClass = static_cast< Class* >(outRoot);
+    1302:    auto call = static_cast< Operation* >(args_.front().get());
+    1698:       func = static_cast< Function* >(proc.item);
+    1717:       cls = static_cast< Class* >(proc.item);
+    1816:    auto cls = static_cast< Class* >(arg.item->Root());
+    1866:       auto newCall = static_cast< Operation* >(args_.front().get());
+    1887:    auto cls = static_cast< Class* >(spec.item->Root());
+    1909:       auto ctorCall = static_cast< Operation* >(args_[2].get());
+    1933:       cls = static_cast< Class* >(root);
+    2126:       area = static_cast< Class* >(targ);
+    2128:       static_cast< Class* >(targ)->Instantiate();
+    2488:    auto cls = static_cast< Class* >(root);
+    2550:          mem = static_cast< Function* >(mem)->InstantiateFunction(tmplt);
   W008 Cast removes const qualification
     308:    CxxToken* prev = const_cast< CxxToken* >(this);
   W106 Function does not invoke Debug::ft
@@ -6070,77 +6083,78 @@ C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.cpp
     411: void CxxUsageSets::AddDirect(const CxxNamed* item)
     419: void CxxUsageSets::AddForward(const CxxNamed* item)
     430: void CxxUsageSets::AddIndirect(const CxxNamed* item)
-    438: void CxxUsageSets::AddUser(const CxxNamed* item)
-    847: Numeric FloatLiteral::GetNumeric() const
-    908: Numeric IntLiteral::BaseNumeric() const
-    1051: CxxToken* Literal::AutoType() const
-    1076: CxxToken* Literal::RootType() const
-    1092: Cxx::ItemType Literal::Type() const
-    2871: TypeSpec* StrLiteral::GetTypeSpec() const
-    2878: CxxScoped* StrLiteral::Referent() const
+    438: void CxxUsageSets::AddInherit(const CxxNamed* item)
+    446: void CxxUsageSets::AddUser(const CxxNamed* item)
+    855: Numeric FloatLiteral::GetNumeric() const
+    916: Numeric IntLiteral::BaseNumeric() const
+    1059: CxxToken* Literal::AutoType() const
+    1084: CxxToken* Literal::RootType() const
+    1100: Cxx::ItemType Literal::Type() const
+    2879: TypeSpec* StrLiteral::GetTypeSpec() const
+    2886: CxxScoped* StrLiteral::Referent() const
 C:/Users/gregu/Documents/rsc/rsc/ct/CxxToken.h
   W008 Cast removes const qualification
-    311:    virtual CxxToken* RootType() const { return const_cast< CxxToken* >(this); }
+    315:    virtual CxxToken* RootType() const { return const_cast< CxxToken* >(this); }
   W032 Unused function
-    295:    CxxToken& operator=(const CxxToken& that) = default;
-    393:       Tags& operator=(const Tags& that) = default;
-    435:       Tags& operator=(const Tags& that) = default;
+    299:    CxxToken& operator=(const CxxToken& that) = default;
+    397:       Tags& operator=(const Tags& that) = default;
+    439:       Tags& operator=(const Tags& that) = default;
   W075 Virtual function is public
-    91:    virtual Cxx::ItemType Type() const { return Cxx::Undefined; }
-    97:    virtual const std::string* Name() const;
-    101:    virtual QualName* GetQualName() const { return nullptr; }
-    106:    virtual std::string TypeString(bool arg) const
-    111:    virtual TypeSpec* GetTypeSpec() const { return nullptr; }
-    115:    virtual bool IsConst() const { return false; }
-    119:    virtual bool IsConstPtr() const { return false; }
-    123:    virtual bool IsConstPtr(size_t n) const { return false; }
-    128:    virtual bool IsAuto() const { return false; }
-    133:    virtual bool IsIndirect() const { return false; }
-    137:    virtual bool IsInitializing() const { return false; }
-    142:    virtual CxxToken* AutoType() const { return nullptr; }
-    147:    virtual Namespace* GetSpace() const { return nullptr; }
-    152:    virtual Class* GetClass() const { return nullptr; }
-    157:    virtual Class* Declarer() const { return GetClass(); }
-    163:    virtual TypeName* GetTemplateArgs() const;
-    168:    virtual Numeric GetNumeric() const { return Numeric::Nil; }
-    172:    virtual void GetConvertibleTypes(StackArgVector& types) { }
-    177:    virtual CxxScoped* Referent() const;
-    183:    virtual void EnterBlock();
-    188:    virtual void ExitBlock() { }
-    194:    virtual bool AppendUnary() { return false; }
-    198:    virtual CxxToken* Back() { return this; }
-    203:    virtual bool WasRead() { return false; }
-    215:    virtual bool WasWritten(const StackArg* arg, bool passed);
-    220:    virtual bool SetNonConst() { return true; }
-    225:    virtual void WasMutated(const StackArg* arg) { }
-    231:    virtual void RecordUsage() const { }
-    236:    virtual void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const { }
-    240:    virtual void Check() const { }
-    244:    virtual std::string Trace() const { return NodeBase::EMPTY_STR; }
-    248:    virtual bool InLine() const { return true; }
-    253:    virtual void Print
-    259:    virtual void Shrink() { }
+    95:    virtual Cxx::ItemType Type() const { return Cxx::Undefined; }
+    101:    virtual const std::string* Name() const;
+    105:    virtual QualName* GetQualName() const { return nullptr; }
+    110:    virtual std::string TypeString(bool arg) const
+    115:    virtual TypeSpec* GetTypeSpec() const { return nullptr; }
+    119:    virtual bool IsConst() const { return false; }
+    123:    virtual bool IsConstPtr() const { return false; }
+    127:    virtual bool IsConstPtr(size_t n) const { return false; }
+    132:    virtual bool IsAuto() const { return false; }
+    137:    virtual bool IsIndirect() const { return false; }
+    141:    virtual bool IsInitializing() const { return false; }
+    146:    virtual CxxToken* AutoType() const { return nullptr; }
+    151:    virtual Namespace* GetSpace() const { return nullptr; }
+    156:    virtual Class* GetClass() const { return nullptr; }
+    161:    virtual Class* Declarer() const { return GetClass(); }
+    167:    virtual TypeName* GetTemplateArgs() const;
+    172:    virtual Numeric GetNumeric() const { return Numeric::Nil; }
+    176:    virtual void GetConvertibleTypes(StackArgVector& types) { }
+    181:    virtual CxxScoped* Referent() const;
+    187:    virtual void EnterBlock();
+    192:    virtual void ExitBlock() { }
+    198:    virtual bool AppendUnary() { return false; }
+    202:    virtual CxxToken* Back() { return this; }
+    207:    virtual bool WasRead() { return false; }
+    219:    virtual bool WasWritten(const StackArg* arg, bool passed);
+    224:    virtual bool SetNonConst() { return true; }
+    229:    virtual void WasMutated(const StackArg* arg) { }
+    235:    virtual void RecordUsage() const { }
+    240:    virtual void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const { }
+    244:    virtual void Check() const { }
+    248:    virtual std::string Trace() const { return NodeBase::EMPTY_STR; }
+    252:    virtual bool InLine() const { return true; }
+    257:    virtual void Print
+    263:    virtual void Shrink() { }
   W076 Virtual function is overloaded
-    119:    virtual bool IsConstPtr() const { return false; }
-    123:    virtual bool IsConstPtr(size_t n) const { return false; }
+    123:    virtual bool IsConstPtr() const { return false; }
+    127:    virtual bool IsConstPtr(size_t n) const { return false; }
   W082 Adjacent arguments have the same type
-    656:    Function* FindNewOrDelete(const StackArg& arg, bool del, bool& pod) const;
+    660:    Function* FindNewOrDelete(const StackArg& arg, bool del, bool& pod) const;
   W090 Function could be const
-    188:    virtual void ExitBlock() { }
+    192:    virtual void ExitBlock() { }
   W092 Function could be free
-    305:    static void ShrinkExpression(const ExprPtr& expr);
-    508:    static DataPtr CreateRef();
-    645:    static void PushType(const std::string& name);
+    309:    static void ShrinkExpression(const ExprPtr& expr);
+    512:    static DataPtr CreateRef();
+    649:    static void PushType(const std::string& name);
   W114 Function could be tagged noexcept
-    53:    CxxUsageSets() = default;  // create empty CxxNamedSets
-    391:       Tags(Radix r, bool u, Size s) : radix_(r), unsigned_(u), size_(s) { }
-    392:       Tags(const Tags& that) = default;
-    393:       Tags& operator=(const Tags& that) = default;
-    433:       Tags(bool e, Size s) : exp_(e), size_(s) { }
-    434:       Tags(const Tags& that) = default;
-    435:       Tags& operator=(const Tags& that) = default;
+    56:    CxxUsageSets() = default;  // create empty CxxNamedSets
+    395:       Tags(Radix r, bool u, Size s) : radix_(r), unsigned_(u), size_(s) { }
+    396:       Tags(const Tags& that) = default;
+    397:       Tags& operator=(const Tags& that) = default;
+    437:       Tags(bool e, Size s) : exp_(e), size_(s) { }
+    438:       Tags(const Tags& that) = default;
+    439:       Tags& operator=(const Tags& that) = default;
   W118 Copy/move constructor does not invoke base copy/move constructor
-    291:    CxxToken(const CxxToken& that) = default;
+    295:    CxxToken(const CxxToken& that) = default;
 C:/Users/gregu/Documents/rsc/rsc/ct/Editor.cpp
   W005 Functional cast
     694:    *cli.obuf << ": " << Warning(log.warning);
@@ -6257,13 +6271,13 @@ C:/Users/gregu/Documents/rsc/rsc/ct/Lexer.h
     401:       explicit LineInfo(size_t start) :
 C:/Users/gregu/Documents/rsc/rsc/ct/Library.cpp
   W007 Cast down the inheritance hierarchy
-    94:       (static_cast< CfgStrParm* >(reg->FindParm("SourcePath")));
+    95:       (static_cast< CfgStrParm* >(reg->FindParm("SourcePath")));
 C:/Users/gregu/Documents/rsc/rsc/ct/Library.h
   W042 Member could be private
     67:    CodeDir* FindDir(const std::string& name) const;
     88:    LibrarySet* FindVar(const std::string& name) const;
   W048 Data is write-only
-    225:    LibraryVarSet* varSet_;
+    231:    LibraryVarSet* varSet_;
   W082 Adjacent arguments have the same type
     62:    NodeBase::word Import
     104:    NodeBase::word Assign(const std::string& name,
@@ -6297,19 +6311,19 @@ C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.cpp
     312: LibrarySet* LibrarySet::Needers() const
     321: word LibrarySet::NotImplemented(string& expl) const
     347: LibrarySet* LibrarySet::OpError() const
-    463: LibrarySet* LibrarySet::Union(const LibrarySet* rhs) const
-    470: LibrarySet* LibrarySet::UsedBy(bool self) const
-    477: LibrarySet* LibrarySet::Users(bool self) const
+    452: LibrarySet* LibrarySet::Union(const LibrarySet* rhs) const
+    459: LibrarySet* LibrarySet::UsedBy(bool self) const
+    466: LibrarySet* LibrarySet::Users(bool self) const
 C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h
   W042 Member could be private
     69:    bool IsReadOnly() const;
-    178:    static ptrdiff_t LinkDiff();
+    172:    static ptrdiff_t LinkDiff();
   W043 Member could be protected
-    156:    virtual LibrarySet* Create(const std::string& name, SetOfIds* set) const;
+    150:    virtual LibrarySet* Create(const std::string& name, SetOfIds* set) const;
   W053 Data could be const
-    226:    NodeBase::Q2Link link_;
+    220:    NodeBase::Q2Link link_;
   W065 Base class virtual destructor is not public
-    194:    virtual ~LibrarySet();
+    188:    virtual ~LibrarySet();
   W075 Virtual function is public
     77:    virtual LibSetType GetType() const;
     83:    virtual NodeBase::word Check(std::ostream* stream, std::string& expl) const;
@@ -6322,29 +6336,28 @@ C:/Users/gregu/Documents/rsc/rsc/ct/LibrarySet.h
     128:    virtual NodeBase::word Scan(std::ostream& stream,
     135:    virtual NodeBase::word Show(std::string& result) const;
     141:    virtual NodeBase::word Sort(std::ostream& stream, std::string& expl) const;
-    147:    virtual NodeBase::word Trim(std::ostream& stream, std::string& expl) const;
-    156:    virtual LibrarySet* Create(const std::string& name, SetOfIds* set) const;
-    157:    virtual LibrarySet* Assign(LibrarySet* rhs);
-    158:    virtual LibrarySet* Intersection(const LibrarySet* rhs) const;
-    159:    virtual LibrarySet* Difference(const LibrarySet* rhs) const;
-    160:    virtual LibrarySet* Union(const LibrarySet* rhs) const;
-    161:    virtual LibrarySet* Directories() const;
-    162:    virtual LibrarySet* Files() const;
-    163:    virtual LibrarySet* FileName(const LibrarySet* that) const;
-    164:    virtual LibrarySet* FileType(const LibrarySet* that) const;
-    165:    virtual LibrarySet* MatchString(const LibrarySet* that) const;
-    166:    virtual LibrarySet* FoundIn(const LibrarySet* that) const;
-    167:    virtual LibrarySet* Implements() const;
-    168:    virtual LibrarySet* UsedBy(bool self) const;
-    169:    virtual LibrarySet* Users(bool self) const;
-    170:    virtual LibrarySet* AffectedBy() const;
-    171:    virtual LibrarySet* Affecters() const;
-    172:    virtual LibrarySet* CommonAffecters() const;
-    173:    virtual LibrarySet* NeededBy() const;
-    174:    virtual LibrarySet* Needers() const;
+    150:    virtual LibrarySet* Create(const std::string& name, SetOfIds* set) const;
+    151:    virtual LibrarySet* Assign(LibrarySet* rhs);
+    152:    virtual LibrarySet* Intersection(const LibrarySet* rhs) const;
+    153:    virtual LibrarySet* Difference(const LibrarySet* rhs) const;
+    154:    virtual LibrarySet* Union(const LibrarySet* rhs) const;
+    155:    virtual LibrarySet* Directories() const;
+    156:    virtual LibrarySet* Files() const;
+    157:    virtual LibrarySet* FileName(const LibrarySet* that) const;
+    158:    virtual LibrarySet* FileType(const LibrarySet* that) const;
+    159:    virtual LibrarySet* MatchString(const LibrarySet* that) const;
+    160:    virtual LibrarySet* FoundIn(const LibrarySet* that) const;
+    161:    virtual LibrarySet* Implements() const;
+    162:    virtual LibrarySet* UsedBy(bool self) const;
+    163:    virtual LibrarySet* Users(bool self) const;
+    164:    virtual LibrarySet* AffectedBy() const;
+    165:    virtual LibrarySet* Affecters() const;
+    166:    virtual LibrarySet* CommonAffecters() const;
+    167:    virtual LibrarySet* NeededBy() const;
+    168:    virtual LibrarySet* Needers() const;
   W092 Function could be free
-    198:    static NodeBase::word Counted(std::string& result, const size_t* count);
-    203:    static NodeBase::word Shown(std::string& result);
+    192:    static NodeBase::word Counted(std::string& result, const size_t* count);
+    197:    static NodeBase::word Shown(std::string& result);
 C:/Users/gregu/Documents/rsc/rsc/ct/LibraryTypes.h
   W114 Function could be tagged noexcept
     58:    FileLevel(NodeBase::id_t f, size_t l) : fid(f), level(l) { }
@@ -6387,33 +6400,33 @@ C:/Users/gregu/Documents/rsc/rsc/ct/Parser.cpp
     3828/2: void Parser::Log(Warning warning, size_t pos) const
 C:/Users/gregu/Documents/rsc/rsc/ct/Parser.h
   W082 Adjacent arguments have the same type
-    477:    static bool SetCompoundType
-    523:    bool GetParExpr(ExprPtr& expr, bool omit, bool opt = false);
+    486:    static bool SetCompoundType
+    532:    bool GetParExpr(ExprPtr& expr, bool omit, bool opt = false);
   W088 Argument could be const
-    324/1:    bool GetStatements(BlockPtr& block, bool braced);
-    413/1:    bool GetFuncSpecial(FunctionPtr& func);
-    426/1:    bool GetCtorInit(FunctionPtr& func);
-    445/1:    bool GetArguments(FunctionPtr& func);
-    478/1:       (QualNamePtr& name, Cxx::Type type, int size, int sign);
-    538/1:    bool GetNum(ExprPtr& expr);
-    539/1:    bool GetChar(ExprPtr& expr);
-    540/1:    bool GetStr(ExprPtr& expr);
-    550/1:    bool GetCast(ExprPtr& expr);
-    551/1:    bool GetPrecedence(ExprPtr& expr);
-    558/1:    bool HandleTilde(ExprPtr& expr, size_t start);
-    562/1:    bool GetSubscript(ExprPtr& expr);
-    571/1:    bool GetCxxCast(ExprPtr& expr, Cxx::Operator op);
-    572/1:    bool GetConditional(ExprPtr& expr);
-    573/1:    bool GetDefined(ExprPtr& expr);
-    574/1:    bool GetDelete(ExprPtr& expr, Cxx::Operator op);
-    575/1:    bool GetNew(ExprPtr& expr, Cxx::Operator op);
-    576/1:    bool GetNoExcept(ExprPtr& expr);
-    577/1:    bool GetSizeOf(ExprPtr& expr);
-    578/1:    bool GetThrow(ExprPtr& expr);
-    579/1:    bool GetTypeId(ExprPtr& expr);
+    333/1:    bool GetStatements(BlockPtr& block, bool braced);
+    422/1:    bool GetFuncSpecial(FunctionPtr& func);
+    435/1:    bool GetCtorInit(FunctionPtr& func);
+    454/1:    bool GetArguments(FunctionPtr& func);
+    487/1:       (QualNamePtr& name, Cxx::Type type, int size, int sign);
+    547/1:    bool GetNum(ExprPtr& expr);
+    548/1:    bool GetChar(ExprPtr& expr);
+    549/1:    bool GetStr(ExprPtr& expr);
+    559/1:    bool GetCast(ExprPtr& expr);
+    560/1:    bool GetPrecedence(ExprPtr& expr);
+    567/1:    bool HandleTilde(ExprPtr& expr, size_t start);
+    571/1:    bool GetSubscript(ExprPtr& expr);
+    580/1:    bool GetCxxCast(ExprPtr& expr, Cxx::Operator op);
+    581/1:    bool GetConditional(ExprPtr& expr);
+    582/1:    bool GetDefined(ExprPtr& expr);
+    583/1:    bool GetDelete(ExprPtr& expr, Cxx::Operator op);
+    584/1:    bool GetNew(ExprPtr& expr, Cxx::Operator op);
+    585/1:    bool GetNoExcept(ExprPtr& expr);
+    586/1:    bool GetSizeOf(ExprPtr& expr);
+    587/1:    bool GetThrow(ExprPtr& expr);
+    588/1:    bool GetTypeId(ExprPtr& expr);
   W092 Function could be free
-    477:    static bool SetCompoundType
-    658:    static std::string Indent();
+    486:    static bool SetCompoundType
+    667:    static std::string Indent();
 C:/Users/gregu/Documents/rsc/rsc/ct/SetOperations.h
   W082 Adjacent arguments have the same type
     33:    void SetDifference

@@ -677,7 +677,7 @@ public:
    //
    bool EnterScope() override;
 
-   //  Overridden to return true if compile code follows this directive
+   //  Overridden to return true if compiled code follows this directive
    //  or an #elif.
    //
    bool HasCompiledCode() const override;

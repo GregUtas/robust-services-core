@@ -39,6 +39,7 @@
 #include "LibraryVarSet.h"
 #include "NbCliParms.h"
 #include "Singleton.h"
+#include "ThisThread.h"
 
 using namespace NodeBase;
 using std::ostream;
@@ -395,7 +396,7 @@ LibrarySet* Library::Evaluate(const string& expr, size_t pos) const
 
 fn_name Library_Export = "Library.Export";
 
-word Library::Export(ostream& stream, const string& opts) const
+void Library::Export(ostream& stream, const string& opts) const
 {
    Debug::ft(Library_Export);
 
@@ -449,8 +450,6 @@ word Library::Export(ostream& stream, const string& opts) const
          (*c)->DisplayHierarchy(stream, EMPTY_STR);
       }
    }
-
-   return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -661,5 +660,33 @@ void Library::Startup(RestartLevel level)
    subsSet_ = new CodeFileSet(SubsStr, set);
 
    varSet_ = new LibraryVarSet(VarsStr);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Library_Trim = "Library.Trim";
+
+void Library::Trim(ostream& stream) const
+{
+   Debug::ft(Library_Trim);
+
+   //  There was originally a >trim command that displayed
+   //  files in build order, so retain this behavior.
+   //
+   auto order = fileSet_->SortInBuildOrder();
+
+   for(auto f = order->cbegin(); f != order->cend(); ++f)
+   {
+      auto file = files_.At(f->fid);
+      if(file->IsHeader()) file->Trim(&stream);
+      ThisThread::Pause();
+   }
+
+   for(auto f = order->cbegin(); f != order->cend(); ++f)
+   {
+      auto file = files_.At(f->fid);
+      if(file->IsCpp()) file->Trim(&stream);
+      ThisThread::Pause();
+   }
 }
 }

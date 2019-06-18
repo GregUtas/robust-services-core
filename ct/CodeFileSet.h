@@ -99,10 +99,6 @@ public:
    //
    NodeBase::word Show(std::string& result) const override;
 
-   //  Trims the code files in the set.
-   //
-   NodeBase::word Trim(std::ostream& stream, std::string& expl) const override;
-
    //  Returns the build order of the set.
    //
    BuildOrderPtr SortInBuildOrder() const;

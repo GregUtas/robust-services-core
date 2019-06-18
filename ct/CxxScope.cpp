@@ -2037,7 +2037,7 @@ TypeMatch Function::CalcConstructibilty
    //  If this function must be invoked explicitly or is not even a
    //  constructor, there is no compatibility.
    //
-   if(explicit_ || (FuncRole() != PureCtor)) return Incompatible;
+   if(IsExplicit() || (FuncRole() != PureCtor)) return Incompatible;
 
    //  If this constructor can be invoked with a single argument, find
    //  out how well THAT matches with the constructor's argument.
@@ -2264,6 +2264,8 @@ void Function::CheckAccessControl() const
 {
    Debug::ft(Function_CheckAccessControl);
 
+   if(defn_) return Debug::SwLog(Function_CheckAccessControl, 0, 0);
+
    //  Do not check the access control of destructors.  If this is an override,
    //  do not suggest a more restricted access control unless the function has
    //  a broader access control than the root function.
@@ -2286,6 +2288,8 @@ fn_name Function_CheckArgs = "Function.CheckArgs";
 void Function::CheckArgs() const
 {
    Debug::ft(Function_CheckArgs);
+
+   if(defn_) return Debug::SwLog(Function_CheckArgs, 0, 0);
 
    //  See if the function has any arguments to check.  Don't check the
    //  arguments to a function that is undefined, unused, or an operator.
@@ -2434,6 +2438,8 @@ fn_name Function_CheckCtor = "Function.CheckCtor";
 void Function::CheckCtor() const
 {
    Debug::ft(Function_CheckCtor);
+
+   if(defn_) return Debug::SwLog(Function_CheckCtor, 0, 0);
 
    //  Check that this is a constructor and that it isn't deleted.
    //
@@ -2603,6 +2609,7 @@ void Function::CheckDtor() const
 {
    Debug::ft(Function_CheckDtor);
 
+   if(defn_) return Debug::SwLog(Function_CheckDtor, 0, 0);
    if(FuncType() != FuncDtor) return;
 
    auto impl = GetDefn()->impl_.get();
@@ -2638,6 +2645,7 @@ void Function::CheckForVirtualDefault() const
 {
    Debug::ft(Function_CheckForVirtualDefault);
 
+   if(defn_) return Debug::SwLog(Function_CheckForVirtualDefault, 0, 0);
    if(!virtual_) return;
 
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
@@ -2657,6 +2665,7 @@ fn_name Function_CheckIfCouldBeConst = "Function.CheckIfCouldBeConst";
 void Function::CheckIfCouldBeConst() const
 {
    Debug::ft(Function_CheckIfCouldBeConst);
+   if(defn_) return Debug::SwLog(Function_CheckIfCouldBeConst, 0, 0);
 
    //  Before claiming that a function could be const, check for const
    //  overloading (another function in this class that has the same name
@@ -2682,6 +2691,12 @@ fn_name Function_CheckIfDefined = "Function.CheckIfDefined";
 Warning Function::CheckIfDefined() const
 {
    Debug::ft(Function_CheckIfDefined);
+
+   if(defn_)
+   {
+      Debug::SwLog(Function_CheckIfDefined, 0, 0);
+      return Warning_N;
+   }
 
    //  A function without an implementation is logged as undefined unless
    //  o it's actually part of a function signature typedef;
@@ -2709,6 +2724,7 @@ void Function::CheckIfHiding() const
 {
    Debug::ft(Function_CheckIfHiding);
 
+   if(defn_) return Debug::SwLog(Function_CheckIfHiding, 0, 0);
    if(FuncType() != FuncStandard) return;
 
    auto item = FindInheritedName();
@@ -2739,6 +2755,8 @@ void Function::CheckIfOverridden() const
 {
    Debug::ft(Function_CheckIfOverridden);
 
+   if(defn_) return Debug::SwLog(Function_CheckIfOverridden, 0, 0);
+
    //  To be logged for having no overrides, this function must be virtual,
    //  not an override, and a standard function (not a destructor).
    //
@@ -2753,6 +2771,8 @@ fn_name Function_CheckIfPublicVirtual = "Function.CheckIfPublicVirtual";
 void Function::CheckIfPublicVirtual() const
 {
    Debug::ft(Function_CheckIfPublicVirtual);
+
+   if(defn_) return Debug::SwLog(Function_CheckIfPublicVirtual, 0, 0);
 
    //  To be logged for being public and virtual, this must be a standard
    //  function that is not overriding one that was already public.
@@ -2776,6 +2796,8 @@ void Function::CheckIfUsed(Warning warning) const
 {
    Debug::ft(Function_CheckIfUsed);
 
+   if(defn_) return Debug::SwLog(Function_CheckIfUsed, 0, 0);
+
    if(type_) return;
    if(IsUnused()) LogToBoth(warning);
 }
@@ -2787,6 +2809,8 @@ fn_name Function_CheckMemberUsage = "Function.CheckMemberUsage";
 void Function::CheckMemberUsage() const
 {
    Debug::ft(Function_CheckMemberUsage);
+
+   if(defn_) return Debug::SwLog(Function_CheckMemberUsage, 0, 0);
 
    //  Check if this function could be static or free.  For either to be
    //  possible, the function cannot be virtual, must not have accessed a
@@ -2827,6 +2851,8 @@ void Function::CheckNoexcept() const
 {
    Debug::ft(Function_CheckNoexcept);
 
+   if(defn_) return Debug::SwLog(Function_CheckNoexcept, 0, 0);
+
    auto can = CanBeNoexcept();
 
    if(noexcept_)
@@ -2846,6 +2872,8 @@ fn_name Function_CheckOverride = "Function.CheckOverride";
 void Function::CheckOverride()
 {
    Debug::ft(Function_CheckOverride);
+
+   if(defn_) return Debug::SwLog(Function_CheckOverride, 0, 0);
 
    //  If this function is an override, register it against the function that
    //  it immediately overrides.  A destructor is neither registered nor logged.
@@ -2908,7 +2936,7 @@ void Function::Display(ostream& stream,
    stream << prefix;
    if(!options.test(DispNoAC) && !defn_ && (GetClass() != nullptr))
    {
-      stream << GetDecl()->GetAccess() << ": ";
+      stream << GetAccess() << ": ";
    }
    DisplayDecl(stream, options);
    DisplayDefn(stream, prefix, options);
@@ -3295,6 +3323,8 @@ Function* Function::FindBaseFunc() const
 {
    Debug::ft(Function_FindBaseFunc);
 
+   if(defn_) return GetDecl()->FindBaseFunc();
+
    //  If the base class function has already been found, return it.
    //
    if(base_ != nullptr) return base_;
@@ -3366,6 +3396,10 @@ Function* Function::FindRootFunc() const
 {
    Debug::ft(Function_FindRootFunc);
 
+   if(defn_) return GetDecl()->FindRootFunc();
+
+   //  Follow the chain of overrides to the original virtual function.
+   //
    auto prev = const_cast< Function* >(this);
 
    for(auto curr = base_; curr != nullptr; curr = curr->base_)
@@ -3484,6 +3518,14 @@ FunctionType Function::FuncType() const
    if(Name()->find('~') != string::npos) return FuncDtor;
    if(parms_ != nullptr) return FuncStandard;
    return FuncCtor;
+}
+
+//------------------------------------------------------------------------------
+
+Cxx::Access Function::GetAccess() const
+{
+   if(defn_) return GetDecl()->GetAccess();
+   return CxxScope::GetAccess();
 }
 
 //------------------------------------------------------------------------------
@@ -3628,38 +3670,58 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    //  o in the definition (if separate from the declaration)
    //  o in an overridden function (which must #include the base class)
    //  Consequently, symbols used in the signature only need to be reported
-   //  when they appear in the declaration of a new function.  Symbols that
-   //  were accessed via a using statement are an exception, however, as the
-   //  using statement is always required.  Consequently, all usages were
-   //  obtained, but only symbols accessed via a using statement are merged
-   //  into SYMBOLS in the cases discussed.
+   //  (for the purpose of determining which files to #include) when they
+   //  appear in the declaration of a new function.  Symbols accessed via a
+   //  using statement, however, must be reported because a using statement
+   //  is still needed.  To support the creation of a global cross-reference,
+   //  symbols that were previously unreported for an override or definition
+   //  are now reported as "inherited".
    //
-   if(!GetDecl()->override_ && !defn_)
+   auto first = !IsOverride() && !defn_;
+
+   for(auto d = usages.directs.cbegin(); d != usages.directs.cend(); ++d)
    {
-      for(auto d = usages.directs.cbegin(); d != usages.directs.cend(); ++d)
-      {
+      if(first)
          symbols.AddDirect(*d);
-      }
+      else
+         symbols.AddInherit(*d);
+   }
 
-      for(auto i = usages.indirects.cbegin(); i != usages.indirects.cend(); ++i)
-      {
+   for(auto i = usages.indirects.cbegin(); i != usages.indirects.cend(); ++i)
+   {
+      if(first)
          symbols.AddIndirect(*i);
-      }
+      else
+         symbols.AddInherit(*i);
+   }
 
-      for(auto f = usages.forwards.cbegin(); f != usages.forwards.cend(); ++f)
-      {
+   for(auto f = usages.forwards.cbegin(); f != usages.forwards.cend(); ++f)
+   {
+      if(first)
          symbols.AddForward(*f);
-      }
+      else
+         symbols.AddInherit(*f);
+   }
 
-      for(auto f = usages.friends.cbegin(); f != usages.friends.cend(); ++f)
-      {
+   for(auto f = usages.friends.cbegin(); f != usages.friends.cend(); ++f)
+   {
+      if(first)
          symbols.AddForward(*f);
-      }
+      else
+         symbols.AddInherit(*f);
    }
 
    for(auto u = usages.users.cbegin(); u != usages.users.cend(); ++u)
    {
       symbols.AddUser(*u);
+   }
+
+   //  If this is an override, report the original function declaration for
+   //  cross-reference purposes.
+   //
+   if(IsOverride())
+   {
+      symbols.AddInherit(FindRootFunc());
    }
 
    //  If this is a function definition, include the declaration as a usage.
@@ -3709,6 +3771,8 @@ fn_name Function_HasInvokers = "Function.HasInvokers";
 bool Function::HasInvokers() const
 {
    Debug::ft(Function_HasInvokers);
+
+   if(defn_) return GetDecl()->HasInvokers();
 
    //  A non-virtual function must be invoked directly.
    //
@@ -4029,7 +4093,7 @@ bool Function::IsExemptFromTracing() const
    Debug::ft(Function_IsExemptFromTracing);
 
    if(impl_ == nullptr) return true;   // declaration only
-   if(GetDecl()->pure_) return true;   // pure virtual
+   if(IsPureVirtual()) return true;
    if(tmplt_ != nullptr) return true;  // in a template
 
    if(impl_->FirstStatement() == nullptr) return true;
@@ -4111,6 +4175,8 @@ fn_name Function_IsInvokedInBase = "Function.IsInvokedInBase";
 bool Function::IsInvokedInBase() const
 {
    Debug::ft(Function_IsInvokedInBase);
+
+   if(defn_) return GetDecl()->IsInvokedInBase();
 
    for(auto b = base_; b != nullptr; b = b->base_)
    {
@@ -4790,7 +4856,7 @@ void Function::WasCalled()
    //
    if(Context::Scope()->GetFunction() == this) return;
 
-   ++calls_;
+   ++GetDecl()->calls_;
 
    auto type = FuncType();
 
@@ -4800,7 +4866,7 @@ void Function::WasCalled()
       //
       //  Record invocations up the class hierarchy.
       //
-      for(auto dtor = GetDecl()->base_; dtor != nullptr; dtor = dtor->base_)
+      for(auto dtor = GetBase(); dtor != nullptr; dtor = dtor->base_)
       {
          ++dtor->calls_;
       }
@@ -4817,12 +4883,12 @@ void Function::WasCalled()
 
       if((func != nullptr) && (func->FuncType() == FuncCtor))
       {
-         if(func->GetDecl()->base_ == nullptr) func->GetDecl()->base_ = this;
+         if(func->GetBase() == nullptr) func->GetDecl()->base_ = GetDecl();
       }
 
       //  Now record invocations up the class hierarchy.
       //
-      for(auto ctor = GetDecl()->base_; ctor != nullptr; ctor = ctor->base_)
+      for(auto ctor = GetBase(); ctor != nullptr; ctor = ctor->base_)
       {
          ++ctor->calls_;
       }

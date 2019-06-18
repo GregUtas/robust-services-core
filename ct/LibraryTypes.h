@@ -124,5 +124,7 @@ constexpr char CanonicalFileView = 'c';
 constexpr char OriginalFileView = 'o';
 constexpr char ClassHierarchyView = 'h';
 constexpr char ItemStatistics = 's';
+constexpr char FileSymbolUsage = 'u';
+constexpr char GlobalCrossReference = 'x';
 }
 #endif

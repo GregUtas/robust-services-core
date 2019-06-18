@@ -46,7 +46,7 @@ public:
    //
    virtual ~CxxArea();
 
-   //  Adds USE as a using declaration in the area's scope.
+   //  Adds USE as a using statement in the area's scope.
    //
    bool AddUsing(UsingPtr& use);
 
@@ -151,7 +151,7 @@ protected:
    //
    CxxArea();
 
-   //  Returns the area's using declarations.
+   //  Returns the area's using statements.
    //
    const UsingPtrVector* Usings() const { return &usings_; }
 
@@ -186,7 +186,7 @@ private:
    static Function* FoundFunc
       (Function* func, SymbolView* view, TypeMatch match);
 
-   //  The area's using declarations.
+   //  The area's using statements.
    //
    UsingPtrVector usings_;
 

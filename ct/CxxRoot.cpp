@@ -132,7 +132,7 @@ CxxToken* MacroFILE::GetValue() const
       return unknown_.get();
    }
 
-   auto fn = file->FullName();
+   auto fn = file->Path();
 
    if(!files_.empty())
    {

@@ -958,21 +958,9 @@ public:
    //
    bool IsInline() const { return inline_; }
 
-   //  Returns true if the function is virtual.
-   //
-   bool IsVirtual() const { return virtual_; }
-
-   //  Returns true if the function was tagged "explicit".
-   //
-   bool IsExplicit() const { return explicit_; }
-
    //  Returns the function's operator (Cxx::NIL_OPERATOR if not an operator).
    //
    Cxx::Operator Operator() const { return name_->Operator(); }
-
-   //  Returns true if the function is an override.
-   //
-   bool IsOverride() const { return override_; }
 
    //  Returns true if the function is deleted or declared private to make
    //  it inaccessible (e.g. a private constructor or assignment operator).
@@ -994,9 +982,30 @@ public:
    const Function* GetDecl() const { return (defn_ ? mate_ : this); }
    Function* GetDecl() { return (defn_ ? mate_ : this); }
 
-   //  Returns the function that this one overrides.
+   //  The following are all forwarded to the function declaration because
+   //  the fields in question are not set on a function definition.  When
+   //  code that implements this class uses one of these fields directly, it
+   //  is to deliberately exclude a function definition from consideration.
    //
-   Function* GetBase() const { return base_; }
+   //  GetBase: Returns the function that this one overrides.
+   //  IsExtern: Returns true if the function was tagged "extern".
+   //  IsVirtual: Returns true if the function is virtual.
+   //  IsPureVirtual: Returns true if the function is pure virtual.
+   //  IsExplicit: Returns true if the function was tagged "explicit".
+   //  IsOverride: Returns true if the function is an override.
+   //  IsFinal: Returns true if the function is final.
+   //  IsStatic: Returns true if the function is static.
+   //  GetAccess: Returns the access control for the function.
+   //
+   Function* GetBase() const { return GetDecl()->base_; }
+   bool IsExtern() const { return GetDecl()->extern_; }
+   bool IsVirtual() const { return GetDecl()->virtual_; }
+   bool IsPureVirtual() const { return GetDecl()->pure_; }
+   bool IsExplicit() const { return GetDecl()->explicit_; }
+   bool IsOverride() const { return GetDecl()->override_; }
+   bool IsFinal() const { return GetDecl()->final_; }
+   bool IsStatic() const override { return GetDecl()->static_; }
+   Cxx::Access GetAccess() const override;
 
    //  Deletes the single argument "(void)", which simplifies the comparison
    //  of function signatures.
@@ -1229,10 +1238,6 @@ public:
    //
    bool IsInTemplateInstance() const override;
 
-   //  Overridden to return true if the function is static.
-   //
-   bool IsStatic() const override { return static_; }
-
    //  Overridden to determine if the function is unused.
    //
    bool IsUnused() const override;
@@ -1455,7 +1460,7 @@ private:
    //
    TypeNamePtr tspec_;
 
-   //  Set for a function tagged as extern.
+   //  Set for a function tagged as extern.  ONLY SET ON THE DECLARATION.
    //
    bool extern_ : 1;
 
@@ -1467,15 +1472,16 @@ private:
    //
    bool constexpr_ : 1;
 
-   //  Set for a static function.
+   //  Set for a static function.  ONLY SET ON THE DECLARATION.
    //
    bool static_ : 1;
 
    //  Set for a virtual function, even if it is not tagged "virtual".
+   //  ONLY SET ON THE DECLARATION.
    //
    bool virtual_ : 1;
 
-   //  Set for an explicit constructor.
+   //  Set for an explicit constructor.  ONLY SET ON THE DECLARATION.
    //
    bool explicit_ : 1;
 
@@ -1488,14 +1494,15 @@ private:
    bool noexcept_ : 1;
 
    //  Set for an override, even if it is not tagged "override".
+   //  ONLY SET ON THE DECLARATION.
    //
    bool override_ : 1;
 
-   //  Set for a function tagged "final".
+   //  Set for a function tagged "final".  ONLY SET ON THE DECLARATION.
    //
    bool final_ : 1;
 
-   //  Set for a pure virtual function.
+   //  Set for a pure virtual function.  ONLY SET ON THE DECLARATION.
    //
    bool pure_ : 1;
 
@@ -1528,6 +1535,7 @@ private:
    bool implicit_ : 1;
 
    //  How many times the function was invoked.
+   //  ONLY INCREMENTED ON THE DECLARATION.
    //
    size_t calls_ : 13;
 
@@ -1574,6 +1582,7 @@ private:
    size_t pos_;
 
    //  The next function, up the class hierarchy, that this one overrides.
+   //  ONLY SET ON THE DECLARATION.
    //
    Function* base_;
 
@@ -1589,7 +1598,7 @@ private:
    //
    mutable FunctionVector tmplts_;
 
-   //  Direct overrides of the function.
+   //  Direct overrides of the function.  ONLY USED BY THE DECLARATION.
    //
    mutable FunctionVector overs_;
 };

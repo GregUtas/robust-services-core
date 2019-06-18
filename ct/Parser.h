@@ -45,8 +45,12 @@ namespace CodeTools
 //
 //  The parser is implemented using recursive descent.  Except for the analysis
 //  of #include lists (CodeFile.Scan) and the preprocessing of empty macro names
-//  (Lexer.Preprocess), it is a single-pass compiler.  The grammar is documented
-//  in the relevant compiler functions.
+//  (Lexer.Preprocess), it is a single-pass parser.  The grammar is documented
+//  in the relevant parser functions.
+//
+//  The parser does not support the concept of "translation units".  All files
+//  are parsed in one pass after analyzing #include directives to calculate a
+//  global parse order.  All header files are parsed first.
 //
 //  NOT SUPPORTED
 //  -------------
@@ -69,6 +73,9 @@ namespace CodeTools
 //      to fail (there are situations in which it expects unqualified names)
 //  character and string literals (GetCxxExpr, GetCxxAlpha, GetChar, GetStr):
 //    o type tags (u8, u, U, L, R)
+//  declarations and definitions:
+//    o identical declarations of anything except a class (see Forward)
+//    o identical definitions of anything
 //  namespaces:
 //    o unnamed and inline namespaces (GetNamespace and symbol resolution)
 //    o namespace aliases (GetNamespace)
@@ -102,6 +109,8 @@ namespace CodeTools
 //    o variadic argument lists
 //    o lambdas (GetArgument and many others)
 //    o dynamic exception specifications
+//    o deduced return type ("auto")
+//    o trailing return type (after "->")
 //  data:
 //    o the order of tags is inflexible: "extern static mutable constexpr const"
 //      (GetClassData, GetSpaceData, GetFuncData)
@@ -327,7 +336,7 @@ private:
    //
    bool ParseInBlock(Cxx::Keyword kwd, Block* block);
 
-   //  Returns true and creates USE on finding a using declaration.
+   //  Returns true and creates USE on finding a using statement.
    //
    bool GetUsing(UsingPtr& use);
 

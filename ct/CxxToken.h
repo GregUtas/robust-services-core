@@ -49,6 +49,9 @@ struct CxxUsageSets
    CxxNamedSet forwards;   // types resolved via a forward declaration
    CxxNamedSet friends;    // types resolved via a friend declaration
    CxxNamedSet users;      // names resolved via a using statement
+   CxxNamedSet inherits;   // types not needed to calculate #include or using
+                           // directives but which the global cross-reference
+                           // should report as being used
 
    CxxUsageSets() = default;  // create empty CxxNamedSets
 
@@ -61,6 +64,7 @@ struct CxxUsageSets
    void AddIndirect(const CxxNamed* item);
    void AddForward(const CxxNamed* item);
    void AddUser(const CxxNamed* item);
+   void AddInherit(const CxxNamed* item);
 
    //  Removes, from each set, items that are template arguments for TYPE.
    //

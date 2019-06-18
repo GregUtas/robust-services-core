@@ -513,7 +513,7 @@ enum LineType
    FunctionNameSplit,     // fn_name Class_Func =\n "Class.Func";
    IncludeDirective,      // #include
    HashDirective,         // #ifndef #define #endif et al
-   UsingDirective,        // using
+   UsingStatement,        // using directive or declaration
    AnyLine,               // all lines
    LineType_N             // number of line types
 };

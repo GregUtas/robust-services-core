@@ -107,10 +107,6 @@ private:
    //
    NodeBase::word Sort(std::ostream& stream, std::string& expl) const override;
 
-   //  Returns a non-zero value and updates EXPL with an explanation.
-   //
-   NodeBase::word Trim(std::ostream& stream, std::string& expl) const override;
-
    //  The error to be reported.
    //
    const LibExprErr err_;

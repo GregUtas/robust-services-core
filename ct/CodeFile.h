@@ -67,9 +67,10 @@ public:
    //
    NodeBase::id_t Fid() const { return fid_.GetId(); }
 
-   //  Returns the file's name, including its path.
+   //  Returns the file's path.  If FULL is not set, the path to the source
+   //  code directory is removed from the front of the path.
    //
-   std::string FullName() const;
+   std::string Path(bool full = true) const;
 
    //  Returns the file's directory.  If the file is first encountered in an
    //  #include directive, its directory is unknown until the file is found.
@@ -365,14 +366,18 @@ private:
       bool hide = false) const;
 
    //  Returns false if >trim does not apply to this file (e.g. a template
-   //  header).  STREAM is where the output for >trim is being directed.
+   //  header).
    //
-   bool CanBeTrimmed(std::ostream* stream) const;
+   bool CanBeTrimmed() const;
 
    //  Finds the identifiers of files that declare items that this file
    //  (if a .cpp) defines.
    //
    void FindDeclIds();
+
+   //  Records, in the global cross-reference, that the file used ITEMS.
+   //
+   void InsertInXref(const CxxNamedSet& items) const;
 
    //  Saves the identifiers of files that define direct base classes used
    //  by this file.  BASES is from CxxUsageSets.bases.

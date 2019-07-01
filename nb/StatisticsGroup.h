@@ -95,7 +95,7 @@ private:
    //
    const char* Expl() const { return expl_.c_str(); }
 
-   //  The group's identifier within StatisticsRegistry.
+   //  The group's index in StatisticsRegistry.
    //
    RegCell gid_;
 

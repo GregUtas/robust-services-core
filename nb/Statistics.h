@@ -113,7 +113,7 @@ private:
    //
    virtual void StartInterval(bool first);
 
-   //  The statistic's identifier within StatisticsRegistry.
+   //  The statistic's index in StatisticsRegistry.
    //
    RegCell sid_;
 

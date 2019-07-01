@@ -81,7 +81,7 @@ void PosixSignalRegistry::Display(ostream& stream,
 {
    Protected::Display(stream, prefix, options);
 
-   stream << prefix << "signals [signal_t]" << CRLF;
+   stream << prefix << "signals [id_t]" << CRLF;
    signals_.Display(stream, prefix + spaces(2), options);
 }
 

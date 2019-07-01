@@ -129,7 +129,7 @@ private:
    //
    Flags attrs_;
 
-   //  The signal's location in PosixSignalRegistry.
+   //  The signal's index in PosixSignalRegistry.
    //
    RegCell sid_;
 };

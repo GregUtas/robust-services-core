@@ -67,10 +67,7 @@ StatisticsGroup::~StatisticsGroup()
 {
    Debug::ft(StatisticsGroup_dtor);
 
-   if(Gid() != NIL_ID)
-   {
-      Singleton< StatisticsRegistry >::Instance()->UnbindGroup(*this);
-   }
+   Singleton< StatisticsRegistry >::Instance()->UnbindGroup(*this);
 }
 
 //------------------------------------------------------------------------------

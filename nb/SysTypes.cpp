@@ -49,7 +49,7 @@ fixed_string SCOPE_STR = "::";
 
 //------------------------------------------------------------------------------
 
-fixed_string LogLevelStrings[LogLevel_N + 1] =
+fixed_string SwLogLevelStrings[SwLogLevel_N + 1] =
 {
    "INFO",
    "WARNING",
@@ -59,10 +59,10 @@ fixed_string LogLevelStrings[LogLevel_N + 1] =
 
 ostream& operator<<(ostream& stream, SwLogLevel level)
 {
-   if((level >= 0) && (level < LogLevel_N))
-      stream << LogLevelStrings[level];
+   if((level >= 0) && (level < SwLogLevel_N))
+      stream << SwLogLevelStrings[level];
    else
-      stream << LogLevelStrings[LogLevel_N];
+      stream << SwLogLevelStrings[SwLogLevel_N];
    return stream;
 }
 

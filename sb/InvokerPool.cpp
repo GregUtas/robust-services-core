@@ -323,7 +323,7 @@ void InvokerPool::Display(ostream& stream,
    invokers_.Display(stream, prefix + spaces(2), options);
 
    auto lead = prefix + spaces(2);
-   stream << prefix << "workq [MsgPriority]" << CRLF;
+   stream << prefix << "workq [Message::Priority]" << CRLF;
 
    for(auto p = 0; p <= Message::MaxPriority; ++p)
    {

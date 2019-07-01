@@ -150,10 +150,10 @@ extern fixed_string SCOPE_STR;
 //
 enum SwLogLevel
 {
-   SwInfo,     // a basic debug log
-   SwWarning,  // a log that includes a stack trace
-   SwError,    // a log that raises an exception
-   LogLevel_N  // number of software log levels
+   SwInfo,       // a basic debug log
+   SwWarning,    // a log that includes a stack trace
+   SwError,      // throws an exception (which includes a stack trace)
+   SwLogLevel_N  // number of software log levels
 };
 
 //  Inserts a string for LEVEL into STREAM.

@@ -112,7 +112,7 @@ void StatisticsRegistry::Display(ostream& stream,
       << "statsFileName : " << strObj(statsFileName_.get()) << CRLF;
 
    auto lead = prefix + spaces(2);
-   stream << prefix << "groups [StatisticsGroup::Id]" << CRLF;
+   stream << prefix << "groups [id_t]" << CRLF;
 
    for(auto g = groups_.First(); g != nullptr; groups_.Next(g))
    {

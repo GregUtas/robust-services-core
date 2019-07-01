@@ -286,8 +286,7 @@ ThreadAdmin::~ThreadAdmin()
 
 bool ThreadAdmin::BreakEnabled()
 {
-   if(Element::RunningInLab()) return BreakEnabled_;
-   return false;
+   return (Element::RunningInLab() ? BreakEnabled_ : false);
 }
 
 //------------------------------------------------------------------------------

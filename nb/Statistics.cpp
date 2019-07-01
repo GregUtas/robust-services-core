@@ -75,10 +75,7 @@ Statistic::~Statistic()
 {
    Debug::ft(Statistic_dtor);
 
-   if(sid_.GetId() != NIL_ID)
-   {
-      Singleton< StatisticsRegistry >::Instance()->UnbindStat(*this);
-   }
+   Singleton< StatisticsRegistry >::Instance()->UnbindStat(*this);
 }
 
 //------------------------------------------------------------------------------

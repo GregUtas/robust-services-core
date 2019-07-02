@@ -38,9 +38,6 @@ using std::string;
 namespace NodeBase
 {
 string Element::Name_ = "Unnamed Element";
-string Element::HelpPath_ = "help";
-string Element::InputPath_ = "input";
-string Element::OutputPath_ = "output";
 
 #ifdef FIELD_LOAD
    bool Element::RunningInLab_ = false;
@@ -54,8 +51,6 @@ fn_name Element_ctor = "Element.ctor";
 
 Element::Element() :
    name_(nullptr),
-   inputPath_(nullptr),
-   outputPath_(nullptr),
    runningInLab_(nullptr)
 {
    Debug::ft(Element_ctor);
@@ -67,18 +62,6 @@ Element::Element() :
    name_.reset(new CfgStrParm
       ("ElementName", "Unnamed Element", &Name_, "element's name"));
    reg->BindParm(*name_);
-
-   helpPath_.reset(new CfgStrParm
-      ("HelpPath", "help", &HelpPath_, "help directory"));
-   reg->BindParm(*helpPath_);
-
-   inputPath_.reset(new CfgStrParm
-      ("InputPath", "input", &InputPath_, "input directory"));
-   reg->BindParm(*inputPath_);
-
-   outputPath_.reset(new CfgStrParm
-      ("OutputPath", "output", &OutputPath_, "output directory"));
-   reg->BindParm(*outputPath_);
 
    runningInLab_.reset(new CfgBoolParm
       ("RunningInLab", "T", &RunningInLab_, "set if running in lab"));
@@ -102,53 +85,44 @@ void Element::Display(ostream& stream,
    Protected::Display(stream, prefix, options);
 
    stream << prefix << "Name         : " << Name_ << CRLF;
-   stream << prefix << "InputPath    : " << HelpPath_ << CRLF;
-   stream << prefix << "InputPath    : " << InputPath_ << CRLF;
-   stream << prefix << "OutputPath   : " << OutputPath_ << CRLF;
+   stream << prefix << "RscPath      : " << RscPath() << CRLF;
+   stream << prefix << "HelpPath     : " << HelpPath() << CRLF;
+   stream << prefix << "InputPath    : " << InputPath() << CRLF;
+   stream << prefix << "OutputPath   : " << OutputPath() << CRLF;
    stream << prefix << "RunningInLab : " << RunningInLab_ << CRLF;
    stream << prefix << "name         : " << strObj(name_.get()) << CRLF;
-   stream << prefix << "helpPath     : " << strObj(helpPath_.get()) << CRLF;
-   stream << prefix << "inputPath    : " << strObj(inputPath_.get()) << CRLF;
-   stream << prefix << "outputPath   : " << strObj(outputPath_.get()) << CRLF;
    stream << prefix << "runningInLab : " << strObj(runningInLab_.get()) << CRLF;
 }
 
 //------------------------------------------------------------------------------
 
-const string& Element::HelpPath()
+string Element::HelpPath()
 {
-   //  A static default is not required for this string, because it is
-   //  not used before the CLI has been entered.
-   //
-   return HelpPath_;
+   static string HelpDir;
+
+   if(HelpDir.empty()) HelpDir = RscPath() + PATH_SEPARATOR + "help";
+   return HelpDir;
 }
 
 //------------------------------------------------------------------------------
 
-const string& Element::InputPath()
+string Element::InputPath()
 {
-   static string DefaultInputPath("input");
+   static string InputDir;
 
-   //  If our singleton hasn't even been created yet, InputPath_ might not
-   //  have been initialized yet.  Return the static string created above.
-   //
-   auto element = Singleton< Element >::Extant();
-   if(element == nullptr) return DefaultInputPath;
-   return InputPath_;
+   if(InputDir.empty()) InputDir = RscPath() + PATH_SEPARATOR + "input";
+   return InputDir;
 }
 
 //------------------------------------------------------------------------------
 
-const string& Element::OutputPath()
+string Element::OutputPath()
 {
-   static string DefaultOutputPath("output");
+   static string OutputDir;
 
-   //  If our singleton hasn't even been created yet, OutputPath_ might not
-   //  have been initialized yet.  Return the static string created above.
-   //
-   auto element = Singleton< Element >::Extant();
-   if(element == nullptr) return DefaultOutputPath;
-   return OutputPath_;
+   if(OutputDir.empty())
+      OutputDir = RscPath() + PATH_SEPARATOR + "excluded/output";
+   return OutputDir;
 }
 
 //------------------------------------------------------------------------------
@@ -156,6 +130,32 @@ const string& Element::OutputPath()
 void Element::Patch(sel_t selector, void* arguments)
 {
    Protected::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
+string Element::RscPath()
+{
+   static string RscDir;
+
+   if(RscDir.empty())
+   {
+      auto& args = Singleton< CfgParmRegistry >::Instance()->GetMainArgs();
+      RscDir = *args.at(0);
+
+      for(size_t pos = 0; pos < RscDir.size(); ++pos)
+      {
+         if(RscDir[pos] == BACKSLASH) RscDir[pos] = PATH_SEPARATOR;
+      }
+
+      string dir("rsc");
+      dir.push_back(PATH_SEPARATOR);
+      auto pos = RscDir.rfind(dir);
+      if(pos == string::npos) abort();
+      RscDir.erase(pos + 3);
+   }
+
+   return RscDir;
 }
 
 //------------------------------------------------------------------------------

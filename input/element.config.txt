@@ -1,5 +1,9 @@
 / Parameters that use default values are commented out.
 /
+/ HelpPath, InputPath, and OutputPath are obsolete.  Their
+/ directory names are now fixed, and the path to them is
+/ relative to the directory out of which the .exe was run.
+/
 / BreakEnabled             F
 CheckStack               T
 / CipTcpPort               40000
@@ -7,8 +11,8 @@ CheckStack               T
 / ConsoleFileName          console
 ElementName              Reigi
 / InitTimeoutMsecs         10000
-HelpPath                 C:/Users/gregu/Documents/rsc/rsc/clihelp
-InputPath                C:/Users/gregu/Documents/rsc/rsc/input
+/ HelpPath [obsolete]      .../rsc/help
+/ InputPath [obsolete]     .../rsc/input
 / NodeAddr                 127.0.0.1
 NoIngressMessageCount    1000
 / NoIngressQueueLength     1200
@@ -28,7 +32,7 @@ NumOfSbIpBuffers         9
 NumOfServiceSMs          17
 / NumOfThreads             1
 NumOfTimers              9
-OutputPath               C:/Users/gregu/Documents/rsc/rsc/excluded/output
+/ OutputPath [obsolete]    .../rsc/excluded/output
 / PotsCallIpPort           40002
 / PotsShelfIpPort          40001
 ReinitOnSchedTimeout     F

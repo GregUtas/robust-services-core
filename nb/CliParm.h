@@ -114,11 +114,11 @@ public:
       Skip    // used internally only: skip optional parameter
    };
 
-   //> Precedes explanatory text.
+   //  Precedes explanatory text.
    //
    static fixed_string ParmExplPrefix;
 
-   //> Indicates that any string will match a parameter.
+   //  Indicates that any string will match a parameter.
    //
    static fixed_string AnyStringParm;
 
@@ -287,19 +287,19 @@ protected:
    //
    static const col_t ParmWidth;
 
-   //> Prefix for a mandatory parameter in help text.
+   //  Prefix for a mandatory parameter in help text.
    //
    static const char MandParmBegin;
 
-   //> Suffix for a mandatory parameter in help text.
+   //  Suffix for a mandatory parameter in help text.
    //
    static const char MandParmEnd;
 
-   //> Prefix for an optional parameter in help text.
+   //  Prefix for an optional parameter in help text.
    //
    static const char OptParmBegin;
 
-   //> Suffix for an optional parameter in help text.
+   //  Suffix for an optional parameter in help text.
    //
    static const char OptParmEnd;
 

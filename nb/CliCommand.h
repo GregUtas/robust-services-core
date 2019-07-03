@@ -42,7 +42,7 @@ public:
    //
    static const int CommandWidth;
 
-   //> Separates the name of an increment from a command in help text.
+   //  Separates the name of an increment from a command in help text.
    //
    static const char CommandSeparator;
 

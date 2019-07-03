@@ -41,33 +41,33 @@ class CliBuffer : public Temporary
    friend std::unique_ptr< CliBuffer >::deleter_type;
    friend class CliThread;
 public:
-   //> The character that prevents the next one from being interpreted in a
+   //  The character that prevents the next one from being interpreted in a
    //  special way.
    //
    static const char EscapeChar;
 
-   //> The character that precedes and follows a string that contains blanks
+   //  The character that precedes and follows a string that contains blanks
    //  or special characters.
    //
    static const char StringChar;
 
-   //> The character that causes the remainder of an input line to be ignored.
+   //  The character that causes the remainder of an input line to be ignored.
    //
    static const char CommentChar;
 
-   //> The character that explicitly skips an optional parameter.
+   //  The character that explicitly skips an optional parameter.
    //
    static const char OptSkipChar;
 
-   //> The character that explicitly tags an optional parameter.
+   //  The character that explicitly tags an optional parameter.
    //
    static const char OptTagChar;
 
-   //> The character that precedes a symbol's name to obtain its value.
+   //  The character that precedes a symbol's name to obtain its value.
    //
    static const char SymbolChar;
 
-   //> Highlights faulty user input during command parsing.
+   //  Highlights faulty user input during command parsing.
    //
    static fixed_string ErrorPointer;
 

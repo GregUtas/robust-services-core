@@ -150,4 +150,31 @@ bool SysFile::FindFiles
 
    return true;
 }
+
+//------------------------------------------------------------------------------
+
+fn_name SysFile_Normalize1 = "SysFile.Normalize";
+
+void SysFile::Normalize(string& path)
+{
+   Debug::ft(SysFile_Normalize1);
+
+   for(size_t pos = 0; pos < path.size(); ++pos)
+   {
+      if(path[pos] == BACKSLASH) path[pos] = PATH_SEPARATOR;
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SysFile_Normalize2 = "SysFile.Normalize(const)";
+
+string SysFile::Normalize(const string& path)
+{
+   Debug::ft(SysFile_Normalize2);
+
+   auto copy = path;
+   Normalize(copy);
+   return copy;
+}
 }

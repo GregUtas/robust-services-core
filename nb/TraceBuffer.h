@@ -67,11 +67,11 @@ public:
    //
    static const size_t MaxSize;
 
-   //> A string indicating that the buffer overflowed.
+   //  A string indicating that the buffer overflowed.
    //
    static fixed_string OverflowStr;
 
-   //> A string indicating that no item was selected for tracing.
+   //  A string indicating that no item was selected for tracing.
    //
    static fixed_string NoneSelected;
 
@@ -271,7 +271,7 @@ private:
    //
    static const size_t InitialSize;
 
-   //> The value written after the last record added to the buffer.
+   //  The value written after the last record added to the buffer.
    //
    static const uword EndMarker;
 

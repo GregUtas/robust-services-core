@@ -71,6 +71,13 @@ typedef std::unique_ptr< FileList > FileListPtr;
 //
 namespace SysFile
 {
+   //  Replaces occurrences of '\' in PATH with '/'.  The first version
+   //  modifies PATH, and the second version modifies and returns a copy
+   //  of PATH.
+   //
+   void Normalize(std::string& path);
+   std::string Normalize(const std::string& path);
+
    //  Opens an existing file for input.  Returns nullptr if the file is
    //  empty or does not exist.
    //

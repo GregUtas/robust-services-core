@@ -37,11 +37,11 @@ namespace NodeBase
 
 namespace NodeBase
 {
-   //> Precedes the output of a hex value.
+   //  Precedes the output of a hex value.
    //
    extern fixed_string HexPrefixStr;
 
-   //> Precedes each object when a Display function outputs a queue of objects,
+   //  Precedes each object when a Display function outputs a queue of objects,
    //  as an alternative to strIndex (see below) when no index can be associated
    //  with each object.
    //

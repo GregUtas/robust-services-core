@@ -102,7 +102,7 @@ void CfgTuple::Patch(sel_t selector, void* arguments)
 
 const string& CfgTuple::ValidBlankChars()
 {
-   //> Valid blank characters in a file that contains configuration tuples.
+   //  Valid blank characters in a file that contains configuration tuples.
    //
    static const string BlankChars(" ");
 
@@ -113,7 +113,7 @@ const string& CfgTuple::ValidBlankChars()
 
 const string& CfgTuple::ValidNameChars()
 {
-   //> Valid characters in a configuration tuple's name.
+   //  Valid characters in a configuration tuple's name.
    //
    static const string NameChars
       ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-.");
@@ -125,7 +125,7 @@ const string& CfgTuple::ValidNameChars()
 
 const string& CfgTuple::ValidValueChars()
 {
-   //> Valid characters in a configuration tuple's value.
+   //  Valid characters in a configuration tuple's value.
    //
    static const string ValueChars(ValidNameChars() + ":/\\");
 

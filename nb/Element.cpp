@@ -29,6 +29,7 @@
 #include "Debug.h"
 #include "Formatters.h"
 #include "Singleton.h"
+#include "SysFile.h"
 #include "SysTime.h"
 #include "SysTypes.h"
 
@@ -147,11 +148,7 @@ string Element::RscPath()
    {
       auto& args = Singleton< CfgParmRegistry >::Instance()->GetMainArgs();
       RscDir = *args.at(0);
-
-      for(size_t pos = 0; pos < RscDir.size(); ++pos)
-      {
-         if(RscDir[pos] == BACKSLASH) RscDir[pos] = PATH_SEPARATOR;
-      }
+      SysFile::Normalize(RscDir);
 
       string dir("rsc");
       dir.push_back(PATH_SEPARATOR);

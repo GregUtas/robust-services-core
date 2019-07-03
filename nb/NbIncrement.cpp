@@ -804,7 +804,7 @@ word HelpCommand::DisplayHelp(const CliThread& cli, const string& key)
    switch(rc)
    {
    case -1:
-      return cli.Report(-1, "There is no additonal help for that command.", 0);
+      return cli.Report(-1, "There is no additional help for this command.", 0);
    case -2:
       return cli.Report(-2, "Failed to open file " + path, 0);
    }

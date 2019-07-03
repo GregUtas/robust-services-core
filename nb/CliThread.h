@@ -246,7 +246,7 @@ private:
    //
    void Cleanup() override;
 
-   //> The default prompt for user input.
+   //  The default prompt for user input.
    //
    static const char CliPrompt;
 

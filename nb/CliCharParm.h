@@ -60,7 +60,7 @@ private:
    //
    bool ShowValues(std::string& values) const override;
 
-   //> Separates valid input characters in parameter help text.
+   //  Separates valid input characters in parameter help text.
    //
    static const char CharSeparator;
 

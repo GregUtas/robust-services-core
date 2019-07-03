@@ -38,8 +38,8 @@ using std::string;
 
 namespace NodeBase
 {
-fixed_string CfgParmRegistry::BackFromExePath = "rsc\\rsc\\";
-fixed_string CfgParmRegistry::AppendToExePath = "/input/element.config.txt";
+fixed_string CfgParmRegistry::BackFromExePath = "rsc/";
+fixed_string CfgParmRegistry::AppendToExePath = "input/element.config.txt";
 
 //------------------------------------------------------------------------------
 
@@ -82,16 +82,16 @@ void CfgParmRegistry::AddMainArg(const string& arg)
 
    if(mainArgs_->size() == 1)
    {
-      *configFileName_ = arg;
+      *configFileName_ = SysFile::Normalize(arg);
 
       auto pos = configFileName_->rfind(BackFromExePath);
 
       if(pos != string::npos)
-      {
          pos += strlen(BackFromExePath);
-         configFileName_->erase(pos);
-      }
+      else
+         pos = configFileName_->rfind('/') + 1;
 
+      configFileName_->erase(pos);
       configFileName_->append(AppendToExePath);
    }
 }

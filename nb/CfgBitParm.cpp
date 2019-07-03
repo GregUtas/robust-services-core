@@ -137,7 +137,7 @@ bool CfgBitParm::SetNextValue(bool value)
 
 fixed_string CfgBitParm::ValidFalseChars()
 {
-   //> Characters that set a configuration parameter to false.
+   //  Characters that set a configuration parameter to false.
    //
    static fixed_string FalseChars = "FfNn";
 
@@ -148,7 +148,7 @@ fixed_string CfgBitParm::ValidFalseChars()
 
 fixed_string CfgBitParm::ValidTrueChars()
 {
-   //> Characters that set a configuration parameter to true.
+   //  Characters that set a configuration parameter to true.
    //
    static fixed_string TrueChars = "TtYy";
 

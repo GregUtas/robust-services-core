@@ -239,6 +239,55 @@ void CliThread::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
+fn_name CliThread_DisplayHelp = "CliThread.DisplayHelp";
+
+word CliThread::DisplayHelp(const string& path, const string& key) const
+{
+   Debug::ft(CliThread_DisplayHelp);
+
+   //  Open the help file addressed by PATH.
+   //
+   auto stream = SysFile::CreateIstream(path.c_str());
+   if(stream == nullptr) return -2;
+
+   //  After finding the line that contains "$ KEY", display the
+   //  lines that follow, up to the next line that begins with '$'.
+   //
+   auto found = false;
+   string line;
+
+   while(stream->peek() != EOF)
+   {
+      std::getline(*stream, line);
+
+      if(line.empty())
+      {
+         if(found) *obuf << CRLF;
+         continue;
+      }
+
+      switch(line.front())
+      {
+      case '/':
+         continue;
+
+      case '$':
+         if(found) return 0;
+         while(line.back() == SPACE) line.pop_back();
+         line.erase(0, 2);
+         if(strCompare(line, key) == 0) found = true;
+         break;
+
+      default:
+         if(found) *obuf << line << CRLF;
+      }
+   }
+
+   return (found ? 0 : -1);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CliThread_EndOfInput = "CliThread.EndOfInput";
 
 bool CliThread::EndOfInput(bool error) const

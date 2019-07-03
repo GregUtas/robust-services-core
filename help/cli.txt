@@ -1,3 +1,4 @@
+$
                     COMMAND LINE INTERPRETER (CLI)
              incrs: Lists all available increments (sets of related commands)
             <incr>: Enters an increment
@@ -23,3 +24,145 @@ The following are used when displaying and entering a command's parameters:
        \  overrides any special meaning for the next character
 Optional parameters must be entered in the same order that they are displayed
 by >help <comm>.
+/
+$ ct
+Commands in this increment often take an expression as the last parameter.
+An expression contains variables and operators.  Variables can be defined
+using the >assign command.  The code library also provides the following
+variables, which cannot be modified using the >assign command:
+   $dirs : directories that have been added to the code base by >import
+  $files : all code files (headers and implementations) found in $dirs
+   $hdrs : headers in $files
+   $cpps : implementations (.c*) in $files
+   $exts : headers whose directories were not included by an >import
+   $subs : headers that declare a subset of the items in $exts in order
+           to make them available during a compile
+   $vars : all variables (those above, or user-defined)
+
+An expression is evaluated left to right, but parentheses can be used to
+override this.  A variable is a set of either directories or files.  The
+following notation is used below:
+  <ds> : the name of a directory (from >import) or a set of directories
+  <fs> : the name of a specific file or a set of files
+   <s> : a <ds> or an <fs>
+
+A list of current operators appears below.  What the operator returns is
+on the left; it becomes the input to commands such as >assign and >type.
+The type of parameter(s) that the operator expects are shown on the right:
+   <s> = <s1> | <s2>    set union of <s1> and <s2> (the '|' is optional)
+   <s> = <s1> & <s2>    set intersection of <s1> and <s2>
+   <s> = <s1> - <s2>    set difference between <s1> and s2>
+  <fs> = f <ds>         the files in <ds>
+  <ds> = d <fs>         the directories in <fs>
+  <fs> = <fs> fn <str>  files in <fs> with the file name <str>*
+  <fs> = <fs> ft <str>  files in <fs> with the file type *.<str>
+  <fs> = <fs> ms <str>  files in <fs> that contain <str>
+  <fs> = <fs> in <ds>   files in <fs> whose directory is in <ds>
+  <fs> = im <fs>        implements: for each item declared in <fs>,
+                        add the file that defines it, and vice versa
+  <fs> = us <fs>        users: files that #include any in <fs>
+  <fs> = ub <fs>        used by: files that any in <fs> #include
+  <fs> = as <fs>        affecters: ub <fs>, transitively
+  <fs> = ab <fs>        affected by: us <fs>, transitively
+  <fs> = ca <fs>        common affecters: (as f1) & (as f2) & ... (as fN)
+  <fs> = ns <fs>        needers: files that also need <fs> in a build
+                        (im ab <fs>, transitively)
+  <fs> = nb <fs>        needed by: files that <fs> also needs in a build
+                        (im as <fs>, transitively)
+
+Here is how the last six operators act on the <fs> parameter:
+  lower layers     <fs> parameter     higher layers
+       |<----ub/as/nb----|----us/ab/ns---->|
+
+The im operator links declarations with definitions, so it requires all
+files that affect <fs>, or that are affected by <fs>, to have been parsed.
+The ns and nb operators use the im operator, so they also require these
+files to have been parsed.  The parsing occurs automatically if required.
+
+Here are some examples of library commands:
+  >import nbase "nb" : add NodeBase files to the code base
+  >import sbase "sb" : add SessionBase files to the code base
+  >type us Thread.h : show all files that #include Thread.h
+  >assign h1 f sbase ft cpp : h1 = all SessionBase implementations
+  >assign c1 ab Thread.h : c1 = files that could be affected by
+    changing Thread.h
+  >assign s1 h1 & c1 : s1 = SessionBase .cpps that could be affected
+    by changing Thread.h
+/
+$ ct.coverage
+These subcommands manage databases that map functions to the testcases that
+invoke them.  To support this mapping, a function must invoke Debug::ft and
+be captured in a <test>.funcs.txt function trace (usually by having a script
+execute >testcase begin <test>, followed by >save funcs &testcase.name).  A
+code coverage database is then created as follows:
+
+1. copy all testcase function trace summaries (*.funcs.txt) to OutputPath/
+2. >read buildlib         // set up compile environment
+3. >parse - win32 $files  // compile the code base (here, for Win32)
+4. >check rsc $files      // finds functions that invoke Debug::ft
+5. >coverage update       // scans test traces (OutputPath/*.funcs.txt) and
+                          // saves the database in InputPath/coverage.db.txt
+
+The database can be loaded later on with >coverage load.  It can then be
+updated with steps 2 to 5, which finds modified functions and traces from
+tests that have been added or re-executed.  The >coverage update subcommand
+displays the following:
+
+1. Functions that have been added, changed, or deleted.
+2. Testcases that should be rerun to test the functions that were modified.
+   The state of these testcases is also set to "reexecute" in the testcase
+   database.
+3. Functions that were modified but which are not invoked by any testcase.
+
+Finally, >coverage under N lists all functions that are invoked by fewer than
+N testcases, and >coverage erase deletes, from the database, a function that
+is no longer valid (this should only be necessary after a template function
+or a function in a class template has been removed from the code base).
+/
+$ ct.export
+The options are specified in a string that contains any of the following:
+  n: namespace view: items sorted by namespace; declarations/definitions merged
+  c: canonical file view: items sorted (enums-typedefs-data-functions)
+  o: original file view: items in original order
+  h: include class hierarchy
+  s: include statistics, such as the number of reads and writes on each item
+  u: display each file's symbol usage and recommended changes to #includes,
+     usings, and forward declarations (in a separate .trim file)
+  x: display the global cross-reference (in a separate .xref file)
+If no options are entered, they default to "nchsux".  At least one option of
+"ncoh" must be specified to cause the generation of the .lib file.
+/
+$ ct.parse
+The options are specified in a string that contains any of the following:
+  p: save parse tree on failure
+  s: always save parse tree
+  x: generate "object code" during execution (use >save trace <fn> afterwards)
+  i: immediate tracing: needed if 'x' causes trace buffer to overflow
+  f: enable FunctionTracer
+For no options, use the skip character ('-').
+/
+$ nb.sched
+The following columns appear in >sched show output:
+         id  Thread::Id (identifier)
+       name  Thread.AbbrName (abbreviated name)
+       host  SysThreadId (host identifier)
+          f  Faction (w=watchdog s=system P=payload M=maintenance O=operations
+                      B=background A=audit; lower case if not running locked)
+          b  BlockingReason (S=sleeping N=network C=console D=database)
+The following statistics are reset at the end of each 15-minute interval:
+         ex  number of exceptions
+     yields  number of yields
+    rtc t/o  number of run-to-completion timeouts (running locked too long)
+   max msgs  maximum length of message queue
+  max stack  maximum stack usage
+  max usecs  longest time running locked
+total usecs  total time running locked
+       %cpu  percentage of available CPU time used, during both the current
+             15-minute interval and the most recent 5-second interval
+/
+$ nt.testcase
+These subcommands support test scripts and a testcase database.  The prolog,
+epilog, recover, begin, end, and failed subcommands are used in test scripts.
+The retest, query, erase, and reset subcommands are used to inspect and manage
+the testcase database.  See also the >coverage command in the >ct increment,
+which supports code coverage by making use of the testcase database.

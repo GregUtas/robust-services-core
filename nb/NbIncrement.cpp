@@ -755,7 +755,7 @@ public:
    HelpCommand();
 private:
    word ProcessCommand(CliThread& cli) const override;
-   static word DisplayHelpFile(const CliThread& cli, const string& name);
+   static word DisplayHelp(const CliThread& cli, const string& key);
 };
 
 fixed_string HelpIncrExpl = "name of increment";
@@ -796,31 +796,17 @@ HelpCommand::HelpCommand() : CliCommand(HelpStr, HelpExpl)
    BindParm(*new HelpFullParm);
 }
 
-word HelpCommand::DisplayHelpFile(const CliThread& cli, const string& name)
+word HelpCommand::DisplayHelp(const CliThread& cli, const string& key)
 {
-   auto path = Element::HelpPath() + PATH_SEPARATOR + "cli";
+   auto path = Element::HelpPath() + PATH_SEPARATOR + "cli.txt";
+   auto rc = cli.DisplayHelp(path, key);
 
-   if(!name.empty())
+   switch(rc)
    {
-      path.push_back('.');
-      path.append(name);
-   }
-
-   path.append(".txt");
-
-   auto stream = SysFile::CreateIstream(path.c_str());
-
-   if(stream == nullptr)
-   {
-      return cli.Report(0, SuccessExpl);
-   }
-
-   string line;
-
-   while(stream->peek() != EOF)
-   {
-      std::getline(*stream, line);
-      *cli.obuf << line << CRLF;
+   case -1:
+      return cli.Report(-1, "There is no additonal help for that command.", 0);
+   case -2:
+      return cli.Report(-2, "Failed to open file " + path, 0);
    }
 
    return 0;
@@ -852,7 +838,7 @@ word HelpCommand::ProcessCommand(CliThread& cli) const
    if(!GetString(s1, cli))
    {
       cli.EndOfInput(false);
-      return DisplayHelpFile(cli, EMPTY_STR);  // [1]
+      return DisplayHelp(cli, EMPTY_STR);  // [1]
    }
 
    if(s1 == "full")
@@ -860,7 +846,7 @@ word HelpCommand::ProcessCommand(CliThread& cli) const
       cli.EndOfInput(false);
       incr = cli.stack_->Top();
       incr->Explain(*cli.obuf, 2);
-      return DisplayHelpFile(cli, incr->Name());  // [2]
+      return DisplayHelp(cli, incr->Name());  // [2]
    }
 
    auto comm = cli.stack_->FindCommand(s1, incr);
@@ -871,10 +857,11 @@ word HelpCommand::ProcessCommand(CliThread& cli) const
       {
          cli.EndOfInput(false);
          comm->ExplainCommand(*cli.obuf, true);
-         string file(incr->Name());
-         file.push_back('.');
-         file.append(comm->Text());
-         return DisplayHelpFile(cli, file);  // [3]
+         *cli.obuf << CRLF;
+         string key(incr->Name());
+         key.push_back('.');
+         key.append(comm->Text());
+         return DisplayHelp(cli, key);  // [3]
       }
 
       cli.EndOfInput(false);
@@ -905,7 +892,7 @@ word HelpCommand::ProcessCommand(CliThread& cli) const
    {
       cli.EndOfInput(false);
       incr->Explain(*cli.obuf, 2);
-      return DisplayHelpFile(cli, incr->Name());  // [8]
+      return DisplayHelp(cli, incr->Name());  // [8]
    }
 
    comm = incr->FindCommand(s2);
@@ -921,10 +908,11 @@ word HelpCommand::ProcessCommand(CliThread& cli) const
    {
       cli.EndOfInput(false);
       comm->ExplainCommand(*cli.obuf, true);
-      string file(incr->Name());
-      file.push_back('.');
-      file.append(comm->Text());
-      return DisplayHelpFile(cli, file);  // [10]
+      *cli.obuf << CRLF;
+      string key(incr->Name());
+      key.push_back('.');
+      key.append(comm->Text());
+      return DisplayHelp(cli, key);  // [10]
    }
 
    cli.EndOfInput(false);

@@ -20,7 +20,9 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Element.h"
+#include <cstddef>
 #include <ostream>
+#include <vector>
 #include "CfgBoolParm.h"
 #include "CfgParmRegistry.h"
 #include "CfgStrParm.h"
@@ -138,6 +140,9 @@ string Element::RscPath()
 {
    static string RscDir;
 
+   //  Set RscDir to the last directory named "rsc/" on the path to the
+   //  executable.
+   //
    if(RscDir.empty())
    {
       auto& args = Singleton< CfgParmRegistry >::Instance()->GetMainArgs();
@@ -151,8 +156,20 @@ string Element::RscPath()
       string dir("rsc");
       dir.push_back(PATH_SEPARATOR);
       auto pos = RscDir.rfind(dir);
-      if(pos == string::npos) abort();
-      RscDir.erase(pos + 3);
+
+      if(pos != string::npos)
+      {
+         RscDir.erase(pos + 3);
+      }
+      else
+      {
+         //  An "rsc/" directory was not found.  Set RscDir to the executable's
+         //  directory, though this is unlikely to work.
+         //
+         pos = RscDir.rfind(PATH_SEPARATOR);
+         RscDir.erase(pos);
+      }
+
    }
 
    return RscDir;

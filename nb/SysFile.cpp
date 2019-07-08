@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "SysFile.h"
+#include <cstddef>
 #include <cstdio>
 #include <fstream>
 #include <ios>

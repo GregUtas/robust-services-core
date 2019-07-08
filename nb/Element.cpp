@@ -20,7 +20,6 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Element.h"
-#include <cstddef>
 #include <ostream>
 #include <vector>
 #include "CfgBoolParm.h"
@@ -166,7 +165,6 @@ string Element::RscPath()
          pos = RscDir.rfind(PATH_SEPARATOR);
          RscDir.erase(pos);
       }
-
    }
 
    return RscDir;

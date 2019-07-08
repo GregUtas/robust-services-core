@@ -32,6 +32,7 @@
 #include "SysThreadStack.h"
 #include "ThisThread.h"
 
+using std::ostream;
 using std::string;
 
 //------------------------------------------------------------------------------
@@ -206,5 +207,24 @@ void Debug::SwLog(fn_name_arg func, const string& errstr,
    Debug::ft(Debug_SwLog2);
 
    GenerateSwLog(func, errstr, offset, level);
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string SwLogLevelStrings[SwLogLevel_N + 1] =
+{
+   "INFO",
+   "WARNING",
+   "ERROR",
+   ERROR_STR
+};
+
+ostream& operator<<(ostream& stream, SwLogLevel level)
+{
+   if((level >= 0) && (level < SwLogLevel_N))
+      stream << SwLogLevelStrings[level];
+   else
+      stream << SwLogLevelStrings[SwLogLevel_N];
+   return stream;
 }
 }

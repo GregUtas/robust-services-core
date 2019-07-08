@@ -146,20 +146,6 @@ extern fixed_string CRLF_STR;
 extern fixed_string ERROR_STR;
 extern fixed_string SCOPE_STR;
 
-//  Severity of software logs.  See Debug::SwLog.
-//
-enum SwLogLevel
-{
-   SwInfo,       // a basic debug log
-   SwWarning,    // a log that includes a stack trace
-   SwError,      // throws an exception (which includes a stack trace)
-   SwLogLevel_N  // number of software log levels
-};
-
-//  Inserts a string for LEVEL into STREAM.
-//
-std::ostream& operator<<(std::ostream& stream, SwLogLevel level);
-
 //  Types for debug error codes.
 //
 typedef uint32_t debug32_t;

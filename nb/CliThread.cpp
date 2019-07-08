@@ -22,6 +22,7 @@
 #include "CliThread.h"
 #include <algorithm>
 #include <cctype>
+#include <cstdio>
 #include <ios>
 #include <sstream>
 #include "CinThread.h"

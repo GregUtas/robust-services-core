@@ -88,10 +88,10 @@ namespace SysFile
    //
    ostreamPtr CreateOstream(const char* fileName, bool trunc = false);
 
-   //  Sets dirName to the default directory.  On an error, dirName is
+   //  Sets dirName to the current directory.  On an error, dirName is
    //  cleared.
    //
-   void GetDir(std::string& dirName);
+   void GetCurrDir(std::string& dirName);
 
    //  Sets the default directory.  Returns false if the directory does
    //  not exist.

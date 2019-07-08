@@ -134,11 +134,11 @@ bool FileWalker::Reset()
 
 //==============================================================================
 
-fn_name SysFile_GetDir = "SysFile.GetDir";
+fn_name SysFile_GetCurrDir = "SysFile.GetCurrDir";
 
-void SysFile::GetDir(string& dirName)
+void SysFile::GetCurrDir(string& dirName)
 {
-   Debug::ft(SysFile_GetDir);
+   Debug::ft(SysFile_GetCurrDir);
 
    char buff[256];
 

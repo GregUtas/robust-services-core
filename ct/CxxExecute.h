@@ -31,6 +31,7 @@
 #include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxFwd.h"
+#include "Debug.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------

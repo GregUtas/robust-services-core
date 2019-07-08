@@ -75,7 +75,7 @@ PayloadInvokerPool::PayloadInvokerPool() :
       noIngressMessageCount_.reset
          (new CfgIntParm("NoIngressMessageCount", "800",
          &NoIngressMessageCount_, 400, 1200,
-         "Messages reserved for non-ingress work"));
+         "messages reserved for non-ingress work"));
       reg->BindParm(*noIngressMessageCount_);
    }
 }

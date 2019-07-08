@@ -23,6 +23,7 @@
 #define DEBUG_H_INCLUDED
 
 #include <atomic>
+#include <iosfwd>
 #include <string>
 #include "SysTypes.h"
 
@@ -30,6 +31,20 @@
 
 namespace NodeBase
 {
+//  Severity of software logs.
+//
+enum SwLogLevel
+{
+   SwInfo,       // a basic debug log
+   SwWarning,    // a log that includes a stack trace
+   SwError,      // throws an exception (which includes a stack trace)
+   SwLogLevel_N  // number of software log levels
+};
+
+//  Inserts a string for LEVEL into STREAM.
+//
+std::ostream& operator<<(std::ostream& stream, SwLogLevel level);
+
 //  Interface for generating debug information.  This interface must restrict
 //  its use of headers so that it can be used by low level class templates.
 //

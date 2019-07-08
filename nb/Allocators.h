@@ -99,7 +99,6 @@ template< typename T > struct DynAllocator
       if(n == 0) return nullptr;
       if(n > SIZE_MAX / sizeof(T)) throw AllocationException(MemDyn, n);
       auto addr = Memory::Alloc(n * sizeof(T), MemDyn);
-      if(addr == nullptr) throw AllocationException(MemDyn, n);
       return static_cast< T* >(addr);
    }
 
@@ -142,7 +141,6 @@ template< typename T > struct ImmAllocator
       if(n == 0) return nullptr;
       if(n > SIZE_MAX / sizeof(T)) throw AllocationException(MemImm, n);
       auto addr = Memory::Alloc(n * sizeof(T), MemImm);
-      if(addr == nullptr) throw AllocationException(MemImm, n);
       return static_cast< T* >(addr);
    }
 
@@ -185,7 +183,6 @@ template< typename T > struct PermAllocator
       if(n == 0) return nullptr;
       if(n > SIZE_MAX / sizeof(T)) throw AllocationException(MemPerm, n);
       auto addr = Memory::Alloc(n * sizeof(T), MemPerm);
-      if(addr == nullptr) throw AllocationException(MemPerm, n);
       return static_cast< T* >(addr);
    }
 
@@ -228,7 +225,6 @@ template< typename T > struct ProtAllocator
       if(n == 0) return nullptr;
       if(n > SIZE_MAX / sizeof(T)) throw AllocationException(MemProt, n);
       auto addr = Memory::Alloc(n * sizeof(T), MemProt);
-      if(addr == nullptr) throw AllocationException(MemProt, n);
       return static_cast< T* >(addr);
    }
 
@@ -271,7 +267,6 @@ template< typename T > struct TempAllocator
       if(n == 0) return nullptr;
       if(n > SIZE_MAX / sizeof(T)) throw AllocationException(MemTemp, n);
       auto addr = Memory::Alloc(n * sizeof(T), MemTemp);
-      if(addr == nullptr) throw AllocationException(MemTemp, n);
       return static_cast< T* >(addr);
    }
 

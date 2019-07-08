@@ -26,11 +26,9 @@
 #include <cctype>
 #include <cstddef>
 #include <cstdint>
-#include <cstdio>
 #include <iomanip>
 #include <ios>
 #include <iosfwd>
-#include <istream>
 #include <memory>
 #include <sstream>
 #include <string>
@@ -68,7 +66,6 @@
 #include "StatisticsRegistry.h"
 #include "Symbol.h"
 #include "SymbolRegistry.h"
-#include "SysFile.h"
 #include "SysHeap.h"
 #include "ThisThread.h"
 #include "ThreadRegistry.h"

@@ -90,6 +90,30 @@ std::ostream& operator<<(std::ostream& stream, Faction faction);
 //
 char FactionChar(Faction faction);
 
+//  Types of logs.  Each LogId (see below) should be defined using one
+//  of these enumerators plus an offset.
+//
+enum LogType
+{
+   TroubleLog = 100,        // 100-199: intervention required
+   ThresholdLog = 200,      // 200-299: important level exceeded
+   StateChangeLog = 300,    // 300-399: state change or progress update
+   PeriodicLog = 400,       // 400-499: automatic report
+   InformationLog = 500,    // 500-699: no intervention required
+   MiscellaneousLog = 700,  // 700-899: other types of logs
+   ExpertLog = 900          // 900-999: debugging logs
+};
+
+//  Alarm levels.
+//
+enum AlarmLevel
+{
+   NoAlarm,       // alarm off
+   MinorAlarm,    // narrow degradation/outage
+   MajorAlarm,    // broader degradation/outage
+   CriticalAlarm  // widespread degradation/outage
+};
+
 //  The direction of a message.
 //
 enum MsgDirection
@@ -121,6 +145,10 @@ typedef uint16_t ModuleId;
 //  An identifier for a thread.
 //
 typedef uint16_t ThreadId;
+
+//  An identifier for a log.
+//
+typedef uint16_t LogId;
 
 //  An identifier for a trace record.
 //

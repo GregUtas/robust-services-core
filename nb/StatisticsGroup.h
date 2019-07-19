@@ -34,7 +34,8 @@
 
 namespace NodeBase
 {
-//  Base class for grouping related statistics.
+//  Base class for grouping related statistics.  Statistics groups
+//  survive warm restarts but must be created during all others.
 //
 class StatisticsGroup : public Dynamic
 {

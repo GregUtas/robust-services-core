@@ -55,10 +55,6 @@ namespace NodeBase
    //
    std::string spaces(size_t count);
 
-   //  Converts N to a string.
-   //
-   std::string strInt(int64_t n);
-
    //  Outputs N (as hex) in STREAM.  If PREFIX is true, HexPrefixStr ("0x")
    //  is added as a prefix.  WIDTH is interpreted as follows:
    //  o negative: N occupies only as much space as needed
@@ -86,6 +82,10 @@ namespace NodeBase
    //  Returns S with all characters converted to lower case.
    //
    std::string strLower(const std::string& s);
+
+   //  Returns S with all characters converted to upper case.
+   //
+   std::string strUpper(const std::string& s);
 
    //  Returns -1, 0, or 1 if S1 is less than, equal to, or greater than S2.
    //  Case is ignored.

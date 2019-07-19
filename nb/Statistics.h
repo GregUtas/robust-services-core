@@ -35,7 +35,8 @@
 
 namespace NodeBase
 {
-//  Base class for statistics.
+//  Base class for statistics.  Statistics survive warm restarts
+//  but must be created during all others.
 //
 class Statistic : public Dynamic
 {

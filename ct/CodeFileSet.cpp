@@ -230,7 +230,7 @@ word CodeFileSet::Countlines(string& result) const
       count += files.At(*f)->GetLexer().LineCount();
    }
 
-   result = result + strInt(count);
+   result = result + std::to_string(count);
    return 0;
 }
 

@@ -92,8 +92,8 @@ public:
       const std::string& chars, const std::string& help, bool upper = false);
 
    //  Displays help information in the file addressed by PATH.  KEY specifies
-   //  the help topic.  The line "$ KEY" is searched for in the file, ignoring
-   //  case.  If found, everything up to the next line that begins with a '$'
+   //  the help topic.  The line "? KEY" is searched for in the file, ignoring
+   //  case.  If found, everything up to the next line that begins with a '?'
    //  is displayed.  Returns 0 on success, -1 if there was no match for KEY,
    //  and -2 if the file could not be opened.
    //

@@ -60,6 +60,8 @@ extern fixed_string NoCommandExpl;
 extern fixed_string NoDiscardsExpl;
 extern fixed_string NoFileExpl;
 extern fixed_string NoIncrExpl;
+extern fixed_string NoLogExpl;
+extern fixed_string NoLogGroupExpl;
 extern fixed_string NoModuleExpl;
 extern fixed_string NoPoolExpl;
 extern fixed_string NoStatsGroupExpl;

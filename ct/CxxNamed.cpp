@@ -1700,6 +1700,7 @@ StackArg DataSpec::ResultType() const
       }
 
       StackArg arg(result, tags_.PtrCount(true), false);
+      arg.SetRefs(tags_.RefCount());
       if(tags_.IsConst()) arg.SetAsConst();
       if(tags_.IsConstPtr() == 1) arg.SetAsConstPtr();
       return arg;

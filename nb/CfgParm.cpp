@@ -174,7 +174,7 @@ bool CfgParm::SetFromTuple()
       return true;
    }
 
-   auto log = Log::Create("CFGPARM VALUE INVALID");
+   auto log = Log::Create("CFGPARM INVALID VALUE");
 
    if(log != nullptr)
    {

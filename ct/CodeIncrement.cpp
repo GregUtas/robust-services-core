@@ -26,7 +26,6 @@
 #include "CliText.h"
 #include "CliTextParm.h"
 #include <cstddef>
-#include <cstdint>
 #include <iomanip>
 #include <memory>
 #include <sstream>
@@ -1271,7 +1270,7 @@ public: LineNumberParm();
 
 fixed_string LineNumberExpl = "line number (must contain source code)";
 
-LineNumberParm::LineNumberParm() : CliIntParm(LineNumberExpl, 0, INT32_MAX) { }
+LineNumberParm::LineNumberParm() : CliIntParm(LineNumberExpl, 0, 999999) { }
 
 class BreakText : public CliText
 {

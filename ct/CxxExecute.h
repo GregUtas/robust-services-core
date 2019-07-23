@@ -166,6 +166,10 @@ public:
    //
    void SetAsMember() { member_ = true; }
 
+   //  Sets the number of reference tags on the argument.
+   //
+   void SetRefs(TagCount r) { refs_ = r; }
+
    //  Tags the argument const.
    //
    void SetAsConst() { const_ = true; }
@@ -342,6 +346,10 @@ private:
    //  return a negative count.
    //
    TagCount ptrs_ : 8;
+
+   //  The number of reference tags attached to the argument.
+   //
+   TagCount refs_ : 8;
 
    //  Set if the argument was accessed via "this".
    //

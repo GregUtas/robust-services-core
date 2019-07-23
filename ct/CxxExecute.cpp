@@ -979,6 +979,7 @@ StackArg::StackArg(CxxToken* t, TagCount p, bool ctor) :
    name(nullptr),
    via_(nullptr),
    ptrs_(p),
+   refs_(0),
    member_(false),
    const_(t != nullptr ? t->IsConst() : false),
    constptr_(t != nullptr ? t->IsConstPtr() : false),
@@ -1001,6 +1002,7 @@ StackArg::StackArg(Function* f, TypeName* name) :
    name(name),
    via_(nullptr),
    ptrs_(0),
+   refs_(0),
    member_(false),
    const_(f != nullptr ? f->IsConst() : false),
    constptr_(false),
@@ -1024,6 +1026,7 @@ StackArg::StackArg(CxxToken* t, TypeName* name,
    name(name),
    via_(via.item),
    ptrs_(0),
+   refs_(0),
    member_(false),
    const_(t != nullptr ? t->IsConst() : false),
    constptr_(t != nullptr ? t->IsConstPtr() : false),
@@ -1071,6 +1074,7 @@ StackArg::StackArg(CxxToken* t, TypeName* name) :
    name(name),
    via_(nullptr),
    ptrs_(0),
+   refs_(0),
    member_(false),
    const_(t != nullptr ? t->IsConst() : false),
    constptr_(t != nullptr ? t->IsConstPtr() : false),
@@ -1556,7 +1560,8 @@ size_t StackArg::Refs() const
 
    if(item == nullptr) return 0;
    auto spec = item->GetTypeSpec();
-   return (spec == nullptr ? 0 : spec->Refs());
+   size_t count = (spec == nullptr ? 0 : spec->Refs());
+   return count + refs_;
 }
 
 //------------------------------------------------------------------------------

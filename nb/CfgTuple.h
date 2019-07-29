@@ -74,7 +74,7 @@ public:
    //  Returns a string containing the characters that are valid in the
    //  name of a configuration parameter.
    //
-   static const std::string& ValidNameChars();
+   static const std::string& ValidKeyChars();
 
    //  Returns a string containing the characters that are valid in an
    //  input string that sets the value of a configuration parameter.

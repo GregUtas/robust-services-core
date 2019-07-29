@@ -457,7 +457,7 @@ fixed_string CfgParmsListExpl = "lists all configuration parameters";
 CfgParmsListText::CfgParmsListText() :
    CliText(CfgParmsListExpl, CfgParmsListStr) { }
 
-fixed_string CfgParmsExplStr = "expl";
+fixed_string CfgParmsExplStr = "explain";
 fixed_string CfgParmsExplExpl = "explains a configuration parameter";
 
 CfgParmsExplText::CfgParmsExplText() :

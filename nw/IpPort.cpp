@@ -23,6 +23,8 @@
 #include "Dynamic.h"
 #include <ostream>
 #include <string>
+#include "Alarm.h"
+#include "AlarmRegistry.h"
 #include "Algorithms.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -101,12 +103,15 @@ IpPort::IpPort(ipport_t port, const IpService* service) :
    service_(service),
    handler_(nullptr),
    thread_(nullptr),
-   socket_(nullptr)
+   socket_(nullptr),
+   alarm_(nullptr)
 {
    Debug::ft(IpPort_ctor);
 
    stats_.reset(new IpPortStats);
    Singleton< IpPortRegistry >::Instance()->BindPort(*this);
+   alarmName_ = "PORT" + std::to_string(port);
+   EnsureAlarm();
 }
 
 //------------------------------------------------------------------------------
@@ -243,6 +248,26 @@ void IpPort::DisplayStats(ostream& stream, const Flags& options) const
    stats_->bytesSent_->DisplayStat(stream, options);
    stats_->maxBytesSent_->DisplayStat(stream, options);
    stats_->overflows_->DisplayStat(stream, options);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name IpPort_EnsureAlarm = "IpPort.EnsureAlarm";
+
+void IpPort::EnsureAlarm()
+{
+   Debug::ft(IpPort_EnsureAlarm);
+
+   //  If the port's alarm is not registered, create it.
+   //
+   auto reg = Singleton< AlarmRegistry >::Instance();
+   alarm_ = reg->Find(alarmName_);
+
+   if(alarm_ == nullptr)
+   {
+      alarmExpl_ = "Service unavailable: " + string(service_->Name());
+      alarm_ = new Alarm(alarmName_, alarmExpl_, 5);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -393,6 +418,8 @@ fn_name IpPort_Startup = "IpPort.Startup";
 void IpPort::Startup(RestartLevel level)
 {
    Debug::ft(IpPort_Startup);
+
+   EnsureAlarm();
 
    if(stats_ == nullptr) stats_.reset(new IpPortStats);
 

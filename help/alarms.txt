@@ -1,0 +1,21 @@
+? NETWORK
+The status of the network layer has changed:
+  o critical: the node has lost network access
+  o off: the node has regained network access
+? OBJPOOL*
+The percentage of unused blocks in the specified object pool has reached
+a threshold indicated by the following alarm severity:
+  o critical: under 3.125% (1 in 32) of the blocks are available
+  o major: under 6.25% (1 in 16) of the blocks are available
+  o minor: under 12.5% (1 in 8) of the blocks are available
+  o off: over 12.5% of the blocks are available
+? OVERLOAD
+Payload processing is currently experiencing the following workload:
+  o major: overloaded--ingress work is being discarded
+  o off: not overloaded--ingress work is being accepted
+? PORT*
+The status of the specified network service has changed:
+  o major: the service is unavailable because its I/O thread could not
+    configure a socket on its IP port
+  o off: the service is available because an I/O thread has successfully
+    configured a socket on its IP port

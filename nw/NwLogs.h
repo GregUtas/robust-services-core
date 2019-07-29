@@ -36,10 +36,11 @@ namespace NetworkBase
    constexpr NodeBase::LogId NetworkShutdownFailure = NodeBase::TroubleLog + 1;
    constexpr NodeBase::LogId NetworkUnavailable = NodeBase::TroubleLog + 2;
    constexpr NodeBase::LogId NetworkPortOccupied = NodeBase::TroubleLog + 3;
-   constexpr NodeBase::LogId NetworkIoThreadFailure = NodeBase::TroubleLog + 4;
+   constexpr NodeBase::LogId NetworkServiceFailure = NodeBase::TroubleLog + 4;
    constexpr NodeBase::LogId NetworkAllocFailure = NodeBase::TroubleLog + 5;
    constexpr NodeBase::LogId NetworkFunctionError = NodeBase::TroubleLog + 6;
    constexpr NodeBase::LogId NetworkAvailable = NodeBase::InfoLog;
+   constexpr NodeBase::LogId NetworkServiceAvailable = NodeBase::InfoLog + 1;
    constexpr NodeBase::LogId NetworkSocketError = NodeBase::DebugLog;
    constexpr NodeBase::LogId NetworkNoDestination = NodeBase::DebugLog + 1;
 

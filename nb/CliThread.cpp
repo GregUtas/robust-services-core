@@ -251,8 +251,10 @@ word CliThread::DisplayHelp(const string& path, const string& key) const
    auto stream = SysFile::CreateIstream(path.c_str());
    if(stream == nullptr) return -2;
 
-   //  After finding the line that contains "? KEY", display the
-   //  lines that follow, up to the next line that begins with '?'.
+   //  Find line that contains "? KEY" and display the lines that follow, up
+   //  to the next line that begins with '?'.  If a line begins with '?' and
+   //  ends with '*', it is a wildcard that matches KEY if KEY's begins with
+   //  the same characters as those that precede the asterisk.
    //
    auto found = false;
    string line;
@@ -276,7 +278,17 @@ word CliThread::DisplayHelp(const string& path, const string& key) const
          if(found) return 0;
          while(line.back() == SPACE) line.pop_back();
          line.erase(0, 2);
-         if(strCompare(line, key) == 0) found = true;
+
+         if(line.back() == '*')
+         {
+            auto keyStart = key.substr(0, line.size() - 1);
+            auto lineStart = line.substr(0, line.size() - 1);
+            if(strCompare(lineStart, keyStart) == 0) found = true;
+         }
+         else
+         {
+            if(strCompare(line, key) == 0) found = true;
+         }
          break;
 
       default:

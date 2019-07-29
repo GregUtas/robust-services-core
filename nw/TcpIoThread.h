@@ -108,10 +108,14 @@ private:
    //
    bool ListenerHasFailed(SysTcpSocket* listener) const;
 
-   //  Invoked when a listener could not be allocated.  ERRVAL is the
-   //  reason for the failure.
+   //  Raises an alarm when the thread will exit because a listener socket
+   //  could not be configured.  ERRVAL is the reason for the failure.
    //
-   SysTcpSocket* ListenerError(NodeBase::word errval) const;
+   SysTcpSocket* RaiseAlarm(NodeBase::word errval) const;
+
+   //  Clears any alarm associated with the thread's service.
+   //
+   void ClearAlarm() const;
 
    //  Polls the sockets until at least one of them reports an event or
    //  an error occurs.  Returns the result of SysTcpSocket::Poll.

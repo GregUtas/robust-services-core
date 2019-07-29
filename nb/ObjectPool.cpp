@@ -189,7 +189,7 @@ ObjectPool::ObjectPool(MemoryType type, size_t nBytes, const string& name) :
    cfgSegments_(nullptr),
    availCount_(0),
    totalCount_(0),
-   availAlarm_(nullptr),
+   alarm_(nullptr),
    corruptQHead_(false)
 {
    Debug::ft(ObjectPool_ctor);
@@ -580,7 +580,7 @@ void ObjectPool::Display(ostream& stream,
    stream << prefix << "totalCount   : " << totalCount_ << CRLF;
    stream << prefix << "alarmName    : " << alarmName_ << CRLF;
    stream << prefix << "alarmExpl    : " << alarmExpl_ << CRLF;
-   stream << prefix << "availAlarm   : " << availAlarm_ << CRLF;
+   stream << prefix << "alarm        : " << alarm_ << CRLF;
    stream << prefix << "corruptQHead : " << corruptQHead_ << CRLF;
 
    auto lead = prefix + spaces(2);
@@ -718,15 +718,15 @@ void ObjectPool::EnsureAlarm()
 {
    Debug::ft(ObjectPool_EnsureAlarm);
 
-   //  If the low availability alarm is not registered, create it.
+   //  If the high usage alarm is not registered, create it.
    //
    auto reg = Singleton< AlarmRegistry >::Instance();
-   availAlarm_ = reg->Find(alarmName_);
+   alarm_ = reg->Find(alarmName_);
 
-   if(availAlarm_ == nullptr)
+   if(alarm_ == nullptr)
    {
-      alarmExpl_ = "Low number of available " + name_;
-      availAlarm_ = new Alarm(alarmName_, alarmExpl_, 30);
+      alarmExpl_ = "High percentage of in-use " + name_;
+      alarm_ = new Alarm(alarmName_, alarmExpl_, 30);
    }
 }
 
@@ -1073,7 +1073,7 @@ void ObjectPool::UpdateAlarm() const
 {
    Debug::ft(ObjectPool_UpdateAlarm);
 
-   if(availAlarm_ == nullptr) return;
+   if(alarm_ == nullptr) return;
 
    //  The alarm level is determined by the number of available blocks
    //  compared to the total number of blocks allocated:
@@ -1091,7 +1091,7 @@ void ObjectPool::UpdateAlarm() const
    else if(availCount_ <= (totalCount_ >> 3))
       status = MinorAlarm;
 
-   auto log = availAlarm_->Create(ObjPoolLogGroup, ObjPoolBlocksAvail, status);
+   auto log = alarm_->Create(ObjPoolLogGroup, ObjPoolBlocksInUse, status);
    if(log != nullptr) Log::Submit(log);
 }
 }

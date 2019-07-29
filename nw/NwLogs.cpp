@@ -51,10 +51,11 @@ void CreateNwLogs(RestartLevel level)
    new Log(group, NetworkShutdownFailure, "Network shutdown failure");
    new Log(group, NetworkUnavailable, "Network unavailable");
    new Log(group, NetworkPortOccupied, "IP port already occupied");
-   new Log(group, NetworkIoThreadFailure, "I/O thread failure");
+   new Log(group, NetworkServiceFailure, "Network service has failed");
    new Log(group, NetworkAllocFailure, "Network allocation failure");
    new Log(group, NetworkFunctionError, "Network function error");
    new Log(group, NetworkAvailable, "Network available");
+   new Log(group, NetworkServiceAvailable, "Network service is available");
    new Log(group, NetworkSocketError, "Socket function error");
    new Log(group, NetworkNoDestination, "No destination from input handler");
 }

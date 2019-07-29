@@ -48,7 +48,7 @@ CfgTuple::CfgTuple(const string& key, const string& input) :
 {
    Debug::ft(CfgTuple_ctor);
 
-   if(key_.find_first_not_of(ValidNameChars()) != string::npos)
+   if(key_.find_first_not_of(ValidKeyChars()) != string::npos)
    {
       auto log = Log::Create(ConfigLogGroup, ConfigKeyInvalid);
 
@@ -112,7 +112,7 @@ const string& CfgTuple::ValidBlankChars()
 
 //------------------------------------------------------------------------------
 
-const string& CfgTuple::ValidNameChars()
+const string& CfgTuple::ValidKeyChars()
 {
    //  Valid characters in a configuration tuple's name.
    //
@@ -128,7 +128,7 @@ const string& CfgTuple::ValidValueChars()
 {
    //  Valid characters in a configuration tuple's value.
    //
-   static const string ValueChars(ValidNameChars() + ":/\\");
+   static const string ValueChars(ValidKeyChars() + ":/\\");
 
    return ValueChars;
 }

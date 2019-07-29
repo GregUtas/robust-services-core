@@ -47,12 +47,12 @@ void CreateSbLogs(RestartLevel level)
    new Alarm(OverloadAlarmName, "Payload processing is overloaded", 30);
 
    auto group = new LogGroup(SessionLogGroup, "Sessions");
-   new Log(group, SessionError, "Session error");
-   new Log(group, ServiceError, "Service error");
    new Log(group, InvokerPoolBlocked, "Invoker pool blocked");
    new Log(group, SessionOverload, "Payload processing now overloaded");
    new Log(group, SessionNoOverload, "Payload processing no longer overloaded");
-   new Log(group, InvokerQueueCount, "Invoker queue count incorrect");
+   new Log(group, SessionError, "Session error");
+   new Log(group, ServiceError, "Service error");
+   new Log(group, InvokerWorkQueueCount, "Invoker work queue count incorrect");
    new Log(group, InvokerDiscardedBuffer, "Invoker discarded buffer");
    new Log(group, InvokerDiscardedMessage, "Invoker discarded message");
    new Log(group, InvalidIncomingMessage, "Invalid incoming message");

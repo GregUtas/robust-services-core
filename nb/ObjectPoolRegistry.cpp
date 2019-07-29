@@ -137,7 +137,7 @@ ObjectPoolRegistry::ObjectPoolRegistry()
    pools_.Init(ObjectPool::MaxId + 1, ObjectPool::CellDiff(), MemProt);
    statsGroup_.reset(new ObjectPoolStatsGroup);
    nullifyObjectData_.reset(new CfgBoolParm("NullifyObjectData", "F",
-      &NullifyObjectData_, "set to nullify an object's data after its vptr"));
+      &NullifyObjectData_, "set to nullify the data after an object's vptr"));
    Singleton< CfgParmRegistry >::Instance()->BindParm(*nullifyObjectData_);
 }
 

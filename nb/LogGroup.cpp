@@ -88,14 +88,14 @@ bool LogGroup::BindLog(Log& log)
 
    if(FindLog(id) != nullptr)
    {
-      Debug::SwLog(LogGroup_BindLog, id, 0);
+      Debug::SwLog(LogGroup_BindLog, "LogId in use", id);
    }
 
    auto last = logs_.Last();
 
    if((last != nullptr) && (last->Id() > id))
    {
-      Debug::SwLog(LogGroup_BindLog, id, 1);
+      Debug::SwLog(LogGroup_BindLog, "LogId not sorted", id);
    }
 
    return logs_.Insert(log);

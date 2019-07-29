@@ -319,17 +319,17 @@ private:
    //
    size_t totalCount_;
 
-   //  The name for the low availability alarm.
+   //  The name for the high usage alarm.
    //
    std::string alarmName_;  //r
 
-   //  The explanation for the low availability alarm.
+   //  The explanation for the high usage alarm.
    //
    std::string alarmExpl_;  //r
 
-   //  The alarm raised when the number of available blocks is low.
+   //  The alarm raised when the percentage of blocks in use is high.
    //
-   Alarm* availAlarm_;
+   Alarm* alarm_;
 
    //  Used to detect a corrupt queue header when auditing freeq_.
    //

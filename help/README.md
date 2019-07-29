@@ -10,5 +10,6 @@ information.
 * `>help <comm> full` provides additional help for a specific command.
 
 Documentation for each log and alarm is also located in this directory.  Each help
-file contains keys, which are lines that begin with a '$'.  Each key precedes the
-additional help for a particular topic, which ends at the next key.
+file contains keys, which are lines that begin with `?`.  Each key precedes the
+additional help for a particular topic, which ends with the next key.  A key that
+ends with `*` matches a lookup that begins with the string that precedes the `*`.

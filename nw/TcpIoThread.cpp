@@ -22,6 +22,7 @@
 #include "TcpIoThread.h"
 #include <sstream>
 #include <string>
+#include "Alarm.h"
 #include "Clock.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -186,15 +187,15 @@ SysTcpSocket* TcpIoThread::AllocateListener()
    SysTcpSocketPtr socket(new SysTcpSocket(port_, svc, rc));
 
    if(socket == nullptr)
-      return ListenerError(0);
+      return RaiseAlarm(0);
 
    if(rc != SysSocket::AllocOk)
-      return ListenerError(socket->GetError());
+      return RaiseAlarm(socket->GetError());
 
    socket->TracePort(NwTrace::Listen, port_, svc->MaxBacklog());
 
    if(!socket->Listen(svc->MaxBacklog()))
-      return ListenerError(socket->GetError());
+      return RaiseAlarm(socket->GetError());
 
    Debug::Assert(ipPort_->SetSocket(socket.get()));
 
@@ -242,6 +243,25 @@ void TcpIoThread::Cleanup()
 
    ReleaseResources();
    Thread::Cleanup();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TcpIoThread_ClearAlarm = "TcpIoThread.ClearAlarm";
+
+void TcpIoThread::ClearAlarm() const
+{
+   Debug::ft(TcpIoThread_ClearAlarm);
+
+   auto alarm = ipPort_->GetAlarm();
+   if(alarm == nullptr) return;
+
+   auto log = alarm->Create
+      (NetworkLogGroup, NetworkServiceAvailable, NoAlarm);
+   if(log == nullptr) return;
+
+   *log << Log::Tab << expl << "UDP: port=" << port_;
+   Log::Submit(log);
 }
 
 //------------------------------------------------------------------------------
@@ -335,9 +355,11 @@ void TcpIoThread::Enter()
    PollFlags* flags = nullptr;
    size_t first = (listen_ ? 1 : 0);
 
-   //  Exit if a listener socket cannot be created.
+   //  Exit if a listener socket cannot be created, otherwise clear any alarm
+   //  associated with our service.
    //
    if(!EnsureListener()) return;
+   ClearAlarm();
 
    while(true)
    {
@@ -471,18 +493,6 @@ SysTcpSocket* TcpIoThread::Listener() const
 
 //------------------------------------------------------------------------------
 
-fn_name TcpIoThread_ListenerError = "TcpIoThread.ListenerError";
-
-SysTcpSocket* TcpIoThread::ListenerError(word errval) const
-{
-   Debug::ft(TcpIoThread_ListenerError);
-
-   OutputLog(NetworkIoThreadFailure, "TCP", SocketNull, nullptr, errval);
-   return nullptr;
-}
-
-//------------------------------------------------------------------------------
-
 fn_name TcpIoThread_ListenerHasFailed = "TcpIoThread.ListenerHasFailed";
 
 bool TcpIoThread::ListenerHasFailed(SysTcpSocket* listener) const
@@ -588,6 +598,26 @@ word TcpIoThread::PollSockets()
    recvs_ = 0;
    if(ready > 0) sockets_.Front()->TraceEvent(NwTrace::Poll, ready);
    return ready;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TcpIoThread_RaiseAlarm = "TcpIoThread.RaiseAlarm";
+
+SysTcpSocket* TcpIoThread::RaiseAlarm(word errval) const
+{
+   Debug::ft(TcpIoThread_RaiseAlarm);
+
+   auto alarm = ipPort_->GetAlarm();
+   if(alarm == nullptr) return nullptr;
+
+   auto log = alarm->Create
+      (NetworkLogGroup, NetworkServiceFailure, MajorAlarm);
+   if(log == nullptr) return nullptr;
+
+   *log << Log::Tab << expl << "TCP: port=" << port_ << " errval=" << errval;
+   Log::Submit(log);
+   return nullptr;
 }
 
 //------------------------------------------------------------------------------

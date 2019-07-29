@@ -122,7 +122,7 @@ every CLI session produces
 written to the console)
   * a `log` file (system events that were written to the console asynchronously)
 
-The numeric string *`yymmdd-hhmmss-mmm`* is appended to the names of these files to record
+The numeric string `yymmdd-hhmmss-mmm` is appended to the names of these files to record
 the time when the system initialized (for a `console` file and the initial `log` file) or
 the time of the last restart (for a subsequent`log` file).
 

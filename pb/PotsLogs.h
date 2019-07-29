@@ -32,13 +32,13 @@ namespace PotsBase
    //  Logs for PotsBase.
    //
    extern NodeBase::fixed_string PotsLogGroup;
-   constexpr NodeBase::LogId PotsShelfCircuitReset = NodeBase::TroubleLog;
-   constexpr NodeBase::LogId PotsShelfIcSignal = NodeBase::TroubleLog + 1;
-   constexpr NodeBase::LogId PotsShelfIcBuffer = NodeBase::TroubleLog + 2;
-   constexpr NodeBase::LogId PotsShelfIcMessage = NodeBase::TroubleLog + 3;
-   constexpr NodeBase::LogId PotsCallIcSignal = NodeBase::TroubleLog + 4;
-   constexpr NodeBase::LogId PotsCallIcBuffer = NodeBase::TroubleLog + 5;
-   constexpr NodeBase::LogId PotsTrafficError = NodeBase::TroubleLog + 6;
+   constexpr NodeBase::LogId PotsShelfIcSignal = NodeBase::TroubleLog;
+   constexpr NodeBase::LogId PotsShelfIcBuffer = NodeBase::TroubleLog + 1;
+   constexpr NodeBase::LogId PotsShelfIcMessage = NodeBase::TroubleLog + 2;
+   constexpr NodeBase::LogId PotsCallIcSignal = NodeBase::TroubleLog + 3;
+   constexpr NodeBase::LogId PotsCallIcBuffer = NodeBase::TroubleLog + 4;
+   constexpr NodeBase::LogId PotsTrafficError = NodeBase::TroubleLog + 5;
+   constexpr NodeBase::LogId PotsShelfCircuitReset = NodeBase::StateLog;
    constexpr NodeBase::LogId PotsTrafficRate = NodeBase::InfoLog;
    constexpr NodeBase::LogId PotsShelfOgSignal = NodeBase::DebugLog;
 

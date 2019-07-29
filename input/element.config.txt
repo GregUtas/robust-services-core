@@ -11,21 +11,21 @@ CheckStack               T
 / CipTcpPort               40000
 / CipUdpPort               40000
 / ConsoleFileName          console
+/ ElementDefaultAddr       127.0.0.1
 ElementName              Reigi
 / InitTimeoutMsecs         10000
 / HelpPath [obsolete]      .../rsc/help
 / InputPath [obsolete]     .../rsc/input
-/ NodeAddr                 127.0.0.1
-NoIngressMessageCount    1000
+/ NoIngressMessageCount    800
 / NoIngressQueueLength     1200
 / NoSpoolingMessageCount   400
 NullifyObjectData        T
 NumOfBtIpBuffers         10
-NumOfContexts            16
+NumOfContexts            18
 NumOfDipIpBuffers        2
 NumOfEvents              2
-/ NumOfMediaEndpts         1
 NumOfIpBuffers           2
+/ NumOfMediaEndpts         1
 NumOfMessages            8
 NumOfMsgBuffers          6
 NumOfMsgPorts            30
@@ -41,7 +41,6 @@ NumOfTimers              9
 ReinitOnSchedTimeout     F
 / RtcInterval              60
 / RtcLimit                 6
-/ RtcTimeoutMsecs          20
 / RtcTimeoutMsecs          20
 / RunningInLab             T
 / SchedTimeoutMsecs        250

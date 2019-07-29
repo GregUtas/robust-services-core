@@ -31,6 +31,11 @@
 #include "Q1Link.h"
 #include "SysTypes.h"
 
+namespace NodeBase
+{
+   class Alarm;
+}
+
 namespace NetworkBase
 {
    class IpPortStats;
@@ -87,6 +92,10 @@ public:
    //  supports a socket for each application instance.
    //
    virtual SysTcpSocket* CreateAppSocket();
+
+   //  Provides the I/O thread with access to the port's alarm.
+   //
+   NodeBase::Alarm* GetAlarm() const { return alarm_; }
 
    //  Invoked after COUNT bytes were received.
    //
@@ -171,6 +180,10 @@ private:
    //
    void UnbindHandler(const InputHandler& handler);
 
+   //  Ensures that the low availability alarm exists.
+   //
+   void EnsureAlarm();
+
    //  Deleted to prohibit copying.
    //
    IpPort(const IpPort& that) = delete;
@@ -199,6 +212,18 @@ private:
    //  The port's socket.
    //
    SysSocket* socket_;
+
+   //  The name for the port's alarm.
+   //
+   std::string alarmName_;  //r
+
+   //  The explanation for the port's alarm.
+   //
+   std::string alarmExpl_;  //r
+
+   //  The port's alarm.
+   //
+   NodeBase::Alarm* alarm_;
 
    //  The port's statistics.
    //

@@ -32,15 +32,15 @@ namespace SessionBase
    //  Logs for SessionBase.
    //
    extern NodeBase::fixed_string SessionLogGroup;
-   constexpr NodeBase::LogId SessionError = NodeBase::TroubleLog;
-   constexpr NodeBase::LogId ServiceError = NodeBase::TroubleLog + 1;
-   constexpr NodeBase::LogId InvokerPoolBlocked = NodeBase::TroubleLog + 2;
+   constexpr NodeBase::LogId InvokerPoolBlocked = NodeBase::TroubleLog;
    constexpr NodeBase::LogId SessionOverload = NodeBase::ThresholdLog;
    constexpr NodeBase::LogId SessionNoOverload = NodeBase::InfoLog;
-   constexpr NodeBase::LogId InvokerQueueCount = NodeBase::DebugLog;
-   constexpr NodeBase::LogId InvokerDiscardedBuffer = NodeBase::DebugLog + 1;
-   constexpr NodeBase::LogId InvokerDiscardedMessage = NodeBase::DebugLog + 2;
-   constexpr NodeBase::LogId InvalidIncomingMessage = NodeBase::DebugLog + 3;
+   constexpr NodeBase::LogId SessionError = NodeBase::DebugLog;
+   constexpr NodeBase::LogId ServiceError = NodeBase::DebugLog + 1;
+   constexpr NodeBase::LogId InvokerWorkQueueCount = NodeBase::DebugLog + 2;
+   constexpr NodeBase::LogId InvokerDiscardedBuffer = NodeBase::DebugLog + 3;
+   constexpr NodeBase::LogId InvokerDiscardedMessage = NodeBase::DebugLog + 4;
+   constexpr NodeBase::LogId InvalidIncomingMessage = NodeBase::DebugLog + 5;
 
    extern NodeBase::fixed_string OverloadAlarmName;
 

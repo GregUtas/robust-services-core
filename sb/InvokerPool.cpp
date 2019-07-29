@@ -294,7 +294,7 @@ void InvokerPool::Dequeued(Message::Priority prio) const
       return;
    }
 
-   auto log = Log::Create(SessionLogGroup, InvokerQueueCount);
+   auto log = Log::Create(SessionLogGroup, InvokerWorkQueueCount);
 
    if(log != nullptr)
    {
@@ -396,7 +396,7 @@ Context* InvokerPool::FindWork()
       }
       else if(work->length_ > 0)
       {
-         auto log = Log::Create(SessionLogGroup, InvokerQueueCount);
+         auto log = Log::Create(SessionLogGroup, InvokerWorkQueueCount);
 
          if(log != nullptr)
          {

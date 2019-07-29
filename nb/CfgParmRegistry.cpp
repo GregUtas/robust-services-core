@@ -311,7 +311,7 @@ bool CfgParmRegistry::LoadNextTuple(string& key, string& value)
 
       //  The next key begins at input[keyBeg].  See where it ends.
       //
-      keyEnd = input.find_first_not_of(CfgTuple::ValidNameChars(), keyBeg);
+      keyEnd = input.find_first_not_of(CfgTuple::ValidKeyChars(), keyBeg);
 
       if(keyEnd == string::npos)
       {

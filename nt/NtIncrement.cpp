@@ -2432,7 +2432,7 @@ void RegistryPool::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
    stream << prefix << "Registry:" << CRLF;
-   registry_.Display(stream, prefix + spaces(2), Flags(Vb_Mask));
+   registry_.Display(stream, prefix + spaces(2), VerboseOpt);
    stream << CRLF;
 }
 

@@ -22,6 +22,7 @@
 #include "PotsSessions.h"
 #include <memory>
 #include <sstream>
+#include <string>
 #include "Debug.h"
 #include "IpPort.h"
 #include "LocalAddress.h"
@@ -30,6 +31,7 @@
 #include "MsgHeader.h"
 #include "MsgPort.h"
 #include "PotsCircuit.h"
+#include "PotsLogs.h"
 #include "PotsProfile.h"
 #include "PotsProtocol.h"
 #include "SbAppIds.h"
@@ -70,15 +72,14 @@ void PotsCallHandler::DiscardBuff
 
    Port()->InvalidDiscarded();
 
-   auto log = Log::Create("POTS CALL INVALID INCOMING BUFFER");
+   auto log = Log::Create(PotsLogGroup, PotsCallIcBuffer);
 
    if(log != nullptr)
    {
-      *log << "port=" << phi->port;
-      *log << " signal=" << phi->signal;
-      *log << " errval=" << errval << CRLF;
-      buff->Display(*log, EMPTY_STR, Flags(Vb_Mask));
-      Log::Spool(log);
+      *log << Log::Tab << "port=" << phi->port;
+      *log << " signal=" << phi->signal << " errval=" << errval << CRLF;
+      buff->Display(*log, Log::Tab, VerboseOpt);
+      Log::Submit(log);
    }
 }
 

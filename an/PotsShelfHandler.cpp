@@ -22,12 +22,14 @@
 #include "PotsShelf.h"
 #include <memory>
 #include <sstream>
+#include <string>
 #include "Circuit.h"
 #include "Debug.h"
 #include "LocalAddress.h"
 #include "Log.h"
 #include "Message.h"
 #include "MsgHeader.h"
+#include "PotsLogs.h"
 #include "PotsProtocol.h"
 #include "PotsTrafficThread.h"
 #include "SbAppIds.h"
@@ -80,13 +82,13 @@ void PotsShelfHandler::ReceiveBuff
    {
       buff->InvalidDiscarded();
 
-      auto log = Log::Create("POTS SHELF INVALID INCOMING BUFFER");
+      auto log = Log::Create(PotsLogGroup, PotsShelfIcBuffer);
 
       if(log != nullptr)
       {
-         *log << "port=" << phi->port;
-         *log << "sig=" << phi->signal << CRLF;
-         Log::Spool(log);
+         *log << Log::Tab << "port=" << phi->port;
+         *log << "sig=" << phi->signal;
+         Log::Submit(log);
       }
 
       return;

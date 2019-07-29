@@ -27,6 +27,7 @@
 #include "NbAppIds.h"
 #include "NbModule.h"
 #include "NwIncrement.h"
+#include "NwLogs.h"
 #include "NwTracer.h"
 #include "Restart.h"
 #include "Singleton.h"
@@ -104,6 +105,8 @@ fn_name NwModule_Startup = "NwModule.Startup";
 void NwModule::Startup(RestartLevel level)
 {
    Debug::ft(NwModule_Startup);
+
+   CreateNwLogs(level);
 
    if((level >= RestartCold) && !SysSocket::StartLayer())
    {

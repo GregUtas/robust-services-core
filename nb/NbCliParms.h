@@ -54,6 +54,7 @@ extern fixed_string DelayFailure;
 extern fixed_string EmptySet;
 extern fixed_string EndOfFreeQueue;
 extern fixed_string NextRestartExpl;
+extern fixed_string NoAlarmExpl;
 extern fixed_string NoBuffersExpl;
 extern fixed_string NoCfgParmExpl;
 extern fixed_string NoCommandExpl;
@@ -129,11 +130,16 @@ word ExplainTraceRc(const CliThread& cli, TraceRc rc);
 
 //------------------------------------------------------------------------------
 //
-//  Parameter for a mandatory Faction.
+//  Parameter for a Faction.
 //
 class FactionMandParm : public CliIntParm
 {
 public: FactionMandParm();
+};
+
+class FactionOptParm : public CliIntParm
+{
+public: FactionOptParm();
 };
 
 //------------------------------------------------------------------------------
@@ -147,16 +153,39 @@ public: IstreamMandParm();
 
 //------------------------------------------------------------------------------
 //
-//  Parameter for an optional Faction.
+//  Parameter for a LogBuffer.
 //
-class FactionOptParm : public CliIntParm
+class LogBufferIdParm : public CliIntParm
 {
-public: FactionOptParm();
+public: LogBufferIdParm();
 };
 
 //------------------------------------------------------------------------------
 //
-//  Parameter for ModuleId.
+//  Parameters for a LogGroup.
+//
+class LogGroupMandParm : public CliTextParm
+{
+public: LogGroupMandParm();
+};
+
+class LogGroupOptParm : public CliTextParm
+{
+public: LogGroupOptParm();
+};
+
+//------------------------------------------------------------------------------
+//
+//  Parameters for a mandatory LogId.
+//
+class LogIdMandParm : public CliIntParm
+{
+public: LogIdMandParm();
+};
+
+//------------------------------------------------------------------------------
+//
+//  Parameter for a ModuleId.
 //
 class ModuleIdOptParm : public CliIntParm
 {
@@ -188,17 +217,13 @@ public: ObjPtrMandParm();
 
 //------------------------------------------------------------------------------
 //
-//  Parameter for a mandatory filename for output.
+//  Parameters for a filename for output.
 //
 class OstreamMandParm : public CliTextParm
 {
 public: OstreamMandParm();
 };
 
-//------------------------------------------------------------------------------
-//
-//  Parameter for an optional filename for output.
-//
 class OstreamOptParm : public CliTextParm
 {
 public: OstreamOptParm();

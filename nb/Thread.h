@@ -207,7 +207,7 @@ public:
    //  Displays statistics.  May be overridden to include thread-specific
    //  statistics, but the base class version must be invoked.
    //
-   virtual void DisplayStats(std::ostream& stream) const;
+   virtual void DisplayStats(std::ostream& stream, const Flags& options) const;
 
    //  Displays a summary of all threads' statistics in STREAM.
    //

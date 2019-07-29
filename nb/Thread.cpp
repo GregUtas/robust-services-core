@@ -45,6 +45,7 @@
 #include "Log.h"
 #include "MsgBuffer.h"
 #include "MutexGuard.h"
+#include "NbLogs.h"
 #include "NbPools.h"
 #include "NbSignals.h"
 #include "NbTracer.h"
@@ -1118,15 +1119,15 @@ Thread::~Thread()
    //  This thread is still active and did not invoke Thread::Exit.  This
    //  is a serious error, so output a log now.
    //
-   auto log = Log::Create("THREAD DELETED");
+   auto log = Log::Create(ThreadLogGroup, ThreadDeleted);
 
    if(log != nullptr)
    {
-      *log << "thread=" << to_str() << CRLF;
+      *log << Log::Tab << "thread=" << to_str() << CRLF;
       SysThreadStack::Display(*log, 0);
-      *log << ThreadDataStr << CRLF;
-      Display(*log, spaces(2), NoFlags);
-      Log::Spool(log);
+      *log << Log::Tab << ThreadDataStr << CRLF;
+      Display(*log, Log::Tab + spaces(2), NoFlags);
+      Log::Submit(log);
    }
 
    ReleaseResources();
@@ -1313,20 +1314,20 @@ void Thread::DisplayContextSwitches(ostream& stream)
 
 fn_name Thread_DisplayStats = "Thread.DisplayStats";
 
-void Thread::DisplayStats(ostream& stream) const
+void Thread::DisplayStats(ostream& stream, const Flags& options) const
 {
    Debug::ft(Thread_DisplayStats);
 
    stream << spaces(2) << AbbrName()
       << SPACE << strIndex(Tid(), 0, false) << CRLF;
 
-   stats_->traps_->DisplayStat(stream);
-   stats_->yields_->DisplayStat(stream);
-   stats_->exceeds_->DisplayStat(stream);
-   stats_->maxMsgs_->DisplayStat(stream);
-   stats_->maxStack_->DisplayStat(stream);
-   stats_->maxUsecs_->DisplayStat(stream);
-   stats_->totUsecs_->DisplayStat(stream);
+   stats_->traps_->DisplayStat(stream, options);
+   stats_->yields_->DisplayStat(stream, options);
+   stats_->exceeds_->DisplayStat(stream, options);
+   stats_->maxMsgs_->DisplayStat(stream, options);
+   stats_->maxStack_->DisplayStat(stream, options);
+   stats_->maxUsecs_->DisplayStat(stream, options);
+   stats_->totUsecs_->DisplayStat(stream, options);
 }
 
 //------------------------------------------------------------------------------
@@ -1575,13 +1576,13 @@ main_t Thread::Exit(signal_t sig)
 
    if(LogSignal(sig) || Element::RunningInLab())
    {
-      auto log = Log::Create("THREAD EXITED");
+      auto log = Log::Create(ThreadLogGroup, ThreadExited);
 
       if(log != nullptr)
       {
-         *log << "thread=" << to_str() << CRLF;
-         *log << "signal=" << reg->strSignal(sig) << CRLF;
-         Log::Spool(log);
+         *log << Log::Tab << "thread=" << to_str();
+         *log << "signal=" << reg->strSignal(sig);
+         Log::Submit(log);
       }
    }
 
@@ -2249,14 +2250,14 @@ void Thread::Raise(signal_t sig)
    //
    if(install && LogSignal(sig))
    {
-      auto log = Log::Create("SIGNAL RAISED");
+      auto log = Log::Create(ThreadLogGroup, ThreadSignalRaised);
 
       if(log != nullptr)
       {
-         if(thr != nullptr) *log << "by " << thr->to_str() << CRLF;
-         *log << "for " << this->to_str() << CRLF;
-         *log << "signal=" << reg->strSignal(sig) << CRLF;
-         Log::Spool(log);
+         if(thr != nullptr) *log << Log::Tab << "by " << thr->to_str() << CRLF;
+         *log << Log::Tab << "for " << this->to_str() << CRLF;
+         *log << Log::Tab << "signal=" << reg->strSignal(sig);
+         Log::Submit(log);
       }
    }
 
@@ -2654,13 +2655,13 @@ void Thread::SignalHandler(signal_t sig)
    //  handler for the signal and reraising it (to enter the debugger, for
    //  example).
    //
-   auto log = Log::Create("SIGNAL RERAISED");
+   auto log = Log::Create(ThreadLogGroup, ThreadSignalReraised);
 
    if(log != nullptr)
    {
       auto reg = Singleton< PosixSignalRegistry >::Instance();
-      *log << "signal=" << reg->strSignal(sig) << CRLF;
-      Log::Spool(log);
+      *log << Log::Tab << "signal=" << reg->strSignal(sig);
+      Log::Submit(log);
    }
 
    Pause(2 * TIMEOUT_1_SEC);
@@ -2815,14 +2816,14 @@ main_t Thread::Start()
             exit(reason);
          }
 
-         auto log = Log::Create("NODE RESTART");
+         auto log = Log::Create(NodeLogGroup, NodeRestart);
 
          if(log != nullptr)
          {
-            *log << "in " << to_str() << CRLF;
-            nex.Display(*log, spaces(2));
-            *log << nex.Stack()->str();
-            Log::Spool(log);
+            *log << Log::Tab << "in " << to_str() << CRLF;
+            nex.Display(*log, Log::Tab + spaces(2));
+            *log << Log::Tab << nex.Stack()->str();
+            Log::Submit(log);
          }
 
          //  RootThread and InitThread handle their own flow of execution when
@@ -3135,28 +3136,28 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
 
    if(!reg->Attrs(sig).test(PosixSignal::NoError))
    {
-      auto log = Log::Create("EXCEPTION");
+      auto log = Log::Create(ThreadLogGroup, ThreadException);
 
       if(log != nullptr)
       {
          auto trapcount = ThreadAdmin::TrapCount();
-         *log << "in " << to_str();
+         *log << Log::Tab << "in " << to_str();
          *log << ": trap number " << trapcount << CRLF;
 
          if(e != nullptr)
          {
-            *log << "type=" << e->what() << CRLF;
+            *log << Log::Tab << "type=" << e->what() << CRLF;
             if(ex != nullptr) ex->Display(*log, spaces(4));
          }
          else
          {
             if(sig != SIGNIL)
             {
-               *log << "signal=" << reg->strSignal(sig) << CRLF;
+               *log << Log::Tab << "signal=" << reg->strSignal(sig) << CRLF;
             }
             else
             {
-               *log << UnknownExceptionStr << CRLF;
+               *log << Log::Tab << UnknownExceptionStr << CRLF;
                if(Element::RunningInLab()) return Rethrow;
             }
          }
@@ -3167,12 +3168,12 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
          if(priv_->recovering_)
          {
             SetSignal(SIGRETRAP);
-            *log << TrapDuringRecoveryStr << CRLF;
+            *log << Log::Tab << TrapDuringRecoveryStr << CRLF;
          }
          else if(priv_->trapLbc_.HasReachedLimit())
          {
             SetSignal(SIGTRAPS);
-            *log << TrapLimitReachedStr << CRLF;
+            *log << Log::Tab << TrapLimitReachedStr << CRLF;
          }
 
          if(stack != nullptr) *log << stack->str();
@@ -3181,11 +3182,11 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
          //
          if(reg->Attrs(priv_->signal_).test(PosixSignal::Exit))
          {
-            *log << ThreadDataStr << CRLF;
-            Display(*log, spaces(2), NoFlags);
+            *log << Log::Tab << ThreadDataStr << CRLF;
+            Display(*log, Log::Tab + spaces(2), NoFlags);
          }
 
-         Log::Spool(log);
+         Log::Submit(log);
       }
    }
 
@@ -3234,15 +3235,15 @@ void Thread::Unlock()
 
    if(priv_->warned_)
    {
-      auto log = Log::Create("THREAD YIELDED");
+      auto log = Log::Create(ThreadLogGroup, ThreadYielded);
 
       if(log != nullptr)
       {
-         *log << "thread=" << to_str();
+         *log << Log::Tab << "thread=" << to_str();
          auto ticks = Clock::TicksSince(priv_->currEnd_);
          auto msecs = Clock::TicksToMsecs(ticks);
-         *log << " extra msecs=" << msecs << CRLF;
-         Log::Spool(log);
+         *log << " extra msecs=" << msecs;
+         Log::Submit(log);
       }
 
       priv_->warned_ = false;

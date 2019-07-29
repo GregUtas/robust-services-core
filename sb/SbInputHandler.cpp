@@ -21,6 +21,7 @@
 //
 #include "SbInputHandler.h"
 #include <sstream>
+#include <string>
 #include "Debug.h"
 #include "InvokerPool.h"
 #include "InvokerPoolRegistry.h"
@@ -29,6 +30,7 @@
 #include "MsgHeader.h"
 #include "NbTypes.h"
 #include "SbIpBuffer.h"
+#include "SbLogs.h"
 #include "SbTypes.h"
 #include "Singleton.h"
 #include "SysTypes.h"
@@ -69,11 +71,11 @@ IpBuffer* SbInputHandler::AllocBuff(const byte_t* source,
    {
       Port()->InvalidDiscarded();
 
-      auto log = Log::Create("INVALID INCOMING MESSAGE");
+      auto log = Log::Create(SessionLogGroup, InvalidIncomingMessage);
       if(log == nullptr) return nullptr;
-      *log << "port=" << Port()->GetPort();
-      *log << " size=" << size << CRLF;
-      Log::Spool(log);
+      *log << Log::Tab << "port=" << Port()->GetPort();
+      *log << " size=" << size;
+      Log::Submit(log);
       return nullptr;
    }
 

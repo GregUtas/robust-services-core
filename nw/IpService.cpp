@@ -28,6 +28,7 @@
 #include "IpPortRegistry.h"
 #include "IpServiceRegistry.h"
 #include "Log.h"
+#include "NwLogs.h"
 #include "Singleton.h"
 
 using namespace NodeBase;
@@ -219,11 +220,11 @@ IpPort* IpService::Provision(ipport_t pid)
       auto svc = port->GetService();
       if(svc != this)
       {
-         auto log = Log::Create("IP PORT OCCUPIED");
+         auto log = Log::Create(NetworkLogGroup, NetworkPortOccupied);
          if(log != nullptr)
          {
-            *log << "port=" << pid << " errval=" << Name() << CRLF;
-            Log::Spool(log);
+            *log << Log::Tab << "port=" << pid << " errval=" << Name();
+            Log::Submit(log);
          }
          return nullptr;
       }

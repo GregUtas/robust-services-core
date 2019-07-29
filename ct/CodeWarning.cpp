@@ -340,6 +340,7 @@ void CodeWarning::GenerateReport(ostream* stream, const SetOfIds& set)
             if((item->line != 0) || item->info.empty())
             {
                *stream << f->GetLexer().GetNthLine(item->line);
+               if(!item->info.empty()) *stream << " // ";
             }
 
             *stream << item->info << CRLF;

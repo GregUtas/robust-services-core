@@ -94,7 +94,8 @@ void StatisticsGroup::Display(ostream& stream,
 
 fn_name StatisticsGroup_DisplayStats = "StatisticsGroup.DisplayStats";
 
-void StatisticsGroup::DisplayStats(ostream& stream, id_t id) const
+void StatisticsGroup::DisplayStats
+   (ostream& stream, id_t id, const Flags& options) const
 {
    Debug::ft(StatisticsGroup_DisplayStats);
 

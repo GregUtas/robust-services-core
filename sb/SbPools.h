@@ -203,7 +203,8 @@ public:
 
    //  Overridden to display statistics.
    //
-   void DisplayStats(std::ostream& stream) const override;
+   void DisplayStats
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to claim blocks in the TimerRegistry.
    //

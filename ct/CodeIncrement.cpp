@@ -610,7 +610,7 @@ word FileIdCommand::ProcessCommand(CliThread& cli) const
 
    auto file = Singleton< Library >::Instance()->Files().At(fid);
    if(file == nullptr) return cli.Report(-2, NoFileExpl);
-   file->Display(*cli.obuf, spaces(2), Flags(Vb_Mask));
+   file->Display(*cli.obuf, spaces(2), VerboseOpt);
    return 0;
 }
 
@@ -656,7 +656,7 @@ word FileInfoCommand::ProcessCommand(CliThread& cli) const
 
    auto file = Singleton< Library >::Instance()->FindFile(name);
    if(file == nullptr) return cli.Report(-2, NoFileExpl);
-   file->Display(*cli.obuf, spaces(2), Flags(Vb_Mask));
+   file->Display(*cli.obuf, spaces(2), VerboseOpt);
    return 0;
 }
 

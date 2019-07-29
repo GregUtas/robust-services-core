@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Statistics.h"
+#include <bitset>
 #include <iomanip>
 #include <ostream>
 #include "Algorithms.h"
@@ -27,7 +28,6 @@
 #include "Formatters.h"
 #include "Singleton.h"
 #include "StatisticsRegistry.h"
-#include "SysTypes.h"
 
 using std::ostream;
 using std::setw;
@@ -104,7 +104,7 @@ void Statistic::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-void Statistic::DisplayStat(ostream& stream) const
+void Statistic::DisplayStat(ostream& stream, const Flags& options) const
 {
    stream << spaces(MaxExplSize + 4 - expl_.size()) << expl_;
 }
@@ -161,9 +161,11 @@ Counter::~Counter()
 
 //------------------------------------------------------------------------------
 
-void Counter::DisplayStat(ostream& stream) const
+void Counter::DisplayStat(ostream& stream, const Flags& options) const
 {
-   Statistic::DisplayStat(stream);
+   if(!options.test(DispVerbose) && (Overall() == 0)) return;
+
+   Statistic::DisplayStat(stream, options);
 
    auto incr = divisor_ >> 1;
 
@@ -224,9 +226,11 @@ HighWatermark::~HighWatermark()
 
 //------------------------------------------------------------------------------
 
-void HighWatermark::DisplayStat(ostream& stream) const
+void HighWatermark::DisplayStat(ostream& stream, const Flags& options) const
 {
-   Statistic::DisplayStat(stream);
+   if(!options.test(DispVerbose) && (Overall() == Initial)) return;
+
+   Statistic::DisplayStat(stream, options);
 
    auto incr = divisor_ >> 1;
 
@@ -300,9 +304,11 @@ LowWatermark::~LowWatermark()
 
 //------------------------------------------------------------------------------
 
-void LowWatermark::DisplayStat(ostream& stream) const
+void LowWatermark::DisplayStat(ostream& stream, const Flags& options) const
 {
-   Statistic::DisplayStat(stream);
+   if(!options.test(DispVerbose) && (Overall() == Initial)) return;
+
+   Statistic::DisplayStat(stream, options);
 
    auto incr = divisor_ >> 1;
 

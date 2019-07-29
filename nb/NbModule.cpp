@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "NbModule.h"
+#include "AlarmRegistry.h"
 #include "CfgParmRegistry.h"
 #include "CinThread.h"
 #include "ClassRegistry.h"
@@ -31,10 +32,13 @@
 #include "Element.h"
 #include "FileThread.h"
 #include "InitFlags.h"
+#include "LogBufferRegistry.h"
+#include "LogGroupRegistry.h"
 #include "LogThread.h"
 #include "Memory.h"
 #include "NbAppIds.h"
 #include "NbIncrement.h"
+#include "NbLogs.h"
 #include "NbPools.h"
 #include "ObjectPoolAudit.h"
 #include "ObjectPoolRegistry.h"
@@ -115,6 +119,9 @@ void NbModule::Shutdown(RestartLevel level)
    Singleton< ThreadRegistry >::Instance()->Shutdown(level);
    Singleton< ObjectPoolRegistry >::Instance()->Shutdown(level);
    Singleton< CfgParmRegistry >::Instance()->Shutdown(level);
+   Singleton< LogGroupRegistry >::Instance()->Shutdown(level);
+   Singleton< AlarmRegistry >::Instance()->Shutdown(level);
+   Singleton< LogBufferRegistry >::Instance()->Shutdown(level);
    Singleton< StatisticsRegistry >::Instance()->Shutdown(level);
    Singleton< PosixSignalRegistry >::Instance()->Shutdown(level);
 
@@ -138,6 +145,10 @@ void NbModule::Startup(RestartLevel level)
    //
    Singleton< PosixSignalRegistry >::Instance()->Startup(level);
    Singleton< StatisticsRegistry >::Instance()->Startup(level);
+   Singleton< LogBufferRegistry >::Instance()->Startup(level);
+   Singleton< AlarmRegistry >::Instance()->Startup(level);
+   Singleton< LogGroupRegistry >::Instance()->Startup(level);
+   CreateNbLogs(level);
    Singleton< CfgParmRegistry >::Instance()->Startup(level);
    Singleton< ObjectPoolRegistry >::Instance()->Startup(level);
    Singleton< ThreadRegistry >::Instance()->Startup(level);

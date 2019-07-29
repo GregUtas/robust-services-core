@@ -22,9 +22,11 @@
 #include "PotsShelf.h"
 #include "CliText.h"
 #include <sstream>
+#include <string>
 #include "Debug.h"
 #include "Log.h"
 #include "PotsCircuit.h"
+#include "PotsLogs.h"
 #include "PotsProtocol.h"
 #include "SbAppIds.h"
 #include "Singleton.h"
@@ -120,12 +122,12 @@ void PotsShelfFactory::DiscardMsg(const Message& msg, Switch::PortId port)
 
    msg.InvalidDiscarded();
 
-   auto log = Log::Create("POTS SHELF INVALID INCOMING MESSAGE");
+   auto log = Log::Create(PotsLogGroup, PotsShelfIcMessage);
    if(log == nullptr) return;
-   *log << "signal=" << msg.GetSignal();
+   *log << Log::Tab << "signal=" << msg.GetSignal();
    *log << " port=" << port << CRLF;
-   msg.Output(*log, 0, true);
-   Log::Spool(log);
+   msg.Output(*log, Log::Indent, true);
+   Log::Submit(log);
 }
 
 //------------------------------------------------------------------------------

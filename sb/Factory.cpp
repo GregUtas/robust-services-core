@@ -29,7 +29,6 @@
 #include "Formatters.h"
 #include "Singleton.h"
 #include "Statistics.h"
-#include "SysTypes.h"
 
 using namespace NodeBase;
 using std::ostream;
@@ -263,21 +262,21 @@ void Factory::Display(ostream& stream,
 
 fn_name Factory_DisplayStats = "Factory.DisplayStats";
 
-void Factory::DisplayStats(ostream& stream) const
+void Factory::DisplayStats(ostream& stream, const Flags& options) const
 {
    Debug::ft(Factory_DisplayStats);
 
    stream << spaces(2) << name_ << SPACE << strIndex(Fid(), 0, false) << CRLF;
 
-   stats_->icMsgsIntra_->DisplayStat(stream);
-   stats_->icMsgsInter_->DisplayStat(stream);
-   stats_->icMsgSize_->DisplayStat(stream);
-   stats_->ogMsgsIntra_->DisplayStat(stream);
-   stats_->ogMsgsInter_->DisplayStat(stream);
-   stats_->ogMsgSize_->DisplayStat(stream);
-   stats_->contexts_->DisplayStat(stream);
-   stats_->msgsDeleted_->DisplayStat(stream);
-   stats_->ctxsDeleted_->DisplayStat(stream);
+   stats_->icMsgsIntra_->DisplayStat(stream, options);
+   stats_->icMsgsInter_->DisplayStat(stream, options);
+   stats_->icMsgSize_->DisplayStat(stream, options);
+   stats_->ogMsgsIntra_->DisplayStat(stream, options);
+   stats_->ogMsgsInter_->DisplayStat(stream, options);
+   stats_->ogMsgSize_->DisplayStat(stream, options);
+   stats_->contexts_->DisplayStat(stream, options);
+   stats_->msgsDeleted_->DisplayStat(stream, options);
+   stats_->ctxsDeleted_->DisplayStat(stream, options);
 }
 
 //------------------------------------------------------------------------------

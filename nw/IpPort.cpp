@@ -34,7 +34,6 @@
 #include "Singleton.h"
 #include "Statistics.h"
 #include "SysSocket.h"
-#include "SysTypes.h"
 
 using namespace NodeBase;
 using std::ostream;
@@ -226,7 +225,7 @@ void IpPort::Display(ostream& stream,
 
 fn_name IpPort_DisplayStats = "IpPort.DisplayStats";
 
-void IpPort::DisplayStats(ostream& stream) const
+void IpPort::DisplayStats(ostream& stream, const Flags& options) const
 {
    Debug::ft(IpPort_DisplayStats);
 
@@ -234,16 +233,16 @@ void IpPort::DisplayStats(ostream& stream) const
 
    stream << spaces(2) << name << SPACE << strIndex(port_, 0, false) << CRLF;
 
-   stats_->recvs_->DisplayStat(stream);
-   stats_->bytesRcvd_->DisplayStat(stream);
-   stats_->maxBytesRcvd_->DisplayStat(stream);
-   stats_->maxRecvs_->DisplayStat(stream);
-   stats_->discards_->DisplayStat(stream);
-   stats_->rejects_->DisplayStat(stream);
-   stats_->sends_->DisplayStat(stream);
-   stats_->bytesSent_->DisplayStat(stream);
-   stats_->maxBytesSent_->DisplayStat(stream);
-   stats_->overflows_->DisplayStat(stream);
+   stats_->recvs_->DisplayStat(stream, options);
+   stats_->bytesRcvd_->DisplayStat(stream, options);
+   stats_->maxBytesRcvd_->DisplayStat(stream, options);
+   stats_->maxRecvs_->DisplayStat(stream, options);
+   stats_->discards_->DisplayStat(stream, options);
+   stats_->rejects_->DisplayStat(stream, options);
+   stats_->sends_->DisplayStat(stream, options);
+   stats_->bytesSent_->DisplayStat(stream, options);
+   stats_->maxBytesSent_->DisplayStat(stream, options);
+   stats_->overflows_->DisplayStat(stream, options);
 }
 
 //------------------------------------------------------------------------------

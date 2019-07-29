@@ -43,7 +43,8 @@ class FactoryStatsGroup : public StatisticsGroup
 public:
    FactoryStatsGroup();
    ~FactoryStatsGroup();
-   void DisplayStats(ostream& stream, id_t id) const override;
+   void DisplayStats
+      (ostream& stream, id_t id, const Flags& options) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -69,11 +70,12 @@ FactoryStatsGroup::~FactoryStatsGroup()
 
 fn_name FactoryStatsGroup_DisplayStats = "FactoryStatsGroup.DisplayStats";
 
-void FactoryStatsGroup::DisplayStats(ostream& stream, id_t id) const
+void FactoryStatsGroup::DisplayStats
+   (ostream& stream, id_t id, const Flags& options) const
 {
    Debug::ft(FactoryStatsGroup_DisplayStats);
 
-   StatisticsGroup::DisplayStats(stream, id);
+   StatisticsGroup::DisplayStats(stream, id, options);
 
    auto reg = Singleton< FactoryRegistry >::Instance();
 
@@ -83,7 +85,7 @@ void FactoryStatsGroup::DisplayStats(ostream& stream, id_t id) const
 
       for(auto f = facs.First(); f != nullptr; facs.Next(f))
       {
-         f->DisplayStats(stream);
+         f->DisplayStats(stream, options);
       }
    }
    else
@@ -96,7 +98,7 @@ void FactoryStatsGroup::DisplayStats(ostream& stream, id_t id) const
          return;
       }
 
-      f->DisplayStats(stream);
+      f->DisplayStats(stream, options);
    }
 }
 

@@ -21,12 +21,14 @@
 //
 #include "UdpIoThread.h"
 #include <sstream>
+#include <string>
 #include "Clock.h"
 #include "Debug.h"
 #include "IpPort.h"
 #include "IpPortRegistry.h"
 #include "Log.h"
 #include "NbTypes.h"
+#include "NwLogs.h"
 #include "NwTrace.h"
 #include "Singleton.h"
 #include "SysIpL3Addr.h"
@@ -185,13 +187,13 @@ void UdpIoThread::Enter()
          //
          if(rcvd == -1)
          {
-            auto log = Log::Create("UDP RECVFROM ERROR");
+            auto log = Log::Create(NetworkLogGroup, NetworkSocketError);
 
             if(log != nullptr)
             {
-               *log << "port=" << port_;
-               *log << " errval=" << socket->GetError() << CRLF;
-               Log::Spool(log);
+               *log << Log::Tab << "RecvFrom: port=" << port_;
+               *log << " errval=" << socket->GetError();
+               Log::Submit(log);
             }
          }
 
@@ -215,13 +217,12 @@ void UdpIoThread::OutputLog(debug32_t errval) const
 {
    Debug::ft(UdpIoThread_OutputLog);
 
-   auto log = Log::Create("UDP I/O THREAD FAILURE");
+   auto log = Log::Create(NetworkLogGroup, NetworkIoThreadFailure);
 
    if(log != nullptr)
    {
-      *log << "port=" << port_;
-      *log << " errval=" << errval << CRLF;
-      Log::Spool(log);
+      *log << Log::Tab << "UDP: port=" << port_ << " errval=" << errval;
+      Log::Submit(log);
    }
 }
 

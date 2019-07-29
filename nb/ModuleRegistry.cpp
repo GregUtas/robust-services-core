@@ -31,6 +31,7 @@
 #include "Formatters.h"
 #include "Log.h"
 #include "Module.h"
+#include "NbLogs.h"
 #include "Restart.h"
 #include "Singleton.h"
 #include "ThisThread.h"
@@ -220,8 +221,8 @@ void ModuleRegistry::Restart()
 
          Startup(Restart::Level_);
          {
-            auto log = Log::Create("NODE RUNNING");
-            Log::Spool(log);
+            auto log = Log::Create(NodeLogGroup, NodeRunning);
+            if(log != nullptr) Log::Submit(log);
          }
          Restart::Level_ = RestartNil;
          Restart::Status_ = Running;
@@ -283,7 +284,7 @@ void ModuleRegistry::Shutdown(RestartLevel level)
    //
    *Stream() << NotifyingThreadsStr << setw(52 - strlen(NotifyingThreadsStr));
    *Stream() << Clock::TicksToTime(zeroTime) << CRLF;
-   Log::Spool(stream_);
+   Log::Submit(stream_);
 
    auto reg = Singleton< ThreadRegistry >::Instance();
    auto before = reg->Threads().Size();
@@ -297,7 +298,7 @@ void ModuleRegistry::Shutdown(RestartLevel level)
    *Stream() << ExitingThreadsStr << setw(2) << planned;
    *Stream() << setw(36 - (strlen(ExitingThreadsStr) + 2));
    *Stream() << Clock::TicksToMsecs(Clock::TicksSince(zeroTime)) << CRLF;
-   Log::Spool(stream_);
+   Log::Submit(stream_);
 
    ThisThread::MakePreemptable();
       for(size_t tries = 20; tries > 0; --tries)  //r use timed interrupt?
@@ -312,7 +313,7 @@ void ModuleRegistry::Shutdown(RestartLevel level)
    *Stream() << CRLF << ExitedThreadsStr << setw(2) << actual;
    *Stream() << setw(36 - (strlen(ExitedThreadsStr) + 2));
    *Stream() << Clock::TicksToMsecs(Clock::TicksSince(zeroTime)) << CRLF;
-   Log::Spool(stream_);
+   Log::Submit(stream_);
 
    //  Modules must be shut down in reverse order of their initialization.
    //
@@ -322,20 +323,20 @@ void ModuleRegistry::Shutdown(RestartLevel level)
       auto name = strClass(m) + "...";
       *Stream() << name << setw(52 - name.size());
       *Stream() << Clock::TicksToTime(time) << CRLF;
-      Log::Spool(stream_);
+      Log::Submit(stream_);
 
       m->Shutdown(level);
 
       *Stream() << ShutdownStr << setw(36 - strlen(ShutdownStr));
       *Stream() << Clock::TicksToMsecs(Clock::TicksSince(time)) << CRLF;
-      Log::Spool(stream_);
+      Log::Submit(stream_);
    }
 
    *Stream() << setw(36) << string(5, '-') << CRLF;
    auto width = strlen(ShutdownTotalStr);
    auto msecs = Clock::TicksToMsecs(Clock::TicksSince(zeroTime));
    *Stream() << ShutdownTotalStr << setw(36 - width) << msecs << CRLF;
-   Log::Spool(stream_);
+   Log::Submit(stream_);
 }
 
 //------------------------------------------------------------------------------
@@ -372,20 +373,20 @@ void ModuleRegistry::Startup(RestartLevel level)
       auto name = strClass(m) + "...";
       *Stream() << name << setw(52 - name.size());
       *Stream() << Clock::TicksToTime(time) << CRLF;
-      Log::Spool(stream_);
+      Log::Submit(stream_);
 
       m->Startup(level);
 
       *Stream() << InitializedStr << setw(36 - strlen(InitializedStr));
       *Stream() << Clock::TicksToMsecs(Clock::TicksSince(time)) << CRLF;
-      Log::Spool(stream_);
+      Log::Submit(stream_);
    }
 
    *Stream() << setw(36) << string(5, '-') << CRLF;
    auto width = strlen(StartupTotalStr);
    auto msecs = Clock::TicksToMsecs(Clock::TicksSince(zeroTime));
    *Stream() << StartupTotalStr << setw(36 - width) << msecs << CRLF;
-   Log::Spool(stream_);
+   Log::Submit(stream_);
 }
 
 //------------------------------------------------------------------------------

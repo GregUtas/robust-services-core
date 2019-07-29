@@ -30,6 +30,7 @@
 #include "RegCell.h"
 #include "SbTypes.h"
 #include "Signal.h"
+#include "SysTypes.h"
 
 namespace NodeBase
 {
@@ -167,7 +168,8 @@ public:
    //  Displays statistics.  May be overridden to include factory-specific
    //  statistics, but the base class version must be invoked.
    //
-   virtual void DisplayStats(std::ostream& stream) const;
+   virtual void DisplayStats
+      (std::ostream& stream, const NodeBase::Flags& options) const;
 
    //  Returns the offset to fid_.
    //

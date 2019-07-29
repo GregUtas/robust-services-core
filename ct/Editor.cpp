@@ -3574,7 +3574,10 @@ word Editor::TagAsStaticFunction(const CodeWarning& log, string& expl)
       Changed();
    }
 
-   //  A static function cannot be const, so remove that tag if it exists.
+   //  A static function cannot be const, so remove that tag if it exists.  If
+   //  "const" is on the same line as RPAR, delete any space *before* "const";
+   //  if it's on the next line, delete any space *after* "const" to preserve
+   //  indentation.
    //
    if(func->IsConst())
    {
@@ -3583,8 +3586,16 @@ word Editor::TagAsStaticFunction(const CodeWarning& log, string& expl)
       {
          auto& code = tag.iter->code;
          code.erase(tag.pos, strlen(CONST_STR));
-         if((tag.pos < code.size()) && IsBlank(code[tag.pos]))
-            code.erase(tag.pos, 1);
+
+         if(rpar.iter == tag.iter)
+         {
+            if(IsBlank(code[tag.pos - 1])) code.erase(tag.pos - 1, 1);
+         }
+         else
+         {
+            if((tag.pos < code.size()) && IsBlank(code[tag.pos]))
+               code.erase(tag.pos, 1);
+         }
       }
    }
 

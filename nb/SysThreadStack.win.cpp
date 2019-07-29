@@ -31,6 +31,7 @@
 #include "Formatters.h"
 #include "Log.h"
 #include "Memory.h"
+#include "NbLogs.h"
 
 using std::ostream;
 using std::string;
@@ -198,13 +199,14 @@ void SysThreadStack::Display(ostream& stream, fn_depth omit)
    //  XLO and XHI limit the traceback's display to 48 functions, namely
    //  the 28 uppermost and the 20 lowermost functions.
    //
+   string prefix = Log::Tab + spaces(2);
    string name;
    DWORD line;
    DWORD disp;
    auto xlo = omit + 1 + 20;
    auto xhi = depth - 1 - 28;
 
-   stream << "Function Traceback:" << CRLF;
+   stream << Log::Tab << "Function Traceback:" << CRLF;
 
    for(auto f = omit + 1; f < depth; ++f)
    {
@@ -212,13 +214,13 @@ void SysThreadStack::Display(ostream& stream, fn_depth omit)
       {
          if(f == xlo)
          {
-            stream << "  ..." << (xhi - xlo + 1)
+            stream << prefix << "..." << (xhi - xlo + 1)
                << " functions omitted." << CRLF;
          }
       }
       else
       {
-         stream << "  ";
+         stream << prefix;
 
          //  Get the name of the function associated with this stack frame.
          //  Modify the name by replacing each C++ scope operator with a dot.
@@ -297,12 +299,12 @@ void SysThreadStack::Startup(RestartLevel level)
    auto errval = StackInfo::Startup();
    if(errval == 0) return;
 
-   auto log = Log::Create("SYMBOL INFORMATION NOT LOADED");
+   auto log = Log::Create(NodeLogGroup, NodeNoSymbolInfo);
 
    if(log != nullptr)
    {
-      *log << "errval=" << errval << CRLF;
-      Log::Spool(log);
+      *log << Log::Tab << "errval=" << errval;
+      Log::Submit(log);
    }
 }
 

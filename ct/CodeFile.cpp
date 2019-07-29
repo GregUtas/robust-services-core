@@ -1160,7 +1160,7 @@ LineType CodeFile::ClassifyLine(string s, std::set< Warning >& warnings)
 
    if(pos % INDENT_SIZE != 0)
    {
-      if((s.front() != '/') && (s.front() != QUOTE)) warnings.insert(Indentation);
+      if((s[0] != '/') && (s[0] != QUOTE)) warnings.insert(Indentation);
    }
 
    //  Now that the line has been reformatted, recalculate its length.
@@ -1169,9 +1169,9 @@ LineType CodeFile::ClassifyLine(string s, std::set< Warning >& warnings)
 
    //  Look for lines that contain nothing but a brace (or brace and semicolon).
    //
-   if((s.front() == '{') && (length == 1)) return OpenBrace;
+   if((s[0] == '{') && (length == 1)) return OpenBrace;
 
-   if(s.front() == '}')
+   if(s[0] == '}')
    {
       if(length == 1) return CloseBrace;
       if((s[1] == ';') && (length == 2)) return CloseBraceSemicolon;
@@ -1203,7 +1203,7 @@ LineType CodeFile::ClassifyLine(string s, std::set< Warning >& warnings)
 
    //  Look for preprocessor directives (e.g. #include, #ifndef).
    //
-   if(s.front() == '#')
+   if(s[0] == '#')
    {
       pos = s.find(HASH_INCLUDE_STR);
       if(pos == 0) return IncludeDirective;

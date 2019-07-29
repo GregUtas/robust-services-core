@@ -30,6 +30,7 @@
 #include <string>
 #include "NbTypes.h"
 #include "RegCell.h"
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -60,7 +61,7 @@ public:
 
    //  Display the statistic in STREAM.
    //
-   virtual void DisplayStat(std::ostream& stream) const;
+   virtual void DisplayStat(std::ostream& stream, const Flags& options) const;
 
    //  Returns the offset to mid_.
    //
@@ -144,7 +145,7 @@ public:
 
    //  Overridden to display the statistic.
    //
-   void DisplayStat(std::ostream& stream) const override;
+   void DisplayStat(std::ostream& stream, const Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -200,7 +201,7 @@ public:
 
    //  Overridden to display the statistic.
    //
-   void DisplayStat(std::ostream& stream) const override;
+   void DisplayStat(std::ostream& stream, const Flags& options) const override;
 private:
    //  Overridden to start a new measurement interval.
    //
@@ -236,7 +237,7 @@ public:
 
    //  Overridden to display the statistic.
    //
-   void DisplayStat(std::ostream& stream) const override;
+   void DisplayStat(std::ostream& stream, const Flags& options) const override;
 private:
    //  Overridden to start a new measurement interval.
    //

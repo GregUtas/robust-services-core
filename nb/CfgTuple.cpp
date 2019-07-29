@@ -25,6 +25,7 @@
 #include "CfgParmRegistry.h"
 #include "Debug.h"
 #include "Log.h"
+#include "NbLogs.h"
 #include "Singleton.h"
 #include "SysTypes.h"
 
@@ -49,12 +50,12 @@ CfgTuple::CfgTuple(const string& key, const string& input) :
 
    if(key_.find_first_not_of(ValidNameChars()) != string::npos)
    {
-      auto log = Log::Create("CFGPARM INVALID KEY");
+      auto log = Log::Create(ConfigLogGroup, ConfigKeyInvalid);
 
       if(log != nullptr)
       {
-         *log << "errval=" << key_ << CRLF;
-         Log::Spool(log);
+         *log << Log::Tab << "errval=" << key_;
+         Log::Submit(log);
       }
    }
 }

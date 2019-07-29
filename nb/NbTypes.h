@@ -44,7 +44,7 @@ enum DisplayOptions
    DispOption_N  // number of reasons; can be used to extend this enum
 };
 
-extern const Flags Vb_Mask;  // used in Flags(Vb_Mask) to set DispVerbose
+extern const Flags VerboseOpt;  // flag with DispVerbose set
 
 //  Reasons for thread blocking.
 //
@@ -95,24 +95,34 @@ char FactionChar(Faction faction);
 //
 enum LogType
 {
-   TroubleLog = 100,        // 100-199: intervention required
-   ThresholdLog = 200,      // 200-299: important level exceeded
-   StateChangeLog = 300,    // 300-399: state change or progress update
-   PeriodicLog = 400,       // 400-499: automatic report
-   InformationLog = 500,    // 500-699: no intervention required
-   MiscellaneousLog = 700,  // 700-899: other types of logs
-   ExpertLog = 900          // 900-999: debugging logs
+   TroubleLog = 100,    // 100-199: fault; intervention may be possible
+   ThresholdLog = 200,  // 200-299: level reached or exceeded
+   StateLog = 300,      // 300-399: state change or progress update
+   PeriodicLog = 400,   // 400-499: automatic report
+   InfoLog = 500,       // 500-699: no intervention required
+   MiscLog = 700,       // 700-899: other types of logs
+   DebugLog = 900       // 900-999: to help debug software
 };
 
 //  Alarm levels.
 //
-enum AlarmLevel
+enum AlarmStatus
 {
-   NoAlarm,       // alarm off
-   MinorAlarm,    // narrow degradation/outage
-   MajorAlarm,    // broader degradation/outage
-   CriticalAlarm  // widespread degradation/outage
+   NoAlarm,        // alarm off
+   MinorAlarm,     // narrow degradation/outage
+   MajorAlarm,     // broader degradation/outage
+   CriticalAlarm,  // widespread degradation/outage
+   AlarmStatus_N   // number of alarm statuses
 };
+
+//  Inserts a string for STATUS into STREAM.  The string is 4 characters wide,
+//  contains only asterisks and spaces, and ends with a space.
+//
+std::ostream& operator<<(std::ostream& stream, AlarmStatus status);
+
+//  Returns a 4-character string that corresponds to STATUS.
+//
+fixed_string AlarmStatusSymbol(AlarmStatus status);
 
 //  The direction of a message.
 //

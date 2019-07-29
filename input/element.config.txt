@@ -3,6 +3,8 @@
 / HelpPath, InputPath, and OutputPath are obsolete.  Their
 / directory names are now fixed, and the path to them is
 / relative to the directory out of which the .exe was run.
+/ However, SourcePath still exists so that non-RSC software
+/ can be analyzed.
 /
 / BreakEnabled             F
 CheckStack               T
@@ -16,9 +18,10 @@ ElementName              Reigi
 / NodeAddr                 127.0.0.1
 NoIngressMessageCount    1000
 / NoIngressQueueLength     1200
+/ NoSpoolingMessageCount   400
 NullifyObjectData        T
 NumOfBtIpBuffers         10
-NumOfContexts            18
+NumOfContexts            16
 NumOfDipIpBuffers        2
 NumOfEvents              2
 / NumOfMediaEndpts         1
@@ -45,7 +48,6 @@ ReinitOnSchedTimeout     F
 SourcePath               C:/Users/gregu/Documents/rsc/rsc
 StackCheckInterval       1
 / StackUsageLimit          6000
-/ StatsFileName            stats
 / TrapInterval             60
 / TrapLimit                4
 TrapOnRtcTimeout         F

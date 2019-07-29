@@ -28,7 +28,42 @@ using std::ostream;
 
 namespace NodeBase
 {
-const Flags Vb_Mask = Flags(1 << DispVerbose);
+const Flags VerboseOpt = Flags(1 << DispVerbose);
+
+//------------------------------------------------------------------------------
+
+fixed_string AlarmSymbols[AlarmStatus_N + 1] =
+{
+   "    ",  // NoAlarm
+   "  * ",  // MinorAlarm
+   " ** ",  // MajorAlarm
+   "*** ",  // CriticalAlarm
+   "  ? "   // AlarmStatus_N
+};
+
+fixed_string AlarmStatusSymbol(AlarmStatus status)
+{
+   if((status >= 0) && (status < AlarmStatus_N)) return AlarmSymbols[status];
+   return AlarmSymbols[AlarmStatus_N];
+}
+
+fixed_string AlarmStatusStrings[AlarmStatus_N + 1] =
+{
+   "NoAlarm",
+   "Minor",
+   "Major",
+   "Critical",
+   ERROR_STR
+};
+
+ostream& operator<<(ostream& stream, AlarmStatus status)
+{
+   if((status >= 0) && (status < AlarmStatus_N))
+      stream << AlarmStatusStrings[status];
+   else
+      stream << AlarmStatusStrings[AlarmStatus_N];
+   return stream;
+}
 
 //------------------------------------------------------------------------------
 

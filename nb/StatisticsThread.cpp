@@ -23,8 +23,8 @@
 #include <sstream>
 #include <string>
 #include "Debug.h"
-#include "FileThread.h"
 #include "Log.h"
+#include "NbLogs.h"
 #include "Singleton.h"
 #include "StatisticsRegistry.h"
 #include "SysTime.h"
@@ -169,26 +169,21 @@ void StatisticsThread::Enter()
       {
          //  Generate a statistics report.
          //
-         auto name = StatisticsRegistry::StatsFileName() + ".txt";
-         auto stream = FileThread::CreateStream();
+         auto log = Log::Create(StatsLogGroup, StatsReport);
 
-         if(stream != nullptr)
+         if(log != nullptr)
          {
-            reg->DisplayStats(*stream);
-            FileThread::Spool(name, stream);
+            *log << Log::Tab;
+            reg->DisplayStats(*log, VerboseOpt);
+            Log::Submit(log);
             delayed_ = false;
          }
          else
          {
             //  Setting this flag will cause repeated attempts to
-            //  generate the failed statistics report.  Once the
-            //  next interval is reached, however, those statistics
-            //  will be rolled over again and lost, apart from their
-            //  amalgamation into overall totals.
+            //  generate the failed statistics report.
             //
             delayed_ = true;
-            auto log = Log::Create("STATISTICS REPORT DELAYED");
-            if(log != nullptr) Log::Spool(log);
          }
 
          if(countdown_ == 0)

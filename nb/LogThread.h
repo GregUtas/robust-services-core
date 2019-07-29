@@ -23,9 +23,15 @@
 #define LOGTHREAD_H_INCLUDED
 
 #include "Thread.h"
+#include <cstddef>
 #include "NbTypes.h"
 #include "SysMutex.h"
 #include "SysTypes.h"
+
+namespace NodeBase
+{
+   class LogBuffer;
+}
 
 //------------------------------------------------------------------------------
 
@@ -37,6 +43,7 @@ class LogThread : public Thread
 {
    friend class Singleton< LogThread >;
    friend class Log;
+   friend class LogsCommand;
 public:
    //  Overridden to display member variables.
    //
@@ -55,11 +62,21 @@ private:
    //
    ~LogThread();
 
-   //  Adds a CRLF to LOG unless it already ends in one.  Writes LOG to
-   //  the log file and, if appropriate, the console.  LogThread takes
-   //  ownership of LOG, which is set to nullptr before returning.
+   //> When bundling logs into a stream, the threshold that prevents
+   //  another log from being added to the stream.
    //
-   static void Spool(ostringstreamPtr& log);
+   static const size_t BundledLogSizeThreshold = 2048;
+
+   //  Retrieves logs from BUFFER and bundles them into an ostringstream.
+   //  Returns nullptr if BUFFER was empty.
+   //
+   static ostringstreamPtr GetLogsFromBuffer(LogBuffer* buffer);
+
+   //  Invoked to immediately output LOG during a restart.  Writes LOG
+   //  to the log file and, if appropriate, the console.  LOG is freed
+   //  and set to nullptr before returning.
+   //
+   void Spool(ostringstreamPtr& log);
 
    //  Overridden to return a name for the thread.
    //
@@ -75,7 +92,16 @@ private:
 
    //  Critical section lock for the log file.
    //
-   static SysMutex LogFileLock_;
+   SysMutex lock_;
+
+   //  The configuration parameter for the number of MsgBuffers reserved
+   //  for work other than spooling logs.
+   //
+   CfgIntParmPtr noSpoolingMessageCount_;
+
+   //  The number of MsgBuffers reserved for work other than spooling logs.
+   //
+   static word NoSpoolingMessageCount_;
 };
 }
 #endif

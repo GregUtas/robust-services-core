@@ -41,7 +41,8 @@ class ThreadStatsGroup : public StatisticsGroup
 public:
    ThreadStatsGroup();
    ~ThreadStatsGroup();
-   void DisplayStats(ostream& stream, id_t id) const override;
+   void DisplayStats
+      (ostream& stream, id_t id, const Flags& options) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -66,11 +67,12 @@ ThreadStatsGroup::~ThreadStatsGroup()
 
 fn_name ThreadStatsGroup_DisplayStats = "ThreadStatsGroup.DisplayStats";
 
-void ThreadStatsGroup::DisplayStats(ostream& stream, id_t id) const
+void ThreadStatsGroup::DisplayStats
+   (ostream& stream, id_t id, const Flags& options) const
 {
    Debug::ft(ThreadStatsGroup_DisplayStats);
 
-   StatisticsGroup::DisplayStats(stream, id);
+   StatisticsGroup::DisplayStats(stream, id, options);
 
    auto reg = Singleton< ThreadRegistry >::Instance();
 
@@ -80,7 +82,7 @@ void ThreadStatsGroup::DisplayStats(ostream& stream, id_t id) const
 
       for(auto t = threads.First(); t != nullptr; threads.Next(t))
       {
-         t->DisplayStats(stream);
+         t->DisplayStats(stream, options);
       }
    }
    else
@@ -93,7 +95,7 @@ void ThreadStatsGroup::DisplayStats(ostream& stream, id_t id) const
          return;
       }
 
-      t->DisplayStats(stream);
+      t->DisplayStats(stream, options);
    }
 }
 

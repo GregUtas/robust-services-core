@@ -21,12 +21,15 @@
 //
 #ifdef OS_WIN
 #include "SysSocket.h"
+#include <iosfwd>
 #include <sstream>
 #include <winsock2.h>  // must precede windows.h
 #include <windows.h>
+#include <winerror.h>
 #include "Debug.h"
 #include "IpService.h"
 #include "Log.h"
+#include "NwLogs.h"
 
 using namespace NodeBase;
 
@@ -182,6 +185,16 @@ word SysSocket::SetError()
    Debug::ft(SysSocket_SetError);
 
    error_ = WSAGetLastError();
+
+   switch(error_)
+   {
+   case WSAENETDOWN:
+   case WSASYSNOTREADY:
+   case WSANOTINITIALISED:
+      SetStatus(false, std::to_string(error_));
+      break;
+   }
+
    return -1;
 }
 
@@ -259,14 +272,7 @@ bool SysSocket::StartLayer()
 
    if(err != 0)
    {
-      auto log = Log::Create("SOCKETS STARTUP FAILURE");
-
-      if(log != nullptr)
-      {
-         *log << "errval=" << err << CRLF;
-         Log::Spool(log);
-      }
-
+      SetStatus(false, std::to_string(err));
       return false;
    }
 
@@ -275,18 +281,18 @@ bool SysSocket::StartLayer()
 
    if((rls != 2) || (dot != 2))
    {
-      auto log = Log::Create("SOCKETS STARTUP FAILURE");
-
-      if(log != nullptr)
-      {
-         *log << "errval=" << rls << '.' << dot << CRLF;
-         Log::Spool(log);
-      }
-
+      std::ostringstream stream;
+      stream << rls << '.' << dot;
+      SetStatus(false, stream.str());
       WSACleanup();
       return false;
    }
 
+   //  To indicate that the network is available, generate a log without
+   //  trying to modify the network alarm, which is currently off.
+   //
+   auto log = Log::Create(NetworkLogGroup, NetworkAvailable);
+   if(log != nullptr) Log::Submit(log);
    return true;
 }
 
@@ -300,12 +306,12 @@ void SysSocket::StopLayer()
 
    if(WSACleanup() != 0)
    {
-      auto log = Log::Create("SOCKETS SHUTDOWN FAILURE");
+      auto log = Log::Create(NetworkLogGroup, NetworkShutdownFailure);
 
       if(log != nullptr)
       {
-         *log << "errval=" << WSAGetLastError() << CRLF;
-         Log::Spool(log);
+         *log << Log::Tab << "errval=" << WSAGetLastError();
+         Log::Submit(log);
       }
    }
 }

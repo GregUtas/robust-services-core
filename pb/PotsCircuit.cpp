@@ -26,6 +26,7 @@
 #include "Log.h"
 #include "MsgHeader.h"
 #include "NbAppIds.h"
+#include "PotsLogs.h"
 #include "PotsProfile.h"
 #include "Switch.h"
 
@@ -277,10 +278,10 @@ void PotsCircuit::ReceiveMsg(const Pots_NU_Message& msg)
       return;
 
    default:
-      auto log = Log::Create("POTS SHELF INVALID INCOMING SIGNAL");
+      auto log = Log::Create(PotsLogGroup, PotsShelfIcSignal);
       if(log == nullptr) return;
-      *log << "sig=" << phi->signal << SPACE << strState() << CRLF;
-      Log::Spool(log);
+      *log << Log::Tab << "sig=" << phi->signal << SPACE << strState();
+      Log::Submit(log);
       return;
    }
 }
@@ -314,10 +315,10 @@ void PotsCircuit::ResetCircuit()
       flash_ = false;
       cause_ = Cause::NilInd;
 
-      auto log = Log::Create("POTS SHELF CIRCUIT RESET");
+      auto log = Log::Create(PotsLogGroup, PotsShelfCircuitReset);
       if(log == nullptr) return;
-      *log << info << CRLF;
-      Log::Spool(log);
+      *log << Log::Tab << info;
+      Log::Submit(log);
    }
 }
 
@@ -403,10 +404,10 @@ bool PotsCircuit::SendMsg(Pots_UN_Message& msg)
    //
    delete &msg;
 
-   auto log = Log::Create("POTS SHELF INVALID OUTGOING SIGNAL");
+   auto log = Log::Create(PotsLogGroup, PotsShelfOgSignal);
    if(log == nullptr) return false;
-   *log << "sig=" << sid << SPACE << strState() << CRLF;
-   Log::Spool(log);
+   *log << Log::Tab << "sig=" << sid << SPACE << strState();
+   Log::Submit(log);
    return false;
 }
 

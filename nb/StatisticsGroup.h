@@ -67,7 +67,8 @@ public:
    //  outputs the group's explanation and column headings, and must be invoked
    //  by subclasses.
    //
-   virtual void DisplayStats(std::ostream& stream, id_t id) const;
+   virtual void DisplayStats
+      (std::ostream& stream, id_t id, const Flags& options) const;
 
    //  Overridden to display member variables.
    //

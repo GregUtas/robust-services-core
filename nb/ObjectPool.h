@@ -34,6 +34,7 @@
 
 namespace NodeBase
 {
+   class Alarm;
    struct ObjectBlock;
    class ObjectPoolStats;
    class Pooled;
@@ -165,7 +166,7 @@ public:
    //  Displays statistics.  May be overridden to include pool-specific
    //  statistics, but the base class version must be invoked.
    //
-   virtual void DisplayStats(std::ostream& stream) const;
+   virtual void DisplayStats(std::ostream& stream, const Flags& options) const;
 
    //  Displays in-use blocks.  Returns false if no block were in use.
    //
@@ -231,6 +232,14 @@ private:
    //  identifier BID.  Returns false if I or J is invalid.
    //
    bool IndicesToBid(size_t i, size_t j, PooledObjectId& bid) const;
+
+   //  Ensures that the low availability alarm exists.
+   //
+   void EnsureAlarm();
+
+   //  Updates the status of the low availability alarm.
+   //
+   void UpdateAlarm() const;
 
    //  Marks all blocks as orphaned and audits the free queue for sanity,
    //  unmarking its blocks so that they will not be recovered.
@@ -305,6 +314,22 @@ private:
    //  The number of blocks in freeq_.
    //
    size_t availCount_;
+
+   //  The total number of blocks currently allocated.
+   //
+   size_t totalCount_;
+
+   //  The name for the low availability alarm.
+   //
+   std::string alarmName_;  //r
+
+   //  The explanation for the low availability alarm.
+   //
+   std::string alarmExpl_;  //r
+
+   //  The alarm raised when the number of available blocks is low.
+   //
+   Alarm* availAlarm_;
 
    //  Used to detect a corrupt queue header when auditing freeq_.
    //

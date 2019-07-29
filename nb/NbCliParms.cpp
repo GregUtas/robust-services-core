@@ -24,6 +24,8 @@
 #include "CliThread.h"
 #include "Clock.h"
 #include "Debug.h"
+#include "Log.h"
+#include "LogBufferRegistry.h"
 #include "Module.h"
 #include "NbTypes.h"
 #include "ObjectPool.h"
@@ -45,6 +47,7 @@ fixed_string DelayFailure         = "Delay failed: rc=";
 fixed_string EmptySet             = "No elements in set.";
 fixed_string EndOfFreeQueue       = "Failed: reached end of pool's free queue.";
 fixed_string NextRestartExpl      = "This change will take effect after the next restart.";
+fixed_string NoAlarmExpl          = "There is no alarm with that identifier.";
 fixed_string NoBuffersExpl        = "There were no buffers to display.";
 fixed_string NoCfgParmExpl        = "No such configuration parameter.";
 fixed_string NoCommandExpl        = "No such command: ";
@@ -196,6 +199,30 @@ CliParm::Rc GetCBV(const CliCommand& comm, CliThread& cli, bool& c, bool& v)
 
 //------------------------------------------------------------------------------
 
+fixed_string LogBufferIdExpl = "log buffer index";
+
+LogBufferIdParm::LogBufferIdParm() :
+   CliIntParm(LogBufferIdExpl, 0, LogBufferRegistry::MaxBuffers - 1) { }
+
+//------------------------------------------------------------------------------
+
+fixed_string LogGroupMandExpl = "log group name";
+
+LogGroupMandParm::LogGroupMandParm() : CliTextParm(LogGroupMandExpl) { }
+
+fixed_string LogGroupOptExpl = "log group name (default=all)";
+
+LogGroupOptParm::LogGroupOptParm() : CliTextParm(LogGroupOptExpl, true) { }
+
+//------------------------------------------------------------------------------
+
+fixed_string LogIdMandExpl = "log number";
+
+LogIdMandParm::LogIdMandParm() :
+   CliIntParm(LogIdMandExpl, TroubleLog, Log::MaxId) { }
+
+//------------------------------------------------------------------------------
+
 fixed_string ModuleIdOptExpl = "ModuleId (default=all)";
 
 ModuleIdOptParm::ModuleIdOptParm() :
@@ -224,8 +251,6 @@ ObjPtrMandParm::ObjPtrMandParm() : CliPtrParm(ObjPtrMandText) { }
 fixed_string OstreamMandExpl = "filename for output";
 
 OstreamMandParm::OstreamMandParm() : CliTextParm(OstreamMandExpl) { }
-
-//------------------------------------------------------------------------------
 
 fixed_string OstreamOptExpl = "filename for output (default=console)";
 

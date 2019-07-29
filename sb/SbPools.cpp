@@ -384,13 +384,13 @@ void TimerPool::ClaimBlocks()
 
 fn_name TimerPool_DisplayStats = "TimerPool.DisplayStats";
 
-void TimerPool::DisplayStats(ostream& stream) const
+void TimerPool::DisplayStats(ostream& stream, const Flags& options) const
 {
    Debug::ft(TimerPool_DisplayStats);
 
-   ObjectPool::DisplayStats(stream);
+   ObjectPool::DisplayStats(stream, options);
 
-   timeouts_->DisplayStat(stream);
+   timeouts_->DisplayStat(stream, options);
 }
 
 //------------------------------------------------------------------------------

@@ -21,12 +21,9 @@
 //
 #include "StatisticsRegistry.h"
 #include <ostream>
-#include "CfgParmRegistry.h"
-#include "CfgStrParm.h"
+#include <string>
 #include "Debug.h"
-#include "Element.h"
 #include "Formatters.h"
-#include "Singleton.h"
 #include "Statistics.h"
 #include "StatisticsGroup.h"
 
@@ -39,7 +36,6 @@ namespace NodeBase
 {
 const size_t StatisticsRegistry::MaxStats = 1000;
 const size_t StatisticsRegistry::MaxGroups = 100;
-string StatisticsRegistry::StatsFileName_ = "stats";
 ticks_t StatisticsRegistry::StartTicks_ = 0;
 
 //------------------------------------------------------------------------------
@@ -54,18 +50,6 @@ StatisticsRegistry::StatisticsRegistry()
    groups_.Init(MaxGroups + 1, StatisticsGroup::CellDiff(), MemDyn);
 
    StartTicks_ = Clock::TicksZero();
-
-   auto reg = Singleton< CfgParmRegistry >::Instance();
-
-   statsFileName_.reset
-      (static_cast< CfgFileTimeParm* >(reg->FindParm("StatsFileName")));
-
-   if(statsFileName_ == nullptr)
-   {
-      statsFileName_.reset(new CfgFileTimeParm("StatsFileName",
-         "stats", &StatsFileName_, "name for statistics files"));
-      reg->BindParm(*statsFileName_);
-   }
 }
 
 //------------------------------------------------------------------------------
@@ -106,11 +90,6 @@ void StatisticsRegistry::Display(ostream& stream,
 {
    Dynamic::Display(stream, prefix, options);
 
-   stream << prefix
-      << "StatsFileName : " << StatsFileName_ << CRLF;
-   stream << prefix
-      << "statsFileName : " << strObj(statsFileName_.get()) << CRLF;
-
    auto lead = prefix + spaces(2);
    stream << prefix << "groups [id_t]" << CRLF;
 
@@ -124,21 +103,21 @@ void StatisticsRegistry::Display(ostream& stream,
 
 fn_name StatisticsRegistry_DisplayStats = "StatisticsRegistry.DisplayStats";
 
-void StatisticsRegistry::DisplayStats(ostream& stream) const
+void StatisticsRegistry::DisplayStats
+   (ostream& stream, const Flags& options) const
 {
    Debug::ft(StatisticsRegistry_DisplayStats);
 
-   stream << "STATISTICS REPORT: " << Element::strTimePlace() << CRLF;
-   stream << "for interval beginning at ";
+   stream << "For reporting period beginning at ";
    stream << Clock::TicksToTime(StartTicks_) << CRLF;
 
    for(auto g = groups_.First(); g != nullptr; groups_.Next(g))
    {
       stream << string(StatisticsGroup::ReportWidth, '-') << CRLF;
-      g->DisplayStats(stream, 0);
+      g->DisplayStats(stream, 0, options);
    }
 
-   stream << string(StatisticsGroup::ReportWidth, '=') << CRLF;
+   stream << string(StatisticsGroup::ReportWidth, '-') << CRLF;
 }
 
 //------------------------------------------------------------------------------

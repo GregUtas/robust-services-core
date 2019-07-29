@@ -29,6 +29,7 @@
 #include "InputHandler.h"
 #include "NwTypes.h"
 #include "Q1Link.h"
+#include "SysTypes.h"
 
 namespace NetworkBase
 {
@@ -120,7 +121,8 @@ public:
    //  Displays statistics.  May be overridden to include pool-specific
    //  statistics, but the base class version must be invoked.
    //
-   virtual void DisplayStats(std::ostream& stream) const;
+   virtual void DisplayStats
+      (std::ostream& stream, const NodeBase::Flags& options) const;
 
    //  Returns the offset to link_.
    //

@@ -80,24 +80,25 @@ PotsStatistics::~PotsStatistics()
 
 fn_name PotsStatistics_DisplayStats = "PotsStatistics.DisplayStats";
 
-void PotsStatistics::DisplayStats(ostream& stream, id_t id) const
+void PotsStatistics::DisplayStats
+   (ostream& stream, id_t id, const Flags& options) const
 {
    Debug::ft(PotsStatistics_DisplayStats);
 
-   StatisticsGroup::DisplayStats(stream, id);
+   StatisticsGroup::DisplayStats(stream, id, options);
 
    stream << spaces(2) << "Basic Calls" << CRLF;
 
    for(auto i = 0; i <= MaxId; ++i)
    {
-      basicCalls_[i]->DisplayStat(stream);
+      basicCalls_[i]->DisplayStat(stream, options);
    }
 
    stream << spaces(2) << "Treatments (by Cause)" << CRLF;
 
    for(auto i = 0; i <= Cause::MaxInd; ++i)
    {
-      treatments_[i]->DisplayStat(stream);
+      treatments_[i]->DisplayStat(stream, options);
    }
 }
 

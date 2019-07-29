@@ -75,7 +75,8 @@ class ThreadsStatsGroup : public StatisticsGroup
 public:
    ThreadsStatsGroup();
    ~ThreadsStatsGroup();
-   void DisplayStats(ostream& stream, id_t id) const override;
+   void DisplayStats
+      (ostream& stream, id_t id, const Flags& options) const override;
 };
 
 //  Configuration parameter to allow breakpoint debugging.
@@ -142,13 +143,14 @@ ThreadsStatsGroup::~ThreadsStatsGroup()
 
 fn_name ThreadsStatsGroup_DisplayStats = "ThreadsStatsGroup.DisplayStats";
 
-void ThreadsStatsGroup::DisplayStats(ostream& stream, id_t id) const
+void ThreadsStatsGroup::DisplayStats
+   (ostream& stream, id_t id, const Flags& options) const
 {
    Debug::ft(ThreadsStatsGroup_DisplayStats);
 
-   StatisticsGroup::DisplayStats(stream, id);
+   StatisticsGroup::DisplayStats(stream, id, options);
 
-   Singleton< ThreadAdmin >::Instance()->DisplayStats(stream);
+   Singleton< ThreadAdmin >::Instance()->DisplayStats(stream, options);
 }
 
 //==============================================================================
@@ -358,24 +360,24 @@ void ThreadAdmin::Display(ostream& stream,
 
 fn_name ThreadAdmin_DisplayStats = "ThreadAdmin.DisplayStats";
 
-void ThreadAdmin::DisplayStats(ostream& stream) const
+void ThreadAdmin::DisplayStats(ostream& stream, const Flags& options) const
 {
    Debug::ft(ThreadAdmin_DisplayStats);
 
    if(stats_ != nullptr)
    {
-      stats_->creations_->DisplayStat(stream);
-      stats_->deletions_->DisplayStat(stream);
-      stats_->switches_->DisplayStat(stream);
-      stats_->locks_->DisplayStat(stream);
-      stats_->interrupts_->DisplayStat(stream);
-      stats_->traps_->DisplayStat(stream);
-      stats_->recoveries_->DisplayStat(stream);
-      stats_->recreations_->DisplayStat(stream);
-      stats_->orphans_->DisplayStat(stream);
-      stats_->kills_->DisplayStat(stream);
-      stats_->unknowns_->DisplayStat(stream);
-      stats_->unreleased_->DisplayStat(stream);
+      stats_->creations_->DisplayStat(stream, options);
+      stats_->deletions_->DisplayStat(stream, options);
+      stats_->switches_->DisplayStat(stream, options);
+      stats_->locks_->DisplayStat(stream, options);
+      stats_->interrupts_->DisplayStat(stream, options);
+      stats_->traps_->DisplayStat(stream, options);
+      stats_->recoveries_->DisplayStat(stream, options);
+      stats_->recreations_->DisplayStat(stream, options);
+      stats_->orphans_->DisplayStat(stream, options);
+      stats_->kills_->DisplayStat(stream, options);
+      stats_->unknowns_->DisplayStat(stream, options);
+      stats_->unreleased_->DisplayStat(stream, options);
    }
 }
 

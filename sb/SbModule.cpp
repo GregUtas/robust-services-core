@@ -28,6 +28,7 @@
 #include "ProtocolRegistry.h"
 #include "SbIncrement.h"
 #include "SbInvokerPools.h"
+#include "SbLogs.h"
 #include "SbPools.h"
 #include "SbTracer.h"
 #include "ServiceRegistry.h"
@@ -122,6 +123,8 @@ fn_name SbModule_Startup = "SbModule.Startup";
 void SbModule::Startup(RestartLevel level)
 {
    Debug::ft(SbModule_Startup);
+
+   CreateSbLogs(level);
 
    Singleton< ProtocolRegistry >::Instance()->Startup(level);
    Singleton< ServiceRegistry >::Instance()->Startup(level);

@@ -25,6 +25,7 @@
 #include "IoThread.h"
 #include <cstddef>
 #include "Array.h"
+#include "NbTypes.h"
 #include "NwTypes.h"
 #include "SysTypes.h"
 
@@ -142,11 +143,11 @@ private:
       SocketFlags   // include socket->OutFlags() in log
    };
 
-   //  Generates a log when an error occurs.  EXPL is a text explanation,
-   //  and ERROR is the general type of error.  SOCKET is where the error
-   //  occurred, and ERRVAL is used if SOCKET is nullptr.
+   //  Generates the log specified by ID when an error occurs.  EXPL explains
+   //  the failure, and ERROR is the general type of error.  SOCKET is where
+   //  the error occurred, and ERRVAL is used if SOCKET is nullptr.
    //
-   void OutputLog(NodeBase::fixed_string expl, Error error,
+   void OutputLog(NodeBase::LogId id, NodeBase::fixed_string expl, Error error,
       SysTcpSocket* socket, NodeBase::debug32_t errval = 0) const;
 
    //  Releases resources when exiting or cleaning up the thread.

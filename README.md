@@ -121,11 +121,10 @@ every CLI session produces
   * a `console` file (a transcript of the CLI commands that you entered and what was
 written to the console)
   * a `log` file (system events that were written to the console asynchronously)
-  * a `stats` file (generated periodically to report system statistics)
 
-The numeric string *`yymmdd-hhmmss`* is appended to the names of these files to record
-the time when the system initialized (for a `console` or `log` file) or when the report
-was generated (for a `stats` file).
+The numeric string *`yymmdd-hhmmss-mmm`* is appended to the names of these files to record
+the time when the system initialized (for a `console` file and the initial `log` file) or
+the time of the last restart (for a subsequent`log` file).
 
 ## Testing
 

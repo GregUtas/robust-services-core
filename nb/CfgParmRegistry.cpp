@@ -29,6 +29,7 @@
 #include "Debug.h"
 #include "Formatters.h"
 #include "Log.h"
+#include "NbLogs.h"
 #include "SysFile.h"
 
 using std::ostream;
@@ -100,16 +101,16 @@ void CfgParmRegistry::AddMainArg(const string& arg)
 
 fn_name CfgParmRegistry_BadLine = "CfgParmRegistry.BadLine";
 
-void CfgParmRegistry::BadLine(fixed_string reason, const string& input) const
+void CfgParmRegistry::BadLine(LogId id, const string& input) const
 {
    Debug::ft(CfgParmRegistry_BadLine);
 
-   auto log = Log::Create(reason);
+   auto log = Log::Create(ConfigLogGroup, id);
 
    if(log != nullptr)
    {
-      *log << "errval=" << input << " line=" << currLine_ << CRLF;
-      Log::Spool(log);
+      *log << Log::Tab << "errval=" << input << " line=" << currLine_;
+      Log::Submit(log);
    }
 }
 
@@ -168,12 +169,12 @@ bool CfgParmRegistry::BindTuple(CfgTuple& tuple)
 
       if(key0 == key1)
       {
-         auto log = Log::Create("CFGPARM KEY IN USE");
+         auto log = Log::Create(ConfigLogGroup, ConfigKeyInUse);
 
          if(log != nullptr)
          {
-            *log << "errval=" << key0 << CRLF;
-            Log::Spool(log);
+            *log << Log::Tab << "errval=" << key0;
+            Log::Submit(log);
          }
 
          return false;
@@ -314,13 +315,13 @@ bool CfgParmRegistry::LoadNextTuple(string& key, string& value)
 
       if(keyEnd == string::npos)
       {
-         BadLine("CFGPARM VALUE ABSENT", input);  // line only contains a key
+         BadLine(ConfigValueMissing, input);  // line only contains a key
          continue;
       }
 
       if(keyEnd == keyBeg)
       {
-         BadLine("CFGPARM KEY INVALID", input);  // first character invalid
+         BadLine(ConfigKeyInvalid, input);  // first character invalid
          continue;
       }
 
@@ -332,7 +333,7 @@ bool CfgParmRegistry::LoadNextTuple(string& key, string& value)
 
       if(valBeg == string::npos)
       {
-         BadLine("CFGPARM VALUE ABSENT", input);  // line only contains a key
+         BadLine(ConfigValueMissing, input);  // line only contains a key
          continue;
       }
 
@@ -346,7 +347,7 @@ bool CfgParmRegistry::LoadNextTuple(string& key, string& value)
 
       if(valEnd == valBeg)
       {
-         BadLine("CFGPARM VALUE INVALID", input);  // first character invalid
+         BadLine(ConfigValueInvalid, input);  // first character invalid
          continue;
       }
 
@@ -358,7 +359,7 @@ bool CfgParmRegistry::LoadNextTuple(string& key, string& value)
       if(extra == string::npos) return true;
       if(input[extra] == CfgTuple::CommentChar) return true;
 
-      BadLine("CFGPARM EXTRA INPUT IGNORED", input.substr(extra));
+      BadLine(ConfigExtraIgnored, input.substr(extra));
       return true;
    }
 
@@ -385,14 +386,14 @@ void CfgParmRegistry::LoadTuples()
 
    if(stream_ == nullptr)
    {
-      auto log = Log::Create("CFGPARM FILE NOT FOUND");
+      auto log = Log::Create(ConfigLogGroup, ConfigFileNotFound);
 
       if(log != nullptr)
       {
-         *log << "path=" << *configFileName_ << CRLF;
+         *log << Log::Tab << "path=" << *configFileName_;
+         Log::Submit(log);
       }
 
-      Log::Spool(log);
       return;
    }
 

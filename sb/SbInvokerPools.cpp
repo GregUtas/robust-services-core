@@ -23,11 +23,15 @@
 #include <cstddef>
 #include <ostream>
 #include <string>
+#include "Alarm.h"
+#include "AlarmRegistry.h"
 #include "CfgIntParm.h"
 #include "CfgParmRegistry.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "Log.h"
 #include "Message.h"
+#include "SbLogs.h"
 #include "SbPools.h"
 #include "Singleton.h"
 
@@ -48,6 +52,7 @@ fn_name PayloadInvokerPool_ctor = "PayloadInvokerPool.ctor";
 
 PayloadInvokerPool::PayloadInvokerPool() :
    InvokerPool(PayloadFaction, "NumOfPayloadInvokers"),
+   overloadAlarm_(nullptr),
    noIngressQueueLength_(nullptr),
    noIngressMessageCount_(nullptr)
 {
@@ -78,6 +83,16 @@ PayloadInvokerPool::PayloadInvokerPool() :
          "messages reserved for non-ingress work"));
       reg->BindParm(*noIngressMessageCount_);
    }
+
+   //  Find the overload alarm, which should already have been created.
+   //
+   auto areg = Singleton< AlarmRegistry >::Instance();
+   overloadAlarm_ = areg->Find(OverloadAlarmName);
+
+   if(overloadAlarm_ == nullptr)
+   {
+      Debug::SwLog(PayloadInvokerPool_ctor, 0, 0);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -104,6 +119,8 @@ void PayloadInvokerPool::Display(ostream& stream,
    stream << strObj(noIngressQueueLength_.get()) << CRLF;
    stream << prefix << "noIngressMessageCount : ";
    stream << strObj(noIngressMessageCount_.get()) << CRLF;
+   stream << prefix << "overloadAlarm         : ";
+   stream << strObj(overloadAlarm_) << CRLF;
 }
 
 //------------------------------------------------------------------------------
@@ -122,10 +139,30 @@ bool PayloadInvokerPool::RejectIngressWork() const
 {
    Debug::ft(PayloadInvokerPool_RejectIngressWork);
 
-   auto msgs = Singleton< MessagePool >::Instance();
+   auto msgCount = Singleton< MessagePool >::Instance()->AvailCount();
+   auto msgOvld = (msgCount <= size_t(NoIngressMessageCount_));
+   auto workLength = WorkQCurrLength(Message::Ingress);
+   auto workOvld = (workLength >= size_t(NoIngressQueueLength_));
 
-   if(msgs->AvailCount() <= size_t(NoIngressMessageCount_)) return true;
+   if(msgOvld || workOvld)
+   {
+      if(overloadAlarm_ != nullptr)
+      {
+         auto log = overloadAlarm_->Create
+            (SessionLogGroup, SessionOverload, MajorAlarm);
+         if(log != nullptr) Log::Submit(log);
+      }
 
-   return (WorkQCurrLength(Message::Ingress) >= size_t(NoIngressQueueLength_));
+      return true;
+   }
+
+   if(overloadAlarm_ != nullptr)
+   {
+      auto log = overloadAlarm_->Create
+         (SessionLogGroup, SessionNoOverload, NoAlarm);
+      if(log != nullptr) Log::Submit(log);
+   }
+
+   return false;
 }
 }

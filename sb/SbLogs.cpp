@@ -42,7 +42,7 @@ void CreateSbLogs(RestartLevel level)
 {
    Debug::ft(SessionBase_CreateSbLogs);
 
-   if(level < RestartWarm) return;
+   if(level <= RestartWarm) return;
 
    new Alarm(OverloadAlarmName, "Payload processing is overloaded", 30);
 

@@ -109,6 +109,10 @@ private:
    //
    size_t Find(const LogBuffer* buff) const;
 
+   //  Keeps the buffers contiguous after deleting one or more buffers.
+   //
+   void Compress();
+
    //  The number of buffers currently allocated.
    //
    size_t size_;

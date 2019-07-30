@@ -40,7 +40,7 @@ void CreatePotsLogs(RestartLevel level)
 {
    Debug::ft(PotsBase_CreatePotsLogs);
 
-   if(level < RestartWarm) return;
+   if(level <= RestartWarm) return;
 
    auto group = new LogGroup(PotsLogGroup, "POTS Application");
    new Log(group, PotsShelfIcSignal, "POTS shelf invalid incoming signal");

@@ -42,7 +42,7 @@ void CreateNwLogs(RestartLevel level)
 {
    Debug::ft(NetworkBase_CreateNwLogs);
 
-   if(level < RestartWarm) return;
+   if(level <= RestartWarm) return;
 
    new Alarm(NetworkAlarmName, "Network access lost", 5);
 

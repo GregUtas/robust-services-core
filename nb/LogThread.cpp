@@ -50,6 +50,7 @@ using std::string;
 namespace NodeBase
 {
 word LogThread::NoSpoolingMessageCount_ = 400;
+SysMutex LogThread::Lock_;
 
 //------------------------------------------------------------------------------
 
@@ -109,12 +110,12 @@ void LogThread::Display(ostream& stream,
    Thread::Display(stream, prefix, options);
 
    auto lead = prefix + spaces(2);
-   stream << prefix << "lock : " << CRLF;
-   lock_.Display(stream, lead, options);
    stream << prefix << "NoSpoolingMessageCount : ";
    stream << NoSpoolingMessageCount_ << CRLF;
    stream << prefix << "noSpoolingMessageCount : ";
    stream << strObj(noSpoolingMessageCount_.get()) << CRLF;
+   stream << prefix << "Lock : " << CRLF;
+   Lock_.Display(stream, lead, options);
 }
 
 //------------------------------------------------------------------------------
@@ -191,7 +192,7 @@ ostringstreamPtr LogThread::GetLogsFromBuffer(LogBuffer* buffer)
 
    if(discards > 0)
    {
-      *log << CRLF << Log::Tab << "WARNING: ";
+      *log << CRLF << AlarmStatusSymbol(MinorAlarm) << "WARNING: ";
       *log << discards << " log(s) discarded";
       *log << CRLF;
       buffer->ResetDiscards();
@@ -230,7 +231,7 @@ void LogThread::Spool(ostringstreamPtr& log)
    auto level = Restart::GetStatus();
    Debug::Assert(level != Running, level);
 
-   MutexGuard guard(&lock_);
+   MutexGuard guard(&Lock_);
 
    auto name = Singleton< LogBufferRegistry >::Instance()->FileName();
    auto path = Element::OutputPath() + PATH_SEPARATOR + name;

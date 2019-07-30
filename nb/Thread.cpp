@@ -1580,8 +1580,8 @@ main_t Thread::Exit(signal_t sig)
 
       if(log != nullptr)
       {
-         *log << Log::Tab << "thread=" << to_str();
-         *log << "signal=" << reg->strSignal(sig);
+         *log << Log::Tab << "thread=" << to_str() << CRLF;
+         *log << Log::Tab << "signal=" << reg->strSignal(sig);
          Log::Submit(log);
       }
    }
@@ -2390,7 +2390,7 @@ void Thread::ReleaseResources()
 {
    Debug::ft(Thread_ReleaseResources);
 
-   //  Setting this prevents LockedThread() from returning this thread,
+   //  Setting deleted_ prevents LockedThread() from returning this thread,
    //  which in turn prevents attempts to use stats_ or priv_ while they
    //  are being deleted.  It also guards against multiple invocations.
    //

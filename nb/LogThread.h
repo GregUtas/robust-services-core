@@ -76,7 +76,7 @@ private:
    //  to the log file and, if appropriate, the console.  LOG is freed
    //  and set to nullptr before returning.
    //
-   void Spool(ostringstreamPtr& log);
+   static void Spool(ostringstreamPtr& log);
 
    //  Overridden to return a name for the thread.
    //
@@ -90,10 +90,6 @@ private:
    //
    void Destroy() override;
 
-   //  Critical section lock for the log file.
-   //
-   SysMutex lock_;
-
    //  The configuration parameter for the number of MsgBuffers reserved
    //  for work other than spooling logs.
    //
@@ -102,6 +98,10 @@ private:
    //  The number of MsgBuffers reserved for work other than spooling logs.
    //
    static word NoSpoolingMessageCount_;
+
+   //  Critical section lock for the log file.
+   //
+   static SysMutex Lock_;
 };
 }
 #endif

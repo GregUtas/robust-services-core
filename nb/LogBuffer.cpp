@@ -79,7 +79,8 @@ LogBuffer::~LogBuffer()
 {
    Debug::ft(LogBuffer_dtor);
 
-   lock_.Acquire(TIMEOUT_NEVER);
+   MutexGuard guard(&lock_);
+
    Memory::Free(buff_);
    buff_ = nullptr;
 }
@@ -170,7 +171,7 @@ LogBuffer::Entry* LogBuffer::InsertionPoint(size_t size)
    where->next = nullptr;
    SetNext(reinterpret_cast< Entry* >(after));
    next_->prev = where;
-   return UpdateMax(where);
+   return where;
 }
 
 //------------------------------------------------------------------------------
@@ -242,6 +243,12 @@ LogBuffer::Entry* LogBuffer::Push(ostringstreamPtr& log)
 {
    Debug::ft(LogBuffer_Push);
 
+   //  This must not be invoked during a restart.
+   //  LogThread::Spool should be invoked instead.
+   //
+   auto level = Restart::GetStatus();
+   Debug::Assert(level == Running, level);
+
    MutexGuard guard(&lock_);
 
    auto count = log->str().size();
@@ -256,6 +263,7 @@ LogBuffer::Entry* LogBuffer::Push(ostringstreamPtr& log)
 
    strcpy(entry->log, log->str().c_str());
    if(first_ == nullptr) first_ = entry;
+   UpdateMax();
    Singleton< LogThread >::Instance()->Interrupt();
    return entry;
 }
@@ -293,16 +301,15 @@ size_t LogBuffer::Size() const
 
 //------------------------------------------------------------------------------
 
-LogBuffer::Entry* LogBuffer::UpdateMax(Entry* where)
+void LogBuffer::UpdateMax()
 {
    size_t used = 0;
 
    if(first_ < next_)
-      used = next_ - first_;
+      used = (ptr_t) next_ - (ptr_t) first_;
    else
-      used = size_ - (first_ - next_);
+      used = size_ - ((ptr_t) first_ - (ptr_t) next_);
 
    if(used > max_) max_ = used;
-   return where;
 }
 }

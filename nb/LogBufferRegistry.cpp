@@ -66,6 +66,40 @@ LogBuffer* LogBufferRegistry::Access(size_t index) const
 
 //------------------------------------------------------------------------------
 
+fn_name LogBufferRegistry_Compress = "LogBufferRegistry.Compress";
+
+void LogBufferRegistry::Compress()
+{
+   Debug::ft(LogBufferRegistry_Compress);
+
+   for(size_t i = 0; i < size_ - 1; ++i)
+   {
+      if(buffer_[i] != nullptr) continue;
+
+      for(size_t j = i + 1; j < size_; ++j)
+      {
+         if(buffer_[j] != nullptr)
+         {
+            buffer_[i] = std::move(buffer_[j]);
+            break;
+         }
+      }
+   }
+
+   for(size_t i = 0; i < MaxBuffers; ++i)
+   {
+      if(buffer_[i] == nullptr)
+      {
+         size_ = i;
+         return;
+      }
+   }
+
+   size_ = MaxBuffers;
+}
+
+//------------------------------------------------------------------------------
+
 void LogBufferRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -133,15 +167,7 @@ bool LogBufferRegistry::Free(size_t index)
    }
 
    buffer_[index].reset();
-   if(--size_ == 0) return true;
-
-   //  Keep the buffers contiguous.
-   //
-   while(index < size_)
-   {
-      buffer_[index] = std::move(buffer_[index + 1]);
-   }
-
+   Compress();
    return true;
 }
 
@@ -202,27 +228,31 @@ void LogBufferRegistry::Startup(RestartLevel level)
 {
    Debug::ft(LogBufferRegistry_Startup);
 
-   //  Delete all empty buffers.
-   //
-   for(size_t i = 0; i < size_; ++i)
-   {
-      if(buffer_[i]->First() == nullptr)
-      {
-         Free(i);
-      }
-   }
-
-   //  If the array of buffers is full, delete the second-oldest one.  This
-   //  preserves the oldest buffer in case a restart loop occurs.
-   //
-   if(size_ == MaxBuffers)
-   {
-      Free(1);
-   }
-
    //  Allocate a log buffer during each restart.
    //
    buffer_[size_] = std::unique_ptr< LogBuffer >(new LogBuffer(LogBufferSize));
    ++size_;
+
+   //  Delete all empty buffers except the new one.
+   //
+   for(size_t i = 0; i < size_ - 1; ++i)
+   {
+      if(buffer_[i]->First() == nullptr)
+      {
+         buffer_[i].reset();
+      }
+   }
+
+   Compress();
+
+   //  If the array of buffers is full, a restart loop has probably occurred.
+   //  In the restart sequence boot-warm-cold-reload, with a second attempt at
+   //  a reload restart now occurring, preserve the first four buffers in case
+   //  the system ever comes up.
+   //
+   if(size_ == MaxBuffers)
+   {
+      Free(4);
+   }
 }
 }

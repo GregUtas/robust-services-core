@@ -129,9 +129,9 @@ private:
    //
    Entry* InsertionPoint(size_t size);
 
-   //  Updates the maximum space used in the buffer and returns WHERE.
+   //  Updates the maximum space used in the buffer.
    //
-   Entry* UpdateMax(Entry* where);
+   void UpdateMax();
 
    //  Critical section lock for the log buffer.
    //

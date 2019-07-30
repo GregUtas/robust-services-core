@@ -324,7 +324,7 @@ void Log::Submit(ostringstreamPtr& stream)
    //
    if(Restart::GetStatus() != Running)
    {
-      Singleton< LogThread >::Instance()->Spool(stream);
+      LogThread::Spool(stream);
       if(log != nullptr) log->bufferCount_->Incr();
       return;
    }

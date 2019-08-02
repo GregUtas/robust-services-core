@@ -3325,8 +3325,9 @@ word Editor::TagAsConstArgument(const CodeWarning& log, string& expl)
    //
    auto func = static_cast< const Function* >(log.item);
    auto& args = func->GetArgs();
-   if(log.offset >= args.size()) return NotFound(expl, "Argument");
-   auto arg = args.at(log.offset).get();
+   auto index = (func->IsStatic() ? log.offset - 1 : log.offset);
+   if(index >= args.size()) return NotFound(expl, "Argument");
+   auto arg = args.at(index).get();
    if(arg == nullptr) return NotFound(expl, "Argument");
    auto type = FindPos(arg->GetTypeSpec()->GetPos());
    if(type.pos == string::npos) return NotFound(expl, "Argument type");

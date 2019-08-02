@@ -46,6 +46,8 @@ using std::string;
 
 namespace NodeBase
 {
+const size_t Log::MaxExplSize = 48;
+const size_t Log::Indent = 4;
 const string Log::Tab = spaces(Log::Indent);
 std::atomic_size_t Log::SeqNo_ = 0;
 
@@ -71,12 +73,12 @@ Log::Log(LogGroup* group, LogId id, fixed_string expl) :
 
    if((id_ > MaxId) || (id < TroubleLog))
    {
-      Debug::SwLog(Log_ctor, id_, 0);
+      Debug::SwLog(Log_ctor, "LogId invalid", id_);
    }
 
    if(expl_.size() > MaxExplSize)
    {
-      Debug::SwLog(Log_ctor, expl_.size(), 1);
+      Debug::SwLog(Log_ctor, "expl size", expl_.size());
    }
 
    if(!group_->BindLog(*this))
@@ -339,7 +341,7 @@ void Log::Submit(ostringstreamPtr& stream)
 
    //  Add the log to the active log buffer.
    //
-   auto buffer = Singleton< LogBufferRegistry >::Instance()->First();
+   auto buffer = Singleton< LogBufferRegistry >::Instance()->Active();
    auto entry = buffer->Push(stream);
 
    if(entry != nullptr)

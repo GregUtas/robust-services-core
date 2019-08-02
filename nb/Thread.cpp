@@ -1027,6 +1027,7 @@ const SysThread::Priority FactionMap[Faction_N] =
 
 //------------------------------------------------------------------------------
 
+const Thread::Id Thread::MaxId = 99;
 SysMutex Thread::RtcLock_;
 
 //------------------------------------------------------------------------------

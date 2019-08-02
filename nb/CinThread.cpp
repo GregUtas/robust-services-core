@@ -31,7 +31,6 @@
 #include "Restart.h"
 #include "Singleton.h"
 #include "SysConsole.h"
-#include "SysTypes.h"
 
 using std::ostream;
 using std::string;

@@ -50,7 +50,7 @@ public:
 
    //  Identifies a record that has not been fully constructed.
    //
-   static const Id InvalidId = UINT8_MAX;
+   static const Id InvalidId;
 
    //  Virtual to allow subclassing.
    //

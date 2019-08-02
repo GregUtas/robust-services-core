@@ -55,11 +55,11 @@ public:
 
    //> The maximum length of the string that explains a log.
    //
-   static const size_t MaxExplSize = 48;
+   static const size_t MaxExplSize;
 
    //  The indentation for each subsequent line of a log.
    //
-   static const size_t Indent = 4;
+   static const size_t Indent;
 
    //  A string for inserting Tab spaces.
    //

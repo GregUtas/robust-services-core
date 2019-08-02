@@ -70,7 +70,7 @@ public:
 
    //> Highest valid thread identifier.
    //
-   static const Id MaxId = 99;
+   static const Id MaxId;
 
    //  Returns the thread that is currently running.  Throws an exception
    //  if ASSERT is set and the running thread cannot be found.

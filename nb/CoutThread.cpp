@@ -113,6 +113,10 @@ void CoutThread::Spool(ostringstreamPtr& stream)
 
    if(stream == nullptr) return;
 
+   //  Copy the output to the console transcript file.
+   //
+   FileThread::Record(stream->str());
+
    //  During a restart, our thread won't run, so output the stream directly.
    //
    if(Restart::GetStatus() != Running)
@@ -121,10 +125,6 @@ void CoutThread::Spool(ostringstreamPtr& stream)
       stream.reset();
       return;
    }
-
-   //  Copy the output to the console transcript file.
-   //
-   FileThread::Record(stream->str());
 
    //  Forward the stream to our thread.  This must be done unpreemptably
    //  because both this function (which runs on the client thread) and

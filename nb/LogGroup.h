@@ -49,15 +49,15 @@ class LogGroup : public Dynamic
 public:
    //> The maximum length of a log group's name.
    //
-   static const size_t MaxNameSize = 5;
+   static const size_t MaxNameSize;
 
    //> The maximum length of the string that explains a log group.
    //
-   static const size_t MaxExplSize = 48;
+   static const size_t MaxExplSize;
 
    //> The maximum number of logs in a group.
    //
-   static const id_t MaxLogs = 250;
+   static const id_t MaxLogs;
 
    //  Creates a group identified by NAME, which is converted to
    //  upper case.  EXPL describes the types of logs in the group.

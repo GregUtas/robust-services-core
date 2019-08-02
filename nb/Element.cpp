@@ -25,6 +25,7 @@
 #include "CfgBoolParm.h"
 #include "CfgParmRegistry.h"
 #include "CfgStrParm.h"
+#include "Clock.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Singleton.h"
@@ -81,6 +82,23 @@ Element::~Element()
 
 //------------------------------------------------------------------------------
 
+const string& Element::ConsoleFileName()
+{
+   static string ConsoleTranscriptFile;
+
+   //  Set RscDir to the last directory named "rsc/" on the path to the
+   //  executable.
+   //
+   if(ConsoleTranscriptFile.empty())
+   {
+      ConsoleTranscriptFile = "console" + Clock::TimeZeroStr();
+   }
+
+   return ConsoleTranscriptFile;
+}
+
+//------------------------------------------------------------------------------
+
 void Element::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -98,7 +116,7 @@ void Element::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-string Element::HelpPath()
+const string& Element::HelpPath()
 {
    static string HelpDir;
 
@@ -108,7 +126,7 @@ string Element::HelpPath()
 
 //------------------------------------------------------------------------------
 
-string Element::InputPath()
+const string& Element::InputPath()
 {
    static string InputDir;
 
@@ -118,7 +136,7 @@ string Element::InputPath()
 
 //------------------------------------------------------------------------------
 
-string Element::OutputPath()
+const string& Element::OutputPath()
 {
    static string OutputDir;
 
@@ -136,7 +154,7 @@ void Element::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-string Element::RscPath()
+const string& Element::RscPath()
 {
    static string RscDir;
 

@@ -29,11 +29,11 @@
 #include <iomanip>
 #include <ios>
 #include <iosfwd>
-#include <memory>
 #include <sstream>
 #include <string>
 #include "Alarm.h"
 #include "AlarmRegistry.h"
+#include "CallbackRequest.h"
 #include "CfgParm.h"
 #include "CfgParmRegistry.h"
 #include "CliBuffer.h"
@@ -1582,15 +1582,17 @@ word LogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
       if(buff != nullptr)
       {
          auto file = buff->FileName();
-         word size = buff->Size();
+         word size = buff->Count(true, true);
          size_t targ = (count < size ? size - count : 0);
          if(count == 0) targ = 0;
+         buff->ResetAllToUnspooled();
 
-         while(buff->Size() > targ)
+         while(buff->Count(false, true) > targ)
          {
-            auto stream = LogThread::GetLogsFromBuffer(buff);
+            CallbackRequestPtr callback;
+            auto stream = LogThread::GetLogsFromBuffer(buff, callback);
             if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
-            FileThread::Spool(file, stream);
+            FileThread::Spool(file, stream, callback);
          }
 
          return cli.Report(0, SuccessExpl);

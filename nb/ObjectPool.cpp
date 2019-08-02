@@ -173,7 +173,9 @@ ObjectPoolStats::~ObjectPoolStats()
 
 //==============================================================================
 
+const ObjectPoolId ObjectPool::MaxId = 250;
 const uint8_t ObjectPool::OrphanThreshold = 2;
+const size_t ObjectPool::OrphanMaxLogs = 8;
 
 fn_name ObjectPool_ctor = "ObjectPool.ctor";
 
@@ -972,7 +974,7 @@ void ObjectPool::RecoverBlocks()
                }
             }
 
-            if(p->assigned_ && !p->logged_ && (count <= 4))
+            if(p->assigned_ && !p->logged_ && (count <= OrphanMaxLogs))
             {
                auto log = Log::Create(ObjPoolLogGroup, ObjPoolBlockRecovered);
 

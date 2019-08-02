@@ -329,7 +329,7 @@ private:
 
    //  A string that describes the parameter's purpose.
    //
-   const char* help_;
+   const char* const help_;
 
    //  Whether the parameter is mandatory or optional.
    //
@@ -337,7 +337,7 @@ private:
 
    //  The tag, if any, for an optional parameter.
    //
-   const char* tag_;
+   const char* const tag_;
 };
 }
 #endif

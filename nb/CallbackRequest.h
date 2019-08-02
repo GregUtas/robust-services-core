@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  SysConsole.h
+//  CallbackRequest.h
 //
 //  Copyright (C) 2017  Greg Utas
 //
@@ -19,37 +19,38 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifndef SYSCONSOLE_H_INCLUDED
-#define SYSCONSOLE_H_INCLUDED
+#ifndef CALLBACKREQUEST_H_INCLUDED
+#define CALLBACKREQUEST_H_INCLUDED
 
-#include <iosfwd>
-#include <string>
+#include <memory>
 
 //------------------------------------------------------------------------------
 
 namespace NodeBase
 {
-//  Operating system abstraction layer: console I/O.
+//  General interface for callbacks.  Subclasses add the data necessary to
+//  complete a callback and give it to a client, who later calls Invoked()
+//  and deletes the callback.
 //
-namespace SysConsole
+class CallbackRequest
 {
-   //  Returns the stream from which console input is received.  Applications
-   //  must use the CLI interfaces instead of using this directly.
+public:
+   //  Virtual to allow subclassing.
    //
-   std::istream& In();
+   virtual ~CallbackRequest() = default;
 
-   //  Returns the stream to which console output is sent.  Applications must
-   //  use CoutThread instead of using this directly.
+   //  The callback.
    //
-   std::ostream& Out();
+   virtual void Callback() { }
+protected:
+   //  Protected because this class is virtual.
+   //
+   CallbackRequest() = default;
+};
 
-   //  Minimizes or restores the console window.
-   //
-   bool Minimize(bool minimize);
-
-   //  Sets the console window's title.
-   //
-   bool SetTitle(const std::string& title);
-}
+//  A CallbackRequest is allocated from the general heap and should therefore
+//  be managed by a unique_ptr.
+//
+typedef std::unique_ptr< CallbackRequest > CallbackRequestPtr;
 }
 #endif

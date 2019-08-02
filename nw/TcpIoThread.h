@@ -110,6 +110,7 @@ private:
 
    //  Raises an alarm when the thread will exit because a listener socket
    //  could not be configured.  ERRVAL is the reason for the failure.
+   //  Returns nullptr.
    //
    SysTcpSocket* RaiseAlarm(NodeBase::word errval) const;
 

@@ -66,7 +66,7 @@ private:
 
    //  The characters that are valid for this parameter.
    //
-   const char* chars_;
+   const char* const chars_;
 };
 }
 #endif

@@ -53,7 +53,7 @@ StatisticsGroup::StatisticsGroup(const string& expl) : expl_(expl.c_str())
 
    if(expl_.size() > MaxExplSize)
    {
-      Debug::SwLog(StatisticsGroup_ctor, expl_.size(), 0);
+      Debug::SwLog(StatisticsGroup_ctor, "expl size", expl_.size());
    }
 
    Singleton< StatisticsRegistry >::Instance()->BindGroup(*this);

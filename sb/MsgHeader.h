@@ -64,7 +64,6 @@ struct MsgHeader
 };
 
 //  The maximum size of the payload portion of a SessionBase message.
-//  The magic "32" must be the size of MsgHeader or greater.
 //
 constexpr size_t MaxSbMsgSize =
    NetworkBase::SysSocket::MaxMsgSize - sizeof(MsgHeader);

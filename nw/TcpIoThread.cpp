@@ -256,11 +256,10 @@ void TcpIoThread::ClearAlarm() const
    auto alarm = ipPort_->GetAlarm();
    if(alarm == nullptr) return;
 
-   auto log = alarm->Create
-      (NetworkLogGroup, NetworkServiceAvailable, NoAlarm);
+   auto log = alarm->Create(NetworkLogGroup, NetworkServiceAvailable, NoAlarm);
    if(log == nullptr) return;
 
-   *log << Log::Tab << expl << "UDP: port=" << port_;
+   *log << Log::Tab << "TCP: port=" << port_;
    Log::Submit(log);
 }
 
@@ -611,11 +610,10 @@ SysTcpSocket* TcpIoThread::RaiseAlarm(word errval) const
    auto alarm = ipPort_->GetAlarm();
    if(alarm == nullptr) return nullptr;
 
-   auto log = alarm->Create
-      (NetworkLogGroup, NetworkServiceFailure, MajorAlarm);
+   auto log = alarm->Create(NetworkLogGroup, NetworkServiceFailure, MajorAlarm);
    if(log == nullptr) return nullptr;
 
-   *log << Log::Tab << expl << "TCP: port=" << port_ << " errval=" << errval;
+   *log << Log::Tab << "TCP: port=" << port_ << " errval=" << errval;
    Log::Submit(log);
    return nullptr;
 }

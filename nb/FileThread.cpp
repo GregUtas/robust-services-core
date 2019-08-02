@@ -24,11 +24,12 @@
 #include <ios>
 #include <iosfwd>
 #include <sstream>
-#include "CliRegistry.h"
 #include "Clock.h"
 #include "Debug.h"
 #include "Element.h"
+#include "Formatters.h"
 #include "FunctionGuard.h"
+#include "MutexGuard.h"
 #include "Restart.h"
 #include "Singleton.h"
 #include "SysFile.h"
@@ -157,6 +158,10 @@ void FileRequest::Patch(sel_t selector, void* arguments)
 
 //==============================================================================
 
+SysMutex FileThread::ConsoleFileLock_;
+
+//------------------------------------------------------------------------------
+
 fn_name FileThread_ctor = "FileThread.ctor";
 
 FileThread::FileThread() : Thread(BackgroundFaction)
@@ -206,6 +211,17 @@ void FileThread::Destroy()
 
 //------------------------------------------------------------------------------
 
+void FileThread::Display(ostream& stream,
+   const string& prefix, const Flags& options) const
+{
+   Thread::Display(stream, prefix, options);
+
+   stream << prefix << "ConsoleFileLock : " << CRLF;
+   ConsoleFileLock_.Display(stream, prefix + spaces(2), options);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name FileThread_Enter = "FileThread.Enter";
 
 void FileThread::Enter()
@@ -220,6 +236,7 @@ void FileThread::Enter()
       if(req == nullptr) continue;
       stringPtr name(req->TakeName());
       ostringstreamPtr stream(req->TakeStream());
+      CallbackRequestPtr written(req->TakeCallback());
       auto trunc = req->GetTrunc();
 
       delete msg;
@@ -236,8 +253,10 @@ void FileThread::Enter()
          file.reset();
       }
 
+      if(written != nullptr) written->Callback();
       name.reset();
       stream.reset();
+      written.reset();
    }
 }
 
@@ -256,16 +275,18 @@ void FileThread::Record(const std::string& s, bool eol)
 {
    Debug::ft(FileThread_Record);
 
-   auto name = CliRegistry::ConsoleFileName() + ".txt";
+   MutexGuard guard(&ConsoleFileLock_);
+
+   auto name = Element::ConsoleFileName() + ".txt";
    Spool(name, s, eol);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name FileThread_Spool1 = "FileThread.Spool(stream)";
+fn_name FileThread_Spool1 = "FileThread.Spool(written)";
 
-void FileThread::Spool
-   (const string& name, ostringstreamPtr& stream, bool trunc)
+void FileThread::Spool(const string& name,
+   ostringstreamPtr& stream, CallbackRequestPtr& written, bool trunc)
 {
    Debug::ft(FileThread_Spool1);
 
@@ -284,7 +305,9 @@ void FileThread::Spool
          file.reset();
       }
 
+      if(written != nullptr) written->Callback();
       stream.reset();
+      written.reset();
       return;
    }
 
@@ -305,6 +328,7 @@ void FileThread::Spool
    if(request != nullptr)
    {
       request->GiveStream(stream);
+      request->GiveCallback(written);
       Singleton< FileThread >::Instance()->EnqMsg(*request);
    }
    else
@@ -315,17 +339,31 @@ void FileThread::Spool
 
 //------------------------------------------------------------------------------
 
-fn_name FileThread_Spool2 = "FileThread.Spool(string)";
+fn_name FileThread_Spool2 = "FileThread.Spool(stream)";
+
+void FileThread::Spool(const string& name, ostringstreamPtr& stream, bool trunc)
+{
+   Debug::ft(FileThread_Spool2);
+
+   CallbackRequestPtr callback;
+   Spool(name, stream, callback, trunc);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name FileThread_Spool3 = "FileThread.Spool(string)";
 
 void FileThread::Spool(const string& name, const string& s, bool eol)
 {
-   Debug::ft(FileThread_Spool2);
+   Debug::ft(FileThread_Spool3);
 
    ostringstreamPtr stream(new std::ostringstream);
    if(stream == nullptr) return;
    *stream << s;
    if(eol) *stream << CRLF;
-   Spool(name, stream);
+
+   CallbackRequestPtr callback;
+   Spool(name, stream, callback);
 }
 
 //------------------------------------------------------------------------------

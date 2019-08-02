@@ -21,7 +21,6 @@
 //
 #include "LogBufferRegistry.h"
 #include <bitset>
-#include <cstdint>
 #include <ostream>
 #include <utility>
 #include "Clock.h"
@@ -36,6 +35,10 @@ using std::string;
 
 namespace NodeBase
 {
+const size_t LogBufferRegistry::LogBufferSize = 1024;  // 1MB
+
+//------------------------------------------------------------------------------
+
 fn_name LogBufferRegistry_ctor = "LogBufferRegistry.ctor";
 
 LogBufferRegistry::LogBufferRegistry() : size_(0)
@@ -62,6 +65,18 @@ LogBuffer* LogBufferRegistry::Access(size_t index) const
 
    if(index >= size_ - 1) return nullptr;
    return buffer_[index].get();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name LogBufferRegistry_Active = "LogBufferRegistry.Active";
+
+LogBuffer* LogBufferRegistry::Active() const
+{
+   Debug::ft(LogBufferRegistry_Active);
+
+   if(size_ == 0) return nullptr;
+   return buffer_[size_ - 1].get();
 }
 
 //------------------------------------------------------------------------------
@@ -126,32 +141,6 @@ string LogBufferRegistry::FileName() const
 
 //------------------------------------------------------------------------------
 
-size_t LogBufferRegistry::Find(const LogBuffer* buff) const
-{
-   if((size_ == 0) || (buff == nullptr)) return SIZE_MAX;
-
-   for(size_t i = 0; i < size_; ++i)
-   {
-      if(buffer_[i].get() == buff) return i;
-   }
-
-   return SIZE_MAX;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name LogBufferRegistry_First = "LogBufferRegistry.First";
-
-LogBuffer* LogBufferRegistry::First() const
-{
-   Debug::ft(LogBufferRegistry_First);
-
-   if(size_ == 0) return nullptr;
-   return buffer_[size_ - 1].get();
-}
-
-//------------------------------------------------------------------------------
-
 fn_name LogBufferRegistry_Free = "LogBufferRegistry.Free";
 
 bool LogBufferRegistry::Free(size_t index)
@@ -162,7 +151,7 @@ bool LogBufferRegistry::Free(size_t index)
    //
    if(index >= size_ - 1)
    {
-      Debug::SwLog(LogBufferRegistry_Free, index, 0);
+      Debug::SwLog(LogBufferRegistry_Free, "index invalid", index);
       return false;
    }
 
@@ -173,51 +162,9 @@ bool LogBufferRegistry::Free(size_t index)
 
 //------------------------------------------------------------------------------
 
-fn_name LogBufferRegistry_Last = "LogBufferRegistry.Last";
-
-LogBuffer* LogBufferRegistry::Last() const
-{
-   Debug::ft(LogBufferRegistry_Last);
-
-   if(size_ == 0) return nullptr;
-   return buffer_[0].get();
-}
-
-//------------------------------------------------------------------------------
-
-void LogBufferRegistry::Next(LogBuffer*& buff) const
-{
-   auto i = Find(buff);
-
-   if((i >= size_ - 1) || (i == SIZE_MAX))
-   {
-      buff = nullptr;
-      return;
-   }
-
-   buff = buffer_[i + 1].get();
-}
-
-//------------------------------------------------------------------------------
-
 void LogBufferRegistry::Patch(sel_t selector, void* arguments)
 {
    Immutable::Patch(selector, arguments);
-}
-
-//------------------------------------------------------------------------------
-
-void LogBufferRegistry::Prev(LogBuffer*& buff) const
-{
-   auto i = Find(buff);
-
-   if((i == 0) || (i == SIZE_MAX))
-   {
-      buff = nullptr;
-      return;
-   }
-
-   buff = buffer_[i - 1].get();
 }
 
 //------------------------------------------------------------------------------
@@ -245,14 +192,12 @@ void LogBufferRegistry::Startup(RestartLevel level)
 
    Compress();
 
-   //  If the array of buffers is full, a restart loop has probably occurred.
-   //  In the restart sequence boot-warm-cold-reload, with a second attempt at
-   //  a reload restart now occurring, preserve the first four buffers in case
-   //  the system ever comes up.
+   //  If the array of buffers is full, delete the oldest buffer in case
+   //  another restart occurs.
    //
    if(size_ == MaxBuffers)
    {
-      Free(4);
+      Free(0);
    }
 }
 }

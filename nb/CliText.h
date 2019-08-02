@@ -106,7 +106,7 @@ private:
 
    //  The string that that may be followed by parameters.
    //
-   const char* text_;
+   const char* const text_;
 
    //  The parameters that may follow the string.
    //

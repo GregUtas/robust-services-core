@@ -46,7 +46,7 @@ class AlarmRegistry : public Dynamic
 public:
    //> The maximum number of alarms.
    //
-   static const id_t MaxAlarms = 250;
+   static const id_t MaxAlarms;
 
    //  Returns the alarm associated with NAME.
    //

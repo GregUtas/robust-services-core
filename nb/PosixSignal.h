@@ -40,7 +40,7 @@ class PosixSignal : public Protected
 public:
    //> Highest valid signal identifier.
    //
-   static const signal_t MaxId = UINT8_MAX;
+   static const signal_t MaxId;
 
    //  Signal attributes.
    //
@@ -111,15 +111,15 @@ private:
 
    //  The signal's value.
    //
-   signal_t value_;
+   const signal_t value_;
 
    //  The signal's name (e.g. "SIGSEGV").
    //
-   const char* name_;
+   const char* const name_;
 
    //  An explanation of the signal (e.g. "Invalid memory access").
    //
-   const char* expl_;
+   const char* const expl_;
 
    //  The signal's severity.
    //

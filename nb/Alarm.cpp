@@ -26,7 +26,6 @@
 #include "Debug.h"
 #include "Log.h"
 #include "Singleton.h"
-#include "SysTickTimer.h"
 
 using std::ostream;
 using std::string;
@@ -35,12 +34,17 @@ using std::string;
 
 namespace NodeBase
 {
+const size_t Alarm::MaxNameSize = 12;
+const size_t Alarm::MaxExplSize = 48;
+
+//------------------------------------------------------------------------------
+
 fn_name Alarm_ctor = "Alarm.ctor";
 
 Alarm::Alarm(const string& name, const string& expl, secs_t delay) :
    name_(name.c_str()),
    expl_(expl.c_str()),
-   delay_(delay * Singleton< SysTickTimer >::Instance()->TicksPerSec()),
+   delay_(delay * Clock::TicksPerSec()),
    status_(NoAlarm),
    nextStatus_(NoAlarm),
    currStatusTime_(0)
@@ -49,17 +53,17 @@ Alarm::Alarm(const string& name, const string& expl, secs_t delay) :
 
    if(name_.size() > MaxNameSize)
    {
-      Debug::SwLog(Alarm_ctor, name_.size(), 0);
+      Debug::SwLog(Alarm_ctor, "name size", name_.size());
    }
 
    if(expl_.size() > MaxExplSize)
    {
-      Debug::SwLog(Alarm_ctor, expl_.size(), 1);
+      Debug::SwLog(Alarm_ctor, "expl size", expl_.size());
    }
 
    if(!Singleton< AlarmRegistry >::Instance()->BindAlarm(*this))
    {
-      Debug::SwLog(Alarm_ctor, expl_.c_str(), 2);
+      Debug::SwLog(Alarm_ctor, expl_.c_str(), 0);
    }
 }
 
@@ -92,7 +96,7 @@ ostringstreamPtr Alarm::Create
 {
    Debug::ft(Alarm_Create);
 
-   auto now = Singleton< SysTickTimer >::Instance()->TicksNow();
+   auto now = Clock::TicksNow();
    ostringstreamPtr log(nullptr);
 
    if(status > status_)
@@ -152,7 +156,7 @@ void Alarm::SetStatus(AlarmStatus status)
 
    status_ = status;
    nextStatus_ = NoAlarm;
-   currStatusTime_ = Singleton< SysTickTimer >::Instance()->TicksNow();
+   currStatusTime_ = Clock::TicksNow();
 }
 
 //------------------------------------------------------------------------------

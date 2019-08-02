@@ -58,7 +58,7 @@ class ObjectPool : public Protected
 public:
    //> Highest valid object pool identifier.
    //
-   static const ObjectPoolId MaxId = 250;
+   static const ObjectPoolId MaxId;
 
    //> The maximum number of segments in an object pool.
    //
@@ -343,6 +343,11 @@ private:
    //  before it is recovered.
    //
    static const uint8_t OrphanThreshold;
+
+   //> The maximum number of logs that display the contents of an orphaned
+   //  block in a given pool during each audit cycle.
+   //
+   static const size_t OrphanMaxLogs;
 };
 }
 #endif

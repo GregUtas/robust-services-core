@@ -181,8 +181,8 @@ private:
       SignalFilter();
       SignalFilter(ProtocolId p, SignalId s, NodeBase::TraceStatus ts);
 
-      ProtocolId prid;     // protocol identifier
-      SignalId sid;        // signal identifier
+      ProtocolId prid;               // protocol identifier
+      SignalId sid;                  // signal identifier
       NodeBase::TraceStatus status;  // whether included or excluded
    };
 

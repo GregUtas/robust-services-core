@@ -21,7 +21,6 @@
 //
 #include "LogThread.h"
 #include <iosfwd>
-#include <ostream>
 #include <sstream>
 #include <string>
 #include "CfgIntParm.h"
@@ -32,14 +31,12 @@
 #include "Element.h"
 #include "FileThread.h"
 #include "Formatters.h"
-#include "Log.h"
 #include "LogBuffer.h"
 #include "LogBufferRegistry.h"
 #include "MutexGuard.h"
 #include "NbPools.h"
 #include "Restart.h"
 #include "Singleton.h"
-#include "SysConsole.h"
 #include "SysFile.h"
 
 using std::ostream;
@@ -49,8 +46,73 @@ using std::string;
 
 namespace NodeBase
 {
+class LogsWritten : public CallbackRequest
+{
+public:
+   //  Constructs a callback when LAST was the last log spooled from BUFF.
+   //
+   LogsWritten(LogBuffer* buff, const LogBuffer::Entry* last);
+
+   void Callback() override;
+private:
+   //  The buffer from which the logs were spooled.
+   //
+   LogBuffer* buff_;
+
+   //  The last log that was spooled from the buffer.
+   //
+   const LogBuffer::Entry* const last_;
+};
+
+//------------------------------------------------------------------------------
+
+fn_name LogsWritten_ctor = "LogsWritten.ctor";
+
+LogsWritten::LogsWritten(LogBuffer* buff, const LogBuffer::Entry* last) :
+   buff_(buff),
+   last_(last)
+{
+   Debug::ft(LogsWritten_ctor);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name LogsWritten_Callback = "LogsWritten.Callback";
+
+void LogsWritten::Callback()
+{
+   Debug::ft(LogsWritten_Callback);
+
+   //  If the last_ log that was spooled still exists, free the logs
+   //  before it, and then free it as well.
+   //
+   for(auto curr = buff_->Last(); curr != last_; curr = curr->prev)
+   {
+      if(curr == nullptr)
+      {
+         //  last_ no longer exists: requests must have been reordered!?
+         //
+         Debug::SwLog(LogsWritten_Callback,
+            debug64_t(last_), debug64_t(buff_->Last()));
+         return;
+      }
+   }
+
+   auto curr = buff_->FirstSpooled();
+
+   while((curr != last_) && (curr != nullptr))
+   {
+      curr = buff_->Pop();
+   }
+
+   buff_->Pop();
+}
+
+//------------------------------------------------------------------------------
+
+const size_t LogThread::BundledLogSizeThreshold = 2048;
 word LogThread::NoSpoolingMessageCount_ = 400;
-SysMutex LogThread::Lock_;
+SysMutex LogThread::LogFileLock_;
 
 //------------------------------------------------------------------------------
 
@@ -93,6 +155,23 @@ const char* LogThread::AbbrName() const
 
 //------------------------------------------------------------------------------
 
+fn_name LogThread_CopyToConsole = "LogThread.CopyToConsole";
+
+void LogThread::CopyToConsole(const ostringstreamPtr& stream)
+{
+   Debug::ft(LogThread_CopyToConsole);
+
+   //  In a lab load, display the logs on the console.
+   //
+   if(Element::RunningInLab())
+   {
+      ostringstreamPtr clone(new std::ostringstream(stream->str()));
+      CoutThread::Spool(clone);
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name LogThread_Destroy = "LogThread.Destroy";
 
 void LogThread::Destroy()
@@ -114,8 +193,8 @@ void LogThread::Display(ostream& stream,
    stream << NoSpoolingMessageCount_ << CRLF;
    stream << prefix << "noSpoolingMessageCount : ";
    stream << strObj(noSpoolingMessageCount_.get()) << CRLF;
-   stream << prefix << "Lock : " << CRLF;
-   Lock_.Display(stream, lead, options);
+   stream << prefix << "LogFileLock : " << CRLF;
+   LogFileLock_.Display(stream, lead, options);
 }
 
 //------------------------------------------------------------------------------
@@ -146,8 +225,9 @@ void LogThread::Enter()
          continue;
       }
 
-      auto buff = reg->First();
-      auto stream = GetLogsFromBuffer(buff);
+      auto buff = reg->Active();
+      CallbackRequestPtr callback;
+      auto stream = GetLogsFromBuffer(buff, callback);
 
       if(stream == nullptr)
       {
@@ -157,22 +237,17 @@ void LogThread::Enter()
 
       delay = TIMEOUT_IMMED;  // still more logs in buffer
 
-      //  Add the log to the log file.  In the lab, also write a copy to
-      //  the console.
+      //  Add the log to the log file and possibly the console.
       //
-      if(Element::RunningInLab())
-      {
-         ostringstreamPtr clone(new std::ostringstream(stream->str()));
-         CoutThread::Spool(clone);
-      }
-
-      FileThread::Spool(buff->FileName(), stream);
+      CopyToConsole(stream);
+      FileThread::Spool(buff->FileName(), stream, callback);
    }
 }
 
 //------------------------------------------------------------------------------
 
-ostringstreamPtr LogThread::GetLogsFromBuffer(LogBuffer* buffer)
+ostringstreamPtr LogThread::GetLogsFromBuffer
+   (LogBuffer* buffer, CallbackRequestPtr& callback)
 {
    //  If the log buffer contains any logs, create a stream to spool them.
    //
@@ -180,8 +255,8 @@ ostringstreamPtr LogThread::GetLogsFromBuffer(LogBuffer* buffer)
 
    MutexGuard guard(buffer->GetLock());
 
-   auto entry = buffer->First();
-   if(entry == nullptr) return nullptr;
+   auto curr = buffer->FirstUnspooled();
+   if(curr == nullptr) return nullptr;
    ostringstreamPtr log(new std::ostringstream);
    if(log == nullptr) return nullptr;
 
@@ -198,13 +273,16 @@ ostringstreamPtr LogThread::GetLogsFromBuffer(LogBuffer* buffer)
       buffer->ResetDiscards();
    }
 
-   while((log->str().size() < BundledLogSizeThreshold) && (entry != nullptr))
+   const LogBuffer::Entry* prev = nullptr;
+
+   while((log->str().size() < BundledLogSizeThreshold) && (curr != nullptr))
    {
-      *log << static_cast< const char* >(entry->log);
-      buffer->Next(entry);
-      buffer->Pop();  //* move to callback invoked after StreamRequest handled
+      *log << static_cast< const char* >(curr->log);
+      prev = curr;
+      curr = buffer->Advance();
    }
 
+   callback.reset(new LogsWritten(buffer, prev));
    return log;
 }
 
@@ -219,7 +297,7 @@ void LogThread::Patch(sel_t selector, void* arguments)
 
 fn_name LogThread_Spool = "LogThread.Spool";
 
-void LogThread::Spool(ostringstreamPtr& log)
+void LogThread::Spool(ostringstreamPtr& stream)
 {
    Debug::ft(LogThread_Spool);
 
@@ -231,7 +309,9 @@ void LogThread::Spool(ostringstreamPtr& log)
    auto level = Restart::GetStatus();
    Debug::Assert(level != Running, level);
 
-   MutexGuard guard(&Lock_);
+   MutexGuard guard(&LogFileLock_);
+
+   CopyToConsole(stream);
 
    auto name = Singleton< LogBufferRegistry >::Instance()->FileName();
    auto path = Element::OutputPath() + PATH_SEPARATOR + name;
@@ -239,11 +319,10 @@ void LogThread::Spool(ostringstreamPtr& log)
 
    if(file != nullptr)
    {
-      *file << log->str();
+      *file << stream->str();
       file.reset();
    }
 
-   if(Element::RunningInLab()) SysConsole::Out() << log->str() << std::flush;
-   log.reset();
+   stream.reset();
 }
 }

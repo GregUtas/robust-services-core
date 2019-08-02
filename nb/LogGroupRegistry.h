@@ -47,7 +47,7 @@ class LogGroupRegistry : public Dynamic
 public:
    //> The maximum number of log groups.
    //
-   static const id_t MaxGroups = 250;
+   static const id_t MaxGroups;
 
    //  Returns the group associated with NAME.
    //

@@ -104,7 +104,7 @@ private:
       PeerFilter();
       PeerFilter(const SysIpL3Addr& a, NodeBase::TraceStatus s);
 
-      SysIpL3Addr peer;    // peer
+      SysIpL3Addr peer;              // peer
       NodeBase::TraceStatus status;  // whether included or excluded
    };
 
@@ -115,7 +115,7 @@ private:
       PortFilter();
       PortFilter(ipport_t p, NodeBase::TraceStatus s);
 
-      ipport_t port;        // host port
+      ipport_t port;                  // host port
       NodeBase::TraceStatus status;   // whether included or excluded
    };
 

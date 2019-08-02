@@ -25,6 +25,7 @@
 #include "Thread.h"
 #include <ios>
 #include "NbTypes.h"
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -57,7 +58,7 @@ public:
 private:
    //> The size of the console input buffer.
    //
-   static const std::streamsize BuffSize = 160;
+   static const std::streamsize BuffSize = 2 * COUT_LENGTH_MAX;
 
    //  Private because this singleton is not subclassed.
    //

@@ -22,7 +22,6 @@
 #include "IpPort.h"
 #include "Dynamic.h"
 #include <ostream>
-#include <string>
 #include "Alarm.h"
 #include "AlarmRegistry.h"
 #include "Algorithms.h"

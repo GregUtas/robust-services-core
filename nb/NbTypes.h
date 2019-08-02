@@ -180,7 +180,6 @@ typedef uint8_t PooledObjectSeqNo;
 //  owned by a unique_ptr.
 //
 class CfgBoolParm;
-class CfgFileTimeParm;
 class CfgFlagParm;
 class CfgIntParm;
 class CfgStrParm;
@@ -191,7 +190,6 @@ class LowWatermark;
 class StatisticsGroup;
 
 typedef std::unique_ptr< CfgBoolParm > CfgBoolParmPtr;
-typedef std::unique_ptr< CfgFileTimeParm > CfgFileTimeParmPtr;
 typedef std::unique_ptr< CfgFlagParm > CfgFlagParmPtr;
 typedef std::unique_ptr< CfgIntParm > CfgIntParmPtr;
 typedef std::unique_ptr< CfgStrParm > CfgStrParmPtr;

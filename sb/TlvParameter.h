@@ -51,7 +51,7 @@ constexpr size_t MaxTlvParmSize = MaxSbMsgSize - sizeof(TlvParmHeader);
 //
 struct TlvParmLayout
 {
-   TlvParmHeader header;              // parameter header
+   TlvParmHeader header;                        // parameter header
    NodeBase::byte_t bytes[MaxTlvParmSize - 1];  // parameter contents
 };
 

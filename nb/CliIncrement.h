@@ -107,11 +107,11 @@ private:
 
    //  The increment's name.
    //
-   const char* name_;
+   const char* const name_;
 
    //  The increment's purpose.
    //
-   const char* help_;
+   const char* const help_;
 
    //  The increment's commands.
    //

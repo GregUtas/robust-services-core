@@ -41,8 +41,7 @@ StreamRequest::StreamRequest() : stream_(nullptr)
 
 fn_name StreamRequest_ctor2 = "StreamRequest.ctor(copy)";
 
-StreamRequest::StreamRequest(const StreamRequest& that) : MsgBuffer(that),
-   stream_(nullptr)
+StreamRequest::StreamRequest(const StreamRequest& that) : MsgBuffer(that)
 {
    Debug::ft(StreamRequest_ctor2);
 }
@@ -54,8 +53,6 @@ fn_name StreamRequest_dtor = "StreamRequest.dtor";
 StreamRequest::~StreamRequest()
 {
    Debug::ft(StreamRequest_dtor);
-
-   stream_.reset();
 }
 
 //------------------------------------------------------------------------------
@@ -67,6 +64,7 @@ void StreamRequest::Cleanup()
    Debug::ft(StreamRequest_Cleanup);
 
    stream_.reset();
+   written_.reset();
    MsgBuffer::Cleanup();
 }
 
@@ -77,7 +75,8 @@ void StreamRequest::Display(ostream& stream,
 {
    MsgBuffer::Display(stream, prefix, options);
 
-   stream << prefix << "stream : " << stream_.get() << CRLF;
+   stream << prefix << "stream  : " << stream_.get() << CRLF;
+   stream << prefix << "written : " << written_.get() << CRLF;
 }
 
 //------------------------------------------------------------------------------

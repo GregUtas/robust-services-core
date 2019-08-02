@@ -102,7 +102,7 @@ private:
 
    //  The size of the functionq_ array.
    //
-   size_t size_;
+   const size_t size_;
 
    //  The hash table for FunctionStat records.  Function names with the
    //  same hash value appear in the same queue.

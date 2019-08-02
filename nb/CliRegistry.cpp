@@ -21,12 +21,9 @@
 //
 #include "CliRegistry.h"
 #include <ostream>
-#include "CfgParmRegistry.h"
-#include "CfgStrParm.h"
 #include "CliIncrement.h"
 #include "Debug.h"
 #include "Formatters.h"
-#include "Singleton.h"
 #include "SysTypes.h"
 
 using std::ostream;
@@ -37,7 +34,6 @@ using std::string;
 namespace NodeBase
 {
 const size_t CliRegistry::MaxIncrements = 30;
-string CliRegistry::ConsoleFileName_ = "console";
 
 //------------------------------------------------------------------------------
 
@@ -48,10 +44,6 @@ CliRegistry::CliRegistry()
    Debug::ft(CliRegistry_ctor);
 
    increments_.Init(MaxIncrements + 1, CliIncrement::CellDiff(), MemProt);
-
-   consoleFileName_.reset(new CfgFileTimeParm("ConsoleFileName",
-      "console", &ConsoleFileName_, "name for console transcript files"));
-   Singleton< CfgParmRegistry >::Instance()->BindParm(*consoleFileName_);
 }
 
 //------------------------------------------------------------------------------
@@ -81,10 +73,6 @@ void CliRegistry::Display(ostream& stream,
 {
    Protected::Display(stream, prefix, options);
 
-   stream << prefix
-      << "ConsoleFileName : " << ConsoleFileName() << CRLF;
-   stream << prefix
-      << "consoleFileName : " << strObj(consoleFileName_.get()) << CRLF;
    stream << prefix << "increments : " << CRLF;
    increments_.Display(stream, prefix + spaces(2), options);
 }

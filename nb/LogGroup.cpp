@@ -35,6 +35,12 @@ using std::string;
 
 namespace NodeBase
 {
+const size_t LogGroup::MaxNameSize = 5;
+const size_t LogGroup::MaxExplSize = 48;
+const id_t LogGroup::MaxLogs = 250;
+
+//------------------------------------------------------------------------------
+
 fn_name LogGroup_ctor = "LogGroup.ctor";
 
 LogGroup::LogGroup(fixed_string name, fixed_string expl) :
@@ -46,19 +52,19 @@ LogGroup::LogGroup(fixed_string name, fixed_string expl) :
 
    if(name_.size() > MaxNameSize)
    {
-      Debug::SwLog(LogGroup_ctor, name_.size(), 0);
+      Debug::SwLog(LogGroup_ctor, "name size", name_.size());
    }
 
    if(expl_.size() > MaxExplSize)
    {
-      Debug::SwLog(LogGroup_ctor, expl_.size(), 1);
+      Debug::SwLog(LogGroup_ctor, "expl size", expl_.size());
    }
 
    logs_.Init(MaxLogs + 1, Log::CellDiff(), MemDyn);
 
    if(!Singleton< LogGroupRegistry >::Instance()->BindGroup(*this))
    {
-      Debug::SwLog(LogGroup_ctor, name_.c_str(), 2);
+      Debug::SwLog(LogGroup_ctor, name_.c_str(), 0);
    }
 }
 

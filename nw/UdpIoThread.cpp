@@ -98,11 +98,10 @@ void UdpIoThread::ClearAlarm() const
    auto alarm = ipPort_->GetAlarm();
    if(alarm == nullptr) return;
 
-   auto log = alarm->Create
-      (NetworkLogGroup, NetworkServiceAvailable, NoAlarm);
+   auto log = alarm->Create(NetworkLogGroup, NetworkServiceAvailable, NoAlarm);
    if(log == nullptr) return;
 
-   *log << Log::Tab << expl << "UDP: port=" << port_;
+   *log << Log::Tab << "UDP: port=" << port_;
    Log::Submit(log);
 }
 
@@ -249,11 +248,10 @@ void UdpIoThread::RaiseAlarm(debug32_t errval) const
    auto alarm = ipPort_->GetAlarm();
    if(alarm == nullptr) return;
 
-   auto log = alarm->Create
-      (NetworkLogGroup, NetworkServiceFailure, MajorAlarm);
+   auto log = alarm->Create(NetworkLogGroup, NetworkServiceFailure, MajorAlarm);
    if(log == nullptr) return;
 
-   *log << Log::Tab << expl << "UDP: port=" << port_ << " errval=" << errval;
+   *log << Log::Tab << "UDP: port=" << port_ << " errval=" << errval;
    Log::Submit(log);
 }
 

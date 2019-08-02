@@ -50,29 +50,15 @@ public:
 
    //> The size of a log buffer in kilobytes.
    //
-   static const size_t LogBufferSize = 1024;  // 1MB
+   static const size_t LogBufferSize;
 
    //  Returns the name of the log file.
    //
    std::string FileName() const;
 
-   //  Returns the current log buffer.
+   //  Returns the active log buffer.
    //
-   LogBuffer* First() const;
-
-   //  Returns the oldest log buffer.
-   //
-   LogBuffer* Last() const;
-
-   //  Updates BUFF to the previous log buffer.  Sets BUFF to nullptr
-   //  if there is no previous buffer.
-   //
-   void Prev(LogBuffer*& buff) const;
-
-   //  Updates BUFF to the next log buffer.  Sets BUFF to nullptr if
-   //  there is no next buffer.
-   //
-   void Next(LogBuffer*& buff) const;
+   LogBuffer* Active() const;
 
    //  Returns buffer_[INDEX].  Returns nullptr if INDEX is invalid
    //  or that of the active buffer.
@@ -104,10 +90,6 @@ private:
    //  Private because this singleton is not subclassed.
    //
    ~LogBufferRegistry();
-
-   //  Returns the index associated with BUFF.
-   //
-   size_t Find(const LogBuffer* buff) const;
 
    //  Keeps the buffers contiguous after deleting one or more buffers.
    //

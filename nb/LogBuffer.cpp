@@ -45,7 +45,8 @@ fn_name LogBuffer_ctor = "LogBuffer.ctor";
 
 LogBuffer::LogBuffer(size_t kbs) :
    discards_(0),
-   first_(nullptr),
+   spooled_(nullptr),
+   unspooled_(nullptr),
    next_(nullptr),
    max_(0),
    size_(0),
@@ -87,12 +88,63 @@ LogBuffer::~LogBuffer()
 
 //------------------------------------------------------------------------------
 
+fn_name LogBuffer_Advance = "LogBuffer.Advance";
+
+const LogBuffer::Entry* LogBuffer::Advance()
+{
+   Debug::ft(LogBuffer_Advance);
+
+   if(unspooled_ == nullptr) return nullptr;
+
+   if(spooled_ == nullptr)
+   {
+      spooled_ = unspooled_;  // first unspooled log was just spooled
+   }
+
+   unspooled_ = unspooled_->next;
+   return unspooled_;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name LogBuffer_Count = "LogBuffer.Count";
+
+size_t LogBuffer::Count(bool spooled, bool unspooled) const
+{
+   Debug::ft(LogBuffer_Count);
+
+   if(!spooled && !unspooled) return 0;
+
+   size_t total = 0;
+
+   for(auto curr = First(); curr != nullptr; ++total)
+   {
+      curr = curr->next;
+   }
+
+   if(spooled & unspooled) return total;
+
+   size_t unsent = 0;
+
+   for(auto curr = unspooled_; curr != nullptr; ++unsent)
+   {
+      curr = curr->next;
+   }
+
+   if(unspooled) return unsent;
+   return (total - unsent);
+}
+
+//------------------------------------------------------------------------------
+
 void LogBuffer::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
    if(!options.test(DispVerbose))
    {
-      stream << fileName_ << SPACE << "[count=" << Size() << ']' << CRLF;
+      stream << fileName_ << SPACE
+         << "[spooled=" << Count(true, false) << SPACE
+         << "unspooled=" << Count(false, true) << ']' << CRLF;
       return;
    }
 
@@ -100,7 +152,8 @@ void LogBuffer::Display(ostream& stream,
 
    stream << prefix << "fileName   : " << fileName_ << CRLF;
    stream << prefix << "discards   : " << discards_ << CRLF;
-   stream << prefix << "first      : " << first_ << CRLF;
+   stream << prefix << "spooled    : " << spooled_ << CRLF;
+   stream << prefix << "unspooled  : " << unspooled_ << CRLF;
    stream << prefix << "next       : " << next_ << CRLF;
    stream << prefix << "max (KBs)  : " << (max_ >> 10) << CRLF;
    stream << prefix << "size (KBs) : " << (size_ >> 10) << CRLF;
@@ -119,7 +172,29 @@ const LogBuffer::Entry* LogBuffer::First() const
 {
    Debug::ft(LogBuffer_First);
 
-   return first_;
+   return (spooled_ != nullptr ? spooled_ : unspooled_);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name LogBuffer_FirstSpooled = "LogBuffer.FirstSpooled";
+
+const LogBuffer::Entry* LogBuffer::FirstSpooled() const
+{
+   Debug::ft(LogBuffer_FirstSpooled);
+
+   return spooled_;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name LogBuffer_FirstUnspooled = "LogBuffer.FirstUnspooled";
+
+const LogBuffer::Entry* LogBuffer::FirstUnspooled() const
+{
+   Debug::ft(LogBuffer_FirstUnspooled);
+
+   return unspooled_;
 }
 
 //------------------------------------------------------------------------------
@@ -137,24 +212,25 @@ LogBuffer::Entry* LogBuffer::InsertionPoint(size_t size)
    auto where = next_;
    auto after = (ptr_t) next_ + size;
    auto wrap = after >= (buff_ + size_);
+   auto first = First();
 
    //  If the new log would overwrite the first log, discard the new log.
    //  Older logs are preserved because they capture the onset of a problem
    //  when a log flood occurs.
    //
-   if(next_ > first_)
+   if(next_ > first)
    {
       //  The first log lies above the new one, so an overwrite can only
       //  occur when wrapping around and running into the first log.
       //
-      if(wrap && (after > (ptr_t) first_)) return nullptr;
+      if(wrap && (after > (const_ptr_t) first)) return nullptr;
    }
    else
    {
       //  The first log lies below the new one, so an overwrite always occurs
       //  if wrapping around.  It also occurs when running into the first log.
       //
-      if(wrap || (after > (ptr_t) first_)) return nullptr;
+      if(wrap || (after > (const_ptr_t) first)) return nullptr;
    }
 
    //  If the new log will overrun the buffer, insert it at the top.
@@ -182,21 +258,7 @@ const LogBuffer::Entry* LogBuffer::Last() const
 {
    Debug::ft(LogBuffer_Last);
 
-   if(next_ == nullptr) return nullptr;
    return next_->prev;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name LogBuffer_Next = "LogBuffer.Next";
-
-void LogBuffer::Next(const Entry*& curr) const
-{
-   Debug::ft(LogBuffer_Next);
-
-   if(curr == nullptr) return;
-   curr = curr->next;
-   if(curr == next_) curr = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -210,36 +272,43 @@ void LogBuffer::Patch(sel_t selector, void* arguments)
 
 fn_name LogBuffer_Pop = "LogBuffer.Pop";
 
-void LogBuffer::Pop()
+const LogBuffer::Entry* LogBuffer::Pop()
 {
    Debug::ft(LogBuffer_Pop);
 
-   if(first_ == nullptr) return;
-   first_ = first_->next;
+   if(spooled_ == nullptr) return nullptr;
 
-   if(first_ == nullptr)
-      SetNext(reinterpret_cast< Entry* >(buff_));
-   else
-      first_->prev = nullptr;
-}
+   spooled_ = spooled_->next;
 
-//------------------------------------------------------------------------------
+   if(spooled_ == nullptr)
+   {
+      if(unspooled_ == nullptr)
+      {
+         //  The buffer is empty; add the next entry at the top.
+         //
+         SetNext(reinterpret_cast< Entry* >(buff_));
+      }
 
-fn_name LogBuffer_Prev = "LogBuffer.Prev";
+      return nullptr;
+   }
 
-void LogBuffer::Prev(const Entry*& curr)
-{
-   Debug::ft(LogBuffer_Prev);
+   spooled_->prev = nullptr;
 
-   if(curr == nullptr) return;
-   curr = curr->prev;
+   if(spooled_ == unspooled_)
+   {
+      //  Only unspooled logs remain.
+      //
+      spooled_ = nullptr;
+   }
+
+   return spooled_;
 }
 
 //------------------------------------------------------------------------------
 
 fn_name LogBuffer_Push = "LogBuffer.Push";
 
-LogBuffer::Entry* LogBuffer::Push(ostringstreamPtr& log)
+LogBuffer::Entry* LogBuffer::Push(const ostringstreamPtr& log)
 {
    Debug::ft(LogBuffer_Push);
 
@@ -262,10 +331,22 @@ LogBuffer::Entry* LogBuffer::Push(ostringstreamPtr& log)
    }
 
    strcpy(entry->log, log->str().c_str());
-   if(first_ == nullptr) first_ = entry;
+   if(unspooled_ == nullptr) unspooled_ = entry;
    UpdateMax();
    Singleton< LogThread >::Instance()->Interrupt();
    return entry;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name LogBuffer_ResetAllToUnspooled = "LogBuffer.ResetAllToUnspooled";
+
+void LogBuffer::ResetAllToUnspooled()
+{
+   Debug::ft(LogBuffer_ResetAllToUnspooled);
+
+   if(spooled_ != nullptr) unspooled_ = spooled_;
+   spooled_ = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -283,32 +364,16 @@ void LogBuffer::SetNext(Entry* next)
 
 //------------------------------------------------------------------------------
 
-fn_name LogBuffer_Size = "LogBuffer.Size";
-
-size_t LogBuffer::Size() const
-{
-   Debug::ft(LogBuffer_Size);
-
-   size_t size = 0;
-
-   for(auto log = first_; log != nullptr; ++size)
-   {
-      log = log->next;
-   }
-
-   return size;
-}
-
-//------------------------------------------------------------------------------
-
 void LogBuffer::UpdateMax()
 {
    size_t used = 0;
 
-   if(first_ < next_)
-      used = (ptr_t) next_ - (ptr_t) first_;
+   auto first = First();
+
+   if(first < next_)
+      used = (const_ptr_t) next_ - (const_ptr_t) first;
    else
-      used = size_ - ((ptr_t) first_ - (ptr_t) next_);
+      used = size_ - ((const_ptr_t) first - (const_ptr_t) next_);
 
    if(used > max_) max_ = used;
 }

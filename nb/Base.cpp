@@ -33,6 +33,8 @@ using std::string;
 
 namespace NodeBase
 {
+const size_t Base::MaxSubtendedCount = 256;
+
 fn_name Base_ctor = "Base.ctor";
 
 Base::Base()
@@ -99,7 +101,7 @@ void Base::GetSubtended(Base* objects[], size_t& count) const
       return;
    }
 
-   Debug::SwLog(Base_GetSubtended, count, 0);
+   Debug::SwLog(Base_GetSubtended, "array full", count);
 }
 
 //------------------------------------------------------------------------------

@@ -100,6 +100,10 @@ void LogStatsGroup::DisplayStats
 
 //==============================================================================
 
+const id_t LogGroupRegistry::MaxGroups = 250;
+
+//------------------------------------------------------------------------------
+
 fn_name LogGroupRegistry_ctor = "LogGroupRegistry.ctor";
 
 LogGroupRegistry::LogGroupRegistry()

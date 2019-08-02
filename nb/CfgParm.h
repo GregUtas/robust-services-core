@@ -140,11 +140,11 @@ private:
 
    //  A string that sets the parameter to its default value.
    //
-   const char* default_;
+   const char* const default_;
 
    //  A string that explains the parameter's type and purpose.
    //
-   const char* expl_;
+   const char* const expl_;
 
    //  The level of restart required to set the parameter to a pending value.
    //

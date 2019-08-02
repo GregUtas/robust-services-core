@@ -209,7 +209,7 @@ private:
 
    //  The event's identifier.
    //
-   Id eid_;
+   const Id eid_;
 
    //  The state machine that owns the event.
    //

@@ -264,11 +264,11 @@ private:
 
    //  The protocol that the factory supports.
    //
-   ProtocolId prid_;
+   const ProtocolId prid_;
 
    //  The factory's name.
    //
-   const char* name_;
+   const char* const name_;
 
    //  The signals that are legal for the factory to receive.
    //

@@ -96,7 +96,7 @@ class Module : public Immutable
 public:
    //> Highest valid module identifier.
    //
-   static const ModuleId MaxId = 4000;
+   static const ModuleId MaxId;
 
    //  Returns the module's identifier.
    //

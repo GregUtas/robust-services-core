@@ -113,7 +113,7 @@ private:
 
    //  The protocol to which the signal belongs.
    //
-   ProtocolId prid_;
+   const ProtocolId prid_;
 
    //  The signal's identifier.
    //

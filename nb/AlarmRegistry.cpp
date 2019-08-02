@@ -33,6 +33,10 @@ using std::string;
 
 namespace NodeBase
 {
+const id_t AlarmRegistry::MaxAlarms = 250;
+
+//------------------------------------------------------------------------------
+
 fn_name AlarmRegistry_ctor = "AlarmRegistry.ctor";
 
 AlarmRegistry::AlarmRegistry()

@@ -45,7 +45,7 @@ public:
 
    //> Highest valid state identifier;
    //
-   static const Id MaxId = 63;
+   static const Id MaxId;
 
    //  Returns the state's identifier.
    //
@@ -112,7 +112,7 @@ private:
 
    //  The service to which this state belongs.
    //
-   ServiceId sid_;
+   const ServiceId sid_;
 
    //  Registry for the state's event handlers.
    //

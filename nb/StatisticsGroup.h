@@ -103,7 +103,7 @@ private:
 
    //  An explanation of the group's statistics.
    //
-   DynString expl_;
+   const DynString expl_;
 };
 }
 #endif

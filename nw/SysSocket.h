@@ -59,7 +59,9 @@ uint16_t ntohs(uint16_t netshort);
 class SysSocket : public NodeBase::Dynamic
 {
 public:
-   //> Arbitrary limit on the size of IP messages (in bytes).
+   //> Arbitrary limit on the size of IP messages (in bytes).  Note
+   //  that a protocol running over UDP is typically restricted to
+   //  a smaller size.
    //
    static const size_t MaxMsgSize = 2048;
 

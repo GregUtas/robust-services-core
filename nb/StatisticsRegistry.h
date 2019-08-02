@@ -25,7 +25,6 @@
 #include "Dynamic.h"
 #include <cstddef>
 #include <iosfwd>
-#include <string>
 #include "Clock.h"
 #include "NbTypes.h"
 #include "Registry.h"
@@ -78,11 +77,7 @@ public:
 
    //  Displays all statistics in STREAM.
    //
-   void DisplayStats(std::ostream& stream) const;
-
-   //  Returns the prefix used for statistics report files.
-   //
-   static std::string StatsFileName() { return StatsFileName_; }
+   void DisplayStats(std::ostream& stream, const Flags& options) const;
 
    //  Returns the tick time when the current interval started.
    //
@@ -121,14 +116,6 @@ private:
    //  The global registry of statistics groups.
    //
    Registry< StatisticsGroup > groups_;
-
-   //  Specifies the prefix for log files.
-   //
-   static std::string StatsFileName_;
-
-   //  Configuration parameter for the statistics report file.
-   //
-   CfgFileTimeParmPtr statsFileName_;
 
    //  The time when the most recent statistics interval began.
    //

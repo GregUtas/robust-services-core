@@ -27,6 +27,7 @@
 #include "Debug.h"
 #include "Formatters.h"
 #include "Log.h"
+#include "NbLogs.h"
 #include "Singleton.h"
 
 using std::ostream;
@@ -174,12 +175,12 @@ bool CfgParm::SetFromTuple()
       return true;
    }
 
-   auto log = Log::Create("CFGPARM VALUE INVALID");
+   auto log = Log::Create(ConfigLogGroup, ConfigValueInvalid);
 
    if(log != nullptr)
    {
-      *log << "errval=" << input << " key=" << Key() << CRLF;
-      Log::Spool(log);
+      *log << Log::Tab << "errval=" << input << " key=" << Key();
+      Log::Submit(log);
    }
 
    SetNext(default_);

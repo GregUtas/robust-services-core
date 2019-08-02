@@ -53,7 +53,7 @@ StatisticsGroup::StatisticsGroup(const string& expl) : expl_(expl.c_str())
 
    if(expl_.size() > MaxExplSize)
    {
-      Debug::SwLog(StatisticsGroup_ctor, expl_.size(), 0);
+      Debug::SwLog(StatisticsGroup_ctor, "expl size", expl_.size());
    }
 
    Singleton< StatisticsRegistry >::Instance()->BindGroup(*this);
@@ -67,10 +67,7 @@ StatisticsGroup::~StatisticsGroup()
 {
    Debug::ft(StatisticsGroup_dtor);
 
-   if(Gid() != NIL_ID)
-   {
-      Singleton< StatisticsRegistry >::Instance()->UnbindGroup(*this);
-   }
+   Singleton< StatisticsRegistry >::Instance()->UnbindGroup(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -97,7 +94,8 @@ void StatisticsGroup::Display(ostream& stream,
 
 fn_name StatisticsGroup_DisplayStats = "StatisticsGroup.DisplayStats";
 
-void StatisticsGroup::DisplayStats(ostream& stream, id_t id) const
+void StatisticsGroup::DisplayStats
+   (ostream& stream, id_t id, const Flags& options) const
 {
    Debug::ft(StatisticsGroup_DisplayStats);
 

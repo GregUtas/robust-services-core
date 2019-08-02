@@ -37,11 +37,11 @@ namespace NodeBase
 
 namespace NodeBase
 {
-   //> Precedes the output of a hex value.
+   //  Precedes the output of a hex value.
    //
    extern fixed_string HexPrefixStr;
 
-   //> Precedes each object when a Display function outputs a queue of objects,
+   //  Precedes each object when a Display function outputs a queue of objects,
    //  as an alternative to strIndex (see below) when no index can be associated
    //  with each object.
    //
@@ -54,10 +54,6 @@ namespace NodeBase
    //  If STR is longer than ColumnWidth, nothing gets appended.
    //
    std::string spaces(size_t count);
-
-   //  Converts N to a string.
-   //
-   std::string strInt(int64_t n);
 
    //  Outputs N (as hex) in STREAM.  If PREFIX is true, HexPrefixStr ("0x")
    //  is added as a prefix.  WIDTH is interpreted as follows:
@@ -86,6 +82,10 @@ namespace NodeBase
    //  Returns S with all characters converted to lower case.
    //
    std::string strLower(const std::string& s);
+
+   //  Returns S with all characters converted to upper case.
+   //
+   std::string strUpper(const std::string& s);
 
    //  Returns -1, 0, or 1 if S1 is less than, equal to, or greater than S2.
    //  Case is ignored.

@@ -52,15 +52,15 @@ class LibrarySet : public LibraryItem
    friend class Library;
    friend class NodeBase::Q2Way< LibrarySet >;
 public:
-   //> Prefix for a read-only set.
+   //  Prefix for the name of a read-only set.
    //
    static const char ReadOnlyChar;
 
-   //> Prefix for a temporary set.
+   //  Prefix for the name of a temporary set.
    //
    static const char TemporaryChar;
 
-   //> Returns a name for a temporary variable.
+   //  Returns a name for a temporary variable.
    //
    static std::string TemporaryName();
 

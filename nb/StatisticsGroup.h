@@ -34,7 +34,8 @@
 
 namespace NodeBase
 {
-//  Base class for grouping related statistics.
+//  Base class for grouping related statistics.  Statistics groups
+//  survive warm restarts but must be created during all others.
 //
 class StatisticsGroup : public Dynamic
 {
@@ -66,7 +67,8 @@ public:
    //  outputs the group's explanation and column headings, and must be invoked
    //  by subclasses.
    //
-   virtual void DisplayStats(std::ostream& stream, id_t id) const;
+   virtual void DisplayStats
+      (std::ostream& stream, id_t id, const Flags& options) const;
 
    //  Overridden to display member variables.
    //
@@ -95,13 +97,13 @@ private:
    //
    const char* Expl() const { return expl_.c_str(); }
 
-   //  The group's identifier within StatisticsRegistry.
+   //  The group's index in StatisticsRegistry.
    //
    RegCell gid_;
 
    //  An explanation of the group's statistics.
    //
-   DynString expl_;
+   const DynString expl_;
 };
 }
 #endif

@@ -31,6 +31,7 @@
 #include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxFwd.h"
+#include "Debug.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -164,6 +165,10 @@ public:
    //  whose non-static member function is currently being executed).
    //
    void SetAsMember() { member_ = true; }
+
+   //  Sets the number of reference tags on the argument.
+   //
+   void SetRefs(TagCount r) { refs_ = r; }
 
    //  Tags the argument const.
    //
@@ -341,6 +346,10 @@ private:
    //  return a negative count.
    //
    TagCount ptrs_ : 8;
+
+   //  The number of reference tags attached to the argument.
+   //
+   TagCount refs_ : 8;
 
    //  Set if the argument was accessed via "this".
    //

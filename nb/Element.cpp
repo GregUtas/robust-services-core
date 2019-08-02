@@ -21,12 +21,15 @@
 //
 #include "Element.h"
 #include <ostream>
+#include <vector>
 #include "CfgBoolParm.h"
 #include "CfgParmRegistry.h"
 #include "CfgStrParm.h"
+#include "Clock.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Singleton.h"
+#include "SysFile.h"
 #include "SysTime.h"
 #include "SysTypes.h"
 
@@ -38,9 +41,6 @@ using std::string;
 namespace NodeBase
 {
 string Element::Name_ = "Unnamed Element";
-string Element::HelpPath_ = "help";
-string Element::InputPath_ = "input";
-string Element::OutputPath_ = "output";
 
 #ifdef FIELD_LOAD
    bool Element::RunningInLab_ = false;
@@ -54,8 +54,6 @@ fn_name Element_ctor = "Element.ctor";
 
 Element::Element() :
    name_(nullptr),
-   inputPath_(nullptr),
-   outputPath_(nullptr),
    runningInLab_(nullptr)
 {
    Debug::ft(Element_ctor);
@@ -67,18 +65,6 @@ Element::Element() :
    name_.reset(new CfgStrParm
       ("ElementName", "Unnamed Element", &Name_, "element's name"));
    reg->BindParm(*name_);
-
-   helpPath_.reset(new CfgStrParm
-      ("HelpPath", "help", &HelpPath_, "help directory"));
-   reg->BindParm(*helpPath_);
-
-   inputPath_.reset(new CfgStrParm
-      ("InputPath", "input", &InputPath_, "input directory"));
-   reg->BindParm(*inputPath_);
-
-   outputPath_.reset(new CfgStrParm
-      ("OutputPath", "output", &OutputPath_, "output directory"));
-   reg->BindParm(*outputPath_);
 
    runningInLab_.reset(new CfgBoolParm
       ("RunningInLab", "T", &RunningInLab_, "set if running in lab"));
@@ -96,20 +82,33 @@ Element::~Element()
 
 //------------------------------------------------------------------------------
 
+const string& Element::ConsoleFileName()
+{
+   static string ConsoleTranscriptFile;
+
+   //  Set RscDir to the last directory named "rsc/" on the path to the
+   //  executable.
+   //
+   if(ConsoleTranscriptFile.empty())
+      ConsoleTranscriptFile = "console" + Clock::TimeZeroStr();
+   return ConsoleTranscriptFile;
+}
+
+//------------------------------------------------------------------------------
+
 void Element::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
    Protected::Display(stream, prefix, options);
 
    stream << prefix << "Name         : " << Name_ << CRLF;
-   stream << prefix << "InputPath    : " << HelpPath_ << CRLF;
-   stream << prefix << "InputPath    : " << InputPath_ << CRLF;
-   stream << prefix << "OutputPath   : " << OutputPath_ << CRLF;
+   stream << prefix << "RscPath      : " << RscPath() << CRLF;
+   stream << prefix << "HelpPath     : " << HelpPath() << CRLF;
+   stream << prefix << "InputPath    : " << InputPath() << CRLF;
+   stream << prefix << "OutputPath   : " << OutputPath() << CRLF;
+   stream << prefix << "ConsoleFileName : " << ConsoleFileName() << CRLF;
    stream << prefix << "RunningInLab : " << RunningInLab_ << CRLF;
    stream << prefix << "name         : " << strObj(name_.get()) << CRLF;
-   stream << prefix << "helpPath     : " << strObj(helpPath_.get()) << CRLF;
-   stream << prefix << "inputPath    : " << strObj(inputPath_.get()) << CRLF;
-   stream << prefix << "outputPath   : " << strObj(outputPath_.get()) << CRLF;
    stream << prefix << "runningInLab : " << strObj(runningInLab_.get()) << CRLF;
 }
 
@@ -117,38 +116,31 @@ void Element::Display(ostream& stream,
 
 const string& Element::HelpPath()
 {
-   //  A static default is not required for this string, because it is
-   //  not used before the CLI has been entered.
-   //
-   return HelpPath_;
+   static string HelpDir;
+
+   if(HelpDir.empty()) HelpDir = RscPath() + PATH_SEPARATOR + "help";
+   return HelpDir;
 }
 
 //------------------------------------------------------------------------------
 
 const string& Element::InputPath()
 {
-   static string DefaultInputPath("input");
+   static string InputDir;
 
-   //  If our singleton hasn't even been created yet, InputPath_ might not
-   //  have been initialized yet.  Return the static string created above.
-   //
-   auto element = Singleton< Element >::Extant();
-   if(element == nullptr) return DefaultInputPath;
-   return InputPath_;
+   if(InputDir.empty()) InputDir = RscPath() + PATH_SEPARATOR + "input";
+   return InputDir;
 }
 
 //------------------------------------------------------------------------------
 
 const string& Element::OutputPath()
 {
-   static string DefaultOutputPath("output");
+   static string OutputDir;
 
-   //  If our singleton hasn't even been created yet, OutputPath_ might not
-   //  have been initialized yet.  Return the static string created above.
-   //
-   auto element = Singleton< Element >::Extant();
-   if(element == nullptr) return DefaultOutputPath;
-   return OutputPath_;
+   if(OutputDir.empty())
+      OutputDir = RscPath() + PATH_SEPARATOR + "excluded/output";
+   return OutputDir;
 }
 
 //------------------------------------------------------------------------------
@@ -156,6 +148,42 @@ const string& Element::OutputPath()
 void Element::Patch(sel_t selector, void* arguments)
 {
    Protected::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
+const string& Element::RscPath()
+{
+   static string RscDir;
+
+   //  Set RscDir to the last directory named "rsc/" on the path to the
+   //  executable.
+   //
+   if(RscDir.empty())
+   {
+      auto& args = Singleton< CfgParmRegistry >::Instance()->GetMainArgs();
+      RscDir = *args.at(0);
+      SysFile::Normalize(RscDir);
+
+      string dir("rsc");
+      dir.push_back(PATH_SEPARATOR);
+      auto pos = RscDir.rfind(dir);
+
+      if(pos != string::npos)
+      {
+         RscDir.erase(pos + 3);
+      }
+      else
+      {
+         //  An "rsc/" directory was not found.  Set RscDir to the executable's
+         //  directory, though this is unlikely to work.
+         //
+         pos = RscDir.rfind(PATH_SEPARATOR);
+         RscDir.erase(pos);
+      }
+   }
+
+   return RscDir;
 }
 
 //------------------------------------------------------------------------------

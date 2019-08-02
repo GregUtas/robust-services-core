@@ -90,7 +90,7 @@ private:
 
    //  The feature's identifier.
    //
-   PotsFeature::Id fid_;
+   const PotsFeature::Id fid_;
 
    //  The next feature assigned to the profile.
    //

@@ -55,7 +55,7 @@ private:
    //
    bool ShowValues(std::string& values) const override;
 
-   //> Indicates a boolean value in parameter help text.
+   //  Represents a boolean value in parameter help text.
    //
    static fixed_string AnyBoolParm;
 };

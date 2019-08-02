@@ -60,10 +60,6 @@ public:
    //
    void ListIncrements(std::ostream& stream) const;
 
-   //  Returns the name for the console transcript file.
-   //
-   static std::string ConsoleFileName() { return ConsoleFileName_; }
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -88,14 +84,6 @@ private:
    //  The global registry of CLI increments.
    //
    Registry< CliIncrement > increments_;
-
-   //  Specifies the prefix for console transcript files.
-   //
-   static std::string ConsoleFileName_;
-
-   //  Configuration parameter for the console transcript file.
-   //
-   CfgFileTimeParmPtr consoleFileName_;
 };
 }
 #endif

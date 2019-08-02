@@ -24,7 +24,6 @@
 #include <string>
 #include "CfgParmRegistry.h"
 #include "Debug.h"
-#include "Formatters.h"
 #include "IpPortCfgParm.h"
 #include "Singleton.h"
 
@@ -54,7 +53,7 @@ PotsCallIpService::PotsCallIpService() : port_(NilIpPort)
 {
    Debug::ft(PotsCallIpService_ctor);
 
-   auto port = strInt(PotsCallIpPort);
+   auto port = std::to_string(PotsCallIpPort);
    cfgPort_.reset(new IpPortCfgParm
       (PotsCallIpPortKey, port.c_str(), &port_, PotsCallIpPortExpl, this));
    Singleton< CfgParmRegistry >::Instance()->BindParm(*cfgPort_);

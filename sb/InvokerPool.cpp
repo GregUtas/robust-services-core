@@ -36,12 +36,12 @@
 #include "Q2Way.h"
 #include "Restart.h"
 #include "SbIpBuffer.h"
+#include "SbLogs.h"
 #include "SbPools.h"
 #include "SbTrace.h"
 #include "SbTracer.h"
 #include "Singleton.h"
 #include "Statistics.h"
-#include "SysTypes.h"
 #include "ThisThread.h"
 #include "ToolTypes.h"
 #include "TraceBuffer.h"
@@ -294,13 +294,13 @@ void InvokerPool::Dequeued(Message::Priority prio) const
       return;
    }
 
-   auto log = Log::Create("INVOKER QUEUE UNDERFLOW");
+   auto log = Log::Create(SessionLogGroup, InvokerWorkQueueCount);
 
    if(log != nullptr)
    {
-      *log << "pool=" << int(GetFaction());
-      *log << " queue=" << prio << CRLF;
-      Log::Spool(log);
+      *log << Log::Tab << "pool=" << int(GetFaction());
+      *log << " queue=" << prio << " [underflow]";
+      Log::Submit(log);
    }
 
    work->length_ = work->contextq_.Size();
@@ -323,7 +323,7 @@ void InvokerPool::Display(ostream& stream,
    invokers_.Display(stream, prefix + spaces(2), options);
 
    auto lead = prefix + spaces(2);
-   stream << prefix << "workq [MsgPriority]" << CRLF;
+   stream << prefix << "workq [Message::Priority]" << CRLF;
 
    for(auto p = 0; p <= Message::MaxPriority; ++p)
    {
@@ -336,7 +336,7 @@ void InvokerPool::Display(ostream& stream,
 
 fn_name InvokerPool_DisplayStats = "InvokerPool.DisplayStats";
 
-void InvokerPool::DisplayStats(ostream& stream) const
+void InvokerPool::DisplayStats(ostream& stream, const Flags& options) const
 {
    Debug::ft(InvokerPool_DisplayStats);
 
@@ -348,16 +348,16 @@ void InvokerPool::DisplayStats(ostream& stream) const
       auto work = work_[p].get();
       stream << spaces(4) << Message::strPriority(p);
       stream << " work queue:" << CRLF;
-      work->dequeues_->DisplayStat(stream);
-      work->maxLength_->DisplayStat(stream);
-      work->maxDelay_->DisplayStat(stream);
+      work->dequeues_->DisplayStat(stream, options);
+      work->maxLength_->DisplayStat(stream, options);
+      work->maxDelay_->DisplayStat(stream, options);
    }
 
    stream << spaces(4) << "pool statistics:" << CRLF;
-   stats_->maxTrans_->DisplayStat(stream);
-   stats_->requeues_->DisplayStat(stream);
-   stats_->trojans_->DisplayStat(stream);
-   stats_->lockouts_->DisplayStat(stream);
+   stats_->maxTrans_->DisplayStat(stream, options);
+   stats_->requeues_->DisplayStat(stream, options);
+   stats_->trojans_->DisplayStat(stream, options);
+   stats_->lockouts_->DisplayStat(stream, options);
 }
 
 //------------------------------------------------------------------------------
@@ -396,13 +396,13 @@ Context* InvokerPool::FindWork()
       }
       else if(work->length_ > 0)
       {
-         auto log = Log::Create("INVOKER QUEUE EMPTY");
+         auto log = Log::Create(SessionLogGroup, InvokerWorkQueueCount);
 
          if(log != nullptr)
          {
-            *log << "pool=" << int(GetFaction());
-            *log << " queue=" << prio << CRLF;
-            Log::Spool(log);
+            *log << Log::Tab << "pool=" << int(GetFaction());
+            *log << " queue=" << prio << " [zeroed]";
+            Log::Submit(log);
          }
 
          work->length_ = 0;
@@ -447,10 +447,10 @@ void InvokerPool::KickThread()
    //
    if(Restart::GetStatus() == Running)
    {
-      auto log = Log::Create("INVOKER POOL BLOCKED");
+      auto log = Log::Create(SessionLogGroup, InvokerPoolBlocked);
       if(log == nullptr) return;
-      *log << "pool=" << int(GetFaction()) << CRLF;
-      Log::Spool(log);
+      *log << Log::Tab << "pool=" << int(GetFaction());
+      Log::Submit(log);
    }
 }
 
@@ -467,15 +467,15 @@ bool InvokerPool::LogLostBuff
 
    if(GenerateLog(rc))
    {
-      auto log = Log::Create("INVOKER DISCARDED BUFFER");
+      auto log = Log::Create(SessionLogGroup, InvokerDiscardedBuffer);
 
       if(log != nullptr)
       {
-         *log << "pool=" << int(GetFaction());
+         *log << Log::Tab << "pool=" << int(GetFaction());
          *log << " factory=" << fid;
          *log << " errval=" << rc << CRLF;
-         buff.Output(*log, 0, true);
-         Log::Spool(log);
+         buff.Output(*log, Log::Indent, true);
+         Log::Submit(log);
       }
    }
 
@@ -495,16 +495,16 @@ bool InvokerPool::LogLostMsg(Message& msg, Factory::Rc rc, TransTrace* tt) const
 
    if(GenerateLog(rc))
    {
-      auto log = Log::Create("INVOKER DISCARDED MESSAGE");
+      auto log = Log::Create(SessionLogGroup, InvokerDiscardedMessage);
 
       if(log != nullptr)
       {
-         *log << "pool=" << int(GetFaction());
+         *log << Log::Tab << "pool=" << int(GetFaction());
          *log << " protocol=" << msg.GetProtocol();
          *log << " signal=" << msg.GetSignal();
          *log << " errval=" << rc << CRLF;
-         msg.Output(*log, 0, true);
-         Log::Spool(log);
+         msg.Output(*log, Log::Indent, true);
+         Log::Submit(log);
       }
    }
 

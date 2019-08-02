@@ -57,7 +57,7 @@ class Base
 public:
    //> The maximum number of objects in the Base::GetSubtended array.
    //
-   static const size_t MaxSubtendedCount = 256;
+   static const size_t MaxSubtendedCount;
 
    //  Virtual to allow subclassing.
    //

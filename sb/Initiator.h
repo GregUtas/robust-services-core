@@ -115,15 +115,15 @@ private:
 
    //  The service associated with the initiator.
    //
-   ServiceId sid_;
+   const ServiceId sid_;
 
    //  The service associated with the trigger (the initiator's ancestor).
    //
-   ServiceId aid_;
+   const ServiceId aid_;
 
    //  The trigger associated with the initiator.
    //
-   TriggerId tid_;
+   const TriggerId tid_;
 
    //  The initiator's priority.
    //

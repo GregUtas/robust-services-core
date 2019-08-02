@@ -3325,8 +3325,9 @@ word Editor::TagAsConstArgument(const CodeWarning& log, string& expl)
    //
    auto func = static_cast< const Function* >(log.item);
    auto& args = func->GetArgs();
-   if(log.offset >= args.size()) return NotFound(expl, "Argument");
-   auto arg = args.at(log.offset).get();
+   auto index = (func->IsStatic() ? log.offset - 1 : log.offset);
+   if(index >= args.size()) return NotFound(expl, "Argument");
+   auto arg = args.at(index).get();
    if(arg == nullptr) return NotFound(expl, "Argument");
    auto type = FindPos(arg->GetTypeSpec()->GetPos());
    if(type.pos == string::npos) return NotFound(expl, "Argument type");
@@ -3574,7 +3575,10 @@ word Editor::TagAsStaticFunction(const CodeWarning& log, string& expl)
       Changed();
    }
 
-   //  A static function cannot be const, so remove that tag if it exists.
+   //  A static function cannot be const, so remove that tag if it exists.  If
+   //  "const" is on the same line as RPAR, delete any space *before* "const";
+   //  if it's on the next line, delete any space *after* "const" to preserve
+   //  indentation.
    //
    if(func->IsConst())
    {
@@ -3583,8 +3587,16 @@ word Editor::TagAsStaticFunction(const CodeWarning& log, string& expl)
       {
          auto& code = tag.iter->code;
          code.erase(tag.pos, strlen(CONST_STR));
-         if((tag.pos < code.size()) && IsBlank(code[tag.pos]))
-            code.erase(tag.pos, 1);
+
+         if(rpar.iter == tag.iter)
+         {
+            if(IsBlank(code[tag.pos - 1])) code.erase(tag.pos - 1, 1);
+         }
+         else
+         {
+            if((tag.pos < code.size()) && IsBlank(code[tag.pos]))
+               code.erase(tag.pos, 1);
+         }
       }
    }
 

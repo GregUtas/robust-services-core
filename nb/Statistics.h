@@ -30,12 +30,14 @@
 #include <string>
 #include "NbTypes.h"
 #include "RegCell.h"
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
 namespace NodeBase
 {
-//  Base class for statistics.
+//  Base class for statistics.  Statistics survive warm restarts
+//  but must be created during all others.
 //
 class Statistic : public Dynamic
 {
@@ -59,7 +61,7 @@ public:
 
    //  Display the statistic in STREAM.
    //
-   virtual void DisplayStat(std::ostream& stream) const;
+   virtual void DisplayStat(std::ostream& stream, const Flags& options) const;
 
    //  Returns the offset to mid_.
    //
@@ -113,13 +115,13 @@ private:
    //
    virtual void StartInterval(bool first);
 
-   //  The statistic's identifier within StatisticsRegistry.
+   //  The statistic's index in StatisticsRegistry.
    //
    RegCell sid_;
 
    //  The string that explains the statistic's purpose.
    //
-   DynString expl_;
+   const DynString expl_;
 };
 
 //------------------------------------------------------------------------------
@@ -143,7 +145,7 @@ public:
 
    //  Overridden to display the statistic.
    //
-   void DisplayStat(std::ostream& stream) const override;
+   void DisplayStat(std::ostream& stream, const Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -199,7 +201,7 @@ public:
 
    //  Overridden to display the statistic.
    //
-   void DisplayStat(std::ostream& stream) const override;
+   void DisplayStat(std::ostream& stream, const Flags& options) const override;
 private:
    //  Overridden to start a new measurement interval.
    //
@@ -235,7 +237,7 @@ public:
 
    //  Overridden to display the statistic.
    //
-   void DisplayStat(std::ostream& stream) const override;
+   void DisplayStat(std::ostream& stream, const Flags& options) const override;
 private:
    //  Overridden to start a new measurement interval.
    //

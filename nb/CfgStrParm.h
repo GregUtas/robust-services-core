@@ -78,35 +78,5 @@ private:
    //
    std::string next_;  //r
 };
-
-//------------------------------------------------------------------------------
-//
-//  Configuration parameter for a filename that adds a suffix containing
-//  the time at which the system was initialized.
-//
-class CfgFileTimeParm : public CfgStrParm
-{
-public:
-   //  Creates a parameter with the specified attributes.
-   //
-   CfgFileTimeParm(const char* key, const char* def,
-      std::string* field, const char* expl);
-
-   //  Virtual to allow subclassing.
-   //
-   virtual ~CfgFileTimeParm();
-protected:
-   //  Overridden to add the time at which the system was initialized.
-   //
-   bool SetNext(const std::string& input) override;
-private:
-   //  Overridden to return the filename without its time suffix.
-   //
-   std::string GetInput() const override { return input_; }
-
-   //  Preserves the filename's original value, without the time suffix.
-   //
-   std::string input_;  //r
-};
 }
 #endif

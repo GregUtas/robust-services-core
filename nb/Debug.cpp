@@ -28,6 +28,7 @@
 #include "InitFlags.h"
 #include "Log.h"
 #include "NbAppIds.h"
+#include "NbLogs.h"
 #include "SoftwareException.h"
 #include "SysThreadStack.h"
 #include "ThisThread.h"
@@ -78,22 +79,22 @@ void Debug::GenerateSwLog(fn_name_arg func, const string& errstr,
       throw SoftwareException(errstr, offset, 3);
    }
 
-   auto log = Log::Create("SOFTWARE ERROR");
+   auto log = Log::Create(SoftwareLogGroup, SoftwareError);
 
    if(log != nullptr)
    {
-      *log << level << " in ";
+      *log << Log::Tab << "in ";
       if(func != nullptr)
          *log << func;
       else
          *log << "Unknown Function";
       *log << CRLF;
 
-      *log << "errval=" << errstr;
+      *log << Log::Tab << "errval=" << errstr;
       *log << " offset=" << strHex(offset) << CRLF;
 
       if(level != SwInfo) SysThreadStack::Display(*log, 1);
-      Log::Spool(log);
+      Log::Submit(log);
    }
 
    Thread::ExitSwLog(false);

@@ -54,7 +54,7 @@ public:
 
    //> Highest valid parameter identifier.
    //
-   static const Id MaxId = 63;
+   static const Id MaxId;
 
    //  Identifier for timeout (timer expiry) parameter.
    //
@@ -182,7 +182,7 @@ private:
 
    //  The protocol to which the parameter belongs.
    //
-   ProtocolId prid_;
+   const ProtocolId prid_;
 
    //  The parameter's identifier.
    //

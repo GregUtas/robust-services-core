@@ -24,6 +24,7 @@
 
 #include "InvokerPool.h"
 #include "NbTypes.h"
+#include "ObjectPool.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -57,6 +58,10 @@ private:
    //  Private because this singleton is not subclassed.
    //
    ~PayloadInvokerPool();
+
+   //  The alarm that is raised when payload work enters overload.
+   //
+   NodeBase::Alarm* overloadAlarm_;
 
    //  The configuration parameter for the maximum length of
    //  this pool's ingress work queue.

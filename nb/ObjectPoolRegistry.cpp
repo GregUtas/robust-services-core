@@ -62,7 +62,8 @@ class ObjectPoolStatsGroup : public StatisticsGroup
 public:
    ObjectPoolStatsGroup();
    ~ObjectPoolStatsGroup();
-   void DisplayStats(ostream& stream, id_t id) const override;
+   void DisplayStats
+      (ostream& stream, id_t id, const Flags& options) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -88,11 +89,12 @@ ObjectPoolStatsGroup::~ObjectPoolStatsGroup()
 
 fn_name ObjectPoolStatsGroup_DisplayStats = "ObjectPoolStatsGroup.DisplayStats";
 
-void ObjectPoolStatsGroup::DisplayStats(ostream& stream, id_t id) const
+void ObjectPoolStatsGroup::DisplayStats
+   (ostream& stream, id_t id, const Flags& options) const
 {
    Debug::ft(ObjectPoolStatsGroup_DisplayStats);
 
-   StatisticsGroup::DisplayStats(stream, id);
+   StatisticsGroup::DisplayStats(stream, id, options);
 
    auto reg = Singleton< ObjectPoolRegistry >::Instance();
 
@@ -102,7 +104,7 @@ void ObjectPoolStatsGroup::DisplayStats(ostream& stream, id_t id) const
 
       for(auto p = pools.First(); p != nullptr; pools.Next(p))
       {
-         p->DisplayStats(stream);
+         p->DisplayStats(stream, options);
       }
    }
    else
@@ -115,7 +117,7 @@ void ObjectPoolStatsGroup::DisplayStats(ostream& stream, id_t id) const
          return;
       }
 
-      p->DisplayStats(stream);
+      p->DisplayStats(stream, options);
    }
 }
 
@@ -135,7 +137,7 @@ ObjectPoolRegistry::ObjectPoolRegistry()
    pools_.Init(ObjectPool::MaxId + 1, ObjectPool::CellDiff(), MemProt);
    statsGroup_.reset(new ObjectPoolStatsGroup);
    nullifyObjectData_.reset(new CfgBoolParm("NullifyObjectData", "F",
-      &NullifyObjectData_, "set to nullify an object's data after its vptr"));
+      &NullifyObjectData_, "set to nullify the data after an object's vptr"));
    Singleton< CfgParmRegistry >::Instance()->BindParm(*nullifyObjectData_);
 }
 

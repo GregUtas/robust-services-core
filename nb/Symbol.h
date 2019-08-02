@@ -93,7 +93,7 @@ private:
 
    //  The symbol's name.
    //
-   DynString name_;
+   const DynString name_;
 
    //  The symbol's value.
    //

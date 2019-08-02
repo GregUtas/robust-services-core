@@ -25,6 +25,7 @@
 #include "IoThread.h"
 #include <cstddef>
 #include "Array.h"
+#include "NbTypes.h"
 #include "NwTypes.h"
 #include "SysTypes.h"
 
@@ -107,10 +108,15 @@ private:
    //
    bool ListenerHasFailed(SysTcpSocket* listener) const;
 
-   //  Invoked when a listener could not be allocated.  ERRVAL is the
-   //  reason for the failure.
+   //  Raises an alarm when the thread will exit because a listener socket
+   //  could not be configured.  ERRVAL is the reason for the failure.
+   //  Returns nullptr.
    //
-   SysTcpSocket* ListenerError(NodeBase::word errval) const;
+   SysTcpSocket* RaiseAlarm(NodeBase::word errval) const;
+
+   //  Clears any alarm associated with the thread's service.
+   //
+   void ClearAlarm() const;
 
    //  Polls the sockets until at least one of them reports an event or
    //  an error occurs.  Returns the result of SysTcpSocket::Poll.
@@ -142,11 +148,11 @@ private:
       SocketFlags   // include socket->OutFlags() in log
    };
 
-   //  Generates a log when an error occurs.  EXPL is a text explanation,
-   //  and ERROR is the general type of error.  SOCKET is where the error
-   //  occurred, and ERRVAL is used if SOCKET is nullptr.
+   //  Generates the log specified by ID when an error occurs.  EXPL explains
+   //  the failure, and ERROR is the general type of error.  SOCKET is where
+   //  the error occurred, and ERRVAL is used if SOCKET is nullptr.
    //
-   void OutputLog(NodeBase::fixed_string expl, Error error,
+   void OutputLog(NodeBase::LogId id, NodeBase::fixed_string expl, Error error,
       SysTcpSocket* socket, NodeBase::debug32_t errval = 0) const;
 
    //  Releases resources when exiting or cleaning up the thread.

@@ -33,6 +33,7 @@
 #include "PotsFeatureRegistry.h"
 #include "PotsHtlFeature.h"
 #include "PotsIncrement.h"
+#include "PotsLogs.h"
 #include "PotsProfileRegistry.h"
 #include "PotsProtocol.h"
 #include "PotsSusFeature.h"
@@ -115,6 +116,7 @@ void PbModule::Startup(RestartLevel level)
 {
    Debug::ft(PbModule_Startup);
 
+   CreatePotsLogs(level);
    Singleton< PotsProfileRegistry >::Instance()->Startup(level);
    Singleton< PotsBicFeature >::Instance()->Startup(level);
    Singleton< PotsBocFeature >::Instance()->Startup(level);

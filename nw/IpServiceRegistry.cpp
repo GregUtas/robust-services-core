@@ -70,7 +70,7 @@ void IpServiceRegistry::Display(ostream& stream,
 {
    Protected::Display(stream, prefix, options);
 
-   stream << prefix << "services [IpServiceId]" << CRLF;
+   stream << prefix << "services [id_t]" << CRLF;
    services_.Display(stream, prefix + spaces(2), options);
 }
 

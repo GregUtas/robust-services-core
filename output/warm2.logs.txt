@@ -1,161 +1,31 @@
-...initialized                   198
-NodeTools.NtModule...                   08:45:16.397
-...initialized                    13
-CodeTools.CtModule...                   08:45:16.414
-...initialized                     6
-NetworkBase.NwModule...                 08:45:16.424
-...initialized                    80
-SessionBase.SbModule...                 08:45:16.508
-...initialized                    89
-SessionTools.StModule...                08:45:16.601
-...initialized                     8
-MediaBase.MbModule...                   08:45:16.613
-...initialized                     5
-CallBase.CbModule...                    08:45:16.621
-...initialized                    35
-PotsBase.PbModule...                    08:45:16.660
-...initialized                     8
-OperationsNode.OnModule...              08:45:16.673
-...initialized                     5
-ControlNode.CnModule...                 08:45:16.682
-...initialized                     4
-RoutingNode.RnModule...                 08:45:16.693
-...initialized                     5
-ServiceNode.SnModule...                 08:45:16.702
-...initialized                    38
-AccessNode.AnModule...                  08:45:16.745
-...initialized                    30
+...initialized                    25
+NodeTools.NtModule...                   14:00:57.169
+...initialized                    11
+CodeTools.CtModule...                   14:00:57.191
+...initialized                    10
+NetworkBase.NwModule...                 14:00:57.212
+...initialized                    10
+SessionBase.SbModule...                 14:00:57.234
+...initialized                    16
+SessionTools.StModule...                14:00:57.260
+...initialized                    12
+MediaBase.MbModule...                   14:00:57.285
+...initialized                    11
+CallBase.CbModule...                    14:00:57.308
+...initialized                    11
+PotsBase.PbModule...                    14:00:57.329
+...initialized                    11
+OperationsNode.OnModule...              14:00:57.355
+...initialized                    15
+ControlNode.CnModule...                 14:00:57.385
+...initialized                    14
+RoutingNode.RnModule...                 14:00:57.417
+...initialized                    16
+ServiceNode.SnModule...                 14:00:57.449
+...initialized                    15
+AccessNode.AnModule...                  14:00:57.480
+...initialized                    15
                                -----
-total initialization time        905
+total initialization time        379
 
-NODE RUNNING 13-Jun-2018 08:45:16.790 on Reigi {1}
-
-POTS TRAFFIC RATE 13-Jun-2018 08:46:42.214 on Reigi {2}
-rate=1200
-
-NODE RESTART 13-Jun-2018 08:47:26.758 on Reigi {3}
-in NodeBase.CliThread (tid=9, nid=0x00002b00)
-  reason : 0x1
-  errval : 0x1
-Function Traceback:
-  NodeBase.ElementException.ElementException @ elementexception.cpp + 38[12]
-  NodeBase.Restart.Initiate @ restart.cpp + 41[16]
-  NodeBase.RestartCommand.ProcessCommand @ nbincrement.cpp + 1686[11]
-  NodeBase.CliThread.InvokeCommand @ clithread.cpp + 394[19]
-  NodeBase.CliThread.ReadCommands @ clithread.cpp + 573[0]
-  NodeBase.ReadCommand.ProcessCommand @ nbincrement.cpp + 1550[0]
-  NodeBase.CliThread.InvokeCommand @ clithread.cpp + 394[19]
-  NodeBase.CliThread.ReadCommands @ clithread.cpp + 573[0]
-  NodeBase.CliThread.Enter @ clithread.cpp + 267[17]
-  NodeBase.Thread.Start @ thread.cpp + 2797[15]
-  NodeBase.Thread.EnterThread @ thread.cpp + 1562[0]
-  BaseThreadInitThunk @ <unknown file> (err=487)
-  RtlValidSecurityDescriptor @ <unknown file> (err=487)
-  RtlValidSecurityDescriptor @ <unknown file> (err=487)
-
-RESTART TYPE: warm
-
-MODULE SHUTDOWN                msecs      invoked at
-Notifying threads...                    08:47:26.863
-...threads to exit:  8            22
-
-THREAD EXITED 13-Jun-2018 08:47:26.965 on Reigi {4}
-thread=SessionBase.InvokerThread (tid=10, nid=0x00000dcc)
-signal=120 (SIGCLOSE: Non-Error Shutdown)
-
-THREAD EXITED 13-Jun-2018 08:47:26.976 on Reigi {5}
-thread=NodeBase.LogThread (tid=8, nid=0x00002098)
-signal=120 (SIGCLOSE: Non-Error Shutdown)
-
-THREAD EXITED 13-Jun-2018 08:47:26.996 on Reigi {7}
-thread=NodeBase.ObjectPoolAudit (tid=6, nid=0x00004678)
-signal=120 (SIGCLOSE: Non-Error Shutdown)
-
-THREAD EXITED 13-Jun-2018 08:47:26.986 on Reigi {6}
-thread=NodeBase.CoutThread (tid=4, nid=0x000006ec)
-signal=120 (SIGCLOSE: Non-Error Shutdown)
-
-THREAD EXITED 13-Jun-2018 08:47:27.026 on Reigi {8}
-thread=NodeBase.FileThread (tid=3, nid=0x000018ec)
-signal=120 (SIGCLOSE: Non-Error Shutdown)
-
-THREAD EXITED 13-Jun-2018 08:47:27.026 on Reigi {9}
-thread=SessionBase.TimerThread (tid=11, nid=0x00000638)
-signal=120 (SIGCLOSE: Non-Error Shutdown)
-
-THREAD EXITED 13-Jun-2018 08:47:27.026 on Reigi {10}
-thread=NodeBase.CliThread (tid=9, nid=0x00002b00)
-signal=120 (SIGCLOSE: Non-Error Shutdown)
-
-THREAD EXITED 13-Jun-2018 08:47:27.035 on Reigi {11}
-thread=NodeBase.StatisticsThread (tid=7, nid=0x000046a0)
-signal=120 (SIGCLOSE: Non-Error Shutdown)
-
-...threads exited:  8            357
-AccessNode.AnModule...                  08:47:27.231
-...shut down                       7
-ServiceNode.SnModule...                 08:47:27.245
-...shut down                       6
-RoutingNode.RnModule...                 08:47:27.257
-...shut down                       7
-ControlNode.CnModule...                 08:47:27.271
-...shut down                      11
-OperationsNode.OnModule...              08:47:27.288
-...shut down                       7
-PotsBase.PbModule...                    08:47:27.307
-...shut down                       6
-CallBase.CbModule...                    08:47:27.318
-...shut down                       8
-MediaBase.MbModule...                   08:47:27.333
-...shut down                       7
-SessionTools.StModule...                08:47:27.345
-...shut down                       7
-SessionBase.SbModule...                 08:47:27.355
-...shut down                       7
-NetworkBase.NwModule...                 08:47:27.368
-...shut down                       5
-CodeTools.CtModule...                   08:47:27.377
-...shut down                       7
-NodeTools.NtModule...                   08:47:27.391
-...shut down                       4
-NodeBase.NbModule...                    08:47:27.400
-...shut down                       7
-                               -----
-total shutdown time              549
-
-MODULE INITIALIZATION          msecs      invoked at
-NodeBase.NbModule...                    08:47:27.419
-...initialized                   111
-NodeTools.NtModule...                   08:47:27.538
-...initialized                     5
-CodeTools.CtModule...                   08:47:27.549
-...initialized                     5
-NetworkBase.NwModule...                 08:47:27.559
-...initialized                     5
-SessionBase.SbModule...                 08:47:27.568
-...initialized                    42
-SessionTools.StModule...                08:47:27.619
-...initialized                     6
-MediaBase.MbModule...                   08:47:27.632
-...initialized                     6
-CallBase.CbModule...                    08:47:27.645
-...initialized                     9
-PotsBase.PbModule...                    08:47:27.662
-...initialized                     7
-OperationsNode.OnModule...              08:47:27.675
-...initialized                     9
-ControlNode.CnModule...                 08:47:27.693
-...initialized                     8
-RoutingNode.RnModule...                 08:47:27.709
-...initialized                     5
-ServiceNode.SnModule...                 08:47:27.725
-...initialized                     9
-AccessNode.AnModule...                  08:47:27.741
-...initialized                     9
-                               -----
-total initialization time        339
-
-NODE RUNNING 13-Jun-2018 08:47:27.768 on Reigi {12}
-
-POTS TRAFFIC RATE 13-Jun-2018 08:48:07.746 on Reigi {13}
-rate=0
+    NODE500 2-Aug-2019 14:00:57.528 on Reigi {12}

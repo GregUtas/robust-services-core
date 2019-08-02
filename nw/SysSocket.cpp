@@ -21,10 +21,12 @@
 //
 #include "SysSocket.h"
 #include <sstream>
-#include <string>
+#include "Alarm.h"
+#include "AlarmRegistry.h"
 #include "Debug.h"
 #include "IpBuffer.h"
 #include "Log.h"
+#include "NwLogs.h"
 #include "NwTrace.h"
 #include "NwTracer.h"
 #include "Singleton.h"
@@ -79,14 +81,15 @@ void SysSocket::Display(ostream& stream,
 
 fn_name SysSocket_OutputLog = "SysSocket.OutputLog";
 
-void SysSocket::OutputLog(fixed_string expl, const IpBuffer* buff) const
+void SysSocket::OutputLog
+   (LogId id, fixed_string expl, const IpBuffer* buff) const
 {
    Debug::ft(SysSocket_OutputLog);
 
-   auto log = Log::Create(expl);
+   auto log = Log::Create(NetworkLogGroup, id);
    if(log == nullptr) return;
 
-   *log << "errval=" << GetError();
+   *log << Log::Tab << expl << ": errval=" << GetError();
 
    if(buff != nullptr)
    {
@@ -94,8 +97,7 @@ void SysSocket::OutputLog(fixed_string expl, const IpBuffer* buff) const
       *log << " rxPort=" << buff->RxAddr().GetPort();
    }
 
-   *log << CRLF;
-   Log::Spool(log);
+   Log::Submit(log);
 }
 
 //------------------------------------------------------------------------------
@@ -129,6 +131,32 @@ word SysSocket::SetError(word errval)
 
    error_ = errval;
    return -1;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SysSocket_SetStatus = "SysSocket.SetStatus";
+
+void SysSocket::SetStatus(bool ok, const string& err)
+{
+   auto reg = Singleton< AlarmRegistry >::Instance();
+   auto alarm = reg->Find(NetworkAlarmName);
+   auto status = (ok ? NoAlarm : CriticalAlarm);
+   auto id = (ok ? NetworkAvailable : NetworkUnavailable);
+
+   if(alarm == nullptr)
+   {
+      Debug::SwLog(SysSocket_SetStatus, err, status);
+      return;
+   }
+
+   auto log = alarm->Create(NetworkLogGroup, id, status);
+
+   if(log != nullptr)
+   {
+      if(!ok) *log << Log::Tab << "errval=" << err;
+      Log::Submit(log);
+   }
 }
 
 //------------------------------------------------------------------------------

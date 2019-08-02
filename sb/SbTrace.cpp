@@ -303,7 +303,7 @@ bool BuffTrace::Display(ostream& stream, bool diff)
    stream << "factory=" << int(fid);
    stream << " (" << strClass(fac, false) << ')' << CRLF;
 
-   if(!buff_->IsInvalid()) buff_->Display(stream, spaces(2), Flags(Vb_Mask));
+   if(!buff_->IsInvalid()) buff_->Display(stream, spaces(2), VerboseOpt);
    stream << string(COUT_LENGTH_MAX, '-');
    return true;
 }

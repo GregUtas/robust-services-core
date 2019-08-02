@@ -29,6 +29,7 @@
 #include "Log.h"
 #include "Memory.h"
 #include "PotsCircuit.h"
+#include "PotsLogs.h"
 #include "PotsProfile.h"
 #include "PotsProfileRegistry.h"
 #include "PotsProtocol.h"
@@ -537,12 +538,13 @@ void TrafficCall::OutputLog(word errval) const
 {
    Debug::ft(TrafficCall_OutputLog);
 
-   auto log = Log::Create("POTS TRAFFIC ERROR");
+   auto log = Log::Create(PotsLogGroup, PotsTrafficError);
    if(log == nullptr) return;
-   *log << "state=" << strState(state_) << " errval=" << errval << CRLF;
-   if(orig_ != nullptr) *log << "o: " << orig_->strState() << CRLF;
-   if(term_ != nullptr) *log << "t: " << term_->strState() << CRLF;
-   Log::Spool(log);
+   *log << Log::Tab << "state=" << strState(state_);
+   *log << " errval=" << errval << CRLF;
+   if(orig_ != nullptr) *log << Log::Tab << "o: " << orig_->strState() << CRLF;
+   if(term_ != nullptr) *log << Log::Tab << "t: " << term_->strState();
+   Log::Submit(log);
 }
 
 //------------------------------------------------------------------------------
@@ -1497,10 +1499,10 @@ void PotsTrafficThread::SetRate(word rate)
       if(wakeup) Interrupt();
    }
 
-   auto log = Log::Create("POTS TRAFFIC RATE");
+   auto log = Log::Create(PotsLogGroup, PotsTrafficRate);
    if(log == nullptr) return;
-   *log << "rate=" << rate << CRLF;
-   Log::Spool(log);
+   *log << Log::Tab << "rate=" << rate;
+   Log::Submit(log);
 }
 
 //------------------------------------------------------------------------------

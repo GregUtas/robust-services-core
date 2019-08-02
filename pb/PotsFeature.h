@@ -130,11 +130,11 @@ private:
 
    //  The feature's abbreviation.
    //
-   const char* abbr_;
+   const char* const abbr_;
 
    //  The feature's full name;
    //
-   const char* name_;
+   const char* const name_;
 
    //  Flags that specify which features are incompatible with this one.
    //

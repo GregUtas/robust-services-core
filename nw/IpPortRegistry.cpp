@@ -111,7 +111,8 @@ class IpPortStatsGroup : public StatisticsGroup
 public:
    IpPortStatsGroup();
    ~IpPortStatsGroup();
-   void DisplayStats(ostream& stream, id_t id) const override;
+   void DisplayStats
+      (ostream& stream, id_t id, const Flags& options) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -136,11 +137,12 @@ IpPortStatsGroup::~IpPortStatsGroup()
 
 fn_name IpPortStatsGroup_DisplayStats = "IpPortStatsGroup.DisplayStats";
 
-void IpPortStatsGroup::DisplayStats(ostream& stream, id_t id) const
+void IpPortStatsGroup::DisplayStats
+   (ostream& stream, id_t id, const Flags& options) const
 {
    Debug::ft(IpPortStatsGroup_DisplayStats);
 
-   StatisticsGroup::DisplayStats(stream, id);
+   StatisticsGroup::DisplayStats(stream, id, options);
 
    auto reg = Singleton< IpPortRegistry >::Instance();
 
@@ -150,7 +152,7 @@ void IpPortStatsGroup::DisplayStats(ostream& stream, id_t id) const
 
       for(auto p = ports.First(); p != nullptr; ports.Next(p))
       {
-         p->DisplayStats(stream);
+         p->DisplayStats(stream, options);
       }
    }
    else
@@ -163,7 +165,7 @@ void IpPortStatsGroup::DisplayStats(ostream& stream, id_t id) const
          return;
       }
 
-      p->DisplayStats(stream);
+      p->DisplayStats(stream, options);
    }
 }
 

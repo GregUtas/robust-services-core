@@ -59,8 +59,15 @@ public:
 class LogsCommand : public CliCommand
 {
 public:
-   static const id_t CountIndex = 1;
-   static const id_t LastNbIndex = 1;
+   static const id_t ListIndex = 1;
+   static const id_t ExplainIndex = 2;
+   static const id_t SuppressIndex = 3;
+   static const id_t ThrottleIndex = 4;
+   static const id_t CountIndex = 5;
+   static const id_t BuffersIndex = 6;
+   static const id_t WriteIndex = 7;
+   static const id_t FreeIndex = 8;
+   static const id_t LastNbIndex = 8;
 
    //  Set BIND to false if binding a subclass of LogsAction.
    //

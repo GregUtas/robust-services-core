@@ -25,6 +25,7 @@
 #include "MsgBuffer.h"
 #include <sstream>
 #include <utility>
+#include "CallbackRequest.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -72,6 +73,18 @@ public:
    //
    ostringstreamPtr TakeStream() { return std::move(stream_); }
 
+   //  Gives ownership of a callback to the request.  The callback is
+   //  invoked after the stream has been written.
+   //
+   void GiveCallback(CallbackRequestPtr& written)
+   {
+      written_ = std::move(written);
+   }
+
+   //  Takes ownership of the callback from the request.
+   //
+   CallbackRequestPtr TakeCallback() { return std::move(written_); }
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -88,6 +101,10 @@ private:
    //  The stream to be output.
    //
    ostringstreamPtr stream_;
+
+   //  The callback invoked after the stream has been written.
+   //
+   CallbackRequestPtr written_;
 };
 }
 #endif

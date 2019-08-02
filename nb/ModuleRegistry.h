@@ -66,7 +66,7 @@ private:
    //
    ~ModuleRegistry();
 
-   //  Registers MODULE against MID.
+   //  Registers MODULE against its ModuleId.
    //
    void BindModule(Module& module);
 

@@ -90,7 +90,7 @@ private:
 
    //  The application associated with the data.
    //
-   Id id_;
+   const Id id_;
 };
 
 //------------------------------------------------------------------------------

@@ -41,6 +41,10 @@ using std::string;
 
 namespace SessionBase
 {
+const State::Id State::MaxId = 63;
+
+//------------------------------------------------------------------------------
+
 fn_name State_ctor = "State.ctor";
 
 State::State(ServiceId sid, Id stid) : sid_(sid)

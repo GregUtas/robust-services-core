@@ -33,6 +33,7 @@
 #include "RegCell.h"
 #include "Registry.h"
 #include "SbTypes.h"
+#include "SysTypes.h"
 
 namespace SessionBase
 {
@@ -83,7 +84,8 @@ public:
 
    //  Displays statistics.
    //
-   virtual void DisplayStats(std::ostream& stream) const;
+   virtual void DisplayStats
+      (std::ostream& stream, const NodeBase::Flags& options) const;
 
    //  Returns the offset to faction_.
    //

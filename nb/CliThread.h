@@ -71,7 +71,7 @@ public:
    //
    word Report(word rc, const std::string& expl, col_t indent = 2) const;
 
-   //  Outputs and clears the output buffer (obuf) if it contains text.
+   //  Outputs and clears the output buffer (.obuf) if it contains text.
    //
    void Flush();
 
@@ -90,6 +90,14 @@ public:
    //
    char CharPrompt(const std::string& prompt,
       const std::string& chars, const std::string& help, bool upper = false);
+
+   //  Displays help information in the file addressed by PATH.  KEY specifies
+   //  the help topic.  The line "? KEY" is searched for in the file, ignoring
+   //  case.  If found, everything up to the next line that begins with a '?'
+   //  is displayed.  Returns 0 on success, -1 if there was no match for KEY,
+   //  and -2 if the file could not be opened.
+   //
+   word DisplayHelp(const std::string& path, const std::string& key) const;
 
    //  Returns the buffer where output to be passed to FileThread is placed.
    //
@@ -238,7 +246,7 @@ private:
    //
    void Cleanup() override;
 
-   //> The default prompt for user input.
+   //  The default prompt for user input.
    //
    static const char CliPrompt;
 

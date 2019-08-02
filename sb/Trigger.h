@@ -113,7 +113,7 @@ private:
 
    //  The identifier for this trigger.
    //
-   Id tid_;
+   const Id tid_;
 
    //  The queue of initiators registered with this trigger.
    //

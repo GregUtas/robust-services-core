@@ -34,6 +34,10 @@ using std::string;
 
 namespace NodeBase
 {
+const TraceRecord::Id TraceRecord::InvalidId = UINT8_MAX;
+
+//------------------------------------------------------------------------------
+
 TraceRecord::TraceRecord(size_t size, FlagId owner) :
    size_(int16_t(size)),
    owner_(owner),

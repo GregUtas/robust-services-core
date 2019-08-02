@@ -43,7 +43,8 @@ class InvokerPoolStatsGroup : public StatisticsGroup
 public:
    InvokerPoolStatsGroup();
    ~InvokerPoolStatsGroup();
-   void DisplayStats(ostream& stream, id_t id) const override;
+   void DisplayStats
+      (ostream& stream, id_t id, const Flags& options) const override;
 };
 
 //------------------------------------------------------------------------------
@@ -70,11 +71,12 @@ InvokerPoolStatsGroup::~InvokerPoolStatsGroup()
 fn_name InvokerPoolStatsGroup_DisplayStats =
    "InvokerPoolStatsGroup.DisplayStats";
 
-void InvokerPoolStatsGroup::DisplayStats(ostream& stream, id_t id) const
+void InvokerPoolStatsGroup::DisplayStats
+   (ostream& stream, id_t id, const Flags& options) const
 {
    Debug::ft(InvokerPoolStatsGroup_DisplayStats);
 
-   StatisticsGroup::DisplayStats(stream, id);
+   StatisticsGroup::DisplayStats(stream, id, options);
 
    auto reg = Singleton< InvokerPoolRegistry >::Instance();
 
@@ -84,7 +86,7 @@ void InvokerPoolStatsGroup::DisplayStats(ostream& stream, id_t id) const
 
       for(auto p = pools.First(); p != nullptr; pools.Next(p))
       {
-         p->DisplayStats(stream);
+         p->DisplayStats(stream, options);
       }
    }
    else
@@ -97,7 +99,7 @@ void InvokerPoolStatsGroup::DisplayStats(ostream& stream, id_t id) const
          return;
       }
 
-      p->DisplayStats(stream);
+      p->DisplayStats(stream, options);
    }
 }
 

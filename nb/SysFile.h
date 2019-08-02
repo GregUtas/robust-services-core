@@ -71,6 +71,13 @@ typedef std::unique_ptr< FileList > FileListPtr;
 //
 namespace SysFile
 {
+   //  Replaces occurrences of '\' in PATH with '/'.  The first version
+   //  modifies PATH, and the second version modifies and returns a copy
+   //  of PATH.
+   //
+   void Normalize(std::string& path);
+   std::string Normalize(const std::string& path);
+
    //  Opens an existing file for input.  Returns nullptr if the file is
    //  empty or does not exist.
    //
@@ -81,10 +88,10 @@ namespace SysFile
    //
    ostreamPtr CreateOstream(const char* fileName, bool trunc = false);
 
-   //  Sets dirName to the default directory.  On an error, dirName is
+   //  Sets dirName to the current directory.  On an error, dirName is
    //  cleared.
    //
-   void GetDir(std::string& dirName);
+   void GetCurrDir(std::string& dirName);
 
    //  Sets the default directory.  Returns false if the directory does
    //  not exist.

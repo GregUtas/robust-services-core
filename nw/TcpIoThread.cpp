@@ -22,6 +22,7 @@
 #include "TcpIoThread.h"
 #include <sstream>
 #include <string>
+#include "Alarm.h"
 #include "Clock.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -29,7 +30,7 @@
 #include "IpPort.h"
 #include "IpPortRegistry.h"
 #include "Log.h"
-#include "NbTypes.h"
+#include "NwLogs.h"
 #include "NwTrace.h"
 #include "Singleton.h"
 #include "SysIpL3Addr.h"
@@ -140,7 +141,7 @@ bool TcpIoThread::AcceptConn()
       {
          //s Handle Accept() error.
          //
-         OutputLog("TCP ACCEPT ERROR", SocketError, listener);
+         OutputLog(NetworkSocketError, "Accept", SocketError, listener);
       }
 
       return false;
@@ -186,15 +187,15 @@ SysTcpSocket* TcpIoThread::AllocateListener()
    SysTcpSocketPtr socket(new SysTcpSocket(port_, svc, rc));
 
    if(socket == nullptr)
-      return ListenerError(0);
+      return RaiseAlarm(0);
 
    if(rc != SysSocket::AllocOk)
-      return ListenerError(socket->GetError());
+      return RaiseAlarm(socket->GetError());
 
    socket->TracePort(NwTrace::Listen, port_, svc->MaxBacklog());
 
    if(!socket->Listen(svc->MaxBacklog()))
-      return ListenerError(socket->GetError());
+      return RaiseAlarm(socket->GetError());
 
    Debug::Assert(ipPort_->SetSocket(socket.get()));
 
@@ -242,6 +243,24 @@ void TcpIoThread::Cleanup()
 
    ReleaseResources();
    Thread::Cleanup();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TcpIoThread_ClearAlarm = "TcpIoThread.ClearAlarm";
+
+void TcpIoThread::ClearAlarm() const
+{
+   Debug::ft(TcpIoThread_ClearAlarm);
+
+   auto alarm = ipPort_->GetAlarm();
+   if(alarm == nullptr) return;
+
+   auto log = alarm->Create(NetworkLogGroup, NetworkServiceAvailable, NoAlarm);
+   if(log == nullptr) return;
+
+   *log << Log::Tab << "TCP: port=" << port_;
+   Log::Submit(log);
 }
 
 //------------------------------------------------------------------------------
@@ -306,8 +325,7 @@ bool TcpIoThread::EnsureListener()
       //  We don't have a listener, but our port does.  Use
       //  it unless it has failed.
       //
-      if(ListenerHasFailed(registrant))
-         return AllocateListener();
+      if(ListenerHasFailed(registrant)) return AllocateListener();
       sockets_.PushBack(registrant);
       return registrant;
    }
@@ -336,9 +354,11 @@ void TcpIoThread::Enter()
    PollFlags* flags = nullptr;
    size_t first = (listen_ ? 1 : 0);
 
-   //  Exit if a listener socket cannot be created.
+   //  Exit if a listener socket cannot be created, otherwise clear any alarm
+   //  associated with our service.
    //
    if(!EnsureListener()) return;
+   ClearAlarm();
 
    while(true)
    {
@@ -348,7 +368,7 @@ void TcpIoThread::Enter()
       {
          //s Handle Poll() error.
          //
-         OutputLog("TCP POLL ERROR", SocketError, sockets_.Front());
+         OutputLog(NetworkSocketError, "Poll", SocketError, sockets_.Front());
          Pause(20);
          continue;
       }
@@ -472,18 +492,6 @@ SysTcpSocket* TcpIoThread::Listener() const
 
 //------------------------------------------------------------------------------
 
-fn_name TcpIoThread_ListenerError = "TcpIoThread.ListenerError";
-
-SysTcpSocket* TcpIoThread::ListenerError(word errval) const
-{
-   Debug::ft(TcpIoThread_ListenerError);
-
-   OutputLog("TCP I/O THREAD FAILURE", SocketNull, nullptr, errval);
-   return nullptr;
-}
-
-//------------------------------------------------------------------------------
-
 fn_name TcpIoThread_ListenerHasFailed = "TcpIoThread.ListenerHasFailed";
 
 bool TcpIoThread::ListenerHasFailed(SysTcpSocket* listener) const
@@ -495,7 +503,7 @@ bool TcpIoThread::ListenerHasFailed(SysTcpSocket* listener) const
    if(flags->test(PollInvalid) || flags->test(PollError) ||
       flags->test(PollHungUp))
    {
-      OutputLog("TCP LISTENER ERROR", SocketFlags, listener);
+      OutputLog(NetworkSocketError, "listener", SocketFlags, listener);
       return true;
    }
 
@@ -506,16 +514,17 @@ bool TcpIoThread::ListenerHasFailed(SysTcpSocket* listener) const
 
 fn_name TcpIoThread_OutputLog = "TcpIoThread.OutputLog";
 
-void TcpIoThread::OutputLog(fixed_string expl, Error error,
-   SysTcpSocket* socket, debug32_t errval) const
+void TcpIoThread::OutputLog(LogId id, fixed_string expl,
+   Error error, SysTcpSocket* socket, debug32_t errval) const
 {
    Debug::ft(TcpIoThread_OutputLog);
 
    if((error == SocketError) && (socket->GetError() == 0)) return;
 
-   auto log = Log::Create(expl);
+   auto log = Log::Create(NetworkLogGroup, id);
    if(log == nullptr) return;
-   *log << "port=" << port_;
+
+   *log << Log::Tab << expl << ": port=" << port_;
 
    switch(error)
    {
@@ -530,8 +539,7 @@ void TcpIoThread::OutputLog(fixed_string expl, Error error,
       break;
    }
 
-   *log << CRLF;
-   Log::Spool(log);
+   Log::Submit(log);
 }
 
 //------------------------------------------------------------------------------
@@ -589,6 +597,25 @@ word TcpIoThread::PollSockets()
    recvs_ = 0;
    if(ready > 0) sockets_.Front()->TraceEvent(NwTrace::Poll, ready);
    return ready;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TcpIoThread_RaiseAlarm = "TcpIoThread.RaiseAlarm";
+
+SysTcpSocket* TcpIoThread::RaiseAlarm(word errval) const
+{
+   Debug::ft(TcpIoThread_RaiseAlarm);
+
+   auto alarm = ipPort_->GetAlarm();
+   if(alarm == nullptr) return nullptr;
+
+   auto log = alarm->Create(NetworkLogGroup, NetworkServiceFailure, MajorAlarm);
+   if(log == nullptr) return nullptr;
+
+   *log << Log::Tab << "TCP: port=" << port_ << " errval=" << errval;
+   Log::Submit(log);
+   return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -663,7 +690,7 @@ void TcpIoThread::ServiceSocket()
       {
          //s Handle Recv() error.
          //
-         OutputLog("TCP RECV ERROR", SocketError, socket);
+         OutputLog(NetworkSocketError, "Recv", SocketError, socket);
       }
 
       EraseSocket(curr_);
@@ -680,7 +707,7 @@ void TcpIoThread::ServiceSocket()
    //
    if(!socket->RemAddr(txAddr_))
    {
-      OutputLog("TCP PEER UNKNOWN", SocketError, socket);
+      OutputLog(NetworkSocketError, "GetPeerName", SocketError, socket);
       return;
    }
 

@@ -29,6 +29,7 @@
 #include "InitFlags.h"
 #include "InitThread.h"
 #include "Log.h"
+#include "NbLogs.h"
 #include "NbPools.h"
 #include "NbSignals.h"
 #include "Restart.h"
@@ -144,13 +145,13 @@ void RootThread::Enter()
          //
          if(reason != NilRestart)
          {
-            auto log = Log::Create("INITIALIZATION TIMEOUT");
+            auto log = Log::Create(NodeLogGroup, NodeInitTimeout);
 
             if(log != nullptr)
             {
-               *log << "reason=" << strHex(uint32_t(reason)) << CRLF;
-               *log << "timeout=" << timeout << CRLF;
-               Log::Spool(log);
+               *log << Log::Tab << "reason=" << strHex(uint32_t(reason));
+               *log << " timeout=" << timeout;
+               Log::Submit(log);
             }
 
             reason = NilRestart;
@@ -223,13 +224,13 @@ void RootThread::Enter()
          //  exists, tell it to initiate a restart.  If it doesn't exist,
          //  loop around and create it.
          //
-         auto log = Log::Create("SCHEDULING TIMEOUT");
+         auto log = Log::Create(NodeLogGroup, NodeSchedTimeout);
 
          if(log != nullptr)
          {
-            *log << "reason=" << strHex(uint32_t(reason)) << CRLF;
-            *log << "timeout=" << timeout << CRLF;
-            Log::Spool(log);
+            *log << Log::Tab << "reason=" << strHex(uint32_t(reason));
+            *log << " timeout=" << timeout;
+            Log::Submit(log);
          }
 
          reason = NilRestart;

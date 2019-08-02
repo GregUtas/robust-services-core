@@ -173,6 +173,28 @@ LogsSortText::LogsSortText() : CliText(LogsSortTextExpl, LogsSortTextStr)
    BindParm(*new OstreamMandParm);
 }
 
+class FloodCountParm : public CliIntParm
+{
+public: FloodCountParm();
+};
+
+fixed_string FloodCountExpl = "number of SW900 logs to generate";
+
+FloodCountParm::FloodCountParm() : CliIntParm(FloodCountExpl, 1, 250) { }
+
+class LogsFloodText : public CliText
+{
+public: LogsFloodText();
+};
+
+fixed_string LogsFloodTextStr = "flood";
+fixed_string LogsFloodTextExpl = "enters a loop that generates SW900 logs";
+
+LogsFloodText::LogsFloodText() : CliText(LogsFloodTextExpl, LogsFloodTextStr)
+{
+   BindParm(*new FloodCountParm);
+}
+
 class NtLogsAction : public LogsAction
 {
 public:
@@ -184,7 +206,8 @@ class NtLogsCommand : public LogsCommand
 {
 public:
    static const id_t SortIndex = LastNbIndex + 1;
-   static const id_t LastNtIndex = SortIndex;
+   static const id_t FloodIndex = LastNbIndex + 2;
+   static const id_t LastNtIndex = FloodIndex;
 
    //  Set BIND to false if binding a subclass of NtLogsAction.
    //
@@ -199,6 +222,7 @@ private:
 NtLogsAction::NtLogsAction()
 {
    BindText(*new LogsSortText, NtLogsCommand::SortIndex);
+   BindText(*new LogsFloodText, NtLogsCommand::FloodIndex);
 }
 
 NtLogsCommand::NtLogsCommand(bool bind) : LogsCommand(false)
@@ -212,16 +236,36 @@ word NtLogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
    Debug::ft(NtLogsCommand_ProcessSubcommand);
 
-   if(index != SortIndex) return LogsCommand::ProcessSubcommand(cli, index);
+   if((index <= LastNbIndex) || (index > LastNtIndex))
+   {
+      return LogsCommand::ProcessSubcommand(cli, index);
+   }
 
    string input, output, expl;
-   word rc;
+   word count;
+   word rc = 0;
 
-   if(!GetFileName(input, cli)) return -1;
-   if(!GetFileName(output, cli)) return -1;
-   cli.EndOfInput(false);
-   rc = Sort(input, output, expl);
-   return cli.Report(rc, expl);
+   switch(index)
+   {
+   case SortIndex:
+      if(!GetFileName(input, cli)) return -1;
+      if(!GetFileName(output, cli)) return -1;
+      cli.EndOfInput(false);
+      rc = Sort(input, output, expl);
+      return cli.Report(rc, expl);
+
+   case FloodIndex:
+      if(!GetIntParm(count, cli)) return -1;
+      cli.EndOfInput(false);
+
+      while(count-- > 0)
+      {
+         Debug::SwLog(NtLogsCommand_ProcessSubcommand, count + 1, 0);
+      }
+      break;
+   }
+
+   return rc;
 }
 
 fn_name NtLogsCommand_Sort = "NtLogsCommand.Sort";
@@ -2432,7 +2476,7 @@ void RegistryPool::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
    stream << prefix << "Registry:" << CRLF;
-   registry_.Display(stream, prefix + spaces(2), Flags(Vb_Mask));
+   registry_.Display(stream, prefix + spaces(2), VerboseOpt);
    stream << CRLF;
 }
 

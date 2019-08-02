@@ -53,8 +53,8 @@ SysTickTimer::SysTickTimer() :
    startTime_ = SysTime();
 
    startTimeStr_ = startTime_.to_str(SysTime::Numeric);
-   auto index = startTimeStr_.find('.');
-   if(index != string::npos) startTimeStr_.erase(index);
+   auto pos = startTimeStr_.find('.');
+   if(pos != string::npos) startTimeStr_[pos] = '-';
 }
 
 //------------------------------------------------------------------------------

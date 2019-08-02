@@ -34,11 +34,11 @@ namespace NodeBase
 class CliIntParm : public CliParm
 {
 public:
-   //> Indicates an integer value in parameter help text.
+   //  Represents an integer value in parameter help text.
    //
    static fixed_string AnyIntParm;
 
-   //> Indicates a hex value in parameter help text.
+   //  Represents a hex value in parameter help text.
    //
    static fixed_string AnyHexParm;
 
@@ -70,7 +70,7 @@ private:
    //
    bool ShowValues(std::string& values) const override;
 
-   //> Separates the minimum and maximum values in parameter help text.
+   //  Separates the minimum and maximum values in parameter help text.
    //
    static const char RangeSeparator;
 

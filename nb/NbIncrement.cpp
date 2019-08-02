@@ -26,14 +26,14 @@
 #include <cctype>
 #include <cstddef>
 #include <cstdint>
-#include <cstdio>
 #include <iomanip>
 #include <ios>
 #include <iosfwd>
-#include <istream>
-#include <memory>
 #include <sstream>
 #include <string>
+#include "Alarm.h"
+#include "AlarmRegistry.h"
+#include "CallbackRequest.h"
 #include "CfgParm.h"
 #include "CfgParmRegistry.h"
 #include "CliBuffer.h"
@@ -48,6 +48,11 @@
 #include "Formatters.h"
 #include "FunctionGuard.h"
 #include "Log.h"
+#include "LogBuffer.h"
+#include "LogBufferRegistry.h"
+#include "LogGroup.h"
+#include "LogGroupRegistry.h"
+#include "LogThread.h"
 #include "Memory.h"
 #include "Module.h"
 #include "ModuleRegistry.h"
@@ -68,7 +73,6 @@
 #include "StatisticsRegistry.h"
 #include "Symbol.h"
 #include "SymbolRegistry.h"
-#include "SysFile.h"
 #include "SysHeap.h"
 #include "ThisThread.h"
 #include "ThreadRegistry.h"
@@ -85,6 +89,160 @@ using std::string;
 
 namespace NodeBase
 {
+//  The ALARMS command.
+//
+class AlarmParm : public CliTextParm
+{
+public: AlarmParm();
+};
+
+fixed_string AlarmExpl = "alarm name";
+
+AlarmParm::AlarmParm() : CliTextParm(AlarmExpl) { }
+
+class AlarmsListText : public CliText
+{
+public: AlarmsListText();
+};
+
+fixed_string AlarmsListTextStr = "list";
+fixed_string AlarmsListTextExpl = "lists alarms";
+
+AlarmsListText::AlarmsListText() :
+   CliText(AlarmsListTextExpl, AlarmsListTextStr) { }
+
+class AlarmsExplainText : public CliText
+{
+public: AlarmsExplainText();
+};
+
+fixed_string AlarmsExplainTextStr = "explain";
+fixed_string AlarmsExplainTextExpl = "displays documentation for an alarm";
+
+AlarmsExplainText::AlarmsExplainText() :
+   CliText(AlarmsExplainTextExpl, AlarmsExplainTextStr)
+{
+   BindParm(*new AlarmParm);
+}
+
+class AlarmsClearText : public CliText
+{
+public: AlarmsClearText();
+};
+
+fixed_string AlarmsClearTextStr = "clear";
+fixed_string AlarmsClearTextExpl = "clears an alarm";
+
+AlarmsClearText::AlarmsClearText() :
+   CliText(AlarmsClearTextExpl, AlarmsClearTextStr)
+{
+   BindParm(*new AlarmParm);
+}
+
+class AlarmsAction : public CliTextParm
+{
+public:
+   AlarmsAction();
+};
+
+const id_t AlarmsListIndex = 1;
+const id_t AlarmsExplainIndex = 2;
+const id_t AlarmsClearIndex = 3;
+
+fixed_string AlarmsActionExpl = "subcommand...";
+
+AlarmsAction::AlarmsAction() : CliTextParm(AlarmsActionExpl)
+{
+   BindText(*new AlarmsListText, AlarmsListIndex);
+   BindText(*new AlarmsExplainText, AlarmsExplainIndex);
+   BindText(*new AlarmsClearText, AlarmsClearIndex);
+}
+
+class AlarmsCommand : public CliCommand
+{
+public:
+   AlarmsCommand();
+private:
+   word ProcessCommand(CliThread& cli) const override;
+};
+
+fixed_string AlarmsStr = "alarms";
+fixed_string AlarmsExpl = "Interface to the alarm subsystem.";
+
+AlarmsCommand::AlarmsCommand() : CliCommand(AlarmsStr, AlarmsExpl)
+{
+   BindParm(*new AlarmsAction);
+}
+
+fn_name AlarmsCommand_ProcessCommand = "AlarmsCommand.ProcessCommand";
+
+word AlarmsCommand::ProcessCommand(CliThread& cli) const
+{
+   Debug::ft(AlarmsCommand_ProcessCommand);
+
+   auto rc = 0;
+   id_t index;
+   string name, key, path;
+   Alarm* alarm;
+
+   if(!GetTextIndex(index, cli)) return -1;
+
+   switch(index)
+   {
+   case AlarmsListIndex:
+      cli.EndOfInput(false);
+      Singleton< AlarmRegistry >::Instance()->Output(*cli.obuf, 2, false);
+      break;
+
+   case AlarmsExplainIndex:
+      if(!GetString(name, cli)) return -1;
+      cli.EndOfInput(false);
+
+      alarm = Singleton< AlarmRegistry >::Instance()->Find(name);
+
+      if(alarm == nullptr)
+      {
+         return cli.Report(-1, NoAlarmExpl);
+      }
+
+      key = alarm->Name();
+      path = Element::HelpPath() + PATH_SEPARATOR + "alarms.txt";
+      rc = cli.DisplayHelp(path, key);
+
+      switch(rc)
+      {
+      case -1:
+         return cli.Report(-1, "This alarm has not been documented.");
+      case -2:
+         return cli.Report(-2, "Failed to open file " + path);
+      }
+
+      break;
+
+   case AlarmsClearIndex:
+      if(!GetString(name, cli)) return -1;
+      cli.EndOfInput(false);
+
+      alarm = Singleton< AlarmRegistry >::Instance()->Find(name);
+
+      if(alarm == nullptr)
+      {
+         return cli.Report(-1, NoAlarmExpl);
+      }
+
+      alarm->SetStatus(NoAlarm);
+      return cli.Report(0, SuccessExpl);
+
+   default:
+      Debug::SwLog(AlarmsCommand_ProcessCommand, index, 0);
+      return cli.Report(index, SystemErrorExpl);
+   }
+
+   return rc;
+}
+
+//------------------------------------------------------------------------------
+//
 //  The AUDIT command.
 //
 class AuditSecondsParm : public CliIntParm
@@ -299,7 +457,7 @@ fixed_string CfgParmsListExpl = "lists all configuration parameters";
 CfgParmsListText::CfgParmsListText() :
    CliText(CfgParmsListExpl, CfgParmsListStr) { }
 
-fixed_string CfgParmsExplStr = "expl";
+fixed_string CfgParmsExplStr = "explain";
 fixed_string CfgParmsExplExpl = "explains a configuration parameter";
 
 CfgParmsExplText::CfgParmsExplText() :
@@ -755,7 +913,7 @@ public:
    HelpCommand();
 private:
    word ProcessCommand(CliThread& cli) const override;
-   static word DisplayHelpFile(const CliThread& cli, const string& name);
+   static word DisplayHelp(const CliThread& cli, const string& key);
 };
 
 fixed_string HelpIncrExpl = "name of increment";
@@ -796,31 +954,17 @@ HelpCommand::HelpCommand() : CliCommand(HelpStr, HelpExpl)
    BindParm(*new HelpFullParm);
 }
 
-word HelpCommand::DisplayHelpFile(const CliThread& cli, const string& name)
+word HelpCommand::DisplayHelp(const CliThread& cli, const string& key)
 {
-   auto path = Element::HelpPath() + PATH_SEPARATOR + "cli";
+   auto path = Element::HelpPath() + PATH_SEPARATOR + "cli.txt";
+   auto rc = cli.DisplayHelp(path, key);
 
-   if(!name.empty())
+   switch(rc)
    {
-      path.push_back('.');
-      path.append(name);
-   }
-
-   path.append(".txt");
-
-   auto stream = SysFile::CreateIstream(path.c_str());
-
-   if(stream == nullptr)
-   {
-      return cli.Report(0, SuccessExpl);
-   }
-
-   string line;
-
-   while(stream->peek() != EOF)
-   {
-      std::getline(*stream, line);
-      *cli.obuf << line << CRLF;
+   case -1:
+      return cli.Report(-1, "No additional help is available.", 0);
+   case -2:
+      return cli.Report(-2, "Failed to open file " + path, 0);
    }
 
    return 0;
@@ -852,7 +996,7 @@ word HelpCommand::ProcessCommand(CliThread& cli) const
    if(!GetString(s1, cli))
    {
       cli.EndOfInput(false);
-      return DisplayHelpFile(cli, EMPTY_STR);  // [1]
+      return DisplayHelp(cli, EMPTY_STR);  // [1]
    }
 
    if(s1 == "full")
@@ -860,7 +1004,7 @@ word HelpCommand::ProcessCommand(CliThread& cli) const
       cli.EndOfInput(false);
       incr = cli.stack_->Top();
       incr->Explain(*cli.obuf, 2);
-      return DisplayHelpFile(cli, incr->Name());  // [2]
+      return DisplayHelp(cli, incr->Name());  // [2]
    }
 
    auto comm = cli.stack_->FindCommand(s1, incr);
@@ -871,10 +1015,11 @@ word HelpCommand::ProcessCommand(CliThread& cli) const
       {
          cli.EndOfInput(false);
          comm->ExplainCommand(*cli.obuf, true);
-         string file(incr->Name());
-         file.push_back('.');
-         file.append(comm->Text());
-         return DisplayHelpFile(cli, file);  // [3]
+         *cli.obuf << CRLF;
+         string key(incr->Name());
+         key.push_back('.');
+         key.append(comm->Text());
+         return DisplayHelp(cli, key);  // [3]
       }
 
       cli.EndOfInput(false);
@@ -905,7 +1050,7 @@ word HelpCommand::ProcessCommand(CliThread& cli) const
    {
       cli.EndOfInput(false);
       incr->Explain(*cli.obuf, 2);
-      return DisplayHelpFile(cli, incr->Name());  // [8]
+      return DisplayHelp(cli, incr->Name());  // [8]
    }
 
    comm = incr->FindCommand(s2);
@@ -921,10 +1066,11 @@ word HelpCommand::ProcessCommand(CliThread& cli) const
    {
       cli.EndOfInput(false);
       comm->ExplainCommand(*cli.obuf, true);
-      string file(incr->Name());
-      file.push_back('.');
-      file.append(comm->Text());
-      return DisplayHelpFile(cli, file);  // [10]
+      *cli.obuf << CRLF;
+      string key(incr->Name());
+      key.push_back('.');
+      key.append(comm->Text());
+      return DisplayHelp(cli, key);  // [10]
    }
 
    cli.EndOfInput(false);
@@ -1133,6 +1279,76 @@ word IncrsCommand::ProcessCommand(CliThread& cli) const
 //
 //  The LOGS command.
 //
+class LogsListText : public CliText
+{
+public: LogsListText();
+};
+
+fixed_string LogsListTextStr = "list";
+fixed_string LogsListTextExpl =
+   "shows info for all logs or the logs in a specific group";
+
+LogsListText::LogsListText() :
+   CliText(LogsListTextExpl, LogsListTextStr)
+{
+   BindParm(*new LogGroupOptParm);
+}
+
+class LogsExplainText : public CliText
+{
+public: LogsExplainText();
+};
+
+fixed_string LogsExplainTextStr = "explain";
+fixed_string LogsExplainTextExpl = "displays documentation for a log";
+
+LogsExplainText::LogsExplainText() :
+   CliText(LogsExplainTextExpl, LogsExplainTextStr)
+{
+   BindParm(*new LogGroupMandParm);
+   BindParm(*new LogIdMandParm);
+}
+
+class LogsSuppressText : public CliText
+{
+public: LogsSuppressText();
+};
+
+fixed_string LogsSuppressTextStr = "suppress";
+fixed_string LogsSuppressTextExpl = "suppresses all the logs in a group";
+
+LogsSuppressText::LogsSuppressText() :
+   CliText(LogsSuppressTextExpl, LogsSuppressTextStr)
+{
+   BindParm(*new LogGroupMandParm);
+   BindParm(*new SetHowParm);
+}
+
+class LogThrottleParm : public CliIntParm
+{
+public: LogThrottleParm();
+};
+
+fixed_string LogThrottleExpl = "report every Nth log (0=none, 1=all)";
+
+LogThrottleParm::LogThrottleParm() : CliIntParm(LogThrottleExpl, 0, 100) { }
+
+class LogsThrottleText : public CliText
+{
+public: LogsThrottleText();
+};
+
+fixed_string LogsThrottleTextStr = "throttle";
+fixed_string LogsThrottleTextExpl = "throttles or suppresses a specific log";
+
+LogsThrottleText::LogsThrottleText() :
+   CliText(LogsThrottleTextExpl, LogsThrottleTextStr)
+{
+   BindParm(*new LogGroupMandParm);
+   BindParm(*new LogIdMandParm);
+   BindParm(*new LogThrottleParm);
+}
+
 class LogsCountText : public CliText
 {
 public: LogsCountText();
@@ -1144,11 +1360,68 @@ fixed_string LogsCountTextExpl = "displays the number of logs reported so far";
 LogsCountText::LogsCountText() :
    CliText(LogsCountTextExpl, LogsCountTextStr) { }
 
+class LogsBuffersText : public CliText
+{
+public: LogsBuffersText();
+};
+
+fixed_string LogsBuffersTextStr = "buffers";
+fixed_string LogsBuffersTextExpl = "lists all log buffers";
+
+LogsBuffersText::LogsBuffersText() :
+   CliText(LogsBuffersTextExpl, LogsBuffersTextStr)
+{
+   BindParm(*new DispBVParm);
+}
+
+class LogCountParm : public CliIntParm
+{
+public: LogCountParm();
+};
+
+fixed_string LogCountExpl = "number of logs to send (0=all)";
+
+LogCountParm::LogCountParm() : CliIntParm(LogCountExpl, 0, 1000) { }
+
+class LogsWriteText : public CliText
+{
+public: LogsWriteText();
+};
+
+fixed_string LogsWriteTextStr = "write";
+fixed_string LogsWriteTextExpl = "writes a buffer's logs to its log file";
+
+LogsWriteText::LogsWriteText() : CliText(LogsWriteTextExpl, LogsWriteTextStr)
+{
+   BindParm(*new LogBufferIdParm);
+   BindParm(*new LogCountParm);
+}
+
+class LogsFreeText : public CliText
+{
+public: LogsFreeText();
+};
+
+fixed_string LogsFreeTextStr = "free";
+fixed_string LogsFreeTextExpl = "deletes a log buffer";
+
+LogsFreeText::LogsFreeText() : CliText(LogsFreeTextExpl, LogsFreeTextStr)
+{
+   BindParm(*new LogBufferIdParm);
+}
+
 fixed_string LogsActionExpl = "subcommand...";
 
 LogsAction::LogsAction() : CliTextParm(LogsActionExpl)
 {
+   BindText(*new LogsListText, LogsCommand::ListIndex);
+   BindText(*new LogsExplainText, LogsCommand::ExplainIndex);
+   BindText(*new LogsThrottleText, LogsCommand::ThrottleIndex);
+   BindText(*new LogsSuppressText, LogsCommand::SuppressIndex);
    BindText(*new LogsCountText, LogsCommand::CountIndex);
+   BindText(*new LogsBuffersText, LogsCommand::BuffersIndex);
+   BindText(*new LogsWriteText, LogsCommand::WriteIndex);
+   BindText(*new LogsFreeText, LogsCommand::FreeIndex);
 }
 
 fixed_string LogsStr = "logs";
@@ -1157,6 +1430,41 @@ fixed_string LogsExpl = "Interface to the log subsystem.";
 LogsCommand::LogsCommand(bool bind) : CliCommand(LogsStr, LogsExpl)
 {
    if(bind) BindParm(*new LogsAction);
+}
+
+//  Sets GROUP and LOG to the log group and log identified by NAME and ID.
+//  Returns false if GROUP or LOG cannot be found, updating EXPL with an
+//  explanation.  If GROUP is found and ID is 0, sets LOG to nullptr and
+//  returns true.
+//
+fn_name NodeBase_FindGroupAndLog = "NodeBase.FindGroupAndLog";
+
+bool FindGroupAndLog(const string& name, word id,
+      LogGroup*& group, Log*& log, string& expl)
+{
+   Debug::ft(NodeBase_FindGroupAndLog);
+
+   auto reg = Singleton< LogGroupRegistry >::Instance();
+   group = reg->FindGroup(name);
+
+   if(group == nullptr)
+   {
+      expl = NoLogGroupExpl;
+      return false;
+   }
+
+   log = nullptr;
+   if(id == 0) return true;
+
+   log = group->FindLog(id);
+
+   if(log == nullptr)
+   {
+      expl = NoLogExpl;
+      return false;
+   }
+
+   return true;
 }
 
 fn_name LogsCommand_ProcessCommand = "LogsCommand.ProcessCommand";
@@ -1178,11 +1486,139 @@ word LogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
    Debug::ft(LogsCommand_ProcessSubcommand);
 
-   if(index != CountIndex) return CliCommand::ProcessSubcommand(cli, index);
+   auto rc = 0;
+   string name, expl, key, path;
+   word id, count, interval;
+   auto v = false;
+   id_t setHowIndex;
+   Log* log;
+   LogGroup* group;
+   LogBuffer* buff;
+   auto reg = Singleton< LogBufferRegistry >::Instance();
 
-   auto count = Log::Count();
-   *cli.obuf << count << CRLF;
-   return count;
+   switch(index)
+   {
+   case ListIndex:
+      GetStringRc(name, cli);
+      cli.EndOfInput(false);
+
+      if(name.empty())
+      {
+         Singleton< LogGroupRegistry >::Instance()->Output(*cli.obuf, 2, false);
+      }
+      else
+      {
+         group = Singleton< LogGroupRegistry >::Instance()->FindGroup(name);
+         if(group == nullptr) return cli.Report(-1, NoLogGroupExpl);
+         group->Output(*cli.obuf, 2, false);
+      }
+
+      break;
+
+   case ExplainIndex:
+      if(!GetString(name, cli)) return -1;
+      if(!GetIntParm(id, cli)) return -1;
+      cli.EndOfInput(false);
+
+      if(!FindGroupAndLog(name, id, group, log, expl))
+      {
+         return cli.Report(-1, expl);
+      }
+
+      key = group->Name() + std::to_string(id);
+      path = Element::HelpPath() + PATH_SEPARATOR + "logs.txt";
+      rc = cli.DisplayHelp(path, key);
+
+      switch(rc)
+      {
+      case -1:
+         return cli.Report(-1, "This log has not been documented.");
+      case -2:
+         return cli.Report(-2, "Failed to open file " + path);
+      }
+
+      break;
+
+   case SuppressIndex:
+      if(!GetString(name, cli)) return -1;
+      if(!GetTextIndex(setHowIndex, cli)) return -1;
+      cli.EndOfInput(false);
+
+      if(!FindGroupAndLog(name, 0, group, log, expl))
+      {
+         return cli.Report(-1, expl);
+      }
+
+      group->SetSuppressed(setHowIndex == SetHowParm::On);
+      return cli.Report(0, SuccessExpl);
+
+   case ThrottleIndex:
+      if(!GetString(name, cli)) return -1;
+      if(!GetIntParm(id, cli)) return -1;
+      if(!GetIntParm(interval, cli)) return -1;
+      cli.EndOfInput(false);
+
+      if(!FindGroupAndLog(name, id, group, log, expl))
+      {
+         return cli.Report(-1, expl);
+      }
+
+      log->SetInterval(interval);
+      return cli.Report(0, SuccessExpl);
+
+   case BuffersIndex:
+      if(GetBV(*this, cli, v) == Error) return -1;
+      cli.EndOfInput(false);
+      reg->Output(*cli.obuf, 2, v);
+      break;
+
+   case WriteIndex:
+      if(!GetIntParm(id, cli)) return -1;
+      if(!GetIntParm(count, cli)) return -1;
+      cli.EndOfInput(false);
+
+      buff = reg->Access(id);
+
+      if(buff != nullptr)
+      {
+         auto file = buff->FileName();
+         word size = buff->Count(true, true);
+         size_t targ = (count < size ? size - count : 0);
+         if(count == 0) targ = 0;
+         buff->ResetAllToUnspooled();
+
+         while(buff->Count(false, true) > targ)
+         {
+            CallbackRequestPtr callback;
+            auto stream = LogThread::GetLogsFromBuffer(buff, callback);
+            if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
+            FileThread::Spool(file, stream, callback);
+         }
+
+         return cli.Report(0, SuccessExpl);
+      }
+
+      return cli.Report(-1, "That buffer is either active or invalid.");
+
+   case FreeIndex:
+      if(!GetIntParm(id, cli)) return -1;
+      cli.EndOfInput(false);
+      if(!Singleton< LogBufferRegistry >::Instance()->Free(id))
+      {
+         return cli.Report(-1, "That buffer is either active or invalid.");
+      }
+      break;
+
+   case CountIndex:
+      cli.EndOfInput(false);
+      *cli.obuf << Log::Count() << CRLF;
+      return Log::Count();
+
+   default:
+      return CliCommand::ProcessSubcommand(cli, index);
+   }
+
+   return rc;
 }
 
 //------------------------------------------------------------------------------
@@ -1958,8 +2394,8 @@ class SendCommand : public CliCommand
 {
 public:
    SendCommand();
-   static void SendAckToOutputFile(const CliThread& cli);
 private:
+   static void SendAckToOutputFile(const CliThread& cli);
    word ProcessCommand(CliThread& cli) const override;
 };
 
@@ -2336,7 +2772,7 @@ private:
 };
 
 fixed_string GroupsTextStr = "groups";
-fixed_string GroupsTextExpl = "lists available groups";
+fixed_string GroupsTextExpl = "lists all statistics groups";
 
 GroupsText::GroupsText() : CliText(GroupsTextExpl, GroupsTextStr) { }
 
@@ -2357,10 +2793,11 @@ StatsShowText::StatsShowText() : CliText(StatsShowTextExpl, StatsShowTextStr)
 {
    BindParm(*new StatisticsGroupOptParm);
    BindParm(*new MemberIdOptParm);
+   BindParm(*new DispBVParm);
    BindParm(*new OstreamOptParm);
 }
 
-fixed_string RolloverExpl = "end of first interval? (default=f)";
+fixed_string RolloverExpl = "clear history prior to this interval? (default=f)";
 
 RolloverParm::RolloverParm() : CliBoolParm(RolloverExpl, true) { }
 
@@ -2404,8 +2841,9 @@ word StatisticsCommand::ProcessCommand(CliThread& cli) const
    auto reg = Singleton< StatisticsRegistry >::Instance();
    id_t index;
    word gid, mid = 0;
-   bool all, first = false;
+   bool all, first, v = false;
    string title;
+   Flags options;
    ostream* stream = cli.obuf.get();
 
    if(!GetTextIndex(index, cli)) return -1;
@@ -2426,6 +2864,7 @@ word StatisticsCommand::ProcessCommand(CliThread& cli) const
       }
 
       if(GetIntParmRc(mid, cli) == Error) return -1;
+      if(GetBV(*this, cli, v) == Error) return -1;
       if(!GetFileName(title, cli)) title.clear();
       cli.EndOfInput(false);
 
@@ -2435,16 +2874,18 @@ word StatisticsCommand::ProcessCommand(CliThread& cli) const
          if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
       }
 
+      options = (v ? VerboseOpt : NoFlags);
+
       if(all)
       {
-         reg->DisplayStats(*stream);
+         reg->DisplayStats(*stream, options);
       }
       else
       {
          auto group = reg->GetGroup(gid);
 
          if(group != nullptr)
-            group->DisplayStats(*stream, mid);
+            group->DisplayStats(*stream, mid, options);
          else
             return cli.Report(-2, NoStatsGroupExpl);
       }
@@ -2547,6 +2988,23 @@ word StatusCommand::ProcessCommand(CliThread& cli) const
    *cli.obuf << std::setprecision(1) << std::fixed;
    *cli.obuf << "CPU IDLE TIME: " << Thread::PercentIdle() << '%' << CRLF;
 
+   *cli.obuf << CRLF;
+   *cli.obuf << "ACTIVE ALARMS" << CRLF;
+
+   auto prefix = spaces(2);
+   auto active = false;
+   auto& alarms = Singleton< AlarmRegistry >::Instance()->Alarms();
+
+   for(auto a = alarms.First(); a != nullptr; alarms.Next(a))
+   {
+      if(a->Status() != NoAlarm)
+      {
+         a->Display(*cli.obuf, prefix, NoFlags);
+         active = true;
+      }
+   }
+
+   if(!active) *cli.obuf << prefix << "No active alarms." << CRLF;
    return 0;
 }
 
@@ -2922,6 +3380,7 @@ NbIncrement::NbIncrement() : CliIncrement(RootStr, RootExpl, 48)
    BindCommand(*new PrintCommand);
    BindCommand(*new CfgParmsCommand);
    BindCommand(*new LogsCommand);
+   BindCommand(*new AlarmsCommand);
    BindCommand(*new SymbolsCommand);
    BindCommand(*new StatisticsCommand);
    BindCommand(*new ModulesCommand);

@@ -33,6 +33,7 @@
 #include "MsgHeader.h"
 #include "MsgPort.h"
 #include "RootServiceSM.h"
+#include "SbLogs.h"
 #include "SbTrace.h"
 #include "Singleton.h"
 #include "SsmFactory.h"
@@ -155,12 +156,12 @@ void SsmContext::OutputLog(ServiceId sid, word errval) const
 {
    Debug::ft(SsmContext_OutputLog);
 
-   auto log = Log::Create("SERVICE ERROR");
+   auto log = Log::Create(SessionLogGroup, ServiceError);
    if(log == nullptr) return;
-   *log << "sid=" << sid;
+   *log << Log::Tab << "sid=" << sid;
    *log << " errval=" << errval << CRLF;
-   *log << "trace " << strTrace() << CRLF;
-   Log::Spool(log);
+   *log << Log::Tab << "trace " << strTrace();
+   Log::Submit(log);
 }
 
 //------------------------------------------------------------------------------

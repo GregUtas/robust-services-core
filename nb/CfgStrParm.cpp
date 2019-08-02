@@ -21,7 +21,6 @@
 //
 #include "CfgStrParm.h"
 #include <ostream>
-#include "Clock.h"
 #include "Debug.h"
 #include "SysTypes.h"
 
@@ -101,39 +100,5 @@ bool CfgStrParm::SetNext(const string& input)
 
    next_ = input;
    return true;
-}
-
-//==============================================================================
-
-fn_name CfgFileTimeParm_ctor = "CfgFileTimeParm.ctor";
-
-CfgFileTimeParm::CfgFileTimeParm
-   (const char* key, const char* def, string* field, const char* expl) :
-   CfgStrParm(key, def, field, expl),
-   input_(def)
-{
-   Debug::ft(CfgFileTimeParm_ctor);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CfgFileTimeParm_dtor = "CfgFileTimeParm.dtor";
-
-CfgFileTimeParm::~CfgFileTimeParm()
-{
-   Debug::ft(CfgFileTimeParm_dtor);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CfgFileTimeParm_SetNext = "CfgFileTimeParm.SetNext";
-
-bool CfgFileTimeParm::SetNext(const string& input)
-{
-   Debug::ft(CfgFileTimeParm_SetNext);
-
-   input_ = input;
-   string full = input + Clock::TimeZeroStr();
-   return CfgStrParm::SetNext(full);
 }
 }

@@ -234,7 +234,7 @@ protected:
       MsgHeader header;
       union
       {
-         TlvParmLayout firstParm;         // first parameter
+         TlvParmLayout firstParm;                   // first parameter
          NodeBase::byte_t bytes[MaxSbMsgSize - 1];  // payload as bytes
       };
    };

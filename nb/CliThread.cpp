@@ -22,6 +22,7 @@
 #include "CliThread.h"
 #include <algorithm>
 #include <cctype>
+#include <cstdio>
 #include <ios>
 #include <sstream>
 #include "CinThread.h"
@@ -235,6 +236,67 @@ void CliThread::Display(ostream& stream,
          appData_[i]->Display(stream, lead2, options);
       }
    }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CliThread_DisplayHelp = "CliThread.DisplayHelp";
+
+word CliThread::DisplayHelp(const string& path, const string& key) const
+{
+   Debug::ft(CliThread_DisplayHelp);
+
+   //  Open the help file addressed by PATH.
+   //
+   auto stream = SysFile::CreateIstream(path.c_str());
+   if(stream == nullptr) return -2;
+
+   //  Find line that contains "? KEY" and display the lines that follow, up
+   //  to the next line that begins with '?'.  If a line begins with '?' and
+   //  ends with '*', it is a wildcard that matches KEY if KEY's begins with
+   //  the same characters as those that precede the asterisk.
+   //
+   auto found = false;
+   string line;
+
+   while(stream->peek() != EOF)
+   {
+      std::getline(*stream, line);
+
+      if(line.empty())
+      {
+         if(found) *obuf << CRLF;
+         continue;
+      }
+
+      switch(line.front())
+      {
+      case '/':
+         continue;
+
+      case '?':
+         if(found) return 0;
+         while(line.back() == SPACE) line.pop_back();
+         line.erase(0, 2);
+
+         if(!line.empty() && line.back() == '*')
+         {
+            auto keyStart = key.substr(0, line.size() - 1);
+            auto lineStart = line.substr(0, line.size() - 1);
+            if(strCompare(lineStart, keyStart) == 0) found = true;
+         }
+         else
+         {
+            if(strCompare(line, key) == 0) found = true;
+         }
+         break;
+
+      default:
+         if(found) *obuf << line << CRLF;
+      }
+   }
+
+   return (found ? 0 : -1);
 }
 
 //------------------------------------------------------------------------------
@@ -799,7 +861,7 @@ void CliThread::SetResult(word result)
    result_ = result;
    auto reg = Singleton< SymbolRegistry >::Instance();
    auto sym = reg->EnsureSymbol("cli.result");
-   if(sym != nullptr) sym->SetValue(strInt(result_), false);
+   if(sym != nullptr) sym->SetValue(std::to_string(result_), false);
 }
 
 //------------------------------------------------------------------------------

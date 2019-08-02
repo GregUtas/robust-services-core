@@ -24,7 +24,9 @@
 
 #include "Thread.h"
 #include <string>
+#include "CallbackRequest.h"
 #include "NbTypes.h"
+#include "SysMutex.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -45,11 +47,17 @@ public:
 
    //  Queues STREAM for output to the file identified by NAME.  If TRUNC
    //  is set, an existing file with NAME is overwritten; otherwise, STREAM
-   //  is appended to it.  FileThread assumes ownership of STREAM, which is
-   //  is set to nullptr before returning.
+   //  is appended to it.  When STREAM has been written, WRITTEN is invoked.
+   //  FileThread assumes ownership of STREAM and WRITTEN, which are set to
+   //  nullptr before returning.
    //
-   static void Spool(const std::string& name,
-      ostringstreamPtr& stream, bool trunc = false);
+   static void Spool(const std::string& name, ostringstreamPtr& stream,
+      CallbackRequestPtr& written, bool trunc = false);
+
+   //  The same as Spool (above), but without a callback.
+   //
+   static void Spool(const std::string& name, ostringstreamPtr& stream,
+      bool trunc = false);
 
    //  Outputs S to the file identified by NAME.  Adds an "CRLF" if EOL is set.
    //
@@ -63,6 +71,11 @@ public:
    //  Clears the contents of the file identified by NAME.
    //
    static void Truncate(const std::string& name);
+
+   //  Overridden to display member variables.
+   //
+   void Display(std::ostream& stream,
+      const std::string& prefix, const Flags& options) const override;
 
    //  Overridden for patching.
    //
@@ -87,6 +100,10 @@ private:
    //  Overridden to delete the singleton.
    //
    void Destroy() override;
+
+   //  To prevent interleaved output in the console transcript file.
+   //
+   static SysMutex ConsoleFileLock_;
 };
 }
 #endif

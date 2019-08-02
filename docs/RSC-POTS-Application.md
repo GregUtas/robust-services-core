@@ -17,7 +17,7 @@ object creations/deletions, incoming and outgoing messages, and internal states 
 The items in this event trace also appear in the function trace.
 * A console file (`*.cli.txt`).
 
-The [`traffic`](/input/traffic.txt) script (`>read traffic.start`) launches a
+The [`traffic`](/input/traffic.start.txt) script (`>read traffic.start`) launches a
 [thread](/an/PotsTrafficThread.h) that initiates, answers, and releases calls, initially
 at a rate of 600 per minute.  The call rate can be increased to the point where the system
 enters overload.  Whatever the current call rate, you can observe the system's behavior with

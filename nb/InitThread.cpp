@@ -28,6 +28,7 @@
 #include "FunctionGuard.h"
 #include "Log.h"
 #include "ModuleRegistry.h"
+#include "NbLogs.h"
 #include "Registry.h"
 #include "RootThread.h"
 #include "Singleton.h"
@@ -125,12 +126,12 @@ void InitThread::CauseRestart()
    //  o Delay fails (unlikely)
    //  o a critical thread could not be recreated
    //
-   auto log = Log::Create("DEATH OF CRITICAL THREAD");
+   auto log = Log::Create(ThreadLogGroup, ThreadCriticalDeath);
 
    if(log != nullptr)
    {
-      *log << "errval=" << strHex(errval_) << CRLF;
-      Log::Spool(log);
+      *log << Log::Tab << "errval=" << strHex(errval_);
+      Log::Submit(log);
    }
 
    Singleton< RootThread >::Instance()->Interrupt(RestartMask);

@@ -26,7 +26,6 @@
 #include "CliText.h"
 #include "CliTextParm.h"
 #include <cstddef>
-#include <cstdint>
 #include <iomanip>
 #include <memory>
 #include <sstream>
@@ -611,7 +610,7 @@ word FileIdCommand::ProcessCommand(CliThread& cli) const
 
    auto file = Singleton< Library >::Instance()->Files().At(fid);
    if(file == nullptr) return cli.Report(-2, NoFileExpl);
-   file->Display(*cli.obuf, spaces(2), Flags(Vb_Mask));
+   file->Display(*cli.obuf, spaces(2), VerboseOpt);
    return 0;
 }
 
@@ -657,7 +656,7 @@ word FileInfoCommand::ProcessCommand(CliThread& cli) const
 
    auto file = Singleton< Library >::Instance()->FindFile(name);
    if(file == nullptr) return cli.Report(-2, NoFileExpl);
-   file->Display(*cli.obuf, spaces(2), Flags(Vb_Mask));
+   file->Display(*cli.obuf, spaces(2), VerboseOpt);
    return 0;
 }
 
@@ -1271,7 +1270,7 @@ public: LineNumberParm();
 
 fixed_string LineNumberExpl = "line number (must contain source code)";
 
-LineNumberParm::LineNumberParm() : CliIntParm(LineNumberExpl, 0, INT32_MAX) { }
+LineNumberParm::LineNumberParm() : CliIntParm(LineNumberExpl, 0, 999999) { }
 
 class BreakText : public CliText
 {

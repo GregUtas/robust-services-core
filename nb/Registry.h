@@ -275,7 +275,8 @@ public:
       //
       auto cell = Cell(item);
       if(cell == nullptr) return false;
-      if((cell->id == NIL_ID) || (cell->id >= capacity_))
+      if(cell->id == NIL_ID) return false;
+      if(cell->id >= capacity_)
       {
          Debug::SwLog(Registry_Erase(), cell->id, 2);
          return false;

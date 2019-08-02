@@ -26,6 +26,7 @@
 #include <ws2tcpip.h>
 #include "Debug.h"
 #include "Log.h"
+#include "NwLogs.h"
 #include "SysTypes.h"
 
 using namespace NodeBase;
@@ -81,12 +82,12 @@ bool SysIpL2Addr::HostName(string& name)
 
    if(gethostname(buff, 256) == SOCKET_ERROR)
    {
-      auto log = Log::Create("IP GETHOSTNAME ERROR");
+      auto log = Log::Create(NetworkLogGroup, NetworkFunctionError);
 
       if(log != nullptr)
       {
-         *log << "errval=" << WSAGetLastError() << CRLF;
-         Log::Spool(log);
+         *log << Log::Tab << "GetHostName: errval=" << WSAGetLastError();
+         Log::Submit(log);
       }
       return false;
    }

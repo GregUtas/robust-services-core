@@ -33,11 +33,13 @@ namespace NodeBase
 //
 namespace SysConsole
 {
-   //  Returns the stream from which console input is received.
+   //  Returns the stream from which console input is received.  Applications
+   //  must use the CLI interfaces instead of using this directly.
    //
    std::istream& In();
 
-   //  Returns the stream to which console output is sent.
+   //  Returns the stream to which console output is sent.  Applications must
+   //  use CoutThread instead of using this directly.
    //
    std::ostream& Out();
 

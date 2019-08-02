@@ -38,12 +38,18 @@ class Element : public Protected
 public:
    //  Returns the element's name.
    //
-   static std::string Name() { return Name_; }
+   static const std::string& Name() { return Name_; }
 
    //  Returns a string containing the current time in SysTime::Alpha format,
    //  followed by " on " and Element::Name().
    //
    static std::string strTimePlace();
+
+   //  Returns the first directory named "rsc" on the path to the .exe that
+   //  contains the object code.  Does not include a trailing PATH_SEPARATOR
+   //  character.
+   //
+   static const std::string& RscPath();
 
    //  Returns the help directory, which contains help files for CLI commands
    //  and increments.  Does not include a trailing PATH_SEPARATOR character.
@@ -60,6 +66,10 @@ public:
    //  written.  Does not include a trailing PATH_SEPARATOR character.
    //
    static const std::string& OutputPath();
+
+   //  Returns name for the console transcript file.
+   //
+   static const std::string& ConsoleFileName();
 
    //  Returns true if running in a non-field (debug) load.
    //
@@ -86,18 +96,6 @@ private:
    //
    static std::string Name_;
 
-   //  The directory from which help files are obtained.
-   //
-   static std::string HelpPath_;
-
-   //  The directory from which files are to be read.
-   //
-   static std::string InputPath_;
-
-   //  The directory to which files are to be written.
-   //
-   static std::string OutputPath_;
-
    //  Set if this is a lab load.
    //
    static bool RunningInLab_;
@@ -105,18 +103,6 @@ private:
    //  Configuration parameter for the element's name.
    //
    CfgStrParmPtr name_;
-
-   //  Configuration parameter for the help directory.
-   //
-   CfgStrParmPtr helpPath_;
-
-   //  Configuration parameter for the input directory.
-   //
-   CfgStrParmPtr inputPath_;
-
-   //  Configuration parameter for the output directory.
-   //
-   CfgStrParmPtr outputPath_;
 
    //  Configuration parameter that defines if this is a lab load.
    //

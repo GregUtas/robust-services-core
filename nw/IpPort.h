@@ -26,9 +26,16 @@
 #include <cstddef>
 #include <iosfwd>
 #include <memory>
+#include <string>
 #include "InputHandler.h"
 #include "NwTypes.h"
 #include "Q1Link.h"
+#include "SysTypes.h"
+
+namespace NodeBase
+{
+   class Alarm;
+}
 
 namespace NetworkBase
 {
@@ -87,6 +94,10 @@ public:
    //
    virtual SysTcpSocket* CreateAppSocket();
 
+   //  Provides the I/O thread with access to the port's alarm.
+   //
+   NodeBase::Alarm* GetAlarm() const { return alarm_; }
+
    //  Invoked after COUNT bytes were received.
    //
    void BytesRcvd(size_t count) const;
@@ -120,7 +131,8 @@ public:
    //  Displays statistics.  May be overridden to include pool-specific
    //  statistics, but the base class version must be invoked.
    //
-   virtual void DisplayStats(std::ostream& stream) const;
+   virtual void DisplayStats
+      (std::ostream& stream, const NodeBase::Flags& options) const;
 
    //  Returns the offset to link_.
    //
@@ -169,6 +181,10 @@ private:
    //
    void UnbindHandler(const InputHandler& handler);
 
+   //  Ensures that the low availability alarm exists.
+   //
+   void EnsureAlarm();
+
    //  Deleted to prohibit copying.
    //
    IpPort(const IpPort& that) = delete;
@@ -197,6 +213,18 @@ private:
    //  The port's socket.
    //
    SysSocket* socket_;
+
+   //  The name for the port's alarm.
+   //
+   std::string alarmName_;  //r
+
+   //  The explanation for the port's alarm.
+   //
+   std::string alarmExpl_;  //r
+
+   //  The port's alarm.
+   //
+   NodeBase::Alarm* alarm_;
 
    //  The port's statistics.
    //

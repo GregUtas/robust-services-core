@@ -80,7 +80,7 @@ private:
    //
    ~ToolRegistry();
 
-   //> The maximum number of increments that can register.
+   //> The maximum number of tools that can register.
    //
    static const size_t MaxTools;
 

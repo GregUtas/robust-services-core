@@ -25,6 +25,7 @@
 #include "CfgParmRegistry.h"
 #include "Debug.h"
 #include "Log.h"
+#include "NbLogs.h"
 #include "Singleton.h"
 #include "SysTypes.h"
 
@@ -47,14 +48,14 @@ CfgTuple::CfgTuple(const string& key, const string& input) :
 {
    Debug::ft(CfgTuple_ctor);
 
-   if(key_.find_first_not_of(ValidNameChars()) != string::npos)
+   if(key_.find_first_not_of(ValidKeyChars()) != string::npos)
    {
-      auto log = Log::Create("CFGPARM INVALID KEY");
+      auto log = Log::Create(ConfigLogGroup, ConfigKeyInvalid);
 
       if(log != nullptr)
       {
-         *log << "errval=" << key_ << CRLF;
-         Log::Spool(log);
+         *log << Log::Tab << "errval=" << key_;
+         Log::Submit(log);
       }
    }
 }
@@ -102,7 +103,7 @@ void CfgTuple::Patch(sel_t selector, void* arguments)
 
 const string& CfgTuple::ValidBlankChars()
 {
-   //> Valid blank characters in a file that contains configuration tuples.
+   //  Valid blank characters in a file that contains configuration tuples.
    //
    static const string BlankChars(" ");
 
@@ -111,9 +112,9 @@ const string& CfgTuple::ValidBlankChars()
 
 //------------------------------------------------------------------------------
 
-const string& CfgTuple::ValidNameChars()
+const string& CfgTuple::ValidKeyChars()
 {
-   //> Valid characters in a configuration tuple's name.
+   //  Valid characters in a configuration tuple's name.
    //
    static const string NameChars
       ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-.");
@@ -125,9 +126,9 @@ const string& CfgTuple::ValidNameChars()
 
 const string& CfgTuple::ValidValueChars()
 {
-   //> Valid characters in a configuration tuple's value.
+   //  Valid characters in a configuration tuple's value.
    //
-   static const string ValueChars(ValidNameChars() + ":/\\");
+   static const string ValueChars(ValidKeyChars() + ":/\\");
 
    return ValueChars;
 }

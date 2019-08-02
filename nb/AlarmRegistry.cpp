@@ -1,0 +1,142 @@
+//==============================================================================
+//
+//  AlarmRegistry.cpp
+//
+//  Copyright (C) 2017  Greg Utas
+//
+//  This file is part of the Robust Services Core (RSC).
+//
+//  RSC is free software: you can redistribute it and/or modify it under the
+//  terms of the GNU General Public License as published by the Free Software
+//  Foundation, either version 3 of the License, or (at your option) any later
+//  version.
+//
+//  RSC is distributed in the hope that it will be useful, but WITHOUT ANY
+//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+//  FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+//  details.
+//
+//  You should have received a copy of the GNU General Public License along
+//  with RSC.  If not, see <http://www.gnu.org/licenses/>.
+//
+#include "AlarmRegistry.h"
+#include <cstddef>
+#include <ostream>
+#include "Alarm.h"
+#include "Debug.h"
+#include "Formatters.h"
+
+using std::ostream;
+using std::string;
+
+//------------------------------------------------------------------------------
+
+namespace NodeBase
+{
+const id_t AlarmRegistry::MaxAlarms = 250;
+
+//------------------------------------------------------------------------------
+
+fn_name AlarmRegistry_ctor = "AlarmRegistry.ctor";
+
+AlarmRegistry::AlarmRegistry()
+{
+   Debug::ft(AlarmRegistry_ctor);
+
+   alarms_.Init(MaxAlarms + 1, Alarm::CellDiff(), MemDyn);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name AlarmRegistry_dtor = "AlarmRegistry.dtor";
+
+AlarmRegistry::~AlarmRegistry()
+{
+   Debug::ft(AlarmRegistry_dtor);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name AlarmRegistry_BindAlarm = "AlarmRegistry.BindAlarm";
+
+bool AlarmRegistry::BindAlarm(Alarm& alarm)
+{
+   Debug::ft(AlarmRegistry_BindAlarm);
+
+   return alarms_.Insert(alarm);
+}
+
+//------------------------------------------------------------------------------
+
+void AlarmRegistry::Display(ostream& stream,
+   const string& prefix, const Flags& options) const
+{
+   auto lead = prefix + spaces(2);
+   size_t active = 0;
+
+   stream << prefix << "Alarms:" << CRLF;
+
+   for(auto a = alarms_.First(); a != nullptr; alarms_.Next(a))
+   {
+      a->Display(stream, lead, NoFlags);
+      if(a->Status() != NoAlarm) ++active;
+   }
+
+   stream << prefix;
+   if(active == 0)
+      stream << "No";
+   else
+      stream << active;
+   stream << " alarm(s) active." << CRLF;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name AlarmRegistry_Find = "AlarmRegistry.Find";
+
+Alarm* AlarmRegistry::Find(const std::string& name) const
+{
+   Debug::ft(AlarmRegistry_Find);
+
+   auto key = strUpper(name);
+
+   for(auto a = alarms_.First(); a != nullptr; alarms_.Next(a))
+   {
+      if(strUpper(a->Name()) == key) return a;
+   }
+
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+void AlarmRegistry::Patch(sel_t selector, void* arguments)
+{
+   Dynamic::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name AlarmRegistry_Shutdown = "AlarmRegistry.Shutdown";
+
+void AlarmRegistry::Shutdown(RestartLevel level)
+{
+   Debug::ft(AlarmRegistry_Shutdown);
+
+   for(auto a = alarms_.First(); a != nullptr; alarms_.Next(a))
+   {
+      a->Shutdown(level);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name AlarmRegistry_UnbindAlarm = "AlarmRegistry.UnbindAlarm";
+
+void AlarmRegistry::UnbindAlarm(Alarm& alarm)
+{
+   Debug::ft(AlarmRegistry_UnbindAlarm);
+
+   alarms_.Erase(alarm);
+}
+}

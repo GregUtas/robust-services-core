@@ -34,6 +34,7 @@
 
 namespace NodeBase
 {
+   class Alarm;
    struct ObjectBlock;
    class ObjectPoolStats;
    class Pooled;
@@ -57,7 +58,7 @@ class ObjectPool : public Protected
 public:
    //> Highest valid object pool identifier.
    //
-   static const ObjectPoolId MaxId = 250;
+   static const ObjectPoolId MaxId;
 
    //> The maximum number of segments in an object pool.
    //
@@ -165,7 +166,7 @@ public:
    //  Displays statistics.  May be overridden to include pool-specific
    //  statistics, but the base class version must be invoked.
    //
-   virtual void DisplayStats(std::ostream& stream) const;
+   virtual void DisplayStats(std::ostream& stream, const Flags& options) const;
 
    //  Displays in-use blocks.  Returns false if no block were in use.
    //
@@ -231,6 +232,14 @@ private:
    //  identifier BID.  Returns false if I or J is invalid.
    //
    bool IndicesToBid(size_t i, size_t j, PooledObjectId& bid) const;
+
+   //  Ensures that the low availability alarm exists.
+   //
+   void EnsureAlarm();
+
+   //  Updates the status of the low availability alarm.
+   //
+   void UpdateAlarm() const;
 
    //  Marks all blocks as orphaned and audits the free queue for sanity,
    //  unmarking its blocks so that they will not be recovered.
@@ -306,6 +315,22 @@ private:
    //
    size_t availCount_;
 
+   //  The total number of blocks currently allocated.
+   //
+   size_t totalCount_;
+
+   //  The name for the high usage alarm.
+   //
+   std::string alarmName_;  //r
+
+   //  The explanation for the high usage alarm.
+   //
+   std::string alarmExpl_;  //r
+
+   //  The alarm raised when the percentage of blocks in use is high.
+   //
+   Alarm* alarm_;
+
    //  Used to detect a corrupt queue header when auditing freeq_.
    //
    bool corruptQHead_;
@@ -318,6 +343,11 @@ private:
    //  before it is recovered.
    //
    static const uint8_t OrphanThreshold;
+
+   //> The maximum number of logs that display the contents of an orphaned
+   //  block in a given pool during each audit cycle.
+   //
+   static const size_t OrphanMaxLogs;
 };
 }
 #endif

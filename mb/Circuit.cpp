@@ -50,10 +50,7 @@ Circuit::~Circuit()
 {
    Debug::ft(Circuit_dtor);
 
-   if(TsPort() != NIL_ID)
-   {
-      Singleton< Switch >::Instance()->UnbindCircuit(*this);
-   }
+   Singleton< Switch >::Instance()->UnbindCircuit(*this);
 }
 
 //------------------------------------------------------------------------------

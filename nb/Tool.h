@@ -102,11 +102,11 @@ private:
 
    //  The character that enables or disables the tool in the >set tool command.
    //
-   char abbr_;
+   const char abbr_;
 
    //  Whether the tool is safe for field use.
    //
-   bool safe_;
+   const bool safe_;
 };
 
 //------------------------------------------------------------------------------

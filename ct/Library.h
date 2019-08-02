@@ -142,7 +142,7 @@ public:
    //
    static const size_t MaxFiles;
 
-   //> The name for the directory that contains substitute files (see
+   //  The name of the directory that contains substitute files (see
    //  the definition of subsSet_, below).
    //
    static NodeBase::fixed_string SubsDir;

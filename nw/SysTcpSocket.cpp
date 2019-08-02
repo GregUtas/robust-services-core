@@ -28,6 +28,7 @@
 #include "IpBuffer.h"
 #include "IpPort.h"
 #include "IpPortRegistry.h"
+#include "NwLogs.h"
 #include "NwTrace.h"
 #include "Singleton.h"
 #include "SysIpL3Addr.h"
@@ -344,7 +345,7 @@ SysSocket::SendRc SysTcpSocket::SendBuff(IpBuffer& buff)
       {
          //s Handle Connect() error.
          //
-         OutputLog("TCP CONNECT ERROR", &buff);
+         OutputLog(NetworkSocketError, "Connect", &buff);
          return SendFailed;
       }
    }
@@ -388,7 +389,7 @@ SysSocket::SendRc SysTcpSocket::SendBuff(IpBuffer& buff)
 
       //s Handle Send() error.
       //
-      OutputLog("TCP SEND ERROR", &buff);
+      OutputLog(NetworkSocketError, "Send", &buff);
       return SendFailed;
    }
 

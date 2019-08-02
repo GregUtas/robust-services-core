@@ -21,12 +21,15 @@
 //
 #include "UdpIoThread.h"
 #include <sstream>
+#include <string>
+#include "Alarm.h"
 #include "Clock.h"
 #include "Debug.h"
 #include "IpPort.h"
 #include "IpPortRegistry.h"
 #include "Log.h"
 #include "NbTypes.h"
+#include "NwLogs.h"
 #include "NwTrace.h"
 #include "Singleton.h"
 #include "SysIpL3Addr.h"
@@ -86,6 +89,24 @@ void UdpIoThread::Cleanup()
 
 //------------------------------------------------------------------------------
 
+fn_name UdpIoThread_ClearAlarm = "UdpIoThread.ClearAlarm";
+
+void UdpIoThread::ClearAlarm() const
+{
+   Debug::ft(UdpIoThread_ClearAlarm);
+
+   auto alarm = ipPort_->GetAlarm();
+   if(alarm == nullptr) return;
+
+   auto log = alarm->Create(NetworkLogGroup, NetworkServiceAvailable, NoAlarm);
+   if(log == nullptr) return;
+
+   *log << Log::Tab << "UDP: port=" << port_;
+   Log::Submit(log);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name UdpIoThread_Enter = "UdpIoThread.Enter";
 
 void UdpIoThread::Enter()
@@ -98,7 +119,7 @@ void UdpIoThread::Enter()
    //
    if(ipPort_ == nullptr)
    {
-      OutputLog(0);
+      RaiseAlarm(0);
       return;
    }
 
@@ -119,23 +140,25 @@ void UdpIoThread::Enter()
       if(rc != SysSocket::AllocOk)
       {
          delete socket;
-         OutputLog(0x100 + rc);
+         RaiseAlarm(0x100 + rc);
          return;
       }
 
       if(!ipPort_->SetSocket(socket))
       {
          delete socket;
-         OutputLog(1);
+         RaiseAlarm(1);
          return;
       }
    }
 
    //  Make all messages look as if they arrived on our IP address and
-   //  port, regardless of how they were actually addressed.
+   //  port, regardless of how they were actually addressed.  Clear any
+   //  alarm that indicates our service is unavailable.
    //
    auto host = IpPortRegistry::HostAddress();
    rxAddr_ = SysIpL3Addr(host, port_, IpUdp, nullptr);
+   ClearAlarm();
 
    //  Enter a loop that keeps waiting forever to receive the next message.
    //  Pause after receiving a threshhold number of messages in a row.
@@ -185,13 +208,13 @@ void UdpIoThread::Enter()
          //
          if(rcvd == -1)
          {
-            auto log = Log::Create("UDP RECVFROM ERROR");
+            auto log = Log::Create(NetworkLogGroup, NetworkSocketError);
 
             if(log != nullptr)
             {
-               *log << "port=" << port_;
-               *log << " errval=" << socket->GetError() << CRLF;
-               Log::Spool(log);
+               *log << Log::Tab << "RecvFrom: port=" << port_;
+               *log << " errval=" << socket->GetError();
+               Log::Submit(log);
             }
          }
 
@@ -209,27 +232,27 @@ void UdpIoThread::Enter()
 
 //------------------------------------------------------------------------------
 
-fn_name UdpIoThread_OutputLog = "UdpIoThread.OutputLog";
-
-void UdpIoThread::OutputLog(debug32_t errval) const
+void UdpIoThread::Patch(sel_t selector, void* arguments)
 {
-   Debug::ft(UdpIoThread_OutputLog);
-
-   auto log = Log::Create("UDP I/O THREAD FAILURE");
-
-   if(log != nullptr)
-   {
-      *log << "port=" << port_;
-      *log << " errval=" << errval << CRLF;
-      Log::Spool(log);
-   }
+   IoThread::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------
 
-void UdpIoThread::Patch(sel_t selector, void* arguments)
+fn_name UdpIoThread_RaiseAlarm = "UdpIoThread.RaiseAlarm";
+
+void UdpIoThread::RaiseAlarm(debug32_t errval) const
 {
-   IoThread::Patch(selector, arguments);
+   Debug::ft(UdpIoThread_RaiseAlarm);
+
+   auto alarm = ipPort_->GetAlarm();
+   if(alarm == nullptr) return;
+
+   auto log = alarm->Create(NetworkLogGroup, NetworkServiceFailure, MajorAlarm);
+   if(log == nullptr) return;
+
+   *log << Log::Tab << "UDP: port=" << port_ << " errval=" << errval;
+   Log::Submit(log);
 }
 
 //------------------------------------------------------------------------------

@@ -39,6 +39,10 @@ using std::string;
 
 namespace SessionBase
 {
+const Parameter::Id Parameter::MaxId = 63;
+
+//------------------------------------------------------------------------------
+
 fn_name Parameter_ctor = "Parameter.ctor";
 
 Parameter::Parameter(ProtocolId prid, Id pid) : prid_(prid)

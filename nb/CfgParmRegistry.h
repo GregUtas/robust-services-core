@@ -132,9 +132,9 @@ private:
    bool LoadNextTuple(std::string& key, std::string& value);
 
    //  Called by LoadNextTuple to flag invalid entries in ConfigFileName.
-   //  REASON explains the problem, and INPUT is the invalid entry.
+   //  ID identifies the problem, and INPUT is the invalid entry.
    //
-   void BadLine(fixed_string reason, const std::string& input) const;
+   void BadLine(LogId id, const std::string& input) const;
 
    //  Type for a dynamically allocated vector that holds dynamically
    //  allocated strings.

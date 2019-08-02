@@ -67,7 +67,7 @@ bool SymbolRegistry::BindSymbol(const string& name, word value, bool lock)
 
    auto sym = EnsureSymbol(name);
    if(sym == nullptr) return false;
-   return sym->SetValue(strInt(value), lock);
+   return sym->SetValue(std::to_string(value), lock);
 }
 
 //------------------------------------------------------------------------------

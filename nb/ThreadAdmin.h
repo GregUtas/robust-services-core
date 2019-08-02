@@ -132,7 +132,7 @@ public:
 
    //  Displays statistics.
    //
-   void DisplayStats(std::ostream& stream) const;
+   void DisplayStats(std::ostream& stream, const Flags& options) const;
 
    //  Returns the number of traps.
    //

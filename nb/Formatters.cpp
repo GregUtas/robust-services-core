@@ -256,13 +256,6 @@ string strIndex(size_t n, int width, bool colon)
 
 //------------------------------------------------------------------------------
 
-string strInt(int64_t n)
-{
-   return std::to_string(n);
-}
-
-//------------------------------------------------------------------------------
-
 string strLower(const string& s)
 {
    string output;
@@ -296,5 +289,14 @@ string strPtr(const void* p)
 
    stream << p;
    return stream.str();
+}
+
+//------------------------------------------------------------------------------
+
+string strUpper(const string& s)
+{
+   string output;
+   for(size_t i = 0; i < s.size(); ++i) output += toupper(s[i]);
+   return output;
 }
 }

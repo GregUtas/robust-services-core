@@ -139,7 +139,7 @@ protected:
 private:
    //> Highest valid port identifier.
    //
-   static const NodeBase::PooledObjectId MaxId = 0x40000;  // 2^18 = 256K
+   static const NodeBase::PooledObjectId MaxId;
 
    //  Overridden to create the layer above for an incoming message.
    //

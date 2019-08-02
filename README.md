@@ -62,9 +62,8 @@ available in the [`dip`](/dip) directory and is described in some further detail
 
 ## Installing the repository
 
-Download the repository to a directory named `rsc`, located directly within another
-directory named `rsc`.  This is because, when the executable starts, it looks for
-its configuration file on the path `.../rsc/rsc/input/element.config.txt`.
+Download the repository to a directory named `rsc`.  This is because, when the executable
+starts, it looks for its configuration file on the path `.../rsc/input/element.config.txt`.
 
 ## Building an executable
 
@@ -76,7 +75,7 @@ platform-specific `.cpp`'s, that should allow it to be ported to other systems
 fairly easily.  Two executables, for 32-bit and 64-bit Windows, are provided
 [here](/exe).
 
-The directories that contain source code, and the dependencies between them, are
+The directories that contain RSC's source code, and the dependencies between them, are
 listed in the comments that precede the implementation of [`main`](/rsc/main.cpp).
 Each of these directories is built as a separate static library, with `main`
 residing in its own directory.
@@ -115,17 +114,17 @@ see how function calls were nested
   * the total time spent in the function (in microseconds)
   * the net time spent in the function (in microseconds)
 
-All output appears in the directory specified by `OutputPath` in the configuration file.
+All output appears in the directory `.../rsc/excluded/output` (the first directory
+named `rsc` above the directory from which the `.exe` was launched).
 In addition to any specific output that you request, such as the initialization trace,
 every CLI session produces
   * a `console` file (a transcript of the CLI commands that you entered and what was
 written to the console)
   * a `log` file (system events that were written to the console asynchronously)
-  * a `stats` file (generated periodically to report system statistics)
 
-The numeric string *`yymmdd-hhmmss`* is appended to the names of these files to record
-the time when the system initialized (for a `console` or `log` file) or when the report
-was generated (for a `stats` file).
+The numeric string *`yymmdd-hhmmss-mmm`* is appended to the names of these files to record
+the time when the system initialized (for the `console` file and initial `log` file) or
+the time of the preceding restart (for a subsequent`log` file).
 
 ## Testing
 

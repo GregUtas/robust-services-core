@@ -35,6 +35,10 @@ using std::string;
 
 namespace NodeBase
 {
+const ModuleId Module::MaxId = 4000;
+
+//------------------------------------------------------------------------------
+
 fn_name Module_ctor = "Module.ctor";
 
 Module::Module(ModuleId mid)

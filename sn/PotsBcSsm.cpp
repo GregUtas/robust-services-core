@@ -30,6 +30,7 @@
 #include "Log.h"
 #include "MsgHeader.h"
 #include "PotsCircuit.h"
+#include "PotsLogs.h"
 #include "PotsProfile.h"
 #include "PotsProtocol.h"
 #include "PotsStatistics.h"
@@ -285,17 +286,15 @@ EventHandler::Rc PotsBcSsm::AnalyzeMsg
    //p Including the PotsCircuit state in this log aids debugging, but it
    //  will have to be removed to decouple the POTS shelf and POTS call.
    //
-   auto log = Log::Create("POTS CALL INVALID INCOMING SIGNAL");
+   auto log = Log::Create(PotsLogGroup, PotsCallIcSignal);
 
    if(log != nullptr)
    {
-      *log << "sig=" << sid;
-      *log << " state=" << stid;
-      *log << " errval=" << errval;
-      *log << " rel=" << rel << CRLF;
-      *log << "trace " << GetContext()->strTrace() << CRLF;
-      *log << Profile()->GetCircuit()->strState() << CRLF;
-      Log::Spool(log);
+      *log << Log::Tab << "sig=" << sid << " state=" << stid;
+      *log << Log::Tab << " errval=" << errval << " rel=" << rel << CRLF;
+      *log << Log::Tab << "trace " << GetContext()->strTrace() << CRLF;
+      *log << Log::Tab << Profile()->GetCircuit()->strState();
+      Log::Submit(log);
    }
 
    if(!rel) return EventHandler::Suspend;

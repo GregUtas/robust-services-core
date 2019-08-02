@@ -31,6 +31,7 @@
 #include "Log.h"
 #include "Memory.h"
 #include "NbTypes.h"
+#include "NwLogs.h"
 #include "SysSocket.h"
 
 using namespace NodeBase;
@@ -171,14 +172,14 @@ void IoThread::InvokeHandler
       {
          port.InvalidDiscarded();
 
-         auto log = Log::Create("NO DESTINATION FROM INPUT HANDLER");
+         auto log = Log::Create(NetworkLogGroup, NetworkNoDestination);
 
          if(log != nullptr)
          {
-            *log << "port=" << port_;
+            *log << Log::Tab << "port=" << port_;
             *log << " size=" << size << CRLF;
-            buff->Display(*log, EMPTY_STR, Flags(Vb_Mask));
-            Log::Spool(log);
+            buff->Display(*log, Log::Tab, VerboseOpt);
+            Log::Submit(log);
          }
 
          return;

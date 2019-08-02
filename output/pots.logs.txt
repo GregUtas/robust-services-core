@@ -1,0 +1,379 @@
+
+MODULE INITIALIZATION          msecs      invoked at
+pre-Module.Startup               453    08:46:29.986
+NodeBase.NbModule...                    08:46:30.439
+...initialized                    48
+NodeTools.NtModule...                   08:46:30.497
+...initialized                    22
+CodeTools.CtModule...                   08:46:30.529
+...initialized                    17
+NetworkBase.NwModule...                 08:46:30.554
+
+    NET500 2-Aug-2019 08:46:30.569 on Reigi {1}
+...initialized                   121
+SessionBase.SbModule...                 08:46:30.684
+...initialized                    94
+SessionTools.StModule...                08:46:30.786
+...initialized                    13
+MediaBase.MbModule...                   08:46:30.810
+...initialized                    14
+CallBase.CbModule...                    08:46:30.834
+...initialized                    18
+PotsBase.PbModule...                    08:46:30.864
+...initialized                    18
+OperationsNode.OnModule...              08:46:30.893
+...initialized                    12
+ControlNode.CnModule...                 08:46:30.916
+...initialized                    15
+RoutingNode.RnModule...                 08:46:30.946
+...initialized                    15
+ServiceNode.SnModule...                 08:46:30.976
+...initialized                    45
+AccessNode.AnModule...                  08:46:31.033
+...initialized                    16
+                               -----
+total initialization time       1074
+
+    NODE500 2-Aug-2019 08:46:31.073 on Reigi {2}
+
+    THR903 2-Aug-2019 08:48:50.919 on Reigi {3}
+    by NodeBase.InitThread (tid=2, nid=0x00007ce4)
+    for NodeBase.CliThread (tid=9, nid=0x0000b27c)
+    signal=121 (SIGYIELD: Running Locked Too Long)
+
+    THR905 2-Aug-2019 08:48:50.970 on Reigi {4}
+    thread=NodeBase.CliThread (tid=9, nid=0x0000b27c) extra msecs=173
+
+    THR902 2-Aug-2019 08:51:46.581 on Reigi {5}
+    in SessionBase.InvokerThread (tid=10, nid=0x000077e4): trap number 1
+    type=SessionBase Exception
+    errval : 0x0
+    offset : 0x0
+    context : 04A47464
+    Function Traceback:
+      SessionBase.SbException.SbException @ context.cpp + 93[22]
+      SessionBase.Context.Kill @ context.cpp + 567[20]
+      CallBase.BcOaAnalyzeRemoteMessage.ProcessEvent @ bchandlers.cpp + 129[18]
+      SessionBase.SbAnalyzeMessage.ProcessEvent @ sbhandlers.cpp + 74[27]
+      SessionBase.ServiceSM.ProcessEvent @ servicesm.cpp + 553[27]
+      SessionBase.SsmContext.ProcessIcMsg @ ssmcontext.cpp + 211[22]
+      SessionBase.Context.ProcessMsg @ context.cpp + 656[19]
+      SessionBase.Context.ProcessWork @ context.cpp + 734[22]
+      SessionBase.InvokerPool.ProcessWork @ invokerpool.cpp + 547[0]
+      SessionBase.InvokerThread.Enter @ invokerthread.cpp + 168[0]
+      NodeBase.Thread.Start @ thread.cpp + 2799[15]
+      NodeBase.Thread.EnterThread @ thread.cpp + 1564[0]
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
+      RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
+
+    SESS900 2-Aug-2019 08:51:46.582 on Reigi {6}
+    SessionBase.SsmContext
+    this : 04A47464
+    patchArea : 0x0
+    pid      : 5
+    seq      : 1
+    link     : 00000000
+    assigned : true
+    orphaned : 0
+    corrupt  : false
+    logged   : false
+    whichq  : 00000000
+    link    : 
+      next : 00000000
+      prev : 00000000
+    priMsgq : 
+      tail : 00000000
+      diff : 8
+    stdMsgq : 
+      tail : 00000000
+      diff : 8
+    enqTime : 4343638052647
+    pool    : 023EA830
+    thread  : 03B1398C
+    faction : 5
+    state   : 3
+    prio    : 2
+    traceOn : true
+    trans   : 019CE4E8
+    trace : 4,9> 4,9> 3,2> 4,9>
+    portq : 
+      tail : 04DD73CC
+      diff : 8
+      [->]: 04DD7360 SessionBase.MsgPort
+      [->]: 04DD73C4 SessionBase.MsgPort
+    psmq  : 
+      tail : 0526FB5C
+      diff : 8
+      [->]: 0526FA20 PotsBase.PotsCallPsm
+      [->]: 0526FB54 CallBase.CipPsm
+    root : 05BD0184
+    --------------------------------------------------------
+    PotsBase.PotsCallPsm
+    this : 0526FA20
+    patchArea : 0x0
+    pid      : 8
+    seq      : 1
+    link     : 0526FB5C
+    assigned : true
+    orphaned : 0
+    corrupt  : false
+    logged   : false
+    ctx   : 04A47464
+    upper : 00000000
+    lower : 04DD7360
+    rcvdMsgq : 
+      tail : 00000000
+      diff : 8
+    ogMsgq   : 
+      tail : 00000000
+      diff : 8
+    sentMsgq : 
+      tail : 00000000
+      diff : 8
+    timerq   : 
+      tail : 00000000
+      diff : 8
+    fid      : 7
+    state    : 1
+    ogMsg        : 00000000
+    sendRing     : false
+    sendScan     : false
+    sendCause    : false
+    sendFacility : false
+    header : 
+      signal : 0 (nullptr)
+      port   : 11 (POTS 20000)
+    ring : 
+      on : false
+    scan : 
+      digits : false
+      flash  : false
+    cause : 
+      cause : 0 (Invalid Cause)
+    facility : 
+      sid : 0 (nullptr)
+      ind : 0
+    --------------------------------------------------------
+    CallBase.CipPsm
+    this : 0526FB54
+    patchArea : 0x0
+    pid      : 8
+    seq      : 1
+    link     : 0526FA28
+    assigned : true
+    orphaned : 0
+    corrupt  : false
+    logged   : false
+    ctx   : 04A47464
+    upper : 00000000
+    lower : 04DD73C4
+    rcvdMsgq : 
+      tail : 050F5FF4
+      diff : 8
+      [->]: 050F5FEC CallBase.CipMessage
+    ogMsgq   : 
+      tail : 00000000
+      diff : 8
+    sentMsgq : 
+      tail : 00000000
+      diff : 8
+    timerq   : 
+      tail : 00000000
+      diff : 8
+    fid      : 2
+    state    : 8
+    edge    : false
+    ogPsm   : 0526FA20
+    ogTone  : 255
+    icTone  : 255
+    icMedia : 
+      rxFrom : 12 (POTS 20001)
+    ogMediaSent : 
+      rxFrom : 11 (POTS 20000)
+    ogMediaCurr : 
+      rxFrom : 11 (POTS 20000)
+    mep : 00000000
+    iamTimer : false
+    --------------------------------------------------------
+    CallBase.CipMessage
+    this : 050F5FEC
+    patchArea : 0x0
+    pid      : 7
+    seq      : 1
+    link     : 050F5FF4
+    assigned : true
+    orphaned : 0
+    corrupt  : false
+    logged   : false
+    buff    : 026A1A34
+    bt      : 00000000
+    handled : false
+    saves   : 0
+    psm     : 0526FB54
+    whichq  : 0526FB70
+    --------------------------------------------------------
+    SessionBase.SbIpBuffer
+    this : 026A1A34
+    patchArea : 0x0
+    pid      : 4
+    seq      : 1
+    link     : 00000000
+    assigned : true
+    orphaned : 0
+    corrupt  : false
+    logged   : false
+    rxTicks : 4343638042303
+    buff     : 057A4F10
+    hdrSize  : 24
+    buffSize : 42
+    txAddr   : 192.168.0.10: 40000 [Any, 064AA3A8]
+    rxAddr   : 192.168.0.10: 40000
+    dir      : 0
+    external : false
+    queued   : false
+    length   : 8
+      00: 32 00 00 00 01 06 03 00 - 31 00 00 00 01 06 02 00  2.......1.......
+      01: 02 80 03 00 04 00 08 00 - 00 00 02 00 0c 00 0c 00  .€..............
+    MsgHeader:
+      txAddr : bid=50  seq=1  pid=6  fid=3
+      rxAddr : bid=49  seq=1  pid=6  fid=2
+      priority=2  initial=0  final=0  join=0  self=0
+        injected=0  kill=0  route=2  length=8  spare=0x0
+      protocol=3 (CipProtocol)  signal=4 (CipAnmSignal)
+    Parameters:
+      Deleted parameter: pid=0, length=2
+    --------------------------------------------------------
+    SessionBase.MsgPort
+    this : 04DD7360
+    patchArea : 0x0
+    pid      : 6
+    seq      : 1
+    link     : 04DD73CC
+    assigned : true
+    orphaned : 0
+    corrupt  : false
+    logged   : false
+    ctx   : 04A47464
+    upper : 0526FA20
+    lower : 00000000
+    locAddr : 
+      SessionBase.GlobalAddress
+      this : 04DD737C
+      patchArea : 0x0
+      v4Addr : 192.168.0.10: 40002
+      port   : 40002
+      proto  : Any
+      socket : 00000000
+      sbAddr : bid=48  seq=1  pid=6  fid=7
+    remAddr : 
+      SessionBase.GlobalAddress
+      this : 04DD739C
+      patchArea : 0x0
+      v4Addr : 192.168.0.10: 40001
+      port   : 40001
+      proto  : Any
+      socket : 00000000
+      sbAddr : bid=0  seq=0  pid=0  fid=6
+    msgRcvd : true
+    msgSent : true
+    --------------------------------------------------------
+    SessionBase.MsgPort
+    this : 04DD73C4
+    patchArea : 0x0
+    pid      : 6
+    seq      : 1
+    link     : 04DD7368
+    assigned : true
+    orphaned : 0
+    corrupt  : false
+    logged   : false
+    ctx   : 04A47464
+    upper : 0526FB54
+    lower : 00000000
+    locAddr : 
+      SessionBase.GlobalAddress
+      this : 04DD73E0
+      patchArea : 0x0
+      v4Addr : 192.168.0.10: 40000
+      port   : 40000
+      proto  : Any
+      socket : 00000000
+      sbAddr : bid=49  seq=1  pid=6  fid=2
+    remAddr : 
+      SessionBase.GlobalAddress
+      this : 04DD7400
+      patchArea : 0x0
+      v4Addr : 192.168.0.10: 40000
+      port   : 40000
+      proto  : TCP
+      socket : 064AA3A8
+      sbAddr : bid=50  seq=1  pid=6  fid=3
+    msgRcvd : true
+    msgSent : true
+    --------------------------------------------------------
+    PotsBase.PotsBcSsm
+    this : 05BD0184
+    patchArea : 0x0
+    pid      : 10
+    seq      : 1
+    link     : 00000000
+    assigned : true
+    orphaned : 0
+    corrupt  : false
+    logged   : false
+    sid       : 2
+    currState : 8
+    nextState : 8
+    idled     : false
+    nextSap   : 0
+    nextSnp   : 0
+    triggered : 
+      1 2 4 5 7 8 9 12 13 15 16 18 19 20 23 24 
+    ssmq : 
+      tail : 00000000
+      diff : 8
+    parentSsm : 00000000
+    eventq[Active] : 
+      tail : 06328BEC
+      diff : 8
+      [->]: 06328BE4 SessionBase.AnalyzeMsgEvent
+    eventq[Pending] : 
+      tail : 00000000
+      diff : 8
+    eventq[Saved] : 
+      tail : 00000000
+      diff : 8
+    ctx : 04A47464
+    mgwPsm : 00000000
+    model : 1
+    upsm  : 0526FA20
+    npsm  : 0526FB54
+    dialed : 
+      count  : 5
+      digits : 20001
+    analysis : 
+      selector   : 1 (Directory Number)
+      identifier : 20001
+    route : 
+      selector   : 7 (PotsCallFactory)
+      identifier : 20001
+    proxyCount : 0
+    prof : 044D4A18
+    tid  : 0
+    trmt : 00000000
+    --------------------------------------------------------
+    SessionBase.AnalyzeMsgEvent
+    this : 06328BE4
+    patchArea : 0x0
+    pid      : 11
+    seq      : 1
+    link     : 06328BEC
+    assigned : true
+    orphaned : 0
+    corrupt  : false
+    logged   : false
+    eid      : 1
+    owner    : 05BD0184
+    location : 0
+    msg : 050F5FEC

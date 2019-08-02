@@ -74,7 +74,7 @@ private:
 
    //  The flag's identifier.
    //
-   FlagId fid_;
+   const FlagId fid_;
 };
 }
 #endif

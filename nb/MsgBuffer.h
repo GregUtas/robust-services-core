@@ -36,7 +36,7 @@ namespace NodeBase
 class MsgBuffer : public Pooled
 {
 public:
-   //  Allocates a message buffer.
+   //  Records the time when the message was allocated.
    //
    MsgBuffer();
 

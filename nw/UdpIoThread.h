@@ -69,9 +69,13 @@ private:
    //
    void Enter() override;
 
-   //  Generates a log when an error forces the thread to exit.
+   //  Raises an alarm when an error forces the thread to exit.
    //
-   void OutputLog(NodeBase::debug32_t errval) const;
+   void RaiseAlarm(NodeBase::debug32_t errval) const;
+
+   //  Clears any alarm associated with the thread's service.
+   //
+   void ClearAlarm() const;
 
    //  Releases resources when exiting or cleaning up the thread.
    //

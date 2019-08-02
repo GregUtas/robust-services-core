@@ -27,6 +27,7 @@
 #include <ws2tcpip.h>
 #include "Debug.h"
 #include "Log.h"
+#include "NwLogs.h"
 #include "SysTypes.h"
 
 using namespace NodeBase;
@@ -83,12 +84,12 @@ SysIpL3Addr::SysIpL3Addr(const string& name,
    }
    else
    {
-      auto log = Log::Create("IP GETADDRINFO ERROR");
+      auto log = Log::Create(NetworkLogGroup, NetworkFunctionError);
 
       if(log != nullptr)
       {
-         *log << "errval=" << WSAGetLastError() << CRLF;
-         Log::Spool(log);
+         *log << Log::Tab << "GetAddrInfo: errval=" << WSAGetLastError();
+         Log::Submit(log);
       }
    }
 
@@ -119,12 +120,12 @@ bool SysIpL3Addr::AddrToName(string& name, string& service) const
       return true;
    }
 
-   auto log = Log::Create("IP GETNAMEINFO ERROR");
+   auto log = Log::Create(NetworkLogGroup, NetworkFunctionError);
 
    if(log != nullptr)
    {
-      *log << "errval=" << WSAGetLastError() << CRLF;
-      Log::Spool(log);
+      *log << Log::Tab << "GetNameInfo: errval=" << WSAGetLastError();
+      Log::Submit(log);
    }
    return false;
 }

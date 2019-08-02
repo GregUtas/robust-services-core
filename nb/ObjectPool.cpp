@@ -22,7 +22,10 @@
 #include "ObjectPool.h"
 #include "CfgIntParm.h"
 #include "Dynamic.h"
+#include <bitset>
 #include <sstream>
+#include "Alarm.h"
+#include "AlarmRegistry.h"
 #include "Algorithms.h"
 #include "AllocationException.h"
 #include "CfgParmRegistry.h"
@@ -31,6 +34,7 @@
 #include "Formatters.h"
 #include "Log.h"
 #include "Memory.h"
+#include "NbLogs.h"
 #include "ObjectPoolRegistry.h"
 #include "ObjectPoolTrace.h"
 #include "Pooled.h"
@@ -169,7 +173,9 @@ ObjectPoolStats::~ObjectPoolStats()
 
 //==============================================================================
 
+const ObjectPoolId ObjectPool::MaxId = 250;
 const uint8_t ObjectPool::OrphanThreshold = 2;
+const size_t ObjectPool::OrphanMaxLogs = 8;
 
 fn_name ObjectPool_ctor = "ObjectPool.ctor";
 
@@ -184,6 +190,8 @@ ObjectPool::ObjectPool(MemoryType type, size_t nBytes, const string& name) :
    targSegments_(1),
    cfgSegments_(nullptr),
    availCount_(0),
+   totalCount_(0),
+   alarm_(nullptr),
    corruptQHead_(false)
 {
    Debug::ft(ObjectPool_ctor);
@@ -203,6 +211,8 @@ ObjectPool::ObjectPool(MemoryType type, size_t nBytes, const string& name) :
    Singleton< CfgParmRegistry >::Instance()->BindParm(*cfgSegments_);
 
    Singleton< ObjectPoolRegistry >::Instance()->BindPool(*this);
+   alarmName_ = "OBJPOOL" + std::to_string(Pid());
+   EnsureAlarm();
 }
 
 //------------------------------------------------------------------------------
@@ -238,14 +248,14 @@ bool ObjectPool::AllocBlocks()
 
       if(blocks_[currSegments_] == nullptr)
       {
-         auto log = Log::Create("OBJECT POOL EXPANSION FAILED");
+         auto log = Log::Create(ObjPoolLogGroup, ObjPoolExpansionFailed);
 
          if(log != nullptr)
          {
-            *log << "pool=" << int(pid);
+            *log << Log::Tab << "pool=" << int(pid);
             *log << " target=" << targSegments_;
-            *log << " actual=" << currSegments_ << CRLF;
-            Log::Spool(log);
+            *log << " actual=" << currSegments_;
+            Log::Submit(log);
          }
 
          return false;
@@ -253,6 +263,7 @@ bool ObjectPool::AllocBlocks()
 
       auto bid = currSegments_ << ObjectsPerSegmentLog2;
       ++currSegments_;
+      totalCount_ = currSegments_ * ObjectsPerSegment;
       auto seg = blocks_[currSegments_ - 1];
 
       for(size_t j = 0; j < segSize_; j += segIncr_)
@@ -340,11 +351,10 @@ void ObjectPool::AuditFreeq()
          //  the queue again.  Eventually it reaches an item whose corrupt_
          //  flag *is already set*, at which point the queue gets truncated.
          //
-         size_t maxCount = currSegments_ * ObjectsPerSegment;
          Pooled* prev = nullptr;
          auto badLink = false;
 
-         while(count <= maxCount)
+         while(count <= totalCount_)
          {
             auto curr = (Pooled*) getptr1(item, diff);
 
@@ -375,14 +385,14 @@ void ObjectPool::AuditFreeq()
             //
             if(badLink)
             {
-               auto log = Log::Create("OBJECT POOL QUEUE CORRUPT");
+               auto log = Log::Create(ObjPoolLogGroup, ObjPoolQueueCorrupt);
 
                if(log != nullptr)
                {
-                  *log << "pool=" << int(Pid());
+                  *log << Log::Tab << "pool=" << int(Pid());
                   *log << " available=" << availCount_;
-                  *log << " revised=" << count << CRLF;
-                  Log::Spool(log);
+                  *log << " revised=" << count;
+                  Log::Submit(log);
                }
 
                if(prev == nullptr)
@@ -423,14 +433,14 @@ void ObjectPool::AuditFreeq()
    //
    if(availCount_ != count)
    {
-      auto log = Log::Create("OBJECT POOL QUEUE COUNT INCORRECT");
+      auto log = Log::Create(ObjPoolLogGroup, ObjPoolQueueCount);
 
       if(log != nullptr)
       {
-         *log << "pool=" << int(Pid());
+         *log << Log::Tab << "pool=" << int(Pid());
          *log << " available=" << availCount_;
-         *log << " revised=" << count << CRLF;
-         Log::Spool(log);
+         *log << " revised=" << count;
+         Log::Submit(log);
       }
 
       availCount_ = count;
@@ -535,6 +545,7 @@ Pooled* ObjectPool::DeqBlock(size_t size)
    }
 
    --availCount_;
+   UpdateAlarm();
    stats_->lowCount_->Update(availCount_);
    stats_->allocCount_->Incr();
 
@@ -568,6 +579,10 @@ void ObjectPool::Display(ostream& stream,
    stream << prefix << "cfgSegments  : ";
    stream << strObj(cfgSegments_.get()) << CRLF;
    stream << prefix << "availCount   : " << availCount_ << CRLF;
+   stream << prefix << "totalCount   : " << totalCount_ << CRLF;
+   stream << prefix << "alarmName    : " << alarmName_ << CRLF;
+   stream << prefix << "alarmExpl    : " << alarmExpl_ << CRLF;
+   stream << prefix << "alarm        : " << alarm_ << CRLF;
    stream << prefix << "corruptQHead : " << corruptQHead_ << CRLF;
 
    auto lead = prefix + spaces(2);
@@ -583,18 +598,18 @@ void ObjectPool::Display(ostream& stream,
 
 fn_name ObjectPool_DisplayStats = "ObjectPool.DisplayStats";
 
-void ObjectPool::DisplayStats(ostream& stream) const
+void ObjectPool::DisplayStats(ostream& stream, const Flags& options) const
 {
    Debug::ft(ObjectPool_DisplayStats);
 
    stream << spaces(2) << name_ << SPACE << strIndex(Pid(), 0, false) << CRLF;
 
-   stats_->lowCount_->DisplayStat(stream);
-   stats_->allocCount_->DisplayStat(stream);
-   stats_->freeCount_->DisplayStat(stream);
-   stats_->failCount_->DisplayStat(stream);
-   stats_->auditCount_->DisplayStat(stream);
-   stats_->lowExcess_->DisplayStat(stream);
+   stats_->lowCount_->DisplayStat(stream, options);
+   stats_->allocCount_->DisplayStat(stream, options);
+   stats_->freeCount_->DisplayStat(stream, options);
+   stats_->failCount_->DisplayStat(stream, options);
+   stats_->auditCount_->DisplayStat(stream, options);
+   stats_->lowExcess_->DisplayStat(stream, options);
 }
 
 //------------------------------------------------------------------------------
@@ -689,7 +704,32 @@ void ObjectPool::EnqBlock(Pooled* obj, bool deleted)
    }
 
    ++availCount_;
-   if(deleted) stats_->freeCount_->Incr();
+
+   if(deleted)
+   {
+      UpdateAlarm();
+      stats_->freeCount_->Incr();
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name ObjectPool_EnsureAlarm = "ObjectPool.EnsureAlarm";
+
+void ObjectPool::EnsureAlarm()
+{
+   Debug::ft(ObjectPool_EnsureAlarm);
+
+   //  If the high usage alarm is not registered, create it.
+   //
+   auto reg = Singleton< AlarmRegistry >::Instance();
+   alarm_ = reg->Find(alarmName_);
+
+   if(alarm_ == nullptr)
+   {
+      alarmExpl_ = "High percentage of in-use " + name_;
+      alarm_ = new Alarm(alarmName_, alarmExpl_, 30);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -760,7 +800,7 @@ bool ObjectPool::IndicesToBid(size_t i, size_t j, PooledObjectId& bid) const
 
 size_t ObjectPool::InUseCount() const
 {
-   return (currSegments_ * ObjectsPerSegment) - availCount_;
+   return totalCount_ - availCount_;
 }
 
 //------------------------------------------------------------------------------
@@ -934,16 +974,16 @@ void ObjectPool::RecoverBlocks()
                }
             }
 
-            if(p->assigned_ && !p->logged_ && (count <= 4))
+            if(p->assigned_ && !p->logged_ && (count <= OrphanMaxLogs))
             {
-               auto log = Log::Create("OBJECT RECOVERED");
+               auto log = Log::Create(ObjPoolLogGroup, ObjPoolBlockRecovered);
 
                if(log != nullptr)
                {
-                  *log << "pool=" << int(pid) << CRLF;
+                  *log << Log::Tab << "pool=" << int(pid) << CRLF;
                   p->logged_ = true;
-                  p->Display(*log, EMPTY_STR, Flags(Vb_Mask));
-                  Log::Spool(log);
+                  p->Display(*log, Log::Tab, VerboseOpt);
+                  Log::Submit(log);
                }
             }
 
@@ -969,14 +1009,13 @@ void ObjectPool::RecoverBlocks()
 
    if(count > 0)
    {
-      auto log = Log::Create("OBJECTS RECOVERED");
+      auto log = Log::Create(ObjPoolLogGroup, ObjPoolBlocksRecovered);
 
       if(log != nullptr)
       {
-         *log << "pool=" << int(pid);
-         *log << " count=" << count << CRLF;
-
-         Log::Spool(log);
+         *log << Log::Tab << "pool=" << int(pid);
+         *log << " count=" << count;
+         Log::Submit(log);
       }
    }
 }
@@ -1006,6 +1045,7 @@ void ObjectPool::Shutdown(RestartLevel level)
    freeq_.Init(Pooled::LinkDiff());
    currSegments_ = 0;
    availCount_ = 0;
+   totalCount_ = 0;
    corruptQHead_ = false;
 }
 
@@ -1017,11 +1057,43 @@ void ObjectPool::Startup(RestartLevel level)
 {
    Debug::ft(ObjectPool_Startup);
 
+   EnsureAlarm();
+
    if(stats_ == nullptr) stats_.reset(new ObjectPoolStats);
 
    if(!AllocBlocks())
    {
       Restart::Initiate(SystemOutOfMemory, Pid());
    }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name ObjectPool_UpdateAlarm = "ObjectPool.UpdateAlarm";
+
+void ObjectPool::UpdateAlarm() const
+{
+   Debug::ft(ObjectPool_UpdateAlarm);
+
+   if(alarm_ == nullptr) return;
+
+   //  The alarm level is determined by the number of available blocks
+   //  compared to the total number of blocks allocated:
+   //    o critical: less than 1/32nd available
+   //    o major: less than 1/16th available
+   //    o minor: less than 1/8th available
+   //    o none: more than 1/8th available
+   //
+   auto status = NoAlarm;
+
+   if(availCount_ <= (totalCount_ >> 5))
+      status = CriticalAlarm;
+   else if(availCount_ <= (totalCount_ >> 4))
+      status = MajorAlarm;
+   else if(availCount_ <= (totalCount_ >> 3))
+      status = MinorAlarm;
+
+   auto log = alarm_->Create(ObjPoolLogGroup, ObjPoolBlocksInUse, status);
+   if(log != nullptr) Log::Submit(log);
 }
 }

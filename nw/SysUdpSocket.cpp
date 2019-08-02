@@ -27,6 +27,7 @@
 #include "IpBuffer.h"
 #include "IpPort.h"
 #include "IpPortRegistry.h"
+#include "NwLogs.h"
 #include "NwTrace.h"
 #include "Singleton.h"
 #include "SysIpL3Addr.h"
@@ -96,7 +97,7 @@ SysSocket::SendRc SysUdpSocket::SendBuff(IpBuffer& buff)
    {
       //s Handle SendTo() error.
       //
-      OutputLog("UDP SENDTO ERROR", &buff);
+      OutputLog(NetworkSocketError, "SendTo", &buff);
       return SendFailed;
    }
 

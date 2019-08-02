@@ -37,6 +37,7 @@
 #include "Parameter.h"
 #include "ProtocolSM.h"
 #include "Q2Way.h"
+#include "SbLogs.h"
 #include "SbPools.h"
 #include "SbTrace.h"
 #include "SbTracer.h"
@@ -329,10 +330,10 @@ void Context::Dump(fn_name_arg func, debug64_t errval, debug32_t offset)
 
 void Context::Dump() const
 {
-   auto log = Log::Create("SESSION ERROR");
+   auto log = Log::Create(SessionLogGroup, SessionError);
    if(log == nullptr) return;
-   LogSubtended(*log, EMPTY_STR, NoFlags);
-   Log::Spool(log);
+   LogSubtended(*log, Log::Tab, NoFlags);
+   Log::Submit(log);
 }
 
 //------------------------------------------------------------------------------

@@ -35,6 +35,10 @@ using std::string;
 
 namespace NodeBase
 {
+const signal_t PosixSignal::MaxId = UINT8_MAX;
+
+//------------------------------------------------------------------------------
+
 fn_name PosixSignal_ctor = "PosixSignal.ctor";
 
 PosixSignal::PosixSignal(signal_t value, const char* name,

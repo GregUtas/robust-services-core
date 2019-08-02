@@ -75,7 +75,8 @@ class ThreadsStatsGroup : public StatisticsGroup
 public:
    ThreadsStatsGroup();
    ~ThreadsStatsGroup();
-   void DisplayStats(ostream& stream, id_t id) const override;
+   void DisplayStats
+      (ostream& stream, id_t id, const Flags& options) const override;
 };
 
 //  Configuration parameter to allow breakpoint debugging.
@@ -142,13 +143,14 @@ ThreadsStatsGroup::~ThreadsStatsGroup()
 
 fn_name ThreadsStatsGroup_DisplayStats = "ThreadsStatsGroup.DisplayStats";
 
-void ThreadsStatsGroup::DisplayStats(ostream& stream, id_t id) const
+void ThreadsStatsGroup::DisplayStats
+   (ostream& stream, id_t id, const Flags& options) const
 {
    Debug::ft(ThreadsStatsGroup_DisplayStats);
 
-   StatisticsGroup::DisplayStats(stream, id);
+   StatisticsGroup::DisplayStats(stream, id, options);
 
-   Singleton< ThreadAdmin >::Instance()->DisplayStats(stream);
+   Singleton< ThreadAdmin >::Instance()->DisplayStats(stream, options);
 }
 
 //==============================================================================
@@ -246,7 +248,7 @@ ThreadAdmin::ThreadAdmin()
    creg->BindParm(*rtcLimit_);
 
    rtcInterval_.reset(new CfgIntParm("RtcInterval", "60",
-      &RtcInterval_, 5, 60, "interval in which to reach RtcLimit (secs)"));
+      &RtcInterval_, 5, 60, "interval (secs) in which to reach RtcLimit"));
    creg->BindParm(*rtcInterval_);
 
    breakEnabled_.reset(new BreakEnabledCfg(&BreakEnabled_));
@@ -257,11 +259,11 @@ ThreadAdmin::ThreadAdmin()
    creg->BindParm(*trapLimit_);
 
    trapInterval_.reset(new CfgIntParm("TrapInterval", "60",
-      &TrapInterval_, 5, 300, "interval in which to reach TrapLimit (secs)"));
+      &TrapInterval_, 5, 300, "interval (secs) in which to reach TrapLimit"));
    creg->BindParm(*trapInterval_);
 
    checkStack_.reset(new CfgFlagParm("CheckStack", "F",
-      &Debug::FcFlags_, Debug::StackChecking, "set to enable stack checking"));
+      &Debug::FcFlags_, Debug::StackChecking, "set to check stack sizes"));
    creg->BindParm(*checkStack_);
 
    stackUsageLimit_.reset(new CfgIntParm("StackUsageLimit", "6000",
@@ -269,7 +271,7 @@ ThreadAdmin::ThreadAdmin()
    creg->BindParm(*stackUsageLimit_);
 
    stackCheckInterval_.reset(new CfgIntParm("StackCheckInterval", "10",
-      &StackCheckInterval_, 1, 20, "check stack on every nth function call"));
+      &StackCheckInterval_, 1, 20, "check stack size every nth function call"));
    creg->BindParm(*stackCheckInterval_);
 }
 
@@ -286,8 +288,7 @@ ThreadAdmin::~ThreadAdmin()
 
 bool ThreadAdmin::BreakEnabled()
 {
-   if(Element::RunningInLab()) return BreakEnabled_;
-   return false;
+   return (Element::RunningInLab() ? BreakEnabled_ : false);
 }
 
 //------------------------------------------------------------------------------
@@ -359,24 +360,24 @@ void ThreadAdmin::Display(ostream& stream,
 
 fn_name ThreadAdmin_DisplayStats = "ThreadAdmin.DisplayStats";
 
-void ThreadAdmin::DisplayStats(ostream& stream) const
+void ThreadAdmin::DisplayStats(ostream& stream, const Flags& options) const
 {
    Debug::ft(ThreadAdmin_DisplayStats);
 
    if(stats_ != nullptr)
    {
-      stats_->creations_->DisplayStat(stream);
-      stats_->deletions_->DisplayStat(stream);
-      stats_->switches_->DisplayStat(stream);
-      stats_->locks_->DisplayStat(stream);
-      stats_->interrupts_->DisplayStat(stream);
-      stats_->traps_->DisplayStat(stream);
-      stats_->recoveries_->DisplayStat(stream);
-      stats_->recreations_->DisplayStat(stream);
-      stats_->orphans_->DisplayStat(stream);
-      stats_->kills_->DisplayStat(stream);
-      stats_->unknowns_->DisplayStat(stream);
-      stats_->unreleased_->DisplayStat(stream);
+      stats_->creations_->DisplayStat(stream, options);
+      stats_->deletions_->DisplayStat(stream, options);
+      stats_->switches_->DisplayStat(stream, options);
+      stats_->locks_->DisplayStat(stream, options);
+      stats_->interrupts_->DisplayStat(stream, options);
+      stats_->traps_->DisplayStat(stream, options);
+      stats_->recoveries_->DisplayStat(stream, options);
+      stats_->recreations_->DisplayStat(stream, options);
+      stats_->orphans_->DisplayStat(stream, options);
+      stats_->kills_->DisplayStat(stream, options);
+      stats_->unknowns_->DisplayStat(stream, options);
+      stats_->unreleased_->DisplayStat(stream, options);
    }
 }
 

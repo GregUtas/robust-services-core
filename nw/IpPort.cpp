@@ -22,7 +22,8 @@
 #include "IpPort.h"
 #include "Dynamic.h"
 #include <ostream>
-#include <string>
+#include "Alarm.h"
+#include "AlarmRegistry.h"
 #include "Algorithms.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -34,7 +35,6 @@
 #include "Singleton.h"
 #include "Statistics.h"
 #include "SysSocket.h"
-#include "SysTypes.h"
 
 using namespace NodeBase;
 using std::ostream;
@@ -102,12 +102,15 @@ IpPort::IpPort(ipport_t port, const IpService* service) :
    service_(service),
    handler_(nullptr),
    thread_(nullptr),
-   socket_(nullptr)
+   socket_(nullptr),
+   alarm_(nullptr)
 {
    Debug::ft(IpPort_ctor);
 
    stats_.reset(new IpPortStats);
    Singleton< IpPortRegistry >::Instance()->BindPort(*this);
+   alarmName_ = "PORT" + std::to_string(port);
+   EnsureAlarm();
 }
 
 //------------------------------------------------------------------------------
@@ -226,7 +229,7 @@ void IpPort::Display(ostream& stream,
 
 fn_name IpPort_DisplayStats = "IpPort.DisplayStats";
 
-void IpPort::DisplayStats(ostream& stream) const
+void IpPort::DisplayStats(ostream& stream, const Flags& options) const
 {
    Debug::ft(IpPort_DisplayStats);
 
@@ -234,16 +237,36 @@ void IpPort::DisplayStats(ostream& stream) const
 
    stream << spaces(2) << name << SPACE << strIndex(port_, 0, false) << CRLF;
 
-   stats_->recvs_->DisplayStat(stream);
-   stats_->bytesRcvd_->DisplayStat(stream);
-   stats_->maxBytesRcvd_->DisplayStat(stream);
-   stats_->maxRecvs_->DisplayStat(stream);
-   stats_->discards_->DisplayStat(stream);
-   stats_->rejects_->DisplayStat(stream);
-   stats_->sends_->DisplayStat(stream);
-   stats_->bytesSent_->DisplayStat(stream);
-   stats_->maxBytesSent_->DisplayStat(stream);
-   stats_->overflows_->DisplayStat(stream);
+   stats_->recvs_->DisplayStat(stream, options);
+   stats_->bytesRcvd_->DisplayStat(stream, options);
+   stats_->maxBytesRcvd_->DisplayStat(stream, options);
+   stats_->maxRecvs_->DisplayStat(stream, options);
+   stats_->discards_->DisplayStat(stream, options);
+   stats_->rejects_->DisplayStat(stream, options);
+   stats_->sends_->DisplayStat(stream, options);
+   stats_->bytesSent_->DisplayStat(stream, options);
+   stats_->maxBytesSent_->DisplayStat(stream, options);
+   stats_->overflows_->DisplayStat(stream, options);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name IpPort_EnsureAlarm = "IpPort.EnsureAlarm";
+
+void IpPort::EnsureAlarm()
+{
+   Debug::ft(IpPort_EnsureAlarm);
+
+   //  If the port's alarm is not registered, create it.
+   //
+   auto reg = Singleton< AlarmRegistry >::Instance();
+   alarm_ = reg->Find(alarmName_);
+
+   if(alarm_ == nullptr)
+   {
+      alarmExpl_ = "Service unavailable: " + string(service_->Name());
+      alarm_ = new Alarm(alarmName_, alarmExpl_, 5);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -394,6 +417,8 @@ fn_name IpPort_Startup = "IpPort.Startup";
 void IpPort::Startup(RestartLevel level)
 {
    Debug::ft(IpPort_Startup);
+
+   EnsureAlarm();
 
    if(stats_ == nullptr) stats_.reset(new IpPortStats);
 

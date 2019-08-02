@@ -49,25 +49,6 @@ fixed_string SCOPE_STR = "::";
 
 //------------------------------------------------------------------------------
 
-fixed_string LogLevelStrings[LogLevel_N + 1] =
-{
-   "INFO",
-   "WARNING",
-   "ERROR",
-   ERROR_STR
-};
-
-ostream& operator<<(ostream& stream, SwLogLevel level)
-{
-   if((level >= 0) && (level < LogLevel_N))
-      stream << LogLevelStrings[level];
-   else
-      stream << LogLevelStrings[LogLevel_N];
-   return stream;
-}
-
-//------------------------------------------------------------------------------
-
 fixed_string MemoryTypeStrings[MemoryType_N + 1] =
 {
    "null",

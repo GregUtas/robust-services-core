@@ -21,8 +21,10 @@
 //
 #include "TcpIpPort.h"
 #include <sstream>
+#include <string>
 #include "Debug.h"
 #include "Log.h"
+#include "NwLogs.h"
 #include "SysTcpSocket.h"
 #include "SysTypes.h"
 #include "TcpIoThread.h"
@@ -81,12 +83,13 @@ SysTcpSocket* TcpIpPort::CreateAppSocket()
 
    if(rc != SysSocket::AllocOk)
    {
-      auto log = Log::Create("TCP SOCKET ALLOCATION");
+      auto log = Log::Create(NetworkLogGroup, NetworkAllocFailure);
 
       if(log != nullptr)
       {
-         *log << "rc=" << rc << " errval=" << socket->GetError() << CRLF;
-         Log::Spool(log);
+         *log << Log::Tab << "TCP socket: rc=" << rc;
+         *log << " errval=" << socket->GetError();
+         Log::Submit(log);
       }
 
       return nullptr;

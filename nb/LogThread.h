@@ -23,9 +23,16 @@
 #define LOGTHREAD_H_INCLUDED
 
 #include "Thread.h"
+#include <cstddef>
+#include "CallbackRequest.h"
 #include "NbTypes.h"
 #include "SysMutex.h"
 #include "SysTypes.h"
+
+namespace NodeBase
+{
+   class LogBuffer;
+}
 
 //------------------------------------------------------------------------------
 
@@ -37,6 +44,7 @@ class LogThread : public Thread
 {
    friend class Singleton< LogThread >;
    friend class Log;
+   friend class LogsCommand;
 public:
    //  Overridden to display member variables.
    //
@@ -55,11 +63,28 @@ private:
    //
    ~LogThread();
 
-   //  Adds a CRLF to LOG unless it already ends in one.  Writes LOG to
-   //  the log file and, if appropriate, the console.  LogThread takes
-   //  ownership of LOG, which is set to nullptr before returning.
+   //> When bundling logs into a stream, the number of characters that
+   //  prevents another log from being added to the stream.
    //
-   static void Spool(ostringstreamPtr& log);
+   static const size_t BundledLogSizeThreshold;
+
+   //  Retrieves logs from BUFFER and bundles them into an ostringstream.
+   //  Returns nullptr if BUFFER was empty, else updates CALLBACK so that
+   //  BUFFER can free the space occupied by the logs after they have been
+   //  written.
+   //
+   static ostringstreamPtr GetLogsFromBuffer
+      (LogBuffer* buffer, CallbackRequestPtr& callback);
+
+   //  Invoked to immediately output a STREAM of logs during a restart.
+   //  Writes STREAM to the log file and, if appropriate, the console.
+   //  STREAM is freed and set to nullptr before returning.
+   //
+   static void Spool(ostringstreamPtr& stream);
+
+   //  Copies the STREAM of logs to the console when appropriate.
+   //
+   static void CopyToConsole(const ostringstreamPtr& stream);
 
    //  Overridden to return a name for the thread.
    //
@@ -73,7 +98,16 @@ private:
    //
    void Destroy() override;
 
-   //  Critical section lock for the log file.
+   //  The configuration parameter for the number of MsgBuffers reserved
+   //  for work other than spooling logs.
+   //
+   CfgIntParmPtr noSpoolingMessageCount_;
+
+   //  The number of MsgBuffers reserved for work other than spooling logs.
+   //
+   static word NoSpoolingMessageCount_;
+
+   //  To prevent interleaved output in the log file.
    //
    static SysMutex LogFileLock_;
 };

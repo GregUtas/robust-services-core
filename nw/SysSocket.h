@@ -25,6 +25,7 @@
 #include "Dynamic.h"
 #include <cstddef>
 #include <cstdint>
+#include <string>
 #include "NbTypes.h"
 #include "NwTypes.h"
 #include "SysDecls.h"
@@ -58,7 +59,9 @@ uint16_t ntohs(uint16_t netshort);
 class SysSocket : public NodeBase::Dynamic
 {
 public:
-   //> Arbitrary limit on the size of IP messages (in bytes).
+   //> Arbitrary limit on the size of IP messages (in bytes).  Note
+   //  that a protocol running over UDP is typically restricted to
+   //  a smaller size.
    //
    static const size_t MaxMsgSize = 2048;
 
@@ -117,10 +120,11 @@ public:
    //
    virtual SendRc SendBuff(IpBuffer& buff) = 0;
 
-   //  Generates a log when a socket operation fails.  EXPL explains the
-   //  failure, and BUFF is any associated buffer.
+   //  Generates the network log specified by ID when a socket operation
+   //  fails.  EXPL explains the failure, and BUFF is any associated buffer.
    //
-   void OutputLog(NodeBase::fixed_string expl, const IpBuffer* buff) const;
+   void OutputLog(NodeBase::LogId id,
+      NodeBase::fixed_string expl, const IpBuffer* buff) const;
 
    //  Returns the last error report on the socket.  Its interpretation
    //  is platform specific.
@@ -193,6 +197,11 @@ private:
    //
    SysSocket(const SysSocket& that) = delete;
    SysSocket& operator=(const SysSocket& that) = delete;
+
+   //  Updates the network alarm when the network goes down or comes back up.
+   //  ERR is included in the alarm log when OK is false.
+   //
+   static void SetStatus(bool ok, const std::string& err);
 
    //  Sets or clears tracing_ and returns the new setting.
    //

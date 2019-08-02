@@ -85,7 +85,7 @@ void Symbol::Display(ostream& stream,
 
 const string& Symbol::InvalidInitialChars()
 {
-   //> Characters that are invalid as the start of a symbol name.
+   //  Characters that are invalid at the start of a symbol name.
    //
    static const string NonInitialChars("0123456789.");
 
@@ -127,7 +127,7 @@ bool Symbol::SetValue(const string& value, bool lock)
 
 const string& Symbol::ValidNameChars()
 {
-   //> Valid characters in a symbol name.
+   //  Valid characters in a symbol name.
    //
    static const string NameChars
       ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.");

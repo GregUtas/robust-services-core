@@ -22,44 +22,183 @@
 #ifndef LOG_H_INCLUDED
 #define LOG_H_INCLUDED
 
+#include "Dynamic.h"
+#include <atomic>
 #include <cstddef>
+#include <cstdint>
+#include <iosfwd>
 #include <string>
+#include "NbTypes.h"
+#include "RegCell.h"
 #include "SysTypes.h"
+
+namespace NodeBase
+{
+   class Alarm;
+   class LogGroup;
+}
 
 //------------------------------------------------------------------------------
 
 namespace NodeBase
 {
-//  Interface for generating logs.
+//  Interface for defining and generating logs.  Log definitions survive
+//  a warm restart but must be recreated during all others.
 //
-class Log
+class Log : public Dynamic
 {
+   friend class Alarm;
 public:
-   //  Creates a log in which the first line will be TITLE, followed
-   //  by Element::strTimePlace().
+   //  The maximum identifier for a log.
    //
-   static ostringstreamPtr Create(fixed_string title);
+   static const LogId MaxId = 999;
 
-   //  Spools LOG to the log thread.  The log system assumes ownership of
-   //  LOG, which is set to nullptr.
+   //> The maximum length of the string that explains a log.
    //
-   static void Spool(ostringstreamPtr& log);
+   static const size_t MaxExplSize;
 
-   //  Returns the name of the log file.
+   //  The indentation for each subsequent line of a log.
    //
-   static std::string FileName();
+   static const size_t Indent;
+
+   //  A string for inserting Tab spaces.
+   //
+   static const std::string Tab;
+
+   //  Defines a log that belongs to GROUP and is identified by ID, which
+   //  should be defined as a LogType plus offset.  EXPL provides a brief
+   //  explanation of the log and is included with each occurrence.
+   //
+   Log(LogGroup* group, LogId id, fixed_string expl);
+
+   //  Not subclassed.
+   //
+   ~Log();
+
+   //  Creates an instance of the log identified by groupName and ID.  The
+   //  version that includes alarmName and STATUS is used to set or clear
+   //  an alarm.  Only trouble and threshold logs should set an alarm, but
+   //  any type of log can clear one.  Returns the stream allocated for the
+   //  log after formatting its header, which ends in a CRLF.  When adding
+   //  more info to the log, start each line with Tab spaces (defined above)
+   //  so that asterisks used to highlight an alarm remain prominent.
+   //
+   //  NOTE: Returns nullptr if the log is suppressed, so check for this!
+   //        Applications should also try to avoid causing log floods, which
+   //        usually occur when a log is continuously repeated or a higher
+   //        level problem generates dependent logs.
+   //
+   static ostringstreamPtr Create(fixed_string groupName, LogId id);
+
+   //  Submits STREAM to the log system.  STREAM must have been created by
+   //  Create.  Adds a CRLF to stream if it does not end with one.  The log
+   //  system assumes ownership of STREAM, which is set to nullptr.
+   //
+   static void Submit(ostringstreamPtr& stream);
+
+   //  Returns the log's identifier within its group.
+   //
+   LogId Id() const { return id_; }
+
+   //  Used to suppress or throttle the log:
+   //    o 1: no effect
+   //    o 0: suppresses all occurrences of the log
+   //    o N: throttles the log: only every Nth occurrence is generated
+   //  A log that sets an alarm is never suppressed.  A log that clears an
+   //  alarm is suppressed if the alarm is already off.
+   //
+   void SetInterval(uint8_t interval);
+
+   //  Displays the log's statistics.
+   //
+   void DisplayStats(std::ostream& stream, const Flags& options) const;
 
    //  Returns the number of logs generated so far.
    //
    static size_t Count() { return SeqNo_; }
-private:
-   //  Deleted because this class only has static members.
+
+   //  Returns the offset to lid_.
    //
-   Log() = delete;
+   static ptrdiff_t CellDiff();
+
+   //  Overridden for restarts.
+   //
+   void Shutdown(RestartLevel level) override;
+
+   //  Overridden to display member variables.
+   //
+   void Display(std::ostream& stream,
+      const std::string& prefix, const Flags& options) const override;
+
+   //  Overridden for patching.
+   //
+   void Patch(sel_t selector, void* arguments) override;
+private:
+   //  Returns the log associated with groupName and ID.  Updates
+   //  GROUP to the log's group.
+   //
+   static Log* Find(fixed_string groupName, LogId id, LogGroup*& group);
+
+   //  Returns the log associated with LOG by extracting the group
+   //  name and LogId from the first line of LOG.
+   //
+   static Log* Find(const std::string& log);
+
+   //  Creates an instance of the log identified by groupName and ID, with
+   //  alarmName and STATUS used to set or clear an alarm.  Applications
+   //  must use Alarm::Create, which invokes this.
+   //
+   static ostringstreamPtr Create(fixed_string groupName, LogId id,
+      fixed_string alarmName, AlarmStatus status);
+
+   //  Creates and returns the log's header.  STATUS is used when
+   //  modifying an alarm.
+   //
+   ostringstreamPtr Format(AlarmStatus status = NoAlarm) const;
+
+   //  Returns nullptr after incrementing the count of suppressed logs.
+   //
+   ostringstreamPtr Suppressed() const;
+
+   //  The group to which the log belongs.
+   //
+   LogGroup* group_;
+
+   //  The log's identifier within its group.
+   //
+   const LogId id_;
+
+   //  The log's explanation.
+   //
+   const DynString expl_;
+
+   //  The log's index in its LogGroup's registry.
+   //
+   RegCell lid_;
+
+   //  Whether to suppress or throttle the log.
+   //
+   uint16_t interval_;
+
+   //  Counts occurrences of the log when interval_ is greater than 1.
+   //
+   uint16_t sequence_;
+
+   //  The number of times the log was buffered for output.
+   //
+   CounterPtr bufferCount_;
+
+   //  The number of times the log was suppressed.
+   //
+   CounterPtr suppressCount_;
+
+   //  The number of times the log was discarded.
+   //
+   CounterPtr discardCount_;
 
    //  Incremented when a log is created; assigned to it as a sequence number.
    //
-   static size_t SeqNo_;
+   static std::atomic_size_t SeqNo_;
 };
 }
 #endif

@@ -3,9 +3,9 @@ save trace init
 nt
 save funcs init
 clear buffer
-/ register as a testcase; the only log should be "NODE RUNNING"
+/ register as a testcase; the only logs should be NET500 and NODE500
 testcase begin init
 logs count
-if &cli.result > 1 testcase failure &cli.result "logs during system initialization"
+if &cli.result != 2 testcase failed &cli.result "logs during system initialization"
 testcase end
 testcase reset

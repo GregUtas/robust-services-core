@@ -90,10 +90,7 @@ const string& Element::ConsoleFileName()
    //  executable.
    //
    if(ConsoleTranscriptFile.empty())
-   {
       ConsoleTranscriptFile = "console" + Clock::TimeZeroStr();
-   }
-
    return ConsoleTranscriptFile;
 }
 
@@ -109,6 +106,7 @@ void Element::Display(ostream& stream,
    stream << prefix << "HelpPath     : " << HelpPath() << CRLF;
    stream << prefix << "InputPath    : " << InputPath() << CRLF;
    stream << prefix << "OutputPath   : " << OutputPath() << CRLF;
+   stream << prefix << "ConsoleFileName : " << ConsoleFileName() << CRLF;
    stream << prefix << "RunningInLab : " << RunningInLab_ << CRLF;
    stream << prefix << "name         : " << strObj(name_.get()) << CRLF;
    stream << prefix << "runningInLab : " << strObj(runningInLab_.get()) << CRLF;

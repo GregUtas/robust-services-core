@@ -1,0 +1,5198 @@
+
+MODULE INITIALIZATION          msecs      invoked at
+pre-Module.Startup               453    08:46:29.986
+NodeBase.NbModule...                    08:46:30.439
+...initialized                    48
+NodeTools.NtModule...                   08:46:30.497
+...initialized                    22
+CodeTools.CtModule...                   08:46:30.529
+...initialized                    17
+NetworkBase.NwModule...                 08:46:30.554
+
+    NET500 2-Aug-2019 08:46:30.569 on Reigi {1}
+...initialized                   121
+SessionBase.SbModule...                 08:46:30.684
+...initialized                    94
+SessionTools.StModule...                08:46:30.786
+...initialized                    13
+MediaBase.MbModule...                   08:46:30.810
+...initialized                    14
+CallBase.CbModule...                    08:46:30.834
+...initialized                    18
+PotsBase.PbModule...                    08:46:30.864
+...initialized                    18
+OperationsNode.OnModule...              08:46:30.893
+...initialized                    12
+ControlNode.CnModule...                 08:46:30.916
+...initialized                    15
+RoutingNode.RnModule...                 08:46:30.946
+...initialized                    15
+ServiceNode.SnModule...                 08:46:30.976
+...initialized                    45
+AccessNode.AnModule...                  08:46:31.033
+...initialized                    16
+                               -----
+total initialization time       1074
+
+    NODE500 2-Aug-2019 08:46:31.073 on Reigi {2}
+nb>read test.cp.all
+nb>read test.cp.setup
+nb>quit all
+  Nothing to quit.
+nb>nt
+nt>sb
+sb>st
+st>pots
+pots>read test.tools.setup
+pots>stop
+  OK.
+pots>clear buffer
+  OK.
+pots>clear selections
+  OK.
+pots>clear tools
+  OK.
+pots>set tools f on
+  f: OK.
+  OK.
+pots>/ set scope counts  / enables full function trace if commented out
+pots>include all on
+  OK.
+pots>read test.cp.tools.setup
+pots>set tools ntbc on
+  n: OK.
+  t: OK.
+  b: OK.
+  c: OK.
+  OK.
+pots>exclude faction &faction.audit
+  OK.
+pots>exclude faction &faction.bkgd
+  OK.
+pots>exclude faction &faction.oper
+  OK.
+pots>/ exclude timers
+pots>/ swflags set &flag.cipalwaysoverip on  / CIP messages can bypass IP stack if commented out
+pots>symbols set dn.A 20000
+  OK.
+pots>symbols set dn.B 20001
+  OK.
+pots>symbols set dn.C 20002
+  OK.
+pots>symbols set dn.D 20003
+  OK.
+pots>symbols set dn.E 20004
+  OK.
+pots>symbols set dn.X 90000
+  OK.
+pots>symbols set dn.Y 90001
+  OK.
+pots>symbols set dn.Z 90002
+  OK.
+pots>register &dn.A
+  OK.
+pots>register &dn.B
+  OK.
+pots>register &dn.C
+  OK.
+pots>register &dn.D
+  OK.
+pots>register &dn.E
+  OK.
+pots>register &dn.X
+  OK.
+pots>register &dn.Y
+  OK.
+pots>register &dn.Z
+  OK.
+pots>symbols set port.A 11
+  OK.
+pots>symbols set port.B 12
+  OK.
+pots>symbols set port.C 13
+  OK.
+pots>symbols set port.D 14
+  OK.
+pots>symbols set port.E 15
+  OK.
+pots>symbols set port.X 16
+  OK.
+pots>symbols set port.Y 17
+  OK.
+pots>symbols set port.Z 18
+  OK.
+pots>testcase prolog test.cp.prolog
+  OK.
+pots>testcase epilog test.cp.epilog
+  OK.
+pots>read test.cp.bc
+pots>read bc.01
+pots>testcase begin bc.01
+symbols set testcase.name bc.01
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ A: NO DIGITS; ABANDON
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS R &port.A &cause.normal
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase bc.01 completed.
+pots>read bc.02
+pots>testcase begin bc.02
+symbols set testcase.name bc.02
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ A: NO DIGITS; ADDRESS TIMEOUT
+pots>inject PS B &port.A
+pots>delay 12
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.reorder c=&cause.addresstimeout
+pots>verify PS R &port.A &cause.normal
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase bc.02 completed.
+pots>read bc.03
+pots>testcase begin bc.03
+symbols set testcase.name bc.03
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ A: PARTIAL DIGITS; ABANDON
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A 2
+pots>delay 1
+pots>inject PS D &port.A 0
+pots>delay 1
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A m=&port.silence
+pots>verify PS R &port.A &cause.normal
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase bc.03 completed.
+pots>read bc.04
+pots>testcase begin bc.04
+symbols set testcase.name bc.04
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ A: PARTIAL DIGITS; ADDRESS TIMEOUT
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A 2
+pots>delay 1
+pots>inject PS D &port.A 0
+pots>delay 12
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A m=&port.silence
+pots>verify PS S &port.A s=x m=&port.reorder c=&cause.addresstimeout
+pots>verify PS R &port.A &cause.normal
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase bc.04 completed.
+pots>read bc.05
+pots>testcase begin bc.05
+symbols set testcase.name bc.05
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ A: INVALID ADDRESS
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A 2000#
+pots>delay 1
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.reorder c=&cause.invalidaddress
+pots>verify PS R &port.A &cause.normal
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase bc.05 completed.
+pots>read bc.06
+pots>testcase begin bc.06
+symbols set testcase.name bc.06
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ A: UNALLOCATED NUMBER
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A 20009
+pots>delay 1
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence c=&cause.unallocnumber
+pots>verify PS R &port.A &cause.normal
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase bc.06 completed.
+pots>read bc.07
+pots>testcase begin bc.07
+symbols set testcase.name bc.07
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ A-B: USER BUSY; RELEASE
+pots>inject PS B &port.A
+pots>inject PS B &port.B
+pots>delay 1
+pots>inject PS D &port.A &dn.B
+pots>delay 2
+pots>inject PS E &port.A
+pots>inject PS E &port.B
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.B s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.A m=&port.busy c=&cause.userbusy
+pots>verify PS R &port.A &cause.normal
+pots>verify PS R &port.B &cause.normal
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase bc.07 completed.
+pots>read bc.08
+pots>testcase begin bc.08
+symbols set testcase.name bc.08
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ A-B: RINGBACK; RELEASE
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A &dn.B
+pots>delay 2
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS R &port.A &cause.normal
+pots>verify PS R &port.B &cause.normal
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase bc.08 completed.
+pots>read bc.09
+pots>testcase begin bc.09
+symbols set testcase.name bc.09
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ A-B: RINGBACK; ANSWER TIMEOUT
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A &dn.B
+pots>delay 2
+pots>delay 62
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS R &port.B &cause.answertimeout
+pots>verify PS S &port.A m=&port.reorder c=&cause.answertimeout
+pots>verify PS R &port.A &cause.normal
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase bc.09 completed.
+pots>read bc.10
+pots>testcase begin bc.10
+symbols set testcase.name bc.10
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ A-B: RINGBACK; ANSWER; RELEASE
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A 2
+pots>delay 1
+pots>inject PS D &port.A 0
+pots>delay 1
+pots>inject PS D &port.A 001
+pots>delay 2
+pots>inject PS B &port.B
+pots>delay 2
+pots>inject PS E &port.A
+pots>delay 2
+pots>inject PS E &port.B
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A m=&port.silence
+pots>verify PS S &port.A s=x
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.B r=f m=&port.A
+pots>verify PS S &port.A m=&port.B
+pots>verify PS R &port.A &cause.normal
+pots>verify PS S &port.B m=&port.silence c=&cause.normal
+pots>verify PS R &port.B &cause.normal
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+
+    THR903 2-Aug-2019 08:48:50.919 on Reigi {3}
+    by NodeBase.InitThread (tid=2, nid=0x00007ce4)
+    for NodeBase.CliThread (tid=9, nid=0x0000b27c)
+    signal=121 (SIGYIELD: Running Locked Too Long)
+
+    THR905 2-Aug-2019 08:48:50.970 on Reigi {4}
+    thread=NodeBase.CliThread (tid=9, nid=0x0000b27c) extra msecs=173
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase bc.10 completed.
+pots>read bc.11
+pots>testcase begin bc.11
+symbols set testcase.name bc.11
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ A-B: RINGBACK; ANSWER; SUSPEND; RELEASE
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A 2
+pots>delay 1
+pots>inject PS D &port.A 0
+pots>delay 1
+pots>inject PS D &port.A 001
+pots>delay 2
+pots>inject PS B &port.B
+pots>delay 3
+pots>inject PS E &port.B
+pots>delay 3
+pots>inject PS E &port.A
+pots>delay 2
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A m=&port.silence
+pots>verify PS S &port.A s=x
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.B r=f m=&port.A
+pots>verify PS S &port.A m=&port.B
+pots>verify PS R &port.A &cause.normal
+pots>verify PS R &port.B &cause.normal
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase bc.11 completed.
+pots>read bc.12
+pots>testcase begin bc.12
+symbols set testcase.name bc.12
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ A-B: RINGBACK; ANSWER; SUSPEND; SUSPEND TIMEOUT
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A 2
+pots>delay 1
+pots>inject PS D &port.A 0
+pots>delay 1
+pots>inject PS D &port.A 001
+pots>delay 2
+pots>inject PS B &port.B
+pots>delay 3
+pots>inject PS E &port.B
+pots>delay 12
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A m=&port.silence
+pots>verify PS S &port.A s=x
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.B r=f m=&port.A
+pots>verify PS S &port.A m=&port.B
+pots>verify PS R &port.B &cause.normal
+pots>verify PS S &port.A m=&port.silence c=&cause.normal
+pots>verify PS R &port.A &cause.normal
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase bc.12 completed.
+pots>read bc.13
+pots>testcase begin bc.13
+symbols set testcase.name bc.13
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ A-B: RINGBACK; ANSWER; SUSPEND; RESUME; RELEASE
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A 2
+pots>delay 1
+pots>inject PS D &port.A 0
+pots>delay 1
+pots>inject PS D &port.A 001
+pots>delay 2
+pots>inject PS B &port.B
+pots>delay 5
+pots>inject PS E &port.B
+pots>delay 5
+pots>inject PS B &port.B
+pots>delay 5
+pots>inject PS E &port.A
+pots>delay 2
+pots>inject PS E &port.B
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A m=&port.silence
+pots>verify PS S &port.A s=x
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.B r=f m=&port.A
+pots>verify PS S &port.A m=&port.B
+pots>verify PS R &port.A &cause.normal
+pots>verify PS S &port.B m=&port.silence c=&cause.normal
+pots>verify PS R &port.B &cause.normal
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase bc.13 completed.
+pots>read bc.14
+pots>testcase begin bc.14
+symbols set testcase.name bc.14
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ A-B: RINGBACK; ANSWER; RELEASE; LOCKOUT
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A 2
+pots>delay 1
+pots>inject PS D &port.A 0
+pots>delay 1
+pots>inject PS D &port.A 001
+pots>delay 2
+pots>inject PS B &port.B
+pots>delay 2
+pots>inject PS E &port.A
+pots>delay 74
+pots>inject PS E &port.B
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A m=&port.silence
+pots>verify PS S &port.A s=x
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.B r=f m=&port.A
+pots>verify PS S &port.A m=&port.B
+pots>verify PS R &port.A &cause.normal
+pots>verify PS S &port.B m=&port.silence c=&cause.normal
+pots>verify PS S &port.B m=&port.reorder
+pots>verify PS S &port.B m=&port.roh
+pots>verify PS L &port.B
+pots>verify PS R &port.B &cause.normal
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase bc.14 completed.
+pots>read bc.15
+pots>testcase begin bc.15
+symbols set testcase.name bc.15
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ A-B: IAM TIMEOUT
+pots>/ caused by TBC purging CPG(EOS) and CPG(Alert) while ringing
+pots>/ idle sent on IAM timeout; offhook response creates new call
+pots>swflags set &flag.cipiamtimeout on
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A &dn.B
+pots>delay 12
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS R &port.A &cause.protocoltimeout
+pots>verify PS R &port.B &cause.protocoltimeout
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS R &port.A &cause.normal
+pots>swflags set &flag.cipiamtimeout off
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase bc.15 completed.
+pots>read bc.16
+pots>testcase begin bc.16
+symbols set testcase.name bc.16
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ A-B: ALERTING TIMEOUT
+pots>swflags set &flag.cipalertingtimeout on
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A &dn.B
+pots>delay 8
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS R &port.B &cause.alertingtimeout
+pots>verify PS S &port.A c=&cause.alertingtimeout
+pots>verify PS R &port.A &cause.normal
+pots>swflags set &flag.cipalertingtimeout off
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase bc.16 completed.
+pots>read bc.17
+pots>testcase begin bc.17
+symbols set testcase.name bc.17
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ A-B: RINGBACK; ANSWER; KILL CONTEXT
+pots>swflags set &flag.calltrap on
+pots>inject PS B &port.A
+pots>delay 2
+pots>inject PS D &port.A &dn.B
+pots>delay 2
+pots>inject PS B &port.B
+pots>delay 2
+
+    THR902 2-Aug-2019 08:51:46.581 on Reigi {5}
+    in SessionBase.InvokerThread (tid=10, nid=0x000077e4): trap number 1
+    type=SessionBase Exception
+    errval : 0x0
+    offset : 0x0
+    context : 04A47464
+    Function Traceback:
+      SessionBase.SbException.SbException @ context.cpp + 93[22]
+      SessionBase.Context.Kill @ context.cpp + 567[20]
+      CallBase.BcOaAnalyzeRemoteMessage.ProcessEvent @ bchandlers.cpp + 129[18]
+      SessionBase.SbAnalyzeMessage.ProcessEvent @ sbhandlers.cpp + 74[27]
+      SessionBase.ServiceSM.ProcessEvent @ servicesm.cpp + 553[27]
+      SessionBase.SsmContext.ProcessIcMsg @ ssmcontext.cpp + 211[22]
+      SessionBase.Context.ProcessMsg @ context.cpp + 656[19]
+      SessionBase.Context.ProcessWork @ context.cpp + 734[22]
+      SessionBase.InvokerPool.ProcessWork @ invokerpool.cpp + 547[0]
+      SessionBase.InvokerThread.Enter @ invokerthread.cpp + 168[0]
+      NodeBase.Thread.Start @ thread.cpp + 2799[15]
+      NodeBase.Thread.EnterThread @ thread.cpp + 1564[0]
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
+      RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
+
+    SESS900 2-Aug-2019 08:51:46.582 on Reigi {6}
+    SessionBase.SsmContext
+    this : 04A47464
+    patchArea : 0x0
+    pid      : 5
+    seq      : 1
+    link     : 00000000
+    assigned : true
+    orphaned : 0
+    corrupt  : false
+    logged   : false
+    whichq  : 00000000
+    link    : 
+      next : 00000000
+      prev : 00000000
+    priMsgq : 
+      tail : 00000000
+      diff : 8
+    stdMsgq : 
+      tail : 00000000
+      diff : 8
+    enqTime : 4343638052647
+    pool    : 023EA830
+    thread  : 03B1398C
+    faction : 5
+    state   : 3
+    prio    : 2
+    traceOn : true
+    trans   : 019CE4E8
+    trace : 4,9> 4,9> 3,2> 4,9>
+    portq : 
+      tail : 04DD73CC
+      diff : 8
+      [->]: 04DD7360 SessionBase.MsgPort
+      [->]: 04DD73C4 SessionBase.MsgPort
+    psmq  : 
+      tail : 0526FB5C
+      diff : 8
+      [->]: 0526FA20 PotsBase.PotsCallPsm
+      [->]: 0526FB54 CallBase.CipPsm
+    root : 05BD0184
+    --------------------------------------------------------
+    PotsBase.PotsCallPsm
+    this : 0526FA20
+    patchArea : 0x0
+    pid      : 8
+    seq      : 1
+    link     : 0526FB5C
+    assigned : true
+    orphaned : 0
+    corrupt  : false
+    logged   : false
+    ctx   : 04A47464
+    upper : 00000000
+    lower : 04DD7360
+    rcvdMsgq : 
+      tail : 00000000
+      diff : 8
+    ogMsgq   : 
+      tail : 00000000
+      diff : 8
+    sentMsgq : 
+      tail : 00000000
+      diff : 8
+    timerq   : 
+      tail : 00000000
+      diff : 8
+    fid      : 7
+    state    : 1
+    ogMsg        : 00000000
+    sendRing     : false
+    sendScan     : false
+    sendCause    : false
+    sendFacility : false
+    header : 
+      signal : 0 (nullptr)
+      port   : 11 (POTS 20000)
+    ring : 
+      on : false
+    scan : 
+      digits : false
+      flash  : false
+    cause : 
+      cause : 0 (Invalid Cause)
+    facility : 
+      sid : 0 (nullptr)
+      ind : 0
+    --------------------------------------------------------
+    CallBase.CipPsm
+    this : 0526FB54
+    patchArea : 0x0
+    pid      : 8
+    seq      : 1
+    link     : 0526FA28
+    assigned : true
+    orphaned : 0
+    corrupt  : false
+    logged   : false
+    ctx   : 04A47464
+    upper : 00000000
+    lower : 04DD73C4
+    rcvdMsgq : 
+      tail : 050F5FF4
+      diff : 8
+      [->]: 050F5FEC CallBase.CipMessage
+    ogMsgq   : 
+      tail : 00000000
+      diff : 8
+    sentMsgq : 
+      tail : 00000000
+      diff : 8
+    timerq   : 
+      tail : 00000000
+      diff : 8
+    fid      : 2
+    state    : 8
+    edge    : false
+    ogPsm   : 0526FA20
+    ogTone  : 255
+    icTone  : 255
+    icMedia : 
+      rxFrom : 12 (POTS 20001)
+    ogMediaSent : 
+      rxFrom : 11 (POTS 20000)
+    ogMediaCurr : 
+      rxFrom : 11 (POTS 20000)
+    mep : 00000000
+    iamTimer : false
+    --------------------------------------------------------
+    CallBase.CipMessage
+    this : 050F5FEC
+    patchArea : 0x0
+    pid      : 7
+    seq      : 1
+    link     : 050F5FF4
+    assigned : true
+    orphaned : 0
+    corrupt  : false
+    logged   : false
+    buff    : 026A1A34
+    bt      : 00000000
+    handled : false
+    saves   : 0
+    psm     : 0526FB54
+    whichq  : 0526FB70
+    --------------------------------------------------------
+    SessionBase.SbIpBuffer
+    this : 026A1A34
+    patchArea : 0x0
+    pid      : 4
+    seq      : 1
+    link     : 00000000
+    assigned : true
+    orphaned : 0
+    corrupt  : false
+    logged   : false
+    rxTicks : 4343638042303
+    buff     : 057A4F10
+    hdrSize  : 24
+    buffSize : 42
+    txAddr   : 192.168.0.10: 40000 [Any, 064AA3A8]
+    rxAddr   : 192.168.0.10: 40000
+    dir      : 0
+    external : false
+    queued   : false
+    length   : 8
+      00: 32 00 00 00 01 06 03 00 - 31 00 00 00 01 06 02 00  2.......1.......
+      01: 02 80 03 00 04 00 08 00 - 00 00 02 00 0c 00 0c 00  .€..............
+    MsgHeader:
+      txAddr : bid=50  seq=1  pid=6  fid=3
+      rxAddr : bid=49  seq=1  pid=6  fid=2
+      priority=2  initial=0  final=0  join=0  self=0
+        injected=0  kill=0  route=2  length=8  spare=0x0
+      protocol=3 (CipProtocol)  signal=4 (CipAnmSignal)
+    Parameters:
+      Deleted parameter: pid=0, length=2
+    --------------------------------------------------------
+    SessionBase.MsgPort
+    this : 04DD7360
+    patchArea : 0x0
+    pid      : 6
+    seq      : 1
+    link     : 04DD73CC
+    assigned : true
+    orphaned : 0
+    corrupt  : false
+    logged   : false
+    ctx   : 04A47464
+    upper : 0526FA20
+    lower : 00000000
+    locAddr : 
+      SessionBase.GlobalAddress
+      this : 04DD737C
+      patchArea : 0x0
+      v4Addr : 192.168.0.10: 40002
+      port   : 40002
+      proto  : Any
+      socket : 00000000
+      sbAddr : bid=48  seq=1  pid=6  fid=7
+    remAddr : 
+      SessionBase.GlobalAddress
+      this : 04DD739C
+      patchArea : 0x0
+      v4Addr : 192.168.0.10: 40001
+      port   : 40001
+      proto  : Any
+      socket : 00000000
+      sbAddr : bid=0  seq=0  pid=0  fid=6
+    msgRcvd : true
+    msgSent : true
+    --------------------------------------------------------
+    SessionBase.MsgPort
+    this : 04DD73C4
+    patchArea : 0x0
+    pid      : 6
+    seq      : 1
+    link     : 04DD7368
+    assigned : true
+    orphaned : 0
+    corrupt  : false
+    logged   : false
+    ctx   : 04A47464
+    upper : 0526FB54
+    lower : 00000000
+    locAddr : 
+      SessionBase.GlobalAddress
+      this : 04DD73E0
+      patchArea : 0x0
+      v4Addr : 192.168.0.10: 40000
+      port   : 40000
+      proto  : Any
+      socket : 00000000
+      sbAddr : bid=49  seq=1  pid=6  fid=2
+    remAddr : 
+      SessionBase.GlobalAddress
+      this : 04DD7400
+      patchArea : 0x0
+      v4Addr : 192.168.0.10: 40000
+      port   : 40000
+      proto  : TCP
+      socket : 064AA3A8
+      sbAddr : bid=50  seq=1  pid=6  fid=3
+    msgRcvd : true
+    msgSent : true
+    --------------------------------------------------------
+    PotsBase.PotsBcSsm
+    this : 05BD0184
+    patchArea : 0x0
+    pid      : 10
+    seq      : 1
+    link     : 00000000
+    assigned : true
+    orphaned : 0
+    corrupt  : false
+    logged   : false
+    sid       : 2
+    currState : 8
+    nextState : 8
+    idled     : false
+    nextSap   : 0
+    nextSnp   : 0
+    triggered : 
+      1 2 4 5 7 8 9 12 13 15 16 18 19 20 23 24 
+    ssmq : 
+      tail : 00000000
+      diff : 8
+    parentSsm : 00000000
+    eventq[Active] : 
+      tail : 06328BEC
+      diff : 8
+      [->]: 06328BE4 SessionBase.AnalyzeMsgEvent
+    eventq[Pending] : 
+      tail : 00000000
+      diff : 8
+    eventq[Saved] : 
+      tail : 00000000
+      diff : 8
+    ctx : 04A47464
+    mgwPsm : 00000000
+    model : 1
+    upsm  : 0526FA20
+    npsm  : 0526FB54
+    dialed : 
+      count  : 5
+      digits : 20001
+    analysis : 
+      selector   : 1 (Directory Number)
+      identifier : 20001
+    route : 
+      selector   : 7 (PotsCallFactory)
+      identifier : 20001
+    proxyCount : 0
+    prof : 044D4A18
+    tid  : 0
+    trmt : 00000000
+    --------------------------------------------------------
+    SessionBase.AnalyzeMsgEvent
+    this : 06328BE4
+    patchArea : 0x0
+    pid      : 11
+    seq      : 1
+    link     : 06328BEC
+    assigned : true
+    orphaned : 0
+    corrupt  : false
+    logged   : false
+    eid      : 1
+    owner    : 05BD0184
+    location : 0
+    msg : 050F5FEC
+pots>inject PS E &port.A
+pots>inject PS E &port.B
+pots>delay 2
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.B r=f m=&port.A
+pots>verify PS R &port.A &port.B
+pots>verify PS R &port.B &port.B
+pots>swflags set &flag.calltrap off
+pots>delay 2
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase bc.17 completed.
+pots>read test.cp.cip
+pots>read cip.01
+pots>testcase begin cip.01
+symbols set testcase.name cip.01
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ INJECT IAM TO A; ANSWER; RELEASE
+pots>inject CO 1 I r &factory.pots.call &dn.A &dn.X &dn.A m=&port.X
+pots>delay 4
+pots>verify PS S &port.A r=t
+pots>verify CO 1 C &prog.eos
+pots>verify CO 1 C &prog.alerting m=&port.ringback
+pots>inject PS B &port.A
+pots>delay 2
+pots>verify PS S &port.A r=f m=&port.X
+pots>verify CO 1 A m=&port.A
+pots>inject CO 1 R &cause.normal m=&port.silence
+pots>delay 2
+pots>verify PS S &port.A m=&port.silence c=&cause.normal
+pots>inject PS E &port.A
+pots>delay 2
+pots>verify PS R &port.A &cause.normal
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cip.01 completed.
+pots>read cip.02
+pots>testcase begin cip.02
+symbols set testcase.name cip.02
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ CALL TEST DN
+pots>inject PS B &port.A
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>inject PS D &port.A 90000
+pots>delay 2
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify CT 2 I r &factory.call.test &dn.X &dn.A &dn.X m=&port.A
+pots>inject CT 2 C &prog.eos
+pots>delay 2
+pots>inject CT 2 C &prog.alerting m=&port.ringback
+pots>delay 2
+pots>verify PS S &port.A m=&port.ringback
+pots>inject CT 2 A m=&port.X
+pots>delay 2
+pots>verify PS S &port.A m=&port.X
+pots>inject PS E &port.A
+pots>delay 2
+pots>verify PS R &port.A &cause.normal
+pots>verify CT 2 R &cause.normal m=&port.silence
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cip.02 completed.
+pots>read test.cp.ss
+pots>read sus.01
+pots>testcase begin sus.01
+symbols set testcase.name sus.01
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>subscribe &dn.A sus
+pots>/ A: SUS(OBC)
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PS S &port.A m=&port.reorder c=&cause.facilityreject
+pots>verify PS R &port.A &cause.normal
+pots>unsubscribe &dn.A sus
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase sus.01 completed.
+pots>read sus.02
+pots>testcase begin sus.02
+symbols set testcase.name sus.02
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>subscribe &dn.B sus
+pots>/ A-B: SUS(TBC)
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A &dn.B
+pots>delay 2
+pots>inject PS E &port.A
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.A c=&cause.destoutoforder
+pots>verify PS R &port.A &cause.normal
+pots>unsubscribe &dn.B sus
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase sus.02 completed.
+pots>read boc.01
+pots>testcase begin boc.01
+symbols set testcase.name boc.01
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>subscribe &dn.A boc
+pots>/ A: BOC
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PS S &port.A m=&port.reorder c=&cause.incomingbarred
+pots>verify PS R &port.A &cause.normal
+pots>unsubscribe &dn.A boc
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase boc.01 completed.
+pots>read sus.03
+pots>testcase begin sus.03
+symbols set testcase.name sus.03
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>subscribe &dn.A sus
+pots>subscribe &dn.A boc
+pots>/ A: SUS(OBC) & BOC
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PS S &port.A m=&port.reorder c=&cause.facilityreject
+pots>verify PS R &port.A &cause.normal
+pots>unsubscribe &dn.A sus
+pots>unsubscribe &dn.A boc
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase sus.03 completed.
+pots>read bic.01
+pots>testcase begin bic.01
+symbols set testcase.name bic.01
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>subscribe &dn.B bic
+pots>/ A-B: BIC
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A &dn.B
+pots>delay 2
+pots>inject PS E &port.A
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.A c=&cause.outgoingbarred
+pots>verify PS R &port.A &cause.normal
+pots>unsubscribe &dn.B bic
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase bic.01 completed.
+pots>read sus.04
+pots>testcase begin sus.04
+symbols set testcase.name sus.04
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>subscribe &dn.B bic
+pots>subscribe &dn.B sus
+pots>/ A-B: SUS(TBC) & BIC
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A &dn.B
+pots>delay 2
+pots>inject PS E &port.A
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.A c=&cause.destoutoforder
+pots>verify PS R &port.A &cause.normal
+pots>unsubscribe &dn.B bic
+pots>unsubscribe &dn.B sus
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase sus.04 completed.
+pots>read htl.01
+pots>testcase begin htl.01
+symbols set testcase.name htl.01
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>subscribe &dn.A htl &dn.B
+pots>/ A-B: HTL USAGE
+pots>inject PS B &port.A
+pots>delay 2
+pots>inject PS B &port.B
+pots>delay 2
+pots>inject PS E &port.B
+pots>delay 3
+pots>inject PS E &port.A
+pots>delay 2
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.B r=f m=&port.A
+pots>verify PS S &port.A m=&port.B
+pots>verify PS R &port.A &cause.normal
+pots>verify PS R &port.B &cause.normal
+pots>unsubscribe &dn.A htl
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase htl.01 completed.
+pots>read wml.01
+pots>testcase begin wml.01
+symbols set testcase.name wml.01
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>subscribe &dn.A wml &dn.B 6
+pots>/ A: ABANDON (WML ACTIVATED)
+pots>inject PS B &port.A
+pots>delay 3
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS R &port.A &cause.normal
+pots>unsubscribe &dn.A wml
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase wml.01 completed.
+pots>read wml.02
+pots>testcase begin wml.02
+symbols set testcase.name wml.02
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>subscribe &dn.A wml &dn.B 6
+pots>/ A: PARTIAL DIAL (WML ACTIVATED)
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A 2
+pots>delay 1
+pots>inject PS D &port.A 0
+pots>delay 1
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A m=&port.silence
+pots>verify PS R &port.A &cause.normal
+pots>unsubscribe &dn.A wml
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase wml.02 completed.
+pots>read wml.03
+pots>testcase begin wml.03
+symbols set testcase.name wml.03
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>subscribe &dn.A wml &dn.B 6
+pots>/ A-B: WML USAGE; RINGBACK; RELEASE
+pots>inject PS B &port.A
+pots>delay 8
+pots>inject PS E &port.A
+pots>delay 2
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS R &port.A &cause.normal
+pots>verify PS R &port.B &cause.normal
+pots>unsubscribe &dn.A wml
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase wml.03 completed.
+pots>read wml.04
+pots>testcase begin wml.04
+symbols set testcase.name wml.04
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>subscribe &dn.A wml &dn.B 6
+pots>/ A: WML DEACTIVATION
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A *34
+pots>delay 2
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.conf c=&cause.confirmation
+pots>verify PS R &port.A &cause.normal
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>/ A: ADDRESS TIMEOUT (WML DEACTIVATED)
+pots>inject PS B &port.A
+pots>delay 12
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.reorder c=&cause.addresstimeout
+pots>verify PS R &port.A &cause.normal
+pots>unsubscribe &dn.A wml
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase wml.04 completed.
+pots>read wml.05
+pots>testcase begin wml.05
+symbols set testcase.name wml.05
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>subscribe &dn.A wml &dn.B 6
+pots>/ A: WML DEACTIVATION
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A &sc.wml.deactivation
+pots>delay 2
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.conf c=&cause.confirmation
+pots>verify PS R &port.A &cause.normal
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>/ A: WML ACTIVATION TO B
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A &sc.wml.activation
+pots>delay 2
+pots>inject PS D &port.A #
+pots>delay 2
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=d m=&port.stutter
+pots>verify PS S &port.A s=x m=&port.conf c=&cause.confirmation
+pots>verify PS R &port.A &cause.normal
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>/ A-B: WML USAGE; RINGBACK; RELEASE
+pots>inject PS B &port.A
+pots>delay 8
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS R &port.A &cause.normal
+pots>verify PS R &port.B &cause.normal
+pots>unsubscribe &dn.A wml
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase wml.05 completed.
+pots>read wml.06
+pots>testcase begin wml.06
+symbols set testcase.name wml.06
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>subscribe &dn.A wml &dn.B 6
+pots>/ A: WML DEACTIVATION
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A &sc.wml.deactivation
+pots>delay 2
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.conf c=&cause.confirmation
+pots>verify PS R &port.A &cause.normal
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>/ A: WML ACTIVATION TO SELF
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A &sc.wml.activation
+pots>delay 2
+pots>inject PS D &port.A &dn.A
+pots>delay 2
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=d m=&port.stutter
+pots>verify PS S &port.A s=x m=&port.conf c=&cause.confirmation
+pots>verify PS R &port.A &cause.normal
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>/ A-B: WML USAGE; USER BUSY
+pots>inject PS B &port.A
+pots>delay 8
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.A m=&port.busy c=&cause.userbusy
+pots>verify PS R &port.A &cause.normal
+pots>unsubscribe &dn.A wml
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase wml.06 completed.
+pots>read wml.07
+pots>testcase begin wml.07
+symbols set testcase.name wml.07
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>subscribe &dn.A wml &dn.B 6
+pots>/ A: WML DEACTIVATION
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A &sc.wml.deactivation
+pots>delay 2
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.conf c=&cause.confirmation
+pots>verify PS R &port.A &cause.normal
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>/ A: WML ACTIVATION ERROR
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A &sc.wml.activation
+pots>delay 2
+pots>inject PS D &port.A &sc.wml.deactivation
+pots>delay 2
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=d m=&port.stutter
+pots>verify PS S &port.A s=x m=&port.reorder c=&cause.invalidaddress
+pots>verify PS R &port.A &cause.normal
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>/ A: ADDRESS TIMEOUT (WML DEACTIVATED)
+pots>inject PS B &port.A
+pots>delay 12
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.reorder c=&cause.addresstimeout
+pots>verify PS R &port.A &cause.normal
+pots>unsubscribe &dn.A wml
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase wml.07 completed.
+pots>read test.cp.cfx
+pots>read cfx.01
+pots>subscribe &dn.B cfu &dn.C
+  OK.
+pots>testcase begin cfx.01
+symbols set testcase.name cfx.01
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ A-B: VERIFY CFU INACTIVE
+pots>read bc.AB
+pots>/ A-B: RINGBACK; ANSWER
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A &dn.B
+pots>delay 2
+pots>inject PS B &port.B
+pots>delay 2
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.B r=f m=&port.A
+pots>verify PS S &port.A m=&port.B
+pots>delay 2
+pots>inject PS E &port.A
+pots>delay 1
+pots>inject PS E &port.B
+pots>verify PS R &port.A &cause.normal
+pots>verify PS S &port.B m=&port.silence c=&cause.normal
+pots>verify PS R &port.B &cause.normal
+pots>delay 1
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>/ B: ACTIVATE CFU TO C (PROVISIONED)
+pots>inject PS B &port.B
+pots>delay 1
+pots>inject PS D &port.B &sc.cfu.activation
+pots>delay 2
+pots>inject PS D &port.B #
+pots>delay 2
+pots>inject PS E &port.B
+pots>delay 1
+pots>verify PS S &port.B s=d m=&port.dial
+pots>verify PS S &port.B s=d m=&port.stutter
+pots>verify PS S &port.B s=x m=&port.conf c=&cause.confirmation
+pots>verify PS R &port.B &cause.normal
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>/ A-B(CFU)-C: RINGBACK, ANSWER, RELEASE
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A &dn.B
+pots>delay 2
+pots>inject PS B &port.C
+pots>delay 2
+pots>inject PS E &port.A
+pots>delay 1
+pots>inject PS E &port.C
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.C r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.C r=f m=&port.A
+pots>verify PS S &port.A m=&port.C
+pots>verify PS R &port.A &cause.normal
+pots>verify PS S &port.C m=&port.silence c=&cause.normal
+pots>verify PS R &port.C &cause.normal
+pots>delay 2
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cfx.01 completed.
+pots>unsubscribe &dn.B cfu
+  OK.
+pots>read cfx.02
+pots>subscribe &dn.B cfb &dn.C
+  OK.
+pots>testcase begin cfx.02
+symbols set testcase.name cfx.02
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ A-B: VERIFY CFB INACTIVE
+pots>read bc.AB
+pots>/ A-B: RINGBACK; ANSWER
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A &dn.B
+pots>delay 2
+pots>inject PS B &port.B
+pots>delay 2
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.B r=f m=&port.A
+pots>verify PS S &port.A m=&port.B
+pots>delay 2
+pots>inject PS E &port.A
+pots>delay 1
+pots>inject PS E &port.B
+pots>verify PS R &port.A &cause.normal
+pots>verify PS S &port.B m=&port.silence c=&cause.normal
+pots>verify PS R &port.B &cause.normal
+pots>delay 1
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>/ A-B(CFB)-C: ANSWER; RELEASE
+pots>inject PS B &port.A
+pots>inject PS B &port.B
+pots>delay 1
+pots>inject PS D &port.A &dn.B
+pots>delay 2
+pots>inject PS B &port.C
+pots>delay 2
+pots>inject PS E &port.A
+pots>delay 1
+pots>inject PS E &port.B
+pots>inject PS E &port.C
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.B s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.C r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.C r=f m=&port.A
+pots>verify PS S &port.A m=&port.C
+pots>verify PS R &port.A &cause.normal
+pots>verify PS S &port.C m=&port.silence c=&cause.normal
+pots>verify PS R &port.B &cause.normal
+pots>verify PS R &port.C &cause.normal
+pots>delay 2
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cfx.02 completed.
+pots>unsubscribe &dn.B cfb
+  OK.
+pots>read cfx.03
+pots>subscribe &dn.B cfn &dn.C 12
+  OK.
+pots>testcase begin cfx.03
+symbols set testcase.name cfx.03
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ A-B: ANSWER (VERIFY CFN NOT TRIGGERED)
+pots>read bc.AB
+pots>/ A-B: RINGBACK; ANSWER
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A &dn.B
+pots>delay 2
+pots>inject PS B &port.B
+pots>delay 2
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.B r=f m=&port.A
+pots>verify PS S &port.A m=&port.B
+pots>delay 2
+pots>inject PS E &port.A
+pots>delay 1
+pots>inject PS E &port.B
+pots>delay 1
+pots>verify PS R &port.A &cause.normal
+pots>verify PS S &port.B m=&port.silence c=&cause.normal
+pots>verify PS R &port.B &cause.normal
+pots>delay 1
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>/ A-B(CFN)-C: ANSWER; RELEASE
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A &dn.B
+pots>delay 15
+pots>inject PS B &port.C
+pots>delay 2
+pots>inject PS E &port.A
+pots>delay 1
+pots>inject PS E &port.C
+pots>delay 1
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS R &port.B &cause.callredirected
+pots>verify PS S &port.C r=t
+pots>verify PS S &port.C r=f m=&port.A
+pots>verify PS S &port.A m=&port.C
+pots>verify PS R &port.A &cause.normal
+pots>verify PS S &port.C m=&port.silence c=&cause.normal
+pots>verify PS R &port.C &cause.normal
+pots>delay 2
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cfx.03 completed.
+pots>unsubscribe &dn.B cfn
+  OK.
+pots>read cfx.04
+pots>subscribe &dn.B cwt
+  OK.
+pots>subscribe &dn.B cfb &dn.E
+  OK.
+pots>testcase begin cfx.04
+symbols set testcase.name cfx.04
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ A-B: ANSWER
+pots>read bc.AB
+pots>/ A-B: RINGBACK; ANSWER
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A &dn.B
+pots>delay 2
+pots>inject PS B &port.B
+pots>delay 2
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.B r=f m=&port.A
+pots>verify PS S &port.A m=&port.B
+pots>delay 2
+pots>/ D-B: CWT
+pots>inject PS B &port.D
+pots>delay 1
+pots>inject PS D &port.D &dn.B
+pots>delay 2
+pots>verify PS S &port.D s=d m=&port.dial
+pots>verify PS S &port.D s=x m=&port.silence
+pots>verify PM F &port.B f &service.cwm &facility.req
+pots>verify PC F &port.B f &service.cwa &facility.req
+pots>verify PM F &port.B f &service.cwm &facility.ack
+pots>verify PC F &port.B f &service.cwb &facility.ack
+pots>verify PM S &port.B r=t
+pots>verify PS S &port.B s=f m=&port.cwt
+pots>verify PC A &port.B
+pots>verify PS S &port.D m=&port.ringback
+pots>/ C-B(CFB)-E: RINGBACK
+pots>inject PS B &port.C
+pots>delay 1
+pots>inject PS D &port.C &dn.B
+pots>delay 5
+pots>/ VERIFY C-E ALERTING AFTER B(CWT) FAILS
+pots>verify PS S &port.C s=d m=&port.dial
+pots>verify PS S &port.C s=x m=&port.silence
+pots>verify PM F &port.B f &service.cwm &facility.req
+pots>verify PC F &port.B f &service.cwb &facility.nack
+pots>verify PM R &port.B &cause.callredirected
+pots>verify PS S &port.E r=t
+pots>verify PS S &port.C m=&port.ringback
+pots>/ VERIFY A-B RECONNECTED (END OF CWT TONE)
+pots>verify PS S &port.B m=&port.A
+pots>/ C-E ANSWER; RELEASE
+pots>inject PS B &port.E
+pots>delay 2
+pots>inject PS E &port.C
+pots>delay 2
+pots>inject PS E &port.E
+pots>delay 2
+pots>/* ADD VERIFICATION
+pots>/ RELEASE A, B, D
+pots>inject PS E &port.A
+pots>inject PS E &port.D
+pots>inject PS E &port.B
+pots>delay 2
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cfx.04 completed.
+pots>unsubscribe &dn.B cfb
+  OK.
+pots>unsubscribe &dn.B cwt
+  OK.
+pots>read cfx.05
+pots>subscribe &dn.A cwt
+  OK.
+pots>subscribe &dn.A cfn &dn.D 12
+  OK.
+pots>testcase begin cfx.05
+symbols set testcase.name cfx.05
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ B-A: ANSWER
+pots>read bc.BA
+pots>/ B-A: RINGBACK; ANSWER
+pots>inject PS B &port.B
+pots>delay 1
+pots>inject PS D &port.B &dn.A
+pots>delay 2
+pots>inject PS B &port.A
+pots>delay 2
+pots>verify PS S &port.B s=d m=&port.dial
+pots>verify PS S &port.B s=x m=&port.silence
+pots>verify PS S &port.A r=t
+pots>verify PS S &port.B m=&port.ringback
+pots>verify PS S &port.A r=f m=&port.B
+pots>verify PS S &port.B m=&port.A
+pots>delay 2
+pots>/ C-A(CWT)
+pots>inject PS B &port.C
+pots>delay 1
+pots>inject PS D &port.C &dn.A
+pots>delay 2
+pots>verify PS S &port.C s=d m=&port.dial
+pots>verify PS S &port.C s=x m=&port.silence
+pots>verify PM F &port.A f &service.cwm &facility.req
+pots>verify PC F &port.A f &service.cwa &facility.req
+pots>verify PM F &port.A f &service.cwm &facility.ack
+pots>verify PC F &port.A f &service.cwb &facility.ack
+pots>verify PM S &port.A r=t
+pots>verify PS S &port.A s=f m=&port.cwt
+pots>verify PC A &port.A
+pots>verify PS S &port.C m=&port.ringback
+pots>/ CFN TIMEOUT: C-A(CFN)-D
+pots>delay 15
+pots>/ ANSWER D
+pots>inject PS B &port.D
+pots>delay 2
+pots>/* ADD VERIFICATION
+pots>/ IDLE B, A, C, D
+pots>inject PS E &port.B
+pots>inject PS E &port.C
+pots>inject PS E &port.A
+pots>inject PS E &port.D
+pots>delay 2
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cfx.05 completed.
+pots>unsubscribe &dn.A cfn
+  OK.
+pots>unsubscribe &dn.A cwt
+  OK.
+pots>read test.cp.cwt
+pots>read cwt.01
+pots>subscribe &dn.A cwt
+  OK.
+pots>testcase verify off
+  OK.
+pots>read bc.AB
+pots>/ A-B: RINGBACK; ANSWER
+pots>inject PS B &port.A
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.A &dn.B
+  OK.
+pots>delay 2
+  OK.
+pots>inject PS B &port.B
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.B r=f m=&port.A
+pots>verify PS S &port.A m=&port.B
+pots>testcase verify on
+  OK.
+pots>testcase begin cwt.01
+symbols set testcase.name cwt.01
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ 1A 1B
+pots>read cwt.In2Ack
+pots>/ INITIATE CWT
+pots>inject PS B &port.C
+pots>delay 1
+pots>inject PS D &port.C &dn.A
+pots>delay 3
+pots>verify PS S &port.C s=d m=&port.dial
+pots>verify PS S &port.C s=x m=&port.silence
+pots>verify PM F &port.A f &service.cwm &facility.req
+pots>verify PC F &port.A f &service.cwa &facility.req
+pots>verify PM F &port.A f &service.cwm &facility.ack
+pots>verify PC F &port.A f &service.cwb &facility.ack
+pots>verify PM S &port.A r=t
+pots>verify PS S &port.A s=f m=&port.cwt
+pots>verify PC A &port.A
+pots>verify PS S &port.C m=&port.ringback
+pots>/ 1C
+pots>read cwt.Nf2Tmr
+pots>/ NOTIFYING 2: STOP CWT TONE
+pots>delay 6
+pots>verify PS S &port.A m=&port.B
+pots>/ 1D
+pots>read cwt.Nd2ExC
+pots>/ NOTIFIED 2; IDLE C
+pots>inject PS E &port.C
+pots>delay 2
+pots>verify PS R &port.C &cause.normal
+pots>verify PM R &port.A &cause.normal
+pots>verify PS S &port.A s=x c=&cause.normal
+pots>verify PC F &port.A f &service.cwa &facility.cwt.released
+pots>/ 1E
+pots>read cwt.Nu1ExA
+pots>/ NULL 1: EXIT A
+pots>inject PS E &port.A
+pots>delay 2
+pots>verify PC E &port.A
+pots>verify PM R &port.A &cause.normal
+pots>verify PS R &port.A &cause.normal
+pots>verify PS S &port.B m=&port.silence c=&cause.normal
+pots>/ IDLE B
+pots>read cwt.Nu0ExB
+pots>/ NULL 0: IDLE B
+pots>inject PS E &port.B
+pots>delay 2
+pots>verify PS R &port.B &cause.normal
+pots>delay 2
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cwt.01 completed.
+pots>unsubscribe &dn.A cwt
+  OK.
+pots>read cwt.02
+pots>subscribe &dn.A cwt
+  OK.
+pots>testcase verify off
+  OK.
+pots>read bc.AB
+pots>/ A-B: RINGBACK; ANSWER
+pots>inject PS B &port.A
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.A &dn.B
+  OK.
+pots>delay 2
+  OK.
+pots>inject PS B &port.B
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.B r=f m=&port.A
+pots>verify PS S &port.A m=&port.B
+pots>/ 1A 1B
+pots>read cwt.In2Ack
+pots>/ INITIATE CWT
+pots>inject PS B &port.C
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.C &dn.A
+  OK.
+pots>delay 3
+  OK.
+pots>verify PS S &port.C s=d m=&port.dial
+pots>verify PS S &port.C s=x m=&port.silence
+pots>verify PM F &port.A f &service.cwm &facility.req
+pots>verify PC F &port.A f &service.cwa &facility.req
+pots>verify PM F &port.A f &service.cwm &facility.ack
+pots>verify PC F &port.A f &service.cwb &facility.ack
+pots>verify PM S &port.A r=t
+pots>verify PS S &port.A s=f m=&port.cwt
+pots>verify PC A &port.A
+pots>verify PS S &port.C m=&port.ringback
+pots>/ 1C
+pots>read cwt.Nf2Tmr
+pots>/ NOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>testcase verify on
+  OK.
+pots>testcase begin cwt.02
+symbols set testcase.name cwt.02
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ 2A
+pots>read cwt.Nd2Tmr
+pots>/ NOTIFIED: RENOTIFY
+pots>delay 6
+pots>verify PS S &port.A m=&port.cwt
+pots>/ 2B
+pots>read cwt.Rf2Tmr
+pots>/ RENOTIFYING 2: STOP CWT TONE
+pots>delay 6
+pots>verify PS S &port.A m=&port.B
+pots>/ 2C
+pots>read cwt.Rd2Fls
+pots>/ RENOTIFIED 2: FLASH (ANSWER)
+pots>inject PS L &port.A
+pots>delay 2
+pots>verify PC B &port.A m=&port.A
+pots>verify PC P &port.A &prog.media m=&port.held
+pots>verify PS S &port.A m=&port.silence
+pots>verify PM S &port.A r=f m=&port.C
+pots>verify PS S &port.A m=&port.C
+pots>verify PS S &port.C m=&port.A
+pots>verify PS S &port.B m=&port.held
+pots>/ 2D
+pots>read cwt.AdAFls
+pots>/ FLASH (FLIP TO ORIGINAL)
+pots>inject PS L &port.A
+pots>delay 2
+pots>verify PS S &port.A m=&port.B
+pots>verify PC P &port.A &prog.media m=&port.held
+pots>verify PC P &port.A &prog.media m=&port.A
+pots>verify PS S &port.C m=&port.held
+pots>verify PS S &port.B m=&port.A
+pots>/ 2E
+pots>read cwt.AdHFls
+pots>/ FLASH (FLIP TO WAITING)
+pots>inject PS L &port.A
+pots>delay 2
+pots>verify PC P &port.A 5 m=&port.A
+pots>verify PC P &port.A 5 m=&port.held
+pots>verify PS S &port.A m=&port.C
+pots>verify PS S &port.C m=&port.A
+pots>verify PS S &port.B m=&port.held
+pots>/ 2F
+pots>read cwt.MuxSus
+pots>/ ONHOOK (SUSPEND)
+pots>inject PS E &port.A
+pots>delay 2
+pots>verify PC E &port.A
+pots>/ 2G
+pots>read cwt.MuxRes
+pots>/ OFFHOOK (RESUME)
+pots>inject PS B &port.A
+pots>delay 2
+pots>verify PC B &port.A
+pots>/ 2D (REPEATED)
+pots>read cwt.AdAFls
+pots>/ FLASH (FLIP TO ORIGINAL)
+pots>inject PS L &port.A
+pots>delay 2
+pots>verify PS S &port.A m=&port.B
+pots>verify PC P &port.A &prog.media m=&port.held
+pots>verify PC P &port.A &prog.media m=&port.A
+pots>verify PS S &port.C m=&port.held
+pots>verify PS S &port.B m=&port.A
+pots>/ 2H
+pots>read cwt.AdHExA
+pots>/ ORIGINAL ACTIVE: ONHOOK A (RERING)
+pots>inject PS E &port.A
+pots>delay 2
+pots>verify PC E &port.A
+pots>verify PM R &port.A &cause.normal
+pots>verify PS S &port.A r=t m=&port.silence
+pots>verify PS S &port.B m=&port.silence c=&cause.normal
+pots>/ 2I
+pots>read cwt.Nu0ExB
+pots>/ NULL 0: IDLE B
+pots>inject PS E &port.B
+pots>delay 2
+pots>verify PS R &port.B &cause.normal
+pots>/ 2J
+pots>read cwt.ReCOff
+pots>/ C RERINGING: REANSWER
+pots>inject PS B &port.A
+pots>delay 2
+pots>verify PS S &port.A r=f s=x m=&port.C
+pots>verify PC F &port.A f &service.cwb &facility.cwt.reanswered m=&port.A
+pots>verify PS S &port.C m=&port.A
+pots>/ 2K
+pots>read cwt.MuxSus
+pots>/ ONHOOK (SUSPEND)
+pots>inject PS E &port.A
+pots>delay 2
+pots>verify PC E &port.A
+pots>/ IDLE C (A SUSPENDED)
+pots>inject PS E &port.C
+pots>delay 1
+pots>verify PS R &port.C &cause.normal
+pots>verify PM R &port.A &cause.normal
+pots>verify PS R &port.A &cause.normal
+pots>delay 2
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cwt.02 completed.
+pots>unsubscribe &dn.A cwt
+  OK.
+pots>read cwt.03
+pots>subscribe &dn.A cwt
+  OK.
+pots>testcase verify off
+  OK.
+pots>read bc.BA
+pots>/ B-A: RINGBACK; ANSWER
+pots>inject PS B &port.B
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.B &dn.A
+  OK.
+pots>delay 2
+  OK.
+pots>inject PS B &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.B s=d m=&port.dial
+pots>verify PS S &port.B s=x m=&port.silence
+pots>verify PS S &port.A r=t
+pots>verify PS S &port.B m=&port.ringback
+pots>verify PS S &port.A r=f m=&port.B
+pots>verify PS S &port.B m=&port.A
+pots>/ 1A 1B
+pots>read cwt.In2Ack
+pots>/ INITIATE CWT
+pots>inject PS B &port.C
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.C &dn.A
+  OK.
+pots>delay 3
+  OK.
+pots>verify PS S &port.C s=d m=&port.dial
+pots>verify PS S &port.C s=x m=&port.silence
+pots>verify PM F &port.A f &service.cwm &facility.req
+pots>verify PC F &port.A f &service.cwa &facility.req
+pots>verify PM F &port.A f &service.cwm &facility.ack
+pots>verify PC F &port.A f &service.cwb &facility.ack
+pots>verify PM S &port.A r=t
+pots>verify PS S &port.A s=f m=&port.cwt
+pots>verify PC A &port.A
+pots>verify PS S &port.C m=&port.ringback
+pots>/ 1C
+pots>read cwt.Nf2Tmr
+pots>/ NOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>testcase verify on
+  OK.
+pots>testcase begin cwt.03
+symbols set testcase.name cwt.03
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ 3A
+pots>read cwt.Nd2ExB
+pots>/ NOTIFIED 2; IDLE B
+pots>inject PS E &port.B
+pots>delay 2
+pots>verify PS R &port.B &cause.normal
+pots>verify PM R &port.A &cause.normal
+pots>verify PS S &port.A m=&port.silence c=&cause.normal
+pots>/ 3B
+pots>read cwt.Nd2Tmr
+pots>/ NOTIFIED: RENOTIFY
+pots>delay 6
+pots>verify PS S &port.A m=&port.cwt
+pots>/ 3C
+pots>read cwt.Nf1Tmr
+pots>/ NOTIFYING 1: STOP CWT TONE
+pots>delay 4
+pots>verify PS S &port.A m=&port.silence
+pots>/ 3D & 3E
+pots>read cwt.Rd1Fls
+pots>/ RENOTIFIED 1: FLASH (ANSWER)
+pots>inject PS L &port.A
+pots>delay 2
+pots>verify PC B &port.A m=&port.A
+pots>/ RING OFF
+pots>verify PM S &port.A r=f m=&port.C
+pots>verify PS S &port.A m=&port.C
+pots>verify PS S &port.A s=x
+pots>verify PC F &port.A f &service.cwb &facility.cwt.answered
+pots>verify PS S &port.C m=&port.A
+pots>/ IDLE C
+pots>inject PS E &port.C
+pots>/ IDLE A
+pots>inject PS E &port.A
+pots>delay 2
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cwt.03 completed.
+pots>unsubscribe &dn.A cwt
+  OK.
+pots>read cwt.04
+pots>subscribe &dn.A cwt
+  OK.
+pots>testcase verify off
+  OK.
+pots>read bc.AB
+pots>/ A-B: RINGBACK; ANSWER
+pots>inject PS B &port.A
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.A &dn.B
+  OK.
+pots>delay 2
+  OK.
+pots>inject PS B &port.B
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.B r=f m=&port.A
+pots>verify PS S &port.A m=&port.B
+pots>/ 1A 1B
+pots>read cwt.In2Ack
+pots>/ INITIATE CWT
+pots>inject PS B &port.C
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.C &dn.A
+  OK.
+pots>delay 3
+  OK.
+pots>verify PS S &port.C s=d m=&port.dial
+pots>verify PS S &port.C s=x m=&port.silence
+pots>verify PM F &port.A f &service.cwm &facility.req
+pots>verify PC F &port.A f &service.cwa &facility.req
+pots>verify PM F &port.A f &service.cwm &facility.ack
+pots>verify PC F &port.A f &service.cwb &facility.ack
+pots>verify PM S &port.A r=t
+pots>verify PS S &port.A s=f m=&port.cwt
+pots>verify PC A &port.A
+pots>verify PS S &port.C m=&port.ringback
+pots>/ 1C
+pots>read cwt.Nf2Tmr
+pots>/ NOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>/ 2A
+pots>read cwt.Nd2Tmr
+pots>/ NOTIFIED: RENOTIFY
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.cwt
+pots>/ 2B
+pots>read cwt.Rf2Tmr
+pots>/ RENOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>testcase verify on
+  OK.
+pots>testcase begin cwt.04
+symbols set testcase.name cwt.04
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ 4A
+pots>read cwt.Rd2Tmr
+pots>/ RENOTIFIED 2: CWT ANSWER TIMEOUT
+pots>delay 6
+pots>verify PC F &port.A f &service.cwb &facility.cwt.unanswered
+pots>verify PC F &port.A f &service.cwa &facility.cwt.unanswered
+pots>verify PM R &port.A &cause.answertimeout
+pots>verify PS S &port.A s=x c=&cause.answertimeout
+pots>/ IDLE A
+pots>read cwt.Nu1ExA
+pots>/ NULL 1: EXIT A
+pots>inject PS E &port.A
+pots>delay 2
+pots>verify PC E &port.A
+pots>verify PM R &port.A &cause.normal
+pots>verify PS R &port.A &cause.normal
+pots>verify PS S &port.B m=&port.silence c=&cause.normal
+pots>/ IDLE B
+pots>read cwt.Nu0ExB
+pots>/ NULL 0: IDLE B
+pots>inject PS E &port.B
+pots>delay 2
+pots>verify PS R &port.B &cause.normal
+pots>/ 4B
+pots>read cwt.Nu0Tmr
+pots>/ NULL 0: ANSWER TIMEOUT (C)
+pots>delay 32
+pots>verify PS S &port.C m=&port.reorder c=&cause.answertimeout
+pots>/ 4C
+pots>read cwt.Nu0ExC
+pots>/ NULL 0: IDLE C
+pots>inject PS E &port.C
+pots>delay 2
+pots>verify PS R &port.C &cause.normal
+pots>delay 2
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cwt.04 completed.
+pots>unsubscribe &dn.A cwt
+  OK.
+pots>read cwt.05
+pots>subscribe &dn.A cwt
+  OK.
+pots>testcase verify off
+  OK.
+pots>read bc.AB
+pots>/ A-B: RINGBACK; ANSWER
+pots>inject PS B &port.A
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.A &dn.B
+  OK.
+pots>delay 2
+  OK.
+pots>inject PS B &port.B
+  OK.
+pots>delay 2
+
+    STATS400 2-Aug-2019 09:00:00.001 on Reigi {7}
+    For reporting period beginning at 08:46:29.986
+----------------------------------------------------------------------------
+Object Pools [ObjectPoolId]                       Curr      Prev         All
+  Threads [1]
+                     fewest remaining blocks      1010         *        1010
+                      successful allocations        14         0          14
+                               deallocations         0         0           0
+                    unsuccessful allocations         0         0           0
+                   blocks recovered by audit         0         0           0
+          size of block minus largest object        56         *          56
+  MsgBuffers [2]
+                     fewest remaining blocks      3840         *        3840
+                      successful allocations     12711         0       12711
+                               deallocations     12711         0       12711
+                    unsuccessful allocations         0         0           0
+                   blocks recovered by audit         0         0           0
+          size of block minus largest object        48         *          48
+  IpBuffers [3]
+                     fewest remaining blocks         *         *           *
+                      successful allocations         0         0           0
+                               deallocations         0         0           0
+                    unsuccessful allocations         0         0           0
+                   blocks recovered by audit         0         0           0
+          size of block minus largest object         *         *           *
+  SbIpBuffers [4]
+                     fewest remaining blocks      9208         *        9208
+                      successful allocations      1667         0        1667
+                               deallocations      1666         0        1666
+                    unsuccessful allocations         0         0           0
+                   blocks recovered by audit         0         0           0
+          size of block minus largest object         0         *           0
+  Contexts [5]
+                     fewest remaining blocks     18421         *       18421
+                      successful allocations       523         0         523
+                               deallocations       521         0         521
+                    unsuccessful allocations         0         0           0
+                   blocks recovered by audit         0         0           0
+          size of block minus largest object         0         *           0
+  MsgPorts [6]
+                     fewest remaining blocks     30701         *       30701
+                      successful allocations       225         0         225
+                               deallocations       221         0         221
+                    unsuccessful allocations         0         0           0
+                   blocks recovered by audit         0         0           0
+          size of block minus largest object         0         *           0
+  Messages [7]
+                     fewest remaining blocks      8184         *        8184
+                      successful allocations      2044         0        2044
+                               deallocations      2043         0        2043
+                    unsuccessful allocations         0         0           0
+                   blocks recovered by audit         0         0           0
+          size of block minus largest object       148         *         148
+  ProtocolSMs [8]
+                     fewest remaining blocks     30701         *       30701
+                      successful allocations       225         0         225
+                               deallocations       221         0         221
+                    unsuccessful allocations         0         0           0
+                   blocks recovered by audit         0         0           0
+          size of block minus largest object       200         *         200
+  Timers [9]
+                     fewest remaining blocks      9211         *        9211
+                      successful allocations       288         0         288
+                               deallocations       288         0         288
+                    unsuccessful allocations         0         0           0
+                   blocks recovered by audit         0         0           0
+          size of block minus largest object         0         *           0
+                       timeout messages sent        31         0          31
+  ServiceSMs [10]
+                     fewest remaining blocks     17396         *       17396
+                      successful allocations       175         0         175
+                               deallocations       173         0         173
+                    unsuccessful allocations         0         0           0
+                   blocks recovered by audit         0         0           0
+          size of block minus largest object       180         *         180
+  Events [11]
+                     fewest remaining blocks      2044         *        2044
+                      successful allocations      2168         0        2168
+                               deallocations      2168         0        2168
+                    unsuccessful allocations         0         0           0
+                   blocks recovered by audit         0         0           0
+          size of block minus largest object        56         *          56
+  BtIpBuffers [12]
+                     fewest remaining blocks     10128         *       10128
+                      successful allocations      1659         0        1659
+                               deallocations      1659         0        1659
+                    unsuccessful allocations         0         0           0
+                   blocks recovered by audit         0         0           0
+          size of block minus largest object         0         *           0
+  MediaEndpts [13]
+                     fewest remaining blocks         *         *           *
+                      successful allocations         0         0           0
+                               deallocations         0         0           0
+                    unsuccessful allocations         0         0           0
+                   blocks recovered by audit         0         0           0
+          size of block minus largest object         *         *           *
+----------------------------------------------------------------------------
+Threads [Thread::Id]                              Curr      Prev         All
+  root [1]
+                                       traps         0         0           0
+                                      yields     37960         0       37960
+                     running locked too long         0         0           0
+             longest length of message queue         *         *           *
+                 highest stack usage (words)       185         *         185
+                 longest time locked (usecs)    451540         *      451540
+                total execution time (msecs)      2859         0        2859
+  init [2]
+                                       traps         0         0           0
+                                      yields     37961         0       37961
+                     running locked too long         0         0           0
+             longest length of message queue         *         *           *
+                 highest stack usage (words)      1464         *        1464
+                 longest time locked (usecs)    643740         *      643740
+                total execution time (msecs)      3814         0        3814
+  file [3]
+                                       traps         0         0           0
+                                      yields     17542         0       17542
+                     running locked too long         1         0           1
+             longest length of message queue       153         *         153
+                 highest stack usage (words)       219         *         219
+                 longest time locked (usecs)       202         *         202
+                total execution time (msecs)     48083         0       48083
+  cout [4]
+                                       traps         0         0           0
+                                      yields      8641         0        8641
+                     running locked too long         0         0           0
+             longest length of message queue       103         *         103
+                 highest stack usage (words)       190         *         190
+                 longest time locked (usecs)       178         *         178
+                total execution time (msecs)      2037         0        2037
+  cin [5]
+                                       traps         0         0           0
+                                      yields         3         0           3
+                     running locked too long         0         0           0
+             longest length of message queue         *         *           *
+                 highest stack usage (words)       152         *         152
+                 longest time locked (usecs)        50         *          50
+                total execution time (msecs)         0         0           0
+  objaud [6]
+                                       traps         0         0           0
+                                      yields      6441         0        6441
+                     running locked too long         0         0           0
+             longest length of message queue         *         *           *
+                 highest stack usage (words)       446         *         446
+                 longest time locked (usecs)      5077         *        5077
+                total execution time (msecs)      1946         0        1946
+  stats [7]
+                                       traps         0         0           0
+                                      yields       162         0         162
+                     running locked too long         0         0           0
+             longest length of message queue         *         *           *
+                 highest stack usage (words)       229         *         229
+                 longest time locked (usecs)       134         *         134
+                total execution time (msecs)         4         0           4
+  log [8]
+                                       traps         0         0           0
+                                      yields         6         0           6
+                     running locked too long         0         0           0
+             longest length of message queue         *         *           *
+                 highest stack usage (words)       335         *         335
+                 longest time locked (usecs)       212         *         212
+                total execution time (msecs)         1         0           1
+  cli [9]
+                                       traps         0         0           0
+                                      yields      4574         0        4574
+                     running locked too long         9         0           9
+             longest length of message queue         *         *           *
+                 highest stack usage (words)      1055         *        1055
+                 longest time locked (usecs)    213669         *      213669
+                total execution time (msecs)     50683         0       50683
+  invoker [10]
+                                       traps         1         0           1
+                                      yields       716         0         716
+                     running locked too long         1         0           1
+             longest length of message queue         *         *           *
+                 highest stack usage (words)      1021         *        1021
+                 longest time locked (usecs)     36842         *       36842
+                total execution time (msecs)      1893         0        1893
+  timer [11]
+                                       traps         0         0           0
+                                      yields       809         0         809
+                     running locked too long         0         0           0
+             longest length of message queue         *         *           *
+                 highest stack usage (words)       292         *         292
+                 longest time locked (usecs)      1299         *        1299
+                total execution time (msecs)        65         0          65
+  tcpio [12]
+                                       traps         0         0           0
+                                      yields       405         0         405
+                     running locked too long         0         0           0
+             longest length of message queue         *         *           *
+                 highest stack usage (words)       192         *         192
+                 longest time locked (usecs)      1947         *        1947
+                total execution time (msecs)        85         0          85
+  udpio [13]
+                                       traps         0         0           0
+                                      yields       276         0         276
+                     running locked too long         0         0           0
+             longest length of message queue         *         *           *
+                 highest stack usage (words)       338         *         338
+                 longest time locked (usecs)      2663         *        2663
+                total execution time (msecs)       216         0         216
+  udpio [14]
+                                       traps         0         0           0
+                                      yields       291         0         291
+                     running locked too long         0         0           0
+             longest length of message queue         *         *           *
+                 highest stack usage (words)       327         *         327
+                 longest time locked (usecs)      4936         *        4936
+                total execution time (msecs)       258         0         258
+----------------------------------------------------------------------------
+Logs [group id_t]                                 Curr      Prev         All
+  NODE group [1]
+    100
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    101
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    102
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    103
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    500
+                                    buffered         1         0           1
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+  SW group [2]
+    900
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+  CFG group [3]
+    100
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    101
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    102
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    103
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    104
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    500
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+  STATS group [4]
+    400
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+  THR group [5]
+    100
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    900
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    901
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    902
+                                    buffered         1         0           1
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    903
+                                    buffered         1         0           1
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    904
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    905
+                                    buffered         1         0           1
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+  OBJ group [6]
+    100
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    200
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    900
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    901
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    902
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    903
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+  NET group [7]
+    100
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    101
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    102
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    103
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    104
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    105
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    106
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    500
+                                    buffered         1         0           1
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    501
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    900
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    901
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+  SESS group [8]
+    100
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    200
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    500
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    900
+                                    buffered         1         0           1
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    901
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    902
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    903
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    904
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    905
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+  POTS group [9]
+    100
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    101
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    102
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    103
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    104
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    105
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    300
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    500
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    900
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+----------------------------------------------------------------------------
+Threads (all)                                     Curr      Prev         All
+                                   creations        12         0          12
+                                   deletions         0         0           0
+                            context switches    115783         0      115783
+                       RTC lock acquisitions     26900         0       26900
+                                  interrupts     51706         0       51706
+                                       traps         1         0           1
+                             trap recoveries         1         0           1
+                                re-creations         0         0           0
+                           orphan detections         0         0           0
+                                       kills         0         0           0
+                    running thread not found         0         0           0
+                   locks recovered by kernel         0         0           0
+----------------------------------------------------------------------------
+IpPorts [ipport_t]                                Curr      Prev         All
+  Call Interworking [40000]
+                          receive operations         0         0           0
+                              bytes received         0         0           0
+                         most bytes received         *         *           *
+               most receives before yielding         *         *           *
+         messages discarded by input handler         0         0           0
+      ingress work rejected by input handler         0         0           0
+                             send operations         0         0           0
+                                  bytes sent         0         0           0
+                             most bytes sent         *         *           *
+      connection rejected: socket array full         0         0           0
+  POTS Shelf [40001]
+                          receive operations       400         0         400
+                              bytes received      7936         0        7936
+                         most bytes received        32         *          32
+               most receives before yielding         4         *           4
+         messages discarded by input handler         0         0           0
+      ingress work rejected by input handler         0         0           0
+                             send operations       277         0         277
+                                  bytes sent      3256         0        3256
+                             most bytes sent        24         *          24
+      connection rejected: socket array full         0         0           0
+  POTS Call [40002]
+                          receive operations       275         0         275
+                              bytes received      3240         0        3240
+                         most bytes received        24         *          24
+               most receives before yielding         1         *           1
+         messages discarded by input handler         0         0           0
+      ingress work rejected by input handler         0         0           0
+                             send operations       400         0         400
+                                  bytes sent      7936         0        7936
+                             most bytes sent        32         *          32
+      connection rejected: socket array full         0         0           0
+----------------------------------------------------------------------------
+Factories [Factory::Id]                           Curr      Prev         All
+  Test Sessions [1]
+            incoming intraprocessor messages         5         0           5
+            incoming interprocessor messages         0         0           0
+                    longest incoming message         *         *           *
+            outgoing intraprocessor messages         5         0           5
+            outgoing interprocessor messages         0         0           0
+                    longest outgoing message         *         *           *
+                            contexts created         1         0           1
+              retransmitted messages deleted         0         0           0
+            contexts freed on request-cancel         0         0           0
+  Outgoing CIP Calls [2]
+            incoming intraprocessor messages       130         0         130
+            incoming interprocessor messages         0         0           0
+                    longest incoming message        32         *          32
+            outgoing intraprocessor messages        85         0          85
+            outgoing interprocessor messages         0         0           0
+                    longest outgoing message        68         *          68
+                            contexts created         0         0           0
+              retransmitted messages deleted         0         0           0
+            contexts freed on request-cancel         0         0           0
+  Incoming CIP Calls [3]
+            incoming intraprocessor messages        87         0          87
+            incoming interprocessor messages         0         0           0
+                    longest incoming message        68         *          68
+            outgoing intraprocessor messages       132         0         132
+            outgoing interprocessor messages         0         0           0
+                    longest outgoing message        32         *          32
+                            contexts created        45         0          45
+              retransmitted messages deleted         0         0           0
+            contexts freed on request-cancel         0         0           0
+  Proxy Calls [4]
+            incoming intraprocessor messages        25         0          25
+            incoming interprocessor messages         0         0           0
+                    longest incoming message        68         *          68
+            outgoing intraprocessor messages        25         0          25
+            outgoing interprocessor messages         0         0           0
+                    longest outgoing message        68         *          68
+                            contexts created         5         0           5
+              retransmitted messages deleted         0         0           0
+            contexts freed on request-cancel         0         0           0
+  CIP Test Calls [5]
+            incoming intraprocessor messages         0         0           0
+            incoming interprocessor messages         0         0           0
+                    longest incoming message         *         *           *
+            outgoing intraprocessor messages         0         0           0
+            outgoing interprocessor messages         0         0           0
+                    longest outgoing message         *         *           *
+                            contexts created         0         0           0
+              retransmitted messages deleted         0         0           0
+            contexts freed on request-cancel         0         0           0
+  POTS Shelf [6]
+            incoming intraprocessor messages         0         0           0
+            incoming interprocessor messages       400         0         400
+                    longest incoming message        32         *          32
+            outgoing intraprocessor messages         0         0           0
+            outgoing interprocessor messages       277         0         277
+                    longest outgoing message        24         *          24
+                            contexts created       400         0         400
+              retransmitted messages deleted         0         0           0
+            contexts freed on request-cancel         0         0           0
+  POTS Basic Call [7]
+            incoming intraprocessor messages        71         0          71
+            incoming interprocessor messages       275         0         275
+                    longest incoming message        24         *          24
+            outgoing intraprocessor messages        65         0          65
+            outgoing interprocessor messages       400         0         400
+                    longest outgoing message        32         *          32
+                            contexts created        66         0          66
+              retransmitted messages deleted         0         0           0
+            contexts freed on request-cancel         0         0           0
+  POTS Multiplexer [8]
+            incoming intraprocessor messages        38         0          38
+            incoming interprocessor messages         0         0           0
+                    longest incoming message        24         *          24
+            outgoing intraprocessor messages        44         0          44
+            outgoing interprocessor messages         0         0           0
+                    longest outgoing message        24         *          24
+                            contexts created         6         0           6
+              retransmitted messages deleted         0         0           0
+            contexts freed on request-cancel         0         0           0
+----------------------------------------------------------------------------
+Invoker Pools [Faction]                           Curr      Prev         All
+  Payload [5]
+    ingress work queue:
+                           contexts dequeued        65         0          65
+                longest length of work queue         1         *           1
+                longest queue delay in msecs         1         *           1
+    egress work queue:
+                           contexts dequeued        44         0          44
+                longest length of work queue         1         *           1
+                longest queue delay in msecs         *         *           *
+    progress work queue:
+                           contexts dequeued       816         0         816
+                longest length of work queue         4         *           4
+                longest queue delay in msecs         8         *           8
+    immediate work queue:
+                           contexts dequeued       100         0         100
+                longest length of work queue         2         *           2
+                longest queue delay in msecs         4         *           4
+    pool statistics:
+           most transactions before yielding        10         *          10
+       contexts requeued after priority work         0         0           0
+        corrupt contexts found on work queue         0         0           0
+        times that all invokers were blocked         0         0           0
+----------------------------------------------------------------------------
+POTS Calls                                        Curr      Prev         All
+  Basic Calls
+                      originations attempted        69         0          69
+                      originations abandoned         9         0           9
+                      terminations attempted        44         0          44
+                      terminations abandoned         6         0           6
+                               calls alerted        38         0          38
+                              calls answered        30         0          30
+                               calls resumed         2         0           2
+                       proxy calls attempted         5         0           5
+                        proxy calls answered         5         0           5
+  Treatments (by Cause)
+                               Invalid Cause         0         0           0
+                          Unallocated Number         1         0           1
+                                Confirmation         7         0           7
+                             Address Timeout         3         0           3
+                        Normal Call Clearing        19         0          19
+                                   User Busy         2         0           2
+                            Alerting Timeout         1         0           1
+                              Answer Timeout         2         0           2
+                      Exchange Routing Error         0         0           0
+                    Destination Out Of Order         2         0           2
+                             Invalid Address         2         0           2
+                           Facility Rejected         2         0           2
+                           Temporary Failure         1         0           1
+                       Outgoing Calls Barred         1         0           1
+                       Incoming Calls Barred         1         0           1
+                             Call Redirected         0         0           0
+                       Excessive Redirection         0         0           0
+                   Message Invalid For State         0         0           0
+                            Parameter Absent         0         0           0
+                      Protocol Timer Expired         1         0           1
+                               Reset Circuit         0         0           0
+----------------------------------------------------------------------------
+  OK.
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.B r=f m=&port.A
+pots>verify PS S &port.A m=&port.B
+pots>/ 1A 1B
+pots>read cwt.In2Ack
+pots>/ INITIATE CWT
+pots>inject PS B &port.C
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.C &dn.A
+  OK.
+pots>delay 3
+  OK.
+pots>verify PS S &port.C s=d m=&port.dial
+pots>verify PS S &port.C s=x m=&port.silence
+pots>verify PM F &port.A f &service.cwm &facility.req
+pots>verify PC F &port.A f &service.cwa &facility.req
+pots>verify PM F &port.A f &service.cwm &facility.ack
+pots>verify PC F &port.A f &service.cwb &facility.ack
+pots>verify PM S &port.A r=t
+pots>verify PS S &port.A s=f m=&port.cwt
+pots>verify PC A &port.A
+pots>verify PS S &port.C m=&port.ringback
+pots>/ 1C
+pots>read cwt.Nf2Tmr
+pots>/ NOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>testcase verify on
+  OK.
+pots>testcase begin cwt.05
+symbols set testcase.name cwt.05
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ 5A
+pots>read cwt.Nd2ExA
+pots>/ RENOTIFIED 2: ONHOOK A (RING)
+pots>inject PS E &port.A
+pots>delay 2
+pots>verify PC E &port.A
+pots>verify PM R &port.A &cause.normal
+pots>verify PS S &port.A r=t m=&port.silence
+pots>verify PC P &port.A &prog.media m=&port.A
+pots>verify PS S &port.B m=&port.silence c=&cause.normal
+pots>/ verify PC A &port.A [sent by shelf, so marked injected]
+pots>verify PS S &port.A s=x
+pots>verify PC F &port.A f &service.cwb &facility.cwt.alerted
+pots>/ IDLE B
+pots>read cwt.Nu0ExB
+pots>/ NULL 0: IDLE B
+pots>inject PS E &port.B
+pots>delay 2
+pots>verify PS R &port.B &cause.normal
+pots>/ 5B
+pots>read cwt.Nu1Off
+pots>/ NULL: C RINGING A; ANSWER
+pots>inject PS B &port.A
+pots>delay 2
+pots>verify PC B &port.A
+pots>verify PM S &port.A r=f m=&port.C
+pots>verify PS S &port.A r=f m=&port.C
+pots>verify PS S &port.C m=&port.A
+pots>/ 5C
+pots>read cwt.Nu1ExC
+pots>/ NULL 1: IDLE C
+pots>inject PS E &port.C
+pots>delay 2
+pots>verify PS R &port.C &cause.normal
+pots>verify PM S &port.A m=&port.silence c=&cause.normal
+pots>verify PS S &port.A m=&port.silence c=&cause.normal
+pots>/ 5D
+pots>read cwt.Nu0ExA
+pots>/ NULL 0: IDLE A
+pots>inject PS E &port.A
+pots>delay 2
+pots>verify PC E &port.A
+pots>verify PM R &port.A &cause.normal
+pots>verify PS R &port.A &cause.normal
+pots>delay 2
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cwt.05 completed.
+pots>unsubscribe &dn.A cwt
+  OK.
+pots>read cwt.06
+pots>subscribe &dn.A cwt
+  OK.
+pots>testcase verify off
+  OK.
+pots>read bc.BA
+pots>/ B-A: RINGBACK; ANSWER
+pots>inject PS B &port.B
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.B &dn.A
+  OK.
+pots>delay 2
+  OK.
+pots>inject PS B &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.B s=d m=&port.dial
+pots>verify PS S &port.B s=x m=&port.silence
+pots>verify PS S &port.A r=t
+pots>verify PS S &port.B m=&port.ringback
+pots>verify PS S &port.A r=f m=&port.B
+pots>verify PS S &port.B m=&port.A
+pots>/ 1A 1B
+pots>read cwt.In2Ack
+pots>/ INITIATE CWT
+pots>inject PS B &port.C
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.C &dn.A
+  OK.
+pots>delay 3
+  OK.
+pots>verify PS S &port.C s=d m=&port.dial
+pots>verify PS S &port.C s=x m=&port.silence
+pots>verify PM F &port.A f &service.cwm &facility.req
+pots>verify PC F &port.A f &service.cwa &facility.req
+pots>verify PM F &port.A f &service.cwm &facility.ack
+pots>verify PC F &port.A f &service.cwb &facility.ack
+pots>verify PM S &port.A r=t
+pots>verify PS S &port.A s=f m=&port.cwt
+pots>verify PC A &port.A
+pots>verify PS S &port.C m=&port.ringback
+pots>/ 1C
+pots>read cwt.Nf2Tmr
+pots>/ NOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>/ 3A
+pots>read cwt.Nd2ExB
+pots>/ NOTIFIED 2; IDLE B
+pots>inject PS E &port.B
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS R &port.B &cause.normal
+pots>verify PM R &port.A &cause.normal
+pots>verify PS S &port.A m=&port.silence c=&cause.normal
+pots>/ 3B
+pots>read cwt.Nd2Tmr
+pots>/ NOTIFIED: RENOTIFY
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.cwt
+pots>/ 3C
+pots>read cwt.Rf2Tmr
+pots>/ RENOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>testcase verify on
+  OK.
+pots>testcase begin cwt.06
+symbols set testcase.name cwt.06
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ 6A & 6B
+pots>read cwt.Rd1Tmr
+pots>/ RENOTIFIED 1: CWT ANSWER TIMEOUT
+pots>delay 6
+pots>verify PC F &port.A f &service.cwb &facility.cwt.unanswered
+pots>verify PM R &port.A &cause.answertimeout
+pots>verify PC F &port.A f &service.disc &facility.req c=&cause.answertimeout
+pots>verify PS S &port.A s=x
+pots>verify PM S &port.A m=&port.reorder c=&cause.answertimeout
+pots>verify PS S &port.A m=&port.reorder c=&cause.answertimeout
+pots>/ IDLE A
+pots>inject PS E &port.A
+pots>delay 2
+pots>verify PC E &port.A
+pots>verify PM R &port.A &cause.normal
+pots>verify PS R &port.A &cause.normal
+pots>/ IDLE C
+pots>read cwt.Nu0ExC
+pots>/ NULL 0: IDLE C
+pots>inject PS E &port.C
+pots>delay 2
+pots>verify PS R &port.C &cause.normal
+pots>delay 2
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cwt.06 completed.
+pots>unsubscribe &dn.A cwt
+  OK.
+pots>read cwt.07
+pots>subscribe &dn.A cwt
+  OK.
+pots>testcase verify off
+  OK.
+pots>read bc.AB
+pots>/ A-B: RINGBACK; ANSWER
+pots>inject PS B &port.A
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.A &dn.B
+  OK.
+pots>delay 2
+  OK.
+pots>inject PS B &port.B
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.B r=f m=&port.A
+pots>verify PS S &port.A m=&port.B
+pots>/ 1A 1B
+pots>read cwt.In2Ack
+pots>/ INITIATE CWT
+pots>inject PS B &port.C
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.C &dn.A
+  OK.
+pots>delay 3
+  OK.
+pots>verify PS S &port.C s=d m=&port.dial
+pots>verify PS S &port.C s=x m=&port.silence
+pots>verify PM F &port.A f &service.cwm &facility.req
+pots>verify PC F &port.A f &service.cwa &facility.req
+pots>verify PM F &port.A f &service.cwm &facility.ack
+pots>verify PC F &port.A f &service.cwb &facility.ack
+pots>verify PM S &port.A r=t
+pots>verify PS S &port.A s=f m=&port.cwt
+pots>verify PC A &port.A
+pots>verify PS S &port.C m=&port.ringback
+pots>/ 1C
+pots>read cwt.Nf2Tmr
+pots>/ NOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>/ 2A
+pots>read cwt.Nd2Tmr
+pots>/ NOTIFIED: RENOTIFY
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.cwt
+pots>/ 2B
+pots>read cwt.Rf2Tmr
+pots>/ RENOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>/ 2C
+pots>read cwt.Rd2Fls
+pots>/ RENOTIFIED 2: FLASH (ANSWER)
+pots>inject PS L &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PC B &port.A m=&port.A
+pots>verify PC P &port.A &prog.media m=&port.held
+pots>verify PS S &port.A m=&port.silence
+pots>verify PM S &port.A r=f m=&port.C
+pots>verify PS S &port.A m=&port.C
+pots>verify PS S &port.C m=&port.A
+pots>verify PS S &port.B m=&port.held
+pots>testcase verify on
+  OK.
+pots>testcase begin cwt.07
+symbols set testcase.name cwt.07
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ 7A
+pots>read cwt.AdAExB
+pots>/ ACTIVE ON WAITING CALL: IDLE B
+pots>inject PS E &port.B
+pots>delay 12
+pots>verify PS R &port.B &cause.normal
+pots>verify PM R &port.A &cause.normal
+pots>verify PS S &port.A s=x c=&cause.normal
+pots>verify PC F &port.A f &service.cwb &facility.cwt.released
+pots>/ IDLE C
+pots>read cwt.Nu1ExC
+pots>/ NULL 1: IDLE C
+pots>inject PS E &port.C
+pots>delay 2
+pots>verify PS R &port.C &cause.normal
+pots>verify PM S &port.A m=&port.silence c=&cause.normal
+pots>verify PS S &port.A m=&port.silence c=&cause.normal
+pots>/ IDLE A
+pots>read cwt.Nu0ExA
+pots>/ NULL 0: IDLE A
+pots>inject PS E &port.A
+pots>delay 2
+pots>verify PC E &port.A
+pots>verify PM R &port.A &cause.normal
+pots>verify PS R &port.A &cause.normal
+pots>delay 2
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cwt.07 completed.
+pots>unsubscribe &dn.A cwt
+  OK.
+pots>read cwt.08
+pots>subscribe &dn.A cwt
+  OK.
+pots>testcase verify off
+  OK.
+pots>read bc.AB
+pots>/ A-B: RINGBACK; ANSWER
+pots>inject PS B &port.A
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.A &dn.B
+  OK.
+pots>delay 2
+  OK.
+pots>inject PS B &port.B
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.B r=f m=&port.A
+pots>verify PS S &port.A m=&port.B
+pots>/ 1A 1B
+pots>read cwt.In2Ack
+pots>/ INITIATE CWT
+pots>inject PS B &port.C
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.C &dn.A
+  OK.
+pots>delay 3
+  OK.
+pots>verify PS S &port.C s=d m=&port.dial
+pots>verify PS S &port.C s=x m=&port.silence
+pots>verify PM F &port.A f &service.cwm &facility.req
+pots>verify PC F &port.A f &service.cwa &facility.req
+pots>verify PM F &port.A f &service.cwm &facility.ack
+pots>verify PC F &port.A f &service.cwb &facility.ack
+pots>verify PM S &port.A r=t
+pots>verify PS S &port.A s=f m=&port.cwt
+pots>verify PC A &port.A
+pots>verify PS S &port.C m=&port.ringback
+pots>/ 1C
+pots>read cwt.Nf2Tmr
+pots>/ NOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>/ 2A
+pots>read cwt.Nd2Tmr
+pots>/ NOTIFIED: RENOTIFY
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.cwt
+pots>/ 2B
+pots>read cwt.Rf2Tmr
+pots>/ RENOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>/ 2C
+pots>read cwt.Rd2Fls
+pots>/ RENOTIFIED 2: FLASH (ANSWER)
+pots>inject PS L &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PC B &port.A m=&port.A
+pots>verify PC P &port.A &prog.media m=&port.held
+pots>verify PS S &port.A m=&port.silence
+pots>verify PM S &port.A r=f m=&port.C
+pots>verify PS S &port.A m=&port.C
+pots>verify PS S &port.C m=&port.A
+pots>verify PS S &port.B m=&port.held
+pots>testcase verify on
+  OK.
+pots>testcase begin cwt.08
+symbols set testcase.name cwt.08
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ 8A
+pots>read cwt.AdAExC
+pots>/ ACTIVE ON WAITING CALL: IDLE C
+pots>inject PS E &port.C
+pots>delay 2
+pots>verify PS R &port.C &cause.normal
+pots>verify PM R &port.A &cause.normal
+pots>verify PS S &port.A m=&port.silence c=&cause.normal
+pots>/ 8B
+pots>read cwt.Hg1ExA
+pots>/ HOLDING 1: ONHOOK A (RERING)
+pots>inject PS E &port.A
+pots>delay 2
+pots>verify PS S &port.A r=t
+pots>/ 8C
+pots>read cwt.ReBOff
+pots>/ B RERINGING: OFFHOOK (REANSWER)
+pots>inject PS B &port.A
+pots>delay 2
+pots>verify PS S &port.A r=f s=x m=&port.B
+pots>verify PC F &port.A f &service.cwa &facility.cwt.reanswered m=&port.A
+pots>verify PS S &port.B m=&port.A
+pots>/ IDLE A
+pots>read cwt.Nu1ExA
+pots>/ NULL 1: EXIT A
+pots>inject PS E &port.A
+pots>delay 2
+pots>verify PC E &port.A
+pots>verify PM R &port.A &cause.normal
+pots>verify PS R &port.A &cause.normal
+pots>verify PS S &port.B m=&port.silence c=&cause.normal
+pots>/ IDLE B
+pots>read cwt.Nu0ExB
+pots>/ NULL 0: IDLE B
+pots>inject PS E &port.B
+pots>delay 2
+pots>verify PS R &port.B &cause.normal
+pots>delay 2
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cwt.08 completed.
+pots>unsubscribe &dn.A cwt
+  OK.
+pots>read cwt.09
+pots>subscribe &dn.A cwt
+  OK.
+pots>testcase verify off
+  OK.
+pots>read bc.BA
+pots>/ B-A: RINGBACK; ANSWER
+pots>inject PS B &port.B
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.B &dn.A
+  OK.
+pots>delay 2
+  OK.
+pots>inject PS B &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.B s=d m=&port.dial
+pots>verify PS S &port.B s=x m=&port.silence
+pots>verify PS S &port.A r=t
+pots>verify PS S &port.B m=&port.ringback
+pots>verify PS S &port.A r=f m=&port.B
+pots>verify PS S &port.B m=&port.A
+pots>/ 1A 1B
+pots>read cwt.In2Ack
+pots>/ INITIATE CWT
+pots>inject PS B &port.C
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.C &dn.A
+  OK.
+pots>delay 3
+  OK.
+pots>verify PS S &port.C s=d m=&port.dial
+pots>verify PS S &port.C s=x m=&port.silence
+pots>verify PM F &port.A f &service.cwm &facility.req
+pots>verify PC F &port.A f &service.cwa &facility.req
+pots>verify PM F &port.A f &service.cwm &facility.ack
+pots>verify PC F &port.A f &service.cwb &facility.ack
+pots>verify PM S &port.A r=t
+pots>verify PS S &port.A s=f m=&port.cwt
+pots>verify PC A &port.A
+pots>verify PS S &port.C m=&port.ringback
+pots>testcase verify on
+  OK.
+pots>testcase begin cwt.09
+symbols set testcase.name cwt.09
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ 9A
+pots>read cwt.Nf2ExB
+pots>/ NOTIFYING 2; IDLE B
+pots>inject PS E &port.B
+pots>delay 2
+pots>verify PS R &port.B &cause.normal
+pots>verify PM R &port.A &cause.normal
+pots>verify PS S &port.A c=&cause.normal
+pots>/ 9B
+pots>read cwt.Hg1Fls
+pots>/ HOLDING 1: FLASH (ANSWER)
+pots>inject PS L &port.A
+pots>delay 2
+pots>verify PS S &port.A m=&port.silence
+pots>verify PC B &port.A m=&port.A
+pots>verify PM S &port.A r=f m=&port.C
+pots>verify PS S &port.A m=&port.C
+pots>verify PS S &port.A s=x
+pots>verify PC F &port.A f &service.cwb &facility.cwt.answered
+pots>verify PS S &port.C m=&port.A
+pots>/ IDLE C
+pots>inject PS E &port.C
+pots>/ IDLE A
+pots>inject PS E &port.A
+pots>delay 2
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cwt.09 completed.
+pots>unsubscribe &dn.A cwt
+  OK.
+pots>read cwt.10
+pots>subscribe &dn.A cwt
+  OK.
+pots>testcase verify off
+  OK.
+pots>read bc.AB
+pots>/ A-B: RINGBACK; ANSWER
+pots>inject PS B &port.A
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.A &dn.B
+  OK.
+pots>delay 2
+  OK.
+pots>inject PS B &port.B
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.B r=f m=&port.A
+pots>verify PS S &port.A m=&port.B
+pots>/ 1A 1B
+pots>read cwt.In2Ack
+pots>/ INITIATE CWT
+pots>inject PS B &port.C
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.C &dn.A
+  OK.
+pots>delay 3
+  OK.
+pots>verify PS S &port.C s=d m=&port.dial
+pots>verify PS S &port.C s=x m=&port.silence
+pots>verify PM F &port.A f &service.cwm &facility.req
+pots>verify PC F &port.A f &service.cwa &facility.req
+pots>verify PM F &port.A f &service.cwm &facility.ack
+pots>verify PC F &port.A f &service.cwb &facility.ack
+pots>verify PM S &port.A r=t
+pots>verify PS S &port.A s=f m=&port.cwt
+pots>verify PC A &port.A
+pots>verify PS S &port.C m=&port.ringback
+pots>/ 1C
+pots>read cwt.Nf2Tmr
+pots>/ NOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>/ 2A
+pots>read cwt.Nd2Tmr
+pots>/ NOTIFIED: RENOTIFY
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.cwt
+pots>testcase verify on
+  OK.
+pots>testcase begin cwt.10
+symbols set testcase.name cwt.10
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ 10A
+pots>read cwt.Rf2ExC
+pots>/ RENOTIFYING 2: IDLE C
+pots>inject PS E &port.C
+pots>delay 2
+pots>verify PS R &port.C &cause.normal
+pots>verify PM R &port.A &cause.normal
+pots>verify PS S &port.A s=x m=&port.B c=&cause.normal
+pots>verify PC F &port.A f &service.cwa &facility.cwt.released
+pots>/ IDLE A
+pots>read cwt.Nu1ExA
+pots>/ NULL 1: EXIT A
+pots>inject PS E &port.A
+pots>delay 2
+pots>verify PC E &port.A
+pots>verify PM R &port.A &cause.normal
+pots>verify PS R &port.A &cause.normal
+pots>verify PS S &port.B m=&port.silence c=&cause.normal
+pots>/ IDLE B
+pots>read cwt.Nu0ExB
+pots>/ NULL 0: IDLE B
+pots>inject PS E &port.B
+pots>delay 2
+pots>verify PS R &port.B &cause.normal
+pots>delay 2
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cwt.10 completed.
+pots>unsubscribe &dn.A cwt
+  OK.
+pots>read cwt.11
+pots>subscribe &dn.A cwt
+  OK.
+pots>testcase verify off
+  OK.
+pots>read bc.AB
+pots>/ A-B: RINGBACK; ANSWER
+pots>inject PS B &port.A
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.A &dn.B
+  OK.
+pots>delay 2
+  OK.
+pots>inject PS B &port.B
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.B r=f m=&port.A
+pots>verify PS S &port.A m=&port.B
+pots>/ 1A 1B
+pots>read cwt.In2Ack
+pots>/ INITIATE CWT
+pots>inject PS B &port.C
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.C &dn.A
+  OK.
+pots>delay 3
+  OK.
+pots>verify PS S &port.C s=d m=&port.dial
+pots>verify PS S &port.C s=x m=&port.silence
+pots>verify PM F &port.A f &service.cwm &facility.req
+pots>verify PC F &port.A f &service.cwa &facility.req
+pots>verify PM F &port.A f &service.cwm &facility.ack
+pots>verify PC F &port.A f &service.cwb &facility.ack
+pots>verify PM S &port.A r=t
+pots>verify PS S &port.A s=f m=&port.cwt
+pots>verify PC A &port.A
+pots>verify PS S &port.C m=&port.ringback
+pots>/ 1C
+pots>read cwt.Nf2Tmr
+pots>/ NOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>/ 2A
+pots>read cwt.Nd2Tmr
+pots>/ NOTIFIED: RENOTIFY
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.cwt
+pots>/ 2B
+pots>read cwt.Rf2Tmr
+pots>/ RENOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>/ 2C
+pots>read cwt.Rd2Fls
+pots>/ RENOTIFIED 2: FLASH (ANSWER)
+pots>inject PS L &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PC B &port.A m=&port.A
+pots>verify PC P &port.A &prog.media m=&port.held
+pots>verify PS S &port.A m=&port.silence
+pots>verify PM S &port.A r=f m=&port.C
+pots>verify PS S &port.A m=&port.C
+pots>verify PS S &port.C m=&port.A
+pots>verify PS S &port.B m=&port.held
+pots>/ 2D
+pots>read cwt.AdAFls
+pots>/ FLASH (FLIP TO ORIGINAL)
+pots>inject PS L &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>verify PC P &port.A &prog.media m=&port.held
+pots>verify PC P &port.A &prog.media m=&port.A
+pots>verify PS S &port.C m=&port.held
+pots>verify PS S &port.B m=&port.A
+pots>testcase verify on
+  OK.
+pots>testcase begin cwt.11
+symbols set testcase.name cwt.11
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ 11A
+pots>read cwt.AdHExB
+pots>/ WAITING CALL HELD: IDLE B
+pots>inject PS E &port.B
+pots>delay 12
+pots>verify PS R &port.B &cause.normal
+pots>verify PM R &port.A &cause.normal
+pots>verify PS S &port.A m=&port.silence c=&cause.normal
+pots>/ 11B
+pots>read cwt.Hg1Tmr
+pots>/ HOLDING 1: TIMEOUT (RECONNECT)
+pots>delay 12
+pots>verify PS S &port.A s=x m=&port.C
+pots>verify PC F &port.A f &service.cwb &facility.cwt.reconnected m=&port.A
+pots>verify PS S &port.C m=&port.A
+pots>/ IDLE B
+pots>read cwt.Nu1ExC
+pots>/ NULL 1: IDLE C
+pots>inject PS E &port.C
+pots>delay 2
+pots>verify PS R &port.C &cause.normal
+pots>verify PM S &port.A m=&port.silence c=&cause.normal
+pots>verify PS S &port.A m=&port.silence c=&cause.normal
+pots>/ IDLE A
+pots>read cwt.Nu0ExA
+pots>/ NULL 0: IDLE A
+pots>inject PS E &port.A
+pots>delay 2
+pots>verify PC E &port.A
+pots>verify PM R &port.A &cause.normal
+pots>verify PS R &port.A &cause.normal
+pots>delay 2
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cwt.11 completed.
+pots>unsubscribe &dn.A cwt
+  OK.
+pots>read cwt.12
+pots>subscribe &dn.A cwt
+  OK.
+pots>testcase verify off
+  OK.
+pots>read bc.AB
+pots>/ A-B: RINGBACK; ANSWER
+pots>inject PS B &port.A
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.A &dn.B
+  OK.
+pots>delay 2
+  OK.
+pots>inject PS B &port.B
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.B r=f m=&port.A
+pots>verify PS S &port.A m=&port.B
+pots>/ 1A 1B
+pots>read cwt.In2Ack
+pots>/ INITIATE CWT
+pots>inject PS B &port.C
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.C &dn.A
+  OK.
+pots>delay 3
+  OK.
+pots>verify PS S &port.C s=d m=&port.dial
+pots>verify PS S &port.C s=x m=&port.silence
+pots>verify PM F &port.A f &service.cwm &facility.req
+pots>verify PC F &port.A f &service.cwa &facility.req
+pots>verify PM F &port.A f &service.cwm &facility.ack
+pots>verify PC F &port.A f &service.cwb &facility.ack
+pots>verify PM S &port.A r=t
+pots>verify PS S &port.A s=f m=&port.cwt
+pots>verify PC A &port.A
+pots>verify PS S &port.C m=&port.ringback
+pots>/ 1C
+pots>read cwt.Nf2Tmr
+pots>/ NOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>/ 2A
+pots>read cwt.Nd2Tmr
+pots>/ NOTIFIED: RENOTIFY
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.cwt
+pots>/ 2B
+pots>read cwt.Rf2Tmr
+pots>/ RENOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>/ 2C
+pots>read cwt.Rd2Fls
+pots>/ RENOTIFIED 2: FLASH (ANSWER)
+pots>inject PS L &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PC B &port.A m=&port.A
+pots>verify PC P &port.A &prog.media m=&port.held
+pots>verify PS S &port.A m=&port.silence
+pots>verify PM S &port.A r=f m=&port.C
+pots>verify PS S &port.A m=&port.C
+pots>verify PS S &port.C m=&port.A
+pots>verify PS S &port.B m=&port.held
+pots>/ 2D
+pots>read cwt.AdAFls
+pots>/ FLASH (FLIP TO ORIGINAL)
+pots>inject PS L &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>verify PC P &port.A &prog.media m=&port.held
+pots>verify PC P &port.A &prog.media m=&port.A
+pots>verify PS S &port.C m=&port.held
+pots>verify PS S &port.B m=&port.A
+pots>/ 11A
+pots>read cwt.AdHExB
+pots>/ WAITING CALL HELD: IDLE B
+pots>inject PS E &port.B
+  OK.
+pots>delay 12
+  OK.
+pots>verify PS R &port.B &cause.normal
+pots>verify PM R &port.A &cause.normal
+pots>verify PS S &port.A m=&port.silence c=&cause.normal
+pots>testcase verify on
+  OK.
+pots>testcase begin cwt.12
+symbols set testcase.name cwt.12
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ 12A
+pots>read cwt.Hg1ExC
+pots>/ HOLDING 1: IDLE C
+pots>inject PS E &port.C
+pots>delay 2
+pots>verify PS R &port.C &cause.normal
+pots>verify PM R &port.A &cause.normal
+pots>verify PC F &port.A f &service.disc &facility.req c=&cause.normal
+pots>verify PS S &port.A s=x
+pots>verify PM S &port.A c=&cause.normal
+pots>verify PS S &port.A c=&cause.normal
+pots>/ IDLE A
+pots>inject PS E &port.A
+pots>verify PC E &port.A
+pots>verify PM R &port.A &cause.normal
+pots>verify PS R &port.A &cause.normal
+pots>delay 2
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cwt.12 completed.
+pots>unsubscribe &dn.A cwt
+  OK.
+pots>read cwt.13
+pots>subscribe &dn.A cwt
+  OK.
+pots>testcase verify off
+  OK.
+pots>read bc.AB
+pots>/ A-B: RINGBACK; ANSWER
+pots>inject PS B &port.A
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.A &dn.B
+  OK.
+pots>delay 2
+  OK.
+pots>inject PS B &port.B
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.B r=f m=&port.A
+pots>verify PS S &port.A m=&port.B
+pots>/ 1A 1B
+pots>read cwt.In2Ack
+pots>/ INITIATE CWT
+pots>inject PS B &port.C
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.C &dn.A
+  OK.
+pots>delay 3
+  OK.
+pots>verify PS S &port.C s=d m=&port.dial
+pots>verify PS S &port.C s=x m=&port.silence
+pots>verify PM F &port.A f &service.cwm &facility.req
+pots>verify PC F &port.A f &service.cwa &facility.req
+pots>verify PM F &port.A f &service.cwm &facility.ack
+pots>verify PC F &port.A f &service.cwb &facility.ack
+pots>verify PM S &port.A r=t
+pots>verify PS S &port.A s=f m=&port.cwt
+pots>verify PC A &port.A
+pots>verify PS S &port.C m=&port.ringback
+pots>/ 1C
+pots>read cwt.Nf2Tmr
+pots>/ NOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>/ 2A
+pots>read cwt.Nd2Tmr
+pots>/ NOTIFIED: RENOTIFY
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.cwt
+pots>/ 2B
+pots>read cwt.Rf2Tmr
+pots>/ RENOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>/ 2C
+pots>read cwt.Rd2Fls
+pots>/ RENOTIFIED 2: FLASH (ANSWER)
+pots>inject PS L &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PC B &port.A m=&port.A
+pots>verify PC P &port.A &prog.media m=&port.held
+pots>verify PS S &port.A m=&port.silence
+pots>verify PM S &port.A r=f m=&port.C
+pots>verify PS S &port.A m=&port.C
+pots>verify PS S &port.C m=&port.A
+pots>verify PS S &port.B m=&port.held
+pots>/ 8A
+pots>read cwt.AdAExC
+pots>/ ACTIVE ON WAITING CALL: IDLE C
+pots>inject PS E &port.C
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS R &port.C &cause.normal
+pots>verify PM R &port.A &cause.normal
+pots>verify PS S &port.A m=&port.silence c=&cause.normal
+pots>/ 8B
+pots>read cwt.Hg1ExA
+pots>/ HOLDING 1: ONHOOK A (RERING)
+pots>inject PS E &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.A r=t
+pots>testcase verify on
+  OK.
+pots>testcase begin cwt.13
+symbols set testcase.name cwt.13
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ 13A
+pots>read cwt.Re1Tmr
+pots>/ RERINGING: TIMEOUT
+pots>delay 30
+pots>verify PS R &port.A &cause.normal
+pots>verify PC R &port.A &cause.normal
+pots>verify PS S &port.B m=&port.silence c=&cause.normal
+pots>/ IDLE B
+pots>read cwt.Nu0ExB
+pots>/ NULL 0: IDLE B
+pots>inject PS E &port.B
+pots>delay 2
+pots>verify PS R &port.B &cause.normal
+pots>delay 2
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cwt.13 completed.
+pots>unsubscribe &dn.A cwt
+  OK.
+pots>read cwt.14
+pots>subscribe &dn.A cwt
+  OK.
+pots>testcase verify off
+  OK.
+pots>read bc.AB
+pots>/ A-B: RINGBACK; ANSWER
+pots>inject PS B &port.A
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.A &dn.B
+  OK.
+pots>delay 2
+  OK.
+pots>inject PS B &port.B
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.B r=f m=&port.A
+pots>verify PS S &port.A m=&port.B
+pots>/ 1A 1B
+pots>read cwt.In2Ack
+pots>/ INITIATE CWT
+pots>inject PS B &port.C
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.C &dn.A
+  OK.
+pots>delay 3
+  OK.
+pots>verify PS S &port.C s=d m=&port.dial
+pots>verify PS S &port.C s=x m=&port.silence
+pots>verify PM F &port.A f &service.cwm &facility.req
+pots>verify PC F &port.A f &service.cwa &facility.req
+pots>verify PM F &port.A f &service.cwm &facility.ack
+pots>verify PC F &port.A f &service.cwb &facility.ack
+pots>verify PM S &port.A r=t
+pots>verify PS S &port.A s=f m=&port.cwt
+pots>verify PC A &port.A
+pots>verify PS S &port.C m=&port.ringback
+pots>/ 1C
+pots>read cwt.Nf2Tmr
+pots>/ NOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>/ 2A
+pots>read cwt.Nd2Tmr
+pots>/ NOTIFIED: RENOTIFY
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.cwt
+pots>/ 2B
+pots>read cwt.Rf2Tmr
+pots>/ RENOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>/ 2C
+pots>read cwt.Rd2Fls
+pots>/ RENOTIFIED 2: FLASH (ANSWER)
+pots>inject PS L &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PC B &port.A m=&port.A
+pots>verify PC P &port.A &prog.media m=&port.held
+pots>verify PS S &port.A m=&port.silence
+pots>verify PM S &port.A r=f m=&port.C
+pots>verify PS S &port.A m=&port.C
+pots>verify PS S &port.C m=&port.A
+pots>verify PS S &port.B m=&port.held
+pots>/ 8A
+pots>read cwt.AdAExC
+pots>/ ACTIVE ON WAITING CALL: IDLE C
+pots>inject PS E &port.C
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS R &port.C &cause.normal
+pots>verify PM R &port.A &cause.normal
+pots>verify PS S &port.A m=&port.silence c=&cause.normal
+pots>/ 8B
+pots>read cwt.Hg1ExA
+pots>/ HOLDING 1: ONHOOK A (RERING)
+pots>inject PS E &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.A r=t
+pots>testcase verify on
+  OK.
+pots>testcase begin cwt.14
+symbols set testcase.name cwt.14
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ 14A
+pots>read cwt.Re1ExB
+pots>/ RERINGING: IDLE B
+pots>inject PS E &port.B
+pots>delay 12
+pots>verify PS R &port.B &cause.normal
+pots>verify PM R &port.A &cause.normal
+pots>verify PS R &port.A &cause.normal
+pots>delay 2
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cwt.14 completed.
+pots>unsubscribe &dn.A cwt
+  OK.
+pots>read cwt.15
+pots>subscribe &dn.A cwt
+  OK.
+pots>testcase verify off
+  OK.
+pots>read bc.BA
+pots>/ B-A: RINGBACK; ANSWER
+pots>inject PS B &port.B
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.B &dn.A
+  OK.
+pots>delay 2
+  OK.
+pots>inject PS B &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.B s=d m=&port.dial
+pots>verify PS S &port.B s=x m=&port.silence
+pots>verify PS S &port.A r=t
+pots>verify PS S &port.B m=&port.ringback
+pots>verify PS S &port.A r=f m=&port.B
+pots>verify PS S &port.B m=&port.A
+pots>/ 1A 1B
+pots>read cwt.In2Ack
+pots>/ INITIATE CWT
+pots>inject PS B &port.C
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.C &dn.A
+  OK.
+pots>delay 3
+  OK.
+pots>verify PS S &port.C s=d m=&port.dial
+pots>verify PS S &port.C s=x m=&port.silence
+pots>verify PM F &port.A f &service.cwm &facility.req
+pots>verify PC F &port.A f &service.cwa &facility.req
+pots>verify PM F &port.A f &service.cwm &facility.ack
+pots>verify PC F &port.A f &service.cwb &facility.ack
+pots>verify PM S &port.A r=t
+pots>verify PS S &port.A s=f m=&port.cwt
+pots>verify PC A &port.A
+pots>verify PS S &port.C m=&port.ringback
+pots>/ 1C
+pots>read cwt.Nf2Tmr
+pots>/ NOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>/ 3A
+pots>read cwt.Nd2ExB
+pots>/ NOTIFIED 2; IDLE B
+pots>inject PS E &port.B
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS R &port.B &cause.normal
+pots>verify PM R &port.A &cause.normal
+pots>verify PS S &port.A m=&port.silence c=&cause.normal
+pots>testcase verify on
+  OK.
+pots>testcase begin cwt.15
+symbols set testcase.name cwt.15
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ 15A
+pots>inject PS E &port.A
+pots>delay 2
+pots>verify PS S &port.A r=t
+pots>verify PC P &port.A &prog.media m=&port.A
+pots>/ verify PC A &port.A [sent by shelf, so marked injected]
+pots>verify PS S &port.A s=x
+pots>verify PC F &port.A f &service.cwb &facility.cwt.alerted
+pots>/ C RINGING: ANSWER
+pots>read cwt.Nu1Off
+pots>/ NULL: C RINGING A; ANSWER
+pots>inject PS B &port.A
+pots>delay 2
+pots>verify PC B &port.A
+pots>verify PM S &port.A r=f m=&port.C
+pots>verify PS S &port.A r=f m=&port.C
+pots>verify PS S &port.C m=&port.A
+pots>/ IDLE C & A
+pots>inject PS E &port.C
+pots>inject PS E &port.A
+pots>delay 2
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cwt.15 completed.
+pots>unsubscribe &dn.A cwt
+  OK.
+pots>read cwt.16
+pots>subscribe &dn.A cwt
+  OK.
+pots>/ A(CCW)-B (ANSWERED)
+pots>testcase begin cwt.16
+symbols set testcase.name cwt.16
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A *7
+pots>delay 1
+pots>inject PS D &port.A 0
+pots>delay 1
+pots>inject PS D &port.A &dn.B
+pots>delay 2
+pots>inject PS B &port.B
+pots>delay 2
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A m=&port.silence
+pots>verify PS S &port.A s=d m=&port.stutter
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.B r=f m=&port.A
+pots>verify PS S &port.A m=&port.B
+pots>/ INITIATE CWT: DENIED BY CCW
+pots>inject PS B &port.C
+pots>delay 1
+pots>inject PS D &port.C &dn.A
+pots>delay 3
+pots>verify PS S &port.C s=d m=&port.dial
+pots>verify PS S &port.C s=x m=&port.silence
+pots>verify PM F &port.A f &service.cwm &facility.req
+pots>verify PC F &port.A f &service.cwa &facility.req
+pots>verify PM F &port.A f &service.cwm &facility.nack
+pots>verify PC F &port.A f &service.cwb &facility.nack
+pots>verify PM R &port.A &cause.userbusy
+pots>verify PS S &port.C m=&port.busy c=&cause.userbusy
+pots>inject PS E &port.A
+pots>inject PS E &port.B
+pots>inject PS E &port.C
+pots>delay 2
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cwt.16 completed.
+pots>unsubscribe &dn.A cwt
+  OK.
+pots>read cwt.17
+pots>subscribe &dn.A cwt
+  OK.
+pots>testcase begin cwt.17
+symbols set testcase.name cwt.17
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ A-B (ALERTING)
+pots>inject PS B &port.A
+pots>delay 1
+pots>inject PS D &port.A &dn.B
+pots>delay 2
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>/ INITIATE CWT: DENIED BECAUSE A-B NOT ANSWERED
+pots>inject PS B &port.C
+pots>delay 1
+pots>inject PS D &port.C &dn.A
+pots>delay 3
+pots>verify PS S &port.C s=d m=&port.dial
+pots>verify PS S &port.C s=x m=&port.silence
+pots>verify PM F &port.A f &service.cwm &facility.req
+pots>verify PC F &port.A f &service.cwa &facility.req
+pots>verify PM F &port.A f &service.cwm &facility.nack
+pots>verify PC F &port.A f &service.cwb &facility.nack
+pots>verify PM R &port.A &cause.userbusy
+pots>verify PS S &port.C m=&port.busy c=&cause.userbusy
+pots>inject PS E &port.A
+pots>inject PS E &port.C
+pots>delay 2
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cwt.17 completed.
+pots>unsubscribe &dn.A cwt
+  OK.
+pots>read cwt.18
+pots>subscribe &dn.A cwt
+  OK.
+pots>testcase verify off
+  OK.
+pots>read bc.AB
+pots>/ A-B: RINGBACK; ANSWER
+pots>inject PS B &port.A
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.A &dn.B
+  OK.
+pots>delay 2
+  OK.
+pots>inject PS B &port.B
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.B r=f m=&port.A
+pots>verify PS S &port.A m=&port.B
+pots>/ 1A 1B
+pots>read cwt.In2Ack
+pots>/ INITIATE CWT
+pots>inject PS B &port.C
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.C &dn.A
+  OK.
+pots>delay 3
+  OK.
+pots>verify PS S &port.C s=d m=&port.dial
+pots>verify PS S &port.C s=x m=&port.silence
+pots>verify PM F &port.A f &service.cwm &facility.req
+pots>verify PC F &port.A f &service.cwa &facility.req
+pots>verify PM F &port.A f &service.cwm &facility.ack
+pots>verify PC F &port.A f &service.cwb &facility.ack
+pots>verify PM S &port.A r=t
+pots>verify PS S &port.A s=f m=&port.cwt
+pots>verify PC A &port.A
+pots>verify PS S &port.C m=&port.ringback
+pots>/ 1C
+pots>read cwt.Nf2Tmr
+pots>/ NOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>/ 2A
+pots>read cwt.Nd2Tmr
+pots>/ NOTIFIED: RENOTIFY
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.cwt
+pots>/ 2B
+pots>read cwt.Rf2Tmr
+pots>/ RENOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>/ 2C
+pots>read cwt.Rd2Fls
+pots>/ RENOTIFIED 2: FLASH (ANSWER)
+pots>inject PS L &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PC B &port.A m=&port.A
+pots>verify PC P &port.A &prog.media m=&port.held
+pots>verify PS S &port.A m=&port.silence
+pots>verify PM S &port.A r=f m=&port.C
+pots>verify PS S &port.A m=&port.C
+pots>verify PS S &port.C m=&port.A
+pots>verify PS S &port.B m=&port.held
+pots>/ 2D
+pots>read cwt.AdAFls
+pots>/ FLASH (FLIP TO ORIGINAL)
+pots>inject PS L &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>verify PC P &port.A &prog.media m=&port.held
+pots>verify PC P &port.A &prog.media m=&port.A
+pots>verify PS S &port.C m=&port.held
+pots>verify PS S &port.B m=&port.A
+pots>/ 11A
+pots>read cwt.AdHExB
+pots>/ WAITING CALL HELD: IDLE B
+pots>inject PS E &port.B
+  OK.
+pots>delay 12
+  OK.
+pots>verify PS R &port.B &cause.normal
+pots>verify PM R &port.A &cause.normal
+pots>verify PS S &port.A m=&port.silence c=&cause.normal
+pots>testcase verify on
+  OK.
+pots>testcase begin cwt.18
+symbols set testcase.name cwt.18
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ 12A
+pots>read cwt.Hg1ExC
+pots>/ HOLDING 1: IDLE C
+pots>inject PS E &port.C
+pots>delay 2
+pots>verify PS R &port.C &cause.normal
+pots>verify PM R &port.A &cause.normal
+pots>verify PC F &port.A f &service.disc &facility.req c=&cause.normal
+pots>verify PS S &port.A s=x
+pots>verify PM S &port.A c=&cause.normal
+pots>verify PS S &port.A c=&cause.normal
+pots>/ DISC TREATMENT PROGRESSING TO LOCKOUT
+pots>delay 74
+pots>inject PS E &port.A
+pots>delay 1
+pots>verify PM S &port.A m=&port.reorder
+pots>verify PS S &port.A m=&port.reorder
+pots>verify PM S &port.A m=&port.roh
+pots>verify PS S &port.A m=&port.roh
+pots>verify PM L &port.A
+pots>verify PS L &port.A
+pots>delay 2
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cwt.18 completed.
+pots>unsubscribe &dn.A cwt
+  OK.
+pots>read cwt.19
+pots>subscribe &dn.A cwt
+  OK.
+pots>testcase verify off
+  OK.
+pots>read bc.AB
+pots>/ A-B: RINGBACK; ANSWER
+pots>inject PS B &port.A
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.A &dn.B
+  OK.
+pots>delay 2
+  OK.
+pots>inject PS B &port.B
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.B r=f m=&port.A
+pots>verify PS S &port.A m=&port.B
+pots>/ 1A 1B
+pots>read cwt.In2Ack
+pots>/ INITIATE CWT
+pots>inject PS B &port.C
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.C &dn.A
+  OK.
+pots>delay 3
+  OK.
+pots>verify PS S &port.C s=d m=&port.dial
+pots>verify PS S &port.C s=x m=&port.silence
+pots>verify PM F &port.A f &service.cwm &facility.req
+pots>verify PC F &port.A f &service.cwa &facility.req
+pots>verify PM F &port.A f &service.cwm &facility.ack
+pots>verify PC F &port.A f &service.cwb &facility.ack
+pots>verify PM S &port.A r=t
+pots>verify PS S &port.A s=f m=&port.cwt
+pots>verify PC A &port.A
+pots>verify PS S &port.C m=&port.ringback
+pots>/ 1C
+pots>read cwt.Nf2Tmr
+pots>/ NOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>/ 1D
+pots>read cwt.Nd2ExC
+pots>/ NOTIFIED 2; IDLE C
+pots>inject PS E &port.C
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS R &port.C &cause.normal
+pots>verify PM R &port.A &cause.normal
+pots>verify PS S &port.A s=x c=&cause.normal
+pots>verify PC F &port.A f &service.cwa &facility.cwt.released
+pots>testcase verify on
+  OK.
+pots>/ RE-INITIATE CWT IN MUX PASSIVE STATE
+pots>testcase begin cwt.19
+symbols set testcase.name cwt.19
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ 1A 1B
+pots>read cwt.In2Ack
+pots>/ INITIATE CWT
+pots>inject PS B &port.C
+pots>delay 1
+pots>inject PS D &port.C &dn.A
+pots>delay 3
+pots>verify PS S &port.C s=d m=&port.dial
+pots>verify PS S &port.C s=x m=&port.silence
+pots>verify PM F &port.A f &service.cwm &facility.req
+pots>verify PC F &port.A f &service.cwa &facility.req
+pots>verify PM F &port.A f &service.cwm &facility.ack
+pots>verify PC F &port.A f &service.cwb &facility.ack
+pots>verify PM S &port.A r=t
+pots>verify PS S &port.A s=f m=&port.cwt
+pots>verify PC A &port.A
+pots>verify PS S &port.C m=&port.ringback
+pots>/ 1C
+pots>read cwt.Nf2Tmr
+pots>/ NOTIFYING 2: STOP CWT TONE
+pots>delay 6
+pots>verify PS S &port.A m=&port.B
+pots>/ 1D
+pots>read cwt.Nd2ExC
+pots>/ NOTIFIED 2; IDLE C
+pots>inject PS E &port.C
+pots>delay 2
+pots>verify PS R &port.C &cause.normal
+pots>verify PM R &port.A &cause.normal
+pots>verify PS S &port.A s=x c=&cause.normal
+pots>verify PC F &port.A f &service.cwa &facility.cwt.released
+pots>/ 1E
+pots>read cwt.Nu1ExA
+pots>/ NULL 1: EXIT A
+pots>inject PS E &port.A
+pots>delay 2
+pots>verify PC E &port.A
+pots>verify PM R &port.A &cause.normal
+pots>verify PS R &port.A &cause.normal
+pots>verify PS S &port.B m=&port.silence c=&cause.normal
+pots>/ IDLE B
+pots>read cwt.Nu0ExB
+pots>/ NULL 0: IDLE B
+pots>inject PS E &port.B
+pots>delay 2
+pots>verify PS R &port.B &cause.normal
+pots>delay 2
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cwt.19 completed.
+pots>unsubscribe &dn.A cwt
+  OK.
+pots>read cwt.20
+pots>subscribe &dn.A cwt
+  OK.
+pots>testcase verify off
+  OK.
+pots>/ A-B (ALERTING)
+pots>inject PS B &port.A
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.A &dn.B
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>/ INITIATE CWT: DENIED BECAUSE A-B NOT ANSWERED
+pots>inject PS B &port.C
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.C &dn.A
+  OK.
+pots>delay 3
+  OK.
+pots>verify PS S &port.C s=d m=&port.dial
+pots>verify PS S &port.C s=x m=&port.silence
+pots>verify PM F &port.A f &service.cwm &facility.req
+pots>verify PC F &port.A f &service.cwa &facility.req
+pots>verify PM F &port.A f &service.cwm &facility.nack
+pots>verify PC F &port.A f &service.cwb &facility.nack
+pots>verify PM R &port.A &cause.userbusy
+pots>verify PS S &port.C m=&port.busy c=&cause.userbusy
+pots>inject PS E &port.C
+  OK.
+pots>delay 3
+  OK.
+pots>testcase verify on
+  OK.
+pots>testcase begin cwt.20
+symbols set testcase.name cwt.20
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ RE-INITIATE CWT IN MUX PASSIVE STATE: DENIED AGAIN
+pots>inject PS B &port.C
+pots>delay 1
+pots>inject PS D &port.C &dn.A
+pots>delay 3
+pots>verify PS S &port.C s=d m=&port.dial
+pots>verify PS S &port.C s=x m=&port.silence
+pots>verify PM F &port.A f &service.cwm &facility.req
+pots>verify PC F &port.A f &service.cwa &facility.req
+pots>verify PM F &port.A f &service.cwm &facility.nack
+pots>verify PC F &port.A f &service.cwb &facility.nack
+pots>verify PM R &port.A &cause.userbusy
+pots>verify PS S &port.C m=&port.busy c=&cause.userbusy
+pots>inject PS E &port.C
+pots>delay 3
+pots>inject PS E &port.A
+pots>delay 2
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cwt.20 completed.
+pots>unsubscribe &dn.A cwt
+  OK.
+pots>read cwt.21
+pots>subscribe &dn.A cwt
+  OK.
+pots>testcase verify off
+  OK.
+pots>read bc.AB
+pots>/ A-B: RINGBACK; ANSWER
+pots>inject PS B &port.A
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.A &dn.B
+  OK.
+pots>delay 2
+  OK.
+pots>inject PS B &port.B
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.A s=d m=&port.dial
+pots>verify PS S &port.A s=x m=&port.silence
+pots>verify PS S &port.B r=t
+pots>verify PS S &port.A m=&port.ringback
+pots>verify PS S &port.B r=f m=&port.A
+pots>verify PS S &port.A m=&port.B
+pots>/ 1A 1B
+pots>read cwt.In2Ack
+pots>/ INITIATE CWT
+pots>inject PS B &port.C
+  OK.
+pots>delay 1
+  OK.
+pots>inject PS D &port.C &dn.A
+  OK.
+pots>delay 3
+  OK.
+pots>verify PS S &port.C s=d m=&port.dial
+pots>verify PS S &port.C s=x m=&port.silence
+pots>verify PM F &port.A f &service.cwm &facility.req
+pots>verify PC F &port.A f &service.cwa &facility.req
+pots>verify PM F &port.A f &service.cwm &facility.ack
+pots>verify PC F &port.A f &service.cwb &facility.ack
+pots>verify PM S &port.A r=t
+pots>verify PS S &port.A s=f m=&port.cwt
+pots>verify PC A &port.A
+pots>verify PS S &port.C m=&port.ringback
+pots>/ 1C
+pots>read cwt.Nf2Tmr
+pots>/ NOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>/ 2A
+pots>read cwt.Nd2Tmr
+pots>/ NOTIFIED: RENOTIFY
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.cwt
+pots>/ 2B
+pots>read cwt.Rf2Tmr
+pots>/ RENOTIFYING 2: STOP CWT TONE
+pots>delay 6
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>/ 2C
+pots>read cwt.Rd2Fls
+pots>/ RENOTIFIED 2: FLASH (ANSWER)
+pots>inject PS L &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PC B &port.A m=&port.A
+pots>verify PC P &port.A &prog.media m=&port.held
+pots>verify PS S &port.A m=&port.silence
+pots>verify PM S &port.A r=f m=&port.C
+pots>verify PS S &port.A m=&port.C
+pots>verify PS S &port.C m=&port.A
+pots>verify PS S &port.B m=&port.held
+pots>/ 2D
+pots>read cwt.AdAFls
+pots>/ FLASH (FLIP TO ORIGINAL)
+pots>inject PS L &port.A
+  OK.
+pots>delay 2
+  OK.
+pots>verify PS S &port.A m=&port.B
+pots>verify PC P &port.A &prog.media m=&port.held
+pots>verify PC P &port.A &prog.media m=&port.A
+pots>verify PS S &port.C m=&port.held
+pots>verify PS S &port.B m=&port.A
+pots>testcase verify on
+  OK.
+pots>testcase begin cwt.21
+symbols set testcase.name cwt.21
+  OK.
+read test.cp.prolog
+pots>send &testcase.name
+  OK.
+pots>start
+pots>/ INITIATE CWT: DENIED BECAUSE CWT ALREADY ACTIVE
+pots>inject PS B &port.D
+pots>delay 1
+pots>inject PS D &port.D &dn.A
+pots>delay 3
+pots>verify PS S &port.D s=d m=&port.dial
+pots>verify PS S &port.D s=x m=&port.silence
+pots>verify PM F &port.A f &service.cwm &facility.req
+pots>verify PC F &port.A f &service.cwb &facility.nack
+pots>verify PM R &port.A &cause.userbusy
+pots>verify PS S &port.D m=&port.busy c=&cause.userbusy
+pots>inject PS E &port.D
+pots>delay 3
+pots>inject PS E &port.A
+pots>inject PS E &port.B
+pots>inject PS E &port.C
+pots>delay 3
+pots>testcase end
+read test.cp.epilog
+pots>stop
+pots>contexts c
+pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+pots>save funcs &testcase.name
+pots>save trace &testcase.name
+pots>save msc &testcase.name
+pots>clear buffer
+pots>send cout
+pots>print Testcase &testcase.name completed.
+Testcase cwt.21 completed.
+pots>unsubscribe &dn.A cwt
+  OK.
+pots>

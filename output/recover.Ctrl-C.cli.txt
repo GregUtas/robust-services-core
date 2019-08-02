@@ -15,9 +15,7 @@ nt>delay 1
   OK.
 nt>recover loop
   OK.
-nt>delay 3
-  OK.
-nt>cfgparms set traponrtctimeout &save.traponrtctimeout
+nt>nt>cfgparms set traponrtctimeout &save.traponrtctimeout
   OK.
 nt>testcase end
   OK.
@@ -30,7 +28,8 @@ nt>sched show &testcase.name
   OK.
 nt>save funcs &testcase.name
   OK.
-nt>/ save trace &testcase.name
+nt>save trace &testcase.name
+  OK.
 nt>clear buffer
   OK.
 nt>send cout

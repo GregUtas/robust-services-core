@@ -63,7 +63,7 @@ print             : Writes a string to the console.
 cfgparms          : Supports configuration parameters.
 (                 : subcommand...
   list            : lists all configuration parameters
-  expl            : explains a configuration parameter
+  explain         : explains a configuration parameter
     <str>         : name of configuration parameter
   get             : returns a configuration parameter's value
     <str>         : name of configuration parameter
@@ -74,7 +74,38 @@ cfgparms          : Supports configuration parameters.
 
 logs              : Interface to the log subsystem.
 (                 : subcommand...
+  list            : shows info for all logs or the logs in a specific group
+    [<str>]       : log group name (default=all)
+  explain         : displays documentation for a log
+    <str>         : log group name
+    (100:999)     : log number
+  suppress        : suppresses all the logs in a group
+    <str>         : log group name
+  (               : setting...
+    on            : on
+    off           : off
+  )
+  throttle        : throttles or suppresses a specific log
+    <str>         : log group name
+    (100:999)     : log number
+    (0:100)       : report every Nth log (0=none, 1=all)
   count           : displays the number of logs reported so far
+  buffers         : lists all log buffers
+    [b|v]         : 'b'=brief 'v'=verbose (default='b')
+  write           : writes a buffer's logs to its log file
+    (0:7)         : log buffer index
+    (0:1000)      : number of logs to send (0=all)
+  free            : deletes a log buffer
+    (0:7)         : log buffer index
+)
+
+alarms            : Interface to the alarm subsystem.
+(                 : subcommand...
+  list            : lists alarms
+  explain         : displays documentation for an alarm
+    <str>         : alarm name
+  clear           : clears an alarm
+    <str>         : alarm name
 )
 
 symbols           : Supports symbols.
@@ -91,13 +122,14 @@ symbols           : Supports symbols.
 
 stats             : Supports performance statistics.
 (                 : subcommand...
-  groups          : lists available groups
+  groups          : lists all statistics groups
   show            : displays statistics
     [0:255]       : group number (default=all)
     [0:65535]     : member number (group specific; default=all)
+    [b|v]         : 'b'=brief 'v'=verbose (default='b')
     [<str>]       : filename for output (default=console)
   rollover        : starts a new interval
-    [t|f]         : end of first interval? (default=f)
+    [t|f]         : clear history prior to this interval? (default=f)
 )
 
 modules           : Displays modules.
@@ -241,15 +273,39 @@ restart           : Shuts down the system.
   exit            : exits and does not restart the system
 )
 
-  OK.
+No additional help is available.
 nb>nt
 nt>help full
 logs              : Interface to the log subsystem.
 (                 : subcommand...
+  list            : shows info for all logs or the logs in a specific group
+    [<str>]       : log group name (default=all)
+  explain         : displays documentation for a log
+    <str>         : log group name
+    (100:999)     : log number
+  suppress        : suppresses all the logs in a group
+    <str>         : log group name
+  (               : setting...
+    on            : on
+    off           : off
+  )
+  throttle        : throttles or suppresses a specific log
+    <str>         : log group name
+    (100:999)     : log number
+    (0:100)       : report every Nth log (0=none, 1=all)
   count           : displays the number of logs reported so far
+  buffers         : lists all log buffers
+    [b|v]         : 'b'=brief 'v'=verbose (default='b')
+  write           : writes a buffer's logs to its log file
+    (0:7)         : log buffer index
+    (0:1000)      : number of logs to send (0=all)
+  free            : deletes a log buffer
+    (0:7)         : log buffer index
   sort            : sorts the logs in a log file
     <str>         : filename for input (in OutputPath directory)
     <str>         : filename for output
+  flood           : enters a loop that generates SW900 logs
+    (1:250)       : number of SW900 logs to generate
 )
 
 set               : Controls trace tool settings.
@@ -469,7 +525,7 @@ recover           : Tests thread recovery.
     <str>         : signal's name ('SIG...')
 )
 
-  OK.
+No additional help is available.
 nt>quit
 nb>nw
 nw>help full
@@ -544,7 +600,7 @@ clear             : Clears the trace buffer, tools, or selections.
   ports           : all included/excluded IP ports
 )
 
-  OK.
+No additional help is available.
 nw>quit
 nb>sb
 sb>help full
@@ -712,7 +768,7 @@ clear             : Clears the trace buffer, tools, or selections.
 kill              : Kills a PSM's context.
   <hex>           : pointer to a PSM
 
-  OK.
+No additional help is available.
 sb>quit
 nb>st
 st>help full
@@ -1033,7 +1089,7 @@ verify            : Checks a message RECEIVED by a factory or one of its PSMs.
   )
 )
 
-  OK.
+No additional help is available.
 st>quit
 nb>pots
 pots>help full
@@ -1134,7 +1190,7 @@ reset             : Resets a DN to its initial state.
 sizes             : Displays class sizes.
   [t|f]           : display sizes in base classes? (default=f)
 
-  OK.
+No additional help is available.
 pots>quit
 nb>an
 an>help full
@@ -1146,7 +1202,7 @@ traffic           : Generates POTS calls for load testing.
   query           : displays traffic statistics
 )
 
-  OK.
+No additional help is available.
 an>quit
 nb>sn
 sn>help full
@@ -1157,7 +1213,7 @@ treatments        : Displays treatments.
 sizes             : Displays class sizes.
   [t|f]           : display sizes in base classes? (default=f)
 
-  OK.
+No additional help is available.
 sn>quit
 nb>ct
 ct>help full
@@ -1214,7 +1270,7 @@ trace             : Manage tracepoints for >parse command.
     stop          : stop tracing
   )
     <str>         : name of source code file
-    (0:2147483647) : line number (must contain source code)
+    (0:999999)    : line number (must contain source code)
   remove          : delete tracepoint
   (               : action at tracepoint...
     break         : breakpoint (at Debug::noop in Context::SetPos)
@@ -1222,7 +1278,7 @@ trace             : Manage tracepoints for >parse command.
     stop          : stop tracing
   )
     <str>         : name of source code file
-    (0:2147483647) : line number (must contain source code)
+    (0:999999)    : line number (must contain source code)
   clear           : delete all tracepoints
   list            : list tracepoints
 )

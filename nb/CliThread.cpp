@@ -279,7 +279,7 @@ word CliThread::DisplayHelp(const string& path, const string& key) const
          while(line.back() == SPACE) line.pop_back();
          line.erase(0, 2);
 
-         if(line.back() == '*')
+         if(!line.empty() && line.back() == '*')
          {
             auto keyStart = key.substr(0, line.size() - 1);
             auto lineStart = line.substr(0, line.size() - 1);

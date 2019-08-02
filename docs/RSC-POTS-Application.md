@@ -22,9 +22,9 @@ The [`traffic`](/input/traffic.start.txt) script (`>read traffic.start`) launche
 at a rate of 600 per minute.  The call rate can be increased to the point where the system
 enters overload.  Whatever the current call rate, you can observe the system's behavior with
 commands such as `>status`, `>sched show`, and `>traffic profile`.  A console file of a
-traffic run appears [here](/output/console170919-141122.txt), and a log file appears
-[here](/output/logs170919-141122.txt).  During the run, the call rate is suddenly
-increased from 120 to 18,000 calls per minute.  Once this rate is reached, it is increased
+traffic run appears [here](/output/traffic.console.txt), and a log file appears
+[here](/output/traffic.logs.txt).  During the run, the call rate is suddenly
+increased from 120 to 20,000 calls per minute.  Once this rate is reached, it is increased
 to 24,000 calls per minute to create an overload situation.  After overload has persisted
 for a while, the call rate is dropped to 0, which gradually causes all calls to be released.
 

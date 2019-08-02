@@ -1,56 +1,59 @@
-an>sched show
-SCHEDULER REPORT: 13-Jun-2018 08:47:25.680 on Reigi
-for interval beginning at 08:45:15.875
+nt>sched show
+SCHEDULER REPORT: 2-Aug-2019 14:00:54.938 on Reigi
+for interval beginning at 14:00:43.831
 ----------------------------------------------------------------------------
       THREADS          |    SINCE START OF CURRENT 15-MIN INTERVAL    | LAST
                        |            rtc  max   max     max  total     |5 SEC
 id    name     host f b| ex yields  t/o msgs stack   usecs  msecs %cpu| %cpu
 ----------------------------------------------------------------------------
-      idle                                                 123479 95.1  95.1
- 1    root      ff8 w S   0   3982    0    0   176  292278    529  0.4   0.1
- 2    init     32b8 s S   0   3983    0    0   803  602916    911  0.7   0.1
- 3    file     18ec b     0    117    0   35   206      59    134  0.1   0.0
- 4    cout      6ec b     0    105    0   33   181     101    397  0.3   0.0
- 5     cin     45e0 B C   0     15    0    0   143      43      0  0.0   0.0
- 6  objaud     4678 A S   0    926    0    0   425   31049    337  0.3   0.4
- 7   stats     46a0 B S   0     27    0    0   203      81      1  0.0   0.0
- 8     log     2098 B S   0      2    0    1   231      49      0  0.0   0.0
- 9     cli     2b00 O     0     74    0    0   623   31419   2248  1.7   0.0
-10 invoker      dcc P S   0   1690    0    0   374   14109   1198  0.9   2.9
-11   timer      638 P S   0    128    2    0   264    1071      8  0.0   0.0
-12   tcpio     25f4 P N   0      1    0    0   178     337      0  0.0   0.0
-13   udpio     4370 P N   0    631    0    0   325    1298    151  0.1   0.3
-14   udpio     3324 P N   0    643    0    0   270    1860    148  0.1   0.4
-15 traffic     3540 P S   0    400    0    0   333    3156    264  0.2   0.6
+      idle                                                  10003 90.1  82.8
+ 1    root     d468 w S   0    489    0    0   185  298664    335  3.0   5.4
+ 2    init     a720 s S   0    490    0    0  1464  635739    683  6.2  11.2
+ 3    file     d8fc B     0     10    0   37   219     156     27  0.2   0.1
+ 4    cout      cc4 B     0     36    0   22   190     138     10  0.1   0.0
+ 5     cin     ba8c B C   0      3    0    0   147      47      0  0.0   0.0
+ 6  objaud     be00 A S   0     81    0    0   407    2954     33  0.3   0.4
+ 7   stats     d730 B S   0      2    0    0   183     173      0  0.0   0.0
+ 8     log     c824 B S   0      1    0    0   163      73      0  0.0   0.0
+ 9     cli     b9a8 O     0     28    0    0   632    3831     19  0.2   0.0
+10 invoker     4bd4 P S   0      1    0    0   158     140      0  0.0   0.0
+11   timer     1fb8 P S   0     11    0    0   152     284      1  0.0   0.0
+12   tcpio     98f8 P N   0      6    0    0   192     408      1  0.0   0.0
+13   udpio     dfcc P N   0      1    0    0   188    1468      1  0.0   0.0
+14   udpio     91f8 P N   0      1    0    0   188     522      1  0.0   0.0
 ----------------------------------------------------------------------------
-an>sb status
-STATUS REPORT: 13-Jun-2018 08:47:25.682 on Reigi
+nt>sb status
+STATUS REPORT: 2-Aug-2019 14:00:54.940 on Reigi
 MEMORY USAGE
   Alloc                            Bytes        Max     Memory  Heap
   Fails     Allocs      Frees     In Use     In Use       Type  Address
-      0        683        675        492      36464  temporary  03F30000
-      0      14666      10571   29124272   29125080    dynamic  020F0000
-      0       3260         49     287636     287636  protected  020A0000
-      0         54          9    8728920    8730576  permanent  00AC0000
-      0         30          2       2864       2864  immutable  020C0000
+      0         12          5        492        492  temporary  03EC0000
+      0       2061          5   29225960   29225960    dynamic  02180000
+      0       1974         49     187996     187996  protected  00190000
+      0         46          1    9781520    9781584  permanent  00200000
+      0         31          2       2916       2916  immutable  00460000
 
 OBJECT POOLS
   Alloc  Lowest    Curr    Curr
   Fails   Avail   Avail  In Use   Allocs    Frees   Pool
-      0    1009    1009      15       15        0   Threads
-      0    6071    6071      73      176      103   MsgBuffers
-      0    8873    8885     331    10889    10558   SbIpBuffers
+      0    1010    1010      14       14        0   Threads
+      0    4033    4033      63       86       23   MsgBuffers
+      0       *    2048       0        0        0   IpBuffers
+      0       *    9216       0        0        0   SbIpBuffers
+      0       *   18432       0        0        0   Contexts
+      0       *   30720       0        0        0   MsgPorts
+      0       *    8192       0        0        0   Messages
+      0       *   30720       0        0        0   ProtocolSMs
+      0       *    9216       0        0        0   Timers
+      0       *   17408       0        0        0   ServiceSMs
+      0       *    2048       0        0        0   Events
       0       *   10240       0        0        0   BtIpBuffers
-      0   17662   17667     765     3628     2863   Contexts
-      0    7849    7861     331    10889    10558   Messages
-      0   29293   29293    1427     1901      474   MsgPorts
-      0   29293   29293    1427     1901      474   ProtocolSMs
-      0    8864    8864     352     2184     1832   Timers
-      0    2045    2048       0    14267    14267   Events
-      0   16643   16643     765     1043      278   ServiceSMs
       0       *    1024       0        0        0   MediaEndpts
 
-CPU IDLE TIME: 95.1%
+CPU IDLE TIME: 82.8%
+
+ACTIVE ALARMS
+  No active alarms.
 
 IP PORT DISCARDS
   There were no discards to display.
@@ -58,9 +61,9 @@ IP PORT DISCARDS
 INGRESS WORK QUEUES
     Curr     Max     Max
   Length  Length   Delay   Faction
-       0       3      14   Payload
+       0       0       0   Payload
 
 FACTORY DISCARDS
   There were no discards to display.
-an>send cout
+nt>send cout
   OK.

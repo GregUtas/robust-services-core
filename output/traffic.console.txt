@@ -1,0 +1,162 @@
+
+MODULE INITIALIZATION          msecs      invoked at
+pre-Module.Startup               328    14:38:07.203
+NodeBase.NbModule...                    14:38:07.531
+...initialized                    38
+NodeTools.NtModule...                   14:38:07.573
+...initialized                    16
+CodeTools.CtModule...                   14:38:07.592
+...initialized                    11
+NetworkBase.NwModule...                 14:38:07.606
+
+    NET500 2-Aug-2019 14:38:07.614 on Reigi {1}
+...initialized                   101
+SessionBase.SbModule...                 14:38:07.711
+...initialized                    73
+SessionTools.StModule...                14:38:07.788
+...initialized                     6
+MediaBase.MbModule...                   14:38:07.800
+...initialized                     8
+CallBase.CbModule...                    14:38:07.815
+...initialized                    15
+PotsBase.PbModule...                    14:38:07.836
+...initialized                    10
+OperationsNode.OnModule...              14:38:07.851
+...initialized                     5
+ControlNode.CnModule...                 14:38:07.861
+...initialized                     4
+RoutingNode.RnModule...                 14:38:07.872
+...initialized                     6
+ServiceNode.SnModule...                 14:38:07.883
+...initialized                    31
+AccessNode.AnModule...                  14:38:07.921
+...initialized                    11
+                               -----
+total initialization time        734
+
+    NODE500 2-Aug-2019 14:38:07.946 on Reigi {2}
+nb>read traffic.start
+nb>quit all
+  Nothing to quit.
+nb>nt
+nt>sb
+sb>st
+st>pots
+pots>an
+an>read test.tools.setup
+an>stop
+  OK.
+an>clear buffer
+  OK.
+an>clear selections
+  OK.
+an>clear tools
+  OK.
+an>set tools f on
+  f: OK.
+  OK.
+an>/ set scope counts  / enables full function trace if commented out
+an>include all on
+  OK.
+an>read test.cp.tools.setup
+an>set tools ntbc on
+  n: OK.
+  t: OK.
+  b: OK.
+  c: OK.
+  OK.
+an>exclude faction &faction.audit
+  OK.
+an>exclude faction &faction.bkgd
+  OK.
+an>exclude faction &faction.oper
+  OK.
+an>/ exclude timers
+an>/ swflags set &flag.cipalwaysoverip on  / CIP messages can bypass IP stack if commented out
+an>symbols set script.name traffic
+  OK.
+an>/ start  / enable to start tracing; limits throughput to about 20% of maximum
+an>query tools
+Tracing is OFF.
+  ToolBuffer: OFF
+  FunctionTracer: ON
+  MemoryTracer: OFF
+  ObjPoolTracer: OFF
+  NetworkTracer: ON
+  TransTracer: ON
+  BufferTracer: ON
+  ContextTracer: ON
+  ParserTracer: OFF
+an>/ swflags set &flag.cipalwaysoverip on  / enable to force CIP messages over IP
+an>testcase begin traffic
+symbols set testcase.name traffic
+  OK.
+an>delay 2
+  OK.
+an>traffic rate 600
+an>
+    POTS500 2-Aug-2019 14:38:19.528 on Reigi {3}
+    rate=600
+traffic rate 20000
+an>
+    POTS500 2-Aug-2019 14:38:29.399 on Reigi {4}
+    rate=20000
+
+  * OBJ200 2-Aug-2019 14:39:19.006 on Reigi {5}
+    Alarm ON: OBJPOOL6 (High percentage of in-use MsgPorts)
+
+  * OBJ200 2-Aug-2019 14:39:23.714 on Reigi {6}
+    Alarm ON: OBJPOOL7 (High percentage of in-use Messages)
+
+ ** SESS200 2-Aug-2019 14:39:37.249 on Reigi {7}
+    Alarm ON: OVERLOAD (Payload processing is overloaded)
+
+    OBJ200 2-Aug-2019 14:40:04.722 on Reigi {8}
+    Alarm OFF: OBJPOOL6 (High percentage of in-use MsgPorts)
+
+    OBJ200 2-Aug-2019 14:40:07.308 on Reigi {9}
+    Alarm OFF: OBJPOOL7 (High percentage of in-use Messages)
+
+    SESS500 2-Aug-2019 14:42:17.729 on Reigi {10}
+    Alarm OFF: OVERLOAD (Payload processing is overloaded)
+traffic rate 24000
+an>
+    POTS500 2-Aug-2019 14:42:49.104 on Reigi {11}
+    rate=24000
+
+ ** SESS200 2-Aug-2019 14:42:53.126 on Reigi {12}
+    Alarm ON: OVERLOAD (Payload processing is overloaded)
+read traffic.stop
+an>send &script.name
+  OK.
+an>status
+an>traffic query
+an>traffic profile
+an>send cout
+an>traffic rate 0
+an>
+    POTS500 2-Aug-2019 14:44:11.330 on Reigi {13}
+    rate=0
+delay 180
+
+    SESS500 2-Aug-2019 14:44:42.788 on Reigi {14}
+    Alarm OFF: OVERLOAD (Payload processing is overloaded)
+  OK.
+an>contexts c
+  0
+an>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
+  Result is false.
+an>testcase end
+  OK.
+an>stop
+  OK.
+an>save funcs &script.name
+  The trace buffer has nothing to display.
+an>stats show &script.name
+an>send &script.name
+  OK.
+an>status
+an>traffic query
+an>traffic profile
+an>send cout
+an>

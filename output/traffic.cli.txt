@@ -1,35 +1,64 @@
-/ save trace &testcase.name
-an>/ save msc &testcase.name
-an>clear buffer
-  OK.
-an>send cout
-  OK.
+an>status
+STATUS REPORT: 2-Aug-2019 14:47:11.832 on Reigi
+MEMORY USAGE
+  Alloc                            Bytes        Max     Memory  Heap
+  Fails     Allocs      Frees     In Use     In Use       Type  Address
+      0         11          2       1640      13984  temporary  03E70000
+      0    2259202    2257122   29336048   32976756    dynamic  01CD0000
+      0      30346      28064     326288    1670288  protected  01230000
+      0         48          1    9781692    9781692  permanent  01280000
+      0         31          2       2916       2916  immutable  001E0000
+
+OBJECT POOLS
+  Alloc  Lowest    Curr    Curr
+  Fails   Avail   Avail  In Use   Allocs    Frees   Pool
+      0    1009    1009      15       15        0   Threads
+      0    3992    4079      17      288      271   MsgBuffers
+      0       *    2048       0        0        0   IpBuffers
+      0    2010    9216       0  2164283  2164283   SbIpBuffers
+      0    3175   18432       0   623457   623457   Contexts
+      0    3198   30720       0   245003   245003   MsgPorts
+      0     986    8192       0  2131651  2131651   Messages
+      0    3873   30720       0   235386   235386   ProtocolSMs
+      0    2498    9216       0   302624   302624   Timers
+      0    2851   17408       0   137060   137060   ServiceSMs
+      0    2045    2048       0  2162274  2162274   Events
+      0       *   10240       0        0        0   BtIpBuffers
+      0       *    1024       0        0        0   MediaEndpts
+
+CPU IDLE TIME: 98.9%
+
+ACTIVE ALARMS
+  No active alarms.
+
+IP PORT DISCARDS
+   Msgs  IP Port
+  32632  POTS Call
+
+INGRESS WORK QUEUES
+    Curr     Max     Max
+  Length  Length   Delay   Faction
+       0    1374    7850   Payload
+
+FACTORY DISCARDS
+   Msgs   Ctxs  Factory
+  38561   9617  POTS Basic Call
 an>traffic query
 Number of timewheel slots    1201
-Timewheel interval (msecs)   100
+Timewheel interval (msecs)   infinite
 Maximum calls per minute     48460
 Traffic rate (calls/min)     0
-Maximum calls per tick       2
+Maximum calls per tick       80
 Millicalls per tick          0
-First DN added for traffic   30001
-Last DN added for traffic    30700
-Current timeslot             607
-Total calls created          549
-Number of active calls       2
+First DN added for traffic   0
+Last DN added for traffic    0
+Current timeslot             535
+Total calls created          95153
+Number of active calls       0
 Number of DN overflows       0
-Total holding time reports   938
-Average holding time (secs)  33
-Average DNs/call * 100       170 ***
-First call after current timeslot:
-  [622]: 
-    PotsBase.TrafficCall
-    this : 0430C140
-    patchArea : 0x0
-    callid : 540    orig   : none
-    delay  : 0
-    dest   : 30225
-    term   : POTS 30225
-    state  : Rlsg
+Total holding time reports   137751
+Average holding time (secs)  32
+Average DNs/call * 100       144
 an>traffic profile
 Basic call states:
           AO   CI   AI   SR   AS   SC   OA        RS
@@ -38,9 +67,9 @@ Basic call states:
            0              0         0    0         0
 POTS circuit states:
     Idle  Actv  Orig  Term  Lock
-     706     0     0     0     2
+       0     0     0     0     0
 Traffic call states:
     Orig  Dial  Term  Ring  Conn  Susp  Disc  Rlsg
-       0     0     0     0     0     0     0     2
+       0     0     0     0     0     0     0     0
 an>send cout
   OK.

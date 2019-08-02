@@ -1,10 +1,10 @@
 # CLI Scripts and Other Input Files
 
 **NOTE**: The file [`element.config`](/input/element.config.txt) in this directory is read
-during system  startup to initialize various configuration parameters.  You will need to
+during system startup to initialize various configuration parameters.  You will need to
 change the value for its `SourcePath` parameter to the directory that contains all of the
-download RSC directories (or the directory that contains whatever source files that you
-wish to analyze using the C++ static analysis tools).
+downloaded RSC directories (or the directory that contains whatever source files that you
+want to analyze using the C++ static analysis tools).
 
 The file `win32` or `win64` is an argument to the CodeTools `>parse` command when "compiling"
 in order to subsequently use C++ static analysis tools on 32-bit Windows or 64-bit Windows.
@@ -20,8 +20,8 @@ Script | Description
 buildlib | builds CodeTools library
 debug | sets up environment before using breakpoint debugging
 regression | executes all testcases and saves results in `regression.*` files when done
-restart.cold 1/2 | run to initiate cold restart and then to capture trace
-restart.warm 1/2 | run to initiate warm restart and then to capture trace
+restart.cold1 | initiate cold restart; use `>read restart.cold2` to capture trace
+restart.warm1 | initiate warm restart; use `>read restart.warm2` to capture trace
 savehelp | read this at any time to save full explanation of all CLI commands in `help.cli.txt`
 saveinit | read this immediately after startup to save trace of system initialization in `init.trace.txt` and `init.funcs.txt`
 test.cp.all | executes all call processing testcases (including test.cp.setup)

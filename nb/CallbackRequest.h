@@ -29,8 +29,8 @@
 namespace NodeBase
 {
 //  General interface for callbacks.  Subclasses add the data necessary to
-//  complete a callback and give it to a client, who later calls Invoked()
-//  and deletes the callback.
+//  complete a callback and give it to a client, who later calls Callback()
+//  and deletes the request.
 //
 class CallbackRequest
 {

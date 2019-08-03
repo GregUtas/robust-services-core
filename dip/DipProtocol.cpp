@@ -29,6 +29,7 @@
 #include "Debug.h"
 #include "Formatters.h"
 #include "Memory.h"
+#include "NbAppIds.h"
 #include "Singleton.h"
 #include "SysIpL3Addr.h"
 #include "SysSocket.h"
@@ -530,7 +531,7 @@ const size_t DipIpBufferPool::BlockSize = sizeof(DipIpBuffer);
 fn_name DipIpBufferPool_ctor = "DipIpBufferPool.ctor";
 
 DipIpBufferPool::DipIpBufferPool() :
-   ObjectPool(MemDyn, BlockSize, "DipIpBuffers")
+   ObjectPool(DipIpBufferObjPoolId, MemDyn, BlockSize, "DipIpBuffers")
 {
    Debug::ft(DipIpBufferPool_ctor);
 }

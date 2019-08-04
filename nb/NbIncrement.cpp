@@ -385,8 +385,7 @@ word BuffersCommand::ProcessCommand(CliThread& cli) const
 
    auto pool = Singleton< MsgBufferPool >::Instance();
    auto num = pool->InUseCount();
-   Flags opts;
-   if(v) opts.set(DispVerbose);
+   auto opts = (v ? VerboseOpt : NoFlags);
 
    if(c)
       *cli.obuf << spaces(2) << num << CRLF;

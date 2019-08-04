@@ -22,6 +22,7 @@
 #include "MbPools.h"
 #include "Debug.h"
 #include "MediaEndpt.h"
+#include "NbAppIds.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -35,7 +36,8 @@ const size_t MediaEndptPool::BlockSize =
 
 fn_name MediaEndptPool_ctor = "MediaEndptPool.ctor";
 
-MediaEndptPool::MediaEndptPool() : ObjectPool(MemDyn, BlockSize, "MediaEndpts")
+MediaEndptPool::MediaEndptPool() :
+   ObjectPool(MediaEndptObjPoolId, MemDyn, BlockSize, "MediaEndpts")
 {
    Debug::ft(MediaEndptPool_ctor);
 }

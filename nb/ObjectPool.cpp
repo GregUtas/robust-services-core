@@ -179,7 +179,8 @@ const size_t ObjectPool::OrphanMaxLogs = 8;
 
 fn_name ObjectPool_ctor = "ObjectPool.ctor";
 
-ObjectPool::ObjectPool(MemoryType type, size_t nBytes, const string& name) :
+ObjectPool::ObjectPool
+   (ObjectPoolId pid, MemoryType type, size_t nBytes, const string& name) :
    name_(name),
    key_("NumOf" + name),
    type_(type),
@@ -202,6 +203,7 @@ ObjectPool::ObjectPool(MemoryType type, size_t nBytes, const string& name) :
    segIncr_ = blockSize_ >> BYTES_PER_WORD_LOG2;
    segSize_ = segIncr_ * ObjectsPerSegment;
 
+   pid_.SetId(pid);
    freeq_.Init(Pooled::LinkDiff());
 
    for(auto i = 0; i < MaxSegments; ++i) blocks_[i] = nullptr;

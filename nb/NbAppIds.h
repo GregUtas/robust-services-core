@@ -55,6 +55,30 @@ constexpr ModuleId FirstAppModuleId = 15;  // start of applicaton modules
 
 //------------------------------------------------------------------------------
 //
+//  Object pool identifiers.  A new object pool must define an identifier here.
+//  Fixed identifiers are required so that it would be possible to serialize an
+//  object in one software release and import it into another release.
+//
+enum ObjectPoolIds
+{
+   ThreadObjPoolId = 1,
+   MsgBufferObjPoolId = 2,
+   IpBufferObjPoolId = 3,
+   SbIpBufferObjPoolId = 4,
+   BtIpBufferObjPoolId = 5,
+   ContextObjPoolId = 6,
+   MessageObjPoolId = 7,
+   MsgPortObjPoolId = 8,
+   ProtocolSMObjPoolId = 9,
+   TimerObjPoolId = 10,
+   EventObjPoolId = 11,
+   ServiceSMObjPoolId = 12,
+   MediaEndptObjPoolId = 13,
+   DipIpBufferObjPoolId = 14
+};
+
+//------------------------------------------------------------------------------
+//
 //  Reserved software debugging flags.  Ad hoc usage should begin with the
 //  last FlagId defined here.
 //

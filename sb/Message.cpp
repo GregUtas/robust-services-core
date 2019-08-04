@@ -1041,7 +1041,7 @@ fixed_string PriorityStrings[Message::MaxPriority + 2] =
    ERROR_STR
 };
 
-const char* Message::strPriority(Priority prio)
+c_string Message::strPriority(Priority prio)
 {
    if((prio >= 0) && (prio <= MaxPriority)) return PriorityStrings[prio];
    return PriorityStrings[MaxPriority + 1];

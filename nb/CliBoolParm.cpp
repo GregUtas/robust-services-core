@@ -39,7 +39,7 @@ fixed_string CliBoolParm::AnyBoolParm = "t|f";
 
 fn_name CliBoolParm_ctor = "CliBoolParm.ctor";
 
-CliBoolParm::CliBoolParm(const char* help, bool opt, const char* tag) :
+CliBoolParm::CliBoolParm(c_string help, bool opt, c_string tag) :
    CliParm(help, opt, tag)
 {
    Debug::ft(CliBoolParm_ctor);

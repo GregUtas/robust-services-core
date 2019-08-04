@@ -38,7 +38,7 @@ namespace NodeBase
 {
 fn_name CliIncrement_ctor = "CliIncrement.ctor";
 
-CliIncrement::CliIncrement(const char* name, const char* help, uint32_t size) :
+CliIncrement::CliIncrement(c_string name, c_string help, uint32_t size) :
    name_(name),
    help_(help)
 {

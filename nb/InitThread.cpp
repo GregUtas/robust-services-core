@@ -67,7 +67,7 @@ InitThread::~InitThread()
 
 //------------------------------------------------------------------------------
 
-const char* InitThread::AbbrName() const
+c_string InitThread::AbbrName() const
 {
    return "init";
 }

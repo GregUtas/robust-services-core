@@ -24,6 +24,7 @@
 
 #include "Factory.h"
 #include "SbTypes.h"
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -42,7 +43,8 @@ public:
 protected:
    //  Protected because this is class is virtual.
    //
-   MsgFactory(Id fid, ContextType type, ProtocolId prid, const char* name);
+   MsgFactory
+      (Id fid, ContextType type, ProtocolId prid, NodeBase::c_string name);
 
    //  Protected because subclasses should be singletons.
    //

@@ -44,8 +44,8 @@ const char CliIntParm::RangeSeparator = ':';
 
 fn_name CliIntParm_ctor = "CliIntParm.ctor";
 
-CliIntParm::CliIntParm(const char* help, word min, word max,
-   bool opt, const char* tag, bool hex) : CliParm(help, opt, tag),
+CliIntParm::CliIntParm(c_string help, word min, word max,
+   bool opt, c_string tag, bool hex) : CliParm(help, opt, tag),
    min_(min),
    max_(max),
    hex_(hex)

@@ -89,7 +89,7 @@ FactoryStats::~FactoryStats()
 
 fn_name Factory_ctor = "Factory.ctor";
 
-Factory::Factory(Id fid, ContextType type, ProtocolId prid, const char* name) :
+Factory::Factory(Id fid, ContextType type, ProtocolId prid, c_string name) :
    type_(type),
    faction_(PayloadFaction),
    prid_(prid),

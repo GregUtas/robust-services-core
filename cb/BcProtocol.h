@@ -301,7 +301,7 @@ class CipUdpService : public UdpIpService
 public:
    //  Overridden to return the service's attributes.
    //
-   const char* Name() const override { return "Call Interworking"; }
+   c_string Name() const override { return "Call Interworking"; }
    ipport_t Port() const override { return ipport_t(port_); }
    Faction GetFaction() const override { return PayloadFaction; }
 private:
@@ -340,7 +340,7 @@ class CipTcpService : public TcpIpService
 public:
    //  Overridden to return the service's attributes.
    //
-   const char* Name() const override { return "Call Interworking"; }
+   c_string Name() const override { return "Call Interworking"; }
    ipport_t Port() const override { return ipport_t(port_); }
    Faction GetFaction() const override { return PayloadFaction; }
    size_t MaxConns() const override { return TcpIoThread::MaxConns; }
@@ -400,7 +400,7 @@ class CipFactory : public SsmFactory
 protected:
    //  Protected because this class is virtual.
    //
-   CipFactory(Id fid, const char* name);
+   CipFactory(Id fid, c_string name);
 
    //  Protected because subclasses should be singletons.
    //

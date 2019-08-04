@@ -23,7 +23,6 @@
 #include <ostream>
 #include <string>
 #include "Debug.h"
-#include "SysTypes.h"
 
 using std::ostream;
 using std::string;
@@ -35,7 +34,7 @@ namespace NodeBase
 fn_name CfgBoolParm_ctor = "CfgBoolParm.ctor";
 
 CfgBoolParm::CfgBoolParm
-(const char* key, const char* def, bool* field, const char* expl) :
+(c_string key, c_string def, bool* field, c_string expl) :
    CfgBitParm(key, def, expl),
    curr_(field),
    next_(false)

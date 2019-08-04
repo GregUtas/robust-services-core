@@ -28,7 +28,6 @@
 #include "SbTrace.h"
 #include "SbTracer.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 #include "ToolTypes.h"
 #include "TraceBuffer.h"
 
@@ -41,7 +40,7 @@ namespace SessionBase
 fn_name MsgFactory_ctor = "MsgFactory.ctor";
 
 MsgFactory::MsgFactory(Id fid, ContextType type, ProtocolId prid,
-   const char* name) : Factory(fid, type, prid, name)
+   c_string name) : Factory(fid, type, prid, name)
 {
    Debug::ft(MsgFactory_ctor);
 }

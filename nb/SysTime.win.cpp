@@ -25,7 +25,6 @@
 #include <sys/timeb.h>
 #include <windows.h>
 #include "Debug.h"
-#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 

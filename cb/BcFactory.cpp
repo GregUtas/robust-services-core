@@ -28,7 +28,7 @@ namespace CallBase
 {
 fn_name BcFactory_ctor = "BcFactory.ctor";
 
-BcFactory::BcFactory(Id fid, ProtocolId prid, const char* name) :
+BcFactory::BcFactory(Id fid, ProtocolId prid, c_string name) :
    SsmFactory(fid, prid, name)
 {
    Debug::ft(BcFactory_ctor);

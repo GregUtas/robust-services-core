@@ -54,7 +54,7 @@ public:
 private:
    //  Overridden to return a string explaining the event.
    //
-   const char* EventString() const override;
+   c_string EventString() const override;
 
    //  The object for which the event occurred.
    //

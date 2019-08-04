@@ -81,7 +81,7 @@ CliThread::~CliThread()
 
 //------------------------------------------------------------------------------
 
-const char* CliThread::AbbrName() const
+c_string CliThread::AbbrName() const
 {
    return "cli";
 }

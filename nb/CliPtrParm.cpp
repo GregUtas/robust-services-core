@@ -26,7 +26,6 @@
 #include "CliIntParm.h"
 #include "CliThread.h"
 #include "Debug.h"
-#include "SysTypes.h"
 
 using std::string;
 
@@ -36,7 +35,7 @@ namespace NodeBase
 {
 fn_name CliPtrParm_ctor = "CliPtrParm.ctor";
 
-CliPtrParm::CliPtrParm(const char* help, bool opt, const char* tag) :
+CliPtrParm::CliPtrParm(c_string help, bool opt, c_string tag) :
    CliParm(help, opt, tag)
 {
    Debug::ft(CliPtrParm_ctor);

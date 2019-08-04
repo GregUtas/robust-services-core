@@ -51,8 +51,8 @@ class ObjPoolTraceTool : public Tool
    friend class Singleton< ObjPoolTraceTool >;
 private:
    ObjPoolTraceTool() : Tool(ObjPoolTracer, 'o', true) { }
-   const char* Name() const override { return ObjPoolTraceToolName; }
-   const char* Expl() const override { return ObjPoolTraceToolExpl; }
+   c_string Name() const override { return ObjPoolTraceToolName; }
+   c_string Expl() const override { return ObjPoolTraceToolExpl; }
 };
 
 //------------------------------------------------------------------------------

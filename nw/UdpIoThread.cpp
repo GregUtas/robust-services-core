@@ -70,7 +70,7 @@ UdpIoThread::~UdpIoThread()
 
 //------------------------------------------------------------------------------
 
-const char* UdpIoThread::AbbrName() const
+c_string UdpIoThread::AbbrName() const
 {
    return "udpio";
 }

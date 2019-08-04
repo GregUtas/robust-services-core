@@ -25,7 +25,6 @@
 #include "Message.h"
 #include "MsgHeader.h"
 #include "SsmContext.h"
-#include "SysTypes.h"
 
 using namespace NodeBase;
 
@@ -35,7 +34,7 @@ namespace SessionBase
 {
 fn_name SsmFactory_ctor = "SsmFactory.ctor";
 
-SsmFactory::SsmFactory(Id fid, ProtocolId prid, const char* name) :
+SsmFactory::SsmFactory(Id fid, ProtocolId prid, c_string name) :
    PsmFactory(fid, MultiPort, prid, name)
 {
    Debug::ft(SsmFactory_ctor);

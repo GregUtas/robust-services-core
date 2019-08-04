@@ -52,7 +52,7 @@ TimerThread::~TimerThread()
 
 //------------------------------------------------------------------------------
 
-const char* TimerThread::AbbrName() const
+c_string TimerThread::AbbrName() const
 {
    return "timer";
 }

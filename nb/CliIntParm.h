@@ -46,8 +46,8 @@ public:
    //  legal range for the integer value.  HEX is true if the parameter
    //  must be entered in hex.
    //
-   CliIntParm(const char* help, word min, word max,
-      bool opt = false, const char* tag = nullptr, bool hex = false);
+   CliIntParm(c_string help, word min, word max,
+      bool opt = false, c_string tag = nullptr, bool hex = false);
 
    //  Virtual to allow subclassing.
    //

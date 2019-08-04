@@ -50,8 +50,8 @@ class TraceBufferTool : public Tool
 private:
    TraceBufferTool() : Tool(ToolBuffer, 0, true) { }
    ~TraceBufferTool() = default;
-   const char* Name() const override { return TraceBufferToolName; }
-   const char* Expl() const override { return TraceBufferToolExpl; }
+   c_string Name() const override { return TraceBufferToolName; }
+   c_string Expl() const override { return TraceBufferToolExpl; }
 };
 
 //------------------------------------------------------------------------------
@@ -67,8 +67,8 @@ class FunctionTraceTool : public Tool
 private:
    FunctionTraceTool() : Tool(FunctionTracer, 'f', true) { }
    ~FunctionTraceTool() = default;
-   const char* Name() const override { return FunctionTraceToolName; }
-   const char* Expl() const override { return FunctionTraceToolExpl; }
+   c_string Name() const override { return FunctionTraceToolName; }
+   c_string Expl() const override { return FunctionTraceToolExpl; }
    string Status() const override;
 };
 
@@ -97,8 +97,8 @@ class MemoryTraceTool : public Tool
 private:
    MemoryTraceTool() : Tool(MemoryTracer, 'm', true) { }
    ~MemoryTraceTool() = default;
-   const char* Name() const override { return MemoryTraceToolName; }
-   const char* Expl() const override { return MemoryTraceToolExpl; }
+   c_string Name() const override { return MemoryTraceToolName; }
+   c_string Expl() const override { return MemoryTraceToolExpl; }
 };
 
 //------------------------------------------------------------------------------

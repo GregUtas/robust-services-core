@@ -24,6 +24,7 @@
 
 #include "PsmFactory.h"
 #include "SbTypes.h"
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -52,7 +53,7 @@ public:
 protected:
    //  Protected because this class is virtual.
    //
-   SsmFactory(Id fid, ProtocolId prid, const char* name);
+   SsmFactory(Id fid, ProtocolId prid, NodeBase::c_string name);
 
    //  Protected because subclasses should be singletons.
    //

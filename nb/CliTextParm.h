@@ -46,8 +46,8 @@ public:
    //  of strings in the list of valid inputs.  A SIZE of zero means that an
    //  arbitrary string may be entered.
    //
-   explicit CliTextParm(const char* help, bool opt = false,
-      uint32_t size = 32, const char* tag = nullptr);
+   explicit CliTextParm(c_string help, bool opt = false,
+      uint32_t size = 32, c_string tag = nullptr);
 
    //  Virtual to allow subclassing.
    //

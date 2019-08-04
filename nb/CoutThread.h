@@ -45,7 +45,7 @@ public:
 
    //  Queues STR for output to the console.  Adds a "CRLF" if EOL is set.
    //
-   static void Spool(const char* s, bool eol = false);
+   static void Spool(c_string s, bool eol = false);
 
    //  Overridden for patching.
    //
@@ -61,7 +61,7 @@ private:
 
    //  Overridden to return a name for the thread.
    //
-   const char* AbbrName() const override;
+   c_string AbbrName() const override;
 
    //  Overridden to dequeue console output requests.
    //

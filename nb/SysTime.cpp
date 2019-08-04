@@ -24,7 +24,6 @@
 #include <iosfwd>
 #include <sstream>
 #include "Debug.h"
-#include "SysTypes.h"
 
 using std::ostream;
 using std::setw;
@@ -382,7 +381,7 @@ void SysTime::Round(TimeField field, int16_t interval)
 
 //------------------------------------------------------------------------------
 
-const char* SysTime::strMonth() const
+c_string SysTime::strMonth() const
 {
    auto month = time_[MonthsField];
    if((month >= 0) && (month <= MaxMonth)) return MonthStrings[month];
@@ -391,7 +390,7 @@ const char* SysTime::strMonth() const
 
 //------------------------------------------------------------------------------
 
-const char* SysTime::strWeekDay() const
+c_string SysTime::strWeekDay() const
 {
    auto wday = DayOfWeek();
    if((wday >= 0) && (wday <= MaxWeekDay)) return WeekDayStrings[wday];

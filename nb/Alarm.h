@@ -77,11 +77,11 @@ public:
 
    //  Returns the alarm's name.
    //
-   const char* Name() const { return name_.c_str(); }
+   c_string Name() const { return name_.c_str(); }
 
    //  Returns the explanation for the alarm.
    //
-   const char* Expl() const { return expl_.c_str(); }
+   c_string Expl() const { return expl_.c_str(); }
 
    //  Returns the alarm's status.
    //

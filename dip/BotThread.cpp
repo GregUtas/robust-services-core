@@ -53,7 +53,7 @@ BotThread::BotThread() : Thread(PayloadFaction),
 
 //------------------------------------------------------------------------------
 
-const char* BotThread::AbbrName() const
+c_string BotThread::AbbrName() const
 {
    return "dipbot";
 }

@@ -148,7 +148,7 @@ LogThread::~LogThread()
 
 //------------------------------------------------------------------------------
 
-const char* LogThread::AbbrName() const
+c_string LogThread::AbbrName() const
 {
    return "log";
 }
@@ -277,7 +277,7 @@ ostringstreamPtr LogThread::GetLogsFromBuffer
 
    while((log->str().size() < BundledLogSizeThreshold) && (curr != nullptr))
    {
-      *log << static_cast< const char* >(curr->log);
+      *log << static_cast< c_string >(curr->log);
       prev = curr;
       curr = buffer->Advance();
    }

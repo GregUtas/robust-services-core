@@ -1209,7 +1209,7 @@ CipHandler::~CipHandler()
 
 fn_name CipFactory_ctor = "CipFactory.ctor";
 
-CipFactory::CipFactory(Id fid, const char* name) :
+CipFactory::CipFactory(Id fid, c_string name) :
    SsmFactory(fid, CipProtocolId, name)
 {
    Debug::ft(CipFactory_ctor);

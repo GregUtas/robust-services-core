@@ -23,7 +23,6 @@
 #include "CliIntParm.h"
 #include <ostream>
 #include "Debug.h"
-#include "SysTypes.h"
 
 using std::ostream;
 using std::string;
@@ -58,7 +57,7 @@ fixed_string CauseIndStrings[Cause::MaxInd + 2] =
    ERROR_STR
 };
 
-const char* Cause::strInd(Ind ind)
+c_string Cause::strInd(Ind ind)
 {
    if((ind >= 0) && (ind <= MaxInd)) return CauseIndStrings[ind];
    return CauseIndStrings[MaxInd + 1];

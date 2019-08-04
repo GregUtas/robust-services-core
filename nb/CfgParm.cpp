@@ -39,7 +39,7 @@ namespace NodeBase
 {
 fn_name CfgParm_ctor = "CfgParm.ctor";
 
-CfgParm::CfgParm(const char* key, const char* def, const char* expl) :
+CfgParm::CfgParm(c_string key, c_string def, c_string expl) :
    tuple_(nullptr),
    default_(def),
    expl_(expl),
@@ -125,7 +125,7 @@ string CfgParm::GetInput() const
 
 //------------------------------------------------------------------------------
 
-const char* CfgParm::Key() const
+c_string CfgParm::Key() const
 {
    return tuple_->Key().c_str();
 }

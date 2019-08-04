@@ -71,7 +71,7 @@ InvokerThread::~InvokerThread()
 
 //------------------------------------------------------------------------------
 
-const char* InvokerThread::AbbrName() const
+c_string InvokerThread::AbbrName() const
 {
    return "invoker";
 }

@@ -75,7 +75,7 @@ private:
 
    //  Overridden to return a name for the thread.
    //
-   const char* AbbrName() const override;
+   c_string AbbrName() const override;
 
    //  Overridden to read input from the console and either buffer it
    //  or pass it to a waiting thread.

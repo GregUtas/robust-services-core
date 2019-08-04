@@ -49,7 +49,7 @@ public:
 
    //  Returns a string that identifies the service for display purposes.
    //
-   virtual const char* Name() const = 0;
+   virtual NodeBase::c_string Name() const = 0;
 
    //  Returns the IP protocol over which the service runs.
    //

@@ -27,6 +27,7 @@
 #include <cstdint>
 #include <string>
 #include "Clock.h"
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -128,11 +129,11 @@ public:
 
    //  Returns a three-character string for the Month.
    //
-   const char* strMonth() const;
+   c_string strMonth() const;
 
    //  Returns a three-character string for the DayOfWeek.
    //
-   const char* strWeekDay() const;
+   c_string strWeekDay() const;
 
    //  Returns a string for displaying the time in the indicated format.
    //

@@ -188,7 +188,7 @@ fixed_string TestRcStrings[Parameter::TestRc_N + 1] =
    ERROR_STR
 };
 
-const char* Parameter::ExplainRc(TestRc rc)
+c_string Parameter::ExplainRc(TestRc rc)
 {
    if((rc >= 0) && (rc < TestRc_N)) return TestRcStrings[rc];
    return TestRcStrings[TestRc_N];

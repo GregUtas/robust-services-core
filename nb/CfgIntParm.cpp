@@ -34,8 +34,8 @@ namespace NodeBase
 {
 fn_name CfgIntParm_ctor = "CfgIntParm.ctor";
 
-CfgIntParm::CfgIntParm(const char* key, const char* def, word* field,
-   word min, word max, const char* expl) :
+CfgIntParm::CfgIntParm(c_string key, c_string def, word* field,
+   word min, word max, c_string expl) :
    CfgParm(key, def, expl),
    curr_(field),
    next_(0),

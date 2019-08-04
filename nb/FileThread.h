@@ -91,7 +91,7 @@ private:
 
    //  Overridden to return a name for the thread.
    //
-   const char* AbbrName() const override;
+   c_string AbbrName() const override;
 
    //  Overridden to dequeue file output requests.
    //

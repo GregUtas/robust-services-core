@@ -30,7 +30,6 @@
 #include "Formatters.h"
 #include "NbCliParms.h"
 #include "Registry.h"
-#include "SysTypes.h"
 
 using std::string;
 
@@ -40,8 +39,8 @@ namespace NodeBase
 {
 fn_name CliCommandSet_ctor = "CliCommandSet.ctor";
 
-CliCommandSet::CliCommandSet(const char* comm,
-   const char* help, uint32_t size) : CliCommand(comm, help, size)
+CliCommandSet::CliCommandSet(c_string comm,
+   c_string help, uint32_t size) : CliCommand(comm, help, size)
 {
    Debug::ft(CliCommandSet_ctor);
 }

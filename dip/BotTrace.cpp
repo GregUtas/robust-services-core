@@ -112,7 +112,7 @@ bool BotTrace::Display(ostream& stream, bool diff)
 fixed_string IcMsgEventStr = "icmsg";
 fixed_string OgMsgEventStr = "ogmsg";
 
-const char* BotTrace::EventString() const
+c_string BotTrace::EventString() const
 {
    switch(rid_)
    {

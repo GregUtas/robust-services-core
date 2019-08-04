@@ -47,7 +47,7 @@ const char CliParm::OptParmEnd = ']';
 
 fn_name CliParm_ctor = "CliParm.ctor";
 
-CliParm::CliParm(const char* help, bool opt, const char* tag) :
+CliParm::CliParm(c_string help, bool opt, c_string tag) :
    help_(help),
    opt_(opt),
    tag_(tag)

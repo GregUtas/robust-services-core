@@ -55,7 +55,7 @@ bool TraceRecord::Display(ostream& stream, bool diff)
 
 //------------------------------------------------------------------------------
 
-const char* TraceRecord::EventString() const
+c_string TraceRecord::EventString() const
 {
    static const string BlankEventStr(TraceDump::EvtWidth, SPACE);
 

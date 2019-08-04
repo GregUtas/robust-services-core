@@ -46,7 +46,7 @@ ostream& operator<<(ostream& stream, ContextType type)
    return stream;
 }
 
-const char* strContextType(ContextType type)
+c_string strContextType(ContextType type)
 {
    if((type >= 0) && (type < ContextType_N)) return ContextTypeStrings[type];
    return ContextTypeStrings[ContextType_N];

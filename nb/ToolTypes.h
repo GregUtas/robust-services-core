@@ -69,7 +69,7 @@ enum TraceRc
 
 //  Returns a string that explains RC.
 //
-const char* strTraceRc(TraceRc rc);
+c_string strTraceRc(TraceRc rc);
 
 //  Trace tool identifiers.
 //

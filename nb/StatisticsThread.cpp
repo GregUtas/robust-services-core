@@ -69,7 +69,7 @@ StatisticsThread::~StatisticsThread()
 
 //------------------------------------------------------------------------------
 
-const char* StatisticsThread::AbbrName() const
+c_string StatisticsThread::AbbrName() const
 {
    return "stats";
 }

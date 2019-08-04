@@ -3490,7 +3490,7 @@ private:
    static void UseBadPointer();
    static void LoopForever();
    static void RecurseForever(size_t depth);
-   const char* AbbrName() const override;
+   c_string AbbrName() const override;
    bool IsCritical() const override;
    void Enter() override;
    RecoveryAction Recover() override;
@@ -3524,7 +3524,7 @@ RecoveryTestThread::~RecoveryTestThread()
 
 //------------------------------------------------------------------------------
 
-const char* RecoveryTestThread::AbbrName() const
+c_string RecoveryTestThread::AbbrName() const
 {
    return "recov";
 }

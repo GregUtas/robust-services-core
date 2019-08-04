@@ -34,8 +34,8 @@ namespace NodeBase
 {
 fn_name CfgFlagParm_ctor = "CfgFlagParm.ctor";
 
-CfgFlagParm::CfgFlagParm(const char* key, const char* def,
-   Flags* field, FlagId fid, const char* expl) :
+CfgFlagParm::CfgFlagParm(c_string key, c_string def,
+   Flags* field, FlagId fid, c_string expl) :
    CfgBitParm(key, def, expl),
    curr_(field),
    next_(false),

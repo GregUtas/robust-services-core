@@ -39,8 +39,8 @@ namespace NetworkBase
 {
 fn_name IpPortCfgParm_ctor = "IpPortCfgParm.ctor";
 
-IpPortCfgParm::IpPortCfgParm(const char* key, const char* def,
-   word* field, const char* expl, const IpService* service) :
+IpPortCfgParm::IpPortCfgParm(c_string key, c_string def,
+   word* field, c_string expl, const IpService* service) :
    CfgIntParm(key, def, field, FirstAppIpPort, LastAppIpPort, expl),
    service_(service)
 {

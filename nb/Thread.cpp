@@ -102,7 +102,7 @@ private:
 
    //  Overridden to return a string that explains an event.
    //
-   const char* EventString() const override;
+   c_string EventString() const override;
 
    //  Additional debug information.
    //
@@ -230,7 +230,7 @@ fixed_string LockReleasedStr  = "-lock";
 fixed_string PauseEnterStr    = "     ";
 fixed_string PauseExitStr     = "     ";
 
-const char* ThreadTrace::EventString() const
+c_string ThreadTrace::EventString() const
 {
    switch(rid_)
    {
@@ -1138,7 +1138,7 @@ Thread::~Thread()
 
 fn_name Thread_AbbrName = "Thread.AbbrName";
 
-const char* Thread::AbbrName() const
+c_string Thread::AbbrName() const
 {
    Debug::ft(Thread_AbbrName);
 

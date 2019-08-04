@@ -134,7 +134,7 @@ ProxyBcService::~ProxyBcService()
 
 fixed_string ProxyPortStr = "Proxy port";
 
-const char* ProxyBcService::PortName(PortId pid) const
+c_string ProxyBcService::PortName(PortId pid) const
 {
    if(pid == ProxyPort) return ProxyPortStr;
 

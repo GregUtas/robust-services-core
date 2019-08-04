@@ -120,10 +120,10 @@ protected:
    //  The arguments are from the base class.  Protected because this
    //  class is virtual.
    //
-   LibraryCommand(const char* comm, const char* help);
+   LibraryCommand(c_string comm, c_string help);
 };
 
-LibraryCommand::LibraryCommand(const char* comm, const char* help) :
+LibraryCommand::LibraryCommand(c_string comm, c_string help) :
    CliCommand(comm, help) { }
 
 fn_name LibraryCommand_Evaluate = "LibraryCommand.Evaluate";

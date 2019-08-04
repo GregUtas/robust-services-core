@@ -49,7 +49,7 @@ fixed_string ToolRcStrings[TraceRc_N + 1] =
    ERROR_STR
 };
 
-const char* strTraceRc(TraceRc rc)
+c_string strTraceRc(TraceRc rc)
 {
    if((rc >= 0) && (rc < TraceRc_N)) return ToolRcStrings[rc];
    return ToolRcStrings[TraceRc_N];

@@ -103,7 +103,7 @@ private:
 
    //  Overridden to return a name for the thread.
    //
-   const char* AbbrName() const override;
+   c_string AbbrName() const override;
 
    //  Overridden to initialize the system and then run in the background
    //  to enforce the run-to-completion timeout and recreate application

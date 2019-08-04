@@ -280,7 +280,7 @@ public:
 
    //  Returns a string for displaying PRIO.
    //
-   static const char* strPriority(Priority prio);
+   static NodeBase::c_string strPriority(Priority prio);
 
    //  Records BT as the trace record that captured this message.
    //

@@ -61,7 +61,7 @@ CinThread::~CinThread()
 
 //------------------------------------------------------------------------------
 
-const char* CinThread::AbbrName() const
+c_string CinThread::AbbrName() const
 {
    return "cin";
 }

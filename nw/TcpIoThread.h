@@ -83,7 +83,7 @@ protected:
 private:
    //  Overridden to return a name for the thread.
    //
-   const char* AbbrName() const override;
+   NodeBase::c_string AbbrName() const override;
 
    //  Overridden to receive TCP messages on PORT.
    //

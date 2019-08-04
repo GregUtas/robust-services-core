@@ -216,7 +216,7 @@ class BotTcpService : public TcpIpService
 public:
    //  Overridden to return the service's attributes.
    //
-   const char* Name() const override { return "Diplomacy"; }
+   c_string Name() const override { return "Diplomacy"; }
    ipport_t Port() const override;
    Faction GetFaction() const override { return PayloadFaction; }
    bool AcceptsConns() const override { return false; }

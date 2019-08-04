@@ -165,7 +165,7 @@ bool IpService::HasSharedSocket() const
 
 fn_name IpService_Name = "IpService.Name";
 
-const char* IpService::Name() const
+c_string IpService::Name() const
 {
    Debug::ft(IpService_Name);
 

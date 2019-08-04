@@ -41,7 +41,7 @@ const char CliCommand::CommandSeparator = '.';
 
 fn_name CliCommand_ctor = "CliCommand.ctor";
 
-CliCommand::CliCommand(const char* comm, const char* help, uint32_t size) :
+CliCommand::CliCommand(c_string comm, c_string help, uint32_t size) :
    CliText(help, comm, false, size)
 {
    Debug::ft(CliCommand_ctor);

@@ -63,7 +63,7 @@ RootThread::~RootThread()
 
 //------------------------------------------------------------------------------
 
-const char* RootThread::AbbrName() const
+c_string RootThread::AbbrName() const
 {
    return "root";
 }

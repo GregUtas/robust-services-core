@@ -28,6 +28,8 @@
 #include <vector>
 #include "SysTypes.h"
 
+using namespace NodeBase;
+
 //------------------------------------------------------------------------------
 
 namespace CodeTools
@@ -113,7 +115,7 @@ enum LibExprErr
 
 //  Returns a string that explains ERR.
 //
-const char* strError(LibExprErr err);
+c_string strError(LibExprErr err);
 
 //------------------------------------------------------------------------------
 //

@@ -58,7 +58,7 @@ fixed_string IpAddrTextParmExpl = "IP address and optional port: n.n.n.n[:p]";
 
 IpAddrTextParm::IpAddrTextParm() : CliTextParm(IpAddrTextParmExpl) { }
 
-IpAddrParm::IpAddrParm(const char* help, const char* text) :
+IpAddrParm::IpAddrParm(c_string help, c_string text) :
    CliText(help, text)
 {
    BindParm(*new IpAddrTextParm);

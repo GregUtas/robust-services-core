@@ -58,7 +58,7 @@ class PotsCallIpService : public UdpIpService
 public:
    //  Overridden to return the service's attributes.
    //
-   const char* Name() const override { return "POTS Call"; }
+   c_string Name() const override { return "POTS Call"; }
    ipport_t Port() const override { return ipport_t(port_); }
    Faction GetFaction() const override { return PayloadFaction; }
 private:

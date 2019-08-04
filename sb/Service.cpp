@@ -140,7 +140,7 @@ ServiceSM* Service::AllocModifier() const
 
 fn_name Service_BindEventName = "Service.BindEventName";
 
-bool Service::BindEventName(const char* name, EventId eid)
+bool Service::BindEventName(NodeBase::c_string name, EventId eid)
 {
    Debug::ft(Service_BindEventName);
 
@@ -360,7 +360,7 @@ bool Service::Enable()
 
 //------------------------------------------------------------------------------
 
-const char* Service::EventName(EventId eid) const
+c_string Service::EventName(EventId eid) const
 {
    if(!Event::IsValidId(eid)) return nullptr;
 
@@ -387,7 +387,7 @@ fixed_string UnknownPortStr = "Unknown port";
 fixed_string UserPortStr = "User port";
 fixed_string NetworkPortStr = "Network port";
 
-const char* Service::PortName(PortId pid) const
+c_string Service::PortName(PortId pid) const
 {
    switch(pid)
    {

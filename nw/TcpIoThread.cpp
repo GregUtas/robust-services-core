@@ -111,7 +111,7 @@ TcpIoThread::~TcpIoThread()
 
 //------------------------------------------------------------------------------
 
-const char* TcpIoThread::AbbrName() const
+c_string TcpIoThread::AbbrName() const
 {
    return "tcpio";
 }

@@ -27,6 +27,7 @@
 #include <string>
 #include "NbTypes.h"
 #include "Q1Link.h"
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -58,7 +59,7 @@ public:
 
    //  Returns the symbol's name.
    //
-   const char* Name() const { return name_.c_str(); }
+   c_string Name() const { return name_.c_str(); }
 
    //  Sets the symbol's value, locking it if LOCK is set.
    //  Returns false if the symbol is already locked.
@@ -67,7 +68,7 @@ public:
 
    //  Returns the symbol's value.
    //
-   const char* GetValue() const { return value_.c_str(); }
+   c_string GetValue() const { return value_.c_str(); }
 
    //  Returns true if the value is locked.
    //

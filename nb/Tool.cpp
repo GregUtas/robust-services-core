@@ -87,7 +87,7 @@ void Tool::Display(ostream& stream,
 
 fn_name Tool_Expl = "Tool.Expl";
 
-const char* Tool::Expl() const
+c_string Tool::Expl() const
 {
    Debug::SwLog(Tool_Expl, Tid(), 0);
    return EMPTY_STR;
@@ -109,7 +109,7 @@ bool Tool::IsSafe() const
 
 fn_name Tool_Name = "Tool.Name";
 
-const char* Tool::Name() const
+c_string Tool::Name() const
 {
    Debug::SwLog(Tool_Name, Tid(), 0);
    return EMPTY_STR;

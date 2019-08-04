@@ -166,7 +166,7 @@ private:
 
    //  Returns a string for displaying STATE.
    //
-   static const char* strState(State state);
+   static c_string strState(State state);
 
    //  The next call in the timeslot.
    //
@@ -1033,7 +1033,7 @@ void TrafficCall::SetState(State state)
 
 //------------------------------------------------------------------------------
 
-const char* TrafficCall::strState(State state)
+c_string TrafficCall::strState(State state)
 {
    if((state >= 0) && (state < State_N)) return TrafficStateStr[state];
    return TrafficStateStr[State_N];
@@ -1115,7 +1115,7 @@ PotsTrafficThread::~PotsTrafficThread()
 
 //------------------------------------------------------------------------------
 
-const char* PotsTrafficThread::AbbrName() const
+c_string PotsTrafficThread::AbbrName() const
 {
    return "traffic";
 }

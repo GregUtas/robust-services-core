@@ -100,7 +100,7 @@ enum ContextType
 
 //  Returns a string for TYPE.
 //
-const char* strContextType(ContextType type);
+NodeBase::c_string strContextType(ContextType type);
 
 //  Inserts a string for TYPE into STREAM.
 //

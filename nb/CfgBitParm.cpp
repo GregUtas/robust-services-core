@@ -32,7 +32,7 @@ namespace NodeBase
 {
 fn_name CfgBitParm_ctor = "CfgBitParm.ctor";
 
-CfgBitParm::CfgBitParm(const char* key, const char* def, const char* expl) :
+CfgBitParm::CfgBitParm(c_string key, c_string def, c_string expl) :
    CfgParm(key, def, expl)
 {
    Debug::ft(CfgBitParm_ctor);

@@ -44,8 +44,8 @@ namespace NodeBase
 {
 fn_name CliTextParm_ctor = "CliTextParm.ctor";
 
-CliTextParm::CliTextParm(const char* help, bool opt, uint32_t size,
-   const char* tag) : CliParm(help, opt, tag)
+CliTextParm::CliTextParm(c_string help, bool opt, uint32_t size,
+   c_string tag) : CliParm(help, opt, tag)
 {
    Debug::ft(CliTextParm_ctor);
 

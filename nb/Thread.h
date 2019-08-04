@@ -324,7 +324,7 @@ private:
    //  Returns an abbreviated version of the thread's name, which must be
    //  at most 7 characters long.
    //
-   virtual const char* AbbrName() const = 0;
+   virtual c_string AbbrName() const = 0;
 
    //  The common entry function for all threads (except RootThread).
    //  ARG is a pointer to the Thread object.

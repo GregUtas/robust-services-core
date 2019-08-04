@@ -63,7 +63,7 @@ public:
 
    //  Overridden to provide a name for proxy ports.
    //
-   const char* PortName(PortId pid) const override;
+   c_string PortName(PortId pid) const override;
 protected:
    //  Protected because this class is virtual.  By default, basic calls
    //  support modifier services.  The constructor registers event names

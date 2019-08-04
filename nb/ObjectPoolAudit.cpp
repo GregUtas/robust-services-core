@@ -55,7 +55,7 @@ ObjectPoolAudit::~ObjectPoolAudit()
 
 //------------------------------------------------------------------------------
 
-const char* ObjectPoolAudit::AbbrName() const
+c_string ObjectPoolAudit::AbbrName() const
 {
    return "objaud";
 }

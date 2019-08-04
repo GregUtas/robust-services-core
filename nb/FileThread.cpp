@@ -180,7 +180,7 @@ FileThread::~FileThread()
 
 //------------------------------------------------------------------------------
 
-const char* FileThread::AbbrName() const
+c_string FileThread::AbbrName() const
 {
    return "file";
 }

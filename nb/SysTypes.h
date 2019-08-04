@@ -100,8 +100,10 @@ typedef int main_t;
 //
 typedef int signal_t;
 
-//  For defining a string constant.
+//  For defining C strings and C string constants.  These are used unless
+//  a char is mandated by something external (e.g. by exception::what).
 //
+typedef const char* c_string;
 typedef const char* const fixed_string;
 
 //  Identifies a function by name.  The typedefs make it easier to track
@@ -184,7 +186,7 @@ enum RestartLevel
 //  Returns a string that identifies LEVEL.  Returns ERROR_STR if
 //  LEVEL is RestartNil or RestartExit.
 //
-const char* strRestartLevel(RestartLevel level);
+c_string strRestartLevel(RestartLevel level);
 
 //  The reason for a shutdown or restart.  See Restart.h for values.
 //

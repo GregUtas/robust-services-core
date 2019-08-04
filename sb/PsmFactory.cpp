@@ -27,7 +27,6 @@
 #include "MsgHeader.h"
 #include "MsgPort.h"
 #include "PsmContext.h"
-#include "SysTypes.h"
 
 using namespace NodeBase;
 
@@ -38,7 +37,7 @@ namespace SessionBase
 fn_name PsmFactory_ctor = "PsmFactory.ctor";
 
 PsmFactory::PsmFactory(Id fid, ContextType type, ProtocolId prid,
-   const char* name) : MsgFactory(fid, type, prid, name)
+   c_string name) : MsgFactory(fid, type, prid, name)
 {
    Debug::ft(PsmFactory_ctor);
 }

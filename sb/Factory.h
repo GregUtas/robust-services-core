@@ -111,7 +111,7 @@ public:
 
    //  Returns a string that identifies the factory.
    //
-   const char* Name() const { return name_; }
+   NodeBase::c_string Name() const { return name_; }
 
    //  Creates a subclass of CliText so that the factory can be specified
    //  with a string.  The default version returns nullptr and must be
@@ -195,7 +195,7 @@ protected:
    //  Sets the corresponding member variables and adds the factory to
    //  FactoryRegistry.  Protected because this class is virtual.
    //
-   Factory(Id fid, ContextType type, ProtocolId prid, const char* name);
+   Factory(Id fid, ContextType type, ProtocolId prid, NodeBase::c_string name);
 
    //  Removes the factory from FactoryRegistry.  Protected because
    //  subclasses should be singletons.
@@ -268,7 +268,7 @@ private:
 
    //  The factory's name.
    //
-   const char* const name_;
+   NodeBase::fixed_string name_;
 
    //  The signals that are legal for the factory to receive.
    //

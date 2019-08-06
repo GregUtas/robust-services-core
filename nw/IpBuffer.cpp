@@ -160,7 +160,7 @@ size_t IpBuffer::BuffSize(size_t nBytes)
       if(BuffSizes[i] >= nBytes) return BuffSizes[i];
    }
 
-   Debug::SwLog(IpBuffer_BuffSize, nBytes, 0, SwError);
+   Debug::SwLog(IpBuffer_BuffSize, "size out of range", nBytes, SwError);
    return 0;
 }
 
@@ -295,7 +295,7 @@ bool IpBuffer::Send(bool external)
 
    if(buff_ == nullptr)
    {
-      Debug::SwLog(IpBuffer_Send, txAddr_.GetPort(), 0);
+      Debug::SwLog(IpBuffer_Send, "null buffer", txAddr_.GetPort());
       return false;
    }
 
@@ -321,7 +321,7 @@ bool IpBuffer::Send(bool external)
 
       if(ipPort == nullptr)
       {
-         Debug::SwLog(IpBuffer_Send, txPort, 1);
+         Debug::SwLog(IpBuffer_Send, "port not found", txPort);
          return false;
       }
 
@@ -329,13 +329,13 @@ bool IpBuffer::Send(bool external)
 
       if(svc == nullptr)
       {
-         Debug::SwLog(IpBuffer_Send, txPort, 2);
+         Debug::SwLog(IpBuffer_Send, "service not found", txPort);
          return false;
       }
 
       if(!svc->HasSharedSocket())
       {
-         Debug::SwLog(IpBuffer_Send, txPort, 3);
+         Debug::SwLog(IpBuffer_Send, "no shared socket", txPort);
          return false;
       }
 
@@ -345,7 +345,7 @@ bool IpBuffer::Send(bool external)
       {
          if(Restart::GetStatus() != ShuttingDown)
          {
-            Debug::SwLog(IpBuffer_Send, txPort, 4);
+            Debug::SwLog(IpBuffer_Send, "socket not found", txPort);
          }
 
          return false;

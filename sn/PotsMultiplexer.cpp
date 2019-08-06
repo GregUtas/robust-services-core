@@ -425,7 +425,8 @@ ProtocolSM::OutgoingRc PotsMuxPsm::ProcessOgMsg(Message& msg)
       //
       if(ogMsg_ != nullptr)
       {
-         Debug::SwLog(PotsMuxPsm_ProcessOgMsg, msg.GetSignal(), 0);
+         Debug::SwLog(PotsMuxPsm_ProcessOgMsg,
+            "sending second message", msg.GetSignal());
       }
 
       return SendMessage;
@@ -467,7 +468,8 @@ ProtocolSM::OutgoingRc PotsMuxPsm::ProcessOgMsg(Message& msg)
       //
       //  Other signals should only occur when being relayed (see SetSignal).
       //
-      Debug::SwLog(PotsMuxPsm_ProcessOgMsg, header_.signal, 1);
+      Debug::SwLog(PotsMuxPsm_ProcessOgMsg,
+         "unexpected signal", header_.signal);
       return PurgeMessage;
    }
 
@@ -584,7 +586,7 @@ void PotsMuxPsm::SendSignal(PotsSignal::Id signal)
       //
       //  Other messages are relayed instead of being built explicitly.
       //
-      Debug::SwLog(PotsMuxPsm_SendSignal, signal, 0);
+      Debug::SwLog(PotsMuxPsm_SendSignal, "unexpected signal", signal);
    }
 }
 
@@ -963,7 +965,7 @@ void PotsMuxSsm::SetNPsm(CallId cid, PotsMuxPsm& psm)
 
    if(nPsm_[cid] != nullptr)
    {
-      Debug::SwLog(PotsMuxSsm_SetNPsm, cid, 0);
+      Debug::SwLog(PotsMuxSsm_SetNPsm, "nPSM already exists", cid);
       return;
    }
 

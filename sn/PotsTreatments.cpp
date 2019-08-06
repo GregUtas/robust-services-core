@@ -149,7 +149,7 @@ PotsTreatment::PotsTreatment(PotsTreatmentQueue::QId qid) : qid_(qid)
    if(tq != nullptr)
       tq->BindTreatment(*this);
    else
-      Debug::SwLog(PotsTreatment_ctor, qid_, 0);
+      Debug::SwLog(PotsTreatment_ctor, "queue not found", qid_);
 }
 
 //------------------------------------------------------------------------------
@@ -166,7 +166,7 @@ PotsTreatment::~PotsTreatment()
    if(tq != nullptr)
       tq->UnbindTreatment(*this);
    else
-      Debug::SwLog(PotsTreatment_dtor, qid_, 0);
+      Debug::SwLog(PotsTreatment_dtor, "queue not found", qid_);
 }
 
 //------------------------------------------------------------------------------
@@ -220,7 +220,7 @@ PotsTreatment* PotsTreatment::NextTreatment() const
 
    if(tq == nullptr)
    {
-      Debug::SwLog(PotsTreatment_NextTreatment, qid_, 0);
+      Debug::SwLog(PotsTreatment_NextTreatment, "queue not found", qid_);
       return nullptr;
    }
 
@@ -240,7 +240,7 @@ PotsToneTreatment::PotsToneTreatment
    Debug::ft(PotsToneTreatment_ctor);
 
    if(duration_ == 0)
-      Debug::SwLog(PotsToneTreatment_ctor, 0, 0);
+      Debug::SwLog(PotsToneTreatment_ctor, "invalid duration", 0);
 }
 
 //------------------------------------------------------------------------------

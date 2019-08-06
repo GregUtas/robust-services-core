@@ -127,7 +127,8 @@ bool MapAndUnits::any_orders_entered() const
              (our_winter_orders.number_of_waives != 0));
    }
 
-   Debug::SwLog(MapAndUnits_any_orders_entered, curr_season.all(), 0);
+   Debug::SwLog(MapAndUnits_any_orders_entered,
+      "invalid season", curr_season.all());
    return false;
 }
 
@@ -646,7 +647,8 @@ TokenMessage MapAndUnits::encode_movement_order(const UnitOrder& unit) const
       break;
 
    default:
-      Debug::SwLog(MapAndUnits_encode_movement_order, unit.order, 0);
+      Debug::SwLog(MapAndUnits_encode_movement_order,
+         "invalid order", unit.order);
       order.clear();
    }
 
@@ -756,7 +758,8 @@ TokenMessage MapAndUnits::encode_movement_result(const UnitOrder& unit) const
       break;
 
    default:
-      Debug::SwLog(MapAndUnits_encode_movement_result, unit.order, 0);
+      Debug::SwLog(MapAndUnits_encode_movement_result,
+         "invalid order", unit.order);
       return result;  // empty
    }
 
@@ -791,7 +794,8 @@ TokenMessage MapAndUnits::encode_retreat_order(const UnitOrder& unit) const
       break;
 
    default:
-      Debug::SwLog(MapAndUnits_encode_retreat_order, unit.order, 0);
+      Debug::SwLog(MapAndUnits_encode_retreat_order,
+         "invalid order", unit.order);
       order.clear();
    }
 
@@ -829,7 +833,8 @@ TokenMessage MapAndUnits::encode_retreat_result(const UnitOrder& unit) const
       break;
 
    default:
-      Debug::SwLog(MapAndUnits_encode_retreat_result, unit.order, 0);
+      Debug::SwLog(MapAndUnits_encode_retreat_result,
+         "invalid order", unit.order);
       return result;  // empty
    }
 
@@ -1235,7 +1240,8 @@ std::vector< PowerOrders > MapAndUnits::get_orders(const Token& season) const
    }
 
    default:
-      Debug::SwLog(MapAndUnits_get_orders, season.to_str(), 0);
+      string expl = "invalid season" + season.to_str();
+      Debug::SwLog(MapAndUnits_get_orders, expl, 0);
    }
 
    return powers;
@@ -1603,7 +1609,7 @@ size_t MapAndUnits::process_now(const TokenMessage& now)
 
    if(number_of_provinces == 0)
    {
-      Debug::SwLog(MapAndUnits_process_now, 0, 0);
+      Debug::SwLog(MapAndUnits_process_now, "map has no provinces", 0);
       return NO_ERROR;
    }
 
@@ -1776,7 +1782,7 @@ size_t MapAndUnits::process_ord(const TokenMessage& ord)
 
    if(number_of_provinces == 0)
    {
-      Debug::SwLog(MapAndUnits_process_ord, 0, 0);
+      Debug::SwLog(MapAndUnits_process_ord, "map has no provinces", 0);
       return NO_ERROR;
    }
 
@@ -1926,7 +1932,8 @@ Token MapAndUnits::process_order(const TokenMessage& order, PowerId power)
       break;
 
    default:
-      Debug::SwLog(MapAndUnits_process_order, order_token.order_season(), 0);
+      Debug::SwLog(MapAndUnits_process_order,
+         "invalid season type", order_token.order_season());
       return TOKEN_ORDER_NOTE_NRS;
    }
 
@@ -2196,7 +2203,8 @@ Token MapAndUnits::process_order(const TokenMessage& order, PowerId power)
       break;
 
    default:
-      Debug::SwLog(MapAndUnits_process_order, order_token.all(), 0);
+      Debug::SwLog(MapAndUnits_process_order,
+         "invalid order type", order_token.all());
       return TOKEN_ORDER_NOTE_NRS;
    }
 
@@ -2340,7 +2348,7 @@ size_t MapAndUnits::process_sco(const TokenMessage& sco)
 
    if(number_of_provinces == 0)
    {
-      Debug::SwLog(MapAndUnits_process_sco, 0, 0);
+      Debug::SwLog(MapAndUnits_process_sco, "map has no provinces", 0);
       return NO_ERROR;
    }
 
@@ -2540,7 +2548,7 @@ Token MapAndUnits::province_token(ProvinceId province) const
 {
    if((province < 0) || (province >= PROVINCE_MAX))
    {
-      Debug::SwLog(MapAndUnits_province_token, province, 0);
+      Debug::SwLog(MapAndUnits_province_token, "invalid province", province);
       return INVALID_TOKEN;
    }
 

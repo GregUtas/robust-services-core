@@ -91,7 +91,7 @@ PayloadInvokerPool::PayloadInvokerPool() :
 
    if(overloadAlarm_ == nullptr)
    {
-      Debug::SwLog(PayloadInvokerPool_ctor, 0, 0);
+      Debug::SwLog(PayloadInvokerPool_ctor, "alarm not found", 0);
    }
 }
 

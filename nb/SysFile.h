@@ -22,6 +22,7 @@
 #ifndef SYSFILE_H_INCLUDED
 #define SYSFILE_H_INCLUDED
 
+#include "Base.h"
 #include <set>
 #include <string>
 #include "SysTypes.h"
@@ -33,7 +34,7 @@ namespace NodeBase
 //  Virtual base class for file iteration.  An instance is created with
 //  SysFile::GetFileList.
 //
-class FileList
+class FileList : public Base
 {
 public:
    //  Virtual to allow subclassing.

@@ -22,6 +22,7 @@
 #include "MediaPsm.h"
 #include <ostream>
 #include <string>
+#include "Algorithms.h"
 #include "Context.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -246,7 +247,7 @@ MediaSsm* MediaPsm::GetMediaSsm() const
 
    if(root == nullptr)
    {
-      Debug::SwLog(MediaPsm_GetMediaSsm, 0, 0);
+      Debug::SwLog(MediaPsm_GetMediaSsm, "root SSM not found", 0);
       return nullptr;
    }
 
@@ -457,7 +458,7 @@ void MediaPsm::SetOgPsm(MediaPsm* ogPsm)
    //
    if(!IsUppermost())
    {
-      Debug::SwLog(MediaPsm_SetOgPsm, GetFactory(), 0);
+      Debug::SwLog(MediaPsm_SetOgPsm, "not uppermost PSM", GetFactory());
       return;
    }
 
@@ -490,7 +491,7 @@ void MediaPsm::SetOgTone(Tone::Id ogTone)
    //
    if(!IsUppermost())
    {
-      Debug::SwLog(MediaPsm_SetOgTone, GetFactory(), 0);
+      Debug::SwLog(MediaPsm_SetOgTone, "not uppermost PSM", GetFactory());
       return;
    }
 
@@ -533,7 +534,8 @@ void MediaPsm::SynchEdge(MediaPsm& psm) const
    {
       //  PSM should be in a stable state, so this is a problem.
       //
-      Debug::SwLog(MediaPsm_SynchEdge, psm.GetFactory(), GetFactory());
+      Debug::SwLog(MediaPsm_SynchEdge, "media not in synch",
+         pack2(psm.GetFactory(), GetFactory()));
    }
 }
 

@@ -23,6 +23,7 @@
 #include <bitset>
 #include <ostream>
 #include <string>
+#include "Algorithms.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Initiator.h"
@@ -107,7 +108,8 @@ void Trigger::UnbindInitiator(Initiator& init)
 
    if(!initq_.Exq(init))
    {
-      Debug::SwLog(Trigger_UnbindInitiator, tid_, init.Sid());
+      Debug::SwLog(Trigger_UnbindInitiator,
+         "Exq failed", pack2(init.Sid() ,tid_));
    }
 }
 }

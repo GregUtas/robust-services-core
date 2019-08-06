@@ -470,7 +470,7 @@ NameVector GetNameAndArgs(const string& name)
                   if(op == '<')
                      --j;
                   else
-                     Debug::SwLog(CodeTools_GetNameAndArgs, c, 0);
+                     Debug::SwLog(CodeTools_GetNameAndArgs, string(1, c), 0);
 
                   curr.name = name.substr(i, j - i + 1);
                   i = j + 1;

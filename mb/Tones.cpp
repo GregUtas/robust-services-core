@@ -156,11 +156,11 @@ ToneSilent::ToneSilent() : Tone(Silence)
 {
    Debug::ft(ToneSilent_ctor);
 
-   auto p = TsPort();
+   auto port = TsPort();
 
-   if(p != Switch::SilentPort)
+   if(port != Switch::SilentPort)
    {
-      Debug::SwLog(ToneSilent_ctor, p, 0);
+      Debug::SwLog(ToneSilent_ctor, "not silent port", port);
    }
 }
 

@@ -234,7 +234,7 @@ word AlarmsCommand::ProcessCommand(CliThread& cli) const
       return cli.Report(0, SuccessExpl);
 
    default:
-      Debug::SwLog(AlarmsCommand_ProcessCommand, index, 0);
+      Debug::SwLog(AlarmsCommand_ProcessCommand, UnexpectedIndex, index);
       return cli.Report(index, SystemErrorExpl);
    }
 
@@ -345,7 +345,7 @@ word AuditCommand::ProcessCommand(CliThread& cli) const
       thr->Interrupt();
       break;
    default:
-      Debug::SwLog(AuditCommand_ProcessCommand, index, 0);
+      Debug::SwLog(AuditCommand_ProcessCommand, UnexpectedIndex, index);
       return cli.Report(index, SystemErrorExpl);
    }
 
@@ -567,7 +567,7 @@ word CfgParmsCommand::ProcessCommand(CliThread& cli) const
       return cli.Report(0, SuccessExpl);
 
    default:
-      Debug::SwLog(CfgParmsCommand_ProcessCommand, index, 0);
+      Debug::SwLog(CfgParmsCommand_ProcessCommand, UnexpectedIndex, index);
       return cli.Report(index, SystemErrorExpl);
    }
 
@@ -1159,7 +1159,7 @@ word IfCommand::ProcessCommand(CliThread& cli) const
       result = (sym >= val);
       break;
    default:
-      Debug::SwLog(IfCommand_ProcessCommand, index, 0);
+      Debug::SwLog(IfCommand_ProcessCommand, UnexpectedIndex, index);
       return cli.Report(index, SystemErrorExpl);
    }
 
@@ -2353,7 +2353,7 @@ word SchedCommand::ProcessCommand(CliThread& cli) const
       break;
 
    default:
-      Debug::SwLog(SchedCommand_ProcessCommand, index, 0);
+      Debug::SwLog(SchedCommand_ProcessCommand, UnexpectedIndex, index);
       return cli.Report(index, SystemErrorExpl);
    }
 
@@ -2493,7 +2493,7 @@ word SendCommand::ProcessCommand(CliThread& cli) const
       return cli.Report(-7, TooManyOutputStreams);
 
    default:
-      Debug::SwLog(SendCommand_ProcessCommand, index, 0);
+      Debug::SwLog(SendCommand_ProcessCommand, UnexpectedIndex, index);
       return cli.Report(index, SystemErrorExpl);
    }
 }
@@ -2901,7 +2901,7 @@ word StatisticsCommand::ProcessCommand(CliThread& cli) const
       break;
 
    default:
-      Debug::SwLog(StatisticsCommand_ProcessCommand, index, 0);
+      Debug::SwLog(StatisticsCommand_ProcessCommand, UnexpectedIndex, index);
       return cli.Report(index, SystemErrorExpl);
    }
 
@@ -3232,7 +3232,7 @@ word SymbolsCommand::ProcessCommand(CliThread& cli) const
       return cli.Report(0, SuccessExpl);
 
    default:
-      Debug::SwLog(SymbolsCommand_ProcessCommand, index, 0);
+      Debug::SwLog(SymbolsCommand_ProcessCommand, UnexpectedIndex, index);
       return cli.Report(index, SystemErrorExpl);
    }
 

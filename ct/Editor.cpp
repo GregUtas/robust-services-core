@@ -477,7 +477,7 @@ Editor::Iter Editor::CodeBegin()
          if(ns)
          {
             if(s->code.find(NAMESPACE_STR) != string::npos) continue;
-            Debug::SwLog(Editor_CodeBegin, "Namespace expected", s->line + 1);
+            Debug::SwLog(Editor_CodeBegin, "namespace expected", s->line + 1);
          }
          return ++s;
 
@@ -487,7 +487,7 @@ Editor::Iter Editor::CodeBegin()
          //
          //  These shouldn't occur.
          //
-         Debug::SwLog(Editor_CodeBegin, "Unexpected line type", type);
+         Debug::SwLog(Editor_CodeBegin, "unexpected line type", type);
          //  [[fallthrough]]
       case FileComment:
       case CloseBrace:

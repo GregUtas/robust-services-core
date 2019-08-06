@@ -307,7 +307,7 @@ word IpCommand::ProcessCommand(CliThread& cli) const
       *cli.obuf << CRLF;
       break;
    default:
-      Debug::SwLog(IpCommand_ProcessCommand, index, 0);
+      Debug::SwLog(IpCommand_ProcessCommand, UnexpectedIndex, index);
       return cli.Report(index, SystemErrorExpl);
    }
 

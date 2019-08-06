@@ -143,7 +143,7 @@ void AnalyzeSapEvent::FreeContext(bool freeMsg)
       return;
    }
 
-   Debug::SwLog(AnalyzeSapEvent_FreeContext, location_, 0);
+   Debug::SwLog(AnalyzeSapEvent_FreeContext, "invalid location", location_);
 }
 
 //------------------------------------------------------------------------------

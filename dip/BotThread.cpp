@@ -125,7 +125,7 @@ void BotThread::Enter()
 
    if(rc != 0)
    {
-      Debug::SwLog(BotThread_Enter, "Failed to initialise bot", rc);
+      Debug::SwLog(BotThread_Enter, "failed to initialise bot", rc);
       return;
    }
 

@@ -46,6 +46,11 @@ public:
    //
    static const char CommandSeparator;
 
+   //  Used in software logs when a command doesn't recognize its first
+   //  parameter.
+   //
+   static fixed_string UnexpectedIndex;
+
    //  Virtual to allow subclassing.
    //
    virtual ~CliCommand();

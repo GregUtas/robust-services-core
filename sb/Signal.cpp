@@ -51,7 +51,7 @@ Signal::Signal(ProtocolId prid, Id sid) : prid_(prid)
 
    if(pro == nullptr)
    {
-      Debug::SwLog(Signal_ctor, prid_, sid);
+      Debug::SwLog(Signal_ctor, "protocol not found", pack2(prid_, sid));
       return;
    }
 

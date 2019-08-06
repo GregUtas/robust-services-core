@@ -132,7 +132,8 @@ ServiceSM* Service::AllocModifier() const
    //  It is either illegal to allocate this service as a modifier, or it
    //  should have overridden this function.
    //
-   Debug::SwLog(Service_AllocModifier, Sid(), modifier_);
+   Debug::SwLog(Service_AllocModifier,
+      "invalid modifier", pack2(Sid(), modifier_));
    return nullptr;
 }
 
@@ -151,13 +152,13 @@ bool Service::BindEventName(NodeBase::c_string name, EventId eid)
    //
    if(status_ == NotRegistered)
    {
-      Debug::SwLog(Service_BindEventName, Sid(), 0);
+      Debug::SwLog(Service_BindEventName, "service not registered", Sid());
       return false;
    }
 
    if(!Event::IsValidId(eid))
    {
-      Debug::SwLog(Service_BindEventName, eid, 1);
+      Debug::SwLog(Service_BindEventName, "invalid event", eid);
       return false;
    }
 
@@ -166,7 +167,7 @@ bool Service::BindEventName(NodeBase::c_string name, EventId eid)
    //
    if(eventNames_[eid] != nullptr)
    {
-      Debug::SwLog(Service_BindEventName, eid, 2);
+      Debug::SwLog(Service_BindEventName, "replacing event name", eid);
    }
 
    eventNames_[eid] = name;
@@ -188,13 +189,14 @@ bool Service::BindHandler(EventHandler& handler, EventHandlerId ehid)
    //
    if(status_ == NotRegistered)
    {
-      Debug::SwLog(Service_BindHandler, pack2(Sid(), ehid), 0);
+      Debug::SwLog(Service_BindHandler,
+         "service not registered", pack2(Sid(), ehid));
       return false;
    }
 
    if(!EventHandler::AppCanRegister(ehid))
    {
-      Debug::SwLog(Service_BindHandler, pack2(Sid(), ehid), 1);
+      Debug::SwLog(Service_BindHandler, "invalid event", pack2(Sid(), ehid));
       return false;
    }
 
@@ -211,7 +213,7 @@ bool Service::BindState(State& state)
 
    if(status_ == NotRegistered)
    {
-      Debug::SwLog(Service_BindState, Sid(), 0);
+      Debug::SwLog(Service_BindState, "service not registered", Sid());
       return false;
    }
 
@@ -232,13 +234,13 @@ bool Service::BindSystemHandler(EventHandler& handler, EventHandlerId ehid)
    //
    if(status_ == NotRegistered)
    {
-      Debug::SwLog(Service_BindSystemHandler, Sid(), 0);
+      Debug::SwLog(Service_BindSystemHandler, "service not registered", Sid());
       return false;
    }
 
    if(ehid >= EventHandler::NextId)
    {
-      Debug::SwLog(Service_BindSystemHandler, ehid, 1);
+      Debug::SwLog(Service_BindSystemHandler, "invalid event", ehid);
       return false;
    }
 
@@ -263,13 +265,13 @@ bool Service::BindTrigger(Trigger& trigger)
    //
    if(status_ == NotRegistered)
    {
-      Debug::SwLog(Service_BindTrigger, Sid(), 0);
+      Debug::SwLog(Service_BindTrigger, "service not registered", Sid());
       return false;
    }
 
    if(!modifiable_)
    {
-      Debug::SwLog(Service_BindTrigger, Sid(), 1);
+      Debug::SwLog(Service_BindTrigger, "service not modifiable", Sid());
       return false;
    }
 
@@ -297,7 +299,7 @@ bool Service::Disable()
    //
    if(status_ == NotRegistered)
    {
-      Debug::SwLog(Service_Disable, Sid(), 0);
+      Debug::SwLog(Service_Disable, "service not registered", Sid());
       return false;
    }
 
@@ -350,7 +352,7 @@ bool Service::Enable()
    //
    if(status_ == NotRegistered)
    {
-      Debug::SwLog(Service_Enable, Sid(), 0);
+      Debug::SwLog(Service_Enable, "service not registered", Sid());
       return false;
    }
 

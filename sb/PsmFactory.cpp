@@ -71,9 +71,7 @@ ProtocolSM* PsmFactory::AllocIcPsm
 {
    Debug::ft(PsmFactory_AllocIcPsm);
 
-   //  This must be implemented by a subclass if required.
-   //
-   Debug::SwLog(PsmFactory_AllocIcPsm, Fid(), 0);
+   Debug::SwLog(PsmFactory_AllocIcPsm, strOver(this), Fid());
    return nullptr;
 }
 

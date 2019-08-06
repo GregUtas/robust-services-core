@@ -295,13 +295,13 @@ int32_t SysTime::MsecsUntil(const SysTime& time) const
    {
       auto diff = ms1 - ms0;
       if(diff <= INT32_MAX) return diff;
-      Debug::SwLog(SysTime_MsecsUntil, 0, 0);
+      Debug::SwLog(SysTime_MsecsUntil, "overflow", diff);
       return INT32_MAX;
    }
 
    auto diff = ms0 - ms1;
    if(diff >= INT32_MIN) return diff;
-   Debug::SwLog(SysTime_MsecsUntil, 0, 1);
+   Debug::SwLog(SysTime_MsecsUntil, "underflow", diff);
    return INT32_MIN;
 }
 
@@ -374,7 +374,7 @@ void SysTime::Round(TimeField field, int16_t interval)
       return;
 
    default:
-      Debug::SwLog(SysTime_Round, field, 0);
+      Debug::SwLog(SysTime_Round, "unexpected field", field);
       return;
    }
 }

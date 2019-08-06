@@ -81,8 +81,8 @@ RootServiceSM* SsmContext::AllocRoot(const Message& msg, ProtocolSM& psm)
 
    if(!header->initial)
    {
-      Debug::SwLog
-         (SsmContext_AllocRoot, pack2(header->protocol, header->signal), 0);
+      Debug::SwLog(SsmContext_AllocRoot, "initial message expected",
+         pack2(header->protocol, header->signal));
       return nullptr;
    }
 
@@ -91,8 +91,8 @@ RootServiceSM* SsmContext::AllocRoot(const Message& msg, ProtocolSM& psm)
 
    if(fac == nullptr)
    {
-      Debug::SwLog
-         (SsmContext_AllocRoot, pack2(header->protocol, header->signal), fid);
+      Debug::SwLog(SsmContext_AllocRoot, "factory not found",
+         pack3(header->protocol, header->signal, fid));
       return nullptr;
    }
 

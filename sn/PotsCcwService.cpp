@@ -271,7 +271,7 @@ EventHandler::Rc PotsCcwSsm::ProcessSip(Event& currEvent, Event*& nextEvent)
       return EventHandler::Pass;
    }
 
-   Debug::SwLog(PotsCcwSsm_ProcessSip, stid, 0);
+   Debug::SwLog(PotsCcwSsm_ProcessSip, "unexpected state", stid);
    SetNextState(PotsCcwState::Null);
    return EventHandler::Pass;
 }

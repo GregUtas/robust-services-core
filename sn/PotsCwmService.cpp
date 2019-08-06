@@ -27,6 +27,7 @@
 #include <cstddef>
 #include <ostream>
 #include <string>
+#include "Algorithms.h"
 #include "BcCause.h"
 #include "Clock.h"
 #include "Context.h"
@@ -999,7 +1000,7 @@ void PotsCwmSsm::ClearTimer(TimerId tid)
 
    if(tid_ != tid)
    {
-      Debug::SwLog(PotsCwmSsm_ClearTimer, tid_, tid);
+      Debug::SwLog(PotsCwmSsm_ClearTimer, "TimerId mismatch", pack2(tid_, tid));
       return;
    }
 
@@ -1138,7 +1139,7 @@ PotsMuxPsm* PotsCwmSsm::OtherNPsm(const ProtocolSM* npsm) const
 
    if(fid != PotsMuxFactoryId)
    {
-      Debug::SwLog(PotsCwmSsm_OtherNPsm, fid, 0);
+      Debug::SwLog(PotsCwmSsm_OtherNPsm, "invalid FactoryId", fid);
       return nullptr;
    }
 
@@ -1184,7 +1185,7 @@ EventHandler::Rc PotsCwmSsm::ProcessInitAck
 
       if(actNPsm == nullptr)
       {
-         Debug::SwLog(PotsCwmSsm_ProcessInitAck, 0, 1);
+         Debug::SwLog(PotsCwmSsm_ProcessInitAck, "failed to create nPsm", 0);
          SendFacilityNack(hldNPsm, PotsCwbServiceId);
          return EventHandler::Suspend;
       }
@@ -1243,7 +1244,7 @@ EventHandler::Rc PotsCwmSsm::ProcessInitAck
       }
       else
       {
-         Debug::SwLog(PotsCwmSsm_ProcessInitAck, 0, 2);
+         Debug::SwLog(PotsCwmSsm_ProcessInitAck, "JoinPeer failed", 0);
          SendFacilityNack(hldNPsm, PotsCwbServiceId);
          return EventHandler::Suspend;
       }
@@ -1870,7 +1871,7 @@ void PotsCwmSsm::StartTimer(TimerId tid, secs_t duration)
 
    if(tid_ != NIL_ID)
    {
-      Debug::SwLog(PotsCwmSsm_StartTimer, tid_, tid);
+      Debug::SwLog(PotsCwmSsm_StartTimer, "timer in use", pack2(tid_, tid));
 
       upsm->StopTimer(*this, tid_);
       tid_ = NIL_ID;
@@ -1945,7 +1946,7 @@ void PotsCwmSsm::StopTimer(TimerId tid)
 
    if(tid_ != tid)
    {
-      Debug::SwLog(PotsCwmSsm_StopTimer, tid_, tid);
+      Debug::SwLog(PotsCwmSsm_StopTimer, "TimerId mismatch", pack2(tid_, tid));
       return;
    }
 

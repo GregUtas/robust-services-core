@@ -178,7 +178,7 @@ void Timer::Exqueue()
 
    if(!psm_->timerq_.Exq(*this))
    {
-      Debug::SwLog(Timer_Exqueue, 0, 0);
+      Debug::SwLog(Timer_Exqueue, "Exq failed", Tid());
    }
 
    psm_ = nullptr;

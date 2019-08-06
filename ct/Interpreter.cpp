@@ -405,11 +405,14 @@ void LibraryOpcode::Execute()
    case OpNeeders:
       result = lhs_->Assign(rhs1_->Needers());
       break;
+   default:
+      Debug::SwLog(LibraryOpcode_Execute, "unexpected opcode", op_);
+      return;
    }
 
    if(result == nullptr)
    {
-      Debug::SwLog(LibraryOpcode_Execute, op_, 0);
+      Debug::SwLog(LibraryOpcode_Execute, "assignment failure", op_);
       err_ = InterpreterError;
    }
 }
@@ -494,7 +497,7 @@ LibExprErr Interpreter::ApplyOperator(bool operand)
          //
          //  These shouldn't be on the operator stack.
          //
-         Debug::SwLog(Interpreter_ApplyOperator, op, 1);
+         Debug::SwLog(Interpreter_ApplyOperator, "unexpected operator", op);
          return InterpreterError;
 
       default:
@@ -522,7 +525,8 @@ LibExprErr Interpreter::ApplyOperator(bool operand)
       return ExpressionOk;
    }
 
-   Debug::SwLog(Interpreter_ApplyOperator, operands_.size(), 0);
+   Debug::SwLog(Interpreter_ApplyOperator,
+      "too many operands", operands_.size());
    return InterpreterError;
 }
 
@@ -687,7 +691,7 @@ LibrarySet* Interpreter::Evaluate()
    case 1:
       break;
    default:
-      Debug::SwLog(Interpreter_Evaluate, operands_.size(), 1);
+      Debug::SwLog(Interpreter_Evaluate, "too many operands", operands_.size());
       return Error(InterpreterError);
    }
 
@@ -876,7 +880,7 @@ LibExprErr Interpreter::HandleToken()
       }
    }
 
-   Debug::SwLog(Interpreter_HandleToken, type_, 0);
+   Debug::SwLog(Interpreter_HandleToken, "unexpected token", type_);
    return InterpreterError;
 }
 

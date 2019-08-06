@@ -219,7 +219,8 @@ TraceRc FunctionProfiler::Generate(ostream& stream, Sort sort)
       break;
 
    default:
-      Debug::SwLog(FunctionProfiler_Generate, FunctionTrace::GetScope(), 0);
+      Debug::SwLog(FunctionProfiler_Generate,
+         "unexpected scope", FunctionTrace::GetScope());
       return NothingToDisplay;
    }
 

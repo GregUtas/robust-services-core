@@ -22,6 +22,7 @@
 #include "Event.h"
 #include <ostream>
 #include <string>
+#include "Algorithms.h"
 #include "Clock.h"
 #include "Context.h"
 #include "Debug.h"
@@ -50,8 +51,7 @@ Event::Event(Id eid, ServiceSM* owner, Location loc) :
 {
    Debug::ft(Event_ctor);
 
-   if(loc == Saved)
-      Debug::SwLog(Event_ctor, loc, 0);
+   if(loc == Saved) Debug::SwLog(Event_ctor, "invalid location", loc);
 
    if(owner_ != nullptr)
    {
@@ -63,7 +63,7 @@ Event::Event(Id eid, ServiceSM* owner, Location loc) :
 
       if(root != nullptr)
       {
-         Debug::SwLog(Event_ctor, root->Sid(), 0);
+         Debug::SwLog(Event_ctor, "owner should be root SSM", root->Sid());
       }
    }
 
@@ -170,7 +170,7 @@ void Event::Free()
       return;
    }
 
-   Debug::SwLog(Event_Free, eid_, location_);
+   Debug::SwLog(Event_Free, "invalid location", pack2(eid_, location_));
 }
 
 //------------------------------------------------------------------------------
@@ -183,7 +183,7 @@ void Event::FreeContext(bool freeMsg)
 
    //  Only certain events support this function.
    //
-   Debug::SwLog(Event_FreeContext, eid_, 0);
+   Debug::SwLog(Event_FreeContext, "invalid event", eid_);
 }
 
 //------------------------------------------------------------------------------
@@ -221,7 +221,7 @@ Event* Event::Restore(EventHandler::Rc& rc)
       return this;
    }
 
-   Debug::SwLog(Event_Restore, eid_, location_);
+   Debug::SwLog(Event_Restore, "invalid location", pack2(eid_, location_));
    rc = EventHandler::Suspend;
    return nullptr;
 }
@@ -236,7 +236,7 @@ Event* Event::RestoreContext(EventHandler::Rc& rc)
 
    //  Only certain events support this function.
    //
-   Debug::SwLog(Event_RestoreContext, eid_, 0);
+   Debug::SwLog(Event_RestoreContext, "invalid event", eid_);
    return nullptr;
 }
 
@@ -256,7 +256,7 @@ bool Event::Save()
       return true;
    }
 
-   Debug::SwLog(Event_Save, eid_, location_);
+   Debug::SwLog(Event_Save, "invalid location", pack2(eid_, location_));
    return false;
 }
 
@@ -270,7 +270,7 @@ bool Event::SaveContext()
 
    //  Only certain events support this function.
    //
-   Debug::SwLog(Event_SaveContext, eid_, 0);
+   Debug::SwLog(Event_SaveContext, "invalid event", eid_);
    return false;
 }
 
@@ -318,7 +318,8 @@ void Event::SetOwner(RootServiceSM& owner)
 
    if(owner_ != nullptr)
    {
-      Debug::SwLog(Event_SetOwner, owner.Sid(), Eid());
+      Debug::SwLog(Event_SetOwner,
+         "owner already exists", pack2(owner.Sid(), eid_));
       return;
    }
 

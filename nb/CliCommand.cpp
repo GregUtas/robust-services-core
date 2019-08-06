@@ -36,6 +36,7 @@ namespace NodeBase
 {
 const int CliCommand::CommandWidth = 12;
 const char CliCommand::CommandSeparator = '.';
+fixed_string CliCommand::UnexpectedIndex = "unexpected index";
 
 //------------------------------------------------------------------------------
 
@@ -48,7 +49,7 @@ CliCommand::CliCommand(c_string comm, c_string help, uint32_t size) :
 
    if((comm != nullptr) && (strlen(comm) > CommandWidth))
    {
-      Debug::SwLog(CliCommand_ctor, strlen(comm), 0);
+      Debug::SwLog(CliCommand_ctor, "command name length", strlen(comm));
    }
 }
 
@@ -237,9 +238,7 @@ word CliCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(CliCommand_ProcessCommand);
 
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(CliCommand_ProcessCommand, Text(), 0);
+   Debug::SwLog(CliCommand_ProcessCommand, strOver(this), 0);
    return -1;
 }
 
@@ -253,7 +252,7 @@ word CliCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
    //  This can be invoked to generate a log.
    //
-   Debug::SwLog(CliCommand_ProcessSubcommand, index, 0);
+   Debug::SwLog(CliCommand_ProcessSubcommand, UnexpectedIndex, index);
    return -1;
 }
 }

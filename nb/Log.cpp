@@ -73,12 +73,12 @@ Log::Log(LogGroup* group, LogId id, fixed_string expl) :
 
    if((id_ > MaxId) || (id < TroubleLog))
    {
-      Debug::SwLog(Log_ctor, "LogId invalid", id_);
+      Debug::SwLog(Log_ctor, "invalid LogId", id_);
    }
 
    if(expl_.size() > MaxExplSize)
    {
-      Debug::SwLog(Log_ctor, "expl size", expl_.size());
+      Debug::SwLog(Log_ctor, "expl length", expl_.size());
    }
 
    if(!group_->BindLog(*this))

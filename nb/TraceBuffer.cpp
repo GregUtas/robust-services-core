@@ -266,7 +266,8 @@ void TraceBuffer::ClaimBlocks()
 
          if(--count <= 0)
          {
-            Debug::SwLog(TraceBuffer_ClaimBlocks, MaxRecords(), 0);
+            Debug::SwLog(TraceBuffer_ClaimBlocks,
+               "sanity count reached", MaxRecords());
             break;
          }
       }
@@ -655,7 +656,8 @@ void TraceBuffer::Shutdown(RestartLevel level)
 
          if(--count <= 0)
          {
-            Debug::SwLog(TraceBuffer_Shutdown, MaxRecords(), 0);
+            Debug::SwLog(TraceBuffer_Shutdown,
+               "sanity count reached", MaxRecords());
             break;
          }
       }
@@ -712,7 +714,7 @@ void TraceBuffer::StopTracing()
 
    if(hardLock_.exchange(false))
    {
-      Debug::SwLog(TraceBuffer_StopTracing, 0, 0);
+      Debug::SwLog(TraceBuffer_StopTracing, "not locked", 0);
    }
 
    //  If trace records are being output immediately, display the last
@@ -747,6 +749,6 @@ void TraceBuffer::Unlock()
    if(softLocks_.load() > 0)
       softLocks_.fetch_sub(1);
    else
-      Debug::SwLog(TraceBuffer_Unlock, 0, 1);
+      Debug::SwLog(TraceBuffer_Unlock, "not locked", 0);
 }
 }

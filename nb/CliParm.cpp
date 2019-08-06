@@ -56,11 +56,12 @@ CliParm::CliParm(c_string help, bool opt, c_string tag) :
 
    Debug::Assert(help_ != nullptr);
 
-   auto len = ParmWidth + strlen(ParmExplPrefix) + strlen(help_);
+   auto size = strlen(help_);
+   auto total = ParmWidth + strlen(ParmExplPrefix) + size;
 
-   if((len == 0) || (len >= COUT_LENGTH_MAX))
+   if((size == 0) || (total >= COUT_LENGTH_MAX))
    {
-      Debug::SwLog(CliParm_ctor, len, 0);
+      Debug::SwLog(CliParm_ctor, "help length", size);
    }
 }
 
@@ -384,9 +385,7 @@ bool CliParm::ShowValues(string& values) const
 {
    Debug::ft(CliParm_ShowValues);
 
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(CliParm_ShowValues, GetId(), 0);
+   Debug::SwLog(CliParm_ShowValues, strOver(this), 0);
    return false;
 }
 }

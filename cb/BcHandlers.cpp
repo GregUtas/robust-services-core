@@ -48,7 +48,7 @@ EventHandler::Rc BcNuAnalyzeRemoteMessage::ProcessEvent
       return Continue;
    }
 
-   Debug::SwLog(BcNuAnalyzeRemoteMessage_ProcessEvent, sid, 0);
+   Debug::SwLog(BcNuAnalyzeRemoteMessage_ProcessEvent, "invalid signal", sid);
    return bcssm.RaiseReleaseCall(nextEvent, Cause::MessageInvalidForState);
 }
 
@@ -80,7 +80,8 @@ EventHandler::Rc BcScAnalyzeRemoteMessage::ProcessEvent
       case Progress::Alerting:
          return bcssm.RaiseRemoteAlerting(nextEvent);
       default:
-         Debug::SwLog(BcScAnalyzeRemoteMessage_ProcessEvent, cpi->progress, 0);
+         Debug::SwLog(BcScAnalyzeRemoteMessage_ProcessEvent,
+            "invalid Progress::Ind", cpi->progress);
       }
       break;
 
@@ -99,7 +100,8 @@ EventHandler::Rc BcScAnalyzeRemoteMessage::ProcessEvent
       return bcssm.AnalyzeNPsmTimeout(*msg, nextEvent);
 
    default:
-      Debug::SwLog(BcScAnalyzeRemoteMessage_ProcessEvent, sid, 0);
+      Debug::SwLog(BcScAnalyzeRemoteMessage_ProcessEvent,
+         "invalid signal", sid);
    }
 
    return bcssm.RaiseReleaseCall(nextEvent, Cause::MessageInvalidForState);
@@ -142,7 +144,7 @@ EventHandler::Rc BcOaAnalyzeRemoteMessage::ProcessEvent
       return bcssm.AnalyzeNPsmTimeout(*msg, nextEvent);
    }
 
-   Debug::SwLog(BcOaAnalyzeRemoteMessage_ProcessEvent, sid, 0);
+   Debug::SwLog(BcOaAnalyzeRemoteMessage_ProcessEvent, "invalid signal", sid);
    return bcssm.RaiseReleaseCall(nextEvent, Cause::MessageInvalidForState);
 }
 
@@ -172,7 +174,7 @@ EventHandler::Rc BcPcAnalyzeRemoteMessage::ProcessEvent
       return bcssm.AnalyzeNPsmTimeout(*msg, nextEvent);
    }
 
-   Debug::SwLog(BcPcAnalyzeRemoteMessage_ProcessEvent, sid, 0);
+   Debug::SwLog(BcPcAnalyzeRemoteMessage_ProcessEvent, "invalid signal", sid);
    return bcssm.RaiseReleaseCall(nextEvent, Cause::MessageInvalidForState);
 }
 
@@ -204,7 +206,8 @@ EventHandler::Rc BcAcAnalyzeRemoteMessage::ProcessEvent
       case Progress::Resume:
          return bcssm.RaiseRemoteResume(nextEvent);
       default:
-         Debug::SwLog(BcAcAnalyzeRemoteMessage_ProcessEvent, cpi->progress, 1);
+         Debug::SwLog(BcAcAnalyzeRemoteMessage_ProcessEvent,
+            "invalid Progress::Ind", cpi->progress);
       }
       break;
 
@@ -216,7 +219,8 @@ EventHandler::Rc BcAcAnalyzeRemoteMessage::ProcessEvent
       return bcssm.AnalyzeNPsmTimeout(*msg, nextEvent);
 
    default:
-      Debug::SwLog(BcAcAnalyzeRemoteMessage_ProcessEvent, sid, 0);
+      Debug::SwLog(BcAcAnalyzeRemoteMessage_ProcessEvent,
+         "invalid signal", sid);
    }
 
    return bcssm.RaiseReleaseCall(nextEvent, Cause::MessageInvalidForState);

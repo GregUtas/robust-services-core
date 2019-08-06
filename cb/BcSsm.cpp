@@ -22,6 +22,7 @@
 #include "BcSessions.h"
 #include <iomanip>
 #include <ostream>
+#include "Algorithms.h"
 #include "BcProtocol.h"
 #include "Debug.h"
 #include "FactoryRegistry.h"
@@ -76,7 +77,7 @@ CipPsm* BcSsm::AllocNPsm()
 
    if(nPsm_ != nullptr)
    {
-      Debug::SwLog(BcSsm_AllocNPsm, Sid(), 0);
+      Debug::SwLog(BcSsm_AllocNPsm, "PSM already exists", Sid());
       return nPsm_;
    }
 
@@ -116,9 +117,7 @@ EventHandler::Rc BcSsm::AnalyzeNPsmTimeout
 {
    Debug::ft(BcSsm_AnalyzeNPsmTimeout);
 
-   //  This must be overridden by a subclass that runs a timer on the CIP PSM.
-   //
-   Debug::SwLog(BcSsm_AnalyzeNPsmTimeout, Sid(), 0);
+   Debug::SwLog(BcSsm_AnalyzeNPsmTimeout, strOver(this), Sid());
    return RaiseReleaseCall(nextEvent, Cause::MessageInvalidForState);
 }
 
@@ -132,7 +131,7 @@ CipMessage* BcSsm::BuildCipCpg(Progress::Ind progress)
 
    if(nPsm_ == nullptr)
    {
-      Debug::SwLog(BcSsm_BuildCipCpg, Sid(), progress);
+      Debug::SwLog(BcSsm_BuildCipCpg, "null nPSM", Sid());
       return nullptr;
    }
 
@@ -160,7 +159,7 @@ CipMessage* BcSsm::BuildCipIam()
    //
    if(uPsm_ == nullptr)
    {
-      Debug::SwLog(BcSsm_BuildCipIam, Sid(), 0);
+      Debug::SwLog(BcSsm_BuildCipIam, "null uPSM", Sid());
       return nullptr;
    }
 
@@ -207,7 +206,7 @@ CipMessage* BcSsm::BuildCipRel(Cause::Ind cause)
    //
    if(nPsm_ == nullptr)
    {
-      Debug::SwLog(BcSsm_BuildCipRel, Sid(), 0);
+      Debug::SwLog(BcSsm_BuildCipRel, "null nPSM", Sid());
       return nullptr;
    }
 
@@ -335,7 +334,7 @@ EventHandler::Rc BcSsm::HandleLocalAlerting()
    //
    if(nPsm_ == nullptr)
    {
-      Debug::SwLog(BcSsm_HandleLocalAlerting, Sid(), 0);
+      Debug::SwLog(BcSsm_HandleLocalAlerting, "null nPSM", Sid());
       return EventHandler::Suspend;
    }
 
@@ -350,7 +349,7 @@ EventHandler::Rc BcSsm::HandleLocalAlerting()
 
    if(uPsm_ == nullptr)
    {
-      Debug::SwLog(BcSsm_HandleLocalAlerting, Sid(), 1);
+      Debug::SwLog(BcSsm_HandleLocalAlerting, "null uPSM", Sid());
       return EventHandler::Suspend;
    }
 
@@ -373,7 +372,7 @@ EventHandler::Rc BcSsm::HandleLocalAnswer()
    //
    if(nPsm_ == nullptr)
    {
-      Debug::SwLog(BcSsm_HandleLocalAnswer, Sid(), 0);
+      Debug::SwLog(BcSsm_HandleLocalAnswer, "null nPSM", Sid());
       return EventHandler::Suspend;
    }
 
@@ -384,7 +383,7 @@ EventHandler::Rc BcSsm::HandleLocalAnswer()
 
    if(uPsm_ == nullptr)
    {
-      Debug::SwLog(BcSsm_HandleLocalAnswer, Sid(), 1);
+      Debug::SwLog(BcSsm_HandleLocalAnswer, "null uPSM", Sid());
       return EventHandler::Suspend;
    }
 
@@ -932,7 +931,7 @@ EventHandler::Rc BcSsm::SelectRoute(Event*& nextEvent)
       }
    }
 
-   Debug::SwLog(BcSsm_SelectRoute, route_.selector, 0);
+   Debug::SwLog(BcSsm_SelectRoute, "invalid route", route_.selector);
    return RaiseReleaseCall(nextEvent, Cause::ExchangeRoutingError);
 }
 
@@ -971,7 +970,7 @@ void BcSsm::SetNPsm(CipPsm& psm)
 
    if(nPsm_ != nullptr)
    {
-      Debug::SwLog(BcSsm_SetNPsm, Sid(), 0);
+      Debug::SwLog(BcSsm_SetNPsm, "PSM already exists", Sid());
       return;
    }
 
@@ -988,7 +987,8 @@ void BcSsm::SetUPsm(MediaPsm& psm)
 
    if(uPsm_ != nullptr)
    {
-      Debug::SwLog(BcSsm_SetUPsm, Sid(), uPsm_->GetFactory());
+      Debug::SwLog(BcSsm_SetUPsm, "PSM already exists",
+         pack2(uPsm_->GetFactory(), Sid()));
       return;
    }
 

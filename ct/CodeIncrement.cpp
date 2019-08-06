@@ -1164,7 +1164,7 @@ word ShowCommand::ProcessCommand(CliThread& cli) const
       break;
 
    default:
-      Debug::SwLog(ShowCommand_ProcessCommand, index, 0);
+      Debug::SwLog(ShowCommand_ProcessCommand, UnexpectedIndex, index);
       return cli.Report(index, SystemErrorExpl);
    }
 

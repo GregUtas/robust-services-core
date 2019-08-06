@@ -234,7 +234,7 @@ word SysTcpSocket::Recv(byte_t* buff, size_t size)
 
    if((buff == nullptr) || (size == 0))
    {
-      Debug::SwLog(SysTcpSocket_Recv, size, 0);
+      Debug::SwLog(SysTcpSocket_Recv, size, (buff == nullptr));
       return -1;
    }
 
@@ -279,7 +279,7 @@ word SysTcpSocket::Send(const byte_t* data, size_t size)
 
    if((data == nullptr) || (size == 0))
    {
-      Debug::SwLog(SysTcpSocket_Send, size, 0);
+      Debug::SwLog(SysTcpSocket_Send, size, (data == nullptr));
       return -1;
    }
 

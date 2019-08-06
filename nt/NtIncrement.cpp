@@ -3608,7 +3608,7 @@ void RecoveryTestThread::Enter()
          Raise(signal_);
          break;
       default:
-         Debug::SwLog(RecoveryTestThread_Enter, test, 0);
+         Debug::SwLog(RecoveryTestThread_Enter, "unexpected test", test);
       }
 
       //  Sleep for 3 seconds or until interrupted to perform the next test.
@@ -3972,7 +3972,7 @@ word RecoverCommand::ProcessCommand(CliThread& cli) const
       break;
 
    default:
-      Debug::SwLog(RecoverCommand_ProcessCommand, index, 0);
+      Debug::SwLog(RecoverCommand_ProcessCommand, UnexpectedIndex, index);
       return cli.Report(index, SystemErrorExpl);
    }
 

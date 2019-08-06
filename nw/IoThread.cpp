@@ -65,7 +65,7 @@ IoThread::IoThread(const IpService* service, ipport_t port) :
 
    if(rxSize_ > MaxRxBuffSize)
    {
-      Debug::SwLog(IoThread_ctor, rxSize_, 0);
+      Debug::SwLog(IoThread_ctor, "rx size", rxSize_);
       rxSize_ = MaxRxBuffSize;
    }
 
@@ -73,7 +73,7 @@ IoThread::IoThread(const IpService* service, ipport_t port) :
 
    if(txSize_ > MaxTxBuffSize)
    {
-      Debug::SwLog(IoThread_ctor, txSize_, 1);
+      Debug::SwLog(IoThread_ctor, "tx size", txSize_);
       txSize_ = MaxTxBuffSize;
    }
 

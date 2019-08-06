@@ -106,7 +106,7 @@ bool CliText::BindParm(CliParm& parm)
 
          if((t != nullptr) && (strcmp(t, tag) == 0))
          {
-            Debug::SwLog(CliText_BindParm, Parms().Size(), 1);
+            Debug::SwLog(CliText_BindParm, t, Parms().Size());
             return false;
          }
       }

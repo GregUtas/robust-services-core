@@ -143,13 +143,14 @@ ProtocolLayer* MsgPort::AllocUpper(const Message& msg)
 
    if(fac == nullptr)
    {
-      Debug::SwLog(MsgPort_AllocUpper, pack2(hdr->protocol, hdr->signal), 0);
+      Debug::SwLog(MsgPort_AllocUpper,
+         "factory not found", pack2(hdr->protocol, hdr->signal));
       return nullptr;
    }
 
    if(fac->GetType() == SingleMsg)
    {
-      Debug::SwLog(MsgPort_AllocUpper, pack2(hdr->protocol, hdr->signal), fid);
+      Debug::SwLog(MsgPort_AllocUpper, "invalid ContextType", fid);
       return nullptr;
    }
 
@@ -276,7 +277,7 @@ void MsgPort::Initialize(const Message* msg)
    if(fac != nullptr)
       static_cast< PsmFactory* >(fac)->PortAllocated(*this, msg);
    else
-      Debug::SwLog(MsgPort_Initialize, fid, 0);
+      Debug::SwLog(MsgPort_Initialize, "factory not found", fid);
 
    //  Record the port's creation if this context is traced.
    //

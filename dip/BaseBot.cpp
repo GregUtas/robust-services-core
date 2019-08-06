@@ -208,7 +208,7 @@ void BaseBot::disconnect_from_server(ProtocolError error)
 
    if(state_ == DISCONNECTED)
    {
-      Debug::SwLog(BaseBot_disconnect_from_server, "Already disconnected", 0);
+      Debug::SwLog(BaseBot_disconnect_from_server, "already disconnected", 0);
       return;
    }
 
@@ -1945,7 +1945,7 @@ void BaseBot::report_end(const TokenMessage& message) const
       break;
 
    default:
-      Debug::SwLog(BaseBot_report_end, signal, 0);
+      Debug::SwLog(BaseBot_report_end, "unexpected signal", signal);
       return;
    }
 
@@ -2317,7 +2317,7 @@ void BaseBot::send_im_message()
 
    if(state_ != DISCONNECTED)
    {
-      Debug::SwLog(BaseBot_send_im_message, "Already connected", state_);
+      Debug::SwLog(BaseBot_send_im_message, "already connected", state_);
       return;
    }
 

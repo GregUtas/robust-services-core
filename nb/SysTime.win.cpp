@@ -47,14 +47,14 @@ SysTime::SysTime()
 
    if(err != 0)
    {
-      Debug::SwLog(SysTime_ctor2, err, 0);
+      Debug::SwLog(SysTime_ctor2, "_ftime_s failed", err);
    }
 
    err = localtime_s(&timeofday, &longtime);
 
    if(err != 0)
    {
-      Debug::SwLog(SysTime_ctor2, err, 1);
+      Debug::SwLog(SysTime_ctor2, "localtime_s failed", err);
    }
 
    time_[YearsField] = timeofday.tm_year + 1900;

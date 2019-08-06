@@ -64,7 +64,7 @@ SysIpL2Addr::SysIpL2Addr(const string& text) : v4Addr_(INADDR_NONE)
       Debug::SwLog(SysIpL2Addr_ctor4, text, 0);
       break;
    default:
-      Debug::SwLog(SysIpL2Addr_ctor4, WSAGetLastError(), 0);
+      Debug::SwLog(SysIpL2Addr_ctor4, "inet_pton failed", WSAGetLastError());
    }
 }
 

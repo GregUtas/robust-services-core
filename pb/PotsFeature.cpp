@@ -73,9 +73,7 @@ CliText* PotsFeature::Attrs() const
 {
    Debug::ft(PotsFeature_Attrs);
 
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(PotsFeature_Attrs, AbbrName(), 0);
+   Debug::SwLog(PotsFeature_Attrs, strOver(this), 0);
    return nullptr;
 }
 
@@ -133,9 +131,7 @@ PotsFeatureProfile* PotsFeature::Subscribe
 {
    Debug::ft(PotsFeature_Subscribe);
 
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(PotsFeature_Subscribe, AbbrName(), 0);
+   Debug::SwLog(PotsFeature_Subscribe, strOver(this), 0);
    return nullptr;
 }
 }

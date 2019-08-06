@@ -71,7 +71,7 @@ word SysUdpSocket::RecvFrom(byte_t* buff, size_t size, SysIpL3Addr& remAddr)
 
    if((buff == nullptr) || (size == 0))
    {
-      Debug::SwLog(SysUdpSocket_RecvFrom, size, 0);
+      Debug::SwLog(SysUdpSocket_RecvFrom, size, (buff == nullptr));
       return 0;
    }
 
@@ -103,7 +103,7 @@ word SysUdpSocket::SendTo
 
    if((data == nullptr) || (size == 0))
    {
-      Debug::SwLog(SysUdpSocket_SendTo, size, 0);
+      Debug::SwLog(SysUdpSocket_SendTo, size, (data == nullptr));
       return 0;
    }
 

@@ -155,7 +155,7 @@ RootServiceSM* PotsCallFactory::AllocRoot
       break;
 
    default:
-      Debug::SwLog(PotsCallFactory_AllocRoot, fid, 0);
+      Debug::SwLog(PotsCallFactory_AllocRoot, "invalid FactoryId", fid);
    }
 
    return root;

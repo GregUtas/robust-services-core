@@ -349,13 +349,13 @@ bool IpPort::SetSocket(SysSocket* socket)
    //
    if(handler_ == nullptr)
    {
-      Debug::SwLog(IpPort_SetSocket, port_, 0);
+      Debug::SwLog(IpPort_SetSocket, "input handler not found", port_);
       return false;
    }
 
    if(thread_ == nullptr)
    {
-      Debug::SwLog(IpPort_SetSocket, port_, 1);
+      Debug::SwLog(IpPort_SetSocket, "I/O thread not found", port_);
       return false;
    }
 
@@ -363,7 +363,7 @@ bool IpPort::SetSocket(SysSocket* socket)
    //
    if(socket_ != nullptr)
    {
-      Debug::SwLog(IpPort_SetSocket, port_, 2);
+      Debug::SwLog(IpPort_SetSocket, "socket already exists", port_);
    }
 
    socket_ = socket;
@@ -390,7 +390,7 @@ void IpPort::SetThread(IoThread* thread)
    //
    if(thread_ != nullptr)
    {
-      Debug::SwLog(IpPort_SetThread, port_, 0);
+      Debug::SwLog(IpPort_SetThread, "I/O thread already exists", port_);
    }
 
    thread_ = thread;

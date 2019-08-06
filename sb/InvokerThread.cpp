@@ -97,7 +97,7 @@ bool InvokerThread::BlockingAllowed(BlockingReason why, fn_name_arg func)
       break;
 
    default:
-      Debug::SwLog(InvokerThread_BlockingAllowed, why, 0);
+      Debug::SwLog(InvokerThread_BlockingAllowed, "invalid reason", why);
       return false;
    }
 
@@ -166,7 +166,7 @@ void InvokerThread::Enter()
    //  ProcessWork is not supposed to return.
    //
    RunningInvoker_ = nullptr;
-   Debug::SwLog(InvokerThread_Enter, Tid(), 0);
+   Debug::SwLog(InvokerThread_Enter, "ProcessWork should not return", Tid());
 }
 
 //------------------------------------------------------------------------------

@@ -175,7 +175,7 @@ TraceRc SbTracer::ClearSelections(FlagId filter)
       break;
 
    default:
-      Debug::SwLog(SbTracer_ClearSelections, filter, 0);
+      Debug::SwLog(SbTracer_ClearSelections, "unexpected filter", filter);
    }
 
    return TraceOk;

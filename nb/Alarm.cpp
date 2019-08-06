@@ -53,12 +53,12 @@ Alarm::Alarm(const string& name, const string& expl, secs_t delay) :
 
    if(name_.size() > MaxNameSize)
    {
-      Debug::SwLog(Alarm_ctor, "name size", name_.size());
+      Debug::SwLog(Alarm_ctor, "name length", name_.size());
    }
 
    if(expl_.size() > MaxExplSize)
    {
-      Debug::SwLog(Alarm_ctor, "expl size", expl_.size());
+      Debug::SwLog(Alarm_ctor, "expl length", expl_.size());
    }
 
    if(!Singleton< AlarmRegistry >::Instance()->BindAlarm(*this))

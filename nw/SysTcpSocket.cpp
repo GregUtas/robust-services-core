@@ -22,6 +22,7 @@
 #include "SysTcpSocket.h"
 #include <ostream>
 #include <string>
+#include "Algorithms.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "InputHandler.h"
@@ -94,7 +95,8 @@ SysTcpSocket::~SysTcpSocket()
    if(iotActive_ || (appState_ == Acquired ) ||
       ((appState_ == Initial) && (state_ != Idle)))
    {
-      Debug::SwLog(SysTcpSocket_dtor, appState_, iotActive_);
+      Debug::SwLog(SysTcpSocket_dtor,
+         "socket still in use", pack2(iotActive_, appState_));
    }
 
    if(icMsg_ != nullptr)
@@ -356,7 +358,8 @@ SysSocket::SendRc SysTcpSocket::SendBuff(IpBuffer& buff)
    //
    if(state_ != Connected)
    {
-      Debug::SwLog(SysTcpSocket_SendBuff, txport, state_);
+      Debug::SwLog(SysTcpSocket_SendBuff,
+         "invalid state", pack2(txport, state_));
       return SendFailed;
    }
 
@@ -367,7 +370,8 @@ SysSocket::SendRc SysTcpSocket::SendBuff(IpBuffer& buff)
 
    if(!RemAddr(peer))
    {
-      Debug::SwLog(SysTcpSocket_SendBuff, txport, Connected);
+      Debug::SwLog(SysTcpSocket_SendBuff,
+         "invalid state", pack2(txport, Connected));
       Disconnect();
       return SendFailed;
    }

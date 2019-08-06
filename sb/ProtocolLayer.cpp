@@ -81,7 +81,7 @@ ProtocolLayer::~ProtocolLayer()
    //
    if(upper_ != nullptr)
    {
-      Debug::SwLog(ProtocolLayer_dtor, 0, 0);
+      Debug::SwLog(ProtocolLayer_dtor, "unexpected upper layer", GetFactory());
       upper_->AdjacentDeleted(false);
       upper_ = nullptr;
    }
@@ -216,9 +216,7 @@ FactoryId ProtocolLayer::GetFactory() const
 {
    Debug::ft(ProtocolLayer_GetFactory);
 
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(ProtocolLayer_GetFactory, 0, 0);
+   Debug::SwLog(ProtocolLayer_GetFactory, strOver(this), 0);
    return NIL_ID;
 }
 
@@ -252,9 +250,7 @@ MsgPort* ProtocolLayer::Port() const
 {
    Debug::ft(ProtocolLayer_Port);
 
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(ProtocolLayer_Port, GetFactory(), 0);
+   Debug::SwLog(ProtocolLayer_Port, strOver(this), 0);
    return nullptr;
 }
 
@@ -292,9 +288,7 @@ Message::Route ProtocolLayer::Route() const
 {
    Debug::ft(ProtocolLayer_Route);
 
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(ProtocolLayer_Route, GetFactory(), 0);
+   Debug::SwLog(ProtocolLayer_Route, strOver(this), 0);
    return Message::External;
 }
 
@@ -386,9 +380,7 @@ ProtocolSM* ProtocolLayer::UppermostPsm() const
 {
    Debug::ft(ProtocolLayer_UppermostPsm);
 
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(ProtocolLayer_UppermostPsm, GetFactory(), 0);
+   Debug::SwLog(ProtocolLayer_UppermostPsm, strOver(this), 0);
    return nullptr;
 }
 

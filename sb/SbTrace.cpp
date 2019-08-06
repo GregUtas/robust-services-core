@@ -23,6 +23,7 @@
 #include <iomanip>
 #include <ios>
 #include <sstream>
+#include "Algorithms.h"
 #include "Context.h"
 #include "Debug.h"
 #include "Factory.h"
@@ -397,7 +398,8 @@ BuffTrace* BuffTrace::NextIcMsg
 
          if(--max <= 0)
          {
-            Debug::SwLog(BuffTrace_NextIcMsg, 200, 0);
+            Debug::SwLog(BuffTrace_NextIcMsg,
+               "message not found", pack2(fid, sid));
             break;
          }
       }

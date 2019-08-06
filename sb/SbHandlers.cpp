@@ -77,8 +77,8 @@ EventHandler::Rc SbAnalyzeMessage::ProcessEvent
    //
    if(ssm.CurrState() != stid)
    {
-      Debug::SwLog(SbAnalyzeMessage_ProcessEvent,
-         pack3(ssm.Sid(), state->Stid(), ssm.CurrState()), 1);
+      Debug::SwLog(SbAnalyzeMessage_ProcessEvent, "invalid state change",
+         pack3(ssm.Sid(), state->Stid(), ssm.CurrState()));
    }
 
    return rc;
@@ -181,7 +181,8 @@ EventHandler::Rc SbInitiationReq::ProcessEvent
 
       if(svc == nullptr)
       {
-         Debug::SwLog(SbInitiationReq_ProcessEvent, ire.GetModifier(), 0);
+         Debug::SwLog(SbInitiationReq_ProcessEvent,
+            "service not found", ire.GetModifier());
          return Suspend;
       }
 

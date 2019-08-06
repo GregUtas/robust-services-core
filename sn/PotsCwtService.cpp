@@ -26,6 +26,7 @@
 #include "State.h"
 #include <ostream>
 #include <string>
+#include "Algorithms.h"
 #include "BcCause.h"
 #include "BcProgress.h"
 #include "BcProtocol.h"
@@ -761,7 +762,7 @@ void PotsCwbSsm::ClearTimer(TimerId tid)
 
    if(tid_ != tid)
    {
-      Debug::SwLog(PotsCwbSsm_ClearTimer, tid_, tid);
+      Debug::SwLog(PotsCwbSsm_ClearTimer, "TimerId mismatch", pack2(tid_, tid));
       return;
    }
 
@@ -794,7 +795,7 @@ void PotsCwbSsm::FreeContext()
    }
    else
    {
-      Debug::SwLog(PotsCwbSsm_FreeContext, 0, 0);
+      Debug::SwLog(PotsCwbSsm_FreeContext, "null SAP event", 0);
    }
 }
 
@@ -890,7 +891,7 @@ EventHandler::Rc PotsCwbSsm::RestoreContext(Event*& nextEvent)
    }
    else
    {
-      Debug::SwLog(PotsCwbSsm_RestoreContext, 0, 0);
+      Debug::SwLog(PotsCwbSsm_RestoreContext, "null SAP event", 0);
    }
 
    return rc;
@@ -909,7 +910,7 @@ void PotsCwbSsm::StartTimer(TimerId tid, secs_t duration)
 
    if(tid_ != NIL_ID)
    {
-      Debug::SwLog(PotsCwbSsm_StartTimer, tid_, tid);
+      Debug::SwLog(PotsCwbSsm_StartTimer, "timer in use", pack2(tid_, tid));
 
       upsm->StopTimer(*this, tid_);
       tid_ = NIL_ID;
@@ -931,7 +932,7 @@ void PotsCwbSsm::StopTimer(TimerId tid)
 
    if(tid_ != tid)
    {
-      Debug::SwLog(PotsCwbSsm_StopTimer, tid_, tid);
+      Debug::SwLog(PotsCwbSsm_StopTimer, "TimerId mismatch", pack2(tid_, tid));
       return;
    }
 
@@ -1077,7 +1078,8 @@ EventHandler::Rc PotsCwtAcAnalyzeUserMessage::ProcessEvent
             nextEvent = new PotsCwtReleaseEvent(cwtssm, pfi->ind);
             return Continue;
          default:
-            Debug::SwLog(PotsCwtAcAnalyzeUserMessage_ProcessEvent, pfi->ind, 0);
+            Debug::SwLog(PotsCwtAcAnalyzeUserMessage_ProcessEvent,
+               "unexpected Facility::Ind", pfi->ind);
          }
 
          return Suspend;
@@ -1130,7 +1132,8 @@ EventHandler::Rc PotsCwtAcRelease::ProcessEvent
       cwtssm.SetNextState(ServiceSM::Null);
       break;
    default:
-      Debug::SwLog(PotsCwtAcRelease_ProcessEvent, ind, 0);
+      Debug::SwLog(PotsCwtAcRelease_ProcessEvent,
+         "unexpected Facility::Ind", ind);
    }
 
    return Suspend;

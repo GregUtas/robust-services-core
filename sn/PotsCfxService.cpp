@@ -24,6 +24,7 @@
 #include "State.h"
 #include <ostream>
 #include <string>
+#include "Algorithms.h"
 #include "BcAddress.h"
 #include "BcProtocol.h"
 #include "BcRouting.h"
@@ -637,7 +638,8 @@ EventHandler::Rc PotsCfxSsm::ProcessSip(Event& currEvent, Event*& nextEvent)
    auto& ire = static_cast< InitiationReqEvent& >(currEvent);
 
    ire.DenyRequest();
-   Debug::SwLog(PotsCfxSsm_ProcessSip, stid, ire.GetModifier());
+   Debug::SwLog(PotsCfxSsm_ProcessSip,
+      "unexpected state", pack2(ire.GetModifier(), stid));
    return EventHandler::Pass;
 }
 

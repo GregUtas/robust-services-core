@@ -248,13 +248,15 @@ void ServiceSM::EnqEvent(Event& evt, Event::Location loc)
 
    if(loc >= Event::Location_N)
    {
-      Debug::SwLog(ServiceSM_EnqEvent, pack3(sid_, evt.Eid(), loc), 0);
+      Debug::SwLog(ServiceSM_EnqEvent,
+         "invalid location", pack3(sid_, evt.Eid(), loc));
       return;
    }
 
    if(!eventq_[loc].Enq(evt))
    {
-      Debug::SwLog(ServiceSM_EnqEvent, pack3(sid_, evt.Eid(), loc), 1);
+      Debug::SwLog(ServiceSM_EnqEvent,
+         "Enq failed", pack3(sid_, evt.Eid(), loc));
    }
 }
 
@@ -295,13 +297,15 @@ bool ServiceSM::ExqEvent(Event& evt, Event::Location loc)
 
    if(loc >= Event::Location_N)
    {
-      Debug::SwLog(ServiceSM_ExqEvent, pack3(sid_, evt.Eid(), loc), 0);
+      Debug::SwLog(ServiceSM_ExqEvent,
+         "invalid location", pack3(sid_, evt.Eid(), loc));
       return false;
    }
 
    if(!eventq_[loc].Exq(evt))
    {
-      Debug::SwLog(ServiceSM_EnqEvent, pack3(sid_, evt.Eid(), loc), 1);
+      Debug::SwLog(ServiceSM_EnqEvent,
+         "Exq failed", pack3(sid_, evt.Eid(), loc));
       return false;
    }
 

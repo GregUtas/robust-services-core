@@ -398,7 +398,7 @@ EventHandler::Rc ProxyBcAnalyzeProxyMessage::ProcessEvent
       return pssm.RaiseProxyRelease(nextEvent, cci->cause);
    }
 
-   Debug::SwLog(ProxyBcAnalyzeProxyMessage_ProcessEvent, sid, 0);
+   Debug::SwLog(ProxyBcAnalyzeProxyMessage_ProcessEvent, "invalid signal", sid);
    return Suspend;
 }
 
@@ -852,7 +852,7 @@ void ProxyBcSsm::Relay(BcPsm& target) const
 
    if(&target == nullptr)
    {
-      Debug::SwLog(ProxyBcSsm_Relay, 0, 0);
+      Debug::SwLog(ProxyBcSsm_Relay, "null target PSM", 0);
       return;
    }
 
@@ -860,7 +860,7 @@ void ProxyBcSsm::Relay(BcPsm& target) const
 
    if(msg == nullptr)
    {
-      Debug::SwLog(ProxyBcSsm_Relay, 0, 1);
+      Debug::SwLog(ProxyBcSsm_Relay, "message not found", 1);
       return;
    }
 
@@ -868,7 +868,7 @@ void ProxyBcSsm::Relay(BcPsm& target) const
 
    if(prid != CipProtocolId)
    {
-      Debug::SwLog(ProxyBcSsm_Relay, prid, 2);
+      Debug::SwLog(ProxyBcSsm_Relay, "invalid protocol", prid);
       return;
    }
 

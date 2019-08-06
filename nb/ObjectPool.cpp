@@ -532,7 +532,7 @@ Pooled* ObjectPool::DeqBlock(size_t size)
 
    if(size > maxsize)
    {
-      Debug::SwLog(ObjectPool_DeqBlock, Pid(), size);
+      Debug::SwLog(ObjectPool_DeqBlock, size, Pid());
       throw AllocationException(type_, size);
    }
 
@@ -673,13 +673,13 @@ void ObjectPool::EnqBlock(Pooled* obj, bool deleted)
    {
       if(obj->orphaned_ == 0)
       {
-         Debug::SwLog(ObjectPool_EnqBlock, debug64_t(obj), pack2(Pid(), 0));
+         Debug::SwLog(ObjectPool_EnqBlock, debug64_t(obj), pack2(0, Pid()));
          return;
       }
    }
    else if(obj->link_.next != nullptr)
    {
-      Debug::SwLog(ObjectPool_EnqBlock, debug64_t(obj), pack2(Pid(), 1));
+      Debug::SwLog(ObjectPool_EnqBlock, debug64_t(obj), pack2(1, Pid()));
       return;
    }
 
@@ -701,7 +701,7 @@ void ObjectPool::EnqBlock(Pooled* obj, bool deleted)
 
    if(!freeq_.Enq(*obj))
    {
-      Debug::SwLog(ObjectPool_EnqBlock, debug64_t(obj), pack2(Pid(), 2));
+      Debug::SwLog(ObjectPool_EnqBlock, debug64_t(obj), pack2(2, Pid()));
       return;
    }
 

@@ -71,7 +71,7 @@ bool CliCommandSet::BindCommand(CliCommand& comm)
 
    if(strlen(s) == 0)
    {
-      Debug::SwLog(CliCommandSet_BindCommand, 0, 0);
+      Debug::SwLog(CliCommandSet_BindCommand, "null name", 0);
       return false;
    }
 
@@ -81,7 +81,7 @@ bool CliCommandSet::BindCommand(CliCommand& comm)
    {
       if(c->Text() == s)
       {
-         Debug::SwLog(CliCommandSet_BindCommand, c->GetId(), 1);
+         Debug::SwLog(CliCommandSet_BindCommand, s, c->GetId());
          return false;
       }
    }
@@ -99,7 +99,7 @@ bool CliCommandSet::BindParm(CliParm& parm)
 
    //  This class only accepts other commands as parameters.
    //
-   Debug::SwLog(CliCommandSet_BindParm, Parms().Size(), 0);
+   Debug::SwLog(CliCommandSet_BindParm, strClass(&parm), Parms().Size());
    return false;
 }
 

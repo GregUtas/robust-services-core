@@ -1251,7 +1251,7 @@ bool Parser::GetCxxAlpha(ExprPtr& expr)
          return Backup(start, 228);
 
       default:
-         Debug::SwLog(Parser_GetCxxAlpha, op, 0, SwInfo);
+         Debug::SwLog(Parser_GetCxxAlpha, "unexpected operator", op, SwInfo);
          return Backup(start, 79);
       }
    }
@@ -2716,7 +2716,7 @@ bool Parser::GetQualName(QualNamePtr& name, Constraint constraint)
 
       if(!lexer_.GetOpOverride(oper))
       {
-         Debug::SwLog(Parser_GetQualName, 0, 0, SwInfo);
+         Debug::SwLog(Parser_GetQualName, "operator override?", 0, SwInfo);
          return Backup(start, 169);
       }
 
@@ -4105,7 +4105,7 @@ bool Parser::ParseInBlock(Cxx::Keyword kwd, Block* block)
             return block->AddStatement(usingItem.release());
          break;
       case '-':
-         Debug::SwLog(Parser_ParseInBlock, kwd, 0, SwInfo);
+         Debug::SwLog(Parser_ParseInBlock, "unexpected keyword", kwd, SwInfo);
          return false;
       }
 
@@ -4179,7 +4179,7 @@ bool Parser::ParseInClass(Cxx::Keyword kwd, Class* cls)
          if(GetUsing(usingItem)) return cls->AddUsing(usingItem);
          break;
       case '-':
-         Debug::SwLog(Parser_ParseInClass, kwd, 0, SwInfo);
+         Debug::SwLog(Parser_ParseInClass, "unexpected keyword", kwd, SwInfo);
          return false;
       }
 
@@ -4255,7 +4255,7 @@ bool Parser::ParseInFile(Cxx::Keyword kwd, Namespace* space)
          if(GetUsing(usingItem)) return space->AddUsing(usingItem);
          break;
       case '-':
-         Debug::SwLog(Parser_ParseInFile, kwd, 0, SwInfo);
+         Debug::SwLog(Parser_ParseInFile, "unexpected keyword", kwd, SwInfo);
          return false;
       }
 

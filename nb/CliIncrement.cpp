@@ -79,7 +79,7 @@ bool CliIncrement::BindCommand(CliCommand& comm)
 
    if(strlen(s) == 0)
    {
-      Debug::SwLog(CliIncrement_BindCommand, 0, 0);
+      Debug::SwLog(CliIncrement_BindCommand, "null name", 0);
       return false;
    }
 
@@ -87,7 +87,7 @@ bool CliIncrement::BindCommand(CliCommand& comm)
    {
       if(c->Text() == s)
       {
-         Debug::SwLog(CliIncrement_BindCommand, c->GetId(), 1);
+         Debug::SwLog(CliIncrement_BindCommand, s, c->GetId());
          return false;
       }
    }

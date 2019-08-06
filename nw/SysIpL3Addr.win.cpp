@@ -72,12 +72,14 @@ SysIpL3Addr::SysIpL3Addr(const string& name,
             proto_ = IpTcp;
             break;
          default:
-            Debug::SwLog(SysIpL3Addr_ctor, info->ai_protocol, 1);
+            Debug::SwLog(SysIpL3Addr_ctor,
+               "unsupported protocol", info->ai_protocol);
          }
       }
       else
       {
-         Debug::SwLog(SysIpL3Addr_ctor, info->ai_family, 1);
+         Debug::SwLog(SysIpL3Addr_ctor,
+            "unsupported protocol family", info->ai_family);
       }
 
       freeaddrinfo(info);

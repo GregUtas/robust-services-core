@@ -22,6 +22,7 @@
 #include "PotsCircuit.h"
 #include <iomanip>
 #include <sstream>
+#include "Algorithms.h"
 #include "Debug.h"
 #include "Log.h"
 #include "MsgHeader.h"
@@ -430,7 +431,8 @@ bool PotsCircuit::SendMsg(PotsSignal::Id sid)
       //
       //  This includes PotsSignal::Digits, which needs a parameter.
       //
-      Debug::SwLog(PotsCircuit_SendMsg2, TsPort(), sid);
+      Debug::SwLog(PotsCircuit_SendMsg2,
+         "invalid signal", pack2(TsPort(), sid));
       return false;
    }
 

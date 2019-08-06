@@ -151,7 +151,7 @@ bool LogBufferRegistry::Free(size_t index)
    //
    if(index >= size_ - 1)
    {
-      Debug::SwLog(LogBufferRegistry_Free, "index invalid", index);
+      Debug::SwLog(LogBufferRegistry_Free, "invalid index", index);
       return false;
    }
 

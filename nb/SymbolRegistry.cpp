@@ -121,7 +121,7 @@ Symbol* SymbolRegistry::EnsureSymbol(const string& name)
 
       if(name == next->Name())
       {
-         Debug::SwLog(SymbolRegistry_EnsureSymbol, 0, 0);
+         Debug::SwLog(SymbolRegistry_EnsureSymbol, name, 0);
          return next;
       }
 

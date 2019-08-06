@@ -24,6 +24,7 @@
 #include "Tool.h"
 #include <ostream>
 #include <string>
+#include "Algorithms.h"
 #include "CfgBoolParm.h"
 #include "CfgParmRegistry.h"
 #include "Debug.h"
@@ -240,8 +241,8 @@ void ObjectPoolRegistry::AuditPools() const
          //
          //  An unknown phase.
          //
-         Debug::SwLog
-            (ObjectPoolRegistry_AuditPools, thread->phase_, thread->pid_);
+         Debug::SwLog(ObjectPoolRegistry_AuditPools,
+            "unexpected phase", pack2(thread->pid_, thread->phase_));
          thread->phase_ = ObjectPoolAudit::CheckingFreeq;
          thread->pid_ = NIL_ID;
          return;

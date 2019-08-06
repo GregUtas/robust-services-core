@@ -240,7 +240,7 @@ void ProtocolSM::EndOfTransaction()
             //  to prevent what will probably end up being an infinite loop.
             //
             Debug::SwLog(ProtocolSM_EndOfTransaction,
-               pack2(fid_, state_), m->GetSignal());
+               "message not moved", pack3(fid_, state_, m->GetSignal()));
             delete m;
          }
          break;
@@ -291,10 +291,9 @@ ProtocolId ProtocolSM::GetProtocol() const
    Debug::ft(ProtocolSM_GetProtocol);
 
    auto fac = Singleton< FactoryRegistry >::Instance()->GetFactory(fid_);
-
    if(fac != nullptr) return fac->GetProtocol();
 
-   Debug::SwLog(ProtocolSM_GetProtocol, fid_, 0);
+   Debug::SwLog(ProtocolSM_GetProtocol, "factory not found", fid_);
    return NIL_ID;
 }
 
@@ -458,7 +457,7 @@ void ProtocolSM::Kill()
 
    if(!msg->SendToSelf())
    {
-      Debug::SwLog(ProtocolSM_Kill, fid_, 0);
+      Debug::SwLog(ProtocolSM_Kill, "failed to send message", fid_);
    }
 }
 
@@ -552,15 +551,15 @@ Event* ProtocolSM::ReceiveMsg(Message& msg)
    {
    case EventRaised:
       if(evt == nullptr)
-         Debug::SwLog(ProtocolSM_ReceiveMsg, fid_, rc);
+         Debug::SwLog(ProtocolSM_ReceiveMsg, "null event", fid_);
       break;
    case DiscardMessage:
       if(evt != nullptr)
-         Debug::SwLog(ProtocolSM_ReceiveMsg, fid_, rc);
+         Debug::SwLog(ProtocolSM_ReceiveMsg, "non-null event", fid_);
       break;
    case ReceiveMessage:
       if(evt != nullptr)
-         Debug::SwLog(ProtocolSM_ReceiveMsg, fid_, rc);
+         Debug::SwLog(ProtocolSM_ReceiveMsg, "non-null event", fid_);
       return SendToUpper(msg);
    }
 
@@ -589,9 +588,7 @@ void ProtocolSM::SendFinalMsg()
 {
    Debug::ft(ProtocolSM_SendFinalMsg);
 
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(ProtocolSM_SendFinalMsg, fid_, 0);
+   Debug::SwLog(ProtocolSM_SendFinalMsg, strOver(this), 0);
 }
 
 //------------------------------------------------------------------------------
@@ -638,7 +635,8 @@ bool ProtocolSM::StartTimer
    //
    if(FindTimer(owner, tid) != nullptr)
    {
-      Debug::SwLog(ProtocolSM_StartTimer, fid_, tid);
+      Debug::SwLog(ProtocolSM_StartTimer,
+         "TimerId already in use", pack2(fid_, tid));
       return false;
    }
 

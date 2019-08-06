@@ -69,7 +69,7 @@ State::State(ServiceId sid, Id stid) : sid_(sid)
 
    if(svc == nullptr)
    {
-      Debug::SwLog(State_ctor, sid, stid);
+      Debug::SwLog(State_ctor, "service not found", pack2(sid, stid));
       return;
    }
 
@@ -136,19 +136,22 @@ bool State::BindEventHandler(EventHandlerId ehid, EventId eid)
    //
    if(!EventHandler::AppCanUse(ehid))
    {
-      Debug::SwLog(State_BindEventHandler, pack3(sid_, Stid(), ehid), 0);
+      Debug::SwLog(State_BindEventHandler, 
+         "invalid event", pack3(sid_, Stid(), ehid));
       return false;
    }
 
    if(!Event::AppCanHandle(eid))
    {
-      Debug::SwLog(State_BindEventHandler, pack3(sid_, Stid(), ehid), 1);
+      Debug::SwLog(State_BindEventHandler,
+         "unexpected event", pack3(sid_, Stid(), ehid));
       return false;
    }
 
    if(handlers_[eid] != NIL_ID)
    {
-      Debug::SwLog(State_BindEventHandler, pack3(sid_, Stid(), ehid), 2);
+      Debug::SwLog(State_BindEventHandler,
+         "replacing event handler", pack3(sid_, Stid(), ehid));
    }
 
    handlers_[eid] = ehid;
@@ -168,19 +171,22 @@ bool State::BindMsgAnalyzer(EventHandlerId ehid, ServicePortId pid)
    //
    if(!EventHandler::AppCanUse(ehid))
    {
-      Debug::SwLog(State_BindMsgAnalyzer, pack4(sid_, Stid(), ehid, pid), 0);
+      Debug::SwLog(State_BindMsgAnalyzer,
+         "invalid event", pack4(sid_, Stid(), ehid, pid));
       return false;
    }
 
    if(!Service::IsValidPortId(pid))
    {
-      Debug::SwLog(State_BindMsgAnalyzer, pack4(sid_, Stid(), ehid, pid), 1);
+      Debug::SwLog(State_BindMsgAnalyzer,
+         "invalid ServicePortId", pack4(sid_, Stid(), ehid, pid));
       return false;
    }
 
    if(msgAnalyzers_[pid] != NIL_ID)
    {
-      Debug::SwLog(State_BindMsgAnalyzer, pack4(sid_, Stid(), ehid, pid), 2);
+      Debug::SwLog(State_BindMsgAnalyzer,
+         "replacing message analyzer", pack4(sid_, Stid(), ehid, pid));
    }
 
    msgAnalyzers_[pid] = ehid;

@@ -160,13 +160,13 @@ bool Token::set_number(int number)
 
    if(number > NUMERIC_MAX)
    {
-      Debug::SwLog(Token_set_number, number, 0);
+      Debug::SwLog(Token_set_number, "invalid number", number);
       number = NUMERIC_MAX;
       result = false;
    }
    else if(number < NUMERIC_MIN)
    {
-      Debug::SwLog(Token_set_number, number, 1);
+      Debug::SwLog(Token_set_number, "invalid number", number);
       number = NUMERIC_MIN;
       result = false;
    }
@@ -269,7 +269,7 @@ Token power_token(PowerId power)
 {
    if((power < 0) || (power >= POWER_MAX))
    {
-      Debug::SwLog(Diplomacy_power_token, power, 0);
+      Debug::SwLog(Diplomacy_power_token, "invalid power", power);
       return INVALID_TOKEN;
    }
 

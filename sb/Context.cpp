@@ -158,7 +158,7 @@ Context::Context(Faction faction) :
 
    if(pool_ == nullptr)
    {
-      Debug::SwLog(Context_ctor, faction_, 0);
+      Debug::SwLog(Context_ctor, "invoker pool not found", faction_);
    }
 
    for(size_t i = 0; i < TraceSize; ++i) trace_[i] = NilMessageEntry;
@@ -775,17 +775,13 @@ void Context::ProcessWork(InvokerThread* inv)
          //  Bizarre.  We were invoked (or resumed execution after yielding)
          //  but didn't have any messages to process.
          //
-         if(IsIdle())
-         {
-            Debug::SwLog(Context_ProcessWork, pack2(faction_, state_), 0);
-            delete this;
-         }
-         else
-         {
-            Debug::SwLog(Context_ProcessWork, pack2(faction_, state_), 1);
-            SetState(Dormant);
-         }
+         Debug::SwLog(Context_ProcessWork,
+            "message queue empty", pack2(faction_, state_));
 
+         if(IsIdle())
+            delete this;
+         else
+            SetState(Dormant);
          return;
       }
    }
@@ -977,9 +973,7 @@ ContextType Context::Type() const
 {
    Debug::ft(Context_Type);
 
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(Context_Type, faction_, 0);
+   Debug::SwLog(Context_Type, strOver(this), 0);
    return SingleMsg;
 }
 }

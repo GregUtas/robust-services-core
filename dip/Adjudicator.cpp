@@ -63,7 +63,7 @@ void MapAndUnits::adjudicate()
       break;
 
    default:
-      Debug::SwLog(MapAndUnits_adjudicate, curr_season.all(), 0);
+      Debug::SwLog(MapAndUnits_adjudicate, "invalid season", curr_season.all());
    }
 }
 
@@ -401,7 +401,8 @@ bool MapAndUnits::apply_adjudication()
       break;
 
    default:
-      Debug::SwLog(MapAndUnits_apply_adjudication, curr_season.all(), 0);
+      Debug::SwLog(MapAndUnits_apply_adjudication,
+         "invalid season", curr_season.all());
    }
 
    return move_to_next_turn();
@@ -1481,7 +1482,7 @@ size_t MapAndUnits::distance_from_home(const UnitOrder& unit) const
 
    //  The unit did not reach a home center!  Something is very wrong indeed.
    //
-   Debug::SwLog(MapAndUnits_distance_from_home, 0, 0);
+   Debug::SwLog(MapAndUnits_distance_from_home, "home centre not found", 0);
    return SIZE_MAX;
 }
 
@@ -1869,7 +1870,8 @@ bool MapAndUnits::move_to_next_turn()
          break;
 
       default:
-         Debug::SwLog(MapAndUnits_move_to_next_turn, curr_season.all(), 0);
+         Debug::SwLog(MapAndUnits_move_to_next_turn,
+            "invalid season", curr_season.all());
          return false;
       }
    }

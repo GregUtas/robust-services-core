@@ -80,7 +80,7 @@ InputHandler* IpService::CreateHandler(IpPort* port) const
 {
    Debug::ft(IpService_CreateHandler);
 
-   Debug::SwLog(IpService_CreateHandler, Name(), port->GetPort());
+   Debug::SwLog(IpService_CreateHandler, strOver(this), port->GetPort());
    return nullptr;
 }
 
@@ -92,7 +92,7 @@ IpPort* IpService::CreatePort(ipport_t pid)
 {
    Debug::ft(IpService_CreatePort);
 
-   Debug::SwLog(IpService_CreatePort, Name(), pid);
+   Debug::SwLog(IpService_CreatePort, strOver(this), pid);
    return nullptr;
 }
 
@@ -104,7 +104,7 @@ CliText* IpService::CreateText() const
 {
    Debug::ft(IpService_CreateText);
 
-   Debug::SwLog(IpService_CreateText, Name(), sid_.GetId());
+   Debug::SwLog(IpService_CreateText, strOver(this), sid_.GetId());
    return nullptr;
 }
 
@@ -134,7 +134,7 @@ void IpService::GetAppSocketSizes(size_t& rxSize, size_t& txSize) const
 
    rxSize = 0;
    txSize = 0;
-   Debug::SwLog(IpService_GetAppSocketSizes, Name(), sid_.GetId());
+   Debug::SwLog(IpService_GetAppSocketSizes, strOver(this), sid_.GetId());
 }
 
 //------------------------------------------------------------------------------
@@ -145,7 +145,7 @@ Faction IpService::GetFaction() const
 {
    Debug::ft(IpService_GetFaction);
 
-   Debug::SwLog(IpService_GetFaction, Name(), sid_.GetId());
+   Debug::SwLog(IpService_GetFaction, strOver(this), sid_.GetId());
    return OperationsFaction;
 }
 
@@ -157,7 +157,7 @@ bool IpService::HasSharedSocket() const
 {
    Debug::ft(IpService_HasSharedSocket);
 
-   Debug::SwLog(IpService_HasSharedSocket, Name(), sid_.GetId());
+   Debug::SwLog(IpService_HasSharedSocket, strOver(this), sid_.GetId());
    return false;
 }
 
@@ -169,7 +169,7 @@ c_string IpService::Name() const
 {
    Debug::ft(IpService_Name);
 
-   Debug::SwLog(IpService_Name, 0, sid_.GetId());
+   Debug::SwLog(IpService_Name, strOver(this), sid_.GetId());
    return ERROR_STR;
 }
 
@@ -188,7 +188,7 @@ ipport_t IpService::Port() const
 {
    Debug::ft(IpService_Port);
 
-   Debug::SwLog(IpService_Port, Name(), sid_.GetId());
+   Debug::SwLog(IpService_Port, strOver(this), sid_.GetId());
    return NilIpPort;
 }
 
@@ -200,7 +200,7 @@ IpProtocol IpService::Protocol() const
 {
    Debug::ft(IpService_Protocol);
 
-   Debug::SwLog(IpService_Protocol, Name(), sid_.GetId());
+   Debug::SwLog(IpService_Protocol, strOver(this), sid_.GetId());
    return IpAny;
 }
 

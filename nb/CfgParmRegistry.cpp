@@ -68,7 +68,7 @@ CfgParmRegistry::~CfgParmRegistry()
    //  parameters and tuples should be freed together, when the protected
    //  heap is deallocated.
    //
-   Debug::SwLog(CfgParmRegistry_dtor, 0, 0);
+   Debug::SwLog(CfgParmRegistry_dtor, "unexpected invocation", 0);
 }
 
 //------------------------------------------------------------------------------

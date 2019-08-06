@@ -22,6 +22,7 @@
 #include "PotsSessions.h"
 #include <sstream>
 #include <string>
+#include "Algorithms.h"
 #include "BcCause.h"
 #include "BcProgress.h"
 #include "BcProtocol.h"
@@ -92,7 +93,7 @@ PotsBcSsm::PotsBcSsm(ServiceId sid, const Message& msg, ProtocolSM& psm) :
       break;
 
    default:
-      Debug::SwLog(PotsBcSsm_ctor, fid, 0);
+      Debug::SwLog(PotsBcSsm_ctor, "unexpected FactoryId", fid);
    }
 }
 
@@ -325,7 +326,7 @@ EventHandler::Rc PotsBcSsm::AnalyzeNPsmTimeout
       }
    }
 
-   Debug::SwLog(PotsBcSsm_AnalyzeNPsmTimeout, toi->tid, 0);
+   Debug::SwLog(PotsBcSsm_AnalyzeNPsmTimeout, "unexpected TimerId", toi->tid);
    return EventHandler::Suspend;
 }
 
@@ -359,7 +360,7 @@ void PotsBcSsm::ClearTimer(TimerId tid)
 
    if(tid_ != tid)
    {
-      Debug::SwLog(PotsBcSsm_ClearTimer, tid_, tid);
+      Debug::SwLog(PotsBcSsm_ClearTimer, "TimerId mismatch", pack2(tid_, tid));
       return;
    }
 
@@ -481,7 +482,7 @@ void PotsBcSsm::SetProfile(PotsProfile* prof)
 
    if(prof == nullptr)
    {
-      Debug::SwLog(PotsBcSsm_SetProfile, 0, 0);
+      Debug::SwLog(PotsBcSsm_SetProfile, "null profile", 0);
       return;
    }
 
@@ -500,12 +501,12 @@ void PotsBcSsm::StartTimer(TimerId tid, secs_t duration)
 
    if(tid_ != NIL_ID)
    {
-      Debug::SwLog(PotsBcSsm_StartTimer, tid_, tid);
+      Debug::SwLog(PotsBcSsm_StartTimer, "timer in use", pack2(tid_, tid));
 
       psm = TimerPsm(tid_);
 
       if(psm == nullptr)
-         Debug::SwLog(PotsBcSsm_StartTimer, tid_, 0);
+         Debug::SwLog(PotsBcSsm_StartTimer, "PSM not found", tid_);
       else
          psm->StopTimer(*this, tid_);
 
@@ -516,7 +517,7 @@ void PotsBcSsm::StartTimer(TimerId tid, secs_t duration)
 
    if(psm == nullptr)
    {
-      Debug::SwLog(PotsBcSsm_StartTimer, 0, tid);
+      Debug::SwLog(PotsBcSsm_StartTimer, "PSM not found", tid);
       return;
    }
 
@@ -533,7 +534,7 @@ void PotsBcSsm::StopTimer(TimerId tid)
 
    if(tid_ != tid)
    {
-      Debug::SwLog(PotsBcSsm_StopTimer, tid_, tid);
+      Debug::SwLog(PotsBcSsm_StopTimer, "TimerId mismatch", pack2(tid_, tid));
       return;
    }
 
@@ -541,7 +542,7 @@ void PotsBcSsm::StopTimer(TimerId tid)
 
    if(psm == nullptr)
    {
-      Debug::SwLog(PotsBcSsm_StopTimer, tid_, 0);
+      Debug::SwLog(PotsBcSsm_StopTimer, "PSM not found", tid_);
       return;
    }
 

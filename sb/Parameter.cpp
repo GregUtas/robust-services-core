@@ -59,7 +59,7 @@ Parameter::Parameter(ProtocolId prid, Id pid) : prid_(prid)
 
    if(pro == nullptr)
    {
-      Debug::SwLog(Parameter_ctor, pack2(prid_, pid), 0);
+      Debug::SwLog(Parameter_ctor, "protocol not found", pack2(prid_, pid));
       return;
    }
 
@@ -91,7 +91,7 @@ bool Parameter::BindUsage(SignalId sid, Usage usage)
 
    if(!Signal::IsValidId(sid))
    {
-      Debug::SwLog(Parameter_BindUsage, Pid(), sid);
+      Debug::SwLog(Parameter_BindUsage, "invalid signal", Pid());
       return false;
    }
 
@@ -211,7 +211,7 @@ Parameter::TestRc Parameter::InjectMsg
 {
    Debug::ft(Parameter_InjectMsg);
 
-   Debug::SwLog(Parameter_InjectMsg, prid_, Pid());
+   Debug::SwLog(Parameter_InjectMsg, strOver(this), pack2(prid_, Pid()));
    return NotImplemented;
 }
 
@@ -231,7 +231,7 @@ Parameter::TestRc Parameter::VerifyMsg
 {
    Debug::ft(Parameter_VerifyMsg);
 
-   Debug::SwLog(Parameter_VerifyMsg, prid_, Pid());
+   Debug::SwLog(Parameter_VerifyMsg, strOver(this), pack2(prid_, Pid()));
    return NotImplemented;
 }
 }

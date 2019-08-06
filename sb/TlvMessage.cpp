@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "TlvMessage.h"
+#include "Algorithms.h"
 #include "Context.h"
 #include "MsgPort.h"
 #include "NbTypes.h"
@@ -151,7 +152,8 @@ TlvParmPtr TlvMessage::AddParm(ParameterId pid, size_t plen)
 
    if(Dir() == MsgIncoming)
    {
-      Debug::SwLog(TlvMessage_AddParm, layout->header.signal, pid);
+      Debug::SwLog(TlvMessage_AddParm,
+         "invalid operation", pack2(pid, layout->header.signal));
       return nullptr;
    }
 
@@ -503,7 +505,7 @@ TlvParmPtr TlvMessage::Wrap(const TlvMessage& msg, ParameterId pid)
 
    if(plen > MaxSbMsgSize)
    {
-      Debug::SwLog(TlvMessage_Wrap, plen, 0);
+      Debug::SwLog(TlvMessage_Wrap, "message length", plen);
       return nullptr;
    }
 

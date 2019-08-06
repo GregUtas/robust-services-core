@@ -8,7 +8,7 @@ This directory contains RSC executables.
 Save an executable in a directory that allows it to locate the
 [configuration file](/input/element.config.txt).  When the program
 starts, it notes the path from which it was launched and searches
-for the string `rsc/rsc/` on that path.  The configuration file must
-then appear as `.../rsc/rsc/input/element.config.txt`.  If it is not
+for `rsc/` upwards on that path.  The configuration file must
+then appear as `.../rsc/input/element.config.txt`.  If it is not
 found, a warning appears on the console and default values are used
 for all configuration parameters.

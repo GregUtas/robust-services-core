@@ -59,7 +59,7 @@ public:
 
    //  The indentation for each subsequent line of a log.
    //
-   static const size_t Indent;
+   static const col_t Indent;
 
    //  A string for inserting Tab spaces.
    //
@@ -100,6 +100,10 @@ public:
    //
    LogId Id() const { return id_; }
 
+   //  Returns the type of log associated with ID.
+   //
+   static LogType GetType(LogId id);
+
    //  Used to suppress or throttle the log:
    //    o 1: no effect
    //    o 0: suppresses all occurrences of the log
@@ -108,6 +112,16 @@ public:
    //  alarm is suppressed if the alarm is already off.
    //
    void SetInterval(uint8_t interval);
+
+   //  Returns the log associated with groupName and ID.  Updates
+   //  GROUP to the log's group.
+   //
+   static Log* Find(fixed_string groupName, LogId id, LogGroup*& group);
+
+   //  Returns the log associated with LOG by extracting the group
+   //  name and LogId from the beginning of LOG.
+   //
+   static Log* Find(fixed_string log);
 
    //  Displays the log's statistics.
    //
@@ -134,16 +148,6 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Returns the log associated with groupName and ID.  Updates
-   //  GROUP to the log's group.
-   //
-   static Log* Find(fixed_string groupName, LogId id, LogGroup*& group);
-
-   //  Returns the log associated with LOG by extracting the group
-   //  name and LogId from the first line of LOG.
-   //
-   static Log* Find(const std::string& log);
-
    //  Creates an instance of the log identified by groupName and ID, with
    //  alarmName and STATUS used to set or clear an alarm.  Applications
    //  must use Alarm::Create, which invokes this.

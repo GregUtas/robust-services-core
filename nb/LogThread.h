@@ -23,16 +23,9 @@
 #define LOGTHREAD_H_INCLUDED
 
 #include "Thread.h"
-#include <cstddef>
-#include "CallbackRequest.h"
 #include "NbTypes.h"
 #include "SysMutex.h"
 #include "SysTypes.h"
-
-namespace NodeBase
-{
-   class LogBuffer;
-}
 
 //------------------------------------------------------------------------------
 
@@ -44,7 +37,6 @@ class LogThread : public Thread
 {
    friend class Singleton< LogThread >;
    friend class Log;
-   friend class LogsCommand;
 public:
    //  Overridden to display member variables.
    //
@@ -62,19 +54,6 @@ private:
    //  Private because this singleton is not subclassed.
    //
    ~LogThread();
-
-   //> When bundling logs into a stream, the number of characters that
-   //  prevents another log from being added to the stream.
-   //
-   static const size_t BundledLogSizeThreshold;
-
-   //  Retrieves logs from BUFFER and bundles them into an ostringstream.
-   //  Returns nullptr if BUFFER was empty, else updates CALLBACK so that
-   //  BUFFER can free the space occupied by the logs after they have been
-   //  written.
-   //
-   static ostringstreamPtr GetLogsFromBuffer
-      (LogBuffer* buffer, CallbackRequestPtr& callback);
 
    //  Invoked to immediately output a STREAM of logs during a restart.
    //  Writes STREAM to the log file and, if appropriate, the console.

@@ -52,7 +52,6 @@
 #include "LogBufferRegistry.h"
 #include "LogGroup.h"
 #include "LogGroupRegistry.h"
-#include "LogThread.h"
 #include "Memory.h"
 #include "Module.h"
 #include "ModuleRegistry.h"
@@ -1589,7 +1588,8 @@ word LogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
          while(buff->Count(false, true) > targ)
          {
             CallbackRequestPtr callback;
-            auto stream = LogThread::GetLogsFromBuffer(buff, callback);
+            auto periodic = false;
+            auto stream = buff->GetLogs(callback, periodic);
             if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
             FileThread::Spool(file, stream, callback);
          }

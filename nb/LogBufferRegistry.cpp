@@ -184,7 +184,7 @@ void LogBufferRegistry::Startup(RestartLevel level)
    //
    for(size_t i = 0; i < size_ - 1; ++i)
    {
-      if(buffer_[i]->First() == nullptr)
+      if(buffer_[i]->Empty())
       {
          buffer_[i].reset();
       }

@@ -744,7 +744,7 @@ bool Message::Send(Route route)
    {
       switch(header->priority)
       {
-      case Immediate:
+      case IMMEDIATE:
          //
          //  An interprocessor message cannot use immediate priority, nor can
          //  a message sent by a MsgFactory.  Generate a log.
@@ -753,12 +753,12 @@ bool Message::Send(Route route)
          {
             Debug::SwLog(Message_Send,
                "invalid priority", pack2(GetProtocol(), GetSignal()));
-            header->priority = Progress;
+            header->priority = PROGRESS;
          }
          break;
 
-      case Ingress:
-      case Egress:
+      case INGRESS:
+      case EGRESS:
          //
          //  Promote the following to progress priority:
          //  (a) a message to a known PSM
@@ -767,10 +767,10 @@ bool Message::Send(Route route)
          //  (c) a subsequent message
          //
          if((header->rxAddr.bid != NIL_ID) ||               // case (a)
-            (local && (header->priority == Ingress)) ||     // case (b)
+            (local && (header->priority == INGRESS)) ||     // case (b)
             ((txport != nullptr) && txport->HasSentMsg()))  // case (c)
          {
-            header->priority = Progress;
+            header->priority = PROGRESS;
          }
          break;
       }
@@ -942,7 +942,7 @@ void Message::SetJoin(bool join)
 
 fn_name Message_SetPriority = "Message.SetPriority";
 
-void Message::SetPriority(Priority prio)
+void Message::SetPriority(MsgPriority prio)
 {
    Debug::ft(Message_SetPriority);
 
@@ -1035,23 +1035,6 @@ void Message::SetSignal(SignalId sid)
    Debug::ft(Message_SetSignal);
 
    buff_->Header()->signal = sid;
-}
-
-//------------------------------------------------------------------------------
-
-fixed_string PriorityStrings[Message::MaxPriority + 2] =
-{
-   "ingress",
-   "egress",
-   "progress",
-   "immediate",
-   ERROR_STR
-};
-
-c_string Message::strPriority(Priority prio)
-{
-   if((prio >= 0) && (prio <= MaxPriority)) return PriorityStrings[prio];
-   return PriorityStrings[MaxPriority + 1];
 }
 
 //------------------------------------------------------------------------------

@@ -128,7 +128,7 @@ private:
 
    //  The incoming message's priority.
    //
-   const Message::Priority prio_;
+   const MsgPriority prio_;
 
    //  The incoming message's protocol.
    //

@@ -28,7 +28,6 @@
 #include <string>
 #include "Clock.h"
 #include "Factory.h"
-#include "Message.h"
 #include "NbTypes.h"
 #include "Q1Way.h"
 #include "Q2Link.h"
@@ -271,9 +270,11 @@ private:
    //
    size_t MsgCount(bool priority, bool standard) const;
 
-   //  Adds the context to the work queue associated with PRIO.
+   //  Adds the context to the work queue associated with PRIO.  HENQ is set
+   //  if the context should be placed at the front of that queue.
    //
-   void Enqueue(NodeBase::Q2Way< Context >& whichq, Message::Priority prio);
+   void Enqueue(NodeBase::Q2Way< Context >& whichq,
+      MsgPriority prio, bool henq);
 
    //  Removes the context from its work queue.
    //
@@ -341,7 +342,7 @@ private:
 
    //  The priority of the work queue on which the context is located.
    //
-   Message::Priority prio_;
+   MsgPriority prio_;
 
    //  Set if the context is being traced.
    //

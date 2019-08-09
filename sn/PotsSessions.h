@@ -165,6 +165,10 @@ private:
    //
    void PortAllocated(const MsgPort& port, const Message* msg) const override;
 
+   //  Overridden to return true.
+   //
+   bool ScreenFirstMsg(const Message& msg, MsgPriority& prio) const override;
+
    //  Overridden to screen subsequent messages received while an offhook
    //  is waiting on the ingress work queue.
    //

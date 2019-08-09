@@ -184,7 +184,7 @@ CipMessage* BcSsm::BuildCipIam()
    if(iam == nullptr) return nullptr;
 
    iam->SetSignal(CipSignal::IAM);
-   iam->SetPriority(Message::Egress);
+   iam->SetPriority(EGRESS);
    iam->AddRoute(route_);
    iam->AddAddress(DialedDigits().ToDN(), CipParameter::Called);
 

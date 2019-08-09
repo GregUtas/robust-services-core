@@ -217,6 +217,18 @@ Message* PotsCallFactory::ReallocOgMsg(SbIpBufferPtr& buff) const
 
 //------------------------------------------------------------------------------
 
+fn_name PotsCallFactory_ScreenFirstMsg = "PotsCallFactory.ScreenFirstMsg";
+
+bool PotsCallFactory::ScreenFirstMsg
+   (const Message& msg, MsgPriority& prio) const
+{
+   Debug::ft(PotsCallFactory_ScreenFirstMsg);
+
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name PotsCallFactory_ScreenIcMsgs = "PotsCallFactory.ScreenIcMsgs";
 
 bool PotsCallFactory::ScreenIcMsgs(Q1Way< Message >& msgq)

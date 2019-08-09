@@ -165,11 +165,11 @@ bool StTestData::InjectMsg(Message& appMsg, TestSessionId tid)
 
       if(dest != nullptr)
       {
-         msg->SetPriority(Message::Progress);
+         msg->SetPriority(PROGRESS);
       }
       else
       {
-         msg->SetPriority(Message::Ingress);
+         msg->SetPriority(INGRESS);
          msg->Header()->initial = true;
       }
 

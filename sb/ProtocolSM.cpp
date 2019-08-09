@@ -452,7 +452,7 @@ void ProtocolSM::Kill()
 
    msg->SetProtocol(TimerProtocolId);
    msg->SetSignal(Signal::Timeout);
-   msg->SetPriority(Message::Progress);
+   msg->SetPriority(PROGRESS);
    msg->Header()->kill = true;
 
    if(!msg->SendToSelf())

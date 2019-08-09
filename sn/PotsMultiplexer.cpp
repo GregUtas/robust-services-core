@@ -414,7 +414,7 @@ ProtocolSM::OutgoingRc PotsMuxPsm::ProcessOgMsg(Message& msg)
    //  Send all messages from the multiplexer NPSM with immediate priority.
    //
    auto& pmsg = static_cast< Pots_UN_Message& >(msg);
-   msg.SetPriority(Message::Immediate);
+   msg.SetPriority(IMMEDIATE);
 
    if(&msg != ogMsg_)
    {

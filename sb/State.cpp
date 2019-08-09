@@ -136,7 +136,7 @@ bool State::BindEventHandler(EventHandlerId ehid, EventId eid)
    //
    if(!EventHandler::AppCanUse(ehid))
    {
-      Debug::SwLog(State_BindEventHandler, 
+      Debug::SwLog(State_BindEventHandler,
          "invalid event", pack3(sid_, Stid(), ehid));
       return false;
    }

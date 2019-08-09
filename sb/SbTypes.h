@@ -106,6 +106,20 @@ NodeBase::c_string strContextType(ContextType type);
 //
 std::ostream& operator<<(std::ostream& stream, ContextType type);
 
+//  Message priorities.
+//
+typedef uint8_t MsgPriority;
+
+constexpr MsgPriority INGRESS = 0;      // from user starting a new session
+constexpr MsgPriority EGRESS = 1;       // to user receiving a new session
+constexpr MsgPriority PROGRESS = 2;     // to an existing session
+constexpr MsgPriority IMMEDIATE = 3;    // between SSMs serving same user
+constexpr MsgPriority MAX_PRIORITY = 3;
+
+//  Returns a string for displaying PRIO.
+//
+NodeBase::c_string strMsgPriority(MsgPriority prio);
+
 //  Object pool users.  This is used as a parameter to overrides of
 //  operator new in order to support segregated pools that allocate
 //  identical objects.

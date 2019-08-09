@@ -48,6 +48,7 @@
 #include "SbCliParms.h"
 #include "SbPools.h"
 #include "SbTracer.h"
+#include "SbTypes.h"
 #include "Service.h"
 #include "ServiceRegistry.h"
 #include "ServiceSM.h"
@@ -1470,9 +1471,9 @@ word SbStatusCommand::ProcessCommand(CliThread& cli) const
 
    for(auto p = pools.First(); p != nullptr; pools.Next(p))
    {
-      *cli.obuf << setw(8) << p->WorkQCurrLength(Message::Ingress);
-      *cli.obuf << setw(8) << p->WorkQMaxLength(Message::Ingress);
-      *cli.obuf << setw(8) << p->WorkQMaxDelay(Message::Ingress);
+      *cli.obuf << setw(8) << p->WorkQCurrLength(INGRESS);
+      *cli.obuf << setw(8) << p->WorkQMaxLength(INGRESS);
+      *cli.obuf << setw(8) << p->WorkQMaxDelay(INGRESS);
       *cli.obuf << spaces(3) << p->GetFaction() << CRLF;
    }
 

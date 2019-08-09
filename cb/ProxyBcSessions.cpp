@@ -532,7 +532,7 @@ ProtocolSM::OutgoingRc ProxyBcPsm::ProcessOgMsg(Message& msg)
 
    //  Send all proxy messages with immediate priority.
    //
-   msg.SetPriority(Message::Immediate);
+   msg.SetPriority(IMMEDIATE);
 
    //  If this PSM is not part of a broadcast, simply allow our base class to
    //  handle the message.
@@ -872,7 +872,7 @@ void ProxyBcSsm::Relay(BcPsm& target) const
       return;
    }
 
-   if(&target == NPsm()) msg->SetPriority(Message::Progress);
+   if(&target == NPsm()) msg->SetPriority(PROGRESS);
 
    msg->Relay(target);
 }

@@ -51,4 +51,21 @@ c_string strContextType(ContextType type)
    if((type >= 0) && (type < ContextType_N)) return ContextTypeStrings[type];
    return ContextTypeStrings[ContextType_N];
 }
+
+//------------------------------------------------------------------------------
+
+fixed_string MsgPriorityStrings[MAX_PRIORITY + 2] =
+{
+   "ingress",
+   "egress",
+   "progress",
+   "immediate",
+   ERROR_STR
+};
+
+c_string strMsgPriority(MsgPriority prio)
+{
+   if((prio >= 0) && (prio <= MAX_PRIORITY)) return MsgPriorityStrings[prio];
+   return MsgPriorityStrings[MAX_PRIORITY + 1];
+}
 }

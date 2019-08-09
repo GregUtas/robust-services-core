@@ -101,7 +101,7 @@ void PotsShelfHandler::ReceiveBuff
 
    header->initial = false;
    header->final = (phi->signal != PotsSignal::Supervise);
-   header->priority = Message::Progress;
+   header->priority = PROGRESS;
    header->rxAddr.fid = PotsShelfFactoryId;
    header->txAddr.fid = PotsCallFactoryId;
 
@@ -112,7 +112,7 @@ void PotsShelfHandler::ReceiveBuff
 
    if((thr != nullptr) && (thr->GetRate() > 0))
    {
-      header->priority = Message::Immediate;
+      header->priority = IMMEDIATE;
    }
 
    //  Invoke the base class implementation to queue the message.  The base

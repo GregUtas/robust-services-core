@@ -39,20 +39,20 @@ namespace SessionBase
 //
 struct MsgHeader
 {
-   LocalAddress      txAddr;         // source address
-   LocalAddress      rxAddr;         // destination address
-   Message::Priority priority : 2;   // message's priority
-   bool              initial  : 1;   // true for initial message
-   bool              final    : 1;   // true for final message
-   bool              join     : 1;   // true to create PSM and join root SSM
-   bool              self     : 1;   // true for message to self
-   bool              injected : 1;   // true if sent by InjectCommand
-   bool              kill     : 1;   // true to kill context on arrival
-   uint8_t           spare    : 6;   // reserved for future use
-   Message::Route    route    : 2;   // the route that the message took
-   ProtocolId        protocol : 16;  // message's protocol
-   SignalId          signal   : 16;  // message's signal
-   uint16_t          length   : 16;  // total bytes in all parameters
+   LocalAddress   txAddr;         // source address
+   LocalAddress   rxAddr;         // destination address
+   MsgPriority    priority : 2;   // message's priority
+   bool           initial  : 1;   // true for initial message
+   bool           final    : 1;   // true for final message
+   bool           join     : 1;   // true to create PSM and join root SSM
+   bool           self     : 1;   // true for message to self
+   bool           injected : 1;   // true if sent by InjectCommand
+   bool           kill     : 1;   // true to kill context on arrival
+   uint8_t        spare    : 6;   // reserved for future use
+   Message::Route route    : 2;   // the route that the message took
+   ProtocolId     protocol : 16;  // message's protocol
+   SignalId       signal   : 16;  // message's signal
+   uint16_t       length   : 16;  // total bytes in all parameters
 
    //  Initializes all fields.
    //

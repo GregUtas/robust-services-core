@@ -398,6 +398,17 @@ void Factory::RecordMsg(bool incoming, bool inter, size_t size) const
 
 //------------------------------------------------------------------------------
 
+fn_name Factory_ScreenFirstMsg = "Factory.ScreenFirstMsg";
+
+bool Factory::ScreenFirstMsg(const Message& msg, MsgPriority& prio) const
+{
+   Debug::ft(Factory_ScreenFirstMsg);
+
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Factory_ScreenIcMsgs = "Factory.ScreenIcMsgs";
 
 bool Factory::ScreenIcMsgs(Q1Way< Message >& msgq)

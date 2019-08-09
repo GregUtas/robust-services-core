@@ -138,6 +138,13 @@ public:
    //
    virtual Message* ReallocOgMsg(SbIpBufferPtr& buff) const;
 
+   //  Invoked when the first ingress MSG is received.  Updates PRIO if MSG
+   //  should go on a higher priority work queue and/or returns true if MSG
+   //  should be placed at the front of that queue.  The default version
+   //  simply returns false and leaves PRIO at INGRESS.
+   //
+   virtual bool ScreenFirstMsg(const Message& msg, MsgPriority& prio) const;
+
    //  Invoked when a context on the ingress work queue receives a subsequent
    //  message.  MSGQ provides access to the context's message queue.  If the
    //  subsequent message was a retransmission of the original request, this

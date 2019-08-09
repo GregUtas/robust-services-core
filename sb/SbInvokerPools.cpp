@@ -30,9 +30,9 @@
 #include "Debug.h"
 #include "Formatters.h"
 #include "Log.h"
-#include "Message.h"
 #include "SbLogs.h"
 #include "SbPools.h"
+#include "SbTypes.h"
 #include "Singleton.h"
 
 using namespace NodeBase;
@@ -141,7 +141,7 @@ bool PayloadInvokerPool::RejectIngressWork() const
 
    auto msgCount = Singleton< MessagePool >::Instance()->AvailCount();
    auto msgOvld = (msgCount <= size_t(NoIngressMessageCount_));
-   auto workLength = WorkQCurrLength(Message::Ingress);
+   auto workLength = WorkQCurrLength(INGRESS);
    auto workOvld = (workLength >= size_t(NoIngressQueueLength_));
 
    if(msgOvld || workOvld)

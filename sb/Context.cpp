@@ -144,7 +144,7 @@ Context::Context(Faction faction) :
    thread_(nullptr),
    faction_(faction),
    state_(Dormant),
-   prio_(Message::Ingress),
+   prio_(INGRESS),
    traceOn_(false),
    trans_(nullptr),
    buffIndex_(0)
@@ -346,7 +346,7 @@ bool Context::EnqMsg(Message& msg)
 
    if(IsCorrupt()) return false;
 
-   if(msg.Header()->priority != Message::Immediate)
+   if(msg.Header()->priority != IMMEDIATE)
       msg.Enqueue(stdMsgq_);
    else
       msg.Enqueue(priMsgq_);
@@ -384,7 +384,7 @@ void Context::EnqPsm(ProtocolSM& psm)
 
 fn_name Context_Enqueue = "Context.Enqueue";
 
-void Context::Enqueue(Q2Way< Context >& whichq, Message::Priority prio)
+void Context::Enqueue(Q2Way< Context >& whichq, MsgPriority prio, bool henq)
 {
    Debug::ft(Context_Enqueue);
 
@@ -403,7 +403,14 @@ void Context::Enqueue(Q2Way< Context >& whichq, Message::Priority prio)
    switch(state_)
    {
    case Dormant:
-      whichq.Enq(*this);
+      //
+      //  HENQ can only occur here, for an initial ingress message.
+      //
+      if(henq)
+         whichq.Henq(*this);
+      else
+         whichq.Enq(*this);
+
       whichq_ = &whichq;
       state_ = Ready;
       prio_ = prio;
@@ -416,10 +423,10 @@ void Context::Enqueue(Q2Way< Context >& whichq, Message::Priority prio)
       //  If we just received a message of immediate priority, move to the
       //  immediate priority work queue if we're not already there.
       //
-      if((prio == Message::Immediate) && (prio_ != Message::Immediate))
+      if((prio == IMMEDIATE) && (prio_ != IMMEDIATE))
       {
          Exqueue();
-         Enqueue(whichq, Message::Immediate);
+         Enqueue(whichq, IMMEDIATE, false);
          return;
       }
 
@@ -429,7 +436,7 @@ void Context::Enqueue(Q2Way< Context >& whichq, Message::Priority prio)
       //  message can be deleted.  In the second case, the entire context can
       //  be deleted.
       //
-      if(prio_ == Message::Ingress)
+      if(prio_ == INGRESS)
       {
          auto fac = stdMsgq_.First()->RxFactory();
 
@@ -455,11 +462,11 @@ void Context::Enqueue(Q2Way< Context >& whichq, Message::Priority prio)
       //  handled when our invoker resumes execution.  However, if this is a
       //  priority message, it must be handled immediately.
       //
-      if((prio == Message::Immediate) && (prio_ != Message::Immediate))
+      if((prio == IMMEDIATE) && (prio_ != IMMEDIATE))
       {
          thread_->ClearContext();
          SetState(Dormant);
-         Enqueue(whichq, Message::Immediate);
+         Enqueue(whichq, IMMEDIATE, false);
       }
       return;
 

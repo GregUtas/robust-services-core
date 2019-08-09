@@ -32,6 +32,7 @@
 #include "InvokerThread.h"
 #include "LocalAddress.h"
 #include "Log.h"
+#include "Message.h"
 #include "MsgHeader.h"
 #include "Q2Way.h"
 #include "Restart.h"
@@ -190,7 +191,7 @@ InvokerPool::InvokerPool(Faction faction, const string& parmKey) :
       reg->BindParm(*cfgInvokers_);
    }
 
-   for(auto p = 0; p <= Message::MaxPriority; ++p)
+   for(auto p = 0; p <= MAX_PRIORITY; ++p)
    {
       work_[p].reset(new InvokerWork);
    }
@@ -244,9 +245,9 @@ void InvokerPool::ClaimBlocks()
 
    corrupt_ = true;
 
-   //  Message::Priority is unsigned, so P must be signed to end this loop.
+   //  MsgPriority is unsigned, so P must be signed to end this loop.
    //
-   for(int p = Message::MaxPriority; p >= 0; --p)
+   for(int p = MAX_PRIORITY; p >= 0; --p)
    {
       auto ctxq = &work_[p]->contextq_;
 
@@ -282,7 +283,7 @@ void InvokerPool::ClaimBlocks()
 
 fn_name InvokerPool_Dequeued = "InvokerPool.Dequeued";
 
-void InvokerPool::Dequeued(Message::Priority prio) const
+void InvokerPool::Dequeued(MsgPriority prio) const
 {
    Debug::ft(InvokerPool_Dequeued);
 
@@ -323,9 +324,9 @@ void InvokerPool::Display(ostream& stream,
    invokers_.Display(stream, prefix + spaces(2), options);
 
    auto lead = prefix + spaces(2);
-   stream << prefix << "workq [Message::Priority]" << CRLF;
+   stream << prefix << "workq [MsgPriority]" << CRLF;
 
-   for(auto p = 0; p <= Message::MaxPriority; ++p)
+   for(auto p = 0; p <= MAX_PRIORITY; ++p)
    {
       stream << lead << strIndex(p);
       stream << "length=" << work_[p]->length_ << CRLF;
@@ -343,10 +344,10 @@ void InvokerPool::DisplayStats(ostream& stream, const Flags& options) const
    stream << spaces(2) << GetFaction();
    stream << SPACE << strIndex(GetFaction(), 0, false) << CRLF;
 
-   for(auto p = 0; p <= Message::MaxPriority; ++p)
+   for(auto p = 0; p <= MAX_PRIORITY; ++p)
    {
       auto work = work_[p].get();
-      stream << spaces(4) << Message::strPriority(p);
+      stream << spaces(4) << strMsgPriority(p);
       stream << " work queue:" << CRLF;
       work->dequeues_->DisplayStat(stream, options);
       work->maxLength_->DisplayStat(stream, options);
@@ -364,7 +365,7 @@ void InvokerPool::DisplayStats(ostream& stream, const Flags& options) const
 
 fn_name InvokerPool_Enqueued = "InvokerPool.Enqueued";
 
-void InvokerPool::Enqueued(Message::Priority prio) const
+void InvokerPool::Enqueued(MsgPriority prio) const
 {
    Debug::ft(InvokerPool_Enqueued);
 
@@ -381,9 +382,9 @@ Context* InvokerPool::FindWork()
 {
    Debug::ft(InvokerPool_FindWork);
 
-   //  Message::Priority is unsigned, so PRIO must be signed to end this loop.
+   //  MsgPriority is unsigned, so PRIO must be signed to end this loop.
    //
-   for(int prio = Message::MaxPriority; prio >= 0; --prio)
+   for(int prio = MAX_PRIORITY; prio >= 0; --prio)
    {
       auto work = work_[prio].get();
       auto ctx = work->contextq_.First();
@@ -661,7 +662,7 @@ bool InvokerPool::ReceiveMsg(Message& msg, bool atIoLevel)
    //
    auto prio = header->priority;
 
-   if(prio > Message::MaxPriority)
+   if(prio > MAX_PRIORITY)
    {
       return LogLostMsg(msg, Factory::MsgPriorityInvalid, tt);
    }
@@ -685,10 +686,22 @@ bool InvokerPool::ReceiveMsg(Message& msg, bool atIoLevel)
 
    fac->RecordMsg(true, atIoLevel, header->length);
 
+   //  If this is an ingress message that created a new context, see if it
+   //  should be queued differently than usual.  The factory has the option
+   //  of putting the new context at the front of the ingress work queue or
+   //  even on another queue.
+   //
+   auto henq = false;
+
+   if((prio == INGRESS) && (ctx->MsgCount(true, true) == 1))
+   {
+      henq = fac->ScreenFirstMsg(msg, prio);
+   }
+
    //  Put the context on the appropriate work queue.  If the context is
    //  already on a queue, it knows how to deal with this.
    //
-   ctx->Enqueue(work_[prio]->contextq_, prio);
+   ctx->Enqueue(work_[prio]->contextq_, prio, henq);
 
    //  Make sure that an invoker thread will handle the work.
    //
@@ -698,7 +711,7 @@ bool InvokerPool::ReceiveMsg(Message& msg, bool atIoLevel)
 
 //------------------------------------------------------------------------------
 
-void InvokerPool::RecordDelay(Message::Priority prio, msecs_t delay) const
+void InvokerPool::RecordDelay(MsgPriority prio, msecs_t delay) const
 {
    work_[prio]->maxDelay_->Update(delay);
 }
@@ -716,7 +729,7 @@ void InvokerPool::Requeue(Context& ctx)
    //  to return to the progress queue.
    //
    stats_->requeues_->Incr();
-   ctx.Enqueue(work_[Message::Progress]->contextq_, Message::Progress);
+   ctx.Enqueue(work_[PROGRESS]->contextq_, PROGRESS, false);
 }
 
 //------------------------------------------------------------------------------
@@ -802,25 +815,25 @@ void InvokerPool::UnbindThread(InvokerThread& thread)
 
 //------------------------------------------------------------------------------
 
-size_t InvokerPool::WorkQCurrLength(Message::Priority prio) const
+size_t InvokerPool::WorkQCurrLength(MsgPriority prio) const
 {
-   if(prio > Message::MaxPriority) return 0;
+   if(prio > MAX_PRIORITY) return 0;
    return work_[prio]->length_;
 }
 
 //------------------------------------------------------------------------------
 
-msecs_t InvokerPool::WorkQMaxDelay(Message::Priority prio) const
+msecs_t InvokerPool::WorkQMaxDelay(MsgPriority prio) const
 {
-   if(prio > Message::MaxPriority) return 0;
+   if(prio > MAX_PRIORITY) return 0;
    return work_[prio]->maxDelay_->Curr();
 }
 
 //------------------------------------------------------------------------------
 
-size_t InvokerPool::WorkQMaxLength(Message::Priority prio) const
+size_t InvokerPool::WorkQMaxLength(MsgPriority prio) const
 {
-   if(prio > Message::MaxPriority) return 0;
+   if(prio > MAX_PRIORITY) return 0;
    return work_[prio]->maxLength_->Curr();
 }
 }

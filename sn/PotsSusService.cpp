@@ -209,7 +209,7 @@ EventHandler::Rc PotsSusSsm::ProcessInitAck
       return EventHandler::Revert;
 
    default:
-      Context::Kill(PotsSusSsm_ProcessInitAck, stid, 0);
+      Context::Kill("invalid state", stid);
    }
 
    return EventHandler::Suspend;

@@ -235,7 +235,7 @@ void TlvMessage::CheckFence() const
    if(*FencePtr() != ParmFencePattern)
    {
       *FencePtr() = ParmDeathPattern;
-      Context::Kill(TlvMessage_CheckFence, GetProtocol(), GetSignal());
+      Context::Kill("message trampled", pack2(GetProtocol(), GetSignal()));
    }
 }
 

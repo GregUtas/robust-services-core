@@ -815,7 +815,7 @@ EventHandler::Rc PotsCwbSsm::ProcessInitAck
 
    if(stid != BcState::SelectingFacility)
    {
-      Context::Kill(PotsCwbSsm_ProcessInitAck, stid, 0);
+      Context::Kill("invalid state", stid);
       return EventHandler::Suspend;
    }
 

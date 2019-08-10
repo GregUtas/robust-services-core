@@ -64,8 +64,8 @@ EventHandler::Rc SbAnalyzeMessage::ProcessEvent
       //
       if(ssm.Parent() == nullptr)
       {
-         Context::Kill(SbAnalyzeMessage_ProcessEvent,
-            pack3(ssm.Sid(), state->Stid(), pid), 0);
+         Context::Kill("message analyzer not found", 
+            pack3(ssm.Sid(), state->Stid(), pid));
       }
 
       return Pass;
@@ -192,7 +192,7 @@ EventHandler::Rc SbInitiationReq::ProcessEvent
 
       if(modifier == nullptr)
       {
-         Context::Kill(SbInitiationReq_ProcessEvent, ire.GetModifier(), 0);
+         Context::Kill("failed to allocate modifier", ire.GetModifier());
       }
 
       ssm.HenqModifier(*modifier);

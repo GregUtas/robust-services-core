@@ -175,7 +175,7 @@ Event* AnalyzeSapEvent::Restore(EventHandler::Rc& rc)
          }
       }
 
-      Context::Kill(AnalyzeSapEvent_Restore, 0, 0);
+      Context::Kill("failed to restore event", rc);
    }
 
    return nullptr;

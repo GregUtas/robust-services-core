@@ -90,7 +90,7 @@ EventHandler::Rc RootServiceSM::ProcessInitAck
 {
    Debug::ft(RootServiceSM_ProcessInitAck);
 
-   Context::Kill(RootServiceSM_ProcessInitAck, Sid(), 0);
+   Context::Kill(strOver(this), Sid());
    return EventHandler::Suspend;
 }
 
@@ -103,7 +103,7 @@ EventHandler::Rc RootServiceSM::ProcessInitNack
 {
    Debug::ft(RootServiceSM_ProcessInitNack);
 
-   Context::Kill(RootServiceSM_ProcessInitNack, Sid(), 0);
+   Context::Kill(strOver(this), Sid());
    return EventHandler::Suspend;
 }
 
@@ -115,7 +115,7 @@ EventHandler::Rc RootServiceSM::ProcessSap(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft(RootServiceSM_ProcessSap);
 
-   Context::Kill(RootServiceSM_ProcessSap, Sid(), 0);
+   Context::Kill(strOver(this), Sid());
    return EventHandler::Suspend;
 }
 
@@ -127,7 +127,7 @@ EventHandler::Rc RootServiceSM::ProcessSip(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft(RootServiceSM_ProcessSip);
 
-   Context::Kill(RootServiceSM_ProcessSip, Sid(), 0);
+   Context::Kill(strOver(this), Sid());
    return EventHandler::Suspend;
 }
 
@@ -139,7 +139,7 @@ EventHandler::Rc RootServiceSM::ProcessSnp(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft(RootServiceSM_ProcessSnp);
 
-   Context::Kill(RootServiceSM_ProcessSnp, Sid(), 0);
+   Context::Kill(strOver(this), Sid());
    return EventHandler::Suspend;
 }
 

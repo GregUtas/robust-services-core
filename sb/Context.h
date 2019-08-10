@@ -114,10 +114,10 @@ public:
    virtual void NextPort(MsgPort*& port) const { port = nullptr; }
 
    //  Logs and deletes the objects in the current context when a fatal
-   //  error occurs.  FUNC, ERRVAL, and OFFSET are included in the log.
+   //  error occurs.  ERRSTR/ERRVAL and OFFSET are included in the log.
    //
-   static void Kill(NodeBase::fn_name_arg func,
-      NodeBase::debug64_t errval, NodeBase::debug32_t offset);
+   static void Kill(const std::string& errstr, NodeBase::debug32_t offset);
+   static void Kill(NodeBase::debug64_t errval, NodeBase::debug32_t offset);
 
    //  Logs the objects in the context for debugging purposes.  FUNC,
    //  ERRVAL, and OFFSET are passed to Debug::SwLog.

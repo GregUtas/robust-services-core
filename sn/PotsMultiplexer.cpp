@@ -393,7 +393,7 @@ ProtocolSM::IncomingRc PotsMuxPsm::ProcessIcMsg(Message& msg, Event*& event)
       break;
 
    default:
-      Context::Kill(PotsMuxPsm_ProcessIcMsg, sid, 0);
+      Context::Kill("invalid signal", sid);
       return DiscardMessage;
    }
 
@@ -836,11 +836,11 @@ EventHandler::Rc PotsMuxSsm::Initiate(Event*& nextEvent)
          return EventHandler::Initiate;
       }
 
-      Context::Kill(PotsMuxSsm_Initiate, pfi->sid, pfi->ind);
+      Context::Kill("invalid facility indicator", pack2(pfi->sid, pfi->ind));
       return EventHandler::Suspend;
    }
 
-   Context::Kill(PotsMuxSsm_Initiate, 0, 0);
+   Context::Kill("facility parameter not found", 0);
    return EventHandler::Suspend;
 }
 
@@ -899,7 +899,7 @@ EventHandler::Rc PotsMuxSsm::RelayMsg()
    //
    if(CountCalls() != 1)
    {
-      Context::Kill(PotsMuxSsm_RelayMsg, sid, 0);
+      Context::Kill("invalid call count", CountCalls());
    }
 
    switch(sid)
@@ -921,7 +921,7 @@ EventHandler::Rc PotsMuxSsm::RelayMsg()
       break;
 
    default:
-      Context::Kill(PotsMuxSsm_RelayMsg, sid, 1);
+      Context::Kill("invalid signal", sid);
       return EventHandler::Suspend;
    }
 
@@ -935,7 +935,7 @@ EventHandler::Rc PotsMuxSsm::RelayMsg()
 
    if(!pmsg->Relay(*ogPsm))
    {
-      Context::Kill(PotsMuxSsm_RelayMsg, sid, 0);
+      Context::Kill("failed to relay message", sid);
    }
 
    //d If our UPSM doesn't have addresses yet, supply them.  Don't pass PMSG to
@@ -1003,7 +1003,7 @@ EventHandler::Rc PotsMuxNuAnalyzeNetworkMessage::ProcessEvent
       return Continue;
    }
 
-   Context::Kill(PotsMuxNuAnalyzeNetworkMessage_ProcessEvent, sid, 0);
+   Context::Kill("invalid signal", sid);
    return Suspend;
 }
 

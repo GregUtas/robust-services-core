@@ -178,10 +178,7 @@ EventHandler::Rc PotsTreatment::ApplyTreatment
 {
    Debug::ft(PotsTreatment_ApplyTreatment);
 
-   //  This is a pure virtual function.
-   //
-   Context::Kill(PotsTreatment_ApplyTreatment,
-      pack2(ate.Owner()->Sid(), ate.GetCause()), 0);
+   Context::Kill(strOver(this), pack2(ate.Owner()->Sid(), ate.GetCause()));
    return EventHandler::Suspend;
 }
 

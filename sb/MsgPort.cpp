@@ -400,7 +400,7 @@ Message::Route MsgPort::Route() const
    auto upper = Upper();
    if(upper != nullptr) return upper->Route();
 
-   Context::Kill(MsgPort_Route, 0, 0);
+   Context::Kill("PSM not found", 0);
    return Message::External;
 }
 

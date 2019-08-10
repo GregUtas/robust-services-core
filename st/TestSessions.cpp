@@ -984,7 +984,7 @@ EventHandler::Rc TestAnalyzeUserMessage::ProcessEvent
       return Continue;
    }
 
-   Context::Kill(TestAnalyzeUserMessage_ProcessEvent, sid, 0);
+   Context::Kill("invalid signal", sid);
    return Suspend;
 }
 

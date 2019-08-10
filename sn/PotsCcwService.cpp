@@ -233,7 +233,7 @@ EventHandler::Rc PotsCcwSsm::ProcessInitAck
       //  tone and reconnecting the held call.
    }
 
-   Context::Kill(PotsCcwSsm_ProcessInitAck, stid, 0);
+   Context::Kill("invalid state", stid);
    return EventHandler::Suspend;
 }
 

@@ -179,7 +179,7 @@ EventHandler::Rc PotsHtlSsm::ProcessInitAck
    {
       auto prof = pssm.Profile();
       auto htlp = static_cast< PotsHtlFeatureProfile* >(prof->FindFeature(HTL));
-      if(htlp == nullptr) Context::Kill(PotsHtlSsm_ProcessInitAck, stid, 1);
+      if(htlp == nullptr) Context::Kill("HTL not assigned", 0);
 
       auto dn = htlp->GetDN();
       DigitString ds(dn);
@@ -193,7 +193,7 @@ EventHandler::Rc PotsHtlSsm::ProcessInitAck
       return EventHandler::Revert;
    }
 
-   Context::Kill(PotsHtlSsm_ProcessInitAck, stid, 0);
+   Context::Kill("invalid state", stid);
    return EventHandler::Suspend;
 }
 

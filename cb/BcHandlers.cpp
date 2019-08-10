@@ -128,7 +128,7 @@ EventHandler::Rc BcOaAnalyzeRemoteMessage::ProcessEvent
    case CipSignal::ANM:
       if(Debug::SwFlagOn(CallTrapFlag))
       {
-         Context::Kill(BcOaAnalyzeRemoteMessage_ProcessEvent, 0, 0);
+         Context::Kill("trap recovery test", 0);
       }
       return bcssm.RaiseRemoteAnswer(nextEvent);
 

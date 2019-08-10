@@ -513,7 +513,7 @@ EventHandler::Rc PotsWmlSsm::ProcessInitAck
       break;
    }
 
-   Context::Kill(PotsWmlSsm_ProcessInitAck, stid, sid);
+   Context::Kill("invalid service", pack2(stid, sid));
    return EventHandler::Suspend;
 }
 

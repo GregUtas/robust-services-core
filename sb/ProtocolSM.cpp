@@ -246,7 +246,7 @@ void ProtocolSM::EndOfTransaction()
          break;
 
       default:
-         Context::Kill(ProtocolSM_EndOfTransaction, fid_, rc);
+         Context::Kill("invalid result", pack2(fid_, rc));
          return;
       }
    }
@@ -513,9 +513,7 @@ ProtocolSM::IncomingRc ProtocolSM::ProcessIcMsg(Message& msg, Event*& event)
 {
    Debug::ft(ProtocolSM_ProcessIcMsg);
 
-   //  This is a pure virtual function.
-   //
-   Context::Kill(ProtocolSM_ProcessIcMsg, fid_, 0);
+   Context::Kill(strOver(this), fid_);
    return DiscardMessage;
 }
 
@@ -527,9 +525,7 @@ ProtocolSM::OutgoingRc ProtocolSM::ProcessOgMsg(Message& msg)
 {
    Debug::ft(ProtocolSM_ProcessOgMsg);
 
-   //  This is a pure virtual function.
-   //
-   Context::Kill(ProtocolSM_ProcessOgMsg, fid_, 0);
+   Context::Kill(strOver(this), fid_);
    return PurgeMessage;
 }
 

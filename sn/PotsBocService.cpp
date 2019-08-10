@@ -182,7 +182,7 @@ EventHandler::Rc PotsBocSsm::ProcessInitAck
       return EventHandler::Revert;
    }
 
-   Context::Kill(PotsBocSsm_ProcessInitAck, stid, 0);
+   Context::Kill("invalid state", stid);
    return EventHandler::Suspend;
 }
 

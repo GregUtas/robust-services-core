@@ -116,7 +116,7 @@ void MsgFactory::ProcessIcMsg(Message& msg) const
 
    //  This must be implemented by a subclass if required.
    //
-   Context::Kill(MsgFactory_ProcessIcMsg, msg.GetProtocol(), msg.GetSignal());
+   Context::Kill(strOver(this), pack2(msg.GetProtocol(), msg.GetSignal()));
 }
 
 //------------------------------------------------------------------------------

@@ -230,9 +230,7 @@ void MediaPsm::EnsureMediaMsg()
 {
    Debug::ft(MediaPsm_EnsureMediaMsg);
 
-   //  This is a pure virtual function.
-   //
-   Context::Kill(MediaPsm_EnsureMediaMsg, GetFactory(), 0);
+   Context::Kill(strOver(this), GetFactory());
 }
 
 //------------------------------------------------------------------------------

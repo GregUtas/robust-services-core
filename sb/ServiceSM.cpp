@@ -149,9 +149,7 @@ ServicePortId ServiceSM::CalcPort(const AnalyzeMsgEvent& ame)
 {
    Debug::ft(ServiceSM_CalcPort);
 
-   //  This is a pure virtual function.
-   //
-   Context::Kill(ServiceSM_CalcPort, sid_, 0);
+   Context::Kill(strOver(this), sid_);
    return NIL_ID;
 }
 
@@ -549,8 +547,8 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* currEvent, Event*& nextEvent)
 
             if(handler == nullptr)
             {
-               Context::Kill(ServiceSM_ProcessEvent,
-                  pack3(sid_, state->Stid(), currEvent->Eid()), 0);
+               Context::Kill("event handler not found",
+                  pack3(sid_, state->Stid(), currEvent->Eid()));
                return EventHandler::Suspend;
             }
 
@@ -668,7 +666,7 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* currEvent, Event*& nextEvent)
             //
             //  Illegal event handler return code.
             //
-            Context::Kill(ServiceSM_ProcessEvent, pack2(rc, sid_), 1);
+            Context::Kill("invalid result", pack2(rc, sid_));
          }
 
          //  If there are modifiers on the SSMQ, create an SNP event
@@ -780,7 +778,8 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* currEvent, Event*& nextEvent)
             else if(((AnalyzeSapEvent*) nextEvent)->CurrSsm() != nullptr)
                phase = ModifierReentryPhase;
             else
-               Context::Kill(ServiceSM_ProcessEvent, 0, 0);
+               Context::Kill("failed to route next event",
+                  pack3(sid_, currState_, nextEvent->Eid()));
 
             currEvent = nextEvent;
             nextEvent = nullptr;
@@ -810,7 +809,7 @@ EventHandler::Rc ServiceSM::ProcessEvent(Event* currEvent, Event*& nextEvent)
          //
          //  Illegal event routing phase.
          //
-         Context::Kill(ServiceSM_ProcessEvent, pack2(phase, sid_), 0);
+         Context::Kill("invalid phase", pack2(sid_, phase));
       }
    }
 }
@@ -823,9 +822,7 @@ EventHandler::Rc ServiceSM::ProcessInitAck(Event& currEvent, Event*& nextEvent)
 {
    Debug::ft(ServiceSM_ProcessInitAck);
 
-   //  This is a pure virtual function.
-   //
-   Context::Kill(ServiceSM_ProcessInitAck, sid_, 0);
+   Context::Kill(strOver(this), sid_);
    return EventHandler::Pass;
 }
 
@@ -839,7 +836,7 @@ EventHandler::Rc ServiceSM::ProcessInitNack(Event& currEvent, Event*& nextEvent)
 
    //  This function must be overridden if it can be invoked.
    //
-   Context::Kill(ServiceSM_ProcessInitNack, sid_, 0);
+   Context::Kill(strOver(this), sid_);
    return EventHandler::Pass;
 }
 
@@ -906,7 +903,7 @@ EventHandler::Rc ServiceSM::ProcessInitqSap
          //
          //  Initiator::InvokeHandler should have prevented this.
          //
-         Context::Kill(ServiceSM_ProcessInitqSap, modifier->Sid(), rc);
+         Context::Kill("invalid result", pack2(modifier->Sid(), rc));
       }
    }
 }
@@ -968,7 +965,7 @@ void ServiceSM::ProcessInitqSnp
          //
          //  Initiator::InvokeHandler should have prevented this.
          //
-         Context::Kill(ServiceSM_ProcessInitqSnp, modifier->Sid(), rc);
+         Context::Kill("invalid result", pack2(modifier->Sid(), rc));
       }
 
       //  If there is another modifier, pass the SAP to it.

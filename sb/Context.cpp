@@ -68,6 +68,10 @@ public:
    //
    SbException(debug64_t errval, debug32_t offset);
 
+   //  ERRSTR and OFFSET are passed to Software Exception.
+   //
+   SbException(const string& errstr, debug32_t offset);
+
    //  Not subclassed.
    //
    ~SbException() noexcept;
@@ -87,13 +91,27 @@ private:
 
 //------------------------------------------------------------------------------
 
-fn_name SbException_ctor = "SbException.ctor";
+fn_name SbException_ctor1 = "SbException.ctor";
 
 SbException::SbException(debug64_t errval, debug32_t offset) :
    SoftwareException(errval, offset, 2),
    ctx_(nullptr)
 {
-   Debug::ft(SbException_ctor);
+   Debug::ft(SbException_ctor1);
+
+   auto inv = InvokerThread::RunningInvoker_;
+   if(inv != nullptr) ctx_ = inv->GetContext();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SbException_ctor2 = "SbException.ctor(string)";
+
+SbException::SbException(const string& errstr, debug32_t offset) :
+   SoftwareException(errstr, offset, 2),
+   ctx_(nullptr)
+{
+   Debug::ft(SbException_ctor2);
 
    auto inv = InvokerThread::RunningInvoker_;
    if(inv != nullptr) ctx_ = inv->GetContext();
@@ -364,7 +382,7 @@ void Context::EnqPort(MsgPort& port)
 
    //  This is overridden by contexts that support ports.
    //
-   Kill(Context_EnqPort, port.LocAddr().Fid(), 0);
+   Kill(strOver(this), port.LocAddr().Fid());
 }
 
 //------------------------------------------------------------------------------
@@ -377,7 +395,7 @@ void Context::EnqPsm(ProtocolSM& psm)
 
    //  This is overridden by contexts that support PSMs.
    //
-   Kill(Context_EnqPsm, psm.GetFactory(), 0);
+   Kill(strOver(this), psm.GetFactory());
 }
 
 //------------------------------------------------------------------------------
@@ -489,7 +507,7 @@ void Context::ExqPort(MsgPort& port)
 
    //  This is overridden by contexts that support ports.
    //
-   Kill(Context_ExqPort, port.LocAddr().Fid(), 0);
+   Kill(strOver(this), port.LocAddr().Fid());
 }
 
 //------------------------------------------------------------------------------
@@ -502,7 +520,7 @@ void Context::ExqPsm(ProtocolSM& psm)
 
    //  This is overridden by contexts that support PSMs.
    //
-   Kill(Context_ExqPsm, psm.GetFactory(), 0);
+   Kill(strOver(this), psm.GetFactory());
 }
 
 //------------------------------------------------------------------------------
@@ -560,18 +578,29 @@ void Context::HenqPsm(ProtocolSM& psm)
 
    //  This is overridden by contexts that support PSMs.
    //
-   Kill(Context_EnqPsm, psm.GetFactory(), 0);
+   Kill(strOver(this), psm.GetFactory());
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Context_Kill = "Context.Kill";
+fn_name Context_Kill1 = "Context.Kill";
 
-void Context::Kill(fn_name_arg func, debug64_t errval, debug32_t offset)
+void Context::Kill(debug64_t errval, debug32_t offset)
 {
-   Debug::ft(Context_Kill);
+   Debug::ft(Context_Kill1);
 
    throw SbException(errval, offset);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Context_Kill2 = "Context.Kill(string)";
+
+void Context::Kill(const string& errstr, debug32_t offset)
+{
+   Debug::ft(Context_Kill2);
+
+   throw SbException(errstr, offset);
 }
 
 //------------------------------------------------------------------------------
@@ -624,9 +653,7 @@ void Context::ProcessIcMsg(Message& msg)
 {
    Debug::ft(Context_ProcessIcMsg);
 
-   //  This is a pure virtual function.
-   //
-   Kill(Context_ProcessIcMsg, 0, 0);
+   Kill(strOver(this), msg.Header()->rxAddr.fid);
 }
 
 //------------------------------------------------------------------------------
@@ -654,7 +681,7 @@ bool Context::ProcessMsg(Q1Way< Message >& msgq, const InvokerThread* inv)
    //
    if(msg->Header()->kill)
    {
-      Kill(Context_ProcessMsg, 0, 0);
+      Kill("killed remotely", 0);
       return true;
    }
 

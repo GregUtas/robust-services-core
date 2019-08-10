@@ -71,9 +71,7 @@ SbIpBufferPtr TextTlvMessage::Build()
 {
    Debug::ft(TextTlvMessage_Build);
 
-   //  This is a pure virtual function.
-   //
-   Context::Kill(TextTlvMessage_Build, GetProtocol(), 0);
+   Context::Kill(strOver(this), GetProtocol());
    return nullptr;
 }
 
@@ -95,9 +93,7 @@ SbIpBufferPtr TextTlvMessage::Parse()
 {
    Debug::ft(TextTlvMessage_Parse);
 
-   //  This is a pure virtual function.
-   //
-   Context::Kill(TextTlvMessage_Parse, GetProtocol(), 0);
+   Context::Kill(strOver(this), GetProtocol());
    return nullptr;
 }
 

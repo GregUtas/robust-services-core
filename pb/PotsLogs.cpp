@@ -48,7 +48,6 @@ void CreatePotsLogs(RestartLevel level)
    new Log(group, PotsShelfIcMessage, "POTS shelf invalid incoming message");
    new Log(group, PotsCallIcSignal, "POTS call invalid incoming signal");
    new Log(group, PotsCallIcBuffer, "POTS call invalid incoming buffer");
-   new Log(group, PotsTrafficError, "POTS traffic error");
    new Log(group, PotsShelfCircuitReset, "POTS shelf circuit reset");
    new Log(group, PotsTrafficRate, "POTS traffic rate");
    new Log(group, PotsShelfOgSignal, "POTS shelf invalid outgoing signal");

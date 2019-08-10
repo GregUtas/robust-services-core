@@ -91,6 +91,10 @@ public:
    //
    void RecordHoldingTime(secs_t secs);
 
+   //  Records an aborted call.
+   //
+   void RecordAbort() { ++aborts_; }
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -218,6 +222,12 @@ private:
    //  a call.
    //
    word overflows_;
+
+   //  The number of times a call was aborted because the traffic thread
+   //  did not have enough time to do its work, resulting in a timeout
+   //  in the POTS call.
+   //
+   word aborts_;
 
    //  Each active call is queued against the timeslot in which it will
    //  decide what to do next (typically, to send a messsage).

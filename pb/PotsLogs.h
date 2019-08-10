@@ -37,7 +37,6 @@ namespace PotsBase
    constexpr NodeBase::LogId PotsShelfIcMessage = NodeBase::TroubleLog + 2;
    constexpr NodeBase::LogId PotsCallIcSignal = NodeBase::TroubleLog + 3;
    constexpr NodeBase::LogId PotsCallIcBuffer = NodeBase::TroubleLog + 4;
-   constexpr NodeBase::LogId PotsTrafficError = NodeBase::TroubleLog + 5;
    constexpr NodeBase::LogId PotsShelfCircuitReset = NodeBase::StateLog;
    constexpr NodeBase::LogId PotsTrafficRate = NodeBase::InfoLog;
    constexpr NodeBase::LogId PotsShelfOgSignal = NodeBase::DebugLog;

@@ -160,10 +160,6 @@ private:
    void EraseOrig();
    void EraseTerm();
 
-   //  Generates a log when an unexpected situation is detected.
-   //
-   void OutputLog(word errval) const;
-
    //  Returns a string for displaying STATE.
    //
    static c_string strState(State state);
@@ -387,12 +383,13 @@ bool TrafficCall::CheckTerm()
 
    if(term_->GetTrafficId() == callid_) return true;
 
-   //  The terminator was released, probably because of an answer or
-   //  suspend timeout.  Log this call and release it after ensuring
-   //  that it won't try to send an Onhook on behalf of its former
-   //  terminator.
+   //  The terminator was released, probably because of an answer or suspend
+   //  timeout.  Release this call after ensuring that it won't try to send
+   //  an Onhook on behalf of its former terminator.  This used to be logged
+   //  but was only seen when trace tools were imposing significant overhead,
+   //  so the log was removed.
    //
-   OutputLog(0);
+   Singleton< PotsTrafficThread >::Instance()->RecordAbort();
    EraseTerm();
    return false;
 }
@@ -532,23 +529,6 @@ msecs_t TrafficCall::Originate() const
 
 //------------------------------------------------------------------------------
 
-fn_name TrafficCall_OutputLog = "TrafficCall.OutputLog";
-
-void TrafficCall::OutputLog(word errval) const
-{
-   Debug::ft(TrafficCall_OutputLog);
-
-   auto log = Log::Create(PotsLogGroup, PotsTrafficError);
-   if(log == nullptr) return;
-   *log << Log::Tab << "state=" << strState(state_);
-   *log << " errval=" << errval << CRLF;
-   if(orig_ != nullptr) *log << Log::Tab << "o: " << orig_->strState() << CRLF;
-   if(term_ != nullptr) *log << Log::Tab << "t: " << term_->strState();
-   Log::Submit(log);
-}
-
-//------------------------------------------------------------------------------
-
 fn_name TrafficCall_ProcessConnected = "TrafficCall.ProcessConnected";
 
 msecs_t TrafficCall::ProcessConnected()
@@ -590,18 +570,26 @@ msecs_t TrafficCall::ProcessDialing()
 {
    Debug::ft(TrafficCall_ProcessDialing);
 
-   //  We could check orig_->CanDial() here.  If the traffic thread
-   //  falls behind (which is undesirable), then digit collection may
-   //  time out, which will cause a log when we try to send a Digits
-   //  message.  But because this is informative, we don't prevent it.
+   //  We check orig_->CanDial() here because the traffic thread falls
+   //  behind when trace tools are imposing significant overhead.  Digit
+   //  collection can time out, which will cause a POTS900 log if we try
+   //  to send a Digits message.
    //
    //  o Abandon (5%).
    //  o Time out (5%).
    //  o Dial the rest of the DN (90%).
    //
+   auto dial = orig_->CanDial();
    auto rnd = rand(1, 100);
 
-   if(rnd <= 5)
+   if((rnd <= 5) || !dial)
+   {
+      if(!dial) Singleton< PotsTrafficThread >::Instance()->RecordAbort();
+      ReleaseOrig();
+      return 0;
+   }
+
+   if((rnd <= 5) || !orig_->CanDial())
    {
       ReleaseOrig();
       return 0;
@@ -1070,6 +1058,7 @@ PotsTrafficThread::PotsTrafficThread() : Thread(PayloadFaction),
    totalTimes_(0),
    totalReports_(0),
    overflows_(0),
+   aborts_(0),
    timewheel_(nullptr)
 {
    Debug::ft(PotsTrafficThread_ctor);
@@ -1152,6 +1141,7 @@ void PotsTrafficThread::Display(ostream& stream,
    stream << prefix << "totalTimes      : " << totalTimes_ << CRLF;
    stream << prefix << "totalReports    : " << totalReports_ << CRLF;
    stream << prefix << "overflows       : " << overflows_ << CRLF;
+   stream << prefix << "aborts          : " << aborts_ << CRLF;
 }
 
 //------------------------------------------------------------------------------
@@ -1339,6 +1329,7 @@ void PotsTrafficThread::Query(ostream& stream) const
    stream << "Total calls created          " << totalCalls_ << CRLF;
    stream << "Number of active calls       " << activeCalls_ << CRLF;
    stream << "Number of DN overflows       " << overflows_ << CRLF;
+   stream << "Number of calls aborted      " << aborts_ << CRLF;
    stream << "Total holding time reports   " << totalReports_ << CRLF;
 
    if((totalReports_ > 0) && (totalCalls_ > 0))

@@ -29,6 +29,7 @@
 #include "Context.h"
 #include "NbTypes.h"
 #include "RegCell.h"
+#include "SbTypes.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------

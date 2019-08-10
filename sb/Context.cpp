@@ -31,6 +31,7 @@
 #include "InvokerPool.h"
 #include "InvokerPoolRegistry.h"
 #include "InvokerThread.h"
+#include "LocalAddress.h"
 #include "Log.h"
 #include "MsgHeader.h"
 #include "MsgPort.h"

@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "MsgFactory.h"
+#include "Algorithms.h"
 #include "Clock.h"
 #include "Debug.h"
 #include "Message.h"

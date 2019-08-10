@@ -22,6 +22,7 @@
 #include "ProtocolLayer.h"
 #include <ostream>
 #include <string>
+#include "Algorithms.h"
 #include "Context.h"
 #include "Debug.h"
 #include "SysTypes.h"

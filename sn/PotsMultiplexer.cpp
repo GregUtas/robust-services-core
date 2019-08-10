@@ -23,6 +23,7 @@
 #include "CliText.h"
 #include <ostream>
 #include <string>
+#include "Algorithms.h"
 #include "Context.h"
 #include "Debug.h"
 #include "Formatters.h"

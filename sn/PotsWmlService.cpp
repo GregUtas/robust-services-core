@@ -26,6 +26,7 @@
 #include "State.h"
 #include <ostream>
 #include <string>
+#include "Algorithms.h"
 #include "BcAddress.h"
 #include "BcCause.h"
 #include "BcRouting.h"

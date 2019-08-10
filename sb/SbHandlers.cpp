@@ -64,7 +64,7 @@ EventHandler::Rc SbAnalyzeMessage::ProcessEvent
       //
       if(ssm.Parent() == nullptr)
       {
-         Context::Kill("message analyzer not found", 
+         Context::Kill("message analyzer not found",
             pack3(ssm.Sid(), state->Stid(), pid));
       }
 

@@ -292,7 +292,7 @@ ostringstreamPtr LogBuffer::GetLogs
          continue;
       }
 
-      periodic = (LogType(log->Id()) == PeriodicLog);
+      periodic = (GetLogType(log->Id()) == PeriodicLog);
 
       if(periodic && (count > 0))
       {

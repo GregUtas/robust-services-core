@@ -100,10 +100,6 @@ public:
    //
    LogId Id() const { return id_; }
 
-   //  Returns the type of log associated with ID.
-   //
-   static LogType GetType(LogId id);
-
    //  Used to suppress or throttle the log:
    //    o 1: no effect
    //    o 0: suppresses all occurrences of the log

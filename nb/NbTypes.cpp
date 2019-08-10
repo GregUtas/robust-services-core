@@ -21,6 +21,7 @@
 //
 #include "NbTypes.h"
 #include <sstream>
+#include "Debug.h"
 
 using std::ostream;
 
@@ -122,5 +123,23 @@ ostream& operator<<(ostream& stream, Faction faction)
    else
       stream << FactionStrings[Faction_N];
    return stream;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name NodeBase_GetType = "NodeBase.GetLogType";
+
+LogType GetLogType(LogId id)
+{
+   Debug::ft(NodeBase_GetType);
+
+   if((id >= TroubleLog) && (id <= TroubleLog + 99)) return TroubleLog;
+   if((id >= ThresholdLog) && (id <= ThresholdLog + 99)) return ThresholdLog;
+   if((id >= StateLog) && (id <= StateLog + 99)) return StateLog;
+   if((id >= PeriodicLog) && (id <= PeriodicLog + 99)) return PeriodicLog;
+   if((id >= InfoLog) && (id <= InfoLog + 199)) return InfoLog;
+   if((id >= MiscLog) && (id <= MiscLog + 199)) return MiscLog;
+   if((id >= DebugLog) && (id <= DebugLog + 99)) return DebugLog;
+   return LogType_N;
 }
 }

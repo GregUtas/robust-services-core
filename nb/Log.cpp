@@ -280,20 +280,6 @@ ostringstreamPtr Log::Format(AlarmStatus status) const
 
 //------------------------------------------------------------------------------
 
-LogType Log::GetType(LogId id)
-{
-   if((id >= TroubleLog) && (id <= TroubleLog + 99)) return TroubleLog;
-   if((id >= ThresholdLog) && (id <= ThresholdLog + 99)) return ThresholdLog;
-   if((id >= StateLog) && (id <= StateLog + 99)) return StateLog;
-   if((id >= PeriodicLog) && (id <= PeriodicLog + 99)) return PeriodicLog;
-   if((id >= InfoLog) && (id <= InfoLog + 199)) return InfoLog;
-   if((id >= MiscLog) && (id <= MiscLog + 199)) return MiscLog;
-   if((id >= DebugLog) && (id <= DebugLog + 99)) return DebugLog;
-   return LogType_N;
-}
-
-//------------------------------------------------------------------------------
-
 void Log::Patch(sel_t selector, void* arguments)
 {
    Dynamic::Patch(selector, arguments);

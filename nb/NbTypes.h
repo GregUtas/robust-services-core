@@ -161,6 +161,10 @@ typedef uint16_t ThreadId;
 //
 typedef uint16_t LogId;
 
+//  Returns the type of log associated with ID.
+//
+LogType GetLogType(LogId id);
+
 //  An identifier for a trace record.
 //
 typedef uint8_t TraceRecordId;

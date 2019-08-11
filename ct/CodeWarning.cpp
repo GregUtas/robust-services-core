@@ -533,7 +533,7 @@ void CodeWarning::Initialize()
       "Typedef of pointer type")));
    Attrs_.insert(WarningPair(AnonymousEnum,
       WarningAttrs(F, X, F,
-      "Unnamed enum")));
+      "Anonymous enum")));
    Attrs_.insert(WarningPair(DataUninitialized,
       WarningAttrs(F, X, F,
       "Global data initialization not found")));
@@ -641,7 +641,7 @@ void CodeWarning::Initialize()
       "\"(void)\" as function argument")));
    Attrs_.insert(WarningPair(AnonymousArgument,
       WarningAttrs(F, X, F,
-      "Unnamed argument")));
+      "Anonymous argument")));
    Attrs_.insert(WarningPair(AdjacentArgumentTypes,
       WarningAttrs(F, X, F,
       "Adjacent arguments have the same type")));

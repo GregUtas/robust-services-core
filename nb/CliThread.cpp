@@ -81,7 +81,7 @@ CliThread::~CliThread()
 
 //------------------------------------------------------------------------------
 
-const char* CliThread::AbbrName() const
+c_string CliThread::AbbrName() const
 {
    return "cli";
 }
@@ -426,7 +426,7 @@ CliAppData* CliThread::GetAppData(CliAppData::Id aid) const
 {
    if(aid <= CliAppData::MaxId) return appData_[aid].get();
 
-   Debug::SwLog(CliThread_GetAppData, aid, 0);
+   Debug::SwLog(CliThread_GetAppData, "invalid CliAppData::Id", aid);
    return nullptr;
 }
 
@@ -670,7 +670,7 @@ void CliThread::ReadCommands()
             //  StreamEof and StreamFailure are not reported when reading from
             //  the console.  Pause before continuing.
             //
-            Debug::SwLog(CliThread_ReadCommands, rc, 1);
+            Debug::SwLog(CliThread_ReadCommands, "invalid StreamRc", rc);
             //  [fallthrough]
          case StreamInterrupt:
          case StreamRestart:
@@ -686,7 +686,7 @@ void CliThread::ReadCommands()
 
          case StreamInUse:
          default:
-            Debug::SwLog(CliThread_ReadCommands, rc, 0);
+            Debug::SwLog(CliThread_ReadCommands, "unexpected StreamRc", rc);
          }
       }
    }
@@ -847,7 +847,7 @@ void CliThread::SetAppData(CliAppData* data, CliAppData::Id aid)
       return;
    }
 
-   Debug::SwLog(CliThread_SetAppData, aid, 0);
+   Debug::SwLog(CliThread_SetAppData, "invalid CliAppData::Id", aid);
 }
 
 //------------------------------------------------------------------------------

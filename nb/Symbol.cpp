@@ -25,7 +25,6 @@
 #include "Debug.h"
 #include "Singleton.h"
 #include "SymbolRegistry.h"
-#include "SysTypes.h"
 
 using std::ostream;
 using std::string;

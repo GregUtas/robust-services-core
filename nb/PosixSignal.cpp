@@ -41,8 +41,8 @@ const signal_t PosixSignal::MaxId = UINT8_MAX;
 
 fn_name PosixSignal_ctor = "PosixSignal.ctor";
 
-PosixSignal::PosixSignal(signal_t value, const char* name,
-   const char* expl, uint8_t severity, const Flags& attrs) :
+PosixSignal::PosixSignal(signal_t value, c_string name,
+   c_string expl, uint8_t severity, const Flags& attrs) :
    value_(value),
    name_(name),
    expl_(expl),

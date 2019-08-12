@@ -23,6 +23,7 @@
 #define CFGBOOLPARM_H_INCLUDED
 
 #include "CfgBitParm.h"
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -35,7 +36,7 @@ class CfgBoolParm : public CfgBitParm
 public:
    //  Creates a parameter with the specified attributes.
    //
-   CfgBoolParm(const char* key, const char* def, bool* field, const char* expl);
+   CfgBoolParm(c_string key, c_string def, bool* field, c_string expl);
 
    //  Virtual to allow subclassing.
    //

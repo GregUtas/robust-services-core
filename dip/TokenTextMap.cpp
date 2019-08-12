@@ -312,13 +312,14 @@ bool TokenTextMap::insert(const Token& token, const string& text)
    //
    if(token_to_text_map_.find(token) != token_to_text_map_.end())
    {
-      Debug::SwLog(TokenTextMap_insert, token.all(), 0);
+      Debug::SwLog(TokenTextMap_insert, "token already exists", token.all());
       return false;
    }
 
    if(text_to_token_map_.find(text) != text_to_token_map_.end())
    {
-      Debug::SwLog(TokenTextMap_insert, text, 1);
+      string expl = "string already in use: " + text;
+      Debug::SwLog(TokenTextMap_insert, expl, 1);
       return false;
    }
 

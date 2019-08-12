@@ -211,7 +211,7 @@ Pots_NU_Message::Pots_NU_Message(ProtocolSM* psm, size_t size) :
    //
    if(psm->PeerFactory() == PotsMuxFactoryId)
    {
-      SetPriority(Immediate);
+      SetPriority(IMMEDIATE);
    }
 }
 

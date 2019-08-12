@@ -158,7 +158,7 @@ void StartupParameters::SetFromCommandLine()
    if(ip_specified && name_specified)
    {
       Debug::SwLog(StartupParameters_SetFromCommandLine,
-         "Shouldn't specify both ServerName and ServerIPAddr", 2);
+         "shouldn't specify both ServerName and ServerIPAddr", 2);
    }
 }
 }

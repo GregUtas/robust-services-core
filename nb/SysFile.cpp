@@ -37,9 +37,7 @@ fn_name FileList_Advance = "FileList.Advance";
 
 bool FileList::Advance()
 {
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(FileList_Advance, 0, 0);
+   Debug::SwLog(FileList_Advance, strOver(this), 0);
    return false;
 }
 
@@ -49,9 +47,7 @@ fn_name FileList_AtEnd = "FileList.AtEnd";
 
 bool FileList::AtEnd() const
 {
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(FileList_AtEnd, 0, 0);
+   Debug::SwLog(FileList_AtEnd, strOver(this), 0);
    return true;
 }
 
@@ -61,9 +57,7 @@ fn_name FileList_GetName = "FileList.GetName";
 
 void FileList::GetName(string& fileName) const
 {
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(FileList_GetName, 0, 0);
+   Debug::SwLog(FileList_GetName, strOver(this), 0);
    fileName.clear();
 }
 
@@ -73,9 +67,7 @@ fn_name FileList_IsSubdir = "FileList.IsSubdir";
 
 bool FileList::IsSubdir() const
 {
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(FileList_IsSubdir, 0, 0);
+   Debug::SwLog(FileList_IsSubdir, strOver(this), 0);
    return false;
 }
 

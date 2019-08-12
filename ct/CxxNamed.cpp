@@ -34,7 +34,6 @@
 #include "CxxScoped.h"
 #include "CxxSymbols.h"
 #include "Debug.h"
-#include "Formatters.h"
 #include "Lexer.h"
 #include "Library.h"
 #include "Parser.h"
@@ -193,8 +192,7 @@ void CxxNamed::FindReferent()
 {
    Debug::ft(CxxNamed_FindReferent);
 
-   auto expl = "FindReferent() not implemented by " + strClass(this, false);
-   Context::SwLog(CxxNamed_FindReferent, expl, 0);
+   Context::SwLog(CxxNamed_FindReferent, strOver(this), 0);
 }
 
 //------------------------------------------------------------------------------
@@ -603,8 +601,7 @@ void CxxNamed::SetReferent(CxxScoped* item, const SymbolView* view) const
 {
    Debug::ft(CxxNamed_SetReferent);
 
-   auto expl = "SetReferent() not implemented by " + strClass(this, false);
-   Context::SwLog(CxxNamed_FindReferent, expl, 0);
+   Context::SwLog(CxxNamed_FindReferent, strOver(this), 0);
 }
 
 //------------------------------------------------------------------------------
@@ -1308,7 +1305,7 @@ bool DataSpec::ItemIsTemplateArg(const CxxNamed* item) const
 
    if(item == nullptr)
    {
-      Debug::SwLog(DataSpec_ItemIsTemplateArg, 0, 0);
+      Debug::SwLog(DataSpec_ItemIsTemplateArg, "null item", 0);
       return false;
    }
 

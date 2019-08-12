@@ -22,10 +22,12 @@
 #include "LogBuffer.h"
 #include <bitset>
 #include <cstring>
+#include <iosfwd>
 #include <sstream>
 #include "Clock.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "Log.h"
 #include "LogThread.h"
 #include "Memory.h"
 #include "MutexGuard.h"
@@ -41,6 +43,52 @@ using std::string;
 
 namespace NodeBase
 {
+class LogsWritten : public CallbackRequest
+{
+public:
+   //  Constructs a callback when LAST was the last log spooled from BUFF.
+   //
+   LogsWritten(LogBuffer* buff, const LogBuffer::Entry* last);
+
+   void Callback() override;
+private:
+   //  The buffer from which the logs were spooled.
+   //
+   LogBuffer* buff_;
+
+   //  The last log that was spooled from the buffer.
+   //
+   const LogBuffer::Entry* const last_;
+};
+
+//------------------------------------------------------------------------------
+
+fn_name LogsWritten_ctor = "LogsWritten.ctor";
+
+LogsWritten::LogsWritten(LogBuffer* buff, const LogBuffer::Entry* last) :
+   buff_(buff),
+   last_(last)
+{
+   Debug::ft(LogsWritten_ctor);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name LogsWritten_Callback = "LogsWritten.Callback";
+
+void LogsWritten::Callback()
+{
+   Debug::ft(LogsWritten_Callback);
+
+   buff_->Purge(last_);
+}
+
+//==============================================================================
+
+const size_t LogBuffer::BundledLogSizeThreshold = 2048;
+
+//------------------------------------------------------------------------------
+
 fn_name LogBuffer_ctor = "LogBuffer.ctor";
 
 LogBuffer::LogBuffer(size_t kbs) :
@@ -199,6 +247,72 @@ const LogBuffer::Entry* LogBuffer::FirstUnspooled() const
 
 //------------------------------------------------------------------------------
 
+fn_name LogBuffer_GetLogs = "LogBuffer.GetLogs";
+
+ostringstreamPtr LogBuffer::GetLogs
+   (CallbackRequestPtr& callback, bool& periodic)
+{
+   Debug::ft(LogBuffer_GetLogs);
+
+   //  If the log buffer contains any logs, create a stream to spool them.
+   //
+   MutexGuard guard(&lock_);
+
+   periodic = false;
+   auto curr = FirstUnspooled();
+   if(curr == nullptr) return nullptr;
+   ostringstreamPtr stream(new std::ostringstream);
+   if(stream == nullptr) return nullptr;
+
+   //  Accumulate logs until they exceed the size limit.  But first, insert
+   //  a warning if some logs were discarded because the buffer was full.
+   //
+   if(discards_ > 0)
+   {
+      *stream << CRLF << AlarmStatusSymbol(MinorAlarm) << "WARNING: ";
+      *stream << discards_ << " log(s) discarded";
+      *stream << CRLF;
+      discards_ = 0;
+   }
+
+   size_t count = 0;
+   const LogBuffer::Entry* prev = nullptr;
+
+   while((stream->str().size() < BundledLogSizeThreshold) && (curr != nullptr))
+   {
+      //  Identify this log so that a periodic log is not bundled with
+      //  others.
+      //
+      auto log = Log::Find(&curr->log[0]);
+
+      if(log == nullptr)
+      {
+         Debug::SwLog(LogBuffer_GetLogs, "log not found", 0);
+         curr = Advance();
+         continue;
+      }
+
+      periodic = (GetLogType(log->Id()) == PeriodicLog);
+
+      if(periodic && (count > 0))
+      {
+         periodic = false;
+         break;
+      }
+
+      *stream << &curr->log[0];
+      prev = curr;
+      curr = Advance();
+      if(periodic) break;
+      ++count;
+   }
+
+   callback.reset(new LogsWritten(this, prev));
+   return stream;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name LogBuffer_InsertionPoint = "LogBuffer.InsertionPoint";
 
 LogBuffer::Entry* LogBuffer::InsertionPoint(size_t size)
@@ -302,6 +416,38 @@ const LogBuffer::Entry* LogBuffer::Pop()
    }
 
    return spooled_;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name LogBuffer_Purge = "LogBuffer.Purge";
+
+void LogBuffer::Purge(const Entry* last)
+{
+   Debug::ft(LogBuffer_Purge);
+
+   //  If the LAST log that was written to the log file still exists, free the
+   //  logs before it, and then free it as well.
+   //
+   for(auto curr = Last(); curr != last; curr = curr->prev)
+   {
+      if(curr == nullptr)
+      {
+         //  LAST no longer exists: requests must have been reordered!?
+         //
+         Debug::SwLog(LogsWritten_Callback, debug64_t(last), debug64_t(Last()));
+         return;
+      }
+   }
+
+   auto curr = FirstSpooled();
+
+   while((curr != last) && (curr != nullptr))
+   {
+      curr = Pop();
+   }
+
+   Pop();
 }
 
 //------------------------------------------------------------------------------

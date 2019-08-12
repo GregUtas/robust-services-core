@@ -36,16 +36,16 @@ namespace FunctionName
 {
    //  Returns the first location of STR in FUNC, else string::npos.
    //
-   size_t find(fn_name_arg func, const char* str);
+   size_t find(fn_name_arg func, c_string str);
 
    //  Returns the last location of STR in FUNC, else string::npos.
    //
-   size_t rfind(fn_name_arg func, const char* str);
+   size_t rfind(fn_name_arg func, c_string str);
 
    //  Returns -1, 0, or 1 if FUNC is less than, equal to, or greater
    //  than STR.
    //
-   int compare(fn_name_arg func, const char* str);
+   int compare(fn_name_arg func, c_string str);
 
    //  Constants for tools.  The "tags" appear as substrings in the
    //  types of functions indicated.

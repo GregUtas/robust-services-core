@@ -28,7 +28,7 @@ namespace CallBase
 {
 fn_name BcFactory_ctor = "BcFactory.ctor";
 
-BcFactory::BcFactory(Id fid, ProtocolId prid, const char* name) :
+BcFactory::BcFactory(Id fid, ProtocolId prid, c_string name) :
    SsmFactory(fid, prid, name)
 {
    Debug::ft(BcFactory_ctor);
@@ -51,7 +51,7 @@ Cause::Ind BcFactory::VerifyRoute(RouteResult::Id rid) const
 {
    Debug::ft(BcFactory_VerifyRoute);
 
-   Debug::SwLog(BcFactory_VerifyRoute, Fid(), 0);
+   Debug::SwLog(BcFactory_VerifyRoute, strOver(this), Fid());
    return Cause::ExchangeRoutingError;
 }
 }

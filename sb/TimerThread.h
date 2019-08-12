@@ -46,7 +46,7 @@ private:
 
    //  Overridden to return a name for the thread.
    //
-   const char* AbbrName() const override;
+   NodeBase::c_string AbbrName() const override;
 
    //  Private because this singleton is not subclassed.
    //

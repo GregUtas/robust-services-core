@@ -23,6 +23,7 @@
 #define CLIPTRPARM_H_INCLUDED
 
 #include "CliParm.h"
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -35,8 +36,7 @@ class CliPtrParm : public CliParm
 public:
    //  HELP, OPT, and TAG are passed to CliParm.
    //
-   explicit CliPtrParm(const char* help,
-      bool opt = false, const char* tag = nullptr);
+   explicit CliPtrParm(c_string help, bool opt = false, c_string tag = nullptr);
 
    //  Virtual to allow subclassing.
    //

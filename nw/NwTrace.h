@@ -79,7 +79,7 @@ public:
 private:
    //  Overridden to return a string for displaying this type of record.
    //
-   const char* EventString() const override;
+   NodeBase::c_string EventString() const override;
 
    //  The socket on which the event occurred.
    //

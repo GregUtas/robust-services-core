@@ -116,7 +116,7 @@ void PotsStatistics::Incr(Id id)
       return;
    }
 
-   Debug::SwLog(PotsStatistics_Incr, id, 0);
+   Debug::SwLog(PotsStatistics_Incr, "invalid id", id);
 }
 
 //------------------------------------------------------------------------------
@@ -133,6 +133,6 @@ void PotsStatistics::IncrCause(Cause::Ind cause)
       return;
    }
 
-   Debug::SwLog(PotsStatistics_IncrCause, cause, 0);
+   Debug::SwLog(PotsStatistics_IncrCause, "invalid Cause::Ind", cause);
 }
 }

@@ -272,7 +272,7 @@ Message* TestSession::NextIcMsg(FactoryId fid, SignalId sid, SkipInfo& skip)
             testPsm_ = TestPsm::Find(*psm);
 
             if(testPsm_ == nullptr)
-               Debug::SwLog(TestSession_NextIcMsg, appFid_, 0);
+               Debug::SwLog(TestSession_NextIcMsg, "PSM not found", appFid_);
             else
                testPsm_->SetCliId(*sbData_->Cli(), tid_);
          }
@@ -602,7 +602,7 @@ ProtocolSM::OutgoingRc TestPsm::ProcessOgMsg(Message& msg)
 
    //  A test PSM does not send messages.
    //
-   Debug::SwLog(TestPsm_ProcessOgMsg, msg.GetSignal(), 0);
+   Debug::SwLog(TestPsm_ProcessOgMsg, "unexpected invocation", msg.GetSignal());
    return PurgeMessage;
 }
 
@@ -984,7 +984,7 @@ EventHandler::Rc TestAnalyzeUserMessage::ProcessEvent
       return Continue;
    }
 
-   Context::Kill(TestAnalyzeUserMessage_ProcessEvent, sid, 0);
+   Context::Kill("invalid signal", sid);
    return Suspend;
 }
 

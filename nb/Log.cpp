@@ -47,7 +47,7 @@ using std::string;
 namespace NodeBase
 {
 const size_t Log::MaxExplSize = 48;
-const size_t Log::Indent = 4;
+const col_t Log::Indent = 4;
 const string Log::Tab = spaces(Log::Indent);
 std::atomic_size_t Log::SeqNo_ = 0;
 
@@ -73,12 +73,12 @@ Log::Log(LogGroup* group, LogId id, fixed_string expl) :
 
    if((id_ > MaxId) || (id < TroubleLog))
    {
-      Debug::SwLog(Log_ctor, "LogId invalid", id_);
+      Debug::SwLog(Log_ctor, "invalid LogId", id_);
    }
 
    if(expl_.size() > MaxExplSize)
    {
-      Debug::SwLog(Log_ctor, "expl size", expl_.size());
+      Debug::SwLog(Log_ctor, "expl length", expl_.size());
    }
 
    if(!group_->BindLog(*this))
@@ -217,23 +217,27 @@ Log* Log::Find(fixed_string groupName, LogId id, LogGroup*& group)
 
 //------------------------------------------------------------------------------
 
-Log* Log::Find(const string& log)
+const size_t LogIdSize = 3;
+const size_t NameBegin = 1 + Log::Indent;
+const size_t NameSize = LogGroup::MaxNameSize + LogIdSize + 1;
+const size_t MinNameSize = 1 + LogIdSize;
+
+Log* Log::Find(fixed_string log)
 {
    Debug::ft(Log_Find);
 
-   //  The log's name starts at LOG[Indent +1], after the <CRLF> at the
-   //  start of the log and field for any alarm status.  Find END, the
+   //  The log's name starts at LOG[Indent + 1], after the <CRLF> at the
+   //  start of the log and the field for an alarm status.  Find END, the
    //  position of the space that follows the name, and then extract the
    //  log's number and group name.  Convert the number to a LogId and
    //  find the log's definition.
    //
-   size_t numSize = 3;
-   auto begin = Indent + 1;
-   if(log.size() <= begin) return nullptr;
-   auto end = log.find(SPACE, begin);
+   string front(&log[NameBegin], NameSize);
+   auto end = front.find(SPACE);
    if(end == string::npos) return nullptr;
-   auto number = log.substr(end - numSize, numSize);
-   auto name = log.substr(begin, end - begin - numSize);
+   if(end < MinNameSize) return nullptr;
+   auto number = front.substr(end - LogIdSize, LogIdSize);
+   auto name = front.substr(0, end - LogIdSize);
 
    LogId id = 0;
 
@@ -319,7 +323,7 @@ void Log::Submit(ostringstreamPtr& stream)
    if(stream == nullptr) return;
    if(stream->str().back() != CRLF) *stream << CRLF;
 
-   auto log = Find(stream->str());
+   auto log = Find(stream->str().c_str());
 
    //  During a restart, LogThread won't run, so output the log
    //  directly instead of buffering it.

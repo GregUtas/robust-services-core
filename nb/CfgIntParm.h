@@ -36,8 +36,8 @@ class CfgIntParm : public CfgParm
 public:
    //  Creates a parameter with the specified attributes.
    //
-   CfgIntParm(const char* key, const char* def, word* field,
-      word min, word max, const char* expl);
+   CfgIntParm(c_string key, c_string def, word* field,
+      word min, word max, c_string expl);
 
    //  Virtual to allow subclassing.
    //

@@ -246,7 +246,7 @@ public:
 
    //  Returns the string that explains a parameter.
    //
-   const char* Help() const { return help_; }
+   c_string Help() const { return help_; }
 
    //  Indicates whether the parameter is optional or mandatory.
    //
@@ -254,7 +254,7 @@ public:
 
    //  Returns the tag (if any) for an optional parameter.
    //
-   const char* Tag() const { return tag_; }
+   c_string Tag() const { return tag_; }
 
    //  Sets the registry index required by the parameter.
    //
@@ -308,7 +308,7 @@ protected:
    //  it allows the parameter to appear in any order, tagged with "<tag>=".
    //  Protected because this class is virtual.
    //
-   CliParm(const char* help, bool opt, const char* tag);
+   CliParm(c_string help, bool opt, c_string tag);
 private:
    //  Updates VALUES to show legal inputs for the parameter.  Returns true
    //  if ParmMandBegin and ParmMandEnd should be included before and after
@@ -329,7 +329,7 @@ private:
 
    //  A string that describes the parameter's purpose.
    //
-   const char* const help_;
+   fixed_string help_;
 
    //  Whether the parameter is mandatory or optional.
    //
@@ -337,7 +337,7 @@ private:
 
    //  The tag, if any, for an optional parameter.
    //
-   const char* const tag_;
+   fixed_string tag_;
 };
 }
 #endif

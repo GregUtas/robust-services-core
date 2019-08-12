@@ -206,7 +206,8 @@ EventHandler::Rc PotsBcCiAnalyzeLocalMessage::ProcessEvent
          return pssm.RaiseCollectionTimeout(nextEvent);
       }
 
-      Debug::SwLog(PotsBcCiAnalyzeLocalMessage_ProcessEvent, toi->tid, 0);
+      Debug::SwLog(PotsBcCiAnalyzeLocalMessage_ProcessEvent,
+         "unexpected TimerId", toi->tid);
       return Suspend;
    }
 
@@ -780,7 +781,8 @@ EventHandler::Rc PotsBcAcAnalyzeLocalMessage::ProcessEvent
          return pssm.RaiseLocalRelease(nextEvent, Cause::NormalCallClearing);
       }
 
-      Debug::SwLog(PotsBcAcAnalyzeLocalMessage_ProcessEvent, toi->tid, 0);
+      Debug::SwLog(PotsBcAcAnalyzeLocalMessage_ProcessEvent,
+         "unexpected TimerId", toi->tid);
       return Suspend;
    }
 
@@ -901,7 +903,8 @@ EventHandler::Rc PotsBcExAnalyzeLocalMessage::ProcessEvent
          return pssm.RaiseApplyTreatment(nextEvent, Cause::NilInd);
       }
 
-      Debug::SwLog(PotsBcExAnalyzeLocalMessage_ProcessEvent, toi->tid, 0);
+      Debug::SwLog(PotsBcExAnalyzeLocalMessage_ProcessEvent,
+         "unexpected TimerId", toi->tid);
       return Suspend;
    }
 

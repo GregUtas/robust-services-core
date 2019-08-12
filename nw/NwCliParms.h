@@ -67,7 +67,7 @@ class IpAddrParm : public NodeBase::CliText
 public:
    virtual ~IpAddrParm() = default;
 protected:
-   IpAddrParm(const char* help, const char* text);
+   IpAddrParm(NodeBase::c_string help, NodeBase::c_string text);
 };
 
 //------------------------------------------------------------------------------

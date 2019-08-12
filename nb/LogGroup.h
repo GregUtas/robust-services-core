@@ -70,7 +70,7 @@ public:
 
    //  Returns the group's name.
    //
-   const char* Name() const { return name_.c_str(); }
+   c_string Name() const { return name_.c_str(); }
 
    //  Returns the group's identifier.
    //

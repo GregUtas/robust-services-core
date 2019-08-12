@@ -111,7 +111,7 @@ public:
 
    //  Returns a string that identifies the factory.
    //
-   const char* Name() const { return name_; }
+   NodeBase::c_string Name() const { return name_; }
 
    //  Creates a subclass of CliText so that the factory can be specified
    //  with a string.  The default version returns nullptr and must be
@@ -137,6 +137,13 @@ public:
    //  VerifyCommand.
    //
    virtual Message* ReallocOgMsg(SbIpBufferPtr& buff) const;
+
+   //  Invoked when the first ingress MSG is received.  Updates PRIO if MSG
+   //  should go on a higher priority work queue and/or returns true if MSG
+   //  should be placed at the front of that queue.  The default version
+   //  simply returns false and leaves PRIO at INGRESS.
+   //
+   virtual bool ScreenFirstMsg(const Message& msg, MsgPriority& prio) const;
 
    //  Invoked when a context on the ingress work queue receives a subsequent
    //  message.  MSGQ provides access to the context's message queue.  If the
@@ -195,7 +202,7 @@ protected:
    //  Sets the corresponding member variables and adds the factory to
    //  FactoryRegistry.  Protected because this class is virtual.
    //
-   Factory(Id fid, ContextType type, ProtocolId prid, const char* name);
+   Factory(Id fid, ContextType type, ProtocolId prid, NodeBase::c_string name);
 
    //  Removes the factory from FactoryRegistry.  Protected because
    //  subclasses should be singletons.
@@ -268,7 +275,7 @@ private:
 
    //  The factory's name.
    //
-   const char* const name_;
+   NodeBase::fixed_string name_;
 
    //  The signals that are legal for the factory to receive.
    //

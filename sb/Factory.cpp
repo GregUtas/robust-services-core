@@ -89,7 +89,7 @@ FactoryStats::~FactoryStats()
 
 fn_name Factory_ctor = "Factory.ctor";
 
-Factory::Factory(Id fid, ContextType type, ProtocolId prid, const char* name) :
+Factory::Factory(Id fid, ContextType type, ProtocolId prid, c_string name) :
    type_(type),
    faction_(PayloadFaction),
    prid_(prid),
@@ -130,7 +130,8 @@ void Factory::AddIncomingSignal(SignalId sid)
 
    if(!Signal::IsValidId(sid))
    {
-      Debug::SwLog(Factory_AddIncomingSignal, sid, 0);
+      Debug::SwLog(Factory_AddIncomingSignal, "invalid signal", sid);
+      return;
    }
 
    icSignals_[sid] = true;
@@ -146,7 +147,8 @@ void Factory::AddOutgoingSignal(SignalId sid)
 
    if(!Signal::IsValidId(sid))
    {
-      Debug::SwLog(Factory_AddOutgoingSignal, sid, 0);
+      Debug::SwLog(Factory_AddOutgoingSignal, "invalid signal", sid);
+      return;
    }
 
    ogSignals_[sid] = true;
@@ -160,9 +162,7 @@ Context* Factory::AllocContext() const
 {
    Debug::ft(Factory_AllocContext);
 
-   //  This must be implemented by subclasses.
-   //
-   Debug::SwLog(Factory_AllocContext, Fid(), 0);
+   Debug::SwLog(Factory_AllocContext, strOver(this), Fid());
    return nullptr;
 }
 
@@ -174,9 +174,7 @@ Message* Factory::AllocIcMsg(SbIpBufferPtr& buff) const
 {
    Debug::ft(Factory_AllocIcMsg);
 
-   //  This must be implemented by a subclass if required.
-   //
-   Debug::SwLog(Factory_AllocIcMsg, Fid(), 0);
+   Debug::SwLog(Factory_AllocIcMsg, strOver(this), Fid());
    return nullptr;
 }
 
@@ -188,9 +186,7 @@ Message* Factory::AllocOgMsg(SignalId sid) const
 {
    Debug::ft(Factory_AllocOgMsg);
 
-   //  This must be implemented by a subclass if required.
-   //
-   Debug::SwLog(Factory_AllocOgMsg, Fid(), 0);
+   Debug::SwLog(Factory_AllocOgMsg, strOver(this), Fid());
    return nullptr;
 }
 
@@ -298,9 +294,7 @@ bool Factory::InjectMsg(Message& msg) const
 {
    Debug::ft(Factory_InjectMsg);
 
-   //  This must be implemented by a subclass if required.
-   //
-   Debug::SwLog(Factory_InjectMsg, Fid(), 0);
+   Debug::SwLog(Factory_InjectMsg, strOver(this), Fid());
    return false;
 }
 
@@ -343,9 +337,7 @@ Message* Factory::ReallocOgMsg(SbIpBufferPtr& buff) const
 {
    Debug::ft(Factory_ReallocOgMsg);
 
-   //  This must be implemented by a subclass if required.
-   //
-   Debug::SwLog(Factory_ReallocOgMsg, Fid(), 0);
+   Debug::SwLog(Factory_ReallocOgMsg, strOver(this), Fid());
    return nullptr;
 }
 
@@ -358,9 +350,7 @@ Factory::Rc Factory::ReceiveMsg
 {
    Debug::ft(Factory_ReceiveMsg);
 
-   //  This must be implemented by a subclass if required.
-   //
-   Debug::SwLog(Factory_ReceiveMsg, Fid(), 0);
+   Debug::SwLog(Factory_ReceiveMsg, strOver(this), Fid());
    return FactoryNotReceiving;
 }
 
@@ -404,6 +394,17 @@ void Factory::RecordMsg(bool incoming, bool inter, size_t size) const
 
       stats_->ogMsgSize_->Update(size);
    }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Factory_ScreenFirstMsg = "Factory.ScreenFirstMsg";
+
+bool Factory::ScreenFirstMsg(const Message& msg, MsgPriority& prio) const
+{
+   Debug::ft(Factory_ScreenFirstMsg);
+
+   return false;
 }
 
 //------------------------------------------------------------------------------

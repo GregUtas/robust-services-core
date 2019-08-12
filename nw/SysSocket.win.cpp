@@ -80,7 +80,7 @@ SysSocket::SysSocket(ipport_t port, const IpService* service, AllocRc& rc) :
       socket_ = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
       break;
    default:
-      Debug::SwLog(SysSocket_ctor2, proto, 0);
+      Debug::SwLog(SysSocket_ctor2, "unexpected protocol", proto);
       SetError(WSAENOPROTOOPT);
       rc = AllocFailed;
       return;

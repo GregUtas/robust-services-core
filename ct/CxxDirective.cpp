@@ -739,9 +739,7 @@ CxxToken* Macro::GetValue() const
 {
    Debug::ft(Macro_GetValue);
 
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(Macro_GetValue, 0, 0);
+   Debug::SwLog(Macro_GetValue, strOver(this), 0);
    return nullptr;
 }
 
@@ -776,7 +774,7 @@ void Macro::SetExpr(ExprPtr& rhs)
 
    //  This shouldn't be invoked on a built-in macro.
    //
-   Debug::SwLog(Macro_SetExpr, 0, 0);
+   Debug::SwLog(Macro_SetExpr, name_, 0);
 }
 
 //------------------------------------------------------------------------------

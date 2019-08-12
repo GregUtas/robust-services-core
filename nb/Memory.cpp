@@ -328,7 +328,7 @@ void* Memory::Realloc(void* addr, size_t nBytes)
    //
    if(addr == nullptr)
    {
-      Debug::SwLog(Memory_Realloc, nBytes, 0);
+      Debug::SwLog(Memory_Realloc, "null address", nBytes);
       return nullptr;
    }
 
@@ -379,7 +379,7 @@ MemoryType Memory::Type(const void* addr)
 
    if(addr == nullptr)
    {
-      Debug::SwLog(Memory_Type, 0, 0);
+      Debug::SwLog(Memory_Type, "null address", 0);
       return MemNull;
    }
 

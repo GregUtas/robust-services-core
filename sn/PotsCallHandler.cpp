@@ -150,13 +150,13 @@ void PotsCallHandler::ReceiveBuff
       }
 
       header->initial = true;
-      header->priority = Message::Ingress;
+      header->priority = INGRESS;
       header->rxAddr.fid = PotsCallFactoryId;
    }
    else
    {
       header->initial = false;
-      header->priority = Message::Progress;
+      header->priority = PROGRESS;
       header->rxAddr = addr;
    }
 

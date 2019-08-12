@@ -28,7 +28,6 @@
 #include "CliCookie.h"
 #include "CliThread.h"
 #include "Debug.h"
-#include "SysTypes.h"
 
 using std::ostream;
 using std::string;
@@ -44,7 +43,7 @@ const char CliCharParm::CharSeparator = '|';
 fn_name CliCharParm_ctor = "CliCharParm.ctor";
 
 CliCharParm::CliCharParm
-   (const char* help, const char* chars, bool opt, const char* tag) :
+   (c_string help, c_string chars, bool opt, c_string tag) :
    CliParm(help, opt, tag),
    chars_(chars)
 {

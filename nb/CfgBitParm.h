@@ -45,7 +45,7 @@ protected:
    //  Creates a parameter with the specified attributes.  Protected
    //  because this class is virtual.
    //
-   CfgBitParm(const char* key, const char* def, const char* expl);
+   CfgBitParm(c_string key, c_string def, c_string expl);
 
    //  Returns the parameter's current value.
    //

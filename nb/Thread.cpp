@@ -102,7 +102,7 @@ private:
 
    //  Overridden to return a string that explains an event.
    //
-   const char* EventString() const override;
+   c_string EventString() const override;
 
    //  Additional debug information.
    //
@@ -181,7 +181,7 @@ void ThreadTrace::CaptureEvent(fn_name_arg func, Id rid, word info)
       new ThreadTrace(func, depth - 3, rid, info);
       break;
    default:
-      Debug::SwLog(ThreadTrace_CaptureEvent, rid, 0);
+      Debug::SwLog(ThreadTrace_CaptureEvent, "unexpected event", rid);
    }
 }
 
@@ -230,7 +230,7 @@ fixed_string LockReleasedStr  = "-lock";
 fixed_string PauseEnterStr    = "     ";
 fixed_string PauseExitStr     = "     ";
 
-const char* ThreadTrace::EventString() const
+c_string ThreadTrace::EventString() const
 {
    switch(rid_)
    {
@@ -691,7 +691,7 @@ bool Orphans::ExitNow()
          orphans_.Erase(i);
          ThreadAdmin::Incr(ThreadAdmin::Orphans);
          delete orphan;
-         Debug::SwLog(Orphans_ExitNow, "ORPHAN EXITED", pid);
+         Debug::SwLog(Orphans_ExitNow, "orphan exited", pid);
          return true;
       }
    }
@@ -713,7 +713,7 @@ void Orphans::Register(SysThread* thr)
 
    if(!orphans_.PushBack(thr))
    {
-      Debug::SwLog(Orphans_Register, thr->Nid(), 0);
+      Debug::SwLog(Orphans_Register, "failed to register orphan", thr->Nid());
    }
 }
 
@@ -1138,13 +1138,11 @@ Thread::~Thread()
 
 fn_name Thread_AbbrName = "Thread.AbbrName";
 
-const char* Thread::AbbrName() const
+c_string Thread::AbbrName() const
 {
    Debug::ft(Thread_AbbrName);
 
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(Thread_AbbrName, Tid(), faction_);
+   Debug::SwLog(Thread_AbbrName, strOver(this), 0);
    return "unknown";
 }
 
@@ -1472,9 +1470,7 @@ void Thread::Enter()
 {
    Debug::ft(Thread_Enter);
 
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(Thread_Enter, AbbrName(), faction_);
+   Debug::SwLog(Thread_Enter, strOver(this), 0);
 }
 
 //------------------------------------------------------------------------------
@@ -1487,7 +1483,7 @@ bool Thread::EnterBlockingOperation(BlockingReason why, fn_name_arg func)
 
    if(why == NotBlocked)
    {
-      Debug::SwLog(Thread_EnterBlockingOperation, why, 0);
+      Debug::SwLog(Thread_EnterBlockingOperation, "invalid reason", why);
       return false;
    }
 
@@ -1728,7 +1724,7 @@ SysThread::Priority Thread::FactionToPriority(Faction& faction)
 
    if(faction < Faction_N) return FactionMap[faction];
 
-   Debug::SwLog(Thread_FactionToPriority, faction, 0);
+   Debug::SwLog(Thread_FactionToPriority, "invalid faction", faction);
    faction = BackgroundFaction;
    return SysThread::DefaultPriority;
 }
@@ -2008,7 +2004,7 @@ void Thread::MakePreemptable()
    //
    if(thr->priv_->unpreempts_ == 0)
    {
-      Debug::SwLog(Thread_MakePreemptable, thr->Tid(), thr->GetFaction());
+      Debug::SwLog(Thread_MakePreemptable, "underflow", thr->Tid());
       return;
    }
 
@@ -2030,7 +2026,7 @@ void Thread::MakeUnpreemptable()
    //
    if(thr->priv_->unpreempts_ >= 0x0f)
    {
-      Debug::SwLog(Thread_MakeUnpreemptable, thr->Tid(), thr->GetFaction());
+      Debug::SwLog(Thread_MakeUnpreemptable, "overflow", thr->Tid());
       return;
    }
 
@@ -2051,7 +2047,7 @@ void Thread::MemProtect()
 
    if(thr->priv_->unprotects_ == 0)
    {
-      Debug::SwLog(Thread_MemProtect, thr->Tid(), thr->GetFaction());
+      Debug::SwLog(Thread_MemProtect, "underflow", thr->Tid());
       return;
    }
 
@@ -2072,7 +2068,7 @@ void Thread::MemUnprotect()
 
    if(thr->priv_->unprotects_ >= 0x0f)
    {
-      Debug::SwLog(Thread_MemUnprotect, thr->Tid(), thr->GetFaction());
+      Debug::SwLog(Thread_MemUnprotect, "overflow", thr->Tid());
       return;
    }
 
@@ -2185,7 +2181,7 @@ void Thread::Raise(signal_t sig)
 
    if(ps1 == nullptr)
    {
-      Debug::SwLog(Thread_Raise, sig, 0);
+      Debug::SwLog(Thread_Raise, "unexpected signal", sig);
       return;
    }
 
@@ -2213,7 +2209,7 @@ void Thread::Raise(signal_t sig)
    //
    if(ps1->Severity() == 0)
    {
-      Debug::SwLog(Thread_Raise, sig, 1);
+      Debug::SwLog(Thread_Raise, "invalid signal", sig);
       return;
    }
 
@@ -2230,7 +2226,7 @@ void Thread::Raise(signal_t sig)
       if(ps0 != nullptr)
          install = (ps1->Severity() > ps0->Severity());
       else
-         Debug::SwLog(Thread_Raise, sig, 2);
+         Debug::SwLog(Thread_Raise, "signal not found", priv_->signal_);
    }
 
    //  If the signal will force the thread to exit, try to unblock it.
@@ -2306,13 +2302,15 @@ bool Thread::Recreate()
    //
    if(systhrd_ != nullptr)
    {
-      Debug::SwLog(Thread_Recreate, pack2(faction_, Tid()), 0);
+      Debug::SwLog(Thread_Recreate,
+         "SysThread already exists", pack2(faction_, Tid()));
       return true;
    }
 
    if(!IsCritical())
    {
-      Debug::SwLog(Thread_Recreate, pack2(faction_, Tid()), 1);
+      Debug::SwLog(Thread_Recreate,
+         "thread is not critical", pack2(faction_, Tid()));
       return true;
    }
 

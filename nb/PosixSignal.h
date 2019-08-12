@@ -64,11 +64,11 @@ public:
 
    //  Returns the signal's name.
    //
-   const char* Name() const { return name_; }
+   c_string Name() const { return name_; }
 
    //  Returns the signal's explanation.
    //
-   const char* Expl() const { return expl_; }
+   c_string Expl() const { return expl_; }
 
    //  Returns the signal's severity.  A severity of zero indicates that
    //  the signal cannot be raised for another thread.  If a thread has a
@@ -96,8 +96,8 @@ protected:
    //  Sets the corresponding member variables and adds the signal to
    //  PosixSignalRegistry.  Protected because this class is virtual.
    //
-   PosixSignal(signal_t value, const char* name,
-      const char* expl, uint8_t severity, const Flags& attrs);
+   PosixSignal(signal_t value, c_string name,
+      c_string expl, uint8_t severity, const Flags& attrs);
 
    //  Removes the signal from PosixSignalRegistry.  Virtual to allow
    //  subclassing.
@@ -115,11 +115,11 @@ private:
 
    //  The signal's name (e.g. "SIGSEGV").
    //
-   const char* const name_;
+   fixed_string name_;
 
    //  An explanation of the signal (e.g. "Invalid memory access").
    //
-   const char* const expl_;
+   fixed_string expl_;
 
    //  The signal's severity.
    //

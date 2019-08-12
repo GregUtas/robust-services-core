@@ -144,7 +144,7 @@ public:
 
    //  Returns a string that explains the above return codes.
    //
-   static const char* ExplainRc(TestRc rc);
+   static NodeBase::c_string ExplainRc(TestRc rc);
 
    //  Returns the offset to pid_.
    //

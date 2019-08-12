@@ -77,7 +77,7 @@ bool MemoryTrace::Display(ostream& stream, bool diff)
 fixed_string AllocEventStr = " +mem";
 fixed_string FreeEventStr  = " -mem";
 
-const char* MemoryTrace::EventString() const
+c_string MemoryTrace::EventString() const
 {
    switch(rid_)
    {
@@ -101,7 +101,7 @@ fixed_string MemTypeStrings[MemoryType_N + 1] =
    ERROR_STR
 };
 
-const char* MemoryTrace::TypeString(MemoryType type)
+c_string MemoryTrace::TypeString(MemoryType type)
 {
    if((type >= 0) && (type < MemoryType_N)) return MemTypeStrings[type];
    return MemTypeStrings[MemoryType_N];

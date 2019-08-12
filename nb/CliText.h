@@ -25,6 +25,7 @@
 #include "CliParm.h"
 #include <cstdint>
 #include "Registry.h"
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -45,8 +46,7 @@ public:
    //  useless).  For an example of a CliText instance that uses EMPTY_STR,
    //  see FileText (used by SendWhereParm).
    //
-   CliText(const char* help, const char* text,
-      bool opt = false, uint32_t size = 32);
+   CliText(c_string help, c_string text, bool opt = false, uint32_t size = 32);
 
    //  Virtual to allow subclassing.
    //
@@ -54,11 +54,11 @@ public:
 
    //  Returns the string.
    //
-   const char* Text() const { return text_; }
+   c_string Text() const { return text_; }
 
    //  Returns the string as displayed by the >help command.
    //
-   const char* HelpText() const;
+   c_string HelpText() const;
 
    //  Returns the registry of parameters.
    //
@@ -106,7 +106,7 @@ private:
 
    //  The string that that may be followed by parameters.
    //
-   const char* const text_;
+   fixed_string text_;
 
    //  The parameters that may follow the string.
    //

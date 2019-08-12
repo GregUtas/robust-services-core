@@ -46,7 +46,7 @@ fixed_string LibExprErrStrings[LibExprErr_N + 1] =
    ERROR_STR
 };
 
-const char* strError(LibExprErr err)
+c_string strError(LibExprErr err)
 {
    if((err >= 0) && (err < LibExprErr_N)) return LibExprErrStrings[err];
    return LibExprErrStrings[LibExprErr_N];

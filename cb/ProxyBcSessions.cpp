@@ -134,7 +134,7 @@ ProxyBcService::~ProxyBcService()
 
 fixed_string ProxyPortStr = "Proxy port";
 
-const char* ProxyBcService::PortName(PortId pid) const
+c_string ProxyBcService::PortName(PortId pid) const
 {
    if(pid == ProxyPort) return ProxyPortStr;
 
@@ -398,7 +398,7 @@ EventHandler::Rc ProxyBcAnalyzeProxyMessage::ProcessEvent
       return pssm.RaiseProxyRelease(nextEvent, cci->cause);
    }
 
-   Debug::SwLog(ProxyBcAnalyzeProxyMessage_ProcessEvent, sid, 0);
+   Debug::SwLog(ProxyBcAnalyzeProxyMessage_ProcessEvent, "invalid signal", sid);
    return Suspend;
 }
 
@@ -532,7 +532,7 @@ ProtocolSM::OutgoingRc ProxyBcPsm::ProcessOgMsg(Message& msg)
 
    //  Send all proxy messages with immediate priority.
    //
-   msg.SetPriority(Message::Immediate);
+   msg.SetPriority(IMMEDIATE);
 
    //  If this PSM is not part of a broadcast, simply allow our base class to
    //  handle the message.
@@ -852,7 +852,7 @@ void ProxyBcSsm::Relay(BcPsm& target) const
 
    if(&target == nullptr)
    {
-      Debug::SwLog(ProxyBcSsm_Relay, 0, 0);
+      Debug::SwLog(ProxyBcSsm_Relay, "null target PSM", 0);
       return;
    }
 
@@ -860,7 +860,7 @@ void ProxyBcSsm::Relay(BcPsm& target) const
 
    if(msg == nullptr)
    {
-      Debug::SwLog(ProxyBcSsm_Relay, 0, 1);
+      Debug::SwLog(ProxyBcSsm_Relay, "message not found", 1);
       return;
    }
 
@@ -868,11 +868,11 @@ void ProxyBcSsm::Relay(BcPsm& target) const
 
    if(prid != CipProtocolId)
    {
-      Debug::SwLog(ProxyBcSsm_Relay, prid, 2);
+      Debug::SwLog(ProxyBcSsm_Relay, "invalid protocol", prid);
       return;
    }
 
-   if(&target == NPsm()) msg->SetPriority(Message::Progress);
+   if(&target == NPsm()) msg->SetPriority(PROGRESS);
 
    msg->Relay(target);
 }

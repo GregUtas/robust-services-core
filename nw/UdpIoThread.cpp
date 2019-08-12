@@ -53,7 +53,7 @@ UdpIoThread::UdpIoThread(const UdpIpService* service, ipport_t port) :
 
    if(ipPort_ == nullptr)
    {
-      Debug::SwLog(UdpIoThread_ctor, port_, 0);
+      Debug::SwLog(UdpIoThread_ctor, "port not configured", port_);
    }
 }
 
@@ -70,7 +70,7 @@ UdpIoThread::~UdpIoThread()
 
 //------------------------------------------------------------------------------
 
-const char* UdpIoThread::AbbrName() const
+c_string UdpIoThread::AbbrName() const
 {
    return "udpio";
 }

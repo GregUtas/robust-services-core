@@ -139,7 +139,7 @@ Parameter::TestRc AddressParameter::InjectMsg
       *cli.obuf << spaces(2) << TooManyDigitsExpl << CRLF;
       return IllegalValueInStream;
    default:
-      Debug::SwLog(AddressParameter_InjectMsg, rc, 0);
+      Debug::SwLog(AddressParameter_InjectMsg, "invalid digits", rc);
       return IllegalValueInStream;
    }
 

@@ -53,11 +53,11 @@ public:
 
    //  Returns the tool's name.  Limited to 18 characters.
    //
-   virtual const char* Name() const = 0;
+   virtual c_string Name() const = 0;
 
    //  Returns an explanation of the tool's purpose.  Limited to 52 characters.
    //
-   virtual const char* Expl() const = 0;
+   virtual c_string Expl() const = 0;
 
    //  Returns a string for displaying the tool's status.  The default version
    //  returns a string indicating whether the tool is on, and overrides must

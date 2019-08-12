@@ -31,6 +31,7 @@
 #include "InvokerPool.h"
 #include "InvokerPoolRegistry.h"
 #include "InvokerThread.h"
+#include "LocalAddress.h"
 #include "Log.h"
 #include "MsgHeader.h"
 #include "MsgPort.h"
@@ -68,6 +69,10 @@ public:
    //
    SbException(debug64_t errval, debug32_t offset);
 
+   //  ERRSTR and OFFSET are passed to Software Exception.
+   //
+   SbException(const string& errstr, debug32_t offset);
+
    //  Not subclassed.
    //
    ~SbException() noexcept;
@@ -87,13 +92,27 @@ private:
 
 //------------------------------------------------------------------------------
 
-fn_name SbException_ctor = "SbException.ctor";
+fn_name SbException_ctor1 = "SbException.ctor";
 
 SbException::SbException(debug64_t errval, debug32_t offset) :
    SoftwareException(errval, offset, 2),
    ctx_(nullptr)
 {
-   Debug::ft(SbException_ctor);
+   Debug::ft(SbException_ctor1);
+
+   auto inv = InvokerThread::RunningInvoker_;
+   if(inv != nullptr) ctx_ = inv->GetContext();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SbException_ctor2 = "SbException.ctor(string)";
+
+SbException::SbException(const string& errstr, debug32_t offset) :
+   SoftwareException(errstr, offset, 2),
+   ctx_(nullptr)
+{
+   Debug::ft(SbException_ctor2);
 
    auto inv = InvokerThread::RunningInvoker_;
    if(inv != nullptr) ctx_ = inv->GetContext();
@@ -144,7 +163,7 @@ Context::Context(Faction faction) :
    thread_(nullptr),
    faction_(faction),
    state_(Dormant),
-   prio_(Message::Ingress),
+   prio_(INGRESS),
    traceOn_(false),
    trans_(nullptr),
    buffIndex_(0)
@@ -158,7 +177,7 @@ Context::Context(Faction faction) :
 
    if(pool_ == nullptr)
    {
-      Debug::SwLog(Context_ctor, faction_, 0);
+      Debug::SwLog(Context_ctor, "invoker pool not found", faction_);
    }
 
    for(size_t i = 0; i < TraceSize; ++i) trace_[i] = NilMessageEntry;
@@ -346,7 +365,7 @@ bool Context::EnqMsg(Message& msg)
 
    if(IsCorrupt()) return false;
 
-   if(msg.Header()->priority != Message::Immediate)
+   if(msg.Header()->priority != IMMEDIATE)
       msg.Enqueue(stdMsgq_);
    else
       msg.Enqueue(priMsgq_);
@@ -364,7 +383,7 @@ void Context::EnqPort(MsgPort& port)
 
    //  This is overridden by contexts that support ports.
    //
-   Kill(Context_EnqPort, port.LocAddr().Fid(), 0);
+   Kill(strOver(this), port.LocAddr().Fid());
 }
 
 //------------------------------------------------------------------------------
@@ -377,14 +396,14 @@ void Context::EnqPsm(ProtocolSM& psm)
 
    //  This is overridden by contexts that support PSMs.
    //
-   Kill(Context_EnqPsm, psm.GetFactory(), 0);
+   Kill(strOver(this), psm.GetFactory());
 }
 
 //------------------------------------------------------------------------------
 
 fn_name Context_Enqueue = "Context.Enqueue";
 
-void Context::Enqueue(Q2Way< Context >& whichq, Message::Priority prio)
+void Context::Enqueue(Q2Way< Context >& whichq, MsgPriority prio, bool henq)
 {
    Debug::ft(Context_Enqueue);
 
@@ -403,7 +422,14 @@ void Context::Enqueue(Q2Way< Context >& whichq, Message::Priority prio)
    switch(state_)
    {
    case Dormant:
-      whichq.Enq(*this);
+      //
+      //  HENQ can only occur here, for an initial ingress message.
+      //
+      if(henq)
+         whichq.Henq(*this);
+      else
+         whichq.Enq(*this);
+
       whichq_ = &whichq;
       state_ = Ready;
       prio_ = prio;
@@ -416,10 +442,10 @@ void Context::Enqueue(Q2Way< Context >& whichq, Message::Priority prio)
       //  If we just received a message of immediate priority, move to the
       //  immediate priority work queue if we're not already there.
       //
-      if((prio == Message::Immediate) && (prio_ != Message::Immediate))
+      if((prio == IMMEDIATE) && (prio_ != IMMEDIATE))
       {
          Exqueue();
-         Enqueue(whichq, Message::Immediate);
+         Enqueue(whichq, IMMEDIATE, false);
          return;
       }
 
@@ -429,7 +455,7 @@ void Context::Enqueue(Q2Way< Context >& whichq, Message::Priority prio)
       //  message can be deleted.  In the second case, the entire context can
       //  be deleted.
       //
-      if(prio_ == Message::Ingress)
+      if(prio_ == INGRESS)
       {
          auto fac = stdMsgq_.First()->RxFactory();
 
@@ -455,11 +481,11 @@ void Context::Enqueue(Q2Way< Context >& whichq, Message::Priority prio)
       //  handled when our invoker resumes execution.  However, if this is a
       //  priority message, it must be handled immediately.
       //
-      if((prio == Message::Immediate) && (prio_ != Message::Immediate))
+      if((prio == IMMEDIATE) && (prio_ != IMMEDIATE))
       {
          thread_->ClearContext();
          SetState(Dormant);
-         Enqueue(whichq, Message::Immediate);
+         Enqueue(whichq, IMMEDIATE, false);
       }
       return;
 
@@ -482,7 +508,7 @@ void Context::ExqPort(MsgPort& port)
 
    //  This is overridden by contexts that support ports.
    //
-   Kill(Context_ExqPort, port.LocAddr().Fid(), 0);
+   Kill(strOver(this), port.LocAddr().Fid());
 }
 
 //------------------------------------------------------------------------------
@@ -495,7 +521,7 @@ void Context::ExqPsm(ProtocolSM& psm)
 
    //  This is overridden by contexts that support PSMs.
    //
-   Kill(Context_ExqPsm, psm.GetFactory(), 0);
+   Kill(strOver(this), psm.GetFactory());
 }
 
 //------------------------------------------------------------------------------
@@ -553,18 +579,29 @@ void Context::HenqPsm(ProtocolSM& psm)
 
    //  This is overridden by contexts that support PSMs.
    //
-   Kill(Context_EnqPsm, psm.GetFactory(), 0);
+   Kill(strOver(this), psm.GetFactory());
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Context_Kill = "Context.Kill";
+fn_name Context_Kill1 = "Context.Kill";
 
-void Context::Kill(fn_name_arg func, debug64_t errval, debug32_t offset)
+void Context::Kill(debug64_t errval, debug32_t offset)
 {
-   Debug::ft(Context_Kill);
+   Debug::ft(Context_Kill1);
 
    throw SbException(errval, offset);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Context_Kill2 = "Context.Kill(string)";
+
+void Context::Kill(const string& errstr, debug32_t offset)
+{
+   Debug::ft(Context_Kill2);
+
+   throw SbException(errstr, offset);
 }
 
 //------------------------------------------------------------------------------
@@ -617,9 +654,7 @@ void Context::ProcessIcMsg(Message& msg)
 {
    Debug::ft(Context_ProcessIcMsg);
 
-   //  This is a pure virtual function.
-   //
-   Kill(Context_ProcessIcMsg, 0, 0);
+   Kill(strOver(this), msg.Header()->rxAddr.fid);
 }
 
 //------------------------------------------------------------------------------
@@ -647,7 +682,7 @@ bool Context::ProcessMsg(Q1Way< Message >& msgq, const InvokerThread* inv)
    //
    if(msg->Header()->kill)
    {
-      Kill(Context_ProcessMsg, 0, 0);
+      Kill("killed remotely", 0);
       return true;
    }
 
@@ -775,17 +810,13 @@ void Context::ProcessWork(InvokerThread* inv)
          //  Bizarre.  We were invoked (or resumed execution after yielding)
          //  but didn't have any messages to process.
          //
-         if(IsIdle())
-         {
-            Debug::SwLog(Context_ProcessWork, pack2(faction_, state_), 0);
-            delete this;
-         }
-         else
-         {
-            Debug::SwLog(Context_ProcessWork, pack2(faction_, state_), 1);
-            SetState(Dormant);
-         }
+         Debug::SwLog(Context_ProcessWork,
+            "message queue empty", pack2(faction_, state_));
 
+         if(IsIdle())
+            delete this;
+         else
+            SetState(Dormant);
          return;
       }
    }
@@ -977,9 +1008,7 @@ ContextType Context::Type() const
 {
    Debug::ft(Context_Type);
 
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(Context_Type, faction_, 0);
+   Debug::SwLog(Context_Type, strOver(this), 0);
    return SingleMsg;
 }
 }

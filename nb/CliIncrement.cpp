@@ -38,7 +38,7 @@ namespace NodeBase
 {
 fn_name CliIncrement_ctor = "CliIncrement.ctor";
 
-CliIncrement::CliIncrement(const char* name, const char* help, uint32_t size) :
+CliIncrement::CliIncrement(c_string name, c_string help, uint32_t size) :
    name_(name),
    help_(help)
 {
@@ -79,7 +79,7 @@ bool CliIncrement::BindCommand(CliCommand& comm)
 
    if(strlen(s) == 0)
    {
-      Debug::SwLog(CliIncrement_BindCommand, 0, 0);
+      Debug::SwLog(CliIncrement_BindCommand, "null name", 0);
       return false;
    }
 
@@ -87,7 +87,7 @@ bool CliIncrement::BindCommand(CliCommand& comm)
    {
       if(c->Text() == s)
       {
-         Debug::SwLog(CliIncrement_BindCommand, c->GetId(), 1);
+         Debug::SwLog(CliIncrement_BindCommand, s, c->GetId());
          return false;
       }
    }

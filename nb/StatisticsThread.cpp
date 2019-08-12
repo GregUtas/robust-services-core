@@ -69,7 +69,7 @@ StatisticsThread::~StatisticsThread()
 
 //------------------------------------------------------------------------------
 
-const char* StatisticsThread::AbbrName() const
+c_string StatisticsThread::AbbrName() const
 {
    return "stats";
 }
@@ -95,7 +95,7 @@ msecs_t StatisticsThread::CalcFirstDelay()
 
    if((delay < 0) || (delay > 1500 * ShortIntervalSecs))
    {
-      Debug::SwLog(StatisticsThread_CalcFirstDelay, delay, 0);
+      Debug::SwLog(StatisticsThread_CalcFirstDelay, "invalid delay", delay);
       delay = 1000 * ShortIntervalSecs;
    }
 
@@ -109,7 +109,7 @@ msecs_t StatisticsThread::CalcFirstDelay()
 
    if((delta < 0) || (delta > 1500 * LongIntervalSecs))
    {
-      Debug::SwLog(StatisticsThread_CalcFirstDelay, delta, 1);
+      Debug::SwLog(StatisticsThread_CalcFirstDelay, "invalid delta", delta);
       countdown_ = WakeupsBetweenReports;
    }
    else

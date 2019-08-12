@@ -241,8 +241,7 @@ void CxxToken::EnterBlock()
 {
    Debug::ft(CxxToken_EnterBlock);
 
-   auto expl = "EnterBlock() not implemented by " + strClass(this, false);
-   Context::SwLog(CxxToken_EnterBlock, expl, 0);
+   Context::SwLog(CxxToken_EnterBlock, strOver(this), 0);
 }
 
 //------------------------------------------------------------------------------
@@ -273,8 +272,7 @@ fn_name CxxToken_Name = "CxxToken.Name";
 
 const string* CxxToken::Name() const
 {
-   auto expl = "Name() not implemented by " + strClass(this, false);
-   Context::SwLog(CxxToken_Name, expl, 0);
+   Context::SwLog(CxxToken_Name, strOver(this), 0);
    return nullptr;
 }
 
@@ -293,7 +291,7 @@ CxxScoped* CxxToken::Referent() const
 {
    Debug::ft(CxxToken_Referent);
 
-   Debug::SwLog(CxxToken_Referent, strClass(this, false), 0);
+   Debug::SwLog(CxxToken_Referent, strOver(this), 0);
    return nullptr;
 }
 
@@ -630,7 +628,7 @@ bool Expression::AddItem(TokenPtr& item)
 
    if(type != Cxx::Operation)
    {
-      Debug::SwLog(Expression_AddItem, 0, type);
+      Debug::SwLog(Expression_AddItem, "unexpected item type", type);
       return false;
    }
 
@@ -750,7 +748,7 @@ bool Expression::AddVariableOp(TokenPtr& item)
          return true;
       }
 
-      Debug::SwLog(Expression_AddVariableOp, ante->Op(), 0);
+      Debug::SwLog(Expression_AddVariableOp, "failed to elide", ante->Op());
       return false;
    }
 
@@ -1138,7 +1136,7 @@ void Operation::AddArg(TokenPtr& arg, bool prefixed)
 
    if(arg == nullptr)
    {
-      Debug::SwLog(Operation_AddArg, op_, 0);
+      Debug::SwLog(Operation_AddArg, "null argument", op_);
       return;
    }
 
@@ -1539,7 +1537,7 @@ void Operation::Execute() const
       //
       //c Support the .* and ->* operators.
       //
-      Debug::SwLog(Operation_Execute, "Unsupported operator", op_);
+      Debug::SwLog(Operation_Execute, "unsupported operator", op_);
       return;
 
    case Cxx::MULTIPLY:
@@ -1647,7 +1645,7 @@ void Operation::Execute() const
       return;
 
    default:
-      Debug::SwLog(Operation_Execute, op_, 0);
+      Debug::SwLog(Operation_Execute, "unexpected operator", op_);
    }
 }
 
@@ -2280,7 +2278,7 @@ bool Operation::MakeBinary()
       return true;
    }
 
-   Debug::SwLog(Operation_MakeBinary, op_, 0);
+   Debug::SwLog(Operation_MakeBinary, "unexpected operator", op_);
    return false;
 }
 
@@ -2389,7 +2387,7 @@ void Operation::Print(ostream& stream, const Flags& options) const
          break;
 
       default:
-         Debug::SwLog(Operation_Print, op_, 0);
+         Debug::SwLog(Operation_Print, "unexpected operator", op_);
          stream << ERROR_STR << "(op=" << op_ << ')';
       }
    }

@@ -101,7 +101,8 @@ enum LogType
    PeriodicLog = 400,   // 400-499: automatic report
    InfoLog = 500,       // 500-699: no intervention required
    MiscLog = 700,       // 700-899: other types of logs
-   DebugLog = 900       // 900-999: to help debug software
+   DebugLog = 900,      // 900-999: to help debug software
+   LogType_N            // number of LogTypes
 };
 
 //  Alarm levels.
@@ -159,6 +160,10 @@ typedef uint16_t ThreadId;
 //  An identifier for a log.
 //
 typedef uint16_t LogId;
+
+//  Returns the type of log associated with ID.
+//
+LogType GetLogType(LogId id);
 
 //  An identifier for a trace record.
 //

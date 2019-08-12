@@ -178,7 +178,7 @@ void Timer::Exqueue()
 
    if(!psm_->timerq_.Exq(*this))
    {
-      Debug::SwLog(Timer_Exqueue, 0, 0);
+      Debug::SwLog(Timer_Exqueue, "Exq failed", Tid());
    }
 
    psm_ = nullptr;
@@ -268,7 +268,7 @@ void Timer::SendTimeout()
 
    msg->SetProtocol(TimerProtocolId);
    msg->SetSignal(Signal::Timeout);
-   msg->SetPriority(Message::Progress);
+   msg->SetPriority(PROGRESS);
 
    TimeoutInfo info;
    info.owner = owner_;

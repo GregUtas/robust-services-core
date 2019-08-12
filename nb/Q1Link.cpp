@@ -56,7 +56,7 @@ Q1Link::~Q1Link()
    {
       if(curr == this)
       {
-         Debug::SwLog(Q1Link_dtor, INT16_MAX - i, 0);
+         Debug::SwLog(Q1Link_dtor, "item was still queued", INT16_MAX - i);
          prev->next = curr->next;
          return;
       }
@@ -66,7 +66,7 @@ Q1Link::~Q1Link()
       curr = curr->next;
    }
 
-   Debug::SwLog(Q1Link_dtor, INT16_MAX - i, 1);
+   Debug::SwLog(Q1Link_dtor, "item is still queued", INT16_MAX - i);
 }
 
 //------------------------------------------------------------------------------

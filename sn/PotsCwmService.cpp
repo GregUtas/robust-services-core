@@ -27,6 +27,7 @@
 #include <cstddef>
 #include <ostream>
 #include <string>
+#include "Algorithms.h"
 #include "BcCause.h"
 #include "Clock.h"
 #include "Context.h"
@@ -999,7 +1000,7 @@ void PotsCwmSsm::ClearTimer(TimerId tid)
 
    if(tid_ != tid)
    {
-      Debug::SwLog(PotsCwmSsm_ClearTimer, tid_, tid);
+      Debug::SwLog(PotsCwmSsm_ClearTimer, "TimerId mismatch", pack2(tid_, tid));
       return;
    }
 
@@ -1022,7 +1023,7 @@ void PotsCwmSsm::ConnectInactiveCall(Tone::Id tone)
 
    if(hPsm == nullptr)
    {
-      Context::Kill(PotsCwmSsm_ConnectInactiveCall, activeCall_, 0);
+      Context::Kill("PSM not found", activeCall_);
       return;
    }
 
@@ -1120,7 +1121,7 @@ EventHandler::Rc PotsCwmSsm::Flipflop()
       break;
 
    default:
-      Context::Kill(PotsCwmSsm_Flipflop, substate_, 0);
+      Context::Kill("invalid substate", substate_);
    }
 
    return EventHandler::Suspend;
@@ -1138,7 +1139,7 @@ PotsMuxPsm* PotsCwmSsm::OtherNPsm(const ProtocolSM* npsm) const
 
    if(fid != PotsMuxFactoryId)
    {
-      Debug::SwLog(PotsCwmSsm_OtherNPsm, fid, 0);
+      Debug::SwLog(PotsCwmSsm_OtherNPsm, "invalid FactoryId", fid);
       return nullptr;
    }
 
@@ -1184,7 +1185,7 @@ EventHandler::Rc PotsCwmSsm::ProcessInitAck
 
       if(actNPsm == nullptr)
       {
-         Debug::SwLog(PotsCwmSsm_ProcessInitAck, 0, 1);
+         Debug::SwLog(PotsCwmSsm_ProcessInitAck, "failed to create nPsm", 0);
          SendFacilityNack(hldNPsm, PotsCwbServiceId);
          return EventHandler::Suspend;
       }
@@ -1243,7 +1244,7 @@ EventHandler::Rc PotsCwmSsm::ProcessInitAck
       }
       else
       {
-         Debug::SwLog(PotsCwmSsm_ProcessInitAck, 0, 2);
+         Debug::SwLog(PotsCwmSsm_ProcessInitAck, "JoinPeer failed", 0);
          SendFacilityNack(hldNPsm, PotsCwbServiceId);
          return EventHandler::Suspend;
       }
@@ -1279,7 +1280,7 @@ EventHandler::Rc PotsCwmSsm::ProcessInitAck
       return EventHandler::Suspend;
    }
 
-   Context::Kill(PotsCwmSsm_ProcessInitAck, 0, 0);
+   Context::Kill("failed to relay message", 0);
    return EventHandler::Suspend;
 }
 
@@ -1326,7 +1327,7 @@ EventHandler::Rc PotsCwmSsm::Reanswer()
 
    if(substate_ != Reringing)
    {
-      Context::Kill(PotsCwmSsm_Reanswer, substate_, 0);
+      Context::Kill("invalid substate", substate_);
       return EventHandler::Suspend;
    }
 
@@ -1353,7 +1354,7 @@ EventHandler::Rc PotsCwmSsm::Reconnect()
 
    if(substate_ != Holding)
    {
-      Context::Kill(PotsCwmSsm_Reconnect, substate_, 0);
+      Context::Kill("invalid substate", substate_);
    }
 
    //  Reconnect the remaining call.
@@ -1373,7 +1374,7 @@ EventHandler::Rc PotsCwmSsm::RelayFacilityMsg()
 
    if(CurrState() != PotsCwmState::Initiating)
    {
-      Context::Kill(PotsCwmSsm_RelayFacilityMsg, substate_, 0);
+      Context::Kill("invalid substate", substate_);
    }
 
    auto pmsg = static_cast< PotsMessage* >(Context::ContextMsg());
@@ -1392,18 +1393,18 @@ EventHandler::Rc PotsCwmSsm::RelayFacilityMsg()
       break;
 
    default:
-      Context::Kill(PotsCwmSsm_RelayFacilityMsg, pfi->sid, 1);
+      Context::Kill("invalid facility indicator", pfi->sid);
    }
 
    if(ogPsm == nullptr)
    {
-      Context::Kill(PotsCwmSsm_RelayFacilityMsg, pfi->sid, 2);
+      Context::Kill("null outgoing PSM", pfi->sid);
       return EventHandler::Suspend;
    }
 
    if(!pmsg->Relay(*ogPsm))
    {
-      Context::Kill(PotsCwmSsm_RelayFacilityMsg, pfi->sid, 3);
+      Context::Kill("Failed to relay message", pfi->sid);
       return EventHandler::Suspend;
    }
 
@@ -1438,7 +1439,7 @@ EventHandler::Rc PotsCwmSsm::RelayMsg()
       break;
 
    default:
-      Context::Kill(PotsCwmSsm_RelayMsg, substate_, sid);
+      Context::Kill("invalid substate", pack2(sid, substate_));
    }
 
    switch(sid)
@@ -1474,12 +1475,12 @@ EventHandler::Rc PotsCwmSsm::RelayMsg()
             }
             else
             {
-               Context::Kill(PotsCwmSsm_RelayMsg, substate_, 3);
+               Context::Kill("invalid substate", substate_);
             }
          }
          else
          {
-            Context::Kill(PotsCwmSsm_RelayMsg, substate_, 2);
+            Context::Kill("invalid substate", substate_);
          }
 
          pmsg->DeleteParm(*pptr);
@@ -1487,7 +1488,7 @@ EventHandler::Rc PotsCwmSsm::RelayMsg()
       break;
 
    default:
-      Context::Kill(PotsCwmSsm_RelayMsg, sid, 1);
+      Context::Kill("invalid signal", sid);
       return EventHandler::Suspend;
    }
 
@@ -1502,7 +1503,7 @@ EventHandler::Rc PotsCwmSsm::RelayMsg()
 
    if(!pmsg->Relay(*ogPsm))
    {
-      Context::Kill(PotsCwmSsm_RelayMsg, sid, 0);
+      Context::Kill("failed to relay message", sid);
    }
 
    //d If our UPSM doesn't have addresses yet, supply them.  Don't pass PMSG to
@@ -1567,7 +1568,7 @@ EventHandler::Rc PotsCwmSsm::ReleaseActive(Cause::Ind cause, Event*& nextEvent)
       return EventHandler::Revert;
 
    default:
-      Context::Kill(PotsCwmSsm_ReleaseActive, substate_, 0);
+      Context::Kill("invalid substate", substate_);
       return EventHandler::Suspend;
    }
 
@@ -1618,7 +1619,7 @@ void PotsCwmSsm::ReleaseCwt(Facility::Ind ind)
       break;
 
    default:
-      Context::Kill(PotsCwmSsm_ReleaseCwt, ind, 0);
+      Context::Kill("invalid facility indicator", ind);
       return;
    }
 
@@ -1701,7 +1702,7 @@ EventHandler::Rc PotsCwmSsm::ReleaseInactive
       break;
 
    default:
-      Context::Kill(PotsCwmSsm_ReleaseInactive, substate_, 0);
+      Context::Kill("invalid substate", substate_);
       return EventHandler::Suspend;
    }
 
@@ -1711,7 +1712,7 @@ EventHandler::Rc PotsCwmSsm::ReleaseInactive
    //  call into the Exception state to apply a treatment.
    //
    auto npsm = CreateNPsm();
-   if(npsm == nullptr) Context::Kill(PotsCwmSsm_ReleaseInactive, substate_, 1);
+   if(npsm == nullptr) Context::Kill("failed to allocate PSM", substate_);
 
    Mux()->SetNPsm(activeCall_, *npsm);
    npsm->SetIcTone(Tone::Media);
@@ -1773,7 +1774,7 @@ EventHandler::Rc PotsCwmSsm::Rering()
       break;
 
    default:
-      Context::Kill(PotsCwmSsm_Rering, substate_, 0);
+      Context::Kill("invalid substate", substate_);
    }
 
    UPsm()->ApplyRinging(true);
@@ -1850,7 +1851,7 @@ EventHandler::Rc PotsCwmSsm::StartCwtTone()
       return EventHandler::Suspend;
 
    default:
-      Context::Kill(PotsCwmSsm_StartCwtTone, substate_, 0);
+      Context::Kill("invalid substate", substate_);
    }
 
    upsm->SetOgTone(Tone::CallWaiting);
@@ -1870,7 +1871,7 @@ void PotsCwmSsm::StartTimer(TimerId tid, secs_t duration)
 
    if(tid_ != NIL_ID)
    {
-      Debug::SwLog(PotsCwmSsm_StartTimer, tid_, tid);
+      Debug::SwLog(PotsCwmSsm_StartTimer, "timer in use", pack2(tid_, tid));
 
       upsm->StopTimer(*this, tid_);
       tid_ = NIL_ID;
@@ -1900,7 +1901,7 @@ EventHandler::Rc PotsCwmSsm::StopCwtTone()
       break;
 
    default:
-      Context::Kill(PotsCwmSsm_StopCwtTone, substate_, 0);
+      Context::Kill("invalid substate", substate_);
    }
 
    UPsm()->SetOgTone(Tone::Media);
@@ -1919,7 +1920,7 @@ EventHandler::Rc PotsCwmSsm::StopReringing()
    //
    if(substate_ != Reringing)
    {
-      Context::Kill(PotsCwmSsm_StopReringing, substate_, 0);
+      Context::Kill("invalid substate", substate_);
    }
 
    auto upsm = UPsm();
@@ -1945,7 +1946,7 @@ void PotsCwmSsm::StopTimer(TimerId tid)
 
    if(tid_ != tid)
    {
-      Debug::SwLog(PotsCwmSsm_StopTimer, tid_, tid);
+      Debug::SwLog(PotsCwmSsm_StopTimer, "TimerId mismatch", pack2(tid_, tid));
       return;
    }
 
@@ -1976,11 +1977,11 @@ EventHandler::Rc PotsCwmInAnalyzeNetworkMessage::ProcessEvent
          return Continue;
       }
 
-      Context::Kill(PotsCwmInAnalyzeNetworkMessage_ProcessEvent, sid, pfi->ind);
+      Context::Kill("invalid facility indicator", pfi->ind);
       return Suspend;
    }
 
-   Context::Kill(PotsCwmInAnalyzeNetworkMessage_ProcessEvent, sid, 0);
+   Context::Kill("invalid signal", sid);
    return Suspend;
 }
 
@@ -2043,7 +2044,7 @@ EventHandler::Rc PotsCwmAcAnalyzeUserMessage::ProcessEvent
             return Continue;
          }
 
-         Context::Kill(PotsCwmAcAnalyzeUserMessage_ProcessEvent, toi->tid, 0);
+         Context::Kill("invalid TimerId", toi->tid);
          return Suspend;
       }
 
@@ -2081,7 +2082,7 @@ EventHandler::Rc PotsCwmAcAnalyzeUserMessage::ProcessEvent
          return Suspend;
 
       default:
-         Context::Kill(PotsCwmAcAnalyzeUserMessage_ProcessEvent, cwts, 0);
+         Context::Kill("invalid substate", cwts);
       }
 
       return Suspend;
@@ -2098,7 +2099,7 @@ EventHandler::Rc PotsCwmAcAnalyzeUserMessage::ProcessEvent
       return Continue;
    }
 
-   Context::Kill(PotsCwmAcAnalyzeUserMessage_ProcessEvent, sid, 0);
+   Context::Kill("invalid signal", sid);
    return Suspend;
 }
 
@@ -2181,7 +2182,7 @@ EventHandler::Rc PotsCwmAcAnalyzeNetworkMessage::ProcessEvent
             return Continue;
          }
 
-         Context::Kill(PotsCwmAcAnalyzeNetworkMessage_ProcessEvent, cwts, 2);
+         Context::Kill("invalid substate", cwts);
          return Suspend;
 
       case PotsCwmSsm::Inactive:
@@ -2200,7 +2201,7 @@ EventHandler::Rc PotsCwmAcAnalyzeNetworkMessage::ProcessEvent
       return Pass;
    }
 
-   Context::Kill(PotsCwmAcAnalyzeNetworkMessage_ProcessEvent, sid, 0);
+   Context::Kill("invalid signal", sid);
    return Suspend;
 }
 
@@ -2370,7 +2371,7 @@ EventHandler::Rc PotsCwmAcQuiesce::ProcessEvent
       return Suspend;
    }
 
-   Context::Kill(PotsCwmAcQuiesce_ProcessEvent, cwts, 0);
+   Context::Kill("invalid substate", cwts);
    return Suspend;
 }
 

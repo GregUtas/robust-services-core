@@ -352,7 +352,7 @@ string Block::ScopedName(bool templates) const
       }
    }
 
-   Debug::SwLog(Block_ScopedName, 0, 0);
+   Debug::SwLog(Block_ScopedName, "function not found", 0);
    return ERROR_STR;
 }
 
@@ -2264,7 +2264,7 @@ void Function::CheckAccessControl() const
 {
    Debug::ft(Function_CheckAccessControl);
 
-   if(defn_) return Debug::SwLog(Function_CheckAccessControl, 0, 0);
+   if(defn_) return Debug::SwLog(Function_CheckAccessControl, "defn", 0);
 
    //  Do not check the access control of destructors.  If this is an override,
    //  do not suggest a more restricted access control unless the function has
@@ -2289,7 +2289,7 @@ void Function::CheckArgs() const
 {
    Debug::ft(Function_CheckArgs);
 
-   if(defn_) return Debug::SwLog(Function_CheckArgs, 0, 0);
+   if(defn_) return Debug::SwLog(Function_CheckArgs, "defn", 0);
 
    //  See if the function has any arguments to check.  Don't check the
    //  arguments to a function that is undefined, unused, or an operator.
@@ -2439,7 +2439,7 @@ void Function::CheckCtor() const
 {
    Debug::ft(Function_CheckCtor);
 
-   if(defn_) return Debug::SwLog(Function_CheckCtor, 0, 0);
+   if(defn_) return Debug::SwLog(Function_CheckCtor, "defn", 0);
 
    //  Check that this is a constructor and that it isn't deleted.
    //
@@ -2609,7 +2609,7 @@ void Function::CheckDtor() const
 {
    Debug::ft(Function_CheckDtor);
 
-   if(defn_) return Debug::SwLog(Function_CheckDtor, 0, 0);
+   if(defn_) return Debug::SwLog(Function_CheckDtor, "defn", 0);
    if(FuncType() != FuncDtor) return;
 
    auto impl = GetDefn()->impl_.get();
@@ -2645,7 +2645,7 @@ void Function::CheckForVirtualDefault() const
 {
    Debug::ft(Function_CheckForVirtualDefault);
 
-   if(defn_) return Debug::SwLog(Function_CheckForVirtualDefault, 0, 0);
+   if(defn_) return Debug::SwLog(Function_CheckForVirtualDefault, "defn", 0);
    if(!virtual_) return;
 
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
@@ -2665,7 +2665,8 @@ fn_name Function_CheckIfCouldBeConst = "Function.CheckIfCouldBeConst";
 void Function::CheckIfCouldBeConst() const
 {
    Debug::ft(Function_CheckIfCouldBeConst);
-   if(defn_) return Debug::SwLog(Function_CheckIfCouldBeConst, 0, 0);
+
+   if(defn_) return Debug::SwLog(Function_CheckIfCouldBeConst, "defn", 0);
 
    //  Before claiming that a function could be const, check for const
    //  overloading (another function in this class that has the same name
@@ -2694,7 +2695,7 @@ Warning Function::CheckIfDefined() const
 
    if(defn_)
    {
-      Debug::SwLog(Function_CheckIfDefined, 0, 0);
+      Debug::SwLog(Function_CheckIfDefined, "defn", 0);
       return Warning_N;
    }
 
@@ -2724,7 +2725,7 @@ void Function::CheckIfHiding() const
 {
    Debug::ft(Function_CheckIfHiding);
 
-   if(defn_) return Debug::SwLog(Function_CheckIfHiding, 0, 0);
+   if(defn_) return Debug::SwLog(Function_CheckIfHiding, "defn", 0);
    if(FuncType() != FuncStandard) return;
 
    auto item = FindInheritedName();
@@ -2755,7 +2756,7 @@ void Function::CheckIfOverridden() const
 {
    Debug::ft(Function_CheckIfOverridden);
 
-   if(defn_) return Debug::SwLog(Function_CheckIfOverridden, 0, 0);
+   if(defn_) return Debug::SwLog(Function_CheckIfOverridden, "defn", 0);
 
    //  To be logged for having no overrides, this function must be virtual,
    //  not an override, and a standard function (not a destructor).
@@ -2772,7 +2773,7 @@ void Function::CheckIfPublicVirtual() const
 {
    Debug::ft(Function_CheckIfPublicVirtual);
 
-   if(defn_) return Debug::SwLog(Function_CheckIfPublicVirtual, 0, 0);
+   if(defn_) return Debug::SwLog(Function_CheckIfPublicVirtual, "defn", 0);
 
    //  To be logged for being public and virtual, this must be a standard
    //  function that is not overriding one that was already public.
@@ -2796,8 +2797,7 @@ void Function::CheckIfUsed(Warning warning) const
 {
    Debug::ft(Function_CheckIfUsed);
 
-   if(defn_) return Debug::SwLog(Function_CheckIfUsed, 0, 0);
-
+   if(defn_) return Debug::SwLog(Function_CheckIfUsed, "defn", 0);
    if(type_) return;
    if(IsUnused()) LogToBoth(warning);
 }
@@ -2810,7 +2810,7 @@ void Function::CheckMemberUsage() const
 {
    Debug::ft(Function_CheckMemberUsage);
 
-   if(defn_) return Debug::SwLog(Function_CheckMemberUsage, 0, 0);
+   if(defn_) return Debug::SwLog(Function_CheckMemberUsage, "defn", 0);
 
    //  Check if this function could be static or free.  For either to be
    //  possible, the function cannot be virtual, must not have accessed a
@@ -2851,7 +2851,7 @@ void Function::CheckNoexcept() const
 {
    Debug::ft(Function_CheckNoexcept);
 
-   if(defn_) return Debug::SwLog(Function_CheckNoexcept, 0, 0);
+   if(defn_) return Debug::SwLog(Function_CheckNoexcept, "defn", 0);
 
    auto can = CanBeNoexcept();
 
@@ -2873,7 +2873,7 @@ void Function::CheckOverride()
 {
    Debug::ft(Function_CheckOverride);
 
-   if(defn_) return Debug::SwLog(Function_CheckOverride, 0, 0);
+   if(defn_) return Debug::SwLog(Function_CheckOverride, "defn", 0);
 
    //  If this function is an override, register it against the function that
    //  it immediately overrides.  A destructor is neither registered nor logged.

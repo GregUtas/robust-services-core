@@ -3490,7 +3490,7 @@ private:
    static void UseBadPointer();
    static void LoopForever();
    static void RecurseForever(size_t depth);
-   const char* AbbrName() const override;
+   c_string AbbrName() const override;
    bool IsCritical() const override;
    void Enter() override;
    RecoveryAction Recover() override;
@@ -3524,7 +3524,7 @@ RecoveryTestThread::~RecoveryTestThread()
 
 //------------------------------------------------------------------------------
 
-const char* RecoveryTestThread::AbbrName() const
+c_string RecoveryTestThread::AbbrName() const
 {
    return "recov";
 }
@@ -3608,7 +3608,7 @@ void RecoveryTestThread::Enter()
          Raise(signal_);
          break;
       default:
-         Debug::SwLog(RecoveryTestThread_Enter, test, 0);
+         Debug::SwLog(RecoveryTestThread_Enter, "unexpected test", test);
       }
 
       //  Sleep for 3 seconds or until interrupted to perform the next test.
@@ -3972,7 +3972,7 @@ word RecoverCommand::ProcessCommand(CliThread& cli) const
       break;
 
    default:
-      Debug::SwLog(RecoverCommand_ProcessCommand, index, 0);
+      Debug::SwLog(RecoverCommand_ProcessCommand, UnexpectedIndex, index);
       return cli.Report(index, SystemErrorExpl);
    }
 

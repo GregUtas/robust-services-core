@@ -28,7 +28,6 @@
 #include <string>
 #include "Clock.h"
 #include "Factory.h"
-#include "Message.h"
 #include "NbTypes.h"
 #include "Q1Way.h"
 #include "Q2Link.h"
@@ -115,10 +114,10 @@ public:
    virtual void NextPort(MsgPort*& port) const { port = nullptr; }
 
    //  Logs and deletes the objects in the current context when a fatal
-   //  error occurs.  FUNC, ERRVAL, and OFFSET are included in the log.
+   //  error occurs.  ERRSTR/ERRVAL and OFFSET are included in the log.
    //
-   static void Kill(NodeBase::fn_name_arg func,
-      NodeBase::debug64_t errval, NodeBase::debug32_t offset);
+   static void Kill(const std::string& errstr, NodeBase::debug32_t offset);
+   static void Kill(NodeBase::debug64_t errval, NodeBase::debug32_t offset);
 
    //  Logs the objects in the context for debugging purposes.  FUNC,
    //  ERRVAL, and OFFSET are passed to Debug::SwLog.
@@ -271,9 +270,11 @@ private:
    //
    size_t MsgCount(bool priority, bool standard) const;
 
-   //  Adds the context to the work queue associated with PRIO.
+   //  Adds the context to the work queue associated with PRIO.  HENQ is set
+   //  if the context should be placed at the front of that queue.
    //
-   void Enqueue(NodeBase::Q2Way< Context >& whichq, Message::Priority prio);
+   void Enqueue(NodeBase::Q2Way< Context >& whichq,
+      MsgPriority prio, bool henq);
 
    //  Removes the context from its work queue.
    //
@@ -341,7 +342,7 @@ private:
 
    //  The priority of the work queue on which the context is located.
    //
-   Message::Priority prio_;
+   MsgPriority prio_;
 
    //  Set if the context is being traced.
    //

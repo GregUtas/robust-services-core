@@ -23,6 +23,7 @@
 #define CLICHARPARM_H_INCLUDED
 
 #include "CliParm.h"
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -36,8 +37,8 @@ public:
    //  HELP, OPT, and TAG are passed to CliParm.  CHARS lists the characters
    //  that are valid for this parameter.
    //
-   CliCharParm(const char* help, const char* chars,
-      bool opt = false, const char* tag = nullptr);
+   CliCharParm(c_string help, c_string chars,
+      bool opt = false, c_string tag = nullptr);
 
    //  Virtual to allow subclassing.
    //
@@ -66,7 +67,7 @@ private:
 
    //  The characters that are valid for this parameter.
    //
-   const char* const chars_;
+   fixed_string chars_;
 };
 }
 #endif

@@ -233,7 +233,7 @@ EventHandler::Rc PotsCcwSsm::ProcessInitAck
       //  tone and reconnecting the held call.
    }
 
-   Context::Kill(PotsCcwSsm_ProcessInitAck, stid, 0);
+   Context::Kill("invalid state", stid);
    return EventHandler::Suspend;
 }
 
@@ -271,7 +271,7 @@ EventHandler::Rc PotsCcwSsm::ProcessSip(Event& currEvent, Event*& nextEvent)
       return EventHandler::Pass;
    }
 
-   Debug::SwLog(PotsCcwSsm_ProcessSip, stid, 0);
+   Debug::SwLog(PotsCcwSsm_ProcessSip, "unexpected state", stid);
    SetNextState(PotsCcwState::Null);
    return EventHandler::Pass;
 }

@@ -256,7 +256,6 @@ void TestDatabase::Load()
       return;
    }
 
-   string expl;
    string input;
    auto state = GetTestcase;
    tests_.clear();
@@ -273,7 +272,7 @@ void TestDatabase::Load()
 
    if(state == GetTestcase)
    {
-      expl = "Reached end of database unexpectedly";
+      auto expl = "Reached end of database unexpectedly";
       Debug::SwLog(TestDatabase_Load, expl, 0);
    }
 

@@ -63,7 +63,7 @@ TcpIoThread::TcpIoThread(const TcpIpService* service, ipport_t port) :
 
    if(ipPort_ == nullptr)
    {
-      Debug::SwLog(TcpIoThread_ctor, port_, 0);
+      Debug::SwLog(TcpIoThread_ctor, "port not found", port_);
    }
 
    listen_ = service->AcceptsConns();
@@ -79,13 +79,14 @@ TcpIoThread::TcpIoThread(const TcpIpService* service, ipport_t port) :
    {
       if(fdSize < 2)
       {
-         Debug::SwLog(TcpIoThread_ctor, fdSize, 2);
+         Debug::SwLog(TcpIoThread_ctor, "invalid socket count", fdSize);
          fdSize = 2;
       }
    }
    else
    {
-      if(fdSize < 1) Debug::SwLog(TcpIoThread_ctor, fdSize, 1);
+      if(fdSize < 1)
+         Debug::SwLog(TcpIoThread_ctor, "invalid socket count", fdSize);
       fdSize = 1;
    }
 
@@ -111,7 +112,7 @@ TcpIoThread::~TcpIoThread()
 
 //------------------------------------------------------------------------------
 
-const char* TcpIoThread::AbbrName() const
+c_string TcpIoThread::AbbrName() const
 {
    return "tcpio";
 }
@@ -314,7 +315,7 @@ bool TcpIoThread::EnsureListener()
 
       //  Our listener isn't registered with our port.
       //
-      Debug::SwLog(TcpIoThread_EnsureListener, port_, 0);
+      Debug::SwLog(TcpIoThread_EnsureListener, "listener not found", port_);
       if(ListenerHasFailed(listener)) return AllocateListener();
       Debug::Assert(ipPort_->SetSocket(listener));
       return listener;
@@ -334,7 +335,8 @@ bool TcpIoThread::EnsureListener()
    {
       //  A different listener is registered with our port.
       //
-      Debug::SwLog(TcpIoThread_EnsureListener, port_, 1);
+      Debug::SwLog(TcpIoThread_EnsureListener,
+         "listener already exists", port_);
       ipPort_->SetSocket(nullptr);
       Debug::Assert(ipPort_->SetSocket(listener));
    }
@@ -426,7 +428,7 @@ void TcpIoThread::EraseSocket(size_t& index)
    //
    if(listen_ && (index == 0))
    {
-      Debug::SwLog(TcpIoThread_EraseSocket, 0, 0);
+      Debug::SwLog(TcpIoThread_EraseSocket, "tried to free listener", 0);
       return;
    }
 

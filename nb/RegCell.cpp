@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "RegCell.h"
+#include "Algorithms.h"
 #include "Debug.h"
 
 using std::string;
@@ -38,7 +39,7 @@ RegCell::~RegCell()
 {
    if(bound)
    {
-      Debug::SwLog(RegCell_dtor, id, 0);
+      Debug::SwLog(RegCell_dtor, "item is still registered", id);
    }
 }
 
@@ -49,7 +50,7 @@ fn_name RegCell_SetId = "RegCell.SetId";
 void RegCell::SetId(id_t cid)
 {
    if(bound)
-      Debug::SwLog(RegCell_SetId, id, cid);
+      Debug::SwLog(RegCell_SetId, "item already registered", pack2(id, cid));
    else
       id = cid;
 }

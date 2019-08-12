@@ -26,6 +26,7 @@
 #include "State.h"
 #include <ostream>
 #include <string>
+#include "Algorithms.h"
 #include "BcAddress.h"
 #include "BcCause.h"
 #include "BcRouting.h"
@@ -513,7 +514,7 @@ EventHandler::Rc PotsWmlSsm::ProcessInitAck
       break;
    }
 
-   Context::Kill(PotsWmlSsm_ProcessInitAck, stid, sid);
+   Context::Kill("invalid service", pack2(stid, sid));
    return EventHandler::Suspend;
 }
 
@@ -608,7 +609,7 @@ EventHandler::Rc PotsWmlSsm::ProcessSip(Event& currEvent, Event*& nextEvent)
       return EventHandler::Revert;
    }
 
-   Debug::SwLog(PotsWmlSsm_ProcessSip, stid, 0);
+   Debug::SwLog(PotsWmlSsm_ProcessSip, "unexpected state", stid);
    SetNextState(PotsWmlState::Null);
    return EventHandler::Pass;
 }

@@ -30,7 +30,6 @@
 #include "Formatters.h"
 #include "NbCliParms.h"
 #include "Registry.h"
-#include "SysTypes.h"
 
 using std::string;
 
@@ -40,8 +39,8 @@ namespace NodeBase
 {
 fn_name CliCommandSet_ctor = "CliCommandSet.ctor";
 
-CliCommandSet::CliCommandSet(const char* comm,
-   const char* help, uint32_t size) : CliCommand(comm, help, size)
+CliCommandSet::CliCommandSet(c_string comm,
+   c_string help, uint32_t size) : CliCommand(comm, help, size)
 {
    Debug::ft(CliCommandSet_ctor);
 }
@@ -72,7 +71,7 @@ bool CliCommandSet::BindCommand(CliCommand& comm)
 
    if(strlen(s) == 0)
    {
-      Debug::SwLog(CliCommandSet_BindCommand, 0, 0);
+      Debug::SwLog(CliCommandSet_BindCommand, "null name", 0);
       return false;
    }
 
@@ -82,7 +81,7 @@ bool CliCommandSet::BindCommand(CliCommand& comm)
    {
       if(c->Text() == s)
       {
-         Debug::SwLog(CliCommandSet_BindCommand, c->GetId(), 1);
+         Debug::SwLog(CliCommandSet_BindCommand, s, c->GetId());
          return false;
       }
    }
@@ -100,7 +99,7 @@ bool CliCommandSet::BindParm(CliParm& parm)
 
    //  This class only accepts other commands as parameters.
    //
-   Debug::SwLog(CliCommandSet_BindParm, Parms().Size(), 0);
+   Debug::SwLog(CliCommandSet_BindParm, strClass(&parm), Parms().Size());
    return false;
 }
 

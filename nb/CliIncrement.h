@@ -72,7 +72,7 @@ public:
 
    //  Returns the increment's name.
    //
-   const char* Name() const { return name_; }
+   c_string Name() const { return name_; }
 
    //  Returns the offset to iid_.
    //
@@ -90,7 +90,7 @@ protected:
    //  Sets the corresponding member variables and adds the increment to
    //  CliRegistry.  Protected because this class is virtual.
    //
-   CliIncrement(const char* name, const char* help, uint32_t size = 32);
+   CliIncrement(c_string name, c_string help, uint32_t size = 32);
 
    //  Adds COMM to the increment's dictionary of commands.
    //
@@ -107,11 +107,11 @@ private:
 
    //  The increment's name.
    //
-   const char* const name_;
+   fixed_string name_;
 
    //  The increment's purpose.
    //
-   const char* const help_;
+   fixed_string help_;
 
    //  The increment's commands.
    //

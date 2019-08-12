@@ -77,7 +77,7 @@ namespace NodeBase
 
    //  Returns a string containing either NAME (if not nullptr), else VALUE.
    //
-   std::string strName(const char* name, int value);
+   std::string strName(c_string name, int value);
 
    //  Returns S with all characters converted to lower case.
    //

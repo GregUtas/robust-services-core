@@ -23,7 +23,6 @@
 #include "CliIntParm.h"
 #include <ostream>
 #include "Debug.h"
-#include "SysTypes.h"
 
 using std::ostream;
 using std::string;
@@ -43,7 +42,7 @@ fixed_string ProgressIndStrings[Progress::MaxInd + 2] =
    ERROR_STR
 };
 
-const char* Progress::strInd(Ind ind)
+c_string Progress::strInd(Ind ind)
 {
    if((ind >= 0) && (ind <= MaxInd)) return ProgressIndStrings[ind];
    return ProgressIndStrings[MaxInd + 1];

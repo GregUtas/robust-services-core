@@ -216,7 +216,7 @@ void Message::ChangeDir(MsgDirection nextDir)
 
    if(currDir == nextDir)
    {
-      Debug::SwLog(Message_ChangeDir, currDir, 0);
+      Debug::SwLog(Message_ChangeDir, "direction already set", currDir);
       return;
    }
 
@@ -277,7 +277,8 @@ void Message::Enqueue(Q1Way< Message >& whichq)
 
    if(!whichq.Enq(*this))
    {
-      Debug::SwLog(Message_Enqueue, pack2(GetProtocol(), GetSignal()), 0);
+      Debug::SwLog(Message_Enqueue,
+         "Enq failed", pack2(GetProtocol(), GetSignal()));
       delete this;
       return;
    }
@@ -299,7 +300,8 @@ void Message::Exqueue()
    {
       //  The message wasn't where it claimed to be.
       //
-      Debug::SwLog(Message_Exqueue, 0, 0);
+      Debug::SwLog(Message_Exqueue,
+         "Exq failed", pack2(GetProtocol(), GetSignal()));
       return;
    }
 
@@ -401,7 +403,8 @@ void Message::Handled(bool retain)
    //
    if(handled_)
    {
-      Debug::SwLog(Message_Handled, pack2(GetProtocol(), GetSignal()), 0);
+      Debug::SwLog(Message_Handled,
+         "message already handled", pack2(GetProtocol(), GetSignal()));
       return;
    }
 
@@ -440,7 +443,8 @@ void Message::Henqueue(Q1Way< Message >& whichq)
 
    if(!whichq.Henq(*this))
    {
-      Debug::SwLog(Message_Enqueue, pack2(GetProtocol(), GetSignal()), 0);
+      Debug::SwLog(Message_Enqueue,
+         "Henq failed", pack2(GetProtocol(), GetSignal()));
       delete this;
       return;
    }
@@ -556,7 +560,7 @@ bool Message::Relay(ProtocolSM& ogPsm)
       return true;
    }
 
-   Debug::SwLog(Message_Relay, pack2(GetProtocol(), GetSignal()), error);
+   Debug::SwLog(Message_Relay, error, pack2(GetProtocol(), GetSignal()));
    return false;
 }
 
@@ -607,7 +611,7 @@ bool Message::Restore()
       return true;
    }
 
-   Debug::SwLog(Message_Restore, pack2(GetProtocol(), GetSignal()), error);
+   Debug::SwLog(Message_Restore, error, pack2(GetProtocol(), GetSignal()));
    return false;
 }
 
@@ -636,7 +640,7 @@ bool Message::Retrieve(ProtocolSM* psm)
       return true;
    }
 
-   Debug::SwLog(Message_Retrieve, pack2(GetProtocol(), GetSignal()), error);
+   Debug::SwLog(Message_Retrieve, error, pack2(GetProtocol(), GetSignal()));
    return false;
 }
 
@@ -714,7 +718,8 @@ bool Message::Send(Route route)
    {
       if((txport == nullptr) || (txpsm->Lower() != txport))
       {
-         Debug::SwLog(Message_Send, txpsm->GetFactory(), 1);
+         Debug::SwLog(Message_Send,
+            "MsgPort not adjacent", pack2(GetProtocol(), GetSignal()));
          return txpsm->SendToLower(*this);
       }
    }
@@ -739,20 +744,21 @@ bool Message::Send(Route route)
    {
       switch(header->priority)
       {
-      case Immediate:
+      case IMMEDIATE:
          //
          //  An interprocessor message cannot use immediate priority, nor can
          //  a message sent by a MsgFactory.  Generate a log.
          //
          if(!local || (txpsm == nullptr))
          {
-            Debug::SwLog(Message_Send, pack2(GetProtocol(), GetSignal()), 2);
-            header->priority = Progress;
+            Debug::SwLog(Message_Send,
+               "invalid priority", pack2(GetProtocol(), GetSignal()));
+            header->priority = PROGRESS;
          }
          break;
 
-      case Ingress:
-      case Egress:
+      case INGRESS:
+      case EGRESS:
          //
          //  Promote the following to progress priority:
          //  (a) a message to a known PSM
@@ -761,10 +767,10 @@ bool Message::Send(Route route)
          //  (c) a subsequent message
          //
          if((header->rxAddr.bid != NIL_ID) ||               // case (a)
-            (local && (header->priority == Ingress)) ||     // case (b)
+            (local && (header->priority == INGRESS)) ||     // case (b)
             ((txport != nullptr) && txport->HasSentMsg()))  // case (c)
          {
-            header->priority = Progress;
+            header->priority = PROGRESS;
          }
          break;
       }
@@ -846,7 +852,8 @@ bool Message::Send(Route route)
       auto fac = facreg->GetFactory(header->txAddr.fid);
 
       if(fac == nullptr)
-         Debug::SwLog(Message_Send, pack2(GetProtocol(), GetSignal()), 3);
+         Debug::SwLog(Message_Send,
+            "factory not found", pack2(GetProtocol(), GetSignal()));
       else
          fac->RecordMsg(false, !local, header->length);
 
@@ -916,7 +923,7 @@ bool Message::SendToSelf()
       return Send(Internal);
    }
 
-   Debug::SwLog(Message_SendToSelf, pack2(GetProtocol(), GetSignal()), error);
+   Debug::SwLog(Message_SendToSelf, error, pack2(GetProtocol(), GetSignal()));
    return false;
 }
 
@@ -935,7 +942,7 @@ void Message::SetJoin(bool join)
 
 fn_name Message_SetPriority = "Message.SetPriority";
 
-void Message::SetPriority(Priority prio)
+void Message::SetPriority(MsgPriority prio)
 {
    Debug::ft(Message_SetPriority);
 
@@ -1032,23 +1039,6 @@ void Message::SetSignal(SignalId sid)
 
 //------------------------------------------------------------------------------
 
-fixed_string PriorityStrings[Message::MaxPriority + 2] =
-{
-   "ingress",
-   "egress",
-   "progress",
-   "immediate",
-   ERROR_STR
-};
-
-const char* Message::strPriority(Priority prio)
-{
-   if((prio >= 0) && (prio <= MaxPriority)) return PriorityStrings[prio];
-   return PriorityStrings[MaxPriority + 1];
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Message_TxIpAddr = "Message.TxIpAddr";
 
 const SysIpL3Addr& Message::TxIpAddr() const
@@ -1083,7 +1073,8 @@ void Message::Unsave()
    if(saves_ > 0)
       --saves_;
    else
-      Debug::SwLog(Message_Unsave, pack2(GetProtocol(), GetSignal()), 0);
+      Debug::SwLog(Message_Unsave,
+         "underflow", pack2(GetProtocol(), GetSignal()));
 
    if((saves_ == 0) && handled_) delete this;
 }

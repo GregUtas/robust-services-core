@@ -717,7 +717,7 @@ void ParseFrame::Clear(word from)
    }
    if(ops_.empty()) return;
    Debug::SwLog(ParseFrame_Clear,
-      "Operator stack not empty", ops_.size(), SwInfo);
+      "operator stack not empty", ops_.size(), SwInfo);
    ops_.clear();
 }
 

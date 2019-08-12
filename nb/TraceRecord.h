@@ -107,7 +107,7 @@ protected:
    //  The default version returns an empty string and should generally be
    //  overridden by subclasses.
    //
-   virtual const char* EventString() const;
+   virtual c_string EventString() const;
 private:
    //  Must be overridden to claim any Pooled object owned by a subclass.
    //  TraceBuffer::ClaimBlocks must also be modified to add the owner

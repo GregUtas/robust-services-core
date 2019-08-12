@@ -50,11 +50,11 @@ public:
 private:
    //  Overridden to return a string for displaying this type of record.
    //
-   const char* EventString() const override;
+   c_string EventString() const override;
 
    //  Returns a string for displaying TYPE.
    //
-   static const char* TypeString(MemoryType type);
+   static c_string TypeString(MemoryType type);
 
    //  The address where memory was allocated or freed.
    //

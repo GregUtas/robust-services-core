@@ -34,7 +34,7 @@
 namespace SessionBase
 {
 //  Supports a stateful context in which a subclass of PsmFactory creates
-//  a standalone PSM that receives messages via ProtocolSM::ProcessIcMsg.
+//  a stand-alone PSM that receives messages via ProtocolSM::ProcessIcMsg.
 //
 class PsmContext : public MsgContext
 {

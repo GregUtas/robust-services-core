@@ -28,7 +28,6 @@
 #include "CliThread.h"
 #include "Debug.h"
 #include "Formatters.h"
-#include "SysTypes.h"
 
 using std::ostream;
 using std::string;
@@ -39,7 +38,7 @@ namespace NodeBase
 {
 fn_name CliText_ctor = "CliText.ctor";
 
-CliText::CliText(const char* help, const char* text, bool opt, uint32_t size) :
+CliText::CliText(c_string help, c_string text, bool opt, uint32_t size) :
    CliParm(help, opt, nullptr),
    text_(text)
 {
@@ -107,7 +106,7 @@ bool CliText::BindParm(CliParm& parm)
 
          if((t != nullptr) && (strcmp(t, tag) == 0))
          {
-            Debug::SwLog(CliText_BindParm, Parms().Size(), 1);
+            Debug::SwLog(CliText_BindParm, t, Parms().Size());
             return false;
          }
       }
@@ -234,7 +233,7 @@ CliParm::Rc CliText::GetTextParmRc(id_t& i, string& s, CliThread& cli) const
 
 //------------------------------------------------------------------------------
 
-const char* CliText::HelpText() const
+c_string CliText::HelpText() const
 {
    if(strlen(text_) > 0) return text_;
    return AnyStringParm;

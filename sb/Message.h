@@ -57,16 +57,6 @@ class Message : public NodeBase::Pooled
    friend class ProtocolSM;
    friend class PsmFactory;
 public:
-   //  Message priorities.
-   //
-   typedef uint8_t Priority;
-
-   static const Priority Ingress = 0;     // from user starting a new session
-   static const Priority Egress = 1;      // to user receiving a new session
-   static const Priority Progress = 2;    // to an existing session
-   static const Priority Immediate = 3;   // between SSMs serving same user
-   static const Priority MaxPriority = 3;
-
    //  Message routes.  If a protocol is only used intraprocessor (Internal), it
    //  does not require an IpPort or InputHandler.
    //
@@ -235,7 +225,7 @@ public:
 
    //  Sets the priority for an outgoing message.
    //
-   void SetPriority(Priority prio);
+   void SetPriority(MsgPriority prio);
 
    //  Sets the destination address for an outgoing message.
    //
@@ -277,10 +267,6 @@ public:
    //  Returns the message's buffer.
    //
    const SbIpBuffer* Buffer() const { return buff_.get(); }
-
-   //  Returns a string for displaying PRIO.
-   //
-   static const char* strPriority(Priority prio);
 
    //  Records BT as the trace record that captured this message.
    //

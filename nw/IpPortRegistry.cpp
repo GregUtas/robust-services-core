@@ -232,7 +232,8 @@ bool IpPortRegistry::BindPort(IpPort& port)
 
       if((newpro == IpAny) || (oldpro == IpAny) || (newpro == oldpro))
       {
-         Debug::SwLog(IpPortRegistry_BindPort, pack2(newpro, oldpro), pid);
+         Debug::SwLog(IpPortRegistry_BindPort,
+            "port already in use", pack3(newpro, oldpro, pid));
          return false;
       }
 

@@ -23,6 +23,7 @@
 #include <bitset>
 #include <ostream>
 #include <string>
+#include "Algorithms.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "NbTypes.h"
@@ -106,7 +107,8 @@ bool PooledClass::SetPool(ObjectPool& pool)
    //
    if((pool_ != nullptr) && (pool_ != &pool))
    {
-      Debug::SwLog(PooledClass_SetPool, pool_->Pid(), pool.Pid());
+      Debug::SwLog(PooledClass_SetPool,
+         "pool already set", pack2(pool_->Pid(), pool.Pid()));
       return false;
    }
 

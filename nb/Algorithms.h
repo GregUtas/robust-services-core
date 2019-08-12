@@ -24,6 +24,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -59,6 +60,6 @@ namespace NodeBase
 
    //  Returns a hash value for S.
    //
-   uint32_t stringHash(const char* s);
+   uint32_t stringHash(c_string s);
 }
 #endif

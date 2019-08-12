@@ -73,7 +73,7 @@ private:
 
    //  Overridden to return a string for displaying this type of record.
    //
-   const char* EventString() const override;
+   c_string EventString() const override;
 
    //  Overridden to nullify the record if buff_ will vanish.
    //

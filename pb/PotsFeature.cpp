@@ -26,7 +26,6 @@
 #include "Debug.h"
 #include "PotsFeatureRegistry.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 
 using std::ostream;
 using std::string;
@@ -38,7 +37,7 @@ namespace PotsBase
 fn_name PotsFeature_ctor = "PotsFeature.ctor";
 
 PotsFeature::PotsFeature(PotsFeature::Id fid, bool deactivation,
-   const char* abbr, const char* name) :
+   c_string abbr, c_string name) :
    deactivation_(deactivation),
    abbr_(abbr),
    name_(name)
@@ -74,9 +73,7 @@ CliText* PotsFeature::Attrs() const
 {
    Debug::ft(PotsFeature_Attrs);
 
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(PotsFeature_Attrs, AbbrName(), 0);
+   Debug::SwLog(PotsFeature_Attrs, strOver(this), 0);
    return nullptr;
 }
 
@@ -134,9 +131,7 @@ PotsFeatureProfile* PotsFeature::Subscribe
 {
    Debug::ft(PotsFeature_Subscribe);
 
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(PotsFeature_Subscribe, AbbrName(), 0);
+   Debug::SwLog(PotsFeature_Subscribe, strOver(this), 0);
    return nullptr;
 }
 }

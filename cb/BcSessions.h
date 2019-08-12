@@ -1211,7 +1211,7 @@ public:
 protected:
    //  Protected because this class is virtual.
    //
-   BcFactory(Id fid, ProtocolId prid, const char* name);
+   BcFactory(Id fid, ProtocolId prid, c_string name);
 
    //  Protected because subclasses should be singletons.
    //

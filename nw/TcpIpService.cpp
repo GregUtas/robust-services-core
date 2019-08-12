@@ -81,7 +81,7 @@ size_t TcpIpService::MaxBacklog() const
 {
    Debug::ft(TcpIpService_MaxBacklog);
 
-   Debug::SwLog(TcpIpService_MaxBacklog, Name(), Sid());
+   Debug::SwLog(TcpIpService_MaxBacklog, strOver(this), Sid());
    return 0;
 }
 
@@ -93,7 +93,7 @@ size_t TcpIpService::MaxConns() const
 {
    Debug::ft(TcpIpService_MaxConns);
 
-   Debug::SwLog(TcpIpService_MaxConns, Name(), Sid());
+   Debug::SwLog(TcpIpService_MaxConns, strOver(this), Sid());
    return 0;
 }
 

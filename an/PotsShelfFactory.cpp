@@ -23,6 +23,7 @@
 #include "CliText.h"
 #include <sstream>
 #include <string>
+#include "Algorithms.h"
 #include "Debug.h"
 #include "Log.h"
 #include "PotsCircuit.h"
@@ -145,7 +146,8 @@ bool PotsShelfFactory::InjectMsg(Message& msg) const
    //
    if(phi == nullptr)
    {
-      Debug::SwLog(PotsShelfFactory_InjectMsg, pmsg.GetSignal(), 0);
+      Debug::SwLog(PotsShelfFactory_InjectMsg,
+         "header not found", pmsg.GetSignal());
       return false;
    }
 
@@ -154,7 +156,8 @@ bool PotsShelfFactory::InjectMsg(Message& msg) const
 
    if(cct == nullptr)
    {
-      Debug::SwLog(PotsShelfFactory_InjectMsg, pmsg.GetSignal(), phi->port);
+      Debug::SwLog(PotsShelfFactory_InjectMsg,
+         "circuit not found", pack2(phi->port, pmsg.GetSignal()));
       return false;
    }
 

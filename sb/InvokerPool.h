@@ -28,7 +28,6 @@
 #include <string>
 #include "Clock.h"
 #include "Factory.h"
-#include "Message.h"
 #include "NbTypes.h"
 #include "RegCell.h"
 #include "Registry.h"
@@ -70,17 +69,17 @@ public:
 
    //  Returns the length of the work queue associated with PRIO.
    //
-   size_t WorkQCurrLength(Message::Priority prio) const;
+   size_t WorkQCurrLength(MsgPriority prio) const;
 
    //  Returns a work queue's maximum length during the current
    //  statistics interval.
    //
-   size_t WorkQMaxLength(Message::Priority prio) const;
+   size_t WorkQMaxLength(MsgPriority prio) const;
 
    //  Returns a work queue's maximum delay during the current
    //  statistics interval.
    //
-   NodeBase::msecs_t WorkQMaxDelay(Message::Priority prio) const;
+   NodeBase::msecs_t WorkQMaxDelay(MsgPriority prio) const;
 
    //  Displays statistics.
    //
@@ -158,17 +157,17 @@ private:
    //  Called when a context is removed from the work queue associated
    //  with PRIO.
    //
-   void Dequeued(Message::Priority prio) const;
+   void Dequeued(MsgPriority prio) const;
 
    //  Called when a context is added to the work queue associated
    //  with PRIO.
    //
-   void Enqueued(Message::Priority prio) const;
+   void Enqueued(MsgPriority prio) const;
 
    //  Called to record the time that a message waited on a work queue
    //  before being processed.
    //
-   void RecordDelay(Message::Priority prio, NodeBase::msecs_t delay) const;
+   void RecordDelay(MsgPriority prio, NodeBase::msecs_t delay) const;
 
    //  Returns CTX to the progress work queue after it has processed
    //  messages of immediate priority.
@@ -222,7 +221,7 @@ private:
 
    //  The pool's pending work.
    //
-   std::unique_ptr< InvokerWork > work_[Message::MaxPriority + 1];
+   std::unique_ptr< InvokerWork > work_[MAX_PRIORITY + 1];
 
    //  The pool's invoker(s)
    //

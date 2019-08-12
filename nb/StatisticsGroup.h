@@ -95,7 +95,7 @@ private:
 
    //  Returns the string that explains the group.
    //
-   const char* Expl() const { return expl_.c_str(); }
+   c_string Expl() const { return expl_.c_str(); }
 
    //  The group's index in StatisticsRegistry.
    //

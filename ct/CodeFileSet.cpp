@@ -146,14 +146,19 @@ word CodeFileSet::Check(ostream* stream, string& expl) const
       return 0;
    }
 
+   //  To avoid generating spurious warnings, all files affected by those to be
+   //  checked, as well as all files that affect them, must have been parsed.
+   //  As long as one of them has been parsed, we can parse the others because
+   //  the target (operating system and word size) is already known.
+   //
    auto& files = Singleton< Library >::Instance()->Files();
+   auto abSet = static_cast< CodeFileSet* >(this->AffectedBy());
+   auto asSet = static_cast< CodeFileSet* >(this->Affecters());
+   auto parseSet = new SetOfIds;
+   SetUnion(*parseSet, abSet->Set(), asSet->Set());
    auto found = false;
 
-   //  In order to generate a report for a file, it must have been parsed.
-   //  As long as one of the files has been parsed, we can parse the others
-   //  because the target (operating system and word size) is already known.
-   //
-   for(auto f = fileSet.cbegin(); f != fileSet.cend(); ++f)
+   for(auto f = parseSet->cbegin(); f != parseSet->cend(); ++f)
    {
       auto file = files.At(*f);
 
@@ -170,7 +175,11 @@ word CodeFileSet::Check(ostream* stream, string& expl) const
       return 0;
    }
 
-   auto rc = Parse(expl, "-");
+   auto parseFiles = new CodeFileSet(TemporaryName(), parseSet);
+   auto rc = parseFiles->Parse(expl, "-");
+   abSet->Release();
+   asSet->Release();
+   parseFiles->Release();
    if(rc != 0) return rc;
    expl.clear();
 

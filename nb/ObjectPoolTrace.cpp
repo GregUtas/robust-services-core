@@ -69,7 +69,7 @@ fixed_string ObjEnqEventStr   = "  enq";
 fixed_string ObjClaimEventStr = "claim";
 fixed_string ObjRecoverStr    = "recov";
 
-const char* ObjectPoolTrace::EventString() const
+c_string ObjectPoolTrace::EventString() const
 {
    switch(rid_)
    {

@@ -32,7 +32,7 @@ namespace NodeBase
 {
 fn_name CfgBitParm_ctor = "CfgBitParm.ctor";
 
-CfgBitParm::CfgBitParm(const char* key, const char* def, const char* expl) :
+CfgBitParm::CfgBitParm(c_string key, c_string def, c_string expl) :
    CfgParm(key, def, expl)
 {
    Debug::ft(CfgBitParm_ctor);
@@ -77,9 +77,7 @@ bool CfgBitParm::GetCurrValue() const
 {
    Debug::ft(CfgBitParm_GetCurrValue);
 
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(CfgBitParm_GetCurrValue, Key(), 0);
+   Debug::SwLog(CfgBitParm_GetCurrValue, strOver(this), 0);
    return false;
 }
 
@@ -127,9 +125,7 @@ bool CfgBitParm::SetNextValue(bool value)
 {
    Debug::ft(CfgBitParm_SetNextValue);
 
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(CfgBitParm_SetNextValue, Key(), 0);
+   Debug::SwLog(CfgBitParm_SetNextValue, strOver(this), 0);
    return false;
 }
 

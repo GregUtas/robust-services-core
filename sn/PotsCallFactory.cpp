@@ -155,7 +155,7 @@ RootServiceSM* PotsCallFactory::AllocRoot
       break;
 
    default:
-      Debug::SwLog(PotsCallFactory_AllocRoot, fid, 0);
+      Debug::SwLog(PotsCallFactory_AllocRoot, "invalid FactoryId", fid);
    }
 
    return root;
@@ -213,6 +213,18 @@ Message* PotsCallFactory::ReallocOgMsg(SbIpBufferPtr& buff) const
    Debug::ft(PotsCallFactory_ReallocOgMsg);
 
    return new Pots_NU_Message(buff);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name PotsCallFactory_ScreenFirstMsg = "PotsCallFactory.ScreenFirstMsg";
+
+bool PotsCallFactory::ScreenFirstMsg
+   (const Message& msg, MsgPriority& prio) const
+{
+   Debug::ft(PotsCallFactory_ScreenFirstMsg);
+
+   return true;
 }
 
 //------------------------------------------------------------------------------

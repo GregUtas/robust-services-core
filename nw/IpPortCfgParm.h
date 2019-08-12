@@ -43,8 +43,8 @@ public:
    //  in the base class constructor.  SERVICE identifies what is running on
    //  the port.
    //
-   IpPortCfgParm(const char* key, const char* def,
-      NodeBase::word* field, const char* expl, const IpService* service);
+   IpPortCfgParm(NodeBase::c_string key, NodeBase::c_string def,
+      NodeBase::word* field, NodeBase::c_string expl, const IpService* service);
 
    //  Virtual to allow subclassing.
    //

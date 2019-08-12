@@ -27,6 +27,7 @@
 #include <iosfwd>
 #include <string>
 #include "SbTypes.h"
+#include "SysTypes.h"
 
 using namespace NodeBase;
 using namespace SessionBase;
@@ -53,7 +54,7 @@ namespace Progress
 
    //  Returns a string for displaying ID.
    //
-   const char* strInd(Ind ind);
+   c_string strInd(Ind ind);
 }
 
 //------------------------------------------------------------------------------

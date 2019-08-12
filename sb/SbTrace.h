@@ -92,7 +92,7 @@ public:
 private:
    //  Overridden to return a string for displaying this type of record.
    //
-   const char* EventString() const override;
+   NodeBase::c_string EventString() const override;
 
    //  The object (context or factory) that received the message.  The raw
    //  pointer correlates transactions processed by the same context.  If the
@@ -128,7 +128,7 @@ private:
 
    //  The incoming message's priority.
    //
-   const Message::Priority prio_;
+   const MsgPriority prio_;
 
    //  The incoming message's protocol.
    //
@@ -190,7 +190,7 @@ private:
 
    //  Overridden to return a string for displaying this type of record.
    //
-   const char* EventString() const override;
+   NodeBase::c_string EventString() const override;
 
    //  Overridden to nullify the record if buff_ will vanish.
    //
@@ -269,7 +269,7 @@ public:
 private:
    //  Overridden to return a string for displaying this type of record.
    //
-   const char* EventString() const override;
+   NodeBase::c_string EventString() const override;
 
    //  The service whose SSM was created or deleted.
    //
@@ -298,7 +298,7 @@ public:
 private:
    //  Overridden to return a string for displaying this type of record.
    //
-   const char* EventString() const override;
+   NodeBase::c_string EventString() const override;
 
    //  The factory associated with the PSM.
    //
@@ -331,7 +331,7 @@ public:
 private:
    //  Overridden to return a string for displaying this type of record.
    //
-   const char* EventString() const override;
+   NodeBase::c_string EventString() const override;
 
    //  The factory associated with the port.
    //
@@ -377,7 +377,7 @@ public:
 private:
    //  Overridden to return a string for displaying this type of record.
    //
-   const char* EventString() const override;
+   NodeBase::c_string EventString() const override;
 
    //  The message's protocol.
    //
@@ -430,7 +430,7 @@ public:
 private:
    //  Overridden to return a string for displaying this type of record.
    //
-   const char* EventString() const override;
+   NodeBase::c_string EventString() const override;
 
    //  The timer's identifier.
    //
@@ -483,7 +483,7 @@ protected:
 
    //  Overridden to return a string for displaying this type of record.
    //
-   const char* EventString() const override;
+   NodeBase::c_string EventString() const override;
 
    //  The service that owns the event.
    //

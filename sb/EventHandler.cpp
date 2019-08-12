@@ -62,8 +62,8 @@ EventHandler::Rc EventHandler::ProcessEvent
 
    //  An event handler must override this function if it can be invoked.
    //
-   Context::Kill(EventHandler_ProcessEvent,
-      pack2(ssm.Sid(), ssm.CurrState()), currEvent.Eid());
+   Context::Kill
+      (strOver(this), pack3(ssm.Sid(), ssm.CurrState(), currEvent.Eid()));
    return Suspend;
 }
 

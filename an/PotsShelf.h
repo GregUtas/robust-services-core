@@ -47,7 +47,7 @@ class PotsShelfIpService : public UdpIpService
 public:
    //  Overridden to return the service's attributes.
    //
-   const char* Name() const override { return "POTS Shelf"; }
+   c_string Name() const override { return "POTS Shelf"; }
    ipport_t Port() const override { return ipport_t(port_); }
    Faction GetFaction() const override { return PayloadFaction; }
 private:

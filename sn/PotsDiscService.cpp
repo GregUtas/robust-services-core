@@ -139,7 +139,7 @@ EventHandler::Rc PotsDiscSsm::ProcessInitAck
       return EventHandler::Revert;
    }
 
-   Context::Kill(PotsDiscSsm_ProcessInitAck, stid, 0);
+   Context::Kill("invalid state", stid);
    return EventHandler::Suspend;
 }
 }

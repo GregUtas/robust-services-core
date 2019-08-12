@@ -20,9 +20,11 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "LogThread.h"
+#include <cstddef>
 #include <iosfwd>
 #include <sstream>
 #include <string>
+#include "CallbackRequest.h"
 #include "CfgIntParm.h"
 #include "CfgParmRegistry.h"
 #include "Clock.h"
@@ -46,71 +48,6 @@ using std::string;
 
 namespace NodeBase
 {
-class LogsWritten : public CallbackRequest
-{
-public:
-   //  Constructs a callback when LAST was the last log spooled from BUFF.
-   //
-   LogsWritten(LogBuffer* buff, const LogBuffer::Entry* last);
-
-   void Callback() override;
-private:
-   //  The buffer from which the logs were spooled.
-   //
-   LogBuffer* buff_;
-
-   //  The last log that was spooled from the buffer.
-   //
-   const LogBuffer::Entry* const last_;
-};
-
-//------------------------------------------------------------------------------
-
-fn_name LogsWritten_ctor = "LogsWritten.ctor";
-
-LogsWritten::LogsWritten(LogBuffer* buff, const LogBuffer::Entry* last) :
-   buff_(buff),
-   last_(last)
-{
-   Debug::ft(LogsWritten_ctor);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name LogsWritten_Callback = "LogsWritten.Callback";
-
-void LogsWritten::Callback()
-{
-   Debug::ft(LogsWritten_Callback);
-
-   //  If the last_ log that was spooled still exists, free the logs
-   //  before it, and then free it as well.
-   //
-   for(auto curr = buff_->Last(); curr != last_; curr = curr->prev)
-   {
-      if(curr == nullptr)
-      {
-         //  last_ no longer exists: requests must have been reordered!?
-         //
-         Debug::SwLog(LogsWritten_Callback,
-            debug64_t(last_), debug64_t(buff_->Last()));
-         return;
-      }
-   }
-
-   auto curr = buff_->FirstSpooled();
-
-   while((curr != last_) && (curr != nullptr))
-   {
-      curr = buff_->Pop();
-   }
-
-   buff_->Pop();
-}
-
-//------------------------------------------------------------------------------
-
-const size_t LogThread::BundledLogSizeThreshold = 2048;
 word LogThread::NoSpoolingMessageCount_ = 400;
 SysMutex LogThread::LogFileLock_;
 
@@ -148,7 +85,7 @@ LogThread::~LogThread()
 
 //------------------------------------------------------------------------------
 
-const char* LogThread::AbbrName() const
+c_string LogThread::AbbrName() const
 {
    return "log";
 }
@@ -227,7 +164,8 @@ void LogThread::Enter()
 
       auto buff = reg->Active();
       CallbackRequestPtr callback;
-      auto stream = GetLogsFromBuffer(buff, callback);
+      auto periodic = false;
+      auto stream = buff->GetLogs(callback, periodic);
 
       if(stream == nullptr)
       {
@@ -239,51 +177,9 @@ void LogThread::Enter()
 
       //  Add the log to the log file and possibly the console.
       //
-      CopyToConsole(stream);
+      if(!periodic) CopyToConsole(stream);
       FileThread::Spool(buff->FileName(), stream, callback);
    }
-}
-
-//------------------------------------------------------------------------------
-
-ostringstreamPtr LogThread::GetLogsFromBuffer
-   (LogBuffer* buffer, CallbackRequestPtr& callback)
-{
-   //  If the log buffer contains any logs, create a stream to spool them.
-   //
-   if(buffer == nullptr) return nullptr;
-
-   MutexGuard guard(buffer->GetLock());
-
-   auto curr = buffer->FirstUnspooled();
-   if(curr == nullptr) return nullptr;
-   ostringstreamPtr log(new std::ostringstream);
-   if(log == nullptr) return nullptr;
-
-   //  Accumulate logs until they exceed the size limit.  But first, insert
-   //  a warning if some logs were discarded because the buffer was full.
-   //
-   auto discards = buffer->Discards();
-
-   if(discards > 0)
-   {
-      *log << CRLF << AlarmStatusSymbol(MinorAlarm) << "WARNING: ";
-      *log << discards << " log(s) discarded";
-      *log << CRLF;
-      buffer->ResetDiscards();
-   }
-
-   const LogBuffer::Entry* prev = nullptr;
-
-   while((log->str().size() < BundledLogSizeThreshold) && (curr != nullptr))
-   {
-      *log << static_cast< const char* >(curr->log);
-      prev = curr;
-      curr = buffer->Advance();
-   }
-
-   callback.reset(new LogsWritten(buffer, prev));
-   return log;
 }
 
 //------------------------------------------------------------------------------

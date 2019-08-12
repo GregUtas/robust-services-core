@@ -76,7 +76,7 @@ public:
    //  Returns a symbolic name for the port identified by PID.  Should be
    //  overridden by a subclass that defines an application-specific port.
    //
-   virtual const char* PortName(PortId pid) const;
+   virtual NodeBase::c_string PortName(PortId pid) const;
 
    //  Returns the state registered against SID.
    //
@@ -94,7 +94,7 @@ public:
 
    //  Returns the name of the event associated with EID.
    //
-   const char* EventName(EventId eid) const;
+   NodeBase::c_string EventName(EventId eid) const;
 
    //  Returns the trigger registered against TID.
    //
@@ -187,7 +187,7 @@ protected:
    //  should register a name for each event that it defines and invoke
    //  this function in its constructor.
    //
-   bool BindEventName(const char* name, EventId eid);
+   bool BindEventName(NodeBase::c_string name, EventId eid);
 
    //  Registers TRIGGER with the service.  The service must be modifiable.
    //  A trigger can register with more than one service, so individual
@@ -230,7 +230,7 @@ private:
 
    //  Registry for the service's event names.
    //
-   const char* eventNames_[Event::MaxId + 1];
+   NodeBase::c_string eventNames_[Event::MaxId + 1];
 
    //  Registry for the service's triggers (if it is modifiable).
    //

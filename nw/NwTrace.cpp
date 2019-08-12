@@ -149,7 +149,7 @@ fixed_string CloseEventStr      = "close";
 fixed_string PurgeEventStr      = "purge";
 fixed_string DeleteEventStr     = "-sock";
 
-const char* NwTrace::EventString() const
+c_string NwTrace::EventString() const
 {
    switch(rid_)
    {

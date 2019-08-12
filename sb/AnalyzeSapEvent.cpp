@@ -143,7 +143,7 @@ void AnalyzeSapEvent::FreeContext(bool freeMsg)
       return;
    }
 
-   Debug::SwLog(AnalyzeSapEvent_FreeContext, location_, 0);
+   Debug::SwLog(AnalyzeSapEvent_FreeContext, "invalid location", location_);
 }
 
 //------------------------------------------------------------------------------
@@ -175,7 +175,7 @@ Event* AnalyzeSapEvent::Restore(EventHandler::Rc& rc)
          }
       }
 
-      Context::Kill(AnalyzeSapEvent_Restore, 0, 0);
+      Context::Kill("failed to restore event", rc);
    }
 
    return nullptr;

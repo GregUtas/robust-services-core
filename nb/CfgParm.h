@@ -57,7 +57,7 @@ public:
 
    //  Returns the parameter's name (its tuple's key).
    //
-   const char* Key() const;
+   c_string Key() const;
 
    //  Updates EXPL to explain the parmeter's purpose.
    //
@@ -87,7 +87,7 @@ protected:
    //  KEY and DEF (the default value) are used to create a new tuple and add
    //  it to the registry.  DEF and EXPL are also saved as default_ and expl_.
    //
-   CfgParm(const char* key, const char* def, const char* expl);
+   CfgParm(c_string key, c_string def, c_string expl);
 
    //  A subclass must override this to return a string that corresponds
    //  to the parameter's value.  If that string were passed to SetNext,
@@ -140,11 +140,11 @@ private:
 
    //  A string that sets the parameter to its default value.
    //
-   const char* const default_;
+   fixed_string default_;
 
    //  A string that explains the parameter's type and purpose.
    //
-   const char* const expl_;
+   fixed_string expl_;
 
    //  The level of restart required to set the parameter to a pending value.
    //

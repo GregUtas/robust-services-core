@@ -55,7 +55,7 @@ CoutThread::~CoutThread()
 
 //------------------------------------------------------------------------------
 
-const char* CoutThread::AbbrName() const
+c_string CoutThread::AbbrName() const
 {
    return "cout";
 }
@@ -155,7 +155,7 @@ void CoutThread::Spool(ostringstreamPtr& stream)
 
 fn_name CoutThread_Spool2 = "CoutThread.Spool(string)";
 
-void CoutThread::Spool(const char* s, bool eol)
+void CoutThread::Spool(c_string s, bool eol)
 {
    Debug::ft(CoutThread_Spool2);
 

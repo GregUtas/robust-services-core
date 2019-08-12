@@ -23,6 +23,7 @@
 #include "CliText.h"
 #include <ostream>
 #include <string>
+#include "Algorithms.h"
 #include "Context.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -393,7 +394,7 @@ ProtocolSM::IncomingRc PotsMuxPsm::ProcessIcMsg(Message& msg, Event*& event)
       break;
 
    default:
-      Context::Kill(PotsMuxPsm_ProcessIcMsg, sid, 0);
+      Context::Kill("invalid signal", sid);
       return DiscardMessage;
    }
 
@@ -414,7 +415,7 @@ ProtocolSM::OutgoingRc PotsMuxPsm::ProcessOgMsg(Message& msg)
    //  Send all messages from the multiplexer NPSM with immediate priority.
    //
    auto& pmsg = static_cast< Pots_UN_Message& >(msg);
-   msg.SetPriority(Message::Immediate);
+   msg.SetPriority(IMMEDIATE);
 
    if(&msg != ogMsg_)
    {
@@ -425,7 +426,8 @@ ProtocolSM::OutgoingRc PotsMuxPsm::ProcessOgMsg(Message& msg)
       //
       if(ogMsg_ != nullptr)
       {
-         Debug::SwLog(PotsMuxPsm_ProcessOgMsg, msg.GetSignal(), 0);
+         Debug::SwLog(PotsMuxPsm_ProcessOgMsg,
+            "sending second message", msg.GetSignal());
       }
 
       return SendMessage;
@@ -467,7 +469,8 @@ ProtocolSM::OutgoingRc PotsMuxPsm::ProcessOgMsg(Message& msg)
       //
       //  Other signals should only occur when being relayed (see SetSignal).
       //
-      Debug::SwLog(PotsMuxPsm_ProcessOgMsg, header_.signal, 1);
+      Debug::SwLog(PotsMuxPsm_ProcessOgMsg,
+         "unexpected signal", header_.signal);
       return PurgeMessage;
    }
 
@@ -584,7 +587,7 @@ void PotsMuxPsm::SendSignal(PotsSignal::Id signal)
       //
       //  Other messages are relayed instead of being built explicitly.
       //
-      Debug::SwLog(PotsMuxPsm_SendSignal, signal, 0);
+      Debug::SwLog(PotsMuxPsm_SendSignal, "unexpected signal", signal);
    }
 }
 
@@ -834,11 +837,11 @@ EventHandler::Rc PotsMuxSsm::Initiate(Event*& nextEvent)
          return EventHandler::Initiate;
       }
 
-      Context::Kill(PotsMuxSsm_Initiate, pfi->sid, pfi->ind);
+      Context::Kill("invalid facility indicator", pack2(pfi->sid, pfi->ind));
       return EventHandler::Suspend;
    }
 
-   Context::Kill(PotsMuxSsm_Initiate, 0, 0);
+   Context::Kill("facility parameter not found", 0);
    return EventHandler::Suspend;
 }
 
@@ -897,7 +900,7 @@ EventHandler::Rc PotsMuxSsm::RelayMsg()
    //
    if(CountCalls() != 1)
    {
-      Context::Kill(PotsMuxSsm_RelayMsg, sid, 0);
+      Context::Kill("invalid call count", CountCalls());
    }
 
    switch(sid)
@@ -919,7 +922,7 @@ EventHandler::Rc PotsMuxSsm::RelayMsg()
       break;
 
    default:
-      Context::Kill(PotsMuxSsm_RelayMsg, sid, 1);
+      Context::Kill("invalid signal", sid);
       return EventHandler::Suspend;
    }
 
@@ -933,7 +936,7 @@ EventHandler::Rc PotsMuxSsm::RelayMsg()
 
    if(!pmsg->Relay(*ogPsm))
    {
-      Context::Kill(PotsMuxSsm_RelayMsg, sid, 0);
+      Context::Kill("failed to relay message", sid);
    }
 
    //d If our UPSM doesn't have addresses yet, supply them.  Don't pass PMSG to
@@ -963,7 +966,7 @@ void PotsMuxSsm::SetNPsm(CallId cid, PotsMuxPsm& psm)
 
    if(nPsm_[cid] != nullptr)
    {
-      Debug::SwLog(PotsMuxSsm_SetNPsm, cid, 0);
+      Debug::SwLog(PotsMuxSsm_SetNPsm, "nPSM already exists", cid);
       return;
    }
 
@@ -1001,7 +1004,7 @@ EventHandler::Rc PotsMuxNuAnalyzeNetworkMessage::ProcessEvent
       return Continue;
    }
 
-   Context::Kill(PotsMuxNuAnalyzeNetworkMessage_ProcessEvent, sid, 0);
+   Context::Kill("invalid signal", sid);
    return Suspend;
 }
 

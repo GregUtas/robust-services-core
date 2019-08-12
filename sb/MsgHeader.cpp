@@ -41,7 +41,7 @@ namespace SessionBase
 fn_name MsgHeader_ctor = "MsgHeader.ctor";
 
 MsgHeader::MsgHeader() :
-   priority(Message::Ingress),
+   priority(INGRESS),
    initial(false),
    final(false),
    join(false),

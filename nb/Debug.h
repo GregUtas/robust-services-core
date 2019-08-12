@@ -26,6 +26,11 @@
 #include <string>
 #include "SysTypes.h"
 
+namespace NodeBase
+{
+   class Base;
+}
+
 //------------------------------------------------------------------------------
 
 namespace NodeBase
@@ -38,6 +43,11 @@ enum SwLogLevel
    SwWarning,  // a log that includes a stack trace
    SwError     // throws an exception (which includes a stack trace)
 };
+
+//  Used in software logs when a function override should have been provided.
+//  Returns the string "override not found in " + strClass(obj, ns).
+//
+std::string strOver(const Base* obj, bool ns = true);
 
 //  Interface for generating debug information.  This interface must restrict
 //  its use of headers so that it can be used by low level class templates.

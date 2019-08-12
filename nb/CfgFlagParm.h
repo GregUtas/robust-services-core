@@ -36,8 +36,8 @@ class CfgFlagParm : public CfgBitParm
 public:
    //  Creates a parameter with the specified attributes.
    //
-   CfgFlagParm(const char* key, const char* def,
-      Flags* field, FlagId fid, const char* expl);
+   CfgFlagParm(c_string key, c_string def,
+      Flags* field, FlagId fid, c_string expl);
 
    //  Virtual to allow subclassing.
    //

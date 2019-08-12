@@ -24,6 +24,7 @@
 
 #include "CfgParm.h"
 #include <string>
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -36,8 +37,7 @@ class CfgStrParm : public CfgParm
 public:
    //  Creates a parameter with the specified attributes.
    //
-   CfgStrParm(const char* key, const char* def,
-      std::string* field, const char* expl);
+   CfgStrParm(c_string key, c_string def, std::string* field, c_string expl);
 
    //  Virtual to allow subclassing.
    //

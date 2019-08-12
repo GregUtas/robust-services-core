@@ -314,7 +314,8 @@ ProtocolSM::OutgoingRc PotsCallPsm::ProcessOgMsg(Message& msg)
       break;
 
    default:
-      Debug::SwLog(PotsCallPsm_ProcessOgMsg, header_.signal, 1);
+      Debug::SwLog(PotsCallPsm_ProcessOgMsg,
+         "unexpected signal", header_.signal);
       return PurgeMessage;
    }
 
@@ -474,7 +475,7 @@ void PotsCallPsm::SendSignal(SignalId signal)
       break;
 
    default:
-      Debug::SwLog(PotsCallPsm_SendSignal, signal, 0);
+      Debug::SwLog(PotsCallPsm_SendSignal, "unexpected signal", signal);
    }
 }
 

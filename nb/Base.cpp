@@ -101,7 +101,7 @@ void Base::GetSubtended(Base* objects[], size_t& count) const
       return;
    }
 
-   Debug::SwLog(Base_GetSubtended, "array full", count);
+   Debug::SwLog(Base_GetSubtended, "objects array full", count);
 }
 
 //------------------------------------------------------------------------------

@@ -58,7 +58,7 @@ class PotsCallIpService : public UdpIpService
 public:
    //  Overridden to return the service's attributes.
    //
-   const char* Name() const override { return "POTS Call"; }
+   c_string Name() const override { return "POTS Call"; }
    ipport_t Port() const override { return ipport_t(port_); }
    Faction GetFaction() const override { return PayloadFaction; }
 private:
@@ -164,6 +164,10 @@ private:
    //  Overridden to record PORT in the user's profile.
    //
    void PortAllocated(const MsgPort& port, const Message* msg) const override;
+
+   //  Overridden to return true.
+   //
+   bool ScreenFirstMsg(const Message& msg, MsgPriority& prio) const override;
 
    //  Overridden to screen subsequent messages received while an offhook
    //  is waiting on the ingress work queue.

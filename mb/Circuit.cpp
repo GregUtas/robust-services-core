@@ -92,9 +92,7 @@ string Circuit::Name() const
 {
    Debug::ft(Circuit_Name);
 
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(Circuit_Name, port_.GetId(), 0);
+   Debug::SwLog(Circuit_Name, strOver(this), 0);
    return "Unknown circuit";
 }
 }

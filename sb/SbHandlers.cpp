@@ -64,8 +64,8 @@ EventHandler::Rc SbAnalyzeMessage::ProcessEvent
       //
       if(ssm.Parent() == nullptr)
       {
-         Context::Kill(SbAnalyzeMessage_ProcessEvent,
-            pack3(ssm.Sid(), state->Stid(), pid), 0);
+         Context::Kill("message analyzer not found",
+            pack3(ssm.Sid(), state->Stid(), pid));
       }
 
       return Pass;
@@ -77,8 +77,8 @@ EventHandler::Rc SbAnalyzeMessage::ProcessEvent
    //
    if(ssm.CurrState() != stid)
    {
-      Debug::SwLog(SbAnalyzeMessage_ProcessEvent,
-         pack3(ssm.Sid(), state->Stid(), ssm.CurrState()), 1);
+      Debug::SwLog(SbAnalyzeMessage_ProcessEvent, "invalid state change",
+         pack3(ssm.Sid(), state->Stid(), ssm.CurrState()));
    }
 
    return rc;
@@ -181,7 +181,8 @@ EventHandler::Rc SbInitiationReq::ProcessEvent
 
       if(svc == nullptr)
       {
-         Debug::SwLog(SbInitiationReq_ProcessEvent, ire.GetModifier(), 0);
+         Debug::SwLog(SbInitiationReq_ProcessEvent,
+            "service not found", ire.GetModifier());
          return Suspend;
       }
 
@@ -191,7 +192,7 @@ EventHandler::Rc SbInitiationReq::ProcessEvent
 
       if(modifier == nullptr)
       {
-         Context::Kill(SbInitiationReq_ProcessEvent, ire.GetModifier(), 0);
+         Context::Kill("failed to allocate modifier", ire.GetModifier());
       }
 
       ssm.HenqModifier(*modifier);

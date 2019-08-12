@@ -208,4 +208,12 @@ void Debug::SwLog(fn_name_arg func, const string& errstr,
 
    GenerateSwLog(func, errstr, offset, level);
 }
+
+//------------------------------------------------------------------------------
+
+string strOver(const Base* obj, bool ns)
+{
+   string result = "override not found in " + strClass(obj, ns);
+   return result;
+}
 }

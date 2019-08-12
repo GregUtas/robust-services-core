@@ -55,13 +55,13 @@ Statistic::Statistic(const string& expl, size_t divisor) :
 
    if(divisor_ == 0)
    {
-      Debug::SwLog(Statistic_ctor, "divisor invalid", 0);
+      Debug::SwLog(Statistic_ctor, "invalid divisor", 0);
       divisor_ = 1;
    }
 
    if(expl.size() > MaxExplSize)
    {
-      Debug::SwLog(Statistic_ctor, "expl size", expl.size());
+      Debug::SwLog(Statistic_ctor, "expl length", expl.size());
    }
 
    Singleton< StatisticsRegistry >::Instance()->BindStat(*this);

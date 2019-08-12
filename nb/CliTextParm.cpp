@@ -44,8 +44,8 @@ namespace NodeBase
 {
 fn_name CliTextParm_ctor = "CliTextParm.ctor";
 
-CliTextParm::CliTextParm(const char* help, bool opt, uint32_t size,
-   const char* tag) : CliParm(help, opt, tag)
+CliTextParm::CliTextParm(c_string help, bool opt, uint32_t size,
+   c_string tag) : CliParm(help, opt, tag)
 {
    Debug::ft(CliTextParm_ctor);
 
@@ -169,7 +169,7 @@ void CliTextParm::Explain(ostream& stream, col_t indent) const
 
    if(indent < 2)
    {
-      Debug::SwLog(CliTextParm_Explain, indent, 0);
+      Debug::SwLog(CliTextParm_Explain, "invalid indent", indent);
       indent = 2;
    }
 
@@ -433,7 +433,7 @@ bool CliTextParm::ShowValues(string& values) const
    //  Our Explain function handles other cases without
    //  invoking CliParm::Explain, so we shouldn't get here.
    //
-   Debug::SwLog(CliTextParm_ShowValues, size, 0);
+   Debug::SwLog(CliTextParm_ShowValues, strClass(this), size);
    return true;
 }
 }

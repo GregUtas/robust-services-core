@@ -288,8 +288,8 @@ class ParserTraceTool : public Tool
    friend class Singleton< ParserTraceTool >;
 private:
    ParserTraceTool() : Tool(ParserTracer, 'p', false) { }
-   const char* Name() const override { return ParserTraceToolName; }
-   const char* Expl() const override { return ParserTraceToolExpl; }
+   c_string Name() const override { return ParserTraceToolName; }
+   c_string Expl() const override { return ParserTraceToolExpl; }
 };
 
 //==============================================================================

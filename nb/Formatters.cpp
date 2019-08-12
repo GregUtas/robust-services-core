@@ -265,7 +265,7 @@ string strLower(const string& s)
 
 //------------------------------------------------------------------------------
 
-string strName(const char* name, int value)
+string strName(c_string name, int value)
 {
    if(name == nullptr) return std::to_string(value);
    return name;

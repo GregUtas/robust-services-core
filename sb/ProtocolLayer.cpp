@@ -22,6 +22,7 @@
 #include "ProtocolLayer.h"
 #include <ostream>
 #include <string>
+#include "Algorithms.h"
 #include "Context.h"
 #include "Debug.h"
 #include "SysTypes.h"
@@ -81,7 +82,7 @@ ProtocolLayer::~ProtocolLayer()
    //
    if(upper_ != nullptr)
    {
-      Debug::SwLog(ProtocolLayer_dtor, 0, 0);
+      Debug::SwLog(ProtocolLayer_dtor, "unexpected upper layer", GetFactory());
       upper_->AdjacentDeleted(false);
       upper_ = nullptr;
    }
@@ -160,9 +161,7 @@ bool ProtocolLayer::DropPeer(const GlobalAddress& peerPrevRemAddr)
 {
    Debug::ft(ProtocolLayer_DropPeer);
 
-   //  This is a pure virtual function.
-   //
-   Context::Kill(ProtocolLayer_DropPeer, GetFactory(), 0);
+   Context::Kill(strOver(this), GetFactory());
    return false;
 }
 
@@ -182,7 +181,7 @@ void ProtocolLayer::EnsureLower(const Message* msg)
 
       if(lower_ == nullptr)
       {
-         Context::Kill(ProtocolLayer_EnsureLower, GetFactory(), 0);
+         Context::Kill("failed to allocate lower layer", GetFactory());
          return;
       }
 
@@ -216,9 +215,7 @@ FactoryId ProtocolLayer::GetFactory() const
 {
    Debug::ft(ProtocolLayer_GetFactory);
 
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(ProtocolLayer_GetFactory, 0, 0);
+   Debug::SwLog(ProtocolLayer_GetFactory, strOver(this), 0);
    return NIL_ID;
 }
 
@@ -231,9 +228,7 @@ ProtocolLayer* ProtocolLayer::JoinPeer
 {
    Debug::ft(ProtocolLayer_JoinPeer);
 
-   //  This is a pure virtual function.
-   //
-   Context::Kill(ProtocolLayer_JoinPeer, GetFactory(), 0);
+   Context::Kill(strOver(this), GetFactory());
    return nullptr;
 }
 
@@ -252,9 +247,7 @@ MsgPort* ProtocolLayer::Port() const
 {
    Debug::ft(ProtocolLayer_Port);
 
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(ProtocolLayer_Port, GetFactory(), 0);
+   Debug::SwLog(ProtocolLayer_Port, strOver(this), 0);
    return nullptr;
 }
 
@@ -266,9 +259,7 @@ Event* ProtocolLayer::ReceiveMsg(Message& msg)
 {
    Debug::ft(ProtocolLayer_ReceiveMsg);
 
-   //  This is a pure virtual function.
-   //
-   Context::Kill(ProtocolLayer_ReceiveMsg, GetFactory(), 0);
+   Context::Kill(strOver(this), GetFactory());
    return nullptr;
 }
 
@@ -292,9 +283,7 @@ Message::Route ProtocolLayer::Route() const
 {
    Debug::ft(ProtocolLayer_Route);
 
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(ProtocolLayer_Route, GetFactory(), 0);
+   Debug::SwLog(ProtocolLayer_Route, strOver(this), 0);
    return Message::External;
 }
 
@@ -306,9 +295,7 @@ bool ProtocolLayer::SendMsg(Message& msg)
 {
    Debug::ft(ProtocolLayer_SendMsg);
 
-   //  This is a pure virtual function.
-   //
-   Context::Kill(ProtocolLayer_SendMsg, GetFactory(), 0);
+   Context::Kill(strOver(this), GetFactory());
    return false;
 }
 
@@ -345,8 +332,8 @@ Event* ProtocolLayer::SendToUpper(Message& msg)
 
       if(upper_ == nullptr)
       {
-         Context::Kill
-            (ProtocolLayer_SendToUpper, msg.GetProtocol(), msg.GetSignal());
+         Context::Kill("failed to allocate upper layer",
+            pack2(msg.GetProtocol(), msg.GetSignal()));
          return nullptr;
       }
 
@@ -374,7 +361,7 @@ Message* ProtocolLayer::UnwrapMsg(Message& msg)
    //  A layer that is not at the bottom of a stack must implement
    //  this function.
    //
-   Context::Kill(ProtocolLayer_UnwrapMsg, GetFactory(), 0);
+   Context::Kill(strOver(this), GetFactory());
    return nullptr;
 }
 
@@ -386,9 +373,7 @@ ProtocolSM* ProtocolLayer::UppermostPsm() const
 {
    Debug::ft(ProtocolLayer_UppermostPsm);
 
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(ProtocolLayer_UppermostPsm, GetFactory(), 0);
+   Debug::SwLog(ProtocolLayer_UppermostPsm, strOver(this), 0);
    return nullptr;
 }
 
@@ -403,7 +388,7 @@ Message* ProtocolLayer::WrapMsg(Message& msg)
    //  A layer that is not at the bottom of a stack must implement
    //  this function.
    //
-   Context::Kill(ProtocolLayer_WrapMsg, GetFactory(), 0);
+   Context::Kill(strOver(this), GetFactory());
    return nullptr;
 }
 }

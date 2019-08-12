@@ -53,8 +53,8 @@ class TransTraceTool : public Tool
    friend class Singleton< TransTraceTool >;
 private:
    TransTraceTool() : Tool(TransTracer, 't', true) { }
-   const char* Name() const override { return TransTraceToolName; }
-   const char* Expl() const override { return TransTraceToolExpl; }
+   c_string Name() const override { return TransTraceToolName; }
+   c_string Expl() const override { return TransTraceToolExpl; }
 };
 
 //------------------------------------------------------------------------------
@@ -67,8 +67,8 @@ class BufferTraceTool : public Tool
    friend class Singleton< BufferTraceTool >;
 private:
    BufferTraceTool() : Tool(BufferTracer, 'b', true) { }
-   const char* Name() const override { return BufferTraceToolName; }
-   const char* Expl() const override { return BufferTraceToolExpl; }
+   c_string Name() const override { return BufferTraceToolName; }
+   c_string Expl() const override { return BufferTraceToolExpl; }
 };
 
 //------------------------------------------------------------------------------
@@ -81,8 +81,8 @@ class ContextTraceTool : public Tool
    friend class Singleton< ContextTraceTool >;
 private:
    ContextTraceTool() : Tool(ContextTracer, 'c', true) { }
-   const char* Name() const override { return ContextTraceToolName; }
-   const char* Expl() const override { return ContextTraceToolExpl; }
+   c_string Name() const override { return ContextTraceToolName; }
+   c_string Expl() const override { return ContextTraceToolExpl; }
 };
 
 //------------------------------------------------------------------------------
@@ -175,7 +175,7 @@ TraceRc SbTracer::ClearSelections(FlagId filter)
       break;
 
    default:
-      Debug::SwLog(SbTracer_ClearSelections, filter, 0);
+      Debug::SwLog(SbTracer_ClearSelections, "unexpected filter", filter);
    }
 
    return TraceOk;

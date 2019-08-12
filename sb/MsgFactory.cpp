@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "MsgFactory.h"
+#include "Algorithms.h"
 #include "Clock.h"
 #include "Debug.h"
 #include "Message.h"
@@ -28,7 +29,6 @@
 #include "SbTrace.h"
 #include "SbTracer.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 #include "ToolTypes.h"
 #include "TraceBuffer.h"
 
@@ -41,7 +41,7 @@ namespace SessionBase
 fn_name MsgFactory_ctor = "MsgFactory.ctor";
 
 MsgFactory::MsgFactory(Id fid, ContextType type, ProtocolId prid,
-   const char* name) : Factory(fid, type, prid, name)
+   c_string name) : Factory(fid, type, prid, name)
 {
    Debug::ft(MsgFactory_ctor);
 }
@@ -117,7 +117,7 @@ void MsgFactory::ProcessIcMsg(Message& msg) const
 
    //  This must be implemented by a subclass if required.
    //
-   Context::Kill(MsgFactory_ProcessIcMsg, msg.GetProtocol(), msg.GetSignal());
+   Context::Kill(strOver(this), pack2(msg.GetProtocol(), msg.GetSignal()));
 }
 
 //------------------------------------------------------------------------------

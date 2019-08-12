@@ -28,6 +28,7 @@
 #include "Parameter.h"
 #include "RegCell.h"
 #include "Signal.h"
+#include "SysTypes.h"
 
 namespace PotsBase
 {
@@ -64,11 +65,11 @@ public:
 
    //  Returns a string that is an abbreviation for the feature.
    //
-   const char* AbbrName() const { return abbr_; }
+   c_string AbbrName() const { return abbr_; }
 
    //  Returns a string that provides the feature's full name.
    //
-   const char* FullName() const { return name_; }
+   c_string FullName() const { return name_; }
 
    //  Returns true if the feature can be activated and deactivated.
    //
@@ -101,7 +102,7 @@ protected:
    //  name.
    //
    PotsFeature(PotsFeature::Id fid, bool deactivation,
-      const char* abbr, const char* name);
+      c_string abbr, c_string name);
 
    //  Protected because subclasses should be singletons.
    //
@@ -130,11 +131,11 @@ private:
 
    //  The feature's abbreviation.
    //
-   const char* const abbr_;
+   fixed_string abbr_;
 
    //  The feature's full name;
    //
-   const char* const name_;
+   fixed_string name_;
 
    //  Flags that specify which features are incompatible with this one.
    //

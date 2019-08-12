@@ -24,7 +24,6 @@
 #include <iosfwd>
 #include <sstream>
 #include "Debug.h"
-#include "SysTypes.h"
 
 using std::ostream;
 using std::setw;
@@ -296,13 +295,13 @@ int32_t SysTime::MsecsUntil(const SysTime& time) const
    {
       auto diff = ms1 - ms0;
       if(diff <= INT32_MAX) return diff;
-      Debug::SwLog(SysTime_MsecsUntil, 0, 0);
+      Debug::SwLog(SysTime_MsecsUntil, "overflow", diff);
       return INT32_MAX;
    }
 
    auto diff = ms0 - ms1;
    if(diff >= INT32_MIN) return diff;
-   Debug::SwLog(SysTime_MsecsUntil, 0, 1);
+   Debug::SwLog(SysTime_MsecsUntil, "underflow", diff);
    return INT32_MIN;
 }
 
@@ -375,14 +374,14 @@ void SysTime::Round(TimeField field, int16_t interval)
       return;
 
    default:
-      Debug::SwLog(SysTime_Round, field, 0);
+      Debug::SwLog(SysTime_Round, "unexpected field", field);
       return;
    }
 }
 
 //------------------------------------------------------------------------------
 
-const char* SysTime::strMonth() const
+c_string SysTime::strMonth() const
 {
    auto month = time_[MonthsField];
    if((month >= 0) && (month <= MaxMonth)) return MonthStrings[month];
@@ -391,7 +390,7 @@ const char* SysTime::strMonth() const
 
 //------------------------------------------------------------------------------
 
-const char* SysTime::strWeekDay() const
+c_string SysTime::strWeekDay() const
 {
    auto wday = DayOfWeek();
    if((wday >= 0) && (wday <= MaxWeekDay)) return WeekDayStrings[wday];

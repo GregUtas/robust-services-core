@@ -26,6 +26,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <string>
+#include "CallbackRequest.h"
 #include "SysMutex.h"
 #include "SysTypes.h"
 
@@ -42,6 +43,7 @@ class LogBuffer : public Permanent
 //  restart for debugging purposes and must be freed using a CLI command when
 //  no longer required.
 //
+   friend class LogsWritten;
 public:
    //  Creates a buffer of length KBS kilobytes.
    //
@@ -60,60 +62,26 @@ public:
       char log[UINT16_MAX];  // log's contents (null-terminated)
    };
 
+   //  Returns true if the buffer is empty.
+   //
+   bool Empty() const { return First() == nullptr; }
+
    //  Adds LOG's contents to the buffer and releases LOG.  Returns
    //  the log's location in the buffer, or nullptr if the buffer
    //  is full.
    //
    Entry* Push(const ostringstreamPtr& log);
 
-   //  Provides access to the buffer's mutex so the buffer can
-   //  be locked while using functions other than Insert (which
-   //  handles locking itself).
-   //
-   SysMutex* GetLock() { return &lock_; }
-
-   //  Returns the first (oldest) log in the buffer.  This log has been
-   //  spooled but is still waiting for an acknowledgment that it was
-   //  written to the log file.  Returns nullptr if the buffer is empty.
-   //
-   const Entry* FirstSpooled() const;
-
-   //  Returns the first unspooled log in the buffer.  Returns nullptr
-   //  if the buffer is empty.
-   //
-   const Entry* FirstUnspooled() const;
-
-   //  Returns spooled_ if it is not nullptr, otherwise returns unspooled_.
-   //
-   const Entry* First() const;
-   //
-   //  Returns the last (newest) log in the buffer.  Returns nullptr if
-   //  the buffer is empty.
-   //
-   const Entry* Last() const;
-
-   //  Invoked after spooling the first unspooled log.  Returns the next
-   //  unspooled log or nullptr if no unspooled logs remain.
-   //
-   const Entry* Advance();
-
-   //  Invoked after receiving an acknowledgment that the first spooled log
-   //  has been written to the log file.  Returns the next spooled log or
-   //  nullptr if no spooled logs remain.
-   //
-   const Entry* Pop();
-
    //  Returns the number of unspooled and/or unspooled logs in the buffer.
    //
    size_t Count(bool spooled, bool unspooled) const;
 
-   //  Returns the number of discarded logs.
+   //  Extracts logs from the buffer and bundles them into an ostringstream.
+   //  Returns nullptr if the buffer was empty, else updates CALLBACK so that
+   //  the buffer can free the space occupied by the logs after they have been
+   //  written.  Sets PERIODIC when the stream contains a periodic log.
    //
-   size_t Discards() const { return discards_; }
-
-   //  Clears the number of discarded logs.
-   //
-   void ResetDiscards() { discards_ = 0; }
+   ostringstreamPtr GetLogs(CallbackRequestPtr& callback, bool& periodic);
 
    //  Returns the file name for the logs.
    //
@@ -134,6 +102,20 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
+   //> When bundling logs into a stream, the number of characters that
+   //  prevents another log from being added to the stream.
+   //
+   static const size_t BundledLogSizeThreshold;
+
+   //  Returns spooled_ if it is not nullptr, otherwise returns unspooled_.
+   //
+   const Entry* First() const;
+
+   //  Returns the last (newest) log in the buffer.  Returns nullptr if
+   //  the buffer is empty.
+   //
+   const Entry* Last() const;
+
    //  Sets NEXT as the next location for inserting a log.
    //
    void SetNext(Entry* next);
@@ -141,6 +123,33 @@ private:
    //  Returns the location for inserting an entry of SIZE bytes.
    //
    Entry* InsertionPoint(size_t size);
+
+   //  Returns the first unspooled log in the buffer.  Returns nullptr
+   //  if the buffer is empty.
+   //
+   const Entry* FirstUnspooled() const;
+
+   //  Returns the first (oldest) log in the buffer.  This log has been
+   //  spooled but is still waiting for an acknowledgment that it was
+   //  written to the log file.  Returns nullptr if the buffer is empty.
+   //
+   const Entry* FirstSpooled() const;
+
+   //  Invoked after spooling the first unspooled log.  Returns the next
+   //  unspooled log or nullptr if no unspooled logs remain.
+   //
+   const Entry* Advance();
+
+   //  Invoked after receiving an acknowledgment that the first spooled log
+   //  has been written to the log file.  Returns the next spooled log or
+   //  nullptr if no spooled logs remain.
+   //
+   const Entry* Pop();
+
+   //  Removes spooled logs up to LAST when it is acknowledged that they
+   //  have been successfully written to the log file.
+   //
+   void Purge(const Entry* last);
 
    //  Updates the maximum space used in the buffer.
    //

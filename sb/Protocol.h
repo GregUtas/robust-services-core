@@ -64,10 +64,6 @@ public:
    //
    static const Id MaxId = UINT8_MAX;
 
-   //  Returns the protocol's identifier.
-   //
-   Id Prid() const { return Id(prid_.GetId()); }
-
    //  Returns true if PRID1 understands PRID2 (that is, if PRID1 = PRID2
    //  or PRID2 is a base for PRID1).
    //

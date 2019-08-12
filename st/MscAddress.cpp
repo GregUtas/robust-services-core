@@ -128,8 +128,8 @@ void MscAddress::SetPeer(const MsgTrace& mt, MscContext* context)
    }
    else if(extFid_ != mt.RemAddr().fid)
    {
-      Debug::SwLog(MscAddress_SetPeer,
-         pack2(extFid_, mt.RemAddr().fid), locAddr_.fid);
+      Debug::SwLog(MscAddress_SetPeer, "unexpected factory",
+         pack3(locAddr_.fid, extFid_, mt.RemAddr().fid));
    }
 }
 }

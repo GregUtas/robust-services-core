@@ -324,7 +324,7 @@ private:
    //  Returns an abbreviated version of the thread's name, which must be
    //  at most 7 characters long.
    //
-   virtual const char* AbbrName() const = 0;
+   virtual c_string AbbrName() const = 0;
 
    //  The common entry function for all threads (except RootThread).
    //  ARG is a pointer to the Thread object.
@@ -347,7 +347,7 @@ private:
    //  allowed to block.  The default version returns true.  This function
    //  exists to avoid making EnterBlockingOperation virtual.  That way, if
    //  a thread's vptr gets corrupted, EnterBlockingOperation will still be
-   //  invoked.
+   //  invoked.  WHY and FUNC are the same as for EnterBlockingOperation.
    //
    virtual bool BlockingAllowed
       (BlockingReason why, fn_name_arg func) { return true; }
@@ -356,7 +356,8 @@ private:
    //  running again.  The default version does nothing.  This function's
    //  purpose is to effectively make ExitBlockingOperation virtual.  It is
    //  implemented as a separate function so that, if a thread's vptr gets
-   //  corrupted, ExitBlockingOperation will still be invoked.
+   //  corrupted, ExitBlockingOperation will still be invoked.  FUNC is the
+   //  same as for ExitBlockingOperation.
    //
    virtual void ScheduledIn(fn_name_arg func) { }
 

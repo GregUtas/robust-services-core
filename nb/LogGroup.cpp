@@ -52,12 +52,12 @@ LogGroup::LogGroup(fixed_string name, fixed_string expl) :
 
    if(name_.size() > MaxNameSize)
    {
-      Debug::SwLog(LogGroup_ctor, "name size", name_.size());
+      Debug::SwLog(LogGroup_ctor, "name length", name_.size());
    }
 
    if(expl_.size() > MaxExplSize)
    {
-      Debug::SwLog(LogGroup_ctor, "expl size", expl_.size());
+      Debug::SwLog(LogGroup_ctor, "expl length", expl_.size());
    }
 
    logs_.Init(MaxLogs + 1, Log::CellDiff(), MemDyn);

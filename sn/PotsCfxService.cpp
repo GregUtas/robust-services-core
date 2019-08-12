@@ -24,6 +24,7 @@
 #include "State.h"
 #include <ostream>
 #include <string>
+#include "Algorithms.h"
 #include "BcAddress.h"
 #include "BcProtocol.h"
 #include "BcRouting.h"
@@ -318,7 +319,7 @@ EventHandler::Rc PotsCfbTiTimeout::ProcessEvent
       return cssm.ForwardCall(nextEvent);
    }
 
-   Context::Kill(PotsCfbTiTimeout_ProcessEvent, 0, 0);
+   Context::Kill("invalid state", pssm.CurrState());
    return Suspend;
 }
 
@@ -524,26 +525,26 @@ EventHandler::Rc PotsCfxSsm::ProcessInitAck
 
    case PotsCfuServiceId:
       cfxp = static_cast< DnRouteFeatureProfile* >(prof->FindFeature(CFU));
-      if(cfxp == nullptr) Context::Kill(PotsCfxSsm_ProcessInitAck, stid, sid);
+      if(cfxp == nullptr) Context::Kill("CFU not assigned", pack2(stid, sid));
       SetProfile(cfxp);
       return ForwardCall(nextEvent);
 
    case PotsCfbServiceId:
       cfxp = static_cast< DnRouteFeatureProfile* >(prof->FindFeature(CFB));
-      if(cfxp == nullptr) Context::Kill(PotsCfxSsm_ProcessInitAck, stid, sid);
+      if(cfxp == nullptr) Context::Kill("CFB not assigned", pack2(stid, sid));
       SetProfile(cfxp);
       return ForwardCall(nextEvent);
 
    case PotsCfnServiceId:
       cfnp = static_cast< PotsCfnFeatureProfile* >(prof->FindFeature(CFN));
-      if(cfnp == nullptr) Context::Kill(PotsCfxSsm_ProcessInitAck, stid, sid);
+      if(cfnp == nullptr) Context::Kill("CFN not assigned", pack2(stid, sid));
       SetProfile(cfnp);
       timer_ = ppsm->StartTimer(cfnp->Timeout(), *this, 0);
       SetNextState(PotsCfxState::Timing);
       return EventHandler::Resume;
    }
 
-   Context::Kill(PotsCfxSsm_ProcessInitAck, stid, sid);
+   Context::Kill("invalid service", pack2(stid, sid));
    return EventHandler::Suspend;
 }
 
@@ -637,7 +638,8 @@ EventHandler::Rc PotsCfxSsm::ProcessSip(Event& currEvent, Event*& nextEvent)
    auto& ire = static_cast< InitiationReqEvent& >(currEvent);
 
    ire.DenyRequest();
-   Debug::SwLog(PotsCfxSsm_ProcessSip, stid, ire.GetModifier());
+   Debug::SwLog(PotsCfxSsm_ProcessSip,
+      "unexpected state", pack2(ire.GetModifier(), stid));
    return EventHandler::Pass;
 }
 

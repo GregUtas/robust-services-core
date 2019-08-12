@@ -23,6 +23,7 @@
 #include <iomanip>
 #include <ios>
 #include <sstream>
+#include "Algorithms.h"
 #include "Context.h"
 #include "Debug.h"
 #include "Factory.h"
@@ -174,7 +175,7 @@ void TransTrace::EndOfTransaction()
 fixed_string RxNetEventStr = "RXNET";
 fixed_string TransEventStr = "TRANS";
 
-const char* TransTrace::EventString() const
+c_string TransTrace::EventString() const
 {
    switch(rid_)
    {
@@ -313,7 +314,7 @@ bool BuffTrace::Display(ostream& stream, bool diff)
 fixed_string IcMsgEventStr = "icmsg";
 fixed_string OgMsgEventStr = "ogmsg";
 
-const char* BuffTrace::EventString() const
+c_string BuffTrace::EventString() const
 {
    switch(rid_)
    {
@@ -397,7 +398,8 @@ BuffTrace* BuffTrace::NextIcMsg
 
          if(--max <= 0)
          {
-            Debug::SwLog(BuffTrace_NextIcMsg, 200, 0);
+            Debug::SwLog(BuffTrace_NextIcMsg,
+               "message not found", pack2(fid, sid));
             break;
          }
       }
@@ -496,7 +498,7 @@ bool SsmTrace::Display(ostream& stream, bool diff)
 fixed_string SsmCreationEventStr = " +ssm";
 fixed_string SsmDeletionEventStr = " -ssm";
 
-const char* SsmTrace::EventString() const
+c_string SsmTrace::EventString() const
 {
    switch(rid_)
    {
@@ -538,7 +540,7 @@ bool PsmTrace::Display(ostream& stream, bool diff)
 fixed_string PsmCreationEventStr = " +psm";
 fixed_string PsmDeletionEventStr = " -psm";
 
-const char* PsmTrace::EventString() const
+c_string PsmTrace::EventString() const
 {
    switch(rid_)
    {
@@ -578,7 +580,7 @@ bool PortTrace::Display(ostream& stream, bool diff)
 fixed_string PortCreationEventStr = "+port";
 fixed_string PortDeletionEventStr = "-port";
 
-const char* PortTrace::EventString() const
+c_string PortTrace::EventString() const
 {
    switch(rid_)
    {
@@ -667,7 +669,7 @@ fixed_string MsgDeletionEventStr     = " -msg";
 fixed_string MsgReceptionEventStr    = ">>msg";
 fixed_string MsgTransmissionEventStr = "<<msg";
 
-const char* MsgTrace::EventString() const
+c_string MsgTrace::EventString() const
 {
    switch(rid_)
    {
@@ -707,7 +709,7 @@ bool TimerTrace::Display(ostream& stream, bool diff)
 fixed_string TimerCreationEventStr = " +tmr";
 fixed_string TimerDeletionEventStr = " -tmr";
 
-const char* TimerTrace::EventString() const
+c_string TimerTrace::EventString() const
 {
    switch(rid_)
    {
@@ -784,7 +786,7 @@ fixed_string EventCreationEventStr = " +evt";
 fixed_string EventDeletionEventStr = " -evt";
 fixed_string EventHandlerEventStr  = ">>evt";
 
-const char* EventTrace::EventString() const
+c_string EventTrace::EventString() const
 {
    switch(rid_)
    {

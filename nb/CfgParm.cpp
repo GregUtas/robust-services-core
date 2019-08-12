@@ -39,7 +39,7 @@ namespace NodeBase
 {
 fn_name CfgParm_ctor = "CfgParm.ctor";
 
-CfgParm::CfgParm(const char* key, const char* def, const char* expl) :
+CfgParm::CfgParm(c_string key, c_string def, c_string expl) :
    tuple_(nullptr),
    default_(def),
    expl_(expl),
@@ -106,9 +106,7 @@ string CfgParm::GetCurr() const
 {
    Debug::ft(CfgParm_GetCurr);
 
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(CfgParm_GetCurr, Key(), 0);
+   Debug::SwLog(CfgParm_GetCurr, strOver(this), 0);
    return EMPTY_STR;
 }
 
@@ -125,7 +123,7 @@ string CfgParm::GetInput() const
 
 //------------------------------------------------------------------------------
 
-const char* CfgParm::Key() const
+c_string CfgParm::Key() const
 {
    return tuple_->Key().c_str();
 }
@@ -196,9 +194,7 @@ bool CfgParm::SetNext(const string& input)
 {
    Debug::ft(CfgParm_SetNext);
 
-   //  This is a pure virtual function.
-   //
-   Debug::SwLog(CfgParm_SetNext, Key(), 0);
+   Debug::SwLog(CfgParm_SetNext, strOver(this), 0);
    return false;
 }
 

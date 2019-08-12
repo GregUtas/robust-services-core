@@ -22,7 +22,6 @@
 #include "Algorithms.h"
 #include <cstdlib>
 #include <cstring>
-#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -88,7 +87,7 @@ uint32_t rand(uint32_t min, uint32_t max)
 
 //------------------------------------------------------------------------------
 
-uint32_t stringHash(const char* s)
+uint32_t stringHash(c_string s)
 {
    uint64_t hash = 0;
 

@@ -22,7 +22,6 @@
 #include "CfgStrParm.h"
 #include <ostream>
 #include "Debug.h"
-#include "SysTypes.h"
 
 using std::ostream;
 using std::string;
@@ -34,7 +33,7 @@ namespace NodeBase
 fn_name CfgStrParm_ctor = "CfgStrParm.ctor";
 
 CfgStrParm::CfgStrParm
-   (const char* key, const char* def, string* field, const char* expl) :
+   (c_string key, c_string def, string* field, c_string expl) :
    CfgParm(key, def, expl),
    curr_(field),
    next_(EMPTY_STR)

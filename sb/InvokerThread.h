@@ -29,6 +29,7 @@
 #include "Context.h"
 #include "NbTypes.h"
 #include "RegCell.h"
+#include "SbTypes.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -95,7 +96,7 @@ private:
 
    //  Overridden to return a name for the thread.
    //
-   const char* AbbrName() const override;
+   NodeBase::c_string AbbrName() const override;
 
    //  Overridden to dequeue work from the appropriate invoker pool and
    //  process it.

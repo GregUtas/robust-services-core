@@ -245,8 +245,6 @@ PotsBase::TrafficCall::LinkDiff [an/PotsTrafficThread.cpp]
    an/PotsTrafficThread.cpp
 PotsBase::TrafficCall::Originate [an/PotsTrafficThread.cpp]
    an/PotsTrafficThread.cpp
-PotsBase::TrafficCall::OutputLog [an/PotsTrafficThread.cpp]
-   an/PotsTrafficThread.cpp
 PotsBase::TrafficCall::ProcessConnected [an/PotsTrafficThread.cpp]
    an/PotsTrafficThread.cpp
 PotsBase::TrafficCall::ProcessDialing [an/PotsTrafficThread.cpp]
@@ -351,8 +349,6 @@ PotsBase::TrafficCall_EraseTerm [an/PotsTrafficThread.cpp]
    an/PotsTrafficThread.cpp
 PotsBase::TrafficCall_Originate [an/PotsTrafficThread.cpp]
    an/PotsTrafficThread.cpp
-PotsBase::TrafficCall_OutputLog [an/PotsTrafficThread.cpp]
-   an/PotsTrafficThread.cpp
 PotsBase::TrafficCall_ProcessConnected [an/PotsTrafficThread.cpp]
    an/PotsTrafficThread.cpp
 PotsBase::TrafficCall_ProcessDialing [an/PotsTrafficThread.cpp]
@@ -441,6 +437,8 @@ PotsBase::PotsTrafficThread::PotsTrafficThread [an/PotsTrafficThread.h]
 PotsBase::PotsTrafficThread::Query [an/PotsTrafficThread.h]
    an/AnIncrement.cpp
    an/PotsTrafficThread.cpp
+PotsBase::PotsTrafficThread::RecordAbort [an/PotsTrafficThread.h]
+   an/PotsTrafficThread.cpp
 PotsBase::PotsTrafficThread::RecordHoldingTime [an/PotsTrafficThread.h]
    an/PotsTrafficThread.cpp
 PotsBase::PotsTrafficThread::SendMessages [an/PotsTrafficThread.h]
@@ -452,6 +450,9 @@ PotsBase::PotsTrafficThread::StartDN [an/PotsTrafficThread.h]
    an/PotsTrafficThread.cpp
 PotsBase::PotsTrafficThread::Takedown [an/PotsTrafficThread.h]
    an/PotsTrafficThread.cpp
+PotsBase::PotsTrafficThread::aborts_ [an/PotsTrafficThread.h]
+   an/PotsTrafficThread.cpp
+   an/PotsTrafficThread.h
 PotsBase::PotsTrafficThread::activeCalls_ [an/PotsTrafficThread.h]
    an/PotsTrafficThread.cpp
 PotsBase::PotsTrafficThread::callsPerMin_ [an/PotsTrafficThread.h]
@@ -5931,6 +5932,18 @@ CodeTools::ExpExpl [ct/CodeIncrement.cpp]
    ct/CodeIncrement.cpp
 CodeTools::ExpStr [ct/CodeIncrement.cpp]
    ct/CodeIncrement.cpp
+CodeTools::ExplainCommand [ct/CodeIncrement.cpp]
+   ct/CodeIncrement.cpp
+CodeTools::ExplainCommand::ExplainCommand [ct/CodeIncrement.cpp]
+   ct/CodeIncrement.cpp
+CodeTools::ExplainCommand::ProcessCommand [ct/CodeIncrement.cpp]
+   ct/CodeIncrement.cpp
+CodeTools::ExplainCommand_ProcessCommand [ct/CodeIncrement.cpp]
+   ct/CodeIncrement.cpp
+CodeTools::ExplainExpl [ct/CodeIncrement.cpp]
+   ct/CodeIncrement.cpp
+CodeTools::ExplainStr [ct/CodeIncrement.cpp]
+   ct/CodeIncrement.cpp
 CodeTools::ExportCommand [ct/CodeIncrement.cpp]
    ct/CodeIncrement.cpp
 CodeTools::ExportCommand::ExportCommand [ct/CodeIncrement.cpp]
@@ -6288,6 +6301,12 @@ CodeTools::ViewsParm [ct/CodeIncrement.cpp]
 CodeTools::ViewsParm::ViewsParm [ct/CodeIncrement.cpp]
    ct/CodeIncrement.cpp
 CodeTools::WarningExpl [ct/CodeIncrement.cpp]
+   ct/CodeIncrement.cpp
+CodeTools::WarningIdExpl [ct/CodeIncrement.cpp]
+   ct/CodeIncrement.cpp
+CodeTools::WarningIdParm [ct/CodeIncrement.cpp]
+   ct/CodeIncrement.cpp
+CodeTools::WarningIdParm::WarningIdParm [ct/CodeIncrement.cpp]
    ct/CodeIncrement.cpp
 CodeTools::WarningParm [ct/CodeIncrement.cpp]
    ct/CodeIncrement.cpp
@@ -23763,30 +23782,54 @@ NodeBase::getptr2 [nb/Algorithms.h]
    nb/Q2Way.h
    nb/Registry.h
 NodeBase::pack2 [nb/Algorithms.h]
+   an/PotsShelfFactory.cpp
    cb/BcProtocol.cpp
+   cb/BcSsm.cpp
+   mb/MediaPsm.cpp
    nb/Algorithms.cpp
    nb/InitThread.cpp
    nb/ObjectPool.cpp
+   nb/ObjectPoolRegistry.cpp
+   nb/PooledClass.cpp
+   nb/RegCell.cpp
    nb/Thread.cpp
-   nw/IpPortRegistry.cpp
+   nw/SysTcpSocket.cpp
+   pb/PotsCircuit.cpp
    sb/Context.cpp
-   sb/EventHandler.cpp
+   sb/Event.cpp
    sb/Message.cpp
+   sb/MsgFactory.cpp
    sb/MsgPort.cpp
    sb/Parameter.cpp
+   sb/ProtocolLayer.cpp
    sb/ProtocolSM.cpp
+   sb/SbTrace.cpp
    sb/Service.cpp
    sb/ServiceSM.cpp
+   sb/Signal.cpp
    sb/SsmContext.cpp
+   sb/State.cpp
+   sb/TlvMessage.cpp
+   sb/Trigger.cpp
+   sn/PotsBcSsm.cpp
+   sn/PotsCfxService.cpp
+   sn/PotsCwmService.cpp
+   sn/PotsCwtService.cpp
+   sn/PotsMultiplexer.cpp
    sn/PotsTreatments.cpp
-   st/MscAddress.cpp
+   sn/PotsWmlService.cpp
    st/MscBuilder.cpp
 NodeBase::pack3 [nb/Algorithms.h]
    nb/Algorithms.cpp
+   nw/IpPortRegistry.cpp
+   sb/EventHandler.cpp
    sb/Initiator.cpp
+   sb/ProtocolSM.cpp
    sb/SbHandlers.cpp
    sb/ServiceSM.cpp
+   sb/SsmContext.cpp
    sb/State.cpp
+   st/MscAddress.cpp
    st/MscBuilder.cpp
 NodeBase::pack4 [nb/Algorithms.h]
    nb/Algorithms.cpp
@@ -23985,12 +24028,14 @@ NodeBase::Base [nb/Base.h]
    nb/Base.h
    nb/Class.cpp
    nb/Class.h
+   nb/Debug.cpp
    nb/Formatters.cpp
    nb/NbIncrement.cpp
    nb/Object.h
    nb/Singleton.h
    nb/Singletons.cpp
    nb/Singletons.h
+   nb/SysFile.h
    sb/Context.cpp
    sb/Context.h
    sb/Message.cpp
@@ -24659,17 +24704,18 @@ NodeBase::Class [nb/Base.h]
 NodeBase::CallbackRequest [nb/CallbackRequest.h]
    nb/CallbackRequest.h
    nb/FileThread.cpp
-   nb/LogThread.cpp
+   nb/LogBuffer.cpp
    nb/StreamRequest.cpp
    nb/StreamRequest.h
 NodeBase::CallbackRequest::Callback [nb/CallbackRequest.h]
    nb/FileThread.cpp
-   nb/LogThread.cpp
+   nb/LogBuffer.cpp
 NodeBase::CallbackRequestPtr [nb/CallbackRequest.h]
    nb/FileThread.cpp
    nb/FileThread.h
+   nb/LogBuffer.cpp
+   nb/LogBuffer.h
    nb/LogThread.cpp
-   nb/LogThread.h
    nb/NbIncrement.cpp
    nb/StreamRequest.cpp
    nb/StreamRequest.h
@@ -24883,7 +24929,6 @@ NodeBase::CfgParm::GetCurr [nb/CfgParm.h]
 NodeBase::CfgParm::GetInput [nb/CfgParm.h]
    nb/CfgParm.cpp
 NodeBase::CfgParm::Key [nb/CfgParm.h]
-   nb/CfgBitParm.cpp
    nb/CfgParm.cpp
    nb/CfgParmRegistry.cpp
 NodeBase::CfgParm::LinkDiff [nb/CfgParm.h]
@@ -25716,6 +25761,13 @@ NodeBase::CliCommand::ProcessSubcommand [nb/CliCommand.h]
    sb/SbIncrement.cpp
    sb/SbIncrement.h
    st/StIncrement.cpp
+NodeBase::CliCommand::UnexpectedIndex [nb/CliCommand.h]
+   an/AnIncrement.cpp
+   ct/CodeIncrement.cpp
+   nb/CliCommand.cpp
+   nb/NbIncrement.cpp
+   nt/NtIncrement.cpp
+   nw/NwIncrement.cpp
 NodeBase::CliCommand::~CliCommand [nb/CliCommand.h]
    nb/CliCommand.cpp
 NodeBase::CliCommandSet_BindCommand [nb/CliCommandSet.cpp]
@@ -26115,7 +26167,6 @@ NodeBase::CliParm::GetFileNameRc [nb/CliParm.h]
 NodeBase::CliParm::GetId [nb/CliParm.h]
    nb/CliCommandSet.cpp
    nb/CliIncrement.cpp
-   nb/CliParm.cpp
    nb/CliTextParm.cpp
 NodeBase::CliParm::GetIdentifier [nb/CliParm.h]
    ct/CodeIncrement.cpp
@@ -26886,6 +26937,7 @@ NodeBase::CliThread::Destroy [nb/CliThread.h]
 NodeBase::CliThread::Display [nb/CliThread.h]
    nb/CliThread.cpp
 NodeBase::CliThread::DisplayHelp [nb/CliThread.h]
+   ct/CodeIncrement.cpp
    nb/CliThread.cpp
    nb/NbIncrement.cpp
 NodeBase::CliThread::EndOfInput [nb/CliThread.h]
@@ -27396,6 +27448,8 @@ NodeBase::Debug_SwLog2 [nb/Debug.cpp]
    nb/Debug.cpp
 NodeBase::Debug_noop [nb/Debug.cpp]
    nb/Debug.cpp
+NodeBase::Base [nb/Debug.h]
+   nb/Debug.h
 NodeBase::Debug [nb/Debug.h]
    nb/Debug.cpp
 NodeBase::Debug::Assert [nb/Debug.h]
@@ -27528,10 +27582,10 @@ NodeBase::Debug::SwLog(const char* const,unsigned long long,unsigned long long,N
    nb/CliThread.cpp
    nb/Debug.cpp
    nb/Log.cpp
+   nb/LogBuffer.cpp
    nb/LogBufferRegistry.cpp
    nb/LogGroup.cpp
    nb/LogGroupRegistry.cpp
-   nb/LogThread.cpp
    nb/Memory.cpp
    nb/ModuleRegistry.cpp
    nb/NbIncrement.cpp
@@ -27796,6 +27850,7 @@ NodeBase::Debug::ft [nb/Debug.h]
    nb/NbPools.cpp
    nb/NbSignals.cpp
    nb/NbTracer.cpp
+   nb/NbTypes.cpp
    nb/Object.cpp
    nb/ObjectPool.cpp
    nb/ObjectPoolAudit.cpp
@@ -28021,6 +28076,44 @@ NodeBase::SwLogLevel::SwInfo [nb/Debug.h]
    nb/Debug.cpp
 NodeBase::SwLogLevel::SwWarning [nb/Debug.h]
    nb/Debug.h
+NodeBase::strOver [nb/Debug.h]
+   cb/BcFactory.cpp
+   cb/BcSsm.cpp
+   ct/CxxDirective.cpp
+   ct/CxxNamed.cpp
+   ct/CxxToken.cpp
+   ct/LibrarySet.cpp
+   mb/Circuit.cpp
+   mb/MediaPsm.cpp
+   nb/CfgBitParm.cpp
+   nb/CfgParm.cpp
+   nb/Class.cpp
+   nb/CliCommand.cpp
+   nb/CliParm.cpp
+   nb/Debug.cpp
+   nb/SysFile.cpp
+   nb/Thread.cpp
+   nb/Tool.cpp
+   nw/InputHandler.cpp
+   nw/IpService.cpp
+   nw/SysSocket.cpp
+   nw/TcpIpService.cpp
+   pb/PotsFeature.cpp
+   pb/PotsFeatureProfile.cpp
+   sb/Context.cpp
+   sb/EventHandler.cpp
+   sb/Factory.cpp
+   sb/Initiator.cpp
+   sb/MsgFactory.cpp
+   sb/Parameter.cpp
+   sb/Protocol.cpp
+   sb/ProtocolLayer.cpp
+   sb/ProtocolSM.cpp
+   sb/PsmFactory.cpp
+   sb/RootServiceSM.cpp
+   sb/ServiceSM.cpp
+   sb/TextTlvMessage.cpp
+   sn/PotsTreatments.cpp
 NodeBase::Dynamic_ctor [nb/Dynamic.cpp]
    nb/Dynamic.cpp
 NodeBase::Dynamic_new1 [nb/Dynamic.cpp]
@@ -28090,6 +28183,7 @@ NodeBase::Element::Display [nb/Element.h]
 NodeBase::Element::Element [nb/Element.h]
    nb/Element.cpp
 NodeBase::Element::HelpPath [nb/Element.h]
+   ct/CodeIncrement.cpp
    nb/Element.cpp
    nb/NbIncrement.cpp
 NodeBase::Element::InputPath [nb/Element.h]
@@ -28473,15 +28567,19 @@ NodeBase::strCenter [nb/Formatters.h]
 NodeBase::strClass [nb/Formatters.h]
    cb/BcRouting.cpp
    ct/CxxExecute.cpp
-   ct/CxxNamed.cpp
    ct/CxxToken.cpp
    nb/Base.cpp
+   nb/CliCommandSet.cpp
+   nb/CliTextParm.cpp
+   nb/Debug.cpp
    nb/Formatters.cpp
    nb/ModuleRegistry.cpp
    nb/ObjectPoolTrace.cpp
    nb/Singletons.cpp
    nb/Thread.cpp
+   nb/ToolRegistry.cpp
    pb/PotsProtocol.cpp
+   sb/Initiator.cpp
    sb/MsgHeader.cpp
    sb/SbIncrement.cpp
    sb/SbTrace.cpp
@@ -28907,6 +29005,8 @@ NodeBase::LeakyBucketCounter::limit_ [nb/LeakyBucketCounter.h]
    nb/LeakyBucketCounter.cpp
 NodeBase::LeakyBucketCounter::~LeakyBucketCounter [nb/LeakyBucketCounter.h]
    nb/LeakyBucketCounter.cpp
+NodeBase::LogIdSize [nb/Log.cpp]
+   nb/Log.cpp
 NodeBase::Log_Create1 [nb/Log.cpp]
    nb/Log.cpp
 NodeBase::Log_Create2 [nb/Log.cpp]
@@ -28929,9 +29029,16 @@ NodeBase::Log_ctor [nb/Log.cpp]
    nb/Log.cpp
 NodeBase::Log_dtor [nb/Log.cpp]
    nb/Log.cpp
+NodeBase::MinNameSize [nb/Log.cpp]
+   nb/Log.cpp
+NodeBase::NameBegin [nb/Log.cpp]
+   nb/Log.cpp
+NodeBase::NameSize [nb/Log.cpp]
+   nb/Log.cpp
 NodeBase::Log [nb/Log.h]
    nb/Log.cpp
    nb/Log.h
+   nb/LogBuffer.cpp
    nb/LogGroup.cpp
    nb/NbIncrement.cpp
    nb/NbLogs.cpp
@@ -28983,13 +29090,15 @@ NodeBase::Log::Display [nb/Log.h]
 NodeBase::Log::DisplayStats [nb/Log.h]
    nb/Log.cpp
    nb/LogGroup.cpp
+NodeBase::Log::Find(const char* const) [nb/Log.h]
+   nb/Log.cpp
 NodeBase::Log::Find(const char* const,unsigned short,NodeBase::LogGroup*) [nb/Log.h]
    nb/Log.cpp
-NodeBase::Log::Find(const std::basic_string<char,std::char_traits<char>,std::allocator<char>>) [nb/Log.h]
-   nb/Log.cpp
+   nb/LogBuffer.cpp
 NodeBase::Log::Format [nb/Log.h]
    nb/Log.cpp
 NodeBase::Log::Id [nb/Log.h]
+   nb/LogBuffer.cpp
    nb/LogGroup.cpp
 NodeBase::Log::Indent [nb/Log.h]
    an/PotsShelfFactory.cpp
@@ -29112,11 +29221,15 @@ NodeBase::LogBuffer_FirstSpooled [nb/LogBuffer.cpp]
    nb/LogBuffer.cpp
 NodeBase::LogBuffer_FirstUnspooled [nb/LogBuffer.cpp]
    nb/LogBuffer.cpp
+NodeBase::LogBuffer_GetLogs [nb/LogBuffer.cpp]
+   nb/LogBuffer.cpp
 NodeBase::LogBuffer_InsertionPoint [nb/LogBuffer.cpp]
    nb/LogBuffer.cpp
 NodeBase::LogBuffer_Last [nb/LogBuffer.cpp]
    nb/LogBuffer.cpp
 NodeBase::LogBuffer_Pop [nb/LogBuffer.cpp]
+   nb/LogBuffer.cpp
+NodeBase::LogBuffer_Purge [nb/LogBuffer.cpp]
    nb/LogBuffer.cpp
 NodeBase::LogBuffer_Push [nb/LogBuffer.cpp]
    nb/LogBuffer.cpp
@@ -29128,6 +29241,20 @@ NodeBase::LogBuffer_ctor [nb/LogBuffer.cpp]
    nb/LogBuffer.cpp
 NodeBase::LogBuffer_dtor [nb/LogBuffer.cpp]
    nb/LogBuffer.cpp
+NodeBase::LogsWritten [nb/LogBuffer.cpp]
+   nb/LogBuffer.cpp
+NodeBase::LogsWritten::Callback [nb/LogBuffer.cpp]
+   nb/LogBuffer.cpp
+NodeBase::LogsWritten::LogsWritten [nb/LogBuffer.cpp]
+   nb/LogBuffer.cpp
+NodeBase::LogsWritten::buff_ [nb/LogBuffer.cpp]
+   nb/LogBuffer.cpp
+NodeBase::LogsWritten::last_ [nb/LogBuffer.cpp]
+   nb/LogBuffer.cpp
+NodeBase::LogsWritten_Callback [nb/LogBuffer.cpp]
+   nb/LogBuffer.cpp
+NodeBase::LogsWritten_ctor [nb/LogBuffer.cpp]
+   nb/LogBuffer.cpp
 NodeBase::LogBuffer [nb/LogBuffer.h]
    nb/Log.cpp
    nb/LogBuffer.cpp
@@ -29136,61 +29263,57 @@ NodeBase::LogBuffer [nb/LogBuffer.h]
    nb/NbIncrement.cpp
 NodeBase::LogBuffer::Advance [nb/LogBuffer.h]
    nb/LogBuffer.cpp
-   nb/LogThread.cpp
+NodeBase::LogBuffer::BundledLogSizeThreshold [nb/LogBuffer.h]
+   nb/LogBuffer.cpp
 NodeBase::LogBuffer::Count [nb/LogBuffer.h]
    nb/LogBuffer.cpp
    nb/NbIncrement.cpp
-NodeBase::LogBuffer::Discards [nb/LogBuffer.h]
-   nb/LogThread.cpp
 NodeBase::LogBuffer::Display [nb/LogBuffer.h]
    nb/LogBuffer.cpp
+NodeBase::LogBuffer::Empty [nb/LogBuffer.h]
+   nb/LogBufferRegistry.cpp
 NodeBase::LogBuffer::Entry [nb/LogBuffer.h]
    nb/LogBuffer.cpp
    nb/LogBuffer.h
-   nb/LogThread.cpp
 NodeBase::LogBuffer::Entry::log [nb/LogBuffer.h]
    nb/LogBuffer.cpp
-   nb/LogThread.cpp
 NodeBase::LogBuffer::Entry::next [nb/LogBuffer.h]
    nb/LogBuffer.cpp
 NodeBase::LogBuffer::Entry::prev [nb/LogBuffer.h]
    nb/LogBuffer.cpp
-   nb/LogThread.cpp
 NodeBase::LogBuffer::FileName [nb/LogBuffer.h]
    nb/LogBufferRegistry.cpp
    nb/LogThread.cpp
    nb/NbIncrement.cpp
 NodeBase::LogBuffer::First [nb/LogBuffer.h]
    nb/LogBuffer.cpp
-   nb/LogBufferRegistry.cpp
+   nb/LogBuffer.h
 NodeBase::LogBuffer::FirstSpooled [nb/LogBuffer.h]
    nb/LogBuffer.cpp
-   nb/LogThread.cpp
 NodeBase::LogBuffer::FirstUnspooled [nb/LogBuffer.h]
    nb/LogBuffer.cpp
+NodeBase::LogBuffer::GetLogs [nb/LogBuffer.h]
+   nb/LogBuffer.cpp
    nb/LogThread.cpp
-NodeBase::LogBuffer::GetLock [nb/LogBuffer.h]
-   nb/LogThread.cpp
+   nb/NbIncrement.cpp
 NodeBase::LogBuffer::InsertionPoint [nb/LogBuffer.h]
    nb/LogBuffer.cpp
 NodeBase::LogBuffer::Last [nb/LogBuffer.h]
    nb/LogBuffer.cpp
-   nb/LogThread.cpp
 NodeBase::LogBuffer::LogBuffer [nb/LogBuffer.h]
    nb/LogBuffer.cpp
 NodeBase::LogBuffer::Patch [nb/LogBuffer.h]
    nb/LogBuffer.cpp
 NodeBase::LogBuffer::Pop [nb/LogBuffer.h]
    nb/LogBuffer.cpp
-   nb/LogThread.cpp
+NodeBase::LogBuffer::Purge [nb/LogBuffer.h]
+   nb/LogBuffer.cpp
 NodeBase::LogBuffer::Push [nb/LogBuffer.h]
    nb/Log.cpp
    nb/LogBuffer.cpp
 NodeBase::LogBuffer::ResetAllToUnspooled [nb/LogBuffer.h]
    nb/LogBuffer.cpp
    nb/NbIncrement.cpp
-NodeBase::LogBuffer::ResetDiscards [nb/LogBuffer.h]
-   nb/LogThread.cpp
 NodeBase::LogBuffer::SetNext [nb/LogBuffer.h]
    nb/LogBuffer.cpp
 NodeBase::LogBuffer::UpdateMax [nb/LogBuffer.h]
@@ -29199,13 +29322,11 @@ NodeBase::LogBuffer::buff_ [nb/LogBuffer.h]
    nb/LogBuffer.cpp
 NodeBase::LogBuffer::discards_ [nb/LogBuffer.h]
    nb/LogBuffer.cpp
-   nb/LogBuffer.h
 NodeBase::LogBuffer::fileName_ [nb/LogBuffer.h]
    nb/LogBuffer.cpp
    nb/LogBuffer.h
 NodeBase::LogBuffer::lock_ [nb/LogBuffer.h]
    nb/LogBuffer.cpp
-   nb/LogBuffer.h
 NodeBase::LogBuffer::max_ [nb/LogBuffer.h]
    nb/LogBuffer.cpp
 NodeBase::LogBuffer::next_ [nb/LogBuffer.h]
@@ -29327,6 +29448,7 @@ NodeBase::LogGroup::MaxExplSize [nb/LogGroup.h]
 NodeBase::LogGroup::MaxLogs [nb/LogGroup.h]
    nb/LogGroup.cpp
 NodeBase::LogGroup::MaxNameSize [nb/LogGroup.h]
+   nb/Log.cpp
    nb/LogGroup.cpp
 NodeBase::LogGroup::Name [nb/LogGroup.h]
    nb/Log.cpp
@@ -29442,29 +29564,11 @@ NodeBase::LogThread_ctor [nb/LogThread.cpp]
    nb/LogThread.cpp
 NodeBase::LogThread_dtor [nb/LogThread.cpp]
    nb/LogThread.cpp
-NodeBase::LogsWritten [nb/LogThread.cpp]
-   nb/LogThread.cpp
-NodeBase::LogsWritten::Callback [nb/LogThread.cpp]
-   nb/LogThread.cpp
-NodeBase::LogsWritten::LogsWritten [nb/LogThread.cpp]
-   nb/LogThread.cpp
-NodeBase::LogsWritten::buff_ [nb/LogThread.cpp]
-   nb/LogThread.cpp
-NodeBase::LogsWritten::last_ [nb/LogThread.cpp]
-   nb/LogThread.cpp
-NodeBase::LogsWritten_Callback [nb/LogThread.cpp]
-   nb/LogThread.cpp
-NodeBase::LogsWritten_ctor [nb/LogThread.cpp]
-   nb/LogThread.cpp
-NodeBase::LogBuffer [nb/LogThread.h]
-   nb/LogThread.h
 NodeBase::LogThread [nb/LogThread.h]
    nb/LogBuffer.cpp
    nb/LogThread.cpp
    nb/NbModule.cpp
 NodeBase::LogThread::AbbrName [nb/LogThread.h]
-   nb/LogThread.cpp
-NodeBase::LogThread::BundledLogSizeThreshold [nb/LogThread.h]
    nb/LogThread.cpp
 NodeBase::LogThread::CopyToConsole [nb/LogThread.h]
    nb/LogThread.cpp
@@ -29474,9 +29578,6 @@ NodeBase::LogThread::Display [nb/LogThread.h]
    nb/LogThread.cpp
 NodeBase::LogThread::Enter [nb/LogThread.h]
    nb/LogThread.cpp
-NodeBase::LogThread::GetLogsFromBuffer [nb/LogThread.h]
-   nb/LogThread.cpp
-   nb/NbIncrement.cpp
 NodeBase::LogThread::LogFileLock_ [nb/LogThread.h]
    nb/LogThread.cpp
 NodeBase::LogThread::LogThread [nb/LogThread.h]
@@ -29933,6 +30034,34 @@ NodeBase::NtModuleId [nb/NbAppIds.h]
 NodeBase::NwModuleId [nb/NbAppIds.h]
    nb/NbAppIds.h
    nw/NwModule.cpp
+NodeBase::ObjectPoolIds::BtIpBufferObjPoolId [nb/NbAppIds.h]
+   sb/SbPools.cpp
+NodeBase::ObjectPoolIds::ContextObjPoolId [nb/NbAppIds.h]
+   sb/SbPools.cpp
+NodeBase::ObjectPoolIds::DipIpBufferObjPoolId [nb/NbAppIds.h]
+   dip/DipProtocol.cpp
+NodeBase::ObjectPoolIds::EventObjPoolId [nb/NbAppIds.h]
+   sb/SbPools.cpp
+NodeBase::ObjectPoolIds::IpBufferObjPoolId [nb/NbAppIds.h]
+   nw/IpBuffer.cpp
+NodeBase::ObjectPoolIds::MediaEndptObjPoolId [nb/NbAppIds.h]
+   mb/MbPools.cpp
+NodeBase::ObjectPoolIds::MessageObjPoolId [nb/NbAppIds.h]
+   sb/SbPools.cpp
+NodeBase::ObjectPoolIds::MsgBufferObjPoolId [nb/NbAppIds.h]
+   nb/NbPools.cpp
+NodeBase::ObjectPoolIds::MsgPortObjPoolId [nb/NbAppIds.h]
+   sb/SbPools.cpp
+NodeBase::ObjectPoolIds::ProtocolSMObjPoolId [nb/NbAppIds.h]
+   sb/SbPools.cpp
+NodeBase::ObjectPoolIds::SbIpBufferObjPoolId [nb/NbAppIds.h]
+   sb/SbPools.cpp
+NodeBase::ObjectPoolIds::ServiceSMObjPoolId [nb/NbAppIds.h]
+   sb/SbPools.cpp
+NodeBase::ObjectPoolIds::ThreadObjPoolId [nb/NbAppIds.h]
+   nb/NbPools.cpp
+NodeBase::ObjectPoolIds::TimerObjPoolId [nb/NbAppIds.h]
+   sb/SbPools.cpp
 NodeBase::OnModuleId [nb/NbAppIds.h]
    nb/NbAppIds.h
    on/OnModule.cpp
@@ -32196,6 +32325,8 @@ NodeBase::BlockingReasonStrings [nb/NbTypes.cpp]
    nb/NbTypes.cpp
 NodeBase::FactionStrings [nb/NbTypes.cpp]
    nb/NbTypes.cpp
+NodeBase::NodeBase_GetType [nb/NbTypes.cpp]
+   nb/NbTypes.cpp
 NodeBase::Accumulator [nb/NbTypes.h]
    nb/NbTypes.h
 NodeBase::AccumulatorPtr [nb/NbTypes.h]
@@ -32219,7 +32350,7 @@ NodeBase::AlarmStatus::MajorAlarm [nb/NbTypes.h]
    nw/UdpIoThread.cpp
    sb/SbInvokerPools.cpp
 NodeBase::AlarmStatus::MinorAlarm [nb/NbTypes.h]
-   nb/LogThread.cpp
+   nb/LogBuffer.cpp
    nb/ObjectPool.cpp
 NodeBase::AlarmStatus::NoAlarm [nb/NbTypes.h]
    nb/Alarm.cpp
@@ -32235,7 +32366,7 @@ NodeBase::AlarmStatus::NoAlarm [nb/NbTypes.h]
 NodeBase::AlarmStatusSymbol [nb/NbTypes.h]
    nb/Alarm.cpp
    nb/Log.cpp
-   nb/LogThread.cpp
+   nb/LogBuffer.cpp
    nb/NbTypes.cpp
 NodeBase::BlockingReason [nb/NbTypes.h]
    nb/NbTypes.cpp
@@ -32319,13 +32450,11 @@ NodeBase::CounterPtr [nb/NbTypes.h]
    sb/SbPools.h
    sn/PotsStatistics.h
 NodeBase::DisplayOptions::DispVerbose [nb/NbTypes.h]
-   nb/Base.cpp
    nb/Class.cpp
    nb/CliStack.cpp
    nb/Log.cpp
    nb/LogBuffer.cpp
    nb/LogBufferRegistry.cpp
-   nb/NbIncrement.cpp
    nb/NbTypes.cpp
    nb/ObjectPool.cpp
    nb/PooledClass.cpp
@@ -32339,7 +32468,6 @@ NodeBase::DisplayOptions::DispVerbose [nb/NbTypes.h]
    nw/TcpIoThread.cpp
    pb/PotsProfile.cpp
    sb/Parameter.cpp
-   sb/SbIncrement.cpp
    sb/Signal.cpp
    sb/State.cpp
    sb/TimerRegistry.cpp
@@ -32444,6 +32572,9 @@ NodeBase::Faction::WatchdogFaction [nb/NbTypes.h]
 NodeBase::FactionChar [nb/NbTypes.h]
    nb/NbTypes.cpp
    nb/Thread.cpp
+NodeBase::GetLogType [nb/NbTypes.h]
+   nb/LogBuffer.cpp
+   nb/NbTypes.cpp
 NodeBase::HighWatermark [nb/NbTypes.h]
    nb/NbTypes.h
 NodeBase::HighWatermarkPtr [nb/NbTypes.h]
@@ -32463,6 +32594,8 @@ NodeBase::LogId [nb/NbTypes.h]
    nb/LogGroupRegistry.cpp
    nb/LogGroupRegistry.h
    nb/NbLogs.h
+   nb/NbTypes.cpp
+   nb/NbTypes.h
    nw/NwLogs.h
    nw/SysSocket.cpp
    nw/SysSocket.h
@@ -32470,27 +32603,41 @@ NodeBase::LogId [nb/NbTypes.h]
    nw/TcpIoThread.h
    pb/PotsLogs.h
    sb/SbLogs.h
+NodeBase::LogType [nb/NbTypes.h]
+   nb/NbTypes.cpp
+   nb/NbTypes.h
 NodeBase::LogType::DebugLog [nb/NbTypes.h]
    nb/NbLogs.h
+   nb/NbTypes.cpp
    nw/NwLogs.h
    pb/PotsLogs.h
    sb/SbLogs.h
 NodeBase::LogType::InfoLog [nb/NbTypes.h]
    nb/NbLogs.h
+   nb/NbTypes.cpp
    nw/NwLogs.h
    pb/PotsLogs.h
    sb/SbLogs.h
+NodeBase::LogType::LogType_N [nb/NbTypes.h]
+   nb/NbTypes.cpp
+NodeBase::LogType::MiscLog [nb/NbTypes.h]
+   nb/NbTypes.cpp
 NodeBase::LogType::PeriodicLog [nb/NbTypes.h]
+   nb/LogBuffer.cpp
    nb/NbLogs.h
+   nb/NbTypes.cpp
 NodeBase::LogType::StateLog [nb/NbTypes.h]
+   nb/NbTypes.cpp
    pb/PotsLogs.h
 NodeBase::LogType::ThresholdLog [nb/NbTypes.h]
    nb/NbLogs.h
+   nb/NbTypes.cpp
    sb/SbLogs.h
 NodeBase::LogType::TroubleLog [nb/NbTypes.h]
    nb/Log.cpp
    nb/NbCliParms.cpp
    nb/NbLogs.h
+   nb/NbTypes.cpp
    nw/NwLogs.h
    pb/PotsLogs.h
    sb/SbLogs.h
@@ -32751,12 +32898,14 @@ NodeBase::TraceRecordId [nb/NbTypes.h]
    nw/SysSocket.h
 NodeBase::VerboseOpt [nb/NbTypes.h]
    ct/CodeIncrement.cpp
+   nb/Base.cpp
    nb/NbIncrement.cpp
    nb/NbTypes.cpp
    nb/ObjectPool.cpp
    nb/StatisticsThread.cpp
    nt/NtIncrement.cpp
    nw/IoThread.cpp
+   sb/SbIncrement.cpp
    sb/SbTrace.cpp
    sn/PotsCallHandler.cpp
 NodeBase::operator<<(std::basic_ostream,NodeBase::AlarmStatus) [nb/NbTypes.h]
@@ -33674,7 +33823,7 @@ NodeBase::ObjectPool::ObjSeq [nb/ObjectPool.h]
    sb/MsgPort.cpp
 NodeBase::ObjectPool::ObjToBlock [nb/ObjectPool.h]
    nb/ObjectPool.cpp
-NodeBase::ObjectPool::ObjectPool(NodeBase::ObjectPool* const,NodeBase::MemoryType,unsigned int,const std::basic_string<char,std::char_traits<char>,std::allocator<char>>) [nb/ObjectPool.h]
+NodeBase::ObjectPool::ObjectPool(NodeBase::ObjectPool* const,unsigned char,NodeBase::MemoryType,unsigned int,const std::basic_string<char,std::char_traits<char>,std::allocator<char>>) [nb/ObjectPool.h]
    nb/ObjectPool.cpp
 NodeBase::ObjectPool::ObjectSecondIndexMask [nb/ObjectPool.h]
    nb/ObjectPool.cpp
@@ -34704,6 +34853,7 @@ NodeBase::Q2Way::First [nb/Q2Way.h]
    sb/TimerRegistry.cpp
 NodeBase::Q2Way::Henq [nb/Q2Way.h]
    nt/NtIncrement.cpp
+   sb/Context.cpp
    sb/Timer.cpp
 NodeBase::Q2Way::Init [nb/Q2Way.h]
    ct/Library.cpp
@@ -34836,7 +34986,6 @@ NodeBase::RegCell [nb/RegCell.h]
 NodeBase::RegCell::GetId [nb/RegCell.h]
    ct/CodeDir.h
    ct/CodeFile.h
-   mb/Circuit.cpp
    mb/Circuit.h
    mb/Tones.h
    nb/Class.h
@@ -34855,7 +35004,6 @@ NodeBase::RegCell::GetId [nb/RegCell.h]
    sb/Factory.h
    sb/InvokerPool.h
    sb/Parameter.h
-   sb/Protocol.h
    sb/Service.h
    sb/Signal.h
    sb/State.h
@@ -34866,6 +35014,7 @@ NodeBase::RegCell::SetId [nb/RegCell.h]
    nb/Class.cpp
    nb/CliParm.h
    nb/Module.cpp
+   nb/ObjectPool.cpp
    nb/RegCell.cpp
    nb/Thread.cpp
    nb/Tool.cpp
@@ -37483,9 +37632,9 @@ NodeBase::ERROR_STR [nb/SysTypes.h]
    nw/NwTrace.cpp
    nw/NwTypes.cpp
    sb/EventHandler.cpp
-   sb/Message.cpp
    sb/Parameter.cpp
    sb/SbTrace.cpp
+   sb/SbTypes.cpp
 NodeBase::FlagId [nb/SysTypes.h]
    dip/DipTypes.h
    nb/CfgFlagParm.cpp
@@ -37826,7 +37975,6 @@ NodeBase::Flags [nb/SysTypes.h]
    sb/RootServiceSM.cpp
    sb/RootServiceSM.h
    sb/SbEvents.h
-   sb/SbIncrement.cpp
    sb/SbInvokerPools.cpp
    sb/SbInvokerPools.h
    sb/SbIpBuffer.cpp
@@ -38072,6 +38220,7 @@ NodeBase::NIL_ID [nb/SysTypes.h]
 NodeBase::NoFlags [nb/SysTypes.h]
    an/PotsTrafficThread.cpp
    nb/AlarmRegistry.cpp
+   nb/Base.cpp
    nb/LogGroup.cpp
    nb/LogGroupRegistry.cpp
    nb/NbIncrement.cpp
@@ -38084,6 +38233,7 @@ NodeBase::NoFlags [nb/SysTypes.h]
    nt/FunctionProfiler.cpp
    nt/NtIncrement.cpp
    sb/Context.cpp
+   sb/SbIncrement.cpp
    st/MscBuilder.cpp
 NodeBase::PATH_SEPARATOR [nb/SysTypes.h]
    ct/CodeCoverage.cpp
@@ -38462,6 +38612,148 @@ NodeBase::byte_t [nb/SysTypes.h]
    sb/TlvMessage.h
    sb/TlvParameter.h
    sb/TlvProtocol.cpp
+NodeBase::c_string [nb/SysTypes.h]
+   an/PotsShelf.h
+   an/PotsTrafficThread.cpp
+   an/PotsTrafficThread.h
+   cb/BcCause.cpp
+   cb/BcCause.h
+   cb/BcFactory.cpp
+   cb/BcProgress.cpp
+   cb/BcProgress.h
+   cb/BcProtocol.cpp
+   cb/BcProtocol.h
+   cb/BcSessions.h
+   cb/ProxyBcSessions.cpp
+   cb/ProxyBcSessions.h
+   ct/CodeIncrement.cpp
+   ct/CxxRoot.cpp
+   ct/LibraryTypes.cpp
+   ct/LibraryTypes.h
+   dip/BotThread.cpp
+   dip/BotThread.h
+   dip/BotTrace.cpp
+   dip/BotTrace.h
+   dip/BotTracer.cpp
+   dip/DipProtocol.h
+   nb/Alarm.h
+   nb/Algorithms.cpp
+   nb/Algorithms.h
+   nb/CfgBitParm.cpp
+   nb/CfgBitParm.h
+   nb/CfgBoolParm.cpp
+   nb/CfgBoolParm.h
+   nb/CfgFlagParm.cpp
+   nb/CfgFlagParm.h
+   nb/CfgIntParm.cpp
+   nb/CfgIntParm.h
+   nb/CfgParm.cpp
+   nb/CfgParm.h
+   nb/CfgStrParm.cpp
+   nb/CfgStrParm.h
+   nb/CinThread.cpp
+   nb/CinThread.h
+   nb/CliBoolParm.cpp
+   nb/CliBoolParm.h
+   nb/CliCharParm.cpp
+   nb/CliCharParm.h
+   nb/CliCommand.cpp
+   nb/CliCommand.h
+   nb/CliCommandSet.cpp
+   nb/CliCommandSet.h
+   nb/CliIncrement.cpp
+   nb/CliIncrement.h
+   nb/CliIntParm.cpp
+   nb/CliIntParm.h
+   nb/CliParm.cpp
+   nb/CliParm.h
+   nb/CliPtrParm.cpp
+   nb/CliPtrParm.h
+   nb/CliText.cpp
+   nb/CliText.h
+   nb/CliTextParm.cpp
+   nb/CliTextParm.h
+   nb/CliThread.cpp
+   nb/CliThread.h
+   nb/CoutThread.cpp
+   nb/CoutThread.h
+   nb/FileThread.cpp
+   nb/FileThread.h
+   nb/Formatters.cpp
+   nb/Formatters.h
+   nb/FunctionName.cpp
+   nb/FunctionName.h
+   nb/InitThread.cpp
+   nb/InitThread.h
+   nb/LogGroup.h
+   nb/LogThread.cpp
+   nb/LogThread.h
+   nb/MemoryTrace.cpp
+   nb/MemoryTrace.h
+   nb/NbTracer.cpp
+   nb/ObjectPoolAudit.cpp
+   nb/ObjectPoolAudit.h
+   nb/ObjectPoolRegistry.cpp
+   nb/ObjectPoolTrace.cpp
+   nb/ObjectPoolTrace.h
+   nb/PosixSignal.cpp
+   nb/PosixSignal.h
+   nb/RootThread.cpp
+   nb/RootThread.h
+   nb/StatisticsGroup.h
+   nb/StatisticsThread.cpp
+   nb/StatisticsThread.h
+   nb/Symbol.h
+   nb/SysTime.cpp
+   nb/SysTime.h
+   nb/SysTypes.cpp
+   nb/SysTypes.h
+   nb/Thread.cpp
+   nb/Thread.h
+   nb/Tool.cpp
+   nb/Tool.h
+   nb/ToolTypes.cpp
+   nb/ToolTypes.h
+   nb/TraceRecord.cpp
+   nb/TraceRecord.h
+   nt/NtIncrement.cpp
+   nw/IpPortCfgParm.cpp
+   nw/IpPortCfgParm.h
+   nw/IpService.cpp
+   nw/IpService.h
+   nw/NwCliParms.cpp
+   nw/NwCliParms.h
+   nw/NwTrace.cpp
+   nw/NwTrace.h
+   nw/NwTracer.cpp
+   nw/TcpIoThread.cpp
+   nw/TcpIoThread.h
+   nw/UdpIoThread.cpp
+   nw/UdpIoThread.h
+   pb/PotsFeature.cpp
+   pb/PotsFeature.h
+   sb/Factory.cpp
+   sb/Factory.h
+   sb/InvokerThread.cpp
+   sb/InvokerThread.h
+   sb/MsgFactory.cpp
+   sb/MsgFactory.h
+   sb/Parameter.cpp
+   sb/Parameter.h
+   sb/PsmFactory.cpp
+   sb/PsmFactory.h
+   sb/SbTrace.cpp
+   sb/SbTrace.h
+   sb/SbTracer.cpp
+   sb/SbTypes.cpp
+   sb/SbTypes.h
+   sb/Service.cpp
+   sb/Service.h
+   sb/SsmFactory.cpp
+   sb/SsmFactory.h
+   sb/TimerThread.cpp
+   sb/TimerThread.h
+   sn/PotsSessions.h
 NodeBase::col_t [nb/SysTypes.h]
    nb/Base.cpp
    nb/Base.h
@@ -38474,6 +38766,8 @@ NodeBase::col_t [nb/SysTypes.h]
    nb/CliTextParm.h
    nb/CliThread.cpp
    nb/CliThread.h
+   nb/Log.cpp
+   nb/Log.h
    nb/TraceDump.h
    sb/SbTrace.cpp
 NodeBase::const_ptr_t [nb/SysTypes.h]
@@ -38521,7 +38815,7 @@ NodeBase::debug64_t [nb/SysTypes.h]
    cb/BcProtocol.cpp
    nb/Debug.cpp
    nb/Debug.h
-   nb/LogThread.cpp
+   nb/LogBuffer.cpp
    nb/ObjectPool.cpp
    nb/SoftwareException.cpp
    nb/SoftwareException.h
@@ -38580,16 +38874,22 @@ NodeBase::fixed_string [nb/SysTypes.h]
    nb/AssertionException.cpp
    nb/CfgBitParm.cpp
    nb/CfgBitParm.h
+   nb/CfgParm.h
    nb/CfgParmRegistry.cpp
    nb/CfgParmRegistry.h
    nb/CliBoolParm.cpp
    nb/CliBoolParm.h
    nb/CliBuffer.cpp
    nb/CliBuffer.h
+   nb/CliCharParm.h
+   nb/CliCommand.cpp
+   nb/CliCommand.h
+   nb/CliIncrement.h
    nb/CliIntParm.cpp
    nb/CliIntParm.h
    nb/CliParm.cpp
    nb/CliParm.h
+   nb/CliText.h
    nb/CliThread.cpp
    nb/ElementException.cpp
    nb/Exception.cpp
@@ -38614,6 +38914,7 @@ NodeBase::fixed_string [nb/SysTypes.h]
    nb/ObjectPoolRegistry.cpp
    nb/ObjectPoolTrace.cpp
    nb/PosixSignal.cpp
+   nb/PosixSignal.h
    nb/PosixSignalRegistry.cpp
    nb/SignalException.cpp
    nb/SoftwareException.cpp
@@ -38653,6 +38954,7 @@ NodeBase::fixed_string [nb/SysTypes.h]
    pb/PotsCliParms.h
    pb/PotsCwtFeature.cpp
    pb/PotsCxfFeature.cpp
+   pb/PotsFeature.h
    pb/PotsFeatureRegistry.cpp
    pb/PotsHtlFeature.cpp
    pb/PotsIncrement.cpp
@@ -38664,7 +38966,7 @@ NodeBase::fixed_string [nb/SysTypes.h]
    pb/PotsWmlFeature.cpp
    sb/Context.cpp
    sb/EventHandler.cpp
-   sb/Message.cpp
+   sb/Factory.h
    sb/Parameter.cpp
    sb/SbCliParms.cpp
    sb/SbCliParms.h
@@ -38845,6 +39147,7 @@ NodeBase::fn_name [nb/SysTypes.h]
    nb/NbPools.cpp
    nb/NbSignals.cpp
    nb/NbTracer.cpp
+   nb/NbTypes.cpp
    nb/Object.cpp
    nb/ObjectPool.cpp
    nb/ObjectPoolAudit.cpp
@@ -40050,7 +40353,6 @@ NodeBase::Thread::GetBlockingReason [nb/Thread.h]
 NodeBase::Thread::GetFaction [nb/Thread.h]
    nb/CoutThread.cpp
    nb/FileThread.cpp
-   nb/Thread.cpp
 NodeBase::Thread::GetStatus [nb/Thread.h]
    nb/NbTracer.cpp
    sb/TimerThread.cpp
@@ -40773,7 +41075,6 @@ NodeBase::Tool::Status [nb/Tool.h]
 NodeBase::Tool::Tid [nb/Tool.h]
    nb/NbIncrement.cpp
    nb/Tool.cpp
-   nb/ToolRegistry.cpp
 NodeBase::Tool::Tool(NodeBase::Tool* const,unsigned char,char,bool) [nb/Tool.h]
    nb/Tool.cpp
 NodeBase::Tool::abbr_ [nb/Tool.h]
@@ -44128,7 +44429,6 @@ NetworkBase::IpService::Name [nw/IpService.h]
    nw/IpService.cpp
    nw/IpServiceRegistry.cpp
    nw/NwIncrement.cpp
-   nw/TcpIpService.cpp
    sn/PotsSessions.h
 NetworkBase::IpService::Patch [nw/IpService.h]
    nw/IpService.cpp
@@ -46437,7 +46737,6 @@ PotsBase::PotsCircuit::state_ [pb/PotsCircuit.h]
    pb/PotsCircuit.cpp
    pb/PotsCircuit.h
 PotsBase::PotsCircuit::strState [pb/PotsCircuit.h]
-   an/PotsTrafficThread.cpp
    pb/PotsCircuit.cpp
    sn/PotsBcSsm.cpp
 PotsBase::PotsCircuit::strTrace [pb/PotsCircuit.h]
@@ -47339,10 +47638,6 @@ PotsBase::PotsShelfIcSignal [pb/PotsLogs.h]
    pb/PotsLogs.h
 PotsBase::PotsShelfOgSignal [pb/PotsLogs.h]
    pb/PotsCircuit.cpp
-   pb/PotsLogs.cpp
-   pb/PotsLogs.h
-PotsBase::PotsTrafficError [pb/PotsLogs.h]
-   an/PotsTrafficThread.cpp
    pb/PotsLogs.cpp
    pb/PotsLogs.h
 PotsBase::PotsTrafficRate [pb/PotsLogs.h]
@@ -48692,7 +48987,9 @@ SessionBase::Context_GetSubtended [sb/Context.cpp]
    sb/Context.cpp
 SessionBase::Context_HenqPsm [sb/Context.cpp]
    sb/Context.cpp
-SessionBase::Context_Kill [sb/Context.cpp]
+SessionBase::Context_Kill1 [sb/Context.cpp]
+   sb/Context.cpp
+SessionBase::Context_Kill2 [sb/Context.cpp]
    sb/Context.cpp
 SessionBase::Context_MsgCount [sb/Context.cpp]
    sb/Context.cpp
@@ -48726,7 +49023,9 @@ SessionBase::SbException [sb/Context.cpp]
    sb/Context.cpp
 SessionBase::SbException::Display [sb/Context.cpp]
    sb/Context.cpp
-SessionBase::SbException::SbException [sb/Context.cpp]
+SessionBase::SbException::SbException(SessionBase::SbException* const,const std::basic_string<char,std::char_traits<char>,std::allocator<char>>,unsigned int) [sb/Context.cpp]
+   sb/Context.cpp
+SessionBase::SbException::SbException(SessionBase::SbException* const,unsigned long long,unsigned int) [sb/Context.cpp]
    sb/Context.cpp
 SessionBase::SbException::ctx_ [sb/Context.cpp]
    sb/Context.cpp
@@ -48736,7 +49035,9 @@ SessionBase::SbException::~SbException [sb/Context.cpp]
    sb/Context.cpp
 SessionBase::SbExceptionExpl [sb/Context.cpp]
    sb/Context.cpp
-SessionBase::SbException_ctor [sb/Context.cpp]
+SessionBase::SbException_ctor1 [sb/Context.cpp]
+   sb/Context.cpp
+SessionBase::SbException_ctor2 [sb/Context.cpp]
    sb/Context.cpp
 SessionBase::SbException_dtor [sb/Context.cpp]
    sb/Context.cpp
@@ -48860,7 +49161,7 @@ SessionBase::Context::IsIdle [sb/Context.h]
    sb/PsmContext.h
    sb/SsmContext.cpp
    sb/SsmContext.h
-SessionBase::Context::Kill [sb/Context.h]
+SessionBase::Context::Kill(const std::basic_string<char,std::char_traits<char>,std::allocator<char>>,unsigned int) [sb/Context.h]
    cb/BcHandlers.cpp
    mb/MediaPsm.cpp
    sb/AnalyzeSapEvent.cpp
@@ -48888,6 +49189,8 @@ SessionBase::Context::Kill [sb/Context.h]
    sn/PotsTreatments.cpp
    sn/PotsWmlService.cpp
    st/TestSessions.cpp
+SessionBase::Context::Kill(unsigned long long,unsigned int) [sb/Context.h]
+   sb/Context.cpp
 SessionBase::Context::LinkDiff [sb/Context.h]
    sb/Context.cpp
    sb/InvokerPool.cpp
@@ -48902,6 +49205,7 @@ SessionBase::Context::MessageEntry::sid [sb/Context.h]
    sb/Context.cpp
 SessionBase::Context::MsgCount [sb/Context.h]
    sb/Context.cpp
+   sb/InvokerPool.cpp
 SessionBase::Context::NextPort [sb/Context.h]
    sb/PsmContext.h
 SessionBase::Context::NextPsm [sb/Context.h]
@@ -49185,7 +49489,6 @@ SessionBase::Event::Capture [sb/Event.h]
 SessionBase::Event::Display [sb/Event.h]
    sb/Event.cpp
 SessionBase::Event::Eid [sb/Event.h]
-   sb/Event.cpp
    sb/EventHandler.cpp
    sb/Initiator.cpp
    sb/SbTrace.cpp
@@ -49683,6 +49986,8 @@ SessionBase::Factory_RecordDeletion [sb/Factory.cpp]
    sb/Factory.cpp
 SessionBase::Factory_RecordMsg [sb/Factory.cpp]
    sb/Factory.cpp
+SessionBase::Factory_ScreenFirstMsg [sb/Factory.cpp]
+   sb/Factory.cpp
 SessionBase::Factory_ScreenIcMsgs [sb/Factory.cpp]
    sb/Factory.cpp
 SessionBase::Factory_Shutdown [sb/Factory.cpp]
@@ -49910,6 +50215,11 @@ SessionBase::Factory::RecordMsg [sb/Factory.h]
    sb/Factory.cpp
    sb/InvokerPool.cpp
    sb/Message.cpp
+SessionBase::Factory::ScreenFirstMsg [sb/Factory.h]
+   sb/Factory.cpp
+   sb/InvokerPool.cpp
+   sn/PotsCallFactory.cpp
+   sn/PotsSessions.h
 SessionBase::Factory::ScreenIcMsgs [sb/Factory.h]
    sb/Context.cpp
    sb/Factory.cpp
@@ -50221,6 +50531,7 @@ SessionBase::Initiator::ProcessEvent [sb/Initiator.h]
    sn/PotsWmlService.cpp
    sn/PotsWmlService.h
 SessionBase::Initiator::Sid [sb/Initiator.h]
+   sb/Initiator.cpp
    sb/ServiceSM.cpp
    sb/Trigger.cpp
 SessionBase::Initiator::aid_ [sb/Initiator.h]
@@ -50592,6 +50903,7 @@ SessionBase::LocalAddress [sb/LocalAddress.h]
    pb/PotsIncrement.cpp
    pb/PotsProfile.cpp
    pb/PotsProfile.h
+   sb/Context.cpp
    sb/GlobalAddress.cpp
    sb/GlobalAddress.h
    sb/InvokerPool.cpp
@@ -50635,6 +50947,7 @@ SessionBase::LocalAddress::bid [sb/LocalAddress.h]
    st/TestSessions.cpp
 SessionBase::LocalAddress::fid [sb/LocalAddress.h]
    an/PotsShelfHandler.cpp
+   sb/Context.cpp
    sb/GlobalAddress.cpp
    sb/GlobalAddress.h
    sb/InvokerPool.cpp
@@ -50767,8 +51080,6 @@ SessionBase::Message_dtor [sb/Message.cpp]
    sb/Message.cpp
 SessionBase::Message_new [sb/Message.cpp]
    sb/Message.cpp
-SessionBase::PriorityStrings [sb/Message.cpp]
-   sb/Message.cpp
 SessionBase::BuffTrace [sb/Message.h]
    sb/Message.h
    st/StTestData.h
@@ -50803,16 +51114,12 @@ SessionBase::Message [sb/Message.h]
    sb/AnalyzeMsgEvent.cpp
    sb/AnalyzeSapEvent.cpp
    sb/Context.cpp
-   sb/Context.h
    sb/Factory.h
    sb/InitiationReqEvent.cpp
    sb/InvokerPool.cpp
-   sb/InvokerPool.h
-   sb/InvokerThread.h
    sb/Message.cpp
    sb/Message.h
    sb/MsgContext.cpp
-   sb/MsgContext.h
    sb/MsgFactory.cpp
    sb/MsgPort.cpp
    sb/MsgPort.h
@@ -50869,10 +51176,6 @@ SessionBase::Message::Dir [sb/Message.h]
    sb/TlvMessage.cpp
 SessionBase::Message::Display [sb/Message.h]
    sb/Message.cpp
-SessionBase::Message::Egress [sb/Message.h]
-   cb/BcSsm.cpp
-   sb/Message.cpp
-   sb/Message.h
 SessionBase::Message::Enqueue [sb/Message.h]
    sb/Context.cpp
    sb/Message.cpp
@@ -50970,23 +51273,6 @@ SessionBase::Message::Header [sb/Message.h]
 SessionBase::Message::Henqueue [sb/Message.h]
    sb/Message.cpp
    sb/ProtocolSM.cpp
-SessionBase::Message::Immediate [sb/Message.h]
-   an/PotsShelfHandler.cpp
-   cb/ProxyBcSessions.cpp
-   pb/PotsMessages.cpp
-   sb/Context.cpp
-   sb/Message.cpp
-   sb/Message.h
-   sn/PotsMultiplexer.cpp
-SessionBase::Message::Ingress [sb/Message.h]
-   sb/Context.cpp
-   sb/Message.cpp
-   sb/Message.h
-   sb/MsgHeader.cpp
-   sb/SbIncrement.cpp
-   sb/SbInvokerPools.cpp
-   sn/PotsCallHandler.cpp
-   st/StTestData.cpp
 SessionBase::Message::InspectMsg [sb/Message.h]
    sb/Message.cpp
    sb/TlvMessage.cpp
@@ -51020,11 +51306,6 @@ SessionBase::Message::IpStack [sb/Message.h]
    cb/BcProtocol.cpp
    sb/Message.cpp
    sb/Message.h
-SessionBase::Message::MaxPriority [sb/Message.h]
-   sb/InvokerPool.cpp
-   sb/InvokerPool.h
-   sb/Message.cpp
-   sb/Message.h
 SessionBase::Message::Message(SessionBase::Message* const,SessionBase::ProtocolSM*,unsigned int) [sb/Message.h]
    sb/Message.cpp
 SessionBase::Message::Message(SessionBase::Message* const,std::unique_ptr<SessionBase::SbIpBuffer>) [sb/Message.h]
@@ -51038,25 +51319,6 @@ SessionBase::Message::Patch [sb/Message.h]
 SessionBase::Message::Payload [sb/Message.h]
    sb/Message.cpp
    sb/TlvMessage.cpp
-SessionBase::Message::Priority [sb/Message.h]
-   sb/Context.cpp
-   sb/Context.h
-   sb/InvokerPool.cpp
-   sb/InvokerPool.h
-   sb/Message.cpp
-   sb/Message.h
-   sb/MsgHeader.h
-   sb/SbTrace.h
-SessionBase::Message::Progress [sb/Message.h]
-   an/PotsShelfHandler.cpp
-   cb/ProxyBcSessions.cpp
-   sb/InvokerPool.cpp
-   sb/Message.cpp
-   sb/Message.h
-   sb/ProtocolSM.cpp
-   sb/Timer.cpp
-   sn/PotsCallHandler.cpp
-   st/StTestData.cpp
 SessionBase::Message::Psm [sb/Message.h]
    cb/BcSsm.cpp
    cb/ProxyBcSessions.cpp
@@ -51236,9 +51498,6 @@ SessionBase::Message::psm_ [sb/Message.h]
    sb/Message.h
 SessionBase::Message::saves_ [sb/Message.h]
    sb/Message.cpp
-SessionBase::Message::strPriority [sb/Message.h]
-   sb/InvokerPool.cpp
-   sb/Message.cpp
 SessionBase::Message::whichq_ [sb/Message.h]
    sb/Message.cpp
 SessionBase::Message::~Message [sb/Message.h]
@@ -51405,6 +51664,7 @@ SessionBase::MsgHeader::route [sb/MsgHeader.h]
    sn/PotsCallHandler.cpp
 SessionBase::MsgHeader::rxAddr [sb/MsgHeader.h]
    an/PotsShelfHandler.cpp
+   sb/Context.cpp
    sb/InvokerPool.cpp
    sb/Message.cpp
    sb/MsgHeader.cpp
@@ -51951,8 +52211,6 @@ SessionBase::Protocol::NextSignal [sb/Protocol.h]
    st/StIncrement.cpp
 SessionBase::Protocol::Patch [sb/Protocol.h]
    sb/Protocol.cpp
-SessionBase::Protocol::Prid [sb/Protocol.h]
-   sb/Protocol.cpp
 SessionBase::Protocol::Protocol(SessionBase::Protocol* const,unsigned short,unsigned short) [sb/Protocol.h]
    sb/Protocol.cpp
 SessionBase::Protocol::UnbindParameter [sb/Protocol.h]
@@ -51970,7 +52228,6 @@ SessionBase::Protocol::parameters_ [sb/Protocol.h]
    sb/Protocol.cpp
 SessionBase::Protocol::prid_ [sb/Protocol.h]
    sb/Protocol.cpp
-   sb/Protocol.h
 SessionBase::Protocol::signals_ [sb/Protocol.h]
    sb/Protocol.cpp
 SessionBase::Protocol::~Protocol [sb/Protocol.h]
@@ -52094,7 +52351,6 @@ SessionBase::ProtocolLayer::GetFactory [sb/ProtocolLayer.h]
    mb/MediaPsm.cpp
    pb/PotsIncrement.cpp
    sb/Context.cpp
-   sb/Message.cpp
    sb/MsgPort.cpp
    sb/MsgPort.h
    sb/ProtocolLayer.cpp
@@ -54037,7 +54293,6 @@ SessionBase::SbIpBuffer_new [sb/SbIpBuffer.cpp]
 SessionBase::SbIpBuffer [sb/SbIpBuffer.h]
    an/PotsShelfHandler.cpp
    sb/InvokerPool.cpp
-   sb/InvokerPool.h
    sb/Message.cpp
    sb/Message.h
    sb/SbExtInputHandler.cpp
@@ -54925,6 +55180,8 @@ SessionBase::SbTracer::~SbTracer [sb/SbTracer.h]
    sb/SbTracer.cpp
 SessionBase::ContextTypeStrings [sb/SbTypes.cpp]
    sb/SbTypes.cpp
+SessionBase::MsgPriorityStrings [sb/SbTypes.cpp]
+   sb/SbTypes.cpp
 SessionBase::Context [sb/SbTypes.h]
    sb/Factory.cpp
    sb/Factory.h
@@ -54970,6 +55227,10 @@ SessionBase::ContextType::SingleMsg [sb/SbTypes.h]
    st/StIncrement.cpp
 SessionBase::ContextType::SinglePort [sb/SbTypes.h]
    sb/PsmContext.h
+SessionBase::EGRESS [sb/SbTypes.h]
+   cb/BcSsm.cpp
+   sb/Message.cpp
+   sb/SbTypes.h
 SessionBase::Event [sb/SbTypes.h]
    cb/BcProtocol.h
    mb/MediaPsm.h
@@ -55037,6 +55298,24 @@ SessionBase::FactoryId [sb/SbTypes.h]
    st/StTestData.h
    st/TestSessions.cpp
    st/TestSessions.h
+SessionBase::IMMEDIATE [sb/SbTypes.h]
+   an/PotsShelfHandler.cpp
+   cb/ProxyBcSessions.cpp
+   pb/PotsMessages.cpp
+   sb/Context.cpp
+   sb/Message.cpp
+   sb/SbTypes.h
+   sn/PotsMultiplexer.cpp
+SessionBase::INGRESS [sb/SbTypes.h]
+   sb/Context.cpp
+   sb/InvokerPool.cpp
+   sb/Message.cpp
+   sb/MsgHeader.cpp
+   sb/SbIncrement.cpp
+   sb/SbInvokerPools.cpp
+   sb/SbTypes.h
+   sn/PotsCallHandler.cpp
+   st/StTestData.cpp
 SessionBase::Initiator [sb/SbTypes.h]
    sb/Event.cpp
    sb/Event.h
@@ -55049,6 +55328,11 @@ SessionBase::InvokerThread [sb/SbTypes.h]
    sb/InvokerPool.cpp
    sb/InvokerPool.h
    sb/SbTrace.h
+SessionBase::MAX_PRIORITY [sb/SbTypes.h]
+   sb/InvokerPool.cpp
+   sb/InvokerPool.h
+   sb/SbTypes.cpp
+   sb/SbTypes.h
 SessionBase::MaxServicePortId [sb/SbTypes.h]
    sb/SbTypes.h
    sb/Service.h
@@ -55057,8 +55341,13 @@ SessionBase::MaxServicePortId [sb/SbTypes.h]
 SessionBase::Message [sb/SbTypes.h]
    an/PotsShelf.h
    mb/MediaEndpt.h
+   sb/Context.cpp
+   sb/Context.h
    sb/Factory.cpp
    sb/Factory.h
+   sb/InvokerPool.h
+   sb/InvokerThread.h
+   sb/MsgContext.h
    sb/MsgFactory.h
    sb/Parameter.cpp
    sb/Parameter.h
@@ -55080,6 +55369,31 @@ SessionBase::MsgPort [sb/SbTypes.h]
    sb/SbTrace.h
    sn/PotsSessions.h
    st/TestSessions.h
+SessionBase::MsgPriority [sb/SbTypes.h]
+   sb/Context.cpp
+   sb/Context.h
+   sb/Factory.cpp
+   sb/Factory.h
+   sb/InvokerPool.cpp
+   sb/InvokerPool.h
+   sb/Message.cpp
+   sb/Message.h
+   sb/MsgHeader.h
+   sb/SbTrace.h
+   sb/SbTypes.cpp
+   sb/SbTypes.h
+   sn/PotsCallFactory.cpp
+   sn/PotsSessions.h
+SessionBase::PROGRESS [sb/SbTypes.h]
+   an/PotsShelfHandler.cpp
+   cb/ProxyBcSessions.cpp
+   sb/InvokerPool.cpp
+   sb/Message.cpp
+   sb/ProtocolSM.cpp
+   sb/SbTypes.h
+   sb/Timer.cpp
+   sn/PotsCallHandler.cpp
+   st/StTestData.cpp
 SessionBase::ParameterId [sb/SbTypes.h]
    mb/MediaPsm.cpp
    mb/MediaPsm.h
@@ -55160,6 +55474,7 @@ SessionBase::RootServiceSM [sb/SbTypes.h]
    sb/SsmFactory.cpp
    sb/SsmFactory.h
 SessionBase::SbIpBuffer [sb/SbTypes.h]
+   sb/InvokerPool.h
    sb/Protocol.cpp
    sb/Protocol.h
    sb/SbTypes.h
@@ -55410,6 +55725,9 @@ SessionBase::operator<<(std::basic_ostream,SessionBase::ContextType) [sb/SbTypes
 SessionBase::strContextType [sb/SbTypes.h]
    sb/SbTypes.cpp
    st/MscContext.cpp
+SessionBase::strMsgPriority [sb/SbTypes.h]
+   sb/InvokerPool.cpp
+   sb/SbTypes.cpp
 SessionBase::AnalyzeMsgEventStr [sb/Service.cpp]
    sb/Service.cpp
 SessionBase::AnalyzeSapEventStr [sb/Service.cpp]
@@ -56579,6 +56897,7 @@ SessionBase::Timer::SendTimeout [sb/Timer.h]
 SessionBase::Timer::Tid [sb/Timer.h]
    sb/ProtocolSM.cpp
    sb/SbTrace.cpp
+   sb/Timer.cpp
 SessionBase::Timer::Timer [sb/Timer.h]
    sb/Timer.cpp
 SessionBase::Timer::duration_ [sb/Timer.h]
@@ -57634,6 +57953,8 @@ PotsBase::PotsCallFactory_CreateText [sn/PotsCallFactory.cpp]
 PotsBase::PotsCallFactory_PortAllocated [sn/PotsCallFactory.cpp]
    sn/PotsCallFactory.cpp
 PotsBase::PotsCallFactory_ReallocOgMsg [sn/PotsCallFactory.cpp]
+   sn/PotsCallFactory.cpp
+PotsBase::PotsCallFactory_ScreenFirstMsg [sn/PotsCallFactory.cpp]
    sn/PotsCallFactory.cpp
 PotsBase::PotsCallFactory_ScreenIcMsgs [sn/PotsCallFactory.cpp]
    sn/PotsCallFactory.cpp
@@ -59960,6 +60281,8 @@ PotsBase::PotsCallFactory::PotsCallFactory [sn/PotsSessions.h]
    sn/PotsCallFactory.cpp
 PotsBase::PotsCallFactory::ReallocOgMsg [sn/PotsSessions.h]
    sn/PotsCallFactory.cpp
+PotsBase::PotsCallFactory::ScreenFirstMsg [sn/PotsSessions.h]
+   sn/PotsCallFactory.cpp
 PotsBase::PotsCallFactory::ScreenIcMsgs [sn/PotsSessions.h]
    sn/PotsCallFactory.cpp
 PotsBase::PotsCallFactory::SendRelease [sn/PotsSessions.h]
@@ -61680,7 +62003,6 @@ std::bitset [subs/bitset]
    ct/CxxStatement.cpp
    ct/CxxSymbols.cpp
    ct/Library.cpp
-   nb/Base.cpp
    nb/CfgFlagParm.cpp
    nb/Class.cpp
    nb/CliStack.cpp
@@ -61689,7 +62011,6 @@ std::bitset [subs/bitset]
    nb/Log.cpp
    nb/LogBuffer.cpp
    nb/LogBufferRegistry.cpp
-   nb/NbIncrement.cpp
    nb/ObjectPool.cpp
    nb/PooledClass.cpp
    nb/PosixSignal.cpp
@@ -61715,7 +62036,6 @@ std::bitset [subs/bitset]
    nw/TcpIoThread.cpp
    pb/PotsProfile.cpp
    sb/Parameter.cpp
-   sb/SbIncrement.cpp
    sb/Signal.cpp
    sb/State.cpp
    sb/TimerRegistry.cpp
@@ -61746,10 +62066,8 @@ std::bitset::set(std::bitset* const) [subs/bitset]
    ct/CxxScoped.cpp
    ct/CxxStatement.cpp
    ct/Library.cpp
-   nb/Base.cpp
    nb/CfgFlagParm.cpp
    nb/Debug.cpp
-   nb/NbIncrement.cpp
    nb/SysThread.win.cpp
    nb/Thread.cpp
    nb/TraceBuffer.cpp
@@ -61758,7 +62076,6 @@ std::bitset::set(std::bitset* const) [subs/bitset]
    nw/SysTcpSocket.cpp
    nw/SysTcpSocket.win.cpp
    nw/TcpIoThread.cpp
-   sb/SbIncrement.cpp
 std::bitset::test [subs/bitset]
    ct/CxxArea.cpp
    ct/CxxDirective.cpp
@@ -62105,7 +62422,6 @@ size_t [subs/cstddef]
    nb/LogGroup.cpp
    nb/LogGroup.h
    nb/LogThread.cpp
-   nb/LogThread.h
    nb/Memory.cpp
    nb/Memory.h
    nb/MemoryTrace.cpp
@@ -62477,6 +62793,7 @@ uint8_t [subs/cstdint]
    sb/Message.h
    sb/MsgHeader.h
    sb/ProtocolSM.h
+   sb/SbTypes.h
    sn/PotsStatistics.h
 uintptr_t [subs/cstdint]
    nb/Base.h
@@ -63257,6 +63574,7 @@ std::ostringstream [subs/iosfwd]
    nb/FileThread.cpp
    nb/Formatters.cpp
    nb/Log.cpp
+   nb/LogBuffer.cpp
    nb/LogThread.cpp
    nb/ModuleRegistry.cpp
    nb/ModuleRegistry.h
@@ -63520,12 +63838,6 @@ std::multimap::upper_bound(const std::multimap* const,const T1) [subs/map]
 std::multimap::value_type [subs/map]
    dip/Adjudicator.cpp
 std::unique_ptr [subs/memory]
-   ct/CodeFileSet.cpp
-   dip/TokenMessage.cpp
-   dip/TokenMessage.h
-   nb/Thread.cpp
-   nw/SysTcpSocket.win.cpp
-std::unique_ptr [subs/memory]
    an/PotsShelfHandler.cpp
    an/PotsShelfIpService.cpp
    cb/BcProtocol.cpp
@@ -63580,6 +63892,7 @@ std::unique_ptr [subs/memory]
    nb/Exception.h
    nb/FileThread.cpp
    nb/Log.cpp
+   nb/LogBuffer.cpp
    nb/LogBufferRegistry.cpp
    nb/LogBufferRegistry.h
    nb/LogGroupRegistry.cpp
@@ -63640,8 +63953,11 @@ std::unique_ptr [subs/memory]
    st/StTestData.cpp
    st/StTestData.h
    st/TestSessions.h
-std::unique_ptr::get [subs/memory]
+std::unique_ptr [subs/memory]
+   ct/CodeFileSet.cpp
    dip/TokenMessage.cpp
+   dip/TokenMessage.h
+   nb/Thread.cpp
    nw/SysTcpSocket.win.cpp
 std::unique_ptr::get [subs/memory]
    an/PotsShelfHandler.cpp
@@ -63701,6 +64017,9 @@ std::unique_ptr::get [subs/memory]
    sb/SbInvokerPools.cpp
    sn/PotsCallHandler.cpp
    st/StTestData.cpp
+std::unique_ptr::get [subs/memory]
+   dip/TokenMessage.cpp
+   nw/SysTcpSocket.win.cpp
 std::unique_ptr::release [subs/memory]
    ct/CodeSet.cpp
    ct/CxxArea.cpp
@@ -63766,6 +64085,7 @@ std::unique_ptr::reset [subs/memory]
    nb/Exception.cpp
    nb/FileThread.cpp
    nb/Log.cpp
+   nb/LogBuffer.cpp
    nb/LogBufferRegistry.cpp
    nb/LogGroupRegistry.cpp
    nb/LogThread.cpp
@@ -64868,7 +65188,6 @@ std::basic_ostream::operator<<(std::basic_ostream* const,unsigned int) [subs/ost
    nb/LeakyBucketCounter.cpp
    nb/Log.cpp
    nb/LogBuffer.cpp
-   nb/LogThread.cpp
    nb/MemoryTrace.cpp
    nb/ModuleRegistry.cpp
    nb/NbIncrement.cpp
@@ -65783,7 +66102,6 @@ std::basic_string::size [subs/string]
    nb/Log.cpp
    nb/LogBuffer.cpp
    nb/LogGroup.cpp
-   nb/LogThread.cpp
    nb/ModuleRegistry.cpp
    nb/NbIncrement.cpp
    nb/Statistics.cpp
@@ -66302,6 +66620,7 @@ std::to_string(int) [subs/string]
    an/PotsShelfIpService.cpp
    cb/BcProtocol.cpp
    ct/CodeFileSet.cpp
+   ct/CodeIncrement.cpp
    ct/Editor.cpp
    ct/LibrarySet.cpp
    dip/BaseBot.cpp

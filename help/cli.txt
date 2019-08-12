@@ -24,7 +24,7 @@ The following are used when displaying and entering a command's parameters:
        \  overrides any special meaning for the next character
 Optional parameters must be entered in the same order that they are displayed
 by >help <comm>.
-
+/
 ? ct
 Commands in this increment often take an expression as the last parameter.
 An expression contains variables and operators.  Variables can be defined
@@ -88,7 +88,7 @@ Here are some examples of library commands:
     changing Thread.h
   >assign s1 h1 & c1 : s1 = SessionBase .cpps that could be affected
     by changing Thread.h
-
+/
 ? ct.coverage
 These subcommands manage databases that map functions to the testcases that
 invoke them.  To support this mapping, a function must invoke Debug::ft and
@@ -118,7 +118,7 @@ Finally, >coverage under N lists all functions that are invoked by fewer than
 N testcases, and >coverage erase deletes, from the database, a function that
 is no longer valid (this should only be necessary after a template function
 or a function in a class template has been removed from the code base).
-
+/
 ? ct.export
 The options are specified in a string that contains any of the following:
   n: namespace view: items sorted by namespace; declarations/definitions merged
@@ -131,7 +131,7 @@ The options are specified in a string that contains any of the following:
   x: display the global cross-reference (in a separate .xref file)
 If no options are entered, they default to "nchsux".  At least one option of
 "ncoh" must be specified to cause the generation of the .lib file.
-
+/
 ? ct.parse
 The options are specified in a string that contains any of the following:
   p: save parse tree on failure
@@ -140,7 +140,7 @@ The options are specified in a string that contains any of the following:
   i: immediate tracing: needed if 'x' causes trace buffer to overflow
   f: enable FunctionTracer
 For no options, use the skip character ('-').
-
+/
 ? nb.sched
 The following columns appear in >sched show output:
          id  Thread::Id (identifier)
@@ -159,7 +159,7 @@ The following statistics are reset at the end of each 15-minute interval:
 total usecs  total time running locked
        %cpu  percentage of available CPU time used, during both the current
              15-minute interval and the most recent 5-second interval
-
+/
 ? nt.testcase
 These subcommands support test scripts and a testcase database.  The prolog,
 epilog, recover, begin, end, and failed subcommands are used in test scripts.

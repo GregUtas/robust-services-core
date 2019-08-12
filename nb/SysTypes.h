@@ -74,7 +74,7 @@ constexpr id_t NIL_ID = 0;
 
 //  Causes a trap.  Its value must differ from nullptr.
 //
-extern uintptr_t const BAD_POINTER;
+extern const uintptr_t BAD_POINTER;
 
 //  For wrapping dynamically allocated strings and streams.
 //

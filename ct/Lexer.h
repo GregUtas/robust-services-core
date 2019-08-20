@@ -184,6 +184,21 @@ public:
    //
    Cxx::Keyword NextKeyword(std::string& str) const;
 
+   //  Updates TAGS with the next series of keywords that appear in a data
+   //  declaration.  Stops when a non-keyword is reached.
+   //
+   void GetDataTags(KeywordSet& tags);
+
+   //  Updates TAGS with the next series of keywords that appear before the
+   //  name in a function declaration.  Stops when a non-keyword is reached.
+   //
+   void GetFuncFrontTags(KeywordSet& tags);
+
+   //  Updates TAGS with the next series of keywords that appear at the end
+   //  of a function declaration.  Stops when a non-keyword is reached.
+   //
+   void GetFuncBackTags(KeywordSet& tags);
+
    //  Returns the next operator (punctuation only).
    //
    std::string NextOperator() const;

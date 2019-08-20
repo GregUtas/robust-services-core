@@ -23,6 +23,7 @@
 #include <cctype>
 #include <cmath>
 #include <cstring>
+#include <set>
 #include "CxxArea.h"
 #include "CxxDirective.h"
 #include "CxxExecute.h"
@@ -702,6 +703,36 @@ Cxx::Operator Lexer::GetCxxOp()
 
 //------------------------------------------------------------------------------
 
+fn_name Lexer_GetDataTags = "Lexer.GetDataTags";
+
+void Lexer::GetDataTags(KeywordSet& tags)
+{
+   Debug::ft(Lexer_GetDataTags);
+
+   string str;
+
+   while(true)
+   {
+      auto kwd = NextKeyword(str);
+
+      switch(kwd)
+      {
+      case Cxx::CONSTEXPR:
+      case Cxx::EXTERN:
+      case Cxx::STATIC:
+      case Cxx::MUTABLE:
+         tags.insert(kwd);
+         Reposition(curr_ + str.size());
+         continue;
+
+      default:
+         return;
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 void Lexer::GetDepth(size_t line, int8_t& depth, bool& cont) const
 {
    if(!scanned_ || (line >= lines_))
@@ -732,6 +763,69 @@ void Lexer::GetFloat(long double& num)
    word digits = GetInt(frac);
    if((digits == 0) || (frac == 0)) return;
    num += (frac * pow(10.0, -digits));
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Lexer_GetFuncBackTags = "Lexer.GetFuncBackTags";
+
+void Lexer::GetFuncBackTags(KeywordSet& tags)
+{
+   Debug::ft(Lexer_GetFuncBackTags);
+
+   //  The only tags are "override" and "final": if present, "const"
+   //  and/or "noexcept" precede them and have already been parsed.
+   //
+   string str;
+
+   while(true)
+   {
+      auto kwd = NextKeyword(str);
+
+      switch(kwd)
+      {
+      case Cxx::OVERRIDE:
+      case Cxx::FINAL:
+         tags.insert(kwd);
+         Reposition(curr_ + str.size());
+         continue;
+
+      default:
+         return;
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Lexer_GetFuncFrontTags = "Lexer.GetFuncFrontTags";
+
+void Lexer::GetFuncFrontTags(KeywordSet& tags)
+{
+   Debug::ft(Lexer_GetFuncFrontTags);
+
+   string str;
+
+   while(true)
+   {
+      auto kwd = NextKeyword(str);
+
+      switch(kwd)
+      {
+      case Cxx::VIRTUAL:
+      case Cxx::STATIC:
+      case Cxx::EXPLICIT:
+      case Cxx::INLINE:
+      case Cxx::CONSTEXPR:
+      case Cxx::EXTERN:
+         tags.insert(kwd);
+         Reposition(curr_ + str.size());
+         continue;
+
+      default:
+         return;
+      }
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -908,10 +1002,12 @@ bool Lexer::GetName(string& name, Constraint constraint)
 {
    Debug::ft(Lexer_GetName1);
 
-   auto str = NextIdentifier();
-   if(str.size() == 0) return false;
+   auto id = NextIdentifier();
+   if(id.size() == 0) return false;
 
    //  There are two exceptions to CONSTRAINT:
+   //  o "override" and "final" are not actually keywords but are
+   //    in Keywords for convenience.
    //  o NonKeyword is used to look for function names, so "operator"
    //    (which is in Keywords) must be allowed.
    //  o TypeKeyword is used to look for types, so "auto" (which is
@@ -920,22 +1016,26 @@ bool Lexer::GetName(string& name, Constraint constraint)
    switch(constraint)
    {
    case NonKeyword:
-      if(str != OPERATOR_STR)
+      if(Types->lower_bound(id) != Types->cend()) return false;
+
+      if(Keywords->lower_bound(id) != Keywords->cend())
       {
-         if(Types->lower_bound(str) != Types->cend()) return false;
-         if(Keywords->lower_bound(str) != Keywords->cend()) return false;
+         if((id != OPERATOR_STR) && (id != OVERRIDE_STR) && (id != FINAL_STR))
+         {
+            return false;
+         }
       }
       break;
 
    case TypeKeyword:
-      if(str != AUTO_STR)
+      if(id != AUTO_STR)
       {
-         if(Keywords->lower_bound(str) != Keywords->cend()) return false;
+         if(Keywords->lower_bound(id) != Keywords->cend()) return false;
       }
    }
 
-   name += str;
-   return Advance(str.size());
+   name += id;
+   return Advance(id.size());
 }
 
 //------------------------------------------------------------------------------
@@ -1353,6 +1453,7 @@ bool Lexer::Initialize()
    Keywords->insert(KeywordPair(ENUM_STR, Cxx::ENUM));
    Keywords->insert(KeywordPair(EXPLICIT_STR, Cxx::EXPLICIT));
    Keywords->insert(KeywordPair(EXTERN_STR, Cxx::EXTERN));
+   Keywords->insert(KeywordPair(FINAL_STR, Cxx::FINAL));
    Keywords->insert(KeywordPair(FOR_STR, Cxx::FOR));
    Keywords->insert(KeywordPair(FRIEND_STR, Cxx::FRIEND));
    Keywords->insert(KeywordPair(IF_STR, Cxx::IF));
@@ -1360,6 +1461,7 @@ bool Lexer::Initialize()
    Keywords->insert(KeywordPair(MUTABLE_STR, Cxx::MUTABLE));
    Keywords->insert(KeywordPair(NAMESPACE_STR, Cxx::NAMESPACE));
    Keywords->insert(KeywordPair(OPERATOR_STR, Cxx::OPERATOR));
+   Keywords->insert(KeywordPair(OVERRIDE_STR, Cxx::OVERRIDE));
    Keywords->insert(KeywordPair(PRIVATE_STR, Cxx::PRIVATE));
    Keywords->insert(KeywordPair(PROTECTED_STR, Cxx::PROTECTED));
    Keywords->insert(KeywordPair(PUBLIC_STR, Cxx::PUBLIC));

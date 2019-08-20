@@ -39,7 +39,7 @@ and `>export` commands for the current version of the entire code base:
 * the [`.trim`](/output/rsc.trim.txt) file from `>export`
 * the [`.xref`](/output/rsc.xref.txt) file from `>export`
 
-Cursory documentation for each warning that >check can emit can be seen
+Cursory documentation for each warning that `>check` can emit can be seen
 [here](/help/cppcheck.txt).  (This file is formatted for use by the `>explain`
 command but is easily readable.)
 

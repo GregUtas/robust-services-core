@@ -106,15 +106,17 @@ const CxxWord CxxWord::Attrs[Cxx::NIL_KEYWORD + 1] =
    CxxWord("-",   "-",    "d",  T),  // DO
    CxxWord("E",   "E",    "E",  T),  // ENUM
    CxxWord("-",   "P",    "-",  F),  // EXPLICIT
-   CxxWord("DP",  "-",    "-",  T),  // EXTERN
+   CxxWord("DP",  "-",    "-",  F),  // EXTERN
+   CxxWord("-",   "-",    "-",  F),  // FINAL
    CxxWord("-",   "-",    "f",  T),  // FOR
    CxxWord("-",   "F",    "-",  T),  // FRIEND
    CxxWord("H",   "H",    "H",  F),  // HASH
    CxxWord("-",   "-",    "i",  T),  // IF
-   CxxWord("P",   "P",    "-",  T),  // INLINE
+   CxxWord("P",   "P",    "-",  F),  // INLINE
    CxxWord("-",   "D",    "-",  F),  // MUTABLE
    CxxWord("N",   "-",    "-",  T),  // NAMESPACE
    CxxWord("-",   "P",    "-",  F),  // OPERATOR
+   CxxWord("-",   "-",    "-",  F),  // OVERRIDE
    CxxWord("-",   "A",    "-",  T),  // PRIVATE
    CxxWord("-",   "A",    "-",  T),  // PROTECTED
    CxxWord("-",   "A",    "-",  T),  // PUBLIC

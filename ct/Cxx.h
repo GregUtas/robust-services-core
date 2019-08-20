@@ -67,6 +67,7 @@ namespace Cxx
       ENUM,
       EXPLICIT,
       EXTERN,
+      FINAL,
       FOR,
       FRIEND,
       HASH,        // treats preprocessor '#' as keyword
@@ -75,6 +76,7 @@ namespace Cxx
       MUTABLE,
       NAMESPACE,
       OPERATOR,
+      OVERRIDE,
       PRIVATE,
       PROTECTED,
       PUBLIC,

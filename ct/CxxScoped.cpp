@@ -2106,6 +2106,7 @@ fn_name Typedef_ctor = "Typedef.ctor";
 
 Typedef::Typedef(string& name, TypeSpecPtr& spec) :
    spec_(spec.release()),
+   using_(false),
    refs_(0)
 {
    Debug::ft(Typedef_ctor);
@@ -2170,12 +2171,24 @@ void Typedef::Display(ostream& stream,
    auto fq = options.test(DispFQ);
    stream << prefix;
    if(GetScope()->Type() == Cxx::Class) stream << GetAccess() << ": ";
-   stream << TYPEDEF_STR << SPACE;
-   spec_->Print(stream, options);
-   if(spec_->GetFuncSpec() == nullptr)
+
+   if(using_)
    {
-      stream << SPACE << (fq ? ScopedName(true) : *Name());
+      stream << USING_STR << SPACE;
+      stream << (fq ? ScopedName(true) : *Name());
+      stream << " = ";
+      spec_->Print(stream, options);
    }
+   else
+   {
+      stream << TYPEDEF_STR << SPACE;
+      spec_->Print(stream, options);
+      if(spec_->GetFuncSpec() == nullptr)
+      {
+         stream << SPACE << (fq ? ScopedName(true) : *Name());
+      }
+   }
+
    spec_->DisplayArrays(stream);
    stream << ';';
 
@@ -2254,10 +2267,18 @@ void Typedef::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 void Typedef::Print(ostream& stream, const Flags& options) const
 {
-   stream << TYPEDEF_STR << SPACE;
+   if(using_)
+   {
+      stream << USING_STR << SPACE << *Name() << " = ";
+      spec_->Print(stream, options);
+   }
+   else
+   {
+      stream << TYPEDEF_STR << SPACE;
+      spec_->Print(stream, options);
+      if(spec_->GetFuncSpec() == nullptr) stream << SPACE << *Name();
+   }
 
-   spec_->Print(stream, options);
-   if(spec_->GetFuncSpec() == nullptr) stream << SPACE << *Name();
    spec_->DisplayArrays(stream);
    stream << ';';
 }

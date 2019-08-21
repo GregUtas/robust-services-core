@@ -184,7 +184,8 @@ This data is initialized and written but never read.
 Global static data
   This data is defined at file scope in a header and is neither
 extern nor a constexpr. It will therefore have an instance in
-*each compilation unit*, which was probably not intended.
+*each translation unit* that #includes it, which was probably
+not intended.
 ? W50
 Data is not private
   This class data is public or protected rather than private.

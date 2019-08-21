@@ -60,26 +60,28 @@ namespace CodeTools
 //  need to be modified to support them.
 //
 //  reserved words:
-//    o asm, alignas, alignof, char16_t, char32_t, concept, decltype, export,
-//      goto, register, requires, static_assert, thread_local, volatile
-//    o wchar_t (supported by a typedef)
+//    o asm, alignas, alignof, concept, decltype, export, goto, register,
+//      requires, static_assert, thread_local, volatile
+//    * char16_t, char32_t, wchar_t
 //    o and, and_eq, bitand, bitor, compl, not, not_eq, or, or_eq, xor, xor_eq
-//    o #undef, #line, #pragma (parsed but have no effect)
+//    * #undef, #line, #pragma (parsed but have no effect)
 //    o #if, #elif (the conditional that follows the directive is ignored)
 //  identifiers:
-//    o elaborated type specifiers (class, struct, union, or enum prefixed to
+//    * elaborated type specifiers (class, struct, union, or enum prefixed to
 //      resolve a type ambiguity caused by overloading an identifier)
 //    o declaring a function as ClassName::FunctionName will cause the parser
 //      to fail (there are situations in which it expects unqualified names)
 //  character and string literals (GetCxxExpr, GetCxxAlpha, GetChar, GetStr):
-//    o type tags (u8, u, U, L, R)
+//    * type tags (u, U, L)
+//    o type tags (u8, R)
+//    o user-defined literals
 //  declarations and definitions:
-//    o identical declarations of anything except a class (see Forward)
+//    o identical declarations of anything (except a class: see Forward)
 //    o identical definitions of anything
 //  namespaces:
 //    o unnamed and inline namespaces (GetNamespace and symbol resolution)
 //    o namespace aliases (GetNamespace)
-//    o using statements in namespaces (currently seen as belonging to files)
+//    o using statements in namespaces (currently treated as if at file scope)
 //  classes:
 //    o multiple inheritance (GetBaseDecl)
 //    o tagging a base class as virtual (GetBaseDecl)
@@ -91,7 +93,6 @@ namespace CodeTools
 //    o including a union instance immediately after defining it (GetClassDecl)
 //    o pointer-to-member (the type "Class::*" and operators ".*" and "->*)
 //  functions:
-//    o the order of tags is inflexible: "extern inline static virtual explicit
 //      constexpr <signature> const noexcept override final" (GetFuncDecl)
 //    o const&, &, and && as member function suffix tags
 //    o noexcept(<expr>) as a function tag (only "noexcept" is supported)
@@ -102,7 +103,6 @@ namespace CodeTools
 //    o constructor inheritance (GetUsing, Class.FindCtor, and others)
 //    o defining a class or function within a function (ParseInBlock and others)
 //    o range-based for loops (GetFor and many others)
-//    o multiple declarations of the same extern function
 //    o overloading the function call or comma operator (the parser allows it,
 //      but calls to the overload won't be registered because Operator.Execute
 //      doesn't look for it)
@@ -112,19 +112,18 @@ namespace CodeTools
 //    o deduced return type ("auto")
 //    o trailing return type (after "->")
 //  data:
-//    o the order of tags is inflexible: "extern static mutable constexpr const"
 //      (GetClassData, GetSpaceData, GetFuncData)
 //    o declaring more than one data instance in the same statement, either at
 //      file scope or within a class (GetClassData and GetSpaceData)--note that
 //      this *is* supported within a function (e.g. int i = 0, *pi = nullptr)
-//    o multiple declarations of the same extern data
 //    o unnamed bit fields (GetClassData)
 //  enums:
 //    o accessing an enum or enumerator using "." or "->" instead of "::"
 //    o scoped ("enum class", "enum struct") and opaque enums
+//    o forward declarations of enums
 //  typedefs:
 //    o "typedef enum" and "typedef struct" (GetTypedef)
-//    o type aliases and alias templates (GetUsing and others)
+//    * alias templates (GetUsing and others)
 //  templates:
 //    o template parameters other than typename, class, or struct: in the /subs
 //      directory, for example, bitset had to be declared as bitset<typename N>
@@ -336,9 +335,9 @@ private:
    //
    bool ParseInBlock(Cxx::Keyword kwd, Block* block);
 
-   //  Returns true and creates USE on finding a using statement.
+   //  Returns true and creates USE or TYPE on finding a using statement.
    //
-   bool GetUsing(UsingPtr& use);
+   bool GetUsing(UsingPtr& use, TypedefPtr& type);
 
    //  Returns true on finding a namespace declaration.
    //

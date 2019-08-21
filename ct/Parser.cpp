@@ -1463,7 +1463,7 @@ bool Parser::GetDtorDecl(FunctionPtr& func)
 {
    Debug::ft(Parser_GetDtorDecl);
 
-   //  <DtorDecl> = ["inline"| ["virtual"] "~" <Name> "(" ")" ["noexcept"]
+   //  <DtorDecl> = ["inline"] ["virtual"] "~" <Name> "(" ")" ["noexcept"]
    //
    auto start = CurrPos();
 
@@ -1726,8 +1726,8 @@ bool Parser::GetFuncData(DataPtr& data)
    //  <FuncData> = ["static"] ["constexpr"] <TypeSpec>
    //               (<FuncData1> | <FuncData2>)
    //  <FuncData1> = <Name> "(" [<Expr>] ")" ";"
-   //  <FuncData2> =        <Name> ([<ArraySpec>] ["=" <Expr>]
-   //    ["," ["*"]* ["&"]* <Name> ([<ArraySpec>] ["=" <Expr>]]* ";"
+   //  <FuncData2> =        <Name> [<ArraySpec>] ["=" <Expr>]
+   //    ["," ["*"]* ["&"]* <Name> [<ArraySpec>] ["=" <Expr>]]* ";"
    //  FuncData1 initializes the data with a parenthesized expression that
    //  directly follows the name.  It is sometimes a constructor call:
    //    i.e. Class name(args); instead of auto name = Class(args);
@@ -2713,7 +2713,7 @@ bool Parser::GetQualName(QualNamePtr& name, Constraint constraint)
 {
    Debug::ft(Parser_GetQualName);
 
-   //  <QualName> = ["::"] [ <TypeName> "::" ]*
+   //  <QualName> = ["::"] [<TypeName> "::"]*
    //               (<TypeName> | "operator" <Operator>)
    //
    auto start = CurrPos();
@@ -3118,7 +3118,7 @@ bool Parser::GetTypedef(TypedefPtr& type)
 {
    Debug::ft(Parser_GetTypedef);
 
-   //  <Typedef> = "typedef" <TypeSpec> [<Name>] [<ArraySpec>] ";"
+   //  <Typedef> = "typedef" <TypeSpec> [<Name>] [<ArraySpec>]* ";"
    //  The "typedef" keyword has already been parsed.  <Name> is mandatory if
    //  (and only if) <TypeSpec> does not include a <FuncSpec> (function type).
    //
@@ -3370,22 +3370,50 @@ bool Parser::GetTypeTags(TypeSpec* spec)
 
 fn_name Parser_GetUsing = "Parser.GetUsing";
 
-bool Parser::GetUsing(UsingPtr& use)
+bool Parser::GetUsing(UsingPtr& use, TypedefPtr& type)
 {
    Debug::ft(Parser_GetUsing);
 
-   //  <Using> = "using" ["namespace"] <QualName> ";"
+   //  <Using> = "using" (<UsingDecl> | <TypeAlias>) ";"
+   //  <UsingDecl> = ["namespace"] <QualName>
+   //  <TypeAlias> = <name> "=" <TypeSpec> [<ArraySpec>]*
+   //             
    //  The "using" keyword has already been parsed.
    //
    auto begin = kwdBegin_;
    auto start = CurrPos();
 
+   //  Start by looking for a using directive or declaration.
+   //
    QualNamePtr usingName;
    auto space = NextKeywordIs(NAMESPACE_STR);
-   if(!GetQualName(usingName)) return Backup(start, 208);
-   if(!lexer_.NextCharIs(';')) return Backup(start, 209);
-   use.reset(new Using(usingName, space));
-   use->SetContext(begin);
+
+   if((GetQualName(usingName)) && lexer_.NextCharIs(';'))
+   {
+      use.reset(new Using(usingName, space));
+      use->SetContext(begin);
+      return Success(Parser_GetUsing, begin);
+   }
+
+   if(space) return Backup(start, 208);
+
+   //  Look for a type alias.  If found, it is captured as a typedef.
+   //
+   lexer_.Reposition(start);
+   string typeName;
+   if(!lexer_.GetName(typeName)) return Backup(start, 209);
+   if(!lexer_.NextCharIs('=')) return Backup(start, 230);
+
+   TypeSpecPtr typeSpec;
+   if(!GetTypeSpec(typeSpec, typeName)) return Backup(start, 231);
+
+   ArraySpecPtr arraySpec;
+   while(GetArraySpec(arraySpec)) typeSpec->AddArray(arraySpec);
+   if(!lexer_.NextCharIs(';')) return Backup(start, 232);
+
+   type.reset(new Typedef(typeName, typeSpec));
+   type->SetUsing();
+   type->SetContext(begin);
    return Success(Parser_GetUsing, begin);
 }
 
@@ -4120,8 +4148,13 @@ bool Parser::ParseInBlock(Cxx::Keyword kwd, Block* block)
             return block->AddStatement(typeItem.release());
          break;
       case 'U':
-         if(GetUsing(usingItem))
-            return block->AddStatement(usingItem.release());
+         if(GetUsing(usingItem, typeItem))
+         {
+            if(usingItem != nullptr)
+               return block->AddStatement(usingItem.release());
+            else
+               return block->AddStatement(typeItem.release());
+         }
          break;
       case '-':
          Debug::SwLog(Parser_ParseInBlock, "unexpected keyword", kwd, SwInfo);
@@ -4195,7 +4228,13 @@ bool Parser::ParseInClass(Cxx::Keyword kwd, Class* cls)
          if(GetTypedef(typeItem)) return cls->AddType(typeItem);
          break;
       case 'U':
-         if(GetUsing(usingItem)) return cls->AddUsing(usingItem);
+         if(GetUsing(usingItem, typeItem))
+         {
+            if(usingItem != nullptr)
+               return cls->AddUsing(usingItem);
+            else
+               return cls->AddType(typeItem);
+         }
          break;
       case '-':
          Debug::SwLog(Parser_ParseInClass, "unexpected keyword", kwd, SwInfo);
@@ -4271,7 +4310,13 @@ bool Parser::ParseInFile(Cxx::Keyword kwd, Namespace* space)
          if(GetTypedef(typeItem)) return space->AddType(typeItem);
          break;
       case 'U':
-         if(GetUsing(usingItem)) return space->AddUsing(usingItem);
+         if(GetUsing(usingItem, typeItem))
+         {
+            if(usingItem != nullptr)
+               return space->AddUsing(usingItem);
+            else
+               return space->AddType(typeItem);
+         }
          break;
       case '-':
          Debug::SwLog(Parser_ParseInFile, "unexpected keyword", kwd, SwInfo);

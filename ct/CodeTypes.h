@@ -42,6 +42,8 @@ extern NodeBase::fixed_string BREAK_STR;
 extern NodeBase::fixed_string CATCH_STR;
 extern NodeBase::fixed_string CASE_STR;
 extern NodeBase::fixed_string CHAR_STR;
+extern NodeBase::fixed_string CHAR16_STR;
+extern NodeBase::fixed_string CHAR32_STR;
 extern NodeBase::fixed_string CLASS_STR;
 extern NodeBase::fixed_string CONST_STR;
 extern NodeBase::fixed_string CONST_CAST_STR;
@@ -100,6 +102,7 @@ extern NodeBase::fixed_string UNSIGNED_STR;
 extern NodeBase::fixed_string USING_STR;
 extern NodeBase::fixed_string VIRTUAL_STR;
 extern NodeBase::fixed_string VOID_STR;
+extern NodeBase::fixed_string WCHAR_STR;
 extern NodeBase::fixed_string WHILE_STR;
 
 extern NodeBase::fixed_string DEFINED_STR;

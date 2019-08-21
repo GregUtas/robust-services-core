@@ -383,6 +383,8 @@ void CxxChar::Initialize()
 const Numeric Numeric::Nil(NIL, 0, F);
 const Numeric Numeric::Bool(INT, 1, F);
 const Numeric Numeric::Char(INT, sizeof(char) << 3, T);
+const Numeric Numeric::Char16(INT, sizeof(char16_t) << 3, F);
+const Numeric Numeric::Char32(INT, sizeof(char32_t) << 3, F);
 const Numeric Numeric::Double(FLOAT, sizeof(double) << 3, T);
 const Numeric Numeric::Enum(ENUM, sizeof(int) << 3, T);
 const Numeric Numeric::Float(FLOAT, sizeof(float) << 3, T);
@@ -397,6 +399,7 @@ const Numeric Numeric::uInt(INT, sizeof(int) << 3, F);
 const Numeric Numeric::uLong(INT, sizeof(long) << 3, F);
 const Numeric Numeric::uLongLong(INT, sizeof(long long) << 3, F);
 const Numeric Numeric::uShort(INT, sizeof(short) << 3, F);
+const Numeric Numeric::wChar(INT, sizeof(wchar_t) << 3, F);
 
 //------------------------------------------------------------------------------
 

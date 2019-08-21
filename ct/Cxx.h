@@ -173,6 +173,8 @@ namespace Cxx
       AUTO_TYPE,
       BOOL,
       CHAR,
+      CHAR16,
+      CHAR32,
       DOUBLE,
       FLOAT,
       INT,
@@ -182,6 +184,7 @@ namespace Cxx
       SIGNED,
       UNSIGNED,
       VOID,
+      WCHAR,
       NON_TYPE,  // a keyword that can erroneously be parsed as a type
       NIL_TYPE   // none of the above
    };
@@ -459,6 +462,8 @@ public:
    static const Numeric Nil;
    static const Numeric Bool;
    static const Numeric Char;
+   static const Numeric Char16;
+   static const Numeric Char32;
    static const Numeric Double;
    static const Numeric Enum;
    static const Numeric Float;
@@ -473,6 +478,7 @@ public:
    static const Numeric uLong;
    static const Numeric uLongLong;
    static const Numeric uShort;
+   static const Numeric wChar;
 private:
    //  The underlying type.
    //

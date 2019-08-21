@@ -52,6 +52,8 @@ fixed_string BREAK_STR            = "break";
 fixed_string CATCH_STR            = "catch";
 fixed_string CASE_STR             = "case";
 fixed_string CHAR_STR             = "char";
+fixed_string CHAR16_STR           = "char16_t";
+fixed_string CHAR32_STR           = "char32_t";
 fixed_string CLASS_STR            = "class";
 fixed_string CONST_STR            = "const";
 fixed_string CONST_CAST_STR       = "const_cast";
@@ -110,6 +112,7 @@ fixed_string UNSIGNED_STR         = "unsigned";
 fixed_string USING_STR            = "using";
 fixed_string VIRTUAL_STR          = "virtual";
 fixed_string VOID_STR             = "void";
+fixed_string WCHAR_STR            = "wchar_t";
 fixed_string WHILE_STR            = "while";
 
 fixed_string DEFINED_STR      = "defined";

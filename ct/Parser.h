@@ -62,7 +62,6 @@ namespace CodeTools
 //  reserved words:
 //    o asm, alignas, alignof, concept, decltype, export, goto, register,
 //      requires, static_assert, thread_local, volatile
-//    * char16_t, char32_t, wchar_t
 //    o and, and_eq, bitand, bitor, compl, not, not_eq, or, or_eq, xor, xor_eq
 //    * #undef, #line, #pragma (parsed but have no effect)
 //    o #if, #elif (the conditional that follows the directive is ignored)

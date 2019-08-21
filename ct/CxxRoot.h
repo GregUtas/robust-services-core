@@ -105,6 +105,8 @@ private:
    TerminalPtr auto_;
    TerminalPtr bool_;
    TerminalPtr char_;
+   TerminalPtr char16_;
+   TerminalPtr char32_;
    TerminalPtr double_;
    TerminalPtr float_;
    TerminalPtr int_;
@@ -120,6 +122,7 @@ private:
    TerminalPtr ulong_long_;
    TerminalPtr ushort_;
    TerminalPtr void_;
+   TerminalPtr wchar_;
    MacroPtrVector macros_;
 };
 }

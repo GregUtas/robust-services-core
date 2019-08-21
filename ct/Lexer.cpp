@@ -1592,6 +1592,8 @@ bool Lexer::Initialize()
    Types->insert(TypePair(AUTO_STR, Cxx::AUTO_TYPE));
    Types->insert(TypePair(BOOL_STR, Cxx::BOOL));
    Types->insert(TypePair(CHAR_STR, Cxx::CHAR));
+   Types->insert(TypePair(CHAR16_STR, Cxx::CHAR16));
+   Types->insert(TypePair(CHAR32_STR, Cxx::CHAR32));
    Types->insert(TypePair(DOUBLE_STR, Cxx::DOUBLE));
    Types->insert(TypePair(FLOAT_STR, Cxx::FLOAT));
    Types->insert(TypePair(INT_STR, Cxx::INT));
@@ -1601,6 +1603,7 @@ bool Lexer::Initialize()
    Types->insert(TypePair(SIGNED_STR, Cxx::SIGNED));
    Types->insert(TypePair(UNSIGNED_STR, Cxx::UNSIGNED));
    Types->insert(TypePair(VOID_STR, Cxx::VOID));
+   Types->insert(TypePair(WCHAR_STR, Cxx::WCHAR));
    Types->insert(TypePair(DELETE_STR, Cxx::NON_TYPE));
    Types->insert(TypePair(NEW_STR, Cxx::NON_TYPE));
    Types->insert(TypePair(THROW_STR, Cxx::NON_TYPE));

@@ -44,6 +44,11 @@ class CliStack : public Temporary
    friend std::unique_ptr< CliStack >::deleter_type;
    friend class CliThread;
 public:
+   //  Deleted to prohibit copying.
+   //
+   CliStack(const CliStack& that) = delete;
+   CliStack& operator=(const CliStack& that) = delete;
+
    //  Returns the increment on top of the stack.
    //
    CliIncrement* Top() const;
@@ -86,11 +91,6 @@ private:
    //  Not subclassed.  Only deleted by CliThread.
    //
    ~CliStack();
-
-   //  Deleted to prohibit copying.
-   //
-   CliStack(const CliStack& that) = delete;
-   CliStack& operator=(const CliStack& that) = delete;
 
    //  Adds the CLI's NbIncrement to the stack.
    //

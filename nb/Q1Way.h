@@ -65,6 +65,11 @@ public:
       Purge();
    }
 
+   //  Deleted to prohibit copying.
+   //
+   Q1Way(const Q1Way& that) = delete;
+   Q1Way& operator=(const Q1Way& that) = delete;
+
    //  Initializes the queue so that it can be used.
    //
    void Init(ptrdiff_t diff)
@@ -379,11 +384,6 @@ private:
          }
       }
    }
-
-   //  Deleted to prohibit copying.
-   //
-   Q1Way(const Q1Way& that) = delete;
-   Q1Way& operator=(const Q1Way& that) = delete;
 
    //  See the comment in Singleton.h about fn_name's in a template header.
    //

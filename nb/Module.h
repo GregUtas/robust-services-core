@@ -98,6 +98,11 @@ public:
    //
    static const ModuleId MaxId;
 
+   //  Deleted to prohibit copying.
+   //
+   Module(const Module& that) = delete;
+   Module& operator=(const Module& that) = delete;
+
    //  Returns the module's identifier.
    //
    ModuleId Mid() const { return mid_.GetId(); }
@@ -145,11 +150,6 @@ protected:
    //
    virtual ~Module();
 private:
-   //  Deleted to prohibit copying.
-   //
-   Module(const Module& that) = delete;
-   Module& operator=(const Module& that) = delete;
-
    //  The module's identifier.
    //
    RegCell mid_;

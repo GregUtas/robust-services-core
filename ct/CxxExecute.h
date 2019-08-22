@@ -589,6 +589,10 @@ class Context
 {
    friend class Parser;
 public:
+   //  Deleted because this class only has static members.
+   //
+   Context() = delete;
+
    //  Enters a scope.
    //
    static void PushScope(CxxScope* scope) { Frame_->PushScope(scope); }
@@ -747,11 +751,6 @@ public:
    //
    static bool Tracing;
 private:
-   //  Deleted because this class (basically a singleton) only has
-   //  static members.
-   //
-   Context() = delete;
-
    //  Pushes a parser onto the stack.
    //
    static void PushParser(const Parser* parser);

@@ -49,6 +49,11 @@ public:
    //
    virtual ~CliIncrement();
 
+   //  Deleted to prohibit copying.
+   //
+   CliIncrement(const CliIncrement& that) = delete;
+   CliIncrement& operator=(const CliIncrement& that) = delete;
+
    //  Used by the CLI to search for a command whose name matches TEXT.
    //
    CliCommand* FindCommand(const std::string& comm) const;
@@ -96,11 +101,6 @@ protected:
    //
    bool BindCommand(CliCommand& comm);
 private:
-   //  Deleted to prohibit copying.
-   //
-   CliIncrement(const CliIncrement& that) = delete;
-   CliIncrement& operator=(const CliIncrement& that) = delete;
-
    //  The increment's index in CliRegistry.
    //
    RegCell iid_;

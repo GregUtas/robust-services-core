@@ -52,6 +52,11 @@ public:
    //
    ~Q1Link();
 
+   //  Deleted to prohibit copying.
+   //
+   Q1Link(const Q1Link& that) = delete;
+   Q1Link& operator=(const Q1Link& that) = delete;
+
    //  Returns true if the item is on a queue.
    //
    bool IsQueued() const { return next != nullptr; }
@@ -60,11 +65,6 @@ public:
    //
    std::string to_str() const;
 private:
-   //  Deleted to prohibit copying.
-   //
-   Q1Link(const Q1Link& that) = delete;
-   Q1Link& operator=(const Q1Link& that) = delete;
-
    //  The next item in the queue.  Because Q1Way uses circular queues, a
    //  value of nullptr means that the item is not on a queue.
    //

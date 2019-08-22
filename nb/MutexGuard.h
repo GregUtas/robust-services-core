@@ -44,12 +44,12 @@ public:
    //  Releases the mutex.
    //
    ~MutexGuard();
-private:
+
    //  Deleted to prohibit copying.
    //
    MutexGuard(const MutexGuard& that) = delete;
    MutexGuard& operator=(const MutexGuard& that) = delete;
-
+private:
    //  The mutex.
    //
    SysMutex* mutex_;

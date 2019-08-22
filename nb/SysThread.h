@@ -97,6 +97,11 @@ private:
    //
    ~SysThread();
 
+   //  Deleted to prohibit copying.
+   //
+   SysThread(const SysThread& that) = delete;
+   SysThread& operator=(const SysThread& that) = delete;
+
    //  Used by the constructor to create an actual native thread.  ENTRY,
    //  CLIENT, and stackSize were passed to the constructor.  Updates NID
    //  to the new thread's native identifier.  Returns the thread's native
@@ -162,11 +167,6 @@ private:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
-
-   //  Deleted to prohibit copying.
-   //
-   SysThread(const SysThread& that) = delete;
-   SysThread& operator=(const SysThread& that) = delete;
 
    //  Reference to the native thread.
    //

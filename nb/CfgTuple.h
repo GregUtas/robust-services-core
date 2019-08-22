@@ -57,6 +57,11 @@ public:
    //
    ~CfgTuple();
 
+   //  Deleted to prohibit copying.
+   //
+   CfgTuple(const CfgTuple& that) = delete;
+   CfgTuple& operator=(const CfgTuple& that) = delete;
+
    //  Returns the tuple's key.
    //
    const std::string& Key() const { return key_; }
@@ -99,11 +104,6 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Deleted to prohibit copying.
-   //
-   CfgTuple(const CfgTuple& that) = delete;
-   CfgTuple& operator=(const CfgTuple& that) = delete;
-
    //  The name of the parameter associated with the tuple.
    //
    const std::string key_;  //r

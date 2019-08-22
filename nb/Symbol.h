@@ -47,6 +47,11 @@ public:
    //
    ~Symbol();
 
+   //  Deleted to prohibit copying.
+   //
+   Symbol(const Symbol& that) = delete;
+   Symbol& operator=(const Symbol& that) = delete;
+
    //  Returns a string containing the characters that are valid in a
    //  symbol name.
    //
@@ -87,11 +92,6 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Deleted to prohibit copying.
-   //
-   Symbol(const Symbol& that) = delete;
-   Symbol& operator=(const Symbol& that) = delete;
-
    //  The symbol's name.
    //
    const DynString name_;

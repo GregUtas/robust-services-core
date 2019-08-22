@@ -59,6 +59,11 @@ public:
       array_ = nullptr;
    }
 
+   //  Deleted to prohibit copying.
+   //
+   Array(const Array& that) = delete;
+   Array& operator=(const Array& that) = delete;
+
    //  Specifies that the array uses memory of type MEM and that it
    //  is limited to MAX elements.
    //
@@ -216,11 +221,6 @@ public:
    //
    T* Items() { return array_; }
 private:
-   //  Deleted to prohibit copying.
-   //
-   Array(const Array& that) = delete;
-   Array& operator=(const Array& that) = delete;
-
    //  Increases the size of the array, up to its maximum, when more space
    //  is needed.  MIN is the minimum number of elements to be supported.
    //

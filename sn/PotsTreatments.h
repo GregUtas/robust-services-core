@@ -78,6 +78,11 @@ public:
    //
    ~PotsTreatmentQueue();
 
+   //  Deleted to prohibit copying.
+   //
+   PotsTreatmentQueue(const PotsTreatmentQueue& that) = delete;
+   PotsTreatmentQueue& operator=(const PotsTreatmentQueue& that) = delete;
+
    //  Adds TREATMENT to the queue.
    //
    void BindTreatment(PotsTreatment& treatment);
@@ -103,11 +108,6 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
-   //  Deleted to prohibit copying.
-   //
-   PotsTreatmentQueue(const PotsTreatmentQueue& that) = delete;
-   PotsTreatmentQueue& operator=(const PotsTreatmentQueue& that) = delete;
-
    //  The queue's index in PotsTreatmentRegistry.
    //
    RegCell qid_;
@@ -127,6 +127,11 @@ public:
    //  Removes the treatment from its queue.  Virtual to allow subclassing.
    //
    virtual ~PotsTreatment();
+
+   //  Deleted to prohibit copying.
+   //
+   PotsTreatment(const PotsTreatment& that) = delete;
+   PotsTreatment& operator=(const PotsTreatment& that) = delete;
 
    //  Returns the treatment that follows this one in its queue.
    //
@@ -151,11 +156,6 @@ protected:
    //
    explicit PotsTreatment(PotsTreatmentQueue::QId qid);
 private:
-   //  Deleted to prohibit copying.
-   //
-   PotsTreatment(const PotsTreatment& that) = delete;
-   PotsTreatment& operator=(const PotsTreatment& that) = delete;
-
    //  The identifier of the PotsTreatmentQueue in which the treatment appears.
    //
    PotsTreatmentQueue::QId qid_;

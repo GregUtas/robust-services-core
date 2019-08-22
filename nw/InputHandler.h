@@ -58,6 +58,11 @@ public:
    //
    virtual ~InputHandler();
 
+   //  Deleted to prohibit copying.
+   //
+   InputHandler(const InputHandler& that) = delete;
+   InputHandler& operator=(const InputHandler& that) = delete;
+
    //  Returns the port that the handler serves.
    //
    IpPort* Port() const { return port_; }
@@ -148,11 +153,6 @@ protected:
    //
    explicit InputHandler(IpPort* port);
 private:
-   //  Deleted to prohibit copying.
-   //
-   InputHandler(const InputHandler& that) = delete;
-   InputHandler& operator=(const InputHandler& that) = delete;
-
    //  The port where the input handler is registered.
    //
    IpPort* port_;

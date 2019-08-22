@@ -47,6 +47,11 @@ public:
    //
    virtual ~Pooled() = default;
 
+   //  Deleted to prohibit copying.
+   //
+   Pooled(const Pooled& that) = delete;
+   Pooled& operator=(const Pooled& that) = delete;
+
    //  Returns true if the object is marked corrupt.
    //
    bool IsCorrupt() const { return corrupt_; }
@@ -87,20 +92,15 @@ public:
    //  Overridden to return a block to its object pool.
    //
    static void operator delete(void* addr);
+
+   //  Deleted to prohibit array allocation.
+   //
+   static void* operator new[](size_t size, MemoryType type) = delete;
 protected:
    //  Protected because this class is virtual.
    //
    Pooled();
 private:
-   //  Delete vector operator new to prohibit array allocation.
-   //
-   static void* operator new[](size_t size, MemoryType type) = delete;
-
-   //  Deleted to prohibit copying.
-   //
-   Pooled(const Pooled& that) = delete;
-   Pooled& operator=(const Pooled& that) = delete;
-
    //  Link for queueing the object.
    //
    Q1Link link_;

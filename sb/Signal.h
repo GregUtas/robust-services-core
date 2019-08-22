@@ -53,6 +53,11 @@ public:
    //
    static const Id MaxId = 63;
 
+   //  Deleted to prohibit copying.
+   //
+   Signal(const Signal& that) = delete;
+   Signal& operator=(const Signal& that) = delete;
+
    //  Returns true if SID is a valid signal identifier.
    //
    static bool IsValidId(Id sid)
@@ -106,11 +111,6 @@ protected:
    //
    virtual ~Signal();
 private:
-   //  Deleted to prohibit copying.
-   //
-   Signal(const Signal& that) = delete;
-   Signal& operator=(const Signal& that) = delete;
-
    //  The protocol to which the signal belongs.
    //
    const ProtocolId prid_;

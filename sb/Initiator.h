@@ -51,6 +51,11 @@ public:
    //
    typedef uint8_t Priority;
 
+   //  Deleted to prohibit copying.
+   //
+   Initiator(const Initiator& that) = delete;
+   Initiator& operator=(const Initiator& that) = delete;
+
    //  Returns the service associated with the initiator.
    //
    ServiceId Sid() const { return sid_; }
@@ -90,11 +95,6 @@ protected:
    //
    virtual ~Initiator();
 private:
-   //  Deleted to prohibit copying.
-   //
-   Initiator(const Initiator& that) = delete;
-   Initiator& operator=(const Initiator& that) = delete;
-
    //  The initiator's event handler, which receives either an SAP or SNP,
    //  depending on the trigger with which it has registered.  It can either
    //  pass currEvent onwards or create an InitiationReqEvent and return it in

@@ -39,6 +39,10 @@ namespace NodeBase
 class Exception : public std::exception
 {
 public:
+   //  Deleted to prohibit assignment.
+   //
+   Exception& operator=(const Exception& that) = delete;
+
    //  Outputs information about the exception in STREAM.  INDENT specifies
    //  how far to indent the output.  The implementation provided here does
    //  nothing because the call stack is output separately.
@@ -64,10 +68,6 @@ protected:
    //  Protected to restrict deletion.  Virtual to allow subclassing.
    //
    virtual ~Exception() noexcept;
-
-   //  Deleted to prohibit assignment.
-   //
-   Exception& operator=(const Exception& that) = delete;
 
    //  Overridden so that Thread::Start can catch this exception.  Subclasses
    //  should override this implementation.

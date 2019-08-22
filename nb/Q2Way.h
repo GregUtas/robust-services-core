@@ -68,6 +68,11 @@ public:
       head_.next = nullptr;              // expected by Q2Link destructor
    }
 
+   //  Deleted to prohibit copying.
+   //
+   Q2Way(const Q2Way& that) = delete;
+   Q2Way& operator=(const Q2Way& that) = delete;
+
    //  Initializes the queue so that it is ready for use.
    //
    void Init(ptrdiff_t diff)
@@ -353,11 +358,6 @@ private:
          }
       }
    }
-
-   //  Deleted to prohibit copying.
-   //
-   Q2Way(const Q2Way& that) = delete;
-   Q2Way& operator=(const Q2Way& that) = delete;
 
    //  See the comment in Singleton.h about fn_name's in a template header.
    //

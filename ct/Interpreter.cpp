@@ -41,6 +41,11 @@ namespace CodeTools
 //
 struct OperatorInfo
 {
+   //  Define the copy operator to suppress the compiler warning caused
+   //  by our const string member.
+   //
+   OperatorInfo& operator=(const OperatorInfo& that) = delete;
+
    //  If OP is a valid operator, updates TYPE and returns true,
    //  else returns false.
    //
@@ -79,11 +84,6 @@ private:
    //
    OperatorInfo(const string& sym, int args, LibSetType lhs,
       LibSetType rhs1, LibSetType rhs2);
-
-   //  Define the copy operator to suppress the compiler warning caused
-   //  by our const string member.
-   //
-   OperatorInfo& operator=(const OperatorInfo& that) = delete;
 };
 
 //------------------------------------------------------------------------------

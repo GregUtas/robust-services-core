@@ -59,6 +59,11 @@ public:
    //
    ~BotTrace();
 
+   //  Deleted to prohibit copying.
+   //
+   BotTrace(const BotTrace& that) = delete;
+   BotTrace& operator=(const BotTrace& that) = delete;
+
    //  Returns the message's header.
    //
    DipHeader* Header() const;
@@ -78,11 +83,6 @@ private:
    //  Overridden to nullify the record if buff_ will vanish.
    //
    void Shutdown(RestartLevel level) override;
-
-   //  Deleted to prohibit copying.
-   //
-   BotTrace(const BotTrace& that) = delete;
-   BotTrace& operator=(const BotTrace& that) = delete;
 
    //  A clone of the buffer being captured.
    //

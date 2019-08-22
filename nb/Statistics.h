@@ -51,6 +51,11 @@ public:
    //
    virtual ~Statistic();
 
+   //  Deleted to prohibit copying.
+   //
+   Statistic(const Statistic& that) = delete;
+   Statistic& operator=(const Statistic& that) = delete;
+
    //  Returns the value during the current measurement period.
    //
    size_t Curr() const { return curr_; }
@@ -102,11 +107,6 @@ protected:
    //
    size_t divisor_;
 private:
-   //  Deleted to prohibit copying.
-   //
-   Statistic(const Statistic& that) = delete;
-   Statistic& operator=(const Statistic& that) = delete;
-
    //  Invoked at regular intervals to start a new measurement period.
    //  If FIRST is true, previous values in total_ are discarded.  The
    //  default version adds curr_ to total_, sets prev_ to curr_, and

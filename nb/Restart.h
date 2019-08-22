@@ -65,6 +65,10 @@ class Restart
 {
    friend class ModuleRegistry;
 public:
+   //  Deleted because this class only has static members.
+   //
+   Restart() = delete;
+
    //  Returns the system's initialization status.
    //
    static RestartStatus GetStatus() { return Status_; }
@@ -79,10 +83,6 @@ public:
    //
    static void Initiate(reinit_t reason, debug32_t errval);
 private:
-   //  Deleted because this class only has static members.
-   //
-   Restart() = delete;
-
    //  The state of system initialization or shutdown.
    //
    static RestartStatus Status_;

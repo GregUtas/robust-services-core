@@ -225,13 +225,13 @@ public:
    static const Ind NextInd        = 4;  // next available indicator
    static const Ind MaxInd         = UINT8_MAX;
 
-   //  Allow subclasses to define application-specific service indicators.
-   //
-   virtual ~Facility() = default;
-private:
    //  Deleted because this class is not intended to be instantiated.
    //
    Facility() = delete;
+
+   //  Allow subclasses to define application-specific service indicators.
+   //
+   virtual ~Facility() = default;
 };
 
 //------------------------------------------------------------------------------

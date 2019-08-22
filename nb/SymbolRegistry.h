@@ -44,6 +44,11 @@ class SymbolRegistry : public Dynamic
 {
    friend class Singleton< SymbolRegistry >;
 public:
+   //  Deleted to prohibit copying.
+   //
+   SymbolRegistry(const SymbolRegistry& that) = delete;
+   SymbolRegistry& operator=(const SymbolRegistry& that) = delete;
+
    //  Creates or finds the record for the symbol identified by NAME and
    //  sets its value to VALUE, locking it if LOCK is set.  Returns false
    //  if the symbol is locked to a different value.
@@ -84,11 +89,6 @@ private:
    //  Private because this singleton is not subclassed.
    //
    ~SymbolRegistry();
-
-   //  Deleted to prohibit copying.
-   //
-   SymbolRegistry(const SymbolRegistry& that) = delete;
-   SymbolRegistry& operator=(const SymbolRegistry& that) = delete;
 
    //> The maximum number of symbols allowed in symbolq_.
    //

@@ -182,6 +182,11 @@ protected:
    //
    virtual ~SysSocket();
 
+   //  Deleted to prohibit copying.
+   //
+   SysSocket(const SysSocket& that) = delete;
+   SysSocket& operator=(const SysSocket& that) = delete;
+
    //  Returns the native socket.
    //
    NodeBase::SysSocket_t Socket() const { return socket_; }
@@ -193,11 +198,6 @@ protected:
    NodeBase::word SetError();
    NodeBase::word SetError(NodeBase::word errval);
 private:
-   //  Deleted to prohibit copying.
-   //
-   SysSocket(const SysSocket& that) = delete;
-   SysSocket& operator=(const SysSocket& that) = delete;
-
    //  Updates the network alarm when the network goes down or comes back up.
    //  ERR is included in the alarm log when OK is false.
    //

@@ -47,6 +47,11 @@ public:
    //
    static const Id MaxId;
 
+   //  Deleted to prohibit copying.
+   //
+   State(const State& that) = delete;
+   State& operator=(const State& that) = delete;
+
    //  Returns the state's identifier.
    //
    Id Stid() const { return Id(stid_.GetId()); }
@@ -101,11 +106,6 @@ protected:
    //
    bool BindMsgAnalyzer(EventHandlerId ehid, ServicePortId pid);
 private:
-   //  Deleted to prohibit copying.
-   //
-   State(const State& that) = delete;
-   State& operator=(const State& that) = delete;
-
    //  The state's identifier.
    //
    NodeBase::RegCell stid_;

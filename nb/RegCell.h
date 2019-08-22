@@ -54,6 +54,11 @@ public:
    //
    ~RegCell();
 
+   //  Deleted to prohibit copying.
+   //
+   RegCell(const RegCell& that) = delete;
+   RegCell& operator=(const RegCell& that) = delete;
+
    //  Before an object is registered, this function allow its index within
    //  the registry (and therefore its identifier) to be specified.  This is
    //  important for an object whose identifier must be fixed (because it is
@@ -69,11 +74,6 @@ public:
    //
    std::string to_str() const;
 private:
-   //  Deleted to prohibit copying.
-   //
-   RegCell(const RegCell& that) = delete;
-   RegCell& operator=(const RegCell& that) = delete;
-
    //  The object's index (identifier) within the registry's array.
    //
    id_t id;

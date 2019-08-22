@@ -80,6 +80,11 @@ public:
    //
    static const PooledObjectSeqNo MaxSeqNo = UINT8_MAX;
 
+   //  Deleted to prohibit copying.
+   //
+   ObjectPool(const ObjectPool& that) = delete;
+   ObjectPool& operator=(const ObjectPool& that) = delete;
+
    //  Returns the pool's name.
    //
    const std::string& Name() const { return name_; }
@@ -255,11 +260,6 @@ private:
    //  Accesses the header that resides above OBJ.
    //
    static ObjectBlock* ObjToBlock(const Pooled* obj);
-
-   //  Deleted to prohibit copying.
-   //
-   ObjectPool(const ObjectPool& that) = delete;
-   ObjectPool& operator=(const ObjectPool& that) = delete;
 
    //  The pool's identifier.
    //

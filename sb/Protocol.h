@@ -64,6 +64,11 @@ public:
    //
    static const Id MaxId = UINT8_MAX;
 
+   //  Deleted to prohibit copying.
+   //
+   Protocol(const Protocol& that) = delete;
+   Protocol& operator=(const Protocol& that) = delete;
+
    //  Returns true if PRID1 understands PRID2 (that is, if PRID1 = PRID2
    //  or PRID2 is a base for PRID1).
    //
@@ -129,11 +134,6 @@ protected:
    //
    virtual ~Protocol();
 private:
-   //  Deleted to prohibit copying.
-   //
-   Protocol(const Protocol& that) = delete;
-   Protocol& operator=(const Protocol& that) = delete;
-
    //  Adds SIGNAL to the protocol.  Invoked by Signal's base class
    //  constructor.
    //

@@ -66,6 +66,11 @@ public:
    //
    ~FunctionProfiler();
 
+   //  Deleted to prohibit copying.
+   //
+   FunctionProfiler(const FunctionProfiler& that) = delete;
+   FunctionProfiler& operator=(const FunctionProfiler& that) = delete;
+
    //  Builds the report and invokes Output.
    //
    TraceRc Generate(std::ostream& stream, Sort sort);
@@ -86,11 +91,6 @@ private:
    //  Outputs the FunctionStats records after sorting them based on SORT.
    //
    TraceRc Show(std::ostream& stream, Sort sort);
-
-   //  Deleted to prohibit copying.
-   //
-   FunctionProfiler(const FunctionProfiler& that) = delete;
-   FunctionProfiler& operator=(const FunctionProfiler& that) = delete;
 
    //  The size (log2) of the functionq_ array.
    //

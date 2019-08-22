@@ -81,6 +81,11 @@ public:
       ContextCorrupt        // message rejected because context was corrupt
    };
 
+   //  Deleted to prohibit copying.
+   //
+   Factory(const Factory& that) = delete;
+   Factory& operator=(const Factory& that) = delete;
+
    //  Returns the factory's identifier.
    //
    Id Fid() const { return Id(fid_.GetId()); }
@@ -238,11 +243,6 @@ protected:
    //
    void RecordDeletion(bool context) const;
 private:
-   //  Deleted to prohibit copying.
-   //
-   Factory(const Factory& that) = delete;
-   Factory& operator=(const Factory& that) = delete;
-
    //  Allocates an incoming message to wrap BUFF and returns it in MSG.
    //  Returning nullptr indicates that BUFF should be discarded, either
    //  because it is invalid or because message allocation failed.  Must

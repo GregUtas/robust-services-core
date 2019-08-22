@@ -47,6 +47,11 @@ public:
    //
    static const NodeBase::id_t MaxId;
 
+   //  Deleted to prohibit copying.
+   //
+   IpService(const IpService& that) = delete;
+   IpService& operator=(const IpService& that) = delete;
+
    //  Returns a string that identifies the service for display purposes.
    //
    virtual NodeBase::c_string Name() const = 0;
@@ -131,11 +136,6 @@ protected:
    //
    virtual ~IpService();
 private:
-   //  Deleted to prohibit copying.
-   //
-   IpService(const IpService& that) = delete;
-   IpService& operator=(const IpService& that) = delete;
-
    //  Creates an InputHandler that will host the service on PORT.
    //
    virtual InputHandler* CreateHandler(IpPort* port) const = 0;

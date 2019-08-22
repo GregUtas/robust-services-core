@@ -32,14 +32,14 @@ namespace NodeBase
 class SysSignals
 {
 public:
-   //  Creates native signals during system initialization.
-   //
-   static void CreateNativeSignals();
-private:
    //  Deleted because this class only has static members.
    //
    SysSignals() = delete;
 
+   //  Creates native signals during system initialization.
+   //
+   static void CreateNativeSignals();
+private:
    //  Standard signals.  CreateNativeSignals instantiates a singleton for each
    //  one that this platform supports.  Other signals also exist, but their use
    //  in a server is either dubious or unlikely to be required.

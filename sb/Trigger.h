@@ -67,6 +67,11 @@ public:
    //
    static const Id MaxId = INT8_MAX;
 
+   //  Deleted to prohibit copying.
+   //
+   Trigger(const Trigger& that) = delete;
+   Trigger& operator=(const Trigger& that) = delete;
+
    //  Returns true if TID is a valid trigger identifier.
    //
    static bool IsValidId(Id tid)
@@ -105,11 +110,6 @@ private:
    //  by Initiator's base class destructor.  Private to restrict usage.
    //
    void UnbindInitiator(Initiator& init);
-
-   //  Deleted to prohibit copying.
-   //
-   Trigger(const Trigger& that) = delete;
-   Trigger& operator=(const Trigger& that) = delete;
 
    //  The identifier for this trigger.
    //

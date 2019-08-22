@@ -61,6 +61,11 @@ public:
    //
    explicit PotsProfile(DN dn);
 
+   //  Deleted to prohibit copying.
+   //
+   PotsProfile(const PotsProfile& that) = delete;
+   PotsProfile& operator=(const PotsProfile& that) = delete;
+
    //  Returns the profile's DN.
    //
    DN GetDN() const { return IndexToDN(dn_.GetId()); }
@@ -146,11 +151,6 @@ protected:
    //
    virtual ~PotsProfile();
 private:
-   //  Deleted to prohibit copying.
-   //
-   PotsProfile(const PotsProfile& that) = delete;
-   PotsProfile& operator=(const PotsProfile& that) = delete;
-
    //  The profile's directory number.
    //
    RegCell dn_;

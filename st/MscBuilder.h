@@ -85,6 +85,11 @@ public:
    //
    ~MscBuilder();
 
+   //  Deleted to prohibit copying.
+   //
+   MscBuilder(const MscBuilder& that) = delete;
+   MscBuilder& operator=(const MscBuilder& that) = delete;
+
    //  Builds the MSCs.
    //
    TraceRc Generate(std::ostream& stream);
@@ -229,11 +234,6 @@ private:
    //  indicate where the error occurred.  Returns false.
    //
    bool Error(debug64_t errval, debug32_t offset);
-
-   //  Deleted to prohibit copying.
-   //
-   MscBuilder(const MscBuilder& that) = delete;
-   MscBuilder& operator=(const MscBuilder& that) = delete;
 
    //  Set if internal data structures are to be displayed.
    //

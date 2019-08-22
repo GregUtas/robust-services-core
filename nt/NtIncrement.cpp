@@ -1222,14 +1222,14 @@ class Q1WayItem : public Temporary
 public:
    explicit Q1WayItem(word index);
    ~Q1WayItem();
+   Q1WayItem(const Q1WayItem& that) = delete;
+   Q1WayItem& operator=(const Q1WayItem& that) = delete;
    void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
    static ptrdiff_t LinkDiff();
 
    const id_t index_;
 private:
-   Q1WayItem(const Q1WayItem& that) = delete;
-   Q1WayItem& operator=(const Q1WayItem& that) = delete;
    Q1Link link_;
 };
 
@@ -1734,14 +1734,14 @@ class Q2WayItem : public Temporary
 public:
    explicit Q2WayItem(word index);
    ~Q2WayItem();
+   Q2WayItem(const Q2WayItem& that) = delete;
+   Q2WayItem& operator=(const Q2WayItem& that) = delete;
    void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
    static ptrdiff_t LinkDiff();
 
    const id_t index_;
 private:
-   Q2WayItem(const Q2WayItem& that) = delete;
-   Q2WayItem& operator=(const Q2WayItem& that) = delete;
    Q2Link link_;
 };
 
@@ -2300,14 +2300,14 @@ class RegistryItem : public Temporary
 public:
    explicit RegistryItem(word index);
    ~RegistryItem();
+   RegistryItem(const RegistryItem& that) = delete;
+   RegistryItem& operator=(const RegistryItem& that) = delete;
    void Display(ostream& stream,
       const string& prefix, const Flags& options) const override;
    static ptrdiff_t CellDiff();
 
    RegCell rid_;
 private:
-   RegistryItem(const RegistryItem& that) = delete;
-   RegistryItem& operator=(const RegistryItem& that) = delete;
    const id_t index_;
 };
 

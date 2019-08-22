@@ -75,6 +75,11 @@ public:
    //
    static fixed_string NoneSelected;
 
+   //  Deleted to prohibit copying.
+   //
+   TraceBuffer(const TraceBuffer& that) = delete;
+   TraceBuffer& operator=(const TraceBuffer& that) = delete;
+
    //  Enables or disables the tool identified by TID based on VALUE.
    //
    TraceRc SetTool(FlagId tid, bool value);
@@ -243,11 +248,6 @@ private:
    //  Private because this singleton is not subclassed.
    //
    ~TraceBuffer();
-
-   //  Deleted to prohibit copying.
-   //
-   TraceBuffer(const TraceBuffer& that) = delete;
-   TraceBuffer& operator=(const TraceBuffer& that) = delete;
 
    //  A tuple containing a function's name and how many times it was invoked.
    //

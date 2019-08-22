@@ -58,6 +58,10 @@ class Debug
    friend class ThreadAdmin;
    friend class TraceBuffer;
 public:
+   //  Deleted because this class only has static members.
+   //
+   Debug() = delete;
+
    //  Any function that wishes to be included in a function trace must call
    //  Debug::ft(ClassName_FunctionName) as its first line of code, where the
    //  argument is defined as
@@ -138,10 +142,6 @@ private:
       TrapPending,    // set when a Raise() is pending on any thread
       StackChecking   // set when stack overflow prevention is active
    };
-
-   //  Deleted because this class only has static members.
-   //
-   Debug() = delete;
 
    //  Used by the various versions of SwLog.
    //

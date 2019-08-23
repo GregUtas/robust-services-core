@@ -1087,17 +1087,24 @@ Function* Class::FindCtor
 {
    Debug::ft(Class_FindCtor);
 
-   //  If no arguments were provided, look for any constructor.
+   //  If no arguments were provided, look for the default constructor.
+   //  If there isn't one, return the first constructor (if any).
    //
    if(args == nullptr)
    {
+      Function* ctor = nullptr;
       auto funcs = CxxArea::Funcs();
-      for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
+
+      for(auto f = funcs->begin(); f != funcs->end(); ++f)
       {
-         if((*f)->FuncType() == FuncCtor) return f->get();
+         if((*f)->FuncType() == FuncCtor)
+         {
+            ctor = f->get();
+            if((*f)->GetArgs().size() == 1) return f->get();  //*
+         }
       }
 
-      return nullptr;
+      return ctor;
    }
 
    //  If no "this" argument was provided, insert one.

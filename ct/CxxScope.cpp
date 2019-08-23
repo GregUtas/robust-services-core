@@ -2266,8 +2266,13 @@ void Function::CheckAccessControl() const
 
    if(defn_) return Debug::SwLog(Function_CheckAccessControl, "defn", 0);
 
-   //  Do not check the access control of destructors.  If this is an override,
-   //  do not suggest a more restricted access control unless the function has
+   //  Checking the access control of a deleted function causes a "coulde be
+   //  private" recommendation.
+   //
+   if(deleted_) return;
+
+   //  Don't check the access control of destructors.  If this is an override,
+   //  don't suggest a more restricted access control unless the function has
    //  a broader access control than the root function.
    //
    auto type = FuncType();

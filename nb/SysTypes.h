@@ -136,6 +136,7 @@ typedef uint8_t col_t;
 constexpr char APOSTROPHE = '\'';
 constexpr char BACKSLASH = '\\';
 constexpr char CRLF = '\n';
+constexpr char NUL = '\0';
 constexpr char PATH_SEPARATOR = '/';
 constexpr char QUOTE = '"';
 constexpr char SPACE = ' ';

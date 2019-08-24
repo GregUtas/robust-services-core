@@ -84,7 +84,7 @@ public:
    //  Displays PROMPT, followed by CHARS, and loops until the user enters a
    //  character in CHARS, which is returned.  Converts upper to lower case
    //  unless UPPER is set.  Returns the first character in CHARS if commands
-   //  are being read from a file rather than the console.  Returns '\0' on
+   //  are being read from a file rather than the console.  Returns NUL on
    //  an error, such as CHARS being empty.  Displays HELP if the user enters
    //  invalid input.
    //

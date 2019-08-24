@@ -573,7 +573,7 @@ std::streamsize CliBuffer::PutLine(const CliThread& cli, const string& input)
    size_ = input.size();
    if(size_ <= 0) return StreamEmpty;
    for(auto i = 0; i < size_; ++i) buff_[i] = input[i];
-   buff_[size_] = '\0';
+   buff_[size_] = NUL;
    CoutThread::Spool(input.c_str(), true);
    return ScanLine(cli);
 }

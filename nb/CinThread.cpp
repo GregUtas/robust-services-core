@@ -47,7 +47,7 @@ CinThread::CinThread() : Thread(BackgroundFaction),
 {
    Debug::ft(CinThread_ctor);
 
-   buff_[0] = '\0';
+   buff_[0] = NUL;
 }
 
 //------------------------------------------------------------------------------
@@ -176,9 +176,9 @@ std::streamsize CinThread::GetLine(char* buff, std::streamsize capacity)
    //
    auto n = std::min(server->size_, capacity - 1);
    Memory::Copy(buff, server->buff_, n);
-   buff[n] = '\0';
+   buff[n] = NUL;
 
-   server->buff_[0] = '\0';
+   server->buff_[0] = NUL;
    server->size_ = 0;
    server->client_ = nullptr;
    server->Interrupt();

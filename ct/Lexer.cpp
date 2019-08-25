@@ -638,15 +638,79 @@ bool Lexer::GetAccess(Cxx::Access& access)
 
 fn_name Lexer_GetChar = "Lexer.GetChar";
 
-bool Lexer::GetChar(char& c)
+bool Lexer::GetChar(uint32_t& c)
 {
    Debug::ft(Lexer_GetChar);
 
    if(curr_ >= size_) return false;
-   auto end = SkipCharLiteral(curr_);
-   if(end == string::npos) return false;
-   c = source_->at(end - 1);
-   return Reposition(end + 1);
+   c = source_->at(curr_);
+   ++curr_;
+
+   if(c == BACKSLASH)
+   {
+      //  This is an escape sequence.  The next character is
+      //  taken verbatim unless it has a special meaning.
+      //
+      int64_t n;
+
+      if(curr_ >= size_) return false;
+      c = source_->at(curr_);
+
+      switch(c)
+      {
+      case '0':
+      case '1':
+         //
+         //  This is the character's octal value.
+         //
+         GetOct(n);
+         c = n;
+         break;
+      case 'U':  // 8 bytes
+      case 'u':  // 4 bytes
+      case 'x':  // 2 bytes
+         //
+         //  This is the character's hex value.
+         //
+         ++curr_;
+         if(curr_ >= size_) return false;
+         GetHexNum(n);
+         c = n;
+         break;
+      case 'a':
+         c = 0x07;  // bell
+         ++curr_;
+         break;
+      case 'b':
+         c = 0x08;  // backspace
+         ++curr_;
+         break;
+      case 'f':
+         c = 0x0c;  // form feed
+         ++curr_;
+         break;
+      case 'n':
+         c = 0x0a;  // line feed
+         ++curr_;
+         break;
+      case 'r':
+         c = 0x0d;  // carriage return
+         ++curr_;
+         break;
+      case 't':
+         c = 0x09;  // horizontal tab
+         ++curr_;
+         break;
+      case 'v':
+         c = 0x0b;  // vertical tab
+         ++curr_;
+         break;
+      default:
+         ++curr_;
+      }
+   }
+
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -840,24 +904,35 @@ size_t Lexer::GetHex(int64_t& num)
    //
    if(ThisCharIs('x') || ThisCharIs('X'))
    {
-      size_t count = 0;
-      num = 0;
-
-      while(curr_ < size_)
-      {
-         auto c = source_->at(curr_);
-         auto value = CxxChar::Attrs[c].hexValue;
-         if(value < 0) return count;
-         ++count;
-         num <<= 4;
-         num += value;
-         ++curr_;
-      }
-
-      return count;
+      return GetHexNum(num);
    }
 
    return 0;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Lexer_GetHexNum = "Lexer.GetHexNum";
+
+size_t Lexer::GetHexNum(int64_t& num)
+{
+   Debug::ft(Lexer_GetHexNum);
+
+   size_t count = 0;
+   num = 0;
+
+   while(curr_ < size_)
+   {
+      auto c = source_->at(curr_);
+      auto value = CxxChar::Attrs[c].hexValue;
+      if(value < 0) return count;
+      ++count;
+      num <<= 4;
+      num += value;
+      ++curr_;
+   }
+
+   return count;
 }
 
 //------------------------------------------------------------------------------
@@ -1375,23 +1450,6 @@ Cxx::Operator Lexer::GetReserved(const string& name)
 
 //------------------------------------------------------------------------------
 
-fn_name Lexer_GetStr = "Lexer.GetStr";
-
-bool Lexer::GetStr(string& s)
-{
-   Debug::ft(Lexer_GetStr);
-
-   auto frag = false;
-   auto end = SkipStrLiteral(curr_, frag);
-   if(end == string::npos) return false;
-   ++curr_;
-   s = source_->substr(curr_, end - curr_);
-   if(frag) Concatenate(s);
-   return Reposition(end + 1);
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Lexer_GetTemplateSpec = "Lexer.GetTemplateSpec";
 
 bool Lexer::GetTemplateSpec(string& spec)
@@ -1809,7 +1867,7 @@ size_t Lexer::NextPos(size_t pos) const
          //  See if this is a continuation of the current line.
          //
          if(++pos >= size_) return string::npos;
-         if(source_->at(pos) != CRLF) return string::npos;
+         if(source_->at(pos) != CRLF) return pos - 1;
          ++pos;
          break;
 
@@ -2059,7 +2117,7 @@ size_t Lexer::SkipStrLiteral(size_t pos, bool& fragmented) const
       switch(c)
       {
       case QUOTE:
-         next = source_->find_first_not_of(WhitespaceChars, pos + 1);
+         next = NextPos(pos + 1);
          if(next == string::npos) return pos;
          if(source_->at(next) != QUOTE) return pos;
          fragmented = true;

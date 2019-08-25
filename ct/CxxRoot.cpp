@@ -33,7 +33,7 @@
 #include "Cxx.h"
 #include "CxxExecute.h"
 #include "CxxString.h"
-#include "CxxToken.h"
+#include "CxxStrLiteral.h"
 #include "Debug.h"
 #include "Parser.h"
 #include "Singleton.h"

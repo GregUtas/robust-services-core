@@ -10,7 +10,7 @@
 
 namespace std
 {
-   template< typename N > class bitset
+   template< size_t N > class bitset
    {
    public:
       bitset();
@@ -45,11 +45,11 @@ namespace std
       unsigned long to_ulong() const;
    };
 
-   template< typename T > bitset< T > operator&
+   template< size_t T > bitset< T > operator&
       (const bitset< T >& lhs, const bitset< T >& rhs);
-   template< typename T > bitset< T > operator^
+   template< size_t T > bitset< T > operator^
       (const bitset< T >& lhs, const bitset< T >& rhs);
-   template< typename T > bitset< T > operator|
+   template< size_t T > bitset< T > operator|
       (const bitset< T >& lhs, const bitset< T >& rhs);
 }
 

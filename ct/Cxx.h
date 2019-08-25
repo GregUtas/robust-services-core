@@ -200,6 +200,10 @@ namespace Cxx
       ClassTag_N
    };
 
+   //  Inserts a string for TAG into STREAM.
+   //
+   std::ostream& operator<<(std::ostream& stream, ClassTag tag);
+
    //  Access control.
    //
    enum Access
@@ -209,6 +213,26 @@ namespace Cxx
       Public,
       Access_N
    };
+
+   //  Inserts a string for ACCESS into STREAM.
+   //
+   std::ostream& operator<<(std::ostream& stream, Access access);
+
+   //  Character encodings.
+   //
+   enum Encoding
+   {
+      ASCII,
+      U8,
+      U16,
+      U32,
+      WIDE,
+      Encoding_N
+   };
+
+   //  Inserts a string for CODE into STREAM.
+   //
+   std::ostream& operator<<(std::ostream& stream, Encoding code);
 
    //  The maximum number of pointers that can be attached to a type.
    //
@@ -242,15 +266,15 @@ namespace Cxx
       Operation,
       Elision
    };
-
-   //  Inserts a string for ACCESS into STREAM.
-   //
-   std::ostream& operator<<(std::ostream& stream, Access access);
-
-   //  Inserts a string for TAG into STREAM.
-   //
-   std::ostream& operator<<(std::ostream& stream, ClassTag tag);
 }
+
+//------------------------------------------------------------------------------
+//
+//  Returns a string for displaying the character C.  Returns an escape sequence
+//  if C is not a displayable ASCII character.  S is set if C appeared within a
+//  string literal, else C appeared within a character literal.
+//
+std::string CharString(uint32_t c, bool s);
 
 //------------------------------------------------------------------------------
 //
@@ -258,6 +282,11 @@ namespace Cxx
 //
 struct CxxWord
 {
+   //  Define the copy operator to suppress the compiler warning caused
+   //  by our const string member.
+   //
+   CxxWord& operator=(const CxxWord& that) = delete;
+
    //  What to look for when a particular keyword is found at file scope,
    //  in a class, and in a function, respectively:
    //      A (access control)   b (break)
@@ -291,11 +320,6 @@ private:
    //
    CxxWord(const std::string& file,
       const std::string& cls, const std::string& func, bool adv);
-
-   //  Define the copy operator to suppress the compiler warning caused
-   //  by our const string member.
-   //
-   CxxWord& operator=(const CxxWord& that) = delete;
 };
 
 //------------------------------------------------------------------------------
@@ -347,6 +371,11 @@ struct CxxChar
 //
 struct CxxOp
 {
+   //  Define the copy operator to suppress the compiler warning caused
+   //  by our const string member.
+   //
+   CxxOp& operator=(const CxxOp& that) = delete;
+
    //  OPER was selected before the number of arguments was known.  Now
    //  that the number is known, verify that it is correct, updating it
    //  if it was ambiguous before ARGS was known.
@@ -405,11 +434,6 @@ private:
    //
    CxxOp(const std::string& sym, size_t args,
       size_t prio, bool over, bool push, bool symm);
-
-   //  Define the copy operator to suppress the compiler warning caused
-   //  by our const string member.
-   //
-   CxxOp& operator=(const CxxOp& that) = delete;
 };
 
 //------------------------------------------------------------------------------
@@ -500,6 +524,11 @@ private:
 class CxxStats
 {
 public:
+   //  Define the copy operator to suppress the compiler warning caused
+   //  by our const string member.
+   //
+   CxxStats& operator=(const CxxStats& that) = delete;
+
    //  The classes whose memory usage is tracked.
    //
    enum Item
@@ -596,11 +625,6 @@ private:
    //  Constructs an entry with the specified attributes.
    //
    CxxStats(const std::string& item, size_t bytes);
-
-   //  Define the copy operator to suppress the compiler warning caused
-   //  by our const string member.
-   //
-   CxxStats& operator=(const CxxStats& that) = delete;
 
    //  The item's name.
    //

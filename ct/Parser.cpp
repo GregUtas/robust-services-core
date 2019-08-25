@@ -28,6 +28,7 @@
 #include <utility>
 #include "CodeFile.h"
 #include "CxxArea.h"
+#include "CxxCharLiteral.h"
 #include "CxxDirective.h"
 #include "CxxExecute.h"
 #include "CxxNamed.h"
@@ -35,6 +36,7 @@
 #include "CxxScope.h"
 #include "CxxScoped.h"
 #include "CxxStatement.h"
+#include "CxxStrLiteral.h"
 #include "CxxSymbols.h"
 #include "CxxToken.h"
 #include "Debug.h"
@@ -202,6 +204,12 @@ bool Parser::CheckType(QualNamePtr& name)
    case Cxx::CHAR:
       name->SetReferent(root->CharTerm(), nullptr);
       return true;
+   case Cxx::CHAR16:
+      name->SetReferent(root->Char16Term(), nullptr);
+      return true;
+   case Cxx::CHAR32:
+      name->SetReferent(root->Char32Term(), nullptr);
+      return true;
    case Cxx::DOUBLE:
       name->SetReferent(root->DoubleTerm(), nullptr);
       return true;
@@ -222,6 +230,10 @@ bool Parser::CheckType(QualNamePtr& name)
    case Cxx::SIGNED:
    case Cxx::UNSIGNED:
       return GetCompoundType(name, type);
+   case Cxx::WCHAR:
+      name->SetReferent(root->wCharTerm(), nullptr);
+      return true;
+
    case Cxx::NON_TYPE:
       //
       //  This screens out reserved words (delete, new, and throw) that can
@@ -754,13 +766,39 @@ bool Parser::GetCatch(TokenPtr& statement)
 
 fn_name Parser_GetChar = "Parser.GetChar";
 
-bool Parser::GetChar(ExprPtr& expr)
+bool Parser::GetChar(ExprPtr& expr, Cxx::Encoding code)
 {
    Debug::ft(Parser_GetChar);
 
-   char c;
+   //  Extract the character that appears between two single quotation
+   //  marks and wrap it in the appropriate type of character literal.
+   //
+   uint32_t c;
+   if(!lexer_.ThisCharIs(APOSTROPHE)) return false;
    if(!lexer_.GetChar(c)) return false;
-   TokenPtr item(new CharLiteral(c));
+   if(!lexer_.NextCharIs(APOSTROPHE)) return false;
+
+   TokenPtr item;
+
+   switch(code)
+   {
+   case Cxx::ASCII:
+   case Cxx::U8:
+      item = TokenPtr(new CharLiteral(c));
+      break;
+   case Cxx::U16:
+      item = TokenPtr(new u16CharLiteral(c));
+      break;
+   case Cxx::U32:
+      item = TokenPtr(new u32CharLiteral(c));
+      break;
+   case Cxx::WIDE:
+      item = TokenPtr(new wCharLiteral(c));
+      break;
+   default:
+      return false;
+   }
+
    expr->AddItem(item);
    return true;
 }
@@ -1316,11 +1354,11 @@ bool Parser::GetCxxExpr(ExprPtr& expr, size_t end, bool force)
       switch(c)
       {
       case QUOTE:
-         if(GetStr(expr)) break;
+         if(GetStr(expr, Cxx::ASCII)) break;
          return Skip(end, expr);
 
       case APOSTROPHE:
-         if(GetChar(expr)) break;
+         if(GetChar(expr, Cxx::ASCII)) break;
          return Skip(end, expr);
 
       case '{':
@@ -1328,6 +1366,12 @@ bool Parser::GetCxxExpr(ExprPtr& expr, size_t end, bool force)
 
       case '_':
          if(GetCxxAlpha(expr)) break;
+         return Skip(end, expr);
+
+      case 'u':
+      case 'U':
+      case 'L':
+         if(GetCxxLiteralOrAlpha(expr)) break;
          return Skip(end, expr);
 
       default:
@@ -1354,6 +1398,61 @@ bool Parser::GetCxxExpr(ExprPtr& expr, size_t end, bool force)
    }
 
    return Success(Parser_GetCxxExpr, start);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Parser_GetCxxLiteralOrAlpha = "Parser.GetCxxLiteralOrAlpha";
+
+bool Parser::GetCxxLiteralOrAlpha(ExprPtr& expr)
+{
+   Debug::ft(Parser_GetCxxLiteralOrAlpha);
+
+   Cxx::Encoding code = Cxx::Encoding_N;
+   char c;
+   auto start = lexer_.CurrChar(c);
+
+   switch(c)
+   {
+   case 'u':
+      //
+      //  Look for a "u" or "u8" tag.
+      //
+      if(lexer_.At(start + 1) == '8')
+      {
+         code = Cxx::U8;
+         lexer_.Reposition(start + 2);
+      }
+      else
+      {
+         code = Cxx::U16;
+         lexer_.Reposition(start + 1);
+      }
+      break;
+
+   case 'U':
+      code = Cxx::U32;
+      lexer_.Reposition(start + 1);
+      break;
+
+   case 'L':
+      code = Cxx::WIDE;
+      lexer_.Reposition(start + 1);
+      break;
+   }
+
+   if(code != Cxx::Encoding_N)
+   {
+      c = lexer_.CurrChar();
+      if(c == QUOTE) return GetStr(expr, code);
+      if(c == APOSTROPHE) return GetChar(expr, code);
+   }
+
+   //  This wasn't a character or string literal,
+   //  so back up and look for an identifier.
+   //
+   lexer_.Reposition(start);
+   return GetCxxAlpha(expr);
 }
 
 //------------------------------------------------------------------------------
@@ -2535,11 +2634,11 @@ bool Parser::GetPreExpr(ExprPtr& expr, size_t end)
       switch(c)
       {
       case QUOTE:
-         if(GetStr(expr)) break;
+         if(GetStr(expr, Cxx::ASCII)) break;
          return Skip(end, expr);
 
       case APOSTROPHE:
-         if(GetChar(expr)) break;
+         if(GetChar(expr, Cxx::ASCII)) break;
          return Skip(end, expr);
 
       case '{':
@@ -2925,13 +3024,70 @@ bool Parser::GetStatements(BlockPtr& block, bool braced)
 
 fn_name Parser_GetStr = "Parser.GetStr";
 
-bool Parser::GetStr(ExprPtr& expr)
+bool Parser::GetStr(ExprPtr& expr, Cxx::Encoding code)
 {
    Debug::ft(Parser_GetStr);
 
-   string s;
-   if(!lexer_.GetStr(s)) return false;
-   TokenPtr item(new StrLiteral(s));
+   //  Extract the string that appears between two quotation marks
+   //  and wrap it in the appropriate type of string literal.
+   //
+   if(!lexer_.ThisCharIs(QUOTE)) return false;
+
+   StringLiteralPtr str;
+
+   switch(code)
+   {
+   case Cxx::ASCII:
+   case Cxx::U8:
+      str = StringLiteralPtr(new StrLiteral);
+      break;
+   case Cxx::U16:
+      str = StringLiteralPtr(new u16StrLiteral);
+      break;
+   case Cxx::U32:
+      str = StringLiteralPtr(new u32StrLiteral);
+      break;
+   case Cxx::WIDE:
+      str = StringLiteralPtr(new wStrLiteral);
+      break;
+   default:
+      return false;
+   }
+
+   uint32_t c;
+
+   while(true)
+   {
+      auto curr = lexer_.Curr();
+      if(!lexer_.GetChar(c)) return false;
+
+      if(c == QUOTE)
+      {
+         //  There are three cases:
+         //  o If a backslash preceded the quote, add the quote to the literal.
+         //  o If another quote follows the quote, continue the literal.
+         //  o If neither of the above applies, the quote ended the literal.
+         //
+         if(lexer_.At(curr) == BACKSLASH)
+         {
+            str->PushBack(c);
+         }
+         else
+         {
+            curr = lexer_.Curr();
+            if(!lexer_.GetChar(c)) return false;
+            if(c == QUOTE) continue;
+            lexer_.Reposition(curr);
+            break;
+         }
+      }
+      else
+      {
+         str->PushBack(c);
+      }
+   }
+
+   TokenPtr item(std::move(str));
    expr->AddItem(item);
    return true;
 }
@@ -2999,12 +3155,18 @@ bool Parser::GetTemplateParm(TemplateParmPtr& parm)
 {
    Debug::ft(Parser_GetTemplateParm);
 
-   //  <TemplateParm> = <ClassTag> <Name> ["*"]* ["=" <TypeName>]
+   //  <TemplateParm> = (<ClassTag> | <QualName>) <Name> ["*"]* ["=" <TypeName>]
    //
    auto start = CurrPos();
 
    Cxx::ClassTag tag;
-   if(!lexer_.GetClassTag(tag, true)) return Backup(start, 189);
+   QualNamePtr type;
+
+   if(!lexer_.GetClassTag(tag, true))
+   {
+      tag = Cxx::ClassTag_N;
+      if(!GetQualName(type)) return Backup(start, 189);
+   }
 
    string argName;
    if(!lexer_.GetName(argName)) return Backup(start, 190);
@@ -3018,7 +3180,7 @@ bool Parser::GetTemplateParm(TemplateParmPtr& parm)
       if(!GetQualName(preset)) return Backup(start, 191);
    }
 
-   parm.reset(new TemplateParm(argName, tag, ptrs, preset));
+   parm.reset(new TemplateParm(argName, tag, type, ptrs, preset));
    parm->SetContext(start);
    return Success(Parser_GetTemplateParm, start);
 }
@@ -3377,7 +3539,7 @@ bool Parser::GetUsing(UsingPtr& use, TypedefPtr& type)
    //  <Using> = "using" (<UsingDecl> | <TypeAlias>) ";"
    //  <UsingDecl> = ["namespace"] <QualName>
    //  <TypeAlias> = <name> "=" <TypeSpec> [<ArraySpec>]*
-   //             
+   //
    //  The "using" keyword has already been parsed.
    //
    auto begin = kwdBegin_;

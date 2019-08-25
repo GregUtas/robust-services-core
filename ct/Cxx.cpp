@@ -23,15 +23,18 @@
 #include <cctype>
 #include <cstring>
 #include <iomanip>
-#include <ostream>
+#include <ios>
+#include <sstream>
 #include "CodeFile.h"
 #include "CxxArea.h"
+#include "CxxCharLiteral.h"
 #include "CxxDirective.h"
 #include "CxxNamed.h"
 #include "CxxRoot.h"
 #include "CxxScope.h"
 #include "CxxScoped.h"
 #include "CxxStatement.h"
+#include "CxxStrLiteral.h"
 #include "CxxSymbols.h"
 #include "CxxToken.h"
 #include "Debug.h"
@@ -85,6 +88,68 @@ ostream& Cxx::operator<<(ostream& stream, ClassTag tag)
    else
       stream << ClassTagStrings[ClassTag_N];
    return stream;
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string EncodingStrings[Cxx::Encoding_N + 1] =
+{
+   "",
+   "u8",
+   "u",
+   "U",
+   "L",
+   ERROR_STR
+};
+
+ostream& Cxx::operator<<(ostream& stream, Encoding code)
+{
+   if((code >= 0) && (code < Cxx::Encoding_N))
+      stream << EncodingStrings[code];
+   else
+      stream << EncodingStrings[Encoding_N];
+   return stream;
+}
+
+//------------------------------------------------------------------------------
+
+string CharString(uint32_t c, bool s)
+{
+   switch(c)
+   {
+   case 0x00: return "\\0";
+   case 0x07: return "\\a";
+   case 0x08: return "\\b";
+   case 0x0c: return "\\f";
+   case 0x0a: return "\\n";
+   case 0x0d: return "\\r";
+   case 0x09: return "\\t";
+   case 0x0b: return "\\v";
+   case BACKSLASH: return "\\\\";
+   case QUOTE:
+      if(s) return "\\\"";
+      break;
+   case APOSTROPHE:
+      if(!s) return "\\'";
+      break;
+   }
+
+   if((c >= 32) && (c <= 126))
+   {
+      return string(1, c);  // displayable, not escaped
+   }
+
+   std::ostringstream stream;
+   stream << std::hex << std::setfill('0');
+
+   if(c <= UINT8_MAX)
+      stream << BACKSLASH << 'x' << c;
+   else if(c <= UINT16_MAX)
+      stream << BACKSLASH << 'u' << c;
+   else
+      stream << BACKSLASH << 'U' << c;
+
+   return stream.str();
 }
 
 //==============================================================================

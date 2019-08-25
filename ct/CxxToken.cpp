@@ -174,26 +174,6 @@ void BraceInit::Shrink()
 
 //==============================================================================
 
-void CharLiteral::Print(ostream& stream, const Flags& options) const
-{
-   stream << APOSTROPHE;
-   if(c_ == APOSTROPHE) stream << BACKSLASH;
-   stream << c_ << APOSTROPHE;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CharLiteral_Referent = "CharLiteral.Referent";
-
-CxxScoped* CharLiteral::Referent() const
-{
-   Debug::ft(CharLiteral_Referent);
-
-   return Singleton< CxxRoot >::Instance()->CharTerm();
-}
-
-//==============================================================================
-
 fn_name CxxToken_ctor = "CxxToken.ctor";
 
 CxxToken::CxxToken()
@@ -2834,63 +2814,14 @@ void Precedence::Print(ostream& stream, const Flags& options) const
    stream << ')';
 }
 
-//==============================================================================
-
-const DataPtr StrLiteral::Ref_ = StrLiteral::CreateRef();
-
 //------------------------------------------------------------------------------
 
-fn_name StrLiteral_CreateRef = "StrLiteral.CreateRef";
+fn_name StringLiteral_PushBack = "StringLiteral.PushBack";
 
-DataPtr StrLiteral::CreateRef()
+void StringLiteral::PushBack(uint32_t c)
 {
-   Debug::ft(StrLiteral_CreateRef);
+   Debug::ft(StringLiteral_PushBack);
 
-   //  Create a data item whose type is "const char* const".  FuncData is used
-   //  because SpaceData will try to open a scope in the parser's current scope,
-   //  which doesn't exist.
-   //
-   DataPtr data;
-   string dataName("__string_literal_referent");
-   QualNamePtr typeName(new QualName(CHAR_STR));
-   TypeSpecPtr typeSpec(new DataSpec(typeName));
-   typeSpec->Tags()->SetConst(true);
-   typeSpec->Tags()->SetPointer(0, true);
-   data.reset(new FuncData(dataName, typeSpec));
-   data->SetScope(Singleton< CxxRoot >::Instance()->GlobalNamespace());
-   return data;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name StrLiteral_GetReferent = "StrLiteral.GetReferent";
-
-CxxScoped* StrLiteral::GetReferent()
-{
-   Debug::ft(StrLiteral_GetReferent);
-
-   return Ref_.get();
-}
-
-//------------------------------------------------------------------------------
-
-TypeSpec* StrLiteral::GetTypeSpec() const
-{
-   return Ref_->GetTypeSpec();
-}
-
-//------------------------------------------------------------------------------
-
-CxxScoped* StrLiteral::Referent() const
-{
-   return GetReferent();
-}
-
-//------------------------------------------------------------------------------
-
-void StrLiteral::Shrink()
-{
-   str_.shrink_to_fit();
-   CxxStats::Strings(CxxStats::STR_LITERAL, str_.capacity());
+   Debug::SwLog(StringLiteral_PushBack, strOver(this), 0);
 }
 }

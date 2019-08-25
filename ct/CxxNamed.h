@@ -116,6 +116,10 @@ public:
    //
    virtual ~CxxNamed();
 
+   //  Deleted to prohibit copy assignment.
+   //
+   CxxNamed& operator=(const CxxNamed& that) = delete;
+
    //  Sets the file and offset at which this item was found.
    //
    virtual void SetLoc(CodeFile* file, size_t pos);
@@ -440,10 +444,6 @@ private:
    virtual bool ResolveForward
       (CxxScoped* decl, size_t n) const { return false; }
 
-   //  Deleted to prohibit copy assignment.
-   //
-   CxxNamed& operator=(const CxxNamed& that) = delete;
-
    //  The location where the item appeared.
    //
    CxxLocation loc_;
@@ -518,6 +518,10 @@ public:
    //  Copy constructor.
    //
    TypeName(const TypeName& that);
+
+   //  Deleted to prohibit copy assignment.
+   //
+   TypeName& operator=(const TypeName& that) = delete;
 
    //  In a qualified name, adds TYPE as the name that follows this one.
    //  A scope resolution operator separates the two names.
@@ -684,10 +688,6 @@ public:
    //
    std::string TypeString(bool arg) const override;
 private:
-   //  Deleted to prohibit copy assignment.
-   //
-   TypeName& operator=(const TypeName& that) = delete;
-
    //  The name that appears in what could be a qualified name.
    //
    std::string name_;
@@ -758,6 +758,10 @@ public:
    //  Copy constructor.
    //
    QualName(const QualName& that);
+
+   //  Deleted to prohibit copy assignment.
+   //
+   QualName& operator=(const QualName& that) = delete;
 
    //  Adds TYPE to the name.  In a qualified name, TYPE is preceded by a
    //  scope resolution operator.
@@ -918,10 +922,6 @@ public:
    //
    std::string TypeString(bool arg) const override;
 private:
-   //  Deleted to prohibit copy assignment.
-   //
-   QualName& operator=(const QualName& that) = delete;
-
    //  Returns the last name.
    //
    TypeName* Last() const;
@@ -1088,6 +1088,10 @@ public:
    //
    virtual ~TypeSpec() = default;
 
+   //  Deleted to prohibit copy assignment.
+   //
+   TypeSpec& operator=(const TypeSpec& that) = delete;
+
    //  Sets the type of item to which the type belongs.
    //
    virtual void SetUserType(Cxx::ItemType user);
@@ -1244,10 +1248,6 @@ protected:
    //
    TypeSpec(const TypeSpec& that);
 private:
-   //  Deleted to prohibit copy assignment.
-   //
-   TypeSpec& operator=(const TypeSpec& that) = delete;
-
    //  The item type to which the type belongs.  The default is Cxx::Operation.
    //
    Cxx::ItemType user_ : 8;
@@ -1272,6 +1272,10 @@ public:
    //
    explicit DataSpec(const char* name);
 
+   //  Not subclassed.
+   //
+   ~DataSpec();
+
    //  Copy constructor.
    //
    //  NOTE: arrays_ is not copied.  This means that a type with a bounded
@@ -1280,9 +1284,9 @@ public:
    //
    DataSpec(const DataSpec& that);
 
-   //  Not subclassed.
+   //  Deleted to prohibit copy assignment.
    //
-   ~DataSpec();
+   DataSpec& operator=(const DataSpec& that) = delete;
 
    //  A DataSpec for a bool.
    //
@@ -1292,10 +1296,6 @@ public:
    //
    static const TypeSpecPtr Int;
 private:
-   //  Deleted to prohibit copy assignment.
-   //
-   DataSpec& operator=(const DataSpec& that) = delete;
-
    //  Returns true if the type was declared as auto, even if (unlike IsAuto)
    //  its underlying type has been determined.
    //
@@ -1585,11 +1585,12 @@ private:
 class TemplateParm : public CxxNamed
 {
 public:
-   //  Creates a parameter defined by NAME, TYPE, and PTRS (e.g. T/class/1
-   //  for template <class T*...), which may specify an optional default.
+   //  Creates a parameter defined by NAME, TAG or TYPE, and PTRS (e.g.
+   //  T/class/nullptr/1 for template <class T*...), which may specify
+   //  an optional default (PRESET).
    //
-   TemplateParm(std::string& name,
-      Cxx::ClassTag tag, size_t ptrs, QualNamePtr& preset);
+   TemplateParm(std::string& name, Cxx::ClassTag tag,
+      QualNamePtr& type, size_t ptrs, QualNamePtr& preset);
 
    //  Not subclassed.
    //
@@ -1624,9 +1625,14 @@ private:
    //
    std::string name_;
 
-   //  The parameter's type tag.
+   //  The parameter's type tag.  Set to Cxx::ClassTag_N
+   //  if a non-class type was specified.
    //
    const Cxx::ClassTag tag_;
+
+   //  The parameter's type if tag_ is Cxx::ClassTag_N.
+   //
+   const QualNamePtr type_;
 
    //  The level of pointer indirection for the parameter.
    //
@@ -1634,7 +1640,7 @@ private:
 
    //  The parameter's default value, if any.
    //
-   QualNamePtr default_;
+   const QualNamePtr default_;
 };
 
 //------------------------------------------------------------------------------

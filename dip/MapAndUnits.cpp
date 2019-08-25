@@ -18,7 +18,6 @@
 #include <sstream>
 #include "ConvoySubversion.h"
 #include "Debug.h"
-#include "SysTypes.h"
 
 using std::string;
 using namespace NodeBase;

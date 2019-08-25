@@ -189,38 +189,6 @@ string Compress(const string& s)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeTools_Concatenate = "CodeTools.Concatenate";
-
-void Concatenate(string& s)
-{
-   Debug::ft(CodeTools_Concatenate);
-
-   std::vector< char > chars;
-   size_t pos = 0;
-
-   while(pos < s.size())
-   {
-      auto c = s[pos];
-
-      switch(c)
-      {
-      case QUOTE:
-         pos = s.find(QUOTE, pos + 1) + 1;
-         break;
-      case BACKSLASH:
-         ++pos;
-      }
-
-      chars.push_back(s[pos]);
-      ++pos;
-   }
-
-   s.clear();
-   for(pos = 0; pos < chars.size(); ++pos) s.push_back(chars[pos]);
-}
-
-//------------------------------------------------------------------------------
-
 size_t FindIndex(const stringVector& sv, const string& s)
 {
    for(size_t i = 0; i < sv.size(); ++i)

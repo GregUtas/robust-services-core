@@ -59,6 +59,12 @@ namespace CodeTools
 //  are known not to be supported, along with some of the functions that would
 //  need to be modified to support them.
 //
+//  character sets:
+//    o All source code is assumed to be of type char.  Dupport for char8_t,
+//      char16_t, char32_t, and wchar_t has been sketched in, but significant
+//      changes would be needed to handle these, such as preprocessing source
+//      code to convert characters to their universal character names and
+//      replacing uses of std::string in the parser and other classes.
 //  reserved words:
 //    o asm, alignas, alignof, concept, decltype, export, goto, register,
 //      requires, static_assert, thread_local, volatile
@@ -71,8 +77,8 @@ namespace CodeTools
 //    o declaring a function as ClassName::FunctionName will cause the parser
 //      to fail (there are situations in which it expects unqualified names)
 //  character and string literals (GetCxxExpr, GetCxxAlpha, GetChar, GetStr):
-//    * type tags (u, U, L)
-//    o type tags (u8, R)
+//    o raw string literals ("R" prefix)
+//    o multi-character literals (e.g. 'AB')
 //    o user-defined literals
 //  declarations and definitions:
 //    o identical declarations of anything (except a class: see Forward)
@@ -92,7 +98,6 @@ namespace CodeTools
 //    o including a union instance immediately after defining it (GetClassDecl)
 //    o pointer-to-member (the type "Class::*" and operators ".*" and "->*)
 //  functions:
-//      constexpr <signature> const noexcept override final" (GetFuncDecl)
 //    o const&, &, and && as member function suffix tags
 //    o noexcept(<expr>) as a function tag (only "noexcept" is supported)
 //    o using a different type (an alias) for an argument in the definition of
@@ -111,7 +116,6 @@ namespace CodeTools
 //    o deduced return type ("auto")
 //    o trailing return type (after "->")
 //  data:
-//      (GetClassData, GetSpaceData, GetFuncData)
 //    o declaring more than one data instance in the same statement, either at
 //      file scope or within a class (GetClassData and GetSpaceData)--note that
 //      this *is* supported within a function (e.g. int i = 0, *pi = nullptr)
@@ -124,9 +128,6 @@ namespace CodeTools
 //    o "typedef enum" and "typedef struct" (GetTypedef)
 //    * alias templates (GetUsing and others)
 //  templates:
-//    o template parameters other than typename, class, or struct: in the /subs
-//      directory, for example, bitset had to be declared as bitset<typename N>
-//      instead of bitset<size_t N>
 //    o template arguments other than qualified names: bitset<sizeof(uint8_t)>,
 //      for example, would have to be written as bitset<bytesize>, following
 //      the definition constexpr size_t bytesize = sizeof(uint8_t);
@@ -535,16 +536,23 @@ private:
    bool GetCxxAlpha(ExprPtr& expr);
 
    //  Updates EXPR with the results of parsing an expression upon reaching
+   //  an alphabetic character that could be an encoding tag for a character
+   //  or string literal.
+   //
+   bool GetCxxLiteralOrAlpha(ExprPtr& expr);
+
+   //  Updates EXPR with the results of parsing an expression upon reaching
    //  a punctuation character.  CXX is true when parsing C++ and is false
    //  when parsing preprocessor directives.
    //
    bool GetOp(ExprPtr& expr, bool cxx);
 
-   //  Updates EXPR with the results of parsing a literal.
+   //  Updates EXPR with the results of parsing a literal.  CODE specifies
+   //  the encoding tag, if any, that preceded a character os string literal.
    //
    bool GetNum(ExprPtr& expr);
-   bool GetChar(ExprPtr& expr);
-   bool GetStr(ExprPtr& expr);
+   bool GetChar(ExprPtr& expr, Cxx::Encoding code);
+   bool GetStr(ExprPtr& expr, Cxx::Encoding code);
 
    //  Updates EXPR with the results of parsing an expression enclosed by
    //  parentheses.  It tries, in order,

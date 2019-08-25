@@ -124,8 +124,8 @@ extern NodeBase::fixed_string HASH_UNDEF_STR;
 //  Other parser strings.
 //
 extern NodeBase::fixed_string ARRAY_STR;
-extern NodeBase::fixed_string COMMENT_END_STR;
 extern NodeBase::fixed_string COMMENT_BEGIN_STR;
+extern NodeBase::fixed_string COMMENT_END_STR;
 extern NodeBase::fixed_string COMMENT_STR;
 extern NodeBase::fixed_string ELLIPSES_STR;
 extern NodeBase::fixed_string LOCALS_STR;

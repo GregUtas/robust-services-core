@@ -13,10 +13,10 @@
 
 namespace std
 {
-   template< typename T > class char_traits { };
+   template <typename T> class char_traits { };
 
-   template< typename charT, class traits = char_traits< charT >,
-      class alloc = allocator< charT >> class basic_string
+   template <typename charT, class traits = char_traits<charT>,
+      class alloc = allocator<charT>> class basic_string
    {
    public:
       static const size_t npos = UINT32_MAX;
@@ -86,26 +86,28 @@ namespace std
       basic_string& substr(size_t pos = 0, size_t num = npos) const;
    };
 
-   template < typename C, typename T, typename A > basic_string< C, T, A> operator+
-      (const basic_string< C, T, A >& s, const basic_string< C, T, A >& t);
-   template < typename C, typename T, typename A > basic_string< C, T, A> operator+
-      (const basic_string< C, T, A >& s, const C c);
-   template < typename C, typename T, typename A > basic_string< C, T, A> operator+
-      (const C c, const basic_string< C, T, A >& s);
-   template < typename C, typename T, typename A > basic_string< C, T, A> operator+
-      (const basic_string< C, T, A >& s, const C* pc);
-   template < typename C, typename T, typename A > basic_string< C, T, A> operator+
-      (const C* pc, const basic_string< C, T, A >& s);
+   template <typename C, typename T, typename A> basic_string<C, T, A> operator+
+      (const basic_string<C, T, A>& s, const basic_string<C, T, A>& t);
+   template <typename C, typename T, typename A> basic_string<C, T, A> operator+
+      (const basic_string<C, T, A>& s, const C c);
+   template <typename C, typename T, typename A> basic_string<C, T, A> operator+
+      (const C c, const basic_string<C, T, A>& s);
+   template <typename C, typename T, typename A> basic_string<C, T, A> operator+
+      (const basic_string<C, T, A>& s, const C* pc);
+   template <typename C, typename T, typename A> basic_string<C, T, A> operator+
+      (const C* pc, const basic_string<C, T, A>& s);
 
-   template < typename C, typename T, typename A > basic_istream& getline
-      (basic_istream& i, basic_string< C, T, A >& s);
-   template < typename C, typename T, typename A > basic_ostream& operator<<
-      (basic_ostream& o, const basic_string< C, T, A >& s);
-   template < typename C, typename T, typename A > basic_istream& operator>>
-      (basic_istream& i, const basic_string< C, T, A >& s);
+   template <typename C, typename T, typename A> basic_istream& getline
+      (basic_istream& i, basic_string<C, T, A>& s);
+   template <typename C, typename T, typename A> basic_ostream& operator<<
+      (basic_ostream& o, const basic_string<C, T, A>& s);
+   template <typename C, typename T, typename A> basic_istream& operator>>
+      (basic_istream& i, const basic_string<C, T, A>& s);
 
-   typedef basic_string< char, char_traits<char>, allocator<char>> string;
-   typedef basic_string< wchar_t, char_traits<wchar_t>, allocator<wchar_t>> wstring;
+   using string = basic_string<char, char_traits<char>, allocator<char>>;
+   using wstring = basic_string<wchar_t, char_traits<wchar_t>, allocator<wchar_t>>;
+   using u16string = basic_string<char16_t, char_traits<char16_t>, allocator<char16_t>>;
+   using u32string = basic_string<char32_t, char_traits<char32_t>, allocator<char32_t>>;
 
    string to_string(int n);
    string to_string(unsigned int n);

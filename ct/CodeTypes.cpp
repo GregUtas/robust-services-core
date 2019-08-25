@@ -130,8 +130,8 @@ fixed_string HASH_PRAGMA_STR  = "#pragma";
 fixed_string HASH_UNDEF_STR   = "#undef";
 
 fixed_string ARRAY_STR         = "[]";
-fixed_string COMMENT_END_STR   = "*/";
 fixed_string COMMENT_BEGIN_STR = "/*";
+fixed_string COMMENT_END_STR   = "*/";
 fixed_string COMMENT_STR       = "//";
 fixed_string ELLIPSES_STR      = "...";
 fixed_string LOCALS_STR        = "$locals";  // name for code blocks

@@ -22,11 +22,13 @@
 #include "Parser.h"
 #include <cctype>
 #include <cstdio>
+#include <cstring>
 #include <iomanip>
 #include <sstream>
 #include <utility>
 #include "CodeFile.h"
 #include "CxxArea.h"
+#include "CxxCharLiteral.h"
 #include "CxxDirective.h"
 #include "CxxExecute.h"
 #include "CxxNamed.h"
@@ -34,6 +36,7 @@
 #include "CxxScope.h"
 #include "CxxScoped.h"
 #include "CxxStatement.h"
+#include "CxxStrLiteral.h"
 #include "CxxSymbols.h"
 #include "CxxToken.h"
 #include "Debug.h"
@@ -201,6 +204,12 @@ bool Parser::CheckType(QualNamePtr& name)
    case Cxx::CHAR:
       name->SetReferent(root->CharTerm(), nullptr);
       return true;
+   case Cxx::CHAR16:
+      name->SetReferent(root->Char16Term(), nullptr);
+      return true;
+   case Cxx::CHAR32:
+      name->SetReferent(root->Char32Term(), nullptr);
+      return true;
    case Cxx::DOUBLE:
       name->SetReferent(root->DoubleTerm(), nullptr);
       return true;
@@ -221,6 +230,10 @@ bool Parser::CheckType(QualNamePtr& name)
    case Cxx::SIGNED:
    case Cxx::UNSIGNED:
       return GetCompoundType(name, type);
+   case Cxx::WCHAR:
+      name->SetReferent(root->wCharTerm(), nullptr);
+      return true;
+
    case Cxx::NON_TYPE:
       //
       //  This screens out reserved words (delete, new, and throw) that can
@@ -753,13 +766,39 @@ bool Parser::GetCatch(TokenPtr& statement)
 
 fn_name Parser_GetChar = "Parser.GetChar";
 
-bool Parser::GetChar(ExprPtr& expr)
+bool Parser::GetChar(ExprPtr& expr, Cxx::Encoding code)
 {
    Debug::ft(Parser_GetChar);
 
-   char c;
+   //  Extract the character that appears between two single quotation
+   //  marks and wrap it in the appropriate type of character literal.
+   //
+   uint32_t c;
+   if(!lexer_.ThisCharIs(APOSTROPHE)) return false;
    if(!lexer_.GetChar(c)) return false;
-   TokenPtr item(new CharLiteral(c));
+   if(!lexer_.NextCharIs(APOSTROPHE)) return false;
+
+   TokenPtr item;
+
+   switch(code)
+   {
+   case Cxx::ASCII:
+   case Cxx::U8:
+      item = TokenPtr(new CharLiteral(c));
+      break;
+   case Cxx::U16:
+      item = TokenPtr(new u16CharLiteral(c));
+      break;
+   case Cxx::U32:
+      item = TokenPtr(new u32CharLiteral(c));
+      break;
+   case Cxx::WIDE:
+      item = TokenPtr(new wCharLiteral(c));
+      break;
+   default:
+      return false;
+   }
+
    expr->AddItem(item);
    return true;
 }
@@ -799,15 +838,17 @@ bool Parser::GetClassData(DataPtr& data)
    //
    auto start = CurrPos();
 
+   KeywordSet tags;
    TypeSpecPtr typeSpec;
    string dataName;
    ArraySpecPtr arraySpec;
    ExprPtr width;
    ExprPtr init;
 
-   auto stat = NextKeywordIs(STATIC_STR);
-   auto mute = NextKeywordIs(MUTABLE_STR);
-   auto cexpr = NextKeywordIs(CONSTEXPR_STR);
+   lexer_.GetDataTags(tags);
+   auto stat = (tags.find(Cxx::STATIC) != tags.cend());
+   auto mute = (tags.find(Cxx::MUTABLE) != tags.cend());
+   auto cexp = (tags.find(Cxx::CONSTEXPR) != tags.cend());
    if(!GetTypeSpec(typeSpec)) return Backup(start, 35);
    auto pos = CurrPos();
    if(!lexer_.GetName(dataName)) return Backup(start, 36);
@@ -840,7 +881,7 @@ bool Parser::GetClassData(DataPtr& data)
    data.reset(new ClassData(dataName, typeSpec));
    data->SetContext(pos);
    data->SetStatic(stat);
-   data->SetConstexpr(cexpr);
+   data->SetConstexpr(cexp);
    static_cast< ClassData* >(data.get())->SetMutable(mute);
    static_cast< ClassData* >(data.get())->SetWidth(width);
    data->SetAssignment(init);
@@ -1039,13 +1080,17 @@ bool Parser::GetCtorDecl(FunctionPtr& func)
 {
    Debug::ft(Parser_GetCtorDecl);
 
-   //  <CtorDecl> = ["explicit"] ["constexpr"] <Name> <Arguments> [<CtorInit>]
+   //  <CtorDecl> = ["inline"] ["explicit"] ["constexpr"]
+   //               <Name> <Arguments> [<CtorInit>]
    //
    auto start = CurrPos();
 
+   KeywordSet tags;
    string name;
-   auto expl = NextKeywordIs(EXPLICIT_STR);
-   auto cexpr = NextKeywordIs(CONSTEXPR_STR);
+   lexer_.GetFuncFrontTags(tags);
+   auto inln = (tags.find(Cxx::INLINE) != tags.cend());
+   auto expl = (tags.find(Cxx::EXPLICIT) != tags.cend());
+   auto cexp = (tags.find(Cxx::CONSTEXPR) != tags.cend());
    auto pos = CurrPos();
    if(!GetName(name)) return Backup(start, 54);
    if(!lexer_.NextCharIs('(')) return Backup(start, 55);
@@ -1053,9 +1098,10 @@ bool Parser::GetCtorDecl(FunctionPtr& func)
    ctorName->SetContext(pos);
    func.reset(new Function(ctorName));
    func->SetContext(start);
+   func->SetInline(inln);
    func->SetExplicit(expl);
-   func->SetConstexpr(cexpr);
-   if(cexpr) func->SetInline(true);
+   func->SetConstexpr(cexp);
+   if(cexp) func->SetInline(true);
    if(!GetArguments(func)) return Backup(start, func, 214);
    auto noex = NextKeywordIs(NOEXCEPT_STR);
    if(!GetCtorInit(func)) return Backup(start, func, 215);
@@ -1308,11 +1354,11 @@ bool Parser::GetCxxExpr(ExprPtr& expr, size_t end, bool force)
       switch(c)
       {
       case QUOTE:
-         if(GetStr(expr)) break;
+         if(GetStr(expr, Cxx::ASCII)) break;
          return Skip(end, expr);
 
       case APOSTROPHE:
-         if(GetChar(expr)) break;
+         if(GetChar(expr, Cxx::ASCII)) break;
          return Skip(end, expr);
 
       case '{':
@@ -1320,6 +1366,12 @@ bool Parser::GetCxxExpr(ExprPtr& expr, size_t end, bool force)
 
       case '_':
          if(GetCxxAlpha(expr)) break;
+         return Skip(end, expr);
+
+      case 'u':
+      case 'U':
+      case 'L':
+         if(GetCxxLiteralOrAlpha(expr)) break;
          return Skip(end, expr);
 
       default:
@@ -1346,6 +1398,61 @@ bool Parser::GetCxxExpr(ExprPtr& expr, size_t end, bool force)
    }
 
    return Success(Parser_GetCxxExpr, start);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Parser_GetCxxLiteralOrAlpha = "Parser.GetCxxLiteralOrAlpha";
+
+bool Parser::GetCxxLiteralOrAlpha(ExprPtr& expr)
+{
+   Debug::ft(Parser_GetCxxLiteralOrAlpha);
+
+   Cxx::Encoding code = Cxx::Encoding_N;
+   char c;
+   auto start = lexer_.CurrChar(c);
+
+   switch(c)
+   {
+   case 'u':
+      //
+      //  Look for a "u" or "u8" tag.
+      //
+      if(lexer_.At(start + 1) == '8')
+      {
+         code = Cxx::U8;
+         lexer_.Reposition(start + 2);
+      }
+      else
+      {
+         code = Cxx::U16;
+         lexer_.Reposition(start + 1);
+      }
+      break;
+
+   case 'U':
+      code = Cxx::U32;
+      lexer_.Reposition(start + 1);
+      break;
+
+   case 'L':
+      code = Cxx::WIDE;
+      lexer_.Reposition(start + 1);
+      break;
+   }
+
+   if(code != Cxx::Encoding_N)
+   {
+      c = lexer_.CurrChar();
+      if(c == QUOTE) return GetStr(expr, code);
+      if(c == APOSTROPHE) return GetChar(expr, code);
+   }
+
+   //  This wasn't a character or string literal,
+   //  so back up and look for an identifier.
+   //
+   lexer_.Reposition(start);
+   return GetCxxAlpha(expr);
 }
 
 //------------------------------------------------------------------------------
@@ -1455,10 +1562,14 @@ bool Parser::GetDtorDecl(FunctionPtr& func)
 {
    Debug::ft(Parser_GetDtorDecl);
 
-   //  <DtorDecl> = ["virtual"] "~" <Name> "(" ")" ["noexcept"]
+   //  <DtorDecl> = ["inline"] ["virtual"] "~" <Name> "(" ")" ["noexcept"]
    //
    auto start = CurrPos();
-   auto virt = NextKeywordIs(VIRTUAL_STR);
+
+   KeywordSet tags;
+   lexer_.GetFuncFrontTags(tags);
+   auto inln = (tags.find(Cxx::INLINE) != tags.cend());
+   auto virt = (tags.find(Cxx::VIRTUAL) != tags.cend());
    if(!lexer_.NextCharIs('~')) return Backup(start, 95);
 
    string name;
@@ -1469,6 +1580,7 @@ bool Parser::GetDtorDecl(FunctionPtr& func)
    dtorName->SetContext(pos);
    func.reset(new Function(dtorName));
    func->SetContext(start);
+   func->SetInline(inln);
    func->SetVirtual(virt);
    if(!lexer_.NextCharIs('(')) return Backup(start, 97);
    if(!GetArguments(func)) return Backup(start, func, 98);
@@ -1713,8 +1825,8 @@ bool Parser::GetFuncData(DataPtr& data)
    //  <FuncData> = ["static"] ["constexpr"] <TypeSpec>
    //               (<FuncData1> | <FuncData2>)
    //  <FuncData1> = <Name> "(" [<Expr>] ")" ";"
-   //  <FuncData2> =        <Name> ([<ArraySpec>] ["=" <Expr>]
-   //    ["," ["*"]* ["&"]* <Name> ([<ArraySpec>] ["=" <Expr>]]* ";"
+   //  <FuncData2> =        <Name> [<ArraySpec>] ["=" <Expr>]
+   //    ["," ["*"]* ["&"]* <Name> [<ArraySpec>] ["=" <Expr>]]* ";"
    //  FuncData1 initializes the data with a parenthesized expression that
    //  directly follows the name.  It is sometimes a constructor call:
    //    i.e. Class name(args); instead of auto name = Class(args);
@@ -1724,11 +1836,13 @@ bool Parser::GetFuncData(DataPtr& data)
    //
    auto start = CurrPos();
 
+   KeywordSet tags;
    TypeSpecPtr typeSpec;
    string dataName;
 
-   auto stat = NextKeywordIs(STATIC_STR);
-   auto cexpr = NextKeywordIs(CONSTEXPR_STR);
+   lexer_.GetDataTags(tags);
+   auto stat = (tags.find(Cxx::STATIC) != tags.cend());
+   auto cexp = (tags.find(Cxx::CONSTEXPR) != tags.cend());
    if(!GetTypeSpec(typeSpec)) return Backup(start, 121);
    auto pos = CurrPos();
    if(!lexer_.GetName(dataName)) return Backup(start, 122);
@@ -1746,7 +1860,7 @@ bool Parser::GetFuncData(DataPtr& data)
       data.reset(new FuncData(dataName, typeSpec));
       data->SetContext(pos);
       data->SetStatic(stat);
-      data->SetConstexpr(cexpr);
+      data->SetConstexpr(cexp);
       static_cast< FuncData* >(data.get())->SetExpression(expr);
       return Success(Parser_GetFuncData, start);
    }
@@ -1809,7 +1923,7 @@ bool Parser::GetFuncData(DataPtr& data)
 
       curr->SetContext(pos);
       curr->SetStatic(stat);
-      curr->SetConstexpr(cexpr);
+      curr->SetConstexpr(cexp);
       curr->SetAssignment(init);
       prev = curr;
    }
@@ -1827,13 +1941,12 @@ bool Parser::GetFuncDecl(Cxx::Keyword kwd, FunctionPtr& func)
 {
    Debug::ft(Parser_GetFuncDecl);
 
-   //  <FuncDecl> = ["extern"] [<TemplateParms>] ["inline"]
+   //  <FuncDecl> = ["extern"] [<TemplateParms>]
    //               (<CtorDecl> | <DtorDecl> | <ProcDecl>) (<FuncImpl> | ";")
    //
    auto start = CurrPos();
    auto found = false;
    auto extn = false;
-   auto inln = false;
 
    TemplateParmsPtr parms;
 
@@ -1841,6 +1954,7 @@ bool Parser::GetFuncDecl(Cxx::Keyword kwd, FunctionPtr& func)
    {
    case Cxx::EXTERN:
       extn = true;
+      lexer_.Advance(strlen(EXTERN_STR));
       GetTemplateParms(parms);
       break;
    case Cxx::TEMPLATE:
@@ -1872,15 +1986,13 @@ bool Parser::GetFuncDecl(Cxx::Keyword kwd, FunctionPtr& func)
       found = GetDtorDecl(func);
       break;
    case Cxx::INLINE:
-      inln = true;
       found = (GetCtorDecl(func) || GetDtorDecl(func) || GetProcDecl(func));
       break;
    }
 
    if(!found) return Backup(start, func, 218);
    func->SetTemplateParms(parms);
-   func->SetExtern(extn);
-   func->SetInline(inln);
+   if(extn) func->SetExtern(true);
 
    //  The next character should be a semicolon, equal sign, or left brace,
    //  depending on whether the function is only declared here, is deleted
@@ -1937,10 +2049,8 @@ bool Parser::GetFuncDefn(Cxx::Keyword kwd, FunctionPtr& func)
 
    switch(kwd)
    {
-   case Cxx::INLINE:
-      inln = true;
-      //  [[fallthrough]]
    case Cxx::NIL_KEYWORD:
+   case Cxx::INLINE:
       found = (GetCtorDefn(func) || GetDtorDefn(func) || GetProcDefn(func));
       break;
    default:
@@ -2524,11 +2634,11 @@ bool Parser::GetPreExpr(ExprPtr& expr, size_t end)
       switch(c)
       {
       case QUOTE:
-         if(GetStr(expr)) break;
+         if(GetStr(expr, Cxx::ASCII)) break;
          return Skip(end, expr);
 
       case APOSTROPHE:
-         if(GetChar(expr)) break;
+         if(GetChar(expr, Cxx::ASCII)) break;
          return Skip(end, expr);
 
       case '{':
@@ -2572,19 +2682,17 @@ bool Parser::GetProcDecl(FunctionPtr& func)
 {
    Debug::ft(Parser_GetProcDecl);
 
-   //  <ProcDecl> = ["static"] ["virtual"] ["explicit"] ["constexpr"]
-   //               (<StdProc> | <ConvOper>)
-   //               <Arguments> ["const"] ["noexcept"] ["= 0" | "override"]
+   //  <ProcDecl> = ["inline"] ["static"] ["virtual"] ["explicit"] ["constexpr"]
+   //               (<StdProc> | <ConvOper>) <Arguments>
+   //               ["const"] ["noexcept"] ["override"] ["final"] ["= 0"]
    //  <StdProc> = <TypeSpec> (<Name> | "operator" <Operator>)
    //  <ConvOper> = "operator" <TypeSpec>
    //
    auto start = CurrPos();
-   auto stat = NextKeywordIs(STATIC_STR);
-   auto virt = NextKeywordIs(VIRTUAL_STR);
-   auto expl = NextKeywordIs(EXPLICIT_STR);
-   auto cexpr = NextKeywordIs(CONSTEXPR_STR);
+
+   KeywordSet frontTags;
+   lexer_.GetFuncFrontTags(frontTags);
    auto oper = Cxx::NIL_OPERATOR;
-   auto pure = false;
 
    auto pos = start;
    TypeSpecPtr typeSpec;
@@ -2600,10 +2708,17 @@ bool Parser::GetProcDecl(FunctionPtr& func)
    else
    {
       if(!GetTypeSpec(typeSpec)) return Backup(start, 159);
+      lexer_.GetFuncFrontTags(frontTags);
       pos = CurrPos();
       if(!lexer_.GetName(name, oper)) return Backup(start, 160);
    }
 
+   auto extn = (frontTags.find(Cxx::EXTERN) != frontTags.cend());
+   auto inln = (frontTags.find(Cxx::INLINE) != frontTags.cend());
+   auto stat = (frontTags.find(Cxx::STATIC) != frontTags.cend());
+   auto virt = (frontTags.find(Cxx::VIRTUAL) != frontTags.cend());
+   auto expl = (frontTags.find(Cxx::EXPLICIT) != frontTags.cend());
+   auto cexp = (frontTags.find(Cxx::CONSTEXPR) != frontTags.cend());
    if(!lexer_.NextCharIs('(')) return Backup(start, 161);
    QualNamePtr funcName(new QualName(name));
    funcName->SetContext(pos);
@@ -2614,15 +2729,21 @@ bool Parser::GetProcDecl(FunctionPtr& func)
 
    auto readonly = NextKeywordIs(CONST_STR);
    auto noex = NextKeywordIs(NOEXCEPT_STR);
-   auto over = NextKeywordIs(OVERRIDE_STR);
-   auto final = NextKeywordIs(FINAL_STR);
-   if(virt) pure = (lexer_.NextStringIs("=") && lexer_.NextCharIs('0'));
+   KeywordSet backTags;
+   lexer_.GetFuncBackTags(backTags);
+   auto over = (backTags.find(Cxx::OVERRIDE) != backTags.cend());
+   auto final = (backTags.find(Cxx::FINAL) != backTags.cend());
+   pos = CurrPos();
+   auto pure = (lexer_.NextStringIs("=") && lexer_.NextCharIs('0'));
+   if(!pure) lexer_.Reposition(pos);
 
    func->SetStatic(stat, oper);
+   func->SetInline(extn);
+   func->SetInline(inln);
    func->SetVirtual(virt);
    func->SetExplicit(expl);
-   func->SetConstexpr(cexpr);
-   if(cexpr) func->SetInline(true);
+   func->SetConstexpr(cexp);
+   if(cexp) func->SetInline(true);
    func->SetConst(readonly);
    func->SetNoexcept(noex);
    func->SetOverride(over);
@@ -2691,7 +2812,7 @@ bool Parser::GetQualName(QualNamePtr& name, Constraint constraint)
 {
    Debug::ft(Parser_GetQualName);
 
-   //  <QualName> = ["::"] [ <TypeName> "::" ]*
+   //  <QualName> = ["::"] [<TypeName> "::"]*
    //               (<TypeName> | "operator" <Operator>)
    //
    auto start = CurrPos();
@@ -2806,7 +2927,7 @@ bool Parser::GetSpaceData(Cxx::Keyword kwd, DataPtr& data)
 {
    Debug::ft(Parser_GetSpaceData);
 
-   //  <SpaceData> = ["extern"] [<TemplateParms>] ["static"] ["constexpr"]
+   //  <SpaceData> = [["extern"] | [<TemplateParms>]] ["static"] ["constexpr"]
    //                <TypeSpec> <QualName> (<SpaceData1> | <SpaceData2>)
    //  <SpaceData1> = "(" [<Expr>] ")" ";"
    //  <SpaceData2> =  [<ArraySpec>] ["=" <Expr>] ";"
@@ -2815,26 +2936,23 @@ bool Parser::GetSpaceData(Cxx::Keyword kwd, DataPtr& data)
    //
    auto start = CurrPos();
 
+   KeywordSet tags;
    TemplateParmsPtr parms;
    TypeSpecPtr typeSpec;
    QualNamePtr dataName;
    ArraySpecPtr arraySpec;
    TokenPtr expr;
    ExprPtr init;
-   auto extn = false;
 
-   switch(kwd)
+   if(kwd == Cxx::TEMPLATE)
    {
-   case Cxx::EXTERN:
-      extn = true;
-      break;
-   case Cxx::TEMPLATE:
       if(!GetTemplateParms(parms)) return Backup(start, 174);
-      break;
    }
 
-   auto stat = NextKeywordIs(STATIC_STR);
-   auto cexpr = NextKeywordIs(CONSTEXPR_STR);
+   lexer_.GetDataTags(tags);
+   auto extn = (tags.find(Cxx::EXTERN) != tags.cend());
+   auto stat = (tags.find(Cxx::STATIC) != tags.cend());
+   auto cexp = (tags.find(Cxx::CONSTEXPR) != tags.cend());
    if(!GetTypeSpec(typeSpec)) return Backup(start, 175);
    auto pos = CurrPos();
    if(!GetQualName(dataName)) return Backup(start, 176);
@@ -2871,7 +2989,7 @@ bool Parser::GetSpaceData(Cxx::Keyword kwd, DataPtr& data)
    data->SetTemplateParms(parms);
    data->SetExtern(extn);
    data->SetStatic(stat);
-   data->SetConstexpr(cexpr);
+   data->SetConstexpr(cexp);
    data->SetExpression(expr);
    data->SetAssignment(init);
    return Success(Parser_GetSpaceData, start);
@@ -2906,13 +3024,76 @@ bool Parser::GetStatements(BlockPtr& block, bool braced)
 
 fn_name Parser_GetStr = "Parser.GetStr";
 
-bool Parser::GetStr(ExprPtr& expr)
+bool Parser::GetStr(ExprPtr& expr, Cxx::Encoding code)
 {
    Debug::ft(Parser_GetStr);
 
-   string s;
-   if(!lexer_.GetStr(s)) return false;
-   TokenPtr item(new StrLiteral(s));
+   //  Extract the string that appears between two quotation marks
+   //  and wrap it in the appropriate type of string literal.
+   //
+   if(!lexer_.ThisCharIs(QUOTE)) return false;
+
+   StringLiteralPtr str;
+
+   switch(code)
+   {
+   case Cxx::ASCII:
+   case Cxx::U8:
+      str = StringLiteralPtr(new StrLiteral);
+      break;
+   case Cxx::U16:
+      str = StringLiteralPtr(new u16StrLiteral);
+      break;
+   case Cxx::U32:
+      str = StringLiteralPtr(new u32StrLiteral);
+      break;
+   case Cxx::WIDE:
+      str = StringLiteralPtr(new wStrLiteral);
+      break;
+   default:
+      return false;
+   }
+
+   uint32_t c;
+
+   while(true)
+   {
+      auto curr = lexer_.Curr();
+      if(!lexer_.GetChar(c)) return false;
+
+      if(c == QUOTE)
+      {
+         //  There are three cases:
+         //  o If a backslash preceded the quote, add the quote to the literal.
+         //  o If another quote follows the quote, continue the literal.
+         //  o If neither of the above applies, the quote ended the literal.
+         //
+         if(lexer_.At(curr) == BACKSLASH)
+         {
+            str->PushBack(c);
+         }
+         else
+         {
+            //  Get the lexer's current position, which is the character
+            //  directly after the quote.  It could be whitespace, so use
+            //  Reposition to find the next character that will be parsed,
+            //  which continues the string literal if it is also a quote.
+            //
+            curr = lexer_.Curr();
+            lexer_.Reposition(curr);
+            if(!lexer_.GetChar(c)) return false;
+            if(c == QUOTE) continue;
+            lexer_.Reposition(curr);
+            break;
+         }
+      }
+      else
+      {
+         str->PushBack(c);
+      }
+   }
+
+   TokenPtr item(std::move(str));
    expr->AddItem(item);
    return true;
 }
@@ -2980,12 +3161,18 @@ bool Parser::GetTemplateParm(TemplateParmPtr& parm)
 {
    Debug::ft(Parser_GetTemplateParm);
 
-   //  <TemplateParm> = <ClassTag> <Name> ["*"]* ["=" <TypeName>]
+   //  <TemplateParm> = (<ClassTag> | <QualName>) <Name> ["*"]* ["=" <TypeName>]
    //
    auto start = CurrPos();
 
    Cxx::ClassTag tag;
-   if(!lexer_.GetClassTag(tag, true)) return Backup(start, 189);
+   QualNamePtr type;
+
+   if(!lexer_.GetClassTag(tag, true))
+   {
+      tag = Cxx::ClassTag_N;
+      if(!GetQualName(type)) return Backup(start, 189);
+   }
 
    string argName;
    if(!lexer_.GetName(argName)) return Backup(start, 190);
@@ -2999,7 +3186,7 @@ bool Parser::GetTemplateParm(TemplateParmPtr& parm)
       if(!GetQualName(preset)) return Backup(start, 191);
    }
 
-   parm.reset(new TemplateParm(argName, tag, ptrs, preset));
+   parm.reset(new TemplateParm(argName, tag, type, ptrs, preset));
    parm->SetContext(start);
    return Success(Parser_GetTemplateParm, start);
 }
@@ -3099,7 +3286,7 @@ bool Parser::GetTypedef(TypedefPtr& type)
 {
    Debug::ft(Parser_GetTypedef);
 
-   //  <Typedef> = "typedef" <TypeSpec> [<Name>] [<ArraySpec>] ";"
+   //  <Typedef> = "typedef" <TypeSpec> [<Name>] [<ArraySpec>]* ";"
    //  The "typedef" keyword has already been parsed.  <Name> is mandatory if
    //  (and only if) <TypeSpec> does not include a <FuncSpec> (function type).
    //
@@ -3351,22 +3538,50 @@ bool Parser::GetTypeTags(TypeSpec* spec)
 
 fn_name Parser_GetUsing = "Parser.GetUsing";
 
-bool Parser::GetUsing(UsingPtr& use)
+bool Parser::GetUsing(UsingPtr& use, TypedefPtr& type)
 {
    Debug::ft(Parser_GetUsing);
 
-   //  <Using> = "using" ["namespace"] <QualName> ";"
+   //  <Using> = "using" (<UsingDecl> | <TypeAlias>) ";"
+   //  <UsingDecl> = ["namespace"] <QualName>
+   //  <TypeAlias> = <name> "=" <TypeSpec> [<ArraySpec>]*
+   //
    //  The "using" keyword has already been parsed.
    //
    auto begin = kwdBegin_;
    auto start = CurrPos();
 
+   //  Start by looking for a using directive or declaration.
+   //
    QualNamePtr usingName;
    auto space = NextKeywordIs(NAMESPACE_STR);
-   if(!GetQualName(usingName)) return Backup(start, 208);
-   if(!lexer_.NextCharIs(';')) return Backup(start, 209);
-   use.reset(new Using(usingName, space));
-   use->SetContext(begin);
+
+   if((GetQualName(usingName)) && lexer_.NextCharIs(';'))
+   {
+      use.reset(new Using(usingName, space));
+      use->SetContext(begin);
+      return Success(Parser_GetUsing, begin);
+   }
+
+   if(space) return Backup(start, 208);
+
+   //  Look for a type alias.  If found, it is captured as a typedef.
+   //
+   lexer_.Reposition(start);
+   string typeName;
+   if(!lexer_.GetName(typeName)) return Backup(start, 209);
+   if(!lexer_.NextCharIs('=')) return Backup(start, 230);
+
+   TypeSpecPtr typeSpec;
+   if(!GetTypeSpec(typeSpec, typeName)) return Backup(start, 231);
+
+   ArraySpecPtr arraySpec;
+   while(GetArraySpec(arraySpec)) typeSpec->AddArray(arraySpec);
+   if(!lexer_.NextCharIs(';')) return Backup(start, 232);
+
+   type.reset(new Typedef(typeName, typeSpec));
+   type->SetUsing();
+   type->SetContext(begin);
    return Success(Parser_GetUsing, begin);
 }
 
@@ -4101,8 +4316,13 @@ bool Parser::ParseInBlock(Cxx::Keyword kwd, Block* block)
             return block->AddStatement(typeItem.release());
          break;
       case 'U':
-         if(GetUsing(usingItem))
-            return block->AddStatement(usingItem.release());
+         if(GetUsing(usingItem, typeItem))
+         {
+            if(usingItem != nullptr)
+               return block->AddStatement(usingItem.release());
+            else
+               return block->AddStatement(typeItem.release());
+         }
          break;
       case '-':
          Debug::SwLog(Parser_ParseInBlock, "unexpected keyword", kwd, SwInfo);
@@ -4176,7 +4396,13 @@ bool Parser::ParseInClass(Cxx::Keyword kwd, Class* cls)
          if(GetTypedef(typeItem)) return cls->AddType(typeItem);
          break;
       case 'U':
-         if(GetUsing(usingItem)) return cls->AddUsing(usingItem);
+         if(GetUsing(usingItem, typeItem))
+         {
+            if(usingItem != nullptr)
+               return cls->AddUsing(usingItem);
+            else
+               return cls->AddType(typeItem);
+         }
          break;
       case '-':
          Debug::SwLog(Parser_ParseInClass, "unexpected keyword", kwd, SwInfo);
@@ -4252,7 +4478,13 @@ bool Parser::ParseInFile(Cxx::Keyword kwd, Namespace* space)
          if(GetTypedef(typeItem)) return space->AddType(typeItem);
          break;
       case 'U':
-         if(GetUsing(usingItem)) return space->AddUsing(usingItem);
+         if(GetUsing(usingItem, typeItem))
+         {
+            if(usingItem != nullptr)
+               return space->AddUsing(usingItem);
+            else
+               return space->AddType(typeItem);
+         }
          break;
       case '-':
          Debug::SwLog(Parser_ParseInFile, "unexpected keyword", kwd, SwInfo);

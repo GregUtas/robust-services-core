@@ -40,7 +40,7 @@ class CinThread : public Thread
 public:
    //  Reads input from the console and places it in BUFF, which can hold up
    //  to CAPACITY characters.  Returns the number of characters read (N >= 1),
-   //  excluding the trailing '\0' that is also placed in BUFF.  If N <= 0, see
+   //  excluding the trailing NUL that is also placed in BUFF.  If N <= 0, see
    //  StreamRc.  The client thread is only scheduled out if input is not yet
    //  available, so it must not call EnterBlockingOperation before it invokes
    //  this function.

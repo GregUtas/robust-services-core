@@ -41,6 +41,11 @@ namespace SessionTools
 class StTestData : public CliAppData
 {
 public:
+   //  Deleted to prohibit copying.
+   //
+   StTestData(const StTestData& that) = delete;
+   StTestData& operator=(const StTestData& that) = delete;
+
    //  Returns the test data registered against CLI.  If the data
    //  does not exist, it is created.
    //
@@ -85,11 +90,6 @@ private:
    //  Private to restrict deletion.  Not subclassed.
    //
    ~StTestData();
-
-   //  Deleted to prohibit copying.
-   //
-   StTestData(const StTestData& that) = delete;
-   StTestData& operator=(const StTestData& that) = delete;
 
    //  Whether the >verify command is currently enabled.
    //

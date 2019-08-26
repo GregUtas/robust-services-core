@@ -58,6 +58,11 @@ public:
    //
    virtual ~IpPort();
 
+   //  Deleted to prohibit copying.
+   //
+   IpPort(const IpPort& that) = delete;
+   IpPort& operator=(const IpPort& that) = delete;
+
    //  Returns the IP port.
    //
    ipport_t GetPort() const { return port_; }
@@ -184,11 +189,6 @@ private:
    //  Ensures that the low availability alarm exists.
    //
    void EnsureAlarm();
-
-   //  Deleted to prohibit copying.
-   //
-   IpPort(const IpPort& that) = delete;
-   IpPort& operator=(const IpPort& that) = delete;
 
    //  The next entry in IpPortRegistry.
    //

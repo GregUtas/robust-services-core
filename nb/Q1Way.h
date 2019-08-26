@@ -47,7 +47,7 @@ namespace NodeBase
 //  o two or more items: tail_.next = last item, last item.next = first
 //    item, second last item.next = last item (circular queue)
 //
-template< typename T > class Q1Way
+template< class T > class Q1Way
 {
    friend class ObjectPool;
 public:
@@ -64,6 +64,11 @@ public:
       Debug::ft(Q1Way_dtor());
       Purge();
    }
+
+   //  Deleted to prohibit copying.
+   //
+   Q1Way(const Q1Way& that) = delete;
+   Q1Way& operator=(const Q1Way& that) = delete;
 
    //  Initializes the queue so that it can be used.
    //
@@ -379,11 +384,6 @@ private:
          }
       }
    }
-
-   //  Deleted to prohibit copying.
-   //
-   Q1Way(const Q1Way& that) = delete;
-   Q1Way& operator=(const Q1Way& that) = delete;
 
    //  See the comment in Singleton.h about fn_name's in a template header.
    //

@@ -353,6 +353,11 @@ class ContextSwitches : public Permanent
 {
    friend class Singleton< ContextSwitches >;
 public:
+   //  Deleted to prohibit copying.
+   //
+   ContextSwitches(const ContextSwitches& that) = delete;
+   ContextSwitches& operator=(const ContextSwitches& that) = delete;
+
    //  Returns true if context switches are being logged.
    //
    bool LoggingOn() const { return log_; }
@@ -377,11 +382,6 @@ private:
    //  Private because this singleton is not subclassed.
    //
    ~ContextSwitches();
-
-   //  Deleted to prohibit copying.
-   //
-   ContextSwitches(const ContextSwitches& that) = delete;
-   ContextSwitches& operator=(const ContextSwitches& that) = delete;
 
    //  The size of the context switch array.
    //
@@ -608,6 +608,11 @@ class Orphans : public Permanent
 {
    friend class Singleton< Orphans >;
 public:
+   //  Deleted to prohibit copying.
+   //
+   Orphans(const Orphans& that) = delete;
+   Orphans& operator=(const Orphans& that) = delete;
+
    //  Adds THR to the list of orphans when a Thread object is unexpectedly
    //  deleted.
    //
@@ -625,11 +630,6 @@ private:
    //  Private because this singleton is not subclassed.
    //
    ~Orphans();
-
-   //  Deleted to prohibit copying.
-   //
-   Orphans(const Orphans& that) = delete;
-   Orphans& operator=(const Orphans& that) = delete;
 
    //  The orphans array.
    //

@@ -2478,15 +2478,16 @@ string QualName::TypeString(bool arg) const
 
 fn_name TemplateParm_ctor1 = "TemplateParm.ctor";
 
-TemplateParm::TemplateParm
-   (string& name, Cxx::ClassTag tag, size_t ptrs, QualNamePtr& preset) :
+TemplateParm::TemplateParm(string& name, Cxx::ClassTag tag,
+   QualNamePtr& type, size_t ptrs, QualNamePtr& preset) :
    tag_(tag),
-   ptrs_(ptrs)
+   type_(std::move(type)),
+   ptrs_(ptrs),
+   default_(std::move(preset))
 {
    Debug::ft(TemplateParm_ctor1);
 
    std::swap(name_, name);
-   default_ = std::move(preset);
    CxxStats::Incr(CxxStats::TEMPLATE_PARM);
 }
 
@@ -2498,6 +2499,7 @@ void TemplateParm::Check() const
 {
    Debug::ft(TemplateParm_Check);
 
+   if(type_ != nullptr) type_->Check();
    if(default_ != nullptr) default_->Check();
 }
 
@@ -2505,8 +2507,12 @@ void TemplateParm::Check() const
 
 void TemplateParm::Print(ostream& stream, const Flags& options) const
 {
-   stream << tag_ << SPACE;
-   stream << *Name();
+   if(tag_ != Cxx::ClassTag_N)
+      stream << tag_;
+   else
+      type_->Print(stream, options);
+
+   stream << SPACE << *Name();
    if(ptrs_ > 0) stream << string(ptrs_, '*');
 
    if(default_ != nullptr)

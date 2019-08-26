@@ -46,12 +46,12 @@ public:
    //  Invokes the conjugate function if the constructor invoked FIRST.
    //
    ~FunctionGuard();
-private:
+
    //  Deleted to prohibit copying.
    //
    FunctionGuard(const FunctionGuard& that) = delete;
    FunctionGuard& operator=(const FunctionGuard& that) = delete;
-
+private:
    //  The first function that was invoked.
    //
    First first_;

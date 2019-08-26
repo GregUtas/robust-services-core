@@ -47,6 +47,8 @@ public:
    Terminal* AutoTerm() const { return auto_.get(); }
    Terminal* BoolTerm() const { return bool_.get(); }
    Terminal* CharTerm() const { return char_.get(); }
+   Terminal* Char16Term() const { return char16_.get(); }
+   Terminal* Char32Term() const { return char32_.get(); }
    Terminal* DoubleTerm() const { return double_.get(); }
    Terminal* FloatTerm() const { return float_.get(); }
    Terminal* IntTerm() const { return int_.get(); }
@@ -62,6 +64,7 @@ public:
    Terminal* uLongLongTerm() const { return ulong_long_.get(); }
    Terminal* uShortTerm() const { return ushort_.get(); }
    Terminal* VoidTerm() const { return void_.get(); }
+   Terminal* wCharTerm() const { return wchar_.get(); }
 
    //  Registers a macro.
    //
@@ -105,6 +108,8 @@ private:
    TerminalPtr auto_;
    TerminalPtr bool_;
    TerminalPtr char_;
+   TerminalPtr char16_;
+   TerminalPtr char32_;
    TerminalPtr double_;
    TerminalPtr float_;
    TerminalPtr int_;
@@ -120,6 +125,7 @@ private:
    TerminalPtr ulong_long_;
    TerminalPtr ushort_;
    TerminalPtr void_;
+   TerminalPtr wchar_;
    MacroPtrVector macros_;
 };
 }

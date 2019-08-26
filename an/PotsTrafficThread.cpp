@@ -63,6 +63,11 @@ public:
    //
    ~TrafficCall();
 
+   //  Deleted to prohibit copying.
+   //
+   TrafficCall(const TrafficCall& that) = delete;
+   TrafficCall& operator=(const TrafficCall& that) = delete;
+
    enum State
    {
       Originating,  // waiting for dial tone
@@ -119,11 +124,6 @@ public:
    //
    static void operator delete(void* addr);
 private:
-   //  Deleted to prohibit copying.
-   //
-   TrafficCall(const TrafficCall& that) = delete;
-   TrafficCall& operator=(const TrafficCall& that) = delete;
-
    //> The size of the DelayMsecs_ array.
    //
    static const size_t DelaySize = 4;
@@ -222,6 +222,11 @@ class TrafficCallPool : public Dynamic
 {
    friend class Singleton< TrafficCallPool >;
 public:
+   //  Deleted to prohibit copying.
+   //
+   TrafficCallPool(const TrafficCallPool& that) = delete;
+   TrafficCallPool& operator=(const TrafficCallPool& that) = delete;
+
    //  Gets a TrafficCall from the pool.
    //
    TrafficCall* Deq() { return freeq_.Deq(); }
@@ -237,11 +242,6 @@ private:
    //  Destroys the pool.
    //
    ~TrafficCallPool();
-
-   //  Deleted to prohibit copying.
-   //
-   TrafficCallPool(const TrafficCallPool& that) = delete;
-   TrafficCallPool& operator=(const TrafficCallPool& that) = delete;
 
    //  The free queue of calls, which minimizes use of the heap.
    //

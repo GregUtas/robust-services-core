@@ -216,7 +216,7 @@ public:
    static const Id ProxyAnswer   = FirstId + 2;
    static const Id ProxyRelease  = FirstId + 3;
    static const Id NextId        = FirstId + 4;
-private:
+
    //  Deleted because this class only has static members.  Its purpose is
    //  to define event identifiers, but the events themselves are derived
    //  from various basic call events.
@@ -385,7 +385,7 @@ public:
    //
    static const Id ProxyAnswerSnp  = FirstId + 2;
    static const Id NextId          = FirstId + 3;
-private:
+
    //  Deleted because this class only has static members.  It defines
    //  trigger identifiers to which active modifier SSMs can react, but
    //  no actual triggers (for Initiators) use these identifiers as yet.

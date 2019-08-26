@@ -342,10 +342,10 @@ public:
    //
    bool HasPODMember() const;
 
-   //  Returns the constructor that accepts ARGS.  Looks for any constructor if
-   //  ARGS is nullptr.  Otherwise, looks for a constructor that matches ARGS
-   //  after inserting a "this" argument if ARGS lacks one.  Returns nullptr if
-   //  no constructor is not found, in which case the class has an implicit,
+   //  Returns the constructor that accepts ARGS.  If ARGS is nullptr, returns
+   //  the default constructor if it exists, else the first constructor found.
+   //  Otherwise, looks for a constructor that matches ARGS.  Returns nullptr
+   //  if a constructor is not found, in which case the class has an implicit,
    //  default constructor if IsDefaultConstructible returns true.  Updates
    //  VIEW with the constructor's accessibility to SCOPE if SCOPE is provided.
    //

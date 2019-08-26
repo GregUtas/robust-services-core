@@ -57,6 +57,11 @@ public:
    //
    ~SysMutex();
 
+   //  Deleted to prohibit copying.
+   //
+   SysMutex(const SysMutex& that) = delete;
+   SysMutex& operator=(const SysMutex& that) = delete;
+
    //  Acquires the mutex.  TIMEOUT specifies how long to wait.
    //
    Rc Acquire(msecs_t timeout, Thread* owner = nullptr);
@@ -82,11 +87,6 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Deleted to prohibit copying.
-   //
-   SysMutex(const SysMutex& that) = delete;
-   SysMutex& operator=(const SysMutex& that) = delete;
-
    //  A handle to the native mutex.
    //
    SysMutex_t mutex_;

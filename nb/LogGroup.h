@@ -68,6 +68,11 @@ public:
    //
    ~LogGroup();
 
+   //  Deleted to prohibit copying.
+   //
+   LogGroup(const LogGroup& that) = delete;
+   LogGroup& operator=(const LogGroup& that) = delete;
+
    //  Returns the group's name.
    //
    c_string Name() const { return name_.c_str(); }
@@ -109,11 +114,6 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Deleted to prohibit copying.
-   //
-   LogGroup(const LogGroup& that) = delete;
-   LogGroup& operator=(const LogGroup& that) = delete;
-
    //  Adds LOG to the group.
    //
    bool BindLog(Log& log);

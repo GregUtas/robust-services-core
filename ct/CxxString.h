@@ -82,13 +82,6 @@ namespace CodeTools
    //
    std::string Compress(const std::string& s);
 
-   //  Concatentates a string of the form ("<string>"<whitespace>)*"<string>"
-   //  by removing the quotation marks and whitespace between the strings.
-   //  The quotation marks originally at the beginning and end of the string
-   //  must not be included in S.
-   //
-   void Concatenate(std::string& s);
-
    //  Appends a scope resolution operator to SCOPE unless it is empty, and
    //  returns the resulting string.
    //

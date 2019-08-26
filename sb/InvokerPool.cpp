@@ -82,6 +82,11 @@ public:
    //
    ~InvokerWork();
 
+   //  Deleted to prohibit copying.
+   //
+   InvokerWork(const InvokerWork& that) = delete;
+   InvokerWork& operator=(const InvokerWork& that) = delete;
+
    //  Queue of contexts that have messages waiting to be processed.
    //
    Q2Way< Context > contextq_;
@@ -101,11 +106,6 @@ public:
    //  The longest time that a context was queued.
    //
    HighWatermarkPtr maxDelay_;
-private:
-   //  Deleted to prohibit copying.
-   //
-   InvokerWork(const InvokerWork& that) = delete;
-   InvokerWork& operator=(const InvokerWork& that) = delete;
 };
 
 //------------------------------------------------------------------------------

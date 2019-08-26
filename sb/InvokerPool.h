@@ -62,6 +62,11 @@ public:
    //
    static const size_t MaxInvokers;
 
+   //  Deleted to prohibit copying.
+   //
+   InvokerPool(const InvokerPool& that) = delete;
+   InvokerPool& operator=(const InvokerPool& that) = delete;
+
    //  Returns the pool's scheduler faction.
    //
    NodeBase::Faction GetFaction() const
@@ -201,11 +206,6 @@ private:
    //  Overridden to mark objects in the work queues as being in use.
    //
    void ClaimBlocks() override;
-
-   //  Deleted to prohibit copying.
-   //
-   InvokerPool(const InvokerPool& that) = delete;
-   InvokerPool& operator=(const InvokerPool& that) = delete;
 
    //  The scheduler faction in which the pool's invokers run.
    //

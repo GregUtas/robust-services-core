@@ -41,6 +41,11 @@ public:
    //
    virtual ~SysHeap();
 
+   //  Deleted to prohibit copying.
+   //
+   SysHeap(const SysHeap& that) = delete;
+   SysHeap& operator=(const SysHeap& that) = delete;
+
    //  Allocates SIZE bytes.
    //
    void* Alloc(size_t size);
@@ -104,6 +109,11 @@ public:
    //
    static void operator delete(void* addr);
    static void operator delete[](void* addr);
+
+   //  Deleted to prevent allocation on another heap.
+   //
+   static void* operator new(size_t size, MemoryType type) = delete;
+   static void* operator new[](size_t size, MemoryType type) = delete;
 protected:
    //  Creates a heap for memory of TYPE.  If SIZE is 0, the heap can grow
    //  indefinitely, else it is limited to SIZE bytes.  If TYPE is MemPerm,
@@ -112,16 +122,6 @@ protected:
    //
    SysHeap(MemoryType type, size_t bytes);
 private:
-   //  Deleted to prohibit copying.
-   //
-   SysHeap(const SysHeap& that) = delete;
-   SysHeap& operator=(const SysHeap& that) = delete;
-
-   //  Deleted to prevent allocation on another heap.
-   //
-   static void* operator new(size_t size, MemoryType type) = delete;
-   static void* operator new[](size_t size, MemoryType type) = delete;
-
    //  The type of memory provided by the heap.
    //
    const MemoryType type_;

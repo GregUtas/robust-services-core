@@ -72,6 +72,11 @@ public:
    static const Usage Optional  = 1;  // parameter optional for signal
    static const Usage Mandatory = 2;  // parameter mandatory for signal
 
+   //  Deleted to prohibit copying.
+   //
+   Parameter(const Parameter& that) = delete;
+   Parameter& operator=(const Parameter& that) = delete;
+
    //  Returns the parameter's identifier.
    //
    Id Pid() const { return Id(pid_.GetId()); }
@@ -175,11 +180,6 @@ protected:
    //
    bool BindUsage(SignalId sid, Usage usage);
 private:
-   //  Deleted to prohibit copying.
-   //
-   Parameter(const Parameter& that) = delete;
-   Parameter& operator=(const Parameter& that) = delete;
-
    //  The protocol to which the parameter belongs.
    //
    const ProtocolId prid_;

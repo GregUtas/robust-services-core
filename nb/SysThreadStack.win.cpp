@@ -45,6 +45,10 @@ namespace NodeBase
 class StackInfo
 {
 public:
+   //  Deleted because this class only has static members.
+   //
+   StackInfo() = delete;
+
    //  Loads symbol information on startup.
    //
    static DWORD Startup();
@@ -77,10 +81,6 @@ public:
    //
    static const size_t MaxFrames = 2048;
 private:
-   //  Deleted because this class only has static members.
-   //
-   StackInfo() = delete;
-
    //  A handle to our process.
    //
    static HANDLE Process;

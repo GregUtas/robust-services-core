@@ -33,7 +33,7 @@
 #include "Cxx.h"
 #include "CxxExecute.h"
 #include "CxxString.h"
-#include "CxxToken.h"
+#include "CxxStrLiteral.h"
 #include "Debug.h"
 #include "Parser.h"
 #include "Singleton.h"
@@ -428,6 +428,12 @@ void CxxRoot::Startup(RestartLevel level)
    char_.reset(new Terminal(CHAR_STR));
    char_->SetNumeric(Numeric::Char);
 
+   char16_.reset(new Terminal(CHAR16_STR));
+   char16_->SetNumeric(Numeric::Char16);
+
+   char32_.reset(new Terminal(CHAR32_STR));
+   char32_->SetNumeric(Numeric::Char32);
+
    double_.reset(new Terminal(DOUBLE_STR));
    double_->SetNumeric(Numeric::Double);
 
@@ -469,6 +475,9 @@ void CxxRoot::Startup(RestartLevel level)
    ushort_->SetNumeric(Numeric::uShort);
 
    void_.reset(new Terminal(VOID_STR));
+
+   wchar_.reset(new Terminal(WCHAR_STR));
+   wchar_->SetNumeric(Numeric::wChar);
 
    //  Define standard macros.
    //

@@ -46,7 +46,7 @@ namespace NodeBase
 //  o one item: head_.next & head_.prev = item, item.next & item.prev = head_
 //  o two or more items: circular queue that includes head
 //
-template< typename T > class Q2Way
+template< class T > class Q2Way
 {
 public:
    //  Initializes the queue header to default values.  Before the queue can
@@ -67,6 +67,11 @@ public:
       head_.prev = nullptr;              // expected by Q2Link destructor
       head_.next = nullptr;              // expected by Q2Link destructor
    }
+
+   //  Deleted to prohibit copying.
+   //
+   Q2Way(const Q2Way& that) = delete;
+   Q2Way& operator=(const Q2Way& that) = delete;
 
    //  Initializes the queue so that it is ready for use.
    //
@@ -353,11 +358,6 @@ private:
          }
       }
    }
-
-   //  Deleted to prohibit copying.
-   //
-   Q2Way(const Q2Way& that) = delete;
-   Q2Way& operator=(const Q2Way& that) = delete;
 
    //  See the comment in Singleton.h about fn_name's in a template header.
    //

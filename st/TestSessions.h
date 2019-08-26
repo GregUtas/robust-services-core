@@ -335,6 +335,11 @@ public:
    //
    static const TestSessionId MaxId = 16;
 
+   //  Deleted to prohibit copying.
+   //
+   TestSession(const TestSession& that) = delete;
+   TestSession& operator=(const TestSession& that) = delete;
+
    //  Returns the test PSM associated with this entry.
    //
    TestPsm* GetTestPsm() const { return testPsm_; }
@@ -365,11 +370,6 @@ private:
    //  Private to restrict deletion.  Not subclassed.
    //
    ~TestSession();
-
-   //  Deleted to prohibit copying.
-   //
-   TestSession(const TestSession& that) = delete;
-   TestSession& operator=(const TestSession& that) = delete;
 
    //  The instance of StTestData to which this session belongs.
    //

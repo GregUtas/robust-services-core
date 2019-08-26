@@ -52,6 +52,11 @@ public:
    //
    static const Id MaxId = 511;
 
+   //  Deleted to prohibit copying.
+   //
+   Service(const Service& that) = delete;
+   Service& operator=(const Service& that) = delete;
+
    //  Returns the service's identifier.
    //
    Id Sid() const { return Id(sid_.GetId()); }
@@ -206,11 +211,6 @@ private:
    //  Registers HANDLER against EHID.
    //
    bool BindSystemHandler(EventHandler& handler, EventHandlerId ehid);
-
-   //  Deleted to prohibit copying.
-   //
-   Service(const Service& that) = delete;
-   Service& operator=(const Service& that) = delete;
 
    //  The service's identifier.
    //

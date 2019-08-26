@@ -23,15 +23,18 @@
 #include <cctype>
 #include <cstring>
 #include <iomanip>
-#include <ostream>
+#include <ios>
+#include <sstream>
 #include "CodeFile.h"
 #include "CxxArea.h"
+#include "CxxCharLiteral.h"
 #include "CxxDirective.h"
 #include "CxxNamed.h"
 #include "CxxRoot.h"
 #include "CxxScope.h"
 #include "CxxScoped.h"
 #include "CxxStatement.h"
+#include "CxxStrLiteral.h"
 #include "CxxSymbols.h"
 #include "CxxToken.h"
 #include "Debug.h"
@@ -87,6 +90,68 @@ ostream& Cxx::operator<<(ostream& stream, ClassTag tag)
    return stream;
 }
 
+//------------------------------------------------------------------------------
+
+fixed_string EncodingStrings[Cxx::Encoding_N + 1] =
+{
+   "",
+   "u8",
+   "u",
+   "U",
+   "L",
+   ERROR_STR
+};
+
+ostream& Cxx::operator<<(ostream& stream, Encoding code)
+{
+   if((code >= 0) && (code < Cxx::Encoding_N))
+      stream << EncodingStrings[code];
+   else
+      stream << EncodingStrings[Encoding_N];
+   return stream;
+}
+
+//------------------------------------------------------------------------------
+
+string CharString(uint32_t c, bool s)
+{
+   switch(c)
+   {
+   case 0x00: return "\\0";
+   case 0x07: return "\\a";
+   case 0x08: return "\\b";
+   case 0x0c: return "\\f";
+   case 0x0a: return "\\n";
+   case 0x0d: return "\\r";
+   case 0x09: return "\\t";
+   case 0x0b: return "\\v";
+   case BACKSLASH: return "\\\\";
+   case QUOTE:
+      if(s) return "\\\"";
+      break;
+   case APOSTROPHE:
+      if(!s) return "\\'";
+      break;
+   }
+
+   if((c >= 32) && (c <= 126))
+   {
+      return string(1, c);  // displayable, not escaped
+   }
+
+   std::ostringstream stream;
+   stream << std::hex << std::setfill('0');
+
+   if(c <= UINT8_MAX)
+      stream << BACKSLASH << 'x' << setw(2) << uint32_t(c);
+   else if(c <= UINT16_MAX)
+      stream << BACKSLASH << 'u' << setw(4) << uint32_t(c);
+   else
+      stream << BACKSLASH << 'U' << setw(8) << uint32_t(c);
+
+   return stream.str();
+}
+
 //==============================================================================
 
 const bool F = false;
@@ -106,15 +171,17 @@ const CxxWord CxxWord::Attrs[Cxx::NIL_KEYWORD + 1] =
    CxxWord("-",   "-",    "d",  T),  // DO
    CxxWord("E",   "E",    "E",  T),  // ENUM
    CxxWord("-",   "P",    "-",  F),  // EXPLICIT
-   CxxWord("DP",  "-",    "-",  T),  // EXTERN
+   CxxWord("DP",  "-",    "-",  F),  // EXTERN
+   CxxWord("-",   "-",    "-",  F),  // FINAL
    CxxWord("-",   "-",    "f",  T),  // FOR
    CxxWord("-",   "F",    "-",  T),  // FRIEND
    CxxWord("H",   "H",    "H",  F),  // HASH
    CxxWord("-",   "-",    "i",  T),  // IF
-   CxxWord("P",   "P",    "-",  T),  // INLINE
+   CxxWord("P",   "P",    "-",  F),  // INLINE
    CxxWord("-",   "D",    "-",  F),  // MUTABLE
    CxxWord("N",   "-",    "-",  T),  // NAMESPACE
    CxxWord("-",   "P",    "-",  F),  // OPERATOR
+   CxxWord("-",   "-",    "-",  F),  // OVERRIDE
    CxxWord("-",   "A",    "-",  T),  // PRIVATE
    CxxWord("-",   "A",    "-",  T),  // PROTECTED
    CxxWord("-",   "A",    "-",  T),  // PUBLIC
@@ -381,6 +448,8 @@ void CxxChar::Initialize()
 const Numeric Numeric::Nil(NIL, 0, F);
 const Numeric Numeric::Bool(INT, 1, F);
 const Numeric Numeric::Char(INT, sizeof(char) << 3, T);
+const Numeric Numeric::Char16(INT, sizeof(char16_t) << 3, F);
+const Numeric Numeric::Char32(INT, sizeof(char32_t) << 3, F);
 const Numeric Numeric::Double(FLOAT, sizeof(double) << 3, T);
 const Numeric Numeric::Enum(ENUM, sizeof(int) << 3, T);
 const Numeric Numeric::Float(FLOAT, sizeof(float) << 3, T);
@@ -395,6 +464,7 @@ const Numeric Numeric::uInt(INT, sizeof(int) << 3, F);
 const Numeric Numeric::uLong(INT, sizeof(long) << 3, F);
 const Numeric Numeric::uLongLong(INT, sizeof(long long) << 3, F);
 const Numeric Numeric::uShort(INT, sizeof(short) << 3, F);
+const Numeric Numeric::wChar(INT, sizeof(wchar_t) << 3, F);
 
 //------------------------------------------------------------------------------
 

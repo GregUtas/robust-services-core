@@ -27,7 +27,7 @@
 
 namespace NodeBase
 {
-   template< typename T > class Registry;
+   template< class T > class Registry;
 }
 
 //------------------------------------------------------------------------------
@@ -42,7 +42,7 @@ namespace NodeBase
 //
 class RegCell
 {
-   template< typename T > friend class Registry;
+   template< class T > friend class Registry;
 public:
    //  Until an object is registered, it has a nil identifier and has not
    //  been bound to the registry.
@@ -53,6 +53,11 @@ public:
    //  registry.
    //
    ~RegCell();
+
+   //  Deleted to prohibit copying.
+   //
+   RegCell(const RegCell& that) = delete;
+   RegCell& operator=(const RegCell& that) = delete;
 
    //  Before an object is registered, this function allow its index within
    //  the registry (and therefore its identifier) to be specified.  This is
@@ -69,11 +74,6 @@ public:
    //
    std::string to_str() const;
 private:
-   //  Deleted to prohibit copying.
-   //
-   RegCell(const RegCell& that) = delete;
-   RegCell& operator=(const RegCell& that) = delete;
-
    //  The object's index (identifier) within the registry's array.
    //
    id_t id;

@@ -48,7 +48,7 @@ namespace NodeBase
 //  as an identifier for the object.  The first entry in the array is not
 //  used and corresponds to NIL_ID (a nil object or nullptr).
 //
-template< typename T > class Registry
+template< class T > class Registry
 {
 public:
    //  Creates an empty registry.
@@ -75,6 +75,11 @@ public:
       Memory::Free(registry_);
       registry_ = nullptr;
    }
+
+   //  Deleted to prohibit copying.
+   //
+   Registry(const Registry& that) = delete;
+   Registry& operator=(const Registry& that) = delete;
 
    //  Allocates memory of type MEM for the registry's array.  MAX is the
    //  maximum number of objects that can register.  All objects must derive
@@ -619,11 +624,6 @@ private:
          }
       }
    }
-
-   //  Deleted to prohibit copying.
-   //
-   Registry(const Registry& that) = delete;
-   Registry& operator=(const Registry& that) = delete;
 
    //  See the comment in Singleton.h about fn_name's in a template header.
    //

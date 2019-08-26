@@ -702,7 +702,7 @@ size_t TokenMessage::set_from(const string& text)
          ++token_index;
          ++text_index;
       }
-      else if(text[text_index] == '\'')
+      else if(text[text_index] == APOSTROPHE)
       {
          ++text_index;
 
@@ -711,20 +711,20 @@ size_t TokenMessage::set_from(const string& text)
          {
             //  Double apostrophe.  Insert a single one into the message.
             //
-            tokens[token_index] = Token(CATEGORY_ASCII, '\'');
+            tokens[token_index] = Token(CATEGORY_ASCII, APOSTROPHE);
             ++token_index;
          }
 
          //  Copy the rest of the quoted string into the message.
          //
-         while((text_index < text.size()) && (text[text_index] != '\''))
+         while((text_index < text.size()) && (text[text_index] != APOSTROPHE))
          {
             tokens[token_index] = Token(CATEGORY_ASCII, text[text_index]);
             ++token_index;
             ++text_index;
          }
 
-         if(text[text_index] != '\'')
+         if(text[text_index] != APOSTROPHE)
             location = text_index;  // unmatched single quote
          else
             ++text_index;

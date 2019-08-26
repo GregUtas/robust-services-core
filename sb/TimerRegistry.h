@@ -39,6 +39,11 @@ class TimerRegistry : public NodeBase::Dynamic
    friend class NodeBase::Singleton< TimerRegistry >;
    friend class Timer;
 public:
+   //  Deleted to prohibit copying.
+   //
+   TimerRegistry(const TimerRegistry& that) = delete;
+   TimerRegistry& operator=(const TimerRegistry& that) = delete;
+
    //  Invokes SendTimeout on each timer that has expired.
    //
    void ProcessWork();
@@ -72,11 +77,6 @@ private:
    //  Sends a timeout on behalf of TMR.
    //
    void SendTimeout(Timer* tmr);
-
-   //  Deleted to prohibit copying.
-   //
-   TimerRegistry(const TimerRegistry& that) = delete;
-   TimerRegistry& operator=(const TimerRegistry& that) = delete;
 
    //  timerq_[s] contains timers expiring in (s - nextQid_) seconds; the
    //  last queue is for timers of Timer::MaxQId seconds or more.

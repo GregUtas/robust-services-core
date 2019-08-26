@@ -34,7 +34,7 @@
 
 namespace NodeBase
 {
-   template< typename T > class Q1Way;
+   template< class T > class Q1Way;
 }
 
 namespace SessionBase
@@ -80,6 +80,11 @@ public:
       PortAllocFailed,      // failed to create PSM for context
       ContextCorrupt        // message rejected because context was corrupt
    };
+
+   //  Deleted to prohibit copying.
+   //
+   Factory(const Factory& that) = delete;
+   Factory& operator=(const Factory& that) = delete;
 
    //  Returns the factory's identifier.
    //
@@ -238,11 +243,6 @@ protected:
    //
    void RecordDeletion(bool context) const;
 private:
-   //  Deleted to prohibit copying.
-   //
-   Factory(const Factory& that) = delete;
-   Factory& operator=(const Factory& that) = delete;
-
    //  Allocates an incoming message to wrap BUFF and returns it in MSG.
    //  Returning nullptr indicates that BUFF should be discarded, either
    //  because it is invalid or because message allocation failed.  Must

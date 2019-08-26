@@ -106,6 +106,11 @@ protected:
    //
    virtual ~Class();
 
+   //  Deleted to prohibit copying.
+   //
+   Class(const Class& that) = delete;
+   Class& operator=(const Class& that) = delete;
+
    //  Performs the equivalent of operator new on the object's class
    //  to allocate SIZE bytes when creating an object.  The default
    //  version invokes the global operator new.
@@ -135,11 +140,6 @@ private:
    //   Checks that OBJ belongs to this class.
    //
    bool VerifyClass(const Object& obj) const;
-
-   //  Deleted to prohibit copying.
-   //
-   Class(const Class& that) = delete;
-   Class& operator=(const Class& that) = delete;
 
    //  The class's identifier.
    //

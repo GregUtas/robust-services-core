@@ -42,6 +42,8 @@ extern NodeBase::fixed_string BREAK_STR;
 extern NodeBase::fixed_string CATCH_STR;
 extern NodeBase::fixed_string CASE_STR;
 extern NodeBase::fixed_string CHAR_STR;
+extern NodeBase::fixed_string CHAR16_STR;
+extern NodeBase::fixed_string CHAR32_STR;
 extern NodeBase::fixed_string CLASS_STR;
 extern NodeBase::fixed_string CONST_STR;
 extern NodeBase::fixed_string CONST_CAST_STR;
@@ -100,6 +102,7 @@ extern NodeBase::fixed_string UNSIGNED_STR;
 extern NodeBase::fixed_string USING_STR;
 extern NodeBase::fixed_string VIRTUAL_STR;
 extern NodeBase::fixed_string VOID_STR;
+extern NodeBase::fixed_string WCHAR_STR;
 extern NodeBase::fixed_string WHILE_STR;
 
 extern NodeBase::fixed_string DEFINED_STR;
@@ -121,8 +124,8 @@ extern NodeBase::fixed_string HASH_UNDEF_STR;
 //  Other parser strings.
 //
 extern NodeBase::fixed_string ARRAY_STR;
-extern NodeBase::fixed_string COMMENT_END_STR;
 extern NodeBase::fixed_string COMMENT_BEGIN_STR;
+extern NodeBase::fixed_string COMMENT_END_STR;
 extern NodeBase::fixed_string COMMENT_STR;
 extern NodeBase::fixed_string ELLIPSES_STR;
 extern NodeBase::fixed_string LOCALS_STR;
@@ -606,7 +609,7 @@ template< typename T > size_t IndexOf(const std::vector< T >& v, const T& item)
 //
 //  Displays the objects in a vector.
 //
-template< typename T > void DisplayObjects
+template< class T > void DisplayObjects
    (const std::vector< T >& group, std::ostream& stream,
    const std::string& prefix, const NodeBase::Flags& options)
 {

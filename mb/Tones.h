@@ -60,6 +60,11 @@ public:
 
    static const Id Media           = UINT8_MAX;  // not connected to a tone
 
+   //  Deleted to prohibit copying.
+   //
+   Tone(const Tone& that) = delete;
+   Tone& operator=(const Tone& that) = delete;
+
    //  Returns the tone's identifier.
    //
    Id Tid() const { return Id(tid_.GetId()); }
@@ -81,11 +86,6 @@ protected:
    //
    virtual ~Tone();
 private:
-   //  Deleted to prohibit copying.
-   //
-   Tone(const Tone& that) = delete;
-   Tone& operator=(const Tone& that) = delete;
-
    //  The tone's identifier.
    //
    RegCell tid_;

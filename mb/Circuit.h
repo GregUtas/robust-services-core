@@ -47,6 +47,11 @@ public:
    //
    virtual ~Circuit();
 
+   //  Deleted to prohibit copying.
+   //
+   Circuit(const Circuit& that) = delete;
+   Circuit& operator=(const Circuit& that) = delete;
+
    //  Returns the port to which the circuit is assigned.
    //
    Switch::PortId TsPort() const { return port_.GetId(); }
@@ -80,11 +85,6 @@ protected:
    //
    Circuit();
 private:
-   //  Deleted to prohibit copying.
-   //
-   Circuit(const Circuit& that) = delete;
-   Circuit& operator=(const Circuit& that) = delete;
-
    //  The port where the circuit appears.
    //
    RegCell port_;

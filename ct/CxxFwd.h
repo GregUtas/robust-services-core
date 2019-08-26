@@ -26,6 +26,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include "Cxx.h"
 
 //------------------------------------------------------------------------------
 
@@ -174,6 +175,7 @@ typedef std::vector< Typedef* > TypedefVector;
 typedef std::vector< Using* > UsingVector;
 
 typedef std::set< std::string > stringSet;
+typedef std::set< Cxx::Keyword > KeywordSet;
 typedef std::set< const CxxNamed* > CxxNamedSet;
 }
 #endif

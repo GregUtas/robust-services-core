@@ -39,6 +39,10 @@ namespace NodeBase
 class Memory
 {
 public:
+   //  Deleted because this class only has static members.
+   //
+   Memory() = delete;
+
    //  Rounds up SIZE bytes to a multiple of LOG2ALIGN bytes.
    //
    static size_t Align(size_t size, size_t log2align = BYTES_PER_WORD_LOG2);
@@ -90,10 +94,6 @@ public:
    //
    static void Shutdown(RestartLevel level);
 private:
-   //  Deleted because this class only has static members.
-   //
-   Memory() = delete;
-
    //  Returns the heap for TYPE.  If it doesn't exist, it is created.
    //
    static SysHeap* EnsureHeap(MemoryType type);

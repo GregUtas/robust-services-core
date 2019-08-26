@@ -47,6 +47,11 @@ class CfgParmRegistry : public Protected
 {
    friend class Singleton< CfgParmRegistry >;
 public:
+   //  Deleted to prohibit copying.
+   //
+   CfgParmRegistry(const CfgParmRegistry& that) = delete;
+   CfgParmRegistry& operator=(const CfgParmRegistry& that) = delete;
+
    //  Adds TUPLE to the registry.
    //
    bool BindTuple(CfgTuple& tuple);
@@ -112,11 +117,6 @@ private:
    //  Private because this singleton is not subclassed.
    //
    ~CfgParmRegistry();
-
-   //  Deleted to prohibit copying.
-   //
-   CfgParmRegistry(const CfgParmRegistry& that) = delete;
-   CfgParmRegistry& operator=(const CfgParmRegistry& that) = delete;
 
    //  Reads configuration tuples (key-value pairs) from ConfigFileName
    //  during system initialization.  Creates a CfgTuple instance for

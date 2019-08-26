@@ -160,6 +160,11 @@ public:
    //
    ~BuffTrace();
 
+   //  Deleted to prohibit copying.
+   //
+   BuffTrace(const BuffTrace& that) = delete;
+   BuffTrace& operator=(const BuffTrace& that) = delete;
+
    //  Starting at BT, finds the next message with SID that was received
    //  by FID.  Updates SKIP with information about signals (if any) that
    //  matched FID but that were skipped before also matching SID.
@@ -195,11 +200,6 @@ private:
    //  Overridden to nullify the record if buff_ will vanish.
    //
    void Shutdown(NodeBase::RestartLevel level) override;
-
-   //  Deleted to prohibit copying.
-   //
-   BuffTrace(const BuffTrace& that) = delete;
-   BuffTrace& operator=(const BuffTrace& that) = delete;
 
    //  A clone of the buffer being captured.
    //

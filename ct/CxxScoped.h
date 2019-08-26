@@ -1077,6 +1077,10 @@ public:
    //
    ~Typedef();
 
+   //  Invoked for a type alias, which uses the keyword "using".
+   //
+   void SetUsing() { using_ = true; }
+
    //  Overridden to set the type for an "auto" variable.
    //
    CxxToken* AutoType() const override { return (CxxToken*) this; }
@@ -1173,9 +1177,13 @@ private:
    //
    const TypeSpecPtr spec_;
 
+   //  Set if this is actually a type alias (using <name> = <TypeSpec>).
+   //
+   bool using_ : 1;
+
    //  How many times the typedef was used as a type.
    //
-   size_t refs_ : 16;
+   size_t refs_ : 15;
 };
 
 //------------------------------------------------------------------------------

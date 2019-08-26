@@ -34,11 +34,6 @@
 #include "NbTypes.h"
 #include "SysTypes.h"
 
-namespace CodeTools
-{
-   struct SymbolView;
-}
-
 //------------------------------------------------------------------------------
 
 namespace CodeTools

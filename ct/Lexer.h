@@ -148,6 +148,12 @@ public:
    //
    bool NextCharIs(char c);
 
+   //  The same as NextCharIs, but only advances curr_ to the character that
+   //  immediately follows C.  Used to parse literals, as it does not skip
+   //  over blanks and comments.
+   //
+   bool ThisCharIs(char c);
+
    //  Returns true if STR starts at curr_, advancing curr_ beyond STR.  Used
    //  when looking for a specific keyword or operator.  If CHECK isn't forced
    //  to false, then either
@@ -183,6 +189,21 @@ public:
    //  identifier that was found.
    //
    Cxx::Keyword NextKeyword(std::string& str) const;
+
+   //  Updates TAGS with the next series of keywords that appear in a data
+   //  declaration.  Stops when a non-keyword is reached.
+   //
+   void GetDataTags(KeywordSet& tags);
+
+   //  Updates TAGS with the next series of keywords that appear before the
+   //  name in a function declaration.  Stops when a non-keyword is reached.
+   //
+   void GetFuncFrontTags(KeywordSet& tags);
+
+   //  Updates TAGS with the next series of keywords that appear at the end
+   //  of a function declaration.  Stops when a non-keyword is reached.
+   //
+   void GetFuncBackTags(KeywordSet& tags);
 
    //  Returns the next operator (punctuation only).
    //
@@ -254,15 +275,11 @@ public:
    //
    bool GetNum(TokenPtr& item);
 
-   //  If the next token is a character literal, sets C to its value and
-   //  returns true, else returns false.
+   //  Sets C to the value of the next character within a character or string
+   //  literal and returns true.  Handles escape sequences.  Returns false if
+   //  the end of the source code is reached before a character is found.
    //
-   bool GetChar(char& c);
-
-   //  If the next token is a string literal, sets S to its value and returns
-   //  true, else returns false.
-   //
-   bool GetStr(std::string& s);
+   bool GetChar(uint32_t& c);
 
    //  Returns true and updates TAG on finding a class keyword.  TYPE is
    //  set if "typename" is acceptable as a keyword.
@@ -312,12 +329,6 @@ private:
    //
    void Preprocess();
 
-   //  The same as NextCharIs, but only advances curr_ to the character that
-   //  immediately follows C.  Used to parse literals, as it does not skip
-   //  over blanks and comments.
-   //
-   bool ThisCharIs(char c);
-
    //  Returns the position of the next character to parse, starting at POS.
    //  The result is POS unless characters are skipped (namely whitespace,
    //  comments, and character and string literals).  Returns string::npos
@@ -358,6 +369,12 @@ private:
    //  digits in NUM (zero if no literal was found).
    //
    size_t GetHex(int64_t& num);
+
+   //  Parses a hex string (digits only) and returns it in NUM.  Returns the
+   //  number of digits in NUM (zero if no hex digits were found).  MAX is
+   //  the maximum number of digits allowed in the string.
+   //
+   size_t GetHexNum(int64_t& num, size_t max = 16);
 
    //  Parses an octal literal and returns it in NUM.  Returns the number of
    //  digits in NUM (zero if no literal was found).

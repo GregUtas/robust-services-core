@@ -1087,17 +1087,24 @@ Function* Class::FindCtor
 {
    Debug::ft(Class_FindCtor);
 
-   //  If no arguments were provided, look for any constructor.
+   //  If no arguments were provided, look for the default constructor.
+   //  If there isn't one, return the first constructor found (if any).
    //
    if(args == nullptr)
    {
+      Function* ctor = nullptr;
       auto funcs = CxxArea::Funcs();
-      for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
+
+      for(auto f = funcs->begin(); f != funcs->end(); ++f)
       {
-         if((*f)->FuncType() == FuncCtor) return f->get();
+         if((*f)->FuncType() == FuncCtor)
+         {
+            ctor = f->get();
+            if((*f)->GetArgs().size() == 1) return f->get();
+         }
       }
 
-      return nullptr;
+      return ctor;
    }
 
    //  If no "this" argument was provided, insert one.
@@ -1382,10 +1389,22 @@ void Class::GetMemberInitAttrs(DataInitVector& members) const
    for(size_t i = 0; i < data->size(); ++i)
    {
       //  The member should be initialized if it is not default constructible.
-      //  However, exempt a member that appears in a union.
+      //  However, exempt a member that appears in a union or that is a direct
+      //  template parameter.
       //
       auto mem = data->at(i).get();
       auto init = (!mem->IsDefaultConstructible() && !mem->IsUnionMember());
+
+      if(init)
+      {
+         auto spec = mem->GetTypeSpec();
+         if((spec->GetTemplateRole() == TemplateParameter) &&
+            (spec->Ptrs(false) == 0))
+         {
+            init = false;
+         }
+      }
+
       DataInitAttrs attrs(mem, init, 0);
       members.push_back(attrs);
    }

@@ -2266,8 +2266,13 @@ void Function::CheckAccessControl() const
 
    if(defn_) return Debug::SwLog(Function_CheckAccessControl, "defn", 0);
 
-   //  Do not check the access control of destructors.  If this is an override,
-   //  do not suggest a more restricted access control unless the function has
+   //  Checking the access control of a deleted function causes a "coulde be
+   //  private" recommendation.
+   //
+   if(deleted_) return;
+
+   //  Don't check the access control of destructors.  If this is an override,
+   //  don't suggest a more restricted access control unless the function has
    //  a broader access control than the root function.
    //
    auto type = FuncType();
@@ -2456,8 +2461,8 @@ void Function::CheckCtor() const
    }
 
    //  A constructor should probably be tagged explicit if it is not invoked
-   //  implicitly, can take a single argument (besides "this"), and is not a
-   //  copy or move constructor.
+   //  implicitly, can take a single argument (besides the "this" argument
+   //  that we give it), and is not a copy or move constructor.
    //
    if(!explicit_ && !implicit_)
    {
@@ -3149,7 +3154,7 @@ void Function::EnterBlock()
    //  Don't execute a function template or a function in a class template.
    //  Execution will fail because template arguments are untyped.  However:
    //  o An inline function in a class template *is* executed (because it
-   //    is not included in template instances)
+   //    is not included in template instances).
    //  o A function in a class template instance *is* executed, and so is a
    //    function template instance (GetTemplateType returns NonTemplate in
    //    this case).
@@ -4498,16 +4503,13 @@ void Function::PushThisArg(StackArgVector& args) const
 {
    Debug::ft(Function_PushThisArg);
 
-   auto exists = (args.empty() ? false : args.front().IsThis());
-
-   if(!exists)
+   if(args.empty() || !args.front().IsThis())
    {
       //  A "this" argument hasn't been pushed.  If the context function
       //  has one, push it as an implicit "this" argument.  If this is a
       //  constructor, however, there may not be a context function (e.g.
       //  during static member initialization), or the context function
-      //  may belong to another class, so push our own "this" argument
-      //  (which would eventually be the void* returned by operator new).
+      //  may belong to another class, so push our own "this" argument.
       //
       if(FuncType() != FuncCtor)
       {

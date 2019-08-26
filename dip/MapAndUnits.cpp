@@ -1499,11 +1499,11 @@ size_t MapAndUnits::process_map(const TokenMessage& map)
    auto name = map.get_parm(1);
    map_name = name.to_str().c_str();
 
-   auto begin = map_name.find('\'');
+   auto begin = map_name.find(APOSTROPHE);
 
    if(begin != string::npos)
    {
-      auto end = map_name.find_last_of('\'');
+      auto end = map_name.find_last_of(APOSTROPHE);
 
       if((end != string::npos) && (end > begin))
       {

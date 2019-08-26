@@ -59,10 +59,15 @@ namespace CodeTools
 //  are known not to be supported, along with some of the functions that would
 //  need to be modified to support them.
 //
+//  character sets:
+//    o All source code is assumed to be of type char.  char8_t, char16_t,
+//      char32_t, and wchar_t are supported by escape codes and prefixes to
+//      literals (u8, u, U, L), but additional changes would be needed to
+//      support them in identifiers, such as replacing uses of std::string
+//      in the parser and other classes.
 //  reserved words:
-//    o asm, alignas, alignof, char16_t, char32_t, concept, decltype, export,
-//      goto, register, requires, static_assert, thread_local, volatile
-//    o wchar_t (supported by a typedef)
+//    o asm, alignas, alignof, concept, decltype, export, goto, register,
+//      requires, static_assert, thread_local, volatile
 //    o and, and_eq, bitand, bitor, compl, not, not_eq, or, or_eq, xor, xor_eq
 //    o #undef, #line, #pragma (parsed but have no effect)
 //    o #if, #elif (the conditional that follows the directive is ignored)
@@ -72,14 +77,16 @@ namespace CodeTools
 //    o declaring a function as ClassName::FunctionName will cause the parser
 //      to fail (there are situations in which it expects unqualified names)
 //  character and string literals (GetCxxExpr, GetCxxAlpha, GetChar, GetStr):
-//    o type tags (u8, u, U, L, R)
+//    o raw string literals ("R" prefix)
+//    o multi-character literals (e.g. 'AB')
+//    o user-defined literals
 //  declarations and definitions:
-//    o identical declarations of anything except a class (see Forward)
+//    o identical declarations of anything (except a class: see Forward)
 //    o identical definitions of anything
 //  namespaces:
 //    o unnamed and inline namespaces (GetNamespace and symbol resolution)
 //    o namespace aliases (GetNamespace)
-//    o using statements in namespaces (currently seen as belonging to files)
+//    o using statements in namespaces (currently treated as if at file scope)
 //  classes:
 //    o multiple inheritance (GetBaseDecl)
 //    o tagging a base class as virtual (GetBaseDecl)
@@ -91,8 +98,6 @@ namespace CodeTools
 //    o including a union instance immediately after defining it (GetClassDecl)
 //    o pointer-to-member (the type "Class::*" and operators ".*" and "->*)
 //  functions:
-//    o the order of tags is inflexible: "extern inline static virtual explicit
-//      constexpr <signature> const noexcept override final" (GetFuncDecl)
 //    o const&, &, and && as member function suffix tags
 //    o noexcept(<expr>) as a function tag (only "noexcept" is supported)
 //    o using a different type (an alias) for an argument in the definition of
@@ -102,7 +107,6 @@ namespace CodeTools
 //    o constructor inheritance (GetUsing, Class.FindCtor, and others)
 //    o defining a class or function within a function (ParseInBlock and others)
 //    o range-based for loops (GetFor and many others)
-//    o multiple declarations of the same extern function
 //    o overloading the function call or comma operator (the parser allows it,
 //      but calls to the overload won't be registered because Operator.Execute
 //      doesn't look for it)
@@ -112,23 +116,18 @@ namespace CodeTools
 //    o deduced return type ("auto")
 //    o trailing return type (after "->")
 //  data:
-//    o the order of tags is inflexible: "extern static mutable constexpr const"
-//      (GetClassData, GetSpaceData, GetFuncData)
 //    o declaring more than one data instance in the same statement, either at
 //      file scope or within a class (GetClassData and GetSpaceData)--note that
 //      this *is* supported within a function (e.g. int i = 0, *pi = nullptr)
-//    o multiple declarations of the same extern data
 //    o unnamed bit fields (GetClassData)
 //  enums:
 //    o accessing an enum or enumerator using "." or "->" instead of "::"
 //    o scoped ("enum class", "enum struct") and opaque enums
+//    o forward declarations of enums
 //  typedefs:
 //    o "typedef enum" and "typedef struct" (GetTypedef)
-//    o type aliases and alias templates (GetUsing and others)
+//    o alias templates (GetUsing and others)
 //  templates:
-//    o template parameters other than typename, class, or struct: in the /subs
-//      directory, for example, bitset had to be declared as bitset<typename N>
-//      instead of bitset<size_t N>
 //    o template arguments other than qualified names: bitset<sizeof(uint8_t)>,
 //      for example, would have to be written as bitset<bytesize>, following
 //      the definition constexpr size_t bytesize = sizeof(uint8_t);
@@ -336,9 +335,9 @@ private:
    //
    bool ParseInBlock(Cxx::Keyword kwd, Block* block);
 
-   //  Returns true and creates USE on finding a using statement.
+   //  Returns true and creates USE or TYPE on finding a using statement.
    //
-   bool GetUsing(UsingPtr& use);
+   bool GetUsing(UsingPtr& use, TypedefPtr& type);
 
    //  Returns true on finding a namespace declaration.
    //
@@ -537,16 +536,23 @@ private:
    bool GetCxxAlpha(ExprPtr& expr);
 
    //  Updates EXPR with the results of parsing an expression upon reaching
+   //  an alphabetic character that could be an encoding tag for a character
+   //  or string literal.
+   //
+   bool GetCxxLiteralOrAlpha(ExprPtr& expr);
+
+   //  Updates EXPR with the results of parsing an expression upon reaching
    //  a punctuation character.  CXX is true when parsing C++ and is false
    //  when parsing preprocessor directives.
    //
    bool GetOp(ExprPtr& expr, bool cxx);
 
-   //  Updates EXPR with the results of parsing a literal.
+   //  Updates EXPR with the results of parsing a literal.  CODE specifies
+   //  the encoding tag, if any, that preceded a character os string literal.
    //
    bool GetNum(ExprPtr& expr);
-   bool GetChar(ExprPtr& expr);
-   bool GetStr(ExprPtr& expr);
+   bool GetChar(ExprPtr& expr, Cxx::Encoding code);
+   bool GetStr(ExprPtr& expr, Cxx::Encoding code);
 
    //  Updates EXPR with the results of parsing an expression enclosed by
    //  parentheses.  It tries, in order,

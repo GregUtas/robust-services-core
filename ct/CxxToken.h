@@ -473,46 +473,23 @@ private:
 
 //------------------------------------------------------------------------------
 //
-//  A character literal ('c').
+//  Base class for string literals.
 //
-class CharLiteral : public Literal
+class StringLiteral : public Literal
 {
 public:
-   explicit CharLiteral(char c)
-      : c_(c) { CxxStats::Incr(CxxStats::CHAR_LITERAL); }
-   ~CharLiteral() { CxxStats::Decr(CxxStats::CHAR_LITERAL); }
-   void Print
-      (std::ostream& stream, const NodeBase::Flags& options) const override;
-   CxxScoped* Referent() const override;
-   std::string TypeString(bool arg) const override { return CHAR_STR; }
-private:
-   Numeric GetNumeric() const override { return Numeric::Char; }
-   const char c_;
-};
+   //  Virtual to allow subclassing.
+   //
+   virtual ~StringLiteral() = default;
 
-//------------------------------------------------------------------------------
-//
-//  A string literal ("s").
-//
-class StrLiteral : public Literal
-{
-public:
-   explicit StrLiteral(const std::string& s)
-      : str_(s) { CxxStats::Incr(CxxStats::STR_LITERAL); }
-   ~StrLiteral() { CxxStats::Decr(CxxStats::STR_LITERAL); }
-   std::string GetStr() const { return str_; }
-   TypeSpec* GetTypeSpec() const override;
-   void Print(std::ostream& stream, const NodeBase::Flags& options)
-      const override { stream << NodeBase::QUOTE << str_ << NodeBase::QUOTE; }
-   CxxScoped* Referent() const override;
-   void Shrink() override;
-   std::string TypeString(bool arg) const override { return "char*"; }
-   static CxxScoped* GetReferent();
-private:
-   static DataPtr CreateRef();
-   Numeric GetNumeric() const override { return Numeric::Pointer; }
-   std::string str_;
-   static const DataPtr Ref_;
+   //  This allows a string literal to be assembled one character (C) at
+   //  a time without knowing the actual type of the literal's class.
+   //
+   virtual void PushBack(uint32_t c) = 0;
+protected:
+   //  Protected because this class is virtual.
+   //
+   StringLiteral() = default;
 };
 
 //------------------------------------------------------------------------------

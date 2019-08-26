@@ -53,6 +53,11 @@ public:
    //
    virtual ~StatisticsGroup();
 
+   //  Deleted to prohibit copying.
+   //
+   StatisticsGroup(const StatisticsGroup& that) = delete;
+   StatisticsGroup& operator=(const StatisticsGroup& that) = delete;
+
    //  Returns the group's location in the global StatisticsRegistry.
    //
    id_t Gid() const { return gid_.GetId(); }
@@ -84,11 +89,6 @@ protected:
    //
    explicit StatisticsGroup(const std::string& expl);
 private:
-   //  Deleted to prohibit copying.
-   //
-   StatisticsGroup(const StatisticsGroup& that) = delete;
-   StatisticsGroup& operator=(const StatisticsGroup& that) = delete;
-
    //> The header for statistics reports.
    //
    static fixed_string ReportHeader;

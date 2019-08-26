@@ -55,6 +55,11 @@ public:
    //
    virtual ~CfgParm();
 
+   //  Deleted to prohibit copying.
+   //
+   CfgParm(const CfgParm& that) = delete;
+   CfgParm& operator=(const CfgParm& that) = delete;
+
    //  Returns the parameter's name (its tuple's key).
    //
    c_string Key() const;
@@ -128,11 +133,6 @@ private:
    //  the tuple is changed to the default.
    //
    bool SetFromTuple();
-
-   //  Deleted to prohibit copying.
-   //
-   CfgParm(const CfgParm& that) = delete;
-   CfgParm& operator=(const CfgParm& that) = delete;
 
    //  The parameter's tuple (its key and the string used to set its value).
    //

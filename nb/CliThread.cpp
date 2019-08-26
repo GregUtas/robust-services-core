@@ -131,7 +131,7 @@ char CliThread::CharPrompt
    //  If input is being taken from a file rather than the console,
    //  return the first character.
    //
-   if(chars.empty()) return '\0';
+   if(chars.empty()) return NUL;
    if(inIndex_ > 0) return chars.front();
 
    auto first = true;
@@ -155,7 +155,7 @@ char CliThread::CharPrompt
 
       auto count = CinThread::GetLine(text, COUT_LENGTH_MAX);
 
-      if(count < 0) return '\0';
+      if(count < 0) return NUL;
 
       FileThread::Record(text, true);
 

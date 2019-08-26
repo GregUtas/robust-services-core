@@ -30,7 +30,7 @@
 
 namespace NodeBase
 {
-   template< typename T > class Registry;
+   template< class T > class Registry;
 }
 
 //------------------------------------------------------------------------------
@@ -66,6 +66,11 @@ public:
    //> Highest valid trigger identifier.
    //
    static const Id MaxId = INT8_MAX;
+
+   //  Deleted to prohibit copying.
+   //
+   Trigger(const Trigger& that) = delete;
+   Trigger& operator=(const Trigger& that) = delete;
 
    //  Returns true if TID is a valid trigger identifier.
    //
@@ -105,11 +110,6 @@ private:
    //  by Initiator's base class destructor.  Private to restrict usage.
    //
    void UnbindInitiator(Initiator& init);
-
-   //  Deleted to prohibit copying.
-   //
-   Trigger(const Trigger& that) = delete;
-   Trigger& operator=(const Trigger& that) = delete;
 
    //  The identifier for this trigger.
    //

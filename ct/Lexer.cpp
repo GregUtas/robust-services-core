@@ -23,6 +23,7 @@
 #include <cctype>
 #include <cmath>
 #include <cstring>
+#include <set>
 #include "CxxArea.h"
 #include "CxxDirective.h"
 #include "CxxExecute.h"
@@ -637,15 +638,83 @@ bool Lexer::GetAccess(Cxx::Access& access)
 
 fn_name Lexer_GetChar = "Lexer.GetChar";
 
-bool Lexer::GetChar(char& c)
+bool Lexer::GetChar(uint32_t& c)
 {
    Debug::ft(Lexer_GetChar);
 
    if(curr_ >= size_) return false;
-   auto end = SkipCharLiteral(curr_);
-   if(end == string::npos) return false;
-   c = source_->at(end - 1);
-   return Reposition(end + 1);
+   c = source_->at(curr_);
+   ++curr_;
+
+   if(c == BACKSLASH)
+   {
+      //  This is an escape sequence.  The next character is
+      //  taken verbatim unless it has a special meaning.
+      //
+      int64_t n;
+
+      if(curr_ >= size_) return false;
+      c = source_->at(curr_);
+
+      switch(c)
+      {
+      case '0':
+      case '1':  // character's octal value
+         GetOct(n);
+         c = n;
+         break;
+      case 'x':  // character's 2-byte hex value
+         ++curr_;
+         if(curr_ >= size_) return false;
+         GetHexNum(n, 2);
+         c = n;
+         break;
+      case 'u':  // character's 4-byte hex value
+         ++curr_;
+         if(curr_ >= size_) return false;
+         GetHexNum(n, 4);
+         c = n;
+         break;
+      case 'U':  // character's 8-byte hex value
+         ++curr_;
+         if(curr_ >= size_) return false;
+         GetHexNum(n, 8);
+         c = n;
+         break;
+      case 'a':
+         c = 0x07;  // bell
+         ++curr_;
+         break;
+      case 'b':
+         c = 0x08;  // backspace
+         ++curr_;
+         break;
+      case 'f':
+         c = 0x0c;  // form feed
+         ++curr_;
+         break;
+      case 'n':
+         c = 0x0a;  // line feed
+         ++curr_;
+         break;
+      case 'r':
+         c = 0x0d;  // carriage return
+         ++curr_;
+         break;
+      case 't':
+         c = 0x09;  // horizontal tab
+         ++curr_;
+         break;
+      case 'v':
+         c = 0x0b;  // vertical tab
+         ++curr_;
+         break;
+      default:
+         ++curr_;
+      }
+   }
+
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -702,6 +771,36 @@ Cxx::Operator Lexer::GetCxxOp()
 
 //------------------------------------------------------------------------------
 
+fn_name Lexer_GetDataTags = "Lexer.GetDataTags";
+
+void Lexer::GetDataTags(KeywordSet& tags)
+{
+   Debug::ft(Lexer_GetDataTags);
+
+   string str;
+
+   while(true)
+   {
+      auto kwd = NextKeyword(str);
+
+      switch(kwd)
+      {
+      case Cxx::CONSTEXPR:
+      case Cxx::EXTERN:
+      case Cxx::STATIC:
+      case Cxx::MUTABLE:
+         tags.insert(kwd);
+         Reposition(curr_ + str.size());
+         continue;
+
+      default:
+         return;
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 void Lexer::GetDepth(size_t line, int8_t& depth, bool& cont) const
 {
    if(!scanned_ || (line >= lines_))
@@ -736,6 +835,69 @@ void Lexer::GetFloat(long double& num)
 
 //------------------------------------------------------------------------------
 
+fn_name Lexer_GetFuncBackTags = "Lexer.GetFuncBackTags";
+
+void Lexer::GetFuncBackTags(KeywordSet& tags)
+{
+   Debug::ft(Lexer_GetFuncBackTags);
+
+   //  The only tags are "override" and "final": if present, "const"
+   //  and/or "noexcept" precede them and have already been parsed.
+   //
+   string str;
+
+   while(true)
+   {
+      auto kwd = NextKeyword(str);
+
+      switch(kwd)
+      {
+      case Cxx::OVERRIDE:
+      case Cxx::FINAL:
+         tags.insert(kwd);
+         Reposition(curr_ + str.size());
+         continue;
+
+      default:
+         return;
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Lexer_GetFuncFrontTags = "Lexer.GetFuncFrontTags";
+
+void Lexer::GetFuncFrontTags(KeywordSet& tags)
+{
+   Debug::ft(Lexer_GetFuncFrontTags);
+
+   string str;
+
+   while(true)
+   {
+      auto kwd = NextKeyword(str);
+
+      switch(kwd)
+      {
+      case Cxx::VIRTUAL:
+      case Cxx::STATIC:
+      case Cxx::EXPLICIT:
+      case Cxx::INLINE:
+      case Cxx::CONSTEXPR:
+      case Cxx::EXTERN:
+         tags.insert(kwd);
+         Reposition(curr_ + str.size());
+         continue;
+
+      default:
+         return;
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Lexer_GetHex = "Lexer.GetHex";
 
 size_t Lexer::GetHex(int64_t& num)
@@ -746,24 +908,36 @@ size_t Lexer::GetHex(int64_t& num)
    //
    if(ThisCharIs('x') || ThisCharIs('X'))
    {
-      size_t count = 0;
-      num = 0;
-
-      while(curr_ < size_)
-      {
-         auto c = source_->at(curr_);
-         auto value = CxxChar::Attrs[c].hexValue;
-         if(value < 0) return count;
-         ++count;
-         num <<= 4;
-         num += value;
-         ++curr_;
-      }
-
-      return count;
+      return GetHexNum(num);
    }
 
    return 0;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Lexer_GetHexNum = "Lexer.GetHexNum";
+
+size_t Lexer::GetHexNum(int64_t& num, size_t max)
+{
+   Debug::ft(Lexer_GetHexNum);
+
+   size_t count = 0;
+   num = 0;
+
+   while((curr_ < size_) && (max > 0))
+   {
+      auto c = source_->at(curr_);
+      auto value = CxxChar::Attrs[c].hexValue;
+      if(value < 0) return count;
+      ++count;
+      num <<= 4;
+      num += value;
+      ++curr_;
+      --max;
+   }
+
+   return count;
 }
 
 //------------------------------------------------------------------------------
@@ -908,10 +1082,12 @@ bool Lexer::GetName(string& name, Constraint constraint)
 {
    Debug::ft(Lexer_GetName1);
 
-   auto str = NextIdentifier();
-   if(str.size() == 0) return false;
+   auto id = NextIdentifier();
+   if(id.size() == 0) return false;
 
    //  There are two exceptions to CONSTRAINT:
+   //  o "override" and "final" are not actually keywords but are
+   //    in Keywords for convenience.
    //  o NonKeyword is used to look for function names, so "operator"
    //    (which is in Keywords) must be allowed.
    //  o TypeKeyword is used to look for types, so "auto" (which is
@@ -920,22 +1096,26 @@ bool Lexer::GetName(string& name, Constraint constraint)
    switch(constraint)
    {
    case NonKeyword:
-      if(str != OPERATOR_STR)
+      if(Types->lower_bound(id) != Types->cend()) return false;
+
+      if(Keywords->lower_bound(id) != Keywords->cend())
       {
-         if(Types->lower_bound(str) != Types->cend()) return false;
-         if(Keywords->lower_bound(str) != Keywords->cend()) return false;
+         if((id != OPERATOR_STR) && (id != OVERRIDE_STR) && (id != FINAL_STR))
+         {
+            return false;
+         }
       }
       break;
 
    case TypeKeyword:
-      if(str != AUTO_STR)
+      if(id != AUTO_STR)
       {
-         if(Keywords->lower_bound(str) != Keywords->cend()) return false;
+         if(Keywords->lower_bound(id) != Keywords->cend()) return false;
       }
    }
 
-   name += str;
-   return Advance(str.size());
+   name += id;
+   return Advance(id.size());
 }
 
 //------------------------------------------------------------------------------
@@ -1275,23 +1455,6 @@ Cxx::Operator Lexer::GetReserved(const string& name)
 
 //------------------------------------------------------------------------------
 
-fn_name Lexer_GetStr = "Lexer.GetStr";
-
-bool Lexer::GetStr(string& s)
-{
-   Debug::ft(Lexer_GetStr);
-
-   auto frag = false;
-   auto end = SkipStrLiteral(curr_, frag);
-   if(end == string::npos) return false;
-   ++curr_;
-   s = source_->substr(curr_, end - curr_);
-   if(frag) Concatenate(s);
-   return Reposition(end + 1);
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Lexer_GetTemplateSpec = "Lexer.GetTemplateSpec";
 
 bool Lexer::GetTemplateSpec(string& spec)
@@ -1353,6 +1516,7 @@ bool Lexer::Initialize()
    Keywords->insert(KeywordPair(ENUM_STR, Cxx::ENUM));
    Keywords->insert(KeywordPair(EXPLICIT_STR, Cxx::EXPLICIT));
    Keywords->insert(KeywordPair(EXTERN_STR, Cxx::EXTERN));
+   Keywords->insert(KeywordPair(FINAL_STR, Cxx::FINAL));
    Keywords->insert(KeywordPair(FOR_STR, Cxx::FOR));
    Keywords->insert(KeywordPair(FRIEND_STR, Cxx::FRIEND));
    Keywords->insert(KeywordPair(IF_STR, Cxx::IF));
@@ -1360,6 +1524,7 @@ bool Lexer::Initialize()
    Keywords->insert(KeywordPair(MUTABLE_STR, Cxx::MUTABLE));
    Keywords->insert(KeywordPair(NAMESPACE_STR, Cxx::NAMESPACE));
    Keywords->insert(KeywordPair(OPERATOR_STR, Cxx::OPERATOR));
+   Keywords->insert(KeywordPair(OVERRIDE_STR, Cxx::OVERRIDE));
    Keywords->insert(KeywordPair(PRIVATE_STR, Cxx::PRIVATE));
    Keywords->insert(KeywordPair(PROTECTED_STR, Cxx::PROTECTED));
    Keywords->insert(KeywordPair(PUBLIC_STR, Cxx::PUBLIC));
@@ -1490,6 +1655,8 @@ bool Lexer::Initialize()
    Types->insert(TypePair(AUTO_STR, Cxx::AUTO_TYPE));
    Types->insert(TypePair(BOOL_STR, Cxx::BOOL));
    Types->insert(TypePair(CHAR_STR, Cxx::CHAR));
+   Types->insert(TypePair(CHAR16_STR, Cxx::CHAR16));
+   Types->insert(TypePair(CHAR32_STR, Cxx::CHAR32));
    Types->insert(TypePair(DOUBLE_STR, Cxx::DOUBLE));
    Types->insert(TypePair(FLOAT_STR, Cxx::FLOAT));
    Types->insert(TypePair(INT_STR, Cxx::INT));
@@ -1499,6 +1666,7 @@ bool Lexer::Initialize()
    Types->insert(TypePair(SIGNED_STR, Cxx::SIGNED));
    Types->insert(TypePair(UNSIGNED_STR, Cxx::UNSIGNED));
    Types->insert(TypePair(VOID_STR, Cxx::VOID));
+   Types->insert(TypePair(WCHAR_STR, Cxx::WCHAR));
    Types->insert(TypePair(DELETE_STR, Cxx::NON_TYPE));
    Types->insert(TypePair(NEW_STR, Cxx::NON_TYPE));
    Types->insert(TypePair(THROW_STR, Cxx::NON_TYPE));
@@ -1704,7 +1872,7 @@ size_t Lexer::NextPos(size_t pos) const
          //  See if this is a continuation of the current line.
          //
          if(++pos >= size_) return string::npos;
-         if(source_->at(pos) != CRLF) return string::npos;
+         if(source_->at(pos) != CRLF) return pos - 1;
          ++pos;
          break;
 
@@ -1954,7 +2122,7 @@ size_t Lexer::SkipStrLiteral(size_t pos, bool& fragmented) const
       switch(c)
       {
       case QUOTE:
-         next = source_->find_first_not_of(WhitespaceChars, pos + 1);
+         next = NextPos(pos + 1);
          if(next == string::npos) return pos;
          if(source_->at(next) != QUOTE) return pos;
          fragmented = true;

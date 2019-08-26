@@ -44,6 +44,11 @@ class PotsFeatureProfile : public Protected
    friend class PotsProfile;
    friend class Q1Way< PotsFeatureProfile >;
 public:
+   //  Deleted to prohibit copying.
+   //
+   PotsFeatureProfile(const PotsFeatureProfile& that) = delete;
+   PotsFeatureProfile& operator=(const PotsFeatureProfile& that) = delete;
+
    //  Activates the feature.  The default version generates a log and must
    //  be overridden by features that can be activated and deactivated.
    //
@@ -75,11 +80,6 @@ protected:
    //
    virtual ~PotsFeatureProfile();
 private:
-   //  Deleted to prohibit copying.
-   //
-   PotsFeatureProfile(const PotsFeatureProfile& that) = delete;
-   PotsFeatureProfile& operator=(const PotsFeatureProfile& that) = delete;
-
    //  Deletes the user's subscription to the feature.  Deletion is actually
    //  performed by PotsProfile.Unsubscribe (see below), which also invokes
    //  this function.  The default version does nothing but may be overridden

@@ -59,6 +59,11 @@ public:
    //
    static const Id MaxId = 63;
 
+   //  Deleted to prohibit copying.
+   //
+   PotsFeature(const PotsFeature& that) = delete;
+   PotsFeature& operator=(const PotsFeature& that) = delete;
+
    //  Returns the feature's identifier.
    //
    Id Fid() const { return Id(fid_.GetId()); }
@@ -112,11 +117,6 @@ protected:
    //
    void SetIncompatible(PotsFeature::Id fid);
 private:
-   //  Deleted to prohibit copying.
-   //
-   PotsFeature(const PotsFeature& that) = delete;
-   PotsFeature& operator=(const PotsFeature& that) = delete;
-
    //  Returns the parameters used to provision the feature.
    //
    virtual CliText* Attrs() const = 0;

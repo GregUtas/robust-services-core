@@ -58,6 +58,11 @@ public:
       Attribute_N   // number of attributes
    };
 
+   //  Deleted to prohibit copying.
+   //
+   PosixSignal(const PosixSignal& that) = delete;
+   PosixSignal& operator=(const PosixSignal& that) = delete;
+
    //  Returns the signal's value on this platform.
    //
    signal_t Value() const { return value_; }
@@ -104,11 +109,6 @@ protected:
    //
    virtual ~PosixSignal();
 private:
-   //  Deleted to prohibit copying.
-   //
-   PosixSignal(const PosixSignal& that) = delete;
-   PosixSignal& operator=(const PosixSignal& that) = delete;
-
    //  The signal's value.
    //
    const signal_t value_;

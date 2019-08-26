@@ -27,7 +27,7 @@
 
 namespace NodeBase
 {
-   template< typename T > class Registry;
+   template< class T > class Registry;
 }
 
 //------------------------------------------------------------------------------
@@ -42,7 +42,7 @@ namespace NodeBase
 //
 class RegCell
 {
-   template< typename T > friend class Registry;
+   template< class T > friend class Registry;
 public:
    //  Until an object is registered, it has a nil identifier and has not
    //  been bound to the registry.

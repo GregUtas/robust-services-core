@@ -609,7 +609,7 @@ template< typename T > size_t IndexOf(const std::vector< T >& v, const T& item)
 //
 //  Displays the objects in a vector.
 //
-template< typename T > void DisplayObjects
+template< class T > void DisplayObjects
    (const std::vector< T >& group, std::ostream& stream,
    const std::string& prefix, const NodeBase::Flags& options)
 {

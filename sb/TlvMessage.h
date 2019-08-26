@@ -80,7 +80,7 @@ public:
    //  omitting the TLV header.  The syntax for invocation on MSG is
    //    auto info = msg.FindType< T >(pid);
    //
-   template< typename T > T* FindType(ParameterId pid) const
+   template< class T > T* FindType(ParameterId pid) const
    {
       NodeBase::Debug::ft(TlvMessage_FindType());
       auto pptr = FindParm(pid);
@@ -94,7 +94,7 @@ public:
    //  where PARM is of type T, with its fields already filled in
    //  (although they can also be filled in afterwards).
    //
-   template< typename T > T* AddType(const T& parm, ParameterId pid)
+   template< class T > T* AddType(const T& parm, ParameterId pid)
    {
       NodeBase::Debug::ft(TlvMessage_AddType());
       auto pptr = AddParm(pid, sizeof(T));
@@ -110,7 +110,7 @@ public:
    //  The syntax for invocation on MSG is
    //    auto info = msg.CopyType< T >(icMsg, icPid, ogPid);
    //
-   template< typename T > T* CopyType
+   template< class T > T* CopyType
       (const TlvMessage& icMsg, ParameterId icPid, ParameterId ogPid = 0)
    {
       NodeBase::Debug::ft(TlvMessage_CopyType());
@@ -128,7 +128,7 @@ public:
    //    T* parm;
    //    auto rc = msg.VerifyParm(pid, use, parm);
    //
-   template< typename T > Parameter::TestRc VerifyParm
+   template< class T > Parameter::TestRc VerifyParm
       (ParameterId pid, Parameter::Usage use, T*& parm) const
    {
       NodeBase::Debug::ft(TlvMessage_VerifyParm());

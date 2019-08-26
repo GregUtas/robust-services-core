@@ -30,7 +30,7 @@
 
 namespace NodeBase
 {
-   template< typename T > class Registry;
+   template< class T > class Registry;
 }
 
 //------------------------------------------------------------------------------

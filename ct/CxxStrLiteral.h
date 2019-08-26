@@ -45,7 +45,7 @@ namespace CodeTools
 {
 //  A string literal ("s", u"s", u8"s", U"s", or L"s").
 //
-template< typename C, typename T, Cxx::Encoding E >
+template< typename C, class T, Cxx::Encoding E >
    class CxxStrLiteral : public StringLiteral
 {
 public:
@@ -151,7 +151,7 @@ using u16StrLiteral = CxxStrLiteral<char16_t, std::u16string, Cxx::U16>;
 using u32StrLiteral = CxxStrLiteral<char32_t, std::u32string, Cxx::U32>;
 using wStrLiteral = CxxStrLiteral<wchar_t, std::wstring, Cxx::WIDE>;
 
-template< typename C, typename T, Cxx::Encoding E >
+template< typename C, class T, Cxx::Encoding E >
    const DataPtr CxxStrLiteral< C, T, E>::Ref_[Cxx::Encoding_N] =
 {
    StrLiteral::CreateRef(),

@@ -34,7 +34,7 @@
 
 namespace NodeBase
 {
-   template< typename T > class Q1Way;
+   template< class T > class Q1Way;
 }
 
 namespace SessionBase

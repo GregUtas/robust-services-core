@@ -27,7 +27,7 @@
 
 namespace NodeBase
 {
-   template< typename T > class Q2Way;
+   template< class T > class Q2Way;
 }
 
 //------------------------------------------------------------------------------
@@ -40,7 +40,7 @@ namespace NodeBase
 //
 class Q2Link
 {
-   template< typename T > friend class Q2Way;
+   template< class T > friend class Q2Way;
 public:
    //  Public because an instance of this class is included in objects that
    //  can be queued.

@@ -48,7 +48,7 @@ namespace NodeBase
 //  as an identifier for the object.  The first entry in the array is not
 //  used and corresponds to NIL_ID (a nil object or nullptr).
 //
-template< typename T > class Registry
+template< class T > class Registry
 {
 public:
    //  Creates an empty registry.

@@ -63,7 +63,7 @@ public:
       stream << E << APOSTROPHE << CharString(c_, false) << APOSTROPHE;
    }
 
-   static std::string TypeString()
+   static std::string TypeStr()
    {
       switch(E)
       {
@@ -89,7 +89,7 @@ private:
       return nullptr;
    }
 
-   std::string TypeString(bool arg) const override { return TypeString(); }
+   std::string TypeString(bool arg) const override { return TypeStr(); }
 
    Numeric GetNumeric() const override
    {

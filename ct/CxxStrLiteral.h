@@ -88,7 +88,7 @@ public:
       Debug::ft(CxxStrLiteral_CreateRef());
 
       DataPtr data;
-      auto ctype = CxxCharLiteral<C, E>::TypeString();
+      auto ctype = CxxCharLiteral<C, E>::TypeStr();
       std::string dataName("__string<");
       dataName.append(ctype);
       dataName.append(">_literal_referent");
@@ -121,7 +121,7 @@ private:
 
    std::string TypeString(bool arg) const override
    {
-      auto type = CxxCharLiteral<C, E>::TypeString();
+      auto type = CxxCharLiteral<C, E>::TypeStr();
       type.push_back('*');
       return type;
    }

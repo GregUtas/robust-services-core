@@ -6448,11 +6448,20 @@ CodeTools::CATCH_STR [ct/CodeTypes.h]
    ct/CodeTypes.cpp
    ct/CxxStatement.cpp
    ct/Parser.cpp
+CodeTools::CHAR16_STR [ct/CodeTypes.h]
+   ct/CodeTypes.cpp
+   ct/CxxCharLiteral.h
+   ct/CxxRoot.cpp
+   ct/Lexer.cpp
+CodeTools::CHAR32_STR [ct/CodeTypes.h]
+   ct/CodeTypes.cpp
+   ct/CxxCharLiteral.h
+   ct/CxxRoot.cpp
+   ct/Lexer.cpp
 CodeTools::CHAR_STR [ct/CodeTypes.h]
    ct/CodeTypes.cpp
+   ct/CxxCharLiteral.h
    ct/CxxRoot.cpp
-   ct/CxxToken.cpp
-   ct/CxxToken.h
    ct/Lexer.cpp
    ct/Parser.cpp
 CodeTools::CLASS_STR [ct/CodeTypes.h]
@@ -6482,7 +6491,6 @@ CodeTools::CONSTEXPR_STR [ct/CodeTypes.h]
    ct/CxxScope.cpp
    ct/Editor.cpp
    ct/Lexer.cpp
-   ct/Parser.cpp
 CodeTools::CONST_CAST_STR [ct/CodeTypes.h]
    ct/CodeTypes.cpp
    ct/Cxx.cpp
@@ -6633,19 +6641,19 @@ CodeTools::EXPLICIT_STR [ct/CodeTypes.h]
    ct/CodeTypes.cpp
    ct/CxxScope.cpp
    ct/Lexer.cpp
-   ct/Parser.cpp
 CodeTools::EXTERN_STR [ct/CodeTypes.h]
    ct/CodeTypes.cpp
    ct/CxxScope.cpp
    ct/Editor.cpp
    ct/Lexer.cpp
+   ct/Parser.cpp
 CodeTools::FALSE_STR [ct/CodeTypes.h]
    ct/CodeTypes.cpp
    ct/Lexer.cpp
 CodeTools::FINAL_STR [ct/CodeTypes.h]
    ct/CodeTypes.cpp
    ct/CxxScope.cpp
-   ct/Parser.cpp
+   ct/Lexer.cpp
 CodeTools::FLOAT_STR [ct/CodeTypes.h]
    ct/CodeTypes.cpp
    ct/CxxRoot.cpp
@@ -6955,7 +6963,6 @@ CodeTools::MUTABLE_STR [ct/CodeTypes.h]
    ct/CxxScope.cpp
    ct/Editor.cpp
    ct/Lexer.cpp
-   ct/Parser.cpp
 CodeTools::NAMESPACE_STR [ct/CodeTypes.h]
    ct/CodeFile.cpp
    ct/CodeTypes.cpp
@@ -7034,7 +7041,7 @@ CodeTools::OVERRIDE_STR [ct/CodeTypes.h]
    ct/CodeTypes.cpp
    ct/CxxScope.cpp
    ct/Editor.cpp
-   ct/Parser.cpp
+   ct/Lexer.cpp
 CodeTools::PRIVATE_STR [ct/CodeTypes.h]
    ct/CodeTypes.cpp
    ct/Cxx.cpp
@@ -7079,7 +7086,6 @@ CodeTools::STATIC_STR [ct/CodeTypes.h]
    ct/CodeTypes.cpp
    ct/CxxScope.cpp
    ct/Lexer.cpp
-   ct/Parser.cpp
 CodeTools::STRUCT_STR [ct/CodeTypes.h]
    ct/CodeTypes.cpp
    ct/Cxx.cpp
@@ -7105,6 +7111,7 @@ CodeTools::SymbolView [ct/CodeTypes.h]
    ct/CxxScoped.cpp
    ct/CxxScoped.h
    ct/CxxSymbols.cpp
+   ct/CxxSymbols.h
    ct/CxxToken.cpp
    ct/Lexer.cpp
    ct/Parser.cpp
@@ -7191,6 +7198,7 @@ CodeTools::TemplateRole::TemplateClass [ct/CodeTypes.h]
 CodeTools::TemplateRole::TemplateNone [ct/CodeTypes.h]
    ct/CxxNamed.cpp
 CodeTools::TemplateRole::TemplateParameter [ct/CodeTypes.h]
+   ct/CxxArea.cpp
    ct/CxxNamed.cpp
 CodeTools::TemplateType [ct/CodeTypes.h]
    ct/CodeFile.cpp
@@ -7267,7 +7275,6 @@ CodeTools::VIRTUAL_STR [ct/CodeTypes.h]
    ct/CxxScope.cpp
    ct/Editor.cpp
    ct/Lexer.cpp
-   ct/Parser.cpp
 CodeTools::VOID_STR [ct/CodeTypes.h]
    ct/CodeTypes.cpp
    ct/CxxRoot.cpp
@@ -7296,6 +7303,11 @@ CodeTools::ValidOpChars [ct/CodeTypes.h]
    ct/CxxString.cpp
    ct/Lexer.cpp
 CodeTools::ValidTemplateSpecChars [ct/CodeTypes.h]
+   ct/Lexer.cpp
+CodeTools::WCHAR_STR [ct/CodeTypes.h]
+   ct/CodeTypes.cpp
+   ct/CxxCharLiteral.h
+   ct/CxxRoot.cpp
    ct/Lexer.cpp
 CodeTools::WHILE_STR [ct/CodeTypes.h]
    ct/CodeTypes.cpp
@@ -7759,7 +7771,6 @@ CodeTools::Warning::Warning_N [ct/CodeTypes.h]
 CodeTools::WhitespaceChars [ct/CodeTypes.h]
    ct/CodeTypes.cpp
    ct/Editor.cpp
-   ct/Lexer.cpp
 CodeTools::operator<<(std::basic_ostream,CodeTools::LineType) [ct/CodeTypes.h]
    ct/CodeTypes.cpp
    ct/CodeWarning.cpp
@@ -7949,6 +7960,8 @@ CodeTools::CxxStats_ctor [ct/Cxx.cpp]
    ct/Cxx.cpp
 CodeTools::CxxWord_ctor [ct/Cxx.cpp]
    ct/Cxx.cpp
+CodeTools::EncodingStrings [ct/Cxx.cpp]
+   ct/Cxx.cpp
 CodeTools::F [ct/Cxx.cpp]
    ct/Cxx.cpp
 CodeTools::ItemHeader [ct/Cxx.cpp]
@@ -7957,6 +7970,10 @@ CodeTools::Numeric_CalcMatchWith [ct/Cxx.cpp]
    ct/Cxx.cpp
 CodeTools::T [ct/Cxx.cpp]
    ct/Cxx.cpp
+CodeTools::CharString [ct/Cxx.h]
+   ct/Cxx.cpp
+   ct/CxxCharLiteral.h
+   ct/CxxStrLiteral.h
 CodeTools::Cxx::Access [ct/Cxx.h]
    ct/Cxx.cpp
    ct/Cxx.h
@@ -8011,6 +8028,8 @@ CodeTools::Cxx::ClassTag [ct/Cxx.h]
    ct/Parser.cpp
 CodeTools::Cxx::ClassTag::ClassTag_N [ct/Cxx.h]
    ct/Cxx.cpp
+   ct/CxxNamed.cpp
+   ct/Parser.cpp
 CodeTools::Cxx::ClassTag::ClassType [ct/Cxx.h]
    ct/CxxArea.cpp
    ct/CxxScope.cpp
@@ -8068,6 +8087,36 @@ CodeTools::Cxx::Directive::_PRAGMA [ct/Cxx.h]
    ct/Parser.cpp
 CodeTools::Cxx::Directive::_UNDEF [ct/Cxx.h]
    ct/Lexer.cpp
+   ct/Parser.cpp
+CodeTools::Cxx::Encoding [ct/Cxx.h]
+   ct/Cxx.cpp
+   ct/Cxx.h
+   ct/CxxCharLiteral.h
+   ct/CxxStrLiteral.h
+   ct/Parser.cpp
+   ct/Parser.h
+CodeTools::Cxx::Encoding::ASCII [ct/Cxx.h]
+   ct/CxxCharLiteral.h
+   ct/CxxStrLiteral.h
+   ct/Parser.cpp
+CodeTools::Cxx::Encoding::Encoding_N [ct/Cxx.h]
+   ct/Cxx.cpp
+   ct/CxxStrLiteral.h
+   ct/Parser.cpp
+CodeTools::Cxx::Encoding::U16 [ct/Cxx.h]
+   ct/CxxCharLiteral.h
+   ct/CxxStrLiteral.h
+   ct/Parser.cpp
+CodeTools::Cxx::Encoding::U32 [ct/Cxx.h]
+   ct/CxxCharLiteral.h
+   ct/CxxStrLiteral.h
+   ct/Parser.cpp
+CodeTools::Cxx::Encoding::U8 [ct/Cxx.h]
+   ct/CxxCharLiteral.h
+   ct/Parser.cpp
+CodeTools::Cxx::Encoding::WIDE [ct/Cxx.h]
+   ct/CxxCharLiteral.h
+   ct/CxxStrLiteral.h
    ct/Parser.cpp
 CodeTools::Cxx::ItemType [ct/Cxx.h]
    ct/CxxArea.h
@@ -8186,6 +8235,7 @@ CodeTools::Cxx::ItemType::Typedef [ct/Cxx.h]
 CodeTools::Cxx::ItemType::Undefined [ct/Cxx.h]
    ct/CxxToken.h
 CodeTools::Cxx::Keyword [ct/Cxx.h]
+   ct/CxxFwd.h
    ct/Lexer.cpp
    ct/Lexer.h
    ct/Parser.cpp
@@ -8218,6 +8268,9 @@ CodeTools::Cxx::Keyword::EXPLICIT [ct/Cxx.h]
 CodeTools::Cxx::Keyword::EXTERN [ct/Cxx.h]
    ct/Lexer.cpp
    ct/Parser.cpp
+CodeTools::Cxx::Keyword::FINAL [ct/Cxx.h]
+   ct/Lexer.cpp
+   ct/Parser.cpp
 CodeTools::Cxx::Keyword::FOR [ct/Cxx.h]
    ct/Lexer.cpp
 CodeTools::Cxx::Keyword::FRIEND [ct/Cxx.h]
@@ -8231,6 +8284,7 @@ CodeTools::Cxx::Keyword::INLINE [ct/Cxx.h]
    ct/Parser.cpp
 CodeTools::Cxx::Keyword::MUTABLE [ct/Cxx.h]
    ct/Lexer.cpp
+   ct/Parser.cpp
 CodeTools::Cxx::Keyword::NAMESPACE [ct/Cxx.h]
    ct/Lexer.cpp
 CodeTools::Cxx::Keyword::NIL_KEYWORD [ct/Cxx.h]
@@ -8242,6 +8296,9 @@ CodeTools::Cxx::Keyword::NVDTOR [ct/Cxx.h]
    ct/Lexer.cpp
    ct/Parser.cpp
 CodeTools::Cxx::Keyword::OPERATOR [ct/Cxx.h]
+   ct/Lexer.cpp
+   ct/Parser.cpp
+CodeTools::Cxx::Keyword::OVERRIDE [ct/Cxx.h]
    ct/Lexer.cpp
    ct/Parser.cpp
 CodeTools::Cxx::Keyword::PRIVATE [ct/Cxx.h]
@@ -8556,6 +8613,12 @@ CodeTools::Cxx::Type::BOOL [ct/Cxx.h]
 CodeTools::Cxx::Type::CHAR [ct/Cxx.h]
    ct/Lexer.cpp
    ct/Parser.cpp
+CodeTools::Cxx::Type::CHAR16 [ct/Cxx.h]
+   ct/Lexer.cpp
+   ct/Parser.cpp
+CodeTools::Cxx::Type::CHAR32 [ct/Cxx.h]
+   ct/Lexer.cpp
+   ct/Parser.cpp
 CodeTools::Cxx::Type::DOUBLE [ct/Cxx.h]
    ct/Lexer.cpp
    ct/Parser.cpp
@@ -8589,6 +8652,9 @@ CodeTools::Cxx::Type::UNSIGNED [ct/Cxx.h]
 CodeTools::Cxx::Type::VOID [ct/Cxx.h]
    ct/Lexer.cpp
    ct/Parser.cpp
+CodeTools::Cxx::Type::WCHAR [ct/Cxx.h]
+   ct/Lexer.cpp
+   ct/Parser.cpp
 CodeTools::Cxx::operator<<(std::basic_ostream,CodeTools::Cxx::Access) [ct/Cxx.h]
    ct/Cxx.cpp
    ct/CxxArea.cpp
@@ -8600,6 +8666,10 @@ CodeTools::Cxx::operator<<(std::basic_ostream,CodeTools::Cxx::ClassTag) [ct/Cxx.
    ct/CxxArea.cpp
    ct/CxxNamed.cpp
    ct/CxxScoped.cpp
+CodeTools::Cxx::operator<<(std::basic_ostream,CodeTools::Cxx::Encoding) [ct/Cxx.h]
+   ct/Cxx.cpp
+   ct/CxxCharLiteral.h
+   ct/CxxStrLiteral.h
 CodeTools::CxxChar [ct/Cxx.h]
    ct/Cxx.cpp
    ct/Cxx.h
@@ -8680,6 +8750,7 @@ CodeTools::CxxStats::CxxStats [ct/Cxx.h]
 CodeTools::CxxStats::Decr [ct/Cxx.h]
    ct/CodeFile.cpp
    ct/CxxArea.cpp
+   ct/CxxCharLiteral.h
    ct/CxxDirective.cpp
    ct/CxxDirective.h
    ct/CxxNamed.cpp
@@ -8689,6 +8760,7 @@ CodeTools::CxxStats::Decr [ct/Cxx.h]
    ct/CxxScoped.cpp
    ct/CxxScoped.h
    ct/CxxStatement.h
+   ct/CxxStrLiteral.h
    ct/CxxSymbols.cpp
    ct/CxxToken.h
 CodeTools::CxxStats::Display [ct/Cxx.h]
@@ -8697,11 +8769,13 @@ CodeTools::CxxStats::Display [ct/Cxx.h]
 CodeTools::CxxStats::Incr [ct/Cxx.h]
    ct/CodeFile.cpp
    ct/CxxArea.cpp
+   ct/CxxCharLiteral.h
    ct/CxxDirective.cpp
    ct/CxxNamed.cpp
    ct/CxxScope.cpp
    ct/CxxScoped.cpp
    ct/CxxStatement.cpp
+   ct/CxxStrLiteral.h
    ct/CxxSymbols.cpp
    ct/CxxToken.cpp
    ct/CxxToken.h
@@ -8736,7 +8810,7 @@ CodeTools::CxxStats::Item::CATCH [ct/Cxx.h]
    ct/CxxStatement.cpp
    ct/CxxStatement.h
 CodeTools::CxxStats::Item::CHAR_LITERAL [ct/Cxx.h]
-   ct/CxxToken.h
+   ct/CxxCharLiteral.h
 CodeTools::CxxStats::Item::CLASS_DATA [ct/Cxx.h]
    ct/CxxScope.cpp
 CodeTools::CxxStats::Item::CLASS_DECL [ct/Cxx.h]
@@ -8852,8 +8926,7 @@ CodeTools::CxxStats::Item::RETURN [ct/Cxx.h]
 CodeTools::CxxStats::Item::SPACE_DECL [ct/Cxx.h]
    ct/CxxArea.cpp
 CodeTools::CxxStats::Item::STR_LITERAL [ct/Cxx.h]
-   ct/CxxToken.cpp
-   ct/CxxToken.h
+   ct/CxxStrLiteral.h
 CodeTools::CxxStats::Item::SWITCH [ct/Cxx.h]
    ct/CxxStatement.cpp
    ct/CxxStatement.h
@@ -8891,8 +8964,8 @@ CodeTools::CxxStats::Strings [ct/Cxx.h]
    ct/CxxNamed.cpp
    ct/CxxScope.cpp
    ct/CxxScoped.cpp
+   ct/CxxStrLiteral.h
    ct/CxxSymbols.cpp
-   ct/CxxToken.cpp
 CodeTools::CxxStats::Vectors [ct/Cxx.h]
    ct/CodeFile.cpp
    ct/CxxArea.cpp
@@ -8955,8 +9028,14 @@ CodeTools::Numeric::CalcMatchWith [ct/Cxx.h]
    ct/CxxExecute.cpp
    ct/CxxToken.cpp
 CodeTools::Numeric::Char [ct/Cxx.h]
+   ct/CxxCharLiteral.h
    ct/CxxRoot.cpp
-   ct/CxxToken.h
+CodeTools::Numeric::Char16 [ct/Cxx.h]
+   ct/CxxCharLiteral.h
+   ct/CxxRoot.cpp
+CodeTools::Numeric::Char32 [ct/Cxx.h]
+   ct/CxxCharLiteral.h
+   ct/CxxRoot.cpp
 CodeTools::Numeric::Double [ct/Cxx.h]
    ct/CxxRoot.cpp
    ct/CxxToken.cpp
@@ -8980,6 +9059,7 @@ CodeTools::Numeric::LongLong [ct/Cxx.h]
    ct/CxxRoot.cpp
    ct/CxxToken.cpp
 CodeTools::Numeric::Nil [ct/Cxx.h]
+   ct/CxxCharLiteral.h
    ct/CxxDirective.cpp
    ct/CxxExecute.cpp
    ct/CxxNamed.cpp
@@ -9010,6 +9090,7 @@ CodeTools::Numeric::NumericType::PTR [ct/Cxx.h]
 CodeTools::Numeric::Pointer [ct/Cxx.h]
    ct/CxxExecute.cpp
    ct/CxxNamed.cpp
+   ct/CxxStrLiteral.h
    ct/CxxToken.h
 CodeTools::Numeric::SetWidth [ct/Cxx.h]
    ct/CxxToken.cpp
@@ -9042,6 +9123,9 @@ CodeTools::Numeric::uLongLong [ct/Cxx.h]
    ct/CxxRoot.cpp
    ct/CxxToken.cpp
 CodeTools::Numeric::uShort [ct/Cxx.h]
+   ct/CxxRoot.cpp
+CodeTools::Numeric::wChar [ct/Cxx.h]
+   ct/CxxCharLiteral.h
    ct/CxxRoot.cpp
 CodeTools::ClassInst_DerivesFrom [ct/CxxArea.cpp]
    ct/CxxArea.cpp
@@ -9722,6 +9806,22 @@ CodeTools::Namespace::spaces_ [ct/CxxArea.h]
    ct/CxxArea.cpp
 CodeTools::Namespace::~Namespace [ct/CxxArea.h]
    ct/CxxArea.cpp
+CodeTools::CharLiteral [ct/CxxCharLiteral.h]
+   ct/Cxx.cpp
+   ct/Parser.cpp
+CodeTools::CxxCharLiteral [ct/CxxCharLiteral.h]
+   ct/CxxCharLiteral.h
+CodeTools::CxxCharLiteral::TypeStr [ct/CxxCharLiteral.h]
+   ct/CxxCharLiteral.h
+   ct/CxxStrLiteral.h
+CodeTools::CxxCharLiteral::c_ [ct/CxxCharLiteral.h]
+   ct/CxxCharLiteral.h
+CodeTools::u16CharLiteral [ct/CxxCharLiteral.h]
+   ct/Parser.cpp
+CodeTools::u32CharLiteral [ct/CxxCharLiteral.h]
+   ct/Parser.cpp
+CodeTools::wCharLiteral [ct/CxxCharLiteral.h]
+   ct/Parser.cpp
 CodeTools::AlignLeft [ct/CxxDirective.cpp]
    ct/CxxDirective.cpp
 CodeTools::Conditional_EnterScope [ct/CxxDirective.cpp]
@@ -11062,8 +11162,7 @@ CodeTools::DataPtr [ct/CxxFwd.h]
    ct/CxxFwd.h
    ct/CxxScope.cpp
    ct/CxxScope.h
-   ct/CxxToken.cpp
-   ct/CxxToken.h
+   ct/CxxStrLiteral.h
    ct/Parser.cpp
    ct/Parser.h
 CodeTools::DataPtrVector [ct/CxxFwd.h]
@@ -11240,6 +11339,10 @@ CodeTools::IncludePtr [ct/CxxFwd.h]
 CodeTools::IncludePtrVector [ct/CxxFwd.h]
    ct/CodeFile.cpp
    ct/CodeFile.h
+CodeTools::KeywordSet [ct/CxxFwd.h]
+   ct/Lexer.cpp
+   ct/Lexer.h
+   ct/Parser.cpp
 CodeTools::Line [ct/CxxFwd.h]
    ct/CxxFwd.h
 CodeTools::LinePtr [ct/CxxFwd.h]
@@ -11328,7 +11431,7 @@ CodeTools::QualNamePtr [ct/CxxFwd.h]
    ct/CxxScope.h
    ct/CxxScoped.cpp
    ct/CxxScoped.h
-   ct/CxxToken.cpp
+   ct/CxxStrLiteral.h
    ct/Parser.cpp
    ct/Parser.h
 CodeTools::ScopePtr [ct/CxxFwd.h]
@@ -11433,7 +11536,7 @@ CodeTools::TypeSpecPtr [ct/CxxFwd.h]
    ct/CxxScope.h
    ct/CxxScoped.cpp
    ct/CxxScoped.h
-   ct/CxxToken.cpp
+   ct/CxxStrLiteral.h
    ct/Parser.cpp
    ct/Parser.h
 CodeTools::TypeSpecPtrVector [ct/CxxFwd.h]
@@ -12133,7 +12236,7 @@ CodeTools::CxxNamed::SetScope [ct/CxxNamed.h]
    ct/CxxScope.cpp
    ct/CxxScoped.cpp
    ct/CxxScoped.h
-   ct/CxxToken.cpp
+   ct/CxxStrLiteral.h
 CodeTools::CxxNamed::SetTemplateParms [ct/CxxNamed.h]
    ct/CxxArea.cpp
    ct/CxxArea.h
@@ -12167,7 +12270,7 @@ CodeTools::DataSpec [ct/CxxNamed.h]
    ct/CxxNamed.cpp
    ct/CxxNamed.h
    ct/CxxScope.cpp
-   ct/CxxToken.cpp
+   ct/CxxStrLiteral.h
    ct/Parser.cpp
 CodeTools::DataSpec::AddArray [ct/CxxNamed.h]
    ct/CxxNamed.cpp
@@ -12328,6 +12431,7 @@ CodeTools::QualName [ct/CxxNamed.h]
    ct/CxxScope.h
    ct/CxxScoped.cpp
    ct/CxxScoped.h
+   ct/CxxStrLiteral.h
    ct/CxxToken.cpp
    ct/Parser.cpp
 CodeTools::QualName::Append [ct/CxxNamed.h]
@@ -12450,6 +12554,8 @@ CodeTools::TemplateParm::name_ [ct/CxxNamed.h]
 CodeTools::TemplateParm::ptrs_ [ct/CxxNamed.h]
    ct/CxxNamed.cpp
 CodeTools::TemplateParm::tag_ [ct/CxxNamed.h]
+   ct/CxxNamed.cpp
+CodeTools::TemplateParm::type_ [ct/CxxNamed.h]
    ct/CxxNamed.cpp
 CodeTools::TemplateParms [ct/CxxNamed.h]
    ct/CodeFile.cpp
@@ -12623,6 +12729,7 @@ CodeTools::TypeSpec [ct/CxxNamed.h]
    ct/CxxScoped.cpp
    ct/CxxScoped.h
    ct/CxxStatement.cpp
+   ct/CxxStrLiteral.h
    ct/CxxToken.cpp
    ct/Editor.cpp
    ct/Parser.cpp
@@ -12686,6 +12793,7 @@ CodeTools::TypeSpec::GetNames [ct/CxxNamed.h]
    ct/CxxScope.cpp
    ct/CxxScope.h
 CodeTools::TypeSpec::GetTemplateRole [ct/CxxNamed.h]
+   ct/CxxArea.cpp
    ct/CxxNamed.cpp
 CodeTools::TypeSpec::GetUserType [ct/CxxNamed.h]
    ct/CxxNamed.cpp
@@ -12732,6 +12840,7 @@ CodeTools::TypeSpec::NamesReferToArgs [ct/CxxNamed.h]
    ct/CxxScope.cpp
    ct/CxxScope.h
 CodeTools::TypeSpec::Ptrs [ct/CxxNamed.h]
+   ct/CxxArea.cpp
    ct/CxxExecute.cpp
    ct/CxxNamed.cpp
    ct/CxxNamed.h
@@ -12774,7 +12883,7 @@ CodeTools::TypeSpec::Tags(CodeTools::TypeSpec* const) [ct/CxxNamed.h]
    ct/CxxNamed.h
    ct/CxxScope.cpp
    ct/CxxScope.h
-   ct/CxxToken.cpp
+   ct/CxxStrLiteral.h
    ct/Parser.cpp
 CodeTools::TypeSpec::Tags(const CodeTools::TypeSpec* const) [ct/CxxNamed.h]
    ct/CxxNamed.cpp
@@ -12802,7 +12911,7 @@ CodeTools::TypeTags [ct/CxxNamed.h]
    ct/CxxNamed.h
    ct/CxxScope.cpp
    ct/CxxScope.h
-   ct/CxxToken.cpp
+   ct/CxxStrLiteral.h
    ct/Parser.cpp
 CodeTools::TypeTags::AddArray [ct/CxxNamed.h]
    ct/CxxNamed.cpp
@@ -12833,7 +12942,7 @@ CodeTools::TypeTags::SetConst [ct/CxxNamed.h]
    ct/CxxExecute.cpp
    ct/CxxNamed.cpp
    ct/CxxScope.cpp
-   ct/CxxToken.cpp
+   ct/CxxStrLiteral.h
    ct/Parser.cpp
 CodeTools::TypeTags::SetConstPtr [ct/CxxNamed.h]
    ct/CxxExecute.cpp
@@ -12841,7 +12950,7 @@ CodeTools::TypeTags::SetConstPtr [ct/CxxNamed.h]
 CodeTools::TypeTags::SetPointer [ct/CxxNamed.h]
    ct/CxxNamed.cpp
    ct/CxxScope.cpp
-   ct/CxxToken.cpp
+   ct/CxxStrLiteral.h
    ct/Parser.cpp
 CodeTools::TypeTags::SetPtrs [ct/CxxNamed.h]
    ct/CxxNamed.cpp
@@ -12978,11 +13087,13 @@ CodeTools::CxxRoot [ct/CxxRoot.h]
    ct/CtModule.cpp
    ct/Cxx.cpp
    ct/CxxArea.cpp
+   ct/CxxCharLiteral.h
    ct/CxxDirective.cpp
    ct/CxxNamed.cpp
    ct/CxxRoot.cpp
    ct/CxxScope.cpp
    ct/CxxScoped.cpp
+   ct/CxxStrLiteral.h
    ct/CxxSymbols.cpp
    ct/CxxToken.cpp
    ct/Lexer.cpp
@@ -12999,8 +13110,14 @@ CodeTools::CxxRoot::AutoTerm [ct/CxxRoot.h]
 CodeTools::CxxRoot::BoolTerm [ct/CxxRoot.h]
    ct/CxxToken.cpp
    ct/Parser.cpp
+CodeTools::CxxRoot::Char16Term [ct/CxxRoot.h]
+   ct/CxxCharLiteral.h
+   ct/Parser.cpp
+CodeTools::CxxRoot::Char32Term [ct/CxxRoot.h]
+   ct/CxxCharLiteral.h
+   ct/Parser.cpp
 CodeTools::CxxRoot::CharTerm [ct/CxxRoot.h]
-   ct/CxxToken.cpp
+   ct/CxxCharLiteral.h
    ct/Parser.cpp
 CodeTools::CxxRoot::CxxRoot [ct/CxxRoot.h]
    ct/CxxRoot.cpp
@@ -13023,8 +13140,8 @@ CodeTools::CxxRoot::GlobalNamespace [ct/CxxRoot.h]
    ct/CxxDirective.cpp
    ct/CxxNamed.cpp
    ct/CxxScoped.cpp
+   ct/CxxStrLiteral.h
    ct/CxxSymbols.cpp
-   ct/CxxToken.cpp
    ct/Lexer.cpp
    ct/Library.cpp
    ct/Parser.cpp
@@ -13060,6 +13177,12 @@ CodeTools::CxxRoot::auto_ [ct/CxxRoot.h]
    ct/CxxRoot.cpp
    ct/CxxRoot.h
 CodeTools::CxxRoot::bool_ [ct/CxxRoot.h]
+   ct/CxxRoot.cpp
+   ct/CxxRoot.h
+CodeTools::CxxRoot::char16_ [ct/CxxRoot.h]
+   ct/CxxRoot.cpp
+   ct/CxxRoot.h
+CodeTools::CxxRoot::char32_ [ct/CxxRoot.h]
    ct/CxxRoot.cpp
    ct/CxxRoot.h
 CodeTools::CxxRoot::char_ [ct/CxxRoot.h]
@@ -13125,6 +13248,12 @@ CodeTools::CxxRoot::ushort_ [ct/CxxRoot.h]
    ct/CxxRoot.cpp
    ct/CxxRoot.h
 CodeTools::CxxRoot::void_ [ct/CxxRoot.h]
+   ct/CxxRoot.cpp
+   ct/CxxRoot.h
+CodeTools::CxxRoot::wCharTerm [ct/CxxRoot.h]
+   ct/CxxCharLiteral.h
+   ct/Parser.cpp
+CodeTools::CxxRoot::wchar_ [ct/CxxRoot.h]
    ct/CxxRoot.cpp
    ct/CxxRoot.h
 CodeTools::CxxRoot::~CxxRoot [ct/CxxRoot.h]
@@ -13623,8 +13752,8 @@ CodeTools::Data [ct/CxxScope.h]
    ct/CxxArea.h
    ct/CxxScope.cpp
    ct/CxxScope.h
+   ct/CxxStrLiteral.h
    ct/CxxSymbols.cpp
-   ct/CxxToken.cpp
    ct/Editor.cpp
    ct/Parser.cpp
 CodeTools::Data::Check [ct/CxxScope.h]
@@ -13759,7 +13888,7 @@ CodeTools::FuncData [ct/CxxScope.h]
    ct/Cxx.cpp
    ct/CxxExecute.cpp
    ct/CxxScope.cpp
-   ct/CxxToken.cpp
+   ct/CxxStrLiteral.h
    ct/Parser.cpp
 CodeTools::FuncData::Check [ct/CxxScope.h]
    ct/CxxScope.cpp
@@ -13999,6 +14128,7 @@ CodeTools::Function::Function(CodeTools::Function* const,std::unique_ptr<CodeToo
 CodeTools::Function::GetAccess [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::GetArgs [ct/CxxScope.h]
+   ct/CxxArea.cpp
    ct/Editor.cpp
 CodeTools::Function::GetBase [ct/CxxScope.h]
    ct/CxxScope.cpp
@@ -14609,6 +14739,7 @@ CodeTools::CxxScoped [ct/CxxScoped.h]
    ct/CxxScope.h
    ct/CxxScoped.cpp
    ct/CxxScoped.h
+   ct/CxxStrLiteral.h
    ct/CxxSymbols.cpp
    ct/CxxToken.cpp
    ct/Parser.cpp
@@ -15013,6 +15144,8 @@ CodeTools::Typedef::Print [ct/CxxScoped.h]
    ct/CxxScoped.cpp
 CodeTools::Typedef::Referent [ct/CxxScoped.h]
    ct/CxxScoped.cpp
+CodeTools::Typedef::SetUsing [ct/CxxScoped.h]
+   ct/Parser.cpp
 CodeTools::Typedef::Shrink [ct/CxxScoped.h]
    ct/CxxScoped.cpp
 CodeTools::Typedef::TypeString [ct/CxxScoped.h]
@@ -15026,6 +15159,9 @@ CodeTools::Typedef::refs_ [ct/CxxScoped.h]
    ct/CxxScoped.cpp
    ct/CxxScoped.h
 CodeTools::Typedef::spec_ [ct/CxxScoped.h]
+   ct/CxxScoped.cpp
+   ct/CxxScoped.h
+CodeTools::Typedef::using_ [ct/CxxScoped.h]
    ct/CxxScoped.cpp
    ct/CxxScoped.h
 CodeTools::Typedef::~Typedef [ct/CxxScoped.h]
@@ -15504,11 +15640,39 @@ CodeTools::While::While [ct/CxxStatement.h]
 CodeTools::While::loop_ [ct/CxxStatement.h]
    ct/CxxStatement.cpp
    ct/CxxStatement.h
+CodeTools::CxxStrLiteral [ct/CxxStrLiteral.h]
+   ct/CxxRoot.cpp
+   ct/CxxStrLiteral.h
+CodeTools::CxxStrLiteral::CreateRef [ct/CxxStrLiteral.h]
+   ct/CxxStrLiteral.h
+CodeTools::CxxStrLiteral::CxxStrLiteral_CreateRef [ct/CxxStrLiteral.h]
+   ct/CxxStrLiteral.h
+CodeTools::CxxStrLiteral::CxxStrLiteral_GetReferent [ct/CxxStrLiteral.h]
+   ct/CxxStrLiteral.h
+CodeTools::CxxStrLiteral::GetReferent [ct/CxxStrLiteral.h]
+   ct/CxxRoot.cpp
+   ct/CxxStrLiteral.h
+CodeTools::CxxStrLiteral::GetStr [ct/CxxStrLiteral.h]
+   ct/CxxRoot.cpp
+CodeTools::CxxStrLiteral::Ref_ [ct/CxxStrLiteral.h]
+   ct/CxxStrLiteral.h
+CodeTools::CxxStrLiteral::str_ [ct/CxxStrLiteral.h]
+   ct/CxxStrLiteral.h
+CodeTools::StrLiteral [ct/CxxStrLiteral.h]
+   ct/Cxx.cpp
+   ct/CxxRoot.cpp
+   ct/Parser.cpp
+CodeTools::StringLiteralPtr [ct/CxxStrLiteral.h]
+   ct/Parser.cpp
+CodeTools::u16StrLiteral [ct/CxxStrLiteral.h]
+   ct/Parser.cpp
+CodeTools::u32StrLiteral [ct/CxxStrLiteral.h]
+   ct/Parser.cpp
+CodeTools::wStrLiteral [ct/CxxStrLiteral.h]
+   ct/Parser.cpp
 CodeTools::CodeTools_AdjustPtrs [ct/CxxString.cpp]
    ct/CxxString.cpp
 CodeTools::CodeTools_CompareScopes [ct/CxxString.cpp]
-   ct/CxxString.cpp
-CodeTools::CodeTools_Concatenate [ct/CxxString.cpp]
    ct/CxxString.cpp
 CodeTools::CodeTools_FindSubstr [ct/CxxString.cpp]
    ct/CxxString.cpp
@@ -15546,9 +15710,6 @@ CodeTools::CompareScopes [ct/CxxString.h]
    ct/CxxScoped.cpp
    ct/CxxString.cpp
 CodeTools::Compress [ct/CxxString.h]
-   ct/CxxString.cpp
-   ct/Lexer.cpp
-CodeTools::Concatenate [ct/CxxString.h]
    ct/CxxString.cpp
    ct/Lexer.cpp
 CodeTools::FindIndex [ct/CxxString.h]
@@ -15991,8 +16152,6 @@ CodeTools::SymbolVector [ct/CxxSymbols.h]
    ct/CxxNamed.cpp
    ct/CxxSymbols.cpp
    ct/CxxSymbols.h
-CodeTools::SymbolView [ct/CxxSymbols.h]
-   ct/CxxSymbols.h
 CodeTools::TARG_REFS [ct/CxxSymbols.h]
    ct/CxxNamed.cpp
    ct/CxxSymbols.cpp
@@ -16030,8 +16189,6 @@ CodeTools::BraceInit_EnterBlock [ct/CxxToken.cpp]
 CodeTools::BraceInit_GetUsages [ct/CxxToken.cpp]
    ct/CxxToken.cpp
 CodeTools::BraceInit_ctor [ct/CxxToken.cpp]
-   ct/CxxToken.cpp
-CodeTools::CharLiteral_Referent [ct/CxxToken.cpp]
    ct/CxxToken.cpp
 CodeTools::CxxToken_DirectClass [ct/CxxToken.cpp]
    ct/CxxToken.cpp
@@ -16141,9 +16298,7 @@ CodeTools::Precedence_EnterBlock [ct/CxxToken.cpp]
    ct/CxxToken.cpp
 CodeTools::Precedence_GetUsages [ct/CxxToken.cpp]
    ct/CxxToken.cpp
-CodeTools::StrLiteral_CreateRef [ct/CxxToken.cpp]
-   ct/CxxToken.cpp
-CodeTools::StrLiteral_GetReferent [ct/CxxToken.cpp]
+CodeTools::StringLiteral_PushBack [ct/CxxToken.cpp]
    ct/CxxToken.cpp
 CodeTools::Union [ct/CxxToken.cpp]
    ct/CxxToken.cpp
@@ -16192,16 +16347,6 @@ CodeTools::BraceInit::Shrink [ct/CxxToken.h]
 CodeTools::BraceInit::items_ [ct/CxxToken.h]
    ct/CxxToken.cpp
    ct/CxxToken.h
-CodeTools::CharLiteral [ct/CxxToken.h]
-   ct/Cxx.cpp
-   ct/CxxToken.cpp
-   ct/Parser.cpp
-CodeTools::CharLiteral::Print [ct/CxxToken.h]
-   ct/CxxToken.cpp
-CodeTools::CharLiteral::Referent [ct/CxxToken.h]
-   ct/CxxToken.cpp
-CodeTools::CharLiteral::c_ [ct/CxxToken.h]
-   ct/CxxToken.cpp
 CodeTools::CxxToken [ct/CxxToken.h]
    ct/CxxArea.h
    ct/CxxDirective.cpp
@@ -16358,8 +16503,8 @@ CodeTools::CxxToken::GetTypeSpec [ct/CxxToken.h]
    ct/CxxScoped.cpp
    ct/CxxScoped.h
    ct/CxxStatement.cpp
+   ct/CxxStrLiteral.h
    ct/CxxToken.cpp
-   ct/CxxToken.h
    ct/Editor.cpp
    ct/Parser.cpp
 CodeTools::CxxToken::GetUsages [ct/CxxToken.h]
@@ -16838,6 +16983,7 @@ CodeTools::IntLiteral::num_ [ct/CxxToken.h]
 CodeTools::IntLiteral::tags_ [ct/CxxToken.h]
    ct/CxxToken.cpp
 CodeTools::Literal [ct/CxxToken.h]
+   ct/CxxCharLiteral.h
    ct/CxxToken.cpp
    ct/CxxToken.h
 CodeTools::Literal::AutoType [ct/CxxToken.h]
@@ -16959,29 +17105,13 @@ CodeTools::Precedence::Print [ct/CxxToken.h]
 CodeTools::Precedence::expr_ [ct/CxxToken.h]
    ct/CxxToken.cpp
    ct/CxxToken.h
-CodeTools::StrLiteral [ct/CxxToken.h]
-   ct/Cxx.cpp
-   ct/CxxRoot.cpp
+CodeTools::StringLiteral [ct/CxxToken.h]
+   ct/CxxStrLiteral.h
    ct/CxxToken.cpp
    ct/Parser.cpp
-CodeTools::StrLiteral::CreateRef [ct/CxxToken.h]
+CodeTools::StringLiteral::PushBack [ct/CxxToken.h]
    ct/CxxToken.cpp
-CodeTools::StrLiteral::GetReferent [ct/CxxToken.h]
-   ct/CxxRoot.cpp
-   ct/CxxToken.cpp
-CodeTools::StrLiteral::GetStr [ct/CxxToken.h]
-   ct/CxxRoot.cpp
-CodeTools::StrLiteral::GetTypeSpec [ct/CxxToken.h]
-   ct/CxxToken.cpp
-CodeTools::StrLiteral::Ref_ [ct/CxxToken.h]
-   ct/CxxToken.cpp
-CodeTools::StrLiteral::Referent [ct/CxxToken.h]
-   ct/CxxToken.cpp
-CodeTools::StrLiteral::Shrink [ct/CxxToken.h]
-   ct/CxxToken.cpp
-CodeTools::StrLiteral::str_ [ct/CxxToken.h]
-   ct/CxxToken.cpp
-   ct/CxxToken.h
+   ct/Parser.cpp
 CodeTools::BackChars [ct/Editor.cpp]
    ct/Editor.cpp
 CodeTools::CodeTools_NotFound [ct/Editor.cpp]
@@ -17638,9 +17768,17 @@ CodeTools::Lexer_GetClassTag [ct/Lexer.cpp]
    ct/Lexer.cpp
 CodeTools::Lexer_GetCxxOp [ct/Lexer.cpp]
    ct/Lexer.cpp
+CodeTools::Lexer_GetDataTags [ct/Lexer.cpp]
+   ct/Lexer.cpp
 CodeTools::Lexer_GetFloat [ct/Lexer.cpp]
    ct/Lexer.cpp
+CodeTools::Lexer_GetFuncBackTags [ct/Lexer.cpp]
+   ct/Lexer.cpp
+CodeTools::Lexer_GetFuncFrontTags [ct/Lexer.cpp]
+   ct/Lexer.cpp
 CodeTools::Lexer_GetHex [ct/Lexer.cpp]
+   ct/Lexer.cpp
+CodeTools::Lexer_GetHexNum [ct/Lexer.cpp]
    ct/Lexer.cpp
 CodeTools::Lexer_GetIncludeFile [ct/Lexer.cpp]
    ct/Lexer.cpp
@@ -17663,8 +17801,6 @@ CodeTools::Lexer_GetOpOverride [ct/Lexer.cpp]
 CodeTools::Lexer_GetPreOp [ct/Lexer.cpp]
    ct/Lexer.cpp
 CodeTools::Lexer_GetReserved [ct/Lexer.cpp]
-   ct/Lexer.cpp
-CodeTools::Lexer_GetStr [ct/Lexer.cpp]
    ct/Lexer.cpp
 CodeTools::Lexer_GetTemplateSpec [ct/Lexer.cpp]
    ct/Lexer.cpp
@@ -17800,12 +17936,23 @@ CodeTools::Lexer::GetClassTag [ct/Lexer.h]
 CodeTools::Lexer::GetCxxOp [ct/Lexer.h]
    ct/Lexer.cpp
    ct/Parser.cpp
+CodeTools::Lexer::GetDataTags [ct/Lexer.h]
+   ct/Lexer.cpp
+   ct/Parser.cpp
 CodeTools::Lexer::GetDepth [ct/Lexer.h]
    ct/CodeFile.cpp
    ct/Lexer.cpp
 CodeTools::Lexer::GetFloat [ct/Lexer.h]
    ct/Lexer.cpp
+CodeTools::Lexer::GetFuncBackTags [ct/Lexer.h]
+   ct/Lexer.cpp
+   ct/Parser.cpp
+CodeTools::Lexer::GetFuncFrontTags [ct/Lexer.h]
+   ct/Lexer.cpp
+   ct/Parser.cpp
 CodeTools::Lexer::GetHex [ct/Lexer.h]
+   ct/Lexer.cpp
+CodeTools::Lexer::GetHexNum [ct/Lexer.h]
    ct/Lexer.cpp
 CodeTools::Lexer::GetIncludeFile [ct/Lexer.h]
    ct/CodeFile.cpp
@@ -17858,9 +18005,6 @@ CodeTools::Lexer::GetPreOp [ct/Lexer.h]
    ct/Lexer.cpp
    ct/Parser.cpp
 CodeTools::Lexer::GetReserved [ct/Lexer.h]
-   ct/Lexer.cpp
-   ct/Parser.cpp
-CodeTools::Lexer::GetStr [ct/Lexer.h]
    ct/Lexer.cpp
    ct/Parser.cpp
 CodeTools::Lexer::GetTemplateSpec [ct/Lexer.h]
@@ -17969,6 +18113,7 @@ CodeTools::Lexer::SkipTemplateSpec [ct/Lexer.h]
    ct/Lexer.cpp
 CodeTools::Lexer::ThisCharIs [ct/Lexer.h]
    ct/Lexer.cpp
+   ct/Parser.cpp
 CodeTools::Lexer::TypePair [ct/Lexer.h]
    ct/Lexer.cpp
 CodeTools::Lexer::Types [ct/Lexer.h]
@@ -18881,6 +19026,8 @@ CodeTools::Parser_GetCxxCast [ct/Parser.cpp]
    ct/Parser.cpp
 CodeTools::Parser_GetCxxExpr [ct/Parser.cpp]
    ct/Parser.cpp
+CodeTools::Parser_GetCxxLiteralOrAlpha [ct/Parser.cpp]
+   ct/Parser.cpp
 CodeTools::Parser_GetDefault [ct/Parser.cpp]
    ct/Parser.cpp
 CodeTools::Parser_GetDefined [ct/Parser.cpp]
@@ -19161,6 +19308,8 @@ CodeTools::Parser::GetCxxAlpha [ct/Parser.h]
 CodeTools::Parser::GetCxxCast [ct/Parser.h]
    ct/Parser.cpp
 CodeTools::Parser::GetCxxExpr [ct/Parser.h]
+   ct/Parser.cpp
+CodeTools::Parser::GetCxxLiteralOrAlpha [ct/Parser.h]
    ct/Parser.cpp
 CodeTools::Parser::GetDefault [ct/Parser.h]
    ct/Parser.cpp
@@ -27747,6 +27896,7 @@ NodeBase::Debug::ft [nb/Debug.h]
    ct/CxxScope.cpp
    ct/CxxScoped.cpp
    ct/CxxStatement.cpp
+   ct/CxxStrLiteral.h
    ct/CxxString.cpp
    ct/CxxSymbols.cpp
    ct/CxxToken.cpp
@@ -35680,12 +35830,14 @@ NodeBase::Singleton::Instance [nb/Singleton.h]
    ct/CtModule.cpp
    ct/Cxx.cpp
    ct/CxxArea.cpp
+   ct/CxxCharLiteral.h
    ct/CxxDirective.cpp
    ct/CxxExecute.cpp
    ct/CxxNamed.cpp
    ct/CxxRoot.cpp
    ct/CxxScope.cpp
    ct/CxxScoped.cpp
+   ct/CxxStrLiteral.h
    ct/CxxSymbols.cpp
    ct/CxxToken.cpp
    ct/Interpreter.cpp
@@ -37255,15 +37407,18 @@ NodeBase::MemoryTypeStrings [nb/SysTypes.cpp]
 NodeBase::RestartStrings [nb/SysTypes.cpp]
    nb/SysTypes.cpp
 NodeBase::APOSTROPHE [nb/SysTypes.h]
-   ct/CxxToken.cpp
+   ct/Cxx.cpp
+   ct/CxxCharLiteral.h
    ct/Lexer.cpp
    ct/Parser.cpp
+   dip/MapAndUnits.cpp
    dip/TokenMessage.cpp
    nb/SysTypes.h
 NodeBase::BACKSLASH [nb/SysTypes.h]
+   ct/Cxx.cpp
    ct/CxxString.cpp
-   ct/CxxToken.cpp
    ct/Lexer.cpp
+   ct/Parser.cpp
    nb/CliBuffer.cpp
    nb/SysFile.cpp
    nb/SysThreadStack.win.cpp
@@ -37610,6 +37765,7 @@ NodeBase::ERROR_STR [nb/SysTypes.h]
    ct/CodeTypes.cpp
    ct/CodeWarning.cpp
    ct/Cxx.cpp
+   ct/CxxCharLiteral.h
    ct/CxxDirective.cpp
    ct/CxxExecute.cpp
    ct/CxxNamed.cpp
@@ -38217,6 +38373,11 @@ NodeBase::NIL_ID [nb/SysTypes.h]
    st/MscBuilder.cpp
    st/MscContext.cpp
    st/TestSessions.cpp
+NodeBase::NUL [nb/SysTypes.h]
+   nb/CinThread.cpp
+   nb/CliBuffer.cpp
+   nb/CliThread.cpp
+   nb/SysTypes.h
 NodeBase::NoFlags [nb/SysTypes.h]
    an/PotsTrafficThread.cpp
    nb/AlarmRegistry.cpp
@@ -38254,10 +38415,11 @@ NodeBase::QUOTE [nb/SysTypes.h]
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
    ct/CodeIncrement.cpp
+   ct/Cxx.cpp
    ct/CxxDirective.cpp
    ct/CxxScope.cpp
+   ct/CxxStrLiteral.h
    ct/CxxString.cpp
-   ct/CxxToken.h
    ct/Editor.cpp
    ct/Lexer.cpp
    ct/Parser.cpp
@@ -39043,6 +39205,7 @@ NodeBase::fn_name [nb/SysTypes.h]
    ct/CxxScope.cpp
    ct/CxxScoped.cpp
    ct/CxxStatement.cpp
+   ct/CxxStrLiteral.h
    ct/CxxString.cpp
    ct/CxxSymbols.cpp
    ct/CxxToken.cpp
@@ -62328,6 +62491,7 @@ size_t [subs/cstddef]
    ct/CxxScoped.h
    ct/CxxStatement.cpp
    ct/CxxStatement.h
+   ct/CxxStrLiteral.h
    ct/CxxString.cpp
    ct/CxxString.h
    ct/CxxSymbols.cpp
@@ -62613,6 +62777,7 @@ SIZE_MAX [subs/cstdint]
    sb/TlvMessage.cpp
 UINT16_MAX [subs/cstdint]
    ct/CodeTypes.h
+   ct/Cxx.cpp
    ct/CxxExecute.cpp
    ct/CxxToken.cpp
    dip/DipProtocol.h
@@ -62706,7 +62871,12 @@ uint32_t [subs/cstdint]
    cb/BcRouting.h
    ct/CodeCoverage.cpp
    ct/CodeCoverage.h
+   ct/Cxx.cpp
+   ct/Cxx.h
    ct/CxxToken.cpp
+   ct/CxxToken.h
+   ct/Lexer.cpp
+   ct/Lexer.h
    ct/Parser.cpp
    ct/Parser.h
    nb/Algorithms.cpp
@@ -62853,6 +63023,7 @@ strlen [subs/cstring]
    ct/Editor.cpp
    ct/Lexer.cpp
    ct/LibraryErrSet.cpp
+   ct/Parser.cpp
    nb/Algorithms.cpp
    nb/CfgParmRegistry.cpp
    nb/CliCharParm.cpp
@@ -62965,6 +63136,7 @@ _findnext [subs/io.h]
    nb/SysFile.win.cpp
 std::setfill [subs/iomanip]
    ct/CodeWarning.cpp
+   ct/Cxx.cpp
    nb/Formatters.cpp
    nb/SysTime.cpp
    sb/SbTrace.cpp
@@ -63033,6 +63205,7 @@ std::fixed [subs/ios]
    nb/Thread.cpp
 std::hex [subs/ios]
    ct/CodeCoverage.cpp
+   ct/Cxx.cpp
    ct/CxxToken.cpp
    nb/CliIntParm.cpp
    nb/Formatters.cpp
@@ -63545,6 +63718,7 @@ std::ostringstream [subs/iosfwd]
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
    ct/CodeWarning.cpp
+   ct/Cxx.cpp
    ct/CxxArea.cpp
    ct/CxxDirective.cpp
    ct/CxxExecute.cpp
@@ -63837,6 +64011,8 @@ std::multimap::upper_bound(const std::multimap* const,const T1) [subs/map]
    dip/Adjudicator.cpp
 std::multimap::value_type [subs/map]
    dip/Adjudicator.cpp
+std::allocator [subs/memory]
+   ct/CxxStrLiteral.h
 std::unique_ptr [subs/memory]
    an/PotsShelfHandler.cpp
    an/PotsShelfIpService.cpp
@@ -63860,6 +64036,7 @@ std::unique_ptr [subs/memory]
    ct/CxxScoped.cpp
    ct/CxxScoped.h
    ct/CxxStatement.cpp
+   ct/CxxStrLiteral.h
    ct/CxxSymbols.cpp
    ct/CxxSymbols.h
    ct/CxxToken.cpp
@@ -63976,6 +64153,7 @@ std::unique_ptr::get [subs/memory]
    ct/CxxScope.h
    ct/CxxScoped.cpp
    ct/CxxScoped.h
+   ct/CxxStrLiteral.h
    ct/CxxToken.cpp
    ct/CxxToken.h
    ct/Editor.cpp
@@ -64056,6 +64234,10 @@ std::unique_ptr::release [subs/memory]
 std::unique_ptr::release [subs/memory]
    dip/TokenMessage.cpp
 std::unique_ptr::reset [subs/memory]
+   dip/TokenMessage.cpp
+   nb/Thread.cpp
+   nw/SysTcpSocket.win.cpp
+std::unique_ptr::reset [subs/memory]
    an/PotsShelfIpService.cpp
    cb/BcProtocol.cpp
    ct/CodeFile.cpp
@@ -64068,6 +64250,7 @@ std::unique_ptr::reset [subs/memory]
    ct/CxxScope.cpp
    ct/CxxScope.h
    ct/CxxScoped.h
+   ct/CxxStrLiteral.h
    ct/CxxSymbols.cpp
    ct/CxxToken.cpp
    ct/Editor.cpp
@@ -64118,10 +64301,6 @@ std::unique_ptr::reset [subs/memory]
    sn/PotsStatistics.cpp
    st/StIncrement.cpp
    st/StTestData.cpp
-std::unique_ptr::reset [subs/memory]
-   dip/TokenMessage.cpp
-   nb/Thread.cpp
-   nw/SysTcpSocket.win.cpp
 operator delete [subs/new]
    nb/SysHeap.cpp
 operator delete[] [subs/new]
@@ -64155,12 +64334,14 @@ std::basic_ostream [subs/ostream]
    ct/CodeWarning.cpp
    ct/Cxx.cpp
    ct/CxxArea.cpp
+   ct/CxxCharLiteral.h
    ct/CxxDirective.cpp
    ct/CxxExecute.cpp
    ct/CxxNamed.cpp
    ct/CxxScope.cpp
    ct/CxxScoped.cpp
    ct/CxxStatement.cpp
+   ct/CxxStrLiteral.h
    ct/CxxSymbols.cpp
    ct/CxxToken.cpp
    ct/CxxToken.h
@@ -64455,15 +64636,16 @@ std::basic_ostream::operator<<(std::basic_ostream* const,char) [subs/ostream]
    ct/CodeWarning.cpp
    ct/Cxx.cpp
    ct/CxxArea.cpp
+   ct/CxxCharLiteral.h
    ct/CxxDirective.cpp
    ct/CxxExecute.cpp
    ct/CxxNamed.cpp
    ct/CxxScope.cpp
    ct/CxxScoped.cpp
    ct/CxxStatement.cpp
+   ct/CxxStrLiteral.h
    ct/CxxSymbols.cpp
    ct/CxxToken.cpp
-   ct/CxxToken.h
    ct/Editor.cpp
    ct/Library.cpp
    ct/LibraryErrSet.cpp
@@ -65336,8 +65518,10 @@ std::set [subs/set]
    ct/CxxToken.cpp
    ct/Editor.cpp
    ct/Editor.h
+   ct/Lexer.cpp
    ct/Library.cpp
    ct/LibraryTypes.h
+   ct/Parser.cpp
    ct/SetOperations.cpp
    dip/Adjudicator.cpp
    dip/BaseBot.cpp
@@ -65389,6 +65573,7 @@ std::set::cend [subs/set]
    ct/CxxSymbols.cpp
    ct/CxxToken.cpp
    ct/Editor.cpp
+   ct/Parser.cpp
    ct/SetOperations.cpp
    dip/BaseBot.cpp
    dip/BotThread.cpp
@@ -65438,6 +65623,7 @@ std::set::find(const std::set* const,const T) [subs/set]
    ct/CodeWarning.cpp
    ct/CxxNamed.cpp
    ct/CxxScoped.cpp
+   ct/Parser.cpp
    dip/Adjudicator.cpp
    dip/BaseBot.cpp
    dip/MapAndUnits.cpp
@@ -65451,6 +65637,7 @@ std::set::insert [subs/set]
    ct/CxxSymbols.cpp
    ct/CxxToken.cpp
    ct/Editor.cpp
+   ct/Lexer.cpp
    ct/Library.cpp
    dip/Adjudicator.cpp
    dip/BaseBot.cpp
@@ -65482,6 +65669,7 @@ std::basic_ostringstream [subs/sstream]
    ct/CodeFileSet.cpp
    ct/CodeIncrement.cpp
    ct/CodeWarning.cpp
+   ct/Cxx.cpp
    ct/CxxArea.cpp
    ct/CxxDirective.cpp
    ct/CxxExecute.cpp
@@ -65554,6 +65742,7 @@ std::basic_ostringstream::str(const std::basic_ostringstream* const) [subs/sstre
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
    ct/CodeWarning.cpp
+   ct/Cxx.cpp
    ct/CxxArea.cpp
    ct/CxxDirective.cpp
    ct/CxxExecute.cpp
@@ -65632,6 +65821,7 @@ std::basic_string [subs/string]
    ct/CxxScoped.cpp
    ct/CxxStatement.cpp
    ct/CxxStatement.h
+   ct/CxxStrLiteral.h
    ct/CxxString.cpp
    ct/CxxSymbols.cpp
    ct/CxxToken.cpp
@@ -65710,6 +65900,7 @@ std::basic_string [subs/string]
 std::basic_string::append(std::basic_string* const,const std::basic_string) [subs/string]
    ct/CodeCoverage.cpp
    ct/CxxScope.cpp
+   ct/CxxStrLiteral.h
    ct/CxxSymbols.cpp
    ct/Editor.cpp
    nb/CfgParmRegistry.cpp
@@ -65791,8 +65982,8 @@ std::basic_string::capacity [subs/string]
    ct/CxxNamed.cpp
    ct/CxxScope.cpp
    ct/CxxScoped.cpp
+   ct/CxxStrLiteral.h
    ct/CxxSymbols.cpp
-   ct/CxxToken.cpp
 std::basic_string::clear [subs/string]
    ct/CodeCoverage.cpp
    ct/CodeFile.cpp
@@ -65922,7 +66113,6 @@ std::basic_string::find_first_not_of(const std::basic_string* const,const std::b
    ct/Cxx.cpp
    ct/Editor.cpp
    ct/Interpreter.cpp
-   ct/Lexer.cpp
    nb/CfgParmRegistry.cpp
    nb/CfgTuple.cpp
    nb/CliTextParm.cpp
@@ -66023,6 +66213,7 @@ std::basic_string::push_back [subs/string]
    ct/CodeIncrement.cpp
    ct/CxxArea.cpp
    ct/CxxNamed.cpp
+   ct/CxxStrLiteral.h
    ct/CxxString.cpp
    ct/CxxSymbols.cpp
    ct/Editor.cpp
@@ -66066,7 +66257,7 @@ std::basic_string::shrink_to_fit [subs/string]
    ct/CxxScope.cpp
    ct/CxxScoped.cpp
    ct/CxxStatement.h
-   ct/CxxToken.cpp
+   ct/CxxStrLiteral.h
 std::basic_string::size [subs/string]
    cb/DigitString.cpp
    ct/CodeCoverage.cpp
@@ -66080,6 +66271,7 @@ std::basic_string::size [subs/string]
    ct/CxxScope.cpp
    ct/CxxScoped.cpp
    ct/CxxStatement.cpp
+   ct/CxxStrLiteral.h
    ct/CxxString.cpp
    ct/Editor.cpp
    ct/Interpreter.cpp
@@ -66132,6 +66324,7 @@ std::basic_string::substr [subs/string]
    nb/Formatters.cpp
    nb/Log.cpp
 std::char_traits [subs/string]
+   ct/CxxStrLiteral.h
    nb/NbTypes.h
 std::getline [subs/string]
    ct/CodeCoverage.cpp
@@ -66190,6 +66383,7 @@ std::string [subs/string]
    ct/Cxx.h
    ct/CxxArea.cpp
    ct/CxxArea.h
+   ct/CxxCharLiteral.h
    ct/CxxDirective.cpp
    ct/CxxDirective.h
    ct/CxxExecute.cpp
@@ -66205,6 +66399,7 @@ std::string [subs/string]
    ct/CxxScoped.h
    ct/CxxStatement.cpp
    ct/CxxStatement.h
+   ct/CxxStrLiteral.h
    ct/CxxString.cpp
    ct/CxxString.h
    ct/CxxSymbols.cpp
@@ -66637,7 +66832,12 @@ std::to_string(int) [subs/string]
    nw/SysSocket.win.cpp
    pb/PotsCircuit.cpp
    sn/PotsCallIpService.cpp
+std::u16string [subs/string]
+   ct/CxxStrLiteral.h
+std::u32string [subs/string]
+   ct/CxxStrLiteral.h
 std::wstring [subs/string]
+   ct/CxxStrLiteral.h
    nb/SysConsole.win.cpp
 _ftime_s [subs/timeb.h]
    nb/SysTickTimer.win.cpp
@@ -66904,6 +67104,7 @@ std::vector::empty [subs/vector]
 std::vector::end(std::vector* const) [subs/vector]
    ct/CodeFile.cpp
    ct/CodeWarning.cpp
+   ct/CxxArea.cpp
    ct/CxxScoped.cpp
    ct/Editor.cpp
 std::vector::erase(std::vector* const,std::iterator_t) [subs/vector]

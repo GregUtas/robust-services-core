@@ -60,19 +60,19 @@ namespace CodeTools
 //  need to be modified to support them.
 //
 //  character sets:
-//    o All source code is assumed to be of type char.  Dupport for char8_t,
-//      char16_t, char32_t, and wchar_t has been sketched in, but significant
-//      changes would be needed to handle these, such as preprocessing source
-//      code to convert characters to their universal character names and
-//      replacing uses of std::string in the parser and other classes.
+//    o All source code is assumed to be of type char.  char8_t, char16_t,
+//      char32_t, and wchar_t are supported by escape codes and prefixes to
+//      literals (u8, u, U, L), but additional changes would be needed to
+//      support them in identifiers, such as replacing uses of std::string
+//      in the parser and other classes.
 //  reserved words:
 //    o asm, alignas, alignof, concept, decltype, export, goto, register,
 //      requires, static_assert, thread_local, volatile
 //    o and, and_eq, bitand, bitor, compl, not, not_eq, or, or_eq, xor, xor_eq
-//    * #undef, #line, #pragma (parsed but have no effect)
+//    o #undef, #line, #pragma (parsed but have no effect)
 //    o #if, #elif (the conditional that follows the directive is ignored)
 //  identifiers:
-//    * elaborated type specifiers (class, struct, union, or enum prefixed to
+//    o elaborated type specifiers (class, struct, union, or enum prefixed to
 //      resolve a type ambiguity caused by overloading an identifier)
 //    o declaring a function as ClassName::FunctionName will cause the parser
 //      to fail (there are situations in which it expects unqualified names)
@@ -126,7 +126,7 @@ namespace CodeTools
 //    o forward declarations of enums
 //  typedefs:
 //    o "typedef enum" and "typedef struct" (GetTypedef)
-//    * alias templates (GetUsing and others)
+//    o alias templates (GetUsing and others)
 //  templates:
 //    o template arguments other than qualified names: bitset<sizeof(uint8_t)>,
 //      for example, would have to be written as bitset<bytesize>, following

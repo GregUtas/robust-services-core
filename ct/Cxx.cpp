@@ -143,11 +143,11 @@ string CharString(uint32_t c, bool s)
    stream << std::hex << std::setfill('0');
 
    if(c <= UINT8_MAX)
-      stream << BACKSLASH << 'x' << c;
+      stream << BACKSLASH << 'x' << setw(2) << uint32_t(c);
    else if(c <= UINT16_MAX)
-      stream << BACKSLASH << 'u' << c;
+      stream << BACKSLASH << 'u' << setw(4) << uint32_t(c);
    else
-      stream << BACKSLASH << 'U' << c;
+      stream << BACKSLASH << 'U' << setw(8) << uint32_t(c);
 
    return stream.str();
 }

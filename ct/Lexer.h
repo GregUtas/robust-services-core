@@ -371,9 +371,10 @@ private:
    size_t GetHex(int64_t& num);
 
    //  Parses a hex string (digits only) and returns it in NUM.  Returns the
-   //  number of digits in NUM (zero if no hex digits were found).
+   //  number of digits in NUM (zero if no hex digits were found).  MAX is
+   //  the maximum number of digits allowed in the string.
    //
-   size_t GetHexNum(int64_t& num);
+   size_t GetHexNum(int64_t& num, size_t max = 16);
 
    //  Parses an octal literal and returns it in NUM.  Returns the number of
    //  digits in NUM (zero if no literal was found).

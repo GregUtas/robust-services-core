@@ -108,7 +108,7 @@ private:
       stream << E << QUOTE;
       for(size_t i = 0; i < str_.size(); ++i)
          stream << CharString(str_[i], true);
-      stream << E << QUOTE;
+      stream << QUOTE;
    }
 
    CxxScoped* Referent() const override { return GetReferent(); }

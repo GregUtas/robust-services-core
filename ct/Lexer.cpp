@@ -659,22 +659,26 @@ bool Lexer::GetChar(uint32_t& c)
       switch(c)
       {
       case '0':
-      case '1':
-         //
-         //  This is the character's octal value.
-         //
+      case '1':  // character's octal value
          GetOct(n);
          c = n;
          break;
-      case 'U':  // 8 bytes
-      case 'u':  // 4 bytes
-      case 'x':  // 2 bytes
-         //
-         //  This is the character's hex value.
-         //
+      case 'x':  // character's 2-byte hex value
          ++curr_;
          if(curr_ >= size_) return false;
-         GetHexNum(n);
+         GetHexNum(n, 2);
+         c = n;
+         break;
+      case 'u':  // character's 4-byte hex value
+         ++curr_;
+         if(curr_ >= size_) return false;
+         GetHexNum(n, 4);
+         c = n;
+         break;
+      case 'U':  // character's 8-byte hex value
+         ++curr_;
+         if(curr_ >= size_) return false;
+         GetHexNum(n, 8);
          c = n;
          break;
       case 'a':
@@ -914,14 +918,14 @@ size_t Lexer::GetHex(int64_t& num)
 
 fn_name Lexer_GetHexNum = "Lexer.GetHexNum";
 
-size_t Lexer::GetHexNum(int64_t& num)
+size_t Lexer::GetHexNum(int64_t& num, size_t max)
 {
    Debug::ft(Lexer_GetHexNum);
 
    size_t count = 0;
    num = 0;
 
-   while(curr_ < size_)
+   while((curr_ < size_) && (max > 0))
    {
       auto c = source_->at(curr_);
       auto value = CxxChar::Attrs[c].hexValue;
@@ -930,6 +934,7 @@ size_t Lexer::GetHexNum(int64_t& num)
       num <<= 4;
       num += value;
       ++curr_;
+      --max;
    }
 
    return count;

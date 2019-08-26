@@ -3074,7 +3074,13 @@ bool Parser::GetStr(ExprPtr& expr, Cxx::Encoding code)
          }
          else
          {
+            //  Get the lexer's current position, which is the character directly
+            //  after the quote.  It could be whitespace, in which case Reposition
+            //  finds the next character that would be parsed, which is that would
+            //  continue the string literal if it is also a quote.
+            //
             curr = lexer_.Curr();
+            lexer_.Reposition(curr);
             if(!lexer_.GetChar(c)) return false;
             if(c == QUOTE) continue;
             lexer_.Reposition(curr);

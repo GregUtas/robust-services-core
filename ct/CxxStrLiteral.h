@@ -56,6 +56,7 @@ public:
 
    explicit CxxStrLiteral(const T& s) : str_(s)
    {
+      CxxStats::Incr(CxxStats::STR_LITERAL);
    }
 
    ~CxxStrLiteral()

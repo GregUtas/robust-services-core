@@ -69,6 +69,7 @@ namespace CodeTools
 //    o asm, alignas, alignof, concept, decltype, export, goto, register,
 //      requires, static_assert, thread_local, volatile
 //    o and, and_eq, bitand, bitor, compl, not, not_eq, or, or_eq, xor, xor_eq
+//  preprocessor:
 //    o #undef, #line, #pragma (parsed but have no effect)
 //    o #if, #elif (the conditional that follows the directive is ignored)
 //  identifiers:
@@ -96,7 +97,7 @@ namespace CodeTools
 //    o enums, typedefs, or functions in an anonymous union (allowed by parser,
 //      but CxxArea.FindEnum, FindFunc, and FindType do not look for them)
 //    o including a union instance immediately after defining it (GetClassDecl)
-//    o pointer-to-member (the type "Class::*" and operators ".*" and "->*)
+//    o pointer-to-member (the type "Class::*" and operators ".*" and "->*")
 //  functions:
 //    o const&, &, and && as member function suffix tags
 //    o noexcept(<expr>) as a function tag (only "noexcept" is supported)

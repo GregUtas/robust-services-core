@@ -170,7 +170,7 @@ void ObjectPoolRegistry::AuditPools() const
       {
       case ObjectPoolAudit::CheckingFreeq:
          //
-         //  Audit the pool's free queue.
+         //  Audit each pool's free queue.
          //
          while(thread->pid_ <= ObjectPool::MaxId)
          {
@@ -187,7 +187,7 @@ void ObjectPoolRegistry::AuditPools() const
 
          thread->phase_ = ObjectPoolAudit::ClaimingBlocks;
          thread->pid_ = NIL_ID;
-         break;
+         //  [[fallthrough]]
 
       case ObjectPoolAudit::ClaimingBlocks:
          //
@@ -212,12 +212,12 @@ void ObjectPoolRegistry::AuditPools() const
 
          thread->phase_ = ObjectPoolAudit::RecoveringBlocks;
          thread->pid_ = NIL_ID;
-         break;
+         //  [[fallthrough]]
 
       case ObjectPoolAudit::RecoveringBlocks:
          //
          //  For each object pool, recover any block that is still marked.
-         //  Such  a block is an orphan that is neither on the free queue
+         //  Such a block is an orphan that is neither on the free queue
          //  nor in use by an application.
          //
          while(thread->pid_ <= ObjectPool::MaxId)

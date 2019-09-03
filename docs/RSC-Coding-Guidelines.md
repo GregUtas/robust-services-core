@@ -6,7 +6,7 @@ Use the `>check` command to help determine whether software follows recommended 
 The existing software does not always follow every guideline.  In some cases, there is a good reason
 for violating a guideline.  In others, the effort that would be needed to make the software conform
 is better spent elsewhere.  Some of the software was developed before C++11, so there are things that
-it should still adopt (e.g. greater use of std::unique_ptr).
+it should still adopt (e.g. greater use of `std::unique_ptr`).
 
 ## Formatting
 Try to make it impossible for the reader to tell where code was added or changed.
@@ -48,12 +48,11 @@ low-level types and constants.  Names that evoke Hungarian notation are an abomi
 ## Interfaces
 1. Insert an `#include` guard based on the file name (`FileName.ext` and `FILENAME_EXT_INCLUDED`) immediately
 after the standard heading.
-1. Sort `#include` directives as follows:
+1. Sort `#include` directives alphabetically within the following groups:
    1. header(s) that declare something that this .cpp defines
    1. header(s) that defines base class of classes defined in this file
-   1. external headers (#include <filename>)
-   1. interal headers (#include "filename.h")
-   And alphabetically within each group.
+   1. external headers (`#include <filename>`)
+   1. interal headers (`#include "filename.h"`)
 1. Remove an `#include` solely associated with functions inherited from a base class.
 1. Remove an `#include` by forward-declaring a class that is only named in references or pointers.  Use
 an explicit forward declaration instead of relying on this as a side effect of a friend declaration.

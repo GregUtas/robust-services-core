@@ -1,11 +1,12 @@
 # Robust Services Core: Coding Guidelines
 All code must `>parse` successfully.
 
-Use the `>check` and `>trim` commands to help determine whether software follows these guidelines.
+Use the `>check` command to help determine whether software follows recommended guidelines.
 
 The existing software does not always follow every guideline.  In some cases, there is a good reason
 for violating a guideline.  In others, the effort that would be needed to make the software conform
-is better spent elsewhere.
+is better spent elsewhere.  Some of the software was developed before C++11, so there are things that
+it should still adopt (e.g. greater use of std::unique_ptr).
 
 ## Formatting
 Try to make it impossible for the reader to tell where code was added or changed.
@@ -40,17 +41,19 @@ Try to make it impossible for the reader to tell where code was added or changed
 1. Limit lines to 80 characters in length.  Break after `,:)` and before `(`.  A break at an operator can
 either occur before or after, depending on which reads better.
 1. Break before `{` and `}` unless everything in between also fits on the same line.
-1. Almost always use Camel case.  Use all uppercase and underscores only in low-level types and constants.
-Names that evoke Hungarian notation are an abomination.
+1. Almost always use Camel case.  Use all uppercase and interior underscores only in
+low-level types and constants.  Names that evoke Hungarian notation are an abomination.
 1. Keep `*` and `&` with the type instead of the variable (`Type* t` instead of `Type *t`).
 
 ## Interfaces
 1. Insert an `#include` guard based on the file name (`FileName.ext` and `FILENAME_EXT_INCLUDED`) immediately
 after the standard heading.
 1. Sort `#include` directives as follows:
-   1. the header that defines the base class of the class defined in the header
-   1. C++/C library headers, in alphabetical order
-   1. other headers, in alphabetical order
+   1. header(s) that declare something that this .cpp defines
+   1. header(s) that defines base class of classes defined in this file
+   1. external headers (#include <filename>)
+   1. interal headers (#include "filename.h")
+   And alphabetically within each group.
 1. Remove an `#include` solely associated with functions inherited from a base class.
 1. Remove an `#include` by forward-declaring a class that is only named in references or pointers.  Use
 an explicit forward declaration instead of relying on this as a side effect of a friend declaration.
@@ -164,6 +167,7 @@ Some comments identify work items.  They have the form `//a`, where `a` is usual
 following are currently used:
 - `//&` is something in [`main.cpp`](/rsc/main.cpp) that might be enabled for a subset build
 - `//>` is an internal constant that can be changed to alter behavior
+- `//@` is a useful breakpoint during development
 - `//b` is a basic call enhancement
 - `//c` is a CodeTools enhancement
 - `//d` is a decoupling enhancement

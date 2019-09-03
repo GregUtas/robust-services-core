@@ -375,13 +375,14 @@ void ObjectPool::AuditFreeq()
                   prev->corrupt_ = true;
             }
 
-            //  CURR has not been claimed, so it should still be marked as
-            //  orphaned.  If it isn't, PREV's link must be corrupt.  It
-            //  could be pointing back into the middle of the queue, or it
-            //  could be a random but legal address at which the offset of
-            //  orphaned_ is zero.
+            //  CURR has not yet been claimed, so it should still be marked as
+            //  orphaned (a value in the range 1 to OrphanThreshold).  If it
+            //  isn't, PREV's link must be corrupt.  PREV might be pointing
+            //  back into the middle of the queue, or it might be a random
+            //  but legal address.
             //
-            if(!badLink) badLink = (curr->orphaned_ == 0);
+            badLink = badLink ||
+               ((curr->orphaned_ == 0) || (curr->orphaned_ > OrphanThreshold));
 
             //  If a bad link was detected, generate a log and truncate the
             //  queue.

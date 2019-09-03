@@ -54,7 +54,7 @@ void SE_Handler(uint32_t errval, void* ex)
    //  Reenable Debug functions before tracing this function.
    //
    Debug::Reset();
-   Debug::ft(NodeBase_SE_Handler);
+   Debug::ft(NodeBase_SE_Handler);  //@
 
    signal_t sig = 0;
 

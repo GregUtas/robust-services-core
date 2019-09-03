@@ -375,12 +375,14 @@ void ObjectPool::AuditFreeq()
                   prev->corrupt_ = true;
             }
 
-            //  If this block isn't orphaned, PREV's link is corrupt.  It
-            //  could be pointing back into the middle of the queue, or it
-            //  could be a random but legal address at which the offset of
-            //  orphaned_ is zero.
+            //  CURR has not yet been claimed, so it should still be marked as
+            //  orphaned (a value in the range 1 to OrphanThreshold).  If it
+            //  isn't, PREV's link must be corrupt.  PREV might be pointing
+            //  back into the middle of the queue, or it might be a random
+            //  but legal address.
             //
-            if(!badLink) badLink = (curr->orphaned_ == 0);
+            badLink = badLink ||
+               ((curr->orphaned_ == 0) || (curr->orphaned_ > OrphanThreshold));
 
             //  If a bad link was detected, generate a log and truncate the
             //  queue.
@@ -990,7 +992,7 @@ void ObjectPool::RecoverBlocks()
             }
 
             //  When an in-use orphan is found, we mark it corrupt and clean
-            //  it up.  If it so corrupt that it causes an exception during
+            //  it up.  If it is so corrupt that it causes an exception during
             //  cleanup, this code is reentered and encounters the block again.
             //  It will then already be marked as corrupt, in which case it
             //  will simply be returned to the free queue.

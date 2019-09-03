@@ -43,7 +43,7 @@ fn_name Pooled_ctor = "Pooled.ctor";
 
 Pooled::Pooled() :
    assigned_(true),
-   orphaned_(false),
+   orphaned_(0),
    corrupt_(false),
    logged_(false)
 {
@@ -58,7 +58,7 @@ void Pooled::Claim()
 {
    Debug::ft(Pooled_Claim);
 
-   orphaned_ = false;
+   orphaned_ = 0;
 
    if(Debug::TraceOn())
    {

@@ -60,7 +60,7 @@ does not understand #pragma once, although maybe it should.
   Defining a standard order for #include directives precludes the use
 of a customized order to resolve an interface design deficiency. The
 order within RSC is
-  1. the header(s) that declare something that this .cpp defines
+  1. header(s) that declare something that this .cpp defines
   2. headers that define base classes of classes defined in this file
   3. external headers (#include <filename>)
   4. internal headers (#include "filename.h")
@@ -173,7 +173,7 @@ Anonymous enum
   This enumeration has no type name, only enumerators.
 ? W46
 Global data initialization not found
-  This data, which is defined at file scope, is not initialized.
+  This data, which is declared at file scope, is not initialized.
 ? W47
 Data is init-only
 This data is initialized but never read or written.
@@ -448,7 +448,7 @@ Function could be defaulted
 Initialization uses assignment operator
   Although the compiler might optimize it, auto item = Class(args)
 constructs an instance of Class and then copies it to item. The
-unambiguous alternative is to write Class name(args).
+unambiguous alternative is to write Class item(args).
 ? W114
 Function could be tagged noexcept
   This function could be tagged noexcept. Note that RSC uses noexcept

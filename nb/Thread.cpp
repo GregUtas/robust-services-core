@@ -730,22 +730,21 @@ enum SchedulingAction
 
 //==============================================================================
 //
-//  Per-thread data that is not required in the header.  Member data is
-//  defined in the header
-//  o for performance (inlining or avoiding an extra dereference)
-//  o to survive deletion (see comment about deleted_)
-//  Other data is defined here, which reduces the number of #includes
-//  in the header and often allows new capabilities to be added without
-//  significant recompilation.
+//  Per-thread data not required in the header (PIMPL idiom).  Declaring member
+//  data here reduces the number of #includes in the header and sometimes allows
+//  new capabilities to be added without significant recompilation.  Member data
+//  is declared in the header
+//  o to survive deletion of this object (see comment about deleted_)
+//  o for performance (to allow inlining or avoid an extra dereference)
 //
 class ThreadPriv : public Permanent
 {
 public:
-   //  Creates the statistics.
+   //  Creates the thread's private data.
    //
    ThreadPriv();
 
-   //  Deletes the statistics.
+   //  Deletes the thread's private data.
    //
    ~ThreadPriv();
 
@@ -2791,7 +2790,7 @@ main_t Thread::Start()
          }
 
          //  Invoke the thread's entry function.  If this returns,
-         //  then thread exited voluntarily.
+         //  the thread exited voluntarily.
          //
          priv_->entered_ = true;
          Enter();

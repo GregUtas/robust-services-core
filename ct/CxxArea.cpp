@@ -611,6 +611,7 @@ void Class::CheckOverrides() const
    //  o Classes outside of NodeBase and SessionBase (Patch only).
    //  o Templates (Patch only).
    //  o Classes not derived from Base (Display) or Object (Patch).
+   //  o Template instances (any warnings apply to the template itself). 
    //c Allow the above to be customized through a configuration file.
    //
    auto space = GetSpace();

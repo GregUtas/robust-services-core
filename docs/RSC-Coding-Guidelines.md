@@ -48,7 +48,7 @@ low-level types and constants. Names that evoke Hungarian notation are an abomin
 1. Keep `*` and `&` with the type instead of the variable (`Type* t` instead of `Type *t`).
 
 ## Interfaces
-1. Insert an `#include` guard based on the file name (*FileName.h* and `FILENAME_H_INCLUDED`) immediately
+1. Insert an `#include` guard based on the file name (_FileName.h_ and `FILENAME_H_INCLUDED`) immediately
 after the standard heading.
 1. Sort `#include` directives alphabetically within the following groups:
    1. header(s) that define direct base class of classes defined in this file
@@ -59,7 +59,7 @@ after the standard heading.
 an explicit forward declaration instead of relying on this as a side effect of a friend declaration.
 1. Avoid `using` declarations and directives for `std` symbols. Prefix the namespace directly (i.e.
 `std::<symbol>`).
-1. Initialize global data (static members) in the *.cpp* if possible.
+1. Initialize global data (static members) in the _.cpp_ if possible.
 
 ## Preprocessor
 Do not use the preprocessor except for one of the following purposes:
@@ -68,16 +68,16 @@ Do not use the preprocessor except for one of the following purposes:
 in current use are
    1. `OS_WIN` for Windows (defines a specific platform: may only be used in platform-specific files;
    those for Windows are named _*.win.cpp_)
-   1. `FIELD_LOAD` for a production build (else assumed to be a debug build; may only be used in a *.cpp*
+   1. `FIELD_LOAD` for a production build (else assumed to be a debug build; may only be used in a _.cpp_
    that executes _before_ the configuration file has been read during system initialization; otherwise
    use `Element::RunningInLab()`)
-   1. `WORDSIZE_32` for a 32-bit CPU (else assumed to be 64-bit; may only be used in *subs/* files)
-   1. `CT_COMPILER` when running the `>parse` command (may only be used in *subs/* files) </li>
+   1. `WORDSIZE_32` for a 32-bit CPU (else assumed to be 64-bit; may only be used in _subs/_ files)
+   1. `CT_COMPILER` when running the `>parse` command (may only be used in _subs/_ files) </li>
 1. To `#define` an imitation keyword that maps to an empty string. The only current example is `NO_OP`.
 
 ## Implementations
 1. Sort `#include` directives alphabetically within the following groups:
-   1. header(s) that declare something that this *.cpp* defines
+   1. header(s) that declare something that this _.cpp_ defines
    1. header(s) that define direct base class of classes defined in this file
    1. external headers (`#include <filename>`)
    1. interal headers (`#include "filename.h"`)
@@ -91,7 +91,7 @@ in current use are
 1. Fix compiler warnings through level 4.
 
 ## Classes
-1. Give a class its own *.h* and *.cpp* unless it is trivial, closely related to others, or private to an implementation.
+1. Give a class its own _.h_ and _.cpp_ unless it is trivial, closely related to others, or private to an implementation.
 1. A base class should be abstract. Its constructor should therefore be protected.
 1. Tag a constructor as `explicit` if it can be invoked with one argument.
 1. Make each public function non-virtual, with a one-line invocation of a virtual function if necessary.
@@ -125,7 +125,7 @@ the compiler-generated default.
 1. Avoid invoking virtual functions in the same class hierarchy within constructors and destructors.
 1. Provide an implementation for a pure virtual function to highlight the bug of calling it too early during
 construction or too late during destruction.
-1. If a class is large, consider using the PIMPL idiom to move its private members to the *.cpp*.
+1. If a class is large, consider using the PIMPL idiom to move its private members to the _.cpp_.
 1. When only a subset of a class’s data should be write-protected, split it into a pair of collaborating classes
 that use `MemProt` and `MemDyn` (or `MemImm` and `MemPerm`).
 1. Static member data begins with an uppercase letter and ends with an underscore, which may be omitted if it is

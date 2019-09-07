@@ -1,7 +1,7 @@
 # Documentation
 
-File | Description
----- | -----------
+Document | Description
+-------- | -----------
 [RCS chapter 2](/docs/RCS-chapter-2.pdf) | chapter 2 of _Robust Communications Software_
 [RCS tutorial](/docs/RCS-tutorial.pdf) | overview of _Robust Communications Software_
 [RSC Product Overview](/docs/RSC-Product-Overview.pdf) | roadmap for the Robust Services Core

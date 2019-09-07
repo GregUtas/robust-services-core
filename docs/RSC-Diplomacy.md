@@ -44,5 +44,5 @@ for `DipModule`.
 
 If you've already developed a bot, rebasing it onto RSC will require a bit of work because
 some of the interfaces have changed.  However, it shouldn't prove too difficult.  Note that
-only the software exercised by the observer bot has been tested; `Adjudicator.cpp` probably
+only the software exercised by the observer bot has been tested; *Adjudicator.cpp* probably
 contains a few surprises at this stage.

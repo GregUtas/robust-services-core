@@ -46,7 +46,7 @@ low-level types and constants.  Names that evoke Hungarian notation are an abomi
 1. Keep `*` and `&` with the type instead of the variable (`Type* t` instead of `Type *t`).
 
 ## Interfaces
-1. Insert an `#include` guard based on the file name (`FileName.ext` and `FILENAME_EXT_INCLUDED`) immediately
+1. Insert an `#include` guard based on the file name (*FileName.ext* and `FILENAME_EXT_INCLUDED`) immediately
 after the standard heading.
 1. Sort `#include` directives alphabetically within the following groups:
    1. header(s) that define direct base class of classes defined in this file
@@ -69,8 +69,8 @@ in current use are
    1. `FIELD_LOAD` for a production build (else assumed to be a debug build; may only be used in a .cpp
    that executes _before_ the configuration file has been read during system initialization; otherwise
    use `Element::RunningInLab()`)
-   1. `WORDSIZE_32` for a 32-bit CPU (else assumed to be 64-bit; may only be used in `/subs` files)
-   1. `CT_COMPILER` when running the `>parse` command (may only be used in `/subs` files) </li>
+   1. `WORDSIZE_32` for a 32-bit CPU (else assumed to be 64-bit; may only be used in */subs* files)
+   1. `CT_COMPILER` when running the `>parse` command (may only be used in */subs* files) </li>
 1. To `#define` an imitation keyword that maps to an empty string.  The only current example is `NO_OP`.
 
 ## Implementations
@@ -114,7 +114,7 @@ equivalents must be used.  These are to make the function private (`delete`) or 
 1. To prohibit scalar heap allocation, make `operator new` private.
 1. To prohibit vector heap allocation, make `operator new[]` private.
 1. If a class only has static members, convert it to a namespace.  If this is not possible, prohibit its creation.
-1. Include `virtual` and `override` when overriding a function defined in a base class.
+1. Use `override` when overriding a function defined in a base class.
 1. Within the same level of access control, sort overridden functions alphabetically.
 1. Make a function or argument const when appropriate.
 1. Remove `inline` as a keyword.
@@ -159,7 +159,7 @@ which may be omitted if it is public (in which case it should probably be in a s
 1. It is a serious bug for a function to cause an unexpected exception, so check arguments and results returned
 by other functions.
 1. Throw an exception only when it is impossible to fail gracefully or the work being performed must be aborted.
-Prefer to generate a log (`Debug::SwErr`) and return a failure value.
+Prefer to generate a log (`Debug::SwLog`) and return a failure value.
    
 ## Tagged comments
 Some comments identify work items.  They have the form `//a`, where `a` is usually an alphabetic character.  The

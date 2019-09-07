@@ -57,21 +57,21 @@ they submit.  Their website also provides base software for developing bots.  It
 that it would be interesting to refactor this software while decoupling it from Windows
 and bringing it more in line with C++11.  This would help RSC evolve to better
 support standalone clients that use IP (TCP, in this case).  The resulting software is
-available in the [`dip`](/dip) directory and is described in some further detail
+available in the [*dip*](/dip) directory and is described in some further detail
 [here](/docs/RSC-Diplomacy.md).
 
 ## Installing the repository
 
-Download the repository to a directory named `rsc`.  This is because, when the executable
-starts, it looks for its configuration file on the path `.../rsc/input/element.config.txt`.
+Download the repository to a directory named *rsc*.  This is because, when the executable
+starts, it looks for its configuration file on the path *.../rsc/input/element.config.txt*.
 
 ## Building an executable
 
 RSC requires C++11.
 
 RSC is currently implemented on Windows, where it runs as a console application.
-However, it defines an abstraction layer, in the form of generic C++ `.h`'s and
-platform-specific `.cpp`'s, that should allow it to be ported to other systems
+However, it defines an abstraction layer, in the form of generic C++ *.h*'s and
+platform-specific *.cpp*'s, that should allow it to be ported to other systems
 fairly easily.  Two executables, for 32-bit and 64-bit Windows, are provided
 [here](/exe).
 
@@ -81,11 +81,11 @@ Each of these directories is built as a separate static library, with `main`
 residing in its own directory.
 
 RSC is currently developed using Visual Studio 2017.  If that is also your development
-environment, the `.vcxproj` (project) files in this repository should already
+environment, the *.vcxproj* (project) files in this repository should already
 provide most of the build instructions that you need.  However, you will need
 to change the paths to where the source code is located.  It's probably
-easiest to do this by opening the `.vcxproj` files in Notepad and replacing
-occurrences of `C:\Users\gregu\Documents\rsc\rsc` (the directory that contains
+easiest to do this by opening the *.vcxproj* files in Notepad and replacing
+occurrences of *C:\Users\gregu\Documents\rsc\rsc* (the directory that contains
 the source code on the author's PC) with the directory into which you downloaded
 the repository.
 
@@ -98,7 +98,7 @@ is read when the program is initializing during startup.
 During initialization, the program displays each module as it is initialized.  (A
 *module* is currently equivalent to a static library.)  After all modules have
 initialized, the CLI prompt `nb>` appears to indicate that CLI commands in the
-`nb` directory are available.  The information written to the console during
+*nb* directory are available.  The information written to the console during
 startup is shown [here](/output/startup.txt), and a list of all CLI commands
 is provided [here](/output/help.cli.txt).
 
@@ -114,21 +114,21 @@ see how function calls were nested
   * the total time spent in the function (in microseconds)
   * the net time spent in the function (in microseconds)
 
-All output appears in the directory `.../rsc/excluded/output` (the first directory
-named `rsc` above the directory from which the `.exe` was launched).
+All output appears in the directory *.../rsc/excluded/output* (the first directory
+named *rsc* above the directory from which the *.exe* was launched).
 In addition to any specific output that you request, such as the initialization trace,
 every CLI session produces
-  * a `console` file (a transcript of the CLI commands that you entered and what was
+  * a *console* file (a transcript of the CLI commands that you entered and what was
 written to the console)
-  * a `log` file (system events that were written to the console asynchronously)
+  * a *log* file (system events that were written to the console asynchronously)
 
-The numeric string *`yymmdd-hhmmss-mmm`* is appended to the names of these files to record
-the time when the system initialized (for the `console` file and initial `log` file) or
-the time of the preceding restart (for a subsequent`log` file).
+The numeric string *yymmdd-hhmmss-mmm* is appended to the names of these files to record
+the time when the system initialized (for the *console* file and initial *log* file) or
+the time of the preceding restart (for a subsequent*log* file).
 
 ## Testing
 
-Most of the files in the [`input`](/input) directory are test scripts.  The document that
+Most of the files in the [*input*](/input) directory are test scripts.  The document that
 describes the [POTS application](/docs/RSC-POTS-Application.md) also discusses its tests,
 which exercise a considerable portion of the RSC software.  The tests described below are
 rather tactical by comparison.
@@ -139,17 +139,17 @@ that is caught in `Thread.Start`, after which an appropriate recovery action is 
 Getting the safety net to work could be a challenge when porting RSC to another
 platform, which is why these tests are provided.  All of the safety net tests can be run
 with the command `>read test.trap.all.`  During each test, the following are generated
-(see the `recover.*` files in the [`output`](/output) directory):
+(see the *recover.\** files in the [*output*](/output) directory):
 
-  * A function trace (`*.trace.txt`), as described above.
-  * A function profile (`*.funcs.txt`) that lists each function that was invoked, along with
+  * A function trace (*\*.trace.txt*), as described above.
+  * A function profile (*\*.funcs.txt*) that lists each function that was invoked, along with
 how many times it was invoked and the total net time spent in it.  This information is not
 that useful here, but it is valuable when you want to pinpoint which functions to focus on in
 order to improve real-time performance.
-  * A scheduler trace (`*.sched.txt`).  The first part of this trace lists all threads in the
+  * A scheduler trace (*\*.sched.txt*).  The first part of this trace lists all threads in the
 executable, with statistics for each.  The second part is a record of all the context switches
 that occurred during the test.
-  * A console file of the test (`*.cli.txt`), as described above.
+  * A console file of the test (*\*.cli.txt*), as described above.
  
 Entering `>nt` in the CLI accesses the "nt" *increment* (a set of CLI commands).  This increment
 provides sets of commands for testing functions in the [`LeakyBucketCounter`](/nb/LeakyBucketCounter.h),

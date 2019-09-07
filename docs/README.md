@@ -15,4 +15,4 @@ File | Description
 [RSC POTS Application](/docs/RSC-POTS-Application.md) | overview of the POTS application
 [PLCP](/docs/PLCP.pdf) | *A Pattern Language of Call Processing*
 [RSC Diplomacy Bot](/docs/RSC-Diplomacy.md) | overview of the software for building a bot that plays the board game *Diplomacy*
-[`output`](/output) directory | mostly output from tests, but also a summary of all [CLI commands](/output/help.cli.txt)
+[*output*](/output) directory | mostly output from tests, but also a summary of all [CLI commands](/output/help.cli.txt)

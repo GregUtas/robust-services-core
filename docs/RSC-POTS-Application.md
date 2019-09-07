@@ -5,19 +5,19 @@ services.
 
 ## Running tests
 
-Many of the scripts in the [`input`](/input) directory are tests for the POTS application.
-When the [`test.cp.setup`](/input/test.cp.setup.txt) script is read, the following files
-are generated during each test (see the files in the [`output`](/output) directory):
+Many of the scripts in the [*input*](/input) directory are tests for the POTS application.
+When the [*test.cp.setup*](/input/test.cp.setup.txt) script is read, the following files
+are generated during each test (see the files in the [*output*](/output) directory):
 
-* A detailed function and message trace (`*.trace.txt`).
-* A function profile (`*.funcs.txt`), as described in the [**Testing**](/README.md) section.
+* A detailed function and message trace (*\*.trace.txt*).
+* A function profile (*\*.funcs.txt*), as described in the [**Testing**](/README.md) section.
 * A [message sequence chart](http://en.wikipedia.org/wiki/Message_sequence_chart) of the
-scenario (`*.msc.txt`).  This is followed by an event trace (a summary of socket activity,
+scenario (*\*.msc.txt*).  This is followed by an event trace (a summary of socket activity,
 object creations/deletions, incoming and outgoing messages, and internal states and events).
 The items in this event trace also appear in the function trace.
-* A console file (`*.cli.txt`).
+* A console file (*\*.cli.txt*).
 
-The [`traffic`](/input/traffic.start.txt) script (`>read traffic.start`) launches a
+The [*traffic*](/input/traffic.start.txt) script (`>read traffic.start`) launches a
 [thread](/an/PotsTrafficThread.h) that initiates, answers, and releases calls, initially
 at a rate of 600 per minute.  The call rate can be increased to the point where the system
 enters overload.  Whatever the current call rate, you can observe the system's behavior with

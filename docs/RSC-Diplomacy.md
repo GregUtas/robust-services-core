@@ -1,15 +1,15 @@
 # Robust Services Core: Diplomacy Bot
 
-Much of the software in the [`dip`](/dip) directory was evolved from the base software
+Much of the software in the [*dip*](/dip) directory was evolved from the base software
 for developing Diplomacy bots found on the [DAIDE](http://www.daide.org.uk) (Diplomacy
 AI Development Environment) website.  That software was refactored, decoupled from
 Windows (to run as a console application), and evolved to introduce C++11 capabilities.
 
-The [`extras`](/dip/extras) directory should give you an idea of the current state of
+The [*extras*](/dip/extras) directory should give you an idea of the current state of
 this software.  To build a bot that plays the game, derive from [`BaseBot`](/dip/BaseBot.h)
-and follow the instructions in [`BotType.h`](/dip/BotType.h).  If you simply build the
+and follow the instructions in [*BotType.h*](/dip/BotType.h).  If you simply build the
 software as is, it produces an observer bot that can join a game and report on its progress.
-Several files in the `extras` directory illustrate the output from this observer.  All the
+Several files in the *extras* directory illustrate the output from this observer.  All the
 games in that directory were played by instances of the impressive Albert bot:
 
 * A win by Turkey in a [standard](/dip/extras/Standard-TUR-win.txt) game.
@@ -19,8 +19,8 @@ games in that directory were played by instances of the impressive Albert bot:
 
 The last game is included because it is accompanied by a [trace](/dip/extras/classical.trace.txt)
 of the game's startup and initial season.  This should give you an idea of the debugging
-capabilities available in RSC.  The last thing in the `extras` directory is a Win32 debug
-executable of the observer bot (`obsbot.exe`).  If you launch it with the `-L3` option, it will
+capabilities available in RSC.  The last thing in the *extras* directory is a Win32 debug
+executable of the observer bot (*obsbot.exe*).  If you launch it with the `-L3` option, it will
 capture the level of information shown in that trace.  The trace is saved to a file using
 the `>save` command.  CLI commands are documented [here](/output/help.cli.txt), but only
 those available in the `NodeBase` and `NetworkBase` namespaces are available to a bot.  If

@@ -1,4 +1,4 @@
-# Robust Services Core: Coding Guidelines
+﻿# Robust Services Core: Coding Guidelines
 All code must `>parse` successfully.
 
 Use the `>check` command to help determine whether software follows recommended guidelines.
@@ -49,8 +49,7 @@ low-level types and constants.  Names that evoke Hungarian notation are an abomi
 1. Insert an `#include` guard based on the file name (`FileName.ext` and `FILENAME_EXT_INCLUDED`) immediately
 after the standard heading.
 1. Sort `#include` directives alphabetically within the following groups:
-   1. header(s) that declare something that this .cpp defines
-   1. header(s) that defines base class of classes defined in this file
+   1. header(s) that define direct base class of classes defined in this file
    1. external headers (`#include <filename>`)
    1. interal headers (`#include "filename.h"`)
 1. Remove an `#include` solely associated with functions inherited from a base class.
@@ -75,10 +74,11 @@ in current use are
 1. To `#define` an imitation keyword that maps to an empty string.  The only current example is `NO_OP`.
 
 ## Implementations
-1. Order `#include` directives as follows:
-   1. the header that defines the functions being implemented
-   1. C++/C library headers, in alphabetical order
-   1. other headers, in alphabetical order
+1. Sort `#include` directives alphabetically within the following groups:
+   1. header(s) that declare something that this .cpp defines
+   1. header(s) that define direct base class of classes defined in this file
+   1. external headers (`#include <filename>`)
+   1. interal headers (`#include "filename.h"`)
 1. Omit any `#include` or using that is already in the header.
 1. Put all of the code in the same namespace as the class defined in the header.
 1. Implement functions in alphabetical order, following the constructor(s) and destructor.

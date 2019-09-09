@@ -291,14 +291,7 @@ public:
       }
    }
 
-   //  Displays member variables.  Used if T is not subclassed from Base.
-   //
-   void Display(std::ostream& stream, const std::string& prefix) const
-   {
-      Show(stream, prefix, NoFlags);
-   }
-
-   //  Displays member variables.  Used if T is subclassed from Base.
+   //  Displays member variables.  T must be subclassed from Base.
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const
@@ -387,7 +380,6 @@ private:
 
    //  See the comment in Singleton.h about fn_name's in a template header.
    //
-   inline static fn_name Q1Way_ctor()   { return "Q1Way.ctor"; }
    inline static fn_name Q1Way_dtor()   { return "Q1Way.dtor"; }
    inline static fn_name Q1Way_Init()   { return "Q1Way.Init"; }
    inline static fn_name Q1Way_Enq()    { return "Q1Way.Enq"; }

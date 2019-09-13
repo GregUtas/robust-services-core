@@ -179,11 +179,12 @@ public:
    bool ParseClassInst(ClassInst* inst, size_t pos);
 
    //  Parses the function template instance identified by NAME, adding it to
-   //  the namespace or class specified by AREA.  TYPE and CODE contain the
-   //  instance's template arguments and code.
+   //  the namespace or class specified by AREA.  TMPLT is the function template
+   //  on which it is based, and TYPE and CODE contain the instance's template
+   //  arguments and code.
    //
-   bool ParseFuncInst(const std::string& name,
-      const TypeName* type, CxxArea* area, const NodeBase::stringPtr& code);
+   bool ParseFuncInst(const std::string& name, const Function* tmplt,
+      CxxArea* area, const TypeName* type, const NodeBase::stringPtr& code);
 
    //  Returns true and creates SPEC if CODE is a valid type specification.
    //

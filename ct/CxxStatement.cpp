@@ -174,6 +174,17 @@ void Catch::ExitBlock()
 
 //------------------------------------------------------------------------------
 
+fn_name Catch_FindNthItem = "Catch.FindNthItem";
+
+CxxScoped* Catch::FindNthItem(const std::string& name, size_t& n) const
+{
+   Debug::ft(Catch_FindNthItem);
+
+   return handler_->FindNthItem(name, n);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Catch_GetUsages = "Catch.GetUsages";
 
 void Catch::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
@@ -182,6 +193,17 @@ void Catch::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
    if(arg_ != nullptr) arg_->GetUsages(file, symbols);
    handler_->GetUsages(file, symbols);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Catch_LocateItem = "Catch.LocateItem";
+
+bool Catch::LocateItem(const CxxNamed* item, size_t& n) const
+{
+   Debug::ft(Catch_LocateItem);
+
+   return handler_->LocateItem(item, n);
 }
 
 //------------------------------------------------------------------------------
@@ -345,6 +367,17 @@ void Do::EnterBlock()
 
 //------------------------------------------------------------------------------
 
+fn_name Do_FindNthItem = "Do.FindNthItem";
+
+CxxScoped* Do::FindNthItem(const std::string& name, size_t& n) const
+{
+   Debug::ft(Do_FindNthItem);
+
+   return loop_->FindNthItem(name, n);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Do_GetUsages = "Do.GetUsages";
 
 void Do::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
@@ -360,6 +393,17 @@ void Do::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 bool Do::InLine() const
 {
    return !loop_->CrlfOver(Block::Unbraced);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Do_LocateItem = "Do.LocateItem";
+
+bool Do::LocateItem(const CxxNamed* item, size_t& n) const
+{
+   Debug::ft(Do_LocateItem);
+
+   return loop_->LocateItem(item, n);
 }
 
 //------------------------------------------------------------------------------
@@ -553,6 +597,21 @@ void For::ExitBlock()
 
 //------------------------------------------------------------------------------
 
+fn_name For_FindNthItem = "For.FindNthItem";
+
+CxxScoped* For::FindNthItem(const std::string& name, size_t& n) const
+{
+   Debug::ft(For_FindNthItem);
+
+   auto item = initial_->FindNthItem(name, n);
+   if(item != nullptr) return item;
+   item = subsequent_->FindNthItem(name, n);
+   if(item != nullptr) return item;
+   return loop_->FindNthItem(name, n);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name For_GetUsages = "For.GetUsages";
 
 void For::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
@@ -570,6 +629,19 @@ void For::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 bool For::InLine() const
 {
    return !loop_->CrlfOver(Block::Unbraced);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name For_LocateItem = "For.LocateItem";
+
+bool For::LocateItem(const CxxNamed* item, size_t& n) const
+{
+   Debug::ft(For_LocateItem);
+
+   if(initial_->LocateItem(item, n)) return true;
+   if(subsequent_->LocateItem(item, n)) return true;
+   return loop_->LocateItem(item, n);
 }
 
 //------------------------------------------------------------------------------
@@ -660,6 +732,20 @@ void If::EnterBlock()
 
 //------------------------------------------------------------------------------
 
+fn_name If_FindNthItem = "If.FindNthItem";
+
+CxxScoped* If::FindNthItem(const std::string& name, size_t& n) const
+{
+   Debug::ft(If_FindNthItem);
+
+   auto item = then_->FindNthItem(name, n);
+   if(item != nullptr) return item;
+   if(else_ == nullptr) return nullptr;
+   return else_->FindNthItem(name, n);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name If_GetUsages = "If.GetUsages";
 
 void If::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
@@ -679,6 +765,19 @@ bool If::InLine() const
    if(elseif_) return false;
    if(then_->CrlfOver(Block::Unbraced)) return false;
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name If_LocateItem = "If.LocateItem";
+
+bool If::LocateItem(const CxxNamed* item, size_t& n) const
+{
+   Debug::ft(If_LocateItem);
+
+   if(then_->LocateItem(item, n)) return true;
+   if(else_ == nullptr) return false;
+   return else_->LocateItem(item, n);
 }
 
 //------------------------------------------------------------------------------
@@ -892,6 +991,17 @@ void Switch::EnterBlock()
 
 //------------------------------------------------------------------------------
 
+fn_name Switch_FindNthItem = "Switch.FindNthItem";
+
+CxxScoped* Switch::FindNthItem(const std::string& name, size_t& n) const
+{
+   Debug::ft(Switch_FindNthItem);
+
+   return cases_->FindNthItem(name, n);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Switch_GetUsages = "Switch.GetUsages";
 
 void Switch::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
@@ -900,6 +1010,17 @@ void Switch::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
    expr_->GetUsages(file, symbols);
    cases_->GetUsages(file, symbols);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Switch_LocateItem = "Switch.LocateItem";
+
+bool Switch::LocateItem(const CxxNamed* item, size_t& n) const
+{
+   Debug::ft(Switch_LocateItem);
+
+   return cases_->LocateItem(item, n);
 }
 
 //------------------------------------------------------------------------------
@@ -987,6 +1108,26 @@ void Try::ExitBlock()
 
 //------------------------------------------------------------------------------
 
+fn_name Try_FindNthItem = "Try.FindNthItem";
+
+CxxScoped* Try::FindNthItem(const std::string& name, size_t& n) const
+{
+   Debug::ft(Try_FindNthItem);
+
+   auto item = try_->FindNthItem(name, n);
+   if(item != nullptr) return item;
+
+   for(auto c = catches_.cbegin(); c != catches_.cend(); ++c)
+   {
+      item = (*c)->FindNthItem(name, n);
+      if(item != nullptr) return item;
+   }
+
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Try_GetUsages = "Try.GetUsages";
 
 void Try::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
@@ -999,6 +1140,24 @@ void Try::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    {
       (*c)->GetUsages(file, symbols);
    }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Try_LocateItem = "Try.LocateItem";
+
+bool Try::LocateItem(const CxxNamed* item, size_t& n) const
+{
+   Debug::ft(Try_LocateItem);
+
+   if(try_->LocateItem(item, n)) return true;
+
+   for(auto c = catches_.cbegin(); c != catches_.cend(); ++c)
+   {
+      if((*c)->LocateItem(item, n)) return true;
+   }
+
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -1063,6 +1222,17 @@ void While::EnterBlock()
 
 //------------------------------------------------------------------------------
 
+fn_name While_FindNthItem = "While.FindNthItem";
+
+CxxScoped* While::FindNthItem(const std::string& name, size_t& n) const
+{
+   Debug::ft(While_FindNthItem);
+
+   return loop_->FindNthItem(name, n);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name While_GetUsages = "While.GetUsages";
 
 void While::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
@@ -1078,6 +1248,17 @@ void While::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 bool While::InLine() const
 {
    return !loop_->CrlfOver(Block::Unbraced);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name While_LocateItem = "While.LocateItem";
+
+bool While::LocateItem(const CxxNamed* item, size_t& n) const
+{
+   Debug::ft(While_LocateItem);
+
+   return loop_->LocateItem(item, n);
 }
 
 //------------------------------------------------------------------------------

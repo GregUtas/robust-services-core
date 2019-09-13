@@ -309,9 +309,18 @@ public:
    //
    virtual bool Instantiate() { return false; }
 
+   //  If the item is, or belongs to, a template instance, returns the instance.
+   //
+   virtual CxxScope* GetTemplateInstance() const;
+
    //  Returns true if the item is, or belongs to, a template instance.
    //
-   virtual bool IsInTemplateInstance() const;
+   bool IsInTemplateInstance() const;
+
+   //  If this item appears in a template instance, returns the template
+   //  item that corresponds to ITEM.
+   //
+   virtual CxxScoped* FindTemplateAnalog(const CxxNamed* item) const;
 
    //  Constructs an argument for the item when it is named directly, perhaps
    //  through an implicit "this".  OP is the operator that is on top of the
@@ -325,11 +334,6 @@ public:
    //
    virtual StackArg MemberToArg
       (StackArg& via, TypeName* name, Cxx::Operator op);
-
-   //  Invoked when the item is accessed.  Invokes ItemAccessed on the context
-   //  function.
-   //
-   void Accessed() const;
 
    //  Invoked on an item that was used directly (e.g. to invoke a function).
    //  If the item's type is a forward declaration, its actual class is added
@@ -426,6 +430,11 @@ protected:
    //
    virtual bool ResolveTemplate
       (Class* cls, const TypeName* args, bool end) const { return true; }
+
+   //  Invoked when the item is accessed.  Invokes ItemAccessed on the context
+   //  function.
+   //
+   void Accessed() const;
 
    //  Invoked by overrides of RecordUsage.
    //

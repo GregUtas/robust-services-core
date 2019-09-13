@@ -42,6 +42,7 @@
 #include "Debug.h"
 #include "Element.h"
 #include "Formatters.h"
+#include "Log.h"
 #include "Singleton.h"
 #include "SysFile.h"
 #include "SysThreadStack.h"
@@ -130,7 +131,9 @@ Parser::~Parser()
 }
 
 //------------------------------------------------------------------------------
-
+//
+//  Current causes = 1 to 232.  101 currently unused.
+//
 fn_name Parser_Backup1 = "Parser.Backup(cause)";
 
 bool Parser::Backup(size_t cause)
@@ -329,7 +332,7 @@ bool Parser::Fault(DirectiveError err) const
    auto code = lexer_.GetLine(curr);
    auto line = lexer_.GetLineNum(curr);
    std::ostringstream text;
-   text << venue_ << ", line " << line + 1 << ':' << CRLF << code;
+   text << venue_ << ", line " << line + 1 << ':' << CRLF << Log::Tab << code;
    Debug::SwLog(Parser_Fault, text.str(), err, SwInfo);
    return false;
 }
@@ -1599,19 +1602,15 @@ bool Parser::GetDtorDefn(FunctionPtr& func)
 
    //  <DtorDefn> = <QualName> "::~" <Name> "(" ")" ["noexcept"]
    //
+   //  The entire name, including the '~', is parsed as qualified name,
+   //  so check that it actually contains a '~'.
+   //
    auto start = CurrPos();
 
    QualNamePtr dtorName;
-   string name;
    if(!GetQualName(dtorName)) return Backup(start, 99);
-   if(!lexer_.NextStringIs("::~")) return Backup(start, 100);
-   auto pos = CurrPos();
-   if(!lexer_.GetName(name)) return Backup(start, 101);
-   name.insert(0, 1, '~');
-   TypeNamePtr className(new TypeName(name));
-   className->SetContext(pos);
-   className->SetScoped();
-   dtorName->PushBack(className);
+   auto name = dtorName->QualifiedName(true, false);
+   if(name.find('~') == string::npos) return Backup(start, 100);
    func.reset(new Function(dtorName));
    func->SetContext(start);
    if(!lexer_.NextCharIs('(')) return Backup(start, 102);
@@ -4182,8 +4181,8 @@ bool Parser::ParseClassInst(ClassInst* inst, size_t pos)
 
 fn_name Parser_ParseFuncInst = "Parser.ParseFuncInst";
 
-bool Parser::ParseFuncInst(const string& name,
-   const TypeName* type, CxxArea* area, const stringPtr& code)
+bool Parser::ParseFuncInst(const std::string& name, const Function* tmplt,
+   CxxArea* area, const TypeName* type, const NodeBase::stringPtr& code)
 {
    Debug::ft(Parser_ParseFuncInst);
 
@@ -4204,6 +4203,9 @@ bool Parser::ParseFuncInst(const string& name,
    FunctionPtr func;
    if(GetFuncDefn(kwd, func))
    {
+      func->SetAccess(tmplt->GetAccess());
+      func->SetTemplateArgs(type);
+      func->SetTemplate(const_cast< Function* >(tmplt));
       area->AddFunc(func);
    }
 

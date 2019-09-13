@@ -2557,6 +2557,14 @@ void Operation::PushResult(StackArg& lhs, StackArg& rhs) const
       match = rhs.CalcMatchWith(lhs, rhsType, lhsType);
    }
 
+   if((match == Promotable) || (match == Abridgeable))
+   {
+      if((*lhs.item->Name() == BOOL_STR) || (*rhs.item->Name() == BOOL_STR))
+      {
+         Context::Log(BoolMixedWithNumeric);
+      }
+   }
+
    auto diff = false;
 
    if(match <= Convertible)  // allows detection of pointer arithmetic

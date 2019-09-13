@@ -228,6 +228,23 @@ void Block::EnterBlock()
 
 //------------------------------------------------------------------------------
 
+fn_name Block_FindNthItem = "Block.FindNthItem";
+
+CxxScoped* Block::FindNthItem(const std::string& name, size_t& n) const
+{
+   Debug::ft(Block_FindNthItem);
+
+   for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
+   {
+      auto item = (*s)->FindNthItem(name, n);
+      if(item != nullptr) return item;
+   }
+
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
 CxxToken* Block::FirstStatement() const
 {
    if(statements_.empty()) return nullptr;
@@ -283,6 +300,22 @@ bool Block::InLine() const
    if(size == 0) return true;
    if(nested_) return false;
    return statements_.front()->InLine();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Block_LocateItem = "Block.LocateItem";
+
+bool Block::LocateItem(const CxxNamed* item, size_t& n) const
+{
+   Debug::ft(Block_LocateItem);
+
+   for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
+   {
+      if((*s)->LocateItem(item, n)) return true;
+   }
+
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -1158,7 +1191,7 @@ void Data::DisplayStats(ostream& stream, const Flags& options) const
    if(!options.test(DispStats)) return;
 
    auto decl = GetDecl();
-   stream << "i=" << int(decl->inited_) << SPACE;
+   stream << "i=" << decl->inited_ << SPACE;
    stream << "r=" << decl->reads_ << SPACE;
    stream << "w=" << decl->writes_ << SPACE;
 }
@@ -1284,7 +1317,7 @@ bool Data::InitByAssign()
    rhs_->EnterBlock();
    auto result = Context::PopArg(true);
    spec_->MustMatchWith(result);
-   GetDecl()->inited_ = true;
+   SetInited();
 
    if(result.WasConstructed() && (result.Ptrs(true) == 0) &&
       (GetScope()->GetFunction() != nullptr))
@@ -1323,11 +1356,11 @@ bool Data::InitByDefault()
       SymbolView view;
       cls->AccessibilityOf(Context::Scope(), ctor, &view);
       ctor->WasCalled();
-      decl->inited_ = true;
+      SetInited();
    }
    else
    {
-      decl->inited_ = (!cls->HasPODMember());
+      if(!cls->HasPODMember()) SetInited();
       auto warning =
          (decl->inited_ ? DefaultConstructor : DefaultPODConstructor);
       Log(warning, cls, -1);
@@ -1403,7 +1436,7 @@ bool Data::InitByExpr(CxxToken* expr)
       }
    }
 
-   GetDecl()->inited_ = true;
+   SetInited();
    return true;
 }
 
@@ -1493,6 +1526,20 @@ void Data::SetDefn(Data* data)
 
 //------------------------------------------------------------------------------
 
+fn_name Data_SetInited = "Data.SetInited";
+
+void Data::SetInited()
+{
+   Debug::ft(Data_SetInited);
+
+   GetDecl()->inited_ = true;
+
+   auto item = static_cast< Data* >(FindTemplateAnalog(this));
+   if(item != nullptr) item->SetInited();
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Data_SetNonConst = "Data.SetNonConst";
 
 bool Data::SetNonConst()
@@ -1500,7 +1547,12 @@ bool Data::SetNonConst()
    Debug::ft(Data_SetNonConst);
 
    if(initing_) return true;
+   if(nonconst_) return true;
+
    nonconst_ = true;
+   auto item = static_cast< Data* >(FindTemplateAnalog(this));
+   if(item != nullptr) item->nonconst_ = true;
+
    return !IsConst();
 }
 
@@ -1526,6 +1578,8 @@ bool Data::WasRead()
 {
    if(initing_) return false;
    ++reads_;
+   auto item = static_cast< Data* >(FindTemplateAnalog(this));
+   if(item != nullptr) ++item->reads_;
    return true;
 }
 
@@ -1539,13 +1593,21 @@ bool Data::WasWritten(const StackArg* arg, bool passed)
 
    if(initing_) return false;
    ++writes_;
+   auto item = static_cast< Data* >(FindTemplateAnalog(this));
+   if(item != nullptr) ++item->writes_;
 
    auto ptrs = (arg->item == this ? arg->Ptrs(true) : spec_->Ptrs(true));
 
    if(ptrs == 0)
+   {
       nonconst_ = true;
+      if(item != nullptr) item->nonconst_ = true;
+   }
    else
+   {
       nonconstptr_ = true;
+      if(item != nullptr) item->nonconstptr_ = true;
+   }
 
    return true;
 }
@@ -1581,15 +1643,6 @@ fn_name FuncData_Check = "FuncData.Check";
 void FuncData::Check() const
 {
    Debug::ft(FuncData_Check);
-
-   //  Don't check a variable in a function template, because its code isn't
-   //  executed.  Don't check a variable in a template instance, because an
-   //  accurate picture could only be obtained by considering all instances
-   //  of the function.
-   //
-   auto func = GetScope()->GetFunction();
-   if(func->IsTemplate()) return;
-   if(func->IsInTemplateInstance()) return;
 
    //  Don't check a function's internal variables for potential constness.
    //
@@ -2226,7 +2279,10 @@ void Function::Check() const
 {
    Debug::ft(Function_Check);
 
-   if(IsTemplateInstance()) return;
+   //  Only check the first instance of a function template.  Any warnings
+   //  logged against it will be moved to the function template itself.
+   //
+   if((tmplt_ != nullptr) && (tmplt_->FirstInstance() != this)) return;
 
    if(parms_ != nullptr) parms_->Check();
    if(spec_ != nullptr) spec_->Check();
@@ -2239,7 +2295,7 @@ void Function::Check() const
    if(!defn_)
    {
       auto w = CheckIfDefined();
-      if(w != FunctionNotDefined) CheckIfUsed(FunctionUnused);
+      if(w != FunctionNotDefined) CheckIfUnused(FunctionUnused);
       if(w != FunctionNotDefined) CheckNoexcept();
       CheckIfHiding();
       CheckArgs();
@@ -2796,15 +2852,22 @@ void Function::CheckIfPublicVirtual() const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_CheckIfUsed = "Function.CheckIfUsed";
+fn_name Function_CheckIfUnused = "Function.CheckIfUnused";
 
-void Function::CheckIfUsed(Warning warning) const
+bool Function::CheckIfUnused(Warning warning) const
 {
-   Debug::ft(Function_CheckIfUsed);
+   Debug::ft(Function_CheckIfUnused);
 
-   if(defn_) return Debug::SwLog(Function_CheckIfUsed, "defn", 0);
-   if(type_) return;
-   if(IsUnused()) LogToBoth(warning);
+   if(defn_)
+   {
+      Debug::SwLog(Function_CheckIfUnused, "defn", 0);
+      return false;
+   }
+
+   if(type_) return false;
+   if(!IsUnused()) return false;
+   LogToBoth(warning);
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -2825,27 +2888,22 @@ void Function::CheckMemberUsage() const
    //  However, the function would have to add the underlying object as an
    //  argument--essentially a "this" argument.  Some will argue that this
    //  improves encapsulation, but we will demur.]
-   //c To support this for templates, nonstatic_ and nonpublic_ would have to
-   //  to be looked at over all instances of a function, whether instantiated
-   //  in a class or function template, because these flags are never set in
-   //  a pure template, because it is neither executed nor invoked directly.
    //
    if(virtual_) return;
    if(type_) return;
    if(GetDefn()->nonstatic_) return;
-   if(tmplt_ != nullptr) return;
-   if(!tmplts_.empty()) return;
    if(FuncType() != FuncStandard) return;
 
    auto cls = GetClass();
    if(cls == nullptr) return;
-   if(cls->GetTemplate() != nullptr) return;
 
-   //  If the function accessed only public members, it could be free.
-   //  Otherwise, it could be static.
+   //  If the function accessed only public members, it could be free (but if
+   //  it's inline, it's probably to obey ODR).  Otherwise it could be static.
    //
-   if(!GetDefn()->nonpublic_) LogToBoth(FunctionCouldBeFree);
-   else if(!static_) LogToBoth(FunctionCouldBeStatic);
+   if(!GetDefn()->nonpublic_ && !inline_)
+      LogToBoth(FunctionCouldBeFree);
+   else if(!static_)
+      LogToBoth(FunctionCouldBeStatic);
 }
 
 //------------------------------------------------------------------------------
@@ -3003,9 +3061,8 @@ void Function::DisplayDecl(ostream& stream, const Flags& options) const
 
    stream << '(';
 
-   for(size_t i = 0 ; i < args_.size(); ++i)
+   for(size_t i = (this_ ? 1 : 0); i < args_.size(); ++i)
    {
-      if((i == 0) && this_) continue;
       args_[i]->Print(stream, options);
       if(i != args_.size() - 1) stream << ", ";
    }
@@ -3112,22 +3169,22 @@ void Function::DisplayInfo(ostream& stream, const Flags& options) const
    if(options.test(DispCode)) return;
 
    auto cls = GetClass();
+   auto decl = GetDecl();
+   auto defn = GetDefn();
+   auto impl = (defn->impl_ != nullptr);
    auto inst = ((cls != nullptr) && cls->IsInTemplateInstance());
    auto subs = GetFile()->IsSubsFile();
-   auto impl = (GetDefn()->impl_ != nullptr);
-   auto decl = GetDecl();
-   auto calls = false;
+   auto def = defaulted_ || defn->defaulted_;
 
    std::ostringstream buff;
    buff << " // ";
 
-   if(!impl && !inst && !subs && !deleted_)
+   if(!impl && !inst && !subs && !deleted_ && !def)
       buff << "<@unimpl" << SPACE;
-   else
-      calls = true;
 
    if(options.test(DispStats))
    {
+      auto calls = !override_ && (impl || inst || subs || def);
       if(!decl->overs_.empty()) buff << "o=" << decl->overs_.size() << SPACE;
       if((decl->calls_ > 0) || calls) buff << "c=" << decl->calls_ << SPACE;
    }
@@ -3305,7 +3362,7 @@ void Function::EnterSignature()
 
 fn_name Function_FindArg = "Function.FindArg";
 
-size_t Function::FindArg(const Argument* arg) const
+size_t Function::FindArg(const Argument* arg, bool disp) const
 {
    Debug::ft(Function_FindArg);
 
@@ -3313,7 +3370,7 @@ size_t Function::FindArg(const Argument* arg) const
    {
       if(args_[i].get() == arg)
       {
-         return (this_ ? i : i + 1);
+         return (this_ || !disp ? i : i + 1);
       }
    }
 
@@ -3395,6 +3452,24 @@ Function* Function::FindBaseFunc() const
 
 //------------------------------------------------------------------------------
 
+fn_name Function_FindNthItem = "Function.FindNthItem";
+
+CxxScoped* Function::FindNthItem(const std::string& name, size_t& n) const
+{
+   Debug::ft(Function_FindNthItem);
+
+   for(auto a = args_.cbegin(); a != args_.cend(); ++a)
+   {
+      auto item = (*a)->FindNthItem(name, n);
+      if(item != nullptr) return item;
+   }
+
+   if(impl_ == nullptr) return nullptr;
+   return impl_->FindNthItem(name, n);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Function_FindRootFunc = "Function.FindRootFunc";
 
 Function* Function::FindRootFunc() const
@@ -3413,6 +3488,65 @@ Function* Function::FindRootFunc() const
    }
 
    return prev;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Function_FindTemplateAnalog = "Function.FindTemplateAnalog";
+
+CxxScoped* Function::FindTemplateAnalog(const CxxNamed* item) const
+{
+   Debug::ft(Function_FindTemplateAnalog);
+
+   //  Start by assuming that this is a function template instance.
+   //
+   auto func = tmplt_;
+
+   if(func == nullptr)
+   {
+      //  This can be invoked on a regular function in a class template
+      //  instance.  In that case it needs to find ITEM's analog in the
+      //  class template's version of that function, so start by finding
+      //  that function.
+      //
+      auto inst = GetTemplateInstance();
+      if(inst == nullptr) return nullptr;
+      func = static_cast< Function* >(inst->FindTemplateAnalog(this));
+      if(func == nullptr) return nullptr;
+   }
+
+   auto type = item->Type();
+
+   switch(type)
+   {
+   case Cxx::Function:
+      return func;
+
+   case Cxx::Argument:
+   {
+      auto i = FindArg(static_cast< const Argument* >(item), false);
+      if(i == SIZE_MAX) return nullptr;
+      return func->GetArgs().at(i).get();
+   }
+
+   case Cxx::Data:
+   case Cxx::Enum:
+   case Cxx::Enumerator:
+   case Cxx::Typedef:
+   {
+      //  This item is defined inside this function.  Find its offset and then
+      //  find the item in the template at the same offset.
+      //
+      size_t n = 0;
+      if(!LocateItem(item, n)) return nullptr;
+      return func->FindNthItem(*item->Name(), n);
+   }
+
+   default:
+      Context::SwLog(Function_FindTemplateAnalog, "Unexpected item", type);
+   }
+
+   return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -3600,6 +3734,14 @@ CxxScope* Function::GetTemplate() const
 
 //------------------------------------------------------------------------------
 
+CxxScope* Function::GetTemplateInstance() const
+{
+   if(tmplt_ != nullptr) return (CxxScope*) this;
+   return CxxScope::GetTemplateInstance();
+}
+
+//------------------------------------------------------------------------------
+
 TemplateType Function::GetTemplateType() const
 {
    if(IsTemplate()) return FuncTemplate;
@@ -3665,9 +3807,8 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
    if(spec_ != nullptr) spec_->GetUsages(file, usages);
 
-   for(size_t i = 0; i < args_.size(); ++i)
+   for(size_t i = (this_ ? 1 : 0); i < args_.size(); ++i)
    {
-      if((i == 0) && this_) continue;
       args_[i]->GetUsages(file, usages);
    }
 
@@ -3917,15 +4058,12 @@ Function* Function::InstantiateFunction(const TypeName* type) const
    auto fullName = ScopedName(true) + ts;
    RemoveRefs(fullName);
    std::unique_ptr< Parser > parser(new Parser(EMPTY_STR));
-   parser->ParseFuncInst(fullName, type, area, code);
+   parser->ParseFuncInst(fullName, this, area, type, code);
    parser.reset();
    code.reset();
 
    func = area->FindFunc(instName, nullptr, false, nullptr, nullptr);
    if(func == nullptr) return InstantiateError(instName, 3);
-   func->SetAccess(GetAccess());
-   func->SetTemplateArgs(type);
-   func->SetTemplate(const_cast< Function* >(this));
    tmplts_.push_back(func);
    return func;
 }
@@ -4099,7 +4237,7 @@ bool Function::IsExemptFromTracing() const
 
    if(impl_ == nullptr) return true;   // declaration only
    if(IsPureVirtual()) return true;
-   if(tmplt_ != nullptr) return true;  // in a template
+   if(tmplt_ != nullptr) return true;  // a function template instance
 
    if(impl_->FirstStatement() == nullptr) return true;
 
@@ -4163,14 +4301,6 @@ bool Function::IsImplemented() const
 {
    auto defn = GetDefn();
    return ((defn->impl_ != nullptr) || defn->defaulted_);
-}
-
-//------------------------------------------------------------------------------
-
-bool Function::IsInTemplateInstance() const
-{
-   if(tmplt_ != nullptr) return true;
-   return CxxScope::IsInTemplateInstance();
 }
 
 //------------------------------------------------------------------------------
@@ -4330,7 +4460,7 @@ void Function::ItemAccessed(const CxxNamed* item)
       auto ref = spec->Referent();
       if(ref != nullptr)
       {
-         if(ref->GetAccess() != Cxx::Public) nonpublic_ = true;
+         if(ref->GetAccess() != Cxx::Public) SetNonPublic();
       }
    }
 
@@ -4340,14 +4470,31 @@ void Function::ItemAccessed(const CxxNamed* item)
    //
    if(*item->Name() == THIS_STR)
    {
-      nonpublic_ = true;
-      nonstatic_ = true;
+      SetNonPublic();
+      SetNonStatic();
       return;
    }
 
    if(item->IsDeclaredInFunction()) return;
-   if(item->GetAccess() != Cxx::Public) nonpublic_ = true;
-   if(!item->IsStatic()) nonstatic_ = true;
+   if(item->GetAccess() != Cxx::Public) SetNonPublic();
+   if(!item->IsStatic()) SetNonStatic();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Function_LocateItem = "Function.LocateItem";
+
+bool Function::LocateItem(const CxxNamed* item, size_t& n) const
+{
+   Debug::ft(Function_LocateItem);
+
+   for(auto a = args_.cbegin(); a != args_.cend(); ++a)
+   {
+      if((*a)->LocateItem(item, n)) return true;
+   }
+
+   if(impl_ == nullptr) return false;
+   return impl_->LocateItem(item, n);
 }
 
 //------------------------------------------------------------------------------
@@ -4603,6 +4750,42 @@ void Function::SetImpl(BlockPtr& block)
    //    that its code is also present.
    //
    if(found_) EnterBlock();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Function_SetNonPublic = "Function.SetNonPublic";
+
+void Function::SetNonPublic()
+{
+   Debug::ft(Function_SetNonPublic);
+
+   if(nonpublic_) return;
+   nonpublic_ = true;
+
+   //  If the function appears in a template instance, update its
+   //  analog in the template.
+   //
+   auto func = static_cast< Function* >(FindTemplateAnalog(this));
+   if(func != nullptr) func->nonpublic_ = true;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Function_SetNonStatic = "Function.SetNonStatic";
+
+void Function::SetNonStatic()
+{
+   Debug::ft(Function_SetNonStatic);
+
+   if(nonstatic_) return;
+   nonstatic_ = true;
+
+   //  If the function appears in a template instance, update its
+   //  analog in the template.
+   //
+   auto func = static_cast< Function* >(FindTemplateAnalog(this));
+   if(func != nullptr) func->nonstatic_ = true;
 }
 
 //------------------------------------------------------------------------------
@@ -4907,10 +5090,10 @@ void Function::WasCalled()
    //
    auto cls = GetClass();
 
-   if((cls != nullptr) && cls->IsInTemplateInstance())
+   if(cls != nullptr)
    {
-      auto func = static_cast< ClassInst* >(cls)->FindTemplateAnalog(this);
-      if(func != nullptr) ++static_cast< Function* >(func)->calls_;
+      auto func = static_cast< Function* >(cls->FindTemplateAnalog(this));
+      if(func != nullptr) ++func->calls_;
    }
 }
 

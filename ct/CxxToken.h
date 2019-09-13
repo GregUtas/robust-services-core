@@ -239,6 +239,18 @@ public:
    //
    virtual void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const { }
 
+   //  Searches this item for ITEM.  Returns true if it was found.  Increments
+   //  N each time that an item with the same name was encountered.
+   //
+   virtual bool LocateItem(const CxxNamed* item, size_t& n)
+      const { return false; }
+
+   //  Searches this item for the Nth occurrence of an item that matches NAME.
+   //  Returns that item if found, else returns nullptr.
+   //
+   virtual CxxScoped* FindNthItem(const std::string& name, size_t& n)
+      const { return nullptr; }
+
    //  Logs code warnings associated with the item.
    //
    virtual void Check() const { }

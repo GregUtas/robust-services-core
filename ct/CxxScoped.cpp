@@ -163,7 +163,7 @@ void Argument::LogToFunc(Warning warning) const
    Debug::ft(Argument_LogToFunc);
 
    auto func = static_cast< Function* >(GetScope());
-   auto offset = func->FindArg(this);
+   auto offset = func->FindArg(this, true);
    if(offset == SIZE_MAX) offset = 0;
    Log(warning, func, offset);
 }
@@ -186,6 +186,8 @@ void Argument::Print(ostream& stream, const Flags& options) const
       stream << " = ";
       default_->Print(stream, options);
    }
+
+   //* Display reads_ and writes_.
 }
 
 //------------------------------------------------------------------------------
@@ -196,7 +198,13 @@ bool Argument::SetNonConst()
 {
    Debug::ft(Argument_SetNonConst);
 
-   nonconst_ = true;
+   if(!nonconst_)
+   {
+      nonconst_ = true;
+      auto item = static_cast< Argument* >(FindTemplateAnalog(this));
+      if(item != nullptr) item->nonconst_ = true;
+   }
+
    return !IsConst();
 }
 
@@ -219,6 +227,20 @@ string Argument::TypeString(bool arg) const
 
 //------------------------------------------------------------------------------
 
+fn_name Argument_WasRead = "Argument.WasRead";
+
+bool Argument::WasRead()
+{
+   Debug::ft(Argument_WasRead);
+
+   ++reads_;
+   auto item = static_cast< Argument* >(FindTemplateAnalog(this));
+   if(item != nullptr) ++item->reads_;
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Argument_WasWritten = "Argument.WasWritten";
 
 bool Argument::WasWritten(const StackArg* arg, bool passed)
@@ -226,11 +248,19 @@ bool Argument::WasWritten(const StackArg* arg, bool passed)
    Debug::ft(Argument_WasWritten);
 
    ++writes_;
-   if((arg == nullptr) || (arg->Ptrs(true) == 0)) nonconst_ = true;
+   auto item = static_cast< Argument* >(FindTemplateAnalog(this));
+   if(item != nullptr) ++item->writes_;
+
+   if((arg == nullptr) || (arg->Ptrs(true) == 0))
+   {
+      nonconst_ = true;
+      if(item != nullptr) item->nonconst_ = true;
+   }
 
    if(!passed && (name_ != THIS_STR) && !arg->UsedIndirectly())
    {
       modified_ = true;
+      if(item != nullptr) item->modified_ = true;
    }
 
    return true;
@@ -437,12 +467,9 @@ void CxxScoped::CheckAccessControl() const
 
    //  If an item is used, log it if its access control could be
    //  more restrictive.
-   //c Support this for templates, accounting for all instances.
    //
    auto cls = GetClass();
    if(cls == nullptr) return;
-   if(IsTemplate()) return;
-   if(cls->IsTemplate()) return;
    if(IsInTemplateInstance()) return;
    if(IsUnused()) return;
 
@@ -473,13 +500,15 @@ void CxxScoped::CheckIfHiding() const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxScoped_CheckIfUsed = "CxxScoped.CheckIfUsed";
+fn_name CxxScoped_CheckIfUnused = "CxxScoped.CheckIfUnused";
 
-void CxxScoped::CheckIfUsed(Warning warning) const
+bool CxxScoped::CheckIfUnused(Warning warning) const
 {
-   Debug::ft(CxxScoped_CheckIfUsed);
+   Debug::ft(CxxScoped_CheckIfUnused);
 
-   if(IsUnused()) Log(warning);
+   if(!IsUnused()) return false;
+   Log(warning);
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -536,6 +565,20 @@ CxxScoped* CxxScoped::FindInheritedName() const
    auto base = cls->BaseClass();
    if(base == nullptr) return nullptr;
    return base->FindName(*Name(), nullptr);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CxxScoped_FindNthItem = "CxxScoped.FindNthItem";
+
+CxxScoped* CxxScoped::FindNthItem(const std::string& name, size_t& n) const
+{
+   Debug::ft(CxxScoped_FindNthItem);
+
+   if(n == 0) return nullptr;
+   if(name == *Name()) --n;
+   if(n == 0) return const_cast< CxxScoped* >(this);
+   return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -650,6 +693,24 @@ bool CxxScoped::IsSuperscopeOf(const string& fqSub, bool tmplt) const
 
    auto fqSuper = ScopedName(tmplt);
    return (CompareScopes(fqSub, fqSuper, tmplt) != string::npos);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CxxScoped_LocateItem = "CxxScoped.LocateItem";
+
+bool CxxScoped::LocateItem(const CxxNamed* item, size_t& n) const
+{
+   Debug::ft(CxxScoped_LocateItem);
+
+   if(item == this)
+   {
+      ++n;
+      return true;
+   }
+
+   if(*item->Name() == *Name()) ++n;
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -781,9 +842,29 @@ void CxxScoped::RecordAccess(Cxx::Access access) const
    }
 
    if(access == Cxx::Public)
+   {
+      if(public_) return;
       public_ = true;
+      RecordTemplateAccess(Cxx::Public);
+   }
    else if(access == Cxx::Protected)
+   {
+      if(protected_) return;
       protected_ = true;
+      RecordTemplateAccess(Cxx::Protected);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CxxScoped_RecordTemplateAccess = "CxxScoped.RecordTemplateAccess";
+
+void CxxScoped::RecordTemplateAccess(Cxx::Access access) const
+{
+   Debug::ft(CxxScoped_RecordTemplateAccess);
+
+   auto item = FindTemplateAnalog(this);
+   if(item != nullptr) item->RecordAccess(access);
 }
 
 //==============================================================================
@@ -846,7 +927,7 @@ void Enum::Check() const
    Debug::ft(Enum_Check);
 
    if(name_.empty()) Log(AnonymousEnum);
-   CheckIfUsed(EnumUnused);
+   CheckIfUnused(EnumUnused);
    CheckIfHiding();
    CheckAccessControl();
 
@@ -1023,6 +1104,19 @@ bool Enum::IsUnused() const
 
 //------------------------------------------------------------------------------
 
+fn_name Enum_SetAsReferent = "Enum.SetAsReferent";
+
+void Enum::SetAsReferent(const CxxNamed* user)
+{
+   Debug::ft(Enum_SetAsReferent);
+
+   ++refs_;
+   auto item = static_cast< Enum* >(FindTemplateAnalog(this));
+   if(item != nullptr) ++item->refs_;
+}
+
+//------------------------------------------------------------------------------
+
 void Enum::Shrink()
 {
    name_.shrink_to_fit();
@@ -1080,7 +1174,7 @@ void Enumerator::Check() const
 {
    Debug::ft(Enumerator_Check);
 
-   CheckIfUsed(EnumeratorUnused);
+   CheckIfUnused(EnumeratorUnused);
    CheckIfHiding();
 }
 
@@ -1173,8 +1267,12 @@ void Enumerator::GetScopedNames(stringVector& names, bool templates) const
 
 //------------------------------------------------------------------------------
 
+fn_name Enumerator_RecordAccess = "Enumerator.RecordAccess";
+
 void Enumerator::RecordAccess(Cxx::Access access) const
 {
+   Debug::ft(Enumerator_RecordAccess);
+
    CxxScoped::RecordAccess(access);
    enum_->RecordAccess(access);
 }
@@ -1188,6 +1286,19 @@ string Enumerator::ScopedName(bool templates) const
    Debug::ft(Enumerator_ScopedName);
 
    return Prefix(enum_->ScopedName(templates)) + *Name();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Enumerator_SetAsReferent = "Enumerator.SetAsReferent";
+
+void Enumerator::SetAsReferent(const CxxNamed* user)
+{
+   Debug::ft(Enumerator_SetAsReferent);
+
+   ++refs_;
+   auto item = static_cast< Enumerator* >(FindTemplateAnalog(this));
+   if(item != nullptr) ++item->refs_;
 }
 
 //------------------------------------------------------------------------------
@@ -1206,6 +1317,20 @@ string Enumerator::TypeString(bool arg) const
    auto ts = enum_->TypeString(arg);
    if(!arg) ts += SCOPE_STR + *Name();
    return ts;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Enumerator_WasRead = "Enumerator.WasRead";
+
+bool Enumerator::WasRead()
+{
+   Debug::ft(Enumerator_WasRead);
+
+   ++refs_;
+   auto item = static_cast< Enumerator* >(FindTemplateAnalog(this));
+   if(item != nullptr) ++item->refs_;
+   return true;
 }
 
 //==============================================================================
@@ -1355,6 +1480,19 @@ string Forward::ScopedName(bool templates) const
 
 //------------------------------------------------------------------------------
 
+fn_name Forward_SetAsReferent = "Forward.SetAsReferent";
+
+void Forward::SetAsReferent(const CxxNamed* user)
+{
+   Debug::ft(Forward_SetAsReferent);
+
+   ++users_;
+   auto item = static_cast< Forward* >(FindTemplateAnalog(this));
+   if(item != nullptr) ++item->users_;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Forward_SetTemplateParms = "Forward.SetTemplateParms";
 
 void Forward::SetTemplateParms(TemplateParmsPtr& parms)
@@ -1391,6 +1529,7 @@ fn_name Friend_ctor = "Friend.ctor";
 
 Friend::Friend() :
    inline_(nullptr),
+   grantor_(nullptr),
    tag_(Cxx::Typename),
    using_(false),
    searching_(false),
@@ -1416,28 +1555,6 @@ Friend::~Friend()
    }
 
    CxxStats::Decr(CxxStats::FRIEND_DECL);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Friend_AddUses = "Friend.AddUsers";
-
-void Friend::AddUsers(const ClassInstPtrVector& instances)
-{
-   Debug::ft(Friend_AddUses);
-
-   auto ref = Referent();
-
-   if(ref != nullptr)
-   {
-      users_ = 0;
-
-      for(auto t = instances.cbegin(); t != instances.cend(); ++t)
-      {
-         auto tf = (*t)->FindFriend(static_cast< const CxxScope* >(ref));
-         if(tf != nullptr) users_ += tf->users_;
-      }
-   }
 }
 
 //------------------------------------------------------------------------------
@@ -1470,10 +1587,22 @@ void Friend::Check() const
    }
 
    //  Log an unused friend declaration (that is, one that did not access an
-   //  item that would otherwise have been inaccessible) unless the friend
-   //  has no implementation (in which case it is probably external).
+   //  item that would otherwise have been inaccessible) unless the grantor
+   //  is also unused or the friend is an instance of an external template.
    //
-   if((users_ == 0) && ref->IsImplemented()) Log(FriendUnused);
+   if(users_ == 0)
+   {
+      if(grantor_->CheckIfUnused(ClassUnused)) return;
+
+      auto inst = ref->GetTemplateInstance();
+
+      if(inst != nullptr)
+      {
+         if(inst->GetTemplate()->GetFile()->IsSubsFile()) return;
+      }
+
+      Log(FriendUnused);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -1679,7 +1808,7 @@ void Friend::FindReferent()
    ++Depth_;
 
    SymbolView view = DeclaredGlobally;
-   auto scope = GetScope();
+   grantor_ = GetScope();
    auto mask = (GetFunction() != nullptr ? FRIEND_FUNCS : FRIEND_CLASSES);
    CxxScoped* ref = nullptr;
 
@@ -1692,8 +1821,8 @@ void Friend::FindReferent()
       //  has not yet been declared.
       //
       searched_ = true;
-      SetScope(scope->GetSpace());
-      ref = ResolveName(GetFile(), scope, mask, &view);
+      SetScope(grantor_->GetSpace());
+      ref = ResolveName(GetFile(), grantor_, mask, &view);
       if(ref != nullptr) using_ = view.using_;
    }
 
@@ -1807,6 +1936,19 @@ void Friend::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    //  Indicate whether our referent was made visible by a using statement.
    //
    if(using_) symbols.AddUser(this);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Friend_IncrUsers = "Friend.IncrUsers";
+
+void Friend::IncrUsers()
+{
+   Debug::ft(Friend_IncrUsers);
+
+   ++users_;
+   auto item = static_cast< Friend* >(grantor_->FindTemplateAnalog(this));
+   if(item != nullptr) ++item->users_;
 }
 
 //------------------------------------------------------------------------------
@@ -2138,7 +2280,7 @@ void Typedef::Check() const
    Debug::ft(Typedef_Check);
 
    spec_->Check();
-   CheckIfUsed(TypedefUnused);
+   CheckIfUnused(TypedefUnused);
    CheckIfHiding();
    CheckAccessControl();
    CheckPointerType();
@@ -2296,6 +2438,19 @@ CxxScoped* Typedef::Referent() const
 
 //------------------------------------------------------------------------------
 
+fn_name Typedef_SetAsReferent = "Typedef.SetAsReferent";
+
+void Typedef::SetAsReferent(const CxxNamed* user)
+{
+   Debug::ft(Typedef_SetAsReferent);
+
+   ++refs_;
+   auto item = static_cast< Typedef* >(FindTemplateAnalog(this));
+   if(item != nullptr) ++item->refs_;
+}
+
+//------------------------------------------------------------------------------
+
 void Typedef::Shrink()
 {
    name_.shrink_to_fit();
@@ -2447,7 +2602,12 @@ bool Using::IsUsingFor
       //  In that case, the using statement was not part of the original
       //  source, so don't claim that it has users.
       //
-      if(Context::ParsingSourceCode()) ++users_;
+      if(Context::ParsingSourceCode())
+      {
+         ++users_;
+         auto item = static_cast< Using* >(FindTemplateAnalog(this));
+         if(item != nullptr) ++item->users_;
+      }
       return true;
    }
 

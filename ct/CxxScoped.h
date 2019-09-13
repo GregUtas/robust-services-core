@@ -99,6 +99,17 @@ public:
    //
    virtual bool IsUnused() const { return false; }
 
+   //  Logs an unused item.  The default version generates a log that
+   //  contains WARNING if IsUnused returns true.  Returns true if a
+   //  log was generated.
+   //
+   virtual bool CheckIfUnused(Warning warning) const;
+
+   //  Overridden to decrement N if this item's name matches NAME, and to
+   //  return this item if N has reached 0.
+   //
+   CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
+
    //  Overridden to return the access control level for the item.
    //
    Cxx::Access GetAccess() const override { return access_; }
@@ -156,6 +167,11 @@ public:
    //
    bool IsSuperscopeOf(const std::string& fqSub, bool tmplt) const override;
 
+   //  Overridden to return true if this item matches ITEM and to increment
+   //  N if this item's name matches ITEM.
+   //
+   bool LocateItem(const CxxNamed* item, size_t& n) const override;
+
    //  Overridden to return the item itself.
    //
    CxxScoped* Referent() const override { return (CxxScoped*) this; }
@@ -172,11 +188,6 @@ protected:
    //
    CxxScoped();
 
-   //  Logs an unused item.  The default version generates a log that
-   //  contains WARNING if IsUnused returns true.
-   //
-   virtual void CheckIfUsed(Warning warning) const;
-
    //  Logs an item whose name hides a name defined in a base class.
    //
    virtual void CheckIfHiding() const;
@@ -185,6 +196,11 @@ protected:
    //
    virtual void CheckAccessControl() const;
 private:
+   //  Records that the item's template analog, if any, required *at least*
+   //  ACCESS to be accessible.
+   //
+   void RecordTemplateAccess(Cxx::Access access) const;
+
    //  The scope where the item appeared.
    //
    CxxScope* scope_;
@@ -301,7 +317,7 @@ public:
 
    //  Overridden to increment the number of reads.
    //
-   bool WasRead() override { ++reads_; return true; }
+   bool WasRead() override;
 
    //  Overridden to increment the number of writes.
    //
@@ -517,7 +533,7 @@ public:
 
    //  Overridden to count references.
    //
-   void SetAsReferent(const CxxNamed* user) override { ++refs_; }
+   void SetAsReferent(const CxxNamed* user) override;
 
    //  Overridden to shrink containers.
    //
@@ -596,10 +612,6 @@ public:
    //
    void ExitBlock() override;
 
-   //  Overridden to count references to the enumerator.
-   //
-   bool WasRead() override { ++refs_; return true; }
-
    //  Overridden to indicate that an enum can be converted to an integer.
    //
    Numeric GetNumeric() const override { return Numeric::Enum; }
@@ -631,7 +643,7 @@ public:
 
    //  Overridden to count references.
    //
-   void SetAsReferent(const CxxNamed* user) override { ++refs_; }
+   void SetAsReferent(const CxxNamed* user) override;
 
    //  Overridden to shrink containers.
    //
@@ -644,6 +656,10 @@ public:
    //  Overridden to return the enumeration's type.
    //
    std::string TypeString(bool arg) const override;
+
+   //  Overridden to count references to the enumerator.
+   //
+   bool WasRead() override;
 private:
    //  The enumerator's name.
    //
@@ -729,7 +745,7 @@ public:
 
    //  Overridden to count usages.
    //
-   void SetAsReferent(const CxxNamed* user) override { ++users_; }
+   void SetAsReferent(const CxxNamed* user) override;
 
    //  Overriden to support the forward declaration of templates.
    //
@@ -802,12 +818,7 @@ public:
    //  Tracks how many times the declaration was used to access something
    //  that would otherwise have been restricted.
    //
-   void IncrUsers() { ++users_; }
-
-   //  Adds each users_ in a set of class template INSTANCES to the users_
-   //  of the original friend declaration in the class template.
-   //
-   void AddUsers(const ClassInstPtrVector& instances);
+   void IncrUsers();
 
    //  Overridden to return the referent if known, else the friend declaration.
    //
@@ -943,6 +954,10 @@ private:
    //  If the friend is an inlined function, a pointer to it.
    //
    Function* inline_;
+
+   //  The class that granted friendship.
+   //
+   const CxxScope* grantor_;
 
    //  If the friend is a class, its type.
    //
@@ -1141,7 +1156,7 @@ public:
 
    //  Overridden to count references.
    //
-   void SetAsReferent(const CxxNamed* user) override { ++refs_; }
+   void SetAsReferent(const CxxNamed* user) override;
 
    //  Overridden to shrink containers.
    //

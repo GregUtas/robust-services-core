@@ -23,7 +23,6 @@
 #include <algorithm>
 #include <cstdint>
 #include <cstring>
-#include <iterator>
 #include <sstream>
 #include <utility>
 #include "CodeFile.h"
@@ -462,12 +461,8 @@ void Class::Check() const
 
    if(parms_ != nullptr) parms_->Check();
 
-   //  If this is a class template, aggregate the friend usages from its
-   //  instantiations.
-   //
    for(auto f = friends_.cbegin(); f != friends_.cend(); ++f)
    {
-      if(IsTemplate()) (*f)->AddUsers(tmplts_);
       (*f)->Check();
    }
 
@@ -476,51 +471,18 @@ void Class::Check() const
       Log(NonVirtualDestructor);
    }
 
-   CheckIfUsed(ClassUnused);
+   CheckIfUnused(ClassUnused);
    CheckOverrides();
    CheckRuleOfThree();
-   CheckForVirtualOverload();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Class_CheckForVirtualOverload = "Class.CheckForVirtualOverload";
+fn_name Class_CheckIfUnused = "Class.CheckIfUnused";
 
-void Class::CheckForVirtualOverload() const
+bool Class::CheckIfUnused(Warning warning) const
 {
-   Debug::ft(Class_CheckForVirtualOverload);
-
-   //  Check if this class declares two virtual functions with the same name.
-   //  Only base class declarations of a function are logged for this.
-   //
-   auto funcs = Funcs();
-
-   for(auto f1 = funcs->cbegin(); f1 != funcs->cend(); ++f1)
-   {
-      auto func1 = f1->get();
-      if(!func1->IsVirtual()) continue;
-
-      for(auto f2 = std::next(f1); f2 != funcs->cend(); ++f2)
-      {
-         auto func2 = f2->get();
-         if(!func2->IsVirtual()) continue;
-
-         if(*func1->Name() == *func2->Name())
-         {
-            if(!func1->IsOverride()) func1->Log(VirtualOverloading);
-            if(!func2->IsOverride()) func2->Log(VirtualOverloading);
-         }
-      }
-   }
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Class_CheckIfUsed = "Class.CheckIfUsed";
-
-void Class::CheckIfUsed(Warning warning) const
-{
-   Debug::ft(Class_CheckIfUsed);
+   Debug::ft(Class_CheckIfUnused);
 
    auto attrs = GetUsageAttrs();
 
@@ -536,7 +498,7 @@ void Class::CheckIfUsed(Warning warning) const
       if((base != nullptr) && (base->GetClassTag() == Cxx::ClassType))
       {
          if(tag_ == Cxx::StructType) Log(StructCouldBeClass);
-         return;
+         return false;
       }
 
       if((attrs.test(IsBase)) ||
@@ -553,7 +515,7 @@ void Class::CheckIfUsed(Warning warning) const
          if(tag_ == Cxx::ClassType) Log(ClassCouldBeStruct);
       }
 
-      return;
+      return false;
    }
 
    //  If the class only has public static functions and data, or enums and
@@ -569,7 +531,7 @@ void Class::CheckIfUsed(Warning warning) const
       if((base != nullptr) && (base->GetClassTag() == Cxx::ClassType))
       {
          if(tag_ == Cxx::StructType) Log(StructCouldBeClass);
-         return;
+         return false;
       }
 
       if((attrs.test(IsBase)) || (attrs.test(HasInstantiations)) ||
@@ -580,23 +542,40 @@ void Class::CheckIfUsed(Warning warning) const
          (attrs.test(HasNonPublicStaticData)))
       {
          if(tag_ == Cxx::StructType) Log(StructCouldBeClass);
-         return;
+         return false;
       }
 
       Log(ClassCouldBeNamespace);
-      return;
+      return false;
    }
 
-   //  Before logging the class as unused, see if it is constructed.
-   //
-   if(attrs.test(IsConstructed)) return;
+   if(IsTemplate())
+   {
+      //  A class template is unused if it has no instantiations.
+      //
+      if(!attrs.test(HasInstantiations))
+      {
+         Log(warning);
+         return true;
+      }
+   }
+   else
+   {
+      //  A class is unused if it is never constructed.  Non-public items can
+      //  only used by the class itself (though GetUsageAttrs treats protected
+      //  members as private, which could cause inaccuracies).  In any case,
+      //  the class is only considered used if it is constructed or it is has
+      //  public items that are used (if any such item exists, this function
+      //  would already have returned).
+      //
+      if(!attrs.test(IsConstructed))
+      {
+         Log(warning);
+         return true;
+      }
+   }
 
-   //  Note that non-public items can only used by the class itself (although
-   //  we treat protected members as private, which could cause inaccuracies).
-   //  In any case, the class is only considered used if it is constructed or
-   //  if it has public items that are used.
-   //
-   if(!attrs.test(IsConstructed)) Log(warning);
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -611,7 +590,7 @@ void Class::CheckOverrides() const
    //  o Classes outside of NodeBase and SessionBase (Patch only).
    //  o Templates (Patch only).
    //  o Classes not derived from Base (Display) or Object (Patch).
-   //  o Template instances (any warnings apply to the template itself). 
+   //  o Template instances (any warnings apply to the template itself).
    //c Allow the above to be customized through a configuration file.
    //
    auto space = GetSpace();
@@ -1555,20 +1534,15 @@ void Class::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
    Debug::ft(Class_GetUsages);
 
-   auto inst = IsInTemplateInstance();
-
-   if(IsTemplate())
+   //  A class template cannot be executed by itself, so it must get its
+   //  symbol usage information from its instantiations.  We compile the
+   //  full template instead of instantiating each member when it is used,
+   //  so it is sufficient to pull symbols from the first instantiation.
+   //
+   if(!tmplts_.empty())
    {
-      //  A class template cannot be executed by itself, so it must get its
-      //  symbol usage information from its instantiations.  We compile the
-      //  full template instead of instantiating each member when it is used,
-      //  so it is sufficient to pull symbols from the first instantiation.
-      //
-      if(!tmplts_.empty())
-      {
-         auto first = tmplts_.front().get();
-         first->GetUsages(file, symbols);
-      }
+      auto first = tmplts_.front().get();
+      first->GetUsages(file, symbols);
    }
 
    auto base = GetBaseDecl();
@@ -1594,6 +1568,7 @@ void Class::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
       (*t)->GetUsages(file, symbols);
    }
 
+   auto inst = IsInTemplateInstance();
    auto funcs = Funcs();
 
    for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
@@ -1939,6 +1914,21 @@ ClassInst::~ClassInst()
 
 //------------------------------------------------------------------------------
 
+fn_name ClassInst_Check = "ClassInst.Check";
+
+void ClassInst::Check() const
+{
+   Debug::ft(ClassInst_Check);
+
+   //  Only check the first instance of a class template.  Any warnings
+   //  logged against it will be moved to the class template itself.
+   //
+   if(tmplt_->Instances()->front().get() != this) return;
+   Class::Check();
+}
+
+//------------------------------------------------------------------------------
+
 fn_name ClassInst_DerivesFrom = "ClassInst.DerivesFrom";
 
 bool ClassInst::DerivesFrom(const Class* cls) const
@@ -2076,19 +2066,45 @@ CxxScoped* ClassInst::FindTemplateAnalog(const CxxNamed* item) const
 {
    Debug::ft(ClassInst_FindTemplateAnalog);
 
+   //  If ITEM is in a function, have that function find its analog.
+   //  A friend can be in a function and its scope is not the class
+   //  that granted friendship, so don't check this for a friend.
+   //
    auto type = item->Type();
+
+   if((item != this) && (type != Cxx::Friend))
+   {
+      auto scope = item->GetScope();
+
+      if(scope != this)
+      {
+         auto func = scope->GetFunction();
+         if(func != nullptr) return func->FindTemplateAnalog(item);
+         return nullptr;
+      }
+   }
 
    switch(type)
    {
    case Cxx::Class:
-      return tmplt_;
+      if(item == this) return tmplt_;
+      break;
 
    case Cxx::Function:
+   {
       size_t idx;
       auto func = static_cast< const Function* >(item);
       if(!GetFuncIndex(func, idx)) return nullptr;
       auto list = tmplt_->FuncVector(*item->Name());
       return list->at(idx).get();
+   }
+
+   case Cxx::Friend:
+   {
+      auto ref = item->Referent();
+      if(ref == nullptr) return nullptr;
+      return tmplt_->FindFriend(static_cast< const CxxScope* >(ref));
+   }
    }
 
    return tmplt_->FindMember(*item->Name(), false);

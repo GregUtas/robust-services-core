@@ -252,7 +252,7 @@ bool SysThread::Interrupt()
    //  delaying, this has the side effect of immediately reawakening
    //  the thread the next time it tries to sleep.
    //
-   if(SetEvent(sentry_) != 0) return true;
+   if(SetEvent(sentry_)) return true;
    Debug::SwLog(SysThread_Interrupt, GetLastError(), nid_);
    return false;
 }

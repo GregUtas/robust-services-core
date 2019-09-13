@@ -33,15 +33,6 @@ SysSignals::SigAbort::SigAbort() : PosixSignal(SIGABRT, "SIGABRT",
 
 //------------------------------------------------------------------------------
 
-#ifndef SIGALRM
-const signal_t SIGALRM = 14;
-#endif
-
-SysSignals::SigAlrm::SigAlrm() : PosixSignal(SIGALRM, "SIGALRM",
-   "Alarm Clock", 0, PS_Native()) { }
-
-//------------------------------------------------------------------------------
-
 #ifndef SIGBREAK
 const signal_t SIGBREAK = 21;
 #endif
@@ -75,38 +66,11 @@ SysSignals::SigInt::SigInt() : PosixSignal(SIGINT, "SIGINT",
 
 //------------------------------------------------------------------------------
 
-#ifndef SIGQUIT
-const signal_t SIGQUIT = 3;
-#endif
-
-SysSignals::SigQuit::SigQuit() : PosixSignal(SIGQUIT, "SIGQUIT",
-   "Terminal Quit", 8, PS_Native() | PS_Break()) { }
-
-//------------------------------------------------------------------------------
-
 SysSignals::SigSegv::SigSegv() : PosixSignal(SIGSEGV, "SIGSEGV",
    "Invalid Memory Reference", 0, PS_Native()) { }
 
 //------------------------------------------------------------------------------
 
-#ifndef SIGSYS
-const signal_t SIGSYS = 12;
-#endif
-
-SysSignals::SigSys::SigSys() : PosixSignal(SIGSYS, "SIGSYS",
-   "Bad System Call", 0, PS_Native()) { }
-
-//------------------------------------------------------------------------------
-
 SysSignals::SigTerm::SigTerm() : PosixSignal(SIGTERM, "SIGTERM",
    "Termination Request", 0, PS_Native()) { }
-
-//------------------------------------------------------------------------------
-
-#ifndef SIGVTALRM
-const signal_t SIGVTALRM = 28;
-#endif
-
-SysSignals::SigVtAlrm::SigVtAlrm() : PosixSignal(SIGVTALRM, "SIGVTALRM",
-   "Virtual Timer Expired", 0, PS_Native()) { }
 }

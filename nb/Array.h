@@ -92,7 +92,7 @@ public:
 
    //  Inserts ITEM at the end of the array.
    //
-   bool PushBack(const T& item)
+   bool PushBack(T& item)
    {
       if(&item == nullptr)
       {
@@ -125,7 +125,7 @@ public:
 
    //  Replaces the item in the cell specified by INDEX with ITEM.
    //
-   bool Replace(size_t index, const T& item)
+   bool Replace(size_t index, T& item) const
    {
       if(&item == nullptr)
       {

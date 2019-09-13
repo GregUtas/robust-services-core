@@ -44,7 +44,6 @@ namespace NodeBase
 //
 class LogGroup : public Dynamic
 {
-   friend class Singleton< LogGroup >;
    friend class Log;
 public:
    //> The maximum length of a log group's name.

@@ -601,6 +601,7 @@ SizesCommand::SizesCommand() : CliCommand(SizesStr, SizesExpl)
 
 void SizesCommand::DisplaySizes(CliThread& cli, bool all) const
 {
+   *cli.obuf << "  Base = " << sizeof(Base) << CRLF;
    *cli.obuf << "  Class = " << sizeof(Class) << CRLF;
    *cli.obuf << "  CliBoolParm = " << sizeof(CliBoolParm) << CRLF;
    *cli.obuf << "  CliIntParm = " << sizeof(CliIntParm) << CRLF;
@@ -612,11 +613,8 @@ void SizesCommand::DisplaySizes(CliThread& cli, bool all) const
    *cli.obuf << "  Object = " << sizeof(Object) << CRLF;
    *cli.obuf << "  Pooled = " << sizeof(Pooled) << CRLF;
    *cli.obuf << "  Q1Link = " << sizeof(Q1Link) << CRLF;
-   *cli.obuf << "  Q1Way = " << sizeof(Q1Way< Object >) << CRLF;
    *cli.obuf << "  Q2Link = " << sizeof(Q2Link) << CRLF;
-   *cli.obuf << "  Q2Way = " << sizeof(Q2Way< Object >) << CRLF;
    *cli.obuf << "  RegCell = " << sizeof(RegCell) << CRLF;
-   *cli.obuf << "  Registry = " << sizeof(Registry< Object >) << CRLF;
    *cli.obuf << "  SysThread = " << sizeof(SysThread) << CRLF;
    *cli.obuf << "  Thread = " << sizeof(Thread) << CRLF;
    *cli.obuf << "  TraceRecord = " << sizeof(TraceRecord) << CRLF;

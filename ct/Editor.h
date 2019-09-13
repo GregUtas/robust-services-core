@@ -138,7 +138,7 @@ private:
    word EraseConst(const CodeWarning& log, string& expl);
    word EraseEnumerator(const CodeWarning& log, string& expl);
    word EraseForward(const CodeWarning& log, string& expl);
-   bool EraseLineBreak(const CodeWarning& log, string& expl);
+   word EraseLineBreak(const CodeWarning& log, string& expl);
    word EraseMutableTag(const CodeWarning& log, string& expl);
    word EraseNoexceptTag(const CodeWarning& log, string& expl);
    word EraseOverrideTag(const CodeWarning& log, string& expl);

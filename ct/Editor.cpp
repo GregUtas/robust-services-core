@@ -1151,7 +1151,7 @@ bool Editor::EraseLineBreak(const Iter& curr)
 
 fn_name Editor_EraseLineBreak2 = "Editor.EraseLineBreak(log)";
 
-bool Editor::EraseLineBreak(const CodeWarning& log, string& expl)
+word Editor::EraseLineBreak(const CodeWarning& log, string& expl)
 {
    Debug::ft(Editor_EraseLineBreak2);
 
@@ -2363,9 +2363,9 @@ word Editor::InsertDefaultFunction(const CodeWarning& log, string& expl)
       return 0;
    }
 
-   //  If an external file defines the class, the log cannot be fixed.
+   //  If a substitute file defines the class, the log cannot be fixed.
    //
-   if(file_->IsExtFile())
+   if(file_->IsSubsFile())
    {
       expl = "This cannot be fixed without modifying an external class.";
       return 0;

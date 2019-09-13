@@ -130,7 +130,7 @@ protected:
 
       return Ok;
    }
-
+private:
    //  See the comment in Singleton.h about fn_name's in a template header.
    //
    inline static NodeBase::fn_name TlvIntParameter_InjectMsg()

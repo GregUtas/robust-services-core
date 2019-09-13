@@ -939,6 +939,10 @@ private:
    //
    CxxNamed* ResolveLocal(SymbolView* view) const;
 
+   //  Checks if REF (the name's referent) is a template argument.
+   //
+   void CheckIfTemplateArgument(const CxxScoped* ref) const;
+
    //  The first name in what might be a qualified name.
    //
    TypeNamePtr first_;

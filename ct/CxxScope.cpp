@@ -1808,13 +1808,14 @@ Function::Function(QualNamePtr& name) :
    friend_(false),
    found_(false),
    this_(false),
+   tparm_(false),
    nonpublic_(false),
    nonstatic_(false),
    implicit_(false),
-   calls_(0),
    defn_(false),
    deleted_(false),
    defaulted_(false),
+   calls_(0),
    mate_(nullptr),
    pos_(string::npos),
    base_(nullptr),
@@ -1851,13 +1852,14 @@ Function::Function(QualNamePtr& name, TypeSpecPtr& spec, bool type) :
    friend_(false),
    found_(false),
    this_(false),
+   tparm_(false),
    nonpublic_(false),
    nonstatic_(false),
    implicit_(false),
-   calls_(0),
    defn_(false),
    deleted_(false),
    defaulted_(false),
+   calls_(0),
    mate_(nullptr),
    spec_(spec.release()),
    pos_(string::npos),
@@ -2897,10 +2899,13 @@ void Function::CheckMemberUsage() const
    auto cls = GetClass();
    if(cls == nullptr) return;
 
+   //  The function can be free if
+   //  (a) it only accessed public members, and
+   //  (b) it's not inline (which is probably to obey ODR), and
    //  If the function accessed only public members, it could be free (but if
-   //  it's inline, it's probably to obey ODR).  Otherwise it could be static.
+   //  Otherwise it could be static.
    //
-   if(!GetDefn()->nonpublic_ && !inline_)
+   if(!GetDefn()->nonpublic_ && !inline_ && !tparm_)
       LogToBoth(FunctionCouldBeFree);
    else if(!static_)
       LogToBoth(FunctionCouldBeStatic);
@@ -3215,7 +3220,6 @@ void Function::EnterBlock()
    //  o A function in a class template instance *is* executed, and so is a
    //    function template instance (GetTemplateType returns NonTemplate in
    //    this case).
-   //  o A function template instance is also executed.
    //
    auto type = GetTemplateType();
 
@@ -4762,10 +4766,6 @@ void Function::SetNonPublic()
 
    if(nonpublic_) return;
    nonpublic_ = true;
-
-   //  If the function appears in a template instance, update its
-   //  analog in the template.
-   //
    auto func = static_cast< Function* >(FindTemplateAnalog(this));
    if(func != nullptr) func->nonpublic_ = true;
 }
@@ -4780,10 +4780,6 @@ void Function::SetNonStatic()
 
    if(nonstatic_) return;
    nonstatic_ = true;
-
-   //  If the function appears in a template instance, update its
-   //  analog in the template.
-   //
    auto func = static_cast< Function* >(FindTemplateAnalog(this));
    if(func != nullptr) func->nonstatic_ = true;
 }

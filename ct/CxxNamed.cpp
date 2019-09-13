@@ -2046,6 +2046,45 @@ bool QualName::CheckCtorDefn() const
 
 //------------------------------------------------------------------------------
 
+fn_name QualName_CheckIfTemplateArgument = "QualName.CheckIfTemplateArgument";
+
+void QualName::CheckIfTemplateArgument(const CxxScoped* ref) const
+{
+   Debug::ft(QualName_CheckIfTemplateArgument);
+
+   //  If we are parsing a function in a template instance and this name's
+   //  referent (REF) is a template argument, find the template's version
+   //  of that function, indicating that its code uses a template argument.
+   //
+   if(!Context::GetParser()->ParsingTemplateInstance()) return;
+   auto scope = Context::Scope();
+   if(scope == nullptr) return;
+   auto ifunc = scope->GetFunction();
+   if(ifunc == nullptr) return;
+   auto inst = ifunc->GetClass();
+   if(inst == nullptr) return;
+   if(!inst->IsInTemplateInstance()) return;
+   auto args = inst->GetTemplateArgs()->Args();
+
+   for(auto a = args->cbegin(); a != args->cend(); ++a)
+   {
+      auto aref = (*a)->Referent();
+      if(aref == nullptr) continue;
+
+      auto type = aref->Type();
+      if((type == Cxx::Forward) || (type == Cxx::Friend))
+         aref = aref->Referent();
+      if(ref == aref)
+      {
+         auto tfunc = inst->FindTemplateAnalog(ifunc);
+         if(tfunc != nullptr)
+            static_cast< Function* >(tfunc)->SetTemplateParm();
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name QualName_CopyContext = "QualName.CopyContext";
 
 void QualName::CopyContext(const CxxNamed* that)
@@ -2346,6 +2385,7 @@ CxxScoped* QualName::Referent() const
    //
    ref = item->Referent();
    if(ref == nullptr) return ReferentError(item->Trace(), item->Type());
+   CheckIfTemplateArgument(ref);
    return ref;
 }
 

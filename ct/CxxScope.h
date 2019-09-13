@@ -974,6 +974,10 @@ public:
    //
    void SetTemplateArgs(const TypeName* spec);
 
+   //  Invoked when a function uses a template parameter.
+   //
+   void SetTemplateParm() { tparm_ = true; }
+
    //  Returns true if the function was explicitly inlined.
    //
    bool IsInline() const { return inline_; }
@@ -1556,6 +1560,10 @@ private:
    //
    bool this_ : 1;
 
+   //  Set if the function uses a template parameter.
+   //
+   bool tparm_ : 1;
+
    //  Set if the function used a non-public member in its own class.
    //
    bool nonpublic_ : 1;
@@ -1568,22 +1576,22 @@ private:
    //
    bool implicit_ : 1;
 
-   //  How many times the function was invoked.
-   //  ONLY INCREMENTED ON THE DECLARATION.
-   //
-   size_t calls_ : 13;
-
    //  Set if this is the definition of a previously declared function.
    //
    bool defn_ : 1;
 
-   //  Set if the function was defined as "=delete".
+   //  Set if the function was defined as "= delete".
    //
    bool deleted_ : 1;
 
-   //  Set if the function was defined as "=default".
+   //  Set if the function was defined as "= default".
    //
    bool defaulted_ : 1;
+
+   //  How many times the function was invoked.
+   //  ONLY INCREMENTED ON THE DECLARATION.
+   //
+   size_t calls_ : 16;
 
    //  If defn_ is set, the function's declaration.  If defn_ is not set,
    //  the function's definition (if distinct from its declaration).

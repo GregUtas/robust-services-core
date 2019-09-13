@@ -803,7 +803,7 @@ size_t Class::CreateCode(const ClassInst* inst, stringPtr& code) const
 
    //  Replace the template name with the instance name, except within
    //  any inner templates.  Note that the lexer must be reinitialized
-   //  each time through, because it caches the length of CODE, which
+   //  each time through because it caches the length of CODE, which
    //  changes as the result of symbol substitution.
    //
    Lexer lexer;

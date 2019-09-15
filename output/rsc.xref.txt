@@ -5437,7 +5437,6 @@ CodeTools::CodeFile::IsCpp [ct/CodeFile.h]
    ct/Library.cpp
    ct/Parser.cpp
 CodeTools::CodeFile::IsExtFile [ct/CodeFile.h]
-   ct/Editor.cpp
    ct/Library.cpp
 CodeTools::CodeFile::IsHeader [ct/CodeFile.h]
    ct/CodeDir.cpp
@@ -5454,6 +5453,8 @@ CodeTools::CodeFile::IsSubsFile [ct/CodeFile.h]
    ct/CodeWarning.cpp
    ct/CxxArea.cpp
    ct/CxxScope.cpp
+   ct/CxxScoped.cpp
+   ct/Editor.cpp
    ct/Library.cpp
 CodeTools::CodeFile::IsTemplateHeader [ct/CodeFile.h]
    ct/CodeFile.cpp
@@ -6473,11 +6474,13 @@ CodeTools::COMMENT_BEGIN_STR [ct/CodeTypes.h]
    ct/CodeFile.cpp
    ct/CodeTypes.cpp
    ct/CxxNamed.cpp
+   ct/CxxScoped.cpp
    ct/Editor.cpp
 CodeTools::COMMENT_END_STR [ct/CodeTypes.h]
    ct/CodeFile.cpp
    ct/CodeTypes.cpp
    ct/CxxNamed.cpp
+   ct/CxxScoped.cpp
    ct/Editor.cpp
    ct/Lexer.cpp
 CodeTools::COMMENT_STR [ct/CodeTypes.h]
@@ -7200,6 +7203,7 @@ CodeTools::TemplateRole::TemplateNone [ct/CodeTypes.h]
 CodeTools::TemplateRole::TemplateParameter [ct/CodeTypes.h]
    ct/CxxArea.cpp
    ct/CxxNamed.cpp
+   ct/CxxScope.cpp
 CodeTools::TemplateType [ct/CodeTypes.h]
    ct/CodeFile.cpp
    ct/CodeFile.h
@@ -7228,6 +7232,7 @@ CodeTools::TypeMatch [ct/CodeTypes.h]
 CodeTools::TypeMatch::Abridgeable [ct/CodeTypes.h]
    ct/Cxx.cpp
    ct/CxxArea.cpp
+   ct/CxxNamed.cpp
    ct/CxxToken.cpp
 CodeTools::TypeMatch::Adaptable [ct/CodeTypes.h]
    ct/CxxExecute.cpp
@@ -7256,6 +7261,8 @@ CodeTools::TypeMatch::Incompatible [ct/CodeTypes.h]
    ct/CxxToken.cpp
 CodeTools::TypeMatch::Promotable [ct/CodeTypes.h]
    ct/Cxx.cpp
+   ct/CxxNamed.cpp
+   ct/CxxToken.cpp
 CodeTools::UNION_STR [ct/CodeTypes.h]
    ct/CodeTypes.cpp
    ct/Cxx.cpp
@@ -7368,6 +7375,10 @@ CodeTools::Warning::ArgumentCouldBeConstRef [ct/CodeTypes.h]
 CodeTools::Warning::ArgumentUnused [ct/CodeTypes.h]
    ct/CodeWarning.cpp
    ct/CxxScope.cpp
+CodeTools::Warning::BoolMixedWithNumeric [ct/CodeTypes.h]
+   ct/CodeWarning.cpp
+   ct/CxxNamed.cpp
+   ct/CxxToken.cpp
 CodeTools::Warning::CastingAwayConstness [ct/CodeTypes.h]
    ct/CodeWarning.cpp
    ct/CxxToken.cpp
@@ -7381,6 +7392,7 @@ CodeTools::Warning::ClassCouldBeStruct [ct/CodeTypes.h]
 CodeTools::Warning::ClassUnused [ct/CodeTypes.h]
    ct/CodeWarning.cpp
    ct/CxxArea.cpp
+   ct/CxxScoped.cpp
 CodeTools::Warning::CopyCtorConstructsBase [ct/CodeTypes.h]
    ct/CodeWarning.cpp
    ct/CxxScope.cpp
@@ -7755,9 +7767,6 @@ CodeTools::Warning::VirtualDestructor [ct/CodeTypes.h]
 CodeTools::Warning::VirtualFunctionInvoked [ct/CodeTypes.h]
    ct/CodeWarning.cpp
    ct/CxxScope.cpp
-CodeTools::Warning::VirtualOverloading [ct/CodeTypes.h]
-   ct/CodeWarning.cpp
-   ct/CxxArea.cpp
 CodeTools::Warning::VoidAsArgument [ct/CodeTypes.h]
    ct/CodeWarning.cpp
    ct/CxxScoped.cpp
@@ -7834,8 +7843,6 @@ CodeTools::CodeWarning::Initialize [ct/CodeWarning.h]
 CodeTools::CodeWarning::Insert [ct/CodeWarning.h]
    ct/CodeFile.cpp
    ct/CodeWarning.cpp
-CodeTools::CodeWarning::IsForUnusedItem [ct/CodeWarning.h]
-   ct/CxxNamed.cpp
 CodeTools::CodeWarning::IsSortedByFile [ct/CodeWarning.h]
    ct/CodeWarning.cpp
 CodeTools::CodeWarning::IsSortedByType [ct/CodeWarning.h]
@@ -7898,8 +7905,6 @@ CodeTools::WarningAttrs::fixable [ct/CodeWarning.h]
    ct/CodeWarning.cpp
 CodeTools::WarningAttrs::order [ct/CodeWarning.h]
    ct/CodeWarning.cpp
-CodeTools::WarningAttrs::unusedItem [ct/CodeWarning.h]
-   ct/CodeWarning.h
 CodeTools::WarningStatus [ct/CodeWarning.h]
    ct/CodeWarning.h
    ct/Editor.cpp
@@ -8130,6 +8135,7 @@ CodeTools::Cxx::ItemType [ct/Cxx.h]
    ct/CxxToken.h
 CodeTools::Cxx::ItemType::Argument [ct/Cxx.h]
    ct/CxxNamed.cpp
+   ct/CxxScope.cpp
    ct/CxxScoped.h
 CodeTools::Cxx::ItemType::Block [ct/Cxx.h]
    ct/CxxScope.h
@@ -8157,11 +8163,13 @@ CodeTools::Cxx::ItemType::Elision [ct/Cxx.h]
 CodeTools::Cxx::ItemType::Enum [ct/Cxx.h]
    ct/CxxExecute.cpp
    ct/CxxNamed.cpp
+   ct/CxxScope.cpp
    ct/CxxScoped.h
    ct/CxxSymbols.cpp
    ct/CxxToken.cpp
 CodeTools::Cxx::ItemType::Enumerator [ct/Cxx.h]
    ct/CxxNamed.cpp
+   ct/CxxScope.cpp
    ct/CxxScoped.h
    ct/CxxSymbols.cpp
 CodeTools::Cxx::ItemType::Forward [ct/Cxx.h]
@@ -8173,6 +8181,7 @@ CodeTools::Cxx::ItemType::Forward [ct/Cxx.h]
    ct/CxxSymbols.cpp
 CodeTools::Cxx::ItemType::Friend [ct/Cxx.h]
    ct/CodeFile.cpp
+   ct/CxxArea.cpp
    ct/CxxNamed.cpp
    ct/CxxScoped.cpp
    ct/CxxScoped.h
@@ -8216,7 +8225,6 @@ CodeTools::Cxx::ItemType::QualName [ct/Cxx.h]
    ct/Parser.cpp
 CodeTools::Cxx::ItemType::Terminal [ct/Cxx.h]
    ct/CodeFile.cpp
-   ct/CxxExecute.cpp
    ct/CxxNamed.cpp
    ct/CxxScoped.h
    ct/CxxSymbols.cpp
@@ -8228,6 +8236,7 @@ CodeTools::Cxx::ItemType::TypeSpec [ct/Cxx.h]
 CodeTools::Cxx::ItemType::Typedef [ct/Cxx.h]
    ct/CodeFile.cpp
    ct/CxxNamed.cpp
+   ct/CxxScope.cpp
    ct/CxxScoped.cpp
    ct/CxxScoped.h
    ct/CxxSymbols.cpp
@@ -9127,6 +9136,8 @@ CodeTools::Numeric::uShort [ct/Cxx.h]
 CodeTools::Numeric::wChar [ct/Cxx.h]
    ct/CxxCharLiteral.h
    ct/CxxRoot.cpp
+CodeTools::ClassInst_Check [ct/CxxArea.cpp]
+   ct/CxxArea.cpp
 CodeTools::ClassInst_DerivesFrom [ct/CxxArea.cpp]
    ct/CxxArea.cpp
 CodeTools::ClassInst_FindInstanceAnalog [ct/CxxArea.cpp]
@@ -9165,9 +9176,7 @@ CodeTools::Class_CanConstructFrom [ct/CxxArea.cpp]
    ct/CxxArea.cpp
 CodeTools::Class_Check [ct/CxxArea.cpp]
    ct/CxxArea.cpp
-CodeTools::Class_CheckForVirtualOverload [ct/CxxArea.cpp]
-   ct/CxxArea.cpp
-CodeTools::Class_CheckIfUsed [ct/CxxArea.cpp]
+CodeTools::Class_CheckIfUnused [ct/CxxArea.cpp]
    ct/CxxArea.cpp
 CodeTools::Class_CheckOverrides [ct/CxxArea.cpp]
    ct/CxxArea.cpp
@@ -9386,9 +9395,7 @@ CodeTools::Class::CanConstructFrom [ct/CxxArea.h]
    ct/CxxExecute.cpp
 CodeTools::Class::Check [ct/CxxArea.h]
    ct/CxxArea.cpp
-CodeTools::Class::CheckForVirtualOverload [ct/CxxArea.h]
-   ct/CxxArea.cpp
-CodeTools::Class::CheckIfUsed [ct/CxxArea.h]
+CodeTools::Class::CheckIfUnused [ct/CxxArea.h]
    ct/CxxArea.cpp
 CodeTools::Class::CheckOverrides [ct/CxxArea.h]
    ct/CxxArea.cpp
@@ -9443,7 +9450,6 @@ CodeTools::Class::FindDtor [ct/CxxArea.h]
    ct/CxxToken.cpp
 CodeTools::Class::FindFriend [ct/CxxArea.h]
    ct/CxxArea.cpp
-   ct/CxxScoped.cpp
 CodeTools::Class::FindFunc [ct/CxxArea.h]
    ct/CxxArea.cpp
 CodeTools::Class::FindFuncByRole [ct/CxxArea.h]
@@ -9500,6 +9506,7 @@ CodeTools::Class::HasPODMember [ct/CxxArea.h]
    ct/CxxArea.cpp
    ct/CxxScope.cpp
 CodeTools::Class::Instances [ct/CxxArea.h]
+   ct/CxxArea.cpp
    ct/CxxScope.cpp
 CodeTools::Class::IsDefaultConstructible [ct/CxxArea.h]
    ct/CxxArea.cpp
@@ -9571,8 +9578,9 @@ CodeTools::ClassInst [ct/CxxArea.h]
    ct/CxxArea.h
    ct/CxxNamed.cpp
    ct/CxxScope.cpp
-   ct/CxxScoped.cpp
    ct/Parser.cpp
+CodeTools::ClassInst::Check [ct/CxxArea.h]
+   ct/CxxArea.cpp
 CodeTools::ClassInst::ClassInst [ct/CxxArea.h]
    ct/CxxArea.cpp
 CodeTools::ClassInst::DerivesFrom [ct/CxxArea.h]
@@ -9584,8 +9592,6 @@ CodeTools::ClassInst::FindInstanceAnalog [ct/CxxArea.h]
    ct/CxxScope.cpp
 CodeTools::ClassInst::FindTemplateAnalog [ct/CxxArea.h]
    ct/CxxArea.cpp
-   ct/CxxNamed.cpp
-   ct/CxxScope.cpp
 CodeTools::ClassInst::GetCode [ct/CxxArea.h]
    ct/Parser.cpp
 CodeTools::ClassInst::GetUsages [ct/CxxArea.h]
@@ -10485,6 +10491,7 @@ CodeTools::Context::GetParser [ct/CxxExecute.h]
    ct/CxxRoot.cpp
 CodeTools::Context::GetPos [ct/CxxExecute.h]
    ct/CxxExecute.cpp
+   ct/CxxNamed.cpp
    ct/CxxScope.cpp
 CodeTools::Context::InsertTracepoint [ct/CxxExecute.h]
    ct/CodeIncrement.cpp
@@ -11072,8 +11079,6 @@ CodeTools::ClassInstPtr [ct/CxxFwd.h]
 CodeTools::ClassInstPtrVector [ct/CxxFwd.h]
    ct/CxxArea.cpp
    ct/CxxArea.h
-   ct/CxxScoped.cpp
-   ct/CxxScoped.h
 CodeTools::ClassPtr [ct/CxxFwd.h]
    ct/CxxArea.cpp
    ct/CxxArea.h
@@ -11597,6 +11602,8 @@ CodeTools::CxxNamed_CopyContext [ct/CxxNamed.cpp]
    ct/CxxNamed.cpp
 CodeTools::CxxNamed_FindReferent [ct/CxxNamed.cpp]
    ct/CxxNamed.cpp
+CodeTools::CxxNamed_FindTemplateAnalog [ct/CxxNamed.cpp]
+   ct/CxxNamed.cpp
 CodeTools::CxxNamed_GetDirectClasses [ct/CxxNamed.cpp]
    ct/CxxNamed.cpp
 CodeTools::CxxNamed_GetDirectTemplateArgs [ct/CxxNamed.cpp]
@@ -11724,6 +11731,8 @@ CodeTools::QualName_Append [ct/CxxNamed.cpp]
 CodeTools::QualName_Check [ct/CxxNamed.cpp]
    ct/CxxNamed.cpp
 CodeTools::QualName_CheckCtorDefn [ct/CxxNamed.cpp]
+   ct/CxxNamed.cpp
+CodeTools::QualName_CheckIfTemplateArgument [ct/CxxNamed.cpp]
    ct/CxxNamed.cpp
 CodeTools::QualName_CopyContext [ct/CxxNamed.cpp]
    ct/CxxNamed.cpp
@@ -11901,6 +11910,8 @@ CodeTools::CxxNamed [ct/CxxNamed.h]
    ct/CxxScope.h
    ct/CxxScoped.cpp
    ct/CxxScoped.h
+   ct/CxxStatement.cpp
+   ct/CxxStatement.h
    ct/CxxSymbols.cpp
    ct/CxxToken.cpp
    ct/Editor.cpp
@@ -11958,6 +11969,13 @@ CodeTools::CxxNamed::FindReferent [ct/CxxNamed.h]
    ct/CxxScope.h
    ct/CxxScoped.cpp
    ct/CxxScoped.h
+CodeTools::CxxNamed::FindTemplateAnalog [ct/CxxNamed.h]
+   ct/CxxArea.cpp
+   ct/CxxArea.h
+   ct/CxxNamed.cpp
+   ct/CxxScope.cpp
+   ct/CxxScope.h
+   ct/CxxScoped.cpp
 CodeTools::CxxNamed::GetAccess [ct/CxxNamed.h]
    ct/CxxArea.cpp
    ct/CxxExecute.cpp
@@ -11966,6 +11984,7 @@ CodeTools::CxxNamed::GetAccess [ct/CxxNamed.h]
    ct/CxxScope.h
    ct/CxxScoped.cpp
    ct/CxxScoped.h
+   ct/Parser.cpp
 CodeTools::CxxNamed::GetArea [ct/CxxNamed.h]
    ct/CxxArea.h
    ct/CxxNamed.cpp
@@ -12014,6 +12033,7 @@ CodeTools::CxxNamed::GetFile [ct/CxxNamed.h]
    ct/CxxToken.cpp
    ct/Editor.cpp
 CodeTools::CxxNamed::GetFunction [ct/CxxNamed.h]
+   ct/CxxArea.cpp
    ct/CxxExecute.cpp
    ct/CxxNamed.cpp
    ct/CxxScope.cpp
@@ -12076,6 +12096,12 @@ CodeTools::CxxNamed::GetTemplate [ct/CxxNamed.h]
    ct/CxxScope.h
    ct/CxxScoped.cpp
    ct/Editor.cpp
+CodeTools::CxxNamed::GetTemplateInstance [ct/CxxNamed.h]
+   ct/CxxArea.h
+   ct/CxxNamed.cpp
+   ct/CxxScope.cpp
+   ct/CxxScope.h
+   ct/CxxScoped.cpp
 CodeTools::CxxNamed::GetTemplateParms [ct/CxxNamed.h]
    ct/CodeFile.cpp
    ct/CxxArea.h
@@ -12099,14 +12125,11 @@ CodeTools::CxxNamed::IsImplemented [ct/CxxNamed.h]
    ct/CxxArea.h
    ct/CxxScope.cpp
    ct/CxxScope.h
-   ct/CxxScoped.cpp
 CodeTools::CxxNamed::IsInTemplateInstance [ct/CxxNamed.h]
    ct/CodeFile.cpp
    ct/CxxArea.cpp
-   ct/CxxArea.h
    ct/CxxNamed.cpp
    ct/CxxScope.cpp
-   ct/CxxScope.h
    ct/CxxScoped.cpp
    ct/Editor.cpp
 CodeTools::CxxNamed::IsInternal [ct/CxxNamed.h]
@@ -12200,6 +12223,7 @@ CodeTools::CxxNamed::SetAccess [ct/CxxNamed.h]
    ct/CxxScope.cpp
    ct/CxxScoped.cpp
    ct/CxxScoped.h
+   ct/Parser.cpp
 CodeTools::CxxNamed::SetAsReferent [ct/CxxNamed.h]
    ct/CxxArea.h
    ct/CxxNamed.cpp
@@ -12445,6 +12469,8 @@ CodeTools::QualName::Check [ct/CxxNamed.h]
 CodeTools::QualName::CheckCtorDefn [ct/CxxNamed.h]
    ct/CxxNamed.cpp
    ct/Parser.cpp
+CodeTools::QualName::CheckIfTemplateArgument [ct/CxxNamed.h]
+   ct/CxxNamed.cpp
 CodeTools::QualName::CopyContext [ct/CxxNamed.h]
    ct/CxxNamed.cpp
 CodeTools::QualName::EnterBlock [ct/CxxNamed.h]
@@ -12608,6 +12634,7 @@ CodeTools::TypeName::Append [ct/CxxNamed.h]
    ct/CxxNamed.cpp
 CodeTools::TypeName::Args [ct/CxxNamed.h]
    ct/CxxArea.cpp
+   ct/CxxNamed.cpp
    ct/CxxScope.cpp
    ct/Parser.cpp
 CodeTools::TypeName::Check [ct/CxxNamed.h]
@@ -12795,6 +12822,7 @@ CodeTools::TypeSpec::GetNames [ct/CxxNamed.h]
 CodeTools::TypeSpec::GetTemplateRole [ct/CxxNamed.h]
    ct/CxxArea.cpp
    ct/CxxNamed.cpp
+   ct/CxxScope.cpp
 CodeTools::TypeSpec::GetUserType [ct/CxxNamed.h]
    ct/CxxNamed.cpp
 CodeTools::TypeSpec::HasArrayDefn [ct/CxxNamed.h]
@@ -13266,9 +13294,13 @@ CodeTools::Block_Check [ct/CxxScope.cpp]
    ct/CxxScope.cpp
 CodeTools::Block_EnterBlock [ct/CxxScope.cpp]
    ct/CxxScope.cpp
+CodeTools::Block_FindNthItem [ct/CxxScope.cpp]
+   ct/CxxScope.cpp
 CodeTools::Block_GetUsages [ct/CxxScope.cpp]
    ct/CxxScope.cpp
 CodeTools::Block_GetUsingFor [ct/CxxScope.cpp]
+   ct/CxxScope.cpp
+CodeTools::Block_LocateItem [ct/CxxScope.cpp]
    ct/CxxScope.cpp
 CodeTools::Block_RemoveUsing [ct/CxxScope.cpp]
    ct/CxxScope.cpp
@@ -13354,6 +13386,8 @@ CodeTools::Data_SetAssignment [ct/CxxScope.cpp]
    ct/CxxScope.cpp
 CodeTools::Data_SetDefn [ct/CxxScope.cpp]
    ct/CxxScope.cpp
+CodeTools::Data_SetInited [ct/CxxScope.cpp]
+   ct/CxxScope.cpp
 CodeTools::Data_SetNonConst [ct/CxxScope.cpp]
    ct/CxxScope.cpp
 CodeTools::Data_WasWritten [ct/CxxScope.cpp]
@@ -13426,7 +13460,7 @@ CodeTools::Function_CheckIfOverridden [ct/CxxScope.cpp]
    ct/CxxScope.cpp
 CodeTools::Function_CheckIfPublicVirtual [ct/CxxScope.cpp]
    ct/CxxScope.cpp
-CodeTools::Function_CheckIfUsed [ct/CxxScope.cpp]
+CodeTools::Function_CheckIfUnused [ct/CxxScope.cpp]
    ct/CxxScope.cpp
 CodeTools::Function_CheckMemberUsage [ct/CxxScope.cpp]
    ct/CxxScope.cpp
@@ -13448,7 +13482,11 @@ CodeTools::Function_FindArg [ct/CxxScope.cpp]
    ct/CxxScope.cpp
 CodeTools::Function_FindBaseFunc [ct/CxxScope.cpp]
    ct/CxxScope.cpp
+CodeTools::Function_FindNthItem [ct/CxxScope.cpp]
+   ct/CxxScope.cpp
 CodeTools::Function_FindRootFunc [ct/CxxScope.cpp]
+   ct/CxxScope.cpp
+CodeTools::Function_FindTemplateAnalog [ct/CxxScope.cpp]
    ct/CxxScope.cpp
 CodeTools::Function_FirstInstance [ct/CxxScope.cpp]
    ct/CxxScope.cpp
@@ -13482,6 +13520,8 @@ CodeTools::Function_IsInvokedInBase [ct/CxxScope.cpp]
    ct/CxxScope.cpp
 CodeTools::Function_IsOverriddenAtOrBelow [ct/CxxScope.cpp]
    ct/CxxScope.cpp
+CodeTools::Function_IsTemplateArg [ct/CxxScope.cpp]
+   ct/CxxScope.cpp
 CodeTools::Function_IsTrivial [ct/CxxScope.cpp]
    ct/CxxScope.cpp
 CodeTools::Function_IsUndefined [ct/CxxScope.cpp]
@@ -13489,6 +13529,8 @@ CodeTools::Function_IsUndefined [ct/CxxScope.cpp]
 CodeTools::Function_IsUnused [ct/CxxScope.cpp]
    ct/CxxScope.cpp
 CodeTools::Function_ItemAccessed [ct/CxxScope.cpp]
+   ct/CxxScope.cpp
+CodeTools::Function_LocateItem [ct/CxxScope.cpp]
    ct/CxxScope.cpp
 CodeTools::Function_LogToBoth [ct/CxxScope.cpp]
    ct/CxxScope.cpp
@@ -13511,6 +13553,10 @@ CodeTools::Function_SetBaseInit [ct/CxxScope.cpp]
 CodeTools::Function_SetDefn [ct/CxxScope.cpp]
    ct/CxxScope.cpp
 CodeTools::Function_SetImpl [ct/CxxScope.cpp]
+   ct/CxxScope.cpp
+CodeTools::Function_SetNonPublic [ct/CxxScope.cpp]
+   ct/CxxScope.cpp
+CodeTools::Function_SetNonStatic [ct/CxxScope.cpp]
    ct/CxxScope.cpp
 CodeTools::Function_SetOperator [ct/CxxScope.cpp]
    ct/CxxScope.cpp
@@ -13575,6 +13621,8 @@ CodeTools::Block::Display [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Block::EnterBlock [ct/CxxScope.h]
    ct/CxxScope.cpp
+CodeTools::Block::FindNthItem [ct/CxxScope.h]
+   ct/CxxScope.cpp
 CodeTools::Block::FirstStatement [ct/CxxScope.h]
    ct/CxxScope.cpp
    ct/Parser.cpp
@@ -13598,6 +13646,8 @@ CodeTools::Block::InLine [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Block::IsBraced [ct/CxxScope.h]
    ct/Parser.cpp
+CodeTools::Block::LocateItem [ct/CxxScope.h]
+   ct/CxxScope.cpp
 CodeTools::Block::Print [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Block::RemoveUsing [ct/CxxScope.h]
@@ -13829,6 +13879,8 @@ CodeTools::Data::SetExpression [ct/CxxScope.h]
    ct/Parser.cpp
 CodeTools::Data::SetExtern [ct/CxxScope.h]
    ct/Parser.cpp
+CodeTools::Data::SetInited [ct/CxxScope.h]
+   ct/CxxScope.cpp
 CodeTools::Data::SetNonConst [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Data::SetStatic [ct/CxxScope.h]
@@ -14070,7 +14122,7 @@ CodeTools::Function::CheckIfOverridden [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::CheckIfPublicVirtual [ct/CxxScope.h]
    ct/CxxScope.cpp
-CodeTools::Function::CheckIfUsed [ct/CxxScope.h]
+CodeTools::Function::CheckIfUnused [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::CheckMemberUsage [ct/CxxScope.h]
    ct/CxxScope.cpp
@@ -14104,8 +14156,12 @@ CodeTools::Function::FindArg [ct/CxxScope.h]
    ct/CxxScoped.cpp
 CodeTools::Function::FindBaseFunc [ct/CxxScope.h]
    ct/CxxScope.cpp
+CodeTools::Function::FindNthItem [ct/CxxScope.h]
+   ct/CxxScope.cpp
 CodeTools::Function::FindRootFunc [ct/CxxScope.h]
    ct/CxxNamed.cpp
+   ct/CxxScope.cpp
+CodeTools::Function::FindTemplateAnalog [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::FirstInstance [ct/CxxScope.h]
    ct/CxxScope.cpp
@@ -14129,6 +14185,7 @@ CodeTools::Function::GetAccess [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::GetArgs [ct/CxxScope.h]
    ct/CxxArea.cpp
+   ct/CxxScope.cpp
    ct/Editor.cpp
 CodeTools::Function::GetBase [ct/CxxScope.h]
    ct/CxxScope.cpp
@@ -14151,6 +14208,8 @@ CodeTools::Function::GetRange [ct/CxxScope.h]
 CodeTools::Function::GetScope [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::GetTemplate [ct/CxxScope.h]
+   ct/CxxScope.cpp
+CodeTools::Function::GetTemplateInstance [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::GetTemplateType [ct/CxxScope.h]
    ct/CxxScope.cpp
@@ -14186,8 +14245,6 @@ CodeTools::Function::IsExplicit [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::IsImplemented [ct/CxxScope.h]
    ct/CxxScope.cpp
-CodeTools::Function::IsInTemplateInstance [ct/CxxScope.h]
-   ct/CxxScope.cpp
 CodeTools::Function::IsInline [ct/CxxScope.h]
    ct/CxxArea.cpp
 CodeTools::Function::IsInvokedInBase [ct/CxxScope.h]
@@ -14198,6 +14255,8 @@ CodeTools::Function::IsOverride [ct/CxxScope.h]
    ct/CxxArea.cpp
    ct/CxxScope.cpp
 CodeTools::Function::IsPureVirtual [ct/CxxScope.h]
+   ct/CxxScope.cpp
+CodeTools::Function::IsTemplateArg [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::IsTemplateInstance [ct/CxxScope.h]
    ct/CxxScope.cpp
@@ -14210,9 +14269,10 @@ CodeTools::Function::IsUnused [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::IsVirtual [ct/CxxScope.h]
    ct/CodeWarning.cpp
-   ct/CxxArea.cpp
 CodeTools::Function::ItemAccessed [ct/CxxScope.h]
    ct/CxxNamed.cpp
+   ct/CxxScope.cpp
+CodeTools::Function::LocateItem [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::LogToBoth [ct/CxxScope.h]
    ct/CxxScope.cpp
@@ -14269,6 +14329,10 @@ CodeTools::Function::SetInline [ct/CxxScope.h]
    ct/Parser.cpp
 CodeTools::Function::SetNoexcept [ct/CxxScope.h]
    ct/Parser.cpp
+CodeTools::Function::SetNonPublic [ct/CxxScope.h]
+   ct/CxxScope.cpp
+CodeTools::Function::SetNonStatic [ct/CxxScope.h]
+   ct/CxxScope.cpp
 CodeTools::Function::SetOperator [ct/CxxScope.h]
    ct/CxxScope.cpp
    ct/Parser.cpp
@@ -14280,9 +14344,12 @@ CodeTools::Function::SetStatic [ct/CxxScope.h]
    ct/CxxScope.cpp
    ct/Parser.cpp
 CodeTools::Function::SetTemplate [ct/CxxScope.h]
-   ct/CxxScope.cpp
+   ct/Parser.cpp
 CodeTools::Function::SetTemplateArgs [ct/CxxScope.h]
    ct/CxxScope.cpp
+   ct/Parser.cpp
+CodeTools::Function::SetTemplateParm [ct/CxxScope.h]
+   ct/CxxNamed.cpp
 CodeTools::Function::SetTemplateParms [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::SetVirtual [ct/CxxScope.h]
@@ -14392,6 +14459,9 @@ CodeTools::Function::tmplt_ [ct/CxxScope.h]
    ct/CxxScope.h
 CodeTools::Function::tmplts_ [ct/CxxScope.h]
    ct/CxxScope.cpp
+CodeTools::Function::tparm_ [ct/CxxScope.h]
+   ct/CxxScope.cpp
+   ct/CxxScope.h
 CodeTools::Function::tspec_ [ct/CxxScope.h]
    ct/CxxScope.cpp
    ct/CxxScope.h
@@ -14448,6 +14518,8 @@ CodeTools::Argument_LogToFunc [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
 CodeTools::Argument_SetNonConst [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
+CodeTools::Argument_WasRead [ct/CxxScoped.cpp]
+   ct/CxxScoped.cpp
 CodeTools::Argument_WasWritten [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
 CodeTools::Argument_ctor [ct/CxxScoped.cpp]
@@ -14474,19 +14546,25 @@ CodeTools::CxxScoped_CheckAccessControl [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
 CodeTools::CxxScoped_CheckIfHiding [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
-CodeTools::CxxScoped_CheckIfUsed [ct/CxxScoped.cpp]
+CodeTools::CxxScoped_CheckIfUnused [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
 CodeTools::CxxScoped_FileScopeAccessiblity [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
 CodeTools::CxxScoped_FindInheritedName [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
+CodeTools::CxxScoped_FindNthItem [ct/CxxScoped.cpp]
+   ct/CxxScoped.cpp
 CodeTools::CxxScoped_IsSubscopeOf [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
 CodeTools::CxxScoped_IsSuperscopeOf [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
+CodeTools::CxxScoped_LocateItem [ct/CxxScoped.cpp]
+   ct/CxxScoped.cpp
 CodeTools::CxxScoped_NameRefersToItem [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
 CodeTools::CxxScoped_RecordAccess [ct/CxxScoped.cpp]
+   ct/CxxScoped.cpp
+CodeTools::CxxScoped_RecordTemplateAccess [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
 CodeTools::CxxScoped_ctor [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
@@ -14510,6 +14588,8 @@ CodeTools::Enum_FindEnumerator [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
 CodeTools::Enum_IsUnused [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
+CodeTools::Enum_SetAsReferent [ct/CxxScoped.cpp]
+   ct/CxxScoped.cpp
 CodeTools::Enum_ctor [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
 CodeTools::Enum_dtor [ct/CxxScoped.cpp]
@@ -14524,7 +14604,13 @@ CodeTools::Enumerator_ExitBlock [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
 CodeTools::Enumerator_GetScopedNames [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
+CodeTools::Enumerator_RecordAccess [ct/CxxScoped.cpp]
+   ct/CxxScoped.cpp
 CodeTools::Enumerator_ScopedName [ct/CxxScoped.cpp]
+   ct/CxxScoped.cpp
+CodeTools::Enumerator_SetAsReferent [ct/CxxScoped.cpp]
+   ct/CxxScoped.cpp
+CodeTools::Enumerator_WasRead [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
 CodeTools::Enumerator_ctor [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
@@ -14542,13 +14628,13 @@ CodeTools::Forward_Referent [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
 CodeTools::Forward_ScopedName [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
+CodeTools::Forward_SetAsReferent [ct/CxxScoped.cpp]
+   ct/CxxScoped.cpp
 CodeTools::Forward_SetTemplateParms [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
 CodeTools::Forward_ctor [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
 CodeTools::Forward_dtor [ct/CxxScoped.cpp]
-   ct/CxxScoped.cpp
-CodeTools::Friend_AddUses [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
 CodeTools::Friend_Check [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
@@ -14563,6 +14649,8 @@ CodeTools::Friend_FindReferent [ct/CxxScoped.cpp]
 CodeTools::Friend_GetDirectClasses [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
 CodeTools::Friend_GetUsages [ct/CxxScoped.cpp]
+   ct/CxxScoped.cpp
+CodeTools::Friend_IncrUsers [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
 CodeTools::Friend_Referent [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
@@ -14609,6 +14697,8 @@ CodeTools::Typedef_ExitBlock [ct/CxxScoped.cpp]
 CodeTools::Typedef_GetUsages [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
 CodeTools::Typedef_Referent [ct/CxxScoped.cpp]
+   ct/CxxScoped.cpp
+CodeTools::Typedef_SetAsReferent [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
 CodeTools::Typedef_ctor [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
@@ -14673,6 +14763,8 @@ CodeTools::Argument::Shrink [ct/CxxScoped.h]
    ct/CxxScoped.cpp
 CodeTools::Argument::TypeString [ct/CxxScoped.h]
    ct/CxxScoped.cpp
+CodeTools::Argument::WasRead [ct/CxxScoped.h]
+   ct/CxxScoped.cpp
 CodeTools::Argument::WasWritten [ct/CxxScoped.h]
    ct/CxxScoped.cpp
 CodeTools::Argument::default_ [ct/CxxScoped.h]
@@ -14687,6 +14779,7 @@ CodeTools::Argument::nonconst_ [ct/CxxScoped.h]
    ct/CxxScoped.cpp
    ct/CxxScoped.h
 CodeTools::Argument::reads_ [ct/CxxScoped.h]
+   ct/CxxScoped.cpp
    ct/CxxScoped.h
 CodeTools::Argument::spec_ [ct/CxxScoped.h]
    ct/CxxScoped.cpp
@@ -14739,6 +14832,8 @@ CodeTools::CxxScoped [ct/CxxScoped.h]
    ct/CxxScope.h
    ct/CxxScoped.cpp
    ct/CxxScoped.h
+   ct/CxxStatement.cpp
+   ct/CxxStatement.h
    ct/CxxStrLiteral.h
    ct/CxxSymbols.cpp
    ct/CxxToken.cpp
@@ -14763,7 +14858,7 @@ CodeTools::CxxScoped::CheckIfHiding [ct/CxxScoped.h]
    ct/CxxScope.cpp
    ct/CxxScope.h
    ct/CxxScoped.cpp
-CodeTools::CxxScoped::CheckIfUsed [ct/CxxScoped.h]
+CodeTools::CxxScoped::CheckIfUnused [ct/CxxScoped.h]
    ct/CxxArea.cpp
    ct/CxxArea.h
    ct/CxxScope.cpp
@@ -14781,6 +14876,8 @@ CodeTools::CxxScoped::FileScopeAccessiblity [ct/CxxScoped.h]
    ct/CxxScoped.cpp
 CodeTools::CxxScoped::FindInheritedName [ct/CxxScoped.h]
    ct/CxxScope.cpp
+   ct/CxxScoped.cpp
+CodeTools::CxxScoped::FindNthItem [ct/CxxScoped.h]
    ct/CxxScoped.cpp
 CodeTools::CxxScoped::GetImplFile [ct/CxxScoped.h]
    ct/CxxScope.cpp
@@ -14814,6 +14911,8 @@ CodeTools::CxxScoped::IsUnused [ct/CxxScoped.h]
    ct/CxxScope.h
    ct/CxxScoped.cpp
    ct/CxxScoped.h
+CodeTools::CxxScoped::LocateItem [ct/CxxScoped.h]
+   ct/CxxScoped.cpp
 CodeTools::CxxScoped::NameRefersToItem [ct/CxxScoped.h]
    ct/CxxArea.cpp
    ct/CxxArea.h
@@ -14831,6 +14930,8 @@ CodeTools::CxxScoped::RecordAccess [ct/CxxScoped.h]
    ct/CxxScoped.cpp
    ct/CxxScoped.h
    ct/CxxToken.cpp
+CodeTools::CxxScoped::RecordTemplateAccess [ct/CxxScoped.h]
+   ct/CxxScoped.cpp
 CodeTools::CxxScoped::access_ [ct/CxxScoped.h]
    ct/CxxScoped.cpp
    ct/CxxScoped.h
@@ -14884,6 +14985,8 @@ CodeTools::Enum::GetTypeSpec [ct/CxxScoped.h]
    ct/CxxScoped.cpp
 CodeTools::Enum::IsUnused [ct/CxxScoped.h]
    ct/CxxScoped.cpp
+CodeTools::Enum::SetAsReferent [ct/CxxScoped.h]
+   ct/CxxScoped.cpp
 CodeTools::Enum::Shrink [ct/CxxScoped.h]
    ct/CxxScoped.cpp
 CodeTools::Enum::TypeString [ct/CxxScoped.h]
@@ -14896,7 +14999,6 @@ CodeTools::Enum::name_ [ct/CxxScoped.h]
    ct/CxxScoped.h
 CodeTools::Enum::refs_ [ct/CxxScoped.h]
    ct/CxxScoped.cpp
-   ct/CxxScoped.h
 CodeTools::Enum::spec_ [ct/CxxScoped.h]
    ct/CxxScoped.cpp
 CodeTools::Enum::~Enum [ct/CxxScoped.h]
@@ -14926,9 +15028,13 @@ CodeTools::Enumerator::RecordAccess [ct/CxxScoped.h]
    ct/CxxScoped.cpp
 CodeTools::Enumerator::ScopedName [ct/CxxScoped.h]
    ct/CxxScoped.cpp
+CodeTools::Enumerator::SetAsReferent [ct/CxxScoped.h]
+   ct/CxxScoped.cpp
 CodeTools::Enumerator::Shrink [ct/CxxScoped.h]
    ct/CxxScoped.cpp
 CodeTools::Enumerator::TypeString [ct/CxxScoped.h]
+   ct/CxxScoped.cpp
+CodeTools::Enumerator::WasRead [ct/CxxScoped.h]
    ct/CxxScoped.cpp
 CodeTools::Enumerator::enum_ [ct/CxxScoped.h]
    ct/CxxScoped.cpp
@@ -14968,6 +15074,8 @@ CodeTools::Forward::Referent [ct/CxxScoped.h]
    ct/CxxScoped.cpp
 CodeTools::Forward::ScopedName [ct/CxxScoped.h]
    ct/CxxScoped.cpp
+CodeTools::Forward::SetAsReferent [ct/CxxScoped.h]
+   ct/CxxScoped.cpp
 CodeTools::Forward::SetTemplateParms [ct/CxxScoped.h]
    ct/CxxScoped.cpp
 CodeTools::Forward::Shrink [ct/CxxScoped.h]
@@ -14994,9 +15102,6 @@ CodeTools::Friend [ct/CxxScoped.h]
    ct/CxxScoped.cpp
    ct/CxxSymbols.cpp
    ct/Parser.cpp
-CodeTools::Friend::AddUsers [ct/CxxScoped.h]
-   ct/CxxArea.cpp
-   ct/CxxScoped.cpp
 CodeTools::Friend::AutoType [ct/CxxScoped.h]
    ct/CxxScoped.cpp
 CodeTools::Friend::Check [ct/CxxScoped.h]
@@ -15027,6 +15132,7 @@ CodeTools::Friend::GetUsages [ct/CxxScoped.h]
    ct/CxxScoped.cpp
 CodeTools::Friend::IncrUsers [ct/CxxScoped.h]
    ct/CxxArea.cpp
+   ct/CxxScoped.cpp
 CodeTools::Friend::Inline [ct/CxxScoped.h]
    ct/Parser.cpp
 CodeTools::Friend::Name [ct/CxxScoped.h]
@@ -15060,6 +15166,8 @@ CodeTools::Friend::Shrink [ct/CxxScoped.h]
 CodeTools::Friend::TypeString [ct/CxxScoped.h]
    ct/CxxScoped.cpp
 CodeTools::Friend::func_ [ct/CxxScoped.h]
+   ct/CxxScoped.cpp
+CodeTools::Friend::grantor_ [ct/CxxScoped.h]
    ct/CxxScoped.cpp
 CodeTools::Friend::inline_ [ct/CxxScoped.h]
    ct/CxxScoped.cpp
@@ -15143,6 +15251,8 @@ CodeTools::Typedef::GetUsages [ct/CxxScoped.h]
 CodeTools::Typedef::Print [ct/CxxScoped.h]
    ct/CxxScoped.cpp
 CodeTools::Typedef::Referent [ct/CxxScoped.h]
+   ct/CxxScoped.cpp
+CodeTools::Typedef::SetAsReferent [ct/CxxScoped.h]
    ct/CxxScoped.cpp
 CodeTools::Typedef::SetUsing [ct/CxxScoped.h]
    ct/Parser.cpp
@@ -15235,7 +15345,11 @@ CodeTools::Catch_EnterBlock [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
 CodeTools::Catch_ExitBlock [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
+CodeTools::Catch_FindNthItem [ct/CxxStatement.cpp]
+   ct/CxxStatement.cpp
 CodeTools::Catch_GetUsages [ct/CxxStatement.cpp]
+   ct/CxxStatement.cpp
+CodeTools::Catch_LocateItem [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
 CodeTools::Catch_ctor [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
@@ -15253,7 +15367,11 @@ CodeTools::Do_Check [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
 CodeTools::Do_EnterBlock [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
+CodeTools::Do_FindNthItem [ct/CxxStatement.cpp]
+   ct/CxxStatement.cpp
 CodeTools::Do_GetUsages [ct/CxxStatement.cpp]
+   ct/CxxStatement.cpp
+CodeTools::Do_LocateItem [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
 CodeTools::Do_ctor [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
@@ -15269,7 +15387,11 @@ CodeTools::For_EnterBlock [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
 CodeTools::For_ExitBlock [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
+CodeTools::For_FindNthItem [ct/CxxStatement.cpp]
+   ct/CxxStatement.cpp
 CodeTools::For_GetUsages [ct/CxxStatement.cpp]
+   ct/CxxStatement.cpp
+CodeTools::For_LocateItem [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
 CodeTools::For_ctor [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
@@ -15277,7 +15399,11 @@ CodeTools::If_Check [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
 CodeTools::If_EnterBlock [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
+CodeTools::If_FindNthItem [ct/CxxStatement.cpp]
+   ct/CxxStatement.cpp
 CodeTools::If_GetUsages [ct/CxxStatement.cpp]
+   ct/CxxStatement.cpp
+CodeTools::If_LocateItem [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
 CodeTools::If_ctor [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
@@ -15299,7 +15425,11 @@ CodeTools::Switch_Check [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
 CodeTools::Switch_EnterBlock [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
+CodeTools::Switch_FindNthItem [ct/CxxStatement.cpp]
+   ct/CxxStatement.cpp
 CodeTools::Switch_GetUsages [ct/CxxStatement.cpp]
+   ct/CxxStatement.cpp
+CodeTools::Switch_LocateItem [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
 CodeTools::Switch_ctor [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
@@ -15309,7 +15439,11 @@ CodeTools::Try_EnterBlock [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
 CodeTools::Try_ExitBlock [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
+CodeTools::Try_FindNthItem [ct/CxxStatement.cpp]
+   ct/CxxStatement.cpp
 CodeTools::Try_GetUsages [ct/CxxStatement.cpp]
+   ct/CxxStatement.cpp
+CodeTools::Try_LocateItem [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
 CodeTools::Try_ctor [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
@@ -15317,7 +15451,11 @@ CodeTools::While_Check [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
 CodeTools::While_EnterBlock [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
+CodeTools::While_FindNthItem [ct/CxxStatement.cpp]
+   ct/CxxStatement.cpp
 CodeTools::While_GetUsages [ct/CxxStatement.cpp]
+   ct/CxxStatement.cpp
+CodeTools::While_LocateItem [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
 CodeTools::While_ctor [ct/CxxStatement.cpp]
    ct/CxxStatement.cpp
@@ -15362,7 +15500,11 @@ CodeTools::Catch::EnterBlock [ct/CxxStatement.h]
    ct/CxxStatement.cpp
 CodeTools::Catch::ExitBlock [ct/CxxStatement.h]
    ct/CxxStatement.cpp
+CodeTools::Catch::FindNthItem [ct/CxxStatement.h]
+   ct/CxxStatement.cpp
 CodeTools::Catch::GetUsages [ct/CxxStatement.h]
+   ct/CxxStatement.cpp
+CodeTools::Catch::LocateItem [ct/CxxStatement.h]
    ct/CxxStatement.cpp
 CodeTools::Catch::Shrink [ct/CxxStatement.h]
    ct/CxxStatement.cpp
@@ -15421,9 +15563,13 @@ CodeTools::Do::Do [ct/CxxStatement.h]
    ct/CxxStatement.cpp
 CodeTools::Do::EnterBlock [ct/CxxStatement.h]
    ct/CxxStatement.cpp
+CodeTools::Do::FindNthItem [ct/CxxStatement.h]
+   ct/CxxStatement.cpp
 CodeTools::Do::GetUsages [ct/CxxStatement.h]
    ct/CxxStatement.cpp
 CodeTools::Do::InLine [ct/CxxStatement.h]
+   ct/CxxStatement.cpp
+CodeTools::Do::LocateItem [ct/CxxStatement.h]
    ct/CxxStatement.cpp
 CodeTools::Do::Print [ct/CxxStatement.h]
    ct/CxxStatement.cpp
@@ -15465,11 +15611,15 @@ CodeTools::For::EnterBlock [ct/CxxStatement.h]
    ct/CxxStatement.cpp
 CodeTools::For::ExitBlock [ct/CxxStatement.h]
    ct/CxxStatement.cpp
+CodeTools::For::FindNthItem [ct/CxxStatement.h]
+   ct/CxxStatement.cpp
 CodeTools::For::For [ct/CxxStatement.h]
    ct/CxxStatement.cpp
 CodeTools::For::GetUsages [ct/CxxStatement.h]
    ct/CxxStatement.cpp
 CodeTools::For::InLine [ct/CxxStatement.h]
+   ct/CxxStatement.cpp
+CodeTools::For::LocateItem [ct/CxxStatement.h]
    ct/CxxStatement.cpp
 CodeTools::For::Print [ct/CxxStatement.h]
    ct/CxxStatement.cpp
@@ -15498,11 +15648,15 @@ CodeTools::If::Display [ct/CxxStatement.h]
    ct/CxxStatement.cpp
 CodeTools::If::EnterBlock [ct/CxxStatement.h]
    ct/CxxStatement.cpp
+CodeTools::If::FindNthItem [ct/CxxStatement.h]
+   ct/CxxStatement.cpp
 CodeTools::If::GetUsages [ct/CxxStatement.h]
    ct/CxxStatement.cpp
 CodeTools::If::If [ct/CxxStatement.h]
    ct/CxxStatement.cpp
 CodeTools::If::InLine [ct/CxxStatement.h]
+   ct/CxxStatement.cpp
+CodeTools::If::LocateItem [ct/CxxStatement.h]
    ct/CxxStatement.cpp
 CodeTools::If::Print [ct/CxxStatement.h]
    ct/CxxStatement.cpp
@@ -15575,7 +15729,11 @@ CodeTools::Switch::Display [ct/CxxStatement.h]
    ct/CxxStatement.cpp
 CodeTools::Switch::EnterBlock [ct/CxxStatement.h]
    ct/CxxStatement.cpp
+CodeTools::Switch::FindNthItem [ct/CxxStatement.h]
+   ct/CxxStatement.cpp
 CodeTools::Switch::GetUsages [ct/CxxStatement.h]
+   ct/CxxStatement.cpp
+CodeTools::Switch::LocateItem [ct/CxxStatement.h]
    ct/CxxStatement.cpp
 CodeTools::Switch::Shrink [ct/CxxStatement.h]
    ct/CxxStatement.cpp
@@ -15603,7 +15761,11 @@ CodeTools::Try::EnterBlock [ct/CxxStatement.h]
    ct/CxxStatement.cpp
 CodeTools::Try::ExitBlock [ct/CxxStatement.h]
    ct/CxxStatement.cpp
+CodeTools::Try::FindNthItem [ct/CxxStatement.h]
+   ct/CxxStatement.cpp
 CodeTools::Try::GetUsages [ct/CxxStatement.h]
+   ct/CxxStatement.cpp
+CodeTools::Try::LocateItem [ct/CxxStatement.h]
    ct/CxxStatement.cpp
 CodeTools::Try::Shrink [ct/CxxStatement.h]
    ct/CxxStatement.cpp
@@ -15627,9 +15789,13 @@ CodeTools::While::Display [ct/CxxStatement.h]
    ct/CxxStatement.cpp
 CodeTools::While::EnterBlock [ct/CxxStatement.h]
    ct/CxxStatement.cpp
+CodeTools::While::FindNthItem [ct/CxxStatement.h]
+   ct/CxxStatement.cpp
 CodeTools::While::GetUsages [ct/CxxStatement.h]
    ct/CxxStatement.cpp
 CodeTools::While::InLine [ct/CxxStatement.h]
+   ct/CxxStatement.cpp
+CodeTools::While::LocateItem [ct/CxxStatement.h]
    ct/CxxStatement.cpp
 CodeTools::While::Print [ct/CxxStatement.h]
    ct/CxxStatement.cpp
@@ -15766,12 +15932,12 @@ CodeTools::PathIncludes [ct/CxxString.h]
    ct/CodeDir.cpp
    ct/CxxString.cpp
 CodeTools::Prefix(std::basic_string<char,std::char_traits<char>,std::allocator<char>>) [ct/CxxString.h]
+   ct/CxxString.cpp
+CodeTools::Prefix(std::basic_string<char,std::char_traits<char>,std::allocator<char>>) [ct/CxxString.h]
    ct/CxxArea.cpp
    ct/CxxNamed.cpp
    ct/CxxScope.cpp
    ct/CxxScoped.cpp
-   ct/CxxString.cpp
-CodeTools::Prefix(std::basic_string<char,std::char_traits<char>,std::allocator<char>>) [ct/CxxString.h]
    ct/CxxString.cpp
 CodeTools::RemoveConsts [ct/CxxString.h]
    ct/CxxExecute.cpp
@@ -16432,6 +16598,13 @@ CodeTools::CxxToken::ExitBlock [ct/CxxToken.h]
    ct/CxxScoped.h
    ct/CxxStatement.cpp
    ct/CxxStatement.h
+CodeTools::CxxToken::FindNthItem [ct/CxxToken.h]
+   ct/CxxScope.cpp
+   ct/CxxScope.h
+   ct/CxxScoped.cpp
+   ct/CxxScoped.h
+   ct/CxxStatement.cpp
+   ct/CxxStatement.h
 CodeTools::CxxToken::GetClass [ct/CxxToken.h]
    ct/CodeFile.cpp
    ct/CxxArea.cpp
@@ -16579,6 +16752,13 @@ CodeTools::CxxToken::IsPointer [ct/CxxToken.h]
    ct/CxxExecute.cpp
    ct/CxxScope.cpp
    ct/CxxToken.cpp
+CodeTools::CxxToken::LocateItem [ct/CxxToken.h]
+   ct/CxxScope.cpp
+   ct/CxxScope.h
+   ct/CxxScoped.cpp
+   ct/CxxScoped.h
+   ct/CxxStatement.cpp
+   ct/CxxStatement.h
 CodeTools::CxxToken::Name [ct/CxxToken.h]
    ct/CodeFile.cpp
    ct/CodeWarning.cpp
@@ -16740,6 +16920,7 @@ CodeTools::CxxToken::WasRead [ct/CxxToken.h]
    ct/CxxExecute.cpp
    ct/CxxScope.cpp
    ct/CxxScope.h
+   ct/CxxScoped.cpp
    ct/CxxScoped.h
    ct/Lexer.cpp
 CodeTools::CxxToken::WasWritten [ct/CxxToken.h]
@@ -19501,6 +19682,7 @@ CodeTools::Parser::Parser(CodeTools::Parser* const,const std::basic_string<char,
 CodeTools::Parser::ParsingTemplateInstance [ct/Parser.h]
    ct/CxxArea.cpp
    ct/CxxExecute.cpp
+   ct/CxxNamed.cpp
    ct/Parser.cpp
 CodeTools::Parser::ResetStats [ct/Parser.h]
    ct/CodeIncrement.cpp
@@ -24185,6 +24367,7 @@ NodeBase::Base [nb/Base.h]
    nb/Singletons.cpp
    nb/Singletons.h
    nb/SysFile.h
+   nt/NtIncrement.cpp
    sb/Context.cpp
    sb/Context.h
    sb/Message.cpp
@@ -29311,6 +29494,7 @@ NodeBase::Log::Tab [nb/Log.h]
    an/PotsShelfFactory.cpp
    an/PotsShelfHandler.cpp
    an/PotsTrafficThread.cpp
+   ct/Parser.cpp
    nb/CfgParm.cpp
    nb/CfgParmRegistry.cpp
    nb/CfgTuple.cpp
@@ -32900,7 +33084,6 @@ NodeBase::Singleton [nb/NbTypes.h]
    nb/FileThread.h
    nb/InitThread.h
    nb/LogBufferRegistry.h
-   nb/LogGroup.h
    nb/LogGroupRegistry.h
    nb/LogThread.h
    nb/ModuleRegistry.h
@@ -34752,7 +34935,7 @@ NodeBase::Q1Way::Deq [nb/Q1Way.h]
    nb/Thread.cpp
    nt/NtIncrement.cpp
    nw/SysTcpSocket.cpp
-NodeBase::Q1Way::Display(const NodeBase::Q1Way* const,std::basic_ostream,const std::basic_string<char,std::char_traits<char>,std::allocator<char>>) [nb/Q1Way.h]
+NodeBase::Q1Way::Display [nb/Q1Way.h]
    nb/CfgParmRegistry.cpp
    nb/SymbolRegistry.cpp
    nb/Thread.cpp
@@ -34976,7 +35159,7 @@ NodeBase::Q2Way::Deq [nb/Q2Way.h]
    nb/Q2Way.h
    nt/FunctionProfiler.cpp
    nt/NtIncrement.cpp
-NodeBase::Q2Way::Display(const NodeBase::Q2Way* const,std::basic_ostream,const std::basic_string<char,std::char_traits<char>,std::allocator<char>>) [nb/Q2Way.h]
+NodeBase::Q2Way::Display [nb/Q2Way.h]
    ct/Library.cpp
 NodeBase::Q2Way::Empty [nb/Q2Way.h]
    nt/FunctionProfiler.cpp
@@ -35342,7 +35525,7 @@ NodeBase::Registry::At [nb/Registry.h]
    sn/PotsTreatmentRegistry.cpp
 NodeBase::Registry::Cell [nb/Registry.h]
    nb/Registry.h
-NodeBase::Registry::Display(const NodeBase::Registry* const,std::basic_ostream,const std::basic_string<char,std::char_traits<char>,std::allocator<char>>) [nb/Registry.h]
+NodeBase::Registry::Display [nb/Registry.h]
    ct/Library.cpp
    mb/Switch.cpp
    mb/ToneRegistry.cpp
@@ -36918,15 +37101,7 @@ NodeBase::SysMutex_ctor [nb/SysMutex.win.cpp]
    nb/SysMutex.win.cpp
 NodeBase::SysMutex_dtor [nb/SysMutex.win.cpp]
    nb/SysMutex.win.cpp
-NodeBase::SIGALRM [nb/SysSignals.cpp]
-   nb/SysSignals.cpp
 NodeBase::SIGBUS [nb/SysSignals.cpp]
-   nb/SysSignals.cpp
-NodeBase::SIGQUIT [nb/SysSignals.cpp]
-   nb/SysSignals.cpp
-NodeBase::SIGSYS [nb/SysSignals.cpp]
-   nb/SysSignals.cpp
-NodeBase::SIGVTALRM [nb/SysSignals.cpp]
    nb/SysSignals.cpp
 NodeBase::SysSignals [nb/SysSignals.h]
    nb/SysSignals.cpp
@@ -36937,8 +37112,6 @@ NodeBase::SysSignals::CreateNativeSignals [nb/SysSignals.h]
 NodeBase::SysSignals::SigAbort [nb/SysSignals.h]
    nb/SysSignals.win.cpp
 NodeBase::SysSignals::SigAbort::SigAbort [nb/SysSignals.h]
-   nb/SysSignals.cpp
-NodeBase::SysSignals::SigAlrm::SigAlrm [nb/SysSignals.h]
    nb/SysSignals.cpp
 NodeBase::SysSignals::SigBreak [nb/SysSignals.h]
    nb/SysSignals.win.cpp
@@ -36958,19 +37131,13 @@ NodeBase::SysSignals::SigInt [nb/SysSignals.h]
    nb/SysSignals.win.cpp
 NodeBase::SysSignals::SigInt::SigInt [nb/SysSignals.h]
    nb/SysSignals.cpp
-NodeBase::SysSignals::SigQuit::SigQuit [nb/SysSignals.h]
-   nb/SysSignals.cpp
 NodeBase::SysSignals::SigSegv [nb/SysSignals.h]
    nb/SysSignals.win.cpp
 NodeBase::SysSignals::SigSegv::SigSegv [nb/SysSignals.h]
    nb/SysSignals.cpp
-NodeBase::SysSignals::SigSys::SigSys [nb/SysSignals.h]
-   nb/SysSignals.cpp
 NodeBase::SysSignals::SigTerm [nb/SysSignals.h]
    nb/SysSignals.win.cpp
 NodeBase::SysSignals::SigTerm::SigTerm [nb/SysSignals.h]
-   nb/SysSignals.cpp
-NodeBase::SysSignals::SigVtAlrm::SigVtAlrm [nb/SysSignals.h]
    nb/SysSignals.cpp
 NodeBase::SysSignals_CreateNativeSignals [nb/SysSignals.win.cpp]
    nb/SysSignals.win.cpp
@@ -63815,7 +63982,6 @@ std::basic_istream::seekg(std::basic_istream* const,long) [subs/istream]
    ct/Editor.cpp
 std::next [subs/iterator]
    ct/CodeFile.cpp
-   ct/CxxArea.cpp
    ct/CxxScope.cpp
    ct/Editor.cpp
    dip/BaseBot.cpp
@@ -64199,6 +64365,8 @@ std::unique_ptr::get [subs/memory]
    dip/TokenMessage.cpp
    nw/SysTcpSocket.win.cpp
 std::unique_ptr::release [subs/memory]
+   dip/TokenMessage.cpp
+std::unique_ptr::release [subs/memory]
    ct/CodeSet.cpp
    ct/CxxArea.cpp
    ct/CxxNamed.cpp
@@ -64231,8 +64399,6 @@ std::unique_ptr::release [subs/memory]
    sb/InvokerThread.cpp
    sb/Message.cpp
    sb/SbInputHandler.cpp
-std::unique_ptr::release [subs/memory]
-   dip/TokenMessage.cpp
 std::unique_ptr::reset [subs/memory]
    dip/TokenMessage.cpp
    nb/Thread.cpp
@@ -64556,6 +64722,7 @@ std::basic_ostream::operator<<(std::basic_ostream* const,bool) [subs/ostream]
    cb/BcProtocol.cpp
    cb/ProxyBcSessions.cpp
    ct/CodeFile.cpp
+   ct/CxxScope.cpp
    ct/CxxToken.h
    ct/LibrarySet.cpp
    dip/BaseBot.cpp
@@ -65229,7 +65396,6 @@ std::basic_ostream::operator<<(std::basic_ostream* const,int) [subs/ostream]
    ct/CodeFile.cpp
    ct/CodeWarning.cpp
    ct/CxxExecute.cpp
-   ct/CxxScope.cpp
    ct/CxxToken.cpp
    ct/Editor.cpp
    ct/LibraryErrSet.cpp

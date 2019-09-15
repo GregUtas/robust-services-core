@@ -511,14 +511,7 @@ public:
       }
    }
 
-   //  Displays member variables.  Used if T is not subclassed from Base.
-   //
-   void Display(std::ostream& stream, const std::string& prefix) const
-   {
-      Show(stream, prefix, NoFlags);
-   }
-
-   //  Displays member variables.  Used if T is subclassed from Base.
+   //  Displays member variables.  T must be subclassed from Base.
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const

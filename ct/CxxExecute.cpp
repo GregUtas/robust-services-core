@@ -1112,7 +1112,6 @@ void StackArg::AssignedTo(const StackArg& that, AssignmentType type) const
 
    if(that.const_) return;
    if(this->item == nullptr) return;
-   if(this->item->Type() == Cxx::Terminal) return;
    if(that.item == nullptr) return;
 
    auto thisPtrs = this->Ptrs(true);
@@ -1826,6 +1825,7 @@ void StackArg::WasIndexed()
    if(item->GetTypeSpec()->Tags()->PtrCount(false) >= ptrs)
    {
       member_ = false;
+      constptr_ = false;
    }
 
    //  We are now at one less level of indirection, so if the pointer count

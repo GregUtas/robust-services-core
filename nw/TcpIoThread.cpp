@@ -167,7 +167,7 @@ bool TcpIoThread::AcceptConn()
 
 fn_name TcpIoThread_AllocateListener = "TcpIoThread.AllocateListener";
 
-SysTcpSocket* TcpIoThread::AllocateListener()
+bool TcpIoThread::AllocateListener()
 {
    Debug::ft(TcpIoThread_AllocateListener);
 
@@ -215,7 +215,7 @@ SysTcpSocket* TcpIoThread::AllocateListener()
       sockets_.Replace(0, result);
    }
 
-   return result;
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -318,7 +318,7 @@ bool TcpIoThread::EnsureListener()
       Debug::SwLog(TcpIoThread_EnsureListener, "listener not found", port_);
       if(ListenerHasFailed(listener)) return AllocateListener();
       Debug::Assert(ipPort_->SetSocket(listener));
-      return listener;
+      return true;
    }
 
    if(listener == nullptr)
@@ -328,7 +328,7 @@ bool TcpIoThread::EnsureListener()
       //
       if(ListenerHasFailed(registrant)) return AllocateListener();
       sockets_.PushBack(registrant);
-      return registrant;
+      return true;
    }
 
    if(registrant != listener)
@@ -342,7 +342,7 @@ bool TcpIoThread::EnsureListener()
    }
 
    if(ListenerHasFailed(listener)) return AllocateListener();
-   return listener;
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -605,19 +605,19 @@ word TcpIoThread::PollSockets()
 
 fn_name TcpIoThread_RaiseAlarm = "TcpIoThread.RaiseAlarm";
 
-SysTcpSocket* TcpIoThread::RaiseAlarm(word errval) const
+bool TcpIoThread::RaiseAlarm(word errval) const
 {
    Debug::ft(TcpIoThread_RaiseAlarm);
 
    auto alarm = ipPort_->GetAlarm();
-   if(alarm == nullptr) return nullptr;
+   if(alarm == nullptr) return false;
 
    auto log = alarm->Create(NetworkLogGroup, NetworkServiceFailure, MajorAlarm);
-   if(log == nullptr) return nullptr;
+   if(log == nullptr) return false;
 
    *log << Log::Tab << "TCP: port=" << port_ << " errval=" << errval;
    Log::Submit(log);
-   return nullptr;
+   return false;
 }
 
 //------------------------------------------------------------------------------

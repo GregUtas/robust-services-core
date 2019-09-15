@@ -26,7 +26,6 @@
 #include <utility>
 #include "CodeFile.h"
 #include "CodeSet.h"
-#include "CodeWarning.h"
 #include "CxxArea.h"
 #include "CxxExecute.h"
 #include "CxxRoot.h"
@@ -197,6 +196,19 @@ void CxxNamed::FindReferent()
 
 //------------------------------------------------------------------------------
 
+fn_name CxxNamed_FindTemplateAnalog = "CxxNamed.FindTemplateAnalog";
+
+CxxScoped* CxxNamed::FindTemplateAnalog(const CxxNamed* item) const
+{
+   Debug::ft(CxxNamed_FindTemplateAnalog);
+
+   auto inst = GetTemplateInstance();
+   if(inst == nullptr) return nullptr;
+   return inst->FindTemplateAnalog(item);
+}
+
+//------------------------------------------------------------------------------
+
 CxxArea* CxxNamed::GetArea() const
 {
    auto item = GetScope();
@@ -275,9 +287,18 @@ Namespace* CxxNamed::GetSpace() const
 
 //------------------------------------------------------------------------------
 
+CxxScope* CxxNamed::GetTemplateInstance() const
+{
+   auto scope = GetScope();
+   if(scope == nullptr) return nullptr;
+   return scope->GetTemplateInstance();
+}
+
+//------------------------------------------------------------------------------
+
 bool CxxNamed::IsInTemplateInstance() const
 {
-   return GetScope()->IsInTemplateInstance();
+   return (GetTemplateInstance() != nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -312,19 +333,18 @@ void CxxNamed::Log
 {
    Debug::ft(CxxNamed_Log);
 
-   //  Do not log unused items in class templates or their instances.  The
-   //  exception is a friend: although it may appear in such a class, it is
-   //  declared in another.
+   //  If this warning is associated with a template instance, log it
+   //  against the template.
    //
-   if(CodeWarning::IsForUnusedItem(warning) && (Type() != Cxx::Friend))
-   {
-      auto cls = GetClass();
+   auto inst = GetTemplateInstance();
 
-      if(cls != nullptr)
-      {
-         if(cls->IsTemplate()) return;
-         if(cls->IsInTemplateInstance()) return;
-      }
+   if(inst != nullptr)
+   {
+      auto that = inst->FindTemplateAnalog(this);
+      if(that == nullptr) return;
+      if(item != nullptr) item = inst->FindTemplateAnalog(item);
+      that->Log(warning, item, offset, hide);
+      return;
    }
 
    if(item == nullptr) item = this;
@@ -2026,6 +2046,45 @@ bool QualName::CheckCtorDefn() const
 
 //------------------------------------------------------------------------------
 
+fn_name QualName_CheckIfTemplateArgument = "QualName.CheckIfTemplateArgument";
+
+void QualName::CheckIfTemplateArgument(const CxxScoped* ref) const
+{
+   Debug::ft(QualName_CheckIfTemplateArgument);
+
+   //  If we are parsing a function in a template instance and this name's
+   //  referent (REF) is a template argument, find the template's version
+   //  of that function, indicating that its code uses a template argument.
+   //
+   if(!Context::GetParser()->ParsingTemplateInstance()) return;
+   auto scope = Context::Scope();
+   if(scope == nullptr) return;
+   auto ifunc = scope->GetFunction();
+   if(ifunc == nullptr) return;
+   auto inst = ifunc->GetClass();
+   if(inst == nullptr) return;
+   if(!inst->IsInTemplateInstance()) return;
+   auto args = inst->GetTemplateArgs()->Args();
+
+   for(auto a = args->cbegin(); a != args->cend(); ++a)
+   {
+      auto aref = (*a)->Referent();
+      if(aref == nullptr) continue;
+
+      auto type = aref->Type();
+      if((type == Cxx::Forward) || (type == Cxx::Friend))
+         aref = aref->Referent();
+      if(ref == aref)
+      {
+         auto tfunc = inst->FindTemplateAnalog(ifunc);
+         if(tfunc != nullptr)
+            static_cast< Function* >(tfunc)->SetTemplateParm();
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name QualName_CopyContext = "QualName.CopyContext";
 
 void QualName::CopyContext(const CxxNamed* that)
@@ -2183,7 +2242,7 @@ void QualName::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    {
       if(cls->IsInTemplateInstance())
       {
-         ref = static_cast< ClassInst* >(cls)->FindTemplateAnalog(ref);
+         ref = cls->FindTemplateAnalog(ref);
          if(ref == nullptr) return;
       }
    }
@@ -2326,6 +2385,7 @@ CxxScoped* QualName::Referent() const
    //
    ref = item->Referent();
    if(ref == nullptr) return ReferentError(item->Trace(), item->Type());
+   CheckIfTemplateArgument(ref);
    return ref;
 }
 
@@ -2585,7 +2645,7 @@ void TemplateParms::Print(ostream& stream, const Flags& options) const
    for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
    {
       (*p)->Print(stream, options);
-      if(*p != parms_.back()) stream << ',';
+      if(*p != parms_.back()) stream << ", ";
    }
 
    stream << "> ";
@@ -2987,7 +3047,7 @@ void TypeName::Print(ostream& stream, const Flags& options) const
       for(auto a = args_->cbegin(); a != args_->cend(); ++a)
       {
          (*a)->Print(stream, options);
-         if(*a != args_->back()) stream << ',';
+         if(*a != args_->back()) stream << ", ";
       }
 
       stream << '>';
@@ -3352,6 +3412,13 @@ TypeMatch TypeSpec::MustMatchWith(const StackArg& that) const
    {
       auto expl = thisType + " is incompatible with " + thatType;
       Context::SwLog(TypeSpec_MustMatchWith, expl, 0);
+   }
+   else if((match == Abridgeable) || (match == Promotable))
+   {
+      if((*this->Name() == BOOL_STR) || (*that.item->Name() == BOOL_STR))
+      {
+         GetFile()->LogPos(Context::GetPos(), BoolMixedWithNumeric);
+      }
    }
 
    return match;

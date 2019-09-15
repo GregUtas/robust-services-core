@@ -55,10 +55,6 @@ struct WarningAttrs
    //
    const uint8_t order;
 
-   //  Set if the warning is associated with an unused item.
-   //
-   const bool unusedItem;
-
    //  Set to suppress the warning.
    //
    bool suppressed;
@@ -69,8 +65,7 @@ struct WarningAttrs
 
    //  Constructs a warning with the specified attributes.
    //
-   WarningAttrs(bool fix, uint8_t order,
-      bool unused, fixed_string expl) noexcept;
+   WarningAttrs(bool fix, uint8_t order, fixed_string expl) noexcept;
 };
 
 //------------------------------------------------------------------------------
@@ -106,10 +101,6 @@ public:
    //  Initializes the Attrs map.
    //
    static void Initialize();
-
-   //  Returns true if W is a warning for an unused item.
-   //
-   static bool IsForUnusedItem(Warning w) { return Attrs_.at(w).unusedItem; }
 
    //  Returns the explanation for warning W.
    //

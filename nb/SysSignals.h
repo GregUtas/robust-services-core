@@ -51,13 +51,6 @@ private:
       SigAbort();
    };
 
-   class SigAlrm : public PosixSignal
-   {
-      friend class Singleton< SigAlrm >;
-   private:
-      SigAlrm();
-   };
-
    class SigBreak : public PosixSignal
    {
       friend class Singleton< SigBreak >;
@@ -93,13 +86,6 @@ private:
       SigInt();
    };
 
-   class SigQuit : public PosixSignal
-   {
-      friend class Singleton< SigQuit >;
-   private:
-      SigQuit();
-   };
-
    class SigSegv : public PosixSignal
    {
       friend class Singleton< SigSegv >;
@@ -107,25 +93,11 @@ private:
       SigSegv();
    };
 
-   class SigSys : public PosixSignal
-   {
-      friend class Singleton< SigSys >;
-   private:
-      SigSys();
-   };
-
    class SigTerm : public PosixSignal
    {
       friend class Singleton< SigTerm >;
    private:
       SigTerm();
-   };
-
-   class SigVtAlrm : public PosixSignal
-   {
-      friend class Singleton< SigVtAlrm >;
-   private:
-      SigVtAlrm();
    };
 };
 }

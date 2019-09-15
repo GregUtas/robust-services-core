@@ -438,7 +438,7 @@ enum Warning
    FunctionNotDefined,       // function not implemented
    PureVirtualNotDefined,    // pure virtual function not implemented
    VirtualAndPublic,         // function is both public and virtual
-   VirtualOverloading,       // function reuses name of virtual function
+   BoolMixedWithNumeric,     // bool used as numeric or vice versa
    FunctionNotOverridden,    // virtual function has no overrides
    RemoveVirtualTag,         // function is an override or is tagged final
    OverrideTagMissing,       // add override tag to function declaration

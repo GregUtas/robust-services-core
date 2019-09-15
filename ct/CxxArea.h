@@ -452,7 +452,7 @@ public:
 
    //  Overridden to determine if the class is used.
    //
-   void CheckIfUsed(Warning warning) const override;
+   bool CheckIfUnused(Warning warning) const override;
 
    //  Overridden to return the outer class.
    //
@@ -640,11 +640,6 @@ private:
    //
    void CheckOverrides() const;
 
-   //  Checks that the class does not define more than one virtual function with
-   //  the same name.
-   //
-   void CheckForVirtualOverload() const;
-
    //  The class's name.
    //
    const QualNamePtr name_;
@@ -719,10 +714,6 @@ public:
    //
    const std::string& GetCode() const { return *code_; }
 
-   //  Returns the template item that corresponds to ITEM in the instance class.
-   //
-   CxxScoped* FindTemplateAnalog(const CxxNamed* item) const;
-
    //  Returns the instance item that corresponds to ITEM in the class template.
    //
    CxxScoped* FindInstanceAnalog(const CxxNamed* item) const;
@@ -730,6 +721,10 @@ public:
    //  Overridden to return the class template's base class.
    //
    Class* BaseClass() const override { return tmplt_->BaseClass(); }
+
+   //  Overridden to check only the first class template instance.
+   //
+   void Check() const override;
 
    //  Overridden to check if CLS if of the form T<args2>, where this class
    //  is of the form T<args1>.  If so, return true if args2 are compatible
@@ -749,6 +744,10 @@ public:
    //
    ClassInst* EnsureInstance(const TypeName* type)
       override { return this; }
+
+   //  Overridden to return the template item that corresponds to ITEM.
+   //
+   CxxScoped* FindTemplateAnalog(const CxxNamed* item) const override;
 
    //  Overridden to return the template's base class declaration.
    //
@@ -781,9 +780,9 @@ public:
    //
    bool Instantiate() override;
 
-   //  Overridden to indicate that this is a class template instance.
+   //  Overridden to return this class template instance.
    //
-   bool IsInTemplateInstance() const override { return true; }
+   CxxScope* GetTemplateInstance() const override { return (CxxScope*) this; }
 
    //  Overridden for when NAME refers to a class template instance.
    //
@@ -897,9 +896,9 @@ public:
    Namespace* GetSpace() const
       override { return const_cast< Namespace* >(this); }
 
-   //  Overridden to indicate that we cannot be in a template instance.
+   //  Overridden to indicate that we are not in a template instance.
    //
-   bool IsInTemplateInstance() const override { return false; }
+   CxxScope* GetTemplateInstance() const override { return nullptr; }
 
    //  Overridden to return the namespace's name.
    //

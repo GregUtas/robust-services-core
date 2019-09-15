@@ -200,6 +200,10 @@ public:
    //
    void EnterBlock() override;
 
+   //  Overridden to search the block's code for an item that matches NAME.
+   //
+   CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
+
    //  Overridden to return the function in which the block appears.
    //
    Function* GetFunction() const override;
@@ -216,6 +220,10 @@ public:
    //  Overridden to determine if in-line display is possible.
    //
    bool InLine() const override;
+
+   //  Overridden to search the block's code for ITEM.
+   //
+   bool LocateItem(const CxxNamed* item, size_t& n) const override;
 
    //  Overridden to return the block's name.
    //
@@ -487,6 +495,10 @@ private:
    //  Returns true if such a statement existed.
    //
    bool InitByAssign();
+
+   //  Marks the data as initialized.
+   //
+   void SetInited();
 
    //  Set for extern data.
    //
@@ -954,6 +966,18 @@ public:
    //
    void SetImpl(BlockPtr& block);
 
+   //  Sets the function template for a template instance.
+   //
+   void SetTemplate(Function* func) { tmplt_ = func; }
+
+   //  Sets the name (with template arguments) for a template instance.
+   //
+   void SetTemplateArgs(const TypeName* spec);
+
+   //  Invoked when a function uses a template parameter.
+   //
+   void SetTemplateParm() { tparm_ = true; }
+
    //  Returns true if the function was explicitly inlined.
    //
    bool IsInline() const { return inline_; }
@@ -971,11 +995,11 @@ public:
    //
    const ArgumentPtrVector& GetArgs() const { return args_; }
 
-   //  Returns the index of ARG in args_.  The index is incremented if the
-   //  function does not have an implicit "this" argument.  Returns SIZE_MAX
-   //  if ARG is not in args_.
+   //  Returns the index of ARG in args_.  The index is incremented if DISP
+   //  is set and the function does not have an implicit "this" argument.
+   //  Returns SIZE_MAX if ARG is not in args_.
    //
-   size_t FindArg(const Argument* arg) const;
+   size_t FindArg(const Argument* arg, bool disp) const;
 
    //  Returns the function's declaration.
    //
@@ -1153,7 +1177,7 @@ public:
 
    //  Overridden to determine if the function is used.
    //
-   void CheckIfUsed(Warning warning) const override;
+   bool CheckIfUnused(Warning warning) const override;
 
    //  Overridden to display the function.
    //
@@ -1167,6 +1191,16 @@ public:
    //  Overridden to add the function to the current scope.
    //
    bool EnterScope() override;
+
+   //  Overridden to search the function's arguments and code for an item that
+   //  matches NAME.
+   //
+   CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
+
+   //  Overridden to return the template item that corresponds to ITEM
+   //  if this is a function in a template instance.
+   //
+   CxxScoped* FindTemplateAnalog(const CxxNamed* item) const override;
 
    //  Overridden to return the file that declared the function.
    //
@@ -1212,6 +1246,10 @@ public:
    //
    TypeName* GetTemplateArgs() const override { return tspec_.get(); }
 
+   //  Overridden to return this function if it is a template instance.
+   //
+   CxxScope* GetTemplateInstance() const override;
+
    //  Overriden to support function templates.
    //
    const TemplateParms* GetTemplateParms() const
@@ -1234,13 +1272,13 @@ public:
    //
    bool IsImplemented() const override;
 
-   //  Overridden to return true if this is an instance of a function template.
-   //
-   bool IsInTemplateInstance() const override;
-
    //  Overridden to determine if the function is unused.
    //
    bool IsUnused() const override;
+
+   //  Overridden to search the function's arguments and code for ITEM.
+   //
+   bool LocateItem(const CxxNamed* item, size_t& n) const override;
 
    //  Overriden to include VIA as a "this" argument.
    //
@@ -1382,13 +1420,13 @@ private:
    static Function* InstantiateError
       (const std::string& instName, NodeBase::debug32_t offset);
 
-   //  Sets the function template for a template instance.
+   //  Invoked when the function accesed a non-public member in its class.
    //
-   void SetTemplate(Function* func) { tmplt_ = func; }
+   void SetNonPublic();
 
-   //  Sets the name (with template arguments) for a template instance.
+   //  Invoked when the function accesed a non-static member in its class.
    //
-   void SetTemplateArgs(const TypeName* spec);
+   void SetNonStatic();
 
    //  If this is a function template, returns its first instance.
    //
@@ -1406,6 +1444,10 @@ private:
    //  Returns true if the Nth argument could be const.
    //
    bool ArgCouldBeConst(size_t n) const;
+
+   //  Returns true if ARG is a template argument.
+   //
+   bool IsTemplateArg(const Argument* arg) const;
 
    //  Checks a function and logs any warnings that it detects.
    //
@@ -1522,11 +1564,15 @@ private:
    //
    bool this_ : 1;
 
-   //  Set if the function used a non-public member in its own class
+   //  Set if the function uses a template parameter.
+   //
+   bool tparm_ : 1;
+
+   //  Set if the function used a non-public member in its own class.
    //
    bool nonpublic_ : 1;
 
-   //  Set if the function used a non-static member in its own class
+   //  Set if the function used a non-static member in its own class.
    //
    bool nonstatic_ : 1;
 
@@ -1534,22 +1580,22 @@ private:
    //
    bool implicit_ : 1;
 
-   //  How many times the function was invoked.
-   //  ONLY INCREMENTED ON THE DECLARATION.
-   //
-   size_t calls_ : 13;
-
    //  Set if this is the definition of a previously declared function.
    //
    bool defn_ : 1;
 
-   //  Set if the function was defined as "=delete".
+   //  Set if the function was defined as "= delete".
    //
    bool deleted_ : 1;
 
-   //  Set if the function was defined as "=default".
+   //  Set if the function was defined as "= default".
    //
    bool defaulted_ : 1;
+
+   //  How many times the function was invoked.
+   //  ONLY INCREMENTED ON THE DECLARATION.
+   //
+   size_t calls_ : 16;
 
    //  If defn_ is set, the function's declaration.  If defn_ is not set,
    //  the function's definition (if distinct from its declaration).

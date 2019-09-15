@@ -456,7 +456,7 @@ void TraceBuffer::Next(TraceRecord*& record, const Flags& mask) const
       if(record == nullptr) return;
       if(record->owner_ != NIL_ID)
       {
-         if((mask.test(record->owner_)) != 0) return;
+         if(mask.test(record->owner_)) return;
       }
       incr = Memory::Words(record->size_);
       next = (uword*) record + incr;

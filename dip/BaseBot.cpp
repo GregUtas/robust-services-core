@@ -283,7 +283,7 @@ void BaseBot::Display(ostream& stream,
    stream << prefix << "version        : " << version_ << CRLF;
    stream << prefix << "reconnect      : " << reconnect_ << CRLF;
    stream << prefix << "observer       : " << observer_ << CRLF;
-   stream << prefix << "report         : " << observer_ << CRLF;
+   stream << prefix << "report         : " << report_ << CRLF;
    stream << prefix << "ord_received   : " << ord_received_ << CRLF;
    stream << prefix << "map_requested  : " << map_requested_ << CRLF;
    stream << prefix << "map_message    : " << map_message_.to_str() << CRLF;

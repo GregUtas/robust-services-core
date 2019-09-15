@@ -119,8 +119,10 @@ public:
       const std::string& prefix, const NodeBase::Flags& options) const override;
    void EnterBlock() override;
    void ExitBlock() override;
+   CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
    bool InLine() const override { return false; }
+   bool LocateItem(const CxxNamed* item, size_t& n) const override;
    void Shrink() override;
 private:
    ArgumentPtr arg_;
@@ -157,8 +159,10 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
    void EnterBlock() override;
+   CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
    bool InLine() const override;
+   bool LocateItem(const CxxNamed* item, size_t& n) const override;
    void Shrink() override;
 private:
    BlockPtr loop_;
@@ -201,8 +205,10 @@ public:
       const std::string& prefix, const NodeBase::Flags& options) const override;
    void EnterBlock() override;
    void ExitBlock() override;
+   CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
    bool InLine() const override;
+   bool LocateItem(const CxxNamed* item, size_t& n) const override;
    void Shrink() override;
 private:
    TokenPtr initial_;
@@ -228,8 +234,10 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
    void EnterBlock() override;
+   CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
    bool InLine() const override;
+   bool LocateItem(const CxxNamed* item, size_t& n) const override;
    void Shrink() override;
    Cxx::ItemType Type() const override { return Cxx::If; }
 private:
@@ -309,8 +317,10 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
    void EnterBlock() override;
+   CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
    bool InLine() const override { return false; }
+   bool LocateItem(const CxxNamed* item, size_t& n) const override;
    void Shrink() override;
 private:
    ExprPtr expr_;
@@ -333,8 +343,10 @@ public:
       const std::string& prefix, const NodeBase::Flags& options) const override;
    void EnterBlock() override;
    void ExitBlock() override;
+   CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
    bool InLine() const override { return false; }
+   bool LocateItem(const CxxNamed* item, size_t& n) const override;
    void Shrink() override;
 private:
    BlockPtr try_;
@@ -357,8 +369,10 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
    void EnterBlock() override;
+   CxxScoped* FindNthItem(const std::string& name, size_t& n) const override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
    bool InLine() const override;
+   bool LocateItem(const CxxNamed* item, size_t& n) const override;
    void Shrink() override;
 private:
    BlockPtr loop_;

@@ -207,7 +207,7 @@ void SysHeap::DisplayHeaps(ostream& stream)
 
    //  Release the memory allocated from the default process heap.
    //
-   if(HeapFree(DefaultProcessHeap, 0, aHeaps) == 0)
+   if(!HeapFree(DefaultProcessHeap, 0, aHeaps))
    {
       stream << "Failed to free memory allocated from default heap." << CRLF;
    }
@@ -250,7 +250,7 @@ bool SysHeap::Validate(const void* addr)
    Debug::ft(SysHeap_Validate);
 
    if(heap_ == nullptr) return false;
-   return (HeapValidate(heap_, 0, addr) != 0);
+   return HeapValidate(heap_, 0, addr);
 }
 }
 #endif

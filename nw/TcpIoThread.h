@@ -99,9 +99,9 @@ private:
    //
    bool EnsureListener();
 
-   //  Allocates or replaces the listener socket.
+   //  Allocates or replaces the listener socket.  Returns true on success.
    //
-   SysTcpSocket* AllocateListener();
+   bool AllocateListener();
 
    //  Generates a log, deregisters LISTENER from our port, and returns
    //  false if an error has occurred on LISTENER.
@@ -110,9 +110,9 @@ private:
 
    //  Raises an alarm when the thread will exit because a listener socket
    //  could not be configured.  ERRVAL is the reason for the failure.
-   //  Returns nullptr.
+   //  Returns false.
    //
-   SysTcpSocket* RaiseAlarm(NodeBase::word errval) const;
+   bool RaiseAlarm(NodeBase::word errval) const;
 
    //  Clears any alarm associated with the thread's service.
    //

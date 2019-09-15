@@ -1909,12 +1909,15 @@ bool Lexer::NextStringIs(fixed_string str, bool check)
    case TAB:
       break;
    default:
-      //  If NEXT is valid in an identifier, the last character in STR
-      //  must not be valid in an identifier, and vice versa.
+      //  If the last character in STR is valid for an identifier, the
+      //  character at NEXT must not be valid in an identifier.  This
+      //  check prevents an identifier that starts with a keyword from
+      //  being recognized as that keyword.
       //
-      if(CxxChar::Attrs[next].validNext ^
-         CxxChar::Attrs[str[size - 1]].validNext) break;
-      return false;
+      if(CxxChar::Attrs[str[size - 1]].validNext)
+      {
+         if(CxxChar::Attrs[next].validNext) return false;
+      }
    }
 
    return Reposition(pos);
@@ -2144,7 +2147,7 @@ size_t Lexer::SkipTemplateSpec(size_t pos) const
 {
    Debug::ft(Lexer_SkipTemplateSpec);
 
-   if(pos >= size_) return false;
+   if(pos >= size_) return string::npos;
 
    //  Extract the template specification, which must begin with a '<', end
    //  with a balanced '>', and contain identifiers or template punctuation.

@@ -2645,7 +2645,7 @@ void TemplateParms::Print(ostream& stream, const Flags& options) const
    for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
    {
       (*p)->Print(stream, options);
-      if(*p != parms_.back()) stream << ',';
+      if(*p != parms_.back()) stream << ", ";
    }
 
    stream << "> ";
@@ -3047,7 +3047,7 @@ void TypeName::Print(ostream& stream, const Flags& options) const
       for(auto a = args_->cbegin(); a != args_->cend(); ++a)
       {
          (*a)->Print(stream, options);
-         if(*a != args_->back()) stream << ',';
+         if(*a != args_->back()) stream << ", ";
       }
 
       stream << '>';

@@ -332,7 +332,7 @@ public:
          return;
       }
       auto item = (Q1Link*)                   // start at the current item
-         getptr2(&elem, diff_);
+         getptr2(elem, diff_);
       item->next = (Q1Link*) BAD_POINTER;     // corrupt ELEM's next pointer
    }
 private:

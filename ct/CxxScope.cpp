@@ -2448,7 +2448,10 @@ void Function::CheckArgs() const
          //  o if the argument is "this", the function could be const;
          //  o if the argument is an object passed by value, it could
          //    be passed as a const reference;
-         //  o otherwise, the argument could be declared const.
+         //  o otherwise, the argument could be declared const unless it
+         //    is a pointer type used as a template argument (in which
+         //    case making it const would apply to the pointer, not the
+         //    underlying type)
          //
          if(ArgCouldBeConst(i))
          {
@@ -2467,7 +2470,10 @@ void Function::CheckArgs() const
                }
                else
                {
-                  LogToBoth(ArgumentCouldBeConst, i);
+                  if(!IsTemplateArg(arg) || (spec->Ptrs(true) == 0))
+                  {
+                     LogToBoth(ArgumentCouldBeConst, i);
+                  }
                }
             }
          }
@@ -3066,10 +3072,12 @@ void Function::DisplayDecl(ostream& stream, const Flags& options) const
 
    stream << '(';
 
-   for(size_t i = (this_ ? 1 : 0); i < args_.size(); ++i)
+   auto defn = GetDefn();
+
+   for(size_t i = (this_ ? 1 : 0); i < defn->args_.size(); ++i)
    {
-      args_[i]->Print(stream, options);
-      if(i != args_.size() - 1) stream << ", ";
+      defn->args_[i]->Print(stream, options);
+      if(i != defn->args_.size() - 1) stream << ", ";
    }
 
    stream << ')';
@@ -4341,6 +4349,24 @@ bool Function::IsOverriddenAtOrBelow(const Class* cls) const
    }
 
    return false;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Function_IsTemplateArg = "Function.IsTemplateArg";
+
+bool Function::IsTemplateArg(const Argument* arg) const
+{
+   Debug::ft(Function_IsTemplateArg);
+
+   //  For ARG to be a template argument, it must be a template parameter
+   //  in its template.
+   //
+   auto inst = GetTemplateInstance();
+   if(inst == nullptr) return false;
+   auto that = static_cast< const Argument* >(FindTemplateAnalog(arg));
+   if(that == nullptr) return false;
+   return (that->GetTypeSpec()->GetTemplateRole() == TemplateParameter);
 }
 
 //------------------------------------------------------------------------------

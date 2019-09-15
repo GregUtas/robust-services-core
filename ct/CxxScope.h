@@ -1445,6 +1445,10 @@ private:
    //
    bool ArgCouldBeConst(size_t n) const;
 
+   //  Returns true if ARG is a template argument.
+   //
+   bool IsTemplateArg(const Argument* arg) const;
+
    //  Checks a function and logs any warnings that it detects.
    //
    void CheckArgs() const;

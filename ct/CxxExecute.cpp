@@ -1825,6 +1825,7 @@ void StackArg::WasIndexed()
    if(item->GetTypeSpec()->Tags()->PtrCount(false) >= ptrs)
    {
       member_ = false;
+      constptr_ = false;
    }
 
    //  We are now at one less level of indirection, so if the pointer count

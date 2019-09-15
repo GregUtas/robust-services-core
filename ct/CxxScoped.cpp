@@ -187,7 +187,12 @@ void Argument::Print(ostream& stream, const Flags& options) const
       default_->Print(stream, options);
    }
 
-   //* Display reads_ and writes_.
+   if(!options.test(DispStats)) return;
+   if((reads_ == 0) && (writes_ == 0)) return;
+   stream << SPACE << COMMENT_BEGIN_STR;
+   stream << SPACE << "r=" << reads_;
+   if(writes_ > 0) stream << SPACE << "w=" << writes_;
+   stream << SPACE << COMMENT_END_STR;
 }
 
 //------------------------------------------------------------------------------

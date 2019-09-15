@@ -44,18 +44,9 @@ Cursory documentation for each warning that `>check` can emit can be seen
 command but is easily readable.)
 
 The parser currently supports everything used within RSC.  Because this is
-not everything in C++11, there are limitations, many of which are noted in the
-comments at the top of [_Parser.h_](/ct/Parser.h).  The goal is to support
-whatever the code base uses, although some things would be deemed undesirable
-or marginal and would therefore not be introduced.
-
-The `>check` command occasionally generate false positives.  Examples include
-
-* If the member `a.b.c` is modified, `a` may be flagged as "could be const" because
-a write is only noted on what immediately precedes the _final_ reference-select (`.`)
-operator.
-* A variable that is only modified in the second clause following a `?` operator may
-be flagged as "could be const" because writes are only noted in the _first_ clause.
-* Because external headers in the [_subs_](/subs) directory do not provide function
-implementations for templates, `>check` may suggest removing an `#include` that is
-needed to make a destructor visible to a `unique_ptr` template instance, for example.
+not everything in C++11, there are limitations.  A detailed description of
+exclusions can be found [here](/docs/RSC-Cpp11-Exclusions.md).  Some things
+are not fully supported and can result in false positives from `>check`.  But
+when code uses something that is not supported at all, it will fail to compile,
+which will limit the usefulness of the tools.  If you run into this, you are
+welcome to request that the missing language feature(s) be supported.

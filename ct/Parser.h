@@ -41,7 +41,7 @@ namespace CodeTools
 //  it is parsing code that successfully compiles and links.  It may therefore
 //  accept constructs that would actually be illegal.  Conversely, it can reject
 //  legal constructs that the code base does not use.  This keeps the grammar
-//  manageable and, in some cases, rejects unwanted constructs.
+//  manageable.
 //
 //  The parser is implemented using recursive descent.  Except for the analysis
 //  of #include lists (CodeFile.Scan) and the preprocessing of empty macro names
@@ -52,107 +52,13 @@ namespace CodeTools
 //  are parsed in one pass after analyzing #include directives to calculate a
 //  global parse order.  All header files are parsed first.
 //
-//  NOT SUPPORTED
-//  -------------
-//  C++ specifications are voluminous, so there are many things that the parser
-//  does not support.  The following is a list of things (through C++11) that
-//  are known not to be supported, along with some of the functions that would
-//  need to be modified to support them.
-//
-//  character sets:
-//    o All source code is assumed to be of type char.  char8_t, char16_t,
-//      char32_t, and wchar_t are supported by escape codes and prefixes to
-//      literals (u8, u, U, L), but additional changes would be needed to
-//      support them in identifiers, such as replacing uses of std::string
-//      in the parser and other classes.
-//  reserved words:
-//    o asm, alignas, alignof, concept, decltype, export, goto, register,
-//      requires, static_assert, thread_local, volatile
-//    o and, and_eq, bitand, bitor, compl, not, not_eq, or, or_eq, xor, xor_eq
-//  preprocessor:
-//    o #undef, #line, #pragma (parsed but have no effect)
-//    o #if, #elif (the conditional that follows the directive is ignored)
-//  identifiers:
-//    o elaborated type specifiers (class, struct, union, or enum prefixed to
-//      resolve a type ambiguity caused by overloading an identifier)
-//    o declaring a function as ClassName::FunctionName will cause the parser
-//      to fail (there are situations in which it expects unqualified names)
-//  character and string literals (GetCxxExpr, GetCxxAlpha, GetChar, GetStr):
-//    o raw string literals ("R" prefix)
-//    o multi-character literals (e.g. 'AB')
-//    o user-defined literals
-//  declarations and definitions:
-//    o identical declarations of anything (except a class: see Forward)
-//    o identical definitions of anything
-//  namespaces:
-//    o unnamed and inline namespaces (GetNamespace and symbol resolution)
-//    o namespace aliases (GetNamespace)
-//    o using statements in namespaces (currently treated as if at file scope)
-//  classes:
-//    o multiple inheritance (GetBaseDecl)
-//    o tagging a base class as virtual (GetBaseDecl)
-//    o non-public base class (allowed by parser, but accessibility checking
-//      does not enforce it)
-//    o anonymous structs (GetClassDecl)
-//    o enums, typedefs, or functions in an anonymous union (allowed by parser,
-//      but CxxArea.FindEnum, FindFunc, and FindType do not look for them)
-//    o including a union instance immediately after defining it (GetClassDecl)
-//    o pointer-to-member (the type "Class::*" and operators ".*" and "->*")
-//  functions:
-//    o const&, &, and && as member function suffix tags
-//    o noexcept(<expr>) as a function tag (only "noexcept" is supported)
-//    o using a different type (an alias) for an argument in the definition of
-//      a previously declared function (DataSpec.MatchesExactly)
-//    o argument-dependent lookup of regular functions (done only for operator
-//      overloads)
-//    o constructor inheritance (GetUsing, Class.FindCtor, and others)
-//    o defining a class or function within a function (ParseInBlock and others)
-//    o range-based for loops (GetFor and many others)
-//    o overloading the function call or comma operator (the parser allows it,
-//      but calls to the overload won't be registered because Operator.Execute
-//      doesn't look for it)
-//    o variadic argument lists
-//    o lambdas (GetArgument and many others)
-//    o dynamic exception specifications
-//    o deduced return type ("auto")
-//    o trailing return type (after "->")
-//  data:
-//    o declaring more than one data instance in the same statement, either at
-//      file scope or within a class (GetClassData and GetSpaceData)--note that
-//      this *is* supported within a function (e.g. int i = 0, *pi = nullptr)
-//    o unnamed bit fields (GetClassData)
-//  enums:
-//    o accessing an enum or enumerator using "." or "->" instead of "::"
-//    o scoped ("enum class", "enum struct") and opaque enums
-//    o forward declarations of enums
-//  typedefs:
-//    o "typedef enum" and "typedef struct" (GetTypedef)
-//    o alias templates (GetUsing and others)
-//  templates:
-//    o template arguments other than qualified names: bitset<sizeof(uint8_t)>,
-//      for example, would have to be written as bitset<bytesize>, following
-//      the definition constexpr size_t bytesize = sizeof(uint8_t);
-//    o a constructor call that requires template argument deduction when a
-//      template is a base class: need to include the template argument after
-//      the class template name
-//    o instantiation of the entire class template occurs when a member is
-//      referenced, and the definition of the template argument(s) must be
-//      visible at that point, even if they are not needed for a successful
-//      compile (e.g. if the template's code only used the type T*, not T)
-//    o explicit instantiation
-//    o "extern template"
+//  The parser supports all C++ language features used in the RSC code base.
+//  This is a subset of C++11, so there are many things that the parser does
+//  not yet support.  See "RSC-Cpp11-Exclusions" in RSC's docs/ directory for
+//  a description of what is not supported.
 //
 //  Comments in the CodeTools namespace that begin with "//c" describe other
 //  enhancements that have not been implemented.
-//
-//  WORKAROUNDS
-//  -----------
-//  o See the above comments, primarily for templates.
-//  o If template T with parameter P is instantiated with argument A, and T<P>
-//    appears within one of its functions, it causes a parse error because it
-//    gets expanded to T<A><A>.  This occurs because T is first replaced by
-//    T<A>, after which <P> is replaced by <A>.  The workaround is to remove
-//    the <P>, which is not required.
 //
 class Parser
 {

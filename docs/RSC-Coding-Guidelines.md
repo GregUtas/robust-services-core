@@ -1,4 +1,4 @@
-﻿# Robust Services Core: Coding Guidelines
+# Robust Services Core: Coding Guidelines
 All code must `>parse` successfully. If it doesn't, try to use a construct that the parser understands.
 Failing that, enhance the parser (or ask for it to be enhanced) to support the missing language feature.
 
@@ -50,10 +50,12 @@ low-level types and constants. Names that evoke Hungarian notation are an abomin
 ## Interfaces
 1. Insert an `#include` guard based on the file name (_FileName.h_ and `FILENAME_H_INCLUDED`) immediately
 after the standard heading.
-1. Sort `#include` directives alphabetically within the following groups:
-   1. header(s) that define direct base class of classes defined in this file
-   1. external headers (`#include <filename>`)
-   1. interal headers (`#include "filename.h"`)
+1. Sort `#include` directives as follows:
+   1. header(s) that declare something that this .cpp defines
+   1. header(s) that defines base class of classes defined in this file
+   1. external headers (#include <filename>)
+   1. interal headers (#include "filename.h")
+   And alphabetically within each group.
 1. Remove an `#include` solely associated with functions inherited from a base class.
 1. Remove an `#include` by forward-declaring a class that is only named in references or pointers. Use
 an explicit forward declaration instead of relying on this as a side effect of a friend declaration.

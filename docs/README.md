@@ -10,6 +10,7 @@ Document | Description
 [RSC Coding Guidelines](/docs/RSC-Coding-Guidelines.md) | C++ coding guidelines
 [RSC Software Design](/docs/RSC-Software-Design.pdf) | high-level design notes for various enhancements
 [RSC C++ Static Analysis Tools](/docs/RSC-Cpp-Static-Analysis-Tools.md) | overview of the C++ static analysis tools
+[RSC C++11 Exclusions](/docs/RSC-Cpp11-Exclusions.md) | C++11 language features not supported by the static analysis tools
 [RSC Session Processing tutorial](/docs/RSC-Session-Processing-tutorial.pdf) | overview of `SessionBase`
 [RSC Session Processing](/docs/RSC-Session-Processing.pdf) | design guide for `SessionBase` applications
 [RSC POTS Application](/docs/RSC-POTS-Application.md) | overview of the POTS application

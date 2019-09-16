@@ -1,4 +1,4 @@
-# Robust Services Core: Static Analysis C++11 Exclusions
+﻿# Robust Services Core: Static Analysis C++11 Exclusions
 
 The _ct_ directory contains a [parser](/ct/Parser.h) that supports the C++
 static analysis tools. Because these tools were developed to analyze RSC,
@@ -61,7 +61,7 @@ the parser and other `CodeTools` classes.
   of expressions that yield a constant has not been implemented. This capability
   would also be useful for other purposes.
 
-- [ ] `#pragma`: parsed but has no effect
+- [ ] `#pragma`: parsed, but only `#pragma once` has any effect
 - [ ] `#undef`: parsed but has no effect
 - [ ] `#` operator (to define a string literal)
 - [ ] `##` operator (concatenation)

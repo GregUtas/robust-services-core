@@ -826,6 +826,13 @@ void CodeFile::CheckIncludeGuard()
 
    if((pos == string::npos) || (code_.find(HASH_IFNDEF_STR, pos) != pos))
    {
+      if(code_.find(HASH_PRAGMA_STR, pos) == pos)
+      {
+         pos += strlen(HASH_PRAGMA_STR);
+         pos = code_.find_first_not_of(WhitespaceChars, pos);
+         if(code_.find("once", pos) == pos) return;
+      }
+
       LogLine(n, IncludeGuardMissing);
       return;
    }

@@ -6,22 +6,22 @@ the parser only supports the C++ language features that RSC uses. In fact,
 RSC's source code is currently the only test suite for the parser.
 
 Before RSC can use anything that the parser does not support, the parser
-must be enhanced so that analyzing RSC's code is still possible.
-The goal is to enhance the parser to support things not used
-within RSC so that other projects can also use the static analysis tools.
+must be enhanced so that analyzing RSC's code is still possible. However,
+the goal is to enhance the parser to support things that RSC does not use,
+so that other projects can also use the static analysis tools.
 To this end, you are welcome to request that missing language features be
 supported, and you are even _more_ welcome to implement them.
 
 Enhancing the parser to support a language feature is not enough. It would
-be more accurate to say that the code is _compiled_; there is a lot
+be more accurate to say that the code is _compiled_; there is much
 that happens outside _Parser.h_. The `>parse` command
 actually has an option that causes it to emit pseudo-code for a stack machine,
 which is useful for checking whether the code was properly "understood". Many
 static analysis capabilities require this level of understanding, and `>parse`
-even collects some information that a regular compiler would not.
+even gathers information that a regular compiler would not.
 
-The following is a list of things (through C++11) that are known **not** to be
-supported. In some cases, the functions that would need to be enhanced to support
+The following is a list of things (through C++11) that are known _not_ to be
+supported. In some cases, functions that would need to be enhanced to support
 them are noted.
 
 ### Recently Implemented
@@ -102,7 +102,8 @@ See `Parser.GetCxxExpr`, `Parser.GetCxxAlpha`, `Parser.GetChar`, and `Parser.Get
   Note that `Forward` supports multiple declarations of a class.
 - [ ] identical definitions of anything, _even in separate translation units_
 
-  All of the code is compiled together after calculating a global compile order.
+  All of the code is compiled together after calculating a global compile order,
+  which makes ODR global.
 
 ### Operators
 - [ ] `operator .` chaining
@@ -118,9 +119,9 @@ this is caused by
   ```
   auto token = (index == 0 ? item : via_);
   ```
-  Here, `token` is a **non**-const `CxxToken*`, as is `item`.  If `via_` were assigned to
+  Here, `token` is a _non_-const `CxxToken*`, courtesy of `item`.  If `via_` were assigned to
 the non-const `token`, we would know that `via_` could not be const, but this does not
-occur. The reason is that the _first_ expression afer the `?` operator is checked when
+occur. The reason is that the _first_ expression afer the `?` operator is evaluated when
 executing the assignment operator, but not the second.
 
 ### Namespaces
@@ -181,7 +182,7 @@ by `>check`.
 - [ ] declaring more than one data instance in the same statement, either at file
 scope or within a class (`Parser.GetClassData` and `Parser.GetSpaceData`)
 
-  Note that this _is_ supported _within_ a function (for example, `int i = 0, *pi = nullptr`).
+  Note that `FuncData` supports this _within_ a function (for example, `int i = 0, *pi = nullptr`).
 - [ ] unnamed bit fields (`Parser.GetClassData`)
 
 ### Enumerations
@@ -208,11 +209,10 @@ so an enumeration that often acts as a `const int` should not be converted.
 template is a base class
 
   The template argument must currently be included after the class template name.
-- [ ] instantiation of the entire class template occurs when a member is
-referenced
+- [ ] instantiation of the entire class template occurs when a member is used
 
   The definition of the template argument(s) must be visible
-at that point, even if they are not needed for a successful compile (e.g.
+at this point, even if they are not needed for a successful compile (e.g.
 if the template's code only uses the type `T*`, not `T`)
 - [ ] explicit instantiation
 - [ ] `using` for alias templates (`Parser.GetUsing` and others)
@@ -224,12 +224,6 @@ implementations for templates, `>check` may erroneously recommend things such as
 `std::unique_ptr` template instance
 - declaring a data member `const`even though it is inserted in a `std::set` and
 must therefore support `std::move`
-
-If template `T` with parameter `P` is instantiated with argument `A`, and `T<P>`
-appears within one of its functions, it causes a parse error because it gets
-expanded to `T<A><A>`. This occurs because `T` is first replaced by `T<A>`,
-after which `<P>` is replaced by `<A>`. The workaround is to remove the `<P>`,
-which is not required.
 
 ### Parser
 - [ ] `Parser.Punt` causes a software log on argument overflow

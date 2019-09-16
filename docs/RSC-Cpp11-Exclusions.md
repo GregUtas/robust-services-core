@@ -6,22 +6,22 @@ the parser only supports the C++ language features that RSC uses. In fact,
 RSC's source code is currently the only test suite for the parser.
 
 Before RSC can use anything that the parser does not support, the parser
-must be enhanced so that analyzing RSC's code will still be possible.
-The goal is also to enhance the parser to support things not used
-within RSC, so that other projects can also use the static analysis tools.
+must be enhanced so that analyzing RSC's code is still possible.
+The goal is to enhance the parser to support things not used
+within RSC so that other projects can also use the static analysis tools.
 To this end, you are welcome to request that missing language features be
-supported, and you are even _more_ welcome to _implement_ them.
+supported, and you are even _more_ welcome to implement them.
 
 Enhancing the parser to support a language feature is not enough. It would
-be more accurate to say that the code base is _compiled_; there is a lot
+be more accurate to say that the code is _compiled_; there is a lot
 that happens outside _Parser.h_. The `>parse` command
 actually has an option that causes it to emit pseudo-code for a stack machine,
 which is useful for checking whether the code was properly "understood". Many
 static analysis capabilities require this level of understanding, and `>parse`
 even collects some information that a regular compiler would not.
 
-The following is a list of things (through C++11) that are known _not_ to be
-supported. In some cases, functions that would need to be enhanced to support
+The following is a list of things (through C++11) that are known **not** to be
+supported. In some cases, the functions that would need to be enhanced to support
 them are noted.
 
 ### Recently Implemented
@@ -30,7 +30,7 @@ them are noted.
 - [x] flexible order for keyword tags (e.g. `static`) used in function and data declarations/definitions
 - [x] character escape sequences (`\`, `u8`, `u`, `U`)
 - [x] prefixes for character and string literals (`u8`, `u`, `U`, `L`)
-- [x] `using` to define type aliases (as an alternative to `typedef`)
+- [x] `using` for type aliases (as an alternative to `typedef`)
 
 ### Character Sets
 All source code is assumed to be of type `char`.  `char8_t`, `char16_t`,
@@ -63,15 +63,18 @@ the parser and other `CodeTools` classes.
 - [ ] code aliases (_\<identifier> \<code>_)
 
 The _only_ preprocessing that currently occurs before parsing is to
-- analyze `#include` relationships to calculate a global parse order;
-- find and erase any macro name that is defined as an empty string.
+- analyze `#include` relationships to calculate a global parse order
+- find and erase any macro name that is defined as an empty string
 
 RSC's use of the preprocessor is restricted to
 - `#include` directives
 - `#ifndef` for `#include` guards
 - `#ifdef` to include software that supports the target platform
-- `#define` for a pseudo-keyword that maps to an empty string (`NO_OP`)
+- `#define` for a pseudo-keyword that maps to an empty string (`NO_OP` is the only current example)
 - `#define` for a few integral constants in the _subs_ directory
+
+  A constant of this type is effectively treated as if it had been declared
+using `constexpr`.
 
 The conditional that follows `#if` or `#elif` is ignored because the evaluation
 of expressions that yield a constant has not been implemented. This capability
@@ -79,8 +82,8 @@ would also be useful for other purposes.
 
 ### Identifiers
 - [ ] elaborated type specifiers (`class`, `struct`, `union`, or `enum` prefixed
-to resolve a type ambiguity caused by overloading an identifier or to act as an
-inline forward declaration)
+to an identifier to act as an inline forward declaration or to resolve an ambiguity
+caused by overloading an identifier)
 - [ ] unnecessary name qualification
 
   Declaring a function as `Class::Function` causes the the parser to fail because
@@ -96,7 +99,7 @@ See `Parser.GetCxxExpr`, `Parser.GetCxxAlpha`, `Parser.GetChar`, and `Parser.Get
 ### Declarations and Definitions
 - [ ] identical declarations of data or functions
 
-  Multiple forward declarations of a class are supported by `Forward`.
+  Note that `Forward` supports multiple declarations of a class.
 - [ ] identical definitions of anything, _even in separate translation units_
 
   All of the code is compiled together after calculating a global compile order.
@@ -108,16 +111,16 @@ See `Parser.GetCxxExpr`, `Parser.GetCxxAlpha`, `Parser.GetChar`, and `Parser.Get
 This occurs even though `parm.header.pid` is the LHS of an assignment. `StackArg` has
 a single `via_`, so it can’t follow a _chain_ of `.` operators. It knows that `header`
 is modified, but not `parm`.
-- [ ] `operator ?` second expression (after the `:`)
+- [ ] `operator ?` second expression (the one after the `:`)
 
   `StackArg.via_` is incorrectly flagged as `DataCouldBeConst`. In `StackArg.SetNonConst`,
 this is caused by
   ```
   auto token = (index == 0 ? item : via_);
   ```
-  Here, `token` is a _non_-const `CxxToken*`, as is `item`.  If `via_` were assigned to
+  Here, `token` is a **non**-const `CxxToken*`, as is `item`.  If `via_` were assigned to
 the non-const `token`, we would know that `via_` could not be const, but this does not
-occur. This is because the _first_ expression afer the `?` operator is checked when
+occur. The reason is that the _first_ expression afer the `?` operator is checked when
 executing the assignment operator, but not the second.
 
 ### Namespaces
@@ -153,9 +156,7 @@ previously declared function (`DataSpec.MatchesExactly`)
 overloads)
 - [ ] constructor inheritance (`Parser.GetUsing`, `Class.FindCtor`, and others)
 - [ ] defining a class or function within a function (`Parser.ParseInBlock` and others)
-- [ ] range-based `for` loops
-
-  See `Parser.GetFor`, `Parser.GetTypeSpec`, and `Operation.Execute`.
+- [ ] range-based `for` loops (`Parser.GetFor`, `Parser.GetTypeSpec`, and `Operation.Execute`)
 - [ ] overloading the function call or comma operator
 
   The parser allows this, but calls to the overload won't be registered because
@@ -169,26 +170,27 @@ overloads)
 
   `StackArg` does not distinguish lvalues and rvalues. Consequently,
 `Function.CanInvokeWith` cannot distinguish functions that are identical
-apart from the use of `argument-type&` and `argument-type&&`. Functions
+apart from the use of _\<argument-type>_`&` and _\<argument-type>_`&&`. Functions
 with the latter signature will therefore be logged as `FunctionIsUnused`
 by `>check`.
-- [ ] A function call on a constructor is not noted when brace initialization
+- [ ] A function call on a constructor is not registered when brace initialization
 is used. The constructor might therefore be logged as `FunctionIsUnused`
 by `>check`.
 
 ### Data
 - [ ] declaring more than one data instance in the same statement, either at file
-scope or within a class (``Parser.GetClassData` and `Parser.GetSpaceData`)
+scope or within a class (`Parser.GetClassData` and `Parser.GetSpaceData`)
 
-Note that this _is_ supported within a function (e.g. `int i = 0, *pi = nullptr`).
+  Note that this _is_ supported _within_ a function (for example, `int i = 0, *pi = nullptr`).
 - [ ] unnamed bit fields (`Parser.GetClassData`)
 
 ### Enumerations
 - [ ] accessing an enumeration or enumerator using `.` or `->` instead of `::`
 - [ ] scoped enumerations (`enum class`, `enum struct`)
-  - once supported, convert some enumerations at namespace scope to use them
-  - converting from a scoped enumeration to an `int` requires a `static_cast`,
-so don’t convert an enumeration that often acts as a `const int`
+
+  Once this is supported, some enumerations at namespace scope should make use of it.
+However, converting from a scoped enumeration to an `int` requires a `static_cast`,
+so an enumeration that often acts as a `const int` should not be converted.
 - [ ] opaque enumerations
 - [ ] forward declarations of enumerations
 - [ ] argument-dependent lookup in an enumeration's scope
@@ -200,26 +202,28 @@ so don’t convert an enumeration that often acts as a `const int`
 ### Templates
 - [ ] template arguments other than qualified names
 
-  For example, `bitset\<sizeof(uint8_t)>` would have to be written as
-`bitset\<bytesize>` after `constexpr size_t bytesize = sizeof(uint8_t);`
+  For example, `std::bitset<sizeof(uint8_t)>` would have to be written as
+`std::bitset<bytesize>` following `constexpr size_t bytesize = sizeof(uint8_t);`
 - [ ] a constructor call that requires template argument deduction when a
 template is a base class
 
   The template argument must currently be included after the class template name.
 - [ ] instantiation of the entire class template occurs when a member is
-referenced, and the definition of the template argument(s) must be visible
+referenced
+
+  The definition of the template argument(s) must be visible
 at that point, even if they are not needed for a successful compile (e.g.
-if the template's code only used the type `T*`, not `T`)
+if the template's code only uses the type `T*`, not `T`)
 - [ ] explicit instantiation
 - [ ] `using` for alias templates (`Parser.GetUsing` and others)
 - [ ] `extern template`
 
 Because external headers in the [_subs_](/subs) directory do not provide function
-implementations for templates, `>check` may erroneously recommend
+implementations for templates, `>check` may erroneously recommend things such as
 - removing an `#include` that is needed to make a destructor visible to a
 `std::unique_ptr` template instance
-- declaring a data member `const`even though it is inserted in a `std::set`, in which
-case it must allow `std::move`
+- declaring a data member `const`even though it is inserted in a `std::set` and
+must therefore support `std::move`
 
 If template `T` with parameter `P` is instantiated with argument `A`, and `T<P>`
 appears within one of its functions, it causes a parse error because it gets

@@ -56,6 +56,11 @@ the parser and other `CodeTools` classes.
 - [ ] `#define` for any value other than an empty string or integer literal
 - [ ] `#if`: the conditional that follows the directive is ignored
 - [ ] `#elif`: the conditional that follows the directive is ignored
+
+  The conditional that follows `#if` or `#elif` is ignored because the evaluation
+  of expressions that yield a constant has not been implemented. This capability
+  would also be useful for other purposes.
+
 - [ ] `#pragma`: parsed but has no effect
 - [ ] `#undef`: parsed but has no effect
 - [ ] `#` operator (to define a string literal)
@@ -76,10 +81,6 @@ RSC's use of the preprocessor is restricted to
 
   A constant of this type is effectively treated as if it had been declared
   using `constexpr`.
-
-The conditional that follows `#if` or `#elif` is ignored because the evaluation
-of expressions that yield a constant has not been implemented. This capability
-would also be useful for other purposes.
 
 ### Identifiers
 - [ ] elaborated type specifiers (`class`, `struct`, `union`, or `enum` prefixed

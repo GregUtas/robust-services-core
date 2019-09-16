@@ -3,20 +3,20 @@
 The _ct_ directory contains a [parser](/ct/Parser.h) that supports the C++
 static analysis tools. Because these tools were developed to analyze RSC,
 the parser only supports the C++ language features that RSC uses. In fact,
-RSC's source code is currently the only test suite for the parser.
+RSC's source code is currently the only test suite for the `>parse` command.
 
-Before RSC can use anything that the parser does not support, the parser
+Before RSC can use anything that `>parse` does not support, the parser
 must be enhanced so that analyzing RSC's code is still possible. However,
-the goal is to enhance the parser to support things that RSC does not use,
+`>parse` should also be enhanced to support things that RSC does not use,
 so that other projects can also use the static analysis tools.
 To this end, you are welcome to request that missing language features be
-supported, and you are even _more_ welcome to implement them.
+supported, and you are even _more_ than welcome to implement them.
 
 Enhancing the parser to support a language feature is not enough. It would
-be more accurate to say that the code is _compiled_; there is much
+be more accurate to say that `>parse` actually _compiles_ the code; there is much
 that happens outside _Parser.h_. The `>parse` command
 actually has an option that causes it to emit pseudo-code for a stack machine,
-which is useful for checking whether the code was properly "understood". Many
+which is useful for checking whether the code was properly understood. Many
 static analysis capabilities require this level of understanding, and `>parse`
 even gathers information that a regular compiler would not.
 
@@ -34,7 +34,7 @@ them are noted.
 
 ### Character Sets
 All source code is assumed to be of type `char`.  `char8_t`, `char16_t`,
-`char32_t`, and `wchar_t` are supported by escape codes and literal
+`char32_t`, and `wchar_t` are supported via escape codes and literal
 prefixes (`u8`, `u`, `U`, `L`) but significant changes would be needed to
 support them in identifiers, such as replacing uses of `std::string` in
 the parser and other `CodeTools` classes.
@@ -53,11 +53,12 @@ the parser and other `CodeTools` classes.
 - [ ] `and`, `and_eq`, `bitand`, `bitor`, `compl`, `not`, `not_eq`, `or`, `or_eq`, `xor`, `xor_eq`
 
 ### Preprocessor
+- [ ] `#define` for any value other than an empty string or integer literal
 - [ ] `#if`: the conditional that follows the directive is ignored
 - [ ] `#elif`: the conditional that follows the directive is ignored
 - [ ] `#pragma`: parsed but has no effect
 - [ ] `#undef`: parsed but has no effect
-- [ ] `#` operator (stringification)
+- [ ] `#` operator (to define a string literal)
 - [ ] `##` operator (concatenation)
 - [ ] function macros
 - [ ] code aliases (_\<identifier> \<code>_)
@@ -74,7 +75,7 @@ RSC's use of the preprocessor is restricted to
 - `#define` for a few integral constants in the _subs_ directory
 
   A constant of this type is effectively treated as if it had been declared
-using `constexpr`.
+  using `constexpr`.
 
 The conditional that follows `#if` or `#elif` is ignored because the evaluation
 of expressions that yield a constant has not been implemented. This capability
@@ -87,7 +88,7 @@ caused by overloading an identifier)
 - [ ] unnecessary name qualification
 
   Declaring a function as `Class::Function` causes the the parser to fail because
-this is one situation in which it expects an unqualified name.
+  this is one situation in which it expects an unqualified name.
 
 ### Character and String Literals
 - [ ] raw string literals (`R` prefix)
@@ -103,26 +104,26 @@ See `Parser.GetCxxExpr`, `Parser.GetCxxAlpha`, `Parser.GetChar`, and `Parser.Get
 - [ ] identical definitions of anything, _even in separate translation units_
 
   All of the code is compiled together after calculating a global compile order,
-  which makes ODR global.
+  which makes the One Definition Rule global.
 
 ### Operators
-- [ ] `operator .` chaining
+- [ ] `operator.` chaining
 
   In `TlvMessage.DeleteParm`, `parm` is incorrectly flagged as `ArgumentCouldBeConst`.
-This occurs even though `parm.header.pid` is the LHS of an assignment. `StackArg` has
-a single `via_`, so it can’t follow a _chain_ of `.` operators. It knows that `header`
-is modified, but not `parm`.
-- [ ] `operator ?` second expression (the one after the `:`)
+  This occurs even though `parm.header.pid` is the target of an assignment. `StackArg` has
+  a single `via_` member, so it can’t follow a _chain_ of `.` operators. It knows that `header`
+  is modified, but it has dropped this information for `parm`.
+- [ ] `operator?` second expression (the one after the `:`)
 
   `StackArg.via_` is incorrectly flagged as `DataCouldBeConst`. In `StackArg.SetNonConst`,
-this is caused by
+  this is caused by
   ```
   auto token = (index == 0 ? item : via_);
   ```
   Here, `token` is a _non_-const `CxxToken*`, courtesy of `item`.  If `via_` were assigned to
-the non-const `token`, we would know that `via_` could not be const, but this does not
-occur. The reason is that the _first_ expression afer the `?` operator is evaluated when
-executing the assignment operator, but not the second.
+  the non-const `token`, we would know that `via_` could not be const, but this does not
+  occur. The reason is that the _first_ expression afer the `?` operator is evaluated when
+  executing the assignment operator, but not the second.
 
 ### Namespaces
 - [ ] `using` statements in namespaces (currently treated as if at file scope)
@@ -161,7 +162,7 @@ overloads)
 - [ ] overloading the function call or comma operator
 
   The parser allows this, but calls to the overload won't be registered because
-`Operation.Execute` doesn't look for it.
+  `Operation.Execute` doesn't look for it.
 - [ ] variadic argument lists
 - [ ] lambdas (`Parser.GetArgument` and many others)
 - [ ] dynamic exception specifications
@@ -170,10 +171,10 @@ overloads)
 - [ ] lvalues and rvalues
 
   `StackArg` does not distinguish lvalues and rvalues. Consequently,
-`Function.CanInvokeWith` cannot distinguish functions that are identical
-apart from the use of _\<argument-type>_`&` and _\<argument-type>_`&&`. Functions
-with the latter signature will therefore be logged as `FunctionIsUnused`
-by `>check`.
+  `Function.CanInvokeWith` cannot distinguish functions that are identical
+  apart from the use of _\<argument-type>_`&` and _\<argument-type>_`&&`. Functions
+  with the latter signature will therefore be logged as `FunctionIsUnused`
+  by `>check`.
 - [ ] A function call on a constructor is not registered when brace initialization
 is used. The constructor might therefore be logged as `FunctionIsUnused`
 by `>check`.
@@ -190,8 +191,8 @@ scope or within a class (`Parser.GetClassData` and `Parser.GetSpaceData`)
 - [ ] scoped enumerations (`enum class`, `enum struct`)
 
   Once this is supported, some enumerations at namespace scope should make use of it.
-However, converting from a scoped enumeration to an `int` requires a `static_cast`,
-so an enumeration that often acts as a `const int` should not be converted.
+  However, converting from a scoped enumeration to an `int` requires a `static_cast`,
+  so an enumeration that often acts as a `const int` should not be converted.
 - [ ] opaque enumerations
 - [ ] forward declarations of enumerations
 - [ ] argument-dependent lookup in an enumeration's scope
@@ -204,7 +205,7 @@ so an enumeration that often acts as a `const int` should not be converted.
 - [ ] template arguments other than qualified names
 
   For example, `std::bitset<sizeof(uint8_t)>` would have to be written as
-`std::bitset<bytesize>` following `constexpr size_t bytesize = sizeof(uint8_t);`
+  `std::bitset<bytesize>` following `constexpr size_t bytesize = sizeof(uint8_t)`.
 - [ ] a constructor call that requires template argument deduction when a
 template is a base class
 
@@ -212,18 +213,25 @@ template is a base class
 - [ ] instantiation of the entire class template occurs when a member is used
 
   The definition of the template argument(s) must be visible
-at this point, even if they are not needed for a successful compile (e.g.
-if the template's code only uses the type `T*`, not `T`)
+  at this point, even if they are not needed for a successful compile (e.g.
+  if the template's code only uses the type `T*`, not `T`)
 - [ ] explicit instantiation
 - [ ] `using` for alias templates (`Parser.GetUsing` and others)
 - [ ] `extern template`
+- [ ] initialization of static data members in template instances
+
+  The code for this is not included when generating the code for a template instance,
+  so the static member appears uninitialized (`<@i=0`) in the _.lib_ file created by
+  `>export`.
 
 Because external headers in the [_subs_](/subs) directory do not provide function
-implementations for templates, `>check` may erroneously recommend things such as
+implementations for templates, `>check` erroneously recommends things such as
 - removing an `#include` that is needed to make a destructor visible to a
 `std::unique_ptr` template instance
 - declaring a data member `const`even though it is inserted in a `std::set` and
 must therefore support `std::move`
+- removing most of the things in _Allocators.h_ (since this code is only invoked
+from the STL, not from within RSC)
 
 ### Parser
 - [ ] `Parser.Punt` causes a software log on argument overflow

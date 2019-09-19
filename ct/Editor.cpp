@@ -1722,8 +1722,7 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
       return -1;
    }
 
-   //  Run through all the warnings.  If fixing a warning is not supported,
-   //  skip it.
+   //  Run through all the warnings.
    //
    word rc = 0;
    auto reply = 'y';
@@ -1734,29 +1733,53 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
 
    for(auto item = warnings_.begin(); item != warnings_.end(); ++item)
    {
-      //  Skip this item if it isn't supposed to be fixed.
+      //  Skip this item if the user didn't include its warning type.
       //
       if((opts.warning != AllWarnings) &&
-         (item->warning != opts.warning)) continue;
+         (opts.warning != item->warning)) continue;
 
-      //  Before skipping over an eligible item that was already
-      //  fixed, note that such an item was found.
-      //
+      auto fix = false;
+
       switch(FixStatus(*item))
       {
       case NotFixed:
+         //
+         //  This item is eligible for fixing, and note that such an item
+         //  was found.
+         //
+         fix = true;
+         found = true;
          break;
+
       case Fixed:
       case Pending:
+         //
+         //  Before skipping over an eligible item that was already fixed,
+         //  note that such an item was found.
+         //
          fixed = true;
-         //  [[fallthrough]]
-      default:
          continue;
+
+      case NotSupported:
+      default:
+         //
+         //  If multiple warning types are being fixed, try the next one.  If
+         //  only one warning type is being fixed, fall through and exit the
+         //  loop, because there will be nothing to fix.
+         //
+         if(opts.warning == AllWarnings) continue;
+         break;
       }
+
+      //  If this item is ineligible for fixing, we exited the "NotSupported"
+      //  case, which occurs when the user tries to fix a specific unsupported
+      //  warning type.  Exit the loop and write out the file before returning,
+      //  because it may have changed (e.g. to fix tabs and trailing blanks).
+      //
+      if(!fix) break;
 
       //  This item is eligible for fixing.  Display it.
       //
-      found = true;
       DisplayLog(cli, *item, first);
       first = false;
 
@@ -1813,15 +1836,24 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
    if(found)
    {
       if(exit || (rc != 0))
-         *cli.obuf << spaces(2) << "Remaining warnings skipped." << CRLF;
+         *cli.obuf << spaces(2) << "Remaining warnings skipped.";
       else
-         *cli.obuf << spaces(2) << "End of warnings." << CRLF;
+         *cli.obuf << spaces(2) << "End of warnings.";
    }
    else if(fixed)
    {
       *cli.obuf << spaces(2) << "Selected warning(s) in ";
-      *cli.obuf << file_->Name() << " previously fixed." << CRLF;
+      *cli.obuf << file_->Name() << " previously fixed.";
    }
+   else
+   {
+      if(opts.warning == AllWarnings)
+         *cli.obuf << "No warnings that can be fixed were found.";
+      else
+         *cli.obuf << "Fixing this type of warning is not supported.";
+   }
+
+   *cli.obuf << CRLF;
 
    //  Write out the modified file(s).
    //

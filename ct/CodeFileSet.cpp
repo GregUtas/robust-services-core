@@ -387,11 +387,8 @@ word CodeFileSet::Fix
       if(rc != 0) return rc;
    }
 
-   if(Editor::CommitCount() == prev)
-   {
-      *cli.obuf << "No warnings that could be fixed were found." << CRLF;
-   }
-
+   auto changed = Editor::CommitCount() -  prev;
+   *cli.obuf << changed << " file(s) were changed." << CRLF;
    return 0;
 }
 

@@ -4247,11 +4247,10 @@ bool Function::IsExemptFromTracing() const
 {
    Debug::ft(Function_IsExemptFromTracing);
 
-   if(impl_ == nullptr) return true;   // declaration only
-   if(IsPureVirtual()) return true;
-   if(tmplt_ != nullptr) return true;  // a function template instance
-
+   if(impl_ == nullptr) return true;
    if(impl_->FirstStatement() == nullptr) return true;
+   if(IsInTemplateInstance()) return true;
+   if(IsPureVirtual()) return true;
 
    auto file = GetImplFile();
    if(file != nullptr)
@@ -4263,18 +4262,21 @@ bool Function::IsExemptFromTracing() const
       if(file->Name() == "CxxString.cpp") return true;
    }
 
-   if(Name()->find("Display") != string::npos) return true;
-   if(Name()->find("Patch") != string::npos) return true;
-   if(Name()->find("Print") != string::npos) return true;
-   if(Name()->find("Show") != string::npos) return true;
-   if(Name()->find("Output") != string::npos) return true;
-   if(Name()->find("Shrink") != string::npos) return true;
-   if(Name()->find("CellDiff") != string::npos) return true;
-   if(Name()->find("LinkDiff") != string::npos) return true;
-   if(Name()->find("TypeString") != string::npos) return true;
-   if(Name()->find("operator==") != string::npos) return true;
-   if(Name()->find("operator!=") != string::npos) return true;
-   if(Name()->find("operator<<") != string::npos) return true;
+   if(Name()->find("Display") == 0) return true;
+   if(Name()->find("Print") == 0) return true;
+   if(Name()->find("Output") == 0) return true;
+   if(Name()->find("Show") == 0) return true;
+   if(Name()->find("CellDiff") == 0) return true;
+   if(Name()->find("LinkDiff") == 0) return true;
+   if(Name()->find("Shrink") == 0) return true;
+   if(Name()->compare("Patch") == 0) return true;
+   if(Name()->compare("CreateText") == 0) return true;
+   if(Name()->compare("CreateCliParm") == 0) return true;
+   if(Name()->compare("TypeString") == 0) return true;
+   if(Name()->compare("operator<<") == 0) return true;
+   if(Name()->compare("operator==") == 0) return true;
+   if(Name()->compare("operator!=") == 0) return true;
+   if(Name()->compare("operator<") == 0) return true;
 
    if(spec_ != nullptr)
    {
@@ -4301,6 +4303,7 @@ bool Function::IsExemptFromTracing() const
          if(cls->DerivesFrom("Signal")) return true;
          if(cls->DerivesFrom("Parameter")) return true;
          if(cls->DerivesFrom("BcState")) return true;
+         if(cls->DerivesFrom("PotsFeature")) return (*Name() == "Attrs");
       }
    }
 

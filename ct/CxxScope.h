@@ -1506,7 +1506,9 @@ private:
    //
    bool extern_ : 1;
 
-   //  Set for a function explicitly or implicitly tagged as inline.
+   //  Set for a function explicitly tagged as inline or constexpr.
+   //  Not set for a function whose definition is inlined unless
+   //  tagged as inline or constexpr.
    //
    bool inline_ : 1;
 

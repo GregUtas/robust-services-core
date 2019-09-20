@@ -387,7 +387,7 @@ word CodeFileSet::Fix
       if(rc != 0) return rc;
    }
 
-   auto changed = Editor::CommitCount() -  prev;
+   auto changed = Editor::CommitCount() - prev;
    *cli.obuf << changed << " file(s) were changed." << CRLF;
    return 0;
 }

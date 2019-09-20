@@ -2032,12 +2032,11 @@ bool Parser::GetFuncDefn(Cxx::Keyword kwd, FunctionPtr& func)
 {
    Debug::ft(Parser_GetFuncDefn);
 
-   //  <FuncDefn> = [<TemplateParms>] ["inline"]
+   //  <FuncDefn> = [<TemplateParms>]
    //               (<CtorDefn> | <DtorDefn> | <ProcDefn>) <FuncImpl>
    //
    auto start = CurrPos();
    auto found = false;
-   auto inln = false;
 
    TemplateParmsPtr parms;
 
@@ -2058,7 +2057,6 @@ bool Parser::GetFuncDefn(Cxx::Keyword kwd, FunctionPtr& func)
 
    if(!found) return Backup(start, func, 222);
    func->SetTemplateParms(parms);
-   func->SetInline(inln);
    if(GetFuncSpecial(func)) return Success(Parser_GetFuncDecl, start);
 
    auto curr = CurrPos();

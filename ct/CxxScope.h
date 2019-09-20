@@ -1020,6 +1020,7 @@ public:
    //  IsFinal: Returns true if the function is final.
    //  IsStatic: Returns true if the function is static.
    //  GetAccess: Returns the access control for the function.
+   //  GetImpl: Returns the function's implementation.
    //
    Function* GetBase() const { return GetDecl()->base_; }
    bool IsExtern() const { return GetDecl()->extern_; }
@@ -1030,6 +1031,7 @@ public:
    bool IsFinal() const { return GetDecl()->final_; }
    bool IsStatic() const override { return GetDecl()->static_; }
    Cxx::Access GetAccess() const override;
+   const Block* GetImpl() const { return GetDefn()->impl_.get(); }
 
    //  Deletes the single argument "(void)", which simplifies the comparison
    //  of function signatures.
@@ -1145,10 +1147,6 @@ public:
    //  already been instantiated, it is found and returned.
    //
    Function* InstantiateFunction(const TypeName* type) const;
-
-   //  Returns true if the function is exempt from invoking Debug::ft.
-   //
-   bool IsExemptFromTracing() const;
 
    //  Returns the function's name for Debug::ft purposes.
    //

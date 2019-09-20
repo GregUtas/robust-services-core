@@ -155,7 +155,7 @@ word Editor::AdjustLineIndentation(const CodeWarning& log, string& expl)
 {
    Debug::ft(Editor_AdjustLineIndentation);
 
-   auto s = FindLine(log.line, expl);
+   auto s = FindLine(log.line_, expl);
    if(s == source_.end()) return 0;
    Indent(s, false);
    return Changed(s, expl);
@@ -169,12 +169,12 @@ word Editor::AdjustTags(const CodeWarning& log, string& expl)
 {
    Debug::ft(Editor_AdjustTags);
 
-   auto tag = (log.warning == PtrTagDetached ? '*' : '&');
+   auto tag = (log.warning_ == PtrTagDetached ? '*' : '&');
    string target = "Detached ";
    target.push_back(tag);
    target.push_back(SPACE);
 
-   auto loc = FindPos(log.pos);
+   auto loc = FindPos(log.pos_);
    if(loc.pos == string::npos) NotFound(expl, target.c_str());
 
    //  A pointer tag should not be preceded by a space.  It either adheres to
@@ -225,10 +225,10 @@ word Editor::AlignArgumentNames(const CodeWarning& log, string& expl)
    //  than the declaration, and on both when they use a different name than
    //  the base class (for an override).
    //
-   auto defn = static_cast< const Function* >(log.item);
+   auto defn = static_cast< const Function* >(log.item_);
    const Function* decl = nullptr;
 
-   if(log.warning == DefinitionRenamesArgument)
+   if(log.warning_ == DefinitionRenamesArgument)
       decl = defn->GetDecl();
    else
       decl = defn->GetBase();
@@ -237,13 +237,13 @@ word Editor::AlignArgumentNames(const CodeWarning& log, string& expl)
    //  Find the argument names used in the definition and the declaration.
    //
    auto& defnArgs = defn->GetArgs();
-   if(log.offset >= defnArgs.size()) return NotFound(expl, "Argument");
-   auto defnName = defnArgs.at(log.offset)->Name();
+   if(log.offset_ >= defnArgs.size()) return NotFound(expl, "Argument");
+   auto defnName = defnArgs.at(log.offset_)->Name();
 
    auto& declArgs = decl->GetArgs();
-   if(log.offset >= declArgs.size())
+   if(log.offset_ >= declArgs.size())
       return NotFound(expl, "Argument declaration");
-   auto declName = declArgs.at(log.offset)->Name();
+   auto declName = declArgs.at(log.offset_)->Name();
 
    //  Find the lines on which the function's code begins and ends.  Between
    //  those lines, replace instances of the definition's argument name with
@@ -252,12 +252,12 @@ word Editor::AlignArgumentNames(const CodeWarning& log, string& expl)
    size_t first, right;
    defn->GetRange(first, right);
    if(right == string::npos) return NotFound(expl, "Right brace");
-   auto begin = FindPos(log.item->GetPos());
+   auto begin = FindPos(log.item_->GetPos());
    if(begin.pos == string::npos) return NotFound(expl, "Function name");
-   auto lastLine = log.file->GetLexer().GetLineNum(right);
+   auto lastLine = log.file_->GetLexer().GetLineNum(right);
    auto end = FindLine(lastLine);
    if(end == source_.end()) return NotFound(expl, "Function last line");
-   auto range = lastLine - log.line + 1;
+   auto range = lastLine - log.line_ + 1;
 
    for(auto loc = FindWord(begin.iter, begin.pos, *defnName, &range);
        loc.pos != string::npos;
@@ -281,7 +281,7 @@ word Editor::ChangeClassToStruct(const CodeWarning& log, string& expl)
 
    //  Look for the class's name and then back up to "class".
    //
-   auto cls = FindPos(log.item->GetPos());
+   auto cls = FindPos(log.item_->GetPos());
    if(cls.pos == string::npos) return NotFound(expl, "Class name");
    cls = Rfind(cls.iter, CLASS_STR, cls.pos);
    if(cls.pos == string::npos) return NotFound(expl, CLASS_STR, true);
@@ -340,7 +340,7 @@ word Editor::ChangeDebugFtName(const CodeWarning& log, string& expl)
    //  Find the locations of the existing fn_name definition and
    //  Debug::ft invocation.  The definition could span two lines.
    //
-   auto func = FindPos(log.item->GetPos());
+   auto func = FindPos(log.item_->GetPos());
    if(func.pos == string::npos) return NotFound(expl, "Function name");
    auto dbegin = Rfind(func.iter, "fn_name", func.pos);
    if(dbegin.pos == string::npos)
@@ -358,7 +358,7 @@ word Editor::ChangeDebugFtName(const CodeWarning& log, string& expl)
    //  is too long.
    //
    string defn, call;
-   DebugFtCode(static_cast< const Function* >(log.item), defn, call);
+   DebugFtCode(static_cast< const Function* >(log.item_), defn, call);
    auto where = source_.erase(dbegin.iter);
    if(split) where = source_.erase(where);
    where = source_.insert(where, SourceLine(defn, SIZE_MAX));
@@ -382,7 +382,7 @@ word Editor::ChangeStructToClass(const CodeWarning& log, string& expl)
 
    //  Look for the struct's name and then back up to "struct".
    //
-   auto str = FindPos(log.item->GetPos());
+   auto str = FindPos(log.item_->GetPos());
    if(str.pos == string::npos) return NotFound(expl, "Struct name");
    str = Rfind(str.iter, STRUCT_STR, str.pos);
    if(str.pos == string::npos) return NotFound(expl, STRUCT_STR, true);
@@ -684,26 +684,26 @@ void Editor::DisplayLog(const CliThread& cli, const CodeWarning& log, bool file)
 
    if(file)
    {
-      *cli.obuf << log.file->Name() << ':' << CRLF;
+      *cli.obuf << log.file_->Name() << ':' << CRLF;
    }
 
    //  Display LOG's details.
    //
-   *cli.obuf << "  Line " << log.line + 1;
-   if(log.offset > 0) *cli.obuf << '/' << log.offset;
-   *cli.obuf << ": " << Warning(log.warning);
-   if(log.HasInfoToDisplay()) *cli.obuf << ": " << log.info;
+   *cli.obuf << "  Line " << log.line_ + 1;
+   if(log.offset_ > 0) *cli.obuf << '/' << log.offset_;
+   *cli.obuf << ": " << Warning(log.warning_);
+   if(log.HasInfoToDisplay()) *cli.obuf << ": " << log.info_;
    *cli.obuf << CRLF;
 
    if(log.HasCodeToDisplay())
    {
       //  Display the current version of the code associated with LOG.
       //
-      auto s = FindLine(log.line);
+      auto s = FindLine(log.line_);
 
       if(s == source_.end())
       {
-         *cli.obuf << "  Line " << log.line + 1 << " not found." << CRLF;
+         *cli.obuf << "  Line " << log.line_ + 1 << " not found." << CRLF;
          return;
       }
 
@@ -721,9 +721,9 @@ word Editor::EraseAccessControl(const CodeWarning& log, string& expl)
    Debug::ft(Editor_EraseAccessControl);
 
    //  The parser logs RedundantAccessControl at the position
-   //  where it occurred; log.item is nullptr in this warning.
+   //  where it occurred; log.item_ is nullptr in this warning.
    //
-   auto s = FindLine(log.line, expl);
+   auto s = FindLine(log.line_, expl);
    if(s == source_.end()) return 0;
    size_t len = 0;
 
@@ -779,7 +779,7 @@ word Editor::EraseAdjacentSpaces(const CodeWarning& log, string& expl)
 {
    Debug::ft(Editor_EraseAdjacentSpaces);
 
-   auto s = FindLine(log.line, expl);
+   auto s = FindLine(log.line_, expl);
    if(s == source_.end()) return 0;
 
    auto& code = s->code;
@@ -849,7 +849,7 @@ word Editor::EraseBlankLine(const CodeWarning& log, string& expl)
 
    //  Remove the specified line of code.
    //
-   auto blank = FindPos(log.pos);
+   auto blank = FindPos(log.pos_);
    if(blank.pos == string::npos) return NotFound(expl, "Blank line");
    source_.erase(blank.iter);
    return Changed();
@@ -892,7 +892,7 @@ word Editor::EraseCode(const CodeWarning& log, string& expl)
 
    //  Find the where the code to be deleted begins and ends.
    //
-   auto begin = FindPos(log.pos);
+   auto begin = FindPos(log.pos_);
    if(begin.pos == string::npos) return NotFound(expl, "Code to be deleted");
    source_.erase(begin.iter);
    return Changed();
@@ -909,7 +909,7 @@ word Editor::EraseCode
 
    //  Find the where the code to be deleted begins and ends.
    //
-   auto begin = FindPos(log.pos);
+   auto begin = FindPos(log.pos_);
    if(begin.pos == string::npos)
       return NotFound(expl, "Start of code to be deleted");
    auto end = FindFirstOf(begin.iter, 0, delimiters);
@@ -957,7 +957,7 @@ word Editor::EraseConst(const CodeWarning& log, string& expl)
    //  "const" precedes its typename, and a '*' can only occur if the "const"
    //  makes a pointer const.
    //
-   auto tag = FindPos(log.pos);
+   auto tag = FindPos(log.pos_);
    if(tag.pos == string::npos) return NotFound(expl, "Redundant const");
 
    for(tag = FindWord(tag.iter, tag.pos, CONST_STR);
@@ -1029,8 +1029,8 @@ word Editor::EraseEnumerator(const CodeWarning& log, string& expl)
 {
    Debug::ft(Editor_EraseEnumerator);
 
-   auto etor = static_cast< const Enumerator* >(log.item);
-   auto curr = FindPos(log.pos);
+   auto etor = static_cast< const Enumerator* >(log.item_);
+   auto curr = FindPos(log.pos_);
    if(curr.pos == string::npos) return NotFound(expl, "Enumerator's line");
 
    //  There are various possibilities, including more than one enumerator
@@ -1104,7 +1104,7 @@ word Editor::EraseForward(const CodeWarning& log, string& expl)
    //  Erase the line where the forward declaration appears.  This
    //  may leave an empty enclosing namespace that should be deleted.
    //
-   auto forw = FindPos(log.pos);
+   auto forw = FindPos(log.pos_);
    if(forw.pos == string::npos)
       return NotFound(expl, "Forward declaration");
    forw.iter = source_.erase(forw.iter);
@@ -1155,7 +1155,7 @@ word Editor::EraseLineBreak(const CodeWarning& log, string& expl)
 {
    Debug::ft(Editor_EraseLineBreak2);
 
-   auto iter = FindLine(log.line, expl);
+   auto iter = FindLine(log.line_, expl);
    if(iter == source_.end()) return 0;
    auto merged = EraseLineBreak(iter);
    if(!merged) expl = "Line break was not removed.";
@@ -1173,7 +1173,7 @@ word Editor::EraseMutableTag(const CodeWarning& log, string& expl)
    //  Find the line on which the data's type appears, and erase the
    //  "mutable" before that type.
    //
-   auto type = FindPos(log.item->GetTypeSpec()->GetPos());
+   auto type = FindPos(log.item_->GetTypeSpec()->GetPos());
    if(type.pos == string::npos) return NotFound(expl, "Data type");
    auto tag = Rfind(type.iter, MUTABLE_STR, type.pos);
    if(tag.pos == string::npos) return NotFound(expl, MUTABLE_STR, true);
@@ -1230,7 +1230,7 @@ word Editor::EraseSemicolon(const CodeWarning& log, string& expl)
    //  The parser logs a redundant semicolon that follows the closing '}'
    //  of a function definition or namespace enclosure.
    //
-   auto s = FindLine(log.line, expl);
+   auto s = FindLine(log.line_, expl);
    if(s == source_.end()) return 0;
    auto semi = s->code.rfind(';');
    if(semi == string::npos) return NotFound(expl, "Semicolon");
@@ -1274,7 +1274,7 @@ word Editor::EraseVirtualTag(const CodeWarning& log, string& expl)
 
    //  Look for "virtual" just before the function's return type.
    //
-   auto type = FindPos(log.item->GetTypeSpec()->GetPos());
+   auto type = FindPos(log.item_->GetTypeSpec()->GetPos());
    if(type.pos == string::npos) return NotFound(expl, "Function type");
    auto virt = type.iter->code.rfind(VIRTUAL_STR, type.pos);
    if(virt == string::npos) return NotFound(expl, VIRTUAL_STR, true);
@@ -1293,7 +1293,7 @@ word Editor::EraseVoidArgument(const CodeWarning& log, string& expl)
    //  The function might return "void", so the second occurrence of "void"
    //  could be the argument.  Erase it, leaving only the parentheses.
    //
-   auto s = FindLine(log.line, expl);
+   auto s = FindLine(log.line_, expl);
    if(s == source_.end()) return 0;
 
    for(auto arg = FindWord(s, 0, VOID_STR); arg.pos != string::npos;
@@ -1346,8 +1346,8 @@ Editor::CodeLocation Editor::FindArgsEnd(const CodeWarning& log)
 
    //  Verify that LOG.ITEM is a function in our file.
    //
-   if(log.item->Type() != Cxx::Function) return CodeLocation(source_.end());
-   auto func = static_cast< const Function* >(log.item);
+   if(log.item_->Type() != Cxx::Function) return CodeLocation(source_.end());
+   auto func = static_cast< const Function* >(log.item_);
    if(func->GetFile() != file_) return CodeLocation(source_.end());
 
    auto& args = func->GetArgs();
@@ -1420,9 +1420,9 @@ Editor::Iter Editor::FindInsertionPoint
    //  The order is constructor, destructor, copy constructor, and
    //  finally copy operator.
    //
-   auto where = FindPos(log.item->GetPos());
+   auto where = FindPos(log.item_->GetPos());
    if(where.pos == string::npos) return source_.end();
-   auto cls = static_cast< const Class* >(log.item);
+   auto cls = static_cast< const Class* >(log.item_);
    auto ctors = cls->FindCtors();
    auto ctor = ctors.back();
    auto dtor = cls->FindFuncByRole(PureDtor, false);
@@ -1430,7 +1430,7 @@ Editor::Iter Editor::FindInsertionPoint
 
    const Function* func = nullptr;  // insert right after class declaration
 
-   switch(log.warning)
+   switch(log.warning_)
    {
    case DefaultConstructor:
       break;
@@ -1572,8 +1572,8 @@ CodeWarning* Editor::FindLog
 
    for(auto w = warnings_.begin(); w != warnings_.end(); ++w)
    {
-      if((w->warning == log.warning) && (w->item == item) &&
-         (w->offset == offset))
+      if((w->warning_ == log.warning_) && (w->item_ == item) &&
+         (w->offset_ == offset))
       {
          return &*w;
       }
@@ -1634,9 +1634,9 @@ Editor::CodeLocation Editor::FindSigEnd(const CodeWarning& log)
 
    //  Look for the first semicolon or left brace after the function's name.
    //
-   if(log.item == nullptr) return CodeLocation(source_.end());
-   if(log.item->Type() != Cxx::Function) return CodeLocation(source_.end());
-   auto func = FindPos(log.item->GetPos());
+   if(log.item_ == nullptr) return CodeLocation(source_.end());
+   if(log.item_->Type() != Cxx::Function) return CodeLocation(source_.end());
+   auto func = FindPos(log.item_->GetPos());
    if(func.pos == string::npos) return CodeLocation(source_.end());
    return FindFirstOf(func.iter, func.pos, ";{");
 }
@@ -1736,7 +1736,7 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
       //  Skip this item if the user didn't include its warning type.
       //
       if((opts.warning != AllWarnings) &&
-         (opts.warning != item->warning)) continue;
+         (opts.warning != item->warning_)) continue;
 
       auto fix = false;
 
@@ -1811,7 +1811,7 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
 
          for(auto log = logs.begin(); log != logs.end(); ++log)
          {
-            auto editor = (*log)->file->GetEditor(expl);
+            auto editor = (*log)->file_->GetEditor(expl);
             if(editor != nullptr) rc = editor->FixLog(**log, expl);
             *cli.obuf << spaces(2) << (expl.empty() ? SuccessExpl : expl);
             *cli.obuf << CRLF;
@@ -1911,7 +1911,7 @@ WarningStatus Editor::FixStatus(const CodeWarning& log) const
 {
    Debug::ft(Editor_FixStatus);
 
-   if((log.warning == IncludeNotSorted) && (log.status == NotFixed))
+   if((log.warning_ == IncludeNotSorted) && (log.status == NotFixed))
    {
       //  If there are multiple warnings for unsorted #include directives,
       //  they all gets fixed when the first one is fixed.
@@ -1930,7 +1930,7 @@ word Editor::FixWarning(const CodeWarning& log, string& expl)
 {
    Debug::ft(Editor_FixWarning);
 
-   switch(log.warning)
+   switch(log.warning_)
    {
    case UseOfNull:
       return ReplaceNull(log, expl);
@@ -2234,9 +2234,9 @@ word Editor::InitByConstructor(const CodeWarning& log, string& expl)
    //  Change ["const"] <type> <name> = <class> "(" [<args>] ");"
    //      to ["const"] <class> <name> "(" <args> ");"
    //
-   auto loc = FindPos(log.pos);
+   auto loc = FindPos(log.pos_);
    if(loc.pos == string::npos) return NotFound(expl, "Statement");
-   auto name = FindWord(loc.iter, 0, *log.item->Name());
+   auto name = FindWord(loc.iter, 0, *log.item_->Name());
    if(name.pos == string::npos) return NotFound(expl, "Variable name");
    auto vprev = name.iter->code.rfind(SPACE, name.pos);
    if(vprev == string::npos) return NotFound(expl, "Start of variable name");
@@ -2261,7 +2261,7 @@ word Editor::InitByConstructor(const CodeWarning& log, string& expl)
    auto var = name.iter->code.substr(vprev + 1, vend.pos - vprev);
    auto cls = cbegin.iter->code.substr(cbegin.pos, cend.pos - cbegin.pos + 1);
    auto code = cls + SPACE + var;
-   if(log.item->IsConst()) code.insert(0, "const ");
+   if(log.item_->IsConst()) code.insert(0, "const ");
 
    //  If the constructor is called with an empty argument list, delete the
    //  parentheses.  That is, auto name = class(); must become class name;
@@ -2315,7 +2315,7 @@ word Editor::InsertBlankLine(const CodeWarning& log, string& expl)
 {
    Debug::ft(Editor_InsertBlankLine);
 
-   auto s = FindLine(log.line, expl);
+   auto s = FindLine(log.line_, expl);
    if(s == source_.end()) return 0;
    Insert(s, EMPTY_STR);
    return 0;
@@ -2329,7 +2329,7 @@ word Editor::InsertDebugFtCall(const CodeWarning& log, string& expl)
 {
    Debug::ft(Editor_InsertDebugFtCall);
 
-   auto name = FindPos(log.item->GetPos());
+   auto name = FindPos(log.item_->GetPos());
    if(name.pos == string::npos) return NotFound(expl, "Function name");
    auto left = FindFirstOf(name.iter, name.pos, "{");
    if(left.pos == string::npos) return NotFound(expl, "Left brace");
@@ -2338,7 +2338,7 @@ word Editor::InsertDebugFtCall(const CodeWarning& log, string& expl)
    //  EXTRA gets set if anything follows the left brace on the same line.
    //
    string defn, call;
-   DebugFtCode(static_cast< const Function* >(log.item), defn, call);
+   DebugFtCode(static_cast< const Function* >(log.item_), defn, call);
    auto extra = (left.iter->code.find_first_not_of
       (WhitespaceChars, left.pos + 1) != string::npos);
 
@@ -2389,7 +2389,7 @@ word Editor::InsertDefaultFunction(const CodeWarning& log, string& expl)
    //  If this log is not one associated with the class itself, nothing
    //  needs to be done.
    //
-   if(log.offset != 0)
+   if(log.offset_ != 0)
    {
       expl = "This warning is only informational and cannot be fixed.";
       return 0;
@@ -2421,16 +2421,16 @@ word Editor::InsertDefaultFunction(const CodeWarning& log, string& expl)
       prefix = spaces(indent);
 
    string code(prefix);
-   auto className = *log.item->Name();
+   auto className = *log.item_->Name();
 
-   switch(log.warning)
+   switch(log.warning_)
    {
    case DefaultConstructor:
       code += className + "() = default";
       break;
 
    case RuleOf3CopyOperNoCtor:
-      if(log.offset != 0)
+      if(log.offset_ != 0)
       {
          expl = "This can only be fixed if the copy operator is trivial.";
          return 0;
@@ -2442,7 +2442,7 @@ word Editor::InsertDefaultFunction(const CodeWarning& log, string& expl)
       break;
 
    case RuleOf3CopyCtorNoOper:
-      if(log.offset != 0)
+      if(log.offset_ != 0)
       {
          expl = "This can only be fixed if the copy constructor is trivial.";
          return 0;
@@ -2478,7 +2478,7 @@ word Editor::InsertDefaultFunction(const CodeWarning& log, string& expl)
 
       code = prefix + COMMENT_STR + spaces(2);
 
-      switch(log.warning)
+      switch(log.warning_)
       {
       case DefaultConstructor:
          code += "Constructor.";
@@ -2517,7 +2517,7 @@ word Editor::InsertForward(const CodeWarning& log, string& expl)
 
    //  LOGS provides the forward's namespace and any template parameters.
    //
-   string forward = spaces(INDENT_SIZE) + log.info + ';';
+   string forward = spaces(INDENT_SIZE) + log.info_ + ';';
    auto srPos = forward.find(SCOPE_STR);
    if(srPos == string::npos) return NotFound(expl, "Forward's namespace.");
 
@@ -2598,11 +2598,11 @@ word Editor::InsertInclude(const CodeWarning& log, string& expl)
    Debug::ft(Editor_InsertInclude1);
 
    //  Create the new #include directive and add it to the list.
-   //  Its file name appears in log.info.
+   //  Its file name appears in log.info_.
    //
    string include = HASH_INCLUDE_STR;
    include.push_back(SPACE);
-   include += log.info;
+   include += log.info_;
    return InsertInclude(include, expl);
 }
 
@@ -2665,7 +2665,7 @@ word Editor::InsertIncludeGuard(const CodeWarning& log, string& expl)
    //
    auto where = IncludesBegin();
    if(where == source_.end()) where = PrologEnd();
-   string guardname = log.file->MakeGuardName();
+   string guardname = log.file_->MakeGuardName();
    string code = "#define " + guardname;
    where = Insert(where, EMPTY_STR);
    where = Insert(where, code);
@@ -2701,7 +2701,7 @@ word Editor::InsertLineBreak(const CodeWarning& log, string& expl)
 {
    Debug::ft(Editor_InsertLineBreak2);
 
-   auto s = FindLine(log.line, expl);
+   auto s = FindLine(log.line_, expl);
    if(s == source_.end()) return 0;
    expl = "Inserting a line break is not yet supported.";
    return -1;
@@ -2763,7 +2763,7 @@ word Editor::InsertUsing(const CodeWarning& log, string& expl)
    //
    string statement = USING_STR;
    statement.push_back(SPACE);
-   statement += log.info;
+   statement += log.info_;
    statement.push_back(';');
 
    auto code = CodeBegin();
@@ -3043,13 +3043,13 @@ word Editor::RenameIncludeGuard(const CodeWarning& log, string& expl)
 
    //  This warning is logged against the #define.
    //
-   auto def = FindLine(log.line, expl);
+   auto def = FindLine(log.line_, expl);
    if(def == source_.end()) return 0;
    auto ifn = Rfind(def, HASH_IFNDEF_STR);
    if(ifn.pos == string::npos) return NotFound(expl, HASH_IFNDEF_STR);
    if(def->code.find(HASH_DEFINE_STR) == string::npos)
       return NotFound(expl, HASH_DEFINE_STR);
-   auto guard = log.file->MakeGuardName();
+   auto guard = log.file_->MakeGuardName();
    ifn.iter->code.erase(strlen(HASH_IFNDEF_STR) + 1);
    ifn.iter->code.append(guard);
    def->code.erase(strlen(HASH_DEFINE_STR) + 1);
@@ -3068,7 +3068,7 @@ word Editor::ReplaceNull(const CodeWarning& log, string& expl)
    //  If there are multiple occurrences on the same line, each one will
    //  cause a log, so just fix the first one.
    //
-   auto s = FindLine(log.line, expl);
+   auto s = FindLine(log.line_, expl);
    if(s == source_.end()) return 0;
    auto null = FindWord(s, 0, NULL_STR);
    if(null.pos == string::npos) return NotFound(expl, NULL_STR, true);
@@ -3085,7 +3085,7 @@ word Editor::ReplaceSlashAsterisk(const CodeWarning& log, string& expl)
 {
    Debug::ft(Editor_ReplaceSlashAsterisk);
 
-   auto s = FindLine(log.line, expl);
+   auto s = FindLine(log.line_, expl);
    if(s == source_.end()) return 0;
    auto pos1 = s->code.find(COMMENT_BEGIN_STR);
    if(pos1 == string::npos) return NotFound(expl, COMMENT_BEGIN_STR);
@@ -3355,9 +3355,9 @@ word Editor::TagAsConstArgument(const CodeWarning& log, string& expl)
    //  Find the line on which the argument's type appears, and insert
    //  "const" before that type.
    //
-   auto func = static_cast< const Function* >(log.item);
+   auto func = static_cast< const Function* >(log.item_);
    auto& args = func->GetArgs();
-   auto index = (func->IsStatic() ? log.offset - 1 : log.offset);
+   auto index = (func->IsStatic() ? log.offset_ - 1 : log.offset_);
    if(index >= args.size()) return NotFound(expl, "Argument");
    auto arg = args.at(index).get();
    if(arg == nullptr) return NotFound(expl, "Argument");
@@ -3378,7 +3378,7 @@ word Editor::TagAsConstData(const CodeWarning& log, string& expl)
    //  Find the line on which the data's type appears, and insert
    //  "const" before that type.
    //
-   auto type = FindPos(log.item->GetTypeSpec()->GetPos());
+   auto type = FindPos(log.item_->GetTypeSpec()->GetPos());
    if(type.pos == string::npos) return NotFound(expl, "Data type");
    type.iter->code.insert(type.pos, "const ");
    return Changed(type.iter, expl);
@@ -3438,7 +3438,7 @@ word Editor::TagAsConstPointer(const CodeWarning& log, string& expl)
    //  If there is more than one pointer, this applies to the last one, so
    //  back up from the data item's name.
    //
-   auto data = FindPos(log.item->GetPos());
+   auto data = FindPos(log.item_->GetPos());
    if(data.pos == string::npos) return NotFound(expl, "Member name");
    auto ptr = Rfind(data.iter, "*", data.pos);
    if(ptr.pos == string::npos) return NotFound(expl, "Pointer tag");
@@ -3459,7 +3459,7 @@ word Editor::TagAsConstReference(const CodeWarning& log, string& expl)
    //  added first so that its position won't change as a result of adding the
    //  "const" earlier in the line.
    //
-   auto arg = FindPos(log.pos);
+   auto arg = FindPos(log.pos_);
    if(arg.pos == string::npos) return NotFound(expl, "Argument name");
    auto prev = RfindNonBlank(arg.iter, arg.pos - 1);
    prev.iter->code.insert(prev.pos + 1, 1, '&');
@@ -3480,7 +3480,7 @@ word Editor::TagAsDefaulted(const CodeWarning& log, string& expl)
    //  If this is a separate definition, delete it and tag the definition
    //  as defaulted.
    //
-   auto defn = static_cast< const Function* >(log.item);
+   auto defn = static_cast< const Function* >(log.item_);
    if(defn->GetDecl() != defn)
    {
       return EraseCode(log, "}", expl);
@@ -3516,7 +3516,7 @@ word Editor::TagAsExplicit(const CodeWarning& log, string& expl)
    //  A constructor can be tagged "constexpr", which the parser looks for
    //  only *after* "explicit".
    //
-   auto ctor = FindPos(log.item->GetPos());
+   auto ctor = FindPos(log.item_->GetPos());
    if(ctor.pos == string::npos) return NotFound(expl, "Constructor");
    auto prev = ctor.iter->code.rfind(CONSTEXPR_STR, ctor.pos);
    if(prev != string::npos) ctor.pos = prev;
@@ -3535,7 +3535,7 @@ word Editor::TagAsNoexcept(const CodeWarning& log, string& expl)
    //  Insert "noexcept" after "const" but before "override" or "final".
    //  Start by finding the end of the function's argument list.
    //
-   auto func = FindPos(log.item->GetPos());
+   auto func = FindPos(log.item_->GetPos());
    if(func.pos == string::npos) return NotFound(expl, "Function name");
    auto rpar = FindArgsEnd(log);
    if(rpar.pos == string::npos) return NotFound(expl, "End of argument list");
@@ -3584,7 +3584,7 @@ word Editor::TagAsStaticFunction(const CodeWarning& log, string& expl)
    //  Start with the function's return type in case it's on the line above
    //  the function's name.  Then find the end of the argument list.
    //
-   auto type = FindPos(log.item->GetTypeSpec()->GetPos());
+   auto type = FindPos(log.item_->GetTypeSpec()->GetPos());
    if(type.pos == string::npos) return NotFound(expl, "Function type");
    auto rpar = FindArgsEnd(log);
    if(rpar.pos == string::npos) return NotFound(expl, "End of argument list");
@@ -3592,7 +3592,7 @@ word Editor::TagAsStaticFunction(const CodeWarning& log, string& expl)
    //  Only a function's declaration, not its definition, is tagged "static".
    //  The parser also wants "static" to follow "extern" and "inline".
    //
-   auto func = static_cast< const Function* >(log.item);
+   auto func = static_cast< const Function* >(log.item_);
 
    if(func->GetDecl() == func)
    {

@@ -106,9 +106,10 @@ public:
    //
    static fixed_string Expl(Warning w) { return Attrs_.at(w).expl; }
 
-   //  Adds LOG to the global set of warnings.
+   //  Adds the log to the global set of warnings unless it is a duplicate
+   //  or suppressed.
    //
-   static void Insert(const CodeWarning& log);
+   void Insert() const;
 
    //  Adds N to the number of line types of type T.
    //
@@ -125,15 +126,19 @@ private:
    bool operator==(const CodeWarning& that) const;
    bool operator!=(const CodeWarning& that) const;
 
+   //  Returns true if the log should be suppressed.
+   //
+   bool Suppress() const;
+
    //  Returns true if the log has code to display.
    //
    bool HasCodeToDisplay() const
-      { return ((line != 0) || info.empty()); }
+      { return ((line_ != 0) || info_.empty()); }
 
    //  Returns true if .info should be displayed.
    //
    bool HasInfoToDisplay() const
-      { return (info.find_first_not_of(SPACE) != std::string::npos); }
+      { return (info_.find_first_not_of(SPACE) != std::string::npos); }
 
    //  Returns the logs that need to be fixed to resolve this log.
    //  The log itself is included in the result unless it does not
@@ -183,35 +188,35 @@ private:
 
    //  The type of warning.
    //
-   Warning warning;
+   Warning warning_;
 
    //  The file in which the warning occurred.
    //
-   const CodeFile* file;
+   const CodeFile* file_;
 
    //  The line in FILE on which the warning occurred.
    //
-   size_t line;
+   size_t line_;
 
    //  The position in FILE where the warning occurred.
    //
-   size_t pos;
+   size_t pos_;
 
    //  The C++ item associated with the warning.
    //
-   const CxxNamed* item;
+   const CxxNamed* item_;
 
    //  Warning specific; displayed if > 0.
    //
-   word offset;
+   word offset_;
 
    //  Warning specific.
    //
-   std::string info;
+   std::string info_;
 
    //  If set, prevents a warning from being displayed.
    //
-   bool hide;
+   bool hide_;
 
    //  Whether a warning can be, or has been, fixed by the Editor.
    //

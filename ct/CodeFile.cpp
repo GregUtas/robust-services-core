@@ -697,7 +697,7 @@ void CodeFile::CheckDebugFt() const
          }
       }
 
-      if(!debug && !((*f)->IsExemptFromTracing()))
+      if(!debug)
       {
          LogPos(begin, DebugFtNotInvoked, *f);
       }
@@ -957,7 +957,7 @@ fixed_string FileProlog[FilePrologSize] =
 
 fn_name CodeFile_CheckProlog = "CodeFile.CheckProlog";
 
-void CodeFile::CheckProlog()
+void CodeFile::CheckProlog()  //*
 {
    Debug::ft(CodeFile_CheckProlog);
 
@@ -2270,7 +2270,7 @@ void CodeFile::LogCode(Warning warning, size_t line, size_t pos,
       (pos < code_.size()))
    {
       CodeWarning log(warning, this, line, pos, item, offset, info, hide);
-      CodeWarning::Insert(log);
+      log.Insert();
    }
 }
 

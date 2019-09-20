@@ -27,6 +27,7 @@
 #include "CodeFile.h"
 #include "CodeFileSet.h"
 #include "CxxArea.h"
+#include "CxxNamed.h"
 #include "CxxRoot.h"
 #include "CxxScope.h"
 #include "Debug.h"
@@ -94,14 +95,14 @@ fn_name CodeWarning_ctor = "CodeWarning.ctor";
 CodeWarning::CodeWarning(Warning warning, const CodeFile* file,
    size_t line, size_t pos, const CxxNamed* item, word offset,
    const string& info, bool hide) :
-   warning(warning),
-   file(file),
-   line(line),
-   pos(pos),
-   item(item),
-   offset(offset),
-   info(info),
-   hide(hide),
+   warning_(warning),
+   file_(file),
+   line_(line),
+   pos_(pos),
+   item_(item),
+   offset_(offset),
+   info_(info),
+   hide_(hide),
    status(NotSupported)
 {
    Debug::ft(CodeWarning_ctor);
@@ -120,7 +121,7 @@ CodeWarning* CodeWarning::FindMateLog(std::string& expl) const
    //  Look for the mate item associated with this log.  Find its file and
    //  editor, and ask its editor find the log that corresponds to this one.
    //
-   auto mate = item->GetMate();
+   auto mate = item_->GetMate();
    if(mate == nullptr) return nullptr;
    auto mateFile = mate->GetFile();
    if(mateFile == nullptr)
@@ -128,7 +129,7 @@ CodeWarning* CodeWarning::FindMateLog(std::string& expl) const
       expl = "Mate's file not found";
       return nullptr;
    }
-   return mateFile->FindLog(*this, mate, offset, expl);
+   return mateFile->FindLog(*this, mate, offset_, expl);
 }
 
 //------------------------------------------------------------------------------
@@ -141,27 +142,27 @@ CodeWarning* CodeWarning::FindRootLog(std::string& expl)
 
    //  This warning is logged against the location that invokes a special
    //  member function and that class that did not declare that function.
-   //  If its .offset specifies that it is the former (-1), find the log
+   //  If its offset_ specifies that it is the former (-1), find the log
    //  associated with the class, which is the one to fix.  The logs could
-   //  both appear in the same file, so .offset is used to distinguish the
+   //  both appear in the same file, so offset_ is used to distinguish the
    //  logs so that the fix is only applied once.
    //
-   if(offset == 0) return this;
+   if(offset_ == 0) return this;
 
-   auto rootFile = item->GetFile();
+   auto rootFile = item_->GetFile();
    if(rootFile == nullptr)
    {
       expl = "Class's file not found";
       return nullptr;
    }
 
-   auto log = rootFile->FindLog(*this, item, 0, expl);
+   auto log = rootFile->FindLog(*this, item_, 0, expl);
    if(log == nullptr)
    {
       if(rootFile->IsSubsFile())
       {
          expl = "Cannot add a special member function to external class ";
-         expl += *item->Name() + '.';
+         expl += *item_->Name() + '.';
       }
       else
       {
@@ -246,9 +247,9 @@ void CodeWarning::GenerateReport(ostream* stream, const SetOfIds& set)
    //
    for(auto item = Warnings_.cbegin(); item != Warnings_.cend(); ++item)
    {
-      if(!item->hide && (set.find(item->file->Fid()) != set.cend()))
+      if(!item->hide_ && (set.find(item->file_->Fid()) != set.cend()))
       {
-         ++WarningCounts_[item->warning];
+         ++WarningCounts_[item->warning_];
          warnings.push_back(*item);
       }
    }
@@ -288,32 +289,32 @@ void CodeWarning::GenerateReport(ostream* stream, const SetOfIds& set)
 
    while(item != last)
    {
-      auto w = item->warning;
+      auto w = item->warning_;
       *stream << WarningCode(w) << SPACE << w << CRLF;
 
       do
       {
-         *stream << spaces(2) << item->file->Path();
-         *stream << '(' << item->line + 1;
-         if(item->offset > 0) *stream << '/' << item->offset;
+         *stream << spaces(2) << item->file_->Path();
+         *stream << '(' << item->line_ + 1;
+         if(item->offset_ > 0) *stream << '/' << item->offset_;
          *stream << "): ";
 
          if(item->HasCodeToDisplay())
          {
-            *stream << item->file->GetLexer().GetNthLine(item->line);
+            *stream << item->file_->GetLexer().GetNthLine(item->line_);
          }
 
-         if(item->HasInfoToDisplay()) *stream << item->info;
+         if(item->HasInfoToDisplay()) *stream << item->info_;
          *stream << CRLF;
          ++item;
       }
-      while((item != last) && (item->warning == w));
+      while((item != last) && (item->warning_ == w));
    }
 
    *stream << string(120, '=') << CRLF;
    *stream << "WARNINGS SORTED BY FILE/TYPE/LINE" << CRLF;
 
-   //  Sort and output the warnings by file/warning type/line.
+   //  Sort and output the warnings by file/warning_ type/line.
    //
    std::sort(warnings.begin(), warnings.end(), IsSortedByFile);
 
@@ -322,32 +323,32 @@ void CodeWarning::GenerateReport(ostream* stream, const SetOfIds& set)
 
    while(item != last)
    {
-      auto f = item->file;
+      auto f = item->file_;
       *stream << f->Path() << CRLF;
 
       do
       {
-         auto w = item->warning;
+         auto w = item->warning_;
          *stream << spaces(2) << WarningCode(w) << SPACE << w << CRLF;
 
          do
          {
-            *stream << spaces(4) << item->line + 1;
-            if(item->offset > 0) *stream << '/' << item->offset;
+            *stream << spaces(4) << item->line_ + 1;
+            if(item->offset_ > 0) *stream << '/' << item->offset_;
             *stream << ": ";
 
-            if((item->line != 0) || item->info.empty())
+            if((item->line_ != 0) || item->info_.empty())
             {
-               *stream << f->GetLexer().GetNthLine(item->line);
-               if(!item->info.empty()) *stream << " // ";
+               *stream << f->GetLexer().GetNthLine(item->line_);
+               if(!item->info_.empty()) *stream << " // ";
             }
 
-            *stream << item->info << CRLF;
+            *stream << item->info_ << CRLF;
             ++item;
          }
-         while((item != last) && (item->warning == w) && (item->file == f));
+         while((item != last) && (item->warning_ == w) && (item->file_ == f));
       }
-      while((item != last) && (item->file == f));
+      while((item != last) && (item->file_ == f));
    }
 }
 
@@ -362,7 +363,7 @@ void CodeWarning::GetWarnings
 
    for(auto w = Warnings_.cbegin(); w != Warnings_.cend(); ++w)
    {
-      if(w->file == file)
+      if(w->file_ == file)
       {
          warnings.push_back(*w);
       }
@@ -767,11 +768,14 @@ void CodeWarning::Initialize()
 
 fn_name CodeWarning_Insert = "CodeWarning.Insert";
 
-void CodeWarning::Insert(const CodeWarning& log)
+void CodeWarning::Insert() const
 {
    Debug::ft(CodeWarning_Insert);
 
-   if(FindWarning(log) < 0) Warnings_.push_back(log);
+   if((FindWarning(*this) < 0) && !Suppress())
+   {
+      Warnings_.push_back(*this);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -779,17 +783,17 @@ void CodeWarning::Insert(const CodeWarning& log)
 bool CodeWarning::IsSortedByFile
    (const CodeWarning& log1, const CodeWarning& log2)
 {
-   auto result = strCompare(log1.file->Path(), log2.file->Path());
+   auto result = strCompare(log1.file_->Path(), log2.file_->Path());
    if(result == -1) return true;
    if(result == 1) return false;
-   if(log1.warning < log2.warning) return true;
-   if(log1.warning > log2.warning) return false;
-   if(log1.line < log2.line) return true;
-   if(log1.line > log2.line) return false;
-   if(log1.offset < log2.offset) return true;
-   if(log1.offset > log2.offset) return false;
-   if(log1.info < log2.info) return true;
-   if(log1.info > log2.info) return false;
+   if(log1.warning_ < log2.warning_) return true;
+   if(log1.warning_ > log2.warning_) return false;
+   if(log1.line_ < log2.line_) return true;
+   if(log1.line_ > log2.line_) return false;
+   if(log1.offset_ < log2.offset_) return true;
+   if(log1.offset_ > log2.offset_) return false;
+   if(log1.info_ < log2.info_) return true;
+   if(log1.info_ > log2.info_) return false;
    return (&log1 < &log2);
 }
 
@@ -798,17 +802,17 @@ bool CodeWarning::IsSortedByFile
 bool CodeWarning::IsSortedByType
    (const CodeWarning& log1, const CodeWarning& log2)
 {
-   if(log1.warning < log2.warning) return true;
-   if(log1.warning > log2.warning) return false;
-   auto result = strCompare(log1.file->Path(), log2.file->Path());
+   if(log1.warning_ < log2.warning_) return true;
+   if(log1.warning_ > log2.warning_) return false;
+   auto result = strCompare(log1.file_->Path(), log2.file_->Path());
    if(result == -1) return true;
    if(result == 1) return false;
-   if(log1.line < log2.line) return true;
-   if(log1.line > log2.line) return false;
-   if(log1.offset < log2.offset) return true;
-   if(log1.offset > log2.offset) return false;
-   if(log1.info < log2.info) return true;
-   if(log1.info > log2.info) return false;
+   if(log1.line_ < log2.line_) return true;
+   if(log1.line_ > log2.line_) return false;
+   if(log1.offset_ < log2.offset_) return true;
+   if(log1.offset_ > log2.offset_) return false;
+   if(log1.info_ < log2.info_) return true;
+   if(log1.info_ > log2.info_) return false;
    return (&log1 < &log2);
 }
 
@@ -817,23 +821,23 @@ bool CodeWarning::IsSortedByType
 bool CodeWarning::IsSortedToFix
    (const CodeWarning& log1, const CodeWarning& log2)
 {
-   auto result = strCompare(log1.file->Path(), log2.file->Path());
+   auto result = strCompare(log1.file_->Path(), log2.file_->Path());
    if(result == -1) return true;
    if(result == 1) return false;
-   if(Attrs_.at(log1.warning).order < Attrs_.at(log2.warning).order)
+   if(Attrs_.at(log1.warning_).order < Attrs_.at(log2.warning_).order)
       return true;
-   if(Attrs_.at(log1.warning).order > Attrs_.at(log2.warning).order)
+   if(Attrs_.at(log1.warning_).order > Attrs_.at(log2.warning_).order)
       return false;
-   if(log1.line < log2.line) return true;
-   if(log1.line > log2.line) return false;
-   if(log1.pos > log2.pos) return true;
-   if(log1.pos < log2.pos) return false;
-   if(log1.offset > log2.offset) return true;
-   if(log1.offset < log2.offset) return false;
-   if(log1.warning < log2.warning) return true;
-   if(log1.warning > log2.warning) return false;
-   if(log1.info < log2.info) return true;
-   if(log1.info > log2.info) return false;
+   if(log1.line_ < log2.line_) return true;
+   if(log1.line_ > log2.line_) return false;
+   if(log1.pos_ > log2.pos_) return true;
+   if(log1.pos_ < log2.pos_) return false;
+   if(log1.offset_ > log2.offset_) return true;
+   if(log1.offset_ < log2.offset_) return false;
+   if(log1.warning_ < log2.warning_) return true;
+   if(log1.warning_ > log2.warning_) return false;
+   if(log1.info_ < log2.info_) return true;
+   if(log1.info_ > log2.info_) return false;
    return (&log1 < &log2);
 }
 
@@ -848,13 +852,13 @@ std::vector< CodeWarning* > CodeWarning::LogsToFix(std::string& expl)
    std::vector< CodeWarning* > logs;
    CodeWarning* log = nullptr;
 
-   if(!Attrs_.at(warning).fixable)
+   if(!Attrs_.at(warning_).fixable)
    {
       expl = "Fixing this type of warning is not supported.";
       return logs;
    }
 
-   switch(warning)
+   switch(warning_)
    {
    case DefaultConstructor:
    case DefaultCopyConstructor:
@@ -871,7 +875,7 @@ std::vector< CodeWarning* > CodeWarning::LogsToFix(std::string& expl)
    case FunctionCouldBeStatic:
    case CouldBeNoexcept:
    case ShouldNotBeNoexcept:
-      if(static_cast< const Function* >(item)->IsVirtual())
+      if(static_cast< const Function* >(item_)->IsVirtual())
       {
          expl = "Changing a virtual function's signature is not supported.";
          return logs;
@@ -894,12 +898,12 @@ std::vector< CodeWarning* > CodeWarning::LogsToFix(std::string& expl)
 
 bool CodeWarning::operator==(const CodeWarning& that) const
 {
-   if(this->file != that.file) return false;
-   if(this->line != that.line) return false;
-   if(this->pos != that.pos) return false;
-   if(this->warning != that.warning) return false;
-   if(this->offset != that.offset) return false;
-   return (this->info == that.info);
+   if(this->file_ != that.file_) return false;
+   if(this->line_ != that.line_) return false;
+   if(this->pos_ != that.pos_) return false;
+   if(this->warning_ != that.warning_) return false;
+   if(this->offset_ != that.offset_) return false;
+   return (this->info_ == that.info_);
 }
 
 //------------------------------------------------------------------------------
@@ -907,5 +911,140 @@ bool CodeWarning::operator==(const CodeWarning& that) const
 bool CodeWarning::operator!=(const CodeWarning& that) const
 {
    return !(*this == that);
+}
+
+//------------------------------------------------------------------------------
+
+bool CodeWarning::Suppress() const
+{
+   //  Allocators.h generates a lot of warnings because its code
+   //  is only invoked from the STL.
+   //
+   if(file_->Name() == "Allocators.h") return true;
+
+   switch(warning_)
+   {
+   case DebugFtNotInvoked:
+   {
+      auto func = static_cast< const Function* >(item_);
+      auto impl = func->GetImpl();
+      if(impl == nullptr) return true;
+      if(impl->FirstStatement() == nullptr) return true;
+      if(func->IsInTemplateInstance()) return true;
+      if(func->IsPureVirtual()) return true;
+
+      auto file = func->GetImplFile();
+      if(file != nullptr)
+      {
+         if(file->Name() == "Algorithms.cpp") return true;
+         if(file->Name() == "Formatters.cpp") return true;
+         if(file->Name() == "Clock.cpp") return true;
+         if(file->Name() == "TraceRecord.cpp") return true;
+         if(file->Name() == "CxxString.cpp") return true;
+      }
+
+      auto name = func->Name();
+
+      if(name->find("Display") == 0) return true;
+      if(name->find("Print") == 0) return true;
+      if(name->find("Output") == 0) return true;
+      if(name->find("Show") == 0) return true;
+      if(name->find("CellDiff") == 0) return true;
+      if(name->find("LinkDiff") == 0) return true;
+      if(name->find("Shrink") == 0) return true;
+      if(name->compare("Patch") == 0) return true;
+      if(name->compare("CreateText") == 0) return true;
+      if(name->compare("CreateCliParm") == 0) return true;
+      if(name->compare("TypeString") == 0) return true;
+      if(name->compare("operator<<") == 0) return true;
+      if(name->compare("operator==") == 0) return true;
+      if(name->compare("operator!=") == 0) return true;
+      if(name->compare("operator<") == 0) return true;
+
+      auto spec = func->GetTypeSpec();
+
+      if(spec != nullptr)
+      {
+         auto type = spec->TypeString(true);
+         if(type.find("string") != string::npos) return true;
+         if(type.find("char*") != string::npos) return true;
+      }
+
+      auto cls = func->GetClass();
+      if(cls != nullptr)
+      {
+         if(cls->DerivesFrom("TraceRecord")) return true;
+
+         auto ft = func->FuncType();
+         if((ft == FuncCtor) || (ft == FuncDtor))
+         {
+            if(cls->DerivesFrom("CliIntParm")) return true;
+            if(cls->DerivesFrom("CliBoolParm")) return true;
+            if(cls->DerivesFrom("CliText")) return true;
+            if(cls->DerivesFrom("CliTextParm")) return true;
+            if(cls->DerivesFrom("CliCharParm")) return true;
+            if(cls->DerivesFrom("CliPtrParm")) return true;
+            if(cls->DerivesFrom("EventHandler")) return true;
+            if(cls->DerivesFrom("Signal")) return true;
+            if(cls->DerivesFrom("Parameter")) return true;
+            if(cls->DerivesFrom("BcState")) return true;
+            if(cls->DerivesFrom("PotsFeature")) return (*name == "Attrs");
+         }
+      }
+      break;
+   }
+
+   case DisplayNotOverridden:
+   {
+      auto cls = static_cast< const Class* >(item_);
+
+      //  Leaf classes for modules, statistics, and tools do not need
+      //  to override Display.
+      //
+      if(cls->Subclasses()->empty())
+      {
+         if(cls->DerivesFrom("Module")) return true;
+         if(cls->DerivesFrom("Statistic")) return true;
+         if(cls->DerivesFrom("StatisticsGroup")) return true;
+         if(cls->DerivesFrom("Tool")) return true;
+      }
+
+      //  Classes that represent C++ language elements do not need to
+      //  override Display.
+      //
+      if(cls->DerivesFrom("CxxToken")) return true;
+      break;
+   }
+
+   case PatchNotOverridden:
+   {
+      //  Classes in example applications do not need to override Patch.
+      //
+      auto cls = static_cast< const Class* >(item_);
+      auto sname = cls->GetSpace()->Name();
+
+      if((*sname != "NodeBase") &&
+         (*sname != "NetworkBase") &&
+         (*sname != "SessionBase"))
+      {
+         return true;
+      }
+
+      //  Leaf classes for the CLI and configuration parameters, as well
+      //  as statistics and tools, do not need to override Patch.
+      //
+      if(cls->Subclasses()->empty())
+      {
+         if(cls->DerivesFrom("CliParm")) return true;
+         if(cls->DerivesFrom("CfgParm")) return true;
+         if(cls->DerivesFrom("Statistic")) return true;
+         if(cls->DerivesFrom("StatisticsGroup")) return true;
+         if(cls->DerivesFrom("Tool")) return true;
+      }
+      break;
+   }
+   }
+
+   return false;
 }
 }

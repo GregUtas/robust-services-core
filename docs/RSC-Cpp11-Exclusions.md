@@ -1,4 +1,4 @@
-﻿# Robust Services Core: Static Analysis C++11 Exclusions
+# Robust Services Core: Static Analysis C++11 Exclusions
 
 The _ct_ directory contains a [parser](/ct/Parser.h) that supports the C++
 static analysis tools. Because these tools were developed to analyze RSC,
@@ -25,12 +25,13 @@ supported. In some cases, functions that would need to be enhanced to support
 them are noted.
 
 ### Recently Implemented
-- [x] `"`_\<substr1>_`"`_\<whitespace>_`"`_\<substr2>_`"` as the continuation of a string literal
-- [x] `= delete` and `= default` for constructor, destructor, and assignment operator
+- [x] `#pragma once` as alternative to `#include` guard
+- [x] `using` for type aliases (as an alternative to `typedef`)
 - [x] flexible order for keyword tags (e.g. `static`) used in function and data declarations/definitions
 - [x] character escape sequences (`\`, `u8`, `u`, `U`)
 - [x] prefixes for character and string literals (`u8`, `u`, `U`, `L`)
-- [x] `using` for type aliases (as an alternative to `typedef`)
+- [x] `= delete` and `= default` for constructor, destructor, and assignment operator
+- [x] `"`_\<substr1>_`"`_\<whitespace>_`"`_\<substr2>_`"` as the continuation of a string literal
 
 ### Character Sets
 All source code is assumed to be of type `char`.  `char8_t`, `char16_t`,

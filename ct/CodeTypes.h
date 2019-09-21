@@ -459,12 +459,12 @@ enum Warning
    NonBooleanConditional,    // conditional expression is not a boolean
    EnumTypesDiffer,          // binary operator uses two different enum types
    UseOfTab,                 // tab character in line
-   Indentation,              // indentation not a multiple of INDENT_SIZE spaces
+   Indentation,              // indentation not a multiple of IndentSize()
    TrailingSpace,            // space after last non-blank character
    AdjacentSpaces,           // extra embedded space in source code
    AddBlankLine,             // add blank line
    RemoveBlankLine,          // adjacent blank lines
-   LineLength,               // line length exceeds LINE_LENGTH_MAX characters
+   LineLength,               // line length exceeds LineLengthMax() characters
    FunctionNotSorted,        // function does not appear in alphabetical order
    HeadingNotStandard,       // lines at top of file do not follow template
    IncludeGuardMisnamed,     // #include guard name is not based on filename
@@ -554,10 +554,11 @@ private:
    LineTypeAttr(bool code, bool exe, bool merge, bool blank);
 };
 
-//  Returns true if LINE1[BEGIN1..END1] and LINE2[BEGIN2..END2] can be
-//  merged.
+//  Returns the resulting line length if LINE1[BEGIN1..END1] and
+//  LINE2[BEGIN2..END2] were merged.  Returns SIZE_MAX if the lines
+//  should not be merged.
 //
-bool LinesCanBeMerged
+size_t LineMergeLength
    (const std::string& line1, size_t begin1, size_t end1,
     const std::string& line2, size_t begin2, size_t end2);
 
@@ -588,7 +589,7 @@ extern const NodeBase::Flags NoAC_Mask;
 extern const NodeBase::Flags NoTP_Mask;
 extern const NodeBase::Flags Stats_Mask;
 
-constexpr uint8_t INDENT_SIZE = 3;
+constexpr size_t INDENT_SIZE = 3;
 constexpr size_t LINE_LENGTH_MAX = 80;
 
 //------------------------------------------------------------------------------

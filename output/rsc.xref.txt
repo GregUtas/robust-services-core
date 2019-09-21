@@ -5200,15 +5200,13 @@ CodeTools::CodeTools_RemoveIncludedBaseItems [ct/CodeFile.cpp]
    ct/CodeFile.cpp
 CodeTools::CodeTools_RemoveIndirectBaseItems [ct/CodeFile.cpp]
    ct/CodeFile.cpp
+CodeTools::DEFAULT_PROLOG [ct/CodeFile.cpp]
+   ct/CodeFile.cpp
 CodeTools::DisplayFileNames [ct/CodeFile.cpp]
    ct/CodeFile.cpp
 CodeTools::DisplaySymbols [ct/CodeFile.cpp]
    ct/CodeFile.cpp
 CodeTools::DisplaySymbolsAndFiles [ct/CodeFile.cpp]
-   ct/CodeFile.cpp
-CodeTools::FileProlog [ct/CodeFile.cpp]
-   ct/CodeFile.cpp
-CodeTools::FilePrologSize [ct/CodeFile.cpp]
    ct/CodeFile.cpp
 CodeTools::FindForwardCandidates [ct/CodeFile.cpp]
    ct/CodeFile.cpp
@@ -5293,7 +5291,7 @@ CodeTools::CodeFile::Classes [ct/CodeFile.h]
    ct/Library.cpp
 CodeTools::CodeFile::ClassifyLine(CodeTools::CodeFile* const,unsigned int) [ct/CodeFile.h]
    ct/CodeFile.cpp
-CodeTools::CodeFile::ClassifyLine(std::basic_string<char,std::char_traits<char>,std::allocator<char>>,std::set<CodeTools::Warning>) [ct/CodeFile.h]
+CodeTools::CodeFile::ClassifyLine(const CodeTools::CodeFile* const,std::basic_string<char,std::char_traits<char>,std::allocator<char>>,std::set<CodeTools::Warning>) [ct/CodeFile.h]
    ct/CodeFile.cpp
    ct/Editor.cpp
 CodeTools::CodeFile::CodeFile [ct/CodeFile.h]
@@ -5389,6 +5387,9 @@ CodeTools::CodeFile::Implementers [ct/CodeFile.h]
    ct/CodeFileSet.cpp
 CodeTools::CodeFile::InclList [ct/CodeFile.h]
    ct/CodeFileSet.cpp
+CodeTools::CodeFile::IndentSize [ct/CodeFile.h]
+   ct/CodeFile.cpp
+   ct/Editor.cpp
 CodeTools::CodeFile::InputStream [ct/CodeFile.h]
    ct/CodeFile.cpp
    ct/Editor.cpp
@@ -5458,6 +5459,9 @@ CodeTools::CodeFile::IsSubsFile [ct/CodeFile.h]
    ct/Library.cpp
 CodeTools::CodeFile::IsTemplateHeader [ct/CodeFile.h]
    ct/CodeFile.cpp
+CodeTools::CodeFile::LineLengthMax [ct/CodeFile.h]
+   ct/CodeFile.cpp
+   ct/Editor.cpp
 CodeTools::CodeFile::LogAddForwards [ct/CodeFile.h]
    ct/CodeFile.cpp
 CodeTools::CodeFile::LogAddIncludes [ct/CodeFile.h]
@@ -5506,6 +5510,8 @@ CodeTools::CodeFile::Path [ct/CodeFile.h]
    ct/CxxRoot.cpp
    ct/CxxSymbols.cpp
    ct/Editor.cpp
+CodeTools::CodeFile::Prolog [ct/CodeFile.h]
+   ct/CodeFile.cpp
 CodeTools::CodeFile::PruneForwardCandidates [ct/CodeFile.h]
    ct/CodeFile.cpp
 CodeTools::CodeFile::PruneLocalForwards [ct/CodeFile.h]
@@ -6732,10 +6738,12 @@ CodeTools::FunctionType [ct/CodeTypes.h]
    ct/CxxScope.h
 CodeTools::FunctionType::FuncCtor [ct/CodeTypes.h]
    ct/CodeFile.cpp
+   ct/CodeWarning.cpp
    ct/CxxArea.cpp
    ct/CxxScope.cpp
 CodeTools::FunctionType::FuncDtor [ct/CodeTypes.h]
    ct/CodeFile.cpp
+   ct/CodeWarning.cpp
    ct/CxxScope.cpp
 CodeTools::FunctionType::FuncOperator [ct/CodeTypes.h]
    ct/CodeFile.cpp
@@ -6803,6 +6811,7 @@ CodeTools::HASH_LINE_STR [ct/CodeTypes.h]
    ct/Lexer.cpp
    ct/Parser.cpp
 CodeTools::HASH_PRAGMA_STR [ct/CodeTypes.h]
+   ct/CodeFile.cpp
    ct/CodeTypes.cpp
    ct/CxxDirective.cpp
    ct/Lexer.cpp
@@ -6824,7 +6833,6 @@ CodeTools::INDENT_SIZE [ct/CodeTypes.h]
    ct/CxxScope.cpp
    ct/CxxScoped.cpp
    ct/CxxStatement.cpp
-   ct/Editor.cpp
 CodeTools::INLINE_STR [ct/CodeTypes.h]
    ct/CodeTypes.cpp
    ct/CxxScope.cpp
@@ -6844,10 +6852,8 @@ CodeTools::LF_Mask [ct/CodeTypes.h]
    ct/CxxStatement.cpp
 CodeTools::LINE_LENGTH_MAX [ct/CodeTypes.h]
    ct/CodeFile.cpp
-   ct/CodeTypes.cpp
    ct/CodeTypes.h
    ct/CxxScope.cpp
-   ct/Editor.cpp
    ct/Library.cpp
 CodeTools::LOCALS_STR [ct/CodeTypes.h]
    ct/CodeTypes.cpp
@@ -6862,6 +6868,10 @@ CodeTools::LONG_STR [ct/CodeTypes.h]
    ct/Parser.cpp
 CodeTools::Last_Mask [ct/CodeTypes.h]
    ct/CodeTypes.cpp
+CodeTools::LineMergeLength [ct/CodeTypes.h]
+   ct/CodeFile.cpp
+   ct/CodeTypes.cpp
+   ct/Editor.cpp
 CodeTools::LineType [ct/CodeTypes.h]
    ct/CodeFile.cpp
    ct/CodeFile.h
@@ -6956,10 +6966,6 @@ CodeTools::LineTypeAttr::isExecutable [ct/CodeTypes.h]
    ct/Editor.cpp
 CodeTools::LineTypeAttr::isMergeable [ct/CodeTypes.h]
    ct/CodeFile.cpp
-   ct/Editor.cpp
-CodeTools::LinesCanBeMerged [ct/CodeTypes.h]
-   ct/CodeFile.cpp
-   ct/CodeTypes.cpp
    ct/Editor.cpp
 CodeTools::MUTABLE_STR [ct/CodeTypes.h]
    ct/CodeTypes.cpp
@@ -7778,6 +7784,7 @@ CodeTools::Warning::Warning_N [ct/CodeTypes.h]
    ct/CodeWarning.h
    ct/CxxScope.cpp
 CodeTools::WhitespaceChars [ct/CodeTypes.h]
+   ct/CodeFile.cpp
    ct/CodeTypes.cpp
    ct/Editor.cpp
 CodeTools::operator<<(std::basic_ostream,CodeTools::LineType) [ct/CodeTypes.h]
@@ -7856,42 +7863,44 @@ CodeTools::CodeWarning::LineTypeCounts_ [ct/CodeWarning.h]
 CodeTools::CodeWarning::LogsToFix [ct/CodeWarning.h]
    ct/CodeWarning.cpp
    ct/Editor.cpp
+CodeTools::CodeWarning::Suppress [ct/CodeWarning.h]
+   ct/CodeWarning.cpp
 CodeTools::CodeWarning::WarningCounts_ [ct/CodeWarning.h]
    ct/CodeWarning.cpp
 CodeTools::CodeWarning::WarningPair [ct/CodeWarning.h]
    ct/CodeWarning.cpp
 CodeTools::CodeWarning::Warnings_ [ct/CodeWarning.h]
    ct/CodeWarning.cpp
-CodeTools::CodeWarning::file [ct/CodeWarning.h]
+CodeTools::CodeWarning::file_ [ct/CodeWarning.h]
    ct/CodeWarning.cpp
    ct/Editor.cpp
-CodeTools::CodeWarning::hide [ct/CodeWarning.h]
+CodeTools::CodeWarning::hide_ [ct/CodeWarning.h]
    ct/CodeWarning.cpp
-CodeTools::CodeWarning::info [ct/CodeWarning.h]
+CodeTools::CodeWarning::info_ [ct/CodeWarning.h]
    ct/CodeWarning.cpp
    ct/CodeWarning.h
    ct/Editor.cpp
-CodeTools::CodeWarning::item [ct/CodeWarning.h]
+CodeTools::CodeWarning::item_ [ct/CodeWarning.h]
    ct/CodeWarning.cpp
    ct/Editor.cpp
-CodeTools::CodeWarning::line [ct/CodeWarning.h]
+CodeTools::CodeWarning::line_ [ct/CodeWarning.h]
    ct/CodeWarning.cpp
    ct/CodeWarning.h
    ct/Editor.cpp
-CodeTools::CodeWarning::offset [ct/CodeWarning.h]
+CodeTools::CodeWarning::offset_ [ct/CodeWarning.h]
    ct/CodeWarning.cpp
    ct/Editor.cpp
 CodeTools::CodeWarning::operator!= [ct/CodeWarning.h]
    ct/CodeWarning.cpp
 CodeTools::CodeWarning::operator== [ct/CodeWarning.h]
    ct/CodeWarning.cpp
-CodeTools::CodeWarning::pos [ct/CodeWarning.h]
+CodeTools::CodeWarning::pos_ [ct/CodeWarning.h]
    ct/CodeWarning.cpp
    ct/Editor.cpp
 CodeTools::CodeWarning::status [ct/CodeWarning.h]
    ct/CodeWarning.cpp
    ct/Editor.cpp
-CodeTools::CodeWarning::warning [ct/CodeWarning.h]
+CodeTools::CodeWarning::warning_ [ct/CodeWarning.h]
    ct/CodeWarning.cpp
    ct/Editor.cpp
 CodeTools::WarningAttrs [ct/CodeWarning.h]
@@ -9312,6 +9321,7 @@ CodeTools::Namespace_dtor [ct/CxxArea.cpp]
    ct/CxxArea.cpp
 CodeTools::Class [ct/CxxArea.h]
    ct/CodeFile.cpp
+   ct/CodeWarning.cpp
    ct/Cxx.cpp
    ct/CxxArea.cpp
    ct/CxxArea.h
@@ -9415,6 +9425,7 @@ CodeTools::Class::CreateInstance [ct/CxxArea.h]
    ct/CxxArea.cpp
 CodeTools::Class::DerivesFrom(const CodeTools::Class* const,const CodeTools::Class*) [ct/CxxArea.h]
    ct/CodeFile.cpp
+   ct/CodeWarning.cpp
    ct/CxxArea.cpp
    ct/CxxArea.h
    ct/CxxExecute.cpp
@@ -9533,6 +9544,7 @@ CodeTools::Class::SetTemplateParms [ct/CxxArea.h]
 CodeTools::Class::Shrink [ct/CxxArea.h]
    ct/CxxArea.cpp
 CodeTools::Class::Subclasses [ct/CxxArea.h]
+   ct/CodeWarning.cpp
    ct/CxxScope.cpp
 CodeTools::Class::TypeString [ct/CxxArea.h]
    ct/CxxArea.cpp
@@ -12127,6 +12139,7 @@ CodeTools::CxxNamed::IsImplemented [ct/CxxNamed.h]
    ct/CxxScope.h
 CodeTools::CxxNamed::IsInTemplateInstance [ct/CxxNamed.h]
    ct/CodeFile.cpp
+   ct/CodeWarning.cpp
    ct/CxxArea.cpp
    ct/CxxNamed.cpp
    ct/CxxScope.cpp
@@ -12747,6 +12760,7 @@ CodeTools::TypeName::using_ [ct/CxxNamed.h]
 CodeTools::TypeName::~TypeName [ct/CxxNamed.h]
    ct/CxxNamed.cpp
 CodeTools::TypeSpec [ct/CxxNamed.h]
+   ct/CodeWarning.cpp
    ct/CxxArea.cpp
    ct/CxxExecute.cpp
    ct/CxxNamed.cpp
@@ -13514,8 +13528,6 @@ CodeTools::Function_InvokeDefaultBaseCtor [ct/CxxScope.cpp]
    ct/CxxScope.cpp
 CodeTools::Function_IsDeleted [ct/CxxScope.cpp]
    ct/CxxScope.cpp
-CodeTools::Function_IsExemptFromTracing [ct/CxxScope.cpp]
-   ct/CxxScope.cpp
 CodeTools::Function_IsInvokedInBase [ct/CxxScope.cpp]
    ct/CxxScope.cpp
 CodeTools::Function_IsOverriddenAtOrBelow [ct/CxxScope.cpp]
@@ -13599,8 +13611,10 @@ CodeTools::SpaceData_ctor [ct/CxxScope.cpp]
 CodeTools::SpaceData_dtor [ct/CxxScope.cpp]
    ct/CxxScope.cpp
 CodeTools::Block [ct/CxxScope.h]
+   ct/CodeWarning.cpp
    ct/Cxx.cpp
    ct/CxxScope.cpp
+   ct/CxxScope.h
    ct/CxxStatement.cpp
    ct/CxxStatement.h
    ct/Parser.cpp
@@ -13624,6 +13638,7 @@ CodeTools::Block::EnterBlock [ct/CxxScope.h]
 CodeTools::Block::FindNthItem [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Block::FirstStatement [ct/CxxScope.h]
+   ct/CodeWarning.cpp
    ct/CxxScope.cpp
    ct/Parser.cpp
 CodeTools::Block::Form [ct/CxxScope.h]
@@ -14174,6 +14189,7 @@ CodeTools::Function::FuncRole [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::FuncType [ct/CxxScope.h]
    ct/CodeFile.cpp
+   ct/CodeWarning.cpp
    ct/CxxArea.cpp
    ct/CxxScope.cpp
    ct/Editor.cpp
@@ -14201,8 +14217,11 @@ CodeTools::Function::GetDeclFile [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::GetDefn [ct/CxxScope.h]
    ct/CxxScope.cpp
+   ct/CxxScope.h
 CodeTools::Function::GetDefnFile [ct/CxxScope.h]
    ct/CxxScope.cpp
+CodeTools::Function::GetImpl [ct/CxxScope.h]
+   ct/CodeWarning.cpp
 CodeTools::Function::GetRange [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::GetScope [ct/CxxScope.h]
@@ -14237,9 +14256,6 @@ CodeTools::Function::InvokeDefaultBaseCtor [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::IsDeleted [ct/CxxScope.h]
    ct/CxxScope.cpp
-CodeTools::Function::IsExemptFromTracing [ct/CxxScope.h]
-   ct/CodeFile.cpp
-   ct/CxxScope.cpp
 CodeTools::Function::IsExplicit [ct/CxxScope.h]
    ct/CxxArea.cpp
    ct/CxxScope.cpp
@@ -14255,7 +14271,7 @@ CodeTools::Function::IsOverride [ct/CxxScope.h]
    ct/CxxArea.cpp
    ct/CxxScope.cpp
 CodeTools::Function::IsPureVirtual [ct/CxxScope.h]
-   ct/CxxScope.cpp
+   ct/CodeWarning.cpp
 CodeTools::Function::IsTemplateArg [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::IsTemplateInstance [ct/CxxScope.h]
@@ -14412,6 +14428,7 @@ CodeTools::Function::friend_ [ct/CxxScope.h]
    ct/CxxScope.h
 CodeTools::Function::impl_ [ct/CxxScope.h]
    ct/CxxScope.cpp
+   ct/CxxScope.h
 CodeTools::Function::implicit_ [ct/CxxScope.h]
    ct/CxxScope.cpp
    ct/CxxScope.h
@@ -14880,6 +14897,7 @@ CodeTools::CxxScoped::FindInheritedName [ct/CxxScoped.h]
 CodeTools::CxxScoped::FindNthItem [ct/CxxScoped.h]
    ct/CxxScoped.cpp
 CodeTools::CxxScoped::GetImplFile [ct/CxxScoped.h]
+   ct/CodeWarning.cpp
    ct/CxxScope.cpp
    ct/CxxScoped.cpp
 CodeTools::CxxScoped::GetRange [ct/CxxScoped.h]
@@ -15932,12 +15950,12 @@ CodeTools::PathIncludes [ct/CxxString.h]
    ct/CodeDir.cpp
    ct/CxxString.cpp
 CodeTools::Prefix(std::basic_string<char,std::char_traits<char>,std::allocator<char>>) [ct/CxxString.h]
-   ct/CxxString.cpp
-CodeTools::Prefix(std::basic_string<char,std::char_traits<char>,std::allocator<char>>) [ct/CxxString.h]
    ct/CxxArea.cpp
    ct/CxxNamed.cpp
    ct/CxxScope.cpp
    ct/CxxScoped.cpp
+   ct/CxxString.cpp
+CodeTools::Prefix(std::basic_string<char,std::char_traits<char>,std::allocator<char>>) [ct/CxxString.h]
    ct/CxxString.cpp
 CodeTools::RemoveConsts [ct/CxxString.h]
    ct/CxxExecute.cpp
@@ -15959,6 +15977,7 @@ CodeTools::Replace [ct/CxxString.h]
    ct/CxxString.cpp
 CodeTools::stringVector [ct/CxxString.h]
    ct/CodeFile.cpp
+   ct/CodeFile.h
    ct/CxxArea.cpp
    ct/CxxNamed.cpp
    ct/CxxNamed.h
@@ -16607,6 +16626,7 @@ CodeTools::CxxToken::FindNthItem [ct/CxxToken.h]
    ct/CxxStatement.h
 CodeTools::CxxToken::GetClass [ct/CxxToken.h]
    ct/CodeFile.cpp
+   ct/CodeWarning.cpp
    ct/CxxArea.cpp
    ct/CxxArea.h
    ct/CxxExecute.cpp
@@ -16646,6 +16666,7 @@ CodeTools::CxxToken::GetQualName [ct/CxxToken.h]
    ct/CxxToken.cpp
 CodeTools::CxxToken::GetSpace [ct/CxxToken.h]
    ct/CodeFile.cpp
+   ct/CodeWarning.cpp
    ct/CxxArea.cpp
    ct/CxxArea.h
    ct/CxxNamed.cpp
@@ -16667,6 +16688,7 @@ CodeTools::CxxToken::GetTemplateArgs [ct/CxxToken.h]
    ct/CxxToken.cpp
    ct/Parser.cpp
 CodeTools::CxxToken::GetTypeSpec [ct/CxxToken.h]
+   ct/CodeWarning.cpp
    ct/CxxArea.cpp
    ct/CxxExecute.cpp
    ct/CxxNamed.cpp
@@ -16893,6 +16915,7 @@ CodeTools::CxxToken::Type [ct/CxxToken.h]
    ct/Editor.cpp
    ct/Parser.cpp
 CodeTools::CxxToken::TypeString [ct/CxxToken.h]
+   ct/CodeWarning.cpp
    ct/CxxArea.cpp
    ct/CxxArea.h
    ct/CxxDirective.cpp
@@ -18601,9 +18624,9 @@ CodeTools::LibraryItem::Name [ct/LibraryItem.h]
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
    ct/CodeIncrement.cpp
+   ct/CodeWarning.cpp
    ct/CxxExecute.cpp
    ct/CxxNamed.cpp
-   ct/CxxScope.cpp
    ct/CxxScoped.cpp
    ct/Editor.cpp
    ct/Library.cpp
@@ -62929,6 +62952,7 @@ INT8_MAX [subs/cstdint]
 INT8_MIN [subs/cstdint]
    ct/CxxToken.cpp
 SIZE_MAX [subs/cstdint]
+   ct/CodeTypes.cpp
    ct/CodeTypes.h
    ct/CxxArea.cpp
    ct/CxxScope.cpp
@@ -63096,7 +63120,6 @@ uint8_t [subs/cstdint]
    cb/BcAddress.h
    cb/BcCause.h
    cb/BcProgress.h
-   ct/CodeTypes.h
    ct/CodeWarning.cpp
    ct/CodeWarning.h
    ct/CxxScope.h
@@ -64303,6 +64326,9 @@ std::unique_ptr [subs/memory]
    nb/Thread.cpp
    nw/SysTcpSocket.win.cpp
 std::unique_ptr::get [subs/memory]
+   dip/TokenMessage.cpp
+   nw/SysTcpSocket.win.cpp
+std::unique_ptr::get [subs/memory]
    an/PotsShelfHandler.cpp
    ct/CodeFile.cpp
    ct/CodeIncrement.cpp
@@ -64361,11 +64387,6 @@ std::unique_ptr::get [subs/memory]
    sb/SbInvokerPools.cpp
    sn/PotsCallHandler.cpp
    st/StTestData.cpp
-std::unique_ptr::get [subs/memory]
-   dip/TokenMessage.cpp
-   nw/SysTcpSocket.win.cpp
-std::unique_ptr::release [subs/memory]
-   dip/TokenMessage.cpp
 std::unique_ptr::release [subs/memory]
    ct/CodeSet.cpp
    ct/CxxArea.cpp
@@ -64399,10 +64420,8 @@ std::unique_ptr::release [subs/memory]
    sb/InvokerThread.cpp
    sb/Message.cpp
    sb/SbInputHandler.cpp
-std::unique_ptr::reset [subs/memory]
+std::unique_ptr::release [subs/memory]
    dip/TokenMessage.cpp
-   nb/Thread.cpp
-   nw/SysTcpSocket.win.cpp
 std::unique_ptr::reset [subs/memory]
    an/PotsShelfIpService.cpp
    cb/BcProtocol.cpp
@@ -64467,6 +64486,10 @@ std::unique_ptr::reset [subs/memory]
    sn/PotsStatistics.cpp
    st/StIncrement.cpp
    st/StTestData.cpp
+std::unique_ptr::reset [subs/memory]
+   dip/TokenMessage.cpp
+   nb/Thread.cpp
+   nw/SysTcpSocket.win.cpp
 operator delete [subs/new]
    nb/SysHeap.cpp
 operator delete[] [subs/new]
@@ -66169,6 +66192,7 @@ std::basic_string::clear [subs/string]
    nw/NwIncrement.cpp
    nw/SysIpL2Addr.win.cpp
 std::basic_string::compare(const std::basic_string* const,const std::basic_string) [subs/string]
+   ct/CodeWarning.cpp
    ct/Cxx.cpp
    ct/CxxArea.cpp
    ct/CxxNamed.cpp
@@ -66249,6 +66273,7 @@ std::basic_string::find(const std::basic_string* const,const std::basic_string,u
    ct/CodeFileSet.cpp
    ct/CodeIncrement.cpp
    ct/CodeTypes.cpp
+   ct/CodeWarning.cpp
    ct/CxxArea.cpp
    ct/CxxExecute.cpp
    ct/CxxNamed.cpp
@@ -66328,6 +66353,7 @@ std::basic_string::npos [subs/string]
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
    ct/CodeIncrement.cpp
+   ct/CodeWarning.cpp
    ct/CodeWarning.h
    ct/Cxx.cpp
    ct/CxxArea.cpp
@@ -67257,6 +67283,7 @@ std::vector::empty [subs/vector]
    ct/CodeCoverage.cpp
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
+   ct/CodeWarning.cpp
    ct/CxxArea.cpp
    ct/CxxExecute.cpp
    ct/CxxNamed.cpp

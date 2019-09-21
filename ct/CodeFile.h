@@ -29,6 +29,7 @@
 #include <string>
 #include "CodeTypes.h"
 #include "CxxFwd.h"
+#include "CxxString.h"
 #include "Lexer.h"
 #include "LibraryTypes.h"
 #include "RegCell.h"
@@ -180,7 +181,7 @@ public:
    //  Classifies a line of code (S) and updates WARNINGS with any warnings
    //  that were found.
    //
-   static LineType ClassifyLine(std::string s, std::set< Warning >& warnings);
+   LineType ClassifyLine(std::string s, std::set< Warning >& warnings) const;
 
    //  Returns the LineType for line N.  Returns LineType_N if N is out
    //  of range.
@@ -190,6 +191,14 @@ public:
    //  Returns the level of indentation for a line.
    //
    int8_t GetDepth(size_t line) const;
+
+   //  Returns the file's indentation size.
+   //
+   size_t IndentSize() const;
+
+   //  Returns the file's maximum line length.
+   //
+   size_t LineLengthMax() const;
 
    //  Returns a standard name for an #include guard.  Returns EMPTY_STR
    //  if the file is not a header file.
@@ -303,8 +312,12 @@ private:
    //
    LineType ClassifyLine(size_t n);
 
-   //  Checks for the standard lines that should appear at the top
-   //  of each file.
+   //  Returns the file's prolog (comments that should appear at the top
+   //  of the file).
+   //
+   const stringVector& Prolog() const;
+
+   //  Checks the file's prolog.
    //
    void CheckProlog();
 

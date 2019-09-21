@@ -911,8 +911,9 @@ void CxxSymbols::RecordUsage(const CxxNamed* item, id_t fid)
 
 void CxxSymbols::Shrink() const
 {
-   //c This does not yet shrink its containers.
-
+   //  This cannot shrink its containers.  An unordered multimap does not
+   //  support shrink_to_fit, and the strings in each tuple are const.
+   //
    size_t ssize = 0;
    size_t vsize = 0;
 

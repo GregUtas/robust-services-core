@@ -368,7 +368,7 @@ word CodeFileSet::Fix
    *cli.obuf << "The following is also automatic in modified files:" << CRLF;
    *cli.obuf << "  o Whitespace at the end of a line is deleted." << CRLF;
    *cli.obuf << "  o A repeated blank line is deleted." << CRLF;
-   *cli.obuf << "  o Tabs are replaced by spaces based on INDENT_SIZE." << CRLF;
+   *cli.obuf << "  o Spaces replace tabs based on IndentSize()." << CRLF;
 
    //  In order to fix warnings in a file, it must have been checked.
    //
@@ -387,11 +387,8 @@ word CodeFileSet::Fix
       if(rc != 0) return rc;
    }
 
-   if(Editor::CommitCount() == prev)
-   {
-      *cli.obuf << "No warnings that could be fixed were found." << CRLF;
-   }
-
+   auto changed = Editor::CommitCount() - prev;
+   *cli.obuf << changed << " file(s) were changed." << CRLF;
    return 0;
 }
 

@@ -587,64 +587,29 @@ void Class::CheckOverrides() const
    Debug::ft(Class_CheckOverrides);
 
    //  Check for overrides of Patch and Display.  The following are exempt:
-   //  o Classes outside of NodeBase and SessionBase (Patch only).
-   //  o Templates (Patch only).
-   //  o Classes not derived from Base (Display) or Object (Patch).
-   //  o Template instances (any warnings apply to the template itself).
-   //c Allow the above to be customized through a configuration file.
+   //  o Template instances (any warnings apply to the template).
+   //  o Classes not derived from Base (Display).
+   //  o Templates and classes not derived from Object (Patch).
    //
-   auto space = GetSpace();
-   if(space == nullptr) return;
    if(IsInTemplateInstance()) return;
    if(!DerivesFrom("Base")) return;
+   auto patch = !IsTemplate() && DerivesFrom("Object");
 
    //  Unless the class has no data, or only static const data, it
    //  should override Display.
    //
    auto display = false;
-
    auto data = Datas();
 
    for(auto d = data->cbegin(); d != data->cend(); ++d)
    {
-      auto mem = d->get();
-
-      if(mem->IsStatic() && mem->IsConst()) continue;
+      if((*d)->IsStatic() && (*d)->IsConst()) continue;
       display = true;
       break;
    }
 
-   //  A class should override Patch unless it is a template, does not
-   //  derive from Object, or is not in NodeBase or SessionBase.  Also
-   //  exempt are trivial leaf classes.
-   //
-   auto patch = !IsTemplate();
-   if(patch && !DerivesFrom("Object")) patch = false;
-   if(patch)
-   {
-      auto& name = *space->Name();
-      patch = (name == "NodeBase");
-      patch = patch || (name == "NetworkBase");
-      patch = patch || (name == "SessionBase");
-   }
-
-   if(subs_.empty())
-   {
-      if(display && DerivesFrom("Module")) display = false;
-      if(display && DerivesFrom("Statistic")) display = false;
-      if(display && DerivesFrom("StatisticsGroup")) display = false;
-      if(display && DerivesFrom("Tool")) display = false;
-
-      if(patch && DerivesFrom("CliParm")) patch = false;
-      if(patch && DerivesFrom("CfgParm")) patch = false;
-      if(patch && DerivesFrom("Statistic")) patch = false;
-      if(patch && DerivesFrom("StatisticsGroup")) patch = false;
-      if(patch && DerivesFrom("Tool")) patch = false;
-   }
-
-   if(display && DerivesFrom("CxxToken")) display = false;
-
-   //  Look for overrides of Patch and Display.
+   //  Look for overrides of Patch and Display.  Classes without
+   //  a standard function are exempt from overriding Patch.
    //
    auto simple = true;
    auto funcs = Funcs();

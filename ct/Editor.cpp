@@ -362,7 +362,7 @@ word Editor::ChangeDebugFtName(const CodeWarning& log, string& expl)
    auto where = source_.erase(dbegin.iter);
    if(split) where = source_.erase(where);
    where = source_.insert(where, SourceLine(defn, SIZE_MAX));
-   if(defn.size() > LINE_LENGTH_MAX)
+   if(defn.size() > file_->LineLengthMax())
    {
       auto pos = defn.find('=');
       InsertLineBreak(where, pos + 1);
@@ -548,6 +548,8 @@ word Editor::ConvertTabsToBlanks()
 {
    Debug::ft(Editor_ConvertTabsToBlanks);
 
+   auto indent = file_->IndentSize();
+
    //  Run through the source, looking for a line of code that contains a tab.
    //
    for(auto s = source_.begin(); s != source_.end(); ++s)
@@ -560,9 +562,9 @@ word Editor::ConvertTabsToBlanks()
          //  into UNTABBED.  Run through the rest of the line, copying
          //  non-tab characters to UNTABBED.  Replace each tab with the
          //  number of spaces needed to reach the next tab stop, namely
-         //  the next even multiple of INDENT_SIZE.  This code doesn't
-         //  bother to skip over character and string literals, which
-         //  should use \t or TAB or something that is actually visible.
+         //  the next even multiple of INDENT.  This code doesn't bother
+         //  to skip over character and string literals, which should use
+         //  \t or TAB or something that is actually visible.
          //
          string untabbed = s->code.substr(0, pos);
 
@@ -576,8 +578,8 @@ word Editor::ConvertTabsToBlanks()
             }
             else
             {
-               int spaces = untabbed.size() % INDENT_SIZE;
-               if(spaces == 0) spaces = INDENT_SIZE;
+               int spaces = untabbed.size() % indent;
+               if(spaces == 0) spaces = indent;
 
                for(NO_OP; spaces > 0; --spaces)
                {
@@ -602,7 +604,7 @@ word Editor::ConvertTabsToBlanks()
 fn_name Editor_DebugFtCode = "Editor.DebugFtCode";
 
 void Editor::DebugFtCode
-   (const Function* func, std::string& defn, std::string& call)
+   (const Function* func, std::string& defn, std::string& call) const
 {
    Debug::ft(Editor_DebugFtCode);
 
@@ -638,7 +640,7 @@ void Editor::DebugFtCode
    defn.append(" = ");
    defn.append(dslit);
    defn.push_back(';');
-   call = string(INDENT_SIZE, SPACE) + "Debug::ft(";
+   call = string(file_->IndentSize(), SPACE) + "Debug::ft(";
    call.append(dname);
    call.append(");");
 }
@@ -1129,9 +1131,10 @@ bool Editor::EraseLineBreak(const Iter& curr)
    if(!LineTypeAttr::Attrs[type].isMergeable) return false;
    type = GetLineType(next);
    if(!LineTypeAttr::Attrs[type].isMergeable) return false;
-   if(!LinesCanBeMerged
+   auto size = LineMergeLength
       (curr->code, 0, curr->code.size() - 1,
-       next->code, 0, next->code.size() - 1)) return false;
+       next->code, 0, next->code.size() - 1);
+   if(size > file_->LineLengthMax()) return false;
 
    //  Merge the lines.
    //
@@ -2131,7 +2134,7 @@ LineType Editor::GetLineType(const Iter& iter) const
    std::set< Warning > warnings;
 
    if(iter->line != SIZE_MAX) return file_->GetLineType(iter->line);
-   return CodeFile::ClassifyLine(iter->code, warnings);
+   return file_->ClassifyLine(iter->code, warnings);
 }
 
 //------------------------------------------------------------------------------
@@ -2217,7 +2220,7 @@ size_t Editor::Indent(const Iter& iter, bool split)
       if((first != string::npos) && (iter->code[first] != '{')) ++depth;
    }
 
-   auto indent = depth * INDENT_SIZE;
+   auto indent = depth * file_->IndentSize();
    iter->code.insert(0, indent, SPACE);
    Changed();
    return indent;
@@ -2358,7 +2361,7 @@ word Editor::InsertDebugFtCall(const CodeWarning& log, string& expl)
       auto above = Insert(name.iter, EMPTY_STR);
       above = Insert(above, defn);
 
-      if(defn.size() > LINE_LENGTH_MAX)
+      if(defn.size() > file_->LineLengthMax())
       {
          auto pos = defn.find('=');
          InsertLineBreak(above, pos + 1);
@@ -2414,9 +2417,9 @@ word Editor::InsertDefaultFunction(const CodeWarning& log, string& expl)
    string prefix;
    auto indent = curr->code.find_first_not_of(WhitespaceChars);
    if(indent == string::npos)
-      prefix = spaces(INDENT_SIZE);
+      prefix = spaces(file_->IndentSize());
    else if(curr->code.at(indent) == '}')
-      prefix = spaces(indent + INDENT_SIZE);
+      prefix = spaces(indent + file_->IndentSize());
    else
       prefix = spaces(indent);
 
@@ -2517,7 +2520,7 @@ word Editor::InsertForward(const CodeWarning& log, string& expl)
 
    //  LOGS provides the forward's namespace and any template parameters.
    //
-   string forward = spaces(INDENT_SIZE) + log.info_ + ';';
+   string forward = spaces(file_->IndentSize()) + log.info_ + ';';
    auto srPos = forward.find(SCOPE_STR);
    if(srPos == string::npos) return NotFound(expl, "Forward's namespace.");
 

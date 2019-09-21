@@ -207,7 +207,7 @@ word ThreadAdmin::RtcInterval_          = 60;
 bool ThreadAdmin::BreakEnabled_         = false;
 word ThreadAdmin::TrapLimit_            = 4;
 word ThreadAdmin::TrapInterval_         = 60;
-word ThreadAdmin::StackUsageLimit_      = 6000;
+word ThreadAdmin::StackUsageLimit_      = 8000;
 word ThreadAdmin::StackCheckInterval_   = 1;
 
 //------------------------------------------------------------------------------
@@ -266,7 +266,7 @@ ThreadAdmin::ThreadAdmin()
       &Debug::FcFlags_, Debug::StackChecking, "set to check stack sizes"));
    creg->BindParm(*checkStack_);
 
-   stackUsageLimit_.reset(new CfgIntParm("StackUsageLimit", "6000",
+   stackUsageLimit_.reset(new CfgIntParm("StackUsageLimit", "8000",
       &StackUsageLimit_, 4000, 20000, "stack usage that traps thread (words)"));
    creg->BindParm(*stackUsageLimit_);
 

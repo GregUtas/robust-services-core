@@ -52,7 +52,7 @@ namespace NodeBase
 namespace NodeBase
 {
 //  Base class for threads.  All threads should subclass from this, as it
-//  provides functions that support a carrier-grade programming model.
+//  provides functions that support RSC's programming model.
 //
 class Thread : public Pooled
 {

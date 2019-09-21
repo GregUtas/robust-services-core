@@ -224,7 +224,7 @@ const LineTypeAttr LineTypeAttr::Attrs[LineType_N + 1] =
 
 //------------------------------------------------------------------------------
 
-bool LinesCanBeMerged
+size_t LineMergeLength
    (const string& line1, size_t begin1, size_t end1,
     const string& line2, size_t begin2, size_t end2)
 {
@@ -233,18 +233,18 @@ bool LinesCanBeMerged
    //  a semicolon.  If LINE2 doesn't start with a left parenthesis, a space
    //  will also have to be inserted when merging.
    //
-   if(line1.at(end1) == ';') return false;
-   if(line1.at(end1) == ':') return false;
-   if(line1.at(end1) == '}') return false;
-   if(line2.at(end2) != ';') return false;
-   if(line1.find(COMMENT_STR, begin1) < end1) return false;
+   if(line1.at(end1) == ';') return SIZE_MAX;
+   if(line1.at(end1) == ':') return SIZE_MAX;
+   if(line1.at(end1) == '}') return SIZE_MAX;
+   if(line2.at(end2) != ';') return SIZE_MAX;
+   if(line1.find(COMMENT_STR, begin1) < end1) return SIZE_MAX;
    auto first1 = line1.find_first_not_of(WhitespaceChars, begin1);
-   if(line1.find(IF_STR, first1) == first1) return false;
-   if(line1.find(ELSE_STR, first1) == first1) return false;
+   if(line1.find(IF_STR, first1) == first1) return SIZE_MAX;
+   if(line1.find(ELSE_STR, first1) == first1) return SIZE_MAX;
    begin2 = line2.find_first_not_of(WhitespaceChars, begin2);
    auto size = (end1 - begin1 + 1) + (end2 - begin2 + 1);
    if(line2.at(begin2) != '(') ++size;
-   return (size <= LINE_LENGTH_MAX);
+   return size;
 }
 
 //==============================================================================

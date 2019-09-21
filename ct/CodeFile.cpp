@@ -41,7 +41,6 @@
 #include "CxxRoot.h"
 #include "CxxScope.h"
 #include "CxxScoped.h"
-#include "CxxString.h"
 #include "CxxSymbols.h"
 #include "CxxToken.h"
 #include "Debug.h"
@@ -922,7 +921,8 @@ void CodeFile::CheckLineBreaks()
       auto end1 = code_.find(CRLF, begin1) - 1;
       auto begin2 = lexer_.GetLineStart(n + 1);
       auto end2 = code_.find(CRLF, begin2) - 1;
-      if(LinesCanBeMerged(code_, begin1, end1, code_, begin2, end2))
+      auto size = LineMergeLength(code_, begin1, end1, code_, begin2, end2);
+      if(size <= LineLengthMax())
       {
          LogLine(n, RemoveLineBreak);
       }
@@ -931,33 +931,9 @@ void CodeFile::CheckLineBreaks()
 
 //------------------------------------------------------------------------------
 
-const size_t FilePrologSize = 18;
-
-fixed_string FileProlog[FilePrologSize] =
-{
-   EMPTY_STR,
-   "Copyright (C) 2017  Greg Utas",
-   EMPTY_STR,
-   "This file is part of the Robust Services Core (RSC).",
-   EMPTY_STR,
-   "RSC is free software: you can redistribute it and/or modify it under the",
-   "terms of the GNU General Public License as published by the Free Software",
-   "Foundation, either version 3 of the License, or (at your option) any later",
-   "version.",
-   EMPTY_STR,
-   "RSC is distributed in the hope that it will be useful, but WITHOUT ANY",
-   "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS",
-   "FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more",
-   "details.",
-   EMPTY_STR,
-   "You should have received a copy of the GNU General Public License along",
-   "with RSC.  If not, see <http://www.gnu.org/licenses/>.",
-   EMPTY_STR
-};
-
 fn_name CodeFile_CheckProlog = "CodeFile.CheckProlog";
 
-void CodeFile::CheckProlog()  //*
+void CodeFile::CheckProlog()
 {
    Debug::ft(CodeFile_CheckProlog);
 
@@ -982,17 +958,18 @@ void CodeFile::CheckProlog()  //*
    ok = ok && (code_.find(Name(), pos) == pos + 4);
    if(!ok) return LogLine(2, HeadingNotStandard);
 
+   auto prolog = Prolog();
    size_t line = 3;
 
-   for(auto i = 0; i < FilePrologSize; ++i)
+   for(size_t i = 0; i < prolog.size(); ++i)
    {
       pos = lexer_.GetLineStart(line);
       ok = ok && (code_.find(COMMENT_STR, pos) == pos);
 
-      if(FileProlog[i] == EMPTY_STR)
+      if(prolog[i].empty())
          ok = ok && (lineType_[line] == EmptyComment);
       else
-         ok = ok && (code_.find(FileProlog[i], pos) == pos + 4);
+         ok = ok && (code_.find(prolog[i], pos) == pos + 4);
 
       if(!ok) return LogLine(line, HeadingNotStandard);
       ++line;
@@ -1120,7 +1097,7 @@ void CodeFile::CheckUsings() const
 
 fn_name CodeFile_ClassifyLine1 = "CodeFile.ClassifyLine(string)";
 
-LineType CodeFile::ClassifyLine(string s, std::set< Warning >& warnings)
+LineType CodeFile::ClassifyLine(string s, std::set< Warning >& warnings) const
 {
    Debug::ft(CodeFile_ClassifyLine1);
 
@@ -1130,7 +1107,7 @@ LineType CodeFile::ClassifyLine(string s, std::set< Warning >& warnings)
    //  If the line is too long, flag it unless it ends in a string literal
    //  (a quotation mark followed by a semicolon or, within a list, a comma).
    //
-   if(length > LINE_LENGTH_MAX)
+   if(length > LineLengthMax())
    {
       auto end = s.substr(length - 2);
       if((end != "\";") && (end != "\",")) warnings.insert(LineLength);
@@ -1165,7 +1142,7 @@ LineType CodeFile::ClassifyLine(string s, std::set< Warning >& warnings)
    auto pos = s.find_first_not_of(SPACE);
    if(pos > 0) s.erase(0, pos);
 
-   if(pos % INDENT_SIZE != 0)
+   if(pos % IndentSize() != 0)
    {
       if((s[0] != '/') && (s[0] != QUOTE)) warnings.insert(Indentation);
    }
@@ -1228,7 +1205,7 @@ LineType CodeFile::ClassifyLine(string s, std::set< Warning >& warnings)
    //  Look for strings that provide function names for Debug::ft.  These
    //  have the format
    //    fn_name ClassName_FunctionName = "ClassName.FunctionName";
-   //  with an endline after the '=' if the line would exceed LINE_LENGTH_MAX
+   //  with an endline after the '=' if the line would exceed LineLengthMax
    //  characters.
    //
    string type(FunctionName::TypeStr);
@@ -1949,6 +1926,13 @@ const SetOfIds& CodeFile::Implementers()
 
 //------------------------------------------------------------------------------
 
+size_t CodeFile::IndentSize() const
+{
+   return INDENT_SIZE;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeFile_InputStream = "CodeFile.InputStream";
 
 istreamPtr CodeFile::InputStream() const
@@ -2101,6 +2085,13 @@ bool CodeFile::IsTemplateHeader() const
    }
 
    return (!funcs_.empty());
+}
+
+//------------------------------------------------------------------------------
+
+size_t CodeFile::LineLengthMax() const
+{
+   return LINE_LENGTH_MAX;
 }
 
 //------------------------------------------------------------------------------
@@ -2426,6 +2417,35 @@ string CodeFile::Path(bool full) const
    }
 
    return name;
+}
+
+//------------------------------------------------------------------------------
+
+const stringVector DEFAULT_PROLOG =
+{
+   EMPTY_STR,
+   "Copyright (C) 2017  Greg Utas",
+   EMPTY_STR,
+   "This file is part of the Robust Services Core (RSC).",
+   EMPTY_STR,
+   "RSC is free software: you can redistribute it and/or modify it under the",
+   "terms of the GNU General Public License as published by the Free Software",
+   "Foundation, either version 3 of the License, or (at your option) any later",
+   "version.",
+   EMPTY_STR,
+   "RSC is distributed in the hope that it will be useful, but WITHOUT ANY",
+   "WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS",
+   "FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more",
+   "details.",
+   EMPTY_STR,
+   "You should have received a copy of the GNU General Public License along",
+   "with RSC.  If not, see <http://www.gnu.org/licenses/>.",
+   EMPTY_STR
+};
+
+const stringVector& CodeFile::Prolog() const
+{
+   return DEFAULT_PROLOG;
 }
 
 //------------------------------------------------------------------------------

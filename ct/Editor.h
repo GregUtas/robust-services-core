@@ -348,8 +348,8 @@ private:
    CodeLocation InsertLineBreak(const Iter& iter, size_t pos);
 
    //  Deletes the line break at the end of the line referenced by CURR if
-   //  the following line will also fit within LINE_LENGTH_MAX.  Returns
-   //  true if the line break was deleted.
+   //  the following line will also fit within LineLengthMax.  Returns true
+   //  if the line break was deleted.
    //
    bool EraseLineBreak(const Iter& curr);
 
@@ -444,8 +444,8 @@ private:
 
    //  Supplies the code for a Debug::Ft fn_name definition and invocation.
    //
-   static void DebugFtCode
-      (const Function* func, std::string& defn, std::string& call);
+   void DebugFtCode
+      (const Function* func, std::string& defn, std::string& call) const;
 
    //  Adds the editor to Editors_ and returns 0.
    //

@@ -2452,8 +2452,7 @@ fn_name Thread_ResumeLocked = "Thread.ResumeLocked";
 
 void Thread::ResumeLocked(fn_name_arg func)
 {
-   //  Update data associated with running unpreemptably and start the
-   //  RTC timer.
+   //  Set the time before which the thread should schedule itself out.
    //
    auto msecs = InitialMsecs() << ThreadAdmin::WarpFactor();
    if(!priv_->entered_) msecs <<= 2;

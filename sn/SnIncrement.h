@@ -23,9 +23,9 @@
 #define SNINCREMENT_H_INCLUDED
 
 #include "CliIncrement.h"
+#include "NbTypes.h"
 
 using namespace NodeBase;
-#include "NbTypes.h"
 
 //------------------------------------------------------------------------------
 

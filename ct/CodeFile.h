@@ -237,7 +237,7 @@ public:
    //  Invokes the editor to interactively fix warnings found by Check().
    //
    NodeBase::word Fix(NodeBase::CliThread& cli,
-      const FixOptions& opts, std::string& expl) const;
+      FixOptions& opts, std::string& expl) const;
 
    //  Invokes the editor to format the file's source code.
    //
@@ -325,7 +325,11 @@ private:
    //
    void CheckIncludeGuard();
 
-   //  Looks for #include directives that should be removed.
+   //  Looks for #include directives that follow code.
+   //
+   void CheckIncludes();
+
+   //  Looks for unsorted and duplicated #include directives.
    //
    void CheckIncludeOrder() const;
 

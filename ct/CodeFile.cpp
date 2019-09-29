@@ -615,6 +615,7 @@ void CodeFile::Check()
    CheckLineBreaks();
    CheckFunctionOrder();
    CheckDebugFt();
+   CheckIncludes();
    CheckIncludeOrder();
    checked_ = true;
 }
@@ -899,6 +900,33 @@ void CodeFile::CheckIncludeOrder() const
 
       group1 = group2;
       name1 = name2;
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeFile_CheckIncludes = "CodeFile.CheckIncludes";
+
+void CodeFile::CheckIncludes()
+{
+   Debug::ft(CodeFile_CheckIncludes);
+
+   //  Log any #include directive that follows code.
+   //
+   auto code = false;
+
+   for(size_t i = 0; i < lineType_.size(); ++i)
+   {
+      switch(lineType_[i])
+      {
+      case HashDirective:
+         break;
+      case IncludeDirective:
+         if(code) LogLine(i, IncludeFollowsCode);
+         break;
+      default:
+         if(LineTypeAttr::Attrs[lineType_[i]].isCode) code = true;
+      }
    }
 }
 
@@ -1650,7 +1678,7 @@ Using* CodeFile::FindUsingFor(const string& fqName, size_t prefix,
 
 fn_name CodeFile_Fix = "CodeFile.Fix";
 
-word CodeFile::Fix(CliThread& cli, const FixOptions& opts, string& expl) const
+word CodeFile::Fix(CliThread& cli, FixOptions& opts, string& expl) const
 {
    Debug::ft(CodeFile_Fix);
 
@@ -2015,7 +2043,6 @@ Include* CodeFile::InsertInclude(const string& fn)
    {
       if(*(*i)->Name() == fn)
       {
-         (*i)->SetScope(Context::Scope());
          items_.push_back(i->get());
          return i->get();
       }

@@ -71,7 +71,7 @@ private:
    //  Returns a non-zero value and updates EXPL with an explanation.
    //
    NodeBase::word Fix(NodeBase::CliThread& cli,
-      const FixOptions& opts, std::string& expl) const override;
+      FixOptions& opts, std::string& expl) const override;
 
    //  Returns a non-zero value and updates EXPL with an explanation.
    //

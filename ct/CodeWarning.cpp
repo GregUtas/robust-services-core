@@ -435,12 +435,12 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(DefineNotAtFileScope,
       WarningAttrs(F, X,
       "#define appears within a class or function")));
-   Attrs_.insert(WarningPair(IncludeNotAtGlobalScope,
-      WarningAttrs(F, X,
-      "No #include guard found")));
+   Attrs_.insert(WarningPair(IncludeFollowsCode,
+      WarningAttrs(T, U,
+      "#include appears after code")));
    Attrs_.insert(WarningPair(IncludeGuardMissing,
       WarningAttrs(T, C,
-      "#include appears outside of global namespace")));
+      "No #include guard found")));
    Attrs_.insert(WarningPair(IncludeNotSorted,
       WarningAttrs(T, U,
       "#include not sorted in standard order")));

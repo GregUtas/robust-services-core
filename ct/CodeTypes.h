@@ -375,7 +375,7 @@ enum Warning
    RedundantSemicolon,       // unnecessary semicolon
    RedundantConst,           // more than one const qualifier for same token
    DefineNotAtFileScope,     // #define appears within a class or function
-   IncludeNotAtGlobalScope,  // #include appears outside of global namespace
+   IncludeFollowsCode,       // #include appears after code
    IncludeGuardMissing,      // no #include guard
    IncludeNotSorted,         // #include not sorted in standard order
    IncludeDuplicated,        // #include already exists for this file
@@ -493,6 +493,7 @@ struct FixOptions
 {
    Warning warning;  // type of warning to fix
    bool prompt;      // whether to prompt before fixing a warning
+   bool multiple;    // multiple files being fixed
 };
 
 //------------------------------------------------------------------------------

@@ -67,7 +67,7 @@ public:
    //  Fixes warnings detected by >check.
    //
    NodeBase::word Fix(NodeBase::CliThread& cli,
-      const FixOptions& opts, std::string& expl) const override;
+      FixOptions& opts, std::string& expl) const override;
 
    //  Formats the code files in the set.
    //

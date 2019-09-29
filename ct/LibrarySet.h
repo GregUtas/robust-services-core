@@ -99,7 +99,7 @@ public:
    //  an explanation.
    //
    virtual NodeBase::word Fix(NodeBase::CliThread& cli,
-      const FixOptions& opts, std::string& expl) const;
+      FixOptions& opts, std::string& expl) const;
 
    //  On success, returns 0 after reformatting the file.  Returns another
    //  value on failure and updates EXPL with an explanation.

@@ -1839,24 +1839,25 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
    if(found)
    {
       if(exit || (rc != 0))
-         *cli.obuf << spaces(2) << "Remaining warnings skipped.";
+         *cli.obuf << spaces(2) << "Remaining warnings skipped." << CRLF;
       else
-         *cli.obuf << spaces(2) << "End of warnings.";
+         *cli.obuf << spaces(2) << "End of warnings." << CRLF;
    }
    else if(fixed)
    {
       *cli.obuf << spaces(2) << "Selected warning(s) in ";
-      *cli.obuf << file_->Name() << " previously fixed.";
+      *cli.obuf << file_->Name() << " previously fixed." << CRLF;
    }
    else
    {
-      if(opts.warning == AllWarnings)
-         *cli.obuf << "No warnings that can be fixed were found.";
-      else
-         *cli.obuf << "Fixing this type of warning is not supported.";
+      if(!opts.multiple)
+      {
+         if(opts.warning == AllWarnings)
+            *cli.obuf << "No warnings that can be fixed were found." << CRLF;
+         else
+            *cli.obuf << "Fixing this warning type is not supported." << CRLF;
+      }
    }
-
-   *cli.obuf << CRLF;
 
    //  Write out the modified file(s).
    //
@@ -1914,12 +1915,13 @@ WarningStatus Editor::FixStatus(const CodeWarning& log) const
 {
    Debug::ft(Editor_FixStatus);
 
-   if((log.warning_ == IncludeNotSorted) && (log.status == NotFixed))
+   if((log.warning_ == IncludeNotSorted) ||
+      (log.warning_ == IncludeFollowsCode))
    {
-      //  If there are multiple warnings for unsorted #include directives,
-      //  they all gets fixed when the first one is fixed.
+      //  If there are multiple warnings for unsorted or embedded #include
+      //  directives, they all get fixed when the first one gets fixed.
       //
-      if(sorted_) return Fixed;
+      if(sorted_ && (log.status == NotFixed)) return Fixed;
    }
 
    return log.status;
@@ -1945,6 +1947,8 @@ word Editor::FixWarning(const CodeWarning& log, string& expl)
       return EraseSemicolon(log, expl);
    case RedundantConst:
       return EraseConst(log, expl);
+   case IncludeFollowsCode:
+      return SortIncludes(expl);
    case IncludeGuardMissing:
       return InsertIncludeGuard(log, expl);
    case IncludeNotSorted:
@@ -3318,28 +3322,47 @@ word Editor::SortIncludes(string& expl)
 {
    Debug::ft(Editor_SortIncludes);
 
-   //  Just sort the #include directives.
-   //
-   auto begin = IncludesBegin();
-   if(begin == source_.end()) return NotFound(expl, HASH_INCLUDE_STR);
-   auto end = IncludesEnd();
-
    //  std::list does not support a sort bounded by iterators, so move all of
    //  the #include statements into a new list, sort them, and reinsert them.
+   //  BEGIN is the line above the first #include.
    //
+   auto begin = source_.cend();
    std::list< SourceLine > includes;
 
-   for(auto s = begin; s != end; NO_OP)
+   for(auto s = source_.cbegin(); s != source_.cend(); NO_OP)
    {
-      includes.push_back(SourceLine(s->code, s->line));
-      s = source_.erase(s);
+      if(s->code.find(HASH_INCLUDE_STR) == 0)
+      {
+         if((begin == source_.cend()) &&
+            (s != source_.cbegin()))
+         {
+            begin = std::prev(s);
+         }
+
+         includes.push_back(SourceLine(s->code, s->line));
+         s = source_.erase(s);
+      }
+      else
+      {
+         ++s;
+      }
    }
+
+   if(includes.empty()) return NotFound(expl, HASH_INCLUDE_STR);
+
+   //  Reinsert the #includes after the line where they originally appeared.
+   //  If BEGIN is still cend(), the first line in the file was an #include.
+   //
+   if(begin != source_.cend())
+      ++begin;
+   else
+      begin = source_.cbegin();
 
    includes.sort(IsSorted1);
 
    for(auto s = includes.begin(); s != includes.end(); ++s)
    {
-      source_.insert(end, *s);
+      source_.insert(begin, *s);
    }
 
    sorted_ = true;

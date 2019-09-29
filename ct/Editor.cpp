@@ -3694,9 +3694,12 @@ word Editor::Write(string& expl)
    //  functions defined in this file had their angle brackets or quotes mangled
    //  for sorting purposes.  Fix this.
    //
-   for(auto s = IncludesBegin(); s != IncludesEnd(); ++s)
+   for(auto s = source_.begin(); s != source_.end(); ++s)
    {
-      s->code = DemangleInclude(s->code);
+      if(s->code.find(HASH_INCLUDE_STR) == 0)
+      {
+         s->code = DemangleInclude(s->code);
+      }
    }
 
    for(auto s = source_.cbegin(); s != source_.cend(); ++s)

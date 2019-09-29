@@ -759,6 +759,9 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(ReturnsNonConstMember,
       WarningAttrs(F, X,
       "Function returns non-const reference or pointer to member data")));
+   Attrs_.insert(WarningPair(FunctionCouldBeMember,
+      WarningAttrs(F, X,
+      "Function could be a member of a class that is an indirect argument")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(F, X,
       ERROR_STR)));

@@ -2729,6 +2729,31 @@ void Function::CheckForVirtualDefault() const
 
 //------------------------------------------------------------------------------
 
+fn_name Function_CheckFree = "Function.CheckFree";
+
+void Function::CheckFree() const
+{
+   Debug::ft(Function_CheckFree);
+
+   //  This function can be free.  But if it has a possible "this" argument
+   //  for another class, it should probably be a member of that class.
+   //
+   for(size_t i = (this_ ? 1 : 0); i < args_.size(); ++i)
+   {
+      auto cls = args_[i]->IsThisCandidate();
+
+      if((cls != nullptr) && (cls != GetClass()))
+      {
+         LogToBoth(FunctionCouldBeMember, i);
+         return;
+      }
+   }
+
+   LogToBoth(FunctionCouldBeFree);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Function_CheckIfCouldBeConst = "Function.CheckIfCouldBeConst";
 
 void Function::CheckIfCouldBeConst() const
@@ -2908,13 +2933,13 @@ void Function::CheckMemberUsage() const
    //  The function can be free if
    //  (a) it only accessed public members, and
    //  (b) it's not inline (which is probably to obey ODR), and
-   //  If the function accessed only public members, it could be free (but if
-   //  Otherwise it could be static.
+   //  (c) it doesn't use a template parameter.
+   //  Otherwise it can be static.
    //
    if(!GetDefn()->nonpublic_ && !inline_ && !tparm_)
-      LogToBoth(FunctionCouldBeFree);
-   else if(!static_)
-      LogToBoth(FunctionCouldBeStatic);
+      CheckFree();
+   else
+      CheckStatic();
 }
 
 //------------------------------------------------------------------------------
@@ -2965,6 +2990,37 @@ void Function::CheckOverride()
    if(!override_ && !final_) Log(OverrideTagMissing);
    virtual_ = true;
    override_ = true;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Function_CheckStatic = "Function.CheckStatic";
+
+void Function::CheckStatic() const
+{
+   Debug::ft(Function_CheckStatic);
+
+   //  If this function isn't static, it could be.
+   //
+   if(!static_)
+   {
+      LogToBoth(FunctionCouldBeStatic);
+      return;
+   }
+
+   //  The function is already static.  But if it has a possible "this"
+   //  argument for its class, it should probably be non-static.
+   //
+   for(size_t i = 0; i < args_.size(); ++i)
+   {
+      auto cls = args_[i]->IsThisCandidate();
+
+      if(cls == GetClass())
+      {
+         LogToBoth(FunctionCouldBeMember, i);
+         return;
+      }
+   }
 }
 
 //------------------------------------------------------------------------------

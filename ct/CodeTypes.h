@@ -368,7 +368,7 @@ enum Warning
    RefTagDetached,           // <type> &<data> instead of <type>& data
    UseOfCast,                // use of C-style cast: (type) expr
    FunctionalCast,           // type(expr) is equivalent to a C-style cast
-   ReinterpretCast,          // use of reinterpret cast
+   ReinterpretCast,          // use of reinterpret_cast
    Downcasting,              // use of cast down inheritance hierarchy
    CastingAwayConstness,     // use of cast to remove const qualifier
    PointerArithmetic,        // use of pointer arithmetic
@@ -483,6 +483,7 @@ enum Warning
    CopyCtorConstructsBase,   // copy/move constructor relies on base constructor
    ValueArgumentModified,    // argument passed by value is modified
    ReturnsNonConstMember,    // returns non-const reference or pointer to member
+   FunctionCouldBeMember,    // static|free but has an indirect class argument
    Warning_N                 // number of warnings
 };
 

@@ -156,6 +156,25 @@ void Argument::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
+fn_name Argument_IsThisCandidate = "Argument.IsThisCandidate";
+
+Class* Argument::IsThisCandidate() const
+{
+   Debug::ft(Argument_IsThisCandidate);
+
+   auto ref = Referent();
+   if(ref == nullptr) return nullptr;
+   if(ref->Type() != Cxx::Class) return nullptr;
+   auto cls = static_cast< Class* >(ref);
+   if(cls == nullptr) return nullptr;
+   if(cls->GetFile()->IsSubsFile()) return nullptr;
+   if(IsConst()) return nullptr;
+   if(spec_->Ptrs(true) + spec_->Refs() == 1) return cls;
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Argument_LogToFunc = "Argument.LogToFunc";
 
 void Argument::LogToFunc(Warning warning) const

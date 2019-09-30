@@ -2068,14 +2068,7 @@ void Friend::SetAsReferent(const CxxNamed* user)
       return;
    }
 
-   //  Provide a string that specifies the forward declaration that
-   //  is equivalent to the friend declaration.
-   //
-   std::ostringstream name;
-   if(parms_ != nullptr) parms_->Print(name, Flags());
-   name << tag_ << SPACE;
-   name << ScopedName(true);
-   user->Log(FriendAsForward, nullptr, 0, false, name.str());
+   user->Log(FriendAsForward);
 }
 
 //------------------------------------------------------------------------------

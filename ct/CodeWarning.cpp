@@ -505,7 +505,7 @@ void CodeWarning::Initialize()
       WarningAttrs(T, D,
       "No referent for friend declaration")));
    Attrs_.insert(WarningPair(FriendAsForward,
-      WarningAttrs(T, C,
+      WarningAttrs(F, X,
       "Indirect reference relies on friend, not forward, declaration")));
    Attrs_.insert(WarningPair(HidesInheritedName,
       WarningAttrs(F, X,

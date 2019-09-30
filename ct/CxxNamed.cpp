@@ -328,8 +328,8 @@ bool CxxNamed::IsPreviousDeclOf(const CxxNamed* item) const
 
 fn_name CxxNamed_Log = "CxxNamed.Log";
 
-void CxxNamed::Log
-   (Warning warning, const CxxNamed* item, word offset, bool hide) const
+void CxxNamed::Log(Warning warning, const CxxNamed* item,
+   word offset, bool hide, const string& info) const
 {
    Debug::ft(CxxNamed_Log);
 
@@ -343,12 +343,12 @@ void CxxNamed::Log
       auto that = inst->FindTemplateAnalog(this);
       if(that == nullptr) return;
       if(item != nullptr) item = inst->FindTemplateAnalog(item);
-      that->Log(warning, item, offset, hide);
+      that->Log(warning, item, offset, hide, info);
       return;
    }
 
    if(item == nullptr) item = this;
-   GetFile()->LogPos(GetPos(), warning, item, offset, EMPTY_STR, hide);
+   GetFile()->LogPos(GetPos(), warning, item, offset, info, hide);
 }
 
 //------------------------------------------------------------------------------

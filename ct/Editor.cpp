@@ -1985,6 +1985,8 @@ word Editor::FixWarning(const CodeWarning& log, string& expl)
       return EraseForward(log, expl);
    case FriendUnresolved:
       return EraseCode(log, ";", expl);
+   case FriendAsForward:
+      return InsertForward(log, expl);
    case ClassCouldBeStruct:
       return ChangeClassToStruct(log, expl);
    case StructCouldBeClass:
@@ -2581,12 +2583,15 @@ word Editor::InsertForward
 
    //  ITER references a namespace that matches the one for a new forward
    //  declaration.  Insert the new declaration alphabetically within the
-   //  declarations that already appear in this namespace.
+   //  declarations that already appear in this namespace.  Note that it
+   //  may already have been inserted while fixing another warning.
    //
    for(auto s = std::next(iter, 2); s != source_.end(); ++s)
    {
-      if((strCompare(s->code, forward) > 0) ||
-         (s->code.find('}') != string::npos))
+      auto comp = strCompare(s->code, forward);
+      if(comp == 0) return Report(expl, "Previously inserted.");
+
+      if((comp > 0) || (s->code.find('}') != string::npos))
       {
          s = Insert(s, forward);
          return Changed(s, expl);

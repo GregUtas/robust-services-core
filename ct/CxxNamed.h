@@ -354,13 +354,14 @@ public:
    //
    virtual void GetDirectTemplateArgs(CxxUsageSets& symbols) const;
 
-   //  Logs WARNING at the position where this item is located.  ITEM
-   //  and OFFSET are specific to WARNING, and HIDE is set to prevent
+   //  Logs WARNING at the position where this item is located.  ITEM,
+   //  OFFSET, and INFO are specific to WARNING, and HIDE is set to prevent
    //  the warning from being displayed.  If ITEM is nullptr, "this" is
    //  included in the log.
    //
    void Log(Warning warning, const CxxNamed* item = nullptr,
-      NodeBase::word offset = 0, bool hide = false) const;
+      NodeBase::word offset = 0, bool hide = false,
+      const std::string& info = NodeBase::EMPTY_STR) const;
 
    //  The default returns ScopedName(templates).  Overridden by functions
    //  to append argument types when the function's name is ambiguous.

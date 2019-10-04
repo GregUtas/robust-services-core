@@ -111,10 +111,6 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
-   //  Overridden to log an #include that is not at file scope.
-   //
-   void SetScope(CxxScope* scope) override;
-
    //  Overridden to report the filename's length.
    //
    void Shrink() override;

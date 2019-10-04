@@ -28,6 +28,7 @@
 #include "CodeDir.h"
 #include "CodeDirSet.h"
 #include "CodeFile.h"
+#include "CodeTypes.h"
 #include "Debug.h"
 #include "Editor.h"
 #include "Formatters.h"
@@ -351,8 +352,7 @@ LibrarySet* CodeFileSet::FileType(const LibrarySet* that) const
 
 fn_name CodeFileSet_Fix = "CodeFileSet.Fix";
 
-word CodeFileSet::Fix
-   (CliThread& cli, const FixOptions& opts, string& expl) const
+word CodeFileSet::Fix(CliThread& cli, FixOptions& opts, string& expl) const
 {
    Debug::ft(CodeFileSet_Fix);
 
@@ -363,6 +363,8 @@ word CodeFileSet::Fix
       expl = EmptySet;
       return 0;
    }
+
+   opts.multiple = (fileSet.size() > 1);
 
    *cli.obuf << "Checking diffs after modifying code is recommended." << CRLF;
    *cli.obuf << "The following is also automatic in modified files:" << CRLF;

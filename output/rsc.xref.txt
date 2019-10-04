@@ -5096,6 +5096,8 @@ CodeTools::CodeFile_CheckIncludeGuard [ct/CodeFile.cpp]
    ct/CodeFile.cpp
 CodeTools::CodeFile_CheckIncludeOrder [ct/CodeFile.cpp]
    ct/CodeFile.cpp
+CodeTools::CodeFile_CheckIncludes [ct/CodeFile.cpp]
+   ct/CodeFile.cpp
 CodeTools::CodeFile_CheckLineBreaks [ct/CodeFile.cpp]
    ct/CodeFile.cpp
 CodeTools::CodeFile_CheckProlog [ct/CodeFile.cpp]
@@ -5276,6 +5278,8 @@ CodeTools::CodeFile::CheckFunctionOrder [ct/CodeFile.h]
 CodeTools::CodeFile::CheckIncludeGuard [ct/CodeFile.h]
    ct/CodeFile.cpp
 CodeTools::CodeFile::CheckIncludeOrder [ct/CodeFile.h]
+   ct/CodeFile.cpp
+CodeTools::CodeFile::CheckIncludes [ct/CodeFile.h]
    ct/CodeFile.cpp
 CodeTools::CodeFile::CheckLineBreaks [ct/CodeFile.h]
    ct/CodeFile.cpp
@@ -6689,6 +6693,9 @@ CodeTools::FixOptions [ct/CodeTypes.h]
    ct/CodeTypes.cpp
    ct/Editor.cpp
    ct/Editor.h
+CodeTools::FixOptions::multiple [ct/CodeTypes.h]
+   ct/CodeFileSet.cpp
+   ct/Editor.cpp
 CodeTools::FixOptions::prompt [ct/CodeTypes.h]
    ct/CodeIncrement.cpp
    ct/Editor.cpp
@@ -7512,6 +7519,7 @@ CodeTools::Warning::ForwardUnresolved [ct/CodeTypes.h]
 CodeTools::Warning::FriendAsForward [ct/CodeTypes.h]
    ct/CodeWarning.cpp
    ct/CxxScoped.cpp
+   ct/Editor.cpp
 CodeTools::Warning::FriendUnresolved [ct/CodeTypes.h]
    ct/CodeWarning.cpp
    ct/CxxScoped.cpp
@@ -7532,6 +7540,9 @@ CodeTools::Warning::FunctionCouldBeDefaulted [ct/CodeTypes.h]
    ct/CxxScope.cpp
    ct/Editor.cpp
 CodeTools::Warning::FunctionCouldBeFree [ct/CodeTypes.h]
+   ct/CodeWarning.cpp
+   ct/CxxScope.cpp
+CodeTools::Warning::FunctionCouldBeMember [ct/CodeTypes.h]
    ct/CodeWarning.cpp
    ct/CxxScope.cpp
 CodeTools::Warning::FunctionCouldBeStatic [ct/CodeTypes.h]
@@ -7572,6 +7583,10 @@ CodeTools::Warning::IncludeDuplicated [ct/CodeTypes.h]
    ct/CodeFile.cpp
    ct/CodeWarning.cpp
    ct/Editor.cpp
+CodeTools::Warning::IncludeFollowsCode [ct/CodeTypes.h]
+   ct/CodeFile.cpp
+   ct/CodeWarning.cpp
+   ct/Editor.cpp
 CodeTools::Warning::IncludeGuardMisnamed [ct/CodeTypes.h]
    ct/CodeFile.cpp
    ct/CodeWarning.cpp
@@ -7580,9 +7595,6 @@ CodeTools::Warning::IncludeGuardMissing [ct/CodeTypes.h]
    ct/CodeFile.cpp
    ct/CodeWarning.cpp
    ct/Editor.cpp
-CodeTools::Warning::IncludeNotAtGlobalScope [ct/CodeTypes.h]
-   ct/CodeWarning.cpp
-   ct/CxxDirective.cpp
 CodeTools::Warning::IncludeNotSorted [ct/CodeTypes.h]
    ct/CodeFile.cpp
    ct/CodeWarning.cpp
@@ -9900,8 +9912,6 @@ CodeTools::Ifndef_ctor [ct/CxxDirective.cpp]
    ct/CxxDirective.cpp
 CodeTools::Include_FindFile [ct/CxxDirective.cpp]
    ct/CxxDirective.cpp
-CodeTools::Include_SetScope [ct/CxxDirective.cpp]
-   ct/CxxDirective.cpp
 CodeTools::Include_ctor [ct/CxxDirective.cpp]
    ct/CxxDirective.cpp
 CodeTools::Line_ctor [ct/CxxDirective.cpp]
@@ -10113,8 +10123,6 @@ CodeTools::Include::FindFile [ct/CxxDirective.h]
    ct/CodeFile.cpp
    ct/CxxDirective.cpp
 CodeTools::Include::Include [ct/CxxDirective.h]
-   ct/CxxDirective.cpp
-CodeTools::Include::SetScope [ct/CxxDirective.h]
    ct/CxxDirective.cpp
 CodeTools::Include::Shrink [ct/CxxDirective.h]
    ct/CxxDirective.cpp
@@ -10578,7 +10586,6 @@ CodeTools::Context::Reset [ct/CxxExecute.h]
 CodeTools::Context::RootParser [ct/CxxExecute.h]
    ct/Parser.cpp
 CodeTools::Context::Scope [ct/CxxExecute.h]
-   ct/CodeFile.cpp
    ct/CxxExecute.cpp
    ct/CxxNamed.cpp
    ct/CxxRoot.cpp
@@ -12268,7 +12275,6 @@ CodeTools::CxxNamed::SetScope [ct/CxxNamed.h]
    ct/CodeFile.cpp
    ct/CxxArea.cpp
    ct/CxxDirective.cpp
-   ct/CxxDirective.h
    ct/CxxNamed.cpp
    ct/CxxScope.cpp
    ct/CxxScoped.cpp
@@ -13464,6 +13470,8 @@ CodeTools::Function_CheckDtor [ct/CxxScope.cpp]
    ct/CxxScope.cpp
 CodeTools::Function_CheckForVirtualDefault [ct/CxxScope.cpp]
    ct/CxxScope.cpp
+CodeTools::Function_CheckFree [ct/CxxScope.cpp]
+   ct/CxxScope.cpp
 CodeTools::Function_CheckIfCouldBeConst [ct/CxxScope.cpp]
    ct/CxxScope.cpp
 CodeTools::Function_CheckIfDefined [ct/CxxScope.cpp]
@@ -13481,6 +13489,8 @@ CodeTools::Function_CheckMemberUsage [ct/CxxScope.cpp]
 CodeTools::Function_CheckNoexcept [ct/CxxScope.cpp]
    ct/CxxScope.cpp
 CodeTools::Function_CheckOverride [ct/CxxScope.cpp]
+   ct/CxxScope.cpp
+CodeTools::Function_CheckStatic [ct/CxxScope.cpp]
    ct/CxxScope.cpp
 CodeTools::Function_DebugName [ct/CxxScope.cpp]
    ct/CxxScope.cpp
@@ -14127,6 +14137,8 @@ CodeTools::Function::CheckDtor [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::CheckForVirtualDefault [ct/CxxScope.h]
    ct/CxxScope.cpp
+CodeTools::Function::CheckFree [ct/CxxScope.h]
+   ct/CxxScope.cpp
 CodeTools::Function::CheckIfCouldBeConst [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::CheckIfDefined [ct/CxxScope.h]
@@ -14144,6 +14156,8 @@ CodeTools::Function::CheckMemberUsage [ct/CxxScope.h]
 CodeTools::Function::CheckNoexcept [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::CheckOverride [ct/CxxScope.h]
+   ct/CxxScope.cpp
+CodeTools::Function::CheckStatic [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::DebugName [ct/CxxScope.h]
    ct/CxxScope.cpp
@@ -14531,6 +14545,8 @@ CodeTools::Argument_ExitBlock [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
 CodeTools::Argument_GetUsages [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
+CodeTools::Argument_IsThisCandidate [ct/CxxScoped.cpp]
+   ct/CxxScoped.cpp
 CodeTools::Argument_LogToFunc [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
 CodeTools::Argument_SetNonConst [ct/CxxScoped.cpp]
@@ -14768,6 +14784,9 @@ CodeTools::Argument::GetUsages [ct/CxxScoped.h]
    ct/CxxScoped.cpp
 CodeTools::Argument::HasDefault [ct/CxxScoped.h]
    ct/CxxScope.cpp
+CodeTools::Argument::IsThisCandidate [ct/CxxScoped.h]
+   ct/CxxScope.cpp
+   ct/CxxScoped.cpp
 CodeTools::Argument::LogToFunc [ct/CxxScoped.h]
    ct/CxxScoped.cpp
 CodeTools::Argument::Print [ct/CxxScoped.h]
@@ -37925,6 +37944,7 @@ NodeBase::EMPTY_STR [nb/SysTypes.h]
    ct/CxxExecute.cpp
    ct/CxxExecute.h
    ct/CxxNamed.cpp
+   ct/CxxNamed.h
    ct/CxxRoot.cpp
    ct/CxxScope.cpp
    ct/CxxScoped.h
@@ -64033,6 +64053,8 @@ std::list::cend [subs/list]
 std::list::clear [subs/list]
    dip/MapAndUnits.cpp
    dip/UnitOrder.cpp
+std::list::empty [subs/list]
+   ct/Editor.cpp
 std::list::end(std::list* const) [subs/list]
    ct/Editor.cpp
    dip/Adjudicator.cpp
@@ -64203,6 +64225,12 @@ std::multimap::value_type [subs/map]
 std::allocator [subs/memory]
    ct/CxxStrLiteral.h
 std::unique_ptr [subs/memory]
+   ct/CodeFileSet.cpp
+   dip/TokenMessage.cpp
+   dip/TokenMessage.h
+   nb/Thread.cpp
+   nw/SysTcpSocket.win.cpp
+std::unique_ptr [subs/memory]
    an/PotsShelfHandler.cpp
    an/PotsShelfIpService.cpp
    cb/BcProtocol.cpp
@@ -64319,15 +64347,6 @@ std::unique_ptr [subs/memory]
    st/StTestData.cpp
    st/StTestData.h
    st/TestSessions.h
-std::unique_ptr [subs/memory]
-   ct/CodeFileSet.cpp
-   dip/TokenMessage.cpp
-   dip/TokenMessage.h
-   nb/Thread.cpp
-   nw/SysTcpSocket.win.cpp
-std::unique_ptr::get [subs/memory]
-   dip/TokenMessage.cpp
-   nw/SysTcpSocket.win.cpp
 std::unique_ptr::get [subs/memory]
    an/PotsShelfHandler.cpp
    ct/CodeFile.cpp
@@ -64387,6 +64406,9 @@ std::unique_ptr::get [subs/memory]
    sb/SbInvokerPools.cpp
    sn/PotsCallHandler.cpp
    st/StTestData.cpp
+std::unique_ptr::get [subs/memory]
+   dip/TokenMessage.cpp
+   nw/SysTcpSocket.win.cpp
 std::unique_ptr::release [subs/memory]
    ct/CodeSet.cpp
    ct/CxxArea.cpp

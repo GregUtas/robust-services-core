@@ -325,7 +325,11 @@ private:
    //
    void CheckIncludeGuard();
 
-   //  Looks for #include directives that should be removed.
+   //  Looks for #include directives that follow code.
+   //
+   void CheckIncludes();
+
+   //  Looks for unsorted and duplicated #include directives.
    //
    void CheckIncludeOrder() const;
 

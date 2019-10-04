@@ -623,18 +623,6 @@ CodeFile* Include::FindFile() const
 
 //------------------------------------------------------------------------------
 
-fn_name Include_SetScope = "Include.SetScope";
-
-void Include::SetScope(CxxScope* scope)
-{
-   Debug::ft(Include_SetScope);
-
-   if(scope == Singleton< CxxRoot >::Instance()->GlobalNamespace()) return;
-   Log(IncludeNotAtGlobalScope);
-}
-
-//------------------------------------------------------------------------------
-
 void Include::Shrink()
 {
    SymbolDirective::Shrink();

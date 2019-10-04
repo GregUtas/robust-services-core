@@ -5,6 +5,7 @@ Document | Description
 [RCS chapter 2](/docs/RCS-chapter-2.pdf) | chapter 2 of _Robust Communications Software_
 [RCS tutorial](/docs/RCS-tutorial.pdf) | overview of _Robust Communications Software_
 [RSC Product Overview](/docs/RSC-Product-Overview.pdf) | roadmap for the Robust Services Core
+[Robust C++ : P and V Considered Harmful](https://www.codeproject.com/Articles/5246597/Robust-Cplusplus-P-and-V-Considered-Harmful) | article on cooperative scheduling
 [Robust C++ : Safety Net](https://www.codeproject.com/Articles/5165710/Robust-Cplusplus-Safety-Net) | article on recovering from exceptions
 [Robust C++ : Object Pools](https://www.codeproject.com/Articles/5166096/Robust-Cplusplus-Object-Pools) | article on recovering from memory leaks
 [RSC Coding Guidelines](/docs/RSC-Coding-Guidelines.md) | C++ coding guidelines

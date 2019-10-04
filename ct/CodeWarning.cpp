@@ -435,12 +435,12 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(DefineNotAtFileScope,
       WarningAttrs(F, X,
       "#define appears within a class or function")));
-   Attrs_.insert(WarningPair(IncludeNotAtGlobalScope,
-      WarningAttrs(F, X,
-      "No #include guard found")));
+   Attrs_.insert(WarningPair(IncludeFollowsCode,
+      WarningAttrs(T, U,
+      "#include appears after code")));
    Attrs_.insert(WarningPair(IncludeGuardMissing,
       WarningAttrs(T, C,
-      "#include appears outside of global namespace")));
+      "No #include guard found")));
    Attrs_.insert(WarningPair(IncludeNotSorted,
       WarningAttrs(T, U,
       "#include not sorted in standard order")));
@@ -505,7 +505,7 @@ void CodeWarning::Initialize()
       WarningAttrs(T, D,
       "No referent for friend declaration")));
    Attrs_.insert(WarningPair(FriendAsForward,
-      WarningAttrs(F, X,
+      WarningAttrs(T, C,
       "Indirect reference relies on friend, not forward, declaration")));
    Attrs_.insert(WarningPair(HidesInheritedName,
       WarningAttrs(F, X,
@@ -759,6 +759,9 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(ReturnsNonConstMember,
       WarningAttrs(F, X,
       "Function returns non-const reference or pointer to member data")));
+   Attrs_.insert(WarningPair(FunctionCouldBeMember,
+      WarningAttrs(F, X,
+      "Function could be a member of a class that is an indirect argument")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(F, X,
       ERROR_STR)));

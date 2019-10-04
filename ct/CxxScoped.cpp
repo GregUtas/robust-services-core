@@ -20,7 +20,6 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CxxScoped.h"
-#include <bitset>
 #include <cstdint>
 #include <set>
 #include <sstream>
@@ -152,6 +151,25 @@ void Argument::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
    spec_->GetUsages(file, symbols);
    if(default_ != nullptr) default_->GetUsages(file, symbols);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Argument_IsThisCandidate = "Argument.IsThisCandidate";
+
+Class* Argument::IsThisCandidate() const
+{
+   Debug::ft(Argument_IsThisCandidate);
+
+   auto ref = Referent();
+   if(ref == nullptr) return nullptr;
+   if(ref->Type() != Cxx::Class) return nullptr;
+   auto cls = static_cast< Class* >(ref);
+   if(cls == nullptr) return nullptr;
+   if(cls->GetFile()->IsSubsFile()) return nullptr;
+   if(IsConst()) return nullptr;
+   if(spec_->Ptrs(true) + spec_->Refs() == 1) return cls;
+   return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -2049,7 +2067,14 @@ void Friend::SetAsReferent(const CxxNamed* user)
       return;
    }
 
-   user->Log(FriendAsForward);
+   //  Provide a string that specifies the forward declaration that
+   //  is equivalent to the friend declaration.
+   //
+   std::ostringstream name;
+   if(parms_ != nullptr) parms_->Print(name, Flags());
+   name << tag_ << SPACE;
+   name << ScopedName(true);
+   user->Log(FriendAsForward, nullptr, 0, false, name.str());
 }
 
 //------------------------------------------------------------------------------

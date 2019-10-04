@@ -1458,6 +1458,8 @@ private:
    void CheckIfOverridden() const;
    void CheckIfCouldBeConst() const;
    void CheckMemberUsage() const;
+   void CheckStatic() const;
+   void CheckFree() const;
 
    //  Logs WARNING on both the function's declaration and its definition.
    //  When INDEX is provided, CodeWarning.pos will be that of args_[INDEX]

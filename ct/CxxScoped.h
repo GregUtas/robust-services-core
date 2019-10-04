@@ -245,6 +245,11 @@ public:
    //
    bool CouldBeConst() const { return !nonconst_; }
 
+   //  If the argument is a non-const reference *or* pointer to a class
+   //  that is not external, returns that class, else returns nullptr.
+   //
+   Class* IsThisCandidate() const;
+
    //  Overridden to set the type for an "auto" variable.
    //
    CxxToken* AutoType() const override { return spec_.get(); }

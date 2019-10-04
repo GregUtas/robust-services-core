@@ -472,11 +472,15 @@ bool IsCodeFile(const string& file)
    auto ext = GetFileExtension(file);
    if(ext.empty()) return true;
    if(ext == "h") return true;
-   if(ext == "cpp") return true;
    if(ext == "c") return true;
+   if(ext == "hpp") return true;
+   if(ext == "cpp") return true;
+   if(ext == "hh") return true;
+   if(ext == "cc") return true;
    if(ext == "hxx") return true;
    if(ext == "cxx") return true;
-   if(ext == "hpp") return true;
+   if(ext == "h++") return true;
+   if(ext == "c++") return true;
    return false;
 }
 

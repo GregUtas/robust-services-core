@@ -20,7 +20,6 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CxxScoped.h"
-#include <bitset>
 #include <cstdint>
 #include <set>
 #include <sstream>

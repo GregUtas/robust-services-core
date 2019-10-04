@@ -28,6 +28,7 @@
 #include "CodeDir.h"
 #include "CodeDirSet.h"
 #include "CodeFile.h"
+#include "CodeTypes.h"
 #include "Debug.h"
 #include "Editor.h"
 #include "Formatters.h"

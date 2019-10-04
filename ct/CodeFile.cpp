@@ -1678,7 +1678,7 @@ Using* CodeFile::FindUsingFor(const string& fqName, size_t prefix,
 
 fn_name CodeFile_Fix = "CodeFile.Fix";
 
-word CodeFile::Fix(CliThread& cli, FixOptions& opts, string& expl) const
+word CodeFile::Fix(CliThread& cli, const FixOptions& opts, string& expl) const
 {
    Debug::ft(CodeFile_Fix);
 

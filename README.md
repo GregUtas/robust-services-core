@@ -63,7 +63,7 @@ available in the [_dip_](/dip) directory and is described in some further detail
 ## Installing the repository
 
 Download the repository to a directory named _rsc_.  This is because, when the executable
-starts, it looks for its configuration file on the path _.../rsc/input/element.config.txt_.
+starts, it looks for its [configuration file](input/element.config.txt) on the path _../rsc/input/element.config.txt_.
 
 ## Building an executable
 
@@ -82,18 +82,9 @@ residing in its own directory.
 
 RSC is currently developed using Visual Studio 2017.  If that is also your development
 environment, the _.vcxproj_ (project) files in this repository should already
-provide most of the build instructions that you need.  However, you will need
-to change the paths to where the source code is located.  It's probably
-easiest to do this by opening the _.vcxproj_ files in Notepad and replacing
-occurrences of _C:\Users\gregu\Documents\rsc\rsc_ (the directory that contains
-the source code on the author's PC) with the directory into which you downloaded
-the repository.
+provide most of the build instructions that you need.
 
 ## Running the executable
-
-Before you run the executable, you also need to change each path (as described in
-the above paragraph) in the [configuration file](input/element.config.txt), which
-is read when the program is initializing during startup.
 
 During initialization, the program displays each module as it is initialized.  (A
 _module_ is currently equivalent to a static library.)  After all modules have
@@ -114,7 +105,7 @@ see how function calls were nested
   * the total time spent in the function (in microseconds)
   * the net time spent in the function (in microseconds)
 
-All output appears in the directory _.../rsc/excluded/output_ (the first directory
+All output appears in the directory _../rsc/excluded/output_ (the first directory
 named _rsc_ above the directory from which the _.exe_ was launched).
 In addition to any specific output that you request, such as the initialization trace,
 every CLI session produces

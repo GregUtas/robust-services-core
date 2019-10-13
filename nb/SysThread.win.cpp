@@ -281,8 +281,6 @@ void SysThread::RegisterForSignal(signal_t sig, sighandler_t handler)
    //  sigemptyset(&block_mask);
    //  sigaddset(&block_mask, SIGTERM);
    //  sigaddset(&block_mask, SIGINT);
-   //  sigaddset(&block_mask, SIGQUIT);
-   //  sigaddset(&block_mask, SIGVTALRM);
    //
    //  action.sa_handler = handler;
    //  action.sa_mask = block_mask;

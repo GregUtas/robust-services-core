@@ -51,7 +51,7 @@ extern const Flags VerboseOpt;  // flag with DispVerbose set
 enum BlockingReason
 {
    NotBlocked,         // running or ready to run
-   BlockedOnClock,     // SysThread::Delay (non-zero time)
+   BlockedOnClock,     // SysThread::Delay
    BlockedOnNetwork,   // SysUdpSocket::Recvfrom or SysTcpSocket::Poll
    BlockedOnConsole,   // CinThread::GetLine (console)
    BlockedOnDatabase,  // in-memory database

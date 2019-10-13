@@ -112,7 +112,7 @@ SysMutex::Rc SysMutex::Acquire(msecs_t timeout, Thread* owner)
 
 fn_name SysMutex_Release = "SysMutex.Release";
 
-void SysMutex::Release()
+void SysMutex::Release(bool log)
 {
    Debug::ft(SysMutex_Release);
 
@@ -126,7 +126,7 @@ void SysMutex::Release()
    {
       nid_ = nid;
       owner_ = owner;
-      Debug::SwLog(SysMutex_Release, debug64_t(mutex_), GetLastError());
+      if(log) Debug::SwLog(SysMutex_Release, debug64_t(mutex_), GetLastError());
    }
 }
 }

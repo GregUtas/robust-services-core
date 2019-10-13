@@ -40,7 +40,6 @@ const uintptr_t BAD_POINTER = BadPointer();
 
 //------------------------------------------------------------------------------
 
-const FlagId MaxFlagId = BITS_PER_WORD - 1;
 const Flags NoFlags = Flags();
 fixed_string EMPTY_STR = "";
 fixed_string CRLF_STR = "\n";

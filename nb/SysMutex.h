@@ -66,9 +66,10 @@ public:
    //
    Rc Acquire(msecs_t timeout, Thread* owner = nullptr);
 
-   //  Releases the mutex.
+   //  Releases the mutex.  If LOG is set, a log is generated if the
+   //  mutex was not released (because this thread didn't own it).
    //
-   void Release();
+   void Release(bool log = true);
 
    //  Returns the native identifier of the thread that owns the mutex.
    //

@@ -253,6 +253,10 @@ void FileThread::Enter()
          file.reset();
       }
 
+      //  Now that the file has been written, run unpreemptably
+      //  again before invoking any callback.
+      //
+      guard.~FunctionGuard();
       if(written != nullptr) written->Callback();
       name.reset();
       stream.reset();

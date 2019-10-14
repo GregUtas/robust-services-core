@@ -78,6 +78,7 @@ void CreateNbLogs(RestartLevel level)
    group = new LogGroup(ObjPoolLogGroup, "Object Pools");
    new Log(group, ObjPoolExpansionFailed, "Object pool expansion failed");
    new Log(group, ObjPoolBlocksInUse, "Object pool blocks in use");
+   new Log(group, ObjPoolExpanded, "Object pool size expanded");
    new Log(group, ObjPoolQueueCorrupt, "Object pool queue corrupt");
    new Log(group, ObjPoolQueueCount, "Object pool queue count incorrect");
    new Log(group, ObjPoolBlockRecovered, "Object pool block recovered");

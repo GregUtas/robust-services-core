@@ -82,10 +82,13 @@ object pool.
 ? OBJ200
 The percentage of unused blocks in an object pool has reached a threshold
 level. This log raises an OBJPOOL alarm with the following severity:
-  o critical: under 3.125% (1 in 32) of the blocks are available
+  o critical: under 3.13% (1 in 32) of the blocks are available
   o major: under 6.25% (1 in 16) of the blocks are available
-  o minor: under 12.5% (1 in 8) of the blocks are available
-  o off: over 12.5% of the blocks are available
+  o minor: under 12.50% (1 in 8) of the blocks are available
+  o off: over 12.50% of the blocks are available
+? OBJ300
+The size of an object pool was automatically expanded because the number
+of available blocks was less than 1.56% (1 in 64) of the total blocks.
 ? OBJ900
 An object pool's queue of available blocks was corrupted. The object
 pool audit has truncated the queue and will recover orphaned blocks.

@@ -266,7 +266,7 @@ void Condition::Print(ostream& stream, const Flags& options) const
 bool Condition::Show(ostream& stream) const
 {
    if(condition_ == nullptr) return false;
-   condition_->Print(stream, Flags());
+   condition_->Print(stream, NoFlags);
    return true;
 }
 

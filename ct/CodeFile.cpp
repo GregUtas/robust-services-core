@@ -2143,7 +2143,7 @@ void CodeFile::LogAddForwards(ostream* stream, const CxxNamedSet& items) const
       if(cls != nullptr)
       {
          auto parms = cls->GetTemplateParms();
-         if(parms != nullptr) parms->Print(name, Flags());
+         if(parms != nullptr) parms->Print(name, NoFlags);
 
          auto tag = cls->GetClassTag();
          name << tag << SPACE;

@@ -109,7 +109,7 @@ Flags Debug::GetSwFlags()
    Debug::ft(Debug_GetSwFlags);
 
    if(Element::RunningInLab()) return SwFlags_;
-   return Flags();
+   return NoFlags;
 }
 
 //------------------------------------------------------------------------------

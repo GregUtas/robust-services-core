@@ -656,7 +656,7 @@ void CxxNamed::strName(ostream& stream, bool fq, const QualName* name) const
    if(fq)
       stream << ScopedName(true);
    else
-      name->Print(stream, Flags());
+      name->Print(stream, NoFlags);
 }
 
 //------------------------------------------------------------------------------
@@ -850,7 +850,7 @@ void DataSpec::DisplayArrays(ostream& stream) const
    {
       for(auto a = arrays_->cbegin(); a != arrays_->cend(); ++a)
       {
-         (*a)->Print(stream, Flags());
+         (*a)->Print(stream, NoFlags);
       }
    }
 }
@@ -1778,6 +1778,7 @@ void DataSpec::SetReferent(CxxScoped* item, const SymbolView* view) const
    else
    {
       name_->SetReferent(item, view);
+      if(GetTemplateRole() == TemplateArgument) item->WasRead();
 
       if(item->Type() != Cxx::Typedef)
       {

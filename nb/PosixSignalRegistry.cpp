@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PosixSignalRegistry.h"
+#include <bitset>
 #include <iosfwd>
 #include <sstream>
 #include "Debug.h"
@@ -56,10 +57,10 @@ PosixSignalRegistry::~PosixSignalRegistry()
 
 Flags PosixSignalRegistry::Attrs(signal_t value) const
 {
-   if(value == SIGNIL) return Flags();
+   if(value == SIGNIL) return NoFlags;
 
    auto s = Find(value);
-   if(s == nullptr) return Flags();
+   if(s == nullptr) return NoFlags;
    return s->Attrs();
 }
 

@@ -120,7 +120,8 @@ typedef int16_t fn_depth;
 //
 typedef uint8_t FlagId;
 constexpr FlagId MaxFlagId = 31;
-typedef std::bitset< MaxFlagId + 1 > Flags;
+constexpr FlagId FLAGS_SIZE = MaxFlagId + 1;
+typedef std::bitset< FLAGS_SIZE > Flags;
 extern const Flags NoFlags;
 
 //  Maximum line length for formatted console output.

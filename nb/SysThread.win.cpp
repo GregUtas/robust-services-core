@@ -158,56 +158,9 @@ SysSentry_t SysThread::CreateSentry()
    //
    return CreateEvent(
       nullptr,   // default security attributes
-      false,     // automatically reset when signaled
-      false,     // initial state not signaled
+      false,     // automatically reset when signalled
+      false,     // initial state not signalled
       nullptr);  // unnamed
-}
-
-//------------------------------------------------------------------------------
-
-fn_name SysThread_Delay = "SysThread.Delay";
-
-DelayRc SysThread::Delay(msecs_t msecs)
-{
-   Debug::ft(SysThread_Delay);
-
-   //  This operation can only be applied to the running thread.
-   //
-   if(RunningThreadId() != nid_)
-   {
-      Debug::SwLog(SysThread_Delay, RunningThreadId(), nid_);
-      return DelayError;
-   }
-
-   //  Wait on our timer, possibly forever.
-   //
-   if(msecs < 0) msecs = INFINITE;
-
-   auto rc = WaitForSingleObject(sentry_, msecs);
-
-   switch(rc)
-   {
-   case WAIT_TIMEOUT:
-      //
-      //  Our alarm clock went off.
-      //
-      return DelayCompleted;
-   case WAIT_OBJECT_0:
-      //
-      //  Someone woke us up early, presumably because work is waiting for us.
-      //
-      return DelayInterrupted;
-   case WAIT_ABANDONED:
-      //
-      //  We're the only thread that waits on sentry_, so this shouldn't occur.
-      //
-      Debug::SwLog(SysThread_Delay, "unexpected result", rc);
-      return DelayInterrupted;
-   default:
-      Debug::SwLog(SysThread_Delay, GetLastError(), rc);
-   }
-
-   return DelayError;
 }
 
 //------------------------------------------------------------------------------
@@ -242,23 +195,6 @@ void SysThread::DeleteSentry(SysSentry_t& sentry)
 
 //------------------------------------------------------------------------------
 
-fn_name SysThread_Interrupt = "SysThread.Interrupt";
-
-bool SysThread::Interrupt()
-{
-   Debug::ft(SysThread_Interrupt);
-
-   //  Signal the thread's timer to wake it up.  If the thread is not
-   //  delaying, this has the side effect of immediately reawakening
-   //  the thread the next time it tries to sleep.
-   //
-   if(SetEvent(sentry_)) return true;
-   Debug::SwLog(SysThread_Interrupt, GetLastError(), nid_);
-   return false;
-}
-
-//------------------------------------------------------------------------------
-
 void SysThread::Patch(sel_t selector, void* arguments)
 {
    Permanent::Patch(selector, arguments);
@@ -287,6 +223,21 @@ void SysThread::RegisterForSignal(signal_t sig, sighandler_t handler)
    //  action.sa_flags = 0;
    //
    //  sigaction(sig, &action, nullptr);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SysThread_Resume = "SysThread.Resume";
+
+bool SysThread::Resume(SysSentry_t& sentry)
+{
+   Debug::ft(SysThread_Resume);
+
+   //  Signal SENTRY in case the thread is blocked on it.
+   //
+   if(SetEvent(sentry)) return true;
+   Debug::SwLog(SysThread_Resume, GetLastError(), nid_);
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -342,6 +293,49 @@ signal_t SysThread::Start()
    //
    _set_se_translator((_se_translator_function) SE_Handler);
    return 0;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SysThread_Suspend = "SysThread.Suspend";
+
+DelayRc SysThread::Suspend(SysSentry_t& sentry, msecs_t msecs)
+{
+   Debug::ft(SysThread_Suspend);
+
+   //  This operation can only be applied to the running thread.
+   //
+   if(RunningThreadId() != nid_)
+   {
+      Debug::SwLog(SysThread_Suspend, RunningThreadId(), nid_);
+      return DelayError;
+   }
+
+   auto rc = WaitForSingleObject(sentry, msecs);
+
+   switch(rc)
+   {
+   case WAIT_TIMEOUT:
+      //
+      //  Our timeout occurred before we were signalled.
+      //
+      return DelayCompleted;
+   case WAIT_OBJECT_0:
+      //
+      //  Someone signalled us.
+      //
+      return DelayInterrupted;
+   case WAIT_ABANDONED:
+      //
+      //  We're the only thread that waits on SENTRY, so this shouldn't occur.
+      //
+      Debug::SwLog(SysThread_Suspend, "unexpected result", rc);
+      return DelayInterrupted;
+   default:
+      Debug::SwLog(SysThread_Suspend, GetLastError(), rc);
+   }
+
+   return DelayError;
 }
 
 //------------------------------------------------------------------------------

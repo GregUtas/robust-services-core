@@ -102,8 +102,8 @@ void RootThread::Enter()
    auto reason = NilRestart;
 
    //  When a thread is entered, it is unpreemptable.  However, we must run
-   //  preemptably so that we can't get locked out by a thread that holds the
-   //  RTC lock.  Our high priority ensures that we will run whenever we want.
+   //  preemptably so that we don't wait for other unpreemptable threads to
+   //  yield.  Our high priority ensures that we will run whenever we want.
    //
    MakePreemptable();
 
@@ -177,10 +177,7 @@ void RootThread::Enter()
          //
          //  The system initialized.  Sleep for the scheduling timeout.
          //
-         if(ThreadAdmin::BreakEnabled())
-            timeout = TIMEOUT_NEVER;
-         else
-            timeout = ThreadAdmin::SchedTimeoutMsecs();
+         timeout = ThreadAdmin::SchedTimeoutMsecs();
 
          switch(Pause(timeout))
          {
@@ -201,9 +198,11 @@ void RootThread::Enter()
 
          case DelayCompleted:
             //
-            //  InitThread failed to respond.
+            //  InitThread failed to respond.  Ignore this if breakpoint
+            //  debugging is enabled.
             //
             reason = SchedulingTimeout;
+            if(ThreadAdmin::BreakEnabled()) reason = NilRestart;
             break;
 
          case DelayError:
@@ -279,7 +278,8 @@ main_t RootThread::Main()
 
       //  Wrap the root thread and enter it.
       //
-      Singleton< RootThread >::Instance()->Start();
+      auto root = Singleton< RootThread >::Instance();
+      Thread::EnterThread(root);
    }
 }
 

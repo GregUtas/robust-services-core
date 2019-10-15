@@ -101,7 +101,7 @@ ThreadsStats::ThreadsStats()
    creations_.reset(new Counter("creations"));
    deletions_.reset(new Counter("deletions"));
    switches_.reset(new Counter("context switches"));
-   locks_.reset(new Counter("RTC lock acquisitions"));
+   locks_.reset(new Counter("scheduled to run unpreemptably"));
    interrupts_.reset(new Counter("interrupts"));
    traps_.reset(new Counter("traps"));
    recoveries_.reset(new Counter("trap recoveries"));
@@ -227,8 +227,8 @@ ThreadAdmin::ThreadAdmin()
       &InitTimeoutMsecs_, 5000, 180000, "restart timeout (msecs)"));
    creg->BindParm(*initTimeoutMsecs_);
 
-   schedTimeoutMsecs_.reset(new CfgIntParm("SchedTimeoutMsecs", "250",
-      &SchedTimeoutMsecs_, 200, 1000, "scheduling timeout (msecs)"));
+   schedTimeoutMsecs_.reset(new CfgIntParm("SchedTimeoutMsecs", "50",
+      &SchedTimeoutMsecs_, 5, 200, "scheduling timeout (msecs)"));
    creg->BindParm(*schedTimeoutMsecs_);
 
    reinitOnSchedTimeout_.reset(new CfgBoolParm("ReinitOnSchedTimeout", "T",

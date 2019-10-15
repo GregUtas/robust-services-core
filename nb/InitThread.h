@@ -32,9 +32,11 @@
 namespace NodeBase
 {
 //  This thread is first one created by RootThread and is responsible for
-//  o initializing and restarting the system
-//  o enforcing the run-to-completion timeout when SIGVTALRM is not supported
-//  o restarting suspended application threads
+//  o initializing the system
+//  o restarting the system
+//  o recreating critical threads
+//  o enforcing the run-to-completion timeout
+//  o deciding which unpreemptable thread should run next
 //
 class InitThread : public Thread
 {
@@ -60,14 +62,17 @@ private:
       Restarting     // initiating a restart
    };
 
-   //  A flag used by InitThread and RootThread to indicate that
-   //  a restart is being performed.
+   //  Flags used when interrupting InitThread.
    //
-   static const FlagId Restart = 0;
+   static const FlagId Restart = 0;   // restart system; also used by RootThread
+   static const FlagId Recreate = 1;  // recreate critical thread
+   static const FlagId Schedule = 2;  // schedule next thread
 
-   //  The mask passed to Thread::Interrupt to signal a restart.
+   //  The mask passed to Thread::Interrupt to set one of the above flags.
    //
    static const Flags RestartMask;
+   static const Flags RecreateMask;
+   static const Flags ScheduleMask;
 
    //  Private because this singleton is not subclassed.
    //
@@ -101,6 +106,26 @@ private:
    //
    void CauseRestart();
 
+   //  Recreates any critical threads that have exited.
+   //
+   void RecreateThreads();
+
+   //  Invoked when an unpreemptable thread is ready to run.
+   //
+   void Ready(const Thread* thread);
+
+   //  Invokes when an unpreemptable thread yields.
+   //
+   void Yielding(const Thread* thread);
+
+   //  Resumes execution of the unpreemptable thread that will run next.
+   //
+   void ContextSwitch();
+
+   //  Selects the unpreemptable thread that should run next.
+   //
+   Thread* SelectThread();
+
    //  Overridden to return a name for the thread.
    //
    c_string AbbrName() const override;
@@ -118,6 +143,12 @@ private:
    //  The thread's current state.
    //
    State state_;
+
+   //  The thread at which to start searching for the unpreemptable thread
+   //  to be scheduled in.  Scheduling is currently round-robin but will
+   //  eventually be changed to support proportional scheduling.
+   //
+   id_t start_;
 
    //  Set when a run-to-completion timeout has occurred.
    //

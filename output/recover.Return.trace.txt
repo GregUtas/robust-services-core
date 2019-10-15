@@ -1,134 +1,126 @@
-START OF TRACE: 2-Aug-2019 09:45:36.583 on Reigi
+START OF TRACE: 15-Oct-2019 16:03:21.115 on Reigi
 
 mm:ss.ttt  Thr  Event  TotalTime   NetTime  Function
 ---------  ---  -----  ---------   -------  --------
-45:36.589   15                 4         4    SysMutex.Acquire
-45:36.589   15                35        17    Orphans.ExitNow
-45:36.589   15                 8         5    : MutexGuard.ctor
-45:36.589   15                 3         3    :   SysMutex.Acquire
-45:36.589   15                 7         3    : MutexGuard.dtor
-45:36.589   15                 4         4    :   SysMutex.Release
-45:36.589   15                 3         3    : Thread.InitialMsecs
-45:36.589   15                 0         0    : ThreadAdmin.WarpFactor
-45:36.589   15  +lock       1060         4  Thread.EnterThread
-45:36.589   15                 3         3    Thread.ResumeLocked
-45:36.589   15                 6         6    Thread.RegisterForSignals
-45:36.589   15              1047         4    Thread.Start
-45:36.589   15                 4         4    : SysThread.Start
-45:36.589   15                 3         3    : RecoveryTestThread.Enter
-45:36.589   15              1036         5    : Thread.Exit
-45:36.589   15                 3         3    :   Thread.SetSignal
-45:36.589   15                 3         3    :   Thread.LogSignal
-45:36.589   15               263         4    :   Log.Create
-45:36.589   15                18         5    :   : Log.Find
-45:36.589   15                10        10    :   :   LogGroupRegistry.FindGroup
-45:36.589   15                 3         3    :   :   LogGroup.FindLog
-45:36.589   15               241       241    :   : Log.Format
-45:36.589   15               215         0    :   :   : SysTime.ctor(now)
-45:36.589   15               215         0    :   :   :   Object.ctor
-45:36.589   15               215       215    :   :   :   : Base.ctor
-45:36.589   15               184        50    :   Log.Submit
-45:36.589   15                37        18    :   : Log.Find
-45:36.589   15                19         5    :   :   Log.Find
-45:36.589   15                 8         8    :   :   : LogGroupRegistry.FindGroup
-45:36.589   15                 6         6    :   :   : LogGroup.FindLog
-45:36.589   15                 3         3    :   : LogBufferRegistry.Active
-45:36.589   15                94         4    :   : LogBuffer.Push
-45:36.589   15                32         5    :   :   MutexGuard.ctor
-45:36.589   15                27        27    :   :   : SysMutex.Acquire
-45:36.590   15                33         4    :   :   LogBuffer.InsertionPoint
-45:36.590   15                20        20    :   :   : LogBuffer.First
-45:36.590   15                 6         6    :   :   : LogBuffer.SetNext
-45:36.590   15                 3         3    :   :   : LogBuffer.First
-45:36.590   15                14         4    :   :   Thread.Interrupt
-45:36.590   15                10        10    :   :   : SysThread.Interrupt
-45:36.590   15                11         4    :   :   MutexGuard.dtor
-45:36.590   15                 7         7    :   :   : SysMutex.Release
-45:36.590   15               578         8    :   RecoveryTestThread.Destroy
-45:36.590   15               570         4    :   : Singleton.Destroy
-45:36.590   15               566       104    :   :   Singletons.UnbindInstance
-45:36.590   15               462         4    :   :   : RecoveryTestThread.dtor
-45:36.590   15               435        17    :   :   :   Thread.dtor
-45:36.590   15  -lock        418         4    :   :   :   : Thread.Unlock
-45:36.590   15                18        18    :   :   :   :   Thread.LogContextSwitch
-45:36.590   15                 3         3    :   :   :   :   :   SysMutex.Acquire
-45:36.590   15                 6         6    :   :   :   :   :   SysMutex.Release
-45:36.590   15               396        17    :   :   :   :   SysMutex.Release
-45:36.590   15               379         1    :   :   :   :   : C++.delete
-45:36.590   15               355        36    :   :   :   :   :   SysThread.dtor
-45:36.590   15               319       319    :   :   :   :   :   : SysThread.DeleteSentry
-45:36.590   15                50         8    :   :   :   :   :   :   :   : Statistic.dtor
-45:36.590   15                42         6    :   :   :   :   :   :   :   :   StatisticsRegistry.UnbindStat
-45:36.590   15                36        36    :   :   :   :   :   :   :   :   : Registry.Erase
-45:36.590   15                29         6    :   :   :   :   :   :   :   :   :   : Memory.Free
-45:36.590   15                23        23    :   :   :   :   :   :   :   :   :   :   SysHeap.Free
-45:36.590   15                16         6    :   :   :   :   :   :   :   :   :   :   :   Memory.Free
-45:36.590   15                10        10    :   :   :   :   :   :   :   :   :   :   :   : SysHeap.Free
-45:36.590   15                90        17    :   :   :   :   :   :   :   Object.operator delete
-45:36.590   15                73        20    :   :   :   :   :   :   :   : Memory.Free
-45:36.590   15                53        53    :   :   :   :   :   :   :   :   SysHeap.Free
-45:36.590   15                29        29    :   :   :   :   :   :   :   :   :   :   :   : SysHeap.Free
-45:36.590   15                36        22    :   :   :   :   :   :   :   Object.operator delete
-45:36.590   15                14         7    :   :   :   :   :   :   :   : Memory.Free
-45:36.590   15                 7         7    :   :   :   :   :   :   :   :   SysHeap.Free
-45:36.590   15                96         0    :   :   :   :   :   :   : C++.delete
-45:36.590   15                61         7    :   :   :   :   :   :   :   Counter.dtor
-45:36.590   15                54         7    :   :   :   :   :   :   :   : Statistic.dtor
-45:36.590   15                47         6    :   :   :   :   :   :   :   :   StatisticsRegistry.UnbindStat
-45:36.590   15                41        41    :   :   :   :   :   :   :   :   : Registry.Erase
-45:36.590   15                33         6    :   :   :   :   :   :   :   :   :   :   :   Memory.Free
-45:36.590   15                27        27    :   :   :   :   :   :   :   :   :   :   :   : SysHeap.Free
-45:36.590   15                35         7    :   :   :   :   :   :   :   Object.operator delete
-45:36.590   15                28        21    :   :   :   :   :   :   :   : Memory.Free
-45:36.590   15                 7         7    :   :   :   :   :   :   :   :   SysHeap.Free
-45:36.590   15                23         6    :   :   :   :   :   Object.operator delete
-45:36.590   15                17         7    :   :   :   :   :   : Memory.Free
-45:36.590   15                10        10    :   :   :   :   :   :   SysHeap.Free
-45:36.590   15                23         7    :   :   :   ObjectPool.EnqBlock
-45:36.590   15                 7         7    :   :   :   : Q1Way.Enq
-45:36.590   15                 9         9    :   :   :   : ObjectPool.UpdateAlarm
-45:36.590   15                 0         0    :   :   :   :   Alarm.Create
-45:36.689   12  +lock    2000499         1    :   TcpIoThread.Enter
-45:36.689   12                54        37    :   : Thread.ExitBlockingOperation
-45:36.689   12                17        17    :   :   SysSocket.SetError
-45:36.689   12           2000444         8    :   : Thread.EnterBlockingOperation
-45:36.689   12                 2         2    :   :   Thread.RunningThread
-45:36.689   12  -lock    2000426         7    :   :   Thread.Unlock
-45:36.689   12                29        29    :   :   : Thread.LogContextSwitch
-45:36.689   12                 7         7    :   :   :   : SysMutex.Acquire
-45:36.689   12                 9         9    :   :   :   : SysMutex.Release
-45:36.689   12           2000390   2000390    :   :   : SysMutex.Release
-45:38.689   12                 8         5    :   :   SysMutex.Acquire
-45:38.689   12                 3         3    :   :   : Thread.InitialMsecs
-45:38.689   12                 0         0    :   :   : ThreadAdmin.WarpFactor
-45:38.689   12  +lock          7         0    :   TcpIoThread.Enter
-45:38.689   12                 7         3    :   : Thread.ExitBlockingOperation
-45:38.689   12                 4         4    :   :   Thread.ResumeLocked
-45:38.689   12                16         4    :   IpPortRegistry.HostAddress
-45:38.689   12                 3         3    :   : SysIpL2Addr.IsValid
-45:38.689   12                 9         0    :   : SysIpL2Addr.ctor(copy)
-45:38.689   12                 9         0    :   :   Object.ctor
-45:38.689   12                 9         9    :   :   : Base.ctor
-45:38.689   12                 3         3    :   SysIpL2Addr.operator=(copy)
-45:38.689   12                 3         3    :   SysIpL2Addr.dtor
-45:38.689   12                48         3    :   TcpIoThread.AcceptConn
-45:38.689   12                12         0    :   : SysIpL3Addr.ctor
-45:38.689   12                12         0    :   :   SysIpL2Addr.ctor
-45:38.689   12                12         0    :   :   : Object.ctor
-45:38.689   12                12        12    :   :   :   Base.ctor
-45:38.689   12                 9         9    :   : SysSocket.SetBlocking
-45:38.689   12                17        12    :   : SysTcpSocket.Accept
-45:38.689   12                 5         5    :   :   SysSocket.SetError
-45:38.689   12                 7         4    :   : SysIpL3Addr.dtor
-45:38.689   12                 3         3    :   :   SysIpL2Addr.dtor
-45:38.689   12                38         5    :   TcpIoThread.PollSockets
-45:38.689   12                 5         5    :   : SysSocket.SetBlocking
-45:38.689   12                 4         4    :   : IpPort.RecvsInSequence
-45:38.689   12                24         4    :   : Thread.EnterBlockingOperation
-45:38.689   12                 1         1    :   :   Thread.RunningThread
-45:38.689   12  -lock         19         3    :   :   Thread.Unlock
-45:38.689   12                16        16    :   :   : Thread.LogContextSwitch
-45:38.689   12                 3         3    :   :   :   : SysMutex.Acquire
-45:38.689   12                 5         5    :   :   :   : SysMutex.Release
-45:38.689   12                 0         0    :   :   : SysMutex.Release
+03:21.122   15  +lock       1022        25  Thread.EnterThread
+03:21.122   15               997         5    Thread.Start
+03:21.122   15                 6         6    : SysThread.Start
+03:21.122   15                 4         4    : RecoveryTestThread.Enter
+03:21.122   15               982         5    : Thread.Exit
+03:21.122   15                 3         3    :   Thread.SetSignal
+03:21.122   15                 3         3    :   Thread.LogSignal
+03:21.122   15               285         4    :   Log.Create
+03:21.122   15                23         5    :   : Log.Find
+03:21.122   15                11        11    :   :   LogGroupRegistry.FindGroup
+03:21.122   15                 7         7    :   :   LogGroup.FindLog
+03:21.122   15               258       258    :   : Log.Format
+03:21.122   15               228         0    :   :   : SysTime.ctor(now)
+03:21.122   15               228         0    :   :   :   Object.ctor
+03:21.122   15               228       228    :   :   :   : Base.ctor
+03:21.122   15               195        43    :   Log.Submit
+03:21.122   15                44        24    :   : Log.Find
+03:21.122   15                20         6    :   :   Log.Find
+03:21.122   15                 8         8    :   :   : LogGroupRegistry.FindGroup
+03:21.122   15                 6         6    :   :   : LogGroup.FindLog
+03:21.122   15                 3         3    :   : LogBufferRegistry.Active
+03:21.122   15               105         4    :   : LogBuffer.Push
+03:21.122   15                19         6    :   :   MutexGuard.ctor
+03:21.122   15                13        13    :   :   : SysMutex.Acquire
+03:21.122   15                38         5    :   :   LogBuffer.InsertionPoint
+03:21.122   15                 3         3    :   :   : LogBuffer.First
+03:21.122   15                27        27    :   :   : LogBuffer.SetNext
+03:21.122   15                 3         3    :   :   : LogBuffer.First
+03:21.122   15                32         5    :   :   Thread.Interrupt
+03:21.122   15                27         3    :   :   : SysThread.Interrupt
+03:21.122   15                24        24    :   :   :   SysThread.Resume
+03:21.122   15                12         4    :   :   MutexGuard.dtor
+03:21.122   15                 8         8    :   :   : SysMutex.Release
+03:21.122   15               491         8    :   RecoveryTestThread.Destroy
+03:21.122   15               483         4    :   : Singleton.Destroy
+03:21.122   15               479        15    :   :   Singletons.UnbindInstance
+03:21.122   15               464         3    :   :   : RecoveryTestThread.dtor
+03:21.122   15               461         2    :   :   :   Thread.dtor
+03:21.122   15  -lock        459         4    :   :   :   : Thread.Unlock
+03:21.122   15                46        46    :   :   :   :   Thread.LogContextSwitch
+03:21.122   15                 3         3    :   :   :   :   :   SysMutex.Acquire
+03:21.122   15                20        20    :   :   :   :   :   SysMutex.Release
+03:21.122   15               409       409    :   :   :   :   InitThread.Yielding
+03:21.122   15               381        28    :   :   :   :   :   SysThread.dtor
+03:21.122   15               353       353    :   :   :   :   :   : SysThread.Delete
+03:21.122   15                46        46    :   :   :   :   :   :   :   :   :   :   : SysHeap.Free
+03:21.122   15                28        28    :   :   :   :   :   :   :   :   :   :   :   : Memory.Free
+03:21.122   15                21        21    :   :   :   :   :   :   :   :   SysHeap.Free
+03:21.122   15               255         2    :   :   :   :   :   :   : C++.delete
+03:21.122   15               132        14    :   :   :   :   :   :   :   HighWatermark.dtor
+03:21.122   15               118        14    :   :   :   :   :   :   :   : Statistic.dtor
+03:21.122   15               104        17    :   :   :   :   :   :   :   :   StatisticsRegistry.UnbindStat
+03:21.123   15                87        87    :   :   :   :   :   :   :   :   : Registry.Erase
+03:21.123   15                65        25    :   :   :   :   :   :   :   :   :   : Memory.Free
+03:21.123   15                40        40    :   :   :   :   :   :   :   :   :   :   SysHeap.Free
+03:21.123   15                27        12    :   :   :   :   :   :   :   :   :   :   :   Memory.Free
+03:21.123   15                15        15    :   :   :   :   :   :   :   :   :   :   :   : SysHeap.Free
+03:21.123   15                28         9    :   :   :   :   :   :   :   Object.operator delete
+03:21.123   15                19         7    :   :   :   :   :   :   :   : Memory.Free
+03:21.123   15                12        12    :   :   :   :   :   :   :   :   SysHeap.Free
+03:21.123   15                93         6    :   :   :   :   :   :   :   Counter.dtor
+03:21.123   15                87        13    :   :   :   :   :   :   :   : Statistic.dtor
+03:21.123   15                30        16    :   :   :   :   :   :   :   :   StatisticsRegistry.UnbindStat
+03:21.123   15                14        14    :   :   :   :   :   :   :   :   : Registry.Erase
+03:21.123   15                44        44    :   :   :   :   :   :   :   :   SysHeap.Free
+03:21.123   15                32        10    :   :   :   :   :   :   :   :   :   :   :   Memory.Free
+03:21.123   15                22        22    :   :   :   :   :   :   :   :   :   :   :   : SysHeap.Free
+03:21.123   15                 0         0    :   :   :   :   :   ThreadPriv.dtor
+03:22.243   12  +lock         34         0    :   TcpIoThread.Enter
+03:22.243   12                34        14    :   : Thread.ExitBlockingOperation
+03:22.243   12                20        20    :   :   Thread.ResumeLocked
+03:22.243   12                18         5    :   IpPortRegistry.HostAddress
+03:22.243   12                 3         3    :   : SysIpL2Addr.IsValid
+03:22.243   12                10         0    :   : SysIpL2Addr.ctor(copy)
+03:22.243   12                10         0    :   :   Object.ctor
+03:22.243   12                10        10    :   :   : Base.ctor
+03:22.243   12                 3         3    :   SysIpL2Addr.operator=(copy)
+03:22.243   12                 3         3    :   SysIpL2Addr.dtor
+03:22.243   12                54         4    :   TcpIoThread.AcceptConn
+03:22.243   12                13         0    :   : SysIpL3Addr.ctor
+03:22.243   12                13         0    :   :   SysIpL2Addr.ctor
+03:22.243   12                13         0    :   :   : Object.ctor
+03:22.243   12                13        13    :   :   :   Base.ctor
+03:22.243   12                11        11    :   : SysSocket.SetBlocking
+03:22.243   12                19        14    :   : SysTcpSocket.Accept
+03:22.243   12                 5         5    :   :   SysSocket.SetError
+03:22.243   12                 7         3    :   : SysIpL3Addr.dtor
+03:22.243   12                 4         4    :   :   SysIpL2Addr.dtor
+03:22.243   12                40         5    :   TcpIoThread.PollSockets
+03:22.243   12                 6         6    :   : SysSocket.SetBlocking
+03:22.243   12                 4         4    :   : IpPort.RecvsInSequence
+03:22.243   12                25         4    :   : Thread.EnterBlockingOperation
+03:22.243   12                 1         1    :   :   Thread.RunningThread
+03:22.243   12  -lock         20         3    :   :   Thread.Unlock
+03:22.243   12                17        17    :   :   : Thread.LogContextSwitch
+03:22.243   12                 3         3    :   :   :   : SysMutex.Acquire
+03:22.243   12                 5         5    :   :   :   : SysMutex.Release
+03:22.243   12                 0         0    :   :   : InitThread.Yielding
+03:24.243   12  +lock         22         1    :   TcpIoThread.Enter
+03:24.243   12                10        10    :   : Thread.ExitBlockingOperation
+03:24.243   12                11         0    :   : SysIpL2Addr.ctor(copy)
+03:24.243   12                11        11    :   :   Object.ctor
+03:24.243   12                 4         4    :   SysIpL2Addr.operator=(copy)
+03:24.243   12                 4         4    :   SysIpL2Addr.dtor
+03:24.243   12                73         6    :   TcpIoThread.AcceptConn
+03:24.243   12                15         0    :   : SysIpL3Addr.ctor
+03:24.243   12                15         0    :   :   SysIpL2Addr.ctor
+03:24.243   12                15         0    :   :   : Object.ctor
+03:24.243   12                15        15    :   :   :   Base.ctor
+03:24.244   12                11        11    :   : SysSocket.SetBlocking
+03:24.244   12                33        14    :   : SysTcpSocket.Accept
+03:24.244   12                19        19    :   :   SysSocket.SetError
+03:24.244   12                 8         4    :   : SysIpL3Addr.dtor
+03:24.244   12                 4         4    :   :   SysIpL2Addr.dtor
+03:24.244   12                31         4    :   TcpIoThread.PollSockets
+03:24.244   12                11        11    :   : SysSocket.SetBlocking
+03:24.244   12                16         4    :   : Thread.EnterBlockingOperation
+03:24.244   12                 1         1    :   :   Thread.RunningThread
+03:24.244   12  -lock         11         3    :   :   Thread.Unlock
+03:24.244   12                 8         8    :   :   : Thread.LogContextSwitch
+03:24.244   12                 0         0    :   :   :   : SysMutex.Acquire
 END OF TRACE

@@ -57,6 +57,7 @@
 #include "Singleton.h"
 #include "Statistics.h"
 #include "StatisticsRegistry.h"
+#include "SysMutex.h"
 #include "SysThreadStack.h"
 #include "ThreadAdmin.h"
 #include "ThreadRegistry.h"
@@ -71,13 +72,13 @@ using std::string;
 
 namespace NodeBase
 {
-//  Records the scheduling and locking of threads.
+//  Records the scheduling of threads.
 //
 class ThreadTrace : public FunctionTrace
 {
 public:
-   static const Id LockAcquired = 1;  // obtained RTC lock
-   static const Id LockReleased = 2;  // returned RTC lock
+   static const Id LockAcquired = 1;  // scheduled to run unpreemptably
+   static const Id LockReleased = 2;  // yielded when running unpreemptably
    static const Id PauseEnter   = 3;  // starting to pause
    static const Id PauseExit    = 4;  // returning from pause
    static const Id ScheduledIn  = 5;  // thread starting to run
@@ -850,7 +851,7 @@ public:
 
    //  The time at which the thread will be trapped if it has not yielded.
    //  Reset to 0 when the thread yields, and set when it resumes running
-   //  locked.
+   //  unpreemptably.
    //
    ticks_t currEnd_;
 
@@ -1027,7 +1028,7 @@ const SysThread::Priority FactionMap[Faction_N] =
 //------------------------------------------------------------------------------
 
 const Thread::Id Thread::MaxId = 99;
-SysMutex Thread::RtcLock_;
+Thread* Thread::LockedThread_ = nullptr;
 
 //------------------------------------------------------------------------------
 
@@ -1059,16 +1060,9 @@ Thread::Thread(Faction faction) :
       Singleton< ContextSwitches >::Instance();
 
       systhrd_.reset(new SysThread);
-
       priv_->currStart_ = Clock::TicksZero();
       priv_->entered_ = true;
       tid_.SetId(1);
-
-      //  RootThread never passes through EnterThread, so the following
-      //  must be done here.
-      //
-      RtcLock_.Acquire(TIMEOUT_NEVER, this);
-      RegisterForSignals();
    }
    else
    {
@@ -1530,13 +1524,16 @@ main_t Thread::EnterThread(void* arg)
 {
    auto self = static_cast< Thread* >(arg);
 
-   //  When a Thread is constructed, the thread may actually start to run
-   //  before its Thread object is fully constructed.  This causes a trap
-   //  because its vptr is still invalid, so the thread must wait a while.
-   //  The easiest way to do this is to force the thread to acquire the RTC
-   //  lock before using its Thread object.
+   //  A thread mau start to run before its Thread object is fully constructed.
+   //  This causes a trap, so the thread must wait a while.  We therefore start
+   //  by running each application thread unpreemptably.
    //
-   RtcLock_.Acquire(TIMEOUT_NEVER, self);
+   while(self->systhrd_ == nullptr) Debug::noop();
+
+   if(self->faction_ < SystemFaction)
+   {
+      Singleton< InitThread >::Instance()->Ready(self);
+   }
 
    //  If the thread is orphaned, it must exit immediately.  This occurs if
    //  the thread's constructor trapped, which resulted in its deletion but
@@ -1545,7 +1542,7 @@ main_t Thread::EnterThread(void* arg)
    //
    if(Singleton< Orphans >::Instance()->ExitNow())
    {
-      RtcLock_.Release();
+      Singleton< InitThread >::Instance()->Yielding(self);
       return SIGDELETED;
    }
 
@@ -1596,7 +1593,8 @@ main_t Thread::Exit(signal_t sig)
    {
       priv_->stackBase_ = nullptr;
       systhrd_.reset();
-      Singleton< InitThread >::Instance()->Interrupt();
+      if(LockedThread_ == this) LockedThread_ = nullptr;
+      Singleton< InitThread >::Instance()->Interrupt(InitThread::RecreateMask);
    }
    else
    {
@@ -1633,9 +1631,9 @@ void Thread::ExitBlockingOperation(fn_name_arg func)
       return thr->ResumeUnlocked(func);
    }
 
-   //  An unpreemptable thread must acquire the RTC lock to run.
+   //  An unpreemptable thread must wait to be scheduled in.
    //
-   RtcLock_.Acquire(TIMEOUT_NEVER, thr);
+   Singleton< InitThread >::Instance()->Ready(thr);
    thr->ResumeLocked(func);
 }
 
@@ -1892,14 +1890,26 @@ bool Thread::IsCritical() const
 
 bool Thread::IsLocked() const
 {
-   return (RtcLock_.Owner() == this);
+   return (LockedThread_ == this);
+}
+
+//------------------------------------------------------------------------------
+
+bool Thread::IsReadyAndUnpreemptable() const
+{
+   if(blocked_ == NotBlocked)
+   {
+      return ((priv_ != nullptr) && (priv_->unpreempts_ > 0));
+   }
+
+   return false;
 }
 
 //------------------------------------------------------------------------------
 
 Thread* Thread::LockedThread()
 {
-   auto thr = RtcLock_.Owner();
+   auto thr = LockedThread_;
    if((thr != nullptr) && !thr->deleted_) return thr;
    return nullptr;
 }
@@ -1917,7 +1927,7 @@ void Thread::LogContextSwitch() const
    auto tid = Tid();
    auto reg = Singleton< ThreadRegistry >::Instance();
    auto now = Clock::TicksNow();
-   auto locked = RunningLocked();
+   auto locked = IsLocked();
 
    if(reg->Threads().At(tid) == nullptr)
    {
@@ -2257,7 +2267,7 @@ void Thread::Raise(signal_t sig)
       }
    }
 
-   //  If a thread is being signaled for running unpreemptably too long,
+   //  If a thread is being signalled for running unpreemptably too long,
    //  check that it is actually locked, and make do with the log if it
    //  is not to be trapped.
    //
@@ -2420,7 +2430,19 @@ void Thread::ResetFlag(FlagId fid)
 
    auto thr = RunningThread();
    uint32_t mask = (1 << fid);
-   thr->priv_->vector_.store(~mask);
+   thr->priv_->vector_.fetch_and(~mask);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Thread_ResetFlags = "Thread.ResetFlags";
+
+void Thread::ResetFlags()
+{
+   Debug::ft(Thread_ResetFlags);
+
+   auto thr = RunningThread();
+   thr->priv_->vector_.store(0);
 }
 
 //------------------------------------------------------------------------------
@@ -2487,7 +2509,7 @@ word Thread::RtcPercentUsed()
 {
    Debug::ft(Thread_RtcPercentUsed);
 
-   //  This returns 0 unless the thread is running locked.
+   //  This returns 0 unless the thread is running unpreemptably.
    //
    auto thr = RunningThread();
    if(thr != LockedThread()) return 0;
@@ -2517,13 +2539,6 @@ void Thread::RtcTimeout()
 
 //------------------------------------------------------------------------------
 
-bool Thread::RunningLocked()
-{
-   return (RtcLock_.OwnerId() == SysThread::RunningThreadId());
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Thread_RunningThread = "Thread.RunningThread";
 
 Thread* Thread::RunningThread(bool assert)
@@ -2534,9 +2549,14 @@ Thread* Thread::RunningThread(bool assert)
    //  the locked thread.  If it isn't, search the thread registry.
    //
    auto nid = SysThread::RunningThreadId();
-   auto thr = (RtcLock_.OwnerId() == nid ? RtcLock_.Owner() : nullptr);
-   if(thr == nullptr)
+   Thread* thr = nullptr;
+   auto locked = LockedThread();
+
+   if((locked != nullptr) && (locked->NativeThreadId() == nid))
+      thr = locked;
+   else
       thr = Singleton< ThreadRegistry >::Instance()->FindThread(nid);
+
    if((thr != nullptr) && !thr->deleted_) return thr;
 
    //  The thread could not be found.  This can occur for various reasons:
@@ -2695,11 +2715,9 @@ fn_name Thread_Start = "Thread.Start";
 
 main_t Thread::Start()
 {
-   uint32_t spin = 0;
-
-   while((priv_ == nullptr) || (systhrd_ == nullptr))
+   while((priv_ == nullptr) || (stats_ == nullptr))
    {
-      if(++spin == UINT32_MAX) break;
+      Debug::noop();
    }
 
    for(priv_->trapped_ = false; true; stats_->traps_->Incr())
@@ -3010,10 +3028,10 @@ ticks_t Thread::TicksLeft() const
 {
    Debug::ft(Thread_TicksLeft);
 
-   //  currEnd_ is zeroed just before releasing the RTC lock.  This prevents
-   //  its previous value from being used during the brief interval in which
-   //  the thread has again acquired the RTC lock but currEnd_ has not been
-   //  recalculated.
+   //  currEnd_ is zeroed just before yielding.  This prevents its previous
+   //  value from being used during the brief interval in which the thread
+   //  has again been scheduled to run unpreemptably but currEnd_ has not
+   //  been recalculated.
    //
    if(priv_->currEnd_ == 0) return InitialMsecs();
    return Clock::TicksUntil(priv_->currEnd_);
@@ -3083,8 +3101,16 @@ bool Thread::TraceRunningThread(Thread*& thr)
 
    //  Don't trace a preemptable thread.  It is of minimal value and would
    //  require using a true lock while adding a record to the trace buffer.
+   //  However, it is safe to trace InitThread during system initialization.
    //
-   if(!thr->IsLocked()) return false;
+   if(!thr->IsLocked())
+   {
+      if(thr->faction_ == SystemFaction)
+         return (Restart::GetStatus() != Running);
+      else
+         return false;
+   }
+
    return true;
 }
 
@@ -3225,6 +3251,7 @@ void Thread::Unlock()
       Trace(this, Thread_Unlock, ThreadTrace::LockReleased);
    else
       Debug::ft(Thread_Unlock);
+
    LogContextSwitch();
 
    if(priv_->autostop_) StopTracing();
@@ -3247,7 +3274,7 @@ void Thread::Unlock()
    }
 
    priv_->currEnd_ = 0;
-   RtcLock_.Release();
+   Singleton< InitThread >::Instance()->Yielding(this);
 }
 
 //------------------------------------------------------------------------------

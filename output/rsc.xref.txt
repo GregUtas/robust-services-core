@@ -15969,12 +15969,12 @@ CodeTools::PathIncludes [ct/CxxString.h]
    ct/CodeDir.cpp
    ct/CxxString.cpp
 CodeTools::Prefix(std::basic_string<char,std::char_traits<char>,std::allocator<char>>) [ct/CxxString.h]
+   ct/CxxString.cpp
+CodeTools::Prefix(std::basic_string<char,std::char_traits<char>,std::allocator<char>>) [ct/CxxString.h]
    ct/CxxArea.cpp
    ct/CxxNamed.cpp
    ct/CxxScope.cpp
    ct/CxxScoped.cpp
-   ct/CxxString.cpp
-CodeTools::Prefix(std::basic_string<char,std::char_traits<char>,std::allocator<char>>) [ct/CxxString.h]
    ct/CxxString.cpp
 CodeTools::RemoveConsts [ct/CxxString.h]
    ct/CxxExecute.cpp
@@ -16960,6 +16960,7 @@ CodeTools::CxxToken::WasRead [ct/CxxToken.h]
    ct/CxxDirective.cpp
    ct/CxxDirective.h
    ct/CxxExecute.cpp
+   ct/CxxNamed.cpp
    ct/CxxScope.cpp
    ct/CxxScope.h
    ct/CxxScoped.cpp
@@ -25342,6 +25343,7 @@ NodeBase::CfgParm::SetNext [nb/CfgParm.h]
 NodeBase::CfgParm::SetValue [nb/CfgParm.h]
    nb/CfgParm.cpp
    nb/NbIncrement.cpp
+   nb/ObjectPool.cpp
 NodeBase::CfgParm::default_ [nb/CfgParm.h]
    nb/CfgParm.cpp
 NodeBase::CfgParm::expl_ [nb/CfgParm.h]
@@ -27612,14 +27614,13 @@ NodeBase::TIMEOUT_NEVER [nb/Clock.h]
    nb/Clock.h
    nb/CoutThread.cpp
    nb/FileThread.cpp
-   nb/InitThread.cpp
    nb/LogThread.cpp
    nb/MutexGuard.cpp
    nb/NbIncrement.cpp
    nb/NbModule.cpp
    nb/ObjectPoolAudit.cpp
-   nb/RootThread.cpp
    nb/SysMutex.win.cpp
+   nb/SysThread.cpp
    nb/Thread.cpp
    nw/SysTcpSocket.win.cpp
    nw/TcpIoThread.cpp
@@ -27685,6 +27686,7 @@ NodeBase::msecs_t [nb/Clock.h]
    nb/StatisticsThread.h
    nb/SysMutex.h
    nb/SysMutex.win.cpp
+   nb/SysThread.cpp
    nb/SysThread.h
    nb/SysThread.win.cpp
    nb/SysTime.cpp
@@ -27955,6 +27957,7 @@ NodeBase::Debug::SwLog(const char* const,unsigned long long,unsigned long long,N
    nb/CliTextParm.cpp
    nb/CliThread.cpp
    nb/Debug.cpp
+   nb/InitThread.cpp
    nb/Log.cpp
    nb/LogBuffer.cpp
    nb/LogBufferRegistry.cpp
@@ -28431,6 +28434,7 @@ NodeBase::Debug::ft [nb/Debug.h]
 NodeBase::Debug::noop [nb/Debug.h]
    ct/CxxExecute.cpp
    nb/Debug.cpp
+   nb/Thread.cpp
 NodeBase::SwLogLevel [nb/Debug.h]
    ct/CxxExecute.cpp
    ct/CxxExecute.h
@@ -29079,7 +29083,6 @@ NodeBase::FunctionGuard [nb/FunctionGuard.h]
    nb/CoutThread.cpp
    nb/FileThread.cpp
    nb/FunctionGuard.cpp
-   nb/InitThread.cpp
    nb/NbIncrement.cpp
    nt/NtIncrement.cpp
    nt/TestDatabase.cpp
@@ -29102,7 +29105,6 @@ NodeBase::FunctionGuard::First::MakeUnpreemptable [nb/FunctionGuard.h]
    nb/CoutThread.cpp
    nb/FileThread.cpp
    nb/FunctionGuard.cpp
-   nb/InitThread.cpp
 NodeBase::FunctionGuard::First::MemUnprotect [nb/FunctionGuard.h]
    nb/FunctionGuard.cpp
 NodeBase::FunctionGuard::First::NilFunction [nb/FunctionGuard.h]
@@ -29112,6 +29114,7 @@ NodeBase::FunctionGuard::FunctionGuard(NodeBase::FunctionGuard* const,NodeBase::
 NodeBase::FunctionGuard::first_ [nb/FunctionGuard.h]
    nb/FunctionGuard.cpp
 NodeBase::FunctionGuard::~FunctionGuard [nb/FunctionGuard.h]
+   nb/FileThread.cpp
    nb/FunctionGuard.cpp
    nt/TestDatabase.cpp
 NodeBase::FunctionName::CtorTag [nb/FunctionName.h]
@@ -29275,6 +29278,8 @@ NodeBase::InitThread_CalculateDelay [nb/InitThread.cpp]
    nb/InitThread.cpp
 NodeBase::InitThread_CauseRestart [nb/InitThread.cpp]
    nb/InitThread.cpp
+NodeBase::InitThread_ContextSwitch [nb/InitThread.cpp]
+   nb/InitThread.cpp
 NodeBase::InitThread_Destroy [nb/InitThread.cpp]
    nb/InitThread.cpp
 NodeBase::InitThread_Enter [nb/InitThread.cpp]
@@ -29286,6 +29291,14 @@ NodeBase::InitThread_HandleTimeout [nb/InitThread.cpp]
 NodeBase::InitThread_InitializeSystem [nb/InitThread.cpp]
    nb/InitThread.cpp
 NodeBase::InitThread_InitiateRestart [nb/InitThread.cpp]
+   nb/InitThread.cpp
+NodeBase::InitThread_Ready [nb/InitThread.cpp]
+   nb/InitThread.cpp
+NodeBase::InitThread_RecreateThreads [nb/InitThread.cpp]
+   nb/InitThread.cpp
+NodeBase::InitThread_SelectThread [nb/InitThread.cpp]
+   nb/InitThread.cpp
+NodeBase::InitThread_Yielding [nb/InitThread.cpp]
    nb/InitThread.cpp
 NodeBase::InitThread_ctor [nb/InitThread.cpp]
    nb/InitThread.cpp
@@ -29301,6 +29314,8 @@ NodeBase::InitThread::AbbrName [nb/InitThread.h]
 NodeBase::InitThread::CalculateDelay [nb/InitThread.h]
    nb/InitThread.cpp
 NodeBase::InitThread::CauseRestart [nb/InitThread.h]
+   nb/InitThread.cpp
+NodeBase::InitThread::ContextSwitch [nb/InitThread.h]
    nb/InitThread.cpp
 NodeBase::InitThread::Destroy [nb/InitThread.h]
    nb/InitThread.cpp
@@ -29321,6 +29336,17 @@ NodeBase::InitThread::InitiateRestart [nb/InitThread.h]
    nb/Thread.cpp
 NodeBase::InitThread::Patch [nb/InitThread.h]
    nb/InitThread.cpp
+NodeBase::InitThread::Ready [nb/InitThread.h]
+   nb/InitThread.cpp
+   nb/Thread.cpp
+NodeBase::InitThread::Recreate [nb/InitThread.h]
+   nb/InitThread.cpp
+   nb/InitThread.h
+NodeBase::InitThread::RecreateMask [nb/InitThread.h]
+   nb/InitThread.cpp
+   nb/Thread.cpp
+NodeBase::InitThread::RecreateThreads [nb/InitThread.h]
+   nb/InitThread.cpp
 NodeBase::InitThread::Restart [nb/InitThread.h]
    nb/InitThread.cpp
    nb/InitThread.h
@@ -29328,6 +29354,13 @@ NodeBase::InitThread::Restart [nb/InitThread.h]
 NodeBase::InitThread::RestartMask [nb/InitThread.h]
    nb/InitThread.cpp
    nb/RootThread.cpp
+NodeBase::InitThread::Schedule [nb/InitThread.h]
+   nb/InitThread.cpp
+   nb/InitThread.h
+NodeBase::InitThread::ScheduleMask [nb/InitThread.h]
+   nb/InitThread.cpp
+NodeBase::InitThread::SelectThread [nb/InitThread.h]
+   nb/InitThread.cpp
 NodeBase::InitThread::State [nb/InitThread.h]
    nb/InitThread.h
 NodeBase::InitThread::State::Initializing [nb/InitThread.h]
@@ -29336,7 +29369,12 @@ NodeBase::InitThread::State::Restarting [nb/InitThread.h]
    nb/InitThread.cpp
 NodeBase::InitThread::State::Running [nb/InitThread.h]
    nb/InitThread.cpp
+NodeBase::InitThread::Yielding [nb/InitThread.h]
+   nb/InitThread.cpp
+   nb/Thread.cpp
 NodeBase::InitThread::errval_ [nb/InitThread.h]
+   nb/InitThread.cpp
+NodeBase::InitThread::start_ [nb/InitThread.h]
    nb/InitThread.cpp
 NodeBase::InitThread::state_ [nb/InitThread.h]
    nb/InitThread.cpp
@@ -32406,6 +32444,10 @@ NodeBase::ObjPoolBlocksRecovered [nb/NbLogs.h]
    nb/NbLogs.cpp
    nb/NbLogs.h
    nb/ObjectPool.cpp
+NodeBase::ObjPoolExpanded [nb/NbLogs.h]
+   nb/NbLogs.cpp
+   nb/NbLogs.h
+   nb/ObjectPool.cpp
 NodeBase::ObjPoolExpansionFailed [nb/NbLogs.h]
    nb/NbLogs.cpp
    nb/NbLogs.h
@@ -33003,6 +33045,7 @@ NodeBase::LogType::PeriodicLog [nb/NbTypes.h]
    nb/NbLogs.h
    nb/NbTypes.cpp
 NodeBase::LogType::StateLog [nb/NbTypes.h]
+   nb/NbLogs.h
    nb/NbTypes.cpp
    pb/PotsLogs.h
 NodeBase::LogType::ThresholdLog [nb/NbTypes.h]
@@ -34696,7 +34739,7 @@ NodeBase::PosixSignal::Name [nb/PosixSignal.h]
    nb/PosixSignalRegistry.cpp
 NodeBase::PosixSignal::Patch [nb/PosixSignal.h]
    nb/PosixSignal.cpp
-NodeBase::PosixSignal::PosixSignal(NodeBase::PosixSignal* const,int,const char*,const char*,unsigned char,const std::bitset<unsigned int>) [nb/PosixSignal.h]
+NodeBase::PosixSignal::PosixSignal(NodeBase::PosixSignal* const,int,const char*,const char*,unsigned char,const std::bitset<unsigned char>) [nb/PosixSignal.h]
    nb/PosixSignal.cpp
 NodeBase::PosixSignal::Severity [nb/PosixSignal.h]
    nb/Thread.cpp
@@ -35844,6 +35887,7 @@ NodeBase::Restart::GetStatus [nb/Restart.h]
    nb/Q1Way.h
    nb/Q2Way.h
    nb/Registry.h
+   nb/Thread.cpp
    nw/IpBuffer.cpp
    sb/InvokerPool.cpp
 NodeBase::Restart::Initiate [nb/Restart.h]
@@ -35910,6 +35954,7 @@ NodeBase::RestartStatus::Running [nb/Restart.h]
    nb/Q1Way.h
    nb/Q2Way.h
    nb/Registry.h
+   nb/Thread.cpp
    sb/InvokerPool.cpp
 NodeBase::RestartStatus::ShuttingDown [nb/Restart.h]
    nb/ModuleRegistry.cpp
@@ -36023,6 +36068,7 @@ NodeBase::Singleton::Destroy [nb/Singleton.h]
 NodeBase::Singleton::Extant [nb/Singleton.h]
    an/PotsShelfHandler.cpp
    ct/CtModule.cpp
+   nb/Element.cpp
    nb/Memory.cpp
    nb/RootThread.cpp
    nb/Thread.cpp
@@ -37088,7 +37134,6 @@ NodeBase::SysMutex [nb/SysMutex.h]
    nb/SysMutex.cpp
    nb/SysMutex.win.cpp
    nb/Thread.cpp
-   nb/Thread.h
 NodeBase::SysMutex::Acquire [nb/SysMutex.h]
    nb/MutexGuard.cpp
    nb/SysMutex.win.cpp
@@ -37097,9 +37142,6 @@ NodeBase::SysMutex::Display [nb/SysMutex.h]
    nb/SysMutex.cpp
 NodeBase::SysMutex::Owner [nb/SysMutex.h]
    nb/SysMutex.cpp
-   nb/Thread.cpp
-NodeBase::SysMutex::OwnerId [nb/SysMutex.h]
-   nb/Thread.cpp
 NodeBase::SysMutex::Patch [nb/SysMutex.h]
    nb/SysMutex.cpp
 NodeBase::SysMutex::Rc [nb/SysMutex.h]
@@ -37183,6 +37225,14 @@ NodeBase::SysSignals::SigTerm::SigTerm [nb/SysSignals.h]
    nb/SysSignals.cpp
 NodeBase::SysSignals_CreateNativeSignals [nb/SysSignals.win.cpp]
    nb/SysSignals.win.cpp
+NodeBase::SysThread_Delay [nb/SysThread.cpp]
+   nb/SysThread.cpp
+NodeBase::SysThread_Interrupt [nb/SysThread.cpp]
+   nb/SysThread.cpp
+NodeBase::SysThread_Proceed [nb/SysThread.cpp]
+   nb/SysThread.cpp
+NodeBase::SysThread_Wait [nb/SysThread.cpp]
+   nb/SysThread.cpp
 NodeBase::SysThread_ctor1 [nb/SysThread.cpp]
    nb/SysThread.cpp
 NodeBase::SysThread_ctor2 [nb/SysThread.cpp]
@@ -37190,6 +37240,7 @@ NodeBase::SysThread_ctor2 [nb/SysThread.cpp]
 NodeBase::SysThread_dtor [nb/SysThread.cpp]
    nb/SysThread.cpp
 NodeBase::SysThread [nb/SysThread.h]
+   nb/InitThread.cpp
    nb/SysThread.cpp
    nb/SysThread.win.cpp
    nb/Thread.cpp
@@ -37202,7 +37253,7 @@ NodeBase::SysThread::CreateSentry [nb/SysThread.h]
    nb/SysThread.cpp
    nb/SysThread.win.cpp
 NodeBase::SysThread::Delay [nb/SysThread.h]
-   nb/SysThread.win.cpp
+   nb/SysThread.cpp
    nb/Thread.cpp
 NodeBase::SysThread::Delete [nb/SysThread.h]
    nb/SysThread.cpp
@@ -37213,7 +37264,7 @@ NodeBase::SysThread::DeleteSentry [nb/SysThread.h]
 NodeBase::SysThread::Display [nb/SysThread.h]
    nb/SysThread.cpp
 NodeBase::SysThread::Interrupt [nb/SysThread.h]
-   nb/SysThread.win.cpp
+   nb/SysThread.cpp
    nb/Thread.cpp
 NodeBase::SysThread::Nid [nb/SysThread.h]
    nb/Thread.cpp
@@ -37234,9 +37285,15 @@ NodeBase::SysThread::Priority::SystemPriority [nb/SysThread.h]
 NodeBase::SysThread::Priority::WatchdogPriority [nb/SysThread.h]
    nb/SysThread.cpp
    nb/Thread.cpp
+NodeBase::SysThread::Proceed [nb/SysThread.h]
+   nb/InitThread.cpp
+   nb/SysThread.cpp
 NodeBase::SysThread::RegisterForSignal [nb/SysThread.h]
    nb/SysThread.win.cpp
    nb/Thread.cpp
+NodeBase::SysThread::Resume [nb/SysThread.h]
+   nb/SysThread.cpp
+   nb/SysThread.win.cpp
 NodeBase::SysThread::RunningThreadId [nb/SysThread.h]
    nb/SysMutex.win.cpp
    nb/SysThread.cpp
@@ -37262,6 +37319,9 @@ NodeBase::SysThread::StatusFlag::StatusFlag_N [nb/SysThread.h]
 NodeBase::SysThread::StatusFlags [nb/SysThread.h]
    nb/SysThread.cpp
    nb/SysThread.h
+NodeBase::SysThread::Suspend [nb/SysThread.h]
+   nb/SysThread.cpp
+   nb/SysThread.win.cpp
 NodeBase::SysThread::SysThread(NodeBase::SysThread* const) [nb/SysThread.h]
    nb/SysThread.cpp
 NodeBase::SysThread::SysThread(NodeBase::SysThread* const,const NodeBase::Thread*,const int(void*),NodeBase::SysThread::Priority,unsigned int) [nb/SysThread.h]
@@ -37270,17 +37330,21 @@ NodeBase::SysThread::ThreadEntry [nb/SysThread.h]
    nb/SysThread.cpp
    nb/SysThread.h
    nb/SysThread.win.cpp
+NodeBase::SysThread::Wait [nb/SysThread.h]
+   nb/InitThread.cpp
+   nb/SysThread.cpp
 NodeBase::SysThread::Wrap [nb/SysThread.h]
    nb/SysThread.cpp
    nb/SysThread.win.cpp
+NodeBase::SysThread::event_ [nb/SysThread.h]
+   nb/SysThread.cpp
+NodeBase::SysThread::guard_ [nb/SysThread.h]
+   nb/SysThread.cpp
 NodeBase::SysThread::nid_ [nb/SysThread.h]
    nb/SysThread.cpp
    nb/SysThread.h
    nb/SysThread.win.cpp
 NodeBase::SysThread::nthread_ [nb/SysThread.h]
-   nb/SysThread.cpp
-   nb/SysThread.win.cpp
-NodeBase::SysThread::sentry_ [nb/SysThread.h]
    nb/SysThread.cpp
    nb/SysThread.win.cpp
 NodeBase::SysThread::sighandler_t [nb/SysThread.h]
@@ -37307,17 +37371,17 @@ NodeBase::SysThread_Create [nb/SysThread.win.cpp]
    nb/SysThread.win.cpp
 NodeBase::SysThread_CreateSentry [nb/SysThread.win.cpp]
    nb/SysThread.win.cpp
-NodeBase::SysThread_Delay [nb/SysThread.win.cpp]
-   nb/SysThread.win.cpp
 NodeBase::SysThread_Delete [nb/SysThread.win.cpp]
    nb/SysThread.win.cpp
 NodeBase::SysThread_DeleteSentry [nb/SysThread.win.cpp]
    nb/SysThread.win.cpp
-NodeBase::SysThread_Interrupt [nb/SysThread.win.cpp]
+NodeBase::SysThread_Resume [nb/SysThread.win.cpp]
    nb/SysThread.win.cpp
 NodeBase::SysThread_SetPriority [nb/SysThread.win.cpp]
    nb/SysThread.win.cpp
 NodeBase::SysThread_Start [nb/SysThread.win.cpp]
+   nb/SysThread.win.cpp
+NodeBase::SysThread_Suspend [nb/SysThread.win.cpp]
    nb/SysThread.win.cpp
 NodeBase::SysThread_Wrap [nb/SysThread.win.cpp]
    nb/SysThread.win.cpp
@@ -37639,7 +37703,6 @@ NodeBase::BAD_POINTER [nb/SysTypes.h]
    nb/SysTypes.cpp
    nt/NtIncrement.cpp
 NodeBase::BITS_PER_WORD [nb/SysTypes.h]
-   nb/SysTypes.cpp
    nb/SysTypes.h
 NodeBase::BYTES_PER_POINTER [nb/SysTypes.h]
    nb/SysTypes.cpp
@@ -37913,6 +37976,7 @@ NodeBase::CRLF_STR [nb/SysTypes.h]
    nb/SysTypes.cpp
 NodeBase::DelayRc [nb/SysTypes.h]
    nb/InitThread.cpp
+   nb/SysThread.cpp
    nb/SysThread.h
    nb/SysThread.win.cpp
    nb/ThisThread.cpp
@@ -38001,6 +38065,8 @@ NodeBase::ERROR_STR [nb/SysTypes.h]
    sb/Parameter.cpp
    sb/SbTrace.cpp
    sb/SbTypes.cpp
+NodeBase::FLAGS_SIZE [nb/SysTypes.h]
+   nb/SysTypes.h
 NodeBase::FlagId [nb/SysTypes.h]
    dip/DipTypes.h
    nb/CfgFlagParm.cpp
@@ -38011,7 +38077,6 @@ NodeBase::FlagId [nb/SysTypes.h]
    nb/NbAppIds.h
    nb/NbTracer.cpp
    nb/NbTracer.h
-   nb/SysTypes.cpp
    nb/SysTypes.h
    nb/Thread.cpp
    nb/Thread.h
@@ -38398,7 +38463,7 @@ NodeBase::Flags [nb/SysTypes.h]
    st/TestSessions.h
 NodeBase::MaxFlagId [nb/SysTypes.h]
    nb/Debug.cpp
-   nb/SysTypes.cpp
+   nb/SysTypes.h
    nt/NtIncrement.cpp
 NodeBase::MemoryType [nb/SysTypes.h]
    nb/AllocationException.cpp
@@ -38590,17 +38655,26 @@ NodeBase::NUL [nb/SysTypes.h]
    nb/SysTypes.h
 NodeBase::NoFlags [nb/SysTypes.h]
    an/PotsTrafficThread.cpp
+   ct/CodeFile.cpp
+   ct/CxxNamed.cpp
+   ct/CxxScope.cpp
+   ct/CxxScoped.cpp
+   ct/CxxStatement.cpp
+   ct/CxxToken.cpp
    nb/AlarmRegistry.cpp
    nb/Base.cpp
+   nb/Debug.cpp
    nb/LogGroup.cpp
    nb/LogGroupRegistry.cpp
    nb/NbIncrement.cpp
    nb/ObjectPool.cpp
+   nb/PosixSignalRegistry.cpp
    nb/Q1Way.h
    nb/Q2Way.h
    nb/Registry.h
    nb/SysTypes.cpp
    nb/Thread.cpp
+   nb/Thread.h
    nt/FunctionProfiler.cpp
    nt/NtIncrement.cpp
    sb/Context.cpp
@@ -39776,6 +39850,7 @@ NodeBase::id_t [nb/SysTypes.h]
    nb/CliText.h
    nb/CliTextParm.cpp
    nb/CliTextParm.h
+   nb/InitThread.h
    nb/LogBufferRegistry.h
    nb/LogGroup.cpp
    nb/LogGroup.h
@@ -40449,6 +40524,8 @@ NodeBase::Thread_ReleaseResources [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Thread_ResetFlag [nb/Thread.cpp]
    nb/Thread.cpp
+NodeBase::Thread_ResetFlags [nb/Thread.cpp]
+   nb/Thread.cpp
 NodeBase::Thread_Restarting [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Thread_ResumeLocked [nb/Thread.cpp]
@@ -40692,6 +40769,7 @@ NodeBase::Thread::EnterSwLog [nb/Thread.h]
    nb/Debug.cpp
    nb/Thread.cpp
 NodeBase::Thread::EnterThread [nb/Thread.h]
+   nb/RootThread.cpp
    nb/Thread.cpp
 NodeBase::Thread::Exit [nb/Thread.h]
    nb/Thread.cpp
@@ -40760,7 +40838,13 @@ NodeBase::Thread::IsCritical [nb/Thread.h]
    nt/NtIncrement.cpp
 NodeBase::Thread::IsLocked [nb/Thread.h]
    nb/Thread.cpp
+NodeBase::Thread::IsReadyAndUnpreemptable [nb/Thread.h]
+   nb/InitThread.cpp
+   nb/Thread.cpp
 NodeBase::Thread::LockedThread [nb/Thread.h]
+   nb/InitThread.cpp
+   nb/Thread.cpp
+NodeBase::Thread::LockedThread_ [nb/Thread.h]
    nb/InitThread.cpp
    nb/Thread.cpp
 NodeBase::Thread::LogContextSwitch [nb/Thread.h]
@@ -40864,6 +40948,9 @@ NodeBase::Thread::ResetFlag [nb/Thread.h]
    nb/InitThread.cpp
    nb/RootThread.cpp
    nb/Thread.cpp
+NodeBase::Thread::ResetFlags [nb/Thread.h]
+   nb/InitThread.cpp
+   nb/Thread.cpp
 NodeBase::Thread::Restarting [nb/Thread.h]
    nb/Thread.cpp
    nb/ThreadRegistry.cpp
@@ -40871,16 +40958,12 @@ NodeBase::Thread::ResumeLocked [nb/Thread.h]
    nb/Thread.cpp
 NodeBase::Thread::ResumeUnlocked [nb/Thread.h]
    nb/Thread.cpp
-NodeBase::Thread::RtcLock_ [nb/Thread.h]
-   nb/Thread.cpp
 NodeBase::Thread::RtcPercentUsed [nb/Thread.h]
    nb/ThisThread.cpp
    nb/Thread.cpp
    nw/IoThread.cpp
 NodeBase::Thread::RtcTimeout [nb/Thread.h]
    nb/InitThread.cpp
-   nb/Thread.cpp
-NodeBase::Thread::RunningLocked [nb/Thread.h]
    nb/Thread.cpp
 NodeBase::Thread::RunningThread [nb/Thread.h]
    nb/CinThread.cpp
@@ -40908,7 +40991,6 @@ NodeBase::Thread::SignalHandler [nb/Thread.h]
 NodeBase::Thread::StackCheck [nb/Thread.h]
    nb/Thread.cpp
 NodeBase::Thread::Start [nb/Thread.h]
-   nb/RootThread.cpp
    nb/Thread.cpp
 NodeBase::Thread::StartShortInterval [nb/Thread.h]
    nb/StatisticsThread.cpp
@@ -40972,6 +41054,7 @@ NodeBase::Thread::blocked_ [nb/Thread.h]
 NodeBase::Thread::deleted_ [nb/Thread.h]
    nb/Thread.cpp
 NodeBase::Thread::faction_ [nb/Thread.h]
+   nb/InitThread.cpp
    nb/Thread.cpp
    nb/Thread.h
 NodeBase::Thread::msgq_ [nb/Thread.h]
@@ -40986,6 +41069,7 @@ NodeBase::Thread::status_ [nb/Thread.h]
    nb/Thread.cpp
    nb/Thread.h
 NodeBase::Thread::systhrd_ [nb/Thread.h]
+   nb/InitThread.cpp
    nb/Thread.cpp
 NodeBase::Thread::tid_ [nb/Thread.h]
    nb/Thread.cpp
@@ -62324,6 +62408,8 @@ std::atomic::exchange [subs/atomic]
    nb/TraceBuffer.cpp
 std::atomic::fetch_add [subs/atomic]
    nb/TraceBuffer.cpp
+std::atomic::fetch_and [subs/atomic]
+   nb/Thread.cpp
 std::atomic::fetch_or [subs/atomic]
    nb/Thread.cpp
 std::atomic::fetch_sub [subs/atomic]
@@ -63000,7 +63086,6 @@ UINT32_MAX [subs/cstdint]
    ct/CxxToken.cpp
    nb/Clock.h
    nb/SysTypes.h
-   nb/Thread.cpp
    nt/TestDatabase.h
 UINT64_MAX [subs/cstdint]
    nb/SysTypes.h
@@ -64225,12 +64310,6 @@ std::multimap::value_type [subs/map]
 std::allocator [subs/memory]
    ct/CxxStrLiteral.h
 std::unique_ptr [subs/memory]
-   ct/CodeFileSet.cpp
-   dip/TokenMessage.cpp
-   dip/TokenMessage.h
-   nb/Thread.cpp
-   nw/SysTcpSocket.win.cpp
-std::unique_ptr [subs/memory]
    an/PotsShelfHandler.cpp
    an/PotsShelfIpService.cpp
    cb/BcProtocol.cpp
@@ -64347,6 +64426,12 @@ std::unique_ptr [subs/memory]
    st/StTestData.cpp
    st/StTestData.h
    st/TestSessions.h
+std::unique_ptr [subs/memory]
+   ct/CodeFileSet.cpp
+   dip/TokenMessage.cpp
+   dip/TokenMessage.h
+   nb/Thread.cpp
+   nw/SysTcpSocket.win.cpp
 std::unique_ptr::get [subs/memory]
    an/PotsShelfHandler.cpp
    ct/CodeFile.cpp
@@ -66259,6 +66344,7 @@ std::basic_string::empty [subs/string]
    nb/Formatters.cpp
    nb/NbIncrement.cpp
    nb/SoftwareException.cpp
+   nb/TraceBuffer.cpp
    nt/NtIncrement.cpp
    nt/NtTestData.cpp
    nt/TestDatabase.cpp
@@ -66436,6 +66522,7 @@ std::basic_string::push_back [subs/string]
    nb/CliThread.cpp
    nb/Element.cpp
    nb/NbIncrement.cpp
+   nb/TraceBuffer.cpp
    st/MscContext.cpp
 std::basic_string::replace(std::basic_string* const,unsigned int,unsigned int,const std::basic_string) [subs/string]
    ct/CxxString.cpp
@@ -67316,6 +67403,7 @@ std::vector::empty [subs/vector]
    ct/CxxToken.h
    ct/Editor.cpp
    dip/BaseBot.cpp
+   nb/Element.cpp
 std::vector::end(std::vector* const) [subs/vector]
    ct/CodeFile.cpp
    ct/CodeWarning.cpp
@@ -67459,7 +67547,6 @@ HeapValidate [subs/windows.h]
    nb/SysHeap.win.cpp
 INFINITE [subs/windows.h]
    nb/SysMutex.win.cpp
-   nb/SysThread.win.cpp
 LARGE_INTEGER [subs/windows.h]
    nb/SysTickTimer.win.cpp
 LARGE_INTEGER::QuadPart [subs/windows.h]

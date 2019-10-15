@@ -115,7 +115,7 @@ public:
       Creations,    // number of threads created
       Deletions,    // number of threads deleted
       Switches,     // number of context switches
-      Locks,        // number of RTC lock acquisitions
+      Locks,        // times that a thread was scheduled to run unpreemptably
       Interrupts,   // number of interrupts
       Traps,        // number of traps
       Recoveries,   // number of trap recoveries
@@ -123,7 +123,7 @@ public:
       Orphans,      // number of orphans detected
       Kills,        // number of threads killed
       Unknowns,     // times that RunningThread returned nullptr
-      Unreleased    // times that exiting thread failed to release lock
+      Unreleased    // times that exiting thread failed to release a mutex
    };
 
    //  Increments the Counter specified by R.

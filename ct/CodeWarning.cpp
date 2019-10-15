@@ -920,13 +920,56 @@ bool CodeWarning::operator!=(const CodeWarning& that) const
 
 bool CodeWarning::Suppress() const
 {
-   //  Allocators.h generates a lot of warnings because its code
-   //  is only invoked from the STL.
-   //
-   if(file_->Name() == "Allocators.h") return true;
+   auto& fn = file_->Name();
 
    switch(warning_)
    {
+   case ArgumentUnused:
+      if(fn == "BaseBot.h") return true;
+      break;
+
+   case DataUnused:
+      if(fn == "Allocators.h") return true;
+      break;
+
+   case FunctionUnused:
+      if(fn == "Allocators.h") return true;
+      if(fn == "BaseBot.h") return true;
+      if(fn == "MapAndUnits.h") return true;
+      break;
+
+   case TypedefUnused:
+      if(fn == "Allocators.h") return true;
+      break;
+
+   case ItemCouldBePrivate:
+      if(fn == "BaseBot.h") return true;
+      if(fn == "MapAndUnits.h") return true;
+      break;
+
+   case DataNotPrivate:
+      if(fn == "BaseBot.h") return true;
+      if(fn == "MapAndUnits.h") return true;
+      break;
+
+   case FunctionNotOverridden:
+      if(fn == "BaseBot.h") return true;
+      if(fn == "BcSessions.h") return true;
+      if(fn == "ProxyBcSessions.h") return true;
+      break;
+
+   case FunctionCouldBeStatic:
+   case FunctionCouldBeFree:
+   case CouldBeNoexcept:
+   case ShouldNotBeNoexcept:
+      if(fn == "Allocators.h") return true;
+      break;
+
+   case RemoveLineBreak:
+      if(fn == "BcStates.cpp") return true;
+      if(fn == "CodeWarning.cpp") return true;
+      break;
+
    case DebugFtNotInvoked:
    {
       auto func = static_cast< const Function* >(item_);
@@ -939,11 +982,11 @@ bool CodeWarning::Suppress() const
       auto file = func->GetImplFile();
       if(file != nullptr)
       {
-         if(file->Name() == "Algorithms.cpp") return true;
-         if(file->Name() == "Formatters.cpp") return true;
-         if(file->Name() == "Clock.cpp") return true;
-         if(file->Name() == "TraceRecord.cpp") return true;
-         if(file->Name() == "CxxString.cpp") return true;
+         if(fn == "Algorithms.cpp") return true;
+         if(fn == "Formatters.cpp") return true;
+         if(fn == "Clock.cpp") return true;
+         if(fn == "TraceRecord.cpp") return true;
+         if(fn == "CxxString.cpp") return true;
       }
 
       auto name = func->Name();

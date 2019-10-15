@@ -666,9 +666,8 @@ void CodeFile::CheckDebugFt() const
             break;
 
          case DebugFt:
+            if(code & !debug) LogLine(n, DebugFtNotFirst);
             debug = true;
-            if(code) LogLine(n, DebugFtNotFirst);
-            code = true;
 
             if(lexer_.GetNthLine(n, statement))
             {

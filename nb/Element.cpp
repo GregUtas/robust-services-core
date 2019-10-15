@@ -118,7 +118,12 @@ const string& Element::HelpPath()
 {
    static string HelpDir;
 
-   if(HelpDir.empty()) HelpDir = RscPath() + PATH_SEPARATOR + "help";
+   if(HelpDir.empty())
+   {
+      auto rsc = RscPath();
+      if(!rsc.empty()) HelpDir = rsc + PATH_SEPARATOR + "help";
+   }
+
    return HelpDir;
 }
 
@@ -128,7 +133,12 @@ const string& Element::InputPath()
 {
    static string InputDir;
 
-   if(InputDir.empty()) InputDir = RscPath() + PATH_SEPARATOR + "input";
+   if(InputDir.empty())
+   {
+      auto rsc = RscPath();
+      if(!rsc.empty()) InputDir = rsc + PATH_SEPARATOR + "input";
+   }
+
    return InputDir;
 }
 
@@ -139,7 +149,11 @@ const string& Element::OutputPath()
    static string OutputDir;
 
    if(OutputDir.empty())
-      OutputDir = RscPath() + PATH_SEPARATOR + "excluded/output";
+   {
+      auto rsc = RscPath();
+      if(!rsc.empty()) OutputDir = rsc + PATH_SEPARATOR + "excluded/output";
+   }
+
    return OutputDir;
 }
 
@@ -161,7 +175,10 @@ const string& Element::RscPath()
    //
    if(RscDir.empty())
    {
-      auto& args = Singleton< CfgParmRegistry >::Instance()->GetMainArgs();
+      auto reg = Singleton< CfgParmRegistry >::Extant();
+      if(reg == nullptr) return RscDir;
+      auto& args = reg->GetMainArgs();
+      if(args.empty()) return RscDir;
       RscDir = *args.at(0);
       SysFile::Normalize(RscDir);
 

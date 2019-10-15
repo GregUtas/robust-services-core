@@ -1,69 +1,49 @@
-FUNCTION PROFILE: 2-Aug-2019 09:45:55.542 on Reigi
+FUNCTION PROFILE: 15-Oct-2019 16:03:40.394 on Reigi
 
     Calls       uSecs   Function
     -----       -----   --------
-       20          79   Thread.RunningThread
-       15          69   Thread.Pause
-       14         234   SysMutex.Release
-       10          58   SysMutex.Acquire
-        6         127   Thread.ExitBlockingOperation
-        6         116   Thread.LogContextSwitch
-        6          41   Thread.Unlock
-        6          26   Thread.EnterBlockingOperation
-        5          13   Thread.ResumeLocked
-        3        2297   RecoveryTestThread.Enter
-        3         265   Base.ctor
-        3          15   Log.Find
-        3           0   Object.ctor
-        2          44   SysSocket.SetBlocking
-        2          18   LogGroupRegistry.FindGroup
-        2          13   MutexGuard.ctor
+       15        3589   Thread.Pause
+        7        2705   Thread.RunningThread
+        6         105   Thread.Unlock
+        6          67   SysMutex.Acquire
+        6          55   Thread.ExitBlockingOperation
+        6          54   SysMutex.Release
+        3          48   Thread.LogContextSwitch
+        3           0   InitThread.Yielding
+        2         233   LogGroup.FindLog
+        2          40   MutexGuard.ctor
+        2          38   LogBuffer.First
+        2          37   LogGroupRegistry.FindGroup
+        2          33   SysSocket.SetBlocking
+        2          22   Log.Find
+        2          15   MutexGuard.dtor
         2          12   SysIpL2Addr.dtor
-        2           9   LogGroup.FindLog
-        2           9   Thread.SetSignal
-        2           7   MutexGuard.dtor
-        2           7   Thread.ExitSwLog
-        2           6   LogBuffer.First
-        2           6   Thread.InitialMsecs
-        2           5   Debug.SwFlagOn
-        2           0   ThreadAdmin.WarpFactor
-        1        2229   SysThreadStack.Display
-        1         333   Log.Format
-        1          29   TcpIoThread.PollSockets
-        1          26   SysTcpSocket.Accept
-        1          22   IpPort.RecvsInSequence
-        1          13   SysSocket.SetError
-        1          12   LeakyBucketCounter.HasReachedLimit
-        1          12   Log.Submit
-        1           8   SysIpL3Addr.dtor
-        1           8   SysThread.Interrupt
-        1           7   Thread.RegisterForSignals
-        1           7   Thread.TrapHandler
-        1           6   LogBuffer.SetNext
-        1           5   Exception.dtor
-        1           5   LogBufferRegistry.Active
-        1           5   SysThread.Start
-        1           4   Exception.ctor
-        1           4   IpPortRegistry.HostAddress
-        1           4   Log.Create
-        1           4   LogBuffer.InsertionPoint
-        1           4   RecoveryTestThread.Recover
-        1           4   TcpIoThread.AcceptConn
-        1           4   Thread.HandleSignal
-        1           4   Thread.Interrupt
-        1           4   Thread.SignalHandler
-        1           4   Thread.Start
-        1           3   LogBuffer.Push
-        1           3   Orphans.ExitNow
-        1           3   SignalException.dtor
-        1           3   SysIpL2Addr.IsValid
-        1           3   SysIpL2Addr.operator=(copy)
-        1           3   Thread.ExtendTime
-        1           1   TcpIoThread.Enter
-        1           0   SignalException.ctor
+        2          11   Thread.ExitSwLog
+        2          10   Thread.EnterBlockingOperation
+        2           6   Thread.ResumeLocked
+        1        1832   SignalException.ctor
+        1          33   Base.ctor
+        1          27   LogBuffer.InsertionPoint
+        1          22   Log.Submit
+        1          18   LogBuffer.SetNext
+        1          18   SysTcpSocket.Accept
+        1          17   LeakyBucketCounter.HasReachedLimit
+        1          16   Thread.Interrupt
+        1          12   Thread.TrapHandler
+        1          10   Orphans.ExitNow
+        1          10   SysThread.Resume
+        1           9   SysIpL2Addr.operator=(copy)
+        1           8   LogBuffer.Push
+        1           8   LogBufferRegistry.Active
+        1           7   SysSocket.SetError
+        1           7   TcpIoThread.AcceptConn
+        1           6   SysThread.Interrupt
+        1           6   TcpIoThread.PollSockets
+        1           5   IpPort.RecvsInSequence
+        1           5   SysIpL3Addr.dtor
+        1           0   Object.ctor
         1           0   SysIpL2Addr.ctor
-        1           0   SysIpL2Addr.ctor(copy)
         1           0   SysIpL3Addr.ctor
-        1           0   SysTime.ctor(now)
+        1           0   TcpIoThread.Enter
 
-Total functions: 63
+Total functions: 43

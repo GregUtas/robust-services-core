@@ -64,6 +64,7 @@ namespace NodeBase
    extern fixed_string ObjPoolLogGroup;
    constexpr LogId ObjPoolExpansionFailed = TroubleLog;
    constexpr LogId ObjPoolBlocksInUse = ThresholdLog;
+   constexpr LogId ObjPoolExpanded = StateLog;
    constexpr LogId ObjPoolQueueCorrupt = DebugLog;
    constexpr LogId ObjPoolQueueCount = DebugLog + 1;
    constexpr LogId ObjPoolBlockRecovered = DebugLog + 2;

@@ -25,13 +25,13 @@
 #include "Algorithms.h"
 #include "Debug.h"
 #include "Formatters.h"
-#include "FunctionGuard.h"
 #include "Log.h"
 #include "ModuleRegistry.h"
 #include "NbLogs.h"
 #include "Registry.h"
 #include "RootThread.h"
 #include "Singleton.h"
+#include "SysThread.h"
 #include "ThreadAdmin.h"
 #include "ThreadRegistry.h"
 
@@ -43,6 +43,8 @@ using std::string;
 namespace NodeBase
 {
 const Flags InitThread::RestartMask = Flags(1 << InitThread::Restart);
+const Flags InitThread::RecreateMask = Flags(1 << InitThread::Recreate);
+const Flags InitThread::ScheduleMask = Flags(1 << InitThread::Schedule);
 
 //------------------------------------------------------------------------------
 
@@ -50,6 +52,7 @@ fn_name InitThread_ctor = "InitThread.ctor";
 
 InitThread::InitThread() : Thread(SystemFaction),
    state_(Initializing),
+   start_(1),
    timeout_(false),
    errval_(0)
 {
@@ -80,18 +83,13 @@ msecs_t InitThread::CalculateDelay() const
 {
    Debug::ft(InitThread_CalculateDelay);
 
-   //  If breakpoint debugging is enabled, sleep forever.  Otherwise, wake
-   //  up at the earliest of the following:
-   //  o the time before which RootThread must be interrupted to prevent a
-   //    scheduling timeout;
-   //  o the time before which the locked thread must yield;
-   //  o the RTC timeout, if no thread is currently locked.
+   //  Wake up at the earliest of the following:
+   //  o the time before which RootThread must be interrupted to
+   //    prevent a scheduling timeout;
+   //  o the time before which the unpreemptable thread must yield;
+   //  o the RTC timeout, if no unpreemptable thread is running (or
+   //    if it has already been signalled for running too long).
    //
-   if(ThreadAdmin::BreakEnabled())
-   {
-      return TIMEOUT_NEVER;
-   }
-
    ticks_t ticks = 0;
    auto thr = LockedThread();
 
@@ -142,6 +140,28 @@ void InitThread::CauseRestart()
 
 //------------------------------------------------------------------------------
 
+fn_name InitThread_ContextSwitch = "InitThread.ContextSwitch";
+
+void InitThread::ContextSwitch()
+{
+   Debug::ft(InitThread_ContextSwitch);
+
+   ResetFlag(Schedule);
+
+   auto locked = LockedThread();
+   if(locked != nullptr) return;
+
+   locked = SelectThread();
+
+   if(locked != nullptr)
+   {
+      LockedThread_ = locked;
+      locked->systhrd_->Proceed();
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name InitThread_Destroy = "InitThread.Destroy";
 
 void InitThread::Destroy()
@@ -159,6 +179,7 @@ void InitThread::Display(ostream& stream,
    Thread::Display(stream, prefix, options);
 
    stream << prefix << "state   : " << state_ << CRLF;
+   stream << prefix << "start   : " << start_ << CRLF;
    stream << prefix << "timeout : " << timeout_ << CRLF;
    stream << prefix << "errval  : " << errval_ << CRLF;
 }
@@ -174,16 +195,16 @@ void InitThread::Enter()
    msecs_t delay;
    DelayRc drc;
 
-   //  Threads are unpreemptable when entered, but we run preemptably when
-   //  the system is in service.  If we didn't, then once our sleep interval
-   //  expired, we'd have to acquire the RTC lock before we could run again.
-   //  This would make it impossible to enforce the timeout on the RTC lock,
-   //  which is one of our responsibilities.
+   //  When a thread is entered, it is unpreemptable.  However, we must run
+   //  preemptably so that we don't wait for other unpreemptable threads to
+   //  yield.  Our high priority ensures that we will run whenever we want.
    //
    MakePreemptable();
 
    while(true)
    {
+      Debug::ft(InitThread_Enter);
+
       switch(state_)
       {
       case Initializing:
@@ -234,22 +255,130 @@ void InitThread::HandleInterrupt()
    //
    if(TestFlag(InitThread::Restart))
    {
-      ResetFlag(InitThread::Restart);
+      ResetFlags();
       state_ = Initializing;
       Pause(100);
       return;
    }
 
    //  We also get interrupted
-   //  o to recreate critical threads that were forced to exit.  Initiate a
-   //    restart if re-creation fails.
-   //  o when breakpoint debugging is disabled after being enabled.  After
-   //    failing to find a thread that needs to be recrated, we simply end
-   //    up looping around and recalculating our next timeout interval.
-   //  In both of these cases, interrupt RootThread so that its watchdog
+   //  o to recreate critical threads that were forced to exit;
+   //  o to schedule the next unpreemptable thread;
+   //  o when breakpoint debugging is disabled after being enabled, in which
+   //    case no flag is set and we end up looping around and recalculating
+   //    our next timeout interval.
+   //  In each of these cases, interrupt RootThread so that its watchdog
    //  timer won't expire.
    //
    Singleton< RootThread >::Instance()->Interrupt();
+
+   if(TestFlag(InitThread::Recreate))
+   {
+      RecreateThreads();
+   }
+
+   if(TestFlag(InitThread::Schedule))
+   {
+      ContextSwitch();
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name InitThread_HandleTimeout = "InitThread.HandleTimeout";
+
+void InitThread::HandleTimeout()
+{
+   Debug::ft(InitThread_HandleTimeout);
+
+   //  Interrupt RootThread so that its watchdog timer won't expire.  If the
+   //  locked thread has run too long, signal it unless breakpoint debugging
+   //  is enabled.
+   //
+   Singleton< RootThread >::Instance()->Interrupt();
+   timeout_ = false;
+
+   auto locked = LockedThread();
+
+   if(locked == nullptr)
+   {
+      ContextSwitch();
+      return;
+   }
+
+   if((locked->TicksLeft() == 0) && !ThreadAdmin::BreakEnabled())
+   {
+      locked->RtcTimeout();
+      timeout_ = true;
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name InitThread_InitializeSystem = "InitThread.InitializeSystem";
+
+void InitThread::InitializeSystem()
+{
+   Debug::ft(InitThread_InitializeSystem);
+
+   //  Once the system is initialized, notify RootThread so that it
+   //  will stop the watchdog timer that runs during initialization.
+   //
+   Singleton< ModuleRegistry >::Instance()->Restart();
+   state_ = Running;
+   Singleton< RootThread >::Instance()->Interrupt();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name InitThread_InitiateRestart = "InitThread.InitiateRestart";
+
+void InitThread::InitiateRestart(reinit_t reason, debug32_t errval)
+{
+   Debug::ft(InitThread_InitiateRestart);
+
+   //  Save the restart reason and error value.  Tell RootThread that
+   //  a restart is occurring so that it can act as a watchdog on its
+   //  completion, and then inform our thread.
+   //
+   Singleton< ModuleRegistry >::Instance()->SetReason(reason, errval);
+   Singleton< RootThread >::Instance()->Interrupt(RestartMask);
+   Interrupt(RestartMask);
+}
+
+//------------------------------------------------------------------------------
+
+void InitThread::Patch(sel_t selector, void* arguments)
+{
+   Thread::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name InitThread_Ready = "InitThread.Ready";
+
+void InitThread::Ready(const Thread* thread)
+{
+   Debug::ft(InitThread_Ready);
+
+   //  This thread is ready to run unpreemptably.  If there is
+   //  currently no locked thread, wake InitThread to schedule
+   //  this thread in.  The thread then waits to be signalled.
+   //
+   if(thread->faction_ >= SystemFaction) return;
+   if(LockedThread() == nullptr) Interrupt(ScheduleMask);
+   thread->systhrd_->Wait();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name InitThread_RecreateThreads = "InitThread.RecreateThreads";
+
+void InitThread::RecreateThreads()
+{
+   Debug::ft(InitThread_RecreateThreads);
+
+   ResetFlag(Recreate);
 
    auto& threads = Singleton< ThreadRegistry >::Instance()->Threads();
 
@@ -257,6 +386,9 @@ void InitThread::HandleInterrupt()
    {
       if(t->HasExited())
       {
+         //  Recreate this thread.  If this traps or fails, state_
+         //  and errval_ will cause us to initiate a restart.
+         //
          state_ = Restarting;
          errval_ = pack2(t->Tid(), t->NativeThreadId());
 
@@ -271,67 +403,76 @@ void InitThread::HandleInterrupt()
 
 //------------------------------------------------------------------------------
 
-fn_name InitThread_HandleTimeout = "InitThread.HandleTimeout";
+fn_name InitThread_SelectThread = "InitThread.SelectThread";
 
-void InitThread::HandleTimeout()
+Thread* InitThread::SelectThread()
 {
-   Debug::ft(InitThread_HandleTimeout);
+   Debug::ft(InitThread_SelectThread);
 
-   //  Interrupt RootThread so that its watchdog timer won't expire.
-   //  If the locked thread has run too long, signal it.
+   //  Cycle through all threads, beginning with the one identified by
+   //  start_, to find the next one that is ready to run unpreemptably.
    //
-   Singleton< RootThread >::Instance()->Interrupt();
-   timeout_ = false;
+   auto& threads = Singleton< ThreadRegistry >::Instance()->Threads();
+   auto first = threads.First(start_);
+   Thread* next = nullptr;
 
-   auto thr = LockedThread();
-
-   if((thr != nullptr) && (thr->TicksLeft() == 0))
+   for(auto t = first; t != nullptr; threads.Next(t))
    {
-      thr->RtcTimeout();
-      timeout_ = true;
+      if(t->IsReadyAndUnpreemptable())
+      {
+         next = t;
+         break;
+      }
    }
-}
 
-//------------------------------------------------------------------------------
+   if(next == nullptr)
+   {
+      for(auto t = threads.First(); t != first; threads.Next(t))
+      {
+         if(t->IsReadyAndUnpreemptable())
+         {
+            next = t;
+            break;
+         }
+      }
+   }
 
-fn_name InitThread_InitializeSystem = "InitThread.InitializeSystem";
-
-void InitThread::InitializeSystem()
-{
-   Debug::ft(InitThread_InitializeSystem);
-
-   //  Make this thread unpreeeptable to prevent other threads from running
-   //  before the system is initialized.  When the system is initialized,
-   //  notify the root thread so that it will stop the watchdog timer that
-   //  runs during initialization.
+   //  If a thread was found, start the next search with the thread
+   //  that follows it.
    //
-   FunctionGuard guard(FunctionGuard::MakeUnpreemptable);
-   Singleton< ModuleRegistry >::Instance()->Restart();
-   state_ = Running;
-   Singleton< RootThread >::Instance()->Interrupt();
+   if(next != nullptr)
+   {
+      auto t = threads.Next(*next);
+      start_ = (t != nullptr ? t->Tid() : 1);
+   }
+
+   return next;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name InitThread_InitiateRestart = "InitThread.InitiateRestart";
+fn_name InitThread_Yielding = "InitThread.Yielding";
 
-void InitThread::InitiateRestart(reinit_t reason, debug32_t errval)
+void InitThread::Yielding(const Thread* thread)
 {
-   Debug::ft(InitThread_InitiateRestart);
+   Debug::ft(InitThread_Yielding);
 
-   //  Save the restart reason and error value.  Tell RootThread that a restart
-   //  is occurring so that it can act as a watchdog on its completion, and then
-   //  inform our thread.
+   //  Generate a log if the thread running unpreemptably was not the
+   //  one that yielded.
    //
-   Singleton< ModuleRegistry >::Instance()->SetReason(reason, errval);
-   Singleton< RootThread >::Instance()->Interrupt(RestartMask);
-   Interrupt(RestartMask);
-}
+   auto locked = LockedThread();
 
-//------------------------------------------------------------------------------
+   if((locked != thread) && (locked != nullptr))
+   {
+      Debug::SwLog(InitThread_Yielding, locked->Tid(), thread->Tid());
+      return;
+   }
 
-void InitThread::Patch(sel_t selector, void* arguments)
-{
-   Thread::Patch(selector, arguments);
+   //  No thread is now running unpreemptably.  If an application thread
+   //  just yielded, wake InitThread to schedule the next thread.
+   //
+   LockedThread_ = nullptr;
+   if(thread->faction_ >= SystemFaction) return;
+   Interrupt(ScheduleMask);
 }
 }

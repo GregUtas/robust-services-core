@@ -45,6 +45,7 @@ class SysThread : public Permanent
 {
    friend std::unique_ptr< SysThread >::deleter_type;
    friend class Thread;
+   friend class InitThread;
    friend class Orphans;
 public:
    //  Returns the native identifier of the running thread.
@@ -139,17 +140,33 @@ private:
    signal_t Start();
 
    //  Sleeps for MSECS (0 = yield, -1 = infinite).  The outcomes are
-   //  o Failed: probably an obscure but serious bug
+   //  o Error: probably an obscure but serious bug
    //  o Interrupted: was awoken before the requested duration elapsed
    //  o Completed: slept for the requested duration
    //
    DelayRc Delay(msecs_t msecs);
 
-   //  Signals a thread's sentry.  If the thread is delaying, it awakens.
-   //  If it is not delaying, it only yields (sleeps for zero seconds,
-   //  allowing other threads to run) the next time it delays.
+   //  Signals the thread.  If the thread is delaying, it awakens.  If it
+   //  is not delaying, it only yields (sleeps for zero seconds, allowing
+   //  other threads to run) the next time it delays.
    //
    bool Interrupt();
+
+   //  Invoked by the thread when it is ready to run unpreemptably.
+   //
+   DelayRc Wait();
+
+   //  Invoked when the thread can resume running unpreemptably.
+   //
+   bool Proceed();
+
+   //  Invoked to wait on SENTRY for MSECS.
+   //
+   DelayRc Suspend(SysSentry_t& sentry, msecs_t msecs);
+
+   //  Invoked to signal SENTRY.
+   //
+   bool Resume(SysSentry_t& sentry);
 
    //  Sets or changes the thread's priority.
    //
@@ -180,9 +197,15 @@ private:
    //
    StatusFlags status_;
 
-   //  A reference to a native object that is waited on to implement Delay.
+   //  A reference to a native object that is waited on to implement Delay
+   //  and Interrupt.
    //
-   SysSentry_t sentry_;
+   SysSentry_t event_;
+
+   //  A reference to a native object that is waited on to implement Wait
+   //  and Proceed.
+   //
+   SysSentry_t guard_;
 
    //  The signal that caused the thread to be deleted.
    //

@@ -119,8 +119,9 @@ typedef int16_t fn_depth;
 //  Types for flags.
 //
 typedef uint8_t FlagId;
-extern const FlagId MaxFlagId;
-typedef std::bitset< BITS_PER_WORD > Flags;
+constexpr FlagId MaxFlagId = 31;
+constexpr FlagId FLAGS_SIZE = MaxFlagId + 1;
+typedef std::bitset< FLAGS_SIZE > Flags;
 extern const Flags NoFlags;
 
 //  Maximum line length for formatted console output.

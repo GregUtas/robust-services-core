@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CxxScoped.h"
+#include <bitset>
 #include <cstdint>
 #include <set>
 #include <sstream>
@@ -2071,7 +2072,7 @@ void Friend::SetAsReferent(const CxxNamed* user)
    //  is equivalent to the friend declaration.
    //
    std::ostringstream name;
-   if(parms_ != nullptr) parms_->Print(name, Flags());
+   if(parms_ != nullptr) parms_->Print(name, NoFlags);
    name << tag_ << SPACE;
    name << ScopedName(true);
    user->Log(FriendAsForward, nullptr, 0, false, name.str());

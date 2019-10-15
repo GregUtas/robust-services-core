@@ -96,7 +96,7 @@ SigClose::SigClose() : PosixSignal(SIGCLOSE, "SIGCLOSE",
    PS_Delayed() | PS_Exit() | PS_Final() | PS_NoLog() | PS_NoError()) { }
 
 SigYield::SigYield() : PosixSignal(SIGYIELD, "SIGYIELD",
-   "Running Locked Too Long", 4, Flags()) { }
+   "Running Unpreemptably Too Long", 4, Flags()) { }
 
 SigTraps::SigTraps() : PosixSignal(SIGTRAPS, "SIGTRAPS",
    "Trap Threshold Exceeded", 0, PS_Exit()) { }

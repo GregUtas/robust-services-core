@@ -7,6 +7,7 @@ delay 2
 inject PS E &port.A
 delay 1
 inject PS E &port.B
+delay 1
 verify PS R &port.A &cause.normal
 verify PS S &port.B m=&port.silence c=&cause.normal
 verify PS R &port.B &cause.normal

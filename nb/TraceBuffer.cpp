@@ -688,7 +688,9 @@ TraceRc TraceBuffer::StartTracing(bool immediate)
 
    if(immediate)
    {
-      auto path = Element::OutputPath() + PATH_SEPARATOR + "immed.trace.txt";
+      auto path = Element::OutputPath();
+      if(!path.empty()) path.push_back(PATH_SEPARATOR);
+      path += "immed.trace.txt";
       stream_ = SysFile::CreateOstream(path.c_str());
       if(stream_ == nullptr) return CouldNotOpenFile;
       immediate_ = true;

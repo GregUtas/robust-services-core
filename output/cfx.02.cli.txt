@@ -35,6 +35,8 @@ pots>delay 1
   OK.
 pots>inject PS E &port.B
   OK.
+pots>delay 1
+  OK.
 pots>verify PS R &port.A &cause.normal
   OK.
 pots>verify PS S &port.B m=&port.silence c=&cause.normal
@@ -49,6 +51,8 @@ pots>if &cli.result != 0 testcase failed &cli.result "Context(s) not idled"
   Result is false.
 pots>/ A-B(CFB)-C: ANSWER; RELEASE
 pots>inject PS B &port.A
+  OK.
+pots>delay 1
   OK.
 pots>inject PS B &port.B
   OK.

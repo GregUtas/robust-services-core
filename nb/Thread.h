@@ -35,7 +35,6 @@
 #include "Q1Way.h"
 #include "RegCell.h"
 #include "SysDecls.h"
-#include "SysMutex.h"
 #include "SysThread.h"
 #include "SysTypes.h"
 #include "ToolTypes.h"
@@ -114,7 +113,7 @@ public:
    //  thread can access with Vector() when it resumes execution.  How these
    //  flags are interpreted is thread specific.
    //
-   bool Interrupt(const Flags& mask = Flags());
+   bool Interrupt(const Flags& mask = NoFlags);
 
    //  Returns the running thread's interrupt vector.
    //
@@ -127,6 +126,10 @@ public:
    //  Clears a flag in the running thread's interrupt vector.
    //
    static void ResetFlag(FlagId fid);
+
+   //  Clears the flags in the running thread's interrupt vector.
+   //
+   static void ResetFlags();
 
    //  Must be called immediately before using a blocking operation.  WHY is
    //  the reason for blocking.  FUNC identifies the function that wants to
@@ -406,17 +409,17 @@ private:
    //
    virtual void Destroy();
 
-   //  Invoked when a locked thread resumes execution.  FUNC is from
+   //  Invoked when an unpreemptable thread resumes execution.  FUNC is from
    //  ExitBlockingOperation.
    //
    void ResumeLocked(fn_name_arg func);
 
-   //  Invoked when an unlocked thread resumes execution.  FUNC is from
+   //  Invoked when a preemptable thread resumes execution.  FUNC is from
    //  ExitBlockingOperation.
    //
    void ResumeUnlocked(fn_name_arg func);
 
-   //  Returns true if the thread owns the RTC lock.
+   //  Returns true if the thread is running unpreemptably.
    //
    bool IsLocked() const;
 
@@ -424,14 +427,13 @@ private:
    //
    void Unlock();
 
-   //  Returns the thread that currently owns the run-to-completion lock
-   //  (in other words, the thread that is running unpreemptably).
+   //  Returns the thread that is running unpreemptably.
    //
    static Thread* LockedThread();
 
-   //  Returns true if the running thread is locked.
+   //  Returns true if the thread is not blocked and unpreemptable.
    //
-   static bool RunningLocked();
+   bool IsReadyAndUnpreemptable() const;
 
    //  Returns the priority associated with FACTION.  If FACTION is out of
    //  range, it is set to BackgroundFaction after generating a log.
@@ -495,7 +497,7 @@ private:
    //
    ticks_t TicksLeft() const;
 
-   //  Gives the running thread MSECS more time to run unpreeemptably.
+   //  Gives the running thread MSECS more time to run unpreemptably.
    //
    static void ExtendTime(msecs_t msecs);
 
@@ -608,9 +610,9 @@ private:
    //
    std::unique_ptr< ThreadStats > stats_;
 
-   //  The run-to-completion (RTC) lock.
+   //  The thread that is running unpreemptably.
    //
-   static SysMutex RtcLock_;
+   static Thread* LockedThread_;
 };
 }
 #endif

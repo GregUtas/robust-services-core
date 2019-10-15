@@ -1099,5 +1099,25 @@ void ObjectPool::UpdateAlarm() const
 
    auto log = alarm_->Create(ObjPoolLogGroup, ObjPoolBlocksInUse, status);
    if(log != nullptr) Log::Submit(log);
+
+   //  When the number of available blocks drops to a dangerous level,
+   //  add another segment to the pool.
+   //
+   if(availCount_ <= (totalCount_ >> 6))
+   {
+      RestartLevel level;
+      auto size = std::to_string(currSegments_ + 1);
+
+      if(cfgSegments_->SetValue(size, level))
+      {
+         log = Log::Create(ObjPoolLogGroup, ObjPoolExpanded);
+
+         if(log != nullptr)
+         {
+            *log << Log::Tab << "new segments=" << currSegments_;
+            Log::Submit(log);
+         }
+      }
+   }
 }
 }

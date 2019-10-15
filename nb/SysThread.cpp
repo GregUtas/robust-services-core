@@ -39,18 +39,19 @@ SysThread::SysThread(const Thread* client,
    const ThreadEntry entry, Priority prio, size_t size) :
    nthread_(nullptr),
    nid_(NIL_ID),
-   sentry_(nullptr),
+   event_(CreateSentry()),
+   guard_(CreateSentry()),
    signal_(SIGNIL)
 {
    Debug::ft(SysThread_ctor1);
 
-   //  Create the thread and its sentry.  Set the thread's priority.
+   Debug::Assert(event_ != nullptr);
+   Debug::Assert(guard_ != nullptr);
+
+   //  Create the thread and set its priority.
    //
    nthread_ = Create(entry, client, size, nid_);
    Debug::Assert(nthread_ != nullptr);
-
-   sentry_ = CreateSentry();
-   Debug::Assert(sentry_ != nullptr);
 
    Debug::Assert(SetPriority(prio));
 }
@@ -62,20 +63,19 @@ fn_name SysThread_ctor2 = "SysThread.ctor(wrap)";
 SysThread::SysThread() :
    nthread_(nullptr),
    nid_(RunningThreadId()),
-   sentry_(nullptr),
+   event_(CreateSentry()),
+   guard_(CreateSentry()),
    signal_(SIGNIL)
 {
    Debug::ft(SysThread_ctor2);
 
-   //  Wrap the thread and create its sentry.  Set the thread's priority.
+   Debug::Assert(event_ != nullptr);
+   Debug::Assert(guard_ != nullptr);
+
+   //  Wrap the thread and set its priority.
    //
    nthread_ = Wrap();
    Debug::Assert(nthread_ != nullptr);
-
-   //  Create the event on which the thread waits and set the thread's faction.
-   //
-   sentry_ = CreateSentry();
-   Debug::Assert(sentry_ != nullptr);
 
    SetPriority(WatchdogPriority);
 }
@@ -88,8 +88,20 @@ SysThread::~SysThread()
 {
    Debug::ft(SysThread_dtor);
 
-   DeleteSentry(sentry_);
+   DeleteSentry(event_);
+   DeleteSentry(guard_);
    Delete(nthread_);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SysThread_Delay = "SysThread.Delay";
+
+DelayRc SysThread::Delay(msecs_t msecs)
+{
+   Debug::ft(SysThread_Delay);
+
+   return Suspend(event_, msecs);
 }
 
 //------------------------------------------------------------------------------
@@ -102,7 +114,41 @@ void SysThread::Display(ostream& stream,
    stream << prefix << "nthread : " << nthread_ << CRLF;
    stream << prefix << "nid     : " << strHex(nid_, 4, false) << CRLF;
    stream << prefix << "status  : " << status_.to_string() << CRLF;
-   stream << prefix << "sentry  : " << sentry_ << CRLF;
+   stream << prefix << "event   : " << event_ << CRLF;
+   stream << prefix << "guard   : " << guard_ << CRLF;
    stream << prefix << "signal  : " << signal_ << CRLF;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SysThread_Interrupt = "SysThread.Interrupt";
+
+bool SysThread::Interrupt()
+{
+   Debug::ft(SysThread_Interrupt);
+
+   return Resume(event_);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SysThread_Proceed = "SysThread.Proceed";
+
+bool SysThread::Proceed()
+{
+   Debug::ft(SysThread_Proceed);
+
+   return Resume(guard_);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SysThread_Wait = "SysThread.Wait";
+
+DelayRc SysThread::Wait()
+{
+   Debug::ft(SysThread_Wait);
+
+   return Suspend(guard_, TIMEOUT_NEVER);
 }
 }

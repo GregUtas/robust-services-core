@@ -1273,7 +1273,7 @@ bool Data::GetStrValue(string& str) const
    if(rhs_ == nullptr) return false;
 
    std::ostringstream stream;
-   rhs_->Print(stream, Flags());
+   rhs_->Print(stream, NoFlags);
    str = stream.str();
    auto quote = str.find(QUOTE);
    if(quote == string::npos) return false;
@@ -5318,7 +5318,7 @@ bool FuncSpec::NamesReferToArgs(const NameVector& names,
 
 void FuncSpec::Print(ostream& stream, const Flags& options) const
 {
-   func_->DisplayDecl(stream, Flags());
+   func_->DisplayDecl(stream, NoFlags);
 }
 
 //------------------------------------------------------------------------------

@@ -824,7 +824,7 @@ void Expression::Start()
 string Expression::Trace() const
 {
    std::ostringstream stream;
-   Print(stream, Flags());
+   Print(stream, NoFlags);
    return stream.str();
 }
 
@@ -1069,7 +1069,7 @@ CxxToken* Literal::RootType() const
 string Literal::Trace() const
 {
    std::ostringstream stream;
-   Print(stream, Flags());
+   Print(stream, NoFlags);
    return stream.str();
 }
 
@@ -1268,7 +1268,7 @@ void Operation::CheckCast(const StackArg& inArg, const StackArg& outArg) const
 void Operation::DisplayArg(ostream& stream, size_t index) const
 {
    if(index < args_.size())
-      args_.at(index)->Print(stream, Flags());
+      args_.at(index)->Print(stream, NoFlags);
    else
       stream << ERROR_STR << "(arg=" << index << ')';
 }

@@ -1016,11 +1016,13 @@ fixed_string ClosingConsoleStr = "Closing console in 10 seconds...";
 //
 const SysThread::Priority FactionMap[Faction_N] =
 {
+   SysThread::LowPriority,      // IdleFaction
    SysThread::DefaultPriority,  // AuditFaction
    SysThread::DefaultPriority,  // BackgroundFaction
    SysThread::DefaultPriority,  // OperationsFaction
    SysThread::DefaultPriority,  // MaintenanceFaction
    SysThread::DefaultPriority,  // PayloadFaction
+   SysThread::DefaultPriority,  // LoadTestFaction
    SysThread::SystemPriority,   // SystemFaction
    SysThread::WatchdogPriority  // WatchdogFaction
 };
@@ -1532,7 +1534,7 @@ main_t Thread::EnterThread(void* arg)
 
    if(self->faction_ < SystemFaction)
    {
-      Singleton< InitThread >::Instance()->Ready(self);
+      self->Ready();
    }
 
    //  If the thread is orphaned, it must exit immediately.  This occurs if
@@ -1542,7 +1544,7 @@ main_t Thread::EnterThread(void* arg)
    //
    if(Singleton< Orphans >::Instance()->ExitNow())
    {
-      Singleton< InitThread >::Instance()->Yielding(self);
+      self->Schedule();
       return SIGDELETED;
    }
 
@@ -1633,7 +1635,7 @@ void Thread::ExitBlockingOperation(fn_name_arg func)
 
    //  An unpreemptable thread must wait to be scheduled in.
    //
-   Singleton< InitThread >::Instance()->Ready(thr);
+   thr->Ready();
    thr->ResumeLocked(func);
 }
 
@@ -2289,6 +2291,28 @@ void Thread::Raise(signal_t sig)
 
 //------------------------------------------------------------------------------
 
+fn_name Thread_Ready = "Thread.Ready";
+
+void Thread::Ready() const
+{
+   Debug::ft(Thread_Ready);
+
+   //  This thread is ready to run unpreemptably.  If no thread is currently
+   //  locked, wake InitThread to schedule this thread in.  The thread then
+   //  waits to run until it is signalled.
+   //
+   if(faction_ >= SystemFaction) return;
+
+   if(LockedThread() == nullptr)
+   {
+      Singleton< InitThread >::Instance()->Interrupt(InitThread::ScheduleMask);
+   }
+
+   systhrd_->Wait();
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Thread_Recover = "Thread.Recover";
 
 Thread::RecoveryAction Thread::Recover()
@@ -2579,6 +2603,33 @@ Thread* Thread::RunningThread(bool assert)
    }
 
    return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Thread_Schedule = "Thread.Schedule";
+
+void Thread::Schedule() const
+{
+   Debug::ft(Thread_Schedule);
+
+   //  Generate a log if the thread running unpreemptably was not the
+   //  one that yielded.
+   //
+   auto locked = LockedThread();
+
+   if((locked != this) && (locked != nullptr))
+   {
+      Debug::SwLog(Thread_Schedule, locked->Tid(), Tid());
+      return;
+   }
+
+   //  No thread is now running unpreemptably.  If an application thread
+   //  just yielded, wake InitThread to schedule the next thread.
+   //
+   LockedThread_ = nullptr;
+   if(faction_ >= SystemFaction) return;
+   Singleton< InitThread >::Instance()->Interrupt(InitThread::ScheduleMask);
 }
 
 //------------------------------------------------------------------------------
@@ -3274,7 +3325,7 @@ void Thread::Unlock()
    }
 
    priv_->currEnd_ = 0;
-   Singleton< InitThread >::Instance()->Yielding(this);
+   Schedule();
 }
 
 //------------------------------------------------------------------------------

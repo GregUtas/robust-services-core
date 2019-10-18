@@ -136,7 +136,7 @@ void CoutThread::Spool(ostringstreamPtr& stream)
    auto faction = client->GetFaction();
 
    FunctionGuard
-      guard(FunctionGuard::MakeUnpreemptable, faction <= PayloadFaction);
+      guard(FunctionGuard::MakeUnpreemptable, faction < SystemFaction);
 
    auto request = new StreamRequest;
 

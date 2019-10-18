@@ -38,8 +38,8 @@ const int PriorityMap[SysThread::Priority_N] =
 {
    THREAD_PRIORITY_BELOW_NORMAL,  // LowPriority
    THREAD_PRIORITY_NORMAL,        // DefaultPriority
-   THREAD_PRIORITY_ABOVE_NORMAL,  // SystemFaction
-   THREAD_PRIORITY_HIGHEST        // WatchdogFaction
+   THREAD_PRIORITY_ABOVE_NORMAL,  // SystemPriority
+   THREAD_PRIORITY_HIGHEST        // WatchdogPriority
 };
 
 //------------------------------------------------------------------------------

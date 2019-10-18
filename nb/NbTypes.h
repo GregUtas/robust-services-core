@@ -76,7 +76,8 @@ enum Faction
    BackgroundFaction,   // generating reports
    OperationsFaction,   // CLI, provisioning
    MaintenanceFaction,  // shelf management
-   PayloadFaction,      // session processing
+   PayloadFaction,      // applications for end users
+   LoadTestFaction,     // load generator for stress testing
    SystemFaction,       // InitThread
    WatchdogFaction,     // RootThread
    Faction_N            // number of factions

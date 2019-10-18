@@ -329,12 +329,13 @@ private:
    //
    virtual c_string AbbrName() const = 0;
 
-   //  The common entry function for all threads (except RootThread).
-   //  ARG is a pointer to the Thread object.
+   //  The common entry function for all threads.  ARG is a pointer to
+   //  the Thread object.
    //
    static main_t EnterThread(void* arg);
 
    //  Contains most of the entry code that is common to all threads.
+   //  Implements the safety net that can recover from all exceptions.
    //
    main_t Start();
 
@@ -408,6 +409,14 @@ private:
    //  delete but may be overridden to properly delete a Singleton.
    //
    virtual void Destroy();
+
+   //  Invokes when an unpreemptable thread yields.
+   //
+   void Schedule() const;
+
+   //  Invoked when an unpreemptable thread is ready to run.
+   //
+   void Ready() const;
 
    //  Invoked when an unpreemptable thread resumes execution.  FUNC is from
    //  ExitBlockingOperation.

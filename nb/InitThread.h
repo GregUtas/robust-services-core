@@ -110,14 +110,6 @@ private:
    //
    void RecreateThreads();
 
-   //  Invoked when an unpreemptable thread is ready to run.
-   //
-   void Ready(const Thread* thread);
-
-   //  Invokes when an unpreemptable thread yields.
-   //
-   void Yielding(const Thread* thread);
-
    //  Resumes execution of the unpreemptable thread that will run next.
    //
    void ContextSwitch();

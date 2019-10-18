@@ -325,7 +325,7 @@ void FileThread::Spool(const string& name,
    auto faction = client->GetFaction();
 
    FunctionGuard
-      guard(FunctionGuard::MakeUnpreemptable, faction <= PayloadFaction);
+      guard(FunctionGuard::MakeUnpreemptable, faction < SystemFaction);
 
    auto request = new FileRequest(name, trunc);
 

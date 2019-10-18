@@ -41,7 +41,7 @@ namespace NodeBase
 {
 fn_name CinThread_ctor = "CinThread.ctor";
 
-CinThread::CinThread() : Thread(BackgroundFaction),
+CinThread::CinThread() : Thread(OperationsFaction),
    size_(0),
    client_(nullptr)
 {

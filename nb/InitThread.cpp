@@ -355,23 +355,6 @@ void InitThread::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name InitThread_Ready = "InitThread.Ready";
-
-void InitThread::Ready(const Thread* thread)
-{
-   Debug::ft(InitThread_Ready);
-
-   //  This thread is ready to run unpreemptably.  If there is
-   //  currently no locked thread, wake InitThread to schedule
-   //  this thread in.  The thread then waits to be signalled.
-   //
-   if(thread->faction_ >= SystemFaction) return;
-   if(LockedThread() == nullptr) Interrupt(ScheduleMask);
-   thread->systhrd_->Wait();
-}
-
-//------------------------------------------------------------------------------
-
 fn_name InitThread_RecreateThreads = "InitThread.RecreateThreads";
 
 void InitThread::RecreateThreads()
@@ -447,32 +430,5 @@ Thread* InitThread::SelectThread()
    }
 
    return next;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name InitThread_Yielding = "InitThread.Yielding";
-
-void InitThread::Yielding(const Thread* thread)
-{
-   Debug::ft(InitThread_Yielding);
-
-   //  Generate a log if the thread running unpreemptably was not the
-   //  one that yielded.
-   //
-   auto locked = LockedThread();
-
-   if((locked != thread) && (locked != nullptr))
-   {
-      Debug::SwLog(InitThread_Yielding, locked->Tid(), thread->Tid());
-      return;
-   }
-
-   //  No thread is now running unpreemptably.  If an application thread
-   //  just yielded, wake InitThread to schedule the next thread.
-   //
-   LockedThread_ = nullptr;
-   if(thread->faction_ >= SystemFaction) return;
-   Interrupt(ScheduleMask);
 }
 }

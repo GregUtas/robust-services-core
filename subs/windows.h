@@ -106,6 +106,7 @@ HANDLE  CreateThread(void* ThreadAttributes, SIZE_T StackSize, LPTHREAD_START_RO
 HANDLE  GetCurrentThread();
 DWORD   GetCurrentThreadId();
 bool    SetThreadPriority(HANDLE Thread, int Priority);
+bool    SetThreadPriorityBoost(HANDLE Thread, bool disable);
 
 //------------------------------------------------------------------------------
 //

@@ -32,11 +32,17 @@ namespace NodeBase
 //
 namespace InitFlags
 {
+   //  Return true to suspend RootThread indefinitely after booting.
+   //  Useful to prevent it from constantly reappearing when debugging
+   //  context switching.
+   //
+   bool SuspendRoot();  // default=false
+
    //  Return true to allow breakpoints during initialization.  If this
    //  returns false and a breakpoint is hit, RootThread will time out
    //  and try to restart initialization.
    //
-   bool AllowBreak();  // default=true
+   bool AllowBreak();  // default=true (false if FIELD_LOAD #defined)
 
    //  Return true to test the initialization timeout by delaying
    //  indefinitely during initialization.
@@ -44,18 +50,14 @@ namespace InitFlags
    bool CauseTimeout();  // default=false
 
    //  Return true to immediately write trace records to a file, as they
-   //  are created, if TraceInit or TraceWork is also set.  The file is
-   //  created in the directory that contains the executable.
+   //  are created, if TraceInit is also set.  The file is created in the
+   //  directory that contains the executable.
    //
    bool ImmediateTrace();  // default=false
 
    //  Return true to trace initialization.
    //
-   bool TraceInit();  // default=true
-
-   //  Return true to trace payload work immediately after initialization.
-   //
-   bool TraceWork();  // default=true
+   bool TraceInit();  // default=true (false if FIELD_LOAD #defined)
 }
 }
 #endif

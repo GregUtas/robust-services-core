@@ -56,7 +56,7 @@ CliStack::~CliStack()
    //
    for(auto i = top_; i >= 0; --i)
    {
-      increments_[i]->Exit();
+      if(increments_[i] != nullptr) increments_[i]->Exit();
    }
 }
 

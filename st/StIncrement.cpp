@@ -857,24 +857,6 @@ StIncrement::StIncrement() : CliIncrement(StIncrText, StIncrExpl)
    BindCommand(*new StTestcaseCommand);
    BindCommand(*new StSizesCommand);
    BindCommand(*new StCorruptCommand);
-
-   //  See if SessionBase activity should be immediately traced on start-up.
-   //
-   if(InitFlags::TraceWork() && Element::RunningInLab())
-   {
-      auto buff = Singleton< TraceBuffer >::Instance();
-      auto nbt = Singleton< NbTracer >::Instance();
-
-      if(!Debug::TraceOn())
-      {
-         buff->SetTool(FunctionTracer, true);
-         buff->SetTool(TransTracer, true);
-         buff->SetTool(BufferTracer, true);
-         buff->SetTool(ContextTracer, true);
-         nbt->SelectFaction(PayloadFaction, TraceIncluded);
-         buff->StartTracing(InitFlags::ImmediateTrace());
-      }
-   }
 }
 
 //------------------------------------------------------------------------------

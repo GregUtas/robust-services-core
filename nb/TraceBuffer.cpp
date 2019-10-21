@@ -713,11 +713,7 @@ void TraceBuffer::StopTracing()
 
    SetTool(ToolBuffer, false);
    Debug::FcFlags_.reset(Debug::TracingActive);
-
-   if(hardLock_.exchange(false))
-   {
-      Debug::SwLog(TraceBuffer_StopTracing, "not locked", 0);
-   }
+   hardLock_.exchange(false);
 
    //  If trace records are being output immediately, display the last
    //  one and return after closing the trace output file.

@@ -507,7 +507,7 @@ enum LineType
    EmptyComment,          // //
    FileComment,           // comment at top of file, before any code
    SeparatorComment,      // //# (# = repeated -, =, or /)
-   TaggedComment,         // //@ (@ = any character except -, =, or /)
+   TaggedComment,         // //$ ($ = any character except -, =, or /)
    TextComment,           // //  text
    SlashAsteriskComment,  // /*
    OpenBrace,             // {

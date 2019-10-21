@@ -49,6 +49,8 @@ fn_name SysUdpSocket_dtor = "SysUdpSocket.dtor";
 SysUdpSocket::~SysUdpSocket()
 {
    Debug::ft(SysUdpSocket_dtor);
+
+   Close(false);
 }
 
 //------------------------------------------------------------------------------

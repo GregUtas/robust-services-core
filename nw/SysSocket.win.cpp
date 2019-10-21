@@ -27,6 +27,7 @@
 #include <windows.h>
 #include <winerror.h>
 #include "Debug.h"
+#include "NwTrace.h"
 #include "IpService.h"
 #include "Log.h"
 #include "NwLogs.h"
@@ -106,6 +107,22 @@ SysSocket::SysSocket(ipport_t port, const IpService* service, AllocRc& rc) :
    {
       SetError();
       rc = BindError;
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SysSocket_Close = "SysSocket.Close";
+
+void SysSocket::Close(bool disconnecting)
+{
+   Debug::ft(SysSocket_Close);
+
+   if(IsValid())
+   {
+      TraceEvent(NwTrace::Close, disconnecting);
+      if(closesocket(Socket()) == SOCKET_ERROR) SetError();
+      Invalidate();
    }
 }
 

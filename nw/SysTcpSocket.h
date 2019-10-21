@@ -210,17 +210,11 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
-protected:
+private:
    //  Initiates a disconnect and disables further sends on the socket.
-   //  Protected so that subclasses can decide how to expose this function.
    //
    void Disconnect();
 
-   //  Closes the socket.  Protected so that subclasses can decide how to
-   //  expose this function.
-   //
-   void Close();
-private:
    //  States for TCP sockets.
    //
    enum State

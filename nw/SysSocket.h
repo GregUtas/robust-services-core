@@ -177,8 +177,9 @@ protected:
    //
    explicit SysSocket(NodeBase::SysSocket_t socket);
 
-   //  Closes the socket.  Protected so that subclasses can control their
-   //  deletion policy.  Virtual to allow subclassing.
+   //  Records the deletion.  Subclasses must invoke Close().  Protected so
+   //  that subclasses can control their deletion policy.  Virtual to allow
+   //  subclassing.
    //
    virtual ~SysSocket();
 
@@ -190,6 +191,12 @@ protected:
    //  Returns the native socket.
    //
    NodeBase::SysSocket_t Socket() const { return socket_; }
+
+   //  Closes the socket.  Protected so that subclasses can decide how
+   //  to expose this function.  DISCONNECTING is set if the socket has
+   //  initiated a disconnect.
+   //
+   void Close(bool disconnecting);
 
    //  Sets the error code for the socket so that it can be obtained for
    //  logging purposes.  If the value is not provided explicitly, it is

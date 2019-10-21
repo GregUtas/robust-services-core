@@ -106,7 +106,7 @@ SysTcpSocket::~SysTcpSocket()
    }
 
    ogMsgq_.Purge();
-   Close();
+   Close(disconnecting_);
 }
 
 //------------------------------------------------------------------------------

@@ -35,6 +35,9 @@ namespace NodeBase
    //  application software to #include Thread.h.  The functions defined
    //  here simply invoke the eponymous functions on Thread.
    //
+   //  The class FunctionGuard allows a function to guarantee pairing of
+   //  MakePreemptable/MakeUnpreemptable and MemUnprotect/MemProtect.
+   //
    namespace ThisThread
    {
       ThreadId RunningThreadId();

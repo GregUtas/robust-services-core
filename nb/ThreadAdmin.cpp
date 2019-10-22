@@ -58,6 +58,11 @@ public:
    CounterPtr deletions_;
    CounterPtr switches_;
    CounterPtr locks_;
+   CounterPtr preempts_;
+   CounterPtr delays_;
+   CounterPtr resignals_;
+   CounterPtr reentries_;
+   CounterPtr reselects_;
    CounterPtr interrupts_;
    CounterPtr traps_;
    CounterPtr recoveries_;
@@ -101,7 +106,12 @@ ThreadsStats::ThreadsStats()
    creations_.reset(new Counter("creations"));
    deletions_.reset(new Counter("deletions"));
    switches_.reset(new Counter("context switches"));
-   locks_.reset(new Counter("scheduled to run unpreemptably"));
+   locks_.reset(new Counter("scheduled to run locked"));
+   preempts_.reset(new Counter("preemptions"));
+   delays_.reset(new Counter("scheduled after InitThread timeout"));
+   resignals_.reset(new Counter("resignalled to proceed"));
+   reentries_.reset(new Counter("InitThread interrupted but thread locked"));
+   reselects_.reset(new Counter("reselected to run"));
    interrupts_.reset(new Counter("interrupts"));
    traps_.reset(new Counter("traps"));
    recoveries_.reset(new Counter("trap recoveries"));
@@ -370,6 +380,11 @@ void ThreadAdmin::DisplayStats(ostream& stream, const Flags& options) const
       stats_->deletions_->DisplayStat(stream, options);
       stats_->switches_->DisplayStat(stream, options);
       stats_->locks_->DisplayStat(stream, options);
+      stats_->preempts_->DisplayStat(stream, options);
+      stats_->delays_->DisplayStat(stream, options);
+      stats_->resignals_->DisplayStat(stream, options);
+      stats_->reentries_->DisplayStat(stream, options);
+      stats_->reselects_->DisplayStat(stream, options);
       stats_->interrupts_->DisplayStat(stream, options);
       stats_->traps_->DisplayStat(stream, options);
       stats_->recoveries_->DisplayStat(stream, options);
@@ -401,6 +416,21 @@ void ThreadAdmin::Incr(Register r)
       break;
    case Locks:
       admin->stats_->locks_->Incr();
+      break;
+   case Preempts:
+      admin->stats_->preempts_->Incr();
+      break;
+   case Delays:
+      admin->stats_->delays_->Incr();
+      break;
+   case Resignals:
+      admin->stats_->resignals_->Incr();
+      break;
+   case Reentries:
+      admin->stats_->reentries_->Incr();
+      break;
+   case Reselects:
+      admin->stats_->reselects_->Incr();
       break;
    case Creations:
       admin->stats_->creations_->Incr();
@@ -485,6 +515,7 @@ void ThreadAdmin::Startup(RestartLevel level)
    reg->BindSymbol("faction.oper", OperationsFaction);
    reg->BindSymbol("faction.mtce", MaintenanceFaction);
    reg->BindSymbol("faction.payload", PayloadFaction);
+   reg->BindSymbol("faction.loadtest", LoadTestFaction);
    reg->BindSymbol("faction.system", SystemFaction);
    reg->BindSymbol("faction.watchdog", WatchdogFaction);
 }

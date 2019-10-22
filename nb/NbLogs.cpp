@@ -74,6 +74,7 @@ void CreateNbLogs(RestartLevel level)
    new Log(group, ThreadSignalRaised, "SIgnal raised");
    new Log(group, ThreadSignalReraised, "Signal reraised");
    new Log(group, ThreadYielded, "Thread yielded");
+   new Log(group, ThreadForcedToExit, "Thread forced to exit");
 
    group = new LogGroup(ObjPoolLogGroup, "Object Pools");
    new Log(group, ObjPoolExpansionFailed, "Object pool expansion failed");

@@ -193,28 +193,30 @@ bool TcpIoThread::AllocateListener()
    if(rc != SysSocket::AllocOk)
       return RaiseAlarm(socket->GetError());
 
-   socket->TracePort(NwTrace::Listen, port_, svc->MaxBacklog());
-
    if(!socket->Listen(svc->MaxBacklog()))
       return RaiseAlarm(socket->GetError());
 
-   Debug::Assert(ipPort_->SetSocket(socket.get()));
+   socket->TracePort(NwTrace::Listen, port_, svc->MaxBacklog());
 
-   //  If we're replacing our listener, make sure it was released.
+   if(!ipPort_->SetSocket(socket.get()))
+      return RaiseAlarm(1);
+
+   //  If we already had a listener, it should have been the one
+   //  registered against our port.  But just in case...
    //
    auto listener = Listener();
-   auto result = socket.release();
 
-   if(listener == nullptr)
-   {
-      sockets_.PushBack(result);
-   }
+   if((listener != nullptr) && (listener != registrant))
+      listener->Purge();
+
+   //  Set our new listener.
+   //
+   listener = socket.release();
+
+   if(sockets_.Empty())
+      sockets_.PushBack(listener);
    else
-   {
-      if(listener != registrant) listener->Purge();
-      sockets_.Replace(0, result);
-   }
-
+      sockets_.Replace(0, listener);
    return true;
 }
 

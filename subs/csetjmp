@@ -1,0 +1,14 @@
+//==============================================================================
+//
+//  csetjmp
+//
+#ifndef CSETJMP_INCLUDED
+#define CSETJMP_INCLUDED
+
+typedef int jmp_buf[];
+
+int setjmp(jmp_buf buffer);
+
+void longjmp(jmp_buf buffer, int status);
+
+#endif

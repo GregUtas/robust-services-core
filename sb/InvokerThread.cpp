@@ -184,6 +184,14 @@ Thread::RecoveryAction InvokerThread::Recover()
 {
    Debug::ft(InvokerThread_Recover);
 
+   //  If a cold restart or worse is underway, just exit, which is what we
+   //  wanted to do anyway.
+   //
+   if((Restart::GetStatus() != Running) && (Restart::GetLevel() >= RestartCold))
+   {
+      return DeleteThread;
+   }
+
    if(ctx_ != nullptr)
    {
       ctx_->Dump();

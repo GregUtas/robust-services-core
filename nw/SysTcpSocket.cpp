@@ -90,13 +90,18 @@ SysTcpSocket::~SysTcpSocket()
 
    //  Neither the application nor the I/O thread should be using the socket.
    //  If the socket has just received a message, the socket should not be
-   //  deleted until the application has had a chance to process it.
+   //  deleted until the application has had a chance to process it.  During
+   //  a restart, however, the socket is deleted to unblock TcpIoThread so
+   //  that it can exit.
    //
    if(iotActive_ || (appState_ == Acquired ) ||
       ((appState_ == Initial) && (state_ != Idle)))
    {
-      Debug::SwLog(SysTcpSocket_dtor,
-         "socket still in use", pack2(iotActive_, appState_));
+      if(Restart::GetStatus() == ShuttingDown)
+      {
+         Debug::SwLog(SysTcpSocket_dtor,
+            "socket still in use", pack2(iotActive_, appState_));
+      }
    }
 
    if(icMsg_ != nullptr)

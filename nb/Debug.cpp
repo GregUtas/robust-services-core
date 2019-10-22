@@ -91,7 +91,7 @@ void Debug::GenerateSwLog(fn_name_arg func, const string& errstr,
       *log << CRLF;
 
       *log << Log::Tab << "errval=" << errstr;
-      *log << " offset=" << strHex(offset) << CRLF;
+      *log << "  offset=" << strHex(offset) << CRLF;
 
       if(level != SwInfo) SysThreadStack::Display(*log, 1);
       Log::Submit(log);

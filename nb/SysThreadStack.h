@@ -50,7 +50,7 @@ namespace SysThreadStack
    //
    void Display(std::ostream& stream, fn_depth omit);
 
-   //  Returns true if a destructor is found on the stack.
+   //  Returns false if a destructor is found on the stack.
    //
    bool TrapIsOk();
 }

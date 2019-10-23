@@ -541,10 +541,10 @@ int ThreadAdmin::WarpFactor()
 
    auto warp = 0;
 
-   //e Calculate the time warp factor as follows (to be updated):
+   //  Calculate the time warp factor as follows (to be updated):
    //  o 2x if this is a lab load.
    //  o 32x if the function tracer is on.
-   //  o 2x if other tracers is on.
+   //  o 2x if other tracers are on.
    //  o 2x if immediate tracing is on.
    //
    if(Element::RunningInLab()) warp += 1;

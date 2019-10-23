@@ -43,10 +43,6 @@ public:
    //
    bool RejectIngressWork() const override;
 
-   //  Overridden to raise an alarm when DELAY is excessive.
-   //
-   void RecordDelay(MsgPriority prio, NodeBase::msecs_t delay) const override;
-
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -67,6 +63,10 @@ private:
    //  The alarm that is raised when payload work enters overload.
    //
    NodeBase::Alarm* overloadAlarm_;
+
+   //  Overridden to raise an alarm when DELAY is excessive.
+   //
+   void RecordDelay(MsgPriority prio, NodeBase::msecs_t delay) const override;
 
    //  The configuration parameter for the maximum length of
    //  this pool's ingress work queue.

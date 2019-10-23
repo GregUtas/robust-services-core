@@ -236,11 +236,11 @@ BuffTrace::BuffTrace(Id rid, const SbIpBuffer& buff) :
 
 BuffTrace::~BuffTrace()
 {
-   //e If a StTestData::lastMsg_ or TestSession::lastMsg_ points to this record,
+   //  If a StTestData::lastMsg_ or TestSession::lastMsg_ points to this record,
    //  it will probably lead to a trap.  The odds of this are remote because it
    //  means that the trace buffer wrapped around and caught up with the last
    //  message verified by the factory or PSM.
-
+   //
    //  If our SbIpBuffer is corrupt, we will trap, and we must not trap again
    //  during cleanup.  Flag the buffer as corrupt before deleting it and
    //  clear the flag afterwards.  If it flagged as corrupt when we come in

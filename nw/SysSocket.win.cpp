@@ -28,9 +28,9 @@
 #include <winerror.h>
 #include "Debug.h"
 #include "IpService.h"
-#include "NwTrace.h"
 #include "Log.h"
 #include "NwLogs.h"
+#include "NwTrace.h"
 
 using namespace NodeBase;
 

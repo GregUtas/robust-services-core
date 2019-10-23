@@ -119,7 +119,7 @@ protected:
    //  should be singletons.
    //
    virtual ~InvokerPool();
-protected:
+
    //  Records the DELAY that a message waited on a work queue before being
    //  processed.  A pool can override this to raise an alarm when DELAY is
    //  excessive, but the base class version must be invoked.

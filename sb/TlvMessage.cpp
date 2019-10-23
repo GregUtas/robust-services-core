@@ -266,19 +266,6 @@ void TlvMessage::DeleteParm(TlvParmLayout& parm)
 
 //------------------------------------------------------------------------------
 
-fn_name TlvMessage_ExpandParm = "TlvMessage.ExpandParm";
-
-TlvParmPtr TlvMessage::ExpandParm(TlvParmLayout& parm, size_t plen)
-{
-   Debug::ft(TlvMessage_ExpandParm);
-
-   //e Support parameter expansion.
-
-   return nullptr;
-}
-
-//------------------------------------------------------------------------------
-
 fn_name TlvMessage_FencePtr = "TlvMessage.FencePtr";
 
 TlvMessage::Fence* TlvMessage::FencePtr() const

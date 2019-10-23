@@ -41,6 +41,7 @@ SysThread::SysThread(const Thread* client,
    nid_(NIL_ID),
    event_(CreateSentry()),
    guard_(CreateSentry()),
+   priority_(Priority_N),
    signal_(SIGNIL)
 {
    Debug::ft(SysThread_ctor1);
@@ -65,6 +66,7 @@ SysThread::SysThread() :
    nid_(RunningThreadId()),
    event_(CreateSentry()),
    guard_(CreateSentry()),
+   priority_(Priority_N),
    signal_(SIGNIL)
 {
    Debug::ft(SysThread_ctor2);
@@ -77,7 +79,7 @@ SysThread::SysThread() :
    nthread_ = Wrap();
    Debug::Assert(nthread_ != nullptr);
 
-   SetPriority(WatchdogPriority);
+   Debug::Assert(SetPriority(WatchdogPriority));
 }
 
 //------------------------------------------------------------------------------
@@ -111,12 +113,13 @@ void SysThread::Display(ostream& stream,
 {
    Permanent::Display(stream, prefix, options);
 
-   stream << prefix << "nthread : " << nthread_ << CRLF;
-   stream << prefix << "nid     : " << strHex(nid_, 4, false) << CRLF;
-   stream << prefix << "status  : " << status_.to_string() << CRLF;
-   stream << prefix << "event   : " << event_ << CRLF;
-   stream << prefix << "guard   : " << guard_ << CRLF;
-   stream << prefix << "signal  : " << signal_ << CRLF;
+   stream << prefix << "nthread  : " << nthread_ << CRLF;
+   stream << prefix << "nid      : " << strHex(nid_, 4, false) << CRLF;
+   stream << prefix << "status   : " << status_.to_string() << CRLF;
+   stream << prefix << "event    : " << event_ << CRLF;
+   stream << prefix << "guard    : " << guard_ << CRLF;
+   stream << prefix << "priority : " << priority_ << CRLF;
+   stream << prefix << "signal   : " << signal_ << CRLF;
 }
 
 //------------------------------------------------------------------------------

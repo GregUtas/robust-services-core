@@ -26,6 +26,7 @@
 #include "Debug.h"
 #include "InvokerPool.h"
 #include "InvokerPoolRegistry.h"
+#include "Restart.h"
 #include "Singleton.h"
 #include "ToolTypes.h"
 
@@ -67,6 +68,14 @@ InvokerThread::~InvokerThread()
 
    if(RunningInvoker_ == this) RunningInvoker_ = nullptr;
    pool_->UnbindThread(*this);
+
+   //  If a cold restart or worse is underway, just release our context, whose
+   //  heap is about to be destroyed.
+   //
+   if((Restart::GetStatus() != Running) && (Restart::GetLevel() >= RestartCold))
+   {
+      ctx_.release();
+   }
 }
 
 //------------------------------------------------------------------------------

@@ -132,6 +132,33 @@ void PayloadInvokerPool::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
+fn_name PayloadInvokerPool_RecordDelay = "PayloadInvokerPool.RecordDelay";
+
+void PayloadInvokerPool::RecordDelay(MsgPriority prio, msecs_t delay) const
+{
+   Debug::ft(PayloadInvokerPool_RecordDelay);
+
+   InvokerPool::RecordDelay(prio, delay);
+
+   AlarmStatus status = CriticalAlarm;
+
+   if(delay < 2000)
+      status = NoAlarm;
+   else if(delay < 4000)
+      status = MinorAlarm;
+   else if(delay < 8000)
+      status = MajorAlarm;
+
+   if(overloadAlarm_ != nullptr)
+   {
+      auto log = overloadAlarm_->Create
+         (SessionLogGroup, SessionOverload, status);
+      if(log != nullptr) Log::Submit(log);
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name PayloadInvokerPool_RejectIngressWork =
    "PayloadInvokerPool.RejectIngressWork";
 

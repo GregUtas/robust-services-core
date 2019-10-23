@@ -56,6 +56,7 @@ public:
 
    CounterPtr creations_;
    CounterPtr deletions_;
+   CounterPtr interrupts_;
    CounterPtr switches_;
    CounterPtr locks_;
    CounterPtr preempts_;
@@ -63,7 +64,6 @@ public:
    CounterPtr resignals_;
    CounterPtr reentries_;
    CounterPtr reselects_;
-   CounterPtr interrupts_;
    CounterPtr traps_;
    CounterPtr recoveries_;
    CounterPtr recreations_;
@@ -105,6 +105,7 @@ ThreadsStats::ThreadsStats()
 
    creations_.reset(new Counter("creations"));
    deletions_.reset(new Counter("deletions"));
+   interrupts_.reset(new Counter("interrupts"));
    switches_.reset(new Counter("context switches"));
    locks_.reset(new Counter("scheduled to run locked"));
    preempts_.reset(new Counter("preemptions"));
@@ -112,7 +113,6 @@ ThreadsStats::ThreadsStats()
    resignals_.reset(new Counter("resignalled to proceed"));
    reentries_.reset(new Counter("InitThread interrupted but thread locked"));
    reselects_.reset(new Counter("reselected to run"));
-   interrupts_.reset(new Counter("interrupts"));
    traps_.reset(new Counter("traps"));
    recoveries_.reset(new Counter("trap recoveries"));
    recreations_.reset(new Counter("re-creations"));
@@ -378,6 +378,7 @@ void ThreadAdmin::DisplayStats(ostream& stream, const Flags& options) const
    {
       stats_->creations_->DisplayStat(stream, options);
       stats_->deletions_->DisplayStat(stream, options);
+      stats_->interrupts_->DisplayStat(stream, options);
       stats_->switches_->DisplayStat(stream, options);
       stats_->locks_->DisplayStat(stream, options);
       stats_->preempts_->DisplayStat(stream, options);
@@ -385,7 +386,6 @@ void ThreadAdmin::DisplayStats(ostream& stream, const Flags& options) const
       stats_->resignals_->DisplayStat(stream, options);
       stats_->reentries_->DisplayStat(stream, options);
       stats_->reselects_->DisplayStat(stream, options);
-      stats_->interrupts_->DisplayStat(stream, options);
       stats_->traps_->DisplayStat(stream, options);
       stats_->recoveries_->DisplayStat(stream, options);
       stats_->recreations_->DisplayStat(stream, options);
@@ -408,11 +408,11 @@ void ThreadAdmin::Incr(Register r)
 
    switch(r)
    {
-   case Switches:
-      admin->stats_->switches_->Incr();
-      break;
    case Interrupts:
       admin->stats_->interrupts_->Incr();
+      break;
+   case Switches:
+      admin->stats_->switches_->Incr();
       break;
    case Locks:
       admin->stats_->locks_->Incr();

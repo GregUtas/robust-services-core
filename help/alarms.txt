@@ -14,8 +14,12 @@ a threshold indicated by the following alarm severity:
   o off: over 12.5% of the blocks are available
 ? OVERLOAD
 Payload processing is currently experiencing the following workload:
-  o major: overloaded--ingress work is being discarded
-  o off: not overloaded--ingress work is being accepted
+  o critical: ingress queue delay >= 8 seconds
+  o major: ingress queue delay >= 4 seconds or
+    ingress messages are being discarded 
+  o minor: ingress queue delay >= 2 seconds
+  o off: ingress queue delay < 2 seconds and
+    all ingress messages are being accepted
 ? PORT*
 The status of the specified network service has changed:
   o major: the service is unavailable because its I/O thread could not

@@ -45,6 +45,7 @@ class SysThread : public Permanent
 {
    friend std::unique_ptr< SysThread >::deleter_type;
    friend class Thread;
+   friend class RootThread;
    friend class InitThread;
    friend class Orphans;
 public:
@@ -206,6 +207,10 @@ private:
    //  and Proceed.
    //
    SysSentry_t guard_;
+
+   //  The thread's current priority.
+   //
+   Priority priority_;
 
    //  The signal that caused the thread to be deleted.
    //

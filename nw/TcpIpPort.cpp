@@ -25,6 +25,7 @@
 #include "Debug.h"
 #include "Log.h"
 #include "NwLogs.h"
+#include "Restart.h"
 #include "SysTcpSocket.h"
 #include "SysTypes.h"
 #include "TcpIoThread.h"

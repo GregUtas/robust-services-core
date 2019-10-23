@@ -119,6 +119,12 @@ protected:
    //  should be singletons.
    //
    virtual ~InvokerPool();
+protected:
+   //  Records the DELAY that a message waited on a work queue before being
+   //  processed.  A pool can override this to raise an alarm when DELAY is
+   //  excessive, but the base class version must be invoked.
+   //
+   virtual void RecordDelay(MsgPriority prio, NodeBase::msecs_t delay) const;
 private:
    //  Returns true if ingress work should be rejected.  Each pool
    //  should override this to protect against overload.
@@ -168,11 +174,6 @@ private:
    //  with PRIO.
    //
    void Enqueued(MsgPriority prio) const;
-
-   //  Called to record the time that a message waited on a work queue
-   //  before being processed.
-   //
-   void RecordDelay(MsgPriority prio, NodeBase::msecs_t delay) const;
 
    //  Returns CTX to the progress work queue after it has processed
    //  messages of immediate priority.

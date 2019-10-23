@@ -27,8 +27,8 @@
 #include <windows.h>
 #include <winerror.h>
 #include "Debug.h"
-#include "NwTrace.h"
 #include "IpService.h"
+#include "NwTrace.h"
 #include "Log.h"
 #include "NwLogs.h"
 

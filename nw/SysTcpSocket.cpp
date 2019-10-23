@@ -31,6 +31,7 @@
 #include "IpPortRegistry.h"
 #include "NwLogs.h"
 #include "NwTrace.h"
+#include "Restart.h"
 #include "Singleton.h"
 #include "SysIpL3Addr.h"
 #include "TcpIpService.h"
@@ -97,7 +98,7 @@ SysTcpSocket::~SysTcpSocket()
    if(iotActive_ || (appState_ == Acquired ) ||
       ((appState_ == Initial) && (state_ != Idle)))
    {
-      if(Restart::GetStatus() == ShuttingDown)
+      if(Restart::GetStatus() != ShuttingDown)
       {
          Debug::SwLog(SysTcpSocket_dtor,
             "socket still in use", pack2(iotActive_, appState_));

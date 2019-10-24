@@ -92,7 +92,6 @@ void FunctionTrace::CalcFuncTime()
 
       if(curr->depth_ <= depth_) return;
       if(curr->Nid() != nid) return;
-      if(curr->IsFirstAfterContextSwitch()) return;
 
       if(curr->depth_ == (depth_ + 1))
       {
@@ -125,7 +124,6 @@ usecs_t FunctionTrace::CalcGrossTime()
       auto curr = static_cast< FunctionTrace* >(rec);
 
       if(curr->Nid() != nid) break;
-      if(curr->IsFirstAfterContextSwitch()) break;
 
       if(curr->depth_ <= depth_)
       {
@@ -395,13 +393,6 @@ void FunctionTrace::InvertCtors(fn_depth limit)
          Memory::Copy(src, &ft, sizeof(FunctionTrace));
       }
    }
-}
-
-//------------------------------------------------------------------------------
-
-bool FunctionTrace::IsFirstAfterContextSwitch() const
-{
-   return false;
 }
 
 //------------------------------------------------------------------------------

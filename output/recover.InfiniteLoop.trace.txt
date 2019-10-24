@@ -1,339 +1,310 @@
-START OF TRACE: 15-Oct-2019 16:06:29.484 on Reigi
+START OF TRACE: 24-Oct-2019 14:16:18.647 on Reigi
 
 mm:ss.ttt  Thr  Event  TotalTime   NetTime  Function
 ---------  ---  -----  ---------   -------  --------
-06:29.965   12                 6         6    :   :   : Thread.InitialMsecs
-06:29.965   12                 0         0    :   :   : ThreadAdmin.WarpFactor
-06:29.965   12  +lock          9         1    :   TcpIoThread.Enter
-06:29.965   12                 8         3    :   : Thread.ExitBlockingOperation
-06:29.965   12                 5         5    :   :   Thread.ResumeLocked
-06:29.965   12                18         5    :   IpPortRegistry.HostAddress
-06:29.965   12                 3         3    :   : SysIpL2Addr.IsValid
-06:29.965   12                10         0    :   : SysIpL2Addr.ctor(copy)
-06:29.965   12                10         0    :   :   Object.ctor
-06:29.965   12                10        10    :   :   : Base.ctor
-06:29.965   12                 3         3    :   SysIpL2Addr.operator=(copy)
-06:29.965   12                 4         4    :   SysIpL2Addr.dtor
-06:29.965   12                67         6    :   TcpIoThread.AcceptConn
-06:29.965   12                13         0    :   : SysIpL3Addr.ctor
-06:29.965   12                13         0    :   :   SysIpL2Addr.ctor
-06:29.965   12                13         0    :   :   : Object.ctor
-06:29.965   12                13        13    :   :   :   Base.ctor
-06:29.965   12                24        24    :   : SysSocket.SetBlocking
-06:29.965   12                17        12    :   : SysTcpSocket.Accept
-06:29.965   12                 5         5    :   :   SysSocket.SetError
-06:29.965   12                 7         3    :   : SysIpL3Addr.dtor
-06:29.965   12                 4         4    :   :   SysIpL2Addr.dtor
-06:29.965   12                95         5    :   TcpIoThread.PollSockets
-06:29.965   12                25        25    :   : SysSocket.SetBlocking
-06:29.965   12                 4         4    :   : IpPort.RecvsInSequence
-06:29.965   12                61         4    :   : Thread.EnterBlockingOperation
-06:29.965   12                 1         1    :   :   Thread.RunningThread
-06:29.965   12  -lock         56        22    :   :   Thread.Unlock
-06:29.965   12                34        34    :   :   : Thread.LogContextSwitch
-06:29.965   12                 3         3    :   :   :   : SysMutex.Acquire
-06:29.965   12                 5         5    :   :   :   : SysMutex.Release
-06:29.965   12                 0         0    :   :   : InitThread.Yielding
-06:30.497   15                 5         5    :   SysMutex.Acquire
-06:30.497   15                 3         3    : MutexGuard.dtor
-06:30.497   15                 0         0    :   SysMutex.Release
-06:30.497   15  +lock    5257873   5257873  Thread.EnterThread
-06:30.529   15             32115     32115    :   RecoveryTestThread.LoopForever
-06:30.561   15             37831     37831    :   RecoveryTestThread.LoopForever
-06:30.599   15             32558     32558    :   RecoveryTestThread.LoopForever
-06:30.632   15             32393     32393    :   RecoveryTestThread.LoopForever
-06:30.664   15             32459     32459    :   RecoveryTestThread.LoopForever
-06:30.697   15             32771     32771    :   RecoveryTestThread.LoopForever
-06:30.729   15             31187     31187    :   RecoveryTestThread.LoopForever
-06:30.761   15             33280     33280    :   RecoveryTestThread.LoopForever
-06:30.794   15             33160     33160    :   RecoveryTestThread.LoopForever
-06:30.827   15             34089     34089    :   RecoveryTestThread.LoopForever
-06:30.861   15             33716     33716    :   RecoveryTestThread.LoopForever
-06:30.895   15             33167     33167    :   RecoveryTestThread.LoopForever
-06:30.928   15             33908     33908    :   RecoveryTestThread.LoopForever
-06:30.962   15             33221     33221    :   RecoveryTestThread.LoopForever
-06:30.995   15             33810     33810    :   RecoveryTestThread.LoopForever
-06:31.029   15             34980     34980    :   RecoveryTestThread.LoopForever
-06:31.064   15             33627     33627    :   RecoveryTestThread.LoopForever
-06:31.097   15             33760     33760    :   RecoveryTestThread.LoopForever
-06:31.131   15             33136     33136    :   RecoveryTestThread.LoopForever
-06:31.164   15             33853     33853    :   RecoveryTestThread.LoopForever
-06:31.198   15             32795     32795    :   RecoveryTestThread.LoopForever
-06:31.231   15             32430     32430    :   RecoveryTestThread.LoopForever
-06:31.263   15             32007     32007    :   RecoveryTestThread.LoopForever
-06:31.295   15             30864     30864    :   RecoveryTestThread.LoopForever
-06:31.326   15             32967     32967    :   RecoveryTestThread.LoopForever
-06:31.359   15             33335     33335    :   RecoveryTestThread.LoopForever
-06:31.393   15             31615     31615    :   RecoveryTestThread.LoopForever
-06:31.424   15             32290     32290    :   RecoveryTestThread.LoopForever
-06:31.457   15             32691     32691    :   RecoveryTestThread.LoopForever
-06:31.489   15             30575     30575    :   RecoveryTestThread.LoopForever
-06:31.520   15             33390     33390    :   RecoveryTestThread.LoopForever
-06:31.553   15             34097     34097    :   RecoveryTestThread.LoopForever
-06:31.587   15             32314     32314    :   RecoveryTestThread.LoopForever
-06:31.620   15             31495     31495    :   RecoveryTestThread.LoopForever
-06:31.651   15             31708     31708    :   RecoveryTestThread.LoopForever
-06:31.683   15             30681     30681    :   RecoveryTestThread.LoopForever
-06:31.714   15             31106     31106    :   RecoveryTestThread.LoopForever
-06:31.745   15             34920     34920    :   RecoveryTestThread.LoopForever
-06:31.780   15             34606     34606    :   RecoveryTestThread.LoopForever
-06:31.814   15             33845     33845    :   RecoveryTestThread.LoopForever
-06:31.848   15             31318     31318    :   RecoveryTestThread.LoopForever
-06:31.879   15             33665     33665    :   RecoveryTestThread.LoopForever
-06:31.913   15             31015     31015    :   RecoveryTestThread.LoopForever
-06:31.944   15             32907     32907    :   RecoveryTestThread.LoopForever
-06:31.977   15             33206     33206    :   RecoveryTestThread.LoopForever
-06:32.010   15             32684     32684    :   RecoveryTestThread.LoopForever
-06:32.043   15             31522     31522    :   RecoveryTestThread.LoopForever
-06:32.074   15             31055     31055    :   RecoveryTestThread.LoopForever
-06:32.105   15             30903     30903    :   RecoveryTestThread.LoopForever
-06:32.136   15             30325     30325    :   RecoveryTestThread.LoopForever
-06:32.167   15             36724     36724    :   RecoveryTestThread.LoopForever
-06:32.203   15             35420     35420    :   RecoveryTestThread.LoopForever
-06:32.239   15             37874     37874    :   RecoveryTestThread.LoopForever
-06:32.277   15             38510     38510    :   RecoveryTestThread.LoopForever
-06:32.315   15             31864     31864    :   RecoveryTestThread.LoopForever
-06:32.347   15             30425     30425    :   RecoveryTestThread.LoopForever
-06:32.377   15             35834     35834    :   RecoveryTestThread.LoopForever
-06:32.413   15             33017     33017    :   RecoveryTestThread.LoopForever
-06:32.446   15             32195     32195    :   RecoveryTestThread.LoopForever
-06:32.478   15             31484     31484    :   RecoveryTestThread.LoopForever
-06:32.510   15             30776     30776    :   RecoveryTestThread.LoopForever
-06:32.541   15             32628     32628    :   RecoveryTestThread.LoopForever
-06:32.573   15             35103     35103    :   RecoveryTestThread.LoopForever
-06:32.608   15             37422     37422    :   RecoveryTestThread.LoopForever
-06:32.646   15             36081     36081    :   RecoveryTestThread.LoopForever
-06:32.682   15             33097     33097    :   RecoveryTestThread.LoopForever
-06:32.715   15             32454     32454    :   RecoveryTestThread.LoopForever
-06:32.748   15             32200     32200    :   RecoveryTestThread.LoopForever
-06:32.780   15             33158     33158    :   RecoveryTestThread.LoopForever
-06:32.813   15             32653     32653    :   RecoveryTestThread.LoopForever
-06:32.846   15             32179     32179    :   RecoveryTestThread.LoopForever
-06:32.878   15             30160     30160    :   RecoveryTestThread.LoopForever
-06:32.908   15             30329     30329    :   RecoveryTestThread.LoopForever
-06:32.938   15             30152     30152    :   RecoveryTestThread.LoopForever
-06:32.968   15             28813     28813    :   RecoveryTestThread.LoopForever
-06:32.997   15             33715     33715    :   RecoveryTestThread.LoopForever
-06:33.031   15             31570     31570    :   RecoveryTestThread.LoopForever
-06:33.062   15             29822     29822    :   RecoveryTestThread.LoopForever
-06:33.092   15             30402     30402    :   RecoveryTestThread.LoopForever
-06:33.123   15             30889     30889    :   RecoveryTestThread.LoopForever
-06:33.154   15             31527     31527    :   RecoveryTestThread.LoopForever
-06:33.185   15             32477     32477    :   RecoveryTestThread.LoopForever
-06:33.218   15             32216     32216    :   RecoveryTestThread.LoopForever
-06:33.250   15             30252     30252    :   RecoveryTestThread.LoopForever
-06:33.280   15             30916     30916    :   RecoveryTestThread.LoopForever
-06:33.311   15             29843     29843    :   RecoveryTestThread.LoopForever
-06:33.341   15             29586     29586    :   RecoveryTestThread.LoopForever
-06:33.370   15             29369     29369    :   RecoveryTestThread.LoopForever
-06:33.400   15             35551     35551    :   RecoveryTestThread.LoopForever
-06:33.435   15             62202     62202    :   RecoveryTestThread.LoopForever
-06:33.497   15             29407     29407    :   RecoveryTestThread.LoopForever
-06:33.527   15             29279     29279    :   RecoveryTestThread.LoopForever
-06:33.556   15             29719     29719    :   RecoveryTestThread.LoopForever
-06:33.586   15             31766     31766    :   RecoveryTestThread.LoopForever
-06:33.618   15             33692     33692    :   RecoveryTestThread.LoopForever
-06:33.651   15             30498     30498    :   RecoveryTestThread.LoopForever
-06:33.682   15             29428     29428    :   RecoveryTestThread.LoopForever
-06:33.711   15             29740     29740    :   RecoveryTestThread.LoopForever
-06:33.741   15             29194     29194    :   RecoveryTestThread.LoopForever
-06:33.770   15             29594     29594    :   RecoveryTestThread.LoopForever
-06:33.800   15             33726     33726    :   RecoveryTestThread.LoopForever
-06:33.834   15             31330     31330    :   RecoveryTestThread.LoopForever
-06:33.865   15             30104     30104    :   RecoveryTestThread.LoopForever
-06:33.895   15             29568     29568    :   RecoveryTestThread.LoopForever
-06:33.925   15             29173     29173    :   RecoveryTestThread.LoopForever
-06:33.954   15             29610     29610    :   RecoveryTestThread.LoopForever
-06:33.983   15             29813     29813    :   RecoveryTestThread.LoopForever
-06:34.013   15             33340     33340    :   RecoveryTestThread.LoopForever
-06:34.046   15             31165     31165    :   RecoveryTestThread.LoopForever
-06:34.078   15             30420     30420    :   RecoveryTestThread.LoopForever
-06:34.108   15             30469     30469    :   RecoveryTestThread.LoopForever
-06:34.139   15             29355     29355    :   RecoveryTestThread.LoopForever
-06:34.168   15             29489     29489    :   RecoveryTestThread.LoopForever
-06:34.197   15             32835     32835    :   RecoveryTestThread.LoopForever
-06:34.230   15             31818     31818    :   RecoveryTestThread.LoopForever
-06:34.262   15             30125     30125    :   RecoveryTestThread.LoopForever
-06:34.292   15             29737     29737    :   RecoveryTestThread.LoopForever
-06:34.322   15             38093     38093    :   RecoveryTestThread.LoopForever
-06:34.360   15             39582     39582    :   RecoveryTestThread.LoopForever
-06:34.400   15             38382     38382    :   RecoveryTestThread.LoopForever
-06:34.438   15             33690     33690    :   RecoveryTestThread.LoopForever
-06:34.472   15             30995     30995    :   RecoveryTestThread.LoopForever
-06:34.503   15             29602     29602    :   RecoveryTestThread.LoopForever
-06:34.532   15             29862     29862    :   RecoveryTestThread.LoopForever
-06:34.562   15             29514     29514    :   RecoveryTestThread.LoopForever
-06:34.592   15             29892     29892    :   RecoveryTestThread.LoopForever
-06:34.622   15             33079     33079    :   RecoveryTestThread.LoopForever
-06:34.655   15             30870     30870    :   RecoveryTestThread.LoopForever
-06:34.685   15             30404     30404    :   RecoveryTestThread.LoopForever
-06:34.716   15             30458     30458    :   RecoveryTestThread.LoopForever
-06:34.746   15             29660     29660    :   RecoveryTestThread.LoopForever
-06:34.776   15             29643     29643    :   RecoveryTestThread.LoopForever
-06:34.806   15             30408     30408    :   RecoveryTestThread.LoopForever
-06:34.836   15             34483     34483    :   RecoveryTestThread.LoopForever
-06:34.871   15             31069     31069    :   RecoveryTestThread.LoopForever
-06:34.902   15             30100     30100    :   RecoveryTestThread.LoopForever
-06:34.932   15             29831     29831    :   RecoveryTestThread.LoopForever
-06:34.962   15             29144     29144    :   RecoveryTestThread.LoopForever
-06:34.991   15             28802     28802    :   RecoveryTestThread.LoopForever
-06:35.019   15             31883     31883    :   RecoveryTestThread.LoopForever
-06:35.051   15             32695     32695    :   RecoveryTestThread.LoopForever
-06:35.084   15             31022     31022    :   RecoveryTestThread.LoopForever
-06:35.115   15             29587     29587    :   RecoveryTestThread.LoopForever
-06:35.145   15             29781     29781    :   RecoveryTestThread.LoopForever
-06:35.174   15             28924     28924    :   RecoveryTestThread.LoopForever
-06:35.203   15             29122     29122    :   RecoveryTestThread.LoopForever
-06:35.232   15             34206     34206    :   RecoveryTestThread.LoopForever
-06:35.267   15             30849     30849    :   RecoveryTestThread.LoopForever
-06:35.298   15             30029     30029    :   RecoveryTestThread.LoopForever
-06:35.328   15             29562     29562    :   RecoveryTestThread.LoopForever
-06:35.357   15             30049     30049    :   RecoveryTestThread.LoopForever
-06:35.387   15             29524     29524    :   RecoveryTestThread.LoopForever
-06:35.417   15             29177     29177    :   RecoveryTestThread.LoopForever
-06:35.446   15             32662     32662    :   RecoveryTestThread.LoopForever
-06:35.479   15             30331     30331    :   RecoveryTestThread.LoopForever
-06:35.509   15             29852     29852    :   RecoveryTestThread.LoopForever
-06:35.539   15             29473     29473    :   RecoveryTestThread.LoopForever
-06:35.568   15             29500     29500    :   RecoveryTestThread.LoopForever
-06:35.598   15             29845     29845    :   RecoveryTestThread.LoopForever
-06:35.628   15             31985     31985    :   RecoveryTestThread.LoopForever
-06:35.660   15             31574     31574    :   RecoveryTestThread.LoopForever
-06:35.691   15             30053     30053    :   RecoveryTestThread.LoopForever
-06:35.721   15             30400     30400    :   RecoveryTestThread.LoopForever
-06:35.752   15              3233      3233    :   RecoveryTestThread.LoopForever
-06:35.752   15                 9         6    :   :   :   :   :   Thread.ExitSwLog
-06:35.752   15                 3         3    :   :   :   :   :   : Thread.RunningThread
-06:35.752   15              2551         0    :   :   :   : SignalException.ctor
-06:35.752   15              2551         3    :   :   :   :   Exception.ctor
-06:35.752   15                14         4    :   :   :   :   : Thread.ExtendTime
-06:35.752   15                10        10    :   :   :   :   :   Thread.RunningThread
-06:35.752   15              2534      2534    :   :   :   :   : SysThreadStack.Display
-06:35.755   15               108        23    : Thread.TrapHandler
-06:35.755   15                41         4    :   Orphans.ExitNow
-06:35.755   15                27        24    :   : MutexGuard.ctor
-06:35.755   15                 3         3    :   :   SysMutex.Acquire
-06:35.755   15                10         4    :   : MutexGuard.dtor
-06:35.755   15                 5         5    :   :   SysMutex.Release
-06:35.755   15                 1         1    :   :   Thread.RunningThread
-06:35.755   15                44         4    :   Thread.Pause (msecs=0)
-06:35.755   15                 4         4    :   : Thread.RunningThread
-06:35.755   15                36         4    :   : Thread.EnterBlockingOperation
-06:35.755   15                 1         1    :   :   Thread.RunningThread
-06:35.755   15  -lock         31         4    :   :   Thread.Unlock
-06:35.755   15                27        27    :   :   : Thread.LogContextSwitch
-06:35.755   15                 4         4    :   :   :   : SysMutex.Acquire
-06:35.755   15                11        11    :   :   :   : SysMutex.Release
-06:35.755   15                 0         0    :   :   : InitThread.Yielding
-06:35.757   12  +lock         70         1    :   TcpIoThread.Enter
-06:35.757   12                39        39    :   : Thread.ExitBlockingOperation
-06:35.757   12                22        16    :   : SysTcpSocket.Accept
-06:35.757   12                 6         6    :   :   SysSocket.SetError
-06:35.757   12                 8         4    :   : SysIpL3Addr.dtor
-06:35.757   12                 4         4    :   :   SysIpL2Addr.dtor
-06:35.757   12                77         5    :   TcpIoThread.PollSockets
-06:35.757   12                25        25    :   : SysSocket.SetBlocking
-06:35.757   12                 4         4    :   : IpPort.RecvsInSequence
-06:35.757   12                43        22    :   : Thread.EnterBlockingOperation
-06:35.757   12                 1         1    :   :   Thread.RunningThread
-06:35.757   12  -lock         20         3    :   :   Thread.Unlock
-06:35.757   12                17        17    :   :   : Thread.LogContextSwitch
-06:35.757   12                 3         3    :   :   :   : SysMutex.Acquire
-06:35.757   12                 5         5    :   :   :   : SysMutex.Release
-06:35.757   12                 0         0    :   :   : InitThread.Yielding
-06:35.758   15  +lock         31         1    :   Thread.Pause
-06:35.758   15                30        28    :   : Thread.ExitBlockingOperation
-06:35.758   15                 2         2    :   :   Thread.ResumeLocked
-06:35.758   15                 3         3    :   Thread.Pause (interrupted)
-06:35.758   15                 4         4    :   Thread.SetSignal
-06:35.758   15               174         4    :   Log.Create
-06:35.758   15                17         5    :   : Log.Find
-06:35.758   15                 9         9    :   :   LogGroupRegistry.FindGroup
-06:35.758   15                 3         3    :   :   LogGroup.FindLog
-06:35.758   15               153       153    :   : Log.Format
-06:35.758   15               115         0    :   :   : SysTime.ctor(now)
-06:35.758   15               115         0    :   :   :   Object.ctor
-06:35.758   15               115       115    :   :   :   : Base.ctor
-06:35.758   15                12        12    :   LeakyBucketCounter.HasReachedLimit
-06:35.758   15               181        13    :   Log.Submit
-06:35.758   15                75         5    :   : Log.Find
-06:35.758   15                70        12    :   :   Log.Find
-06:35.758   15                30        30    :   :   : LogGroupRegistry.FindGroup
-06:35.758   15                28        28    :   :   : LogGroup.FindLog
-06:35.758   15                 3         3    :   : LogBufferRegistry.Active
-06:35.758   15                90         5    :   : LogBuffer.Push
-06:35.758   15                33         7    :   :   MutexGuard.ctor
-06:35.758   15                26        26    :   :   : SysMutex.Acquire
-06:35.758   15                17         5    :   :   LogBuffer.InsertionPoint
-06:35.758   15                 3         3    :   :   : LogBuffer.First
-06:35.758   15                 6         6    :   :   : LogBuffer.SetNext
-06:35.758   15                 3         3    :   :   : LogBuffer.First
-06:35.758   15                13         4    :   :   Thread.Interrupt
-06:35.758   15                 9         3    :   :   : SysThread.Interrupt
-06:35.758   15                 6         6    :   :   :   SysThread.Resume
-06:35.758   15                22         3    :   :   MutexGuard.dtor
-06:35.758   15                19        19    :   :   : SysMutex.Release
-06:35.758   15                 8         3    :   :   :   :   :   :   :   :   :   SignalException.dtor
-06:35.758   15                 5         5    :   :   :   :   :   :   :   :   :   : Exception.dtor
-06:35.758   15                56        20    Thread.Start
-06:35.758   15                 6         6    : SysThread.Start
-06:35.758   15                 1         1    :   : Thread.RunningThread
-06:35.758   15                30         4    : Thread.Pause (msecs=0)
-06:35.758   15                 3         3    :   Thread.RunningThread
-06:35.758   15                23         4    :   Thread.EnterBlockingOperation
-06:35.758   15                 1         1    :   : Thread.RunningThread
-06:35.758   15  -lock         18         2    :   : Thread.Unlock
-06:35.758   15                16        16    :   :   Thread.LogContextSwitch
-06:35.758   15                 3         3    :   :   :   SysMutex.Acquire
-06:35.758   15                 5         5    :   :   :   SysMutex.Release
-06:35.758   15                 0         0    :   :   InitThread.Yielding
-06:35.760   15  +lock          1         1    : Thread.Pause
-06:35.760   15                 0         0    :   Thread.ExitBlockingOperation
-06:35.760   15                 2         2    : Thread.Pause (completed)
-06:35.760   15                 1         1    : Thread.Pause (msecs=0)
-06:35.760   15  -lock          0         0    :   : Thread.Unlock
-06:35.760   15  +lock          1         0    : Thread.Pause
-06:35.760   15                 1         1    :   Thread.ExitBlockingOperation
-06:35.761   15                30         2    : Thread.Pause (completed)
-06:35.761   15                28        28    :   Thread.Pause (msecs=3000)
-06:35.761   15  -lock         26        26    :   :   Thread.Unlock
-06:35.761   15                 8         8    :   :   :   : SysMutex.Acquire
-06:35.761   15                 0         0    :   :   :   : SysMutex.Release
-06:37.758   12                 0         0    :   :   : ThreadAdmin.WarpFactor
-06:37.758   12  +lock         23         0    :   TcpIoThread.Enter
-06:37.758   12                23        11    :   : Thread.ExitBlockingOperation
-06:37.758   12                12        12    :   :   Thread.ResumeLocked
-06:37.758   12                44        10    :   IpPortRegistry.HostAddress
-06:37.758   12                 8         8    :   : SysIpL2Addr.IsValid
-06:37.758   12                26         0    :   : SysIpL2Addr.ctor(copy)
-06:37.758   12                26         0    :   :   Object.ctor
-06:37.758   12                26        26    :   :   : Base.ctor
-06:37.758   12                 9         9    :   SysIpL2Addr.operator=(copy)
-06:37.758   12                10        10    :   SysIpL2Addr.dtor
-06:37.758   12               123        11    :   TcpIoThread.AcceptConn
-06:37.758   12                34         0    :   : SysIpL3Addr.ctor
-06:37.758   12                34         0    :   :   SysIpL2Addr.ctor
-06:37.758   12                34         0    :   :   : Object.ctor
-06:37.758   12                34        34    :   :   :   Base.ctor
-06:37.758   12                22        22    :   : SysSocket.SetBlocking
-06:37.758   12                37        24    :   : SysTcpSocket.Accept
-06:37.758   12                13        13    :   :   SysSocket.SetError
-06:37.758   12                19         9    :   : SysIpL3Addr.dtor
-06:37.758   12                10        10    :   :   SysIpL2Addr.dtor
-06:37.758   12                97        11    :   TcpIoThread.PollSockets
-06:37.758   12                15        15    :   : SysSocket.SetBlocking
-06:37.758   12                10        10    :   : IpPort.RecvsInSequence
-06:37.758   12                61         9    :   : Thread.EnterBlockingOperation
-06:37.758   12                 3         3    :   :   Thread.RunningThread
-06:37.758   12  -lock         49         8    :   :   Thread.Unlock
-06:37.758   12                41        41    :   :   : Thread.LogContextSwitch
-06:37.758   12                 9         9    :   :   :   : SysMutex.Acquire
-06:37.758   12                13        13    :   :   :   : SysMutex.Release
-06:37.758   12                 0         0    :   :   : InitThread.Yielding
-06:38.762   15                 0         0    :   :   : ThreadAdmin.WarpFactor
-06:38.762   15  +lock          1         1    :   Thread.Pause
-06:38.762   15                 0         0    :   : Thread.ExitBlockingOperation
-06:38.762   15                 1         1    :   Thread.Pause (completed)
-06:38.762   15                 1         1    :   Thread.Pause (msecs=3000)
-06:38.762   15  -lock          0         0    :   :   Thread.Unlock
+16:18.692   12              1599         9    :   Thread.ExitBlockingOperation
+16:18.692   12                12         6    :   : Thread.RunningThread
+16:18.692   12                 6         6    :   :   ThreadRegistry.FindThread
+16:18.692   12              1578         6    :   : Thread.Ready
+16:18.692   12              1572        19    :   :   SysThread.Wait
+16:18.692   12              1553      1553    :   :   : SysThread.Suspend
+16:18.693   12                 0         0    :   : SysSocket.SetError
+16:19.713   15>                6         6    : SysMutex.Acquire
+16:19.713   15                15         8    MutexGuard.dtor
+16:19.713   15                 7         7    : SysMutex.Release
+16:19.713   15                26         8  Thread.Resume
+16:19.713   15                 8         8    Thread.InitialMsecs
+16:19.713   15                10        10    ThreadAdmin.WarpFactor
+16:19.713   15            954544    954544  Thread.RegisterForSignals
+16:19.744   15             32157     32157    : RecoveryTestThread.LoopForever
+16:19.777   15             31640     31640    : RecoveryTestThread.LoopForever
+16:19.808   15             31055     31055    : RecoveryTestThread.LoopForever
+16:19.839   15             31428     31428    : RecoveryTestThread.LoopForever
+16:19.871   15             30915     30915    : RecoveryTestThread.LoopForever
+16:19.902   15             32386     32386    : RecoveryTestThread.LoopForever
+16:19.934   15             32670     32670    : RecoveryTestThread.LoopForever
+16:19.967   15             31386     31386    : RecoveryTestThread.LoopForever
+16:19.998   15             31866     31866    : RecoveryTestThread.LoopForever
+16:20.030   15             32913     32913    : RecoveryTestThread.LoopForever
+16:20.063   15             33020     33020    : RecoveryTestThread.LoopForever
+16:20.096   15             32675     32675    : RecoveryTestThread.LoopForever
+16:20.129   15             34454     34454    : RecoveryTestThread.LoopForever
+16:20.163   15             33187     33187    : RecoveryTestThread.LoopForever
+16:20.196   15             32689     32689    : RecoveryTestThread.LoopForever
+16:20.229   15             31813     31813    : RecoveryTestThread.LoopForever
+16:20.261   15             32539     32539    : RecoveryTestThread.LoopForever
+16:20.293   15             31171     31171    : RecoveryTestThread.LoopForever
+16:20.324   15             32642     32642    : RecoveryTestThread.LoopForever
+16:20.357   15             34945     34945    : RecoveryTestThread.LoopForever
+16:20.392   15             32879     32879    : RecoveryTestThread.LoopForever
+16:20.425   15             34267     34267    : RecoveryTestThread.LoopForever
+16:20.459   15             32842     32842    : RecoveryTestThread.LoopForever
+16:20.492   15             33723     33723    : RecoveryTestThread.LoopForever
+16:20.526   15             35268     35268    : RecoveryTestThread.LoopForever
+16:20.561   15             36863     36863    : RecoveryTestThread.LoopForever
+16:20.598   15             36855     36855    : RecoveryTestThread.LoopForever
+16:20.635   15             32467     32467    : RecoveryTestThread.LoopForever
+16:20.667   15                 0         0    : RecoveryTestThread.LoopForever
+16:20.693   12>               47         9    :   Thread.ExitBlockingOperation
+16:20.693   12                27         6    :   : Thread.RunningThread
+16:20.693   12                21        21    :   :   ThreadRegistry.FindThread
+16:20.694   12                11         6    :   : Thread.Ready
+16:20.694   12                 5         5    :   :   SysThread.Wait
+16:20.694   12                 0         0    :   :   : SysThread.Suspend
+16:20.699   15>            30428     30428    : RecoveryTestThread.LoopForever
+16:20.729   15             30238     30238    : RecoveryTestThread.LoopForever
+16:20.759   15             30575     30575    : RecoveryTestThread.LoopForever
+16:20.790   15             30172     30172    : RecoveryTestThread.LoopForever
+16:20.820   15             32465     32465    : RecoveryTestThread.LoopForever
+16:20.853   15             32647     32647    : RecoveryTestThread.LoopForever
+16:20.885   15             31359     31359    : RecoveryTestThread.LoopForever
+16:20.917   15             30038     30038    : RecoveryTestThread.LoopForever
+16:20.947   15             30016     30016    : RecoveryTestThread.LoopForever
+16:20.977   15             30903     30903    : RecoveryTestThread.LoopForever
+16:21.008   15             34651     34651    : RecoveryTestThread.LoopForever
+16:21.042   15             32861     32861    : RecoveryTestThread.LoopForever
+16:21.075   15             34672     34672    : RecoveryTestThread.LoopForever
+16:21.110   15             30886     30886    : RecoveryTestThread.LoopForever
+16:21.141   15             29429     29429    : RecoveryTestThread.LoopForever
+16:21.170   15             30318     30318    : RecoveryTestThread.LoopForever
+16:21.200   15             40288     40288    : RecoveryTestThread.LoopForever
+16:21.241   15             33241     33241    : RecoveryTestThread.LoopForever
+16:21.274   15             32083     32083    : RecoveryTestThread.LoopForever
+16:21.306   15             30683     30683    : RecoveryTestThread.LoopForever
+16:21.337   15             30662     30662    : RecoveryTestThread.LoopForever
+16:21.367   15             30541     30541    : RecoveryTestThread.LoopForever
+16:21.398   15             30717     30717    : RecoveryTestThread.LoopForever
+16:21.429   15             34208     34208    : RecoveryTestThread.LoopForever
+16:21.463   15             30370     30370    : RecoveryTestThread.LoopForever
+16:21.493   15             30436     30436    : RecoveryTestThread.LoopForever
+16:21.524   15             29845     29845    : RecoveryTestThread.LoopForever
+16:21.553   15             30229     30229    : RecoveryTestThread.LoopForever
+16:21.584   15             29804     29804    : RecoveryTestThread.LoopForever
+16:21.614   15             31410     31410    : RecoveryTestThread.LoopForever
+16:21.645   15             33414     33414    : RecoveryTestThread.LoopForever
+16:21.678   15             31519     31519    : RecoveryTestThread.LoopForever
+16:21.710   15             29966     29966    : RecoveryTestThread.LoopForever
+16:21.740   15             30858     30858    : RecoveryTestThread.LoopForever
+16:21.771   15             30089     30089    : RecoveryTestThread.LoopForever
+16:21.801   15             29889     29889    : RecoveryTestThread.LoopForever
+16:21.831   15             33181     33181    : RecoveryTestThread.LoopForever
+16:21.864   15             32568     32568    : RecoveryTestThread.LoopForever
+16:21.896   15             30704     30704    : RecoveryTestThread.LoopForever
+16:21.927   15             30411     30411    : RecoveryTestThread.LoopForever
+16:21.958   15             30090     30090    : RecoveryTestThread.LoopForever
+16:21.988   15             30230     30230    : RecoveryTestThread.LoopForever
+16:22.018   15             31231     31231    : RecoveryTestThread.LoopForever
+16:22.049   15             32159     32159    : RecoveryTestThread.LoopForever
+16:22.081   15             33768     33768    : RecoveryTestThread.LoopForever
+16:22.115   15             30944     30944    : RecoveryTestThread.LoopForever
+16:22.146   15             30915     30915    : RecoveryTestThread.LoopForever
+16:22.177   15             29714     29714    : RecoveryTestThread.LoopForever
+16:22.207   15             37401     37401    : RecoveryTestThread.LoopForever
+16:22.244   15             33021     33021    : RecoveryTestThread.LoopForever
+16:22.277   15             31918     31918    : RecoveryTestThread.LoopForever
+16:22.309   15             30032     30032    : RecoveryTestThread.LoopForever
+16:22.339   15             30891     30891    : RecoveryTestThread.LoopForever
+16:22.370   15             31088     31088    : RecoveryTestThread.LoopForever
+16:22.401   15             29524     29524    : RecoveryTestThread.LoopForever
+16:22.430   15             32523     32523    : RecoveryTestThread.LoopForever
+16:22.463   15             32035     32035    : RecoveryTestThread.LoopForever
+16:22.495   15             30590     30590    : RecoveryTestThread.LoopForever
+16:22.526   15             30186     30186    : RecoveryTestThread.LoopForever
+16:22.556   15             29745     29745    : RecoveryTestThread.LoopForever
+16:22.586   15             30153     30153    : RecoveryTestThread.LoopForever
+16:22.616   15             32900     32900    : RecoveryTestThread.LoopForever
+16:22.649   15             37997     37997    : RecoveryTestThread.LoopForever
+16:22.687   15             34191     34191    : RecoveryTestThread.LoopForever
+16:22.721   15             36717     36717    : RecoveryTestThread.LoopForever
+16:22.758   15             31571     31571    : RecoveryTestThread.LoopForever
+16:22.789   15             30554     30554    : RecoveryTestThread.LoopForever
+16:22.820   15             29518     29518    : RecoveryTestThread.LoopForever
+16:22.849   15             32974     32974    : RecoveryTestThread.LoopForever
+16:22.882   15             32778     32778    : RecoveryTestThread.LoopForever
+16:22.915   15             30648     30648    : RecoveryTestThread.LoopForever
+16:22.946   15             30122     30122    : RecoveryTestThread.LoopForever
+16:22.976   15             30289     30289    : RecoveryTestThread.LoopForever
+16:23.006   15             30134     30134    : RecoveryTestThread.LoopForever
+16:23.036   15             32423     32423    : RecoveryTestThread.LoopForever
+16:23.069   15             32710     32710    : RecoveryTestThread.LoopForever
+16:23.101   15             30993     30993    : RecoveryTestThread.LoopForever
+16:23.132   15             30143     30143    : RecoveryTestThread.LoopForever
+16:23.162   15             29851     29851    : RecoveryTestThread.LoopForever
+16:23.192   15             29859     29859    : RecoveryTestThread.LoopForever
+16:23.222   15             30237     30237    : RecoveryTestThread.LoopForever
+16:23.252   15             32494     32494    : RecoveryTestThread.LoopForever
+16:23.285   15             31987     31987    : RecoveryTestThread.LoopForever
+16:23.317   15             30321     30321    : RecoveryTestThread.LoopForever
+16:23.347   15             30402     30402    : RecoveryTestThread.LoopForever
+16:23.378   15             30060     30060    : RecoveryTestThread.LoopForever
+16:23.408   15             30055     30055    : RecoveryTestThread.LoopForever
+16:23.438   15             29938     29938    : RecoveryTestThread.LoopForever
+16:23.468   15             31334     31334    : RecoveryTestThread.LoopForever
+16:23.499   15             32567     32567    : RecoveryTestThread.LoopForever
+16:23.531   15             30752     30752    : RecoveryTestThread.LoopForever
+16:23.562   15             30027     30027    : RecoveryTestThread.LoopForever
+16:23.592   15             29827     29827    : RecoveryTestThread.LoopForever
+16:23.622   15             29569     29569    : RecoveryTestThread.LoopForever
+16:23.652   15             29640     29640    : RecoveryTestThread.LoopForever
+16:23.681   15             32742     32742    : RecoveryTestThread.LoopForever
+16:23.714   15             32657     32657    : RecoveryTestThread.LoopForever
+16:23.747   15             31424     31424    : RecoveryTestThread.LoopForever
+16:23.778   15             31195     31195    : RecoveryTestThread.LoopForever
+16:23.809   15             29767     29767    : RecoveryTestThread.LoopForever
+16:23.839   15             29831     29831    : RecoveryTestThread.LoopForever
+16:23.869   15             31576     31576    : RecoveryTestThread.LoopForever
+16:23.901   15             32081     32081    : RecoveryTestThread.LoopForever
+16:23.933   15             30765     30765    : RecoveryTestThread.LoopForever
+16:23.963   15             30883     30883    : RecoveryTestThread.LoopForever
+16:23.994   15             30048     30048    : RecoveryTestThread.LoopForever
+16:24.024   15             31154     31154    : RecoveryTestThread.LoopForever
+16:24.055   15             29584     29584    : RecoveryTestThread.LoopForever
+16:24.085   15             32643     32643    : RecoveryTestThread.LoopForever
+16:24.118   15             32521     32521    : RecoveryTestThread.LoopForever
+16:24.150   15             30535     30535    : RecoveryTestThread.LoopForever
+16:24.181   15             30283     30283    : RecoveryTestThread.LoopForever
+16:24.211   15             30315     30315    : RecoveryTestThread.LoopForever
+16:24.241   15             36971     36971    : RecoveryTestThread.LoopForever
+16:24.278   15             29900     29900    : RecoveryTestThread.LoopForever
+16:24.308   15             32670     32670    : RecoveryTestThread.LoopForever
+16:24.341   15             31405     31405    : RecoveryTestThread.LoopForever
+16:24.372   15             30420     30420    : RecoveryTestThread.LoopForever
+16:24.403   15             30231     30231    : RecoveryTestThread.LoopForever
+16:24.433   15             30497     30497    : RecoveryTestThread.LoopForever
+16:24.463   15             30442     30442    : RecoveryTestThread.LoopForever
+16:24.494   15             32911     32911    : RecoveryTestThread.LoopForever
+16:24.527   15             32106     32106    : RecoveryTestThread.LoopForever
+16:24.559   15             30852     30852    : RecoveryTestThread.LoopForever
+16:24.590   15             29540     29540    : RecoveryTestThread.LoopForever
+16:24.619   15             30280     30280    : RecoveryTestThread.LoopForever
+16:24.650   15             29489     29489    : RecoveryTestThread.LoopForever
+16:24.679   15             30168     30168    : RecoveryTestThread.LoopForever
+16:24.709   15             32834     32834    : RecoveryTestThread.LoopForever
+16:24.742   15             34490     34490    : RecoveryTestThread.LoopForever
+16:24.777   15             37094     37094    : RecoveryTestThread.LoopForever
+16:24.814   15             37307     37307    : RecoveryTestThread.LoopForever
+16:24.851   15             31666     31666    : RecoveryTestThread.LoopForever
+16:24.883   15             31252     31252    : RecoveryTestThread.LoopForever
+16:24.914   15             33550     33550    : RecoveryTestThread.LoopForever
+16:24.947   15             31297     31297    : RecoveryTestThread.LoopForever
+16:24.979   15              3420      3420    : RecoveryTestThread.LoopForever
+16:24.979   15                 8         5    :   :   :   :   : Thread.ExitSwLog
+16:24.979   15                 3         3    :   :   :   :   :   Thread.RunningThread
+16:24.979   15              2855         0    :   :   :   SignalException.ctor
+16:24.979   15              2855         4    :   :   :   : Exception.ctor
+16:24.979   15                13         3    :   :   :   :   Thread.ExtendTime
+16:24.979   15                10        10    :   :   :   :   : Thread.RunningThread
+16:24.979   15              2838      2838    :   :   :   :   SysThreadStack.Display
+16:24.982   15               469         7    Thread.TrapHandler
+16:24.982   15                36         4    : Orphans.ExitNow
+16:24.982   15                24         7    :   MutexGuard.ctor
+16:24.982   15                17        17    :   : SysMutex.Acquire
+16:24.982   15                 8         3    :   MutexGuard.dtor
+16:24.982   15                 5         5    :   : SysMutex.Release
+16:24.982   15                 5         5    : Thread.SetSignal
+16:24.982   15               157         3    : Log.Create
+16:24.982   15                18         5    :   Log.Find
+16:24.982   15                10        10    :   : LogGroupRegistry.FindGroup
+16:24.982   15                 3         3    :   : LogGroup.FindLog
+16:24.982   15               136       136    :   Log.Format
+16:24.982   15               116         0    :   :   SysTime.ctor(now)
+16:24.982   15               116         0    :   :   : Object.ctor
+16:24.982   15               116       116    :   :   :   Base.ctor
+16:24.982   15                11        11    : LeakyBucketCounter.HasReachedLimit
+16:24.982   15               253        12    : Log.Submit
+16:24.982   15               172         9    :   Log.Find
+16:24.982   15               163         4    :   : Log.Find
+16:24.982   15               152       152    :   :   LogGroupRegistry.FindGroup
+16:24.983   15                 7         7    :   :   LogGroup.FindLog
+16:24.983   15                 3         3    :   LogBufferRegistry.Active
+16:24.983   15                66         3    :   LogBuffer.Push
+16:24.983   15                13         6    :   : MutexGuard.ctor
+16:24.983   15                 7         7    :   :   SysMutex.Acquire
+16:24.983   15                16         4    :   : LogBuffer.InsertionPoint
+16:24.983   15                 3         3    :   :   LogBuffer.First
+16:24.983   15                 6         6    :   :   LogBuffer.SetNext
+16:24.983   15                 3         3    :   :   LogBuffer.First
+16:24.983   15                14         5    :   : Thread.Interrupt
+16:24.983   15                 9         3    :   :   SysThread.Interrupt
+16:24.983   15                 6         6    :   :   : SysThread.Resume
+16:24.983   15                20         4    :   : MutexGuard.dtor
+16:24.983   15                16        16    :   :   SysMutex.Release
+16:24.983   15                 7         3    :   :   :   :   :   :   :   :   : SignalException.dtor
+16:24.983   15                 4         4    :   :   :   :   :   :   :   :   :   Exception.dtor
+16:24.983   15               119         3  Thread.Start
+16:24.983   15                 4         4    SysThread.Start
+16:24.983   15               112         5    RecoveryTestThread.Enter
+16:24.983   15                 1         1    :   : Thread.RunningThread
+16:24.983   15               107         4    : Thread.Pause (msecs=3000)
+16:24.983   15                 3         3    :   Thread.RunningThread
+16:24.983   15                55         4    :   Thread.EnterBlockingOperation
+16:24.983   15                 2         2    :   : Thread.RunningThread
+16:24.983   15                49         4    :   : Thread.Suspend
+16:24.983   15                15        15    :   :   Thread.LogContextSwitch
+16:24.983   15                 3         3    :   :   :   SysMutex.Acquire
+16:24.983   15                 4         4    :   :   :   SysMutex.Release
+16:24.983   15                30         9    :   :   Thread.Schedule
+16:24.983   15                21         5    :   :   : Thread.Interrupt
+16:24.983   15                16         6    :   :   :   SysThread.Interrupt
+16:24.983   15                10        10    :   :   :   : SysThread.Resume
+16:24.983   15                13         6    :   SysThread.Delay
+16:24.983   15                 7         7    :   : SysThread.Suspend
+16:24.983   15                32         5    :   Thread.ExitBlockingOperation
+16:24.983   15                11         5    :   : Thread.RunningThread
+16:24.983   15                 6         6    :   :   ThreadRegistry.FindThread
+16:24.983   15                16         5    :   : Thread.Ready
+16:24.983   15                11         6    :   :   Thread.Interrupt
+16:24.983   15                 5         5    :   :   : SysThread.Interrupt
+16:24.983   15                 0         0    :   :   :   SysThread.Resume
+16:24.984   12>               34        34    :   : Thread.Resume
+16:24.984   12               125       125    :   IpPort.RecvsInSequence
+16:24.984   12                24        24    :   :   :   SysMutex.Acquire
+16:24.984   12                51        51    :   :   :   SysMutex.Release
+16:24.984   12                 0         0    :   SysTcpSocket.Poll
+16:24.985   15>                1         1    : Thread.Pause (interrupted)
+16:24.985   15                87        24    : Thread.Pause (msecs=3000)
+16:24.985   15                58         5    :   Thread.EnterBlockingOperation
+16:24.985   15                 3         3    :   : Thread.RunningThread
+16:24.985   15                50         4    :   : Thread.Suspend
+16:24.985   15                16        16    :   :   Thread.LogContextSwitch
+16:24.985   15                 3         3    :   :   :   SysMutex.Acquire
+16:24.985   15                 4         4    :   :   :   SysMutex.Release
+16:24.985   15                30         7    :   :   Thread.Schedule
+16:24.985   15                23         7    :   :   : Thread.Interrupt
+16:24.985   15                16         5    :   :   :   SysThread.Interrupt
+16:24.985   15                11        11    :   :   :   : SysThread.Resume
+16:24.985   15                 5         5    :   SysThread.Delay
+16:24.985   15                 0         0    :   : SysThread.Suspend
+16:26.985   12>              218       218    :   :   Thread.Interrupt
+16:26.985   12                23        23    :   : SysSocket.SetError
+16:26.985   12                 0         0    :   :   :   : SysThread.Resume
+16:27.984   15>              281        13    :   Thread.ExitBlockingOperation
+16:27.984   15                12         6    :   : Thread.RunningThread
+16:27.984   15                 6         6    :   :   ThreadRegistry.FindThread
+16:27.985   15               244         6    :   : Thread.Ready
+16:27.985   15                28         7    :   :   Thread.Interrupt
+16:27.985   15                21         5    :   :   : SysThread.Interrupt
+16:27.985   15                16        16    :   :   :   SysThread.Resume
+16:27.985   15               210         6    :   :   SysThread.Wait
+16:27.985   15               204       204    :   :   : SysThread.Suspend
+16:27.985   15                12         6    :   : Thread.Resume
+16:27.985   15                 4         4    :   :   Thread.InitialMsecs
+16:27.985   15                 2         2    :   :   ThreadAdmin.WarpFactor
+16:27.985   15                 3         3    : Thread.Pause (completed)
+16:27.985   15                76         4    RecoveryTestThread.Enter
+16:27.985   15                 1         1    :   : Thread.RunningThread
+16:27.985   15                72         5    : Thread.Pause (msecs=3000)
+16:27.985   15                 3         3    :   Thread.RunningThread
+16:27.985   15                59         3    :   Thread.EnterBlockingOperation
+16:27.985   15                 3         3    :   : Thread.RunningThread
+16:27.985   15                53         5    :   : Thread.Suspend
+16:27.985   15                16        16    :   :   Thread.LogContextSwitch
+16:27.985   15                 3         3    :   :   :   SysMutex.Acquire
+16:27.985   15                 4         4    :   :   :   SysMutex.Release
+16:27.985   15                32         8    :   :   Thread.Schedule
+16:27.985   15                24         6    :   :   : Thread.Interrupt
+16:27.985   15                18         6    :   :   :   SysThread.Interrupt
+16:27.985   15                12        12    :   :   :   : SysThread.Resume
+16:27.985   15                 5         5    :   SysThread.Delay
+16:27.985   15                 0         0    :   : SysThread.Suspend
 END OF TRACE

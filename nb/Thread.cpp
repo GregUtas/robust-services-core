@@ -39,7 +39,6 @@
 #include "Element.h"
 #include "ElementException.h"
 #include "Formatters.h"
-#include "FunctionName.h"
 #include "InitThread.h"
 #include "LeakyBucketCounter.h"
 #include "Log.h"
@@ -72,17 +71,13 @@ using std::string;
 
 namespace NodeBase
 {
-//  Records the scheduling of threads.
+//  Records invocations of Pause.
 //
 class ThreadTrace : public FunctionTrace
 {
 public:
-   static const Id LockAcquired = 1;  // scheduled to run unpreemptably
-   static const Id LockReleased = 2;  // yielded when running unpreemptably
-   static const Id PauseEnter   = 3;  // starting to pause
-   static const Id PauseExit    = 4;  // returning from pause
-   static const Id ScheduledIn  = 5;  // thread starting to run
-   static const Id ScheduledOut = 6;  // thread stopping
+   static const Id PauseEnter = 1;  // entering Pause
+   static const Id PauseExit  = 2;  // returning from Pause
 
    //  Creates a trace record for the event identified by RID, which
    //  occurred in function FUNC.  INFO is any debugging information.
@@ -96,14 +91,6 @@ private:
    //  Private to restrict creation to CaptureEvent.
    //
    ThreadTrace(fn_name_arg func, fn_depth depth, Id rid, word info);
-
-   //  Overridden to return true for LockAcquired and ScheduledIn events.
-   //
-   bool IsFirstAfterContextSwitch() const override;
-
-   //  Overridden to return a string that explains an event.
-   //
-   c_string EventString() const override;
 
    //  Additional debug information.
    //
@@ -133,53 +120,19 @@ void ThreadTrace::CaptureEvent(fn_name_arg func, Id rid, word info)
 
    //  The possible traces are
    //
-   // (1a) EnterThread              (1b) func
-   //        ResumeLocked                  ExitBlockingOperation
-   //          Trace(LockAcquired)           ResumeLocked
-   //            CaptureEvent                  Trace(LockAcquired)
-   //                                            CaptureEvent
-   //  (2) Unlock
-   //        Trace(LockReleased)
-   //          CaptureEvent
-   //  (3) Pause                     (4) Pause
+   //  (1) Pause                     (2) Pause
    //        Trace(PauseEnter)             Trace(PauseExit)
    //          CaptureEvent                  CaptureEvent
-   //  (5) func                      (6) func
-   //        ExitBlockingOperation         EnterBlockingOperation
-   //          Trace(ScheduledIn)            Trace(ScheduledOut)
-   //            CaptureEvent                  CaptureEvent
    //
-   //  Adjust FuncDepth accordingly and add any call to ExitBlockingOperation,
-   //  which is always called while preemptable and is therefore included here
-   //  so that it appears in the trace of a context switch to an unpreemptable
-   //  thread.
+   //  Adjust FuncDepth accordingly.
    //
    auto depth = SysThreadStack::FuncDepth();
 
    switch(rid)
    {
-   case LockAcquired:
-      if(FunctionName::compare(func, Thread_EnterThread) == 0)
-      {
-         new ThreadTrace(func, depth - 3, rid, info);
-      }
-      else
-      {
-         new ThreadTrace(func, depth - 4, rid, info);
-         new ThreadTrace(Thread_ExitBlockingOperation, depth - 3, 0, 0);
-      }
-      break;
-   case LockReleased:
    case PauseExit:
    case PauseEnter:
       new ThreadTrace(func, depth - 2, rid, info);
-      break;
-   case ScheduledIn:
-      new ThreadTrace(func, depth - 3, rid, info);
-      new ThreadTrace(Thread_ExitBlockingOperation, depth - 2, 0, 0);
-      break;
-   case ScheduledOut:
-      new ThreadTrace(func, depth - 3, rid, info);
       break;
    default:
       Debug::SwLog(ThreadTrace_CaptureEvent, "unexpected event", rid);
@@ -222,37 +175,6 @@ bool ThreadTrace::Display(ostream& stream, bool diff)
    return true;
 }
 
-//------------------------------------------------------------------------------
-
-fixed_string ScheduledInStr   = "START";
-fixed_string ScheduledOutStr  = "STOP ";
-fixed_string LockAcquiredStr  = "+lock";
-fixed_string LockReleasedStr  = "-lock";
-fixed_string PauseEnterStr    = "     ";
-fixed_string PauseExitStr     = "     ";
-
-c_string ThreadTrace::EventString() const
-{
-   switch(rid_)
-   {
-   case LockAcquired: return LockAcquiredStr;
-   case LockReleased: return LockReleasedStr;
-   case PauseEnter: return PauseEnterStr;
-   case PauseExit: return PauseExitStr;
-   case ScheduledIn: return ScheduledInStr;
-   case ScheduledOut: return ScheduledOutStr;
-   }
-
-   return FunctionTrace::EventString();
-}
-
-//------------------------------------------------------------------------------
-
-bool ThreadTrace::IsFirstAfterContextSwitch() const
-{
-   return ((rid_ == LockAcquired) || (rid_ == ScheduledIn));
-}
-
 //==============================================================================
 //
 //  Statistics for each thread.
@@ -264,8 +186,9 @@ public:
    ~ThreadStats();
 
    CounterPtr       traps_;
-   CounterPtr       yields_;
    CounterPtr       exceeds_;
+   CounterPtr       yields_;
+   CounterPtr       interrupts_;
    HighWatermarkPtr maxMsgs_;
    HighWatermarkPtr maxStack_;
    HighWatermarkPtr maxUsecs_;
@@ -281,11 +204,12 @@ ThreadStats::ThreadStats()
    Debug::ft(ThreadStats_ctor);
 
    traps_.reset(new Counter("traps"));
+   exceeds_.reset(new Counter("running unpreemptable too long"));
    yields_.reset(new Counter("yields"));
-   exceeds_.reset(new Counter("running locked too long"));
+   interrupts_.reset(new Counter("interrupts"));
    maxMsgs_.reset(new HighWatermark("longest length of message queue"));
    maxStack_.reset(new HighWatermark("highest stack usage (words)"));
-   maxUsecs_.reset(new HighWatermark("longest time locked (usecs)"));
+   maxUsecs_.reset(new HighWatermark("longest time scheduled in (usecs)"));
    totUsecs_.reset(new Accumulator("total execution time (msecs)", 1000));
 }
 
@@ -803,10 +727,6 @@ public:
    //
    bool trap_;
 
-   //  Set if the thread has trapped.
-   //
-   bool trapped_;
-
    //  Set if thread is undergoing recovery after a trap.
    //
    bool recovering_;
@@ -898,7 +818,6 @@ ThreadPriv::ThreadPriv() :
    autostop_(false),
    warned_(false),
    trap_(false),
-   trapped_(false),
    recovering_(false),
    exiting_(false),
    recreate_(false),
@@ -945,7 +864,6 @@ void ThreadPriv::Display(ostream& stream,
    stream << prefix << "autostop   : " << autostop_ << CRLF;
    stream << prefix << "warned     : " << warned_ << CRLF;
    stream << prefix << "trap       : " << trap_ << CRLF;
-   stream << prefix << "trapped    : " << trapped_ << CRLF;
    stream << prefix << "recovering : " << recovering_ << CRLF;
    stream << prefix << "exiting    : " << exiting_ << CRLF;
    stream << prefix << "recreate   : " << recreate_ << CRLF;
@@ -978,7 +896,6 @@ void ThreadPriv::Recreate()
    autostop_ = false;
 // warned_ = (preserved)
 // trap_ = (preserved)
-   trapped_ = false;
    recovering_ = false;
    exiting_ = false;
    recreate_ = false;
@@ -1028,9 +945,45 @@ const SysThread::Priority FactionMap[Faction_N] =
 };
 
 //------------------------------------------------------------------------------
+//
+//  The thread that is running or which has been scheduled to run.
+//  Excludes RootThread and InitThread.
+//
+Thread* ActiveThread_ = nullptr;
+
+//  The thread at which to start searching for the thread to be
+//  scheduled in.  Scheduling is currently round-robin but will
+//  eventually be changed to support proportional scheduling.
+//
+id_t Start_ = 1;
+
+//  Set to restrict scheduling to specific factions during a restart.
+//
+bool FactionsRestricted_ = true;
+
+//------------------------------------------------------------------------------
+
+bool FactionAllowed(Faction f)
+{
+   if(FactionsRestricted_)
+   {
+      //  Some factions are not scheduled while preparing to shut down.
+      //
+      switch(f)
+      {
+      case PayloadFaction:
+      case LoadTestFaction:
+      case AuditFaction:
+         return false;
+      }
+   }
+
+   return true;
+}
+
+//------------------------------------------------------------------------------
 
 const Thread::Id Thread::MaxId = 99;
-Thread* Thread::LockedThread_ = nullptr;
 
 //------------------------------------------------------------------------------
 
@@ -1040,8 +993,11 @@ Thread::Thread(Faction faction) :
    faction_(faction),
    blocked_(NotBlocked),
    status_(TraceDefault),
+   waiting_(false),
    traceMsg_(false),
-   deleted_(false)
+   deleted_(false),
+   trapped_(false),
+   readyTime_(UINT64_MAX)
 {
    Debug::ft(Thread_ctor);
 
@@ -1095,8 +1051,7 @@ Thread::~Thread()
    //
    if((systhrd_ == nullptr) || (systhrd_->Nid() == NIL_ID))
    {
-      systhrd_.reset();
-      ReleaseResources();
+      ReleaseResources(false);
       return;
    }
 
@@ -1106,9 +1061,8 @@ Thread::~Thread()
    if(priv_->exiting_)
    {
       systhrd_->status_.set(SysThread::IsExiting);
-      Unlock();
-      systhrd_.reset();
-      ReleaseResources();
+      Suspend();
+      ReleaseResources(false);
       return;
    }
 
@@ -1126,7 +1080,7 @@ Thread::~Thread()
       Log::Submit(log);
    }
 
-   ReleaseResources();
+   ReleaseResources(true);
 }
 
 //------------------------------------------------------------------------------
@@ -1139,6 +1093,16 @@ c_string Thread::AbbrName() const
 
    Debug::SwLog(Thread_AbbrName, strOver(this), 0);
    return "unknown";
+}
+
+//------------------------------------------------------------------------------
+
+Thread* Thread::ActiveThread()
+{
+   auto thr = ActiveThread_;
+   if(thr == nullptr) return nullptr;
+   if(thr->deleted_) return nullptr;
+   return thr;
 }
 
 //------------------------------------------------------------------------------
@@ -1174,21 +1138,20 @@ bool Thread::ChangeFaction(Faction faction)
 {
    Debug::ft(Thread_ChangeFaction);
 
-   if(systhrd_ != nullptr)
+   if(faction == faction_) return true;
+
+   if(faction >= SystemFaction)
    {
-      auto prio = FactionToPriority(faction);
-
-      if(systhrd_->SetPriority(prio))
-      {
-         faction_ = faction;
-         return true;
-      }
-
+      Debug::SwLog(Thread_ChangeFaction, AbbrName(), faction);
       return false;
    }
 
-   //  This will take effect when the native thread is created.
-   //
+   //  Currently, application factions only have two priorities; the lower
+   //  one prevents the platform from scheduling a preemptable thread that
+   //  we have scheduled out.  Consequently, a thread's priority does not
+   //  change when its faction changes.  If our use of priorities changes,
+   //  it may also be necessary to adjust the thread's priority here.
+
    faction_ = faction;
    return true;
 }
@@ -1226,8 +1189,15 @@ void Thread::Cleanup()
    //
    stats_.reset();
    priv_.reset();
-   ReleaseResources();
+   ReleaseResources(true);
    Pooled::Cleanup();
+}
+
+//------------------------------------------------------------------------------
+
+void Thread::ClearActiveThread(const Thread* thr)
+{
+   if(ActiveThread_ == thr) ActiveThread_ = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -1283,17 +1253,20 @@ void Thread::Display(ostream& stream,
    Pooled::Display(stream, prefix, options);
 
    auto lead = prefix + spaces(2);
-   stream << prefix << "systhrd  : " << systhrd_.get() << CRLF;
+   stream << prefix << "systhrd   : " << systhrd_.get() << CRLF;
    if(systhrd_ != nullptr) systhrd_->Display(stream, lead, options);
-   stream << prefix << "tid      : " << tid_.to_str() << CRLF;
-   stream << prefix << "faction  : " << int(faction_) << CRLF;
-   stream << prefix << "blocked  : " << blocked_ << CRLF;
-   stream << prefix << "status   : " << status_ << CRLF;
-   stream << prefix << "traceMsg : " << traceMsg_ << CRLF;
-   stream << prefix << "deleted  : " << deleted_ << CRLF;
-   stream << prefix << "msgq     : " << CRLF;
+   stream << prefix << "tid       : " << tid_.to_str() << CRLF;
+   stream << prefix << "faction   : " << int(faction_) << CRLF;
+   stream << prefix << "blocked   : " << blocked_ << CRLF;
+   stream << prefix << "status    : " << status_ << CRLF;
+   stream << prefix << "waiting   : " << waiting_ << CRLF;
+   stream << prefix << "traceMsg  : " << traceMsg_ << CRLF;
+   stream << prefix << "deleted   : " << deleted_ << CRLF;
+   stream << prefix << "trapped   : " << trapped_ << CRLF;
+   stream << prefix << "readyTime : " << readyTime_ << CRLF;
+   stream << prefix << "msgq      : " << CRLF;
    msgq_.Display(stream, lead, options);
-   stream << prefix << "priv     : " << CRLF;
+   stream << prefix << "priv      : " << CRLF;
    priv_->Display(stream, lead, options);
 }
 
@@ -1316,8 +1289,9 @@ void Thread::DisplayStats(ostream& stream, const Flags& options) const
       << SPACE << strIndex(Tid(), 0, false) << CRLF;
 
    stats_->traps_->DisplayStat(stream, options);
-   stats_->yields_->DisplayStat(stream, options);
    stats_->exceeds_->DisplayStat(stream, options);
+   stats_->yields_->DisplayStat(stream, options);
+   stats_->interrupts_->DisplayStat(stream, options);
    stats_->maxMsgs_->DisplayStat(stream, options);
    stats_->maxStack_->DisplayStat(stream, options);
    stats_->maxUsecs_->DisplayStat(stream, options);
@@ -1491,13 +1465,8 @@ bool Thread::EnterBlockingOperation(BlockingReason why, fn_name_arg func)
 
    if(!thr->BlockingAllowed(why, func)) return false;
 
-   if(!thr->IsLocked())
-   {
-      Trace(thr, func, ThreadTrace::ScheduledOut);
-   }
-
    thr->blocked_ = why;
-   thr->Unlock();
+   thr->Suspend();
    return true;
 }
 
@@ -1524,18 +1493,16 @@ bool Thread::EnterSwLog()
 
 main_t Thread::EnterThread(void* arg)
 {
+   Debug::ft(Thread_EnterThread);
+
    auto self = static_cast< Thread* >(arg);
 
-   //  A thread mau start to run before its Thread object is fully constructed.
-   //  This causes a trap, so the thread must wait a while.  We therefore start
-   //  by running each application thread unpreemptably.
+   //  A thread may start to run before its Thread object is fully constructed.
+   //  This causes a trap, so the thread must wait until it is constructed and
+   //  has been signalled to run.
    //
    while(self->systhrd_ == nullptr) Debug::noop();
-
-   if(self->faction_ < SystemFaction)
-   {
-      self->Ready();
-   }
+   self->Ready();
 
    //  If the thread is orphaned, it must exit immediately.  This occurs if
    //  the thread's constructor trapped, which resulted in its deletion but
@@ -1549,10 +1516,10 @@ main_t Thread::EnterThread(void* arg)
    }
 
    //  Our argument (self) is a pointer to a Thread.  Invoke its entry
-   //  function after configuring it to "resume" running unpreemptably
-   //  and to catch signals.
+   //  function after configuring it to "resume" execution and to catch
+   //  signals.
    //
-   self->ResumeLocked(Thread_EnterThread);
+   self->Resume(Thread_EnterThread);
    RegisterForSignals();
    return self->Start();
 }
@@ -1564,6 +1531,13 @@ fn_name Thread_Exit = "Thread.Exit";
 main_t Thread::Exit(signal_t sig)
 {
    Debug::ft(Thread_Exit);
+
+   //  During trap recovery, force the thread to exit immediately.
+   //
+   if(trapped_)
+   {
+      return ForceExit(sig);
+   }
 
    auto reg = Singleton< PosixSignalRegistry >::Instance();
 
@@ -1593,9 +1567,9 @@ main_t Thread::Exit(signal_t sig)
 
    if(priv_->recreate_)
    {
+      ClearActiveThread(this);
       priv_->stackBase_ = nullptr;
       systhrd_.reset();
-      if(LockedThread_ == this) LockedThread_ = nullptr;
       Singleton< InitThread >::Instance()->Interrupt(InitThread::RecreateMask);
    }
    else
@@ -1626,17 +1600,8 @@ void Thread::ExitBlockingOperation(fn_name_arg func)
       thr->ExitIfSafe(1);
    }
 
-   //  If the thread is preemptable, resume running unlocked.
-   //
-   if(thr->priv_->unpreempts_ == 0)
-   {
-      return thr->ResumeUnlocked(func);
-   }
-
-   //  An unpreemptable thread must wait to be scheduled in.
-   //
    thr->Ready();
-   thr->ResumeLocked(func);
+   thr->Resume(func);
 }
 
 //------------------------------------------------------------------------------
@@ -1652,7 +1617,7 @@ void Thread::ExitIfSafe(debug32_t offset)
 
    Debug::ft(Thread_ExitIfSafe);
 
-   if(SysThreadStack::TrapIsOk())
+   if(!trapped_ && SysThreadStack::TrapIsOk())
    {
       SetTrap(false);
       throw SignalException(priv_->signal_, offset);
@@ -1730,6 +1695,30 @@ SysThread::Priority Thread::FactionToPriority(Faction& faction)
 
 //------------------------------------------------------------------------------
 
+fn_name Thread_ForceExit = "Thread.ForceExit";
+
+main_t Thread::ForceExit(signal_t sig)
+{
+   Debug::ft(Thread_ForceExit);
+
+   //  After logging the problem, destroy this Thread object.
+   //
+   auto reg = Singleton< PosixSignalRegistry >::Instance();
+   auto log = Log::Create(ThreadLogGroup, ThreadForcedToExit);
+
+   if(log != nullptr)
+   {
+      *log << Log::Tab << "thread=" << to_str() << CRLF;
+      *log << Log::Tab << "signal=" << reg->strSignal(sig);
+      Log::Submit(log);
+   }
+
+   Destroy();
+   return sig;
+}
+
+//------------------------------------------------------------------------------
+
 void Thread::FunctionInvoked(fn_name_arg func)
 {
    Thread* thr = nullptr;
@@ -1775,7 +1764,7 @@ fn_name Thread_HandleSignal = "Thread.HandleSignal";
 
 bool Thread::HandleSignal(signal_t sig, uint32_t code)
 {
-   Debug::ft(Thread_HandleSignal);
+   Debug::ft(Thread_HandleSignal);  //@
 
    auto thr = RunningThread(false);
 
@@ -1790,7 +1779,7 @@ bool Thread::HandleSignal(signal_t sig, uint32_t code)
          sig = thr->priv_->signal_;
       }
 
-      //  Turn the signal into a standard C++ exception so that it can
+      //  Turn the signal into a standard C++ exception so that ic can
       //  be caught and recovery action initiated.
       //
       throw SignalException(sig, code);
@@ -1851,6 +1840,8 @@ bool Thread::Interrupt(const Flags& mask)
 {
    Debug::ft(Thread_Interrupt);
 
+   if(deleted_) return false;
+
    //  Update the thread's vector.  This always occurs because
    //  o A thread is only interrupted if it is sleeping (or running), not
    //    if it is waiting on a stream or socket.  Nonetheless, the thread
@@ -1870,6 +1861,7 @@ bool Thread::Interrupt(const Flags& mask)
       if((systhrd_ != nullptr) && systhrd_->Interrupt())
       {
          ThreadAdmin::Incr(ThreadAdmin::Interrupts);
+         stats_->interrupts_->Incr();
          return true;
       }
    }
@@ -1892,27 +1884,43 @@ bool Thread::IsCritical() const
 
 bool Thread::IsLocked() const
 {
-   return (LockedThread_ == this);
+   return ((priv_ != nullptr) && (priv_->unpreempts_ > 0));
 }
 
 //------------------------------------------------------------------------------
 
-bool Thread::IsReadyAndUnpreemptable() const
+bool Thread::IsReady() const
 {
-   if(blocked_ == NotBlocked)
+   return ((blocked_ == NotBlocked) && (faction_ < SystemFaction) && !deleted_);
+}
+
+//------------------------------------------------------------------------------
+
+bool Thread::IsTraceable() const
+{
+   //  Do not trace a thread that has been explicitly excluded.  Trace
+   //  RootThread and InitThread during system initialization and when
+   //  explicitly included.  Trace other threads when included.
+   //
+   auto trace = CalcStatus(true);
+   if(trace == TraceExcluded) return false;
+
+   switch(faction_)
    {
-      return ((priv_ != nullptr) && (priv_->unpreempts_ > 0));
+   case WatchdogFaction:
+   case SystemFaction:
+      return ((Restart::GetStatus() != Running) || (status_ == TraceIncluded));
    }
 
-   return false;
+   return (trace == TraceIncluded);
 }
 
 //------------------------------------------------------------------------------
 
 Thread* Thread::LockedThread()
 {
-   auto thr = LockedThread_;
-   if((thr != nullptr) && !thr->deleted_) return thr;
+   auto thr = ActiveThread();
+   if((thr != nullptr) && thr->IsLocked()) return thr;
    return nullptr;
 }
 
@@ -1955,7 +1963,7 @@ void Thread::LogContextSwitch() const
          stats_->yields_->Incr();
          auto ticks = now - priv_->currStart_;
          auto usecs = Clock::TicksToUsecs(ticks);
-         if(locked) stats_->maxUsecs_->Update(usecs);
+         stats_->maxUsecs_->Update(usecs);
          stats_->totUsecs_->Add(usecs);
          priv_->currUsecs_ += usecs;
       }
@@ -2103,6 +2111,7 @@ msecs_t Thread::MsecsSinceStart() const
 
 SysThreadId Thread::NativeThreadId() const
 {
+   if(deleted_) return NIL_ID;
    if(systhrd_ != nullptr) return systhrd_->Nid();
    return NIL_ID;
 }
@@ -2133,7 +2142,7 @@ DelayRc Thread::Pause(msecs_t msecs)
 {
    Trace(nullptr, Thread_Pause, ThreadTrace::PauseEnter, msecs);
 
-   auto drc = DelayError;
+   auto drc = DelayCompleted;
    auto thr = RunningThread();
 
    //  See if the thread should be forced to sleep indefinitely.  This occurs
@@ -2148,7 +2157,7 @@ DelayRc Thread::Pause(msecs_t msecs)
 
    EnterBlockingOperation(BlockedOnClock, Thread_Pause);
    {
-      drc = thr->systhrd_->Delay(msecs);
+      if(msecs != TIMEOUT_IMMED) drc = thr->systhrd_->Delay(msecs);
    }
    ExitBlockingOperation(Thread_Pause);
 
@@ -2175,6 +2184,39 @@ double Thread::PercentIdle()
 
    return 100 * (double(ThreadPriv::TimeIdle_) /
       (ThreadPriv::TimeIdle_ + ThreadPriv::TimeUsed_));
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Thread_Preempt = "Thread.Preempt";
+
+void Thread::Preempt()
+{
+   Debug::ft(Thread_Preempt);
+
+   //  Set the thread's ready time so that it will later be reselected,
+   //  and lower its priority so that the platform won't schedule it in.
+   //
+   readyTime_ = Clock::TicksNow();
+   systhrd_->SetPriority(SysThread::LowPriority);
+   ThreadAdmin::Incr(ThreadAdmin::Preempts);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Thread_Proceed = "Thread.Proceed";
+
+void Thread::Proceed()
+{
+   Debug::ft(Thread_Proceed);
+
+   //  Now that the thread has been scheduled, clear its ready time and
+   //  ensure that its priority is such that the platform will schedule
+   //  it in.  Signal it to resume.
+   //
+   readyTime_ = UINT64_MAX;
+   systhrd_->SetPriority(SysThread::DefaultPriority);
+   if(waiting_) systhrd_->Proceed();
 }
 
 //------------------------------------------------------------------------------
@@ -2293,22 +2335,26 @@ void Thread::Raise(signal_t sig)
 
 fn_name Thread_Ready = "Thread.Ready";
 
-void Thread::Ready() const
+void Thread::Ready()
 {
    Debug::ft(Thread_Ready);
 
-   //  This thread is ready to run unpreemptably.  If no thread is currently
-   //  locked, wake InitThread to schedule this thread in.  The thread then
-   //  waits to run until it is signalled.
-   //
    if(faction_ >= SystemFaction) return;
 
-   if(LockedThread() == nullptr)
+   //  Record the time when the thread became ready to run.  If no thread
+   //  is currently active, wake InitThread to schedule this thread in,
+   //  but have it wait to be signalled before it runs.
+   //
+   readyTime_ = Clock::TicksNow();
+   waiting_ = true;
+
+   if(ActiveThread() == nullptr)
    {
       Singleton< InitThread >::Instance()->Interrupt(InitThread::ScheduleMask);
    }
 
    systhrd_->Wait();
+   waiting_ = false;
 }
 
 //------------------------------------------------------------------------------
@@ -2356,6 +2402,7 @@ bool Thread::Recreate()
 // status_ = (preserved)
    traceMsg_ = false;
    deleted_ = false;
+   trapped_ = false;
 // msgq_ = (preserved)
 // priv_ = (preserved)
 // stats_ = (preserved)
@@ -2418,16 +2465,21 @@ void Thread::RegisterForSignals()
 
 fn_name Thread_ReleaseResources = "Thread.ReleaseResources";
 
-void Thread::ReleaseResources()
+void Thread::ReleaseResources(bool orphaned)
 {
    Debug::ft(Thread_ReleaseResources);
 
-   //  Setting deleted_ prevents LockedThread() from returning this thread,
-   //  which in turn prevents attempts to use stats_ or priv_ while they
-   //  are being deleted.  It also guards against multiple invocations.
+   //  Setting deleted_ prevents most functions from accessing the thread
+   //  while it is being deleted.
    //
    if(deleted_) return;
    deleted_ = true;
+
+   //  Clear the thread's ready time so that it won't be scheduled.  It
+   //  can no longer be the active thread.
+   //
+   readyTime_ = UINT64_MAX;
+   ClearActiveThread(this);
 
    //  Remove the thread from the registry after voiding its message queue.
    //  The thread may have trapped because of a corrupt message queue, so
@@ -2436,12 +2488,35 @@ void Thread::ReleaseResources()
    msgq_.Init(Pooled::LinkDiff());
    Singleton< ThreadRegistry >::Instance()->UnbindThread(*this);
 
-   //  Add the native thread to the list of orphans instead of deleting it.
+   //  If a restart is underway, release any object that the thread owns
+   //  and whose heap will be deleted.
+   //
+   if(Restart::GetLevel() >= RestartCold)
+   {
+      stats_.release();
+   }
+
+   //  If the thread is not orphaned, it is about to exit, so delete its
+   //  native thread; otherwise, add its native thread to set of orphans.
    //  Various functions invoke ExitNow to check for the existence of an
    //  orphaned native thread, which is immediately exited when found.
    //
-   Singleton< Orphans >::Instance()->Register(systhrd_.release());
-   Pooled::Cleanup();
+   if(orphaned)
+      Singleton< Orphans >::Instance()->Register(systhrd_.release());
+   else
+      systhrd_.reset();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Thread_Reset = "Thread.Reset";
+
+void Thread::Reset(FlagId fid)
+{
+   Debug::ft(Thread_Reset);
+
+   uint32_t mask = (1 << fid);
+   priv_->vector_.fetch_and(~mask);
 }
 
 //------------------------------------------------------------------------------
@@ -2452,9 +2527,7 @@ void Thread::ResetFlag(FlagId fid)
 {
    Debug::ft(Thread_ResetFlag);
 
-   auto thr = RunningThread();
-   uint32_t mask = (1 << fid);
-   thr->priv_->vector_.fetch_and(~mask);
+   RunningThread()->Reset(fid);
 }
 
 //------------------------------------------------------------------------------
@@ -2465,8 +2538,7 @@ void Thread::ResetFlags()
 {
    Debug::ft(Thread_ResetFlags);
 
-   auto thr = RunningThread();
-   thr->priv_->vector_.store(0);
+   RunningThread()->priv_->vector_.store(0);
 }
 
 //------------------------------------------------------------------------------
@@ -2477,7 +2549,8 @@ bool Thread::Restarting(RestartLevel level)
 {
    Debug::ft(Thread_Restarting);
 
-   //  If the thread is willing to exit, signal it and wake it up.
+   //  If the thread is willing to exit, signal it.  ModuleRegistry.Shutdown
+   //  will momentarily schedule it so that it can exit.
    //
    if(ExitOnRestart(level))
    {
@@ -2494,34 +2567,32 @@ bool Thread::Restarting(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_ResumeLocked = "Thread.ResumeLocked";
+fn_name Thread_RestrictFactions = "Thread.RestrictFactions";
 
-void Thread::ResumeLocked(fn_name_arg func)
+void Thread::RestrictFactions(bool enable)
 {
-   //  Set the time before which the thread should schedule itself out.
-   //
-   auto msecs = InitialMsecs() << ThreadAdmin::WarpFactor();
-   if(!priv_->entered_) msecs <<= 2;
-   priv_->warned_ = false;
-   priv_->currStart_ = Clock::TicksNow();
-   priv_->currEnd_ = priv_->currStart_ + Clock::MsecsToTicks(msecs);
+   Debug::ft(Thread_RestrictFactions);
 
-   ThreadAdmin::Incr(ThreadAdmin::Locks);
-   Trace(this, func, ThreadTrace::LockAcquired);
-   Debug::ft(Thread_ResumeLocked);
-   ScheduledIn(func);
+   FactionsRestricted_ = enable;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_ResumeUnlocked = "Thread.ResumeUnlocked";
+fn_name Thread_Resume = "Thread.Resume";
 
-void Thread::ResumeUnlocked(fn_name_arg func)
+void Thread::Resume(fn_name_arg func)
 {
-   Debug::ft(Thread_ResumeUnlocked);
+   Debug::ft(Thread_Resume);
 
-   Trace(this, func, ThreadTrace::ScheduledIn);
+   //  Set the time before which a locked thread should schedule itself out.
+   //
    priv_->currStart_ = Clock::TicksNow();
+   auto msecs = InitialMsecs() << ThreadAdmin::WarpFactor();
+   if(!priv_->entered_) msecs <<= 2;
+   priv_->currEnd_ = priv_->currStart_ + Clock::MsecsToTicks(msecs);
+   priv_->warned_ = false;
+
+   if(priv_->unpreempts_ > 0) ThreadAdmin::Incr(ThreadAdmin::Locks);
    ScheduledIn(func);
 }
 
@@ -2536,7 +2607,7 @@ word Thread::RtcPercentUsed()
    //  This returns 0 unless the thread is running unpreemptably.
    //
    auto thr = RunningThread();
-   if(thr != LockedThread()) return 0;
+   if((thr == nullptr) || !thr->IsLocked()) return 0;
 
    auto used = Clock::TicksSince(thr->priv_->currStart_);
    auto full = thr->priv_->currEnd_ - thr->priv_->currStart_;
@@ -2569,15 +2640,15 @@ Thread* Thread::RunningThread(bool assert)
 {
    Debug::ft(Thread_RunningThread);
 
-   //  Most threads run unpreemptably, so the running thread is usually
-   //  the locked thread.  If it isn't, search the thread registry.
+   //  The running thread is usually the active thread.  If it isn't,
+   //  search the thread registry.
    //
    auto nid = SysThread::RunningThreadId();
    Thread* thr = nullptr;
-   auto locked = LockedThread();
+   auto active = ActiveThread();
 
-   if((locked != nullptr) && (locked->NativeThreadId() == nid))
-      thr = locked;
+   if((active != nullptr) && (active->NativeThreadId() == nid))
+      thr = active;
    else
       thr = Singleton< ThreadRegistry >::Instance()->FindThread(nid);
 
@@ -2613,23 +2684,74 @@ void Thread::Schedule() const
 {
    Debug::ft(Thread_Schedule);
 
-   //  Generate a log if the thread running unpreemptably was not the
-   //  one that yielded.
+   //  Scheduling only occurs among application threads.
    //
-   auto locked = LockedThread();
+   if(faction_ >= SystemFaction) return;
 
-   if((locked != this) && (locked != nullptr))
+   auto active = ActiveThread();
+
+   if((active != this) && (active != nullptr))
    {
-      Debug::SwLog(Thread_Schedule, locked->Tid(), Tid());
+      //  We get here after a preemptable thread suspends or invokes
+      //  MakeUnpreemptable.  If an unpreemptable thread is running,
+      //  don't try to schedule another thread.
+      //
       return;
    }
 
-   //  No thread is now running unpreemptably.  If an application thread
-   //  just yielded, wake InitThread to schedule the next thread.
+   //  No unpreemptable thread is running.  Wake InitThread to schedule
+   //  the next thread.
    //
-   LockedThread_ = nullptr;
-   if(faction_ >= SystemFaction) return;
+   ActiveThread_ = nullptr;
    Singleton< InitThread >::Instance()->Interrupt(InitThread::ScheduleMask);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Thread_Select = "Thread.Select";
+
+Thread* Thread::Select()
+{
+   Debug::ft(Thread_Select);
+
+   //  Cycle through all threads, beginning with the one identified by
+   //  start_, to find the next one that is ready to run.
+   //
+   auto& threads = Singleton< ThreadRegistry >::Instance()->Threads();
+   auto first = threads.First(Start_);
+   Thread* next = nullptr;
+
+   for(auto t = first; t != nullptr; threads.Next(t))
+   {
+      if(t->IsReady() && FactionAllowed(t->faction_))
+      {
+         next = t;
+         break;
+      }
+   }
+
+   if(next == nullptr)
+   {
+      for(auto t = threads.First(); t != first; threads.Next(t))
+      {
+         if(t->IsReady() && FactionAllowed(t->faction_))
+         {
+            next = t;
+            break;
+         }
+      }
+   }
+
+   //  If a thread was found, start the next search with the thread
+   //  that follows it.
+   //
+   if(next != nullptr)
+   {
+      auto t = threads.Next(*next);
+      Start_ = (t != nullptr ? t->Tid() : 1);
+   }
+
+   return next;
 }
 
 //------------------------------------------------------------------------------
@@ -2771,17 +2893,17 @@ main_t Thread::Start()
       Debug::noop();
    }
 
-   for(priv_->trapped_ = false; true; stats_->traps_->Incr())
+   for(NO_OP; true; stats_->traps_->Incr())
    {
       try
       {
+         Debug::ft(Thread_Start);
+
          //  If the thread is preemptable, we got here after handling a trap,
          //  not from Enter (which makes a thread unpreemptable).  Make the
          //  thread unpreemptable again.
          //
          if(priv_->unpreempts_ == 0) MakeUnpreemptable();
-
-         Debug::ft(Thread_Start);
 
          //  Perform any environment-specific initialization (and recovery,
          //  if reentering the thread).  Exit the thread if this fails.
@@ -2793,7 +2915,7 @@ main_t Thread::Start()
          //
          priv_->stackBase_ = &rc;
 
-         if(priv_->trapped_)
+         if(trapped_)
          {
             //  The thread just trapped.  In most cases, invoke Recover
             //  so that the thread can clean up work in progress.
@@ -2810,11 +2932,16 @@ main_t Thread::Start()
             }
             else
             {
-               //  Pause before error recovery.
+               //  Pause before error recovery.  Don't force the thread
+               //  to exit if Recover traps, because the problem might
+               //  be limited to the objects used during the last pass
+               //  through the thread's work loop.
                //
                Pause();
                priv_->recovering_ = true;
+               trapped_ = false;
                action = Recover();
+               trapped_ = true;
                priv_->recovering_ = false;
             }
 
@@ -2855,6 +2982,7 @@ main_t Thread::Start()
             //  Pause after error recovery.
             //
             Pause();
+            trapped_ = false;
          }
 
          //  Invoke the thread's entry function.  If this returns,
@@ -2878,7 +3006,7 @@ main_t Thread::Start()
             //
             CoutThread::Spool(ClosingConsoleStr, true);
             Pause(10 * TIMEOUT_1_SEC);
-            Unlock();
+            Suspend();
             exit(reason);
          }
 
@@ -3012,8 +3140,6 @@ void Thread::StartShortInterval()
 TraceRc Thread::StartTracing(bool immediate, bool autostop)
 {
    auto thr = RunningThread();
-   if(thr != LockedThread()) return TraceFailed;
-
    auto rc = Singleton< TraceBuffer >::Instance()->StartTracing(immediate);
 
    if(rc == TraceOk)
@@ -3047,8 +3173,7 @@ void Thread::Startup(RestartLevel level)
 
 void Thread::StopTracing()
 {
-   auto thr = LockedThread();
-   if(thr == nullptr) return;
+   auto thr = RunningThread();
 
    if(thr->priv_->tracing_)
    {
@@ -3060,15 +3185,97 @@ void Thread::StopTracing()
 
 //------------------------------------------------------------------------------
 
+fn_name Thread_Suspend = "Thread.Suspend";
+
+void Thread::Suspend()
+{
+   Debug::ft(Thread_Suspend);
+
+   if(priv_->autostop_) StopTracing();
+
+   if(priv_->warned_)
+   {
+      auto log = Log::Create(ThreadLogGroup, ThreadYielded);
+
+      if(log != nullptr)
+      {
+         *log << Log::Tab << "thread=" << to_str();
+         auto ticks = Clock::TicksSince(priv_->currEnd_);
+         auto msecs = Clock::TicksToMsecs(ticks);
+         *log << " extra msecs=" << msecs;
+         Log::Submit(log);
+      }
+
+      priv_->warned_ = false;
+   }
+
+   LogContextSwitch();
+   priv_->currEnd_ = 0;
+   Schedule();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Thread_SwitchContext = "Thread.SwitchContext";
+
+bool Thread::SwitchContext()
+{
+   Debug::ft(Thread_SwitchContext);
+
+   auto curr = ActiveThread();
+
+   if((curr != nullptr) && curr->IsLocked())
+   {
+      //  We were invoked to schedule a thread and started to do so, but
+      //  before ActiveThread_ was set (below), we were invoked again.
+      //
+      ThreadAdmin::Incr(ThreadAdmin::Reentries);
+      return true;
+   }
+
+   //  Select the next thread to run.  If one is found, preempt any running
+   //  thread and signal the next one to resume.
+   //
+   auto next = Select();
+
+   if(next != nullptr)
+   {
+      if(next == curr)
+      {
+         ThreadAdmin::Incr(ThreadAdmin::Reselects);
+         return true;
+      }
+
+      if(curr != nullptr) curr->Preempt();
+      ActiveThread_ = next;
+      next->Proceed();
+      return true;
+   }
+
+   return (curr != nullptr);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Thread_Test = "Thread.Test";
+
+bool Thread::Test(FlagId fid) const
+{
+   Debug::ft(Thread_Test);
+
+   auto flags = priv_->vector_.load();
+   return ((flags & (1 << fid)) != 0);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Thread_TestFlag = "Thread.TestFlag";
 
 bool Thread::TestFlag(FlagId fid)
 {
    Debug::ft(Thread_TestFlag);
 
-   auto thr = RunningThread();
-   auto flags = thr->priv_->vector_.load();
-   return ((flags & (1 << fid)) != 0);
+   return RunningThread()->Test(fid);
 }
 
 //------------------------------------------------------------------------------
@@ -3084,7 +3291,7 @@ ticks_t Thread::TicksLeft() const
    //  has again been scheduled to run unpreemptably but currEnd_ has not
    //  been recalculated.
    //
-   if(priv_->currEnd_ == 0) return InitialMsecs();
+   if(priv_->currEnd_ == 0) return Clock::MsecsToTicks(InitialMsecs());
    return Clock::TicksUntil(priv_->currEnd_);
 }
 
@@ -3148,21 +3355,7 @@ bool Thread::TraceRunningThread(Thread*& thr)
       if(thr == nullptr) return true;
    }
 
-   if(thr->CalcStatus(true) == TraceExcluded) return false;
-
-   //  Don't trace a preemptable thread.  It is of minimal value and would
-   //  require using a true lock while adding a record to the trace buffer.
-   //  However, it is safe to trace InitThread during system initialization.
-   //
-   if(!thr->IsLocked())
-   {
-      if(thr->faction_ == SystemFaction)
-         return (Restart::GetStatus() != Running);
-      else
-         return false;
-   }
-
-   return true;
+   return thr->IsTraceable();
 }
 
 //------------------------------------------------------------------------------
@@ -3182,9 +3375,9 @@ fn_name Thread_TrapHandler = "Thread.TrapHandler";
 Thread::TrapAction Thread::TrapHandler(const Exception* ex,
    const std::exception* e, signal_t sig, const std::ostringstream* stack)
 {
-   Debug::ft(Thread_TrapHandler);
+   Debug::ft(Thread_TrapHandler);  //@
 
-   //  If this thread object was deleted, exit immediately.
+   //  Exit immediately if the Thread has already been deleted.
    //
    if((sig == SIGDELETED) || IsInvalid() ||
       Singleton< Orphans >::Instance()->ExitNow())
@@ -3192,11 +3385,15 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
       return Return;
    }
 
-   //  If this thread is locked, pause before logging the trap.
+   //  Exit immediately if the thread trapped during recovery.
+   //  In this case, the Thread must first be deleted.
    //
-   priv_->trapped_ = true;
-   if(IsLocked()) Pause();
+   if(trapped_)
+   {
+      return Release;
+   }
 
+   trapped_ = true;
    SetSignal(sig);
 
    if((sig == SIGSTACK1) && (systhrd_ != nullptr))
@@ -3273,11 +3470,13 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
          ThreadAdmin::Incr(ThreadAdmin::Kills);
       }
 
+      trapped_ = false;
       return Release;
    }
 
    //  Resume execution at the top of Start.
    //
+   trapped_ = false;
    return Continue;
 }
 
@@ -3292,51 +3491,12 @@ void Thread::Unblock()
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_Unlock = "Thread.Unlock";
-
-void Thread::Unlock()
-{
-   auto locked = IsLocked();
-
-   if(locked)
-      Trace(this, Thread_Unlock, ThreadTrace::LockReleased);
-   else
-      Debug::ft(Thread_Unlock);
-
-   LogContextSwitch();
-
-   if(priv_->autostop_) StopTracing();
-   if(!locked) return;
-
-   if(priv_->warned_)
-   {
-      auto log = Log::Create(ThreadLogGroup, ThreadYielded);
-
-      if(log != nullptr)
-      {
-         *log << Log::Tab << "thread=" << to_str();
-         auto ticks = Clock::TicksSince(priv_->currEnd_);
-         auto msecs = Clock::TicksToMsecs(ticks);
-         *log << " extra msecs=" << msecs;
-         Log::Submit(log);
-      }
-
-      priv_->warned_ = false;
-   }
-
-   priv_->currEnd_ = 0;
-   Schedule();
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Thread_Vector = "Thread.Vector";
 
 std::atomic_uint32_t* Thread::Vector()
 {
    Debug::ft(Thread_Vector);
 
-   auto thr = RunningThread();
-   return &thr->priv_->vector_;
+   return &RunningThread()->priv_->vector_;
 }
 }

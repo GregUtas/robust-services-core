@@ -38,6 +38,7 @@
 #include "Parameter.h"
 #include "ProtocolSM.h"
 #include "Q2Way.h"
+#include "Restart.h"
 #include "SbLogs.h"
 #include "SbPools.h"
 #include "SbTrace.h"
@@ -421,10 +422,20 @@ void Context::Enqueue(Q2Way< Context >& whichq, MsgPriority prio, bool henq)
    //
    switch(state_)
    {
+   case Running:
+      //  This can occur as a result of SendToSelf, where a message is sent
+      //  to a context while it is running.  The context does not have to be
+      //  placed on a work queue; it will dequeue the message after it has
+      //  finished processing its current message.  It can also occur during
+      //  a warm restart, when an invoker thread requeues the context that
+      //  it couldn't service before exiting.
+      //
+      if(Restart::GetLevel() == RestartNil)
+         return;
+      else
+         henq = true;
+      //  [[fallthrough]]
    case Dormant:
-      //
-      //  HENQ can only occur here, for an initial ingress message.
-      //
       if(henq)
          whichq.Henq(*this);
       else
@@ -464,15 +475,6 @@ void Context::Enqueue(Q2Way< Context >& whichq, MsgPriority prio, bool henq)
             delete this;
          }
       }
-      return;
-
-   case Running:
-      //
-      //  This can occur as a result of SendToSelf, where a message is sent
-      //  to a context while it is running.  The context does not have to be
-      //  placed on a work queue; it will dequeue the message after it has
-      //  finished processing its current message.
-      //
       return;
 
    case Paused:

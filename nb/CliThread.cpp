@@ -38,6 +38,7 @@
 #include "Formatters.h"
 #include "NbCliParms.h"
 #include "NbIncrement.h"
+#include "Restart.h"
 #include "Singleton.h"
 #include "Symbol.h"
 #include "SymbolRegistry.h"

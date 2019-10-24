@@ -58,6 +58,7 @@ class Thread : public Pooled
    friend class Debug;
    friend class Exception;
    friend class InitThread;
+   friend class ModuleRegistry;
    friend class Registry< Thread >;
    friend class RootThread;
    friend class SysThread;
@@ -106,6 +107,10 @@ public:
    //  The number of msecs that the thread has run since it was scheduled in.
    //
    msecs_t MsecsSinceStart() const;
+
+   //  Returns true if the thread has been scheduled to run.
+   //
+   bool IsScheduled() const { return waiting_; }
 
    //  Awakens a thread if it has paused.  If it has not paused, it will be
    //  immediately reawakened if it pauses.  If it is blocked for some other
@@ -410,39 +415,72 @@ private:
    //
    virtual void Destroy();
 
-   //  Invokes when an unpreemptable thread yields.
+   //  Returns a flag in the thread's interrupt vector.  See also TestFlag.
+   //
+   bool Test(FlagId fid) const;
+
+   //  Clears a flag in the thread's interrupt vector.  See also ResetFlag.
+   //
+   void Reset(FlagId fid);
+
+   //  Invoked by a thread when it is ready to run.
+   //
+   void Ready();
+
+   //  Preempts a running thread.
+   //
+   void Preempt();
+
+   //  Schedules a thread out when it yields or blocks.
+   //
+   void Suspend();
+
+   //  Schedules the next thread when this one is suspending.
    //
    void Schedule() const;
 
-   //  Invoked when an unpreemptable thread is ready to run.
+   //  Schedules another thread after a thread yields or blocks, or
+   //  after a preemptable thread has run for its allotted time.
+   //  Returns false if no thread is running or ready.
    //
-   void Ready() const;
+   static bool SwitchContext();
 
-   //  Invoked when an unpreemptable thread resumes execution.  FUNC is from
+   //  Selects the next thread to run.
+   //
+   static Thread* Select();
+
+   //  Invoked to signal the thread to run.
+   //
+   void Proceed();
+
+   //  Invoked by a thread when it resumes execution.  FUNC is from
    //  ExitBlockingOperation.
    //
-   void ResumeLocked(fn_name_arg func);
+   void Resume(fn_name_arg func);
 
-   //  Invoked when a preemptable thread resumes execution.  FUNC is from
-   //  ExitBlockingOperation.
-   //
-   void ResumeUnlocked(fn_name_arg func);
-
-   //  Returns true if the thread is running unpreemptably.
+   //  Returns true if the thread is unpreemptable.
    //
    bool IsLocked() const;
 
-   //  Used to make a thread preemptable.
+   //  Returns true if the thread can be traced.
    //
-   void Unlock();
+   bool IsTraceable() const;
 
-   //  Returns the thread that is running unpreemptably.
+   //  Returns the active thread.
+   //
+   static Thread* ActiveThread();
+
+   //  Sets the active thread to nullptr if it matches THR.
+   //
+   static void ClearActiveThread(const Thread* thr);
+
+   //  Returns the active thread if it is running unpreemptably.
    //
    static Thread* LockedThread();
 
-   //  Returns true if the thread is not blocked and unpreemptable.
+   //  Returns true if the thread is not blocked.
    //
-   bool IsReadyAndUnpreemptable() const;
+   bool IsReady() const;
 
    //  Returns the priority associated with FACTION.  If FACTION is out of
    //  range, it is set to BackgroundFaction after generating a log.
@@ -551,14 +589,27 @@ private:
    //
    bool Recreate();
 
-   //  Invoked when returning from Thread::Start.  SIGNAL indicates why
+   //  Invoked when returning from Thread::Start.  SIG indicates why
    //  the thread is exiting.
    //
    main_t Exit(signal_t sig);
 
-   //  Invoked by the destructor and Cleanup to free resources.
+   //  Invoked to exit after the thread has run into serious trouble,
+   //  such as getting into a trap loop.  SIG is the error from which
+   //  the thread failed to recover.
    //
-   void ReleaseResources();
+   main_t ForceExit(signal_t sig);
+
+   //  Invoked by the destructor and Cleanup to free resources.  ORPHANED
+   //  is set if the thread is not about to exit, in which case its native
+   //  thread is registered as an orphan instead of being deleted.
+   //
+   void ReleaseResources(bool orphaned);
+
+   //  Used during the shutdown phase of a restart to enable/disable the
+   //  scheduling of specific factions.
+   //
+   static void RestrictFactions(bool enable);
 
    //  Returns a string containing the thread's class name and identifiers.
    //
@@ -596,6 +647,10 @@ private:
    //
    TraceStatus status_;
 
+   //  Set when ready to run but waiting to be signalled.
+   //
+   bool waiting_;
+
    //  Set if the thread's current message is being traced.
    //
    bool traceMsg_;
@@ -606,6 +661,11 @@ private:
    //  has been deleted.
    //
    bool deleted_;
+
+   //  Set during trap recovery until Recover or Enter is invoked.
+   //  If the thread traps when this is set, it is forced to exit.
+   //
+   bool trapped_;
 
    //  The thread's message queue.
    //
@@ -619,9 +679,9 @@ private:
    //
    std::unique_ptr< ThreadStats > stats_;
 
-   //  The thread that is running unpreemptably.
+   //  The time at which the thread became ready to run.
    //
-   static Thread* LockedThread_;
+   ticks_t readyTime_;
 };
 }
 #endif

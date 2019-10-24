@@ -30,7 +30,6 @@
 #include "CliAppData.h"
 #include "CliCookie.h"
 #include "NbTypes.h"
-#include "Restart.h"
 #include "SysTypes.h"
 
 namespace NodeBase
@@ -169,7 +168,7 @@ public:
    //  this to read commands from a file.
    //
    void ReadCommands();
-   
+
    //  Overridden for restarts.
    //
    void Shutdown(RestartLevel level) override;

@@ -34,6 +34,7 @@
 #include "NbSignals.h"
 #include "Restart.h"
 #include "Singleton.h"
+#include "SysThread.h"
 #include "SysThreadStack.h"
 #include "ThreadAdmin.h"
 
@@ -118,13 +119,14 @@ void RootThread::Enter()
          //  initialization failed.
          //
          Singleton< InitThread >::Instance();
+         if(InitFlags::SuspendRoot()) systhrd_->Wait();
          timeout = ThreadAdmin::InitTimeoutMsecs();
 
          switch(Pause(timeout))
          {
          case DelayInterrupted:
-            if(TestFlag(InitThread::Restart))
-               ResetFlag(InitThread::Restart);
+            if(Test(InitThread::Restart))
+               Reset(InitThread::Restart);
             else
                state_ = Running;
             reason = NilRestart;
@@ -156,11 +158,7 @@ void RootThread::Enter()
 
             reason = NilRestart;
 
-            if(InitFlags::AllowBreak())
-            {
-               state_ = Running;
-            }
-            else
+            if(ThreadAdmin::ReinitOnSchedTimeout() && !InitFlags::AllowBreak())
             {
                initThr = Singleton< InitThread >::Extant();
 
@@ -169,6 +167,10 @@ void RootThread::Enter()
                   initThr->Raise(SIGCLOSE);
                   Pause(100);
                }
+            }
+            else
+            {
+               state_ = Running;
             }
          }
          break;
@@ -188,9 +190,9 @@ void RootThread::Enter()
             //  case we must update our state and start to run a watchdog
             //  timer on the restart.
             //
-            if(TestFlag(InitThread::Restart))
+            if(Test(InitThread::Restart))
             {
-               ResetFlag(InitThread::Restart);
+               Reset(InitThread::Restart);
                state_ = Initializing;
             }
             reason = NilRestart;
@@ -234,7 +236,7 @@ void RootThread::Enter()
 
          reason = NilRestart;
 
-         if(ThreadAdmin::ReinitOnSchedTimeout())
+         if(ThreadAdmin::ReinitOnSchedTimeout() && !InitFlags::AllowBreak())
          {
             initThr = Singleton< InitThread >::Extant();
 

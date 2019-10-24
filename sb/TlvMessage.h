@@ -194,10 +194,6 @@ public:
    TlvParmPtr CopyParm
       (const TlvParmLayout& src, ParameterId pid = NodeBase::NIL_ID);
 
-   //  Expands PARM, which already exists, by PLEN bytes.
-   //
-   virtual TlvParmPtr ExpandParm(TlvParmLayout& parm, size_t plen);
-
    //  Removes a parameter by changing its identifier to NIL_ID.
    //
    virtual void DeleteParm(TlvParmLayout& parm);

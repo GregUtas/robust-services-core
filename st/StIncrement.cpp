@@ -31,7 +31,6 @@
 #include <string>
 #include "CliThread.h"
 #include "Debug.h"
-#include "Element.h"
 #include "Event.h"
 #include "EventHandler.h"
 #include "Factory.h"
@@ -39,14 +38,12 @@
 #include "Formatters.h"
 #include "FunctionGuard.h"
 #include "GlobalAddress.h"
-#include "InitFlags.h"
 #include "Initiator.h"
 #include "LocalAddress.h"
 #include "MscBuilder.h"
 #include "MsgHeader.h"
 #include "MsgPort.h"
 #include "NbCliParms.h"
-#include "NbTracer.h"
 #include "NtTestData.h"
 #include "ProtocolRegistry.h"
 #include "ProtocolSM.h"
@@ -857,24 +854,6 @@ StIncrement::StIncrement() : CliIncrement(StIncrText, StIncrExpl)
    BindCommand(*new StTestcaseCommand);
    BindCommand(*new StSizesCommand);
    BindCommand(*new StCorruptCommand);
-
-   //  See if SessionBase activity should be immediately traced on start-up.
-   //
-   if(InitFlags::TraceWork() && Element::RunningInLab())
-   {
-      auto buff = Singleton< TraceBuffer >::Instance();
-      auto nbt = Singleton< NbTracer >::Instance();
-
-      if(!Debug::TraceOn())
-      {
-         buff->SetTool(FunctionTracer, true);
-         buff->SetTool(TransTracer, true);
-         buff->SetTool(BufferTracer, true);
-         buff->SetTool(ContextTracer, true);
-         nbt->SelectFaction(PayloadFaction, TraceIncluded);
-         buff->StartTracing(InitFlags::ImmediateTrace());
-      }
-   }
 }
 
 //------------------------------------------------------------------------------

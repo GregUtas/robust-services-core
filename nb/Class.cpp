@@ -214,7 +214,7 @@ Object* Class::New(size_t size)
 {
    Debug::ft(Class_New);
 
-   //e This needs to support memory types.
+   //e Support memory types.
    //
    auto addr = ::operator new(size, std::nothrow);
    if(addr != nullptr) return (Object*) addr;

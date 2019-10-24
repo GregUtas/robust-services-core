@@ -92,8 +92,8 @@ private:
 //------------------------------------------------------------------------------
 
 SigClose::SigClose() : PosixSignal(SIGCLOSE, "SIGCLOSE",
-   "Non-Error Shutdown", 12, PS_Interrupt() |
-   PS_Delayed() | PS_Exit() | PS_Final() | PS_NoLog() | PS_NoError()) { }
+   "Non-Error Shutdown", 12,
+   PS_Interrupt() | PS_Exit() | PS_Final() | PS_NoLog() | PS_NoError()) { }
 
 SigYield::SigYield() : PosixSignal(SIGYIELD, "SIGYIELD",
    "Running Unpreemptably Too Long", 4, Flags()) { }

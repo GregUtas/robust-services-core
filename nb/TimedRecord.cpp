@@ -37,6 +37,27 @@ using std::string;
 
 namespace NodeBase
 {
+//  Used instead of TraceDump::Tab to highlight a context switch.
+//
+const string& ContextSwitchTab()
+{
+   static string ContextSwitchStr;
+
+   if(ContextSwitchStr.empty())
+   {
+      ContextSwitchStr = TraceDump::Tab();
+      ContextSwitchStr.front() = '>';
+   }
+
+   return ContextSwitchStr;
+}
+
+//------------------------------------------------------------------------------
+
+ThreadId TimedRecord::PrevTid_ = NIL_ID;
+
+//------------------------------------------------------------------------------
+
 TimedRecord::TimedRecord(size_t size, FlagId owner) : TraceRecord(size, owner),
    nid_(SysThread::RunningThreadId()),
    ticks_(Clock::TicksNow())
@@ -55,7 +76,18 @@ bool TimedRecord::Display(ostream& stream, bool diff)
       return false;
 
    stream << GetTime(diff) << TraceDump::Tab();
-   stream << setw(TraceDump::TidWidth) << tid << TraceDump::Tab();
+   stream << setw(TraceDump::TidWidth) << tid;
+
+   if(tid == PrevTid_)
+   {
+      stream << TraceDump::Tab();
+   }
+   else
+   {
+      stream << ContextSwitchTab();
+      PrevTid_ = tid;
+   }
+
    stream << EventString() << TraceDump::Tab();
    return true;
 }

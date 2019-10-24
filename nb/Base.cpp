@@ -95,13 +95,23 @@ void Base::GetSubtended(Base* objects[], size_t& count) const
 {
    Debug::ft(Base_GetSubtended);
 
+   static Base* lastLoggedObject0 = nullptr;
+
    if(count < MaxSubtendedCount)
    {
       objects[count++] = const_cast< Base* >(this);
       return;
    }
 
-   Debug::SwLog(Base_GetSubtended, "objects array full", count);
+   //  To prevent a log flood, limit the frequency of logs.  This is invoked
+   //  during the object pool audit, so throwing an exception is out because
+   //  it could lead to the audit trapping repeatedly.
+   //
+   if(objects[0] != lastLoggedObject0)
+   {
+      lastLoggedObject0 = objects[0];
+      Debug::SwLog(Base_GetSubtended, "objects array full", count);
+   }
 }
 
 //------------------------------------------------------------------------------

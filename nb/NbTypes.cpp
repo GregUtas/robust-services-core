@@ -104,6 +104,7 @@ fixed_string FactionStrings[Faction_N + 1] =
    "Operations",
    "Maintenance",
    "Payload",
+   "LoadTest",
    "System",
    "Watchdog",
    ERROR_STR
@@ -111,9 +112,9 @@ fixed_string FactionStrings[Faction_N + 1] =
 
 char FactionChar(Faction faction)
 {
-   std::ostringstream stream;
-   stream << faction;
-   return stream.str().front();
+   if((faction >= 0) && (faction < Faction_N))
+      return FactionStrings[faction][0];
+   return '?';
 }
 
 ostream& operator<<(ostream& stream, Faction faction)

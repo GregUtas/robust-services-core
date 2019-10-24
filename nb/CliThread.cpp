@@ -38,6 +38,7 @@
 #include "Formatters.h"
 #include "NbCliParms.h"
 #include "NbIncrement.h"
+#include "Restart.h"
 #include "Singleton.h"
 #include "Symbol.h"
 #include "SymbolRegistry.h"
@@ -77,6 +78,14 @@ fn_name CliThread_dtor = "CliThread.dtor";
 CliThread::~CliThread()
 {
    Debug::ft(CliThread_dtor);
+
+   //  When exiting during a restart, release objects whose heap will be
+   //  deleted.
+   //
+   if(Restart::GetStatus() != Running)
+   {
+      NullifyResources(Restart::GetLevel());
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -487,6 +496,30 @@ void CliThread::Notify(CliAppData::Event evt) const
 
 //------------------------------------------------------------------------------
 
+fn_name CliThread_NullifyResources = "CliThread.NullifyResources";
+
+void CliThread::NullifyResources(RestartLevel level)
+{
+   Debug::ft(CliThread_NullifyResources);
+
+   //  Nullify the resources whose heap is deleted during a restart at LEVEL.
+   //  If we exit during the restart and our destructor is invoked, there is
+   //  no to explicitly or implicitly delete these resources.  If we did not
+   //  exit during the restart, they no longer exist and must be invalidated.
+   //
+   //  All of the following resources derive from Temporary, so their heap
+   //  is deleted on all restarts (except a reboot, which only occurs when
+   //  the system is first initialized).
+   //
+   if(level >= RestartReboot) return;
+
+   ibuf.release();
+   stack_.release();
+   for(auto i = 0; i <= CliAppData::MaxId; ++i) appData_[i].release();
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CliThread_OpenInputFile = "CliThread.OpenInputFile";
 
 word CliThread::OpenInputFile(const string& name, string& expl)
@@ -866,6 +899,18 @@ void CliThread::SetResult(word result)
 
 //------------------------------------------------------------------------------
 
+fn_name CliThread_Shutdown = "CliThread.Shutdown";
+
+void CliThread::Shutdown(RestartLevel level)
+{
+   Debug::ft(CliThread_Shutdown);
+
+   NullifyResources(level);
+   Thread::Shutdown(level);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CliThread_Startup = "CliThread.Startup";
 
 void CliThread::Startup(RestartLevel level)
@@ -873,21 +918,6 @@ void CliThread::Startup(RestartLevel level)
    Debug::ft(CliThread_Startup);
 
    Thread::Startup(level);
-
-   if(level < RestartReboot)
-   {
-      //  If we fail to exit during a restart, some of our resources would
-      //  nevertheless have been released--and we still have pointers to them.
-      //  These pointers must be cleared to avoid traps when reacquiring these
-      //  resources.  STL objects, which reside in permanent memory, will have
-      //  survived.  CLI objects, however, reside in temporary memory, so their
-      //  heap is gone.
-      //
-      ibuf.release();
-      stack_.release();
-      for(auto i = 0; i <= CliAppData::MaxId; ++i) appData_[i].release();
-   }
-
    AllocResources();
 }
 }

@@ -108,11 +108,6 @@ private:
    //
    void InvertCtors(fn_depth limit);
 
-   //  Returns true if the function was the first one to be invoked after a
-   //  context switch.
-   //
-   virtual bool IsFirstAfterContextSwitch() const;
-
    //  The name of function that was invoked.
    //
    fn_name func_;

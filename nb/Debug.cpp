@@ -49,7 +49,7 @@ void Debug::Assert(bool condition, debug32_t errval)
 {
    if(!condition)
    {
-      throw AssertionException(errval);
+      throw AssertionException(errval);  //@
    }
 }
 
@@ -76,7 +76,7 @@ void Debug::GenerateSwLog(fn_name_arg func, const string& errstr,
 
    if(level == SwError)
    {
-      throw SoftwareException(errstr, offset, 3);
+      throw SoftwareException(errstr, offset, 3);  //@
    }
 
    auto log = Log::Create(SoftwareLogGroup, SoftwareError);
@@ -91,7 +91,7 @@ void Debug::GenerateSwLog(fn_name_arg func, const string& errstr,
       *log << CRLF;
 
       *log << Log::Tab << "errval=" << errstr;
-      *log << " offset=" << strHex(offset) << CRLF;
+      *log << "  offset=" << strHex(offset) << CRLF;
 
       if(level != SwInfo) SysThreadStack::Display(*log, 1);
       Log::Submit(log);

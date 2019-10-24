@@ -122,6 +122,10 @@ private:
    //
    RecoveryAction Recover() override;
 
+   //  Overridden to handle any context assigned to the context.
+   //
+   void Shutdown(NodeBase::RestartLevel level) override;
+
    //  The thread's identifier in its InvokerPool.
    //
    NodeBase::RegCell iid_;

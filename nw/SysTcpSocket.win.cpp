@@ -59,22 +59,6 @@ SysTcpSocketPtr SysTcpSocket::Accept(SysIpL3Addr& remAddr)
 
 //------------------------------------------------------------------------------
 
-fn_name SysTcpSocket_Close = "SysTcpSocket.Close";
-
-void SysTcpSocket::Close()
-{
-   Debug::ft(SysTcpSocket_Close);
-
-   if(IsValid())
-   {
-      TraceEvent(NwTrace::Close, disconnecting_);
-      if(closesocket(Socket()) == SOCKET_ERROR) SetError();
-      Invalidate();
-   }
-}
-
-//------------------------------------------------------------------------------
-
 fn_name SysTcpSocket_Connect = "SysTcpSocket.Connect";
 
 word SysTcpSocket::Connect(const SysIpL3Addr& remAddr)

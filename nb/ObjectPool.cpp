@@ -1114,7 +1114,8 @@ void ObjectPool::UpdateAlarm() const
 
          if(log != nullptr)
          {
-            *log << Log::Tab << "new segments=" << currSegments_;
+            *log << Log::Tab << "pool=" << name_;
+            *log << "  new segments=" << currSegments_;
             Log::Submit(log);
          }
       }

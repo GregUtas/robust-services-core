@@ -40,7 +40,6 @@ namespace NodeBase
 namespace NodeBase
 {
 //  Strings used by commands in the NodeBase increment.
-//e Support localization.
 //
 extern fixed_string AllocationError;
 extern fixed_string AlreadyInIncrement;

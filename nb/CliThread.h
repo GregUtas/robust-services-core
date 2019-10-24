@@ -171,6 +171,10 @@ public:
 
    //  Overridden for restarts.
    //
+   void Shutdown(RestartLevel level) override;
+
+   //  Overridden for restarts.
+   //
    void Startup(RestartLevel level) override;
 
    //  Overridden to display member variables.
@@ -224,6 +228,11 @@ private:
    //  Releases resources when deleting or recreating the thread.
    //
    void ReleaseResources();
+
+   //  Nullifies resources whose heap was or will be deleted during
+   //  a restart at LEVEL.
+   //
+   void NullifyResources(RestartLevel level);
 
    //  Overridden to return a name for the thread.
    //

@@ -24,8 +24,9 @@
 #include <string>
 #include "Algorithms.h"
 #include "Debug.h"
-#include "InvokerPool.h"
 #include "InvokerPoolRegistry.h"
+#include "Restart.h"
+#include "SbInvokerPools.h"
 #include "Singleton.h"
 #include "ToolTypes.h"
 
@@ -67,6 +68,10 @@ InvokerThread::~InvokerThread()
 
    if(RunningInvoker_ == this) RunningInvoker_ = nullptr;
    pool_->UnbindThread(*this);
+
+   //  If we have a context, handle it the same way as during a restart.
+   //
+   Shutdown(Restart::GetLevel());
 }
 
 //------------------------------------------------------------------------------
@@ -184,6 +189,14 @@ Thread::RecoveryAction InvokerThread::Recover()
 {
    Debug::ft(InvokerThread_Recover);
 
+   //  If a restart is underway, just exit, which is what we wanted to do
+   //  anyway.
+   //
+   if(Restart::GetLevel() >= RestartWarm)
+   {
+      return DeleteThread;
+   }
+
    if(ctx_ != nullptr)
    {
       ctx_->Dump();
@@ -236,5 +249,36 @@ void InvokerThread::SetContext(Context* ctx)
    ctx_.reset(ctx);
    ++trans_;
    ticks0_ = Clock::TicksNow();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name InvokerThread_Shutdown = "InvokerThread.Shutdown";
+
+void InvokerThread::Shutdown(RestartLevel level)
+{
+   Debug::ft(InvokerThread_Shutdown);
+
+   //  Our destructor always invokes this, and it is also invoked if we
+   //  failed to exit during a restart.
+   //  o If no restart is underway, there is nothing to do.
+   //  o During a cold restart, our context's heap will be deleted, so
+   //    nullify it.
+   //  o During a warm restart, put our context back on a work queue so
+   //    that it can be serviced after the restart is over.
+   //
+   switch(level)
+   {
+   case RestartNil:
+      break;
+
+   case RestartWarm:
+      if(ctx_ == nullptr) return;
+      Singleton< PayloadInvokerPool >::Instance()->Requeue(*ctx_.release());
+      break;
+
+   default:
+      ctx_.release();
+   }
 }
 }

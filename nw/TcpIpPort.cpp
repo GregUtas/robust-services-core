@@ -25,6 +25,7 @@
 #include "Debug.h"
 #include "Log.h"
 #include "NwLogs.h"
+#include "Restart.h"
 #include "SysTcpSocket.h"
 #include "SysTypes.h"
 #include "TcpIoThread.h"
@@ -70,6 +71,7 @@ SysTcpSocket* TcpIpPort::CreateAppSocket()
 
    if(thread == nullptr)
    {
+      if(Restart::GetStatus() == ShuttingDown) return nullptr;
       Debug::SwLog(TcpIpPort_CreateAppSocket, "I/O thread not found", 0);
       thread = static_cast< TcpIoThread* >(CreateIoThread());
       if(thread == nullptr) return nullptr;

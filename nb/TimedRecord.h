@@ -82,6 +82,10 @@ private:
    //  The time when the record was created.
    //
    ticks_t ticks_;
+
+   //  The previous thread for which a record was displayed.
+   //
+   static ThreadId PrevTid_;
 };
 }
 #endif

@@ -56,9 +56,14 @@ public:
 
    CounterPtr creations_;
    CounterPtr deletions_;
+   CounterPtr interrupts_;
    CounterPtr switches_;
    CounterPtr locks_;
-   CounterPtr interrupts_;
+   CounterPtr preempts_;
+   CounterPtr delays_;
+   CounterPtr resignals_;
+   CounterPtr reentries_;
+   CounterPtr reselects_;
    CounterPtr traps_;
    CounterPtr recoveries_;
    CounterPtr recreations_;
@@ -100,9 +105,14 @@ ThreadsStats::ThreadsStats()
 
    creations_.reset(new Counter("creations"));
    deletions_.reset(new Counter("deletions"));
-   switches_.reset(new Counter("context switches"));
-   locks_.reset(new Counter("scheduled to run unpreemptably"));
    interrupts_.reset(new Counter("interrupts"));
+   switches_.reset(new Counter("context switches"));
+   locks_.reset(new Counter("scheduled to run locked"));
+   preempts_.reset(new Counter("preemptions"));
+   delays_.reset(new Counter("scheduled after InitThread timeout"));
+   resignals_.reset(new Counter("resignalled to proceed"));
+   reentries_.reset(new Counter("InitThread interrupted but thread locked"));
+   reselects_.reset(new Counter("reselected to run"));
    traps_.reset(new Counter("traps"));
    recoveries_.reset(new Counter("trap recoveries"));
    recreations_.reset(new Counter("re-creations"));
@@ -368,9 +378,14 @@ void ThreadAdmin::DisplayStats(ostream& stream, const Flags& options) const
    {
       stats_->creations_->DisplayStat(stream, options);
       stats_->deletions_->DisplayStat(stream, options);
+      stats_->interrupts_->DisplayStat(stream, options);
       stats_->switches_->DisplayStat(stream, options);
       stats_->locks_->DisplayStat(stream, options);
-      stats_->interrupts_->DisplayStat(stream, options);
+      stats_->preempts_->DisplayStat(stream, options);
+      stats_->delays_->DisplayStat(stream, options);
+      stats_->resignals_->DisplayStat(stream, options);
+      stats_->reentries_->DisplayStat(stream, options);
+      stats_->reselects_->DisplayStat(stream, options);
       stats_->traps_->DisplayStat(stream, options);
       stats_->recoveries_->DisplayStat(stream, options);
       stats_->recreations_->DisplayStat(stream, options);
@@ -393,14 +408,29 @@ void ThreadAdmin::Incr(Register r)
 
    switch(r)
    {
-   case Switches:
-      admin->stats_->switches_->Incr();
-      break;
    case Interrupts:
       admin->stats_->interrupts_->Incr();
       break;
+   case Switches:
+      admin->stats_->switches_->Incr();
+      break;
    case Locks:
       admin->stats_->locks_->Incr();
+      break;
+   case Preempts:
+      admin->stats_->preempts_->Incr();
+      break;
+   case Delays:
+      admin->stats_->delays_->Incr();
+      break;
+   case Resignals:
+      admin->stats_->resignals_->Incr();
+      break;
+   case Reentries:
+      admin->stats_->reentries_->Incr();
+      break;
+   case Reselects:
+      admin->stats_->reselects_->Incr();
       break;
    case Creations:
       admin->stats_->creations_->Incr();
@@ -485,6 +515,7 @@ void ThreadAdmin::Startup(RestartLevel level)
    reg->BindSymbol("faction.oper", OperationsFaction);
    reg->BindSymbol("faction.mtce", MaintenanceFaction);
    reg->BindSymbol("faction.payload", PayloadFaction);
+   reg->BindSymbol("faction.loadtest", LoadTestFaction);
    reg->BindSymbol("faction.system", SystemFaction);
    reg->BindSymbol("faction.watchdog", WatchdogFaction);
 }
@@ -510,10 +541,10 @@ int ThreadAdmin::WarpFactor()
 
    auto warp = 0;
 
-   //e Calculate the time warp factor as follows (to be updated):
+   //  Calculate the time warp factor as follows (to be updated):
    //  o 2x if this is a lab load.
    //  o 32x if the function tracer is on.
-   //  o 2x if other tracers is on.
+   //  o 2x if other tracers are on.
    //  o 2x if immediate tracing is on.
    //
    if(Element::RunningInLab()) warp += 1;

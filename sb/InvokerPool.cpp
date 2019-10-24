@@ -438,6 +438,11 @@ void InvokerPool::KickThread()
    //
    for(auto i = invokers_.First(); i != nullptr; invokers_.Next(i))
    {
+      if(i->IsScheduled()) return;
+   }
+
+   for(auto i = invokers_.First(); i != nullptr; invokers_.Next(i))
+   {
       if(i->Interrupt()) return;
    }
 
@@ -741,6 +746,7 @@ void InvokerPool::ScheduledOut()
    Debug::ft(InvokerPool_ScheduledOut);
 
    if(InvokerThread::RunningInvoker_ == nullptr) return;
+   if(Restart::GetStatus() != Running) return;
    stats_->maxTrans_->Update(InvokerThread::RunningInvoker_->trans_);
 }
 

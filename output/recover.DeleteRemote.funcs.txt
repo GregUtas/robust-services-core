@@ -1,69 +1,72 @@
-FUNCTION PROFILE: 15-Oct-2019 16:06:48.613 on Reigi
+FUNCTION PROFILE: 24-Oct-2019 14:16:38.140 on Reigi
 
     Calls       uSecs   Function
     -----       -----   --------
-       12         245   Thread.RunningThread
-        7         142   SysMutex.Acquire
-        7         124   SysMutex.Release
-        7         116   SysSocket.SetBlocking
-        6         204   Thread.ExitBlockingOperation
-        5         999   Base.ctor
-        5         286   ThreadRegistry.FindThread
-        5         164   Thread.LogContextSwitch
-        5          42   SysIpL2Addr.dtor
-        5          35   Thread.EnterBlockingOperation
-        5          30   Thread.Unlock
-        5           0   InitThread.Yielding
-        5           0   Object.ctor
-        4         103   SysTcpSocket.Accept
-        4          43   SysSocket.SetError
-        4          36   TcpIoThread.PollSockets
-        4          35   IpPort.RecvsInSequence
-        4          29   SysIpL3Addr.dtor
-        4           4   TcpIoThread.Enter
-        3         147   Log.Find
-        3          51   TcpIoThread.AcceptConn
-        3           9   Thread.Pause
+       14         282   Thread.RunningThread
+       10         396   SysThread.Resume
+       10         189   Thread.Interrupt
+       10         169   SysThread.Interrupt
+        9         181   ThreadRegistry.FindThread
+        7         322   SysIpL2Addr.dtor
+        7         128   SysMutex.Release
+        7         116   SysMutex.Acquire
+        6       19811   SysThread.Suspend
+        6         612   Base.ctor
+        6         138   Thread.ExitBlockingOperation
+        6         103   SysSocket.SetBlocking
+        6           0   Object.ctor
+        5         100   Thread.Schedule
+        5          80   SysThread.Wait
+        5          78   Thread.Ready
+        4     2000099   SysTcpSocket.Poll
+        4         146   Thread.LogContextSwitch
+        4          36   Thread.EnterBlockingOperation
+        4          35   Thread.Suspend
+        3          99   Log.Find
+        3          88   SysTcpSocket.Accept
+        3          36   SysIpL2Addr.operator=(copy)
+        3          32   SysSocket.SetError
+        3          26   IpPort.RecvsInSequence
+        3          25   TcpIoThread.AcceptConn
+        3          25   TcpIoThread.PollSockets
+        3          21   SysIpL3Addr.dtor
         3           0   SysIpL2Addr.ctor
         3           0   SysIpL3Addr.ctor
-        2        3597   SysThreadStack.Display
-        2         171   SysThread.DeleteSentry
-        2         162   LogGroupRegistry.FindGroup
-        2         122   MutexGuard.ctor
-        2         100   LogGroup.FindLog
-        2          76   LogBuffer.First
-        2          57   Thread.ExitSwLog
-        2          55   MutexGuard.dtor
-        1        1086   Log.Format
-        1         230   Debug.SwLog(string)
-        1         111   SysThread.Delete
-        1          78   SysHeap.Free
-        1          68   Log.Submit
-        1          65   Memory.Free
-        1          62   SysThread.dtor
-        1          60   Object.operator delete
-        1          59   Orphans.ExitNow
-        1          56   Log.Create
-        1          55   Thread.EnterSwLog
-        1          54   SysThread.Resume
-        1          51   Debug.GenerateSwLog
-        1          45   Exception.ctor
-        1          42   LogBuffer.SetNext
-        1          34   Thread.Interrupt
-        1          33   Thread.ExtendTime
-        1          27   LogBuffer.Push
-        1          27   SysThread.Interrupt
-        1          26   LogBuffer.InsertionPoint
-        1          26   LogBufferRegistry.Active
-        1          13   IpPortRegistry.HostAddress
-        1          10   SysIpL2Addr.operator=(copy)
-        1           9   SysIpL2Addr.IsValid
-        1           6   RecoveryTestThread.Enter
-        1           2   C++.delete
-        1           1   SignalException.ctor
-        1           1   Thread.ResumeLocked
-        1           0   SysIpL2Addr.ctor(copy)
+        2          95   LogGroupRegistry.FindGroup
+        2          89   LogGroup.FindLog
+        2          78   SysThread.DeleteSentry
+        2          75   MutexGuard.ctor
+        2          69   ThreadAdmin.WarpFactor
+        2          53   LogBuffer.First
+        2          53   MutexGuard.dtor
+        2          53   Thread.ExitSwLog
+        2          36   SysIpL2Addr.IsValid
+        2          35   Thread.InitialMsecs
+        2          33   IpPortRegistry.HostAddress
+        2          28   Thread.Pause
+        2           0   SysIpL2Addr.ctor(copy)
+        1        3622   SysThreadStack.Display
+        1         495   Log.Format
+        1         113   Debug.SwLog(string)
+        1          64   Log.Submit
+        1          56   Thread.ExtendTime
+        1          40   LogBuffer.SetNext
+        1          35   SysThread.Delete
+        1          30   SysHeap.Free
+        1          28   Memory.Free
+        1          28   SysThread.dtor
+        1          26   Exception.ctor
+        1          26   Orphans.ExitNow
+        1          26   Thread.EnterSwLog
+        1          25   Debug.GenerateSwLog
+        1          25   LogBuffer.Push
+        1          25   Thread.Resume
+        1          24   Log.Create
+        1          24   LogBuffer.InsertionPoint
+        1          24   LogBufferRegistry.Active
+        1          24   Object.operator delete
+        1          16   SysThread.Delay
+        1           1   C++.delete
         1           0   SysTime.ctor(now)
-        1           0   ThreadAdmin.WarpFactor
 
-Total functions: 63
+Total functions: 66

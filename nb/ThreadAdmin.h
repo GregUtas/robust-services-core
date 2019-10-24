@@ -112,18 +112,23 @@ public:
    //
    enum Register
    {
-      Creations,    // number of threads created
-      Deletions,    // number of threads deleted
-      Switches,     // number of context switches
-      Locks,        // times that a thread was scheduled to run unpreemptably
-      Interrupts,   // number of interrupts
-      Traps,        // number of traps
-      Recoveries,   // number of trap recoveries
-      Recreations,  // number of threads recreated
-      Orphans,      // number of orphans detected
-      Kills,        // number of threads killed
-      Unknowns,     // times that RunningThread returned nullptr
-      Unreleased    // times that exiting thread failed to release a mutex
+      Creations,    // threads created
+      Deletions,    // threads deleted
+      Switches,     // context switches
+      Locks,        // thread started to run unpreemptably
+      Preempts,     // thread preempted
+      Delays,       // InitThread timed out but found a thread to schedule
+      Resignals,    // selected thread had to be resignalled to run
+      Reentries,    // InitThread interrupted but locked thread exists
+      Reselects,    // active thread reselected to run
+      Interrupts,   // thread interrupts
+      Traps,        // traps (signals and exceptions)
+      Recoveries,   // trap recoveries
+      Recreations,  // threads recreated
+      Orphans,      // orphans detected
+      Kills,        // threads killed
+      Unknowns,     // RunningThread returned nullptr
+      Unreleased    // exiting thread failed to release a mutex
    };
 
    //  Increments the Counter specified by R.

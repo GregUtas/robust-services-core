@@ -38,8 +38,8 @@ const int PriorityMap[SysThread::Priority_N] =
 {
    THREAD_PRIORITY_BELOW_NORMAL,  // LowPriority
    THREAD_PRIORITY_NORMAL,        // DefaultPriority
-   THREAD_PRIORITY_ABOVE_NORMAL,  // SystemFaction
-   THREAD_PRIORITY_HIGHEST        // WatchdogFaction
+   THREAD_PRIORITY_ABOVE_NORMAL,  // SystemPriority
+   THREAD_PRIORITY_HIGHEST        // WatchdogPriority
 };
 
 //------------------------------------------------------------------------------
@@ -135,13 +135,22 @@ SysThread_t SysThread::Create(const ThreadEntry entry,
 {
    Debug::ft(SysThread_Create);
 
-   return CreateThread(
+   auto handle = CreateThread(
       nullptr,                         // default security attributes
       stackSize,                       // stack size
       (LPTHREAD_START_ROUTINE) entry,  // thread entry function
       (LPVOID) client,                 // argument to entry function
       0,                               // default creation flags
       (DWORD*) &nid);                  // updates thread's identifier
+
+   if(handle != nullptr)
+   {
+      //  Disable Windows priority boosts.
+      //
+      SetThreadPriorityBoost(handle, true);
+   }
+
+   return handle;
 }
 
 //------------------------------------------------------------------------------
@@ -255,12 +264,15 @@ bool SysThread::SetPriority(Priority prio)
 {
    Debug::ft(SysThread_SetPriority);
 
+   if(priority_ == prio) return true;
+
    if(!SetThreadPriority(nthread_, PriorityMap[prio]))
    {
       status_.set(SetPriorityFailed);
       return false;
    }
 
+   priority_ = prio;
    status_.reset(SetPriorityFailed);
    return true;
 }

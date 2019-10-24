@@ -1045,7 +1045,7 @@ const size_t PotsTrafficThread::MaxCallsPerMin =
 
 fn_name PotsTrafficThread_ctor = "PotsTrafficThread.ctor";
 
-PotsTrafficThread::PotsTrafficThread() : Thread(PayloadFaction),
+PotsTrafficThread::PotsTrafficThread() : Thread(LoadTestFaction),
    timeout_(TIMEOUT_NEVER),
    callsPerMin_(0),
    maxCallsPerTick_(0),

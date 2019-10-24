@@ -38,7 +38,8 @@ class PayloadInvokerPool : public InvokerPool
    friend class NodeBase::Singleton< PayloadInvokerPool >;
 public:
    //  Overridden to reject ingress work when the ingress work queue gets
-   //  too long or the number of available SpIpBuffers gets too low.
+   //  too long or the number of available Messages gets too low, in which
+   //  case an alarm is also raised.
    //
    bool RejectIngressWork() const override;
 
@@ -62,6 +63,10 @@ private:
    //  The alarm that is raised when payload work enters overload.
    //
    NodeBase::Alarm* overloadAlarm_;
+
+   //  Overridden to raise an alarm when DELAY is excessive.
+   //
+   void RecordDelay(MsgPriority prio, NodeBase::msecs_t delay) const override;
 
    //  The configuration parameter for the maximum length of
    //  this pool's ingress work queue.

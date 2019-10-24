@@ -1198,7 +1198,7 @@ LineType CodeFile::ClassifyLine(string s, std::set< Warning >& warnings) const
       if(s[2] == '-') return SeparatorComment;  //-
       if(s[2] == '=') return SeparatorComment;  //=
       if(s[2] == '/') return SeparatorComment;  ///
-      if(s[2] != SPACE) return TaggedComment;   //@ [@ != one of above]
+      if(s[2] != SPACE) return TaggedComment;   //$ [$ != one of above]
       return TextComment;                       //  text
    }
 

@@ -35,6 +35,7 @@
 #include "Restart.h"
 #include "Singleton.h"
 #include "ThisThread.h"
+#include "Thread.h"
 #include "ThreadRegistry.h"
 
 using std::ostream;
@@ -207,12 +208,14 @@ void ModuleRegistry::Restart()
       switch(Restart::Status_)
       {
       case Initial:
+         Thread::RestrictFactions(true);
          reentered = false;
          Restart::Level_ = RestartReboot;
          Restart::Status_ = StartingUp;
          break;
 
       case StartingUp:
+         Thread::RestrictFactions(true);
          if(reentered)
          {
             Restart::Status_ = ShuttingDown;
@@ -226,6 +229,7 @@ void ModuleRegistry::Restart()
          }
          Restart::Level_ = RestartNil;
          Restart::Status_ = Running;
+         Thread::RestrictFactions(false);
          return;
 
       case Running:
@@ -236,6 +240,7 @@ void ModuleRegistry::Restart()
          break;
 
       case ShuttingDown:
+         Thread::RestrictFactions(true);
          if(reentered) Restart::Level_ = NextLevel();
          Shutdown(Restart::Level_);
          reentered = false;
@@ -276,6 +281,15 @@ void ModuleRegistry::Shutdown(RestartLevel level)
 {
    Debug::ft(ModuleRegistry_Shutdown);
 
+   for(size_t tries = 80, idle = 0; (tries > 0) && (idle <= 8); --tries)
+   {
+      ThisThread::Pause(25);
+      if(Thread::SwitchContext())
+         idle = 0;
+      else
+         ++idle;
+   }
+
    auto zeroTime = Clock::TicksNow();
    *Stream() << CRLF << "RESTART TYPE: " << strRestartLevel(level) << CRLF;
    *Stream() << CRLF << ShutdownHeader << CRLF;
@@ -292,22 +306,24 @@ void ModuleRegistry::Shutdown(RestartLevel level)
    size_t actual = 0;
 
    //  Report PLANNED, the number of threads that plan to exit.  Sleep and
-   //  check how many threads have exited upon waking up.  If any threads
-   //  still plan to exit, sleep until TRIES expires before giving up.
+   //  try to schedule another thread upon waking up.  Stop when the planned
+   //  number of threads have exited or after trying to schedule exiting
+   //  threads for 3 seconds.
    //
    *Stream() << ExitingThreadsStr << setw(2) << planned;
    *Stream() << setw(36 - (strlen(ExitingThreadsStr) + 2));
    *Stream() << Clock::TicksToMsecs(Clock::TicksSince(zeroTime)) << CRLF;
    Log::Submit(stream_);
 
-   ThisThread::MakePreemptable();
-      for(size_t tries = 20; tries > 0; --tries)  //r use timed interrupt?
+   Thread::RestrictFactions(false);
+      for(size_t tries = 120; tries > 0; --tries)
       {
-         ThisThread::Pause(100);
+         Thread::SwitchContext();
+         ThisThread::Pause(25);
          actual = before - reg->Threads().Size();
          if(actual >= planned) break;
       }
-   ThisThread::MakeUnpreemptable();
+   Thread::RestrictFactions(true);
 
    actual = before - reg->Threads().Size();
    *Stream() << CRLF << ExitedThreadsStr << setw(2) << actual;

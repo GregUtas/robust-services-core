@@ -122,8 +122,6 @@ fn_name FileRequest_dtor = "FileRequest.dtor";
 FileRequest::~FileRequest()
 {
    Debug::ft(FileRequest_dtor);
-
-   name_.reset();
 }
 
 //------------------------------------------------------------------------------
@@ -325,7 +323,7 @@ void FileThread::Spool(const string& name,
    auto faction = client->GetFaction();
 
    FunctionGuard
-      guard(FunctionGuard::MakeUnpreemptable, faction <= PayloadFaction);
+      guard(FunctionGuard::MakeUnpreemptable, faction < SystemFaction);
 
    auto request = new FileRequest(name, trunc);
 

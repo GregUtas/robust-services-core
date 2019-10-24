@@ -165,7 +165,7 @@ void UdpIoThread::Enter()
    //
    while(true)
    {
-      //e An I/O thread should not allow its receive buffer to overflow.
+      //  An I/O thread should not allow its receive buffer to overflow.
       //  This conflicts with the need to yield to allow other work.  The
       //  work time per faction (as opposed to per thread) could help to
       //  resolve this, with I/O threads perhaps having their own faction.

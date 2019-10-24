@@ -36,7 +36,7 @@ namespace NodeBase
 //  o restarting the system
 //  o recreating critical threads
 //  o enforcing the run-to-completion timeout
-//  o deciding which unpreemptable thread should run next
+//  o initiating context switches
 //
 class InitThread : public Thread
 {
@@ -98,7 +98,7 @@ private:
    //
    void HandleTimeout();
 
-   //  Invoked when awoken prematurely.
+   //  Invoked if interrupted while sleeping.
    //
    void HandleInterrupt();
 
@@ -110,29 +110,17 @@ private:
    //
    void RecreateThreads();
 
-   //  Invoked when an unpreemptable thread is ready to run.
-   //
-   void Ready(const Thread* thread);
-
-   //  Invokes when an unpreemptable thread yields.
-   //
-   void Yielding(const Thread* thread);
-
-   //  Resumes execution of the unpreemptable thread that will run next.
+   //  Initiates a context switch.
    //
    void ContextSwitch();
-
-   //  Selects the unpreemptable thread that should run next.
-   //
-   Thread* SelectThread();
 
    //  Overridden to return a name for the thread.
    //
    c_string AbbrName() const override;
 
    //  Overridden to initialize the system and then run in the background
-   //  to enforce the run-to-completion timeout and recreate application
-   //  threads.
+   //  to enforce the run-to-completion timeout, initiate context switches,
+   //  and recreate application threads.
    //
    void Enter() override;
 
@@ -143,12 +131,6 @@ private:
    //  The thread's current state.
    //
    State state_;
-
-   //  The thread at which to start searching for the unpreemptable thread
-   //  to be scheduled in.  Scheduling is currently round-robin but will
-   //  eventually be changed to support proportional scheduling.
-   //
-   id_t start_;
 
    //  Set when a run-to-completion timeout has occurred.
    //

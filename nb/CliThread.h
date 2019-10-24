@@ -30,6 +30,7 @@
 #include "CliAppData.h"
 #include "CliCookie.h"
 #include "NbTypes.h"
+#include "Restart.h"
 #include "SysTypes.h"
 
 namespace NodeBase
@@ -168,6 +169,10 @@ public:
    //  this to read commands from a file.
    //
    void ReadCommands();
+   
+   //  Overridden for restarts.
+   //
+   void Shutdown(RestartLevel level) override;
 
    //  Overridden for restarts.
    //
@@ -224,6 +229,11 @@ private:
    //  Releases resources when deleting or recreating the thread.
    //
    void ReleaseResources();
+
+   //  Nullifies resources whose heap was or will be deleted during
+   //  a restart at LEVEL.
+   //
+   void NullifyResources(RestartLevel level);
 
    //  Overridden to return a name for the thread.
    //

@@ -98,7 +98,7 @@ SysTcpSocket::~SysTcpSocket()
    if(iotActive_ || (appState_ == Acquired ) ||
       ((appState_ == Initial) && (state_ != Idle)))
    {
-      if(Restart::GetStatus() != ShuttingDown)
+      if(Restart::GetStatus() == Running)
       {
          Debug::SwLog(SysTcpSocket_dtor,
             "socket still in use", pack2(iotActive_, appState_));

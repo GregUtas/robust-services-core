@@ -122,8 +122,6 @@ fn_name FileRequest_dtor = "FileRequest.dtor";
 FileRequest::~FileRequest()
 {
    Debug::ft(FileRequest_dtor);
-
-   name_.reset();
 }
 
 //------------------------------------------------------------------------------

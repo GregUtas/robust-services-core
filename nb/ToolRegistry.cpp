@@ -22,7 +22,6 @@
 #include "ToolRegistry.h"
 #include <cctype>
 #include <ostream>
-#include <string>
 #include "Debug.h"
 #include "Formatters.h"
 #include "Tool.h"
@@ -117,6 +116,24 @@ Tool* ToolRegistry::FindTool(char abbr) const
 Tool* ToolRegistry::GetTool(FlagId id) const
 {
    return tools_.At(id);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name ToolRegistry_ListTools = "ToolRegistry.ListTools";
+
+string ToolRegistry::ListTools() const
+{
+   Debug::ft(ToolRegistry_ListTools);
+
+   string tools;
+
+   for(auto t = tools_.First(); t != nullptr; tools_.Next(t))
+   {
+      tools.push_back(t->CliChar());
+   }
+
+   return tools;
 }
 
 //------------------------------------------------------------------------------

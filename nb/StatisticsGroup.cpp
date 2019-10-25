@@ -36,12 +36,12 @@ namespace NodeBase
 {
 const size_t StatisticsGroup::MaxExplSize = 44;
 const size_t StatisticsGroup::ReportWidth = 76;
-fixed_string StatisticsGroup::ReportHeader =   "      Curr      Prev         All";
-//  <----------------group name---------------->      Curr      Prev         All
-//    <-------------member name---------------->
-//      <---individual statistic explanation---> nnnnnnnnn nnnnnnnnn nnnnnnnnnnn
-// 0        1         2         3         4         5         6         7
-// 01234567890123456789012345678901234567890123456789012345678901234567890123456
+fixed_string StatisticsGroup::ReportHeader =  "     Curr      Prev         All";
+//<----------------group name---------------->      Curr      Prev         All
+//  <-------------member name---------------->
+//    <---individual statistic explanation---> nnnnnnnnn nnnnnnnnn nnnnnnnnnnn
+//         1         2         3         4         5         6         7
+//1234567890123456789012345678901234567890123456789012345678901234567890123456
 
 //------------------------------------------------------------------------------
 

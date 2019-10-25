@@ -2551,7 +2551,7 @@ BuffSizeText::BuffSizeText() : CliText(BuffSizeTextExpl, BuffSizeTextStr)
    BindParm(*new BuffSizeParm);
 }
 
-fixed_string ToolListExpl = "tools to set: string of tool abbrevations";
+fixed_string ToolListExpl = "tools to set: string of tool abbreviations";
 
 ToolListParm::ToolListParm() : CliTextParm(ToolListExpl) { }
 
@@ -2604,6 +2604,7 @@ word SetCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    id_t setHowIndex;
    word buffSize;
    string toolList;
+   string expl;
    bool flag;
    auto buff = Singleton< TraceBuffer >::Instance();
    auto reg = Singleton< ToolRegistry >::Instance();
@@ -2616,16 +2617,16 @@ word SetCommand::ProcessSubcommand(CliThread& cli, id_t index) const
       cli.EndOfInput(false);
       flag = (setHowIndex == SetHowParm::On);
 
+      if(!ValidateOptions(toolList, reg->ListTools(), expl))
+      {
+         return cli.Report(-1, expl);
+      }
+
       for(size_t i = 0; i < toolList.size(); ++i)
       {
          auto c = toolList[i];
-         auto tool = reg->FindTool(toolList[i]);
-
-         if(tool == nullptr)
-            rc = NoSuchItem;
-         else
-            rc = buff->SetTool(tool->Tid(), flag);
-
+         auto tool = reg->FindTool(c);
+         rc = buff->SetTool(tool->Tid(), flag);
          *cli.obuf << spaces(2) << c << ": " << strTraceRc(rc) << CRLF;
       }
       break;

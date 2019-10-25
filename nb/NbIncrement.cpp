@@ -2928,9 +2928,9 @@ fixed_string MemoryHeader2 =
 fixed_string PoolsHeader1 =
    "  Alloc  Lowest    Curr    Curr";
 fixed_string PoolsHeader2 =
-   "  Fails   Avail   Avail  In Use   Allocs    Frees   Pool";
-// 0         1         2         3         4         5         6
-// 0123456789012345678901234567890123456789012345678901234567890
+   "  Fails   Avail   Avail  In Use   Allocs    Frees  Exps   Pool";
+// 0         1         2         3         4         5         6         7
+// 01234567890123456789012345678901234567890123456789012345678901234567890
 
 fn_name StatusCommand_ProcessCommand = "StatusCommand.ProcessCommand";
 
@@ -2981,6 +2981,7 @@ word StatusCommand::ProcessCommand(CliThread& cli) const
       *cli.obuf << setw(8) << p->InUseCount();
       *cli.obuf << setw(9) << p->AllocCount();
       *cli.obuf << setw(9) << p->FreeCount();
+      *cli.obuf << setw(6) << p->Expansions();
       *cli.obuf << spaces(3) << p->Name() << CRLF;
    }
 

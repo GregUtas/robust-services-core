@@ -45,8 +45,8 @@ Protocol::Protocol(Id prid, Id base) : base_(base)
 {
    Debug::ft(Protocol_ctor);
 
-   signals_.Init(Signal::MaxId + 1, Signal::CellDiff(), MemProt);
-   parameters_.Init(Parameter::MaxId + 1, Parameter::CellDiff(), MemProt);
+   signals_.Init(Signal::MaxId, Signal::CellDiff(), MemProt);
+   parameters_.Init(Parameter::MaxId, Parameter::CellDiff(), MemProt);
 
    prid_.SetId(prid);
    Singleton< ProtocolRegistry >::Instance()->BindProtocol(*this);

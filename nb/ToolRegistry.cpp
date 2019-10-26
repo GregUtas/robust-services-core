@@ -43,7 +43,7 @@ ToolRegistry::ToolRegistry()
 {
    Debug::ft(ToolRegistry_ctor);
 
-   tools_.Init(MaxTools + 1, Tool::CellDiff(), MemImm);
+   tools_.Init(MaxTools, Tool::CellDiff(), MemImm);
 }
 
 //------------------------------------------------------------------------------

@@ -53,7 +53,7 @@ PotsFeatureRegistry::PotsFeatureRegistry()
 {
    Debug::ft(PotsFeatureRegistry_ctor);
 
-   features_.Init(PotsFeature::MaxId + 1, PotsFeature::CellDiff(), MemProt);
+   features_.Init(PotsFeature::MaxId, PotsFeature::CellDiff(), MemProt);
    featuresSubscribe_.reset(new WhichFeatureParm);
    featuresActivate_.reset(new WhichFeatureParm);
    featuresDeactivate_.reset(new WhichFeatureParm);

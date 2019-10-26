@@ -55,7 +55,7 @@ ModuleRegistry::ModuleRegistry() :
 {
    Debug::ft(ModuleRegistry_ctor);
 
-   modules_.Init(Module::MaxId + 1, Module::CellDiff(), MemImm);
+   modules_.Init(Module::MaxId, Module::CellDiff(), MemImm);
 }
 
 //------------------------------------------------------------------------------

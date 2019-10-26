@@ -41,7 +41,7 @@ PosixSignalRegistry::PosixSignalRegistry()
 {
    Debug::ft(PosixSignalRegistry_ctor);
 
-   signals_.Init(PosixSignal::MaxId + 1, PosixSignal::CellDiff(), MemProt);
+   signals_.Init(PosixSignal::MaxId, PosixSignal::CellDiff(), MemProt);
 }
 
 //------------------------------------------------------------------------------

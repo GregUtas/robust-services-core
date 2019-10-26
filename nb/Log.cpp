@@ -81,10 +81,7 @@ Log::Log(LogGroup* group, LogId id, fixed_string expl) :
       Debug::SwLog(Log_ctor, "expl length", expl_.size());
    }
 
-   if(!group_->BindLog(*this))
-   {
-      Debug::SwLog(Log_ctor, group_->Name(), id_);
-   }
+   group_->BindLog(*this);
 }
 
 //------------------------------------------------------------------------------

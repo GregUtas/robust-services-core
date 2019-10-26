@@ -40,7 +40,7 @@ ClassRegistry::ClassRegistry()
 {
    Debug::ft(ClassRegistry_ctor);
 
-   classes_.Init(MaxClassId + 1, Class::CellDiff(), MemProt);
+   classes_.Init(MaxClassId, Class::CellDiff(), MemProt);
 }
 
 //------------------------------------------------------------------------------

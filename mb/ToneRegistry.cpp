@@ -40,7 +40,7 @@ ToneRegistry::ToneRegistry()
 {
    Debug::ft(ToneRegistry_ctor);
 
-   tones_.Init(Tone::MaxId + 1, Tone::CellDiff(), MemDyn);
+   tones_.Init(Tone::MaxId, Tone::CellDiff(), MemDyn);
 }
 
 //------------------------------------------------------------------------------

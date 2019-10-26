@@ -38,7 +38,7 @@ Switch::Switch()
 {
    Debug::ft(Switch_ctor);
 
-   circuits_.Init(MaxPortId + 1, Circuit::CellDiff(), MemDyn);
+   circuits_.Init(MaxPortId, Circuit::CellDiff(), MemDyn);
 }
 
 //------------------------------------------------------------------------------

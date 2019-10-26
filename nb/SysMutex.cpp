@@ -33,11 +33,22 @@ using std::string;
 
 namespace NodeBase
 {
+ptrdiff_t SysMutex::CellDiff()
+{
+   int local;
+   auto fake = reinterpret_cast< const SysMutex* >(&local);
+   return ptrdiff(&fake->mid_, fake);
+}
+
+//------------------------------------------------------------------------------
+
 void SysMutex::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
    Permanent::Display(stream, prefix, options);
 
+   stream << prefix << "name  : " << name_ << CRLF;
+   stream << prefix << "mid   : " << mid_.to_str() << CRLF;
    stream << prefix << "mutex : " << mutex_ << CRLF;
    stream << prefix << "nid   : " << nid_ << CRLF;
    stream << prefix << "owner : " << owner_ << CRLF;

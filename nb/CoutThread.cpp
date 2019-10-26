@@ -41,7 +41,7 @@ namespace NodeBase
 {
 //  For serializing access to our message queue.
 //
-SysMutex CoutThreadMsgQLock_;
+SysMutex CoutThreadMsgQLock_("CoutThreadMsgQLock");
 
 //------------------------------------------------------------------------------
 

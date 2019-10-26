@@ -24,6 +24,7 @@
 
 #include "Permanent.h"
 #include "Clock.h"
+#include "RegCell.h"
 #include "SysDecls.h"
 
 namespace NodeBase
@@ -49,9 +50,9 @@ public:
       Error      // error (e.g. mutex does not exist)
    };
 
-   //  Creates a mutex.  Not subclassed.
+   //  Creates a mutex identified by NAME.  Not subclassed.
    //
-   SysMutex();
+   explicit SysMutex(const char* name);
 
    //  Deletes the mutex.
    //
@@ -64,7 +65,7 @@ public:
 
    //  Acquires the mutex.  TIMEOUT specifies how long to wait.
    //
-   Rc Acquire(msecs_t timeout, Thread* owner = nullptr);
+   Rc Acquire(msecs_t timeout);
 
    //  Releases the mutex.  If LOG is set, a log is generated if the
    //  mutex was not released (because this thread didn't own it).
@@ -79,6 +80,14 @@ public:
    //
    Thread* Owner() const;
 
+   //  Returns the mutex's name.
+   //
+   const char* Name() const { return name_; }
+
+   //  Returns the offset to mid_.
+   //
+   static ptrdiff_t CellDiff();
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -88,6 +97,14 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
+   //  The mutex's name.
+   //
+   const char* name_;
+
+   //  The mutex's index in MutexRegistry.
+   //
+   RegCell mid_;
+
    //  A handle to the native mutex.
    //
    SysMutex_t mutex_;

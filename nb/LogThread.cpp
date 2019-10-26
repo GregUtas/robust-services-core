@@ -51,7 +51,7 @@ namespace NodeBase
 {
 //  To prevent interleaved output in the log file.
 //
-SysMutex LogFileLock_;
+SysMutex LogFileLock_("LogFileLock");
 
 //------------------------------------------------------------------------------
 

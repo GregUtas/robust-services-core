@@ -333,7 +333,7 @@ private:
 //
 //  Critical section lock for the array of context switches.
 //
-SysMutex ContextSwitchesLock_;
+SysMutex ContextSwitchesLock_("ContextSwitchesLock");
 
 //------------------------------------------------------------------------------
 
@@ -567,7 +567,7 @@ private:
 //
 //  Critical section lock for the array of orphans.
 //
-SysMutex OrphansLock_;
+SysMutex OrphansLock_("OrphansLock");
 
 //------------------------------------------------------------------------------
 

@@ -23,8 +23,11 @@
 #include "SysMutex.h"
 #include <windows.h>
 #include "Debug.h"
+#include "MutexRegistry.h"
+#include "Singleton.h"
 #include "SysThread.h"
 #include "SysTypes.h"
+#include "Thread.h"
 #include "ThreadAdmin.h"
 
 //------------------------------------------------------------------------------
@@ -33,12 +36,18 @@ namespace NodeBase
 {
 fn_name SysMutex_ctor = "SysMutex.ctor";
 
-SysMutex::SysMutex() : mutex_(nullptr), nid_(NIL_ID), owner_(nullptr)
+SysMutex::SysMutex(const char* name) :
+   name_(name),
+   mutex_(nullptr),
+   nid_(NIL_ID),
+   owner_(nullptr)
 {
    Debug::ft(SysMutex_ctor);
 
    mutex_ = CreateMutex(nullptr, false, nullptr);
    Debug::Assert(mutex_ != nullptr);
+
+   Singleton< MutexRegistry >::Instance()->BindMutex(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -51,15 +60,17 @@ SysMutex::~SysMutex()
 
    if(nid_ != NIL_ID)
    {
-      Debug::SwLog(SysMutex_dtor, debug64_t(mutex_), nid_);
+      Debug::SwLog(SysMutex_dtor, name_, nid_);
    }
+
+   Singleton< MutexRegistry >::Instance()->UnbindMutex(*this);
 
    if(mutex_ != nullptr)
    {
       if(CloseHandle(mutex_))
          mutex_ = nullptr;
       else
-         Debug::SwLog(SysMutex_dtor, debug64_t(mutex_), GetLastError());
+         Debug::SwLog(SysMutex_dtor, name_, GetLastError());
    }
 }
 
@@ -67,7 +78,7 @@ SysMutex::~SysMutex()
 
 fn_name SysMutex_Acquire = "SysMutex.Acquire";
 
-SysMutex::Rc SysMutex::Acquire(msecs_t timeout, Thread* owner)
+SysMutex::Rc SysMutex::Acquire(msecs_t timeout)
 {
    Debug::ft(SysMutex_Acquire);
 
@@ -89,7 +100,7 @@ SysMutex::Rc SysMutex::Acquire(msecs_t timeout, Thread* owner)
       //  Success.
       //
       nid_ = nid;
-      owner_ = owner;
+      owner_ = Thread::RunningThread();
       result = Acquired;
       break;
    case WAIT_TIMEOUT:
@@ -99,7 +110,7 @@ SysMutex::Rc SysMutex::Acquire(msecs_t timeout, Thread* owner)
       result = TimedOut;
       break;
    default:
-      Debug::SwLog(SysMutex_Acquire, debug64_t(mutex_), GetLastError());
+      Debug::SwLog(SysMutex_Acquire, name_, GetLastError());
    }
 
    return result;
@@ -113,6 +124,10 @@ void SysMutex::Release(bool log)
 {
    Debug::ft(SysMutex_Release);
 
+   //  Clear owner_ and nid_ first, in case releasing the mutex results in
+   //  another thread acquiring the mutex, running immediately, and setting
+   //  those fields to their new values.
+   //
    auto owner = owner_;
    auto nid = nid_;
 
@@ -123,7 +138,7 @@ void SysMutex::Release(bool log)
    {
       nid_ = nid;
       owner_ = owner;
-      if(log) Debug::SwLog(SysMutex_Release, debug64_t(mutex_), GetLastError());
+      if(log) Debug::SwLog(SysMutex_Release, name_, GetLastError());
    }
 }
 }

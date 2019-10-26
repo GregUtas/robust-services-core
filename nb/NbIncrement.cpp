@@ -55,6 +55,7 @@
 #include "Memory.h"
 #include "Module.h"
 #include "ModuleRegistry.h"
+#include "MutexRegistry.h"
 #include "NbCliParms.h"
 #include "NbPools.h"
 #include "NbSignals.h"
@@ -1673,6 +1674,40 @@ word ModulesCommand::ProcessCommand(CliThread& cli) const
       mod->Output(*cli.obuf, 2, v);
    }
 
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+//
+//  The MUTEXES command.
+//
+class MutexesCommand : public CliCommand
+{
+public:
+   MutexesCommand();
+private:
+   word ProcessCommand(CliThread& cli) const override;
+};
+
+fixed_string MutexesStr = "mutexes";
+fixed_string MutexesExpl = "Displays mutexes.";
+
+MutexesCommand::MutexesCommand() : CliCommand(MutexesStr, MutexesExpl)
+{
+   BindParm(*new DispBVParm);
+}
+
+fn_name MutexesCommand_ProcessCommand = "MutexesCommand.ProcessCommand";
+
+word MutexesCommand::ProcessCommand(CliThread& cli) const
+{
+   Debug::ft(MutexesCommand_ProcessCommand);
+
+   bool v = false;
+
+   if(GetBV(*this, cli, v) == Error) return -1;
+   cli.EndOfInput(false);
+   Singleton< MutexRegistry >::Instance()->Output(*cli.obuf, 2, v);
    return 0;
 }
 
@@ -3389,6 +3424,7 @@ NbIncrement::NbIncrement() : CliIncrement(RootStr, RootExpl, 48)
    BindCommand(*new AuditCommand);
    BindCommand(*new SchedCommand);
    BindCommand(*new ThreadsCommand);
+   BindCommand(*new MutexesCommand);
    BindCommand(*new BuffersCommand);
    BindCommand(*new PsignalsCommand);
    BindCommand(*new SingletonsCommand);

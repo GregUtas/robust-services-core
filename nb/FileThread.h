@@ -26,7 +26,6 @@
 #include <string>
 #include "CallbackRequest.h"
 #include "NbTypes.h"
-#include "SysMutex.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -72,11 +71,6 @@ public:
    //
    static void Truncate(const std::string& name);
 
-   //  Overridden to display member variables.
-   //
-   void Display(std::ostream& stream,
-      const std::string& prefix, const Flags& options) const override;
-
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
@@ -100,10 +94,6 @@ private:
    //  Overridden to delete the singleton.
    //
    void Destroy() override;
-
-   //  To prevent interleaved output in the console transcript file.
-   //
-   static SysMutex ConsoleFileLock_;
 };
 }
 #endif

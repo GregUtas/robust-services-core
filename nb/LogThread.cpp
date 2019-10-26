@@ -40,6 +40,7 @@
 #include "Restart.h"
 #include "Singleton.h"
 #include "SysFile.h"
+#include "SysMutex.h"
 
 using std::ostream;
 using std::string;
@@ -48,8 +49,13 @@ using std::string;
 
 namespace NodeBase
 {
+//  To prevent interleaved output in the log file.
+//
+SysMutex LogFileLock_;
+
+//------------------------------------------------------------------------------
+
 word LogThread::NoSpoolingMessageCount_ = 400;
-SysMutex LogThread::LogFileLock_;
 
 //------------------------------------------------------------------------------
 
@@ -130,8 +136,6 @@ void LogThread::Display(ostream& stream,
    stream << NoSpoolingMessageCount_ << CRLF;
    stream << prefix << "noSpoolingMessageCount : ";
    stream << strObj(noSpoolingMessageCount_.get()) << CRLF;
-   stream << prefix << "LogFileLock : " << CRLF;
-   LogFileLock_.Display(stream, lead, options);
 }
 
 //------------------------------------------------------------------------------
@@ -205,12 +209,13 @@ void LogThread::Spool(ostringstreamPtr& stream)
    auto level = Restart::GetStatus();
    Debug::Assert(level != Running, level);
 
-   MutexGuard guard(&LogFileLock_);
-
    CopyToConsole(stream);
 
    auto name = Singleton< LogBufferRegistry >::Instance()->FileName();
    auto path = Element::OutputPath() + PATH_SEPARATOR + name;
+
+   MutexGuard guard(&LogFileLock_);
+
    auto file = SysFile::CreateOstream(path.c_str());
 
    if(file != nullptr)

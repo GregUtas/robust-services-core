@@ -69,6 +69,8 @@ fn_name SysMutex_Acquire = "SysMutex.Acquire";
 
 SysMutex::Rc SysMutex::Acquire(msecs_t timeout, Thread* owner)
 {
+   Debug::ft(SysMutex_Acquire);
+
    auto nid = SysThread::RunningThreadId();
    auto result = Error;
    auto msecs = (timeout == TIMEOUT_NEVER ? INFINITE: timeout);
@@ -100,11 +102,6 @@ SysMutex::Rc SysMutex::Acquire(msecs_t timeout, Thread* owner)
       Debug::SwLog(SysMutex_Acquire, debug64_t(mutex_), GetLastError());
    }
 
-   //  Debug::ft is deferred because Windows threads sometimes run *before*
-   //  their Thread object has been fully constructed.  This causes a trap
-   //  when this function is invoked from Thread::EnterThread.
-   //
-   Debug::ft(SysMutex_Acquire);
    return result;
 }
 

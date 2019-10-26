@@ -24,7 +24,6 @@
 
 #include "Thread.h"
 #include "NbTypes.h"
-#include "SysMutex.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -85,10 +84,6 @@ private:
    //  The number of MsgBuffers reserved for work other than spooling logs.
    //
    static word NoSpoolingMessageCount_;
-
-   //  To prevent interleaved output in the log file.
-   //
-   static SysMutex LogFileLock_;
 };
 }
 #endif

@@ -327,11 +327,13 @@ private:
    //  Set if context switches are to be logged.
    //
    bool log_;
-
-   //  Critical section lock for the array of context switches.
-   //
-   mutable SysMutex lock_;
 };
+
+//------------------------------------------------------------------------------
+//
+//  Critical section lock for the array of context switches.
+//
+SysMutex ContextSwitchesLock_;
 
 //------------------------------------------------------------------------------
 
@@ -367,7 +369,7 @@ ContextSwitch* ContextSwitches::AddSwitch()
 
    ContextSwitch* cs;
 
-   if(lock_.Acquire(TIMEOUT_IMMED) == SysMutex::Acquired)
+   if(ContextSwitchesLock_.Acquire(TIMEOUT_IMMED) == SysMutex::Acquired)
    {
       cs = &switches_[next_];
 
@@ -377,7 +379,7 @@ ContextSwitch* ContextSwitches::AddSwitch()
          full_ = true;
       }
 
-      lock_.Release();
+      ContextSwitchesLock_.Release();
       return cs;
    }
 
@@ -405,7 +407,7 @@ void ContextSwitches::DisplaySwitches(ostream& stream) const
       return;
    }
 
-   MutexGuard guard(&lock_);
+   MutexGuard guard(&ContextSwitchesLock_);
 
    size_t first = 0;
    size_t last = next_ - 1;
@@ -559,11 +561,13 @@ private:
    //  The orphans array.
    //
    Array< SysThread* > orphans_;
-
-   //  Critical section lock for the array of orphans.
-   //
-   SysMutex lock_;
 };
+
+//------------------------------------------------------------------------------
+//
+//  Critical section lock for the array of orphans.
+//
+SysMutex OrphansLock_;
 
 //------------------------------------------------------------------------------
 
@@ -599,7 +603,7 @@ bool Orphans::ExitNow()
    //
    auto pid = SysThread::RunningThreadId();
 
-   MutexGuard guard(&lock_);
+   MutexGuard guard(&OrphansLock_);
 
    for(size_t i = 0; i < orphans_.Size(); ++i)
    {
@@ -634,7 +638,7 @@ void Orphans::Register(SysThread* thr)
 
    if(thr == nullptr) return;
 
-   MutexGuard guard(&lock_);
+   MutexGuard guard(&OrphansLock_);
 
    if(!orphans_.PushBack(thr))
    {
@@ -1501,7 +1505,13 @@ main_t Thread::EnterThread(void* arg)
    //  This causes a trap, so the thread must wait until it is constructed and
    //  has been signalled to run.
    //
-   while(self->systhrd_ == nullptr) Debug::noop();
+   while((self->systhrd_ == nullptr) ||
+         (self->priv_ == nullptr) ||
+         (self->stats_ == nullptr))
+   {
+      Debug::noop();
+   }
+
    self->Ready();
 
    //  If the thread is orphaned, it must exit immediately.  This occurs if
@@ -2888,11 +2898,6 @@ fn_name Thread_Start = "Thread.Start";
 
 main_t Thread::Start()
 {
-   while((priv_ == nullptr) || (stats_ == nullptr))
-   {
-      Debug::noop();
-   }
-
    for(NO_OP; true; stats_->traps_->Incr())
    {
       try

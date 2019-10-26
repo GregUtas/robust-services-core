@@ -33,6 +33,7 @@
 #include "Restart.h"
 #include "Singleton.h"
 #include "SysFile.h"
+#include "SysMutex.h"
 
 using std::ostream;
 using std::string;
@@ -41,6 +42,16 @@ using std::string;
 
 namespace NodeBase
 {
+//  For serializing access to our message queue.
+//
+SysMutex FileThreadMsgQLock_;
+
+//  For preventing interleaved output in the console transcript file.
+//
+SysMutex ConsoleFileLock_;
+
+//------------------------------------------------------------------------------
+//
 //  For queueing output to a file.
 //
 class FileRequest : public StreamRequest
@@ -156,10 +167,6 @@ void FileRequest::Patch(sel_t selector, void* arguments)
 
 //==============================================================================
 
-SysMutex FileThread::ConsoleFileLock_;
-
-//------------------------------------------------------------------------------
-
 fn_name FileThread_ctor = "FileThread.ctor";
 
 FileThread::FileThread() : Thread(BackgroundFaction)
@@ -205,17 +212,6 @@ void FileThread::Destroy()
    Debug::ft(FileThread_Destroy);
 
    Singleton< FileThread >::Destroy();
-}
-
-//------------------------------------------------------------------------------
-
-void FileThread::Display(ostream& stream,
-   const string& prefix, const Flags& options) const
-{
-   Thread::Display(stream, prefix, options);
-
-   stream << prefix << "ConsoleFileLock : " << CRLF;
-   ConsoleFileLock_.Display(stream, prefix + spaces(2), options);
 }
 
 //------------------------------------------------------------------------------
@@ -313,24 +309,20 @@ void FileThread::Spool(const string& name,
       return;
    }
 
-   //  Forward the stream to our thread.  This must be done unpreemptably
-   //  because both this function (which runs on the client thread) and
-   //  our Enter function contend for our message queue.  (If the client
-   //  is in SystemFaction or higher, its priority effectively makes it
-   //  unpreemptable.)
+   //  Forward the stream to our thread.
    //
-   auto client = RunningThread();
-   auto faction = client->GetFaction();
-
-   FunctionGuard
-      guard(FunctionGuard::MakeUnpreemptable, faction < SystemFaction);
-
    auto request = new FileRequest(name, trunc);
 
    if(request != nullptr)
    {
       request->GiveStream(stream);
       request->GiveCallback(written);
+
+      //  This function runs on the client thread, so it contends for our
+      //  message queue with our Enter function.  Although it's unlikely,
+      //  the client could be preemptable or of higher priority.
+      //
+      MutexGuard guard(&FileThreadMsgQLock_);
       Singleton< FileThread >::Instance()->EnqMsg(*request);
    }
    else

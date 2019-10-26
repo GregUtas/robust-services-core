@@ -346,9 +346,8 @@ void Log::Submit(ostringstreamPtr& stream)
    //  Add the log to the active log buffer.
    //
    auto buffer = Singleton< LogBufferRegistry >::Instance()->Active();
-   auto entry = buffer->Push(stream);
 
-   if(entry != nullptr)
+   if(buffer->Push(stream))
       log->bufferCount_->Incr();
    else
       log->discardCount_->Incr();

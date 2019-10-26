@@ -34,6 +34,7 @@
 #include "NbTypes.h"
 #include "Restart.h"
 #include "Singleton.h"
+#include "SysMutex.h"
 #include "SysTime.h"
 
 using std::ostream;
@@ -43,6 +44,12 @@ using std::string;
 
 namespace NodeBase
 {
+//  Critical section lock for the log buffer.
+//
+SysMutex LogBufferLock_;
+
+//------------------------------------------------------------------------------
+
 class LogsWritten : public CallbackRequest
 {
 public:
@@ -128,7 +135,7 @@ LogBuffer::~LogBuffer()
 {
    Debug::ft(LogBuffer_dtor);
 
-   MutexGuard guard(&lock_);
+   MutexGuard guard(&LogBufferLock_);
 
    Memory::Free(buff_);
    buff_ = nullptr;
@@ -206,10 +213,6 @@ void LogBuffer::Display(ostream& stream,
    stream << prefix << "max (KBs)  : " << (max_ >> 10) << CRLF;
    stream << prefix << "size (KBs) : " << (size_ >> 10) << CRLF;
    stream << prefix << "buff       : " << intptr_t(buff_) << CRLF;
-
-   auto lead = prefix + spaces(2);
-   stream << prefix << "lock : " << CRLF;
-   lock_.Display(stream, lead, options);
 }
 
 //------------------------------------------------------------------------------
@@ -256,7 +259,7 @@ ostringstreamPtr LogBuffer::GetLogs
 
    //  If the log buffer contains any logs, create a stream to spool them.
    //
-   MutexGuard guard(&lock_);
+   MutexGuard guard(&LogBufferLock_);
 
    periodic = false;
    auto curr = FirstUnspooled();
@@ -454,7 +457,7 @@ void LogBuffer::Purge(const Entry* last)
 
 fn_name LogBuffer_Push = "LogBuffer.Push";
 
-LogBuffer::Entry* LogBuffer::Push(const ostringstreamPtr& log)
+bool LogBuffer::Push(const ostringstreamPtr& log)
 {
    Debug::ft(LogBuffer_Push);
 
@@ -464,23 +467,27 @@ LogBuffer::Entry* LogBuffer::Push(const ostringstreamPtr& log)
    auto level = Restart::GetStatus();
    Debug::Assert(level == Running, level);
 
-   MutexGuard guard(&lock_);
-
    auto count = log->str().size();
-   auto size = 2 * sizeof(intptr_t) + count + 1;
+   size_t size = sizeof(Header) + count + 1;
+
+   MutexGuard guard(&LogBufferLock_);
+
    auto entry = InsertionPoint(size);
 
    if(entry == nullptr)
    {
       ++discards_;
-      return nullptr;
+      return false;
    }
 
-   strcpy(entry->log, log->str().c_str());
+   Memory::Copy(entry->log, log->str().c_str(), count);
+   entry->log[count] = NUL;
    if(unspooled_ == nullptr) unspooled_ = entry;
    UpdateMax();
+   guard.~MutexGuard();
+
    Singleton< LogThread >::Instance()->Interrupt();
-   return entry;
+   return true;
 }
 
 //------------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  CodeIncrement.cpp
+//  CtIncrement.cpp
 //
 //  Copyright (C) 2017  Greg Utas
 //
@@ -19,7 +19,7 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-#include "CodeIncrement.h"
+#include "CtIncrement.h"
 #include "CliBoolParm.h"
 #include "CliCommand.h"
 #include "CliIntParm.h"
@@ -1660,11 +1660,11 @@ word ExpCommand::ProcessCommand(CliThread& cli) const
 fixed_string CtStr = "ct";
 fixed_string CtExpl = "CodeTools Increment";
 
-fn_name CodeIncrement_ctor = "CodeIncrement.ctor";
+fn_name CtIncrement_ctor = "CtIncrement.ctor";
 
-CodeIncrement::CodeIncrement() : CliIncrement(CtStr, CtExpl)
+CtIncrement::CtIncrement() : CliIncrement(CtStr, CtExpl)
 {
-   Debug::ft(CodeIncrement_ctor);
+   Debug::ft(CtIncrement_ctor);
 
    BindCommand(*new ImportCommand);
    BindCommand(*new ShowCommand);
@@ -1694,10 +1694,10 @@ CodeIncrement::CodeIncrement() : CliIncrement(CtStr, CtExpl)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeIncrement_dtor = "CodeIncrement.dtor";
+fn_name CtIncrement_dtor = "CtIncrement.dtor";
 
-CodeIncrement::~CodeIncrement()
+CtIncrement::~CtIncrement()
 {
-   Debug::ft(CodeIncrement_dtor);
+   Debug::ft(CtIncrement_dtor);
 }
 }

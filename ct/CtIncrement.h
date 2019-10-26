@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  CodeIncrement.h
+//  CtIncrement.h
 //
 //  Copyright (C) 2017  Greg Utas
 //
@@ -19,8 +19,8 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifndef CODEINCREMENT_H_INCLUDED
-#define CODEINCREMENT_H_INCLUDED
+#ifndef CTINCREMENT_H_INCLUDED
+#define CTINCREMENT_H_INCLUDED
 
 #include "CliIncrement.h"
 #include "NbTypes.h"
@@ -31,17 +31,17 @@ namespace CodeTools
 {
 //  Increment for source code analysis.
 //
-class CodeIncrement : public NodeBase::CliIncrement
+class CtIncrement : public NodeBase::CliIncrement
 {
-   friend class NodeBase::Singleton< CodeIncrement >;
+   friend class NodeBase::Singleton< CtIncrement >;
 private:
    //  Private because this singleton is not subclassed.
    //
-   CodeIncrement();
+   CtIncrement();
 
    //  Private because this singleton is not subclassed.
    //
-   ~CodeIncrement();
+   ~CtIncrement();
 };
 }
 #endif

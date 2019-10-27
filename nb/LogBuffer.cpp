@@ -21,12 +21,10 @@
 //
 #include "LogBuffer.h"
 #include <bitset>
-#include <cstring>
 #include <iosfwd>
 #include <sstream>
 #include "Clock.h"
 #include "Debug.h"
-#include "Formatters.h"
 #include "Log.h"
 #include "LogThread.h"
 #include "Memory.h"
@@ -156,7 +154,7 @@ const LogBuffer::Entry* LogBuffer::Advance()
       spooled_ = unspooled_;  // first unspooled log was just spooled
    }
 
-   unspooled_ = unspooled_->next;
+   unspooled_ = unspooled_->header.next;
    return unspooled_;
 }
 
@@ -174,7 +172,7 @@ size_t LogBuffer::Count(bool spooled, bool unspooled) const
 
    for(auto curr = First(); curr != nullptr; ++total)
    {
-      curr = curr->next;
+      curr = curr->header.next;
    }
 
    if(spooled & unspooled) return total;
@@ -183,7 +181,7 @@ size_t LogBuffer::Count(bool spooled, bool unspooled) const
 
    for(auto curr = unspooled_; curr != nullptr; ++unsent)
    {
-      curr = curr->next;
+      curr = curr->header.next;
    }
 
    if(unspooled) return unsent;
@@ -358,12 +356,12 @@ LogBuffer::Entry* LogBuffer::InsertionPoint(size_t size)
       after = buff_ + size;
    }
 
-   auto prev = next_->prev;
-   if(prev != nullptr) prev->next = where;
-   where->prev = prev;
-   where->next = nullptr;
+   auto prev = next_->header.prev;
+   if(prev != nullptr) prev->header.next = where;
+   where->header.prev = prev;
+   where->header.next = nullptr;
    SetNext(reinterpret_cast< Entry* >(after));
-   next_->prev = where;
+   next_->header.prev = where;
    return where;
 }
 
@@ -375,7 +373,7 @@ const LogBuffer::Entry* LogBuffer::Last() const
 {
    Debug::ft(LogBuffer_Last);
 
-   return next_->prev;
+   return next_->header.prev;
 }
 
 //------------------------------------------------------------------------------
@@ -395,7 +393,7 @@ const LogBuffer::Entry* LogBuffer::Pop()
 
    if(spooled_ == nullptr) return nullptr;
 
-   spooled_ = spooled_->next;
+   spooled_ = spooled_->header.next;
 
    if(spooled_ == nullptr)
    {
@@ -409,7 +407,7 @@ const LogBuffer::Entry* LogBuffer::Pop()
       return nullptr;
    }
 
-   spooled_->prev = nullptr;
+   spooled_->header.prev = nullptr;
 
    if(spooled_ == unspooled_)
    {
@@ -432,7 +430,7 @@ void LogBuffer::Purge(const Entry* last)
    //  If the LAST log that was written to the log file still exists, free the
    //  logs before it, and then free it as well.
    //
-   for(auto curr = Last(); curr != last; curr = curr->prev)
+   for(auto curr = Last(); curr != last; curr = curr->header.prev)
    {
       if(curr == nullptr)
       {
@@ -511,8 +509,8 @@ void LogBuffer::SetNext(Entry* next)
    Debug::ft(LogBuffer_SetNext);
 
    next_ = next;
-   next_->prev = nullptr;
-   next_->next = nullptr;
+   next_->header.prev = nullptr;
+   next_->header.next = nullptr;
 }
 
 //------------------------------------------------------------------------------

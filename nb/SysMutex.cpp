@@ -22,6 +22,7 @@
 #include "SysMutex.h"
 #include <ostream>
 #include <string>
+#include "Algorithms.h"
 #include "Singleton.h"
 #include "SysTypes.h"
 #include "ThreadRegistry.h"

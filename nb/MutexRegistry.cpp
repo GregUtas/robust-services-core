@@ -20,7 +20,6 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "MutexRegistry.h"
-#include <cstddef>
 #include <ostream>
 #include "Debug.h"
 #include "Formatters.h"
@@ -77,8 +76,6 @@ bool MutexRegistry::BindMutex(SysMutex& mutex)
 void MutexRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   auto lead = prefix + spaces(2);
-
    stream << prefix << "mutexes [id_t]" << CRLF;
    mutexes_.Display(stream, prefix + spaces(2), options);
 }

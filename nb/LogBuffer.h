@@ -91,21 +91,22 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
+   struct Entry;
+
+   //  Header for log buffer entries.
+   //
+   struct Header
+   {
+      Entry* prev;  // previous entry in the buffer
+      Entry* next;  // next entry in the buffer
+   };
+
    //  An entry in the buffer.
    //
    struct Entry
    {
-      Entry* prev;           // previous entry in the buffer
-      Entry* next;           // next entry in the buffer
-      char log[UINT16_MAX];  // log's contents (null-terminated)
-   };
-
-   //  An Entry's header for sizeof() calculations.
-   //
-   struct Header
-   {
-      Entry* prev;
-      Entry* next;
+      Header header;         // pointers to previous and next entries
+      char log[UINT16_MAX];  // log's contents (null-terminated C string)
    };
 
    //> When bundling logs into a stream, the number of characters that

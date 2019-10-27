@@ -23,6 +23,7 @@
 #define SYSMUTEX_H_INCLUDED
 
 #include "Permanent.h"
+#include <cstddef>
 #include "Clock.h"
 #include "RegCell.h"
 #include "SysDecls.h"
@@ -99,7 +100,7 @@ public:
 private:
    //  The mutex's name.
    //
-   const char* name_;
+   const char* const name_;
 
    //  The mutex's index in MutexRegistry.
    //

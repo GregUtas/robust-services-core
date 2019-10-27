@@ -1167,6 +1167,8 @@ SysTcpSocket* CipPsm::CreateAppSocket()
 {
    Debug::ft(CipPsm_CreateAppSocket);
 
+   if(!Debug::SwFlagOn(CipAlwaysOverIpFlag)) return nullptr;
+
    auto reg = Singleton< IpPortRegistry >::Instance();
    auto port = reg->GetPort(CipIpPort, IpTcp);
    if(port == nullptr) return nullptr;
@@ -1181,8 +1183,6 @@ Message::Route CipPsm::Route() const
 {
    Debug::ft(CipPsm_Route);
 
-   //  CIP messages are always internal, even if interprocessor.
-   //
    if(Debug::SwFlagOn(CipAlwaysOverIpFlag)) return Message::IpStack;
    return Message::Internal;
 }

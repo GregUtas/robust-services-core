@@ -21,12 +21,10 @@
 //
 #include "LogBuffer.h"
 #include <bitset>
-#include <cstring>
 #include <iosfwd>
 #include <sstream>
 #include "Clock.h"
 #include "Debug.h"
-#include "Formatters.h"
 #include "Log.h"
 #include "LogThread.h"
 #include "Memory.h"
@@ -34,6 +32,7 @@
 #include "NbTypes.h"
 #include "Restart.h"
 #include "Singleton.h"
+#include "SysMutex.h"
 #include "SysTime.h"
 
 using std::ostream;
@@ -43,6 +42,12 @@ using std::string;
 
 namespace NodeBase
 {
+//  Critical section lock for the log buffer.
+//
+SysMutex LogBufferLock_("LogBufferLock");
+
+//------------------------------------------------------------------------------
+
 class LogsWritten : public CallbackRequest
 {
 public:
@@ -128,7 +133,7 @@ LogBuffer::~LogBuffer()
 {
    Debug::ft(LogBuffer_dtor);
 
-   MutexGuard guard(&lock_);
+   MutexGuard guard(&LogBufferLock_);
 
    Memory::Free(buff_);
    buff_ = nullptr;
@@ -149,7 +154,7 @@ const LogBuffer::Entry* LogBuffer::Advance()
       spooled_ = unspooled_;  // first unspooled log was just spooled
    }
 
-   unspooled_ = unspooled_->next;
+   unspooled_ = unspooled_->header.next;
    return unspooled_;
 }
 
@@ -167,7 +172,7 @@ size_t LogBuffer::Count(bool spooled, bool unspooled) const
 
    for(auto curr = First(); curr != nullptr; ++total)
    {
-      curr = curr->next;
+      curr = curr->header.next;
    }
 
    if(spooled & unspooled) return total;
@@ -176,7 +181,7 @@ size_t LogBuffer::Count(bool spooled, bool unspooled) const
 
    for(auto curr = unspooled_; curr != nullptr; ++unsent)
    {
-      curr = curr->next;
+      curr = curr->header.next;
    }
 
    if(unspooled) return unsent;
@@ -206,10 +211,6 @@ void LogBuffer::Display(ostream& stream,
    stream << prefix << "max (KBs)  : " << (max_ >> 10) << CRLF;
    stream << prefix << "size (KBs) : " << (size_ >> 10) << CRLF;
    stream << prefix << "buff       : " << intptr_t(buff_) << CRLF;
-
-   auto lead = prefix + spaces(2);
-   stream << prefix << "lock : " << CRLF;
-   lock_.Display(stream, lead, options);
 }
 
 //------------------------------------------------------------------------------
@@ -256,7 +257,7 @@ ostringstreamPtr LogBuffer::GetLogs
 
    //  If the log buffer contains any logs, create a stream to spool them.
    //
-   MutexGuard guard(&lock_);
+   MutexGuard guard(&LogBufferLock_);
 
    periodic = false;
    auto curr = FirstUnspooled();
@@ -355,12 +356,12 @@ LogBuffer::Entry* LogBuffer::InsertionPoint(size_t size)
       after = buff_ + size;
    }
 
-   auto prev = next_->prev;
-   if(prev != nullptr) prev->next = where;
-   where->prev = prev;
-   where->next = nullptr;
+   auto prev = next_->header.prev;
+   if(prev != nullptr) prev->header.next = where;
+   where->header.prev = prev;
+   where->header.next = nullptr;
    SetNext(reinterpret_cast< Entry* >(after));
-   next_->prev = where;
+   next_->header.prev = where;
    return where;
 }
 
@@ -372,7 +373,7 @@ const LogBuffer::Entry* LogBuffer::Last() const
 {
    Debug::ft(LogBuffer_Last);
 
-   return next_->prev;
+   return next_->header.prev;
 }
 
 //------------------------------------------------------------------------------
@@ -392,7 +393,7 @@ const LogBuffer::Entry* LogBuffer::Pop()
 
    if(spooled_ == nullptr) return nullptr;
 
-   spooled_ = spooled_->next;
+   spooled_ = spooled_->header.next;
 
    if(spooled_ == nullptr)
    {
@@ -406,7 +407,7 @@ const LogBuffer::Entry* LogBuffer::Pop()
       return nullptr;
    }
 
-   spooled_->prev = nullptr;
+   spooled_->header.prev = nullptr;
 
    if(spooled_ == unspooled_)
    {
@@ -429,7 +430,7 @@ void LogBuffer::Purge(const Entry* last)
    //  If the LAST log that was written to the log file still exists, free the
    //  logs before it, and then free it as well.
    //
-   for(auto curr = Last(); curr != last; curr = curr->prev)
+   for(auto curr = Last(); curr != last; curr = curr->header.prev)
    {
       if(curr == nullptr)
       {
@@ -454,7 +455,7 @@ void LogBuffer::Purge(const Entry* last)
 
 fn_name LogBuffer_Push = "LogBuffer.Push";
 
-LogBuffer::Entry* LogBuffer::Push(const ostringstreamPtr& log)
+bool LogBuffer::Push(const ostringstreamPtr& log)
 {
    Debug::ft(LogBuffer_Push);
 
@@ -464,23 +465,27 @@ LogBuffer::Entry* LogBuffer::Push(const ostringstreamPtr& log)
    auto level = Restart::GetStatus();
    Debug::Assert(level == Running, level);
 
-   MutexGuard guard(&lock_);
-
    auto count = log->str().size();
-   auto size = 2 * sizeof(intptr_t) + count + 1;
+   size_t size = sizeof(Header) + count + 1;
+
+   MutexGuard guard(&LogBufferLock_);
+
    auto entry = InsertionPoint(size);
 
    if(entry == nullptr)
    {
       ++discards_;
-      return nullptr;
+      return false;
    }
 
-   strcpy(entry->log, log->str().c_str());
+   Memory::Copy(entry->log, log->str().c_str(), count);
+   entry->log[count] = NUL;
    if(unspooled_ == nullptr) unspooled_ = entry;
    UpdateMax();
+   guard.~MutexGuard();
+
    Singleton< LogThread >::Instance()->Interrupt();
-   return entry;
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -504,8 +509,8 @@ void LogBuffer::SetNext(Entry* next)
    Debug::ft(LogBuffer_SetNext);
 
    next_ = next;
-   next_->prev = nullptr;
-   next_->next = nullptr;
+   next_->header.prev = nullptr;
+   next_->header.next = nullptr;
 }
 
 //------------------------------------------------------------------------------

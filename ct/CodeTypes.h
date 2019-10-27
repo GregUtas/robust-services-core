@@ -494,6 +494,8 @@ struct FixOptions
    Warning warning;  // type of warning to fix
    bool prompt;      // whether to prompt before fixing a warning
    bool multiple;    // multiple files being fixed
+
+   FixOptions() : warning(Warning_N), prompt(true), multiple(false) { }
 };
 
 //------------------------------------------------------------------------------

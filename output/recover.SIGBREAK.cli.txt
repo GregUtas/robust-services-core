@@ -6,11 +6,11 @@ nt>read trap.08
 nt>/ RECOVER raise ctrl-break
 nt>recover raise SIGBREAK
   OK.
-nt>delay 3
-  OK.
 nt>testcase end
   OK.
 read test.trap.epilog
+nt>delay 2
+  OK.
 nt>stop
   OK.
 nt>sched stop

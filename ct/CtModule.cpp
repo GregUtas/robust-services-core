@@ -21,8 +21,8 @@
 //
 #include "CtModule.h"
 #include "CodeCoverage.h"
-#include "CodeIncrement.h"
 #include "CodeWarning.h"
+#include "CtIncrement.h"
 #include "CxxExecute.h"
 #include "CxxRoot.h"
 #include "CxxSymbols.h"
@@ -91,7 +91,7 @@ void CtModule::Shutdown(RestartLevel level)
    Singleton< CxxRoot >::Instance()->Shutdown(level);
    Singleton< Library >::Instance()->Shutdown(level);
    Singleton< CxxSymbols >::Instance()->Shutdown(level);
-   Singleton< CodeIncrement >::Instance()->Shutdown(level);
+   Singleton< CtIncrement >::Instance()->Shutdown(level);
 }
 
 //------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ void CtModule::Startup(RestartLevel level)
 
    //  Create/start singletons.
    //
-   Singleton< CodeIncrement >::Instance()->Startup(level);
+   Singleton< CtIncrement >::Instance()->Startup(level);
    Singleton< CxxSymbols >::Instance()->Startup(level);
    Singleton< Library >::Instance()->Startup(level);
    Singleton< CxxRoot >::Instance()->Startup(level);

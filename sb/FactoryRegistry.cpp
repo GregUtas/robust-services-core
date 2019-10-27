@@ -110,7 +110,7 @@ FactoryRegistry::FactoryRegistry()
 {
    Debug::ft(FactoryRegistry_ctor);
 
-   factories_.Init(Factory::MaxId + 1, Factory::CellDiff(), MemProt);
+   factories_.Init(Factory::MaxId, Factory::CellDiff(), MemProt);
    statsGroup_.reset(new FactoryStatsGroup);
 }
 

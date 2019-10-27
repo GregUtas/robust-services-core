@@ -135,7 +135,7 @@ ObjectPoolRegistry::ObjectPoolRegistry()
    Debug::ft(ObjectPoolRegistry_ctor);
 
    Singleton< ObjPoolTraceTool >::Instance();
-   pools_.Init(ObjectPool::MaxId + 1, ObjectPool::CellDiff(), MemProt);
+   pools_.Init(ObjectPool::MaxId, ObjectPool::CellDiff(), MemProt);
    statsGroup_.reset(new ObjectPoolStatsGroup);
    nullifyObjectData_.reset(new CfgBoolParm("NullifyObjectData", "F",
       &NullifyObjectData_, "set to nullify the data after an object's vptr"));

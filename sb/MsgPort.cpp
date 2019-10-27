@@ -424,7 +424,7 @@ bool MsgPort::SendMsg(Message& msg)
       msg.Header()->txAddr = locAddr_.sbAddr_;
 
       //  If the protocol stack does not have a socket, give the lowermost
-      //  PSM the opportunity to create one.
+      //  PSM (which is immediately above us) the opportunity to create one.
       //
       if(remAddr_.GetSocket() == nullptr)
       {

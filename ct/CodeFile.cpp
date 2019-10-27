@@ -1131,14 +1131,9 @@ LineType CodeFile::ClassifyLine(string s, std::set< Warning >& warnings) const
    auto length = s.size();
    if(length == 0) return Blank;
 
-   //  If the line is too long, flag it unless it ends in a string literal
-   //  (a quotation mark followed by a semicolon or, within a list, a comma).
+   //  Flag the line if it is too long.
    //
-   if(length > LineLengthMax())
-   {
-      auto end = s.substr(length - 2);
-      if((end != "\";") && (end != "\",")) warnings.insert(LineLength);
-   }
+   if(length > LineLengthMax()) warnings.insert(LineLength);
 
    //  Flag any tabs and convert them to spaces.
    //

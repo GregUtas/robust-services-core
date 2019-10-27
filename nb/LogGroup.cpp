@@ -60,12 +60,9 @@ LogGroup::LogGroup(fixed_string name, fixed_string expl) :
       Debug::SwLog(LogGroup_ctor, "expl length", expl_.size());
    }
 
-   logs_.Init(MaxLogs + 1, Log::CellDiff(), MemDyn);
+   logs_.Init(MaxLogs, Log::CellDiff(), MemDyn);
 
-   if(!Singleton< LogGroupRegistry >::Instance()->BindGroup(*this))
-   {
-      Debug::SwLog(LogGroup_ctor, name_.c_str(), 0);
-   }
+   Singleton< LogGroupRegistry >::Instance()->BindGroup(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -95,6 +92,7 @@ bool LogGroup::BindLog(Log& log)
    if(FindLog(id) != nullptr)
    {
       Debug::SwLog(LogGroup_BindLog, "LogId in use", id);
+      return false;
    }
 
    auto last = logs_.Last();

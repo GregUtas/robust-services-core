@@ -125,7 +125,7 @@ void Tool::Patch(sel_t selector, void* arguments)
 //------------------------------------------------------------------------------
 
 fixed_string ToolOn = "ON";
-fixed_string ToolOff = "OFF";
+fixed_string ToolOff = "off";
 
 string Tool::Status() const
 {

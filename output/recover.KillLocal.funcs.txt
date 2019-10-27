@@ -1,82 +1,70 @@
-FUNCTION PROFILE: 24-Oct-2019 14:16:12.016 on Reigi
+FUNCTION PROFILE: 27-Oct-2019 16:32:54.448 on Reigi
 
     Calls       uSecs   Function
     -----       -----   --------
-        7         158   Memory.Free
-        6         823   Thread.RunningThread
-        6         117   SysThread.Resume
-        6          89   SysMutex.Release
-        6          56   Thread.Interrupt
-        6          37   SysThread.Interrupt
-        6          32   SysMutex.Acquire
-        5          88   SysHeap.Free
-        5          41   Log.Find
-        4         373   Base.ctor
-        4          12   LogBuffer.First
-        4           0   Object.ctor
-        3         600   ThreadRegistry.FindThread
-        3          70   Thread.LogContextSwitch
-        3          57   LogGroupRegistry.FindGroup
-        3          46   Thread.ExitBlockingOperation
-        3          34   Thread.Schedule
-        3          32   Thread.Suspend
-        3          21   LogGroup.FindLog
-        3          19   MutexGuard.ctor
-        3          12   MutexGuard.dtor
-        2     2000972   SysTcpSocket.Poll
-        2       20083   SysThread.Suspend
-        2          90   Registry.Erase
-        2          32   Log.Submit
-        2          25   Thread.Resume
-        2          20   SysThread.Wait
-        2          19   Thread.Ready
-        2          18   IpPort.RecvsInSequence
-        2          16   SysSocket.SetBlocking
-        2          14   Thread.InitialMsecs
-        2          13   LogBuffer.SetNext
-        2          12   Thread.EnterBlockingOperation
-        2           9   LogBuffer.InsertionPoint
-        2           9   ThreadAdmin.WarpFactor
-        2           8   SysIpL2Addr.dtor
-        2           7   LogBuffer.Push
-        2           6   LogBufferRegistry.Active
-        2           0   SysTime.ctor(now)
-        1        1535   SignalException.ctor
-        1         467   LeakyBucketCounter.HasReachedLimit
-        1         288   Q1Way.Init
-        1         186   Log.Format
-        1          31   Pooled.operator delete
-        1          25   HighWatermark.dtor
-        1          17   SysIpL3Addr.dtor
-        1          14   SysThread.DeleteSentry
-        1          13   SysTcpSocket.Accept
-        1          12   Object.operator delete
-        1          12   SignalException.dtor
-        1          12   Singletons.UnbindInstance
-        1          12   Statistic.dtor
-        1           9   Accumulator.dtor
-        1           9   Counter.dtor
+       23         437   SysHeap.Free
+       22         310   Memory.Free
+       10         102   Object.operator delete
+        9           6   C++.delete
+        8        1701   Registry.Erase
+        8          97   Thread.UpdateMutex
+        8          70   Thread.UpdateMutexCount
+        7         147   Statistic.dtor
+        7         107   StatisticsRegistry.UnbindStat
+        6        1565   Thread.RunningThread
+        5          35   Log.Find
+        4          43   Counter.dtor
+        4          39   LogBuffer.First
+        4          34   SysMutex.Release
+        4          32   SysMutex.Acquire
+        3         243   SysThread.Resume
+        3          65   HighWatermark.dtor
+        3          30   LogGroupRegistry.FindGroup
+        3          30   Thread.Interrupt
+        3          25   SysThread.Interrupt
+        3          19   LogGroup.FindLog
+        3          19   MutexGuard.dtor
+        3          17   MutexGuard.ctor
+        2          65   Log.Submit
+        2          30   LogBuffer.Push
+        2          25   Memory.Copy
+        2          20   LogBuffer.SetNext
+        2          15   LogBuffer.InsertionPoint
+        2          14   LeakyBucketCounter.dtor
+        2          10   LogBufferRegistry.Active
+        1        2276   Thread.Pause
+        1        1463   SignalException.ctor
+        1         505   SysThread.Suspend
+        1         350   LeakyBucketCounter.HasReachedLimit
+        1         139   Log.Format
+        1         117   Base.ctor
+        1         113   Thread.LogContextSwitch
+        1          35   ThreadRegistry.UnbindThread
+        1          23   Singletons.UnbindInstance
+        1          19   Alarm.Create
+        1          18   Thread.Schedule
+        1          16   Q1Way.Init
+        1          16   Thread.ReleaseResources
+        1          13   Singleton.Destroy
+        1          10   RecoveryTestThread.Destroy
+        1          10   Thread.Suspend
         1           9   Thread.TrapHandler
-        1           8   Thread.Pause
-        1           7   StatisticsRegistry.UnbindStat
-        1           6   Thread.ReleaseResources
-        1           6   Thread.SetSignal
-        1           5   RecoveryTestThread.Destroy
-        1           5   SysSocket.SetError
-        1           5   TcpIoThread.AcceptConn
-        1           5   TcpIoThread.PollSockets
-        1           4   IpPortRegistry.HostAddress
-        1           4   Orphans.ExitNow
-        1           4   SysIpL2Addr.operator=(copy)
+        1           8   ObjectPool.EnqBlock
+        1           8   Pooled.operator delete
+        1           8   SysThread.Wait
+        1           7   Q1Way.Enq
+        1           7   Thread.ExitSwLog
+        1           7   ThreadPriv.dtor
+        1           6   ObjectPool.UpdateAlarm
+        1           6   RecoveryTestThread.dtor
+        1           6   SignalException.dtor
+        1           6   Thread.dtor
+        1           5   Thread.SetSignal
+        1           4   MutexRegistry.Release
         1           3   Log.Create
-        1           3   RecoveryTestThread.dtor
-        1           3   Singleton.Destroy
-        1           3   SysIpL2Addr.IsValid
-        1           3   Thread.dtor
-        1           1   C++.delete
+        1           3   Orphans.ExitNow
         1           0   Exception.dtor
-        1           0   SysIpL2Addr.ctor
-        1           0   SysIpL2Addr.ctor(copy)
-        1           0   SysIpL3Addr.ctor
+        1           0   Object.ctor
+        1           0   SysTime.ctor(now)
 
-Total functions: 76
+Total functions: 64

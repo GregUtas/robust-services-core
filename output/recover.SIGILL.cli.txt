@@ -6,11 +6,11 @@ nt>read trap.06
 nt>/ RECOVER raise illegal instruction
 nt>recover raise SIGILL
   OK.
-nt>delay 3
-  OK.
 nt>testcase end
   OK.
 read test.trap.epilog
+nt>delay 2
+  OK.
 nt>stop
   OK.
 nt>sched stop

@@ -41,7 +41,7 @@ ServiceRegistry::ServiceRegistry()
 {
    Debug::ft(ServiceRegistry_ctor);
 
-   services_.Init(Service::MaxId + 1, Service::CellDiff(), MemProt);
+   services_.Init(Service::MaxId, Service::CellDiff(), MemProt);
 }
 
 //------------------------------------------------------------------------------

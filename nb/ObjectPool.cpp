@@ -100,6 +100,7 @@ public:
    CounterPtr      freeCount_;
    CounterPtr      failCount_;
    CounterPtr      auditCount_;
+   CounterPtr      expansions_;
    LowWatermarkPtr lowExcess_;
 };
 
@@ -159,6 +160,7 @@ ObjectPoolStats::ObjectPoolStats()
    freeCount_.reset(new Counter("deallocations"));
    failCount_.reset(new Counter("unsuccessful allocations"));
    auditCount_.reset(new Counter("blocks recovered by audit"));
+   expansions_.reset(new Counter("number of times pool was expanded"));
    lowExcess_.reset(new LowWatermark("size of block minus largest object"));
 }
 
@@ -738,6 +740,13 @@ void ObjectPool::EnsureAlarm()
 
 //------------------------------------------------------------------------------
 
+size_t ObjectPool::Expansions() const
+{
+   return stats_->expansions_->Curr();
+}
+
+//------------------------------------------------------------------------------
+
 size_t ObjectPool::FailCount() const
 {
    return stats_->failCount_->Curr();
@@ -1110,6 +1119,8 @@ void ObjectPool::UpdateAlarm() const
 
       if(cfgSegments_->SetValue(size, level))
       {
+         stats_->expansions_->Incr();
+
          log = Log::Create(ObjPoolLogGroup, ObjPoolExpanded);
 
          if(log != nullptr)

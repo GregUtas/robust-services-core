@@ -24,6 +24,7 @@
 
 #include "Immutable.h"
 #include <cstddef>
+#include <string>
 #include "NbTypes.h"
 #include "Registry.h"
 #include "SysTypes.h"
@@ -54,6 +55,10 @@ public:
    //  Returns the tool registered against ID.
    //
    Tool* GetTool(FlagId id) const;
+
+   //  Returns a string that contains each tool's character identifier.
+   //
+   std::string ListTools() const;
 
    //  Returns the tool, if any, whose CLI character is ABBR.
    //

@@ -27,7 +27,6 @@
 #include <cstdint>
 #include <string>
 #include "CallbackRequest.h"
-#include "SysMutex.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -53,24 +52,14 @@ public:
    //
    ~LogBuffer();
 
-   //  An entry in the buffer.
-   //
-   struct Entry
-   {
-      Entry* prev;           // previous entry in the buffer
-      Entry* next;           // next entry in the buffer
-      char log[UINT16_MAX];  // log's contents (null-terminated)
-   };
-
    //  Returns true if the buffer is empty.
    //
    bool Empty() const { return First() == nullptr; }
 
-   //  Adds LOG's contents to the buffer and releases LOG.  Returns
-   //  the log's location in the buffer, or nullptr if the buffer
-   //  is full.
+   //  Adds LOG's contents to the buffer and releases LOG.  Returns true
+   //  if the log was successfully added, and false if the buffer was full.
    //
-   Entry* Push(const ostringstreamPtr& log);
+   bool Push(const ostringstreamPtr& log);
 
    //  Returns the number of unspooled and/or unspooled logs in the buffer.
    //
@@ -102,6 +91,24 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
+   struct Entry;
+
+   //  Header for log buffer entries.
+   //
+   struct Header
+   {
+      Entry* prev;  // previous entry in the buffer
+      Entry* next;  // next entry in the buffer
+   };
+
+   //  An entry in the buffer.
+   //
+   struct Entry
+   {
+      Header header;         // pointers to previous and next entries
+      char log[UINT16_MAX];  // log's contents (null-terminated C string)
+   };
+
    //> When bundling logs into a stream, the number of characters that
    //  prevents another log from being added to the stream.
    //
@@ -154,10 +161,6 @@ private:
    //  Updates the maximum space used in the buffer.
    //
    void UpdateMax();
-
-   //  Critical section lock for the log buffer.
-   //
-   SysMutex lock_;
 
    //  File name for saving the logs.
    //

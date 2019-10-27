@@ -164,6 +164,10 @@ public:
    //
    size_t FreeCount() const;
 
+   //  Returns the number times the pool was expanded.
+   //
+   size_t Expansions() const;
+
    //  Returns the type of memory used by the pool's blocks.
    //
    MemoryType BlockType() const { return type_; }

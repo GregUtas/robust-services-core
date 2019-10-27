@@ -134,6 +134,8 @@ fn_name CinThread_GetLine = "CinThread.GetLine";
 
 std::streamsize CinThread::GetLine(char* buff, std::streamsize capacity)
 {
+   Debug::ft(CinThread_GetLine);
+
    //  Do not read from the console during a restart.  It blocks a thread,
    //  which prevents it from exiting.
    //
@@ -146,8 +148,6 @@ std::streamsize CinThread::GetLine(char* buff, std::streamsize capacity)
    //  one client from being in this code at the same time.
    //
    FunctionGuard guard(FunctionGuard::MakeUnpreemptable);
-
-   Debug::ft(CinThread_GetLine);
 
    auto server = Singleton< CinThread >::Instance();
 
@@ -181,6 +181,8 @@ std::streamsize CinThread::GetLine(char* buff, std::streamsize capacity)
    server->buff_[0] = NUL;
    server->size_ = 0;
    server->client_ = nullptr;
+   guard.~FunctionGuard();
+
    server->Interrupt();
    return n - 1;
 }

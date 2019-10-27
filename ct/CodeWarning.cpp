@@ -965,6 +965,9 @@ bool CodeWarning::Suppress() const
       if(fn == "Allocators.h") return true;
       break;
 
+   case LineLength:
+      if(fn.find("CliParms.cpp") != string::npos) return true;
+
    case RemoveLineBreak:
       if(fn == "BcStates.cpp") return true;
       if(fn == "CodeWarning.cpp") return true;

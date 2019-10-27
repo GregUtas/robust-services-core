@@ -40,7 +40,7 @@ IpServiceRegistry::IpServiceRegistry()
 {
    Debug::ft(IpServiceRegistry_ctor);
 
-   services_.Init(IpService::MaxId + 1, IpService::CellDiff(), MemProt);
+   services_.Init(IpService::MaxId, IpService::CellDiff(), MemProt);
 }
 
 //------------------------------------------------------------------------------

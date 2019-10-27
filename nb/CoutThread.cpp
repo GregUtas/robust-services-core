@@ -28,15 +28,23 @@
 #include "Debug.h"
 #include "FileThread.h"
 #include "FunctionGuard.h"
+#include "MutexGuard.h"
 #include "Restart.h"
 #include "Singleton.h"
 #include "StreamRequest.h"
 #include "SysConsole.h"
+#include "SysMutex.h"
 
 //------------------------------------------------------------------------------
 
 namespace NodeBase
 {
+//  For serializing access to our message queue.
+//
+SysMutex CoutThreadMsgQLock_("CoutThreadMsgQLock");
+
+//------------------------------------------------------------------------------
+
 fn_name CoutThread_ctor = "CoutThread.ctor";
 
 CoutThread::CoutThread() : Thread(BackgroundFaction)
@@ -126,23 +134,19 @@ void CoutThread::Spool(ostringstreamPtr& stream)
       return;
    }
 
-   //  Forward the stream to our thread.  This must be done unpreemptably
-   //  because both this function (which runs on the client thread) and
-   //  our Enter function contend for our message queue.  (If the client
-   //  is in SystemFaction or higher, its priority effectively makes it
-   //  unpreemptable.)
+   //  Forward the stream to our thread.
    //
-   auto client = RunningThread();
-   auto faction = client->GetFaction();
-
-   FunctionGuard
-      guard(FunctionGuard::MakeUnpreemptable, faction < SystemFaction);
-
    auto request = new StreamRequest;
 
    if(request != nullptr)
    {
       request->GiveStream(stream);
+
+      //  This function runs on the client thread, so it contends for our
+      //  message queue with our Enter function.  Although it's unlikely,
+      //  the client could be preemptable or of higher priority.
+      //
+      MutexGuard guard(&CoutThreadMsgQLock_);
       Singleton< CoutThread >::Instance()->EnqMsg(*request);
    }
    else

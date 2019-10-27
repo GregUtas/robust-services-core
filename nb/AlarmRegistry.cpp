@@ -43,7 +43,7 @@ AlarmRegistry::AlarmRegistry()
 {
    Debug::ft(AlarmRegistry_ctor);
 
-   alarms_.Init(MaxAlarms + 1, Alarm::CellDiff(), MemDyn);
+   alarms_.Init(MaxAlarms, Alarm::CellDiff(), MemDyn);
 }
 
 //------------------------------------------------------------------------------
@@ -62,6 +62,12 @@ fn_name AlarmRegistry_BindAlarm = "AlarmRegistry.BindAlarm";
 bool AlarmRegistry::BindAlarm(Alarm& alarm)
 {
    Debug::ft(AlarmRegistry_BindAlarm);
+
+   if(Find(alarm.Name()) != nullptr)
+   {
+      Debug::SwLog(AlarmRegistry_BindAlarm, alarm.Name(), 0);
+      return false;
+   }
 
    return alarms_.Insert(alarm);
 }

@@ -41,7 +41,7 @@ ProtocolRegistry::ProtocolRegistry()
 {
    Debug::ft(ProtocolRegistry_ctor);
 
-   protocols_.Init(Protocol::MaxId + 1, Protocol::CellDiff(), MemProt);
+   protocols_.Init(Protocol::MaxId, Protocol::CellDiff(), MemProt);
 }
 
 //------------------------------------------------------------------------------

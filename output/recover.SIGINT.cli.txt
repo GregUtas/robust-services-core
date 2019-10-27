@@ -6,11 +6,11 @@ nt>read trap.05
 nt>/ RECOVER raise interrupt
 nt>recover raise SIGINT
   OK.
-nt>delay 3
-  OK.
 nt>testcase end
   OK.
 read test.trap.epilog
+nt>delay 2
+  OK.
 nt>stop
   OK.
 nt>sched stop

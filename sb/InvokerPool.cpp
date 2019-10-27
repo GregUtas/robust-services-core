@@ -173,7 +173,7 @@ InvokerPool::InvokerPool(Faction faction, const string& parmKey) :
    Debug::ft(InvokerPool_ctor);
 
    faction_.SetId(faction);
-   invokers_.Init(MaxInvokers + 1, InvokerThread::CellDiff2(), MemDyn);
+   invokers_.Init(MaxInvokers, InvokerThread::CellDiff2(), MemDyn);
    stats_.reset(new InvokerPoolStats);
 
    //  After a restart, cfgInvokers_ may still exist, so try to look it

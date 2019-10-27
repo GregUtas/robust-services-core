@@ -27,6 +27,7 @@
 #include "CliPtrParm.h"
 #include "CliText.h"
 #include "CliTextParm.h"
+#include <string>
 #include "SysTypes.h"
 #include "ToolTypes.h"
 
@@ -98,9 +99,9 @@ class DispBVParm : public CliCharParm
 public: DispBVParm();
 };
 
-//  Free function for obtaining the value of a DispBVParm.  COMM is the command
-//  invoking this function, and CLI is the CLI thread.  Sets V to true if a "v"
-//  was entered.  Returns the result of GetCharParmRc.
+//  Obtains the value of a DispBVParm.  COMM is the command invoking this
+//  function, and CLI is the CLI thread.  Sets V to true if a "v" was entered
+//  Returns the result of GetCharParmRc.
 //
 CliParm::Rc GetBV(const CliCommand& comm, CliThread& cli, bool& v);
 
@@ -114,16 +115,22 @@ class DispCBVParm : public CliCharParm
 public: DispCBVParm();
 };
 
-//  Free function for obtaining the value of a DispCBVParm.  COMM is the command
-//  invoking this function, and CLI is the CLI thread.  Sets V to true if a "v"
-//  was entered, and C to true if a "c" was entered.  Returns the result of
-//  GetCharParmRc.
+//  Obtains the value of a DispCBVParm.  COMM is the command invoking this
+//  function, and CLI is the CLI thread.  Sets V to true if a "v" was entered,
+//  and C to true if a "c" was entered.  Returns the result of GetCharParmRc.
 //
 CliParm::Rc GetCBV(const CliCommand& comm, CliThread& cli, bool& c, bool& v);
 
+//  If a character in OPTS does not appear in VALID, returns false and update
+//  EXPL with an error message and list of invalid characters.  Returns true
+//  if all of the characters in OPTS appear in VALID.
+//
+bool ValidateOptions
+   (const std::string& opts, const std::string& valid, std::string& expl);
+
 //------------------------------------------------------------------------------
 //
-//  Free function for explaining a TraceRc result.
+//  Explains a TraceRc result.  Usage is "return ExplainTraceRc(cli, rc)".
 //
 word ExplainTraceRc(const CliThread& cli, TraceRc rc);
 

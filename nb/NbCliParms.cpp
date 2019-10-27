@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "NbCliParms.h"
+#include <cstddef>
 #include "CliCommand.h"
 #include "CliThread.h"
 #include "Clock.h"
@@ -30,6 +31,8 @@
 #include "NbTypes.h"
 #include "ObjectPool.h"
 #include "SysTime.h"
+
+using std::string;
 
 //------------------------------------------------------------------------------
 
@@ -544,4 +547,29 @@ fixed_string ToolsTextStr = "tools";
 fixed_string ToolsTextExpl = "trace tools";
 
 ToolsText::ToolsText() : CliText(ToolsTextExpl, ToolsTextStr) { }
+
+//------------------------------------------------------------------------------
+
+fn_name NodeBase_ValidateOptions = "NodeBase.ValidateOptions";
+
+bool ValidateOptions(const string& opts, const string& valid, string& expl)
+{
+   Debug::ft(NodeBase_ValidateOptions);
+
+   string invalid;
+
+   for(size_t i = 0; i < opts.size(); ++i)
+   {
+      if(valid.find(opts[i]) == string::npos)
+      {
+         invalid.push_back(opts[i]);
+      }
+   }
+
+   if(invalid.empty()) return true;
+
+   expl = "Invalid options: ";
+   expl += invalid;
+   return false;
+}
 }

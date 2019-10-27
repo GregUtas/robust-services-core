@@ -4883,7 +4883,7 @@ CodeTools::CodeCoverage_dtor [ct/CodeCoverage.cpp]
 CodeTools::CodeCoverage [ct/CodeCoverage.h]
    ct/CodeCoverage.cpp
    ct/CodeFile.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/CtModule.cpp
 CodeTools::CodeCoverage::BLANK [ct/CodeCoverage.h]
    ct/CodeCoverage.cpp
@@ -4903,7 +4903,7 @@ CodeTools::CodeCoverage::Diff [ct/CodeCoverage.h]
    ct/CodeCoverage.cpp
 CodeTools::CodeCoverage::Erase [ct/CodeCoverage.h]
    ct/CodeCoverage.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
 CodeTools::CodeCoverage::FuncData [ct/CodeCoverage.h]
    ct/CodeCoverage.cpp
 CodeTools::CodeCoverage::FuncInfo [ct/CodeCoverage.h]
@@ -4929,7 +4929,7 @@ CodeTools::CodeCoverage::Insert [ct/CodeCoverage.h]
    ct/CodeFile.cpp
 CodeTools::CodeCoverage::Load [ct/CodeCoverage.h]
    ct/CodeCoverage.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
 CodeTools::CodeCoverage::LoadState [ct/CodeCoverage.h]
    ct/CodeCoverage.cpp
    ct/CodeCoverage.h
@@ -4947,7 +4947,7 @@ CodeTools::CodeCoverage::Merge [ct/CodeCoverage.h]
    ct/CodeCoverage.cpp
 CodeTools::CodeCoverage::Query [ct/CodeCoverage.h]
    ct/CodeCoverage.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
 CodeTools::CodeCoverage::Report [ct/CodeCoverage.h]
    ct/CodeCoverage.cpp
 CodeTools::CodeCoverage::Retest [ct/CodeCoverage.h]
@@ -4959,10 +4959,10 @@ CodeTools::CodeCoverage::UNHASHED [ct/CodeCoverage.h]
    ct/CodeCoverage.h
 CodeTools::CodeCoverage::Under [ct/CodeCoverage.h]
    ct/CodeCoverage.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
 CodeTools::CodeCoverage::Update [ct/CodeCoverage.h]
    ct/CodeCoverage.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
 CodeTools::CodeCoverage::currFuncs_ [ct/CodeCoverage.h]
    ct/CodeCoverage.cpp
 CodeTools::CodeCoverage::currTests_ [ct/CodeCoverage.h]
@@ -4997,7 +4997,7 @@ CodeTools::CodeDir [ct/CodeDir.h]
    ct/CodeDirSet.cpp
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Library.cpp
 CodeTools::CodeDir::CellDiff [ct/CodeDir.h]
    ct/CodeDir.cpp
@@ -5006,7 +5006,7 @@ CodeTools::CodeDir::CodeDir [ct/CodeDir.h]
    ct/CodeDir.cpp
 CodeTools::CodeDir::CppCount [ct/CodeDir.h]
    ct/CodeDir.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
 CodeTools::CodeDir::Did [ct/CodeDir.h]
    ct/CodeDirSet.cpp
    ct/CodeFileSet.cpp
@@ -5018,14 +5018,14 @@ CodeTools::CodeDir::Extract [ct/CodeDir.h]
    ct/Library.cpp
 CodeTools::CodeDir::HeaderCount [ct/CodeDir.h]
    ct/CodeDir.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
 CodeTools::CodeDir::IsSubsDir [ct/CodeDir.h]
    ct/CodeDir.cpp
    ct/CodeFile.cpp
 CodeTools::CodeDir::Path [ct/CodeDir.h]
    ct/CodeDirSet.cpp
    ct/CodeFile.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Library.cpp
 CodeTools::CodeDir::did_ [ct/CodeDir.h]
    ct/CodeDir.cpp
@@ -5226,8 +5226,8 @@ CodeTools::CodeFile [ct/CodeFile.h]
    ct/CodeFile.cpp
    ct/CodeFile.h
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeWarning.cpp
+   ct/CtIncrement.cpp
    ct/Cxx.cpp
    ct/CxxArea.cpp
    ct/CxxDirective.cpp
@@ -5364,8 +5364,8 @@ CodeTools::CodeFile::GetEditor [ct/CodeFile.h]
    ct/Editor.cpp
 CodeTools::CodeFile::GetLexer [ct/CodeFile.h]
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeWarning.cpp
+   ct/CtIncrement.cpp
    ct/CxxArea.cpp
    ct/CxxExecute.cpp
    ct/CxxNamed.cpp
@@ -5377,7 +5377,7 @@ CodeTools::CodeFile::GetLineCounts [ct/CodeFile.h]
    ct/CodeWarning.cpp
 CodeTools::CodeFile::GetLineType [ct/CodeFile.h]
    ct/CodeFile.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/CxxScope.cpp
    ct/Editor.cpp
 CodeTools::CodeFile::GetUsageInfo [ct/CodeFile.h]
@@ -5496,7 +5496,7 @@ CodeTools::CodeFile::ParseState [ct/CodeFile.h]
    ct/CodeFile.h
 CodeTools::CodeFile::ParseState::Failed [ct/CodeFile.h]
    ct/CodeFile.h
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
 CodeTools::CodeFile::ParseState::Passed [ct/CodeFile.h]
    ct/CodeFile.h
 CodeTools::CodeFile::ParseState::Unparsed [ct/CodeFile.h]
@@ -5505,7 +5505,7 @@ CodeTools::CodeFile::ParseState::Unparsed [ct/CodeFile.h]
    ct/Parser.cpp
 CodeTools::CodeFile::ParseStatus [ct/CodeFile.h]
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Parser.cpp
 CodeTools::CodeFile::Path [ct/CodeFile.h]
    ct/CodeFile.cpp
@@ -5745,591 +5745,6 @@ CodeTools::CodeFileSet::Users [ct/CodeFileSet.h]
    ct/CodeFileSet.cpp
 CodeTools::CodeFileSet::~CodeFileSet [ct/CodeFileSet.h]
    ct/CodeFileSet.cpp
-CodeTools::ActionExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ActionParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ActionParm::ActionParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ActionParm::Clear [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ActionParm::Insert [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ActionParm::List [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ActionParm::Remove [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::AssignCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::AssignCommand::AssignCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::AssignCommand::ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::AssignCommand_ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::AssignExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::AssignStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::BreakText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::BreakText::BreakText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::BreakTextExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::BreakTextStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CheckCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CheckCommand::CheckCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CheckCommand::ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CheckCommand_ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CheckExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CheckStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ClearText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ClearText::ClearText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ClearTextExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ClearTextStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CodeFileExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CodeFileParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CodeFileParm::CodeFileParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CodeIncrement_ctor [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CodeIncrement_dtor [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CodeSetExprExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CodeSetExprParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CodeSetExprParm::CodeSetExprParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CountCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CountCommand::CountCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CountCommand::ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CountCommand_ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CountExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CountStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CountlinesCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CountlinesCommand::CountlinesCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CountlinesCommand::ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CountlinesCommand_ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CountlinesExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CountlinesStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageAction [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageAction::CoverageAction [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageActionExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageCommand::CoverageCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageCommand::ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageCommand_ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageEraseIndex [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageEraseText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageEraseText::CoverageEraseText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageEraseTextExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageEraseTextStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageLoadIndex [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageLoadText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageLoadText::CoverageLoadText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageLoadTextExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageLoadTextStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageQueryIndex [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageQueryText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageQueryText::CoverageQueryText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageQueryTextExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageQueryTextStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageUnderIndex [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageUnderText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageUnderText::CoverageUnderText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageUnderTextExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageUnderTextStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageUpdateExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageUpdateIndex [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageUpdateStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageUpdateText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CoverageUpdateText::CoverageUpdateText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CtExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CtStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::DefineFileExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::DefineFileParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::DefineFileParm::DefineFileParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::DirMandName [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::DirMandName::DirMandName [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::DirMandNameExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::DirsText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::DirsText::DirsText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::DirsTextExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::DirsTextStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ExpCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ExpCommand::ExpCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ExpCommand::ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ExpCommand_ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ExpExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ExpStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ExplainCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ExplainCommand::ExplainCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ExplainCommand::ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ExplainCommand_ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ExplainExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ExplainStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ExportCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ExportCommand::ExportCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ExportCommand::ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ExportCommand_ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ExportExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ExportStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FailedText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FailedText::FailedText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FailedTextExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FailedTextStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FileIdCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FileIdCommand::FileIdCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FileIdCommand::ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FileIdCommand_ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FileIdExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FileIdMandExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FileIdMandParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FileIdMandParm::FileIdMandParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FileIdStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FileInfoCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FileInfoCommand::FileInfoCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FileInfoCommand::ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FileInfoCommand_ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FileInfoExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FileInfoStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FileNameExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FileNameParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FileNameParm::FileNameParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FileSetExprExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FileSetExprParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FileSetExprParm::FileSetExprParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FixCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FixCommand::FixCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FixCommand::ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FixCommand_ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FixExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FixStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FormatCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FormatCommand::FormatCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FormatCommand::ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FormatCommand_ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FormatExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FormatStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FuncNameParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FuncNameParm::FuncNameParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::FuncNameParmExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ImportCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ImportCommand::ImportCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ImportCommand::ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ImportCommand_ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ImportExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ImportStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::InsertText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::InsertText::InsertText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::InsertTextExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::InsertTextStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ItemsText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ItemsText::ItemsText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ItemsTextExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ItemsTextStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::LibraryCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::LibraryCommand::Evaluate [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::LibraryCommand::LibraryCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::LibraryCommand_Evaluate [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::LineNumberExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::LineNumberParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::LineNumberParm::LineNumberParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ListCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ListCommand::ListCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ListCommand::ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ListCommand_ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ListExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ListStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ListText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ListText::ListText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ListTextExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ListTextStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::MinTestsParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::MinTestsParm::MinTestsParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::MinTestsParmExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ModeExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ModeParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ModeParm::Break [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ModeParm::ModeParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ModeParm::Start [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ModeParm::Stop [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::OptionsExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::OptionsParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::OptionsParm::OptionsParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ParseCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ParseCommand::ParseCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ParseCommand::ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ParseCommand_ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ParseExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ParseStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::PathMandExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::PathMandParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::PathMandParm::PathMandParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::PromptExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::PromptParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::PromptParm::PromptParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::PurgeCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::PurgeCommand::ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::PurgeCommand::PurgeCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::PurgeCommand_ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::PurgeExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::PurgeStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::RemoveText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::RemoveText::RemoveText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::RemoveTextExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::RemoveTextStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ScanCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ScanCommand::ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ScanCommand::ScanCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ScanCommand_ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ScanExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ScanStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::SetExprExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::SetExprParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::SetExprParm::SetExprParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ShowCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ShowCommand::DirsIndex [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ShowCommand::FailedIndex [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ShowCommand::ItemsIndex [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ShowCommand::ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ShowCommand::ShowCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ShowCommand::StatsIndex [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ShowCommand_ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ShowExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ShowStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ShowWhatExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ShowWhatParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ShowWhatParm::ShowWhatParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ShrinkCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ShrinkCommand::ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ShrinkCommand::ShrinkCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ShrinkCommand_ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ShrinkExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ShrinkStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::SortCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::SortCommand::ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::SortCommand::SortCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::SortCommand_ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::SortExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::SortStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::StartText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::StartText::StartText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::StartTextExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::StartTextStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::StatsText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::StatsText::StatsText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::StatsTextExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::StatsTextStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::StopText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::StopText::StopText [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::StopTextExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::StopTextStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::StringPatternExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::StringPatternParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::StringPatternParm::StringPatternParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::TraceCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::TraceCommand::ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::TraceCommand::TraceCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::TraceCommand_ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::TraceExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::TraceStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::TypeCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::TypeCommand::ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::TypeCommand::TypeCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::TypeCommand_ProcessCommand [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::TypeExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::TypeStr [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::VarMandName [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::VarMandName::VarMandName [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::VarMandNameExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ViewsExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ViewsParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::ViewsParm::ViewsParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::WarningExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::WarningIdExpl [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::WarningIdParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::WarningIdParm::WarningIdParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::WarningParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::WarningParm::WarningParm [ct/CodeIncrement.cpp]
-   ct/CodeIncrement.cpp
-CodeTools::CodeIncrement [ct/CodeIncrement.h]
-   ct/CodeIncrement.cpp
-   ct/CtModule.cpp
-CodeTools::CodeIncrement::CodeIncrement [ct/CodeIncrement.h]
-   ct/CodeIncrement.cpp
-CodeTools::CodeIncrement::~CodeIncrement [ct/CodeIncrement.h]
-   ct/CodeIncrement.cpp
 CodeTools::CodeSet_Assign [ct/CodeSet.cpp]
    ct/CodeSet.cpp
 CodeTools::CodeSet_Count [ct/CodeSet.cpp]
@@ -6689,18 +6104,18 @@ CodeTools::FixOptions [ct/CodeTypes.h]
    ct/CodeFile.cpp
    ct/CodeFile.h
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeTypes.cpp
+   ct/CtIncrement.cpp
    ct/Editor.cpp
    ct/Editor.h
 CodeTools::FixOptions::multiple [ct/CodeTypes.h]
    ct/CodeFileSet.cpp
    ct/Editor.cpp
 CodeTools::FixOptions::prompt [ct/CodeTypes.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Editor.cpp
 CodeTools::FixOptions::warning [ct/CodeTypes.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Editor.cpp
 CodeTools::FunctionDefinition [ct/CodeTypes.h]
    ct/CxxArea.cpp
@@ -6948,15 +6363,15 @@ CodeTools::LineType::UsingStatement [ct/CodeTypes.h]
    ct/Editor.cpp
 CodeTools::LineTypeAttr [ct/CodeTypes.h]
    ct/CodeFile.cpp
-   ct/CodeIncrement.cpp
    ct/CodeTypes.cpp
    ct/CodeTypes.h
+   ct/CtIncrement.cpp
    ct/CxxScope.cpp
    ct/Editor.cpp
 CodeTools::LineTypeAttr::Attrs [ct/CodeTypes.h]
    ct/CodeFile.cpp
-   ct/CodeIncrement.cpp
    ct/CodeTypes.cpp
+   ct/CtIncrement.cpp
    ct/CxxScope.cpp
    ct/Editor.cpp
 CodeTools::LineTypeAttr::LineTypeAttr [ct/CodeTypes.h]
@@ -6969,7 +6384,7 @@ CodeTools::LineTypeAttr::isCode [ct/CodeTypes.h]
    ct/CxxScope.cpp
    ct/Editor.cpp
 CodeTools::LineTypeAttr::isExecutable [ct/CodeTypes.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Editor.cpp
 CodeTools::LineTypeAttr::isMergeable [ct/CodeTypes.h]
    ct/CodeFile.cpp
@@ -7337,10 +6752,10 @@ CodeTools::WHILE_STR [ct/CodeTypes.h]
 CodeTools::Warning [ct/CodeTypes.h]
    ct/CodeFile.cpp
    ct/CodeFile.h
-   ct/CodeIncrement.cpp
    ct/CodeTypes.h
    ct/CodeWarning.cpp
    ct/CodeWarning.h
+   ct/CtIncrement.cpp
    ct/CxxArea.cpp
    ct/CxxArea.h
    ct/CxxExecute.cpp
@@ -7791,9 +7206,10 @@ CodeTools::Warning::VoidAsArgument [ct/CodeTypes.h]
    ct/Editor.cpp
 CodeTools::Warning::Warning_N [ct/CodeTypes.h]
    ct/CodeFile.cpp
-   ct/CodeIncrement.cpp
+   ct/CodeTypes.h
    ct/CodeWarning.cpp
    ct/CodeWarning.h
+   ct/CtIncrement.cpp
    ct/CxxScope.cpp
 CodeTools::WhitespaceChars [ct/CodeTypes.h]
    ct/CodeFile.cpp
@@ -7943,6 +7359,597 @@ CodeTools::WarningStatus::Pending [ct/CodeWarning.h]
 CodeTools::operator<<(std::basic_ostream,CodeTools::Warning) [ct/CodeWarning.h]
    ct/CodeWarning.cpp
    ct/Editor.cpp
+CodeTools::ActionExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ActionParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ActionParm::ActionParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ActionParm::Clear [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ActionParm::Insert [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ActionParm::List [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ActionParm::Remove [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::AssignCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::AssignCommand::AssignCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::AssignCommand::ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::AssignCommand_ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::AssignExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::AssignStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::BreakText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::BreakText::BreakText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::BreakTextExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::BreakTextStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CheckCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CheckCommand::CheckCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CheckCommand::ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CheckCommand_ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CheckExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CheckStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ClearText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ClearText::ClearText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ClearTextExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ClearTextStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CodeFileExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CodeFileParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CodeFileParm::CodeFileParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CodeSetExprExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CodeSetExprParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CodeSetExprParm::CodeSetExprParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CountCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CountCommand::CountCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CountCommand::ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CountCommand_ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CountExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CountStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CountlinesCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CountlinesCommand::CountlinesCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CountlinesCommand::ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CountlinesCommand_ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CountlinesExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CountlinesStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageAction [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageAction::CoverageAction [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageActionExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageCommand::CoverageCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageCommand::ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageCommand_ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageEraseIndex [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageEraseText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageEraseText::CoverageEraseText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageEraseTextExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageEraseTextStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageLoadIndex [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageLoadText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageLoadText::CoverageLoadText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageLoadTextExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageLoadTextStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageQueryIndex [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageQueryText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageQueryText::CoverageQueryText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageQueryTextExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageQueryTextStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageUnderIndex [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageUnderText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageUnderText::CoverageUnderText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageUnderTextExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageUnderTextStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageUpdateExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageUpdateIndex [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageUpdateStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageUpdateText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CoverageUpdateText::CoverageUpdateText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CtExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CtIncrement_ctor [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CtIncrement_dtor [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CtStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::DefaultExportOptions [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::DefineFileExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::DefineFileParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::DefineFileParm::DefineFileParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::DirMandName [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::DirMandName::DirMandName [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::DirMandNameExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::DirsText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::DirsText::DirsText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::DirsTextExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::DirsTextStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ExpCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ExpCommand::ExpCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ExpCommand::ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ExpCommand_ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ExpExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ExpStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ExplainCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ExplainCommand::ExplainCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ExplainCommand::ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ExplainCommand_ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ExplainExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ExplainStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ExportCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ExportCommand::ExportCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ExportCommand::ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ExportCommand_ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ExportExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ExportStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FailedText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FailedText::FailedText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FailedTextExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FailedTextStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FileIdCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FileIdCommand::FileIdCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FileIdCommand::ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FileIdCommand_ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FileIdExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FileIdMandExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FileIdMandParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FileIdMandParm::FileIdMandParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FileIdStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FileInfoCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FileInfoCommand::FileInfoCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FileInfoCommand::ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FileInfoCommand_ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FileInfoExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FileInfoStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FileNameExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FileNameParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FileNameParm::FileNameParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FileSetExprExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FileSetExprParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FileSetExprParm::FileSetExprParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FixCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FixCommand::FixCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FixCommand::ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FixCommand_ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FixExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FixStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FormatCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FormatCommand::FormatCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FormatCommand::ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FormatCommand_ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FormatExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FormatStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FuncNameParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FuncNameParm::FuncNameParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::FuncNameParmExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ImportCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ImportCommand::ImportCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ImportCommand::ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ImportCommand_ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ImportExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ImportStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::InsertText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::InsertText::InsertText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::InsertTextExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::InsertTextStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ItemsText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ItemsText::ItemsText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ItemsTextExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ItemsTextStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::LibraryCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::LibraryCommand::Evaluate [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::LibraryCommand::LibraryCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::LibraryCommand_Evaluate [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::LineNumberExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::LineNumberParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::LineNumberParm::LineNumberParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ListCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ListCommand::ListCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ListCommand::ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ListCommand_ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ListExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ListStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ListText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ListText::ListText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ListTextExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ListTextStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::MinTestsParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::MinTestsParm::MinTestsParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::MinTestsParmExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ModeExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ModeParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ModeParm::Break [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ModeParm::ModeParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ModeParm::Start [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ModeParm::Stop [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::OptionsExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::OptionsParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::OptionsParm::OptionsParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ParseCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ParseCommand::ParseCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ParseCommand::ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ParseCommand_ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ParseExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ParseStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::PathMandExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::PathMandParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::PathMandParm::PathMandParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::PromptExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::PromptParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::PromptParm::PromptParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::PurgeCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::PurgeCommand::ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::PurgeCommand::PurgeCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::PurgeCommand_ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::PurgeExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::PurgeStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::RemoveText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::RemoveText::RemoveText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::RemoveTextExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::RemoveTextStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ScanCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ScanCommand::ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ScanCommand::ScanCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ScanCommand_ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ScanExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ScanStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::SetExprExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::SetExprParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::SetExprParm::SetExprParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ShowCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ShowCommand::DirsIndex [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ShowCommand::FailedIndex [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ShowCommand::ItemsIndex [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ShowCommand::ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ShowCommand::ShowCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ShowCommand::StatsIndex [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ShowCommand_ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ShowExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ShowStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ShowWhatExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ShowWhatParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ShowWhatParm::ShowWhatParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ShrinkCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ShrinkCommand::ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ShrinkCommand::ShrinkCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ShrinkCommand_ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ShrinkExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ShrinkStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::SortCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::SortCommand::ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::SortCommand::SortCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::SortCommand_ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::SortExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::SortStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::StartText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::StartText::StartText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::StartTextExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::StartTextStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::StatsText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::StatsText::StatsText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::StatsTextExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::StatsTextStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::StopText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::StopText::StopText [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::StopTextExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::StopTextStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::StringPatternExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::StringPatternParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::StringPatternParm::StringPatternParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::TraceCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::TraceCommand::ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::TraceCommand::TraceCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::TraceCommand_ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::TraceExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::TraceStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::TypeCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::TypeCommand::ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::TypeCommand::TypeCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::TypeCommand_ProcessCommand [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::TypeExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::TypeStr [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ValidExportOptions [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ValidParseOptions [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::VarMandName [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::VarMandName::VarMandName [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::VarMandNameExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ViewsExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ViewsParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ViewsParm::ViewsParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::WarningExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::WarningIdExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::WarningIdParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::WarningIdParm::WarningIdParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::WarningParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::WarningParm::WarningParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::CtIncrement [ct/CtIncrement.h]
+   ct/CtIncrement.cpp
+   ct/CtModule.cpp
+CodeTools::CtIncrement::CtIncrement [ct/CtIncrement.h]
+   ct/CtIncrement.cpp
+CodeTools::CtIncrement::~CtIncrement [ct/CtIncrement.h]
+   ct/CtIncrement.cpp
 CodeTools::CtModule_Register [ct/CtModule.cpp]
    ct/CtModule.cpp
 CodeTools::CtModule_Shutdown [ct/CtModule.cpp]
@@ -8794,7 +8801,7 @@ CodeTools::CxxStats::Decr [ct/Cxx.h]
    ct/CxxSymbols.cpp
    ct/CxxToken.h
 CodeTools::CxxStats::Display [ct/Cxx.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Cxx.cpp
 CodeTools::CxxStats::Incr [ct/Cxx.h]
    ct/CodeFile.cpp
@@ -8985,7 +8992,7 @@ CodeTools::CxxStats::Item::WHILE [ct/Cxx.h]
    ct/CxxStatement.cpp
    ct/CxxStatement.h
 CodeTools::CxxStats::Shrink [ct/Cxx.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Cxx.cpp
 CodeTools::CxxStats::Strings [ct/Cxx.h]
    ct/CodeFile.cpp
@@ -10469,17 +10476,17 @@ CodeTools::Context::Clear [ct/CxxExecute.h]
    ct/CxxScope.cpp
    ct/CxxStatement.cpp
 CodeTools::Context::ClearTracepoints [ct/CxxExecute.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/CxxExecute.cpp
 CodeTools::Context::DisplayTracepoints [ct/CxxExecute.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/CxxExecute.cpp
 CodeTools::Context::Enter [ct/CxxExecute.h]
    ct/CxxExecute.cpp
    ct/CxxScope.cpp
    ct/CxxScoped.cpp
 CodeTools::Context::EraseTracepoint [ct/CxxExecute.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/CxxExecute.cpp
 CodeTools::Context::Execute [ct/CxxExecute.h]
    ct/CxxScope.cpp
@@ -10514,7 +10521,7 @@ CodeTools::Context::GetPos [ct/CxxExecute.h]
    ct/CxxNamed.cpp
    ct/CxxScope.cpp
 CodeTools::Context::InsertTracepoint [ct/CxxExecute.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/CxxExecute.cpp
 CodeTools::Context::LastLogLoc_ [ct/CxxExecute.h]
    ct/CxxExecute.cpp
@@ -10776,6 +10783,7 @@ CodeTools::ParseFrame::pos_ [ct/CxxExecute.h]
 CodeTools::ParseFrame::scopes_ [ct/CxxExecute.h]
    ct/CxxExecute.cpp
 CodeTools::SaveParseTrace [ct/CxxExecute.h]
+   ct/CtIncrement.cpp
    ct/CxxExecute.h
    ct/Parser.cpp
 CodeTools::StackArg [ct/CxxExecute.h]
@@ -10983,34 +10991,38 @@ CodeTools::StackArg::this_ [ct/CxxExecute.h]
 CodeTools::StackArg::via_ [ct/CxxExecute.h]
    ct/CxxExecute.cpp
 CodeTools::TraceExecution [ct/CxxExecute.h]
+   ct/CtIncrement.cpp
    ct/CxxExecute.cpp
    ct/CxxExecute.h
 CodeTools::TraceFunctions [ct/CxxExecute.h]
+   ct/CtIncrement.cpp
    ct/CxxExecute.cpp
    ct/CxxExecute.h
 CodeTools::TraceImmediate [ct/CxxExecute.h]
+   ct/CtIncrement.cpp
    ct/CxxExecute.cpp
    ct/CxxExecute.h
 CodeTools::TraceParse [ct/CxxExecute.h]
+   ct/CtIncrement.cpp
    ct/CxxExecute.h
    ct/Parser.cpp
 CodeTools::Tracepoint [ct/CxxExecute.h]
    ct/CxxExecute.cpp
    ct/CxxExecute.h
 CodeTools::Tracepoint::Action [ct/CxxExecute.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/CxxExecute.cpp
    ct/CxxExecute.h
 CodeTools::Tracepoint::Action::Action_N [ct/CxxExecute.h]
    ct/CxxExecute.cpp
 CodeTools::Tracepoint::Action::Break [ct/CxxExecute.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/CxxExecute.cpp
 CodeTools::Tracepoint::Action::Start [ct/CxxExecute.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/CxxExecute.cpp
 CodeTools::Tracepoint::Action::Stop [ct/CxxExecute.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/CxxExecute.cpp
 CodeTools::Tracepoint::Display [ct/CxxExecute.h]
    ct/CxxExecute.cpp
@@ -13130,8 +13142,8 @@ CodeTools::StrLiteralPtrVector [ct/CxxRoot.cpp]
    ct/CxxRoot.cpp
 CodeTools::CxxRoot [ct/CxxRoot.h]
    ct/CodeFile.cpp
-   ct/CodeIncrement.cpp
    ct/CodeWarning.cpp
+   ct/CtIncrement.cpp
    ct/CtModule.cpp
    ct/Cxx.cpp
    ct/CxxArea.cpp
@@ -13170,7 +13182,7 @@ CodeTools::CxxRoot::CharTerm [ct/CxxRoot.h]
 CodeTools::CxxRoot::CxxRoot [ct/CxxRoot.h]
    ct/CxxRoot.cpp
 CodeTools::CxxRoot::DefineSymbols [ct/CxxRoot.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/CxxRoot.cpp
 CodeTools::CxxRoot::Display [ct/CxxRoot.h]
    ct/CxxRoot.cpp
@@ -16084,7 +16096,7 @@ CodeTools::CODE_REFS [ct/CxxSymbols.h]
    ct/CxxSymbols.cpp
 CodeTools::CxxSymbols [ct/CxxSymbols.h]
    ct/CodeFile.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/CtModule.cpp
    ct/Cxx.cpp
    ct/CxxArea.cpp
@@ -16112,7 +16124,7 @@ CodeTools::CxxSymbols::DataTablePtr [ct/CxxSymbols.h]
    ct/CxxSymbols.cpp
    ct/CxxSymbols.h
 CodeTools::CxxSymbols::DisplayXref [ct/CxxSymbols.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/CxxSymbols.cpp
 CodeTools::CxxSymbols::EnumTable [ct/CxxSymbols.h]
    ct/CxxSymbols.cpp
@@ -18076,8 +18088,8 @@ CodeTools::Lexer [ct/Lexer.h]
    ct/CodeFile.cpp
    ct/CodeFile.h
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeWarning.cpp
+   ct/CtIncrement.cpp
    ct/CxxArea.cpp
    ct/CxxExecute.cpp
    ct/CxxNamed.cpp
@@ -18213,8 +18225,8 @@ CodeTools::Lexer::GetNthLine(const CodeTools::Lexer* const,unsigned int) [ct/Lex
 CodeTools::Lexer::GetNthLine(const CodeTools::Lexer* const,unsigned int,std::basic_string<char,std::char_traits<char>,std::allocator<char>>) [ct/Lexer.h]
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeWarning.cpp
+   ct/CtIncrement.cpp
    ct/CxxExecute.cpp
    ct/Lexer.cpp
 CodeTools::Lexer::GetNum [ct/Lexer.h]
@@ -18432,8 +18444,8 @@ CodeTools::Library [ct/Library.h]
    ct/CodeDirSet.cpp
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeWarning.cpp
+   ct/CtIncrement.cpp
    ct/CtModule.cpp
    ct/Cxx.cpp
    ct/CxxDirective.cpp
@@ -18450,11 +18462,11 @@ CodeTools::Library::AddVar [ct/Library.h]
    ct/Library.cpp
    ct/LibrarySet.cpp
 CodeTools::Library::Assign [ct/Library.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Library.cpp
 CodeTools::Library::Directories [ct/Library.h]
    ct/CodeDirSet.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
 CodeTools::Library::Display [ct/Library.h]
    ct/Library.cpp
 CodeTools::Library::EnsureFile [ct/Library.h]
@@ -18468,18 +18480,18 @@ CodeTools::Library::EraseVar [ct/Library.h]
    ct/Library.cpp
    ct/LibrarySet.cpp
 CodeTools::Library::Evaluate [ct/Library.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Library.cpp
 CodeTools::Library::Export [ct/Library.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Library.cpp
 CodeTools::Library::Files [ct/Library.h]
    ct/CodeDir.cpp
    ct/CodeDirSet.cpp
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeWarning.cpp
+   ct/CtIncrement.cpp
    ct/Cxx.cpp
    ct/CxxDirective.cpp
    ct/CxxNamed.cpp
@@ -18488,13 +18500,13 @@ CodeTools::Library::FindDir [ct/Library.h]
    ct/Library.cpp
 CodeTools::Library::FindFile [ct/Library.h]
    ct/CodeFile.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/CxxDirective.cpp
    ct/Library.cpp
 CodeTools::Library::FindVar [ct/Library.h]
    ct/Library.cpp
 CodeTools::Library::Import [ct/Library.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Library.cpp
 CodeTools::Library::Library [ct/Library.h]
    ct/Library.cpp
@@ -18503,13 +18515,13 @@ CodeTools::Library::MaxDirs [ct/Library.h]
 CodeTools::Library::MaxFiles [ct/Library.h]
    ct/Library.cpp
 CodeTools::Library::Purge [ct/Library.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Library.cpp
 CodeTools::Library::Shutdown [ct/Library.h]
    ct/Library.cpp
 CodeTools::Library::SourcePath [ct/Library.h]
    ct/CodeFile.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
 CodeTools::Library::SourcePath_ [ct/Library.h]
    ct/Library.cpp
    ct/Library.h
@@ -18521,7 +18533,7 @@ CodeTools::Library::SubsDir [ct/Library.h]
 CodeTools::Library::SubsFiles [ct/Library.h]
    ct/CodeFileSet.cpp
 CodeTools::Library::Trim [ct/Library.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Library.cpp
 CodeTools::Library::Variables [ct/Library.h]
    ct/LibraryVarSet.cpp
@@ -18643,8 +18655,8 @@ CodeTools::LibraryItem::Name [ct/LibraryItem.h]
    ct/CodeDirSet.cpp
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeWarning.cpp
+   ct/CtIncrement.cpp
    ct/CxxExecute.cpp
    ct/CxxNamed.cpp
    ct/CxxScoped.cpp
@@ -18710,9 +18722,9 @@ CodeTools::LibrarySet [ct/LibrarySet.h]
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
    ct/CodeFileSet.h
-   ct/CodeIncrement.cpp
    ct/CodeSet.cpp
    ct/CodeSet.h
+   ct/CtIncrement.cpp
    ct/Interpreter.cpp
    ct/Library.cpp
    ct/LibraryErrSet.cpp
@@ -18741,7 +18753,7 @@ CodeTools::LibrarySet::Assign [ct/LibrarySet.h]
 CodeTools::LibrarySet::Check [ct/LibrarySet.h]
    ct/CodeFileSet.cpp
    ct/CodeFileSet.h
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/LibraryErrSet.cpp
    ct/LibraryErrSet.h
    ct/LibrarySet.cpp
@@ -18751,9 +18763,9 @@ CodeTools::LibrarySet::CommonAffecters [ct/LibrarySet.h]
    ct/Interpreter.cpp
    ct/LibrarySet.cpp
 CodeTools::LibrarySet::Count [ct/LibrarySet.h]
-   ct/CodeIncrement.cpp
    ct/CodeSet.cpp
    ct/CodeSet.h
+   ct/CtIncrement.cpp
    ct/LibraryErrSet.cpp
    ct/LibraryErrSet.h
    ct/LibrarySet.cpp
@@ -18766,7 +18778,7 @@ CodeTools::LibrarySet::Counted [ct/LibrarySet.h]
 CodeTools::LibrarySet::Countlines [ct/LibrarySet.h]
    ct/CodeFileSet.cpp
    ct/CodeFileSet.h
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/LibraryErrSet.cpp
    ct/LibraryErrSet.h
    ct/LibrarySet.cpp
@@ -18808,14 +18820,14 @@ CodeTools::LibrarySet::Files [ct/LibrarySet.h]
 CodeTools::LibrarySet::Fix [ct/LibrarySet.h]
    ct/CodeFileSet.cpp
    ct/CodeFileSet.h
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/LibraryErrSet.cpp
    ct/LibraryErrSet.h
    ct/LibrarySet.cpp
 CodeTools::LibrarySet::Format [ct/LibrarySet.h]
    ct/CodeFileSet.cpp
    ct/CodeFileSet.h
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/LibraryErrSet.cpp
    ct/LibraryErrSet.h
    ct/LibrarySet.cpp
@@ -18860,7 +18872,7 @@ CodeTools::LibrarySet::List [ct/LibrarySet.h]
    ct/CodeDirSet.h
    ct/CodeFileSet.cpp
    ct/CodeFileSet.h
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/LibraryErrSet.cpp
    ct/LibraryErrSet.h
    ct/LibrarySet.cpp
@@ -18886,7 +18898,7 @@ CodeTools::LibrarySet::OpError [ct/LibrarySet.h]
 CodeTools::LibrarySet::Parse [ct/LibrarySet.h]
    ct/CodeFileSet.cpp
    ct/CodeFileSet.h
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/LibraryErrSet.cpp
    ct/LibraryErrSet.h
    ct/LibrarySet.cpp
@@ -18901,15 +18913,15 @@ CodeTools::LibrarySet::ReadOnlyChar [ct/LibrarySet.h]
 CodeTools::LibrarySet::Release [ct/LibrarySet.h]
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeSet.cpp
+   ct/CtIncrement.cpp
    ct/Interpreter.cpp
    ct/Library.cpp
    ct/LibrarySet.cpp
 CodeTools::LibrarySet::Scan [ct/LibrarySet.h]
    ct/CodeFileSet.cpp
    ct/CodeFileSet.h
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/LibraryErrSet.cpp
    ct/LibraryErrSet.h
    ct/LibrarySet.cpp
@@ -18920,7 +18932,7 @@ CodeTools::LibrarySet::Show [ct/LibrarySet.h]
    ct/CodeDirSet.h
    ct/CodeFileSet.cpp
    ct/CodeFileSet.h
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/LibraryErrSet.cpp
    ct/LibraryErrSet.h
    ct/LibrarySet.cpp
@@ -18934,7 +18946,7 @@ CodeTools::LibrarySet::Shown [ct/LibrarySet.h]
 CodeTools::LibrarySet::Sort [ct/LibrarySet.h]
    ct/CodeFileSet.cpp
    ct/CodeFileSet.h
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/LibraryErrSet.cpp
    ct/LibraryErrSet.h
    ct/LibrarySet.cpp
@@ -18987,11 +18999,11 @@ CodeTools::BuildOrderPtr [ct/LibraryTypes.h]
    ct/CodeFileSet.h
 CodeTools::CanonicalFileView [ct/LibraryTypes.h]
    ct/CodeFile.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Library.cpp
    ct/LibraryTypes.h
 CodeTools::ClassHierarchyView [ct/LibraryTypes.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Library.cpp
    ct/LibraryTypes.h
 CodeTools::FileLevel [ct/LibraryTypes.h]
@@ -19007,14 +19019,14 @@ CodeTools::FileLevel::fid [ct/LibraryTypes.h]
 CodeTools::FileLevel::level [ct/LibraryTypes.h]
    ct/CodeFileSet.cpp
 CodeTools::FileSymbolUsage [ct/LibraryTypes.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/LibraryTypes.h
 CodeTools::GlobalCrossReference [ct/LibraryTypes.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/LibraryTypes.h
 CodeTools::ItemStatistics [ct/LibraryTypes.h]
    ct/CodeFile.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Library.cpp
    ct/LibraryTypes.h
 CodeTools::LibExprErr [ct/LibraryTypes.h]
@@ -19130,12 +19142,12 @@ CodeTools::LibTokenType::OpUsers [ct/LibraryTypes.h]
 CodeTools::LibTokenType::Operator_N [ct/LibraryTypes.h]
    ct/Interpreter.cpp
 CodeTools::NamespaceView [ct/LibraryTypes.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Library.cpp
    ct/LibraryTypes.h
 CodeTools::OriginalFileView [ct/LibraryTypes.h]
    ct/CodeFile.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Library.cpp
    ct/LibraryTypes.h
 CodeTools::SetOfIds [ct/LibraryTypes.h]
@@ -19473,7 +19485,7 @@ CodeTools::Parser::DirectiveError::FileExpected [ct/Parser.h]
 CodeTools::Parser::DirectiveError::SymbolExpected [ct/Parser.h]
    ct/Parser.cpp
 CodeTools::Parser::DisplayStats [ct/Parser.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Parser.cpp
 CodeTools::Parser::Enter [ct/Parser.h]
    ct/Parser.cpp
@@ -19728,7 +19740,7 @@ CodeTools::Parser::ParsingTemplateInstance [ct/Parser.h]
    ct/CxxNamed.cpp
    ct/Parser.cpp
 CodeTools::Parser::ResetStats [ct/Parser.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Parser.cpp
 CodeTools::Parser::ResolveInstanceArgument [ct/Parser.h]
    ct/CxxNamed.cpp
@@ -24232,6 +24244,7 @@ NodeBase::ptrdiff [nb/Algorithms.h]
    nb/Statistics.cpp
    nb/StatisticsGroup.cpp
    nb/Symbol.cpp
+   nb/SysMutex.cpp
    nb/Thread.cpp
    nb/Tool.cpp
    nt/FunctionStats.cpp
@@ -24505,10 +24518,10 @@ NodeBase::Base::Display [nb/Base.h]
    ct/CodeDir.h
    ct/CodeFile.cpp
    ct/CodeFile.h
-   ct/CodeIncrement.cpp
    ct/CodeSet.cpp
    ct/CodeSet.h
    ct/CodeTypes.h
+   ct/CtIncrement.cpp
    ct/CxxArea.cpp
    ct/CxxArea.h
    ct/CxxDirective.cpp
@@ -24605,7 +24618,6 @@ NodeBase::Base::Display [nb/Base.h]
    nb/Element.cpp
    nb/Element.h
    nb/FileThread.cpp
-   nb/FileThread.h
    nb/InitThread.cpp
    nb/InitThread.h
    nb/LeakyBucketCounter.cpp
@@ -24628,6 +24640,8 @@ NodeBase::Base::Display [nb/Base.h]
    nb/ModuleRegistry.h
    nb/MsgBuffer.cpp
    nb/MsgBuffer.h
+   nb/MutexRegistry.cpp
+   nb/MutexRegistry.h
    nb/NbIncrement.cpp
    nb/Object.cpp
    nb/Object.h
@@ -25814,7 +25828,7 @@ NodeBase::CliBoolParm_ctor [nb/CliBoolParm.cpp]
 NodeBase::CliBoolParm_dtor [nb/CliBoolParm.cpp]
    nb/CliBoolParm.cpp
 NodeBase::CliBoolParm [nb/CliBoolParm.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/CliBoolParm.cpp
    nb/NbIncrement.cpp
    nt/NtIncrement.cpp
@@ -25861,7 +25875,7 @@ NodeBase::CliBuffer_ctor [nb/CliBuffer.cpp]
 NodeBase::CliBuffer_dtor [nb/CliBuffer.cpp]
    nb/CliBuffer.cpp
 NodeBase::CliBuffer [nb/CliBuffer.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/CliBoolParm.cpp
    nb/CliBuffer.cpp
    nb/CliCharParm.cpp
@@ -25953,7 +25967,7 @@ NodeBase::CliBuffer::OptTagChar [nb/CliBuffer.h]
 NodeBase::CliBuffer::Patch [nb/CliBuffer.h]
    nb/CliBuffer.cpp
 NodeBase::CliBuffer::Pos [nb/CliBuffer.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/CliBoolParm.cpp
    nb/CliCharParm.cpp
    nb/CliCommandSet.cpp
@@ -25968,7 +25982,7 @@ NodeBase::CliBuffer::PutLine [nb/CliBuffer.h]
    nb/CliBuffer.cpp
    nb/CliThread.cpp
 NodeBase::CliBuffer::Read [nb/CliBuffer.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/CliBuffer.cpp
    nb/NbIncrement.cpp
 NodeBase::CliBuffer::ScanLine [nb/CliBuffer.h]
@@ -26053,7 +26067,7 @@ NodeBase::CliCommand [nb/CliCommand.h]
    an/AnIncrement.cpp
    cb/BcAddress.cpp
    cb/BcProtocol.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/CliCommand.cpp
    nb/CliCommandSet.cpp
    nb/CliCommandSet.h
@@ -26112,7 +26126,7 @@ NodeBase::CliCommand::Patch [nb/CliCommand.h]
    nb/CliCommand.cpp
 NodeBase::CliCommand::ProcessCommand [nb/CliCommand.h]
    an/AnIncrement.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/CliCommand.cpp
    nb/CliCommandSet.cpp
    nb/CliCommandSet.h
@@ -26143,7 +26157,7 @@ NodeBase::CliCommand::ProcessSubcommand [nb/CliCommand.h]
    st/StIncrement.cpp
 NodeBase::CliCommand::UnexpectedIndex [nb/CliCommand.h]
    an/AnIncrement.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/CliCommand.cpp
    nb/NbIncrement.cpp
    nt/NtIncrement.cpp
@@ -26266,8 +26280,8 @@ NodeBase::CliCommand [nb/CliIncrement.h]
 NodeBase::CliIncrement [nb/CliIncrement.h]
    an/AnIncrement.cpp
    an/AnIncrement.h
-   ct/CodeIncrement.cpp
-   ct/CodeIncrement.h
+   ct/CtIncrement.cpp
+   ct/CtIncrement.h
    nb/CliIncrement.cpp
    nb/CliRegistry.cpp
    nb/CliStack.cpp
@@ -26288,7 +26302,7 @@ NodeBase::CliIncrement [nb/CliIncrement.h]
    st/StIncrement.h
 NodeBase::CliIncrement::BindCommand [nb/CliIncrement.h]
    an/AnIncrement.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/CliIncrement.cpp
    nb/NbIncrement.cpp
    nt/NtIncrement.cpp
@@ -26353,7 +26367,7 @@ NodeBase::CliIntParm [nb/CliIntParm.h]
    cb/BcCause.cpp
    cb/BcProgress.cpp
    cb/BcProtocol.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    mb/MediaParameter.cpp
    nb/CliIntParm.cpp
    nb/NbCliParms.cpp
@@ -26508,7 +26522,7 @@ NodeBase::CliParm::Explain [nb/CliParm.h]
    nb/CliTextParm.cpp
    nb/CliTextParm.h
 NodeBase::CliParm::GetBoolParm [nb/CliParm.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/CliParm.cpp
    nt/NtIncrement.cpp
 NodeBase::CliParm::GetBoolParmRc [nb/CliParm.h]
@@ -26533,7 +26547,7 @@ NodeBase::CliParm::GetCharParmRc [nb/CliParm.h]
    nb/CliParm.cpp
    nb/NbCliParms.cpp
 NodeBase::CliParm::GetFileName [nb/CliParm.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/CliParm.cpp
    nb/NbIncrement.cpp
    nt/NtIncrement.cpp
@@ -26549,7 +26563,7 @@ NodeBase::CliParm::GetId [nb/CliParm.h]
    nb/CliIncrement.cpp
    nb/CliTextParm.cpp
 NodeBase::CliParm::GetIdentifier [nb/CliParm.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/CliParm.cpp
    nb/NbIncrement.cpp
 NodeBase::CliParm::GetIdentifierRc [nb/CliParm.h]
@@ -26561,7 +26575,7 @@ NodeBase::CliParm::GetIdentifierRc [nb/CliParm.h]
 NodeBase::CliParm::GetIntParm [nb/CliParm.h]
    an/AnIncrement.cpp
    cb/BcProtocol.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/CliParm.cpp
    nb/NbIncrement.cpp
    nt/NtIncrement.cpp
@@ -26602,7 +26616,7 @@ NodeBase::CliParm::GetPtrParmRc [nb/CliParm.h]
    nb/CliPtrParm.cpp
    nb/CliPtrParm.h
 NodeBase::CliParm::GetString [nb/CliParm.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/CliParm.cpp
    nb/NbIncrement.cpp
    nt/NtIncrement.cpp
@@ -26620,7 +26634,7 @@ NodeBase::CliParm::GetStringRc [nb/CliParm.h]
 NodeBase::CliParm::GetTextIndex [nb/CliParm.h]
    an/AnIncrement.cpp
    cb/BcProtocol.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/CliParm.cpp
    nb/NbIncrement.cpp
    nt/NtIncrement.cpp
@@ -26984,7 +26998,7 @@ NodeBase::CliText [nb/CliText.h]
    cb/BcProtocol.h
    cb/ProxyBcSessions.cpp
    cb/ProxyBcSessions.h
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    dip/DipProtocol.cpp
    nb/CliCommand.cpp
    nb/CliCommand.h
@@ -27022,7 +27036,7 @@ NodeBase::CliText::AccessParm [nb/CliText.h]
 NodeBase::CliText::BindParm [nb/CliText.h]
    an/AnIncrement.cpp
    cb/BcProtocol.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/CliCommandSet.cpp
    nb/CliCommandSet.h
    nb/CliText.cpp
@@ -27103,7 +27117,7 @@ NodeBase::CliText [nb/CliTextParm.h]
 NodeBase::CliTextParm [nb/CliTextParm.h]
    an/AnIncrement.cpp
    cb/BcProtocol.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/CliTextParm.cpp
    nb/NbCliParms.cpp
    nb/NbCliParms.h
@@ -27122,7 +27136,7 @@ NodeBase::CliTextParm::AccessParm [nb/CliTextParm.h]
    nb/CliTextParm.cpp
 NodeBase::CliTextParm::BindText [nb/CliTextParm.h]
    an/AnIncrement.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/CliTextParm.cpp
    nb/NbCliParms.cpp
    nb/NbIncrement.cpp
@@ -27235,7 +27249,7 @@ NodeBase::CliThread [nb/CliThread.h]
    cb/BcProtocol.cpp
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Editor.cpp
    dip/BaseBot.cpp
    nb/CliAppData.cpp
@@ -27321,12 +27335,12 @@ NodeBase::CliThread::Destroy [nb/CliThread.h]
 NodeBase::CliThread::Display [nb/CliThread.h]
    nb/CliThread.cpp
 NodeBase::CliThread::DisplayHelp [nb/CliThread.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/CliThread.cpp
    nb/NbIncrement.cpp
 NodeBase::CliThread::EndOfInput [nb/CliThread.h]
    an/AnIncrement.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/CliThread.cpp
    nb/NbIncrement.cpp
    nt/NtIncrement.cpp
@@ -27354,7 +27368,7 @@ NodeBase::CliThread::Execute [nb/CliThread.h]
    nb/NbIncrement.cpp
    nt/NtTestData.cpp
 NodeBase::CliThread::FileStream [nb/CliThread.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/CliThread.cpp
    nb/NbIncrement.cpp
    nt/NtIncrement.cpp
@@ -27398,7 +27412,7 @@ NodeBase::CliThread::ParseCommand [nb/CliThread.h]
 NodeBase::CliThread::Patch [nb/CliThread.h]
    nb/CliThread.cpp
 NodeBase::CliThread::Prompt [nb/CliThread.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/CliBuffer.cpp
 NodeBase::CliThread::ReadCommands [nb/CliThread.h]
    nb/CliThread.cpp
@@ -27409,7 +27423,7 @@ NodeBase::CliThread::ReleaseResources [nb/CliThread.h]
    nb/CliThread.cpp
 NodeBase::CliThread::Report [nb/CliThread.h]
    an/AnIncrement.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/CliThread.cpp
    nb/NbCliParms.cpp
    nb/NbIncrement.cpp
@@ -27423,7 +27437,7 @@ NodeBase::CliThread::Report [nb/CliThread.h]
 NodeBase::CliThread::Report1 [nb/CliThread.h]
    nb/CliThread.cpp
 NodeBase::CliThread::SendToFile [nb/CliThread.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/CliThread.cpp
    nb/NbIncrement.cpp
    nt/NtIncrement.cpp
@@ -27447,7 +27461,7 @@ NodeBase::CliThread::cookie_ [nb/CliThread.h]
    nb/CliThread.cpp
    nb/CliThread.h
 NodeBase::CliThread::ibuf [nb/CliThread.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/CliBoolParm.cpp
    nb/CliCharParm.cpp
    nb/CliCommand.cpp
@@ -27471,7 +27485,7 @@ NodeBase::CliThread::obuf [nb/CliThread.h]
    cb/BcProtocol.cpp
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Editor.cpp
    dip/BaseBot.cpp
    nb/CliBuffer.cpp
@@ -27619,6 +27633,7 @@ NodeBase::TIMEOUT_IMMED [nb/Clock.h]
    nb/ThisThread.h
    nb/Thread.cpp
    nb/Thread.h
+   nt/NtIncrement.cpp
 NodeBase::TIMEOUT_NEVER [nb/Clock.h]
    an/PotsTrafficThread.cpp
    dip/BotThread.cpp
@@ -27634,6 +27649,7 @@ NodeBase::TIMEOUT_NEVER [nb/Clock.h]
    nb/SysMutex.win.cpp
    nb/SysThread.cpp
    nb/Thread.cpp
+   nt/NtIncrement.cpp
    nw/SysTcpSocket.win.cpp
    nw/TcpIoThread.cpp
    sb/InvokerPool.cpp
@@ -27783,6 +27799,8 @@ NodeBase::usecs_t [nb/Clock.h]
    nb/Thread.h
    nt/FunctionStats.cpp
    nt/FunctionStats.h
+NodeBase::CoutThreadMsgQLock_ [nb/CoutThread.cpp]
+   nb/CoutThread.cpp
 NodeBase::CoutThread_Destroy [nb/CoutThread.cpp]
    nb/CoutThread.cpp
 NodeBase::CoutThread_Enter [nb/CoutThread.cpp]
@@ -27888,7 +27906,7 @@ NodeBase::Debug::InvocationFlag::TrapPending [nb/Debug.h]
 NodeBase::Debug::Progress [nb/Debug.h]
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/CxxArea.cpp
    ct/Parser.cpp
    nb/Debug.cpp
@@ -27927,7 +27945,7 @@ NodeBase::Debug::SwLog(const char* const,unsigned long long,unsigned long long,N
    cb/ServiceCodeRegistry.cpp
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/CxxDirective.cpp
    ct/CxxExecute.cpp
    ct/CxxNamed.cpp
@@ -27956,6 +27974,7 @@ NodeBase::Debug::SwLog(const char* const,unsigned long long,unsigned long long,N
    mb/MediaSsm.cpp
    mb/Tones.cpp
    nb/Alarm.cpp
+   nb/AlarmRegistry.cpp
    nb/Array.h
    nb/Base.cpp
    nb/CfgBitParm.cpp
@@ -27978,6 +27997,7 @@ NodeBase::Debug::SwLog(const char* const,unsigned long long,unsigned long long,N
    nb/LogGroupRegistry.cpp
    nb/Memory.cpp
    nb/ModuleRegistry.cpp
+   nb/MutexRegistry.cpp
    nb/NbIncrement.cpp
    nb/NbTracer.cpp
    nb/ObjectPool.cpp
@@ -28123,9 +28143,9 @@ NodeBase::Debug::ft [nb/Debug.h]
    ct/CodeDirSet.cpp
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeSet.cpp
    ct/CodeWarning.cpp
+   ct/CtIncrement.cpp
    ct/CtModule.cpp
    ct/Cxx.cpp
    ct/CxxArea.cpp
@@ -28233,6 +28253,7 @@ NodeBase::Debug::ft [nb/Debug.h]
    nb/ModuleRegistry.cpp
    nb/MsgBuffer.cpp
    nb/MutexGuard.cpp
+   nb/MutexRegistry.cpp
    nb/NbCliParms.cpp
    nb/NbIncrement.cpp
    nb/NbLogs.cpp
@@ -28574,12 +28595,12 @@ NodeBase::Element::Display [nb/Element.h]
 NodeBase::Element::Element [nb/Element.h]
    nb/Element.cpp
 NodeBase::Element::HelpPath [nb/Element.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/Element.cpp
    nb/NbIncrement.cpp
 NodeBase::Element::InputPath [nb/Element.h]
    ct/CodeCoverage.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/CliThread.cpp
    nb/Element.cpp
    nt/TestDatabase.cpp
@@ -28709,6 +28730,8 @@ NodeBase::Exception::what [nb/Exception.h]
    nb/Exception.cpp
 NodeBase::Exception::~Exception [nb/Exception.h]
    nb/Exception.cpp
+NodeBase::ConsoleFileLock_ [nb/FileThread.cpp]
+   nb/FileThread.cpp
 NodeBase::FileRequest [nb/FileThread.cpp]
    nb/FileThread.cpp
 NodeBase::FileRequest::Cleanup [nb/FileThread.cpp]
@@ -28739,6 +28762,8 @@ NodeBase::FileRequest_ctor2 [nb/FileThread.cpp]
    nb/FileThread.cpp
 NodeBase::FileRequest_dtor [nb/FileThread.cpp]
    nb/FileThread.cpp
+NodeBase::FileThreadMsgQLock_ [nb/FileThread.cpp]
+   nb/FileThread.cpp
 NodeBase::FileThread_CreateStream [nb/FileThread.cpp]
    nb/FileThread.cpp
 NodeBase::FileThread_Destroy [nb/FileThread.cpp]
@@ -28764,14 +28789,10 @@ NodeBase::FileThread [nb/FileThread.h]
    nb/NbModule.cpp
 NodeBase::FileThread::AbbrName [nb/FileThread.h]
    nb/FileThread.cpp
-NodeBase::FileThread::ConsoleFileLock_ [nb/FileThread.h]
-   nb/FileThread.cpp
 NodeBase::FileThread::CreateStream [nb/FileThread.h]
    nb/CliThread.cpp
    nb/FileThread.cpp
 NodeBase::FileThread::Destroy [nb/FileThread.h]
-   nb/FileThread.cpp
-NodeBase::FileThread::Display [nb/FileThread.h]
    nb/FileThread.cpp
 NodeBase::FileThread::Enter [nb/FileThread.h]
    nb/FileThread.cpp
@@ -28822,9 +28843,9 @@ NodeBase::spaces [nb/Formatters.h]
    ct/CodeDirSet.cpp
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeSet.cpp
    ct/CodeWarning.cpp
+   ct/CtIncrement.cpp
    ct/Cxx.cpp
    ct/CxxArea.cpp
    ct/CxxExecute.cpp
@@ -28858,16 +28879,15 @@ NodeBase::spaces [nb/Formatters.h]
    nb/CliText.cpp
    nb/CliTextParm.cpp
    nb/CliThread.cpp
-   nb/FileThread.cpp
    nb/Formatters.cpp
    nb/Log.cpp
-   nb/LogBuffer.cpp
    nb/LogBufferRegistry.cpp
    nb/LogGroup.cpp
    nb/LogGroupRegistry.cpp
    nb/LogThread.cpp
    nb/MemoryTrace.cpp
    nb/ModuleRegistry.cpp
+   nb/MutexRegistry.cpp
    nb/NbIncrement.cpp
    nb/NbTracer.cpp
    nb/ObjectPool.cpp
@@ -29083,6 +29103,7 @@ NodeBase::strUpper [nb/Formatters.h]
    nb/Formatters.cpp
    nb/LogGroup.cpp
    nb/LogGroupRegistry.cpp
+   nb/MutexRegistry.cpp
 NodeBase::FunctionGuard_ctor [nb/FunctionGuard.cpp]
    nb/FunctionGuard.cpp
 NodeBase::FunctionGuard_dtor [nb/FunctionGuard.cpp]
@@ -29113,8 +29134,6 @@ NodeBase::FunctionGuard::First::MakePreemptable [nb/FunctionGuard.h]
 NodeBase::FunctionGuard::First::MakeUnpreemptable [nb/FunctionGuard.h]
    dip/BaseBot.cpp
    nb/CinThread.cpp
-   nb/CoutThread.cpp
-   nb/FileThread.cpp
    nb/FunctionGuard.cpp
 NodeBase::FunctionGuard::First::MemUnprotect [nb/FunctionGuard.h]
    nb/FunctionGuard.cpp
@@ -29125,6 +29144,7 @@ NodeBase::FunctionGuard::FunctionGuard(NodeBase::FunctionGuard* const,NodeBase::
 NodeBase::FunctionGuard::first_ [nb/FunctionGuard.h]
    nb/FunctionGuard.cpp
 NodeBase::FunctionGuard::~FunctionGuard [nb/FunctionGuard.h]
+   nb/CinThread.cpp
    nb/FileThread.cpp
    nb/FunctionGuard.cpp
    nt/TestDatabase.cpp
@@ -29616,6 +29636,8 @@ NodeBase::Log::~Log [nb/Log.h]
    nb/Log.cpp
 NodeBase::LogGroup [nb/Log.h]
    nb/Log.h
+NodeBase::LogBufferLock_ [nb/LogBuffer.cpp]
+   nb/LogBuffer.cpp
 NodeBase::LogBuffer_Advance [nb/LogBuffer.cpp]
    nb/LogBuffer.cpp
 NodeBase::LogBuffer_Count [nb/LogBuffer.cpp]
@@ -29680,11 +29702,11 @@ NodeBase::LogBuffer::Empty [nb/LogBuffer.h]
 NodeBase::LogBuffer::Entry [nb/LogBuffer.h]
    nb/LogBuffer.cpp
    nb/LogBuffer.h
+NodeBase::LogBuffer::Entry [nb/LogBuffer.h]
+   nb/LogBuffer.h
+NodeBase::LogBuffer::Entry::header [nb/LogBuffer.h]
+   nb/LogBuffer.cpp
 NodeBase::LogBuffer::Entry::log [nb/LogBuffer.h]
-   nb/LogBuffer.cpp
-NodeBase::LogBuffer::Entry::next [nb/LogBuffer.h]
-   nb/LogBuffer.cpp
-NodeBase::LogBuffer::Entry::prev [nb/LogBuffer.h]
    nb/LogBuffer.cpp
 NodeBase::LogBuffer::FileName [nb/LogBuffer.h]
    nb/LogBufferRegistry.cpp
@@ -29701,6 +29723,13 @@ NodeBase::LogBuffer::GetLogs [nb/LogBuffer.h]
    nb/LogBuffer.cpp
    nb/LogThread.cpp
    nb/NbIncrement.cpp
+NodeBase::LogBuffer::Header [nb/LogBuffer.h]
+   nb/LogBuffer.cpp
+   nb/LogBuffer.h
+NodeBase::LogBuffer::Header::next [nb/LogBuffer.h]
+   nb/LogBuffer.cpp
+NodeBase::LogBuffer::Header::prev [nb/LogBuffer.h]
+   nb/LogBuffer.cpp
 NodeBase::LogBuffer::InsertionPoint [nb/LogBuffer.h]
    nb/LogBuffer.cpp
 NodeBase::LogBuffer::Last [nb/LogBuffer.h]
@@ -29730,8 +29759,6 @@ NodeBase::LogBuffer::discards_ [nb/LogBuffer.h]
 NodeBase::LogBuffer::fileName_ [nb/LogBuffer.h]
    nb/LogBuffer.cpp
    nb/LogBuffer.h
-NodeBase::LogBuffer::lock_ [nb/LogBuffer.h]
-   nb/LogBuffer.cpp
 NodeBase::LogBuffer::max_ [nb/LogBuffer.h]
    nb/LogBuffer.cpp
 NodeBase::LogBuffer::next_ [nb/LogBuffer.h]
@@ -29957,6 +29984,8 @@ NodeBase::LogGroupRegistry::statsGroup_ [nb/LogGroupRegistry.h]
    nb/LogGroupRegistry.cpp
 NodeBase::LogGroupRegistry::~LogGroupRegistry [nb/LogGroupRegistry.h]
    nb/LogGroupRegistry.cpp
+NodeBase::LogFileLock_ [nb/LogThread.cpp]
+   nb/LogThread.cpp
 NodeBase::LogThread_CopyToConsole [nb/LogThread.cpp]
    nb/LogThread.cpp
 NodeBase::LogThread_Destroy [nb/LogThread.cpp]
@@ -29982,8 +30011,6 @@ NodeBase::LogThread::Destroy [nb/LogThread.h]
 NodeBase::LogThread::Display [nb/LogThread.h]
    nb/LogThread.cpp
 NodeBase::LogThread::Enter [nb/LogThread.h]
-   nb/LogThread.cpp
-NodeBase::LogThread::LogFileLock_ [nb/LogThread.h]
    nb/LogThread.cpp
 NodeBase::LogThread::LogThread [nb/LogThread.h]
    nb/LogThread.cpp
@@ -30102,6 +30129,7 @@ NodeBase::Memory::Copy [nb/Memory.h]
    nb/CinThread.cpp
    nb/Class.cpp
    nb/FunctionTrace.cpp
+   nb/LogBuffer.cpp
    nb/Memory.cpp
    nw/InputHandler.cpp
    nw/IpBuffer.cpp
@@ -30381,6 +30409,7 @@ NodeBase::MutexGuard_ctor [nb/MutexGuard.cpp]
 NodeBase::MutexGuard_dtor [nb/MutexGuard.cpp]
    nb/MutexGuard.cpp
 NodeBase::MutexGuard [nb/MutexGuard.h]
+   nb/CoutThread.cpp
    nb/FileThread.cpp
    nb/LogBuffer.cpp
    nb/LogThread.cpp
@@ -30391,9 +30420,54 @@ NodeBase::MutexGuard::MutexGuard(NodeBase::MutexGuard* const,NodeBase::SysMutex*
 NodeBase::MutexGuard::mutex_ [nb/MutexGuard.h]
    nb/MutexGuard.cpp
 NodeBase::MutexGuard::~MutexGuard [nb/MutexGuard.h]
+   nb/LogBuffer.cpp
    nb/MutexGuard.cpp
 NodeBase::SysMutex [nb/MutexGuard.h]
    nb/MutexGuard.h
+NodeBase::MutexRegistry_BindMutex [nb/MutexRegistry.cpp]
+   nb/MutexRegistry.cpp
+NodeBase::MutexRegistry_Find [nb/MutexRegistry.cpp]
+   nb/MutexRegistry.cpp
+NodeBase::MutexRegistry_Release [nb/MutexRegistry.cpp]
+   nb/MutexRegistry.cpp
+NodeBase::MutexRegistry_UnbindMutex [nb/MutexRegistry.cpp]
+   nb/MutexRegistry.cpp
+NodeBase::MutexRegistry_ctor [nb/MutexRegistry.cpp]
+   nb/MutexRegistry.cpp
+NodeBase::MutexRegistry_dtor [nb/MutexRegistry.cpp]
+   nb/MutexRegistry.cpp
+NodeBase::MutexRegistry [nb/MutexRegistry.h]
+   nb/MutexRegistry.cpp
+   nb/NbIncrement.cpp
+   nb/SysMutex.win.cpp
+   nb/Thread.cpp
+NodeBase::MutexRegistry::BindMutex [nb/MutexRegistry.h]
+   nb/MutexRegistry.cpp
+   nb/SysMutex.win.cpp
+NodeBase::MutexRegistry::Display [nb/MutexRegistry.h]
+   nb/MutexRegistry.cpp
+NodeBase::MutexRegistry::Find [nb/MutexRegistry.h]
+   nb/MutexRegistry.cpp
+NodeBase::MutexRegistry::MaxMutexes [nb/MutexRegistry.h]
+   nb/MutexRegistry.cpp
+NodeBase::MutexRegistry::MutexRegistry [nb/MutexRegistry.h]
+   nb/MutexRegistry.cpp
+NodeBase::MutexRegistry::Patch [nb/MutexRegistry.h]
+   nb/MutexRegistry.cpp
+NodeBase::MutexRegistry::Release [nb/MutexRegistry.h]
+   nb/MutexRegistry.cpp
+   nb/Thread.cpp
+NodeBase::MutexRegistry::UnbindMutex [nb/MutexRegistry.h]
+   nb/MutexRegistry.cpp
+   nb/SysMutex.win.cpp
+NodeBase::MutexRegistry::mutexes_ [nb/MutexRegistry.h]
+   nb/MutexRegistry.cpp
+   nb/MutexRegistry.h
+NodeBase::MutexRegistry::~MutexRegistry [nb/MutexRegistry.h]
+   nb/MutexRegistry.cpp
+NodeBase::SysMutex [nb/MutexRegistry.h]
+   nb/MutexRegistry.cpp
+   nb/MutexRegistry.h
 NodeBase::AnModuleId [nb/NbAppIds.h]
    an/AnModule.cpp
    nb/NbAppIds.h
@@ -30593,6 +30667,8 @@ NodeBase::NodeBase_GetBV [nb/NbCliParms.cpp]
    nb/NbCliParms.cpp
 NodeBase::NodeBase_GetCBV [nb/NbCliParms.cpp]
    nb/NbCliParms.cpp
+NodeBase::NodeBase_ValidateOptions [nb/NbCliParms.cpp]
+   nb/NbCliParms.cpp
 NodeBase::ObjPoolIdMandExpl [nb/NbCliParms.cpp]
    nb/NbCliParms.cpp
 NodeBase::ObjPoolIdOptExpl [nb/NbCliParms.cpp]
@@ -30721,7 +30797,7 @@ NodeBase::AllActivityText [nb/NbCliParms.h]
 NodeBase::AllActivityText::AllActivityText [nb/NbCliParms.h]
    nb/NbCliParms.cpp
 NodeBase::AllocationError [nb/NbCliParms.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Library.cpp
    nb/NbCliParms.cpp
    nt/NtIncrement.cpp
@@ -30757,7 +30833,7 @@ NodeBase::ContinuePrompt [nb/NbCliParms.h]
    sb/SbIncrement.cpp
 NodeBase::CreateStreamFailure [nb/NbCliParms.h]
    ct/CodeCoverage.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/NbCliParms.cpp
    nb/NbIncrement.cpp
    nt/NtIncrement.cpp
@@ -30881,7 +30957,7 @@ NodeBase::NoDiscardsExpl [nb/NbCliParms.h]
    sb/SbIncrement.cpp
 NodeBase::NoFileExpl [nb/NbCliParms.h]
    ct/CodeCoverage.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/CliThread.cpp
    nb/NbCliParms.cpp
 NodeBase::NoIncrExpl [nb/NbCliParms.h]
@@ -30938,7 +31014,7 @@ NodeBase::ObjPtrMandParm [nb/NbCliParms.h]
 NodeBase::ObjPtrMandParm::ObjPtrMandParm [nb/NbCliParms.h]
    nb/NbCliParms.cpp
 NodeBase::OstreamMandParm [nb/NbCliParms.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/NbCliParms.cpp
    nb/NbIncrement.cpp
    nt/NtIncrement.cpp
@@ -31030,7 +31106,7 @@ NodeBase::StopTracingPrompt [nb/NbCliParms.h]
 NodeBase::SuccessExpl [nb/NbCliParms.h]
    ct/CodeCoverage.cpp
    ct/CodeDir.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Editor.cpp
    ct/Library.cpp
    nb/NbCliParms.cpp
@@ -31089,7 +31165,7 @@ NodeBase::SysTimeYearParm::SysTimeYearParm [nb/NbCliParms.h]
    nb/NbCliParms.cpp
 NodeBase::SystemErrorExpl [nb/NbCliParms.h]
    an/AnIncrement.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/NbCliParms.cpp
    nb/NbIncrement.cpp
    nt/NtIncrement.cpp
@@ -31134,6 +31210,10 @@ NodeBase::TraceReportPrompt [nb/NbCliParms.h]
 NodeBase::UnknownSignalExpl [nb/NbCliParms.h]
    nb/NbCliParms.cpp
    nt/NtIncrement.cpp
+NodeBase::ValidateOptions [nb/NbCliParms.h]
+   ct/CtIncrement.cpp
+   nb/NbCliParms.cpp
+   nb/NbIncrement.cpp
 NodeBase::AlarmExpl [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::AlarmParm [nb/NbIncrement.cpp]
@@ -31663,6 +31743,18 @@ NodeBase::ModulesCommand_ProcessCommand [nb/NbIncrement.cpp]
 NodeBase::ModulesExpl [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::ModulesStr [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::MutexesCommand [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::MutexesCommand::MutexesCommand [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::MutexesCommand::ProcessCommand [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::MutexesCommand_ProcessCommand [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::MutexesExpl [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::MutexesStr [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::NbIncrement_ctor [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
@@ -32959,6 +33051,7 @@ NodeBase::Faction::LoadTestFaction [nb/NbTypes.h]
    an/PotsTrafficThread.cpp
    nb/Thread.cpp
    nb/ThreadAdmin.cpp
+   nt/NtIncrement.cpp
 NodeBase::Faction::MaintenanceFaction [nb/NbTypes.h]
    nb/ThreadAdmin.cpp
 NodeBase::Faction::OperationsFaction [nb/NbTypes.h]
@@ -32973,14 +33066,11 @@ NodeBase::Faction::PayloadFaction [nb/NbTypes.h]
    dip/DipProtocol.h
    nb/Thread.cpp
    nb/ThreadAdmin.cpp
-   nt/NtIncrement.cpp
    sb/Factory.cpp
    sb/SbInvokerPools.cpp
    sb/TimerThread.cpp
    sn/PotsSessions.h
 NodeBase::Faction::SystemFaction [nb/NbTypes.h]
-   nb/CoutThread.cpp
-   nb/FileThread.cpp
    nb/InitThread.cpp
    nb/Thread.cpp
    nb/ThreadAdmin.cpp
@@ -33145,7 +33235,7 @@ NodeBase::Singleton [nb/NbTypes.h]
    cb/ServiceCodeRegistry.h
    cn/CnModule.h
    ct/CodeCoverage.h
-   ct/CodeIncrement.h
+   ct/CtIncrement.h
    ct/CtModule.h
    ct/CxxRoot.h
    ct/CxxSymbols.h
@@ -33173,6 +33263,7 @@ NodeBase::Singleton [nb/NbTypes.h]
    nb/LogGroupRegistry.h
    nb/LogThread.h
    nb/ModuleRegistry.h
+   nb/MutexRegistry.h
    nb/NbIncrement.h
    nb/NbModule.h
    nb/NbPools.h
@@ -33316,7 +33407,7 @@ NodeBase::TraceRecordId [nb/NbTypes.h]
    nw/SysSocket.cpp
    nw/SysSocket.h
 NodeBase::VerboseOpt [nb/NbTypes.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/Base.cpp
    nb/NbIncrement.cpp
    nb/NbTypes.cpp
@@ -33515,6 +33606,8 @@ NodeBase::Object::Patch [nb/Object.h]
    nb/ModuleRegistry.h
    nb/MsgBuffer.cpp
    nb/MsgBuffer.h
+   nb/MutexRegistry.cpp
+   nb/MutexRegistry.h
    nb/NbModule.cpp
    nb/NbModule.h
    nb/NbPools.cpp
@@ -33818,6 +33911,8 @@ NodeBase::Object::sel_t [nb/Object.h]
    nb/ModuleRegistry.h
    nb/MsgBuffer.cpp
    nb/MsgBuffer.h
+   nb/MutexRegistry.cpp
+   nb/MutexRegistry.h
    nb/NbModule.cpp
    nb/NbModule.h
    nb/NbPools.cpp
@@ -34051,6 +34146,8 @@ NodeBase::ObjectPoolStats::allocCount_ [nb/ObjectPool.cpp]
    nb/ObjectPool.cpp
 NodeBase::ObjectPoolStats::auditCount_ [nb/ObjectPool.cpp]
    nb/ObjectPool.cpp
+NodeBase::ObjectPoolStats::expansions_ [nb/ObjectPool.cpp]
+   nb/ObjectPool.cpp
 NodeBase::ObjectPoolStats::failCount_ [nb/ObjectPool.cpp]
    nb/ObjectPool.cpp
 NodeBase::ObjectPoolStats::freeCount_ [nb/ObjectPool.cpp]
@@ -34183,6 +34280,9 @@ NodeBase::ObjectPool::EnqBlock [nb/ObjectPool.h]
    nb/ObjectPool.cpp
    nb/Pooled.cpp
 NodeBase::ObjectPool::EnsureAlarm [nb/ObjectPool.h]
+   nb/ObjectPool.cpp
+NodeBase::ObjectPool::Expansions [nb/ObjectPool.h]
+   nb/NbIncrement.cpp
    nb/ObjectPool.cpp
 NodeBase::ObjectPool::FailCount [nb/ObjectPool.h]
    nb/NbIncrement.cpp
@@ -34512,6 +34612,7 @@ NodeBase::Permanent [nb/Permanent.h]
    dip/BotTracer.h
    nb/LogBuffer.cpp
    nb/LogBuffer.h
+   nb/MutexRegistry.h
    nb/NbTracer.h
    nb/Permanent.cpp
    nb/Singletons.h
@@ -35372,6 +35473,9 @@ NodeBase::RegCell [nb/RegCell.h]
    nb/Statistics.h
    nb/StatisticsGroup.cpp
    nb/StatisticsGroup.h
+   nb/SysMutex.cpp
+   nb/SysMutex.h
+   nb/SysMutex.win.cpp
    nb/Thread.cpp
    nb/Thread.h
    nb/Tool.cpp
@@ -35467,6 +35571,7 @@ NodeBase::RegCell::to_str [nb/RegCell.h]
    nb/RegCell.cpp
    nb/Statistics.cpp
    nb/StatisticsGroup.cpp
+   nb/SysMutex.cpp
    nb/Thread.cpp
    nw/IpService.cpp
    pb/PotsFeature.cpp
@@ -35502,8 +35607,8 @@ NodeBase::Registry [nb/Registry.h]
    ct/CodeDirSet.cpp
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeWarning.cpp
+   ct/CtIncrement.cpp
    ct/Cxx.cpp
    ct/CxxDirective.cpp
    ct/CxxNamed.cpp
@@ -35535,6 +35640,8 @@ NodeBase::Registry [nb/Registry.h]
    nb/LogGroupRegistry.h
    nb/ModuleRegistry.cpp
    nb/ModuleRegistry.h
+   nb/MutexRegistry.cpp
+   nb/MutexRegistry.h
    nb/NbIncrement.cpp
    nb/NbTracer.cpp
    nb/ObjectPoolRegistry.cpp
@@ -35579,8 +35686,8 @@ NodeBase::Registry::At [nb/Registry.h]
    ct/CodeDirSet.cpp
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeWarning.cpp
+   ct/CtIncrement.cpp
    ct/CxxDirective.cpp
    ct/CxxNamed.cpp
    ct/CxxSymbols.cpp
@@ -35620,6 +35727,7 @@ NodeBase::Registry::Display [nb/Registry.h]
    nb/CliText.cpp
    nb/CliTextParm.cpp
    nb/ModuleRegistry.cpp
+   nb/MutexRegistry.cpp
    nb/ObjectPoolRegistry.cpp
    nb/PosixSignalRegistry.cpp
    nb/ThreadRegistry.cpp
@@ -35650,6 +35758,7 @@ NodeBase::Registry::Erase(NodeBase::Registry* const,T) [nb/Registry.h]
    nb/LogGroup.cpp
    nb/LogGroupRegistry.cpp
    nb/ModuleRegistry.cpp
+   nb/MutexRegistry.cpp
    nb/ObjectPoolRegistry.cpp
    nb/PosixSignalRegistry.cpp
    nb/Registry.h
@@ -35674,7 +35783,7 @@ NodeBase::Registry::First(const NodeBase::Registry* const) [nb/Registry.h]
    ct/CodeDir.cpp
    ct/CodeDirSet.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Cxx.cpp
    ct/Library.cpp
    nb/AlarmRegistry.cpp
@@ -35687,6 +35796,7 @@ NodeBase::Registry::First(const NodeBase::Registry* const) [nb/Registry.h]
    nb/LogGroup.cpp
    nb/LogGroupRegistry.cpp
    nb/ModuleRegistry.cpp
+   nb/MutexRegistry.cpp
    nb/NbIncrement.cpp
    nb/NbTracer.cpp
    nb/ObjectPoolRegistry.cpp
@@ -35718,6 +35828,7 @@ NodeBase::Registry::Init [nb/Registry.h]
    nb/LogGroup.cpp
    nb/LogGroupRegistry.cpp
    nb/ModuleRegistry.cpp
+   nb/MutexRegistry.cpp
    nb/ObjectPoolRegistry.cpp
    nb/PosixSignalRegistry.cpp
    nb/StatisticsRegistry.cpp
@@ -35749,6 +35860,7 @@ NodeBase::Registry::Insert(NodeBase::Registry* const,T) [nb/Registry.h]
    nb/LogGroup.cpp
    nb/LogGroupRegistry.cpp
    nb/ModuleRegistry.cpp
+   nb/MutexRegistry.cpp
    nb/ObjectPoolRegistry.cpp
    nb/PosixSignalRegistry.cpp
    nb/StatisticsRegistry.cpp
@@ -35778,7 +35890,7 @@ NodeBase::Registry::Next(const NodeBase::Registry* const,T*) [nb/Registry.h]
    ct/CodeDir.cpp
    ct/CodeDirSet.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Cxx.cpp
    ct/Library.cpp
    nb/AlarmRegistry.cpp
@@ -35791,6 +35903,7 @@ NodeBase::Registry::Next(const NodeBase::Registry* const,T*) [nb/Registry.h]
    nb/LogGroup.cpp
    nb/LogGroupRegistry.cpp
    nb/ModuleRegistry.cpp
+   nb/MutexRegistry.cpp
    nb/NbIncrement.cpp
    nb/NbTracer.cpp
    nb/ObjectPoolRegistry.cpp
@@ -36106,8 +36219,8 @@ NodeBase::Singleton::Instance [nb/Singleton.h]
    ct/CodeDirSet.cpp
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeWarning.cpp
+   ct/CtIncrement.cpp
    ct/CtModule.cpp
    ct/Cxx.cpp
    ct/CxxArea.cpp
@@ -36184,6 +36297,7 @@ NodeBase::Singleton::Instance [nb/Singleton.h]
    nb/StatisticsThread.cpp
    nb/Symbol.cpp
    nb/SysMutex.cpp
+   nb/SysMutex.win.cpp
    nb/SysSignals.win.cpp
    nb/Thread.cpp
    nb/ThreadAdmin.cpp
@@ -36776,7 +36890,7 @@ NodeBase::Symbol::GetValue [nb/Symbol.h]
    nb/CliBuffer.cpp
    nb/NbIncrement.cpp
 NodeBase::Symbol::InvalidInitialChars [nb/Symbol.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Interpreter.cpp
    nb/NbIncrement.cpp
    nb/Symbol.cpp
@@ -36798,7 +36912,7 @@ NodeBase::Symbol::SetValue [nb/Symbol.h]
 NodeBase::Symbol::Symbol(NodeBase::Symbol* const,const std::basic_string<char,std::char_traits<char>,std::allocator<char>>) [nb/Symbol.h]
    nb/Symbol.cpp
 NodeBase::Symbol::ValidNameChars [nb/Symbol.h]
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Interpreter.cpp
    nb/NbIncrement.cpp
    nb/Symbol.cpp
@@ -36967,7 +37081,7 @@ NodeBase::FileListPtr [nb/SysFile.h]
 NodeBase::SysFile::CreateIstream [nb/SysFile.h]
    ct/CodeCoverage.cpp
    ct/CodeFile.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    nb/CfgParmRegistry.cpp
    nb/CliThread.cpp
    nb/SysFile.cpp
@@ -37134,24 +37248,33 @@ NodeBase::SysHeap_ctor [nb/SysHeap.win.cpp]
 NodeBase::SysHeap_dtor [nb/SysHeap.win.cpp]
    nb/SysHeap.win.cpp
 NodeBase::SysMutex [nb/SysMutex.h]
+   nb/CoutThread.cpp
    nb/FileThread.cpp
-   nb/FileThread.h
    nb/LogBuffer.cpp
-   nb/LogBuffer.h
    nb/LogThread.cpp
-   nb/LogThread.h
    nb/MutexGuard.cpp
+   nb/MutexRegistry.cpp
    nb/SysMutex.cpp
    nb/SysMutex.win.cpp
    nb/Thread.cpp
+   nt/NtIncrement.cpp
 NodeBase::SysMutex::Acquire [nb/SysMutex.h]
    nb/MutexGuard.cpp
    nb/SysMutex.win.cpp
    nb/Thread.cpp
+   nt/NtIncrement.cpp
+NodeBase::SysMutex::CellDiff [nb/SysMutex.h]
+   nb/MutexRegistry.cpp
+   nb/SysMutex.cpp
 NodeBase::SysMutex::Display [nb/SysMutex.h]
    nb/SysMutex.cpp
+NodeBase::SysMutex::Name [nb/SysMutex.h]
+   nb/MutexRegistry.cpp
+   nb/Thread.cpp
 NodeBase::SysMutex::Owner [nb/SysMutex.h]
    nb/SysMutex.cpp
+NodeBase::SysMutex::OwnerId [nb/SysMutex.h]
+   nb/MutexRegistry.cpp
 NodeBase::SysMutex::Patch [nb/SysMutex.h]
    nb/SysMutex.cpp
 NodeBase::SysMutex::Rc [nb/SysMutex.h]
@@ -37161,18 +37284,30 @@ NodeBase::SysMutex::Rc::Acquired [nb/SysMutex.h]
    nb/MutexGuard.cpp
    nb/SysMutex.win.cpp
    nb/Thread.cpp
+   nt/NtIncrement.cpp
 NodeBase::SysMutex::Rc::Error [nb/SysMutex.h]
    nb/SysMutex.win.cpp
 NodeBase::SysMutex::Rc::TimedOut [nb/SysMutex.h]
    nb/SysMutex.win.cpp
 NodeBase::SysMutex::Release [nb/SysMutex.h]
    nb/MutexGuard.cpp
+   nb/MutexRegistry.cpp
    nb/SysMutex.win.cpp
    nb/Thread.cpp
-NodeBase::SysMutex::SysMutex(NodeBase::SysMutex* const) [nb/SysMutex.h]
+   nt/NtIncrement.cpp
+NodeBase::SysMutex::SysMutex(NodeBase::SysMutex* const,const char*) [nb/SysMutex.h]
    nb/SysMutex.win.cpp
+NodeBase::SysMutex::locks_ [nb/SysMutex.h]
+   nb/SysMutex.cpp
+   nb/SysMutex.win.cpp
+NodeBase::SysMutex::mid_ [nb/SysMutex.h]
+   nb/SysMutex.cpp
 NodeBase::SysMutex::mutex_ [nb/SysMutex.h]
    nb/SysMutex.cpp
+   nb/SysMutex.win.cpp
+NodeBase::SysMutex::name_ [nb/SysMutex.h]
+   nb/SysMutex.cpp
+   nb/SysMutex.h
    nb/SysMutex.win.cpp
 NodeBase::SysMutex::nid_ [nb/SysMutex.h]
    nb/SysMutex.cpp
@@ -37186,7 +37321,6 @@ NodeBase::SysMutex::~SysMutex [nb/SysMutex.h]
 NodeBase::Thread [nb/SysMutex.h]
    nb/SysMutex.cpp
    nb/SysMutex.h
-   nb/SysMutex.win.cpp
 NodeBase::SysMutex_Acquire [nb/SysMutex.win.cpp]
    nb/SysMutex.win.cpp
 NodeBase::SysMutex_Release [nb/SysMutex.win.cpp]
@@ -37308,6 +37442,7 @@ NodeBase::SysThread::Resume [nb/SysThread.h]
    nb/SysThread.cpp
    nb/SysThread.win.cpp
 NodeBase::SysThread::RunningThreadId [nb/SysThread.h]
+   nb/MutexRegistry.cpp
    nb/SysMutex.win.cpp
    nb/SysThread.cpp
    nb/SysThread.win.cpp
@@ -37768,9 +37903,9 @@ NodeBase::CRLF [nb/SysTypes.h]
    ct/CodeDirSet.cpp
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeSet.cpp
    ct/CodeWarning.cpp
+   ct/CtIncrement.cpp
    ct/Cxx.cpp
    ct/CxxArea.cpp
    ct/CxxDirective.cpp
@@ -37849,6 +37984,7 @@ NodeBase::CRLF [nb/SysTypes.h]
    nb/Module.cpp
    nb/ModuleRegistry.cpp
    nb/MsgBuffer.cpp
+   nb/MutexRegistry.cpp
    nb/NbIncrement.cpp
    nb/NbTracer.cpp
    nb/Object.cpp
@@ -38235,7 +38371,6 @@ NodeBase::Flags [nb/SysTypes.h]
    nb/Element.cpp
    nb/Element.h
    nb/FileThread.cpp
-   nb/FileThread.h
    nb/FunctionTrace.cpp
    nb/FunctionTrace.h
    nb/InitThread.cpp
@@ -38261,6 +38396,8 @@ NodeBase::Flags [nb/SysTypes.h]
    nb/ModuleRegistry.h
    nb/MsgBuffer.cpp
    nb/MsgBuffer.h
+   nb/MutexRegistry.cpp
+   nb/MutexRegistry.h
    nb/NbIncrement.cpp
    nb/NbSignals.cpp
    nb/NbTypes.cpp
@@ -38550,6 +38687,7 @@ NodeBase::MemoryType::MemPerm [nb/SysTypes.h]
    nb/Class.cpp
    nb/LogBuffer.cpp
    nb/Memory.cpp
+   nb/MutexRegistry.cpp
    nb/NbPools.cpp
    nb/Permanent.cpp
    nb/Permanent.h
@@ -38670,6 +38808,7 @@ NodeBase::NUL [nb/SysTypes.h]
    nb/CinThread.cpp
    nb/CliBuffer.cpp
    nb/CliThread.cpp
+   nb/LogBuffer.cpp
    nb/SysTypes.h
 NodeBase::NoFlags [nb/SysTypes.h]
    an/PotsTrafficThread.cpp
@@ -38701,7 +38840,7 @@ NodeBase::NoFlags [nb/SysTypes.h]
 NodeBase::PATH_SEPARATOR [nb/SysTypes.h]
    ct/CodeCoverage.cpp
    ct/CodeFile.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Parser.cpp
    nb/CliThread.cpp
    nb/Element.cpp
@@ -38716,7 +38855,7 @@ NodeBase::PATH_SEPARATOR [nb/SysTypes.h]
 NodeBase::QUOTE [nb/SysTypes.h]
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Cxx.cpp
    ct/CxxDirective.cpp
    ct/CxxScope.cpp
@@ -39095,7 +39234,7 @@ NodeBase::c_string [nb/SysTypes.h]
    cb/BcSessions.h
    cb/ProxyBcSessions.cpp
    cb/ProxyBcSessions.h
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/CxxRoot.cpp
    ct/LibraryTypes.cpp
    ct/LibraryTypes.h
@@ -39289,7 +39428,6 @@ NodeBase::debug64_t [nb/SysTypes.h]
    nb/SoftwareException.cpp
    nb/SoftwareException.h
    nb/SysHeap.win.cpp
-   nb/SysMutex.win.cpp
    sb/Context.cpp
    sb/Context.h
    sb/Message.cpp
@@ -39312,11 +39450,11 @@ NodeBase::fixed_string [nb/SysTypes.h]
    cb/DigitString.cpp
    cb/ProxyBcSessions.cpp
    ct/CodeFile.cpp
-   ct/CodeIncrement.cpp
    ct/CodeTypes.cpp
    ct/CodeTypes.h
    ct/CodeWarning.cpp
    ct/CodeWarning.h
+   ct/CtIncrement.cpp
    ct/Cxx.cpp
    ct/CxxExecute.cpp
    ct/CxxRoot.cpp
@@ -39499,9 +39637,9 @@ NodeBase::fn_name [nb/SysTypes.h]
    ct/CodeDirSet.cpp
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeSet.cpp
    ct/CodeWarning.cpp
+   ct/CtIncrement.cpp
    ct/CtModule.cpp
    ct/Cxx.cpp
    ct/CxxArea.cpp
@@ -39610,6 +39748,7 @@ NodeBase::fn_name [nb/SysTypes.h]
    nb/ModuleRegistry.cpp
    nb/MsgBuffer.cpp
    nb/MutexGuard.cpp
+   nb/MutexRegistry.cpp
    nb/NbCliParms.cpp
    nb/NbIncrement.cpp
    nb/NbLogs.cpp
@@ -39854,7 +39993,7 @@ NodeBase::id_t [nb/SysTypes.h]
    ct/CodeDir.h
    ct/CodeFile.h
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/CxxNamed.cpp
    ct/CxxNamed.h
    ct/CxxScope.cpp
@@ -39878,6 +40017,8 @@ NodeBase::id_t [nb/SysTypes.h]
    nb/LogGroup.h
    nb/LogGroupRegistry.cpp
    nb/LogGroupRegistry.h
+   nb/MutexRegistry.cpp
+   nb/MutexRegistry.h
    nb/NbCliParms.h
    nb/NbIncrement.cpp
    nb/NbIncrement.h
@@ -40036,11 +40177,11 @@ NodeBase::word [nb/SysTypes.h]
    ct/CodeFile.h
    ct/CodeFileSet.cpp
    ct/CodeFileSet.h
-   ct/CodeIncrement.cpp
    ct/CodeSet.cpp
    ct/CodeSet.h
    ct/CodeWarning.cpp
    ct/CodeWarning.h
+   ct/CtIncrement.cpp
    ct/CxxArea.cpp
    ct/CxxExecute.cpp
    ct/CxxExecute.h
@@ -40277,8 +40418,6 @@ NodeBase::ContextSwitches::capacity_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ContextSwitches::full_ [nb/Thread.cpp]
    nb/Thread.cpp
-NodeBase::ContextSwitches::lock_ [nb/Thread.cpp]
-   nb/Thread.cpp
 NodeBase::ContextSwitches::log_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ContextSwitches::next_ [nb/Thread.cpp]
@@ -40286,6 +40425,8 @@ NodeBase::ContextSwitches::next_ [nb/Thread.cpp]
 NodeBase::ContextSwitches::switches_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ContextSwitches::~ContextSwitches [nb/Thread.cpp]
+   nb/Thread.cpp
+NodeBase::ContextSwitchesLock_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ContextSwitches_LogSwitches [nb/Thread.cpp]
    nb/Thread.cpp
@@ -40307,11 +40448,11 @@ NodeBase::Orphans::Orphans(NodeBase::Orphans* const) [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Orphans::Register [nb/Thread.cpp]
    nb/Thread.cpp
-NodeBase::Orphans::lock_ [nb/Thread.cpp]
-   nb/Thread.cpp
 NodeBase::Orphans::orphans_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Orphans::~Orphans [nb/Thread.cpp]
+   nb/Thread.cpp
+NodeBase::OrphansLock_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Orphans_ExitNow [nb/Thread.cpp]
    nb/Thread.cpp
@@ -40359,6 +40500,8 @@ NodeBase::ThreadPriv::TimeIdle_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ThreadPriv::TimeUsed_ [nb/Thread.cpp]
    nb/Thread.cpp
+NodeBase::ThreadPriv::acquiring_ [nb/Thread.cpp]
+   nb/Thread.cpp
 NodeBase::ThreadPriv::action_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ThreadPriv::autostop_ [nb/Thread.cpp]
@@ -40372,6 +40515,8 @@ NodeBase::ThreadPriv::currUsecs_ [nb/Thread.cpp]
 NodeBase::ThreadPriv::entered_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ThreadPriv::exiting_ [nb/Thread.cpp]
+   nb/Thread.cpp
+NodeBase::ThreadPriv::mutexes_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ThreadPriv::prevUsecs_ [nb/Thread.cpp]
    nb/Thread.cpp
@@ -40585,6 +40730,10 @@ NodeBase::Thread_TrapHandler [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Thread_Unblock [nb/Thread.cpp]
    nb/Thread.cpp
+NodeBase::Thread_UpdateMutex [nb/Thread.cpp]
+   nb/Thread.cpp
+NodeBase::Thread_UpdateMutexCount [nb/Thread.cpp]
+   nb/Thread.cpp
 NodeBase::Thread_Vector [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Thread_ctor [nb/Thread.cpp]
@@ -40602,6 +40751,8 @@ NodeBase::UnknownExceptionStr [nb/Thread.cpp]
 NodeBase::MsgBuffer [nb/Thread.h]
    dip/BotThread.h
    nb/Thread.cpp
+   nb/Thread.h
+NodeBase::SysMutex [nb/Thread.h]
    nb/Thread.h
 NodeBase::Thread [nb/Thread.h]
    an/PotsTrafficThread.cpp
@@ -40629,6 +40780,7 @@ NodeBase::Thread [nb/Thread.h]
    nb/RootThread.h
    nb/StatisticsThread.cpp
    nb/StatisticsThread.h
+   nb/SysMutex.win.cpp
    nb/SysThread.win.cpp
    nb/ThisThread.cpp
    nb/Thread.cpp
@@ -40831,9 +40983,6 @@ NodeBase::Thread::FunctionInvoked [nb/Thread.h]
 NodeBase::Thread::GetBlockingReason [nb/Thread.h]
    nb/NbIncrement.cpp
    sb/InvokerPool.cpp
-NodeBase::Thread::GetFaction [nb/Thread.h]
-   nb/CoutThread.cpp
-   nb/FileThread.cpp
 NodeBase::Thread::GetStatus [nb/Thread.h]
    nb/NbTracer.cpp
    sb/TimerThread.cpp
@@ -41008,8 +41157,7 @@ NodeBase::Thread::RtcTimeout [nb/Thread.h]
    nb/Thread.cpp
 NodeBase::Thread::RunningThread [nb/Thread.h]
    nb/CinThread.cpp
-   nb/CoutThread.cpp
-   nb/FileThread.cpp
+   nb/SysMutex.win.cpp
    nb/ThisThread.cpp
    nb/Thread.cpp
    sb/Context.cpp
@@ -41029,6 +41177,8 @@ NodeBase::Thread::SetStatus [nb/Thread.h]
    nb/NbTracer.cpp
 NodeBase::Thread::SetTrap [nb/Thread.h]
    nb/Thread.cpp
+NodeBase::Thread::SetTrapped [nb/Thread.h]
+   nt/NtIncrement.cpp
 NodeBase::Thread::Shutdown [nb/Thread.h]
    nb/Thread.cpp
 NodeBase::Thread::SignalHandler [nb/Thread.h]
@@ -41097,6 +41247,12 @@ NodeBase::Thread::Unblock [nb/Thread.h]
    nw/TcpIoThread.h
    nw/UdpIoThread.cpp
    nw/UdpIoThread.h
+NodeBase::Thread::UpdateMutex [nb/Thread.h]
+   nb/SysMutex.win.cpp
+   nb/Thread.cpp
+NodeBase::Thread::UpdateMutexCount [nb/Thread.h]
+   nb/SysMutex.win.cpp
+   nb/Thread.cpp
 NodeBase::Thread::Vector [nb/Thread.h]
    nb/Thread.cpp
 NodeBase::Thread::blocked_ [nb/Thread.h]
@@ -41132,6 +41288,7 @@ NodeBase::Thread::traceMsg_ [nb/Thread.h]
    nb/Thread.cpp
 NodeBase::Thread::trapped_ [nb/Thread.h]
    nb/Thread.cpp
+   nb/Thread.h
 NodeBase::Thread::waiting_ [nb/Thread.h]
    nb/InitThread.cpp
    nb/Thread.cpp
@@ -41673,6 +41830,8 @@ NodeBase::ToolRegistry_BindTool [nb/ToolRegistry.cpp]
    nb/ToolRegistry.cpp
 NodeBase::ToolRegistry_FindTool [nb/ToolRegistry.cpp]
    nb/ToolRegistry.cpp
+NodeBase::ToolRegistry_ListTools [nb/ToolRegistry.cpp]
+   nb/ToolRegistry.cpp
 NodeBase::ToolRegistry_UnbindTool [nb/ToolRegistry.cpp]
    nb/ToolRegistry.cpp
 NodeBase::ToolRegistry_ctor [nb/ToolRegistry.cpp]
@@ -41698,6 +41857,9 @@ NodeBase::ToolRegistry::FindTool [nb/ToolRegistry.h]
 NodeBase::ToolRegistry::GetTool [nb/ToolRegistry.h]
    nb/ToolRegistry.cpp
    nb/TraceBuffer.cpp
+NodeBase::ToolRegistry::ListTools [nb/ToolRegistry.h]
+   nb/NbIncrement.cpp
+   nb/ToolRegistry.cpp
 NodeBase::ToolRegistry::MaxTools [nb/ToolRegistry.h]
    nb/ToolRegistry.cpp
 NodeBase::ToolRegistry::Patch [nb/ToolRegistry.h]
@@ -41824,7 +41986,6 @@ NodeBase::TraceRc::NoBufferAllocated [nb/ToolTypes.h]
 NodeBase::TraceRc::NoItemSelected [nb/ToolTypes.h]
    nb/TraceBuffer.cpp
 NodeBase::TraceRc::NoSuchItem [nb/ToolTypes.h]
-   nb/NbIncrement.cpp
    nb/NbTracer.cpp
    nb/TraceBuffer.cpp
    sb/SbTracer.cpp
@@ -42246,13 +42407,13 @@ NodeBase::BlockedStr [nb/TraceDump.cpp]
    nb/TraceDump.cpp
 NodeBase::EndOfTrace [nb/TraceDump.cpp]
    nb/TraceDump.cpp
+NodeBase::Header1 [nb/TraceDump.cpp]
+   nb/TraceDump.cpp
+NodeBase::Header2 [nb/TraceDump.cpp]
+   nb/TraceDump.cpp
 NodeBase::StartOfTrace [nb/TraceDump.cpp]
    nb/TraceDump.cpp
 NodeBase::TraceDump_Generate [nb/TraceDump.cpp]
-   nb/TraceDump.cpp
-NodeBase::TraceHeader1 [nb/TraceDump.cpp]
-   nb/TraceDump.cpp
-NodeBase::TraceHeader2 [nb/TraceDump.cpp]
    nb/TraceDump.cpp
 NodeBase::TraceDump::EvtToObj [nb/TraceDump.h]
    ct/CxxExecute.cpp
@@ -43080,6 +43241,30 @@ NodeTools::MsecsUntilExpl [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::MsecsUntilStr [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
+NodeTools::MutexBlockExpl [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::MutexBlockStr [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::MutexBlockText [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::MutexBlockText::MutexBlockText [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::MutexExitExpl [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::MutexExitStr [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::MutexExitText [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::MutexExitText::MutexExitText [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::MutexTrapExpl [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::MutexTrapStr [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::MutexTrapText [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::MutexTrapText::MutexTrapText [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
 NodeTools::NextCommand [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::NextCommand::NextCommand [nt/NtIncrement.cpp]
@@ -43318,11 +43503,15 @@ NodeTools::RecoverWhatParm [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::RecoverWhatParm::RecoverWhatParm [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
+NodeTools::RecoveryTestMutex_ [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
 NodeTools::RecoveryTestThread [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::RecoveryTestThread::AbbrName [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::RecoveryTestThread::Abort [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RecoveryTestThread::AcquireMutex [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::RecoveryTestThread::Delete [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
@@ -43334,6 +43523,22 @@ NodeTools::RecoveryTestThread::Display [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::RecoveryTestThread::DivideByZero [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
+NodeTools::RecoveryTestThread::DoAbort [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RecoveryTestThread::DoDelete [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RecoveryTestThread::DoDivide [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RecoveryTestThread::DoRaise [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RecoveryTestThread::DoRetrap [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RecoveryTestThread::DoSwerr [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RecoveryTestThread::DoTerminate [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RecoveryTestThread::DoTrap [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
 NodeTools::RecoveryTestThread::Enter [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::RecoveryTestThread::InfiniteLoop [nt/NtIncrement.cpp]
@@ -43341,6 +43546,12 @@ NodeTools::RecoveryTestThread::InfiniteLoop [nt/NtIncrement.cpp]
 NodeTools::RecoveryTestThread::IsCritical [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::RecoveryTestThread::LoopForever [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RecoveryTestThread::MutexBlock [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RecoveryTestThread::MutexExit [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RecoveryTestThread::MutexTrap [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::RecoveryTestThread::OverflowStack [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
@@ -43351,6 +43562,8 @@ NodeTools::RecoveryTestThread::Recover [nt/NtIncrement.cpp]
 NodeTools::RecoveryTestThread::RecoveryTestThread [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::RecoveryTestThread::RecurseForever [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RecoveryTestThread::Retrap [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::RecoveryTestThread::Return [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
@@ -43376,7 +43589,25 @@ NodeTools::RecoveryTestThread::test_ [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::RecoveryTestThread::~RecoveryTestThread [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
+NodeTools::RecoveryTestThread_AcquireMutex [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
 NodeTools::RecoveryTestThread_Destroy [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RecoveryTestThread_DoAbort [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RecoveryTestThread_DoDelete [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RecoveryTestThread_DoDivide [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RecoveryTestThread_DoRaise [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RecoveryTestThread_DoRetrap [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RecoveryTestThread_DoSwerr [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RecoveryTestThread_DoTerminate [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RecoveryTestThread_DoTrap [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::RecoveryTestThread_Enter [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
@@ -43461,6 +43692,14 @@ NodeTools::RemoveCommand_ProcessCommand [nt/NtIncrement.cpp]
 NodeTools::RemoveExpl [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::RemoveStr [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RetrapExpl [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RetrapStr [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RetrapText [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RetrapText::RetrapText [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::ReturnText [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
@@ -57790,9 +58029,9 @@ SessionBase::TlvMessage::ParmFencePattern [sb/TlvMessage.h]
    sb/TlvMessage.cpp
    sb/TlvMessage.h
 SessionBase::TlvMessage::ParmIterator [sb/TlvMessage.h]
-   sb/TlvMessage.h
-SessionBase::TlvMessage::ParmIterator [sb/TlvMessage.h]
    sb/TlvMessage.cpp
+SessionBase::TlvMessage::ParmIterator [sb/TlvMessage.h]
+   sb/TlvMessage.h
 SessionBase::TlvMessage::ParmIterator::mptr [sb/TlvMessage.h]
    sb/TlvMessage.cpp
 SessionBase::TlvMessage::ParmIterator::pindex [sb/TlvMessage.h]
@@ -62532,6 +62771,8 @@ std::atomic_size_t [subs/atomic]
    nb/Log.h
    nb/Statistics.cpp
    nb/Statistics.h
+   nb/SysMutex.h
+   nb/SysMutex.win.cpp
 std::atomic_uint32_t [subs/atomic]
    nb/Thread.cpp
    nb/Thread.h
@@ -62788,6 +63029,8 @@ ptrdiff_t [subs/cstddef]
    nb/StatisticsGroup.h
    nb/Symbol.cpp
    nb/Symbol.h
+   nb/SysMutex.cpp
+   nb/SysMutex.h
    nb/Thread.cpp
    nb/Thread.h
    nb/Tool.cpp
@@ -62857,11 +63100,11 @@ size_t [subs/cstddef]
    ct/CodeFile.cpp
    ct/CodeFile.h
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeTypes.cpp
    ct/CodeTypes.h
    ct/CodeWarning.cpp
    ct/CodeWarning.h
+   ct/CtIncrement.cpp
    ct/Cxx.cpp
    ct/Cxx.h
    ct/CxxArea.cpp
@@ -62981,6 +63224,7 @@ size_t [subs/cstddef]
    nb/ModuleRegistry.cpp
    nb/MsgBuffer.cpp
    nb/MsgBuffer.h
+   nb/NbCliParms.cpp
    nb/NbIncrement.cpp
    nb/NbPools.cpp
    nb/NbPools.h
@@ -63397,8 +63641,6 @@ strcmp [subs/cstring]
    nb/FunctionName.cpp
    nb/SymbolRegistry.cpp
    nt/FunctionStats.cpp
-strcpy [subs/cstring]
-   nb/LogBuffer.cpp
 strlen [subs/cstring]
    ct/CodeFile.cpp
    ct/Cxx.cpp
@@ -63534,8 +63776,8 @@ std::setw [subs/iomanip]
    cb/BcSsm.cpp
    ct/CodeCoverage.cpp
    ct/CodeDirSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeWarning.cpp
+   ct/CtIncrement.cpp
    ct/Cxx.cpp
    ct/CxxExecute.cpp
    ct/Parser.cpp
@@ -63807,7 +64049,6 @@ std::ostream [subs/iosfwd]
    nb/Exception.cpp
    nb/Exception.h
    nb/FileThread.cpp
-   nb/FileThread.h
    nb/Formatters.cpp
    nb/Formatters.h
    nb/FunctionTrace.cpp
@@ -63836,6 +64077,8 @@ std::ostream [subs/iosfwd]
    nb/ModuleRegistry.h
    nb/MsgBuffer.cpp
    nb/MsgBuffer.h
+   nb/MutexRegistry.cpp
+   nb/MutexRegistry.h
    nb/NbIncrement.cpp
    nb/NbTracer.cpp
    nb/NbTracer.h
@@ -64406,9 +64649,9 @@ std::unique_ptr [subs/memory]
    cb/BcProtocol.cpp
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeSet.cpp
    ct/CodeSet.h
+   ct/CtIncrement.cpp
    ct/CxxArea.cpp
    ct/CxxArea.h
    ct/CxxDirective.cpp
@@ -64524,13 +64767,10 @@ std::unique_ptr [subs/memory]
    nb/Thread.cpp
    nw/SysTcpSocket.win.cpp
 std::unique_ptr::get [subs/memory]
-   dip/TokenMessage.cpp
-   nw/SysTcpSocket.win.cpp
-std::unique_ptr::get [subs/memory]
    an/PotsShelfHandler.cpp
    ct/CodeFile.cpp
-   ct/CodeIncrement.cpp
    ct/CodeSet.cpp
+   ct/CtIncrement.cpp
    ct/CxxArea.cpp
    ct/CxxArea.h
    ct/CxxDirective.cpp
@@ -64585,8 +64825,9 @@ std::unique_ptr::get [subs/memory]
    sb/SbInvokerPools.cpp
    sn/PotsCallHandler.cpp
    st/StTestData.cpp
-std::unique_ptr::release [subs/memory]
+std::unique_ptr::get [subs/memory]
    dip/TokenMessage.cpp
+   nw/SysTcpSocket.win.cpp
 std::unique_ptr::release [subs/memory]
    ct/CodeSet.cpp
    ct/CxxArea.cpp
@@ -64620,10 +64861,8 @@ std::unique_ptr::release [subs/memory]
    sb/InvokerThread.cpp
    sb/Message.cpp
    sb/SbInputHandler.cpp
-std::unique_ptr::reset [subs/memory]
+std::unique_ptr::release [subs/memory]
    dip/TokenMessage.cpp
-   nb/Thread.cpp
-   nw/SysTcpSocket.win.cpp
 std::unique_ptr::reset [subs/memory]
    an/PotsShelfIpService.cpp
    cb/BcProtocol.cpp
@@ -64688,6 +64927,10 @@ std::unique_ptr::reset [subs/memory]
    sn/PotsStatistics.cpp
    st/StIncrement.cpp
    st/StTestData.cpp
+std::unique_ptr::reset [subs/memory]
+   dip/TokenMessage.cpp
+   nb/Thread.cpp
+   nw/SysTcpSocket.win.cpp
 operator delete [subs/new]
    nb/SysHeap.cpp
 operator delete[] [subs/new]
@@ -64800,6 +65043,7 @@ std::basic_ostream [subs/ostream]
    nb/Module.cpp
    nb/ModuleRegistry.cpp
    nb/MsgBuffer.cpp
+   nb/MutexRegistry.cpp
    nb/NbTracer.cpp
    nb/NbTypes.cpp
    nb/Object.cpp
@@ -65019,9 +65263,9 @@ std::basic_ostream::operator<<(std::basic_ostream* const,char) [subs/ostream]
    ct/CodeDirSet.cpp
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeSet.cpp
    ct/CodeWarning.cpp
+   ct/CtIncrement.cpp
    ct/Cxx.cpp
    ct/CxxArea.cpp
    ct/CxxCharLiteral.h
@@ -65103,6 +65347,7 @@ std::basic_ostream::operator<<(std::basic_ostream* const,char) [subs/ostream]
    nb/Module.cpp
    nb/ModuleRegistry.cpp
    nb/MsgBuffer.cpp
+   nb/MutexRegistry.cpp
    nb/NbIncrement.cpp
    nb/NbTracer.cpp
    nb/Object.cpp
@@ -65261,10 +65506,10 @@ std::basic_ostream::operator<<(std::basic_ostream* const,const char*) [subs/ostr
    ct/CodeDirSet.cpp
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeSet.cpp
    ct/CodeTypes.cpp
    ct/CodeWarning.cpp
+   ct/CtIncrement.cpp
    ct/Cxx.cpp
    ct/CxxArea.cpp
    ct/CxxDirective.cpp
@@ -65347,6 +65592,7 @@ std::basic_ostream::operator<<(std::basic_ostream* const,const char*) [subs/ostr
    nb/Module.cpp
    nb/ModuleRegistry.cpp
    nb/MsgBuffer.cpp
+   nb/MutexRegistry.cpp
    nb/NbIncrement.cpp
    nb/NbTracer.cpp
    nb/NbTypes.cpp
@@ -65506,8 +65752,8 @@ std::basic_ostream::operator<<(std::basic_ostream* const,const std::stream_manip
    cb/BcSsm.cpp
    ct/CodeCoverage.cpp
    ct/CodeDirSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeWarning.cpp
+   ct/CtIncrement.cpp
    ct/Cxx.cpp
    ct/CxxExecute.cpp
    ct/CxxToken.cpp
@@ -65727,9 +65973,9 @@ std::basic_ostream::operator<<(std::basic_ostream* const,unsigned int) [subs/ost
    ct/CodeCoverage.cpp
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeSet.cpp
    ct/CodeWarning.cpp
+   ct/CtIncrement.cpp
    ct/Cxx.cpp
    ct/CxxArea.cpp
    ct/CxxDirective.cpp
@@ -66054,8 +66300,8 @@ std::basic_ostringstream [subs/sstream]
    ct/CodeCoverage.cpp
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeWarning.cpp
+   ct/CtIncrement.cpp
    ct/Cxx.cpp
    ct/CxxArea.cpp
    ct/CxxDirective.cpp
@@ -66195,10 +66441,10 @@ std::basic_string [subs/string]
    ct/CodeDir.cpp
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeTypes.cpp
    ct/CodeWarning.cpp
    ct/CodeWarning.h
+   ct/CtIncrement.cpp
    ct/Cxx.cpp
    ct/CxxArea.cpp
    ct/CxxDirective.cpp
@@ -66253,6 +66499,7 @@ std::basic_string [subs/string]
    nb/LogGroup.h
    nb/LogThread.cpp
    nb/ModuleRegistry.cpp
+   nb/NbCliParms.cpp
    nb/NbIncrement.cpp
    nb/NbTypes.cpp
    nb/NbTypes.h
@@ -66270,6 +66517,7 @@ std::basic_string [subs/string]
    nb/SysThreadStack.win.cpp
    nb/SysTickTimer.win.cpp
    nb/TimedRecord.cpp
+   nb/ToolRegistry.cpp
    nb/TraceBuffer.cpp
    nb/TraceRecord.cpp
    nt/NtIncrement.cpp
@@ -66321,7 +66569,7 @@ std::basic_string::c_str [subs/string]
    ct/CodeCoverage.cpp
    ct/CodeDir.cpp
    ct/CodeFile.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/CxxArea.cpp
    ct/CxxScope.cpp
    ct/Editor.cpp
@@ -66408,9 +66656,9 @@ std::basic_string::empty [subs/string]
    ct/CodeCoverage.cpp
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeWarning.cpp
    ct/CodeWarning.h
+   ct/CtIncrement.cpp
    ct/CxxArea.cpp
    ct/CxxExecute.cpp
    ct/CxxNamed.cpp
@@ -66434,6 +66682,7 @@ std::basic_string::empty [subs/string]
    nb/CliThread.cpp
    nb/Element.cpp
    nb/Formatters.cpp
+   nb/NbCliParms.cpp
    nb/NbIncrement.cpp
    nb/SoftwareException.cpp
    nb/TimedRecord.cpp
@@ -66472,9 +66721,9 @@ std::basic_string::erase [subs/string]
 std::basic_string::find(const std::basic_string* const,const std::basic_string,unsigned int) [subs/string]
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeTypes.cpp
    ct/CodeWarning.cpp
+   ct/CtIncrement.cpp
    ct/CxxArea.cpp
    ct/CxxExecute.cpp
    ct/CxxNamed.cpp
@@ -66495,6 +66744,7 @@ std::basic_string::find(const std::basic_string* const,const std::basic_string,u
    nb/FunctionName.cpp
    nb/Log.cpp
    nb/LogBuffer.cpp
+   nb/NbCliParms.cpp
    nb/SysTickTimer.win.cpp
    nt/NtIncrement.cpp
    st/MscBuilder.cpp
@@ -66554,9 +66804,9 @@ std::basic_string::length [subs/string]
 std::basic_string::npos [subs/string]
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
    ct/CodeWarning.cpp
    ct/CodeWarning.h
+   ct/CtIncrement.cpp
    ct/Cxx.cpp
    ct/CxxArea.cpp
    ct/CxxDirective.cpp
@@ -66588,6 +66838,7 @@ std::basic_string::npos [subs/string]
    nb/FunctionTrace.cpp
    nb/Log.cpp
    nb/LogBuffer.cpp
+   nb/NbCliParms.cpp
    nb/SysTickTimer.win.cpp
    nt/NtIncrement.cpp
    st/MscBuilder.cpp
@@ -66604,7 +66855,7 @@ std::basic_string::pop_back [subs/string]
    nb/CliThread.cpp
 std::basic_string::push_back [subs/string]
    ct/CodeFile.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/CxxArea.cpp
    ct/CxxNamed.cpp
    ct/CxxStrLiteral.h
@@ -66615,7 +66866,9 @@ std::basic_string::push_back [subs/string]
    dip/TokenMessage.cpp
    nb/CliThread.cpp
    nb/Element.cpp
+   nb/NbCliParms.cpp
    nb/NbIncrement.cpp
+   nb/ToolRegistry.cpp
    nb/TraceBuffer.cpp
    st/MscContext.cpp
 std::basic_string::replace(std::basic_string* const,unsigned int,unsigned int,const std::basic_string) [subs/string]
@@ -66625,7 +66878,7 @@ std::basic_string::replace(std::basic_string* const,unsigned int,unsigned int,co
 std::basic_string::rfind(const std::basic_string* const,const std::basic_string,unsigned int) [subs/string]
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Cxx.cpp
    ct/CxxArea.cpp
    ct/CxxExecute.cpp
@@ -66658,7 +66911,7 @@ std::basic_string::size [subs/string]
    ct/CodeCoverage.cpp
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Cxx.cpp
    ct/CxxArea.cpp
    ct/CxxDirective.cpp
@@ -66690,6 +66943,7 @@ std::basic_string::size [subs/string]
    nb/LogBuffer.cpp
    nb/LogGroup.cpp
    nb/ModuleRegistry.cpp
+   nb/NbCliParms.cpp
    nb/NbIncrement.cpp
    nb/Statistics.cpp
    nb/StatisticsGroup.cpp
@@ -66699,7 +66953,7 @@ std::basic_string::size [subs/string]
    st/MscBuilder.cpp
 std::basic_string::substr [subs/string]
    ct/CodeFile.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Cxx.cpp
    ct/CxxDirective.cpp
    ct/CxxScoped.cpp
@@ -66767,13 +67021,13 @@ std::string [subs/string]
    ct/CodeFile.h
    ct/CodeFileSet.cpp
    ct/CodeFileSet.h
-   ct/CodeIncrement.cpp
    ct/CodeSet.cpp
    ct/CodeSet.h
    ct/CodeTypes.cpp
    ct/CodeTypes.h
    ct/CodeWarning.cpp
    ct/CodeWarning.h
+   ct/CtIncrement.cpp
    ct/Cxx.cpp
    ct/Cxx.h
    ct/CxxArea.cpp
@@ -66954,6 +67208,10 @@ std::string [subs/string]
    nb/ModuleRegistry.h
    nb/MsgBuffer.cpp
    nb/MsgBuffer.h
+   nb/MutexRegistry.cpp
+   nb/MutexRegistry.h
+   nb/NbCliParms.cpp
+   nb/NbCliParms.h
    nb/NbIncrement.cpp
    nb/NbTracer.cpp
    nb/Object.cpp
@@ -67210,7 +67468,7 @@ std::to_string(int) [subs/string]
    an/PotsShelfIpService.cpp
    cb/BcProtocol.cpp
    ct/CodeFileSet.cpp
-   ct/CodeIncrement.cpp
+   ct/CtIncrement.cpp
    ct/Editor.cpp
    ct/LibrarySet.cpp
    dip/BaseBot.cpp

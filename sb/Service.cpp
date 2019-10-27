@@ -58,10 +58,10 @@ Service::Service(Id sid, bool modifiable, bool modifier) :
 
    sid_.SetId(sid);
 
-   states_.Init(State::MaxId + 1, State::CellDiff(), MemProt);
-   handlers_.Init(EventHandler::MaxId + 1, 0, MemProt, false);
+   states_.Init(State::MaxId, State::CellDiff(), MemProt);
+   handlers_.Init(EventHandler::MaxId, 0, MemProt, false);
    for(auto i = 0; i <= Event::MaxId; ++i) eventNames_[i] = nullptr;
-   triggers_.Init(Trigger::MaxId + 1, 0, MemProt, false);
+   triggers_.Init(Trigger::MaxId, 0, MemProt, false);
 
    //  Add the service to the global service registry.
    //

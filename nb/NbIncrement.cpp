@@ -55,6 +55,7 @@
 #include "Memory.h"
 #include "Module.h"
 #include "ModuleRegistry.h"
+#include "MutexRegistry.h"
 #include "NbCliParms.h"
 #include "NbPools.h"
 #include "NbSignals.h"
@@ -1678,6 +1679,40 @@ word ModulesCommand::ProcessCommand(CliThread& cli) const
 
 //------------------------------------------------------------------------------
 //
+//  The MUTEXES command.
+//
+class MutexesCommand : public CliCommand
+{
+public:
+   MutexesCommand();
+private:
+   word ProcessCommand(CliThread& cli) const override;
+};
+
+fixed_string MutexesStr = "mutexes";
+fixed_string MutexesExpl = "Displays mutexes.";
+
+MutexesCommand::MutexesCommand() : CliCommand(MutexesStr, MutexesExpl)
+{
+   BindParm(*new DispBVParm);
+}
+
+fn_name MutexesCommand_ProcessCommand = "MutexesCommand.ProcessCommand";
+
+word MutexesCommand::ProcessCommand(CliThread& cli) const
+{
+   Debug::ft(MutexesCommand_ProcessCommand);
+
+   bool v = false;
+
+   if(GetBV(*this, cli, v) == Error) return -1;
+   cli.EndOfInput(false);
+   Singleton< MutexRegistry >::Instance()->Output(*cli.obuf, 2, v);
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+//
 //  The POOLS command.
 //
 class PoolsCommand : public CliCommand
@@ -2551,7 +2586,7 @@ BuffSizeText::BuffSizeText() : CliText(BuffSizeTextExpl, BuffSizeTextStr)
    BindParm(*new BuffSizeParm);
 }
 
-fixed_string ToolListExpl = "tools to set: string of tool abbrevations";
+fixed_string ToolListExpl = "tools to set: string of tool abbreviations";
 
 ToolListParm::ToolListParm() : CliTextParm(ToolListExpl) { }
 
@@ -2604,6 +2639,7 @@ word SetCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    id_t setHowIndex;
    word buffSize;
    string toolList;
+   string expl;
    bool flag;
    auto buff = Singleton< TraceBuffer >::Instance();
    auto reg = Singleton< ToolRegistry >::Instance();
@@ -2616,16 +2652,16 @@ word SetCommand::ProcessSubcommand(CliThread& cli, id_t index) const
       cli.EndOfInput(false);
       flag = (setHowIndex == SetHowParm::On);
 
+      if(!ValidateOptions(toolList, reg->ListTools(), expl))
+      {
+         return cli.Report(-1, expl);
+      }
+
       for(size_t i = 0; i < toolList.size(); ++i)
       {
          auto c = toolList[i];
-         auto tool = reg->FindTool(toolList[i]);
-
-         if(tool == nullptr)
-            rc = NoSuchItem;
-         else
-            rc = buff->SetTool(tool->Tid(), flag);
-
+         auto tool = reg->FindTool(c);
+         rc = buff->SetTool(tool->Tid(), flag);
          *cli.obuf << spaces(2) << c << ": " << strTraceRc(rc) << CRLF;
       }
       break;
@@ -2927,9 +2963,9 @@ fixed_string MemoryHeader2 =
 fixed_string PoolsHeader1 =
    "  Alloc  Lowest    Curr    Curr";
 fixed_string PoolsHeader2 =
-   "  Fails   Avail   Avail  In Use   Allocs    Frees   Pool";
-// 0         1         2         3         4         5         6
-// 0123456789012345678901234567890123456789012345678901234567890
+   "  Fails   Avail   Avail  In Use   Allocs    Frees  Exps   Pool";
+// 0         1         2         3         4         5         6         7
+// 01234567890123456789012345678901234567890123456789012345678901234567890
 
 fn_name StatusCommand_ProcessCommand = "StatusCommand.ProcessCommand";
 
@@ -2980,6 +3016,7 @@ word StatusCommand::ProcessCommand(CliThread& cli) const
       *cli.obuf << setw(8) << p->InUseCount();
       *cli.obuf << setw(9) << p->AllocCount();
       *cli.obuf << setw(9) << p->FreeCount();
+      *cli.obuf << setw(6) << p->Expansions();
       *cli.obuf << spaces(3) << p->Name() << CRLF;
    }
 
@@ -3387,6 +3424,7 @@ NbIncrement::NbIncrement() : CliIncrement(RootStr, RootExpl, 48)
    BindCommand(*new AuditCommand);
    BindCommand(*new SchedCommand);
    BindCommand(*new ThreadsCommand);
+   BindCommand(*new MutexesCommand);
    BindCommand(*new BuffersCommand);
    BindCommand(*new PsignalsCommand);
    BindCommand(*new SingletonsCommand);

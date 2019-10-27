@@ -17,7 +17,7 @@ nt>delay 1
   OK.
 nt>recover loop
   OK.
-nt>delay 3
+nt>delay 2
   OK.
 nt>cfgparms set traponrtctimeout &save.traponrtctimeout
   OK.
@@ -26,6 +26,8 @@ nt>cfgparms set breakenabled &save.breakenabled
 nt>testcase end
   OK.
 read test.trap.epilog
+nt>delay 2
+  OK.
 nt>stop
   OK.
 nt>sched stop

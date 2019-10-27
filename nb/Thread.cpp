@@ -44,6 +44,7 @@
 #include "Log.h"
 #include "MsgBuffer.h"
 #include "MutexGuard.h"
+#include "MutexRegistry.h"
 #include "NbLogs.h"
 #include "NbPools.h"
 #include "NbSignals.h"
@@ -327,11 +328,13 @@ private:
    //  Set if context switches are to be logged.
    //
    bool log_;
-
-   //  Critical section lock for the array of context switches.
-   //
-   mutable SysMutex lock_;
 };
+
+//------------------------------------------------------------------------------
+//
+//  Critical section lock for the array of context switches.
+//
+SysMutex ContextSwitchesLock_("ContextSwitchesLock");
 
 //------------------------------------------------------------------------------
 
@@ -367,7 +370,7 @@ ContextSwitch* ContextSwitches::AddSwitch()
 
    ContextSwitch* cs;
 
-   if(lock_.Acquire(TIMEOUT_IMMED) == SysMutex::Acquired)
+   if(ContextSwitchesLock_.Acquire(TIMEOUT_IMMED) == SysMutex::Acquired)
    {
       cs = &switches_[next_];
 
@@ -377,7 +380,7 @@ ContextSwitch* ContextSwitches::AddSwitch()
          full_ = true;
       }
 
-      lock_.Release();
+      ContextSwitchesLock_.Release();
       return cs;
    }
 
@@ -405,7 +408,7 @@ void ContextSwitches::DisplaySwitches(ostream& stream) const
       return;
    }
 
-   MutexGuard guard(&lock_);
+   MutexGuard guard(&ContextSwitchesLock_);
 
    size_t first = 0;
    size_t last = next_ - 1;
@@ -559,11 +562,13 @@ private:
    //  The orphans array.
    //
    Array< SysThread* > orphans_;
-
-   //  Critical section lock for the array of orphans.
-   //
-   SysMutex lock_;
 };
+
+//------------------------------------------------------------------------------
+//
+//  Critical section lock for the array of orphans.
+//
+SysMutex OrphansLock_("OrphansLock");
 
 //------------------------------------------------------------------------------
 
@@ -599,7 +604,7 @@ bool Orphans::ExitNow()
    //
    auto pid = SysThread::RunningThreadId();
 
-   MutexGuard guard(&lock_);
+   MutexGuard guard(&OrphansLock_);
 
    for(size_t i = 0; i < orphans_.Size(); ++i)
    {
@@ -634,7 +639,7 @@ void Orphans::Register(SysThread* thr)
 
    if(thr == nullptr) return;
 
-   MutexGuard guard(&lock_);
+   MutexGuard guard(&OrphansLock_);
 
    if(!orphans_.PushBack(thr))
    {
@@ -693,6 +698,14 @@ public:
    //  Calls to MemUnprotect minus calls to MemProtect.
    //
    uint8_t unprotects_;
+
+   //  The number of mutexes currently held by the thread.
+   //
+   uint8_t mutexes_;
+
+   //  The mutex on which the thread is currently blocked.
+   //
+   const SysMutex* acquiring_;
 
    //  The depth of nested software logs.
    //
@@ -812,6 +825,8 @@ ThreadPriv::ThreadPriv() :
    stackBase_(nullptr),
    unpreempts_(1),
    unprotects_(0),
+   mutexes_(0),
+   acquiring_(nullptr),
    swlogs_(0),
    entered_(false),
    tracing_(false),
@@ -854,6 +869,12 @@ void ThreadPriv::Display(ostream& stream,
    stream << prefix << "stackBase  : " << stackBase_ << CRLF;
    stream << prefix << "unpreempts : " << int(unpreempts_) << CRLF;
    stream << prefix << "unprotects : " << int(unprotects_) << CRLF;
+   stream << prefix << "mutexes    : " << int(mutexes_) << CRLF;
+   stream << prefix << "acquiring  : ";
+   if(acquiring_ == nullptr)
+      stream << prefix << acquiring_ << CRLF;
+   else
+      stream << acquiring_->Name() << CRLF;
    stream << prefix << "swlogs     : " << int(swlogs_) << CRLF;
    stream << prefix << "rtcLbc     : " << CRLF;
    rtcLbc_.Display(stream, prefix + spaces(2), options);
@@ -890,6 +911,8 @@ void ThreadPriv::Recreate()
    stackBase_ = nullptr;
    unpreempts_ = 1;
    unprotects_ = 0;
+   mutexes_ = 0;
+   acquiring_ = nullptr;
    swlogs_ = 0;
    entered_ = false;
    tracing_ = false;
@@ -1304,8 +1327,8 @@ const size_t SchedHeaderSize = 3;
 
 fixed_string SchedHeader[SchedHeaderSize] =
 {
-// 0      1         2         3         4         5         6         7
-// 34567890123456789012345678901234567890123456789012345678901234567890123456
+//        1         2         3         4         5         6         7
+//234567890123456789012345678901234567890123456789012345678901234567890123456
 "      THREADS          |    SINCE START OF CURRENT 15-MIN INTERVAL    | LAST",
 "                       |            rtc  max   max     max  total     |5 SEC",
 "id    name     host f b| ex yields  t/o msgs stack   usecs  msecs %cpu| %cpu"
@@ -1465,6 +1488,13 @@ bool Thread::EnterBlockingOperation(BlockingReason why, fn_name_arg func)
 
    if(!thr->BlockingAllowed(why, func)) return false;
 
+   if(thr->priv_->mutexes_ > 0)
+   {
+      Debug::SwLog(Thread_EnterBlockingOperation,
+         "mutexes released", thr->priv_->mutexes_);
+      Singleton< MutexRegistry >::Instance()->Release();
+   }
+
    thr->blocked_ = why;
    thr->Suspend();
    return true;
@@ -1501,7 +1531,13 @@ main_t Thread::EnterThread(void* arg)
    //  This causes a trap, so the thread must wait until it is constructed and
    //  has been signalled to run.
    //
-   while(self->systhrd_ == nullptr) Debug::noop();
+   while((self->systhrd_ == nullptr) ||
+         (self->priv_ == nullptr) ||
+         (self->stats_ == nullptr))
+   {
+      Debug::noop();
+   }
+
    self->Ready();
 
    //  If the thread is orphaned, it must exit immediately.  This occurs if
@@ -1531,6 +1567,8 @@ fn_name Thread_Exit = "Thread.Exit";
 main_t Thread::Exit(signal_t sig)
 {
    Debug::ft(Thread_Exit);
+
+   Singleton< MutexRegistry >::Instance()->Release();
 
    //  During trap recovery, force the thread to exit immediately.
    //
@@ -1587,6 +1625,13 @@ void Thread::ExitBlockingOperation(fn_name_arg func)
    Debug::ft(Thread_ExitBlockingOperation);
 
    auto thr = RunningThread();
+
+   if(thr->blocked_ == NotBlocked)
+   {
+      Debug::SwLog(Thread_EnterBlockingOperation, "not blocked", 0);
+      return;
+   }
+
    thr->blocked_ = NotBlocked;
 
    //  Check if the thread is being forced to sleep or exit.
@@ -2155,11 +2200,15 @@ DelayRc Thread::Pause(msecs_t msecs)
       msecs = TIMEOUT_NEVER;
    }
 
-   EnterBlockingOperation(BlockedOnClock, Thread_Pause);
+   if(EnterBlockingOperation(BlockedOnClock, Thread_Pause))
    {
       if(msecs != TIMEOUT_IMMED) drc = thr->systhrd_->Delay(msecs);
+      ExitBlockingOperation(Thread_Pause);
    }
-   ExitBlockingOperation(Thread_Pause);
+   else
+   {
+      if(msecs != TIMEOUT_IMMED) drc = DelayInterrupted;
+   }
 
    Trace(thr, Thread_Pause, ThreadTrace::PauseExit, drc);
    return drc;
@@ -2888,11 +2937,6 @@ fn_name Thread_Start = "Thread.Start";
 
 main_t Thread::Start()
 {
-   while((priv_ == nullptr) || (stats_ == nullptr))
-   {
-      Debug::noop();
-   }
-
    for(NO_OP; true; stats_->traps_->Incr())
    {
       try
@@ -2952,6 +2996,7 @@ main_t Thread::Start()
                //  The thread is not critical or did not want to be reentered,
                //  so exit.
                //
+               trapped_ = false;
                return Exit(SIGNIL);
 
             case ReenterThread:
@@ -2973,6 +3018,7 @@ main_t Thread::Start()
                //
                //  The thread must exit before it can be recreated.
                //
+               trapped_ = false;
                return Exit(priv_->signal_);
 
             default:
@@ -3377,6 +3423,8 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
 {
    Debug::ft(Thread_TrapHandler);  //@
 
+   Singleton< MutexRegistry >::Instance()->Release();
+
    //  Exit immediately if the Thread has already been deleted.
    //
    if((sig == SIGDELETED) || IsInvalid() ||
@@ -3476,7 +3524,6 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
 
    //  Resume execution at the top of Start.
    //
-   trapped_ = false;
    return Continue;
 }
 
@@ -3487,6 +3534,31 @@ fn_name Thread_Unblock = "Thread.Unblock";
 void Thread::Unblock()
 {
    Debug::ft(Thread_Unblock);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Thread_UpdateMutex = "Thread.UpdateMutex";
+
+void Thread::UpdateMutex(const SysMutex* mutex)
+{
+   Debug::ft(Thread_UpdateMutex);
+
+   priv_->acquiring_ = mutex;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Thread_UpdateMutexCount = "Thread.UpdateMutexCount";
+
+void Thread::UpdateMutexCount(bool acquired)
+{
+   Debug::ft(Thread_UpdateMutexCount);
+
+   if(acquired)
+      ++priv_->mutexes_;
+   else
+      --priv_->mutexes_;
 }
 
 //------------------------------------------------------------------------------

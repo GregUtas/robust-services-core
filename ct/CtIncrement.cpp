@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  CodeIncrement.cpp
+//  CtIncrement.cpp
 //
 //  Copyright (C) 2017  Greg Utas
 //
@@ -19,7 +19,7 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-#include "CodeIncrement.h"
+#include "CtIncrement.h"
 #include "CliBoolParm.h"
 #include "CliCommand.h"
 #include "CliIntParm.h"
@@ -565,6 +565,41 @@ ExportCommand::ExportCommand() : CliCommand(ExportStr, ExportExpl)
    BindParm(*new ViewsParm);
 }
 
+const string& ValidExportOptions()
+{
+   static string ValidOpts;
+
+   if(ValidOpts.empty())
+   {
+      ValidOpts.push_back(NamespaceView);
+      ValidOpts.push_back(CanonicalFileView);
+      ValidOpts.push_back(OriginalFileView);
+      ValidOpts.push_back(ClassHierarchyView);
+      ValidOpts.push_back(ItemStatistics);
+      ValidOpts.push_back(FileSymbolUsage);
+      ValidOpts.push_back(GlobalCrossReference);
+   }
+
+   return ValidOpts;
+}
+
+const string& DefaultExportOptions()
+{
+   static string DefaultOpts;
+
+   if(DefaultOpts.empty())
+   {
+      DefaultOpts.push_back(NamespaceView);
+      DefaultOpts.push_back(CanonicalFileView);
+      DefaultOpts.push_back(ClassHierarchyView);
+      DefaultOpts.push_back(ItemStatistics);
+      DefaultOpts.push_back(FileSymbolUsage);
+      DefaultOpts.push_back(GlobalCrossReference);
+   }
+
+   return DefaultOpts;
+}
+
 fn_name ExportCommand_ProcessCommand = "ExportCommand.ProcessCommand";
 
 word ExportCommand::ProcessCommand(CliThread& cli) const
@@ -573,18 +608,23 @@ word ExportCommand::ProcessCommand(CliThread& cli) const
 
    string title;
    string opts;
+   string expl;
 
    if(!GetFileName(title, cli)) return -1;
-   if(!GetString(opts, cli))
-   {
-      opts.push_back(NamespaceView);
-      opts.push_back(CanonicalFileView);
-      opts.push_back(ClassHierarchyView);
-      opts.push_back(ItemStatistics);
-      opts.push_back(FileSymbolUsage);
-      opts.push_back(GlobalCrossReference);
-   }
+   GetString(opts, cli);
    cli.EndOfInput(false);
+
+   if(opts.empty())
+   {
+      opts = DefaultExportOptions();
+   }
+   else
+   {
+      if(!ValidateOptions(opts, ValidExportOptions(), expl))
+      {
+         return cli.Report(-1, expl);
+      }
+   }
 
    if((opts.find(NamespaceView) != string::npos) ||
       (opts.find(CanonicalFileView) != string::npos) ||
@@ -927,7 +967,8 @@ class DefineFileParm : public CliTextParm
 public: DefineFileParm();
 };
 
-fixed_string DefineFileExpl = "file for #define symbols (.txt in input directory)";
+fixed_string DefineFileExpl =
+   "file for #define symbols (.txt in input directory)";
 
 DefineFileParm::DefineFileParm() : CliTextParm(DefineFileExpl) { }
 
@@ -949,6 +990,22 @@ ParseCommand::ParseCommand() : LibraryCommand(ParseStr, ParseExpl)
    BindParm(*new FileSetExprParm);
 }
 
+const string& ValidParseOptions()
+{
+   static string ValidOpts;
+
+   if(ValidOpts.empty())
+   {
+      ValidOpts.push_back(TraceParse);
+      ValidOpts.push_back(SaveParseTrace);
+      ValidOpts.push_back(TraceExecution);
+      ValidOpts.push_back(TraceFunctions);
+      ValidOpts.push_back(TraceImmediate);
+   }
+
+   return ValidOpts;
+}
+
 fn_name ParseCommand_ProcessCommand = "ParseCommand.ProcessCommand";
 
 word ParseCommand::ProcessCommand(CliThread& cli) const
@@ -961,6 +1018,14 @@ word ParseCommand::ProcessCommand(CliThread& cli) const
 
    if(!GetString(opts, cli)) return -1;
    if(!GetString(name, cli)) return -1;
+
+   if(!opts.empty() && (opts != "-"))
+   {
+      if(!ValidateOptions(opts, ValidParseOptions(), expl))
+      {
+         return cli.Report(-1, expl);
+      }
+   }
 
    auto path = Element::InputPath() + PATH_SEPARATOR + name + ".txt";
    auto file = SysFile::CreateIstream(path.c_str());
@@ -1595,11 +1660,11 @@ word ExpCommand::ProcessCommand(CliThread& cli) const
 fixed_string CtStr = "ct";
 fixed_string CtExpl = "CodeTools Increment";
 
-fn_name CodeIncrement_ctor = "CodeIncrement.ctor";
+fn_name CtIncrement_ctor = "CtIncrement.ctor";
 
-CodeIncrement::CodeIncrement() : CliIncrement(CtStr, CtExpl)
+CtIncrement::CtIncrement() : CliIncrement(CtStr, CtExpl)
 {
-   Debug::ft(CodeIncrement_ctor);
+   Debug::ft(CtIncrement_ctor);
 
    BindCommand(*new ImportCommand);
    BindCommand(*new ShowCommand);
@@ -1629,10 +1694,10 @@ CodeIncrement::CodeIncrement() : CliIncrement(CtStr, CtExpl)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeIncrement_dtor = "CodeIncrement.dtor";
+fn_name CtIncrement_dtor = "CtIncrement.dtor";
 
-CodeIncrement::~CodeIncrement()
+CtIncrement::~CtIncrement()
 {
-   Debug::ft(CodeIncrement_dtor);
+   Debug::ft(CtIncrement_dtor);
 }
 }

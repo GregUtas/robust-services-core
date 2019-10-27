@@ -61,10 +61,7 @@ Alarm::Alarm(const string& name, const string& expl, secs_t delay) :
       Debug::SwLog(Alarm_ctor, "expl length", expl_.size());
    }
 
-   if(!Singleton< AlarmRegistry >::Instance()->BindAlarm(*this))
-   {
-      Debug::SwLog(Alarm_ctor, expl_.c_str(), 0);
-   }
+   Singleton< AlarmRegistry >::Instance()->BindAlarm(*this);
 }
 
 //------------------------------------------------------------------------------

@@ -36,10 +36,10 @@ namespace NodeBase
 fixed_string StartOfTrace = "START OF TRACE";
 fixed_string EndOfTrace = "END OF TRACE";
 
-//                          0         1         2         3         4         5
-//                          0123456789012345678901234567890123456789012345678901
-fixed_string TraceHeader1 = "mm:ss.ttt  Thr  Event  TotalTime   NetTime  Function";
-fixed_string TraceHeader2 = "---------  ---  -----  ---------   -------  --------";
+//                     0         1         2         3         4         5
+//                     01234567890123456789012345678901234567890123456789012
+fixed_string Header1 = "mm:ss.ttt  Thr  Event  TotalTime   NetTime  Function";
+fixed_string Header2 = "---------  ---  -----  ---------   -------  --------";
 
 //------------------------------------------------------------------------------
 
@@ -64,8 +64,8 @@ TraceRc TraceDump::Generate(ostream& stream, bool diff)
    if(overflow) stream << TraceBuffer::OverflowStr << CRLF;
    if((blocks > 0) || overflow) stream << CRLF;
 
-   stream << TraceHeader1 << CRLF;
-   stream << TraceHeader2 << CRLF;
+   stream << Header1 << CRLF;
+   stream << Header2 << CRLF;
 
    //  Step through the trace buffer, displaying a trace record if the
    //  tool that created it is enabled.  This allows a single trace to

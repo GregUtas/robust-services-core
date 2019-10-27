@@ -4,5 +4,15 @@ swflags set &flag.criticalthread on
 read debug
 
 / Edit the following to rerun trap testcases that failed.
+testcase begin recover.Retrap
+read trap.23
+testcase begin recover.TrapDuringRecovery
+read trap.15
+testcase begin recover.ThreadCtorTrap
+read trap.20
+testcase begin recover.DeleteRemote
+read trap.16
 testcase begin recover.DeleteLocal
 read trap.17
+testcase begin recover.Ctrl-C
+read trap.18

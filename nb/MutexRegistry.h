@@ -52,6 +52,10 @@ public:
    //
    SysMutex* Find(const std::string& name) const;
 
+   //  Releases all mutexes owned by the running thread.
+   //
+   void Release() const;
+
    //  Returns the registry.
    //
    const Registry< SysMutex >& Mutexes() const { return mutexes_; }

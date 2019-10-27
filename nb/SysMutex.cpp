@@ -53,6 +53,7 @@ void SysMutex::Display(ostream& stream,
    stream << prefix << "mutex : " << mutex_ << CRLF;
    stream << prefix << "nid   : " << nid_ << CRLF;
    stream << prefix << "owner : " << owner_ << CRLF;
+   stream << prefix << "locks : " << locks_ << CRLF;
 }
 
 //------------------------------------------------------------------------------

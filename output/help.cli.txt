@@ -161,6 +161,9 @@ threads           : Counts or displays threads.
   [0:99]          : ThreadId (default=all)
   [c|b|v]         : 'c'=count 'b'=brief 'v'=verbose (default='b')
 
+mutexes           : Displays mutexes.
+  [b|v]           : 'b'=brief 'v'=verbose (default='b')
+
 buffers           : Counts or displays message buffers.
   [c|b|v]         : 'c'=count 'b'=brief 'v'=verbose (default='b')
 
@@ -179,7 +182,7 @@ tools             : Lists available debugging tools.
 set               : Controls trace tool settings.
 (                 : what to set...
   tools           : trace tools: see >tools command for abbrevations
-    <str>         : tools to set: string of tool abbrevations
+    <str>         : tools to set: string of tool abbreviations
   (               : setting...
     on            : on
     off           : off
@@ -196,7 +199,7 @@ include           : Specifies what should be captured by trace tools.
     off           : off
   )
   faction         : threads in a specific faction
-    (0:7)         : faction
+    (0:8)         : faction
   thread          : a specific thread's activity
     (0:99)        : ThreadId
 )
@@ -204,7 +207,7 @@ include           : Specifies what should be captured by trace tools.
 exclude           : Specifies what should not be captured by trace tools.
 (                 : what to exclude...
   faction         : threads in a specific faction
-    (0:7)         : faction
+    (0:8)         : faction
   thread          : a specific thread's activity
     (0:99)        : ThreadId
 )
@@ -222,7 +225,7 @@ clear             : Clears the trace buffer, tools, or selections.
   tools           : trace tools
   selections      : all items included/excluded by trace tools
   faction         : threads in a specific faction
-    (0:7)         : faction
+    (0:8)         : faction
   factions        : all included/excluded factions
   thread          : a specific thread's activity
     (0:99)        : ThreadId
@@ -311,7 +314,7 @@ logs              : Interface to the log subsystem.
 set               : Controls trace tool settings.
 (                 : what to set...
   tools           : trace tools: see >tools command for abbrevations
-    <str>         : tools to set: string of tool abbrevations
+    <str>         : tools to set: string of tool abbreviations
   (               : setting...
     on            : on
     off           : off
@@ -514,9 +517,13 @@ recover           : Tests thread recovery.
   badptr          : dereference an invalid pointer
   divide          : divide by zero
   loop            : enter an infinite loop
+  mutexblock      : block while holding a mutex
+  mutexexit       : exit while holding a mutex
+  mutextrap       : trap while holding a mutex
   stack           : cause a stack overflow
   raise           : raise a signal
     <str>         : signal's name ('SIG...')
+  retrap          : trap during trap recovery
   return          : return from a thread
   swerr           : cause a software exception
   terminate       : call terminate()
@@ -553,7 +560,7 @@ include           : Specifies what should be captured by trace tools.
     off           : off
   )
   faction         : threads in a specific faction
-    (0:7)         : faction
+    (0:8)         : faction
   thread          : a specific thread's activity
     (0:99)        : ThreadId
   peer            : messages to/from from a specific peer address/port
@@ -565,7 +572,7 @@ include           : Specifies what should be captured by trace tools.
 exclude           : Specifies what should not be captured by trace tools.
 (                 : what to exclude...
   faction         : threads in a specific faction
-    (0:7)         : faction
+    (0:8)         : faction
   thread          : a specific thread's activity
     (0:99)        : ThreadId
   peer            : messages to/from from a specific peer address/port
@@ -587,7 +594,7 @@ clear             : Clears the trace buffer, tools, or selections.
   tools           : trace tools
   selections      : all items included/excluded by trace tools
   faction         : threads in a specific faction
-    (0:7)         : faction
+    (0:8)         : faction
   factions        : all included/excluded factions
   thread          : a specific thread's activity
     (0:99)        : ThreadId
@@ -671,7 +678,7 @@ timers            : Counts or displays timers.
   [c|b|v]         : 'c'=count 'b'=brief 'v'=verbose (default='b')
 
 invpools          : Displays invoker pools.
-  [0:7]           : faction (default=all)
+  [0:8]           : faction (default=all)
   [b|v]           : 'b'=brief 'v'=verbose (default='b')
 
 status            : Displays system statistics.
@@ -684,7 +691,7 @@ include           : Specifies what should be captured by trace tools.
     off           : off
   )
   faction         : threads in a specific faction
-    (0:7)         : faction
+    (0:8)         : faction
   thread          : a specific thread's activity
     (0:99)        : ThreadId
   peer            : messages to/from from a specific peer address/port
@@ -706,7 +713,7 @@ include           : Specifies what should be captured by trace tools.
 exclude           : Specifies what should not be captured by trace tools.
 (                 : what to exclude...
   faction         : threads in a specific faction
-    (0:7)         : faction
+    (0:8)         : faction
   thread          : a specific thread's activity
     (0:99)        : ThreadId
   peer            : messages to/from from a specific peer address/port
@@ -738,7 +745,7 @@ clear             : Clears the trace buffer, tools, or selections.
   tools           : trace tools
   selections      : all items included/excluded by trace tools
   faction         : threads in a specific faction
-    (0:7)         : faction
+    (0:8)         : faction
   factions        : all included/excluded factions
   thread          : a specific thread's activity
     (0:99)        : ThreadId
@@ -1293,10 +1300,10 @@ check             : Checks if code follows C++ guidelines.
   <str>           : a set of code files
 
 explain           : Explains a warning generated by >check.
-  (1:120)         : warning number
+  (1:121)         : warning number
 
 fix               : Interactively fixes warnings detected by >check.
-  (0:120)         : warning number from Wnnn (0 = all warnings)
+  (0:121)         : warning number from Wnnn (0 = all warnings)
   (t|f)           : prompt before fixing?
   <str>           : a set of code files
 
@@ -1326,13 +1333,13 @@ Commands in this increment often take an expression as the last parameter.
 An expression contains variables and operators.  Variables can be defined
 using the >assign command.  The code library also provides the following
 variables, which cannot be modified using the >assign command:
-   $dirs : directories that have been added to the code base by >import
+   $dirs : directories that have been added to the library by >import
   $files : all code files (headers and implementations) found in $dirs
    $hdrs : headers in $files
    $cpps : implementations (.c*) in $files
+   $subs : headers that declare items which are external to the code base
    $exts : headers whose directories were not included by an >import
-   $subs : headers that declare a subset of the items in $exts in order
-           to make them available during a compile
+           (which will cause >parse to fail>
    $vars : all variables (those above, or user-defined)
 
 An expression is evaluated left to right, but parentheses can be used to
@@ -1347,7 +1354,7 @@ on the left; it becomes the input to commands such as >assign and >type.
 The type of parameter(s) that the operator expects are shown on the right:
    <s> = <s1> | <s2>    set union of <s1> and <s2> (the '|' is optional)
    <s> = <s1> & <s2>    set intersection of <s1> and <s2>
-   <s> = <s1> - <s2>    set difference between <s1> and s2>
+   <s> = <s1> - <s2>    set difference between <s1> and <s2>
   <fs> = f <ds>         the files in <ds>
   <ds> = d <fs>         the directories in <fs>
   <fs> = <fs> fn <str>  files in <fs> with the file name <str>*
@@ -1376,8 +1383,8 @@ The ns and nb operators use the im operator, so they also require these
 files to have been parsed.  The parsing occurs automatically if required.
 
 Here are some examples of library commands:
-  >import nbase "nb" : add NodeBase files to the code base
-  >import sbase "sb" : add SessionBase files to the code base
+  >import nbase "nb" : add NodeBase files to the library
+  >import sbase "sb" : add SessionBase files to the library
   >type us Thread.h : show all files that #include Thread.h
   >assign h1 f sbase ft cpp : h1 = all SessionBase implementations
   >assign c1 ab Thread.h : c1 = files that could be affected by

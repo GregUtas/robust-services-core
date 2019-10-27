@@ -29,15 +29,21 @@ testcase begin recover.InfiniteLoop
 read trap.13
 testcase begin recover.StackOverflow
 read trap.14
+testcase begin recover.MutexBlock
+read trap.19
+testcase begin recover.MutexExit
+read trap.21
+testcase begin recover.MutexTrap
+read trap.22
+testcase begin recover.Retrap
+read trap.23
 testcase begin recover.TrapDuringRecovery
 read trap.15
+testcase begin recover.ThreadCtorTrap
+read trap.20
 testcase begin recover.DeleteRemote
 read trap.16
 testcase begin recover.DeleteLocal
 read trap.17
-testcase begin recover.ThreadCtorTrap
-read trap.20
-/ testcase begin recover.Ctrl-Break  equivalent to trap.18
-/ read trap.19
 testcase begin recover.Ctrl-C
 read trap.18

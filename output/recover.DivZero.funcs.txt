@@ -1,62 +1,48 @@
-FUNCTION PROFILE: 24-Oct-2019 14:15:38.840 on Reigi
+FUNCTION PROFILE: 27-Oct-2019 16:32:24.391 on Reigi
 
     Calls       uSecs   Function
     -----       -----   --------
-        9          78   Thread.RunningThread
-        6         158   SysThread.Resume
-        6          80   Thread.Interrupt
-        6          73   SysThread.Interrupt
-        4        1765   SysThread.Suspend
-        4         615   Thread.Ready
-        4         134   Thread.Pause
-        4          34   SysMutex.Release
-        4          26   SysMutex.Acquire
-        3          64   Thread.ExitBlockingOperation
-        3          55   Thread.Schedule
-        3          50   SysSocket.SetBlocking
-        3          38   ThreadRegistry.FindThread
-        3          35   SysThread.Wait
-        3          29   SysIpL2Addr.dtor
-        3          17   Log.Find
-        2     1999710   SysTcpSocket.Poll
-        2         240   Base.ctor
-        2          87   Thread.LogContextSwitch
-        2          32   LogGroupRegistry.FindGroup
-        2          31   SysSocket.SetError
-        2          24   TcpIoThread.PollSockets
-        2          21   Thread.Suspend
-        2          20   IpPort.RecvsInSequence
-        2          18   SysIpL3Addr.dtor
-        2          18   Thread.EnterBlockingOperation
-        2          12   MutexGuard.ctor
+        9        3627   Thread.RunningThread
+        6        4161   Thread.Pause
+        4          30   Thread.UpdateMutex
+        4          12   Thread.UpdateMutexCount
+        3          16   Log.Find
+        3          11   SysMutex.Release
+        2          18   LogGroupRegistry.FindGroup
+        2          15   Thread.ExitSwLog
+        2          11   SysMutex.Acquire
         2           9   LogGroup.FindLog
-        2           9   Thread.ExitSwLog
-        2           6   LogBuffer.First
-        2           6   MutexGuard.dtor
-        2           0   Object.ctor
-        1        3338   RecoveryTestThread.Enter
-        1        1974   SysThreadStack.Display
-        1         213   Log.Format
-        1          21   LogBuffer.SetNext
-        1          21   SysTcpSocket.Accept
+        2           8   MutexGuard.ctor
+        2           7   MutexGuard.dtor
+        2           5   LogBuffer.First
+        1       11727   Thread.LogContextSwitch
+        1         145   Log.Format
+        1         118   Base.ctor
+        1          36   Exception.ctor
+        1          22   SysThread.Resume
         1          14   LeakyBucketCounter.HasReachedLimit
-        1          14   SysThread.Delay
         1          12   Log.Submit
-        1           9   TcpIoThread.AcceptConn
-        1           6   Thread.TrapHandler
-        1           5   Exception.ctor
-        1           5   LogBuffer.Push
+        1           9   Thread.TrapHandler
+        1           7   LogBuffer.Push
+        1           6   Thread.ExtendTime
+        1           6   Thread.Start
+        1           5   Exception.dtor
+        1           5   LogBuffer.SetNext
+        1           5   MutexRegistry.Release
+        1           5   SysThread.Start
         1           5   Thread.SetSignal
-        1           4   LogBuffer.InsertionPoint
-        1           4   NodeBase.SE_Handler
-        1           4   Orphans.ExitNow
-        1           4   Thread.HandleSignal
-        1           3   Log.Create
+        1           4   Log.Create
+        1           4   Memory.Copy
+        1           4   SysThread.Interrupt
+        1           4   Thread.Interrupt
+        1           4   Thread.Suspend
+        1           3   LogBuffer.InsertionPoint
         1           3   LogBufferRegistry.Active
-        1           3   Thread.ExtendTime
+        1           3   Orphans.ExitNow
+        1           3   SignalException.dtor
+        1           3   Thread.EnterBlockingOperation
+        1           0   Object.ctor
         1           0   SignalException.ctor
-        1           0   SysIpL2Addr.ctor
-        1           0   SysIpL3Addr.ctor
         1           0   SysTime.ctor(now)
 
-Total functions: 56
+Total functions: 42

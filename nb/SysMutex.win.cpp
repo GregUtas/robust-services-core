@@ -40,7 +40,8 @@ SysMutex::SysMutex(const char* name) :
    name_(name),
    mutex_(nullptr),
    nid_(NIL_ID),
-   owner_(nullptr)
+   owner_(nullptr),
+   locks_(0)
 {
    Debug::ft(SysMutex_ctor);
 
@@ -82,10 +83,13 @@ SysMutex::Rc SysMutex::Acquire(msecs_t timeout)
 {
    Debug::ft(SysMutex_Acquire);
 
+   auto thr = Thread::RunningThread(false);
    auto nid = SysThread::RunningThreadId();
    auto result = Error;
    auto msecs = (timeout == TIMEOUT_NEVER ? INFINITE: timeout);
+   if(thr != nullptr) thr->UpdateMutex(this);
    auto rc = WaitForSingleObject(mutex_, msecs);
+   if(thr != nullptr) thr->UpdateMutex(nullptr);
 
    switch(rc)
    {
@@ -100,7 +104,9 @@ SysMutex::Rc SysMutex::Acquire(msecs_t timeout)
       //  Success.
       //
       nid_ = nid;
-      owner_ = Thread::RunningThread();
+      owner_ = thr;
+      if(thr != nullptr) thr->UpdateMutexCount(true);
+      ++locks_;
       result = Acquired;
       break;
    case WAIT_TIMEOUT:
@@ -134,7 +140,11 @@ void SysMutex::Release(bool log)
    owner_ = nullptr;
    nid_ = NIL_ID;
 
-   if(!ReleaseMutex(mutex_))
+   if(ReleaseMutex(mutex_))
+   {
+      if(owner != nullptr) owner->UpdateMutexCount(false);
+   }
+   else
    {
       nid_ = nid;
       owner_ = owner;

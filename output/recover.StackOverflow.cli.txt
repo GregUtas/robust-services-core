@@ -14,13 +14,15 @@ nt>delay 1
   OK.
 nt>recover stack
   OK.
-nt>delay 3
+nt>delay 2
   OK.
 nt>cfgparms set breakenabled &save.breakenabled
   OK.
 nt>testcase end
   OK.
 read test.trap.epilog
+nt>delay 2
+  OK.
 nt>stop
   OK.
 nt>sched stop

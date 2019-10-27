@@ -24,6 +24,7 @@
 #include "Debug.h"
 #include "Formatters.h"
 #include "SysMutex.h"
+#include "SysThread.h"
 
 using std::ostream;
 using std::string;
@@ -103,6 +104,25 @@ SysMutex* MutexRegistry::Find(const std::string& name) const
 void MutexRegistry::Patch(sel_t selector, void* arguments)
 {
    Permanent::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name MutexRegistry_Release = "MutexRegistry.Release";
+
+void MutexRegistry::Release() const
+{
+   Debug::ft(MutexRegistry_Release);
+
+   auto nid = SysThread::RunningThreadId();
+
+   for(auto m = mutexes_.First(); m != nullptr; mutexes_.Next(m))
+   {
+      if(m->OwnerId() == nid)
+      {
+         m->Release();
+      }
+   }
 }
 
 //------------------------------------------------------------------------------

@@ -42,6 +42,7 @@
 namespace NodeBase
 {
    class MsgBuffer;
+   class SysMutex;
    class ThreadPriv;
    class ThreadStats;
 }
@@ -61,6 +62,7 @@ class Thread : public Pooled
    friend class ModuleRegistry;
    friend class Registry< Thread >;
    friend class RootThread;
+   friend class SysMutex;
    friend class SysThread;
    friend class ThreadRegistry;
 public:
@@ -305,6 +307,10 @@ protected:
    //
    virtual MsgBuffer* DeqMsg(msecs_t timeout);
 
+   //  Sets trapped_.  Used during testing to simulate a retrap.
+   //
+   void SetTrapped() { trapped_ = true; }
+
    //  Overridden to claim queued messages.  May be overridden, but this
    //  version must be invoked.
    //
@@ -481,6 +487,15 @@ private:
    //  Returns true if the thread is not blocked.
    //
    bool IsReady() const;
+
+   //  Notes that the thread is trying to acquire MUTEX, which is nullptr
+   //  if the mutex has been acquired.
+   //
+   void UpdateMutex(const SysMutex* mutex);
+
+   //  Notes that the thread has acquired (if true) or released a mutex.
+   //
+   void UpdateMutexCount(bool acquired);
 
    //  Returns the priority associated with FACTION.  If FACTION is out of
    //  range, it is set to BackgroundFaction after generating a log.

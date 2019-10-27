@@ -36,8 +36,8 @@ namespace NodeBase
 fixed_string StartOfTrace = "START OF TRACE";
 fixed_string EndOfTrace = "END OF TRACE";
 
-//                               1         2         3         4         5
-//                      1234567890123456789012345678901234567890123456789012
+//                     0         1         2         3         4         5
+//                     01234567890123456789012345678901234567890123456789012
 fixed_string Header1 = "mm:ss.ttt  Thr  Event  TotalTime   NetTime  Function";
 fixed_string Header2 = "---------  ---  -----  ---------   -------  --------";
 

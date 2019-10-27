@@ -67,6 +67,7 @@
 #include "Registry.h"
 #include "Singleton.h"
 #include "SysFile.h"
+#include "SysMutex.h"
 #include "SysThread.h"
 #include "SysTime.h"
 #include "TestDatabase.h"
@@ -3471,12 +3472,16 @@ public:
    static const Test DerefenceBadPtr = 3;
    static const Test DivideByZero    = 4;
    static const Test InfiniteLoop    = 5;
-   static const Test OverflowStack   = 6;
-   static const Test RaiseSignal     = 7;
-   static const Test Return          = 8;
-   static const Test Swerr           = 9;
-   static const Test Terminate       = 10;
-   static const Test Trap            = 11;
+   static const Test MutexBlock      = 6;
+   static const Test MutexExit       = 7;
+   static const Test MutexTrap       = 8;
+   static const Test OverflowStack   = 9;
+   static const Test RaiseSignal     = 10;
+   static const Test Retrap          = 11;
+   static const Test Return          = 12;
+   static const Test Swerr           = 13;
+   static const Test Terminate       = 14;
+   static const Test Trap            = 15;
 
    void SetTest(Test test) { test_ = test; }
    void SetTestSignal(signal_t signal) {signal_ = signal; }
@@ -3485,9 +3490,18 @@ public:
 private:
    RecoveryTestThread();
    ~RecoveryTestThread();
-   static void UseBadPointer();
+   static void AcquireMutex();
+   static void DoAbort();
+   static void DoDelete();
+   static int DoDivide();
+   static void DoSwerr();
+   static void DoTerminate();
    static void LoopForever();
    static void RecurseForever(size_t depth);
+   static void UseBadPointer();
+   void DoRaise() const;
+   void DoRetrap();
+   void DoTrap();
    c_string AbbrName() const override;
    bool IsCritical() const override;
    void Enter() override;
@@ -3498,16 +3512,17 @@ private:
    signal_t signal_;
 };
 
+SysMutex RecoveryTestMutex_("RecoveryTestMutex");
+
 //------------------------------------------------------------------------------
 
 fn_name RecoveryTestThread_ctor = "RecoveryTestThread.ctor";
 
-RecoveryTestThread::RecoveryTestThread() : Thread(PayloadFaction),
+RecoveryTestThread::RecoveryTestThread() : Thread(LoadTestFaction),
    test_(Sleep),
    signal_(0)
 {
    Debug::ft(RecoveryTestThread_ctor);
-
    if(Debug::SwFlagOn(ThreadCtorTrapFlag)) UseBadPointer();
 }
 
@@ -3529,12 +3544,24 @@ c_string RecoveryTestThread::AbbrName() const
 
 //------------------------------------------------------------------------------
 
+fn_name RecoveryTestThread_AcquireMutex = "RecoveryTestThread.AcquireMutex";
+
+void RecoveryTestThread::AcquireMutex()
+{
+   Debug::ft(RecoveryTestThread_AcquireMutex);
+   RecoveryTestMutex_.Release(false);
+   auto rc = RecoveryTestMutex_.Acquire(TIMEOUT_IMMED);
+   if(rc != SysMutex::Acquired)
+      Debug::SwLog(RecoveryTestThread_AcquireMutex, "acquire failed", rc);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name RecoveryTestThread_Destroy = "RecoveryTestThread.Destroy";
 
 void RecoveryTestThread::Destroy()
 {
    Debug::ft(RecoveryTestThread_Destroy);
-
    Singleton< RecoveryTestThread >::Destroy();
 }
 
@@ -3544,9 +3571,90 @@ void RecoveryTestThread::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
    Thread::Display(stream, prefix, options);
-
    stream << prefix << "test   : " << int(test_) << CRLF;
    stream << prefix << "signal : " << signal_ << CRLF;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name RecoveryTestThread_DoAbort = "RecoveryTestThread.DoAbort";
+
+void RecoveryTestThread::DoAbort()
+{
+   Debug::ft(RecoveryTestThread_DoAbort);
+   std::abort();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name RecoveryTestThread_DoDelete = "RecoveryTestThread.DoDelete";
+
+void RecoveryTestThread::DoDelete()
+{
+   Debug::ft(RecoveryTestThread_DoDelete);
+   Singleton< RecoveryTestThread >::Destroy();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name RecoveryTestThread_DoDivide = "RecoveryTestThread.DoDivide";
+
+int RecoveryTestThread::DoDivide()
+{
+   Debug::ft(RecoveryTestThread_DoDivide);
+   int one = 1, zero = 0;
+   return (one / zero);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name RecoveryTestThread_DoRaise = "RecoveryTestThread.DoRaise";
+
+void RecoveryTestThread::DoRaise() const
+{
+   Debug::ft(RecoveryTestThread_DoRaise);
+   raise(signal_);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name RecoveryTestThread_DoRetrap = "RecoveryTestThread.DoRetrap";
+
+void RecoveryTestThread::DoRetrap()
+{
+   Debug::ft(RecoveryTestThread_DoRetrap);
+   SetTrapped();
+   UseBadPointer();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name RecoveryTestThread_DoSwerr = "RecoveryTestThread.DoSwerr";
+
+void RecoveryTestThread::DoSwerr()
+{
+   Debug::ft(RecoveryTestThread_DoSwerr);
+   Debug::SwLog(RecoveryTestThread_DoSwerr, Swerr, 1, SwError);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name RecoveryTestThread_DoTerminate = "RecoveryTestThread.DoTerminate";
+
+void RecoveryTestThread::DoTerminate()
+{
+   Debug::ft(RecoveryTestThread_DoTerminate);
+   std::terminate();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name RecoveryTestThread_DoTrap = "RecoveryTestThread.DoTrap";
+
+void RecoveryTestThread::DoTrap()
+{
+   Debug::ft(RecoveryTestThread_DoTrap);
+   Raise(signal_);
 }
 
 //------------------------------------------------------------------------------
@@ -3555,8 +3663,6 @@ fn_name RecoveryTestThread_Enter = "RecoveryTestThread.Enter";
 
 void RecoveryTestThread::Enter()
 {
-   int n = 1, z = 0;
-
    while(true)
    {
       Debug::ft(RecoveryTestThread_Enter);
@@ -3572,46 +3678,60 @@ void RecoveryTestThread::Enter()
       switch(test)
       {
       case Abort:
-         std::abort();
+         DoAbort();
          break;
       case Delete:
-         Singleton< RecoveryTestThread >::Destroy();
+         DoDelete();
          break;
       case DerefenceBadPtr:
          UseBadPointer();
          break;
       case DivideByZero:
-         n = (n / z);
+         DoDivide();
          break;
       case InfiniteLoop:
          LoopForever();
+         break;
+      case MutexBlock:
+         AcquireMutex();
+         Pause(TIMEOUT_1_SEC);
+         break;
+      case MutexExit:
+         AcquireMutex();
+         return;
+      case MutexTrap:
+         AcquireMutex();
+         UseBadPointer();
          break;
       case OverflowStack:
          RecurseForever(1);
          break;
       case RaiseSignal:
-         raise(signal_);
+         DoRaise();
+         break;
+      case Retrap:
+         DoRetrap();
          break;
       case Return:
          return;
       case Sleep:
          break;
       case Swerr:
-         Debug::SwLog(RecoveryTestThread_Enter, test, 1, SwError);
+         DoSwerr();
          break;
       case Terminate:
-         std::terminate();
+         DoTerminate();
          break;
       case Trap:
-         Raise(signal_);
+         DoTrap();
          break;
       default:
          Debug::SwLog(RecoveryTestThread_Enter, "unexpected test", test);
       }
 
-      //  Sleep for 3 seconds or until interrupted to perform the next test.
+      //  Sleep until interrupted to perform the next test.
       //
-      Pause(3 * TIMEOUT_1_SEC);
+      Pause(TIMEOUT_NEVER);
    }
 }
 
@@ -3622,7 +3742,6 @@ fn_name RecoveryTestThread_IsCritical = "RecoveryTestThread.IsCritical";
 bool RecoveryTestThread::IsCritical() const
 {
    Debug::ft(RecoveryTestThread_IsCritical);
-
    return Debug::SwFlagOn(ThreadCriticalFlag);
 }
 
@@ -3652,7 +3771,6 @@ fn_name RecoveryTestThread_Recover = "RecoveryTestThread.Recover";
 Thread::RecoveryAction RecoveryTestThread::Recover()
 {
    Debug::ft(RecoveryTestThread_Recover);
-
    if(Debug::SwFlagOn(ThreadRecoveryTrapFlag)) UseBadPointer();
    if(Debug::SwFlagOn(ThreadCriticalFlag)) return ReenterThread;
    return DeleteThread;
@@ -3676,9 +3794,6 @@ fn_name RecoveryTestThread_UseBadPointer = "RecoveryTestThread.UseBadPointer";
 void RecoveryTestThread::UseBadPointer()
 {
    Debug::ft(RecoveryTestThread_UseBadPointer);
-
-   //  Dereferencing P causes an exception.
-   //
    auto p = reinterpret_cast< char* >(BAD_POINTER);
    if(*p == 0) ++p;
 }
@@ -3712,9 +3827,29 @@ class LoopText : public CliText
 public: LoopText();
 };
 
+class MutexBlockText : public CliText
+{
+public: MutexBlockText();
+};
+
+class MutexExitText : public CliText
+{
+public: MutexExitText();
+};
+
+class MutexTrapText : public CliText
+{
+public: MutexTrapText();
+};
+
 class RaiseText : public CliText
 {
 public: RaiseText();
+};
+
+class RetrapText : public CliText
+{
+public: RetrapText();
 };
 
 class ReturnText : public CliText
@@ -3805,6 +3940,27 @@ LoopText::LoopText() : CliText(LoopTextExpl, LoopTextStr) { }
 
 //------------------------------------------------------------------------------
 
+fixed_string MutexBlockStr = "mutexblock";
+fixed_string MutexBlockExpl = "block while holding a mutex";
+
+MutexBlockText::MutexBlockText() : CliText(MutexBlockExpl, MutexBlockStr) { }
+
+//------------------------------------------------------------------------------
+
+fixed_string MutexExitStr = "mutexexit";
+fixed_string MutexExitExpl = "exit while holding a mutex";
+
+MutexExitText::MutexExitText() : CliText(MutexExitExpl, MutexExitStr) { }
+
+//------------------------------------------------------------------------------
+
+fixed_string MutexTrapStr = "mutextrap";
+fixed_string MutexTrapExpl = "trap while holding a mutex";
+
+MutexTrapText::MutexTrapText() : CliText(MutexTrapExpl, MutexTrapStr) { }
+
+//------------------------------------------------------------------------------
+
 fixed_string RaiseTextStr = "raise";
 fixed_string RaiseTextExpl = "raise a signal";
 
@@ -3812,6 +3968,13 @@ RaiseText::RaiseText() : CliText(RaiseTextExpl, RaiseTextStr)
 {
    BindParm(*new SignalParm);
 }
+
+//------------------------------------------------------------------------------
+
+fixed_string RetrapStr = "retrap";
+fixed_string RetrapExpl = "trap during trap recovery";
+
+RetrapText::RetrapText() : CliText(RetrapExpl, RetrapStr) { }
 
 //------------------------------------------------------------------------------
 
@@ -3876,7 +4039,11 @@ RecoverWhatParm::RecoverWhatParm() : CliTextParm(RecoverWhatExpl)
    BindText(*new BadPtrText, RecoveryTestThread::DerefenceBadPtr);
    BindText(*new DivideText, RecoveryTestThread::DivideByZero);
    BindText(*new LoopText, RecoveryTestThread::InfiniteLoop);
+   BindText(*new MutexBlockText, RecoveryTestThread::MutexBlock);
+   BindText(*new MutexExitText, RecoveryTestThread::MutexExit);
+   BindText(*new MutexTrapText, RecoveryTestThread::MutexTrap);
    BindText(*new RaiseText, RecoveryTestThread::RaiseSignal);
+   BindText(*new RetrapText, RecoveryTestThread::Retrap);
    BindText(*new SwerrText, RecoveryTestThread::Swerr);
    BindText(*new TerminateText, RecoveryTestThread::Terminate);
    BindText(*new TrapText, RecoveryTestThread::Trap);
@@ -3917,7 +4084,11 @@ word RecoverCommand::ProcessCommand(CliThread& cli) const
    case RecoveryTestThread::DerefenceBadPtr:
    case RecoveryTestThread::DivideByZero:
    case RecoveryTestThread::InfiniteLoop:
+   case RecoveryTestThread::MutexBlock:
+   case RecoveryTestThread::MutexExit:
+   case RecoveryTestThread::MutexTrap:
    case RecoveryTestThread::OverflowStack:
+   case RecoveryTestThread::Retrap:
    case RecoveryTestThread::Return:
    case RecoveryTestThread::Swerr:
    case RecoveryTestThread::Terminate:

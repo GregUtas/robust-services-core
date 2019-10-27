@@ -1167,7 +1167,7 @@ SysTcpSocket* CipPsm::CreateAppSocket()
 {
    Debug::ft(CipPsm_CreateAppSocket);
 
-   if(!Debug::SwFlagOn(CipAlwaysOverIpFlag)) return false;
+   if(!Debug::SwFlagOn(CipAlwaysOverIpFlag)) return nullptr;
 
    auto reg = Singleton< IpPortRegistry >::Instance();
    auto port = reg->GetPort(CipIpPort, IpTcp);

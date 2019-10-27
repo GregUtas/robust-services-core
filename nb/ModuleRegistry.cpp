@@ -281,7 +281,7 @@ void ModuleRegistry::Shutdown(RestartLevel level)
 {
    Debug::ft(ModuleRegistry_Shutdown);
 
-   for(size_t tries = 80, idle = 0; (tries > 0) && (idle <= 8); --tries)
+   for(size_t tries = 120, idle = 0; (tries > 0) && (idle <= 8); --tries)
    {
       ThisThread::Pause(25);
       if(Thread::SwitchContext())
@@ -305,10 +305,9 @@ void ModuleRegistry::Shutdown(RestartLevel level)
    auto planned = reg->Restarting(level);
    size_t actual = 0;
 
-   //  Report PLANNED, the number of threads that plan to exit.  Sleep and
-   //  try to schedule another thread upon waking up.  Stop when the planned
-   //  number of threads have exited or after trying to schedule exiting
-   //  threads for 3 seconds.
+   //  Report PLANNED, the number of threads that plan to exit.  Schedule
+   //  threads until the planned number have exited.  If some failto exit,
+   //  RootThread will time out and escalate the restart.
    //
    *Stream() << ExitingThreadsStr << setw(2) << planned;
    *Stream() << setw(36 - (strlen(ExitingThreadsStr) + 2));
@@ -316,12 +315,11 @@ void ModuleRegistry::Shutdown(RestartLevel level)
    Log::Submit(stream_);
 
    Thread::RestrictFactions(false);
-      for(size_t tries = 120; tries > 0; --tries)
+      while(actual < planned)
       {
          Thread::SwitchContext();
          ThisThread::Pause(25);
          actual = before - reg->Threads().Size();
-         if(actual >= planned) break;
       }
    Thread::RestrictFactions(true);
 

@@ -48,6 +48,7 @@ CinThread::CinThread() : Thread(OperationsFaction),
    Debug::ft(CinThread_ctor);
 
    buff_[0] = NUL;
+   SetInitialized();
 }
 
 //------------------------------------------------------------------------------

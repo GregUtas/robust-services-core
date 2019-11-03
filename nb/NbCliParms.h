@@ -58,13 +58,16 @@ extern fixed_string NoAlarmExpl;
 extern fixed_string NoBuffersExpl;
 extern fixed_string NoCfgParmExpl;
 extern fixed_string NoCommandExpl;
+extern fixed_string NoDaemonExpl;
 extern fixed_string NoDiscardsExpl;
 extern fixed_string NoFileExpl;
 extern fixed_string NoIncrExpl;
 extern fixed_string NoLogExpl;
 extern fixed_string NoLogGroupExpl;
 extern fixed_string NoModuleExpl;
+extern fixed_string NoMutexExpl;
 extern fixed_string NoPoolExpl;
+extern fixed_string NoPosixSignalExpl;
 extern fixed_string NoStatsGroupExpl;
 extern fixed_string NoSymbolExpl;
 extern fixed_string NoThreadExpl;
@@ -146,6 +149,15 @@ public: FactionMandParm();
 class FactionOptParm : public CliIntParm
 {
 public: FactionOptParm();
+};
+
+//------------------------------------------------------------------------------
+//
+//  Parameter for an id_t.
+//
+class IdOptParm : public CliIntParm
+{
+public: IdOptParm();
 };
 
 //------------------------------------------------------------------------------

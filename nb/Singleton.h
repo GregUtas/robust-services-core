@@ -96,6 +96,7 @@ public:
    static void Destroy()
    {
       Debug::ft(Singleton_Destroy());
+      if(Instance_ == nullptr) return;
       auto singleton = Instance_;
       auto reg = Singletons::Instance();
       reg->UnbindInstance((const Base**) &Instance_);

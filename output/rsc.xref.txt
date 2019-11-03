@@ -15981,12 +15981,12 @@ CodeTools::PathIncludes [ct/CxxString.h]
    ct/CodeDir.cpp
    ct/CxxString.cpp
 CodeTools::Prefix(std::basic_string<char,std::char_traits<char>,std::allocator<char>>) [ct/CxxString.h]
-   ct/CxxString.cpp
-CodeTools::Prefix(std::basic_string<char,std::char_traits<char>,std::allocator<char>>) [ct/CxxString.h]
    ct/CxxArea.cpp
    ct/CxxNamed.cpp
    ct/CxxScope.cpp
    ct/CxxScoped.cpp
+   ct/CxxString.cpp
+CodeTools::Prefix(std::basic_string<char,std::char_traits<char>,std::allocator<char>>) [ct/CxxString.h]
    ct/CxxString.cpp
 CodeTools::RemoveConsts [ct/CxxString.h]
    ct/CxxExecute.cpp
@@ -24178,7 +24178,6 @@ NodeBase::pack2 [nb/Algorithms.h]
    nb/ObjectPoolRegistry.cpp
    nb/PooledClass.cpp
    nb/RegCell.cpp
-   nb/Thread.cpp
    nw/SysTcpSocket.cpp
    pb/PotsCircuit.cpp
    sb/Context.cpp
@@ -24234,6 +24233,7 @@ NodeBase::ptrdiff [nb/Algorithms.h]
    nb/Class.cpp
    nb/CliIncrement.cpp
    nb/CliParm.cpp
+   nb/Daemon.cpp
    nb/FunctionTrace.cpp
    nb/Log.cpp
    nb/LogGroup.cpp
@@ -24615,6 +24615,10 @@ NodeBase::Base::Display [nb/Base.h]
    nb/CliTextParm.h
    nb/CliThread.cpp
    nb/CliThread.h
+   nb/Daemon.cpp
+   nb/Daemon.h
+   nb/DaemonRegistry.cpp
+   nb/DaemonRegistry.h
    nb/Element.cpp
    nb/Element.h
    nb/FileThread.cpp
@@ -24720,6 +24724,8 @@ NodeBase::Base::Display [nb/Base.h]
    nw/IpService.h
    nw/IpServiceRegistry.cpp
    nw/IpServiceRegistry.h
+   nw/NwDaemons.cpp
+   nw/NwDaemons.h
    nw/SysIpL2Addr.cpp
    nw/SysIpL2Addr.h
    nw/SysIpL3Addr.cpp
@@ -24796,6 +24802,8 @@ NodeBase::Base::Display [nb/Base.h]
    sb/PsmContext.h
    sb/RootServiceSM.cpp
    sb/RootServiceSM.h
+   sb/SbDaemons.cpp
+   sb/SbDaemons.h
    sb/SbEvents.h
    sb/SbInvokerPools.cpp
    sb/SbInvokerPools.h
@@ -27209,8 +27217,6 @@ NodeBase::CliThread_ParseCommand [nb/CliThread.cpp]
    nb/CliThread.cpp
 NodeBase::CliThread_ReadCommands [nb/CliThread.cpp]
    nb/CliThread.cpp
-NodeBase::CliThread_Recreated [nb/CliThread.cpp]
-   nb/CliThread.cpp
 NodeBase::CliThread_ReleaseResources [nb/CliThread.cpp]
    nb/CliThread.cpp
 NodeBase::CliThread_Report [nb/CliThread.cpp]
@@ -27265,6 +27271,7 @@ NodeBase::CliThread [nb/CliThread.h]
    nb/CliTextParm.cpp
    nb/CliThread.cpp
    nb/NbCliParms.cpp
+   nb/NbDaemons.cpp
    nb/NbIncrement.cpp
    nb/NbModule.cpp
    nb/Thread.cpp
@@ -27417,8 +27424,6 @@ NodeBase::CliThread::Prompt [nb/CliThread.h]
 NodeBase::CliThread::ReadCommands [nb/CliThread.h]
    nb/CliThread.cpp
    nb/NbIncrement.cpp
-NodeBase::CliThread::Recreated [nb/CliThread.h]
-   nb/CliThread.cpp
 NodeBase::CliThread::ReleaseResources [nb/CliThread.h]
    nb/CliThread.cpp
 NodeBase::CliThread::Report [nb/CliThread.h]
@@ -27649,7 +27654,6 @@ NodeBase::TIMEOUT_NEVER [nb/Clock.h]
    nb/SysMutex.win.cpp
    nb/SysThread.cpp
    nb/Thread.cpp
-   nt/NtIncrement.cpp
    nw/SysTcpSocket.win.cpp
    nw/TcpIoThread.cpp
    sb/InvokerPool.cpp
@@ -27838,6 +27842,132 @@ NodeBase::CoutThread::Spool(std::unique_ptr<std::basic_ostringstream>) [nb/CoutT
    nb/Thread.cpp
 NodeBase::CoutThread::~CoutThread [nb/CoutThread.h]
    nb/CoutThread.cpp
+NodeBase::Daemon_CreateThread [nb/Daemon.cpp]
+   nb/Daemon.cpp
+NodeBase::Daemon_CreateThreads [nb/Daemon.cpp]
+   nb/Daemon.cpp
+NodeBase::Daemon_Find [nb/Daemon.cpp]
+   nb/Daemon.cpp
+NodeBase::Daemon_ThreadCreated [nb/Daemon.cpp]
+   nb/Daemon.cpp
+NodeBase::Daemon_ThreadDeleted [nb/Daemon.cpp]
+   nb/Daemon.cpp
+NodeBase::Daemon_ctor [nb/Daemon.cpp]
+   nb/Daemon.cpp
+NodeBase::Daemon_dtor [nb/Daemon.cpp]
+   nb/Daemon.cpp
+NodeBase::Daemon [nb/Daemon.h]
+   nb/Daemon.cpp
+   nb/DaemonRegistry.cpp
+   nb/InitThread.cpp
+   nb/NbDaemons.cpp
+   nb/NbDaemons.h
+   nb/NbIncrement.cpp
+   nb/Thread.cpp
+   nt/NtIncrement.cpp
+   nw/NwDaemons.cpp
+   nw/NwDaemons.h
+   sb/InvokerThread.cpp
+   sb/SbDaemons.cpp
+   sb/SbDaemons.h
+NodeBase::Daemon::CellDiff [nb/Daemon.h]
+   nb/Daemon.cpp
+   nb/DaemonRegistry.cpp
+NodeBase::Daemon::CreateThread [nb/Daemon.h]
+   nb/Daemon.cpp
+   nb/NbDaemons.cpp
+   nb/NbDaemons.h
+   nt/NtIncrement.cpp
+   nw/NwDaemons.cpp
+   nw/NwDaemons.h
+   sb/SbDaemons.cpp
+   sb/SbDaemons.h
+NodeBase::Daemon::CreateThreads [nb/Daemon.h]
+   nb/Daemon.cpp
+   nb/InitThread.cpp
+   sb/InvokerPool.cpp
+NodeBase::Daemon::Daemon [nb/Daemon.h]
+   nb/Daemon.cpp
+NodeBase::Daemon::Display [nb/Daemon.h]
+   nb/Daemon.cpp
+NodeBase::Daemon::Find [nb/Daemon.h]
+   nb/Daemon.cpp
+NodeBase::Daemon::Iterator [nb/Daemon.h]
+   nb/Daemon.cpp
+   nb/Daemon.h
+NodeBase::Daemon::Name [nb/Daemon.h]
+   nb/DaemonRegistry.cpp
+NodeBase::Daemon::Patch [nb/Daemon.h]
+   nb/Daemon.cpp
+NodeBase::Daemon::ThreadCreated [nb/Daemon.h]
+   nb/Daemon.cpp
+   nb/Thread.cpp
+NodeBase::Daemon::ThreadDeleted [nb/Daemon.h]
+   nb/Daemon.cpp
+   nb/Thread.cpp
+NodeBase::Daemon::did_ [nb/Daemon.h]
+   nb/Daemon.cpp
+NodeBase::Daemon::name_ [nb/Daemon.h]
+   nb/Daemon.cpp
+   nb/Daemon.h
+NodeBase::Daemon::size_ [nb/Daemon.h]
+   nb/Daemon.cpp
+NodeBase::Daemon::threads_ [nb/Daemon.h]
+   nb/Daemon.cpp
+NodeBase::Daemon::~Daemon [nb/Daemon.h]
+   nb/Daemon.cpp
+NodeBase::Thread [nb/Daemon.h]
+   nb/Daemon.cpp
+   nb/Daemon.h
+   nb/NbDaemons.h
+   nw/NwDaemons.h
+   sb/SbDaemons.h
+std::set<NodeBase::Thread*>::iterator [nb/Daemon.h]
+   nb/Daemon.h
+NodeBase::DaemonRegistry_BindDaemon [nb/DaemonRegistry.cpp]
+   nb/DaemonRegistry.cpp
+NodeBase::DaemonRegistry_FindDaemon [nb/DaemonRegistry.cpp]
+   nb/DaemonRegistry.cpp
+NodeBase::DaemonRegistry_UnbindDaemon [nb/DaemonRegistry.cpp]
+   nb/DaemonRegistry.cpp
+NodeBase::DaemonRegistry_ctor [nb/DaemonRegistry.cpp]
+   nb/DaemonRegistry.cpp
+NodeBase::DaemonRegistry_dtor [nb/DaemonRegistry.cpp]
+   nb/DaemonRegistry.cpp
+NodeBase::Daemon [nb/DaemonRegistry.h]
+   nb/DaemonRegistry.cpp
+   nb/DaemonRegistry.h
+NodeBase::DaemonRegistry [nb/DaemonRegistry.h]
+   nb/Daemon.cpp
+   nb/DaemonRegistry.cpp
+   nb/InitThread.cpp
+   nb/NbIncrement.cpp
+   nw/NwDaemons.cpp
+   sb/SbDaemons.cpp
+NodeBase::DaemonRegistry::BindDaemon [nb/DaemonRegistry.h]
+   nb/Daemon.cpp
+   nb/DaemonRegistry.cpp
+NodeBase::DaemonRegistry::DaemonRegistry [nb/DaemonRegistry.h]
+   nb/DaemonRegistry.cpp
+NodeBase::DaemonRegistry::Daemons [nb/DaemonRegistry.h]
+   nb/InitThread.cpp
+   nb/NbIncrement.cpp
+NodeBase::DaemonRegistry::Display [nb/DaemonRegistry.h]
+   nb/DaemonRegistry.cpp
+NodeBase::DaemonRegistry::FindDaemon [nb/DaemonRegistry.h]
+   nb/DaemonRegistry.cpp
+   nw/NwDaemons.cpp
+   sb/SbDaemons.cpp
+NodeBase::DaemonRegistry::Patch [nb/DaemonRegistry.h]
+   nb/DaemonRegistry.cpp
+NodeBase::DaemonRegistry::UnbindDaemon [nb/DaemonRegistry.h]
+   nb/Daemon.cpp
+   nb/DaemonRegistry.cpp
+NodeBase::DaemonRegistry::daemons_ [nb/DaemonRegistry.h]
+   nb/DaemonRegistry.cpp
+   nb/DaemonRegistry.h
+NodeBase::DaemonRegistry::~DaemonRegistry [nb/DaemonRegistry.h]
+   nb/DaemonRegistry.cpp
 NodeBase::Debug_GenerateSwLog [nb/Debug.cpp]
    nb/Debug.cpp
 NodeBase::Debug_GetSwFlags [nb/Debug.cpp]
@@ -27925,6 +28055,8 @@ NodeBase::Debug::SwFlagOn [nb/Debug.h]
    cb/BcHandlers.cpp
    cb/BcProtocol.cpp
    nb/Debug.cpp
+   nb/RootThread.cpp
+   nb/Thread.cpp
    nt/NtIncrement.cpp
    pb/PotsCircuit.cpp
 NodeBase::Debug::SwFlags_ [nb/Debug.h]
@@ -27989,6 +28121,8 @@ NodeBase::Debug::SwLog(const char* const,unsigned long long,unsigned long long,N
    nb/CliText.cpp
    nb/CliTextParm.cpp
    nb/CliThread.cpp
+   nb/Daemon.cpp
+   nb/DaemonRegistry.cpp
    nb/Debug.cpp
    nb/Log.cpp
    nb/LogBuffer.cpp
@@ -28230,6 +28364,8 @@ NodeBase::Debug::ft [nb/Debug.h]
    nb/CliThread.cpp
    nb/Clock.cpp
    nb/CoutThread.cpp
+   nb/Daemon.cpp
+   nb/DaemonRegistry.cpp
    nb/Debug.cpp
    nb/Dynamic.cpp
    nb/Element.cpp
@@ -28255,6 +28391,7 @@ NodeBase::Debug::ft [nb/Debug.h]
    nb/MutexGuard.cpp
    nb/MutexRegistry.cpp
    nb/NbCliParms.cpp
+   nb/NbDaemons.cpp
    nb/NbIncrement.cpp
    nb/NbLogs.cpp
    nb/NbModule.cpp
@@ -28325,6 +28462,7 @@ NodeBase::Debug::ft [nb/Debug.h]
    nw/IpService.cpp
    nw/IpServiceRegistry.cpp
    nw/NwCliParms.cpp
+   nw/NwDaemons.cpp
    nw/NwIncrement.cpp
    nw/NwLogs.cpp
    nw/NwModule.cpp
@@ -28399,6 +28537,7 @@ NodeBase::Debug::ft [nb/Debug.h]
    sb/PsmContext.cpp
    sb/PsmFactory.cpp
    sb/RootServiceSM.cpp
+   sb/SbDaemons.cpp
    sb/SbExtInputHandler.cpp
    sb/SbHandlers.cpp
    sb/SbIncrement.cpp
@@ -28502,6 +28641,7 @@ NodeBase::strOver [nb/Debug.h]
    nb/Class.cpp
    nb/CliCommand.cpp
    nb/CliParm.cpp
+   nb/Daemon.cpp
    nb/Debug.cpp
    nb/SysFile.cpp
    nb/Thread.cpp
@@ -28879,6 +29019,8 @@ NodeBase::spaces [nb/Formatters.h]
    nb/CliText.cpp
    nb/CliTextParm.cpp
    nb/CliThread.cpp
+   nb/Daemon.cpp
+   nb/DaemonRegistry.cpp
    nb/Formatters.cpp
    nb/Log.cpp
    nb/LogBufferRegistry.cpp
@@ -28894,7 +29036,6 @@ NodeBase::spaces [nb/Formatters.h]
    nb/ObjectPoolRegistry.cpp
    nb/ObjectPoolTrace.cpp
    nb/PooledClass.cpp
-   nb/PosixSignal.cpp
    nb/PosixSignalRegistry.cpp
    nb/Q1Way.h
    nb/Q2Way.h
@@ -29038,6 +29179,7 @@ NodeBase::strIndex [nb/Formatters.h]
    nb/CfgParmRegistry.cpp
    nb/CliStack.cpp
    nb/CliThread.cpp
+   nb/Daemon.cpp
    nb/Formatters.cpp
    nb/LogBufferRegistry.cpp
    nb/LogGroup.cpp
@@ -29068,6 +29210,7 @@ NodeBase::strObj [nb/Formatters.h]
    nb/Class.cpp
    nb/CliStack.cpp
    nb/CliThread.cpp
+   nb/Daemon.cpp
    nb/Element.cpp
    nb/Formatters.cpp
    nb/LogThread.cpp
@@ -29078,11 +29221,13 @@ NodeBase::strObj [nb/Formatters.h]
    nb/Q1Way.h
    nb/Q2Way.h
    nb/Registry.h
+   nb/Thread.cpp
    nb/ThreadAdmin.cpp
    nb/ThreadRegistry.cpp
    nw/IpPort.cpp
    nw/IpPortCfgParm.cpp
    nw/IpPortRegistry.cpp
+   nw/NwDaemons.cpp
    pb/PotsFeatureRegistry.cpp
    pb/PotsIncrement.cpp
    pb/PotsProfile.cpp
@@ -29325,6 +29470,7 @@ NodeBase::InitThread_ctor [nb/InitThread.cpp]
 NodeBase::InitThread_dtor [nb/InitThread.cpp]
    nb/InitThread.cpp
 NodeBase::InitThread [nb/InitThread.h]
+   nb/Daemon.cpp
    nb/InitThread.cpp
    nb/RootThread.cpp
    nb/Thread.cpp
@@ -29360,8 +29506,8 @@ NodeBase::InitThread::Recreate [nb/InitThread.h]
    nb/InitThread.cpp
    nb/InitThread.h
 NodeBase::InitThread::RecreateMask [nb/InitThread.h]
+   nb/Daemon.cpp
    nb/InitThread.cpp
-   nb/Thread.cpp
 NodeBase::InitThread::RecreateThreads [nb/InitThread.h]
    nb/InitThread.cpp
 NodeBase::InitThread::Restart [nb/InitThread.h]
@@ -29486,6 +29632,7 @@ NodeBase::Log::Create(const char* const,unsigned short) [nb/Log.h]
    nb/InitThread.cpp
    nb/Log.cpp
    nb/ModuleRegistry.cpp
+   nb/MutexRegistry.cpp
    nb/ObjectPool.cpp
    nb/RootThread.cpp
    nb/StatisticsThread.cpp
@@ -29557,6 +29704,7 @@ NodeBase::Log::Submit [nb/Log.h]
    nb/InitThread.cpp
    nb/Log.cpp
    nb/ModuleRegistry.cpp
+   nb/MutexRegistry.cpp
    nb/ObjectPool.cpp
    nb/RootThread.cpp
    nb/StatisticsThread.cpp
@@ -29592,6 +29740,7 @@ NodeBase::Log::Tab [nb/Log.h]
    nb/Debug.cpp
    nb/InitThread.cpp
    nb/Log.cpp
+   nb/MutexRegistry.cpp
    nb/ObjectPool.cpp
    nb/RootThread.cpp
    nb/StatisticsThread.cpp
@@ -30452,6 +30601,8 @@ NodeBase::MutexRegistry::MaxMutexes [nb/MutexRegistry.h]
    nb/MutexRegistry.cpp
 NodeBase::MutexRegistry::MutexRegistry [nb/MutexRegistry.h]
    nb/MutexRegistry.cpp
+NodeBase::MutexRegistry::Mutexes [nb/MutexRegistry.h]
+   nb/NbIncrement.cpp
 NodeBase::MutexRegistry::Patch [nb/MutexRegistry.h]
    nb/MutexRegistry.cpp
 NodeBase::MutexRegistry::Release [nb/MutexRegistry.h]
@@ -30496,6 +30647,11 @@ NodeBase::CnModuleId [nb/NbAppIds.h]
 NodeBase::CtModuleId [nb/NbAppIds.h]
    ct/CtModule.cpp
    nb/NbAppIds.h
+NodeBase::DisableRootThreadFlag [nb/NbAppIds.h]
+   nb/Debug.cpp
+   nb/NbAppIds.h
+   nb/RootThread.cpp
+   nt/NtModule.cpp
 NodeBase::FirstAppDebugFlag [nb/NbAppIds.h]
    nb/NbAppIds.h
 NodeBase::FirstAppModuleId [nb/NbAppIds.h]
@@ -30563,17 +30719,21 @@ NodeBase::SnModuleId [nb/NbAppIds.h]
 NodeBase::StModuleId [nb/NbAppIds.h]
    nb/NbAppIds.h
    st/StModule.cpp
-NodeBase::ThreadCriticalFlag [nb/NbAppIds.h]
-   nb/NbAppIds.h
-   nt/NtIncrement.cpp
-   nt/NtModule.cpp
 NodeBase::ThreadCtorTrapFlag [nb/NbAppIds.h]
    nb/NbAppIds.h
    nt/NtIncrement.cpp
    nt/NtModule.cpp
-NodeBase::ThreadRecoveryTrapFlag [nb/NbAppIds.h]
+NodeBase::ThreadRecoverTrapFlag [nb/NbAppIds.h]
    nb/NbAppIds.h
    nt/NtIncrement.cpp
+   nt/NtModule.cpp
+NodeBase::ThreadReenterFlag [nb/NbAppIds.h]
+   nb/NbAppIds.h
+   nt/NtIncrement.cpp
+   nt/NtModule.cpp
+NodeBase::ThreadRetrapFlag [nb/NbAppIds.h]
+   nb/NbAppIds.h
+   nb/Thread.cpp
    nt/NtModule.cpp
 NodeBase::AllActivityTextExpl [nb/NbCliParms.cpp]
    nb/NbCliParms.cpp
@@ -30626,6 +30786,8 @@ NodeBase::GtText::GtText [nb/NbCliParms.cpp]
 NodeBase::GtTextExpl [nb/NbCliParms.cpp]
    nb/NbCliParms.cpp
 NodeBase::GtTextStr [nb/NbCliParms.cpp]
+   nb/NbCliParms.cpp
+NodeBase::IdOptExpl [nb/NbCliParms.cpp]
    nb/NbCliParms.cpp
 NodeBase::IstreamMandExpl [nb/NbCliParms.cpp]
    nb/NbCliParms.cpp
@@ -30905,6 +31067,11 @@ NodeBase::GetCBV [nb/NbCliParms.h]
    nb/NbIncrement.cpp
    pb/PotsIncrement.cpp
    sb/SbIncrement.cpp
+NodeBase::IdOptParm [nb/NbCliParms.h]
+   nb/NbCliParms.cpp
+   nb/NbIncrement.cpp
+NodeBase::IdOptParm::IdOptParm [nb/NbCliParms.h]
+   nb/NbCliParms.cpp
 NodeBase::IstreamMandParm [nb/NbCliParms.h]
    nb/NbCliParms.cpp
    nt/NtIncrement.cpp
@@ -30951,6 +31118,9 @@ NodeBase::NoCommandExpl [nb/NbCliParms.h]
    nb/CliCommandSet.cpp
    nb/CliThread.cpp
    nb/NbCliParms.cpp
+NodeBase::NoDaemonExpl [nb/NbCliParms.h]
+   nb/NbCliParms.cpp
+   nb/NbIncrement.cpp
 NodeBase::NoDiscardsExpl [nb/NbCliParms.h]
    nb/NbCliParms.cpp
    nw/NwIncrement.cpp
@@ -30973,11 +31143,17 @@ NodeBase::NoLogGroupExpl [nb/NbCliParms.h]
 NodeBase::NoModuleExpl [nb/NbCliParms.h]
    nb/NbCliParms.cpp
    nb/NbIncrement.cpp
+NodeBase::NoMutexExpl [nb/NbCliParms.h]
+   nb/NbCliParms.cpp
+   nb/NbIncrement.cpp
 NodeBase::NoPoolExpl [nb/NbCliParms.h]
    nb/NbCliParms.cpp
    nb/NbIncrement.cpp
    nb/ObjectPoolRegistry.cpp
    nt/NtIncrement.cpp
+NodeBase::NoPosixSignalExpl [nb/NbCliParms.h]
+   nb/NbCliParms.cpp
+   nb/NbIncrement.cpp
 NodeBase::NoStatsGroupExpl [nb/NbCliParms.h]
    nb/NbCliParms.cpp
    nb/NbIncrement.cpp
@@ -31214,6 +31390,62 @@ NodeBase::ValidateOptions [nb/NbCliParms.h]
    ct/CtIncrement.cpp
    nb/NbCliParms.cpp
    nb/NbIncrement.cpp
+NodeBase::CliDaemon_CreateThread [nb/NbDaemons.cpp]
+   nb/NbDaemons.cpp
+NodeBase::CliDaemon_ctor [nb/NbDaemons.cpp]
+   nb/NbDaemons.cpp
+NodeBase::CliDaemon_dtor [nb/NbDaemons.cpp]
+   nb/NbDaemons.cpp
+NodeBase::ObjectDaemon_CreateThread [nb/NbDaemons.cpp]
+   nb/NbDaemons.cpp
+NodeBase::ObjectDaemon_ctor [nb/NbDaemons.cpp]
+   nb/NbDaemons.cpp
+NodeBase::ObjectDaemon_dtor [nb/NbDaemons.cpp]
+   nb/NbDaemons.cpp
+NodeBase::StatisticsDaemon_CreateThread [nb/NbDaemons.cpp]
+   nb/NbDaemons.cpp
+NodeBase::StatisticsDaemon_ctor [nb/NbDaemons.cpp]
+   nb/NbDaemons.cpp
+NodeBase::StatisticsDaemon_dtor [nb/NbDaemons.cpp]
+   nb/NbDaemons.cpp
+NodeBase::CliDaemon [nb/NbDaemons.h]
+   nb/CliThread.cpp
+   nb/NbDaemons.cpp
+NodeBase::CliDaemon::CliDaemon [nb/NbDaemons.h]
+   nb/NbDaemons.cpp
+NodeBase::CliDaemon::CreateThread [nb/NbDaemons.h]
+   nb/NbDaemons.cpp
+NodeBase::CliDaemon::~CliDaemon [nb/NbDaemons.h]
+   nb/NbDaemons.cpp
+NodeBase::CliDaemonName [nb/NbDaemons.h]
+   nb/CliThread.cpp
+   nb/NbDaemons.cpp
+NodeBase::ObjectDaemon [nb/NbDaemons.h]
+   nb/NbDaemons.cpp
+   nb/ObjectPoolAudit.cpp
+NodeBase::ObjectDaemon::CreateThread [nb/NbDaemons.h]
+   nb/NbDaemons.cpp
+NodeBase::ObjectDaemon::ObjectDaemon [nb/NbDaemons.h]
+   nb/NbDaemons.cpp
+NodeBase::ObjectDaemon::~ObjectDaemon [nb/NbDaemons.h]
+   nb/NbDaemons.cpp
+NodeBase::ObjectDaemonName [nb/NbDaemons.h]
+   nb/NbDaemons.cpp
+   nb/ObjectPoolAudit.cpp
+NodeBase::Singleton [nb/NbDaemons.h]
+   nb/NbDaemons.h
+NodeBase::StatisticsDaemon [nb/NbDaemons.h]
+   nb/NbDaemons.cpp
+   nb/StatisticsThread.cpp
+NodeBase::StatisticsDaemon::CreateThread [nb/NbDaemons.h]
+   nb/NbDaemons.cpp
+NodeBase::StatisticsDaemon::StatisticsDaemon [nb/NbDaemons.h]
+   nb/NbDaemons.cpp
+NodeBase::StatisticsDaemon::~StatisticsDaemon [nb/NbDaemons.h]
+   nb/NbDaemons.cpp
+NodeBase::StatisticsDaemonName [nb/NbDaemons.h]
+   nb/NbDaemons.cpp
+   nb/StatisticsThread.cpp
 NodeBase::AlarmExpl [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::AlarmParm [nb/NbIncrement.cpp]
@@ -31447,6 +31679,18 @@ NodeBase::CoutText::CoutText [nb/NbIncrement.cpp]
 NodeBase::CoutTextExpl [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::CoutTextStr [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::DaemonsCommand [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::DaemonsCommand::DaemonsCommand [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::DaemonsCommand::ProcessCommand [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::DaemonsCommand_ProcessCommand [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::DaemonsExpl [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::DaemonsStr [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::DelayCommand [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
@@ -32582,8 +32826,13 @@ NodeBase::ThreadForcedToExit [nb/NbLogs.h]
    nb/Thread.cpp
 NodeBase::ThreadLogGroup [nb/NbLogs.h]
    nb/InitThread.cpp
+   nb/MutexRegistry.cpp
    nb/NbLogs.cpp
    nb/Thread.cpp
+NodeBase::ThreadMutexesReleased [nb/NbLogs.h]
+   nb/MutexRegistry.cpp
+   nb/NbLogs.cpp
+   nb/NbLogs.h
 NodeBase::ThreadSignalRaised [nb/NbLogs.h]
    nb/NbLogs.cpp
    nb/NbLogs.h
@@ -32682,10 +32931,6 @@ NodeBase::SigPurge [nb/NbSignals.cpp]
    nb/NbSignals.cpp
 NodeBase::SigPurge::SigPurge [nb/NbSignals.cpp]
    nb/NbSignals.cpp
-NodeBase::SigRetrap [nb/NbSignals.cpp]
-   nb/NbSignals.cpp
-NodeBase::SigRetrap::SigRetrap [nb/NbSignals.cpp]
-   nb/NbSignals.cpp
 NodeBase::SigStack1 [nb/NbSignals.cpp]
    nb/NbSignals.cpp
 NodeBase::SigStack1::SigStack1 [nb/NbSignals.cpp]
@@ -32693,10 +32938,6 @@ NodeBase::SigStack1::SigStack1 [nb/NbSignals.cpp]
 NodeBase::SigStack2 [nb/NbSignals.cpp]
    nb/NbSignals.cpp
 NodeBase::SigStack2::SigStack2 [nb/NbSignals.cpp]
-   nb/NbSignals.cpp
-NodeBase::SigTraps [nb/NbSignals.cpp]
-   nb/NbSignals.cpp
-NodeBase::SigTraps::SigTraps [nb/NbSignals.cpp]
    nb/NbSignals.cpp
 NodeBase::SigYield [nb/NbSignals.cpp]
    nb/NbSignals.cpp
@@ -32722,10 +32963,6 @@ NodeBase::SIGNIL [nb/NbSignals.h]
    nb/Thread.cpp
    nt/NtIncrement.cpp
 NodeBase::SIGPURGE [nb/NbSignals.h]
-   nb/NbIncrement.cpp
-   nb/NbSignals.cpp
-   nb/NbSignals.h
-NodeBase::SIGRETRAP [nb/NbSignals.h]
    nb/NbSignals.cpp
    nb/NbSignals.h
    nb/Thread.cpp
@@ -32738,10 +32975,6 @@ NodeBase::SIGSTACK2 [nb/NbSignals.h]
    nb/NbSignals.cpp
    nb/NbSignals.h
    nb/SysThread.win.cpp
-NodeBase::SIGTRAPS [nb/NbSignals.h]
-   nb/NbSignals.cpp
-   nb/NbSignals.h
-   nb/Thread.cpp
 NodeBase::SIGYIELD [nb/NbSignals.h]
    nb/NbSignals.cpp
    nb/NbSignals.h
@@ -32884,7 +33117,6 @@ NodeBase::BlockingReason [nb/NbTypes.h]
    sb/InvokerThread.cpp
    sb/InvokerThread.h
 NodeBase::BlockingReason::BlockedOnClock [nb/NbTypes.h]
-   nb/NbIncrement.cpp
    nb/Thread.cpp
    sb/InvokerPool.cpp
    sb/InvokerThread.cpp
@@ -33022,6 +33254,8 @@ NodeBase::Faction [nb/NbTypes.h]
    sb/MsgContext.h
    sb/PsmContext.cpp
    sb/PsmContext.h
+   sb/SbDaemons.cpp
+   sb/SbDaemons.h
    sb/SbIncrement.cpp
    sb/SbInputHandler.cpp
    sb/SbInputHandler.h
@@ -33081,6 +33315,7 @@ NodeBase::Faction::WatchdogFaction [nb/NbTypes.h]
 NodeBase::FactionChar [nb/NbTypes.h]
    nb/NbTypes.cpp
    nb/Thread.cpp
+   sb/SbDaemons.cpp
 NodeBase::GetLogType [nb/NbTypes.h]
    nb/LogBuffer.cpp
    nb/NbTypes.cpp
@@ -33256,6 +33491,7 @@ NodeBase::Singleton [nb/NbTypes.h]
    nb/CliRegistry.h
    nb/CliThread.h
    nb/CoutThread.h
+   nb/DaemonRegistry.h
    nb/Element.h
    nb/FileThread.h
    nb/InitThread.h
@@ -33310,6 +33546,7 @@ NodeBase::Singleton [nb/NbTypes.h]
    sb/FactoryRegistry.h
    sb/InvokerPoolRegistry.h
    sb/ProtocolRegistry.h
+   sb/SbDaemons.h
    sb/SbIncrement.h
    sb/SbInvokerPools.h
    sb/SbModule.h
@@ -33428,6 +33665,7 @@ NodeBase::operator<<(std::basic_ostream,NodeBase::Faction) [nb/NbTypes.h]
    nb/NbTypes.cpp
    nw/IpService.cpp
    sb/InvokerPool.cpp
+   sb/SbDaemons.cpp
    sb/SbIncrement.cpp
 NodeBase::Object_GetClass [nb/Object.cpp]
    nb/Object.cpp
@@ -33576,6 +33814,10 @@ NodeBase::Object::Patch [nb/Object.h]
    nb/CliThread.h
    nb/CoutThread.cpp
    nb/CoutThread.h
+   nb/Daemon.cpp
+   nb/Daemon.h
+   nb/DaemonRegistry.cpp
+   nb/DaemonRegistry.h
    nb/Dynamic.cpp
    nb/Dynamic.h
    nb/Element.cpp
@@ -33881,6 +34123,10 @@ NodeBase::Object::sel_t [nb/Object.h]
    nb/CliThread.h
    nb/CoutThread.cpp
    nb/CoutThread.h
+   nb/Daemon.cpp
+   nb/Daemon.h
+   nb/DaemonRegistry.cpp
+   nb/DaemonRegistry.h
    nb/Dynamic.cpp
    nb/Dynamic.h
    nb/Element.cpp
@@ -34434,6 +34680,7 @@ NodeBase::ObjectPoolAudit_ctor [nb/ObjectPoolAudit.cpp]
 NodeBase::ObjectPoolAudit_dtor [nb/ObjectPoolAudit.cpp]
    nb/ObjectPoolAudit.cpp
 NodeBase::ObjectPoolAudit [nb/ObjectPoolAudit.h]
+   nb/NbDaemons.cpp
    nb/NbIncrement.cpp
    nb/NbModule.cpp
    nb/ObjectPoolAudit.cpp
@@ -34610,8 +34857,13 @@ NodeBase::Permanent_new2 [nb/Permanent.cpp]
    nb/Permanent.cpp
 NodeBase::Permanent [nb/Permanent.h]
    dip/BotTracer.h
+   nb/Daemon.cpp
+   nb/Daemon.h
+   nb/DaemonRegistry.cpp
+   nb/DaemonRegistry.h
    nb/LogBuffer.cpp
    nb/LogBuffer.h
+   nb/MutexRegistry.cpp
    nb/MutexRegistry.h
    nb/NbTracer.h
    nb/Permanent.cpp
@@ -34764,9 +35016,6 @@ NodeBase::PS_Break [nb/PosixSignal.h]
    nb/SysSignals.cpp
 NodeBase::PS_Delayed [nb/PosixSignal.h]
    nb/PosixSignal.cpp
-NodeBase::PS_Exit [nb/PosixSignal.h]
-   nb/NbSignals.cpp
-   nb/PosixSignal.cpp
 NodeBase::PS_Final [nb/PosixSignal.h]
    nb/NbSignals.cpp
    nb/PosixSignal.cpp
@@ -34782,10 +35031,8 @@ NodeBase::PS_NoError [nb/PosixSignal.h]
 NodeBase::PS_NoLog [nb/PosixSignal.h]
    nb/NbSignals.cpp
    nb/PosixSignal.cpp
-NodeBase::PS_NoRecover [nb/PosixSignal.h]
-   nb/NbSignals.cpp
-   nb/PosixSignal.cpp
 NodeBase::PosixSignal [nb/PosixSignal.h]
+   nb/NbIncrement.cpp
    nb/NbSignals.cpp
    nb/PosixSignal.cpp
    nb/PosixSignalRegistry.cpp
@@ -34799,9 +35046,6 @@ NodeBase::PosixSignal::Attribute::Break [nb/PosixSignal.h]
    nb/PosixSignal.cpp
    nb/Thread.cpp
 NodeBase::PosixSignal::Attribute::Delayed [nb/PosixSignal.h]
-   nb/PosixSignal.cpp
-   nb/Thread.cpp
-NodeBase::PosixSignal::Attribute::Exit [nb/PosixSignal.h]
    nb/PosixSignal.cpp
    nb/Thread.cpp
 NodeBase::PosixSignal::Attribute::Final [nb/PosixSignal.h]
@@ -34818,9 +35062,6 @@ NodeBase::PosixSignal::Attribute::NoError [nb/PosixSignal.h]
    nb/PosixSignal.cpp
    nb/Thread.cpp
 NodeBase::PosixSignal::Attribute::NoLog [nb/PosixSignal.h]
-   nb/PosixSignal.cpp
-   nb/Thread.cpp
-NodeBase::PosixSignal::Attribute::NoRecover [nb/PosixSignal.h]
    nb/PosixSignal.cpp
    nb/Thread.cpp
 NodeBase::PosixSignal::Attrs [nb/PosixSignal.h]
@@ -34875,6 +35116,8 @@ NodeBase::PosixSignalRegistry_ctor [nb/PosixSignalRegistry.cpp]
    nb/PosixSignalRegistry.cpp
 NodeBase::PosixSignalRegistry_dtor [nb/PosixSignalRegistry.cpp]
    nb/PosixSignalRegistry.cpp
+NodeBase::SigNilStr [nb/PosixSignalRegistry.cpp]
+   nb/PosixSignalRegistry.cpp
 NodeBase::SigUnknownStr [nb/PosixSignalRegistry.cpp]
    nb/PosixSignalRegistry.cpp
 NodeBase::PosixSignal [nb/PosixSignalRegistry.h]
@@ -34907,6 +35150,7 @@ NodeBase::PosixSignalRegistry::Patch [nb/PosixSignalRegistry.h]
 NodeBase::PosixSignalRegistry::PosixSignalRegistry [nb/PosixSignalRegistry.h]
    nb/PosixSignalRegistry.cpp
 NodeBase::PosixSignalRegistry::Signals [nb/PosixSignalRegistry.h]
+   nb/NbIncrement.cpp
    nb/Thread.cpp
 NodeBase::PosixSignalRegistry::UnbindSignal [nb/PosixSignalRegistry.h]
    nb/PosixSignal.cpp
@@ -35457,6 +35701,8 @@ NodeBase::RegCell [nb/RegCell.h]
    nb/CliIncrement.h
    nb/CliParm.cpp
    nb/CliParm.h
+   nb/Daemon.cpp
+   nb/Daemon.h
    nb/Log.cpp
    nb/Log.h
    nb/LogGroup.cpp
@@ -35566,6 +35812,7 @@ NodeBase::RegCell::to_str [nb/RegCell.h]
    nb/Class.cpp
    nb/CliIncrement.cpp
    nb/CliParm.cpp
+   nb/Daemon.cpp
    nb/Module.cpp
    nb/ObjectPool.cpp
    nb/RegCell.cpp
@@ -35589,6 +35836,7 @@ NodeBase::RegCell::~RegCell [nb/RegCell.h]
    nb/RegCell.cpp
 NodeBase::Registry [nb/RegCell.h]
    nb/Class.h
+   nb/Daemon.h
    nb/Module.h
    nb/ObjectPool.h
    nb/PosixSignal.h
@@ -35633,6 +35881,8 @@ NodeBase::Registry [nb/Registry.h]
    nb/CliText.h
    nb/CliTextParm.cpp
    nb/CliTextParm.h
+   nb/DaemonRegistry.cpp
+   nb/DaemonRegistry.h
    nb/InitThread.cpp
    nb/LogGroup.cpp
    nb/LogGroup.h
@@ -35699,6 +35949,7 @@ NodeBase::Registry::At [nb/Registry.h]
    nb/CliTextParm.cpp
    nb/LogGroupRegistry.cpp
    nb/ModuleRegistry.cpp
+   nb/NbIncrement.cpp
    nb/ObjectPoolRegistry.cpp
    nb/StatisticsRegistry.cpp
    nb/Thread.cpp
@@ -35726,6 +35977,7 @@ NodeBase::Registry::Display [nb/Registry.h]
    nb/CliRegistry.cpp
    nb/CliText.cpp
    nb/CliTextParm.cpp
+   nb/DaemonRegistry.cpp
    nb/ModuleRegistry.cpp
    nb/MutexRegistry.cpp
    nb/ObjectPoolRegistry.cpp
@@ -35755,6 +36007,7 @@ NodeBase::Registry::Erase(NodeBase::Registry* const,T) [nb/Registry.h]
    nb/AlarmRegistry.cpp
    nb/ClassRegistry.cpp
    nb/CliRegistry.cpp
+   nb/DaemonRegistry.cpp
    nb/LogGroup.cpp
    nb/LogGroupRegistry.cpp
    nb/ModuleRegistry.cpp
@@ -35792,6 +36045,7 @@ NodeBase::Registry::First(const NodeBase::Registry* const) [nb/Registry.h]
    nb/CliRegistry.cpp
    nb/CliText.cpp
    nb/CliTextParm.cpp
+   nb/DaemonRegistry.cpp
    nb/InitThread.cpp
    nb/LogGroup.cpp
    nb/LogGroupRegistry.cpp
@@ -35825,6 +36079,7 @@ NodeBase::Registry::Init [nb/Registry.h]
    nb/CliRegistry.cpp
    nb/CliText.cpp
    nb/CliTextParm.cpp
+   nb/DaemonRegistry.cpp
    nb/LogGroup.cpp
    nb/LogGroupRegistry.cpp
    nb/ModuleRegistry.cpp
@@ -35857,6 +36112,7 @@ NodeBase::Registry::Insert(NodeBase::Registry* const,T) [nb/Registry.h]
    nb/CliRegistry.cpp
    nb/CliText.cpp
    nb/CliTextParm.cpp
+   nb/DaemonRegistry.cpp
    nb/LogGroup.cpp
    nb/LogGroupRegistry.cpp
    nb/ModuleRegistry.cpp
@@ -35899,6 +36155,7 @@ NodeBase::Registry::Next(const NodeBase::Registry* const,T*) [nb/Registry.h]
    nb/CliRegistry.cpp
    nb/CliText.cpp
    nb/CliTextParm.cpp
+   nb/DaemonRegistry.cpp
    nb/InitThread.cpp
    nb/LogGroup.cpp
    nb/LogGroupRegistry.cpp
@@ -35968,7 +36225,6 @@ NodeBase::Registry::Size [nb/Registry.h]
    nb/ModuleRegistry.cpp
    nb/NbIncrement.cpp
    nt/NtIncrement.cpp
-   sb/InvokerPool.cpp
 NodeBase::Registry::capacity_ [nb/Registry.h]
    nb/Registry.h
 NodeBase::Registry::delete_ [nb/Registry.h]
@@ -35998,6 +36254,7 @@ NodeBase::Restart::GetStatus [nb/Restart.h]
    nb/CinThread.cpp
    nb/CliThread.cpp
    nb/CoutThread.cpp
+   nb/Daemon.cpp
    nb/FileThread.cpp
    nb/Log.cpp
    nb/LogBuffer.cpp
@@ -36026,15 +36283,12 @@ NodeBase::Restart::Status_ [nb/Restart.h]
    nb/ModuleRegistry.cpp
    nb/Restart.cpp
    nb/Restart.h
-NodeBase::RestartReasons::DeathOfCriticalThread [nb/Restart.h]
-   nb/Thread.cpp
 NodeBase::RestartReasons::ManualRestart [nb/Restart.h]
    nb/ModuleRegistry.cpp
    nb/NbIncrement.cpp
    nb/Thread.cpp
 NodeBase::RestartReasons::ModuleStartupFailed [nb/Restart.h]
    nb/ModuleRegistry.cpp
-   sb/InvokerPool.cpp
 NodeBase::RestartReasons::NilRestart [nb/Restart.h]
    nb/ModuleRegistry.cpp
    nb/RootThread.cpp
@@ -36067,6 +36321,7 @@ NodeBase::RestartStatus::Running [nb/Restart.h]
    nb/CinThread.cpp
    nb/CliThread.cpp
    nb/CoutThread.cpp
+   nb/Daemon.cpp
    nb/FileThread.cpp
    nb/Log.cpp
    nb/LogBuffer.cpp
@@ -36095,6 +36350,7 @@ NodeBase::RootThread_ctor [nb/RootThread.cpp]
 NodeBase::RootThread_dtor [nb/RootThread.cpp]
    nb/RootThread.cpp
 NodeBase::RootThread [nb/RootThread.h]
+   nb/Debug.cpp
    nb/InitThread.cpp
    nb/RootThread.cpp
 NodeBase::RootThread::AbbrName [nb/RootThread.h]
@@ -36197,6 +36453,7 @@ NodeBase::Singleton::Extant [nb/Singleton.h]
    nb/Thread.cpp
    nb/ThreadAdmin.cpp
    nb/TraceBuffer.cpp
+   nt/NtIncrement.cpp
    nt/NtModule.cpp
    nw/IpPortRegistry.cpp
 NodeBase::Singleton::Instance [nb/Singleton.h]
@@ -36263,6 +36520,8 @@ NodeBase::Singleton::Instance [nb/Singleton.h]
    nb/CliThread.cpp
    nb/Clock.cpp
    nb/CoutThread.cpp
+   nb/Daemon.cpp
+   nb/Debug.cpp
    nb/Element.cpp
    nb/FileThread.cpp
    nb/FunctionTrace.cpp
@@ -36277,6 +36536,7 @@ NodeBase::Singleton::Instance [nb/Singleton.h]
    nb/Module.cpp
    nb/ModuleRegistry.cpp
    nb/MsgBuffer.cpp
+   nb/NbDaemons.cpp
    nb/NbIncrement.cpp
    nb/NbModule.cpp
    nb/NbPools.cpp
@@ -36316,6 +36576,7 @@ NodeBase::Singleton::Instance [nb/Singleton.h]
    nw/IpPortCfgParm.cpp
    nw/IpPortRegistry.cpp
    nw/IpService.cpp
+   nw/NwDaemons.cpp
    nw/NwIncrement.cpp
    nw/NwModule.cpp
    nw/NwTracer.cpp
@@ -36353,6 +36614,7 @@ NodeBase::Singleton::Instance [nb/Singleton.h]
    sb/Parameter.cpp
    sb/Protocol.cpp
    sb/ProtocolSM.cpp
+   sb/SbDaemons.cpp
    sb/SbHandlers.cpp
    sb/SbIncrement.cpp
    sb/SbInputHandler.cpp
@@ -36799,6 +37061,7 @@ NodeBase::StatisticsThread_ctor [nb/StatisticsThread.cpp]
 NodeBase::StatisticsThread_dtor [nb/StatisticsThread.cpp]
    nb/StatisticsThread.cpp
 NodeBase::StatisticsThread [nb/StatisticsThread.h]
+   nb/NbDaemons.cpp
    nb/NbModule.cpp
    nb/StatisticsThread.cpp
 NodeBase::StatisticsThread::AbbrName [nb/StatisticsThread.h]
@@ -37254,6 +37517,7 @@ NodeBase::SysMutex [nb/SysMutex.h]
    nb/LogThread.cpp
    nb/MutexGuard.cpp
    nb/MutexRegistry.cpp
+   nb/NbIncrement.cpp
    nb/SysMutex.cpp
    nb/SysMutex.win.cpp
    nb/Thread.cpp
@@ -37384,6 +37648,7 @@ NodeBase::SysThread_ctor2 [nb/SysThread.cpp]
 NodeBase::SysThread_dtor [nb/SysThread.cpp]
    nb/SysThread.cpp
 NodeBase::SysThread [nb/SysThread.h]
+   nb/Debug.cpp
    nb/RootThread.cpp
    nb/SysThread.cpp
    nb/SysThread.win.cpp
@@ -37433,6 +37698,7 @@ NodeBase::SysThread::Priority::WatchdogPriority [nb/SysThread.h]
    nb/SysThread.cpp
    nb/Thread.cpp
 NodeBase::SysThread::Proceed [nb/SysThread.h]
+   nb/Debug.cpp
    nb/SysThread.cpp
    nb/Thread.cpp
 NodeBase::SysThread::RegisterForSignal [nb/SysThread.h]
@@ -37853,7 +38119,7 @@ NodeBase::BAD_POINTER [nb/SysTypes.h]
    nb/Class.cpp
    nb/Q1Way.h
    nb/SysTypes.cpp
-   nt/NtIncrement.cpp
+   nb/Thread.cpp
 NodeBase::BITS_PER_WORD [nb/SysTypes.h]
    nb/SysTypes.h
 NodeBase::BYTES_PER_POINTER [nb/SysTypes.h]
@@ -37968,6 +38234,8 @@ NodeBase::CRLF [nb/SysTypes.h]
    nb/CliTextParm.cpp
    nb/CliThread.cpp
    nb/CoutThread.cpp
+   nb/Daemon.cpp
+   nb/DaemonRegistry.cpp
    nb/Debug.cpp
    nb/Element.cpp
    nb/ElementException.cpp
@@ -38037,6 +38305,7 @@ NodeBase::CRLF [nb/SysTypes.h]
    nw/IpPortRegistry.cpp
    nw/IpService.cpp
    nw/IpServiceRegistry.cpp
+   nw/NwDaemons.cpp
    nw/NwIncrement.cpp
    nw/NwTracer.cpp
    nw/SysIpL2Addr.cpp
@@ -38085,6 +38354,7 @@ NodeBase::CRLF [nb/SysTypes.h]
    sb/ProtocolSM.cpp
    sb/PsmContext.cpp
    sb/RootServiceSM.cpp
+   sb/SbDaemons.cpp
    sb/SbIncrement.cpp
    sb/SbInvokerPools.cpp
    sb/SbIpBuffer.cpp
@@ -38366,6 +38636,10 @@ NodeBase::Flags [nb/SysTypes.h]
    nb/CliTextParm.h
    nb/CliThread.cpp
    nb/CliThread.h
+   nb/Daemon.cpp
+   nb/Daemon.h
+   nb/DaemonRegistry.cpp
+   nb/DaemonRegistry.h
    nb/Debug.cpp
    nb/Debug.h
    nb/Element.cpp
@@ -38399,7 +38673,6 @@ NodeBase::Flags [nb/SysTypes.h]
    nb/MutexRegistry.cpp
    nb/MutexRegistry.h
    nb/NbIncrement.cpp
-   nb/NbSignals.cpp
    nb/NbTypes.cpp
    nb/NbTypes.h
    nb/Object.cpp
@@ -38483,6 +38756,8 @@ NodeBase::Flags [nb/SysTypes.h]
    nw/IpService.h
    nw/IpServiceRegistry.cpp
    nw/IpServiceRegistry.h
+   nw/NwDaemons.cpp
+   nw/NwDaemons.h
    nw/SysIpL2Addr.cpp
    nw/SysIpL2Addr.h
    nw/SysIpL3Addr.cpp
@@ -38559,6 +38834,8 @@ NodeBase::Flags [nb/SysTypes.h]
    sb/PsmContext.h
    sb/RootServiceSM.cpp
    sb/RootServiceSM.h
+   sb/SbDaemons.cpp
+   sb/SbDaemons.h
    sb/SbEvents.h
    sb/SbInvokerPools.cpp
    sb/SbInvokerPools.h
@@ -38705,6 +38982,7 @@ NodeBase::MemoryType::MemProt [nb/SysTypes.h]
    nb/CliRegistry.cpp
    nb/CliText.cpp
    nb/CliTextParm.cpp
+   nb/DaemonRegistry.cpp
    nb/Memory.cpp
    nb/ObjectPoolRegistry.cpp
    nb/PosixSignalRegistry.cpp
@@ -38824,6 +39102,7 @@ NodeBase::NoFlags [nb/SysTypes.h]
    nb/LogGroup.cpp
    nb/LogGroupRegistry.cpp
    nb/NbIncrement.cpp
+   nb/NbSignals.cpp
    nb/ObjectPool.cpp
    nb/PosixSignalRegistry.cpp
    nb/Q1Way.h
@@ -39137,6 +39416,7 @@ NodeBase::SPACE [nb/SysTypes.h]
    nb/LogBufferRegistry.cpp
    nb/NbIncrement.cpp
    nb/ObjectPool.cpp
+   nb/PosixSignal.cpp
    nb/SysTime.cpp
    nb/SysTypes.h
    nb/Thread.cpp
@@ -39498,6 +39778,10 @@ NodeBase::fixed_string [nb/SysTypes.h]
    nb/CliParm.h
    nb/CliText.h
    nb/CliThread.cpp
+   nb/Daemon.cpp
+   nb/Daemon.h
+   nb/DaemonRegistry.cpp
+   nb/DaemonRegistry.h
    nb/ElementException.cpp
    nb/Exception.cpp
    nb/Formatters.cpp
@@ -39512,6 +39796,8 @@ NodeBase::fixed_string [nb/SysTypes.h]
    nb/ModuleRegistry.cpp
    nb/NbCliParms.cpp
    nb/NbCliParms.h
+   nb/NbDaemons.cpp
+   nb/NbDaemons.h
    nb/NbIncrement.cpp
    nb/NbLogs.cpp
    nb/NbLogs.h
@@ -39541,6 +39827,8 @@ NodeBase::fixed_string [nb/SysTypes.h]
    nt/TestDatabase.cpp
    nw/NwCliParms.cpp
    nw/NwCliParms.h
+   nw/NwDaemons.cpp
+   nw/NwDaemons.h
    nw/NwIncrement.cpp
    nw/NwLogs.cpp
    nw/NwLogs.h
@@ -39577,6 +39865,8 @@ NodeBase::fixed_string [nb/SysTypes.h]
    sb/Parameter.cpp
    sb/SbCliParms.cpp
    sb/SbCliParms.h
+   sb/SbDaemons.cpp
+   sb/SbDaemons.h
    sb/SbIncrement.cpp
    sb/SbLogs.cpp
    sb/SbLogs.h
@@ -39724,6 +40014,8 @@ NodeBase::fn_name [nb/SysTypes.h]
    nb/CliThread.cpp
    nb/Clock.cpp
    nb/CoutThread.cpp
+   nb/Daemon.cpp
+   nb/DaemonRegistry.cpp
    nb/Debug.cpp
    nb/Dynamic.cpp
    nb/Element.cpp
@@ -40110,6 +40402,7 @@ NodeBase::ostringstreamPtr [nb/SysTypes.h]
    nb/ModuleRegistry.h
    nb/StreamRequest.cpp
    nb/StreamRequest.h
+   nb/Thread.cpp
 NodeBase::ptr_t [nb/SysTypes.h]
    nb/FunctionTrace.cpp
    nb/LogBuffer.cpp
@@ -40353,7 +40646,6 @@ NodeBase::ThisThread::Pause [nb/ThisThread.h]
    nb/ObjectPool.cpp
    nb/ObjectPoolRegistry.cpp
    nb/ThisThread.cpp
-   nt/NtIncrement.cpp
    pb/PotsIncrement.cpp
    sb/Context.cpp
    sb/InvokerPool.cpp
@@ -40490,8 +40782,6 @@ NodeBase::ThreadPriv::Display [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ThreadPriv::PrevIntervalStart_ [nb/Thread.cpp]
    nb/Thread.cpp
-NodeBase::ThreadPriv::Recreate [nb/Thread.cpp]
-   nb/Thread.cpp
 NodeBase::ThreadPriv::StackCheckCounter_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ThreadPriv::ThreadPriv [nb/Thread.cpp]
@@ -40506,6 +40796,8 @@ NodeBase::ThreadPriv::action_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ThreadPriv::autostop_ [nb/Thread.cpp]
    nb/Thread.cpp
+NodeBase::ThreadPriv::blocked_ [nb/Thread.cpp]
+   nb/Thread.cpp
 NodeBase::ThreadPriv::currEnd_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ThreadPriv::currStart_ [nb/Thread.cpp]
@@ -40516,13 +40808,15 @@ NodeBase::ThreadPriv::entered_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ThreadPriv::exiting_ [nb/Thread.cpp]
    nb/Thread.cpp
+NodeBase::ThreadPriv::logged_ [nb/Thread.cpp]
+   nb/Thread.cpp
 NodeBase::ThreadPriv::mutexes_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ThreadPriv::prevUsecs_ [nb/Thread.cpp]
    nb/Thread.cpp
-NodeBase::ThreadPriv::recovering_ [nb/Thread.cpp]
+NodeBase::ThreadPriv::readyTime_ [nb/Thread.cpp]
    nb/Thread.cpp
-NodeBase::ThreadPriv::recreate_ [nb/Thread.cpp]
+NodeBase::ThreadPriv::recovering_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ThreadPriv::rtcLbc_ [nb/Thread.cpp]
    nb/Thread.cpp
@@ -40530,7 +40824,11 @@ NodeBase::ThreadPriv::signal_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ThreadPriv::stackBase_ [nb/Thread.cpp]
    nb/Thread.cpp
+NodeBase::ThreadPriv::status_ [nb/Thread.cpp]
+   nb/Thread.cpp
 NodeBase::ThreadPriv::swlogs_ [nb/Thread.cpp]
+   nb/Thread.cpp
+NodeBase::ThreadPriv::traceMsg_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ThreadPriv::tracing_ [nb/Thread.cpp]
    nb/Thread.cpp
@@ -40538,17 +40836,19 @@ NodeBase::ThreadPriv::trapLbc_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ThreadPriv::trap_ [nb/Thread.cpp]
    nb/Thread.cpp
+NodeBase::ThreadPriv::traps_ [nb/Thread.cpp]
+   nb/Thread.cpp
 NodeBase::ThreadPriv::unpreempts_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ThreadPriv::unprotects_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ThreadPriv::vector_ [nb/Thread.cpp]
    nb/Thread.cpp
+NodeBase::ThreadPriv::waiting_ [nb/Thread.cpp]
+   nb/Thread.cpp
 NodeBase::ThreadPriv::warned_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ThreadPriv::~ThreadPriv [nb/Thread.cpp]
-   nb/Thread.cpp
-NodeBase::ThreadPriv_Recreate [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ThreadPriv_ctor [nb/Thread.cpp]
    nb/Thread.cpp
@@ -40598,6 +40898,8 @@ NodeBase::ThreadTrace_CaptureEvent [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Thread_AbbrName [nb/Thread.cpp]
    nb/Thread.cpp
+NodeBase::Thread_CauseTrap [nb/Thread.cpp]
+   nb/Thread.cpp
 NodeBase::Thread_ChangeFaction [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Thread_Claim [nb/Thread.cpp]
@@ -40634,19 +40936,19 @@ NodeBase::Thread_ExtendTime [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Thread_FactionToPriority [nb/Thread.cpp]
    nb/Thread.cpp
-NodeBase::Thread_ForceExit [nb/Thread.cpp]
-   nb/Thread.cpp
 NodeBase::Thread_HandleSignal [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Thread_InitialMsecs [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Thread_Interrupt [nb/Thread.cpp]
    nb/Thread.cpp
-NodeBase::Thread_IsCritical [nb/Thread.cpp]
+NodeBase::Thread_Kill [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Thread_LogContextSwitch [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Thread_LogSignal [nb/Thread.cpp]
+   nb/Thread.cpp
+NodeBase::Thread_LogTrap [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Thread_MakePreemptable [nb/Thread.cpp]
    nb/Thread.cpp
@@ -40671,10 +40973,6 @@ NodeBase::Thread_Raise [nb/Thread.cpp]
 NodeBase::Thread_Ready [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Thread_Recover [nb/Thread.cpp]
-   nb/Thread.cpp
-NodeBase::Thread_Recreate [nb/Thread.cpp]
-   nb/Thread.cpp
-NodeBase::Thread_Recreated [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Thread_RegisterForSignals [nb/Thread.cpp]
    nb/Thread.cpp
@@ -40701,6 +40999,8 @@ NodeBase::Thread_RunningThread [nb/Thread.cpp]
 NodeBase::Thread_Schedule [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Thread_Select [nb/Thread.cpp]
+   nb/Thread.cpp
+NodeBase::Thread_SetInitialized [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Thread_SetSignal [nb/Thread.cpp]
    nb/Thread.cpp
@@ -40748,6 +41048,15 @@ NodeBase::TrapLimitReachedStr [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::UnknownExceptionStr [nb/Thread.cpp]
    nb/Thread.cpp
+NodeBase::Daemon [nb/Thread.h]
+   nb/Thread.h
+   nw/IoThread.cpp
+   nw/IoThread.h
+   nw/TcpIoThread.cpp
+   nw/TcpIoThread.h
+   nw/UdpIoThread.cpp
+   nw/UdpIoThread.h
+   sb/InvokerThread.h
 NodeBase::MsgBuffer [nb/Thread.h]
    dip/BotThread.h
    nb/Thread.cpp
@@ -40765,12 +41074,15 @@ NodeBase::Thread [nb/Thread.h]
    nb/CliThread.h
    nb/CoutThread.cpp
    nb/CoutThread.h
+   nb/Daemon.cpp
    nb/FileThread.cpp
    nb/FileThread.h
    nb/InitThread.cpp
    nb/InitThread.h
    nb/LogThread.cpp
    nb/LogThread.h
+   nb/MutexRegistry.cpp
+   nb/NbDaemons.cpp
    nb/NbIncrement.cpp
    nb/NbPools.cpp
    nb/NbTracer.cpp
@@ -40791,8 +41103,10 @@ NodeBase::Thread [nb/Thread.h]
    nt/NtIncrement.cpp
    nw/IoThread.cpp
    nw/IoThread.h
+   nw/NwDaemons.cpp
    sb/InvokerThread.cpp
    sb/InvokerThread.h
+   sb/SbDaemons.cpp
    sb/SbTracer.cpp
    sb/TimerThread.cpp
    sb/TimerThread.h
@@ -40836,6 +41150,8 @@ NodeBase::Thread::BlockingAllowed [nb/Thread.h]
    nb/Thread.cpp
    sb/InvokerThread.cpp
    sb/InvokerThread.h
+NodeBase::Thread::BlockingMutex [nb/Thread.h]
+   nb/Thread.cpp
 NodeBase::Thread::CalcStatus [nb/Thread.h]
    nb/Thread.cpp
    nb/TimedRecord.cpp
@@ -40845,6 +41161,9 @@ NodeBase::Thread::CalcStatus [nb/Thread.h]
    sb/SbTracer.cpp
    sb/TimerThread.cpp
    sb/TimerThread.h
+NodeBase::Thread::CauseTrap [nb/Thread.h]
+   nb/Thread.cpp
+   nt/NtIncrement.cpp
 NodeBase::Thread::CellDiff [nb/Thread.h]
    nb/Thread.cpp
    nb/ThreadRegistry.cpp
@@ -40975,22 +41294,18 @@ NodeBase::Thread::ExtendTime [nb/Thread.h]
    nb/Thread.cpp
 NodeBase::Thread::FactionToPriority [nb/Thread.h]
    nb/Thread.cpp
-NodeBase::Thread::ForceExit [nb/Thread.h]
-   nb/Thread.cpp
 NodeBase::Thread::FunctionInvoked [nb/Thread.h]
    nb/Debug.cpp
    nb/Thread.cpp
 NodeBase::Thread::GetBlockingReason [nb/Thread.h]
-   nb/NbIncrement.cpp
+   nb/Thread.cpp
    sb/InvokerPool.cpp
 NodeBase::Thread::GetStatus [nb/Thread.h]
    nb/NbTracer.cpp
+   nb/Thread.cpp
    sb/TimerThread.cpp
 NodeBase::Thread::HandleSignal [nb/Thread.h]
    nb/SysThread.win.cpp
-   nb/Thread.cpp
-NodeBase::Thread::HasExited [nb/Thread.h]
-   nb/InitThread.cpp
    nb/Thread.cpp
 NodeBase::Thread::Id [nb/Thread.h]
    nb/Thread.cpp
@@ -41002,6 +41317,7 @@ NodeBase::Thread::InitialMsecs [nb/Thread.h]
 NodeBase::Thread::Interrupt [nb/Thread.h]
    an/PotsTrafficThread.cpp
    nb/CinThread.cpp
+   nb/Daemon.cpp
    nb/InitThread.cpp
    nb/LogBuffer.cpp
    nb/NbIncrement.cpp
@@ -41012,16 +41328,18 @@ NodeBase::Thread::Interrupt [nb/Thread.h]
    nt/NtIncrement.cpp
    nw/TcpIoThread.cpp
    sb/InvokerPool.cpp
-NodeBase::Thread::IsCritical [nb/Thread.h]
-   nb/Thread.cpp
-   nt/NtIncrement.cpp
 NodeBase::Thread::IsLocked [nb/Thread.h]
    nb/Thread.cpp
 NodeBase::Thread::IsReady [nb/Thread.h]
    nb/Thread.cpp
 NodeBase::Thread::IsScheduled [nb/Thread.h]
+   nb/InitThread.cpp
+   nb/Thread.cpp
    sb/InvokerPool.cpp
 NodeBase::Thread::IsTraceable [nb/Thread.h]
+   nb/Thread.cpp
+NodeBase::Thread::Kill [nb/Thread.h]
+   nb/NbIncrement.cpp
    nb/Thread.cpp
 NodeBase::Thread::LockedThread [nb/Thread.h]
    nb/InitThread.cpp
@@ -41033,6 +41351,8 @@ NodeBase::Thread::LogContextSwitches [nb/Thread.h]
    nb/Thread.cpp
 NodeBase::Thread::LogSignal [nb/Thread.h]
    nb/Thread.cpp
+NodeBase::Thread::LogTrap [nb/Thread.h]
+   nb/Thread.cpp
 NodeBase::Thread::MakePreemptable [nb/Thread.h]
    nb/InitThread.cpp
    nb/RootThread.cpp
@@ -41042,6 +41362,7 @@ NodeBase::Thread::MakeUnpreemptable [nb/Thread.h]
    nb/ThisThread.cpp
    nb/Thread.cpp
 NodeBase::Thread::MaxId [nb/Thread.h]
+   nb/DaemonRegistry.cpp
    nb/NbCliParms.cpp
    nb/Thread.cpp
    nb/ThreadRegistry.cpp
@@ -41056,6 +41377,8 @@ NodeBase::Thread::MsecsSinceStart [nb/Thread.h]
    nb/Thread.cpp
    sb/TimerRegistry.cpp
    sb/TimerThread.cpp
+NodeBase::Thread::MutexCount [nb/Thread.h]
+   nb/Thread.cpp
 NodeBase::Thread::NativeThreadId [nb/Thread.h]
    nb/InitThread.cpp
    nb/Thread.cpp
@@ -41092,7 +41415,6 @@ NodeBase::Thread::Proceed [nb/Thread.h]
    nb/InitThread.cpp
    nb/Thread.cpp
 NodeBase::Thread::Raise [nb/Thread.h]
-   nb/NbIncrement.cpp
    nb/RootThread.cpp
    nb/Thread.cpp
    nt/NtIncrement.cpp
@@ -41104,29 +41426,6 @@ NodeBase::Thread::Recover [nb/Thread.h]
    nt/NtIncrement.cpp
    sb/InvokerThread.cpp
    sb/InvokerThread.h
-NodeBase::Thread::RecoveryAction [nb/Thread.h]
-   nb/Thread.cpp
-   nb/Thread.h
-   nt/NtIncrement.cpp
-   sb/InvokerThread.cpp
-   sb/InvokerThread.h
-NodeBase::Thread::RecoveryAction::DeleteThread [nb/Thread.h]
-   nb/Thread.cpp
-   nt/NtIncrement.cpp
-   sb/InvokerThread.cpp
-NodeBase::Thread::RecoveryAction::RecreateThread [nb/Thread.h]
-   nb/Thread.cpp
-NodeBase::Thread::RecoveryAction::ReenterThread [nb/Thread.h]
-   nb/Thread.cpp
-   nt/NtIncrement.cpp
-   sb/InvokerThread.cpp
-NodeBase::Thread::Recreate [nb/Thread.h]
-   nb/InitThread.cpp
-   nb/Thread.cpp
-NodeBase::Thread::Recreated [nb/Thread.h]
-   nb/CliThread.cpp
-   nb/CliThread.h
-   nb/Thread.cpp
 NodeBase::Thread::RegisterForSignals [nb/Thread.h]
    nb/Thread.cpp
 NodeBase::Thread::ReleaseResources [nb/Thread.h]
@@ -41157,6 +41456,7 @@ NodeBase::Thread::RtcTimeout [nb/Thread.h]
    nb/Thread.cpp
 NodeBase::Thread::RunningThread [nb/Thread.h]
    nb/CinThread.cpp
+   nb/MutexRegistry.cpp
    nb/SysMutex.win.cpp
    nb/ThisThread.cpp
    nb/Thread.cpp
@@ -41171,14 +41471,31 @@ NodeBase::Thread::ScheduledIn [nb/Thread.h]
    sb/InvokerThread.h
 NodeBase::Thread::Select [nb/Thread.h]
    nb/Thread.cpp
+NodeBase::Thread::SetInitialized [nb/Thread.h]
+   an/PotsTrafficThread.cpp
+   dip/BotThread.cpp
+   nb/CinThread.cpp
+   nb/CliThread.cpp
+   nb/CoutThread.cpp
+   nb/FileThread.cpp
+   nb/InitThread.cpp
+   nb/LogThread.cpp
+   nb/ObjectPoolAudit.cpp
+   nb/RootThread.cpp
+   nb/StatisticsThread.cpp
+   nb/Thread.cpp
+   nt/NtIncrement.cpp
+   nw/TcpIoThread.cpp
+   nw/UdpIoThread.cpp
+   sb/InvokerThread.cpp
+   sb/TimerThread.cpp
 NodeBase::Thread::SetSignal [nb/Thread.h]
    nb/Thread.cpp
 NodeBase::Thread::SetStatus [nb/Thread.h]
    nb/NbTracer.cpp
+   nb/Thread.cpp
 NodeBase::Thread::SetTrap [nb/Thread.h]
    nb/Thread.cpp
-NodeBase::Thread::SetTrapped [nb/Thread.h]
-   nt/NtIncrement.cpp
 NodeBase::Thread::Shutdown [nb/Thread.h]
    nb/Thread.cpp
 NodeBase::Thread::SignalHandler [nb/Thread.h]
@@ -41217,6 +41534,7 @@ NodeBase::Thread::TicksLeft [nb/Thread.h]
    nb/Thread.cpp
 NodeBase::Thread::Tid [nb/Thread.h]
    dip/BaseBot.cpp
+   nb/Daemon.cpp
    nb/InitThread.cpp
    nb/ThisThread.cpp
    nb/Thread.cpp
@@ -41232,8 +41550,6 @@ NodeBase::Thread::TrapAction [nb/Thread.h]
 NodeBase::Thread::TrapAction::Continue [nb/Thread.h]
    nb/Thread.cpp
 NodeBase::Thread::TrapAction::Release [nb/Thread.h]
-   nb/Thread.cpp
-NodeBase::Thread::TrapAction::Rethrow [nb/Thread.h]
    nb/Thread.cpp
 NodeBase::Thread::TrapAction::Return [nb/Thread.h]
    nb/Thread.cpp
@@ -41255,7 +41571,7 @@ NodeBase::Thread::UpdateMutexCount [nb/Thread.h]
    nb/Thread.cpp
 NodeBase::Thread::Vector [nb/Thread.h]
    nb/Thread.cpp
-NodeBase::Thread::blocked_ [nb/Thread.h]
+NodeBase::Thread::daemon_ [nb/Thread.h]
    nb/Thread.cpp
    nb/Thread.h
 NodeBase::Thread::deleted_ [nb/Thread.h]
@@ -41263,36 +41579,26 @@ NodeBase::Thread::deleted_ [nb/Thread.h]
 NodeBase::Thread::faction_ [nb/Thread.h]
    nb/Thread.cpp
    nb/Thread.h
+NodeBase::Thread::initialized_ [nb/Thread.h]
+   nb/Thread.cpp
 NodeBase::Thread::msgq_ [nb/Thread.h]
    nb/Thread.cpp
 NodeBase::Thread::operator new [nb/Thread.h]
    nb/Thread.cpp
 NodeBase::Thread::priv_ [nb/Thread.h]
    nb/Thread.cpp
-NodeBase::Thread::readyTime_ [nb/Thread.h]
-   nb/Thread.cpp
 NodeBase::Thread::stats_ [nb/Thread.h]
    nb/Thread.cpp
-NodeBase::Thread::status_ [nb/Thread.h]
-   nb/Thread.cpp
-   nb/Thread.h
 NodeBase::Thread::systhrd_ [nb/Thread.h]
+   nb/Debug.cpp
    nb/RootThread.cpp
    nb/Thread.cpp
 NodeBase::Thread::tid_ [nb/Thread.h]
    nb/Thread.cpp
    nb/Thread.h
 NodeBase::Thread::to_str [nb/Thread.h]
+   nb/MutexRegistry.cpp
    nb/Thread.cpp
-NodeBase::Thread::traceMsg_ [nb/Thread.h]
-   nb/Thread.cpp
-NodeBase::Thread::trapped_ [nb/Thread.h]
-   nb/Thread.cpp
-   nb/Thread.h
-NodeBase::Thread::waiting_ [nb/Thread.h]
-   nb/InitThread.cpp
-   nb/Thread.cpp
-   nb/Thread.h
 NodeBase::Thread::~Thread [nb/Thread.h]
    nb/Thread.cpp
 NodeBase::ThreadPriv [nb/Thread.h]
@@ -41443,7 +41749,6 @@ NodeBase::ThreadAdmin::Register::Recoveries [nb/ThreadAdmin.h]
    nb/Thread.cpp
    nb/ThreadAdmin.cpp
 NodeBase::ThreadAdmin::Register::Recreations [nb/ThreadAdmin.h]
-   nb/Thread.cpp
    nb/ThreadAdmin.cpp
 NodeBase::ThreadAdmin::Register::Reentries [nb/ThreadAdmin.h]
    nb/Thread.cpp
@@ -41603,7 +41908,6 @@ NodeBase::Thread [nb/ThreadRegistry.h]
    nb/ThreadRegistry.cpp
    nb/ThreadRegistry.h
 NodeBase::ThreadRegistry [nb/ThreadRegistry.h]
-   nb/InitThread.cpp
    nb/ModuleRegistry.cpp
    nb/NbIncrement.cpp
    nb/NbModule.cpp
@@ -41615,7 +41919,6 @@ NodeBase::ThreadRegistry [nb/ThreadRegistry.h]
    nb/TimedRecord.cpp
    nt/FunctionProfiler.cpp
 NodeBase::ThreadRegistry::AssociateIds [nb/ThreadRegistry.h]
-   nb/Thread.cpp
    nb/ThreadRegistry.cpp
 NodeBase::ThreadRegistry::BindThread [nb/ThreadRegistry.h]
    nb/Thread.cpp
@@ -41654,7 +41957,6 @@ NodeBase::ThreadRegistry::Startup [nb/ThreadRegistry.h]
 NodeBase::ThreadRegistry::ThreadRegistry [nb/ThreadRegistry.h]
    nb/ThreadRegistry.cpp
 NodeBase::ThreadRegistry::Threads [nb/ThreadRegistry.h]
-   nb/InitThread.cpp
    nb/ModuleRegistry.cpp
    nb/NbIncrement.cpp
    nb/NbTracer.cpp
@@ -42765,6 +43067,22 @@ NodeTools::Countq2Expl [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::Countq2Str [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
+NodeTools::CreateText [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::CreateText::CreateText [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::CreateTextExpl [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::CreateTextStr [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::CtorTrapText [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::CtorTrapText::CtorTrapText [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::CtorTrapTextExpl [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::CtorTrapTextStr [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
 NodeTools::DayOfWeekCommand [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::DayOfWeekCommand::DayOfWeekCommand [nt/NtIncrement.cpp]
@@ -43487,9 +43805,13 @@ NodeTools::RaiseTextStr [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::RecoverCommand [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
+NodeTools::RecoverCommand::EnsureThread [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
 NodeTools::RecoverCommand::ProcessCommand [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::RecoverCommand::RecoverCommand [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RecoverCommand_EnsureThread [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::RecoverCommand_ProcessCommand [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
@@ -43503,127 +43825,137 @@ NodeTools::RecoverWhatParm [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::RecoverWhatParm::RecoverWhatParm [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestMutex_ [nt/NtIncrement.cpp]
+NodeTools::RecoveryDaemon [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread [nt/NtIncrement.cpp]
+NodeTools::RecoveryDaemon::CreateThread [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::AbbrName [nt/NtIncrement.cpp]
+NodeTools::RecoveryDaemon::RecoveryDaemon [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::Abort [nt/NtIncrement.cpp]
+NodeTools::RecoveryDaemon::~RecoveryDaemon [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::AcquireMutex [nt/NtIncrement.cpp]
+NodeTools::RecoveryDaemonName [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::Delete [nt/NtIncrement.cpp]
+NodeTools::RecoveryDaemon_CreateThread [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::DerefenceBadPtr [nt/NtIncrement.cpp]
+NodeTools::RecoveryDaemon_ctor [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::Destroy [nt/NtIncrement.cpp]
+NodeTools::RecoveryDaemon_dtor [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::Display [nt/NtIncrement.cpp]
+NodeTools::RecoveryMutex_ [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::DivideByZero [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::DoAbort [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::AbbrName [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::DoDelete [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::Abort [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::DoDivide [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::AcquireMutex [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::DoRaise [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::Create [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::DoRetrap [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::CtorTrap [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::DoSwerr [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::Delete [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::DoTerminate [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::DerefenceBadPtr [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::DoTrap [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::Destroy [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::Enter [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::Display [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::InfiniteLoop [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::DivideByZero [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::IsCritical [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::DoAbort [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::LoopForever [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::DoDelete [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::MutexBlock [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::DoDivide [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::MutexExit [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::DoRaise [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::MutexTrap [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::DoSwerr [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::OverflowStack [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::DoTerminate [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::RaiseSignal [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::DoTrap [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::Recover [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::Enter [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::RecoveryTestThread [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::InfiniteLoop [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::RecurseForever [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::LoopForever [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::Retrap [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::MutexBlock [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::Return [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::MutexExit [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::SetTest [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::MutexTrap [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::SetTestSignal [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::OverflowStack [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::Sleep [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::RaiseSignal [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::Swerr [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::Recover [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::Terminate [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::RecoveryThread [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::Test [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::RecurseForever [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::Trap [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::Return [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::UseBadPointer [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::SetTest [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::signal_ [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::SetTestSignal [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::test_ [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::Sleep [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread::~RecoveryTestThread [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::Swerr [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread_AcquireMutex [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::Terminate [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread_Destroy [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::Test [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread_DoAbort [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::Trap [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread_DoDelete [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::UseBadPointer [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread_DoDivide [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::signal_ [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread_DoRaise [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::test_ [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread_DoRetrap [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread::~RecoveryThread [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread_DoSwerr [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread_AcquireMutex [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread_DoTerminate [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread_Destroy [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread_DoTrap [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread_DoAbort [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread_Enter [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread_DoDelete [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread_IsCritical [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread_DoDivide [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread_LoopForever [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread_DoRaise [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread_Recover [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread_DoSwerr [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread_RecurseForever [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread_DoTerminate [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread_UseBadPointer [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread_DoTrap [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread_ctor [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread_Enter [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
-NodeTools::RecoveryTestThread_dtor [nt/NtIncrement.cpp]
+NodeTools::RecoveryThread_LoopForever [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RecoveryThread_Recover [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RecoveryThread_RecurseForever [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RecoveryThread_UseBadPointer [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RecoveryThread_ctor [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RecoveryThread_dtor [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::RegistryCommands [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
@@ -43692,14 +44024,6 @@ NodeTools::RemoveCommand_ProcessCommand [nt/NtIncrement.cpp]
 NodeTools::RemoveExpl [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::RemoveStr [nt/NtIncrement.cpp]
-   nt/NtIncrement.cpp
-NodeTools::RetrapExpl [nt/NtIncrement.cpp]
-   nt/NtIncrement.cpp
-NodeTools::RetrapStr [nt/NtIncrement.cpp]
-   nt/NtIncrement.cpp
-NodeTools::RetrapText [nt/NtIncrement.cpp]
-   nt/NtIncrement.cpp
-NodeTools::RetrapText::RetrapText [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::ReturnText [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
@@ -44902,6 +45226,8 @@ NetworkBase::IpPort::SetSocket [nw/IpPort.h]
 NetworkBase::IpPort::SetThread [nw/IpPort.h]
    nw/IoThread.cpp
    nw/IpPort.cpp
+   nw/TcpIoThread.cpp
+   nw/UdpIoThread.cpp
 NetworkBase::IpPort::Shutdown [nw/IpPort.h]
    nw/IpPort.cpp
 NetworkBase::IpPort::Startup [nw/IpPort.h]
@@ -45379,6 +45705,74 @@ NetworkBase::SysIpL3Addr [nw/NwCliParms.h]
    nw/NwCliParms.h
 NodeBase::CliCommand [nw/NwCliParms.h]
    nw/NwCliParms.h
+NetworkBase::TcpIoDaemon_CreateThread [nw/NwDaemons.cpp]
+   nw/NwDaemons.cpp
+NetworkBase::TcpIoDaemon_GetDaemon [nw/NwDaemons.cpp]
+   nw/NwDaemons.cpp
+NetworkBase::TcpIoDaemon_MakeName [nw/NwDaemons.cpp]
+   nw/NwDaemons.cpp
+NetworkBase::TcpIoDaemon_ctor [nw/NwDaemons.cpp]
+   nw/NwDaemons.cpp
+NetworkBase::TcpIoDaemon_dtor [nw/NwDaemons.cpp]
+   nw/NwDaemons.cpp
+NetworkBase::UdpIoDaemon_CreateThread [nw/NwDaemons.cpp]
+   nw/NwDaemons.cpp
+NetworkBase::UdpIoDaemon_GetDaemon [nw/NwDaemons.cpp]
+   nw/NwDaemons.cpp
+NetworkBase::UdpIoDaemon_MakeName [nw/NwDaemons.cpp]
+   nw/NwDaemons.cpp
+NetworkBase::UdpIoDaemon_ctor [nw/NwDaemons.cpp]
+   nw/NwDaemons.cpp
+NetworkBase::UdpIoDaemon_dtor [nw/NwDaemons.cpp]
+   nw/NwDaemons.cpp
+NetworkBase::TcpIoDaemon [nw/NwDaemons.h]
+   nw/NwDaemons.cpp
+   nw/NwDaemons.h
+NetworkBase::TcpIoDaemon::CreateThread [nw/NwDaemons.h]
+   nw/NwDaemons.cpp
+NetworkBase::TcpIoDaemon::Display [nw/NwDaemons.h]
+   nw/NwDaemons.cpp
+NetworkBase::TcpIoDaemon::GetDaemon [nw/NwDaemons.h]
+   nw/NwDaemons.cpp
+   nw/TcpIpPort.cpp
+NetworkBase::TcpIoDaemon::MakeName [nw/NwDaemons.h]
+   nw/NwDaemons.cpp
+NetworkBase::TcpIoDaemon::TcpIoDaemon [nw/NwDaemons.h]
+   nw/NwDaemons.cpp
+NetworkBase::TcpIoDaemon::port_ [nw/NwDaemons.h]
+   nw/NwDaemons.cpp
+NetworkBase::TcpIoDaemon::service_ [nw/NwDaemons.h]
+   nw/NwDaemons.cpp
+NetworkBase::TcpIoDaemon::~TcpIoDaemon [nw/NwDaemons.h]
+   nw/NwDaemons.cpp
+NetworkBase::TcpIoDaemonName [nw/NwDaemons.h]
+   nw/NwDaemons.cpp
+NetworkBase::TcpIpService [nw/NwDaemons.h]
+   nw/NwDaemons.h
+NetworkBase::UdpIoDaemon [nw/NwDaemons.h]
+   nw/NwDaemons.cpp
+   nw/NwDaemons.h
+NetworkBase::UdpIoDaemon::CreateThread [nw/NwDaemons.h]
+   nw/NwDaemons.cpp
+NetworkBase::UdpIoDaemon::Display [nw/NwDaemons.h]
+   nw/NwDaemons.cpp
+NetworkBase::UdpIoDaemon::GetDaemon [nw/NwDaemons.h]
+   nw/NwDaemons.cpp
+   nw/UdpIpPort.cpp
+NetworkBase::UdpIoDaemon::MakeName [nw/NwDaemons.h]
+   nw/NwDaemons.cpp
+NetworkBase::UdpIoDaemon::UdpIoDaemon [nw/NwDaemons.h]
+   nw/NwDaemons.cpp
+NetworkBase::UdpIoDaemon::port_ [nw/NwDaemons.h]
+   nw/NwDaemons.cpp
+NetworkBase::UdpIoDaemon::service_ [nw/NwDaemons.h]
+   nw/NwDaemons.cpp
+NetworkBase::UdpIoDaemon::~UdpIoDaemon [nw/NwDaemons.h]
+   nw/NwDaemons.cpp
+NetworkBase::UdpIoDaemonName [nw/NwDaemons.h]
+   nw/NwDaemons.cpp
+NetworkBase::UdpIpService [nw/NwDaemons.h]
+   nw/NwDaemons.h
 NetworkBase::AddrToNameIndex [nw/NwIncrement.cpp]
    nw/NwIncrement.cpp
 NetworkBase::AddrToNameText [nw/NwIncrement.cpp]
@@ -46092,6 +46486,8 @@ NetworkBase::ipport_t [nw/NwTypes.h]
    nw/IpService.cpp
    nw/IpService.h
    nw/NwCliParms.cpp
+   nw/NwDaemons.cpp
+   nw/NwDaemons.h
    nw/NwTrace.cpp
    nw/NwTrace.h
    nw/NwTracer.cpp
@@ -46888,6 +47284,7 @@ NetworkBase::TcpIoThread_ctor [nw/TcpIoThread.cpp]
 NetworkBase::TcpIoThread_dtor [nw/TcpIoThread.cpp]
    nw/TcpIoThread.cpp
 NetworkBase::TcpIoThread [nw/TcpIoThread.h]
+   nw/NwDaemons.cpp
    nw/TcpIoThread.cpp
    nw/TcpIpPort.cpp
 NetworkBase::TcpIoThread::AbbrName [nw/TcpIoThread.h]
@@ -46991,6 +47388,7 @@ NetworkBase::TcpIpService_dtor [nw/TcpIpService.cpp]
 NetworkBase::TcpIpService [nw/TcpIpService.h]
    cb/BcProtocol.h
    dip/DipProtocol.h
+   nw/NwDaemons.cpp
    nw/SysTcpSocket.cpp
    nw/SysTcpSocket.win.cpp
    nw/TcpIoThread.cpp
@@ -47040,6 +47438,7 @@ NetworkBase::UdpIoThread_ctor [nw/UdpIoThread.cpp]
 NetworkBase::UdpIoThread_dtor [nw/UdpIoThread.cpp]
    nw/UdpIoThread.cpp
 NetworkBase::UdpIoThread [nw/UdpIoThread.h]
+   nw/NwDaemons.cpp
    nw/UdpIoThread.cpp
    nw/UdpIpPort.cpp
 NetworkBase::UdpIoThread::AbbrName [nw/UdpIoThread.h]
@@ -47090,6 +47489,7 @@ NetworkBase::UdpIpService_dtor [nw/UdpIpService.cpp]
 NetworkBase::UdpIpService [nw/UdpIpService.h]
    an/PotsShelf.h
    cb/BcProtocol.h
+   nw/NwDaemons.cpp
    nw/SysUdpSocket.win.cpp
    nw/UdpIoThread.cpp
    nw/UdpIpPort.cpp
@@ -51617,6 +52017,7 @@ SessionBase::InvokerThread [sb/InvokerThread.h]
    sb/InvokerPool.cpp
    sb/InvokerThread.cpp
    sb/InvokerThread.h
+   sb/SbDaemons.cpp
    sb/SbTrace.cpp
 SessionBase::InvokerThread::AbbrName [sb/InvokerThread.h]
    sb/InvokerThread.cpp
@@ -54257,6 +54658,56 @@ SessionBase::TriggerIdOptParm [sb/SbCliParms.h]
    sb/SbIncrement.cpp
 SessionBase::TriggerIdOptParm::TriggerIdOptParm [sb/SbCliParms.h]
    sb/SbCliParms.cpp
+SessionBase::InvokerDaemon_CreateThread [sb/SbDaemons.cpp]
+   sb/SbDaemons.cpp
+SessionBase::InvokerDaemon_GetDaemon [sb/SbDaemons.cpp]
+   sb/SbDaemons.cpp
+SessionBase::InvokerDaemon_MakeName [sb/SbDaemons.cpp]
+   sb/SbDaemons.cpp
+SessionBase::InvokerDaemon_ctor [sb/SbDaemons.cpp]
+   sb/SbDaemons.cpp
+SessionBase::InvokerDaemon_dtor [sb/SbDaemons.cpp]
+   sb/SbDaemons.cpp
+SessionBase::TimerDaemon_CreateThread [sb/SbDaemons.cpp]
+   sb/SbDaemons.cpp
+SessionBase::TimerDaemon_ctor [sb/SbDaemons.cpp]
+   sb/SbDaemons.cpp
+SessionBase::TimerDaemon_dtor [sb/SbDaemons.cpp]
+   sb/SbDaemons.cpp
+SessionBase::InvokerDaemon [sb/SbDaemons.h]
+   sb/InvokerPool.cpp
+   sb/SbDaemons.cpp
+   sb/SbDaemons.h
+SessionBase::InvokerDaemon::CreateThread [sb/SbDaemons.h]
+   sb/SbDaemons.cpp
+SessionBase::InvokerDaemon::Display [sb/SbDaemons.h]
+   sb/SbDaemons.cpp
+SessionBase::InvokerDaemon::GetDaemon [sb/SbDaemons.h]
+   sb/InvokerPool.cpp
+   sb/SbDaemons.cpp
+SessionBase::InvokerDaemon::InvokerDaemon [sb/SbDaemons.h]
+   sb/SbDaemons.cpp
+SessionBase::InvokerDaemon::MakeName [sb/SbDaemons.h]
+   sb/SbDaemons.cpp
+SessionBase::InvokerDaemon::faction_ [sb/SbDaemons.h]
+   sb/SbDaemons.cpp
+SessionBase::InvokerDaemon::~InvokerDaemon [sb/SbDaemons.h]
+   sb/SbDaemons.cpp
+SessionBase::InvokerDaemonName [sb/SbDaemons.h]
+   sb/InvokerThread.cpp
+   sb/SbDaemons.cpp
+SessionBase::TimerDaemon [sb/SbDaemons.h]
+   sb/SbDaemons.cpp
+   sb/TimerThread.cpp
+SessionBase::TimerDaemon::CreateThread [sb/SbDaemons.h]
+   sb/SbDaemons.cpp
+SessionBase::TimerDaemon::TimerDaemon [sb/SbDaemons.h]
+   sb/SbDaemons.cpp
+SessionBase::TimerDaemon::~TimerDaemon [sb/SbDaemons.h]
+   sb/SbDaemons.cpp
+SessionBase::TimerDaemonName [sb/SbDaemons.h]
+   sb/SbDaemons.cpp
+   sb/TimerThread.cpp
 SessionBase::AnalyzeMsgEvent [sb/SbEvents.h]
    cb/BcHandlers.cpp
    cb/BcProtocol.cpp
@@ -57839,6 +58290,7 @@ SessionBase::TimerThread_ctor [sb/TimerThread.cpp]
 SessionBase::TimerThread_dtor [sb/TimerThread.cpp]
    sb/TimerThread.cpp
 SessionBase::TimerThread [sb/TimerThread.h]
+   sb/SbDaemons.cpp
    sb/SbModule.cpp
    sb/TimerRegistry.cpp
    sb/TimerThread.cpp
@@ -61410,13 +61862,13 @@ PotsBase::PotsToneTreatment::duration_ [sn/PotsTreatments.h]
 PotsBase::PotsToneTreatment::tone_ [sn/PotsTreatments.h]
    sn/PotsTreatments.cpp
 PotsBase::PotsTreatment [sn/PotsTreatments.h]
+   sn/PotsTreatments.cpp
+   sn/PotsTreatments.h
+PotsBase::PotsTreatment [sn/PotsTreatments.h]
    sn/PotsBcHandlers.cpp
    sn/PotsTreatments.cpp
    sn/PotsTreatments.h
    sn/SnIncrement.cpp
-PotsBase::PotsTreatment [sn/PotsTreatments.h]
-   sn/PotsTreatments.cpp
-   sn/PotsTreatments.h
 PotsBase::PotsTreatment::ApplyTreatment [sn/PotsTreatments.h]
    sn/PotsBcHandlers.cpp
    sn/PotsTreatments.cpp
@@ -62832,7 +63284,6 @@ std::bitset [subs/bitset]
    sb/Trigger.cpp
    sn/PotsTreatments.cpp
 std::bitset::any [subs/bitset]
-   nb/Thread.cpp
    nw/TcpIoThread.cpp
 std::bitset::none [subs/bitset]
    nb/Debug.cpp
@@ -62908,7 +63359,6 @@ std::bitset::test [subs/bitset]
 std::bitset::to_string [subs/bitset]
    nb/SysThread.cpp
    nb/SysThread.win.cpp
-   nb/Thread.cpp
    nw/SysTcpSocket.cpp
    nw/TcpIoThread.cpp
 std::bitset::to_ulong [subs/bitset]
@@ -63008,6 +63458,8 @@ ptrdiff_t [subs/cstddef]
    nb/CliIncrement.h
    nb/CliParm.cpp
    nb/CliParm.h
+   nb/Daemon.cpp
+   nb/Daemon.h
    nb/Log.cpp
    nb/Log.h
    nb/LogGroup.cpp
@@ -63194,6 +63646,8 @@ size_t [subs/cstddef]
    nb/CliTextParm.cpp
    nb/CliThread.cpp
    nb/CliThread.h
+   nb/Daemon.cpp
+   nb/Daemon.h
    nb/Dynamic.cpp
    nb/Dynamic.h
    nb/Formatters.cpp
@@ -63224,6 +63678,7 @@ size_t [subs/cstddef]
    nb/ModuleRegistry.cpp
    nb/MsgBuffer.cpp
    nb/MsgBuffer.h
+   nb/MutexRegistry.cpp
    nb/NbCliParms.cpp
    nb/NbIncrement.cpp
    nb/NbPools.cpp
@@ -63332,6 +63787,8 @@ size_t [subs/cstddef]
    sb/ProtocolSM.h
    sb/PsmContext.cpp
    sb/PsmContext.h
+   sb/SbDaemons.cpp
+   sb/SbDaemons.h
    sb/SbExtInputHandler.cpp
    sb/SbExtInputHandler.h
    sb/SbInputHandler.cpp
@@ -63414,6 +63871,8 @@ UINT16_MAX [subs/cstdint]
    dip/DipProtocol.h
    nb/Base.h
    nb/LogBuffer.h
+   nb/NbCliParms.cpp
+   nb/NbIncrement.cpp
    nw/NwTypes.h
 UINT32_MAX [subs/cstdint]
    ct/CodeCoverage.h
@@ -63586,6 +64045,7 @@ uint8_t [subs/cstdint]
    nb/SysTypes.cpp
    nb/SysTypes.h
    nb/Thread.cpp
+   nb/Thread.h
    pb/PotsCircuit.h
    pb/PotsFeature.h
    pb/PotsProtocol.h
@@ -63825,6 +64285,7 @@ std::boolalpha [subs/ios]
 std::dec [subs/ios]
    ct/CodeCoverage.cpp
    ct/CxxToken.cpp
+   nb/MutexRegistry.cpp
    nb/Thread.cpp
    nt/TestDatabase.cpp
 std::fixed [subs/ios]
@@ -63837,6 +64298,7 @@ std::hex [subs/ios]
    ct/CxxToken.cpp
    nb/CliIntParm.cpp
    nb/Formatters.cpp
+   nb/MutexRegistry.cpp
    nb/Thread.cpp
    nt/TestDatabase.cpp
 std::left [subs/ios]
@@ -64042,6 +64504,10 @@ std::ostream [subs/iosfwd]
    nb/CliTextParm.h
    nb/CliThread.cpp
    nb/CliThread.h
+   nb/Daemon.cpp
+   nb/Daemon.h
+   nb/DaemonRegistry.cpp
+   nb/DaemonRegistry.h
    nb/Element.cpp
    nb/Element.h
    nb/ElementException.cpp
@@ -64189,6 +64655,8 @@ std::ostream [subs/iosfwd]
    nw/IpService.h
    nw/IpServiceRegistry.cpp
    nw/IpServiceRegistry.h
+   nw/NwDaemons.cpp
+   nw/NwDaemons.h
    nw/NwTrace.cpp
    nw/NwTrace.h
    nw/NwTracer.cpp
@@ -64276,6 +64744,8 @@ std::ostream [subs/iosfwd]
    sb/PsmContext.h
    sb/RootServiceSM.cpp
    sb/RootServiceSM.h
+   sb/SbDaemons.cpp
+   sb/SbDaemons.h
    sb/SbEvents.h
    sb/SbInvokerPools.cpp
    sb/SbInvokerPools.h
@@ -64644,6 +65114,12 @@ std::multimap::value_type [subs/map]
 std::allocator [subs/memory]
    ct/CxxStrLiteral.h
 std::unique_ptr [subs/memory]
+   ct/CodeFileSet.cpp
+   dip/TokenMessage.cpp
+   dip/TokenMessage.h
+   nb/Thread.cpp
+   nw/SysTcpSocket.win.cpp
+std::unique_ptr [subs/memory]
    an/PotsShelfHandler.cpp
    an/PotsShelfIpService.cpp
    cb/BcProtocol.cpp
@@ -64760,12 +65236,6 @@ std::unique_ptr [subs/memory]
    st/StTestData.cpp
    st/StTestData.h
    st/TestSessions.h
-std::unique_ptr [subs/memory]
-   ct/CodeFileSet.cpp
-   dip/TokenMessage.cpp
-   dip/TokenMessage.h
-   nb/Thread.cpp
-   nw/SysTcpSocket.win.cpp
 std::unique_ptr::get [subs/memory]
    an/PotsShelfHandler.cpp
    ct/CodeFile.cpp
@@ -65026,6 +65496,8 @@ std::basic_ostream [subs/ostream]
    nb/CliText.cpp
    nb/CliTextParm.cpp
    nb/CliThread.cpp
+   nb/Daemon.cpp
+   nb/DaemonRegistry.cpp
    nb/Element.cpp
    nb/ElementException.cpp
    nb/FileThread.cpp
@@ -65102,6 +65574,7 @@ std::basic_ostream [subs/ostream]
    nw/IpPortRegistry.cpp
    nw/IpService.cpp
    nw/IpServiceRegistry.cpp
+   nw/NwDaemons.cpp
    nw/NwTrace.cpp
    nw/NwTracer.cpp
    nw/NwTypes.cpp
@@ -65149,6 +65622,7 @@ std::basic_ostream [subs/ostream]
    sb/ProtocolSM.cpp
    sb/PsmContext.cpp
    sb/RootServiceSM.cpp
+   sb/SbDaemons.cpp
    sb/SbInvokerPools.cpp
    sb/SbIpBuffer.cpp
    sb/SbPools.cpp
@@ -65331,6 +65805,8 @@ std::basic_ostream::operator<<(std::basic_ostream* const,char) [subs/ostream]
    nb/CliTextParm.cpp
    nb/CliThread.cpp
    nb/CoutThread.cpp
+   nb/Daemon.cpp
+   nb/DaemonRegistry.cpp
    nb/Debug.cpp
    nb/Element.cpp
    nb/ElementException.cpp
@@ -65399,6 +65875,7 @@ std::basic_ostream::operator<<(std::basic_ostream* const,char) [subs/ostream]
    nw/IpPortRegistry.cpp
    nw/IpService.cpp
    nw/IpServiceRegistry.cpp
+   nw/NwDaemons.cpp
    nw/NwIncrement.cpp
    nw/NwTracer.cpp
    nw/SysIpL2Addr.cpp
@@ -65448,6 +65925,7 @@ std::basic_ostream::operator<<(std::basic_ostream* const,char) [subs/ostream]
    sb/ProtocolSM.cpp
    sb/PsmContext.cpp
    sb/RootServiceSM.cpp
+   sb/SbDaemons.cpp
    sb/SbIncrement.cpp
    sb/SbInvokerPools.cpp
    sb/SbIpBuffer.cpp
@@ -65574,6 +66052,8 @@ std::basic_ostream::operator<<(std::basic_ostream* const,const char*) [subs/ostr
    nb/CliTextParm.cpp
    nb/CliThread.cpp
    nb/CoutThread.cpp
+   nb/Daemon.cpp
+   nb/DaemonRegistry.cpp
    nb/Debug.cpp
    nb/Element.cpp
    nb/ElementException.cpp
@@ -65650,6 +66130,7 @@ std::basic_ostream::operator<<(std::basic_ostream* const,const char*) [subs/ostr
    nw/IpPortRegistry.cpp
    nw/IpService.cpp
    nw/IpServiceRegistry.cpp
+   nw/NwDaemons.cpp
    nw/NwIncrement.cpp
    nw/NwTrace.cpp
    nw/NwTracer.cpp
@@ -65707,6 +66188,7 @@ std::basic_ostream::operator<<(std::basic_ostream* const,const char*) [subs/ostr
    sb/ProtocolSM.cpp
    sb/PsmContext.cpp
    sb/RootServiceSM.cpp
+   sb/SbDaemons.cpp
    sb/SbIncrement.cpp
    sb/SbInputHandler.cpp
    sb/SbInvokerPools.cpp
@@ -65768,6 +66250,7 @@ std::basic_ostream::operator<<(std::basic_ostream* const,const std::stream_manip
    nb/FunctionTrace.cpp
    nb/Log.cpp
    nb/ModuleRegistry.cpp
+   nb/MutexRegistry.cpp
    nb/NbIncrement.cpp
    nb/Statistics.cpp
    nb/SysConsole.cpp
@@ -65960,7 +66443,6 @@ std::basic_ostream::operator<<(std::basic_ostream* const,short) [subs/ostream]
 std::basic_ostream::operator<<(std::basic_ostream* const,unsigned char) [subs/ostream]
    dip/BaseBot.cpp
    nb/Formatters.cpp
-   nb/PosixSignal.cpp
    nw/SysSocket.win.cpp
    pb/PotsCircuit.cpp
    sb/InvokerPool.cpp
@@ -65997,6 +66479,7 @@ std::basic_ostream::operator<<(std::basic_ostream* const,unsigned int) [subs/ost
    nb/Class.cpp
    nb/CliCookie.cpp
    nb/CliThread.cpp
+   nb/Daemon.cpp
    nb/Formatters.cpp
    nb/FunctionTrace.cpp
    nb/InitThread.cpp
@@ -66005,6 +66488,7 @@ std::basic_ostream::operator<<(std::basic_ostream* const,unsigned int) [subs/ost
    nb/LogBuffer.cpp
    nb/MemoryTrace.cpp
    nb/ModuleRegistry.cpp
+   nb/MutexRegistry.cpp
    nb/NbIncrement.cpp
    nb/ObjectPool.cpp
    nb/ObjectPoolAudit.cpp
@@ -66082,6 +66566,7 @@ std::basic_ostream::operator<<(std::basic_ostream* const,unsigned short) [subs/o
    nw/IoThread.cpp
    nw/IpPort.cpp
    nw/IpService.cpp
+   nw/NwDaemons.cpp
    nw/NwTrace.cpp
    nw/NwTracer.cpp
    nw/SysIpL3Addr.cpp
@@ -66166,6 +66651,8 @@ std::set [subs/set]
    dip/MapAndUnits.cpp
    dip/Province.cpp
    dip/UnitOrder.cpp
+   nb/Daemon.cpp
+   nb/Daemon.h
    nb/SysFile.cpp
    nb/SysFile.h
    nt/TestDatabase.cpp
@@ -66191,6 +66678,7 @@ std::set::cbegin [subs/set]
    ct/SetOperations.cpp
    dip/BaseBot.cpp
    dip/BotThread.cpp
+   nb/Daemon.cpp
    nt/TestDatabase.cpp
 std::set::cend [subs/set]
    ct/CodeCoverage.cpp
@@ -66210,6 +66698,7 @@ std::set::cend [subs/set]
    ct/SetOperations.cpp
    dip/BaseBot.cpp
    dip/BotThread.cpp
+   nb/Daemon.cpp
    nt/TestDatabase.cpp
 std::set::clear [subs/set]
    ct/CodeCoverage.cpp
@@ -66239,6 +66728,7 @@ std::set::end(std::set* const) [subs/set]
    dip/BaseBot.cpp
    dip/BotThread.cpp
    dip/MapAndUnits.cpp
+   nb/Daemon.cpp
 std::set::erase(std::set* const,std::iterator_t) [subs/set]
    ct/CodeFile.cpp
    ct/CxxExecute.cpp
@@ -66248,6 +66738,7 @@ std::set::erase(std::set* const,std::iterator_t) [subs/set]
    dip/BaseBot.cpp
    dip/BotThread.cpp
    dip/MapAndUnits.cpp
+   nb/Daemon.cpp
 std::set::find(const std::set* const,const T) [subs/set]
    ct/CodeCoverage.cpp
    ct/CodeDirSet.cpp
@@ -66260,6 +66751,7 @@ std::set::find(const std::set* const,const T) [subs/set]
    dip/Adjudicator.cpp
    dip/BaseBot.cpp
    dip/MapAndUnits.cpp
+   nb/Daemon.cpp
 std::set::insert [subs/set]
    ct/CodeCoverage.cpp
    ct/CodeDirSet.cpp
@@ -66277,6 +66769,7 @@ std::set::insert [subs/set]
    dip/BotThread.cpp
    dip/MapAndUnits.cpp
    dip/Province.cpp
+   nb/Daemon.cpp
    nb/SysFile.cpp
 std::set::lower_bound(const std::set* const,const T) [subs/set]
    dip/MapAndUnits.cpp
@@ -66288,6 +66781,7 @@ std::set::size [subs/set]
    ct/Editor.cpp
    dip/Adjudicator.cpp
    dip/MapAndUnits.cpp
+   nb/Daemon.cpp
 std::set::swap [subs/set]
    ct/SetOperations.cpp
 std::basic_istringstream [subs/sstream]
@@ -66488,6 +66982,7 @@ std::basic_string [subs/string]
    nb/CliTextParm.cpp
    nb/CliThread.cpp
    nb/Clock.cpp
+   nb/DaemonRegistry.cpp
    nb/Debug.cpp
    nb/Element.cpp
    nb/FileThread.cpp
@@ -66524,11 +67019,13 @@ std::basic_string [subs/string]
    nt/NtTestData.cpp
    nt/NtTestData.h
    nt/TestDatabase.cpp
+   nw/NwDaemons.cpp
    nw/NwIncrement.cpp
    nw/SysIpL2Addr.win.cpp
    nw/SysIpL3Addr.win.cpp
    pb/PotsProtocol.cpp
    sb/InvokerPool.cpp
+   sb/SbDaemons.cpp
    sb/SbTrace.cpp
    sn/PotsCallIpService.cpp
    st/MscBuilder.cpp
@@ -66542,6 +67039,7 @@ std::basic_string::append(std::basic_string* const,const std::basic_string) [sub
    nb/CfgParmRegistry.cpp
    nb/LogBuffer.cpp
    nb/NbIncrement.cpp
+   nw/NwDaemons.cpp
 std::basic_string::at(const std::basic_string* const,unsigned int) [subs/string]
    ct/CodeTypes.cpp
    ct/CxxArea.cpp
@@ -66583,6 +67081,7 @@ std::basic_string::c_str [subs/string]
    nb/CliBuffer.cpp
    nb/CliTextParm.cpp
    nb/CliThread.cpp
+   nb/DaemonRegistry.cpp
    nb/Debug.cpp
    nb/FileThread.cpp
    nb/Log.cpp
@@ -66606,9 +67105,11 @@ std::basic_string::c_str [subs/string]
    nt/NtTestData.cpp
    nt/NtTestData.h
    nt/TestDatabase.cpp
+   nw/NwDaemons.cpp
    nw/SysIpL2Addr.win.cpp
    nw/SysIpL3Addr.win.cpp
    sb/InvokerPool.cpp
+   sb/SbDaemons.cpp
    sn/PotsCallIpService.cpp
    st/MscBuilder.cpp
 std::basic_string::capacity [subs/string]
@@ -66870,6 +67371,8 @@ std::basic_string::push_back [subs/string]
    nb/NbIncrement.cpp
    nb/ToolRegistry.cpp
    nb/TraceBuffer.cpp
+   nw/NwDaemons.cpp
+   sb/SbDaemons.cpp
    st/MscContext.cpp
 std::basic_string::replace(std::basic_string* const,unsigned int,unsigned int,const std::basic_string) [subs/string]
    ct/CxxString.cpp
@@ -67173,6 +67676,10 @@ std::string [subs/string]
    nb/CliThread.h
    nb/Clock.cpp
    nb/Clock.h
+   nb/Daemon.cpp
+   nb/Daemon.h
+   nb/DaemonRegistry.cpp
+   nb/DaemonRegistry.h
    nb/Debug.cpp
    nb/Debug.h
    nb/Element.cpp
@@ -67319,6 +67826,8 @@ std::string [subs/string]
    nw/IpServiceRegistry.cpp
    nw/IpServiceRegistry.h
    nw/NwCliParms.cpp
+   nw/NwDaemons.cpp
+   nw/NwDaemons.h
    nw/NwIncrement.cpp
    nw/SysIpL2Addr.cpp
    nw/SysIpL2Addr.h
@@ -67404,6 +67913,8 @@ std::string [subs/string]
    sb/PsmContext.h
    sb/RootServiceSM.cpp
    sb/RootServiceSM.h
+   sb/SbDaemons.cpp
+   sb/SbDaemons.h
    sb/SbEvents.h
    sb/SbInvokerPools.cpp
    sb/SbInvokerPools.h
@@ -67474,7 +67985,6 @@ std::to_string(int) [subs/string]
    dip/BaseBot.cpp
    nb/CfgIntParm.cpp
    nb/CliThread.cpp
-   nb/Debug.cpp
    nb/Formatters.cpp
    nb/NbIncrement.cpp
    nb/ObjectPool.cpp
@@ -67482,6 +67992,7 @@ std::to_string(int) [subs/string]
    nb/SymbolRegistry.cpp
    nt/TestDatabase.cpp
    nw/IpPort.cpp
+   nw/NwDaemons.cpp
    nw/SysSocket.win.cpp
    pb/PotsCircuit.cpp
    sn/PotsCallIpService.cpp

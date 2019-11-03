@@ -67,15 +67,18 @@ ostream& operator<<(ostream& stream, AlarmStatus status)
 }
 
 //------------------------------------------------------------------------------
-
+//
+//  The initial character in the following strings must be
+//  unique to support BlockingReasonChar.
+//
 fixed_string BlockingReasonStrings[BlockingReason_N + 1] =
 {
-   "rdy",
-   "slp",
-   "net",
-   "con",
-   "d/b",
-   "???"
+   "ready",     // NotBlocked
+   "sleeping",  // BlockedOnClock
+   "network",   // BlockedOnNetwork
+   "console",   // BlockedOnConsole
+   "database",  // BlockedOnDatabase
+   "???"        // BlockingReason_N
 };
 
 char BlockingReasonChar(BlockingReason reason)

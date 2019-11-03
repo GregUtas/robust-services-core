@@ -29,7 +29,10 @@
 #include "Log.h"
 #include "NbAppIds.h"
 #include "NbLogs.h"
+#include "RootThread.h"
+#include "Singleton.h"
 #include "SoftwareException.h"
+#include "SysThread.h"
 #include "SysThreadStack.h"
 #include "ThisThread.h"
 
@@ -166,6 +169,13 @@ void Debug::SetSwFlag(FlagId fid, bool value)
    if(Element::RunningInLab() && (fid <= MaxFlagId))
    {
       SwFlags_.set(fid, value);
+
+      //  To be reenabled, RootThread has to be signalled.
+      //
+      if((fid == DisableRootThreadFlag) && !value)
+      {
+         Singleton< RootThread >::Instance()->systhrd_->Proceed();
+      }
    }
 }
 
@@ -194,7 +204,7 @@ void Debug::SwLog(fn_name_arg func, debug64_t errval,
 {
    Debug::ft(Debug_SwLog1);
 
-   GenerateSwLog(func, std::to_string(errval), offset, level);
+   GenerateSwLog(func, strHex(errval), offset, level);
 }
 
 //------------------------------------------------------------------------------

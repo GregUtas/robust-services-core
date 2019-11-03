@@ -1,8 +1,9 @@
 quit all
 nt
 
+swflags set &flag.reenterthread on
 read test.tools.setup
 read test.trap.tools.setup
-
 testcase prolog test.trap.prolog
 testcase epilog test.trap.epilog
+recover create

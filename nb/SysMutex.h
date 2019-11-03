@@ -40,25 +40,34 @@ namespace NodeBase
 {
 //  Operating system abstraction layer: recursive mutex.
 //
+//  DESIGN GUIDELINES
+//
+//  Threads that run unpreeemptably are mutually excluded, so mutexes are only
+//  needed to interact with preemptable or high priority threads.  This is the
+//  rationale for running threads unpreemptably ("locked") and only pausing
+//  between logical units of work.  If the locked thread blocks on a mutex, no
+//  other locked thread can run, but a preemptable or high priority thread
+//  should be holding the mutex, and it should be able to run and release it.
+//
 //  1. Whenever possible, declare a mutex at file scope in a .cpp.
 //     A mutex--especially when locked--should not be deleted.  The risk of
-//     this increases when a mutex is allocated in memory that can be freed,
-//     even during a restart.  Deleting a locked mutex produces a very bizarre
-//     function traceback from Debug.SwLog.
+//     this increases when a mutex is allocated in memory that can be freed.
+//     Deleting a locked mutex produces a bizarre function traceback from
+//     Debug.SwLog.  And if a mutex is allocated in memory whose heap is
+//     freed during a restart, the handle to it will be lost--although it
+//     will still exist--unless it is deleted before the heap is freed.
+//
 //  2. Use MutexGuard whenever possible.
 //     This is a stack variable that, when it goes out of scope, automatically
 //     releases its mutex.  This means that you may not need to write any code
-//     to explicitly release it.  The mutex also gets released after a trap.
+//     to explicitly release it.  The mutex will even be released if you trap.
 //     The only limitation of MutexGuard is that it assumes that you're willing
 //     to block until the mutex becomes available.
+//
 //  3. Do not perform a blocking operation while holding a mutex.
-//     EnterBlockingOperation generates a log and releases all of the thread's
-//     mutexes if this occurs.  The reason is that if the locked thread blocks
-//     while holding a mutex, no other locked thread can run until the blocking
-//     operation ends and the locked thread releases the mutex.  (If the locked
-//     thread blocks on a *mutex*, no other locked thread can run either, but a
-//     preemptable or high priority thread should be holding the mutex, and *it*
-//     should be able to run and release it.)
+//     EnterBlockingOperation generates a log if this occurs.  A mutex should
+//     be held for a short time, to perform an indivisble operation, so it is
+//     hard to see how this could legitimately involve a blocking operation.
 //
 class SysMutex : public Permanent
 {

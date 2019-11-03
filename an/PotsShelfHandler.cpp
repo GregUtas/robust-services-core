@@ -105,7 +105,7 @@ void PotsShelfHandler::ReceiveBuff
    header->rxAddr.fid = PotsShelfFactoryId;
    header->txAddr.fid = PotsCallFactoryId;
 
-   //  If traffic is running, give the shelf absolutely priority over the
+   //  If traffic is running, give the shelf absolute priority over the
    //  call server so that the call server will enter overload first.
    //
    auto thr = Singleton< PotsTrafficThread >::Extant();

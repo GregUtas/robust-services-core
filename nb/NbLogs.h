@@ -61,6 +61,7 @@ namespace NodeBase
    constexpr LogId ThreadSignalReraised = DebugLog + 4;
    constexpr LogId ThreadYielded = DebugLog + 5;
    constexpr LogId ThreadForcedToExit = DebugLog + 6;
+   constexpr LogId ThreadMutexesReleased = DebugLog + 7;
 
    extern fixed_string ObjPoolLogGroup;
    constexpr LogId ObjPoolExpansionFailed = TroubleLog;

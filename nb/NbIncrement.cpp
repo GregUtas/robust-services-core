@@ -42,6 +42,8 @@
 #include "CliThread.h"
 #include "Clock.h"
 #include "CoutThread.h"
+#include "Daemon.h"
+#include "DaemonRegistry.h"
 #include "Debug.h"
 #include "Element.h"
 #include "FileThread.h"
@@ -58,10 +60,10 @@
 #include "MutexRegistry.h"
 #include "NbCliParms.h"
 #include "NbPools.h"
-#include "NbSignals.h"
 #include "NbTracer.h"
 #include "ObjectPoolAudit.h"
 #include "ObjectPoolRegistry.h"
+#include "PosixSignal.h"
 #include "PosixSignalRegistry.h"
 #include "Q1Way.h"
 #include "Registry.h"
@@ -74,6 +76,7 @@
 #include "Symbol.h"
 #include "SymbolRegistry.h"
 #include "SysHeap.h"
+#include "SysMutex.h"
 #include "ThisThread.h"
 #include "ThreadRegistry.h"
 #include "Tool.h"
@@ -659,6 +662,62 @@ word ClearCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    }
 
    return ExplainTraceRc(cli, rc);
+}
+
+//------------------------------------------------------------------------------
+//
+//  The DAEMONS command.
+//
+class DaemonsCommand : public CliCommand
+{
+public:
+   DaemonsCommand();
+private:
+   word ProcessCommand(CliThread& cli) const override;
+};
+
+fixed_string DaemonsStr = "daemons";
+fixed_string DaemonsExpl = "Displays daemons.";
+
+DaemonsCommand::DaemonsCommand() : CliCommand(DaemonsStr, DaemonsExpl)
+{
+   BindParm(*new IdOptParm);
+   BindParm(*new DispBVParm);
+}
+
+fn_name DaemonsCommand_ProcessCommand = "DaemonsCommand.ProcessCommand";
+
+word DaemonsCommand::ProcessCommand(CliThread& cli) const
+{
+   Debug::ft(DaemonsCommand_ProcessCommand);
+
+   word id;
+   bool all, v = false;
+
+   switch(GetIntParmRc(id, cli))
+   {
+   case None: all = true; break;
+   case Ok: all = false; break;
+   default: return -1;
+   }
+
+   if(GetBV(*this, cli, v) == Error) return -1;
+   cli.EndOfInput(false);
+
+   auto reg = Singleton< DaemonRegistry >::Instance();
+
+   if(all)
+   {
+      reg->Output(*cli.obuf, 2, v);
+   }
+   else
+   {
+      auto daemon = reg->Daemons().At(id);
+      if(daemon == nullptr) return cli.Report(-2, NoDaemonExpl);
+      daemon->Output(*cli.obuf, 2, v);
+   }
+
+   return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -1694,6 +1753,7 @@ fixed_string MutexesExpl = "Displays mutexes.";
 
 MutexesCommand::MutexesCommand() : CliCommand(MutexesStr, MutexesExpl)
 {
+   BindParm(*new IdOptParm);
    BindParm(*new DispBVParm);
 }
 
@@ -1703,11 +1763,32 @@ word MutexesCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(MutexesCommand_ProcessCommand);
 
-   bool v = false;
+   word id;
+   bool all, v = false;
+
+   switch(GetIntParmRc(id, cli))
+   {
+   case None: all = true; break;
+   case Ok: all = false; break;
+   default: return -1;
+   }
 
    if(GetBV(*this, cli, v) == Error) return -1;
    cli.EndOfInput(false);
-   Singleton< MutexRegistry >::Instance()->Output(*cli.obuf, 2, v);
+
+   auto reg = Singleton< MutexRegistry >::Instance();
+
+   if(all)
+   {
+      reg->Output(*cli.obuf, 2, v);
+   }
+   else
+   {
+      auto mutex = reg->Mutexes().At(id);
+      if(mutex == nullptr) return cli.Report(-2, NoMutexExpl);
+      mutex->Output(*cli.obuf, 2, v);
+   }
+
    return 0;
 }
 
@@ -1823,6 +1904,7 @@ fixed_string PsignalsExpl = "Displays POSIX signals.";
 
 PsignalsCommand::PsignalsCommand() : CliCommand(PsignalsStr, PsignalsExpl)
 {
+   BindParm(*new IdOptParm);
    BindParm(*new DispBVParm);
 }
 
@@ -1832,11 +1914,32 @@ word PsignalsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(PsignalsCommand_ProcessCommand);
 
-   bool v = false;
+   word id;
+   bool all, v = false;
+
+   switch(GetIntParmRc(id, cli))
+   {
+   case None: all = true; break;
+   case Ok: all = false; break;
+   default: return -1;
+   }
 
    if(GetBV(*this, cli, v) == Error) return -1;
    cli.EndOfInput(false);
-   Singleton< PosixSignalRegistry >::Instance()->Output(*cli.obuf, 2, v);
+
+   auto reg = Singleton< PosixSignalRegistry >::Instance();
+
+   if(all)
+   {
+      reg->Output(*cli.obuf, 2, v);
+   }
+   else
+   {
+      auto signal = reg->Signals().At(id);
+      if(signal == nullptr) return cli.Report(-2, NoPosixSignalExpl);
+      signal->Output(*cli.obuf, 2, v);
+   }
+
    return 0;
 }
 
@@ -2382,8 +2485,7 @@ word SchedCommand::ProcessCommand(CliThread& cli) const
       {
          auto thr = Singleton< ThreadRegistry >::Instance()->GetThread(tid);
          if(thr == nullptr) return cli.Report(-2, NoThreadExpl);
-         thr->Raise(SIGPURGE);
-         if(thr->GetBlockingReason() == BlockedOnClock) thr->Interrupt();
+         thr->Kill();
       }
       break;
 
@@ -2819,7 +2921,7 @@ StatisticsGroupOptParm::StatisticsGroupOptParm() :
 fixed_string MemberIdOptExpl = "member number (group specific; default=all)";
 
 MemberIdOptParm::MemberIdOptParm() :
-   CliIntParm(MemberIdOptExpl, 0, 0xffff, true) { }
+   CliIntParm(MemberIdOptExpl, 0, UINT16_MAX, true) { }
 
 fixed_string StatsShowTextStr = "show";
 fixed_string StatsShowTextExpl = "displays statistics";
@@ -3424,6 +3526,7 @@ NbIncrement::NbIncrement() : CliIncrement(RootStr, RootExpl, 48)
    BindCommand(*new AuditCommand);
    BindCommand(*new SchedCommand);
    BindCommand(*new ThreadsCommand);
+   BindCommand(*new DaemonsCommand);
    BindCommand(*new MutexesCommand);
    BindCommand(*new BuffersCommand);
    BindCommand(*new PsignalsCommand);

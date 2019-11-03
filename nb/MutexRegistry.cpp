@@ -20,11 +20,16 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "MutexRegistry.h"
-#include <ostream>
+#include <cstddef>
+#include <ios>
+#include <sstream>
 #include "Debug.h"
 #include "Formatters.h"
+#include "Log.h"
+#include "NbLogs.h"
 #include "SysMutex.h"
 #include "SysThread.h"
+#include "Thread.h"
 
 using std::ostream;
 using std::string;
@@ -77,6 +82,8 @@ bool MutexRegistry::BindMutex(SysMutex& mutex)
 void MutexRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
+   Permanent::Display(stream, prefix, options);
+
    stream << prefix << "mutexes [id_t]" << CRLF;
    mutexes_.Display(stream, prefix + spaces(2), options);
 }
@@ -114,6 +121,7 @@ void MutexRegistry::Release() const
 {
    Debug::ft(MutexRegistry_Release);
 
+   size_t count = 0;
    auto nid = SysThread::RunningThreadId();
 
    for(auto m = mutexes_.First(); m != nullptr; mutexes_.Next(m))
@@ -121,6 +129,24 @@ void MutexRegistry::Release() const
       if(m->OwnerId() == nid)
       {
          m->Release();
+         ++count;
+      }
+   }
+
+   if(count > 0)
+   {
+      auto log = Log::Create(ThreadLogGroup, ThreadMutexesReleased);
+
+      if(log != nullptr)
+      {
+         auto thr = Thread::RunningThread(false);
+
+         if(thr != nullptr)
+            *log << Log::Tab << "thread=" << thr->to_str() << CRLF;
+         else
+            *log << Log::Tab << "nid=" << std::hex << nid << std::dec << CRLF;
+         *log << Log::Tab << "mutexes=" << count;
+         Log::Submit(log);
       }
    }
 }

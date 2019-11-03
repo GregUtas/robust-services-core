@@ -121,7 +121,7 @@ void LogBufferRegistry::Display(ostream& stream,
    auto lead1 = prefix + spaces(2);
    auto lead2 = prefix + spaces(4);
 
-   stream << prefix << "Buffers [index]:" << CRLF;
+   stream << prefix << "buffers [index]" << CRLF;
 
    for(size_t i = 0; i < size_; ++i)
    {

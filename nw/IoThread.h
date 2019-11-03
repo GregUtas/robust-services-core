@@ -61,10 +61,10 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 protected:
-   //  Creates an I/O thread that receives messages on PORT, on behalf of
-   //  SERVICE.  Protected because this class is virtual.
+   //  Creates an I/O thread, managed by DAEMON, that receives messages on
+   //  PORT on behalf of SERVICE.  Protected because this class is virtual.
    //
-   IoThread(const IpService* service, ipport_t port);
+   IoThread(NodeBase::Daemon* daemon, const IpService* service, ipport_t port);
 
    //  Protected to restrict deletion.  Virtual to allow subclassing.
    //

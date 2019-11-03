@@ -44,6 +44,7 @@ namespace NodeBase
 class SysThread : public Permanent
 {
    friend std::unique_ptr< SysThread >::deleter_type;
+   friend class Debug;
    friend class Thread;
    friend class RootThread;
    friend class InitThread;
@@ -136,7 +137,7 @@ private:
    SysThreadId Nid() const { return nid_; }
 
    //  Performs environment-specific actions upon entering the thread.
-   //  Returns a non-zero value if the thread should immediately return.
+   //  Returns a non-zero value if the thread should immediately exit.
    //
    signal_t Start();
 

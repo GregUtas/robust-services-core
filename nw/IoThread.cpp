@@ -49,8 +49,8 @@ const size_t IoThread::MaxTxBuffSize = 64 * 1024;  // 64KB
 
 fn_name IoThread_ctor = "IoThread.ctor";
 
-IoThread::IoThread(const IpService* service, ipport_t port) :
-   Thread(service->GetFaction()),
+IoThread::IoThread(Daemon* daemon, const IpService* service, ipport_t port) :
+   Thread(service->GetFaction(), daemon),
    port_(port),
    ipPort_(nullptr),
    recvs_(0),

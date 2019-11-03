@@ -47,10 +47,11 @@ public:
    //
    static const size_t MaxConns;
 
-   //  Creates an I/O thread that will receive TCP messages on
-   //  behalf of SERVICE.
+   //  Creates a TCP I/O thread, managed by DAEMON, that receives messages
+   //  on PORT on behalf of SERVICE.
    //
-   TcpIoThread(const TcpIpService* service, ipport_t port);
+   TcpIoThread
+      (NodeBase::Daemon* daemon, const TcpIpService* service, ipport_t port);
 
    //  Adds SOCKET to the list of sockets when accepting a new connection.
    //

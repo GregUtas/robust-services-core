@@ -1,0 +1,7 @@
+/ RECOVER dereference bad pointer and exit thread
+swflags set &flag.reenterthread off
+delay 1
+recover badptr
+delay 2
+swflags set &flag.reenterthread on
+testcase end

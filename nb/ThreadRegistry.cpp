@@ -49,7 +49,7 @@ public:
 
 fn_name ThreadStatsGroup_ctor = "ThreadStatsGroup.ctor";
 
-ThreadStatsGroup::ThreadStatsGroup() : StatisticsGroup("Threads [Thread::Id]")
+ThreadStatsGroup::ThreadStatsGroup() : StatisticsGroup("Threads [ThreadId]")
 {
    Debug::ft(ThreadStatsGroup_ctor);
 }

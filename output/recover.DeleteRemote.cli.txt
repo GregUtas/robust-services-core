@@ -4,12 +4,15 @@ nt>start
   OK.
 nt>read trap.16
 nt>/ RECOVER destroy remotely
+nt>/ After deleting the thread, give it time to wake up and exit.
 nt>recover delete f
+  OK.
+nt>delay 8
   OK.
 nt>testcase end
   OK.
 read test.trap.epilog
-nt>delay 2
+nt>delay 1
   OK.
 nt>stop
   OK.

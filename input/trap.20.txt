@@ -1,13 +1,5 @@
 / RECOVER thread constructor trap
-/ Exit the recovery thread so that it has to be recreated, and then
-/ set the flag that causes a trap in its constructor before doing so.
-/ This also causes a trap in the CLI thread, because it is the thread
-/ that attempts to create the recovery thread.
-recover return
-delay 3
-swflags set &flag.threadctortrap on
-include faction &faction.admin
-delay 1
-recover return
-swflags set &flag.threadctortrap off
+/ This also causes a trap in InitThread, because it invokes
+/ RecoveryDaemon.CreateThread to recreate the recovery thread.
+recover ctortrap
 testcase end

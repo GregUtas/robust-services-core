@@ -29,6 +29,7 @@
 #include "InitFlags.h"
 #include "InitThread.h"
 #include "Log.h"
+#include "NbAppIds.h"
 #include "NbLogs.h"
 #include "NbPools.h"
 #include "NbSignals.h"
@@ -51,6 +52,8 @@ RootThread::RootThread() : Thread(WatchdogFaction),
    state_(Initializing)
 {
    Debug::ft(RootThread_ctor);
+
+   SetInitialized();
 }
 
 //------------------------------------------------------------------------------
@@ -119,7 +122,15 @@ void RootThread::Enter()
          //  initialization failed.
          //
          Singleton< InitThread >::Instance();
-         if(InitFlags::SuspendRoot()) systhrd_->Wait();
+
+         //  The following suspends RootThread during breakpoint debugging,
+         //  where it would otherwise apper with annoying regularity.
+         //
+         if(InitFlags::SuspendRoot() || Debug::SwFlagOn(DisableRootThreadFlag))
+         {
+            systhrd_->Wait();
+         }
+
          timeout = ThreadAdmin::InitTimeoutMsecs();
 
          switch(Pause(timeout))
@@ -177,6 +188,14 @@ void RootThread::Enter()
 
       case Running:
          //
+         //  The following suspends RootThread during breakpoint debugging,
+         //  where it would otherwise apper with annoying regularity.
+         //
+         if(Debug::SwFlagOn(DisableRootThreadFlag))
+         {
+            systhrd_->Wait();
+         }
+
          //  The system initialized.  Sleep for the scheduling timeout.
          //
          timeout = ThreadAdmin::SchedTimeoutMsecs();

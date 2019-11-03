@@ -26,6 +26,7 @@
 #include "Debug.h"
 #include "InvokerPoolRegistry.h"
 #include "Restart.h"
+#include "SbDaemons.h"
 #include "SbInvokerPools.h"
 #include "Singleton.h"
 #include "ToolTypes.h"
@@ -45,7 +46,8 @@ const InvokerThread* InvokerThread::RunningInvoker_ = nullptr;
 
 fn_name InvokerThread_ctor = "InvokerThread.ctor";
 
-InvokerThread::InvokerThread(Faction faction) : Thread(faction),
+InvokerThread::InvokerThread(Faction faction, Daemon* daemon) :
+   Thread(faction, daemon),
    pool_(nullptr),
    ctx_(nullptr),
    msg_(nullptr),
@@ -56,6 +58,7 @@ InvokerThread::InvokerThread(Faction faction) : Thread(faction),
 
    pool_ = Singleton< InvokerPoolRegistry >::Instance()->Pool(faction);
    Debug::Assert(pool_->BindThread(*this));
+   SetInitialized();
 }
 
 //------------------------------------------------------------------------------
@@ -78,7 +81,7 @@ InvokerThread::~InvokerThread()
 
 c_string InvokerThread::AbbrName() const
 {
-   return "invoker";
+   return InvokerDaemonName;
 }
 
 //------------------------------------------------------------------------------
@@ -185,7 +188,7 @@ void InvokerThread::Patch(sel_t selector, void* arguments)
 
 fn_name InvokerThread_Recover = "InvokerThread.Recover";
 
-Thread::RecoveryAction InvokerThread::Recover()
+bool InvokerThread::Recover()
 {
    Debug::ft(InvokerThread_Recover);
 
@@ -194,7 +197,7 @@ Thread::RecoveryAction InvokerThread::Recover()
    //
    if(Restart::GetLevel() >= RestartWarm)
    {
-      return DeleteThread;
+      return false;
    }
 
    if(ctx_ != nullptr)
@@ -216,7 +219,7 @@ Thread::RecoveryAction InvokerThread::Recover()
       ctx_.release();
    }
 
-   return ReenterThread;
+   return true;
 }
 
 //------------------------------------------------------------------------------

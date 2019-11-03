@@ -41,6 +41,7 @@
 
 namespace NodeBase
 {
+   class Daemon;
    class MsgBuffer;
    class SysMutex;
    class ThreadPriv;
@@ -62,8 +63,8 @@ class Thread : public Pooled
    friend class ModuleRegistry;
    friend class Registry< Thread >;
    friend class RootThread;
+   friend class SchedCommand;
    friend class SysMutex;
-   friend class SysThread;
    friend class ThreadRegistry;
 public:
    //  Allows "Id" to refer to a thread identifier in this class hierarchy.
@@ -112,7 +113,7 @@ public:
 
    //  Returns true if the thread has been scheduled to run.
    //
-   bool IsScheduled() const { return waiting_; }
+   bool IsScheduled() const;
 
    //  Awakens a thread if it has paused.  If it has not paused, it will be
    //  immediately reawakened if it pauses.  If it is blocked for some other
@@ -152,7 +153,7 @@ public:
 
    //  Returns the reason, if any, that the thread is blocked.
    //
-   BlockingReason GetBlockingReason() const { return blocked_; }
+   BlockingReason GetBlockingReason() const;
 
    //  Write-enables memory that is normally write-protected.
    //
@@ -180,13 +181,13 @@ public:
 
    //  Used to explicitly include or exclude the thread from a trace.
    //
-   void SetStatus(TraceStatus status) { status_ = status; }
+   void SetStatus(TraceStatus status);
 
    //  Returns the thread's trace status.  To determine if the thread
    //  should actually be traced, use CalcStatus or FindStatus (below),
    //  which take additional criteria into account.
    //
-   TraceStatus GetStatus() const { return status_; }
+   TraceStatus GetStatus() const;
 
    //  Calculates whether the thread should be traced.  DYNAMIC is true when
    //  the thread is running and deciding whether to trace work in progress;
@@ -219,22 +220,10 @@ public:
    //
    virtual void DisplayStats(std::ostream& stream, const Flags& options) const;
 
-   //  Displays a summary of all threads' statistics in STREAM.
-   //
-   static void DisplaySummaries(std::ostream& stream);
-
    //  Returns the percentage of idle time during the most recent
    //  short interval.
    //
    static double PercentIdle();
-
-   //  Starts (stops) logging context switches if ON is true (false).
-   //
-   static TraceRc LogContextSwitches(bool on);
-
-   //  Displays context switches in STREAM.
-   //
-   static void DisplayContextSwitches(std::ostream& stream);
 
    //  Invoked by SignalHandler (and, on Windows, SE_Handler) to handle SIG.
    //  CODE is for debugging.  Returns false if the running thread is unknown
@@ -242,6 +231,10 @@ public:
    //  attribute set).
    //
    static bool HandleSignal(signal_t sig, uint32_t code);
+
+   //  Returns a string containing the thread's class name and identifiers.
+   //
+   std::string to_str() const;
 
    //  Returns the offset to tid_.
    //
@@ -270,24 +263,22 @@ public:
    //
    static void* operator new(size_t size);
 protected:
-   //  What to do with a thread after handling a signal or exception.
+   //  Creates a thread that runs in the scheduler faction FACTION and
+   //  is managed by DAEMON.  Protected because this class is virtual.
    //
-   enum RecoveryAction
-   {
-      DeleteThread,   // exit and delete the thread
-      ReenterThread,  // reinvoke the thread's Enter function
-      RecreateThread  // exit and recreate the native thread
-   };
-
-   //  Creates a thread that runs in the scheduler faction FACTION.
-   //  Protected because this class is virtual.
-   //
-   explicit Thread(Faction faction);
+   Thread(Faction faction, Daemon* daemon = nullptr);
 
    //  Protected to restrict deletion, which must always be done through
    //  Destroy, and exclusively within this class.
    //
    virtual ~Thread();
+
+   //  Invoked as the last thing done in a leaf class constructor.  When
+   //  a Thread is created, its native thread may actually start to run
+   //  before the Thread has been fully constructed, so the thread will
+   //  is held up until it has invoked this function.
+   //
+   void SetInitialized();
 
    //  Returns the number of milliseconds that the thread receives when it
    //  begins to run unpreemptably.  The default should only be overridden
@@ -307,9 +298,9 @@ protected:
    //
    virtual MsgBuffer* DeqMsg(msecs_t timeout);
 
-   //  Sets trapped_.  Used during testing to simulate a retrap.
+   //  Dereferences a bad pointer during testing.
    //
-   void SetTrapped() { trapped_ = true; }
+   static void CauseTrap();
 
    //  Overridden to claim queued messages.  May be overridden, but this
    //  version must be invoked.
@@ -331,8 +322,7 @@ private:
    {
       Continue,  // check if the thread should be recovered
       Release,   // return by invoking Exit
-      Return,    // return immediately
-      Rethrow    // rethrow the signal or exception
+      Return     // return immediately
    };
 
    //  Returns an abbreviated version of the thread's name, which must be
@@ -384,24 +374,17 @@ private:
    virtual void Unblock();
 
    //  Invoked when a thread is reentered after a signal or exception.
-   //  This allows the thread to clean up work in progress and return
-   //  o DeleteThread to simply exit the thread and delete it,
-   //  o ReenterThread to reinvoke the thread's Enter function, or
-   //  o RecreateThread to exit the thread and reenter it after creating
-   //    a new native thread.
-   //  The default version returns ReenterThread and may be overridden as
-   //  required.  When a thread traps too often, RecreateThread is forced.
+   //  This allows the thread to clean up work in progress and
+   //  o return false to simply exit the thread and delete it, after
+   //    which its Daemon (if any) can recreate it, or
+   //  o return true to reinvoke the thread's Enter function.
+   //  The default version returns true and may be overridden as required.
+   //  However, a thread is forced to exit if
+   //  o it receives a signal that forces it to exit, or
+   //  o it traps too often, or
+   //  o it traps during trap recovery, except in this function.
    //
-   virtual RecoveryAction Recover();
-
-   //  Invoked after a thread exits, when its native thread is being recreated.
-   //  Only critical threads are recreated, and a restart occurs if this fails.
-   //  A critical thread can be forced to exit for trapping too often.  Because
-   //  this could be the result of corrupt thread data, this function gives the
-   //  thread a chance to reset its data.  The default version does nothing and
-   //  may be overridden as required.
-   //
-   virtual void Recreated();
+   virtual bool Recover();
 
    //  Invoked at the outset of a restart so that the thread can decide whether
    //  to exit or sleep until the restart is over.  The default version returns
@@ -409,12 +392,6 @@ private:
    //  a restart, this should only be overridden for compelling reasons.
    //
    virtual bool ExitOnRestart(RestartLevel level) const;
-
-   //  Returns true if the thread is critical.  This results in a restart if
-   //  the thread dies and cannot be recreated.  The default version returns
-   //  true and must be overridden by non-critical threads.
-   //
-   virtual bool IsCritical() const;
 
    //  Invoked to destroy a thread.  The default version simply invokes
    //  delete but may be overridden to properly delete a Singleton.
@@ -464,6 +441,10 @@ private:
    //
    void Resume(fn_name_arg func);
 
+   //  Kills the thread.
+   //
+   void Kill();
+
    //  Returns true if the thread is unpreemptable.
    //
    bool IsLocked() const;
@@ -488,14 +469,26 @@ private:
    //
    bool IsReady() const;
 
+   //  Returns the thread's daemon.
+   //
+   Daemon* GetDaemon() const { return daemon_; }
+
    //  Notes that the thread is trying to acquire MUTEX, which is nullptr
    //  if the mutex has been acquired.
    //
-   void UpdateMutex(const SysMutex* mutex);
+   void UpdateMutex(SysMutex* mutex);
+
+   //  Returns the mutex that the thread is trying to acquire.
+   //
+   SysMutex* BlockingMutex() const;
 
    //  Notes that the thread has acquired (if true) or released a mutex.
    //
    void UpdateMutexCount(bool acquired);
+
+   //  Returns the thread's mutex count.
+   //
+   uint8_t MutexCount() const;
 
    //  Returns the priority associated with FACTION.  If FACTION is out of
    //  range, it is set to BackgroundFaction after generating a log.
@@ -534,6 +527,12 @@ private:
    //  STACK contains the thread's stack, if available.
    //
    TrapAction TrapHandler(const Exception* ex,
+      const std::exception* e, signal_t sig, const std::ostringstream* stack);
+
+   //  The same arguments as TrapHandler.  Generates the trap log.  Returns
+   //  true if the thread has exceeded the trap limit.
+   //
+   bool LogTrap(const Exception* ex,
       const std::exception* e, signal_t sig, const std::ostringstream* stack);
 
    //  Invoked at the outset of a restart.  It invokes ExitOnRestart (above)
@@ -596,24 +595,10 @@ private:
    //
    bool LogSignal(signal_t sig) const;
 
-   //  Returns true if the thread is waiting to be recreated.
-   //
-   bool HasExited() const;
-
-   //  Invoked to recreate a thread.  Returns true on success.
-   //
-   bool Recreate();
-
    //  Invoked when returning from Thread::Start.  SIG indicates why
    //  the thread is exiting.
    //
    main_t Exit(signal_t sig);
-
-   //  Invoked to exit after the thread has run into serious trouble,
-   //  such as getting into a trap loop.  SIG is the error from which
-   //  the thread failed to recover.
-   //
-   main_t ForceExit(signal_t sig);
 
    //  Invoked by the destructor and Cleanup to free resources.  ORPHANED
    //  is set if the thread is not about to exit, in which case its native
@@ -626,10 +611,6 @@ private:
    //
    static void RestrictFactions(bool enable);
 
-   //  Returns a string containing the thread's class name and identifiers.
-   //
-   std::string to_str() const;
-
    //  Displays a summary of the thread's statistics in STREAM.  TIME0 is
    //  the time that has elapsed during the current statistics measurement
    //  period.  TIME1 was the duration of the most recent short interval
@@ -638,13 +619,29 @@ private:
    void DisplaySummary
       (std::ostream& stream, usecs_t time0, usecs_t time1) const;
 
+   //  Displays a summary of all threads' statistics in STREAM.
+   //
+   static void DisplaySummaries(std::ostream& stream);
+
+   //  Starts (stops) logging context switches if ON is true (false).
+   //
+   static TraceRc LogContextSwitches(bool on);
+
    //  Logs information about a context switch.
    //
    void LogContextSwitch() const;
 
+   //  Displays context switches in STREAM.
+   //
+   static void DisplayContextSwitches(std::ostream& stream);
+
    //  The wrapper for the native thread.
    //
    std::unique_ptr< SysThread > systhrd_;
+
+   //  The thread's manager, if any.
+   //
+   Daemon* daemon_;
 
    //  The thread's identifier in ThreadRegistry.
    //
@@ -654,21 +651,9 @@ private:
    //
    Faction faction_;
 
-   //  The reason why the thread is blocked.
+   //  Set when the thread has initialized.
    //
-   BlockingReason blocked_;
-
-   //  Whether the thread is being traced.
-   //
-   TraceStatus status_;
-
-   //  Set when ready to run but waiting to be signalled.
-   //
-   bool waiting_;
-
-   //  Set if the thread's current message is being traced.
-   //
-   bool traceMsg_;
+   bool initialized_;
 
    //  Set if the thread has been deleted.  This must be defined in
    //  the main Thread object, which resides in an ObjectPool block
@@ -676,11 +661,6 @@ private:
    //  has been deleted.
    //
    bool deleted_;
-
-   //  Set during trap recovery until Recover or Enter is invoked.
-   //  If the thread traps when this is set, it is forced to exit.
-   //
-   bool trapped_;
 
    //  The thread's message queue.
    //
@@ -693,10 +673,6 @@ private:
    //  Per-thread statistics.
    //
    std::unique_ptr< ThreadStats > stats_;
-
-   //  The time at which the thread became ready to run.
-   //
-   ticks_t readyTime_;
 };
 }
 #endif

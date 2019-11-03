@@ -50,6 +50,8 @@ fn_name CoutThread_ctor = "CoutThread.ctor";
 CoutThread::CoutThread() : Thread(BackgroundFaction)
 {
    Debug::ft(CoutThread_ctor);
+
+   SetInitialized();
 }
 
 //------------------------------------------------------------------------------

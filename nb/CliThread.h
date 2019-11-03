@@ -243,10 +243,6 @@ private:
    //
    void Enter() override;
 
-   //  Overridden to clean up when the thread is recreated.
-   //
-   void Recreated() override;
-
    //  Overridden to delete the singleton.
    //
    void Destroy() override;

@@ -51,8 +51,9 @@ const size_t TcpIoThread::MaxConns = 48 * 1024;  // 48K
 
 fn_name TcpIoThread_ctor = "TcpIoThread.ctor";
 
-TcpIoThread::TcpIoThread(const TcpIpService* service, ipport_t port) :
-   IoThread(service, port),
+TcpIoThread::TcpIoThread(Daemon* daemon,
+   const TcpIpService* service, ipport_t port) :
+   IoThread(daemon, service, port),
    listen_(true),
    ready_(0),
    curr_(0)
@@ -61,10 +62,10 @@ TcpIoThread::TcpIoThread(const TcpIpService* service, ipport_t port) :
 
    ipPort_ = Singleton< IpPortRegistry >::Instance()->GetPort(port_, IpTcp);
 
-   if(ipPort_ == nullptr)
-   {
+   if(ipPort_ != nullptr)
+      ipPort_->SetThread(this);
+   else
       Debug::SwLog(TcpIoThread_ctor, "port not found", port_);
-   }
 
    listen_ = service->AcceptsConns();
 
@@ -97,6 +98,7 @@ TcpIoThread::TcpIoThread(const TcpIpService* service, ipport_t port) :
    //
    sockets_.Init(fdSize, MemDyn);
    sockets_.Reserve(fdSize);
+   SetInitialized();
 }
 
 //------------------------------------------------------------------------------

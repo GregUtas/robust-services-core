@@ -78,7 +78,7 @@ void CliStack::Display(ostream& stream,
    {
       stream << lead1 << strIndex(i);
 
-      if(options.test(DispVerbose))
+      if((increments_[i] != nullptr) && options.test(DispVerbose))
       {
          stream << CRLF;
          increments_[i]->Display(stream, lead2, options);

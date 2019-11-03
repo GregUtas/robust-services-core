@@ -161,13 +161,19 @@ threads           : Counts or displays threads.
   [0:99]          : ThreadId (default=all)
   [c|b|v]         : 'c'=count 'b'=brief 'v'=verbose (default='b')
 
+daemons           : Displays daemons.
+  [0:65535]       : index (location in registry)
+  [b|v]           : 'b'=brief 'v'=verbose (default='b')
+
 mutexes           : Displays mutexes.
+  [0:65535]       : index (location in registry)
   [b|v]           : 'b'=brief 'v'=verbose (default='b')
 
 buffers           : Counts or displays message buffers.
   [c|b|v]         : 'c'=count 'b'=brief 'v'=verbose (default='b')
 
 psignals          : Displays POSIX signals.
+  [0:65535]       : index (location in registry)
   [b|v]           : 'b'=brief 'v'=verbose (default='b')
 
 singletons        : Displays the singletons registry.
@@ -512,7 +518,9 @@ time              : Tests a SysTime function.
 recover           : Tests thread recovery.
 (                 : what to recover from...
   abort           : call abort()
-  delete          : delete a thread
+  create          : create the recovery thread
+  ctortrap        : trap in recovery thread constructor
+  delete          : delete the recovery thread
     (t|f)         : perform by 'this' (t) or by another thread (f)
   badptr          : dereference an invalid pointer
   divide          : divide by zero
@@ -523,8 +531,7 @@ recover           : Tests thread recovery.
   stack           : cause a stack overflow
   raise           : raise a signal
     <str>         : signal's name ('SIG...')
-  retrap          : trap during trap recovery
-  return          : return from a thread
+  return          : return from the recovery thread
   swerr           : cause a software exception
   terminate       : call terminate()
   trap            : cause a trap

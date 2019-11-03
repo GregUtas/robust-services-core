@@ -44,17 +44,19 @@ namespace NetworkBase
 {
 fn_name UdpIoThread_ctor = "UdpIoThread.ctor";
 
-UdpIoThread::UdpIoThread(const UdpIpService* service, ipport_t port) :
-   IoThread(service, port)
+UdpIoThread::UdpIoThread(Daemon* daemon,
+   const UdpIpService* service, ipport_t port) : IoThread(daemon, service, port)
 {
    Debug::ft(UdpIoThread_ctor);
 
    ipPort_ = Singleton< IpPortRegistry >::Instance()->GetPort(port_, IpUdp);
 
-   if(ipPort_ == nullptr)
-   {
+   if(ipPort_ != nullptr)
+      ipPort_->SetThread(this);
+   else
       Debug::SwLog(UdpIoThread_ctor, "port not configured", port_);
-   }
+
+   SetInitialized();
 }
 
 //------------------------------------------------------------------------------

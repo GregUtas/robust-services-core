@@ -40,10 +40,11 @@ namespace NetworkBase
 class UdpIoThread : public IoThread
 {
 public:
-   //  Creates an I/O thread that will receive UDP messages on
-   //  behalf of SERVICE.
+   //  Creates a UDP I/O thread, managed by DAEMON, that receives messages
+   //  on PORT on behalf of SERVICE.
    //
-   UdpIoThread(const UdpIpService* service, ipport_t port);
+   UdpIoThread
+      (NodeBase::Daemon* daemon, const UdpIpService* service, ipport_t port);
 
    //  Overridden for patching.
    //

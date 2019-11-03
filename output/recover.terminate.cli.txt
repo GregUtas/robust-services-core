@@ -5,7 +5,7 @@ nt>start
 nt>read trap.10
 nt>/ ============== PREPARE TO CLICK RETRY, THEN CONTINUE (F5) ==============
 nt>/ RECOVER terminate
-nt>/ Enable breakpoints because of pop-up.
+nt>/ Enable breakpoints because of pop-up dialog.
 nt>symbols assign save.breakenabled breakenabled
   OK.
 nt>cfgparms set breakenabled t
@@ -21,7 +21,7 @@ nt>cfgparms set breakenabled &save.breakenabled
 nt>testcase end
   OK.
 read test.trap.epilog
-nt>delay 2
+nt>delay 1
   OK.
 nt>stop
   OK.

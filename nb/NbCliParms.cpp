@@ -21,6 +21,7 @@
 //
 #include "NbCliParms.h"
 #include <cstddef>
+#include <cstdint>
 #include "CliCommand.h"
 #include "CliThread.h"
 #include "Clock.h"
@@ -54,13 +55,16 @@ fixed_string NoAlarmExpl          = "There is no alarm with that identifier.";
 fixed_string NoBuffersExpl        = "There were no buffers to display.";
 fixed_string NoCfgParmExpl        = "No such configuration parameter.";
 fixed_string NoCommandExpl        = "No such command: ";
+fixed_string NoDaemonExpl         = "There is no daemon at that index.";
 fixed_string NoDiscardsExpl       = "There were no discards to display.";
 fixed_string NoFileExpl           = "File does not exist or is empty.";
 fixed_string NoIncrExpl           = "Nothing to quit.";
 fixed_string NoLogExpl            = "There is no log with that identifier.";
 fixed_string NoLogGroupExpl       = "There is no log group with that identifier.";
 fixed_string NoModuleExpl         = "There is no module with that identifier.";
+fixed_string NoMutexExpl          = "There is no mutex at that index.";
 fixed_string NoPoolExpl           = "There is no object pool with that identifier.";
+fixed_string NoPosixSignalExpl    = "There is no POSIX signal at that index.";
 fixed_string NoStatsGroupExpl     = "There is no statistics group with that identifier.";
 fixed_string NoSymbolExpl         = "There is no symbol with that name.";
 fixed_string NoThreadExpl         = "There is no thread with that identifier.";
@@ -155,6 +159,12 @@ fixed_string FactionsTextStr = "factions";
 fixed_string FactionsTextExpl = "all included/excluded factions";
 
 FactionsText::FactionsText() : CliText(FactionsTextExpl, FactionsTextStr) { }
+
+//------------------------------------------------------------------------------
+
+fixed_string IdOptExpl = "index (location in registry)";
+
+IdOptParm::IdOptParm() : CliIntParm(IdOptExpl, 0, UINT16_MAX, true) { }
 
 //------------------------------------------------------------------------------
 

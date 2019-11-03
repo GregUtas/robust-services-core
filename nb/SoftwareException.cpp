@@ -78,7 +78,7 @@ void SoftwareException::Display(ostream& stream, const string& prefix) const
 
 //------------------------------------------------------------------------------
 
-fixed_string SoftwareExceptionExpl = "Software Abort";
+fixed_string SoftwareExceptionExpl = "Software Error";
 
 const char* SoftwareException::what() const noexcept
 {

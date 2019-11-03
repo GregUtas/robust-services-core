@@ -95,7 +95,7 @@ void PotsTreatmentRegistry::Display(ostream& stream,
 {
    Protected::Display(stream, prefix, options);
 
-   stream << prefix << "treatmentqs [QId]" << CRLF;
+   stream << prefix << "treatmentqs [PotsTreatmentQueue::QId]" << CRLF;
    treatmentqs_.Display(stream, prefix + spaces(2), options);
 
    stream << prefix << "causeToQId [Cause::Ind]" << CRLF;

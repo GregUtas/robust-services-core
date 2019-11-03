@@ -171,6 +171,8 @@ fn_name FileThread_ctor = "FileThread.ctor";
 FileThread::FileThread() : Thread(BackgroundFaction)
 {
    Debug::ft(FileThread_ctor);
+
+   SetInitialized();
 }
 
 //------------------------------------------------------------------------------

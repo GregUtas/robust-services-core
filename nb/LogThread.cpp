@@ -78,6 +78,8 @@ LogThread::LogThread() : Thread(BackgroundFaction)
          "messages reserved for work other than spooling logs"));
       reg->BindParm(*noSpoolingMessageCount_);
    }
+
+   SetInitialized();
 }
 
 //------------------------------------------------------------------------------

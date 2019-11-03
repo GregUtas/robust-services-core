@@ -23,6 +23,8 @@
 #include <sstream>
 #include <string>
 #include "Algorithms.h"
+#include "Daemon.h"
+#include "DaemonRegistry.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Log.h"
@@ -32,7 +34,6 @@
 #include "RootThread.h"
 #include "Singleton.h"
 #include "ThreadAdmin.h"
-#include "ThreadRegistry.h"
 
 using std::ostream;
 using std::string;
@@ -55,6 +56,8 @@ InitThread::InitThread() : Thread(SystemFaction),
    errval_(0)
 {
    Debug::ft(InitThread_ctor);
+
+   SetInitialized();
 }
 
 //------------------------------------------------------------------------------
@@ -296,7 +299,7 @@ void InitThread::HandleTimeout()
    }
    else
    {
-      if(thr->waiting_)
+      if(thr->IsScheduled())
       {
          thr->Proceed();
          ThreadAdmin::Incr(ThreadAdmin::Resignals);
@@ -362,26 +365,15 @@ void InitThread::RecreateThreads()
 {
    Debug::ft(InitThread_RecreateThreads);
 
+   //  Invoke all daemons.  Any with missing threads will create them.
+   //
    Reset(Recreate);
 
-   auto& threads = Singleton< ThreadRegistry >::Instance()->Threads();
+   auto& daemons = Singleton< DaemonRegistry >::Instance()->Daemons();
 
-   for(auto t = threads.First(); t != nullptr; threads.Next(t))
+   for(auto d = daemons.First(); d != nullptr; daemons.Next(d))
    {
-      if(t->HasExited())
-      {
-         //  Recreate this thread.  If this traps or fails, state_
-         //  and errval_ will cause us to initiate a restart.
-         //
-         state_ = Restarting;
-         errval_ = pack2(t->Tid(), t->NativeThreadId());
-
-         if(t->Recreate())
-         {
-            state_ = Running;
-            errval_ = 0;
-         }
-      }
+      d->CreateThreads();
    }
 }
 }

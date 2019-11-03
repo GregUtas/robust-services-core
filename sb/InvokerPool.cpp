@@ -36,6 +36,7 @@
 #include "MsgHeader.h"
 #include "Q2Way.h"
 #include "Restart.h"
+#include "SbDaemons.h"
 #include "SbIpBuffer.h"
 #include "SbLogs.h"
 #include "SbPools.h"
@@ -320,7 +321,7 @@ void InvokerPool::Display(ostream& stream,
    stream << prefix << "cfgInvokers : " << CRLF;
    stream << strObj(cfgInvokers_.get()) << CRLF;
 
-   stream << prefix << "invokers []: " << CRLF;
+   stream << prefix << "invokers []" << CRLF;
    invokers_.Display(stream, prefix + spaces(2), options);
 
    auto lead = prefix + spaces(2);
@@ -758,15 +759,8 @@ void InvokerPool::Startup(RestartLevel level)
 {
    Debug::ft(InvokerPool_Startup);
 
-   //  Create invoker threads until the target number is reached.
-   //
-   for(size_t i = invokers_.Size(); i < poolSize_; ++i)
-   {
-      if(new InvokerThread(GetFaction()) == nullptr)
-      {
-         Restart::Initiate(ModuleStartupFailed, GetFaction());
-      }
-   }
+   auto daemon = InvokerDaemon::GetDaemon(GetFaction(), poolSize_);
+   daemon->CreateThreads();
 }
 
 //------------------------------------------------------------------------------

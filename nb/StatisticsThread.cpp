@@ -24,6 +24,7 @@
 #include <string>
 #include "Debug.h"
 #include "Log.h"
+#include "NbDaemons.h"
 #include "NbLogs.h"
 #include "Singleton.h"
 #include "StatisticsRegistry.h"
@@ -50,12 +51,15 @@ ticks_t StatisticsThread::PrevToCurrTicks =
 
 fn_name StatisticsThread_ctor = "StatisticsThread.ctor";
 
-StatisticsThread::StatisticsThread() : Thread(BackgroundFaction),
+StatisticsThread::StatisticsThread() :
+   Thread(BackgroundFaction, Singleton< StatisticsDaemon >::Instance()),
    wakeupTicks_(0),
    countdown_(WakeupsBetweenReports),
    delayed_(false)
 {
    Debug::ft(StatisticsThread_ctor);
+
+   SetInitialized();
 }
 
 //------------------------------------------------------------------------------
@@ -71,7 +75,7 @@ StatisticsThread::~StatisticsThread()
 
 c_string StatisticsThread::AbbrName() const
 {
-   return "stats";
+   return StatisticsDaemonName;
 }
 
 //------------------------------------------------------------------------------

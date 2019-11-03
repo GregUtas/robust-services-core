@@ -41,8 +41,9 @@ namespace NodeBase
 class InitThread : public Thread
 {
    friend class Singleton< InitThread >;
-   friend class Thread;
+   friend class Daemon;
    friend class RootThread;
+   friend class Thread;
 public:
    //  Overridden to display member variables.
    //

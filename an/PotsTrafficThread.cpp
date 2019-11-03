@@ -1071,6 +1071,8 @@ PotsTrafficThread::PotsTrafficThread() : Thread(LoadTestFaction),
       new (&timewheel_[i]) Q1Way< TrafficCall >();
       timewheel_[i].Init(TrafficCall::LinkDiff());
    }
+
+   SetInitialized();
 }
 
 //------------------------------------------------------------------------------

@@ -22,6 +22,7 @@
 #include "TimerThread.h"
 #include "Clock.h"
 #include "Debug.h"
+#include "SbDaemons.h"
 #include "SbTracer.h"
 #include "Singleton.h"
 #include "SysTypes.h"
@@ -36,9 +37,12 @@ namespace SessionBase
 {
 fn_name TimerThread_ctor = "TimerThread.ctor";
 
-TimerThread::TimerThread() : Thread(PayloadFaction)
+TimerThread::TimerThread() :
+   Thread(PayloadFaction, Singleton< TimerDaemon >::Instance())
 {
    Debug::ft(TimerThread_ctor);
+
+   SetInitialized();
 }
 
 //------------------------------------------------------------------------------
@@ -54,7 +58,7 @@ TimerThread::~TimerThread()
 
 c_string TimerThread::AbbrName() const
 {
-   return "timer";
+   return TimerDaemonName;
 }
 
 //------------------------------------------------------------------------------

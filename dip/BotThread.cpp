@@ -49,6 +49,8 @@ BotThread::BotThread() : Thread(PayloadFaction),
    exit_(false)
 {
    Debug::ft(BotThread_ctor);
+
+   SetInitialized();
 }
 
 //------------------------------------------------------------------------------

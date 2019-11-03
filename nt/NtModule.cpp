@@ -97,9 +97,11 @@ void NtModule::Startup(RestartLevel level)
    if(level < RestartCold) return;
 
    auto reg = Singleton< SymbolRegistry >::Instance();
-   reg->BindSymbol("flag.criticalthread", ThreadCriticalFlag);
+   reg->BindSymbol("flag.reenterthread", ThreadReenterFlag);
    reg->BindSymbol("flag.threadctortrap", ThreadCtorTrapFlag);
-   reg->BindSymbol("flag.recoverytrap", ThreadRecoveryTrapFlag);
+   reg->BindSymbol("flag.recovertrap", ThreadRecoverTrapFlag);
    reg->BindSymbol("flag.showtoolprogress", ShowToolProgress);
+   reg->BindSymbol("flag.disablerootthread", DisableRootThreadFlag);
+   reg->BindSymbol("flag.threadretrap", ThreadRetrapFlag);
 }
 }

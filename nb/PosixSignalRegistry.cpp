@@ -119,6 +119,7 @@ void PosixSignalRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
+fixed_string SigNilStr = "Normal Exit";
 fixed_string SigUnknownStr = "Unknown Signal";
 
 string PosixSignalRegistry::strSignal(signal_t value) const
@@ -131,6 +132,8 @@ string PosixSignalRegistry::strSignal(signal_t value) const
    stream << " (";
    if(s != nullptr)
       stream << s->Name() << ": " << s->Expl();
+   else if(value == SIGNIL)
+      stream << SigNilStr;
    else
       stream << SigUnknownStr;
    stream << ')';

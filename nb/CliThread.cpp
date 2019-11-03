@@ -37,6 +37,7 @@
 #include "FileThread.h"
 #include "Formatters.h"
 #include "NbCliParms.h"
+#include "NbDaemons.h"
 #include "NbIncrement.h"
 #include "Restart.h"
 #include "Singleton.h"
@@ -58,7 +59,8 @@ const char CliThread::CliPrompt = '>';
 
 fn_name CliThread_ctor = "CliThread.ctor";
 
-CliThread::CliThread() : Thread(OperationsFaction),
+CliThread::CliThread() :
+   Thread(OperationsFaction, Singleton< CliDaemon >::Instance()),
    ibuf(nullptr),
    obuf(nullptr),
    stack_(nullptr),
@@ -69,6 +71,9 @@ CliThread::CliThread() : Thread(OperationsFaction),
    inIndex_(0)
 {
    Debug::ft(CliThread_ctor);
+
+   AllocResources();
+   SetInitialized();
 }
 
 //------------------------------------------------------------------------------
@@ -92,7 +97,7 @@ CliThread::~CliThread()
 
 c_string CliThread::AbbrName() const
 {
-   return "cli";
+   return CliDaemonName;
 }
 
 //------------------------------------------------------------------------------
@@ -723,21 +728,6 @@ void CliThread::ReadCommands()
          }
       }
    }
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CliThread_Recreated = "CliThread.Recreated";
-
-void CliThread::Recreated()
-{
-   Debug::ft(CliThread_Recreated);
-
-   //  Recreation is caused by excessive trapping, so release and reacquire
-   //  resources in case some type of corruption has occurred.
-   //
-   ReleaseResources();
-   AllocResources();
 }
 
 //------------------------------------------------------------------------------

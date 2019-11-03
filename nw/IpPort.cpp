@@ -127,7 +127,7 @@ IpPort::~IpPort()
    if(thread_ != nullptr)
    {
       thread_->Raise(SIGCLOSE);
-      thread_ = nullptr;
+      SetThread(nullptr);
    }
 
    Singleton< IpPortRegistry >::Instance()->UnbindPort(*this);
@@ -146,7 +146,7 @@ bool IpPort::BindHandler(InputHandler& handler)
    //  If the port does not have an I/O thread, create one.
    //
    if(thread_ != nullptr) return true;
-   thread_ = CreateIoThread();
+   SetThread(CreateIoThread());
    return (thread_ != nullptr);
 }
 
@@ -386,9 +386,9 @@ void IpPort::SetThread(IoThread* thread)
       return;
    }
 
-   //  If a thread already exists, generate a log before overwriting it.
+   //  If another thread already exists, generate a log before overwriting it.
    //
-   if(thread_ != nullptr)
+   if((thread_ != nullptr) && (thread_ != thread))
    {
       Debug::SwLog(IpPort_SetThread, "I/O thread already exists", port_);
    }
@@ -426,7 +426,7 @@ void IpPort::Startup(RestartLevel level)
    //
    if((handler_ != nullptr) && (thread_ == nullptr))
    {
-      thread_ = CreateIoThread();
+      SetThread(CreateIoThread());
    }
 }
 
@@ -448,7 +448,7 @@ void IpPort::UnbindHandler(const InputHandler& handler)
    if(thread_ != nullptr)
    {
       thread_->Raise(SIGCLOSE);
-      thread_ = nullptr;
+      SetThread(nullptr);
    }
 
    handler_.release();

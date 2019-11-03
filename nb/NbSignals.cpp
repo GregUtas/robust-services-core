@@ -21,6 +21,7 @@
 //
 #include "NbSignals.h"
 #include "PosixSignal.h"
+#include <bitset>
 #include "Debug.h"
 #include "Singleton.h"
 #include "SysSignals.h"
@@ -45,20 +46,6 @@ class SigYield : public PosixSignal
    friend class Singleton< SigYield >;
 private:
    SigYield();
-};
-
-class SigTraps : public PosixSignal
-{
-   friend class Singleton< SigTraps >;
-private:
-   SigTraps();
-};
-
-class SigRetrap : public PosixSignal
-{
-   friend class Singleton< SigRetrap >;
-private:
-   SigRetrap();
 };
 
 class SigStack1 : public PosixSignal
@@ -93,29 +80,23 @@ private:
 
 SigClose::SigClose() : PosixSignal(SIGCLOSE, "SIGCLOSE",
    "Non-Error Shutdown", 12,
-   PS_Interrupt() | PS_Exit() | PS_Final() | PS_NoLog() | PS_NoError()) { }
+   PS_Interrupt() | PS_Final() | PS_NoLog() | PS_NoError()) { }
 
 SigYield::SigYield() : PosixSignal(SIGYIELD, "SIGYIELD",
-   "Running Unpreemptably Too Long", 4, Flags()) { }
-
-SigTraps::SigTraps() : PosixSignal(SIGTRAPS, "SIGTRAPS",
-   "Trap Threshold Exceeded", 0, PS_Exit()) { }
-
-SigRetrap::SigRetrap() : PosixSignal(SIGRETRAP, "SIGRETRAP",
-   "Trap During Recovery", 0, PS_NoRecover() | PS_Exit()) { }
+   "Running Unpreemptably Too Long", 4, NoFlags) { }
 
 SigStack1::SigStack1() : PosixSignal(SIGSTACK1, "SIGSTACK1",
-   "Stack Overflow: Attempt Recovery", 0, Flags()) { }
+   "Stack Overflow: Attempt Recovery", 0, NoFlags) { }
 
 SigStack2::SigStack2() : PosixSignal(SIGSTACK2, "SIGSTACK2",
-   "Stack Overflow: Exit and Recreate", 0, PS_NoRecover() | PS_Exit()) { }
+   "Stack Overflow: Exit Thread", 0, PS_Final()) { }
 
 SigPurge::SigPurge() : PosixSignal(SIGPURGE, "SIGPURGE",
    "Suicided [errval = 0] or Killed [errval > 0]", 16,
-   PS_Interrupt() | PS_Exit() | PS_Final()) { }
+   PS_Interrupt() | PS_Final()) { }
 
 SigDeleted::SigDeleted() : PosixSignal(SIGDELETED, "SIGDELETED",
-   "Thread Deleted", 0, PS_Exit() | PS_Final()) { }
+   "Thread Deleted", 0, PS_Final()) { }
 
 //------------------------------------------------------------------------------
 
@@ -131,8 +112,6 @@ void CreatePosixSignals()
 
    Singleton< SigClose >::Instance();
    Singleton< SigYield >::Instance();
-   Singleton< SigTraps >::Instance();
-   Singleton< SigRetrap >::Instance();
    Singleton< SigStack1 >::Instance();
    Singleton< SigStack2 >::Instance();
    Singleton< SigPurge >::Instance();

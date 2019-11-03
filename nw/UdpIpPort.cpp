@@ -21,6 +21,7 @@
 //
 #include "UdpIpPort.h"
 #include "Debug.h"
+#include "NwDaemons.h"
 #include "SysTypes.h"
 #include "UdpIoThread.h"
 #include "UdpIpService.h"
@@ -57,7 +58,8 @@ IoThread* UdpIpPort::CreateIoThread()
    Debug::ft(UdpIpPort_CreateIoThread);
 
    auto svc = static_cast< const UdpIpService* >(GetService());
-   return new UdpIoThread(svc, GetPort());
+   auto daemon = UdpIoDaemon::GetDaemon(svc, GetPort());
+   return new UdpIoThread(daemon, svc, GetPort());
 }
 
 //------------------------------------------------------------------------------

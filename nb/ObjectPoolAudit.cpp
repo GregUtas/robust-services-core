@@ -23,6 +23,7 @@
 #include <ostream>
 #include <string>
 #include "Debug.h"
+#include "NbDaemons.h"
 #include "ObjectPoolRegistry.h"
 #include "Singleton.h"
 #include "SysTypes.h"
@@ -36,12 +37,15 @@ namespace NodeBase
 {
 fn_name ObjectPoolAudit_ctor = "ObjectPoolAudit.ctor";
 
-ObjectPoolAudit::ObjectPoolAudit() : Thread(AuditFaction),
+ObjectPoolAudit::ObjectPoolAudit() :
+   Thread(AuditFaction, Singleton< ObjectDaemon >::Instance()),
    interval_(5000),
    phase_(CheckingFreeq),
    pid_(NIL_ID)
 {
    Debug::ft(ObjectPoolAudit_ctor);
+
+   SetInitialized();
 }
 
 //------------------------------------------------------------------------------
@@ -57,7 +61,7 @@ ObjectPoolAudit::~ObjectPoolAudit()
 
 c_string ObjectPoolAudit::AbbrName() const
 {
-   return "objaud";
+   return ObjectDaemonName;
 }
 
 //------------------------------------------------------------------------------

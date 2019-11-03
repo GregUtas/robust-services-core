@@ -42,6 +42,7 @@ namespace SessionBase
 class InvokerThread : public NodeBase::Thread
 {
    friend class Context;
+   friend class InvokerDaemon;
    friend class InvokerPool;
    friend class NodeBase::Registry< InvokerThread >;
    friend class SbException;
@@ -72,10 +73,10 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Used by InvokerPool to create an invoker that runs in FACTION.
-   //  Private to restrict creation.
+   //  Creates an invoker thread that is managed by DAEMON and runs in
+   //  FACTION.  Private to restrict creation.
    //
-   explicit InvokerThread(NodeBase::Faction faction);
+   InvokerThread(NodeBase::Faction faction, NodeBase::Daemon* daemon);
 
    //  Private to restrict deletion.  Not subclassed.
    //
@@ -120,7 +121,7 @@ private:
    //  Overridden to log and delete the objects involved in a serious
    //  error before reentering the thread.
    //
-   RecoveryAction Recover() override;
+   bool Recover() override;
 
    //  Overridden to handle any context assigned to the context.
    //

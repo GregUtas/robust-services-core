@@ -48,11 +48,9 @@ public:
    {
       Native,       // supported by platform
       Break,        // interrupt received on unknown thread
-      NoRecover,    // blocks invocation of Thread::Recover
       Interrupt,    // interrupts target thread
       Delayed,      // not received until scheduled out
-      Exit,         // causes thread to exit
-      Final,        // InitThread will not recreate thread
+      Final,        // forces thread to exit
       NoLog,        // no log when raised for another thread
       NoError,      // no log from trap handler
       Attribute_N   // number of attributes
@@ -143,10 +141,8 @@ private:
 //
 Flags PS_Native();
 Flags PS_Break();
-Flags PS_NoRecover();
 Flags PS_Interrupt();
 Flags PS_Delayed();
-Flags PS_Exit();
 Flags PS_Final();
 Flags PS_NoLog();
 Flags PS_NoError();

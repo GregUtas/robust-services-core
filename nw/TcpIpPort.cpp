@@ -24,6 +24,7 @@
 #include <string>
 #include "Debug.h"
 #include "Log.h"
+#include "NwDaemons.h"
 #include "NwLogs.h"
 #include "Restart.h"
 #include "SysTcpSocket.h"
@@ -111,7 +112,8 @@ IoThread* TcpIpPort::CreateIoThread()
    Debug::ft(TcpIpPort_CreateIoThread);
 
    auto svc = static_cast< const TcpIpService* >(GetService());
-   return new TcpIoThread(svc, GetPort());
+   auto daemon = TcpIoDaemon::GetDaemon(svc, GetPort());
+   return new TcpIoThread(daemon, svc, GetPort());
 }
 
 //------------------------------------------------------------------------------

@@ -24,7 +24,6 @@
 #include <string>
 #include "Algorithms.h"
 #include "Debug.h"
-#include "Formatters.h"
 #include "PosixSignalRegistry.h"
 #include "Singleton.h"
 
@@ -80,10 +79,8 @@ fixed_string AttrStrings[PosixSignal::Attribute_N] =
 {
    "Native",
    "Break",
-   "NoRecover",
    "Interrupt",
    "Delayed",
-   "Exit",
    "Final",
    "NoLog",
    "NoError"
@@ -97,8 +94,8 @@ void PosixSignal::Display(ostream& stream,
    stream << prefix << "value    : " << value_ << CRLF;
    stream << prefix << "name     : " << name_ << CRLF;
    stream << prefix << "expl     : " << expl_ << CRLF;
-   stream << prefix << "severity : " << severity_ << CRLF;
-   stream << prefix << "attrs    : " << " (";
+   stream << prefix << "severity : " << int(severity_) << CRLF;
+   stream << prefix << "attrs    : " << "{";
 
    bool found = false;
 
@@ -106,14 +103,14 @@ void PosixSignal::Display(ostream& stream,
    {
       if(attrs_.test(i))
       {
-         if(found) stream << spaces(2);
+         if(found) stream << SPACE;
          stream << AttrStrings[i];
          found = true;
       }
    }
 
    if(!found) stream << "none";
-   stream << ')' << CRLF;
+   stream << '}' << CRLF;
 }
 
 //------------------------------------------------------------------------------
@@ -133,11 +130,6 @@ Flags PS_Break()
 Flags PS_Delayed()
 {
    return Flags(1 << PosixSignal::Delayed);
-}
-
-Flags PS_Exit()
-{
-   return Flags(1 << PosixSignal::Exit);
 }
 
 Flags PS_Final()
@@ -163,10 +155,5 @@ Flags PS_NoError()
 Flags PS_NoLog()
 {
    return Flags(1 << PosixSignal::NoLog);
-}
-
-Flags PS_NoRecover()
-{
-   return Flags(1 << PosixSignal::NoRecover);
 }
 }

@@ -32,10 +32,8 @@ namespace NodeBase
 //  SignalException outside the signal handler.
 //
 constexpr signal_t SIGNIL = 0;        // nil signal
-constexpr signal_t SIGCLOSE = 120;    // exit thread (non-error)
-constexpr signal_t SIGYIELD = 121;    // ran unpreemptably too long
-constexpr signal_t SIGTRAPS = 122;    // trapped too many times
-constexpr signal_t SIGRETRAP = 123;   // trapped during recovery
+constexpr signal_t SIGCLOSE = 122;    // exit thread (non-error)
+constexpr signal_t SIGYIELD = 123;    // ran unpreemptably too long
 constexpr signal_t SIGSTACK1 = 124;   // stack overflow: attempt recovery
 constexpr signal_t SIGSTACK2 = 125;   // stack overflow: recreate thread
 constexpr signal_t SIGPURGE = 126;    // thread killed or suicided

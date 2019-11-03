@@ -1,3 +1,7 @@
 / RECOVER trap during trap recovery
-recover retrap
+swflags set &flag.threadretrap on
+delay 1
+recover badptr
+delay 2
+swflags set &flag.threadretrap off
 testcase end

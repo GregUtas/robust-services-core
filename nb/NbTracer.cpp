@@ -242,7 +242,11 @@ TraceRc NbTracer::SelectFaction(Faction faction, TraceStatus status)
 
    factions_[faction] = status;
 
-   if(status != TraceDefault) buff->SetFilter(TraceFaction);
+   if(status != TraceDefault)
+   {
+      buff->SetFilter(TraceFaction);
+      return TraceOk;
+   }
 
    buff->ClearFilter(TraceFaction);
 

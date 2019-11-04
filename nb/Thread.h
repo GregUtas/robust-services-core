@@ -424,9 +424,10 @@ private:
 
    //  Schedules another thread after a thread yields or blocks, or
    //  after a preemptable thread has run for its allotted time.
-   //  Returns false if no thread is running or ready.
+   //  Returns the scheduled thread.  Returns nullptr if no thread
+   //  is running or ready.
    //
-   static bool SwitchContext();
+   static Thread* SwitchContext();
 
    //  Selects the next thread to run.
    //
@@ -441,9 +442,10 @@ private:
    //
    void Resume(fn_name_arg func);
 
-   //  Kills the thread.
+   //  Kills the thread.  Returns nullptr when trying to kill the thread.
+   //  If the thread cannot be killed, returns a C string explaining why.
    //
-   void Kill();
+   fixed_string Kill();
 
    //  Returns true if the thread is unpreemptable.
    //
@@ -465,9 +467,9 @@ private:
    //
    static Thread* LockedThread();
 
-   //  Returns true if the thread is not blocked.
+   //  Returns true if the thread can be scheduled to run.
    //
-   bool IsReady() const;
+   bool CanBeScheduled() const;
 
    //  Returns the thread's daemon.
    //
@@ -606,10 +608,10 @@ private:
    //
    void ReleaseResources(bool orphaned);
 
-   //  Used during the shutdown phase of a restart to enable/disable the
+   //  Used during initializations and restarts to enable/disable the
    //  scheduling of specific factions.
    //
-   static void RestrictFactions(bool enable);
+   static void EnableFactions(const FactionFlags& enabled);
 
    //  Displays a summary of the thread's statistics in STREAM.  TIME0 is
    //  the time that has elapsed during the current statistics measurement

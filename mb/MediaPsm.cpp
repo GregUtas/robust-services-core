@@ -389,7 +389,7 @@ void MediaPsm::SetIcTone(Tone::Id icTone)
    Switch::PortId port;
 
    //  If the tone has changed, tell the PSM's listeners that they should
-   //  now listen to a different port.  IF the tone is media, they listen
+   //  now listen to a different port.  If the tone is media, they listen
    //  to the PSM's underlying port, else they listen to the tone specified.
    //
    if(icTone_ == icTone) return;

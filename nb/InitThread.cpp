@@ -42,9 +42,9 @@ using std::string;
 
 namespace NodeBase
 {
-const Flags InitThread::RestartMask = Flags(1 << InitThread::Restart);
-const Flags InitThread::RecreateMask = Flags(1 << InitThread::Recreate);
-const Flags InitThread::ScheduleMask = Flags(1 << InitThread::Schedule);
+const Flags InitThread::RestartMask = Flags(1 << Restart);
+const Flags InitThread::RecreateMask = Flags(1 << Recreate);
+const Flags InitThread::ScheduleMask = Flags(1 << Schedule);
 
 //------------------------------------------------------------------------------
 
@@ -243,7 +243,7 @@ void InitThread::HandleInterrupt()
    //  it of the restart.  RootThread is now running a watchdog timer on the
    //  restart itself.  Update our state so that we will initiate the restart.
    //
-   if(Test(InitThread::Restart))
+   if(Test(Restart))
    {
       ResetFlags();
       state_ = Initializing;
@@ -261,12 +261,12 @@ void InitThread::HandleInterrupt()
    //
    Singleton< RootThread >::Instance()->Interrupt();
 
-   if(Test(InitThread::Recreate))
+   if(Test(Recreate))
    {
       RecreateThreads();
    }
 
-   if(Test(InitThread::Schedule))
+   if(Test(Schedule))
    {
       ContextSwitch();
    }
@@ -331,6 +331,7 @@ void InitThread::InitializeSystem()
    Singleton< ModuleRegistry >::Instance()->Restart();
    state_ = Running;
    Singleton< RootThread >::Instance()->Interrupt();
+   ContextSwitch();
 }
 
 //------------------------------------------------------------------------------

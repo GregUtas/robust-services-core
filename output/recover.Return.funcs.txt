@@ -1,56 +1,88 @@
-FUNCTION PROFILE: 3-Nov-2019 11:50:05.855 on Reigi
+FUNCTION PROFILE: 4-Nov-2019 14:55:37.464 on Reigi
 
     Calls       uSecs   Function
     -----       -----   --------
-        7          33   Thread.UpdateMutexCount
-        6          39   Thread.UpdateMutex
-        3          57   SysHeap.Free
-        3          25   SysMutex.Release
-        3          21   SysMutex.Acquire
-        3          15   Thread.RunningThread
-        2         250   Thread.Pause
-        2          60   SysThread.Resume
-        2          23   SysThread.Interrupt
-        2          13   MutexGuard.ctor
-        2          13   MutexGuard.dtor
-        2          12   Memory.Free
-        2          11   Log.Find
-        2          10   Thread.Interrupt
-        2           6   LogBuffer.First
-        1       10080   SysThread.Suspend
-        1         343   Singletons.UnbindInstance
-        1         110   ThreadStats.dtor
-        1          31   Daemon.Find
+     1780       15752   Thread.RunningThread
+     1775       18580   ThreadRegistry.FindThread
+     1061        7393   Thread.Test
+      936       15375   Thread.Pause
+      754        6687   Thread.UpdateMutexCount
+      747        7209   Thread.UpdateMutex
+      724       10222   SysThread.Resume
+      480        3765   Thread.InitialMsecs
+      441        4563   InitThread.Enter
+      430        7133   InitThread.CalculateDelay
+      416        3306   SysThread.Interrupt
+      415        3370   Thread.Interrupt
+      394        3208   SysThread.SetPriority
+      392         842   ThreadAdmin.WarpFactor
+      388       10278   Thread.Schedule
+      387        3516   SysThread.Delay
+      386     2003287   SysThread.Suspend
+      381       23762   SysMutex.Release
+      379        3241   Thread.Resume
+      377        2483   Thread.Ready
+      368        3171   Thread.Select
+      368        2758   Thread.SwitchContext
+      368        2641   Thread.Reset
+      368        2541   InitThread.ContextSwitch
+      359        3534   SysMutex.Acquire
+      351       48272   Thread.LogContextSwitch
+      348        3561   Thread.Suspend
+      348        2876   Thread.Proceed
+      346        3173   Thread.EnterBlockingOperation
+      343        3039   InitThread.HandleInterrupt
+      329        3380   Thread.ExitBlockingOperation
+      308        2214   SysThread.Proceed
+      153        1113   Thread.TicksLeft
+       69         546   InitThread.HandleTimeout
+       45         330   Thread.Preempt
+        6         481   SysHeap.Alloc
+        6          36   Memory.Alloc
+        3          63   Registry.Insert
+        2         503   Base.ctor
+        2          37   SysThread.CreateSentry
+        2          35   StatisticsRegistry.BindStat
+        2          13   Memory.Free
+        2           8   LogBuffer.First
+        2           8   SysHeap.Free
+        2           7   Statistic.ctor
+        2           0   Object.ctor
+        1        2486   RecoveryThread.ctor
+        1        1678   SysThread.Create
+        1          30   ThreadRegistry.AssociateIds
+        1          25   Pooled.MemType
         1          22   Registry.Erase
-        1          21   Thread.ReleaseResources
-        1          20   Thread.RegisterForSignals
-        1          16   Log.Submit
-        1          15   ObjectPool.UpdateAlarm
-        1          13   Q1Way.Enq
-        1          13   RecoveryThread.Destroy
-        1          12   Counter.dtor
-        1          12   ObjectPool.EnqBlock
-        1          12   Thread.EnterThread
-        1          11   ThreadRegistry.FindThread
-        1          10   SysThread.Wait
-        1          10   Thread.Ready
-        1          10   Thread.Resume
-        1           9   Statistic.dtor
-        1           8   LogGroupRegistry.FindGroup
-        1           8   Orphans.ExitNow
-        1           8   Thread.Schedule
-        1           7   LogBuffer.Push
-        1           7   Q1Way.Init
-        1           6   Daemon.ThreadDeleted
-        1           6   LogGroup.FindLog
+        1          22   Thread.SetInitialized
+        1          21   Singletons.BindInstance
+        1          21   ThreadRegistry.BindThread
+        1          20   Daemon.ThreadCreated
+        1          19   Permanent.operator new
+        1          18   Singletons.UnbindInstance
+        1          14   RecoveryThread.Destroy
+        1          11   Registry.Empty
+        1           8   Statistic.dtor
+        1           7   Object.operator delete
         1           6   StatisticsRegistry.UnbindStat
+        1           6   Thread.FactionToPriority
+        1           5   Debug.SwFlagOn
+        1           5   Dynamic.operator new
         1           5   LogBuffer.SetNext
-        1           5   Thread.InitialMsecs
-        1           4   LogBuffer.InsertionPoint
-        1           4   Memory.Copy
+        1           5   LogGroup.FindLog
+        1           5   Memory.Copy
+        1           5   Q1Way.Init
+        1           5   SysThread.Wait
+        1           4   MutexGuard.dtor
         1           4   Singleton.Destroy
-        1           3   LogBufferRegistry.Active
-        1           2   ThreadAdmin.WarpFactor
-        1           0   Alarm.Create
+        1           3   RecoveryThread.dtor
+        1           3   SysThread.ctor
+        1           0   Accumulator.ctor
+        1           0   Counter.ctor
+        1           0   Dynamic.ctor
+        1           0   HighWatermark.ctor
+        1           0   Log.Format
+        1           0   Permanent.ctor
+        1           0   Thread.dtor
+        1           0   ThreadStats.dtor
 
-Total functions: 50
+Total functions: 82

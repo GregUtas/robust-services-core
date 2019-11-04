@@ -1,66 +1,83 @@
-FUNCTION PROFILE: 3-Nov-2019 11:51:08.031 on Reigi
+FUNCTION PROFILE: 4-Nov-2019 14:57:03.833 on Reigi
 
     Calls       uSecs   Function
     -----       -----   --------
-       52     1596724   RecoveryThread.LoopForever
-       14          79   Thread.RunningThread
-        9          57   Log.Find
-        8          33   Thread.UpdateMutex
-        8          25   Thread.UpdateMutexCount
-        6          57   LogGroupRegistry.FindGroup
-        6          33   LogGroup.FindLog
-        6          23   LogBuffer.First
-        5        1836   ThreadRegistry.FindThread
-        5          40   SysMutex.Acquire
-        5          28   SysMutex.Release
-        4       31177   Thread.Pause
-        4          57   SysThread.Resume
-        4          23   Thread.Interrupt
-        4          18   SysThread.Interrupt
-        4          17   MutexGuard.ctor
-        4          17   MutexGuard.dtor
-        3         421   Log.Format
-        3         352   Base.ctor
-        3          42   Log.Submit
-        3          27   LogBuffer.Push
-        3          19   LogBuffer.SetNext
+     2926       26094   Thread.RunningThread
+     2914       28664   ThreadRegistry.FindThread
+     1416       20491   Thread.Pause
+     1240       12268   Thread.UpdateMutex
+     1236        9951   Thread.UpdateMutexCount
+     1173        9113   Thread.Test
+     1009       15557   SysThread.Resume
+      734        6122   Thread.InitialMsecs
+      686        7078   InitThread.Enter
+      679       10626   InitThread.CalculateDelay
+      669        5467   SysThread.Interrupt
+      661        6114   Thread.Interrupt
+      630        1583   ThreadAdmin.WarpFactor
+      629     5260897   SysThread.Suspend
+      629        5562   SysThread.Delay
+      626        4608   Thread.Schedule
+      618        7253   SysMutex.Release
+      612        5822   Thread.Resume
+      605        4110   Thread.Ready
+      597        5634   SysMutex.Acquire
+      591        6174   Thread.Suspend
+      587       47351   Thread.LogContextSwitch
+      577        5283   Thread.EnterBlockingOperation
+      557        6851   Thread.ExitBlockingOperation
+      555        6018   Thread.Select
+      555        4119   Thread.SwitchContext
+      554        4319   Thread.Reset
+      554        4157   InitThread.ContextSwitch
+      375        3617   InitThread.HandleInterrupt
+      342        2726   SysThread.SetPriority
+      341        3280   Thread.Proceed
+      341        2838   SysThread.Proceed
+      322        2747   Thread.TicksLeft
+      274        2333   InitThread.HandleTimeout
+       49        3258   RecoveryThread.LoopForever
+       16          91   LeakyBucketCounter.HasReachedLimit
+       15         118   Thread.RtcTimeout
+       12          99   Log.Find
+        8          84   LogGroupRegistry.FindGroup
+        8          47   LogGroup.FindLog
+        8          34   LogBuffer.First
+        5          27   MutexGuard.ctor
+        5          21   MutexGuard.dtor
+        4         667   Log.Format
+        4         534   Base.ctor
+        4          55   Log.Submit
+        4          36   LogBuffer.Push
+        4          33   Log.Create
+        4          26   LogBuffer.SetNext
+        4          22   Memory.Copy
+        4          20   LogBuffer.InsertionPoint
+        4          16   LogBufferRegistry.Active
+        4           0   Object.ctor
+        4           0   SysTime.ctor(now)
+        3          67   Thread.SetSignal
+        3          46   Thread.Raise
         3          18   Debug.SwFlagOn
-        3          16   Memory.Copy
-        3          16   Thread.SetSignal
-        3          13   LogBuffer.InsertionPoint
-        3          12   Log.Create
-        3          11   LogBufferRegistry.Active
-        3           0   Object.ctor
-        3           0   SysTime.ctor(now)
-        2         368   SysThread.Suspend
-        2          29   Thread.ExitBlockingOperation
-        2          14   Thread.ExitSwLog
-        1        2588   SysThreadStack.Display
-        1          32   Thread.LogContextSwitch
-        1          20   SysThread.Delay
-        1          12   LeakyBucketCounter.HasReachedLimit
+        3          16   Thread.LogSignal
+        2          13   Thread.ExitSwLog
+        1        2379   SysThreadStack.Display
         1          11   Thread.RegisterForSignals
-        1          10   Thread.Raise
-        1          10   Thread.Schedule
+        1           9   Thread.TrapHandler
+        1           8   Thread.HandleSignal
         1           8   Thread.SignalHandler
-        1           7   SysThread.Wait
-        1           7   Thread.HandleSignal
-        1           7   Thread.TrapHandler
-        1           6   Thread.LogSignal
-        1           6   Thread.Ready
+        1           6   Thread.LogTrap
         1           5   Exception.dtor
-        1           5   MutexRegistry.Release
-        1           5   Thread.LogTrap
-        1           4   Exception.ctor
-        1           4   Orphans.ExitNow
+        1           5   Thread.Preempt
+        1           4   MutexRegistry.Release
+        1           4   RecoveryThread.Recover
         1           4   SysThread.Start
-        1           4   Thread.EnterBlockingOperation
+        1           4   Thread.ExtendTime
         1           4   Thread.Start
-        1           4   Thread.Suspend
-        1           3   RecoveryThread.Recover
+        1           3   Exception.ctor
+        1           3   Orphans.ExitNow
         1           3   SignalException.dtor
-        1           3   Thread.ExtendTime
         1           0   SignalException.ctor
         1           0   Thread.SetTrap
 
-Total functions: 60
+Total functions: 77

@@ -2485,7 +2485,8 @@ word SchedCommand::ProcessCommand(CliThread& cli) const
       {
          auto thr = Singleton< ThreadRegistry >::Instance()->GetThread(tid);
          if(thr == nullptr) return cli.Report(-2, NoThreadExpl);
-         thr->Kill();
+         auto expl = thr->Kill();
+         if(expl != nullptr) return cli.Report(-1, expl);
       }
       break;
 

@@ -55,6 +55,7 @@
 #include "PosixSignalRegistry.h"
 #include "Registry.h"
 #include "Restart.h"
+#include "RootThread.h"
 #include "SignalException.h"
 #include "Singleton.h"
 #include "Statistics.h"
@@ -812,35 +813,7 @@ public:
    //  unpreemptably.
    //
    ticks_t currEnd_;
-
-   //  Causes a stack check each time it counts down to one.
-   //
-   static size_t StackCheckCounter_;
-
-   //  The time when the previous short interval for thread statistics began.
-   //
-   static ticks_t PrevIntervalStart_;
-
-   //  The time when the current short interval for thread statistics began.
-   //
-   static ticks_t CurrIntervalStart_;
-
-   //  The amount of idle time during the most recent short interval.
-   //
-   static usecs_t TimeIdle_;
-
-   //  The time spent in threads during the most recent short interval.
-   //
-   static usecs_t TimeUsed_;
 };
-
-//------------------------------------------------------------------------------
-
-size_t ThreadPriv::StackCheckCounter_ = 1;
-ticks_t ThreadPriv::PrevIntervalStart_ = 0;
-ticks_t ThreadPriv::CurrIntervalStart_ = 0;
-usecs_t ThreadPriv::TimeIdle_ = 0;
-usecs_t ThreadPriv::TimeUsed_ = 0;
 
 //------------------------------------------------------------------------------
 
@@ -975,35 +948,35 @@ const SysThread::Priority FactionMap[Faction_N] =
 //
 Thread* ActiveThread_ = nullptr;
 
+//  The factions that may currently be scheduled.
+//
+FactionFlags FactionsEnabled_ = FactionFlags();
+
 //  The thread at which to start searching for the thread to be
 //  scheduled in.  Scheduling is currently round-robin but will
 //  eventually be changed to support proportional scheduling.
 //
 id_t Start_ = 1;
 
-//  Set to restrict scheduling to specific factions during a restart.
+//  Causes a stack check each time it counts down to one.
 //
-bool FactionsRestricted_ = true;
+size_t StackCheckCounter_ = 1;
 
-//------------------------------------------------------------------------------
+//  The time when the previous short interval for thread statistics began.
+//
+ticks_t PrevIntervalStart_ = 0;
 
-bool FactionAllowed(Faction f)
-{
-   if(FactionsRestricted_)
-   {
-      //  Some factions are not scheduled while preparing to shut down.
-      //
-      switch(f)
-      {
-      case PayloadFaction:
-      case LoadTestFaction:
-      case AuditFaction:
-         return false;
-      }
-   }
+//  The time when the current short interval for thread statistics began.
+//
+ticks_t CurrIntervalStart_ = 0;
 
-   return true;
-}
+//  The amount of idle time during the most recent short interval.
+//
+usecs_t TimeIdle_ = 0;
+
+//  The time spent in threads during the most recent short interval.
+//
+usecs_t TimeUsed_ = 0;
 
 //------------------------------------------------------------------------------
 
@@ -1032,7 +1005,7 @@ Thread::Thread(Faction faction, Daemon* daemon) :
    {
       //  There are no threads, so we must be wrapping the root thread.
       //
-      ThreadPriv::CurrIntervalStart_ = Clock::TicksNow();
+      CurrIntervalStart_ = Clock::TicksNow();
 
       Singleton< Orphans >::Instance();
       Singleton< ContextSwitches >::Instance();
@@ -1147,6 +1120,14 @@ TraceStatus Thread::CalcStatus(bool dynamic) const
    auto buff = Singleton< TraceBuffer >::Instance();
    if(buff->FilterIsOn(TraceAll)) return TraceIncluded;
    return TraceExcluded;
+}
+
+//------------------------------------------------------------------------------
+
+bool Thread::CanBeScheduled() const
+{
+   return (!deleted_ && (priv_->blocked_ == NotBlocked) &&
+      FactionsEnabled_.test(faction_));
 }
 
 //------------------------------------------------------------------------------
@@ -1382,11 +1363,11 @@ void Thread::DisplaySummaries(ostream& stream)
 
    //  Set TIME1 to the length of the previous short interval.
    //
-   auto time1 = ThreadPriv::TimeIdle_ + ThreadPriv::TimeUsed_;
+   auto time1 = TimeIdle_ + TimeUsed_;
 
    if(time1 > 0)
    {
-      stream << setw(6) << 100 * (double(ThreadPriv::TimeIdle_) / time1);
+      stream << setw(6) << 100 * (double(TimeIdle_) / time1);
    }
 
    stream << CRLF;
@@ -1445,6 +1426,17 @@ void Thread::DisplaySummary
    }
 
    stream << CRLF;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Thread_EnableFactions = "Thread.EnableFactions";
+
+void Thread::EnableFactions(const FactionFlags& enabled)
+{
+   Debug::ft(Thread_EnableFactions);
+
+   FactionsEnabled_ = enabled;
 }
 
 //------------------------------------------------------------------------------
@@ -1617,13 +1609,10 @@ void Thread::ExitBlockingOperation(fn_name_arg func)
 
    auto thr = RunningThread();
 
-   if(thr->priv_->blocked_ == NotBlocked)
-   {
+   if(thr->priv_->blocked_ != NotBlocked)
+      thr->priv_->blocked_ = NotBlocked;
+   else
       Debug::SwLog(Thread_EnterBlockingOperation, "not blocked", 0);
-      return;
-   }
-
-   thr->priv_->blocked_ = NotBlocked;
 
    //  Check if the thread is being forced to sleep or exit.
    //
@@ -1757,7 +1746,7 @@ void Thread::FunctionInvoked(fn_name_arg func)
 
    if(Debug::FcFlags_.test(Debug::StackChecking))
    {
-      if(ThreadPriv::StackCheckCounter_ <= 1)
+      if(StackCheckCounter_ <= 1)
       {
          if(thr == nullptr) thr = RunningThread(false);
          if(thr == nullptr) return;
@@ -1765,7 +1754,7 @@ void Thread::FunctionInvoked(fn_name_arg func)
       }
       else
       {
-         --ThreadPriv::StackCheckCounter_;
+         --StackCheckCounter_;
       }
    }
 }
@@ -1896,14 +1885,6 @@ bool Thread::IsLocked() const
 
 //------------------------------------------------------------------------------
 
-bool Thread::IsReady() const
-{
-   return ((priv_->blocked_ == NotBlocked) &&
-      (faction_ < SystemFaction) && !deleted_);
-}
-
-//------------------------------------------------------------------------------
-
 bool Thread::IsScheduled() const
 {
    return priv_->waiting_;
@@ -1924,8 +1905,7 @@ bool Thread::IsTraceable() const
    {
    case WatchdogFaction:
    case SystemFaction:
-      return ((Restart::GetStatus() != Running) ||
-         (priv_->status_ == TraceIncluded));
+      if(Restart::GetStatus() != Running) return true;
    }
 
    return (trace == TraceIncluded);
@@ -1933,13 +1913,17 @@ bool Thread::IsTraceable() const
 
 //------------------------------------------------------------------------------
 
+fixed_string KillRootThread = "Cannot kill the root thread.";
+fixed_string KillDeletedThread = "Cannot kill a deleted thread.";
+
 fn_name Thread_Kill = "Thread.Kill";
 
-void Thread::Kill()
+fixed_string Thread::Kill()
 {
    Debug::ft(Thread_Kill);
 
-   if(deleted_) return;
+   if(Singleton< RootThread >::Instance() == this) return KillRootThread;
+   if(deleted_) return KillDeletedThread;
 
    //  If the thread is holding or blocked on a mutex, delete it outright.
    //  Otherwise, sending it the signal SIGPURGE will cause it to exit as
@@ -1949,6 +1933,8 @@ void Thread::Kill()
       Destroy();
    else
       Raise(SIGPURGE);
+
+   return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -2290,10 +2276,8 @@ void Thread::PauseOver(word limit)
 
 double Thread::PercentIdle()
 {
-   if(ThreadPriv::TimeIdle_ == 0) return 0.0;
-
-   return 100 * (double(ThreadPriv::TimeIdle_) /
-      (ThreadPriv::TimeIdle_ + ThreadPriv::TimeUsed_));
+   if(TimeIdle_ == 0) return 0.0;
+   return 100 * (double(TimeIdle_) / (TimeIdle_ + TimeUsed_));
 }
 
 //------------------------------------------------------------------------------
@@ -2600,17 +2584,6 @@ bool Thread::Restarting(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_RestrictFactions = "Thread.RestrictFactions";
-
-void Thread::RestrictFactions(bool enable)
-{
-   Debug::ft(Thread_RestrictFactions);
-
-   FactionsRestricted_ = enable;
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Thread_Resume = "Thread.Resume";
 
 void Thread::Resume(fn_name_arg func)
@@ -2748,7 +2721,7 @@ Thread* Thread::Select()
    Debug::ft(Thread_Select);
 
    //  Cycle through all threads, beginning with the one identified by
-   //  start_, to find the next one that is ready to run.
+   //  start_, to find the next one that can be scheduled.
    //
    auto& threads = Singleton< ThreadRegistry >::Instance()->Threads();
    auto first = threads.First(Start_);
@@ -2756,7 +2729,7 @@ Thread* Thread::Select()
 
    for(auto t = first; t != nullptr; threads.Next(t))
    {
-      if(t->IsReady() && FactionAllowed(t->faction_))
+      if(t->CanBeScheduled())
       {
          next = t;
          break;
@@ -2767,7 +2740,7 @@ Thread* Thread::Select()
    {
       for(auto t = threads.First(); t != first; threads.Next(t))
       {
-         if(t->IsReady() && FactionAllowed(t->faction_))
+         if(t->CanBeScheduled())
          {
             next = t;
             break;
@@ -2918,7 +2891,7 @@ void Thread::StackCheck()
    //
    if((priv_ == nullptr) || (priv_->stackBase_ == nullptr)) return;
 
-   ThreadPriv::StackCheckCounter_ = ThreadAdmin::StackCheckInterval();
+   StackCheckCounter_ = ThreadAdmin::StackCheckInterval();
 
    signal_t local = SIGNIL;
    ptrdiff_t stacksize = &local - priv_->stackBase_;
@@ -3135,31 +3108,30 @@ void Thread::StartShortInterval()
 
    auto& threads = Singleton< ThreadRegistry >::Instance()->Threads();
 
-   ThreadPriv::TimeUsed_ = 0;
+   TimeUsed_ = 0;
 
    for(auto t = threads.First(); t != nullptr; threads.Next(t))
    {
-      ThreadPriv::TimeUsed_ += t->priv_->currUsecs_;
+      TimeUsed_ += t->priv_->currUsecs_;
       t->priv_->prevUsecs_ = t->priv_->currUsecs_;
       t->priv_->currUsecs_ = 0;
    }
 
-   ThreadPriv::PrevIntervalStart_ = ThreadPriv::CurrIntervalStart_;
-   ThreadPriv::CurrIntervalStart_ = Clock::TicksNow();
+   PrevIntervalStart_ = CurrIntervalStart_;
+   CurrIntervalStart_ = Clock::TicksNow();
 
    //  Until the first short interval ends, there is no "previous" short
    //  interval.
    //
-   if(ThreadPriv::PrevIntervalStart_ > 0)
+   if(PrevIntervalStart_ > 0)
    {
-      auto ticks =
-         ThreadPriv::CurrIntervalStart_ - ThreadPriv::PrevIntervalStart_;
+      auto ticks = CurrIntervalStart_ - PrevIntervalStart_;
       auto total = Clock::TicksToUsecs(ticks);
 
-      if(total > ThreadPriv::TimeUsed_)
-         ThreadPriv::TimeIdle_ = total - ThreadPriv::TimeUsed_;
+      if(total > TimeUsed_)
+         TimeIdle_ = total - TimeUsed_;
       else
-         ThreadPriv::TimeIdle_ = 0;
+         TimeIdle_ = 0;
    }
 }
 
@@ -3246,7 +3218,7 @@ void Thread::Suspend()
 
 fn_name Thread_SwitchContext = "Thread.SwitchContext";
 
-bool Thread::SwitchContext()
+Thread* Thread::SwitchContext()
 {
    Debug::ft(Thread_SwitchContext);
 
@@ -3258,11 +3230,11 @@ bool Thread::SwitchContext()
       //  before ActiveThread_ was set (below), we were invoked again.
       //
       ThreadAdmin::Incr(ThreadAdmin::Reentries);
-      return true;
+      return curr;
    }
 
    //  Select the next thread to run.  If one is found, preempt any running
-   //  thread and signal the next one to resume.
+   //  thread (which cannot be locked) and signal the next one to resume.
    //
    auto next = Select();
 
@@ -3271,16 +3243,16 @@ bool Thread::SwitchContext()
       if(next == curr)
       {
          ThreadAdmin::Incr(ThreadAdmin::Reselects);
-         return true;
+         return curr;
       }
 
       if(curr != nullptr) curr->Preempt();
       ActiveThread_ = next;
       next->Proceed();
-      return true;
+      return next;
    }
 
-   return (curr != nullptr);
+   return curr;
 }
 
 //------------------------------------------------------------------------------
@@ -3407,7 +3379,7 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
    {
       Debug::ft(Thread_TrapHandler);  //@
 
-      //  IF the thread is holding any mutexes, release them.
+      //  If the thread is holding any mutexes, release them.
       //
       Singleton< MutexRegistry >::Instance()->Release();
 

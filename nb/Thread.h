@@ -67,13 +67,9 @@ class Thread : public Pooled
    friend class SysMutex;
    friend class ThreadRegistry;
 public:
-   //  Allows "Id" to refer to a thread identifier in this class hierarchy.
-   //
-   typedef ThreadId Id;
-
    //> Highest valid thread identifier.
    //
-   static const Id MaxId;
+   static const ThreadId MaxId;
 
    //  Returns the thread that is currently running.  Throws an exception
    //  if ASSERT is set and the running thread cannot be found.
@@ -165,7 +161,7 @@ public:
 
    //  Returns the thread's identifier within ThreadRegistry.
    //
-   Id Tid() const { return Id(tid_.GetId()); }
+   ThreadId Tid() const { return ThreadId(tid_.GetId()); }
 
    //  Returns the native thread's identifier.
    //

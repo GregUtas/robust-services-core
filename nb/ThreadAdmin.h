@@ -119,8 +119,9 @@ public:
       Preempts,     // thread preempted
       Delays,       // InitThread timed out but found a thread to schedule
       Resignals,    // selected thread had to be resignalled to run
-      Reentries,    // InitThread interrupted but locked thread exists
-      Reselects,    // active thread reselected to run
+      Reentries,    // asked to schedule but locked thread exists
+      Reselects,    // active thread selected to run again
+      Retractions,  // another thread became active before the selected thread
       Interrupts,   // thread interrupts
       Traps,        // traps (signals and exceptions)
       Recoveries,   // trap recoveries

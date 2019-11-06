@@ -420,7 +420,7 @@ private:
 
    //  Schedules the next thread when this one is suspending.
    //
-   void Schedule() const;
+   void Schedule();
 
    //  Schedules another thread after a thread yields or blocks, or
    //  after a preemptable thread has run for its allotted time.
@@ -459,9 +459,10 @@ private:
    //
    static Thread* ActiveThread();
 
-   //  Sets the active thread to nullptr if it matches THR.
+   //  Sets the active thread to nullptr and returns true if it matches
+   //  ACTIVE, else returns false.
    //
-   static void ClearActiveThread(const Thread* thr);
+   static bool ClearActiveThread(Thread* active);
 
    //  Returns the active thread if it is running unpreemptably.
    //

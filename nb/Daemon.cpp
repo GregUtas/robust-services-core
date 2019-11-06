@@ -28,6 +28,7 @@
 #include "InitThread.h"
 #include "Restart.h"
 #include "Singleton.h"
+#include "ThreadAdmin.h"
 
 using std::ostream;
 using std::string;
@@ -97,6 +98,7 @@ void Daemon::CreateThreads()
    {
       auto thread = CreateThread();
       threads_.insert(thread);
+      ThreadAdmin::Incr(ThreadAdmin::Recreations);
    }
 }
 

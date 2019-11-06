@@ -23,6 +23,7 @@
 #include "Dynamic.h"
 #include "FunctionTrace.h"
 #include "Permanent.h"
+#include <atomic>
 #include <bitset>
 #include <cctype>
 #include <csignal>
@@ -946,7 +947,7 @@ const SysThread::Priority FactionMap[Faction_N] =
 //  The thread that is running or which has been scheduled to run.
 //  Excludes RootThread and InitThread.
 //
-Thread* ActiveThread_ = nullptr;
+std::atomic< Thread* > ActiveThread_ = nullptr;
 
 //  The factions that may currently be scheduled.
 //
@@ -1093,7 +1094,7 @@ c_string Thread::AbbrName() const
 
 Thread* Thread::ActiveThread()
 {
-   auto thr = ActiveThread_;
+   auto thr = ActiveThread_.load();
    if(thr == nullptr) return nullptr;
    if(thr->deleted_) return nullptr;
    return thr;
@@ -1216,9 +1217,9 @@ void Thread::Cleanup()
 
 //------------------------------------------------------------------------------
 
-void Thread::ClearActiveThread(const Thread* thr)
+bool Thread::ClearActiveThread(Thread* active)
 {
-   if(ActiveThread_ == thr) ActiveThread_ = nullptr;
+   return ActiveThread_.compare_exchange_strong(active, nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -1913,8 +1914,8 @@ bool Thread::IsTraceable() const
 
 //------------------------------------------------------------------------------
 
-fixed_string KillRootThread = "Cannot kill the root thread.";
-fixed_string KillDeletedThread = "Cannot kill a deleted thread.";
+fixed_string KillRootThread = "The root thread cannot be killed.";
+fixed_string KillDeletedThread = "A deleted thread cannot be killed.";
 
 fn_name Thread_Kill = "Thread.Kill";
 
@@ -2686,7 +2687,7 @@ Thread* Thread::RunningThread(bool assert)
 
 fn_name Thread_Schedule = "Thread.Schedule";
 
-void Thread::Schedule() const
+void Thread::Schedule()
 {
    Debug::ft(Thread_Schedule);
 
@@ -2694,13 +2695,13 @@ void Thread::Schedule() const
    //
    if(faction_ >= SystemFaction) return;
 
-   auto active = ActiveThread();
+   auto active = this;
 
-   if((active != this) && (active != nullptr))
+   if(!ActiveThread_.compare_exchange_strong(active, nullptr))
    {
-      //  We get here after a preemptable thread suspends or invokes
-      //  MakeUnpreemptable.  If an unpreemptable thread is running,
-      //  don't try to schedule another thread.
+      //  This occurs when a preemptable thread suspends or invokes
+      //  MakeUnpreemptable.  The active thread is an unpreemptable
+      //  thread, so don't try to schedule another one.
       //
       return;
    }
@@ -2708,7 +2709,6 @@ void Thread::Schedule() const
    //  No unpreemptable thread is running.  Wake InitThread to schedule
    //  the next thread.
    //
-   ActiveThread_ = nullptr;
    Singleton< InitThread >::Instance()->Interrupt(InitThread::ScheduleMask);
 }
 
@@ -3226,10 +3226,19 @@ Thread* Thread::SwitchContext()
 
    if((curr != nullptr) && curr->IsLocked())
    {
-      //  We were invoked to schedule a thread and started to do so, but
-      //  before ActiveThread_ was set (below), we were invoked again.
+      //  This is similar to code in InitThread, where the scheduled thread
+      //  occasionally misses its Proceed() and needs to be resignalled.
       //
-      ThreadAdmin::Incr(ThreadAdmin::Reentries);
+      if(curr->IsScheduled())
+      {
+         curr->Proceed();
+         ThreadAdmin::Incr(ThreadAdmin::Resignals);
+      }
+      else
+      {
+         ThreadAdmin::Incr(ThreadAdmin::Reentries);
+      }
+
       return curr;
    }
 
@@ -3246,8 +3255,16 @@ Thread* Thread::SwitchContext()
          return curr;
       }
 
+      if(!ActiveThread_.compare_exchange_strong(curr, next))
+      {
+         //  CURR is no longer the active thread, even though it was when
+         //  this function was entered.
+         //
+         ThreadAdmin::Incr(ThreadAdmin::Retractions);
+         return curr;
+      }
+
       if(curr != nullptr) curr->Preempt();
-      ActiveThread_ = next;
       next->Proceed();
       return next;
    }

@@ -588,7 +588,7 @@ void ObjectPool::Display(ostream& stream,
    stream << prefix << "totalCount   : " << totalCount_ << CRLF;
    stream << prefix << "alarmName    : " << alarmName_ << CRLF;
    stream << prefix << "alarmExpl    : " << alarmExpl_ << CRLF;
-   stream << prefix << "alarm        : " << alarm_ << CRLF;
+   stream << prefix << "alarm        : " << strObj(alarm_) << CRLF;
    stream << prefix << "corruptQHead : " << corruptQHead_ << CRLF;
 
    auto lead = prefix + spaces(2);
@@ -1027,7 +1027,7 @@ void ObjectPool::RecoverBlocks()
       if(log != nullptr)
       {
          *log << Log::Tab << "pool=" << int(pid);
-         *log << " count=" << count;
+         *log << " recovered=" << count;
          Log::Submit(log);
       }
    }

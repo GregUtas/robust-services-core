@@ -23,12 +23,8 @@
 #define NBDAEMONS_H_INCLUDED
 
 #include "Daemon.h"
+#include "NbTypes.h"
 #include "SysTypes.h"
-
-namespace NodeBase
-{
-   template<typename T> class Singleton;
-}
 
 //------------------------------------------------------------------------------
 

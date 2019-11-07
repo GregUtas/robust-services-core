@@ -28,6 +28,7 @@
 #include "CliThread.h"
 #include "Clock.h"
 #include "CoutThread.h"
+#include "DaemonRegistry.h"
 #include "Debug.h"
 #include "Element.h"
 #include "FileThread.h"
@@ -37,7 +38,6 @@
 #include "LogThread.h"
 #include "Memory.h"
 #include "ModuleRegistry.h"
-#include "NbAppIds.h"
 #include "NbIncrement.h"
 #include "NbLogs.h"
 #include "NbPools.h"
@@ -103,6 +103,7 @@ void NbModule::Shutdown(RestartLevel level)
    Singleton< ThreadAdmin >::Instance()->Shutdown(level);
    Singleton< ThreadRegistry >::Instance()->Shutdown(level);
    Singleton< ObjectPoolRegistry >::Instance()->Shutdown(level);
+   Singleton< DaemonRegistry >::Instance()->Shutdown(level);
    Singleton< CfgParmRegistry >::Instance()->Shutdown(level);
    Singleton< LogGroupRegistry >::Instance()->Shutdown(level);
    Singleton< AlarmRegistry >::Instance()->Shutdown(level);
@@ -135,6 +136,7 @@ void NbModule::Startup(RestartLevel level)
    Singleton< LogGroupRegistry >::Instance()->Startup(level);
    CreateNbLogs(level);
    Singleton< CfgParmRegistry >::Instance()->Startup(level);
+   Singleton< DaemonRegistry >::Instance()->Startup(level);
    Singleton< ObjectPoolRegistry >::Instance()->Startup(level);
    Singleton< ThreadRegistry >::Instance()->Startup(level);
    Singleton< ThreadAdmin >::Instance()->Startup(level);

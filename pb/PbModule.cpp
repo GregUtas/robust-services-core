@@ -23,7 +23,6 @@
 #include "CbModule.h"
 #include "Debug.h"
 #include "ModuleRegistry.h"
-#include "NbAppIds.h"
 #include "PotsBicFeature.h"
 #include "PotsBocFeature.h"
 #include "PotsCfbFeature.h"

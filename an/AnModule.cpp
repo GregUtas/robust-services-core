@@ -23,7 +23,6 @@
 #include "AnIncrement.h"
 #include "Debug.h"
 #include "ModuleRegistry.h"
-#include "NbAppIds.h"
 #include "PbModule.h"
 #include "PotsShelf.h"
 #include "Singleton.h"
@@ -40,6 +39,11 @@ fn_name AnModule_ctor = "AnModule.ctor";
 AnModule::AnModule() : Module()
 {
    Debug::ft(AnModule_ctor);
+
+   //  Create the modules required by AccessNode.
+   //
+   Singleton< PbModule >::Instance();
+   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -49,11 +53,6 @@ fn_name AnModule_dtor = "AnModule.dtor";
 AnModule::~AnModule()
 {
    Debug::ft(AnModule_dtor);
-
-   //  Create the modules required by AccessNode.
-   //
-   Singleton< PbModule >::Instance();
-   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------

@@ -20,20 +20,19 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "InitThread.h"
-#include <sstream>
+#include <ostream>
 #include <string>
 #include "Algorithms.h"
 #include "Daemon.h"
 #include "DaemonRegistry.h"
 #include "Debug.h"
-#include "Formatters.h"
-#include "Log.h"
 #include "ModuleRegistry.h"
-#include "NbLogs.h"
+#include "NbTracer.h"
 #include "Registry.h"
 #include "RootThread.h"
 #include "Singleton.h"
 #include "ThreadAdmin.h"
+#include "ToolTypes.h"
 
 using std::ostream;
 using std::string;
@@ -121,19 +120,10 @@ void InitThread::CauseRestart()
    Debug::ft(InitThread_CauseRestart);
 
    //  We get here if
-   //  o a critical thread could not be recreated
    //  o we trapped during a restart
    //  o our state gets corrupted (unlikely)
    //  o Delay fails (unlikely)
    //
-   auto log = Log::Create(ThreadLogGroup, ThreadCriticalDeath);
-
-   if(log != nullptr)
-   {
-      *log << Log::Tab << "errval=" << strHex(errval_);
-      Log::Submit(log);
-   }
-
    Singleton< RootThread >::Instance()->Interrupt(RestartMask);
    state_ = Initializing;
    errval_ = 0;
@@ -331,6 +321,15 @@ void InitThread::InitializeSystem()
    Singleton< ModuleRegistry >::Instance()->Restart();
    state_ = Running;
    Singleton< RootThread >::Instance()->Interrupt();
+
+   //  Now that the restart is over, disable tracing of RootThread
+   //  and this thread, which usually cause unwanted noise in traces,
+   //  and schedule the first thread before returning to our thread
+   //  loop to sleep.
+   //
+   auto nbt = Singleton< NbTracer >::Instance();
+   nbt->SelectFaction(WatchdogFaction, TraceExcluded);
+   nbt->SelectFaction(SystemFaction, TraceExcluded);
    ContextSwitch();
 }
 

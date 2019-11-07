@@ -23,8 +23,6 @@
 #include "Dynamic.h"
 #include "FunctionTrace.h"
 #include "Permanent.h"
-#include <atomic>
-#include <bitset>
 #include <cctype>
 #include <csignal>
 #include <cstdlib>

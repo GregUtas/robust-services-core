@@ -22,7 +22,6 @@
 #include "SnModule.h"
 #include "Debug.h"
 #include "ModuleRegistry.h"
-#include "NbAppIds.h"
 #include "PbModule.h"
 #include "PotsBicService.h"
 #include "PotsBocService.h"

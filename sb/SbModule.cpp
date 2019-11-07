@@ -24,7 +24,6 @@
 #include "FactoryRegistry.h"
 #include "InvokerPoolRegistry.h"
 #include "ModuleRegistry.h"
-#include "NbAppIds.h"
 #include "NwModule.h"
 #include "ProtocolRegistry.h"
 #include "SbIncrement.h"
@@ -128,10 +127,13 @@ void SbModule::Startup(RestartLevel level)
    Singleton< EventPool >::Instance()->Startup(level);
    Singleton< BtIpBufferPool >::Instance()->Startup(level);
 
-   Singleton< PayloadInvokerPool >::Instance()->Startup(level);
    Singleton< TimerProtocol >::Instance()->Startup(level);
    Singleton< SbTracer >::Instance()->Startup(level);
    Singleton< SbIncrement >::Instance()->Startup(level);
+
+   //  Create thread pools.
+   //
+   Singleton< PayloadInvokerPool >::Instance();
 
    //  Start threads.
    //

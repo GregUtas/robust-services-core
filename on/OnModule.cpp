@@ -23,7 +23,6 @@
 #include "CnModule.h"
 #include "Debug.h"
 #include "ModuleRegistry.h"
-#include "NbAppIds.h"
 #include "PbModule.h"
 #include "Singleton.h"
 #include "SysTypes.h"

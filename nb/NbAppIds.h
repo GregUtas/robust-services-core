@@ -22,7 +22,6 @@
 #ifndef NBAPPIDS_H_INCLUDED
 #define NBAPPIDS_H_INCLUDED
 
-#include "NbTypes.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------

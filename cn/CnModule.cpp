@@ -22,7 +22,6 @@
 #include "CnModule.h"
 #include "Debug.h"
 #include "ModuleRegistry.h"
-#include "NbAppIds.h"
 #include "SbModule.h"
 #include "Singleton.h"
 #include "SysTypes.h"

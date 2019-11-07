@@ -23,7 +23,6 @@
 #include "CbModule.h"
 #include "Debug.h"
 #include "ModuleRegistry.h"
-#include "NbAppIds.h"
 #include "Singleton.h"
 #include "SysTypes.h"
 

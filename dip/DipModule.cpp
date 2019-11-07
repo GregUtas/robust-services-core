@@ -26,7 +26,6 @@
 #include "BotTracer.h"
 #include "Debug.h"
 #include "DipProtocol.h"
-#include "DipTypes.h"
 #include "ModuleRegistry.h"
 #include "NwModule.h"
 #include "Singleton.h"

@@ -29,7 +29,6 @@
 #include "Debug.h"
 #include "Library.h"
 #include "ModuleRegistry.h"
-#include "NbAppIds.h"
 #include "NbModule.h"
 #include "NtModule.h"
 #include "Singleton.h"

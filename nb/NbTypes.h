@@ -22,7 +22,6 @@
 #ifndef NBTYPES_H_INCLUDED
 #define NBTYPES_H_INCLUDED
 
-#include <bitset>
 #include <cstdint>
 #include <iosfwd>
 #include <memory>

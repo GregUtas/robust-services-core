@@ -25,7 +25,6 @@
 #include "IpPortRegistry.h"
 #include "IpServiceRegistry.h"
 #include "ModuleRegistry.h"
-#include "NbAppIds.h"
 #include "NbModule.h"
 #include "NwIncrement.h"
 #include "NwLogs.h"

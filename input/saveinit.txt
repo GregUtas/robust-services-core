@@ -1,8 +1,14 @@
 stop
+/ The factions for RootThread and InitThread are excluded once the system is
+/ running, so they must be temporarily included to be added to the trace.
+include faction &faction.watchdog
+include faction &faction.system
 save trace init
 nt
 save funcs init
 clear buffer
+exclude faction &faction.system
+exclude faction &faction.watchdog
 / register as a testcase; the only logs should be NET500 and NODE500
 testcase begin init
 logs count

@@ -19,8 +19,6 @@
 #include <list>
 #include <memory>
 #include <set>
-#include "NbAppIds.h"
-#include "NbTypes.h"
 #include "NwTypes.h"
 #include "SysTypes.h"
 #include "ToolTypes.h"

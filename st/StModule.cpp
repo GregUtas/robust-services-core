@@ -22,7 +22,6 @@
 #include "StModule.h"
 #include "Debug.h"
 #include "ModuleRegistry.h"
-#include "NbAppIds.h"
 #include "NtModule.h"
 #include "SbAppIds.h"
 #include "SbModule.h"

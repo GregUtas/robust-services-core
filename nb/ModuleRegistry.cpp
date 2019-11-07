@@ -44,8 +44,6 @@ using std::string;
 
 namespace NodeBase
 {
-//------------------------------------------------------------------------------
-//
 //  The following return the set of factions that can be scheduled during
 //  various scenarios.
 //

@@ -28,6 +28,7 @@
 #include "CxxSymbols.h"
 #include "Debug.h"
 #include "Library.h"
+#include "ModuleRegistry.h"
 #include "NbAppIds.h"
 #include "NbModule.h"
 #include "NtModule.h"
@@ -41,15 +42,17 @@ using namespace NodeTools;
 
 namespace CodeTools
 {
-bool CtModule::Registered = Register();
-
-//------------------------------------------------------------------------------
-
 fn_name CtModule_ctor = "CtModule.ctor";
 
-CtModule::CtModule() : Module(CtModuleId)
+CtModule::CtModule() : Module()
 {
    Debug::ft(CtModule_ctor);
+
+   //  Create the modules required by CodeTools.
+   //
+   Singleton< NbModule >::Instance();
+   Singleton< NtModule >::Instance();
+   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -59,21 +62,6 @@ fn_name CtModule_dtor = "CtModule.dtor";
 CtModule::~CtModule()
 {
    Debug::ft(CtModule_dtor);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CtModule_Register = "CtModule.Register";
-
-bool CtModule::Register()
-{
-   Debug::ft(CtModule_Register);
-
-   //  Create the modules required by CodeTools.
-   //
-   Singleton< NbModule >::Instance();
-   Singleton< NtModule >::Instance();
-   return true;
 }
 
 //------------------------------------------------------------------------------

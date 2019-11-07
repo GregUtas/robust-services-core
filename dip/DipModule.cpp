@@ -27,6 +27,7 @@
 #include "Debug.h"
 #include "DipProtocol.h"
 #include "DipTypes.h"
+#include "ModuleRegistry.h"
 #include "NwModule.h"
 #include "Singleton.h"
 #include "SysTypes.h"
@@ -38,30 +39,16 @@ using namespace NetworkBase;
 
 namespace Diplomacy
 {
-bool DipModule::Registered = Register();
-
-//------------------------------------------------------------------------------
-
 fn_name DipModule_ctor = "DipModule.ctor";
 
-DipModule::DipModule() : Module(DipModuleId)
+DipModule::DipModule() : Module()
 {
    Debug::ft(DipModule_ctor);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name DipModule_Register = "DipModule.Register";
-
-bool DipModule::Register()
-{
-   Debug::ft(DipModule_Register);
 
    //  Create the modules required by Diplomacy.
    //
    Singleton< NwModule >::Instance();
-   Singleton< DipModule >::Instance();
-   return true;
+   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------

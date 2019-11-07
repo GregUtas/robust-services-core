@@ -21,6 +21,7 @@
 //
 #include "SnModule.h"
 #include "Debug.h"
+#include "ModuleRegistry.h"
 #include "NbAppIds.h"
 #include "PbModule.h"
 #include "PotsBicService.h"
@@ -52,15 +53,16 @@ using namespace SessionBase;
 
 namespace ServiceNode
 {
-bool SnModule::Registered = Register();
-
-//------------------------------------------------------------------------------
-
 fn_name SnModule_ctor = "SnModule.ctor";
 
-SnModule::SnModule() : Module(SnModuleId)
+SnModule::SnModule() : Module()
 {
    Debug::ft(SnModule_ctor);
+
+   //  Create the modules required by ServiceNode.
+   //
+   Singleton< PbModule >::Instance();
+   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -70,21 +72,6 @@ fn_name SnModule_dtor = "SnModule.dtor";
 SnModule::~SnModule()
 {
    Debug::ft(SnModule_dtor);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name SnModule_Register = "SnModule.Register";
-
-bool SnModule::Register()
-{
-   Debug::ft(SnModule_Register);
-
-   //  Create the modules required by ServiceNode.
-   //
-   Singleton< PbModule >::Instance();
-   Singleton< SnModule >::Instance();
-   return true;
 }
 
 //------------------------------------------------------------------------------

@@ -36,6 +36,7 @@
 #include "LogGroupRegistry.h"
 #include "LogThread.h"
 #include "Memory.h"
+#include "ModuleRegistry.h"
 #include "NbAppIds.h"
 #include "NbIncrement.h"
 #include "NbLogs.h"
@@ -59,15 +60,13 @@
 
 namespace NodeBase
 {
-bool NbModule::Registered = Register();
-
-//------------------------------------------------------------------------------
-
 fn_name NbModule_ctor = "NbModule.ctor";
 
-NbModule::NbModule() : Module(NbModuleId)
+NbModule::NbModule() : Module()
 {
    Debug::ft(NbModule_ctor);
+
+   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -84,20 +83,6 @@ NbModule::~NbModule()
 void NbModule::Patch(sel_t selector, void* arguments)
 {
    Module::Patch(selector, arguments);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name NbModule_Register = "NbModule.Register";
-
-bool NbModule::Register()
-{
-   Debug::ft(NbModule_Register);
-
-   //  Create the modules required by NodeBase.
-   //
-   Singleton< NbModule >::Instance();
-   return true;
 }
 
 //------------------------------------------------------------------------------

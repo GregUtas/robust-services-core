@@ -22,6 +22,7 @@
 #include "MbModule.h"
 #include "Debug.h"
 #include "MbPools.h"
+#include "ModuleRegistry.h"
 #include "NbAppIds.h"
 #include "SbModule.h"
 #include "Singleton.h"
@@ -37,15 +38,16 @@ using namespace SessionBase;
 
 namespace MediaBase
 {
-bool MbModule::Registered = Register();
-
-//------------------------------------------------------------------------------
-
 fn_name MbModule_ctor = "MbModule.ctor";
 
-MbModule::MbModule() : Module(MbModuleId)
+MbModule::MbModule() : Module()
 {
    Debug::ft(MbModule_ctor);
+
+   //  Create the modules required by MediaBase.
+   //
+   Singleton< SbModule >::Instance();
+   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -55,21 +57,6 @@ fn_name MbModule_dtor = "MbModule.dtor";
 MbModule::~MbModule()
 {
    Debug::ft(MbModule_dtor);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name MbModule_Register = "MbModule.Register";
-
-bool MbModule::Register()
-{
-   Debug::ft(MbModule_Register);
-
-   //  Create the modules required by MediaBase.
-   //
-   Singleton< SbModule >::Instance();
-   Singleton< MbModule >::Instance();
-   return true;
 }
 
 //------------------------------------------------------------------------------

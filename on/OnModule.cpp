@@ -22,6 +22,7 @@
 #include "OnModule.h"
 #include "CnModule.h"
 #include "Debug.h"
+#include "ModuleRegistry.h"
 #include "NbAppIds.h"
 #include "PbModule.h"
 #include "Singleton.h"
@@ -34,15 +35,17 @@ using namespace PotsBase;
 
 namespace OperationsNode
 {
-bool OnModule::Registered = Register();
-
-//------------------------------------------------------------------------------
-
 fn_name OnModule_ctor = "OnModule.ctor";
 
-OnModule::OnModule() : Module(OnModuleId)
+OnModule::OnModule() : Module()
 {
    Debug::ft(OnModule_ctor);
+
+   //  Create the modules required by OperationsNode.
+   //
+   Singleton< CnModule >::Instance();
+   Singleton< PbModule >::Instance();
+   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -52,22 +55,6 @@ fn_name OnModule_dtor = "OnModule.dtor";
 OnModule::~OnModule()
 {
    Debug::ft(OnModule_dtor);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name OnModule_Register = "OnModule.Register";
-
-bool OnModule::Register()
-{
-   Debug::ft(OnModule_Register);
-
-   //  Create the modules required by OperationsNode.
-   //
-   Singleton< CnModule >::Instance();
-   Singleton< PbModule >::Instance();
-   Singleton< OnModule >::Instance();
-   return true;
 }
 
 //------------------------------------------------------------------------------

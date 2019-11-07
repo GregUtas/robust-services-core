@@ -50,14 +50,6 @@ private:
    //  Private because this singleton is not subclassed.
    //
    ~CtModule();
-
-   //  Registers the module before main() is entered.
-   //
-   static bool Register();
-
-   //  Initialized by invoking Register.
-   //
-   static bool Registered;
 };
 }
 #endif

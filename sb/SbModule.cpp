@@ -23,6 +23,7 @@
 #include "Debug.h"
 #include "FactoryRegistry.h"
 #include "InvokerPoolRegistry.h"
+#include "ModuleRegistry.h"
 #include "NbAppIds.h"
 #include "NwModule.h"
 #include "ProtocolRegistry.h"
@@ -45,17 +46,16 @@ using namespace NodeBase;
 
 namespace SessionBase
 {
-bool SbModule::Registered = Register();
-
-fn_name SbModule_Register = "SbModule.Register";
-
-//------------------------------------------------------------------------------
-
 fn_name SbModule_ctor = "SbModule.ctor";
 
-SbModule::SbModule() : Module(SbModuleId)
+SbModule::SbModule() : Module()
 {
    Debug::ft(SbModule_ctor);
+
+   //  Create the modules required by SessionBase.
+   //
+   Singleton< NwModule >::Instance();
+   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -72,19 +72,6 @@ SbModule::~SbModule()
 void SbModule::Patch(sel_t selector, void* arguments)
 {
    Module::Patch(selector, arguments);
-}
-
-//------------------------------------------------------------------------------
-
-bool SbModule::Register()
-{
-   Debug::ft(SbModule_Register);
-
-   //  Create the modules required by SessionBase.
-   //
-   Singleton< NwModule >::Instance();
-   Singleton< SbModule >::Instance();
-   return true;
 }
 
 //------------------------------------------------------------------------------

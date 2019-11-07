@@ -22,6 +22,7 @@
 #include "PbModule.h"
 #include "CbModule.h"
 #include "Debug.h"
+#include "ModuleRegistry.h"
 #include "NbAppIds.h"
 #include "PotsBicFeature.h"
 #include "PotsBocFeature.h"
@@ -48,15 +49,16 @@ using namespace CallBase;
 
 namespace PotsBase
 {
-bool PbModule::Registered = Register();
-
-//------------------------------------------------------------------------------
-
 fn_name PbModule_ctor = "PbModule.ctor";
 
-PbModule::PbModule() : Module(PbModuleId)
+PbModule::PbModule() : Module()
 {
    Debug::ft(PbModule_ctor);
+
+   //  Create the modules required by PotsBase.
+   //
+   Singleton< CbModule >::Instance();
+   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -66,21 +68,6 @@ fn_name PbModule_dtor = "PbModule.dtor";
 PbModule::~PbModule()
 {
    Debug::ft(PbModule_dtor);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name PbModule_Register = "PbModule.Register";
-
-bool PbModule::Register()
-{
-   Debug::ft(PbModule_Register);
-
-   //  Create the modules required by PotsBase.
-   //
-   Singleton< CbModule >::Instance();
-   Singleton< PbModule >::Instance();
-   return true;
 }
 
 //------------------------------------------------------------------------------

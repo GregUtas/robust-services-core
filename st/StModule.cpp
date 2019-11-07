@@ -21,6 +21,7 @@
 //
 #include "StModule.h"
 #include "Debug.h"
+#include "ModuleRegistry.h"
 #include "NbAppIds.h"
 #include "NtModule.h"
 #include "SbAppIds.h"
@@ -38,15 +39,17 @@ using namespace SessionBase;
 
 namespace SessionTools
 {
-bool StModule::Registered = Register();
-
-//------------------------------------------------------------------------------
-
 fn_name StModule_ctor = "StModule.ctor";
 
-StModule::StModule() : Module(StModuleId)
+StModule::StModule() : Module()
 {
    Debug::ft(StModule_ctor);
+
+   //  Create the modules required by SessionTools.
+   //
+   Singleton< SbModule >::Instance();
+   Singleton< NtModule >::Instance();
+   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -56,22 +59,6 @@ fn_name StModule_dtor = "StModule.dtor";
 StModule::~StModule()
 {
    Debug::ft(StModule_dtor);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name StModule_Register = "StModule.Register";
-
-bool StModule::Register()
-{
-   Debug::ft(StModule_Register);
-
-   //  Create the modules required by SessionTools.
-   //
-   Singleton< SbModule >::Instance();
-   Singleton< NtModule >::Instance();
-   Singleton< StModule >::Instance();
-   return true;
 }
 
 //------------------------------------------------------------------------------

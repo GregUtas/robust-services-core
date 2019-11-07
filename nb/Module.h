@@ -38,54 +38,40 @@ namespace NodeBase
 //  "restart" refers to both system initialization (when the executable is
 //  first launched) and reinitialization (to recover from a serious error).
 //
-//  Each module subclass overrides the following functions (see below):
-//  o Dependencies
-//  o Startup
-//  o Shutdown
+//  Each module implements its singleton subclass of Module as follows:
 //
-//  Each module must define a ModuleId (e.g. "NlaModuleId") in NbTypes.h,
-//  where "Nla" stands for "n-letter acronym" (e.g. "Nb"):
-//
-//    const ModuleId NlaModuleId = n;
-//
-//  The module then implements its singleton subclass of Module as follows:
-//
-//    class NlaModule : public Module
+//    class SomeModule : public Module
 //    {
-//       friend class Singleton< NlaModule >;
+//       friend class Singleton< SomeModule >;
 //    public:
 //       virtual void Display(std::ostream& stream,
 //          const std::string& prefix, const Flags& options) const override;
 //       virtual void Patch(sel_t selector, void* arguments) override;
 //    private:
-//       NlaModule() : Module(NlaModuleId) { }
-//       ~NlaModule() { }
-//       virtual Id* Dependencies(size_t& count) const override;
-//       virtual void Startup(RestartLevel level) override;
-//       virtual void Shutdown(RestartLevel level) override;
-//       static bool Register()
+//       SomeModule() : Module()
 //       {
 //          //  Modules 1 to N are the ones on which this module depends.
 //          //  Creating their singletons ensures that they will exist in
-//          //  the module registry when the system initializes.
+//          //  the module registry when the system initializes.  Because
+//          //  each module creates the modules on which it depends before
+//          //  it adds itself to the registry, the registry will contain
+//          //  modules in the (partial) ordering of their dependencies.
 //          //
 //          Singleton< Module1 >::Instance();
 //          //  ...
 //          Singleton< ModuleN >::Instance();
-//          Singleton< NlaModule >::Instance();
-//          return true;
+//          Singleton< ModuleRegistry >::Instance()->BindModule(*this);
 //       }
-//       static bool Registered = Register();
+//
+//       ~SomeModule() { }
+//       virtual void Startup(RestartLevel level) override;
+//       virtual void Shutdown(RestartLevel level) override;
 //    };
 //
-//  When the singleton is created, Module's constructor adds it to
-//  ModuleRegistry.
-//
 //  Later during initialization, ModuleRegistry::Startup handles most of
-//  the system's initialization by
-//  o invoking Dependencies on each module to calculate an initialization
-//    order (which means that the dependency graph must be *acyclic*)
-//  o invoking Startup on each module
+//  the system's initialization by invoking Startup on each module.  The
+//  Startup function initializes the data required by the module when
+//  the system starts to run.
 //
 //  The purpose of modules is to avoid the type of totally unstructured
 //  main() that plagues so many systems.
@@ -106,14 +92,6 @@ public:
    //  Returns the module's identifier.
    //
    ModuleId Mid() const { return mid_.GetId(); }
-
-   //e Returns the list of modules that must be initialized *before* this one.
-   //
-   //  This capability is not yet implemented.  Instead, module identifiers
-   //  are defined so that modules can be initialized in ascending order of
-   //  ModuleId.
-   //
-   virtual ModuleId* Dependencies(size_t& count) const;
 
    //  Overridden but does nothing.  Provided for tracing only.  Each subclass
    //  overrides this to create objects that need to exist before the system
@@ -140,10 +118,9 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 protected:
-   //  Registers the module against MID.  Protected because this class
-   //  is virtual.
+   //  Protected because this class is virtual.
    //
-   explicit Module(ModuleId mid);
+   Module();
 
    //  Removes the module from the global module registry.  Protected
    //  because subclasses should be singletons.

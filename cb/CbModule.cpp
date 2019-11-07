@@ -26,6 +26,7 @@
 #include "BcSessions.h"
 #include "Debug.h"
 #include "MbModule.h"
+#include "ModuleRegistry.h"
 #include "NbAppIds.h"
 #include "ProxyBcSessions.h"
 #include "SbAppIds.h"
@@ -43,15 +44,17 @@ using namespace MediaBase;
 
 namespace CallBase
 {
-bool CbModule::Registered = Register();
-
-//------------------------------------------------------------------------------
-
 fn_name CbModule_ctor = "CbModule.ctor";
 
-CbModule::CbModule() : Module(CbModuleId)
+CbModule::CbModule() : Module()
 {
    Debug::ft(CbModule_ctor);
+
+   //  Create the modules required by CallBase.
+   //
+   Singleton< StModule >::Instance();
+   Singleton< MbModule >::Instance();
+   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -61,22 +64,6 @@ fn_name CbModule_dtor = "CbModule.dtor";
 CbModule::~CbModule()
 {
    Debug::ft(CbModule_dtor);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CbModule_Register = "CbModule.Register";
-
-bool CbModule::Register()
-{
-   Debug::ft(CbModule_Register);
-
-   //  Create the modules required by CallBase.
-   //
-   Singleton< StModule >::Instance();
-   Singleton< MbModule >::Instance();
-   Singleton< CbModule >::Instance();
-   return true;
 }
 
 //------------------------------------------------------------------------------

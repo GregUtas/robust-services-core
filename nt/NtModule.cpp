@@ -21,6 +21,7 @@
 //
 #include "NtModule.h"
 #include "Debug.h"
+#include "ModuleRegistry.h"
 #include "NbAppIds.h"
 #include "NbModule.h"
 #include "NtIncrement.h"
@@ -33,15 +34,16 @@
 
 namespace NodeTools
 {
-bool NtModule::Registered = Register();
-
-//------------------------------------------------------------------------------
-
 fn_name NtModule_ctor = "NtModule.ctor";
 
-NtModule::NtModule() : Module(NtModuleId)
+NtModule::NtModule() : Module()
 {
    Debug::ft(NtModule_ctor);
+
+   //  Create the modules required by NodeTools.
+   //
+   Singleton< NbModule >::Instance();
+   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -51,21 +53,6 @@ fn_name NtModule_dtor = "NtModule.dtor";
 NtModule::~NtModule()
 {
    Debug::ft(NtModule_dtor);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name NtModule_Register = "NtModule.Register";
-
-bool NtModule::Register()
-{
-   Debug::ft(NtModule_Register);
-
-   //  Create the modules required by NodeTools.
-   //
-   Singleton< NbModule >::Instance();
-   Singleton< NtModule >::Instance();
-   return true;
 }
 
 //------------------------------------------------------------------------------

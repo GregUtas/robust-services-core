@@ -49,6 +49,10 @@ public:
    //
    Module* GetModule(ModuleId mid) const;
 
+   //  Registers MODULE against its ModuleId.
+   //
+   void BindModule(Module& module);
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,
@@ -65,10 +69,6 @@ private:
    //  Private because this singleton is not subclassed.
    //
    ~ModuleRegistry();
-
-   //  Registers MODULE against its ModuleId.
-   //
-   void BindModule(Module& module);
 
    //  Removes MODULE from the registry.
    //

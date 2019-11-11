@@ -162,9 +162,10 @@ FactionsText::FactionsText() : CliText(FactionsTextExpl, FactionsTextStr) { }
 
 //------------------------------------------------------------------------------
 
-fixed_string IdOptExpl = "index (location in registry)";
+fixed_string IdExpl = "index (location in registry)";
 
-IdOptParm::IdOptParm() : CliIntParm(IdOptExpl, 0, UINT16_MAX, true) { }
+IdMandParm::IdMandParm() : CliIntParm(IdExpl, 0, UINT16_MAX) { }
+IdOptParm::IdOptParm() : CliIntParm(IdExpl, 0, UINT16_MAX, true) { }
 
 //------------------------------------------------------------------------------
 

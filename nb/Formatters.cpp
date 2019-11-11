@@ -182,12 +182,8 @@ int strCompare(const string& s1, const string& s2)
 
 //------------------------------------------------------------------------------
 
-fn_name NodeBase_strGet = "NodeBase.strGet";
-
 string strGet(string& input)
 {
-   Debug::ft(NodeBase_strGet);
-
    if(input.empty()) return input;
 
    auto begin = input.find_first_not_of(SPACE);

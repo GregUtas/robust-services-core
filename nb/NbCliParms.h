@@ -155,6 +155,11 @@ public: FactionOptParm();
 //
 //  Parameter for an id_t.
 //
+class IdMandParm : public CliIntParm
+{
+public: IdMandParm();
+};
+
 class IdOptParm : public CliIntParm
 {
 public: IdOptParm();

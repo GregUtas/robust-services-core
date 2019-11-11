@@ -138,8 +138,34 @@ void InitThread::ContextSwitch()
 {
    Debug::ft(InitThread_ContextSwitch);
 
-   Reset(Schedule);
+   //  The current execution flow for context switching is
+   //    Thread.Suspend
+   //    ..Thread.Schedule
+   //    ..InitThread.Interrupt [X]
+   //    thread blocks [X]
+   //    InitThread.HandleInterrupt [X]
+   //    ..InitThread.ContextSwitch [X]
+   //    ....InitThread.Reset(Schedule) [X]
+   //    ....Thread.SwitchContext
+   //    ......Thread.Select
+   //    ......Thread.Proceed
+   //  So why not take InitThread out of the picture by removing the things
+   //  marked with an X, so that the original thread blocks after the call to
+   //  Proceed?  Well, doing so resulted in traps when running POTS traffic.
+   //  Specifically, UDP and invoker threads ran simultaneously.  And because
+   //  both allocate Messages, race conditions eventually caused a corruption
+   //  of the Message ObjectPool's free queue.  Instead of debugging this, the
+   //  current design was reinstated.  It hasn't caused this kind of problem
+   //  because it serializes all scheduling through InitThread.  When threads
+   //  initiate context switches themselves, the problem is that more than one
+   //  thread can run at a time (when preemptable threads are included).  Even
+   //  lowering a thread's priority is no guarantee, at least on Windows, that
+   //  it will not run.  Adding the necessary mutexes to fix whatever critical
+   //  sections need protecting could easily add more overhead than continuing
+   //  to go through InitThread.
+   //
    Thread::SwitchContext();
+   Reset(Schedule);
 }
 
 //------------------------------------------------------------------------------
@@ -177,10 +203,15 @@ void InitThread::Enter()
    DelayRc drc;
 
    //  When a thread is entered, it is unpreemptable.  However, we must run
-   //  preemptably so that we don't wait for other unpreemptable threads to
-   //  yield.  Our high priority ensures that we will run whenever we want.
+   //  preemptably so that we don't wait for unpreemptable threads to yield.
+   //  Our high priority ensures that we will run whenever we want.
    //
    MakePreemptable();
+
+   //  When we are reentered after a trap, check for unfinished work before
+   //  sleeping.
+   //
+   HandleInterrupt();
 
    while(true)
    {
@@ -365,15 +396,21 @@ void InitThread::RecreateThreads()
 {
    Debug::ft(InitThread_RecreateThreads);
 
-   //  Invoke all daemons.  Any with missing threads will create them.
+   //  Invoke daemons with missing threads.
    //
-   Reset(Recreate);
-
    auto& daemons = Singleton< DaemonRegistry >::Instance()->Daemons();
 
    for(auto d = daemons.First(); d != nullptr; daemons.Next(d))
    {
-      d->CreateThreads();
+      if(d->Threads().size() < d->TargetSize())
+      {
+         d->CreateThreads();
+      }
    }
+
+   //  This is reset after the above so that if a trap occurs, we will
+   //  again try to recreate threads when reentered.
+   //
+   Reset(Recreate);
 }
 }

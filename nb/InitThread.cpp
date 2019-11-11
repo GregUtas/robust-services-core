@@ -211,7 +211,7 @@ void InitThread::Enter()
    //  When we are reentered after a trap, check for unfinished work before
    //  sleeping.
    //
-   HandleInterrupt();
+   if(state_ == Running) HandleInterrupt();
 
    while(true)
    {

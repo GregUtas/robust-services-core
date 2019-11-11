@@ -31,6 +31,7 @@
 #include <ios>
 #include <map>
 #include <sstream>
+#include <utility>
 #include "Algorithms.h"
 #include "Array.h"
 #include "CliThread.h"
@@ -395,12 +396,12 @@ ContextSwitch* ContextSwitches::AddSwitch()
 //------------------------------------------------------------------------------
 //
 //  Thread activity at a time point associated with a context switch.
-//  
+//
 struct SchedSnapshot
 {
    //  MAX is the maximum ThreadId seen while recording context switches.
    //
-   SchedSnapshot(ThreadId max) :
+   explicit SchedSnapshot(ThreadId max) :
       activity(nullptr),
       duration(0),
       nid(0)
@@ -463,13 +464,11 @@ void ContextSwitches::DisplaySwitches(ostream& stream) const
    MutexGuard guard(&ContextSwitchesLock_);
 
    size_t first = 0;
-   size_t last = next_ - 1;
    auto elems = next_;
 
    if(full_)
    {
       first = next_;
-      last = (first == 0 ? capacity_ - 1 : first - 1);
       elems = capacity_;
    }
 

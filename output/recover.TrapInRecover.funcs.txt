@@ -1,80 +1,82 @@
-FUNCTION PROFILE: 4-Nov-2019 14:56:42.468 on Reigi
+FUNCTION PROFILE: 11-Nov-2019 18:02:12.126 on Reigi
 
     Calls       uSecs   Function
     -----       -----   --------
-     2212       22795   Thread.RunningThread
-     2190       25303   ThreadRegistry.FindThread
-     1070       17489   Thread.Pause
-     1034        8662   Thread.Test
-      947        9041   Thread.UpdateMutexCount
-      941       10779   Thread.UpdateMutex
-      803       13662   SysThread.Resume
-      592        5707   Thread.InitialMsecs
-      518        6008   InitThread.Enter
-      515        9676   InitThread.CalculateDelay
-      508        4731   SysThread.Interrupt
-      505        5485   Thread.Interrupt
-      481        1422   ThreadAdmin.WarpFactor
-      476     3876648   SysThread.Suspend
-      475        5151   SysThread.Delay
-      474        6195   SysMutex.Release
-      472        4121   Thread.Schedule
-      470        5104   Thread.Resume
-      469        3958   Thread.Ready
-      466        5515   Thread.Select
-      465        3758   Thread.SwitchContext
-      464        4329   Thread.Reset
-      464        4050   InitThread.ContextSwitch
-      451        5098   SysMutex.Acquire
-      445        5474   Thread.Suspend
-      436       43297   Thread.LogContextSwitch
-      427        5557   Thread.ExitBlockingOperation
-      423        4535   Thread.EnterBlockingOperation
-      339        3495   InitThread.HandleInterrupt
-      293        2839   Thread.Proceed
-      293        2560   SysThread.Proceed
-      293        2456   SysThread.SetPriority
-      185        1936   Thread.TicksLeft
-      163        1797   InitThread.HandleTimeout
-        6          46   Log.Find
-        4          45   LogGroupRegistry.FindGroup
-        4          32   LogGroup.FindLog
-        4          15   MutexGuard.ctor
+     1622       22806   ThreadRegistry.FindThread
+     1598       19981   Thread.RunningThread
+      899        7488   Thread.Test
+      853       19247   Thread.Pause
+      730        7866   Thread.UpdateMutexCount
+      720        9730   Thread.UpdateMutex
+      658       11432   SysThread.Resume
+      406        5444   InitThread.Enter
+      399        4881   Thread.InitialMsecs
+      394        9048   InitThread.CalculateDelay
+      392        4522   SysThread.Interrupt
+      389        5085   Thread.Interrupt
+      373     3929919   SysThread.Suspend
+      372        3642   Thread.Schedule
+      369        4546   Thread.Reset
+      368        3910   SysThread.Delay
+      366        1492   ThreadAdmin.WarpFactor
+      363        4758   Thread.Select
+      362        4286   InitThread.ContextSwitch
+      362        3640   Thread.SwitchContext
+      361        4914   Thread.Resume
+      360        5842   SysMutex.Release
+      358        3968   Thread.Ready
+      345        4362   SysMutex.Acquire
+      337       36916   Thread.LogContextSwitch
+      336        3975   Thread.Suspend
+      310        3715   Thread.EnterBlockingOperation
+      303        5351   Thread.ExitBlockingOperation
+      287        2802   InitThread.HandleInterrupt
+      264        2403   SysThread.Proceed
+      262        2519   Thread.Proceed
+      262        2406   SysThread.SetPriority
+      114        1446   Thread.TicksLeft
+       96        2232   InitThread.HandleTimeout
+        6          33   Log.Find
+        4          37   LogGroupRegistry.FindGroup
+        4          20   LogGroup.FindLog
         4          15   MutexGuard.dtor
+        4          13   MutexGuard.ctor
         4          12   LogBuffer.First
-        3          20   Thread.ExitSwLog
-        3          12   Thread.SetSignal
-        2        3747   Debug.SwFlagOn
-        2        1394   Exception.dtor
-        2         598   Log.Format
-        2         485   Base.ctor
-        2          39   Log.Submit
-        2          38   LeakyBucketCounter.HasReachedLimit
-        2          31   Thread.TrapHandler
-        2          17   LogBuffer.Push
+        3          30   Debug.SwFlagOn
+        3          13   Thread.SetSignal
+        3           9   Thread.ExitSwLog
+        2         273   Log.Format
+        2         222   Base.ctor
+        2          29   Thread.TrapHandler
+        2          25   LeakyBucketCounter.HasReachedLimit
+        2          25   Log.Submit
+        2          16   LogBuffer.Push
         2          10   LogBuffer.SetNext
+        2           9   Memory.Copy
+        2           9   Thread.Start
         2           8   Exception.ctor
+        2           8   Exception.dtor
         2           8   Log.Create
         2           8   LogBuffer.InsertionPoint
         2           8   MutexRegistry.Release
-        2           7   Memory.Copy
-        2           7   Thread.LogTrap
+        2           8   Orphans.ExitNow
+        2           8   SysThread.Start
+        2           8   Thread.LogTrap
         2           6   LogBufferRegistry.Active
-        2           6   Orphans.ExitNow
         2           3   Thread.ExtendTime
         2           0   Object.ctor
         2           0   SysTime.ctor(now)
-        1        2277   SysThreadStack.Display
-        1        1331   SoftwareException.ctor(string)
-        1           7   SysThread.Wait
-        1           4   Debug.GenerateSwLog
+        1        3477   Thread.CauseTrap
+        1        2113   SysThreadStack.Display
+        1        1592   SoftwareException.ctor(string)
+        1           5   RecoveryThread.Enter
+        1           5   SysThread.Wait
+        1           5   Thread.HandleSignal
         1           4   NodeBase.SE_Handler
+        1           4   RecoveryThread.UseBadPointer
+        1           4   SignalException.dtor
         1           4   SoftwareException.dtor
-        1           4   Thread.EnterSwLog
-        1           4   Thread.HandleSignal
-        1           4   Thread.Start
-        1           3   SysThread.Start
-        1           2   SignalException.dtor
+        1           3   RecoveryThread.Recover
         1           0   SignalException.ctor
 
-Total functions: 74
+Total functions: 76

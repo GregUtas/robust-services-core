@@ -111,6 +111,20 @@ void DaemonRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
+fn_name DaemonRegistry_Startup = "DaemonRegistry.Startup";
+
+void DaemonRegistry::Startup(RestartLevel level)
+{
+   Debug::ft(DaemonRegistry_Startup);
+
+   for(auto d = daemons_.First(); d != nullptr; daemons_.Next(d))
+   {
+      d->Startup(level);
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name DaemonRegistry_UnbindDaemon = "DaemonRegistry.UnbindDaemon";
 
 void DaemonRegistry::UnbindDaemon(Daemon& daemon)

@@ -21,6 +21,7 @@
 //
 #include "SbDaemons.h"
 #include <ostream>
+#include <set>
 #include "DaemonRegistry.h"
 #include "Debug.h"
 #include "InvokerThread.h"
@@ -76,6 +77,24 @@ void InvokerDaemon::Display(ostream& stream,
    Daemon::Display(stream, prefix, options);
 
    stream << prefix << "faction : " << faction_ << CRLF;
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string InvokerDaemon_GetAlarmLevel = "InvokerDaemon.GetAlarmLevel";
+
+AlarmStatus InvokerDaemon::GetAlarmLevel() const
+{
+   Debug::ft(InvokerDaemon_GetAlarmLevel);
+
+   //  Anything other than a critical alarm is rather hypothetical because
+   //  there should have been enough traps to cause a restart if multiple
+   //  invoker threads could not be recreated after being forced to exit.
+   //
+   auto percent = 100 * Threads().size() / TargetSize();
+   if(percent <= 25) return CriticalAlarm;
+   if(percent <= 50) return MajorAlarm;
+   return MinorAlarm;
 }
 
 //------------------------------------------------------------------------------
@@ -146,5 +165,16 @@ Thread* TimerDaemon::CreateThread()
    Debug::ft(TimerDaemon_CreateThread);
 
    return Singleton< TimerThread >::Instance();
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string TimerDaemon_GetAlarmLevel = "TimerDaemon.GetAlarmLevel";
+
+AlarmStatus TimerDaemon::GetAlarmLevel() const
+{
+   Debug::ft(TimerDaemon_GetAlarmLevel);
+
+   return CriticalAlarm;
 }
 }

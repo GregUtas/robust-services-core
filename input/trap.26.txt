@@ -1,0 +1,8 @@
+/ RECOVER daemon retraps trying to recreate thread; reenable to create thread
+swflags set &flag.threadctorretrap on
+delay 1
+recover ctortrap
+delay 2
+daemons set 9 on
+delay 1
+testcase end

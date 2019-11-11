@@ -54,6 +54,7 @@ namespace NodeBase
 
    extern fixed_string ThreadLogGroup;
    constexpr LogId ThreadCriticalDeath = TroubleLog;
+   constexpr LogId ThreadUnavailable = StateLog;
    constexpr LogId ThreadDeleted = DebugLog;
    constexpr LogId ThreadExited = DebugLog + 1;
    constexpr LogId ThreadException = DebugLog + 2;

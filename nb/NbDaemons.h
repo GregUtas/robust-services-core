@@ -47,6 +47,7 @@ private:
    CliDaemon();
    ~CliDaemon();
    Thread* CreateThread() override;
+   AlarmStatus GetAlarmLevel() const override;
 };
 
 //------------------------------------------------------------------------------

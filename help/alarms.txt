@@ -1,6 +1,13 @@
 / Documentation for alarms
 / displayed by >nb alarms explain <alarm-name>
 /
+? DAEMON*
+One or more threads exited and could not be recreated:
+  o critical: a restart will now occur
+  o major: a capability is unavailable
+  o minor: a capability is impaired
+  o off: the thread(s) have been recreated
+The daemon's identifier (as shown in >daemons list) is appended to "DAEMON".
 ? NETWORK
 The status of the network layer has changed:
   o critical: the node has lost network access
@@ -12,6 +19,7 @@ a threshold indicated by the following alarm severity:
   o major: under 6.25% (1 in 16) of the blocks are available
   o minor: under 12.5% (1 in 8) of the blocks are available
   o off: over 12.5% of the blocks are available
+The object pool's identifier (as shown in >pools) is appended to "OBJPOOL".
 ? OVERLOAD
 Payload processing is currently experiencing the following workload:
   o critical: ingress queue delay >= 8 seconds
@@ -26,3 +34,4 @@ The status of the specified network service has changed:
     configure a socket on its IP port
   o off: the service is available because an I/O thread has successfully
     configured a socket on its IP port
+The port number (as shown >nw ipports v) is appended to "PORT".

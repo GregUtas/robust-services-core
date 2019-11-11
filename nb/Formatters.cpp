@@ -25,7 +25,6 @@
 #include <ios>
 #include <sstream>
 #include "Base.h"
-#include "Debug.h"
 
 using std::ostream;
 using std::setw;

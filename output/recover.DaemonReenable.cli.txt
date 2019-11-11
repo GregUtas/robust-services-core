@@ -2,20 +2,19 @@ nt>sched start
   OK.
 nt>start
   OK.
-nt>read trap.18
-nt>/ =============== PREPARE TO ENTER CTRL-C, POSSIBLY TWICE ================
-nt>/ RECOVER infinite loop
-nt>delay 1
-  OK.
-nt>symbols assign save.traponrtctimeout traponrtctimeout
-  OK.
-nt>cfgparms set traponrtctimeout f
+nt>read trap.25
+nt>/ RECOVER disable daemon; kill thread; enable daemon; thread recreated
+nt>daemons set 9 off
   OK.
 nt>delay 1
   OK.
-nt>recover loop
+nt>sched kill 15
   OK.
-nt>nt>cfgparms set traponrtctimeout &save.traponrtctimeout
+nt>delay 2
+  OK.
+nt>daemons set 9 on
+  OK.
+nt>delay 1
   OK.
 nt>testcase end
   OK.

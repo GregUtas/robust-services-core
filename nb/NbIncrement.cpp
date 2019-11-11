@@ -668,6 +668,21 @@ word ClearCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 //
 //  The DAEMONS command.
 //
+class DaemonsListText : public CliText
+{
+public: DaemonsListText();
+};
+
+class DaemonsSetText : public CliText
+{
+public: DaemonsSetText();
+};
+
+class DaemonsAction : public CliTextParm
+{
+public: DaemonsAction();
+};
+
 class DaemonsCommand : public CliCommand
 {
 public:
@@ -676,13 +691,44 @@ private:
    word ProcessCommand(CliThread& cli) const override;
 };
 
+fixed_string DaemonsListTextStr = "list";
+fixed_string DaemonsListTextExpl =
+   "shows info for all daemons or a specific daemon";
+
+DaemonsListText::DaemonsListText() :
+   CliText(DaemonsListTextExpl, DaemonsListTextStr)
+{
+   BindParm(*new IdOptParm);
+   BindParm(*new DispBVParm);
+}
+
+fixed_string DaemonsSetTextStr = "set";
+fixed_string DaemonsSetTextExpl = "disables (off) or enables (on) a daemon";
+
+DaemonsSetText::DaemonsSetText() :
+   CliText(DaemonsSetTextExpl, DaemonsSetTextStr)
+{
+   BindParm(*new IdMandParm);
+   BindParm(*new SetHowParm);
+}
+
+const id_t DaemonsListIndex = 1;
+const id_t DaemonsSetIndex  = 2;
+
+fixed_string DaemonsActionExpl = "subcommand...";
+
+DaemonsAction::DaemonsAction() : CliTextParm(DaemonsActionExpl)
+{
+   BindText(*new DaemonsListText, DaemonsListIndex);
+   BindText(*new DaemonsSetText, DaemonsSetIndex);
+}
+
 fixed_string DaemonsStr = "daemons";
 fixed_string DaemonsExpl = "Displays daemons.";
 
 DaemonsCommand::DaemonsCommand() : CliCommand(DaemonsStr, DaemonsExpl)
 {
-   BindParm(*new IdOptParm);
-   BindParm(*new DispBVParm);
+   BindParm(*new DaemonsAction);
 }
 
 fn_name DaemonsCommand_ProcessCommand = "DaemonsCommand.ProcessCommand";
@@ -691,33 +737,57 @@ word DaemonsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(DaemonsCommand_ProcessCommand);
 
+   id_t index, setHowIndex;
    word id;
    bool all, v = false;
-
-   switch(GetIntParmRc(id, cli))
-   {
-   case None: all = true; break;
-   case Ok: all = false; break;
-   default: return -1;
-   }
-
-   if(GetBV(*this, cli, v) == Error) return -1;
-   cli.EndOfInput(false);
-
+   Daemon* daemon = nullptr;
    auto reg = Singleton< DaemonRegistry >::Instance();
 
-   if(all)
-   {
-      reg->Output(*cli.obuf, 2, v);
-   }
-   else
-   {
-      auto daemon = reg->Daemons().At(id);
-      if(daemon == nullptr) return cli.Report(-2, NoDaemonExpl);
-      daemon->Output(*cli.obuf, 2, v);
-   }
+   if(!GetTextIndex(index, cli)) return -1;
 
-   return 0;
+   switch(index)
+   {
+   case DaemonsListIndex:
+      switch(GetIntParmRc(id, cli))
+      {
+      case None: all = true; break;
+      case Ok: all = false; break;
+      default: return -1;
+      }
+
+      if(GetBV(*this, cli, v) == Error) return -1;
+      cli.EndOfInput(false);
+
+      if(all)
+      {
+         reg->Output(*cli.obuf, 2, v);
+      }
+      else
+      {
+         daemon = reg->Daemons().At(id);
+         if(daemon == nullptr) return cli.Report(-2, NoDaemonExpl);
+         daemon->Output(*cli.obuf, 2, v);
+      }
+
+      return 0;
+
+   case DaemonsSetIndex:
+      if(!GetIntParm(id, cli)) return -1;
+      if(!GetTextIndex(setHowIndex, cli)) return -1;
+      cli.EndOfInput(false);
+
+      daemon = reg->Daemons().At(id);
+      if(daemon == nullptr) return cli.Report(-2, NoDaemonExpl);
+      if(setHowIndex == SetHowParm::Off)
+         daemon->Disable();
+      else
+         daemon->Enable();
+      return cli.Report(0, SuccessExpl);
+
+   default:
+      Debug::SwLog(DaemonsCommand_ProcessCommand, UnexpectedIndex, index);
+      return cli.Report(index, SystemErrorExpl);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -2485,6 +2555,20 @@ word SchedCommand::ProcessCommand(CliThread& cli) const
       {
          auto thr = Singleton< ThreadRegistry >::Instance()->GetThread(tid);
          if(thr == nullptr) return cli.Report(-2, NoThreadExpl);
+
+         auto daemon = thr->GetDaemon();
+         if(daemon != nullptr)
+         {
+            std::ostringstream prompt;
+            prompt << "Do you want to disable this thread's daemon" << CRLF;
+            prompt << "so it will not try to recreate the thread?";
+
+            if(cli.BoolPrompt(prompt.str()))
+            {
+               daemon->Disable();
+            }
+         }
+
          auto expl = thr->Kill();
          if(expl != nullptr) return cli.Report(-1, expl);
       }

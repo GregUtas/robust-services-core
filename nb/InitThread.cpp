@@ -21,6 +21,7 @@
 //
 #include "InitThread.h"
 #include <ostream>
+#include <set>
 #include <string>
 #include "Algorithms.h"
 #include "Daemon.h"

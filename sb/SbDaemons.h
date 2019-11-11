@@ -64,6 +64,11 @@ private:
    //
    NodeBase::Thread* CreateThread() override;
 
+   //  Overridden to return an alarm based on the percentage of available
+   //  invoker threads.
+   //
+   NodeBase::AlarmStatus GetAlarmLevel() const override;
+
    //  The faction for the invoker threads.
    //
    const NodeBase::Faction faction_;
@@ -80,6 +85,7 @@ private:
    TimerDaemon();
    ~TimerDaemon();
    NodeBase::Thread* CreateThread() override;
+   NodeBase::AlarmStatus GetAlarmLevel() const override;
 };
 }
 #endif

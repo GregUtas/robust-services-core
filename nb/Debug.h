@@ -24,6 +24,7 @@
 
 #include <atomic>
 #include <string>
+#include "SysLock.h"
 #include "SysTypes.h"
 
 namespace NodeBase
@@ -117,6 +118,14 @@ public:
    //
    static void Reset();
 
+   //  Enables/disables slow but more accurate function tracing.
+   //
+   static void SetSlowTrace(bool slow) { SlowTrace_ = slow; }
+
+   //  Returns true if slow tracing is enabled.
+   //
+   static bool SlowTraceOn() { return SlowTrace_; }
+
    //  Returns true if the software flag identified by FID is on.
    //  Always returns false unless Element::RunningInLab() is true.
    //
@@ -148,6 +157,14 @@ private:
    static void GenerateSwLog(fn_name_arg func, const std::string& errstr,
       debug64_t offset, SwLogLevel level);
 
+   //  Flags for controlling the behavior of software during testing.
+   //
+   static Flags SwFlags_;
+
+   //  Set for more accurate (and much slower) function tracing.
+   //
+   static bool SlowTrace_;
+
    //  Prevents reentry to Debug::ft.
    //
    static std::atomic_flag FtLock_;
@@ -156,9 +173,10 @@ private:
    //
    static Flags FcFlags_;
 
-   //  Flags for controlling the behavior of software during testing.
+   //  A mutex used when providing more accurate (and much slower) function
+   //  tracing.
    //
-   static Flags SwFlags_;
+   static SysLock TraceLock_;
 };
 }
 #endif

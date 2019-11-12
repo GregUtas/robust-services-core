@@ -1,6 +1,6 @@
 nt>sched start
   OK.
-nt>start
+nt>start s
   OK.
 nt>read trap.18
 nt>/ =============== PREPARE TO ENTER CTRL-C, POSSIBLY TWICE ================
@@ -15,7 +15,9 @@ nt>delay 1
   OK.
 nt>recover loop
   OK.
-nt>nt>cfgparms set traponrtctimeout &save.traponrtctimeout
+nt>delay 2
+  OK.
+nt>cfgparms set traponrtctimeout &save.traponrtctimeout
   OK.
 nt>testcase end
   OK.

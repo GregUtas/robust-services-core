@@ -376,7 +376,7 @@ ContextSwitch* ContextSwitches::AddSwitch()
 
    ContextSwitch* cs;
 
-   if(ContextSwitchesLock_.Acquire(TIMEOUT_IMMED) == SysMutex::Acquired)
+   if(ContextSwitchesLock_.Acquire(10) == SysMutex::Acquired)
    {
       cs = &switches_[next_];
 
@@ -3256,15 +3256,15 @@ void Thread::StartShortInterval()
 
 //------------------------------------------------------------------------------
 
-TraceRc Thread::StartTracing(bool immediate, bool autostop)
+TraceRc Thread::StartTracing(const string& options)
 {
    auto thr = RunningThread();
-   auto rc = Singleton< TraceBuffer >::Instance()->StartTracing(immediate);
+   auto rc = Singleton< TraceBuffer >::Instance()->StartTracing(options);
 
    if(rc == TraceOk)
    {
+      thr->priv_->autostop_ = (options.find('a') != string::npos);
       thr->priv_->tracing_ = true;
-      thr->priv_->autostop_ = autostop;
    }
 
    return rc;

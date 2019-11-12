@@ -149,11 +149,13 @@ public:
    //
    TraceRc Clear();
 
-   //  Initiates tracing by all enabled tools.  If IMMEDIATE is set, each
-   //  trace record is immediately written to the file "immed.trace.txt"
-   //  as it is generated.
+   //  Initiates tracing by all enabled tools using OPTIONS, which can include
+   //  o 'i': immediate tracing--each trace record is immediately written to
+   //    the file "immed.trace.txt" when it is created
+   //  o 's': slow tracing--captures function calls more accurately but is ten
+   //    times slower than regular tracing
    //
-   TraceRc StartTracing(bool immediate);
+   TraceRc StartTracing(const std::string& options);
 
    //  Invoked when stopping tracing.
    //

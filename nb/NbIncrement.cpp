@@ -2905,10 +2905,16 @@ word SingletonsCommand::ProcessCommand(CliThread& cli) const
 //
 //  The START command.
 //
-class ImmediateParm : public CliBoolParm
+class OptionsParm : public CliTextParm
 {
-public: ImmediateParm();
+public: OptionsParm();
 };
+
+fixed_string OptionsExpl = "options (i=immediate, s=slow)";
+
+OptionsParm::OptionsParm() : CliTextParm(OptionsExpl, true) { }
+
+const string& ValidStartOptions = "is";
 
 class StartCommand : public CliCommand
 {
@@ -2918,16 +2924,12 @@ private:
    word ProcessCommand(CliThread& cli) const override;
 };
 
-fixed_string ImmediateExpl = "immediate tracing? (default=f)";
-
-ImmediateParm::ImmediateParm() : CliBoolParm(ImmediateExpl, true) { }
-
 fixed_string StartStr = "start";
 fixed_string StartExpl = "Starts tracing.";
 
 StartCommand::StartCommand() : CliCommand(StartStr, StartExpl)
 {
-   BindParm(*new ImmediateParm);
+   BindParm(*new OptionsParm);
 }
 
 fn_name StartCommand_ProcessCommand = "StartCommand.ProcessCommand";
@@ -2936,13 +2938,26 @@ word StartCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(StartCommand_ProcessCommand);
 
-   bool immed = false;
+   string opts;
+   string expl;
 
-   if(GetBoolParmRc(immed, cli) == Error) return -1;
+   if(GetStringRc(opts, cli) == CliParm::Error) return -1;
    cli.EndOfInput(false);
 
-   if(immed && !Element::RunningInLab()) return cli.Report(-5, NotInFieldExpl);
-   auto rc = Singleton< TraceBuffer >::Instance()->StartTracing(immed);
+   if(!opts.empty() && (opts != "-"))
+   {
+      if(!ValidateOptions(opts, ValidStartOptions, expl))
+      {
+         return cli.Report(-1, expl);
+      }
+   }
+
+   if((opts.find('i') != string::npos) && !Element::RunningInLab())
+   {
+      return cli.Report(-5, NotInFieldExpl);
+   }
+
+   auto rc = Singleton< TraceBuffer >::Instance()->StartTracing(opts);
    return ExplainTraceRc(cli, rc);
 }
 

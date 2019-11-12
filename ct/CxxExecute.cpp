@@ -484,8 +484,9 @@ bool Context::StartTracing()
       ThisThread::IncludeInTrace();
    }
 
-   auto immed = Context::OptionIsOn(TraceImmediate);
-   ThisThread::StartTracing(immed, false);
+   string options;
+   if(Context::OptionIsOn(TraceImmediate)) options.push_back('i');
+   ThisThread::StartTracing(options);
    return true;
 }
 
@@ -1959,9 +1960,10 @@ void Tracepoint::OnLine(const CodeFile* file, size_t line, bool executing) const
    case Start:
    {
       auto buff = Singleton< TraceBuffer >::Instance();
-      auto immed = Context::OptionIsOn(TraceImmediate);
+      string options;
+      if(Context::OptionIsOn(TraceImmediate)) options.push_back('i');
       ThisThread::IncludeInTrace();
-      ThisThread::StartTracing(immed, false);
+      ThisThread::StartTracing(options);
       Context::Tracing = buff->ToolIsOn(ParserTracer);
       break;
    }

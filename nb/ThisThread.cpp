@@ -23,6 +23,8 @@
 #include "NbTracer.h"
 #include "Thread.h"
 
+using std::string;
+
 //------------------------------------------------------------------------------
 
 namespace NodeBase
@@ -104,9 +106,9 @@ ThreadId ThisThread::RunningThreadId()
 
 //------------------------------------------------------------------------------
 
-TraceRc ThisThread::StartTracing(bool immediate, bool autostop)
+TraceRc ThisThread::StartTracing(const string& options)
 {
-   return Thread::StartTracing(immediate, autostop);
+   return Thread::StartTracing(options);
 }
 
 //------------------------------------------------------------------------------

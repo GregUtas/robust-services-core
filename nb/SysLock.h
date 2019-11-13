@@ -22,10 +22,8 @@
 #ifndef SYSLOCK_H_INCLUDED
 #define SYSLOCK_H_INCLUDED
 
-#include <cstddef>
-#include <ostream>
+#include <iosfwd>
 #include <string>
-#include "Object.h"
 #include "SysDecls.h"
 #include "SysTypes.h"
 

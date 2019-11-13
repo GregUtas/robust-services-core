@@ -22,6 +22,7 @@
 #ifndef THISTHREAD_H_INCLUDED
 #define THISTHREAD_H_INCLUDED
 
+#include <string>
 #include "Clock.h"
 #include "NbTypes.h"
 #include "SysTypes.h"

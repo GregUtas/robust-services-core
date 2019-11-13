@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  SysMutex.win.cpp
+//  SysLock.win.cpp
 //
 //  Copyright (C) 2017  Greg Utas
 //
@@ -60,8 +60,6 @@ SysLock::~SysLock()
 
 //------------------------------------------------------------------------------
 
-fn_name SysLock_Acquire = "SysLock.Acquire";
-
 void SysLock::Acquire()
 {
    auto curr = SysThread::RunningThreadId();
@@ -84,7 +82,7 @@ void SysLock::Acquire()
       return;
    default:
       //
-      //  The timeout interval expired before the lock could be acquired.
+      //  There was no timeout, so this shouldn't occur.
       //
       Debug::Assert(false, result);
    }
@@ -96,9 +94,6 @@ fn_name SysLock_Release = "SysLock.Release";
 
 void SysLock::Release()
 {
-   //  This is invoked during error recovery, so check that the running
-   //  thread owns the mutex.
-   //
    auto curr = SysThread::RunningThreadId();
    if(owner_ != curr) return;
 

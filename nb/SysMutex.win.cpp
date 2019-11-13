@@ -22,6 +22,7 @@
 #ifdef OS_WIN
 #include "SysMutex.h"
 #include <windows.h>
+#include "Algorithms.h"
 #include "Debug.h"
 #include "MutexRegistry.h"
 #include "Singleton.h"

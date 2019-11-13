@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "SysLock.h"
+#include <ostream>
 
 using std::ostream;
 using std::string;

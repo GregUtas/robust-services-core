@@ -58,7 +58,7 @@ LibraryErrSet::~LibraryErrSet()
 
 fn_name LibraryErrSet_Check = "LibraryErrSet.Check";
 
-word LibraryErrSet::Check(ostream* stream, string& expl) const
+word LibraryErrSet::Check(CliThread& cli, ostream* stream, string& expl) const
 {
    Debug::ft(LibraryErrSet_Check);
 

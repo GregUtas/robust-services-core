@@ -135,16 +135,18 @@ LibrarySet* CodeFileSet::Affecters() const
 
 fn_name CodeFileSet_Check = "CodeFileSet.Check";
 
-word CodeFileSet::Check(ostream* stream, string& expl) const
+word CodeFileSet::Check(CliThread& cli, ostream* stream, string& expl) const
 {
    Debug::ft(CodeFileSet_Check);
+
+   word rc = 0;
 
    auto& fileSet = Set();
 
    if(fileSet.empty())
    {
       expl = EmptySet;
-      return 0;
+      return rc;
    }
 
    //  To avoid generating spurious warnings, all files affected by those to be
@@ -157,30 +159,38 @@ word CodeFileSet::Check(ostream* stream, string& expl) const
    auto asSet = static_cast< CodeFileSet* >(this->Affecters());
    auto parseSet = new SetOfIds;
    SetUnion(*parseSet, abSet->Set(), asSet->Set());
-   auto found = false;
+   size_t parsed = 0;
 
    for(auto f = parseSet->cbegin(); f != parseSet->cend(); ++f)
    {
-      auto file = files.At(*f);
-
-      if(file->ParseStatus() != CodeFile::Unparsed)
-      {
-         found = true;
-         break;
-      }
+      if(files.At(*f)->ParseStatus() != CodeFile::Unparsed) ++parsed;
    }
 
-   if(!found)
+   if(parsed == 0)
    {
       expl = "No files have been parsed.  This must be done first.";
-      return 0;
+      return rc;
    }
 
-   auto parseFiles = new CodeFileSet(TemporaryName(), parseSet);
-   auto rc = parseFiles->Parse(expl, "-");
+   auto skip = true;
+   auto unparsed = parseSet->size() - parsed;
+
+   if(unparsed > 0)
+   {
+      *cli.obuf << unparsed << " files should be parsed to avoid spurious";
+      *cli.obuf << CRLF << "spurious results.  ";
+      skip = cli.BoolPrompt("Do you wish to skip this?");
+   }
+
+   if(!skip)
+   {
+      auto parseFiles = new CodeFileSet(TemporaryName(), parseSet);
+      rc = parseFiles->Parse(expl, "-");
+      parseFiles->Release();
+   }
+
    abSet->Release();
    asSet->Release();
-   parseFiles->Release();
    if(rc != 0) return rc;
    expl.clear();
 
@@ -189,7 +199,7 @@ word CodeFileSet::Check(ostream* stream, string& expl) const
    std::ostringstream summary;
    summary << fileSet.size() << " file(s) checked.";
    expl = summary.str();
-   return 0;
+   return rc;
 }
 
 //------------------------------------------------------------------------------
@@ -374,7 +384,7 @@ word CodeFileSet::Fix(CliThread& cli, FixOptions& opts, string& expl) const
 
    //  In order to fix warnings in a file, it must have been checked.
    //
-   auto rc = Check(nullptr, expl);
+   auto rc = Check(cli, nullptr, expl);
    if(rc != 0) return rc;
    expl.clear();
 

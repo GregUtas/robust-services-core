@@ -58,7 +58,8 @@ public:
 
    //  Checks the code files in the set.
    //
-   NodeBase::word Check(std::ostream* stream, std::string& expl) const override;
+   NodeBase::word Check(NodeBase::CliThread& cli,
+      std::ostream* stream, std::string& expl) const override;
 
    //  Updates RESULT with the number of lines of code in the set.
    //

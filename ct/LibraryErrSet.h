@@ -58,7 +58,8 @@ private:
 
    //  Returns a non-zero value and updates EXPL with an explanation.
    //
-   NodeBase::word Check(std::ostream* stream, std::string& expl) const override;
+   NodeBase::word Check(NodeBase::CliThread& cli,
+      std::ostream* stream, std::string& expl) const override;
 
    //  Returns a non-zero value and updates RESULT with an explanation.
    //

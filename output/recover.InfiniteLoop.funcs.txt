@@ -1,81 +1,81 @@
-FUNCTION PROFILE: 12-Nov-2019 17:28:20.378 on Reigi
+FUNCTION PROFILE: 13-Nov-2019 17:58:41.740 on Reigi
 
     Calls       uSecs   Function
     -----       -----   --------
-     3620      146677   Thread.RunningThread
-     3608      116839   ThreadRegistry.FindThread
-     1584       50871   Thread.Test
-     1451       45216   Thread.UpdateMutexCount
-     1450       47535   Thread.UpdateMutex
-     1446       47474   Thread.Pause
-     1104       28664   SysThread.Resume
-      927       40502   Thread.InitialMsecs
-      726       20399   Thread.Interrupt
-      726       19765   SysThread.Interrupt
-      725       26204   SysMutex.Acquire
-      725       22684   SysMutex.Release
-      724     3754535   SysThread.Suspend
-      723       36990   Thread.ExitBlockingOperation
-      723       30477   Thread.Ready
-      723       29605   Thread.Resume
-      723       27603   Thread.EnterBlockingOperation
-      723       26211   Thread.Suspend
-      723       22116   Thread.Schedule
-      723        4588   ThreadAdmin.WarpFactor
-      722      216447   Thread.LogContextSwitch
-      722       23356   SysThread.Delay
-      721       43449   InitThread.CalculateDelay
-      721       24185   InitThread.Enter
-      533       14826   InitThread.ContextSwitch
-      533       13899   Thread.SwitchContext
-      533       13778   Thread.Select
-      533        9862   Thread.Reset
-      528       19469   InitThread.HandleInterrupt
-      379       18100   Thread.TicksLeft
-      378       10477   Thread.Proceed
-      378        9253   SysThread.SetPriority
-      378        6863   SysThread.Proceed
-      193        2628   InitThread.HandleTimeout
-       45        3511   RecoveryThread.LoopForever
-        8         110   LeakyBucketCounter.HasReachedLimit
-        7          94   Thread.RtcTimeout
-        6          78   Log.Find
-        4          69   LogGroupRegistry.FindGroup
-        4          34   LogGroup.FindLog
-        4          28   LogBuffer.First
-        3          48   Debug.SwFlagOn
-        3          24   Thread.SetSignal
+     3393      135693   Thread.RunningThread
+     3381      108975   ThreadRegistry.FindThread
+     1586       52556   Thread.Test
+     1360       47889   Thread.UpdateMutex
+     1360       45641   Thread.UpdateMutexCount
+     1355       43807   Thread.Pause
+     1059       27845   SysThread.Resume
+      839       40743   Thread.InitialMsecs
+      681       20288   Thread.Interrupt
+      681       19410   SysThread.Interrupt
+      680       24565   SysMutex.Acquire
+      680       22654   SysMutex.Release
+      678     2808946   SysThread.Suspend
+      678       24800   Thread.EnterBlockingOperation
+      677      212703   Thread.LogContextSwitch
+      677       34395   Thread.ExitBlockingOperation
+      677       30369   Thread.Resume
+      677       30293   Thread.Ready
+      677       24953   Thread.Suspend
+      677       21642   Thread.Schedule
+      677        4547   ThreadAdmin.WarpFactor
+      676       41861   InitThread.CalculateDelay
+      676       25605   InitThread.Enter
+      676       22330   SysThread.Delay
+      528       20295   InitThread.HandleInterrupt
+      481       14606   InitThread.ContextSwitch
+      481       14291   Thread.Select
+      481       13722   Thread.SwitchContext
+      481       11524   Thread.Reset
+      385       20154   Thread.TicksLeft
+      378       11015   Thread.Proceed
+      378       10058   SysThread.SetPriority
+      378        6211   SysThread.Proceed
+      147        1601   InitThread.HandleTimeout
+       44           0   RecoveryThread.LoopForever
+        8          77   LeakyBucketCounter.HasReachedLimit
+        7         116   Thread.RtcTimeout
+        6          92   Log.Find
+        4          53   LogGroupRegistry.FindGroup
+        4          35   LogGroup.FindLog
+        4          30   LogBuffer.First
+        3          45   Thread.SetSignal
+        3          40   MutexGuard.dtor
+        3          33   Debug.SwFlagOn
         3          22   MutexGuard.ctor
-        3          20   MutexGuard.dtor
-        2         378   Log.Format
-        2         315   Base.ctor
-        2          47   SysThread.Wait
-        2          42   LogBuffer.Push
-        2          34   Log.Submit
+        2         502   Log.Format
+        2         441   Base.ctor
+        2          32   Log.Submit
+        2          23   LogBuffer.Push
         2          18   LogBuffer.SetNext
-        2          16   LogBuffer.InsertionPoint
-        2          16   Memory.Copy
+        2          17   Memory.Copy
         2          14   Log.Create
+        2          14   LogBuffer.InsertionPoint
         2          14   LogBufferRegistry.Active
         2           0   Object.ctor
         2           0   RecoveryThread.Enter
+        2           0   SysThread.Wait
         2           0   SysTime.ctor(now)
-        1        2768   SysThreadStack.Display
-        1          72   Thread.SetTrap
-        1          21   MutexRegistry.Release
-        1          19   SignalException.dtor
-        1          12   Thread.Raise
-        1          11   Thread.TrapHandler
+        1        1908   SignalException.ctor
+        1        1473   SysThreadStack.Display
+        1          29   Thread.TrapHandler
+        1          24   Thread.Start
+        1          14   Thread.Raise
+        1           9   Thread.ExtendTime
+        1           9   Thread.LogTrap
         1           8   Exception.dtor
-        1           8   Thread.ExitSwLog
         1           8   Thread.LogSignal
-        1           8   Thread.LogTrap
-        1           7   Exception.ctor
+        1           8   Thread.SetTrap
+        1           7   MutexRegistry.Abandon
         1           7   SysThread.Start
-        1           7   Thread.Start
         1           6   Orphans.ExitNow
-        1           6   RecoveryThread.Recover
-        1           6   Thread.ExtendTime
-        1           0   SignalException.ctor
+        1           6   SignalException.dtor
+        1           5   RecoveryThread.Recover
+        1           0   Exception.ctor
+        1           0   Thread.ExitSwLog
 
 Total functions: 75

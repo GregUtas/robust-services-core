@@ -1,66 +1,65 @@
-FUNCTION PROFILE: 12-Nov-2019 17:27:28.033 on Reigi
+FUNCTION PROFILE: 13-Nov-2019 17:57:54.092 on Reigi
 
     Calls       uSecs   Function
     -----       -----   --------
-     2345      108146   Thread.RunningThread
-     2339       87291   ThreadRegistry.FindThread
-     1373       51166   Thread.Test
-      942       36442   Thread.UpdateMutexCount
-      942       35503   Thread.UpdateMutex
-      937       37749   Thread.Pause
-      819       24443   SysThread.Resume
-      623       32767   Thread.InitialMsecs
-      472       17806   Thread.Interrupt
-      472       17181   SysThread.Interrupt
-      471       18965   SysMutex.Acquire
-      471       18485   SysMutex.Release
-      470      748224   SysThread.Suspend
-      469      164995   Thread.LogContextSwitch
-      469       24968   Thread.Resume
-      469       24551   Thread.Ready
-      469       20205   Thread.EnterBlockingOperation
-      469       20066   Thread.Suspend
-      469       17959   Thread.Schedule
-      469        3521   ThreadAdmin.WarpFactor
-      468       33177   InitThread.CalculateDelay
-      468       27132   Thread.ExitBlockingOperation
-      468       19700   InitThread.Enter
-      468       18745   SysThread.Delay
-      457       19761   InitThread.HandleInterrupt
-      367       10662   SysThread.SetPriority
-      360        9018   Thread.Reset
-      359       13548   InitThread.ContextSwitch
-      359       13096   Thread.Select
-      359       12962   Thread.SwitchContext
-      356       11633   Thread.Proceed
-      347        7134   SysThread.Proceed
-      227       13233   Thread.TicksLeft
-       24         599   SysHeap.Free
-       24         518   Memory.Free
-       24         132   SysHeap.Alloc
-       24          98   Memory.Alloc
-       15         256   Base.ctor
+     2635      124227   Thread.RunningThread
+     2629       98340   ThreadRegistry.FindThread
+     1461       53871   Thread.Test
+     1058       44731   Thread.UpdateMutex
+     1058       42453   Thread.UpdateMutexCount
+     1053       40506   Thread.Pause
+      893       27112   SysThread.Resume
+      689       40329   Thread.InitialMsecs
+      529       22159   SysMutex.Acquire
+      529       21430   SysMutex.Release
+      529       18981   Thread.Interrupt
+      529       18545   SysThread.Interrupt
+      528     1370115   SysThread.Suspend
+      527      195564   Thread.LogContextSwitch
+      527       28089   Thread.Ready
+      527       27658   Thread.Resume
+      527       22528   Thread.EnterBlockingOperation
+      527       22065   Thread.Suspend
+      527       20765   Thread.Schedule
+      527        4006   ThreadAdmin.WarpFactor
+      526       30394   Thread.ExitBlockingOperation
+      526       21944   SysThread.Delay
+      525       40026   InitThread.CalculateDelay
+      525       23329   InitThread.Enter
+      487       18936   InitThread.HandleInterrupt
+      426       11370   SysThread.SetPriority
+      410       10881   Thread.Reset
+      409       15493   InitThread.ContextSwitch
+      409       14795   Thread.Select
+      409       14701   Thread.SwitchContext
+      394       12282   Thread.Proceed
+      364        6629   SysThread.Proceed
+      241       17047   Thread.TicksLeft
+       38         414   InitThread.HandleTimeout
+       31         347   Thread.Preempt
+       24        1067   Memory.Free
+       24         547   SysHeap.Free
+       24         423   Memory.Alloc
+       24         125   SysHeap.Alloc
+       15         575   Base.ctor
        15           0   Object.ctor
-       11         126   Object.operator delete
-       10         208   InitThread.HandleTimeout
-       10          95   Thread.Preempt
-        9         463   Dynamic.operator new
-        9         214   Registry.Erase
-        9          88   Registry.Insert
+       11         339   Object.operator delete
+        9         324   Registry.Erase
+        9         120   Registry.Insert
+        9          23   Dynamic.operator new
         9           0   Dynamic.ctor
-        8         163   Statistic.dtor
-        8          58   StatisticsRegistry.UnbindStat
-        8          41   StatisticsRegistry.BindStat
-        8           2   Statistic.ctor
-        5          54   Counter.dtor
+        8         288   Statistic.dtor
+        8         223   StatisticsRegistry.UnbindStat
+        8          37   StatisticsRegistry.BindStat
+        8           1   Statistic.ctor
         5           0   Counter.ctor
-        3          54   HighWatermark.dtor
-        3          13   HighWatermark.ctor
+        5           0   Counter.dtor
+        3         369   HighWatermark.dtor
+        3          11   HighWatermark.ctor
         3           0   Alarm.Create
         3           0   Log.Find
-        2         130   SysThread.Wait
-        2          48   SysThread.CreateSentry
-        2           9   Permanent.operator new
+        2          52   SysThread.CreateSentry
+        2           8   Permanent.operator new
         2           8   Q1Way.Init
         2           0   Debug.SwFlagOn
         2           0   Debug.noop
@@ -76,18 +75,21 @@ FUNCTION PROFILE: 12-Nov-2019 17:27:28.033 on Reigi
         2           0   Permanent.ctor
         2           0   RecoveryThread.Enter
         2           0   SysThread.DeleteSentry
-        1        1306   SysThread.Create
-        1          46   RecoveryThread.dtor
-        1          45   Thread.FactionToPriority
-        1          44   Thread.dtor
-        1          35   ThreadRegistry.AssociateIds
-        1          30   Singletons.UnbindInstance
-        1          26   Daemon.ThreadCreated
-        1          23   ThreadRegistry.BindThread
+        2           0   SysThread.Wait
+        1        1028   SysThread.Create
+        1          63   RecoveryThread.dtor
+        1          61   Singletons.UnbindInstance
+        1          53   Singleton.Destroy
+        1          53   Thread.dtor
+        1          38   ThreadStats.dtor
+        1          24   Daemon.ThreadCreated
+        1          19   ThreadRegistry.AssociateIds
+        1          18   Accumulator.dtor
+        1          14   ThreadRegistry.BindThread
         1           8   Registry.Empty
+        1           8   Thread.FactionToPriority
         1           2   SysThread.ctor
         1           0   Accumulator.ctor
-        1           0   Accumulator.dtor
         1           0   C++.delete
         1           0   Daemon.CreateThreads
         1           0   Daemon.Find
@@ -102,7 +104,7 @@ FUNCTION PROFILE: 12-Nov-2019 17:27:28.033 on Reigi
         1           0   LogBuffer.SetNext
         1           0   LogBufferRegistry.Active
         1           0   Memory.Copy
-        1           0   MutexRegistry.Release
+        1           0   MutexRegistry.Abandon
         1           0   ObjectPool.DeqBlock
         1           0   ObjectPool.EnqBlock
         1           0   Orphans.ExitNow
@@ -114,7 +116,6 @@ FUNCTION PROFILE: 12-Nov-2019 17:27:28.033 on Reigi
         1           0   RecoveryDaemon.CreateThread
         1           0   RecoveryThread.Destroy
         1           0   RecoveryThread.ctor
-        1           0   Singleton.Destroy
         1           0   Singleton.Instance
         1           0   Singletons.BindInstance
         1           0   SysThread.Delete
@@ -134,6 +135,5 @@ FUNCTION PROFILE: 12-Nov-2019 17:27:28.033 on Reigi
         1           0   ThreadPriv.dtor
         1           0   ThreadRegistry.UnbindThread
         1           0   ThreadStats.ctor
-        1           0   ThreadStats.dtor
 
 Total functions: 133

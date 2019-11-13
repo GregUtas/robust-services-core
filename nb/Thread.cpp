@@ -424,27 +424,32 @@ struct SchedSnapshot
    SysThreadId nid;
 };
 
+//  Each SchedSnapshot is managed by a unique_ptr.
+//
+typedef std::unique_ptr< SchedSnapshot > SchedSnapshotPtr;
+
 //  Associates a time point with what each thread was doing at that time.
 //
-typedef std::pair< ticks_t, std::unique_ptr< SchedSnapshot >> SchedEntry;
+typedef std::pair< ticks_t, SchedSnapshotPtr> SchedEntry;
 
 //  Maps each time point associated with a context switch to what each thread
 //  was doing at that time.
 //
-typedef std::map< ticks_t, std::unique_ptr< SchedSnapshot >> SchedEntries;
+typedef std::map< ticks_t, SchedSnapshotPtr> SchedEntries;
 
 //  The header for displaying context switches.  ThreadIds starting at 1 are
 //  output dynamically following the 0.  Each thread's activity is then shown
 //  in its column.
 //
-fixed_string SwitchHeader = "Timestamp     uSecs  0";
+fixed_string SwitchHeader1 = "             Ran for  -";
+fixed_string SwitchHeader2 = "Timestamp    (usecs)  0";
 
 //  The footer (legend) for displaying context switches.
 //
 fixed_string SwitchFooter1 =
    "Symbols: . idle   # unpreemptable   | preemptable   V scheduled out";
 fixed_string SwitchFooter2 =
-   "         * multiple threads running unpreemptably";
+   "         * multiple threads running unpreemptably (rightmost column)";
 
 //------------------------------------------------------------------------------
 
@@ -494,14 +499,16 @@ void ContextSwitches::DisplaySwitches(ostream& stream) const
 
       if(curr == timeline.cend())
       {
-         timeline.insert(SchedEntry(entry->in, new SchedSnapshot(max)));
+         timeline.insert
+            (SchedEntry(entry->in, SchedSnapshotPtr(new SchedSnapshot(max))));
       }
 
       curr = timeline.find(entry->out);
 
       if(curr == timeline.cend())
       {
-         timeline.insert(SchedEntry(entry->out, new SchedSnapshot(max)));
+         timeline.insert
+            (SchedEntry(entry->out, SchedSnapshotPtr(new SchedSnapshot(max))));
       }
       else
       {
@@ -564,7 +571,14 @@ void ContextSwitches::DisplaySwitches(ostream& stream) const
 
    stream << CRLF;
    stream << "Context switches: " << elems << CRLF;
-   stream << SwitchHeader;
+
+   stream << SwitchHeader1;
+
+   auto front = ((3 * max) - strlen("Threads")) / 2;
+   auto back = ((3 * max) + 1 - strlen("Threads")) / 2;
+   stream << string(front, '-') << "Threads" << string(back, '-') << CRLF;
+
+   stream << SwitchHeader2;
 
    for(ThreadId t = 1; t <= max; ++t)
    {
@@ -578,11 +592,11 @@ void ContextSwitches::DisplaySwitches(ostream& stream) const
       stream << Clock::TicksToTime(entry->first, MinsField);
 
       if(entry->second->duration > 0)
-         stream << setw(10) << Clock::TicksToUsecs(entry->second->duration);
+         stream << setw(11) << Clock::TicksToUsecs(entry->second->duration);
       else if(entry->second->nid != 0)
-         stream << strHex(entry->second->nid, 10, true);
+         stream << strHex(entry->second->nid, 11, true);
       else
-         stream << spaces(10);
+         stream << spaces(11);
 
       size_t locked = 0;
 

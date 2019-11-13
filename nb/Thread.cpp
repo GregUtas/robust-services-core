@@ -1682,7 +1682,7 @@ main_t Thread::Exit(signal_t sig)
    //  If the thread is holding any mutexes, release them.
    //  Then log the exit.
    //
-   Singleton< MutexRegistry >::Instance()->Release();
+   Singleton< MutexRegistry >::Instance()->Abandon();
 
    ostringstreamPtr log = nullptr;
 
@@ -3517,7 +3517,7 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
 
       //  If the thread is holding any mutexes, release them.
       //
-      Singleton< MutexRegistry >::Instance()->Release();
+      Singleton< MutexRegistry >::Instance()->Abandon();
 
       //  Exit immediately if the Thread has already been deleted.
       //

@@ -54,7 +54,7 @@ public:
 
    //  Releases all mutexes owned by the running thread.
    //
-   void Release() const;
+   void Abandon() const;
 
    //  Returns the registry.
    //

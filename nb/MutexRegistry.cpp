@@ -62,6 +62,44 @@ MutexRegistry::~MutexRegistry()
 
 //------------------------------------------------------------------------------
 
+fn_name MutexRegistry_Abandon = "MutexRegistry.Abandon";
+
+void MutexRegistry::Abandon() const
+{
+   Debug::ft(MutexRegistry_Abandon);
+
+   size_t count = 0;
+   auto nid = SysThread::RunningThreadId();
+
+   for(auto m = mutexes_.First(); m != nullptr; mutexes_.Next(m))
+   {
+      if(m->OwnerId() == nid)
+      {
+         m->Release(true);
+         ++count;
+      }
+   }
+
+   if(count > 0)
+   {
+      auto log = Log::Create(ThreadLogGroup, ThreadMutexesReleased);
+
+      if(log != nullptr)
+      {
+         auto thr = Thread::RunningThread(false);
+
+         if(thr != nullptr)
+            *log << Log::Tab << "thread=" << thr->to_str() << CRLF;
+         else
+            *log << Log::Tab << "nid=" << std::hex << nid << std::dec << CRLF;
+         *log << Log::Tab << "mutexes=" << count;
+         Log::Submit(log);
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name MutexRegistry_BindMutex = "MutexRegistry.BindMutex";
 
 bool MutexRegistry::BindMutex(SysMutex& mutex)
@@ -111,44 +149,6 @@ SysMutex* MutexRegistry::Find(const std::string& name) const
 void MutexRegistry::Patch(sel_t selector, void* arguments)
 {
    Permanent::Patch(selector, arguments);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name MutexRegistry_Release = "MutexRegistry.Release";
-
-void MutexRegistry::Release() const
-{
-   Debug::ft(MutexRegistry_Release);
-
-   size_t count = 0;
-   auto nid = SysThread::RunningThreadId();
-
-   for(auto m = mutexes_.First(); m != nullptr; mutexes_.Next(m))
-   {
-      if(m->OwnerId() == nid)
-      {
-         m->Release();
-         ++count;
-      }
-   }
-
-   if(count > 0)
-   {
-      auto log = Log::Create(ThreadLogGroup, ThreadMutexesReleased);
-
-      if(log != nullptr)
-      {
-         auto thr = Thread::RunningThread(false);
-
-         if(thr != nullptr)
-            *log << Log::Tab << "thread=" << thr->to_str() << CRLF;
-         else
-            *log << Log::Tab << "nid=" << std::hex << nid << std::dec << CRLF;
-         *log << Log::Tab << "mutexes=" << count;
-         Log::Submit(log);
-      }
-   }
 }
 
 //------------------------------------------------------------------------------

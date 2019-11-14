@@ -22,39 +22,12 @@
 #ifndef NBAPPIDS_H_INCLUDED
 #define NBAPPIDS_H_INCLUDED
 
-#include "NbTypes.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
 namespace NodeBase
 {
-//  Module identifiers.  A new module must define an identifier here.
-//
-//  Modules are currently initialized in ascending order of ModuleId.  The
-//  order will eventually be based on that provided by Module::Dependencies
-//  functions.  Until then, a new ModuleId must be inserted in the correct
-//  location.  Renumbering existing identifiers or leaving gaps is OK.
-//
-                                           // namespace:      Module:
-constexpr ModuleId NbModuleId = 1;         // NodeBase        NbModule
-constexpr ModuleId NtModuleId = 2;         // NodeTools       NtModule
-constexpr ModuleId CtModuleId = 3;         // CodeTools       CtModule
-constexpr ModuleId NwModuleId = 4;         // NetworkBase     NwModule
-constexpr ModuleId SbModuleId = 5;         // SessionBase     SbModule
-constexpr ModuleId StModuleId = 6;         // SessionTools    StModule
-constexpr ModuleId MbModuleId = 7;         // MediaBase       MbModule
-constexpr ModuleId CbModuleId = 8;         // CallBase        CbModule
-constexpr ModuleId PbModuleId = 9;         // PotsBase        PbModule
-constexpr ModuleId OnModuleId = 10;        // OperationsNode  OnModule
-constexpr ModuleId CnModuleId = 11;        // ControlNode     CnModule
-constexpr ModuleId RnModuleId = 12;        // RoutingNode     RnModule
-constexpr ModuleId SnModuleId = 13;        // ServiceNode     SnModule
-constexpr ModuleId AnModuleId = 14;        // AccessNode      AnModule
-constexpr ModuleId FirstAppModuleId = 15;  // start of applicaton modules
-
-//------------------------------------------------------------------------------
-//
 //  Object pool identifiers.  A new object pool must define an identifier here.
 //  Fixed identifiers are required so that it would be possible to serialize an
 //  object in one software release and import it into another release.
@@ -82,16 +55,17 @@ enum ObjectPoolIds
 //  Reserved software debugging flags.  Ad hoc usage should begin with the
 //  last FlagId defined here.
 //
-constexpr FlagId ThreadReenterFlag = 0;
-constexpr FlagId ThreadCtorTrapFlag = 1;
-constexpr FlagId ThreadRecoverTrapFlag = 2;
-constexpr FlagId ShowToolProgress = 3;
-constexpr FlagId CallTrapFlag = 4;
-constexpr FlagId CipAlwaysOverIpFlag = 5;
-constexpr FlagId CipIamTimeoutFlag = 6;
-constexpr FlagId CipAlertingTimeoutFlag = 7;
-constexpr FlagId DisableRootThreadFlag = 8;
-constexpr FlagId ThreadRetrapFlag = 9;
-constexpr FlagId FirstAppDebugFlag = 10;
+constexpr FlagId ShowToolProgress = 0;
+constexpr FlagId DisableRootThreadFlag = 1;
+constexpr FlagId ThreadReenterFlag = 2;
+constexpr FlagId ThreadRecoverTrapFlag = 3;
+constexpr FlagId ThreadCtorTrapFlag = 4;
+constexpr FlagId ThreadCtorRetrapFlag = 5;
+constexpr FlagId ThreadRetrapFlag = 6;
+constexpr FlagId CipAlwaysOverIpFlag = 7;
+constexpr FlagId CallTrapFlag = 8;
+constexpr FlagId CipIamTimeoutFlag = 9;
+constexpr FlagId CipAlertingTimeoutFlag = 10;
+constexpr FlagId FirstAppDebugFlag = 11;
 }
 #endif

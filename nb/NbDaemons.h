@@ -23,12 +23,8 @@
 #define NBDAEMONS_H_INCLUDED
 
 #include "Daemon.h"
+#include "NbTypes.h"
 #include "SysTypes.h"
-
-namespace NodeBase
-{
-   template<typename T> class Singleton;
-}
 
 //------------------------------------------------------------------------------
 
@@ -51,6 +47,7 @@ private:
    CliDaemon();
    ~CliDaemon();
    Thread* CreateThread() override;
+   AlarmStatus GetAlarmLevel() const override;
 };
 
 //------------------------------------------------------------------------------

@@ -1,0 +1,37 @@
+nt>sched start
+  OK.
+nt>start s
+  OK.
+nt>read trap.25
+nt>/ RECOVER disable daemon; kill thread; enable daemon; thread recreated
+nt>daemons set 9 off
+  OK.
+nt>delay 1
+  OK.
+nt>sched kill 15
+  OK.
+nt>delay 2
+  OK.
+nt>daemons set 9 on
+  OK.
+nt>delay 1
+  OK.
+nt>testcase end
+  OK.
+read test.trap.epilog
+nt>delay 1
+  OK.
+nt>stop
+  OK.
+nt>sched stop
+  OK.
+nt>sched show &testcase.name
+  OK.
+nt>save funcs &testcase.name
+  OK.
+nt>save trace &testcase.name
+  OK.
+nt>clear buffer
+  OK.
+nt>send cout
+  OK.

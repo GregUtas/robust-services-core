@@ -54,14 +54,6 @@ private:
    //  Overridden for restarts.
    //
    void Shutdown(NodeBase::RestartLevel level) override;
-
-   //  Registers the module before main() is entered.
-   //
-   static bool Register();
-
-   //  Initialized by invoking Register.
-   //
-   static bool Registered;
 };
 }
 #endif

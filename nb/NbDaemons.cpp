@@ -34,6 +34,7 @@ fixed_string CliDaemonName = "cli";
 fixed_string CliDaemon_ctor = "CliDaemon.ctor";
 fixed_string CliDaemon_dtor = "CliDaemon.dtor";
 fixed_string CliDaemon_CreateThread = "CliDaemon.CreateThread";
+fixed_string CliDaemon_GetAlarmLevel = "CliDaemon.GetAlarmLevel";
 
 CliDaemon::CliDaemon() : Daemon(CliDaemonName, 1)
 {
@@ -49,6 +50,12 @@ Thread* CliDaemon::CreateThread()
 {
    Debug::ft(CliDaemon_CreateThread);
    return Singleton< CliThread >::Instance();
+}
+
+AlarmStatus CliDaemon::GetAlarmLevel() const
+{
+   Debug::ft(CliDaemon_GetAlarmLevel);
+   return CriticalAlarm;
 }
 
 //------------------------------------------------------------------------------

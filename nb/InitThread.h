@@ -34,7 +34,7 @@ namespace NodeBase
 //  This thread is first one created by RootThread and is responsible for
 //  o initializing the system
 //  o restarting the system
-//  o recreating critical threads
+//  o invoking Daemons so they can recreate threads that have exited
 //  o enforcing the run-to-completion timeout
 //  o initiating context switches
 //

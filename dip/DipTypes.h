@@ -19,8 +19,6 @@
 #include <list>
 #include <memory>
 #include <set>
-#include "NbAppIds.h"
-#include "NbTypes.h"
 #include "NwTypes.h"
 #include "SysTypes.h"
 #include "ToolTypes.h"
@@ -66,7 +64,6 @@ constexpr ipport_t ClientIpPort = 0xda1b;
 
 //  Identifiers for classes derived from ones in NodeBase.
 //
-constexpr ModuleId DipModuleId = FirstAppModuleId;
 constexpr FlagId DipTracer = FirstAppTracer;
 
 //  For sending and receiving Diplomacy messages.

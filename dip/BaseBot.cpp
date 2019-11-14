@@ -430,7 +430,7 @@ BaseBot::StartupResult BaseBot::initialise()
       auto nbt = Singleton< NbTracer >::Instance();
       nbt->ClearSelections(TraceAll);
       ThisThread::IncludeInTrace();
-      ThisThread::StartTracing(false, false);
+      ThisThread::StartTracing(EMPTY_STR);
    }
 
    auto rc = get_ipaddrs();

@@ -162,8 +162,17 @@ threads           : Counts or displays threads.
   [c|b|v]         : 'c'=count 'b'=brief 'v'=verbose (default='b')
 
 daemons           : Displays daemons.
-  [0:65535]       : index (location in registry)
-  [b|v]           : 'b'=brief 'v'=verbose (default='b')
+(                 : subcommand...
+  list            : shows info for all daemons or a specific daemon
+    [0:65535]     : index (location in registry)
+    [b|v]         : 'b'=brief 'v'=verbose (default='b')
+  set             : disables (off) or enables (on) a daemon
+    (0:65535)     : index (location in registry)
+  (               : setting...
+    on            : on
+    off           : off
+  )
+)
 
 mutexes           : Displays mutexes.
   [0:65535]       : index (location in registry)
@@ -239,7 +248,7 @@ clear             : Clears the trace buffer, tools, or selections.
 )
 
 start             : Starts tracing.
-  [t|f]           : immediate tracing? (default=f)
+  [<str>]         : options (i=immediate, s=slow)
 
 stop              : Stops tracing.
 

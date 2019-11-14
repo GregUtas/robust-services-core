@@ -96,7 +96,7 @@ LibrarySet* LibrarySet::Assign(LibrarySet* rhs)
 
 fn_name LibrarySet_Check = "LibrarySet.Check";
 
-word LibrarySet::Check(ostream* stream, string& expl) const
+word LibrarySet::Check(CliThread& cli, ostream* stream, string& expl) const
 {
    Debug::ft(LibrarySet_Check);
 

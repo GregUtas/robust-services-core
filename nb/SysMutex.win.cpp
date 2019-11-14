@@ -22,6 +22,7 @@
 #ifdef OS_WIN
 #include "SysMutex.h"
 #include <windows.h>
+#include "Algorithms.h"
 #include "Debug.h"
 #include "MutexRegistry.h"
 #include "Singleton.h"
@@ -83,8 +84,15 @@ SysMutex::Rc SysMutex::Acquire(msecs_t timeout)
 {
    Debug::ft(SysMutex_Acquire);
 
+   auto curr = SysThread::RunningThreadId();
+
+   if(nid_ == curr)
+   {
+      ++locks_;
+      return Acquired;
+   }
+
    auto thr = Thread::RunningThread(false);
-   auto nid = SysThread::RunningThreadId();
    auto result = Error;
    auto msecs = (timeout == TIMEOUT_NEVER ? INFINITE: timeout);
    if(thr != nullptr) thr->UpdateMutex(this);
@@ -103,10 +111,10 @@ SysMutex::Rc SysMutex::Acquire(msecs_t timeout)
       //
       //  Success.
       //
-      nid_ = nid;
+      nid_ = curr;
       owner_ = thr;
       if(thr != nullptr) thr->UpdateMutexCount(true);
-      ++locks_;
+      locks_ = 1;
       result = Acquired;
       break;
    case WAIT_TIMEOUT:
@@ -126,29 +134,31 @@ SysMutex::Rc SysMutex::Acquire(msecs_t timeout)
 
 fn_name SysMutex_Release = "SysMutex.Release";
 
-void SysMutex::Release(bool log)
+void SysMutex::Release(bool abandon)
 {
    Debug::ft(SysMutex_Release);
+
+   auto curr = SysThread::RunningThreadId();
+
+   if(nid_ != curr)
+   {
+      Debug::SwLog(SysMutex_Release, name_, pack2(curr, nid_));
+      return;
+   }
+
+   if(!abandon && (--locks_ > 0)) return;
 
    //  Clear owner_ and nid_ first, in case releasing the mutex results in
    //  another thread acquiring the mutex, running immediately, and setting
    //  those fields to their new values.
    //
-   auto owner = owner_;
-   auto nid = nid_;
-
+   if(owner_ != nullptr) owner_->UpdateMutexCount(false);
    owner_ = nullptr;
    nid_ = NIL_ID;
 
-   if(ReleaseMutex(mutex_))
+   if(!ReleaseMutex(mutex_))
    {
-      if(owner != nullptr) owner->UpdateMutexCount(false);
-   }
-   else
-   {
-      nid_ = nid;
-      owner_ = owner;
-      if(log) Debug::SwLog(SysMutex_Release, name_, GetLastError());
+      Debug::SwLog(SysMutex_Release, name_, GetLastError());
    }
 }
 }

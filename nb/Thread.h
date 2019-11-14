@@ -67,13 +67,9 @@ class Thread : public Pooled
    friend class SysMutex;
    friend class ThreadRegistry;
 public:
-   //  Allows "Id" to refer to a thread identifier in this class hierarchy.
-   //
-   typedef ThreadId Id;
-
    //> Highest valid thread identifier.
    //
-   static const Id MaxId;
+   static const ThreadId MaxId;
 
    //  Returns the thread that is currently running.  Throws an exception
    //  if ASSERT is set and the running thread cannot be found.
@@ -165,7 +161,7 @@ public:
 
    //  Returns the thread's identifier within ThreadRegistry.
    //
-   Id Tid() const { return Id(tid_.GetId()); }
+   ThreadId Tid() const { return ThreadId(tid_.GetId()); }
 
    //  Returns the native thread's identifier.
    //
@@ -198,11 +194,11 @@ public:
 
    //  Starts tracing unless it is already on.  The thread must be unpreemptable
    //  and must enable the desired trace tools and select the items to be traced
-   //  before invoking this function.  If IMMEDIATE is set, the trace is output
-   //  to a file as it is captured, which is useful when a crash is anticipated.
-   //  If AUTOSTOP is set, tracing stops on the next context switch.
+   //  before invoking this function.  If OPTIONS includes 'a' (autostop), then
+   //  tracing stops on the next context switch.  See TraceBuffer::StartTracing
+   //  for additional options.
    //
-   static TraceRc StartTracing(bool immediate, bool autostop);
+   static TraceRc StartTracing(const std::string& options);
 
    //  Stops a trace that was started by StartTracing.
    //
@@ -420,13 +416,14 @@ private:
 
    //  Schedules the next thread when this one is suspending.
    //
-   void Schedule() const;
+   void Schedule();
 
    //  Schedules another thread after a thread yields or blocks, or
    //  after a preemptable thread has run for its allotted time.
-   //  Returns false if no thread is running or ready.
+   //  Returns the scheduled thread.  Returns nullptr if no thread
+   //  is running or ready.
    //
-   static bool SwitchContext();
+   static Thread* SwitchContext();
 
    //  Selects the next thread to run.
    //
@@ -441,9 +438,10 @@ private:
    //
    void Resume(fn_name_arg func);
 
-   //  Kills the thread.
+   //  Kills the thread.  Returns nullptr when trying to kill the thread.
+   //  If the thread cannot be killed, returns a C string explaining why.
    //
-   void Kill();
+   fixed_string Kill();
 
    //  Returns true if the thread is unpreemptable.
    //
@@ -457,17 +455,18 @@ private:
    //
    static Thread* ActiveThread();
 
-   //  Sets the active thread to nullptr if it matches THR.
+   //  Sets the active thread to nullptr and returns true if it matches
+   //  ACTIVE, else returns false.
    //
-   static void ClearActiveThread(const Thread* thr);
+   static bool ClearActiveThread(Thread* active);
 
    //  Returns the active thread if it is running unpreemptably.
    //
    static Thread* LockedThread();
 
-   //  Returns true if the thread is not blocked.
+   //  Returns true if the thread can be scheduled to run.
    //
-   bool IsReady() const;
+   bool CanBeScheduled() const;
 
    //  Returns the thread's daemon.
    //
@@ -606,10 +605,10 @@ private:
    //
    void ReleaseResources(bool orphaned);
 
-   //  Used during the shutdown phase of a restart to enable/disable the
+   //  Used during initializations and restarts to enable/disable the
    //  scheduling of specific factions.
    //
-   static void RestrictFactions(bool enable);
+   static void EnableFactions(const FactionFlags& enabled);
 
    //  Displays a summary of the thread's statistics in STREAM.  TIME0 is
    //  the time that has elapsed during the current statistics measurement

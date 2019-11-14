@@ -22,6 +22,7 @@
 #ifndef THISTHREAD_H_INCLUDED
 #define THISTHREAD_H_INCLUDED
 
+#include <string>
 #include "Clock.h"
 #include "NbTypes.h"
 #include "SysTypes.h"
@@ -51,7 +52,7 @@ namespace NodeBase
       void MemUnprotect();
       void MemProtect();
       void IncludeInTrace();
-      TraceRc StartTracing(bool immediate, bool autostop);
+      TraceRc StartTracing(const std::string& options);
       void StopTracing();
    }
 }

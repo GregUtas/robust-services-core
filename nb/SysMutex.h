@@ -98,10 +98,11 @@ public:
    //
    Rc Acquire(msecs_t timeout);
 
-   //  Releases the mutex.  If LOG is set, a log is generated if the
-   //  mutex was not released (because this thread didn't own it).
+   //  Releases the mutex.  If ABANDON is set, the mutex is released
+   //  (if owned by this thread) no matter how many times it had been
+   //  recursively acquired.
    //
-   void Release(bool log = true);
+   void Release(bool abandon = false);
 
    //  Returns the native identifier of the thread that owns the mutex.
    //

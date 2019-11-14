@@ -22,7 +22,7 @@
 #include "AnModule.h"
 #include "AnIncrement.h"
 #include "Debug.h"
-#include "NbAppIds.h"
+#include "ModuleRegistry.h"
 #include "PbModule.h"
 #include "PotsShelf.h"
 #include "Singleton.h"
@@ -34,15 +34,16 @@ using namespace PotsBase;
 
 namespace AccessNode
 {
-bool AnModule::Registered = Register();
-
-//------------------------------------------------------------------------------
-
 fn_name AnModule_ctor = "AnModule.ctor";
 
-AnModule::AnModule() : Module(AnModuleId)
+AnModule::AnModule() : Module()
 {
    Debug::ft(AnModule_ctor);
+
+   //  Create the modules required by AccessNode.
+   //
+   Singleton< PbModule >::Instance();
+   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -52,21 +53,6 @@ fn_name AnModule_dtor = "AnModule.dtor";
 AnModule::~AnModule()
 {
    Debug::ft(AnModule_dtor);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name AnModule_Register = "AnModule.Register";
-
-bool AnModule::Register()
-{
-   Debug::ft(AnModule_Register);
-
-   //  Create the modules required by AccessNode.
-   //
-   Singleton< PbModule >::Instance();
-   Singleton< AnModule >::Instance();
-   return true;
 }
 
 //------------------------------------------------------------------------------

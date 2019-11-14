@@ -28,6 +28,7 @@
 #include "CliThread.h"
 #include "Clock.h"
 #include "CoutThread.h"
+#include "DaemonRegistry.h"
 #include "Debug.h"
 #include "Element.h"
 #include "FileThread.h"
@@ -36,7 +37,7 @@
 #include "LogGroupRegistry.h"
 #include "LogThread.h"
 #include "Memory.h"
-#include "NbAppIds.h"
+#include "ModuleRegistry.h"
 #include "NbIncrement.h"
 #include "NbLogs.h"
 #include "NbPools.h"
@@ -59,15 +60,13 @@
 
 namespace NodeBase
 {
-bool NbModule::Registered = Register();
-
-//------------------------------------------------------------------------------
-
 fn_name NbModule_ctor = "NbModule.ctor";
 
-NbModule::NbModule() : Module(NbModuleId)
+NbModule::NbModule() : Module()
 {
    Debug::ft(NbModule_ctor);
+
+   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -88,20 +87,6 @@ void NbModule::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name NbModule_Register = "NbModule.Register";
-
-bool NbModule::Register()
-{
-   Debug::ft(NbModule_Register);
-
-   //  Create the modules required by NodeBase.
-   //
-   Singleton< NbModule >::Instance();
-   return true;
-}
-
-//------------------------------------------------------------------------------
-
 fn_name NbModule_Shutdown = "NbModule.Shutdown";
 
 void NbModule::Shutdown(RestartLevel level)
@@ -118,6 +103,7 @@ void NbModule::Shutdown(RestartLevel level)
    Singleton< ThreadAdmin >::Instance()->Shutdown(level);
    Singleton< ThreadRegistry >::Instance()->Shutdown(level);
    Singleton< ObjectPoolRegistry >::Instance()->Shutdown(level);
+   Singleton< DaemonRegistry >::Instance()->Shutdown(level);
    Singleton< CfgParmRegistry >::Instance()->Shutdown(level);
    Singleton< LogGroupRegistry >::Instance()->Shutdown(level);
    Singleton< AlarmRegistry >::Instance()->Shutdown(level);
@@ -150,6 +136,7 @@ void NbModule::Startup(RestartLevel level)
    Singleton< LogGroupRegistry >::Instance()->Startup(level);
    CreateNbLogs(level);
    Singleton< CfgParmRegistry >::Instance()->Startup(level);
+   Singleton< DaemonRegistry >::Instance()->Startup(level);
    Singleton< ObjectPoolRegistry >::Instance()->Startup(level);
    Singleton< ThreadRegistry >::Instance()->Startup(level);
    Singleton< ThreadAdmin >::Instance()->Startup(level);

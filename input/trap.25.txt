@@ -1,0 +1,8 @@
+/ RECOVER disable daemon; kill thread; enable daemon; thread recreated
+daemons set 9 off
+delay 1
+sched kill 15
+delay 2
+daemons set 9 on
+delay 1
+testcase end

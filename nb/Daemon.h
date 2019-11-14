@@ -24,13 +24,16 @@
 
 #include "Permanent.h"
 #include <cstddef>
+#include <cstdint>
 #include <set>
 #include <string>
+#include "NbTypes.h"
 #include "RegCell.h"
 #include "SysTypes.h"
 
 namespace NodeBase
 {
+   class Alarm;
    class Thread;
 }
 
@@ -59,13 +62,13 @@ class Daemon : public Permanent
 {
    friend class Registry< Daemon >;
 public:
-   //  Virtual to allow subclassing.  An instance would be deleted if
-   //  the threads no longer need to be monitored and recreated.
+   //  Virtual to allow subclassing.  An instance would be deleted if, for some
+   //  reason, the threads no longer need to be monitored and recreated.
    //
    virtual ~Daemon();
 
-   //  Creates threads when there are fewer than size_.  May be
-   //  invoked by a Module during initializations and restarts.
+   //  Creates threads when there are fewer than size_.  May be invoked during
+   //  initializations and restarts.
    //
    void CreateThreads();
 
@@ -81,9 +84,33 @@ public:
    //
    const std::string& Name() const { return name_; }
 
+   //  Returns the daemon's location in the global DaemonRegistry.
+   //
+   id_t Did() const { return did_.GetId(); }
+
+   //  Returns the current set of threads.
+   //
+   const std::set< Thread* > Threads() const { return threads_; }
+
+   //  Returns the target number of threads.
+   //
+   size_t TargetSize() const { return size_; }
+
+   //  Prevents the invocation of CreateThread.
+   //
+   void Disable();
+
+   //  Reenables the daemon and invokes CreateThreads.
+   //
+   void Enable();
+
    //  Returns the offset to did_.
    //
    static ptrdiff_t CellDiff();
+
+   //  Overridden for restarts.
+   //
+   void Startup(RestartLevel level) override;
 
    //  Overridden to display member variables.
    //
@@ -102,6 +129,30 @@ private:
    //  Creates a thread that this daemon will manage.
    //
    virtual Thread* CreateThread() = 0;
+
+   //  Invoked if CreateThread traps.  This allows the subclass to try
+   //  to repair any data that might be corrupted before CreateThread is
+   //  invoked again.  If CreateThread traps twice in a row, or if this
+   //  function traps, GetAlarmLevel is invoked to determine the severity
+   //  of the alarm that will be raised, and CreateThread will no longer
+   //  be invoked.
+   //
+   virtual void Recover() { }
+
+   //  Returns the severity of alarm to raise when a thread exits and
+   //  CreateThead fails to create a replacement.  The default version
+   //  returns MajorAlarm if no threads remain and MinorAlarm otherwise.
+   //
+   virtual AlarmStatus GetAlarmLevel() const;
+
+   //  Ensures that the alarm for a shortage of threads exists.
+   //
+   void EnsureAlarm();
+
+   //  Raises (or clears) an alarm after CreateThreads has tried to
+   //  replace any threads that exited.
+   //
+   void RaiseAlarm(AlarmStatus level) const;
 
    //  The type for iterating over our threads.
    //
@@ -122,6 +173,22 @@ private:
    //  The number of threads to be created.
    //
    size_t size_;
+
+   //  Used to detect traps in CreateThread and to disable the daemon.
+   //
+   uint8_t traps_;
+
+   //  The name for the unavailable thread alarm.
+   //
+   std::string alarmName_;
+
+   //  The explanation for the unavailable thread alarm.
+   //
+   std::string alarmExpl_;
+
+   //  The alarm raised when a thread is unavailable.
+   //
+   Alarm* alarm_;
 
    //  The threads.
    //

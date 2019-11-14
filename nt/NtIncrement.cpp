@@ -3467,6 +3467,7 @@ private:
    RecoveryDaemon();
    ~RecoveryDaemon();
    Thread* CreateThread() override;
+   AlarmStatus GetAlarmLevel() const override;
 };
 
 //------------------------------------------------------------------------------
@@ -3530,6 +3531,7 @@ fixed_string RecoveryDaemonName = "recover";
 fixed_string RecoveryDaemon_ctor = "RecoveryDaemon.ctor";
 fixed_string RecoveryDaemon_dtor = "RecoveryDaemon.dtor";
 fixed_string RecoveryDaemon_CreateThread = "RecoveryDaemon.CreateThread";
+fixed_string RecoveryDaemon_GetAlarmLevel = "RecoveryDaemon.GetAlarmLevel";
 
 RecoveryDaemon::RecoveryDaemon() : Daemon(RecoveryDaemonName, 1)
 {
@@ -3547,6 +3549,12 @@ Thread* RecoveryDaemon::CreateThread()
    return Singleton< RecoveryThread >::Instance();
 }
 
+AlarmStatus RecoveryDaemon::GetAlarmLevel() const
+{
+   Debug::ft(RecoveryDaemon_GetAlarmLevel);
+   return MinorAlarm;
+}
+
 //------------------------------------------------------------------------------
 
 fn_name RecoveryThread_ctor = "RecoveryThread.ctor";
@@ -3558,9 +3566,20 @@ RecoveryThread::RecoveryThread() :
 {
    Debug::ft(RecoveryThread_ctor);
 
+   //  Set ThreadCtorTrapFlag to cause a trap during thread creation.  This
+   //  tests orphan recovery and a single daemon trap.  If ThreadCtorRetrapFlag
+   //  is also set, it tests a double daemon trap, which should disable the
+   //  daemon.  Reenabling the daemon will then recreate this thread.
+   //
    if(Debug::SwFlagOn(ThreadCtorTrapFlag))
    {
       Debug::SetSwFlag(ThreadCtorTrapFlag, false);
+      UseBadPointer();
+   }
+
+   if(Debug::SwFlagOn(ThreadCtorRetrapFlag))
+   {
+      Debug::SetSwFlag(ThreadCtorRetrapFlag, false);
       UseBadPointer();
    }
 
@@ -3591,7 +3610,6 @@ void RecoveryThread::AcquireMutex()
 {
    Debug::ft(RecoveryThread_AcquireMutex);
 
-   RecoveryMutex_.Release(false);
    auto rc = RecoveryMutex_.Acquire(TIMEOUT_IMMED);
    if(rc != SysMutex::Acquired)
       Debug::SwLog(RecoveryThread_AcquireMutex, "acquire failed", rc);

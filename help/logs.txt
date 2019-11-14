@@ -49,6 +49,12 @@ the system first boots, its initial report occurs as scheduled if the
 system has been in service for at least 7 minutes and 30 seconds.
 ? THR100
 A critical thread has exited or been killed. This causes a restart.
+? THR300
+A thread has exited and could not be recreated.  This log raises a
+DAEMON alarm with the following severity:
+  o critical: a restart occurs
+  o major or minor: one or more threads are unavailable
+  o off: the thread was recreated
 ? THR900
 A Thread object was deleted by very naughty software. This should never
 occur. Instead, the thread should be sent a SIGCLOSE or SIGPURGE signal

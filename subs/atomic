@@ -45,6 +45,7 @@ namespace std
    public:
       atomic();
       atomic(T value);
+      bool compare_exchange_strong(T& expected, T desired, memory_order order = memory_order_seq_cst);
       T exchange(T value, memory_order order = memory_order_seq_cst);
       T fetch_add(T value, memory_order order = memory_order_seq_cst);
       T fetch_sub(T value, memory_order order = memory_order_seq_cst);

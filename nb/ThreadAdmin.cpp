@@ -64,6 +64,7 @@ public:
    CounterPtr resignals_;
    CounterPtr reentries_;
    CounterPtr reselects_;
+   CounterPtr retractions_;
    CounterPtr traps_;
    CounterPtr recoveries_;
    CounterPtr recreations_;
@@ -109,10 +110,11 @@ ThreadsStats::ThreadsStats()
    switches_.reset(new Counter("context switches"));
    locks_.reset(new Counter("scheduled to run locked"));
    preempts_.reset(new Counter("preemptions"));
-   delays_.reset(new Counter("scheduled after InitThread timeout"));
-   resignals_.reset(new Counter("resignalled to proceed"));
-   reentries_.reset(new Counter("InitThread interrupted but thread locked"));
-   reselects_.reset(new Counter("reselected to run"));
+   delays_.reset(new Counter("scheduled after timeout"));
+   resignals_.reset(new Counter("resignaled to proceed"));
+   reentries_.reset(new Counter("scheduling interrupt when thread locked"));
+   reselects_.reset(new Counter("selected to run again"));
+   retractions_.reset(new Counter("race condition between selected threads"));
    traps_.reset(new Counter("traps"));
    recoveries_.reset(new Counter("trap recoveries"));
    recreations_.reset(new Counter("re-creations"));
@@ -386,6 +388,7 @@ void ThreadAdmin::DisplayStats(ostream& stream, const Flags& options) const
       stats_->resignals_->DisplayStat(stream, options);
       stats_->reentries_->DisplayStat(stream, options);
       stats_->reselects_->DisplayStat(stream, options);
+      stats_->retractions_->DisplayStat(stream, options);
       stats_->traps_->DisplayStat(stream, options);
       stats_->recoveries_->DisplayStat(stream, options);
       stats_->recreations_->DisplayStat(stream, options);
@@ -431,6 +434,9 @@ void ThreadAdmin::Incr(Register r)
       break;
    case Reselects:
       admin->stats_->reselects_->Incr();
+      break;
+   case Retractions:
+      admin->stats_->retractions_->Incr();
       break;
    case Creations:
       admin->stats_->creations_->Incr();

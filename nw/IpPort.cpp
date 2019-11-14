@@ -223,6 +223,7 @@ void IpPort::Display(ostream& stream,
    stream << prefix << "handler : " << strObj(handler_.get()) << CRLF;
    stream << prefix << "thread  : " << strObj(thread_) << CRLF;
    stream << prefix << "socket  : " << strObj(socket_) << CRLF;
+   stream << prefix << "alarm   : " << strObj(alarm_) << CRLF;
 }
 
 //------------------------------------------------------------------------------

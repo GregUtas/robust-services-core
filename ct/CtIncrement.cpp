@@ -220,7 +220,7 @@ word CheckCommand::ProcessCommand(CliThread& cli) const
    if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
 
    string expl;
-   auto rc = set->Check(stream, expl);
+   auto rc = set->Check(cli, stream, expl);
    set->Release();
 
    if(rc == 0)

@@ -68,6 +68,7 @@ void CreateNbLogs(RestartLevel level)
 
    group = new LogGroup(ThreadLogGroup, "Threads");
    new Log(group, ThreadCriticalDeath, "Death of critical thread");
+   new Log(group, ThreadUnavailable, "Failed to recreate thread");
    new Log(group, ThreadDeleted, "Thread deleted");
    new Log(group, ThreadExited, "Thread exited");
    new Log(group, ThreadException, "Exception");

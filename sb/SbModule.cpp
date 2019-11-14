@@ -23,7 +23,7 @@
 #include "Debug.h"
 #include "FactoryRegistry.h"
 #include "InvokerPoolRegistry.h"
-#include "NbAppIds.h"
+#include "ModuleRegistry.h"
 #include "NwModule.h"
 #include "ProtocolRegistry.h"
 #include "SbIncrement.h"
@@ -45,17 +45,16 @@ using namespace NodeBase;
 
 namespace SessionBase
 {
-bool SbModule::Registered = Register();
-
-fn_name SbModule_Register = "SbModule.Register";
-
-//------------------------------------------------------------------------------
-
 fn_name SbModule_ctor = "SbModule.ctor";
 
-SbModule::SbModule() : Module(SbModuleId)
+SbModule::SbModule() : Module()
 {
    Debug::ft(SbModule_ctor);
+
+   //  Create the modules required by SessionBase.
+   //
+   Singleton< NwModule >::Instance();
+   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -72,19 +71,6 @@ SbModule::~SbModule()
 void SbModule::Patch(sel_t selector, void* arguments)
 {
    Module::Patch(selector, arguments);
-}
-
-//------------------------------------------------------------------------------
-
-bool SbModule::Register()
-{
-   Debug::ft(SbModule_Register);
-
-   //  Create the modules required by SessionBase.
-   //
-   Singleton< NwModule >::Instance();
-   Singleton< SbModule >::Instance();
-   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -141,10 +127,13 @@ void SbModule::Startup(RestartLevel level)
    Singleton< EventPool >::Instance()->Startup(level);
    Singleton< BtIpBufferPool >::Instance()->Startup(level);
 
-   Singleton< PayloadInvokerPool >::Instance()->Startup(level);
    Singleton< TimerProtocol >::Instance()->Startup(level);
    Singleton< SbTracer >::Instance()->Startup(level);
    Singleton< SbIncrement >::Instance()->Startup(level);
+
+   //  Create thread pools.
+   //
+   Singleton< PayloadInvokerPool >::Instance();
 
    //  Start threads.
    //

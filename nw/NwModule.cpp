@@ -24,7 +24,7 @@
 #include "IpBuffer.h"
 #include "IpPortRegistry.h"
 #include "IpServiceRegistry.h"
-#include "NbAppIds.h"
+#include "ModuleRegistry.h"
 #include "NbModule.h"
 #include "NwIncrement.h"
 #include "NwLogs.h"
@@ -40,15 +40,16 @@ using namespace NodeBase;
 
 namespace NetworkBase
 {
-bool NwModule::Registered = Register();
-
-//------------------------------------------------------------------------------
-
 fn_name NwModule_ctor = "NwModule.ctor";
 
-NwModule::NwModule() : Module(NwModuleId)
+NwModule::NwModule() : Module()
 {
    Debug::ft(NwModule_ctor);
+
+   //  Create the modules required by NetworkBase.
+   //
+   Singleton< NbModule >::Instance();
+   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -65,20 +66,6 @@ NwModule::~NwModule()
 void NwModule::Patch(sel_t selector, void* arguments)
 {
    Module::Patch(selector, arguments);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name NwModule_Register = "NwModule.Register";
-
-bool NwModule::Register()
-{
-   Debug::ft(NwModule_Register);
-
-   //  Create the modules required by NetworkBase.
-   //
-   Singleton< NbModule >::Instance();
-   return true;
 }
 
 //------------------------------------------------------------------------------

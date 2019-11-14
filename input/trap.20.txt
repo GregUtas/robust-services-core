@@ -1,5 +1,5 @@
 / RECOVER thread constructor trap
-/ This also causes a trap in InitThread, because it invokes
-/ RecoveryDaemon.CreateThread to recreate the recovery thread.
+/ InitThread will trap when it invokes RecoveryDaemon.CreateThread
+/ to recreate the recovery thread.
 recover ctortrap
 testcase end

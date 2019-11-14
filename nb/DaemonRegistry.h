@@ -59,6 +59,10 @@ public:
    //
    const Registry< Daemon >& Daemons() const { return daemons_; }
 
+   //  Overridden to start up all daemons.
+   //
+   void Startup(RestartLevel level) override;
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,

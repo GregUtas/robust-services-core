@@ -128,9 +128,12 @@ TraceBuffer::TraceBuffer() :
 
    if(InitFlags::TraceInit())
    {
+      string options;
       SetTool(FunctionTracer, true);
       SetFilter(TraceAll);
-      StartTracing(InitFlags::ImmediateTrace());
+      options.push_back('s');
+      if(InitFlags::ImmediateTrace()) options.push_back('i');
+      StartTracing(options);
    }
 }
 
@@ -515,7 +518,8 @@ void TraceBuffer::Query(ostream& stream) const
 
 fixed_string TracingOn = "Tracing is ON.";
 fixed_string TracingOff = "Tracing is OFF.";
-fixed_string ImmediateOn = "Immediate tracing selected.";
+fixed_string ImmediateOn = "IMMEDIATE tracing is enabled.";
+fixed_string SlowOn = "SLOW tracing is enabled.";
 
 fn_name TraceBuffer_QueryTools = "TraceBuffer.QueryTools";
 
@@ -524,11 +528,15 @@ void TraceBuffer::QueryTools(ostream& stream) const
    Debug::ft(TraceBuffer_QueryTools);
 
    if(Debug::TraceOn())
+   {
       stream << TracingOn << CRLF;
+      if(immediate_) stream << ImmediateOn << CRLF;
+      if(Debug::SlowTraceOn()) stream << SlowOn << CRLF;
+   }
    else
+   {
       stream << TracingOff << CRLF;
-
-   if(immediate_) stream << ImmediateOn << CRLF;
+   }
 
    auto& tools = Singleton< ToolRegistry >::Instance()->Tools();
 
@@ -668,7 +676,7 @@ void TraceBuffer::Shutdown(RestartLevel level)
 
 fn_name TraceBuffer_StartTracing = "TraceBuffer.StartTracing";
 
-TraceRc TraceBuffer::StartTracing(bool immediate)
+TraceRc TraceBuffer::StartTracing(const string& options)
 {
    Debug::ft(TraceBuffer_StartTracing);
 
@@ -686,7 +694,7 @@ TraceRc TraceBuffer::StartTracing(bool immediate)
       new BufferTrace;
    }
 
-   if(immediate)
+   if(options.find('i') != string::npos)
    {
       auto path = Element::OutputPath();
       if(!path.empty()) path.push_back(PATH_SEPARATOR);
@@ -695,6 +703,9 @@ TraceRc TraceBuffer::StartTracing(bool immediate)
       if(stream_ == nullptr) return CouldNotOpenFile;
       immediate_ = true;
    }
+
+   auto slow = (options.find('s') != string::npos);
+   Debug::SetSlowTrace(slow);
 
    if(Empty()) startTime_ = SysTime();
    Debug::FcFlags_.set(Debug::TracingActive);

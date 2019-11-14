@@ -1,11 +1,11 @@
 nt>sched start
   OK.
-nt>start
+nt>start s
   OK.
 nt>read trap.20
 nt>/ RECOVER thread constructor trap
-nt>/ This also causes a trap in InitThread, because it invokes
-nt>/ RecoveryDaemon.CreateThread to recreate the recovery thread.
+nt>/ InitThread will trap when it invokes RecoveryDaemon.CreateThread
+nt>/ to recreate the recovery thread.
 nt>recover ctortrap
   OK.
 nt>testcase end

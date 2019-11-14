@@ -83,6 +83,10 @@ enum Faction
    Faction_N            // number of factions
 };
 
+//  A set of flags that indicates which factions can be scheduled.
+//
+typedef std::bitset< Faction_N > FactionFlags;
+
 //  Inserts a string for FACTION into STREAM.
 //
 std::ostream& operator<<(std::ostream& stream, Faction faction);

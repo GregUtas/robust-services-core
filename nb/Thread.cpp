@@ -23,14 +23,15 @@
 #include "Dynamic.h"
 #include "FunctionTrace.h"
 #include "Permanent.h"
-#include <bitset>
 #include <cctype>
 #include <csignal>
 #include <cstdlib>
 #include <cstring>
 #include <iomanip>
 #include <ios>
+#include <map>
 #include <sstream>
+#include <utility>
 #include "Algorithms.h"
 #include "Array.h"
 #include "CliThread.h"
@@ -55,6 +56,7 @@
 #include "PosixSignalRegistry.h"
 #include "Registry.h"
 #include "Restart.h"
+#include "RootThread.h"
 #include "SignalException.h"
 #include "Singleton.h"
 #include "Statistics.h"
@@ -255,10 +257,6 @@ public:
    //  Set if unpreemptable when scheduled out.
    //
    bool locked;
-
-   //  Set if execution overlapped with a previous thread.
-   //
-   bool overlap;
 };
 
 //------------------------------------------------------------------------------
@@ -268,8 +266,7 @@ ContextSwitch::ContextSwitch() :
    out(0),
    tid(0),
    nid(0),
-   locked (false),
-   overlap(false)
+   locked (false)
 {
 }
 
@@ -298,6 +295,13 @@ public:
    //  filled in.
    //
    ContextSwitch* AddSwitch();
+
+   //  Characters used when displaying context switches.
+   //
+   static const char IdleChar = '.';      // thread not running
+   static const char UnlockedChar = '|';  // thread running preemptably
+   static const char LockedChar = '#';    // thread running unpreemptably
+   static const char EndChar = 'V';       // thread scheduled out
 
    //  Displays context switches in STREAM.
    //
@@ -372,7 +376,7 @@ ContextSwitch* ContextSwitches::AddSwitch()
 
    ContextSwitch* cs;
 
-   if(ContextSwitchesLock_.Acquire(TIMEOUT_IMMED) == SysMutex::Acquired)
+   if(ContextSwitchesLock_.Acquire(10) == SysMutex::Acquired)
    {
       cs = &switches_[next_];
 
@@ -390,14 +394,66 @@ ContextSwitch* ContextSwitches::AddSwitch()
 }
 
 //------------------------------------------------------------------------------
+//
+//  Thread activity at a time point associated with a context switch.
+//
+struct SchedSnapshot
+{
+   //  MAX is the maximum ThreadId seen while recording context switches.
+   //
+   explicit SchedSnapshot(ThreadId max) :
+      activity(nullptr),
+      duration(0),
+      nid(0)
+   {
+      activity.reset(new char[max + 1]);
+      for(size_t i = 0; i <= max; ++i) activity[i] = ContextSwitches::IdleChar;
+   }
 
-fixed_string SwitchHeader =
-   "Timestamp  Id  Host              Ticks In            Ticks Out      uSecs";
-// 0         1         2         3         4         5         6         7
-// 01234567890123456789012345678901234567890123456789012345678901234567890123
+   //  An array of characters, one per thread, indicating what each thread was
+   //  doing at this time point.
+   //
+   std::unique_ptr< char[] > activity;
 
-fixed_string SwitchFooter =
-   "Symbols: - (preemptable)  ^ (overlap)";
+   //  If a thread was scheduled out at this time point, how long it had run.
+   //
+   ticks_t duration;
+
+   //  Set if an unknown thread was associated with this entry.
+   //
+   SysThreadId nid;
+};
+
+//  Each SchedSnapshot is managed by a unique_ptr.
+//
+typedef std::unique_ptr< SchedSnapshot > SchedSnapshotPtr;
+
+//  Associates a time point with what each thread was doing at that time.
+//
+typedef std::pair< ticks_t, SchedSnapshotPtr> SchedEntry;
+
+//  Maps each time point associated with a context switch to what each thread
+//  was doing at that time.
+//
+typedef std::map< ticks_t, SchedSnapshotPtr> SchedEntries;
+
+//  The header for displaying context switches.  ThreadIds starting at 1 are
+//  output dynamically following the 0.  Each thread's activity is then shown
+//  in its column.
+//
+fixed_string SwitchHeader1 = "             Ran for  -";
+fixed_string SwitchHeader2 = "Timestamp    (usecs)  0";
+
+//  The footer (legend) for displaying context switches.
+//
+fixed_string SwitchFooter1 =
+   "Symbols: . idle   # unpreemptable   | preemptable   V scheduled out";
+fixed_string SwitchFooter2 =
+   "         * multiple threads running unpreemptably (rightmost column)";
+
+//------------------------------------------------------------------------------
+
+fn_name ContextSwitches_DisplaySwitches = "ContextSwitches.DisplaySwitches";
 
 void ContextSwitches::DisplaySwitches(ostream& stream) const
 {
@@ -413,98 +469,161 @@ void ContextSwitches::DisplaySwitches(ostream& stream) const
    MutexGuard guard(&ContextSwitchesLock_);
 
    size_t first = 0;
-   size_t last = next_ - 1;
    auto elems = next_;
 
    if(full_)
    {
       first = next_;
-      last = (first == 0 ? capacity_ - 1 : first - 1);
       elems = capacity_;
    }
 
-   //  Selection-sort the context switches by time scheduled in.  Starting at
-   //  the second entry, make each successive entry (NEXT) a candidate.  All
-   //  of the entries that precede the candidate are sorted.  If the candidate
-   //  is less than the highest sorted entry (PREV), shift PREV up one slot so
-   //  that the candidate can move down.  Repeat until the previous entries
-   //  have shifted to let the candidate move to the correct slot.  Because
-   //  the array is almost sorted, check that the candidate will have to move
-   //  before bothering to make a copy of it.
+   //  Find the maximum ThreadId recorded during the context switches.
    //
-   for(auto next = first, count = elems - 1; count > 0; --count)
+   ThreadId max = 0;
+
+   for(size_t i = first, count = elems; count > 0; --count)
    {
-      next = (next == capacity_ - 1 ? 0 : next + 1);
-
-      auto curr = next;
-      auto prev = (next == 0 ? capacity_ - 1 : next - 1);
-
-      if(switches_[prev].in > switches_[curr].in)
-      {
-         auto candidate = switches_[next];
-
-         while(switches_[prev].in > candidate.in)
-         {
-            switches_[curr] = switches_[prev];
-            prev = (prev == 0 ? capacity_ - 1 : prev - 1);
-            curr = (curr == 0 ? capacity_ - 1 : curr - 1);
-            if(curr == first) break;
-         }
-
-         switches_[curr] = candidate;
-      }
+      if(switches_[i].tid > max) max = switches_[i].tid;
+      i = (i == capacity_ - 1 ? 0 : i + 1);
    }
 
-   //  Look for overlapped executions.  Look at the time that each entry
-   //  was scheduled out.  Flag an overlap while any following entries
-   //  were scheduled in before this time.
+   //  For each context switch, create an entry for its time in and time out.
    //
-   for(size_t i = first, count = elems - 1; count > 0; --count)
-   {
-      auto j = (i == capacity_ - 1 ? 0 : i + 1);
+   SchedEntries timeline;
 
-      while(switches_[i].out > switches_[j].in)
+   for(size_t i = first, count = elems; count > 0; --count)
+   {
+      auto entry = &switches_[i];
+
+      auto curr = timeline.find(entry->in);
+
+      if(curr == timeline.cend())
       {
-         switches_[j].overlap = true;
-         if(j == last) break;
-         j = (j == capacity_ - 1 ? 0 : j + 1);
+         timeline.insert
+            (SchedEntry(entry->in, SchedSnapshotPtr(new SchedSnapshot(max))));
+      }
+
+      curr = timeline.find(entry->out);
+
+      if(curr == timeline.cend())
+      {
+         timeline.insert
+            (SchedEntry(entry->out, SchedSnapshotPtr(new SchedSnapshot(max))));
+      }
+      else
+      {
+         //  An unknown thread always ends up here because its entry->in and
+         //  entry->out are the same.
+         //
+         if(entry->tid == NIL_ID)
+         {
+            curr->second->nid = entry->nid;
+         }
       }
 
       i = (i == capacity_ - 1 ? 0 : i + 1);
    }
+
+   //  For each context switch, record whether the thread was running locked
+   //  or unlocked between the time it was scheduled and the time it was
+   //  scheduled out.
+   //
+   for(size_t i = first, count = elems; count > 0; --count)
+   {
+      auto entry = &switches_[i];
+      auto begin = timeline.find(entry->in);
+
+      if(begin == timeline.cend())
+      {
+         Debug::SwLog(ContextSwitches_DisplaySwitches, "begin not found", i);
+         return;
+      }
+
+      auto end = timeline.find(entry->out);
+
+      if(end == timeline.cend())
+      {
+         Debug::SwLog(ContextSwitches_DisplaySwitches, "end not found", i);
+         return;
+      }
+
+      auto symbol = (entry->locked ? LockedChar : UnlockedChar);
+
+      for(NO_OP; begin != end; ++begin)
+      {
+         begin->second->activity[entry->tid] = symbol;
+      }
+
+      end->second->activity[entry->tid] = EndChar;
+      end->second->duration = entry->out - entry->in;
+
+      i = (i == capacity_ - 1 ? 0 : i + 1);
+   }
+
+   //  Output the context switch timeline.  The thread identifiers appear
+   //  across the top, after SwitchHeader.  For each entry, output
+   //  o the time, for correlation with any function trace (mm::ss.msecs)
+   //  o when a thread is scheduled out, how long it had run (in usecs)
+   //  o the activity for each thread (running locked, running unlocked,
+   //   or being scheduled out)
+   //
+   auto multilocked = false;
 
    stream << CRLF;
    stream << "Context switches: " << elems << CRLF;
-   stream << SwitchHeader << CRLF;
 
-   for(size_t i = first; elems > 0; --elems)
+   stream << SwitchHeader1;
+
+   auto front = ((3 * max) - strlen("Threads")) / 2;
+   auto back = ((3 * max) + 1 - strlen("Threads")) / 2;
+   stream << string(front, '-') << "Threads" << string(back, '-') << CRLF;
+
+   stream << SwitchHeader2;
+
+   for(ThreadId t = 1; t <= max; ++t)
    {
-      auto curr = &switches_[i];
-
-      auto time = Clock::TicksToTime(curr->in, MinsField);
-      stream << time;
-      stream << setw(4) << curr->tid << spaces(2);
-      stream << setw(4) << strHex(curr->nid, 4, false);
-
-      auto c = SPACE;
-      if(!curr->locked) c = '-';
-      stream << c;
-
-      stream << setw(21) << curr->in;
-      stream << setw(21) << curr->out;
-
-      c = SPACE;
-      if(curr->overlap) c = '^';
-      stream << c;
-
-      auto ticks = curr->out - curr->in;
-      auto usecs = Clock::TicksToUsecs(ticks);
-      stream << setw(10) << usecs << spaces(2) << CRLF;
-
-      i = (i == capacity_ - 1 ? 0 : i + 1);
+      stream << setw(3) << t;
    }
 
-   stream << SwitchFooter << CRLF;
+   stream << CRLF;
+
+   for(auto entry = timeline.cbegin(); entry != timeline.cend(); ++entry)
+   {
+      stream << Clock::TicksToTime(entry->first, MinsField);
+
+      if(entry->second->duration > 0)
+         stream << setw(11) << Clock::TicksToUsecs(entry->second->duration);
+      else if(entry->second->nid != 0)
+         stream << strHex(entry->second->nid, 11, true);
+      else
+         stream << spaces(11);
+
+      size_t locked = 0;
+
+      for(ThreadId t = 0; t <= max; ++t)
+      {
+         auto c = entry->second->activity[t];
+         if(c == LockedChar) ++locked;
+         stream << spaces(2) << entry->second->activity[t];
+      }
+
+      if(locked > 1)
+      {
+         stream << "  *";
+         multilocked = true;
+      }
+
+      stream << CRLF;
+   }
+
+   stream << SwitchFooter1 << CRLF;
+
+   if(multilocked)
+   {
+      Debug::SwLog(ContextSwitches_DisplaySwitches, "simultaneously locked", 0);
+      stream << SwitchFooter2 << CRLF;
+      stream << "UNPREEMPTABLE THREADS RAN SIMULTANEOUSLY" << CRLF;
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -733,6 +852,10 @@ public:
    //
    bool waiting_;
 
+   //  Set when running unpreemptably.
+   //
+   bool locked_;
+
     //  Set if the thread's current message is being traced.
    //
    bool traceMsg_;
@@ -812,35 +935,7 @@ public:
    //  unpreemptably.
    //
    ticks_t currEnd_;
-
-   //  Causes a stack check each time it counts down to one.
-   //
-   static size_t StackCheckCounter_;
-
-   //  The time when the previous short interval for thread statistics began.
-   //
-   static ticks_t PrevIntervalStart_;
-
-   //  The time when the current short interval for thread statistics began.
-   //
-   static ticks_t CurrIntervalStart_;
-
-   //  The amount of idle time during the most recent short interval.
-   //
-   static usecs_t TimeIdle_;
-
-   //  The time spent in threads during the most recent short interval.
-   //
-   static usecs_t TimeUsed_;
 };
-
-//------------------------------------------------------------------------------
-
-size_t ThreadPriv::StackCheckCounter_ = 1;
-ticks_t ThreadPriv::PrevIntervalStart_ = 0;
-ticks_t ThreadPriv::CurrIntervalStart_ = 0;
-usecs_t ThreadPriv::TimeIdle_ = 0;
-usecs_t ThreadPriv::TimeUsed_ = 0;
 
 //------------------------------------------------------------------------------
 
@@ -857,6 +952,7 @@ ThreadPriv::ThreadPriv() :
    blocked_(NotBlocked),
    entered_(false),
    waiting_(false),
+   locked_(false),
    traceMsg_(false),
    tracing_(false),
    autostop_(false),
@@ -915,6 +1011,7 @@ void ThreadPriv::Display(ostream& stream,
    stream << prefix << "blocked    : " << blocked_ << CRLF;
    stream << prefix << "entered    : " << entered_ << CRLF;
    stream << prefix << "waiting    : " << waiting_ << CRLF;
+   stream << prefix << "locked     : " << locked_ << CRLF;
    stream << prefix << "traceMsg   : " << traceMsg_ << CRLF;
    stream << prefix << "tracing    : " << tracing_ << CRLF;
    stream << prefix << "autostop   : " << autostop_ << CRLF;
@@ -973,7 +1070,11 @@ const SysThread::Priority FactionMap[Faction_N] =
 //  The thread that is running or which has been scheduled to run.
 //  Excludes RootThread and InitThread.
 //
-Thread* ActiveThread_ = nullptr;
+std::atomic< Thread* > ActiveThread_ = nullptr;
+
+//  The factions that may currently be scheduled.
+//
+FactionFlags FactionsEnabled_ = FactionFlags();
 
 //  The thread at which to start searching for the thread to be
 //  scheduled in.  Scheduling is currently round-robin but will
@@ -981,33 +1082,29 @@ Thread* ActiveThread_ = nullptr;
 //
 id_t Start_ = 1;
 
-//  Set to restrict scheduling to specific factions during a restart.
+//  Causes a stack check each time it counts down to one.
 //
-bool FactionsRestricted_ = true;
+size_t StackCheckCounter_ = 1;
+
+//  The time when the previous short interval for thread statistics began.
+//
+ticks_t PrevIntervalStart_ = 0;
+
+//  The time when the current short interval for thread statistics began.
+//
+ticks_t CurrIntervalStart_ = 0;
+
+//  The amount of idle time during the most recent short interval.
+//
+usecs_t TimeIdle_ = 0;
+
+//  The time spent in threads during the most recent short interval.
+//
+usecs_t TimeUsed_ = 0;
 
 //------------------------------------------------------------------------------
 
-bool FactionAllowed(Faction f)
-{
-   if(FactionsRestricted_)
-   {
-      //  Some factions are not scheduled while preparing to shut down.
-      //
-      switch(f)
-      {
-      case PayloadFaction:
-      case LoadTestFaction:
-      case AuditFaction:
-         return false;
-      }
-   }
-
-   return true;
-}
-
-//------------------------------------------------------------------------------
-
-const Thread::Id Thread::MaxId = 99;
+const ThreadId Thread::MaxId = 99;
 
 //------------------------------------------------------------------------------
 
@@ -1032,7 +1129,7 @@ Thread::Thread(Faction faction, Daemon* daemon) :
    {
       //  There are no threads, so we must be wrapping the root thread.
       //
-      ThreadPriv::CurrIntervalStart_ = Clock::TicksNow();
+      CurrIntervalStart_ = Clock::TicksNow();
 
       Singleton< Orphans >::Instance();
       Singleton< ContextSwitches >::Instance();
@@ -1120,7 +1217,7 @@ c_string Thread::AbbrName() const
 
 Thread* Thread::ActiveThread()
 {
-   auto thr = ActiveThread_;
+   auto thr = ActiveThread_.load();
    if(thr == nullptr) return nullptr;
    if(thr->deleted_) return nullptr;
    return thr;
@@ -1147,6 +1244,14 @@ TraceStatus Thread::CalcStatus(bool dynamic) const
    auto buff = Singleton< TraceBuffer >::Instance();
    if(buff->FilterIsOn(TraceAll)) return TraceIncluded;
    return TraceExcluded;
+}
+
+//------------------------------------------------------------------------------
+
+bool Thread::CanBeScheduled() const
+{
+   return (!deleted_ && (priv_->blocked_ == NotBlocked) &&
+      FactionsEnabled_.test(faction_));
 }
 
 //------------------------------------------------------------------------------
@@ -1235,9 +1340,9 @@ void Thread::Cleanup()
 
 //------------------------------------------------------------------------------
 
-void Thread::ClearActiveThread(const Thread* thr)
+bool Thread::ClearActiveThread(Thread* active)
 {
-   if(ActiveThread_ == thr) ActiveThread_ = nullptr;
+   return ActiveThread_.compare_exchange_strong(active, nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -1382,11 +1487,11 @@ void Thread::DisplaySummaries(ostream& stream)
 
    //  Set TIME1 to the length of the previous short interval.
    //
-   auto time1 = ThreadPriv::TimeIdle_ + ThreadPriv::TimeUsed_;
+   auto time1 = TimeIdle_ + TimeUsed_;
 
    if(time1 > 0)
    {
-      stream << setw(6) << 100 * (double(ThreadPriv::TimeIdle_) / time1);
+      stream << setw(6) << 100 * (double(TimeIdle_) / time1);
    }
 
    stream << CRLF;
@@ -1445,6 +1550,17 @@ void Thread::DisplaySummary
    }
 
    stream << CRLF;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Thread_EnableFactions = "Thread.EnableFactions";
+
+void Thread::EnableFactions(const FactionFlags& enabled)
+{
+   Debug::ft(Thread_EnableFactions);
+
+   FactionsEnabled_ = enabled;
 }
 
 //------------------------------------------------------------------------------
@@ -1580,7 +1696,7 @@ main_t Thread::Exit(signal_t sig)
    //  If the thread is holding any mutexes, release them.
    //  Then log the exit.
    //
-   Singleton< MutexRegistry >::Instance()->Release();
+   Singleton< MutexRegistry >::Instance()->Abandon();
 
    ostringstreamPtr log = nullptr;
 
@@ -1616,14 +1732,12 @@ void Thread::ExitBlockingOperation(fn_name_arg func)
    Debug::ft(Thread_ExitBlockingOperation);
 
    auto thr = RunningThread();
+   thr->priv_->currStart_ = Clock::TicksNow();
 
-   if(thr->priv_->blocked_ == NotBlocked)
-   {
+   if(thr->priv_->blocked_ != NotBlocked)
+      thr->priv_->blocked_ = NotBlocked;
+   else
       Debug::SwLog(Thread_EnterBlockingOperation, "not blocked", 0);
-      return;
-   }
-
-   thr->priv_->blocked_ = NotBlocked;
 
    //  Check if the thread is being forced to sleep or exit.
    //
@@ -1646,6 +1760,16 @@ fn_name Thread_ExitIfSafe = "Thread.ExitIfSafe";
 
 void Thread::ExitIfSafe(debug32_t offset)
 {
+   //  If the thread is blocked, it just invoked ExitBlockingOperation.  It
+   //  can be trapped before it can even record the time when it started to
+   //  run, so record it now.  This prevents ContextSwitches.DisplaySwitches
+   //  from generating a "simultaneous unpreemptable threads" log.
+   //
+   if(priv_->blocked_ != NotBlocked)
+   {
+      priv_->currStart_ = Clock::TicksNow();
+   }
+
    //  Reset action_ to prevent this from being invoked recursively.
    //  If it isn't safe to exit the thread now, try again later.
    //
@@ -1757,7 +1881,7 @@ void Thread::FunctionInvoked(fn_name_arg func)
 
    if(Debug::FcFlags_.test(Debug::StackChecking))
    {
-      if(ThreadPriv::StackCheckCounter_ <= 1)
+      if(StackCheckCounter_ <= 1)
       {
          if(thr == nullptr) thr = RunningThread(false);
          if(thr == nullptr) return;
@@ -1765,7 +1889,7 @@ void Thread::FunctionInvoked(fn_name_arg func)
       }
       else
       {
-         --ThreadPriv::StackCheckCounter_;
+         --StackCheckCounter_;
       }
    }
 }
@@ -1896,14 +2020,6 @@ bool Thread::IsLocked() const
 
 //------------------------------------------------------------------------------
 
-bool Thread::IsReady() const
-{
-   return ((priv_->blocked_ == NotBlocked) &&
-      (faction_ < SystemFaction) && !deleted_);
-}
-
-//------------------------------------------------------------------------------
-
 bool Thread::IsScheduled() const
 {
    return priv_->waiting_;
@@ -1924,8 +2040,7 @@ bool Thread::IsTraceable() const
    {
    case WatchdogFaction:
    case SystemFaction:
-      return ((Restart::GetStatus() != Running) ||
-         (priv_->status_ == TraceIncluded));
+      if(Restart::GetStatus() != Running) return true;
    }
 
    return (trace == TraceIncluded);
@@ -1933,13 +2048,17 @@ bool Thread::IsTraceable() const
 
 //------------------------------------------------------------------------------
 
+fixed_string KillRootThread = "The root thread cannot be killed.";
+fixed_string KillDeletedThread = "A deleted thread cannot be killed.";
+
 fn_name Thread_Kill = "Thread.Kill";
 
-void Thread::Kill()
+fixed_string Thread::Kill()
 {
    Debug::ft(Thread_Kill);
 
-   if(deleted_) return;
+   if(Singleton< RootThread >::Instance() == this) return KillRootThread;
+   if(deleted_) return KillDeletedThread;
 
    //  If the thread is holding or blocked on a mutex, delete it outright.
    //  Otherwise, sending it the signal SIGPURGE will cause it to exit as
@@ -1949,6 +2068,8 @@ void Thread::Kill()
       Destroy();
    else
       Raise(SIGPURGE);
+
+   return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -1970,15 +2091,11 @@ void Thread::LogContextSwitch() const
 
    ThreadAdmin::Incr(ThreadAdmin::Switches);
 
-   auto tid = Tid();
-   auto reg = Singleton< ThreadRegistry >::Instance();
    auto now = Clock::TicksNow();
-   auto locked = IsLocked();
 
-   if(reg->Threads().At(tid) == nullptr)
+   if(IsInvalid())
    {
-      //  This thread is unknown, probably because it was deleted
-      //  and is about to exit.  Create a partial entry for it.
+      //  This thread has been deleted.  Create a partial entry for it.
       //
       auto rec = Singleton< ContextSwitches >::Instance()->AddSwitch();
 
@@ -1988,8 +2105,7 @@ void Thread::LogContextSwitch() const
          rec->nid = SysThread::RunningThreadId();
          rec->in = now;
          rec->out = now;
-         rec->locked = locked;
-         rec->overlap = false;
+         rec->locked = false;
       }
    }
    else
@@ -2008,13 +2124,14 @@ void Thread::LogContextSwitch() const
 
       if(rec != nullptr)
       {
-         rec->tid = tid;
+         rec->tid = Tid();
          rec->nid = SysThread::RunningThreadId();
          rec->in = priv_->currStart_;
          rec->out = now;
-         rec->locked = locked;
-         rec->overlap = false;
+         rec->locked = priv_->locked_;
       }
+
+      priv_->locked_ = false;
    }
 }
 
@@ -2290,10 +2407,8 @@ void Thread::PauseOver(word limit)
 
 double Thread::PercentIdle()
 {
-   if(ThreadPriv::TimeIdle_ == 0) return 0.0;
-
-   return 100 * (double(ThreadPriv::TimeIdle_) /
-      (ThreadPriv::TimeIdle_ + ThreadPriv::TimeUsed_));
+   if(TimeIdle_ == 0) return 0.0;
+   return 100 * (double(TimeIdle_) / (TimeIdle_ + TimeUsed_));
 }
 
 //------------------------------------------------------------------------------
@@ -2445,6 +2560,8 @@ fn_name Thread_Ready = "Thread.Ready";
 
 void Thread::Ready()
 {
+   priv_->currStart_ = Clock::TicksNow();
+
    Debug::ft(Thread_Ready);
 
    if(faction_ >= SystemFaction) return;
@@ -2463,6 +2580,8 @@ void Thread::Ready()
 
    systhrd_->Wait();
    priv_->waiting_ = false;
+   priv_->currStart_ = Clock::TicksNow();
+   priv_->locked_ = (priv_->unpreempts_ > 0);
 }
 
 //------------------------------------------------------------------------------
@@ -2600,17 +2719,6 @@ bool Thread::Restarting(RestartLevel level)
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_RestrictFactions = "Thread.RestrictFactions";
-
-void Thread::RestrictFactions(bool enable)
-{
-   Debug::ft(Thread_RestrictFactions);
-
-   FactionsRestricted_ = enable;
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Thread_Resume = "Thread.Resume";
 
 void Thread::Resume(fn_name_arg func)
@@ -2619,7 +2727,6 @@ void Thread::Resume(fn_name_arg func)
 
    //  Set the time before which a locked thread should schedule itself out.
    //
-   priv_->currStart_ = Clock::TicksNow();
    auto msecs = InitialMsecs() << ThreadAdmin::WarpFactor();
    if(!priv_->entered_) msecs <<= 2;
    priv_->currEnd_ = priv_->currStart_ + Clock::MsecsToTicks(msecs);
@@ -2713,7 +2820,7 @@ Thread* Thread::RunningThread(bool assert)
 
 fn_name Thread_Schedule = "Thread.Schedule";
 
-void Thread::Schedule() const
+void Thread::Schedule()
 {
    Debug::ft(Thread_Schedule);
 
@@ -2721,13 +2828,13 @@ void Thread::Schedule() const
    //
    if(faction_ >= SystemFaction) return;
 
-   auto active = ActiveThread();
+   auto active = this;
 
-   if((active != this) && (active != nullptr))
+   if(!ActiveThread_.compare_exchange_strong(active, nullptr))
    {
-      //  We get here after a preemptable thread suspends or invokes
-      //  MakeUnpreemptable.  If an unpreemptable thread is running,
-      //  don't try to schedule another thread.
+      //  This occurs when a preemptable thread suspends or invokes
+      //  MakeUnpreemptable.  The active thread is an unpreemptable
+      //  thread, so don't try to schedule another one.
       //
       return;
    }
@@ -2735,7 +2842,6 @@ void Thread::Schedule() const
    //  No unpreemptable thread is running.  Wake InitThread to schedule
    //  the next thread.
    //
-   ActiveThread_ = nullptr;
    Singleton< InitThread >::Instance()->Interrupt(InitThread::ScheduleMask);
 }
 
@@ -2748,7 +2854,7 @@ Thread* Thread::Select()
    Debug::ft(Thread_Select);
 
    //  Cycle through all threads, beginning with the one identified by
-   //  start_, to find the next one that is ready to run.
+   //  start_, to find the next one that can be scheduled.
    //
    auto& threads = Singleton< ThreadRegistry >::Instance()->Threads();
    auto first = threads.First(Start_);
@@ -2756,7 +2862,7 @@ Thread* Thread::Select()
 
    for(auto t = first; t != nullptr; threads.Next(t))
    {
-      if(t->IsReady() && FactionAllowed(t->faction_))
+      if(t->CanBeScheduled())
       {
          next = t;
          break;
@@ -2767,7 +2873,7 @@ Thread* Thread::Select()
    {
       for(auto t = threads.First(); t != first; threads.Next(t))
       {
-         if(t->IsReady() && FactionAllowed(t->faction_))
+         if(t->CanBeScheduled())
          {
             next = t;
             break;
@@ -2918,7 +3024,7 @@ void Thread::StackCheck()
    //
    if((priv_ == nullptr) || (priv_->stackBase_ == nullptr)) return;
 
-   ThreadPriv::StackCheckCounter_ = ThreadAdmin::StackCheckInterval();
+   StackCheckCounter_ = ThreadAdmin::StackCheckInterval();
 
    signal_t local = SIGNIL;
    ptrdiff_t stacksize = &local - priv_->stackBase_;
@@ -3135,45 +3241,44 @@ void Thread::StartShortInterval()
 
    auto& threads = Singleton< ThreadRegistry >::Instance()->Threads();
 
-   ThreadPriv::TimeUsed_ = 0;
+   TimeUsed_ = 0;
 
    for(auto t = threads.First(); t != nullptr; threads.Next(t))
    {
-      ThreadPriv::TimeUsed_ += t->priv_->currUsecs_;
+      TimeUsed_ += t->priv_->currUsecs_;
       t->priv_->prevUsecs_ = t->priv_->currUsecs_;
       t->priv_->currUsecs_ = 0;
    }
 
-   ThreadPriv::PrevIntervalStart_ = ThreadPriv::CurrIntervalStart_;
-   ThreadPriv::CurrIntervalStart_ = Clock::TicksNow();
+   PrevIntervalStart_ = CurrIntervalStart_;
+   CurrIntervalStart_ = Clock::TicksNow();
 
    //  Until the first short interval ends, there is no "previous" short
    //  interval.
    //
-   if(ThreadPriv::PrevIntervalStart_ > 0)
+   if(PrevIntervalStart_ > 0)
    {
-      auto ticks =
-         ThreadPriv::CurrIntervalStart_ - ThreadPriv::PrevIntervalStart_;
+      auto ticks = CurrIntervalStart_ - PrevIntervalStart_;
       auto total = Clock::TicksToUsecs(ticks);
 
-      if(total > ThreadPriv::TimeUsed_)
-         ThreadPriv::TimeIdle_ = total - ThreadPriv::TimeUsed_;
+      if(total > TimeUsed_)
+         TimeIdle_ = total - TimeUsed_;
       else
-         ThreadPriv::TimeIdle_ = 0;
+         TimeIdle_ = 0;
    }
 }
 
 //------------------------------------------------------------------------------
 
-TraceRc Thread::StartTracing(bool immediate, bool autostop)
+TraceRc Thread::StartTracing(const string& options)
 {
    auto thr = RunningThread();
-   auto rc = Singleton< TraceBuffer >::Instance()->StartTracing(immediate);
+   auto rc = Singleton< TraceBuffer >::Instance()->StartTracing(options);
 
    if(rc == TraceOk)
    {
+      thr->priv_->autostop_ = (options.find('a') != string::npos);
       thr->priv_->tracing_ = true;
-      thr->priv_->autostop_ = autostop;
    }
 
    return rc;
@@ -3246,7 +3351,7 @@ void Thread::Suspend()
 
 fn_name Thread_SwitchContext = "Thread.SwitchContext";
 
-bool Thread::SwitchContext()
+Thread* Thread::SwitchContext()
 {
    Debug::ft(Thread_SwitchContext);
 
@@ -3254,15 +3359,24 @@ bool Thread::SwitchContext()
 
    if((curr != nullptr) && curr->IsLocked())
    {
-      //  We were invoked to schedule a thread and started to do so, but
-      //  before ActiveThread_ was set (below), we were invoked again.
+      //  This is similar to code in InitThread, where the scheduled thread
+      //  occasionally misses its Proceed() and needs to be resignalled.
       //
-      ThreadAdmin::Incr(ThreadAdmin::Reentries);
-      return true;
+      if(curr->IsScheduled())
+      {
+         curr->Proceed();
+         ThreadAdmin::Incr(ThreadAdmin::Resignals);
+      }
+      else
+      {
+         ThreadAdmin::Incr(ThreadAdmin::Reentries);
+      }
+
+      return curr;
    }
 
    //  Select the next thread to run.  If one is found, preempt any running
-   //  thread and signal the next one to resume.
+   //  thread (which cannot be locked) and signal the next one to resume.
    //
    auto next = Select();
 
@@ -3271,16 +3385,24 @@ bool Thread::SwitchContext()
       if(next == curr)
       {
          ThreadAdmin::Incr(ThreadAdmin::Reselects);
-         return true;
+         return curr;
+      }
+
+      if(!ActiveThread_.compare_exchange_strong(curr, next))
+      {
+         //  CURR is no longer the active thread, even though it was when
+         //  this function was entered.
+         //
+         ThreadAdmin::Incr(ThreadAdmin::Retractions);
+         return curr;
       }
 
       if(curr != nullptr) curr->Preempt();
-      ActiveThread_ = next;
       next->Proceed();
-      return true;
+      return next;
    }
 
-   return (curr != nullptr);
+   return curr;
 }
 
 //------------------------------------------------------------------------------
@@ -3407,9 +3529,9 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
    {
       Debug::ft(Thread_TrapHandler);  //@
 
-      //  IF the thread is holding any mutexes, release them.
+      //  If the thread is holding any mutexes, release them.
       //
-      Singleton< MutexRegistry >::Instance()->Release();
+      Singleton< MutexRegistry >::Instance()->Abandon();
 
       //  Exit immediately if the Thread has already been deleted.
       //

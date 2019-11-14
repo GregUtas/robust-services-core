@@ -80,7 +80,8 @@ public:
    //  C++ coding guidelines.  If STREAM is not nullptr, produces a report
    //  that contains line counts and warnings.
    //
-   virtual NodeBase::word Check(std::ostream* stream, std::string& expl) const;
+   virtual NodeBase::word Check(NodeBase::CliThread& cli,
+      std::ostream* stream, std::string& expl) const;
 
    //  On success, returns 0 and updates RESULT with the number of items
    //  in the set.  Returns another value on failure and updates RESULT

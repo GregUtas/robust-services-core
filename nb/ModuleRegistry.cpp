@@ -42,10 +42,48 @@ using std::ostream;
 using std::setw;
 using std::string;
 
-//------------------------------------------------------------------------------
-
 namespace NodeBase
 {
+//  The following return the set of factions that can be scheduled during
+//  various scenarios.
+//
+const FactionFlags& NoFactions = FactionFlags();
+
+//------------------------------------------------------------------------------
+
+const FactionFlags& AllFactions()
+{
+   static FactionFlags AllFactions_ = FactionFlags();
+
+   //  RootThread and InitThread are not scheduled but run whenever ready
+   //  because of their higher priority.
+   //
+   if(AllFactions_.none())
+   {
+      for(auto f = 0; f < SystemFaction; ++f) AllFactions_.set(f, true);
+   }
+
+   return AllFactions_;
+}
+
+//------------------------------------------------------------------------------
+
+const FactionFlags& ShutdownFactions()
+{
+   static FactionFlags ShutdownFactions_ = FactionFlags();
+
+   if(ShutdownFactions_.none())
+   {
+      ShutdownFactions_.set(BackgroundFaction, true);
+      ShutdownFactions_.set(OperationsFaction, true);
+      ShutdownFactions_.set(MaintenanceFaction, true);
+   }
+
+   return ShutdownFactions_;
+}
+
+//==============================================================================
+
 fn_name ModuleRegistry_ctor = "ModuleRegistry.ctor";
 
 ModuleRegistry::ModuleRegistry() :
@@ -208,14 +246,14 @@ void ModuleRegistry::Restart()
       switch(Restart::Status_)
       {
       case Initial:
-         Thread::RestrictFactions(true);
+         Thread::EnableFactions(NoFactions);
          reentered = false;
          Restart::Level_ = RestartReboot;
          Restart::Status_ = StartingUp;
          break;
 
       case StartingUp:
-         Thread::RestrictFactions(true);
+         Thread::EnableFactions(NoFactions);
          if(reentered)
          {
             Restart::Status_ = ShuttingDown;
@@ -229,7 +267,7 @@ void ModuleRegistry::Restart()
          }
          Restart::Level_ = RestartNil;
          Restart::Status_ = Running;
-         Thread::RestrictFactions(false);
+         Thread::EnableFactions(AllFactions());
          return;
 
       case Running:
@@ -240,7 +278,7 @@ void ModuleRegistry::Restart()
          break;
 
       case ShuttingDown:
-         Thread::RestrictFactions(true);
+         Thread::EnableFactions(NoFactions);
          if(reentered) Restart::Level_ = NextLevel();
          Shutdown(Restart::Level_);
          reentered = false;
@@ -281,14 +319,18 @@ void ModuleRegistry::Shutdown(RestartLevel level)
 {
    Debug::ft(ModuleRegistry_Shutdown);
 
-   for(size_t tries = 120, idle = 0; (tries > 0) && (idle <= 8); --tries)
-   {
-      ThisThread::Pause(25);
-      if(Thread::SwitchContext())
-         idle = 0;
-      else
-         ++idle;
-   }
+   //  Schedule a subset of the factions so that pending logs will be output.
+   //
+   Thread::EnableFactions(ShutdownFactions());
+      for(size_t tries = 120, idle = 0; (tries > 0) && (idle <= 8); --tries)
+      {
+         ThisThread::Pause(25);
+         if(Thread::SwitchContext() != nullptr)
+            idle = 0;
+         else
+            ++idle;
+      }
+   Thread::EnableFactions(NoFactions);
 
    auto zeroTime = Clock::TicksNow();
    *Stream() << CRLF << "RESTART TYPE: " << strRestartLevel(level) << CRLF;
@@ -306,7 +348,7 @@ void ModuleRegistry::Shutdown(RestartLevel level)
    size_t actual = 0;
 
    //  Report PLANNED, the number of threads that plan to exit.  Schedule
-   //  threads until the planned number have exited.  If some failto exit,
+   //  threads until the planned number have exited.  If some fail to exit,
    //  RootThread will time out and escalate the restart.
    //
    *Stream() << ExitingThreadsStr << setw(2) << planned;
@@ -314,14 +356,14 @@ void ModuleRegistry::Shutdown(RestartLevel level)
    *Stream() << Clock::TicksToMsecs(Clock::TicksSince(zeroTime)) << CRLF;
    Log::Submit(stream_);
 
-   Thread::RestrictFactions(false);
+   Thread::EnableFactions(AllFactions());
       while(actual < planned)
       {
          Thread::SwitchContext();
          ThisThread::Pause(25);
          actual = before - reg->Threads().Size();
       }
-   Thread::RestrictFactions(true);
+   Thread::EnableFactions(NoFactions);
 
    actual = before - reg->Threads().Size();
    *Stream() << CRLF << ExitedThreadsStr << setw(2) << actual;

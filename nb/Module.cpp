@@ -41,12 +41,9 @@ const ModuleId Module::MaxId = 4000;
 
 fn_name Module_ctor = "Module.ctor";
 
-Module::Module(ModuleId mid)
+Module::Module()
 {
    Debug::ft(Module_ctor);
-
-   mid_.SetId(mid);
-   Singleton< ModuleRegistry >::Instance()->BindModule(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -67,18 +64,6 @@ ptrdiff_t Module::CellDiff()
    int local;
    auto fake = reinterpret_cast< const Module* >(&local);
    return ptrdiff(&fake->mid_, fake);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Module_Dependencies = "Module.Dependencies";
-
-ModuleId* Module::Dependencies(size_t& count) const
-{
-   Debug::ft(Module_Dependencies);
-
-   count = 0;
-   return nullptr;
 }
 
 //------------------------------------------------------------------------------

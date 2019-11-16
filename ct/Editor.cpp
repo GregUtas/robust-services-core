@@ -1139,7 +1139,7 @@ bool Editor::EraseLineBreak(const Iter& curr)
    //  Merge the lines.
    //
    auto start = next->code.find_first_not_of(WhitespaceChars);
-   if(next->code.at(start) != '(')
+   if(InsertSpaceOnMerge(curr->code, next->code, start))
    {
       curr->code.push_back(SPACE);
    }
@@ -1767,11 +1767,12 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
       default:
          //
          //  If multiple warning types are being fixed, try the next one.  If
-         //  only one warning type is being fixed, fall through and exit the
-         //  loop, because there will be nothing to fix.
+         //  only one warning type was selected, there will be nothing to fix,
+         //  so return a value that will terminate the >fix command.
          //
          if(opts.warning == AllWarnings) continue;
-         break;
+         *cli.obuf << "Fixing this warning type is not supported." << CRLF;
+         return -2;
       }
 
       //  If this item is ineligible for fixing, we exited the "NotSupported"
@@ -1852,10 +1853,7 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
    {
       if(!opts.multiple)
       {
-         if(opts.warning == AllWarnings)
-            *cli.obuf << "No warnings that can be fixed were found." << CRLF;
-         else
-            *cli.obuf << "Fixing this warning type is not supported." << CRLF;
+         *cli.obuf << "No warnings that can be fixed were found." << CRLF;
       }
    }
 

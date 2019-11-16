@@ -178,7 +178,7 @@ word CodeFileSet::Check(CliThread& cli, ostream* stream, string& expl) const
    if(unparsed > 0)
    {
       *cli.obuf << unparsed << " files should be parsed to avoid spurious";
-      *cli.obuf << CRLF << "spurious results.  ";
+      *cli.obuf << CRLF << "results.  ";
       skip = cli.BoolPrompt("Do you wish to skip this?");
    }
 

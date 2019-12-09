@@ -91,6 +91,16 @@ public:
    char CharPrompt(const std::string& prompt,
       const std::string& chars, const std::string& help, bool upper = false);
 
+   //  Displays PROMPT and loops until the user enters an integer between MIN
+   //  and MAX, which is returned.
+   //
+   word IntPrompt(const std::string& prompt, word min, word max);
+
+   //  Displays PROMPT until the user enters valid input, which is returned.
+   //  Returns an empty string if an error occurs.
+   //
+   std::string StrPrompt(const std::string& prompt);
+
    //  Displays help information in the file addressed by PATH.  KEY specifies
    //  the help topic.  The line "? KEY" is searched for in the file, ignoring
    //  case.  If found, everything up to the next line that begins with a '?'

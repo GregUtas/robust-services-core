@@ -165,6 +165,7 @@ FactionsText::FactionsText() : CliText(FactionsTextExpl, FactionsTextStr) { }
 fixed_string IdExpl = "index (location in registry)";
 
 IdMandParm::IdMandParm() : CliIntParm(IdExpl, 0, UINT16_MAX) { }
+
 IdOptParm::IdOptParm() : CliIntParm(IdExpl, 0, UINT16_MAX, true) { }
 
 //------------------------------------------------------------------------------

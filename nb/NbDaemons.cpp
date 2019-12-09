@@ -31,26 +31,38 @@
 namespace NodeBase
 {
 fixed_string CliDaemonName = "cli";
-fixed_string CliDaemon_ctor = "CliDaemon.ctor";
-fixed_string CliDaemon_dtor = "CliDaemon.dtor";
-fixed_string CliDaemon_CreateThread = "CliDaemon.CreateThread";
-fixed_string CliDaemon_GetAlarmLevel = "CliDaemon.GetAlarmLevel";
+
+//------------------------------------------------------------------------------
+
+fn_name CliDaemon_ctor = "CliDaemon.ctor";
 
 CliDaemon::CliDaemon() : Daemon(CliDaemonName, 1)
 {
    Debug::ft(CliDaemon_ctor);
 }
 
+//------------------------------------------------------------------------------
+
+fn_name CliDaemon_dtor = "CliDaemon.dtor";
+
 CliDaemon::~CliDaemon()
 {
    Debug::ft(CliDaemon_dtor);
 }
+
+//------------------------------------------------------------------------------
+
+fn_name CliDaemon_CreateThread = "CliDaemon.CreateThread";
 
 Thread* CliDaemon::CreateThread()
 {
    Debug::ft(CliDaemon_CreateThread);
    return Singleton< CliThread >::Instance();
 }
+
+//------------------------------------------------------------------------------
+
+fn_name CliDaemon_GetAlarmLevel = "CliDaemon.GetAlarmLevel";
 
 AlarmStatus CliDaemon::GetAlarmLevel() const
 {
@@ -60,20 +72,36 @@ AlarmStatus CliDaemon::GetAlarmLevel() const
 
 //------------------------------------------------------------------------------
 
+void CliDaemon::Patch(sel_t selector, void* arguments)
+{
+   Daemon::Patch(selector, arguments);
+}
+
+//==============================================================================
+
 fixed_string ObjectDaemonName = "objaud";
-fixed_string ObjectDaemon_ctor = "ObjectDaemon.ctor";
-fixed_string ObjectDaemon_dtor = "ObjectDaemon.dtor";
-fixed_string ObjectDaemon_CreateThread = "ObjectDaemon.CreateThread";
+
+//------------------------------------------------------------------------------
+
+fn_name ObjectDaemon_ctor = "ObjectDaemon.ctor";
 
 ObjectDaemon::ObjectDaemon() : Daemon(ObjectDaemonName, 1)
 {
    Debug::ft(ObjectDaemon_ctor);
 }
 
+//------------------------------------------------------------------------------
+
+fn_name ObjectDaemon_dtor = "ObjectDaemon.dtor";
+
 ObjectDaemon::~ObjectDaemon()
 {
    Debug::ft(ObjectDaemon_dtor);
 }
+
+//------------------------------------------------------------------------------
+
+fn_name ObjectDaemon_CreateThread = "ObjectDaemon.CreateThread";
 
 Thread* ObjectDaemon::CreateThread()
 {
@@ -83,24 +111,47 @@ Thread* ObjectDaemon::CreateThread()
 
 //------------------------------------------------------------------------------
 
+void ObjectDaemon::Patch(sel_t selector, void* arguments)
+{
+   Daemon::Patch(selector, arguments);
+}
+
+//==============================================================================
+
 fixed_string StatisticsDaemonName = "stats";
-fixed_string StatisticsDaemon_ctor = "StatisticsDaemon.ctor";
-fixed_string StatisticsDaemon_dtor = "StatisticsDaemon.dtor";
-fixed_string StatisticsDaemon_CreateThread = "StatisticsDaemon.CreateThread";
+
+//------------------------------------------------------------------------------
+
+fn_name StatisticsDaemon_ctor = "StatisticsDaemon.ctor";
 
 StatisticsDaemon::StatisticsDaemon() : Daemon(StatisticsDaemonName, 1)
 {
    Debug::ft(StatisticsDaemon_ctor);
 }
 
+//------------------------------------------------------------------------------
+
+fn_name StatisticsDaemon_dtor = "StatisticsDaemon.dtor";
+
 StatisticsDaemon::~StatisticsDaemon()
 {
    Debug::ft(StatisticsDaemon_dtor);
 }
 
+//------------------------------------------------------------------------------
+
+fn_name StatisticsDaemon_CreateThread = "StatisticsDaemon.CreateThread";
+
 Thread* StatisticsDaemon::CreateThread()
 {
    Debug::ft(StatisticsDaemon_CreateThread);
    return Singleton< StatisticsThread >::Instance();
+}
+
+//------------------------------------------------------------------------------
+
+void StatisticsDaemon::Patch(sel_t selector, void* arguments)
+{
+   Daemon::Patch(selector, arguments);
 }
 }

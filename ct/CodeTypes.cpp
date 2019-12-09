@@ -201,7 +201,7 @@ LineTypeAttr::LineTypeAttr(bool code, bool exe, bool merge, bool blank) :
 const LineTypeAttr LineTypeAttr::Attrs[LineType_N + 1] =
 {
    //           c  x  m  b
-   LineTypeAttr(T, T, T, F),  // Code
+   LineTypeAttr(T, T, T, F),  // SourceCode
    LineTypeAttr(F, F, F, T),  // Blank
    LineTypeAttr(F, F, F, T),  // EmptyComment
    LineTypeAttr(F, F, F, F),  // FileComment
@@ -224,6 +224,17 @@ const LineTypeAttr LineTypeAttr::Attrs[LineType_N + 1] =
 
 //------------------------------------------------------------------------------
 
+bool InsertSpaceOnMerge(const string& line1, const string& line2, size_t begin2)
+{
+   //  Insert a space unless LINE2 is an argument list, which is the case if
+   //  it begins with a parenthesis and LINE1 ends with an identifier.
+   //
+   if(ValidNextChars.find(line1.back()) == string::npos) return true;
+   return (line2.at(begin2) != '(');
+}
+
+//------------------------------------------------------------------------------
+
 size_t LineMergeLength
    (const string& line1, size_t begin1, size_t end1,
     const string& line2, size_t begin2, size_t end2)
@@ -243,7 +254,7 @@ size_t LineMergeLength
    if(line1.find(ELSE_STR, first1) == first1) return SIZE_MAX;
    begin2 = line2.find_first_not_of(WhitespaceChars, begin2);
    auto size = (end1 - begin1 + 1) + (end2 - begin2 + 1);
-   if(line2.at(begin2) != '(') ++size;
+   if(InsertSpaceOnMerge(line1, line2, begin2)) ++size;
    return size;
 }
 

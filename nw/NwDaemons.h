@@ -53,6 +53,10 @@ public:
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
+
+   //  Overridden for patching.
+   //
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Creates a daemon that manages the TCP I/O thread that receives messages
    //  on PORT on behalf of SERVICE.
@@ -96,6 +100,10 @@ public:
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
+
+   //  Overridden for patching.
+   //
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Creates a daemon that manages the UDP I/O thread that receives messages
    //  on PORT on behalf of SERVICE.

@@ -649,7 +649,7 @@ TraceRc ContextSwitches::LogSwitches(bool on)
 
 //==============================================================================
 //
-//  Registry for orphans.  An orphan is a deleted Thread that is not yet
+//  Registry for orphans.  An orphan is a deleted Thread that has not yet
 //  exited.  Its SysThread object still exists, and it must be exited at
 //  the first opportunity.
 //

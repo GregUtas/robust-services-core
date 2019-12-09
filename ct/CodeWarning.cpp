@@ -354,6 +354,26 @@ void CodeWarning::GenerateReport(ostream* stream, const SetOfIds& set)
 
 //------------------------------------------------------------------------------
 
+fn_name CodeWarning_GetNewFuncName = "CodeWarning.GetNewFuncName";
+
+string CodeWarning::GetNewFuncName(string& expl) const
+{
+   Debug::ft(CodeWarning_GetNewFuncName);
+
+   switch(warning_)
+   {
+   case DisplayNotOverridden:
+      return "Display";
+   case PatchNotOverridden:
+      return "Patch";
+   }
+
+   expl = "The function associated with this warning is unknown.";
+   return EMPTY_STR;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeWarning_GetWarnings = "CodeWarning.GetWarnings";
 
 void CodeWarning::GetWarnings
@@ -730,7 +750,7 @@ void CodeWarning::Initialize()
       WarningAttrs(F, X,
       "Override of Base.Display not found")));
    Attrs_.insert(WarningPair(PatchNotOverridden,
-      WarningAttrs(F, X,
+      WarningAttrs(T, C,
       "Override of Object.Patch not found")));
    Attrs_.insert(WarningPair(FunctionCouldBeDefaulted,
       WarningAttrs(T, R,

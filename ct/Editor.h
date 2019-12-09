@@ -36,6 +36,12 @@ namespace NodeBase
    class CliThread;
 }
 
+namespace CodeTools
+{
+   struct FuncDeclAttrs;
+   struct FuncDefnAttrs;
+}
+
 using NodeBase::CliThread;
 using NodeBase::word;
 using std::string;
@@ -114,12 +120,12 @@ private:
    //  is updated to provide any explanation, even when returning 0.  When the
    //  code has been edited, EXPL usually contains the revised line of code.
    //
-   word FixWarning(const CodeWarning& log, string& expl);
+   word FixWarning(CliThread& cli, const CodeWarning& log, string& expl);
 
    //  Invokes FixWarning if LOG's status is NotFixed and updates its status
    //  to Pending on success.
    //
-   word FixLog(CodeWarning& log, string& expl);
+   word FixLog(CliThread& cli, CodeWarning& log, string& expl);
 
    //  Most of the editing functions attempt to fix the warning reported in LOG,
    //  returning 0 on success.  Any other result indicates an error, in which
@@ -153,6 +159,7 @@ private:
    word InsertInclude(const CodeWarning& log, string& expl);
    word InsertIncludeGuard(const CodeWarning& log, string& expl);
    word InsertLineBreak(const CodeWarning& log, string& expl);
+   word InsertPatch(CliThread& cli, const CodeWarning& log, string& expl);
    word InsertUsing(const CodeWarning& log, string& expl);
    word RenameIncludeGuard(const CodeWarning& log, string& expl);
    word ReplaceNull(const CodeWarning& log, string& expl);
@@ -242,6 +249,10 @@ private:
          iter(i), pos(p) { }
    };
 
+   //  Returns the source code.
+   //
+   const SourceList& Source() const { return source_; }
+
    //  Returns the position after CURR.
    //
    CodeLocation NextPos(const CodeLocation& curr);
@@ -328,7 +339,7 @@ private:
 
    //  Returns the line that follows FUNC.
    //
-   Iter FindFuncEnd(const Function* func);
+   Iter LineAfterFunc(const Function* func);
 
    //  Inserts CODE at ITER and returns its location.
    //
@@ -353,21 +364,62 @@ private:
    //
    bool EraseLineBreak(const Iter& curr);
 
-   //  Indicates where a blank line should be added when inserting new code.
+   //  Returns the location where the special member function required to
+   //  fix LOG should be inserted.  Updates ATTRS to specify whether the
+   //  function should be offset with a blank line and, if so, commented.
    //
-   enum BlankLineLocation
-   {
-      BlankNone,
-      BlankBefore,
-      BlankAfter
-   };
+   Iter FindSpecialFuncLoc(const CodeWarning& log, FuncDeclAttrs& attrs);
 
-   //  Returns the location where code to fix LOG should be inserted.  Sets
-   //  BLANK to where a blank line should be added to set off the code, and
-   //  sets COMMENT if the code should be commented.
+   //  Returns the location where the function CLS::NAME should be declared.
+   //  Returns source_.end() if the user decides not to insert the function.
+   //  Updates ATTRS if the function should be commented and/or offset with
+   //  a blank line.
    //
-   Iter FindInsertionPoint
-      (const CodeWarning& log, BlankLineLocation& blank, bool& comment);
+   Iter FindFuncDeclLoc
+      (const Class* cls, const string& name, FuncDeclAttrs& attrs);
+
+   //  Returns the location where a new function declaration should be added
+   //  after PREV and/or before NEXT.  Updates ATTRS if the function should
+   //  be offset with a blank and/or commented.
+   //
+   Iter UpdateFuncDeclLoc
+      (const Function* prev, const Function* next, FuncDeclAttrs& attrs);
+
+   //  Updates ATTRS based on FUNC.
+   //
+   void UpdateFuncDeclAttrs(const Function* func, FuncDeclAttrs& attrs);
+
+   //  Returns the file where the function CLS::NAME should be defined.
+   //
+   const CodeFile* FindFuncDefnFile
+      (CliThread& cli, const Class* cls, const string& name);
+
+   //  Returns the location where the function CLS::NAME should be defined.
+   //  Updates ATTRS if the function should be offset with a rule and/or a
+   //  blank line.
+   //
+   Iter FindFuncDefnLoc(const CodeFile* file, const Class* cls,
+      const string& name, string& expl, FuncDefnAttrs& attrs);
+
+   //  Returns the location where a new function definition should be added
+   //  after PREV and/or before NEXT.  Updates ATTRS if the function should
+   //  be offset with a rule and/or a blank line.
+   //
+   Iter UpdateFuncDefnLoc
+      (const Function* prev, const Function* next, FuncDefnAttrs& attrs);
+
+   //  Updates ATTRS based on FUNC.
+   //
+   void UpdateFuncDefnAttrs(const Function* func, FuncDefnAttrs& attrs);
+
+   //  Inserts the declaration for a Patch override at ITER.
+   //
+   void InsertPatchDecl(Iter& iter, const FuncDeclAttrs& attrs);
+
+   //  Inserts the definition for a Patch override in CLS at ITER.
+   //
+   void InsertPatchDefn
+      (Iter& iter, const Class* cls, const FuncDefnAttrs& attrs);
 
    //  Returns the first line that follows comments and blanks.
    //
@@ -399,11 +451,6 @@ private:
    //  file name.
    //
    word MangleInclude(string& include, string& expl) const;
-
-   //  If CODE is an #include directive, unmanagles and returns it, else
-   //  simply returns it without any changes.
-   //
-   string DemangleInclude(string code) const;
 
    //  Inserts an INCLUDE directive.
    //
@@ -455,10 +502,9 @@ private:
    //
    word Changed(const Iter& iter, std::string& expl);
 
-   //  Comparison functions for sorting #include directives.
+   //  Comparison function for sorting #include directives.
    //
-   static bool IsSorted1(const SourceLine& line1, const SourceLine& line2);
-   static bool IsSorted2(const string& line1, const string& line2);
+   static bool IncludesSorted(const SourceLine& line1, const SourceLine& line2);
 
    //  The file from which the source code was obtained.
    //

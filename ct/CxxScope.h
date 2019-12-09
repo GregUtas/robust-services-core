@@ -1006,6 +1006,11 @@ public:
    const Function* GetDecl() const { return (defn_ ? mate_ : this); }
    Function* GetDecl() { return (defn_ ? mate_ : this); }
 
+   //  Returns the function's definition (if distinct from its declaration),
+   //  else its declaration.
+   //
+   const Function* GetDefn() const;
+
    //  The following are all forwarded to the function declaration because
    //  the fields in question are not set on a function definition.  When
    //  code that implements this class uses one of these fields directly, it
@@ -1368,11 +1373,6 @@ private:
    //  Invoked on a function's declaration when its definition (FUNC) is found.
    //
    void SetDefn(Function* func);
-
-   //  Returns the function's definition (if distinct from its declaration),
-   //  else its declaration.
-   //
-   const Function* GetDefn() const;
 
    //  Returns true if this function is overridden by CLS or one of its
    //  subclasses.

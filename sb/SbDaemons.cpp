@@ -40,7 +40,7 @@ fixed_string InvokerDaemonName = "invoker";
 
 //------------------------------------------------------------------------------
 
-fixed_string InvokerDaemon_ctor = "InvokerDaemon.ctor";
+fn_name InvokerDaemon_ctor = "InvokerDaemon.ctor";
 
 InvokerDaemon::InvokerDaemon(Faction faction, size_t size) :
    Daemon(MakeName(faction).c_str(), 1),
@@ -51,7 +51,7 @@ InvokerDaemon::InvokerDaemon(Faction faction, size_t size) :
 
 //------------------------------------------------------------------------------
 
-fixed_string InvokerDaemon_dtor = "InvokerDaemon.dtor";
+fn_name InvokerDaemon_dtor = "InvokerDaemon.dtor";
 
 InvokerDaemon::~InvokerDaemon()
 {
@@ -60,7 +60,7 @@ InvokerDaemon::~InvokerDaemon()
 
 //------------------------------------------------------------------------------
 
-fixed_string InvokerDaemon_CreateThread = "InvokerDaemon.CreateThread";
+fn_name InvokerDaemon_CreateThread = "InvokerDaemon.CreateThread";
 
 Thread* InvokerDaemon::CreateThread()
 {
@@ -81,7 +81,7 @@ void InvokerDaemon::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fixed_string InvokerDaemon_GetAlarmLevel = "InvokerDaemon.GetAlarmLevel";
+fn_name InvokerDaemon_GetAlarmLevel = "InvokerDaemon.GetAlarmLevel";
 
 AlarmStatus InvokerDaemon::GetAlarmLevel() const
 {
@@ -99,7 +99,7 @@ AlarmStatus InvokerDaemon::GetAlarmLevel() const
 
 //------------------------------------------------------------------------------
 
-fixed_string InvokerDaemon_GetDaemon = "InvokerDaemon.GetDaemon";
+fn_name InvokerDaemon_GetDaemon = "InvokerDaemon.GetDaemon";
 
 InvokerDaemon* InvokerDaemon::GetDaemon(Faction faction, size_t size)
 {
@@ -119,7 +119,7 @@ InvokerDaemon* InvokerDaemon::GetDaemon(Faction faction, size_t size)
 
 //------------------------------------------------------------------------------
 
-fixed_string InvokerDaemon_MakeName = "InvokerDaemon.MakeName";
+fn_name InvokerDaemon_MakeName = "InvokerDaemon.MakeName";
 
 string InvokerDaemon::MakeName(Faction faction)
 {
@@ -134,13 +134,20 @@ string InvokerDaemon::MakeName(Faction faction)
    return name;
 }
 
+//------------------------------------------------------------------------------
+
+void InvokerDaemon::Patch(sel_t selector, void* arguments)
+{
+   Daemon::Patch(selector, arguments);
+}
+
 //==============================================================================
 
 fixed_string TimerDaemonName = "timer";
 
 //------------------------------------------------------------------------------
 
-fixed_string TimerDaemon_ctor = "TimerDaemon.ctor";
+fn_name TimerDaemon_ctor = "TimerDaemon.ctor";
 
 TimerDaemon::TimerDaemon() : Daemon(TimerDaemonName, 1)
 {
@@ -149,7 +156,7 @@ TimerDaemon::TimerDaemon() : Daemon(TimerDaemonName, 1)
 
 //------------------------------------------------------------------------------
 
-fixed_string TimerDaemon_dtor = "TimerDaemon.dtor";
+fn_name TimerDaemon_dtor = "TimerDaemon.dtor";
 
 TimerDaemon::~TimerDaemon()
 {
@@ -169,12 +176,19 @@ Thread* TimerDaemon::CreateThread()
 
 //------------------------------------------------------------------------------
 
-fixed_string TimerDaemon_GetAlarmLevel = "TimerDaemon.GetAlarmLevel";
+fn_name TimerDaemon_GetAlarmLevel = "TimerDaemon.GetAlarmLevel";
 
 AlarmStatus TimerDaemon::GetAlarmLevel() const
 {
    Debug::ft(TimerDaemon_GetAlarmLevel);
 
    return CriticalAlarm;
+}
+
+//------------------------------------------------------------------------------
+
+void TimerDaemon::Patch(sel_t selector, void* arguments)
+{
+   Daemon::Patch(selector, arguments);
 }
 }

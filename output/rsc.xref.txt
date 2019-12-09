@@ -67,8 +67,6 @@ PotsBase::AnIncrement::AnIncrement [an/AnIncrement.h]
    an/AnIncrement.cpp
 PotsBase::AnIncrement::~AnIncrement [an/AnIncrement.h]
    an/AnIncrement.cpp
-AccessNode::AnModule_Register [an/AnModule.cpp]
-   an/AnModule.cpp
 AccessNode::AnModule_Shutdown [an/AnModule.cpp]
    an/AnModule.cpp
 AccessNode::AnModule_Startup [an/AnModule.cpp]
@@ -81,10 +79,6 @@ AccessNode::AnModule [an/AnModule.h]
    an/AnModule.cpp
    rsc/main.cpp
 AccessNode::AnModule::AnModule [an/AnModule.h]
-   an/AnModule.cpp
-AccessNode::AnModule::Register [an/AnModule.h]
-   an/AnModule.cpp
-AccessNode::AnModule::Registered [an/AnModule.h]
    an/AnModule.cpp
 AccessNode::AnModule::Shutdown [an/AnModule.h]
    an/AnModule.cpp
@@ -4286,8 +4280,6 @@ CallBase::BcTrigger_ctor [cb/BcTriggers.cpp]
    cb/BcTriggers.cpp
 CallBase::BcTrigger_dtor [cb/BcTriggers.cpp]
    cb/BcTriggers.cpp
-CallBase::CbModule_Register [cb/CbModule.cpp]
-   cb/CbModule.cpp
 CallBase::CbModule_Shutdown [cb/CbModule.cpp]
    cb/CbModule.cpp
 CallBase::CbModule_Startup [cb/CbModule.cpp]
@@ -4301,10 +4293,6 @@ CallBase::CbModule [cb/CbModule.h]
    pb/PbModule.cpp
    rn/RnModule.cpp
 CallBase::CbModule::CbModule [cb/CbModule.h]
-   cb/CbModule.cpp
-CallBase::CbModule::Register [cb/CbModule.h]
-   cb/CbModule.cpp
-CallBase::CbModule::Registered [cb/CbModule.h]
    cb/CbModule.cpp
 CallBase::CbModule::Shutdown [cb/CbModule.h]
    cb/CbModule.cpp
@@ -4818,8 +4806,6 @@ CallBase::TestCallFactory_ctor [cb/TestCallFactory.cpp]
    cb/TestCallFactory.cpp
 CallBase::TestCallFactory_dtor [cb/TestCallFactory.cpp]
    cb/TestCallFactory.cpp
-ControlNode::CnModule_Register [cn/CnModule.cpp]
-   cn/CnModule.cpp
 ControlNode::CnModule_Shutdown [cn/CnModule.cpp]
    cn/CnModule.cpp
 ControlNode::CnModule_Startup [cn/CnModule.cpp]
@@ -4833,10 +4819,6 @@ ControlNode::CnModule [cn/CnModule.h]
    on/OnModule.cpp
    rsc/main.cpp
 ControlNode::CnModule::CnModule [cn/CnModule.h]
-   cn/CnModule.cpp
-ControlNode::CnModule::Register [cn/CnModule.h]
-   cn/CnModule.cpp
-ControlNode::CnModule::Registered [cn/CnModule.h]
    cn/CnModule.cpp
 ControlNode::CnModule::Shutdown [cn/CnModule.h]
    cn/CnModule.cpp
@@ -5439,6 +5421,7 @@ CodeTools::CodeFile::IsCpp [ct/CodeFile.h]
    ct/CxxArea.cpp
    ct/CxxScope.cpp
    ct/CxxScoped.cpp
+   ct/Editor.cpp
    ct/Library.cpp
    ct/Parser.cpp
 CodeTools::CodeFile::IsExtFile [ct/CodeFile.h]
@@ -6163,10 +6146,12 @@ CodeTools::FunctionType::FuncCtor [ct/CodeTypes.h]
    ct/CodeWarning.cpp
    ct/CxxArea.cpp
    ct/CxxScope.cpp
+   ct/Editor.cpp
 CodeTools::FunctionType::FuncDtor [ct/CodeTypes.h]
    ct/CodeFile.cpp
    ct/CodeWarning.cpp
    ct/CxxScope.cpp
+   ct/Editor.cpp
 CodeTools::FunctionType::FuncOperator [ct/CodeTypes.h]
    ct/CodeFile.cpp
    ct/CxxArea.cpp
@@ -6255,6 +6240,7 @@ CodeTools::INDENT_SIZE [ct/CodeTypes.h]
    ct/CxxScope.cpp
    ct/CxxScoped.cpp
    ct/CxxStatement.cpp
+   ct/Editor.cpp
 CodeTools::INLINE_STR [ct/CodeTypes.h]
    ct/CodeTypes.cpp
    ct/CxxScope.cpp
@@ -6269,6 +6255,9 @@ CodeTools::INT_STR [ct/CodeTypes.h]
    ct/Parser.cpp
 CodeTools::IndexOf [ct/CodeTypes.h]
    ct/CxxArea.cpp
+CodeTools::InsertSpaceOnMerge [ct/CodeTypes.h]
+   ct/CodeTypes.cpp
+   ct/Editor.cpp
 CodeTools::LF_Mask [ct/CodeTypes.h]
    ct/CodeTypes.cpp
    ct/CxxStatement.cpp
@@ -6276,6 +6265,7 @@ CodeTools::LINE_LENGTH_MAX [ct/CodeTypes.h]
    ct/CodeFile.cpp
    ct/CodeTypes.h
    ct/CxxScope.cpp
+   ct/Editor.cpp
    ct/Library.cpp
 CodeTools::LOCALS_STR [ct/CodeTypes.h]
    ct/CodeTypes.cpp
@@ -6315,10 +6305,6 @@ CodeTools::LineType::CloseBrace [ct/CodeTypes.h]
 CodeTools::LineType::CloseBraceSemicolon [ct/CodeTypes.h]
    ct/CodeFile.cpp
    ct/Editor.cpp
-CodeTools::LineType::Code [ct/CodeTypes.h]
-   ct/CodeFile.cpp
-   ct/CxxScope.cpp
-   ct/Editor.cpp
 CodeTools::LineType::DebugFt [ct/CodeTypes.h]
    ct/CodeFile.cpp
    ct/CxxScope.cpp
@@ -6352,8 +6338,13 @@ CodeTools::LineType::OpenBrace [ct/CodeTypes.h]
    ct/Editor.cpp
 CodeTools::LineType::SeparatorComment [ct/CodeTypes.h]
    ct/CodeFile.cpp
+   ct/Editor.cpp
 CodeTools::LineType::SlashAsteriskComment [ct/CodeTypes.h]
    ct/CodeFile.cpp
+CodeTools::LineType::SourceCode [ct/CodeTypes.h]
+   ct/CodeFile.cpp
+   ct/CxxScope.cpp
+   ct/Editor.cpp
 CodeTools::LineType::TaggedComment [ct/CodeTypes.h]
    ct/CodeFile.cpp
 CodeTools::LineType::TextComment [ct/CodeTypes.h]
@@ -7067,6 +7058,7 @@ CodeTools::Warning::OverrideTagMissing [ct/CodeTypes.h]
 CodeTools::Warning::PatchNotOverridden [ct/CodeTypes.h]
    ct/CodeWarning.cpp
    ct/CxxArea.cpp
+   ct/Editor.cpp
 CodeTools::Warning::PointerArithmetic [ct/CodeTypes.h]
    ct/CodeWarning.cpp
    ct/CxxToken.cpp
@@ -7224,6 +7216,8 @@ CodeTools::CodeWarning_FindRootLog [ct/CodeWarning.cpp]
    ct/CodeWarning.cpp
 CodeTools::CodeWarning_GenerateReport [ct/CodeWarning.cpp]
    ct/CodeWarning.cpp
+CodeTools::CodeWarning_GetNewFuncName [ct/CodeWarning.cpp]
+   ct/CodeWarning.cpp
 CodeTools::CodeWarning_GetWarnings [ct/CodeWarning.cpp]
    ct/CodeWarning.cpp
 CodeTools::CodeWarning_Initialize [ct/CodeWarning.cpp]
@@ -7263,6 +7257,9 @@ CodeTools::CodeWarning::FindWarning [ct/CodeWarning.h]
 CodeTools::CodeWarning::GenerateReport [ct/CodeWarning.h]
    ct/CodeFile.cpp
    ct/CodeWarning.cpp
+CodeTools::CodeWarning::GetNewFuncName [ct/CodeWarning.h]
+   ct/CodeWarning.cpp
+   ct/Editor.cpp
 CodeTools::CodeWarning::GetWarnings [ct/CodeWarning.h]
    ct/CodeWarning.cpp
    ct/Editor.cpp
@@ -7950,8 +7947,6 @@ CodeTools::CtIncrement::CtIncrement [ct/CtIncrement.h]
    ct/CtIncrement.cpp
 CodeTools::CtIncrement::~CtIncrement [ct/CtIncrement.h]
    ct/CtIncrement.cpp
-CodeTools::CtModule_Register [ct/CtModule.cpp]
-   ct/CtModule.cpp
 CodeTools::CtModule_Shutdown [ct/CtModule.cpp]
    ct/CtModule.cpp
 CodeTools::CtModule_Startup [ct/CtModule.cpp]
@@ -7964,10 +7959,6 @@ CodeTools::CtModule [ct/CtModule.h]
    ct/CtModule.cpp
    rsc/main.cpp
 CodeTools::CtModule::CtModule [ct/CtModule.h]
-   ct/CtModule.cpp
-CodeTools::CtModule::Register [ct/CtModule.h]
-   ct/CtModule.cpp
-CodeTools::CtModule::Registered [ct/CtModule.h]
    ct/CtModule.cpp
 CodeTools::CtModule::Shutdown [ct/CtModule.h]
    ct/CtModule.cpp
@@ -8017,6 +8008,7 @@ CodeTools::Cxx::Access [ct/Cxx.h]
    ct/CxxScope.h
    ct/CxxScoped.cpp
    ct/CxxScoped.h
+   ct/Editor.cpp
    ct/Lexer.cpp
    ct/Lexer.h
    ct/Parser.cpp
@@ -8024,6 +8016,7 @@ CodeTools::Cxx::Access [ct/Cxx.h]
 CodeTools::Cxx::Access::Access_N [ct/Cxx.h]
    ct/Cxx.cpp
    ct/CxxArea.cpp
+   ct/Editor.cpp
 CodeTools::Cxx::Access::Private [ct/Cxx.h]
    ct/CxxArea.cpp
    ct/CxxExecute.cpp
@@ -8045,6 +8038,7 @@ CodeTools::Cxx::Access::Public [ct/Cxx.h]
    ct/CxxScope.cpp
    ct/CxxScoped.cpp
    ct/CxxToken.cpp
+   ct/Editor.cpp
    ct/Lexer.cpp
    ct/Parser.cpp
 CodeTools::Cxx::ClassTag [ct/Cxx.h]
@@ -8697,6 +8691,7 @@ CodeTools::Cxx::operator<<(std::basic_ostream,CodeTools::Cxx::Access) [ct/Cxx.h]
    ct/CxxArea.cpp
    ct/CxxScope.cpp
    ct/CxxScoped.cpp
+   ct/Editor.cpp
 CodeTools::Cxx::operator<<(std::basic_ostream,CodeTools::Cxx::ClassTag) [ct/Cxx.h]
    ct/CodeFile.cpp
    ct/Cxx.cpp
@@ -9414,6 +9409,7 @@ CodeTools::Class::BaseClass [ct/CxxArea.h]
    ct/CxxExecute.cpp
    ct/CxxScope.cpp
    ct/CxxScoped.cpp
+   ct/Editor.cpp
    ct/Library.cpp
    ct/Parser.cpp
 CodeTools::Class::BlockCopied [ct/CxxArea.h]
@@ -9733,6 +9729,7 @@ CodeTools::CxxArea::FuncVector [ct/CxxArea.h]
 CodeTools::CxxArea::Funcs [ct/CxxArea.h]
    ct/CxxArea.cpp
    ct/CxxScope.cpp
+   ct/Editor.cpp
    ct/Parser.cpp
 CodeTools::CxxArea::MatchFunc [ct/CxxArea.h]
    ct/CxxArea.cpp
@@ -11099,6 +11096,7 @@ CodeTools::Class [ct/CxxFwd.h]
    ct/CxxScoped.h
    ct/CxxSymbols.h
    ct/CxxToken.h
+   ct/Editor.h
    ct/Parser.h
 CodeTools::ClassInst [ct/CxxFwd.h]
    ct/CxxArea.h
@@ -12015,6 +12013,7 @@ CodeTools::CxxNamed::GetAccess [ct/CxxNamed.h]
    ct/CxxScope.h
    ct/CxxScoped.cpp
    ct/CxxScoped.h
+   ct/Editor.cpp
    ct/Parser.cpp
 CodeTools::CxxNamed::GetArea [ct/CxxNamed.h]
    ct/CxxArea.h
@@ -12039,6 +12038,7 @@ CodeTools::CxxNamed::GetDefnFile [ct/CxxNamed.h]
    ct/CxxScope.cpp
    ct/CxxScope.h
    ct/CxxScoped.cpp
+   ct/Editor.cpp
 CodeTools::CxxNamed::GetDirectClasses [ct/CxxNamed.h]
    ct/CxxArea.cpp
    ct/CxxArea.h
@@ -14244,6 +14244,7 @@ CodeTools::Function::GetDeclFile [ct/CxxScope.h]
 CodeTools::Function::GetDefn [ct/CxxScope.h]
    ct/CxxScope.cpp
    ct/CxxScope.h
+   ct/Editor.cpp
 CodeTools::Function::GetDefnFile [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::GetImpl [ct/CxxScope.h]
@@ -14296,6 +14297,7 @@ CodeTools::Function::IsOverriddenAtOrBelow [ct/CxxScope.h]
 CodeTools::Function::IsOverride [ct/CxxScope.h]
    ct/CxxArea.cpp
    ct/CxxScope.cpp
+   ct/Editor.cpp
 CodeTools::Function::IsPureVirtual [ct/CxxScope.h]
    ct/CodeWarning.cpp
 CodeTools::Function::IsTemplateArg [ct/CxxScope.h]
@@ -16669,6 +16671,7 @@ CodeTools::CxxToken::GetClass [ct/CxxToken.h]
    ct/CxxSymbols.cpp
    ct/CxxToken.cpp
    ct/CxxToken.h
+   ct/Editor.cpp
    ct/Parser.cpp
 CodeTools::CxxToken::GetConvertibleTypes [ct/CxxToken.h]
    ct/CxxArea.cpp
@@ -17350,9 +17353,15 @@ CodeTools::StringLiteral::PushBack [ct/CxxToken.h]
    ct/Parser.cpp
 CodeTools::BackChars [ct/Editor.cpp]
    ct/Editor.cpp
-CodeTools::CodeTools_NotFound [ct/Editor.cpp]
+CodeTools::BlankLocation [ct/Editor.cpp]
    ct/Editor.cpp
-CodeTools::CodeTools_Report [ct/Editor.cpp]
+CodeTools::BlankLocation::BlankAfter [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::BlankLocation::BlankBefore [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::BlankLocation::BlankNone [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::DemangleInclude [ct/Editor.cpp]
    ct/Editor.cpp
 CodeTools::Editor_AdjustLineIndentation [ct/Editor.cpp]
    ct/Editor.cpp
@@ -17377,8 +17386,6 @@ CodeTools::Editor_CommentOrBraceFollows [ct/Editor.cpp]
 CodeTools::Editor_ConvertTabsToBlanks [ct/Editor.cpp]
    ct/Editor.cpp
 CodeTools::Editor_DebugFtCode [ct/Editor.cpp]
-   ct/Editor.cpp
-CodeTools::Editor_DemangleInclude [ct/Editor.cpp]
    ct/Editor.cpp
 CodeTools::Editor_DisplayLog [ct/Editor.cpp]
    ct/Editor.cpp
@@ -17426,9 +17433,11 @@ CodeTools::Editor_FindArgsEnd [ct/Editor.cpp]
    ct/Editor.cpp
 CodeTools::Editor_FindFirstOf [ct/Editor.cpp]
    ct/Editor.cpp
-CodeTools::Editor_FindFuncEnd [ct/Editor.cpp]
+CodeTools::Editor_FindFuncDeclLoc [ct/Editor.cpp]
    ct/Editor.cpp
-CodeTools::Editor_FindInsertionPoint [ct/Editor.cpp]
+CodeTools::Editor_FindFuncDefnFile [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::Editor_FindFuncDefnLoc [ct/Editor.cpp]
    ct/Editor.cpp
 CodeTools::Editor_FindLine1 [ct/Editor.cpp]
    ct/Editor.cpp
@@ -17441,6 +17450,8 @@ CodeTools::Editor_FindNonBlank [ct/Editor.cpp]
 CodeTools::Editor_FindPos [ct/Editor.cpp]
    ct/Editor.cpp
 CodeTools::Editor_FindSigEnd [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::Editor_FindSpecialFuncLoc [ct/Editor.cpp]
    ct/Editor.cpp
 CodeTools::Editor_FindUsingReferents [ct/Editor.cpp]
    ct/Editor.cpp
@@ -17490,9 +17501,17 @@ CodeTools::Editor_InsertLineBreak2 [ct/Editor.cpp]
    ct/Editor.cpp
 CodeTools::Editor_InsertNamespaceForward [ct/Editor.cpp]
    ct/Editor.cpp
+CodeTools::Editor_InsertPatch [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::Editor_InsertPatchDecl [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::Editor_InsertPatchDefn [ct/Editor.cpp]
+   ct/Editor.cpp
 CodeTools::Editor_InsertPrefix [ct/Editor.cpp]
    ct/Editor.cpp
 CodeTools::Editor_InsertUsing [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::Editor_LineAfterFunc [ct/Editor.cpp]
    ct/Editor.cpp
 CodeTools::Editor_MangleInclude [ct/Editor.cpp]
    ct/Editor.cpp
@@ -17542,17 +17561,39 @@ CodeTools::Editor_TagAsOverride [ct/Editor.cpp]
    ct/Editor.cpp
 CodeTools::Editor_TagAsStaticFunction [ct/Editor.cpp]
    ct/Editor.cpp
+CodeTools::Editor_UpdateFuncDeclAttrs [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::Editor_UpdateFuncDeclLoc [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::Editor_UpdateFuncDefnAttrs [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::Editor_UpdateFuncDefnLoc [ct/Editor.cpp]
+   ct/Editor.cpp
 CodeTools::Editor_Write [ct/Editor.cpp]
    ct/Editor.cpp
 CodeTools::Editor_ctor [ct/Editor.cpp]
    ct/Editor.cpp
-CodeTools::FixChars [ct/Editor.cpp]
-   ct/Editor.cpp
-CodeTools::FixHelp [ct/Editor.cpp]
+CodeTools::FilePrompt [ct/Editor.cpp]
    ct/Editor.cpp
 CodeTools::FixPrompt [ct/Editor.cpp]
    ct/Editor.cpp
 CodeTools::FrontChars [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::FuncDeclAttrs [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::FuncDeclAttrs::access [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::FuncDeclAttrs::blank [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::FuncDeclAttrs::comment [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::FuncDefnAttrs [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::FuncDefnAttrs::blank [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::FuncDefnAttrs::rule [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::IncludesAreSorted [ct/Editor.cpp]
    ct/Editor.cpp
 CodeTools::IsBlank [ct/Editor.cpp]
    ct/Editor.cpp
@@ -17560,7 +17601,25 @@ CodeTools::IsWordChar [ct/Editor.cpp]
    ct/Editor.cpp
 CodeTools::NotFound [ct/Editor.cpp]
    ct/Editor.cpp
+CodeTools::PatchComment [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::PatchInvocation [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::PatchReturn [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::PatchSignature [ct/Editor.cpp]
+   ct/Editor.cpp
 CodeTools::Report [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::YNSQChars [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::YNSQHelp [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::strCode [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::strComment [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::strRule [ct/Editor.cpp]
    ct/Editor.cpp
 CodeTools::Editor [ct/Editor.h]
    ct/CodeFile.cpp
@@ -17571,15 +17630,6 @@ CodeTools::Editor::AdjustLineIndentation [ct/Editor.h]
 CodeTools::Editor::AdjustTags [ct/Editor.h]
    ct/Editor.cpp
 CodeTools::Editor::AlignArgumentNames [ct/Editor.h]
-   ct/Editor.cpp
-CodeTools::Editor::BlankLineLocation [ct/Editor.h]
-   ct/Editor.cpp
-   ct/Editor.h
-CodeTools::Editor::BlankLineLocation::BlankAfter [ct/Editor.h]
-   ct/Editor.cpp
-CodeTools::Editor::BlankLineLocation::BlankBefore [ct/Editor.h]
-   ct/Editor.cpp
-CodeTools::Editor::BlankLineLocation::BlankNone [ct/Editor.h]
    ct/Editor.cpp
 CodeTools::Editor::ChangeClassToStruct [ct/Editor.h]
    ct/Editor.cpp
@@ -17610,8 +17660,6 @@ CodeTools::Editor::Commits_ [ct/Editor.h]
 CodeTools::Editor::ConvertTabsToBlanks [ct/Editor.h]
    ct/Editor.cpp
 CodeTools::Editor::DebugFtCode [ct/Editor.h]
-   ct/Editor.cpp
-CodeTools::Editor::DemangleInclude [ct/Editor.h]
    ct/Editor.cpp
 CodeTools::Editor::DisplayLog [ct/Editor.h]
    ct/Editor.cpp
@@ -17663,9 +17711,11 @@ CodeTools::Editor::FindArgsEnd [ct/Editor.h]
    ct/Editor.cpp
 CodeTools::Editor::FindFirstOf [ct/Editor.h]
    ct/Editor.cpp
-CodeTools::Editor::FindFuncEnd [ct/Editor.h]
+CodeTools::Editor::FindFuncDeclLoc [ct/Editor.h]
    ct/Editor.cpp
-CodeTools::Editor::FindInsertionPoint [ct/Editor.h]
+CodeTools::Editor::FindFuncDefnFile [ct/Editor.h]
+   ct/Editor.cpp
+CodeTools::Editor::FindFuncDefnLoc [ct/Editor.h]
    ct/Editor.cpp
 CodeTools::Editor::FindLine(CodeTools::Editor* const,unsigned int) [ct/Editor.h]
    ct/Editor.cpp
@@ -17679,6 +17729,8 @@ CodeTools::Editor::FindNonBlank [ct/Editor.h]
 CodeTools::Editor::FindPos [ct/Editor.h]
    ct/Editor.cpp
 CodeTools::Editor::FindSigEnd [ct/Editor.h]
+   ct/Editor.cpp
+CodeTools::Editor::FindSpecialFuncLoc [ct/Editor.h]
    ct/Editor.cpp
 CodeTools::Editor::FindUsingReferents [ct/Editor.h]
    ct/Editor.cpp
@@ -17703,6 +17755,8 @@ CodeTools::Editor::GetLineType [ct/Editor.h]
 CodeTools::Editor::IncludesBegin [ct/Editor.h]
    ct/Editor.cpp
 CodeTools::Editor::IncludesEnd [ct/Editor.h]
+   ct/Editor.cpp
+CodeTools::Editor::IncludesSorted [ct/Editor.h]
    ct/Editor.cpp
 CodeTools::Editor::Indent [ct/Editor.h]
    ct/Editor.cpp
@@ -17732,17 +17786,21 @@ CodeTools::Editor::InsertLineBreak(CodeTools::Editor* const,const std::iterator_
    ct/Editor.cpp
 CodeTools::Editor::InsertNamespaceForward [ct/Editor.h]
    ct/Editor.cpp
+CodeTools::Editor::InsertPatch [ct/Editor.h]
+   ct/Editor.cpp
+CodeTools::Editor::InsertPatchDecl [ct/Editor.h]
+   ct/Editor.cpp
+CodeTools::Editor::InsertPatchDefn [ct/Editor.h]
+   ct/Editor.cpp
 CodeTools::Editor::InsertPrefix [ct/Editor.h]
    ct/Editor.cpp
 CodeTools::Editor::InsertUsing [ct/Editor.h]
    ct/Editor.cpp
-CodeTools::Editor::IsSorted1 [ct/Editor.h]
-   ct/Editor.cpp
-CodeTools::Editor::IsSorted2 [ct/Editor.h]
-   ct/Editor.cpp
 CodeTools::Editor::Iter [ct/Editor.h]
    ct/Editor.cpp
    ct/Editor.h
+CodeTools::Editor::LineAfterFunc [ct/Editor.h]
+   ct/Editor.cpp
 CodeTools::Editor::MangleInclude [ct/Editor.h]
    ct/Editor.cpp
 CodeTools::Editor::NextPos [ct/Editor.h]
@@ -17772,6 +17830,8 @@ CodeTools::Editor::Rfind [ct/Editor.h]
 CodeTools::Editor::RfindNonBlank [ct/Editor.h]
    ct/Editor.cpp
 CodeTools::Editor::SortIncludes [ct/Editor.h]
+   ct/Editor.cpp
+CodeTools::Editor::Source [ct/Editor.h]
    ct/Editor.cpp
 CodeTools::Editor::SourceLine [ct/Editor.h]
    ct/Editor.cpp
@@ -17803,6 +17863,14 @@ CodeTools::Editor::TagAsOverride [ct/Editor.h]
    ct/Editor.cpp
 CodeTools::Editor::TagAsStaticFunction [ct/Editor.h]
    ct/Editor.cpp
+CodeTools::Editor::UpdateFuncDeclAttrs [ct/Editor.h]
+   ct/Editor.cpp
+CodeTools::Editor::UpdateFuncDeclLoc [ct/Editor.h]
+   ct/Editor.cpp
+CodeTools::Editor::UpdateFuncDefnAttrs [ct/Editor.h]
+   ct/Editor.cpp
+CodeTools::Editor::UpdateFuncDefnLoc [ct/Editor.h]
+   ct/Editor.cpp
 CodeTools::Editor::Write [ct/Editor.h]
    ct/Editor.cpp
 CodeTools::Editor::aliased_ [ct/Editor.h]
@@ -17817,8 +17885,13 @@ CodeTools::Editor::sorted_ [ct/Editor.h]
    ct/Editor.cpp
 CodeTools::Editor::source_ [ct/Editor.h]
    ct/Editor.cpp
+   ct/Editor.h
 CodeTools::Editor::warnings_ [ct/Editor.h]
    ct/Editor.cpp
+CodeTools::FuncDeclAttrs [ct/Editor.h]
+   ct/Editor.h
+CodeTools::FuncDefnAttrs [ct/Editor.h]
+   ct/Editor.h
 NodeBase::CliThread [ct/Editor.h]
    ct/Editor.h
 std::list<CodeTools::Editor::SourceLine>::iterator [ct/Editor.h]
@@ -18451,6 +18524,7 @@ CodeTools::Library [ct/Library.h]
    ct/CxxDirective.cpp
    ct/CxxNamed.cpp
    ct/CxxSymbols.cpp
+   ct/Editor.cpp
    ct/Interpreter.cpp
    ct/Library.cpp
    ct/LibrarySet.cpp
@@ -18502,6 +18576,7 @@ CodeTools::Library::FindFile [ct/Library.h]
    ct/CodeFile.cpp
    ct/CtIncrement.cpp
    ct/CxxDirective.cpp
+   ct/Editor.cpp
    ct/Library.cpp
 CodeTools::Library::FindVar [ct/Library.h]
    ct/Library.cpp
@@ -20602,8 +20677,6 @@ Diplomacy::SubversionType::SUBVERTED_CONVOY [dip/ConvoySubversion.h]
 Diplomacy::SubversionType::UNSUBVERTED_CONVOY [dip/ConvoySubversion.h]
    dip/Adjudicator.cpp
    dip/ConvoySubversion.cpp
-Diplomacy::DipModule_Register [dip/DipModule.cpp]
-   dip/DipModule.cpp
 Diplomacy::DipModule_Shutdown [dip/DipModule.cpp]
    dip/DipModule.cpp
 Diplomacy::DipModule_Startup [dip/DipModule.cpp]
@@ -20613,10 +20686,6 @@ Diplomacy::DipModule_ctor [dip/DipModule.cpp]
 Diplomacy::DipModule [dip/DipModule.h]
    dip/DipModule.cpp
 Diplomacy::DipModule::DipModule [dip/DipModule.h]
-   dip/DipModule.cpp
-Diplomacy::DipModule::Register [dip/DipModule.h]
-   dip/DipModule.cpp
-Diplomacy::DipModule::Registered [dip/DipModule.h]
    dip/DipModule.cpp
 Diplomacy::DipModule::Shutdown [dip/DipModule.h]
    dip/DipModule.cpp
@@ -20934,9 +21003,6 @@ Diplomacy::DipIpBufferPtr [dip/DipTypes.h]
    dip/BotThread.cpp
    dip/BotThread.h
    dip/DipProtocol.cpp
-Diplomacy::DipModuleId [dip/DipTypes.h]
-   dip/DipModule.cpp
-   dip/DipTypes.h
 Diplomacy::DipTracer [dip/DipTypes.h]
    dip/BaseBot.cpp
    dip/BotThread.cpp
@@ -23301,8 +23367,6 @@ MediaBase::Circuit::rxFrom_ [mb/Circuit.h]
    mb/Circuit.h
 MediaBase::Circuit::~Circuit [mb/Circuit.h]
    mb/Circuit.cpp
-MediaBase::MbModule_Register [mb/MbModule.cpp]
-   mb/MbModule.cpp
 MediaBase::MbModule_Shutdown [mb/MbModule.cpp]
    mb/MbModule.cpp
 MediaBase::MbModule_Startup [mb/MbModule.cpp]
@@ -23315,10 +23379,6 @@ MediaBase::MbModule [mb/MbModule.h]
    cb/CbModule.cpp
    mb/MbModule.cpp
 MediaBase::MbModule::MbModule [mb/MbModule.h]
-   mb/MbModule.cpp
-MediaBase::MbModule::Register [mb/MbModule.h]
-   mb/MbModule.cpp
-MediaBase::MbModule::Registered [mb/MbModule.h]
    mb/MbModule.cpp
 MediaBase::MbModule::Shutdown [mb/MbModule.h]
    mb/MbModule.cpp
@@ -24037,6 +24097,7 @@ NodeBase::Alarm_dtor [nb/Alarm.cpp]
 NodeBase::Alarm [nb/Alarm.h]
    nb/Alarm.cpp
    nb/AlarmRegistry.cpp
+   nb/Daemon.cpp
    nb/Log.cpp
    nb/NbIncrement.cpp
    nb/ObjectPool.cpp
@@ -24054,6 +24115,7 @@ NodeBase::Alarm::CellDiff [nb/Alarm.h]
    nb/AlarmRegistry.cpp
 NodeBase::Alarm::Create [nb/Alarm.h]
    nb/Alarm.cpp
+   nb/Daemon.cpp
    nb/ObjectPool.cpp
    nw/SysSocket.cpp
    nw/TcpIoThread.cpp
@@ -24118,6 +24180,7 @@ NodeBase::Alarm [nb/AlarmRegistry.h]
 NodeBase::AlarmRegistry [nb/AlarmRegistry.h]
    nb/Alarm.cpp
    nb/AlarmRegistry.cpp
+   nb/Daemon.cpp
    nb/Log.cpp
    nb/NbIncrement.cpp
    nb/NbModule.cpp
@@ -24136,6 +24199,7 @@ NodeBase::AlarmRegistry::Display [nb/AlarmRegistry.h]
    nb/AlarmRegistry.cpp
 NodeBase::AlarmRegistry::Find [nb/AlarmRegistry.h]
    nb/AlarmRegistry.cpp
+   nb/Daemon.cpp
    nb/Log.cpp
    nb/NbIncrement.cpp
    nb/ObjectPool.cpp
@@ -24178,6 +24242,7 @@ NodeBase::pack2 [nb/Algorithms.h]
    nb/ObjectPoolRegistry.cpp
    nb/PooledClass.cpp
    nb/RegCell.cpp
+   nb/SysMutex.win.cpp
    nw/SysTcpSocket.cpp
    pb/PotsCircuit.cpp
    sb/Context.cpp
@@ -25031,6 +25096,10 @@ NodeBase::Base::Startup [nb/Base.h]
    nb/CfgParmRegistry.h
    nb/CliThread.cpp
    nb/CliThread.h
+   nb/Daemon.cpp
+   nb/Daemon.h
+   nb/DaemonRegistry.cpp
+   nb/DaemonRegistry.h
    nb/LogBufferRegistry.cpp
    nb/LogBufferRegistry.h
    nb/Module.cpp
@@ -25951,6 +26020,7 @@ NodeBase::CliBuffer::GetInt [nb/CliBuffer.h]
    nb/CliBuffer.cpp
    nb/CliIntParm.cpp
    nb/CliPtrParm.cpp
+   nb/CliThread.cpp
 NodeBase::CliBuffer::GetLine [nb/CliBuffer.h]
    nb/CliBuffer.cpp
    nb/CliThread.cpp
@@ -27203,6 +27273,8 @@ NodeBase::CliThread_GenerateReportPreemptably [nb/CliThread.cpp]
    nb/CliThread.cpp
 NodeBase::CliThread_GetAppData [nb/CliThread.cpp]
    nb/CliThread.cpp
+NodeBase::CliThread_IntPrompt [nb/CliThread.cpp]
+   nb/CliThread.cpp
 NodeBase::CliThread_InvokeCommand [nb/CliThread.cpp]
    nb/CliThread.cpp
 NodeBase::CliThread_InvokeSubcommand [nb/CliThread.cpp]
@@ -27232,6 +27304,8 @@ NodeBase::CliThread_SetResult [nb/CliThread.cpp]
 NodeBase::CliThread_Shutdown [nb/CliThread.cpp]
    nb/CliThread.cpp
 NodeBase::CliThread_Startup [nb/CliThread.cpp]
+   nb/CliThread.cpp
+NodeBase::CliThread_StrPrompt [nb/CliThread.cpp]
    nb/CliThread.cpp
 NodeBase::CliThread_ctor [nb/CliThread.cpp]
    nb/CliThread.cpp
@@ -27305,6 +27379,7 @@ NodeBase::CliThread::AbbrName [nb/CliThread.h]
 NodeBase::CliThread::AllocResources [nb/CliThread.h]
    nb/CliThread.cpp
 NodeBase::CliThread::BoolPrompt [nb/CliThread.h]
+   ct/CodeFileSet.cpp
    nb/CliThread.cpp
    nb/NbIncrement.cpp
    sb/SbIncrement.cpp
@@ -27398,6 +27473,8 @@ NodeBase::CliThread::InSize [nb/CliThread.h]
    nb/CliThread.h
 NodeBase::CliThread::InputFile [nb/CliThread.h]
    nb/CliBuffer.cpp
+NodeBase::CliThread::IntPrompt [nb/CliThread.h]
+   nb/CliThread.cpp
 NodeBase::CliThread::InvokeCommand [nb/CliThread.h]
    nb/CliThread.cpp
 NodeBase::CliThread::InvokeSubcommand [nb/CliThread.h]
@@ -27456,6 +27533,9 @@ NodeBase::CliThread::SetResult [nb/CliThread.h]
 NodeBase::CliThread::Shutdown [nb/CliThread.h]
    nb/CliThread.cpp
 NodeBase::CliThread::Startup [nb/CliThread.h]
+   nb/CliThread.cpp
+NodeBase::CliThread::StrPrompt [nb/CliThread.h]
+   ct/Editor.cpp
    nb/CliThread.cpp
 NodeBase::CliThread::appData_ [nb/CliThread.h]
    nb/CliThread.cpp
@@ -27846,7 +27926,19 @@ NodeBase::Daemon_CreateThread [nb/Daemon.cpp]
    nb/Daemon.cpp
 NodeBase::Daemon_CreateThreads [nb/Daemon.cpp]
    nb/Daemon.cpp
+NodeBase::Daemon_Disable [nb/Daemon.cpp]
+   nb/Daemon.cpp
+NodeBase::Daemon_Enable [nb/Daemon.cpp]
+   nb/Daemon.cpp
+NodeBase::Daemon_EnsureAlarm [nb/Daemon.cpp]
+   nb/Daemon.cpp
 NodeBase::Daemon_Find [nb/Daemon.cpp]
+   nb/Daemon.cpp
+NodeBase::Daemon_GetAlarmLevel [nb/Daemon.cpp]
+   nb/Daemon.cpp
+NodeBase::Daemon_RaiseAlarm [nb/Daemon.cpp]
+   nb/Daemon.cpp
+NodeBase::Daemon_Startup [nb/Daemon.cpp]
    nb/Daemon.cpp
 NodeBase::Daemon_ThreadCreated [nb/Daemon.cpp]
    nb/Daemon.cpp
@@ -27856,6 +27948,8 @@ NodeBase::Daemon_ctor [nb/Daemon.cpp]
    nb/Daemon.cpp
 NodeBase::Daemon_dtor [nb/Daemon.cpp]
    nb/Daemon.cpp
+NodeBase::Alarm [nb/Daemon.h]
+   nb/Daemon.h
 NodeBase::Daemon [nb/Daemon.h]
    nb/Daemon.cpp
    nb/DaemonRegistry.cpp
@@ -27888,10 +27982,27 @@ NodeBase::Daemon::CreateThreads [nb/Daemon.h]
    sb/InvokerPool.cpp
 NodeBase::Daemon::Daemon [nb/Daemon.h]
    nb/Daemon.cpp
+NodeBase::Daemon::Did [nb/Daemon.h]
+   nb/Daemon.cpp
+NodeBase::Daemon::Disable [nb/Daemon.h]
+   nb/Daemon.cpp
+   nb/NbIncrement.cpp
 NodeBase::Daemon::Display [nb/Daemon.h]
+   nb/Daemon.cpp
+NodeBase::Daemon::Enable [nb/Daemon.h]
+   nb/Daemon.cpp
+   nb/NbIncrement.cpp
+NodeBase::Daemon::EnsureAlarm [nb/Daemon.h]
    nb/Daemon.cpp
 NodeBase::Daemon::Find [nb/Daemon.h]
    nb/Daemon.cpp
+NodeBase::Daemon::GetAlarmLevel [nb/Daemon.h]
+   nb/Daemon.cpp
+   nb/NbDaemons.cpp
+   nb/NbDaemons.h
+   nt/NtIncrement.cpp
+   sb/SbDaemons.cpp
+   sb/SbDaemons.h
 NodeBase::Daemon::Iterator [nb/Daemon.h]
    nb/Daemon.cpp
    nb/Daemon.h
@@ -27899,20 +28010,43 @@ NodeBase::Daemon::Name [nb/Daemon.h]
    nb/DaemonRegistry.cpp
 NodeBase::Daemon::Patch [nb/Daemon.h]
    nb/Daemon.cpp
+NodeBase::Daemon::RaiseAlarm [nb/Daemon.h]
+   nb/Daemon.cpp
+NodeBase::Daemon::Recover [nb/Daemon.h]
+   nb/Daemon.cpp
+NodeBase::Daemon::Startup [nb/Daemon.h]
+   nb/Daemon.cpp
+NodeBase::Daemon::TargetSize [nb/Daemon.h]
+   nb/InitThread.cpp
+   sb/SbDaemons.cpp
 NodeBase::Daemon::ThreadCreated [nb/Daemon.h]
    nb/Daemon.cpp
    nb/Thread.cpp
 NodeBase::Daemon::ThreadDeleted [nb/Daemon.h]
    nb/Daemon.cpp
    nb/Thread.cpp
+NodeBase::Daemon::Threads [nb/Daemon.h]
+   nb/InitThread.cpp
+   sb/SbDaemons.cpp
+NodeBase::Daemon::alarmExpl_ [nb/Daemon.h]
+   nb/Daemon.cpp
+NodeBase::Daemon::alarmName_ [nb/Daemon.h]
+   nb/Daemon.cpp
+NodeBase::Daemon::alarm_ [nb/Daemon.h]
+   nb/Daemon.cpp
 NodeBase::Daemon::did_ [nb/Daemon.h]
    nb/Daemon.cpp
+   nb/Daemon.h
 NodeBase::Daemon::name_ [nb/Daemon.h]
    nb/Daemon.cpp
    nb/Daemon.h
 NodeBase::Daemon::size_ [nb/Daemon.h]
    nb/Daemon.cpp
+   nb/Daemon.h
 NodeBase::Daemon::threads_ [nb/Daemon.h]
+   nb/Daemon.cpp
+   nb/Daemon.h
+NodeBase::Daemon::traps_ [nb/Daemon.h]
    nb/Daemon.cpp
 NodeBase::Daemon::~Daemon [nb/Daemon.h]
    nb/Daemon.cpp
@@ -27928,6 +28062,8 @@ NodeBase::DaemonRegistry_BindDaemon [nb/DaemonRegistry.cpp]
    nb/DaemonRegistry.cpp
 NodeBase::DaemonRegistry_FindDaemon [nb/DaemonRegistry.cpp]
    nb/DaemonRegistry.cpp
+NodeBase::DaemonRegistry_Startup [nb/DaemonRegistry.cpp]
+   nb/DaemonRegistry.cpp
 NodeBase::DaemonRegistry_UnbindDaemon [nb/DaemonRegistry.cpp]
    nb/DaemonRegistry.cpp
 NodeBase::DaemonRegistry_ctor [nb/DaemonRegistry.cpp]
@@ -27942,6 +28078,7 @@ NodeBase::DaemonRegistry [nb/DaemonRegistry.h]
    nb/DaemonRegistry.cpp
    nb/InitThread.cpp
    nb/NbIncrement.cpp
+   nb/NbModule.cpp
    nw/NwDaemons.cpp
    sb/SbDaemons.cpp
 NodeBase::DaemonRegistry::BindDaemon [nb/DaemonRegistry.h]
@@ -27959,6 +28096,8 @@ NodeBase::DaemonRegistry::FindDaemon [nb/DaemonRegistry.h]
    nw/NwDaemons.cpp
    sb/SbDaemons.cpp
 NodeBase::DaemonRegistry::Patch [nb/DaemonRegistry.h]
+   nb/DaemonRegistry.cpp
+NodeBase::DaemonRegistry::Startup [nb/DaemonRegistry.h]
    nb/DaemonRegistry.cpp
 NodeBase::DaemonRegistry::UnbindDaemon [nb/DaemonRegistry.h]
    nb/Daemon.cpp
@@ -28000,6 +28139,7 @@ NodeBase::Debug::Assert [nb/Debug.h]
    nb/LogBuffer.cpp
    nb/LogThread.cpp
    nb/MutexGuard.cpp
+   nb/SysLock.win.cpp
    nb/SysMutex.win.cpp
    nb/SysThread.cpp
    nb/SysThread.win.cpp
@@ -28048,9 +28188,17 @@ NodeBase::Debug::Reset [nb/Debug.h]
 NodeBase::Debug::ResetSwFlags [nb/Debug.h]
    nb/Debug.cpp
    nt/NtIncrement.cpp
+NodeBase::Debug::SetSlowTrace [nb/Debug.h]
+   nb/InitThread.cpp
+   nb/TraceBuffer.cpp
 NodeBase::Debug::SetSwFlag [nb/Debug.h]
    nb/Debug.cpp
    nt/NtIncrement.cpp
+NodeBase::Debug::SlowTraceOn [nb/Debug.h]
+   nb/TraceBuffer.cpp
+NodeBase::Debug::SlowTrace_ [nb/Debug.h]
+   nb/Debug.cpp
+   nb/Debug.h
 NodeBase::Debug::SwFlagOn [nb/Debug.h]
    cb/BcHandlers.cpp
    cb/BcProtocol.cpp
@@ -28149,6 +28297,7 @@ NodeBase::Debug::SwLog(const char* const,unsigned long long,unsigned long long,N
    nb/SymbolRegistry.cpp
    nb/SysFile.cpp
    nb/SysHeap.win.cpp
+   nb/SysLock.win.cpp
    nb/SysMutex.win.cpp
    nb/SysThread.win.cpp
    nb/SysTime.cpp
@@ -28229,6 +28378,8 @@ NodeBase::Debug::SwLog(const char* const,unsigned long long,unsigned long long,N
    st/MscBuilder.cpp
    st/StTestData.cpp
    st/TestSessions.cpp
+NodeBase::Debug::TraceLock_ [nb/Debug.h]
+   nb/Debug.cpp
 NodeBase::Debug::TraceOn [nb/Debug.h]
    dip/BaseBot.cpp
    dip/BotThread.cpp
@@ -28372,7 +28523,6 @@ NodeBase::Debug::ft [nb/Debug.h]
    nb/ElementException.cpp
    nb/Exception.cpp
    nb/FileThread.cpp
-   nb/Formatters.cpp
    nb/FunctionGuard.cpp
    nb/FunctionTrace.cpp
    nb/Immutable.cpp
@@ -28959,8 +29109,6 @@ NodeBase::FileThread::Truncate [nb/FileThread.h]
    nb/NbIncrement.cpp
 NodeBase::FileThread::~FileThread [nb/FileThread.h]
    nb/FileThread.cpp
-NodeBase::NodeBase_strGet [nb/Formatters.cpp]
-   nb/Formatters.cpp
 NodeBase::Base [nb/Formatters.h]
    nb/Formatters.h
 NodeBase::HexPrefixStr [nb/Formatters.h]
@@ -29161,7 +29309,6 @@ NodeBase::strHex(unsigned long long,int,bool) [nb/Formatters.h]
    nb/Debug.cpp
    nb/ElementException.cpp
    nb/Formatters.cpp
-   nb/InitThread.cpp
    nb/Object.cpp
    nb/RootThread.cpp
    nb/SignalException.cpp
@@ -29629,7 +29776,6 @@ NodeBase::Log::Create(const char* const,unsigned short) [nb/Log.h]
    nb/CfgParmRegistry.cpp
    nb/CfgTuple.cpp
    nb/Debug.cpp
-   nb/InitThread.cpp
    nb/Log.cpp
    nb/ModuleRegistry.cpp
    nb/MutexRegistry.cpp
@@ -29700,8 +29846,8 @@ NodeBase::Log::Submit [nb/Log.h]
    nb/CfgParm.cpp
    nb/CfgParmRegistry.cpp
    nb/CfgTuple.cpp
+   nb/Daemon.cpp
    nb/Debug.cpp
-   nb/InitThread.cpp
    nb/Log.cpp
    nb/ModuleRegistry.cpp
    nb/MutexRegistry.cpp
@@ -29737,8 +29883,8 @@ NodeBase::Log::Tab [nb/Log.h]
    nb/CfgParm.cpp
    nb/CfgParmRegistry.cpp
    nb/CfgTuple.cpp
+   nb/Daemon.cpp
    nb/Debug.cpp
-   nb/InitThread.cpp
    nb/Log.cpp
    nb/MutexRegistry.cpp
    nb/ObjectPool.cpp
@@ -29849,9 +29995,9 @@ NodeBase::LogBuffer::Display [nb/LogBuffer.h]
 NodeBase::LogBuffer::Empty [nb/LogBuffer.h]
    nb/LogBufferRegistry.cpp
 NodeBase::LogBuffer::Entry [nb/LogBuffer.h]
-   nb/LogBuffer.cpp
    nb/LogBuffer.h
 NodeBase::LogBuffer::Entry [nb/LogBuffer.h]
+   nb/LogBuffer.cpp
    nb/LogBuffer.h
 NodeBase::LogBuffer::Entry::header [nb/LogBuffer.h]
    nb/LogBuffer.cpp
@@ -30350,8 +30496,6 @@ NodeBase::MemoryTrace::size_ [nb/MemoryTrace.h]
    nb/MemoryTrace.cpp
 NodeBase::MemoryTrace::type_ [nb/MemoryTrace.h]
    nb/MemoryTrace.cpp
-NodeBase::Module_Dependencies [nb/Module.cpp]
-   nb/Module.cpp
 NodeBase::Module_Shutdown [nb/Module.cpp]
    nb/Module.cpp
 NodeBase::Module_Startup [nb/Module.cpp]
@@ -30398,15 +30542,13 @@ NodeBase::Module [nb/Module.h]
 NodeBase::Module::CellDiff [nb/Module.h]
    nb/Module.cpp
    nb/ModuleRegistry.cpp
-NodeBase::Module::Dependencies [nb/Module.h]
-   nb/Module.cpp
 NodeBase::Module::Display [nb/Module.h]
    nb/Module.cpp
 NodeBase::Module::MaxId [nb/Module.h]
    nb/Module.cpp
    nb/ModuleRegistry.cpp
    nb/NbCliParms.cpp
-NodeBase::Module::Module(NodeBase::Module* const,unsigned short) [nb/Module.h]
+NodeBase::Module::Module(NodeBase::Module* const) [nb/Module.h]
    nb/Module.cpp
 NodeBase::Module::Patch [nb/Module.h]
    nb/Module.cpp
@@ -30419,6 +30561,8 @@ NodeBase::Module::mid_ [nb/Module.h]
    nb/Module.h
 NodeBase::Module::~Module [nb/Module.h]
    nb/Module.cpp
+NodeBase::AllFactions [nb/ModuleRegistry.cpp]
+   nb/ModuleRegistry.cpp
 NodeBase::ExitedThreadsStr [nb/ModuleRegistry.cpp]
    nb/ModuleRegistry.cpp
 NodeBase::ExitingThreadsStr [nb/ModuleRegistry.cpp]
@@ -30445,9 +30589,13 @@ NodeBase::ModuleRegistry_ctor [nb/ModuleRegistry.cpp]
    nb/ModuleRegistry.cpp
 NodeBase::ModuleRegistry_dtor [nb/ModuleRegistry.cpp]
    nb/ModuleRegistry.cpp
+NodeBase::NoFactions [nb/ModuleRegistry.cpp]
+   nb/ModuleRegistry.cpp
 NodeBase::NotifyingThreadsStr [nb/ModuleRegistry.cpp]
    nb/ModuleRegistry.cpp
 NodeBase::PreModuleStr [nb/ModuleRegistry.cpp]
+   nb/ModuleRegistry.cpp
+NodeBase::ShutdownFactions [nb/ModuleRegistry.cpp]
    nb/ModuleRegistry.cpp
 NodeBase::ShutdownHeader [nb/ModuleRegistry.cpp]
    nb/ModuleRegistry.cpp
@@ -30463,13 +30611,42 @@ NodeBase::Module [nb/ModuleRegistry.h]
    nb/ModuleRegistry.cpp
    nb/ModuleRegistry.h
 NodeBase::ModuleRegistry [nb/ModuleRegistry.h]
+   an/AnModule.cpp
+   cb/CbModule.cpp
+   cn/CnModule.cpp
+   ct/CtModule.cpp
+   dip/DipModule.cpp
+   mb/MbModule.cpp
    nb/InitThread.cpp
    nb/Module.cpp
    nb/ModuleRegistry.cpp
    nb/NbIncrement.cpp
+   nb/NbModule.cpp
+   nt/NtModule.cpp
+   nw/NwModule.cpp
+   on/OnModule.cpp
+   pb/PbModule.cpp
+   rn/RnModule.cpp
+   sb/SbModule.cpp
+   sn/SnModule.cpp
+   st/StModule.cpp
 NodeBase::ModuleRegistry::BindModule [nb/ModuleRegistry.h]
-   nb/Module.cpp
+   an/AnModule.cpp
+   cb/CbModule.cpp
+   cn/CnModule.cpp
+   ct/CtModule.cpp
+   dip/DipModule.cpp
+   mb/MbModule.cpp
    nb/ModuleRegistry.cpp
+   nb/NbModule.cpp
+   nt/NtModule.cpp
+   nw/NwModule.cpp
+   on/OnModule.cpp
+   pb/PbModule.cpp
+   rn/RnModule.cpp
+   sb/SbModule.cpp
+   sn/SnModule.cpp
+   st/StModule.cpp
 NodeBase::ModuleRegistry::CalcLevel [nb/ModuleRegistry.h]
    nb/ModuleRegistry.cpp
 NodeBase::ModuleRegistry::Display [nb/ModuleRegistry.h]
@@ -30573,11 +30750,11 @@ NodeBase::MutexGuard::~MutexGuard [nb/MutexGuard.h]
    nb/MutexGuard.cpp
 NodeBase::SysMutex [nb/MutexGuard.h]
    nb/MutexGuard.h
+NodeBase::MutexRegistry_Abandon [nb/MutexRegistry.cpp]
+   nb/MutexRegistry.cpp
 NodeBase::MutexRegistry_BindMutex [nb/MutexRegistry.cpp]
    nb/MutexRegistry.cpp
 NodeBase::MutexRegistry_Find [nb/MutexRegistry.cpp]
-   nb/MutexRegistry.cpp
-NodeBase::MutexRegistry_Release [nb/MutexRegistry.cpp]
    nb/MutexRegistry.cpp
 NodeBase::MutexRegistry_UnbindMutex [nb/MutexRegistry.cpp]
    nb/MutexRegistry.cpp
@@ -30589,6 +30766,9 @@ NodeBase::MutexRegistry [nb/MutexRegistry.h]
    nb/MutexRegistry.cpp
    nb/NbIncrement.cpp
    nb/SysMutex.win.cpp
+   nb/Thread.cpp
+NodeBase::MutexRegistry::Abandon [nb/MutexRegistry.h]
+   nb/MutexRegistry.cpp
    nb/Thread.cpp
 NodeBase::MutexRegistry::BindMutex [nb/MutexRegistry.h]
    nb/MutexRegistry.cpp
@@ -30605,9 +30785,6 @@ NodeBase::MutexRegistry::Mutexes [nb/MutexRegistry.h]
    nb/NbIncrement.cpp
 NodeBase::MutexRegistry::Patch [nb/MutexRegistry.h]
    nb/MutexRegistry.cpp
-NodeBase::MutexRegistry::Release [nb/MutexRegistry.h]
-   nb/MutexRegistry.cpp
-   nb/Thread.cpp
 NodeBase::MutexRegistry::UnbindMutex [nb/MutexRegistry.h]
    nb/MutexRegistry.cpp
    nb/SysMutex.win.cpp
@@ -30619,14 +30796,8 @@ NodeBase::MutexRegistry::~MutexRegistry [nb/MutexRegistry.h]
 NodeBase::SysMutex [nb/MutexRegistry.h]
    nb/MutexRegistry.cpp
    nb/MutexRegistry.h
-NodeBase::AnModuleId [nb/NbAppIds.h]
-   an/AnModule.cpp
-   nb/NbAppIds.h
 NodeBase::CallTrapFlag [nb/NbAppIds.h]
    cb/BcHandlers.cpp
-   cb/CbModule.cpp
-   nb/NbAppIds.h
-NodeBase::CbModuleId [nb/NbAppIds.h]
    cb/CbModule.cpp
    nb/NbAppIds.h
 NodeBase::CipAlertingTimeoutFlag [nb/NbAppIds.h]
@@ -30641,12 +30812,6 @@ NodeBase::CipIamTimeoutFlag [nb/NbAppIds.h]
    cb/BcProtocol.cpp
    cb/CbModule.cpp
    nb/NbAppIds.h
-NodeBase::CnModuleId [nb/NbAppIds.h]
-   cn/CnModule.cpp
-   nb/NbAppIds.h
-NodeBase::CtModuleId [nb/NbAppIds.h]
-   ct/CtModule.cpp
-   nb/NbAppIds.h
 NodeBase::DisableRootThreadFlag [nb/NbAppIds.h]
    nb/Debug.cpp
    nb/NbAppIds.h
@@ -30654,21 +30819,6 @@ NodeBase::DisableRootThreadFlag [nb/NbAppIds.h]
    nt/NtModule.cpp
 NodeBase::FirstAppDebugFlag [nb/NbAppIds.h]
    nb/NbAppIds.h
-NodeBase::FirstAppModuleId [nb/NbAppIds.h]
-   dip/DipTypes.h
-   nb/NbAppIds.h
-NodeBase::MbModuleId [nb/NbAppIds.h]
-   mb/MbModule.cpp
-   nb/NbAppIds.h
-NodeBase::NbModuleId [nb/NbAppIds.h]
-   nb/NbAppIds.h
-   nb/NbModule.cpp
-NodeBase::NtModuleId [nb/NbAppIds.h]
-   nb/NbAppIds.h
-   nt/NtModule.cpp
-NodeBase::NwModuleId [nb/NbAppIds.h]
-   nb/NbAppIds.h
-   nw/NwModule.cpp
 NodeBase::ObjectPoolIds::BtIpBufferObjPoolId [nb/NbAppIds.h]
    sb/SbPools.cpp
 NodeBase::ObjectPoolIds::ContextObjPoolId [nb/NbAppIds.h]
@@ -30697,28 +30847,14 @@ NodeBase::ObjectPoolIds::ThreadObjPoolId [nb/NbAppIds.h]
    nb/NbPools.cpp
 NodeBase::ObjectPoolIds::TimerObjPoolId [nb/NbAppIds.h]
    sb/SbPools.cpp
-NodeBase::OnModuleId [nb/NbAppIds.h]
-   nb/NbAppIds.h
-   on/OnModule.cpp
-NodeBase::PbModuleId [nb/NbAppIds.h]
-   nb/NbAppIds.h
-   pb/PbModule.cpp
-NodeBase::RnModuleId [nb/NbAppIds.h]
-   nb/NbAppIds.h
-   rn/RnModule.cpp
-NodeBase::SbModuleId [nb/NbAppIds.h]
-   nb/NbAppIds.h
-   sb/SbModule.cpp
 NodeBase::ShowToolProgress [nb/NbAppIds.h]
    nb/Debug.cpp
    nb/NbAppIds.h
    nt/NtModule.cpp
-NodeBase::SnModuleId [nb/NbAppIds.h]
+NodeBase::ThreadCtorRetrapFlag [nb/NbAppIds.h]
    nb/NbAppIds.h
-   sn/SnModule.cpp
-NodeBase::StModuleId [nb/NbAppIds.h]
-   nb/NbAppIds.h
-   st/StModule.cpp
+   nt/NtIncrement.cpp
+   nt/NtModule.cpp
 NodeBase::ThreadCtorTrapFlag [nb/NbAppIds.h]
    nb/NbAppIds.h
    nt/NtIncrement.cpp
@@ -30787,7 +30923,7 @@ NodeBase::GtTextExpl [nb/NbCliParms.cpp]
    nb/NbCliParms.cpp
 NodeBase::GtTextStr [nb/NbCliParms.cpp]
    nb/NbCliParms.cpp
-NodeBase::IdOptExpl [nb/NbCliParms.cpp]
+NodeBase::IdExpl [nb/NbCliParms.cpp]
    nb/NbCliParms.cpp
 NodeBase::IstreamMandExpl [nb/NbCliParms.cpp]
    nb/NbCliParms.cpp
@@ -31067,6 +31203,11 @@ NodeBase::GetCBV [nb/NbCliParms.h]
    nb/NbIncrement.cpp
    pb/PotsIncrement.cpp
    sb/SbIncrement.cpp
+NodeBase::IdMandParm [nb/NbCliParms.h]
+   nb/NbCliParms.cpp
+   nb/NbIncrement.cpp
+NodeBase::IdMandParm::IdMandParm [nb/NbCliParms.h]
+   nb/NbCliParms.cpp
 NodeBase::IdOptParm [nb/NbCliParms.h]
    nb/NbCliParms.cpp
    nb/NbIncrement.cpp
@@ -31262,6 +31403,7 @@ NodeBase::SetHowParm [nb/NbCliParms.h]
 NodeBase::SetHowParm::Off [nb/NbCliParms.h]
    nb/NbCliParms.cpp
    nb/NbCliParms.h
+   nb/NbIncrement.cpp
 NodeBase::SetHowParm::On [nb/NbCliParms.h]
    nb/NbCliParms.cpp
    nb/NbCliParms.h
@@ -31392,6 +31534,8 @@ NodeBase::ValidateOptions [nb/NbCliParms.h]
    nb/NbIncrement.cpp
 NodeBase::CliDaemon_CreateThread [nb/NbDaemons.cpp]
    nb/NbDaemons.cpp
+NodeBase::CliDaemon_GetAlarmLevel [nb/NbDaemons.cpp]
+   nb/NbDaemons.cpp
 NodeBase::CliDaemon_ctor [nb/NbDaemons.cpp]
    nb/NbDaemons.cpp
 NodeBase::CliDaemon_dtor [nb/NbDaemons.cpp]
@@ -31415,6 +31559,10 @@ NodeBase::CliDaemon::CliDaemon [nb/NbDaemons.h]
    nb/NbDaemons.cpp
 NodeBase::CliDaemon::CreateThread [nb/NbDaemons.h]
    nb/NbDaemons.cpp
+NodeBase::CliDaemon::GetAlarmLevel [nb/NbDaemons.h]
+   nb/NbDaemons.cpp
+NodeBase::CliDaemon::Patch [nb/NbDaemons.h]
+   nb/NbDaemons.cpp
 NodeBase::CliDaemon::~CliDaemon [nb/NbDaemons.h]
    nb/NbDaemons.cpp
 NodeBase::CliDaemonName [nb/NbDaemons.h]
@@ -31427,17 +31575,19 @@ NodeBase::ObjectDaemon::CreateThread [nb/NbDaemons.h]
    nb/NbDaemons.cpp
 NodeBase::ObjectDaemon::ObjectDaemon [nb/NbDaemons.h]
    nb/NbDaemons.cpp
+NodeBase::ObjectDaemon::Patch [nb/NbDaemons.h]
+   nb/NbDaemons.cpp
 NodeBase::ObjectDaemon::~ObjectDaemon [nb/NbDaemons.h]
    nb/NbDaemons.cpp
 NodeBase::ObjectDaemonName [nb/NbDaemons.h]
    nb/NbDaemons.cpp
    nb/ObjectPoolAudit.cpp
-NodeBase::Singleton [nb/NbDaemons.h]
-   nb/NbDaemons.h
 NodeBase::StatisticsDaemon [nb/NbDaemons.h]
    nb/NbDaemons.cpp
    nb/StatisticsThread.cpp
 NodeBase::StatisticsDaemon::CreateThread [nb/NbDaemons.h]
+   nb/NbDaemons.cpp
+NodeBase::StatisticsDaemon::Patch [nb/NbDaemons.h]
    nb/NbDaemons.cpp
 NodeBase::StatisticsDaemon::StatisticsDaemon [nb/NbDaemons.h]
    nb/NbDaemons.cpp
@@ -31680,6 +31830,12 @@ NodeBase::CoutTextExpl [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::CoutTextStr [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
+NodeBase::DaemonsAction [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::DaemonsAction::DaemonsAction [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::DaemonsActionExpl [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
 NodeBase::DaemonsCommand [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::DaemonsCommand::DaemonsCommand [nb/NbIncrement.cpp]
@@ -31689,6 +31845,26 @@ NodeBase::DaemonsCommand::ProcessCommand [nb/NbIncrement.cpp]
 NodeBase::DaemonsCommand_ProcessCommand [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::DaemonsExpl [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::DaemonsListIndex [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::DaemonsListText [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::DaemonsListText::DaemonsListText [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::DaemonsListTextExpl [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::DaemonsListTextStr [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::DaemonsSetIndex [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::DaemonsSetText [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::DaemonsSetText::DaemonsSetText [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::DaemonsSetTextExpl [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::DaemonsSetTextStr [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::DaemonsStr [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
@@ -31852,12 +32028,6 @@ NodeBase::IfValue::IfValue [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::IfValueExpl [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
-NodeBase::ImmediateExpl [nb/NbIncrement.cpp]
-   nb/NbIncrement.cpp
-NodeBase::ImmediateParm [nb/NbIncrement.cpp]
-   nb/NbIncrement.cpp
-NodeBase::ImmediateParm::ImmediateParm [nb/NbIncrement.cpp]
-   nb/NbIncrement.cpp
 NodeBase::IncludeCommand_ProcessCommand [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::IncludeCommand_ProcessSubcommand [nb/NbIncrement.cpp]
@@ -32005,6 +32175,12 @@ NodeBase::NbIncrement_ctor [nb/NbIncrement.cpp]
 NodeBase::NbIncrement_dtor [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::NodeBase_FindGroupAndLog [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::OptionsExpl [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::OptionsParm [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::OptionsParm::OptionsParm [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::PoolsCommand [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
@@ -32468,6 +32644,8 @@ NodeBase::TraceTextExpl [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::TraceTextStr [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
+NodeBase::ValidStartOptions [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
 NodeBase::WarmIndex [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::WarmText [nb/NbIncrement.cpp]
@@ -32805,7 +32983,7 @@ NodeBase::StatsReport [nb/NbLogs.h]
    nb/NbLogs.h
    nb/StatisticsThread.cpp
 NodeBase::ThreadCriticalDeath [nb/NbLogs.h]
-   nb/InitThread.cpp
+   nb/Daemon.cpp
    nb/NbLogs.cpp
    nb/NbLogs.h
 NodeBase::ThreadDeleted [nb/NbLogs.h]
@@ -32825,7 +33003,7 @@ NodeBase::ThreadForcedToExit [nb/NbLogs.h]
    nb/NbLogs.h
    nb/Thread.cpp
 NodeBase::ThreadLogGroup [nb/NbLogs.h]
-   nb/InitThread.cpp
+   nb/Daemon.cpp
    nb/MutexRegistry.cpp
    nb/NbLogs.cpp
    nb/Thread.cpp
@@ -32841,12 +33019,14 @@ NodeBase::ThreadSignalReraised [nb/NbLogs.h]
    nb/NbLogs.cpp
    nb/NbLogs.h
    nb/Thread.cpp
+NodeBase::ThreadUnavailable [nb/NbLogs.h]
+   nb/Daemon.cpp
+   nb/NbLogs.cpp
+   nb/NbLogs.h
 NodeBase::ThreadYielded [nb/NbLogs.h]
    nb/NbLogs.cpp
    nb/NbLogs.h
    nb/Thread.cpp
-NodeBase::NbModule_Register [nb/NbModule.cpp]
-   nb/NbModule.cpp
 NodeBase::NbModule_Shutdown [nb/NbModule.cpp]
    nb/NbModule.cpp
 NodeBase::NbModule_Startup [nb/NbModule.cpp]
@@ -32863,10 +33043,6 @@ NodeBase::NbModule [nb/NbModule.h]
 NodeBase::NbModule::NbModule [nb/NbModule.h]
    nb/NbModule.cpp
 NodeBase::NbModule::Patch [nb/NbModule.h]
-   nb/NbModule.cpp
-NodeBase::NbModule::Register [nb/NbModule.h]
-   nb/NbModule.cpp
-NodeBase::NbModule::Registered [nb/NbModule.h]
    nb/NbModule.cpp
 NodeBase::NbModule::Shutdown [nb/NbModule.h]
    nb/NbModule.cpp
@@ -33021,6 +33197,7 @@ NodeBase::TraceBufferToolName [nb/NbTracer.cpp]
    nb/NbTracer.cpp
 NodeBase::NbTracer [nb/NbTracer.h]
    dip/BaseBot.cpp
+   nb/InitThread.cpp
    nb/NbIncrement.cpp
    nb/NbTracer.cpp
    nb/Thread.cpp
@@ -33040,6 +33217,7 @@ NodeBase::NbTracer::QuerySelections [nb/NbTracer.h]
    nb/NbTracer.cpp
    nw/NwTracer.cpp
 NodeBase::NbTracer::SelectFaction [nb/NbTracer.h]
+   nb/InitThread.cpp
    nb/NbIncrement.cpp
    nb/NbTracer.cpp
 NodeBase::NbTracer::SelectThread [nb/NbTracer.h]
@@ -33071,29 +33249,45 @@ NodeBase::AccumulatorPtr [nb/NbTypes.h]
 NodeBase::AlarmStatus [nb/NbTypes.h]
    nb/Alarm.cpp
    nb/Alarm.h
+   nb/Daemon.cpp
+   nb/Daemon.h
    nb/Log.cpp
    nb/Log.h
+   nb/NbDaemons.cpp
+   nb/NbDaemons.h
    nb/NbTypes.cpp
    nb/NbTypes.h
+   nt/NtIncrement.cpp
+   sb/SbDaemons.cpp
+   sb/SbDaemons.h
    sb/SbInvokerPools.cpp
 NodeBase::AlarmStatus::AlarmStatus_N [nb/NbTypes.h]
    nb/NbTypes.cpp
 NodeBase::AlarmStatus::CriticalAlarm [nb/NbTypes.h]
+   nb/Daemon.cpp
+   nb/NbDaemons.cpp
    nb/ObjectPool.cpp
    nw/SysSocket.cpp
+   sb/SbDaemons.cpp
    sb/SbInvokerPools.cpp
 NodeBase::AlarmStatus::MajorAlarm [nb/NbTypes.h]
+   nb/Daemon.cpp
    nb/ObjectPool.cpp
    nw/TcpIoThread.cpp
    nw/UdpIoThread.cpp
+   sb/SbDaemons.cpp
    sb/SbInvokerPools.cpp
 NodeBase::AlarmStatus::MinorAlarm [nb/NbTypes.h]
+   nb/Daemon.cpp
    nb/LogBuffer.cpp
    nb/ObjectPool.cpp
+   nt/NtIncrement.cpp
+   sb/SbDaemons.cpp
    sb/SbInvokerPools.cpp
 NodeBase::AlarmStatus::NoAlarm [nb/NbTypes.h]
    nb/Alarm.cpp
    nb/AlarmRegistry.cpp
+   nb/Daemon.cpp
    nb/Log.cpp
    nb/Log.h
    nb/NbIncrement.cpp
@@ -33265,12 +33459,12 @@ NodeBase::Faction [nb/NbTypes.h]
    sn/PotsSessions.h
 NodeBase::Faction::AuditFaction [nb/NbTypes.h]
    nb/ObjectPoolAudit.cpp
-   nb/Thread.cpp
    nb/ThreadAdmin.cpp
 NodeBase::Faction::BackgroundFaction [nb/NbTypes.h]
    nb/CoutThread.cpp
    nb/FileThread.cpp
    nb/LogThread.cpp
+   nb/ModuleRegistry.cpp
    nb/StatisticsThread.cpp
    nb/Thread.cpp
    nb/ThreadAdmin.cpp
@@ -33279,18 +33473,20 @@ NodeBase::Faction::Faction_N [nb/NbTypes.h]
    nb/NbTracer.cpp
    nb/NbTracer.h
    nb/NbTypes.cpp
+   nb/NbTypes.h
    nb/Thread.cpp
    sb/InvokerPoolRegistry.cpp
 NodeBase::Faction::LoadTestFaction [nb/NbTypes.h]
    an/PotsTrafficThread.cpp
-   nb/Thread.cpp
    nb/ThreadAdmin.cpp
    nt/NtIncrement.cpp
 NodeBase::Faction::MaintenanceFaction [nb/NbTypes.h]
+   nb/ModuleRegistry.cpp
    nb/ThreadAdmin.cpp
 NodeBase::Faction::OperationsFaction [nb/NbTypes.h]
    nb/CinThread.cpp
    nb/CliThread.cpp
+   nb/ModuleRegistry.cpp
    nb/ThreadAdmin.cpp
    nw/IpService.cpp
 NodeBase::Faction::PayloadFaction [nb/NbTypes.h]
@@ -33298,7 +33494,6 @@ NodeBase::Faction::PayloadFaction [nb/NbTypes.h]
    cb/BcProtocol.h
    dip/BotThread.cpp
    dip/DipProtocol.h
-   nb/Thread.cpp
    nb/ThreadAdmin.cpp
    sb/Factory.cpp
    sb/SbInvokerPools.cpp
@@ -33306,9 +33501,11 @@ NodeBase::Faction::PayloadFaction [nb/NbTypes.h]
    sn/PotsSessions.h
 NodeBase::Faction::SystemFaction [nb/NbTypes.h]
    nb/InitThread.cpp
+   nb/ModuleRegistry.cpp
    nb/Thread.cpp
    nb/ThreadAdmin.cpp
 NodeBase::Faction::WatchdogFaction [nb/NbTypes.h]
+   nb/InitThread.cpp
    nb/RootThread.cpp
    nb/Thread.cpp
    nb/ThreadAdmin.cpp
@@ -33316,6 +33513,10 @@ NodeBase::FactionChar [nb/NbTypes.h]
    nb/NbTypes.cpp
    nb/Thread.cpp
    sb/SbDaemons.cpp
+NodeBase::FactionFlags [nb/NbTypes.h]
+   nb/ModuleRegistry.cpp
+   nb/Thread.cpp
+   nb/Thread.h
 NodeBase::GetLogType [nb/NbTypes.h]
    nb/LogBuffer.cpp
    nb/NbTypes.cpp
@@ -33391,12 +33592,10 @@ NodeBase::LowWatermark [nb/NbTypes.h]
 NodeBase::LowWatermarkPtr [nb/NbTypes.h]
    nb/ObjectPool.cpp
 NodeBase::ModuleId [nb/NbTypes.h]
-   dip/DipTypes.h
    nb/Module.cpp
    nb/Module.h
    nb/ModuleRegistry.cpp
    nb/ModuleRegistry.h
-   nb/NbAppIds.h
 NodeBase::MsgDirection [nb/NbTypes.h]
    dip/DipProtocol.cpp
    dip/DipProtocol.h
@@ -33500,6 +33699,7 @@ NodeBase::Singleton [nb/NbTypes.h]
    nb/LogThread.h
    nb/ModuleRegistry.h
    nb/MutexRegistry.h
+   nb/NbDaemons.h
    nb/NbIncrement.h
    nb/NbModule.h
    nb/NbPools.h
@@ -33850,6 +34050,8 @@ NodeBase::Object::Patch [nb/Object.h]
    nb/MsgBuffer.h
    nb/MutexRegistry.cpp
    nb/MutexRegistry.h
+   nb/NbDaemons.cpp
+   nb/NbDaemons.h
    nb/NbModule.cpp
    nb/NbModule.h
    nb/NbPools.cpp
@@ -33928,6 +34130,8 @@ NodeBase::Object::Patch [nb/Object.h]
    nw/IpService.h
    nw/IpServiceRegistry.cpp
    nw/IpServiceRegistry.h
+   nw/NwDaemons.cpp
+   nw/NwDaemons.h
    nw/NwModule.cpp
    nw/NwModule.h
    nw/SysIpL2Addr.h
@@ -33999,6 +34203,8 @@ NodeBase::Object::Patch [nb/Object.h]
    sb/PsmFactory.h
    sb/RootServiceSM.cpp
    sb/RootServiceSM.h
+   sb/SbDaemons.cpp
+   sb/SbDaemons.h
    sb/SbEvents.h
    sb/SbExtInputHandler.cpp
    sb/SbExtInputHandler.h
@@ -34159,6 +34365,8 @@ NodeBase::Object::sel_t [nb/Object.h]
    nb/MsgBuffer.h
    nb/MutexRegistry.cpp
    nb/MutexRegistry.h
+   nb/NbDaemons.cpp
+   nb/NbDaemons.h
    nb/NbModule.cpp
    nb/NbModule.h
    nb/NbPools.cpp
@@ -34238,6 +34446,8 @@ NodeBase::Object::sel_t [nb/Object.h]
    nw/IpService.h
    nw/IpServiceRegistry.cpp
    nw/IpServiceRegistry.h
+   nw/NwDaemons.cpp
+   nw/NwDaemons.h
    nw/NwModule.cpp
    nw/NwModule.h
    nw/SysIpL2Addr.h
@@ -34309,6 +34519,8 @@ NodeBase::Object::sel_t [nb/Object.h]
    sb/PsmFactory.h
    sb/RootServiceSM.cpp
    sb/RootServiceSM.h
+   sb/SbDaemons.cpp
+   sb/SbDaemons.h
    sb/SbEvents.h
    sb/SbExtInputHandler.cpp
    sb/SbExtInputHandler.h
@@ -35758,6 +35970,7 @@ NodeBase::RegCell::GetId [nb/RegCell.h]
    mb/Tones.h
    nb/Class.h
    nb/CliParm.h
+   nb/Daemon.h
    nb/LogGroup.cpp
    nb/LogGroup.h
    nb/Module.h
@@ -35781,7 +35994,6 @@ NodeBase::RegCell::SetId [nb/RegCell.h]
    mb/Tones.cpp
    nb/Class.cpp
    nb/CliParm.h
-   nb/Module.cpp
    nb/ObjectPool.cpp
    nb/RegCell.cpp
    nb/Thread.cpp
@@ -35952,7 +36164,6 @@ NodeBase::Registry::At [nb/Registry.h]
    nb/NbIncrement.cpp
    nb/ObjectPoolRegistry.cpp
    nb/StatisticsRegistry.cpp
-   nb/Thread.cpp
    nb/ThreadRegistry.cpp
    nb/ToolRegistry.cpp
    nt/NtIncrement.cpp
@@ -36268,6 +36479,7 @@ NodeBase::Restart::GetStatus [nb/Restart.h]
    nw/TcpIpPort.cpp
    sb/InvokerPool.cpp
 NodeBase::Restart::Initiate [nb/Restart.h]
+   nb/Daemon.cpp
    nb/NbIncrement.cpp
    nb/ObjectPool.cpp
    nb/Restart.cpp
@@ -36283,6 +36495,8 @@ NodeBase::Restart::Status_ [nb/Restart.h]
    nb/ModuleRegistry.cpp
    nb/Restart.cpp
    nb/Restart.h
+NodeBase::RestartReasons::DeathOfCriticalThread [nb/Restart.h]
+   nb/Daemon.cpp
 NodeBase::RestartReasons::ManualRestart [nb/Restart.h]
    nb/ModuleRegistry.cpp
    nb/NbIncrement.cpp
@@ -36353,6 +36567,7 @@ NodeBase::RootThread [nb/RootThread.h]
    nb/Debug.cpp
    nb/InitThread.cpp
    nb/RootThread.cpp
+   nb/Thread.cpp
 NodeBase::RootThread::AbbrName [nb/RootThread.h]
    nb/RootThread.cpp
 NodeBase::RootThread::Destroy [nb/RootThread.h]
@@ -36491,6 +36706,7 @@ NodeBase::Singleton::Instance [nb/Singleton.h]
    ct/CxxStrLiteral.h
    ct/CxxSymbols.cpp
    ct/CxxToken.cpp
+   ct/Editor.cpp
    ct/Interpreter.cpp
    ct/Lexer.cpp
    ct/Library.cpp
@@ -37279,6 +37495,7 @@ NodeBase::SysConsole_SetTitle [nb/SysConsole.win.cpp]
 NodeBase::SysHeap_t [nb/SysDecls.h]
    nb/SysHeap.h
 NodeBase::SysMutex_t [nb/SysDecls.h]
+   nb/SysLock.h
    nb/SysMutex.h
 NodeBase::SysSentry_t [nb/SysDecls.h]
    nb/SysThread.h
@@ -37289,6 +37506,7 @@ NodeBase::SysSocket_t [nb/SysDecls.h]
    nw/SysTcpSocket.cpp
    nw/SysTcpSocket.h
 NodeBase::SysThreadId [nb/SysDecls.h]
+   nb/SysLock.h
    nb/SysMutex.h
    nb/SysThread.h
    nb/SysThread.win.cpp
@@ -37510,6 +37728,36 @@ NodeBase::SysHeap_ctor [nb/SysHeap.win.cpp]
    nb/SysHeap.win.cpp
 NodeBase::SysHeap_dtor [nb/SysHeap.win.cpp]
    nb/SysHeap.win.cpp
+NodeBase::SysLock [nb/SysLock.h]
+   nb/Debug.cpp
+   nb/Debug.h
+   nb/SysLock.cpp
+   nb/SysLock.win.cpp
+NodeBase::SysLock::Acquire [nb/SysLock.h]
+   nb/Debug.cpp
+   nb/SysLock.win.cpp
+NodeBase::SysLock::Display [nb/SysLock.h]
+   nb/SysLock.cpp
+NodeBase::SysLock::Owner [nb/SysLock.h]
+   nb/Debug.cpp
+NodeBase::SysLock::Release [nb/SysLock.h]
+   nb/Debug.cpp
+   nb/SysLock.win.cpp
+NodeBase::SysLock::SysLock(NodeBase::SysLock* const) [nb/SysLock.h]
+   nb/SysLock.win.cpp
+NodeBase::SysLock::mutex_ [nb/SysLock.h]
+   nb/SysLock.cpp
+   nb/SysLock.win.cpp
+NodeBase::SysLock::owner_ [nb/SysLock.h]
+   nb/SysLock.cpp
+   nb/SysLock.h
+   nb/SysLock.win.cpp
+NodeBase::SysLock::~SysLock [nb/SysLock.h]
+   nb/SysLock.win.cpp
+NodeBase::SysLock_Release [nb/SysLock.win.cpp]
+   nb/SysLock.win.cpp
+NodeBase::SysLock_dtor [nb/SysLock.win.cpp]
+   nb/SysLock.win.cpp
 NodeBase::SysMutex [nb/SysMutex.h]
    nb/CoutThread.cpp
    nb/FileThread.cpp
@@ -37708,7 +37956,9 @@ NodeBase::SysThread::Resume [nb/SysThread.h]
    nb/SysThread.cpp
    nb/SysThread.win.cpp
 NodeBase::SysThread::RunningThreadId [nb/SysThread.h]
+   nb/Debug.cpp
    nb/MutexRegistry.cpp
+   nb/SysLock.win.cpp
    nb/SysMutex.win.cpp
    nb/SysThread.cpp
    nb/SysThread.win.cpp
@@ -38280,6 +38530,7 @@ NodeBase::CRLF [nb/SysTypes.h]
    nb/SymbolRegistry.cpp
    nb/SysHeap.cpp
    nb/SysHeap.win.cpp
+   nb/SysLock.cpp
    nb/SysMutex.cpp
    nb/SysThread.cpp
    nb/SysThreadStack.win.cpp
@@ -38426,6 +38677,7 @@ NodeBase::DelayRc::DelayInterrupted [nb/SysTypes.h]
 NodeBase::EMPTY_STR [nb/SysTypes.h]
    ct/CodeFile.cpp
    ct/CodeFile.h
+   ct/CodeWarning.cpp
    ct/CxxArea.cpp
    ct/CxxDirective.cpp
    ct/CxxExecute.cpp
@@ -38448,6 +38700,7 @@ NodeBase::EMPTY_STR [nb/SysTypes.h]
    nb/CfgStrParm.cpp
    nb/CliParm.h
    nb/CliText.cpp
+   nb/CliThread.cpp
    nb/Formatters.cpp
    nb/NbIncrement.cpp
    nb/SoftwareException.cpp
@@ -38714,6 +38967,8 @@ NodeBase::Flags [nb/SysTypes.h]
    nb/SymbolRegistry.h
    nb/SysHeap.cpp
    nb/SysHeap.h
+   nb/SysLock.cpp
+   nb/SysLock.h
    nb/SysMutex.cpp
    nb/SysMutex.h
    nb/SysThread.cpp
@@ -39036,6 +39291,7 @@ NodeBase::NIL_ID [nb/SysTypes.h]
    nb/ObjectPoolRegistry.cpp
    nb/RegCell.cpp
    nb/Registry.h
+   nb/SysLock.win.cpp
    nb/SysMutex.cpp
    nb/SysMutex.win.cpp
    nb/SysThread.cpp
@@ -39187,6 +39443,10 @@ NodeBase::RestartLevel [nb/SysTypes.h]
    nb/CfgParmRegistry.h
    nb/CliThread.cpp
    nb/CliThread.h
+   nb/Daemon.cpp
+   nb/Daemon.h
+   nb/DaemonRegistry.cpp
+   nb/DaemonRegistry.h
    nb/Log.cpp
    nb/Log.h
    nb/LogBufferRegistry.cpp
@@ -39817,6 +40077,7 @@ NodeBase::fixed_string [nb/SysTypes.h]
    nb/SysTypes.cpp
    nb/SysTypes.h
    nb/Thread.cpp
+   nb/Thread.h
    nb/Tool.cpp
    nb/ToolTypes.cpp
    nb/TraceBuffer.cpp
@@ -40022,7 +40283,6 @@ NodeBase::fn_name [nb/SysTypes.h]
    nb/ElementException.cpp
    nb/Exception.cpp
    nb/FileThread.cpp
-   nb/Formatters.cpp
    nb/FunctionGuard.cpp
    nb/FunctionTrace.cpp
    nb/FunctionTrace.h
@@ -40042,6 +40302,7 @@ NodeBase::fn_name [nb/SysTypes.h]
    nb/MutexGuard.cpp
    nb/MutexRegistry.cpp
    nb/NbCliParms.cpp
+   nb/NbDaemons.cpp
    nb/NbIncrement.cpp
    nb/NbLogs.cpp
    nb/NbModule.cpp
@@ -40084,6 +40345,7 @@ NodeBase::fn_name [nb/SysTypes.h]
    nb/SysFile.win.cpp
    nb/SysHeap.cpp
    nb/SysHeap.win.cpp
+   nb/SysLock.win.cpp
    nb/SysMutex.win.cpp
    nb/SysSignals.win.cpp
    nb/SysThread.cpp
@@ -40115,6 +40377,7 @@ NodeBase::fn_name [nb/SysTypes.h]
    nw/IpService.cpp
    nw/IpServiceRegistry.cpp
    nw/NwCliParms.cpp
+   nw/NwDaemons.cpp
    nw/NwIncrement.cpp
    nw/NwLogs.cpp
    nw/NwModule.cpp
@@ -40189,6 +40452,7 @@ NodeBase::fn_name [nb/SysTypes.h]
    sb/PsmContext.cpp
    sb/PsmFactory.cpp
    sb/RootServiceSM.cpp
+   sb/SbDaemons.cpp
    sb/SbExtInputHandler.cpp
    sb/SbHandlers.cpp
    sb/SbIncrement.cpp
@@ -40304,6 +40568,7 @@ NodeBase::id_t [nb/SysTypes.h]
    nb/CliText.h
    nb/CliTextParm.cpp
    nb/CliTextParm.h
+   nb/Daemon.h
    nb/LogBufferRegistry.h
    nb/LogGroup.cpp
    nb/LogGroup.h
@@ -40690,8 +40955,6 @@ NodeBase::ContextSwitch::nid [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ContextSwitch::out [nb/Thread.cpp]
    nb/Thread.cpp
-NodeBase::ContextSwitch::overlap [nb/Thread.cpp]
-   nb/Thread.cpp
 NodeBase::ContextSwitch::tid [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ContextSwitches [nb/Thread.cpp]
@@ -40702,9 +40965,17 @@ NodeBase::ContextSwitches::ContextSwitches(NodeBase::ContextSwitches* const) [nb
    nb/Thread.cpp
 NodeBase::ContextSwitches::DisplaySwitches [nb/Thread.cpp]
    nb/Thread.cpp
+NodeBase::ContextSwitches::EndChar [nb/Thread.cpp]
+   nb/Thread.cpp
+NodeBase::ContextSwitches::IdleChar [nb/Thread.cpp]
+   nb/Thread.cpp
+NodeBase::ContextSwitches::LockedChar [nb/Thread.cpp]
+   nb/Thread.cpp
 NodeBase::ContextSwitches::LogSwitches [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ContextSwitches::LoggingOn [nb/Thread.cpp]
+   nb/Thread.cpp
+NodeBase::ContextSwitches::UnlockedChar [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ContextSwitches::capacity_ [nb/Thread.cpp]
    nb/Thread.cpp
@@ -40720,17 +40991,23 @@ NodeBase::ContextSwitches::~ContextSwitches [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ContextSwitchesLock_ [nb/Thread.cpp]
    nb/Thread.cpp
+NodeBase::ContextSwitches_DisplaySwitches [nb/Thread.cpp]
+   nb/Thread.cpp
 NodeBase::ContextSwitches_LogSwitches [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ContextSwitches_ctor [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ContextSwitches_dtor [nb/Thread.cpp]
    nb/Thread.cpp
-NodeBase::FactionAllowed [nb/Thread.cpp]
+NodeBase::CurrIntervalStart_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::FactionMap [nb/Thread.cpp]
    nb/Thread.cpp
-NodeBase::FactionsRestricted_ [nb/Thread.cpp]
+NodeBase::FactionsEnabled_ [nb/Thread.cpp]
+   nb/Thread.cpp
+NodeBase::KillDeletedThread [nb/Thread.cpp]
+   nb/Thread.cpp
+NodeBase::KillRootThread [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Orphans [nb/Thread.cpp]
    nb/Thread.cpp
@@ -40754,9 +41031,25 @@ NodeBase::Orphans_ctor [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Orphans_dtor [nb/Thread.cpp]
    nb/Thread.cpp
+NodeBase::PrevIntervalStart_ [nb/Thread.cpp]
+   nb/Thread.cpp
+NodeBase::SchedEntries [nb/Thread.cpp]
+   nb/Thread.cpp
+NodeBase::SchedEntry [nb/Thread.cpp]
+   nb/Thread.cpp
 NodeBase::SchedHeader [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::SchedHeaderSize [nb/Thread.cpp]
+   nb/Thread.cpp
+NodeBase::SchedSnapshot [nb/Thread.cpp]
+   nb/Thread.cpp
+NodeBase::SchedSnapshot::activity [nb/Thread.cpp]
+   nb/Thread.cpp
+NodeBase::SchedSnapshot::duration [nb/Thread.cpp]
+   nb/Thread.cpp
+NodeBase::SchedSnapshot::nid [nb/Thread.cpp]
+   nb/Thread.cpp
+NodeBase::SchedSnapshotPtr [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::SchedulingAction [nb/Thread.cpp]
    nb/Thread.cpp
@@ -40766,29 +41059,25 @@ NodeBase::SchedulingAction::RunThread [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::SchedulingAction::SleepThread [nb/Thread.cpp]
    nb/Thread.cpp
+NodeBase::StackCheckCounter_ [nb/Thread.cpp]
+   nb/Thread.cpp
 NodeBase::Start_ [nb/Thread.cpp]
    nb/Thread.cpp
-NodeBase::SwitchFooter [nb/Thread.cpp]
+NodeBase::SwitchFooter1 [nb/Thread.cpp]
    nb/Thread.cpp
-NodeBase::SwitchHeader [nb/Thread.cpp]
+NodeBase::SwitchFooter2 [nb/Thread.cpp]
+   nb/Thread.cpp
+NodeBase::SwitchHeader1 [nb/Thread.cpp]
+   nb/Thread.cpp
+NodeBase::SwitchHeader2 [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ThreadDataStr [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ThreadPriv [nb/Thread.cpp]
    nb/Thread.cpp
-NodeBase::ThreadPriv::CurrIntervalStart_ [nb/Thread.cpp]
-   nb/Thread.cpp
 NodeBase::ThreadPriv::Display [nb/Thread.cpp]
    nb/Thread.cpp
-NodeBase::ThreadPriv::PrevIntervalStart_ [nb/Thread.cpp]
-   nb/Thread.cpp
-NodeBase::ThreadPriv::StackCheckCounter_ [nb/Thread.cpp]
-   nb/Thread.cpp
 NodeBase::ThreadPriv::ThreadPriv [nb/Thread.cpp]
-   nb/Thread.cpp
-NodeBase::ThreadPriv::TimeIdle_ [nb/Thread.cpp]
-   nb/Thread.cpp
-NodeBase::ThreadPriv::TimeUsed_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ThreadPriv::acquiring_ [nb/Thread.cpp]
    nb/Thread.cpp
@@ -40807,6 +41096,8 @@ NodeBase::ThreadPriv::currUsecs_ [nb/Thread.cpp]
 NodeBase::ThreadPriv::entered_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ThreadPriv::exiting_ [nb/Thread.cpp]
+   nb/Thread.cpp
+NodeBase::ThreadPriv::locked_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ThreadPriv::logged_ [nb/Thread.cpp]
    nb/Thread.cpp
@@ -40912,6 +41203,8 @@ NodeBase::Thread_Destroy [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Thread_DisplayStats [nb/Thread.cpp]
    nb/Thread.cpp
+NodeBase::Thread_EnableFactions [nb/Thread.cpp]
+   nb/Thread.cpp
 NodeBase::Thread_EnqMsg [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Thread_Enter [nb/Thread.cpp]
@@ -40986,8 +41279,6 @@ NodeBase::Thread_ResetFlags [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Thread_Restarting [nb/Thread.cpp]
    nb/Thread.cpp
-NodeBase::Thread_RestrictFactions [nb/Thread.cpp]
-   nb/Thread.cpp
 NodeBase::Thread_Resume [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Thread_RtcPercentUsed [nb/Thread.cpp]
@@ -41041,6 +41332,10 @@ NodeBase::Thread_ctor [nb/Thread.cpp]
 NodeBase::Thread_dtor [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Thread_new [nb/Thread.cpp]
+   nb/Thread.cpp
+NodeBase::TimeIdle_ [nb/Thread.cpp]
+   nb/Thread.cpp
+NodeBase::TimeUsed_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::TrapDuringRecoveryStr [nb/Thread.cpp]
    nb/Thread.cpp
@@ -41161,6 +41456,8 @@ NodeBase::Thread::CalcStatus [nb/Thread.h]
    sb/SbTracer.cpp
    sb/TimerThread.cpp
    sb/TimerThread.h
+NodeBase::Thread::CanBeScheduled [nb/Thread.h]
+   nb/Thread.cpp
 NodeBase::Thread::CauseTrap [nb/Thread.h]
    nb/Thread.cpp
    nt/NtIncrement.cpp
@@ -41219,6 +41516,9 @@ NodeBase::Thread::DisplaySummaries [nb/Thread.h]
    nb/NbIncrement.cpp
    nb/Thread.cpp
 NodeBase::Thread::DisplaySummary [nb/Thread.h]
+   nb/Thread.cpp
+NodeBase::Thread::EnableFactions [nb/Thread.h]
+   nb/ModuleRegistry.cpp
    nb/Thread.cpp
 NodeBase::Thread::EnqMsg [nb/Thread.h]
    dip/BotThread.cpp
@@ -41300,6 +41600,8 @@ NodeBase::Thread::FunctionInvoked [nb/Thread.h]
 NodeBase::Thread::GetBlockingReason [nb/Thread.h]
    nb/Thread.cpp
    sb/InvokerPool.cpp
+NodeBase::Thread::GetDaemon [nb/Thread.h]
+   nb/NbIncrement.cpp
 NodeBase::Thread::GetStatus [nb/Thread.h]
    nb/NbTracer.cpp
    nb/Thread.cpp
@@ -41307,9 +41609,6 @@ NodeBase::Thread::GetStatus [nb/Thread.h]
 NodeBase::Thread::HandleSignal [nb/Thread.h]
    nb/SysThread.win.cpp
    nb/Thread.cpp
-NodeBase::Thread::Id [nb/Thread.h]
-   nb/Thread.cpp
-   nb/Thread.h
 NodeBase::Thread::InitialMsecs [nb/Thread.h]
    an/PotsTrafficThread.cpp
    an/PotsTrafficThread.h
@@ -41329,8 +41628,6 @@ NodeBase::Thread::Interrupt [nb/Thread.h]
    nw/TcpIoThread.cpp
    sb/InvokerPool.cpp
 NodeBase::Thread::IsLocked [nb/Thread.h]
-   nb/Thread.cpp
-NodeBase::Thread::IsReady [nb/Thread.h]
    nb/Thread.cpp
 NodeBase::Thread::IsScheduled [nb/Thread.h]
    nb/InitThread.cpp
@@ -41442,9 +41739,6 @@ NodeBase::Thread::ResetFlags [nb/Thread.h]
 NodeBase::Thread::Restarting [nb/Thread.h]
    nb/Thread.cpp
    nb/ThreadRegistry.cpp
-NodeBase::Thread::RestrictFactions [nb/Thread.h]
-   nb/ModuleRegistry.cpp
-   nb/Thread.cpp
 NodeBase::Thread::Resume [nb/Thread.h]
    nb/Thread.cpp
 NodeBase::Thread::RtcPercentUsed [nb/Thread.h]
@@ -41665,6 +41959,8 @@ NodeBase::ThreadsStats::reselects_ [nb/ThreadAdmin.cpp]
    nb/ThreadAdmin.cpp
 NodeBase::ThreadsStats::resignals_ [nb/ThreadAdmin.cpp]
    nb/ThreadAdmin.cpp
+NodeBase::ThreadsStats::retractions_ [nb/ThreadAdmin.cpp]
+   nb/ThreadAdmin.cpp
 NodeBase::ThreadsStats::switches_ [nb/ThreadAdmin.cpp]
    nb/ThreadAdmin.cpp
 NodeBase::ThreadsStats::traps_ [nb/ThreadAdmin.cpp]
@@ -41707,7 +42003,9 @@ NodeBase::ThreadAdmin::Display [nb/ThreadAdmin.h]
 NodeBase::ThreadAdmin::DisplayStats [nb/ThreadAdmin.h]
    nb/ThreadAdmin.cpp
 NodeBase::ThreadAdmin::Incr [nb/ThreadAdmin.h]
+   nb/Daemon.cpp
    nb/InitThread.cpp
+   nb/SysLock.win.cpp
    nb/SysMutex.win.cpp
    nb/Thread.cpp
    nb/ThreadAdmin.cpp
@@ -41749,6 +42047,7 @@ NodeBase::ThreadAdmin::Register::Recoveries [nb/ThreadAdmin.h]
    nb/Thread.cpp
    nb/ThreadAdmin.cpp
 NodeBase::ThreadAdmin::Register::Recreations [nb/ThreadAdmin.h]
+   nb/Daemon.cpp
    nb/ThreadAdmin.cpp
 NodeBase::ThreadAdmin::Register::Reentries [nb/ThreadAdmin.h]
    nb/Thread.cpp
@@ -41758,6 +42057,10 @@ NodeBase::ThreadAdmin::Register::Reselects [nb/ThreadAdmin.h]
    nb/ThreadAdmin.cpp
 NodeBase::ThreadAdmin::Register::Resignals [nb/ThreadAdmin.h]
    nb/InitThread.cpp
+   nb/Thread.cpp
+   nb/ThreadAdmin.cpp
+NodeBase::ThreadAdmin::Register::Retractions [nb/ThreadAdmin.h]
+   nb/Thread.cpp
    nb/ThreadAdmin.cpp
 NodeBase::ThreadAdmin::Register::Switches [nb/ThreadAdmin.h]
    nb/Thread.cpp
@@ -41769,6 +42072,7 @@ NodeBase::ThreadAdmin::Register::Unknowns [nb/ThreadAdmin.h]
    nb/Thread.cpp
    nb/ThreadAdmin.cpp
 NodeBase::ThreadAdmin::Register::Unreleased [nb/ThreadAdmin.h]
+   nb/SysLock.win.cpp
    nb/SysMutex.win.cpp
    nb/ThreadAdmin.cpp
 NodeBase::ThreadAdmin::ReinitOnSchedTimeout [nb/ThreadAdmin.h]
@@ -42353,6 +42657,7 @@ NodeBase::TraceStatus::TraceDefault [nb/ToolTypes.h]
    sb/SbTracer.cpp
    sb/TimerThread.cpp
 NodeBase::TraceStatus::TraceExcluded [nb/ToolTypes.h]
+   nb/InitThread.cpp
    nb/NbIncrement.cpp
    nb/Thread.cpp
    nw/NwIncrement.cpp
@@ -42410,6 +42715,8 @@ NodeBase::ImmediateOn [nb/TraceBuffer.cpp]
 NodeBase::NilTraceStr [nb/TraceBuffer.cpp]
    nb/TraceBuffer.cpp
 NodeBase::ResumeTraceStr [nb/TraceBuffer.cpp]
+   nb/TraceBuffer.cpp
+NodeBase::SlowOn [nb/TraceBuffer.cpp]
    nb/TraceBuffer.cpp
 NodeBase::TraceBuffer_AddRecord [nb/TraceBuffer.cpp]
    nb/TraceBuffer.cpp
@@ -43829,6 +44136,8 @@ NodeTools::RecoveryDaemon [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::RecoveryDaemon::CreateThread [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
+NodeTools::RecoveryDaemon::GetAlarmLevel [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
 NodeTools::RecoveryDaemon::RecoveryDaemon [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::RecoveryDaemon::~RecoveryDaemon [nt/NtIncrement.cpp]
@@ -43836,6 +44145,8 @@ NodeTools::RecoveryDaemon::~RecoveryDaemon [nt/NtIncrement.cpp]
 NodeTools::RecoveryDaemonName [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::RecoveryDaemon_CreateThread [nt/NtIncrement.cpp]
+   nt/NtIncrement.cpp
+NodeTools::RecoveryDaemon_GetAlarmLevel [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
 NodeTools::RecoveryDaemon_ctor [nt/NtIncrement.cpp]
    nt/NtIncrement.cpp
@@ -44497,8 +44808,6 @@ NodeTools::TestcaseCommand::TestRetestIndex [nt/NtIncrement.h]
    nt/NtIncrement.h
 NodeTools::TestcaseCommand::TestcaseCommand [nt/NtIncrement.h]
    nt/NtIncrement.cpp
-NodeTools::NtModule_Register [nt/NtModule.cpp]
-   nt/NtModule.cpp
 NodeTools::NtModule_Shutdown [nt/NtModule.cpp]
    nt/NtModule.cpp
 NodeTools::NtModule_Startup [nt/NtModule.cpp]
@@ -44512,10 +44821,6 @@ NodeTools::NtModule [nt/NtModule.h]
    nt/NtModule.cpp
    st/StModule.cpp
 NodeTools::NtModule::NtModule [nt/NtModule.h]
-   nt/NtModule.cpp
-NodeTools::NtModule::Register [nt/NtModule.h]
-   nt/NtModule.cpp
-NodeTools::NtModule::Registered [nt/NtModule.h]
    nt/NtModule.cpp
 NodeTools::NtModule::Shutdown [nt/NtModule.h]
    nt/NtModule.cpp
@@ -45737,6 +46042,8 @@ NetworkBase::TcpIoDaemon::GetDaemon [nw/NwDaemons.h]
    nw/TcpIpPort.cpp
 NetworkBase::TcpIoDaemon::MakeName [nw/NwDaemons.h]
    nw/NwDaemons.cpp
+NetworkBase::TcpIoDaemon::Patch [nw/NwDaemons.h]
+   nw/NwDaemons.cpp
 NetworkBase::TcpIoDaemon::TcpIoDaemon [nw/NwDaemons.h]
    nw/NwDaemons.cpp
 NetworkBase::TcpIoDaemon::port_ [nw/NwDaemons.h]
@@ -45760,6 +46067,8 @@ NetworkBase::UdpIoDaemon::GetDaemon [nw/NwDaemons.h]
    nw/NwDaemons.cpp
    nw/UdpIpPort.cpp
 NetworkBase::UdpIoDaemon::MakeName [nw/NwDaemons.h]
+   nw/NwDaemons.cpp
+NetworkBase::UdpIoDaemon::Patch [nw/NwDaemons.h]
    nw/NwDaemons.cpp
 NetworkBase::UdpIoDaemon::UdpIoDaemon [nw/NwDaemons.h]
    nw/NwDaemons.cpp
@@ -46012,8 +46321,6 @@ NetworkBase::NetworkUnavailable [nw/NwLogs.h]
    nw/NwLogs.cpp
    nw/NwLogs.h
    nw/SysSocket.cpp
-NetworkBase::NwModule_Register [nw/NwModule.cpp]
-   nw/NwModule.cpp
 NetworkBase::NwModule_Shutdown [nw/NwModule.cpp]
    nw/NwModule.cpp
 NetworkBase::NwModule_Startup [nw/NwModule.cpp]
@@ -46029,10 +46336,6 @@ NetworkBase::NwModule [nw/NwModule.h]
 NetworkBase::NwModule::NwModule [nw/NwModule.h]
    nw/NwModule.cpp
 NetworkBase::NwModule::Patch [nw/NwModule.h]
-   nw/NwModule.cpp
-NetworkBase::NwModule::Register [nw/NwModule.h]
-   nw/NwModule.cpp
-NetworkBase::NwModule::Registered [nw/NwModule.h]
    nw/NwModule.cpp
 NetworkBase::NwModule::Shutdown [nw/NwModule.h]
    nw/NwModule.cpp
@@ -47503,8 +47806,6 @@ NetworkBase::UdpIpService::UdpIpService [nw/UdpIpService.h]
    nw/UdpIpService.cpp
 NetworkBase::UdpIpService::~UdpIpService [nw/UdpIpService.h]
    nw/UdpIpService.cpp
-OperationsNode::OnModule_Register [on/OnModule.cpp]
-   on/OnModule.cpp
 OperationsNode::OnModule_Shutdown [on/OnModule.cpp]
    on/OnModule.cpp
 OperationsNode::OnModule_Startup [on/OnModule.cpp]
@@ -47518,18 +47819,12 @@ OperationsNode::OnModule [on/OnModule.h]
    rsc/main.cpp
 OperationsNode::OnModule::OnModule [on/OnModule.h]
    on/OnModule.cpp
-OperationsNode::OnModule::Register [on/OnModule.h]
-   on/OnModule.cpp
-OperationsNode::OnModule::Registered [on/OnModule.h]
-   on/OnModule.cpp
 OperationsNode::OnModule::Shutdown [on/OnModule.h]
    on/OnModule.cpp
 OperationsNode::OnModule::Startup [on/OnModule.h]
    on/OnModule.cpp
 OperationsNode::OnModule::~OnModule [on/OnModule.h]
    on/OnModule.cpp
-PotsBase::PbModule_Register [pb/PbModule.cpp]
-   pb/PbModule.cpp
 PotsBase::PbModule_Shutdown [pb/PbModule.cpp]
    pb/PbModule.cpp
 PotsBase::PbModule_Startup [pb/PbModule.cpp]
@@ -47544,10 +47839,6 @@ PotsBase::PbModule [pb/PbModule.h]
    pb/PbModule.cpp
    sn/SnModule.cpp
 PotsBase::PbModule::PbModule [pb/PbModule.h]
-   pb/PbModule.cpp
-PotsBase::PbModule::Register [pb/PbModule.h]
-   pb/PbModule.cpp
-PotsBase::PbModule::Registered [pb/PbModule.h]
    pb/PbModule.cpp
 PotsBase::PbModule::Shutdown [pb/PbModule.h]
    pb/PbModule.cpp
@@ -50070,8 +50361,6 @@ PotsBase::PotsWmlFeatureProfile::timeout_ [pb/PotsWmlFeature.h]
    pb/PotsWmlFeature.h
 PotsBase::PotsWmlFeatureProfile::~PotsWmlFeatureProfile [pb/PotsWmlFeature.h]
    pb/PotsWmlFeature.cpp
-RoutingNode::RnModule_Register [rn/RnModule.cpp]
-   rn/RnModule.cpp
 RoutingNode::RnModule_Shutdown [rn/RnModule.cpp]
    rn/RnModule.cpp
 RoutingNode::RnModule_Startup [rn/RnModule.cpp]
@@ -50083,10 +50372,6 @@ RoutingNode::RnModule_dtor [rn/RnModule.cpp]
 RoutingNode::RnModule [rn/RnModule.h]
    rn/RnModule.cpp
    rsc/main.cpp
-RoutingNode::RnModule::Register [rn/RnModule.h]
-   rn/RnModule.cpp
-RoutingNode::RnModule::Registered [rn/RnModule.h]
-   rn/RnModule.cpp
 RoutingNode::RnModule::RnModule [rn/RnModule.h]
    rn/RnModule.cpp
 RoutingNode::RnModule::Shutdown [rn/RnModule.h]
@@ -54660,6 +54945,8 @@ SessionBase::TriggerIdOptParm::TriggerIdOptParm [sb/SbCliParms.h]
    sb/SbCliParms.cpp
 SessionBase::InvokerDaemon_CreateThread [sb/SbDaemons.cpp]
    sb/SbDaemons.cpp
+SessionBase::InvokerDaemon_GetAlarmLevel [sb/SbDaemons.cpp]
+   sb/SbDaemons.cpp
 SessionBase::InvokerDaemon_GetDaemon [sb/SbDaemons.cpp]
    sb/SbDaemons.cpp
 SessionBase::InvokerDaemon_MakeName [sb/SbDaemons.cpp]
@@ -54669,6 +54956,8 @@ SessionBase::InvokerDaemon_ctor [sb/SbDaemons.cpp]
 SessionBase::InvokerDaemon_dtor [sb/SbDaemons.cpp]
    sb/SbDaemons.cpp
 SessionBase::TimerDaemon_CreateThread [sb/SbDaemons.cpp]
+   sb/SbDaemons.cpp
+SessionBase::TimerDaemon_GetAlarmLevel [sb/SbDaemons.cpp]
    sb/SbDaemons.cpp
 SessionBase::TimerDaemon_ctor [sb/SbDaemons.cpp]
    sb/SbDaemons.cpp
@@ -54682,12 +54971,16 @@ SessionBase::InvokerDaemon::CreateThread [sb/SbDaemons.h]
    sb/SbDaemons.cpp
 SessionBase::InvokerDaemon::Display [sb/SbDaemons.h]
    sb/SbDaemons.cpp
+SessionBase::InvokerDaemon::GetAlarmLevel [sb/SbDaemons.h]
+   sb/SbDaemons.cpp
 SessionBase::InvokerDaemon::GetDaemon [sb/SbDaemons.h]
    sb/InvokerPool.cpp
    sb/SbDaemons.cpp
 SessionBase::InvokerDaemon::InvokerDaemon [sb/SbDaemons.h]
    sb/SbDaemons.cpp
 SessionBase::InvokerDaemon::MakeName [sb/SbDaemons.h]
+   sb/SbDaemons.cpp
+SessionBase::InvokerDaemon::Patch [sb/SbDaemons.h]
    sb/SbDaemons.cpp
 SessionBase::InvokerDaemon::faction_ [sb/SbDaemons.h]
    sb/SbDaemons.cpp
@@ -54700,6 +54993,10 @@ SessionBase::TimerDaemon [sb/SbDaemons.h]
    sb/SbDaemons.cpp
    sb/TimerThread.cpp
 SessionBase::TimerDaemon::CreateThread [sb/SbDaemons.h]
+   sb/SbDaemons.cpp
+SessionBase::TimerDaemon::GetAlarmLevel [sb/SbDaemons.h]
+   sb/SbDaemons.cpp
+SessionBase::TimerDaemon::Patch [sb/SbDaemons.h]
    sb/SbDaemons.cpp
 SessionBase::TimerDaemon::TimerDaemon [sb/SbDaemons.h]
    sb/SbDaemons.cpp
@@ -55623,8 +55920,6 @@ SessionBase::SessionOverload [sb/SbLogs.h]
    sb/SbInvokerPools.cpp
    sb/SbLogs.cpp
    sb/SbLogs.h
-SessionBase::SbModule_Register [sb/SbModule.cpp]
-   sb/SbModule.cpp
 SessionBase::SbModule_Shutdown [sb/SbModule.cpp]
    sb/SbModule.cpp
 SessionBase::SbModule_Startup [sb/SbModule.cpp]
@@ -55639,10 +55934,6 @@ SessionBase::SbModule [sb/SbModule.h]
    sb/SbModule.cpp
    st/StModule.cpp
 SessionBase::SbModule::Patch [sb/SbModule.h]
-   sb/SbModule.cpp
-SessionBase::SbModule::Register [sb/SbModule.h]
-   sb/SbModule.cpp
-SessionBase::SbModule::Registered [sb/SbModule.h]
    sb/SbModule.cpp
 SessionBase::SbModule::SbModule [sb/SbModule.h]
    sb/SbModule.cpp
@@ -61862,13 +62153,13 @@ PotsBase::PotsToneTreatment::duration_ [sn/PotsTreatments.h]
 PotsBase::PotsToneTreatment::tone_ [sn/PotsTreatments.h]
    sn/PotsTreatments.cpp
 PotsBase::PotsTreatment [sn/PotsTreatments.h]
-   sn/PotsTreatments.cpp
-   sn/PotsTreatments.h
-PotsBase::PotsTreatment [sn/PotsTreatments.h]
    sn/PotsBcHandlers.cpp
    sn/PotsTreatments.cpp
    sn/PotsTreatments.h
    sn/SnIncrement.cpp
+PotsBase::PotsTreatment [sn/PotsTreatments.h]
+   sn/PotsTreatments.cpp
+   sn/PotsTreatments.h
 PotsBase::PotsTreatment::ApplyTreatment [sn/PotsTreatments.h]
    sn/PotsBcHandlers.cpp
    sn/PotsTreatments.cpp
@@ -62169,8 +62460,6 @@ PotsBase::SnIncrement::SnIncrement [sn/SnIncrement.h]
    sn/SnIncrement.cpp
 PotsBase::SnIncrement::~SnIncrement [sn/SnIncrement.h]
    sn/SnIncrement.cpp
-ServiceNode::SnModule_Register [sn/SnModule.cpp]
-   sn/SnModule.cpp
 ServiceNode::SnModule_Shutdown [sn/SnModule.cpp]
    sn/SnModule.cpp
 ServiceNode::SnModule_Startup [sn/SnModule.cpp]
@@ -62181,10 +62470,6 @@ ServiceNode::SnModule_dtor [sn/SnModule.cpp]
    sn/SnModule.cpp
 ServiceNode::SnModule [sn/SnModule.h]
    rsc/main.cpp
-   sn/SnModule.cpp
-ServiceNode::SnModule::Register [sn/SnModule.h]
-   sn/SnModule.cpp
-ServiceNode::SnModule::Registered [sn/SnModule.h]
    sn/SnModule.cpp
 ServiceNode::SnModule::Shutdown [sn/SnModule.h]
    sn/SnModule.cpp
@@ -62724,8 +63009,6 @@ SessionTools::StSizesCommand::DisplaySizes [st/StIncrement.h]
    st/StIncrement.cpp
 SessionTools::StSizesCommand::ProcessCommand [st/StIncrement.h]
    st/StIncrement.cpp
-SessionTools::StModule_Register [st/StModule.cpp]
-   st/StModule.cpp
 SessionTools::StModule_Shutdown [st/StModule.cpp]
    st/StModule.cpp
 SessionTools::StModule_Startup [st/StModule.cpp]
@@ -62736,10 +63019,6 @@ SessionTools::StModule_dtor [st/StModule.cpp]
    st/StModule.cpp
 SessionTools::StModule [st/StModule.h]
    cb/CbModule.cpp
-   st/StModule.cpp
-SessionTools::StModule::Register [st/StModule.h]
-   st/StModule.cpp
-SessionTools::StModule::Registered [st/StModule.h]
    st/StModule.cpp
 SessionTools::StModule::Shutdown [st/StModule.h]
    st/StModule.cpp
@@ -63185,6 +63464,8 @@ std::atomic [subs/atomic]
    nb/Statistics.cpp
    nb/Thread.cpp
    nb/TraceBuffer.cpp
+std::atomic::compare_exchange_strong [subs/atomic]
+   nb/Thread.cpp
 std::atomic::exchange [subs/atomic]
    nb/TraceBuffer.cpp
 std::atomic::fetch_add [subs/atomic]
@@ -63253,6 +63534,8 @@ std::bitset [subs/bitset]
    nb/Log.cpp
    nb/LogBuffer.cpp
    nb/LogBufferRegistry.cpp
+   nb/ModuleRegistry.cpp
+   nb/NbTypes.h
    nb/ObjectPool.cpp
    nb/PooledClass.cpp
    nb/PosixSignal.cpp
@@ -63287,6 +63570,7 @@ std::bitset::any [subs/bitset]
    nw/TcpIoThread.cpp
 std::bitset::none [subs/bitset]
    nb/Debug.cpp
+   nb/ModuleRegistry.cpp
    nb/TraceBuffer.cpp
    nt/NtIncrement.cpp
    nw/TcpIoThread.cpp
@@ -63309,6 +63593,7 @@ std::bitset::set(std::bitset* const) [subs/bitset]
    ct/Library.cpp
    nb/CfgFlagParm.cpp
    nb/Debug.cpp
+   nb/ModuleRegistry.cpp
    nb/SysThread.win.cpp
    nb/Thread.cpp
    nb/TraceBuffer.cpp
@@ -63673,8 +63958,6 @@ size_t [subs/cstddef]
    nb/Memory.h
    nb/MemoryTrace.cpp
    nb/MemoryTrace.h
-   nb/Module.cpp
-   nb/Module.h
    nb/ModuleRegistry.cpp
    nb/MsgBuffer.cpp
    nb/MsgBuffer.h
@@ -64031,6 +64314,7 @@ uint8_t [subs/cstdint]
    dip/DipTypes.h
    dip/UnitOrder.h
    mb/Tones.h
+   nb/Daemon.h
    nb/Formatters.cpp
    nb/Formatters.h
    nb/Log.cpp
@@ -64600,6 +64884,8 @@ std::ostream [subs/iosfwd]
    nb/SysHeap.cpp
    nb/SysHeap.h
    nb/SysHeap.win.cpp
+   nb/SysLock.cpp
+   nb/SysLock.h
    nb/SysMutex.cpp
    nb/SysMutex.h
    nb/SysThread.cpp
@@ -64984,6 +65270,7 @@ std::map [subs/map]
    dip/TokenTextMap.h
    dip/WinterOrders.cpp
    dip/WinterOrders.h
+   nb/Thread.cpp
    nb/ThreadRegistry.cpp
    nb/ThreadRegistry.h
    nb/TraceBuffer.cpp
@@ -65006,6 +65293,7 @@ std::map::cbegin [subs/map]
    ct/CxxSymbols.cpp
    dip/BaseBot.cpp
    dip/MapAndUnits.cpp
+   nb/Thread.cpp
    nt/FunctionProfiler.cpp
    nt/NtIncrement.cpp
    nt/TestDatabase.cpp
@@ -65015,6 +65303,7 @@ std::map::cend [subs/map]
    dip/BaseBot.cpp
    dip/MapAndUnits.cpp
    dip/WinterOrders.cpp
+   nb/Thread.cpp
    nb/ThreadRegistry.cpp
    nt/FunctionProfiler.cpp
    nt/NtIncrement.cpp
@@ -65052,6 +65341,7 @@ std::map::find(const std::map* const,const T1) [subs/map]
    dip/Token.cpp
    dip/TokenMessage.cpp
    dip/TokenTextMap.cpp
+   nb/Thread.cpp
    nb/ThreadRegistry.cpp
    nt/TestDatabase.cpp
 std::map::insert [subs/map]
@@ -65060,6 +65350,7 @@ std::map::insert [subs/map]
    ct/CxxSymbols.cpp
    dip/Adjudicator.cpp
    dip/MapAndUnits.cpp
+   nb/Thread.cpp
    nb/ThreadRegistry.cpp
    nb/TraceBuffer.cpp
    nt/NtIncrement.cpp
@@ -65113,12 +65404,6 @@ std::multimap::value_type [subs/map]
    dip/Adjudicator.cpp
 std::allocator [subs/memory]
    ct/CxxStrLiteral.h
-std::unique_ptr [subs/memory]
-   ct/CodeFileSet.cpp
-   dip/TokenMessage.cpp
-   dip/TokenMessage.h
-   nb/Thread.cpp
-   nw/SysTcpSocket.win.cpp
 std::unique_ptr [subs/memory]
    an/PotsShelfHandler.cpp
    an/PotsShelfIpService.cpp
@@ -65236,6 +65521,15 @@ std::unique_ptr [subs/memory]
    st/StTestData.cpp
    st/StTestData.h
    st/TestSessions.h
+std::unique_ptr [subs/memory]
+   ct/CodeFileSet.cpp
+   dip/TokenMessage.cpp
+   dip/TokenMessage.h
+   nb/Thread.cpp
+   nw/SysTcpSocket.win.cpp
+std::unique_ptr::get [subs/memory]
+   dip/TokenMessage.cpp
+   nw/SysTcpSocket.win.cpp
 std::unique_ptr::get [subs/memory]
    an/PotsShelfHandler.cpp
    ct/CodeFile.cpp
@@ -65295,9 +65589,6 @@ std::unique_ptr::get [subs/memory]
    sb/SbInvokerPools.cpp
    sn/PotsCallHandler.cpp
    st/StTestData.cpp
-std::unique_ptr::get [subs/memory]
-   dip/TokenMessage.cpp
-   nw/SysTcpSocket.win.cpp
 std::unique_ptr::release [subs/memory]
    ct/CodeSet.cpp
    ct/CxxArea.cpp
@@ -65546,6 +65837,7 @@ std::basic_ostream [subs/ostream]
    nb/SysFile.cpp
    nb/SysHeap.cpp
    nb/SysHeap.win.cpp
+   nb/SysLock.cpp
    nb/SysMutex.cpp
    nb/SysThread.cpp
    nb/SysThreadStack.win.cpp
@@ -65851,6 +66143,7 @@ std::basic_ostream::operator<<(std::basic_ostream* const,char) [subs/ostream]
    nb/SymbolRegistry.cpp
    nb/SysHeap.cpp
    nb/SysHeap.win.cpp
+   nb/SysLock.cpp
    nb/SysMutex.cpp
    nb/SysThread.cpp
    nb/SysThreadStack.win.cpp
@@ -66102,6 +66395,7 @@ std::basic_ostream::operator<<(std::basic_ostream* const,const char*) [subs/ostr
    nb/SymbolRegistry.cpp
    nb/SysHeap.cpp
    nb/SysHeap.win.cpp
+   nb/SysLock.cpp
    nb/SysMutex.cpp
    nb/SysThread.cpp
    nb/SysThreadStack.win.cpp
@@ -66296,6 +66590,7 @@ std::basic_ostream::operator<<(std::basic_ostream* const,const void*) [subs/ostr
    nb/StreamRequest.cpp
    nb/SysHeap.cpp
    nb/SysHeap.win.cpp
+   nb/SysLock.cpp
    nb/SysMutex.cpp
    nb/SysThread.cpp
    nb/Thread.cpp
@@ -66364,6 +66659,7 @@ std::basic_ostream::operator<<(std::basic_ostream* const,int) [subs/ostream]
    nb/CliIntParm.cpp
    nb/CliStack.cpp
    nb/CliThread.cpp
+   nb/Daemon.cpp
    nb/InitThread.cpp
    nb/LogBuffer.cpp
    nb/LogThread.cpp
@@ -66499,6 +66795,7 @@ std::basic_ostream::operator<<(std::basic_ostream* const,unsigned int) [subs/ost
    nb/StatisticsThread.cpp
    nb/SysHeap.cpp
    nb/SysHeap.win.cpp
+   nb/SysLock.cpp
    nb/SysMutex.cpp
    nb/SysThreadStack.win.cpp
    nb/Thread.cpp
@@ -66653,9 +66950,11 @@ std::set [subs/set]
    dip/UnitOrder.cpp
    nb/Daemon.cpp
    nb/Daemon.h
+   nb/InitThread.cpp
    nb/SysFile.cpp
    nb/SysFile.h
    nt/TestDatabase.cpp
+   sb/SbDaemons.cpp
 std::set::begin(std::set* const) [subs/set]
    ct/CodeFile.cpp
    ct/Editor.cpp
@@ -66721,6 +67020,7 @@ std::set::empty [subs/set]
    dip/BotThread.cpp
    dip/MapAndUnits.cpp
    dip/Province.cpp
+   nb/Daemon.cpp
 std::set::end(std::set* const) [subs/set]
    ct/CodeFile.cpp
    ct/Editor.cpp
@@ -66782,6 +67082,8 @@ std::set::size [subs/set]
    dip/Adjudicator.cpp
    dip/MapAndUnits.cpp
    nb/Daemon.cpp
+   nb/InitThread.cpp
+   sb/SbDaemons.cpp
 std::set::swap [subs/set]
    ct/SetOperations.cpp
 std::basic_istringstream [subs/sstream]
@@ -67011,6 +67313,7 @@ std::basic_string [subs/string]
    nb/SysFile.win.cpp
    nb/SysThreadStack.win.cpp
    nb/SysTickTimer.win.cpp
+   nb/Thread.cpp
    nb/TimedRecord.cpp
    nb/ToolRegistry.cpp
    nb/TraceBuffer.cpp
@@ -67050,6 +67353,7 @@ std::basic_string::at(const std::basic_string* const,unsigned int) [subs/string]
    ct/Lexer.h
    dip/StartupParameters.cpp
 std::basic_string::back(const std::basic_string* const) [subs/string]
+   ct/CodeTypes.cpp
    ct/Cxx.cpp
    ct/CxxScope.cpp
    ct/CxxString.cpp
@@ -67146,6 +67450,7 @@ std::basic_string::compare(const std::basic_string* const,const std::basic_strin
    ct/CxxNamed.cpp
    ct/CxxString.cpp
    ct/CxxSymbols.cpp
+   ct/Editor.cpp
    ct/Lexer.cpp
    nb/CliBoolParm.cpp
    nb/CliCharParm.cpp
@@ -67246,7 +67551,10 @@ std::basic_string::find(const std::basic_string* const,const std::basic_string,u
    nb/Log.cpp
    nb/LogBuffer.cpp
    nb/NbCliParms.cpp
+   nb/NbIncrement.cpp
    nb/SysTickTimer.win.cpp
+   nb/Thread.cpp
+   nb/TraceBuffer.cpp
    nt/NtIncrement.cpp
    st/MscBuilder.cpp
 std::basic_string::find_first_not_of(const std::basic_string* const,const std::basic_string,unsigned int) [subs/string]
@@ -67305,6 +67613,7 @@ std::basic_string::length [subs/string]
 std::basic_string::npos [subs/string]
    ct/CodeFile.cpp
    ct/CodeFileSet.cpp
+   ct/CodeTypes.cpp
    ct/CodeWarning.cpp
    ct/CodeWarning.h
    ct/CtIncrement.cpp
@@ -67340,7 +67649,10 @@ std::basic_string::npos [subs/string]
    nb/Log.cpp
    nb/LogBuffer.cpp
    nb/NbCliParms.cpp
+   nb/NbIncrement.cpp
    nb/SysTickTimer.win.cpp
+   nb/Thread.cpp
+   nb/TraceBuffer.cpp
    nt/NtIncrement.cpp
    st/MscBuilder.cpp
 std::basic_string::pop_back [subs/string]
@@ -67358,6 +67670,7 @@ std::basic_string::push_back [subs/string]
    ct/CodeFile.cpp
    ct/CtIncrement.cpp
    ct/CxxArea.cpp
+   ct/CxxExecute.cpp
    ct/CxxNamed.cpp
    ct/CxxStrLiteral.h
    ct/CxxString.cpp
@@ -67775,6 +68088,8 @@ std::string [subs/string]
    nb/SysFile.win.cpp
    nb/SysHeap.cpp
    nb/SysHeap.h
+   nb/SysLock.cpp
+   nb/SysLock.h
    nb/SysMutex.cpp
    nb/SysMutex.h
    nb/SysThread.cpp
@@ -67785,6 +68100,8 @@ std::string [subs/string]
    nb/SysTime.cpp
    nb/SysTime.h
    nb/SysTypes.h
+   nb/ThisThread.cpp
+   nb/ThisThread.h
    nb/Thread.cpp
    nb/Thread.h
    nb/ThreadAdmin.cpp
@@ -67985,6 +68302,7 @@ std::to_string(int) [subs/string]
    dip/BaseBot.cpp
    nb/CfgIntParm.cpp
    nb/CliThread.cpp
+   nb/Daemon.cpp
    nb/Formatters.cpp
    nb/NbIncrement.cpp
    nb/ObjectPool.cpp
@@ -68079,6 +68397,7 @@ std::pair [subs/utility]
    dip/TokenMessage.cpp
    dip/TokenTextMap.cpp
    dip/WinterOrders.cpp
+   nb/Thread.cpp
    nb/ThreadRegistry.cpp
    nb/ThreadRegistry.h
    nb/TraceBuffer.cpp
@@ -68095,6 +68414,7 @@ std::pair::first [subs/utility]
    dip/MapAndUnits.cpp
    dip/TokenTextMap.cpp
    dip/WinterOrders.cpp
+   nb/Thread.cpp
    nb/ThreadRegistry.cpp
    nb/TraceBuffer.cpp
    nt/FunctionProfiler.cpp
@@ -68110,6 +68430,7 @@ std::pair::second [subs/utility]
    dip/Token.cpp
    dip/TokenMessage.cpp
    dip/TokenTextMap.cpp
+   nb/Thread.cpp
    nb/ThreadRegistry.cpp
    nb/TraceBuffer.cpp
    nt/FunctionProfiler.cpp
@@ -68347,11 +68668,13 @@ std::vector::size [subs/vector]
 std::vector::swap [subs/vector]
    ct/CxxSymbols.cpp
 CloseHandle [subs/windows.h]
+   nb/SysLock.win.cpp
    nb/SysMutex.win.cpp
    nb/SysThread.win.cpp
 CreateEvent [subs/windows.h]
    nb/SysThread.win.cpp
 CreateMutex [subs/windows.h]
+   nb/SysLock.win.cpp
    nb/SysMutex.win.cpp
 CreateThread [subs/windows.h]
    nb/SysThread.win.cpp
@@ -68382,6 +68705,7 @@ GetCurrentThreadId [subs/windows.h]
    nb/SysThread.win.cpp
 GetLastError [subs/windows.h]
    nb/SysHeap.win.cpp
+   nb/SysLock.win.cpp
    nb/SysMutex.win.cpp
    nb/SysThread.win.cpp
    nb/SysThreadStack.win.cpp
@@ -68409,6 +68733,7 @@ HeapFree [subs/windows.h]
 HeapValidate [subs/windows.h]
    nb/SysHeap.win.cpp
 INFINITE [subs/windows.h]
+   nb/SysLock.win.cpp
    nb/SysMutex.win.cpp
 LARGE_INTEGER [subs/windows.h]
    nb/SysTickTimer.win.cpp
@@ -68427,6 +68752,7 @@ QueryPerformanceCounter [subs/windows.h]
 QueryPerformanceFrequency [subs/windows.h]
    nb/SysTickTimer.win.cpp
 ReleaseMutex [subs/windows.h]
+   nb/SysLock.win.cpp
    nb/SysMutex.win.cpp
 SIZE_T [subs/windows.h]
    nb/SysHeap.win.cpp
@@ -68497,9 +68823,11 @@ THREAD_PRIORITY_HIGHEST [subs/windows.h]
 THREAD_PRIORITY_NORMAL [subs/windows.h]
    nb/SysThread.win.cpp
 WAIT_ABANDONED [subs/windows.h]
+   nb/SysLock.win.cpp
    nb/SysMutex.win.cpp
    nb/SysThread.win.cpp
 WAIT_OBJECT_0 [subs/windows.h]
+   nb/SysLock.win.cpp
    nb/SysMutex.win.cpp
    nb/SysThread.win.cpp
 WAIT_TIMEOUT [subs/windows.h]
@@ -68508,6 +68836,7 @@ WAIT_TIMEOUT [subs/windows.h]
 WORD [subs/windows.h]
    nb/SysThreadStack.win.cpp
 WaitForSingleObject [subs/windows.h]
+   nb/SysLock.win.cpp
    nb/SysMutex.win.cpp
    nb/SysThread.win.cpp
 _resetstkoflw [subs/windows.h]

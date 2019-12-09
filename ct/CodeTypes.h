@@ -504,7 +504,7 @@ struct FixOptions
 //
 enum LineType
 {
-   Code,                  // source code
+   SourceCode,            // source code
    Blank,                 // blank lines
    EmptyComment,          // //
    FileComment,           // comment at top of file, before any code
@@ -565,6 +565,13 @@ private:
 size_t LineMergeLength
    (const std::string& line1, size_t begin1, size_t end1,
     const std::string& line2, size_t begin2, size_t end2);
+
+//  Returns true if a space needs to be inserted at the end of LINE1
+//  when merging it with LINE2, whose first non-blank character is at
+//  index BEGIN2.
+//
+bool InsertSpaceOnMerge
+   (const std::string& line1, const std::string& line2, size_t begin2);
 
 //------------------------------------------------------------------------------
 //

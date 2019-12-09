@@ -446,6 +446,51 @@ CliAppData* CliThread::GetAppData(CliAppData::Id aid) const
 
 //------------------------------------------------------------------------------
 
+fn_name CliThread_IntPrompt = "CliThread.IntPrompt";
+
+word CliThread::IntPrompt(const string& prompt, word min, word max)
+{
+   Debug::ft(CliThread_IntPrompt);
+
+   word result = -1;
+
+   //  If input is being taken from a file rather than the console,
+   //  return 0.
+   //
+   if(inIndex_ > 0) return 0;
+
+   auto first = true;
+   char text[COUT_LENGTH_MAX];
+
+   //  Output the query until the user enters an integer.  Echo the
+   //  user's input to the console transcript file.
+   //
+   while(true)
+   {
+      ostringstreamPtr stream(new std::ostringstream);
+
+      if(first)
+         *stream << prompt;
+      else
+         *stream << "Enter " << min << " to " << max << ": ";
+
+      Flush();
+      CoutThread::Spool(stream);
+      first = false;
+
+      auto count = CinThread::GetLine(text, COUT_LENGTH_MAX);
+      if(count < 0) return result;
+
+      string input(text);
+      FileThread::Record(input, true);
+      auto rc = CliBuffer::GetInt(input, result, false);
+      if(rc != CliParm::Ok) continue;
+      if((result >= min) && (result <= max)) return result;
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CliThread_InvokeCommand = "CliThread.InvokeCommand";
 
 word CliThread::InvokeCommand(const CliCommand& comm)
@@ -909,5 +954,49 @@ void CliThread::Startup(RestartLevel level)
 
    Thread::Startup(level);
    AllocResources();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CliThread_StrPrompt = "CliThread.StrPrompt";
+
+string CliThread::StrPrompt(const string& prompt)
+{
+   Debug::ft(CliThread_StrPrompt);
+
+   //  If input is being taken from a file rather than the console,
+   //  return an empty string.
+   //
+   if(inIndex_ > 0) return EMPTY_STR;
+
+   auto first = true;
+   char text[COUT_LENGTH_MAX];
+
+   //  Output the query, read the user's input, and echo it to the
+   //  console transcript file before returning it.
+   //
+   while(true)
+   {
+      ostringstreamPtr stream(new std::ostringstream);
+
+      if(first)
+         *stream << prompt;
+      else
+         *stream << "Please enter a non-empty string";
+
+      Flush();
+      CoutThread::Spool(stream);
+      first = false;
+
+      auto count = CinThread::GetLine(text, COUT_LENGTH_MAX);
+      if(count < 0) return EMPTY_STR;
+
+      if(count > 0)
+      {
+         string input(text);
+         FileThread::Record(input, true);
+         return input;
+      }
+   }
 }
 }

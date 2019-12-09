@@ -42,7 +42,7 @@ fixed_string TcpIoDaemonName = "tcp";
 
 //------------------------------------------------------------------------------
 
-fixed_string TcpIoDaemon_ctor = "TcpIoDaemon.ctor";
+fn_name TcpIoDaemon_ctor = "TcpIoDaemon.ctor";
 
 TcpIoDaemon::TcpIoDaemon(const TcpIpService* service, ipport_t port) :
    Daemon(MakeName(port).c_str(), 1),
@@ -54,7 +54,7 @@ TcpIoDaemon::TcpIoDaemon(const TcpIpService* service, ipport_t port) :
 
 //------------------------------------------------------------------------------
 
-fixed_string TcpIoDaemon_dtor = "TcpIoDaemon.dtor";
+fn_name TcpIoDaemon_dtor = "TcpIoDaemon.dtor";
 
 TcpIoDaemon::~TcpIoDaemon()
 {
@@ -63,7 +63,7 @@ TcpIoDaemon::~TcpIoDaemon()
 
 //------------------------------------------------------------------------------
 
-fixed_string TcpIoDaemon_CreateThread = "TcpIoDaemon.CreateThread";
+fn_name TcpIoDaemon_CreateThread = "TcpIoDaemon.CreateThread";
 
 Thread* TcpIoDaemon::CreateThread()
 {
@@ -85,7 +85,7 @@ void TcpIoDaemon::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fixed_string TcpIoDaemon_GetDaemon = "TcpIoDaemon.GetDaemon";
+fn_name TcpIoDaemon_GetDaemon = "TcpIoDaemon.GetDaemon";
 
 TcpIoDaemon* TcpIoDaemon::GetDaemon(const TcpIpService* service, ipport_t port)
 {
@@ -105,7 +105,7 @@ TcpIoDaemon* TcpIoDaemon::GetDaemon(const TcpIpService* service, ipport_t port)
 
 //------------------------------------------------------------------------------
 
-fixed_string TcpIoDaemon_MakeName = "TcpIoDaemon.MakeName";
+fn_name TcpIoDaemon_MakeName = "TcpIoDaemon.MakeName";
 
 string TcpIoDaemon::MakeName(ipport_t port)
 {
@@ -120,13 +120,20 @@ string TcpIoDaemon::MakeName(ipport_t port)
    return name;
 }
 
+//------------------------------------------------------------------------------
+
+void TcpIoDaemon::Patch(sel_t selector, void* arguments)
+{
+   Daemon::Patch(selector, arguments);
+}
+
 //==============================================================================
 
 fixed_string UdpIoDaemonName = "udp";
 
 //------------------------------------------------------------------------------
 
-fixed_string UdpIoDaemon_ctor = "UdpIoDaemon.ctor";
+fn_name UdpIoDaemon_ctor = "UdpIoDaemon.ctor";
 
 UdpIoDaemon::UdpIoDaemon(const UdpIpService* service, ipport_t port) :
    Daemon(MakeName(port).c_str(), 1),
@@ -138,7 +145,7 @@ UdpIoDaemon::UdpIoDaemon(const UdpIpService* service, ipport_t port) :
 
 //------------------------------------------------------------------------------
 
-fixed_string UdpIoDaemon_dtor = "UdpIoDaemon.dtor";
+fn_name UdpIoDaemon_dtor = "UdpIoDaemon.dtor";
 
 UdpIoDaemon::~UdpIoDaemon()
 {
@@ -147,7 +154,7 @@ UdpIoDaemon::~UdpIoDaemon()
 
 //------------------------------------------------------------------------------
 
-fixed_string UdpIoDaemon_CreateThread = "UdpIoDaemon.CreateThread";
+fn_name UdpIoDaemon_CreateThread = "UdpIoDaemon.CreateThread";
 
 Thread* UdpIoDaemon::CreateThread()
 {
@@ -169,7 +176,7 @@ void UdpIoDaemon::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fixed_string UdpIoDaemon_GetDaemon = "UdpIoDaemon.GetDaemon";
+fn_name UdpIoDaemon_GetDaemon = "UdpIoDaemon.GetDaemon";
 
 UdpIoDaemon* UdpIoDaemon::GetDaemon(const UdpIpService* service, ipport_t port)
 {
@@ -189,7 +196,7 @@ UdpIoDaemon* UdpIoDaemon::GetDaemon(const UdpIpService* service, ipport_t port)
 
 //------------------------------------------------------------------------------
 
-fixed_string UdpIoDaemon_MakeName = "UdpIoDaemon.MakeName";
+fn_name UdpIoDaemon_MakeName = "UdpIoDaemon.MakeName";
 
 string UdpIoDaemon::MakeName(ipport_t port)
 {
@@ -202,5 +209,12 @@ string UdpIoDaemon::MakeName(ipport_t port)
    name.push_back('_');
    name.append(std::to_string(port));
    return name;
+}
+
+//------------------------------------------------------------------------------
+
+void UdpIoDaemon::Patch(sel_t selector, void* arguments)
+{
+   Daemon::Patch(selector, arguments);
 }
 }

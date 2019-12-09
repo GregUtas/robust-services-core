@@ -40,7 +40,9 @@
 #include "Debug.h"
 #include "Formatters.h"
 #include "Lexer.h"
+#include "Library.h"
 #include "NbCliParms.h"
+#include "Singleton.h"
 #include "SysFile.h"
 
 using std::string;
@@ -50,53 +52,104 @@ using namespace NodeBase;
 
 namespace CodeTools
 {
+//  User prompts.
+//
+fixed_string YNSQChars = "ynsq";
+fixed_string YNSQHelp = "Enter y(yes) n(no) s(skip file) q(quit): ";
+
 //  Characters that enclose the file name of an #include directive,
 //  depending on the group to which it belongs.
 //
 const string FrontChars = "$%@!<\"";
 const string BackChars = "$%@!>\"";
 
-//  Returns true if C is a whitespace character.
+//------------------------------------------------------------------------------
 //
-bool IsBlank(char c);
+//  If CODE is an #include directive, unmanagles and returns it, else
+//  simply returns it without any changes.
+//
+string DemangleInclude(string code)
+{
+   if(code.empty()) return code;
+   if(code.find(HASH_INCLUDE_STR) != 0) return code;
 
-//  Forward declarations of local functions.
-//
-//  Returns true if C is a character that may appear in an identifier.
-//
-bool IsWordChar(char c);
+   auto pos = code.find_first_of(FrontChars);
+   if(pos == string::npos) return code;
 
-//  Sets EXPL to "TEXT not found."  If QUOTES is set, TEXT is enclosed in
-//  quotes.  Returns 0.
-//
-word NotFound(string& expl, fixed_string text, bool quotes = false);
+   switch(FrontChars.find_first_of(code[pos]))
+   {
+   case 0:
+   case 2:
+      code[pos] = '<';
+      code.back() = '>';
+      break;
+   case 1:
+   case 3:
+      code[pos] = QUOTE;
+      code.back() = QUOTE;
+      break;
+   }
 
-//  Sets EXPL to TEXT and returns RC.
-//
-word Report(string& expl, fixed_string text, word rc = 0);
+   return code;
+}
 
 //------------------------------------------------------------------------------
+//
+//  Returns true if the #include in LINE1 should precede that in LINE2.
+//
+bool IncludesAreSorted(const string& line1, const string& line2)
+{
+   //  #includes are sorted by group, then alphabetically.  The characters
+   //  that enclose the filename distinguish the groups: [] for group 1,
+   //  () for group 2, <> for group 3, and "" for group 4.
+   //
+   auto pos1 = line1.find_first_of(FrontChars);
+   auto pos2 = line2.find_first_of(FrontChars);
 
+   if(pos2 == string::npos)
+   {
+      if(pos1 == string::npos) return (&line1 < &line2);
+      return true;
+   }
+   else if(pos1 == string::npos) return false;
+
+   auto c1 = line1[pos1];
+   auto c2 = line2[pos2];
+   auto group1 = FrontChars.find(c1);
+   auto group2 = FrontChars.find(c2);
+   if(group1 < group2) return true;
+   if(group1 > group2) return false;
+   auto cmp = strCompare(line1, line2);
+   if(cmp < 0) return true;
+   if(cmp > 0) return false;
+   return (&line1 < &line2);
+}
+
+//------------------------------------------------------------------------------
+//
+//  Returns true if C is a whitespace character.
+//
 bool IsBlank(char c)
 {
    return (WhitespaceChars.find_first_of(c) != string::npos);
 }
 
 //------------------------------------------------------------------------------
-
+//
+//  Returns true if C is a character that may appear in an identifier.
+//
 bool IsWordChar(char c)
 {
    return (ValidNextChars.find_first_of(c) != string::npos);
 }
 
 //------------------------------------------------------------------------------
-
-fn_name CodeTools_NotFound = "CodeTools.NotFound";
-
-word NotFound(string& expl, fixed_string text, bool quotes)
+//
+//  Sets EXPL to "TEXT not found."  If QUOTES is set, TEXT is enclosed in
+//  quotes.  Returns 0.
+//
+word NotFound(string& expl, fixed_string text, bool quotes = false)
 {
-   Debug::ft(CodeTools_NotFound);
-
    if(quotes) expl = QUOTE;
    expl += text;
    if(quotes) expl.push_back(QUOTE);
@@ -105,16 +158,80 @@ word NotFound(string& expl, fixed_string text, bool quotes)
 }
 
 //------------------------------------------------------------------------------
-
-fn_name CodeTools_Report = "CodeTools.Report";
-
-word Report(string& expl, fixed_string text, word rc)
+//
+//  Sets EXPL to TEXT and returns RC.
+//
+word Report(string& expl, fixed_string text, word rc = 0)
 {
-   Debug::ft(CodeTools_Report);
-
    expl = text;
    return rc;
 }
+
+//------------------------------------------------------------------------------
+//
+//  Returns CODE, indented to LEVEL standard indentations.
+//
+string strCode(const string& code, size_t level)
+{
+   return spaces(level * INDENT_SIZE) + code;
+}
+
+//------------------------------------------------------------------------------
+//
+//  Returns TEXT, prefixed by "//  " and indented to LEVEL standard
+//  indentations.
+//
+string strComment(const string& text, size_t level)
+{
+   return spaces(level * INDENT_SIZE) + "//  " + text;
+}
+
+//------------------------------------------------------------------------------
+//
+//  Returns the string "//" followed by repetitions of C to fill out the line.
+//
+string strRule(char c)
+{
+   string rule = COMMENT_STR;
+   return rule.append(LINE_LENGTH_MAX - 2, c);
+}
+
+//==============================================================================
+//
+//  Indicates where a blank line should be added when inserting new code.
+//
+enum BlankLocation
+{
+   BlankNone,
+   BlankBefore,
+   BlankAfter
+};
+
+//------------------------------------------------------------------------------
+//
+//  Attributes when inserting a function declaration.
+//
+struct FuncDeclAttrs
+{
+   Cxx::Access access;   // desired access control
+   BlankLocation blank;  // where to insert a blank line
+   bool comment;         // whether to include a comment
+
+   explicit FuncDeclAttrs(Cxx::Access acc) :
+      access(acc), blank(BlankNone), comment(false) { }
+};
+
+//------------------------------------------------------------------------------
+//
+//  Attributes when inserting a function definition.
+//
+struct FuncDefnAttrs
+{
+   BlankLocation blank;  // where to insert a blank line
+   bool rule;            // whether to insert a rule
+
+   FuncDefnAttrs() : blank(BlankNone), rule(false) { }
+};
 
 //==============================================================================
 
@@ -467,7 +584,7 @@ Editor::Iter Editor::CodeBegin()
          ns = true;
          break;
 
-      case Code:
+      case SourceCode:
          //
          //  If we saw an open brace, this should be a namespace enclosure.
          //  Generate a log if it's something else, otherwise continue to
@@ -643,37 +760,6 @@ void Editor::DebugFtCode
    call = string(file_->IndentSize(), SPACE) + "Debug::ft(";
    call.append(dname);
    call.append(");");
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Editor_DemangleInclude = "Editor.DemangleInclude";
-
-string Editor::DemangleInclude(string code) const
-{
-   Debug::ft(Editor_DemangleInclude);
-
-   if(code.empty()) return code;
-   if(code.find(HASH_INCLUDE_STR) != 0) return code;
-
-   auto pos = code.find_first_of(FrontChars);
-   if(pos == string::npos) return code;
-
-   switch(FrontChars.find_first_of(code[pos]))
-   {
-   case 0:
-   case 2:
-      code[pos] = '<';
-      code.back() = '>';
-      break;
-   case 1:
-   case 3:
-      code[pos] = QUOTE;
-      code.back() = QUOTE;
-      break;
-   }
-
-   return code;
 }
 
 //------------------------------------------------------------------------------
@@ -1392,142 +1478,202 @@ Editor::CodeLocation Editor::FindFirstOf
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_FindFuncEnd = "Editor.FindFuncEnd";
+fn_name Editor_FindFuncDeclLoc = "Editor.FindFuncDeclLoc";
 
-Editor::Iter Editor::FindFuncEnd(const Function* func)
+Editor::Iter Editor::FindFuncDeclLoc
+   (const Class* cls, const string& name, FuncDeclAttrs& attrs)
 {
-   Debug::ft(Editor_FindFuncEnd);
+   Debug::ft(Editor_FindFuncDeclLoc);
 
-   //  Find the location of the function's name, and then the semicolon
-   //  or right brace at its end.  Return the line that follows.
+   //  This currrently assumes that the function to be added is an override.
+   //  If there is no function with the same access control, add the access
+   //  control and function in the usual order (public, protected, private).
+   //  Otherwise, add the function after the first occurrence of its access
+   //  control, alphabetically among any other overrides.
    //
-   auto end = FindPos(func->GetPos());
-   if(end.pos == string::npos) return source_.end();
-   end = FindFirstOf(end.iter, end.pos, ";}");
-   if(end.pos == string::npos) return source_.end();
-   return std::next(end.iter);
+   auto funcs = cls->Funcs();
+   auto control = false;
+   const Function* prev = nullptr;
+   const Function* next = nullptr;
+
+   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
+   {
+      auto access = (*f)->GetAccess();
+
+      if(access == attrs.access)
+      {
+         //  This function has the same access control.  If it's an override
+         //  whose name follows NAME, insert the new function before it.
+         //
+         control = true;
+
+         if((*f)->IsOverride())
+         {
+            if((*f)->Name()->compare(name) > 0)
+            {
+               next = f->get();
+               break;
+            }
+         }
+      }
+      else if(access < attrs.access)
+      {
+         //  This function has a more restricted access control, so insert
+         //  the new function before it.
+         //
+         next = f->get();
+         break;
+      }
+
+      //  If we get here, the function will be inserted somewhere after the
+      //  current one.
+      //
+      prev = f->get();
+   }
+
+   //  If another function with the desired access control exists, nullify
+   //  this function's access control so that it won't be added redundantly.
+   //
+   if(control) attrs.access = Cxx::Access_N;
+
+   //  We now know the functions between which the new function should be
+   //  inserted (PREV and NEXT), so find its precise insertion location
+   //  and attributes.
+   //
+   return UpdateFuncDeclLoc(prev, next, attrs);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_FindInsertionPoint = "Editor.FindInsertionPoint";
+fixed_string FilePrompt = "Enter the filename in which to define";
 
-Editor::Iter Editor::FindInsertionPoint
-   (const CodeWarning& log, BlankLineLocation& blank, bool& comment)
+fn_name Editor_FindFuncDefnFile = "Editor.FindFuncDefnFile";
+
+const CodeFile* Editor::FindFuncDefnFile
+   (CliThread& cli, const Class* cls, const string& name)
 {
-   Debug::ft(Editor_FindInsertionPoint);
+   Debug::ft(Editor_FindFuncDefnFile);
 
-   //  Find special member functions defined in the class that needs
-   //  to have another one added.  The insertion point will be either
-   //  right after the class declaration or one of these functions.
-   //  The order is constructor, destructor, copy constructor, and
-   //  finally copy operator.
+   //  Look at all the functions in the class to which the new function
+   //  will be added.  If all of them are implemented in the same file,
+   //  define the new function in that file, otherwise ask the user to
+   //  specify which file should contain the function.
    //
-   auto where = FindPos(log.item_->GetPos());
-   if(where.pos == string::npos) return source_.end();
-   auto cls = static_cast< const Class* >(log.item_);
-   auto ctors = cls->FindCtors();
-   auto ctor = ctors.back();
-   auto dtor = cls->FindFuncByRole(PureDtor, false);
-   auto copy = cls->FindFuncByRole(CopyCtor, false);
+   std::set< CodeFile* > impls;
+   auto funcs = cls->Funcs();
 
-   const Function* func = nullptr;  // insert right after class declaration
-
-   switch(log.warning_)
+   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
    {
-   case DefaultConstructor:
-      break;
+      auto file = (*f)->GetDefnFile();
+      if((file != nullptr) && file->IsCpp()) impls.insert(file);
+   }
 
-   case DefaultDestructor:
-      if(ctors.front() != nullptr) func = ctor;
-      break;
+   CodeFile* file = (impls.size() == 1 ? *impls.cbegin() : nullptr);
 
-   case DefaultCopyConstructor:
-   case RuleOf3CopyOperNoCtor:
-      if(dtor != nullptr) func = dtor;
-      else if(ctors.front() != nullptr) func = ctor;
-      break;
-
-   case DefaultCopyOperator:
-   case RuleOf3CopyCtorNoOper:
-      if(copy != nullptr) func = copy;
-      else if(dtor != nullptr) func = dtor;
-      else if(ctor != nullptr) func = ctor;
-      break;
-
-   default:
-      return source_.end();
-   };
-
-   if(func == nullptr)
+   while(file == nullptr)
    {
-      //  Insert the new function at the beginning of the class.
-      //  Skip over, or insert, a "public" access control.
-      //
-      where = FindFirstOf(where.iter, where.pos, "{");
-      ++where.iter;
+      std::ostringstream prompt;
+      prompt << FilePrompt << CRLF << spaces(2);
+      prompt << *cls->Name() << SCOPE_STR << name;
+      prompt << " ('s' to skip this item): ";
+      auto fileName = cli.StrPrompt(prompt.str());
+      if(fileName == "s") return nullptr;
 
-      if(where.iter->code.find(PUBLIC_STR) == string::npos)
+      file = Singleton< Library >::Instance()->FindFile(fileName);
+      if(file == nullptr)
       {
-         SourceLine control(PUBLIC_STR, SIZE_MAX);
-         control.code.push_back(':');
-         where.iter = source_.insert(where.iter, control);
-         ++where.iter;
-      }
-
-      //  If a comment will follow the new function, add a comment
-      //  for it as well.
-      //
-      auto type = GetLineType(where.iter);
-      auto& attrs = LineTypeAttr::Attrs[type];
-      comment = (!attrs.isCode && (type != Blank));
-   }
-   else
-   {
-      //  Insert the new function after FUNC.  If a comment precedes
-      //  FUNC, also add one for the new function.
-      //
-      where.iter = FindFuncEnd(func);
-      auto floc = FindPos(func->GetPos());
-      auto type = GetLineType(std::prev(floc.iter));
-      auto& attrs = LineTypeAttr::Attrs[type];
-      comment = (!attrs.isCode && (type != Blank));
-   }
-
-   //  Decide where to insert a blank line to offset the new function.
-   //  FindFuncEnd often returns a blank line, so advance to the next
-   //  one.  We want to return a non-blank line so that its indentation
-   //  can determine the indentation for the new code.
-   //
-   if(where.iter->code.find_first_not_of(WhitespaceChars) == string::npos)
-   {
-      ++where.iter;
-   }
-
-   //  Where to insert a blank line depends on whether the new function
-   //  will appear first, last, or somewhere in the middle of its class.
-   //
-   auto prevType = GetLineType(std::prev(where.iter));
-   auto nextType = GetLineType(where.iter);
-
-   if(prevType == OpenBrace)
-      blank = (nextType == CloseBraceSemicolon ? BlankNone : BlankAfter);
-   else
-      blank = (nextType == CloseBraceSemicolon ? BlankBefore: BlankAfter);
-
-   //  If the new function will not be commented, don't set it off with
-   //  a blank unless one precedes or follows its insertion point.
-   //
-   if(!comment && (prevType != Blank))
-   {
-      if((nextType == CloseBraceSemicolon) ||
-         (GetLineType(std::next(where.iter)) != Blank))
-      {
-         blank = BlankNone;
+         *cli.obuf << "  That file is not in the code library.";
+         cli.Flush();
       }
    }
 
-   return where.iter;
+   return file;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_FindFuncDefnLoc = "Editor.FindFuncDefnLoc";
+
+Editor::Iter Editor::FindFuncDefnLoc(const CodeFile* file,
+   const Class* cls, const string& name, string& expl, FuncDefnAttrs& attrs)
+{
+   Debug::ft(Editor_FindFuncDefnLoc);
+
+   //  Look at all the functions that are defined in this file and that belong
+   //  to CLS.  Add the new function after the constructor, destructor, and any
+   //  function whose name precedes the new function alphabetically, and add the
+   //  new function befoe any function whose name follows the new function.
+   //
+   auto funcs = file->Funcs();
+   const Function* prev = nullptr;
+   const Function* next = nullptr;
+   auto reached = false;
+   auto special = true;
+
+   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
+   {
+      //  Ignore instantiated functions.
+      //
+      if((*f)->IsInTemplateInstance()) continue;
+
+      //  If this function is in another class, then insert the new function
+      //  o immediately before it, if the new function's class has been reached
+      //  o somewhere after it, if the new function's class has not been reached
+      //
+      if((*f)->GetClass() != cls)
+      {
+         if(reached)
+         {
+            next = (*f)->GetDefn();
+            break;
+         }
+
+         prev = (*f)->GetDefn();
+         continue;
+      }
+
+      reached = true;
+      auto type = (*f)->FuncType();
+
+      if((type == FuncCtor) || (type == FuncDtor))
+      {
+         prev = (*f)->GetDefn();
+         continue;
+      }
+
+      auto currName = (*f)->Name();
+      auto sort = currName->compare(name);
+
+      if(sort > 0)
+      {
+         if(currName->compare(*next->Name()) < 0)
+         {
+            next = (*f)->GetDefn();
+            break;
+         }
+      }
+      else if(sort < 0)
+      {
+         if(special ||
+            (prev == nullptr) || (currName->compare(*prev->Name()) > 0))
+         {
+            prev = (*f)->GetDefn();
+         }
+      }
+      else
+      {
+         expl = "A definition for this function already exists.";
+         return source_.end();
+      }
+
+      special = false;
+   }
+
+   //  We now know the functions between which the new function should be
+   //  inserted (PREV and NEXT), so find its precise insertion location
+   //  and attributes.
+   //
+   return UpdateFuncDefnLoc(prev, next, attrs);
 }
 
 //------------------------------------------------------------------------------
@@ -1646,6 +1792,128 @@ Editor::CodeLocation Editor::FindSigEnd(const CodeWarning& log)
 
 //------------------------------------------------------------------------------
 
+fn_name Editor_FindSpecialFuncLoc = "Editor.FindSpecialFuncLoc";
+
+Editor::Iter Editor::FindSpecialFuncLoc
+   (const CodeWarning& log, FuncDeclAttrs& attrs)
+{
+   Debug::ft(Editor_FindSpecialFuncLoc);
+
+   //  Find special member functions defined in the class that needs
+   //  to have another one added.  The insertion point will be either
+   //  right after the class declaration or one of these functions.
+   //  The order is constructor, destructor, copy constructor, and
+   //  finally copy operator.
+   //
+   auto where = FindPos(log.item_->GetPos());
+   if(where.pos == string::npos) return source_.end();
+   auto cls = static_cast< const Class* >(log.item_);
+   auto ctors = cls->FindCtors();
+   auto ctor = ctors.back();
+   auto dtor = cls->FindFuncByRole(PureDtor, false);
+   auto copy = cls->FindFuncByRole(CopyCtor, false);
+
+   const Function* func = nullptr;  // insert right after class declaration
+
+   switch(log.warning_)
+   {
+   case DefaultConstructor:
+      break;
+
+   case DefaultDestructor:
+      if(ctors.front() != nullptr) func = ctor;
+      break;
+
+   case DefaultCopyConstructor:
+   case RuleOf3CopyOperNoCtor:
+      if(dtor != nullptr) func = dtor;
+      else if(ctors.front() != nullptr) func = ctor;
+      break;
+
+   case DefaultCopyOperator:
+   case RuleOf3CopyCtorNoOper:
+      if(copy != nullptr) func = copy;
+      else if(dtor != nullptr) func = dtor;
+      else if(ctor != nullptr) func = ctor;
+      break;
+
+   default:
+      return source_.end();
+   };
+
+   if(func == nullptr)
+   {
+      //  Insert the new function at the beginning of the class.
+      //  Skip over, or insert, a "public" access control.
+      //
+      where = FindFirstOf(where.iter, where.pos, "{");
+      ++where.iter;
+
+      if(where.iter->code.find(PUBLIC_STR) == string::npos)
+      {
+         SourceLine control(PUBLIC_STR, SIZE_MAX);
+         control.code.push_back(':');
+         where.iter = source_.insert(where.iter, control);
+         ++where.iter;
+      }
+
+      //  If a comment will follow the new function, add a comment
+      //  for it as well.
+      //
+      auto type = GetLineType(where.iter);
+      auto& line = LineTypeAttr::Attrs[type];
+      attrs.comment = (!line.isCode && (type != Blank));
+   }
+   else
+   {
+      //  Insert the new function after FUNC.  If a comment precedes
+      //  FUNC, also add one for the new function.
+      //
+      where.iter = LineAfterFunc(func);
+      auto floc = FindPos(func->GetPos());
+      auto type = GetLineType(std::prev(floc.iter));
+      auto& line = LineTypeAttr::Attrs[type];
+      attrs.comment = (!line.isCode && (type != Blank));
+   }
+
+   //  Decide where to insert a blank line to offset the new function.
+   //  LineAfterFunc often returns a blank line, so advance to the next
+   //  one.  We want to return a non-blank line so that its indentation
+   //  can determine the indentation for the new code.
+   //
+   if(where.iter->code.find_first_not_of(WhitespaceChars) == string::npos)
+   {
+      ++where.iter;
+   }
+
+   //  Where to insert a blank line depends on whether the new function
+   //  will appear first, last, or somewhere in the middle of its class.
+   //
+   auto prevType = GetLineType(std::prev(where.iter));
+   auto nextType = GetLineType(where.iter);
+
+   if(prevType == OpenBrace)
+      attrs.blank = (nextType == CloseBraceSemicolon ? BlankNone : BlankAfter);
+   else
+      attrs.blank = (nextType == CloseBraceSemicolon ? BlankBefore: BlankAfter);
+
+   //  If the new function will not be commented, don't set it off with
+   //  a blank unless one precedes or follows its insertion point.
+   //
+   if(!attrs.comment && (prevType != Blank))
+   {
+      if((nextType == CloseBraceSemicolon) ||
+         (GetLineType(std::next(where.iter)) != Blank))
+      {
+         attrs.blank = BlankNone;
+      }
+   }
+
+   return where.iter;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Editor_FindUsingReferents = "Editor.FindUsingReferents";
 
 CxxNamedSet Editor::FindUsingReferents(const CxxNamed* item) const
@@ -1708,8 +1976,6 @@ Editor::CodeLocation Editor::FindWord
 //------------------------------------------------------------------------------
 
 fixed_string FixPrompt = "  Fix?";
-fixed_string FixChars = "ynsq";
-fixed_string FixHelp = "Enter y(yes) n(no) s(skip file) q(quit): ";
 
 fn_name Editor_Fix = "Editor.Fix";
 
@@ -1798,7 +2064,7 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
 
       if(opts.prompt)
       {
-         reply = cli.CharPrompt(FixPrompt, FixChars, FixHelp);
+         reply = cli.CharPrompt(FixPrompt, YNSQChars, YNSQHelp);
       }
 
       switch(reply)
@@ -1816,7 +2082,7 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
          for(auto log = logs.begin(); log != logs.end(); ++log)
          {
             auto editor = (*log)->file_->GetEditor(expl);
-            if(editor != nullptr) rc = editor->FixLog(**log, expl);
+            if(editor != nullptr) rc = editor->FixLog(cli, **log, expl);
             *cli.obuf << spaces(2) << (expl.empty() ? SuccessExpl : expl);
             *cli.obuf << CRLF;
             expl.clear();
@@ -1831,6 +2097,11 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
       case 's':
       case 'q':
          exit = true;
+         break;
+
+      default:
+         expl = "An internal error occurred.";
+         return -6;
       }
 
       cli.Flush();
@@ -1885,7 +2156,7 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
 
 fn_name Editor_FixLog = "Editor.FixLog";
 
-word Editor::FixLog(CodeWarning& log, string& expl)
+word Editor::FixLog(CliThread& cli, CodeWarning& log, string& expl)
 {
    Debug::ft(Editor_FixLog);
 
@@ -1900,7 +2171,7 @@ word Editor::FixLog(CodeWarning& log, string& expl)
       return 0;
    }
 
-   auto rc = FixWarning(log, expl);
+   auto rc = FixWarning(cli, log, expl);
    if(rc == 0) log.status = Pending;
    return (rc >= -1 ? 0 : rc);
 }
@@ -1929,7 +2200,7 @@ WarningStatus Editor::FixStatus(const CodeWarning& log) const
 
 fn_name Editor_FixWarning = "Editor.FixWarning";
 
-word Editor::FixWarning(const CodeWarning& log, string& expl)
+word Editor::FixWarning(CliThread& cli, const CodeWarning& log, string& expl)
 {
    Debug::ft(Editor_FixWarning);
 
@@ -2051,6 +2322,8 @@ word Editor::FixWarning(const CodeWarning& log, string& expl)
       return InsertDebugFtCall(log, expl);
    case DebugFtNameMismatch:
       return ChangeDebugFtName(log, expl);
+   case PatchNotOverridden:
+      return InsertPatch(cli, log, expl);
    case FunctionCouldBeDefaulted:
       return TagAsDefaulted(log, expl);
    case InitCouldUseConstructor:
@@ -2179,6 +2452,13 @@ Editor::Iter Editor::IncludesEnd()
    }
 
    return source_.end();
+}
+
+//------------------------------------------------------------------------------
+
+bool Editor::IncludesSorted(const SourceLine& line1, const SourceLine& line2)
+{
+   return IncludesAreSorted(line1.code, line2.code);
 }
 
 //------------------------------------------------------------------------------
@@ -2410,9 +2690,8 @@ word Editor::InsertDefaultFunction(const CodeWarning& log, string& expl)
       return 0;
    }
 
-   BlankLineLocation blank = BlankNone;
-   bool comment = true;
-   auto curr = FindInsertionPoint(log, blank, comment);
+   FuncDeclAttrs attrs(Cxx::Public);
+   auto curr = FindSpecialFuncLoc(log, attrs);
    if(curr == source_.end()) return NotFound(expl, "Missing function's class");
 
    //  Indent the code to match that at the insertion point unless the
@@ -2471,14 +2750,14 @@ word Editor::InsertDefaultFunction(const CodeWarning& log, string& expl)
 
    code.push_back(';');
 
-   if(blank == BlankAfter)
+   if(attrs.blank == BlankAfter)
    {
       curr = Insert(curr, EMPTY_STR);
    }
 
    auto func = Insert(curr, code);
 
-   if(comment)
+   if(attrs.comment)
    {
       code = prefix + COMMENT_STR;
       curr = Insert(func, code);
@@ -2506,7 +2785,7 @@ word Editor::InsertDefaultFunction(const CodeWarning& log, string& expl)
       curr = Insert(curr, code);
    }
 
-   if(blank == BlankBefore)
+   if(attrs.blank == BlankBefore)
    {
       curr = Insert(curr, EMPTY_STR);
    }
@@ -2640,7 +2919,7 @@ word Editor::InsertInclude(string& include, string& expl)
          continue;
       }
 
-      if(!IsSorted2(s->code, include))
+      if(!IncludesAreSorted(s->code, include))
       {
          s = Insert(s, include);
          return Changed(s, expl);
@@ -2740,6 +3019,146 @@ word Editor::InsertNamespaceForward
 
 //------------------------------------------------------------------------------
 
+fn_name Editor_InsertPatch = "Editor.InsertPatch";
+
+word Editor::InsertPatch(CliThread& cli, const CodeWarning& log, string& expl)
+{
+   Debug::ft(Editor_InsertPatch);
+
+   //  Extract the name of the function to insert.  (It will be "Patch",
+   //  but this code might eventually be generalized for other functions.)
+   //
+   auto cls = static_cast< const Class* >(log.item_);
+   auto name = log.GetNewFuncName(expl);
+   if(name.empty()) return -1;
+
+   //  Find out where the function's declaration should be inserted and which
+   //  file should contain its definition.  The definition is in another file,
+   //  so access that file's editor and find out where the function should be
+   //  defined in that file.
+   //
+   FuncDeclAttrs decl(Cxx::Public);
+   auto s1 = FindFuncDeclLoc(cls, name, decl);
+   if(s1 == source_.end()) return -1;
+
+   auto file = FindFuncDefnFile(cli, cls, name);
+   if(file == nullptr) return -1;
+
+   auto editor = file->GetEditor(expl);
+   if(editor == nullptr) return -1;
+
+   FuncDefnAttrs defn;
+   auto s2 = editor->FindFuncDefnLoc(file, cls, name, expl, defn);
+   if(s2 == editor->Source().end()) return -1;
+
+   //  Insert the function's declaration and definition.
+   //
+   InsertPatchDecl(s1, decl);
+   editor->InsertPatchDefn(s2, cls, defn);
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string PatchComment = "Overridden for patching.";
+fixed_string PatchReturn = "void";
+fixed_string PatchSignature = "Patch(sel_t selector, void* arguments)";
+fixed_string PatchInvocation = "Patch(selector, arguments)";
+
+fn_name Editor_InsertPatchDecl = "Editor.InsertPatchDecl";
+
+void Editor::InsertPatchDecl(Iter& iter, const FuncDeclAttrs& attrs)
+{
+   Debug::ft(Editor_InsertPatchDecl);
+
+   //  See if a blank line should be inserted below the function.  Then
+   //  insert its definition and comment, and see if a blank line and/or
+   //  access control keyword should be inserted above the function.
+   //
+   if(attrs.blank == BlankAfter) iter = Insert(iter, EMPTY_STR);
+
+   string code = PatchReturn;
+   code.push_back(SPACE);
+   code.append(PatchSignature);
+   code.push_back(SPACE);
+   code.append(OVERRIDE_STR);
+   code.push_back(';');
+   iter = Insert(iter, strCode(code, 1));
+
+   if(attrs.comment)
+   {
+      iter = Insert(iter, strComment(EMPTY_STR, 1));
+      iter = Insert(iter, strComment(PatchComment, 1));
+   }
+
+   if(attrs.access != Cxx::Access_N)
+   {
+      std::ostringstream access;
+      access << attrs.access << ':';
+      iter = Insert(iter, access.str());
+   }
+   else if(attrs.blank == BlankBefore)
+   {
+      iter = Insert(iter, EMPTY_STR);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_InsertPatchDefn = "Editor.InsertPatchDefn";
+
+void Editor::InsertPatchDefn
+   (Iter& iter, const Class* cls, const FuncDefnAttrs& attrs)
+{
+   Debug::ft(Editor_InsertPatchDefn);
+
+   //  See whether to insert a blank and rule below the function.
+   //
+   if(attrs.blank == BlankAfter)
+   {
+      iter = Insert(iter, EMPTY_STR);
+
+      if(attrs.rule)
+      {
+         iter = Insert(iter, strRule('-'));
+         iter = Insert(iter, EMPTY_STR);
+      }
+   }
+
+   //  Add the closing brace, the call to the base class Patch function,
+   //  the opening brace, and the function signature.
+   //
+   iter = Insert(iter, "}");
+   auto base = cls->BaseClass();
+   auto code = *base->Name();
+   code.append(SCOPE_STR);
+   code.append(PatchInvocation);
+   code.push_back(';');
+   iter = Insert(iter, strCode(code, 1));
+   iter = Insert(iter, "{");
+   code = PatchReturn;
+   code.push_back(SPACE);
+   code.append(*cls->Name());
+   code.append(SCOPE_STR);
+   code.append(PatchSignature);
+   iter = Insert(iter, code);
+
+   //  See whether to insert a blank and rule above the function.
+   //
+   if(attrs.blank == BlankBefore)
+   {
+      iter = Insert(iter, EMPTY_STR);
+
+      if(attrs.rule)
+         {
+         iter = Insert(iter, strRule('-'));
+         iter = Insert(iter, EMPTY_STR);
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Editor_InsertPrefix = "Editor.InsertPrefix";
 
 void Editor::InsertPrefix(const Iter& iter, size_t pos, const string& prefix)
@@ -2812,39 +3231,36 @@ word Editor::InsertUsing(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
-bool Editor::IsSorted1(const SourceLine& line1, const SourceLine& line2)
+fn_name Editor_LineAfterFunc = "Editor.LineAfterFunc";
+
+Editor::Iter Editor::LineAfterFunc(const Function* func)
 {
-   return IsSorted2(line1.code, line2.code);
-}
+   Debug::ft(Editor_LineAfterFunc);
 
-//------------------------------------------------------------------------------
+   CodeLocation end(source_.end());
+   size_t begin, close;
 
-bool Editor::IsSorted2(const string& line1, const string& line2)
-{
-   //  #includes are sorted by group, then alphabetically.  The characters
-   //  that enclose the filename distinguish the groups: [] for group 1,
-   //  () for group 2, <> for group 3, and "" for group 4.
-   //
-   auto pos1 = line1.find_first_of(FrontChars);
-   auto pos2 = line2.find_first_of(FrontChars);
+   auto open = func->GetRange(begin, close);
 
-   if(pos2 == string::npos)
+   if(open != string::npos)
    {
-      if(pos1 == string::npos) return (&line1 < &line2);
-      return true;
+      //  This is a function definition, and CLOSE is the position
+      //   ofits final right brace.
+      //
+      end = FindPos(close);
    }
-   else if(pos1 == string::npos) return false;
+   else
+   {
+      //  This is a function declaration.  Find the location of its
+      //  name, and then the semicolon or right brace at its end.
+      //
+      end = FindPos(func->GetPos());
+      if(end.pos == string::npos) return source_.end();
+      end = FindFirstOf(end.iter, end.pos, ";}");
+   }
 
-   auto c1 = line1[pos1];
-   auto c2 = line2[pos2];
-   auto group1 = FrontChars.find(c1);
-   auto group2 = FrontChars.find(c2);
-   if(group1 < group2) return true;
-   if(group1 > group2) return false;
-   auto cmp = strCompare(line1, line2);
-   if(cmp < 0) return true;
-   if(cmp > 0) return false;
-   return (&line1 < &line2);
+   if(end.pos == string::npos) return source_.end();
+   return std::next(end.iter);
 }
 
 //------------------------------------------------------------------------------
@@ -3361,7 +3777,7 @@ word Editor::SortIncludes(string& expl)
    else
       begin = source_.cbegin();
 
-   includes.sort(IsSorted1);
+   includes.sort(IncludesSorted);
 
    for(auto s = includes.begin(); s != includes.end(); ++s)
    {
@@ -3662,6 +4078,238 @@ word Editor::TagAsStaticFunction(const CodeWarning& log, string& expl)
    }
 
    return Changed(type.iter, expl);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_UpdateFuncDeclAttrs = "Editor.UpdateFuncDeclAttrs";
+
+void Editor::UpdateFuncDeclAttrs(const Function* func, FuncDeclAttrs& attrs)
+{
+   Debug::ft(Editor_UpdateFuncDeclAttrs);
+
+   if(func == nullptr) return;
+
+   //  If FUNC is commented, a blank line should also precede or follow it.
+   //
+   size_t begin, end;
+   func->GetRange(begin, end);
+   auto loc = FindPos(begin);
+   auto type = GetLineType(std::prev(loc.iter));
+   auto& line = LineTypeAttr::Attrs[type];
+
+   if(!line.isCode && (type != Blank))
+   {
+      attrs.comment = true;
+      attrs.blank = BlankBefore;
+      return;
+   }
+
+   //  FUNC isn't commented, so see if a blank line precedes or follows it.
+   //
+   if(type == Blank)
+   {
+      attrs.blank = BlankBefore;
+      return;
+   }
+
+   loc = FindPos(end);
+   type = GetLineType(std::next(loc.iter));
+
+   if(type == Blank)
+   {
+      attrs.blank = BlankBefore;
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_UpdateFuncDeclLoc = "Editor.UpdateFuncDeclLoc";
+
+Editor::Iter Editor::UpdateFuncDeclLoc
+   (const Function* prev, const Function* next, FuncDeclAttrs& attrs)
+{
+   Debug::ft(Editor_UpdateFuncDeclLoc);
+
+   //  PREV and NEXT are the functions that precede and follow the function
+   //  whose declaration is to be inserted.
+   //
+   UpdateFuncDeclAttrs(prev, attrs);
+   UpdateFuncDeclAttrs(next, attrs);
+
+   if(prev != nullptr)
+   {
+      //  Insert the function after PREV.
+      //
+      return LineAfterFunc(prev);
+   }
+
+   //  Insert the function before NEXT.  If the new function is to be offset
+   //  with a blank, it will follow the new function.
+   //
+   if(attrs.blank != BlankNone) attrs.blank = BlankAfter;
+   auto loc = FindPos(next->GetPos());
+   auto pred = std::prev(loc.iter);
+
+   while(true)
+   {
+      auto type = GetLineType(pred);
+
+      if(!LineTypeAttr::Attrs[type].isCode)
+      {
+         if(type == Blank) break;
+
+         //  This is a comment, so keep moving up to find the insertion point.
+         //
+         --pred;
+         continue;
+      }
+
+      //  If an access control precedes NEXT, a blank line is not required
+      //  after the new function.
+      //
+      if((pred->code.find(PUBLIC_STR) != string::npos) ||
+         (pred->code.find(PROTECTED_STR) != string::npos) ||
+         (pred->code.find(PRIVATE_STR) != string::npos))
+      {
+         attrs.blank = BlankNone;
+         return pred;
+      }
+
+      break;
+   }
+
+   //  PRED is a blank line or code other than an access control.  Insert the
+   //  new function above the line that follows PRED.
+   //
+   return ++pred;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_UpdateFuncDefnAttrs = "Editor.UpdateFuncDefnAttrs";
+
+void Editor::UpdateFuncDefnAttrs(const Function* func, FuncDefnAttrs& attrs)
+{
+   Debug::ft(Editor_UpdateFuncDefnAttrs);
+
+   if(func == nullptr) return;
+
+   //  See if FUNC is preceded or followed by a rule and/or blank line.
+   //
+   bool blank = false;
+   size_t begin, end;
+   func->GetRange(begin, end);
+   auto loc = FindPos(end);
+   auto type = GetLineType(++loc.iter);
+
+   if(type == Blank)
+   {
+      blank = true;
+      type = GetLineType(++loc.iter);
+      if(type == SeparatorComment)
+      {
+         attrs.rule = true;
+         attrs.blank = BlankBefore;
+         return;
+      }
+   }
+
+   loc = FindPos(begin);
+
+   while(true)
+   {
+      type = GetLineType(--loc.iter);
+
+      switch(type)
+      {
+      case SeparatorComment:
+         attrs.rule = true;
+         attrs.blank = BlankBefore;
+         return;
+
+      case Blank:
+         blank = true;
+         //  [[fallthrough]]
+      case FunctionName:
+      case FunctionNameSplit:
+         continue;
+
+      default:
+         if(blank) attrs.blank = BlankBefore;
+         return;
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_UpdateFuncDefnLoc = "Editor.UpdateFuncDefnLoc";
+
+Editor::Iter Editor::UpdateFuncDefnLoc
+   (const Function* prev, const Function* next, FuncDefnAttrs& attrs)
+{
+   Debug::ft(Editor_UpdateFuncDefnLoc);
+
+   //  PREV and NEXT are the functions that precede and follow the function
+   //  whose definition is to be inserted.
+   //
+   UpdateFuncDefnAttrs(prev, attrs);
+   UpdateFuncDefnAttrs(next, attrs);
+
+   if(prev != nullptr)
+   {
+      //  Insert the function after the one that precedes it.
+      //
+      return LineAfterFunc(prev);
+   }
+
+   if(next == nullptr)
+   {
+      //  Insert a rule above the function.  There must be something else
+      //  in the file!
+      //
+      attrs.rule = true;
+      attrs.blank = BlankBefore;
+
+      //  Insert the function at the bottom of the file.  If the last line
+      //  contains a closing brace, insert the definition above that.
+      //
+      auto last = std::prev(source_.end());
+      auto pred = std::prev(last);
+      auto type = GetLineType(pred);
+      if(type == CloseBrace) return pred;
+      return last;
+   }
+
+   //  Insert the function before NEXT.  If NEXT has an fn_name, insert the
+   //  definition above *that*.  If the new function is to be offset with a
+   //  blank and/or rule, they need to go *after* the new function.
+   //
+   if(attrs.blank != BlankNone) attrs.blank = BlankAfter;
+
+   auto loc = FindPos(next->GetPos());
+   auto pred = std::prev(loc.iter);
+
+   while(true)
+   {
+      auto type = GetLineType(pred);
+
+      switch(type)
+      {
+      case Blank:
+         --pred;
+         continue;
+      case FunctionName:
+         return pred;
+      case FunctionNameSplit:
+         return --pred;
+      default:
+         return loc.iter;
+      }
+   }
+
+   return loc.iter;
 }
 
 //------------------------------------------------------------------------------

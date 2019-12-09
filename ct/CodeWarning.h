@@ -102,6 +102,10 @@ public:
    //
    static void Initialize();
 
+   //  Adds N to the number of line types of type T.
+   //
+   static void AddLineType(LineType t, size_t n) { LineTypeCounts_[t] += n; }
+
    //  Returns the explanation for warning W.
    //
    static fixed_string Expl(Warning w) { return Attrs_.at(w).expl; }
@@ -111,9 +115,10 @@ public:
    //
    void Insert() const;
 
-   //  Adds N to the number of line types of type T.
+   //  Returns the name of the function that this warning wants added to
+   //  a class.  Returns an empty string if LOG does not suggest this.
    //
-   static void AddLineType(LineType t, size_t n) { LineTypeCounts_[t] += n; }
+   std::string GetNewFuncName(std::string& expl) const;
 
    //  Generates a report in STREAM for the files in SET.  The report
    //  includes line type counts and warnings found during parsing and

@@ -4394,7 +4394,7 @@ bool Function::IsTrivial() const
       case CloseBrace:
          return true;
 
-      case Code:
+      case SourceCode:
          if(body) return false;
       }
    }

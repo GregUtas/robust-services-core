@@ -504,7 +504,7 @@ struct FixOptions
 //
 enum LineType
 {
-   Code,                  // source code
+   SourceCode,            // source code
    Blank,                 // blank lines
    EmptyComment,          // //
    FileComment,           // comment at top of file, before any code

@@ -690,7 +690,7 @@ void CodeFile::CheckDebugFt() const
             }
             break;
 
-         case Code:
+         case SourceCode:
             if(open) code = true;
             break;
          }
@@ -1026,7 +1026,7 @@ void CodeFile::CheckSeparation()
 
       switch(lineType_[n])
       {
-      case Code:
+      case SourceCode:
          switch(prevType)
          {
          case FileComment:
@@ -1273,7 +1273,7 @@ LineType CodeFile::ClassifyLine(string s, std::set< Warning >& warnings) const
       }
    }
 
-   return Code;
+   return SourceCode;
 }
 
 //------------------------------------------------------------------------------

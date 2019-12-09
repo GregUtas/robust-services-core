@@ -201,7 +201,7 @@ LineTypeAttr::LineTypeAttr(bool code, bool exe, bool merge, bool blank) :
 const LineTypeAttr LineTypeAttr::Attrs[LineType_N + 1] =
 {
    //           c  x  m  b
-   LineTypeAttr(T, T, T, F),  // Code
+   LineTypeAttr(T, T, T, F),  // SourceCode
    LineTypeAttr(F, F, F, T),  // Blank
    LineTypeAttr(F, F, F, T),  // EmptyComment
    LineTypeAttr(F, F, F, F),  // FileComment

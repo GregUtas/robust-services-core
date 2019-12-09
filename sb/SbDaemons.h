@@ -47,6 +47,10 @@ public:
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
+
+   //  Overridden for patching.
+   //
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Creates a daemon that will manage SIZE invoker threads in FACTION.
    //
@@ -81,6 +85,8 @@ extern NodeBase::fixed_string TimerDaemonName;
 class TimerDaemon : public NodeBase::Daemon
 {
    friend class NodeBase::Singleton< TimerDaemon >;
+public:
+   void Patch(sel_t selector, void* arguments) override;
 private:
    TimerDaemon();
    ~TimerDaemon();

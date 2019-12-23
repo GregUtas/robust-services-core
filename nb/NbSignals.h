@@ -35,7 +35,7 @@ constexpr signal_t SIGNIL = 0;        // nil signal
 constexpr signal_t SIGCLOSE = 122;    // exit thread (non-error)
 constexpr signal_t SIGYIELD = 123;    // ran unpreemptably too long
 constexpr signal_t SIGSTACK1 = 124;   // stack overflow: attempt recovery
-constexpr signal_t SIGSTACK2 = 125;   // stack overflow: recreate thread
+constexpr signal_t SIGSTACK2 = 125;   // stack overflow: exit thread
 constexpr signal_t SIGPURGE = 126;    // thread killed or suicided
 constexpr signal_t SIGDELETED = 127;  // thread unexpectedly deleted
 

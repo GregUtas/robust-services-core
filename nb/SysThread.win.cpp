@@ -287,7 +287,7 @@ signal_t SysThread::Start()
 
    //  This is also invoked when recovering from a trap, so see if a stack
    //  overflow occurred.  Some of these are irrecoverable, in which case
-   //  returning SIGSTACK2 causes the thread to exit and be recreated.
+   //  returning SIGSTACK2 causes the thread to exit.
    //
    if(status_.test(StackOverflowed))
    {

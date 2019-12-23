@@ -18,4 +18,5 @@ Document | Description
 [RSC POTS Application](/docs/RSC-POTS-Application.md) | overview of the POTS application
 [PLCP](/docs/PLCP.pdf) | _A Pattern Language of Call Processing_
 [RSC Diplomacy Bot](/docs/RSC-Diplomacy.md) | overview of the software for building a bot that plays the board game _Diplomacy_
+[RSC Windows Build Options](/docs/RSC-Windows-Build-Options.md) | build options used in VS2017
 [_output_](/output) directory | mostly output from tests, but also a summary of all [CLI commands](/output/help.cli.txt)

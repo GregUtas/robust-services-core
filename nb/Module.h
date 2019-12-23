@@ -63,9 +63,9 @@ namespace NodeBase
 //          Singleton< ModuleRegistry >::Instance()->BindModule(*this);
 //       }
 //
-//       ~SomeModule() { }
-//       virtual void Startup(RestartLevel level) override;
-//       virtual void Shutdown(RestartLevel level) override;
+//       ~SomeModule() = default;
+//       void Startup(RestartLevel level) override;
+//       void Shutdown(RestartLevel level) override;
 //    };
 //
 //  Later during initialization, ModuleRegistry::Startup handles most of

@@ -82,7 +82,8 @@ residing in its own directory.
 
 RSC is currently developed using Visual Studio 2017.  If that is also your development
 environment, the _.vcxproj_ (project) files in this repository should already
-provide most of the build instructions that you need.
+provide most of the build instructions that you need. The Windows build options used
+for RSC are described [here](/docs/RSC-Windows-Build-Options.md).
 
 ## Running the executable
 
@@ -90,7 +91,7 @@ During initialization, the program displays each module as it is initialized.  (
 _module_ is currently equivalent to a static library.)  After all modules have
 initialized, the CLI prompt `nb>` appears to indicate that CLI commands in the
 _nb_ directory are available.  The information written to the console during
-startup is shown [here](/output/startup.txt), and a list of all CLI commands
+startup is shown [here](/output/init.console.txt), and a list of all CLI commands
 is provided [here](/output/help.cli.txt).
 
 If you enter `>read saveinit` as the first CLI command, a function trace of the

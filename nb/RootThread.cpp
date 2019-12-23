@@ -124,7 +124,7 @@ void RootThread::Enter()
          Singleton< InitThread >::Instance();
 
          //  The following suspends RootThread during breakpoint debugging,
-         //  where it would otherwise apper with annoying regularity.
+         //  where it would otherwise appear with annoying regularity.
          //
          if(InitFlags::SuspendRoot() || Debug::SwFlagOn(DisableRootThreadFlag))
          {

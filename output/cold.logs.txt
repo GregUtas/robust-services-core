@@ -35,38 +35,6 @@ AccessNode.AnModule...                  17:02:59.534
 total initialization time        965
 
     NODE500 23-Dec-2019 17:02:59.591 on Reigi {2}
-nb>read restart.cold1
-nb>nt
-nt>testcase reset
-  OK.
-nt>testcase begin cold1
-symbols set testcase.name cold1
-  OK.
-nt>read test.restart.prolog
-nt>stop
-  OK.
-nt>clear buffer
-  OK.
-nt>clear tools
-  OK.
-nt>set tools f on
-  f: OK.
-  OK.
-nt>/ set tools fmo on  / enable to trace heaps and object pools
-nt>set scope full
-  OK.
-nt>clear selections
-  OK.
-nt>include all on
-  OK.
-nt>send &testcase.name
-  OK.
-nt>sched show
-nt>sb status
-nt>send cout
-nt>testcase end
-  OK.
-nt>delay 1
 
     NODE103 23-Dec-2019 17:03:08.516 on Reigi {3}
     in NodeBase.CliThread (tid=9, nid=0x0000aa00)
@@ -87,11 +55,7 @@ nt>delay 1
       __scrt_common_main_seh @ exe_common.inl + 288[5]
       __scrt_common_main @ exe_common.inl + 331[0]
       mainCRTStartup @ exe_main.cpp + 17[0]
-  OK.
-nt>start
-  OK.
-nt>restart cold
-nt>
+
 RESTART TYPE: cold
 
 MODULE SHUTDOWN                msecs      invoked at
@@ -176,60 +140,3 @@ total shutdown time              745
 
 MODULE INITIALIZATION          msecs      invoked at
 NodeBase.NbModule...                    17:03:09.555
-...initialized                    94
-NodeTools.NtModule...                   17:03:09.663
-...initialized                    15
-CodeTools.CtModule...                   17:03:09.693
-...initialized                    14
-NetworkBase.NwModule...                 17:03:09.722
-
-    NET500 23-Dec-2019 17:03:09.742 on Reigi {15}
-...initialized                    44
-SessionBase.SbModule...                 17:03:09.781
-...initialized                    33
-ControlNode.CnModule...                 17:03:09.830
-...initialized                    15
-SessionTools.StModule...                17:03:09.862
-...initialized                    16
-MediaBase.MbModule...                   17:03:09.894
-...initialized                    19
-CallBase.CbModule...                    17:03:09.930
-...initialized                    20
-PotsBase.PbModule...                    17:03:09.967
-...initialized                    18
-OperationsNode.OnModule...              17:03:10.002
-...initialized                    16
-RoutingNode.RnModule...                 17:03:10.034
-...initialized                    15
-ServiceNode.SnModule...                 17:03:10.066
-...initialized                    21
-AccessNode.AnModule...                  17:03:10.104
-...initialized                    16
-                               -----
-total initialization time        582
-
-    NODE500 23-Dec-2019 17:03:10.155 on Reigi {16}
-nb>read restart.cold2
-nb>nt
-nt>testcase reset
-  OK.
-nt>testcase begin cold2
-symbols set testcase.name cold2
-  OK.
-nt>read test.restart.epilog
-nt>stop
-  OK.
-nt>save trace &testcase.name
-  OK.
-nt>save funcs &testcase.name
-  OK.
-nt>clear buffer
-  OK.
-nt>send &testcase.name
-  OK.
-nt>sched show
-nt>sb status
-nt>send cout
-nt>testcase end
-  OK.
-nt>

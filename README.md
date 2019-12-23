@@ -82,7 +82,8 @@ residing in its own directory.
 
 RSC is currently developed using Visual Studio 2017.  If that is also your development
 environment, the _.vcxproj_ (project) files in this repository should already
-provide most of the build instructions that you need.
+provide most of the build instructions that you need. The Windows build options used
+for RSC are described [here](/docs/RSC-Windows-Build-Options.md).
 
 ## Running the executable
 

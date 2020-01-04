@@ -84,6 +84,37 @@ void CxxLocation::SetLoc(CodeFile* file, size_t pos)
 
 //==============================================================================
 
+fn_name Asm_ctor = "Asm.ctor";
+
+Asm::Asm(const string& code) : code_(code)
+{
+   Debug::ft(Asm_ctor);
+
+   CxxStats::Incr(CxxStats::ASM);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Asm_EnterScope = "Asm.EnterScope";
+
+bool Asm::EnterScope()
+{
+   Debug::ft(Asm_EnterScope);
+
+   Context::SetPos(GetLoc());
+   if(AtFileScope()) GetFile()->InsertAsm(this);
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
+void Asm::Print(ostream& stream, const Flags& options) const
+{
+   stream << ASM_STR << '(' << code_ << ");";
+}
+
+//==============================================================================
+
 fn_name CxxNamed_ctor1 = "CxxNamed.ctor";
 
 CxxNamed::CxxNamed()
@@ -1251,7 +1282,6 @@ bool DataSpec::IsConstPtr(size_t n) const
    Debug::ft(DataSpec_IsConstPtr);
 
    if(IsAutoDecl()) return tags_.IsConstPtr(n);
-
    if(tags_.IsConstPtr(n)) return true;
    auto ref = Referent();
    if(ref == nullptr) return false;
@@ -1313,6 +1343,61 @@ bool DataSpec::IsUsedInNameOnly() const
    }
 
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name DataSpec_IsVolatile = "DataSpec.IsVolatile";
+
+bool DataSpec::IsVolatile() const
+{
+   Debug::ft(DataSpec_IsVolatile);
+
+   if(IsAutoDecl()) return tags_.IsVolatile();
+   if(tags_.IsVolatile()) return true;
+   auto ref = Referent();
+   if(ref == nullptr) return false;
+   auto spec = ref->GetTypeSpec();
+   if(spec == nullptr) return false;
+   return spec->IsVolatile();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name DataSpec_IsVolatilePtr = "DataSpec.IsVolatilePtr";
+
+bool DataSpec::IsVolatilePtr() const
+{
+   Debug::ft(DataSpec_IsVolatilePtr);
+
+   auto vp = tags_.IsVolatilePtr();
+
+   if(vp == 1) return true;
+   if(vp == -1) return false;
+   if(IsAutoDecl()) return false;
+
+   //  We have no pointers, so see if our referent has any.
+   //
+   auto ref = Referent();
+   if(ref == nullptr) return false;
+   auto spec = ref->GetTypeSpec();
+   if(spec == nullptr) return false;
+   return spec->IsVolatilePtr();
+}
+
+//------------------------------------------------------------------------------
+
+bool DataSpec::IsVolatilePtr(size_t n) const
+{
+   Debug::ft(DataSpec_IsVolatilePtr);
+
+   if(IsAutoDecl()) return tags_.IsVolatilePtr(n);
+   if(tags_.IsVolatilePtr(n)) return true;
+   auto ref = Referent();
+   if(ref == nullptr) return false;
+   auto spec = ref->GetTypeSpec();
+   if(spec == nullptr) return false;
+   return spec->IsVolatilePtr(n);
 }
 
 //------------------------------------------------------------------------------
@@ -1532,6 +1617,7 @@ bool DataSpec::NamesReferToArgs(const NameVector& names,
 void DataSpec::Print(ostream& stream, const Flags& options) const
 {
    if(tags_.IsConst()) stream << CONST_STR << SPACE;
+   if(tags_.IsVolatile()) stream << VOLATILE_STR << SPACE;
    name_->Print(stream, options);
    tags_.Print(stream);
 
@@ -1789,13 +1875,22 @@ void DataSpec::SetReferent(CxxScoped* item, const SymbolView* view) const
       }
       else
       {
-         //  If our referent is a pointer typedef, "const" applies to the
-         //  pointer, not its target.
+         //  If our referent is a pointer typedef, "const" and "volatile"
+         //  apply to the pointer, not its target.
          //
-         if(tags_.IsConst() && (item->GetTypeSpec()->Ptrs(false) > 0))
+         if(item->GetTypeSpec()->Ptrs(false) > 0)
          {
-            tags_.SetConst(false);
-            tags_.SetConstPtr();
+            if(tags_.IsConst())
+            {
+               tags_.SetConst(false);
+               tags_.SetConstPtr();
+            }
+
+            if(tags_.IsVolatile())
+            {
+               tags_.SetVolatile(false);
+               tags_.SetVolatilePtr();
+            }
          }
       }
    }
@@ -2533,6 +2628,76 @@ string QualName::TypeString(bool arg) const
    auto expl = "Failed to find referent for " + QualifiedName(true, true);
    Context::SwLog(QualName_TypeString, expl, 0);
    return ERROR_STR;
+}
+
+//==============================================================================
+
+fn_name StaticAssert_ctor = "StaticAssert.ctor";
+
+StaticAssert::StaticAssert(ExprPtr& expr, ExprPtr& message) :
+   expr_(std::move(expr)),
+   message_(std::move(message))
+{
+   Debug::ft(StaticAssert_ctor);
+
+   CxxStats::Incr(CxxStats::STATIC_ASSERT);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name StaticAssert_EnterBlock = "StaticAssert.EnterBlock";
+
+void StaticAssert::EnterBlock()
+{
+   Debug::ft(StaticAssert_EnterBlock);
+
+   expr_->EnterBlock();
+   auto result = Context::PopArg(true);
+   result.CheckIfBool();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name StaticAssert_EnterScope = "StaticAssert.EnterScope";
+
+bool StaticAssert::EnterScope()
+{
+   Debug::ft(StaticAssert_EnterScope);
+
+   Context::SetPos(GetLoc());
+   if(AtFileScope()) GetFile()->InsertStaticAssert(this);
+   EnterBlock();
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name StaticAssert_GetUsages = "StaticAssert.GetUsages";
+
+void StaticAssert::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+{
+   Debug::ft(StaticAssert_GetUsages);
+
+   expr_->GetUsages(file, symbols);
+}
+
+//------------------------------------------------------------------------------
+
+void StaticAssert::Print(ostream& stream, const Flags& options) const
+{
+   stream << STATIC_ASSERT_STR << '(';
+   expr_->Print(stream, options);
+   stream << ", ";
+   message_->Print(stream, options);
+   stream << ");";
+}
+
+//------------------------------------------------------------------------------
+
+void StaticAssert::Shrink()
+{
+   expr_-> Shrink();
+   if(message_ != nullptr) message_->Shrink();
 }
 
 //==============================================================================
@@ -3508,14 +3673,15 @@ TypeTags::TypeTags() :
    ptrDet_(false),
    refDet_(false),
    const_(false),
+   volatile_(false),
    array_(false),
    arrays_(0),
    ptrs_(0),
-   refs_(0)
+   refs_(0),
+   constPtr_(0),
+   volatilePtr_(0)
 {
    Debug::ft(TypeTags_ctor1);
-
-   for(auto i = 0; i < Cxx::MAX_PTRS; ++i) constptr_[i] = false;
 }
 
 //------------------------------------------------------------------------------
@@ -3526,19 +3692,19 @@ TypeTags::TypeTags(const TypeSpec& spec) :
    ptrDet_(false),
    refDet_(false),
    const_(spec.IsConst()),
+   volatile_(spec.IsVolatile()),
    array_(spec.Tags()->IsUnboundedArray()),
    arrays_(spec.Arrays()),
    ptrs_(spec.Ptrs(false)),
-   refs_(spec.Refs())
+   refs_(spec.Refs()),
+   constPtr_(0),
+   volatilePtr_(0)
 {
    Debug::ft(TypeTags_ctor2);
 
-   for(auto i = 0; i < Cxx::MAX_PTRS; ++i)
+   for(auto i = 0; i < ptrs_; ++i)
    {
-      if(i < ptrs_)
-         constptr_[i] = spec.IsConstPtr(i);
-      else
-         constptr_[i] = false;
+      SetPointer(i, spec.IsConstPtr(i), spec.IsVolatilePtr(i));
    }
 }
 
@@ -3575,14 +3741,35 @@ TagCount TypeTags::ArrayCount() const
 int TypeTags::IsConstPtr() const
 {
    if(ptrs_ <= 0) return 0;
-   return (constptr_[ptrs_ - 1] ? 1 : -1);
+   auto mask = 1 << (ptrs_ - 1);
+   return (((constPtr_ & mask) != 0) ? 1 : -1);
 }
 
 //------------------------------------------------------------------------------
 
 bool TypeTags::IsConstPtr(size_t n) const
 {
-   return ((n >= 0) && (n < ptrs_) ? constptr_[n] : false);
+   if(n >= ptrs_) return false;
+   auto mask = 1 << n;
+   return ((constPtr_ & mask) != 0);
+}
+
+//------------------------------------------------------------------------------
+
+int TypeTags::IsVolatilePtr() const
+{
+   if(ptrs_ <= 0) return 0;
+   auto mask = 1 << (ptrs_ - 1);
+   return (((volatilePtr_ & mask) != 0) ? 1 : -1);
+}
+
+//------------------------------------------------------------------------------
+
+bool TypeTags::IsVolatilePtr(size_t n) const
+{
+   if(n >= ptrs_) return false;
+   auto mask = 1 << n;
+   return ((volatilePtr_ & mask) != 0);
 }
 
 //------------------------------------------------------------------------------
@@ -3612,7 +3799,7 @@ void TypeTags::Print(ostream& stream) const
    for(auto i = 0; i < ptrs_; ++i)
    {
       stream << '*';
-      if(constptr_[i]) stream << " const";
+      if(IsConstPtr(i)) stream << " const";
    }
 
    if(refs_ > 0) stream << string(refs_, '&');
@@ -3641,7 +3828,7 @@ void TypeTags::SetConstPtr() const
    Debug::ft(TypeTags_SetConstPtr);
 
    if(ptrs_ > 0)
-      constptr_[ptrs_ - 1] = true;
+      constPtr_ |= (1 << (ptrs_ - 1));
    else
       Context::SwLog(TypeTags_SetConstPtr, "No pointer tags", 0);
 }
@@ -3650,16 +3837,21 @@ void TypeTags::SetConstPtr() const
 
 fn_name TypeTags_SetPointer = "TypeTags.SetPointer";
 
-bool TypeTags::SetPointer(size_t n, bool readonly)
+bool TypeTags::SetPointer(size_t n, bool readonly, bool unstable)
 {
    Debug::ft(TypeTags_SetPointer);
 
+   //  Note that a "const" or "volatile" attributed cannot be cleared once set.
+   //
    if((n >= 0) && (n < Cxx::MAX_PTRS))
    {
+      auto mask = 1 << n;
       if(n >= ptrs_) ptrs_ = n + 1;
-      constptr_[n] = readonly;
+      if(readonly) constPtr_ |= mask;
+      if(unstable) volatilePtr_ |= mask;
       return true;
    }
+
    return false;
 }
 
@@ -3676,14 +3868,30 @@ void TypeTags::SetPtrs(TagCount count)
 
 //------------------------------------------------------------------------------
 
+fn_name TypeTags_SetVolatilePtr = "TypeTags.SetVolatilePtr";
+
+void TypeTags::SetVolatilePtr() const
+{
+   Debug::ft(TypeTags_SetVolatilePtr);
+
+   if(ptrs_ > 0)
+      volatilePtr_ |= (1 << (ptrs_ - 1));
+   else
+      Context::SwLog(TypeTags_SetVolatilePtr, "No pointer tags", 0);
+}
+
+//------------------------------------------------------------------------------
+
 void TypeTags::TypeString(std::string& name, bool arg) const
 {
+   //c "volatile" is omitted because it is not supported in type matching.
+   //
    if(const_) name = "const " + name;
 
    for(auto i = 0; i < ptrs_; ++i)
    {
       name.push_back('*');
-      if(constptr_[i]) name += " const";
+      if(IsConstPtr(i)) name += " const";
    }
 
    if(arg)

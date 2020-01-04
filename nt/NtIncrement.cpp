@@ -307,7 +307,7 @@ word NtLogsCommand::Sort
 
       if(line.empty())
       {
-         if(!log.empty() & (num != 0))
+         if(!log.empty() && (num != 0))
          {
             logs.insert(std::pair< size_t, string >(num, log));
          }
@@ -336,7 +336,7 @@ word NtLogsCommand::Sort
       }
    }
 
-   if(!log.empty() & (num != 0))
+   if(!log.empty() && (num != 0))
    {
       logs.insert(std::pair< size_t, string >(num, log));
    }

@@ -118,13 +118,25 @@ public:
    //
    virtual bool IsConst() const { return false; }
 
+   //  Returns true if the item is volatile.
+   //
+   virtual bool IsVolatile() const { return false; }
+
    //  Returns true if the item's outermost pointer is const.
    //
    virtual bool IsConstPtr() const { return false; }
 
-   //  Returns true if the item's Nth (0<=n<=2) pointer is const.
+   //  Returns true if the item's outermost pointer is volatile.
+   //
+   virtual bool IsVolatilePtr() const { return false; }
+
+   //  Returns true if the item's Nth (0<=n<=MAX_PTRS) pointer is const.
    //
    virtual bool IsConstPtr(size_t n) const { return false; }
+
+   //  Returns true if the item's Nth (0<=n<=MAX_PTRS) pointer is volatile.
+   //
+   virtual bool IsVolatilePtr(size_t n) const { return false; }
 
    //  Returns true if the item's type is "auto" and its actual type has
    //  yet to be determined.
@@ -316,9 +328,8 @@ protected:
    //
    virtual Class* DirectClass() const;
 
-   //  Shrinks the specified container.
+   //  Shrinks TOKENS.
    //
-   static void ShrinkExpression(const ExprPtr& expr);
    static void ShrinkTokens(const TokenPtrVector& tokens);
 private:
    //  Returns the item's underlying type.  Can return nullptr, whereas Root
@@ -513,10 +524,10 @@ class NullPtr : public Literal
 public:
    NullPtr() { CxxStats::Incr(CxxStats::NULLPTR); }
    ~NullPtr() { CxxStats::Decr(CxxStats::NULLPTR); }
-   void Print(std::ostream& stream, const NodeBase::Flags& options)
-      const override { stream << NULLPTR_STR; }
    bool IsConstPtr() const override { return true; }
    bool IsConstPtr(size_t n) const override { return true; }
+   void Print(std::ostream& stream, const NodeBase::Flags& options)
+      const override { stream << NULLPTR_STR; }
    CxxScoped* Referent() const override;
    std::string TypeString(bool arg)
       const override { return NULLPTR_T_STR; }
@@ -702,61 +713,6 @@ private:
 
 //------------------------------------------------------------------------------
 //
-//  An argument created for an operator to indicate that this argument will
-//  come from the result of the previous or next operation.
-//
-class Elision : public CxxToken
-{
-public:
-   Elision() { CxxStats::Incr(CxxStats::ELISION); }
-   ~Elision() { CxxStats::Decr(CxxStats::ELISION); }
-   void Print
-      (std::ostream& stream, const NodeBase::Flags& options) const override { }
-   void EnterBlock() override { }
-   Cxx::ItemType Type() const override { return Cxx::Elision; }
-};
-
-//------------------------------------------------------------------------------
-//
-//  Created for an expression that is enclosed in parentheses.
-//
-class Precedence : public CxxToken
-{
-public:
-   explicit Precedence(ExprPtr& expr)
-      : expr_(std::move(expr)) { CxxStats::Incr(CxxStats::PRECEDENCE); }
-   ~Precedence() { CxxStats::Decr(CxxStats::PRECEDENCE); }
-   void Print
-      (std::ostream& stream, const NodeBase::Flags& options) const override;
-   void EnterBlock() override;
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
-   void Shrink() override { ShrinkExpression(expr_); }
-private:
-   const ExprPtr expr_;
-};
-
-//------------------------------------------------------------------------------
-//
-//  A brace initialization list.  This is a series of comma-delimited
-//  expressions that initialize a class or array.
-//
-class BraceInit : public CxxToken
-{
-public:
-   BraceInit();
-   ~BraceInit() { CxxStats::Decr(CxxStats::BRACE_INIT); }
-   void AddItem(TokenPtr& item) { items_.push_back(std::move(item)); }
-   void Print
-      (std::ostream& stream, const NodeBase::Flags& options) const override;
-   void EnterBlock() override;
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
-   void Shrink() override;
-private:
-   TokenPtrVector items_;
-};
-
-//------------------------------------------------------------------------------
-//
 //  An expression.  It is rather general and can appear, for example,
 //  o on the right of an assignment operator
 //  o within parentheses, brackets, or a brace initialization list
@@ -865,11 +821,6 @@ public:
    //
    ~ArraySpec() { CxxStats::Decr(CxxStats::ARRAY_SPEC); }
 
-   //  Overridden to display the array's size within brackets.
-   //
-   void Print
-      (std::ostream& stream, const NodeBase::Flags& options) const override;
-
    //  Overridden to invoke EnterBlock on expr_.
    //
    void EnterBlock() override;
@@ -878,9 +829,14 @@ public:
    //
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
+   //  Overridden to display the array's size within brackets.
+   //
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
+
    //  Overridden to shrink the array expression.
    //
-   void Shrink() override { ShrinkExpression(expr_); }
+   void Shrink() override { if(expr_ != nullptr) expr_->Shrink(); }
 
    //  Overridden to return "[]" if ARG is false and "*" if it is true.
    //
@@ -889,6 +845,80 @@ private:
    //  The expression that specifies the array's size.
    //
    const ExprPtr expr_;
+};
+
+//------------------------------------------------------------------------------
+//
+//  An argument created for an operator to indicate that this argument will
+//  come from the result of the previous or next operation.
+//
+class Elision : public CxxToken
+{
+public:
+   Elision() { CxxStats::Incr(CxxStats::ELISION); }
+   ~Elision() { CxxStats::Decr(CxxStats::ELISION); }
+   void EnterBlock() override { }
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override { }
+   Cxx::ItemType Type() const override { return Cxx::Elision; }
+};
+
+//------------------------------------------------------------------------------
+//
+//  Created for an expression that is enclosed in parentheses.
+//
+class Precedence : public CxxToken
+{
+public:
+   explicit Precedence(ExprPtr& expr)
+      : expr_(std::move(expr)) { CxxStats::Incr(CxxStats::PRECEDENCE); }
+   ~Precedence() { CxxStats::Decr(CxxStats::PRECEDENCE); }
+   void EnterBlock() override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
+   void Shrink() override { if(expr_ != nullptr) expr_->Shrink(); }
+private:
+   const ExprPtr expr_;
+};
+
+//------------------------------------------------------------------------------
+//
+//  A brace initialization list.  This is a series of comma-delimited
+//  expressions that initialize a class or array.
+//
+class BraceInit : public CxxToken
+{
+public:
+   BraceInit();
+   ~BraceInit() { CxxStats::Decr(CxxStats::BRACE_INIT); }
+   void AddItem(TokenPtr& item) { items_.push_back(std::move(item)); }
+   void EnterBlock() override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
+   void Shrink() override;
+private:
+   TokenPtrVector items_;
+};
+
+//------------------------------------------------------------------------------
+//
+//  An alignment directive ("alignas" keyword), which can be either
+//  an expression (ExprPtr) or type specification (TypeSpecPtr).
+//
+class AlignAs : public CxxToken
+{
+public:
+   explicit AlignAs(TokenPtr& token);
+   ~AlignAs() { CxxStats::Decr(CxxStats::ALIGNAS); }
+   void EnterBlock() override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
+   void Shrink() override { token_->Shrink(); }
+private:
+   TokenPtr token_;
 };
 }
 #endif

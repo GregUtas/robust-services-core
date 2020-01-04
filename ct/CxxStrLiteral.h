@@ -96,7 +96,7 @@ public:
       QualNamePtr typeName(new QualName(ctype));
       TypeSpecPtr typeSpec(new DataSpec(typeName));
       typeSpec->Tags()->SetConst(true);
-      typeSpec->Tags()->SetPointer(0, true);
+      typeSpec->Tags()->SetPointer(0, true, false);
       data.reset(new FuncData(dataName, typeSpec));
       data->SetScope(Singleton< CxxRoot >::Instance()->GlobalNamespace());
       return data;

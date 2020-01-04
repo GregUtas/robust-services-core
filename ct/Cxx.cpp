@@ -160,6 +160,8 @@ const bool T = true;
 const CxxWord CxxWord::Attrs[Cxx::NIL_KEYWORD + 1] =
 {
    //      file   class   func  advance
+   CxxWord("D",   "D",    "D",  F),  // ALIGNAS
+   CxxWord("@",   "@",    "@",  T),  // ASM
    CxxWord("-",   "-",    "D",  F),  // AUTO
    CxxWord("-",   "-",    "b",  T),  // BREAK
    CxxWord("-",   "-",    "c",  T),  // CASE
@@ -175,6 +177,7 @@ const CxxWord CxxWord::Attrs[Cxx::NIL_KEYWORD + 1] =
    CxxWord("-",   "-",    "-",  F),  // FINAL
    CxxWord("-",   "-",    "f",  T),  // FOR
    CxxWord("-",   "F",    "-",  T),  // FRIEND
+   CxxWord("-",   "-",    "g",  T),  // GOTO
    CxxWord("H",   "H",    "H",  F),  // HASH
    CxxWord("-",   "-",    "i",  T),  // IF
    CxxWord("P",   "P",    "-",  F),  // INLINE
@@ -187,14 +190,17 @@ const CxxWord CxxWord::Attrs[Cxx::NIL_KEYWORD + 1] =
    CxxWord("-",   "A",    "-",  T),  // PUBLIC
    CxxWord("-",   "-",    "r",  T),  // RETURN
    CxxWord("D",   "DP",   "D",  F),  // STATIC
+   CxxWord("$",   "$",    "$",  T),  // STATIC_ASSERT
    CxxWord("C",   "C",    "-",  T),  // STRUCT
    CxxWord("-",   "-",    "s",  T),  // SWITCH
    CxxWord("DCP", "DCFP", "-",  F),  // TEMPLATE
+   CxxWord("D",   "D",    "D",  F),  // THREAD_LOCAL
    CxxWord("-",   "-",    "t",  T),  // TRY
    CxxWord("T",   "T",    "T",  T),  // TYPEDEF
    CxxWord("C",   "C",    "-",  T),  // UNION
    CxxWord("U",   "U",    "U",  T),  // USING
    CxxWord("-",   "P",    "-",  F),  // VIRTUAL
+   CxxWord("DP",  "DP",   "D",  F),  // VOLATILE
    CxxWord("-",   "-",    "w",  T),  // WHILE
    CxxWord("-",   "P",    "-",  F),  // NVDTOR
    CxxWord("DP",  "DP",   "xD", F)   // NIL_KEYWORD
@@ -233,6 +239,7 @@ const CxxOp CxxOp::Attrs[Cxx::NIL_OPERATOR + 1] =
    CxxOp(REINTERPRET_CAST_STR, 2, 17, F, F, F),  // REINTERPRET_CAST
    CxxOp(     STATIC_CAST_STR, 2, 17, F, F, F),  // STATIC_CAST
    CxxOp(          SIZEOF_STR, 1, 16, F, T, F),  // SIZEOF_TYPE
+   CxxOp(         ALIGNOF_STR, 1, 16, F, T, F),  // ALIGNOF_TYPE
    CxxOp(        NOEXCEPT_STR, 1, 16, F, T, F),  // NOEXCEPT
    CxxOp(                "++", 1, 16, T, T, F),  // PREFIX_INCREMENT
    CxxOp(                "--", 1, 16, T, T, F),  // PREFIX_DECREMENT
@@ -564,6 +571,8 @@ CxxStats CxxStats::Info[CxxStats::Item_N] =
    CxxStats("Friend", sizeof(Friend)),
    CxxStats("Terminal", sizeof(Terminal)),
    CxxStats("Typedef", sizeof(Typedef)),
+   CxxStats("AlignAs", sizeof(AlignAs)),
+   CxxStats("Asm", sizeof(Asm)),
    CxxStats("Break", sizeof(Break)),
    CxxStats("Case", sizeof(Case)),
    CxxStats("Catch", sizeof(Catch)),
@@ -571,10 +580,12 @@ CxxStats CxxStats::Info[CxxStats::Item_N] =
    CxxStats("Do", sizeof(Do)),
    CxxStats("Expr", sizeof(Expr)),
    CxxStats("For", sizeof(For)),
+   CxxStats("Goto", sizeof(Goto)),
    CxxStats("If", sizeof(If)),
    CxxStats("Label", sizeof(Label)),
    CxxStats("NoOp", sizeof(NoOp)),
    CxxStats("Return", sizeof(Return)),
+   CxxStats("StaticAssert", sizeof(StaticAssert)),
    CxxStats("Switch", sizeof(Switch)),
    CxxStats("Try", sizeof(Try)),
    CxxStats("While", sizeof(While)),

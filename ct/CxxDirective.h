@@ -484,7 +484,7 @@ public:
 
    //  Overridden to shrink the conditional expression.
    //
-   void Shrink() override { ShrinkExpression(condition_); }
+   void Shrink() override { condition_->Shrink(); }
 protected:
    //  Protected because this class is virtual.
    //

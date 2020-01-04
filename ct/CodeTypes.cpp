@@ -46,6 +46,9 @@ const string DoubleRule(COMMENT_STR + string(78, '='));
 
 //------------------------------------------------------------------------------
 
+fixed_string ALIGNAS_STR          = "alignas";
+fixed_string ALIGNOF_STR          = "alignof";
+fixed_string ASM_STR              = "asm";
 fixed_string AUTO_STR             = "auto";
 fixed_string BOOL_STR             = "bool";
 fixed_string BREAK_STR            = "break";
@@ -74,6 +77,7 @@ fixed_string FINAL_STR            = "final";
 fixed_string FLOAT_STR            = "float";
 fixed_string FOR_STR              = "for";
 fixed_string FRIEND_STR           = "friend";
+fixed_string GOTO_STR             = "goto";
 fixed_string IF_STR               = "if";
 fixed_string INLINE_STR           = "inline";
 fixed_string INT_STR              = "int";
@@ -96,11 +100,13 @@ fixed_string SHORT_STR            = "short";
 fixed_string SIGNED_STR           = "signed";
 fixed_string SIZEOF_STR           = "sizeof";
 fixed_string STATIC_STR           = "static";
+fixed_string STATIC_ASSERT_STR    = "static_assert";
 fixed_string STATIC_CAST_STR      = "static_cast";
 fixed_string STRUCT_STR           = "struct";
 fixed_string SWITCH_STR           = "switch";
 fixed_string TEMPLATE_STR         = "template";
 fixed_string THIS_STR             = "this";
+fixed_string THREAD_LOCAL_STR     = "thread_local";
 fixed_string THROW_STR            = "throw";
 fixed_string TRUE_STR             = "true";
 fixed_string TRY_STR              = "try";
@@ -112,6 +118,7 @@ fixed_string UNSIGNED_STR         = "unsigned";
 fixed_string USING_STR            = "using";
 fixed_string VIRTUAL_STR          = "virtual";
 fixed_string VOID_STR             = "void";
+fixed_string VOLATILE_STR         = "volatile";
 fixed_string WCHAR_STR            = "wchar_t";
 fixed_string WHILE_STR            = "while";
 

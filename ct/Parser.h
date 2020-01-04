@@ -297,6 +297,11 @@ private:
    //
    bool GetFuncSpec(TypeSpecPtr& spec, FunctionPtr& func);
 
+   //  Updates ALIGN if it finds an alignas directive.  Returns false
+   //  only if "alignas" was found but its parse failed.
+   //
+   bool GetAlignAs(AlignAsPtr& align);
+
    //  Returns true and creates DATA on finding a data declaration
    //  o at file scope
    //  o within a class
@@ -491,6 +496,7 @@ private:
    //  Updates EXPR with the results of parsing an expression that begins with
    //  the specified operator.
    //
+   bool GetAlignOf(ExprPtr& expr);
    bool GetCxxCast(ExprPtr& expr, Cxx::Operator op);
    bool GetConditional(ExprPtr& expr);
    bool GetDefined(ExprPtr& expr);
@@ -503,8 +509,9 @@ private:
 
    //  Updates STATEMENT with the results of parsing a statement that begins
    //  with the specified keyword.  GetBasic handles assignments, function
-   //  calls, and null statements.
+   //  calls, null statements, and labels.
    //
+   bool GetAsm(AsmPtr& statement);
    bool GetBasic(TokenPtr& statement);
    bool GetBreak(TokenPtr& statement);
    bool GetCase(TokenPtr& statement);
@@ -513,8 +520,10 @@ private:
    bool GetDefault(TokenPtr& statement);
    bool GetDo(TokenPtr& statement);
    bool GetFor(TokenPtr& statement);
+   bool GetGoto(TokenPtr& statement);
    bool GetIf(TokenPtr& statement);
    bool GetReturn(TokenPtr& statement);
+   bool GetStaticAssert(StaticAssertPtr& statement);
    bool GetSwitch(TokenPtr& statement);
    bool GetTry(TokenPtr& statement);
    bool GetWhile(TokenPtr& statement);
@@ -627,7 +636,7 @@ private:
 
    //  The highest legal cause_ value.
    //
-   static const size_t MaxCause = 255;
+   static const size_t MaxCause = 300;
 
    //  Statistics on where the parser backed up.
    //

@@ -153,6 +153,8 @@ public:
    void InsertMacro(Macro* macro);
    void InsertType(Typedef* type);
    void InsertUsing(Using* use);
+   void InsertAsm(Asm* code);
+   void InsertStaticAssert(StaticAssert* assert);
 
    //  Records that ITEM was used in the file's executable code.
    //
@@ -562,6 +564,8 @@ private:
    TypedefVector types_;
    FunctionVector funcs_;
    DataVector data_;
+   AsmVector assembly_;
+   StaticAssertVector asserts_;
 
    //  The file's items, in the order in which they appeared.
    //

@@ -62,7 +62,7 @@ public:
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
-   void Shrink() override { ShrinkExpression(condition_); }
+   void Shrink() override { if(condition_ != nullptr) condition_->Shrink(); }
 protected:
    explicit Condition(size_t pos);
    bool Show(std::ostream& stream) const;
@@ -98,7 +98,7 @@ public:
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
    bool InLine() const override { return false; }
-   void Shrink() override { ShrinkExpression(expr_); }
+   void Shrink() override { expr_->Shrink(); }
 private:
    const ExprPtr expr_;
 };
@@ -181,7 +181,7 @@ public:
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
-   void Shrink() override { ShrinkExpression(expr_); }
+   void Shrink() override { expr_->Shrink(); }
 private:
    const ExprPtr expr_;
 };
@@ -214,6 +214,23 @@ private:
    TokenPtr initial_;
    ExprPtr subsequent_;
    BlockPtr loop_;
+};
+
+//------------------------------------------------------------------------------
+//
+//  A goto statement.
+//
+class Goto : public CxxStatement
+{
+public:
+   Goto(std::string& label, size_t pos);
+   ~Goto() { CxxStats::Decr(CxxStats::GOTO); }
+   void EnterBlock() override;
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
+   void Shrink() override { label_.shrink_to_fit(); }
+private:
+   std::string label_;
 };
 
 //------------------------------------------------------------------------------
@@ -297,7 +314,7 @@ public:
       (std::ostream& stream, const NodeBase::Flags& options) const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
-   void Shrink() override { ShrinkExpression(expr_); }
+   void Shrink() override { if(expr_ != nullptr) expr_->Shrink(); }
 private:
    ExprPtr expr_;
 };

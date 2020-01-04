@@ -225,7 +225,7 @@ void Define::SetExpr(ExprPtr& rhs)
 void Define::Shrink()
 {
    Macro::Shrink();
-   ShrinkExpression(rhs_);
+   if(rhs_ != nullptr) rhs_->Shrink();
 }
 
 //==============================================================================

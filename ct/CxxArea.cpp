@@ -878,6 +878,7 @@ void Class::Display(ostream& stream,
 
    stream << CRLF << prefix << '{' << CRLF;
    DisplayObjects(friends_, stream, lead, qual);
+   DisplayObjects(*Asserts(), stream, lead, qual);
    DisplayObjects(*Usings(), stream, lead, qual);
    DisplayObjects(*Forws(), stream, lead, qual);
    DisplayObjects(*Classes(), stream, lead, nonqual);
@@ -886,6 +887,7 @@ void Class::Display(ostream& stream,
    if(code) DisplayObjects(*Datas(), stream, lead, nonqual);
    DisplayObjects(*Funcs(), stream, lead, nonqual);
    DisplayObjects(*Opers(), stream, lead, nonqual);
+   DisplayObjects(*Assembly(), stream, lead, qual);
    if(!code) DisplayObjects(*Datas(), stream, lead, nonqual);
 
    if(!code)
@@ -928,6 +930,8 @@ void Class::DisplayBase(ostream& stream, const Flags& options) const
 
    if(OuterClass() != nullptr) stream << GetAccess() << ": ";
    stream << tag_;
+
+   if(alignas_ != nullptr) alignas_->Print(stream, options);
 
    if(Name()->front() != '$')
    {
@@ -1020,6 +1024,7 @@ bool Class::EnterScope()
    Debug::ft(Class_EnterScope);
 
    if(AtFileScope()) GetFile()->InsertClass(this);
+   if(alignas_ != nullptr) alignas_->EnterBlock();
    return true;
 }
 
@@ -1510,6 +1515,8 @@ void Class::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
       first->GetUsages(file, symbols);
    }
 
+   if(alignas_ != nullptr) alignas_->GetUsages(file, symbols);
+
    auto base = GetBaseDecl();
 
    if(base != nullptr) base->GetUsages(file, symbols);
@@ -1562,6 +1569,13 @@ void Class::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    for(auto d = data->cbegin(); d != data->cend(); ++d)
    {
       (*d)->GetUsages(file, symbols);
+   }
+
+   auto asserts = Asserts();
+
+   for(auto a = asserts->cbegin(); a != asserts->cend(); ++a)
+   {
+      (*a)->GetUsages(file, symbols);
    }
 }
 
@@ -1767,6 +1781,17 @@ StackArg Class::NameToArg(Cxx::Operator op, TypeName* name)
 Class* Class::OuterClass() const
 {
    return GetScope()->GetClass();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Class_SetAlignment = "Class.SetAlignment";
+
+void Class::SetAlignment(AlignAsPtr& align)
+{
+   Debug::ft(Class_SetAlignment);
+
+   alignas_ = std::move(align);
 }
 
 //------------------------------------------------------------------------------
@@ -2191,6 +2216,23 @@ CxxArea::~CxxArea()
 
 //------------------------------------------------------------------------------
 
+fn_name CxxArea_AddAsm = "CxxArea.AddAsm";
+
+bool CxxArea::AddAsm(AsmPtr& code)
+{
+   Debug::ft(CxxArea_AddAsm);
+
+   if(code->EnterScope())
+   {
+      AddItem(code.get());
+      assembly_.push_back(std::move(code));
+   }
+
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CxxArea_AddClass = "CxxArea.AddClass";
 
 bool CxxArea::AddClass(ClassPtr& cls)
@@ -2299,6 +2341,23 @@ bool CxxArea::AddFunc(FunctionPtr& func)
 
 //------------------------------------------------------------------------------
 
+fn_name CxxArea_AddStaticAssert = "CxxArea.AddStaticAssert";
+
+bool CxxArea::AddStaticAssert(StaticAssertPtr& assert)
+{
+   Debug::ft(CxxArea_AddStaticAssert);
+
+   if(assert->EnterScope())
+   {
+      AddItem(assert.get());
+      asserts_.push_back(std::move(assert));
+   }
+
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CxxArea_AddType = "CxxArea.AddType";
 
 bool CxxArea::AddType(TypedefPtr& type)
@@ -2367,6 +2426,11 @@ void CxxArea::Check() const
    for(auto t = types_.cbegin(); t != types_.cend(); ++t)
    {
       (*t)->Check();
+   }
+
+   for(auto a = asserts_.cbegin(); a != asserts_.cend(); ++a)
+   {
+      (*a)->Check();
    }
 }
 
@@ -2659,6 +2723,16 @@ void CxxArea::Shrink()
       (*d)->Shrink();
    }
 
+   for(auto a = assembly_.cbegin(); a != assembly_.cend(); ++a)
+   {
+      (*a)->Shrink();
+   }
+
+   for(auto a = asserts_.cbegin(); a != asserts_.cend(); ++a)
+   {
+      (*a)->Shrink();
+   }
+
    auto size = usings_.capacity() * sizeof(UsingPtr);
    size += (classes_.capacity() * sizeof(ClassPtr));
    size += (data_.capacity() * sizeof(DataPtr));
@@ -2667,7 +2741,9 @@ void CxxArea::Shrink()
    size += (funcs_.capacity() * sizeof(FunctionPtr));
    size += (opers_.capacity() * sizeof(FunctionPtr));
    size += (types_.capacity() * sizeof(TypedefPtr));
-   size += (defns_.capacity() * sizeof(TypedefPtr));
+   size += (defns_.capacity() * sizeof(ScopePtr));
+   size += (assembly_.capacity() * sizeof(AsmPtr));
+   size += (asserts_.capacity() * sizeof(StaticAssertPtr));
 
    if(Type() == Cxx::Namespace)
    {
@@ -2772,10 +2848,12 @@ void Namespace::Display(ostream& stream,
    auto nonqual = options;
    nonqual.reset(DispFQ);
 
+   DisplayObjects(*Asserts(), stream, lead, nonqual);
    DisplayObjects(*Enums(), stream, lead, nonqual);
    DisplayObjects(*Types(), stream, lead, nonqual);
    DisplayObjects(*Funcs(), stream, lead, nonqual);
    DisplayObjects(*Opers(), stream, lead, nonqual);
+   DisplayObjects(*Assembly(), stream, lead, nonqual);
    DisplayObjects(*Datas(), stream, lead, nonqual);
    DisplayObjects(*Classes(), stream, lead, nonqual);
    DisplayObjects(spaces_, stream, lead, nonqual);

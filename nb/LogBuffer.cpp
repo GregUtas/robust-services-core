@@ -175,7 +175,7 @@ size_t LogBuffer::Count(bool spooled, bool unspooled) const
       curr = curr->header.next;
    }
 
-   if(spooled & unspooled) return total;
+   if(spooled && unspooled) return total;
 
    size_t unsent = 0;
 

@@ -741,6 +741,34 @@ bool Lexer::GetClassTag(Cxx::ClassTag& tag, bool type)
 
 //------------------------------------------------------------------------------
 
+fn_name Lexer_GetCVTags = "Lexer.GetCVTags";
+
+void Lexer::GetCVTags(KeywordSet& tags)
+{
+   Debug::ft(Lexer_GetCVTags);
+
+   string str;
+
+   while(true)
+   {
+      auto kwd = NextKeyword(str);
+
+      switch(kwd)
+      {
+      case Cxx::CONST:
+      case Cxx::VOLATILE:
+         tags.insert(kwd);
+         Reposition(curr_ + str.size());
+         continue;
+
+      default:
+         return;
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Lexer_GetCxxOp = "Lexer.GetCxxOp";
 
 Cxx::Operator Lexer::GetCxxOp()
@@ -789,6 +817,7 @@ void Lexer::GetDataTags(KeywordSet& tags)
       case Cxx::EXTERN:
       case Cxx::STATIC:
       case Cxx::MUTABLE:
+      case Cxx::THREAD_LOCAL:
          tags.insert(kwd);
          Reposition(curr_ + str.size());
          continue;
@@ -1504,6 +1533,8 @@ bool Lexer::Initialize()
    Directives->insert(DirectivePair(HASH_UNDEF_STR, Cxx::_UNDEF));
 
    Keywords.reset(new KeywordTable);
+   Keywords->insert(KeywordPair(ALIGNAS_STR, Cxx::ALIGNAS));
+   Keywords->insert(KeywordPair(ASM_STR, Cxx::ASM));
    Keywords->insert(KeywordPair(AUTO_STR, Cxx::AUTO));
    Keywords->insert(KeywordPair(BREAK_STR, Cxx::BREAK));
    Keywords->insert(KeywordPair(CASE_STR, Cxx::CASE));
@@ -1519,6 +1550,7 @@ bool Lexer::Initialize()
    Keywords->insert(KeywordPair(FINAL_STR, Cxx::FINAL));
    Keywords->insert(KeywordPair(FOR_STR, Cxx::FOR));
    Keywords->insert(KeywordPair(FRIEND_STR, Cxx::FRIEND));
+   Keywords->insert(KeywordPair(GOTO_STR, Cxx::GOTO));
    Keywords->insert(KeywordPair(IF_STR, Cxx::IF));
    Keywords->insert(KeywordPair(INLINE_STR, Cxx::INLINE));
    Keywords->insert(KeywordPair(MUTABLE_STR, Cxx::MUTABLE));
@@ -1529,15 +1561,18 @@ bool Lexer::Initialize()
    Keywords->insert(KeywordPair(PROTECTED_STR, Cxx::PROTECTED));
    Keywords->insert(KeywordPair(PUBLIC_STR, Cxx::PUBLIC));
    Keywords->insert(KeywordPair(RETURN_STR, Cxx::RETURN));
+   Keywords->insert(KeywordPair(STATIC_ASSERT_STR, Cxx::STATIC_ASSERT));
    Keywords->insert(KeywordPair(STATIC_STR, Cxx::STATIC));
    Keywords->insert(KeywordPair(STRUCT_STR, Cxx::STRUCT));
    Keywords->insert(KeywordPair(SWITCH_STR, Cxx::SWITCH));
    Keywords->insert(KeywordPair(TEMPLATE_STR, Cxx::TEMPLATE));
+   Keywords->insert(KeywordPair(THREAD_LOCAL_STR, Cxx::THREAD_LOCAL));
    Keywords->insert(KeywordPair(TRY_STR, Cxx::TRY));
    Keywords->insert(KeywordPair(TYPEDEF_STR, Cxx::TYPEDEF));
    Keywords->insert(KeywordPair(UNION_STR, Cxx::UNION));
    Keywords->insert(KeywordPair(USING_STR, Cxx::USING));
    Keywords->insert(KeywordPair(VIRTUAL_STR, Cxx::VIRTUAL));
+   Keywords->insert(KeywordPair(VOLATILE_STR, Cxx::VOLATILE));
    Keywords->insert(KeywordPair(WHILE_STR, Cxx::WHILE));
 
    //  Each string can only have one entry in a hash table.  If a string
@@ -1559,6 +1594,7 @@ bool Lexer::Initialize()
    CxxOps->insert(OperatorPair(REINTERPRET_CAST_STR, Cxx::REINTERPRET_CAST));
    CxxOps->insert(OperatorPair(STATIC_CAST_STR, Cxx::STATIC_CAST));
    CxxOps->insert(OperatorPair(SIZEOF_STR, Cxx::SIZEOF_TYPE));
+   CxxOps->insert(OperatorPair(ALIGNOF_STR, Cxx::ALIGNOF_TYPE));
    CxxOps->insert(OperatorPair(NOEXCEPT_STR, Cxx::NOEXCEPT));
 // CxxOps->insert(OperatorPair("++", Cxx::PREFIX_INCREMENT));
 // CxxOps->insert(OperatorPair("--", Cxx::PREFIX_DECREMENT));
@@ -1637,6 +1673,7 @@ bool Lexer::Initialize()
    PreOps->insert(OperatorPair("?", Cxx::CONDITIONAL));
 
    Reserved.reset(new OperatorTable);
+   Reserved->insert(OperatorPair(ALIGNOF_STR, Cxx::ALIGNOF_TYPE));
    Reserved->insert(OperatorPair(CONST_CAST_STR, Cxx::CONST_CAST));
    Reserved->insert(OperatorPair(DELETE_STR, Cxx::OBJECT_DELETE));
    Reserved->insert(OperatorPair(DYNAMIC_CAST_STR, Cxx::DYNAMIC_CAST));

@@ -466,6 +466,10 @@ public:
    //
    ~Enum();
 
+   //  Sets the enum's alignment.
+   //
+   void SetAlignment(AlignAsPtr& align);
+
    //  Adds an underlying type for the enumeration.
    //
    void AddType(TypeSpecPtr& type);
@@ -524,6 +528,10 @@ public:
    //
    TypeSpec* GetTypeSpec() const override;
 
+   //  Overridden to update SYMBOLS with the enum's type usage.
+   //
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+
    //  Overridden to determine if the enum and all its enumerators are unused.
    //
    bool IsUnused() const override;
@@ -561,6 +569,10 @@ private:
    //  The enumeration's name.
    //
    std::string name_;
+
+   //  The enum's alignment.
+   //
+   AlignAsPtr alignas_;
 
    //  The enum's underlying type, if specified.
    //
@@ -1101,6 +1113,10 @@ public:
    //
    void SetUsing() { using_ = true; }
 
+   //  Sets the typdef's alignment.
+   //
+   void SetAlignment(AlignAsPtr& align);
+
    //  Overridden to set the type for an "auto" variable.
    //
    CxxToken* AutoType() const override { return (CxxToken*) this; }
@@ -1196,6 +1212,10 @@ private:
    //  The typedef's underlying type.
    //
    const TypeSpecPtr spec_;
+
+   //  The typedef's alignment.
+   //
+   AlignAsPtr alignas_;
 
    //  Set if this is actually a type alias (using <name> = <TypeSpec>).
    //

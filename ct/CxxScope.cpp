@@ -478,7 +478,7 @@ void ClassData::CheckAccessControl() const
    //  o that is not private.
    //  Neither of these is particularly useful for static const data.
    //
-   if(IsStatic() & IsConst()) return;
+   if(IsStatic() && IsConst()) return;
    CxxScope::CheckAccessControl();
 
    //  Do not log data as non-private if
@@ -545,9 +545,11 @@ void ClassData::Display(ostream& stream,
    }
 
    stream << prefix << access << ": ";
+   DisplayAlignment(stream, options);
    if(IsStatic()) stream << STATIC_STR << SPACE;
-   if(mutable_) stream << MUTABLE_STR << SPACE;
+   if(IsThreadLocal()) stream << THREAD_LOCAL_STR << SPACE;
    if(IsConstexpr()) stream << CONSTEXPR_STR << SPACE;
+   if(mutable_) stream << MUTABLE_STR << SPACE;
    GetTypeSpec()->Print(stream, options);
    stream << SPACE << (fq ? ScopedName(true) : name_);
    GetTypeSpec()->DisplayArrays(stream);
@@ -634,6 +636,7 @@ bool ClassData::EnterScope()
    //  initialized at this point.
    //
    Context::SetPos(GetLoc());
+   ExecuteAlignment();
    GetTypeSpec()->EnteringScope(this);
 
    if(width_ != nullptr)
@@ -1049,6 +1052,7 @@ fn_name Data_ctor = "Data.ctor";
 Data::Data(TypeSpecPtr& spec) :
    extern_(false),
    static_(false),
+   thread_local_(false),
    constexpr_(false),
    inited_(false),
    initing_(false),
@@ -1133,9 +1137,20 @@ void Data::CheckUsage() const
    {
       if(writes_ > 0)
          Log(DataWriteOnly);
-      else if(WasInited() & !IsConst())
+      else if(WasInited() && !IsConst())
          Log(DataInitOnly);
       else Log(DataUnused);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void Data::DisplayAlignment(ostream& stream, const Flags& options) const
+{
+   if(alignas_ != nullptr)
+   {
+      alignas_->Print(stream, options);
+      stream << SPACE;
    }
 }
 
@@ -1194,6 +1209,17 @@ void Data::DisplayStats(ostream& stream, const Flags& options) const
    stream << "i=" << decl->inited_ << SPACE;
    stream << "r=" << decl->reads_ << SPACE;
    stream << "w=" << decl->writes_ << SPACE;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Data_ExecuteAlignment = "Data.ExecuteAlignment";
+
+void Data::ExecuteAlignment() const
+{
+   Debug::ft(Data_ExecuteAlignment);
+
+   if(alignas_ != nullptr) alignas_->EnterBlock();
 }
 
 //------------------------------------------------------------------------------
@@ -1299,6 +1325,7 @@ void Data::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
    Debug::ft(Data_GetUsages);
 
+   if(alignas_ != nullptr) alignas_->GetUsages(file, symbols);
    spec_->GetUsages(file, symbols);
    if(expr_ != nullptr) expr_->GetUsages(file, symbols);
    if(rhs_ != nullptr) rhs_->GetUsages(file, symbols);
@@ -1488,6 +1515,17 @@ StackArg Data::NameToArg(Cxx::Operator op, TypeName* name)
 
 //------------------------------------------------------------------------------
 
+fn_name Data_SetAlignment = "Data.SetAlignment";
+
+void Data::SetAlignment(AlignAsPtr& align)
+{
+   Debug::ft(Data_SetAlignment);
+
+   alignas_ = std::move(align);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Data_SetAssignment = "Data.SetAssignment";
 
 void Data::SetAssignment(ExprPtr& expr)
@@ -1667,8 +1705,10 @@ void FuncData::DisplayItem(ostream& stream, const Flags& options) const
 {
    if(first_ == this)
    {
+      DisplayAlignment(stream, options);
       if(IsExtern()) stream << EXTERN_STR << SPACE;
       if(IsStatic()) stream << STATIC_STR << SPACE;
+      if(IsThreadLocal()) stream << THREAD_LOCAL_STR << SPACE;
       if(IsConstexpr()) stream << CONSTEXPR_STR << SPACE;
       GetTypeSpec()->Print(stream, options);
       stream << SPACE;
@@ -1717,6 +1757,7 @@ void FuncData::EnterBlock()
 
    Context::SetPos(GetLoc());
    Singleton< CxxSymbols >::Instance()->InsertLocal(this);
+   ExecuteAlignment();
    spec->EnteringScope(this);
    ExecuteInit(false);
 
@@ -1800,6 +1841,7 @@ Function::Function(QualNamePtr& name) :
    virtual_(false),
    explicit_(false),
    const_(false),
+   volatile_(false),
    noexcept_(false),
    override_(false),
    final_(false),
@@ -1844,6 +1886,7 @@ Function::Function(QualNamePtr& name, TypeSpecPtr& spec, bool type) :
    virtual_(false),
    explicit_(false),
    const_(false),
+   volatile_(false),
    noexcept_(false),
    override_(false),
    final_(false),
@@ -1965,7 +2008,7 @@ void Function::AddThisArg()
    TypeSpecPtr typeSpec(new DataSpec(cls->Name()->c_str()));
    typeSpec->CopyContext(this);
    typeSpec->Tags()->SetConst(const_);
-   typeSpec->Tags()->SetPointer(0, true);
+   typeSpec->Tags()->SetPointer(0, true, false);
    typeSpec->SetReferent(cls, nullptr);
    string argName(THIS_STR);
    ArgumentPtr arg(new Argument(argName, typeSpec));
@@ -3071,7 +3114,7 @@ void Function::Display(ostream& stream,
    DisplayDecl(stream, options);
    DisplayDefn(stream, prefix, options);
 
-   if(!options.test(DispCode) & !tmplts_.empty())
+   if(!options.test(DispCode) && !tmplts_.empty())
    {
       stream << prefix << "instantiations (" << tmplts_.size() << "):" << CRLF;
       auto lead = prefix + spaces(INDENT_SIZE);
@@ -3138,6 +3181,7 @@ void Function::DisplayDecl(ostream& stream, const Flags& options) const
 
    stream << ')';
    if(const_) stream << SPACE << CONST_STR;
+   if(volatile_) stream << SPACE << VOLATILE_STR;
    if(noexcept_) stream << SPACE << NOEXCEPT_STR;
    if(override_ && !final_) stream << SPACE << OVERRIDE_STR;
    if(final_) stream << SPACE << FINAL_STR;
@@ -5259,13 +5303,6 @@ void FuncSpec::Instantiating() const
 
 //------------------------------------------------------------------------------
 
-bool FuncSpec::IsConst() const
-{
-   return func_->IsConst();
-}
-
-//------------------------------------------------------------------------------
-
 bool FuncSpec::ItemIsTemplateArg(const CxxNamed* item) const
 {
    Debug::SwLog(FuncSpec_Warning, "ItemIsTemplateArg", 0);
@@ -5296,13 +5333,6 @@ TypeMatch FuncSpec::MatchTemplateArg(const TypeSpec* that) const
 {
    Debug::SwLog(FuncSpec_Warning, "MatchTemplateArg", 0);
    return func_->GetTypeSpec()->MatchTemplateArg(that);
-}
-
-//------------------------------------------------------------------------------
-
-const string* FuncSpec::Name() const
-{
-   return func_->Name();
 }
 
 //------------------------------------------------------------------------------
@@ -5355,13 +5385,6 @@ void FuncSpec::SetReferent(CxxScoped* item, const SymbolView* view) const
 {
    Debug::SwLog(FuncSpec_Warning, "SetReferent", 0);
    func_->GetTypeSpec()->SetReferent(item, view);
-}
-
-//------------------------------------------------------------------------------
-
-void FuncSpec::Shrink()
-{
-   func_->Shrink();
 }
 
 //------------------------------------------------------------------------------
@@ -5441,7 +5464,7 @@ void SpaceData::Check() const
    if(IsDecl())
    {
       CheckUsage();
-      CheckConstness();
+      CheckConstness(true);
       CheckIfStatic();
       CheckIfInitialized();
    }
@@ -5486,8 +5509,10 @@ void SpaceData::Display(ostream& stream,
    auto fq = options.test(DispFQ);
 
    stream << prefix;
+   DisplayAlignment(stream, options);
    if(IsExtern()) stream << EXTERN_STR << SPACE;
    if(IsStatic()) stream << STATIC_STR << SPACE;
+   if(IsThreadLocal()) stream << THREAD_LOCAL_STR << SPACE;
    if(IsConstexpr()) stream << CONSTEXPR_STR << SPACE;
    GetTypeSpec()->Print(stream, options);
    stream << SPACE;
@@ -5524,6 +5549,7 @@ bool SpaceData::EnterScope()
    Debug::ft(SpaceData_EnterScope);
 
    Context::SetPos(GetLoc());
+   ExecuteAlignment();
    GetTypeSpec()->EnteringScope(this);
    CloseScope();
 

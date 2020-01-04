@@ -279,6 +279,10 @@ public:
    //
    virtual ~Data();
 
+   //  Sets the data's alignment.
+   //
+   void SetAlignment(AlignAsPtr& align);
+
    //  Specifies whether the data is extern.
    //
    void SetExtern(bool extn) { extern_ = extn; }
@@ -286,6 +290,10 @@ public:
    //  Specifies whether the data is static.
    //
    void SetStatic(bool stat) { static_ = stat; }
+
+   //  Specifies whether the data is per-thread.
+   //
+   void SetThreadLocal(bool local) { thread_local_ = local; }
 
    //  Specifies whether the data is initialized with a constexpr.
    //
@@ -303,6 +311,10 @@ public:
    //  Returns true if the data is extern.
    //
    bool IsExtern() const { return extern_; }
+
+   //  Returns true if the data is per-thread.
+   //
+   bool IsThreadLocal() const { return thread_local_; }
 
    //  Returns true if the data is initialized with a constexpr.
    //
@@ -395,6 +407,10 @@ public:
    bool IsUnused() const
       override { return ((reads_ == 0) && (writes_ == 0)); }
 
+   //  Overridden to indicate whether the data is volatile.
+   //
+   bool IsVolatile() const override { return spec_->IsVolatile(); }
+
    //  Overridden to make const data writeable during initialization.
    //
    StackArg NameToArg(Cxx::Operator op, TypeName* name) override;
@@ -431,6 +447,10 @@ protected:
    //
    bool IsDecl() const { return !defn_; }
 
+   //  Executes any alignment directive for the data.
+   //
+   void ExecuteAlignment() const;
+
    //  Executes the data's initialization expression.  Invokes PushScope if
    //  PUSH is set.  Returns false if no form of initialization occurred.
    //
@@ -456,7 +476,12 @@ protected:
    //  logic error) be const.  If COULD is not set, only "cannot" errors
    //  are logged.
    //
-   void CheckConstness(bool could = true) const;
+   void CheckConstness(bool could) const;
+
+   //  Displays any alignment directive for the data.
+   //
+   void DisplayAlignment
+      (std::ostream& stream, const NodeBase::Flags& options) const;
 
    //  Displays any parenthesized expression that initializes the data.
    //
@@ -508,6 +533,10 @@ private:
    //
    bool static_ : 1;
 
+   //  Set for per-thread data.
+   //
+   bool thread_local_ : 1;
+
    //  Set for data initialized with a constexpr.
    //
    bool constexpr_ : 1;
@@ -536,6 +565,10 @@ private:
    //  the data's definition (if distinct from its declaration).
    //
    Data* mate_;
+
+   //  The data's alignment.
+   //
+   AlignAsPtr alignas_;
 
    //  The data's type.
    //
@@ -914,6 +947,10 @@ public:
    //
    void SetConst(bool readonly) { const_ = readonly; }
 
+   //  Specifies whether the function is tagged "volatile".
+   //
+   void SetVolatile(bool unstable) { volatile_ = unstable; }
+
    //  Specifies whether the function is tagged "noexcept".
    //
    void SetNoexcept(bool noex) { noexcept_ = noex; }
@@ -1279,6 +1316,10 @@ public:
    //
    bool IsUnused() const override;
 
+   //  Overridden to indicate whether the function is tagged volatile.
+   //
+   bool IsVolatile() const override { return volatile_; }
+
    //  Overridden to search the function's arguments and code for ITEM.
    //
    bool LocateItem(const CxxNamed* item, size_t& n) const override;
@@ -1533,6 +1574,10 @@ private:
    //
    bool const_ : 1;
 
+   //  Set for a function tagged "volatile".
+   //
+   bool volatile_ : 1;
+
    //  Set for a function tagged "noexcept".
    //
    bool noexcept_ : 1;
@@ -1676,11 +1721,12 @@ private:
    //
    void Check() const override;
    void EnteringScope(const CxxScope* scope) override;
-   bool IsConst() const override;
-   const std::string* Name() const override;
+   bool IsConst() const override { return func_->IsConst(); }
+   bool IsVolatile() const override { return func_->IsVolatile(); }
+   const std::string* Name() const override { return func_->Name(); }
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   void Shrink() override;
+   void Shrink() override { func_->Shrink(); }
    std::string Trace() const override;
    std::string TypeString(bool arg) const override;
 

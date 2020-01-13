@@ -20,10 +20,6 @@ which is useful for checking whether the code was properly understood. Many
 static analysis capabilities require this level of understanding, and `>parse`
 even gathers information that a regular compiler would not.
 
-The following is a list of things (through C++11) that are known _not_ to be
-supported. In some cases, functions that would need to be enhanced to support
-them are noted.
-
 ### Recently Implemented
 - [x] keywords `asm`, `alignas`, `alignof`, `goto`, `static_assert`, `thread_local`, `volatile`
 - [x] `#pragma once` as alternative to `#include` guard
@@ -33,6 +29,11 @@ them are noted.
 - [x] prefixes for character and string literals (`u8`, `u`, `U`, `L`)
 - [x] `= delete` and `= default` for constructor, destructor, and assignment operator
 - [x] `"`_\<substr1>_`"`_\<whitespace>_`"`_\<substr2>_`"` as the continuation of a string literal
+
+## Not Supported
+The following is a list of things (through C++11) that are known _not_ to be
+supported. In some cases, functions that would need to be enhanced to support
+them are noted.
 
 ### Character Sets
 All source code is assumed to be of type `char`.  `char8_t`, `char16_t`,

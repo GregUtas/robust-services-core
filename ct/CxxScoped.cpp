@@ -1004,6 +1004,13 @@ void Enum::Display(ostream& stream,
    stream << prefix;
    if(GetScope()->Type() == Cxx::Class) stream << GetAccess() << ": ";
    stream << ENUM_STR;
+
+   if(alignas_ != nullptr)
+   {
+      stream << SPACE;
+      alignas_->Print(stream, options);
+   }
+
    if(!anon) stream << SPACE << (fq ? ScopedName(true) : name_);
 
    if(spec_ != nullptr)
@@ -1047,6 +1054,7 @@ void Enum::EnterBlock()
 
    Context::SetPos(GetLoc());
 
+   if(alignas_ != nullptr) alignas_->EnterBlock();
    if(spec_ != nullptr) spec_->EnteringScope(GetScope());
 
    for(auto e = etors_.cbegin(); e != etors_.cend(); ++e)
@@ -1110,6 +1118,18 @@ TypeSpec* Enum::GetTypeSpec() const
 
 //------------------------------------------------------------------------------
 
+fn_name Enum_GetUsages = "Enum.GetUsages";
+
+void Enum::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+{
+   Debug::ft(Enum_GetUsages);
+
+   if(alignas_ != nullptr) alignas_->GetUsages(file, symbols);
+   if(spec_ != nullptr) spec_->GetUsages(file, symbols);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Enum_IsUnused = "Enum.IsUnused";
 
 bool Enum::IsUnused() const
@@ -1124,6 +1144,17 @@ bool Enum::IsUnused() const
    }
 
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Enum_SetAlignment = "Enum.SetAlignment";
+
+void Enum::SetAlignment(AlignAsPtr& align)
+{
+   Debug::ft(Enum_SetAlignment);
+
+   alignas_ = std::move(align);
 }
 
 //------------------------------------------------------------------------------
@@ -2348,21 +2379,37 @@ void Typedef::Display(ostream& stream,
    if(using_)
    {
       stream << USING_STR << SPACE;
-      stream << (fq ? ScopedName(true) : *Name());
-      stream << " = ";
+      stream << (fq ? ScopedName(true) : *Name()) << SPACE;
+
+      if(alignas_ != nullptr)
+      {
+         alignas_->Print(stream, options);
+         stream << SPACE;
+      }
+
+      stream << "= ";
       spec_->Print(stream, options);
+      spec_->DisplayArrays(stream);
    }
    else
    {
       stream << TYPEDEF_STR << SPACE;
       spec_->Print(stream, options);
+
       if(spec_->GetFuncSpec() == nullptr)
       {
          stream << SPACE << (fq ? ScopedName(true) : *Name());
       }
+
+      spec_->DisplayArrays(stream);
+
+      if(alignas_ != nullptr)
+      {
+         stream << SPACE;
+         alignas_->Print(stream, options);
+      }
    }
 
-   spec_->DisplayArrays(stream);
    stream << ';';
 
    if(!options.test(DispCode))
@@ -2388,6 +2435,7 @@ void Typedef::EnterBlock()
 
    Context::SetPos(GetLoc());
    spec_->EnteringScope(GetScope());
+   if(alignas_ != nullptr) alignas_->EnterBlock();
    refs_ = 0;
 }
 
@@ -2433,7 +2481,8 @@ void Typedef::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
    Debug::ft(Typedef_GetUsages);
 
-   return spec_->GetUsages(file, symbols);
+   spec_->GetUsages(file, symbols);
+   if(alignas_ != nullptr) alignas_->GetUsages(file, symbols);
 }
 
 //------------------------------------------------------------------------------
@@ -2465,6 +2514,17 @@ CxxScoped* Typedef::Referent() const
    Debug::ft(Typedef_Referent);
 
    return spec_->Referent();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Typedef_SetAlignment = "Typedef.SetAlignment";
+
+void Typedef::SetAlignment(AlignAsPtr& align)
+{
+   Debug::ft(Typedef_SetAlignment);
+
+   alignas_ = std::move(align);
 }
 
 //------------------------------------------------------------------------------

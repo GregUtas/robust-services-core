@@ -195,6 +195,10 @@ public:
    //
    void GetDataTags(KeywordSet& tags);
 
+   //  Updates TAGS if "const" and/or "volatile" appear next.
+   //
+   void GetCVTags(KeywordSet& tags);
+
    //  Updates TAGS with the next series of keywords that appear before the
    //  name in a function declaration.  Stops when a non-keyword is reached.
    //
@@ -469,7 +473,7 @@ private:
 
    //  Entries in the operator and reserved word hash tables map a string to a
    //  Cxx::Operator.  Each operator table contains punctuation strings, while
-   //  the Reserved table contains alphabetic strings.  There are two opeartor
+   //  the Reserved table contains alphabetic strings.  There are two operator
    //  tables, one for C++ code and one for preprocessor directives.
    //
    typedef std::unordered_map< std::string, Cxx::Operator > OperatorTable;

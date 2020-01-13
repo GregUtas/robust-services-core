@@ -24,6 +24,7 @@
 
 #include "CxxToken.h"
 #include <cstddef>
+#include <cstdint>
 #include <iosfwd>
 #include <string>
 #include "CodeTypes.h"
@@ -976,15 +977,23 @@ public:
    //
    void SetConst(bool readonly) const { const_ = readonly; }
 
+   //  Sets the type's volatility to UNSTABLE.
+   //
+   void SetVolatile(bool unstable) const { volatile_ = unstable; }
+
    //  Returns true if the type is const.
    //
    bool IsConst() const { return const_; }
 
-   //  Sets the Nth pointer (0<=n<=2) as const if READONLY is set.  Also
-   //  updates the number of pointers if N is greater than the current
-   //  number.  Returns false if N is out of range.
+   //  Returns true if the type is volatile.
    //
-   bool SetPointer(size_t n, bool readonly);
+   bool IsVolatile() const { return volatile_; }
+
+   //  Sets the Nth pointer (0<=n<=2) as const if READONLY is set, and as
+   //  volatile if UNSTABLE is set.  Sets the number of pointers to N+1 if N
+   //  is greater than the current number.  Returns false if N is out of range.
+   //
+   bool SetPointer(size_t n, bool readonly, bool unstable);
 
    //  Resets the number of pointers to COUNT.
    //
@@ -1004,9 +1013,22 @@ public:
    //
    int IsConstPtr() const;
 
-   //  Returns true if the Nth pointer (0<=n<=2) is const.
+   //  Returns true if the Nth pointer (0<=n<=MAX_PTRS) is const.
    //
    bool IsConstPtr(size_t n) const;
+
+   //  Sets the outermost (last) pointer to volatile.
+   //
+   void SetVolatilePtr() const;
+
+   //  Returns 1 if the outermost pointer is volatile.  Returns 0 if the tag
+   //  has no pointers.  Returns -1 if the outermost pointer is not volatile.
+   //
+   int IsVolatilePtr() const;
+
+   //  Returns true if the Nth pointer (0<=n<=MAX_PTRS) is volatile.
+   //
+   bool IsVolatilePtr(size_t n) const;
 
    //  Specifies that the type is followed by an unbounded array tag.
    //
@@ -1069,6 +1091,10 @@ private:
    //
    mutable bool const_ : 1;
 
+   //  Set if the type is volatile.
+   //
+   mutable bool volatile_ : 1;
+
    //  Set if the type is an unbounded array (e.g. table[]).
    //
    bool array_ : 1;
@@ -1086,9 +1112,13 @@ private:
    //
    TagCount refs_ : 8;
 
-   //  Set if pointer[n] is const.
+   //  Records whether a pointer is const.
    //
-   mutable bool constptr_[Cxx::MAX_PTRS];
+   mutable uint8_t constPtr_ : 8;
+
+   //  Records whether a pointer is volatile.
+   //
+   mutable uint8_t volatilePtr_ : 8;
 };
 
 //------------------------------------------------------------------------------
@@ -1461,6 +1491,18 @@ private:
    //
    bool IsIndirect() const override;
 
+   //  Overridden to return true if the type is volatile.
+   //
+   bool IsVolatile() const override;
+
+   //  Overridden to return true if the type's outermost pointer is volatile.
+   //
+   bool IsVolatilePtr() const override;
+
+   //  Overridden to return true if the type's Nth pointer is volatile.
+   //
+   bool IsVolatilePtr(size_t n) const override;
+
    //  Overridden to return true if the types of "this" and THAT match.
    //
    bool MatchesExactly(const TypeSpec* that) const override;
@@ -1703,6 +1745,47 @@ private:
    //  The template's parameters.
    //
    TemplateParmPtrVector parms_;
+};
+
+//------------------------------------------------------------------------------
+//
+//  Inline assembly code ("asm" keyword).  It is unnamed but must know
+//  where it appears.
+//
+class Asm : public CxxNamed
+{
+public:
+   explicit Asm(ExprPtr& code);
+   ~Asm() { CxxStats::Decr(CxxStats::ASM); }
+   void EnterBlock() override { }
+   bool EnterScope() override;
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
+   void Shrink() override { code_->Shrink(); }
+private:
+   const ExprPtr code_;
+};
+
+//------------------------------------------------------------------------------
+//
+//  A compile-time assertion ("static_assert" keyword), which contains
+//  a boolean expression followed by a string literal.  It is unnamed
+//  but must know where it appears.
+//
+class StaticAssert : public CxxNamed
+{
+public:
+   StaticAssert(ExprPtr& expr, ExprPtr& message);
+   ~StaticAssert() { CxxStats::Decr(CxxStats::STATIC_ASSERT); }
+   void EnterBlock() override;
+   bool EnterScope() override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
+   void Shrink() override;
+private:
+   const ExprPtr expr_;
+   const ExprPtr message_;
 };
 }
 #endif

@@ -36,6 +36,9 @@ namespace CodeTools
 {
 //  C++ keyword strings.
 //
+extern NodeBase::fixed_string ALIGNAS_STR;
+extern NodeBase::fixed_string ALIGNOF_STR;
+extern NodeBase::fixed_string ASM_STR;
 extern NodeBase::fixed_string AUTO_STR;
 extern NodeBase::fixed_string BOOL_STR;
 extern NodeBase::fixed_string BREAK_STR;
@@ -64,6 +67,7 @@ extern NodeBase::fixed_string FINAL_STR;
 extern NodeBase::fixed_string FLOAT_STR;
 extern NodeBase::fixed_string FOR_STR;
 extern NodeBase::fixed_string FRIEND_STR;
+extern NodeBase::fixed_string GOTO_STR;
 extern NodeBase::fixed_string IF_STR;
 extern NodeBase::fixed_string INLINE_STR;
 extern NodeBase::fixed_string INT_STR;
@@ -86,11 +90,13 @@ extern NodeBase::fixed_string SHORT_STR;
 extern NodeBase::fixed_string SIGNED_STR;
 extern NodeBase::fixed_string SIZEOF_STR;
 extern NodeBase::fixed_string STATIC_STR;
+extern NodeBase::fixed_string STATIC_ASSERT_STR;
 extern NodeBase::fixed_string STATIC_CAST_STR;
 extern NodeBase::fixed_string STRUCT_STR;
 extern NodeBase::fixed_string SWITCH_STR;
 extern NodeBase::fixed_string TEMPLATE_STR;
 extern NodeBase::fixed_string THIS_STR;
+extern NodeBase::fixed_string THREAD_LOCAL_STR;
 extern NodeBase::fixed_string THROW_STR;
 extern NodeBase::fixed_string TRUE_STR;
 extern NodeBase::fixed_string TRY_STR;
@@ -102,6 +108,7 @@ extern NodeBase::fixed_string UNSIGNED_STR;
 extern NodeBase::fixed_string USING_STR;
 extern NodeBase::fixed_string VIRTUAL_STR;
 extern NodeBase::fixed_string VOID_STR;
+extern NodeBase::fixed_string VOLATILE_STR;
 extern NodeBase::fixed_string WCHAR_STR;
 extern NodeBase::fixed_string WHILE_STR;
 

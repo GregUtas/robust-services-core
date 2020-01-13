@@ -74,6 +74,14 @@ public:
    //
    bool AddType(TypedefPtr& type);
 
+   //  Adds inline assembly code to the area.
+   //
+   bool AddAsm(AsmPtr& code);
+
+   //  Adds a static_assert to the area.
+   //
+   bool AddStaticAssert(StaticAssertPtr& assert);
+
    //  Returns the area's classes.
    //
    const ClassPtrVector* Classes() const { return &classes_; }
@@ -105,6 +113,14 @@ public:
    //  Returns the area's typedefs.
    //
    const TypedefPtrVector* Types() const { return &types_; }
+
+   //  Returns the area's assembly code.
+   //
+   const AsmPtrVector* Assembly() const { return &assembly_; }
+
+   //  Returns the area's assertions.
+   //
+   const StaticAssertPtrVector* Asserts() const { return &asserts_; }
 
    //  Returns the class identified by NAME and declared in this area.
    //
@@ -218,6 +234,14 @@ private:
    //
    TypedefPtrVector types_;
 
+   //  The area's assembly code.
+   //
+   AsmPtrVector assembly_;
+
+   //  The area's static assertions.
+   //
+   StaticAssertPtrVector asserts_;
+
    //  The area's definitions (of previously declared data or functions).
    //
    ScopePtrVector defns_;
@@ -253,6 +277,10 @@ public:
    //  Virtual to allow subclassing.
    //
    virtual ~Class();
+
+   //  Sets the class's alignment.
+   //
+   void SetAlignment(AlignAsPtr& align);
 
    //  Adds BASE as the class's base class.
    //
@@ -643,6 +671,10 @@ private:
    //  The class's name.
    //
    const QualNamePtr name_;
+
+   //  The class's alignment.
+   //
+   AlignAsPtr alignas_;
 
    //  The template parameters for a class template.
    //

@@ -55,6 +55,8 @@ namespace Cxx
 
    enum Keyword
    {
+      ALIGNAS,
+      ASM,
       AUTO,
       BREAK,
       CASE,
@@ -70,6 +72,7 @@ namespace Cxx
       FINAL,
       FOR,
       FRIEND,
+      GOTO,
       HASH,        // treats preprocessor '#' as keyword
       IF,
       INLINE,
@@ -82,14 +85,17 @@ namespace Cxx
       PUBLIC,
       RETURN,
       STATIC,
+      STATIC_ASSERT,
       STRUCT,
       SWITCH,
       TEMPLATE,
+      THREAD_LOCAL,
       TRY,
       TYPEDEF,
       UNION,
       USING,
       VIRTUAL,
+      VOLATILE,
       WHILE,
       NVDTOR,      // treats non-virtual destructor's '~' as keyword
       NIL_KEYWORD  // no keyword found; also used as maximum value
@@ -111,6 +117,7 @@ namespace Cxx
       REINTERPRET_CAST,         // reinterpret_cast< t >(a)
       STATIC_CAST,              // static_cast< t >(a)
       SIZEOF_TYPE,              // sizeof(a)
+      ALIGNOF_TYPE,             // alignof(a)
       NOEXCEPT,                 // noexcept(expr)
       PREFIX_INCREMENT,         // ++i
       PREFIX_DECREMENT,         // --i
@@ -236,7 +243,7 @@ namespace Cxx
 
    //  The maximum number of pointers that can be attached to a type.
    //
-   constexpr size_t MAX_PTRS = 3;
+   constexpr size_t MAX_PTRS = 4;
 
    //  C++ item types (subclasses of CxxToken).  Unless a subclass has a value
    //  here, it is "Undefined".  This type is used to avoid dynamic casts and,
@@ -293,12 +300,14 @@ struct CxxWord
    //      C (class)            c (catch)
    //      D (data)             d (do)
    //      E (enum)             f (for)
-   //      F (friend)           i (if)
-   //      H (# directive)      n (continue)
-   //      N (namespace)        r (return)
-   //      P (function)         s (switch)
-   //      T (typedef)          t (try)
-   //      U (using)            w (while)
+   //      F (friend)           g (goto)
+   //      H (# directive)      i (if)
+   //      N (namespace)        n (continue)
+   //      P (function)         o (default)
+   //      T (typedef)          r (return)
+   //      U (using)            s (switch)
+   //      @ (asm)              t (try)
+   //      $ (static_assert)    w (while)
    //      - (error)            x (basic statement)
    //
    const std::string fileTarget;
@@ -574,6 +583,8 @@ public:
       FRIEND_DECL,
       TERMINAL_DECL,
       TYPE_DECL,
+      ALIGNAS,
+      ASM,
       BREAK,
       CASE,
       CATCH,
@@ -581,10 +592,12 @@ public:
       DO,
       EXPR,
       FOR,
+      GOTO,
       IF,
       LABEL,
       NOOP,
       RETURN,
+      STATIC_ASSERT,
       SWITCH,
       TRY,
       WHILE,

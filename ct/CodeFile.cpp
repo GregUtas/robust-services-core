@@ -666,7 +666,7 @@ void CodeFile::CheckDebugFt() const
             break;
 
          case DebugFt:
-            if(code & !debug) LogLine(n, DebugFtNotFirst);
+            if(code && !debug) LogLine(n, DebugFtNotFirst);
             debug = true;
 
             if(lexer_.GetNthLine(n, statement))
@@ -1440,11 +1440,13 @@ void CodeFile::DisplayItems(ostream& stream, const string& opts) const
       stream << '{' << CRLF;
       DisplayObjects(incls_, stream, lead, options);
       DisplayObjects(macros_, stream, lead, options);
+      DisplayObjects(asserts_, stream, lead, options);
       DisplayObjects(forws_, stream, lead, options);
       DisplayObjects(usings_, stream, lead, options);
       DisplayObjects(enums_, stream, lead, options);
       DisplayObjects(types_, stream, lead, options);
       DisplayObjects(funcs_, stream, lead, options);
+      DisplayObjects(assembly_, stream, lead, options);
       DisplayObjects(data_, stream, lead, options);
       DisplayObjects(classes_, stream, lead, options);
       stream << '}' << CRLF;
@@ -1851,6 +1853,11 @@ void CodeFile::GetUsageInfo(CxxUsageSets& symbols) const
       (*d)->GetUsages(*this, symbols);
    }
 
+   for(auto a = asserts_.cbegin(); a != asserts_.cend(); ++a)
+   {
+      (*a)->GetUsages(*this, symbols);
+   }
+
    //  For a .cpp, include, as base classes, those defined in any header
    //  that the .cpp implements.
    //
@@ -1971,6 +1978,14 @@ istreamPtr CodeFile::InputStream() const
 
 //------------------------------------------------------------------------------
 
+void CodeFile::InsertAsm(Asm* code)
+{
+   items_.push_back(code);
+   assembly_.push_back(code);
+}
+
+//------------------------------------------------------------------------------
+
 void CodeFile::InsertClass(Class* cls)
 {
    items_.push_back(cls);
@@ -2069,6 +2084,14 @@ void CodeFile::InsertMacro(Macro* macro)
 {
    items_.push_back(macro);
    macros_.push_back(macro);
+}
+
+//------------------------------------------------------------------------------
+
+void CodeFile::InsertStaticAssert(StaticAssert* assert)
+{
+   items_.push_back(assert);
+   asserts_.push_back(assert);
 }
 
 //------------------------------------------------------------------------------
@@ -2769,6 +2792,8 @@ void CodeFile::Shrink()
    types_.shrink_to_fit();
    funcs_.shrink_to_fit();
    data_.shrink_to_fit();
+   assembly_.shrink_to_fit();
+   asserts_.shrink_to_fit();
 
    auto size = incls_.capacity() * sizeof(IncludePtr);
    size += dirs_.capacity() * sizeof(DirectivePtr);
@@ -2780,6 +2805,8 @@ void CodeFile::Shrink()
    size += types_.capacity() * sizeof(Typedef*);
    size += funcs_.capacity() * sizeof(Function*);
    size += data_.capacity() * sizeof(Data*);
+   size += assembly_.capacity() * sizeof(Asm*);
+   size += asserts_.capacity() * sizeof(StaticAssert*);
    CxxStats::Vectors(CxxStats::CODE_FILE, size);
 }
 

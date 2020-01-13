@@ -5,9 +5,10 @@ Document | Description
 [RCS chapter 2](/docs/RCS-chapter-2.pdf) | chapter 2 of _Robust Communications Software_
 [RCS tutorial](/docs/RCS-tutorial.pdf) | overview of _Robust Communications Software_
 [RSC Product Overview](/docs/RSC-Product-Overview.pdf) | roadmap for the Robust Services Core
-[Robust C++ : P and V Considered Harmful](https://www.codeproject.com/Articles/5246597/Robust-Cplusplus-P-and-V-Considered-Harmful) | article on cooperative scheduling
+[Robust C++ : P and V Considered Harmful](https://www.codeproject.com/Articles/5246597/Robust-Cplusplus-P-and-V-Considered-Harmful) | article on cooperative/proportional scheduling
 [Robust C++ : Safety Net](https://www.codeproject.com/Articles/5165710/Robust-Cplusplus-Safety-Net) | article on recovering from exceptions
 [Robust C++ : Object Pools](https://www.codeproject.com/Articles/5166096/Robust-Cplusplus-Object-Pools) | article on recovering from memory leaks
+[Robust C++ : Initialization and Restarts](https://www.codeproject.com/Articles/5254138/Robust-Cplusplus-Initialization-and-Restarts) | article on structuring `main` and recovering from serious errors
 [RSC Coding Guidelines](/docs/RSC-Coding-Guidelines.md) | C++ coding guidelines
 [RSC Software Design](/docs/RSC-Software-Design.pdf) | high-level design notes for various enhancements
 [RSC C++ Static Analysis Tools](/docs/RSC-Cpp-Static-Analysis-Tools.md) | overview of the C++ static analysis tools

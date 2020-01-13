@@ -1683,12 +1683,14 @@ bool StackArg::SetAutoTypeOn(const FuncData& data) const
    //
    if(item == nullptr) return false;
 
-   //  SPEC's referent is currently "auto".  Update it to the auto type.
-   //  But first, see if "const auto" or "auto* const" was used.
+   //  SPEC's referent is currently "auto".  Update it to the auto type.  But
+   //  first, see if "const/volatile auto" or "auto* const/volatile" was used.
    //
    auto spec = data.GetTypeSpec();
-   auto constauto = spec->IsConst();
-   auto constautoptr = spec->IsConstPtr();
+   auto cauto = spec->IsConst();
+   auto cautoptr = spec->IsConstPtr();
+   auto vauto = spec->IsVolatile();
+   auto vautoptr = spec->IsVolatilePtr();
 
    //  this->ptrs_ tracked any indirection, address of, or array subscript
    //  operators that were applied to the right-hand side, so it needs to be
@@ -1721,10 +1723,10 @@ bool StackArg::SetAutoTypeOn(const FuncData& data) const
    auto ptrs = Ptrs(true);
    auto refs = spec->Tags()->RefCount();
 
-   //  If "const auto" was used, it applies to the pointer, rather than the
-   //  type, if the auto variable is a pointer.  Handle const* auto as well.
+   //  If "const/volatile auto" was used, it applies to the pointer, not the
+   //  type, if the variable is a pointer.  Same for const/volatile* auto.
    //
-   if(constauto)
+   if(cauto)
    {
       if(ptrs == 0)
          spec->Tags()->SetConst(true);
@@ -1732,7 +1734,16 @@ bool StackArg::SetAutoTypeOn(const FuncData& data) const
          spec->Tags()->SetConstPtr();
    }
 
-   if(constautoptr) spec->Tags()->SetConstPtr();
+   if(vauto)
+   {
+      if(ptrs == 0)
+         spec->Tags()->SetVolatile(true);
+      else
+         spec->Tags()->SetVolatilePtr();
+   }
+
+   if(cautoptr) spec->Tags()->SetConstPtr();
+   if(vautoptr) spec->Tags()->SetVolatilePtr();
 
    //  If the right-hand side was const, it carries over to the auto variable
    //  if it is a pointer or reference type.

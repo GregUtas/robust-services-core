@@ -663,6 +663,39 @@ void For::Shrink()
 
 //==============================================================================
 
+fn_name Goto_ctor = "Goto.ctor";
+
+Goto::Goto(string& label, size_t pos) : CxxStatement(pos)
+{
+   Debug::ft(Goto_ctor);
+
+   std::swap(label_, label);
+   CxxStats::Incr(CxxStats::GOTO);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Goto_EnterBlock = "Goto.EnterBlock";
+
+void Goto::EnterBlock()
+{
+   Debug::ft(Goto_EnterBlock);
+
+   CxxStatement::EnterBlock();
+
+   //  A full compiler would verify the label here, but
+   //  we don't bother to do anything with labels.
+}
+
+//------------------------------------------------------------------------------
+
+void Goto::Print(std::ostream& stream, const NodeBase::Flags& options) const
+{
+   stream << GOTO_STR << SPACE << label_ << ';';
+}
+
+//==============================================================================
+
 fn_name If_ctor = "If.ctor";
 
 If::If(size_t pos) : Condition(pos),
@@ -837,7 +870,8 @@ void Label::EnterBlock()
 
    CxxStatement::EnterBlock();
 
-   //c To support goto, add the label to a symbol table.
+   //  A full compiler would add the label to a symbol table
+   //  here, but we don't bother to do anything with labels.
 }
 
 //------------------------------------------------------------------------------
@@ -848,7 +882,8 @@ void Label::ExitBlock()
 {
    Debug::ft(Label_ExitBlock);
 
-   //c To support goto, remove the label from a symbol table.
+   //  A full compiler would remove the label from a symbol table
+   //  here, but we don't bother to do anything with labels.
 }
 
 //==============================================================================

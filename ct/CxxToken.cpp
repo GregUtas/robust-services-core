@@ -41,6 +41,48 @@ using std::string;
 
 namespace CodeTools
 {
+fn_name AlignAs_ctor = "AlignAs.ctor";
+
+AlignAs::AlignAs(TokenPtr& token) : token_(std::move(token))
+{
+   Debug::ft(AlignAs_ctor);
+
+   CxxStats::Incr(CxxStats::ALIGNAS);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name AlignAs_EnterBlock = "AlignAs.EnterBlock";
+
+void AlignAs::EnterBlock()
+{
+   Debug::ft(AlignAs_EnterBlock);
+
+   token_->EnterBlock();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name AlignAs_GetUsages = "AlignAs.GetUsages";
+
+void AlignAs::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+{
+   Debug::ft(AlignAs_GetUsages);
+
+   token_->GetUsages(file, symbols);
+}
+
+//------------------------------------------------------------------------------
+
+void AlignAs::Print(ostream& stream, const Flags& options) const
+{
+   stream << ALIGNAS_STR << '(';
+   token_->Print(stream, options);
+   stream << ")";
+}
+
+//==============================================================================
+
 fn_name ArraySpec_ctor = "ArraySpec.ctor";
 
 ArraySpec::ArraySpec(ExprPtr& expr) : expr_(expr.release())
@@ -294,13 +336,6 @@ CxxToken* CxxToken::Root() const
    }
 
    return prev;
-}
-
-//------------------------------------------------------------------------------
-
-void CxxToken::ShrinkExpression(const ExprPtr& expr)
-{
-   if(expr != nullptr) expr->Shrink();
 }
 
 //------------------------------------------------------------------------------
@@ -1446,6 +1481,7 @@ void Operation::Execute() const
       return;
 
    case Cxx::SIZEOF_TYPE:
+   case Cxx::ALIGNOF_TYPE:
       //
       //  Push a size_t result.
       //
@@ -2327,6 +2363,7 @@ void Operation::Print(ostream& stream, const Flags& options) const
 
    case Cxx::TYPE_NAME:
    case Cxx::SIZEOF_TYPE:
+   case Cxx::ALIGNOF_TYPE:
    case Cxx::NOEXCEPT:
       stream << attrs.symbol;
       stream << '(';
@@ -2822,7 +2859,7 @@ void Precedence::Print(ostream& stream, const Flags& options) const
    stream << ')';
 }
 
-//------------------------------------------------------------------------------
+//==============================================================================
 
 fn_name StringLiteral_PushBack = "StringLiteral.PushBack";
 

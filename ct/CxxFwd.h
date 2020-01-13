@@ -34,8 +34,10 @@ namespace CodeTools
 {
 //  Forward declarations of classes that represent C++ language constructs.
 //
+class AlignAs;
 class Argument;
 class ArraySpec;
+class Asm;
 class BaseDecl;
 class Block;
 class Class;
@@ -80,6 +82,7 @@ class Parser;
 class Pragma;
 class QualName;
 class StackArg;
+class StaticAssert;
 class TemplateParm;
 class TemplateParms;
 class Terminal;
@@ -93,8 +96,10 @@ class Using;
 //
 //  Types for unique_ptrs that own instances of the above classes.
 //
+typedef std::unique_ptr< AlignAs > AlignAsPtr;
 typedef std::unique_ptr< Argument > ArgumentPtr;
 typedef std::unique_ptr< ArraySpec > ArraySpecPtr;
+typedef std::unique_ptr< Asm > AsmPtr;
 typedef std::unique_ptr< BaseDecl > BaseDeclPtr;
 typedef std::unique_ptr< Block > BlockPtr;
 typedef std::unique_ptr< Class > ClassPtr;
@@ -127,6 +132,7 @@ typedef std::unique_ptr< Namespace > NamespacePtr;
 typedef std::unique_ptr< ParseFrame > ParseFramePtr;
 typedef std::unique_ptr< Pragma > PragmaPtr;
 typedef std::unique_ptr< QualName > QualNamePtr;
+typedef std::unique_ptr< StaticAssert > StaticAssertPtr;
 typedef std::unique_ptr< TemplateParm > TemplateParmPtr;
 typedef std::unique_ptr< TemplateParms > TemplateParmsPtr;
 typedef std::unique_ptr< Terminal > TerminalPtr;
@@ -142,6 +148,7 @@ typedef std::unique_ptr< Using > UsingPtr;
 //
 typedef std::vector< ArraySpecPtr > ArraySpecPtrVector;
 typedef std::vector< ArgumentPtr > ArgumentPtrVector;
+typedef std::vector< AsmPtr > AsmPtrVector;
 typedef std::vector< ClassPtr > ClassPtrVector;
 typedef std::vector< ClassInstPtr > ClassInstPtrVector;
 typedef std::vector< DataPtr > DataPtrVector;
@@ -157,11 +164,13 @@ typedef std::vector< MemberInitPtr > MemberInitPtrVector;
 typedef std::vector< NamespacePtr > NamespacePtrVector;
 typedef std::vector< TemplateParmPtr > TemplateParmPtrVector;
 typedef std::vector< ScopePtr > ScopePtrVector;
+typedef std::vector< StaticAssertPtr > StaticAssertPtrVector;
 typedef std::vector< TokenPtr > TokenPtrVector;
 typedef std::vector< TypedefPtr > TypedefPtrVector;
 typedef std::vector< TypeSpecPtr > TypeSpecPtrVector;
 typedef std::vector< UsingPtr > UsingPtrVector;
 
+typedef std::vector< Asm* > AsmVector;
 typedef std::vector< Class* > ClassVector;
 typedef std::vector< CxxNamed* > NamedVector;
 typedef std::vector< Data* > DataVector;
@@ -171,6 +180,7 @@ typedef std::vector< Forward* > ForwardVector;
 typedef std::vector< Function* > FunctionVector;
 typedef std::vector< Macro* > MacroVector;
 typedef std::vector< StackArg > StackArgVector;
+typedef std::vector< StaticAssert* > StaticAssertVector;
 typedef std::vector< Typedef* > TypedefVector;
 typedef std::vector< Using* > UsingVector;
 

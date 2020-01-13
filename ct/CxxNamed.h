@@ -1755,14 +1755,15 @@ private:
 class Asm : public CxxNamed
 {
 public:
-   explicit Asm(const std::string& code);
+   explicit Asm(ExprPtr& code);
    ~Asm() { CxxStats::Decr(CxxStats::ASM); }
+   void EnterBlock() override { }
    bool EnterScope() override;
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
-   void Shrink() override { code_.shrink_to_fit(); }
+   void Shrink() override { code_->Shrink(); }
 private:
-   std::string code_;
+   const ExprPtr code_;
 };
 
 //------------------------------------------------------------------------------

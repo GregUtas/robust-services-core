@@ -25,7 +25,7 @@ supported. In some cases, functions that would need to be enhanced to support
 them are noted.
 
 ### Recently Implemented
-- [x] keywords `asm`, `alignas`, `alignof`, `goto`, `static_assert`, `thread_local`, and `volatile`
+- [x] keywords `asm`, `alignas`, `alignof`, `goto`, `static_assert`, `thread_local`, `volatile`
 - [x] `#pragma once` as alternative to `#include` guard
 - [x] `using` for type aliases (as an alternative to `typedef`)
 - [x] flexible order for keyword tags (e.g. `static`) used in function and data declarations/definitions
@@ -43,22 +43,32 @@ the parser and other `CodeTools` classes.
 
 ### Reserved Words
 - [ ] `decltype`
-- [ ] `export` (removed in C++11; reintroduced in C++20)
-- [ ] `register` (removed in C++17)
-
+- [ ] `export` (removed in C\++11; reintroduced in C\++20)
+- [ ] `register` (removed in C\++17)
+- [ ] `volatile` (parsed but not used during type or function matching)
 - [ ] `and`, `and_eq`, `bitand`, `bitor`, `compl`, `not`, `not_eq`, `or`, `or_eq`, `xor`, `xor_eq`
 
+  There are proposals to remove `volatile` in C++20. Good riddance, for the same
+  reasons as `register` and the original semantics of `inline`.
+
 ### Preprocessor
-- [ ] `#define` for any value other than an empty string or integer literal
+- [ ] `#define` for any value other than an empty string or an integer literal
 - [ ] `#if`: the conditional that follows the directive is ignored
 - [ ] `#elif`: the conditional that follows the directive is ignored
+- [ ] `#pragma`: parsed, but only `#pragma once` has any effect
+- [ ] `#undef`: parsed but has no effect
 
   The conditional that follows `#if` or `#elif` is ignored because the evaluation
   of expressions that yield a constant has not been implemented. This capability
   would also be useful for other purposes.
+  
+  `#undef` could be supported but, given that all files are compiled together,
+  would require checking as to whether it appeared in the transitive `#include`
+  of the file currently being compiled.
 
-- [ ] `#pragma`: parsed, but only `#pragma once` has any effect
-- [ ] `#undef`: parsed but has no effect
+There are no plans to support the following, which are odious and which would
+force the introduction of a true preprocessing phase:
+
 - [ ] `#` operator (to define a string literal)
 - [ ] `##` operator (concatenation)
 - [ ] function macros

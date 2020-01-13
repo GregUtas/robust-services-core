@@ -813,11 +813,16 @@ void Lexer::GetDataTags(KeywordSet& tags)
 
       switch(kwd)
       {
+      //  "const" and "volatile" go with the type, not the data,
+      //  but can still appear before the other keywords.  Barf.
+      //
+      case Cxx::CONST:
       case Cxx::CONSTEXPR:
       case Cxx::EXTERN:
       case Cxx::STATIC:
       case Cxx::MUTABLE:
       case Cxx::THREAD_LOCAL:
+      case Cxx::VOLATILE:
          tags.insert(kwd);
          Reposition(curr_ + str.size());
          continue;
@@ -905,16 +910,21 @@ void Lexer::GetFuncFrontTags(KeywordSet& tags)
 
    while(true)
    {
+      //  "const" and "volatile" apply to the return type, not the function,
+      //  but can still appear before the other keywords.  Barf.
+      //
       auto kwd = NextKeyword(str);
 
       switch(kwd)
       {
+      case Cxx::CONST:
       case Cxx::VIRTUAL:
       case Cxx::STATIC:
       case Cxx::EXPLICIT:
       case Cxx::INLINE:
       case Cxx::CONSTEXPR:
       case Cxx::EXTERN:
+      case Cxx::VOLATILE:
          tags.insert(kwd);
          Reposition(curr_ + str.size());
          continue;

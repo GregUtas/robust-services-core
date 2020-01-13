@@ -350,11 +350,13 @@ private:
    bool GetProcDecl(FunctionPtr& func);
    bool GetProcDefn(FunctionPtr& func);
 
-   //  Returns true and creates SPEC on finding a type specification.  If SPEC
-   //  is a function type (FuncSpec), the second version returns the name, if
-   //  any, assigned to that type.
+   //  Returns true and creates SPEC on finding a type specification.  ATTRS
+   //  is used when parsing a data type or type returned by a function, when
+   //  "const" and "volatile" may appear before keywords such as "static" and
+   //  "extern".  If SPEC is a function type (FuncSpec), the second version
+   //  returns the name, if any, assigned to that type.
    //
-   bool GetTypeSpec(TypeSpecPtr& spec);
+   bool GetTypeSpec(TypeSpecPtr& spec, KeywordSet* attrs = nullptr);
    bool GetTypeSpec(TypeSpecPtr& spec, std::string& name);
 
    //  Returns true and creates ARRAY on finding an array specification.

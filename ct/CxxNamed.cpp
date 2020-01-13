@@ -86,7 +86,7 @@ void CxxLocation::SetLoc(CodeFile* file, size_t pos)
 
 fn_name Asm_ctor = "Asm.ctor";
 
-Asm::Asm(const string& code) : code_(code)
+Asm::Asm(ExprPtr& code) : code_(std::move(code))
 {
    Debug::ft(Asm_ctor);
 
@@ -110,7 +110,9 @@ bool Asm::EnterScope()
 
 void Asm::Print(ostream& stream, const Flags& options) const
 {
-   stream << ASM_STR << '(' << code_ << ");";
+   stream << ASM_STR << '(';
+   code_->Print(stream, options);
+   stream << ");";
 }
 
 //==============================================================================

@@ -1004,7 +1004,13 @@ void Enum::Display(ostream& stream,
    stream << prefix;
    if(GetScope()->Type() == Cxx::Class) stream << GetAccess() << ": ";
    stream << ENUM_STR;
-   if(alignas_ != nullptr) alignas_->Print(stream, options);
+
+   if(alignas_ != nullptr)
+   {
+      stream << SPACE;
+      alignas_->Print(stream, options);
+   }
+
    if(!anon) stream << SPACE << (fq ? ScopedName(true) : name_);
 
    if(spec_ != nullptr)
@@ -2374,6 +2380,7 @@ void Typedef::Display(ostream& stream,
    {
       stream << USING_STR << SPACE;
       stream << (fq ? ScopedName(true) : *Name()) << SPACE;
+
       if(alignas_ != nullptr)
       {
          alignas_->Print(stream, options);
@@ -2388,11 +2395,14 @@ void Typedef::Display(ostream& stream,
    {
       stream << TYPEDEF_STR << SPACE;
       spec_->Print(stream, options);
+
       if(spec_->GetFuncSpec() == nullptr)
       {
          stream << SPACE << (fq ? ScopedName(true) : *Name());
       }
+
       spec_->DisplayArrays(stream);
+
       if(alignas_ != nullptr)
       {
          stream << SPACE;

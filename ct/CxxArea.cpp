@@ -931,7 +931,11 @@ void Class::DisplayBase(ostream& stream, const Flags& options) const
    if(OuterClass() != nullptr) stream << GetAccess() << ": ";
    stream << tag_;
 
-   if(alignas_ != nullptr) alignas_->Print(stream, options);
+   if(alignas_ != nullptr)
+   {
+      stream << SPACE;
+      alignas_->Print(stream, options);
+   }
 
    if(Name()->front() != '$')
    {

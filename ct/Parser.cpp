@@ -132,7 +132,7 @@ Parser::~Parser()
 
 //------------------------------------------------------------------------------
 //
-//  Current causes are 1 to 255.
+//  Current causes are 1 to 257.
 //
 fn_name Parser_Backup1 = "Parser.Backup(cause)";
 
@@ -577,20 +577,20 @@ bool Parser::GetAsm(AsmPtr& statement)
 {
    Debug::ft(Parser_GetAsm);
 
-   //  The "asm" keyword has already been parsed.  Extract everything
-   //  between the parentheses.
+   //  The "asm" keyword has already been parsed.  It should be
+   //  followed by a string within parentheses.
    //
    auto begin = kwdBegin_;
    auto start = CurrPos();
 
    if(!lexer_.NextCharIs('(')) return Backup(start, 236);
-   auto first = CurrPos();
    auto rpar = lexer_.FindClosing('(', ')');
    if(rpar == string::npos) return Backup(start, 237);
 
-   string code(lexer_.Extract(first, rpar - first));
-   lexer_.Reposition(rpar);
-   if(!lexer_.NextCharIs(';')) return Backup(start, 238);
+   ExprPtr code;
+   if(!GetCxxExpr(code, rpar)) return Backup(start, 238);
+   if(!lexer_.NextCharIs(')')) return Backup(start, 239);
+   if(!lexer_.NextCharIs(';')) return Backup(start, 240);
    statement.reset(new Asm(code));
    return Success(Parser_GetAsm, begin);
 }
@@ -948,13 +948,13 @@ bool Parser::GetClassData(DataPtr& data)
    ExprPtr width;
    ExprPtr init;
 
-   if(!GetAlignAs(align)) return Backup(start, 248);
+   if(!GetAlignAs(align)) return Backup(start, 251);
    lexer_.GetDataTags(attrs);
    auto stat = (attrs.find(Cxx::STATIC) != attrs.cend());
    auto tloc = (attrs.find(Cxx::THREAD_LOCAL) != attrs.cend());
    auto cexp = (attrs.find(Cxx::CONSTEXPR) != attrs.cend());
    auto mute = (attrs.find(Cxx::MUTABLE) != attrs.cend());
-   if(!GetTypeSpec(typeSpec)) return Backup(start, 35);
+   if(!GetTypeSpec(typeSpec, &attrs)) return Backup(start, 35);
    auto pos = CurrPos();
    if(!lexer_.GetName(dataName)) return Backup(start, 36);
    while(GetArraySpec(arraySpec)) typeSpec->AddArray(arraySpec);
@@ -1955,12 +1955,12 @@ bool Parser::GetFuncData(DataPtr& data)
    TypeSpecPtr typeSpec;
    string dataName;
 
-   if(!GetAlignAs(align)) return Backup(start, 249);
+   if(!GetAlignAs(align)) return Backup(start, 254);
    lexer_.GetDataTags(attrs);
    auto stat = (attrs.find(Cxx::STATIC) != attrs.cend());
    auto tloc = (attrs.find(Cxx::THREAD_LOCAL) != attrs.cend());
    auto cexp = (attrs.find(Cxx::CONSTEXPR) != attrs.cend());
-   if(!GetTypeSpec(typeSpec)) return Backup(start, 121);
+   if(!GetTypeSpec(typeSpec, &attrs)) return Backup(start, 121);
    auto pos = CurrPos();
    if(!lexer_.GetName(dataName)) return Backup(start, 122);
    if(lexer_.NextCharIs('('))
@@ -2090,6 +2090,7 @@ bool Parser::GetFuncDecl(Cxx::Keyword kwd, FunctionPtr& func)
    case Cxx::STATIC:
    case Cxx::EXTERN:
    case Cxx::OPERATOR:
+   case Cxx::VOLATILE:
       found = GetProcDecl(func);
       break;
    case Cxx::NIL_KEYWORD:
@@ -2288,7 +2289,8 @@ bool Parser::GetGoto(TokenPtr& statement)
    //  The "goto" keyword has already been parsed.  Get the label.
    //
    string name;
-   if(!lexer_.GetName(name)) return Backup(start, 240);
+   if(!lexer_.GetName(name)) return Backup(start, 249);
+   if(!lexer_.NextCharIs(';')) return Backup(start, 250);
    statement.reset(new Goto(name, begin));
    return Success(Parser_GetGoto, begin);
 }
@@ -2836,14 +2838,14 @@ bool Parser::GetProcDecl(FunctionPtr& func)
 
    if(NextKeywordIs(OPERATOR_STR))
    {
-      if(!GetTypeSpec(typeSpec)) return Backup(start, 158);
+      if(!GetTypeSpec(typeSpec, &attrs)) return Backup(start, 158);
       pos = CurrPos();
       name = OPERATOR_STR;
       oper = Cxx::CAST;
    }
    else
    {
-      if(!GetTypeSpec(typeSpec)) return Backup(start, 159);
+      if(!GetTypeSpec(typeSpec, &attrs)) return Backup(start, 159);
       lexer_.GetFuncFrontTags(attrs);
       pos = CurrPos();
       if(!lexer_.GetName(name, oper)) return Backup(start, 160);
@@ -3094,13 +3096,13 @@ bool Parser::GetSpaceData(Cxx::Keyword kwd, DataPtr& data)
       if(!GetTemplateParms(parms)) return Backup(start, 174);
    }
 
-   if(!GetAlignAs(align)) return Backup(start, 251);
+   if(!GetAlignAs(align)) return Backup(start, 255);
    lexer_.GetDataTags(attrs);
    auto extn = (attrs.find(Cxx::EXTERN) != attrs.cend());
    auto stat = (attrs.find(Cxx::STATIC) != attrs.cend());
    auto tloc = (attrs.find(Cxx::THREAD_LOCAL) != attrs.cend());
    auto cexp = (attrs.find(Cxx::CONSTEXPR) != attrs.cend());
-   if(!GetTypeSpec(typeSpec)) return Backup(start, 175);
+   if(!GetTypeSpec(typeSpec, &attrs)) return Backup(start, 175);
    auto pos = CurrPos();
    if(!GetQualName(dataName)) return Backup(start, 176);
    if(dataName->Operator() != Cxx::NIL_OPERATOR) return Backup(start, 177);
@@ -3193,9 +3195,11 @@ bool Parser::GetStaticAssert(StaticAssertPtr& statement)
    if(!lexer_.NextCharIs(',')) return Backup(start, 245);
 
    ExprPtr message;
-   if(!GetCxxExpr(expr, rpar)) return Backup(start, 246);
+   if(!GetCxxExpr(message, rpar)) return Backup(start, 246);
    if(!lexer_.NextCharIs(')')) return Backup(start, 247);
+   if(!lexer_.NextCharIs(';')) return Backup(start, 248);
    statement.reset(new StaticAssert(expr, message));
+   statement->SetContext(begin);
    return Success(Parser_GetStaticAssert, begin);
 }
 
@@ -3488,7 +3492,7 @@ bool Parser::GetTypedef(TypedefPtr& type)
    ArraySpecPtr arraySpec;
    AlignAsPtr align;
    while(GetArraySpec(arraySpec)) typeSpec->AddArray(arraySpec);
-   if(!GetAlignAs(align)) return Backup(start, 254);
+   if(!GetAlignAs(align)) return Backup(start, 256);
    if(!lexer_.NextCharIs(';')) return Backup(start, 200);
 
    type.reset(new Typedef(typeName, typeSpec));
@@ -3575,7 +3579,7 @@ bool Parser::GetTypeName(TypeNamePtr& type, Constraint constraint)
 
 fn_name Parser_GetTypeSpec1 = "Parser.GetTypeSpec";
 
-bool Parser::GetTypeSpec(TypeSpecPtr& spec)
+bool Parser::GetTypeSpec(TypeSpecPtr& spec, KeywordSet* attrs)
 {
    Debug::ft(Parser_GetTypeSpec1);
 
@@ -3588,11 +3592,28 @@ bool Parser::GetTypeSpec(TypeSpecPtr& spec)
    //
    auto start = CurrPos();
 
-   KeywordSet attrs;
-   lexer_.GetCVTags(attrs);
-   auto readonly = (attrs.find(Cxx::CONST) != attrs.cend());
-   auto unstable = (attrs.find(Cxx::VOLATILE) != attrs.cend());
-   attrs.clear();
+   KeywordSet tags;
+   bool readonly;
+   bool unstable;
+
+   //  ATTRS is provided with data types and function return types,
+   //  where "const" and "volatile" have already been parsed if they
+   //  precede the type's name.
+   //
+   if(attrs != nullptr)
+   {
+      readonly = (attrs->find(Cxx::CONST) != attrs->cend());
+      unstable = (attrs->find(Cxx::VOLATILE) != attrs->cend());
+      attrs->erase(Cxx::CONST);
+      attrs->erase(Cxx::VOLATILE);
+   }
+   else
+   {
+      lexer_.GetCVTags(tags);
+      readonly = (tags.find(Cxx::CONST) != tags.cend());
+      unstable = (tags.find(Cxx::VOLATILE) != tags.cend());
+      tags.clear();
+   }
 
    QualNamePtr typeName;
    if(!GetQualName(typeName, TypeKeyword)) return Backup(start, 206);
@@ -3601,15 +3622,15 @@ bool Parser::GetTypeSpec(TypeSpecPtr& spec)
    spec->SetContext(start);
 
    auto pos = CurrPos();
-   lexer_.GetCVTags(attrs);
-   if(attrs.find(Cxx::CONST) != attrs.cend())
+   lexer_.GetCVTags(tags);
+   if(tags.find(Cxx::CONST) != tags.cend())
    {
       if(readonly)
          Log(RedundantConst, pos);
       else
          readonly = true;
    }
-   if(attrs.find(Cxx::VOLATILE) != attrs.cend()) unstable = true;
+   if(tags.find(Cxx::VOLATILE) != tags.cend()) unstable = true;
 
    spec->Tags()->SetConst(readonly);
    spec->Tags()->SetVolatile(unstable);
@@ -3774,7 +3795,7 @@ bool Parser::GetUsing(UsingPtr& use, TypedefPtr& type)
    ArraySpecPtr arraySpec;
    AlignAsPtr align;
    while(GetArraySpec(arraySpec)) typeSpec->AddArray(arraySpec);
-   if(!GetAlignAs(align)) return Backup(start, 255);
+   if(!GetAlignAs(align)) return Backup(start, 257);
    if(!lexer_.NextCharIs(';')) return Backup(start, 232);
 
    type.reset(new Typedef(typeName, typeSpec));

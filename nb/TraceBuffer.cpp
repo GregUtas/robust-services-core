@@ -21,9 +21,12 @@
 //
 #include "TraceBuffer.h"
 #include "TraceRecord.h"
+#include <cstdint>
 #include <sstream>
 #include "Debug.h"
 #include "Element.h"
+#include "Formatters.h"
+#include "FunctionTrace.h"
 #include "InitFlags.h"
 #include "Memory.h"
 #include "Registry.h"
@@ -50,11 +53,6 @@ public:
    //
    static const Id Resumed = 1;  // trace resumed after being stopped
 
-   //  Constructs an invalid trace record during immediate tracing,
-   //  pending the construction of a new trace record.
-   //
-   explicit BufferTrace(size_t size);
-
    //  Constructs a trace record to indicate when tracing resumed after
    //  being stopped.
    //
@@ -67,14 +65,7 @@ public:
 
 //------------------------------------------------------------------------------
 
-BufferTrace::BufferTrace(size_t size) : TraceRecord(size, ToolBuffer)
-{
-   rid_ = InvalidId;
-}
-
-//------------------------------------------------------------------------------
-
-BufferTrace::BufferTrace() : TraceRecord(sizeof(BufferTrace), ToolBuffer)
+BufferTrace::BufferTrace() : TraceRecord(ToolBuffer)
 {
    rid_ = Resumed;
 }
@@ -99,31 +90,35 @@ bool BufferTrace::Display(ostream& stream, bool diff)
 
 //==============================================================================
 
-const size_t TraceBuffer::MaxSize = 0x04000000;      // 64MW
-const size_t TraceBuffer::InitialSize = 0x00200000;  // 2MW
-const uword TraceBuffer::EndMarker = 0;
+const size_t TraceBuffer::MinSize = 16;  // 64K TraceRecords
+const size_t TraceBuffer::MaxSize = 20;  // 1M TraceRecords
 fixed_string TraceBuffer::NoneSelected = "none";
-fixed_string TraceBuffer::OverflowStr =
+
+fixed_string StartOfTrace = "START OF TRACE";
+fixed_string BlockedStr = "Functions not captured because buffer was locked: ";
+fixed_string BuffFullStr =
+   "The buffer is full. The latter part of the trace was lost.";
+fixed_string BuffOvflStr =
    "The buffer wrapped around. Older entries were lost.";
 
 //------------------------------------------------------------------------------
 
 TraceBuffer::TraceBuffer() :
    buff_(nullptr),
+   funcs_(nullptr),
    size_(0),
-   start_(0),
-   end_(0),
+   bnext_(0),
+   fnext_(0),
+   wrap_(false),
    ovfl_(false),
    lastRecord_(nullptr),
    dtorDepth_(-1),
-   hardLock_(false),
    softLocks_(0),
    immediate_(false),
    stream_(nullptr),
    blocks_(0)
 {
-   buff_ = (uword*) Memory::Alloc(InitialSize << BYTES_PER_WORD_LOG2, MemPerm);
-   size_ = InitialSize;
+   AllocBuffers(MinSize, true);
    invocations_.reset(new InvocationsTable);
 
    if(InitFlags::TraceInit())
@@ -144,104 +139,102 @@ TraceBuffer::~TraceBuffer()
    //  Delete all trace records before freeing the buffer.
    //
    Clear();
-
    Memory::Free(buff_);
    buff_ = nullptr;
+   Memory::Free(funcs_);
+   funcs_ = nullptr;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name TraceBuffer_AddRecord = "TraceBuffer.AddRecord";
+fn_name TraceBuffer_AddFunction = "TraceBuffer.AddFunction";
 
-void* TraceBuffer::AddRecord(size_t nBytes)
+FunctionTrace OverflowSlot(TraceBuffer_AddFunction, 1);
+
+void* TraceBuffer::AddFunction()
 {
-   //  While a record is being added, the trace buffer is in a transient
-   //  state.  Existing records may be deleted to make room for the new
-   //  record, start_ and size_ are being updated, and the new record is
-   //  only partially constructed.  The buffer is therefore locked, and
-   //  the constructor of a TraceRecord subclass must call Unlock.
+   //  If no more records can be added to the trace buffer, construct
+   //  FunctionTrace records in the scratch location OverflowSlot.
    //
-   if(hardLock_.exchange(true))
+   if(ovfl_ && !wrap_) return &OverflowSlot;
+   auto slot = fnext_.fetch_add(1);
+   slot = slot & (size_ - 1);
+   return &funcs_[slot];
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TraceBuffer_AllocBuffers = "TraceBuffer.AllocBuffers";
+
+bool TraceBuffer::AllocBuffers(size_t n, bool ex)
+{
+   Debug::ft(TraceBuffer_AllocBuffers);
+
+   //  This should only be invoked after any trace records have been deleted.
+   //
+   if(!Empty())
    {
-      ++blocks_;
-      return nullptr;
+      Debug::SwLog(TraceBuffer_AllocBuffers, "buffer not empty", 0);
+      return false;
    }
 
-   //  If immediate output is desired, display records as they are created.
+   //  If wraparound is enabled, AllocSlot increments bnext_ past the
+   //  buffer's size when allocating the next slot.  The slot's value
+   //  must then be brought into range, which can be done with a masking
+   //  operation rather than a modulo division if size_ is a power of 2.
    //
-   if(immediate_) ImmediateDisplay();
+   if(n < MinSize) n = MinSize;
+   if(n > MaxSize) n = MaxSize;
+   auto size = 1 << n;
 
-   auto size = Memory::Words(nBytes);  // size of the record in the buffer
-   auto newEnd = end_ + size;          // next value of end_
+   Memory::Free(buff_);
+   buff_ = nullptr;
+   Memory::Free(funcs_);
+   funcs_ = nullptr;
+   size_ = 0;
 
-   //  "Top" means the physical start of the buffer: [0].
-   //  "Bottom" means the physical end of the buffer: [size_ - 1].
-   //  "Start" means the logical start of the buffer: [start_].
-   //  "End" means logical end of the buffer: [end_].
-   //
-   if(newEnd >= size_)
+   buff_ = (TraceRecord**)
+      Memory::Alloc(size * sizeof(TraceRecord*), MemPerm, ex);
+   if(buff_ == nullptr) return false;
+
+   funcs_ = (FunctionTrace*)
+      Memory::Alloc(size * sizeof(FunctionTrace), MemPerm, ex);
+   if(funcs_ == nullptr)
    {
-      //  The buffer has overflowed, so the new record will be added at
-      //  the top.  If the start is below the end, this is the *second*
-      //  (or later) occurrence of wraparound, in which case the records
-      //  between the start and the bottom must be purged.  After that,
-      //  one or more records at the top must be purged to make room for
-      //  the new record.
-      //
-      if(softLocks_.load() > 0)
+      Memory::Free(buff_);
+      buff_ = nullptr;
+      return false;
+   }
+
+   size_ = size;
+   for(size_t i = 0; i < size_; ++i) buff_[i] = nullptr;
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
+size_t TraceBuffer::AllocSlot()
+{
+   //  If the buffer is full, this fails if the buffer is locked
+   //  (because it would have to delete an existing record to add
+   //  a new one) or if wraparound is not enabled.
+   //
+   if(buff_ == nullptr) return SIZE_MAX;
+
+   if(bnext_ >= size_)
+   {
+      ovfl_ = true;
+      if(!wrap_) return SIZE_MAX;
+
+      if(softLocks_ > 0)
       {
          ++blocks_;
-         hardLock_.store(false);
-         return nullptr;
-      }
-
-      ovfl_ = true;
-      if(start_ > end_) PurgeRecords(size_ - 1);
-      PurgeRecords(size);
-
-      //  There should already be an end-of-buffer marker at the bottom of
-      //  the buffer as a result of having added the previous record.
-      //
-      if(buff_[end_] != EndMarker)
-      {
-         Debug::SwLog(TraceBuffer_AddRecord, start_, end_);
-         buff_[end_] = EndMarker;
-      }
-
-      end_ = 0;
-      newEnd = size;
-   }
-   else
-   {
-      //  If the start is below the end, the buffer has wrapped around.  If
-      //  the new record will also reach or surpass the start, records must
-      //  be purged to make room for the new record.
-      //
-      if(start_ > end_)
-      {
-         if(softLocks_.load() > 0)
-         {
-            ++blocks_;
-            hardLock_.store(false);
-            return nullptr;
-         }
-
-         if(newEnd >= start_) PurgeRecords(newEnd);
+         return SIZE_MAX;
       }
    }
 
-   //  Return a pointer to the space allocated for the record after updating
-   //  the end-of-buffer location.  If records are being display immediately,
-   //  construct a temporary record in case the current thread is scheduled
-   //  out before the new record has been fully constructed.
-   //
-   auto addr = (TraceRecord*) &buff_[end_];
-   end_ = newEnd;
-   buff_[end_] = EndMarker;
-   if(immediate_) new (addr) BufferTrace(size);
-   lastRecord_ = addr;
-   hardLock_.store(false);
-   return addr;
+   auto slot = bnext_.fetch_add(1);
+   return (slot & (size_ - 1));
 }
 
 //------------------------------------------------------------------------------
@@ -252,27 +245,18 @@ void TraceBuffer::ClaimBlocks()
 {
    Debug::ft(TraceBuffer_ClaimBlocks);
 
-   auto count = MaxRecords();
-
    //  Function trace records don't need to claim anything, so skip
    //  them for efficiency.
    //
-   TraceRecord* record = nullptr;
+   TraceRecord* rec = nullptr;
    Flags mask;
    mask.set();
    mask.reset(FunctionTracer);
 
    Lock();
-      for(Next(record, mask); record != nullptr; Next(record, mask))
+      for(Next(rec, mask); rec != nullptr; Next(rec, mask))
       {
-         record->ClaimBlocks();
-
-         if(--count <= 0)
-         {
-            Debug::SwLog(TraceBuffer_ClaimBlocks,
-               "sanity count reached", MaxRecords());
-            break;
-         }
+         rec->ClaimBlocks();
       }
    Unlock();
 }
@@ -288,34 +272,40 @@ TraceRc TraceBuffer::Clear()
    //  If tracing has been stopped, delete all records in the buffer
    //  and reset member variables.
    //
+   if(buff_ == nullptr) return NoBufferAllocated;
    if(Debug::TraceOn()) return NotWhileTracing;
 
-   TraceRecord* record = nullptr;
    auto count = 0;
-   auto mask = Flags().set();
 
-   for(Next(record, mask); record != nullptr; Next(record, mask))
-   {
-      delete record;
+   Lock();
+      auto last = (ovfl_ ? size_ : bnext_);
 
-      if(++count >= 100)
+      for(size_t i = 0; i < last; ++i)
       {
-         ThisThread::PauseOver(90);
-         count = 0;
-      }
-   }
+         auto rec = buff_[i];
 
-   start_ = 0;
-   end_ = 0;
+         if(rec != nullptr)
+         {
+            buff_[i] = nullptr;
+            delete rec;
+
+            if(++count >= 100)
+            {
+               ThisThread::PauseOver(90);
+               count = 0;
+            }
+         }
+      }
+   Unlock();
+
+   bnext_ = 0;
+   fnext_ = 0;
    ovfl_ = false;
    lastRecord_ = nullptr;
    dtorDepth_ = -1;
-   hardLock_.store(false);
-   softLocks_.exchange(0);
+   softLocks_ = 0;
    blocks_ = 0;
-
    invocations_->clear();
-
    return TraceOk;
 }
 
@@ -329,6 +319,28 @@ TraceRc TraceBuffer::ClearTools()
 
    tools_.reset();
    return TraceOk;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TraceBuffer_DisplayStart = "TraceBuffer.DisplayStart";
+
+void TraceBuffer::DisplayStart(ostream& stream) const
+{
+   Debug::ft(TraceBuffer_DisplayStart);
+
+   stream << StartOfTrace << strTimePlace() << CRLF << CRLF;
+   if(blocks_ > 0) stream << BlockedStr << blocks_ << CRLF;
+
+   if(ovfl_)
+   {
+      if(wrap_)
+         stream << BuffOvflStr << CRLF;
+      else
+         stream << BuffFullStr << CRLF;
+   }
+
+   if((blocks_ > 0) || ovfl_) stream << CRLF;
 }
 
 //------------------------------------------------------------------------------
@@ -356,39 +368,44 @@ TraceRc TraceBuffer::DisplayTrace(ostream* stream, bool diff)
 
 bool TraceBuffer::Empty() const
 {
-   //  If the buffer is empty, the start_ and end_ indicates both point
-   //  to its top.
-   //
-   return ((start_ == 0) && (end_ == 0));
+   return (bnext_ == 0);
 }
 
 //------------------------------------------------------------------------------
 
-void TraceBuffer::ImmediateDisplay()
+bool TraceBuffer::Insert(TraceRecord* record)
 {
-   //  Create a mask that will find every record.  Starting with the last
-   //  record that was created, display records until a nil record or the
-   //  end of the buffer is reached.  Normally this will display the last
-   //  record that was created, after which the end of the buffer will be
-   //  reached, causing lastRecord_ to become nullptr.  However, it could
-   //  be that the last record has not been fully constructed.
+   //  If immediate tracing is active, display the record now.
    //
-   auto mask = Flags().set();
-
-   while(lastRecord_ != nullptr)
+   if(immediate_)
    {
-      if(lastRecord_->rid_ == TraceRecord::InvalidId) return;
-      if(lastRecord_->Display(*stream_, false)) *stream_ << CRLF;
-      Next(lastRecord_, mask);
+      if(record->Display(*stream_, false)) *stream_ << CRLF;
    }
-}
 
-//------------------------------------------------------------------------------
+   //  Delete the record if no slot is available.
+   //
+   auto slot = AllocSlot();
 
-bool TraceBuffer::IsLocked()
-{
-   if(!hardLock_.load()) return false;
-   ++blocks_;
+   if(slot == SIZE_MAX)
+   {
+      delete record;
+      return false;
+   }
+
+   //  If wraparound is allowed, there could already be a record
+   //  in the slot.  If so, delete it.
+   //
+   auto prev = buff_[slot];
+
+   if(prev != nullptr)
+   {
+      buff_[slot] = nullptr;
+      delete prev;
+   }
+
+   record->slot_ = slot;
+   buff_[slot] = record;
+   lastRecord_ = record;
    return true;
 }
 
@@ -401,68 +418,64 @@ void TraceBuffer::Lock()
 
 //------------------------------------------------------------------------------
 
-fn_name TraceBuffer_MaxRecords = "TraceBuffer.MaxRecords";
-
-size_t TraceBuffer::MaxRecords() const
-{
-   Debug::ft(TraceBuffer_MaxRecords);
-
-   if(start_ == end_) return 0;
-   if(start_ > end_) return size_ / Memory::Words(sizeof(TraceRecord));
-   return (end_ - start_) / Memory::Words(sizeof(TraceRecord));
-}
-
-//------------------------------------------------------------------------------
-
 void TraceBuffer::Next(TraceRecord*& record, const Flags& mask) const
 {
-   uword* next;
-   uword incr;
+   if(Empty())
+   {
+      record = nullptr;
+      return;
+   }
 
-   //  If RECORD is nullptr, start with the first record.
+   //  The current slot is tracked by I.  NEXT is the last allocated slot.
+   //
+   size_t i = SIZE_MAX;
+   auto last = ((bnext_ - 1) & (size_ - 1));
+
+   //  Update RECORD to where the search for the next entry will begin.
+   //  If RECORD is nullptr, start with the first entry, else continue
+   //  with the next entry.
    //
    if(record == nullptr)
    {
-      if(!Empty())
-         next = &buff_[start_];
-      else
-         return;
+      i = (wrap_ && ovfl_ ? bnext_ & (size_ - 1) : 0);
+      record = buff_[i];
    }
    else
    {
-      incr = Memory::Words(record->size_);
-      next = (uword*) record + incr;
+      i = record->slot_;
+
+      if(i == last)
+      {
+         record = nullptr;
+         return;
+      }
+
+      if(++i >= size_) i = 0;
+      record = buff_[i];
    }
 
-   //  Look for records until MASK is satisfied.  If the end-of-buffer
-   //  marker is reached, there are two possibilities:
-   //  (a) It's really the end of the buffer.
-   //  (b) We're at the bottom of the buffer but not at its end.  The
-   //      buffer is circular and contains variable-length entries, so
-   //      an end-of-buffer marker flags unused space at the bottom of
-   //      the buffer when wraparound occurs.
-   //
-   while(next != nullptr)
+   while(true)
    {
-      if(*next == EndMarker)
+      //  If wraparound is disabled, there is a small possibility that a
+      //  FunctionTrace record could be constructed on top of a previous
+      //  one and then fail to get inserted in the trace buffer.  Should
+      //  this occur, its slot will be invalid, so skip it.
+      //
+      if((record != nullptr) &&
+         (record->slot_ != TraceRecord::InvalidSlot) &&
+         (mask.test(record->owner_)))
       {
-         if(next == &buff_[end_])
-            record = nullptr;               // case (a)
-         else
-            record = (TraceRecord*) buff_;  // case (b)
-      }
-      else
-      {
-         record = (TraceRecord*) next;
+         return;
       }
 
-      if(record == nullptr) return;
-      if(record->owner_ != NIL_ID)
+      if(i == last)
       {
-         if(mask.test(record->owner_)) return;
+         record = nullptr;
+         return;
       }
-      incr = Memory::Words(record->size_);
-      next = (uword*) record + incr;
+
+      if(++i >= size_) i = 0;
+      record = buff_[i];
    }
 }
 
@@ -475,43 +488,21 @@ void TraceBuffer::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-void TraceBuffer::PurgeRecords(size_t end)
-{
-   while(start_ <= end)
-   {
-      if(buff_[start_] == EndMarker)
-      {
-         //  The buffer wraps around here.  Records at the top are purged
-         //  separately.
-         //
-         start_ = 0;
-         return;
-      }
-
-      auto record = (TraceRecord*) &buff_[start_];
-      start_ += Memory::Words(record->size_);
-      delete record;
-   }
-}
-
-//------------------------------------------------------------------------------
-
 fn_name TraceBuffer_Query = "TraceBuffer.Query";
 
 void TraceBuffer::Query(ostream& stream) const
 {
    Debug::ft(TraceBuffer_Query);
 
-   auto size = (size_ >> 10) << BYTES_PER_WORD_LOG2;
-   auto entries = (ovfl_ ? size_ : end_);
-   entries = (entries >> 10) << BYTES_PER_WORD_LOG2;
+   auto indent = spaces(2);
+   auto entries = (ovfl_ ? size_ : bnext_);
 
-   stream << "Trace buffer" << CRLF;
-   stream << "  size    : " << size << "KB" << CRLF;
-   stream << "  entries : " << entries << "KB" << CRLF;
-   stream << "  blocked : " << blocks_ << CRLF;
-
-   if(ovfl_) stream << OverflowStr << CRLF;
+   stream << strClass(this) << CRLF;
+   stream << indent << "size    : " << size_ << CRLF;
+   stream << indent << "entries : " << entries << CRLF;
+   stream << indent << "blocked : " << blocks_ << CRLF;
+   stream << indent << "wraparound enabled : " << (wrap_ ? "Y" : "N") << CRLF;
+   if(ovfl_) stream << (wrap_ ? BuffOvflStr : BuffFullStr) << CRLF;
 }
 
 //------------------------------------------------------------------------------
@@ -584,26 +575,16 @@ TraceRc TraceBuffer::SelectAll(bool on)
 
 fn_name TraceBuffer_SetSize = "TraceBuffer.SetSize";
 
-TraceRc TraceBuffer::SetSize(size_t kbs)
+TraceRc TraceBuffer::SetSize(size_t n)
 {
    Debug::ft(TraceBuffer_SetSize);
 
-   //  If tracing has been stopped and the buffer has been cleared, convert
-   //  the size (KBS) to words, delete the old buffer, and create a new one.
+   //  Buffer resizing is only allowed when tracing has been stopped
+   //  and all trace records have been cleared.
    //
    if(Debug::TraceOn()) return NotWhileTracing;
    if(!Empty()) return BufferNotEmpty;
-
-   auto size = (kbs << 10) >> BYTES_PER_WORD_LOG2;
-   if(size > MaxSize) size = MaxSize;
-
-   Memory::Free(buff_);
-   size_ = 0;
-
-   buff_ = (uword*) Memory::Alloc(size << BYTES_PER_WORD_LOG2, MemPerm, false);
-   if(buff_ == nullptr) return BufferAllocFailed;
-
-   size_ = size;
+   if(!AllocBuffers(n, false)) return BufferAllocFailed;
    return TraceOk;
 }
 
@@ -646,28 +627,37 @@ TraceRc TraceBuffer::SetTools(const Flags& tools)
 
 //------------------------------------------------------------------------------
 
+fn_name TraceBuffer_SetWrap = "TraceBuffer.SetWrap";
+
+TraceRc TraceBuffer::SetWrap(bool wrap)
+{
+   Debug::ft(TraceBuffer_SetWrap);
+
+   //  Although wraparound could be enabled/disabled while the buffer contains
+   //  entries, it appears to be of little value and would result in confusing
+   //  results.
+   //
+   if(Debug::TraceOn()) return NotWhileTracing;
+   if(!Empty()) return BufferNotEmpty;
+   wrap_ = wrap;
+   return TraceOk;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name TraceBuffer_Shutdown = "TraceBuffer.Shutdown";
 
 void TraceBuffer::Shutdown(RestartLevel level)
 {
    Debug::ft(TraceBuffer_Shutdown);
 
-   auto count = MaxRecords();
-
-   TraceRecord* record = nullptr;
+   TraceRecord* rec = nullptr;
    auto mask = Flags().set();
 
    Lock();
-      for(Next(record, mask); record != nullptr; Next(record, mask))
+      for(Next(rec, mask); rec != nullptr; Next(rec, mask))
       {
-         record->Shutdown(level);
-
-         if(--count <= 0)
-         {
-            Debug::SwLog(TraceBuffer_Shutdown,
-               "sanity count reached", MaxRecords());
-            break;
-         }
+         rec->Shutdown(level);
       }
    Unlock();
 }
@@ -681,17 +671,14 @@ TraceRc TraceBuffer::StartTracing(const string& options)
    Debug::ft(TraceBuffer_StartTracing);
 
    if(Debug::TraceOn() && !Empty()) return AlreadyStarted;
-
    if(tools_.none()) return NoToolSelected;
-
    if(filters_.none()) return NoItemSelected;
-
    if(buff_ == nullptr) return NoBufferAllocated;
 
    if(!Empty())
    {
       SetTool(ToolBuffer, true);
-      new BufferTrace;
+      Insert(new BufferTrace);
    }
 
    if(options.find('i') != string::npos)
@@ -724,14 +711,12 @@ void TraceBuffer::StopTracing()
 
    SetTool(ToolBuffer, false);
    Debug::FcFlags_.reset(Debug::TracingActive);
-   hardLock_.exchange(false);
 
-   //  If trace records are being output immediately, display the last
-   //  one and return after closing the trace output file.
+   //  If trace records are being output immediately, return after
+   //  closing the trace output file.
    //
    if(immediate_)
    {
-      ImmediateDisplay();
       stream_.reset();
       immediate_ = false;
       return;
@@ -751,11 +736,23 @@ string TraceBuffer::strTimePlace() const
 
 //------------------------------------------------------------------------------
 
+void TraceBuffer::Swap(TraceRecord* record1, TraceRecord* record2) const
+{
+   auto slot1 = record1->slot_;
+   auto slot2 = record2->slot_;
+   record1->slot_ = slot2;
+   record2->slot_ = slot1;
+   buff_[slot1] = record2;
+   buff_[slot2] = record1;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name TraceBuffer_Unlock = "TraceBuffer.Unlock";
 
 void TraceBuffer::Unlock()
 {
-   if(softLocks_.load() > 0)
+   if(softLocks_ > 0)
       softLocks_.fetch_sub(1);
    else
       Debug::SwLog(TraceBuffer_Unlock, "not locked", 0);

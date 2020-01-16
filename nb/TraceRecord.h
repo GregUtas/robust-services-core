@@ -22,7 +22,6 @@
 #ifndef TRACERECORD_H_INCLUDED
 #define TRACERECORD_H_INCLUDED
 
-#include <cstddef>
 #include <cstdint>
 #include <iosfwd>
 #include "NbTypes.h"
@@ -48,7 +47,13 @@ public:
    //
    typedef TraceRecordId Id;
 
-   //  Identifies a record that has not been fully constructed.
+   //  Identifies a record that has not been added to the trace buffer.
+   //  Assigned as the initial value for slot_.
+   //
+   static const uint32_t InvalidSlot;
+
+   //  identifies a record that has not been fully constructed.  Assigned
+   //  as the initial value for rid_.
    //
    static const Id InvalidId;
 
@@ -78,30 +83,11 @@ public:
    //  prevents the insertion of an endline.
    //
    virtual bool Display(std::ostream& stream, bool diff);
-
-   //  Overridden to allocate space in the trace buffer.
-   //
-   static void* operator new(size_t size);
-
-   //  Overridden to return space to the trace buffer.  This does nothing
-   //  because the trace buffer is circular and simply overwrites records
-   //  as it cycles around.
-   //
-   static void operator delete(void* addr) { }
-
-   //  Overridden to support placement new.
-   //
-   static void* operator new(size_t size, void* where);
-
-   //  Overridden to handle the failure of placement new.  It will never be
-   //  invoked, but the compiler generates a warning if it is not supplied.
-   //
-   static void operator delete(void* addr, void* where) { }
 protected:
-   //  SIZE is the record's size (in bytes), and OWNER is the tool that
-   //  created the record.  Protected because this class is virtual.
+   //  OWNER is the tool that created the record.  Protected because this
+   //  class is virtual.
    //
-   TraceRecord(size_t size, FlagId owner);
+   explicit TraceRecord(FlagId owner);
 
    //  Returns a five-character string to be displayed in the EVENT field.
    //  The default version returns an empty string and should generally be
@@ -121,17 +107,17 @@ private:
    //
    virtual void Shutdown(RestartLevel level) { }
 
-   //  The record's size.
+   //  The record's slot in the trace buffer.
    //
-   const int16_t size_ : 16;
+   uint32_t slot_;
 
-   //  The record's owner.
+   //  The record's owner (a trace tool identifier).
    //
    FlagId owner_ : 8;
 protected:
    //  The record's identifier.  This typically identifies the type of event
-   //  that was recorded, but its interpretation is owner specific.  *Must*
-   //  be overwritten by a constructor.
+   //  that was recorded, but its interpretation is owner specific.  It is
+   //  initialized to InvalidId.
    //
    Id rid_ : 8;
 };

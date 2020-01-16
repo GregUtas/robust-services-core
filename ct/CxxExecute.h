@@ -69,10 +69,10 @@ public:
    //
    virtual ~CxxTrace() = default;
 protected:
-   //  Creates a trace record of SIZE, for ACTION.  Protected because this
+   //  Creates a trace record for ACTION.  Protected because this
    //  class is virtual.
    //
-   CxxTrace(size_t size, Action action);
+   explicit CxxTrace(Action action);
 
    //  Overridden to display the trace record.
    //

@@ -37,7 +37,7 @@ using std::string;
 namespace Diplomacy
 {
 BotTrace::BotTrace(Id rid, const DipIpBuffer& buff) :
-   TimedRecord(sizeof(BotTrace), DipTracer),
+   TimedRecord(DipTracer),
    buff_(nullptr),
    corrupt_(false)
 {

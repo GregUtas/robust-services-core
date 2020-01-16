@@ -138,7 +138,7 @@ private:
 
 //==============================================================================
 
-ActTrace::ActTrace(Action action) : CxxTrace(sizeof(ActTrace), action) { }
+ActTrace::ActTrace(Action action) : CxxTrace(action) { }
 
 //------------------------------------------------------------------------------
 
@@ -151,7 +151,7 @@ bool ActTrace::Display(ostream& stream, bool diff)
 //==============================================================================
 
 ArgTrace::ArgTrace(Action action, const StackArg& arg) :
-   CxxTrace(sizeof(ArgTrace), action),
+   CxxTrace(action),
    arg_(arg)
 {
 }
@@ -521,7 +521,8 @@ void Context::SwLog
 void Context::Trace(CxxTrace::Action act)
 {
    if(!Tracing) return;
-   new ActTrace(act);
+   auto rec = new ActTrace(act);
+   Singleton< TraceBuffer >::Instance()->Insert(rec);
 }
 
 //------------------------------------------------------------------------------
@@ -529,7 +530,8 @@ void Context::Trace(CxxTrace::Action act)
 void Context::Trace(CxxTrace::Action act, const StackArg& arg)
 {
    if(!Tracing) return;
-   new ArgTrace(act, arg);
+   auto rec = new ArgTrace(act, arg);
+   Singleton< TraceBuffer >::Instance()->Insert(rec);
 }
 
 //------------------------------------------------------------------------------
@@ -537,7 +539,8 @@ void Context::Trace(CxxTrace::Action act, const StackArg& arg)
 void Context::Trace(CxxTrace::Action act, word err, const string& expl)
 {
    if(!Tracing) return;
-   new ErrTrace(act, err, expl);
+   auto rec = new ErrTrace(act, err, expl);
+   Singleton< TraceBuffer >::Instance()->Insert(rec);
 }
 
 //------------------------------------------------------------------------------
@@ -545,7 +548,8 @@ void Context::Trace(CxxTrace::Action act, word err, const string& expl)
 void Context::Trace(CxxTrace::Action act, const CodeFile& file)
 {
    if(!Tracing) return;
-   new FileTrace(act, file);
+   auto rec = new FileTrace(act, file);
+   Singleton< TraceBuffer >::Instance()->Insert(rec);
 }
 
 //------------------------------------------------------------------------------
@@ -553,7 +557,8 @@ void Context::Trace(CxxTrace::Action act, const CodeFile& file)
 void Context::Trace(CxxTrace::Action act, const CxxToken* token)
 {
    if(!Tracing) return;
-   new TokenTrace(act, token);
+   auto rec = new TokenTrace(act, token);
+   Singleton< TraceBuffer >::Instance()->Insert(rec);
 }
 
 //------------------------------------------------------------------------------
@@ -595,8 +600,8 @@ uint16_t CxxTrace::Last_ = UINT16_MAX;
 
 //------------------------------------------------------------------------------
 
-CxxTrace::CxxTrace(size_t size, Action action) :
-   TraceRecord(size, ParserTracer),
+CxxTrace::CxxTrace(Action action) :
+   TraceRecord(ParserTracer),
    line_(UINT16_MAX)
 {
    rid_ = action;
@@ -639,7 +644,7 @@ bool CxxTrace::Display(ostream& stream, bool diff)
 //==============================================================================
 
 ErrTrace::ErrTrace(Action action, word err, const string& expl) :
-   CxxTrace(sizeof(ErrTrace), action),
+   CxxTrace(action),
    err_(err),
    expl_(nullptr)
 {
@@ -676,7 +681,7 @@ bool ErrTrace::Display(ostream& stream, bool diff)
 //==============================================================================
 
 FileTrace::FileTrace(Action action, const CodeFile& file) :
-   CxxTrace(sizeof(FileTrace), action),
+   CxxTrace(action),
    file_(&file)
 {
 }
@@ -766,7 +771,7 @@ StackArg ParseFrame::PopArg(bool read)
    if(args_.empty())
    {
       if(Context::Tracing)
-         new ErrTrace(CxxTrace::POP_ARG, -1);
+         Context::Trace(CxxTrace::POP_ARG, -1);
       else
          Context::SwLog(ParseFrame_PopArg1, "Empty argument stack", 0);
       return NilStackArg;
@@ -790,7 +795,7 @@ bool ParseFrame::PopArg(StackArg& arg)
    if(args_.empty())
    {
       if(Context::Tracing)
-         new ErrTrace(CxxTrace::POP_ARG, -1);
+         Context::Trace(CxxTrace::POP_ARG, -1);
       else
          Context::SwLog(ParseFrame_PopArg2, "Empty argument stack", 0);
       return false;
@@ -813,7 +818,7 @@ const Operation* ParseFrame::PopOp()
    if(ops_.empty())
    {
       if(Context::Tracing)
-         new ErrTrace(CxxTrace::POP_OP, -1);
+         Context::Trace(CxxTrace::POP_OP, -1);
       else
          Context::SwLog(ParseFrame_PopOp, "Empty operator stack", 0);
       return nullptr;
@@ -863,7 +868,7 @@ void ParseFrame::PushArg(const StackArg& arg)
    if(arg.item == nullptr)
    {
       if(Context::Tracing)
-         new ErrTrace(CxxTrace::PUSH_ARG, -1);
+         Context::Trace(CxxTrace::PUSH_ARG, -1);
       else
          Context::SwLog(ParseFrame_PushArg, "Push null argument", 0);
       return;
@@ -887,7 +892,7 @@ void ParseFrame::PushOp(const Operation* op)
    if(op == nullptr)
    {
       if(Context::Tracing)
-         new ErrTrace(CxxTrace::PUSH_OP, -1);
+         Context::Trace(CxxTrace::PUSH_OP, -1);
       else
          Context::SwLog(ParseFrame_PushOp, "Push null operator", 0);
       return;
@@ -1910,7 +1915,7 @@ void StackArg::WasWritten() const
 //==============================================================================
 
 TokenTrace::TokenTrace(Action action, const CxxToken* token) :
-   CxxTrace(sizeof(TokenTrace), action),
+   CxxTrace(action),
    token_(token)
 {
 }

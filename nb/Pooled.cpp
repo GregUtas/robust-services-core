@@ -62,9 +62,12 @@ void Pooled::Claim()
 
    if(Debug::TraceOn())
    {
-      if(Singleton< TraceBuffer >::Instance()->ToolIsOn(ObjPoolTracer))
+      auto buff = Singleton< TraceBuffer >::Instance();
+
+      if(buff->ToolIsOn(ObjPoolTracer))
       {
-         new ObjectPoolTrace(ObjectPoolTrace::Claimed, *this);
+         auto rec = new ObjectPoolTrace(ObjectPoolTrace::Claimed, *this);
+         buff->Insert(rec);
       }
    }
 }

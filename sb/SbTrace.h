@@ -23,7 +23,6 @@
 #define SBTRACE_H_INCLUDED
 
 #include "TimedRecord.h"
-#include <cstddef>
 #include <iosfwd>
 #include <string>
 #include "Clock.h"
@@ -229,10 +228,10 @@ public:
    //
    bool Display(std::ostream& stream, bool diff) override;
 protected:
-   //  Creates a trace record for SBO, with the SIZE specified.
-   //  Protected because this class is virtual.
+   //  Creates a trace record for SBO.  Protected because this class
+   //  is virtual.
    //
-   SboTrace(size_t size, const NodeBase::Pooled& sbo);
+   explicit SboTrace(const NodeBase::Pooled& sbo);
 
    //  Displays ID in the trace's identifier column, preceded by LABEL.
    //  If ID is NIL_ID, it is not displayed.  Enough spaces to reach the
@@ -475,7 +474,7 @@ public:
 protected:
    //  For subclasses.
    //
-   EventTrace(size_t size, const Event& evt);
+   explicit EventTrace(const Event& evt);
 
    //  Displays the event name associated with SID and EID.
    //
@@ -515,11 +514,6 @@ public:
    //
    bool Display(std::ostream& stream, bool diff) override;
 protected:
-   //  For subclasses.
-   //
-   HandlerTrace(size_t size, ServiceId sid, const State& state,
-      const Event& evt, EventHandler::Rc rc);
-
    //  Displays the state associated with sid_ and stid_.
    //
    void DisplayState(std::ostream& stream) const;

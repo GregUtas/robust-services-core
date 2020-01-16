@@ -36,7 +36,12 @@ namespace NodeBase
 //
 class FunctionTrace : public TimedRecord
 {
+   friend class Thread;
 public:
+   //  Sets func_ and depth_.
+   //
+   FunctionTrace(fn_name_arg func, fn_depth depth);
+
    //  Virtual to allow subclassing.
    //
    virtual ~FunctionTrace() = default;
@@ -56,11 +61,6 @@ public:
    //  Returns the scope of the function trace.
    //
    static Scope GetScope() { return Scope_; }
-
-   //  Captures a call to FUNC when tracing is enabled.  Applications must
-   //  use Debug::ft instead of invoking this directly.
-   //
-   static void Capture(fn_name_arg func);
 
    //  Invoked when tracing stops.  Modifies records to handle constructors
    //  and destructors.
@@ -82,12 +82,32 @@ public:
    //  Mask for selecting FunctionTrace records when using TraceBuffer::Next.
    //
    static const Flags FTmask;
-protected:
-   //  Sets func_ and depth_.  SIZE is the record's size (to allow subclassing).
-   //  Protected to restrict creation to Capture.
-   //
-   FunctionTrace(fn_name_arg func, fn_depth depth, size_t size);
 private:
+   //  Overridden to allocate space in the buffer allocated for records
+   //  that belong to this class.
+   //
+   static void* operator new(size_t size);
+
+   //  Overridden to return space to the buffer.  This does nothing because
+   //  the buffer is circular and simply overwrites previous records when it
+   //  cycles around.
+   //
+   static void operator delete(void* addr) { }
+
+   //  Overridden to support placement new.
+   //
+   static void* operator new(size_t size, void* where);
+
+   //  Overridden to handle the failure of placement new.  It will never be
+   //  invoked, but the compiler generates a warning if it is not supplied.
+   //
+   static void operator delete(void* addr, void* where) { }
+
+   //  Captures a call to FUNC when tracing is enabled.  Applications use
+   //  Debug::ft instead of invoking this directly.
+   //
+   static void Capture(fn_name_arg func);
+
    //  Calculates the gross and net times spent in a function call.
    //
    void CalcFuncTime();
@@ -114,16 +134,16 @@ private:
 
    //  The nesting level of the function call on the thread's stack.
    //
-   fn_depth depth_ : 14;
+   fn_depth depth_;
 
    //  Set for a constructor that was moved during reordering.
    //
-   bool moved_ : 1;
+   bool moved_;
 
    //  Set for a function call that follows a reordered constructor.
    //  It acts as a boundary when reordering nested constructors.
    //
-   bool stop_ : 1;
+   bool stop_;
 
    //  The total time spent in the function call.  Calculated after
    //  tracing stops.

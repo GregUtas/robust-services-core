@@ -87,9 +87,12 @@ void MsgFactory::CaptureMsg(Context& ctx, const Message& msg, TransTrace* tt)
    //
    if(ctx.TraceOn())
    {
-      if(Singleton< TraceBuffer >::Instance()->ToolIsOn(ContextTracer))
+      auto buff = Singleton< TraceBuffer >::Instance();
+
+      if(buff->ToolIsOn(ContextTracer))
       {
-         new MsgTrace(MsgTrace::Creation, msg, Message::Internal);
+         auto rec = new MsgTrace(MsgTrace::Creation, msg, Message::Internal);
+         buff->Insert(rec);
       }
    }
 

@@ -87,10 +87,12 @@ ServiceSM::ServiceSM(ServiceId sid) :
    if(ctx->TraceOn(trans))
    {
       auto warp = Clock::TicksNow();
+      auto buff = Singleton< TraceBuffer >::Instance();
 
-      if(Singleton< TraceBuffer >::Instance()->ToolIsOn(ContextTracer))
+      if(buff->ToolIsOn(ContextTracer))
       {
-         new SsmTrace(SsmTrace::Creation, *this);
+         auto rec = new SsmTrace(SsmTrace::Creation, *this);
+         buff->Insert(rec);
       }
 
       if(trans != nullptr) trans->ResumeTime(warp);
@@ -112,10 +114,12 @@ ServiceSM::~ServiceSM()
    if(Context::RunningContextTraced(trans))
    {
       auto warp = Clock::TicksNow();
+      auto buff = Singleton< TraceBuffer >::Instance();
 
       if(Singleton< TraceBuffer >::Instance()->ToolIsOn(ContextTracer))
       {
-         new SsmTrace(SsmTrace::Deletion, *this);
+         auto rec = new SsmTrace(SsmTrace::Deletion, *this);
+         buff->Insert(rec);
       }
 
       if(trans != nullptr) trans->ResumeTime(warp);

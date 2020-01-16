@@ -60,7 +60,7 @@ void Debug::Assert(bool condition, debug32_t errval)
 
 //------------------------------------------------------------------------------
 //
-//  The cost of function tracing was assessed by running POTS traffic.
+//* The cost of function tracing was assessed by running POTS traffic.
 //  The results, determined by when the system entered overload, were
 //  o no tracing: 15000 calls/minute
 //  o regular tracing: 3000 calls/minute

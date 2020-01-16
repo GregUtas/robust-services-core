@@ -24,7 +24,9 @@
 #include <string>
 #include "Debug.h"
 #include "SbTrace.h"
+#include "Singleton.h"
 #include "SysTypes.h"
+#include "TraceBuffer.h"
 
 using namespace NodeBase;
 using std::ostream;
@@ -90,7 +92,8 @@ Event* InitiationReqEvent::BuildSnp(ServiceSM& owner, TriggerId tid)
 void InitiationReqEvent::Capture
    (ServiceId sid, const State& state, EventHandler::Rc rc) const
 {
-   new SipTrace(sid, state, *this, rc);
+   auto rec = new SipTrace(sid, state, *this, rc);
+   Singleton< TraceBuffer >::Instance()->Insert(rec);
 }
 
 //------------------------------------------------------------------------------

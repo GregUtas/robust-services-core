@@ -37,7 +37,7 @@ using std::ostream;
 namespace NodeBase
 {
 ObjectPoolTrace::ObjectPoolTrace(Id rid, const Pooled& obj) :
-   TimedRecord(sizeof(ObjectPoolTrace), ObjPoolTracer),
+   TimedRecord(ObjPoolTracer),
    obj_(&obj),
    pid_(ObjectPool::ObjPid(&obj))
 {

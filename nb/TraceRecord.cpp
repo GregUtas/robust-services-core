@@ -23,8 +23,6 @@
 #include <ostream>
 #include <string>
 #include "Formatters.h"
-#include "Singleton.h"
-#include "TraceBuffer.h"
 #include "TraceDump.h"
 
 using std::ostream;
@@ -34,12 +32,13 @@ using std::string;
 
 namespace NodeBase
 {
+const uint32_t TraceRecord::InvalidSlot = UINT32_MAX;
 const TraceRecord::Id TraceRecord::InvalidId = UINT8_MAX;
 
 //------------------------------------------------------------------------------
 
-TraceRecord::TraceRecord(size_t size, FlagId owner) :
-   size_(int16_t(size)),
+TraceRecord::TraceRecord(FlagId owner) :
+   slot_(InvalidSlot),
    owner_(owner),
    rid_(InvalidId)
 {
@@ -60,19 +59,5 @@ c_string TraceRecord::EventString() const
    static const string BlankEventStr(TraceDump::EvtWidth, SPACE);
 
    return BlankEventStr.c_str();
-}
-
-//------------------------------------------------------------------------------
-
-void* TraceRecord::operator new(size_t size)
-{
-   return Singleton< TraceBuffer >::Instance()->AddRecord(size);
-}
-
-//------------------------------------------------------------------------------
-
-void* TraceRecord::operator new(size_t size, void* where)
-{
-   return where;
 }
 }

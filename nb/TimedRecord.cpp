@@ -58,7 +58,8 @@ ThreadId TimedRecord::PrevTid_ = NIL_ID;
 
 //------------------------------------------------------------------------------
 
-TimedRecord::TimedRecord(size_t size, FlagId owner) : TraceRecord(size, owner),
+TimedRecord::TimedRecord(FlagId owner) :
+   TraceRecord(owner),
    nid_(SysThread::RunningThreadId()),
    ticks_(Clock::TicksNow())
 {

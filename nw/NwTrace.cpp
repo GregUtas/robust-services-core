@@ -34,7 +34,7 @@ using std::ostream;
 namespace NetworkBase
 {
 NwTrace::NwTrace(Id rid, const SysSocket* socket, word data) :
-   TimedRecord(sizeof(NwTrace), NetworkTracer),
+   TimedRecord(NetworkTracer),
    socket_(socket),
    data_(data),
    port_(NilIpPort)
@@ -45,7 +45,7 @@ NwTrace::NwTrace(Id rid, const SysSocket* socket, word data) :
 //------------------------------------------------------------------------------
 
 NwTrace::NwTrace(Id rid, const SysSocket* socket, word data, ipport_t port) :
-   TimedRecord(sizeof(NwTrace), NetworkTracer),
+   TimedRecord(NetworkTracer),
    socket_(socket),
    data_(data),
    port_(port)
@@ -56,7 +56,7 @@ NwTrace::NwTrace(Id rid, const SysSocket* socket, word data, ipport_t port) :
 //------------------------------------------------------------------------------
 
 NwTrace::NwTrace(Id rid, const SysSocket* socket, word data, ipport_t port,
-   const SysIpL3Addr& peer) : TimedRecord(sizeof(NwTrace), NetworkTracer),
+   const SysIpL3Addr& peer) : TimedRecord(NetworkTracer),
    socket_(socket),
    data_(data),
    port_(port),

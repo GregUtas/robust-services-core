@@ -74,10 +74,12 @@ Event::Event(Id eid, ServiceSM* owner, Location loc) :
    if(Context::RunningContextTraced(trans))
    {
       auto warp = Clock::TicksNow();
+      auto buff = Singleton< TraceBuffer >::Instance();
 
-      if(Singleton< TraceBuffer >::Instance()->ToolIsOn(ContextTracer))
+      if(buff->ToolIsOn(ContextTracer))
       {
-         new EventTrace(EventTrace::Creation, *this);
+         auto rec = new EventTrace(EventTrace::Creation, *this);
+         buff->Insert(rec);
       }
 
       if(trans != nullptr) trans->ResumeTime(warp);
@@ -99,10 +101,12 @@ Event::~Event()
    if(Context::RunningContextTraced(trans))
    {
       auto warp = Clock::TicksNow();
+      auto buff = Singleton< TraceBuffer >::Instance();
 
-      if(Singleton< TraceBuffer >::Instance()->ToolIsOn(ContextTracer))
+      if(buff->ToolIsOn(ContextTracer))
       {
-         new EventTrace(EventTrace::Deletion, *this);
+         auto rec = new EventTrace(EventTrace::Deletion, *this);
+         buff->Insert(rec);
       }
 
       if(trans != nullptr) trans->ResumeTime(warp);
@@ -139,7 +143,8 @@ Event* Event::BuildSnp(ServiceSM& owner, TriggerId tid)
 void Event::Capture
    (ServiceId sid, const State& state, EventHandler::Rc rc) const
 {
-   new HandlerTrace(sid, state, *this, rc);
+   auto rec = new HandlerTrace(sid, state, *this, rc);
+   Singleton< TraceBuffer >::Instance()->Insert(rec);
 }
 
 //------------------------------------------------------------------------------

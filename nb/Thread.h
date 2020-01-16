@@ -584,7 +584,7 @@ private:
    //  provides debugging information.
    //
    static void Trace(Thread* thr, fn_name_arg func,
-      TraceRecordId rid, word info = 0);
+      TraceRecordId rid, int32_t info = 0);
 
    //  Sets the signal to be raised or that is being handled.
    //

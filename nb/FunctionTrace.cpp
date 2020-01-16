@@ -26,10 +26,8 @@
 #include <iomanip>
 #include <ostream>
 #include <string>
-#include "Algorithms.h"
 #include "Debug.h"
 #include "FunctionName.h"
-#include "Memory.h"
 #include "Singleton.h"
 #include "SysThreadStack.h"
 #include "TraceBuffer.h"
@@ -50,8 +48,8 @@ const fn_depth FunctionTrace::MaxDispDepth = 40;
 
 //------------------------------------------------------------------------------
 
-FunctionTrace::FunctionTrace(fn_name_arg func, fn_depth depth,
-   size_t size) : TimedRecord(size, FunctionTracer),
+FunctionTrace::FunctionTrace(fn_name_arg func, fn_depth depth) :
+   TimedRecord(FunctionTracer),
    func_(func),
    depth_(depth),
    moved_(false),
@@ -158,6 +156,7 @@ void FunctionTrace::Capture(fn_name_arg func)
       return;
    }
 
+   auto buff = Singleton< TraceBuffer >::Instance();
    auto depth = SysThreadStack::FuncDepth() - 3;
 
    //  If this is a destructor call that is not one level deeper than the last
@@ -170,8 +169,6 @@ void FunctionTrace::Capture(fn_name_arg func)
    //
    if(FunctionName::rfind(func, FunctionName::DtorTag) != string::npos)
    {
-      auto buff = Singleton< TraceBuffer >::Instance();
-
       if(!buff->ImmediateTraceOn())
       {
          auto insert = (buff->LastDtorDepth() != depth - 1);
@@ -192,14 +189,16 @@ void FunctionTrace::Capture(fn_name_arg func)
 
          if(insert)
          {
-            new FunctionTrace(Cxx_delete, depth - 1, sizeof(FunctionTrace));
+            auto rec = new FunctionTrace(Cxx_delete, depth - 1);
+            buff->Insert(rec);
          }
 
          buff->SetLastDtorDepth(depth);
       }
    }
 
-   new FunctionTrace(func, depth, sizeof(FunctionTrace));
+   auto rec = new FunctionTrace(func, depth);
+   buff->Insert(rec);
 }
 
 //------------------------------------------------------------------------------
@@ -290,7 +289,9 @@ void FunctionTrace::InvertCtors(fn_depth limit)
    FunctionTrace* curr = nullptr;
    const size_t MaxCtors = 24;
    FunctionTrace* ctors[MaxCtors];
-   size_t count = 0;
+
+   ctors[0] = this;
+   size_t count = 1;
 
    //  Scan ahead for constructors from depth_ - 1 back to LIMIT.
    //
@@ -354,13 +355,6 @@ void FunctionTrace::InvertCtors(fn_depth limit)
 
    if(count > 0)
    {
-      //  If the last constructor resides above "this", then the buffer
-      //  wrapped around somewhere in the constructor chain.  This will
-      //  corrupt the buffer when Memory::Copy is invoked.  It's not
-      //  worth the effort to handle it as a special case, so just return.
-      //
-      if(uintptr_t(ctors[count - 1]) < uintptr_t(this)) return;
-
       //  We need to invert at least one constructor.  Find the function
       //  that follows the outermost constructor and set its stop_ flag.
       //
@@ -371,9 +365,14 @@ void FunctionTrace::InvertCtors(fn_depth limit)
       curr = static_cast< FunctionTrace* >(rec);
       curr->stop_ = true;
 
-      //  Invert the constructors, starting with the deepest one.
+      //  Invert the constructors, starting with the deepest one.  This is
+      //  done by swapping their locations in the buffer: ctors_[i] swaps
+      //  with ctors_[count - (i + 1)].  Also swap their invocation times
+      //  and mark them as having moved.
       //
-      for(size_t i = 0; i < count; ++i)
+      auto swaps = count / 2;
+
+      for(size_t i = 0; i < swaps; ++i)
       {
          //  Make a copy of the constructor to be inserted at the front of the
          //  chain.  Reset its time to that of Base.ctor (first in the chain)
@@ -383,16 +382,31 @@ void FunctionTrace::InvertCtors(fn_depth limit)
          //  but it points to successive base class constructors as they move
          //  to the top of the chain.)
          //
-         FunctionTrace ft = *ctors[i];
-         ft.SetTicks(this->GetTicks());
-         ft.moved_ = true;
-         auto src = (ptr_t) this;
-         auto dst = src + sizeof(FunctionTrace);
-         auto len = ptrdiff(ctors[i], src);
-         Memory::Copy(dst, src, len);
-         Memory::Copy(src, &ft, sizeof(FunctionTrace));
+         auto ft1 = ctors[i];
+         auto ft2 = ctors[count - (i + 1)];
+         buff->Swap(ft1, ft2);
+         auto ticks1 = ft1->GetTicks();
+         auto ticks2 = ft2->GetTicks();
+         ft1->SetTicks(ticks2);
+         ft2->SetTicks(ticks1);
+         ft1->moved_ = true;
+         ft2->moved_ = true;
       }
    }
+}
+
+//------------------------------------------------------------------------------
+
+void* FunctionTrace::operator new(size_t size)
+{
+   return Singleton< TraceBuffer >::Instance()->AddFunction();
+}
+
+//------------------------------------------------------------------------------
+
+void* FunctionTrace::operator new(size_t size, void* where)
+{
+   return where;
 }
 
 //------------------------------------------------------------------------------

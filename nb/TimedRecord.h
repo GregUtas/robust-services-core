@@ -23,7 +23,6 @@
 #define TIMEDRECORD_H_INCLUDED
 
 #include "TraceRecord.h"
-#include <cstddef>
 #include <string>
 #include "Clock.h"
 #include "NbTypes.h"
@@ -73,7 +72,7 @@ protected:
    //  See TraceRecord for a description of the arguments.  Protected
    //  because this class is virtual.
    //
-   TimedRecord(size_t size, FlagId owner);
+   explicit TimedRecord(FlagId owner);
 private:
    //  The thread that was running when the function was invoked.
    //

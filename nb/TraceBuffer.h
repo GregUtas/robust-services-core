@@ -37,6 +37,7 @@
 namespace NodeBase
 {
    class TraceRecord;
+   class FunctionTrace;
 }
 
 //------------------------------------------------------------------------------
@@ -47,8 +48,7 @@ namespace NodeBase
 //  exist because breakpoint debugging cannot be used in the field.  There
 //  are a number of trace tools, each of which captures different events.
 //  They are controlled by commands available in CLI increments, and they
-//  record debug information by defining TraceRecord subclasses, which add
-//  themselves to the trace buffer.
+//  record debug information by defining TraceRecord subclasses.
 //
 //  The function tracer, for example, supports detailed debugging:
 //
@@ -63,13 +63,10 @@ class TraceBuffer : public Permanent
 {
    friend class Singleton< TraceBuffer >;
 public:
-   //> The maximum size of the buffer (in bytes).
+   //> The minimum and maximum sizes of the buffer (in log2).
    //
+   static const size_t MinSize;
    static const size_t MaxSize;
-
-   //  A string indicating that the buffer overflowed.
-   //
-   static fixed_string OverflowStr;
 
    //  A string indicating that no item was selected for tracing.
    //
@@ -124,24 +121,19 @@ public:
    //
    TraceRc SelectAll(bool on);
 
-   //  Sets the size of the buffer to KBS kilobytes.
+   //  Sets the size of the buffer so that it can hold 2^N records.
    //
-   TraceRc SetSize(size_t kbs);
+   TraceRc SetSize(size_t n);
+
+   //  Controls whether the buffer will wrap around when full.
+   //
+   TraceRc SetWrap(bool wrap);
 
    //  Returns true if the buffer is empty.
    //
    bool Empty() const;
 
-   //  Returns the number of functions that were not traced because the
-   //  buffer was locked.
-   //
-   size_t Blocks() const { return blocks_; }
-
-   //  Returns true if the buffer overflowed.
-   //
-   bool HasOverflowed() const { return ovfl_; }
-
-   //  Displays, in STREAM, the buffer's size and how full it is.
+   //  Displays, in STREAM, the buffer's current status.
    //
    void Query(std::ostream& stream) const;
 
@@ -161,10 +153,27 @@ public:
    //
    void StopTracing();
 
+   //  Adds RECORD to the buffer.  Deletes RECORD and returns false if
+   //  the buffer is locked.
+   //
+   bool Insert(TraceRecord* record);
+
+   //  Reserves memory for a FunctionTrace instance.
+   //
+   void* AddFunction();
+
+   //  Swaps the locations of RECORD1 and RECORD2.
+   //
+   void Swap(TraceRecord* record1, TraceRecord* record2) const;
+
    //  Displays all of the records in the trace buffer.  STREAM must be
    //  valid unless an immediate trace is in progress.
    //
    TraceRc DisplayTrace(std::ostream* stream, bool diff);
+
+   //  Displays status information before trace records are displayed.
+   //
+   void DisplayStart(std::ostream& stream) const;
 
    //  Returns true if trace records are being output immediately.
    //
@@ -190,11 +199,6 @@ public:
    //  Returns the invocations database.
    //
    const InvocationsTable& GetInvocations() const { return *invocations_; }
-
-   //  Reserves space in the buffer for a record of size nBytes and returns
-   //  a pointer to where the record can be placed.
-   //
-   void* AddRecord(size_t nBytes);
 
    //  Updates RECORD to reference the next record in the buffer.  If RECORD
    //  is nullptr, it is set to the buffer's first record.  RECORD is set to
@@ -226,10 +230,6 @@ public:
    //
    void Unlock();
 
-   //  Returns true if the trace buffer is blocked from adding a new record.
-   //
-   bool IsLocked();
-
    //  Marks objects held by trace buffer records as being in use.
    //
    void ClaimBlocks() override;
@@ -242,8 +242,8 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 private:
-   //  Creates a buffer of InitialSize.  Private because this singleton is
-   //  not subclassed.
+   //  Creates a buffer of MinSize.  Private because this singleton is not
+   //  subclassed.
    //
    TraceBuffer();
 
@@ -255,27 +255,15 @@ private:
    //
    typedef std::pair< fn_name_arg, size_t > FunctionCount;
 
-   //  Returns the maximum number of records that the trace buffer could
-   //  currently contain.
+   //  Allocates space for recording 2^N trace records.  Throws an exception
+   //  if EX is set and allocation fails, else returns false.
    //
-   size_t MaxRecords() const;
+   bool AllocBuffers(size_t n, bool ex);
 
-   //  Displays records when immediate tracing is active.
+   //  Allocates the next available slot for a TraceRecord subclass.  Returns
+   //  SIZE_MAX if no more slots are available or the buffer is locked.
    //
-   void ImmediateDisplay();
-
-   //  Deletes trace records from start_ to END to make room for the next
-   //  record.
-   //
-   void PurgeRecords(size_t end);
-
-   //> The initial size of the buffer (in bytes).
-   //
-   static const size_t InitialSize;
-
-   //  The value written after the last record added to the buffer.
-   //
-   static const uword EndMarker;
+   size_t AllocSlot();
 
    //  Flags that indicate which trace tools are enabled.
    //
@@ -285,21 +273,30 @@ private:
    //
    Flags filters_;
 
-   //  Buffer for trace records (acts as a *circular* buffer).
+   //  Buffer for a sequence of trace records.
    //
-   uword* buff_;
+   TraceRecord** buff_;
 
-   //  The current size of buff_, *minus* space for an end-of-buffer marker.
+   //  Buffer for FunctionTrace records, to avoid the overhead of a heap
+   //  or object pool.
+   //
+   FunctionTrace* funcs_;
+
+   //  The current size of buff_ and funcs_.
    //
    size_t size_;
 
-   //  The offset of the first record in buff_.
+   //  The next available slot in buff_.
    //
-   size_t start_;
+   std::atomic_size_t bnext_;
 
-   //  The offset after the last record in buff_.
+   //  The next available slot in funcs_.
    //
-   size_t end_;
+   std::atomic_size_t fnext_;
+
+   //  Set if the buffer should wrap around when full.
+   //
+   bool wrap_;
 
    //  Set if the buffer wrapped around (overflow).
    //
@@ -307,15 +304,11 @@ private:
 
    //  The most recent trace record added to the buffer.
    //
-   TraceRecord* lastRecord_;
+   const TraceRecord* lastRecord_;
 
    //  The depth of the most recent destructor.
    //
    fn_depth dtorDepth_;
-
-   //  Blocks the creation of a new record while one is being constructed.
-   //
-   std::atomic_bool hardLock_;
 
    //  Blocks the creation of a new record if it would delete an existing one.
    //

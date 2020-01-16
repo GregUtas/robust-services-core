@@ -234,7 +234,8 @@ void* Memory::Alloc(size_t nBytes, MemoryType type, bool ex)
 
       if((buff != nullptr) && buff->ToolIsOn(MemoryTracer))
       {
-         new MemoryTrace(MemoryTrace::Alloc, &seg->data, type, size);
+         auto rec = new MemoryTrace(MemoryTrace::Alloc, &seg->data, type, size);
+         buff->Insert(rec);
       }
    }
 
@@ -299,7 +300,9 @@ void Memory::Free(const void* addr)
 
       if((buff != nullptr) && buff->ToolIsOn(MemoryTracer))
       {
-         new MemoryTrace(MemoryTrace::Free, addr, header->type, header->size);
+         auto rec = new MemoryTrace(MemoryTrace::Free,
+            addr, header->type, header->size);
+         buff->Insert(rec);
       }
    }
 

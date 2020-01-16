@@ -192,7 +192,14 @@ NwTrace* SysSocket::TraceEvent(TraceRecordId rid, word data)
    Debug::ft(SysSocket_TraceEvent);
 
    if(!TraceEnabled()) return nullptr;
-   if(tracing_) return new NwTrace(rid, this, data);
+
+   if(tracing_)
+   {
+      auto buff = Singleton< TraceBuffer >::Instance();
+      auto rec = new NwTrace(rid, this, data);
+      if(buff->Insert(rec)) return rec;
+   }
+
    return nullptr;
 }
 
@@ -211,7 +218,9 @@ NwTrace* SysSocket::TracePeer
 
    if(tracing_ || Trace(nwt->PortStatus(port)) || Trace(nwt->PeerStatus(peer)))
    {
-      return new NwTrace(rid, this, data, port, peer);
+      auto buff = Singleton< TraceBuffer >::Instance();
+      auto rec = new NwTrace(rid, this, data, port, peer);
+      if(buff->Insert(rec)) return rec;
    }
 
    return nullptr;
@@ -229,7 +238,9 @@ NwTrace* SysSocket::TracePort(TraceRecordId rid, ipport_t port, word data)
 
    if(tracing_ || Trace(Singleton< NwTracer >::Instance()->PortStatus(port)))
    {
-      return new NwTrace(rid, this, data, port);
+      auto buff = Singleton< TraceBuffer >::Instance();
+      auto rec = new NwTrace(rid, this, data, port);
+      if(buff->Insert(rec)) return rec;
    }
 
    return nullptr;

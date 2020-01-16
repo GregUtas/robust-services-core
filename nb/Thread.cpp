@@ -30,9 +30,11 @@
 #include <iomanip>
 #include <ios>
 #include <map>
+#include <new>
 #include <sstream>
 #include <utility>
 #include "Algorithms.h"
+#include "AllocationException.h"
 #include "Array.h"
 #include "CliThread.h"
 #include "CoutThread.h"
@@ -87,25 +89,40 @@ public:
    //  Creates a trace record for the event identified by RID, which
    //  occurred in function FUNC.  INFO is any debugging information.
    //
-   static void CaptureEvent(fn_name_arg func, Id rid, word info = 0);
+   static void CaptureEvent(fn_name_arg func, Id rid, int32_t info = 0);
 
    //  Overridden to display the trace record.
    //
    bool Display(ostream& stream, bool diff) override;
+
+   //  Overridden to allocate the trace record from the default heap,
+   //  because the buffer for FunctionTrace records does not support
+   //  subclasses with additional memory requirements.
+   //
+   static void* operator new(size_t size);
+
+   //  Overridden to return the record to the default heap.
+   //
+   static void operator delete(void* addr);
 private:
    //  Private to restrict creation to CaptureEvent.
    //
-   ThreadTrace(fn_name_arg func, fn_depth depth, Id rid, word info);
+   ThreadTrace(fn_name_arg func, fn_depth depth, Id rid, int32_t info);
+
+   //  Not subclassed.
+   //
+   ~ThreadTrace() = default;
 
    //  Additional debug information.
    //
-   const word info_;
+   const int32_t info_;
 };
 
 //------------------------------------------------------------------------------
 
-ThreadTrace::ThreadTrace(fn_name_arg func, fn_depth depth, Id rid, word info) :
-   FunctionTrace(func, depth, sizeof(ThreadTrace)),
+ThreadTrace::ThreadTrace(fn_name_arg func,
+   fn_depth depth, Id rid, int32_t info) :
+   FunctionTrace(func, depth),
    info_(info)
 {
    rid_ = rid;
@@ -117,7 +134,7 @@ fn_name Thread_EnterThread = "Thread.EnterThread";
 fn_name Thread_ExitBlockingOperation = "Thread.ExitBlockingOperation";
 fn_name ThreadTrace_CaptureEvent = "ThreadTrace.CaptureEvent";
 
-void ThreadTrace::CaptureEvent(fn_name_arg func, Id rid, word info)
+void ThreadTrace::CaptureEvent(fn_name_arg func, Id rid, int32_t info)
 {
    //  Do nothing if only invocation counts are being obtained.
    //
@@ -131,14 +148,17 @@ void ThreadTrace::CaptureEvent(fn_name_arg func, Id rid, word info)
    //
    //  Adjust FuncDepth accordingly.
    //
-   auto depth = SysThreadStack::FuncDepth();
-
    switch(rid)
    {
    case PauseExit:
    case PauseEnter:
-      new ThreadTrace(func, depth - 2, rid, info);
+   {
+      auto depth = SysThreadStack::FuncDepth();
+      auto buff = Singleton< TraceBuffer >::Instance();
+      auto rec = new ThreadTrace(func, depth - 2, rid, info);
+      buff->Insert(rec);
       break;
+   }
    default:
       Debug::SwLog(ThreadTrace_CaptureEvent, "unexpected event", rid);
    }
@@ -178,6 +198,22 @@ bool ThreadTrace::Display(ostream& stream, bool diff)
    }
 
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+void ThreadTrace::operator delete(void* addr)
+{
+   ::operator delete(addr);
+}
+
+//------------------------------------------------------------------------------
+
+void* ThreadTrace::operator new(size_t size)
+{
+   auto addr = ::operator new(size, std::nothrow);
+   if(addr != nullptr) return addr;
+   throw AllocationException(MemPerm, size);
 }
 
 //==============================================================================
@@ -3465,7 +3501,8 @@ string Thread::to_str() const
 
 //------------------------------------------------------------------------------
 
-void Thread::Trace(Thread* thr, fn_name_arg func, TraceRecordId rid, word info)
+void Thread::Trace(Thread* thr,
+   fn_name_arg func, TraceRecordId rid, int32_t info)
 {
    if(thr == nullptr) thr = RunningThread(false);
    if(thr == nullptr) return;
@@ -3487,7 +3524,6 @@ bool Thread::TraceRunningThread(Thread*& thr)
    //  function tracing is not on.
    //
    auto buff = Singleton< TraceBuffer >::Instance();
-   if(buff->IsLocked()) return false;
    if(!buff->ToolIsOn(FunctionTracer)) return false;
 
    //  If the running thread is unknown, find it while taking care not

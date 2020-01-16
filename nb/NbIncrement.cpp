@@ -2750,6 +2750,16 @@ class BuffSizeText : public CliText
 public: BuffSizeText();
 };
 
+class BuffWrapParm : public CliBoolParm
+{
+public: BuffWrapParm();
+};
+
+class BuffWrapText : public CliText
+{
+public: BuffWrapText();
+};
+
 class ToolListParm : public CliTextParm
 {
 public: ToolListParm();
@@ -2763,14 +2773,26 @@ public: ToolListText();
 fixed_string BuffSizeExpl = "buffer size in KBs";
 
 BuffSizeParm::BuffSizeParm() :
-   CliIntParm(BuffSizeExpl, 128, TraceBuffer::MaxSize >> 10) { }
+   CliIntParm(BuffSizeExpl, TraceBuffer::MinSize, TraceBuffer::MaxSize) { }
 
 fixed_string BuffSizeTextStr = "buffsize";
-fixed_string BuffSizeTextExpl = "size of event trace buffer";
+fixed_string BuffSizeTextExpl = "capacity of trace buffer (=2^N events)";
 
 BuffSizeText::BuffSizeText() : CliText(BuffSizeTextExpl, BuffSizeTextStr)
 {
    BindParm(*new BuffSizeParm);
+}
+
+fixed_string BuffWrapExpl = "allow trace buffer to wrap around?";
+
+BuffWrapParm::BuffWrapParm() : CliBoolParm(BuffWrapExpl) { }
+
+fixed_string BuffWrapTextStr = "wrap";
+fixed_string BuffWrapTextExpl = "whether trace buffer can wrap around";
+
+BuffWrapText::BuffWrapText() : CliText(BuffWrapTextExpl, BuffWrapTextStr)
+{
+   BindParm(*new BuffWrapParm);
 }
 
 fixed_string ToolListExpl = "tools to set: string of tool abbreviations";
@@ -2793,6 +2815,7 @@ SetWhatParm::SetWhatParm() : CliTextParm(SetWhatExpl)
 {
    BindText(*new ToolListText, SetCommand::SetToolListIndex);
    BindText(*new BuffSizeText, SetCommand::SetBuffSizeIndex);
+   BindText(*new BuffWrapText, SetCommand::SetBuffWrapIndex);
 }
 
 fixed_string SetStr = "set";
@@ -2857,6 +2880,12 @@ word SetCommand::ProcessSubcommand(CliThread& cli, id_t index) const
       if(!GetIntParm(buffSize, cli)) return -1;
       cli.EndOfInput(false);
       rc = buff->SetSize(buffSize);
+      break;
+
+   case SetBuffWrapIndex:
+      if(!GetBoolParm(flag, cli)) return -1;
+      cli.EndOfInput(false);
+      rc = buff->SetWrap(flag);
       break;
 
    default:

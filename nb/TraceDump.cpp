@@ -33,7 +33,6 @@ using std::string;
 
 namespace NodeBase
 {
-fixed_string StartOfTrace = "START OF TRACE";
 fixed_string EndOfTrace = "END OF TRACE";
 
 //                     0         1         2         3         4         5
@@ -42,8 +41,6 @@ fixed_string Header1 = "mm:ss.ttt  Thr  Event  TotalTime   NetTime  Function";
 fixed_string Header2 = "---------  ---  -----  ---------   -------  --------";
 
 //------------------------------------------------------------------------------
-
-fixed_string BlockedStr = "Functions not captured because buffer was locked: ";
 
 fn_name TraceDump_Generate = "TraceDump.Generate";
 
@@ -54,15 +51,7 @@ TraceRc TraceDump::Generate(ostream& stream, bool diff)
    FunctionTrace::Postprocess();
 
    auto buff = Singleton< TraceBuffer >::Instance();
-
-   stream << StartOfTrace << buff->strTimePlace() << CRLF << CRLF;
-
-   auto blocks = buff->Blocks();
-   auto overflow = buff->HasOverflowed();
-
-   if(blocks > 0) stream << BlockedStr << blocks << CRLF;
-   if(overflow) stream << TraceBuffer::OverflowStr << CRLF;
-   if((blocks > 0) || overflow) stream << CRLF;
+   buff->DisplayStart(stream);
 
    stream << Header1 << CRLF;
    stream << Header2 << CRLF;

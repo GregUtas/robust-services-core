@@ -557,9 +557,12 @@ Pooled* ObjectPool::DeqBlock(size_t size)
 
    if(Debug::TraceOn())
    {
-      if(Singleton< TraceBuffer >::Instance()->ToolIsOn(ObjPoolTracer))
+      auto buff = Singleton< TraceBuffer >::Instance();
+
+      if(buff->ToolIsOn(ObjPoolTracer))
       {
-         new ObjectPoolTrace(ObjectPoolTrace::Dequeued, *item);
+         auto rec = new ObjectPoolTrace(ObjectPoolTrace::Dequeued, *item);
+         buff->Insert(rec);
       }
    }
 
@@ -664,9 +667,12 @@ void ObjectPool::EnqBlock(Pooled* obj, bool deleted)
 
    if(Debug::TraceOn() && deleted)
    {
-      if(Singleton< TraceBuffer >::Instance()->ToolIsOn(ObjPoolTracer))
+      auto buff = Singleton< TraceBuffer >::Instance();
+
+      if(buff->ToolIsOn(ObjPoolTracer))
       {
-         new ObjectPoolTrace(ObjectPoolTrace::Enqueued, *obj);
+         auto rec = new ObjectPoolTrace(ObjectPoolTrace::Enqueued, *obj);
+         buff->Insert(rec);
       }
    }
 
@@ -983,7 +989,9 @@ void ObjectPool::RecoverBlocks()
             {
                if(buff->ToolIsOn(ObjPoolTracer))
                {
-                  new ObjectPoolTrace(ObjectPoolTrace::Recovered, *p);
+                  auto rec =
+                     new ObjectPoolTrace(ObjectPoolTrace::Recovered, *p);
+                  buff->Insert(rec);
                }
             }
 

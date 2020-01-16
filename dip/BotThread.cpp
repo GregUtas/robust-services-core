@@ -213,9 +213,12 @@ void BotThread::ProcessMsg(MsgBuffer* msg) const
 
    if(Debug::TraceOn())
    {
-      if(Singleton< TraceBuffer >::Instance()->ToolIsOn(DipTracer))
+      auto tbuff = Singleton< TraceBuffer >::Instance();
+
+      if(tbuff->ToolIsOn(DipTracer))
       {
-         new BotTrace(BotTrace::IcMsg, *ipb);
+         auto rec = new BotTrace(BotTrace::IcMsg, *ipb);
+         tbuff->Insert(rec);
       }
    }
 

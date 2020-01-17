@@ -71,6 +71,10 @@ public:
    //
    fn_name Func() const { return func_; }
 
+   //  Returns the depth of the function whose invocation this record captured.
+   //
+   fn_depth Depth() const { return depth_; }
+
    //  Returns the net time spent in the function that this record captured.
    //
    usecs_t Net() const { return net_; }
@@ -115,11 +119,6 @@ private:
    //  Calculates the gross time spent in a function call.
    //
    usecs_t CalcGrossTime();
-
-   //  Searches ahead for the invocation of a delete operator at the same
-   //  level as this function.
-   //
-   bool FindDeleteOperator();
 
    //  Searches for constructor invocations associated with this record and
    //  reorders them so that they run from leaf class to base class instead

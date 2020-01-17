@@ -47,6 +47,10 @@ namespace FunctionName
    //
    int compare(fn_name_arg func, c_string str);
 
+   //  Returns true if FUNC identifies a destructor.
+   //
+   bool is_dtor(fn_name_arg func);
+
    //  Constants for tools.  The "tags" appear as substrings in the
    //  types of functions indicated.
    //
@@ -54,7 +58,6 @@ namespace FunctionName
    extern fixed_string CtorTag;   // in a constructor
    extern fixed_string DtorTag;   // in a destructor
    extern fixed_string OpNewTag;  // in operator new
-   extern fixed_string OpDelTag;  // in operator delete
 }
 }
 #endif

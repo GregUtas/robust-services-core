@@ -29,6 +29,7 @@
 #include "Debug.h"
 #include "FunctionName.h"
 #include "Singleton.h"
+#include "SysThread.h"
 #include "SysThreadStack.h"
 #include "TraceBuffer.h"
 #include "TraceDump.h"
@@ -79,7 +80,8 @@ void FunctionTrace::CalcFuncTime()
    gross_ = CalcGrossTime();
 
    //  The net time for a function at depth_ is its gross time minus
-   //  the sum of all gross times spent in functions at depth_ + 1.
+   //  the sum of all gross times spent in functions at depth_ + 1
+   //  on the same thread.
    //
    net_ = gross_;
    if(net_ == 0) return;
@@ -88,8 +90,8 @@ void FunctionTrace::CalcFuncTime()
    {
       auto curr = static_cast< FunctionTrace* >(rec);
 
+      if(curr->Nid() != nid) continue;
       if(curr->depth_ <= depth_) return;
-      if(curr->Nid() != nid) return;
 
       if(curr->depth_ == (depth_ + 1))
       {
@@ -111,28 +113,35 @@ usecs_t FunctionTrace::CalcGrossTime()
    TraceRecord* rec = this;
    FunctionTrace* prev = this;
    auto nid = Nid();
-   ticks_t gross;
+   ticks_t others = 0;
 
    //  A function's gross time is the time between when it was invoked and
    //  when the next function at the same (or lower) depth was invoked--in
-   //  the same thread and during the same transaction.
+   //  the same thread and during the same transaction.  Subtract any time
+   //  spent in other threads.
    //
    for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
    {
       auto curr = static_cast< FunctionTrace* >(rec);
 
-      if(curr->Nid() != nid) break;
-
-      if(curr->depth_ <= depth_)
+      if(prev->Nid() != nid)
       {
-         gross = curr->GetTicks() - GetTicks();
-         return Clock::TicksToUsecs(gross);
+         others += (curr->GetTicks() - prev->GetTicks());
+      }
+
+      if(curr->Nid() == nid)
+      {
+         if(curr->depth_ <= depth_)
+         {
+            auto gross = curr->GetTicks() - GetTicks() - others;
+            return Clock::TicksToUsecs(gross);
+         }
       }
 
       prev = curr;
    }
 
-   gross = prev->GetTicks() - GetTicks();
+   auto gross = prev->GetTicks() - GetTicks() - others;
    return Clock::TicksToUsecs(gross);
 }
 
@@ -162,38 +171,27 @@ void FunctionTrace::Capture(fn_name_arg func)
    //  If this is a destructor call that is not one level deeper than the last
    //  destructor or function, add a call to a compiler-generated "C++.delete"
    //  function.  The compiler generates this code to invoke a delete operator
-   //  after a destructor.  If it turns out that a delete operator is not
-   //  invoked, Postprocess (see below) invalidates this call to C++.delete.
-   //  Because many spurious instances of C++.delete are invalidated, don't
-   //  add any during immediate tracing.
+   //  after a destructor.
    //
-   if(FunctionName::rfind(func, FunctionName::DtorTag) != string::npos)
+   if(FunctionName::is_dtor(func))
    {
-      if(!buff->ImmediateTraceOn())
+      auto nid = SysThread::RunningThreadId();
+      auto insert = (buff->LastDtorDepth(nid) != depth - 1);
+
+      if(!insert)
       {
-         auto insert = (buff->LastDtorDepth() != depth - 1);
+         auto rec = buff->LastFunction(nid);
 
-         if(!insert)
+         if(rec != nullptr)
          {
-            auto rec = buff->LastRecord();
-
-            if(rec != nullptr)
-            {
-               if(rec->Owner() == FunctionTracer)
-               {
-                  auto last = static_cast< const FunctionTrace* >(rec);
-                  insert = (last->depth_ != depth - 1);
-               }
-            }
+            insert = (rec->depth_ != depth - 1);
          }
+      }
 
-         if(insert)
-         {
-            auto rec = new FunctionTrace(Cxx_delete, depth - 1);
-            buff->Insert(rec);
-         }
-
-         buff->SetLastDtorDepth(depth);
+      if(insert)
+      {
+         auto rec = new FunctionTrace(Cxx_delete, depth - 1);
+         buff->Insert(rec);
       }
    }
 
@@ -239,40 +237,6 @@ bool FunctionTrace::Display(ostream& stream, bool diff)
 // if(stop_) stream << '#';
 
    return true;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name FunctionTrace_FindDeleteOperator = "FunctionTrace.FindDeleteOperator";
-
-bool FunctionTrace::FindDeleteOperator()
-{
-   Debug::ft(FunctionTrace_FindDeleteOperator);
-
-   auto buff = Singleton< TraceBuffer >::Instance();
-   auto mask = FTmask;
-   auto n = 500;
-   TraceRecord* rec = this;
-
-   //  Search the next N function calls to see if this function (C++.delete)
-   //  invoked a delete operator.  The operator should be at depth_ + 1.
-   //
-   for(buff->Next(rec, mask); ((rec != nullptr) && (n > 0));
-      buff->Next(rec, mask), --n)
-   {
-      auto curr = static_cast< FunctionTrace* >(rec);
-
-      if(curr->depth_ <= depth_) return false;
-
-      if((curr->depth_ == depth_ + 1) &&
-         (FunctionName::rfind
-            (curr->func_, FunctionName::OpDelTag) != string::npos))
-      {
-         return true;
-      }
-   }
-
-   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -464,23 +428,6 @@ void FunctionTrace::Postprocess()
             if(curr->moved_) continue;
             curr->InvertCtors(limit);
             limit = 1;
-            continue;
-         }
-
-         if(FunctionName::compare(curr->func_, Cxx_delete) == 0)
-         {
-            //  A "C++.delete" function is inserted ahead of a destructor that
-            //  is other than one level deeper than the previous function.  It
-            //  represents a compiler-generated delete function that invokes
-            //  destructors (starting with the leaf class), followed by the
-            //  delete operator.  Therefore, if a delete operator at this depth
-            //  soon appears in the trace, this record is retained; otherwise,
-            //  it is invalidated.
-            //
-            if(!curr->FindDeleteOperator())
-            {
-               curr->Nullify();
-            }
             continue;
          }
       }

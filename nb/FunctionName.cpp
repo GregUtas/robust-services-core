@@ -33,7 +33,6 @@ fixed_string FunctionName::TypeStr = "fn_name";
 fixed_string FunctionName::CtorTag = ".ctor";
 fixed_string FunctionName::DtorTag = ".dtor";
 fixed_string FunctionName::OpNewTag = ".operator new";
-fixed_string FunctionName::OpDelTag = ".operator delete";
 
 //------------------------------------------------------------------------------
 
@@ -48,6 +47,25 @@ size_t FunctionName::find(fn_name_arg func, c_string str)
 {
    string name(func);
    return name.find(str);
+}
+
+//------------------------------------------------------------------------------
+
+bool FunctionName::is_dtor(fn_name_arg func)
+{
+   //  This is invoked on every function capture, so it needs to be fast.
+   //  It checks if the tail end of FUNC matches ".dtor".
+   //
+   static int DtorLen = strlen(DtorTag);
+
+   int j = 0;
+
+   for(int i = strlen(func) - DtorLen; (i >= 0) && (j < DtorLen); ++i, ++j)
+   {
+      if(func[i] != DtorTag[j]) return false;
+   }
+
+   return (j == DtorLen);
 }
 
 //------------------------------------------------------------------------------

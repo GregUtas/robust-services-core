@@ -30,6 +30,7 @@
 #include <string>
 #include <utility>
 #include "NbTypes.h"
+#include "SysDecls.h"
 #include "SysTime.h"
 #include "SysTypes.h"
 #include "ToolTypes.h"
@@ -207,17 +208,15 @@ public:
    //
    void Next(TraceRecord*& record, const Flags& mask) const;
 
-   //  Returns the last record added to the trace buffer.
+   //  Returns the FunctionTrace record for the most recent function recorded
+   //  on the thread identified by NID.
    //
-   const TraceRecord* LastRecord() const { return lastRecord_; }
+   const FunctionTrace* LastFunction(SysThreadId nid) const;
 
-   //  Returns the depth of the most recent destructor.
+   //  Returns the depth of the most recent destructor recorded on the thread
+   //  identified by NID.
    //
-   fn_depth LastDtorDepth() const { return dtorDepth_; }
-
-   //  Sets the depth of the most recent destructor.
-   //
-   void SetLastDtorDepth(fn_depth depth) { dtorDepth_ = depth; }
+   fn_depth LastDtorDepth(SysThreadId nid) const;
 
    //  Invoked before using the Next function for iteration.  This allows new
    //  records to be added to the buffer but prevents an existing record from
@@ -301,14 +300,6 @@ private:
    //  Set if the buffer wrapped around (overflow).
    //
    bool ovfl_;
-
-   //  The most recent trace record added to the buffer.
-   //
-   const TraceRecord* lastRecord_;
-
-   //  The depth of the most recent destructor.
-   //
-   fn_depth dtorDepth_;
 
    //  Blocks the creation of a new record if it would delete an existing one.
    //

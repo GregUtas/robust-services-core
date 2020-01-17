@@ -26,6 +26,7 @@
 #include "Debug.h"
 #include "Element.h"
 #include "Formatters.h"
+#include "FunctionName.h"
 #include "FunctionTrace.h"
 #include "InitFlags.h"
 #include "Memory.h"
@@ -111,8 +112,6 @@ TraceBuffer::TraceBuffer() :
    fnext_(0),
    wrap_(false),
    ovfl_(false),
-   lastRecord_(nullptr),
-   dtorDepth_(-1),
    softLocks_(0),
    immediate_(false),
    stream_(nullptr),
@@ -301,8 +300,6 @@ TraceRc TraceBuffer::Clear()
    bnext_ = 0;
    fnext_ = 0;
    ovfl_ = false;
-   lastRecord_ = nullptr;
-   dtorDepth_ = -1;
    softLocks_ = 0;
    blocks_ = 0;
    invocations_->clear();
@@ -405,7 +402,6 @@ bool TraceBuffer::Insert(TraceRecord* record)
 
    record->slot_ = slot;
    buff_[slot] = record;
-   lastRecord_ = record;
    return true;
 }
 
@@ -418,9 +414,58 @@ void TraceBuffer::Lock()
 
 //------------------------------------------------------------------------------
 
+fn_depth TraceBuffer::LastDtorDepth(SysThreadId nid) const
+{
+   if(bnext_ == 0) return -1;
+   size_t i = bnext_;
+   size_t count = 0;
+
+   for(auto rec = buff_[--i]; i != SIZE_MAX; rec = buff_[--i])
+   {
+      if((rec != nullptr) && (rec->owner_ == FunctionTracer))
+      {
+         auto ft = static_cast< FunctionTrace* >(rec);
+
+         if((ft->Nid() == nid) && FunctionName::is_dtor(ft->Func()))
+         {
+            return ft->Depth();
+         }
+
+         //  The purpose of this function is to see if a destructor isn't
+         //  the first one in a chain of destructor calls.  The search is
+         //  therefore limited to the previous 30 functions.
+         //
+         if(++count > 30) return -1;
+      }
+   }
+
+   return -1;
+}
+
+//------------------------------------------------------------------------------
+
+const FunctionTrace* TraceBuffer::LastFunction(SysThreadId nid) const
+{
+   if(bnext_ == 0) return nullptr;
+   size_t i = bnext_;
+
+   for(auto rec = buff_[--i]; i != SIZE_MAX; rec = buff_[--i])
+   {
+      if((rec != nullptr) && (rec->owner_ == FunctionTracer))
+      {
+         auto ft = static_cast< FunctionTrace* >(rec);
+         if(ft->Nid() == nid) return ft;
+      }
+   }
+
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
 void TraceBuffer::Next(TraceRecord*& record, const Flags& mask) const
 {
-   if(Empty())
+   if(bnext_ == 0)
    {
       record = nullptr;
       return;

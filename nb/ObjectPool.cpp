@@ -195,6 +195,7 @@ ObjectPool::ObjectPool
    availCount_(0),
    totalCount_(0),
    alarm_(nullptr),
+   delta_(0),
    corruptQHead_(false)
 {
    Debug::ft(ObjectPool_ctor);
@@ -414,6 +415,7 @@ void ObjectPool::AuditFreeq()
                   availCount_ = count;
                }
 
+               UpdateAlarm();
                buff->Unlock();
                return;
             }
@@ -450,6 +452,7 @@ void ObjectPool::AuditFreeq()
       }
 
       availCount_ = count;
+      UpdateAlarm();
    }
 }
 
@@ -551,9 +554,13 @@ Pooled* ObjectPool::DeqBlock(size_t size)
    }
 
    --availCount_;
-   UpdateAlarm(-1);
    stats_->lowCount_->Update(availCount_);
    stats_->allocCount_->Incr();
+
+   if(--delta_ <= -50)
+   {
+      UpdateAlarm();
+   }
 
    if(Debug::TraceOn())
    {
@@ -592,6 +599,7 @@ void ObjectPool::Display(ostream& stream,
    stream << prefix << "alarmName    : " << alarmName_ << CRLF;
    stream << prefix << "alarmExpl    : " << alarmExpl_ << CRLF;
    stream << prefix << "alarm        : " << strObj(alarm_) << CRLF;
+   stream << prefix << "delta        : " << int(delta_) << CRLF;
    stream << prefix << "corruptQHead : " << corruptQHead_ << CRLF;
 
    auto lead = prefix + spaces(2);
@@ -719,7 +727,11 @@ void ObjectPool::EnqBlock(Pooled* obj, bool deleted)
 
    if(deleted)
    {
-      UpdateAlarm(1);
+      if(++delta_ >= 50)
+      {
+         UpdateAlarm();
+      }
+
       stats_->freeCount_->Incr();
    }
 }
@@ -1067,6 +1079,7 @@ void ObjectPool::Shutdown(RestartLevel level)
    currSegments_ = 0;
    availCount_ = 0;
    totalCount_ = 0;
+   delta_ = 0;
    corruptQHead_ = false;
 }
 
@@ -1092,20 +1105,12 @@ void ObjectPool::Startup(RestartLevel level)
 
 fn_name ObjectPool_UpdateAlarm = "ObjectPool.UpdateAlarm";
 
-void ObjectPool::UpdateAlarm(int delta) const
+void ObjectPool::UpdateAlarm()
 {
    Debug::ft(ObjectPool_UpdateAlarm);
 
-   static int diff = 0;
-
    if(alarm_ == nullptr) return;
-
-   //  The following restricts alarm calculations to occasions when the
-   //  number of available blocks has changed by 50 items.
-   //
-   diff += delta;
-   if((diff < 50) && (diff > -50)) return;
-   delta = 0;
+   delta_ = 0;
 
    //  The alarm level is determined by the number of available blocks
    //  compared to the total number of blocks allocated:

@@ -53,8 +53,8 @@ public:
    //  Creates an alarm identified by NAME and explained by EXPL.  DELAY is
    //  for hysteresis control: the alarm's level cannot be decreased until
    //  DELAY seconds have passed.  A value of 0 avoids hysteresis control.
-   //  Instead of Log::Create, the application must Alarm::Create, which
-   //  returns nullptr unless a log should be generated.
+   //  Instead of Log::Create, the application must invoke Alarm::Create,
+   //  which returns nullptr unless a log should be generated.
    //
    Alarm(const std::string& name, const std::string& expl, secs_t delay);
 

@@ -22,7 +22,6 @@
 #ifndef FUNCTIONNAME_H_INCLUDED
 #define FUNCTIONNAME_H_INCLUDED
 
-#include <cstddef>
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -34,30 +33,14 @@ namespace NodeBase
 //
 namespace FunctionName
 {
-   //  Returns the first location of STR in FUNC, else string::npos.
-   //
-   size_t find(fn_name_arg func, c_string str);
-
-   //  Returns the last location of STR in FUNC, else string::npos.
-   //
-   size_t rfind(fn_name_arg func, c_string str);
-
-   //  Returns -1, 0, or 1 if FUNC is less than, equal to, or greater
-   //  than STR.
-   //
-   int compare(fn_name_arg func, c_string str);
-
-   //  Returns true if FUNC identifies a destructor.
-   //
-   bool is_dtor(fn_name_arg func);
-
    //  Constants for tools.  The "tags" appear as substrings in the
    //  types of functions indicated.
    //
    extern fixed_string TypeStr;   // type for a function name
    extern fixed_string CtorTag;   // in a constructor
    extern fixed_string DtorTag;   // in a destructor
-   extern fixed_string OpNewTag;  // in operator new
+   extern fixed_string OpNewTag;  // in a new operator
+   extern fixed_string OpDelTag;  // in a delete operator
 }
 }
 #endif

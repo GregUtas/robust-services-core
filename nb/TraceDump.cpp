@@ -48,7 +48,7 @@ TraceRc TraceDump::Generate(ostream& stream, bool diff)
 {
    Debug::ft(TraceDump_Generate);
 
-   FunctionTrace::Postprocess();
+   FunctionTrace::Process();
 
    auto buff = Singleton< TraceBuffer >::Instance();
    buff->DisplayStart(stream);

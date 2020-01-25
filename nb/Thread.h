@@ -228,6 +228,12 @@ public:
    //
    static bool HandleSignal(signal_t sig, uint32_t code);
 
+   //  Clears status flags that prevent stack overflows.  This function is
+   //  invoked during exception and signal handling so that logging and
+   //  function tracing do not remain permanently disabled.
+   //
+   static void ResetDebugFlags();
+
    //  Returns a string containing the thread's class name and identifiers.
    //
    std::string to_str() const;

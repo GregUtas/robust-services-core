@@ -247,9 +247,10 @@ private:
    //
    void EnsureAlarm();
 
-   //  Updates the status of the low availability alarm.
+   //  Updates the status of the low availability alarm.  DELTA is +1
+   //  when a block was enqueued and -1 when a block was dequeued.
    //
-   void UpdateAlarm() const;
+   void UpdateAlarm(int delta) const;
 
    //  Marks all blocks as orphaned and audits the free queue for sanity,
    //  unmarking its blocks so that they will not be recovered.

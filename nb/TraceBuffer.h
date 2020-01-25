@@ -145,8 +145,6 @@ public:
    //  Initiates tracing by all enabled tools using OPTIONS, which can include
    //  o 'i': immediate tracing--each trace record is immediately written to
    //    the file "immed.trace.txt" when it is created
-   //  o 's': slow tracing--captures function calls more accurately but is ten
-   //    times slower than regular tracing
    //
    TraceRc StartTracing(const std::string& options);
 
@@ -163,9 +161,9 @@ public:
    //
    void* AddFunction();
 
-   //  Swaps the locations of RECORD1 and RECORD2.
+   //  Moves SECOND to the slot that precedes FIRST.
    //
-   void Swap(TraceRecord* record1, TraceRecord* record2) const;
+   void MoveAbove(TraceRecord* second, const TraceRecord* first) const;
 
    //  Displays all of the records in the trace buffer.  STREAM must be
    //  valid unless an immediate trace is in progress.
@@ -201,12 +199,12 @@ public:
    //
    const InvocationsTable& GetInvocations() const { return *invocations_; }
 
-   //  Updates RECORD to reference the next record in the buffer.  If RECORD
-   //  is nullptr, it is set to the buffer's first record.  RECORD is set to
+   //  Updates CURR to reference the next record in the buffer.  If CURR
+   //  is nullptr, it is set to the buffer's first record.  CURR is set to
    //  nullptr when the end of the buffer is reached.  MASK specifies which
    //  type(s) of record(s) to look for (constants are defined in Tool.h).
    //
-   void Next(TraceRecord*& record, const Flags& mask) const;
+   void Next(TraceRecord*& curr, const Flags& mask) const;
 
    //  Returns the FunctionTrace record for the most recent function recorded
    //  on the thread identified by NID.
@@ -218,6 +216,10 @@ public:
    //
    fn_depth LastDtorDepth(SysThreadId nid) const;
 
+   //  Returns the record in SLOT.
+   //
+   TraceRecord* At(size_t slot) const { return buff_[slot]; }
+
    //  Invoked before using the Next function for iteration.  This allows new
    //  records to be added to the buffer but prevents an existing record from
    //  being purged to make room for a new one, which could cause a trap while
@@ -228,6 +230,11 @@ public:
    //  Unlocks the trace buffer after Lock() has been used for iteration.
    //
    void Unlock();
+
+   //  Returns true if the buffer has been processed, else marks it as having
+   //  been processed and returns false.
+   //
+   bool HasBeenProcessed();
 
    //  Marks objects held by trace buffer records as being in use.
    //
@@ -324,6 +331,10 @@ private:
    //  The table for recording the number of times that a function was invoked.
    //
    std::unique_ptr< InvocationsTable > invocations_;
+
+   //  Set when FunctionTrace.Process is invoked to reorder constructors.
+   //
+   bool processed_;
 };
 }
 #endif

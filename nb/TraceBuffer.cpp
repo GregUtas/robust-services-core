@@ -22,6 +22,7 @@
 #include "TraceBuffer.h"
 #include "TraceRecord.h"
 #include <cstdint>
+#include <cstring>
 #include <sstream>
 #include "Debug.h"
 #include "Element.h"
@@ -33,6 +34,7 @@
 #include "Registry.h"
 #include "Singleton.h"
 #include "SysFile.h"
+#include "SysThread.h"
 #include "ThisThread.h"
 #include "Tool.h"
 #include "ToolRegistry.h"
@@ -115,7 +117,8 @@ TraceBuffer::TraceBuffer() :
    softLocks_(0),
    immediate_(false),
    stream_(nullptr),
-   blocks_(0)
+   blocks_(0),
+   processed_(false)
 {
    AllocBuffers(MinSize, true);
    invocations_.reset(new InvocationsTable);
@@ -145,17 +148,23 @@ TraceBuffer::~TraceBuffer()
 }
 
 //------------------------------------------------------------------------------
-
-fn_name TraceBuffer_AddFunction = "TraceBuffer.AddFunction";
-
-FunctionTrace OverflowSlot(TraceBuffer_AddFunction, 1);
+//
+//  OverflowSlots_ provides a per-thread location for constructing function
+//  trace records when the buffer is full.
+//
+std::map< SysThreadId, FunctionTrace > OverflowSlots_;
 
 void* TraceBuffer::AddFunction()
 {
    //  If no more records can be added to the trace buffer, construct
-   //  FunctionTrace records in the scratch location OverflowSlot.
+   //  FunctionTrace records in the scratch location OverflowSlot.  It
+   //  is provided on a per-thread basis.
    //
-   if(ovfl_ && !wrap_) return &OverflowSlot;
+   if(ovfl_ && !wrap_)
+   {
+      return &OverflowSlots_[SysThread::RunningThreadId()];
+   }
+
    auto slot = fnext_.fetch_add(1);
    slot = slot & (size_ - 1);
    return &funcs_[slot];
@@ -303,6 +312,7 @@ TraceRc TraceBuffer::Clear()
    softLocks_ = 0;
    blocks_ = 0;
    invocations_->clear();
+   processed_ = false;
    return TraceOk;
 }
 
@@ -370,6 +380,19 @@ bool TraceBuffer::Empty() const
 
 //------------------------------------------------------------------------------
 
+fn_name TraceBuffer_HasBeenProcessed = "TraceBuffer.HasBeenProcessed";
+
+bool TraceBuffer::HasBeenProcessed()
+{
+   Debug::ft(TraceBuffer_HasBeenProcessed);
+
+   if(processed_) return true;
+   processed_ = true;
+   return false;
+}
+
+//------------------------------------------------------------------------------
+
 bool TraceBuffer::Insert(TraceRecord* record)
 {
    //  If immediate tracing is active, display the record now.
@@ -407,13 +430,6 @@ bool TraceBuffer::Insert(TraceRecord* record)
 
 //------------------------------------------------------------------------------
 
-void TraceBuffer::Lock()
-{
-   softLocks_.fetch_add(1);
-}
-
-//------------------------------------------------------------------------------
-
 fn_depth TraceBuffer::LastDtorDepth(SysThreadId nid) const
 {
    if(bnext_ == 0) return -1;
@@ -426,7 +442,8 @@ fn_depth TraceBuffer::LastDtorDepth(SysThreadId nid) const
       {
          auto ft = static_cast< FunctionTrace* >(rec);
 
-         if((ft->Nid() == nid) && FunctionName::is_dtor(ft->Func()))
+         if((ft->Nid() == nid) &&
+            (strstr(ft->Func(), FunctionName::DtorTag) != nullptr))
          {
             return ft->Depth();
          }
@@ -463,11 +480,38 @@ const FunctionTrace* TraceBuffer::LastFunction(SysThreadId nid) const
 
 //------------------------------------------------------------------------------
 
-void TraceBuffer::Next(TraceRecord*& record, const Flags& mask) const
+void TraceBuffer::Lock()
+{
+   softLocks_.fetch_add(1);
+}
+
+//------------------------------------------------------------------------------
+
+void TraceBuffer::MoveAbove(TraceRecord* second, const TraceRecord* first) const
+{
+   auto slot1 = first->slot_;
+
+   for(auto curr = second->slot_; NO_OP; --curr)
+   {
+      if(curr >= size_) curr = size_ - 1;
+      if(curr == slot1) break;
+      auto prev = curr - 1;
+      if(prev >= size_) prev = size_ - 1;
+      buff_[curr] = buff_[prev];
+      buff_[curr]->slot_ = curr;
+   }
+
+   buff_[slot1] = second;
+   second->slot_ = slot1;
+}
+
+//------------------------------------------------------------------------------
+
+void TraceBuffer::Next(TraceRecord*& curr, const Flags& mask) const
 {
    if(bnext_ == 0)
    {
-      record = nullptr;
+      curr = nullptr;
       return;
    }
 
@@ -480,23 +524,23 @@ void TraceBuffer::Next(TraceRecord*& record, const Flags& mask) const
    //  If RECORD is nullptr, start with the first entry, else continue
    //  with the next entry.
    //
-   if(record == nullptr)
+   if(curr == nullptr)
    {
       i = (wrap_ && ovfl_ ? bnext_ & (size_ - 1) : 0);
-      record = buff_[i];
+      curr = buff_[i];
    }
    else
    {
-      i = record->slot_;
+      i = curr->slot_;
 
       if(i == last)
       {
-         record = nullptr;
+         curr = nullptr;
          return;
       }
 
       if(++i >= size_) i = 0;
-      record = buff_[i];
+      curr = buff_[i];
    }
 
    while(true)
@@ -506,21 +550,21 @@ void TraceBuffer::Next(TraceRecord*& record, const Flags& mask) const
       //  one and then fail to get inserted in the trace buffer.  Should
       //  this occur, its slot will be invalid, so skip it.
       //
-      if((record != nullptr) &&
-         (record->slot_ != TraceRecord::InvalidSlot) &&
-         (mask.test(record->owner_)))
+      if((curr != nullptr) &&
+         (curr->slot_ != TraceRecord::InvalidSlot) &&
+         (mask.test(curr->owner_)))
       {
          return;
       }
 
       if(i == last)
       {
-         record = nullptr;
+         curr = nullptr;
          return;
       }
 
       if(++i >= size_) i = 0;
-      record = buff_[i];
+      curr = buff_[i];
    }
 }
 
@@ -555,7 +599,6 @@ void TraceBuffer::Query(ostream& stream) const
 fixed_string TracingOn = "Tracing is ON.";
 fixed_string TracingOff = "Tracing is OFF.";
 fixed_string ImmediateOn = "IMMEDIATE tracing is enabled.";
-fixed_string SlowOn = "SLOW tracing is enabled.";
 
 fn_name TraceBuffer_QueryTools = "TraceBuffer.QueryTools";
 
@@ -567,7 +610,6 @@ void TraceBuffer::QueryTools(ostream& stream) const
    {
       stream << TracingOn << CRLF;
       if(immediate_) stream << ImmediateOn << CRLF;
-      if(Debug::SlowTraceOn()) stream << SlowOn << CRLF;
    }
    else
    {
@@ -736,9 +778,6 @@ TraceRc TraceBuffer::StartTracing(const string& options)
       immediate_ = true;
    }
 
-   auto slow = (options.find('s') != string::npos);
-   Debug::SetSlowTrace(slow);
-
    if(Empty()) startTime_ = SysTime();
    Debug::FcFlags_.set(Debug::TracingActive);
    return TraceOk;
@@ -777,18 +816,6 @@ string TraceBuffer::strTimePlace() const
    stream << ": " << startTime_.to_str(SysTime::Alpha);
    stream << " on " << Element::Name();
    return stream.str();
-}
-
-//------------------------------------------------------------------------------
-
-void TraceBuffer::Swap(TraceRecord* record1, TraceRecord* record2) const
-{
-   auto slot1 = record1->slot_;
-   auto slot2 = record2->slot_;
-   record1->slot_ = slot2;
-   record2->slot_ = slot1;
-   buff_[slot1] = record2;
-   buff_[slot2] = record1;
 }
 
 //------------------------------------------------------------------------------

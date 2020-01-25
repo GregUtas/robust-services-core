@@ -78,6 +78,36 @@ using std::string;
 
 namespace NodeBase
 {
+//  The following provides a per-thread lock to prevent nested calls to
+//  functions that are invoked from Debug::ft and that, in turn, invoke
+//  functions that also invoke Debug::Ft.  Nested calls to these functions
+//  must be blocked to prevent a stack overflow.
+//
+std::map< SysThreadId, std::atomic_flag > FtLocks_;
+
+//  Returns the Debug::ft lock for the running thread.
+//
+std::atomic_flag& AccessFtLock()
+{
+   Debug::noft();
+
+   auto nid = SysThread::RunningThreadId();
+   auto iter = FtLocks_.find(nid);
+
+   if(iter != FtLocks_.cend())
+   {
+      return iter->second;
+   }
+
+   //  The lock must be created and initialized.
+   //
+   auto& lock = FtLocks_[nid];
+   lock.clear();
+   return lock;
+}
+
+//------------------------------------------------------------------------------
+
 //  Records invocations of Pause.
 //
 class ThreadTrace : public FunctionTrace
@@ -770,7 +800,7 @@ bool Orphans::ExitNow()
       if(orphan->Nid() == pid)
       {
          //  The orphan's entry must be overwritten before invoking other
-         //  functions so that we don't cause infinite recursion.  If the
+         //  functions so that we don't cause a stack overflow.  If the
          //  orphan holds a lock, the platform kernel must recover it now,
          //  when the orphan is deleted, or in a moment, when the orphan
          //  exits.
@@ -1253,6 +1283,8 @@ c_string Thread::AbbrName() const
 
 Thread* Thread::ActiveThread()
 {
+   Debug::noft();
+
    auto thr = ActiveThread_.load();
    if(thr == nullptr) return nullptr;
    if(thr->deleted_) return nullptr;
@@ -1796,6 +1828,8 @@ fn_name Thread_ExitIfSafe = "Thread.ExitIfSafe";
 
 void Thread::ExitIfSafe(debug32_t offset)
 {
+   Debug::noft();
+
    //  If the thread is blocked, it just invoked ExitBlockingOperation.  It
    //  can be trapped before it can even record the time when it started to
    //  run, so record it now.  This prevents ContextSwitches.DisplaySwitches
@@ -1806,10 +1840,17 @@ void Thread::ExitIfSafe(debug32_t offset)
       priv_->currStart_ = Clock::TicksNow();
    }
 
-   //  Reset action_ to prevent this from being invoked recursively.
-   //  If it isn't safe to exit the thread now, try again later.
+   //  Reset action_ to prevent this from being invoked again.  If it isn't
+   //  safe to exit the thread now, try again later.
    //
    priv_->action_ = RunThread;
+
+   //  This function can be invoked from Debug::ft and TrapCheck, and the
+   //  following functions also invoke Debug::Ft.  Reinvocations of this
+   //  function are therefore blocked to prevent a stack overflow.
+   //
+   auto& lock = AccessFtLock();
+   if(lock.test_and_set()) return;
 
    Debug::ft(Thread_ExitIfSafe);
 
@@ -1819,6 +1860,7 @@ void Thread::ExitIfSafe(debug32_t offset)
       throw SignalException(priv_->signal_, offset);
    }
 
+   lock.clear();
    priv_->action_ = ExitThread;
 }
 
@@ -1893,6 +1935,8 @@ SysThread::Priority Thread::FactionToPriority(Faction& faction)
 
 void Thread::FunctionInvoked(fn_name_arg func)
 {
+   Debug::noft();
+
    Thread* thr = nullptr;
 
    //  This handles the following:
@@ -1902,9 +1946,12 @@ void Thread::FunctionInvoked(fn_name_arg func)
    //
    if(Debug::FcFlags_.test(Debug::TracingActive))
    {
-      if(TraceRunningThread(thr))
+      auto& lock = AccessFtLock();
+      if(!lock.test_and_set())
       {
-         FunctionTrace::Capture(func);
+         if(TraceRunningThread(thr))
+            FunctionTrace::Capture(func);
+         lock.clear();
       }
    }
 
@@ -2370,6 +2417,8 @@ uint8_t Thread::MutexCount() const
 
 SysThreadId Thread::NativeThreadId() const
 {
+   Debug::noft();
+
    if(deleted_) return NIL_ID;
    if(systhrd_ != nullptr) return systhrd_->Nid();
    return NIL_ID;
@@ -2709,6 +2758,14 @@ void Thread::Reset(FlagId fid)
 
 //------------------------------------------------------------------------------
 
+void Thread::ResetDebugFlags()
+{
+   AccessFtLock().clear();
+   ExitSwLog(true);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Thread_ResetFlag = "Thread.ResetFlag";
 
 void Thread::ResetFlag(FlagId fid)
@@ -2814,7 +2871,7 @@ fn_name Thread_RunningThread = "Thread.RunningThread";
 
 Thread* Thread::RunningThread(bool assert)
 {
-   Debug::ft(Thread_RunningThread);
+   Debug::noft();
 
    //  The running thread is usually the active thread.  If it isn't,
    //  search the thread registry.
@@ -3025,7 +3082,7 @@ void Thread::SignalHandler(signal_t sig)
 {
    //  Reenable Debug functions before tracing this function.
    //
-   Debug::Reset();
+   ResetDebugFlags();
    Debug::ft(Thread_SignalHandler);
 
    //  Re-register for signals before handling the signal.
@@ -3056,6 +3113,8 @@ void Thread::SignalHandler(signal_t sig)
 
 void Thread::StackCheck()
 {
+   Debug::noft();
+
    //  Return immediately if stackBase_ has not been initialized.
    //
    if((priv_ == nullptr) || (priv_->stackBase_ == nullptr)) return;
@@ -3068,6 +3127,13 @@ void Thread::StackCheck()
 
    if(stacksize > ThreadAdmin::StackUsageLimit())
    {
+      //  This function can be invoked from Debug::ft, and SignalException's
+      //  constructor also invokes Debug::Ft.  Reinvocations of this function
+      //  are therefore blocked to prevent a stack overflow.
+      //
+      auto& lock = AccessFtLock();
+      if(lock.test_and_set()) return;
+
       priv_->stackBase_ = nullptr;
       throw SignalException(SIGSTACK1, stacksize);
    }
@@ -3548,6 +3614,8 @@ bool Thread::TraceRunningThread(Thread*& thr)
 
 void Thread::TrapCheck()
 {
+   Debug::noft();
+
    //  Wait to trap a thread if it has yet to be entered.
    //
    if((priv_ == nullptr) || !priv_->trap_ || !priv_->entered_) return;

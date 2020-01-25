@@ -2939,7 +2939,7 @@ class OptionsParm : public CliTextParm
 public: OptionsParm();
 };
 
-fixed_string OptionsExpl = "options (i=immediate, s=slow)";
+fixed_string OptionsExpl = "options (i=immediate)";
 
 OptionsParm::OptionsParm() : CliTextParm(OptionsExpl, true) { }
 

@@ -42,6 +42,10 @@ public:
    //
    FunctionTrace(fn_name_arg func, fn_depth depth);
 
+   //  Constructs a default record.
+   //
+   FunctionTrace();
+
    //  Virtual to allow subclassing.
    //
    virtual ~FunctionTrace() = default;
@@ -65,7 +69,7 @@ public:
    //  Invoked when tracing stops.  Modifies records to handle constructors
    //  and destructors.
    //
-   static void Postprocess();
+   static void Process();
 
    //  Returns the function whose invocation this record captured.
    //
@@ -74,6 +78,10 @@ public:
    //  Returns the depth of the function whose invocation this record captured.
    //
    fn_depth Depth() const { return depth_; }
+
+   //  Returns the depth of the function that invoked this one.
+   //
+   fn_depth InvokerDepth() const { return invokerDepth_; }
 
    //  Returns the net time spent in the function that this record captured.
    //
@@ -102,30 +110,46 @@ private:
    //
    static void* operator new(size_t size, void* where);
 
-   //  Overridden to handle the failure of placement new.  It will never be
-   //  invoked, but the compiler generates a warning if it is not supplied.
-   //
-   static void operator delete(void* addr, void* where) { }
-
    //  Captures a call to FUNC when tracing is enabled.  Applications use
    //  Debug::ft instead of invoking this directly.
    //
    static void Capture(fn_name_arg func);
 
+   //  Finds the minimum depth of all functions.
+   //
+   static void FindMinDepth();
+
+   //  Finds the depth of each function's invoker.
+   //
+   static void FindInvokerDepths();
+
+   //  Removes insertions of "C++.delete" that were not followed by a
+   //  call to a delete operator.
+   //
+   static void RemoveCxxDeletes();
+
+   //  This function is an inserted call to "C++.delete" at depth n.
+   //  Returns true if a call to a delete operator follows this function
+   //  at depth n+1 before another function at depth n is reached.
+   //
+   bool FindDeleteOperator();
+
+   //  Fixes constructor chains so that the constructor for the object
+   //  being created precedes its deepest base class constructor.
+   //
+   static void FixCtorChains();
+
+   //  Calculates the gross and net times spent in each function.
+   //
+   static void CalcFuncTimes();
+
    //  Calculates the gross and net times spent in a function call.
    //
-   void CalcFuncTime();
+   void CalcTimes();
 
    //  Calculates the gross time spent in a function call.
    //
    usecs_t CalcGrossTime();
-
-   //  Searches for constructor invocations associated with this record and
-   //  reorders them so that they run from leaf class to base class instead
-   //  of from base class to leaf class.  LIMIT is the minimum depth for one
-   //  of these constructor calls.
-   //
-   void InvertCtors(fn_depth limit);
 
    //  The name of function that was invoked.
    //
@@ -135,14 +159,12 @@ private:
    //
    fn_depth depth_;
 
-   //  Set for a constructor that was moved during reordering.
+   //  The nesting level of the function that *invoked* this one.
+   //  Set after tracing stops.  It *should* be depth_ - 1, but it
+   //  can be different because of how constructors are captured
+   //  and because not all functions invoke Debug::ft.
    //
-   bool moved_;
-
-   //  Set for a function call that follows a reordered constructor.
-   //  It acts as a boundary when reordering nested constructors.
-   //
-   bool stop_;
+   fn_depth invokerDepth_;
 
    //  The total time spent in the function call.  Calculated after
    //  tracing stops.

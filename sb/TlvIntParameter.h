@@ -48,7 +48,10 @@ template< typename T > class TlvIntParameter : public TlvParameter
 protected:
    //  Protected because this class is virtual.
    //
-   TlvIntParameter(ProtocolId prid, Id pid) : TlvParameter(prid, pid) { }
+   TlvIntParameter(ProtocolId prid, Id pid) : TlvParameter(prid, pid)
+   {
+      NodeBase::Debug::ft(TlvIntParameter_ctor());
+   }
 
    //  Protected because subclasses should be singletons.
    //
@@ -133,6 +136,8 @@ protected:
 private:
    //  See the comment in Singleton.h about fn_name's in a template header.
    //
+   inline static NodeBase::fn_name TlvIntParameter_ctor()
+      { return "TlvIntParameter.ctor"; }
    inline static NodeBase::fn_name TlvIntParameter_InjectMsg()
       { return "TlvIntParameter.InjectMsg"; }
    inline static NodeBase::fn_name TlvIntParameter_VerifyMsg()

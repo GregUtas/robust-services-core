@@ -551,7 +551,7 @@ Pooled* ObjectPool::DeqBlock(size_t size)
    }
 
    --availCount_;
-   UpdateAlarm();
+   UpdateAlarm(-1);
    stats_->lowCount_->Update(availCount_);
    stats_->allocCount_->Incr();
 
@@ -719,7 +719,7 @@ void ObjectPool::EnqBlock(Pooled* obj, bool deleted)
 
    if(deleted)
    {
-      UpdateAlarm();
+      UpdateAlarm(1);
       stats_->freeCount_->Incr();
    }
 }
@@ -1092,11 +1092,20 @@ void ObjectPool::Startup(RestartLevel level)
 
 fn_name ObjectPool_UpdateAlarm = "ObjectPool.UpdateAlarm";
 
-void ObjectPool::UpdateAlarm() const
+void ObjectPool::UpdateAlarm(int delta) const
 {
    Debug::ft(ObjectPool_UpdateAlarm);
 
+   static int diff = 0;
+
    if(alarm_ == nullptr) return;
+
+   //  The following restricts alarm calculations to occasions when the
+   //  number of available blocks has changed by 50 items.
+   //
+   diff += delta;
+   if((diff < 50) && (diff > -50)) return;
+   delta = 0;
 
    //  The alarm level is determined by the number of available blocks
    //  compared to the total number of blocks allocated:

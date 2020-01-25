@@ -470,7 +470,7 @@ word NtSaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    auto yield = cli.GenerateReportPreemptably();
    FunctionGuard guard(FunctionGuard::MakePreemptable, yield);
 
-   FunctionTrace::Postprocess();
+   FunctionTrace::Process();
    std::unique_ptr< FunctionProfiler > fp(new FunctionProfiler);
    if(fp == nullptr) return cli.Report(-7, AllocationError);
    rc = fp->Generate(*stream, sort);

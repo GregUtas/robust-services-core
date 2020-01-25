@@ -194,7 +194,7 @@ fn_name ThreadRegistry_FindThread = "ThreadRegistry.FindThread";
 
 Thread* ThreadRegistry::FindThread(SysThreadId nid) const
 {
-   Debug::ft(ThreadRegistry_FindThread);
+   Debug::noft();
 
    auto tid = FindThreadId(nid);
    if(tid == NIL_ID) return nullptr;
@@ -209,6 +209,8 @@ Thread* ThreadRegistry::FindThread(SysThreadId nid) const
 
 ThreadId ThreadRegistry::FindThreadId(SysThreadId nid) const
 {
+   Debug::noft();
+
    auto entry = ids_->find(nid);
    if(entry == ids_->cend()) return NIL_ID;
    return entry->second;

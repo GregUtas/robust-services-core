@@ -43,10 +43,7 @@ using std::string;
 namespace NodeBase
 {
 Flags Debug::SwFlags_ = Flags();
-bool Debug::SlowTrace_ = InitFlags::TraceInit();
-std::atomic_flag Debug::FtLock_ = ATOMIC_FLAG_INIT;
 Flags Debug::FcFlags_ = Flags(InitFlags::TraceInit() ? 1 << TracingActive : 0);
-SysLock Debug::TraceLock_;
 
 //------------------------------------------------------------------------------
 
@@ -60,46 +57,16 @@ void Debug::Assert(bool condition, debug32_t errval)
 
 //------------------------------------------------------------------------------
 //
-//* The cost of function tracing was assessed by running POTS traffic.
-//  The results, determined by when the system entered overload, were
-//  o no tracing: 15000 calls/minute
-//  o regular tracing: 3000 calls/minute
-//  o slow tracing: 250 calls/minute
+//* The cost of function tracing was assessed by running POTS traffic while
+//  tracing threads in the Payload faction only.  The results, determined by
+//  when the system entered overload, were
+//  o tracing off: 13000 calls/minute
+//  o tracing on: 3000 calls/minute
 //
 void Debug::ft(fn_name_arg func)
 {
-   //  Return immediately if there is nothing to do when a function is invoked.
-   //
    if(FcFlags_.none()) return;
-
-   //  Slow tracing is only useful when trace tools are enabled.
-   //
-   if(!SlowTrace_ || !FcFlags_.test(TracingActive))
-   {
-      //  This is fast tracing.  FtLock_ intercepts recursive calls to this
-      //  function, which is necessary because Thread::FunctionInvoked also
-      //  invokes functions that call Debug::ft, and this would result in a
-      //  stack overflow.  The drawback to FtLock_ is that a thread can be
-      //  scheduled out during this function, in which case functions that
-      //  other threads invoke will not be recorded until the thread resumes
-      //  execution and clears FtLock_.
-      //
-      if(FtLock_.test_and_set()) return;
-      Thread::FunctionInvoked(func);
-      FtLock_.clear();
-   }
-   else
-   {
-      //  This is slow tracing, which uses a mutex so that a thread waits to
-      //  have its functions traced instead of just giving up and continuing
-      //  as is the case when FtLock_ is set.  Here, checking if this thread
-      //  already owns TraceLock_ avoids the stack overflows described above.
-      //
-      if(TraceLock_.Owner() == SysThread::RunningThreadId()) return;
-      TraceLock_.Acquire();
-      Thread::FunctionInvoked(func);
-      TraceLock_.Release();
-   }
+   Thread::FunctionInvoked(func);
 }
 
 //------------------------------------------------------------------------------
@@ -173,15 +140,6 @@ void Debug::Progress(const string& s, bool force)
       CoutThread::Spool(s.c_str());
       ThisThread::Pause(10);
    }
-}
-
-//------------------------------------------------------------------------------
-
-void Debug::Reset()
-{
-   FtLock_.clear();
-   TraceLock_.Release();
-   Thread::ExitSwLog(true);
 }
 
 //------------------------------------------------------------------------------

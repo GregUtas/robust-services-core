@@ -61,6 +61,10 @@ public:
    //
    virtual ~TraceRecord() = default;
 
+   //  Returns the trace buffer slot assigned to the record.
+   //
+   uint32_t Slot() const { return slot_; }
+
    //  Returns the trace tool that owns this record.  This allows records
    //  to be included or excluded based on which tools are enabled.
    //

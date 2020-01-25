@@ -1850,8 +1850,8 @@ void Friend::FindReferent()
    //  The following prevents a stack overflow.  The declaration itself can be
    //  found as a candidate when ResolveName is invoked.  To find what it refers
    //  to, it is asked for its scoped name, which looks for its referent, which
-   //  causes this function to be invoked recursively.  A depth limit of 2 is
-   //  also enforced over all friend declarations.  This allows another friend
+   //  causes this function to be reinvoked.  A depth limit of 2 is also
+   //  enforced over all friend declarations.  This allows another friend
    //  declaration to find its referent and provide its resolution to this one.
    //  However, it prevents futile nesting in which declarations ask each other
    //  for a referent that is still only a forward declaration.

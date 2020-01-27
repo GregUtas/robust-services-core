@@ -308,7 +308,7 @@ private:
    //
    bool ovfl_;
 
-   //  Blocks the creation of a new record if it would delete an existing one.
+   //  Blocks the creation of a new record if greater than zero.
    //
    std::atomic_uint8_t softLocks_;
 

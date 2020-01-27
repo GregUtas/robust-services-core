@@ -157,6 +157,28 @@ void Base::Nullify(size_t n)
 
 //------------------------------------------------------------------------------
 
+fn_name Base_new1 = "Base.operator new";
+
+void* Base::operator new(size_t size)
+{
+   Debug::ft(Base_new1);
+
+   return ::operator new(size);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Base_new2 = "Base.operator new[]";
+
+void* Base::operator new[](size_t size)
+{
+   Debug::ft(Base_new2);
+
+   return ::operator new[](size);
+}
+
+//------------------------------------------------------------------------------
+
 void Base::Output(ostream& stream, col_t indent, bool verbose) const
 {
    auto opts = (verbose ? VerboseOpt : NoFlags);

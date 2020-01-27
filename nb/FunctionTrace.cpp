@@ -109,18 +109,17 @@ private:
    //
    void SetOuter(FunctionTrace* outer);
 
-   //  Checks if CTOR is at the same or a lesser depth than a new
-   //  operator, starting at the first chain and stopping at the
-   //  chain just before the index STOP.  Returns true if this is
-   //  the case, after inserting CTOR where it belongs.
+   //  Checks if CTOR should be added to a previous chain instead of
+   //  being set as the outermost constructor in the current chain.
+   //  Returns true if it adds CTOR to a previous chain.
    //
-   static bool AddToPreviousChain(FunctionTrace* ctor, size_t stop);
+   static bool AddToPreviousChain(FunctionTrace* ctor);
 
    //  Records a constructor invoked at the same depth as the outer
    //  constructor.  It was probably invoked to initialize a member of
    //  the *next* class's constructor, which has yet to be encountered.
    //
-   static void HandleInitializer(FunctionTrace* init);
+   static void HandleInitializer(const FunctionTrace* init);
 
    //  Finalizes any constructor chains caused by the invocation of
    //  CURR.  Returns CURR unless this reorders functions, in which
@@ -220,66 +219,45 @@ CtorChain::CtorChain(FunctionTrace* inner, int dummy) :
 
 fn_name CtorChain_AddToPreviousChain = "CtorChain.AddToPreviousChain";
 
-bool CtorChain::AddToPreviousChain(FunctionTrace* ctor, size_t stop)
+bool CtorChain::AddToPreviousChain(FunctionTrace* ctor)
 {
    auto& thrd = ThreadInfo[ctor->Nid()];
    auto& chains = thrd.chains;
+   auto curr = chains.size() - 2;
+   auto depth = ctor->Depth();
 
-   //  CTOR is about to become the new outer constructor of the current chain.
-   //  But first, check if its depth is the same (or less than) a new operator
-   //  in a previous chain.
+   //  Check if CTOR should be added to a previous chain instead of being
+   //  set as  the new outer constructor of the current chain.
    //
-   for(size_t idx = 0; idx < stop; ++idx)
+   for(NO_OP; curr != SIZE_MAX; --curr)
    {
-      auto& chain = chains.at(idx);
+      auto& chain = chains.at(curr);
+      auto outer = chain.outer_;
+
+      if(outer != nullptr)
+      {
+         auto diff = depth - outer->Depth();
+         if(diff >= 0) return false;
+      }
+
       auto opnew = chain.opnew_;
 
       if(opnew != nullptr)
       {
-         if(ctor->Depth() <= opnew->Depth())
+         if(depth == opnew->Depth())
          {
-            auto joined = false;
-
-            if(ctor->Depth() == opnew->Depth())
+            if((outer == nullptr) || (depth < outer->Depth()))
             {
-               if((chain.outer_ == nullptr) ||
-                  (ctor->Depth() < chain.outer_->Depth()))
+               chains.at(curr).SetOuter(ctor);
+               ++curr;
+
+               //  All the chains that follow CURR have now been finalized.
+               //
+               while(chains.size() > curr)
                {
-                  //  CTOR is at the same depth as the new operator, which
-                  //  does not yet have an outer constructor at that depth.
-                  //  Make CTOR its outer constructor and increment IDX so
-                  //  that this chain will not be popped, because it could
-                  //  still invoke initializers.
-                  //
-                  chain.SetOuter(ctor);
-                  joined = true;
-                  ++idx;
+                  thrd.PopBack();
                }
             }
-            else
-            {
-               //  The constructor(s) associated with the new operator was
-               //  not found, so it did not invoke Debug::ft.
-               //
-               Debug::SwLog
-                  (CtorChain_AddToPreviousChain, opnew->Func(), opnew->Slot());
-            }
-
-            //  All the chains that follow this one have now been finalized.
-            //
-            while(chains.size() > idx)
-            {
-               thrd.PopBack();
-            }
-
-            //  If CTOR did not join this new operator, it begins a new chain.
-            //
-            if(!joined)
-            {
-               chains.push_back(CtorChain(ctor));
-            }
-
-            return true;
          }
       }
    }
@@ -385,7 +363,7 @@ TraceRecord* CtorChain::HandleCtor(FunctionTrace* ctor)
          return ctor;
 
       case SetAsOuter:
-         if(!AddToPreviousChain(ctor, chains.size() - 1))
+         if(!AddToPreviousChain(ctor))
          {
             chain.SetOuter(ctor);
          }
@@ -488,7 +466,7 @@ void CtorChain::HandleFunction(FunctionTrace* func)
 
 //------------------------------------------------------------------------------
 
-void CtorChain::HandleInitializer(FunctionTrace* init)
+void CtorChain::HandleInitializer(const FunctionTrace* init)
 {
    //  Only the first function invoked to initialize a member is recorded,
    //  so that the class's constructor can be moved directly above it.
@@ -540,7 +518,6 @@ void CtorChain::SetOuter(FunctionTrace* outer)
 
 const Flags FunctionTrace::FTmask = Flags(1 << FunctionTracer);
 FunctionTrace::Scope FunctionTrace::Scope_ = FullTrace;
-fn_depth FunctionTrace::MinDepth_ = 0;
 const fn_depth FunctionTrace::MaxDispDepth = 40;
 
 //------------------------------------------------------------------------------
@@ -572,6 +549,38 @@ FunctionTrace::FunctionTrace() :
 
 //------------------------------------------------------------------------------
 
+void FunctionTrace::AdjustDepths()
+{
+   auto buff = Singleton< TraceBuffer >::Instance();
+   TraceRecord* rec = nullptr;
+   auto mask = FTmask;
+
+   auto minDepth = INT16_MAX;
+
+   for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
+   {
+      auto curr = static_cast< FunctionTrace* >(rec);
+      if(curr->depth_ < minDepth) minDepth = curr->depth_;
+   }
+
+   //  Decrement minDepth before subtracting it from each function's depth_
+   //  and invokerDepth_.  A value of 0 for the latter represents the C++
+   //  run-time, so we don't want any functions claiming to be at depth 0.
+   //
+   --minDepth;
+
+   rec = nullptr;
+
+   for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
+   {
+      auto curr = static_cast< FunctionTrace* >(rec);
+      curr->depth_ -= minDepth;
+      curr->invokerDepth_ -= minDepth;
+   }
+}
+
+//------------------------------------------------------------------------------
+
 void FunctionTrace::CalcFuncTimes()
 {
    auto buff = Singleton< TraceBuffer >::Instance();
@@ -585,7 +594,6 @@ void FunctionTrace::CalcFuncTimes()
    {
       auto curr = static_cast< FunctionTrace* >(rec);
       curr->CalcTimes();
-      curr->depth_ -= MinDepth_;
    }
 }
 
@@ -724,10 +732,11 @@ bool FunctionTrace::Display(ostream& stream, bool diff)
 {
    if(!TimedRecord::Display(stream, diff)) return false;
 
-   //  Suppress timing information if a >diff is planned.
+   //  Suppress timing information if a >diff is planned.  Display each
+   //  function's depth and its invoker's apparent depth instead.
    //
-   usecs_t gross = (diff ? 0 : gross_);
-   usecs_t net = (diff ? 0 : net_);
+   usecs_t gross = (diff ? depth_ : gross_);
+   usecs_t net = (diff ? invokerDepth_ : net_);
 
    stream << setw(TraceDump::TotWidth) << gross << TraceDump::Tab();
    stream << setw(TraceDump::NetWidth) << net << TraceDump::Tab();
@@ -798,23 +807,6 @@ void FunctionTrace::FindInvokerDepths()
 
 //------------------------------------------------------------------------------
 
-void FunctionTrace::FindMinDepth()
-{
-   auto buff = Singleton< TraceBuffer >::Instance();
-   TraceRecord* rec = nullptr;
-   auto mask = FTmask;
-
-   MinDepth_ = INT16_MAX;
-
-   for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
-   {
-      auto curr = static_cast< FunctionTrace* >(rec);
-      if(curr->depth_ < MinDepth_) MinDepth_ = curr->depth_;
-   }
-}
-
-//------------------------------------------------------------------------------
-
 void FunctionTrace::FixCtorChains()
 {
    auto buff = Singleton< TraceBuffer >::Instance();
@@ -825,9 +817,6 @@ void FunctionTrace::FixCtorChains()
    {
       auto curr = static_cast< FunctionTrace* >(rec);
 
-      if(strcmp(curr->func_, "IoThread.ctor") == 0)  //*
-         Debug::noop();
-
       //  Constructors are analyzed differently than other functions.
       //
       auto ctor = (strstr(curr->func_, FunctionName::CtorTag) != nullptr);
@@ -836,6 +825,16 @@ void FunctionTrace::FixCtorChains()
          rec = CtorChain::HandleCtor(curr);
       else
          CtorChain::HandleFunction(curr);
+   }
+
+   //  Finalize any chain whose resolution is still pending.
+   //
+   for(auto i = ThreadInfo.begin(); i != ThreadInfo.end(); ++i)
+   {
+      while(!i->second.chains.empty())
+      {
+         i->second.PopBack();
+      }
    }
 }
 
@@ -869,16 +868,12 @@ void FunctionTrace::Process()
 
    buff->Lock();
       ThreadInfo.clear();
-      FindMinDepth();
+      AdjustDepths();
       FindInvokerDepths();
       RemoveCxxDeletes();
       FixCtorChains();
       CalcFuncTimes();
    buff->Unlock();
-
-   //  MinDepth_ must be reset in case an immediate trace is performed.
-   //
-   MinDepth_ = 0;
 }
 
 //------------------------------------------------------------------------------

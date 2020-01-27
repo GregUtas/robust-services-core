@@ -115,9 +115,9 @@ private:
    //
    static void Capture(fn_name_arg func);
 
-   //  Finds the minimum depth of all functions.
+   //  Adjusts  all functions' depths to prevent unnecessary indentation.
    //
-   static void FindMinDepth();
+   static void AdjustDepths();
 
    //  Finds the depth of each function's invoker.
    //
@@ -179,10 +179,6 @@ private:
    //  The scope of function tracing.
    //
    static Scope Scope_;
-
-   //  The minimum depth of all function calls in the trace buffer.
-   //
-   static fn_depth MinDepth_;
 
    //> The maximum depth when displaying a function call.
    //

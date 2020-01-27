@@ -223,26 +223,30 @@ bool TraceBuffer::AllocBuffers(size_t n, bool ex)
 
 size_t TraceBuffer::AllocSlot()
 {
-   //  If the buffer is full, this fails if the buffer is locked
-   //  (because it would have to delete an existing record to add
-   //  a new one) or if wraparound is not enabled.
+   //  This fails if
+   //  o the buffer is not allocated
+   //  o the buffer is locked
+   //  o the buffer is full and wraparound is not enabled
    //
    if(buff_ == nullptr) return SIZE_MAX;
+
+   if(softLocks_ > 0)
+   {
+      ++blocks_;
+      return SIZE_MAX;
+   }
+
+   auto slot = bnext_.fetch_add(1);
 
    if(bnext_ >= size_)
    {
       ovfl_ = true;
-      if(!wrap_) return SIZE_MAX;
-
-      if(softLocks_ > 0)
-      {
-         ++blocks_;
-         return SIZE_MAX;
-      }
+      if(wrap_) return (slot & (size_ - 1));
+      bnext_ = size_;
+      return SIZE_MAX;
    }
 
-   auto slot = bnext_.fetch_add(1);
-   return (slot & (size_ - 1));
+   return slot;
 }
 
 //------------------------------------------------------------------------------
@@ -433,10 +437,11 @@ bool TraceBuffer::Insert(TraceRecord* record)
 fn_depth TraceBuffer::LastDtorDepth(SysThreadId nid) const
 {
    if(bnext_ == 0) return -1;
-   size_t i = bnext_;
    size_t count = 0;
+   size_t i = bnext_ - 1;
+   if(i >= size_) i = size_ - 1;
 
-   for(auto rec = buff_[--i]; i != SIZE_MAX; rec = buff_[--i])
+   for(auto rec = buff_[i]; i != SIZE_MAX; rec = buff_[--i])
    {
       if((rec != nullptr) && (rec->owner_ == FunctionTracer))
       {
@@ -465,6 +470,7 @@ const FunctionTrace* TraceBuffer::LastFunction(SysThreadId nid) const
 {
    if(bnext_ == 0) return nullptr;
    size_t i = bnext_;
+   if(i >= size_) i = size_ - 1;
 
    for(auto rec = buff_[--i]; i != SIZE_MAX; rec = buff_[--i])
    {

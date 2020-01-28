@@ -2770,13 +2770,13 @@ class ToolListText : public CliText
 public: ToolListText();
 };
 
-fixed_string BuffSizeExpl = "buffer size in KBs";
+fixed_string BuffSizeExpl = "buffer size (=2^N events)";
 
 BuffSizeParm::BuffSizeParm() :
    CliIntParm(BuffSizeExpl, TraceBuffer::MinSize, TraceBuffer::MaxSize) { }
 
 fixed_string BuffSizeTextStr = "buffsize";
-fixed_string BuffSizeTextExpl = "capacity of trace buffer (=2^N events)";
+fixed_string BuffSizeTextExpl = "capacity of trace buffer";
 
 BuffSizeText::BuffSizeText() : CliText(BuffSizeTextExpl, BuffSizeTextStr)
 {

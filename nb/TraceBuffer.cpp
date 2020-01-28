@@ -21,6 +21,7 @@
 //
 #include "TraceBuffer.h"
 #include "TraceRecord.h"
+#include <cmath>
 #include <cstdint>
 #include <cstring>
 #include <sstream>
@@ -94,7 +95,7 @@ bool BufferTrace::Display(ostream& stream, bool diff)
 //==============================================================================
 
 const size_t TraceBuffer::MinSize = 16;  // 64K TraceRecords
-const size_t TraceBuffer::MaxSize = 20;  // 1M TraceRecords
+const size_t TraceBuffer::MaxSize = 22;  // 4M TraceRecords
 fixed_string TraceBuffer::NoneSelected = "none";
 
 fixed_string StartOfTrace = "START OF TRACE";
@@ -593,9 +594,11 @@ void TraceBuffer::Query(ostream& stream) const
    auto entries = (ovfl_ ? size_ : bnext_);
 
    stream << strClass(this) << CRLF;
-   stream << indent << "size    : " << size_ << CRLF;
-   stream << indent << "entries : " << entries << CRLF;
-   stream << indent << "blocked : " << blocks_ << CRLF;
+   stream << indent << "buffsize : " << int(std::log2(size_));
+   stream << " (for >set buffsize)" << CRLF;
+   stream << indent << "size     : " << size_ << CRLF;
+   stream << indent << "entries  : " << entries << CRLF;
+   stream << indent << "blocked  : " << blocks_ << CRLF;
    stream << indent << "wraparound enabled : " << (wrap_ ? "Y" : "N") << CRLF;
    if(ovfl_) stream << (wrap_ ? BuffOvflStr : BuffFullStr) << CRLF;
 }

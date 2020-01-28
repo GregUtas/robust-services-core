@@ -47,10 +47,10 @@ namespace NodeBase
 {
 //  The following is used to postprocess constructor calls before displaying a
 //  function trace.  When class0 is constructed, a raw trace looks like this:
-//    : : : class3.ctor ("inner" class)
+//    : : : class3.ctor (inner/first class)
 //    : : class2.ctor
 //    : class1.ctor
-//    class0.ctor ("outer" class)
+//    class0.ctor (outer/last class)
 //  We want to display this as
 //    class0.ctor
 //    : : : class3.ctor
@@ -89,14 +89,16 @@ private:
    //  Used when a new operator is encountered.  The second argument
    //  distinguishes this constructor from the preceding one.
    //
-   CtorChain(FunctionTrace* inner, int dummy);
+   CtorChain(FunctionTrace* opnew, int dummy);
 
+   //  What to do with a newly encountered constructor.
+   //
    enum Action
    {
-      Advance,     // go to next chain; if none, create a new chain
-      SetAsInner,  // set as inner_ of this chain
-      SetAsOuter,  // set as outer_ of this chain
-      SetAsInit,   // set as init_ of this chain
+      Create,      // create a new chain
+      SetAsFirst,  // set as the first constructor of this chain
+      SetAsNext,   // set as a subsequent constructor of this chain
+      SetAsInit,   // set as possible initializer of next constructor's class
       Finalize     // finalize this chain and create a new one
    };
 
@@ -105,25 +107,24 @@ private:
    //
    Action CalcAction(const FunctionTrace* ctor, bool popped) const;
 
-   //  Updates the outer constructor.
+   //  Adds OUTER to this chain as its outer constructor.
    //
    void SetOuter(FunctionTrace* outer);
 
    //  Checks if CTOR should be added to a previous chain instead of
-   //  being set as the outermost constructor in the current chain.
-   //  Returns true if it adds CTOR to a previous chain.
+   //  the most recent chain.  Returns true if it does this.
    //
    static bool AddToPreviousChain(FunctionTrace* ctor);
 
-   //  Records a constructor invoked at the same depth as the outer
-   //  constructor.  It was probably invoked to initialize a member of
+   //  Records a function at the same depth as the outer constructor.
+   //  It may have been invoked in the member initialization list of
    //  the *next* class's constructor, which has yet to be encountered.
    //
    static void HandleInitializer(const FunctionTrace* init);
 
-   //  Finalizes any constructor chains caused by the invocation of
-   //  CURR.  Returns CURR unless this reorders functions, in which
-   //  case it returns the function that now occupies CURR's slot.
+   //  Finalizes any chains that are known to be complete because CURR
+   //  was invoked.  Returns CURR unless this reorders functions, in
+   //  which case it returns the function that now occupies CURR's slot.
    //
    static TraceRecord* CheckForEndOfChains(const FunctionTrace* curr);
 
@@ -135,31 +136,26 @@ private:
    //  in which case it might have been invoked to initialize a member of
    //  the *next* class's constructor, which has yet to be encountered.
    //
-   static bool CheckForInitializer(FunctionTrace* curr);
+   static bool CheckForInitializer(const FunctionTrace* curr);
 
-   //  Moves the outer constructor so that it precedes the first
-   //  function invoked in its member initialization list.  Note
-   //  that moving the inner constructor above functions invoked
-   //  in its member initialization list is not supported.  The
-   //  inner constructor is typically trivial, so the effort is
-   //  probably not worth it.
+   //  Moves the outer constructor so that it precedes the first function
+   //  invoked in its member initialization list.  NOTE: Moving the inner
+   //  constructor above functions invoked in its member initialization
+   //  list is not supported.  Such functions appear before the new chain
+   //  is recognized.
    //
    void MoveOuterAboveInit();
 
-   //  The constructor of the innermost class.
+   //  The constructor chain.
    //
-   const FunctionTrace* inner_;
-
-   //  The constructor of the outer class.
-   //
-   FunctionTrace* outer_;
+   std::vector< FunctionTrace* > ctors_;
 
    //  The call to a new operator, if any, that precedes the chain.
    //
    FunctionTrace* const opnew_;
 
-   //  A function possibly invoked to initialize a member of the class
-   //  whose constructor will follow outer_.
+   //  A function possibly invoked in the member initialization list of
+   //  the next constructor that will be added to the chain if it exists.
    //
    const FunctionTrace* init_;
 };
@@ -198,26 +194,21 @@ std::map< SysThreadId, PerThreadInfo > ThreadInfo;
 //==============================================================================
 
 CtorChain::CtorChain(FunctionTrace* inner) :
-   inner_(inner),
-   outer_(inner),
    opnew_(nullptr),
    init_(nullptr)
 {
+   ctors_.push_back(inner);
 }
 
 //------------------------------------------------------------------------------
 
-CtorChain::CtorChain(FunctionTrace* inner, int dummy) :
-   inner_(nullptr),
-   outer_(nullptr),
-   opnew_(inner),
+CtorChain::CtorChain(FunctionTrace* opnew, int dummy) :
+   opnew_(opnew),
    init_(nullptr)
 {
 }
 
 //------------------------------------------------------------------------------
-
-fn_name CtorChain_AddToPreviousChain = "CtorChain.AddToPreviousChain";
 
 bool CtorChain::AddToPreviousChain(FunctionTrace* ctor)
 {
@@ -227,37 +218,42 @@ bool CtorChain::AddToPreviousChain(FunctionTrace* ctor)
    auto depth = ctor->Depth();
 
    //  Check if CTOR should be added to a previous chain instead of being
-   //  set as  the new outer constructor of the current chain.
+   //  set as the new outer constructor of the current chain.
    //
    for(NO_OP; curr != SIZE_MAX; --curr)
    {
       auto& chain = chains.at(curr);
-      auto outer = chain.outer_;
+      auto outer = (!chain.ctors_.empty() ? chain.ctors_.back() : nullptr);
 
+      //  If CTOR's depth is as great as this chain's outer constructor,
+      //  CTOR can't be its new outer constructor.
+      //
       if(outer != nullptr)
       {
          auto diff = depth - outer->Depth();
          if(diff >= 0) return false;
       }
 
+      //  If a new operator created this chain, CTOR is its final constructor
+      //  if it is at the same depth as the new operator.
+      //
       auto opnew = chain.opnew_;
 
-      if(opnew != nullptr)
+      if((opnew != nullptr) && (depth == opnew->Depth()))
       {
-         if(depth == opnew->Depth())
+         if((outer == nullptr) || (depth < outer->Depth()))
          {
-            if((outer == nullptr) || (depth < outer->Depth()))
-            {
-               chains.at(curr).SetOuter(ctor);
-               ++curr;
+            chains.at(curr).SetOuter(ctor);
+            ++curr;
 
-               //  All the chains that follow CURR have now been finalized.
-               //
-               while(chains.size() > curr)
-               {
-                  thrd.PopBack();
-               }
+            //  All the chains that follow CURR have now been finalized.
+            //
+            while(chains.size() > curr)
+            {
+               thrd.PopBack();
             }
+
+            return true;
          }
       }
    }
@@ -267,38 +263,35 @@ bool CtorChain::AddToPreviousChain(FunctionTrace* ctor)
 
 //------------------------------------------------------------------------------
 
-fn_name CtorChain_CalcAction = "CtorChain.CalcAction";
-
 CtorChain::Action CtorChain::CalcAction
    (const FunctionTrace* ctor, bool popped) const
 {
    auto ctorDepth = ctor->Depth();
 
-   if(inner_ == nullptr)
+   if(ctors_.empty())
    {
       //  A new operator is waiting for its first constructor.
       //
       if(ctorDepth >= opnew_->Depth())
       {
-         return SetAsInner;
+         return SetAsFirst;
       }
 
-      //  The constructor(s) associated with the new operator did not
-      //  invoke Debug::ft.  CTOR is at a lower depth and is therefore
-      //  associated with a new chain.
+      //  CTOR is at a lower depth and is therefore associated with
+      //  an earlier chain.
       //
-      Debug::SwLog(CtorChain_CalcAction, opnew_->Func(), opnew_->Slot());
       return Finalize;
    }
 
-   auto diff = ctorDepth - outer_->Depth();
+   auto outer = ctors_.back();
+   auto diff = ctorDepth - outer->Depth();
 
    //  If CTOR is deeper than the outer constructor, it belongs to
    //  a deeper chain.
    //
    if(diff > 0)
    {
-      return Advance;
+      return Create;
    }
 
    if(diff == 0)
@@ -307,7 +300,7 @@ CtorChain::Action CtorChain::CalcAction
       //  class *unless* this chain has a new operator and its outermost
       //  constructor (at the same depth as the new operator) is known.
       //
-      if((opnew_ == nullptr) || (opnew_->Depth() < outer_->Depth()))
+      if((opnew_ == nullptr) || (opnew_->Depth() < outer->Depth()))
          return SetAsInit;
       else
          return Finalize;
@@ -322,11 +315,11 @@ CtorChain::Action CtorChain::CalcAction
       //    that is more than one less than this chain's existing outer
       //    constructor.
       //
-      if((opnew_ != nullptr) && (opnew_->Depth() >= outer_->Depth()))
+      if((opnew_ != nullptr) && (opnew_->Depth() >= outer->Depth()))
          return Finalize;
-      if(popped && (outer_->InvokerDepth() - ctor->InvokerDepth() > 1))
+      if(popped && (outer->InvokerDepth() - ctor->InvokerDepth() > 1))
          return Finalize;
-      return SetAsOuter;
+      return SetAsNext;
    }
 
    //  We assume that constructors in the interior of a chain invoke
@@ -353,16 +346,15 @@ TraceRecord* CtorChain::HandleCtor(FunctionTrace* ctor)
 
       switch(chain.CalcAction(ctor, popped))
       {
-      case Advance:
+      case Create:
          done = true;
          break;
 
-      case SetAsInner:
-         chain.inner_ = ctor;
-         chain.outer_ = ctor;
+      case SetAsFirst:
+         chain.ctors_.push_back(ctor);
          return ctor;
 
-      case SetAsOuter:
+      case SetAsNext:
          if(!AddToPreviousChain(ctor))
          {
             chain.SetOuter(ctor);
@@ -407,15 +399,15 @@ TraceRecord* CtorChain::CheckForEndOfChains(const FunctionTrace* curr)
 
 //------------------------------------------------------------------------------
 
-bool CtorChain::CheckForInitializer(FunctionTrace* curr)
+bool CtorChain::CheckForInitializer(const FunctionTrace* curr)
 {
    auto& chains = ThreadInfo[curr->Nid()].chains;
    if(chains.empty()) return true;
 
-   auto& back = chains.back();
-   if(back.outer_ == nullptr) return true;
-   if(curr->Depth() != back.outer_->Depth()) return false;
-   if(back.opnew_ != nullptr) return false;
+   auto& chain = chains.back();
+   if(chain.ctors_.empty()) return true;
+   if(curr->Depth() != chain.ctors_.back()->Depth()) return false;
+   if(chain.opnew_ != nullptr) return false;  //*?
    HandleInitializer(curr);
    return true;
 }
@@ -435,7 +427,7 @@ bool CtorChain::FunctionEndsChain(const FunctionTrace* curr) const
    //  The function must be at a lesser depth than the outer constructor
    //  to finalize this chain.
    //
-   return (curr->Depth() < outer_->Depth());
+   return (curr->Depth() < ctors_.back()->Depth());
 }
 
 //------------------------------------------------------------------------------
@@ -479,10 +471,11 @@ void CtorChain::HandleInitializer(const FunctionTrace* init)
 
 void CtorChain::MoveOuterAboveInit()
 {
-   if((outer_ != nullptr) && (init_ != nullptr))
+   if(!ctors_.empty() && (init_ != nullptr))
    {
-      Singleton< TraceBuffer >::Instance()->MoveAbove(outer_, init_);
-      outer_->SetTicks(init_->GetTicks());
+      auto outer = ctors_.back();
+      Singleton< TraceBuffer >::Instance()->MoveAbove(outer, init_);
+      outer->SetTicks(init_->GetTicks());
    }
 
    init_ = nullptr;
@@ -492,10 +485,12 @@ void CtorChain::MoveOuterAboveInit()
 
 void CtorChain::MoveOuterAboveInner() const
 {
-   if((outer_ != nullptr) && (inner_ != nullptr))
+   if(ctors_.size() > 1)
    {
-      Singleton< TraceBuffer >::Instance()->MoveAbove(outer_, inner_);
-      outer_->SetTicks(inner_->GetTicks());
+      auto inner = ctors_.front();
+      auto outer = ctors_.back();
+      Singleton< TraceBuffer >::Instance()->MoveAbove(outer, inner);
+      outer->SetTicks(inner->GetTicks());
    }
 }
 
@@ -503,7 +498,7 @@ void CtorChain::MoveOuterAboveInner() const
 
 void CtorChain::SetOuter(FunctionTrace* outer)
 {
-   outer_ = outer;
+   ctors_.push_back(outer);
 
    //  If any function was invoked to initialize a member of OUTER's
    //  class, move OUTER so that it precedes those functions.

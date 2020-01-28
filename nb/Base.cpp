@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Base.h"
+#include <new>
 #include <ostream>
 #include <typeinfo>
 #include "Debug.h"
@@ -34,13 +35,6 @@ using std::string;
 namespace NodeBase
 {
 const size_t Base::MaxSubtendedCount = 256;
-
-fn_name Base_ctor = "Base.ctor";
-
-Base::Base()
-{
-   Debug::ft(Base_ctor);
-}
 
 //------------------------------------------------------------------------------
 

@@ -1724,7 +1724,8 @@ main_t Thread::EnterThread(void* arg)
    //  before its Thread object is fully constructed.  This causes a trap,
    //  so the thread must wait until it is constructed (initialized_).  If
    //  its constructor trapped, the object block will return to its pool,
-   //  so it is also necessary to check if the Thread is still valid.
+   //  so it is also necessary to check if the Thread is still valid.  If
+   //  it is invalid, break the loop to immediately return SIGDELETED.
    //
    auto self = static_cast< Thread* >(arg);
 

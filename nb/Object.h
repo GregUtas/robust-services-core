@@ -127,7 +127,7 @@ public:
 protected:
    //  Protected because this class is virtual.
    //
-   Object();
+   Object() : patchArea_(0) { }
 
    //  Morphs the object to the class associated with TARGET by changing
    //  its vptr.

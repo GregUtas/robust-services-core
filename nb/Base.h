@@ -162,7 +162,7 @@ public:
 protected:
    //  Protected because this class is virtual.
    //
-   Base();
+   Base() = default;
 private:
    //  Type for an object's pointer to its virtual function table.
    //

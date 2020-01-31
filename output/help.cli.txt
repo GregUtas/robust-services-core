@@ -202,8 +202,10 @@ set               : Controls trace tool settings.
     on            : on
     off           : off
   )
-  buffsize        : size of event trace buffer
-    (128:65536)   : buffer size in KBs
+  buffsize        : capacity of trace buffer
+    (16:22)       : buffer size (=2^N events)
+  wrap            : whether trace buffer can wrap around
+    (t|f)         : allow trace buffer to wrap around?
 )
 
 include           : Specifies what should be captured by trace tools.
@@ -248,7 +250,7 @@ clear             : Clears the trace buffer, tools, or selections.
 )
 
 start             : Starts tracing.
-  [<str>]         : options (i=immediate, s=slow)
+  [<str>]         : options: i=immediate
 
 stop              : Stops tracing.
 
@@ -256,7 +258,7 @@ save              : Saves what was captured by trace tools.
 (                 : what to save...
   trace           : events captured by tools that are currently ON
     <str>         : filename for output
-    [t|f]         : suppress time values: useful for >diff (default=f)
+    [<str>]       : options: t=suppress times; c=don't move ctors
 )
 
 if                : Executes rest of input line if condition is true.
@@ -334,8 +336,10 @@ set               : Controls trace tool settings.
     on            : on
     off           : off
   )
-  buffsize        : size of event trace buffer
-    (128:65536)   : buffer size in KBs
+  buffsize        : capacity of trace buffer
+    (16:22)       : buffer size (=2^N events)
+  wrap            : whether trace buffer can wrap around
+    (t|f)         : allow trace buffer to wrap around?
   scope           : scope for function tracing
   (               : how to trace function invocations
     full          : full trace of invocations
@@ -347,7 +351,7 @@ save              : Saves what was captured by trace tools.
 (                 : what to save...
   trace           : events captured by tools that are currently ON
     <str>         : filename for output
-    [t|f]         : suppress time values: useful for >diff (default=f)
+    [<str>]       : options: t=suppress times; c=don't move ctors
   funcs           : function call statistics
     <str>         : filename for output
   [               : how to sort (default=calls)
@@ -799,7 +803,7 @@ save              : Saves what was captured by trace tools.
 (                 : what to save...
   trace           : events captured by tools that are currently ON
     <str>         : filename for output
-    [t|f]         : suppress time values: useful for >diff (default=f)
+    [<str>]       : options: t=suppress times; c=don't move ctors
   funcs           : function call statistics
     <str>         : filename for output
   [               : how to sort (default=calls)

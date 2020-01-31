@@ -1,362 +1,399 @@
-FUNCTION PROFILE: 14-Oct-2019 22:47:36.010 on Reigi
+FUNCTION PROFILE: 30-Jan-2020 18:57:09.961 on Reigi
 
     Calls       uSecs   Function
     -----       -----   --------
-       55         321   Alarm.Create
-       54         188   ObjectPool.UpdateAlarm
-       52         945   Base.ctor
-       52           0   Object.ctor
-       43         163   Q1Way.Enq
-       40         254   Context.RunningContextTraced
-       27         126   Pooled.operator delete
-       27         125   Q1Way.Deq
-       27         122   Thread.RunningThread
-       27         118   ObjectPool.DeqBlock
-       27         113   ObjectPool.EnqBlock
-       26          15   C++.delete
-       26           0   Pooled.ctor
-       20         125   Context.RunningContext
-       20          71   Q1Way.Exq
-       19          56   Q1Way.Purge
-       18        2158   Thread.Pause
-       17           0   SysIpL2Addr.ctor(copy)
-       16          89   MsgPort.Port
-       16          54   ProtocolSM.Port
-       15           0   SysIpL3Addr.ctor(copy)
-       14          67   TlvMessage.FencePtr
-       14          61   SysIpL2Addr.dtor
-       13          55   SysIpL3Addr.dtor
-       12          54   Q1Way.Init
-       11         180   Thread.ExitBlockingOperation
-       11          64   Thread.Unlock
-       11          38   Context.SetContextMsg
-       10          55   Event.operator new
-       10          41   Event.dtor
-       10          31   ServiceSM.ExqEvent
-       10          30   ServiceSM.EnqEvent
-       10           8   Event.ctor
-        9          49   SysIpL2Addr.operator=(copy)
-        9          42   SbIpBuffer.PayloadSize
-        9           0   SysIpL2Addr.ctor
-        9           0   SysIpL3Addr.ctor
-        8          49   SysHeap.Alloc
-        8          49   SysIpL3Addr.operator=(copy)
-        8          42   Memory.Alloc
-        8          37   Message.RxSbAddr
-        8          29   IpBuffer.BuffSize
-        8           0   InitThread.Yielding
-        7         219   Message.ClearContext
-        7          39   Thread.LogContextSwitch
-        7          35   SbIpBuffer.operator new
-        7          33   Thread.EnterBlockingOperation
+       47         162   Q1Way.Enq
+       42         201   Context.RunningContextTraced
+       36         154   Q1Way.Deq
+       36         131   ObjectPool.DeqBlock
+       36         122   Pooled.ctor
+       30         108   ObjectPool.EnqBlock
+       30         103   Pooled.operator delete
+       30          21   C++.delete
+       26          99   Context.RunningContext
+       23         141   SysIpL2Addr.ctor(copy)
+       22          96   SysIpL2Addr.dtor
+       22          71   Q1Way.Exq
+       22          58   SysIpL3Addr.ctor(copy)
+       21          78   SysIpL3Addr.dtor
+       20         219   SysThread.Resume
+       20         152   Thread.Interrupt
+       20          99   SysThread.Interrupt
+       20          64   Q1Way.Init
+       20          61   Context.SetContextMsg
+       19          47   Q1Way.Purge
+       18          68   MsgPort.Port
+       18          64   ProtocolSM.Port
+       17     1249795   SysThread.Suspend
+       17          71   SysIpL2Addr.operator=(copy)
+       16          63   SysIpL3Addr.operator=(copy)
+       14          50   TlvMessage.FencePtr
+       13         109   SysIpL2Addr.ctor
+       13          35   SysIpL3Addr.ctor
+       12          76   SysHeap.Alloc
+       12          63   Thread.Pause
+       12          57   Memory.Alloc
+       12          57   Message.RxSbAddr
+       12          49   SbIpBuffer.operator new
+       12          47   IpBuffer.BuffSize
+       11         167   Thread.ExitBlockingOperation
+       11         119   Thread.Resume
+       11         117   Thread.Ready
+       11         116   Thread.Schedule
+       11         107   Thread.InitialMsecs
+       11          76   ThreadAdmin.WarpFactor
+       11          73   SysThread.Wait
+       11          71   TlvMessage.FindParm
+       11          55   Thread.LogContextSwitch
+       11          48   TlvMessage.FirstParm
+       11          43   Thread.EnterBlockingOperation
+       11          42   Thread.Suspend
+       10         256   Message.ClearContext
+       10          74   Memory.Copy
+       10          47   Event.dtor
+       10          40   TlvMessage.FindType
+       10          36   Event.ctor
+       10          34   Message.Exqueue
+       10          31   Event.operator new
+       10          31   ServiceSM.EnqEvent
+       10          30   ServiceSM.ExqEvent
+        9          44   Context.SetState
+        9          37   SbIpBuffer.PayloadSize
+        9          29   TlvMessage.NextParm
+        8         151   SysSocket.SetBlocking
+        8          36   InvokerPool.FindWork
+        8          27   Thread.RtcPercentUsed
+        7          39   Context.Exqueue
         7          26   TlvMessage.CheckFence
-        7          23   Message.Exqueue
-        6         184   SysSocket.SetBlocking
-        6          55   Memory.Copy
-        6          29   InvokerThread.ClearContext
-        6          22   PotsCallPsm.Cast
-        6          18   BcEvent.dtor
-        6           0   BcEvent.ctor
-        5          42   InvokerPool.FindWork
-        5          26   TlvMessage.AddParm
-        5          24   Context.Exqueue
-        5          20   IpBuffer.AddBytes
-        5          19   Message.Enqueue
-        5          19   PotsBcSsm.SetNextSap
+        7          24   InvokerThread.ClearContext
+        6         145   SysSocket.TracePeer
+        6         121   SbIpBuffer.ctor
+        6          66   Message.RxFactory
+        6          65   SbIpBuffer.ctor(copy)
+        6          48   IpBuffer.ctor
+        6          41   PotsCallPsm.Cast
+        6          40   IpBuffer.ctor(copy)
+        6          40   TlvMessage.dtor
+        6          38   SysHeap.Free
+        6          36   Message.operator new
+        6          33   BcEvent.dtor
+        6          33   SysThread.Delay
+        6          27   IpBuffer.dtor
+        6          27   Message.dtor
+        6          26   SbIpBuffer.dtor
+        6          25   Memory.Free
+        6          24   MsgBuffer.ctor
+        6          24   MsgBuffer.dtor
+        6          23   SbIpBuffer.operator delete
+        6          21   Message.TxSbAddr
+        6          20   Factory.RecordMsg
+        6          20   PotsMessage.dtor
+        6          19   MsgHeader.ctor
+        6          18   BcEvent.ctor
+        6          18   Message.Enqueue
+        6          15   MsgBuffer.ctor(copy)
+        5          29   Alarm.Create
+        5          26   MsgPort.Find
+        5          24   Q2Way.Exq
+        5          24   ServiceSM.SetNextSap
+        5          24   TlvMessage.AddParm
+        5          20   Q1Way.Henq
         5          19   TlvMessage.AddType
-        5          18   Thread.RtcPercentUsed
-        5          16   ServiceSM.SetNextSap
-        5           8   SbIpBuffer.ctor
-        4         162   Message.TxSbAddr
-        4          56   Context.SetState
-        4          53   MsgFactory.CaptureMsg
-        4          33   TlvMessage.FirstParm
-        4          30   TlvMessage.FindParm
-        4          24   Thread.ResumeLocked
-        4          22   Message.dtor
-        4          20   IpBuffer.dtor
-        4          20   SbIpBuffer.operator delete
-        4          19   Message.operator new
-        4          19   MsgHeader.ctor
-        4          19   SysHeap.Free
-        4          18   MsgBuffer.dtor
-        4          16   Memory.Free
-        4          15   Factory.RecordMsg
-        4          15   PotsMessage.dtor
-        4          15   SbIpBuffer.dtor
+        5          17   IpBuffer.AddBytes
+        5          17   IpPort.RecvsInSequence
+        5          16   PotsBcSsm.SetNextSap
+        4         122   Context.CaptureTask
+        4          51   SysIpL2Addr.ctor(IPv4addr)
+        4          36   Context.ProcessWork
+        4          31   MsgFactory.CaptureMsg
+        4          30   Context.TraceMsg
+        4          29   SysSocket.Empty
+        4          28   Context.ProcessMsg
+        4          28   InvokerThread.ScheduledIn
+        4          28   IoThread.InvokeHandler
+        4          28   IpPort.BytesRcvd
+        4          28   SbExtInputHandler.AllocBuff
+        4          27   InvokerPool.Dequeued
+        4          26   PotsMessage.ctor(i/c)
+        4          26   Pots_NU_Message.dtor
+        4          24   InvokerPool.ReceiveMsg
+        4          24   PayloadInvokerPool.RecordDelay
+        4          23   InvokerPool.ReceiveBuff
+        4          22   InvokerThread.SetContext
+        4          20   BcReleaseEvent.ctor
+        4          18   SbInputHandler.ReceiveBuff
+        4          18   SbTracer.MsgStatus
+        4          17   Message.Handled
+        4          15   BcReleaseEvent.dtor
+        4          15   InputHandler.NetworkToHost
+        4          15   MsgFactory.ReceiveMsg
+        4          15   ProtocolSM.SetState
+        4          14   InvokerPool.TraceRxNet
+        4          14   InvokerThread.BlockingAllowed
+        4          14   Message.ctor(i/c)
         4          14   ProtocolSM.PeerFactory
-        4          14   ProtocolSM.SetState
-        4          13   BcReleaseEvent.dtor
-        4          13   TlvMessage.dtor
-        4           9   IpBuffer.ctor(copy)
-        4           9   UdpIoThread.Enter
-        4           7   IpBuffer.ctor
-        4           0   BcReleaseEvent.ctor
-        4           0   MsgBuffer.ctor(copy)
-        4           0   SbIpBuffer.ctor(copy)
-        3         266   IoThread.InvokeHandler
-        3         222   SbInputHandler.ReceiveBuff
-        3         107   SysSocket.TracePeer
-        3          45   SysThread.Resume
-        3          26   ServiceSM.ProcessEvent
-        3          25   IoThread.ConditionalPause
-        3          25   TlvMessage.FindType
-        3          23   MsgFactory.ReceiveMsg
-        3          20   Message.RxFactory
-        3          16   Context.EnqMsg
-        3          15   InvokerThread.BlockingAllowed
-        3          15   Message.Handled
-        3          14   Q2Way.Exq
-        3          13   BcSsm.SetNextState
-        3          13   PotsCallPsm.SendSignal
-        3          12   InvokerPool.Enqueued
-        3          12   Thread.Interrupt
-        3          12   Thread.PauseOver
-        3          11   Context.Enqueue
-        3          11   Context.dtor
-        3          11   InvokerPool.KickThread
-        3          11   Message.SetPsm
-        3          11   SysThread.Interrupt
+        4          14   SysUdpSocket.RecvFrom
+        4          14   Thread.PauseOver
+        4          13   InvokerPool.KickThread
+        4          13   NwTracer.BuffStatus
+        4          12   Context.EnqMsg
+        4          12   Context.Enqueue
+        4          12   InvokerPool.Enqueued
+        4          12   InvokerPool.ScheduledOut
+        4          12   IoThread.ConditionalPause
+        4          11   Message.SetPsm
+        4          10   TlvMessage.ctor(i/c)
+        4           0   SysIpL3Addr.ctor(IPv4addr)
+        3          42   ServiceSM.ProcessEvent
+        3          14   Context.dtor
+        3          13   MediaInfo.ctor
+        3          12   Context.ctor
+        3          10   Context.operator new
         3          10   MsgContext.dtor
-        3           9   Q1Way.Henq
+        3          10   ObjectPool.BidToObj
+        3          10   PotsCallPsm.SendSignal
+        3           9   Factory.IncrContexts
+        3           9   MsgContext.ctor
         3           9   Q2Way.Enq
-        3           9   ServiceSM.SetNextState
-        3           3   InvokerPool.ScheduledOut
-        3           0   MsgBuffer.ctor
-        2          62   Context.CaptureTask
-        2          30   Message.SetSender
-        2          29   Message.SetReceiver
-        2          22   SysSocket.Empty
-        2          17   Context.ProcessWork
-        2          17   SbExtInputHandler.AllocBuff
-        2          15   InvokerThread.SetContext
-        2          15   IpPort.BytesRcvd
-        2          15   SbTracer.MsgStatus
-        2          14   Context.operator new
-        2          14   InvokerPool.ReceiveBuff
-        2          14   InvokerPool.ReceiveMsg
-        2          14   SysUdpSocket.SendBuff
-        2          14   TlvMessage.NextParm
-        2          13   InvokerPool.Dequeued
-        2          13   PotsShelfHandler.ReceiveBuff
-        2          13   ProtocolLayer.SendToLower
-        2          13   ServiceSM.dtor
-        2          12   InputHandler.NetworkToHost
-        2          12   MsgPort.SendMsg
-        2          12   PotsCallPsm.ProcessIcMsg
-        2          11   Context.ProcessMsg
-        2          11   IpBuffer.OutgoingBytes
-        2          11   MsgPort.Route
-        2          11   PotsCallPsm.ProcessOgMsg
-        2          11   PotsCallPsm.Route
-        2          11   PotsShelfFactory.AllocIcMsg
-        2          10   Context.TraceMsg
-        2          10   Message.Send
-        2          10   Pots_NU_Message.dtor
-        2          10   ProtocolSM.EndOfTransaction
-        2          10   PsmContext.EndOfTransaction
-        2          10   SsmContext.EndOfTransaction
-        2           9   BcSsm.CalcPort
+        3           9   Thread.MsecsSinceStart
+        3           8   ServiceSM.SetNextState
+        3           7   BcSsm.SetNextState
+        2         209   Pots_NU_Message.ctor(o/g)
+        2          31   Pots_UN_Message.ctor(i/c)
+        2          27   PotsShelfFactory.ProcessIcMsg
+        2          24   Message.SetSender
+        2          23   Message.SetReceiver
+        2          22   AnalyzeMsgEvent.ctor
+        2          21   BcSsm.CalcPort
+        2          18   Pots_NU_Message.ctor(i/c)
+        2          14   IpPort.BytesSent
+        2          13   Message.Send
+        2          13   MsgContext.ProcessIcMsg
+        2          13   PotsCircuit.ReceiveMsg
+        2          13   PotsMessage.ctor(o/g)
+        2          13   TimerRegistry.ProcessWork
+        2          12   PotsCallFactory.AllocIcMsg
+        2          12   SsmContext.ProcessIcMsg
+        2          11   MsgPort.SendMsg
+        2          11   ServiceSM.ctor
+        2          10   Message.Henqueue
+        2          10   PotsCallPsm.ProcessIcMsg
+        2          10   PotsCallPsm.ProcessOgMsg
+        2          10   ProtocolLayer.SendToLower
+        2          10   ProtocolLayer.SendToUpper
+        2          10   ProtocolLayer.dtor
+        2          10   SbAnalyzeMessage.ProcessEvent
+        2          10   ServiceSM.dtor
+        2          10   SysUdpSocket.SendBuff
         2           9   Circuit.MakeConn
-        2           9   IpPort.RecvsInSequence
-        2           9   MediaPsm.EndOfTransaction
-        2           9   Message.SetSignal
-        2           9   PotsMessage.AddCause
-        2           9   Pots_UN_Message.dtor
-        2           9   ProtocolLayer.dtor
-        2           9   ProtocolSM.AddressesUnknown
-        2           9   SsmContext.SetRoot
-        2           9   TlvMessage.Send
-        2           8   GlobalAddress.dtor
-        2           8   InvokerPool.TraceRxNet
+        2           9   Message.ctor(o/g)
+        2           9   PotsCallHandler.ReceiveBuff
+        2           9   PotsMessage.AddHeader
+        2           9   ProtocolSM.EndOfTransaction
+        2           9   ProtocolSM.FindTimer
+        2           9   ProtocolSM.HenqReceivedMsg
+        2           9   PsmContext.EndOfTransaction
+        2           9   PsmFactory.ReceiveMsg
+        2           8   InputHandler.HostToNetwork
+        2           8   IpBuffer.OutgoingBytes
         2           8   IpBuffer.Send
-        2           8   MediaPsm.UpdateIcMedia
-        2           8   MsgContext.EndOfTransaction
-        2           8   NwTracer.BuffStatus
-        2           8   PotsBcSsm.SetNextSnp
-        2           8   PotsCallPsm.SendCause
-        2           8   PotsMessage.AddHeader
-        2           8   ProtocolLayer.EnsureLower
-        2           8   ProtocolSM.EnqOgMsg
-        2           8   ProtocolSM.GetProtocol
-        2           8   ProxyBcSsm.CalcPort
-        2           8   SbAnalyzeMessage.ProcessEvent
-        2           8   ServiceSM.operator new
+        2           8   MediaPsm.PrepareOgMsgq
+        2           8   Message.Capture
+        2           8   Message.SetSignal
+        2           8   MsgPort.ReceiveMsg
+        2           8   MsgPort.Route
+        2           8   PotsBcSsm.TimerPsm
+        2           8   PotsCallPsm.Route
+        2           8   PotsMessage.AddCause
+        2           8   PotsShelfHandler.ReceiveBuff
+        2           8   Pots_UN_Message.dtor
+        2           8   ProtocolSM.ReceiveMsg
+        2           8   ProxyBcSsm.EndOfTransaction
+        2           8   ProxyBcSsm.FirstProxy
+        2           8   PsmContext.FindPort
+        2           8   Q2Way.Henq
+        2           8   ServiceSM.EndOfTransaction
+        2           8   SsmContext.EndOfTransaction
+        2           8   SsmContext.IsIdle
         2           8   SysUdpSocket.SendTo
-        2           8   Thread.MsecsSinceStart
-        2           7   Factory.IncrContexts
-        2           7   InputHandler.HostToNetwork
-        2           7   MediaPsm.PrepareOgMsgq
-        2           7   Message.SetProtocol
-        2           7   Message.ctor(o/g)
-        2           7   MsgPort.WrapMsg
-        2           7   PotsBcSsm.TimerPsm
-        2           7   ProtocolSM.FindTimer
-        2           7   ServiceSM.SetNextSnp
-        2           7   ServiceSM.ctor
-        2           6   AnalyzeMsgEvent.dtor
-        2           6   ProtocolLayer.RootSsm
-        2           2   Context.ctor
-        2           1   Pots_NU_Message.ctor(o/g)
-        2           1   TlvMessage.ctor(o/g)
-        2           0   AnalyzeMsgEvent.ctor
-        2           0   GlobalAddress.ctor(L3addr, locaddr)
-        2           0   Message.ctor(i/c)
-        2           0   MsgContext.ctor
-        2           0   PotsMessage.ctor(i/c)
-        2           0   PotsMessage.ctor(o/g)
-        2           0   Pots_NU_Message.ctor(i/c)
-        2           0   TlvMessage.ctor(i/c)
-        1          75   MsgPort.ctor(i/c)
-        1          22   IpPortRegistry.HostAddress
-        1          17   ProtocolSM.UppermostPsm
-        1          17   SysTcpSocket.Accept
-        1          12   RouteResult.ctor
-        1          11   MsgPort.Initialize
-        1          11   PotsCircuit.ReceiveMsg
-        1           9   ProtocolSM.dtor
-        1           8   PotsCircuit.SetState
-        1           8   ProtocolSM.Destroy
-        1           8   RootServiceSM.dtor
+        2           7   AnalyzeMsgEvent.dtor
+        2           7   MediaPsm.EndOfTransaction
+        2           7   MediaPsm.ReceiveMsg
+        2           7   MsgContext.EndOfTransaction
+        2           7   PotsCallPsm.SendCause
+        2           7   ProtocolLayer.EnsureLower
+        2           7   ProtocolLayer.RootSsm
+        2           7   ProtocolSM.AddressesUnknown
+        2           7   ProtocolSM.UnwrapMsg
+        2           7   ProxyBcSsm.CalcPort
+        2           7   TlvMessage.Send
+        2           7   TlvMessage.ctor(o/g)
+        2           6   GlobalAddress.ctor(L3addr, locaddr)
+        2           6   GlobalAddress.dtor
+        2           6   MediaPsm.UpdateIcMedia
+        2           6   MsgPort.WrapMsg
+        2           6   PotsShelfFactory.AllocIcMsg
+        2           6   ProtocolSM.EnqOgMsg
+        2           6   ProtocolSM.GetProtocol
+        2           6   ServiceSM.SetNextSnp
+        2           6   ServiceSM.operator new
+        2           6   SsmContext.SetRoot
+        2           6   SsmFactory.ReceiveMsg
+        2           5   Message.SetProtocol
+        2           5   PotsBcSsm.SetNextSnp
+        2           5   Q1Way.Size
+        1      199155   SysTcpSocket.Poll
+        1          73   PotsCallPsm.ctor(subseq)
+        1          47   PotsBcSsm.ctor
+        1          35   ProtocolSM.operator new
+        1          28   PayloadInvokerPool.RejectIngressWork
+        1          24   PotsTreatmentQueue.FirstTreatment
+        1          23   TcpIoThread.AcceptConn
+        1          19   BcLocalReleaseEvent.ctor
+        1          19   BcOriginationDeniedEvent.ctor
+        1          18   BcApplyTreatmentEvent.ctor
+        1          18   BcReleaseCallEvent.ctor
+        1          18   MsgPort.UpdatePeer
+        1          18   PotsTreatmentRegistry.CauseToTreatmentQ
+        1          17   PotsHeaderInfo.ctor
+        1          17   PotsScanInfo.ctor
+        1          16   BcAuthorizeOriginationEvent.ctor
+        1          16   BcOriginateEvent.ctor
+        1          16   SsmContext.ctor
+        1          16   SysTcpSocket.Accept
+        1          12   ProtocolSM.Initialize
         1           8   SysSocket.SetError
-        1           8   Thread.InitialMsecs
-        1           7   MsgPort.dtor
-        1           7   PotsBcExApplyTreatment.ProcessEvent
-        1           7   PotsBcSsm.dtor
-        1           7   ProtocolSM.SendFinal
-        1           7   ProxyBcSsm.EndOfTransaction
-        1           7   TcpIoThread.AcceptConn
+        1           7   ProtocolLayer.ctor(subseq)
+        1           7   ProtocolSM.dtor
         1           7   TcpIoThread.PollSockets
-        1           6   BcSsm.RaiseLocalRelease
-        1           6   BcSsm.dtor
-        1           6   IpPort.BytesSent
-        1           6   MediaSsm.dtor
-        1           6   ObjectPool.BidToObj
-        1           6   PotsBcNuAnalyzeLocalMessage.ProcessEvent
-        1           6   PotsCallPsm.dtor
-        1           6   PotsShelfFactory.ProcessIcMsg
+        1           6   BcApplyTreatmentEvent.dtor
+        1           6   IpPortRegistry.HostAddress
+        1           6   PotsBcExApplyTreatment.ProcessEvent
+        1           6   PotsFacilityInfo.ctor
         1           6   ProtocolSM.StartTimer
-        1           6   ProxyBcSsm.FirstProxy
-        1           6   ServiceSM.EndOfTransaction
+        1           6   ProxyBcSsm.ctor
+        1           6   Q1Way.Insert
         1           6   ServiceSM.ProcessInitReq
-        1           6   SsmContext.ProcessIcMsg
-        1           5   BcSsm.ClearCall
+        1           5   BcSsm.RaiseApplyTreatment
         1           5   BcSsm.RaiseAuthorizeOrigination
-        1           5   BcSsm.RaiseReleaseCall
-        1           5   MediaPsm.dtor
-        1           5   MsgContext.ProcessIcMsg
-        1           5   PotsBcExAnalyzeLocalMessage.ProcessEvent
-        1           5   PotsBcLocalRelease.ProcessEvent
+        1           5   MediaPsm.UpdateOgMedia
+        1           5   MsgPort.dtor
+        1           5   PotsBcNuAnalyzeLocalMessage.ProcessEvent
         1           5   PotsBcSsm.ClearCall
-        1           5   PotsCallFactory.AllocRoot
-        1           5   PotsSusInitiator.ProcessEvent
-        1           5   PotsSusSsm.ProcessInitAck
-        1           5   PotsToneTreatment.ApplyTreatment
-        1           5   ProtocolLayer.SendToUpper
-        1           5   ProtocolSM.ReceiveMsg
-        1           5   ProxyBcSsm.dtor
-        1           5   ServiceSM.ProcessInitqSap
-        1           5   ServiceSM.PsmDeleted
+        1           5   PotsBcSsm.StartTimer
+        1           5   PotsCallFactory.AllocIcPsm
+        1           5   PotsStatistics.IncrCause
+        1           5   ProtocolSM.ctor(subseq)
+        1           5   PsmContext.HenqPsm
+        1           5   RouteResult.ctor
         1           5   SysIpL2Addr.IsValid
-        1           5   Timer.dtor
-        1           4   BcApplyTreatmentEvent.dtor
-        1           4   BcLocalReleaseEvent.dtor
+        1           5   Timer.operator new
+        1           4   BcOriginateEvent.dtor
         1           4   BcReleaseCallEvent.dtor
-        1           4   BcSsm.PsmDeleted
-        1           4   BcSsm.RaiseApplyTreatment
-        1           4   Context.ContextRoot
-        1           4   Event.BuildSap
+        1           4   BcSsm.ClearCall
+        1           4   BcSsm.RaiseLocalRelease
+        1           4   BcSsm.RaiseReleaseCall
         1           4   Initiator.InvokeHandler
-        1           4   InvokerThread.ScheduledIn
-        1           4   MediaPsm.IcPortUpdated
-        1           4   MediaPsm.ReceiveMsg
-        1           4   MediaPsm.SetOgPort
         1           4   MediaPsm.SetOgTone
-        1           4   MediaPsm.UpdateOgMedia
-        1           4   MediaSsm.PsmDeleted
-        1           4   Message.Capture
+        1           4   Message.GetReceiver
         1           4   Message.GetSender
         1           4   MsgPort.AdjacentDeleted
-        1           4   MsgPort.Find
-        1           4   MsgPort.ReceiveMsg
-        1           4   MsgPort.UppermostPsm
-        1           4   PotsBcAoOriginationDenied.ProcessEvent
-        1           4   PotsBcNuOriginate.ProcessEvent
-        1           4   PotsBcReleaseCall.ProcessEvent
+        1           4   MsgPort.AllocUpper
+        1           4   MsgPort.Initialize
+        1           4   PotsBcExAnalyzeLocalMessage.ProcessEvent
         1           4   PotsBcSsm.PsmDeleted
-        1           4   PotsBcSsm.StartTimer
-        1           4   PotsBcSsm.StopTimer
+        1           4   PotsBcSsm.dtor
+        1           4   PotsCallFactory.AllocRoot
         1           4   PotsCallPsm.EnsureMediaMsg
-        1           4   PotsProfile.ClearObjAddr(addr)
-        1           4   PotsProfile.ClearObjAddr(psm)
-        1           4   PotsProfile.FindFeature
-        1           4   PotsStatistics.Incr
-        1           4   PotsStatistics.IncrCause
-        1           4   PotsSusService.AllocModifier
-        1           4   PotsTreatmentQueue.FirstTreatment
-        1           4   PotsTreatmentRegistry.CauseToTreatmentQ
-        1           4   ProtocolSM.HenqReceivedMsg
-        1           4   ProtocolSM.StopTimer
+        1           4   PotsCircuit.SetState
+        1           4   PotsSusInitiator.ProcessEvent
+        1           4   PotsSusSsm.ProcessInitAck
+        1           4   PotsToneTreatment.ApplyTreatment
+        1           4   ProtocolSM.Destroy
         1           4   ProxyBcSsm.PsmDeleted
-        1           4   PsmContext.ExqPsm
-        1           4   PsmContext.FindPort
-        1           4   PsmContext.dtor
-        1           4   ServiceSM.HenqModifier
-        1           4   SsmContext.AllocRoot
+        1           4   PsmContext.ctor
+        1           4   RootServiceSM.dtor
+        1           4   ServiceSM.DeleteIdleModifier
+        1           4   ServiceSM.ProcessInitqSap
+        1           4   ServiceSM.PsmDeleted
         1           4   SsmContext.dtor
-        1           4   SsmFactory.ReceiveMsg
-        1           4   SysIpL3Addr.ReleaseSocket
+        1           4   Timer.dtor
         1           4   TimerRegistry.CalcQId
-        1           4   TimerRegistry.ProcessWork
-        1           4   ToneRegistry.ToneToPort
-        1           3   AnalysisResult.ctor
+        1           3   AnalyzeSapEvent.ctor
         1           3   AnalyzeSapEvent.dtor
         1           3   BcAuthorizeOriginationEvent.dtor
-        1           3   BcOriginateEvent.dtor
+        1           3   BcLocalReleaseEvent.dtor
         1           3   BcOriginationDeniedEvent.dtor
+        1           3   BcSsm.PsmDeleted
         1           3   BcSsm.SetModel
         1           3   BcSsm.SetUPsm
+        1           3   BcSsm.dtor
+        1           3   CauseInfo.ctor
+        1           3   Context.MsgCount
         1           3   DigitString.ctor
+        1           3   Event.BuildSap
         1           3   Event.SetOwner
         1           3   InitiationReqEvent.SetSapEvent
-        1           3   InitiationReqEvent.SetScreening
+        1           3   InitiationReqEvent.ctor
         1           3   InitiationReqEvent.dtor
+        1           3   MediaPsm.IcPortUpdated
         1           3   MediaPsm.MakeEdge
-        1           3   Message.GetReceiver
-        1           3   Message.Henqueue
+        1           3   MediaPsm.SetOgPort
+        1           3   MediaPsm.dtor
+        1           3   MediaSsm.PsmDeleted
+        1           3   MediaSsm.ctor
+        1           3   MediaSsm.dtor
+        1           3   Message.SetRxAddr
+        1           3   MsgPort.UppermostPsm
+        1           3   MsgPort.ctor(i/c)
+        1           3   MsgPort.operator new
+        1           3   ObjectPool.ObjBid
+        1           3   PotsBcAoOriginationDenied.ProcessEvent
+        1           3   PotsBcLocalRelease.ProcessEvent
+        1           3   PotsBcNuOriginate.ProcessEvent
+        1           3   PotsBcReleaseCall.ProcessEvent
         1           3   PotsBcSsm.SetProfile
-        1           3   PotsProfile.HasFeature
+        1           3   PotsBcSsm.StopTimer
+        1           3   PotsCallFactory.PortAllocated
+        1           3   PotsCallFactory.ScreenFirstMsg
+        1           3   PotsCallPsm.dtor
+        1           3   PotsProfile.ClearObjAddr(addr)
+        1           3   PotsProfile.ClearObjAddr(psm)
+        1           3   PotsProfile.FindFeature
+        1           3   PotsProfile.SetObjAddr
         1           3   PotsProfile.SetState
+        1           3   PotsRingInfo.ctor
+        1           3   PotsStatistics.Incr
+        1           3   PotsSusService.AllocModifier
+        1           3   PotsSusSsm.ctor
         1           3   PotsSusSsm.dtor
         1           3   ProtocolLayer.AdjacentDeleted
-        1           3   ProtocolSM.UnwrapMsg
+        1           3   ProtocolLayer.ctor(first)
+        1           3   ProtocolSM.SendFinal
+        1           3   ProtocolSM.StopTimer
         1           3   ProxyBcSsm.SetUPsm
+        1           3   ProxyBcSsm.dtor
+        1           3   PsmContext.EnqPort
         1           3   PsmContext.ExqPort
-        1           3   PsmFactory.ReceiveMsg
-        1           3   Q2Way.Henq
+        1           3   PsmContext.ExqPsm
+        1           3   PsmContext.dtor
+        1           3   RootServiceSM.ctor
         1           3   SbInitiationReq.ProcessEvent
-        1           3   ServiceSM.DeleteIdleModifier
-        1           3   ServiceSM.SetParent
-        1           3   SsmContext.IsIdle
+        1           3   ServiceSM.HenqModifier
+        1           3   SsmContext.AllocRoot
+        1           3   SsmFactory.AllocContext
         1           3   Timer.Deregister
         1           3   Timer.Exqueue
-        1           3   Timer.operator new
-        1           2   BcSsm.ctor
-        1           2   PotsBcSsm.ctor
+        1           3   ToneRegistry.ToneToPort
+        1           2   AnalysisResult.ctor
+        1           2   Context.ContextRoot
+        1           2   InitiationReqEvent.SetScreening
+        1           2   PotsProfile.HasFeature
+        1           2   ProtocolSM.UppermostPsm
+        1           2   ServiceSM.SetParent
+        1           2   SysIpL3Addr.ReleaseSocket
         1           2   Timer.ctor
-        1           1   RootServiceSM.ctor
-        1           1   TcpIoThread.Enter
-        1           0   AnalyzeSapEvent.ctor
-        1           0   BcApplyTreatmentEvent.ctor
-        1           0   BcAuthorizeOriginationEvent.ctor
-        1           0   BcLocalReleaseEvent.ctor
-        1           0   BcOriginateEvent.ctor
-        1           0   BcOriginationDeniedEvent.ctor
-        1           0   BcReleaseCallEvent.ctor
-        1           0   InitiationReqEvent.ctor
-        1           0   MediaSsm.ctor
-        1           0   PotsSusSsm.ctor
-        1           0   ProxyBcSsm.ctor
-        1           0   ThreadAdmin.WarpFactor
+        1           1   BcSsm.ctor
+        1           0   MediaPsm.ctor(subseq)
 
-Total functions: 356
+Total functions: 393

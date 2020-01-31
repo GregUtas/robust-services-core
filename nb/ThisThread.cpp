@@ -106,9 +106,9 @@ ThreadId ThisThread::RunningThreadId()
 
 //------------------------------------------------------------------------------
 
-TraceRc ThisThread::StartTracing(const string& options)
+TraceRc ThisThread::StartTracing(const string& opts)
 {
-   return Thread::StartTracing(options);
+   return Thread::StartTracing(opts);
 }
 
 //------------------------------------------------------------------------------

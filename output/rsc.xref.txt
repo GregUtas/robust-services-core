@@ -7779,12 +7779,6 @@ CodeTools::ModeParm::Start [ct/CtIncrement.cpp]
    ct/CtIncrement.cpp
 CodeTools::ModeParm::Stop [ct/CtIncrement.cpp]
    ct/CtIncrement.cpp
-CodeTools::OptionsExpl [ct/CtIncrement.cpp]
-   ct/CtIncrement.cpp
-CodeTools::OptionsParm [ct/CtIncrement.cpp]
-   ct/CtIncrement.cpp
-CodeTools::OptionsParm::OptionsParm [ct/CtIncrement.cpp]
-   ct/CtIncrement.cpp
 CodeTools::ParseCommand [ct/CtIncrement.cpp]
    ct/CtIncrement.cpp
 CodeTools::ParseCommand::ParseCommand [ct/CtIncrement.cpp]
@@ -7794,6 +7788,12 @@ CodeTools::ParseCommand::ProcessCommand [ct/CtIncrement.cpp]
 CodeTools::ParseCommand_ProcessCommand [ct/CtIncrement.cpp]
    ct/CtIncrement.cpp
 CodeTools::ParseExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ParseOptionsExpl [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ParseOptionsParm [ct/CtIncrement.cpp]
+   ct/CtIncrement.cpp
+CodeTools::ParseOptionsParm::ParseOptionsParm [ct/CtIncrement.cpp]
    ct/CtIncrement.cpp
 CodeTools::ParseStr [ct/CtIncrement.cpp]
    ct/CtIncrement.cpp
@@ -24632,7 +24632,6 @@ NodeBase::ptrdiff [nb/Algorithms.h]
    nb/CliIncrement.cpp
    nb/CliParm.cpp
    nb/Daemon.cpp
-   nb/FunctionTrace.cpp
    nb/Log.cpp
    nb/LogGroup.cpp
    nb/Module.cpp
@@ -24688,6 +24687,7 @@ NodeBase::AllocationException [nb/AllocationException.h]
    nb/Memory.cpp
    nb/ObjectPool.cpp
    nb/SysHeap.cpp
+   nb/Thread.cpp
 NodeBase::AllocationException::AllocationException [nb/AllocationException.h]
    nb/AllocationException.cpp
 NodeBase::AllocationException::Display [nb/AllocationException.h]
@@ -24796,7 +24796,9 @@ NodeBase::Base_GetSubtended [nb/Base.cpp]
    nb/Base.cpp
 NodeBase::Base_LogSubtended [nb/Base.cpp]
    nb/Base.cpp
-NodeBase::Base_ctor [nb/Base.cpp]
+NodeBase::Base_new1 [nb/Base.cpp]
+   nb/Base.cpp
+NodeBase::Base_new2 [nb/Base.cpp]
    nb/Base.cpp
 NodeBase::Base [nb/Base.h]
    ct/CxxRoot.h
@@ -24840,8 +24842,6 @@ NodeBase::Base [nb/Base.h]
    sb/TimerRegistry.cpp
    st/TestSessions.cpp
    st/TestSessions.h
-NodeBase::Base::Base [nb/Base.h]
-   nb/Base.cpp
 NodeBase::Base::Claim [nb/Base.h]
    dip/BotTrace.cpp
    nb/Base.cpp
@@ -25496,6 +25496,10 @@ NodeBase::Base::Startup [nb/Base.h]
 NodeBase::Base::Vptr [nb/Base.h]
    nb/Base.cpp
    nb/Class.cpp
+NodeBase::Base::operator new [nb/Base.h]
+   nb/Base.cpp
+NodeBase::Base::operator new[] [nb/Base.h]
+   nb/Base.cpp
 NodeBase::Base::vptr_t [nb/Base.h]
    nb/Base.cpp
    nb/Base.h
@@ -26935,6 +26939,7 @@ NodeBase::CliParm::Explain [nb/CliParm.h]
 NodeBase::CliParm::GetBoolParm [nb/CliParm.h]
    ct/CtIncrement.cpp
    nb/CliParm.cpp
+   nb/NbIncrement.cpp
    nt/NtIncrement.cpp
 NodeBase::CliParm::GetBoolParmRc [nb/CliParm.h]
    nb/CliBoolParm.cpp
@@ -28489,8 +28494,6 @@ NodeBase::Debug::FcFlags_ [nb/Debug.h]
    nb/Thread.cpp
    nb/ThreadAdmin.cpp
    nb/TraceBuffer.cpp
-NodeBase::Debug::FtLock_ [nb/Debug.h]
-   nb/Debug.cpp
 NodeBase::Debug::GenerateSwLog [nb/Debug.h]
    nb/Debug.cpp
 NodeBase::Debug::GetSwFlags [nb/Debug.h]
@@ -28513,25 +28516,12 @@ NodeBase::Debug::Progress [nb/Debug.h]
    ct/CxxArea.cpp
    ct/Parser.cpp
    nb/Debug.cpp
-NodeBase::Debug::Reset [nb/Debug.h]
-   nb/Debug.cpp
-   nb/Exception.cpp
-   nb/SysThread.win.cpp
-   nb/Thread.cpp
 NodeBase::Debug::ResetSwFlags [nb/Debug.h]
    nb/Debug.cpp
    nt/NtIncrement.cpp
-NodeBase::Debug::SetSlowTrace [nb/Debug.h]
-   nb/InitThread.cpp
-   nb/TraceBuffer.cpp
 NodeBase::Debug::SetSwFlag [nb/Debug.h]
    nb/Debug.cpp
    nt/NtIncrement.cpp
-NodeBase::Debug::SlowTraceOn [nb/Debug.h]
-   nb/TraceBuffer.cpp
-NodeBase::Debug::SlowTrace_ [nb/Debug.h]
-   nb/Debug.cpp
-   nb/Debug.h
 NodeBase::Debug::SwFlagOn [nb/Debug.h]
    cb/BcHandlers.cpp
    cb/BcProtocol.cpp
@@ -28711,8 +28701,6 @@ NodeBase::Debug::SwLog(const char* const,unsigned long long,unsigned long long,N
    st/MscBuilder.cpp
    st/StTestData.cpp
    st/TestSessions.cpp
-NodeBase::Debug::TraceLock_ [nb/Debug.h]
-   nb/Debug.cpp
 NodeBase::Debug::TraceOn [nb/Debug.h]
    dip/BaseBot.cpp
    dip/BotThread.cpp
@@ -29086,6 +29074,10 @@ NodeBase::Debug::ft [nb/Debug.h]
    st/StModule.cpp
    st/StTestData.cpp
    st/TestSessions.cpp
+NodeBase::Debug::noft [nb/Debug.h]
+   nb/SysThread.win.cpp
+   nb/Thread.cpp
+   nb/ThreadRegistry.cpp
 NodeBase::Debug::noop [nb/Debug.h]
    ct/CxxExecute.cpp
    nb/Debug.cpp
@@ -29530,6 +29522,7 @@ NodeBase::spaces [nb/Formatters.h]
    nb/Thread.cpp
    nb/ThreadRegistry.cpp
    nb/ToolRegistry.cpp
+   nb/TraceBuffer.cpp
    nb/TraceRecord.cpp
    nt/FunctionStats.cpp
    nt/NtIncrement.cpp
@@ -29610,6 +29603,7 @@ NodeBase::strClass [nb/Formatters.h]
    nb/Singletons.cpp
    nb/Thread.cpp
    nb/ToolRegistry.cpp
+   nb/TraceBuffer.cpp
    pb/PotsProtocol.cpp
    sb/Initiator.cpp
    sb/MsgHeader.cpp
@@ -29779,6 +29773,7 @@ NodeBase::FunctionName::CtorTag [nb/FunctionName.h]
 NodeBase::FunctionName::DtorTag [nb/FunctionName.h]
    nb/FunctionName.cpp
    nb/FunctionTrace.cpp
+   nb/TraceBuffer.cpp
 NodeBase::FunctionName::OpDelTag [nb/FunctionName.h]
    nb/FunctionName.cpp
    nb/FunctionTrace.cpp
@@ -29788,41 +29783,88 @@ NodeBase::FunctionName::OpNewTag [nb/FunctionName.h]
 NodeBase::FunctionName::TypeStr [nb/FunctionName.h]
    ct/CodeFile.cpp
    nb/FunctionName.cpp
-NodeBase::FunctionName::compare [nb/FunctionName.h]
-   nb/FunctionName.cpp
+NodeBase::CtorChain [nb/FunctionTrace.cpp]
    nb/FunctionTrace.cpp
-   nt/FunctionProfiler.cpp
-NodeBase::FunctionName::find [nb/FunctionName.h]
-   nb/FunctionName.cpp
-NodeBase::FunctionName::rfind [nb/FunctionName.h]
-   nb/FunctionName.cpp
+NodeBase::CtorChain::Action [nb/FunctionTrace.cpp]
+   nb/FunctionTrace.cpp
+NodeBase::CtorChain::Action::Create [nb/FunctionTrace.cpp]
+   nb/FunctionTrace.cpp
+NodeBase::CtorChain::Action::Finalize [nb/FunctionTrace.cpp]
+   nb/FunctionTrace.cpp
+NodeBase::CtorChain::Action::SetAsFirst [nb/FunctionTrace.cpp]
+   nb/FunctionTrace.cpp
+NodeBase::CtorChain::Action::SetAsInit [nb/FunctionTrace.cpp]
+   nb/FunctionTrace.cpp
+NodeBase::CtorChain::Action::SetAsNext [nb/FunctionTrace.cpp]
+   nb/FunctionTrace.cpp
+NodeBase::CtorChain::AddToPreviousChain [nb/FunctionTrace.cpp]
+   nb/FunctionTrace.cpp
+NodeBase::CtorChain::CalcAction [nb/FunctionTrace.cpp]
+   nb/FunctionTrace.cpp
+NodeBase::CtorChain::CheckForEndOfChains [nb/FunctionTrace.cpp]
+   nb/FunctionTrace.cpp
+NodeBase::CtorChain::CheckForInitializer [nb/FunctionTrace.cpp]
+   nb/FunctionTrace.cpp
+NodeBase::CtorChain::CtorChain(NodeBase::CtorChain* const,NodeBase::FunctionTrace*) [nb/FunctionTrace.cpp]
+   nb/FunctionTrace.cpp
+NodeBase::CtorChain::CtorChain(NodeBase::CtorChain* const,NodeBase::FunctionTrace*,int) [nb/FunctionTrace.cpp]
+   nb/FunctionTrace.cpp
+NodeBase::CtorChain::FunctionEndsChain [nb/FunctionTrace.cpp]
+   nb/FunctionTrace.cpp
+NodeBase::CtorChain::HandleCtor [nb/FunctionTrace.cpp]
+   nb/FunctionTrace.cpp
+NodeBase::CtorChain::HandleFunction [nb/FunctionTrace.cpp]
+   nb/FunctionTrace.cpp
+NodeBase::CtorChain::MoveOuterAboveInit [nb/FunctionTrace.cpp]
+   nb/FunctionTrace.cpp
+NodeBase::CtorChain::MoveOuterAboveInner [nb/FunctionTrace.cpp]
+   nb/FunctionTrace.cpp
+NodeBase::CtorChain::SetOuter [nb/FunctionTrace.cpp]
+   nb/FunctionTrace.cpp
+NodeBase::CtorChain::ctors_ [nb/FunctionTrace.cpp]
+   nb/FunctionTrace.cpp
+NodeBase::CtorChain::init_ [nb/FunctionTrace.cpp]
+   nb/FunctionTrace.cpp
+NodeBase::CtorChain::opnew_ [nb/FunctionTrace.cpp]
    nb/FunctionTrace.cpp
 NodeBase::Cxx_delete [nb/FunctionTrace.cpp]
    nb/FunctionTrace.cpp
-NodeBase::FunctionTrace_CalcFuncTime [nb/FunctionTrace.cpp]
+NodeBase::FunctionTrace_Process [nb/FunctionTrace.cpp]
    nb/FunctionTrace.cpp
-NodeBase::FunctionTrace_CalcGrossTime [nb/FunctionTrace.cpp]
-   nb/FunctionTrace.cpp
-NodeBase::FunctionTrace_FindDeleteOperator [nb/FunctionTrace.cpp]
-   nb/FunctionTrace.cpp
-NodeBase::FunctionTrace_InvertCtors [nb/FunctionTrace.cpp]
-   nb/FunctionTrace.cpp
-NodeBase::FunctionTrace_Postprocess [nb/FunctionTrace.cpp]
+NodeBase::FunctionTrace_RemoveCxxDeletes [nb/FunctionTrace.cpp]
    nb/FunctionTrace.cpp
 NodeBase::FunctionTrace_SetScope [nb/FunctionTrace.cpp]
+   nb/FunctionTrace.cpp
+NodeBase::PerThreadInfo [nb/FunctionTrace.cpp]
+   nb/FunctionTrace.cpp
+NodeBase::PerThreadInfo::PopBack [nb/FunctionTrace.cpp]
+   nb/FunctionTrace.cpp
+NodeBase::PerThreadInfo::chains [nb/FunctionTrace.cpp]
+   nb/FunctionTrace.cpp
+NodeBase::PerThreadInfo::depths [nb/FunctionTrace.cpp]
+   nb/FunctionTrace.cpp
+NodeBase::ThreadInfo [nb/FunctionTrace.cpp]
    nb/FunctionTrace.cpp
 NodeBase::FunctionTrace [nb/FunctionTrace.h]
    nb/FunctionTrace.cpp
    nb/Thread.cpp
+   nb/TraceBuffer.cpp
    nt/FunctionProfiler.cpp
    nt/NtIncrement.cpp
-NodeBase::FunctionTrace::CalcFuncTime [nb/FunctionTrace.h]
+NodeBase::FunctionTrace::AdjustDepths [nb/FunctionTrace.h]
+   nb/FunctionTrace.cpp
+NodeBase::FunctionTrace::CalcFuncTimes [nb/FunctionTrace.h]
    nb/FunctionTrace.cpp
 NodeBase::FunctionTrace::CalcGrossTime [nb/FunctionTrace.h]
+   nb/FunctionTrace.cpp
+NodeBase::FunctionTrace::CalcTimes [nb/FunctionTrace.h]
    nb/FunctionTrace.cpp
 NodeBase::FunctionTrace::Capture [nb/FunctionTrace.h]
    nb/FunctionTrace.cpp
    nb/Thread.cpp
+NodeBase::FunctionTrace::Depth [nb/FunctionTrace.h]
+   nb/FunctionTrace.cpp
+   nb/TraceBuffer.cpp
 NodeBase::FunctionTrace::Display [nb/FunctionTrace.h]
    nb/FunctionTrace.cpp
 NodeBase::FunctionTrace::FTmask [nb/FunctionTrace.h]
@@ -29830,26 +29872,34 @@ NodeBase::FunctionTrace::FTmask [nb/FunctionTrace.h]
    nt/FunctionProfiler.cpp
 NodeBase::FunctionTrace::FindDeleteOperator [nb/FunctionTrace.h]
    nb/FunctionTrace.cpp
+NodeBase::FunctionTrace::FindInvokerDepths [nb/FunctionTrace.h]
+   nb/FunctionTrace.cpp
+NodeBase::FunctionTrace::FixCtorChains [nb/FunctionTrace.h]
+   nb/FunctionTrace.cpp
 NodeBase::FunctionTrace::Func [nb/FunctionTrace.h]
+   nb/FunctionTrace.cpp
+   nb/TraceBuffer.cpp
    nt/FunctionProfiler.cpp
-NodeBase::FunctionTrace::FunctionTrace [nb/FunctionTrace.h]
+NodeBase::FunctionTrace::FunctionTrace(NodeBase::FunctionTrace* const) [nb/FunctionTrace.h]
+   nb/FunctionTrace.cpp
+NodeBase::FunctionTrace::FunctionTrace(NodeBase::FunctionTrace* const,const char* const,short) [nb/FunctionTrace.h]
    nb/FunctionTrace.cpp
 NodeBase::FunctionTrace::GetScope [nb/FunctionTrace.h]
    nb/NbTracer.cpp
    nb/Thread.cpp
    nt/FunctionProfiler.cpp
-NodeBase::FunctionTrace::InvertCtors [nb/FunctionTrace.h]
+NodeBase::FunctionTrace::InvokerDepth [nb/FunctionTrace.h]
    nb/FunctionTrace.cpp
 NodeBase::FunctionTrace::MaxDispDepth [nb/FunctionTrace.h]
    nb/FunctionTrace.cpp
-NodeBase::FunctionTrace::MinDepth_ [nb/FunctionTrace.h]
-   nb/FunctionTrace.cpp
 NodeBase::FunctionTrace::Net [nb/FunctionTrace.h]
    nt/FunctionProfiler.cpp
-NodeBase::FunctionTrace::Postprocess [nb/FunctionTrace.h]
+NodeBase::FunctionTrace::Process [nb/FunctionTrace.h]
    nb/FunctionTrace.cpp
    nb/TraceDump.cpp
    nt/NtIncrement.cpp
+NodeBase::FunctionTrace::RemoveCxxDeletes [nb/FunctionTrace.h]
+   nb/FunctionTrace.cpp
 NodeBase::FunctionTrace::Scope [nb/FunctionTrace.h]
    nb/FunctionTrace.cpp
    nb/FunctionTrace.h
@@ -29871,17 +29921,21 @@ NodeBase::FunctionTrace::SetScope [nb/FunctionTrace.h]
    nt/NtIncrement.cpp
 NodeBase::FunctionTrace::depth_ [nb/FunctionTrace.h]
    nb/FunctionTrace.cpp
+   nb/FunctionTrace.h
 NodeBase::FunctionTrace::func_ [nb/FunctionTrace.h]
    nb/FunctionTrace.cpp
    nb/FunctionTrace.h
 NodeBase::FunctionTrace::gross_ [nb/FunctionTrace.h]
    nb/FunctionTrace.cpp
-NodeBase::FunctionTrace::moved_ [nb/FunctionTrace.h]
+NodeBase::FunctionTrace::invokerDepth_ [nb/FunctionTrace.h]
    nb/FunctionTrace.cpp
+   nb/FunctionTrace.h
 NodeBase::FunctionTrace::net_ [nb/FunctionTrace.h]
    nb/FunctionTrace.cpp
    nb/FunctionTrace.h
-NodeBase::FunctionTrace::stop_ [nb/FunctionTrace.h]
+NodeBase::FunctionTrace::operator new(unsigned int) [nb/FunctionTrace.h]
+   nb/FunctionTrace.cpp
+NodeBase::FunctionTrace::operator new(unsigned int,void*) [nb/FunctionTrace.h]
    nb/FunctionTrace.cpp
 NodeBase::Immutable_ctor [nb/Immutable.cpp]
    nb/Immutable.cpp
@@ -30328,9 +30382,9 @@ NodeBase::LogBuffer::Display [nb/LogBuffer.h]
 NodeBase::LogBuffer::Empty [nb/LogBuffer.h]
    nb/LogBufferRegistry.cpp
 NodeBase::LogBuffer::Entry [nb/LogBuffer.h]
+   nb/LogBuffer.cpp
    nb/LogBuffer.h
 NodeBase::LogBuffer::Entry [nb/LogBuffer.h]
-   nb/LogBuffer.cpp
    nb/LogBuffer.h
 NodeBase::LogBuffer::Entry::header [nb/LogBuffer.h]
    nb/LogBuffer.cpp
@@ -30756,7 +30810,6 @@ NodeBase::Memory::Copy [nb/Memory.h]
    dip/DipProtocol.cpp
    nb/CinThread.cpp
    nb/Class.cpp
-   nb/FunctionTrace.cpp
    nb/LogBuffer.cpp
    nb/Memory.cpp
    nw/InputHandler.cpp
@@ -30795,7 +30848,6 @@ NodeBase::Memory::Verify [nb/Memory.h]
    nb/Memory.cpp
 NodeBase::Memory::Words [nb/Memory.h]
    nb/Memory.cpp
-   nb/TraceBuffer.cpp
 NodeBase::SysHeap [nb/Memory.h]
    nb/Memory.h
 NodeBase::AllocEventStr [nb/MemoryTrace.cpp]
@@ -32047,6 +32099,20 @@ NodeBase::BuffSizeTextExpl [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::BuffSizeTextStr [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
+NodeBase::BuffWrapExpl [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::BuffWrapParm [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::BuffWrapParm::BuffWrapParm [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::BuffWrapText [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::BuffWrapText::BuffWrapText [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::BuffWrapTextExpl [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::BuffWrapTextStr [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
 NodeBase::BuffersCommand [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::BuffersCommand::BuffersCommand [nb/NbIncrement.cpp]
@@ -32218,12 +32284,6 @@ NodeBase::DelayTimeExpl [nb/NbIncrement.cpp]
 NodeBase::DelayTimeParm [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::DelayTimeParm::DelayTimeParm [nb/NbIncrement.cpp]
-   nb/NbIncrement.cpp
-NodeBase::DiffExpl [nb/NbIncrement.cpp]
-   nb/NbIncrement.cpp
-NodeBase::DiffParm [nb/NbIncrement.cpp]
-   nb/NbIncrement.cpp
-NodeBase::DiffParm::DiffParm [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::DisplayCommand [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
@@ -32509,12 +32569,6 @@ NodeBase::NbIncrement_dtor [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::NodeBase_FindGroupAndLog [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
-NodeBase::OptionsExpl [nb/NbIncrement.cpp]
-   nb/NbIncrement.cpp
-NodeBase::OptionsParm [nb/NbIncrement.cpp]
-   nb/NbIncrement.cpp
-NodeBase::OptionsParm::OptionsParm [nb/NbIncrement.cpp]
-   nb/NbIncrement.cpp
 NodeBase::PoolsCommand [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::PoolsCommand::PoolsCommand [nb/NbIncrement.cpp]
@@ -32779,6 +32833,12 @@ NodeBase::SetCommand_ProcessSubcommand [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::SetExpl [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
+NodeBase::SetOptionsExpl [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::SetOptionsParm [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::SetOptionsParm::SetOptionsParm [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
 NodeBase::SetStr [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::SetWhatExpl [nb/NbIncrement.cpp]
@@ -32804,6 +32864,12 @@ NodeBase::StartCommand::StartCommand [nb/NbIncrement.cpp]
 NodeBase::StartCommand_ProcessCommand [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::StartExpl [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::StartOptionsExpl [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::StartOptionsParm [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::StartOptionsParm::StartOptionsParm [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::StartStr [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
@@ -32976,6 +33042,8 @@ NodeBase::TraceText::TraceText [nb/NbIncrement.cpp]
 NodeBase::TraceTextExpl [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::TraceTextStr [nb/NbIncrement.cpp]
+   nb/NbIncrement.cpp
+NodeBase::ValidSetOptions [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
 NodeBase::ValidStartOptions [nb/NbIncrement.cpp]
    nb/NbIncrement.cpp
@@ -33189,6 +33257,9 @@ NodeBase::SetCommand::ProcessCommand [nb/NbIncrement.h]
 NodeBase::SetCommand::ProcessSubcommand [nb/NbIncrement.h]
    nb/NbIncrement.cpp
 NodeBase::SetCommand::SetBuffSizeIndex [nb/NbIncrement.h]
+   nb/NbIncrement.cpp
+   nb/NbIncrement.h
+NodeBase::SetCommand::SetBuffWrapIndex [nb/NbIncrement.h]
    nb/NbIncrement.cpp
    nb/NbIncrement.h
 NodeBase::SetCommand::SetCommand [nb/NbIncrement.h]
@@ -34208,8 +34279,6 @@ NodeBase::Object_MemType [nb/Object.cpp]
    nb/Object.cpp
 NodeBase::Object_MorphTo [nb/Object.cpp]
    nb/Object.cpp
-NodeBase::Object_ctor [nb/Object.cpp]
-   nb/Object.cpp
 NodeBase::Object_delete1 [nb/Object.cpp]
    nb/Object.cpp
 NodeBase::Object_delete2 [nb/Object.cpp]
@@ -34278,8 +34347,6 @@ NodeBase::Object::MaxInstanceIdLog2 [nb/Object.h]
 NodeBase::Object::MemType [nb/Object.h]
    nb/Object.cpp
 NodeBase::Object::MorphTo [nb/Object.h]
-   nb/Object.cpp
-NodeBase::Object::Object [nb/Object.h]
    nb/Object.cpp
 NodeBase::Object::ObjectId [nb/Object.h]
    nb/Object.cpp
@@ -35181,6 +35248,8 @@ NodeBase::ObjectPool::cfgSegments_ [nb/ObjectPool.h]
 NodeBase::ObjectPool::corruptQHead_ [nb/ObjectPool.h]
    nb/ObjectPool.cpp
 NodeBase::ObjectPool::currSegments_ [nb/ObjectPool.h]
+   nb/ObjectPool.cpp
+NodeBase::ObjectPool::delta_ [nb/ObjectPool.h]
    nb/ObjectPool.cpp
 NodeBase::ObjectPool::freeq_ [nb/ObjectPool.h]
    nb/ObjectPool.cpp
@@ -37115,7 +37184,6 @@ NodeBase::Singleton::Instance [nb/Singleton.h]
    nb/Tool.cpp
    nb/TraceBuffer.cpp
    nb/TraceDump.cpp
-   nb/TraceRecord.cpp
    nt/FunctionProfiler.cpp
    nt/NtIncrement.cpp
    nt/NtModule.cpp
@@ -37148,10 +37216,13 @@ NodeBase::Singleton::Instance [nb/Singleton.h]
    pb/PotsWmlFeature.cpp
    rn/RnModule.cpp
    rsc/main.cpp
+   sb/AnalyzeSapEvent.cpp
+   sb/AnalyzeSnpEvent.cpp
    sb/Context.cpp
    sb/Event.cpp
    sb/Factory.cpp
    sb/FactoryRegistry.cpp
+   sb/InitiationReqEvent.cpp
    sb/Initiator.cpp
    sb/InvokerPool.cpp
    sb/InvokerPoolRegistry.cpp
@@ -37839,6 +37910,7 @@ NodeBase::SysSocket_t [nb/SysDecls.h]
    nw/SysTcpSocket.cpp
    nw/SysTcpSocket.h
 NodeBase::SysThreadId [nb/SysDecls.h]
+   nb/FunctionTrace.cpp
    nb/SysLock.h
    nb/SysMutex.h
    nb/SysThread.h
@@ -37848,6 +37920,8 @@ NodeBase::SysThreadId [nb/SysDecls.h]
    nb/ThreadRegistry.cpp
    nb/ThreadRegistry.h
    nb/TimedRecord.h
+   nb/TraceBuffer.cpp
+   nb/TraceBuffer.h
 NodeBase::SysThread_t [nb/SysDecls.h]
    nb/SysThread.h
    nb/SysThread.win.cpp
@@ -38062,19 +38136,13 @@ NodeBase::SysHeap_ctor [nb/SysHeap.win.cpp]
 NodeBase::SysHeap_dtor [nb/SysHeap.win.cpp]
    nb/SysHeap.win.cpp
 NodeBase::SysLock [nb/SysLock.h]
-   nb/Debug.cpp
-   nb/Debug.h
    nb/SysLock.cpp
    nb/SysLock.win.cpp
 NodeBase::SysLock::Acquire [nb/SysLock.h]
-   nb/Debug.cpp
    nb/SysLock.win.cpp
 NodeBase::SysLock::Display [nb/SysLock.h]
    nb/SysLock.cpp
-NodeBase::SysLock::Owner [nb/SysLock.h]
-   nb/Debug.cpp
 NodeBase::SysLock::Release [nb/SysLock.h]
-   nb/Debug.cpp
    nb/SysLock.win.cpp
 NodeBase::SysLock::SysLock(NodeBase::SysLock* const) [nb/SysLock.h]
    nb/SysLock.win.cpp
@@ -38289,7 +38357,7 @@ NodeBase::SysThread::Resume [nb/SysThread.h]
    nb/SysThread.cpp
    nb/SysThread.win.cpp
 NodeBase::SysThread::RunningThreadId [nb/SysThread.h]
-   nb/Debug.cpp
+   nb/FunctionTrace.cpp
    nb/MutexRegistry.cpp
    nb/SysLock.win.cpp
    nb/SysMutex.win.cpp
@@ -38297,6 +38365,7 @@ NodeBase::SysThread::RunningThreadId [nb/SysThread.h]
    nb/SysThread.win.cpp
    nb/Thread.cpp
    nb/TimedRecord.cpp
+   nb/TraceBuffer.cpp
 NodeBase::SysThread::SetPriority [nb/SysThread.h]
    nb/SysThread.cpp
    nb/SysThread.win.cpp
@@ -38721,7 +38790,6 @@ NodeBase::BYTES_PER_WORD_LOG2 [nb/SysTypes.h]
    nb/ObjectPool.cpp
    nb/SysTypes.h
    nb/Thread.cpp
-   nb/TraceBuffer.cpp
 NodeBase::COUT_LENGTH_MAX [nb/SysTypes.h]
    ct/CodeFileSet.cpp
    ct/Parser.cpp
@@ -39040,6 +39108,8 @@ NodeBase::EMPTY_STR [nb/SysTypes.h]
    nb/SysTypes.cpp
    nb/Tool.cpp
    nt/FunctionProfiler.cpp
+   nt/NtIncrement.cpp
+   st/MscBuilder.cpp
 NodeBase::ERROR_STR [nb/SysTypes.h]
    an/PotsTrafficThread.cpp
    cb/BcAddress.cpp
@@ -39632,7 +39702,6 @@ NodeBase::NIL_ID [nb/SysTypes.h]
    nb/Thread.cpp
    nb/ThreadRegistry.cpp
    nb/TimedRecord.cpp
-   nb/TraceBuffer.cpp
    nb/TraceRecord.h
    nt/FunctionProfiler.cpp
    pb/PotsProtocol.cpp
@@ -40162,8 +40231,6 @@ NodeBase::c_string [nb/SysTypes.h]
    nb/FileThread.h
    nb/Formatters.cpp
    nb/Formatters.h
-   nb/FunctionName.cpp
-   nb/FunctionName.h
    nb/InitThread.cpp
    nb/InitThread.h
    nb/LogGroup.h
@@ -40490,6 +40557,7 @@ NodeBase::fn_depth [nb/SysTypes.h]
    nb/SysThreadStack.h
    nb/SysThreadStack.win.cpp
    nb/Thread.cpp
+   nb/TraceBuffer.cpp
    nb/TraceBuffer.h
 NodeBase::fn_name [nb/SysTypes.h]
    an/AnIncrement.cpp
@@ -40858,8 +40926,6 @@ NodeBase::fn_name_arg [nb/SysTypes.h]
    ct/Parser.h
    nb/Debug.cpp
    nb/Debug.h
-   nb/FunctionName.cpp
-   nb/FunctionName.h
    nb/FunctionTrace.cpp
    nb/FunctionTrace.h
    nb/ThisThread.cpp
@@ -41002,7 +41068,6 @@ NodeBase::ostringstreamPtr [nb/SysTypes.h]
    nb/StreamRequest.h
    nb/Thread.cpp
 NodeBase::ptr_t [nb/SysTypes.h]
-   nb/FunctionTrace.cpp
    nb/LogBuffer.cpp
 NodeBase::reinit_t [nb/SysTypes.h]
    nb/ElementException.cpp
@@ -41049,8 +41114,6 @@ NodeBase::uword [nb/SysTypes.h]
    nb/ObjectPool.cpp
    nb/ObjectPool.h
    nb/SysTypes.h
-   nb/TraceBuffer.cpp
-   nb/TraceBuffer.h
 NodeBase::word [nb/SysTypes.h]
    an/AnIncrement.cpp
    an/PotsShelf.h
@@ -41272,6 +41335,8 @@ NodeBase::ThisThread::StopTracing [nb/ThisThread.h]
    ct/CxxExecute.cpp
    ct/Parser.cpp
    nb/ThisThread.cpp
+NodeBase::AccessFtLock [nb/Thread.cpp]
+   nb/Thread.cpp
 NodeBase::ActiveThread_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ClosingConsoleStr [nb/Thread.cpp]
@@ -41337,6 +41402,8 @@ NodeBase::CurrIntervalStart_ [nb/Thread.cpp]
 NodeBase::FactionMap [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::FactionsEnabled_ [nb/Thread.cpp]
+   nb/Thread.cpp
+NodeBase::FtLocks_ [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::KillDeletedThread [nb/Thread.cpp]
    nb/Thread.cpp
@@ -41517,6 +41584,10 @@ NodeBase::ThreadTrace::PauseExit [nb/Thread.cpp]
 NodeBase::ThreadTrace::ThreadTrace [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ThreadTrace::info_ [nb/Thread.cpp]
+   nb/Thread.cpp
+NodeBase::ThreadTrace::operator delete [nb/Thread.cpp]
+   nb/Thread.cpp
+NodeBase::ThreadTrace::operator new [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::ThreadTrace_CaptureEvent [nb/Thread.cpp]
    nb/Thread.cpp
@@ -42064,6 +42135,10 @@ NodeBase::Thread::Reset [nb/Thread.h]
    nb/InitThread.cpp
    nb/RootThread.cpp
    nb/Thread.cpp
+NodeBase::Thread::ResetDebugFlags [nb/Thread.h]
+   nb/Exception.cpp
+   nb/SysThread.win.cpp
+   nb/Thread.cpp
 NodeBase::Thread::ResetFlag [nb/Thread.h]
    nb/Thread.cpp
 NodeBase::Thread::ResetFlags [nb/Thread.h]
@@ -42232,6 +42307,9 @@ NodeBase::ThreadPriv [nb/Thread.h]
    nb/Thread.cpp
    nb/Thread.h
 NodeBase::ThreadStats [nb/Thread.h]
+   nb/Thread.cpp
+   nb/Thread.h
+NodeBase::TraceAutostop [nb/Thread.h]
    nb/Thread.cpp
    nb/Thread.h
 NodeBase::BreakEnabledCfg [nb/ThreadAdmin.cpp]
@@ -42636,6 +42714,7 @@ NodeBase::TimedRecord::GetTime [nb/TimedRecord.h]
    st/MscBuilder.cpp
 NodeBase::TimedRecord::Nid [nb/TimedRecord.h]
    nb/FunctionTrace.cpp
+   nb/TraceBuffer.cpp
 NodeBase::TimedRecord::PrevTid_ [nb/TimedRecord.h]
    nb/TimedRecord.cpp
 NodeBase::TimedRecord::SetTicks [nb/TimedRecord.h]
@@ -43033,11 +43112,15 @@ NodeBase::strTraceRc [nb/ToolTypes.h]
    nb/NbCliParms.cpp
    nb/NbIncrement.cpp
    nb/ToolTypes.cpp
+NodeBase::BlockedStr [nb/TraceBuffer.cpp]
+   nb/TraceBuffer.cpp
+NodeBase::BuffFullStr [nb/TraceBuffer.cpp]
+   nb/TraceBuffer.cpp
+NodeBase::BuffOvflStr [nb/TraceBuffer.cpp]
+   nb/TraceBuffer.cpp
 NodeBase::BufferTrace [nb/TraceBuffer.cpp]
    nb/TraceBuffer.cpp
-NodeBase::BufferTrace::BufferTrace(NodeBase::BufferTrace* const) [nb/TraceBuffer.cpp]
-   nb/TraceBuffer.cpp
-NodeBase::BufferTrace::BufferTrace(NodeBase::BufferTrace* const,unsigned int) [nb/TraceBuffer.cpp]
+NodeBase::BufferTrace::BufferTrace [nb/TraceBuffer.cpp]
    nb/TraceBuffer.cpp
 NodeBase::BufferTrace::Display [nb/TraceBuffer.cpp]
    nb/TraceBuffer.cpp
@@ -43047,11 +43130,13 @@ NodeBase::ImmediateOn [nb/TraceBuffer.cpp]
    nb/TraceBuffer.cpp
 NodeBase::NilTraceStr [nb/TraceBuffer.cpp]
    nb/TraceBuffer.cpp
+NodeBase::OverflowSlots_ [nb/TraceBuffer.cpp]
+   nb/TraceBuffer.cpp
 NodeBase::ResumeTraceStr [nb/TraceBuffer.cpp]
    nb/TraceBuffer.cpp
-NodeBase::SlowOn [nb/TraceBuffer.cpp]
+NodeBase::StartOfTrace [nb/TraceBuffer.cpp]
    nb/TraceBuffer.cpp
-NodeBase::TraceBuffer_AddRecord [nb/TraceBuffer.cpp]
+NodeBase::TraceBuffer_AllocBuffers [nb/TraceBuffer.cpp]
    nb/TraceBuffer.cpp
 NodeBase::TraceBuffer_ClaimBlocks [nb/TraceBuffer.cpp]
    nb/TraceBuffer.cpp
@@ -43059,9 +43144,11 @@ NodeBase::TraceBuffer_Clear [nb/TraceBuffer.cpp]
    nb/TraceBuffer.cpp
 NodeBase::TraceBuffer_ClearTools [nb/TraceBuffer.cpp]
    nb/TraceBuffer.cpp
+NodeBase::TraceBuffer_DisplayStart [nb/TraceBuffer.cpp]
+   nb/TraceBuffer.cpp
 NodeBase::TraceBuffer_DisplayTrace [nb/TraceBuffer.cpp]
    nb/TraceBuffer.cpp
-NodeBase::TraceBuffer_MaxRecords [nb/TraceBuffer.cpp]
+NodeBase::TraceBuffer_HasBeenProcessed [nb/TraceBuffer.cpp]
    nb/TraceBuffer.cpp
 NodeBase::TraceBuffer_Query [nb/TraceBuffer.cpp]
    nb/TraceBuffer.cpp
@@ -43075,6 +43162,8 @@ NodeBase::TraceBuffer_SetTool [nb/TraceBuffer.cpp]
    nb/TraceBuffer.cpp
 NodeBase::TraceBuffer_SetTools [nb/TraceBuffer.cpp]
    nb/TraceBuffer.cpp
+NodeBase::TraceBuffer_SetWrap [nb/TraceBuffer.cpp]
+   nb/TraceBuffer.cpp
 NodeBase::TraceBuffer_Shutdown [nb/TraceBuffer.cpp]
    nb/TraceBuffer.cpp
 NodeBase::TraceBuffer_StartTracing [nb/TraceBuffer.cpp]
@@ -43087,6 +43176,13 @@ NodeBase::TracingOff [nb/TraceBuffer.cpp]
    nb/TraceBuffer.cpp
 NodeBase::TracingOn [nb/TraceBuffer.cpp]
    nb/TraceBuffer.cpp
+NodeBase::FunctionTrace [nb/TraceBuffer.h]
+   nb/TraceBuffer.h
+NodeBase::ImmediateTrace [nb/TraceBuffer.h]
+   ct/CxxExecute.cpp
+   nb/NbIncrement.cpp
+   nb/TraceBuffer.cpp
+   nb/TraceBuffer.h
 NodeBase::TraceBuffer [nb/TraceBuffer.h]
    ct/CxxExecute.cpp
    dip/BaseBot.cpp
@@ -43106,12 +43202,14 @@ NodeBase::TraceBuffer [nb/TraceBuffer.h]
    nb/Tool.cpp
    nb/TraceBuffer.cpp
    nb/TraceDump.cpp
-   nb/TraceRecord.cpp
    nt/FunctionProfiler.cpp
    nw/NwTracer.cpp
    nw/SysSocket.cpp
+   sb/AnalyzeSapEvent.cpp
+   sb/AnalyzeSnpEvent.cpp
    sb/Context.cpp
    sb/Event.cpp
+   sb/InitiationReqEvent.cpp
    sb/InvokerPool.cpp
    sb/Message.cpp
    sb/MsgFactory.cpp
@@ -43124,11 +43222,15 @@ NodeBase::TraceBuffer [nb/TraceBuffer.h]
    sb/Timer.cpp
    st/MscBuilder.cpp
    st/StIncrement.cpp
-NodeBase::TraceBuffer::AddRecord [nb/TraceBuffer.h]
+NodeBase::TraceBuffer::AddFunction [nb/TraceBuffer.h]
+   nb/FunctionTrace.cpp
    nb/TraceBuffer.cpp
-   nb/TraceRecord.cpp
-NodeBase::TraceBuffer::Blocks [nb/TraceBuffer.h]
-   nb/TraceDump.cpp
+NodeBase::TraceBuffer::AllocBuffers [nb/TraceBuffer.h]
+   nb/TraceBuffer.cpp
+NodeBase::TraceBuffer::AllocSlot [nb/TraceBuffer.h]
+   nb/TraceBuffer.cpp
+NodeBase::TraceBuffer::At [nb/TraceBuffer.h]
+   nb/FunctionTrace.cpp
 NodeBase::TraceBuffer::ClaimBlocks [nb/TraceBuffer.h]
    nb/TraceBuffer.cpp
 NodeBase::TraceBuffer::Clear [nb/TraceBuffer.h]
@@ -43145,6 +43247,9 @@ NodeBase::TraceBuffer::ClearTools [nb/TraceBuffer.h]
    nb/NbIncrement.cpp
    nb/TraceBuffer.cpp
    st/MscBuilder.cpp
+NodeBase::TraceBuffer::DisplayStart [nb/TraceBuffer.h]
+   nb/TraceBuffer.cpp
+   nb/TraceDump.cpp
 NodeBase::TraceBuffer::DisplayTrace [nb/TraceBuffer.h]
    nb/NbIncrement.cpp
    nb/TraceBuffer.cpp
@@ -43153,8 +43258,6 @@ NodeBase::TraceBuffer::Empty [nb/TraceBuffer.h]
    nb/TraceBuffer.cpp
    nt/FunctionProfiler.cpp
    st/StIncrement.cpp
-NodeBase::TraceBuffer::EndMarker [nb/TraceBuffer.h]
-   nb/TraceBuffer.cpp
 NodeBase::TraceBuffer::FilterIsOn [nb/TraceBuffer.h]
    nb/NbTracer.cpp
    nb/Thread.cpp
@@ -43167,26 +43270,45 @@ NodeBase::TraceBuffer::FunctionCount [nb/TraceBuffer.h]
 NodeBase::TraceBuffer::GetInvocations [nb/TraceBuffer.h]
    nt/FunctionProfiler.cpp
 NodeBase::TraceBuffer::GetTools [nb/TraceBuffer.h]
+   nb/ThreadAdmin.cpp
    st/MscBuilder.cpp
-NodeBase::TraceBuffer::HasOverflowed [nb/TraceBuffer.h]
-   nb/TraceDump.cpp
-NodeBase::TraceBuffer::ImmediateDisplay [nb/TraceBuffer.h]
+NodeBase::TraceBuffer::HasBeenProcessed [nb/TraceBuffer.h]
+   nb/FunctionTrace.cpp
    nb/TraceBuffer.cpp
 NodeBase::TraceBuffer::ImmediateTraceOn [nb/TraceBuffer.h]
-   nb/FunctionTrace.cpp
    nb/ThreadAdmin.cpp
-NodeBase::TraceBuffer::InitialSize [nb/TraceBuffer.h]
+NodeBase::TraceBuffer::Insert [nb/TraceBuffer.h]
+   ct/CxxExecute.cpp
+   dip/BaseBot.cpp
+   dip/BotThread.cpp
+   nb/FunctionTrace.cpp
+   nb/Memory.cpp
+   nb/ObjectPool.cpp
+   nb/Pooled.cpp
+   nb/Thread.cpp
    nb/TraceBuffer.cpp
+   nw/SysSocket.cpp
+   sb/AnalyzeSapEvent.cpp
+   sb/AnalyzeSnpEvent.cpp
+   sb/Context.cpp
+   sb/Event.cpp
+   sb/InitiationReqEvent.cpp
+   sb/InvokerPool.cpp
+   sb/Message.cpp
+   sb/MsgFactory.cpp
+   sb/MsgPort.cpp
+   sb/ProtocolSM.cpp
+   sb/ServiceSM.cpp
+   sb/Timer.cpp
 NodeBase::TraceBuffer::InvocationsTable [nb/TraceBuffer.h]
    nb/TraceBuffer.cpp
    nb/TraceBuffer.h
-NodeBase::TraceBuffer::IsLocked [nb/TraceBuffer.h]
-   nb/Thread.cpp
-   nb/TraceBuffer.cpp
 NodeBase::TraceBuffer::LastDtorDepth [nb/TraceBuffer.h]
    nb/FunctionTrace.cpp
-NodeBase::TraceBuffer::LastRecord [nb/TraceBuffer.h]
+   nb/TraceBuffer.cpp
+NodeBase::TraceBuffer::LastFunction [nb/TraceBuffer.h]
    nb/FunctionTrace.cpp
+   nb/TraceBuffer.cpp
 NodeBase::TraceBuffer::Lock [nb/TraceBuffer.h]
    nb/FunctionTrace.cpp
    nb/ObjectPool.cpp
@@ -43195,10 +43317,14 @@ NodeBase::TraceBuffer::Lock [nb/TraceBuffer.h]
    nt/FunctionProfiler.cpp
    sb/SbTrace.cpp
    st/MscBuilder.cpp
-NodeBase::TraceBuffer::MaxRecords [nb/TraceBuffer.h]
-   nb/TraceBuffer.cpp
 NodeBase::TraceBuffer::MaxSize [nb/TraceBuffer.h]
    nb/NbIncrement.cpp
+   nb/TraceBuffer.cpp
+NodeBase::TraceBuffer::MinSize [nb/TraceBuffer.h]
+   nb/NbIncrement.cpp
+   nb/TraceBuffer.cpp
+NodeBase::TraceBuffer::MoveAbove [nb/TraceBuffer.h]
+   nb/FunctionTrace.cpp
    nb/TraceBuffer.cpp
 NodeBase::TraceBuffer::Next [nb/TraceBuffer.h]
    nb/FunctionTrace.cpp
@@ -43213,12 +43339,7 @@ NodeBase::TraceBuffer::NoneSelected [nb/TraceBuffer.h]
    nb/TraceBuffer.cpp
    nw/NwTracer.cpp
    sb/SbTracer.cpp
-NodeBase::TraceBuffer::OverflowStr [nb/TraceBuffer.h]
-   nb/TraceBuffer.cpp
-   nb/TraceDump.cpp
 NodeBase::TraceBuffer::Patch [nb/TraceBuffer.h]
-   nb/TraceBuffer.cpp
-NodeBase::TraceBuffer::PurgeRecords [nb/TraceBuffer.h]
    nb/TraceBuffer.cpp
 NodeBase::TraceBuffer::Query [nb/TraceBuffer.h]
    nb/NbIncrement.cpp
@@ -43237,8 +43358,6 @@ NodeBase::TraceBuffer::SetFilter [nb/TraceBuffer.h]
    nb/TraceBuffer.cpp
    nw/NwTracer.cpp
    sb/SbTracer.cpp
-NodeBase::TraceBuffer::SetLastDtorDepth [nb/TraceBuffer.h]
-   nb/FunctionTrace.cpp
 NodeBase::TraceBuffer::SetSize [nb/TraceBuffer.h]
    nb/NbIncrement.cpp
    nb/TraceBuffer.cpp
@@ -43252,6 +43371,9 @@ NodeBase::TraceBuffer::SetTool [nb/TraceBuffer.h]
 NodeBase::TraceBuffer::SetTools [nb/TraceBuffer.h]
    nb/TraceBuffer.cpp
    st/MscBuilder.cpp
+NodeBase::TraceBuffer::SetWrap [nb/TraceBuffer.h]
+   nb/NbIncrement.cpp
+   nb/TraceBuffer.cpp
 NodeBase::TraceBuffer::Shutdown [nb/TraceBuffer.h]
    nb/TraceBuffer.cpp
 NodeBase::TraceBuffer::StartTracing [nb/TraceBuffer.h]
@@ -43297,18 +43419,17 @@ NodeBase::TraceBuffer::Unlock [nb/TraceBuffer.h]
    st/MscBuilder.cpp
 NodeBase::TraceBuffer::blocks_ [nb/TraceBuffer.h]
    nb/TraceBuffer.cpp
-   nb/TraceBuffer.h
+NodeBase::TraceBuffer::bnext_ [nb/TraceBuffer.h]
+   nb/TraceBuffer.cpp
 NodeBase::TraceBuffer::buff_ [nb/TraceBuffer.h]
    nb/TraceBuffer.cpp
-NodeBase::TraceBuffer::dtorDepth_ [nb/TraceBuffer.h]
-   nb/TraceBuffer.cpp
    nb/TraceBuffer.h
-NodeBase::TraceBuffer::end_ [nb/TraceBuffer.h]
-   nb/TraceBuffer.cpp
 NodeBase::TraceBuffer::filters_ [nb/TraceBuffer.h]
    nb/TraceBuffer.cpp
    nb/TraceBuffer.h
-NodeBase::TraceBuffer::hardLock_ [nb/TraceBuffer.h]
+NodeBase::TraceBuffer::fnext_ [nb/TraceBuffer.h]
+   nb/TraceBuffer.cpp
+NodeBase::TraceBuffer::funcs_ [nb/TraceBuffer.h]
    nb/TraceBuffer.cpp
 NodeBase::TraceBuffer::immediate_ [nb/TraceBuffer.h]
    nb/TraceBuffer.cpp
@@ -43316,12 +43437,10 @@ NodeBase::TraceBuffer::immediate_ [nb/TraceBuffer.h]
 NodeBase::TraceBuffer::invocations_ [nb/TraceBuffer.h]
    nb/TraceBuffer.cpp
    nb/TraceBuffer.h
-NodeBase::TraceBuffer::lastRecord_ [nb/TraceBuffer.h]
-   nb/TraceBuffer.cpp
-   nb/TraceBuffer.h
 NodeBase::TraceBuffer::ovfl_ [nb/TraceBuffer.h]
    nb/TraceBuffer.cpp
-   nb/TraceBuffer.h
+NodeBase::TraceBuffer::processed_ [nb/TraceBuffer.h]
+   nb/TraceBuffer.cpp
 NodeBase::TraceBuffer::size_ [nb/TraceBuffer.h]
    nb/TraceBuffer.cpp
 NodeBase::TraceBuffer::softLocks_ [nb/TraceBuffer.h]
@@ -43329,11 +43448,8 @@ NodeBase::TraceBuffer::softLocks_ [nb/TraceBuffer.h]
 NodeBase::TraceBuffer::startTime_ [nb/TraceBuffer.h]
    nb/TraceBuffer.cpp
    nb/TraceBuffer.h
-NodeBase::TraceBuffer::start_ [nb/TraceBuffer.h]
-   nb/TraceBuffer.cpp
 NodeBase::TraceBuffer::strTimePlace [nb/TraceBuffer.h]
    nb/TraceBuffer.cpp
-   nb/TraceDump.cpp
    nt/FunctionProfiler.cpp
    st/MscBuilder.cpp
 NodeBase::TraceBuffer::stream_ [nb/TraceBuffer.h]
@@ -43341,19 +43457,17 @@ NodeBase::TraceBuffer::stream_ [nb/TraceBuffer.h]
 NodeBase::TraceBuffer::tools_ [nb/TraceBuffer.h]
    nb/TraceBuffer.cpp
    nb/TraceBuffer.h
+NodeBase::TraceBuffer::wrap_ [nb/TraceBuffer.h]
+   nb/TraceBuffer.cpp
 NodeBase::TraceBuffer::~TraceBuffer [nb/TraceBuffer.h]
    nb/TraceBuffer.cpp
 NodeBase::TraceRecord [nb/TraceBuffer.h]
    nb/TraceBuffer.h
-NodeBase::BlockedStr [nb/TraceDump.cpp]
-   nb/TraceDump.cpp
 NodeBase::EndOfTrace [nb/TraceDump.cpp]
    nb/TraceDump.cpp
 NodeBase::Header1 [nb/TraceDump.cpp]
    nb/TraceDump.cpp
 NodeBase::Header2 [nb/TraceDump.cpp]
-   nb/TraceDump.cpp
-NodeBase::StartOfTrace [nb/TraceDump.cpp]
    nb/TraceDump.cpp
 NodeBase::TraceDump_Generate [nb/TraceDump.cpp]
    nb/TraceDump.cpp
@@ -43405,6 +43519,13 @@ NodeBase::TraceDump::TotWidth [nb/TraceDump.h]
    nb/FunctionTrace.cpp
    nb/TraceDump.h
    sb/SbTrace.cpp
+NodeBase::NoCtorRelocation [nb/TraceRecord.h]
+   nb/FunctionTrace.cpp
+   nb/TraceRecord.h
+NodeBase::NoTimeData [nb/TraceRecord.h]
+   nb/FunctionTrace.cpp
+   nb/TimedRecord.cpp
+   nb/TraceRecord.h
 NodeBase::TraceRecord [nb/TraceRecord.h]
    ct/CxxExecute.cpp
    ct/CxxExecute.h
@@ -43475,6 +43596,8 @@ NodeBase::TraceRecord::Id [nb/TraceRecord.h]
    sb/SbTrace.cpp
    sb/SbTrace.h
 NodeBase::TraceRecord::InvalidId [nb/TraceRecord.h]
+   nb/TraceRecord.cpp
+NodeBase::TraceRecord::InvalidSlot [nb/TraceRecord.h]
    nb/TraceBuffer.cpp
    nb/TraceRecord.cpp
 NodeBase::TraceRecord::Nullify [nb/TraceRecord.h]
@@ -43482,7 +43605,6 @@ NodeBase::TraceRecord::Nullify [nb/TraceRecord.h]
    nb/FunctionTrace.cpp
    sb/SbTrace.cpp
 NodeBase::TraceRecord::Owner [nb/TraceRecord.h]
-   nb/FunctionTrace.cpp
    nb/TraceDump.cpp
    st/MscBuilder.cpp
 NodeBase::TraceRecord::Rid [nb/TraceRecord.h]
@@ -43494,11 +43616,9 @@ NodeBase::TraceRecord::Shutdown [nb/TraceRecord.h]
    nb/TraceBuffer.cpp
    sb/SbTrace.cpp
    sb/SbTrace.h
+NodeBase::TraceRecord::Slot [nb/TraceRecord.h]
+   nb/FunctionTrace.cpp
 NodeBase::TraceRecord::TraceRecord [nb/TraceRecord.h]
-   nb/TraceRecord.cpp
-NodeBase::TraceRecord::operator new(unsigned int) [nb/TraceRecord.h]
-   nb/TraceRecord.cpp
-NodeBase::TraceRecord::operator new(unsigned int,void*) [nb/TraceRecord.h]
    nb/TraceRecord.cpp
 NodeBase::TraceRecord::owner_ [nb/TraceRecord.h]
    nb/TraceBuffer.cpp
@@ -43514,8 +43634,9 @@ NodeBase::TraceRecord::rid_ [nb/TraceRecord.h]
    nb/TraceRecord.h
    nw/NwTrace.cpp
    sb/SbTrace.cpp
-NodeBase::TraceRecord::size_ [nb/TraceRecord.h]
+NodeBase::TraceRecord::slot_ [nb/TraceRecord.h]
    nb/TraceBuffer.cpp
+   nb/TraceRecord.h
 NodeTools::FpColumns [nt/FunctionProfiler.cpp]
    nt/FunctionProfiler.cpp
 NodeTools::FpHeader [nt/FunctionProfiler.cpp]
@@ -56590,9 +56711,9 @@ SessionBase::EventTrace::DisplayEvent [sb/SbTrace.h]
    sb/SbTrace.cpp
 SessionBase::EventTrace::EventString [sb/SbTrace.h]
    sb/SbTrace.cpp
-SessionBase::EventTrace::EventTrace(SessionBase::EventTrace* const,unsigned char,const SessionBase::Event) [sb/SbTrace.h]
+SessionBase::EventTrace::EventTrace(SessionBase::EventTrace* const,const SessionBase::Event) [sb/SbTrace.h]
    sb/SbTrace.cpp
-SessionBase::EventTrace::EventTrace(SessionBase::EventTrace* const,unsigned int,const SessionBase::Event) [sb/SbTrace.h]
+SessionBase::EventTrace::EventTrace(SessionBase::EventTrace* const,unsigned char,const SessionBase::Event) [sb/SbTrace.h]
    sb/SbTrace.cpp
 SessionBase::EventTrace::Handler [sb/SbTrace.h]
    sb/SbTrace.cpp
@@ -56615,9 +56736,7 @@ SessionBase::HandlerTrace::Display [sb/SbTrace.h]
    sb/SbTrace.cpp
 SessionBase::HandlerTrace::DisplayState [sb/SbTrace.h]
    sb/SbTrace.cpp
-SessionBase::HandlerTrace::HandlerTrace(SessionBase::HandlerTrace* const,unsigned int,unsigned short,const SessionBase::State,const SessionBase::Event,SessionBase::EventHandler::Rc) [sb/SbTrace.h]
-   sb/SbTrace.cpp
-SessionBase::HandlerTrace::HandlerTrace(SessionBase::HandlerTrace* const,unsigned short,const SessionBase::State,const SessionBase::Event,SessionBase::EventHandler::Rc) [sb/SbTrace.h]
+SessionBase::HandlerTrace::HandlerTrace [sb/SbTrace.h]
    sb/SbTrace.cpp
 SessionBase::HandlerTrace::rc_ [sb/SbTrace.h]
    sb/SbTrace.cpp
@@ -58939,6 +59058,8 @@ SessionBase::TlvIntParameter [sb/TlvIntParameter.h]
 SessionBase::TlvIntParameter::TlvIntParameter_InjectMsg [sb/TlvIntParameter.h]
    sb/TlvIntParameter.h
 SessionBase::TlvIntParameter::TlvIntParameter_VerifyMsg [sb/TlvIntParameter.h]
+   sb/TlvIntParameter.h
+SessionBase::TlvIntParameter::TlvIntParameter_ctor [sb/TlvIntParameter.h]
    sb/TlvIntParameter.h
 SessionBase::TlvIntParameter<unsigned char> [sb/TlvIntParameter.h]
    cb/BcCause.h
@@ -62486,13 +62607,13 @@ PotsBase::PotsToneTreatment::duration_ [sn/PotsTreatments.h]
 PotsBase::PotsToneTreatment::tone_ [sn/PotsTreatments.h]
    sn/PotsTreatments.cpp
 PotsBase::PotsTreatment [sn/PotsTreatments.h]
+   sn/PotsTreatments.cpp
+   sn/PotsTreatments.h
+PotsBase::PotsTreatment [sn/PotsTreatments.h]
    sn/PotsBcHandlers.cpp
    sn/PotsTreatments.cpp
    sn/PotsTreatments.h
    sn/SnIncrement.cpp
-PotsBase::PotsTreatment [sn/PotsTreatments.h]
-   sn/PotsTreatments.cpp
-   sn/PotsTreatments.h
 PotsBase::PotsTreatment::ApplyTreatment [sn/PotsTreatments.h]
    sn/PotsBcHandlers.cpp
    sn/PotsTreatments.cpp
@@ -63791,16 +63912,12 @@ std::set_union [subs/algorithm]
 std::sort [subs/algorithm]
    ct/CodeWarning.cpp
    ct/Editor.cpp
-ATOMIC_FLAG_INIT [subs/atomic]
-   nb/Debug.cpp
 std::atomic [subs/atomic]
    nb/Statistics.cpp
    nb/Thread.cpp
    nb/TraceBuffer.cpp
 std::atomic::compare_exchange_strong [subs/atomic]
    nb/Thread.cpp
-std::atomic::exchange [subs/atomic]
-   nb/TraceBuffer.cpp
 std::atomic::fetch_add [subs/atomic]
    nb/TraceBuffer.cpp
 std::atomic::fetch_and [subs/atomic]
@@ -63812,26 +63929,15 @@ std::atomic::fetch_sub [subs/atomic]
 std::atomic::load [subs/atomic]
    nb/Statistics.cpp
    nb/Thread.cpp
-   nb/TraceBuffer.cpp
 std::atomic::store [subs/atomic]
    nb/Statistics.cpp
    nb/Thread.cpp
-std::atomic_bool [subs/atomic]
-   nb/TraceBuffer.cpp
-   nb/TraceBuffer.h
-std::atomic_bool::exchange [subs/atomic]
-   nb/TraceBuffer.cpp
-std::atomic_bool::load [subs/atomic]
-   nb/TraceBuffer.cpp
-std::atomic_bool::store [subs/atomic]
-   nb/TraceBuffer.cpp
 std::atomic_flag [subs/atomic]
-   nb/Debug.cpp
-   nb/Debug.h
+   nb/Thread.cpp
 std::atomic_flag::clear [subs/atomic]
-   nb/Debug.cpp
+   nb/Thread.cpp
 std::atomic_flag::test_and_set [subs/atomic]
-   nb/Debug.cpp
+   nb/Thread.cpp
 std::atomic_size_t [subs/atomic]
    nb/Log.cpp
    nb/Log.h
@@ -63839,6 +63945,8 @@ std::atomic_size_t [subs/atomic]
    nb/Statistics.h
    nb/SysMutex.h
    nb/SysMutex.win.cpp
+   nb/TraceBuffer.cpp
+   nb/TraceBuffer.h
 std::atomic_uint32_t [subs/atomic]
    nb/Thread.cpp
    nb/Thread.h
@@ -63901,6 +64009,8 @@ std::bitset [subs/bitset]
    sn/PotsTreatments.cpp
 std::bitset::any [subs/bitset]
    nw/TcpIoThread.cpp
+std::bitset::count [subs/bitset]
+   nb/ThreadAdmin.cpp
 std::bitset::none [subs/bitset]
    nb/Debug.cpp
    nb/ModuleRegistry.cpp
@@ -64020,7 +64130,9 @@ toupper [subs/cctype]
    dip/StartupParameters.cpp
    nb/Formatters.cpp
    nb/Thread.cpp
-pow [subs/cmath]
+std::log2 [subs/cmath]
+   nb/TraceBuffer.cpp
+std::pow [subs/cmath]
    ct/Lexer.cpp
 SIGABRT [subs/csignal]
    nb/SysSignals.cpp
@@ -64270,8 +64382,6 @@ size_t [subs/cstddef]
    nb/Dynamic.h
    nb/Formatters.cpp
    nb/Formatters.h
-   nb/FunctionName.cpp
-   nb/FunctionName.h
    nb/FunctionTrace.cpp
    nb/FunctionTrace.h
    nb/Immutable.cpp
@@ -64341,14 +64451,10 @@ size_t [subs/cstddef]
    nb/Thread.h
    nb/ThreadRegistry.cpp
    nb/ThreadRegistry.h
-   nb/TimedRecord.cpp
-   nb/TimedRecord.h
    nb/ToolRegistry.cpp
    nb/ToolRegistry.h
    nb/TraceBuffer.cpp
    nb/TraceBuffer.h
-   nb/TraceRecord.cpp
-   nb/TraceRecord.h
    nt/FunctionProfiler.cpp
    nt/FunctionProfiler.h
    nt/FunctionStats.cpp
@@ -64414,8 +64520,6 @@ size_t [subs/cstddef]
    sb/SbIpBuffer.h
    sb/SbPools.cpp
    sb/SbPools.h
-   sb/SbTrace.cpp
-   sb/SbTrace.h
    sb/SbTracer.h
    sb/ServiceSM.cpp
    sb/ServiceSM.h
@@ -64477,7 +64581,9 @@ SIZE_MAX [subs/cstdint]
    dip/Adjudicator.cpp
    dip/DipTypes.h
    nb/Allocators.h
+   nb/FunctionTrace.cpp
    nb/Statistics.h
+   nb/TraceBuffer.cpp
    sb/TlvMessage.cpp
 UINT16_MAX [subs/cstdint]
    ct/CodeTypes.h
@@ -64495,6 +64601,7 @@ UINT32_MAX [subs/cstdint]
    ct/CxxToken.cpp
    nb/Clock.h
    nb/SysTypes.h
+   nb/TraceRecord.cpp
    nt/TestDatabase.h
 UINT64_MAX [subs/cstdint]
    nb/SysTypes.h
@@ -64519,16 +64626,17 @@ int16_t [subs/cstdint]
    nb/SysTime.cpp
    nb/SysTime.h
    nb/SysTypes.h
-   nb/TraceRecord.cpp
-   nb/TraceRecord.h
 int32_t [subs/cstdint]
    ct/CxxToken.cpp
    nb/SysTime.cpp
    nb/SysTime.h
+   nb/Thread.cpp
+   nb/Thread.h
 int64_t [subs/cstdint]
    ct/CxxToken.h
    ct/Lexer.cpp
    ct/Lexer.h
+   nb/FunctionTrace.cpp
    nb/SysTime.cpp
    nb/SysTime.h
 int8_t [subs/cstdint]
@@ -64542,6 +64650,7 @@ int8_t [subs/cstdint]
    ct/Lexer.h
    dip/ConvoySubversion.h
    dip/UnitOrder.h
+   nb/ObjectPool.h
 intptr_t [subs/cstdint]
    ct/Cxx.cpp
    nb/LogBuffer.cpp
@@ -64612,6 +64721,8 @@ uint32_t [subs/cstdint]
    nb/SysTypes.h
    nb/Thread.cpp
    nb/Thread.h
+   nb/TraceRecord.cpp
+   nb/TraceRecord.h
    nt/FunctionProfiler.cpp
    nt/FunctionProfiler.h
    nt/TestDatabase.cpp
@@ -64675,7 +64786,6 @@ uint8_t [subs/cstdint]
    sn/PotsStatistics.h
 uintptr_t [subs/cstdint]
    nb/Base.h
-   nb/FunctionTrace.cpp
    nb/Object.h
    nb/SysDecls.h
    nb/SysTypes.cpp
@@ -64716,8 +64826,9 @@ strchr [subs/cstring]
 strcmp [subs/cstring]
    nb/CliText.cpp
    nb/CliTextParm.cpp
-   nb/FunctionName.cpp
+   nb/FunctionTrace.cpp
    nb/SymbolRegistry.cpp
+   nt/FunctionProfiler.cpp
    nt/FunctionStats.cpp
 strlen [subs/cstring]
    ct/CodeFile.cpp
@@ -64743,7 +64854,9 @@ strlen [subs/cstring]
    nb/ModuleRegistry.cpp
    nb/Thread.cpp
 strstr [subs/cstring]
+   nb/FunctionTrace.cpp
    nb/SysThreadStack.win.cpp
+   nb/TraceBuffer.cpp
 time [subs/ctime]
    nb/SysTime.win.cpp
 time_t [subs/ctime]
@@ -65604,6 +65717,7 @@ std::map [subs/map]
    dip/TokenTextMap.h
    dip/WinterOrders.cpp
    dip/WinterOrders.h
+   nb/FunctionTrace.cpp
    nb/Thread.cpp
    nb/ThreadRegistry.cpp
    nb/ThreadRegistry.h
@@ -65622,6 +65736,7 @@ std::map::begin(std::map* const) [subs/map]
    dip/Adjudicator.cpp
    dip/MapAndUnits.cpp
    dip/WinterOrders.cpp
+   nb/FunctionTrace.cpp
 std::map::cbegin [subs/map]
    ct/CodeCoverage.cpp
    ct/CxxSymbols.cpp
@@ -65646,6 +65761,7 @@ std::map::clear [subs/map]
    ct/CodeCoverage.cpp
    dip/Adjudicator.cpp
    dip/MapAndUnits.cpp
+   nb/FunctionTrace.cpp
    nb/TraceBuffer.cpp
    nt/TestDatabase.cpp
 std::map::empty [subs/map]
@@ -65660,6 +65776,7 @@ std::map::end(std::map* const) [subs/map]
    dip/Token.cpp
    dip/TokenMessage.cpp
    dip/TokenTextMap.cpp
+   nb/FunctionTrace.cpp
    nt/TestDatabase.cpp
 std::map::erase(std::map* const,std::iterator_t<const std::pair>) [subs/map]
    ct/CodeCoverage.cpp
@@ -66028,16 +66145,21 @@ std::unique_ptr::reset [subs/memory]
    nw/SysTcpSocket.win.cpp
 operator delete [subs/new]
    nb/SysHeap.cpp
+   nb/Thread.cpp
 operator delete[] [subs/new]
    nb/SysHeap.cpp
 operator new(unsigned int) [subs/new]
+   nb/Base.cpp
    nb/Class.cpp
    nb/SysHeap.cpp
+   nb/Thread.cpp
 operator new[](unsigned int) [subs/new]
+   nb/Base.cpp
    nb/SysHeap.cpp
 std::nothrow [subs/new]
    nb/Class.cpp
    nb/SysHeap.cpp
+   nb/Thread.cpp
 std::basic_ostream [subs/ostream]
    an/PotsTrafficThread.cpp
    cb/BcAddress.cpp
@@ -67012,6 +67134,7 @@ std::basic_ostream::operator<<(std::basic_ostream* const,int) [subs/ostream]
    nb/SysThread.cpp
    nb/Thread.cpp
    nb/ThreadAdmin.cpp
+   nb/TraceBuffer.cpp
    nt/NtIncrement.cpp
    nt/NtTestData.cpp
    nt/TestDatabase.cpp
@@ -67135,7 +67258,6 @@ std::basic_ostream::operator<<(std::basic_ostream* const,unsigned int) [subs/ost
    nb/Thread.cpp
    nb/Tool.cpp
    nb/TraceBuffer.cpp
-   nb/TraceDump.cpp
    nt/FunctionProfiler.cpp
    nt/FunctionStats.cpp
    nt/NtIncrement.cpp
@@ -67555,16 +67677,20 @@ std::basic_ostringstream::str(const std::basic_ostringstream* const) [subs/sstre
 std::stack [subs/stack]
    ct/Interpreter.cpp
    ct/Interpreter.h
+   nb/FunctionTrace.cpp
 std::stack::empty [subs/stack]
    ct/Interpreter.cpp
 std::stack::pop [subs/stack]
    ct/Interpreter.cpp
+   nb/FunctionTrace.cpp
 std::stack::push [subs/stack]
    ct/Interpreter.cpp
+   nb/FunctionTrace.cpp
 std::stack::size [subs/stack]
    ct/Interpreter.cpp
 std::stack::top [subs/stack]
    ct/Interpreter.cpp
+   nb/FunctionTrace.cpp
 std::basic_string [subs/string]
    an/PotsShelfIpService.cpp
    cb/BcProtocol.cpp
@@ -67625,7 +67751,7 @@ std::basic_string [subs/string]
    nb/Element.cpp
    nb/FileThread.cpp
    nb/Formatters.cpp
-   nb/FunctionName.cpp
+   nb/FunctionTrace.cpp
    nb/Log.cpp
    nb/LogBuffer.cpp
    nb/LogGroup.cpp
@@ -67883,13 +68009,14 @@ std::basic_string::find(const std::basic_string* const,const std::basic_string,u
    nb/CliTextParm.cpp
    nb/CliThread.cpp
    nb/Formatters.cpp
-   nb/FunctionName.cpp
+   nb/FunctionTrace.cpp
    nb/Log.cpp
    nb/LogBuffer.cpp
    nb/NbCliParms.cpp
    nb/NbIncrement.cpp
    nb/SysTickTimer.win.cpp
    nb/Thread.cpp
+   nb/TimedRecord.cpp
    nb/TraceBuffer.cpp
    nt/NtIncrement.cpp
    st/MscBuilder.cpp
@@ -67988,6 +68115,7 @@ std::basic_string::npos [subs/string]
    nb/NbIncrement.cpp
    nb/SysTickTimer.win.cpp
    nb/Thread.cpp
+   nb/TimedRecord.cpp
    nb/TraceBuffer.cpp
    nt/NtIncrement.cpp
    st/MscBuilder.cpp
@@ -68045,7 +68173,6 @@ std::basic_string::rfind(const std::basic_string* const,const std::basic_string,
    nb/CliThread.cpp
    nb/Element.cpp
    nb/Formatters.cpp
-   nb/FunctionName.cpp
    nb/NbIncrement.cpp
    nb/SysFile.cpp
    nb/SysThreadStack.win.cpp
@@ -68230,6 +68357,7 @@ std::string [subs/string]
    dip/BotThread.cpp
    dip/BotThread.h
    dip/BotTrace.cpp
+   dip/BotTrace.h
    dip/DipProtocol.cpp
    dip/DipProtocol.h
    dip/MapAndUnits.cpp
@@ -68341,7 +68469,8 @@ std::string [subs/string]
    nb/FileThread.h
    nb/Formatters.cpp
    nb/Formatters.h
-   nb/FunctionName.cpp
+   nb/FunctionTrace.cpp
+   nb/FunctionTrace.h
    nb/InitThread.cpp
    nb/InitThread.h
    nb/LeakyBucketCounter.cpp
@@ -68358,6 +68487,8 @@ std::string [subs/string]
    nb/LogGroupRegistry.h
    nb/LogThread.cpp
    nb/LogThread.h
+   nb/MemoryTrace.cpp
+   nb/MemoryTrace.h
    nb/Module.cpp
    nb/Module.h
    nb/ModuleRegistry.cpp
@@ -68378,6 +68509,8 @@ std::string [subs/string]
    nb/ObjectPoolAudit.h
    nb/ObjectPoolRegistry.cpp
    nb/ObjectPoolRegistry.h
+   nb/ObjectPoolTrace.cpp
+   nb/ObjectPoolTrace.h
    nb/Pooled.cpp
    nb/Pooled.h
    nb/PooledClass.cpp
@@ -68455,6 +68588,7 @@ std::string [subs/string]
    nb/TraceDump.cpp
    nb/TraceDump.h
    nb/TraceRecord.cpp
+   nb/TraceRecord.h
    nt/FunctionStats.cpp
    nt/FunctionStats.h
    nt/NtIncrement.cpp
@@ -68482,6 +68616,8 @@ std::string [subs/string]
    nw/NwDaemons.cpp
    nw/NwDaemons.h
    nw/NwIncrement.cpp
+   nw/NwTrace.cpp
+   nw/NwTrace.h
    nw/SysIpL2Addr.cpp
    nw/SysIpL2Addr.h
    nw/SysIpL2Addr.win.cpp
@@ -68733,6 +68869,7 @@ std::pair [subs/utility]
    dip/TokenMessage.cpp
    dip/TokenTextMap.cpp
    dip/WinterOrders.cpp
+   nb/FunctionTrace.cpp
    nb/Thread.cpp
    nb/ThreadRegistry.cpp
    nb/ThreadRegistry.h
@@ -68766,6 +68903,7 @@ std::pair::second [subs/utility]
    dip/Token.cpp
    dip/TokenMessage.cpp
    dip/TokenTextMap.cpp
+   nb/FunctionTrace.cpp
    nb/Thread.cpp
    nb/ThreadRegistry.cpp
    nb/TraceBuffer.cpp
@@ -68820,6 +68958,7 @@ std::vector [subs/vector]
    nb/CfgParmRegistry.cpp
    nb/CfgParmRegistry.h
    nb/Element.cpp
+   nb/FunctionTrace.cpp
 std::vector::at(const std::vector* const,unsigned int) [subs/vector]
    ct/CodeWarning.cpp
    ct/CxxArea.cpp
@@ -68834,6 +68973,7 @@ std::vector::at(const std::vector* const,unsigned int) [subs/vector]
    dip/StartupParameters.cpp
    nb/CfgParmRegistry.cpp
    nb/Element.cpp
+   nb/FunctionTrace.cpp
 std::vector::back(const std::vector* const) [subs/vector]
    ct/CxxArea.cpp
    ct/CxxExecute.cpp
@@ -68843,6 +68983,7 @@ std::vector::back(const std::vector* const) [subs/vector]
    ct/CxxScoped.cpp
    ct/CxxToken.cpp
    ct/Editor.cpp
+   nb/FunctionTrace.cpp
 std::vector::begin(std::vector* const) [subs/vector]
    ct/CodeFile.cpp
    ct/CodeWarning.cpp
@@ -68924,6 +69065,7 @@ std::vector::empty [subs/vector]
    ct/Editor.cpp
    dip/BaseBot.cpp
    nb/Element.cpp
+   nb/FunctionTrace.cpp
 std::vector::end(std::vector* const) [subs/vector]
    ct/CodeFile.cpp
    ct/CodeWarning.cpp
@@ -68942,6 +69084,7 @@ std::vector::front(const std::vector* const) [subs/vector]
    ct/CxxToken.cpp
    ct/CxxToken.h
    ct/Editor.cpp
+   nb/FunctionTrace.cpp
 std::vector::insert(std::vector* const,std::iterator_t,const T) [subs/vector]
    ct/CxxArea.cpp
    ct/CxxScope.cpp
@@ -68950,6 +69093,7 @@ std::vector::pop_back [subs/vector]
    ct/CxxExecute.cpp
    ct/CxxScope.cpp
    ct/CxxToken.cpp
+   nb/FunctionTrace.cpp
 std::vector::push_back [subs/vector]
    ct/CodeCoverage.cpp
    ct/CodeFile.cpp
@@ -68973,6 +69117,7 @@ std::vector::push_back [subs/vector]
    ct/Parser.cpp
    dip/MapAndUnits.cpp
    nb/CfgParmRegistry.cpp
+   nb/FunctionTrace.cpp
 std::vector::rbegin(std::vector* const) [subs/vector]
    ct/Editor.cpp
 std::vector::rend(std::vector* const) [subs/vector]
@@ -69001,6 +69146,7 @@ std::vector::size [subs/vector]
    dip/BaseBot.cpp
    dip/StartupParameters.cpp
    nb/CfgParmRegistry.cpp
+   nb/FunctionTrace.cpp
 std::vector::swap [subs/vector]
    ct/CxxSymbols.cpp
 CloseHandle [subs/windows.h]

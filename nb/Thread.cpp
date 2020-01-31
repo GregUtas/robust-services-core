@@ -30,9 +30,11 @@
 #include <iomanip>
 #include <ios>
 #include <map>
+#include <new>
 #include <sstream>
 #include <utility>
 #include "Algorithms.h"
+#include "AllocationException.h"
 #include "Array.h"
 #include "CliThread.h"
 #include "CoutThread.h"
@@ -76,6 +78,36 @@ using std::string;
 
 namespace NodeBase
 {
+//  The following provides a per-thread lock to prevent nested calls to
+//  functions that are invoked from Debug::ft and that, in turn, invoke
+//  functions that also invoke Debug::Ft.  Nested calls to these functions
+//  must be blocked to prevent a stack overflow.
+//
+std::map< SysThreadId, std::atomic_flag > FtLocks_;
+
+//  Returns the Debug::ft lock for the running thread.
+//
+std::atomic_flag& AccessFtLock()
+{
+   Debug::noft();
+
+   auto nid = SysThread::RunningThreadId();
+   auto iter = FtLocks_.find(nid);
+
+   if(iter != FtLocks_.cend())
+   {
+      return iter->second;
+   }
+
+   //  The lock must be created and initialized.
+   //
+   auto& lock = FtLocks_[nid];
+   lock.clear();
+   return lock;
+}
+
+//------------------------------------------------------------------------------
+
 //  Records invocations of Pause.
 //
 class ThreadTrace : public FunctionTrace
@@ -87,25 +119,40 @@ public:
    //  Creates a trace record for the event identified by RID, which
    //  occurred in function FUNC.  INFO is any debugging information.
    //
-   static void CaptureEvent(fn_name_arg func, Id rid, word info = 0);
+   static void CaptureEvent(fn_name_arg func, Id rid, int32_t info = 0);
 
    //  Overridden to display the trace record.
    //
-   bool Display(ostream& stream, bool diff) override;
+   bool Display(ostream& stream, const string& opts) override;
+
+   //  Overridden to allocate the trace record from the default heap,
+   //  because the buffer for FunctionTrace records does not support
+   //  subclasses with additional memory requirements.
+   //
+   static void* operator new(size_t size);
+
+   //  Overridden to return the record to the default heap.
+   //
+   static void operator delete(void* addr);
 private:
    //  Private to restrict creation to CaptureEvent.
    //
-   ThreadTrace(fn_name_arg func, fn_depth depth, Id rid, word info);
+   ThreadTrace(fn_name_arg func, fn_depth depth, Id rid, int32_t info);
+
+   //  Not subclassed.
+   //
+   ~ThreadTrace() = default;
 
    //  Additional debug information.
    //
-   const word info_;
+   const int32_t info_;
 };
 
 //------------------------------------------------------------------------------
 
-ThreadTrace::ThreadTrace(fn_name_arg func, fn_depth depth, Id rid, word info) :
-   FunctionTrace(func, depth, sizeof(ThreadTrace)),
+ThreadTrace::ThreadTrace(fn_name_arg func,
+   fn_depth depth, Id rid, int32_t info) :
+   FunctionTrace(func, depth),
    info_(info)
 {
    rid_ = rid;
@@ -117,7 +164,7 @@ fn_name Thread_EnterThread = "Thread.EnterThread";
 fn_name Thread_ExitBlockingOperation = "Thread.ExitBlockingOperation";
 fn_name ThreadTrace_CaptureEvent = "ThreadTrace.CaptureEvent";
 
-void ThreadTrace::CaptureEvent(fn_name_arg func, Id rid, word info)
+void ThreadTrace::CaptureEvent(fn_name_arg func, Id rid, int32_t info)
 {
    //  Do nothing if only invocation counts are being obtained.
    //
@@ -131,14 +178,17 @@ void ThreadTrace::CaptureEvent(fn_name_arg func, Id rid, word info)
    //
    //  Adjust FuncDepth accordingly.
    //
-   auto depth = SysThreadStack::FuncDepth();
-
    switch(rid)
    {
    case PauseExit:
    case PauseEnter:
-      new ThreadTrace(func, depth - 2, rid, info);
+   {
+      auto depth = SysThreadStack::FuncDepth();
+      auto buff = Singleton< TraceBuffer >::Instance();
+      auto rec = new ThreadTrace(func, depth - 2, rid, info);
+      buff->Insert(rec);
       break;
+   }
    default:
       Debug::SwLog(ThreadTrace_CaptureEvent, "unexpected event", rid);
    }
@@ -146,9 +196,9 @@ void ThreadTrace::CaptureEvent(fn_name_arg func, Id rid, word info)
 
 //------------------------------------------------------------------------------
 
-bool ThreadTrace::Display(ostream& stream, bool diff)
+bool ThreadTrace::Display(ostream& stream, const string& opts)
 {
-   if(!FunctionTrace::Display(stream, diff)) return false;
+   if(!FunctionTrace::Display(stream, opts)) return false;
 
    switch(rid_)
    {
@@ -178,6 +228,22 @@ bool ThreadTrace::Display(ostream& stream, bool diff)
    }
 
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+void ThreadTrace::operator delete(void* addr)
+{
+   ::operator delete(addr);
+}
+
+//------------------------------------------------------------------------------
+
+void* ThreadTrace::operator new(size_t size)
+{
+   auto addr = ::operator new(size, std::nothrow);
+   if(addr != nullptr) return addr;
+   throw AllocationException(MemPerm, size);
 }
 
 //==============================================================================
@@ -734,7 +800,7 @@ bool Orphans::ExitNow()
       if(orphan->Nid() == pid)
       {
          //  The orphan's entry must be overwritten before invoking other
-         //  functions so that we don't cause infinite recursion.  If the
+         //  functions so that we don't cause a stack overflow.  If the
          //  orphan holds a lock, the platform kernel must recover it now,
          //  when the orphan is deleted, or in a moment, when the orphan
          //  exits.
@@ -1217,6 +1283,8 @@ c_string Thread::AbbrName() const
 
 Thread* Thread::ActiveThread()
 {
+   Debug::noft();
+
    auto thr = ActiveThread_.load();
    if(thr == nullptr) return nullptr;
    if(thr->deleted_) return nullptr;
@@ -1656,7 +1724,8 @@ main_t Thread::EnterThread(void* arg)
    //  before its Thread object is fully constructed.  This causes a trap,
    //  so the thread must wait until it is constructed (initialized_).  If
    //  its constructor trapped, the object block will return to its pool,
-   //  so it is also necessary to check if the Thread is still valid.
+   //  so it is also necessary to check if the Thread is still valid.  If
+   //  it is invalid, break the loop to immediately return SIGDELETED.
    //
    auto self = static_cast< Thread* >(arg);
 
@@ -1760,6 +1829,8 @@ fn_name Thread_ExitIfSafe = "Thread.ExitIfSafe";
 
 void Thread::ExitIfSafe(debug32_t offset)
 {
+   Debug::noft();
+
    //  If the thread is blocked, it just invoked ExitBlockingOperation.  It
    //  can be trapped before it can even record the time when it started to
    //  run, so record it now.  This prevents ContextSwitches.DisplaySwitches
@@ -1770,10 +1841,17 @@ void Thread::ExitIfSafe(debug32_t offset)
       priv_->currStart_ = Clock::TicksNow();
    }
 
-   //  Reset action_ to prevent this from being invoked recursively.
-   //  If it isn't safe to exit the thread now, try again later.
+   //  Reset action_ to prevent this from being invoked again.  If it isn't
+   //  safe to exit the thread now, try again later.
    //
    priv_->action_ = RunThread;
+
+   //  This function can be invoked from Debug::ft and TrapCheck, and the
+   //  following functions also invoke Debug::Ft.  Reinvocations of this
+   //  function are therefore blocked to prevent a stack overflow.
+   //
+   auto& lock = AccessFtLock();
+   if(lock.test_and_set()) return;
 
    Debug::ft(Thread_ExitIfSafe);
 
@@ -1783,6 +1861,7 @@ void Thread::ExitIfSafe(debug32_t offset)
       throw SignalException(priv_->signal_, offset);
    }
 
+   lock.clear();
    priv_->action_ = ExitThread;
 }
 
@@ -1857,6 +1936,8 @@ SysThread::Priority Thread::FactionToPriority(Faction& faction)
 
 void Thread::FunctionInvoked(fn_name_arg func)
 {
+   Debug::noft();
+
    Thread* thr = nullptr;
 
    //  This handles the following:
@@ -1866,9 +1947,12 @@ void Thread::FunctionInvoked(fn_name_arg func)
    //
    if(Debug::FcFlags_.test(Debug::TracingActive))
    {
-      if(TraceRunningThread(thr))
+      auto& lock = AccessFtLock();
+      if(!lock.test_and_set())
       {
-         FunctionTrace::Capture(func);
+         if(TraceRunningThread(thr))
+            FunctionTrace::Capture(func);
+         lock.clear();
       }
    }
 
@@ -2334,6 +2418,8 @@ uint8_t Thread::MutexCount() const
 
 SysThreadId Thread::NativeThreadId() const
 {
+   Debug::noft();
+
    if(deleted_) return NIL_ID;
    if(systhrd_ != nullptr) return systhrd_->Nid();
    return NIL_ID;
@@ -2673,6 +2759,14 @@ void Thread::Reset(FlagId fid)
 
 //------------------------------------------------------------------------------
 
+void Thread::ResetDebugFlags()
+{
+   AccessFtLock().clear();
+   ExitSwLog(true);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Thread_ResetFlag = "Thread.ResetFlag";
 
 void Thread::ResetFlag(FlagId fid)
@@ -2778,7 +2872,7 @@ fn_name Thread_RunningThread = "Thread.RunningThread";
 
 Thread* Thread::RunningThread(bool assert)
 {
-   Debug::ft(Thread_RunningThread);
+   Debug::noft();
 
    //  The running thread is usually the active thread.  If it isn't,
    //  search the thread registry.
@@ -2989,7 +3083,7 @@ void Thread::SignalHandler(signal_t sig)
 {
    //  Reenable Debug functions before tracing this function.
    //
-   Debug::Reset();
+   ResetDebugFlags();
    Debug::ft(Thread_SignalHandler);
 
    //  Re-register for signals before handling the signal.
@@ -3020,6 +3114,8 @@ void Thread::SignalHandler(signal_t sig)
 
 void Thread::StackCheck()
 {
+   Debug::noft();
+
    //  Return immediately if stackBase_ has not been initialized.
    //
    if((priv_ == nullptr) || (priv_->stackBase_ == nullptr)) return;
@@ -3032,6 +3128,13 @@ void Thread::StackCheck()
 
    if(stacksize > ThreadAdmin::StackUsageLimit())
    {
+      //  This function can be invoked from Debug::ft, and SignalException's
+      //  constructor also invokes Debug::Ft.  Reinvocations of this function
+      //  are therefore blocked to prevent a stack overflow.
+      //
+      auto& lock = AccessFtLock();
+      if(lock.test_and_set()) return;
+
       priv_->stackBase_ = nullptr;
       throw SignalException(SIGSTACK1, stacksize);
    }
@@ -3270,14 +3373,14 @@ void Thread::StartShortInterval()
 
 //------------------------------------------------------------------------------
 
-TraceRc Thread::StartTracing(const string& options)
+TraceRc Thread::StartTracing(const string& opts)
 {
    auto thr = RunningThread();
-   auto rc = Singleton< TraceBuffer >::Instance()->StartTracing(options);
+   auto rc = Singleton< TraceBuffer >::Instance()->StartTracing(opts);
 
    if(rc == TraceOk)
    {
-      thr->priv_->autostop_ = (options.find('a') != string::npos);
+      thr->priv_->autostop_ = (opts.find(TraceAutostop) != string::npos);
       thr->priv_->tracing_ = true;
    }
 
@@ -3465,7 +3568,8 @@ string Thread::to_str() const
 
 //------------------------------------------------------------------------------
 
-void Thread::Trace(Thread* thr, fn_name_arg func, TraceRecordId rid, word info)
+void Thread::Trace(Thread* thr,
+   fn_name_arg func, TraceRecordId rid, int32_t info)
 {
    if(thr == nullptr) thr = RunningThread(false);
    if(thr == nullptr) return;
@@ -3487,7 +3591,6 @@ bool Thread::TraceRunningThread(Thread*& thr)
    //  function tracing is not on.
    //
    auto buff = Singleton< TraceBuffer >::Instance();
-   if(buff->IsLocked()) return false;
    if(!buff->ToolIsOn(FunctionTracer)) return false;
 
    //  If the running thread is unknown, find it while taking care not
@@ -3512,6 +3615,8 @@ bool Thread::TraceRunningThread(Thread*& thr)
 
 void Thread::TrapCheck()
 {
+   Debug::noft();
+
    //  Wait to trap a thread if it has yet to be entered.
    //
    if((priv_ == nullptr) || !priv_->trap_ || !priv_->entered_) return;

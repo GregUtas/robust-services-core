@@ -31,13 +31,14 @@
 #include "TraceDump.h"
 
 using std::ostream;
+using std::string;
 
 //------------------------------------------------------------------------------
 
 namespace NodeBase
 {
 ObjectPoolTrace::ObjectPoolTrace(Id rid, const Pooled& obj) :
-   TimedRecord(sizeof(ObjectPoolTrace), ObjPoolTracer),
+   TimedRecord(ObjPoolTracer),
    obj_(&obj),
    pid_(ObjectPool::ObjPid(&obj))
 {
@@ -46,9 +47,9 @@ ObjectPoolTrace::ObjectPoolTrace(Id rid, const Pooled& obj) :
 
 //------------------------------------------------------------------------------
 
-bool ObjectPoolTrace::Display(ostream& stream, bool diff)
+bool ObjectPoolTrace::Display(ostream& stream, const string& opts)
 {
-   if(!TimedRecord::Display(stream, diff)) return false;
+   if(!TimedRecord::Display(stream, opts)) return false;
 
    auto pool = Singleton< ObjectPoolRegistry >::Instance()->Pool(pid_);
 

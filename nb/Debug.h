@@ -22,9 +22,7 @@
 #ifndef DEBUG_H_INCLUDED
 #define DEBUG_H_INCLUDED
 
-#include <atomic>
 #include <string>
-#include "SysLock.h"
 #include "SysTypes.h"
 
 namespace NodeBase
@@ -108,23 +106,15 @@ public:
    //
    static void noop();
 
+   //  Invoked by functions that are (transitively) invoked by
+   //  Debug::ft.  Such functions must *not* invoke Debug::ft;
+   //  doing so will definitely cause a stack overflow.
+   //
+   static void noft() { }
+
    //  Returns true if a trace tool is currently active.
    //
    static bool TraceOn() { return FcFlags_.test(TracingActive); }
-
-   //  Clears status flags that prevent infinite recursion.  This function
-   //  is invoked during exception and signal handling so that Debug::ft
-   //  and Debug::SwLog do not remain permanently disabled.
-   //
-   static void Reset();
-
-   //  Enables/disables slow but more accurate function tracing.
-   //
-   static void SetSlowTrace(bool slow) { SlowTrace_ = slow; }
-
-   //  Returns true if slow tracing is enabled.
-   //
-   static bool SlowTraceOn() { return SlowTrace_; }
 
    //  Returns true if the software flag identified by FID is on.
    //  Always returns false unless Element::RunningInLab() is true.
@@ -161,22 +151,9 @@ private:
    //
    static Flags SwFlags_;
 
-   //  Set for more accurate (and much slower) function tracing.
-   //
-   static bool SlowTrace_;
-
-   //  Prevents reentry to Debug::ft.
-   //
-   static std::atomic_flag FtLock_;
-
    //  Flags associated with a function call.
    //
    static Flags FcFlags_;
-
-   //  A mutex used when providing more accurate (and much slower) function
-   //  tracing.
-   //
-   static SysLock TraceLock_;
 };
 }
 #endif

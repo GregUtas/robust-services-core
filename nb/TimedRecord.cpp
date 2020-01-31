@@ -58,7 +58,8 @@ ThreadId TimedRecord::PrevTid_ = NIL_ID;
 
 //------------------------------------------------------------------------------
 
-TimedRecord::TimedRecord(size_t size, FlagId owner) : TraceRecord(size, owner),
+TimedRecord::TimedRecord(FlagId owner) :
+   TraceRecord(owner),
    nid_(SysThread::RunningThreadId()),
    ticks_(Clock::TicksNow())
 {
@@ -66,7 +67,7 @@ TimedRecord::TimedRecord(size_t size, FlagId owner) : TraceRecord(size, owner),
 
 //------------------------------------------------------------------------------
 
-bool TimedRecord::Display(ostream& stream, bool diff)
+bool TimedRecord::Display(ostream& stream, const string& opts)
 {
    auto reg = Singleton< ThreadRegistry >::Instance();
    auto tid = reg->FindThreadId(nid_);
@@ -75,7 +76,7 @@ bool TimedRecord::Display(ostream& stream, bool diff)
    if((thr != nullptr) && (thr->CalcStatus(false) != TraceIncluded))
       return false;
 
-   stream << GetTime(diff) << TraceDump::Tab();
+   stream << GetTime(opts) << TraceDump::Tab();
    stream << setw(TraceDump::TidWidth) << tid;
 
    if(tid == PrevTid_)
@@ -94,11 +95,11 @@ bool TimedRecord::Display(ostream& stream, bool diff)
 
 //------------------------------------------------------------------------------
 
-string TimedRecord::GetTime(bool diff) const
+string TimedRecord::GetTime(const string& opts) const
 {
    //  Convert our tick timestamp to hh:mm:ss.mmm and remove the hours.
    //
-   if(diff) return "00:00.000";
+   if(opts.find(NoTimeData) != string::npos) return "00:00.000";
    return Clock::TicksToTime(ticks_, MinsField);
 }
 

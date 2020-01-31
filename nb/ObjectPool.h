@@ -249,7 +249,7 @@ private:
 
    //  Updates the status of the low availability alarm.
    //
-   void UpdateAlarm() const;
+   void UpdateAlarm();
 
    //  Marks all blocks as orphaned and audits the free queue for sanity,
    //  unmarking its blocks so that they will not be recovered.
@@ -335,6 +335,10 @@ private:
    //  The alarm raised when the percentage of blocks in use is high.
    //
    Alarm* alarm_;
+
+   //  Used to reduce calls to UpdateAlarm.
+   //
+   int8_t delta_;
 
    //  Used to detect a corrupt queue header when auditing freeq_.
    //

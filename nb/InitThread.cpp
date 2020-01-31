@@ -354,13 +354,11 @@ void InitThread::InitializeSystem()
    state_ = Running;
    Singleton< RootThread >::Instance()->Interrupt();
 
-   //  Now that the restart is over, disable slow tracing and the
-   //  tracing of RootThread and this thread, which usually cause
-   //  unwanted noise in traces.  Schedule the first thread before
-   //  returning to our thread loop to sleep.
+   //  Now that the restart is over, disable  tracing of RootThread
+   //  and this thread, which usually cause unwanted noise in traces.
+   //  Schedule the first thread before returning to our thread loop
+   //  to sleep.
    //
-   Debug::SetSlowTrace(false);
-
    auto nbt = Singleton< NbTracer >::Instance();
    nbt->SelectFaction(WatchdogFaction, TraceExcluded);
    nbt->SelectFaction(SystemFaction, TraceExcluded);

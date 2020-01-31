@@ -36,15 +36,6 @@ using std::string;
 
 namespace NodeBase
 {
-fn_name Object_ctor = "Object.ctor";
-
-Object::Object() : patchArea_(0)
-{
-   Debug::ft(Object_ctor);
-}
-
-//------------------------------------------------------------------------------
-
 void Object::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {

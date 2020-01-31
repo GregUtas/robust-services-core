@@ -22,9 +22,9 @@
 #ifndef TRACERECORD_H_INCLUDED
 #define TRACERECORD_H_INCLUDED
 
-#include <cstddef>
 #include <cstdint>
 #include <iosfwd>
+#include <string>
 #include "NbTypes.h"
 #include "SysTypes.h"
 
@@ -48,13 +48,23 @@ public:
    //
    typedef TraceRecordId Id;
 
-   //  Identifies a record that has not been fully constructed.
+   //  Identifies a record that has not been added to the trace buffer.
+   //  Assigned as the initial value for slot_.
+   //
+   static const uint32_t InvalidSlot;
+
+   //  identifies a record that has not been fully constructed.  Assigned
+   //  as the initial value for rid_.
    //
    static const Id InvalidId;
 
    //  Virtual to allow subclassing.
    //
    virtual ~TraceRecord() = default;
+
+   //  Returns the trace buffer slot assigned to the record.
+   //
+   uint32_t Slot() const { return slot_; }
 
    //  Returns the trace tool that owns this record.  This allows records
    //  to be included or excluded based on which tools are enabled.
@@ -70,38 +80,22 @@ public:
    //
    void Nullify() { owner_ = NIL_ID; }
 
-   //  Invoked to display the record in STREAM.  DIFF is set to suppress
-   //  output (e.g. timing information) that would result in undesirable
-   //  mismatches in a >diff between traces.  A subclass may invoke this
-   //  version, which displays EventString() (see below) followed by a
-   //  TraceDump::Tab.  Returns false if nothing was displayed, which
-   //  prevents the insertion of an endline.
+   //  Invoked to display the record in STREAM.  OPTS specifies options:
+   //  o NoTimeData ('t') suppresses timing data that would otherwise
+   //    result in undesirable mismatches in a >diff between traces
+   //  o NoCtorRelocation ('c') suppresses the relocation of leaf class
+   //    constructors, which usually provides better timing data but which
+   //    sometimes moves a constructor to an incorrect location
+   //  A subclass may invoke this version, which displays EventString()
+   //  (see below) followed by a TraceDump::Tab.  Returns false if nothing
+   //  was displayed, which prevents the insertion of an endline.
    //
-   virtual bool Display(std::ostream& stream, bool diff);
-
-   //  Overridden to allocate space in the trace buffer.
-   //
-   static void* operator new(size_t size);
-
-   //  Overridden to return space to the trace buffer.  This does nothing
-   //  because the trace buffer is circular and simply overwrites records
-   //  as it cycles around.
-   //
-   static void operator delete(void* addr) { }
-
-   //  Overridden to support placement new.
-   //
-   static void* operator new(size_t size, void* where);
-
-   //  Overridden to handle the failure of placement new.  It will never be
-   //  invoked, but the compiler generates a warning if it is not supplied.
-   //
-   static void operator delete(void* addr, void* where) { }
+   virtual bool Display(std::ostream& stream, const std::string& opts);
 protected:
-   //  SIZE is the record's size (in bytes), and OWNER is the tool that
-   //  created the record.  Protected because this class is virtual.
+   //  OWNER is the tool that created the record.  Protected because this
+   //  class is virtual.
    //
-   TraceRecord(size_t size, FlagId owner);
+   explicit TraceRecord(FlagId owner);
 
    //  Returns a five-character string to be displayed in the EVENT field.
    //  The default version returns an empty string and should generally be
@@ -121,19 +115,26 @@ private:
    //
    virtual void Shutdown(RestartLevel level) { }
 
-   //  The record's size.
+   //  The record's slot in the trace buffer.
    //
-   const int16_t size_ : 16;
+   uint32_t slot_;
 
-   //  The record's owner.
+   //  The record's owner (a trace tool identifier).
    //
    FlagId owner_ : 8;
 protected:
    //  The record's identifier.  This typically identifies the type of event
-   //  that was recorded, but its interpretation is owner specific.  *Must*
-   //  be overwritten by a constructor.
+   //  that was recorded, but its interpretation is owner specific.  It is
+   //  initialized to InvalidId.
    //
    Id rid_ : 8;
 };
+
+//------------------------------------------------------------------------------
+//
+//  Options for the CLI >save command.
+//
+constexpr char NoTimeData = 't';
+constexpr char NoCtorRelocation = 'c';
 }
 #endif

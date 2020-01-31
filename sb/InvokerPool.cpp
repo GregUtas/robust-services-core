@@ -782,7 +782,8 @@ TransTrace* InvokerPool::TraceRxNet(Message& msg, const Factory& fac)
 
       if(buff->ToolIsOn(TransTracer))
       {
-         trans = new TransTrace(msg, fac);
+         auto rec = trans = new TransTrace(msg, fac);
+         buff->Insert(rec);
       }
 
       if(buff->ToolIsOn(BufferTracer))
@@ -791,8 +792,8 @@ TransTrace* InvokerPool::TraceRxNet(Message& msg, const Factory& fac)
 
          if(pool->AvailCount() > 0)
          {
-            auto bt = new BuffTrace(BuffTrace::IcMsg, *msg.Buffer());
-            msg.SetTrace(bt);
+            auto rec = new BuffTrace(BuffTrace::IcMsg, *msg.Buffer());
+            if(buff->Insert(rec)) msg.SetTrace(rec);
          }
       }
 

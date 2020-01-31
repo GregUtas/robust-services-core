@@ -53,7 +53,7 @@ void SE_Handler(uint32_t errval, void* ex)
 {
    //  Reenable Debug functions before tracing this function.
    //
-   Debug::Reset();
+   Thread::ResetDebugFlags();
    Debug::ft(NodeBase_SE_Handler);
 
    signal_t sig = 0;
@@ -253,6 +253,8 @@ bool SysThread::Resume(SysSentry_t& sentry)
 
 SysThreadId SysThread::RunningThreadId()
 {
+   Debug::noft();
+
    return GetCurrentThreadId();
 }
 

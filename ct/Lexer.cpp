@@ -864,7 +864,7 @@ void Lexer::GetFloat(long double& num)
    int64_t frac;
    word digits = GetInt(frac);
    if((digits == 0) || (frac == 0)) return;
-   num += (frac * pow(10.0, -digits));
+   num += (frac * std::pow(10.0, -digits));
 }
 
 //------------------------------------------------------------------------------
@@ -1284,7 +1284,7 @@ bool Lexer::GetNum(TokenPtr& item)
          else if(ThisCharIs('+')) sign = 1;
          if(GetInt(num) == 0) return Retreat(start);
          if(sign == -1) num = -num;
-         fp *= pow(10.0, int(num));
+         fp *= std::pow(10.0, int(num));
       }
 
       //  Finally, look for tags that specify a float or long double type.

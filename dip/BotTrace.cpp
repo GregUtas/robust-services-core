@@ -37,7 +37,7 @@ using std::string;
 namespace Diplomacy
 {
 BotTrace::BotTrace(Id rid, const DipIpBuffer& buff) :
-   TimedRecord(sizeof(BotTrace), DipTracer),
+   TimedRecord(DipTracer),
    buff_(nullptr),
    corrupt_(false)
 {
@@ -83,9 +83,9 @@ void BotTrace::ClaimBlocks()
 
 //------------------------------------------------------------------------------
 
-bool BotTrace::Display(ostream& stream, bool diff)
+bool BotTrace::Display(ostream& stream, const string& opts)
 {
-   if(!TimedRecord::Display(stream, diff)) return false;
+   if(!TimedRecord::Display(stream, opts)) return false;
 
    stream << CRLF;
    stream << string(COUT_LENGTH_MAX, '-') << CRLF;

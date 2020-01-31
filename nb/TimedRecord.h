@@ -23,7 +23,6 @@
 #define TIMEDRECORD_H_INCLUDED
 
 #include "TraceRecord.h"
-#include <cstddef>
 #include <string>
 #include "Clock.h"
 #include "NbTypes.h"
@@ -56,9 +55,9 @@ public:
    SysThreadId Nid() const { return nid_; }
 
    //  Returns the time (mins:secs.msecs) at which the event occurred.
-   //  Returns "00:00.000" if DIFF is set.
+   //  Returns "00:00.000" if OPTS specifies NoTimeData.
    //
-   std::string GetTime(bool diff) const;
+   std::string GetTime(const std::string& opts) const;
 
    //  Returns the thread identifier associated with the event.
    //
@@ -68,12 +67,12 @@ public:
    //  nothing and returns false if the thread is to be excluded from this
    //  trace.  May be overridden, but this version should be invoked first.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 protected:
    //  See TraceRecord for a description of the arguments.  Protected
    //  because this class is virtual.
    //
-   TimedRecord(size_t size, FlagId owner);
+   explicit TimedRecord(FlagId owner);
 private:
    //  The thread that was running when the function was invoked.
    //

@@ -235,12 +235,14 @@ void Context::CaptureTask(const Message& msg, const InvokerThread* inv)
 
       if(buff->ToolIsOn(TransTracer))
       {
-         trans_ = new TransTrace(*this, msg, inv);
+         auto rec = trans_ = new TransTrace(*this, msg, inv);
+         buff->Insert(rec);
       }
 
       if(buff->ToolIsOn(ContextTracer))
       {
-         new MsgTrace(MsgTrace::Reception, msg, msg.Header()->route);
+         auto rec = new MsgTrace(MsgTrace::Reception, msg, msg.Header()->route);
+         buff->Insert(rec);
       }
 
       if(trans_ != nullptr) trans_->ResumeTime(warp);

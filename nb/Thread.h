@@ -194,11 +194,11 @@ public:
 
    //  Starts tracing unless it is already on.  The thread must be unpreemptable
    //  and must enable the desired trace tools and select the items to be traced
-   //  before invoking this function.  If OPTIONS includes 'a' (autostop), then
+   //  before invoking this function.  If OPTS includes TraceAutostop ('a'), then
    //  tracing stops on the next context switch.  See TraceBuffer::StartTracing
    //  for additional options.
    //
-   static TraceRc StartTracing(const std::string& options);
+   static TraceRc StartTracing(const std::string& opts);
 
    //  Stops a trace that was started by StartTracing.
    //
@@ -227,6 +227,12 @@ public:
    //  attribute set).
    //
    static bool HandleSignal(signal_t sig, uint32_t code);
+
+   //  Clears status flags that prevent stack overflows.  This function is
+   //  invoked during exception and signal handling so that logging and
+   //  function tracing do not remain permanently disabled.
+   //
+   static void ResetDebugFlags();
 
    //  Returns a string containing the thread's class name and identifiers.
    //
@@ -584,7 +590,7 @@ private:
    //  provides debugging information.
    //
    static void Trace(Thread* thr, fn_name_arg func,
-      TraceRecordId rid, word info = 0);
+      TraceRecordId rid, int32_t info = 0);
 
    //  Sets the signal to be raised or that is being handled.
    //
@@ -673,5 +679,11 @@ private:
    //
    std::unique_ptr< ThreadStats > stats_;
 };
+
+//------------------------------------------------------------------------------
+//
+//  Options for the StartTracing function.
+//
+constexpr char TraceAutostop = 'a';
 }
 #endif

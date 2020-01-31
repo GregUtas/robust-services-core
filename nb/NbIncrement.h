@@ -96,7 +96,8 @@ class SetCommand : public CliCommand
 public:
    static const id_t SetToolListIndex = 1;
    static const id_t SetBuffSizeIndex = 2;
-   static const id_t LastNbIndex      = 2;
+   static const id_t SetBuffWrapIndex = 3;
+   static const id_t LastNbIndex      = 3;
 
    //  Set BIND to false if binding a subclass of SetWhatParm.
    //

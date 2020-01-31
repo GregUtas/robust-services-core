@@ -2298,9 +2298,12 @@ bool BaseBot::send_buff(DipIpBuffer& buff)
 
    if(Debug::TraceOn())
    {
-      if(Singleton< TraceBuffer >::Instance()->ToolIsOn(DipTracer))
+      auto tbuff = Singleton< TraceBuffer >::Instance();
+
+      if(tbuff->ToolIsOn(DipTracer))
       {
-         new BotTrace(BotTrace::OgMsg, buff);
+         auto rec = new BotTrace(BotTrace::OgMsg, buff);
+         tbuff->Insert(rec);
       }
    }
 

@@ -34,14 +34,15 @@ namespace NodeBase
 //  Operating system abstraction layer: recursive mutex.
 //
 //  This lightweight mutex is similar to SysMutex but is specifically intended
-//  for Debug::ft, where it allows function calls to be traced more accurately.
-//  It is not intended for general use: it neither invokes Debug::ft (which
-//  would be a futile reentrant call) nor registers with MutexRegistry.
+//  for any scenario in which a mutex must frequently be acquired.  It is *not*
+//  intended for general use: it neither invokes Debug::ft nor registers with
+//  MutexRegistry.  It is strongly recommended that SysMutex be used first,
+//  converting to this mutex only after thorough testing if the performance
+//  improvement justifies it.
 //
 class SysLock
 {
-   friend class Debug;
-private:
+public:
    //  Creates the mutex.
    //
    explicit SysLock();
@@ -72,7 +73,7 @@ private:
    //
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const;
-
+private:
    //  A handle to the native mutex.
    //
    SysMutex_t mutex_;

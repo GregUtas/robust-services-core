@@ -56,7 +56,7 @@ namespace TraceDump
 
    //  Displays the records in the trace buffer.
    //
-   TraceRc Generate(std::ostream& stream, bool diff);
+   TraceRc Generate(std::ostream& stream, const std::string& opts);
 }
 }
 #endif

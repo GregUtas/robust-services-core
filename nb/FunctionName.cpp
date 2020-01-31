@@ -20,10 +20,6 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "FunctionName.h"
-#include <cstring>
-#include <string>
-
-using std::string;
 
 //------------------------------------------------------------------------------
 
@@ -34,27 +30,4 @@ fixed_string FunctionName::CtorTag = ".ctor";
 fixed_string FunctionName::DtorTag = ".dtor";
 fixed_string FunctionName::OpNewTag = ".operator new";
 fixed_string FunctionName::OpDelTag = ".operator delete";
-
-//------------------------------------------------------------------------------
-
-int FunctionName::compare(fn_name_arg func, c_string str)
-{
-   return strcmp(func, str);
-}
-
-//------------------------------------------------------------------------------
-
-size_t FunctionName::find(fn_name_arg func, c_string str)
-{
-   string name(func);
-   return name.find(str);
-}
-
-//------------------------------------------------------------------------------
-
-size_t FunctionName::rfind(fn_name_arg func, c_string str)
-{
-   string name(func);
-   return name.rfind(str);
-}
 }

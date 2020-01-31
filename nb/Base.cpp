@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Base.h"
+#include <new>
 #include <ostream>
 #include <typeinfo>
 #include "Debug.h"
@@ -34,13 +35,6 @@ using std::string;
 namespace NodeBase
 {
 const size_t Base::MaxSubtendedCount = 256;
-
-fn_name Base_ctor = "Base.ctor";
-
-Base::Base()
-{
-   Debug::ft(Base_ctor);
-}
 
 //------------------------------------------------------------------------------
 
@@ -153,6 +147,28 @@ void Base::Nullify(size_t n)
       n = (n >> BYTES_PER_WORD_LOG2) - 1;
       for(size_t i = 0; i < n; ++i) obj->data[i] = BAD_POINTER;
    }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Base_new1 = "Base.operator new";
+
+void* Base::operator new(size_t size)
+{
+   Debug::ft(Base_new1);
+
+   return ::operator new(size);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Base_new2 = "Base.operator new[]";
+
+void* Base::operator new[](size_t size)
+{
+   Debug::ft(Base_new2);
+
+   return ::operator new[](size);
 }
 
 //------------------------------------------------------------------------------

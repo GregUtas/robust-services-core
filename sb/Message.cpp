@@ -100,10 +100,12 @@ Message::Message(ProtocolSM* psm, size_t size) :
    if(Context::RunningContextTraced(trans))
    {
       auto warp = Clock::TicksNow();
+      auto buff = Singleton< TraceBuffer >::Instance();
 
-      if(Singleton< TraceBuffer >::Instance()->ToolIsOn(ContextTracer))
+      if(buff->ToolIsOn(ContextTracer))
       {
-         new MsgTrace(MsgTrace::Creation, *this, Internal);
+         auto rec = new MsgTrace(MsgTrace::Creation, *this, Internal);
+         buff->Insert(rec);
       }
 
       if(trans != nullptr) trans->ResumeTime(warp);
@@ -125,10 +127,12 @@ Message::~Message()
    if(Context::RunningContextTraced(trans))
    {
       auto warp = Clock::TicksNow();
+      auto buff = Singleton< TraceBuffer >::Instance();
 
-      if(Singleton< TraceBuffer >::Instance()->ToolIsOn(ContextTracer))
+      if(buff->ToolIsOn(ContextTracer))
       {
-         new MsgTrace(MsgTrace::Deletion, *this, Internal);
+         auto rec = new MsgTrace(MsgTrace::Deletion, *this, Internal);
+         buff->Insert(rec);
       }
 
       if(trans != nullptr) trans->ResumeTime(warp);
@@ -183,7 +187,8 @@ void Message::Capture(Route route) const
 
       if(buff->ToolIsOn(ContextTracer))
       {
-         new MsgTrace(MsgTrace::Transmission, *this, route);
+         auto rec = new MsgTrace(MsgTrace::Transmission, *this, route);
+         buff->Insert(rec);
       }
 
       if(buff->ToolIsOn(BufferTracer))
@@ -192,7 +197,8 @@ void Message::Capture(Route route) const
 
          if(pool->AvailCount() > 0)
          {
-            new BuffTrace(BuffTrace::OgMsg, *buff_);
+            auto rec = new BuffTrace(BuffTrace::OgMsg, *buff_);
+            buff->Insert(rec);
          }
       }
 

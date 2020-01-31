@@ -52,7 +52,7 @@ namespace NodeBase
       void MemUnprotect();
       void MemProtect();
       void IncludeInTrace();
-      TraceRc StartTracing(const std::string& options);
+      TraceRc StartTracing(const std::string& opts);
       void StopTracing();
    }
 }

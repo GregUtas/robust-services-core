@@ -23,7 +23,6 @@
 #define SBTRACE_H_INCLUDED
 
 #include "TimedRecord.h"
-#include <cstddef>
 #include <iosfwd>
 #include <string>
 #include "Clock.h"
@@ -88,7 +87,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 private:
    //  Overridden to return a string for displaying this type of record.
    //
@@ -182,7 +181,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 private:
    //  For an incoming (outgoing) message, returns the identifier of the
    //  factory that received (sent) the message.
@@ -227,12 +226,12 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 protected:
-   //  Creates a trace record for SBO, with the SIZE specified.
-   //  Protected because this class is virtual.
+   //  Creates a trace record for SBO.  Protected because this class
+   //  is virtual.
    //
-   SboTrace(size_t size, const NodeBase::Pooled& sbo);
+   explicit SboTrace(const NodeBase::Pooled& sbo);
 
    //  Displays ID in the trace's identifier column, preceded by LABEL.
    //  If ID is NIL_ID, it is not displayed.  Enough spaces to reach the
@@ -265,7 +264,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 private:
    //  Overridden to return a string for displaying this type of record.
    //
@@ -294,7 +293,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 private:
    //  Overridden to return a string for displaying this type of record.
    //
@@ -327,7 +326,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 private:
    //  Overridden to return a string for displaying this type of record.
    //
@@ -373,7 +372,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 private:
    //  Overridden to return a string for displaying this type of record.
    //
@@ -426,7 +425,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 private:
    //  Overridden to return a string for displaying this type of record.
    //
@@ -471,11 +470,11 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 protected:
    //  For subclasses.
    //
-   EventTrace(size_t size, const Event& evt);
+   explicit EventTrace(const Event& evt);
 
    //  Displays the event name associated with SID and EID.
    //
@@ -513,13 +512,8 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 protected:
-   //  For subclasses.
-   //
-   HandlerTrace(size_t size, ServiceId sid, const State& state,
-      const Event& evt, EventHandler::Rc rc);
-
    //  Displays the state associated with sid_ and stid_.
    //
    void DisplayState(std::ostream& stream) const;
@@ -551,7 +545,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 private:
    //  The event identifier for the SAP or SNP's currEvent_.
    //
@@ -572,7 +566,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 private:
    //  The service whose initiation was requested.
    //

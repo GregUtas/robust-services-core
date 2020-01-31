@@ -195,6 +195,7 @@ ObjectPool::ObjectPool
    availCount_(0),
    totalCount_(0),
    alarm_(nullptr),
+   delta_(0),
    corruptQHead_(false)
 {
    Debug::ft(ObjectPool_ctor);
@@ -414,6 +415,7 @@ void ObjectPool::AuditFreeq()
                   availCount_ = count;
                }
 
+               UpdateAlarm();
                buff->Unlock();
                return;
             }
@@ -450,6 +452,7 @@ void ObjectPool::AuditFreeq()
       }
 
       availCount_ = count;
+      UpdateAlarm();
    }
 }
 
@@ -551,15 +554,22 @@ Pooled* ObjectPool::DeqBlock(size_t size)
    }
 
    --availCount_;
-   UpdateAlarm();
    stats_->lowCount_->Update(availCount_);
    stats_->allocCount_->Incr();
 
+   if(--delta_ <= -50)
+   {
+      UpdateAlarm();
+   }
+
    if(Debug::TraceOn())
    {
-      if(Singleton< TraceBuffer >::Instance()->ToolIsOn(ObjPoolTracer))
+      auto buff = Singleton< TraceBuffer >::Instance();
+
+      if(buff->ToolIsOn(ObjPoolTracer))
       {
-         new ObjectPoolTrace(ObjectPoolTrace::Dequeued, *item);
+         auto rec = new ObjectPoolTrace(ObjectPoolTrace::Dequeued, *item);
+         buff->Insert(rec);
       }
    }
 
@@ -589,6 +599,7 @@ void ObjectPool::Display(ostream& stream,
    stream << prefix << "alarmName    : " << alarmName_ << CRLF;
    stream << prefix << "alarmExpl    : " << alarmExpl_ << CRLF;
    stream << prefix << "alarm        : " << strObj(alarm_) << CRLF;
+   stream << prefix << "delta        : " << int(delta_) << CRLF;
    stream << prefix << "corruptQHead : " << corruptQHead_ << CRLF;
 
    auto lead = prefix + spaces(2);
@@ -664,9 +675,12 @@ void ObjectPool::EnqBlock(Pooled* obj, bool deleted)
 
    if(Debug::TraceOn() && deleted)
    {
-      if(Singleton< TraceBuffer >::Instance()->ToolIsOn(ObjPoolTracer))
+      auto buff = Singleton< TraceBuffer >::Instance();
+
+      if(buff->ToolIsOn(ObjPoolTracer))
       {
-         new ObjectPoolTrace(ObjectPoolTrace::Enqueued, *obj);
+         auto rec = new ObjectPoolTrace(ObjectPoolTrace::Enqueued, *obj);
+         buff->Insert(rec);
       }
    }
 
@@ -713,7 +727,11 @@ void ObjectPool::EnqBlock(Pooled* obj, bool deleted)
 
    if(deleted)
    {
-      UpdateAlarm();
+      if(++delta_ >= 50)
+      {
+         UpdateAlarm();
+      }
+
       stats_->freeCount_->Incr();
    }
 }
@@ -983,7 +1001,9 @@ void ObjectPool::RecoverBlocks()
             {
                if(buff->ToolIsOn(ObjPoolTracer))
                {
-                  new ObjectPoolTrace(ObjectPoolTrace::Recovered, *p);
+                  auto rec =
+                     new ObjectPoolTrace(ObjectPoolTrace::Recovered, *p);
+                  buff->Insert(rec);
                }
             }
 
@@ -1059,6 +1079,7 @@ void ObjectPool::Shutdown(RestartLevel level)
    currSegments_ = 0;
    availCount_ = 0;
    totalCount_ = 0;
+   delta_ = 0;
    corruptQHead_ = false;
 }
 
@@ -1084,11 +1105,12 @@ void ObjectPool::Startup(RestartLevel level)
 
 fn_name ObjectPool_UpdateAlarm = "ObjectPool.UpdateAlarm";
 
-void ObjectPool::UpdateAlarm() const
+void ObjectPool::UpdateAlarm()
 {
    Debug::ft(ObjectPool_UpdateAlarm);
 
    if(alarm_ == nullptr) return;
+   delta_ = 0;
 
    //  The alarm level is determined by the number of available blocks
    //  compared to the total number of blocks allocated:

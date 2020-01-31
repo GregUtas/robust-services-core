@@ -77,10 +77,12 @@ Timer::Timer
    if(Context::RunningContextTraced(trans))
    {
       auto warp = Clock::TicksNow();
+      auto buff = Singleton< TraceBuffer >::Instance();
 
-      if(Singleton< TraceBuffer >::Instance()->ToolIsOn(ContextTracer))
+      if(buff->ToolIsOn(ContextTracer))
       {
-         new TimerTrace(TimerTrace::Creation, *this);
+         auto rec = new TimerTrace(TimerTrace::Creation, *this);
+         buff->Insert(rec);
       }
 
       if(trans != nullptr) trans->ResumeTime(warp);
@@ -105,10 +107,12 @@ Timer::~Timer()
    if(Context::RunningContextTraced(trans))
    {
       auto warp = Clock::TicksNow();
+      auto buff = Singleton< TraceBuffer >::Instance();
 
-      if(Singleton< TraceBuffer >::Instance()->ToolIsOn(ContextTracer))
+      if(buff->ToolIsOn(ContextTracer))
       {
-         new TimerTrace(TimerTrace::Deletion, *this);
+         auto rec = new TimerTrace(TimerTrace::Deletion, *this);
+         buff->Insert(rec);
       }
 
       if(trans != nullptr) trans->ResumeTime(warp);

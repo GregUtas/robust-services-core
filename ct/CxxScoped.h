@@ -984,8 +984,8 @@ private:
    //
    bool using_ : 1;
 
-   //  Set when searching for the friend's referent, to prevent recursive
-   //  invocations of FindReferent.
+   //  Set when searching for the friend's referent, to prevent a stack
+   //  overflow due to nested invocations of FindReferent.
    //
    mutable bool searching_ : 1;
 

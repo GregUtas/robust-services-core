@@ -20,13 +20,13 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "FunctionProfiler.h"
+#include <cstring>
 #include <map>
 #include <ostream>
 #include <string>
 #include <utility>
 #include "Algorithms.h"
 #include "Debug.h"
-#include "FunctionName.h"
 #include "FunctionStats.h"
 #include "FunctionTrace.h"
 #include "Memory.h"
@@ -134,7 +134,7 @@ FunctionStats* FunctionProfiler::EnsureRecord(fn_name_arg func, size_t count)
    //
    for(auto f = fsq->First(); f != nullptr; fsq->Next(f))
    {
-      if(FunctionName::compare(f->Func(), func) == 0) return f;
+      if(strcmp(f->Func(), func) == 0) return f;
    }
 
    auto f = new FunctionStats(func, count);

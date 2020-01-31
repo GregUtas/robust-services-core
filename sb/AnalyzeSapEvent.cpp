@@ -26,7 +26,9 @@
 #include "Debug.h"
 #include "Message.h"
 #include "SbTrace.h"
+#include "Singleton.h"
 #include "SysTypes.h"
+#include "TraceBuffer.h"
 
 using namespace NodeBase;
 using std::ostream;
@@ -92,7 +94,8 @@ Event* AnalyzeSapEvent::BuildSnp(ServiceSM& owner, TriggerId tid)
 void AnalyzeSapEvent::Capture
    (ServiceId sid, const State& state, EventHandler::Rc rc) const
 {
-   new SxpTrace(sid, state, *this, rc);
+   auto rec = new SxpTrace(sid, state, *this, rc);
+   Singleton< TraceBuffer >::Instance()->Insert(rec);
 }
 
 //------------------------------------------------------------------------------

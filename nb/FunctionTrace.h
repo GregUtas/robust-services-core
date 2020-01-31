@@ -24,6 +24,7 @@
 
 #include "TimedRecord.h"
 #include <cstddef>
+#include <string>
 #include "Clock.h"
 #include "SysTypes.h"
 #include "ToolTypes.h"
@@ -36,7 +37,16 @@ namespace NodeBase
 //
 class FunctionTrace : public TimedRecord
 {
+   friend class Thread;
 public:
+   //  Sets func_ and depth_.
+   //
+   FunctionTrace(fn_name_arg func, fn_depth depth);
+
+   //  Constructs a default record.
+   //
+   FunctionTrace();
+
    //  Virtual to allow subclassing.
    //
    virtual ~FunctionTrace() = default;
@@ -57,19 +67,22 @@ public:
    //
    static Scope GetScope() { return Scope_; }
 
-   //  Captures a call to FUNC when tracing is enabled.  Applications must
-   //  use Debug::ft instead of invoking this directly.
+   //  Invoked when tracing stops.  Preprocesses records before they are
+   //  displayed.
    //
-   static void Capture(fn_name_arg func);
-
-   //  Invoked when tracing stops.  Modifies records to handle constructors
-   //  and destructors.
-   //
-   static void Postprocess();
+   static void Process(const std::string& opts);
 
    //  Returns the function whose invocation this record captured.
    //
    fn_name Func() const { return func_; }
+
+   //  Returns the depth of the function whose invocation this record captured.
+   //
+   fn_depth Depth() const { return depth_; }
+
+   //  Returns the depth of the function that invoked this one.
+   //
+   fn_depth InvokerDepth() const { return invokerDepth_; }
 
    //  Returns the net time spent in the function that this record captured.
    //
@@ -77,36 +90,67 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 
    //  Mask for selecting FunctionTrace records when using TraceBuffer::Next.
    //
    static const Flags FTmask;
-protected:
-   //  Sets func_ and depth_.  SIZE is the record's size (to allow subclassing).
-   //  Protected to restrict creation to Capture.
-   //
-   FunctionTrace(fn_name_arg func, fn_depth depth, size_t size);
 private:
+   //  Overridden to allocate space in the buffer allocated for records
+   //  that belong to this class.
+   //
+   static void* operator new(size_t size);
+
+   //  Overridden to return space to the buffer.  This does nothing because
+   //  the buffer is circular and simply overwrites previous records when it
+   //  cycles around.
+   //
+   static void operator delete(void* addr) { }
+
+   //  Overridden to support placement new.
+   //
+   static void* operator new(size_t size, void* where);
+
+   //  Captures a call to FUNC when tracing is enabled.  Applications use
+   //  Debug::ft instead of invoking this directly.
+   //
+   static void Capture(fn_name_arg func);
+
+   //  Adjusts  all functions' depths to prevent unnecessary indentation.
+   //
+   static void AdjustDepths();
+
+   //  Finds the depth of each function's invoker.
+   //
+   static void FindInvokerDepths();
+
+   //  Removes insertions of "C++.delete" that were not followed by a
+   //  call to a delete operator.
+   //
+   static void RemoveCxxDeletes();
+
+   //  This function is an inserted call to "C++.delete" at depth n.
+   //  Returns true if a call to a delete operator follows this function
+   //  at depth n+1 before another function at depth n is reached.
+   //
+   bool FindDeleteOperator();
+
+   //  Fixes constructor chains so that the constructor for the object
+   //  being created precedes its deepest base class constructor.
+   //
+   static void FixCtorChains();
+
+   //  Calculates the gross and net times spent in each function.
+   //
+   static void CalcFuncTimes();
+
    //  Calculates the gross and net times spent in a function call.
    //
-   void CalcFuncTime();
+   void CalcTimes();
 
    //  Calculates the gross time spent in a function call.
    //
    usecs_t CalcGrossTime();
-
-   //  Searches ahead for the invocation of a delete operator at the same
-   //  level as this function.
-   //
-   bool FindDeleteOperator();
-
-   //  Searches for constructor invocations associated with this record and
-   //  reorders them so that they run from leaf class to base class instead
-   //  of from base class to leaf class.  LIMIT is the minimum depth for one
-   //  of these constructor calls.
-   //
-   void InvertCtors(fn_depth limit);
 
    //  The name of function that was invoked.
    //
@@ -114,16 +158,14 @@ private:
 
    //  The nesting level of the function call on the thread's stack.
    //
-   fn_depth depth_ : 14;
+   fn_depth depth_;
 
-   //  Set for a constructor that was moved during reordering.
+   //  The nesting level of the function that *invoked* this one.
+   //  Set after tracing stops.  It *should* be depth_ - 1, but it
+   //  can be different because of how constructors are captured
+   //  and because not all functions invoke Debug::ft.
    //
-   bool moved_ : 1;
-
-   //  Set for a function call that follows a reordered constructor.
-   //  It acts as a boundary when reordering nested constructors.
-   //
-   bool stop_ : 1;
+   fn_depth invokerDepth_;
 
    //  The total time spent in the function call.  Calculated after
    //  tracing stops.
@@ -138,10 +180,6 @@ private:
    //  The scope of function tracing.
    //
    static Scope Scope_;
-
-   //  The minimum depth of all function calls in the trace buffer.
-   //
-   static fn_depth MinDepth_;
 
    //> The maximum depth when displaying a function call.
    //

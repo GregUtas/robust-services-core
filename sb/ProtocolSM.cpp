@@ -97,10 +97,12 @@ ProtocolSM::~ProtocolSM()
    if(Context::RunningContextTraced(trans))
    {
       auto warp = Clock::TicksNow();
+      auto buff = Singleton< TraceBuffer >::Instance();
 
-      if(Singleton< TraceBuffer >::Instance()->ToolIsOn(ContextTracer))
+      if(buff->ToolIsOn(ContextTracer))
       {
-         new PsmTrace(PsmTrace::Deletion, *this);
+         auto rec = new PsmTrace(PsmTrace::Deletion, *this);
+         buff->Insert(rec);
       }
 
       if(trans != nullptr) trans->ResumeTime(warp);
@@ -391,10 +393,12 @@ void ProtocolSM::Initialize(bool henq)
    if(ctx->TraceOn(trans))
    {
       auto warp = Clock::TicksNow();
+      auto buff = Singleton< TraceBuffer >::Instance();
 
-      if(Singleton< TraceBuffer >::Instance()->ToolIsOn(ContextTracer))
+      if(buff->ToolIsOn(ContextTracer))
       {
-         new PsmTrace(PsmTrace::Creation, *this);
+         auto rec = new PsmTrace(PsmTrace::Creation, *this);
+         buff->Insert(rec);
       }
 
       if(trans != nullptr) trans->ResumeTime(warp);

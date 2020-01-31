@@ -1099,8 +1099,8 @@ bool MscBuilder::OutputMessage
 
       if(mt.NoCtx()) active = sender;
       start = sender->Column();
-      txmsgTime = mt.GetTime(false);
-      if(tt != nullptr) transTime = tt->GetTime(false);
+      txmsgTime = mt.GetTime(EMPTY_STR);
+      if(tt != nullptr) transTime = tt->GetTime(EMPTY_STR);
 
       //  If the message was sent to self, the sender is also the receiver.
       //  The message will start one column to the sender's left and end at
@@ -1203,8 +1203,8 @@ bool MscBuilder::OutputMessage
 
       start = sender->Column();
       end = receiver->Column();
-      rxnetTime = tt->GetTime(false);
-      transTime = mt.GetTime(false);
+      rxnetTime = tt->GetTime(EMPTY_STR);
+      transTime = mt.GetTime(EMPTY_STR);
    }
 
    //  Find the message's signal so that it can be displayed.  Strip out
@@ -1337,7 +1337,7 @@ void MscBuilder::OutputTrailer() const
    buff->SetTool(TransTracer, true);
    buff->SetTool(ContextTracer, true);
    *stream_ << CRLF;
-   Singleton< TraceBuffer >::Instance()->DisplayTrace(stream_, false);
+   Singleton< TraceBuffer >::Instance()->DisplayTrace(stream_, EMPTY_STR);
    *stream_ << MscTrailer;
    buff->SetTools(tools);
 }

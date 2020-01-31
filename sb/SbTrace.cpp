@@ -118,9 +118,9 @@ TransTrace::TransTrace
 
 //------------------------------------------------------------------------------
 
-bool TransTrace::Display(ostream& stream, bool diff)
+bool TransTrace::Display(ostream& stream, const string& opts)
 {
-   if(!TimedRecord::Display(stream, diff)) return false;
+   if(!TimedRecord::Display(stream, opts)) return false;
 
    auto delta = ticks1_ - ticks0_;
    auto usecs = Clock::TicksToUsecs(delta);
@@ -285,9 +285,9 @@ void BuffTrace::ClaimBlocks()
 
 //------------------------------------------------------------------------------
 
-bool BuffTrace::Display(ostream& stream, bool diff)
+bool BuffTrace::Display(ostream& stream, const string& opts)
 {
-   if(!TimedRecord::Display(stream, diff)) return false;
+   if(!TimedRecord::Display(stream, opts)) return false;
 
    stream << CRLF;
    stream << string(COUT_LENGTH_MAX, '-') << CRLF;
@@ -448,9 +448,9 @@ SboTrace::SboTrace(const Pooled& sbo) :
 
 //------------------------------------------------------------------------------
 
-bool SboTrace::Display(ostream& stream, bool diff)
+bool SboTrace::Display(ostream& stream, const string& opts)
 {
-   if(!TimedRecord::Display(stream, diff)) return false;
+   if(!TimedRecord::Display(stream, opts)) return false;
 
    stream << spaces(TraceDump::EvtToObj) << sbo_ << TraceDump::Tab();
    return true;
@@ -481,9 +481,9 @@ SsmTrace::SsmTrace(Id rid, const ServiceSM& ssm) :
 
 //------------------------------------------------------------------------------
 
-bool SsmTrace::Display(ostream& stream, bool diff)
+bool SsmTrace::Display(ostream& stream, const string& opts)
 {
-   if(!SboTrace::Display(stream, diff)) return false;
+   if(!SboTrace::Display(stream, opts)) return false;
 
    auto reg = Singleton< ServiceRegistry >::Instance();
 
@@ -523,9 +523,9 @@ PsmTrace::PsmTrace(Id rid, const ProtocolSM& psm) :
 
 //------------------------------------------------------------------------------
 
-bool PsmTrace::Display(ostream& stream, bool diff)
+bool PsmTrace::Display(ostream& stream, const string& opts)
 {
-   if(!SboTrace::Display(stream, diff)) return false;
+   if(!SboTrace::Display(stream, opts)) return false;
 
    auto reg = Singleton< FactoryRegistry >::Instance();
 
@@ -563,9 +563,9 @@ PortTrace::PortTrace(Id rid, const MsgPort& port) :
 
 //------------------------------------------------------------------------------
 
-bool PortTrace::Display(ostream& stream, bool diff)
+bool PortTrace::Display(ostream& stream, const string& opts)
 {
-   if(!SboTrace::Display(stream, diff)) return false;
+   if(!SboTrace::Display(stream, opts)) return false;
 
    auto reg = Singleton< FactoryRegistry >::Instance();
 
@@ -634,9 +634,9 @@ MsgTrace::MsgTrace(Id rid, const Message& msg, Message::Route route) :
 
 //------------------------------------------------------------------------------
 
-bool MsgTrace::Display(ostream& stream, bool diff)
+bool MsgTrace::Display(ostream& stream, const string& opts)
 {
-   if(!SboTrace::Display(stream, diff)) return false;
+   if(!SboTrace::Display(stream, opts)) return false;
 
    stream << OutputId("port=", locAddr_.bid);
 
@@ -695,9 +695,9 @@ TimerTrace::TimerTrace(Id rid, const Timer& tmr) :
 
 //------------------------------------------------------------------------------
 
-bool TimerTrace::Display(ostream& stream, bool diff)
+bool TimerTrace::Display(ostream& stream, const string& opts)
 {
-   if(!SboTrace::Display(stream, diff)) return false;
+   if(!SboTrace::Display(stream, opts)) return false;
 
    stream << OutputId("id=", tid_);
    stream << "secs=" << secs_ << " psm=" << psm_;
@@ -745,9 +745,9 @@ EventTrace::EventTrace(const Event& evt) :
 
 //------------------------------------------------------------------------------
 
-bool EventTrace::Display(ostream& stream, bool diff)
+bool EventTrace::Display(ostream& stream, const string& opts)
 {
-   if(!SboTrace::Display(stream, diff)) return false;
+   if(!SboTrace::Display(stream, opts)) return false;
 
    stream << spaces(TraceDump::ObjToDesc);
    DisplayEvent(stream, owner_, eid_);
@@ -811,9 +811,9 @@ HandlerTrace::HandlerTrace
 
 //------------------------------------------------------------------------------
 
-bool HandlerTrace::Display(ostream& stream, bool diff)
+bool HandlerTrace::Display(ostream& stream, const string& opts)
 {
-   if(!SboTrace::Display(stream, diff)) return false;
+   if(!SboTrace::Display(stream, opts)) return false;
 
    stream << rc_ << spaces(4);
    DisplayEvent(stream, sid_, eid_);
@@ -855,9 +855,9 @@ SxpTrace::SxpTrace
 
 //------------------------------------------------------------------------------
 
-bool SxpTrace::Display(ostream& stream, bool diff)
+bool SxpTrace::Display(ostream& stream, const string& opts)
 {
-   if(!SboTrace::Display(stream, diff)) return false;
+   if(!SboTrace::Display(stream, opts)) return false;
 
    stream << rc_ << spaces(4);
    DisplayEvent(stream, sid_, eid_);
@@ -883,9 +883,9 @@ SipTrace::SipTrace
 
 //------------------------------------------------------------------------------
 
-bool SipTrace::Display(ostream& stream, bool diff)
+bool SipTrace::Display(ostream& stream, const string& opts)
 {
-   if(!SboTrace::Display(stream, diff)) return false;
+   if(!SboTrace::Display(stream, opts)) return false;
 
    stream << rc_ << spaces(4);
    DisplayEvent(stream, sid_, eid_);

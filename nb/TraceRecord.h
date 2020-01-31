@@ -24,6 +24,7 @@
 
 #include <cstdint>
 #include <iosfwd>
+#include <string>
 #include "NbTypes.h"
 #include "SysTypes.h"
 
@@ -79,14 +80,17 @@ public:
    //
    void Nullify() { owner_ = NIL_ID; }
 
-   //  Invoked to display the record in STREAM.  DIFF is set to suppress
-   //  output (e.g. timing information) that would result in undesirable
-   //  mismatches in a >diff between traces.  A subclass may invoke this
-   //  version, which displays EventString() (see below) followed by a
-   //  TraceDump::Tab.  Returns false if nothing was displayed, which
-   //  prevents the insertion of an endline.
+   //  Invoked to display the record in STREAM.  OPTS specifies options:
+   //  o NoTimeData ('t') suppresses timing data that would otherwise
+   //    result in undesirable mismatches in a >diff between traces
+   //  o NoCtorRelocation ('c') suppresses the relocation of leaf class
+   //    constructors, which usually provides better timing data but which
+   //    sometimes moves a constructor to an incorrect location
+   //  A subclass may invoke this version, which displays EventString()
+   //  (see below) followed by a TraceDump::Tab.  Returns false if nothing
+   //  was displayed, which prevents the insertion of an endline.
    //
-   virtual bool Display(std::ostream& stream, bool diff);
+   virtual bool Display(std::ostream& stream, const std::string& opts);
 protected:
    //  OWNER is the tool that created the record.  Protected because this
    //  class is virtual.
@@ -125,5 +129,12 @@ protected:
    //
    Id rid_ : 8;
 };
+
+//------------------------------------------------------------------------------
+//
+//  Options for the CLI >save command.
+//
+constexpr char NoTimeData = 't';
+constexpr char NoCtorRelocation = 'c';
 }
 #endif

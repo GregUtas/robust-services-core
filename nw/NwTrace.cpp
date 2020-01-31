@@ -28,6 +28,7 @@
 
 using namespace NodeBase;
 using std::ostream;
+using std::string;
 
 //------------------------------------------------------------------------------
 
@@ -67,9 +68,9 @@ NwTrace::NwTrace(Id rid, const SysSocket* socket, word data, ipport_t port,
 
 //------------------------------------------------------------------------------
 
-bool NwTrace::Display(ostream& stream, bool diff)
+bool NwTrace::Display(ostream& stream, const string& opts)
 {
-   if(!TimedRecord::Display(stream, diff)) return false;
+   if(!TimedRecord::Display(stream, opts)) return false;
 
    stream << spaces(TraceDump::EvtToObj);
 

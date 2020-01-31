@@ -549,7 +549,7 @@ int ThreadAdmin::WarpFactor()
 
    //  Calculate the time warp factor as follows (to be updated):
    //  o 2x if this is a lab load.
-   //  o 32x if the function tracer is on.
+   //  o 4x if the function tracer is on.
    //  o 2x if other tracers are on.
    //  o 2x if immediate tracing is on.
    //
@@ -558,12 +558,8 @@ int ThreadAdmin::WarpFactor()
    if(Debug::TraceOn())
    {
       auto buff = Singleton< TraceBuffer >::Instance();
-
-      if(buff->ToolIsOn(FunctionTracer))
-         warp += 5;
-      else
-         warp += 1;
-
+      if(buff->ToolIsOn(FunctionTracer)) warp += 2;
+      if(buff->GetTools().count() > 1) warp += 1;
       if(buff->ImmediateTraceOn()) warp += 1;
    }
 

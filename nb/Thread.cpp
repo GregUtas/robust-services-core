@@ -123,7 +123,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(ostream& stream, bool diff) override;
+   bool Display(ostream& stream, const string& opts) override;
 
    //  Overridden to allocate the trace record from the default heap,
    //  because the buffer for FunctionTrace records does not support
@@ -196,9 +196,9 @@ void ThreadTrace::CaptureEvent(fn_name_arg func, Id rid, int32_t info)
 
 //------------------------------------------------------------------------------
 
-bool ThreadTrace::Display(ostream& stream, bool diff)
+bool ThreadTrace::Display(ostream& stream, const string& opts)
 {
-   if(!FunctionTrace::Display(stream, diff)) return false;
+   if(!FunctionTrace::Display(stream, opts)) return false;
 
    switch(rid_)
    {
@@ -3373,14 +3373,14 @@ void Thread::StartShortInterval()
 
 //------------------------------------------------------------------------------
 
-TraceRc Thread::StartTracing(const string& options)
+TraceRc Thread::StartTracing(const string& opts)
 {
    auto thr = RunningThread();
-   auto rc = Singleton< TraceBuffer >::Instance()->StartTracing(options);
+   auto rc = Singleton< TraceBuffer >::Instance()->StartTracing(opts);
 
    if(rc == TraceOk)
    {
-      thr->priv_->autostop_ = (options.find('a') != string::npos);
+      thr->priv_->autostop_ = (opts.find(TraceAutostop) != string::npos);
       thr->priv_->tracing_ = true;
    }
 

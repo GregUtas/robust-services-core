@@ -29,6 +29,7 @@
 #include "TraceDump.h"
 
 using std::ostream;
+using std::string;
 
 //------------------------------------------------------------------------------
 
@@ -45,9 +46,9 @@ MemoryTrace::MemoryTrace(Id rid, const void* addr, MemoryType type,
 
 //------------------------------------------------------------------------------
 
-bool MemoryTrace::Display(ostream& stream, bool diff)
+bool MemoryTrace::Display(ostream& stream, const string& opts)
 {
-   if(!TimedRecord::Display(stream, diff)) return false;
+   if(!TimedRecord::Display(stream, opts)) return false;
 
    stream << spaces(TraceDump::EvtToObj) << addr_ << TraceDump::Tab();
    stream << "type=" << TypeString(type_) << spaces(3);

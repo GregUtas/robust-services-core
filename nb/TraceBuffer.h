@@ -142,11 +142,11 @@ public:
    //
    TraceRc Clear();
 
-   //  Initiates tracing by all enabled tools using OPTIONS, which can include
-   //  o 'i': immediate tracing--each trace record is immediately written to
+   //  Initiates tracing by all enabled tools using OPTS, which can include
+   //  o ImmediateTrace ('i'): each trace record is immediately written to
    //    the file "immed.trace.txt" when it is created
    //
-   TraceRc StartTracing(const std::string& options);
+   TraceRc StartTracing(const std::string& opts);
 
    //  Invoked when stopping tracing.
    //
@@ -168,7 +168,7 @@ public:
    //  Displays all of the records in the trace buffer.  STREAM must be
    //  valid unless an immediate trace is in progress.
    //
-   TraceRc DisplayTrace(std::ostream* stream, bool diff);
+   TraceRc DisplayTrace(std::ostream* stream, const std::string& opts);
 
    //  Displays status information before trace records are displayed.
    //
@@ -336,5 +336,11 @@ private:
    //
    bool processed_;
 };
+
+//------------------------------------------------------------------------------
+//
+//  Options for the CLI >start command.
+//
+constexpr char ImmediateTrace = 'i';
 }
 #endif

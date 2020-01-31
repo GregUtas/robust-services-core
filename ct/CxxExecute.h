@@ -76,7 +76,7 @@ protected:
 
    //  Overridden to display the trace record.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 private:
    //  The line number associated with the trace record.
    //

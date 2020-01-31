@@ -21,7 +21,6 @@
 //
 #include "TraceRecord.h"
 #include <ostream>
-#include <string>
 #include "Formatters.h"
 #include "TraceDump.h"
 
@@ -46,7 +45,7 @@ TraceRecord::TraceRecord(FlagId owner) :
 
 //------------------------------------------------------------------------------
 
-bool TraceRecord::Display(ostream& stream, bool diff)
+bool TraceRecord::Display(ostream& stream, const string& opts)
 {
    stream << spaces(TraceDump::StartToEvt) << EventString() << TraceDump::Tab();
    return true;

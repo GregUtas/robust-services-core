@@ -87,7 +87,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 private:
    //  Overridden to return a string for displaying this type of record.
    //
@@ -181,7 +181,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 private:
    //  For an incoming (outgoing) message, returns the identifier of the
    //  factory that received (sent) the message.
@@ -226,7 +226,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 protected:
    //  Creates a trace record for SBO.  Protected because this class
    //  is virtual.
@@ -264,7 +264,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 private:
    //  Overridden to return a string for displaying this type of record.
    //
@@ -293,7 +293,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 private:
    //  Overridden to return a string for displaying this type of record.
    //
@@ -326,7 +326,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 private:
    //  Overridden to return a string for displaying this type of record.
    //
@@ -372,7 +372,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 private:
    //  Overridden to return a string for displaying this type of record.
    //
@@ -425,7 +425,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 private:
    //  Overridden to return a string for displaying this type of record.
    //
@@ -470,7 +470,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 protected:
    //  For subclasses.
    //
@@ -512,7 +512,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 protected:
    //  Displays the state associated with sid_ and stid_.
    //
@@ -545,7 +545,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 private:
    //  The event identifier for the SAP or SNP's currEvent_.
    //
@@ -566,7 +566,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 private:
    //  The service whose initiation was requested.
    //

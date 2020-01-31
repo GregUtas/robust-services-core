@@ -2334,14 +2334,16 @@ word RestartCommand::ProcessCommand(CliThread& cli) const
 //
 //  The SAVE command.
 //
-class DiffParm : public CliBoolParm
+class SetOptionsParm : public CliTextParm
 {
-public: DiffParm();
+public: SetOptionsParm();
 };
 
-fixed_string DiffExpl = "suppress time values: useful for >diff (default=f)";
+fixed_string SetOptionsExpl = "options: t=suppress times; c=don't move ctors";
 
-DiffParm::DiffParm() : CliBoolParm(DiffExpl, true) { }
+SetOptionsParm::SetOptionsParm() : CliTextParm(SetOptionsExpl, true) { }
+
+const string& ValidSetOptions = "tc";
 
 class TraceText : public CliText
 {
@@ -2354,7 +2356,7 @@ fixed_string TraceTextExpl = "events captured by tools that are currently ON";
 TraceText::TraceText() : CliText(TraceTextExpl, TraceTextStr)
 {
    BindParm(*new OstreamMandParm);
-   BindParm(*new DiffParm);
+   BindParm(*new SetOptionsParm);
 }
 
 fixed_string SaveWhatExpl = "what to save...";
@@ -2395,11 +2397,20 @@ word SaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
    TraceRc rc;
    string title;
-   bool diff = false;
+   string opts;
+   string expl;
 
    if(!GetFileName(title, cli)) return -1;
-   if(GetBoolParmRc(diff, cli) == Error) return -1;
+   if(GetStringRc(opts, cli) == CliParm::Error) return -1;
    cli.EndOfInput(false);
+
+   if(!opts.empty() && (opts != "-"))
+   {
+      if(!ValidateOptions(opts, ValidSetOptions, expl))
+      {
+         return cli.Report(-1, expl);
+      }
+   }
 
    auto stream = cli.FileStream();
    if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
@@ -2407,7 +2418,7 @@ word SaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    auto yield = cli.GenerateReportPreemptably();
    FunctionGuard guard(FunctionGuard::MakePreemptable, yield);
 
-   rc = Singleton< TraceBuffer >::Instance()->DisplayTrace(stream, diff);
+   rc = Singleton< TraceBuffer >::Instance()->DisplayTrace(stream, opts);
 
    if(rc == TraceOk)
    {
@@ -2934,16 +2945,16 @@ word SingletonsCommand::ProcessCommand(CliThread& cli) const
 //
 //  The START command.
 //
-class OptionsParm : public CliTextParm
+class StartOptionsParm : public CliTextParm
 {
-public: OptionsParm();
+public: StartOptionsParm();
 };
 
-fixed_string OptionsExpl = "options (i=immediate)";
+fixed_string StartOptionsExpl = "options: i=immediate";
 
-OptionsParm::OptionsParm() : CliTextParm(OptionsExpl, true) { }
+StartOptionsParm::StartOptionsParm() : CliTextParm(StartOptionsExpl, true) { }
 
-const string& ValidStartOptions = "is";
+const string& ValidStartOptions = "i";
 
 class StartCommand : public CliCommand
 {
@@ -2958,7 +2969,7 @@ fixed_string StartExpl = "Starts tracing.";
 
 StartCommand::StartCommand() : CliCommand(StartStr, StartExpl)
 {
-   BindParm(*new OptionsParm);
+   BindParm(*new StartOptionsParm);
 }
 
 fn_name StartCommand_ProcessCommand = "StartCommand.ProcessCommand";
@@ -2981,7 +2992,7 @@ word StartCommand::ProcessCommand(CliThread& cli) const
       }
    }
 
-   if((opts.find('i') != string::npos) && !Element::RunningInLab())
+   if((opts.find(ImmediateTrace) != string::npos) && !Element::RunningInLab())
    {
       return cli.Report(-5, NotInFieldExpl);
    }

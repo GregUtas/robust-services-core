@@ -953,14 +953,15 @@ word ListCommand::ProcessCommand(CliThread& cli) const
 //
 //  The PARSE command.
 //
-class OptionsParm : public CliTextParm
+class ParseOptionsParm : public CliTextParm
 {
-public: OptionsParm();
+public: ParseOptionsParm();
 };
 
-fixed_string OptionsExpl = "options (enter \">help parse full\" for details)";
+fixed_string ParseOptionsExpl =
+   "options (enter \">help parse full\" for details)";
 
-OptionsParm::OptionsParm() : CliTextParm(OptionsExpl) { }
+ParseOptionsParm::ParseOptionsParm() : CliTextParm(ParseOptionsExpl) { }
 
 class DefineFileParm : public CliTextParm
 {
@@ -985,7 +986,7 @@ fixed_string ParseExpl = "Parses code files.";
 
 ParseCommand::ParseCommand() : LibraryCommand(ParseStr, ParseExpl)
 {
-   BindParm(*new OptionsParm);
+   BindParm(*new ParseOptionsParm);
    BindParm(*new DefineFileParm);
    BindParm(*new FileSetExprParm);
 }

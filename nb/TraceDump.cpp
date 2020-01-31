@@ -44,11 +44,11 @@ fixed_string Header2 = "---------  ---  -----  ---------   -------  --------";
 
 fn_name TraceDump_Generate = "TraceDump.Generate";
 
-TraceRc TraceDump::Generate(ostream& stream, bool diff)
+TraceRc TraceDump::Generate(ostream& stream, const string& opts)
 {
    Debug::ft(TraceDump_Generate);
 
-   FunctionTrace::Process();
+   FunctionTrace::Process(opts);
 
    auto buff = Singleton< TraceBuffer >::Instance();
    buff->DisplayStart(stream);
@@ -71,7 +71,7 @@ TraceRc TraceDump::Generate(ostream& stream, bool diff)
       {
          if(buff->ToolIsOn(rec->Owner()))
          {
-            if(rec->Display(stream, diff)) stream << CRLF;
+            if(rec->Display(stream, opts)) stream << CRLF;
          }
       }
    }

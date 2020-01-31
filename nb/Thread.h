@@ -194,11 +194,11 @@ public:
 
    //  Starts tracing unless it is already on.  The thread must be unpreemptable
    //  and must enable the desired trace tools and select the items to be traced
-   //  before invoking this function.  If OPTIONS includes 'a' (autostop), then
+   //  before invoking this function.  If OPTS includes TraceAutostop ('a'), then
    //  tracing stops on the next context switch.  See TraceBuffer::StartTracing
    //  for additional options.
    //
-   static TraceRc StartTracing(const std::string& options);
+   static TraceRc StartTracing(const std::string& opts);
 
    //  Stops a trace that was started by StartTracing.
    //
@@ -679,5 +679,11 @@ private:
    //
    std::unique_ptr< ThreadStats > stats_;
 };
+
+//------------------------------------------------------------------------------
+//
+//  Options for the StartTracing function.
+//
+constexpr char TraceAutostop = 'a';
 }
 #endif

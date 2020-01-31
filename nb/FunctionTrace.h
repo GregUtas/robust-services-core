@@ -24,6 +24,7 @@
 
 #include "TimedRecord.h"
 #include <cstddef>
+#include <string>
 #include "Clock.h"
 #include "SysTypes.h"
 #include "ToolTypes.h"
@@ -66,10 +67,10 @@ public:
    //
    static Scope GetScope() { return Scope_; }
 
-   //  Invoked when tracing stops.  Modifies records to handle constructors
-   //  and destructors.
+   //  Invoked when tracing stops.  Preprocesses records before they are
+   //  displayed.
    //
-   static void Process();
+   static void Process(const std::string& opts);
 
    //  Returns the function whose invocation this record captured.
    //
@@ -89,7 +90,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(std::ostream& stream, bool diff) override;
+   bool Display(std::ostream& stream, const std::string& opts) override;
 
    //  Mask for selecting FunctionTrace records when using TraceBuffer::Next.
    //

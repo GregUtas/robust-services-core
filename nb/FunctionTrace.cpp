@@ -27,7 +27,7 @@
 #include <map>
 #include <ostream>
 #include <stack>
-#include <string>
+#include <utility>
 #include <vector>
 #include "Debug.h"
 #include "FunctionName.h"
@@ -37,8 +37,10 @@
 #include "SysThreadStack.h"
 #include "TraceBuffer.h"
 #include "TraceDump.h"
+#include "TraceRecord.h"
 
 using std::ostream;
+using std::string;
 using std::setw;
 
 //------------------------------------------------------------------------------
@@ -115,12 +117,6 @@ private:
    //  the most recent chain.  Returns true if it does this.
    //
    static bool AddToPreviousChain(FunctionTrace* ctor);
-
-   //  Records a function at the same depth as the outer constructor.
-   //  It may have been invoked in the member initialization list of
-   //  the *next* class's constructor, which has yet to be encountered.
-   //
-   static void HandleInitializer(const FunctionTrace* init);
 
    //  Finalizes any chains that are known to be complete because CURR
    //  was invoked.  Returns CURR unless this reorders functions, in
@@ -402,13 +398,41 @@ TraceRecord* CtorChain::CheckForEndOfChains(const FunctionTrace* curr)
 bool CtorChain::CheckForInitializer(const FunctionTrace* curr)
 {
    auto& chains = ThreadInfo[curr->Nid()].chains;
+
+   //  A function invoked in the member initialization list of the first
+   //  constructor in a chain is not currently recorded, since this would
+   //  involve speculatively creating a constructor chain for every such
+   //  function.  Nevertheless, the function is reported as a possible
+   //  initializer for future considerations.  There are two scenarios
+   //  where CURR would be for the first constructor in a chain:
+   //  o when no chain has been created yet
+   //  o when a new operator created a chain that is still waiting for
+   //    its first constructor
+   //
    if(chains.empty()) return true;
 
    auto& chain = chains.back();
    if(chain.ctors_.empty()) return true;
-   if(curr->Depth() != chain.ctors_.back()->Depth()) return false;
-   if(chain.opnew_ != nullptr) return false;  //*?
-   HandleInitializer(curr);
+
+   //  This chain has a constructor.  A function invoked in the member
+   //  initialization list of the next constructor must be at the same
+   //  depth as the most recent constructor.  If the chain was created
+   //  by a new operator, it must not have already found its final
+   //  constructor.
+   //
+   auto outer = chain.ctors_.back();
+   if(curr->Depth() != outer->Depth()) return false;
+
+   if(chain.opnew_ != nullptr)
+   {
+      if(chain.opnew_->Depth() == outer->Depth()) return false;
+   }
+
+   //  Only the first function invoked to initialize a member is recorded
+   //  so that the class's constructor can be moved directly above it.
+   //
+   auto& back = chains.back();
+   if(back.init_ == nullptr) back.init_ = curr;
    return true;
 }
 
@@ -436,35 +460,25 @@ void CtorChain::HandleFunction(FunctionTrace* func)
 {
    auto& thrd = ThreadInfo[func->Nid()];
 
-   //  See if this function might have been invoked to initialize
-   //  a member of the next constructor's class.
+   //  See if this function might have been invoked to initialize a member
+   //  of the next constructor's class.
    //
    if(!CtorChain::CheckForInitializer(func))
    {
-      //  No, so see if this function's depth is such that it
-      //  finalizes any constructor chains.
+      //  No, so see if this function's depth is such that it finalizes
+      //  any constructor chains.  (This is not possible for a function
+      //  that could be an initializer, since its depth is insufficient.)
       //
       CtorChain::CheckForEndOfChains(func);
    }
 
-   //  A new operator precedes a constructor chain whose outer
-   //  constructor will be at the same depth as the new operator.
+   //  A new operator precedes a constructor chain whose outer constructor
+   //  will be at the same depth as the new operator.
    //
    if(strstr(func->Func(), FunctionName::OpNewTag) != nullptr)
    {
       thrd.chains.push_back(CtorChain(func, 0));
    }
-}
-
-//------------------------------------------------------------------------------
-
-void CtorChain::HandleInitializer(const FunctionTrace* init)
-{
-   //  Only the first function invoked to initialize a member is recorded,
-   //  so that the class's constructor can be moved directly above it.
-   //
-   auto& back = ThreadInfo[init->Nid()].chains.back();
-   if(back.init_ == nullptr) back.init_ = init;
 }
 
 //------------------------------------------------------------------------------
@@ -606,7 +620,8 @@ usecs_t FunctionTrace::CalcGrossTime()
    //  A function's gross time is the time between when it was invoked and
    //  when the next function at the same (or lower) depth was invoked--in
    //  the same thread and during the same transaction.  Subtract any time
-   //  spent in other threads.
+   //  spent in other threads.  Rounding can result in a negative net time,
+   //  so check for this.
    //
    for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
    {
@@ -621,7 +636,8 @@ usecs_t FunctionTrace::CalcGrossTime()
       {
          if(curr->depth_ <= depth_)
          {
-            auto gross = curr->GetTicks() - GetTicks() - others;
+            int64_t gross = curr->GetTicks() - GetTicks() - others;
+            if(gross < 0) gross = 0;
             return Clock::TicksToUsecs(gross);
          }
       }
@@ -629,7 +645,8 @@ usecs_t FunctionTrace::CalcGrossTime()
       prev = curr;
    }
 
-   auto gross = prev->GetTicks() - GetTicks() - others;
+   int64_t gross = prev->GetTicks() - GetTicks() - others;
+   if(gross < 0) gross = 0;
    return Clock::TicksToUsecs(gross);
 }
 
@@ -723,15 +740,16 @@ void FunctionTrace::Capture(fn_name_arg func)
 
 //------------------------------------------------------------------------------
 
-bool FunctionTrace::Display(ostream& stream, bool diff)
+bool FunctionTrace::Display(ostream& stream, const string& opts)
 {
-   if(!TimedRecord::Display(stream, diff)) return false;
+   if(!TimedRecord::Display(stream, opts)) return false;
 
-   //  Suppress timing information if a >diff is planned.  Display each
-   //  function's depth and its invoker's apparent depth instead.
+   //  Suppress timing information if requested.  Display each function's
+   //  depth and its invoker's apparent depth instead.
    //
-   usecs_t gross = (diff ? depth_ : gross_);
-   usecs_t net = (diff ? invokerDepth_ : net_);
+   auto notimes = (opts.find(NoTimeData) != string::npos);
+   usecs_t gross = (notimes ? depth_ : gross_);
+   usecs_t net = (notimes ? invokerDepth_ : net_);
 
    stream << setw(TraceDump::TotWidth) << gross << TraceDump::Tab();
    stream << setw(TraceDump::NetWidth) << net << TraceDump::Tab();
@@ -851,7 +869,7 @@ void* FunctionTrace::operator new(size_t size, void* where)
 
 fn_name FunctionTrace_Process = "FunctionTrace.Process";
 
-void FunctionTrace::Process()
+void FunctionTrace::Process(const string& opts)
 {
    Debug::ft(FunctionTrace_Process);
 
@@ -866,7 +884,7 @@ void FunctionTrace::Process()
       AdjustDepths();
       FindInvokerDepths();
       RemoveCxxDeletes();
-      FixCtorChains();
+      if(opts.find(NoCtorRelocation) == string::npos) FixCtorChains();
       CalcFuncTimes();
    buff->Unlock();
 }

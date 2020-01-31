@@ -64,7 +64,7 @@ public:
 
    //  Overridden to display the trace record.
    //
-   bool Display(ostream& stream, bool diff) override;
+   bool Display(ostream& stream, const string& opts) override;
 };
 
 //------------------------------------------------------------------------------
@@ -79,7 +79,7 @@ BufferTrace::BufferTrace() : TraceRecord(ToolBuffer)
 const string NilTraceStr("ERROR: invalid trace record");
 const string ResumeTraceStr("BREAK OF TRACE " + string(65,'='));
 
-bool BufferTrace::Display(ostream& stream, bool diff)
+bool BufferTrace::Display(ostream& stream, const string& opts)
 {
    switch(rid_)
    {
@@ -126,12 +126,11 @@ TraceBuffer::TraceBuffer() :
 
    if(InitFlags::TraceInit())
    {
-      string options;
+      string opts;
       SetTool(FunctionTracer, true);
       SetFilter(TraceAll);
-      options.push_back('s');
-      if(InitFlags::ImmediateTrace()) options.push_back('i');
-      StartTracing(options);
+      if(InitFlags::ImmediateTrace()) opts.push_back(ImmediateTrace);
+      StartTracing(opts);
    }
 }
 
@@ -359,7 +358,7 @@ void TraceBuffer::DisplayStart(ostream& stream) const
 
 fn_name TraceBuffer_DisplayTrace = "TraceBuffer.DisplayTrace";
 
-TraceRc TraceBuffer::DisplayTrace(ostream* stream, bool diff)
+TraceRc TraceBuffer::DisplayTrace(ostream* stream, const string& opts)
 {
    Debug::ft(TraceBuffer_DisplayTrace);
 
@@ -371,7 +370,7 @@ TraceRc TraceBuffer::DisplayTrace(ostream* stream, bool diff)
       stream = stream_.get();
    }
 
-   auto rc = TraceDump::Generate(*stream, diff);
+   auto rc = TraceDump::Generate(*stream, opts);
    stream_.reset();
    return rc;
 }
@@ -762,7 +761,7 @@ void TraceBuffer::Shutdown(RestartLevel level)
 
 fn_name TraceBuffer_StartTracing = "TraceBuffer.StartTracing";
 
-TraceRc TraceBuffer::StartTracing(const string& options)
+TraceRc TraceBuffer::StartTracing(const string& opts)
 {
    Debug::ft(TraceBuffer_StartTracing);
 
@@ -777,7 +776,7 @@ TraceRc TraceBuffer::StartTracing(const string& options)
       Insert(new BufferTrace);
    }
 
-   if(options.find('i') != string::npos)
+   if(opts.find(ImmediateTrace) != string::npos)
    {
       auto path = Element::OutputPath();
       if(!path.empty()) path.push_back(PATH_SEPARATOR);

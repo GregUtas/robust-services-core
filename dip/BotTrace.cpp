@@ -83,9 +83,9 @@ void BotTrace::ClaimBlocks()
 
 //------------------------------------------------------------------------------
 
-bool BotTrace::Display(ostream& stream, bool diff)
+bool BotTrace::Display(ostream& stream, const string& opts)
 {
-   if(!TimedRecord::Display(stream, diff)) return false;
+   if(!TimedRecord::Display(stream, opts)) return false;
 
    stream << CRLF;
    stream << string(COUT_LENGTH_MAX, '-') << CRLF;

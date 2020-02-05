@@ -491,6 +491,7 @@ enum Warning
    ValueArgumentModified,    // argument passed by value is modified
    ReturnsNonConstMember,    // returns non-const reference or pointer to member
    FunctionCouldBeMember,    // static|free but has an indirect class argument
+   ExplicitConstructor,      // constructor need not be tagged explicit
    Warning_N                 // number of warnings
 };
 

@@ -2567,18 +2567,24 @@ void Function::CheckCtor() const
       if(!GetClass()->Subclasses()->empty()) Log(PublicConstructor);
    }
 
-   //  A constructor should probably be tagged explicit if it is not invoked
-   //  implicitly, can take a single argument (besides the "this" argument
-   //  that we give it), and is not a copy or move constructor.
-   //
-   if(!explicit_ && !implicit_)
+   if(FuncRole() == PureCtor)
    {
-      auto min = MinArgs();
-      auto max = MaxArgs();
+      //  This is a not a copy or move constructor.  It should probably be
+      //  tagged explicit if it is not invoked implicitly and can take one
+      //  argument (besides the "this" argument that we give it). On the
+      //  other hand, a constructor that cannot take onee argument does not
+      //  need to be tagged explicit.
+      //
+      auto min = MinArgs() - 1;
+      auto max = MaxArgs() - 1;
 
-      if((min <= 2) && (max == 2))
+      if((min <= 1) && (max == 1) && !explicit_ && !implicit_)
       {
-         if(FuncRole() == PureCtor) Log(NonExplicitConstructor);
+         Log(NonExplicitConstructor);
+      }
+      else if(explicit_ && ((max == 0) || (min >= 2)))
+      {
+         Log(ExplicitConstructor);
       }
    }
 

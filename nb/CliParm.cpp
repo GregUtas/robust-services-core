@@ -59,10 +59,11 @@ CliParm::CliParm(c_string help, bool opt, c_string tag) :
    auto size = strlen(help_);
    auto total = ParmWidth + strlen(ParmExplPrefix) + size;
 
-   if((size == 0) || (total >= COUT_LENGTH_MAX))
-   {
-      Debug::SwLog(CliParm_ctor, "help length", size);
-   }
+   if(size == 0)
+      Debug::SwLog(CliParm_ctor, "help string empty", size);
+   else if(total >= COUT_LENGTH_MAX)
+      Debug::SwLog
+         (CliParm_ctor, "help string too long", total - COUT_LENGTH_MAX + 1);
 }
 
 //------------------------------------------------------------------------------

@@ -1183,6 +1183,22 @@ word Editor::EraseEnumerator(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
+fn_name Editor_EraseExplicitTag = "Editor.EraseExplicitTag";
+
+word Editor::EraseExplicitTag(const CodeWarning& log, string& expl)
+{
+   Debug::ft(Editor_EraseExplicitTag);
+
+   auto ctor = FindPos(log.item_->GetPos());
+   if(ctor.pos == string::npos) return NotFound(expl, "Constructor");
+   auto exp = ctor.iter->code.find(EXPLICIT_STR, ctor.pos);
+   if(exp == string::npos) return NotFound(expl, EXPLICIT_STR, true);
+   ctor.iter->code.erase(exp, strlen(EXPLICIT_STR) + 1);
+   return Changed(ctor.iter, expl);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Editor_EraseForward = "Editor.EraseForward";
 
 word Editor::EraseForward(const CodeWarning& log, string& expl)
@@ -2336,6 +2352,8 @@ word Editor::FixWarning(CliThread& cli, const CodeWarning& log, string& expl)
       return ReplaceSlashAsterisk(log, expl);
    case RemoveLineBreak:
       return EraseLineBreak(log, expl);
+   case ExplicitConstructor:
+      return EraseExplicitTag(log, expl);
    default:
       expl = "Fixing this type of warning is not supported.";
    }

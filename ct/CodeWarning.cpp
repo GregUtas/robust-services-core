@@ -782,6 +782,9 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(FunctionCouldBeMember,
       WarningAttrs(F, X,
       "Function could be a member of a class that is an indirect argument")));
+   Attrs_.insert(WarningPair(ExplicitConstructor,
+      WarningAttrs(T, E,
+      "Constructor does not require explicit tag")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(F, X,
       ERROR_STR)));

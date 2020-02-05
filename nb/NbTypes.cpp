@@ -57,15 +57,6 @@ fixed_string AlarmStatusStrings[AlarmStatus_N + 1] =
    ERROR_STR
 };
 
-ostream& operator<<(ostream& stream, AlarmStatus status)
-{
-   if((status >= 0) && (status < AlarmStatus_N))
-      stream << AlarmStatusStrings[status];
-   else
-      stream << AlarmStatusStrings[AlarmStatus_N];
-   return stream;
-}
-
 //------------------------------------------------------------------------------
 //
 //  The initial character in the following strings must be
@@ -86,15 +77,6 @@ char BlockingReasonChar(BlockingReason reason)
    std::ostringstream stream;
    stream << reason;
    return stream.str().front();
-}
-
-ostream& operator<<(ostream& stream, BlockingReason reason)
-{
-   if((reason >= 0) && (reason < BlockingReason_N))
-      stream << BlockingReasonStrings[reason];
-   else
-      stream << BlockingReasonStrings[BlockingReason_N];
-   return stream;
 }
 
 //------------------------------------------------------------------------------
@@ -120,15 +102,6 @@ char FactionChar(Faction faction)
    return '?';
 }
 
-ostream& operator<<(ostream& stream, Faction faction)
-{
-   if((faction >= 0) && (faction < Faction_N))
-      stream << FactionStrings[faction];
-   else
-      stream << FactionStrings[Faction_N];
-   return stream;
-}
-
 //------------------------------------------------------------------------------
 
 fn_name NodeBase_GetType = "NodeBase.GetLogType";
@@ -145,5 +118,38 @@ LogType GetLogType(LogId id)
    if((id >= MiscLog) && (id <= MiscLog + 199)) return MiscLog;
    if((id >= DebugLog) && (id <= DebugLog + 99)) return DebugLog;
    return LogType_N;
+}
+
+//------------------------------------------------------------------------------
+
+ostream& operator<<(ostream& stream, AlarmStatus status)
+{
+   if((status >= 0) && (status < AlarmStatus_N))
+      stream << AlarmStatusStrings[status];
+   else
+      stream << AlarmStatusStrings[AlarmStatus_N];
+   return stream;
+}
+
+//------------------------------------------------------------------------------
+
+ostream& operator<<(ostream& stream, BlockingReason reason)
+{
+   if((reason >= 0) && (reason < BlockingReason_N))
+      stream << BlockingReasonStrings[reason];
+   else
+      stream << BlockingReasonStrings[BlockingReason_N];
+   return stream;
+}
+
+//------------------------------------------------------------------------------
+
+ostream& operator<<(ostream& stream, Faction faction)
+{
+   if((faction >= 0) && (faction < Faction_N))
+      stream << FactionStrings[faction];
+   else
+      stream << FactionStrings[Faction_N];
+   return stream;
 }
 }

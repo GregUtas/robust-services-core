@@ -127,18 +127,18 @@ DWORD64 StackInfo::GetFrame(fn_depth depth)
 
 //------------------------------------------------------------------------------
 
-const char* StackInfo::GetFunction(DWORD64 frame)
-{
-   if(!SymFromAddr(Process, frame, nullptr, Symbols)) return nullptr;
-   return Symbols->Name;
-}
-
-//------------------------------------------------------------------------------
-
 fn_depth StackInfo::GetFrames()
 {
    Depth = RtlCaptureStackBackTrace(0, MaxFrames, Frames, nullptr);
    return Depth;
+}
+
+//------------------------------------------------------------------------------
+
+const char* StackInfo::GetFunction(DWORD64 frame)
+{
+   if(!SymFromAddr(Process, frame, nullptr, Symbols)) return nullptr;
+   return Symbols->Name;
 }
 
 //------------------------------------------------------------------------------

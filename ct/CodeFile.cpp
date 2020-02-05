@@ -25,6 +25,7 @@
 #include <cstring>
 #include <istream>
 #include <iterator>
+#include <list>
 #include <sstream>
 #include <utility>
 #include "Algorithms.h"
@@ -221,6 +222,15 @@ void GetTransitiveBases(const CxxNamedSet& bases, SetOfIds& tBaseIds)
          tBaseIds.insert(c->GetDeclFid());
       }
    }
+}
+
+//------------------------------------------------------------------------------
+
+bool IsSortedByPosition(const Function* func1, const Function* func2)
+{
+   if(func1->GetPos() < func2->GetPos()) return true;
+   if(func1->GetPos() > func2->GetPos()) return false;
+   return (func1 < func2);
 }
 
 //------------------------------------------------------------------------------
@@ -713,83 +723,79 @@ void CodeFile::CheckFunctionOrder() const
 
    if(IsHeader() || funcs_.empty()) return;
 
+   //  Create a list of functions that are *defined* in this file.  Skip
+   //  functions created in template instances, which were added to this
+   //  file if it caused their instantiation.
+   //
+   std::list< const Function* > defns;
+
+   for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
+   {
+      if((*f)->IsInTemplateInstance()) continue;
+      if((*f)->GetDefnFile() != this) continue;
+      defns.push_back((*f)->GetDefn());
+   }
+
+   //  Now sort the functions according to where they were defined and
+   //  check that the functions within the same scope are sorted.
+   //
+   defns.sort(IsSortedByPosition);
+
    CxxScope* scope = nullptr;
    auto state = FuncCtor;
    const string* prev = nullptr;
    const string* curr = nullptr;
-   std::set< Function* > forwards;
 
-   for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
+   for(auto f = defns.cbegin(); f != defns.cend(); ++f)
    {
-      //  Skip functions created in template instances, which are added to
-      //  the file that caused their instantiation.
-      //
-      if((*f)->IsInTemplateInstance()) continue;
-
-      //  Functions only need to be sorted until a function in a new scope
-      //  is encountered.
-      //
       if((*f)->GetScope() != scope)
       {
          scope = (*f)->GetScope();
          state = FuncCtor;
          prev = nullptr;
          curr = nullptr;
-         forwards.clear();
       }
 
-      //  If a function is declared forward in a .cpp, add it to FORWARDS
-      //  the first time (its declaration) so that it can be handled when
-      //  its definition appears.
-      //
-      if(((*f)->GetDeclFile() == this) &&
-         (forwards.find(*f) == forwards.end()))
+      switch(state)
       {
-         forwards.insert(*f);
-      }
-      else
-      {
-         switch(state)
+      case FuncCtor:
+         switch((*f)->FuncType())
+         {
+         case FuncOperator:
+         case FuncStandard:
+            prev = (*f)->Name();
+         case FuncDtor:
+            state = FuncStandard;
+         }
+         break;
+
+      case FuncStandard:
+         switch((*f)->FuncType())
          {
          case FuncCtor:
-            switch((*f)->FuncType())
-            {
-            case FuncOperator:
-            case FuncStandard:
-               prev = (*f)->Name();
-            case FuncDtor:
-               state = FuncStandard;
-            }
+         case FuncDtor:
+            LogPos((*f)->GetPos(), FunctionNotSorted);
             break;
 
-         case FuncStandard:
-            switch((*f)->FuncType())
+         case FuncOperator:
+            curr = (*f)->Name();
+            if((prev != nullptr) && (strCompare(*curr, *prev) < 0))
             {
-            case FuncCtor:
-            case FuncDtor:
-               LogPos((*f)->GetPos(), FunctionNotSorted);
-               break;
-
-            case FuncOperator:
-               curr = (*f)->Name();
-               if((prev != nullptr) && (strCompare(*curr, *prev) < 0))
-               {
-                  if(prev->find(OPERATOR_STR) != 0)
-                  {
-                     LogPos((*f)->GetPos(), FunctionNotSorted);
-                  }
-               }
-               prev = curr;
-               break;
-
-            case FuncStandard:
-               curr = (*f)->Name();
-               if((prev != nullptr) && (strCompare(*curr, *prev) < 0))
+               if(prev->find(OPERATOR_STR) != 0)
                {
                   LogPos((*f)->GetPos(), FunctionNotSorted);
                }
-               prev = curr;
             }
+            prev = curr;
+            break;
+
+         case FuncStandard:
+            curr = (*f)->Name();
+            if((prev != nullptr) && (strCompare(*curr, *prev) < 0))
+            {
+               LogPos((*f)->GetPos(), FunctionNotSorted);
+            }
+            prev = curr;
          }
       }
    }

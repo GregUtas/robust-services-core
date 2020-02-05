@@ -2572,7 +2572,7 @@ void Function::CheckCtor() const
       //  This is a not a copy or move constructor.  It should probably be
       //  tagged explicit if it is not invoked implicitly and can take one
       //  argument (besides the "this" argument that we give it). On the
-      //  other hand, a constructor that cannot take onee argument does not
+      //  other hand, a constructor that cannot take one argument does not
       //  need to be tagged explicit.
       //
       auto min = MinArgs() - 1;
@@ -3805,7 +3805,7 @@ const Function* Function::GetDefn() const
 
 CodeFile* Function::GetDefnFile() const
 {
-   if(defn_) return GetFile();
+   if(impl_ != nullptr) return GetFile();
    if(mate_ != nullptr) return mate_->GetFile();
    return nullptr;
 }

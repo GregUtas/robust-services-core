@@ -327,55 +327,6 @@ CtorChain::Action CtorChain::CalcAction
 
 //------------------------------------------------------------------------------
 
-TraceRecord* CtorChain::HandleCtor(FunctionTrace* ctor)
-{
-   auto buff = Singleton< TraceBuffer >::Instance();
-   auto& thrd = ThreadInfo[ctor->Nid()];
-   auto& chains = thrd.chains;
-   auto slot = ctor->Slot();
-   auto done = false;
-   auto popped = false;
-
-   while(!chains.empty() && !done)
-   {
-      auto& chain = chains.back();
-
-      switch(chain.CalcAction(ctor, popped))
-      {
-      case Create:
-         done = true;
-         break;
-
-      case SetAsFirst:
-         chain.ctors_.push_back(ctor);
-         return ctor;
-
-      case SetAsNext:
-         if(!AddToPreviousChain(ctor))
-         {
-            chain.SetOuter(ctor);
-         }
-         return buff->At(slot);
-
-      case SetAsInit:
-         if(chain.init_ == nullptr) chain.init_ = ctor;
-         return ctor;
-
-      case Finalize:
-         thrd.PopBack();
-         popped = true;
-         break;
-      }
-   }
-
-   //  If we get here, CTOR starts a new chain.
-   //
-   chains.push_back(CtorChain(ctor));
-   return ctor;
-}
-
-//------------------------------------------------------------------------------
-
 TraceRecord* CtorChain::CheckForEndOfChains(const FunctionTrace* curr)
 {
    auto& thrd = ThreadInfo[curr->Nid()];
@@ -452,6 +403,55 @@ bool CtorChain::FunctionEndsChain(const FunctionTrace* curr) const
    //  to finalize this chain.
    //
    return (curr->Depth() < ctors_.back()->Depth());
+}
+
+//------------------------------------------------------------------------------
+
+TraceRecord* CtorChain::HandleCtor(FunctionTrace* ctor)
+{
+   auto buff = Singleton< TraceBuffer >::Instance();
+   auto& thrd = ThreadInfo[ctor->Nid()];
+   auto& chains = thrd.chains;
+   auto slot = ctor->Slot();
+   auto done = false;
+   auto popped = false;
+
+   while(!chains.empty() && !done)
+   {
+      auto& chain = chains.back();
+
+      switch(chain.CalcAction(ctor, popped))
+      {
+      case Create:
+         done = true;
+         break;
+
+      case SetAsFirst:
+         chain.ctors_.push_back(ctor);
+         return ctor;
+
+      case SetAsNext:
+         if(!AddToPreviousChain(ctor))
+         {
+            chain.SetOuter(ctor);
+         }
+         return buff->At(slot);
+
+      case SetAsInit:
+         if(chain.init_ == nullptr) chain.init_ = ctor;
+         return ctor;
+
+      case Finalize:
+         thrd.PopBack();
+         popped = true;
+         break;
+      }
+   }
+
+   //  If we get here, CTOR starts a new chain.
+   //
+   chains.push_back(CtorChain(ctor));
+   return ctor;
 }
 
 //------------------------------------------------------------------------------

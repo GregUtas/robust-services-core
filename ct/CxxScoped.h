@@ -610,6 +610,11 @@ public:
    //
    void Check() const override;
 
+   //  Overridden to generae a log if the enumerator is unused but its enum
+   //  *is* used.
+   //
+   bool CheckIfUnused(Warning warning) const override;
+
    //  Overridden to display the enumeration.
    //
    void Display(std::ostream& stream,

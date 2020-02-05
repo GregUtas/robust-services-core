@@ -1215,7 +1215,7 @@ public:
    //
    void CheckIfHiding() const override;
 
-   //  Overridden to determine if the function is used.
+   //  Overridden to generate a log if the function is unused.
    //
    bool CheckIfUnused(Warning warning) const override;
 

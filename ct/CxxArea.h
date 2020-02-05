@@ -478,7 +478,8 @@ public:
    //
    void Check() const override;
 
-   //  Overridden to determine if the class is used.
+   //  Overridden generate a log if the class is unused.  Also generates
+   //  other types of logs related to a class.
    //
    bool CheckIfUnused(Warning warning) const override;
 

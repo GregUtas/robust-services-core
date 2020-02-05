@@ -1235,6 +1235,20 @@ void Enumerator::Check() const
 
 //------------------------------------------------------------------------------
 
+fn_name Enumerator_CheckIfUnused = "Enumerator.CheckIfUnused";
+
+bool Enumerator::CheckIfUnused(Warning warning) const
+{
+   Debug::ft(Enumerator_CheckIfUnused);
+
+   if(!IsUnused()) return false;
+   if(enum_->IsUnused()) return false;
+   Log(warning);
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
 void Enumerator::Display
    (ostream& stream, const string& prefix, const Flags& options) const
 {

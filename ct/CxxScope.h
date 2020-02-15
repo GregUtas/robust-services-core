@@ -700,7 +700,7 @@ public:
 
    //  Sets the member initialization expression.
    //
-   void SetInit(const MemberInit* init) { init_ = init; }
+   void SetInit(const MemberInit* init);
 
    //  Overridden to log warnings associated with the declaration.
    //
@@ -1370,7 +1370,7 @@ public:
 
    //  Overridden to count a read as an invocation.
    //
-   bool WasRead() override { ++calls_; return true; }
+   bool WasRead() override;
 
    //  Overridden  to append argument types if the function's name is ambiguous.
    //

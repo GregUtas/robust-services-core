@@ -523,6 +523,7 @@ enum LineType
    OpenBrace,             // {
    CloseBrace,            // }
    CloseBraceSemicolon,   // };
+   AccessControl,         // public: protected: private:
    DebugFt,               // Debug::ft(Class_Func);
    FunctionName,          // fn_name Class_Func = "Class.Func";
    FunctionNameSplit,     // fn_name Class_Func =\n "Class.Func";

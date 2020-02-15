@@ -786,6 +786,14 @@ string Macro::TypeString(bool arg) const
    return EMPTY_STR;
 }
 
+//------------------------------------------------------------------------------
+
+bool Macro::WasRead()
+{
+   ++refs_;
+   return true;
+}
+
 //==============================================================================
 
 fn_name MacroName_ctor = "MacroName.ctor";

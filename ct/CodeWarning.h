@@ -55,10 +55,6 @@ struct WarningAttrs
    //
    const uint8_t order;
 
-   //  Set to suppress the warning.
-   //
-   bool suppressed;
-
    //  A string that explains the warning.
    //
    fixed_string expl;

@@ -1076,6 +1076,13 @@ void CodeFile::CheckSeparation()
             LogLine(n - 1, RemoveBlankLine);
          break;
 
+      case AccessControl:
+         if(LineTypeAttr::Attrs[prevType].isBlank)
+            LogLine(n - 1, RemoveBlankLine);
+         if(LineTypeAttr::Attrs[nextType].isBlank)
+            LogLine(n + 1, RemoveBlankLine);
+         break;
+
       case FunctionName:
       case FunctionNameSplit:
          switch(prevType)
@@ -1226,6 +1233,17 @@ LineType CodeFile::ClassifyLine(string s, std::set< Warning >& warnings) const
    //
    if(s.find("using ") == 0) return UsingStatement;
 
+   //  Look for access controls.
+   //
+   pos = s.find_first_not_of(WhitespaceChars);
+
+   if(pos != string::npos)
+   {
+      if(s.find(PUBLIC_STR) == pos) return AccessControl;
+      if(s.find(PROTECTED_STR) == pos) return AccessControl;
+      if(s.find(PRIVATE_STR) == pos) return AccessControl;
+   }
+
    //  Look for invocations of Debug::ft.
    //
    if(FindSubstr(s, "Debug::ft(") != string::npos) return DebugFt;
@@ -1356,7 +1374,7 @@ word CodeFile::CreateEditor(string& expl) const
    //
    if(dir_ == nullptr)
    {
-      expl = "Directory not specified for " + Name() + '.';
+      expl = "Directory not found for " + Name() + '.';
       return -1;
    }
 

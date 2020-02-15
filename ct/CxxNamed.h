@@ -485,6 +485,10 @@ public:
    //
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
+   //  Overridden to reveal that this is a member initialization.
+   //
+   Cxx::ItemType Type() const override { return Cxx::MemInit; }
+
    //  Overridden to return the member's name.
    //
    const std::string* Name() const override { return &name_; }

@@ -95,6 +95,14 @@ public:
    //
    virtual void AddFiles(SetOfIds& imSet) const;
 
+   //  Records a user of the item.
+   //
+   virtual void AddUser(const CxxNamed* name);
+
+   //  Returns the item's users.
+   //
+   const NamedVector& Users() const { return users_; }
+
    //  Returns true if the item is unused.
    //
    virtual bool IsUnused() const { return false; }
@@ -204,6 +212,10 @@ private:
    //  The scope where the item appeared.
    //
    CxxScope* scope_;
+
+   //  Source code references to the item.
+   //
+   NamedVector users_;
 
    //  The access control level for the item.
    //
@@ -1028,9 +1040,9 @@ public:
    //
    void SetNumeric(const Numeric& attrs) { attrs_ = attrs; }
 
-   //  Overridden to return true if the terminal is "auto".
+   //  Overridden to not track users of terminals.
    //
-   bool IsAuto() const override;
+   void AddUser(const CxxNamed* name) override { }
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -1057,6 +1069,10 @@ public:
    //  Overridden to return the terminal's attributes as an integer.
    //
    Numeric GetNumeric() const override { return attrs_; }
+
+   //  Overridden to return true if the terminal is "auto".
+   //
+   bool IsAuto() const override;
 
    //  Overridden to return the terminal's name.
    //

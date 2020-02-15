@@ -294,7 +294,7 @@ public:
 
    //  Overridden to count references to the macro.
    //
-   bool WasRead() override { ++refs_; return true; }
+   bool WasRead() override;
 protected:
    //  Creates a macro for the symbol identified by NAME.  Protected
    //  because this class is virtual.

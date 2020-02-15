@@ -62,7 +62,6 @@ WarningAttrs::WarningAttrs
    (bool fix, uint8_t order, fixed_string expl) noexcept :
    fixable(fix),
    order(order),
-   suppressed(false),
    expl(expl)
 {
 }
@@ -501,7 +500,7 @@ void CodeWarning::Initialize()
       WarningAttrs(F, X,
       "Unused class")));
    Attrs_.insert(WarningPair(DataUnused,
-      WarningAttrs(F, X,
+      WarningAttrs(T, E,
       "Unused data")));
    Attrs_.insert(WarningPair(EnumUnused,
       WarningAttrs(T, D,
@@ -558,10 +557,10 @@ void CodeWarning::Initialize()
       WarningAttrs(F, X,
       "Global data initialization not found")));
    Attrs_.insert(WarningPair(DataInitOnly,
-      WarningAttrs(F, X,
+      WarningAttrs(T, E,
       "Data is init-only")));
    Attrs_.insert(WarningPair(DataWriteOnly,
-      WarningAttrs(F, X,
+      WarningAttrs(T, E,
       "Data is write-only")));
    Attrs_.insert(WarningPair(GlobalStaticData,
       WarningAttrs(F, X,

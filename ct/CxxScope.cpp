@@ -765,6 +765,14 @@ void ClassData::Promote(Class* cls, Cxx::Access access, bool first, bool last)
 
 //------------------------------------------------------------------------------
 
+void ClassData::SetInit(const MemberInit* init)
+{
+   init_ = init;
+   if(init != nullptr) AddUser(init);
+}
+
+//------------------------------------------------------------------------------
+
 void ClassData::Shrink()
 {
    Data::Shrink();
@@ -5155,6 +5163,14 @@ void Function::WasCalled()
       auto func = static_cast< Function* >(cls->FindTemplateAnalog(this));
       if(func != nullptr) ++func->calls_;
    }
+}
+
+//------------------------------------------------------------------------------
+
+bool Function::WasRead()
+{
+   ++calls_;
+   return true;
 }
 
 //------------------------------------------------------------------------------

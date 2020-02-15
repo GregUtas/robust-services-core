@@ -78,7 +78,6 @@ Lexer::OperatorTablePtr Lexer::CxxOps = nullptr;
 Lexer::OperatorTablePtr Lexer::PreOps = nullptr;
 Lexer::OperatorTablePtr Lexer::Reserved = nullptr;
 Lexer::TypesTablePtr Lexer::Types = nullptr;
-bool Lexer::Initialized = Initialize();
 
 //------------------------------------------------------------------------------
 

@@ -3328,6 +3328,7 @@ void TypeName::SetReferent(CxxScoped* item, const SymbolView* view) const
    //
    if((view != nullptr) && view->using_ && (ref_ == nullptr)) using_ = true;
    ref_ = item;
+   if(item != nullptr) item->AddUser(this);
 }
 
 //------------------------------------------------------------------------------

@@ -598,6 +598,7 @@ Editor::Iter Editor::CodeBegin()
          }
          return ++s;
 
+      case AccessControl:
       case DebugFt:
       case FunctionName:
       case FunctionNameSplit:
@@ -974,13 +975,13 @@ word Editor::EraseBlankLinePairs()
 
 fn_name Editor_EraseCode1 = "Editor.EraseCode";
 
-word Editor::EraseCode(const CodeWarning& log, string& expl)
+word Editor::EraseCode(size_t pos, string& expl)
 {
    Debug::ft(Editor_EraseCode1);
 
    //  Find the where the code to be deleted begins and ends.
    //
-   auto begin = FindPos(log.pos_);
+   auto begin = FindPos(pos);
    if(begin.pos == string::npos) return NotFound(expl, "Code to be deleted");
    source_.erase(begin.iter);
    return Changed();
@@ -990,31 +991,59 @@ word Editor::EraseCode(const CodeWarning& log, string& expl)
 
 fn_name Editor_EraseCode2 = "Editor.EraseCode(delimiters)";
 
-word Editor::EraseCode
-   (const CodeWarning& log, const string& delimiters, string& expl)
+word Editor::EraseCode(size_t pos, const string& delimiters, string& expl)
 {
    Debug::ft(Editor_EraseCode2);
 
    //  Find the where the code to be deleted begins and ends.
    //
-   auto begin = FindPos(log.pos_);
+   auto begin = FindPos(pos);
    if(begin.pos == string::npos)
       return NotFound(expl, "Start of code to be deleted");
    auto end = FindFirstOf(begin.iter, 0, delimiters);
    if(end.pos == string::npos)
       return NotFound(expl, "End of code to be deleted");
 
-   //  If a comment or right brace follows the code to be deleted,
-   //  delete any comment that precedes the code.  Go up until a
-   //  line of code is reached.
+   //  When a member initialization is being deleted and a left brace delimits
+   //  the code, replace the previous comma with a space instead of erasing the
+   //  left brace.
+   //
+   if(end.iter->code.at(end.pos) == '{')
+   {
+      end = PrevPos(end);
+
+      if(delimiters.find(',') != string::npos)
+      {
+         auto comma = Rfind(begin.iter, ",", begin.pos);
+
+         if(comma.iter != source_.end())
+         {
+            comma.iter->code.at(comma.pos) = SPACE;
+         }
+      }
+   }
+
+   //  If a comment or right brace follows the code to be deleted, delete any
+   //  comment that precedes the code.  Go up until code or a SeparatorComment
+   //  is reached (and don't erase the line that follows the latter).
    //
    if(CommentOrBraceFollows(end.iter))
    {
       for(auto prev = std::prev(begin.iter); prev != source_.begin(); --prev)
       {
          auto type = GetLineType(prev);
-         if(!LineTypeAttr::Attrs[type].isCode) continue;
-         ++prev;
+
+         if(type == SeparatorComment)
+         {
+            ++prev;
+            ++prev;
+         }
+         else if(LineTypeAttr::Attrs[type].isCode)
+         {
+            ++prev;
+         }
+         else continue;
+
          begin.iter = prev;
          break;
       }
@@ -1084,6 +1113,79 @@ word Editor::EraseConst(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
+fn_name Editor_EraseData = "Editor.EraseData";
+
+word Editor::EraseData
+   (const CliThread& cli, const CodeWarning& log, string& expl)
+{
+   Debug::ft(Editor_EraseData);
+
+   auto decl = static_cast< const Data* >(log.item_);
+   auto defn = decl->GetMate();
+   auto& users = decl->Users();
+
+   //  Erase any references to the data.
+   //
+   for(auto u = users.cbegin(); u != users.cend(); ++u)
+   {
+      auto file = (*u)->GetFile();
+      auto pos = (*u)->GetPos();
+
+      if((file == decl->GetFile()) && (pos == decl->GetPos()))
+         continue;
+
+      if(defn != nullptr)
+      {
+         if((file == defn->GetFile()) && (pos == defn->GetPos()))
+            continue;
+      }
+
+      auto editor = file->GetEditor(expl);
+
+      if(expl.empty())
+      {
+         auto delimiters = ((*u)->Type() == Cxx::MemInit ? ",{" : ";");
+         editor->EraseCode(pos, delimiters, expl);
+         if(!expl.empty())
+         {
+            expl = "Failed to remove usage at " + file->Name() + '/';
+            expl += std::to_string(file->GetLexer().GetLineNum(pos));
+         }
+      }
+
+      if(!expl.empty())
+      {
+         *cli.obuf << spaces(2) << expl << CRLF;
+         expl.clear();
+      }
+   }
+
+   //  Erase the data definition, if any.
+   //
+   if((defn != nullptr) && (defn != decl))
+   {
+      auto editor = defn->GetFile()->GetEditor(expl);
+
+      if(expl.empty())
+      {
+         editor->EraseCode(defn->GetPos(), ";", expl);
+         if(!expl.empty()) expl = "Failed to remove definition";
+      }
+
+      if(!expl.empty())
+      {
+         *cli.obuf << spaces(2) << expl << CRLF;
+         expl.clear();
+      }
+   }
+
+   //  Erase the data declaration.
+   //
+   return EraseCode(log.pos_, ";", expl);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Editor_EraseEmptyNamespace = "Editor.EraseEmptyNamespace";
 
 word Editor::EraseEmptyNamespace(const Iter& iter)
@@ -1104,6 +1206,58 @@ word Editor::EraseEmptyNamespace(const Iter& iter)
    {
       source_.erase(up2, std::next(iter));
       return Changed();
+   }
+
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_EraseEmptySeparators = "Editor.EraseEmptySeparators";
+
+word Editor::EraseEmptySeparators()
+{
+   Debug::ft(Editor_EraseEmptySeparators);
+
+   auto i1 = source_.begin();
+   if(i1 == source_.end()) return 0;
+   auto i2 = std::next(i1);
+   if(i2 == source_.end()) return 0;
+
+   for(auto i3 = std::next(i2); i3 != source_.end(); i3 = std::next(i2))
+   {
+      auto t1 = GetLineType(i1);
+      auto t2 = GetLineType(i2);
+      auto t3 = GetLineType(i3);
+
+      if(LineTypeAttr::Attrs[t2].isBlank)
+      {
+         if(t1 == SeparatorComment)
+         {
+            if((t3 == CloseBrace) || (t3 == SeparatorComment))
+            {
+               source_.erase(i1);
+               source_.erase(i2);
+               i1 = i3;
+               i2 = std::next(i1);
+               if(i2 == source_.end()) return 0;
+               continue;
+            }
+         }
+         else if(t3 == SeparatorComment)
+         {
+            if((t1 == OpenBrace) || (t1 == SeparatorComment))
+            {
+               source_.erase(i2);
+               i2 = source_.erase(i3);
+               if(i2 == source_.end()) return 0;
+               continue;
+            }
+         }
+      }
+
+      i1 = i2;
+      i2 = i3;
    }
 
    return 0;
@@ -1303,6 +1457,47 @@ word Editor::EraseNoexceptTag(const CodeWarning& log, string& expl)
    size_t space = (endsig.pos == 0 ? 0 : 1);
    endsig.iter->code.erase(endsig.pos = space, strlen(NOEXCEPT_STR) + space);
    return Changed(endsig.iter, expl);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_EraseOffsets = "Editor.EraseOffsets";
+
+word Editor::EraseOffsets()
+{
+   Debug::ft(Editor_EraseOffsets);
+
+   for(auto i2 = source_.begin(); i2 != source_.end(); ++i2)
+   {
+      switch(GetLineType(i2))
+      {
+      case AccessControl:
+      case OpenBrace:
+         {
+            auto i3 = std::next(i2);
+            if(i3 == source_.end()) return 0;
+            auto t3 = GetLineType(i3);
+            if(LineTypeAttr::Attrs[t3].isBlank)
+            {
+               source_.erase(i3);
+            }
+            break;
+         }
+         //  [[fallthrough]]
+      case CloseBrace:
+      case CloseBraceSemicolon:
+         {
+            auto i1 = std::prev(i2);
+            auto t1 = GetLineType(i1);
+            if(LineTypeAttr::Attrs[t1].isBlank)
+            {
+               source_.erase(i1);
+            }
+         }
+      }
+   }
+
+   return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -2239,37 +2434,39 @@ word Editor::FixWarning(CliThread& cli, const CodeWarning& log, string& expl)
    case IncludeNotSorted:
       return SortIncludes(expl);
    case IncludeDuplicated:
-      return EraseCode(log, expl);
+      return EraseCode(log.pos_, expl);
    case IncludeAdd:
       return InsertInclude(log, expl);
    case IncludeRemove:
-      return EraseCode(log, expl);
+      return EraseCode(log.pos_, expl);
    case RemoveOverrideTag:
       return EraseOverrideTag(log, expl);
    case UsingInHeader:
       return ReplaceUsing(log, expl);
    case UsingDuplicated:
-      return EraseCode(log, ";", expl);
+      return EraseCode(log.pos_, ";", expl);
    case UsingAdd:
       return InsertUsing(log, expl);
    case UsingRemove:
-      return EraseCode(log, ";", expl);
+      return EraseCode(log.pos_, ";", expl);
    case ForwardAdd:
       return InsertForward(log, expl);
    case ForwardRemove:
       return EraseForward(log, expl);
+   case DataUnused:
+      return EraseData(cli, log, expl);
    case EnumUnused:
-      return EraseCode(log, ";", expl);
+      return EraseCode(log.pos_, ";", expl);
    case EnumeratorUnused:
       return EraseEnumerator(log, expl);
    case FriendUnused:
-      return EraseCode(log, ";", expl);
+      return EraseCode(log.pos_, ";", expl);
    case TypedefUnused:
-      return EraseCode(log, ";", expl);
+      return EraseCode(log.pos_, ";", expl);
    case ForwardUnresolved:
       return EraseForward(log, expl);
    case FriendUnresolved:
-      return EraseCode(log, ";", expl);
+      return EraseCode(log.pos_, ";", expl);
    case FriendAsForward:
       return InsertForward(log, expl);
    case ClassCouldBeStruct:
@@ -2278,6 +2475,10 @@ word Editor::FixWarning(CliThread& cli, const CodeWarning& log, string& expl)
       return ChangeStructToClass(log, expl);
    case RedundantAccessControl:
       return EraseAccessControl(log, expl);
+   case DataInitOnly:
+      return EraseData(cli, log, expl);
+   case DataWriteOnly:
+      return EraseData(cli, log, expl);
    case DataCouldBeConst:
       return TagAsConstData(log, expl);
    case DataCouldBeConstPtr:
@@ -2299,7 +2500,7 @@ word Editor::FixWarning(CliThread& cli, const CodeWarning& log, string& expl)
    case RuleOf3CopyOperNoCtor:
       return InsertDefaultFunction(log, expl);
    case FunctionNotDefined:
-      return EraseCode(log, ";", expl);
+      return EraseCode(log.pos_, ";", expl);
    case RemoveVirtualTag:
       return EraseVirtualTag(log, expl);
    case OverrideTagMissing:
@@ -3648,7 +3849,7 @@ word Editor::ReplaceUsing(const CodeWarning& log, string& expl)
    //  a using statement.
    //
    ResolveUsings();
-   return EraseCode(log, ";", expl);
+   return EraseCode(log.pos_, ";", expl);
 }
 
 //------------------------------------------------------------------------------
@@ -3946,7 +4147,7 @@ word Editor::TagAsDefaulted(const CodeWarning& log, string& expl)
    auto defn = static_cast< const Function* >(log.item_);
    if(defn->GetDecl() != defn)
    {
-      return EraseCode(log, "}", expl);
+      return EraseCode(log.pos_, "}", expl);
    }
 
    //  This is the function's declaration, and possibly its definition.
@@ -4345,6 +4546,8 @@ word Editor::Write(string& expl)
    //
    EraseTrailingBlanks();
    EraseBlankLinePairs();
+   EraseEmptySeparators();
+   EraseOffsets();
    ConvertTabsToBlanks();
 
    //  Create a new file to hold the reformatted version.

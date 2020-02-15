@@ -264,6 +264,7 @@ namespace Cxx
       Friend,
       Function,
       Macro,
+      MemInit,
       Namespace,
       QualName,
       Typedef,

@@ -27,6 +27,7 @@
 #include "CxxRoot.h"
 #include "CxxSymbols.h"
 #include "Debug.h"
+#include "Lexer.h"
 #include "Library.h"
 #include "ModuleRegistry.h"
 #include "NbModule.h"
@@ -90,6 +91,7 @@ void CtModule::Startup(RestartLevel level)
    Debug::ft(CtModule_Startup);
 
    CodeWarning::Initialize();
+   Lexer::Initialize();
 
    //  Create/start singletons.
    //

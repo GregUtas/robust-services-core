@@ -190,8 +190,6 @@ void ThreadRegistry::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name ThreadRegistry_FindThread = "ThreadRegistry.FindThread";
-
 Thread* ThreadRegistry::FindThread(SysThreadId nid) const
 {
    Debug::noft();

@@ -142,6 +142,7 @@ private:
    word EraseAccessControl(const CodeWarning& log, string& expl);
    word EraseBlankLine(const CodeWarning& log, string& expl);
    word EraseConst(const CodeWarning& log, string& expl);
+   word EraseData(const CliThread& cli, const CodeWarning& log, string& expl);
    word EraseEnumerator(const CodeWarning& log, string& expl);
    word EraseExplicitTag(const CodeWarning& log, string& expl);
    word EraseForward(const CodeWarning& log, string& expl);
@@ -177,17 +178,16 @@ private:
    word TagAsOverride(const CodeWarning& log, string& expl);
    word TagAsStaticFunction(const CodeWarning& log, string& expl);
 
-   //  Erases the line of code referenced by LOG.
+   //  Erases the line of code addressed by POS.
    //
-   word EraseCode(const CodeWarning& log, string& expl);
+   word EraseCode(size_t pos, string& expl);
 
-   //  Erases the line of code referenced by LOG.  Comments on preceding
+   //  Erases the line of code addressed by POS.  Comments on preceding
    //  lines, up to the next line of code, are also erased if a comment or
    //  right brace follows the erased code.  DELIMITERS are the characters
    //  where the code ends.
    //
-   word EraseCode
-      (const CodeWarning& log, const std::string& delimiters, string& expl);
+   word EraseCode(size_t pos, const std::string& delimiters, string& expl);
 
    //  Sorts #include directives in standard order.
    //
@@ -202,6 +202,13 @@ private:
    //
    word EraseBlankLinePairs();
 
+   //  Removes a blank line that
+   //  o precedes or follows an access control
+   //  o precedes or follows a left brace
+   //  o precedes a right brace
+   //
+   word EraseOffsets();
+
    //  Removes trailing blanks.  Always invoked on source that was changed.
    //
    word EraseTrailingBlanks();
@@ -209,6 +216,11 @@ private:
    //  Converts tabs to spaces.  Always invoked on source that was changed.
    //
    word ConvertTabsToBlanks();
+
+   //  Removes a separator that is preceded or followed by a brace or separator.
+   //  Always invoked on source that was changed.
+   //
+   word EraseEmptySeparators();
 
    //  Stores a line of code.
    //

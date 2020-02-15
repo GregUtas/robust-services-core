@@ -469,6 +469,13 @@ void CxxScoped::AddFiles(SetOfIds& imSet) const
 
 //------------------------------------------------------------------------------
 
+void CxxScoped::AddUser(const CxxNamed* name)
+{
+   users_.push_back(name);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CxxScoped_BroadestAccessUsed = "CxxScoped.BroadestAccessUsed";
 
 Cxx::Access CxxScoped::BroadestAccessUsed() const

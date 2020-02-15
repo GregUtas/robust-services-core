@@ -2868,8 +2868,6 @@ void Thread::RtcTimeout()
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_RunningThread = "Thread.RunningThread";
-
 Thread* Thread::RunningThread(bool assert)
 {
    Debug::noft();

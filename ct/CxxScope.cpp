@@ -393,11 +393,14 @@ string Block::ScopedName(bool templates) const
 
 void Block::Shrink()
 {
+   CxxScoped::Shrink();
+
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::BLOCK_DECL, name_.capacity());
 
    ShrinkTokens(statements_);
    auto size = statements_.capacity() * sizeof(TokenPtr);
+   size += (Users().capacity() * sizeof(CxxNamed*));
    CxxStats::Vectors(CxxStats::BLOCK_DECL, size);
 }
 
@@ -779,6 +782,7 @@ void ClassData::Shrink()
 
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::CLASS_DATA, name_.capacity());
+   CxxStats::Vectors(CxxStats::CLASS_DATA, Users().capacity());
    if(width_ != nullptr) width_->Shrink();
 }
 
@@ -1606,6 +1610,8 @@ bool Data::SetNonConst()
 
 void Data::Shrink()
 {
+   CxxScoped::Shrink();
+
    spec_->Shrink();
    if(expr_ != nullptr) expr_->Shrink();
    if(rhs_ != nullptr) rhs_->Shrink();
@@ -1832,6 +1838,7 @@ void FuncData::Shrink()
 
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::FUNC_DATA, name_.capacity());
+   CxxStats::Vectors(CxxStats::FUNC_DATA, Users().capacity());
    if(next_ != nullptr) next_->Shrink();
 }
 
@@ -4932,6 +4939,8 @@ void Function::SetTemplateParms(TemplateParmsPtr& parms)
 
 void Function::Shrink()
 {
+   CxxScoped::Shrink();
+
    name_->Shrink();
    if(parms_ != nullptr) parms_->Shrink();
    if(spec_ != nullptr) spec_->Shrink();
@@ -4956,6 +4965,7 @@ void Function::Shrink()
    size += (mems_.capacity() * sizeof(TokenPtr));
    size += (tmplts_.capacity() * sizeof(Function*));
    size += (overs_.capacity() * sizeof(Function*));
+   size += (Users().capacity() * sizeof(CxxNamed*));
    CxxStats::Vectors(CxxStats::FUNC_DECL, size);
 }
 
@@ -5620,6 +5630,7 @@ void SpaceData::Shrink()
 {
    Data::Shrink();
 
+   CxxStats::Vectors(CxxStats::FILE_DATA, Users().capacity());
    name_->Shrink();
    if(parms_ != nullptr) parms_->Shrink();
 }

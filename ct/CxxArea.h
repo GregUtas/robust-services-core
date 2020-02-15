@@ -190,7 +190,7 @@ private:
    //  Defined so that a class can register ITEM in the order in which it was
    //  declared.
    //
-   virtual void AddItem(CxxNamed* item) { }
+   virtual void AddItem(const CxxNamed* item) { }
 
    //  Invoked to add CLS to the area if CLS is an anonymous union.  Returns
    //  true if the union's members were promoted to the union's outer scope.
@@ -606,7 +606,7 @@ protected:
 private:
    //  Overridden to register ITEM in the order in which it was declared.
    //
-   void AddItem(CxxNamed* item) override;
+   void AddItem(const CxxNamed* item) override;
 
    //  Determines if MEMBER is accessible to SCOPE, updating VIEW with details
    //  on its visibility.

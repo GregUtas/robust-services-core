@@ -26,7 +26,6 @@
 #include <cstddef>
 #include "GlobalAddress.h"
 #include "LocalAddress.h"
-#include "NbTypes.h"
 #include "SbTypes.h"
 
 //------------------------------------------------------------------------------

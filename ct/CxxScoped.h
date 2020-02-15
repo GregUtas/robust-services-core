@@ -191,6 +191,10 @@ public:
    //  Overridden to set the scope where the declaration appeared.
    //
    void SetScope(CxxScope* scope) override { scope_ = scope; }
+
+   //  Overridden to shrink containers.
+   //
+   void Shrink() override;
 protected:
    //  Protected because this class is virtual.
    //

@@ -146,6 +146,7 @@ private:
    word EraseEnumerator(const CodeWarning& log, string& expl);
    word EraseExplicitTag(const CodeWarning& log, string& expl);
    word EraseForward(const CodeWarning& log, string& expl);
+   word EraseFunction(const CodeWarning& log, string& expl);
    word EraseLineBreak(const CodeWarning& log, string& expl);
    word EraseMutableTag(const CodeWarning& log, string& expl);
    word EraseNoexceptTag(const CodeWarning& log, string& expl);
@@ -455,9 +456,16 @@ private:
    //
    Iter CodeBegin();
 
-   //  Returns true if a comment or brace follows the code referenced by ITER.
+   //  Returns true if the code referenced by ITER is followed by more code,
+   //  without an intervening comment or right brace.
    //
-   const bool CommentOrBraceFollows(const Iter& iter) const;
+   const bool CodeFollowsImmediately(const Iter& iter) const;
+
+   //  Returns the start of any comments that precede ITER, including an
+   //  fn_name definition if funcName is set.  Returns ITER if it is not
+   //  preceded by any such items.
+   //
+   Iter IntroStart(const Iter& iter, bool funcName);
 
    //  If INCLUDE specifies a file in groups 1 to 4 (see CodeFile.CalcGroup),
    //  this simplifies sorting by replacing the characters that enclose the

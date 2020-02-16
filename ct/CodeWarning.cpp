@@ -500,7 +500,7 @@ void CodeWarning::Initialize()
       WarningAttrs(F, X,
       "Unused class")));
    Attrs_.insert(WarningPair(DataUnused,
-      WarningAttrs(T, E,
+      WarningAttrs(T, D,
       "Unused data")));
    Attrs_.insert(WarningPair(EnumUnused,
       WarningAttrs(T, D,
@@ -512,7 +512,7 @@ void CodeWarning::Initialize()
       WarningAttrs(T, D,
       "Unused friend declaration")));
    Attrs_.insert(WarningPair(FunctionUnused,
-      WarningAttrs(F, X,
+      WarningAttrs(T, D,
       "Unused function")));
    Attrs_.insert(WarningPair(TypedefUnused,
       WarningAttrs(T, D,
@@ -557,10 +557,10 @@ void CodeWarning::Initialize()
       WarningAttrs(F, X,
       "Global data initialization not found")));
    Attrs_.insert(WarningPair(DataInitOnly,
-      WarningAttrs(T, E,
+      WarningAttrs(T, D,
       "Data is init-only")));
    Attrs_.insert(WarningPair(DataWriteOnly,
-      WarningAttrs(T, E,
+      WarningAttrs(T, D,
       "Data is write-only")));
    Attrs_.insert(WarningPair(GlobalStaticData,
       WarningAttrs(F, X,
@@ -894,6 +894,7 @@ std::vector< CodeWarning* > CodeWarning::LogsToFix(std::string& expl)
       if(log != nullptr) logs.push_back(log);
       break;
 
+   case FunctionUnused:
    case ArgumentCouldBeConstRef:
    case ArgumentCouldBeConst:
    case FunctionCouldBeConst:

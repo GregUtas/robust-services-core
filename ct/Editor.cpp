@@ -627,35 +627,27 @@ Editor::Iter Editor::CodeBegin()
 
 //------------------------------------------------------------------------------
 
-fn_name Editor_CommentOrBraceFollows = "Editor.CommentOrBraceFollows";
+fn_name Editor_CodeFollowsImmediately = "Editor.CodeFollowsImmediately";
 
-const bool Editor::CommentOrBraceFollows(const Iter& iter) const
+const bool Editor::CodeFollowsImmediately(const Iter& iter) const
 {
-   Debug::ft(Editor_CommentOrBraceFollows);
+   Debug::ft(Editor_CodeFollowsImmediately);
 
-   //  Find the next non-blank line that follows ITER.  If it is executable
-   //  code (this excludes braces), return false, else return true.
+   //  Proceed from ITER, skipping blank lines and access controls.  Return
+   //  false if the next thing is executable code (this excludes braces and
+   //  access controls), else return false.
    //
    for(auto next = std::next(iter); next != source_.end(); ++next)
    {
       auto type = GetLineType(next);
 
-      if(LineTypeAttr::Attrs[type].isExecutable)
-      {
-         //  If the code is actually an access control, look beyond it.
-         //
-         auto first = next->code.find_first_not_of(WhitespaceChars);
-         if(next->code.find(PUBLIC_STR) == first) continue;
-         if(next->code.find(PROTECTED_STR) == first) continue;
-         if(next->code.find(PRIVATE_STR) == first) continue;
-         return false;
-      }
-
+      if(LineTypeAttr::Attrs[type].isExecutable) return true;
       if(LineTypeAttr::Attrs[type].isBlank) continue;
-      return true;
+      if(type == AccessControl) continue;
+      return false;
    }
 
-   return true;
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -979,7 +971,7 @@ word Editor::EraseCode(size_t pos, string& expl)
 {
    Debug::ft(Editor_EraseCode1);
 
-   //  Find the where the code to be deleted begins and ends.
+   //  Erase the line that contains POS.
    //
    auto begin = FindPos(pos);
    if(begin.pos == string::npos) return NotFound(expl, "Code to be deleted");
@@ -1023,35 +1015,15 @@ word Editor::EraseCode(size_t pos, const string& delimiters, string& expl)
       }
    }
 
-   //  If a comment or right brace follows the code to be deleted, delete any
-   //  comment that precedes the code.  Go up until code or a SeparatorComment
-   //  is reached (and don't erase the line that follows the latter).
+   //  If the code to be deleted isn't immediately followed by code, delete
+   //  any comment that precedes the code, since it almost certainly refers
+   //  only to that code.
    //
-   if(CommentOrBraceFollows(end.iter))
+   if(!CodeFollowsImmediately(end.iter))
    {
-      for(auto prev = std::prev(begin.iter); prev != source_.begin(); --prev)
-      {
-         auto type = GetLineType(prev);
-
-         if(type == SeparatorComment)
-         {
-            ++prev;
-            ++prev;
-         }
-         else if(LineTypeAttr::Attrs[type].isCode)
-         {
-            ++prev;
-         }
-         else continue;
-
-         begin.iter = prev;
-         break;
-      }
+      begin.iter = IntroStart(begin.iter, false);
    }
 
-   //  list::erase(begin, end) only erases elements *before* END, so
-   //  provide the line that *follows* END.
-   //
    source_.erase(begin.iter, std::next(end.iter));
    return Changed();
 }
@@ -1368,6 +1340,40 @@ word Editor::EraseForward(const CodeWarning& log, string& expl)
    forw.iter = source_.erase(forw.iter);
    Changed();
    return EraseEmptyNamespace(forw.iter);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Editor_EraseFunction = "Editor.EraseFunction";
+
+word Editor::EraseFunction(const CodeWarning& log, string& expl)
+{
+   Debug::ft(Editor_EraseFunction);
+
+   auto func = static_cast< const Function* >(log.item_);
+
+   //  It's easy if we're erasing a declaration that has a separate definition.
+   //
+   if(func->GetDefn() != func)
+   {
+      return EraseCode(log.pos_, ";", expl);
+   }
+
+   //  The function contains code, so find its first and last lines.
+   //
+   size_t begin, end;
+   func->GetRange(begin, end);
+   auto first = FindPos(begin);
+   if(first.iter == source_.end())
+      return NotFound(expl, "Start of declaration");
+   auto last = FindPos(end);
+   if(last.iter == source_.end()) return NotFound(expl, "End of declaration");
+
+   //  Also delete any comments and fn_name definition above the function.
+   //
+   first.iter = IntroStart(first.iter, true);
+   source_.erase(first.iter, std::next(last.iter));
+   return Changed();
 }
 
 //------------------------------------------------------------------------------
@@ -2461,6 +2467,8 @@ word Editor::FixWarning(CliThread& cli, const CodeWarning& log, string& expl)
       return EraseEnumerator(log, expl);
    case FriendUnused:
       return EraseCode(log.pos_, ";", expl);
+   case FunctionUnused:
+      return EraseFunction(log, expl);
    case TypedefUnused:
       return EraseCode(log.pos_, ";", expl);
    case ForwardUnresolved:
@@ -3450,6 +3458,45 @@ word Editor::InsertUsing(const CodeWarning& log, string& expl)
 
 //------------------------------------------------------------------------------
 
+fn_name Editor_IntroStart = "Editor.IntroStart";
+
+Editor::Iter Editor::IntroStart(const Iter& iter, bool funcName)
+{
+   Debug::ft(Editor_IntroStart);
+
+   Iter curr = iter;
+
+   while(curr != source_.begin())
+   {
+      auto type = GetLineType(--curr);
+
+      if(type == SeparatorComment)
+      {
+         //  Don't include a separator or a blank that follows it.
+         //
+         ++curr;
+         if(LineTypeAttr::Attrs[GetLineType(curr)].isBlank) ++curr;
+         return curr;
+      }
+
+      if(LineTypeAttr::Attrs[type].isCode)
+      {
+         //  The only code that can be included is an fn_name.
+         //
+         if(funcName)
+         {
+            if((type == FunctionName) || (type == FunctionNameSplit)) continue;
+         }
+
+         return ++curr;
+      }
+   }
+
+   return source_.begin();
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Editor_LineAfterFunc = "Editor.LineAfterFunc";
 
 Editor::Iter Editor::LineAfterFunc(const Function* func)
@@ -4387,9 +4434,7 @@ Editor::Iter Editor::UpdateFuncDeclLoc
       //  If an access control precedes NEXT, a blank line is not required
       //  after the new function.
       //
-      if((pred->code.find(PUBLIC_STR) != string::npos) ||
-         (pred->code.find(PROTECTED_STR) != string::npos) ||
-         (pred->code.find(PRIVATE_STR) != string::npos))
+      if(GetLineType(pred) == AccessControl)
       {
          attrs.blank = BlankNone;
          return pred;

@@ -51,4 +51,11 @@ PermanentHeap* PermanentHeap::Instance()
 
    return &heap;
 }
+
+//------------------------------------------------------------------------------
+
+void PermanentHeap::Patch(sel_t selector, void* arguments)
+{
+   SysHeap::Patch(selector, arguments);
+}
 }

@@ -1461,7 +1461,7 @@ word Editor::EraseNoexceptTag(const CodeWarning& log, string& expl)
    endsig = Rfind(endsig.iter, NOEXCEPT_STR, endsig.pos - 1);
    if(endsig.pos == string::npos) return NotFound(expl, NOEXCEPT_STR, true);
    size_t space = (endsig.pos == 0 ? 0 : 1);
-   endsig.iter->code.erase(endsig.pos = space, strlen(NOEXCEPT_STR) + space);
+   endsig.iter->code.erase(endsig.pos - space, strlen(NOEXCEPT_STR) + space);
    return Changed(endsig.iter, expl);
 }
 
@@ -1521,7 +1521,7 @@ word Editor::EraseOverrideTag(const CodeWarning& log, string& expl)
    endsig = Rfind(endsig.iter, OVERRIDE_STR, endsig.pos - 1);
    if(endsig.pos == string::npos) return NotFound(expl, OVERRIDE_STR, true);
    size_t space = (endsig.pos == 0 ? 0 : 1);
-   endsig.iter->code.erase(endsig.pos = space, strlen(OVERRIDE_STR) + space);
+   endsig.iter->code.erase(endsig.pos - space, strlen(OVERRIDE_STR) + space);
    return Changed(endsig.iter, expl);
 }
 
@@ -1863,11 +1863,8 @@ Editor::Iter Editor::FindFuncDefnLoc(const CodeFile* file,
 
       if(sort > 0)
       {
-         if(currName->compare(*next->Name()) < 0)
-         {
-            next = (*f)->GetDefn();
-            break;
-         }
+         next = (*f)->GetDefn();
+         break;
       }
       else if(sort < 0)
       {

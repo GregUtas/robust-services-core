@@ -41,7 +41,7 @@ public:
 
    //  Not subclassed.
    //
-   ~AssertionException() noexcept;
+   ~AssertionException();
 
    //  Overridden to display member variables.
    //

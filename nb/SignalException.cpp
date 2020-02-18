@@ -48,7 +48,7 @@ SignalException::SignalException(signal_t sig, debug32_t errval) :
 
 fn_name SignalException_dtor = "SignalException.dtor";
 
-SignalException::~SignalException() noexcept
+SignalException::~SignalException()
 {
    Debug::ft(SignalException_dtor);
 }

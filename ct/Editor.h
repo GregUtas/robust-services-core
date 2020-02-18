@@ -73,7 +73,7 @@ public:
 
    //  Not subclassed.
    //
-   ~Editor() noexcept = default;
+   ~Editor() = default;
 
    //  Interactively fixes warnings in the code detected by Check().  If
    //  an error occurs, a non-zero value is returned and EXPL is updated
@@ -227,8 +227,7 @@ private:
    //
    struct SourceLine
    {
-      SourceLine(const string& code, size_t line) noexcept :
-         line(line), code(code) { }
+      SourceLine(const string& code, size_t line) : line(line), code(code) { }
 
       //  The code's line number (the first line is 0, the same as CodeWarning
       //  and Lexer).  A line added by the editor has a line number of SIZE_MAX.
@@ -256,11 +255,9 @@ private:
       Iter iter;   // location in SourceList
       size_t pos;  // position in iter->code
 
-      explicit CodeLocation(const Iter& i) noexcept :
-         iter(i), pos(string::npos) { }
+      explicit CodeLocation(const Iter& i) : iter(i), pos(string::npos) { }
 
-      CodeLocation(const Iter& i, size_t p) noexcept :
-         iter(i), pos(p) { }
+      CodeLocation(const Iter& i, size_t p) : iter(i), pos(p) { }
    };
 
    //  Returns the source code.

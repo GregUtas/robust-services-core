@@ -59,7 +59,7 @@ SoftwareException::SoftwareException(const string& errstr, debug32_t offset,
 
 fn_name SoftwareException_dtor = "SoftwareException.dtor";
 
-SoftwareException::~SoftwareException() noexcept
+SoftwareException::~SoftwareException()
 {
    Debug::ft(SoftwareException_dtor);
 }

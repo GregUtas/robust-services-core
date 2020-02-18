@@ -45,7 +45,7 @@ AllocationException::AllocationException(MemoryType type, size_t size) :
 
 fn_name AllocationException_dtor = "AllocationException.dtor";
 
-AllocationException::~AllocationException() noexcept
+AllocationException::~AllocationException()
 {
    Debug::ft(AllocationException_dtor);
 }

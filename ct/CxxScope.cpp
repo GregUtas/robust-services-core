@@ -2178,44 +2178,32 @@ bool Function::CanBeNoexcept() const
    //
    if(deleted_) return false;
 
-   //  A virtual function should not be noexcept because this forces all
-   //  overrides to be noexcept, which is dangerous for robust software
-   //  that needs to recover from unexpected errors.  The only exception
-   //  to this is in a derived class, when an external class has already
-   //  defined the function as noexcept.
+   //  The only functions that should be noexcept are virtual functions whose
+   //  base class defined the function as noexcept.  This should be enforced
+   //  by the compiler but must be check to avoid generating a warning.
    //
    auto bf = FindBaseFunc();
 
-   if(virtual_ || ((FuncType() == FuncDtor) && (bf != nullptr)))
+   if(IsVirtual() && (FuncType() != FuncDtor))
    {
       for(NO_OP; bf != nullptr; bf = bf->FindBaseFunc())
       {
          if(bf->noexcept_ && bf->GetFile()->IsSubsFile()) return true;
       }
-
-      return false;
    }
 
-   //  It is dangerous for even an empty constructor to be noexcept if any
-   //  base constructor, up the class hierarchy, is not noexcept.  The
-   //  constructor is on the stack when the base constructors are invoked,
-   //  which opens the system to risk.  We therefore use noexcept only on
-   //  defaulted or empty functions that are outside a class or in a class
-   //  that has no base class and no subclasses.
+   //  No other function should be noexcept:
+   //  o A virtual function should not be noexcept because this forces all
+   //    overrides to be noexcept.
+   //  o A non-virtual function should not be noexcept because it will cause
+   //    an exception if it uses a bad "this" pointer.
+   //  o The compiler may treat constructors, destructors, and operators as
+   //    noexcept if they rely on nothing that is potentially throwing, so
+   //    there is little advantage to marking them noexcept.  Even a simple
+   //    constructor or destructor shoudln't be noexcept if a constructor or
+   //    destructor in a constructed base class is potentially throwing.
    //
-   auto defn = GetDefn();
-   auto can = defn->defaulted_;
-
-   if(!can && (defn->impl_ != nullptr))
-   {
-      can = (defn->impl_->FirstStatement() == nullptr);
-   }
-
-   if(!can) return false;
-
-   auto cls = GetClass();
-   if(cls == nullptr) return true;
-   return ((cls->BaseClass() == nullptr) && cls->Subclasses()->empty());
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -2382,7 +2370,7 @@ void Function::CheckAccessControl() const
 
    if(defn_) return Debug::SwLog(Function_CheckAccessControl, "defn", 0);
 
-   //  Checking the access control of a deleted function causes a "coulde be
+   //  Checking the access control of a deleted function causes a "could be
    //  private" recommendation.
    //
    if(deleted_) return;
@@ -2672,7 +2660,7 @@ void Function::CheckCtor() const
    {
       if(item->initOrder == 0)
       {
-         if((item->initNeeded) && (!defn->defaulted_ || FuncRole() != CopyCtor))
+         if((item->initNeeded) && (!IsDefaulted() || FuncRole() != CopyCtor))
          {
             //  Log both the missing member and the suspicious constructor.
             //  This helps to pinpoint where the concern lies.
@@ -2865,10 +2853,9 @@ Warning Function::CheckIfDefined() const
    //  implementation may be intentional.
    //
    if(GetDefn()->impl_ != nullptr) return Warning_N;
-   if(GetDefn()->defaulted_) return Warning_N;
+   if(IsDefaulted()) return Warning_N;
    if(type_) return Warning_N;
    if(IsDeleted()) return Warning_N;
-   if(defaulted_) return Warning_N;
 
    auto w = (pure_ ? PureVirtualNotDefined : FunctionNotDefined);
    Log(w);
@@ -3227,7 +3214,7 @@ void Function::DisplayDefn(ostream& stream,
    {
       if(deleted_)
          stream << " = " << DELETE_STR;
-      else if(defaulted_)
+      else if(IsDefaulted())
          stream << " = " << DEFAULT_STR;
       stream << ';';
       DisplayInfo(stream, options);
@@ -3308,7 +3295,7 @@ void Function::DisplayInfo(ostream& stream, const Flags& options) const
    auto impl = (defn->impl_ != nullptr);
    auto inst = ((cls != nullptr) && cls->IsInTemplateInstance());
    auto subs = GetFile()->IsSubsFile();
-   auto def = defaulted_ || defn->defaulted_;
+   auto def = IsDefaulted();
 
    std::ostringstream buff;
    buff << " // ";
@@ -4284,7 +4271,7 @@ void Function::Invoke(StackArgVector* args)
    //  standard virtual function that is overridden by its own class or
    //  one of its subclasses.
    //
-   if(virtual_ && (this->FuncType() == FuncStandard))
+   if(IsVirtual() && (FuncType() == FuncStandard))
    {
       auto func = Context::Scope()->GetFunction();
 
@@ -4296,9 +4283,9 @@ void Function::Invoke(StackArgVector* args)
          {
             auto cls = func->GetClass();
 
-            if(cls->ClassDistance(this->GetClass()) != NOT_A_SUBCLASS)
+            if(cls->ClassDistance(GetClass()) != NOT_A_SUBCLASS)
             {
-               if(this->IsOverriddenAtOrBelow(cls))
+               if(IsOverriddenAtOrBelow(cls))
                {
                   Context::Log(VirtualFunctionInvoked);
                }
@@ -4364,8 +4351,7 @@ bool Function::IsDeleted() const
 
 bool Function::IsImplemented() const
 {
-   auto defn = GetDefn();
-   return ((defn->impl_ != nullptr) || defn->defaulted_);
+   return ((GetDefn()->impl_ != nullptr) || IsDefaulted());
 }
 
 //------------------------------------------------------------------------------
@@ -4430,7 +4416,7 @@ bool Function::IsTrivial() const
 {
    Debug::ft(Function_IsTrivial);
 
-   if(GetDefn()->defaulted_) return true;
+   if(IsDefaulted()) return true;
    if(tmplt_ != nullptr) return false;
    if(GetDefn()->impl_ == nullptr) return false;
 

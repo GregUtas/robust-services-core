@@ -464,16 +464,16 @@ public:
 
    //  Sets each attribute.
    //
-   Numeric(NumericType type, size_t width, bool sign) noexcept :
+   Numeric(NumericType type, size_t width, bool sign) :
       type_(type), bitWidth_(width), signed_(sign) { }
 
    //  Copy constructor.
    //
-   Numeric(const Numeric& that) noexcept = default;
+   Numeric(const Numeric& that) = default;
 
    //  Copy operator.
    //
-   Numeric& operator=(const Numeric& that) noexcept = default;
+   Numeric& operator=(const Numeric& that) = default;
 
    //  Returns the basic type.
    //

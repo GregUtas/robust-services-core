@@ -61,7 +61,7 @@ struct WarningAttrs
 
    //  Constructs a warning with the specified attributes.
    //
-   WarningAttrs(bool fix, uint8_t order, fixed_string expl) noexcept;
+   WarningAttrs(bool fix, uint8_t order, fixed_string expl);
 };
 
 //------------------------------------------------------------------------------

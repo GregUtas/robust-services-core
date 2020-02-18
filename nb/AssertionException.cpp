@@ -43,7 +43,7 @@ AssertionException::AssertionException(debug32_t errval) : Exception(true, 1),
 
 fn_name AssertionException_dtor = "AssertionException.dtor";
 
-AssertionException::~AssertionException() noexcept
+AssertionException::~AssertionException()
 {
    Debug::ft(AssertionException_dtor);
 }

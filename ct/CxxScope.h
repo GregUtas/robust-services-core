@@ -1028,6 +1028,10 @@ public:
    //
    bool IsDeleted() const;
 
+   //  Returns true if the function is a default special member function.
+   //
+   bool IsDefaulted() const { return GetDefn()->defaulted_; }
+
    //  Returns the function's arguments.
    //
    const ArgumentPtrVector& GetArgs() const { return args_; }

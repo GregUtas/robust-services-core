@@ -41,7 +41,7 @@ public:
 
    //  Not subclassed.
    //
-   ~ElementException() noexcept;
+   ~ElementException();
 
    //  Overridden to display member variables.
    //

@@ -67,7 +67,7 @@ protected:
 
    //  Protected to restrict deletion.  Virtual to allow subclassing.
    //
-   virtual ~Exception() noexcept;
+   virtual ~Exception();
 
    //  Overridden so that Thread::Start can catch this exception.  Subclasses
    //  should override this implementation.

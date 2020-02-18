@@ -198,6 +198,13 @@ int NwTracer::FindPort(ipport_t port) const
 
 //------------------------------------------------------------------------------
 
+void NwTracer::Patch(sel_t selector, void* arguments)
+{
+   Permanent::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name NwTracer_PeersEmpty = "NwTracer.PeersEmpty";
 
 bool NwTracer::PeersEmpty() const

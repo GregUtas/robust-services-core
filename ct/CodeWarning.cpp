@@ -58,8 +58,7 @@ ostream& operator<<(ostream& stream, Warning warning)
 
 //------------------------------------------------------------------------------
 
-WarningAttrs::WarningAttrs
-   (bool fix, uint8_t order, fixed_string expl) noexcept :
+WarningAttrs::WarningAttrs(bool fix, uint8_t order, fixed_string expl) :
    fixable(fix),
    order(order),
    expl(expl)
@@ -903,7 +902,7 @@ std::vector< CodeWarning* > CodeWarning::LogsToFix(std::string& expl)
    case ShouldNotBeNoexcept:
       if(static_cast< const Function* >(item_)->IsVirtual())
       {
-         expl = "Changing a virtual function's signature is not supported.";
+         expl = "Modifying a virtual function is not yet supported.";
          return logs;
       }
       //  [[fallthrough]]

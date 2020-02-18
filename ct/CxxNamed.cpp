@@ -1837,7 +1837,7 @@ void DataSpec::SetPtrs(TagCount count)
    //
    if(!IsAutoDecl())
    {
-      auto expl = "Resetting pointers on non-auto type " + this->Trace();
+      auto expl = "Resetting pointers on non-auto type " + Trace();
       Context::SwLog(DataSpec_SetPtrs, expl, 0);
       return;
    }

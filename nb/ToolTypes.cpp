@@ -29,6 +29,25 @@ using std::ostream;
 
 namespace NodeBase
 {
+fixed_string StatusStrings[TraceStatus_N + 1] =
+{
+   "unspecified",
+   "excluded",
+   "included",
+   ERROR_STR
+};
+
+ostream& operator<<(ostream& stream, TraceStatus status)
+{
+   if((status >= 0) && (status < TraceStatus_N))
+      stream << StatusStrings[status];
+   else
+      stream << StatusStrings[TraceStatus_N];
+   return stream;
+}
+
+//------------------------------------------------------------------------------
+
 fixed_string ToolRcStrings[TraceRc_N + 1] =
 {
    "OK.",
@@ -53,24 +72,5 @@ c_string strTraceRc(TraceRc rc)
 {
    if((rc >= 0) && (rc < TraceRc_N)) return ToolRcStrings[rc];
    return ToolRcStrings[TraceRc_N];
-}
-
-//------------------------------------------------------------------------------
-
-fixed_string StatusStrings[TraceStatus_N + 1] =
-{
-   "unspecified",
-   "excluded",
-   "included",
-   ERROR_STR
-};
-
-ostream& operator<<(ostream& stream, TraceStatus status)
-{
-   if((status >= 0) && (status < TraceStatus_N))
-      stream << StatusStrings[status];
-   else
-      stream << StatusStrings[TraceStatus_N];
-   return stream;
 }
 }

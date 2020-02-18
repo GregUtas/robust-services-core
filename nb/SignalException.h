@@ -40,7 +40,7 @@ public:
 
    //  Not subclassed.
    //
-   ~SignalException() noexcept;
+   ~SignalException();
 
    //  Returns the signal that occurred.
    //

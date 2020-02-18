@@ -1342,6 +1342,13 @@ void StackArg::ContextFunctionIsNonConst()
 
 //------------------------------------------------------------------------------
 
+bool StackArg::IsBool() const
+{
+   return (*item->Name() == BOOL_STR);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name StackArg_IsDefaultCtor = "StackArg.IsDefaultCtor";
 
 bool StackArg::IsDefaultCtor(const StackArgVector& args) const

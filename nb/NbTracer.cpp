@@ -177,6 +177,13 @@ TraceStatus NbTracer::FactionStatus(Faction faction) const
 
 //------------------------------------------------------------------------------
 
+void NbTracer::Patch(sel_t selector, void* arguments)
+{
+   Permanent::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
 fixed_string AllSelected      = "ALL ACTIVITY selected.";
 fixed_string FactionsSelected = "Factions: ";
 fixed_string ThreadsSelected  = "Threads: ";

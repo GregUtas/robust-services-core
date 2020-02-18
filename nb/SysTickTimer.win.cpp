@@ -68,6 +68,13 @@ SysTickTimer::~SysTickTimer()
 
 //------------------------------------------------------------------------------
 
+void SysTickTimer::Patch(sel_t selector, void* arguments)
+{
+   Immutable::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
 ticks_t SysTickTimer::TicksNow() const
 {
    if(available_)

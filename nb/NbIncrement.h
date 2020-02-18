@@ -40,6 +40,7 @@ class StatusCommand : public CliCommand
 public:
    StatusCommand();
    virtual ~StatusCommand() = default;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    word ProcessCommand(CliThread& cli) const override;
 };
@@ -73,6 +74,7 @@ public:
    //
    explicit LogsCommand(bool bind = true);
    virtual ~LogsCommand() = default;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    word ProcessSubcommand(CliThread& cli, id_t index) const override;
 private:
@@ -103,6 +105,7 @@ public:
    //
    explicit SetCommand(bool bind = true);
    virtual ~SetCommand() = default;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    word ProcessSubcommand(CliThread& cli, id_t index) const override;
 private:
@@ -133,6 +136,7 @@ public:
    //
    explicit IncludeCommand(bool bind = true);
    virtual ~IncludeCommand() = default;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    word ProcessSubcommand(CliThread& cli, id_t index) const override;
 private:
@@ -162,6 +166,7 @@ public:
    //
    explicit ExcludeCommand(bool bind = true);
    virtual ~ExcludeCommand() = default;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    word ProcessSubcommand(CliThread& cli, id_t index) const override;
 private:
@@ -192,6 +197,7 @@ public:
    //
    explicit QueryCommand(bool bind = true);
    virtual ~QueryCommand() = default;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    word ProcessSubcommand(CliThread& cli, id_t index) const override;
 private:
@@ -220,6 +226,7 @@ public:
    //
    explicit SaveCommand(bool bind = true);
    virtual ~SaveCommand() = default;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    word ProcessSubcommand(CliThread& cli, id_t index) const override;
 private:
@@ -254,6 +261,7 @@ public:
    //
    explicit ClearCommand(bool bind = true);
    virtual ~ClearCommand() = default;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    word ProcessSubcommand(CliThread& cli, id_t index) const override;
 private:

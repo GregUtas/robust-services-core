@@ -87,6 +87,10 @@ public:
    //  Removes everything of type FILTER that has been included or excluded.
    //
    TraceRc ClearSelections(FlagId filter);
+
+   //  Overridden for patching.
+   //
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Private because this singleton is not subclassed.
    //

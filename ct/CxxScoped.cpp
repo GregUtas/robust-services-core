@@ -236,8 +236,11 @@ bool Argument::SetNonConst()
 
 void Argument::Shrink()
 {
+   CxxScoped::Shrink();
+
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::ARG_DECL, name_.capacity());
+   CxxStats::Vectors(CxxStats::ARG_DECL, Users().capacity());
    spec_->Shrink();
    if(default_ != nullptr) default_->Shrink();
 }
@@ -465,6 +468,13 @@ void CxxScoped::AddFiles(SetOfIds& imSet) const
    auto defn = GetDefnFile();
    if(decl != nullptr) imSet.insert(decl->Fid());
    if(defn != nullptr) imSet.insert(defn->Fid());
+}
+
+//------------------------------------------------------------------------------
+
+void CxxScoped::AddUser(const CxxNamed* name)
+{
+   users_.push_back(name);
 }
 
 //------------------------------------------------------------------------------
@@ -891,6 +901,13 @@ void CxxScoped::RecordTemplateAccess(Cxx::Access access) const
    if(item != nullptr) item->RecordAccess(access);
 }
 
+//------------------------------------------------------------------------------
+
+void CxxScoped::Shrink()
+{
+   users_.shrink_to_fit();
+}
+
 //==============================================================================
 
 fn_name Enum_ctor = "Enum.ctor";
@@ -1174,6 +1191,8 @@ void Enum::SetAsReferent(const CxxNamed* user)
 
 void Enum::Shrink()
 {
+   CxxScoped::Shrink();
+
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::ENUM_DECL, name_.capacity());
 
@@ -1183,6 +1202,7 @@ void Enum::Shrink()
    }
 
    auto size = etors_.capacity() * sizeof(EnumeratorPtr);
+   size += (Users().capacity() * sizeof(CxxNamed*));
    CxxStats::Vectors(CxxStats::ENUM_DECL, size);
 }
 
@@ -1231,6 +1251,20 @@ void Enumerator::Check() const
 
    CheckIfUnused(EnumeratorUnused);
    CheckIfHiding();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Enumerator_CheckIfUnused = "Enumerator.CheckIfUnused";
+
+bool Enumerator::CheckIfUnused(Warning warning) const
+{
+   Debug::ft(Enumerator_CheckIfUnused);
+
+   if(!IsUnused()) return false;
+   if(enum_->IsUnused()) return false;
+   Log(warning);
+   return true;
 }
 
 //------------------------------------------------------------------------------
@@ -1360,8 +1394,11 @@ void Enumerator::SetAsReferent(const CxxNamed* user)
 
 void Enumerator::Shrink()
 {
+   CxxScoped::Shrink();
+
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::ENUM_MEM, name_.capacity());
+   CxxStats::Vectors(CxxStats::ENUM_MEM, Users().capacity());
    if(init_ != nullptr) init_->Shrink();
 }
 
@@ -1561,6 +1598,9 @@ void Forward::SetTemplateParms(TemplateParmsPtr& parms)
 
 void Forward::Shrink()
 {
+   CxxScoped::Shrink();
+
+   CxxStats::Vectors(CxxStats::FORWARD_DECL, Users().capacity());
    name_->Shrink();
    if(parms_ != nullptr) parms_->Shrink();
 }
@@ -2197,6 +2237,9 @@ void Friend::SetTemplateParms(TemplateParmsPtr& parms)
 
 void Friend::Shrink()
 {
+   CxxScoped::Shrink();
+
+   CxxStats::Vectors(CxxStats::FRIEND_DECL, Users().capacity());
    if(name_ != nullptr) name_->Shrink();
    if(parms_ != nullptr) parms_->Shrink();
    if(func_ != nullptr) func_->Shrink();
@@ -2298,10 +2341,13 @@ bool Terminal::NameRefersToItem(const string& name,
 
 void Terminal::Shrink()
 {
+   CxxScoped::Shrink();
+
    name_.shrink_to_fit();
    type_.shrink_to_fit();
    CxxStats::Strings(CxxStats::TERMINAL_DECL, name_.capacity());
    CxxStats::Strings(CxxStats::TERMINAL_DECL, type_.capacity());
+   CxxStats::Vectors(CxxStats::TERMINAL_DECL, Users().capacity());
 }
 
 //==============================================================================
@@ -2544,9 +2590,12 @@ void Typedef::SetAsReferent(const CxxNamed* user)
 
 void Typedef::Shrink()
 {
+   CxxScoped::Shrink();
+
    name_.shrink_to_fit();
-   spec_->Shrink();
    CxxStats::Strings(CxxStats::TYPE_DECL, name_.capacity());
+   CxxStats::Vectors(CxxStats::TYPE_DECL, Users().capacity());
+   spec_->Shrink();
 }
 
 //------------------------------------------------------------------------------

@@ -53,6 +53,7 @@ public:
    //
    explicit NwClearCommand(bool bind = true);
    virtual ~NwClearCommand() = default;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    NodeBase::word ProcessSubcommand
       (NodeBase::CliThread& cli, NodeBase::id_t index) const override;
@@ -80,6 +81,7 @@ public:
    //
    explicit NwExcludeCommand(bool bind = true);
    virtual ~NwExcludeCommand() = default;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    NodeBase::word ProcessSubcommand
       (NodeBase::CliThread& cli, NodeBase::id_t index) const override;
@@ -107,6 +109,7 @@ public:
    //
    explicit NwIncludeCommand(bool bind = true);
    virtual ~NwIncludeCommand() = default;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    NodeBase::word ProcessSubcommand
       (NodeBase::CliThread& cli, NodeBase::id_t index) const override;
@@ -123,6 +126,7 @@ public:
    //
    explicit NwQueryCommand(bool bind = true);
    virtual ~NwQueryCommand() = default;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    NodeBase::word ProcessSubcommand
       (NodeBase::CliThread& cli, NodeBase::id_t index) const override;
@@ -137,6 +141,7 @@ class NwStatusCommand : public NodeBase::StatusCommand
 public:
    NwStatusCommand() = default;
    virtual ~NwStatusCommand() = default;
+   void Patch(sel_t selector, void* arguments) override;
 protected:
    NodeBase::word ProcessCommand(NodeBase::CliThread& cli) const override;
 };

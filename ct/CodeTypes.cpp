@@ -171,6 +171,7 @@ fixed_string LineTypeStrings[LineType_N + 1] =
    "bare left brace",
    "bare right brace",
    "bare right brace with semicolon",
+   "access control",
    "invocation of Debug::ft",
    "definition of an fn_name",
    "definition of an fn_name continued on a subsequent line",
@@ -219,6 +220,7 @@ const LineTypeAttr LineTypeAttr::Attrs[LineType_N + 1] =
    LineTypeAttr(T, F, F, F),  // OpenBrace
    LineTypeAttr(T, F, F, F),  // CloseBrace
    LineTypeAttr(T, F, F, F),  // CloseBraceSemicolon
+   LineTypeAttr(T, F, F, F),  // AccessControl
    LineTypeAttr(T, T, T, F),  // DebugFt
    LineTypeAttr(T, T, T, F),  // FunctionName
    LineTypeAttr(T, T, T, F),  // FunctionNameSplit

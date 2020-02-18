@@ -69,6 +69,10 @@ public:
    //  it's time to look for a proper platform.
    //
    bool TickTimingAvailable() const { return available_; }
+
+   //  Overridden for patching.
+   //
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Private because this singleton is not subclassed.
    //

@@ -11,6 +11,7 @@ namespace std
    {
    public:
       exception() noexcept;
+      explicit exception(const char* const message) noexcept;
       exception(const exception& that) noexcept;
       exception(const exception&& that) noexcept;
       exception& operator=(const exception& that) noexcept;

@@ -1837,7 +1837,7 @@ void DataSpec::SetPtrs(TagCount count)
    //
    if(!IsAutoDecl())
    {
-      auto expl = "Resetting pointers on non-auto type " + this->Trace();
+      auto expl = "Resetting pointers on non-auto type " + Trace();
       Context::SwLog(DataSpec_SetPtrs, expl, 0);
       return;
    }
@@ -3328,6 +3328,7 @@ void TypeName::SetReferent(CxxScoped* item, const SymbolView* view) const
    //
    if((view != nullptr) && view->using_ && (ref_ == nullptr)) using_ = true;
    ref_ = item;
+   if(item != nullptr) item->AddUser(this);
 }
 
 //------------------------------------------------------------------------------
@@ -3583,7 +3584,7 @@ TypeMatch TypeSpec::MustMatchWith(const StackArg& that) const
    }
    else if((match == Abridgeable) || (match == Promotable))
    {
-      if((*this->Name() == BOOL_STR) || (*that.item->Name() == BOOL_STR))
+      if((*this->Name() == BOOL_STR) || that.IsBool())
       {
          GetFile()->LogPos(Context::GetPos(), BoolMixedWithNumeric);
       }

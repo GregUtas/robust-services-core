@@ -373,7 +373,7 @@ bool Class::AddFriend(FriendPtr& decl)
 
 //------------------------------------------------------------------------------
 
-void Class::AddItem(CxxNamed* item)
+void Class::AddItem(const CxxNamed* item)
 {
    items_.push_back(item);
 }
@@ -2682,6 +2682,8 @@ Function* CxxArea::MatchFunc(const Function* curr, bool base) const
 
 void CxxArea::Shrink()
 {
+   CxxScoped::Shrink();
+
    for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
    {
       (*u)->Shrink();
@@ -2748,6 +2750,7 @@ void CxxArea::Shrink()
    size += (defns_.capacity() * sizeof(ScopePtr));
    size += (assembly_.capacity() * sizeof(AsmPtr));
    size += (asserts_.capacity() * sizeof(StaticAssertPtr));
+   size += (Users().capacity() * sizeof(CxxNamed*));
 
    if(Type() == Cxx::Namespace)
    {

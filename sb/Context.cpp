@@ -76,7 +76,7 @@ public:
 
    //  Not subclassed.
    //
-   ~SbException() noexcept;
+   ~SbException();
 
    //  Overridden to display member variables.
    //
@@ -123,7 +123,7 @@ SbException::SbException(const string& errstr, debug32_t offset) :
 
 fn_name SbException_dtor = "SbException.dtor";
 
-SbException::~SbException() noexcept
+SbException::~SbException()
 {
    Debug::ft(SbException_dtor);
 }

@@ -26,7 +26,6 @@
 #include <cstddef>
 #include "GlobalAddress.h"
 #include "LocalAddress.h"
-#include "NbTypes.h"
 #include "SbTypes.h"
 
 //------------------------------------------------------------------------------
@@ -137,10 +136,6 @@ protected:
    //
    void Cleanup() override;
 private:
-   //> Highest valid port identifier.
-   //
-   static const NodeBase::PooledObjectId MaxId;
-
    //  Overridden to create the layer above for an incoming message.
    //
    ProtocolLayer* AllocUpper(const Message& msg) override;

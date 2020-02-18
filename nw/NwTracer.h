@@ -78,6 +78,10 @@ public:
    //
    NodeBase::TraceStatus BuffStatus
       (const IpBuffer& ipb, NodeBase::MsgDirection dir) const;
+
+   //  Overridden for patching.
+   //
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Private because this singleton is not subclassed.
    //

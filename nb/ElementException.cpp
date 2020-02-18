@@ -46,7 +46,7 @@ ElementException::ElementException(reinit_t reason, debug32_t errval) :
 
 fn_name ElementException_dtor = "ElementException.dtor";
 
-ElementException::~ElementException() noexcept
+ElementException::~ElementException()
 {
    Debug::ft(ElementException_dtor);
 }

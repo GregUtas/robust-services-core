@@ -769,8 +769,11 @@ void Macro::SetExpr(ExprPtr& rhs)
 
 void Macro::Shrink()
 {
+   CxxScoped::Shrink();
+
    name_.shrink_to_fit();
-   CxxStats::Strings(CxxStats::DEFINE_DIRECTIVE, Name()->capacity());
+   CxxStats::Strings(CxxStats::DEFINE_DIRECTIVE, name_.capacity());
+   CxxStats::Vectors(CxxStats::DEFINE_DIRECTIVE, Users().capacity());
 }
 
 //------------------------------------------------------------------------------
@@ -784,6 +787,14 @@ string Macro::TypeString(bool arg) const
    auto value = GetValue();
    if(value != nullptr) return value->TypeString(arg);
    return EMPTY_STR;
+}
+
+//------------------------------------------------------------------------------
+
+bool Macro::WasRead()
+{
+   ++refs_;
+   return true;
 }
 
 //==============================================================================

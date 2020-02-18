@@ -700,7 +700,7 @@ public:
 
    //  Sets the member initialization expression.
    //
-   void SetInit(const MemberInit* init) { init_ = init; }
+   void SetInit(const MemberInit* init);
 
    //  Overridden to log warnings associated with the declaration.
    //
@@ -1028,6 +1028,10 @@ public:
    //
    bool IsDeleted() const;
 
+   //  Returns true if the function is a default special member function.
+   //
+   bool IsDefaulted() const { return GetDefn()->defaulted_; }
+
    //  Returns the function's arguments.
    //
    const ArgumentPtrVector& GetArgs() const { return args_; }
@@ -1215,7 +1219,7 @@ public:
    //
    void CheckIfHiding() const override;
 
-   //  Overridden to determine if the function is used.
+   //  Overridden to generate a log if the function is unused.
    //
    bool CheckIfUnused(Warning warning) const override;
 
@@ -1370,7 +1374,7 @@ public:
 
    //  Overridden to count a read as an invocation.
    //
-   bool WasRead() override { ++calls_; return true; }
+   bool WasRead() override;
 
    //  Overridden  to append argument types if the function's name is ambiguous.
    //

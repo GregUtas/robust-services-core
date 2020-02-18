@@ -95,6 +95,14 @@ public:
    //
    virtual void AddFiles(SetOfIds& imSet) const;
 
+   //  Records a user of the item.
+   //
+   virtual void AddUser(const CxxNamed* name);
+
+   //  Returns the item's users.
+   //
+   const NamedVector& Users() const { return users_; }
+
    //  Returns true if the item is unused.
    //
    virtual bool IsUnused() const { return false; }
@@ -183,6 +191,10 @@ public:
    //  Overridden to set the scope where the declaration appeared.
    //
    void SetScope(CxxScope* scope) override { scope_ = scope; }
+
+   //  Overridden to shrink containers.
+   //
+   void Shrink() override;
 protected:
    //  Protected because this class is virtual.
    //
@@ -204,6 +216,10 @@ private:
    //  The scope where the item appeared.
    //
    CxxScope* scope_;
+
+   //  Source code references to the item.
+   //
+   NamedVector users_;
 
    //  The access control level for the item.
    //
@@ -609,6 +625,11 @@ public:
    //  Overridden to log warnings associated with the enumerator.
    //
    void Check() const override;
+
+   //  Overridden to generae a log if the enumerator is unused but its enum
+   //  *is* used.
+   //
+   bool CheckIfUnused(Warning warning) const override;
 
    //  Overridden to display the enumeration.
    //
@@ -1023,9 +1044,9 @@ public:
    //
    void SetNumeric(const Numeric& attrs) { attrs_ = attrs; }
 
-   //  Overridden to return true if the terminal is "auto".
+   //  Overridden to not track users of terminals.
    //
-   bool IsAuto() const override;
+   void AddUser(const CxxNamed* name) override { }
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -1052,6 +1073,10 @@ public:
    //  Overridden to return the terminal's attributes as an integer.
    //
    Numeric GetNumeric() const override { return attrs_; }
+
+   //  Overridden to return true if the terminal is "auto".
+   //
+   bool IsAuto() const override;
 
    //  Overridden to return the terminal's name.
    //

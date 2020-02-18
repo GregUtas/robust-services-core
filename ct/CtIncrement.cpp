@@ -565,6 +565,23 @@ ExportCommand::ExportCommand() : CliCommand(ExportStr, ExportExpl)
    BindParm(*new ViewsParm);
 }
 
+const string& DefaultExportOptions()
+{
+   static string DefaultOpts;
+
+   if(DefaultOpts.empty())
+   {
+      DefaultOpts.push_back(NamespaceView);
+      DefaultOpts.push_back(CanonicalFileView);
+      DefaultOpts.push_back(ClassHierarchyView);
+      DefaultOpts.push_back(ItemStatistics);
+      DefaultOpts.push_back(FileSymbolUsage);
+      DefaultOpts.push_back(GlobalCrossReference);
+   }
+
+   return DefaultOpts;
+}
+
 const string& ValidExportOptions()
 {
    static string ValidOpts;
@@ -581,23 +598,6 @@ const string& ValidExportOptions()
    }
 
    return ValidOpts;
-}
-
-const string& DefaultExportOptions()
-{
-   static string DefaultOpts;
-
-   if(DefaultOpts.empty())
-   {
-      DefaultOpts.push_back(NamespaceView);
-      DefaultOpts.push_back(CanonicalFileView);
-      DefaultOpts.push_back(ClassHierarchyView);
-      DefaultOpts.push_back(ItemStatistics);
-      DefaultOpts.push_back(FileSymbolUsage);
-      DefaultOpts.push_back(GlobalCrossReference);
-   }
-
-   return DefaultOpts;
 }
 
 fn_name ExportCommand_ProcessCommand = "ExportCommand.ProcessCommand";

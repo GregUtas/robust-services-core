@@ -602,6 +602,11 @@ ClearCommand::ClearCommand(bool bind) : CliCommand(ClearStr, ClearExpl)
    if(bind) BindParm(*new ClearWhatParm);
 }
 
+void ClearCommand::Patch(sel_t selector, void* arguments)
+{
+   CliCommand::Patch(selector, arguments);
+}
+
 fn_name ClearCommand_ProcessCommand = "ClearCommand.ProcessCommand";
 
 word ClearCommand::ProcessCommand(CliThread& cli) const
@@ -946,6 +951,11 @@ fixed_string ExcludeExpl =
 ExcludeCommand::ExcludeCommand(bool bind) : CliCommand(ExcludeStr, ExcludeExpl)
 {
    if(bind) BindParm(*new ExcludeWhatParm);
+}
+
+void ExcludeCommand::Patch(sel_t selector, void* arguments)
+{
+   CliCommand::Patch(selector, arguments);
 }
 
 fn_name ExcludeCommand_ProcessCommand = "ExcludeCommand.ProcessCommand";
@@ -1325,6 +1335,11 @@ IncludeCommand::IncludeCommand(bool bind) : CliCommand(IncludeStr, IncludeExpl)
    if(bind) BindParm(*new IncludeWhatParm);
 }
 
+void IncludeCommand::Patch(sel_t selector, void* arguments)
+{
+   CliCommand::Patch(selector, arguments);
+}
+
 fn_name IncludeCommand_ProcessCommand = "IncludeCommand.ProcessCommand";
 
 word IncludeCommand::ProcessCommand(CliThread& cli) const
@@ -1558,6 +1573,11 @@ fixed_string LogsExpl = "Interface to the log subsystem.";
 LogsCommand::LogsCommand(bool bind) : CliCommand(LogsStr, LogsExpl)
 {
    if(bind) BindParm(*new LogsAction);
+}
+
+void LogsCommand::Patch(sel_t selector, void* arguments)
+{
+   CliCommand::Patch(selector, arguments);
 }
 
 //  Sets GROUP and LOG to the log group and log identified by NAME and ID.
@@ -2034,6 +2054,11 @@ QueryCommand::QueryCommand(bool bind) : CliCommand(QueryStr, QueryExpl)
    if(bind) BindParm(*new QueryWhatParm);
 }
 
+void QueryCommand::Patch(sel_t selector, void* arguments)
+{
+   CliCommand::Patch(selector, arguments);
+}
+
 fn_name QueryCommand_ProcessCommand = "QueryCommand.ProcessCommand";
 
 word QueryCommand::ProcessCommand(CliThread& cli) const
@@ -2372,6 +2397,11 @@ fixed_string SaveExpl = "Saves what was captured by trace tools.";
 SaveCommand::SaveCommand(bool bind) : CliCommand(SaveStr, SaveExpl)
 {
    if(bind) BindParm(*new SaveWhatParm);
+}
+
+void SaveCommand::Patch(sel_t selector, void* arguments)
+{
+   CliCommand::Patch(selector, arguments);
 }
 
 fn_name SaveCommand_ProcessCommand = "SaveCommand.ProcessCommand";
@@ -2837,6 +2867,11 @@ SetCommand::SetCommand(bool bind) : CliCommand(SetStr, SetExpl)
    if(bind) BindParm(*new SetWhatParm);
 }
 
+void SetCommand::Patch(sel_t selector, void* arguments)
+{
+   CliCommand::Patch(selector, arguments);
+}
+
 fn_name SetCommand_ProcessCommand = "SetCommand.ProcessCommand";
 
 word SetCommand::ProcessCommand(CliThread& cli) const
@@ -3194,6 +3229,11 @@ fixed_string StatusStr = "status";
 fixed_string StatusExpl = "Displays system statistics.";
 
 StatusCommand::StatusCommand() : CliCommand(StatusStr, StatusExpl) { }
+
+void StatusCommand::Patch(sel_t selector, void* arguments)
+{
+   CliCommand::Patch(selector, arguments);
+}
 
 fixed_string MemoryHeader1 =
    "  Alloc                            Bytes        Max     Memory  Heap";

@@ -58,11 +58,9 @@ ostream& operator<<(ostream& stream, Warning warning)
 
 //------------------------------------------------------------------------------
 
-WarningAttrs::WarningAttrs
-   (bool fix, uint8_t order, fixed_string expl) noexcept :
+WarningAttrs::WarningAttrs(bool fix, uint8_t order, fixed_string expl) :
    fixable(fix),
    order(order),
-   suppressed(false),
    expl(expl)
 {
 }
@@ -266,13 +264,14 @@ void CodeWarning::GenerateReport(ostream* stream, const SetOfIds& set)
 
    //  Display the total number of warnings of each type.
    //
-   *stream << CRLF << "WARNING COUNTS" << CRLF;
+   *stream << CRLF << "WARNING COUNTS (* if supported by >fix)" << CRLF;
 
    for(auto w = 0; w < Warning_N; ++w)
    {
       if(WarningCounts_[w] != 0)
       {
-         *stream << setw(6) << WarningCode(Warning(w)) << setw(6)
+         *stream << (Attrs_.at(Warning(w)).fixable ? '*' : SPACE);
+         *stream << setw(5) << WarningCode(Warning(w)) << setw(6)
             << WarningCounts_[w] << spaces(2) << Warning(w) << CRLF;
       }
    }
@@ -501,7 +500,7 @@ void CodeWarning::Initialize()
       WarningAttrs(F, X,
       "Unused class")));
    Attrs_.insert(WarningPair(DataUnused,
-      WarningAttrs(F, X,
+      WarningAttrs(T, D,
       "Unused data")));
    Attrs_.insert(WarningPair(EnumUnused,
       WarningAttrs(T, D,
@@ -513,7 +512,7 @@ void CodeWarning::Initialize()
       WarningAttrs(T, D,
       "Unused friend declaration")));
    Attrs_.insert(WarningPair(FunctionUnused,
-      WarningAttrs(F, X,
+      WarningAttrs(T, D,
       "Unused function")));
    Attrs_.insert(WarningPair(TypedefUnused,
       WarningAttrs(T, D,
@@ -558,10 +557,10 @@ void CodeWarning::Initialize()
       WarningAttrs(F, X,
       "Global data initialization not found")));
    Attrs_.insert(WarningPair(DataInitOnly,
-      WarningAttrs(F, X,
+      WarningAttrs(T, D,
       "Data is init-only")));
    Attrs_.insert(WarningPair(DataWriteOnly,
-      WarningAttrs(F, X,
+      WarningAttrs(T, D,
       "Data is write-only")));
    Attrs_.insert(WarningPair(GlobalStaticData,
       WarningAttrs(F, X,
@@ -782,6 +781,12 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(FunctionCouldBeMember,
       WarningAttrs(F, X,
       "Function could be a member of a class that is an indirect argument")));
+   Attrs_.insert(WarningPair(ExplicitConstructor,
+      WarningAttrs(T, E,
+      "Constructor does not require explicit tag")));
+   Attrs_.insert(WarningPair(BitwiseOperatorOnBoolean,
+      WarningAttrs(F, X,
+      "Operator | or & used on boolean")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(F, X,
       ERROR_STR)));
@@ -892,6 +897,7 @@ std::vector< CodeWarning* > CodeWarning::LogsToFix(std::string& expl)
       if(log != nullptr) logs.push_back(log);
       break;
 
+   case FunctionUnused:
    case ArgumentCouldBeConstRef:
    case ArgumentCouldBeConst:
    case FunctionCouldBeConst:
@@ -900,7 +906,7 @@ std::vector< CodeWarning* > CodeWarning::LogsToFix(std::string& expl)
    case ShouldNotBeNoexcept:
       if(static_cast< const Function* >(item_)->IsVirtual())
       {
-         expl = "Changing a virtual function's signature is not supported.";
+         expl = "Modifying a virtual function is not yet supported.";
          return logs;
       }
       //  [[fallthrough]]

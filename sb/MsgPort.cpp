@@ -51,10 +51,6 @@ using std::string;
 
 namespace SessionBase
 {
-const PooledObjectId MsgPort::MaxId = 0x40000;  // 2^18 = 256K
-
-//------------------------------------------------------------------------------
-
 fn_name MsgPort_ctor1 = "MsgPort.ctor(i/c)";
 
 MsgPort::MsgPort(const Message& msg, Context& ctx) : ProtocolLayer(&ctx),

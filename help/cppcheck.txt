@@ -450,17 +450,18 @@ constructs an instance of Class and then copies it to item. The
 unambiguous alternative is to write Class item(args).
 ? W114
 Function could be tagged noexcept
-  This function could be tagged noexcept. Note that RSC uses noexcept
-far more sparingly than what would be common practice elsewhere. The
-reason is that even if a function does not throw or transitively use
-anything that does, RSC handles signals such as SIGSEGV (falling off
-a bad pointer) by throwing a SignalException. Consequently, almost
-any non-trivial code could cause an exception, after which objects
-on the stack need to be properly destructed when unwinding the stack
-(until Thread.Start ultimately catches the exception).
+  This warning only occurs if a base class defined a virtual function
+as noexcept but your compiler did not enforce the rule that overrides
+must also be noexcept.
 ? W115
 Function should not be tagged noexcept
-  This function is not trivial enough to be tagged noexcept.
+  RSC never tags a function noexcept unless the standard mandates it
+(when a base class tags a virtual function noexcept). The reason is
+that even if a function does not throw or transitively use anything
+that does, RSC handles signals such as SIGSEGV (using a bad pointer)
+by throwing a SignalException. Consequently, almost any non-trivial
+code can cause an exception, which results in an abort if a noexcept
+function is on the stack.
 ? W116
 C-style comment
   The use of /* <comment> */ should be replaced by // <comment>.
@@ -483,3 +484,11 @@ Function returns non-const reference or pointer to member data
 Function could be a member of a class that is an indirect argument
   This function has a non-const argument that is a pointer or a reference
 to a class, so it should probably be a member of that class.
+? W122
+Constructor does not require explicit tag
+  A constructor does not need to be tagged explicit unless it can be
+invoked with a single argument.
+? W123
+Operator | or & used on boolean
+  A bitwise operator was used on a boolean. Operator || or && was
+probably intended.

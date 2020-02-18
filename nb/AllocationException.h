@@ -43,7 +43,7 @@ public:
 
    //  Not subclassed.
    //
-   ~AllocationException() noexcept;
+   ~AllocationException();
 
    //  Overridden to display member variables.
    //

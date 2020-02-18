@@ -271,6 +271,10 @@ public:
    TypeMatch CalcMatchWith(const StackArg& that,
       const std::string& thisType, const std::string& thatType) const;
 
+   //  Returns true if the item is a bool.
+   //
+   bool IsBool() const;
+
    //  Logs a warning if the item is not a bool.  Invoked when an operator
    //  or conditional expression expects a bool.
    //

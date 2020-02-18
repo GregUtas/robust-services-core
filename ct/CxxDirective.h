@@ -294,7 +294,7 @@ public:
 
    //  Overridden to count references to the macro.
    //
-   bool WasRead() override { ++refs_; return true; }
+   bool WasRead() override;
 protected:
    //  Creates a macro for the symbol identified by NAME.  Protected
    //  because this class is virtual.
@@ -392,7 +392,7 @@ public:
 protected:
    //  Protected because this class is virtual.
    //
-   explicit Optional();
+   Optional();
 };
 
 //------------------------------------------------------------------------------
@@ -430,7 +430,7 @@ public:
 protected:
    //  Protected because this class is virtual.
    //
-   explicit OptionalCode();
+   OptionalCode();
 
    //  Invoked when it is determined that the code following the directive
    //  should be compiled.
@@ -488,7 +488,7 @@ public:
 protected:
    //  Protected because this class is virtual.
    //
-   explicit Conditional();
+   Conditional();
 private:
    //  The condition associated with the directive.
    //
@@ -554,7 +554,7 @@ class Elif : public Conditional
 public:
    //  Creates an #elif directive.
    //
-   explicit Elif();
+   Elif();
 
    //  Not subclassed.
    //
@@ -579,7 +579,7 @@ class Else : public OptionalCode
 public:
    //  Creates an #else directive.
    //
-   explicit Else();
+   Else();
 
    //  Not subclassed.
    //
@@ -604,7 +604,7 @@ class Endif : public Optional
 public:
    //  Creates an #endif directive.
    //
-   explicit Endif();
+   Endif();
 
    //  Not subclassed.
    //

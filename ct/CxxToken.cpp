@@ -1237,6 +1237,27 @@ CxxToken* Operation::Back()
 
 //------------------------------------------------------------------------------
 
+fn_name Operation_CheckBitwiseOp = "Operation.CheckBitwiseOp";
+
+void Operation::CheckBitwiseOp(const StackArg& arg1, const StackArg& arg2) const
+{
+   Debug::ft(Operation_CheckBitwiseOp);
+
+   switch(op_)
+   {
+      case Cxx::BITWISE_AND:
+      case Cxx::BITWISE_OR:
+      case Cxx::BITWISE_AND_ASSIGN:
+      case Cxx::BITWISE_OR_ASSIGN:
+         if(arg1.IsBool() || arg2.IsBool())
+         {
+            Context::Log(BitwiseOperatorOnBoolean);
+         }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Operation_CheckCast = "Operation.CheckCast";
 
 void Operation::CheckCast(const StackArg& inArg, const StackArg& outArg) const
@@ -1566,6 +1587,7 @@ void Operation::Execute() const
    case Cxx::BITWISE_AND:
    case Cxx::BITWISE_XOR:
    case Cxx::BITWISE_OR:
+      CheckBitwiseOp(arg1, arg2);
       if(IsOverloaded(arg1, arg2)) return;
       arg1.WasRead();
       arg2.WasRead();
@@ -1638,6 +1660,7 @@ void Operation::Execute() const
    case Cxx::BITWISE_AND_ASSIGN:
    case Cxx::BITWISE_XOR_ASSIGN:
    case Cxx::BITWISE_OR_ASSIGN:
+      CheckBitwiseOp(arg1, arg2);
       if(IsOverloaded(arg1, arg2)) return;
       arg1.WasRead();
       arg1.WasWritten();
@@ -2596,7 +2619,7 @@ void Operation::PushResult(StackArg& lhs, StackArg& rhs) const
 
    if((match == Promotable) || (match == Abridgeable))
    {
-      if((*lhs.item->Name() == BOOL_STR) || (*rhs.item->Name() == BOOL_STR))
+      if(lhs.IsBool() || rhs.IsBool())
       {
          Context::Log(BoolMixedWithNumeric);
       }

@@ -73,7 +73,7 @@ public:
 
    //  Not subclassed.
    //
-   ~Editor() noexcept = default;
+   ~Editor() = default;
 
    //  Interactively fixes warnings in the code detected by Check().  If
    //  an error occurs, a non-zero value is returned and EXPL is updated
@@ -142,8 +142,11 @@ private:
    word EraseAccessControl(const CodeWarning& log, string& expl);
    word EraseBlankLine(const CodeWarning& log, string& expl);
    word EraseConst(const CodeWarning& log, string& expl);
+   word EraseData(const CliThread& cli, const CodeWarning& log, string& expl);
    word EraseEnumerator(const CodeWarning& log, string& expl);
+   word EraseExplicitTag(const CodeWarning& log, string& expl);
    word EraseForward(const CodeWarning& log, string& expl);
+   word EraseFunction(const CodeWarning& log, string& expl);
    word EraseLineBreak(const CodeWarning& log, string& expl);
    word EraseMutableTag(const CodeWarning& log, string& expl);
    word EraseNoexceptTag(const CodeWarning& log, string& expl);
@@ -176,17 +179,16 @@ private:
    word TagAsOverride(const CodeWarning& log, string& expl);
    word TagAsStaticFunction(const CodeWarning& log, string& expl);
 
-   //  Erases the line of code referenced by LOG.
+   //  Erases the line of code addressed by POS.
    //
-   word EraseCode(const CodeWarning& log, string& expl);
+   word EraseCode(size_t pos, string& expl);
 
-   //  Erases the line of code referenced by LOG.  Comments on preceding
+   //  Erases the line of code addressed by POS.  Comments on preceding
    //  lines, up to the next line of code, are also erased if a comment or
    //  right brace follows the erased code.  DELIMITERS are the characters
    //  where the code ends.
    //
-   word EraseCode
-      (const CodeWarning& log, const std::string& delimiters, string& expl);
+   word EraseCode(size_t pos, const std::string& delimiters, string& expl);
 
    //  Sorts #include directives in standard order.
    //
@@ -201,6 +203,13 @@ private:
    //
    word EraseBlankLinePairs();
 
+   //  Removes a blank line that
+   //  o precedes or follows an access control
+   //  o precedes or follows a left brace
+   //  o precedes a right brace
+   //
+   word EraseOffsets();
+
    //  Removes trailing blanks.  Always invoked on source that was changed.
    //
    word EraseTrailingBlanks();
@@ -209,12 +218,16 @@ private:
    //
    word ConvertTabsToBlanks();
 
+   //  Removes a separator that is preceded or followed by a brace or separator.
+   //  Always invoked on source that was changed.
+   //
+   word EraseEmptySeparators();
+
    //  Stores a line of code.
    //
    struct SourceLine
    {
-      SourceLine(const string& code, size_t line) noexcept :
-         line(line), code(code) { }
+      SourceLine(const string& code, size_t line) : line(line), code(code) { }
 
       //  The code's line number (the first line is 0, the same as CodeWarning
       //  and Lexer).  A line added by the editor has a line number of SIZE_MAX.
@@ -242,11 +255,9 @@ private:
       Iter iter;   // location in SourceList
       size_t pos;  // position in iter->code
 
-      explicit CodeLocation(const Iter& i) noexcept :
-         iter(i), pos(string::npos) { }
+      explicit CodeLocation(const Iter& i) : iter(i), pos(string::npos) { }
 
-      CodeLocation(const Iter& i, size_t p) noexcept :
-         iter(i), pos(p) { }
+      CodeLocation(const Iter& i, size_t p) : iter(i), pos(p) { }
    };
 
    //  Returns the source code.
@@ -442,9 +453,16 @@ private:
    //
    Iter CodeBegin();
 
-   //  Returns true if a comment or brace follows the code referenced by ITER.
+   //  Returns true if the code referenced by ITER is followed by more code,
+   //  without an intervening comment or right brace.
    //
-   const bool CommentOrBraceFollows(const Iter& iter) const;
+   const bool CodeFollowsImmediately(const Iter& iter) const;
+
+   //  Returns the start of any comments that precede ITER, including an
+   //  fn_name definition if funcName is set.  Returns ITER if it is not
+   //  preceded by any such items.
+   //
+   Iter IntroStart(const Iter& iter, bool funcName);
 
    //  If INCLUDE specifies a file in groups 1 to 4 (see CodeFile.CalcGroup),
    //  this simplifies sorting by replacing the characters that enclose the

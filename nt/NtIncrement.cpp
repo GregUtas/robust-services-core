@@ -2435,19 +2435,19 @@ RegistryItem::~RegistryItem()
 
 //------------------------------------------------------------------------------
 
-void RegistryItem::Display(ostream& stream,
-   const string& prefix, const Flags& options) const
-{
-   stream << prefix << "index=" << index_ << CRLF;
-}
-
-//------------------------------------------------------------------------------
-
 ptrdiff_t RegistryItem::CellDiff()
 {
    int local;
    auto fake = reinterpret_cast< const RegistryItem* >(&local);
    return ptrdiff(&fake->rid_, fake);
+}
+
+//------------------------------------------------------------------------------
+
+void RegistryItem::Display(ostream& stream,
+   const string& prefix, const Flags& options) const
+{
+   stream << prefix << "index=" << index_ << CRLF;
 }
 
 //------------------------------------------------------------------------------

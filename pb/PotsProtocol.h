@@ -223,7 +223,6 @@ public:
    static const Ind InitiationAck  = 2;  // service initiation succeeded
    static const Ind InitiationNack = 3;  // service initiation failed
    static const Ind NextInd        = 4;  // next available indicator
-   static const Ind MaxInd         = UINT8_MAX;
 
    //  Deleted because this class is not intended to be instantiated.
    //

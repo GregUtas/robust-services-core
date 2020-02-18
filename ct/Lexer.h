@@ -327,6 +327,10 @@ public:
    //  continues a previous line.
    //
    void GetDepth(size_t line, int8_t& depth, bool& cont) const;
+
+   //  Initializes the keyword and operator hash tables.
+   //
+   static bool Initialize();
 private:
    //  Used by PreprocessSource, which creates a clone of "this" lexer to
    //  do the work.
@@ -402,10 +406,6 @@ private:
    //  before returning.
    //
    void SetDepth(size_t& start, int8_t depth1, int8_t depth2);
-
-   //  Initializes the keyword and operator hash tables.
-   //
-   static bool Initialize();
 
    //  Indicates that the depth of a line of code has not yet been determined.
    //
@@ -490,10 +490,6 @@ private:
    typedef std::pair< std::string, Cxx::Type > TypePair;
    typedef std::unique_ptr< TypesTable > TypesTablePtr;
    static TypesTablePtr Types;
-
-   //  Set by invoking Initialize().
-   //
-   static bool Initialized;
 };
 }
 #endif

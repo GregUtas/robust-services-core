@@ -491,6 +491,8 @@ enum Warning
    ValueArgumentModified,    // argument passed by value is modified
    ReturnsNonConstMember,    // returns non-const reference or pointer to member
    FunctionCouldBeMember,    // static|free but has an indirect class argument
+   ExplicitConstructor,      // constructor need not be tagged explicit
+   BitwiseOperatorOnBoolean, // operator | or & used on boolean
    Warning_N                 // number of warnings
 };
 
@@ -522,6 +524,7 @@ enum LineType
    OpenBrace,             // {
    CloseBrace,            // }
    CloseBraceSemicolon,   // };
+   AccessControl,         // public: protected: private:
    DebugFt,               // Debug::ft(Class_Func);
    FunctionName,          // fn_name Class_Func = "Class.Func";
    FunctionNameSplit,     // fn_name Class_Func =\n "Class.Func";

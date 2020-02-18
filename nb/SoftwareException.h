@@ -45,7 +45,7 @@ public:
 
    //  Virtual to allow subclassing.
    //
-   virtual ~SoftwareException() noexcept;
+   virtual ~SoftwareException();
 
    //  Overridden to display member variables.
    //

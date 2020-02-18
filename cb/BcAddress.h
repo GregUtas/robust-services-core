@@ -211,7 +211,7 @@ public:
 
    //  Returns the digit at position I.
    //
-   Digit GetDigit(DigitCount i) const;
+   Digit At(DigitCount i) const;
 
    //  Converts the string to an address.
    //

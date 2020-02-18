@@ -133,7 +133,6 @@ void LogThread::Display(ostream& stream,
 {
    Thread::Display(stream, prefix, options);
 
-   auto lead = prefix + spaces(2);
    stream << prefix << "NoSpoolingMessageCount : ";
    stream << NoSpoolingMessageCount_ << CRLF;
    stream << prefix << "noSpoolingMessageCount : ";

@@ -145,6 +145,14 @@ DigitString::Rc DigitString::AddDigits(const DigitString& ds)
 
 //------------------------------------------------------------------------------
 
+Digit DigitString::At(DigitCount i) const
+{
+   if(i < Size()) return Digit(digits_[i]);
+   return NilDigit;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name DigitString_Clear = "DigitString.Clear";
 
 void DigitString::Clear()
@@ -162,14 +170,6 @@ void DigitString::Display(ostream& stream, const string& prefix) const
    stream << prefix << "digits : ";
    for(auto i = 0; i < size_; ++i) stream << DigitToChar[digits_[i]];
    stream << CRLF;
-}
-
-//------------------------------------------------------------------------------
-
-Digit DigitString::GetDigit(DigitCount i) const
-{
-   if(i < Size()) return Digit(digits_[i]);
-   return NilDigit;
 }
 
 //------------------------------------------------------------------------------

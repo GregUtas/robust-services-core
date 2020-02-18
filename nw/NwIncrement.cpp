@@ -65,6 +65,11 @@ NwClearCommand::NwClearCommand(bool bind) : ClearCommand(false)
    if(bind) BindParm(*new NwClearWhatParm);
 }
 
+void NwClearCommand::Patch(sel_t selector, void* arguments)
+{
+   ClearCommand::Patch(selector, arguments);
+}
+
 fn_name NwClearCommand_ProcessSubcommand = "NwClearCommand.ProcessSubcommand";
 
 word NwClearCommand::ProcessSubcommand(CliThread& cli, id_t index) const
@@ -118,6 +123,11 @@ NwExcludeCommand::NwExcludeCommand(bool bind) : ExcludeCommand(false)
    if(bind) BindParm(*new NwExcludeWhatParm);
 }
 
+void NwExcludeCommand::Patch(sel_t selector, void* arguments)
+{
+   ExcludeCommand::Patch(selector, arguments);
+}
+
 fn_name NwExcludeCommand_ProcessSubcommand =
    "NwExcludeCommand.ProcessSubcommand";
 
@@ -162,6 +172,11 @@ NwIncludeWhatParm::NwIncludeWhatParm()
 NwIncludeCommand::NwIncludeCommand(bool bind) : IncludeCommand(false)
 {
    if(bind) BindParm(*new NwIncludeWhatParm);
+}
+
+void NwIncludeCommand::Patch(sel_t selector, void* arguments)
+{
+   IncludeCommand::Patch(selector, arguments);
 }
 
 fn_name NwIncludeCommand_ProcessSubcommand =
@@ -376,6 +391,11 @@ word IpPortsCommand::ProcessCommand(CliThread& cli) const
 //
 NwQueryCommand::NwQueryCommand(bool bind) : QueryCommand(bind) { }
 
+void NwQueryCommand::Patch(sel_t selector, void* arguments)
+{
+   QueryCommand::Patch(selector, arguments);
+}
+
 fn_name NwQueryCommand_ProcessSubcommand = "NwQueryCommand.ProcessSubcommand";
 
 word NwQueryCommand::ProcessSubcommand(CliThread& cli, id_t index) const
@@ -395,6 +415,11 @@ word NwQueryCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 //
 //  The STATUS command.
 //
+void NwStatusCommand::Patch(sel_t selector, void* arguments)
+{
+   StatusCommand::Patch(selector, arguments);
+}
+
 fn_name NwStatusCommand_ProcessCommand = "NwStatusCommand.ProcessCommand";
 
 word NwStatusCommand::ProcessCommand(CliThread& cli) const

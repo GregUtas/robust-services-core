@@ -460,7 +460,7 @@ word CodeCoverage::Merge(std::ostringstream& expl)
    //
    for(auto p = prevTests_.cbegin(); p != prevTests_.cend(); ++p)
    {
-      if((currTests_.find(*p) == currTests_.cend()) &
+      if((currTests_.find(*p) == currTests_.cend()) &&
          (testdb->GetState(*p) != TestDatabase::Invalid))
       {
          currTests_.insert(*p);

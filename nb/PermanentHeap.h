@@ -39,6 +39,10 @@ public:
    //  Returns the default heap.
    //
    static PermanentHeap* Instance();
+
+   //  Overridden for patching.
+   //
+   void Patch(sel_t selector, void* arguments) override;
 private:
    //  Private to restrict creation to Instance.
    //

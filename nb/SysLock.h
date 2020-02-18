@@ -45,7 +45,7 @@ class SysLock
 public:
    //  Creates the mutex.
    //
-   explicit SysLock();
+   SysLock();
 
    //  Deletes the mutex.
    //

@@ -688,6 +688,10 @@ private:
    //
    void CheckCast(const StackArg& inArg, const StackArg& outArg) const;
 
+   //  Generates a log when a bitwise operator is used on a boolean.
+   //
+   void CheckBitwiseOp(const StackArg& arg1, const StackArg& arg2) const;
+
    //  Displays operator new or operator new[].
    //
    void DisplayNew(std::ostream& stream) const;

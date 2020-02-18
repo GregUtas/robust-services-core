@@ -3584,7 +3584,7 @@ TypeMatch TypeSpec::MustMatchWith(const StackArg& that) const
    }
    else if((match == Abridgeable) || (match == Promotable))
    {
-      if((*this->Name() == BOOL_STR) || (*that.item->Name() == BOOL_STR))
+      if((*this->Name() == BOOL_STR) || that.IsBool())
       {
          GetFile()->LogPos(Context::GetPos(), BoolMixedWithNumeric);
       }

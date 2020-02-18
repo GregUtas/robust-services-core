@@ -671,6 +671,8 @@ CallBase::DigitString::AddDigits(CallBase::DigitString* const,const std::basic_s
    sn/PotsHtlService.cpp
    sn/PotsProxyHandlers.cpp
    sn/PotsWmlService.cpp
+CallBase::DigitString::At [cb/BcAddress.h]
+   cb/DigitString.cpp
 CallBase::DigitString::Clear [cb/BcAddress.h]
    cb/DigitString.cpp
    sn/PotsCcwService.cpp
@@ -695,8 +697,6 @@ CallBase::DigitString::Empty [cb/BcAddress.h]
    sn/PotsBcHandlers.cpp
    sn/PotsCfxService.cpp
    sn/PotsWmlService.cpp
-CallBase::DigitString::GetDigit [cb/BcAddress.h]
-   cb/DigitString.cpp
 CallBase::DigitString::IsCompleteAddress [cb/BcAddress.h]
    cb/DigitString.cpp
    sn/PotsBcHandlers.cpp
@@ -5196,6 +5196,8 @@ CodeTools::FindForwardCandidates [ct/CodeFile.cpp]
    ct/CodeFile.cpp
 CodeTools::GetTransitiveBases [ct/CodeFile.cpp]
    ct/CodeFile.cpp
+CodeTools::IsSortedByPosition [ct/CodeFile.cpp]
+   ct/CodeFile.cpp
 CodeTools::RemoveAliasedClasses [ct/CodeFile.cpp]
    ct/CodeFile.cpp
 CodeTools::RemoveIncludedBaseItems [ct/CodeFile.cpp]
@@ -5863,6 +5865,7 @@ CodeTools::AssignmentType::Returned [ct/CodeTypes.h]
    ct/CxxStatement.cpp
 CodeTools::BOOL_STR [ct/CodeTypes.h]
    ct/CodeTypes.cpp
+   ct/CxxExecute.cpp
    ct/CxxNamed.cpp
    ct/CxxRoot.cpp
    ct/CxxToken.cpp
@@ -6073,6 +6076,7 @@ CodeTools::ENUM_STR [ct/CodeTypes.h]
 CodeTools::EXPLICIT_STR [ct/CodeTypes.h]
    ct/CodeTypes.cpp
    ct/CxxScope.cpp
+   ct/Editor.cpp
    ct/Lexer.cpp
 CodeTools::EXTERN_STR [ct/CodeTypes.h]
    ct/CodeTypes.cpp
@@ -6319,6 +6323,9 @@ CodeTools::LineType [ct/CodeTypes.h]
    ct/CodeWarning.h
    ct/Editor.cpp
    ct/Editor.h
+CodeTools::LineType::AccessControl [ct/CodeTypes.h]
+   ct/CodeFile.cpp
+   ct/Editor.cpp
 CodeTools::LineType::AnyLine [ct/CodeTypes.h]
    ct/CodeFile.cpp
 CodeTools::LineType::Blank [ct/CodeTypes.h]
@@ -6491,16 +6498,19 @@ CodeTools::OVERRIDE_STR [ct/CodeTypes.h]
    ct/Editor.cpp
    ct/Lexer.cpp
 CodeTools::PRIVATE_STR [ct/CodeTypes.h]
+   ct/CodeFile.cpp
    ct/CodeTypes.cpp
    ct/Cxx.cpp
    ct/Editor.cpp
    ct/Lexer.cpp
 CodeTools::PROTECTED_STR [ct/CodeTypes.h]
+   ct/CodeFile.cpp
    ct/CodeTypes.cpp
    ct/Cxx.cpp
    ct/Editor.cpp
    ct/Lexer.cpp
 CodeTools::PUBLIC_STR [ct/CodeTypes.h]
+   ct/CodeFile.cpp
    ct/CodeTypes.cpp
    ct/Cxx.cpp
    ct/Editor.cpp
@@ -6833,6 +6843,9 @@ CodeTools::Warning::ArgumentCouldBeConstRef [ct/CodeTypes.h]
 CodeTools::Warning::ArgumentUnused [ct/CodeTypes.h]
    ct/CodeWarning.cpp
    ct/CxxScope.cpp
+CodeTools::Warning::BitwiseOperatorOnBoolean [ct/CodeTypes.h]
+   ct/CodeWarning.cpp
+   ct/CxxToken.cpp
 CodeTools::Warning::BoolMixedWithNumeric [ct/CodeTypes.h]
    ct/CodeWarning.cpp
    ct/CxxNamed.cpp
@@ -6875,6 +6888,7 @@ CodeTools::Warning::DataCouldBeConstPtr [ct/CodeTypes.h]
 CodeTools::Warning::DataInitOnly [ct/CodeTypes.h]
    ct/CodeWarning.cpp
    ct/CxxScope.cpp
+   ct/Editor.cpp
 CodeTools::Warning::DataNeedNotBeMutable [ct/CodeTypes.h]
    ct/CodeWarning.cpp
    ct/CxxScope.cpp
@@ -6888,9 +6902,11 @@ CodeTools::Warning::DataUninitialized [ct/CodeTypes.h]
 CodeTools::Warning::DataUnused [ct/CodeTypes.h]
    ct/CodeWarning.cpp
    ct/CxxScope.cpp
+   ct/Editor.cpp
 CodeTools::Warning::DataWriteOnly [ct/CodeTypes.h]
    ct/CodeWarning.cpp
    ct/CxxScope.cpp
+   ct/Editor.cpp
 CodeTools::Warning::DebugFtNameDuplicated [ct/CodeTypes.h]
    ct/CodeFile.cpp
    ct/CodeWarning.cpp
@@ -6948,6 +6964,10 @@ CodeTools::Warning::EnumUnused [ct/CodeTypes.h]
 CodeTools::Warning::EnumeratorUnused [ct/CodeTypes.h]
    ct/CodeWarning.cpp
    ct/CxxScoped.cpp
+   ct/Editor.cpp
+CodeTools::Warning::ExplicitConstructor [ct/CodeTypes.h]
+   ct/CodeWarning.cpp
+   ct/CxxScope.cpp
    ct/Editor.cpp
 CodeTools::Warning::ForwardAdd [ct/CodeTypes.h]
    ct/CodeFile.cpp
@@ -7007,6 +7027,7 @@ CodeTools::Warning::FunctionNotSorted [ct/CodeTypes.h]
 CodeTools::Warning::FunctionUnused [ct/CodeTypes.h]
    ct/CodeWarning.cpp
    ct/CxxScope.cpp
+   ct/Editor.cpp
 CodeTools::Warning::FunctionalCast [ct/CodeTypes.h]
    ct/CodeWarning.cpp
    ct/CxxToken.cpp
@@ -8265,6 +8286,9 @@ CodeTools::Cxx::ItemType::Macro [ct/Cxx.h]
    ct/CxxDirective.h
    ct/CxxNamed.cpp
    ct/CxxSymbols.cpp
+CodeTools::Cxx::ItemType::MemInit [ct/Cxx.h]
+   ct/CxxNamed.h
+   ct/Editor.cpp
 CodeTools::Cxx::ItemType::Namespace [ct/Cxx.h]
    ct/CxxArea.cpp
    ct/CxxArea.h
@@ -10269,6 +10293,8 @@ CodeTools::Macro::Shrink [ct/CxxDirective.h]
    ct/CxxDirective.cpp
 CodeTools::Macro::TypeString [ct/CxxDirective.h]
    ct/CxxDirective.cpp
+CodeTools::Macro::WasRead [ct/CxxDirective.h]
+   ct/CxxDirective.cpp
 CodeTools::Macro::name_ [ct/CxxDirective.h]
    ct/CxxDirective.cpp
    ct/CxxDirective.h
@@ -10925,6 +10951,10 @@ CodeTools::StackArg::IncrPtrs [ct/CxxExecute.h]
    ct/CxxToken.cpp
 CodeTools::StackArg::InvokeSet [ct/CxxExecute.h]
    ct/CxxToken.cpp
+CodeTools::StackArg::IsBool [ct/CxxExecute.h]
+   ct/CxxExecute.cpp
+   ct/CxxNamed.cpp
+   ct/CxxToken.cpp
 CodeTools::StackArg::IsConst [ct/CxxExecute.h]
    ct/CxxExecute.cpp
    ct/CxxScope.cpp
@@ -11544,6 +11574,8 @@ CodeTools::NamedVector [ct/CxxFwd.h]
    ct/CodeFile.h
    ct/CxxArea.cpp
    ct/CxxArea.h
+   ct/CxxScoped.cpp
+   ct/CxxScoped.h
 CodeTools::Namespace [ct/CxxFwd.h]
    ct/CxxFwd.h
    ct/CxxNamed.h
@@ -12206,12 +12238,12 @@ CodeTools::CxxNamed::GetDeclFid [ct/CxxNamed.h]
    ct/CxxNamed.cpp
    ct/CxxScoped.h
 CodeTools::CxxNamed::GetDeclFile [ct/CxxNamed.h]
-   ct/CodeFile.cpp
    ct/CxxNamed.cpp
    ct/CxxScope.cpp
    ct/CxxScope.h
    ct/CxxScoped.cpp
 CodeTools::CxxNamed::GetDefnFile [ct/CxxNamed.h]
+   ct/CodeFile.cpp
    ct/CxxScope.cpp
    ct/CxxScope.h
    ct/CxxScoped.cpp
@@ -12257,6 +12289,7 @@ CodeTools::CxxNamed::GetLoc [ct/CxxNamed.h]
 CodeTools::CxxNamed::GetMate [ct/CxxNamed.h]
    ct/CodeWarning.cpp
    ct/CxxScope.h
+   ct/Editor.cpp
 CodeTools::CxxNamed::GetPos [ct/CxxNamed.h]
    ct/CodeFile.cpp
    ct/CxxArea.cpp
@@ -13988,7 +14021,6 @@ CodeTools::ClassData::first_ [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::ClassData::init_ [ct/CxxScope.h]
    ct/CxxScope.cpp
-   ct/CxxScope.h
 CodeTools::ClassData::last_ [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::ClassData::mutable_ [ct/CxxScope.h]
@@ -14477,6 +14509,7 @@ CodeTools::Function::GetDecl(const CodeTools::Function* const) [ct/CxxScope.h]
 CodeTools::Function::GetDeclFile [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::GetDefn [ct/CxxScope.h]
+   ct/CodeFile.cpp
    ct/CxxScope.cpp
    ct/CxxScope.h
    ct/Editor.cpp
@@ -14516,6 +14549,8 @@ CodeTools::Function::Invoke [ct/CxxScope.h]
    ct/CxxToken.cpp
 CodeTools::Function::InvokeDefaultBaseCtor [ct/CxxScope.h]
    ct/CxxScope.cpp
+CodeTools::Function::IsDefaulted [ct/CxxScope.h]
+   ct/CxxScope.cpp
 CodeTools::Function::IsDeleted [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::IsExplicit [ct/CxxScope.h]
@@ -14548,6 +14583,7 @@ CodeTools::Function::IsUnused [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::IsVirtual [ct/CxxScope.h]
    ct/CodeWarning.cpp
+   ct/CxxScope.cpp
 CodeTools::Function::ItemAccessed [ct/CxxScope.h]
    ct/CxxNamed.cpp
    ct/CxxScope.cpp
@@ -14647,6 +14683,8 @@ CodeTools::Function::UpdateThisArg [ct/CxxScope.h]
    ct/CxxToken.cpp
 CodeTools::Function::WasCalled [ct/CxxScope.h]
    ct/CxxScope.cpp
+CodeTools::Function::WasRead [ct/CxxScope.h]
+   ct/CxxScope.cpp
 CodeTools::Function::XrefName [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::args_ [ct/CxxScope.h]
@@ -14659,7 +14697,6 @@ CodeTools::Function::call_ [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::calls_ [ct/CxxScope.h]
    ct/CxxScope.cpp
-   ct/CxxScope.h
 CodeTools::Function::code_ [ct/CxxScope.h]
    ct/CxxScope.cpp
 CodeTools::Function::const_ [ct/CxxScope.h]
@@ -14669,7 +14706,6 @@ CodeTools::Function::constexpr_ [ct/CxxScope.h]
    ct/CxxScope.cpp
    ct/CxxScope.h
 CodeTools::Function::defaulted_ [ct/CxxScope.h]
-   ct/CxxScope.cpp
    ct/CxxScope.h
 CodeTools::Function::defn_ [ct/CxxScope.h]
    ct/CxxScope.cpp
@@ -14886,6 +14922,8 @@ CodeTools::Enum_ctor [ct/CxxScoped.cpp]
 CodeTools::Enum_dtor [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
 CodeTools::Enumerator_Check [ct/CxxScoped.cpp]
+   ct/CxxScoped.cpp
+CodeTools::Enumerator_CheckIfUnused [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
 CodeTools::Enumerator_EnterBlock [ct/CxxScoped.cpp]
    ct/CxxScoped.cpp
@@ -15143,6 +15181,11 @@ CodeTools::CxxScoped::AddFiles [ct/CxxScoped.h]
    ct/CxxArea.cpp
    ct/CxxArea.h
    ct/CxxScoped.cpp
+CodeTools::CxxScoped::AddUser [ct/CxxScoped.h]
+   ct/CxxNamed.cpp
+   ct/CxxScope.cpp
+   ct/CxxScoped.cpp
+   ct/CxxScoped.h
 CodeTools::CxxScoped::BroadestAccessUsed [ct/CxxScoped.h]
    ct/CxxScoped.cpp
 CodeTools::CxxScoped::CheckAccessControl [ct/CxxScoped.h]
@@ -15160,6 +15203,7 @@ CodeTools::CxxScoped::CheckIfUnused [ct/CxxScoped.h]
    ct/CxxScope.cpp
    ct/CxxScope.h
    ct/CxxScoped.cpp
+   ct/CxxScoped.h
 CodeTools::CxxScoped::CxxScoped [ct/CxxScoped.h]
    ct/CxxScoped.cpp
 CodeTools::CxxScoped::DisplayFiles [ct/CxxScoped.h]
@@ -15229,6 +15273,14 @@ CodeTools::CxxScoped::RecordAccess [ct/CxxScoped.h]
    ct/CxxToken.cpp
 CodeTools::CxxScoped::RecordTemplateAccess [ct/CxxScoped.h]
    ct/CxxScoped.cpp
+CodeTools::CxxScoped::Shrink [ct/CxxScoped.h]
+   ct/CxxScoped.cpp
+CodeTools::CxxScoped::Users [ct/CxxScoped.h]
+   ct/CxxArea.cpp
+   ct/CxxDirective.cpp
+   ct/CxxScope.cpp
+   ct/CxxScoped.cpp
+   ct/Editor.cpp
 CodeTools::CxxScoped::access_ [ct/CxxScoped.h]
    ct/CxxScoped.cpp
    ct/CxxScoped.h
@@ -15237,6 +15289,9 @@ CodeTools::CxxScoped::protected_ [ct/CxxScoped.h]
 CodeTools::CxxScoped::public_ [ct/CxxScoped.h]
    ct/CxxScoped.cpp
 CodeTools::CxxScoped::scope_ [ct/CxxScoped.h]
+   ct/CxxScoped.cpp
+   ct/CxxScoped.h
+CodeTools::CxxScoped::users_ [ct/CxxScoped.h]
    ct/CxxScoped.cpp
    ct/CxxScoped.h
 CodeTools::CxxScoped::~CxxScoped [ct/CxxScoped.h]
@@ -15315,6 +15370,8 @@ CodeTools::Enumerator [ct/CxxScoped.h]
    ct/CxxSymbols.cpp
    ct/Editor.cpp
 CodeTools::Enumerator::Check [ct/CxxScoped.h]
+   ct/CxxScoped.cpp
+CodeTools::Enumerator::CheckIfUnused [ct/CxxScoped.h]
    ct/CxxScoped.cpp
 CodeTools::Enumerator::Display [ct/CxxScoped.h]
    ct/CxxScoped.cpp
@@ -16753,6 +16810,8 @@ CodeTools::Operation_ArgCapacity [ct/CxxToken.cpp]
    ct/CxxToken.cpp
 CodeTools::Operation_Back [ct/CxxToken.cpp]
    ct/CxxToken.cpp
+CodeTools::Operation_CheckBitwiseOp [ct/CxxToken.cpp]
+   ct/CxxToken.cpp
 CodeTools::Operation_CheckCast [ct/CxxToken.cpp]
    ct/CxxToken.cpp
 CodeTools::Operation_ElideForward [ct/CxxToken.cpp]
@@ -17572,6 +17631,8 @@ CodeTools::Operation::ArgsSize [ct/CxxToken.h]
    ct/CxxToken.cpp
 CodeTools::Operation::Back [ct/CxxToken.h]
    ct/CxxToken.cpp
+CodeTools::Operation::CheckBitwiseOp [ct/CxxToken.h]
+   ct/CxxToken.cpp
 CodeTools::Operation::CheckCast [ct/CxxToken.h]
    ct/CxxToken.cpp
 CodeTools::Operation::DisplayArg [ct/CxxToken.h]
@@ -17689,7 +17750,7 @@ CodeTools::Editor_Changed2 [ct/Editor.cpp]
    ct/Editor.cpp
 CodeTools::Editor_CodeBegin [ct/Editor.cpp]
    ct/Editor.cpp
-CodeTools::Editor_CommentOrBraceFollows [ct/Editor.cpp]
+CodeTools::Editor_CodeFollowsImmediately [ct/Editor.cpp]
    ct/Editor.cpp
 CodeTools::Editor_ConvertTabsToBlanks [ct/Editor.cpp]
    ct/Editor.cpp
@@ -17711,11 +17772,19 @@ CodeTools::Editor_EraseCode2 [ct/Editor.cpp]
    ct/Editor.cpp
 CodeTools::Editor_EraseConst [ct/Editor.cpp]
    ct/Editor.cpp
+CodeTools::Editor_EraseData [ct/Editor.cpp]
+   ct/Editor.cpp
 CodeTools::Editor_EraseEmptyNamespace [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::Editor_EraseEmptySeparators [ct/Editor.cpp]
    ct/Editor.cpp
 CodeTools::Editor_EraseEnumerator [ct/Editor.cpp]
    ct/Editor.cpp
+CodeTools::Editor_EraseExplicitTag [ct/Editor.cpp]
+   ct/Editor.cpp
 CodeTools::Editor_EraseForward [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::Editor_EraseFunction [ct/Editor.cpp]
    ct/Editor.cpp
 CodeTools::Editor_EraseLineBreak1 [ct/Editor.cpp]
    ct/Editor.cpp
@@ -17724,6 +17793,8 @@ CodeTools::Editor_EraseLineBreak2 [ct/Editor.cpp]
 CodeTools::Editor_EraseMutableTag [ct/Editor.cpp]
    ct/Editor.cpp
 CodeTools::Editor_EraseNoexceptTag [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::Editor_EraseOffsets [ct/Editor.cpp]
    ct/Editor.cpp
 CodeTools::Editor_EraseOverrideTag [ct/Editor.cpp]
    ct/Editor.cpp
@@ -17818,6 +17889,8 @@ CodeTools::Editor_InsertPatchDefn [ct/Editor.cpp]
 CodeTools::Editor_InsertPrefix [ct/Editor.cpp]
    ct/Editor.cpp
 CodeTools::Editor_InsertUsing [ct/Editor.cpp]
+   ct/Editor.cpp
+CodeTools::Editor_IntroStart [ct/Editor.cpp]
    ct/Editor.cpp
 CodeTools::Editor_LineAfterFunc [ct/Editor.cpp]
    ct/Editor.cpp
@@ -17951,14 +18024,14 @@ CodeTools::Editor::Changed(CodeTools::Editor* const,const std::iterator_t<CodeTo
    ct/Editor.cpp
 CodeTools::Editor::CodeBegin [ct/Editor.h]
    ct/Editor.cpp
+CodeTools::Editor::CodeFollowsImmediately [ct/Editor.h]
+   ct/Editor.cpp
 CodeTools::Editor::CodeLocation [ct/Editor.h]
    ct/Editor.cpp
    ct/Editor.h
 CodeTools::Editor::CodeLocation::iter [ct/Editor.h]
    ct/Editor.cpp
 CodeTools::Editor::CodeLocation::pos [ct/Editor.h]
-   ct/Editor.cpp
-CodeTools::Editor::CommentOrBraceFollows [ct/Editor.h]
    ct/Editor.cpp
 CodeTools::Editor::CommitCount [ct/Editor.h]
    ct/CodeFileSet.cpp
@@ -17983,17 +18056,25 @@ CodeTools::Editor::EraseBlankLine [ct/Editor.h]
    ct/Editor.cpp
 CodeTools::Editor::EraseBlankLinePairs [ct/Editor.h]
    ct/Editor.cpp
-CodeTools::Editor::EraseCode(CodeTools::Editor* const,const CodeTools::CodeWarning,const std::basic_string<char,std::char_traits<char>,std::allocator<char>>,std::basic_string<char,std::char_traits<char>,std::allocator<char>>) [ct/Editor.h]
+CodeTools::Editor::EraseCode(CodeTools::Editor* const,unsigned int,const std::basic_string<char,std::char_traits<char>,std::allocator<char>>,std::basic_string<char,std::char_traits<char>,std::allocator<char>>) [ct/Editor.h]
    ct/Editor.cpp
-CodeTools::Editor::EraseCode(CodeTools::Editor* const,const CodeTools::CodeWarning,std::basic_string<char,std::char_traits<char>,std::allocator<char>>) [ct/Editor.h]
+CodeTools::Editor::EraseCode(CodeTools::Editor* const,unsigned int,std::basic_string<char,std::char_traits<char>,std::allocator<char>>) [ct/Editor.h]
    ct/Editor.cpp
 CodeTools::Editor::EraseConst [ct/Editor.h]
    ct/Editor.cpp
+CodeTools::Editor::EraseData [ct/Editor.h]
+   ct/Editor.cpp
 CodeTools::Editor::EraseEmptyNamespace [ct/Editor.h]
+   ct/Editor.cpp
+CodeTools::Editor::EraseEmptySeparators [ct/Editor.h]
    ct/Editor.cpp
 CodeTools::Editor::EraseEnumerator [ct/Editor.h]
    ct/Editor.cpp
+CodeTools::Editor::EraseExplicitTag [ct/Editor.h]
+   ct/Editor.cpp
 CodeTools::Editor::EraseForward [ct/Editor.h]
+   ct/Editor.cpp
+CodeTools::Editor::EraseFunction [ct/Editor.h]
    ct/Editor.cpp
 CodeTools::Editor::EraseLineBreak(CodeTools::Editor* const,const CodeTools::CodeWarning,std::basic_string<char,std::char_traits<char>,std::allocator<char>>) [ct/Editor.h]
    ct/Editor.cpp
@@ -18002,6 +18083,8 @@ CodeTools::Editor::EraseLineBreak(CodeTools::Editor* const,const std::iterator_t
 CodeTools::Editor::EraseMutableTag [ct/Editor.h]
    ct/Editor.cpp
 CodeTools::Editor::EraseNoexceptTag [ct/Editor.h]
+   ct/Editor.cpp
+CodeTools::Editor::EraseOffsets [ct/Editor.h]
    ct/Editor.cpp
 CodeTools::Editor::EraseOverrideTag [ct/Editor.h]
    ct/Editor.cpp
@@ -18103,6 +18186,8 @@ CodeTools::Editor::InsertPatchDefn [ct/Editor.h]
 CodeTools::Editor::InsertPrefix [ct/Editor.h]
    ct/Editor.cpp
 CodeTools::Editor::InsertUsing [ct/Editor.h]
+   ct/Editor.cpp
+CodeTools::Editor::IntroStart [ct/Editor.h]
    ct/Editor.cpp
 CodeTools::Editor::Iter [ct/Editor.h]
    ct/Editor.cpp
@@ -18639,11 +18724,10 @@ CodeTools::Lexer::Initialize() [ct/Lexer.h]
    ct/Lexer.cpp
 CodeTools::Lexer::Initialize(CodeTools::Lexer* const,const std::basic_string<char,std::char_traits<char>,std::allocator<char>>*) [ct/Lexer.h]
    ct/CodeFile.cpp
+   ct/CtModule.cpp
    ct/CxxArea.cpp
    ct/Lexer.cpp
    ct/Parser.cpp
-CodeTools::Lexer::Initialized [ct/Lexer.h]
-   ct/Lexer.cpp
 CodeTools::Lexer::KeywordPair [ct/Lexer.h]
    ct/Lexer.cpp
 CodeTools::Lexer::KeywordTable [ct/Lexer.h]
@@ -29499,7 +29583,6 @@ NodeBase::spaces [nb/Formatters.h]
    nb/LogBufferRegistry.cpp
    nb/LogGroup.cpp
    nb/LogGroupRegistry.cpp
-   nb/LogThread.cpp
    nb/MemoryTrace.cpp
    nb/ModuleRegistry.cpp
    nb/MutexRegistry.cpp
@@ -33075,6 +33158,8 @@ NodeBase::ClearCommand::FactionsIndex [nb/NbIncrement.h]
 NodeBase::ClearCommand::LastNbIndex [nb/NbIncrement.h]
    nb/NbIncrement.h
    nw/NwIncrement.h
+NodeBase::ClearCommand::Patch [nb/NbIncrement.h]
+   nb/NbIncrement.cpp
 NodeBase::ClearCommand::ProcessCommand [nb/NbIncrement.h]
    nb/NbIncrement.cpp
 NodeBase::ClearCommand::ProcessSubcommand [nb/NbIncrement.h]
@@ -33112,6 +33197,8 @@ NodeBase::ExcludeCommand::ExcludeThreadIndex [nb/NbIncrement.h]
 NodeBase::ExcludeCommand::LastNbIndex [nb/NbIncrement.h]
    nb/NbIncrement.h
    nw/NwIncrement.h
+NodeBase::ExcludeCommand::Patch [nb/NbIncrement.h]
+   nb/NbIncrement.cpp
 NodeBase::ExcludeCommand::ProcessCommand [nb/NbIncrement.h]
    nb/NbIncrement.cpp
 NodeBase::ExcludeCommand::ProcessSubcommand [nb/NbIncrement.h]
@@ -33139,6 +33226,8 @@ NodeBase::IncludeCommand::IncludeThreadIndex [nb/NbIncrement.h]
 NodeBase::IncludeCommand::LastNbIndex [nb/NbIncrement.h]
    nb/NbIncrement.h
    nw/NwIncrement.h
+NodeBase::IncludeCommand::Patch [nb/NbIncrement.h]
+   nb/NbIncrement.cpp
 NodeBase::IncludeCommand::ProcessCommand [nb/NbIncrement.h]
    nb/NbIncrement.cpp
 NodeBase::IncludeCommand::ProcessSubcommand [nb/NbIncrement.h]
@@ -33176,6 +33265,8 @@ NodeBase::LogsCommand::ListIndex [nb/NbIncrement.h]
    nb/NbIncrement.h
 NodeBase::LogsCommand::LogsCommand [nb/NbIncrement.h]
    nb/NbIncrement.cpp
+NodeBase::LogsCommand::Patch [nb/NbIncrement.h]
+   nb/NbIncrement.cpp
 NodeBase::LogsCommand::ProcessCommand [nb/NbIncrement.h]
    nb/NbIncrement.cpp
 NodeBase::LogsCommand::ProcessSubcommand [nb/NbIncrement.h]
@@ -33206,6 +33297,8 @@ NodeBase::QueryCommand::BufferIndex [nb/NbIncrement.h]
    nb/NbIncrement.h
 NodeBase::QueryCommand::LastNbIndex [nb/NbIncrement.h]
    nb/NbIncrement.h
+NodeBase::QueryCommand::Patch [nb/NbIncrement.h]
+   nb/NbIncrement.cpp
 NodeBase::QueryCommand::ProcessCommand [nb/NbIncrement.h]
    nb/NbIncrement.cpp
 NodeBase::QueryCommand::ProcessSubcommand [nb/NbIncrement.h]
@@ -33231,6 +33324,8 @@ NodeBase::SaveCommand [nb/NbIncrement.h]
 NodeBase::SaveCommand::LastNbIndex [nb/NbIncrement.h]
    nb/NbIncrement.h
    nt/NtIncrement.h
+NodeBase::SaveCommand::Patch [nb/NbIncrement.h]
+   nb/NbIncrement.cpp
 NodeBase::SaveCommand::ProcessCommand [nb/NbIncrement.h]
    nb/NbIncrement.cpp
 NodeBase::SaveCommand::ProcessSubcommand [nb/NbIncrement.h]
@@ -33252,6 +33347,8 @@ NodeBase::SetCommand [nb/NbIncrement.h]
 NodeBase::SetCommand::LastNbIndex [nb/NbIncrement.h]
    nb/NbIncrement.h
    nt/NtIncrement.h
+NodeBase::SetCommand::Patch [nb/NbIncrement.h]
+   nb/NbIncrement.cpp
 NodeBase::SetCommand::ProcessCommand [nb/NbIncrement.h]
    nb/NbIncrement.cpp
 NodeBase::SetCommand::ProcessSubcommand [nb/NbIncrement.h]
@@ -33275,6 +33372,8 @@ NodeBase::SetWhatParm::SetWhatParm [nb/NbIncrement.h]
 NodeBase::StatusCommand [nb/NbIncrement.h]
    nb/NbIncrement.cpp
    nw/NwIncrement.h
+NodeBase::StatusCommand::Patch [nb/NbIncrement.h]
+   nb/NbIncrement.cpp
 NodeBase::StatusCommand::ProcessCommand [nb/NbIncrement.h]
    nb/NbIncrement.cpp
 NodeBase::StatusCommand::StatusCommand [nb/NbIncrement.h]
@@ -33615,6 +33714,8 @@ NodeBase::NbTracer::FactionStatus [nb/NbTracer.h]
    nb/NbTracer.cpp
    nb/Thread.cpp
 NodeBase::NbTracer::NbTracer [nb/NbTracer.h]
+   nb/NbTracer.cpp
+NodeBase::NbTracer::Patch [nb/NbTracer.h]
    nb/NbTracer.cpp
 NodeBase::NbTracer::QuerySelections [nb/NbTracer.h]
    nb/NbIncrement.cpp
@@ -34049,8 +34150,6 @@ NodeBase::PooledObjectId [nb/NbTypes.h]
    nb/ObjectPool.h
    pb/PotsIncrement.cpp
    sb/LocalAddress.h
-   sb/MsgPort.cpp
-   sb/MsgPort.h
    sb/SbIncrement.cpp
    sb/SbPools.cpp
    sb/SbPools.h
@@ -34452,10 +34551,14 @@ NodeBase::Object::Patch [nb/Object.h]
    nb/MutexRegistry.h
    nb/NbDaemons.cpp
    nb/NbDaemons.h
+   nb/NbIncrement.cpp
+   nb/NbIncrement.h
    nb/NbModule.cpp
    nb/NbModule.h
    nb/NbPools.cpp
    nb/NbPools.h
+   nb/NbTracer.cpp
+   nb/NbTracer.h
    nb/ObjectPool.cpp
    nb/ObjectPool.h
    nb/ObjectPoolAudit.cpp
@@ -34464,6 +34567,8 @@ NodeBase::Object::Patch [nb/Object.h]
    nb/ObjectPoolRegistry.h
    nb/Permanent.cpp
    nb/Permanent.h
+   nb/PermanentHeap.cpp
+   nb/PermanentHeap.h
    nb/Pooled.cpp
    nb/Pooled.h
    nb/PooledClass.cpp
@@ -34498,6 +34603,8 @@ NodeBase::Object::Patch [nb/Object.h]
    nb/SysMutex.h
    nb/SysThread.h
    nb/SysThread.win.cpp
+   nb/SysTickTimer.h
+   nb/SysTickTimer.win.cpp
    nb/SysTime.cpp
    nb/SysTime.h
    nb/Temporary.cpp
@@ -34532,8 +34639,12 @@ NodeBase::Object::Patch [nb/Object.h]
    nw/IpServiceRegistry.h
    nw/NwDaemons.cpp
    nw/NwDaemons.h
+   nw/NwIncrement.cpp
+   nw/NwIncrement.h
    nw/NwModule.cpp
    nw/NwModule.h
+   nw/NwTracer.cpp
+   nw/NwTracer.h
    nw/SysIpL2Addr.h
    nw/SysIpL2Addr.win.cpp
    nw/SysIpL3Addr.h
@@ -34767,10 +34878,14 @@ NodeBase::Object::sel_t [nb/Object.h]
    nb/MutexRegistry.h
    nb/NbDaemons.cpp
    nb/NbDaemons.h
+   nb/NbIncrement.cpp
+   nb/NbIncrement.h
    nb/NbModule.cpp
    nb/NbModule.h
    nb/NbPools.cpp
    nb/NbPools.h
+   nb/NbTracer.cpp
+   nb/NbTracer.h
    nb/Object.h
    nb/ObjectPool.cpp
    nb/ObjectPool.h
@@ -34780,6 +34895,8 @@ NodeBase::Object::sel_t [nb/Object.h]
    nb/ObjectPoolRegistry.h
    nb/Permanent.cpp
    nb/Permanent.h
+   nb/PermanentHeap.cpp
+   nb/PermanentHeap.h
    nb/Pooled.cpp
    nb/Pooled.h
    nb/PooledClass.cpp
@@ -34814,6 +34931,8 @@ NodeBase::Object::sel_t [nb/Object.h]
    nb/SysMutex.h
    nb/SysThread.h
    nb/SysThread.win.cpp
+   nb/SysTickTimer.h
+   nb/SysTickTimer.win.cpp
    nb/SysTime.cpp
    nb/SysTime.h
    nb/Temporary.cpp
@@ -34848,8 +34967,12 @@ NodeBase::Object::sel_t [nb/Object.h]
    nw/IpServiceRegistry.h
    nw/NwDaemons.cpp
    nw/NwDaemons.h
+   nw/NwIncrement.cpp
+   nw/NwIncrement.h
    nw/NwModule.cpp
    nw/NwModule.h
+   nw/NwTracer.cpp
+   nw/NwTracer.h
    nw/SysIpL2Addr.h
    nw/SysIpL2Addr.win.cpp
    nw/SysIpL3Addr.h
@@ -35509,6 +35632,8 @@ NodeBase::PermanentHeap [nb/PermanentHeap.h]
    nb/PermanentHeap.h
 NodeBase::PermanentHeap::Instance [nb/PermanentHeap.h]
    nb/Memory.cpp
+   nb/PermanentHeap.cpp
+NodeBase::PermanentHeap::Patch [nb/PermanentHeap.h]
    nb/PermanentHeap.cpp
 NodeBase::PermanentHeap::PermanentHeap [nb/PermanentHeap.h]
    nb/PermanentHeap.cpp
@@ -38510,6 +38635,8 @@ NodeBase::Singleton [nb/SysTickTimer.h]
    nb/SysTickTimer.h
 NodeBase::SysTickTimer [nb/SysTickTimer.h]
    nb/Clock.cpp
+   nb/SysTickTimer.win.cpp
+NodeBase::SysTickTimer::Patch [nb/SysTickTimer.h]
    nb/SysTickTimer.win.cpp
 NodeBase::SysTickTimer::StartTick [nb/SysTickTimer.h]
    nb/Clock.cpp
@@ -41689,8 +41816,6 @@ NodeBase::Thread_RtcPercentUsed [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Thread_RtcTimeout [nb/Thread.cpp]
    nb/Thread.cpp
-NodeBase::Thread_RunningThread [nb/Thread.cpp]
-   nb/Thread.cpp
 NodeBase::Thread_Schedule [nb/Thread.cpp]
    nb/Thread.cpp
 NodeBase::Thread_Select [nb/Thread.cpp]
@@ -42590,8 +42715,6 @@ NodeBase::ThreadRegistry_AssociateIds [nb/ThreadRegistry.cpp]
 NodeBase::ThreadRegistry_BindThread [nb/ThreadRegistry.cpp]
    nb/ThreadRegistry.cpp
 NodeBase::ThreadRegistry_ClaimBlocks [nb/ThreadRegistry.cpp]
-   nb/ThreadRegistry.cpp
-NodeBase::ThreadRegistry_FindThread [nb/ThreadRegistry.cpp]
    nb/ThreadRegistry.cpp
 NodeBase::ThreadRegistry_Restarting [nb/ThreadRegistry.cpp]
    nb/ThreadRegistry.cpp
@@ -46623,6 +46746,8 @@ NetworkBase::NwClearCommand::LastNwIndex [nw/NwIncrement.h]
    sb/SbIncrement.h
 NetworkBase::NwClearCommand::NwClearCommand [nw/NwIncrement.h]
    nw/NwIncrement.cpp
+NetworkBase::NwClearCommand::Patch [nw/NwIncrement.h]
+   nw/NwIncrement.cpp
 NetworkBase::NwClearCommand::PeerIndex [nw/NwIncrement.h]
    nw/NwIncrement.cpp
    nw/NwIncrement.h
@@ -46657,6 +46782,8 @@ NetworkBase::NwExcludeCommand::LastNwIndex [nw/NwIncrement.h]
    sb/SbIncrement.h
 NetworkBase::NwExcludeCommand::NwExcludeCommand [nw/NwIncrement.h]
    nw/NwIncrement.cpp
+NetworkBase::NwExcludeCommand::Patch [nw/NwIncrement.h]
+   nw/NwIncrement.cpp
 NetworkBase::NwExcludeCommand::ProcessSubcommand [nw/NwIncrement.h]
    nw/NwIncrement.cpp
 NetworkBase::NwExcludeWhatParm [nw/NwIncrement.h]
@@ -46679,6 +46806,8 @@ NetworkBase::NwIncludeCommand::LastNwIndex [nw/NwIncrement.h]
    sb/SbIncrement.h
 NetworkBase::NwIncludeCommand::NwIncludeCommand [nw/NwIncrement.h]
    nw/NwIncrement.cpp
+NetworkBase::NwIncludeCommand::Patch [nw/NwIncrement.h]
+   nw/NwIncrement.cpp
 NetworkBase::NwIncludeCommand::ProcessSubcommand [nw/NwIncrement.h]
    nw/NwIncrement.cpp
 NetworkBase::NwIncludeWhatParm [nw/NwIncrement.h]
@@ -46699,11 +46828,15 @@ NetworkBase::NwQueryCommand [nw/NwIncrement.h]
    sb/SbIncrement.h
 NetworkBase::NwQueryCommand::NwQueryCommand [nw/NwIncrement.h]
    nw/NwIncrement.cpp
+NetworkBase::NwQueryCommand::Patch [nw/NwIncrement.h]
+   nw/NwIncrement.cpp
 NetworkBase::NwQueryCommand::ProcessSubcommand [nw/NwIncrement.h]
    nw/NwIncrement.cpp
 NetworkBase::NwStatusCommand [nw/NwIncrement.h]
    nw/NwIncrement.cpp
    sb/SbIncrement.h
+NetworkBase::NwStatusCommand::Patch [nw/NwIncrement.h]
+   nw/NwIncrement.cpp
 NetworkBase::NwStatusCommand::ProcessCommand [nw/NwIncrement.h]
    nw/NwIncrement.cpp
 NetworkBase::NetworkBase_CreateNwLogs [nw/NwLogs.cpp]
@@ -46989,6 +47122,8 @@ NetworkBase::NwTracer::MaxPortEntries [nw/NwTracer.h]
    nw/NwTracer.cpp
    nw/NwTracer.h
 NetworkBase::NwTracer::NwTracer [nw/NwTracer.h]
+   nw/NwTracer.cpp
+NetworkBase::NwTracer::Patch [nw/NwTracer.h]
    nw/NwTracer.cpp
 NetworkBase::NwTracer::PeerFilter [nw/NwTracer.h]
    nw/NwTracer.cpp
@@ -50144,8 +50279,6 @@ PotsBase::Facility::InitiationReq [pb/PotsProtocol.h]
    sn/PotsCwtService.cpp
    sn/PotsMultiplexer.cpp
    sn/SnModule.cpp
-PotsBase::Facility::MaxInd [pb/PotsProtocol.h]
-   pb/PotsProtocol.h
 PotsBase::Facility::NextInd [pb/PotsProtocol.h]
    pb/PotsProtocol.h
    sn/PotsCwtService.h
@@ -53724,8 +53857,6 @@ SessionBase::MsgPort::LocAddr [sb/MsgPort.h]
    sb/SbTrace.cpp
    sb/TlvMessage.cpp
    st/TestSessions.cpp
-SessionBase::MsgPort::MaxId [sb/MsgPort.h]
-   sb/MsgPort.cpp
 SessionBase::MsgPort::MsgPort(SessionBase::MsgPort* const,SessionBase::ProtocolLayer) [sb/MsgPort.h]
    sb/MsgPort.cpp
 SessionBase::MsgPort::MsgPort(SessionBase::MsgPort* const,const SessionBase::Message,SessionBase::Context) [sb/MsgPort.h]
@@ -64616,7 +64747,6 @@ UINT8_MAX [subs/cstdint]
    nb/PosixSignal.cpp
    nb/TraceRecord.cpp
    pb/PotsProtocol.cpp
-   pb/PotsProtocol.h
    sb/EventHandler.h
    sb/Factory.h
    sb/Protocol.h
@@ -65654,6 +65784,7 @@ std::next [subs/iterator]
 std::prev [subs/iterator]
    ct/Editor.cpp
 std::list [subs/list]
+   ct/CodeFile.cpp
    ct/Editor.cpp
    ct/Editor.h
    dip/Adjudicator.cpp
@@ -65669,8 +65800,10 @@ std::list::begin(std::list* const) [subs/list]
    dip/MapAndUnits.cpp
    dip/UnitOrder.cpp
 std::list::cbegin [subs/list]
+   ct/CodeFile.cpp
    ct/Editor.cpp
 std::list::cend [subs/list]
+   ct/CodeFile.cpp
    ct/Editor.cpp
 std::list::clear [subs/list]
    dip/MapAndUnits.cpp
@@ -65689,6 +65822,7 @@ std::list::erase(std::list* const,std::iterator_t) [subs/list]
 std::list::insert(std::list* const,std::iterator_t,const T) [subs/list]
    ct/Editor.cpp
 std::list::push_back [subs/list]
+   ct/CodeFile.cpp
    ct/Editor.cpp
    dip/BaseBot.cpp
    dip/MapAndUnits.cpp
@@ -65698,6 +65832,7 @@ std::list::push_front [subs/list]
 std::list::size [subs/list]
    dip/BaseBot.cpp
 std::list::sort(std::list* const) [subs/list]
+   ct/CodeFile.cpp
    ct/Editor.cpp
 std::map [subs/map]
    ct/CodeCoverage.cpp
@@ -66041,6 +66176,8 @@ std::unique_ptr::get [subs/memory]
    dip/TokenMessage.cpp
    nw/SysTcpSocket.win.cpp
 std::unique_ptr::release [subs/memory]
+   dip/TokenMessage.cpp
+std::unique_ptr::release [subs/memory]
    ct/CodeSet.cpp
    ct/CxxArea.cpp
    ct/CxxNamed.cpp
@@ -66073,8 +66210,10 @@ std::unique_ptr::release [subs/memory]
    sb/InvokerThread.cpp
    sb/Message.cpp
    sb/SbInputHandler.cpp
-std::unique_ptr::release [subs/memory]
+std::unique_ptr::reset [subs/memory]
    dip/TokenMessage.cpp
+   nb/Thread.cpp
+   nw/SysTcpSocket.win.cpp
 std::unique_ptr::reset [subs/memory]
    an/PotsShelfIpService.cpp
    cb/BcProtocol.cpp
@@ -66139,10 +66278,6 @@ std::unique_ptr::reset [subs/memory]
    sn/PotsStatistics.cpp
    st/StIncrement.cpp
    st/StTestData.cpp
-std::unique_ptr::reset [subs/memory]
-   dip/TokenMessage.cpp
-   nb/Thread.cpp
-   nw/SysTcpSocket.win.cpp
 operator delete [subs/new]
    nb/SysHeap.cpp
    nb/Thread.cpp
@@ -69127,6 +69262,7 @@ std::vector::shrink_to_fit [subs/vector]
    ct/CxxArea.cpp
    ct/CxxDirective.cpp
    ct/CxxScope.cpp
+   ct/CxxScoped.cpp
 std::vector::size [subs/vector]
    ct/CodeFile.cpp
    ct/CodeTypes.h

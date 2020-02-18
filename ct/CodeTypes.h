@@ -492,6 +492,7 @@ enum Warning
    ReturnsNonConstMember,    // returns non-const reference or pointer to member
    FunctionCouldBeMember,    // static|free but has an indirect class argument
    ExplicitConstructor,      // constructor need not be tagged explicit
+   BitwiseOperatorOnBoolean, // operator | or & used on boolean
    Warning_N                 // number of warnings
 };
 

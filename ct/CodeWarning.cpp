@@ -264,13 +264,14 @@ void CodeWarning::GenerateReport(ostream* stream, const SetOfIds& set)
 
    //  Display the total number of warnings of each type.
    //
-   *stream << CRLF << "WARNING COUNTS" << CRLF;
+   *stream << CRLF << "WARNING COUNTS (* if supported by >fix)" << CRLF;
 
    for(auto w = 0; w < Warning_N; ++w)
    {
       if(WarningCounts_[w] != 0)
       {
-         *stream << setw(6) << WarningCode(Warning(w)) << setw(6)
+         *stream << (Attrs_.at(Warning(w)).fixable ? '*' : SPACE);
+         *stream << setw(5) << WarningCode(Warning(w)) << setw(6)
             << WarningCounts_[w] << spaces(2) << Warning(w) << CRLF;
       }
    }
@@ -783,6 +784,9 @@ void CodeWarning::Initialize()
    Attrs_.insert(WarningPair(ExplicitConstructor,
       WarningAttrs(T, E,
       "Constructor does not require explicit tag")));
+   Attrs_.insert(WarningPair(BitwiseOperatorOnBoolean,
+      WarningAttrs(F, X,
+      "Operator | or & used on boolean")));
    Attrs_.insert(WarningPair(Warning_N,
       WarningAttrs(F, X,
       ERROR_STR)));

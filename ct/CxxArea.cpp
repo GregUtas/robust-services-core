@@ -392,6 +392,35 @@ bool Class::AddSubclass(Class* cls)
 
 //------------------------------------------------------------------------------
 
+fn_name Class_AddToXref = "Class.AddToXref";
+
+void Class::AddToXref() const
+{
+   Debug::ft(Class_AddToXref);
+
+   CxxArea::AddToXref();
+
+   name_->AddToXref();
+
+   if(!tmplts_.empty())
+   {
+      //* To be implemented.
+   }
+
+   if(alignas_ != nullptr) alignas_->AddToXref();
+
+   auto base = GetBaseDecl();
+
+   if(base != nullptr) base->AddToXref();
+
+   for(auto f = friends_.cbegin(); f != friends_.cend(); ++f)
+   {
+      (*f)->AddToXref();
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Class_BlockCopied = "Class.BlockCopied";
 
 void Class::BlockCopied(const StackArg* arg)
@@ -1549,14 +1578,11 @@ void Class::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
    for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
    {
-      //  Unless this is a class template instance, bypass function
+      //  If this is not a class template instance, bypass function
       //  template instantiations, every one of which is registered
-      //  against the class that defines the function template.
+      //  against the function template.
       //
-      if(!inst)
-      {
-         if((*f)->IsInTemplateInstance()) continue;
-      }
+      if(!inst && (*f)->IsInTemplateInstance()) continue;
 
       (*f)->GetUsages(file, symbols);
    }
@@ -1904,6 +1930,17 @@ ClassInst::~ClassInst()
    //
    CxxStats::Decr(CxxStats::CLASS_INST);
    CxxStats::Incr(CxxStats::CLASS_DECL);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name ClassInst_AddToXref = "ClassInst.AddToXref";
+
+void ClassInst::AddToXref() const
+{
+   Debug::ft(ClassInst_AddToXref);
+
+   //* To be implemented.
 }
 
 //------------------------------------------------------------------------------
@@ -2362,6 +2399,53 @@ bool CxxArea::AddStaticAssert(StaticAssertPtr& assert)
 
 //------------------------------------------------------------------------------
 
+fn_name CxxArea_AddToXref = "CxxArea.AddToXref";
+
+void CxxArea::AddToXref() const
+{
+   Debug::ft(CxxArea_AddToXref);
+
+   for(auto c = classes_.cbegin(); c != classes_.cend(); ++c)
+   {
+      (*c)->AddToXref();
+   }
+
+   for(auto t = types_.cbegin(); t != types_.cend(); ++t)
+   {
+      (*t)->AddToXref();
+   }
+
+   auto inst = IsInTemplateInstance();
+
+   for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
+   {
+      //  If this is not a class template instance, bypass function
+      //  template instantiations, every one of which is registered
+      //  against the function template.
+      //
+      if(!inst && (*f)->IsInTemplateInstance()) continue;
+
+      (*f)->AddToXref();
+   }
+
+   for(auto o = opers_.cbegin(); o != opers_.cend(); ++o)
+   {
+      (*o)->AddToXref();
+   }
+
+   for(auto d = data_.cbegin(); d != data_.cend(); ++d)
+   {
+      (*d)->AddToXref();
+   }
+
+   for(auto a = asserts_.cbegin(); a != asserts_.cend(); ++a)
+   {
+      (*a)->AddToXref();
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CxxArea_AddType = "CxxArea.AddType";
 
 bool CxxArea::AddType(TypedefPtr& type)
@@ -2682,8 +2766,6 @@ Function* CxxArea::MatchFunc(const Function* curr, bool base) const
 
 void CxxArea::Shrink()
 {
-   CxxScoped::Shrink();
-
    for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
    {
       (*u)->Shrink();
@@ -2750,7 +2832,7 @@ void CxxArea::Shrink()
    size += (defns_.capacity() * sizeof(ScopePtr));
    size += (assembly_.capacity() * sizeof(AsmPtr));
    size += (asserts_.capacity() * sizeof(StaticAssertPtr));
-   size += (Users().capacity() * sizeof(CxxNamed*));
+   size += XrefSize();
 
    if(Type() == Cxx::Namespace)
    {
@@ -2817,12 +2899,8 @@ void Namespace::Check() const
    checked_ = true;
 
    auto name = ScopedName(false);
-
-   if(name.empty())
-      name = "namespace ::";
-   else
-      name = "namespace " + name;
-
+   if(name.empty()) name = SCOPE_STR;
+   name.insert(0, "namespace ");
    name.push_back(CRLF);
    Debug::Progress(name, true);
 
@@ -2974,7 +3052,14 @@ void Namespace::SetLoc(CodeFile* file, size_t pos)
 {
    Debug::ft(Namespace_SetLoc);
 
+   //  If this is the first appearance of the namespace, set its location.
+   //  Create a namespace definition for the current file.
+   //
    if(GetFile() == nullptr) CxxArea::SetLoc(file, pos);
+
+   SpaceDefnPtr space(new SpaceDefn(this));
+   space->SetLoc(file, pos);
+   file->InsertSpace(space);
 }
 
 //------------------------------------------------------------------------------

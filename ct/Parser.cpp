@@ -1307,7 +1307,7 @@ bool Parser::GetCtorInit(FunctionPtr& func)
          if(end == string::npos) return Backup(start, 63);
          if(!GetArgList(token)) return Backup(start, 64);
          memberName = *baseName->Name();
-         MemberInitPtr mem(new MemberInit(memberName, token));
+         MemberInitPtr mem(new MemberInit(func.get(), memberName, token));
          mem->SetContext(begin);
          func->AddMemberInit(mem);
       }
@@ -1321,7 +1321,7 @@ bool Parser::GetCtorInit(FunctionPtr& func)
       end = lexer_.FindClosing('(', ')');
       if(end == string::npos) return Backup(start, 67);
       if(!GetArgList(token)) return Backup(start, 68);
-      MemberInitPtr mem(new MemberInit(memberName, token));
+      MemberInitPtr mem(new MemberInit(func.get(), memberName, token));
       mem->SetContext(begin);
       func->AddMemberInit(mem);
    }

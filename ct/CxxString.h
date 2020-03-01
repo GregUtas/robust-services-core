@@ -31,6 +31,21 @@
 
 namespace CodeTools
 {
+   //  Returns true if C is a whitespace character.
+   //
+   bool IsBlank(char c);
+
+   //  Returns true if C is a character that may appear in an identifier.
+   //
+   bool IsWordChar(char c);
+
+   //  Starting at STR[POS] and working backwards, returns the position of
+   //  the first character not in ELEMS.  Returns string::npos if no such
+   //  character is found.
+   //
+   size_t RfindFirstNotOf
+      (const std::string& str, size_t pos, const std::string& elems);
+
    //  For lists of strings.
    //
    typedef std::vector< std::string > stringVector;

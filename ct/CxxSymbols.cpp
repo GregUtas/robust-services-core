@@ -20,9 +20,12 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CxxSymbols.h"
+#include <algorithm>
 #include <cstddef>
 #include <cstdint>
+#include <iterator>
 #include <ostream>
+#include <set>
 #include <utility>
 #include "CodeFile.h"
 #include "CodeTypes.h"
@@ -36,8 +39,7 @@
 #include "CxxString.h"
 #include "Debug.h"
 #include "Formatters.h"
-#include "Library.h"
-#include "Registry.h"
+#include "Lexer.h"
 #include "Singleton.h"
 
 using namespace NodeBase;
@@ -91,7 +93,59 @@ typedef std::pair< string, Macro* > MacroPair;
 typedef std::pair< string, Namespace* > SpacePair;
 typedef std::pair< string, Terminal* > TermPair;
 typedef std::pair< string, Typedef* > TypePair;
-typedef std::pair< const CxxNamed*, SetOfIds > XrefPair;
+
+//------------------------------------------------------------------------------
+//
+//  Displays REFS (references to a single item) in STREAM.
+//
+const int LAST_XREF_START_COLUMN = 122;
+
+void DisplayReferences(ostream& stream, const CxxNamedVector& refs)
+{
+   if(refs.empty()) return;
+
+   CodeFile* refFile = nullptr;
+   auto endline = false;
+   auto room = LAST_XREF_START_COLUMN;
+
+   for(auto r = refs.cbegin(); r != refs.cend(); ++r)
+   {
+      if((*r)->IsInTemplateInstance()) continue;
+
+      auto file = (*r)->GetFile();
+      if(file == nullptr) continue;
+
+      if(file != refFile)
+      {
+         if(refFile != nullptr) stream << CRLF;
+         auto fn = file->Path(false);
+         stream << spaces(6) << fn << ':';
+         refFile = file;
+         endline = false;
+         room = LAST_XREF_START_COLUMN - (fn.size() + 7);
+      }
+
+      if(endline)
+      {
+         stream << CRLF << spaces(8);
+         room -= 8;
+         endline = false;
+      }
+
+      auto line = file->GetLexer().GetLineNum((*r)->GetPos());
+      auto num = std::to_string(++line);
+      stream << SPACE << num;
+      room -= (num.size() + 1);
+
+      if(room < 0)
+      {
+         endline = true;
+         room = LAST_XREF_START_COLUMN;
+      }
+   }
+
+   stream << CRLF;
+}
 
 //------------------------------------------------------------------------------
 //
@@ -192,6 +246,93 @@ size_t FindNearestItem(const SymbolVector& list, ViewVector& views)
 
 //------------------------------------------------------------------------------
 //
+//  Adds all symbols in TABLE to ITEMS.
+//
+template< typename T > void GetSymbols
+   (const std::unordered_multimap< string, T >& table, CxxScopedVector& items)
+{
+   for(auto i = table.cbegin(); i != table.cend(); ++i)
+   {
+      auto item = i->second;
+      if(item->IncludeInXref()) items.push_back(item);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+bool IsSortedByName(const CxxScoped* item1, const CxxScoped* item2)
+{
+   auto file1 = item1->GetFile();
+   auto file2 = item2->GetFile();
+   if(file1 == nullptr)
+   {
+      if(file2 != nullptr) return true;
+   }
+   else if(file2 == nullptr)
+   {
+      if(file1 != nullptr) return false;
+   }
+   else
+   {
+      auto fn1 = file1->Path(false);
+      auto fn2 = file2->Path(false);
+      auto result = fn1.compare(fn2);
+      if(result < 0) return true;
+      if(result > 0) return false;
+   }
+
+   auto name1 = item1->ScopedName(true);
+   auto name2 = item2->ScopedName(true);
+   auto result = strCompare(name1, name2);
+   if(result < 0) return true;
+   if(result > 0) return false;
+   return (item1 < item2);
+}
+
+//------------------------------------------------------------------------------
+
+bool IsSortedByPos(const CxxNamed* item1, const CxxNamed* item2)
+{
+   auto file1 = item1->GetFile();
+   auto file2 = item2->GetFile();
+   if(file1 == nullptr)
+   {
+      if(file2 != nullptr) return true;
+   }
+   else if(file2 == nullptr)
+   {
+      if(file1 != nullptr) return false;
+   }
+   else
+   {
+      auto fn1 = file1->Path(false);
+      auto fn2 = file2->Path(false);
+      auto result = fn1.compare(fn2);
+      if(result < 0) return true;
+      if(result > 0) return false;
+   }
+
+   auto pos1 = item1->GetPos();
+   auto pos2 = item2->GetPos();
+   if(pos1 < pos2) return true;
+   if(pos1 > pos2) return false;
+   return (item1 < item2);
+}
+
+//------------------------------------------------------------------------------
+
+bool IsSortedByScope(const CxxScoped* item1, const CxxScoped* item2)
+{
+   auto name1 = item1->ScopedName(true);
+   auto name2 = item2->ScopedName(true);
+   auto result = strCompare(name1, name2);
+   if(result < 0) return true;
+   if(result > 0) return false;
+   return (item1 < item2);
+}
+
+//------------------------------------------------------------------------------
+//
 //  Looks for NAME in TABLE.  Returns a list of matching symbols in LIST.
 //  NAME be unqualified.
 //
@@ -236,71 +377,96 @@ fn_name CxxSymbols_DisplayXref = "CxxSymbols.DisplayXref";
 
 void CxxSymbols::DisplayXref(ostream& stream) const
 {
-   typedef std::pair< string, XrefTable::const_iterator > SymbolFiles;
-   std::multimap< string, XrefTable::const_iterator > symbols;
-   std::set< string > filenames;
+   Debug::ft(CxxSymbols_DisplayXref);
 
-   //  For each item in the cross-reference, create a key consisting of the
-   //  file that defines it and its fully qualified name.  Map this key to
-   //  the iterator that references the item in xref_.  This mapping causes
-   //  items to be sorted by the directory and file that defines them, and
-   //  then alphabetically within each file.  Don't include local variables.
+   //  Start by displaying references to namespaces.
    //
-   for(auto x = xref_->cbegin(); x != xref_->cend(); ++x)
-   {
-      auto name = x->first->XrefName(false);
-      if(name.find(LOCALS_STR) != string::npos) continue;
+   CxxScopedVector namespaces;
+   GetSymbols(*spaces_, namespaces);
 
-      auto file = x->first->GetFile();
-      auto key = (file != nullptr ? file->Path(false) : "unknown file");
-      key.push_back('$');
-      key.append(name);
-      symbols.insert(SymbolFiles(key, x));
+   if(!namespaces.empty())
+   {
+      stream << "NAMESPACES:" << CRLF;
+      std::sort(namespaces.begin(), namespaces.end(), IsSortedByScope);
+
+      for(auto n = namespaces.begin(); n != namespaces.end(); ++n)
+      {
+         CxxNamedVector refs;
+         auto& xref = (*n)->Xref();
+
+         for(auto r = xref.cbegin(); r != xref.cend(); ++r)
+         {
+            refs.push_back(*r);
+         }
+
+         std::sort(refs.begin(), refs.end(), IsSortedByPos);
+
+         auto name = (*n)->XrefName(true);
+         if(name.empty()) continue;
+         stream << spaces(3) << name << CRLF;
+         DisplayReferences(stream, refs);
+      }
    }
 
-   auto& files = Singleton< Library >::Instance()->Files();
-
-   //  Display each symbol, followed by the file that defines it.  Strip
-   //  off the file name that was prefixed to each symbol.
+   //  Make a list of all other items that will appear in the cross-reference.
+   //  Sort them by directory-file-name.  A few items (such as #defined names
+   //  for the compile) don't appear in a file, so put them under "EXTERNAL".
    //
-   for(auto s = symbols.cbegin(); s != symbols.cend(); ++s)
+   CxxScopedVector items;
+   GetSymbols(*classes_, items);
+   GetSymbols(*data_, items);
+   GetSymbols(*enums_, items);
+   GetSymbols(*etors_, items);
+   GetSymbols(*forws_, items);
+   GetSymbols(*friends_, items);
+   GetSymbols(*funcs_, items);
+   GetSymbols(*macros_, items);
+   GetSymbols(*types_, items);
+   std::sort(items.begin(), items.end(), IsSortedByName);
+
+   CodeFile* itemFile = (CodeFile*) UINTPTR_MAX;
+
+   for(auto i = items.begin(); i != items.end(); ++i)
    {
-      auto start = s->first.find('$');
-      auto symbol = s->first.substr(start + 1);
-      stream << symbol << " [";
+      CxxNamedVector refs;
+      auto& xref = (*i)->Xref();
 
-      auto file = s->second->first->GetFile();
-
-      if(file != nullptr)
-         stream << file->Path(false) << ']' << CRLF;
-      else
-         stream << "unknown file]" << CRLF;
-
-      //  Put the files that use the symbol in a set that will result in
-      //  them being sorted by directory and file name.
-      //
-      const auto& users = s->second->second;
-      filenames.clear();
-
-      for(auto u = users.cbegin(); u != users.cend(); ++u)
+      for(auto r = xref.cbegin(); r != xref.cend(); ++r)
       {
-         file = files.At(*u);
+         refs.push_back(*r);
+      }
 
-         if(file != nullptr)
+      std::sort(refs.begin(), refs.end(), IsSortedByPos);
+
+      auto file = (*i)->GetFile();
+      if(file != itemFile)
+      {
+         if(file == nullptr)
          {
-            auto name = file->Path(false);
-            filenames.insert(name);
+            stream << "EXTERNAL:" << CRLF;
          }
          else
          {
-            Debug::SwLog(CxxSymbols_DisplayXref, s->first, *u);
+            if(itemFile == nullptr) stream << "FILES:" << CRLF;
+            stream << file->Path(false) << CRLF;
          }
+
+         itemFile = file;
       }
 
-      for(auto f = filenames.cbegin(); f != filenames.cend(); ++f)
+      auto name = (*i)->XrefName(true);
+      if(name.empty()) continue;
+      stream << spaces(3) << name;
+
+      if(file != nullptr)
       {
-         stream << spaces(3) << *f << CRLF;
+         auto line = file->GetLexer().GetLineNum((*i)->GetPos());
+         stream << ": " << ++line;
       }
+
+      stream << " [" << strClass(*i, false) << ']' << CRLF;
+
+      DisplayReferences(stream, refs);
    }
 }
 
@@ -893,22 +1059,6 @@ void CxxSymbols::ListMacros(const string& name, SymbolVector& list) const
 
 //------------------------------------------------------------------------------
 
-void CxxSymbols::RecordUsage(const CxxNamed* item, id_t fid)
-{
-   //  Drop terminals from the cross-reference.
-   //
-   if(item->Type() == Cxx::Terminal) return;
-
-   auto s = xref_->insert(XrefPair(item, SetOfIds()));
-
-   if(s.first != xref_->cend())
-   {
-      s.first->second.insert(fid);
-   }
-}
-
-//------------------------------------------------------------------------------
-
 void CxxSymbols::Shrink() const
 {
    //  This cannot shrink its containers.  An unordered multimap does not
@@ -917,84 +1067,93 @@ void CxxSymbols::Shrink() const
    size_t ssize = 0;
    size_t vsize = 0;
 
-   vsize += classes_->size() * sizeof(ClassPair);
+   vsize += classes_->size() * (sizeof(ClassPair) + 2 * sizeof(ClassPair*));
+   vsize += classes_->bucket_count() * (sizeof(ClassPair*) + sizeof(size_t));
 
    for(auto c = classes_->cbegin(); c != classes_->cend(); ++c)
    {
       ssize += c->first.capacity();
    }
 
-   vsize += data_->size() * sizeof(DataPair);
+   vsize += data_->size() * (sizeof(DataPair) + 2 * sizeof(DataPair*));
+   vsize += data_->bucket_count() * (sizeof(DataPair*) + sizeof(size_t));
 
    for(auto d = data_->cbegin(); d != data_->cend(); ++d)
    {
       ssize += d->first.capacity();
    }
 
-   vsize += macros_->size() * sizeof(MacroPair);
+   vsize += macros_->size() * (sizeof(MacroPair) + 2 * sizeof(MacroPair*));
+   vsize += macros_->bucket_count() * (sizeof(MacroPair*) + sizeof(size_t));
 
    for(auto m = macros_->cbegin(); m != macros_->cend(); ++m)
    {
       ssize += m->first.capacity();
    }
 
-   vsize += enums_->size() * sizeof(EnumPair);
+   vsize += enums_->size() * (sizeof(EnumPair) + 2 * sizeof(ClassPair*));
+   vsize += enums_->bucket_count() * (sizeof(EnumPair*) + sizeof(size_t));
 
    for(auto e = enums_->cbegin(); e != enums_->cend(); ++e)
    {
       ssize += e->first.capacity();
    }
 
-   vsize += etors_->size() * sizeof(EtorPair);
+   vsize += etors_->size() * (sizeof(EtorPair) + 2 * sizeof(EtorPair*));
+   vsize += etors_->bucket_count() * (sizeof(EtorPair*) + sizeof(size_t));
 
    for(auto e = etors_->cbegin(); e != etors_->cend(); ++e)
    {
       ssize += e->first.capacity();
    }
 
-   vsize += forws_->size() * sizeof(ForwPair);
+   vsize += forws_->size() * (sizeof(ForwPair) + 2 * sizeof(ForwPair*));
+   vsize += forws_->bucket_count() * (sizeof(ForwPair*) + sizeof(size_t));
 
    for(auto f = forws_->cbegin(); f != forws_->cend(); ++f)
    {
       ssize += f->first.capacity();
    }
 
-   vsize += friends_->size() * sizeof(FriendPair);
+   vsize += friends_->size() * (sizeof(FriendPair) + 2 * sizeof(FriendPair*));
+   vsize += friends_->bucket_count() * (sizeof(FriendPair*) + sizeof(size_t));
 
    for(auto f = friends_->cbegin(); f != friends_->cend(); ++f)
    {
       ssize += f->first.capacity();
    }
 
-   vsize += funcs_->size() * sizeof(FuncPair);
+   vsize += funcs_->size() * (sizeof(FuncPair) + 2 * sizeof(FuncPair*));
+   vsize += funcs_->bucket_count() * (sizeof(FuncPair*) + sizeof(size_t));
 
    for(auto f = funcs_->cbegin(); f != funcs_->cend(); ++f)
    {
       ssize += f->first.capacity();
    }
 
-   vsize += spaces_->size() * sizeof(SpacePair);
+   vsize += spaces_->size() * (sizeof(SpacePair) + 2 * sizeof(SpacePair*));
+   vsize += spaces_->bucket_count() * (sizeof(SpacePair*) + sizeof(size_t));
 
    for(auto s = spaces_->cbegin(); s != spaces_->cend(); ++s)
    {
       ssize += s->first.capacity();
    }
 
-   vsize += terms_->size() * sizeof(TermPair);
+   vsize += terms_->size() * (sizeof(TermPair) + 2 * sizeof(TermPair*));
+   vsize += terms_->bucket_count() * (sizeof(TermPair*) + sizeof(size_t));
 
    for(auto t = terms_->cbegin(); t != terms_->cend(); ++t)
    {
       ssize += t->first.capacity();
    }
 
-   vsize += types_->size() * sizeof(TypePair);
+   vsize += types_->size() * (sizeof(TypePair) + 2 * sizeof(TypePair*));
+   vsize += types_->bucket_count() * (sizeof(TypePair*) + sizeof(size_t));
 
    for(auto t = types_->cbegin(); t != types_->cend(); ++t)
    {
       ssize += t->first.capacity();
    }
-
-   vsize += xref_->size() * sizeof(XrefPair);
 
    CxxStats::Strings(CxxStats::CXX_SYMBOLS, ssize);
    CxxStats::Vectors(CxxStats::CXX_SYMBOLS, vsize);
@@ -1024,7 +1183,6 @@ void CxxSymbols::Shutdown(RestartLevel level)
    spaces_.reset();
    terms_.reset();
    types_.reset();
-   xref_.reset();
 }
 
 //------------------------------------------------------------------------------
@@ -1051,6 +1209,5 @@ void CxxSymbols::Startup(RestartLevel level)
    spaces_.reset(new SpaceTable);
    terms_.reset(new TermTable);
    types_.reset(new TypeTable);
-   xref_.reset(new XrefTable);
 }
 }

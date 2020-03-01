@@ -21,6 +21,7 @@
 //
 #include "CodeTypes.h"
 #include <ostream>
+#include "CxxString.h"
 
 using namespace NodeBase;
 using std::ostream;
@@ -253,16 +254,19 @@ size_t LineMergeLength
    //  a semicolon.  If LINE2 doesn't start with a left parenthesis, a space
    //  will also have to be inserted when merging.
    //
-   if(line1.at(end1) == ';') return SIZE_MAX;
-   if(line1.at(end1) == ':') return SIZE_MAX;
-   if(line1.at(end1) == '}') return SIZE_MAX;
-   if(line2.at(end2) != ';') return SIZE_MAX;
-   if(line1.find(COMMENT_STR, begin1) < end1) return SIZE_MAX;
+   auto pos1 = RfindFirstNotOf(line1, end1, WhitespaceChars);
+   if(pos1 == string::npos) return SIZE_MAX;
+   if(line1.at(pos1) == ';') return SIZE_MAX;
+   if(line1.at(pos1) == ':') return SIZE_MAX;
+   if(line1.at(pos1) == '}') return SIZE_MAX;
+   auto pos2 = RfindFirstNotOf(line2, end2, WhitespaceChars);
+   if(line2.at(pos2) != ';') return SIZE_MAX;
+   if(line1.find(COMMENT_STR, begin1) < pos1) return SIZE_MAX;
    auto first1 = line1.find_first_not_of(WhitespaceChars, begin1);
    if(line1.find(IF_STR, first1) == first1) return SIZE_MAX;
    if(line1.find(ELSE_STR, first1) == first1) return SIZE_MAX;
    begin2 = line2.find_first_not_of(WhitespaceChars, begin2);
-   auto size = (end1 - begin1 + 1) + (end2 - begin2 + 1);
+   auto size = (pos1 - begin1 + 1) + (pos2 - begin2 + 1);
    if(InsertSpaceOnMerge(line1, line2, begin2)) ++size;
    return size;
 }

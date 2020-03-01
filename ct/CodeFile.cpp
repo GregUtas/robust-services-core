@@ -42,7 +42,6 @@
 #include "CxxRoot.h"
 #include "CxxScope.h"
 #include "CxxScoped.h"
-#include "CxxSymbols.h"
 #include "CxxToken.h"
 #include "Debug.h"
 #include "Editor.h"
@@ -486,6 +485,20 @@ void CodeFile::AddIndirectExternalTypes
       if(type == Cxx::Terminal) continue;
       if((type == Cxx::Class) && !(*i)->GetFile()->IsSubsFile()) continue;
       inclSet.insert(*i);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CodeFile_AddToXref = "CodeFile.AddToXref";
+
+void CodeFile::AddToXref() const
+{
+   Debug::ft(CodeFile_AddToXref);
+
+   for(auto i = items_.cbegin(); i != items_.cend(); ++i)
+   {
+      (*i)->AddToXref();
    }
 }
 
@@ -2087,27 +2100,18 @@ Include* CodeFile::InsertInclude(const string& fn)
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_InsertInXref = "CodeFile.InsertInXref";
-
-void CodeFile::InsertInXref(const CxxNamedSet& items) const
-{
-   Debug::ft(CodeFile_InsertInXref);
-
-   auto symbols = Singleton< CxxSymbols >::Instance();
-   auto fid = Fid();
-
-   for(auto i = items.cbegin(); i != items.cend(); ++i)
-   {
-      symbols->RecordUsage(*i, fid);
-   }
-}
-
-//------------------------------------------------------------------------------
-
 void CodeFile::InsertMacro(Macro* macro)
 {
    items_.push_back(macro);
    macros_.push_back(macro);
+}
+
+//------------------------------------------------------------------------------
+
+void CodeFile::InsertSpace(SpaceDefnPtr& space)
+{
+   items_.push_back(space.get());
+   spaces_.push_back(std::move(space));
 }
 
 //------------------------------------------------------------------------------
@@ -2778,6 +2782,17 @@ void CodeFile::SetDir(CodeDir* dir)
 
 //------------------------------------------------------------------------------
 
+fn_name CodeFile_SetParsed = "CodeFile.SetParsed";
+
+void CodeFile::SetParsed(bool passed)
+{
+   Debug::ft(CodeFile_SetParsed);
+
+   parsed_ = (passed ? Passed : Failed);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeFile_SetTemplate = "CodeFile.SetTemplate";
 
 void CodeFile::SetTemplate(TemplateType type)
@@ -2811,6 +2826,7 @@ void CodeFile::Shrink()
 
    forws_.shrink_to_fit();
    macros_.shrink_to_fit();
+   spaces_.shrink_to_fit();
    classes_.shrink_to_fit();
    enums_.shrink_to_fit();
    types_.shrink_to_fit();
@@ -2818,12 +2834,14 @@ void CodeFile::Shrink()
    data_.shrink_to_fit();
    assembly_.shrink_to_fit();
    asserts_.shrink_to_fit();
+   items_.shrink_to_fit();
 
    auto size = incls_.capacity() * sizeof(IncludePtr);
    size += dirs_.capacity() * sizeof(DirectivePtr);
    size += usings_.capacity() * sizeof(UsingPtr);
    size += forws_.capacity() * sizeof(Forward*);
    size += macros_.capacity() * sizeof(Macro*);
+   size += spaces_.capacity() * sizeof(SpaceDefn*);
    size += classes_.capacity() * sizeof(Class*);
    size += enums_.capacity() * sizeof(Enum*);
    size += types_.capacity() * sizeof(Typedef*);
@@ -2831,6 +2849,8 @@ void CodeFile::Shrink()
    size += data_.capacity() * sizeof(Data*);
    size += assembly_.capacity() * sizeof(Asm*);
    size += asserts_.capacity() * sizeof(StaticAssert*);
+   size += items_.capacity() * sizeof(StaticAssert*);
+   size += usages_.size() * 3 * sizeof(CxxNamed*);
    CxxStats::Vectors(CxxStats::CODE_FILE, size);
 }
 
@@ -2860,15 +2880,6 @@ void CodeFile::Trim(ostream* stream)
    auto& forwards = symbols.forwards;
    auto& friends = symbols.friends;
    auto& users = symbols.users;
-
-   //  Add the items that the files uses to the global cross-reference.
-   //
-   InsertInXref(bases);
-   InsertInXref(directs);
-   InsertInXref(indirects);
-   InsertInXref(forwards);
-   InsertInXref(friends);
-   InsertInXref(symbols.inherits);
 
    SaveBaseIds(bases);
 

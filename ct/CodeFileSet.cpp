@@ -724,6 +724,15 @@ word CodeFileSet::Parse(string& expl, const string& opts) const
    parseFiles->Release();
    affects->Release();
 
+   //  Update the cross-reference.
+   //
+   Debug::Progress(string("Updating cross-reference...") + CRLF, true);
+
+   for(auto f = files.First(); f != nullptr; files.Next(f))
+   {
+      f->AddToXref();
+   }
+
    std::ostringstream summary;
    summary << "Total=" << total << ", failed=" << failed;
    expl = summary.str();

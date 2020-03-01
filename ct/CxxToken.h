@@ -246,6 +246,10 @@ public:
    //
    virtual void RecordUsage() const { }
 
+   //  Invokes CxxScoped.AddReference on items that this one references.
+   //
+   virtual void AddToXref() const { }
+
    //  Updates SYMBOLS with how this item used other types within FILE.  See
    //  UsageType for a list of how various uses of a type are distinguished.
    //
@@ -588,6 +592,10 @@ public:
    //
    void Execute() const;
 
+   //  Overridden to add each argument's components to cross-references.
+   //
+   void AddToXref() const override;
+
    //  Invoked when a unary operator is encountered.  This operator returns
    //  true if it will elide forward to the unary, and false if the new
    //  operator must actually be binary.
@@ -599,11 +607,6 @@ public:
    //
    CxxToken* Back() override;
 
-   //  Overridden to display the operator and its arguments.
-   //
-   void Print
-      (std::ostream& stream, const NodeBase::Flags& options) const override;
-
    //  Overridden to push this operator and its arguments onto the stack.
    //
    void EnterBlock() override;
@@ -611,6 +614,11 @@ public:
    //  Overridden to update SYMBOLS with each argument's type usage.
    //
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+
+   //  Overridden to display the operator and its arguments.
+   //
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to shrink the tokens.
    //
@@ -754,14 +762,13 @@ public:
    //
    static void Start();
 
+   //  Overridden to add each token's components to cross-references.
+   //
+   void AddToXref() const override;
+
    //  Overridden to return the last item in the expression.
    //
    CxxToken* Back() override;
-
-   //  Overridden to display the expression.
-   //
-   void Print
-      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to invoke Context::Execute after invoking EnterBlock on
    //  each token in items_.
@@ -771,6 +778,11 @@ public:
    //  Overridden to update SYMBOLS with each token's type usage.
    //
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+
+   //  Overridden to display the expression.
+   //
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to shrink the tokens.
    //
@@ -825,6 +837,10 @@ public:
    //
    ~ArraySpec() { CxxStats::Decr(CxxStats::ARRAY_SPEC); }
 
+   //  Overridden to add the specification's components to cross-references.
+   //
+   void AddToXref() const override;
+
    //  Overridden to invoke EnterBlock on expr_.
    //
    void EnterBlock() override;
@@ -877,6 +893,7 @@ public:
    explicit Precedence(ExprPtr& expr)
       : expr_(std::move(expr)) { CxxStats::Incr(CxxStats::PRECEDENCE); }
    ~Precedence() { CxxStats::Decr(CxxStats::PRECEDENCE); }
+   void AddToXref() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
    void Print
@@ -897,6 +914,7 @@ public:
    BraceInit();
    ~BraceInit() { CxxStats::Decr(CxxStats::BRACE_INIT); }
    void AddItem(TokenPtr& item) { items_.push_back(std::move(item)); }
+   void AddToXref() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
    void Print
@@ -916,6 +934,7 @@ class AlignAs : public CxxToken
 public:
    explicit AlignAs(TokenPtr& token);
    ~AlignAs() { CxxStats::Decr(CxxStats::ALIGNAS); }
+   void AddToXref() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
    void Print

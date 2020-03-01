@@ -95,13 +95,23 @@ public:
    //
    virtual void AddFiles(SetOfIds& imSet) const;
 
-   //  Records a user of the item.
+   //  Returns true if the item's cross-reference should be included in the
+   //  global cross-reference.  The default excludes items that are, or that
+   //  appear in, template instances.
    //
-   virtual void AddUser(const CxxNamed* name);
+   virtual bool IncludeInXref() const;
 
-   //  Returns the item's users.
+   //  Records NAME as a reference to the item.
    //
-   const NamedVector& Users() const { return users_; }
+   virtual void AddReference(const CxxNamed* name);
+
+   //  Returns the item's cross-reference (the items that reference it).
+   //
+   const CxxNamedSet& Xref() const { return xref_; }
+
+   //  Returns the amount of memory used by xref_ entries.
+   //
+   size_t XrefSize() const { return xref_.size() * 3 * sizeof(CxxNamed*); }
 
    //  Returns true if the item is unused.
    //
@@ -191,10 +201,6 @@ public:
    //  Overridden to set the scope where the declaration appeared.
    //
    void SetScope(CxxScope* scope) override { scope_ = scope; }
-
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
 protected:
    //  Protected because this class is virtual.
    //
@@ -219,7 +225,7 @@ private:
 
    //  Source code references to the item.
    //
-   NamedVector users_;
+   CxxNamedSet xref_;
 
    //  The access control level for the item.
    //
@@ -265,6 +271,10 @@ public:
    //  that is not external, returns that class, else returns nullptr.
    //
    Class* IsThisCandidate() const;
+
+   //  Overridden to add the argument's components to cross-references.
+   //
+   void AddToXref() const override;
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -401,6 +411,10 @@ public:
    //
    ~BaseDecl() { CxxStats::Decr(CxxStats::BASE_DECL); }
 
+   //  Overridden to add the declaration's components to cross-references.
+   //
+   void AddToXref() const override;
+
    //  Displays the base class declaration.
    //
    void DisplayDecl(std::ostream& stream, bool fq) const;
@@ -502,6 +516,10 @@ public:
    //  Returns all of the enumerators.
    //
    const EnumeratorPtrVector& Etors() const { return etors_; }
+
+   //  Overridden to add the enumeration's components to cross-references.
+   //
+   void AddToXref() const override;
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -618,6 +636,10 @@ public:
    //
    ~Enumerator();
 
+   //  Overridden to add the enumerator's components to cross-references.
+   //
+   void AddToXref() const override;
+
    //  Overridden to set the type for an "auto" variable.
    //
    CxxToken* AutoType() const override { return (CxxToken*) enum_; }
@@ -658,6 +680,10 @@ public:
    //  (that is, <scope>::enumerator as well as <scope>::enum::enumerator).
    //
    void GetScopedNames(stringVector& names, bool templates) const override;
+
+   //  Overridden to update SYMBOLS with the enumerator's type usage.
+   //
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
    //  Overridden to determine if the enumerator is unused.
    //
@@ -731,6 +757,10 @@ public:
    //
    ~Forward();
 
+   //  Overridden to add the declaration to its referent.
+   //
+   void AddToXref() const override;
+
    //  Overridden to return the referent if known, else the forward declaration.
    //
    CxxToken* AutoType() const override;
@@ -764,6 +794,10 @@ public:
    //
    const TemplateParms* GetTemplateParms() const
       override { return parms_.get(); }
+
+   //  Overridden to exclude resolved forward declarations.
+   //
+   bool IncludeInXref() const override;
 
    //  Overridden to determine if the declaration is unused.
    //
@@ -858,6 +892,10 @@ public:
    //
    void IncrUsers();
 
+   //  Overridden to add the declaration to its referent.
+   //
+   void AddToXref() const override;
+
    //  Overridden to return the referent if known, else the friend declaration.
    //
    CxxToken* AutoType() const override;
@@ -900,6 +938,10 @@ public:
    //  Overridden to update SYMBOLS with the declaration's type usage.
    //
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+
+   //  Overridden to exclude resolved friend declarations.
+   //
+   bool IncludeInXref() const override;
 
    //  Overridden to indicate that inline display is not supported.
    //
@@ -1044,9 +1086,9 @@ public:
    //
    void SetNumeric(const Numeric& attrs) { attrs_ = attrs; }
 
-   //  Overridden to not track users of terminals.
+   //  Overridden to not track references to terminals.
    //
-   void AddUser(const CxxNamed* name) override { }
+   void AddReference(const CxxNamed* name) override { }
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -1142,6 +1184,10 @@ public:
    //
    void SetAlignment(AlignAsPtr& align);
 
+   //  Overridden to add the typedef's components to cross-references.
+   //
+   void AddToXref() const override;
+
    //  Overridden to set the type for an "auto" variable.
    //
    CxxToken* AutoType() const override { return (CxxToken*) this; }
@@ -1149,11 +1195,6 @@ public:
    //  Overridden to log warnings associated with the typedef.
    //
    void Check() const override;
-
-   //  Overridden to display the typedef in a function.
-   //
-   void Print
-      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to display the typedef.
    //
@@ -1195,6 +1236,11 @@ public:
    //  Overridden to return the alias introduced by the typedef.
    //
    const std::string* Name() const override { return &name_; }
+
+   //  Overridden to display the typedef in a function.
+   //
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to return the referent of GetTypeSpec().
    //
@@ -1288,6 +1334,10 @@ public:
    //  Returns true if the >trim command marked the statement for removal.
    //
    bool IsToBeRemoved() const { return remove_; }
+
+   //  Overridden to add the declaration to cross-references.
+   //
+   void AddToXref() const override;
 
    //  Overridden to log warnings associated with the declaration.
    //

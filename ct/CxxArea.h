@@ -150,6 +150,10 @@ public:
    //
    virtual Function* MatchFunc(const Function* curr, bool base) const;
 
+   //  Overridden to add the area's components to cross-references.
+   //
+   void AddToXref() const override;
+
    //  Overridden to log warnings associated with the area's declarations.
    //
    void Check() const override;
@@ -470,6 +474,10 @@ public:
    //
    void AddFiles(SetOfIds& imSet) const override;
 
+   //  Overridden to add the class's components to cross-references.
+   //
+   void AddToXref() const override;
+
    //  Overridden to set the type for an "auto" variable.
    //
    CxxToken* AutoType() const override { return (CxxToken*) this; }
@@ -712,7 +720,7 @@ private:
 
    //  The class's items in the order in which they appeared.
    //
-   NamedVector items_;
+   CxxNamedVector items_;
 
    //  The class's template instantiations.
    //
@@ -750,6 +758,10 @@ public:
    //  Returns the instance item that corresponds to ITEM in the class template.
    //
    CxxScoped* FindInstanceAnalog(const CxxNamed* item) const;
+
+   //  Overridden to add the class template's symbols to the cross-reference.
+   //
+   void AddToXref() const override;
 
    //  Overridden to return the class template's base class.
    //
@@ -805,7 +817,7 @@ public:
    //
    TypeName* GetTemplateArgs() const override { return tspec_.get(); }
 
-   //  Overridden to ignore usages in the instance.
+   //  Overridden to obtain usages for the class template.
    //
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
@@ -897,6 +909,12 @@ public:
    //
    Namespace* FindNamespace(const std::string& name) const;
 
+   //  Overridden to determine how ITEM, which is declared in this namespace,
+   //  is accessible to SCOPE.
+   //
+   void AccessibilityOf(const CxxScope* scope,
+      const CxxScoped* item, SymbolView* view) const override;
+
    //  Overridden to log warnings associated with the namespace's declarations.
    //
    void Check() const override;
@@ -956,12 +974,6 @@ public:
    //  Overridden to return the namespace's fully qualified name.
    //
    std::string TypeString(bool arg) const override;
-
-   //  Overridden to determine how ITEM, which is declared in this namespace,
-   //  is accessible to SCOPE.
-   //
-   void AccessibilityOf(const CxxScope* scope,
-      const CxxScoped* item, SymbolView* view) const override;
 private:
    //  The namespace's name.
    //

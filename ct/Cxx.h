@@ -609,6 +609,7 @@ public:
       FUNC_DECL,
       CLASS_DECL,
       CLASS_INST,
+      SPACE_DEFN,
       SPACE_DECL,
       CODE_FILE,
       CXX_SYMBOLS,

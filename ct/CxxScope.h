@@ -183,6 +183,10 @@ public:
    //
    static void ResetUsings();
 
+   //  Overridden to add the block's components to cross-references.
+   //
+   void AddToXref() const override;
+
    //  Overridden to log warnings within the code.
    //
    void Check() const override;
@@ -351,6 +355,10 @@ public:
    //  Returns true if the member appears in a union.
    //
    virtual bool IsUnionMember() const { return false; }
+
+   //  Overridden to add the data's components to cross-references.
+   //
+   void AddToXref() const override;
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -579,10 +587,9 @@ private:
    //
    TokenPtr expr_;
 
-   //  The right-hand side of the assignment statement
-   //  that initializes the data.
+   //  The assignment statement that initializes the data.
    //
-   ExprPtr rhs_;
+   ExprPtr init_;
 
    //  How many times the data was read.
    //
@@ -698,9 +705,14 @@ public:
    //
    void SetWidth(ExprPtr& width) { width_.reset(width.release()); }
 
-   //  Sets the member initialization expression.
+   //  Sets the member initialization expression for the currently
+   //  executing constructor.
    //
-   void SetInit(const MemberInit* init);
+   void SetMemInit(const MemberInit* init);
+
+   //  Overridden to add the data's components to cross-references.
+   //
+   void AddToXref() const override;
 
    //  Overridden to log warnings associated with the declaration.
    //
@@ -789,7 +801,7 @@ private:
    //  The member initialization statement provided by the constructor
    //  for which Function.EnterBlock is currently being executed.
    //
-   const MemberInit* init_;
+   const MemberInit* memInit_;
 
    //  Set for mutable data.
    //
@@ -834,6 +846,10 @@ public:
    //  Sets the first data declaration in a series.
    //
    void SetFirst(const Data* first) { first_ = first; }
+
+   //  Overridden to add the data's components to cross-references.
+   //
+   void AddToXref() const override;
 
    //  Overridden to log warnings associated with the data.
    //
@@ -1206,6 +1222,10 @@ public:
    //  Displays the function's declaration.
    //
    void DisplayDecl(std::ostream& stream, const NodeBase::Flags& options) const;
+
+   //  Overridden to add the function's components to cross-references.
+   //
+   void AddToXref() const override;
 
    //  Overridden to log warnings associated with the function.
    //

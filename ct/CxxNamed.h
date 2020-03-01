@@ -462,6 +462,40 @@ private:
 
 //------------------------------------------------------------------------------
 //
+//  A namespace definition: one occurrence of namespace NS { ... }.
+//
+class SpaceDefn : public CxxNamed
+{
+public:
+   //  NS aggregates *all* items defined in namespace NS, whereas this class
+   //  represents a single occurrence of a namespace definition that defines
+   //  some of the namespace's items.
+   //
+   explicit SpaceDefn(Namespace* ns);
+
+   //  Not subclassed.
+   //
+   ~SpaceDefn() { CxxStats::Decr(CxxStats::SPACE_DEFN); }
+
+   //  Overridden to add itself as a reference to space_.
+   //
+   void AddToXref() const override;
+
+   //  Overridden to forward to space_.
+   //
+   const std::string* Name() const override;
+
+   //  Overridden to forward to space_.
+   //
+   std::string ScopedName(bool templates) const override;
+private:
+   //  The primary class for the namespace.
+   //
+   Namespace* space_;
+};
+
+//------------------------------------------------------------------------------
+//
 //  A member initialization.  This is one of the elements in a constructor's
 //  initialization list.
 //
@@ -470,8 +504,9 @@ class MemberInit : public CxxNamed
 public:
    //  INIT is the expression that initializes NAME.  It is parsed as
    //  arguments for a function call in case it invokes a constructor.
+   //  CTOR is the constructor in which the initialization appears.
    //
-   MemberInit(std::string& name, TokenPtr& init);
+   MemberInit(const Function* ctor, std::string& name, TokenPtr& init);
 
    //  Not subclassed.
    //
@@ -480,6 +515,10 @@ public:
    //  Returns the expression that initializes the member.
    //
    CxxToken* GetInit() const { return init_.get(); }
+
+   //  Overridden to add the statement's components to cross-references.
+   //
+   void AddToXref() const override;
 
    //  Overridden to update SYMBOLS with the statement's type usage.
    //
@@ -506,6 +545,10 @@ public:
    //
    std::string Trace() const override { return name_; }
 private:
+   //  The constructor where the initialization appears.
+   //
+   const Function* const ctor_;
+
    //  The name of the member being initialized.
    //
    std::string name_;
@@ -638,6 +681,10 @@ public:
    //  Adds any template arguments to NAMES.
    //
    void GetNames(stringVector& names) const;
+
+   //  Overridden to invoke AddReference on the name's referent.
+   //
+   void AddToXref() const override;
 
    //  Overridden to check template arguments.
    //
@@ -851,6 +898,10 @@ public:
    //  Checks that the name is a valid constructor name ("...A::A").
    //
    bool CheckCtorDefn() const;
+
+   //  Overridden to add the name's components to cross-references.
+   //
+   void AddToXref() const override;
 
    //  Overridden to check each name and any template parameters.
    //
@@ -1364,6 +1415,10 @@ private:
    //
    void AddArray(ArraySpecPtr& array) override;
 
+   //  Overridden to add the specification's components to cross-references.
+   //
+   void AddToXref() const override;
+
    //  Overridden to align thatArg's type with the this type, which is that of a
    //  template parameter that might be specialized.
    //
@@ -1781,6 +1836,7 @@ class StaticAssert : public CxxNamed
 public:
    StaticAssert(ExprPtr& expr, ExprPtr& message);
    ~StaticAssert() { CxxStats::Decr(CxxStats::STATIC_ASSERT); }
+   void AddToXref() const override;
    void EnterBlock() override;
    bool EnterScope() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;

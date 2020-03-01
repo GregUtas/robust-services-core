@@ -65,6 +65,17 @@ Case::Case(ExprPtr& expression, size_t pos) : CxxStatement(pos),
 
 //------------------------------------------------------------------------------
 
+fn_name Case_AddToXref = "Case.AddToXref";
+
+void Case::AddToXref() const
+{
+   Debug::ft(Case_AddToXref);
+
+   expr_->AddToXref();
+}
+
+//------------------------------------------------------------------------------
+
 void Case::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -109,6 +120,18 @@ Catch::Catch(size_t pos) : CxxStatement(pos)
    Debug::ft(Catch_ctor);
 
    CxxStats::Incr(CxxStats::CATCH);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Catch_AddToXref = "Catch.AddToXref";
+
+void Catch::AddToXref() const
+{
+   Debug::ft(Catch_AddToXref);
+
+   if(arg_ != nullptr) arg_->AddToXref();
+   handler_->AddToXref();
 }
 
 //------------------------------------------------------------------------------
@@ -225,6 +248,17 @@ Condition::Condition(size_t pos) : CxxStatement(pos)
 
 //------------------------------------------------------------------------------
 
+fn_name Condition_AddToXref = "Condition.AddToXref";
+
+void Condition::AddToXref() const
+{
+   Debug::ft(Condition_AddToXref);
+
+   if(condition_ != nullptr) condition_->AddToXref();
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Condition_EnterBlock = "Condition.EnterBlock";
 
 void Condition::EnterBlock()
@@ -313,6 +347,18 @@ Do::Do(size_t pos) : Condition(pos)
    Debug::ft(Do_ctor);
 
    CxxStats::Incr(CxxStats::DO);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Do_AddToXref = "Do.AddToXref";
+
+void Do::AddToXref() const
+{
+   Debug::ft(Do_AddToXref);
+
+   loop_->AddToXref();
+   Condition::AddToXref();
 }
 
 //------------------------------------------------------------------------------
@@ -439,6 +485,17 @@ Expr::Expr(ExprPtr& expression, size_t pos) : CxxStatement(pos),
 
 //------------------------------------------------------------------------------
 
+fn_name Expr_AddToXref = "Expr.AddToXref";
+
+void Expr::AddToXref() const
+{
+   Debug::ft(Expr_AddToXref);
+
+   expr_->AddToXref();
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Expr_EnterBlock = "Expr.EnterBlock";
 
 void Expr::EnterBlock()
@@ -478,6 +535,20 @@ For::For(size_t pos) : Condition(pos)
    Debug::ft(For_ctor);
 
    CxxStats::Incr(CxxStats::FOR);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name For_AddToXref = "For.AddToXref";
+
+void For::AddToXref() const
+{
+   Debug::ft(For_AddToXref);
+
+   if(initial_ != nullptr) initial_->AddToXref();
+   Condition::AddToXref();
+   if(subsequent_ != nullptr) subsequent_->AddToXref();
+   loop_->AddToXref();
 }
 
 //------------------------------------------------------------------------------
@@ -708,6 +779,19 @@ If::If(size_t pos) : Condition(pos),
 
 //------------------------------------------------------------------------------
 
+fn_name If_AddToXref = "If.AddToXref";
+
+void If::AddToXref() const
+{
+   Debug::ft(If_AddToXref);
+
+   Condition::AddToXref();
+   then_->AddToXref();
+   if(else_ != nullptr) else_->AddToXref();
+}
+
+//------------------------------------------------------------------------------
+
 fn_name If_Check = "If.Check";
 
 void If::Check() const
@@ -925,6 +1009,17 @@ Return::Return(size_t pos) : CxxStatement(pos)
 
 //------------------------------------------------------------------------------
 
+fn_name Return_AddToXref = "Return.AddToXref";
+
+void Return::AddToXref() const
+{
+   Debug::ft(Return_AddToXref);
+
+   if(expr_ != nullptr) expr_->AddToXref();
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Return_EnterBlock = "Return.EnterBlock";
 
 void Return::EnterBlock()
@@ -981,6 +1076,18 @@ Switch::Switch(size_t pos) : CxxStatement(pos)
    Debug::ft(Switch_ctor);
 
    CxxStats::Incr(CxxStats::SWITCH);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Switch_AddToXref = "Switch.AddToXref";
+
+void Switch::AddToXref() const
+{
+   Debug::ft(Switch_AddToXref);
+
+   expr_->AddToXref();
+   cases_->AddToXref();
 }
 
 //------------------------------------------------------------------------------
@@ -1075,6 +1182,22 @@ Try::Try(size_t pos) : CxxStatement(pos)
    Debug::ft(Try_ctor);
 
    CxxStats::Incr(CxxStats::TRY);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Try_AddToXref = "Try.AddToXref";
+
+void Try::AddToXref() const
+{
+   Debug::ft(Try_AddToXref);
+
+   try_->AddToXref();
+
+   for(auto c = catches_.cbegin(); c != catches_.cend(); ++c)
+   {
+      (*c)->AddToXref();
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -1216,6 +1339,18 @@ While::While(size_t pos) : Condition(pos)
    Debug::ft(While_ctor);
 
    CxxStats::Incr(CxxStats::WHILE);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name While_AddToXref = "While.AddToXref";
+
+void While::AddToXref() const
+{
+   Debug::ft(While_AddToXref);
+
+   Condition::AddToXref();
+   loop_->AddToXref();
 }
 
 //------------------------------------------------------------------------------

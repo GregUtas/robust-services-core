@@ -52,6 +52,17 @@ AlignAs::AlignAs(TokenPtr& token) : token_(std::move(token))
 
 //------------------------------------------------------------------------------
 
+fn_name AlignAs_AddToXref = "AlignAs.AddToXref";
+
+void AlignAs::AddToXref() const
+{
+   Debug::ft(AlignAs_AddToXref);
+
+   token_->AddToXref();
+}
+
+//------------------------------------------------------------------------------
+
 fn_name AlignAs_EnterBlock = "AlignAs.EnterBlock";
 
 void AlignAs::EnterBlock()
@@ -90,6 +101,17 @@ ArraySpec::ArraySpec(ExprPtr& expr) : expr_(expr.release())
    Debug::ft(ArraySpec_ctor);
 
    CxxStats::Incr(CxxStats::ARRAY_SPEC);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name ArraySpec_AddToXref = "ArraySpec.AddToXref";
+
+void ArraySpec::AddToXref() const
+{
+   Debug::ft(ArraySpec_AddToXref);
+
+   if(expr_ != nullptr) expr_->AddToXref();
 }
 
 //------------------------------------------------------------------------------
@@ -150,6 +172,20 @@ BraceInit::BraceInit()
    Debug::ft(BraceInit_ctor);
 
    CxxStats::Incr(CxxStats::BRACE_INIT);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name BraceInit_AddToXref = "BraceInit.AddToXref";
+
+void BraceInit::AddToXref() const
+{
+   Debug::ft(BraceInit_AddToXref);
+
+   for(auto i = items_.cbegin(); i != items_.cend(); ++i)
+   {
+      (*i)->AddToXref();
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -664,6 +700,20 @@ bool Expression::AddItem(TokenPtr& item)
    //
    Debug::SwLog(Expression_AddItem, oper->Op(), type);
    return false;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Expression_AddToXref = "Expression.AddToXref";
+
+void Expression::AddToXref() const
+{
+   Debug::ft(Expression_AddToXref);
+
+   for(auto i = items_.cbegin(); i != items_.cend(); ++i)
+   {
+      (*i)->AddToXref();
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -1183,6 +1233,20 @@ void Operation::AddArg(TokenPtr& arg, bool prefixed)
 
 //------------------------------------------------------------------------------
 
+fn_name Operation_AddToXref = "Operation.AddToXref";
+
+void Operation::AddToXref() const
+{
+   Debug::ft(Operation_AddToXref);
+
+   for(auto a = args_.cbegin(); a != args_.cend(); ++a)
+   {
+      (*a)->AddToXref();
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Operation_AppendUnary = "Operation.AppendUnary";
 
 bool Operation::AppendUnary()
@@ -1285,7 +1349,8 @@ void Operation::CheckCast(const StackArg& inArg, const StackArg& outArg) const
       {
       case Cxx::CONST_CAST:
       case Cxx::CAST:
-         if(inArg.IsConst()) Context::Log(CastingAwayConstness);
+         if(inArg.IsConst() && inArg.IsIndirect())
+            Context::Log(CastingAwayConstness);
          break;
 
       default:
@@ -2852,6 +2917,17 @@ string Operation::Trace() const
 }
 
 //==============================================================================
+
+fn_name Precedence_AddToXref = "Precedence.AddToXref";
+
+void Precedence::AddToXref() const
+{
+   Debug::ft(Precedence_AddToXref);
+
+   if(expr_ != nullptr) expr_->AddToXref();
+}
+
+//------------------------------------------------------------------------------
 
 fn_name Precedence_EnterBlock = "Precedence.EnterBlock";
 

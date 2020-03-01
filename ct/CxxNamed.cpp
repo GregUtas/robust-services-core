@@ -33,6 +33,7 @@
 #include "CxxScoped.h"
 #include "CxxSymbols.h"
 #include "Debug.h"
+#include "Formatters.h"
 #include "Lexer.h"
 #include "Library.h"
 #include "Parser.h"
@@ -696,7 +697,9 @@ void CxxNamed::strName(ostream& stream, bool fq, const QualName* name) const
 
 string CxxNamed::XrefName(bool templates) const
 {
-   return ScopedName(templates);
+   auto name = ScopedName(templates);
+   ReplaceScopeOperators(name);
+   return name;
 }
 
 //==============================================================================
@@ -765,6 +768,27 @@ void DataSpec::AddArray(ArraySpecPtr& array)
    if(arrays_ == nullptr) arrays_.reset(new ArraySpecPtrVector);
    arrays_->push_back(std::move(array));
    tags_.AddArray();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name DataSpec_AddToXref = "DataSpec.AddToXref";
+
+void DataSpec::AddToXref() const
+{
+   Debug::ft(DataSpec_AddToXref);
+
+   if(IsAutoDecl()) return;
+
+   name_->AddToXref();
+
+   if(arrays_ != nullptr)
+   {
+      for(auto a = arrays_->cbegin(); a != arrays_->cend(); ++a)
+      {
+         (*a)->AddToXref();
+      }
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -2000,12 +2024,28 @@ string DataSpec::TypeTagsString(const TypeTags& tags) const
 
 fn_name MemberInit_ctor = "MemberInit.ctor";
 
-MemberInit::MemberInit(string& name, TokenPtr& init) : init_(init.release())
+MemberInit::MemberInit(const Function* ctor, string& name, TokenPtr& init) :
+   ctor_(ctor),
+   init_(init.release())
 {
    Debug::ft(MemberInit_ctor);
 
    std::swap(name_, name);
    CxxStats::Incr(CxxStats::MEMBER_INIT);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name MemberInit_AddToXref = "MemberInit.AddToXref";
+
+void MemberInit::AddToXref() const
+{
+   Debug::ft(MemberInit_AddToXref);
+
+   auto cls = ctor_->GetClass();
+   auto data = cls->FindData(name_);
+   data->AddReference(this);
+   init_->AddToXref();
 }
 
 //------------------------------------------------------------------------------
@@ -2087,6 +2127,20 @@ QualName::~QualName()
    Debug::ft(QualName_dtor);
 
    CxxStats::Decr(CxxStats::QUAL_NAME);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name QualName_AddToXref = "QualName.AddToXref";
+
+void QualName::AddToXref() const
+{
+   Debug::ft(QualName_AddToXref);
+
+   for(auto n = First(); n != nullptr; n = n->Next())
+   {
+      n->AddToXref();
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -2634,6 +2688,47 @@ string QualName::TypeString(bool arg) const
 
 //==============================================================================
 
+fn_name SpaceDefn_ctor = "SpaceDefn.ctor";
+
+SpaceDefn::SpaceDefn(Namespace* ns) :
+   space_(ns)
+{
+   Debug::ft(SpaceDefn_ctor);
+
+   CxxStats::Incr(CxxStats::SPACE_DEFN);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SpaceDefn_AddToXref = "SpaceDefn.AddToXref";
+
+void SpaceDefn::AddToXref() const
+{
+   Debug::ft(SpaceDefn_AddToXref);
+
+   space_->AddReference(this);
+}
+
+//------------------------------------------------------------------------------
+
+const std::string* SpaceDefn::Name() const
+{
+   return space_->Name();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SpaceDefn_ScopedName = "SpaceDefn.ScopedName";
+
+string SpaceDefn::ScopedName(bool templates) const
+{
+   Debug::ft(SpaceDefn_ScopedName);
+
+   return space_->ScopedName(templates);
+}
+
+//==============================================================================
+
 fn_name StaticAssert_ctor = "StaticAssert.ctor";
 
 StaticAssert::StaticAssert(ExprPtr& expr, ExprPtr& message) :
@@ -2643,6 +2738,17 @@ StaticAssert::StaticAssert(ExprPtr& expr, ExprPtr& message) :
    Debug::ft(StaticAssert_ctor);
 
    CxxStats::Incr(CxxStats::STATIC_ASSERT);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name StaticAssert_AddToXref = "StaticAssert.AddToXref";
+
+void StaticAssert::AddToXref() const
+{
+   Debug::ft(StaticAssert_AddToXref);
+
+   expr_->AddToXref();
 }
 
 //------------------------------------------------------------------------------
@@ -2922,6 +3028,37 @@ void TypeName::AddTemplateArg(TypeSpecPtr& arg)
    if(args_ == nullptr) args_.reset(new TypeSpecPtrVector);
    arg->SetTemplateRole(TemplateArgument);
    args_->push_back(std::move(arg));
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TypeName_AddToXref = "TypeName.AddToXref";
+
+void TypeName::AddToXref() const
+{
+   Debug::ft(TypeName_AddToXref);
+
+   if(ref_ != nullptr)
+   {
+      ref_->AddReference(this);
+
+      if(ref_->IsInTemplateInstance())
+      {
+         //  In T<A>, the referent of T is the template instance, so
+         //  also add the name "T" as a reference to the template T.
+         //
+         auto tmplt = ref_->GetTemplate();
+         if(tmplt != nullptr) tmplt->AddReference(this);
+      }
+   }
+
+   if(args_ != nullptr)
+   {
+      for(auto a = args_->cbegin(); a != args_->cend(); ++a)
+      {
+         (*a)->AddToXref();
+      }
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -3328,7 +3465,6 @@ void TypeName::SetReferent(CxxScoped* item, const SymbolView* view) const
    //
    if((view != nullptr) && view->using_ && (ref_ == nullptr)) using_ = true;
    ref_ = item;
-   if(item != nullptr) item->AddUser(this);
 }
 
 //------------------------------------------------------------------------------

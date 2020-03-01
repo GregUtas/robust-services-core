@@ -460,6 +460,13 @@ NameVector GetNameAndArgs(const string& name)
 
 //------------------------------------------------------------------------------
 
+bool IsBlank(char c)
+{
+   return (WhitespaceChars.find_first_of(c) != string::npos);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeTools_IsCodeFile = "CodeTools.IsCodeFile";
 
 bool IsCodeFile(const string& file)
@@ -500,6 +507,13 @@ bool IsValidIdentifier(const string& id)
    }
 
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+bool IsWordChar(char c)
+{
+   return (ValidNextChars.find_first_of(c) != string::npos);
 }
 
 //------------------------------------------------------------------------------
@@ -754,5 +768,17 @@ size_t Replace
    }
 
    return end;
+}
+
+//------------------------------------------------------------------------------
+
+size_t RfindFirstNotOf(const string& str, size_t pos, const string& elems)
+{
+   for(auto c = str.at(pos); pos != string::npos; --pos)
+   {
+      if(elems.find(c) == string::npos) return pos;
+   }
+
+   return string::npos;
 }
 }

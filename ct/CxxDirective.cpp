@@ -64,6 +64,17 @@ Conditional::Conditional()
 
 //------------------------------------------------------------------------------
 
+fn_name Conditional_AddToXref = "Conditional.AddToXref";
+
+void Conditional::AddToXref() const
+{
+   Debug::ft(Conditional_AddToXref);
+
+   condition_->AddToXref();
+}
+
+//------------------------------------------------------------------------------
+
 void Conditional::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -381,6 +392,17 @@ bool Existential::AddElse(const Else* e)
    if(else_ != nullptr) return false;
    else_ = e;
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Existential_AddToXref = "Existential.AddToXref";
+
+void Existential::AddToXref() const
+{
+   Debug::ft(Existential_AddToXref);
+
+   name_->AddToXref();
 }
 
 //------------------------------------------------------------------------------
@@ -769,11 +791,9 @@ void Macro::SetExpr(ExprPtr& rhs)
 
 void Macro::Shrink()
 {
-   CxxScoped::Shrink();
-
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::DEFINE_DIRECTIVE, name_.capacity());
-   CxxStats::Vectors(CxxStats::DEFINE_DIRECTIVE, Users().capacity());
+   CxxStats::Vectors(CxxStats::DEFINE_DIRECTIVE, XrefSize());
 }
 
 //------------------------------------------------------------------------------
@@ -820,6 +840,17 @@ MacroName::~MacroName()
    Debug::ft(MacroName_dtor);
 
    CxxStats::Decr(CxxStats::QUAL_NAME);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name MacroName_AddToXref = "MacroName.AddToXref";
+
+void MacroName::AddToXref() const
+{
+   Debug::ft(MacroName_AddToXref);
+
+   if(ref_ != nullptr) ref_->AddReference(this);
 }
 
 //------------------------------------------------------------------------------

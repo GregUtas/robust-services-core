@@ -118,7 +118,7 @@ public:
 
    //  Generates a report in STREAM for the files in SET.  The report
    //  includes line type counts and warnings found during parsing and
-   //  "execution".
+   //  compilation.
    //
    static void GenerateReport(std::ostream* stream, const SetOfIds& set);
 private:

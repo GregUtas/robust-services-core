@@ -402,7 +402,7 @@ void Class::AddToXref() const
 
    name_->AddToXref();
 
-   //  A class template's function aren't executed, so it must get these
+   //  A class template's functions aren't compiled, so it must get their
    //  symbol references from its instantiations.  We compile the full
    //  template instead of instantiating each member when it is used, so
    //  it is sufficient to pull symbols from the first instantiation.
@@ -1542,7 +1542,7 @@ void Class::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
    Debug::ft(Class_GetUsages);
 
-   //  A class template cannot be executed by itself, so it must get its
+   //  A class template's functions aren't compiled, so it must get its
    //  symbol usage information from its instantiations.  We compile the
    //  full template instead of instantiating each member when it is used,
    //  so it is sufficient to pull symbols from the first instantiation.
@@ -1975,7 +1975,8 @@ void ClassInst::AddToXref() const
 
    //  We're interested in references within the class template.  It picks
    //  up those outside function definitions.  But for function bodies, it
-   //  has to consult a template instance.
+   //  has to get references from a template instance, whose functions are
+   //  compiled.
    //
    auto funcs = Funcs();
    auto opers = Opers();

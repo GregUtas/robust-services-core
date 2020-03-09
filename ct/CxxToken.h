@@ -214,12 +214,12 @@ public:
    virtual CxxToken* Back() { return this; }
 
    //  Invoked when the item is read.  Returns true to record the read in the
-   //  execution trace.  The default version returns false.
+   //  compilation trace.  The default version returns false.
    //
    virtual bool WasRead() { return false; }
 
    //  Invoked when the item is modified.  Returns true to record a write in
-   //  the execution trace.  The default version generates a log and returns
+   //  the compilation trace.  The default version generates a log and returns
    //  false, and must therefore be overridden by items that can be modified.
    //  ARG is the stack variable through which the item was modified.  The item
    //  itself is usually arg.item, but ARG is nullptr for a function's "this"
@@ -240,7 +240,7 @@ public:
    //
    virtual void WasMutated(const StackArg* arg) { }
 
-   //  Records that the item was used when executing code in the context file.
+   //  Records that the item was used when compiling code in the context file.
    //  This is used to record usages (for #include purposes) that are difficult
    //  to detect simply on the basis of symbol usage.
    //
@@ -271,7 +271,7 @@ public:
    //
    virtual void Check() const { }
 
-   //  Returns a string that describes the item during an execution trace.
+   //  Returns a string that describes the item during a compilation trace.
    //
    virtual std::string Trace() const { return NodeBase::EMPTY_STR; }
 
@@ -588,7 +588,7 @@ public:
    //
    void SetOp(Cxx::Operator op) { op_ = op; }
 
-   //  Executes the operation.  Obtains its arguments from the stack.
+   //  Compiles the operation.  Obtains its arguments from the stack.
    //
    void Execute() const;
 
@@ -656,7 +656,7 @@ private:
    //
    static void PushType(const std::string& name);
 
-   //  Handles the execution of a function call.
+   //  Handles the invocation of a function call.
    //
    static void ExecuteCall();
 
@@ -667,15 +667,15 @@ private:
    //
    Function* FindNewOrDelete(const StackArg& arg, bool del, bool& pod) const;
 
-   //  Handles the execution of operator new.
+   //  Handles the invocation of operator new.
    //
    void ExecuteNew() const;
 
-   //  Handles the execution of operator delete on ARG.
+   //  Handles the invocation of operator delete on ARG.
    //
    void ExecuteDelete(const StackArg& arg) const;
 
-   //  If ARG1 overloads the operator, this executes the overload function
+   //  If ARG1 overloads the operator, this invokes the overload function
    //  and returns T, else it returns false.  If the operator is binary,
    //  ARG2 is its other argument.  NAME is the function name.
    //

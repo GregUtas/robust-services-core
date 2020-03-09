@@ -1174,7 +1174,7 @@ void DataSpec::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    if(ref == nullptr)
    {
       //  The referent for this type was never found.  If this is actually
-      //  a problem, a log should have been produced during execution.
+      //  a problem, a log should have been produced during compilation.
       //
       return;
    }

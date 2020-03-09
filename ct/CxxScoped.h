@@ -658,11 +658,11 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
-   //  Overridden to execute the enumerator's initialization statement.
+   //  Overridden to compile the enumerator's initialization statement.
    //
    void EnterBlock() override;
 
-   //  Overridden to execute the enumerator's initialization statement.
+   //  Overridden to compile the enumerator's initialization statement.
    //
    bool EnterScope() override;
 

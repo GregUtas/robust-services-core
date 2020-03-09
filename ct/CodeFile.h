@@ -226,8 +226,8 @@ public:
    //
    void Scan();
 
-   //  Includes, in the cross-reference, symbols which appear in items
-   //  that are not added to a namespace.
+   //  Includes, in the cross-reference, symbols that appear in the
+   //  file's items.
    //
    void AddToXref() const;
 
@@ -286,7 +286,7 @@ public:
 
    //  Generates a report in STREAM (if not nullptr) for the files in SET.  The
    //  report includes line type counts and warnings found during parsing and
-   //  "execution".
+   //  compilation.
    //
    static void GenerateReport(std::ostream* stream, const SetOfIds& set);
 

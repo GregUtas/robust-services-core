@@ -632,7 +632,7 @@ void ClassData::EnterBlock()
       return;
    }
 
-   //  If there is a member initialization statement, execute it and then
+   //  If there is a member initialization statement, compile it and then
    //  clear it: there could be more than one constructor, each with its
    //  own version of the member initialization.  If there is no member
    //  initialization statement, see if a class member is using a default
@@ -1485,7 +1485,7 @@ bool Data::InitByExpr(CxxToken* expr)
    else
    {
       //  ROOT is not a class, so EXPR should contain a single expression.
-      //  Execute it as if it was a single-member brace initialization list.
+      //  Compile it as if it was a single-member brace initialization list.
       //
       if(expr->Type() == Cxx::Operation)
       {
@@ -1810,7 +1810,7 @@ void FuncData::EnterBlock()
    Debug::ft(FuncData_EnterBlock);
 
    //  This also doubles as the equivalent of EnterScope for function data.
-   //  Set the data's scope, add it to the local symbol table, and execute
+   //  Set the data's scope, add it to the local symbol table, and compile
    //  its definition.
    //
    auto spec = GetTypeSpec();
@@ -2102,8 +2102,9 @@ void Function::AddToXref() const
    case NonTemplate:
       //
       //  This includes a function template instance and a function in a
-      //  class template instance.  A template isn't executed, so it must
-      //  get references in its function bodies from a template instance.
+      //  class template instance.  A template's functions aren't compiled,
+      //  so it must get references in its function bodies from a template
+      //  instance.
       //
       sig = !inst;
       break;
@@ -3464,11 +3465,11 @@ void Function::EnterBlock()
    //
    if(!IsImplemented()) return;
 
-   //  Don't execute a function template or a function in a class template.
-   //  Execution will fail because template arguments are untyped.  However:
-   //  o An inline function in a class template *is* executed (because it
+   //  Don't compile a function template or a function in a class template.
+   //  Compilation will fail because template arguments are untyped.  However:
+   //  o An inline function in a class template *is* compiled (because it
    //    is not included in template instances).
-   //  o A function in a class template instance *is* executed, and so is a
+   //  o A function in a class template instance *is* compiled, and so is a
    //    function template instance (GetTemplateType returns NonTemplate in
    //    this case).
    //
@@ -3482,8 +3483,8 @@ void Function::EnterBlock()
       if(!inline_) return;
    }
 
-   //  Set up the "execution" context and add the function's arguments to the
-   //  local symbol table.  Execute the function's code block, including any
+   //  Set up the compilation context and add the function's arguments to the
+   //  local symbol table.  Compile the function's code block, including any
    //  base constructor call and member initializations.  The latter are first
    //  assigned to their respective members, after which all non-static members
    //  are initialized so that class members can invoke default constructors.
@@ -3581,7 +3582,7 @@ bool Function::EnterScope()
    }
 
    //  Add the function to this file's list of functions.  If it's
-   //  a declaration, check if it's an override.  Then execute it.
+   //  a declaration, check if it's an override.  Then compile it.
    //
    found_ = true;
    if(defn || AtFileScope()) GetFile()->InsertFunc(this);
@@ -4043,7 +4044,7 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
    case FuncTemplate:
       //
-      //  A function template cannot be executed by itself, so it must get its
+      //  A function template cannot be compiled by itself, so it must get its
       //  symbol usage information from its instantiations.  They are all the
       //  same, so it is sufficient to pull symbols from the first one.
       //
@@ -4060,8 +4061,8 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
    case ClassTemplate:
       //
-      //  This function appears in a class template, which is not executed, so
-      //  there will be no symbols to report unless it is an inline function.
+      //  This function appears in a class template.  Such a function is only
+      //  compiled if it is inline (i.e. not copied into template instances).
       //
       if(!inline_) return;
    }

@@ -50,7 +50,7 @@ using std::string;
 
 namespace CodeTools
 {
-//  Concrete classes for tracing execution.
+//  Concrete classes for tracing compilation.
 //
 class ActTrace : public CxxTrace
 {
@@ -293,7 +293,7 @@ void Context::Log(Warning warning, const CxxNamed* item, word offset)
 
 //------------------------------------------------------------------------------
 
-void Context::OnLine(size_t line, bool executing)
+void Context::OnLine(size_t line, bool compiling)
 {
    auto parser = GetParser();
    if(parser == nullptr) return;
@@ -301,7 +301,7 @@ void Context::OnLine(size_t line, bool executing)
 
    for(auto b = Tracepoints_.cbegin(); b != Tracepoints_.cend(); ++b)
    {
-      b->OnLine(File_, line, executing);
+      b->OnLine(File_, line, compiling);
    }
 }
 
@@ -466,7 +466,7 @@ bool Context::StartTracing()
 {
    Debug::ft(Context_StartTracing);
 
-   auto x = OptionIsOn(TraceExecution);
+   auto x = OptionIsOn(TraceCompilation);
    auto f = OptionIsOn(TraceFunctions);
    if(!x && !f) return false;
 
@@ -593,7 +593,7 @@ fixed_string ActionStrings[CxxTrace::Action_N] =
    "incr_c",
    "execute",
    "clear",
-   ERROR_STR  // actually used: appears in execution traces
+   ERROR_STR  // may actually appear in compilation traces
 };
 
 uint16_t CxxTrace::Last_ = UINT16_MAX;
@@ -1690,7 +1690,7 @@ bool StackArg::SetAutoTypeOn(const FuncData& data) const
    Debug::ft(StackArg_SetAutoTypeOn);
 
    //  An auto type acquires the type that resulted from the right-hand side
-   //  of the expression that was just executed.  However, it is adjusted to
+   //  of the expression that was just compiled.  However, it is adjusted to
    //  account for pointers and constness.
    //
    if(item == nullptr) return false;
@@ -1943,7 +1943,7 @@ Tracepoint::Tracepoint(const CodeFile* file, size_t line, Action act) :
    line_(line),
    action_(act),
    parsed_(false),
-   executed_(false)
+   compiled_(false)
 {
 }
 
@@ -1961,12 +1961,12 @@ void Tracepoint::Display(ostream& stream, const string& prefix) const
 
 fn_name Tracepoint_OnLine = "Tracepoint.OnLine";
 
-void Tracepoint::OnLine(const CodeFile* file, size_t line, bool executing) const
+void Tracepoint::OnLine(const CodeFile* file, size_t line, bool compiling) const
 {
    if(file_ != file) return;
    if(line_ != line) return;
-   if(parsed_ && !executing) return;
-   if(executed_ && executing) return;
+   if(parsed_ && !compiling) return;
+   if(compiled_ && compiling) return;
 
    Debug::ft(Tracepoint_OnLine);
 
@@ -1997,8 +1997,8 @@ void Tracepoint::OnLine(const CodeFile* file, size_t line, bool executing) const
       break;
    }
 
-   if(executing)
-      executed_ = true;
+   if(compiling)
+      compiled_ = true;
    else
       parsed_ = true;
 }

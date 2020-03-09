@@ -843,8 +843,8 @@ void Expression::EnterBlock()
 
    //  If evaluation of this expression is to be forced at its end_, mark
    //  the beginning of the expression by pushing a token onto the operator
-   //  stack.  Execute each of the items in the expression, and the force
-   //  the execution of anything still above our start token.
+   //  stack.  Compile each of the items in the expression, and force the
+   //  compilation of anything still above our start token.
    //
    if(force_) Start();
 
@@ -899,7 +899,7 @@ void Expression::Start()
 
    //  Push StartOfExpr onto the stack.  Its priority is lower than all other
    //  operators.  This allows an expression to push its operators onto the
-   //  stack during its execution.
+   //  stack during compilation.
    //
    Context::PushOp(static_cast< Operation* >(StartOfExpr.get()));
 }
@@ -1937,7 +1937,7 @@ void Operation::ExecuteNew() const
 {
    Debug::ft(Operation_ExecuteNew);
 
-   //  If this is operator new[], execute its array argument(s), which
+   //  If this is operator new[], compile its array argument(s), which
    //  start at the third argument.  Pop each result.
    //
    if(op_ == Cxx::OBJECT_CREATE_ARRAY)
@@ -1970,7 +1970,7 @@ void Operation::ExecuteNew() const
       Context::PushArg(StackArg(newArg, 0, false));
       newCall->PushArgs();
 
-      //  Execute the call to the operator new function and pop the result,
+      //  Compile the call to the operator new function and pop the result,
       //  which should be a void*.  Push the TypeSpec that new created, but
       //  add a pointer to it.
       //
@@ -1998,7 +1998,7 @@ void Operation::ExecuteNew() const
    //  Before pushing the constructor, discard the result of operator new.
    //  Then push the constructor's arguments, starting with "this".  Only
    //  operator new, not new[], can have additional arguments, which appear
-   //  in the optional third argument.  Execute the call to the constructor
+   //  in the optional third argument.  Compile the call to the constructor
    //  and add a pointer to the result.
    //
    Context::PopArg(false);
@@ -2156,7 +2156,7 @@ bool Operation::ExecuteOverload
       }
    }
 
-   //  If an overload was found, execute it after fixing its "this" argument
+   //  If an overload was found, invoke it after fixing its "this" argument
    //  if it a member function.  If assigning an auto type, pop the function's
    //  return type and set it as the auto type for FuncData.EnterBlock.  When
    //  setting an auto type, update ARG1 to ARG2, the argument on which the

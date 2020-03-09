@@ -402,9 +402,14 @@ void Class::AddToXref() const
 
    name_->AddToXref();
 
+   //  A class template's function aren't executed, so it must get these
+   //  symbol references from its instantiations.  We compile the full
+   //  template instead of instantiating each member when it is used, so
+   //  it is sufficient to pull symbols from the first instantiation.
+   //
    if(!tmplts_.empty())
    {
-      //* To be implemented.
+      tmplts_.front().get()->AddToXref();
    }
 
    if(alignas_ != nullptr) alignas_->AddToXref();
@@ -1897,6 +1902,34 @@ string Class::TypeString(bool arg) const
    return Prefix(GetScope()->TypeString(arg)) + *Name();
 }
 
+//------------------------------------------------------------------------------
+
+string Class::XrefName(bool templates) const
+{
+   auto name = CxxScoped::XrefName(templates);
+   auto spec = GetQualName()->GetTemplateArgs();
+
+   if(spec != nullptr)
+   {
+      auto args = spec->Args();
+      std::ostringstream stream;
+      Flags options(FQ_Mask);
+
+      name.push_back('<');
+
+      for(size_t i = 0; i < args->size(); ++i)
+      {
+         args->at(i)->Print(stream, options);
+         if(i < args->size() - 1) stream << ',';
+      }
+
+      name += stream.str();
+      name.push_back('>');
+   }
+
+   return name;
+}
+
 //==============================================================================
 
 fn_name ClassInst_ctor = "ClassInst.ctor";
@@ -1940,7 +1973,22 @@ void ClassInst::AddToXref() const
 {
    Debug::ft(ClassInst_AddToXref);
 
-   //* To be implemented.
+   //  We're interested in references within the class template.  It picks
+   //  up those outside function definitions.  But for function bodies, it
+   //  has to consult a template instance.
+   //
+   auto funcs = Funcs();
+   auto opers = Opers();
+
+   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
+   {
+      (*f)->AddToXref();
+   }
+
+   for(auto o = opers->cbegin(); o != opers->cend(); ++o)
+   {
+      (*o)->AddToXref();
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -2129,6 +2177,15 @@ CxxScoped* ClassInst::FindTemplateAnalog(const CxxNamed* item) const
       auto list = tmplt_->FuncVector(*item->Name());
       return list->at(idx).get();
    }
+
+   case Cxx::MemInit:
+   {
+      size_t idx;
+      auto init = static_cast< const MemberInit* >(item);
+      if(!GetFuncIndex(init->Ctor(), idx)) return nullptr;
+      return tmplt_->Funcs()->at(idx).get();
+   }
+      break;
 
    case Cxx::Friend:
    {
@@ -3019,12 +3076,8 @@ Namespace* Namespace::FindNamespace(const string& name) const
 
 //------------------------------------------------------------------------------
 
-fn_name Namespace_ScopedName = "Namespace.ScopedName";
-
 string Namespace::ScopedName(bool templates) const
 {
-   Debug::ft(Namespace_ScopedName);
-
    auto scope = GetScope();
 
    if(scope == nullptr)

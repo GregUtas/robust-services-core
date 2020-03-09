@@ -389,8 +389,6 @@ fn_name Block_ScopedName = "Block.ScopedName";
 
 string Block::ScopedName(bool templates) const
 {
-   Debug::ft(Block_ScopedName);
-
    for(auto s = GetScope(); s != nullptr; s = s->GetScope())
    {
       if(s->Type() == Cxx::Function)
@@ -2091,44 +2089,71 @@ void Function::AddToXref() const
 
    if(deleted_) return;
 
-   //  See if this function appears in a function or class template.
+   auto sig = true;
+   auto body = true;
+   auto inst = IsInTemplateInstance();
+
+   //  Find out if this function appears in a template.
    //
    auto type = GetTemplateType();
 
    switch(type)
    {
    case NonTemplate:
-      if(IsInTemplateInstance())
-      {
-         //* To be implemented.
-         //
-         return;
-      }
+      //
+      //  This includes a function template instance and a function in a
+      //  class template instance.  A template isn't executed, so it must
+      //  get references in its function bodies from a template instance.
+      //
+      sig = !inst;
       break;
 
    case FuncTemplate:
+      //
+      //  References in the function's *signature* can be taken from the
+      //  template, but references in its body must come from an instance.
+      //
       if(!tmplts_.empty())
       {
-         //* To be implemented.
+         tmplts_.front()->AddToXref();
       }
-      return;
+
+      body = false;
+      break;
 
    case ClassTemplate:
       //
-      //  This function appears in a class template, which is not executed, so
-      //  there will be no symbols to report unless it is an inline function.
+      //  This function appears in a class template.  Its body will only
+      //  contain references if it's an inline function, but references
+      //  can be taken from its signature.
       //
-      if(!inline_) return;
+      body = inline_;
    }
 
-   name_->AddToXref();
-
-   if(spec_ != nullptr) spec_->AddToXref();
-
-   for(size_t i = (this_ ? 1 : 0); i < args_.size(); ++i)
+   if(inst)
    {
-      args_[i]->AddToXref();
+      //* Add the template *analog* as a reference.  This usually applies
+      //  to the function body, but it also applies to the signature when
+      //  a class template *contains* a function template (Allocators.h is
+      //  an example).  FindTemplateAnalog doesn't yet support items in a
+      //  function body, so simply return for now.
+      //
+      return;
    }
+
+   if(sig)
+   {
+      name_->AddToXref();
+
+      if(spec_ != nullptr) spec_->AddToXref();
+
+      for(size_t i = (this_ ? 1 : 0); i < args_.size(); ++i)
+      {
+         args_[i]->AddToXref();
+      }
+   }
+
+   if(!body) return;
 
    if(call_ != nullptr) call_->AddToXref();
 
@@ -2141,7 +2166,22 @@ void Function::AddToXref() const
 
    if(base_ != nullptr)
    {
-      if(FuncType() == FuncStandard) base_->AddReference(this);
+      //  Record an override as a reference to the original declaration of
+      //  the virtual function.  If the override appears in a template, the
+      //  function's template analog should be considered the override.
+      //
+      if(FuncType() == FuncStandard)
+      {
+         if(inst)
+         {
+            auto func = FindTemplateAnalog(this);
+            if(func != nullptr) base_->AddReference(func);
+         }
+         else
+         {
+            base_->AddReference(this);
+         }
+      }
    }
 }
 
@@ -2203,24 +2243,6 @@ bool Function::ArgIsUnused(size_t n) const
    if((fci != nullptr) && !fci->ArgIsUnused(n)) return false;
 
    return true;
-}
-
-//------------------------------------------------------------------------------
-
-string Function::ArgTypesString(bool arg) const
-{
-   //  Add the full type of each argument within parentheses,
-   //  using commas to separate them.
-   //
-   string types(1, '(');
-
-   for(auto a = args_.cbegin(); a != args_.cend(); ++a)
-   {
-      types += (*a)->TypeString(arg);
-      if(*a != args_.back()) types += ',';
-   }
-
-   return types + ')';
 }
 
 //------------------------------------------------------------------------------
@@ -3775,6 +3797,17 @@ CxxScoped* Function::FindTemplateAnalog(const CxxNamed* item) const
       return func->FindNthItem(*item->Name(), n);
    }
 
+   case Cxx::MemInit:
+   {
+      for(size_t i = 0; i < mems_.size(); ++i)
+      {
+         if(mems_.at(i).get() == item)
+         {
+            return func->mems_.at(i).get();
+         }
+      }
+   }
+
    default:
       Context::SwLog(Function_FindTemplateAnalog, "Unexpected item", type);
    }
@@ -5164,7 +5197,15 @@ string Function::TypeString(bool arg) const
 
    //  Append the function's argument types.
    //
-   ts += ArgTypesString(arg);
+   ts.push_back('(');
+
+   for(auto a = args_.cbegin(); a != args_.cend(); ++a)
+   {
+      ts += (*a)->TypeString(arg);
+      if(*a != args_.back()) ts.push_back(',');
+   }
+
+   ts.push_back(')');
    return ts;
 }
 
@@ -5300,7 +5341,21 @@ string Function::XrefName(bool templates) const
 
    if(!Singleton< CxxSymbols >::Instance()->IsUniqueName(GetScope(), *Name()))
    {
-      name += ArgTypesString(true);
+      std::ostringstream stream;
+      Flags options(FQ_Mask);
+
+      name.push_back('(');
+
+      for(size_t i = (this_ ? 1 : 0); i < args_.size(); ++i)
+      {
+         args_[i]->GetTypeSpec()->Print(stream, options);
+         if(i < args_.size() - 1) stream << ',';
+      }
+
+      name += stream.str();
+      name.push_back(')');
+
+      if(const_) name += " const";
    }
 
    return name;

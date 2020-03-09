@@ -414,12 +414,8 @@ CxxScoped* BaseDecl::Referent() const
 
 //------------------------------------------------------------------------------
 
-fn_name BaseDecl_ScopedName = "BaseDecl.ScopedName";
-
 string BaseDecl::ScopedName(bool templates) const
 {
-   Debug::ft(BaseDecl_ScopedName);
-
    return Referent()->ScopedName(templates);
 }
 
@@ -494,7 +490,11 @@ void CxxScoped::AddFiles(SetOfIds& imSet) const
 
 void CxxScoped::AddReference(const CxxNamed* name)
 {
-   if(name->GetFile()->IsSubsFile()) return;
+   auto file = name->GetFile();
+   if(file->IsSubsFile()) return;
+   auto line = file->GetLexer().GetLineNum(name->GetPos());  //*
+   if((line == SIZE_MAX) || (line <= 12))
+      Debug::noop();
    xref_.insert(name);
 }
 
@@ -1431,12 +1431,8 @@ void Enumerator::RecordAccess(Cxx::Access access) const
 
 //------------------------------------------------------------------------------
 
-fn_name Enumerator_ScopedName = "Enumerator.ScopedName";
-
 string Enumerator::ScopedName(bool templates) const
 {
-   Debug::ft(Enumerator_ScopedName);
-
    return Prefix(enum_->ScopedName(templates)) + *Name();
 }
 
@@ -1484,6 +1480,13 @@ bool Enumerator::WasRead()
    auto item = static_cast< Enumerator* >(FindTemplateAnalog(this));
    if(item != nullptr) ++item->refs_;
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+string Enumerator::XrefName(bool templates) const
+{
+   return Prefix(enum_->XrefName(templates), ".") + *Name();
 }
 
 //==============================================================================
@@ -1642,12 +1645,8 @@ CxxScoped* Forward::Referent() const
 
 //------------------------------------------------------------------------------
 
-fn_name Forward_ScopedName = "Forward.ScopedName";
-
 string Forward::ScopedName(bool templates) const
 {
-   Debug::ft(Forward_ScopedName);
-
    auto ref = Referent();
    if(ref != nullptr) return ref->ScopedName(templates);
    return CxxNamed::ScopedName(templates);
@@ -2214,12 +2213,8 @@ bool Friend::ResolveTemplate(Class* cls, const TypeName* args, bool end) const
 
 //------------------------------------------------------------------------------
 
-fn_name Friend_ScopedName = "Friend.ScopedName";
-
 string Friend::ScopedName(bool templates) const
 {
-   Debug::ft(Friend_ScopedName);
-
    auto ref = Referent();
    if(ref != nullptr) return ref->ScopedName(templates);
    return CxxNamed::ScopedName(templates);
@@ -2356,6 +2351,80 @@ string Friend::TypeString(bool arg) const
    auto func = GetFunction();
    if(func != nullptr) return func->TypeString(arg);
    return Prefix(GetScope()->TypeString(arg)) + QualifiedName(false, true);
+}
+
+//==============================================================================
+
+fn_name MemberInit_ctor = "MemberInit.ctor";
+
+MemberInit::MemberInit(const Function* ctor, string& name, TokenPtr& init) :
+   ctor_(ctor),
+   init_(init.release())
+{
+   Debug::ft(MemberInit_ctor);
+
+   std::swap(name_, name);
+   CxxStats::Incr(CxxStats::MEMBER_INIT);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name MemberInit_AddToXref = "MemberInit.AddToXref";
+
+void MemberInit::AddToXref() const
+{
+   Debug::ft(MemberInit_AddToXref);
+
+   auto cls = ctor_->GetClass();
+   auto member = cls->FindData(name_);
+
+   //  If the constructor appears in a template instance, make the member
+   //  initialization a reference to the data item in the class template.
+   //
+   if(ctor_->IsInTemplateInstance())
+   {
+      auto init = ctor_->FindTemplateAnalog(this);
+
+      if(init != nullptr)
+      {
+         auto data = ctor_->FindTemplateAnalog(member);
+         if(data != nullptr) data->AddReference(init);
+         static_cast< const MemberInit* >(init)->init_->AddToXref();
+      }
+   }
+   else
+   {
+      member->AddReference(this);
+      init_->AddToXref();
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name MemberInit_GetUsages = "MemberInit.GetUsages";
+
+void MemberInit::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+{
+   Debug::ft(MemberInit_GetUsages);
+
+   init_->GetUsages(file, symbols);
+}
+
+//------------------------------------------------------------------------------
+
+void MemberInit::Print(ostream& stream, const Flags& options) const
+{
+   stream << name_;
+   init_->Print(stream, options);
+}
+
+//------------------------------------------------------------------------------
+
+void MemberInit::Shrink()
+{
+   name_.shrink_to_fit();
+   CxxStats::Strings(CxxStats::MEMBER_INIT, name_.capacity());
+   init_->Shrink();
 }
 
 //==============================================================================
@@ -2895,8 +2964,6 @@ fn_name Using_ScopedName = "Using.ScopedName";
 
 string Using::ScopedName(bool templates) const
 {
-   Debug::ft(Using_ScopedName);
-
    auto ref = Referent();
    if(ref != nullptr) return ref->ScopedName(templates);
 

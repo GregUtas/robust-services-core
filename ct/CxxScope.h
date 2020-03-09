@@ -1547,11 +1547,6 @@ private:
    //
    void DisplayInfo(std::ostream& stream, const NodeBase::Flags& options) const;
 
-   //  Returns the function's argument types enclosed in paretheses.  ARG
-   //  serves the same purpose as in TypeString(arg).
-   //
-   std::string ArgTypesString(bool arg) const;
-
    //  The function's name.
    //
    const QualNamePtr name_;

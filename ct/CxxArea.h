@@ -607,6 +607,10 @@ public:
    //
    bool WasWritten(const StackArg* arg, bool passed)
       override { return false; }
+
+   //  Overridden  to append template arguments to a template specialization.
+   //
+   std::string XrefName(bool templates) const override;
 protected:
    //  Displays the first line of the declaration (the name and base class).
    //

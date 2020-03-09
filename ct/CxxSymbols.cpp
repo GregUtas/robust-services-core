@@ -281,9 +281,15 @@ bool IsSortedByName(const CxxScoped* item1, const CxxScoped* item2)
       if(result > 0) return false;
    }
 
-   auto name1 = item1->ScopedName(true);
-   auto name2 = item2->ScopedName(true);
+   //  The first comparison ignores case, whereas the second one does not.
+   //  This yields consistent ordering when two names only differ in case.
+   //
+   auto name1 = item1->XrefName(true);
+   auto name2 = item2->XrefName(true);
    auto result = strCompare(name1, name2);
+   if(result < 0) return true;
+   if(result > 0) return false;
+   result = name1.compare(name2);
    if(result < 0) return true;
    if(result > 0) return false;
    return (item1 < item2);
@@ -323,9 +329,15 @@ bool IsSortedByPos(const CxxNamed* item1, const CxxNamed* item2)
 
 bool IsSortedByScope(const CxxScoped* item1, const CxxScoped* item2)
 {
+   //  The first comparison ignores case, whereas the second one does not.
+   //  This yields consistent ordering when two names only differ in case.
+   //
    auto name1 = item1->ScopedName(true);
    auto name2 = item2->ScopedName(true);
    auto result = strCompare(name1, name2);
+   if(result < 0) return true;
+   if(result > 0) return false;
+   result = name1.compare(name2);
    if(result < 0) return true;
    if(result > 0) return false;
    return (item1 < item2);

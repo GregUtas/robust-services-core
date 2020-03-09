@@ -23,7 +23,6 @@
 #include <cstring>
 #include "Cxx.h"
 #include "Debug.h"
-#include "SysTypes.h"
 
 using namespace NodeBase;
 using std::string;
@@ -588,20 +587,16 @@ bool PathIncludes(const string& path, const string& dir)
 
 //------------------------------------------------------------------------------
 
-string& Prefix(string& scope)
+string& Prefix(string& scope, fixed_string separator)
 {
-   if(scope.empty()) return scope;
-   scope += SCOPE_STR;
-   return scope;
+   return (scope.empty() ? scope : scope.append(separator));
 }
 
 //------------------------------------------------------------------------------
 
-string& Prefix(string&& scope)
+string& Prefix(string&& scope, fixed_string separator)
 {
-   if(scope.empty()) return scope;
-   scope += SCOPE_STR;
-   return scope;
+   return (scope.empty() ? scope : scope.append(separator));
 }
 
 //------------------------------------------------------------------------------

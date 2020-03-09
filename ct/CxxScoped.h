@@ -693,10 +693,6 @@ public:
    //
    const std::string* Name() const override { return &name_; }
 
-   //  Overridden to prefix the enum as a scope.
-   //
-   std::string ScopedName(bool templates) const override;
-
    //  Overridden to note that the enumeration required ACCESS.
    //
    void RecordAccess(Cxx::Access access) const override;
@@ -704,6 +700,10 @@ public:
    //  Overridden to record usage of the enumerator.
    //
    void RecordUsage() const override { AddUsage(); }
+
+   //  Overridden to prefix the enum as a scope.
+   //
+   std::string ScopedName(bool templates) const override;
 
    //  Overridden to count references.
    //
@@ -724,6 +724,10 @@ public:
    //  Overridden to count references to the enumerator.
    //
    bool WasRead() override;
+
+   //  Overridden to prefix the enum as a scope.
+   //
+   std::string XrefName(bool templates) const override;
 private:
    //  The enumerator's name.
    //
@@ -1158,6 +1162,74 @@ private:
    //  The terminal's attributes as an integer.
    //
    Numeric attrs_;
+};
+
+//------------------------------------------------------------------------------
+//
+//  A member initialization.  This is one of the elements in a constructor's
+//  initialization list.
+//
+class MemberInit : public CxxScoped
+{
+public:
+   //  INIT is the expression that initializes NAME.  It is parsed as
+   //  arguments for a function call in case it invokes a constructor.
+   //  CTOR is the constructor in which the initialization appears.
+   //
+   MemberInit(const Function* ctor, std::string& name, TokenPtr& init);
+
+   //  Not subclassed.
+   //
+   ~MemberInit() { CxxStats::Decr(CxxStats::MEMBER_INIT); }
+
+   //  Returns the constructor to which the initializaiton belongs.
+   //
+   const Function* Ctor() const { return ctor_; }
+
+   //  Returns the expression that initializes the member.
+   //
+   CxxToken* GetInit() const { return init_.get(); }
+
+   //  Overridden to add the statement's components to cross-references.
+   //
+   void AddToXref() const override;
+
+   //  Overridden to update SYMBOLS with the statement's type usage.
+   //
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+
+   //  Overridden to reveal that this is a member initialization.
+   //
+   Cxx::ItemType Type() const override { return Cxx::MemInit; }
+
+   //  Overridden to return the member's name.
+   //
+   const std::string* Name() const override { return &name_; }
+
+   //  Overridden to display the initialization statement.
+   //
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
+
+   //  Overridden to shrink containers.
+   //
+   void Shrink() override;
+
+   //  Overridden to return the member's name.
+   //
+   std::string Trace() const override { return name_; }
+private:
+   //  The constructor where the initialization appears.
+   //
+   const Function* const ctor_;
+
+   //  The name of the member being initialized.
+   //
+   std::string name_;
+
+   //  The expression that initializes the member.
+   //
+   const TokenPtr init_;
 };
 
 //------------------------------------------------------------------------------

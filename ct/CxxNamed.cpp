@@ -33,7 +33,6 @@
 #include "CxxScoped.h"
 #include "CxxSymbols.h"
 #include "Debug.h"
-#include "Formatters.h"
 #include "Lexer.h"
 #include "Library.h"
 #include "Parser.h"
@@ -596,12 +595,8 @@ CxxScoped* CxxNamed::ResolveName(const CodeFile* file,
 
 //------------------------------------------------------------------------------
 
-fn_name CxxNamed_ScopedName = "CxxNamed.ScopedName";
-
 string CxxNamed::ScopedName(bool templates) const
 {
-   Debug::ft(CxxNamed_ScopedName);
-
    //  If the item's scope is not yet known, return its qualified name.
    //  If its scope is known, prefix the enclosing scopes to the name
    //  unless the item is unnamed, as in an anonymous enum or union.
@@ -697,9 +692,14 @@ void CxxNamed::strName(ostream& stream, bool fq, const QualName* name) const
 
 string CxxNamed::XrefName(bool templates) const
 {
-   auto name = ScopedName(templates);
-   ReplaceScopeOperators(name);
-   return name;
+   //  This is like ScopedName except that it invokes XrefName on scopes
+   //  and separates names with a dot rather than a scope operator.
+   //
+   auto scope = GetScope();
+   if(scope == nullptr) return QualifiedName(true, templates);
+   auto xname = QualifiedName(false, templates);
+   if(xname.empty()) return scope->XrefName(templates);
+   return Prefix(scope->XrefName(templates), ".") + xname;
 }
 
 //==============================================================================
@@ -2022,62 +2022,6 @@ string DataSpec::TypeTagsString(const TypeTags& tags) const
 
 //==============================================================================
 
-fn_name MemberInit_ctor = "MemberInit.ctor";
-
-MemberInit::MemberInit(const Function* ctor, string& name, TokenPtr& init) :
-   ctor_(ctor),
-   init_(init.release())
-{
-   Debug::ft(MemberInit_ctor);
-
-   std::swap(name_, name);
-   CxxStats::Incr(CxxStats::MEMBER_INIT);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name MemberInit_AddToXref = "MemberInit.AddToXref";
-
-void MemberInit::AddToXref() const
-{
-   Debug::ft(MemberInit_AddToXref);
-
-   auto cls = ctor_->GetClass();
-   auto data = cls->FindData(name_);
-   data->AddReference(this);
-   init_->AddToXref();
-}
-
-//------------------------------------------------------------------------------
-
-fn_name MemberInit_GetUsages = "MemberInit.GetUsages";
-
-void MemberInit::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
-{
-   Debug::ft(MemberInit_GetUsages);
-
-   init_->GetUsages(file, symbols);
-}
-
-//------------------------------------------------------------------------------
-
-void MemberInit::Print(ostream& stream, const Flags& options) const
-{
-   stream << name_;
-   init_->Print(stream, options);
-}
-
-//------------------------------------------------------------------------------
-
-void MemberInit::Shrink()
-{
-   name_.shrink_to_fit();
-   CxxStats::Strings(CxxStats::MEMBER_INIT, name_.capacity());
-   init_->Shrink();
-}
-
-//==============================================================================
-
 fn_name QualName_ctor1 = "QualName.ctor(type)";
 
 QualName::QualName(TypeNamePtr& type)
@@ -2718,12 +2662,8 @@ const std::string* SpaceDefn::Name() const
 
 //------------------------------------------------------------------------------
 
-fn_name SpaceDefn_ScopedName = "SpaceDefn.ScopedName";
-
 string SpaceDefn::ScopedName(bool templates) const
 {
-   Debug::ft(SpaceDefn_ScopedName);
-
    return space_->ScopedName(templates);
 }
 
@@ -3042,13 +2982,22 @@ void TypeName::AddToXref() const
    {
       ref_->AddReference(this);
 
+      //  If the referent is in a template instance, also record a reference
+      //  to the analogous item in the template.  A template class instance
+      //  (e.g. basic_string) is often accessed through a typedef ("string"),
+      //  so make sure the reference is recorded against the correct item.
+      //
       if(ref_->IsInTemplateInstance())
       {
-         //  In T<A>, the referent of T is the template instance, so
-         //  also add the name "T" as a reference to the template T.
-         //
-         auto tmplt = ref_->GetTemplate();
-         if(tmplt != nullptr) tmplt->AddReference(this);
+         auto item = ref_->FindTemplateAnalog(ref_);
+
+         if(item != nullptr)
+         {
+            if(*item->Name() == name_)
+               item->AddReference(this);
+            else if((type_ != nullptr) && (*type_->Name() == name_))
+               type_->AddReference(this);
+         }
       }
    }
 

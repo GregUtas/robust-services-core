@@ -26,6 +26,7 @@
 #include <string>
 #include <vector>
 #include "CodeTypes.h"
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -97,11 +98,12 @@ namespace CodeTools
    //
    std::string Compress(const std::string& s);
 
-   //  Appends a scope resolution operator to SCOPE unless it is empty, and
-   //  returns the resulting string.
+   //  Appends SEPARATOR to SCOPE unless it is empty, and returns the result.
    //
-   std::string& Prefix(std::string& scope);
-   std::string& Prefix(std::string&& scope);
+   std::string& Prefix(std::string& scope,
+      NodeBase::fixed_string separator = NodeBase::SCOPE_STR);
+   std::string& Prefix(std::string&& scope,
+      NodeBase::fixed_string separator = NodeBase::SCOPE_STR);
 
    //  Modifies NAME by stripping off a scope resolution operator and whatever
    //  precedes it.  Does the same to any template arguments embedded in NAME.

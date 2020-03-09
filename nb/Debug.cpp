@@ -51,7 +51,7 @@ void Debug::Assert(bool condition, debug32_t errval)
 {
    if(!condition)
    {
-      throw AssertionException(errval);  //@
+      throw AssertionException(errval);
    }
 }
 
@@ -82,7 +82,7 @@ void Debug::GenerateSwLog(fn_name_arg func, const string& errstr,
 
    if(level == SwError)
    {
-      throw SoftwareException(errstr, offset, 3);  //@
+      throw SoftwareException(errstr, offset, 3);
    }
 
    auto log = Log::Create(SoftwareLogGroup, SoftwareError);

@@ -211,7 +211,7 @@ typedef std::unique_ptr< StatisticsGroup > StatisticsGroupPtr;
 
 //  Forward declarations of templates.
 //
-template< typename T > class Singleton;
+template< class T > class Singleton;
 
 //  Versions of std::string that support the various MemTypes.  See the
 //  comments in Allocators.h.

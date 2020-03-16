@@ -20,7 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Alarm.h"
-#include <sstream>
+#include <ostream>
 #include "AlarmRegistry.h"
 #include "Algorithms.h"
 #include "Debug.h"

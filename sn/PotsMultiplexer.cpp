@@ -29,7 +29,6 @@
 #include "Formatters.h"
 #include "GlobalAddress.h"
 #include "IpPortRegistry.h"
-#include "LocalAddress.h"
 #include "MsgPort.h"
 #include "NwTypes.h"
 #include "PotsCircuit.h"

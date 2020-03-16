@@ -390,8 +390,8 @@ private:
       const std::string& info = std::string(NodeBase::EMPTY_STR),
       bool hide = false) const;
 
-   //  Returns false if >trim does not apply to this file (e.g. a template
-   //  header).
+   //  Returns false if >trim does not apply to this file (e.g. a substitute
+   //  file).
    //
    bool CanBeTrimmed() const;
 

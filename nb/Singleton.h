@@ -62,7 +62,7 @@ namespace NodeBase
 //  invokes the standard form of new, which means that the memory type must be
 //  determine by one of the singleton's base classes.
 //
-template< typename T > class Singleton
+template< class T = Base > class Singleton
 {
 public:
    //  Creates the singleton if necessary and returns a pointer to it.
@@ -135,6 +135,6 @@ private:
 
 //  Initialization of the singleton instance.
 //
-template< typename T > T* NodeBase::Singleton< T >::Instance_ = nullptr;
+template< class T > T* NodeBase::Singleton< T >::Instance_ = nullptr;
 
 #endif

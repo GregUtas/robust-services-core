@@ -1797,6 +1797,11 @@ void Operation::ExecuteCall()
    switch(proc.item->Type())
    {
    case Cxx::Function:
+      //
+      //  Before matching arguments, insert an implicit "this" argument if
+      //  it may be required.  After the matching function has been found,
+      //  UpdateThisArg (below) erases the argument if it is not needed.
+      //
       func = static_cast< Function* >(proc.item);
       func->PushThisArg(args);
 
@@ -1805,11 +1810,6 @@ void Operation::ExecuteCall()
       case Cxx::NIL_OPERATOR:
       case Cxx::OBJECT_CREATE:
       case Cxx::OBJECT_CREATE_ARRAY:
-         //
-         //  Before matching arguments, insert an implicit "this" argument if
-         //  it may be required.  After the matching function has been found,
-         //  erase the implicit "this" argument if it is not needed.
-         //
          func = func->GetArea()->FindFunc
             (*func->Name(), &args, true, scope, nullptr);
       }
@@ -2583,6 +2583,13 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
 
    if(type != Cxx::Class)
    {
+      //* If ARG1 is a template parameter, search for a function that
+      //  matches the arguments (not yet available).  This could mean
+      //  pushing a temporary argument that will be resolved later,
+      //  similar to when a function is overloaded.  (The code that
+      //  follows appears to assume that the first function found in
+      //  CLS will always be correct, and not an incorrect overload!)
+      //
       auto expl = arg1.Trace() + " is not a class";
       Context::SwLog(Operation_PushMember, expl, type);
       return;

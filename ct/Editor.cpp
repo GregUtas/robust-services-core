@@ -1099,7 +1099,7 @@ word Editor::EraseData
 
       if(expl.empty())
       {
-         auto delimiters = ((*r)->Type() == Cxx::MemInit ? ",{" : ";");
+         auto delimiters = ((*r)->Type() == Cxx::MemberInit ? ",{" : ";");
          editor->EraseCode(pos, delimiters, expl);
          if(!expl.empty())
          {

@@ -28,6 +28,7 @@
 #include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxRoot.h"
+#include "CxxScoped.h"
 #include "Singleton.h"
 #include "SysTypes.h"
 

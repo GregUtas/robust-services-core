@@ -769,8 +769,9 @@ size_t Replace
 
 size_t RfindFirstNotOf(const string& str, size_t pos, const string& elems)
 {
-   for(auto c = str.at(pos); pos != string::npos; --pos)
+   for(NO_OP; pos != string::npos; --pos)
    {
+      auto c = str.at(pos);
       if(elems.find(c) == string::npos) return pos;
    }
 

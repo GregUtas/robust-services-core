@@ -46,7 +46,7 @@ namespace NodeBase
 //  o one item: head_.next & head_.prev = item, item.next & item.prev = head_
 //  o two or more items: circular queue that includes head
 //
-template< class T > class Q2Way
+template< class T = Base > class Q2Way
 {
 public:
    //  Initializes the queue header to default values.  Before the queue can

@@ -260,6 +260,7 @@ size_t LineMergeLength
    if(line1.at(pos1) == ':') return SIZE_MAX;
    if(line1.at(pos1) == '}') return SIZE_MAX;
    auto pos2 = RfindFirstNotOf(line2, end2, WhitespaceChars);
+   if(pos2 == string::npos) return SIZE_MAX;
    if(line2.at(pos2) != ';') return SIZE_MAX;
    if(line1.find(COMMENT_STR, begin1) < pos1) return SIZE_MAX;
    auto first1 = line1.find_first_not_of(WhitespaceChars, begin1);
@@ -303,6 +304,6 @@ const SymbolView NotAccessible
 const SymbolView DeclaredGlobally
    (Unrestricted, Compatible, false, false, true, 0);
 const SymbolView DeclaredLocally
-   (Declared,Compatible, false, false, true, 0);
+   (Declared, Compatible, false, false, true, 0);
 }
 

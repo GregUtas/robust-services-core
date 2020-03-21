@@ -388,7 +388,6 @@ EventHandler::Rc ProxyBcAnalyzeProxyMessage::ProcessEvent
    case CipSignal::CPG:
       cpi = msg->FindType< ProgressInfo >(CipParameter::Progress);
       return pssm.RaiseProxyProgress(nextEvent, cpi->progress);
-      break;
 
    case CipSignal::ANM:
       return pssm.RaiseProxyAnswer(nextEvent);

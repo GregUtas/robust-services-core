@@ -1121,7 +1121,7 @@ bool Lexer::GetName(string& name, Constraint constraint)
    Debug::ft(Lexer_GetName1);
 
    auto id = NextIdentifier();
-   if(id.size() == 0) return false;
+   if(id.empty()) return false;
 
    //  There are two exceptions to CONSTRAINT:
    //  o "override" and "final" are not actually keywords but are

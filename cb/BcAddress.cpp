@@ -118,7 +118,6 @@ Parameter::TestRc AddressParameter::InjectMsg
    case CliParm::None:
       if(use == Mandatory) return StreamMissingMandatoryParm;
       return Ok;
-      break;
    case CliParm::Ok:
       break;
    default:

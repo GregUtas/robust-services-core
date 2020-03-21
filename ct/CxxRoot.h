@@ -54,7 +54,7 @@ public:
    Terminal* IntTerm() const { return int_.get(); }
    Terminal* LongTerm() const { return long_.get(); }
    Terminal* LongDoubleTerm() const { return long_double_.get(); }
-   Terminal* LongLongTerm() const { return long_.get(); }
+   Terminal* LongLongTerm() const { return long_long_.get(); }
    Terminal* NullptrTerm() const { return nullptr_.get(); }
    Terminal* NullptrtTerm() const { return nullptr_t_.get(); }
    Terminal* ShortTerm() const { return short_.get(); }

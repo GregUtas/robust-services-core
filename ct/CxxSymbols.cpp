@@ -20,10 +20,11 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CxxSymbols.h"
-#include <cstddef>
+#include <algorithm>
 #include <cstdint>
+#include <iterator>
 #include <ostream>
-#include <utility>
+#include <set>
 #include "CodeFile.h"
 #include "CodeTypes.h"
 #include "Cxx.h"
@@ -33,11 +34,9 @@
 #include "CxxRoot.h"
 #include "CxxScope.h"
 #include "CxxScoped.h"
-#include "CxxString.h"
 #include "Debug.h"
 #include "Formatters.h"
-#include "Library.h"
-#include "Registry.h"
+#include "Lexer.h"
 #include "Singleton.h"
 
 using namespace NodeBase;
@@ -86,38 +85,66 @@ typedef std::pair< string, Enumerator* > EtorPair;
 typedef std::pair< string, Forward* > ForwPair;
 typedef std::pair< string, Friend* > FriendPair;
 typedef std::pair< string, Function* > FuncPair;
-typedef std::pair< string, CxxScoped* > LocalPair;
 typedef std::pair< string, Macro* > MacroPair;
 typedef std::pair< string, Namespace* > SpacePair;
 typedef std::pair< string, Terminal* > TermPair;
 typedef std::pair< string, Typedef* > TypePair;
-typedef std::pair< const CxxNamed*, SetOfIds > XrefPair;
 
 //------------------------------------------------------------------------------
 //
-//  Removes ITEM from TABLE.
+//  Displays REFS (references to a single item) in STREAM.
 //
-template< typename T > void Erase(const CxxScoped* item,
-   std::unordered_multimap< string, T >& table)
-{
-   auto str = Normalize(*item->Name());
-   auto last = table.upper_bound(str);
+const int LAST_XREF_START_COLUMN = 122;
 
-   for(auto i = table.lower_bound(str); i != last; ++i)
+void DisplayReferences(ostream& stream, const CxxNamedVector& refs)
+{
+   if(refs.empty()) return;
+
+   CodeFile* refFile = nullptr;
+   auto endline = false;
+   auto room = LAST_XREF_START_COLUMN;
+
+   for(auto r = refs.cbegin(); r != refs.cend(); ++r)
    {
-      if(i->second == item)
+      if((*r)->IsInTemplateInstance()) continue;
+
+      auto file = (*r)->GetFile();
+      if(file == nullptr) continue;
+
+      if(file != refFile)
       {
-         table.erase(i);
-         return;
+         if(refFile != nullptr) stream << CRLF;
+         auto fn = file->Path(false);
+         stream << spaces(6) << fn << ':';
+         refFile = file;
+         endline = false;
+         room = LAST_XREF_START_COLUMN - (fn.size() + 7);
+      }
+
+      if(endline)
+      {
+         stream << CRLF << spaces(8);
+         room -= 8;
+         endline = false;
+      }
+
+      auto line = file->GetLexer().GetLineNum((*r)->GetPos());
+      auto num = std::to_string(++line);
+      stream << SPACE << num;
+      room -= (num.size() + 1);
+
+      if(room < 0)
+      {
+         endline = true;
+         room = LAST_XREF_START_COLUMN;
       }
    }
+
+   stream << CRLF;
 }
 
 //------------------------------------------------------------------------------
-//
-//  Returns the index of the item in LIST that is nearest the context scope.
-//  Returns SIZE_MAX if none of the items in LIST is in a related scope.
-//
+
 fn_name CodeTools_FindNearestItem1 = "CodeTools.FindNearestItem(list)";
 
 size_t FindNearestItem(const SymbolVector& list)
@@ -192,20 +219,101 @@ size_t FindNearestItem(const SymbolVector& list, ViewVector& views)
 
 //------------------------------------------------------------------------------
 //
-//  Looks for NAME in TABLE.  Returns a list of matching symbols in LIST.
-//  NAME be unqualified.
+//  Adds all symbols in TABLE to ITEMS.
 //
-template< typename T > void ListSymbols(const string& name,
-   const std::unordered_multimap< string, T >& table, SymbolVector& list)
+template< typename T > void GetSymbols
+   (const std::unordered_multimap< string, T >& table, CxxScopedVector& items)
 {
-   //  Assemble a list of matching symbols.
-   //
-   auto last = table.upper_bound(name);
-
-   for(auto i = table.lower_bound(name); i != last; ++i)
+   for(auto i = table.cbegin(); i != table.cend(); ++i)
    {
-      list.push_back(i->second);
+      auto item = i->second;
+      if(item->IncludeInXref()) items.push_back(item);
    }
+}
+
+//------------------------------------------------------------------------------
+
+bool IsSortedByName(const CxxScoped* item1, const CxxScoped* item2)
+{
+   auto file1 = item1->GetFile();
+   auto file2 = item2->GetFile();
+   if(file1 == nullptr)
+   {
+      if(file2 != nullptr) return true;
+   }
+   else if(file2 == nullptr)
+   {
+      if(file1 != nullptr) return false;
+   }
+   else
+   {
+      auto fn1 = file1->Path(false);
+      auto fn2 = file2->Path(false);
+      auto result = fn1.compare(fn2);
+      if(result < 0) return true;
+      if(result > 0) return false;
+   }
+
+   //  The first comparison ignores case, whereas the second one does not.
+   //  This yields consistent ordering when two names only differ in case.
+   //
+   auto name1 = item1->XrefName(true);
+   auto name2 = item2->XrefName(true);
+   auto result = strCompare(name1, name2);
+   if(result < 0) return true;
+   if(result > 0) return false;
+   result = name1.compare(name2);
+   if(result < 0) return true;
+   if(result > 0) return false;
+   return (item1 < item2);
+}
+
+//------------------------------------------------------------------------------
+
+bool IsSortedByPos(const CxxNamed* item1, const CxxNamed* item2)
+{
+   auto file1 = item1->GetFile();
+   auto file2 = item2->GetFile();
+   if(file1 == nullptr)
+   {
+      if(file2 != nullptr) return true;
+   }
+   else if(file2 == nullptr)
+   {
+      if(file1 != nullptr) return false;
+   }
+   else
+   {
+      auto fn1 = file1->Path(false);
+      auto fn2 = file2->Path(false);
+      auto result = fn1.compare(fn2);
+      if(result < 0) return true;
+      if(result > 0) return false;
+   }
+
+   auto pos1 = item1->GetPos();
+   auto pos2 = item2->GetPos();
+   if(pos1 < pos2) return true;
+   if(pos1 > pos2) return false;
+   return (item1 < item2);
+}
+
+//------------------------------------------------------------------------------
+
+bool IsSortedByScope(const CxxScoped* item1, const CxxScoped* item2)
+{
+   //  The first comparison ignores case, whereas the second one does not.
+   //  This yields consistent ordering when two names only differ in case.
+   //
+   auto name1 = item1->ScopedName(true);
+   auto name2 = item2->ScopedName(true);
+   auto result = strCompare(name1, name2);
+   if(result < 0) return true;
+   if(result > 0) return false;
+   result = name1.compare(name2);
+   if(result < 0) return true;
+   if(result > 0) return false;
+   return (item1 < item2);
 }
 
 //------------------------------------------------------------------------------
@@ -236,71 +344,96 @@ fn_name CxxSymbols_DisplayXref = "CxxSymbols.DisplayXref";
 
 void CxxSymbols::DisplayXref(ostream& stream) const
 {
-   typedef std::pair< string, XrefTable::const_iterator > SymbolFiles;
-   std::multimap< string, XrefTable::const_iterator > symbols;
-   std::set< string > filenames;
+   Debug::ft(CxxSymbols_DisplayXref);
 
-   //  For each item in the cross-reference, create a key consisting of the
-   //  file that defines it and its fully qualified name.  Map this key to
-   //  the iterator that references the item in xref_.  This mapping causes
-   //  items to be sorted by the directory and file that defines them, and
-   //  then alphabetically within each file.  Don't include local variables.
+   //  Start by displaying references to namespaces.
    //
-   for(auto x = xref_->cbegin(); x != xref_->cend(); ++x)
-   {
-      auto name = x->first->XrefName(false);
-      if(name.find(LOCALS_STR) != string::npos) continue;
+   CxxScopedVector namespaces;
+   GetSymbols(*spaces_, namespaces);
 
-      auto file = x->first->GetFile();
-      auto key = (file != nullptr ? file->Path(false) : "unknown file");
-      key.push_back('$');
-      key.append(name);
-      symbols.insert(SymbolFiles(key, x));
+   if(!namespaces.empty())
+   {
+      stream << "NAMESPACES:" << CRLF;
+      std::sort(namespaces.begin(), namespaces.end(), IsSortedByScope);
+
+      for(auto n = namespaces.begin(); n != namespaces.end(); ++n)
+      {
+         CxxNamedVector refs;
+         auto& xref = (*n)->Xref();
+
+         for(auto r = xref.cbegin(); r != xref.cend(); ++r)
+         {
+            refs.push_back(*r);
+         }
+
+         std::sort(refs.begin(), refs.end(), IsSortedByPos);
+
+         auto name = (*n)->XrefName(true);
+         if(name.empty()) continue;
+         stream << spaces(3) << name << CRLF;
+         DisplayReferences(stream, refs);
+      }
    }
 
-   auto& files = Singleton< Library >::Instance()->Files();
-
-   //  Display each symbol, followed by the file that defines it.  Strip
-   //  off the file name that was prefixed to each symbol.
+   //  Make a list of all other items that will appear in the cross-reference.
+   //  Sort them by directory-file-name.  A few items (such as #defined names
+   //  for the compile) don't appear in a file, so put them under "EXTERNAL".
    //
-   for(auto s = symbols.cbegin(); s != symbols.cend(); ++s)
+   CxxScopedVector items;
+   GetSymbols(*classes_, items);
+   GetSymbols(*data_, items);
+   GetSymbols(*enums_, items);
+   GetSymbols(*etors_, items);
+   GetSymbols(*forws_, items);
+   GetSymbols(*friends_, items);
+   GetSymbols(*funcs_, items);
+   GetSymbols(*macros_, items);
+   GetSymbols(*types_, items);
+   std::sort(items.begin(), items.end(), IsSortedByName);
+
+   CodeFile* itemFile = (CodeFile*) UINTPTR_MAX;
+
+   for(auto i = items.begin(); i != items.end(); ++i)
    {
-      auto start = s->first.find('$');
-      auto symbol = s->first.substr(start + 1);
-      stream << symbol << " [";
+      CxxNamedVector refs;
+      auto& xref = (*i)->Xref();
 
-      auto file = s->second->first->GetFile();
-
-      if(file != nullptr)
-         stream << file->Path(false) << ']' << CRLF;
-      else
-         stream << "unknown file]" << CRLF;
-
-      //  Put the files that use the symbol in a set that will result in
-      //  them being sorted by directory and file name.
-      //
-      const auto& users = s->second->second;
-      filenames.clear();
-
-      for(auto u = users.cbegin(); u != users.cend(); ++u)
+      for(auto r = xref.cbegin(); r != xref.cend(); ++r)
       {
-         file = files.At(*u);
+         refs.push_back(*r);
+      }
 
-         if(file != nullptr)
+      std::sort(refs.begin(), refs.end(), IsSortedByPos);
+
+      auto file = (*i)->GetFile();
+      if(file != itemFile)
+      {
+         if(file == nullptr)
          {
-            auto name = file->Path(false);
-            filenames.insert(name);
+            stream << "EXTERNAL:" << CRLF;
          }
          else
          {
-            Debug::SwLog(CxxSymbols_DisplayXref, s->first, *u);
+            if(itemFile == nullptr) stream << "FILES:" << CRLF;
+            stream << file->Path(false) << CRLF;
          }
+
+         itemFile = file;
       }
 
-      for(auto f = filenames.cbegin(); f != filenames.cend(); ++f)
+      auto name = (*i)->XrefName(true);
+      if(name.empty()) continue;
+      stream << spaces(3) << name;
+
+      if(file != nullptr)
       {
-         stream << spaces(3) << *f << CRLF;
+         auto line = file->GetLexer().GetLineNum((*i)->GetPos());
+         stream << ": " << ++line;
       }
+
+      stream << " [" << strClass(*i, false) << ']' << CRLF;
+
+      DisplayReferences(stream, refs);
    }
 }
 
@@ -308,141 +441,77 @@ void CxxSymbols::DisplayXref(ostream& stream) const
 
 void CxxSymbols::EraseClass(const Class* cls)
 {
-   Erase(cls, *classes_);
+   EraseSymbol(cls, *classes_);
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::EraseData(const Data* data)
 {
-   Erase(data, *data_);
+   EraseSymbol(data, *data_);
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::EraseEnum(const Enum* item)
 {
-   Erase(item, *enums_);
+   EraseSymbol(item, *enums_);
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::EraseEtor(const Enumerator* etor)
 {
-   Erase(etor, *etors_);
+   EraseSymbol(etor, *etors_);
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::EraseForw(const Forward* forw)
 {
-   Erase(forw, *forws_);
+   EraseSymbol(forw, *forws_);
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::EraseFriend(const Friend* frnd)
 {
-   Erase(frnd, *friends_);
+   EraseSymbol(frnd, *friends_);
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::EraseFunc(const Function* func)
 {
-   Erase(func, *funcs_);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CxxSymbols_EraseLocal = "CxxSymbols.EraseLocal";
-
-void CxxSymbols::EraseLocal(const CxxScoped* name)
-{
-   Debug::ft(CxxSymbols_EraseLocal);
-
-   Erase(name, *locals_);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CxxSymbols_EraseLocals = "CxxSymbols.EraseLocals";
-
-void CxxSymbols::EraseLocals()
-{
-   Debug::ft(CxxSymbols_EraseLocals);
-
-   locals_->clear();
+   EraseSymbol(func, *funcs_);
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::EraseMacro(const Macro* macro)
 {
-   Erase(macro, *macros_);
+   EraseSymbol(macro, *macros_);
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::EraseSpace(const Namespace* space)
 {
-   Erase(space, *spaces_);
+   EraseSymbol(space, *spaces_);
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::EraseTerm(const Terminal* term)
 {
-   Erase(term, *terms_);
+   EraseSymbol(term, *terms_);
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::EraseType(const Typedef* type)
 {
-   Erase(type, *types_);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CxxSymbols_FindLocal = "CxxSymbols.FindLocal";
-
-CxxScoped* CxxSymbols::FindLocal(const string& name, SymbolView* view) const
-{
-   Debug::ft(CxxSymbols_FindLocal);
-
-   SymbolVector list;
-
-   //  Start by looking for a terminal.
-   //
-   ListSymbols(name, *terms_, list);
-
-   if(!list.empty())
-   {
-      *view = DeclaredGlobally;
-      return list.front();
-   }
-
-   //  Look for a local that matches NAME.
-   //
-   ListSymbols(name, *locals_, list);
-
-   if(!list.empty())
-   {
-      *view = DeclaredLocally;
-
-      if(list.size() > 1)
-      {
-         auto idx = FindNearestItem(list);
-         if(idx != SIZE_MAX) return list[idx];
-         auto expl = name + " has more than one definition";
-         Context::SwLog(CxxSymbols_FindLocal, expl, list.size());
-      }
-
-      return list.front();
-   }
-
-   return nullptr;
+   EraseSymbol(type, *types_);
 }
 
 //------------------------------------------------------------------------------
@@ -747,6 +816,13 @@ void CxxSymbols::FindSymbols(const CodeFile* file, const CxxScope* scope,
 
 //------------------------------------------------------------------------------
 
+void CxxSymbols::FindTerminal(const string& name, SymbolVector& list) const
+{
+   ListSymbols(name, *terms_, list);
+}
+
+//------------------------------------------------------------------------------
+
 void CxxSymbols::InsertClass(Class* cls)
 {
    classes_->insert(ClassPair(Normalize(*cls->Name()), cls));
@@ -792,33 +868,6 @@ void CxxSymbols::InsertFriend(Friend* frnd)
 void CxxSymbols::InsertFunc(Function* func)
 {
    funcs_->insert(FuncPair(Normalize(*func->Name()), func));
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CxxSymbols_InsertLocal = "CxxSymbols.InsertLocal";
-
-void CxxSymbols::InsertLocal(CxxScoped* local)
-{
-   Debug::ft(CxxSymbols_InsertLocal);
-
-   //  Delete any item with the same name that is defined in the same block.
-   //
-   auto name = local->Name();
-   auto scope = local->GetScope();
-   SymbolVector list;
-
-   ListSymbols(*name, *locals_, list);
-
-   for(auto s = list.cbegin(); s != list.cend(); ++s)
-   {
-      if((*s)->GetScope() == scope)
-      {
-         EraseLocal(*s);
-      }
-   }
-
-   locals_->insert(LocalPair(Normalize(*name), local));
 }
 
 //------------------------------------------------------------------------------
@@ -893,22 +942,6 @@ void CxxSymbols::ListMacros(const string& name, SymbolVector& list) const
 
 //------------------------------------------------------------------------------
 
-void CxxSymbols::RecordUsage(const CxxNamed* item, id_t fid)
-{
-   //  Drop terminals from the cross-reference.
-   //
-   if(item->Type() == Cxx::Terminal) return;
-
-   auto s = xref_->insert(XrefPair(item, SetOfIds()));
-
-   if(s.first != xref_->cend())
-   {
-      s.first->second.insert(fid);
-   }
-}
-
-//------------------------------------------------------------------------------
-
 void CxxSymbols::Shrink() const
 {
    //  This cannot shrink its containers.  An unordered multimap does not
@@ -917,84 +950,93 @@ void CxxSymbols::Shrink() const
    size_t ssize = 0;
    size_t vsize = 0;
 
-   vsize += classes_->size() * sizeof(ClassPair);
+   vsize += classes_->size() * (sizeof(ClassPair) + 2 * sizeof(ClassPair*));
+   vsize += classes_->bucket_count() * (sizeof(ClassPair*) + sizeof(size_t));
 
    for(auto c = classes_->cbegin(); c != classes_->cend(); ++c)
    {
       ssize += c->first.capacity();
    }
 
-   vsize += data_->size() * sizeof(DataPair);
+   vsize += data_->size() * (sizeof(DataPair) + 2 * sizeof(DataPair*));
+   vsize += data_->bucket_count() * (sizeof(DataPair*) + sizeof(size_t));
 
    for(auto d = data_->cbegin(); d != data_->cend(); ++d)
    {
       ssize += d->first.capacity();
    }
 
-   vsize += macros_->size() * sizeof(MacroPair);
+   vsize += macros_->size() * (sizeof(MacroPair) + 2 * sizeof(MacroPair*));
+   vsize += macros_->bucket_count() * (sizeof(MacroPair*) + sizeof(size_t));
 
    for(auto m = macros_->cbegin(); m != macros_->cend(); ++m)
    {
       ssize += m->first.capacity();
    }
 
-   vsize += enums_->size() * sizeof(EnumPair);
+   vsize += enums_->size() * (sizeof(EnumPair) + 2 * sizeof(ClassPair*));
+   vsize += enums_->bucket_count() * (sizeof(EnumPair*) + sizeof(size_t));
 
    for(auto e = enums_->cbegin(); e != enums_->cend(); ++e)
    {
       ssize += e->first.capacity();
    }
 
-   vsize += etors_->size() * sizeof(EtorPair);
+   vsize += etors_->size() * (sizeof(EtorPair) + 2 * sizeof(EtorPair*));
+   vsize += etors_->bucket_count() * (sizeof(EtorPair*) + sizeof(size_t));
 
    for(auto e = etors_->cbegin(); e != etors_->cend(); ++e)
    {
       ssize += e->first.capacity();
    }
 
-   vsize += forws_->size() * sizeof(ForwPair);
+   vsize += forws_->size() * (sizeof(ForwPair) + 2 * sizeof(ForwPair*));
+   vsize += forws_->bucket_count() * (sizeof(ForwPair*) + sizeof(size_t));
 
    for(auto f = forws_->cbegin(); f != forws_->cend(); ++f)
    {
       ssize += f->first.capacity();
    }
 
-   vsize += friends_->size() * sizeof(FriendPair);
+   vsize += friends_->size() * (sizeof(FriendPair) + 2 * sizeof(FriendPair*));
+   vsize += friends_->bucket_count() * (sizeof(FriendPair*) + sizeof(size_t));
 
    for(auto f = friends_->cbegin(); f != friends_->cend(); ++f)
    {
       ssize += f->first.capacity();
    }
 
-   vsize += funcs_->size() * sizeof(FuncPair);
+   vsize += funcs_->size() * (sizeof(FuncPair) + 2 * sizeof(FuncPair*));
+   vsize += funcs_->bucket_count() * (sizeof(FuncPair*) + sizeof(size_t));
 
    for(auto f = funcs_->cbegin(); f != funcs_->cend(); ++f)
    {
       ssize += f->first.capacity();
    }
 
-   vsize += spaces_->size() * sizeof(SpacePair);
+   vsize += spaces_->size() * (sizeof(SpacePair) + 2 * sizeof(SpacePair*));
+   vsize += spaces_->bucket_count() * (sizeof(SpacePair*) + sizeof(size_t));
 
    for(auto s = spaces_->cbegin(); s != spaces_->cend(); ++s)
    {
       ssize += s->first.capacity();
    }
 
-   vsize += terms_->size() * sizeof(TermPair);
+   vsize += terms_->size() * (sizeof(TermPair) + 2 * sizeof(TermPair*));
+   vsize += terms_->bucket_count() * (sizeof(TermPair*) + sizeof(size_t));
 
    for(auto t = terms_->cbegin(); t != terms_->cend(); ++t)
    {
       ssize += t->first.capacity();
    }
 
-   vsize += types_->size() * sizeof(TypePair);
+   vsize += types_->size() * (sizeof(TypePair) + 2 * sizeof(TypePair*));
+   vsize += types_->bucket_count() * (sizeof(TypePair*) + sizeof(size_t));
 
    for(auto t = types_->cbegin(); t != types_->cend(); ++t)
    {
       ssize += t->first.capacity();
    }
-
-   vsize += xref_->size() * sizeof(XrefPair);
 
    CxxStats::Strings(CxxStats::CXX_SYMBOLS, ssize);
    CxxStats::Vectors(CxxStats::CXX_SYMBOLS, vsize);
@@ -1019,12 +1061,10 @@ void CxxSymbols::Shutdown(RestartLevel level)
    forws_.reset();
    friends_.reset();
    funcs_.reset();
-   locals_.reset();
    macros_.reset();
    spaces_.reset();
    terms_.reset();
    types_.reset();
-   xref_.reset();
 }
 
 //------------------------------------------------------------------------------
@@ -1046,11 +1086,9 @@ void CxxSymbols::Startup(RestartLevel level)
    forws_.reset(new ForwTable);
    friends_.reset(new FriendTable);
    funcs_.reset(new FuncTable);
-   locals_.reset(new LocalTable);
    macros_.reset(new MacroTable);
    spaces_.reset(new SpaceTable);
    terms_.reset(new TermTable);
    types_.reset(new TypeTable);
-   xref_.reset(new XrefTable);
 }
 }

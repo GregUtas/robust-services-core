@@ -22,7 +22,6 @@
 #include "CxxScoped.h"
 #include <bitset>
 #include <cstdint>
-#include <set>
 #include <sstream>
 #include <utility>
 #include "CodeFile.h"
@@ -60,6 +59,18 @@ Argument::Argument(string& name, TypeSpecPtr& spec) :
    std::swap(name_, name);
    spec_->SetUserType(Cxx::Function);
    CxxStats::Incr(CxxStats::ARG_DECL);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Argument_AddToXref = "Argument.AddToXref";
+
+void Argument::AddToXref() const
+{
+   Debug::ft(Argument_AddToXref);
+
+   spec_->AddToXref();
+   if(default_ != nullptr) default_->AddToXref();
 }
 
 //------------------------------------------------------------------------------
@@ -105,7 +116,7 @@ void Argument::EnterBlock()
 {
    Debug::ft(Argument_EnterBlock);
 
-   if(!name_.empty()) Singleton< CxxSymbols >::Instance()->InsertLocal(this);
+   if(!name_.empty()) Context::InsertLocal(this);
 }
 
 //------------------------------------------------------------------------------
@@ -139,7 +150,7 @@ void Argument::ExitBlock()
    Debug::ft(Argument_ExitBlock);
 
    if(name_.empty()) return;
-   Singleton< CxxSymbols >::Instance()->EraseLocal(this);
+   Context::EraseLocal(this);
 }
 
 //------------------------------------------------------------------------------
@@ -236,11 +247,9 @@ bool Argument::SetNonConst()
 
 void Argument::Shrink()
 {
-   CxxScoped::Shrink();
-
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::ARG_DECL, name_.capacity());
-   CxxStats::Vectors(CxxStats::ARG_DECL, Users().capacity());
+   CxxStats::Vectors(CxxStats::ARG_DECL, XrefSize());
    spec_->Shrink();
    if(default_ != nullptr) default_->Shrink();
 }
@@ -305,6 +314,17 @@ BaseDecl::BaseDecl(QualNamePtr& name, Cxx::Access access) :
 
    SetAccess(access);
    CxxStats::Incr(CxxStats::BASE_DECL);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name BaseDecl_AddToXref = "BaseDecl.AddToXref";
+
+void BaseDecl::AddToXref() const
+{
+   Debug::ft(BaseDecl_AddToXref);
+
+   name_->AddToXref();
 }
 
 //------------------------------------------------------------------------------
@@ -394,12 +414,8 @@ CxxScoped* BaseDecl::Referent() const
 
 //------------------------------------------------------------------------------
 
-fn_name BaseDecl_ScopedName = "BaseDecl.ScopedName";
-
 string BaseDecl::ScopedName(bool templates) const
 {
-   Debug::ft(BaseDecl_ScopedName);
-
    return Referent()->ScopedName(templates);
 }
 
@@ -472,9 +488,11 @@ void CxxScoped::AddFiles(SetOfIds& imSet) const
 
 //------------------------------------------------------------------------------
 
-void CxxScoped::AddUser(const CxxNamed* name)
+void CxxScoped::AddReference(const CxxNamed* name)
 {
-   users_.push_back(name);
+   auto file = name->GetFile();
+   if(file->IsSubsFile()) return;
+   xref_.insert(name);
 }
 
 //------------------------------------------------------------------------------
@@ -637,6 +655,13 @@ size_t CxxScoped::GetRange(size_t& begin, size_t& end) const
    lexer.Reposition(begin);
    end = lexer.FindFirstOf(";");
    return string::npos;
+}
+
+//------------------------------------------------------------------------------
+
+bool CxxScoped::IncludeInXref() const
+{
+   return !IsInTemplateInstance();
 }
 
 //------------------------------------------------------------------------------
@@ -901,13 +926,6 @@ void CxxScoped::RecordTemplateAccess(Cxx::Access access) const
    if(item != nullptr) item->RecordAccess(access);
 }
 
-//------------------------------------------------------------------------------
-
-void CxxScoped::Shrink()
-{
-   users_.shrink_to_fit();
-}
-
 //==============================================================================
 
 fn_name Enum_ctor = "Enum.ctor";
@@ -946,6 +964,23 @@ void Enum::AddEnumerator(string& name, ExprPtr& init, size_t pos)
    etor->SetLoc(GetFile(), pos);
    etor->SetAccess(GetAccess());
    etors_.push_back(std::move(etor));
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Enum_AddToXref = "Enum.AddToXref";
+
+void Enum::AddToXref() const
+{
+   Debug::ft(Enum_AddToXref);
+
+   if(alignas_ != nullptr) alignas_->AddToXref();
+   if(spec_ != nullptr) spec_->AddToXref();
+
+   for(auto e = etors_.cbegin(); e != etors_.cend(); ++e)
+   {
+      (*e)->AddToXref();
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -1143,6 +1178,11 @@ void Enum::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
    if(alignas_ != nullptr) alignas_->GetUsages(file, symbols);
    if(spec_ != nullptr) spec_->GetUsages(file, symbols);
+
+   for(auto e = etors_.cbegin(); e != etors_.cend(); ++e)
+   {
+      (*e)->GetUsages(file, symbols);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -1191,8 +1231,6 @@ void Enum::SetAsReferent(const CxxNamed* user)
 
 void Enum::Shrink()
 {
-   CxxScoped::Shrink();
-
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::ENUM_DECL, name_.capacity());
 
@@ -1202,7 +1240,7 @@ void Enum::Shrink()
    }
 
    auto size = etors_.capacity() * sizeof(EnumeratorPtr);
-   size += (Users().capacity() * sizeof(CxxNamed*));
+   size += XrefSize();
    CxxStats::Vectors(CxxStats::ENUM_DECL, size);
 }
 
@@ -1239,6 +1277,17 @@ Enumerator::~Enumerator()
 
    Singleton< CxxSymbols >::Instance()->EraseEtor(this);
    CxxStats::Decr(CxxStats::ENUM_MEM);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Enumerator_AddToXref = "Enumerator.AddToXref";
+
+void Enumerator::AddToXref() const
+{
+   Debug::ft(Enumerator_AddToXref);
+
+   if(init_ != nullptr) init_->AddToXref();
 }
 
 //------------------------------------------------------------------------------
@@ -1356,6 +1405,17 @@ void Enumerator::GetScopedNames(stringVector& names, bool templates) const
 
 //------------------------------------------------------------------------------
 
+fn_name Enumerator_GetUsages = "Enumerator.GetUsages";
+
+void Enumerator::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+{
+   Debug::ft(Enumerator_GetUsages);
+
+   if(init_ != nullptr) init_->GetUsages(file, symbols);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Enumerator_RecordAccess = "Enumerator.RecordAccess";
 
 void Enumerator::RecordAccess(Cxx::Access access) const
@@ -1368,12 +1428,8 @@ void Enumerator::RecordAccess(Cxx::Access access) const
 
 //------------------------------------------------------------------------------
 
-fn_name Enumerator_ScopedName = "Enumerator.ScopedName";
-
 string Enumerator::ScopedName(bool templates) const
 {
-   Debug::ft(Enumerator_ScopedName);
-
    return Prefix(enum_->ScopedName(templates)) + *Name();
 }
 
@@ -1394,11 +1450,9 @@ void Enumerator::SetAsReferent(const CxxNamed* user)
 
 void Enumerator::Shrink()
 {
-   CxxScoped::Shrink();
-
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::ENUM_MEM, name_.capacity());
-   CxxStats::Vectors(CxxStats::ENUM_MEM, Users().capacity());
+   CxxStats::Vectors(CxxStats::ENUM_MEM, XrefSize());
    if(init_ != nullptr) init_->Shrink();
 }
 
@@ -1423,6 +1477,13 @@ bool Enumerator::WasRead()
    auto item = static_cast< Enumerator* >(FindTemplateAnalog(this));
    if(item != nullptr) ++item->refs_;
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+string Enumerator::XrefName(bool templates) const
+{
+   return Prefix(enum_->XrefName(templates), ".") + *Name();
 }
 
 //==============================================================================
@@ -1450,6 +1511,17 @@ Forward::~Forward()
 
    Singleton< CxxSymbols >::Instance()->EraseForw(this);
    CxxStats::Decr(CxxStats::FORWARD_DECL);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Forward_AddToXref = "Forward.AddToXref";
+
+void Forward::AddToXref() const
+{
+   Debug::ft(Forward_AddToXref);
+
+   name_->AddToXref();
 }
 
 //------------------------------------------------------------------------------
@@ -1542,6 +1614,17 @@ void Forward::GetDirectClasses(CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
+bool Forward::IncludeInXref() const
+{
+   //  Exclude a forward declaration from the global cross-reference unless
+   //  it wasn't resolved.
+   //
+   auto ref = Referent();
+   return (ref == nullptr);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Forward_Referent = "Forward.Referent";
 
 CxxScoped* Forward::Referent() const
@@ -1559,12 +1642,8 @@ CxxScoped* Forward::Referent() const
 
 //------------------------------------------------------------------------------
 
-fn_name Forward_ScopedName = "Forward.ScopedName";
-
 string Forward::ScopedName(bool templates) const
 {
-   Debug::ft(Forward_ScopedName);
-
    auto ref = Referent();
    if(ref != nullptr) return ref->ScopedName(templates);
    return CxxNamed::ScopedName(templates);
@@ -1598,9 +1677,7 @@ void Forward::SetTemplateParms(TemplateParmsPtr& parms)
 
 void Forward::Shrink()
 {
-   CxxScoped::Shrink();
-
-   CxxStats::Vectors(CxxStats::FORWARD_DECL, Users().capacity());
+   CxxStats::Vectors(CxxStats::FORWARD_DECL, XrefSize());
    name_->Shrink();
    if(parms_ != nullptr) parms_->Shrink();
 }
@@ -1650,6 +1727,17 @@ Friend::~Friend()
    }
 
    CxxStats::Decr(CxxStats::FRIEND_DECL);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Friend_AddToXref = "Friend.AddToXref";
+
+void Friend::AddToXref() const
+{
+   Debug::ft(Friend_AddToXref);
+
+   name_->AddToXref();
 }
 
 //------------------------------------------------------------------------------
@@ -1903,7 +1991,6 @@ void Friend::FindReferent()
    ++Depth_;
 
    SymbolView view = DeclaredGlobally;
-   grantor_ = GetScope();
    auto mask = (GetFunction() != nullptr ? FRIEND_FUNCS : FRIEND_CLASSES);
    CxxScoped* ref = nullptr;
 
@@ -1916,6 +2003,7 @@ void Friend::FindReferent()
       //  has not yet been declared.
       //
       searched_ = true;
+      grantor_ = GetScope();
       SetScope(grantor_->GetSpace());
       ref = ResolveName(GetFile(), grantor_, mask, &view);
       if(ref != nullptr) using_ = view.using_;
@@ -2035,6 +2123,17 @@ void Friend::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 //------------------------------------------------------------------------------
 
+bool Friend::IncludeInXref() const
+{
+   //  Exclude a friend declaration from the global cross-reference unless
+   //  it wasn't resolved.
+   //
+   auto ref = Referent();
+   return (ref == nullptr);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Friend_IncrUsers = "Friend.IncrUsers";
 
 void Friend::IncrUsers()
@@ -2111,12 +2210,8 @@ bool Friend::ResolveTemplate(Class* cls, const TypeName* args, bool end) const
 
 //------------------------------------------------------------------------------
 
-fn_name Friend_ScopedName = "Friend.ScopedName";
-
 string Friend::ScopedName(bool templates) const
 {
-   Debug::ft(Friend_ScopedName);
-
    auto ref = Referent();
    if(ref != nullptr) return ref->ScopedName(templates);
    return CxxNamed::ScopedName(templates);
@@ -2237,9 +2332,7 @@ void Friend::SetTemplateParms(TemplateParmsPtr& parms)
 
 void Friend::Shrink()
 {
-   CxxScoped::Shrink();
-
-   CxxStats::Vectors(CxxStats::FRIEND_DECL, Users().capacity());
+   CxxStats::Vectors(CxxStats::FRIEND_DECL, XrefSize());
    if(name_ != nullptr) name_->Shrink();
    if(parms_ != nullptr) parms_->Shrink();
    if(func_ != nullptr) func_->Shrink();
@@ -2255,6 +2348,188 @@ string Friend::TypeString(bool arg) const
    auto func = GetFunction();
    if(func != nullptr) return func->TypeString(arg);
    return Prefix(GetScope()->TypeString(arg)) + QualifiedName(false, true);
+}
+
+//==============================================================================
+
+fn_name MemberInit_ctor = "MemberInit.ctor";
+
+MemberInit::MemberInit(const Function* ctor, string& name, TokenPtr& init) :
+   ctor_(ctor),
+   init_(init.release())
+{
+   Debug::ft(MemberInit_ctor);
+
+   std::swap(name_, name);
+   CxxStats::Incr(CxxStats::MEMBER_INIT);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name MemberInit_AddToXref = "MemberInit.AddToXref";
+
+void MemberInit::AddToXref() const
+{
+   Debug::ft(MemberInit_AddToXref);
+
+   auto cls = ctor_->GetClass();
+   auto member = cls->FindData(name_);
+   member->AddReference(this);
+   init_->AddToXref();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name MemberInit_GetUsages = "MemberInit.GetUsages";
+
+void MemberInit::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+{
+   Debug::ft(MemberInit_GetUsages);
+
+   init_->GetUsages(file, symbols);
+}
+
+//------------------------------------------------------------------------------
+
+void MemberInit::Print(ostream& stream, const Flags& options) const
+{
+   stream << name_;
+   init_->Print(stream, options);
+}
+
+//------------------------------------------------------------------------------
+
+void MemberInit::Shrink()
+{
+   name_.shrink_to_fit();
+   CxxStats::Strings(CxxStats::MEMBER_INIT, name_.capacity());
+   init_->Shrink();
+}
+
+//==============================================================================
+
+fn_name TemplateParm_ctor1 = "TemplateParm.ctor";
+
+TemplateParm::TemplateParm(string& name, Cxx::ClassTag tag,
+   QualNamePtr& type, size_t ptrs, TypeSpecPtr& preset) :
+   tag_(tag),
+   type_(std::move(type)),
+   ptrs_(ptrs),
+   default_(std::move(preset))
+{
+   Debug::ft(TemplateParm_ctor1);
+
+   std::swap(name_, name);
+   CxxStats::Incr(CxxStats::TEMPLATE_PARM);
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken* TemplateParm::AutoType() const
+{
+   if(default_ != nullptr)
+   {
+      auto ref = default_->Referent();
+      if(ref != nullptr) return ref;
+   }
+
+   return (CxxToken*) this;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TemplateParm_Check = "TemplateParm.Check";
+
+void TemplateParm::Check() const
+{
+   Debug::ft(TemplateParm_Check);
+
+   if(type_ != nullptr) type_->Check();
+   if(default_ != nullptr) default_->Check();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TemplateParm_EnterBlock = "TemplateParm.EnterBlock";
+
+void TemplateParm::EnterBlock()
+{
+   Debug::ft(TemplateParm_EnterBlock);
+
+   Context::InsertLocal(this);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TemplateParm_ExitBlock = "TemplateParm.ExitBlock";
+
+void TemplateParm::ExitBlock()
+{
+   Debug::ft(TemplateParm_ExitBlock);
+
+   Context::EraseLocal(this);
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParm::Print(ostream& stream, const Flags& options) const
+{
+   if(tag_ != Cxx::ClassTag_N)
+      stream << tag_;
+   else
+      type_->Print(stream, options);
+
+   stream << SPACE << *Name();
+   if(ptrs_ > 0) stream << string(ptrs_, '*');
+
+   if(default_ != nullptr)
+   {
+      stream << " = ";
+      default_->Print(stream, options);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+CxxScoped* TemplateParm::Referent() const
+{
+   if(default_ != nullptr)
+   {
+      auto ref = default_->Referent();
+      if(ref != nullptr) return ref;
+   }
+
+   return (CxxScoped*) this;
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken* TemplateParm::RootType() const
+{
+   if(default_ != nullptr)
+   {
+      auto ref = default_->Referent();
+      if(ref != nullptr) return ref;
+   }
+
+   return (CxxToken*) this;
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParm::Shrink()
+{
+   name_.shrink_to_fit();
+   CxxStats::Strings(CxxStats::TEMPLATE_PARM, name_.capacity());
+}
+
+//------------------------------------------------------------------------------
+
+string TemplateParm::TypeString(bool arg) const
+{
+   auto ts = *Name();
+   if(ptrs_ > 0) ts += string(ptrs_, '*');
+   return ts;
 }
 
 //==============================================================================
@@ -2341,13 +2616,11 @@ bool Terminal::NameRefersToItem(const string& name,
 
 void Terminal::Shrink()
 {
-   CxxScoped::Shrink();
-
    name_.shrink_to_fit();
    type_.shrink_to_fit();
    CxxStats::Strings(CxxStats::TERMINAL_DECL, name_.capacity());
    CxxStats::Strings(CxxStats::TERMINAL_DECL, type_.capacity());
-   CxxStats::Vectors(CxxStats::TERMINAL_DECL, Users().capacity());
+   CxxStats::Vectors(CxxStats::TERMINAL_DECL, XrefSize());
 }
 
 //==============================================================================
@@ -2377,6 +2650,18 @@ Typedef::~Typedef()
 
    Singleton< CxxSymbols >::Instance()->EraseType(this);
    CxxStats::Decr(CxxStats::TYPE_DECL);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Typedef_AddToXref = "Typedef.AddToXref";
+
+void Typedef::AddToXref() const
+{
+   Debug::ft(Typedef_AddToXref);
+
+   spec_->AddToXref();
+   if(alignas_ != nullptr) alignas_->AddToXref();
 }
 
 //------------------------------------------------------------------------------
@@ -2590,11 +2875,9 @@ void Typedef::SetAsReferent(const CxxNamed* user)
 
 void Typedef::Shrink()
 {
-   CxxScoped::Shrink();
-
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::TYPE_DECL, name_.capacity());
-   CxxStats::Vectors(CxxStats::TYPE_DECL, Users().capacity());
+   CxxStats::Vectors(CxxStats::TYPE_DECL, XrefSize());
    spec_->Shrink();
 }
 
@@ -2619,6 +2902,17 @@ Using::Using(QualNamePtr& name, bool space, bool added) :
    Debug::ft(Using_ctor);
 
    CxxStats::Incr(CxxStats::USING_DECL);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Using_AddToXref = "Using.AddToXref";
+
+void Using::AddToXref() const
+{
+   Debug::ft(Using_AddToXref);
+
+   name_->AddToXref();
 }
 
 //------------------------------------------------------------------------------
@@ -2775,8 +3069,6 @@ fn_name Using_ScopedName = "Using.ScopedName";
 
 string Using::ScopedName(bool templates) const
 {
-   Debug::ft(Using_ScopedName);
-
    auto ref = Referent();
    if(ref != nullptr) return ref->ScopedName(templates);
 

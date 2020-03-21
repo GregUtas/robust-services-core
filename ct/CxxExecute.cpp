@@ -50,7 +50,7 @@ using std::string;
 
 namespace CodeTools
 {
-//  Concrete classes for tracing execution.
+//  Concrete classes for tracing compilation.
 //
 class ActTrace : public CxxTrace
 {
@@ -254,10 +254,10 @@ void Context::InsertTracepoint
 string Context::Location()
 {
    auto parser = GetParser();
-   if(parser == nullptr) return "[at unknown location]";
+   if(parser == nullptr) return "unknown location";
 
    std::ostringstream stream;
-   stream << " [" << parser->GetVenue();
+   stream << parser->GetVenue();
    stream << ", line " << parser->GetLineNum(GetPos()) + 1;
 
    if(parser->GetSourceType() == Parser::IsFile)
@@ -275,7 +275,6 @@ string Context::Location()
       }
    }
 
-   stream << ']';
    return stream.str();
 }
 
@@ -293,7 +292,7 @@ void Context::Log(Warning warning, const CxxNamed* item, word offset)
 
 //------------------------------------------------------------------------------
 
-void Context::OnLine(size_t line, bool executing)
+void Context::OnLine(size_t line, bool compiling)
 {
    auto parser = GetParser();
    if(parser == nullptr) return;
@@ -301,7 +300,7 @@ void Context::OnLine(size_t line, bool executing)
 
    for(auto b = Tracepoints_.cbegin(); b != Tracepoints_.cend(); ++b)
    {
-      b->OnLine(File_, line, executing);
+      b->OnLine(File_, line, compiling);
    }
 }
 
@@ -379,7 +378,6 @@ void Context::Reset()
    File_ = nullptr;
    CheckPos_ = false;
    Block::ResetUsings();
-   Singleton< CxxSymbols >::Instance()->EraseLocals();
 }
 
 //------------------------------------------------------------------------------
@@ -466,7 +464,7 @@ bool Context::StartTracing()
 {
    Debug::ft(Context_StartTracing);
 
-   auto x = OptionIsOn(TraceExecution);
+   auto x = OptionIsOn(TraceCompilation);
    auto f = OptionIsOn(TraceFunctions);
    if(!x && !f) return false;
 
@@ -510,7 +508,7 @@ void Context::SwLog
    }
 
    LastLogLoc_ = loc;
-   auto info = expl + loc;
+   auto info = loc + ": " + expl;
    Trace(CxxTrace::ERROR, errval, info);
    if(Tracing && (level == SwInfo)) return;  //@
    Debug::SwLog(func, info, errval, level);
@@ -593,7 +591,7 @@ fixed_string ActionStrings[CxxTrace::Action_N] =
    "incr_c",
    "execute",
    "clear",
-   ERROR_STR  // actually used: appears in execution traces
+   ERROR_STR  // may actually appear in compilation traces
 };
 
 uint16_t CxxTrace::Last_ = UINT16_MAX;
@@ -729,6 +727,17 @@ void ParseFrame::Clear(word from)
 
 //------------------------------------------------------------------------------
 
+fn_name ParseFrame_EraseLocal = "ParseFrame.EraseLocal";
+
+void ParseFrame::EraseLocal(const CxxScoped* local)
+{
+   Debug::ft(ParseFrame_EraseLocal);
+
+   EraseSymbol(local, locals_);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name ParseFrame_Execute = "ParseFrame.Execute";
 
 void ParseFrame::Execute()
@@ -750,6 +759,77 @@ void ParseFrame::Execute()
       if(top->Op() == Cxx::START_OF_EXPRESSION) return;
       top->Execute();
    }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name ParseFrame_FindLocal = "ParseFrame.FindLocal";
+
+CxxScoped* ParseFrame::FindLocal(const string& name, SymbolView* view) const
+{
+   Debug::ft(ParseFrame_FindLocal);
+
+   SymbolVector list;
+
+   //  Start by looking for a terminal.
+   //
+   Singleton< CxxSymbols >::Instance()->FindTerminal(name, list);
+
+   if(!list.empty())
+   {
+      *view = DeclaredGlobally;
+      return list.front();
+   }
+
+   //  Look for a local that matches NAME.
+   //
+   ListSymbols(name, locals_, list);
+
+   if(!list.empty())
+   {
+      *view = DeclaredLocally;
+
+      if(list.size() > 1)
+      {
+         auto idx = FindNearestItem(list);
+         if(idx != SIZE_MAX) return list[idx];
+         auto expl = name + " has more than one definition";
+         Context::SwLog(ParseFrame_FindLocal, expl, list.size());
+      }
+
+      return list.front();
+   }
+
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name ParseFrame_InsertLocal = "ParseFrame.InsertLocal";
+
+void ParseFrame::InsertLocal(CxxScoped* local)
+{
+   Debug::ft(ParseFrame_InsertLocal);
+
+   typedef std::pair< string, CxxScoped* > LocalPair;
+
+   //  Delete any item with the same name that is defined in the same block.
+   //
+   auto name = local->Name();
+   auto scope = local->GetScope();
+   SymbolVector list;
+
+   ListSymbols(*name, locals_, list);
+
+   for(auto s = list.cbegin(); s != list.cend(); ++s)
+   {
+      if((*s)->GetScope() == scope)
+      {
+         EraseLocal(*s);
+      }
+   }
+
+   locals_.insert(LocalPair(Normalize(*name), local));
 }
 
 //------------------------------------------------------------------------------
@@ -933,6 +1013,7 @@ void ParseFrame::Reset()
    Debug::ft(ParseFrame_Reset);
 
    opts_.clear();
+   locals_.clear();
    scopes_.clear();
    ops_.clear();
    args_.clear();
@@ -1690,7 +1771,7 @@ bool StackArg::SetAutoTypeOn(const FuncData& data) const
    Debug::ft(StackArg_SetAutoTypeOn);
 
    //  An auto type acquires the type that resulted from the right-hand side
-   //  of the expression that was just executed.  However, it is adjusted to
+   //  of the expression that was just compiled.  However, it is adjusted to
    //  account for pointers and constness.
    //
    if(item == nullptr) return false;
@@ -1943,7 +2024,7 @@ Tracepoint::Tracepoint(const CodeFile* file, size_t line, Action act) :
    line_(line),
    action_(act),
    parsed_(false),
-   executed_(false)
+   compiled_(false)
 {
 }
 
@@ -1961,12 +2042,12 @@ void Tracepoint::Display(ostream& stream, const string& prefix) const
 
 fn_name Tracepoint_OnLine = "Tracepoint.OnLine";
 
-void Tracepoint::OnLine(const CodeFile* file, size_t line, bool executing) const
+void Tracepoint::OnLine(const CodeFile* file, size_t line, bool compiling) const
 {
    if(file_ != file) return;
    if(line_ != line) return;
-   if(parsed_ && !executing) return;
-   if(executed_ && executing) return;
+   if(parsed_ && !compiling) return;
+   if(compiled_ && compiling) return;
 
    Debug::ft(Tracepoint_OnLine);
 
@@ -1997,8 +2078,8 @@ void Tracepoint::OnLine(const CodeFile* file, size_t line, bool executing) const
       break;
    }
 
-   if(executing)
-      executed_ = true;
+   if(compiling)
+      compiled_ = true;
    else
       parsed_ = true;
 }

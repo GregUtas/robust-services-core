@@ -17,6 +17,7 @@ namespace std
       unordered_map();
       ~unordered_map();
       entry* begin();
+      size_t bucket_count() const;
       entry* cbegin() const;
       entry* cend() const;
       void clear();
@@ -45,6 +46,7 @@ namespace std
       unordered_multimap();
       ~unordered_multimap();
       entry* begin();
+      size_t bucket_count() const;
       entry* cbegin() const;
       entry* cend() const;
       void clear();

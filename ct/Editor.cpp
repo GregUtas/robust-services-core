@@ -36,6 +36,7 @@
 #include "CxxNamed.h"
 #include "CxxScope.h"
 #include "CxxScoped.h"
+#include "CxxString.h"
 #include "CxxToken.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -123,24 +124,6 @@ bool IncludesAreSorted(const string& line1, const string& line2)
    if(cmp < 0) return true;
    if(cmp > 0) return false;
    return (&line1 < &line2);
-}
-
-//------------------------------------------------------------------------------
-//
-//  Returns true if C is a whitespace character.
-//
-bool IsBlank(char c)
-{
-   return (WhitespaceChars.find_first_of(c) != string::npos);
-}
-
-//------------------------------------------------------------------------------
-//
-//  Returns true if C is a character that may appear in an identifier.
-//
-bool IsWordChar(char c)
-{
-   return (ValidNextChars.find_first_of(c) != string::npos);
 }
 
 //------------------------------------------------------------------------------
@@ -1094,14 +1077,14 @@ word Editor::EraseData
 
    auto decl = static_cast< const Data* >(log.item_);
    auto defn = decl->GetMate();
-   auto& users = decl->Users();
+   auto& refs = decl->Xref();
 
    //  Erase any references to the data.
    //
-   for(auto u = users.cbegin(); u != users.cend(); ++u)
+   for(auto r = refs.cbegin(); r != refs.cend(); ++r)
    {
-      auto file = (*u)->GetFile();
-      auto pos = (*u)->GetPos();
+      auto file = (*r)->GetFile();
+      auto pos = (*r)->GetPos();
 
       if((file == decl->GetFile()) && (pos == decl->GetPos()))
          continue;
@@ -1116,7 +1099,7 @@ word Editor::EraseData
 
       if(expl.empty())
       {
-         auto delimiters = ((*u)->Type() == Cxx::MemInit ? ",{" : ";");
+         auto delimiters = ((*r)->Type() == Cxx::MemberInit ? ",{" : ";");
          editor->EraseCode(pos, delimiters, expl);
          if(!expl.empty())
          {
@@ -1955,11 +1938,8 @@ Editor::CodeLocation Editor::FindNonBlank(Iter iter, size_t pos)
 
    while(iter != source_.end())
    {
-      for(NO_OP; pos < iter->code.size(); ++pos)
-      {
-         if(!IsBlank(iter->code[pos])) return CodeLocation(iter, pos);
-      }
-
+      pos = iter->code.find_first_not_of(WhitespaceChars, pos);
+      if(pos != string::npos) return CodeLocation(iter, pos);
       ++iter;
       pos = 0;
    }
@@ -3983,11 +3963,8 @@ Editor::CodeLocation Editor::RfindNonBlank(Iter iter, size_t pos)
 
    while(true)
    {
-      for(NO_OP; pos != string::npos; --pos)
-      {
-         if(!IsBlank(iter->code[pos])) return CodeLocation(iter, pos);
-      }
-
+      pos = RfindFirstNotOf(iter->code, pos, WhitespaceChars);
+      if(pos != string::npos) return CodeLocation(iter, pos);
       if(iter == source_.begin()) break;
       --iter;
       pos = iter->code.size();
@@ -4065,7 +4042,8 @@ word Editor::TagAsConstArgument(const CodeWarning& log, string& expl)
    //
    auto func = static_cast< const Function* >(log.item_);
    auto& args = func->GetArgs();
-   auto index = (func->IsStatic() ? log.offset_ - 1 : log.offset_);
+   auto index = log.offset_;
+   if(func->IsStatic() || (func->GetClass() == nullptr)) --index;
    if(index >= args.size()) return NotFound(expl, "Argument");
    auto arg = args.at(index).get();
    if(arg == nullptr) return NotFound(expl, "Argument");

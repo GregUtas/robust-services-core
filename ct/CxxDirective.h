@@ -164,6 +164,10 @@ public:
    //
    bool WasDefined() const;
 
+   //  Overridden to add the name to the cross-reference.
+   //
+   void AddToXref() const override;
+
    //  Overridden to find the referent and push it onto the argument stack.
    //
    void EnterBlock() override;
@@ -469,6 +473,10 @@ public:
    //
    void AddCondition(ExprPtr& c) override { condition_ = std::move(c); }
 
+   //  Overridden to add the condition's symbols to cross-references.
+   //
+   void AddToXref() const override;
+
    //  Overridden to display the condition.
    //
    void Display(std::ostream& stream,
@@ -509,6 +517,10 @@ public:
    //  Overridden to add an #else to the directive.
    //
    bool AddElse(const Else* e) override;
+
+   //  Overridden to add name_ to the cross-reference.
+   //
+   void AddToXref() const override;
 
    //  Overridden to display the directive.
    //

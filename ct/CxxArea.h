@@ -150,6 +150,10 @@ public:
    //
    virtual Function* MatchFunc(const Function* curr, bool base) const;
 
+   //  Overridden to add the area's components to cross-references.
+   //
+   void AddToXref() const override;
+
    //  Overridden to log warnings associated with the area's declarations.
    //
    void Check() const override;
@@ -470,6 +474,10 @@ public:
    //
    void AddFiles(SetOfIds& imSet) const override;
 
+   //  Overridden to add the class's components to cross-references.
+   //
+   void AddToXref() const override;
+
    //  Overridden to set the type for an "auto" variable.
    //
    CxxToken* AutoType() const override { return (CxxToken*) this; }
@@ -599,6 +607,10 @@ public:
    //
    bool WasWritten(const StackArg* arg, bool passed)
       override { return false; }
+
+   //  Overridden to append template arguments to a template specialization.
+   //
+   std::string XrefName(bool templates) const override;
 protected:
    //  Displays the first line of the declaration (the name and base class).
    //
@@ -712,7 +724,7 @@ private:
 
    //  The class's items in the order in which they appeared.
    //
-   NamedVector items_;
+   CxxNamedVector items_;
 
    //  The class's template instantiations.
    //
@@ -750,6 +762,12 @@ public:
    //  Returns the instance item that corresponds to ITEM in the class template.
    //
    CxxScoped* FindInstanceAnalog(const CxxNamed* item) const;
+
+   //  Overridden to not add any symbols to the cross-reference.  The class
+   //  template adds them itself because each template instance is the same
+   //  (apart from its template arguments, which we would want to exclude).
+   //
+   void AddToXref() const override { }
 
    //  Overridden to return the class template's base class.
    //
@@ -805,13 +823,13 @@ public:
    //
    TypeName* GetTemplateArgs() const override { return tspec_.get(); }
 
-   //  Overridden to ignore usages in the instance.
+   //  Overridden to obtain usages for the class template.
    //
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
    //  Overridden to instantiate the class template instance.
    //
-   bool Instantiate() override;
+   void Instantiate() override;
 
    //  Overridden to return this class template instance.
    //
@@ -897,6 +915,12 @@ public:
    //
    Namespace* FindNamespace(const std::string& name) const;
 
+   //  Overridden to determine how ITEM, which is declared in this namespace,
+   //  is accessible to SCOPE.
+   //
+   void AccessibilityOf(const CxxScope* scope,
+      const CxxScoped* item, SymbolView* view) const override;
+
    //  Overridden to log warnings associated with the namespace's declarations.
    //
    void Check() const override;
@@ -956,12 +980,6 @@ public:
    //  Overridden to return the namespace's fully qualified name.
    //
    std::string TypeString(bool arg) const override;
-
-   //  Overridden to determine how ITEM, which is declared in this namespace,
-   //  is accessible to SCOPE.
-   //
-   void AccessibilityOf(const CxxScope* scope,
-      const CxxScoped* item, SymbolView* view) const override;
 private:
    //  The namespace's name.
    //

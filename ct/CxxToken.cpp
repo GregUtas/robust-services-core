@@ -52,6 +52,17 @@ AlignAs::AlignAs(TokenPtr& token) : token_(std::move(token))
 
 //------------------------------------------------------------------------------
 
+fn_name AlignAs_AddToXref = "AlignAs.AddToXref";
+
+void AlignAs::AddToXref() const
+{
+   Debug::ft(AlignAs_AddToXref);
+
+   token_->AddToXref();
+}
+
+//------------------------------------------------------------------------------
+
 fn_name AlignAs_EnterBlock = "AlignAs.EnterBlock";
 
 void AlignAs::EnterBlock()
@@ -90,6 +101,17 @@ ArraySpec::ArraySpec(ExprPtr& expr) : expr_(expr.release())
    Debug::ft(ArraySpec_ctor);
 
    CxxStats::Incr(CxxStats::ARRAY_SPEC);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name ArraySpec_AddToXref = "ArraySpec.AddToXref";
+
+void ArraySpec::AddToXref() const
+{
+   Debug::ft(ArraySpec_AddToXref);
+
+   if(expr_ != nullptr) expr_->AddToXref();
 }
 
 //------------------------------------------------------------------------------
@@ -150,6 +172,20 @@ BraceInit::BraceInit()
    Debug::ft(BraceInit_ctor);
 
    CxxStats::Incr(CxxStats::BRACE_INIT);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name BraceInit_AddToXref = "BraceInit.AddToXref";
+
+void BraceInit::AddToXref() const
+{
+   Debug::ft(BraceInit_AddToXref);
+
+   for(auto i = items_.cbegin(); i != items_.cend(); ++i)
+   {
+      (*i)->AddToXref();
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -668,6 +704,20 @@ bool Expression::AddItem(TokenPtr& item)
 
 //------------------------------------------------------------------------------
 
+fn_name Expression_AddToXref = "Expression.AddToXref";
+
+void Expression::AddToXref() const
+{
+   Debug::ft(Expression_AddToXref);
+
+   for(auto i = items_.cbegin(); i != items_.cend(); ++i)
+   {
+      (*i)->AddToXref();
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Expression_AddUnaryOp = "Expression.AddUnaryOp";
 
 bool Expression::AddUnaryOp(TokenPtr& item)
@@ -793,8 +843,8 @@ void Expression::EnterBlock()
 
    //  If evaluation of this expression is to be forced at its end_, mark
    //  the beginning of the expression by pushing a token onto the operator
-   //  stack.  Execute each of the items in the expression, and the force
-   //  the execution of anything still above our start token.
+   //  stack.  Compile each of the items in the expression, and force the
+   //  compilation of anything still above our start token.
    //
    if(force_) Start();
 
@@ -849,7 +899,7 @@ void Expression::Start()
 
    //  Push StartOfExpr onto the stack.  Its priority is lower than all other
    //  operators.  This allows an expression to push its operators onto the
-   //  stack during its execution.
+   //  stack during compilation.
    //
    Context::PushOp(static_cast< Operation* >(StartOfExpr.get()));
 }
@@ -1183,6 +1233,20 @@ void Operation::AddArg(TokenPtr& arg, bool prefixed)
 
 //------------------------------------------------------------------------------
 
+fn_name Operation_AddToXref = "Operation.AddToXref";
+
+void Operation::AddToXref() const
+{
+   Debug::ft(Operation_AddToXref);
+
+   for(auto a = args_.cbegin(); a != args_.cend(); ++a)
+   {
+      (*a)->AddToXref();
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Operation_AppendUnary = "Operation.AppendUnary";
 
 bool Operation::AppendUnary()
@@ -1285,7 +1349,8 @@ void Operation::CheckCast(const StackArg& inArg, const StackArg& outArg) const
       {
       case Cxx::CONST_CAST:
       case Cxx::CAST:
-         if(inArg.IsConst()) Context::Log(CastingAwayConstness);
+         if(inArg.IsConst() && inArg.IsIndirect())
+            Context::Log(CastingAwayConstness);
          break;
 
       default:
@@ -1732,6 +1797,11 @@ void Operation::ExecuteCall()
    switch(proc.item->Type())
    {
    case Cxx::Function:
+      //
+      //  Before matching arguments, insert an implicit "this" argument if
+      //  it may be required.  After the matching function has been found,
+      //  UpdateThisArg (below) erases the argument if it is not needed.
+      //
       func = static_cast< Function* >(proc.item);
       func->PushThisArg(args);
 
@@ -1740,11 +1810,6 @@ void Operation::ExecuteCall()
       case Cxx::NIL_OPERATOR:
       case Cxx::OBJECT_CREATE:
       case Cxx::OBJECT_CREATE_ARRAY:
-         //
-         //  Before matching arguments, insert an implicit "this" argument if
-         //  it may be required.  After the matching function has been found,
-         //  erase the implicit "this" argument if it is not needed.
-         //
          func = func->GetArea()->FindFunc
             (*func->Name(), &args, true, scope, nullptr);
       }
@@ -1872,7 +1937,7 @@ void Operation::ExecuteNew() const
 {
    Debug::ft(Operation_ExecuteNew);
 
-   //  If this is operator new[], execute its array argument(s), which
+   //  If this is operator new[], compile its array argument(s), which
    //  start at the third argument.  Pop each result.
    //
    if(op_ == Cxx::OBJECT_CREATE_ARRAY)
@@ -1905,7 +1970,7 @@ void Operation::ExecuteNew() const
       Context::PushArg(StackArg(newArg, 0, false));
       newCall->PushArgs();
 
-      //  Execute the call to the operator new function and pop the result,
+      //  Compile the call to the operator new function and pop the result,
       //  which should be a void*.  Push the TypeSpec that new created, but
       //  add a pointer to it.
       //
@@ -1933,7 +1998,7 @@ void Operation::ExecuteNew() const
    //  Before pushing the constructor, discard the result of operator new.
    //  Then push the constructor's arguments, starting with "this".  Only
    //  operator new, not new[], can have additional arguments, which appear
-   //  in the optional third argument.  Execute the call to the constructor
+   //  in the optional third argument.  Compile the call to the constructor
    //  and add a pointer to the result.
    //
    Context::PopArg(false);
@@ -2091,7 +2156,7 @@ bool Operation::ExecuteOverload
       }
    }
 
-   //  If an overload was found, execute it after fixing its "this" argument
+   //  If an overload was found, invoke it after fixing its "this" argument
    //  if it a member function.  If assigning an auto type, pop the function's
    //  return type and set it as the auto type for FuncData.EnterBlock.  When
    //  setting an auto type, update ARG1 to ARG2, the argument on which the
@@ -2518,6 +2583,13 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
 
    if(type != Cxx::Class)
    {
+      //* If ARG1 is a template parameter, search for a function that
+      //  matches the arguments (not yet available).  This could mean
+      //  pushing a temporary argument that will be resolved later,
+      //  similar to when a function is overloaded.  (The code that
+      //  follows appears to assume that the first function found in
+      //  CLS will always be correct, and not an incorrect overload!)
+      //
       auto expl = arg1.Trace() + " is not a class";
       Context::SwLog(Operation_PushMember, expl, type);
       return;
@@ -2852,6 +2924,17 @@ string Operation::Trace() const
 }
 
 //==============================================================================
+
+fn_name Precedence_AddToXref = "Precedence.AddToXref";
+
+void Precedence::AddToXref() const
+{
+   Debug::ft(Precedence_AddToXref);
+
+   if(expr_ != nullptr) expr_->AddToXref();
+}
+
+//------------------------------------------------------------------------------
 
 fn_name Precedence_EnterBlock = "Precedence.EnterBlock";
 

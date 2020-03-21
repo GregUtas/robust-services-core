@@ -58,10 +58,11 @@ class Condition : public CxxStatement
 public:
    virtual ~Condition() = default;
    void AddCondition(ExprPtr& c) { condition_ = std::move(c); }
-   void Print
-      (std::ostream& stream, const NodeBase::Flags& options) const override;
+   void AddToXref() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override { if(condition_ != nullptr) condition_->Shrink(); }
 protected:
    explicit Condition(size_t pos);
@@ -93,6 +94,7 @@ class Case : public CxxStatement
 public:
    Case(ExprPtr& expression, size_t pos);
    ~Case() { CxxStats::Decr(CxxStats::CASE); }
+   void AddToXref() const override;
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
    void EnterBlock() override;
@@ -114,6 +116,7 @@ public:
    ~Catch() { CxxStats::Decr(CxxStats::CATCH); }
    void AddArg(ArgumentPtr& a) { arg_ = std::move(a); }
    void AddHandler(BlockPtr& b) { handler_ = std::move(b); }
+   void AddToXref() const override;
    void Check() const override;
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
@@ -153,9 +156,8 @@ public:
    explicit Do(size_t pos);
    ~Do() { CxxStats::Decr(CxxStats::DO); }
    void AddLoop(BlockPtr& b) { loop_ = std::move(b); }
+   void AddToXref() const override;
    void Check() const override;
-   void Print
-      (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
    void EnterBlock() override;
@@ -163,6 +165,8 @@ public:
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
    bool InLine() const override;
    bool LocateItem(const CxxNamed* item, size_t& n) const override;
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;
 private:
    BlockPtr loop_;
@@ -177,10 +181,11 @@ class Expr : public CxxStatement
 public:
    Expr(ExprPtr& expression, size_t pos);
    ~Expr() { CxxStats::Decr(CxxStats::EXPR); }
-   void Print
-      (std::ostream& stream, const NodeBase::Flags& options) const override;
+   void AddToXref() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override { expr_->Shrink(); }
 private:
    const ExprPtr expr_;
@@ -198,9 +203,8 @@ public:
    void AddInitial(TokenPtr& i) { initial_ = std::move(i); }
    void AddSubsequent(ExprPtr& s) { subsequent_ = std::move(s); }
    void AddLoop(BlockPtr& b) { loop_ = std::move(b); }
+   void AddToXref() const override;
    void Check() const override;
-   void Print
-      (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
    void EnterBlock() override;
@@ -209,6 +213,8 @@ public:
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
    bool InLine() const override;
    bool LocateItem(const CxxNamed* item, size_t& n) const override;
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;
 private:
    TokenPtr initial_;
@@ -245,9 +251,8 @@ public:
    void AddThen(BlockPtr& b) { then_ = std::move(b); }
    void AddElse(BlockPtr& b) { else_ = std::move(b); }
    void SetElseIf() { elseif_ = true; }
+   void AddToXref() const override;
    void Check() const override;
-   void Print
-      (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
    void EnterBlock() override;
@@ -255,6 +260,8 @@ public:
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
    bool InLine() const override;
    bool LocateItem(const CxxNamed* item, size_t& n) const override;
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;
    Cxx::ItemType Type() const override { return Cxx::If; }
 private:
@@ -310,10 +317,11 @@ public:
    explicit Return(size_t pos);
    ~Return() { CxxStats::Decr(CxxStats::RETURN); }
    void AddExpr(ExprPtr& e) { expr_ = std::move(e); }
-   void Print
-      (std::ostream& stream, const NodeBase::Flags& options) const override;
+   void AddToXref() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override { if(expr_ != nullptr) expr_->Shrink(); }
 private:
    ExprPtr expr_;
@@ -330,6 +338,7 @@ public:
    ~Switch() { CxxStats::Decr(CxxStats::SWITCH); }
    void AddExpr(ExprPtr& e) { expr_ = std::move(e); }
    void AddCases(BlockPtr& b) { cases_ = std::move(b); }
+   void AddToXref() const override;
    void Check() const override;
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
@@ -355,6 +364,7 @@ public:
    ~Try() { CxxStats::Decr(CxxStats::TRY); }
    void AddTry(BlockPtr& b) { try_ = std::move(b); }
    void AddCatch(TokenPtr& t) { catches_.push_back(std::move(t)); }
+   void AddToXref() const override;
    void Check() const override;
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
@@ -380,9 +390,8 @@ public:
    explicit While(size_t pos);
    ~While() { CxxStats::Decr(CxxStats::WHILE); }
    void AddLoop(BlockPtr& b) { loop_ = std::move(b); }
+   void AddToXref() const override;
    void Check() const override;
-   void Print
-      (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
    void EnterBlock() override;
@@ -390,6 +399,8 @@ public:
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
    bool InLine() const override;
    bool LocateItem(const CxxNamed* item, size_t& n) const override;
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
    void Shrink() override;
 private:
    BlockPtr loop_;

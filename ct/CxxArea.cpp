@@ -215,6 +215,15 @@ void Class::AccessibilityOf
          return;
       }
 
+      //  Don't enforce access controls on a class template.  Violations
+      //  will be detected on template instances.
+      //
+      if(usingClass->IsTemplate())
+      {
+         view->accessibility = Unrestricted;
+         return;
+      }
+
       //  If the using class is a template instance, it can use a template
       //  argument, even if the argument is private.
       //
@@ -231,6 +240,17 @@ void Class::AccessibilityOf
    }
 
    view->distance = scope->ScopeDistance(itemClasses.back()->GetSpace());
+
+   //  Don't enforce access controls on a function template.  Violations
+   //  will be detected on template instances.
+   //
+   auto usingFunc = scope->GetFunction();
+
+   if((usingFunc != nullptr) && usingFunc->IsTemplate())
+   {
+      view->accessibility = Unrestricted;
+      return;
+   }
 
    //  ITEM must be public at file scope unless SCOPE is a friend.
    //
@@ -388,6 +408,30 @@ bool Class::AddSubclass(Class* cls)
 
    subs_.push_back(cls);
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Class_AddToXref = "Class.AddToXref";
+
+void Class::AddToXref() const
+{
+   Debug::ft(Class_AddToXref);
+
+   CxxArea::AddToXref();
+
+   name_->AddToXref();
+
+   if(alignas_ != nullptr) alignas_->AddToXref();
+
+   auto base = GetBaseDecl();
+
+   if(base != nullptr) base->AddToXref();
+
+   for(auto f = friends_.cbegin(); f != friends_.cend(); ++f)
+   {
+      (*f)->AddToXref();
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -1352,6 +1396,7 @@ void Class::GetMemberInitAttrs(DataInitVector& members) const
       if(init)
       {
          auto spec = mem->GetTypeSpec();
+
          if((spec->GetTemplateRole() == TemplateParameter) &&
             (spec->Ptrs(false) == 0))
          {
@@ -1508,10 +1553,8 @@ void Class::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
    Debug::ft(Class_GetUsages);
 
-   //  A class template cannot be executed by itself, so it must get its
-   //  symbol usage information from its instantiations.  We compile the
-   //  full template instead of instantiating each member when it is used,
-   //  so it is sufficient to pull symbols from the first instantiation.
+   //  IF this is a class template, obtain usage information from its first
+   //  instance in case some symbols in the template could not be resolved.
    //
    if(!tmplts_.empty())
    {
@@ -1549,14 +1592,11 @@ void Class::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
    for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
    {
-      //  Unless this is a class template instance, bypass function
+      //  If this is not a class template instance, bypass function
       //  template instantiations, every one of which is registered
-      //  against the class that defines the function template.
+      //  against the function template.
       //
-      if(!inst)
-      {
-         if((*f)->IsInTemplateInstance()) continue;
-      }
+      if(!inst && (*f)->IsInTemplateInstance()) continue;
 
       (*f)->GetUsages(file, symbols);
    }
@@ -1871,6 +1911,34 @@ string Class::TypeString(bool arg) const
    return Prefix(GetScope()->TypeString(arg)) + *Name();
 }
 
+//------------------------------------------------------------------------------
+
+string Class::XrefName(bool templates) const
+{
+   auto name = CxxScoped::XrefName(templates);
+   auto spec = GetQualName()->GetTemplateArgs();
+
+   if(spec != nullptr)
+   {
+      auto args = spec->Args();
+      std::ostringstream stream;
+      Flags options(FQ_Mask);
+
+      name.push_back('<');
+
+      for(size_t i = 0; i < args->size(); ++i)
+      {
+         args->at(i)->Print(stream, options);
+         if(i < args->size() - 1) stream << ',';
+      }
+
+      name += stream.str();
+      name.push_back('>');
+   }
+
+   return name;
+}
+
 //==============================================================================
 
 fn_name ClassInst_ctor = "ClassInst.ctor";
@@ -2125,7 +2193,7 @@ void ClassInst::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 fn_name ClassInst_Instantiate = "ClassInst.Instantiate";
 
-bool ClassInst::Instantiate()
+void ClassInst::Instantiate()
 {
    Debug::ft(ClassInst_Instantiate);
 
@@ -2134,19 +2202,29 @@ bool ClassInst::Instantiate()
    //  its template is being instantiated.  This causes the instantiation
    //  of any templates that this one requires.
    //
-   if(created_) return true;
+   if(created_) return;
    created_ = true;
-   tspec_->Instantiating();
+
+   CxxScopedVector locals;
+   tspec_->Instantiating(locals);
 
    //  Get the code for the template instance and parse it.
    //
    code_.reset();
    auto begin = tmplt_->CreateCode(this, code_);
    std::unique_ptr< Parser > parser(new Parser(EMPTY_STR));
+
+   if(!locals.empty())
+   {
+      for(auto item = locals.cbegin(); item != locals.cend(); ++item)
+      {
+         Context::InsertLocal(*item);
+      }
+   }
+
    compiled_ = parser->ParseClassInst(this, begin);
    parser.reset();
    if(compiled_) code_.reset();
-   return compiled_;
 }
 
 //------------------------------------------------------------------------------
@@ -2358,6 +2436,53 @@ bool CxxArea::AddStaticAssert(StaticAssertPtr& assert)
    }
 
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CxxArea_AddToXref = "CxxArea.AddToXref";
+
+void CxxArea::AddToXref() const
+{
+   Debug::ft(CxxArea_AddToXref);
+
+   for(auto c = classes_.cbegin(); c != classes_.cend(); ++c)
+   {
+      (*c)->AddToXref();
+   }
+
+   for(auto t = types_.cbegin(); t != types_.cend(); ++t)
+   {
+      (*t)->AddToXref();
+   }
+
+   auto inst = IsInTemplateInstance();
+
+   for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
+   {
+      //  If this is not a class template instance, bypass function
+      //  template instantiations, every one of which is registered
+      //  against the function template.
+      //
+      if(!inst && (*f)->IsInTemplateInstance()) continue;
+
+      (*f)->AddToXref();
+   }
+
+   for(auto o = opers_.cbegin(); o != opers_.cend(); ++o)
+   {
+      (*o)->AddToXref();
+   }
+
+   for(auto d = data_.cbegin(); d != data_.cend(); ++d)
+   {
+      (*d)->AddToXref();
+   }
+
+   for(auto a = asserts_.cbegin(); a != asserts_.cend(); ++a)
+   {
+      (*a)->AddToXref();
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -2682,8 +2807,6 @@ Function* CxxArea::MatchFunc(const Function* curr, bool base) const
 
 void CxxArea::Shrink()
 {
-   CxxScoped::Shrink();
-
    for(auto u = usings_.cbegin(); u != usings_.cend(); ++u)
    {
       (*u)->Shrink();
@@ -2750,7 +2873,7 @@ void CxxArea::Shrink()
    size += (defns_.capacity() * sizeof(ScopePtr));
    size += (assembly_.capacity() * sizeof(AsmPtr));
    size += (asserts_.capacity() * sizeof(StaticAssertPtr));
-   size += (Users().capacity() * sizeof(CxxNamed*));
+   size += XrefSize();
 
    if(Type() == Cxx::Namespace)
    {
@@ -2817,12 +2940,8 @@ void Namespace::Check() const
    checked_ = true;
 
    auto name = ScopedName(false);
-
-   if(name.empty())
-      name = "namespace ::";
-   else
-      name = "namespace " + name;
-
+   if(name.empty()) name = SCOPE_STR;
+   name.insert(0, "namespace ");
    name.push_back(CRLF);
    Debug::Progress(name, true);
 
@@ -2941,12 +3060,8 @@ Namespace* Namespace::FindNamespace(const string& name) const
 
 //------------------------------------------------------------------------------
 
-fn_name Namespace_ScopedName = "Namespace.ScopedName";
-
 string Namespace::ScopedName(bool templates) const
 {
-   Debug::ft(Namespace_ScopedName);
-
    auto scope = GetScope();
 
    if(scope == nullptr)
@@ -2974,7 +3089,14 @@ void Namespace::SetLoc(CodeFile* file, size_t pos)
 {
    Debug::ft(Namespace_SetLoc);
 
+   //  If this is the first appearance of the namespace, set its location.
+   //  Create a namespace definition for the current file.
+   //
    if(GetFile() == nullptr) CxxArea::SetLoc(file, pos);
+
+   SpaceDefnPtr space(new SpaceDefn(this));
+   space->SetLoc(file, pos);
+   file->InsertSpace(space);
 }
 
 //------------------------------------------------------------------------------

@@ -214,12 +214,12 @@ public:
    virtual CxxToken* Back() { return this; }
 
    //  Invoked when the item is read.  Returns true to record the read in the
-   //  execution trace.  The default version returns false.
+   //  compilation trace.  The default version returns false.
    //
    virtual bool WasRead() { return false; }
 
    //  Invoked when the item is modified.  Returns true to record a write in
-   //  the execution trace.  The default version generates a log and returns
+   //  the compilation trace.  The default version generates a log and returns
    //  false, and must therefore be overridden by items that can be modified.
    //  ARG is the stack variable through which the item was modified.  The item
    //  itself is usually arg.item, but ARG is nullptr for a function's "this"
@@ -240,11 +240,15 @@ public:
    //
    virtual void WasMutated(const StackArg* arg) { }
 
-   //  Records that the item was used when executing code in the context file.
+   //  Records that the item was used when compiling code in the context file.
    //  This is used to record usages (for #include purposes) that are difficult
    //  to detect simply on the basis of symbol usage.
    //
    virtual void RecordUsage() const { }
+
+   //  Invokes CxxScoped.AddReference on items that this one references.
+   //
+   virtual void AddToXref() const { }
 
    //  Updates SYMBOLS with how this item used other types within FILE.  See
    //  UsageType for a list of how various uses of a type are distinguished.
@@ -267,7 +271,7 @@ public:
    //
    virtual void Check() const { }
 
-   //  Returns a string that describes the item during an execution trace.
+   //  Returns a string that describes the item during a compilation trace.
    //
    virtual std::string Trace() const { return NodeBase::EMPTY_STR; }
 
@@ -584,9 +588,13 @@ public:
    //
    void SetOp(Cxx::Operator op) { op_ = op; }
 
-   //  Executes the operation.  Obtains its arguments from the stack.
+   //  Compiles the operation.  Obtains its arguments from the stack.
    //
    void Execute() const;
+
+   //  Overridden to add each argument's components to cross-references.
+   //
+   void AddToXref() const override;
 
    //  Invoked when a unary operator is encountered.  This operator returns
    //  true if it will elide forward to the unary, and false if the new
@@ -599,11 +607,6 @@ public:
    //
    CxxToken* Back() override;
 
-   //  Overridden to display the operator and its arguments.
-   //
-   void Print
-      (std::ostream& stream, const NodeBase::Flags& options) const override;
-
    //  Overridden to push this operator and its arguments onto the stack.
    //
    void EnterBlock() override;
@@ -611,6 +614,11 @@ public:
    //  Overridden to update SYMBOLS with each argument's type usage.
    //
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+
+   //  Overridden to display the operator and its arguments.
+   //
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to shrink the tokens.
    //
@@ -648,7 +656,7 @@ private:
    //
    static void PushType(const std::string& name);
 
-   //  Handles the execution of a function call.
+   //  Handles the invocation of a function call.
    //
    static void ExecuteCall();
 
@@ -659,15 +667,15 @@ private:
    //
    Function* FindNewOrDelete(const StackArg& arg, bool del, bool& pod) const;
 
-   //  Handles the execution of operator new.
+   //  Handles the invocation of operator new.
    //
    void ExecuteNew() const;
 
-   //  Handles the execution of operator delete on ARG.
+   //  Handles the invocation of operator delete on ARG.
    //
    void ExecuteDelete(const StackArg& arg) const;
 
-   //  If ARG1 overloads the operator, this executes the overload function
+   //  If ARG1 overloads the operator, this invokes the overload function
    //  and returns T, else it returns false.  If the operator is binary,
    //  ARG2 is its other argument.  NAME is the function name.
    //
@@ -754,14 +762,13 @@ public:
    //
    static void Start();
 
+   //  Overridden to add each token's components to cross-references.
+   //
+   void AddToXref() const override;
+
    //  Overridden to return the last item in the expression.
    //
    CxxToken* Back() override;
-
-   //  Overridden to display the expression.
-   //
-   void Print
-      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to invoke Context::Execute after invoking EnterBlock on
    //  each token in items_.
@@ -771,6 +778,11 @@ public:
    //  Overridden to update SYMBOLS with each token's type usage.
    //
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+
+   //  Overridden to display the expression.
+   //
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to shrink the tokens.
    //
@@ -825,6 +837,10 @@ public:
    //
    ~ArraySpec() { CxxStats::Decr(CxxStats::ARRAY_SPEC); }
 
+   //  Overridden to add the specification's components to cross-references.
+   //
+   void AddToXref() const override;
+
    //  Overridden to invoke EnterBlock on expr_.
    //
    void EnterBlock() override;
@@ -877,6 +893,7 @@ public:
    explicit Precedence(ExprPtr& expr)
       : expr_(std::move(expr)) { CxxStats::Incr(CxxStats::PRECEDENCE); }
    ~Precedence() { CxxStats::Decr(CxxStats::PRECEDENCE); }
+   void AddToXref() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
    void Print
@@ -897,6 +914,7 @@ public:
    BraceInit();
    ~BraceInit() { CxxStats::Decr(CxxStats::BRACE_INIT); }
    void AddItem(TokenPtr& item) { items_.push_back(std::move(item)); }
+   void AddToXref() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
    void Print
@@ -916,6 +934,7 @@ class AlignAs : public CxxToken
 public:
    explicit AlignAs(TokenPtr& token);
    ~AlignAs() { CxxStats::Decr(CxxStats::ALIGNAS); }
+   void AddToXref() const override;
    void EnterBlock() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
    void Print

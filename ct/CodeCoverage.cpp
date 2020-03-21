@@ -143,9 +143,7 @@ word CodeCoverage::Build(std::ostringstream& expl)
 
          if(func == currFuncs_.cend())
          {
-            //  This function was not in the database.  This occurs in the
-            //  case of a function template or function in a class template,
-            //  since these are not parsed.  Add the function.
+            //  This function was not in the database, so add it.
             //
             FuncInfo info(UNHASHED);
             auto result = currFuncs_.insert(FuncData(str, info));

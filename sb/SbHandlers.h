@@ -26,7 +26,7 @@
 
 namespace NodeBase
 {
-   template< typename T > class Singleton;
+   template< class T > class Singleton;
 }
 
 //------------------------------------------------------------------------------

@@ -145,6 +145,7 @@ public:
    void InsertInclude(IncludePtr& incl);
    Include* InsertInclude(const std::string& fn);
    bool InsertDirective(DirectivePtr& dir);
+   void InsertSpace(SpaceDefnPtr& space);
    void InsertClass(Class* cls);
    void InsertData(Data* data);
    void InsertEnum(Enum* item);
@@ -178,7 +179,7 @@ public:
 
    //  Updates the file's parse status.
    //
-   void SetParsed(bool passed) { parsed_ = (passed ? Passed : Failed); }
+   void SetParsed(bool passed);
 
    //  Classifies a line of code (S) and updates WARNINGS with any warnings
    //  that were found.
@@ -224,6 +225,11 @@ public:
    //  Reads the file into code_ and preprocesses it.
    //
    void Scan();
+
+   //  Includes, in the cross-reference, symbols that appear in the
+   //  file's items.
+   //
+   void AddToXref() const;
 
    //  Checks the file after it has been parsed, looking for additional
    //  warnings when a report is to be generated.
@@ -280,7 +286,7 @@ public:
 
    //  Generates a report in STREAM (if not nullptr) for the files in SET.  The
    //  report includes line type counts and warnings found during parsing and
-   //  "execution".
+   //  compilation.
    //
    static void GenerateReport(std::ostream* stream, const SetOfIds& set);
 
@@ -384,8 +390,8 @@ private:
       const std::string& info = std::string(NodeBase::EMPTY_STR),
       bool hide = false) const;
 
-   //  Returns false if >trim does not apply to this file (e.g. a template
-   //  header).
+   //  Returns false if >trim does not apply to this file (e.g. a substitute
+   //  file).
    //
    bool CanBeTrimmed() const;
 
@@ -393,10 +399,6 @@ private:
    //  (if a .cpp) defines.
    //
    void FindDeclIds();
-
-   //  Records, in the global cross-reference, that the file used ITEMS.
-   //
-   void InsertInXref(const CxxNamedSet& items) const;
 
    //  Saves the identifiers of files that define direct base classes used
    //  by this file.  BASES is from CxxUsageSets.bases.
@@ -559,6 +561,7 @@ private:
    UsingVector usings_;
    ForwardVector forws_;
    MacroVector macros_;
+   SpaceDefnPtrVector spaces_;
    ClassVector classes_;
    EnumVector enums_;
    TypedefVector types_;
@@ -569,7 +572,7 @@ private:
 
    //  The file's items, in the order in which they appeared.
    //
-   NamedVector items_;
+   CxxNamedVector items_;
 
    //  The items used in the file's executable code.
    //

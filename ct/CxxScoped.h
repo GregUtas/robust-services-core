@@ -95,13 +95,23 @@ public:
    //
    virtual void AddFiles(SetOfIds& imSet) const;
 
-   //  Records a user of the item.
+   //  Returns true if the item's cross-reference should be included in the
+   //  global cross-reference.  The default excludes items that are, or that
+   //  appear in, template instances.
    //
-   virtual void AddUser(const CxxNamed* name);
+   virtual bool IncludeInXref() const;
 
-   //  Returns the item's users.
+   //  Records NAME as a reference to the item.
    //
-   const NamedVector& Users() const { return users_; }
+   virtual void AddReference(const CxxNamed* name);
+
+   //  Returns the item's cross-reference (the items that reference it).
+   //
+   const CxxNamedSet& Xref() const { return xref_; }
+
+   //  Returns the amount of memory used by xref_ entries.
+   //
+   size_t XrefSize() const { return xref_.size() * 3 * sizeof(CxxNamed*); }
 
    //  Returns true if the item is unused.
    //
@@ -191,10 +201,6 @@ public:
    //  Overridden to set the scope where the declaration appeared.
    //
    void SetScope(CxxScope* scope) override { scope_ = scope; }
-
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
 protected:
    //  Protected because this class is virtual.
    //
@@ -219,7 +225,7 @@ private:
 
    //  Source code references to the item.
    //
-   NamedVector users_;
+   CxxNamedSet xref_;
 
    //  The access control level for the item.
    //
@@ -266,6 +272,10 @@ public:
    //
    Class* IsThisCandidate() const;
 
+   //  Overridden to add the argument's components to cross-references.
+   //
+   void AddToXref() const override;
+
    //  Overridden to set the type for an "auto" variable.
    //
    CxxToken* AutoType() const override { return spec_.get(); }
@@ -274,7 +284,7 @@ public:
    //
    void Check() const override;
 
-   //  Overridden to make the argument visible within its function.
+   //  Overridden to make the argument visible as a local.
    //
    void EnterBlock() override;
 
@@ -401,6 +411,10 @@ public:
    //
    ~BaseDecl() { CxxStats::Decr(CxxStats::BASE_DECL); }
 
+   //  Overridden to add the declaration's components to cross-references.
+   //
+   void AddToXref() const override;
+
    //  Displays the base class declaration.
    //
    void DisplayDecl(std::ostream& stream, bool fq) const;
@@ -502,6 +516,10 @@ public:
    //  Returns all of the enumerators.
    //
    const EnumeratorPtrVector& Etors() const { return etors_; }
+
+   //  Overridden to add the enumeration's components to cross-references.
+   //
+   void AddToXref() const override;
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -618,6 +636,10 @@ public:
    //
    ~Enumerator();
 
+   //  Overridden to add the enumerator's components to cross-references.
+   //
+   void AddToXref() const override;
+
    //  Overridden to set the type for an "auto" variable.
    //
    CxxToken* AutoType() const override { return (CxxToken*) enum_; }
@@ -636,11 +658,11 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
-   //  Overridden to execute the enumerator's initialization statement.
+   //  Overridden to compile the enumerator's initialization statement.
    //
    void EnterBlock() override;
 
-   //  Overridden to execute the enumerator's initialization statement.
+   //  Overridden to compile the enumerator's initialization statement.
    //
    bool EnterScope() override;
 
@@ -659,6 +681,10 @@ public:
    //
    void GetScopedNames(stringVector& names, bool templates) const override;
 
+   //  Overridden to update SYMBOLS with the enumerator's type usage.
+   //
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+
    //  Overridden to determine if the enumerator is unused.
    //
    bool IsUnused() const override { return (refs_ == 0); }
@@ -667,10 +693,6 @@ public:
    //
    const std::string* Name() const override { return &name_; }
 
-   //  Overridden to prefix the enum as a scope.
-   //
-   std::string ScopedName(bool templates) const override;
-
    //  Overridden to note that the enumeration required ACCESS.
    //
    void RecordAccess(Cxx::Access access) const override;
@@ -678,6 +700,10 @@ public:
    //  Overridden to record usage of the enumerator.
    //
    void RecordUsage() const override { AddUsage(); }
+
+   //  Overridden to prefix the enum as a scope.
+   //
+   std::string ScopedName(bool templates) const override;
 
    //  Overridden to count references.
    //
@@ -698,6 +724,10 @@ public:
    //  Overridden to count references to the enumerator.
    //
    bool WasRead() override;
+
+   //  Overridden to prefix the enum as a scope.
+   //
+   std::string XrefName(bool templates) const override;
 private:
    //  The enumerator's name.
    //
@@ -730,6 +760,10 @@ public:
    //  Not subclassed.
    //
    ~Forward();
+
+   //  Overridden to add the declaration to its referent.
+   //
+   void AddToXref() const override;
 
    //  Overridden to return the referent if known, else the forward declaration.
    //
@@ -764,6 +798,10 @@ public:
    //
    const TemplateParms* GetTemplateParms() const
       override { return parms_.get(); }
+
+   //  Overridden to exclude resolved forward declarations.
+   //
+   bool IncludeInXref() const override;
 
    //  Overridden to determine if the declaration is unused.
    //
@@ -858,6 +896,10 @@ public:
    //
    void IncrUsers();
 
+   //  Overridden to add the declaration to its referent.
+   //
+   void AddToXref() const override;
+
    //  Overridden to return the referent if known, else the friend declaration.
    //
    CxxToken* AutoType() const override;
@@ -900,6 +942,10 @@ public:
    //  Overridden to update SYMBOLS with the declaration's type usage.
    //
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+
+   //  Overridden to exclude resolved friend declarations.
+   //
+   bool IncludeInXref() const override;
 
    //  Overridden to indicate that inline display is not supported.
    //
@@ -1025,6 +1071,160 @@ private:
 
 //------------------------------------------------------------------------------
 //
+//  A member initialization.  This is one of the elements in a constructor's
+//  initialization list.
+//
+class MemberInit : public CxxScoped
+{
+public:
+   //  INIT is the expression that initializes NAME.  It is parsed as
+   //  arguments for a function call in case it invokes a constructor.
+   //  CTOR is the constructor in which the initialization appears.
+   //
+   MemberInit(const Function* ctor, std::string& name, TokenPtr& init);
+
+   //  Not subclassed.
+   //
+   ~MemberInit() { CxxStats::Decr(CxxStats::MEMBER_INIT); }
+
+   //  Returns the expression that initializes the member.
+   //
+   CxxToken* GetInit() const { return init_.get(); }
+
+   //  Overridden to add the statement's components to cross-references.
+   //
+   void AddToXref() const override;
+
+   //  Overridden to update SYMBOLS with the statement's type usage.
+   //
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+
+   //  Overridden to reveal that this is a member initialization.
+   //
+   Cxx::ItemType Type() const override { return Cxx::MemberInit; }
+
+   //  Overridden to return the member's name.
+   //
+   const std::string* Name() const override { return &name_; }
+
+   //  Overridden to display the initialization statement.
+   //
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
+
+   //  Overridden to shrink containers.
+   //
+   void Shrink() override;
+
+   //  Overridden to return the member's name.
+   //
+   std::string Trace() const override { return name_; }
+private:
+   //  The constructor where the initialization appears.
+   //
+   const Function* const ctor_;
+
+   //  The name of the member being initialized.
+   //
+   std::string name_;
+
+   //  The expression that initializes the member.
+   //
+   const TokenPtr init_;
+};
+
+//------------------------------------------------------------------------------
+//
+//  A template parameter appears within the angle brackets that follow the
+//  "template" keyword.
+//
+class TemplateParm : public CxxScoped
+{
+public:
+   //  Creates a parameter defined by NAME, TAG or TYPE, and PTRS (e.g.
+   //  T/class/nullptr/1 for template <class T*...), which may specify
+   //  an optional default (PRESET).
+   //
+   TemplateParm(std::string& name, Cxx::ClassTag tag,
+      QualNamePtr& type, size_t ptrs, TypeSpecPtr& preset);
+
+   //  Not subclassed.
+   //
+   ~TemplateParm() { CxxStats::Decr(CxxStats::TEMPLATE_PARM); }
+
+   //  Returns the parameter's default type.
+   //
+   const TypeSpec* Default() const { return default_.get(); }
+
+   //  Overridden to return the default's type, else this item.
+   //
+   CxxToken* AutoType() const override;
+
+   //  Overridden to check the default type.
+   //
+   void Check() const override;
+
+   //  Overridden to make the parameter visible as a local.
+   //
+   void EnterBlock() override;
+
+   //  Overridden to remove the parameter as a local.
+   //
+   void ExitBlock() override;
+
+   //  Overridden to return the parameter's name.
+   //
+   const std::string* Name() const override { return &name_; }
+
+   //  Overridden to display the parameter.
+   //
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
+
+   //  Overridden to return the default's referent, else this item.
+   //
+   CxxScoped* Referent() const override;
+
+   //  Overridden to shrink the item's name.
+   //
+   void Shrink() override;
+
+   //  Overridden to reveal that this is a template parameter.
+   //
+   Cxx::ItemType Type() const override { return Cxx::TemplateParm; }
+
+   //  Overridden to return the parameter's name and pointers.
+   //
+   std::string TypeString(bool arg) const override;
+private:
+   //  Overridden to return the default's type, else this item.
+   //
+   CxxToken* RootType() const override;
+
+   //  The parameter's name.
+   //
+   std::string name_;
+
+   //  The parameter's type tag.  Set to Cxx::ClassTag_N
+   //  if a non-class type was specified.
+   //
+   const Cxx::ClassTag tag_;
+
+   //  The parameter's type if tag_ is Cxx::ClassTag_N.
+   //
+   const QualNamePtr type_;
+
+   //  The level of pointer indirection for the parameter.
+   //
+   const size_t ptrs_;
+
+   //  The parameter's default value, if any.
+   //
+   const TypeSpecPtr default_;
+};
+
+//------------------------------------------------------------------------------
+//
 //  This is created for a reserved word that can be the referent of a type.
 //
 class Terminal : public CxxScoped
@@ -1044,9 +1244,9 @@ public:
    //
    void SetNumeric(const Numeric& attrs) { attrs_ = attrs; }
 
-   //  Overridden to not track users of terminals.
+   //  Overridden to not track references to terminals.
    //
-   void AddUser(const CxxNamed* name) override { }
+   void AddReference(const CxxNamed* name) override { }
 
    //  Overridden to set the type for an "auto" variable.
    //
@@ -1142,6 +1342,10 @@ public:
    //
    void SetAlignment(AlignAsPtr& align);
 
+   //  Overridden to add the typedef's components to cross-references.
+   //
+   void AddToXref() const override;
+
    //  Overridden to set the type for an "auto" variable.
    //
    CxxToken* AutoType() const override { return (CxxToken*) this; }
@@ -1149,11 +1353,6 @@ public:
    //  Overridden to log warnings associated with the typedef.
    //
    void Check() const override;
-
-   //  Overridden to display the typedef in a function.
-   //
-   void Print
-      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to display the typedef.
    //
@@ -1195,6 +1394,11 @@ public:
    //  Overridden to return the alias introduced by the typedef.
    //
    const std::string* Name() const override { return &name_; }
+
+   //  Overridden to display the typedef in a function.
+   //
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
 
    //  Overridden to return the referent of GetTypeSpec().
    //
@@ -1288,6 +1492,10 @@ public:
    //  Returns true if the >trim command marked the statement for removal.
    //
    bool IsToBeRemoved() const { return remove_; }
+
+   //  Overridden to add the declaration to cross-references.
+   //
+   void AddToXref() const override;
 
    //  Overridden to log warnings associated with the declaration.
    //

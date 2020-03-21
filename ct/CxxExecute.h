@@ -28,6 +28,7 @@
 #include <iosfwd>
 #include <set>
 #include <string>
+#include <unordered_map>
 #include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxFwd.h"
@@ -38,12 +39,12 @@
 
 namespace CodeTools
 {
-//  Base class for tracing execution.
+//  Base class for tracing compilation.
 //
 class CxxTrace : public NodeBase::TraceRecord
 {
 public:
-   //  Actions that are traced during execution.
+   //  Actions that are traced during compilation.
    //
    enum Action
    {
@@ -89,7 +90,7 @@ private:
 
 //------------------------------------------------------------------------------
 //
-//  A stack argument when "executing code" to track usages.
+//  A stack argument when compiling code.
 //
 class StackArg
 {
@@ -162,7 +163,7 @@ public:
    void SetAsDirect() const;
 
    //  Tags the argument as a member of the context class (the class
-   //  whose non-static member function is currently being executed).
+   //  whose non-static member function is currently being compiled).
    //
    void SetAsMember() { member_ = true; }
 
@@ -406,13 +407,13 @@ extern const StackArg NilStackArg;
 //
 constexpr char TraceParse = 'p';
 constexpr char SaveParseTrace = 's';
-constexpr char TraceExecution = 'x';
+constexpr char TraceCompilation = 'c';
 constexpr char TraceFunctions = 'f';
 constexpr char TraceImmediate = 'i';
 
 //------------------------------------------------------------------------------
 //
-//  Used when parsing and executing code.
+//  Used when parsing and compiling code.
 //
 class ParseFrame
 {
@@ -436,6 +437,18 @@ public:
    //  Returns the current conditional compilation.
    //
    OptionalCode* Optional() const;
+
+   //  Adds LOCAL to the set of local variables.
+   //
+   void InsertLocal(CxxScoped* local);
+
+   //  Resolves NAME if it is a terminal or a local variable.
+   //
+   CxxScoped* FindLocal(const std::string& name, SymbolView* view) const;
+
+   //  Removes LOCAL from the local variables in the current scope.
+   //
+   void EraseLocal(const CxxScoped* local);
 
    //  Enters a scope.
    //
@@ -478,11 +491,11 @@ public:
    //
    StackArg* TopArg();
 
-   //  Returns the current execution position.
+   //  Returns the current compilation position.
    //
    size_t GetPos() const { return pos_; }
 
-   //  Sets the current execution position.
+   //  Sets the current compilation position.
    //
    void SetPos(size_t pos) { pos_ = pos; }
 
@@ -507,7 +520,11 @@ private:
    //
    std::vector< OptionalCode* > opts_;
 
-   //  The scopes in which execution is occurring.
+   //  The current set of local variables.
+   //
+   std::unordered_multimap< std::string, CxxScoped* > locals_;
+
+   //  The scopes in which compilation is occurring.
    //
    std::vector< CxxScope* > scopes_;
 
@@ -553,10 +570,10 @@ public:
    //
    const CodeFile* File() const { return file_; }
 
-   //  Invoked when FILE/LINE is reached.  EXECUTING is false during
-   //  parsing and true during execution.
+   //  Invoked when FILE/LINE is reached.  COMPILING is false during
+   //  parsing and true during compilation.
    //
-   void OnLine(const CodeFile* file, size_t line, bool executing) const;
+   void OnLine(const CodeFile* file, size_t line, bool compiling) const;
 
    //  Displays the tracepoint in STREAM, starting each line with PREFIX.
    //
@@ -578,9 +595,9 @@ private:
    //
    mutable bool parsed_;
 
-   //  Set if the tracepoint has been handled during execution.
+   //  Set if the tracepoint has been handled during compilation.
    //
-   mutable bool executed_;
+   mutable bool compiled_;
 };
 
 std::ostream& operator<<(std::ostream& stream, Tracepoint::Action action);
@@ -596,6 +613,19 @@ public:
    //  Deleted because this class only has static members.
    //
    Context() = delete;
+
+   //  Adds LOCAL to the local variables in the current scope.
+   //
+   static void InsertLocal(CxxScoped* local) { Frame_->InsertLocal(local); }
+
+   //  Resolves NAME if it is a terminal or a local variable.
+   //
+   static CxxScoped* FindLocal(const std::string& name, SymbolView* view)
+      { return Frame_->FindLocal(name, view); }
+
+   //  Removes LOCAL from the local variables in the current scope.
+   //
+   static void EraseLocal(const CxxScoped* local) { Frame_->EraseLocal(local); }
 
    //  Enters a scope.
    //
@@ -626,7 +656,7 @@ public:
    //
    static const Parser* GetParser();
 
-   //  Sets the item in which execution is about to occur.  It is
+   //  Sets the item in which compilation is about to occur.  It is
    //  recorded in the trace, and SetPos(owner) is invoked.
    //
    static void Enter(const CxxScoped* owner);
@@ -664,11 +694,11 @@ public:
    //
    static void WasCalled(Function* func);
 
-   //  Returns the current execution position in the source code.
+   //  Returns the current compilation position in the source code.
    //
    static size_t GetPos() { return Frame_->GetPos(); }
 
-   //  Sets the current execution position in the source code.
+   //  Sets the current compilation position in the source code.
    //
    static void SetPos(const CxxLocation& loc);
    static void SetPos(size_t pos);
@@ -685,7 +715,7 @@ public:
    //
    static void Clear(NodeBase::word from) { Frame_->Clear(from); }
 
-   //  Returns the file in which execution is occurring.
+   //  Returns the file in which compilation is occurring.
    //
    static CodeFile* File() { return File_; }
 
@@ -730,14 +760,14 @@ public:
    static void DisplayTracepoints
       (std::ostream& stream, const std::string& prefix);
 
-   //  Logs WARNING at the current execution position.  ITEM and OFFSET
+   //  Logs WARNING at the current compilation position.  ITEM and OFFSET
    //  are included as additional information for the log.
    //
    static void Log(Warning warning,
       const CxxNamed* item = nullptr, NodeBase::word offset = 0);
 
    //  The following invokes its Debug counterpart but also inserts
-   //  the log in the execution trace to make it easier to see where
+   //  the log in the compilation trace to make it easier to see where
    //  the error occurred.
    //
    static void SwLog(NodeBase::fn_name_arg func, const std::string& expl,
@@ -751,7 +781,7 @@ public:
    //
    static void Startup(NodeBase::RestartLevel level) { }
 
-   //  Set if execution is being traced.
+   //  Set if compilation is being traced.
    //
    static bool Tracing;
 private:
@@ -779,7 +809,7 @@ private:
    //
    static std::string GetOptions() { return Options_; }
 
-   //  Sets the current execution position in the source code
+   //  Sets the current compilation position in the source code
    //  for a SCOPE that has both a declaration and definition.
    //
    static void SetPos(const CxxScoped* scope);
@@ -793,15 +823,15 @@ private:
    //
    static bool StartTracing();
 
-   //  Invoked when parsing or executing LINE.
+   //  Invoked when parsing or compiling LINE.
    //
-   static void OnLine(size_t line, bool executing);
+   static void OnLine(size_t line, bool compiling);
 
    //  Reinitializes all members.
    //
    static void Reset();
 
-   //  Sets the file in which execution is occurring and invokes Reset.
+   //  Sets the file in which compilation is occurring and invokes Reset.
    //
    static void SetFile(CodeFile* file);
 
@@ -813,11 +843,11 @@ private:
    //
    static std::string Options_;
 
-   //  The file in which execution is occurring.
+   //  The file in which compilation is occurring.
    //
    static CodeFile* File_;
 
-   //  The parse frames in which execution is occurring.
+   //  The parse frames in which compilation is occurring.
    //
    static std::vector< ParseFramePtr > Frames_;
 
@@ -829,7 +859,7 @@ private:
    //
    static std::string LastLogLoc_;
 
-   //  Execution tracepoints.
+   //  Parser/compiler tracepoints.
    //
    static std::set< Tracepoint > Tracepoints_;
 

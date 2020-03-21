@@ -999,7 +999,7 @@ const string& ValidParseOptions()
    {
       ValidOpts.push_back(TraceParse);
       ValidOpts.push_back(SaveParseTrace);
-      ValidOpts.push_back(TraceExecution);
+      ValidOpts.push_back(TraceCompilation);
       ValidOpts.push_back(TraceFunctions);
       ValidOpts.push_back(TraceImmediate);
    }

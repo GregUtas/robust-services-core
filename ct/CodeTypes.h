@@ -236,7 +236,7 @@ enum FunctionDefinition
 
 //------------------------------------------------------------------------------
 //
-//  Controls whether a function is "executed" (to produce pseudo object code)
+//  Controls whether a function is compiled (to produce pseudo object code)
 //  and, for a header, indicates whether it contains function templates or an
 //  entire class template.
 //
@@ -547,7 +547,7 @@ struct LineTypeAttr
    //
    const bool isCode;
 
-   //  The line contains code that is "executed" after it is parsed.
+   //  The line contains code that is compiled after it is parsed.
    //
    const bool isExecutable;
 

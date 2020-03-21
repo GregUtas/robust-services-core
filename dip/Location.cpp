@@ -12,7 +12,6 @@
 //  commercial purposes without permission from the authors is prohibited.
 //
 #include "Location.h"
-#include <ostream>
 #include "TokenMessage.h"
 
 using std::ostream;

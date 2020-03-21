@@ -306,9 +306,9 @@ public:
    virtual void SetAsReferent(const CxxNamed* user) { }
 
    //  Invoked to instantiate a class template instance when it is declared as
-   //  a member or named in executable code.  Returns false if an error occurs.
+   //  a member or named in executable code.
    //
-   virtual bool Instantiate() { return false; }
+   virtual void Instantiate() { }
 
    //  If the item is, or belongs to, a template instance, returns the instance.
    //
@@ -462,57 +462,36 @@ private:
 
 //------------------------------------------------------------------------------
 //
-//  A member initialization.  This is one of the elements in a constructor's
-//  initialization list.
+//  A namespace definition: one occurrence of namespace NS { ... }.
 //
-class MemberInit : public CxxNamed
+class SpaceDefn : public CxxNamed
 {
 public:
-   //  INIT is the expression that initializes NAME.  It is parsed as
-   //  arguments for a function call in case it invokes a constructor.
+   //  NS aggregates *all* items defined in namespace NS, whereas this class
+   //  represents a single occurrence of a namespace definition that defines
+   //  some of the namespace's items.
    //
-   MemberInit(std::string& name, TokenPtr& init);
+   explicit SpaceDefn(Namespace* ns);
 
    //  Not subclassed.
    //
-   ~MemberInit() { CxxStats::Decr(CxxStats::MEMBER_INIT); }
+   ~SpaceDefn() { CxxStats::Decr(CxxStats::SPACE_DEFN); }
 
-   //  Returns the expression that initializes the member.
+   //  Overridden to add itself as a reference to space_.
    //
-   CxxToken* GetInit() const { return init_.get(); }
+   void AddToXref() const override;
 
-   //  Overridden to update SYMBOLS with the statement's type usage.
+   //  Overridden to forward to space_.
    //
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+   const std::string* Name() const override;
 
-   //  Overridden to reveal that this is a member initialization.
+   //  Overridden to forward to space_.
    //
-   Cxx::ItemType Type() const override { return Cxx::MemInit; }
-
-   //  Overridden to return the member's name.
-   //
-   const std::string* Name() const override { return &name_; }
-
-   //  Overridden to display the initialization statement.
-   //
-   void Print
-      (std::ostream& stream, const NodeBase::Flags& options) const override;
-
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
-
-   //  Overridden to return the member's name.
-   //
-   std::string Trace() const override { return name_; }
+   std::string ScopedName(bool templates) const override;
 private:
-   //  The name of the member being initialized.
+   //  The primary class for the namespace.
    //
-   std::string name_;
-
-   //  The expression that initializes the member.
-   //
-   const TokenPtr init_;
+   Namespace* space_;
 };
 
 //------------------------------------------------------------------------------
@@ -559,6 +538,10 @@ public:
    //
    void AddTemplateArg(TypeSpecPtr& arg);
 
+   //  Creates template arguments from template parameters.
+   //
+   void SetTemplateArgs(const TemplateParms* tparms);
+
    //  Returns the template arguments.
    //
    const TypeSpecPtrVector* Args() const { return args_.get(); }
@@ -591,7 +574,7 @@ public:
    //  Invoked when instantiating the template specified by the arguments.
    //  Invokes Instantiating on each template argument.
    //
-   void Instantiating() const;
+   void Instantiating(CxxScopedVector& locals) const;
 
    //  Determines if THAT can instantiate a template for args_.
    //  o Returns Compatible if args_ is empty.
@@ -638,6 +621,10 @@ public:
    //  Adds any template arguments to NAMES.
    //
    void GetNames(stringVector& names) const;
+
+   //  Overridden to invoke AddReference on the name's referent.
+   //
+   void AddToXref() const override;
 
    //  Overridden to check template arguments.
    //
@@ -816,6 +803,10 @@ public:
    //
    void SetUserType(Cxx::ItemType user) const;
 
+   //  Invokes SetTemplateArgs on the last name.
+   //
+   void SetTemplateArgs(const TemplateParms* tparms);
+
    //  Sets the referent of the Nth name to ITEM.  VIEW provides information
    //  about how the name was resolved.  If name resolution failed, ITEM will
    //  be nullptr.  If whoever requested name resolution did not provide a
@@ -851,6 +842,10 @@ public:
    //  Checks that the name is a valid constructor name ("...A::A").
    //
    bool CheckCtorDefn() const;
+
+   //  Overridden to add the name's components to cross-references.
+   //
+   void AddToXref() const override;
 
    //  Overridden to check each name and any template parameters.
    //
@@ -940,10 +935,6 @@ private:
    //  Returns the last name.
    //
    TypeName* Last() const;
-
-   //  Resolves the item's qualified name within a function.
-   //
-   CxxNamed* ResolveLocal(SymbolView* view) const;
 
    //  Checks if REF (the name's referent) is a template argument.
    //
@@ -1272,7 +1263,7 @@ public:
    //  to instantiate a template.  Finds the type's referent and, if it is a
    //  template, also instantiates it.
    //
-   virtual void Instantiating() const = 0;
+   virtual void Instantiating(CxxScopedVector& locals) const = 0;
 
    //  Adds each scoped name in the type to NAMES.
    //
@@ -1363,6 +1354,10 @@ private:
    //  Overridden to add a bounded array specification to the type.
    //
    void AddArray(ArraySpecPtr& array) override;
+
+   //  Overridden to add the specification's components to cross-references.
+   //
+   void AddToXref() const override;
 
    //  Overridden to align thatArg's type with the this type, which is that of a
    //  template parameter that might be specialized.
@@ -1468,7 +1463,7 @@ private:
 
    //  Overridden to instantiate the type's referent if it is a template.
    //
-   void Instantiating() const override;
+   void Instantiating(CxxScopedVector& locals) const override;
 
    //  Overridden to return true if the type is "auto" and the referent has
    //  yet to be determined.
@@ -1639,72 +1634,6 @@ private:
 
 //------------------------------------------------------------------------------
 //
-//  A template parameter appears within the angle brackets that follow the
-//  "template" keyword.
-//
-class TemplateParm : public CxxNamed
-{
-public:
-   //  Creates a parameter defined by NAME, TAG or TYPE, and PTRS (e.g.
-   //  T/class/nullptr/1 for template <class T*...), which may specify
-   //  an optional default (PRESET).
-   //
-   TemplateParm(std::string& name, Cxx::ClassTag tag,
-      QualNamePtr& type, size_t ptrs, QualNamePtr& preset);
-
-   //  Not subclassed.
-   //
-   ~TemplateParm() { CxxStats::Decr(CxxStats::TEMPLATE_PARM); }
-
-   //  Returns the parameter's default type.
-   //
-   const QualName* Default() const { return default_.get(); }
-
-   //  Overridden to check the default type.
-   //
-   void Check() const override;
-
-   //  Overridden to return the parameter's name.
-   //
-   const std::string* Name() const override { return &name_; }
-
-   //  Overridden to display the parameter.
-   //
-   void Print
-      (std::ostream& stream, const NodeBase::Flags& options) const override;
-
-   //  Overridden to shrink the item's name.
-   //
-   void Shrink() override;
-
-   //  Overridden to return the parameter's name and pointers.
-   //
-   std::string TypeString(bool arg) const override;
-private:
-   //  The parameter's name.
-   //
-   std::string name_;
-
-   //  The parameter's type tag.  Set to Cxx::ClassTag_N
-   //  if a non-class type was specified.
-   //
-   const Cxx::ClassTag tag_;
-
-   //  The parameter's type if tag_ is Cxx::ClassTag_N.
-   //
-   const QualNamePtr type_;
-
-   //  The level of pointer indirection for the parameter.
-   //
-   const size_t ptrs_;
-
-   //  The parameter's default value, if any.
-   //
-   const QualNamePtr default_;
-};
-
-//------------------------------------------------------------------------------
-//
 //  Parameters associated with a template declaration.  Even though this is
 //  subclassed from CxxToken, it is put here to make TemplateParm's definition
 //  visible, as the unique_ptrs in parms_ must be able to see its destructor.
@@ -1781,6 +1710,7 @@ class StaticAssert : public CxxNamed
 public:
    StaticAssert(ExprPtr& expr, ExprPtr& message);
    ~StaticAssert() { CxxStats::Decr(CxxStats::STATIC_ASSERT); }
+   void AddToXref() const override;
    void EnterBlock() override;
    bool EnterScope() override;
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;

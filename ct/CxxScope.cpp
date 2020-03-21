@@ -84,6 +84,20 @@ bool Block::AddStatement(CxxToken* s)
 
 //------------------------------------------------------------------------------
 
+fn_name Block_AddToXref = "Block.AddToXref";
+
+void Block::AddToXref() const
+{
+   Debug::ft(Block_AddToXref);
+
+   for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
+   {
+      (*s)->AddToXref();
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Block_AddUsing = "Block.AddUsing";
 
 void Block::AddUsing(Using* use)
@@ -375,8 +389,6 @@ fn_name Block_ScopedName = "Block.ScopedName";
 
 string Block::ScopedName(bool templates) const
 {
-   Debug::ft(Block_ScopedName);
-
    for(auto s = GetScope(); s != nullptr; s = s->GetScope())
    {
       if(s->Type() == Cxx::Function)
@@ -393,14 +405,12 @@ string Block::ScopedName(bool templates) const
 
 void Block::Shrink()
 {
-   CxxScoped::Shrink();
-
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::BLOCK_DECL, name_.capacity());
 
    ShrinkTokens(statements_);
    auto size = statements_.capacity() * sizeof(TokenPtr);
-   size += (Users().capacity() * sizeof(CxxNamed*));
+   size += XrefSize();
    CxxStats::Vectors(CxxStats::BLOCK_DECL, size);
 }
 
@@ -409,7 +419,7 @@ void Block::Shrink()
 fn_name ClassData_ctor = "ClassData.ctor";
 
 ClassData::ClassData(string& name, TypeSpecPtr& type) : Data(type),
-   init_(nullptr),
+   memInit_(nullptr),
    mutable_(false),
    mutated_(false),
    first_(false),
@@ -435,6 +445,19 @@ ClassData::~ClassData()
    CloseScope();
    Singleton< CxxSymbols >::Instance()->EraseData(this);
    CxxStats::Decr(CxxStats::CLASS_DATA);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name ClassData_AddToXref = "ClassData.AddToXref";
+
+void ClassData::AddToXref() const
+{
+   Debug::ft(ClassData_AddToXref);
+
+   Data::AddToXref();
+
+   if(width_ != nullptr) width_->AddToXref();
 }
 
 //------------------------------------------------------------------------------
@@ -609,17 +632,17 @@ void ClassData::EnterBlock()
       return;
    }
 
-   //  If there is a member initialization statement, execute it and then
+   //  If there is a member initialization statement, compile it and then
    //  clear it: there could be more than one constructor, each with its
    //  own version of the member initialization.  If there is no member
    //  initialization statement, see if a class member is using a default
    //  constructor.
    //
-   if(init_ != nullptr)
+   if(memInit_ != nullptr)
    {
-      Context::SetPos(init_->GetLoc());
-      InitByExpr(init_->GetInit());
-      init_ = nullptr;
+      Context::SetPos(memInit_->GetLoc());
+      InitByExpr(memInit_->GetInit());
+      memInit_ = nullptr;
       return;
    }
 
@@ -768,10 +791,9 @@ void ClassData::Promote(Class* cls, Cxx::Access access, bool first, bool last)
 
 //------------------------------------------------------------------------------
 
-void ClassData::SetInit(const MemberInit* init)
+void ClassData::SetMemInit(const MemberInit* init)
 {
-   init_ = init;
-   if(init != nullptr) AddUser(init);
+   memInit_ = init;
 }
 
 //------------------------------------------------------------------------------
@@ -782,7 +804,7 @@ void ClassData::Shrink()
 
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::CLASS_DATA, name_.capacity());
-   CxxStats::Vectors(CxxStats::CLASS_DATA, Users().capacity());
+   CxxStats::Vectors(CxxStats::CLASS_DATA, XrefSize());
    if(width_ != nullptr) width_->Shrink();
 }
 
@@ -1092,6 +1114,20 @@ Data::~Data()
 
 //------------------------------------------------------------------------------
 
+fn_name Data_AddToXref = "Data.AddToXref";
+
+void Data::AddToXref() const
+{
+   Debug::ft(Data_AddToXref);
+
+   if(alignas_ != nullptr) alignas_->AddToXref();
+   spec_->AddToXref();
+   if(expr_ != nullptr) expr_->AddToXref();
+   if(init_ != nullptr) init_->AddToXref();
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Data_Check = "Data.Check";
 
 void Data::Check() const
@@ -1174,10 +1210,10 @@ void Data::DisplayAssignment(ostream& stream, const Flags& options) const
    //  only display it where it occurs.
    //
    auto ns = options.test(DispNS);
-   if(!ns && (rhs_ == nullptr)) return;
+   if(!ns && (init_ == nullptr)) return;
 
-   auto rhs = GetDefn()->rhs_.get();
-   if(rhs == nullptr) return;
+   auto init = GetDefn()->init_.get();
+   if(init == nullptr) return;
 
    //  The source code only contains the assignment operator and the
    //  initialization expression.
@@ -1185,7 +1221,7 @@ void Data::DisplayAssignment(ostream& stream, const Flags& options) const
    std::ostringstream buffer;
 
    stream << " = ";
-   rhs->Back()->Print(buffer, options);
+   init->Back()->Print(buffer, options);
 
    auto expr = buffer.str();
 
@@ -1308,10 +1344,10 @@ bool Data::GetStrValue(string& str) const
    //  that denote a string literal.  Strip off everything outside the
    //  quotes to generate STR.
    //
-   if(rhs_ == nullptr) return false;
+   if(init_ == nullptr) return false;
 
    std::ostringstream stream;
-   rhs_->Print(stream, NoFlags);
+   init_->Print(stream, NoFlags);
    str = stream.str();
    auto quote = str.find(QUOTE);
    if(quote == string::npos) return false;
@@ -1340,7 +1376,7 @@ void Data::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    if(alignas_ != nullptr) alignas_->GetUsages(file, symbols);
    spec_->GetUsages(file, symbols);
    if(expr_ != nullptr) expr_->GetUsages(file, symbols);
-   if(rhs_ != nullptr) rhs_->GetUsages(file, symbols);
+   if(init_ != nullptr) init_->GetUsages(file, symbols);
 }
 
 //------------------------------------------------------------------------------
@@ -1351,9 +1387,9 @@ bool Data::InitByAssign()
 {
    Debug::ft(Data_InitByAssign);
 
-   if(rhs_ == nullptr) return false;
+   if(init_ == nullptr) return false;
 
-   rhs_->EnterBlock();
+   init_->EnterBlock();
    auto result = Context::PopArg(true);
    spec_->MustMatchWith(result);
    SetInited();
@@ -1449,7 +1485,7 @@ bool Data::InitByExpr(CxxToken* expr)
    else
    {
       //  ROOT is not a class, so EXPR should contain a single expression.
-      //  Execute it as if it was a single-member brace initialization list.
+      //  Compile it as if it was a single-member brace initialization list.
       //
       if(expr->Type() == Cxx::Operation)
       {
@@ -1544,21 +1580,21 @@ void Data::SetAssignment(ExprPtr& expr)
 {
    Debug::ft(Data_SetAssignment);
 
-   //  Create an assignment operation in which the name of this data item
+   //  Create an assignment expression in which the name of this data item
    //  is the first argument and EXPR is the second argument.
    //
    if(expr == nullptr) return;
-   rhs_.reset(new Expression(expr->EndPos(), true));
+   init_.reset(new Expression(expr->EndPos(), true));
 
    QualNamePtr name;
    GetInitName(name);
    name->CopyContext(this);
    TokenPtr arg1(name.release());
-   rhs_->AddItem(arg1);
+   init_->AddItem(arg1);
    TokenPtr op(new Operation(Cxx::ASSIGN));
-   rhs_->AddItem(op);
+   init_->AddItem(op);
    TokenPtr arg2(expr.release());
-   rhs_->AddItem(arg2);
+   init_->AddItem(arg2);
 }
 
 //------------------------------------------------------------------------------
@@ -1610,11 +1646,9 @@ bool Data::SetNonConst()
 
 void Data::Shrink()
 {
-   CxxScoped::Shrink();
-
    spec_->Shrink();
    if(expr_ != nullptr) expr_->Shrink();
-   if(rhs_ != nullptr) rhs_->Shrink();
+   if(init_ != nullptr) init_->Shrink();
 }
 
 //------------------------------------------------------------------------------
@@ -1686,6 +1720,19 @@ FuncData::~FuncData()
    Debug::ft(FuncData_dtor);
 
    CxxStats::Decr(CxxStats::FUNC_DATA);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name FuncData_AddToXref = "FuncData.AddToXref";
+
+void FuncData::AddToXref() const
+{
+   Debug::ft(FuncData_AddToXref);
+
+   Data::AddToXref();
+
+   if(next_ != nullptr) next_->AddToXref();
 }
 
 //------------------------------------------------------------------------------
@@ -1763,14 +1810,14 @@ void FuncData::EnterBlock()
    Debug::ft(FuncData_EnterBlock);
 
    //  This also doubles as the equivalent of EnterScope for function data.
-   //  Set the data's scope, add it to the local symbol table, and execute
+   //  Set the data's scope, add it to the local symbol table, and compile
    //  its definition.
    //
    auto spec = GetTypeSpec();
    auto anon = spec->IsAuto();
 
    Context::SetPos(GetLoc());
-   Singleton< CxxSymbols >::Instance()->InsertLocal(this);
+   Context::InsertLocal(this);
    ExecuteAlignment();
    spec->EnteringScope(this);
    ExecuteInit(false);
@@ -1793,7 +1840,7 @@ void FuncData::ExitBlock()
 {
    Debug::ft(FuncData_ExitBlock);
 
-   Singleton< CxxSymbols >::Instance()->EraseLocal(this);
+   Context::EraseLocal(this);
    if(next_ != nullptr) next_->ExitBlock();
 }
 
@@ -1838,7 +1885,7 @@ void FuncData::Shrink()
 
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::FUNC_DATA, name_.capacity());
-   CxxStats::Vectors(CxxStats::FUNC_DATA, Users().capacity());
+   CxxStats::Vectors(CxxStats::FUNC_DATA, XrefSize());
    if(next_ != nullptr) next_->Shrink();
 }
 
@@ -2018,18 +2065,67 @@ void Function::AddThisArg()
 
    //  Add an argument with the name "this", which is a pointer to the class
    //  that defined the function.  The argument is const if the function was
-   //  defined as const.
+   //  defined as const.  Include the template parameters in the name of a
+   //  function template's "this" argument.
    //
    TypeSpecPtr typeSpec(new DataSpec(cls->Name()->c_str()));
    typeSpec->CopyContext(this);
    typeSpec->Tags()->SetConst(const_);
    typeSpec->Tags()->SetPointer(0, true, false);
    typeSpec->SetReferent(cls, nullptr);
+   auto parms = cls->GetTemplateParms();
+   if(parms != nullptr) typeSpec->GetQualName()->SetTemplateArgs(parms);
    string argName(THIS_STR);
    ArgumentPtr arg(new Argument(argName, typeSpec));
    arg->CopyContext(this);
    args_.insert(args_.begin(), std::move(arg));
    this_ = true;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Function_AddToXref = "Function.AddToXref";
+
+void Function::AddToXref() const
+{
+   Debug::ft(Function_AddToXref);
+
+   if(deleted_) return;
+
+   //  Don't add items in a template instance to the cross-reference, since
+   //  they have no code file or line number.
+   //
+   if(IsInTemplateInstance()) return;
+
+   name_->AddToXref();
+
+   if(spec_ != nullptr) spec_->AddToXref();
+
+   for(size_t i = (this_ ? 1 : 0); i < args_.size(); ++i)
+   {
+      args_[i]->AddToXref();
+   }
+
+   if(base_ != nullptr)
+   {
+      //  Record an override as a reference to the original declaration of
+      //  the virtual function.  If the override appears in a template, the
+      //  function's template analog should be considered the override.
+      //
+      if(FuncType() == FuncStandard)
+      {
+         base_->AddReference(this);
+      }
+   }
+
+   if(call_ != nullptr) call_->AddToXref();
+
+   for(auto m = mems_.cbegin(); m != mems_.cend(); ++m)
+   {
+      (*m)->AddToXref();
+   }
+
+   if(impl_ != nullptr) impl_->AddToXref();
 }
 
 //------------------------------------------------------------------------------
@@ -2090,24 +2186,6 @@ bool Function::ArgIsUnused(size_t n) const
    if((fci != nullptr) && !fci->ArgIsUnused(n)) return false;
 
    return true;
-}
-
-//------------------------------------------------------------------------------
-
-string Function::ArgTypesString(bool arg) const
-{
-   //  Add the full type of each argument within parentheses,
-   //  using commas to separate them.
-   //
-   string types(1, '(');
-
-   for(auto a = args_.cbegin(); a != args_.cend(); ++a)
-   {
-      types += (*a)->TypeString(arg);
-      if(*a != args_.back()) types += ',';
-   }
-
-   return types + ')';
 }
 
 //------------------------------------------------------------------------------
@@ -3325,36 +3403,49 @@ void Function::EnterBlock()
 
    //  If the function has no implementation, do nothing.  An empty function
    //  (just the braces) has an empty code block, so it will get past this.
-   //  Treat a defaulted function as having an empty code block.
+   //  A defaulted function is treated as if it had an empty code block.
    //
    if(!IsImplemented()) return;
 
-   //  Don't execute a function template or a function in a class template.
-   //  Execution will fail because template arguments are untyped.  However:
-   //  o An inline function in a class template *is* executed (because it
-   //    is not included in template instances).
-   //  o A function in a class template instance *is* executed, and so is a
-   //    function template instance (GetTemplateType returns NonTemplate in
-   //    this case).
-   //
    auto type = GetTemplateType();
+   const TemplateParmPtrVector* parms = nullptr;
 
    if(type != NonTemplate)
    {
+      //  This is a function template or a function in a class template.
+      //  Don't bother compiling a function *template* in a class template
+      //  *instance*.  However, a *regular* function in a class template
+      //  instance *is* compiled, and so is a function template instance
+      //  (GetTemplateType returns NonTemplate in these cases).
+      //
       if(Context::ParsingTemplateInstance()) return;
+
+      if(type == FuncTemplate)
+         parms = parms_->Parms();
+      else
+         parms = GetClass()->GetTemplateParms()->Parms();
+
       auto file = GetImplFile();
       if(file != nullptr) file->SetTemplate(type);
-      if(!inline_) return;
    }
 
-   //  Set up the "execution" context and add the function's arguments to the
-   //  local symbol table.  Execute the function's code block, including any
-   //  base constructor call and member initializations.  The latter are first
-   //  assigned to their respective members, after which all non-static members
-   //  are initialized so that class members can invoke default constructors.
+   //  Set up the compilation context and add any template parameters and
+   //  arguments to the local symbol table.  Compile the function's code,
+   //  including any base constructor call and member initializations.  The
+   //  latter are first assigned to their respective members, after which
+   //  all non-static members are initialized so that class members can
+   //  invoke default constructors.
    //
    Context::Enter(this);
    Context::PushScope(this);
+
+   if(parms != nullptr)
+   {
+      for(auto p = parms->cbegin(); p != parms->cend(); ++p)
+      {
+         (*p)->EnterBlock();
+      }
+   }
 
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
    {
@@ -3381,7 +3472,7 @@ void Function::EnterBlock()
 
          if(data != nullptr)
          {
-            static_cast< ClassData* >(data)->SetInit(m->get());
+            static_cast< ClassData* >(data)->SetMemInit(m->get());
          }
          else
          {
@@ -3405,6 +3496,14 @@ void Function::EnterBlock()
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
    {
       (*a)->ExitBlock();
+   }
+
+   if(parms != nullptr)
+   {
+      for(auto p = parms->cbegin(); p != parms->cend(); ++p)
+      {
+         (*p)->ExitBlock();
+      }
    }
 
    Context::PopScope();
@@ -3446,7 +3545,7 @@ bool Function::EnterScope()
    }
 
    //  Add the function to this file's list of functions.  If it's
-   //  a declaration, check if it's an override.  Then execute it.
+   //  a declaration, check if it's an override.  Then compile it.
    //
    found_ = true;
    if(defn || AtFileScope()) GetFile()->InsertFunc(this);
@@ -3893,13 +3992,17 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    switch(type)
    {
    case NonTemplate:
+      //
+      //  This could be a regular function or a function in a template
+      //  instance.
+      //
       break;
 
    case FuncTemplate:
       //
-      //  A function template cannot be executed by itself, so it must get its
-      //  symbol usage information from its instantiations.  They are all the
-      //  same, so it is sufficient to pull symbols from the first one.
+      //  This is a function template, so obtain usage information from its
+      //  first instance in case some symbols in the template could not be
+      //  resolved.
       //
       if(!tmplts_.empty())
       {
@@ -3909,13 +4012,15 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
          sets.EraseTemplateArgs(first->GetTemplateArgs());
          sets.EraseLocals();
          symbols.Union(sets);
+         return;
       }
-      return;
 
    case ClassTemplate:
       //
-      //  This function appears in a class template, which is not executed, so
-      //  there will be no symbols to report unless it is an inline function.
+      //  This function appears in a class template, which pulls its usages
+      //  from its first instance, in the same way as above.  However, an
+      //  inline function is not copied into instances, so its usages must
+      //  be obtained here.
       //
       if(!inline_) return;
    }
@@ -4125,7 +4230,8 @@ Function* Function::InstantiateFunction(const TypeName* type) const
    //  template is being instantiated.  This causes the instantiation of any
    //  templates on which this one depends.
    //
-   type->Instantiating();
+   CxxScopedVector locals;
+   type->Instantiating(locals);
 
    //  Get the code for the function template, assembling it if this is the
    //  first instantiation.
@@ -4178,6 +4284,15 @@ Function* Function::InstantiateFunction(const TypeName* type) const
    auto fullName = ScopedName(true) + ts;
    RemoveRefs(fullName);
    std::unique_ptr< Parser > parser(new Parser(EMPTY_STR));
+
+   if(!locals.empty())
+   {
+      for(auto item = locals.cbegin(); item != locals.cend(); ++item)
+      {
+         Context::InsertLocal(*item);
+      }
+   }
+
    parser->ParseFuncInst(fullName, this, area, type, code);
    parser.reset();
    code.reset();
@@ -4719,6 +4834,10 @@ void Function::PushThisArg(StackArgVector& args) const
 {
    Debug::ft(Function_PushThisArg);
 
+   //  Return if this function doesn't take a "this" argument.
+   //
+   if(!this_) return;
+
    if(args.empty() || !args.front().IsThis())
    {
       //  A "this" argument hasn't been pushed.  If the context function
@@ -4794,6 +4913,18 @@ void Function::SetDefn(Function* func)
    func->mate_ = this;
    func->defn_ = true;
    this->mate_ = func;
+
+   //  Set the referent on each name in FUNC's (the definition's) qualified
+   //  name.  They can be set from the declaration's scopes.
+   //
+   auto qname = func->GetQualName();
+   CxxScope* scope = this;
+
+   for(auto i = func->GetQualName()->Size() - 1; i != SIZE_MAX; --i)
+   {
+      qname->SetReferentN(i, scope, nullptr);
+      scope = scope->GetScope();
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -4925,8 +5056,6 @@ void Function::SetTemplateParms(TemplateParmsPtr& parms)
 
 void Function::Shrink()
 {
-   CxxScoped::Shrink();
-
    name_->Shrink();
    if(parms_ != nullptr) parms_->Shrink();
    if(spec_ != nullptr) spec_->Shrink();
@@ -4951,7 +5080,7 @@ void Function::Shrink()
    size += (mems_.capacity() * sizeof(TokenPtr));
    size += (tmplts_.capacity() * sizeof(Function*));
    size += (overs_.capacity() * sizeof(Function*));
-   size += (Users().capacity() * sizeof(CxxNamed*));
+   size += XrefSize();
    CxxStats::Vectors(CxxStats::FUNC_DECL, size);
 }
 
@@ -5041,7 +5170,15 @@ string Function::TypeString(bool arg) const
 
    //  Append the function's argument types.
    //
-   ts += ArgTypesString(arg);
+   ts.push_back('(');
+
+   for(auto a = args_.cbegin(); a != args_.cend(); ++a)
+   {
+      ts += (*a)->TypeString(arg);
+      if(*a != args_.back()) ts.push_back(',');
+   }
+
+   ts.push_back(')');
    return ts;
 }
 
@@ -5173,11 +5310,25 @@ bool Function::WasRead()
 
 string Function::XrefName(bool templates) const
 {
-   auto name = ScopedName(templates);
+   auto name = CxxScoped::XrefName(templates);
 
    if(!Singleton< CxxSymbols >::Instance()->IsUniqueName(GetScope(), *Name()))
    {
-      name += ArgTypesString(true);
+      std::ostringstream stream;
+      Flags options(FQ_Mask);
+
+      name.push_back('(');
+
+      for(size_t i = (this_ ? 1 : 0); i < args_.size(); ++i)
+      {
+         args_[i]->GetTypeSpec()->Print(stream, options);
+         if(i < args_.size() - 1) stream << ',';
+      }
+
+      name += stream.str();
+      name.push_back(')');
+
+      if(const_) name += " const";
    }
 
    return name;
@@ -5313,10 +5464,10 @@ bool FuncSpec::HasArrayDefn() const
 
 //------------------------------------------------------------------------------
 
-void FuncSpec::Instantiating() const
+void FuncSpec::Instantiating(CxxScopedVector& locals) const
 {
    Debug::SwLog(FuncSpec_Warning, "Instantiating", 0);
-   func_->GetTypeSpec()->Instantiating();
+   func_->GetTypeSpec()->Instantiating(locals);
 }
 
 //------------------------------------------------------------------------------
@@ -5616,7 +5767,7 @@ void SpaceData::Shrink()
 {
    Data::Shrink();
 
-   CxxStats::Vectors(CxxStats::FILE_DATA, Users().capacity());
+   CxxStats::Vectors(CxxStats::FILE_DATA, XrefSize());
    name_->Shrink();
    if(parms_ != nullptr) parms_->Shrink();
 }

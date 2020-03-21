@@ -596,6 +596,7 @@ CxxStats CxxStats::Info[CxxStats::Item_N] =
    CxxStats("Function", sizeof(Function)),
    CxxStats("Class", sizeof(Class)),
    CxxStats("ClassInst", sizeof(ClassInst)),
+   CxxStats("SpaceDefn", sizeof(SpaceDefn)),
    CxxStats("Namespace", sizeof(Namespace)),
    CxxStats("CodeFile", sizeof(CodeFile)),
    CxxStats("CxxSymbols", sizeof(CxxSymbols))

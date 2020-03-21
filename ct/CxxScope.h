@@ -169,19 +169,23 @@ public:
    //
    CxxToken* FirstStatement() const;
 
-   //  Adds USE to the statements that are local to the currently executing
-   //  block.
+   //  Adds USE to the statements that are local to the block which is
+   //  being compiled.
    //
    static void AddUsing(Using* use);
 
-   //  Removes USE from the statements that are local to the currently
-   //  executing block.
+   //  Removes USE from the statements that are local to the block which
+   //  is being compiled.
    //
    static void RemoveUsing(const Using* use);
 
    //  Clears any using statements that are local to code blocks.
    //
    static void ResetUsings();
+
+   //  Overridden to add the block's components to cross-references.
+   //
+   void AddToXref() const override;
 
    //  Overridden to log warnings within the code.
    //
@@ -196,7 +200,7 @@ public:
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
    //  Overridden to invoke EnterBlock on each token in statements_, followed
-   //  by ExitBlock after all the statements have been executed.
+   //  by ExitBlock after all the statements have been compiled.
    //
    void EnterBlock() override;
 
@@ -263,7 +267,7 @@ private:
    //
    bool nested_;
 
-   //  The using statements visible within the currently executing block.
+   //  The using statements visible within the block being compiled.
    //
    static UsingVector Usings_;
 };
@@ -352,6 +356,10 @@ public:
    //
    virtual bool IsUnionMember() const { return false; }
 
+   //  Overridden to add the data's components to cross-references.
+   //
+   void AddToXref() const override;
+
    //  Overridden to set the type for an "auto" variable.
    //
    CxxToken* AutoType() const override { return (CxxToken*) this; }
@@ -394,7 +402,7 @@ public:
    //
    bool IsConst() const override;
 
-   //  Returns true if the data's initialization is currently being executed.
+   //  Returns true if the data's initialization is currently being compiled.
    //
    bool IsInitializing() const override { return initing_; }
 
@@ -447,24 +455,25 @@ protected:
    //
    bool IsDecl() const { return !defn_; }
 
-   //  Executes any alignment directive for the data.
+   //  Compiles any alignment directive for the data.
    //
    void ExecuteAlignment() const;
 
-   //  Executes the data's initialization expression.  Invokes PushScope if
+   //  Compiles the data's initialization expression.  Invokes PushScope if
    //  PUSH is set.  Returns false if no form of initialization occurred.
    //
    bool ExecuteInit(bool push);
 
-   //  Executes the initialization expression EXPR, which appeared in
+   //  Compiles the initialization expression EXPR, which appeared in
    //  parentheses.  If the data's type is a class, EXPR is handled as
    //  a constructor call, else it is handled as a single-member brace
    //  initialization.  Returns true unless EXPR is nullptr.
    //
    bool InitByExpr(CxxToken* expr);
 
-   //  Executes the default constructor that initializes the data.
-   //  Returns true if a default constructor call was executed.
+   //  Looks for a default constructor (i.e. one without arguments) to
+   //  initialize the data.  Returns false if the class has POD members
+   //  but no such destructor.
    //
    bool InitByDefault();
 
@@ -516,7 +525,7 @@ private:
    //
    CxxToken* RootType() const override { return spec_.get(); }
 
-   //  Executes the assignment statement that initializes the data.
+   //  Compiles the assignment statement that initializes the data.
    //  Returns true if such a statement existed.
    //
    bool InitByAssign();
@@ -579,10 +588,9 @@ private:
    //
    TokenPtr expr_;
 
-   //  The right-hand side of the assignment statement
-   //  that initializes the data.
+   //  The assignment statement that initializes the data.
    //
-   ExprPtr rhs_;
+   ExprPtr init_;
 
    //  How many times the data was read.
    //
@@ -698,9 +706,14 @@ public:
    //
    void SetWidth(ExprPtr& width) { width_.reset(width.release()); }
 
-   //  Sets the member initialization expression.
+   //  Sets the member initialization expression provided by the
+   //  constructor that is currently being compiled.
    //
-   void SetInit(const MemberInit* init);
+   void SetMemInit(const MemberInit* init);
+
+   //  Overridden to add the data's components to cross-references.
+   //
+   void AddToXref() const override;
 
    //  Overridden to log warnings associated with the declaration.
    //
@@ -787,9 +800,9 @@ private:
    ExprPtr width_;
 
    //  The member initialization statement provided by the constructor
-   //  for which Function.EnterBlock is currently being executed.
+   //  that is currently being compiled.
    //
-   const MemberInit* init_;
+   const MemberInit* memInit_;
 
    //  Set for mutable data.
    //
@@ -834,6 +847,10 @@ public:
    //  Sets the first data declaration in a series.
    //
    void SetFirst(const Data* first) { first_ = first; }
+
+   //  Overridden to add the data's components to cross-references.
+   //
+   void AddToXref() const override;
 
    //  Overridden to log warnings associated with the data.
    //
@@ -999,7 +1016,7 @@ public:
    //
    void SetBracePos(size_t pos) { pos_ = pos; }
 
-   //  Sets the function's implementation, which is immediately executed.
+   //  Sets the function's implementation, which is immediately compiled.
    //
    void SetImpl(BlockPtr& block);
 
@@ -1207,6 +1224,10 @@ public:
    //
    void DisplayDecl(std::ostream& stream, const NodeBase::Flags& options) const;
 
+   //  Overridden to add the function's components to cross-references.
+   //
+   void AddToXref() const override;
+
    //  Overridden to log warnings associated with the function.
    //
    void Check() const override;
@@ -1228,7 +1249,7 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
-   //  Overridden to execute the function.
+   //  Overridden to compile the function.
    //
    void EnterBlock() override;
 
@@ -1381,7 +1402,7 @@ public:
    std::string XrefName(bool templates) const override;
 private:
    //  Adds a "this" argument to the function if required.  This occurs
-   //  immediately before executing the function's code (in EnterBlock).
+   //  immediately before compiling the function's code (in EnterBlock).
    //
    void AddThisArg();
 
@@ -1526,11 +1547,6 @@ private:
    //  many times it was overridden, and how many times it was invoked.
    //
    void DisplayInfo(std::ostream& stream, const NodeBase::Flags& options) const;
-
-   //  Returns the function's argument types enclosed in paretheses.  ARG
-   //  serves the same purpose as in TypeString(arg).
-   //
-   std::string ArgTypesString(bool arg) const;
 
    //  The function's name.
    //
@@ -1758,7 +1774,7 @@ private:
    //
    void FindReferent() override;
    void GetNames(stringVector& names) const override;
-   void Instantiating() const override;
+   void Instantiating(CxxScopedVector& locals) const override;
    TypeMatch MatchTemplateArg(const TypeSpec* that) const override;
    bool ItemIsTemplateArg(const CxxNamed* item) const override;
    bool MatchesExactly(const TypeSpec* that) const override;

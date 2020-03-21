@@ -40,7 +40,7 @@ Exception::Exception(bool stack, fn_depth depth) : stack_(nullptr)
    //  Reenable Debug functions before tracing this function.
    //
    Thread::ResetDebugFlags();
-   Debug::ft(Exception_ctor1);
+   Debug::ft(Exception_ctor1);  //@
 
    //  Exception handling and stack walking are slow, so give the thread
    //  another 200 msecs.

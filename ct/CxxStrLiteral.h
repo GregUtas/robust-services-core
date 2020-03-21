@@ -28,6 +28,7 @@
 #include <ostream>
 #include <string>
 #include "Cxx.h"
+#include "CxxArea.h"
 #include "CxxCharLiteral.h"
 #include "CxxFwd.h"
 #include "CxxNamed.h"

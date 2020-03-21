@@ -23,7 +23,6 @@
 #include <cstring>
 #include "Cxx.h"
 #include "Debug.h"
-#include "SysTypes.h"
 
 using namespace NodeBase;
 using std::string;
@@ -460,6 +459,13 @@ NameVector GetNameAndArgs(const string& name)
 
 //------------------------------------------------------------------------------
 
+bool IsBlank(char c)
+{
+   return (WhitespaceChars.find_first_of(c) != string::npos);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeTools_IsCodeFile = "CodeTools.IsCodeFile";
 
 bool IsCodeFile(const string& file)
@@ -500,6 +506,13 @@ bool IsValidIdentifier(const string& id)
    }
 
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+bool IsWordChar(char c)
+{
+   return (ValidNextChars.find_first_of(c) != string::npos);
 }
 
 //------------------------------------------------------------------------------
@@ -574,20 +587,16 @@ bool PathIncludes(const string& path, const string& dir)
 
 //------------------------------------------------------------------------------
 
-string& Prefix(string& scope)
+string& Prefix(string& scope, fixed_string separator)
 {
-   if(scope.empty()) return scope;
-   scope += SCOPE_STR;
-   return scope;
+   return (scope.empty() ? scope : scope.append(separator));
 }
 
 //------------------------------------------------------------------------------
 
-string& Prefix(string&& scope)
+string& Prefix(string&& scope, fixed_string separator)
 {
-   if(scope.empty()) return scope;
-   scope += SCOPE_STR;
-   return scope;
+   return (scope.empty() ? scope : scope.append(separator));
 }
 
 //------------------------------------------------------------------------------
@@ -754,5 +763,18 @@ size_t Replace
    }
 
    return end;
+}
+
+//------------------------------------------------------------------------------
+
+size_t RfindFirstNotOf(const string& str, size_t pos, const string& elems)
+{
+   for(NO_OP; pos != string::npos; --pos)
+   {
+      auto c = str.at(pos);
+      if(elems.find(c) == string::npos) return pos;
+   }
+
+   return string::npos;
 }
 }

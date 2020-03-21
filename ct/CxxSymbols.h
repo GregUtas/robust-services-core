@@ -23,14 +23,16 @@
 #define CXXSYMBOLS_H_INCLUDED
 
 #include "Base.h"
+#include <cstddef>
 #include <iosfwd>
-#include <map>
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 #include "CxxFwd.h"
-#include "LibraryTypes.h"
+#include "CxxString.h"
+#include "CxxToken.h"
 #include "NbTypes.h"
 #include "SysTypes.h"
 
@@ -86,6 +88,10 @@ class CxxSymbols: public NodeBase::Base
 {
    friend class NodeBase::Singleton< CxxSymbols >;
 public:
+   //  Returns any terminal(s) that match NAME.
+   //
+   void FindTerminal(const std::string& name, SymbolVector& list) const;
+
    //  Returns the item referred to by NAME, which was used in FILE and SCOPE.
    //  If AREA is provided, only items in that area are considered.  Returns
    //  nullptr if no item was found.  When an item is returned, VIEW is updated
@@ -95,10 +101,6 @@ public:
    CxxScoped* FindSymbol(const CodeFile* file, const CxxScope* scope,
       const std::string& name, const NodeBase::Flags& mask, SymbolView* view,
       const CxxArea* area = nullptr) const;
-
-   //  Returns NAME if it is a terminal or a local variable in a function.
-   //
-   CxxScoped* FindLocal(const std::string& name, SymbolView* view) const;
 
    //  The same as FindSymbol, but returns all matching symbols in LIST,
    //  along with their VIEWS.
@@ -134,7 +136,6 @@ public:
    void InsertSpace(Namespace* space);
    void InsertTerm(Terminal* term);
    void InsertType(Typedef* type);
-   void InsertLocal(CxxScoped* local);
 
    //  Removes the specified item from the symbol database.
    //
@@ -149,15 +150,6 @@ public:
    void EraseSpace(const Namespace* space);
    void EraseTerm(const Terminal* term);
    void EraseType(const Typedef* type);
-   void EraseLocal(const CxxScoped* name);
-
-   //  Releases all entries in the local symbol table.
-   //
-   void EraseLocals();
-
-   //  Records that the file identified by FID uses ITEM.
-   //
-   void RecordUsage(const CxxNamed* item, NodeBase::id_t fid);
 
    //  Outputs the global cross-reference to STREAM.
    //
@@ -182,7 +174,6 @@ private:
 
    //  Types for symbol tables.
    //
-   typedef std::unordered_multimap< std::string, CxxScoped* > LocalTable;
    typedef std::unordered_multimap< std::string, Class* > ClassTable;
    typedef std::unordered_multimap< std::string, Data* > DataTable;
    typedef std::unordered_multimap< std::string, Enum* > EnumTable;
@@ -194,7 +185,6 @@ private:
    typedef std::unordered_multimap< std::string, Namespace* > SpaceTable;
    typedef std::unordered_multimap< std::string, Terminal* > TermTable;
    typedef std::unordered_multimap< std::string, Typedef* > TypeTable;
-   typedef std::map< const CxxNamed*, SetOfIds > XrefTable;
 
    //  Types for unique_ptrs that own symbol tables.
    //
@@ -205,12 +195,10 @@ private:
    typedef std::unique_ptr< ForwTable > ForwTablePtr;
    typedef std::unique_ptr< FriendTable > FriendTablePtr;
    typedef std::unique_ptr< FuncTable > FuncTablePtr;
-   typedef std::unique_ptr< LocalTable > LocalTablePtr;
    typedef std::unique_ptr< MacroTable > MacroTablePtr;
    typedef std::unique_ptr< SpaceTable > SpaceTablePtr;
    typedef std::unique_ptr< TermTable > TermTablePtr;
    typedef std::unique_ptr< TypeTable > TypeTablePtr;
-   typedef std::unique_ptr< XrefTable > XrefTablePtr;
 
    //  Private because this singleton is not subclassed.
    //
@@ -229,12 +217,55 @@ private:
    ForwTablePtr forws_;
    FriendTablePtr friends_;
    FuncTablePtr funcs_;
-   LocalTablePtr locals_;
    MacroTablePtr macros_;
    TermTablePtr terms_;
    SpaceTablePtr spaces_;
    TypeTablePtr types_;
-   XrefTablePtr xref_;
 };
+
+//------------------------------------------------------------------------------
+//
+//  Returns the index of the item in LIST that is nearest the context scope.
+//  Returns SIZE_MAX if none of the items in LIST is in a related scope.
+//
+size_t FindNearestItem(const SymbolVector& list);
+
+//------------------------------------------------------------------------------
+//
+//  Removes ITEM from TABLE.
+//
+template< typename T > void EraseSymbol(const CxxScoped* item,
+   std::unordered_multimap< std::string, T >& table)
+{
+   auto str = Normalize(*item->Name());
+   auto last = table.upper_bound(str);
+
+   for(auto i = table.lower_bound(str); i != last; ++i)
+   {
+      if(i->second == item)
+      {
+         table.erase(i);
+         return;
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+//
+//  Looks for NAME in TABLE.  Returns a list of matching symbols in LIST.
+//  NAME be unqualified.
+//
+template< typename T > void ListSymbols(const std::string& name,
+   const std::unordered_multimap< std::string, T >& table, SymbolVector& list)
+{
+   //  Assemble a list of matching symbols.
+   //
+   auto last = table.upper_bound(name);
+
+   for(auto i = table.lower_bound(name); i != last; ++i)
+   {
+      list.push_back(i->second);
+   }
+}
 }
 #endif

@@ -608,7 +608,7 @@ public:
    bool WasWritten(const StackArg* arg, bool passed)
       override { return false; }
 
-   //  Overridden  to append template arguments to a template specialization.
+   //  Overridden to append template arguments to a template specialization.
    //
    std::string XrefName(bool templates) const override;
 protected:
@@ -763,9 +763,11 @@ public:
    //
    CxxScoped* FindInstanceAnalog(const CxxNamed* item) const;
 
-   //  Overridden to add the class template's symbols to the cross-reference.
+   //  Overridden to not add any symbols to the cross-reference.  The class
+   //  template adds them itself because each template instance is the same
+   //  (apart from its template arguments, which we would want to exclude).
    //
-   void AddToXref() const override;
+   void AddToXref() const override { }
 
    //  Overridden to return the class template's base class.
    //
@@ -827,7 +829,7 @@ public:
 
    //  Overridden to instantiate the class template instance.
    //
-   bool Instantiate() override;
+   void Instantiate() override;
 
    //  Overridden to return this class template instance.
    //

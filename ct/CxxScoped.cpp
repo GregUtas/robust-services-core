@@ -116,7 +116,7 @@ void Argument::EnterBlock()
 {
    Debug::ft(Argument_EnterBlock);
 
-   if(!name_.empty()) Singleton< CxxSymbols >::Instance()->InsertLocal(this);
+   if(!name_.empty()) Context::InsertLocal(this);
 }
 
 //------------------------------------------------------------------------------
@@ -150,7 +150,7 @@ void Argument::ExitBlock()
    Debug::ft(Argument_ExitBlock);
 
    if(name_.empty()) return;
-   Singleton< CxxSymbols >::Instance()->EraseLocal(this);
+   Context::EraseLocal(this);
 }
 
 //------------------------------------------------------------------------------
@@ -492,9 +492,6 @@ void CxxScoped::AddReference(const CxxNamed* name)
 {
    auto file = name->GetFile();
    if(file->IsSubsFile()) return;
-   auto line = file->GetLexer().GetLineNum(name->GetPos());  //*
-   if((line == SIZE_MAX) || (line <= 12))
-      Debug::noop();
    xref_.insert(name);
 }
 
@@ -2377,26 +2374,8 @@ void MemberInit::AddToXref() const
 
    auto cls = ctor_->GetClass();
    auto member = cls->FindData(name_);
-
-   //  If the constructor appears in a template instance, make the member
-   //  initialization a reference to the data item in the class template.
-   //
-   if(ctor_->IsInTemplateInstance())
-   {
-      auto init = ctor_->FindTemplateAnalog(this);
-
-      if(init != nullptr)
-      {
-         auto data = ctor_->FindTemplateAnalog(member);
-         if(data != nullptr) data->AddReference(init);
-         static_cast< const MemberInit* >(init)->init_->AddToXref();
-      }
-   }
-   else
-   {
-      member->AddReference(this);
-      init_->AddToXref();
-   }
+   member->AddReference(this);
+   init_->AddToXref();
 }
 
 //------------------------------------------------------------------------------
@@ -2425,6 +2404,132 @@ void MemberInit::Shrink()
    name_.shrink_to_fit();
    CxxStats::Strings(CxxStats::MEMBER_INIT, name_.capacity());
    init_->Shrink();
+}
+
+//==============================================================================
+
+fn_name TemplateParm_ctor1 = "TemplateParm.ctor";
+
+TemplateParm::TemplateParm(string& name, Cxx::ClassTag tag,
+   QualNamePtr& type, size_t ptrs, TypeSpecPtr& preset) :
+   tag_(tag),
+   type_(std::move(type)),
+   ptrs_(ptrs),
+   default_(std::move(preset))
+{
+   Debug::ft(TemplateParm_ctor1);
+
+   std::swap(name_, name);
+   CxxStats::Incr(CxxStats::TEMPLATE_PARM);
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken* TemplateParm::AutoType() const
+{
+   if(default_ != nullptr)
+   {
+      auto ref = default_->Referent();
+      if(ref != nullptr) return ref;
+   }
+
+   return (CxxToken*) this;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TemplateParm_Check = "TemplateParm.Check";
+
+void TemplateParm::Check() const
+{
+   Debug::ft(TemplateParm_Check);
+
+   if(type_ != nullptr) type_->Check();
+   if(default_ != nullptr) default_->Check();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TemplateParm_EnterBlock = "TemplateParm.EnterBlock";
+
+void TemplateParm::EnterBlock()
+{
+   Debug::ft(TemplateParm_EnterBlock);
+
+   Context::InsertLocal(this);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TemplateParm_ExitBlock = "TemplateParm.ExitBlock";
+
+void TemplateParm::ExitBlock()
+{
+   Debug::ft(TemplateParm_ExitBlock);
+
+   Context::EraseLocal(this);
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParm::Print(ostream& stream, const Flags& options) const
+{
+   if(tag_ != Cxx::ClassTag_N)
+      stream << tag_;
+   else
+      type_->Print(stream, options);
+
+   stream << SPACE << *Name();
+   if(ptrs_ > 0) stream << string(ptrs_, '*');
+
+   if(default_ != nullptr)
+   {
+      stream << " = ";
+      default_->Print(stream, options);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+CxxScoped* TemplateParm::Referent() const
+{
+   if(default_ != nullptr)
+   {
+      auto ref = default_->Referent();
+      if(ref != nullptr) return ref;
+   }
+
+   return (CxxScoped*) this;
+}
+
+//------------------------------------------------------------------------------
+
+CxxToken* TemplateParm::RootType() const
+{
+   if(default_ != nullptr)
+   {
+      auto ref = default_->Referent();
+      if(ref != nullptr) return ref;
+   }
+
+   return (CxxToken*) this;
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParm::Shrink()
+{
+   name_.shrink_to_fit();
+   CxxStats::Strings(CxxStats::TEMPLATE_PARM, name_.capacity());
+}
+
+//------------------------------------------------------------------------------
+
+string TemplateParm::TypeString(bool arg) const
+{
+   auto ts = *Name();
+   if(ptrs_ > 0) ts += string(ptrs_, '*');
+   return ts;
 }
 
 //==============================================================================

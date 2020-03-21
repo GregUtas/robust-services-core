@@ -28,6 +28,7 @@
 #include <iosfwd>
 #include <set>
 #include <string>
+#include <unordered_map>
 #include "CodeTypes.h"
 #include "Cxx.h"
 #include "CxxFwd.h"
@@ -437,6 +438,18 @@ public:
    //
    OptionalCode* Optional() const;
 
+   //  Adds LOCAL to the set of local variables.
+   //
+   void InsertLocal(CxxScoped* local);
+
+   //  Resolves NAME if it is a terminal or a local variable.
+   //
+   CxxScoped* FindLocal(const std::string& name, SymbolView* view) const;
+
+   //  Removes LOCAL from the local variables in the current scope.
+   //
+   void EraseLocal(const CxxScoped* local);
+
    //  Enters a scope.
    //
    void PushScope(CxxScope* scope);
@@ -506,6 +519,10 @@ private:
    //  Any conditional compilation (can be stacked).
    //
    std::vector< OptionalCode* > opts_;
+
+   //  The current set of local variables.
+   //
+   std::unordered_multimap< std::string, CxxScoped* > locals_;
 
    //  The scopes in which compilation is occurring.
    //
@@ -596,6 +613,19 @@ public:
    //  Deleted because this class only has static members.
    //
    Context() = delete;
+
+   //  Adds LOCAL to the local variables in the current scope.
+   //
+   static void InsertLocal(CxxScoped* local) { Frame_->InsertLocal(local); }
+
+   //  Resolves NAME if it is a terminal or a local variable.
+   //
+   static CxxScoped* FindLocal(const std::string& name, SymbolView* view)
+      { return Frame_->FindLocal(name, view); }
+
+   //  Removes LOCAL from the local variables in the current scope.
+   //
+   static void EraseLocal(const CxxScoped* local) { Frame_->EraseLocal(local); }
 
    //  Enters a scope.
    //

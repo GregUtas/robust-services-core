@@ -47,7 +47,7 @@ namespace NodeBase
 //  o two or more items: tail_.next = last item, last item.next = first
 //    item, second last item.next = last item (circular queue)
 //
-template< class T = Base > class Q1Way
+template< class T > class Q1Way
 {
    friend class ObjectPool;
 public:

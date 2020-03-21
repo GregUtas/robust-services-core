@@ -284,7 +284,7 @@ public:
    //
    void Check() const override;
 
-   //  Overridden to make the argument visible within its function.
+   //  Overridden to make the argument visible as a local.
    //
    void EnterBlock() override;
 
@@ -1071,6 +1071,160 @@ private:
 
 //------------------------------------------------------------------------------
 //
+//  A member initialization.  This is one of the elements in a constructor's
+//  initialization list.
+//
+class MemberInit : public CxxScoped
+{
+public:
+   //  INIT is the expression that initializes NAME.  It is parsed as
+   //  arguments for a function call in case it invokes a constructor.
+   //  CTOR is the constructor in which the initialization appears.
+   //
+   MemberInit(const Function* ctor, std::string& name, TokenPtr& init);
+
+   //  Not subclassed.
+   //
+   ~MemberInit() { CxxStats::Decr(CxxStats::MEMBER_INIT); }
+
+   //  Returns the expression that initializes the member.
+   //
+   CxxToken* GetInit() const { return init_.get(); }
+
+   //  Overridden to add the statement's components to cross-references.
+   //
+   void AddToXref() const override;
+
+   //  Overridden to update SYMBOLS with the statement's type usage.
+   //
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
+
+   //  Overridden to reveal that this is a member initialization.
+   //
+   Cxx::ItemType Type() const override { return Cxx::MemberInit; }
+
+   //  Overridden to return the member's name.
+   //
+   const std::string* Name() const override { return &name_; }
+
+   //  Overridden to display the initialization statement.
+   //
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
+
+   //  Overridden to shrink containers.
+   //
+   void Shrink() override;
+
+   //  Overridden to return the member's name.
+   //
+   std::string Trace() const override { return name_; }
+private:
+   //  The constructor where the initialization appears.
+   //
+   const Function* const ctor_;
+
+   //  The name of the member being initialized.
+   //
+   std::string name_;
+
+   //  The expression that initializes the member.
+   //
+   const TokenPtr init_;
+};
+
+//------------------------------------------------------------------------------
+//
+//  A template parameter appears within the angle brackets that follow the
+//  "template" keyword.
+//
+class TemplateParm : public CxxScoped
+{
+public:
+   //  Creates a parameter defined by NAME, TAG or TYPE, and PTRS (e.g.
+   //  T/class/nullptr/1 for template <class T*...), which may specify
+   //  an optional default (PRESET).
+   //
+   TemplateParm(std::string& name, Cxx::ClassTag tag,
+      QualNamePtr& type, size_t ptrs, TypeSpecPtr& preset);
+
+   //  Not subclassed.
+   //
+   ~TemplateParm() { CxxStats::Decr(CxxStats::TEMPLATE_PARM); }
+
+   //  Returns the parameter's default type.
+   //
+   const TypeSpec* Default() const { return default_.get(); }
+
+   //  Overridden to return the default's type, else this item.
+   //
+   CxxToken* AutoType() const override;
+
+   //  Overridden to check the default type.
+   //
+   void Check() const override;
+
+   //  Overridden to make the parameter visible as a local.
+   //
+   void EnterBlock() override;
+
+   //  Overridden to remove the parameter as a local.
+   //
+   void ExitBlock() override;
+
+   //  Overridden to return the parameter's name.
+   //
+   const std::string* Name() const override { return &name_; }
+
+   //  Overridden to display the parameter.
+   //
+   void Print
+      (std::ostream& stream, const NodeBase::Flags& options) const override;
+
+   //  Overridden to return the default's referent, else this item.
+   //
+   CxxScoped* Referent() const override;
+
+   //  Overridden to shrink the item's name.
+   //
+   void Shrink() override;
+
+   //  Overridden to reveal that this is a template parameter.
+   //
+   Cxx::ItemType Type() const override { return Cxx::TemplateParm; }
+
+   //  Overridden to return the parameter's name and pointers.
+   //
+   std::string TypeString(bool arg) const override;
+private:
+   //  Overridden to return the default's type, else this item.
+   //
+   CxxToken* RootType() const override;
+
+   //  The parameter's name.
+   //
+   std::string name_;
+
+   //  The parameter's type tag.  Set to Cxx::ClassTag_N
+   //  if a non-class type was specified.
+   //
+   const Cxx::ClassTag tag_;
+
+   //  The parameter's type if tag_ is Cxx::ClassTag_N.
+   //
+   const QualNamePtr type_;
+
+   //  The level of pointer indirection for the parameter.
+   //
+   const size_t ptrs_;
+
+   //  The parameter's default value, if any.
+   //
+   const TypeSpecPtr default_;
+};
+
+//------------------------------------------------------------------------------
+//
 //  This is created for a reserved word that can be the referent of a type.
 //
 class Terminal : public CxxScoped
@@ -1162,74 +1316,6 @@ private:
    //  The terminal's attributes as an integer.
    //
    Numeric attrs_;
-};
-
-//------------------------------------------------------------------------------
-//
-//  A member initialization.  This is one of the elements in a constructor's
-//  initialization list.
-//
-class MemberInit : public CxxScoped
-{
-public:
-   //  INIT is the expression that initializes NAME.  It is parsed as
-   //  arguments for a function call in case it invokes a constructor.
-   //  CTOR is the constructor in which the initialization appears.
-   //
-   MemberInit(const Function* ctor, std::string& name, TokenPtr& init);
-
-   //  Not subclassed.
-   //
-   ~MemberInit() { CxxStats::Decr(CxxStats::MEMBER_INIT); }
-
-   //  Returns the constructor to which the initializaiton belongs.
-   //
-   const Function* Ctor() const { return ctor_; }
-
-   //  Returns the expression that initializes the member.
-   //
-   CxxToken* GetInit() const { return init_.get(); }
-
-   //  Overridden to add the statement's components to cross-references.
-   //
-   void AddToXref() const override;
-
-   //  Overridden to update SYMBOLS with the statement's type usage.
-   //
-   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
-
-   //  Overridden to reveal that this is a member initialization.
-   //
-   Cxx::ItemType Type() const override { return Cxx::MemInit; }
-
-   //  Overridden to return the member's name.
-   //
-   const std::string* Name() const override { return &name_; }
-
-   //  Overridden to display the initialization statement.
-   //
-   void Print
-      (std::ostream& stream, const NodeBase::Flags& options) const override;
-
-   //  Overridden to shrink containers.
-   //
-   void Shrink() override;
-
-   //  Overridden to return the member's name.
-   //
-   std::string Trace() const override { return name_; }
-private:
-   //  The constructor where the initialization appears.
-   //
-   const Function* const ctor_;
-
-   //  The name of the member being initialized.
-   //
-   std::string name_;
-
-   //  The expression that initializes the member.
-   //
-   const TokenPtr init_;
 };
 
 //------------------------------------------------------------------------------

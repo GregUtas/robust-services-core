@@ -215,6 +215,15 @@ void Class::AccessibilityOf
          return;
       }
 
+      //  Don't enforce access controls on a class template.  Violations
+      //  will be detected on template instances.
+      //
+      if(usingClass->IsTemplate())
+      {
+         view->accessibility = Unrestricted;
+         return;
+      }
+
       //  If the using class is a template instance, it can use a template
       //  argument, even if the argument is private.
       //
@@ -231,6 +240,17 @@ void Class::AccessibilityOf
    }
 
    view->distance = scope->ScopeDistance(itemClasses.back()->GetSpace());
+
+   //  Don't enforce access controls on a function template.  Violations
+   //  will be detected on template instances.
+   //
+   auto usingFunc = scope->GetFunction();
+
+   if((usingFunc != nullptr) && usingFunc->IsTemplate())
+   {
+      view->accessibility = Unrestricted;
+      return;
+   }
 
    //  ITEM must be public at file scope unless SCOPE is a friend.
    //
@@ -401,16 +421,6 @@ void Class::AddToXref() const
    CxxArea::AddToXref();
 
    name_->AddToXref();
-
-   //  A class template's functions aren't compiled, so it must get their
-   //  symbol references from its instantiations.  We compile the full
-   //  template instead of instantiating each member when it is used, so
-   //  it is sufficient to pull symbols from the first instantiation.
-   //
-   if(!tmplts_.empty())
-   {
-      tmplts_.front().get()->AddToXref();
-   }
 
    if(alignas_ != nullptr) alignas_->AddToXref();
 
@@ -1386,6 +1396,7 @@ void Class::GetMemberInitAttrs(DataInitVector& members) const
       if(init)
       {
          auto spec = mem->GetTypeSpec();
+
          if((spec->GetTemplateRole() == TemplateParameter) &&
             (spec->Ptrs(false) == 0))
          {
@@ -1542,10 +1553,8 @@ void Class::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
    Debug::ft(Class_GetUsages);
 
-   //  A class template's functions aren't compiled, so it must get its
-   //  symbol usage information from its instantiations.  We compile the
-   //  full template instead of instantiating each member when it is used,
-   //  so it is sufficient to pull symbols from the first instantiation.
+   //  IF this is a class template, obtain usage information from its first
+   //  instance in case some symbols in the template could not be resolved.
    //
    if(!tmplts_.empty())
    {
@@ -1967,33 +1976,6 @@ ClassInst::~ClassInst()
 
 //------------------------------------------------------------------------------
 
-fn_name ClassInst_AddToXref = "ClassInst.AddToXref";
-
-void ClassInst::AddToXref() const
-{
-   Debug::ft(ClassInst_AddToXref);
-
-   //  We're interested in references within the class template.  It picks
-   //  up those outside function definitions.  But for function bodies, it
-   //  has to get references from a template instance, whose functions are
-   //  compiled.
-   //
-   auto funcs = Funcs();
-   auto opers = Opers();
-
-   for(auto f = funcs->cbegin(); f != funcs->cend(); ++f)
-   {
-      (*f)->AddToXref();
-   }
-
-   for(auto o = opers->cbegin(); o != opers->cend(); ++o)
-   {
-      (*o)->AddToXref();
-   }
-}
-
-//------------------------------------------------------------------------------
-
 fn_name ClassInst_Check = "ClassInst.Check";
 
 void ClassInst::Check() const
@@ -2179,15 +2161,6 @@ CxxScoped* ClassInst::FindTemplateAnalog(const CxxNamed* item) const
       return list->at(idx).get();
    }
 
-   case Cxx::MemInit:
-   {
-      size_t idx;
-      auto init = static_cast< const MemberInit* >(item);
-      if(!GetFuncIndex(init->Ctor(), idx)) return nullptr;
-      return tmplt_->Funcs()->at(idx).get();
-   }
-      break;
-
    case Cxx::Friend:
    {
       auto ref = item->Referent();
@@ -2220,7 +2193,7 @@ void ClassInst::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 fn_name ClassInst_Instantiate = "ClassInst.Instantiate";
 
-bool ClassInst::Instantiate()
+void ClassInst::Instantiate()
 {
    Debug::ft(ClassInst_Instantiate);
 
@@ -2229,19 +2202,29 @@ bool ClassInst::Instantiate()
    //  its template is being instantiated.  This causes the instantiation
    //  of any templates that this one requires.
    //
-   if(created_) return true;
+   if(created_) return;
    created_ = true;
-   tspec_->Instantiating();
+
+   CxxScopedVector locals;
+   tspec_->Instantiating(locals);
 
    //  Get the code for the template instance and parse it.
    //
    code_.reset();
    auto begin = tmplt_->CreateCode(this, code_);
    std::unique_ptr< Parser > parser(new Parser(EMPTY_STR));
+
+   if(!locals.empty())
+   {
+      for(auto item = locals.cbegin(); item != locals.cend(); ++item)
+      {
+         Context::InsertLocal(*item);
+      }
+   }
+
    compiled_ = parser->ParseClassInst(this, begin);
    parser.reset();
    if(compiled_) code_.reset();
-   return compiled_;
 }
 
 //------------------------------------------------------------------------------

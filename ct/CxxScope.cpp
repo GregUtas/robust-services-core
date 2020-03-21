@@ -1817,7 +1817,7 @@ void FuncData::EnterBlock()
    auto anon = spec->IsAuto();
 
    Context::SetPos(GetLoc());
-   Singleton< CxxSymbols >::Instance()->InsertLocal(this);
+   Context::InsertLocal(this);
    ExecuteAlignment();
    spec->EnteringScope(this);
    ExecuteInit(false);
@@ -1840,7 +1840,7 @@ void FuncData::ExitBlock()
 {
    Debug::ft(FuncData_ExitBlock);
 
-   Singleton< CxxSymbols >::Instance()->EraseLocal(this);
+   Context::EraseLocal(this);
    if(next_ != nullptr) next_->ExitBlock();
 }
 
@@ -2065,13 +2065,16 @@ void Function::AddThisArg()
 
    //  Add an argument with the name "this", which is a pointer to the class
    //  that defined the function.  The argument is const if the function was
-   //  defined as const.
+   //  defined as const.  Include the template parameters in the name of a
+   //  function template's "this" argument.
    //
    TypeSpecPtr typeSpec(new DataSpec(cls->Name()->c_str()));
    typeSpec->CopyContext(this);
    typeSpec->Tags()->SetConst(const_);
    typeSpec->Tags()->SetPointer(0, true, false);
    typeSpec->SetReferent(cls, nullptr);
+   auto parms = cls->GetTemplateParms();
+   if(parms != nullptr) typeSpec->GetQualName()->SetTemplateArgs(parms);
    string argName(THIS_STR);
    ArgumentPtr arg(new Argument(argName, typeSpec));
    arg->CopyContext(this);
@@ -2089,81 +2092,19 @@ void Function::AddToXref() const
 
    if(deleted_) return;
 
-   auto sig = true;
-   auto body = true;
-   auto inst = IsInTemplateInstance();
-
-   //  Find out if this function appears in a template.
+   //  Don't add items in a template instance to the cross-reference, since
+   //  they have no code file or line number.
    //
-   auto type = GetTemplateType();
+   if(IsInTemplateInstance()) return;
 
-   switch(type)
+   name_->AddToXref();
+
+   if(spec_ != nullptr) spec_->AddToXref();
+
+   for(size_t i = (this_ ? 1 : 0); i < args_.size(); ++i)
    {
-   case NonTemplate:
-      //
-      //  This includes a function template instance and a function in a
-      //  class template instance.  A template's functions aren't compiled,
-      //  so it must get references in its function bodies from a template
-      //  instance.
-      //
-      sig = !inst;
-      break;
-
-   case FuncTemplate:
-      //
-      //  References in the function's *signature* can be taken from the
-      //  template, but references in its body must come from an instance.
-      //
-      if(!tmplts_.empty())
-      {
-         tmplts_.front()->AddToXref();
-      }
-
-      body = false;
-      break;
-
-   case ClassTemplate:
-      //
-      //  This function appears in a class template.  Its body will only
-      //  contain references if it's an inline function, but references
-      //  can be taken from its signature.
-      //
-      body = inline_;
+      args_[i]->AddToXref();
    }
-
-   if(inst)
-   {
-      //* Add the template *analog* as a reference.  This usually applies
-      //  to the function body, but it also applies to the signature when
-      //  a class template *contains* a function template (Allocators.h is
-      //  an example).  FindTemplateAnalog doesn't yet support items in a
-      //  function body, so simply return for now.
-      //
-      return;
-   }
-
-   if(sig)
-   {
-      name_->AddToXref();
-
-      if(spec_ != nullptr) spec_->AddToXref();
-
-      for(size_t i = (this_ ? 1 : 0); i < args_.size(); ++i)
-      {
-         args_[i]->AddToXref();
-      }
-   }
-
-   if(!body) return;
-
-   if(call_ != nullptr) call_->AddToXref();
-
-   for(auto m = mems_.cbegin(); m != mems_.cend(); ++m)
-   {
-      (*m)->AddToXref();
-   }
-
-   if(impl_ != nullptr) impl_->AddToXref();
 
    if(base_ != nullptr)
    {
@@ -2173,17 +2114,18 @@ void Function::AddToXref() const
       //
       if(FuncType() == FuncStandard)
       {
-         if(inst)
-         {
-            auto func = FindTemplateAnalog(this);
-            if(func != nullptr) base_->AddReference(func);
-         }
-         else
-         {
-            base_->AddReference(this);
-         }
+         base_->AddReference(this);
       }
    }
+
+   if(call_ != nullptr) call_->AddToXref();
+
+   for(auto m = mems_.cbegin(); m != mems_.cend(); ++m)
+   {
+      (*m)->AddToXref();
+   }
+
+   if(impl_ != nullptr) impl_->AddToXref();
 }
 
 //------------------------------------------------------------------------------
@@ -3465,32 +3407,45 @@ void Function::EnterBlock()
    //
    if(!IsImplemented()) return;
 
-   //  Don't compile a function template or a function in a class template.
-   //  Compilation will fail because template arguments are untyped.  However:
-   //  o An inline function in a class template *is* compiled (because it
-   //    is not included in template instances).
-   //  o A function in a class template instance *is* compiled, and so is a
-   //    function template instance (GetTemplateType returns NonTemplate in
-   //    this case).
-   //
    auto type = GetTemplateType();
+   const TemplateParmPtrVector* parms = nullptr;
 
    if(type != NonTemplate)
    {
+      //  This is a function template or a function in a class template.
+      //  Don't bother compiling a function *template* in a class template
+      //  *instance*.  However, a *regular* function in a class template
+      //  instance *is* compiled, and so is a function template instance
+      //  (GetTemplateType returns NonTemplate in these cases).
+      //
       if(Context::ParsingTemplateInstance()) return;
+
+      if(type == FuncTemplate)
+         parms = parms_->Parms();
+      else
+         parms = GetClass()->GetTemplateParms()->Parms();
+
       auto file = GetImplFile();
       if(file != nullptr) file->SetTemplate(type);
-      if(!inline_) return;
    }
 
-   //  Set up the compilation context and add the function's arguments to the
-   //  local symbol table.  Compile the function's code block, including any
-   //  base constructor call and member initializations.  The latter are first
-   //  assigned to their respective members, after which all non-static members
-   //  are initialized so that class members can invoke default constructors.
+   //  Set up the compilation context and add any template parameters and
+   //  arguments to the local symbol table.  Compile the function's code,
+   //  including any base constructor call and member initializations.  The
+   //  latter are first assigned to their respective members, after which
+   //  all non-static members are initialized so that class members can
+   //  invoke default constructors.
    //
    Context::Enter(this);
    Context::PushScope(this);
+
+   if(parms != nullptr)
+   {
+      for(auto p = parms->cbegin(); p != parms->cend(); ++p)
+      {
+         (*p)->EnterBlock();
+      }
+   }
 
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
    {
@@ -3541,6 +3496,14 @@ void Function::EnterBlock()
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
    {
       (*a)->ExitBlock();
+   }
+
+   if(parms != nullptr)
+   {
+      for(auto p = parms->cbegin(); p != parms->cend(); ++p)
+      {
+         (*p)->ExitBlock();
+      }
    }
 
    Context::PopScope();
@@ -3798,17 +3761,6 @@ CxxScoped* Function::FindTemplateAnalog(const CxxNamed* item) const
       return func->FindNthItem(*item->Name(), n);
    }
 
-   case Cxx::MemInit:
-   {
-      for(size_t i = 0; i < mems_.size(); ++i)
-      {
-         if(mems_.at(i).get() == item)
-         {
-            return func->mems_.at(i).get();
-         }
-      }
-   }
-
    default:
       Context::SwLog(Function_FindTemplateAnalog, "Unexpected item", type);
    }
@@ -4040,13 +3992,17 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    switch(type)
    {
    case NonTemplate:
+      //
+      //  This could be a regular function or a function in a template
+      //  instance.
+      //
       break;
 
    case FuncTemplate:
       //
-      //  A function template cannot be compiled by itself, so it must get its
-      //  symbol usage information from its instantiations.  They are all the
-      //  same, so it is sufficient to pull symbols from the first one.
+      //  This is a function template, so obtain usage information from its
+      //  first instance in case some symbols in the template could not be
+      //  resolved.
       //
       if(!tmplts_.empty())
       {
@@ -4056,13 +4012,15 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
          sets.EraseTemplateArgs(first->GetTemplateArgs());
          sets.EraseLocals();
          symbols.Union(sets);
+         return;
       }
-      return;
 
    case ClassTemplate:
       //
-      //  This function appears in a class template.  Such a function is only
-      //  compiled if it is inline (i.e. not copied into template instances).
+      //  This function appears in a class template, which pulls its usages
+      //  from its first instance, in the same way as above.  However, an
+      //  inline function is not copied into instances, so its usages must
+      //  be obtained here.
       //
       if(!inline_) return;
    }
@@ -4272,7 +4230,8 @@ Function* Function::InstantiateFunction(const TypeName* type) const
    //  template is being instantiated.  This causes the instantiation of any
    //  templates on which this one depends.
    //
-   type->Instantiating();
+   CxxScopedVector locals;
+   type->Instantiating(locals);
 
    //  Get the code for the function template, assembling it if this is the
    //  first instantiation.
@@ -4325,6 +4284,15 @@ Function* Function::InstantiateFunction(const TypeName* type) const
    auto fullName = ScopedName(true) + ts;
    RemoveRefs(fullName);
    std::unique_ptr< Parser > parser(new Parser(EMPTY_STR));
+
+   if(!locals.empty())
+   {
+      for(auto item = locals.cbegin(); item != locals.cend(); ++item)
+      {
+         Context::InsertLocal(*item);
+      }
+   }
+
    parser->ParseFuncInst(fullName, this, area, type, code);
    parser.reset();
    code.reset();
@@ -4865,6 +4833,10 @@ fn_name Function_PushThisArg = "Function.PushThisArg";
 void Function::PushThisArg(StackArgVector& args) const
 {
    Debug::ft(Function_PushThisArg);
+
+   //  Return if this function doesn't take a "this" argument.
+   //
+   if(!this_) return;
 
    if(args.empty() || !args.front().IsThis())
    {
@@ -5492,10 +5464,10 @@ bool FuncSpec::HasArrayDefn() const
 
 //------------------------------------------------------------------------------
 
-void FuncSpec::Instantiating() const
+void FuncSpec::Instantiating(CxxScopedVector& locals) const
 {
    Debug::SwLog(FuncSpec_Warning, "Instantiating", 0);
-   func_->GetTypeSpec()->Instantiating();
+   func_->GetTypeSpec()->Instantiating(locals);
 }
 
 //------------------------------------------------------------------------------

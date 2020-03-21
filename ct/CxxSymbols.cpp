@@ -21,12 +21,10 @@
 //
 #include "CxxSymbols.h"
 #include <algorithm>
-#include <cstddef>
 #include <cstdint>
 #include <iterator>
 #include <ostream>
 #include <set>
-#include <utility>
 #include "CodeFile.h"
 #include "CodeTypes.h"
 #include "Cxx.h"
@@ -36,7 +34,6 @@
 #include "CxxRoot.h"
 #include "CxxScope.h"
 #include "CxxScoped.h"
-#include "CxxString.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Lexer.h"
@@ -88,7 +85,6 @@ typedef std::pair< string, Enumerator* > EtorPair;
 typedef std::pair< string, Forward* > ForwPair;
 typedef std::pair< string, Friend* > FriendPair;
 typedef std::pair< string, Function* > FuncPair;
-typedef std::pair< string, CxxScoped* > LocalPair;
 typedef std::pair< string, Macro* > MacroPair;
 typedef std::pair< string, Namespace* > SpacePair;
 typedef std::pair< string, Terminal* > TermPair;
@@ -148,30 +144,7 @@ void DisplayReferences(ostream& stream, const CxxNamedVector& refs)
 }
 
 //------------------------------------------------------------------------------
-//
-//  Removes ITEM from TABLE.
-//
-template< typename T > void Erase(const CxxScoped* item,
-   std::unordered_multimap< string, T >& table)
-{
-   auto str = Normalize(*item->Name());
-   auto last = table.upper_bound(str);
 
-   for(auto i = table.lower_bound(str); i != last; ++i)
-   {
-      if(i->second == item)
-      {
-         table.erase(i);
-         return;
-      }
-   }
-}
-
-//------------------------------------------------------------------------------
-//
-//  Returns the index of the item in LIST that is nearest the context scope.
-//  Returns SIZE_MAX if none of the items in LIST is in a related scope.
-//
 fn_name CodeTools_FindNearestItem1 = "CodeTools.FindNearestItem(list)";
 
 size_t FindNearestItem(const SymbolVector& list)
@@ -344,24 +317,6 @@ bool IsSortedByScope(const CxxScoped* item1, const CxxScoped* item2)
 }
 
 //------------------------------------------------------------------------------
-//
-//  Looks for NAME in TABLE.  Returns a list of matching symbols in LIST.
-//  NAME be unqualified.
-//
-template< typename T > void ListSymbols(const string& name,
-   const std::unordered_multimap< string, T >& table, SymbolVector& list)
-{
-   //  Assemble a list of matching symbols.
-   //
-   auto last = table.upper_bound(name);
-
-   for(auto i = table.lower_bound(name); i != last; ++i)
-   {
-      list.push_back(i->second);
-   }
-}
-
-//------------------------------------------------------------------------------
 
 fn_name CxxSymbols_ctor = "CxxSymbols.ctor";
 
@@ -486,141 +441,77 @@ void CxxSymbols::DisplayXref(ostream& stream) const
 
 void CxxSymbols::EraseClass(const Class* cls)
 {
-   Erase(cls, *classes_);
+   EraseSymbol(cls, *classes_);
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::EraseData(const Data* data)
 {
-   Erase(data, *data_);
+   EraseSymbol(data, *data_);
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::EraseEnum(const Enum* item)
 {
-   Erase(item, *enums_);
+   EraseSymbol(item, *enums_);
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::EraseEtor(const Enumerator* etor)
 {
-   Erase(etor, *etors_);
+   EraseSymbol(etor, *etors_);
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::EraseForw(const Forward* forw)
 {
-   Erase(forw, *forws_);
+   EraseSymbol(forw, *forws_);
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::EraseFriend(const Friend* frnd)
 {
-   Erase(frnd, *friends_);
+   EraseSymbol(frnd, *friends_);
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::EraseFunc(const Function* func)
 {
-   Erase(func, *funcs_);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CxxSymbols_EraseLocal = "CxxSymbols.EraseLocal";
-
-void CxxSymbols::EraseLocal(const CxxScoped* name)
-{
-   Debug::ft(CxxSymbols_EraseLocal);
-
-   Erase(name, *locals_);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CxxSymbols_EraseLocals = "CxxSymbols.EraseLocals";
-
-void CxxSymbols::EraseLocals()
-{
-   Debug::ft(CxxSymbols_EraseLocals);
-
-   locals_->clear();
+   EraseSymbol(func, *funcs_);
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::EraseMacro(const Macro* macro)
 {
-   Erase(macro, *macros_);
+   EraseSymbol(macro, *macros_);
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::EraseSpace(const Namespace* space)
 {
-   Erase(space, *spaces_);
+   EraseSymbol(space, *spaces_);
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::EraseTerm(const Terminal* term)
 {
-   Erase(term, *terms_);
+   EraseSymbol(term, *terms_);
 }
 
 //------------------------------------------------------------------------------
 
 void CxxSymbols::EraseType(const Typedef* type)
 {
-   Erase(type, *types_);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CxxSymbols_FindLocal = "CxxSymbols.FindLocal";
-
-CxxScoped* CxxSymbols::FindLocal(const string& name, SymbolView* view) const
-{
-   Debug::ft(CxxSymbols_FindLocal);
-
-   SymbolVector list;
-
-   //  Start by looking for a terminal.
-   //
-   ListSymbols(name, *terms_, list);
-
-   if(!list.empty())
-   {
-      *view = DeclaredGlobally;
-      return list.front();
-   }
-
-   //  Look for a local that matches NAME.
-   //
-   ListSymbols(name, *locals_, list);
-
-   if(!list.empty())
-   {
-      *view = DeclaredLocally;
-
-      if(list.size() > 1)
-      {
-         auto idx = FindNearestItem(list);
-         if(idx != SIZE_MAX) return list[idx];
-         auto expl = name + " has more than one definition";
-         Context::SwLog(CxxSymbols_FindLocal, expl, list.size());
-      }
-
-      return list.front();
-   }
-
-   return nullptr;
+   EraseSymbol(type, *types_);
 }
 
 //------------------------------------------------------------------------------
@@ -925,6 +816,13 @@ void CxxSymbols::FindSymbols(const CodeFile* file, const CxxScope* scope,
 
 //------------------------------------------------------------------------------
 
+void CxxSymbols::FindTerminal(const string& name, SymbolVector& list) const
+{
+   ListSymbols(name, *terms_, list);
+}
+
+//------------------------------------------------------------------------------
+
 void CxxSymbols::InsertClass(Class* cls)
 {
    classes_->insert(ClassPair(Normalize(*cls->Name()), cls));
@@ -970,33 +868,6 @@ void CxxSymbols::InsertFriend(Friend* frnd)
 void CxxSymbols::InsertFunc(Function* func)
 {
    funcs_->insert(FuncPair(Normalize(*func->Name()), func));
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CxxSymbols_InsertLocal = "CxxSymbols.InsertLocal";
-
-void CxxSymbols::InsertLocal(CxxScoped* local)
-{
-   Debug::ft(CxxSymbols_InsertLocal);
-
-   //  Delete any item with the same name that is defined in the same block.
-   //
-   auto name = local->Name();
-   auto scope = local->GetScope();
-   SymbolVector list;
-
-   ListSymbols(*name, *locals_, list);
-
-   for(auto s = list.cbegin(); s != list.cend(); ++s)
-   {
-      if((*s)->GetScope() == scope)
-      {
-         EraseLocal(*s);
-      }
-   }
-
-   locals_->insert(LocalPair(Normalize(*name), local));
 }
 
 //------------------------------------------------------------------------------
@@ -1190,7 +1061,6 @@ void CxxSymbols::Shutdown(RestartLevel level)
    forws_.reset();
    friends_.reset();
    funcs_.reset();
-   locals_.reset();
    macros_.reset();
    spaces_.reset();
    terms_.reset();
@@ -1216,7 +1086,6 @@ void CxxSymbols::Startup(RestartLevel level)
    forws_.reset(new ForwTable);
    friends_.reset(new FriendTable);
    funcs_.reset(new FuncTable);
-   locals_.reset(new LocalTable);
    macros_.reset(new MacroTable);
    spaces_.reset(new SpaceTable);
    terms_.reset(new TermTable);

@@ -1774,7 +1774,7 @@ private:
    //
    void FindReferent() override;
    void GetNames(stringVector& names) const override;
-   void Instantiating() const override;
+   void Instantiating(CxxScopedVector& locals) const override;
    TypeMatch MatchTemplateArg(const TypeSpec* that) const override;
    bool ItemIsTemplateArg(const CxxNamed* item) const override;
    bool MatchesExactly(const TypeSpec* that) const override;

@@ -306,9 +306,9 @@ public:
    virtual void SetAsReferent(const CxxNamed* user) { }
 
    //  Invoked to instantiate a class template instance when it is declared as
-   //  a member or named in executable code.  Returns false if an error occurs.
+   //  a member or named in executable code.
    //
-   virtual bool Instantiate() { return false; }
+   virtual void Instantiate() { }
 
    //  If the item is, or belongs to, a template instance, returns the instance.
    //
@@ -538,6 +538,10 @@ public:
    //
    void AddTemplateArg(TypeSpecPtr& arg);
 
+   //  Creates template arguments from template parameters.
+   //
+   void SetTemplateArgs(const TemplateParms* tparms);
+
    //  Returns the template arguments.
    //
    const TypeSpecPtrVector* Args() const { return args_.get(); }
@@ -570,7 +574,7 @@ public:
    //  Invoked when instantiating the template specified by the arguments.
    //  Invokes Instantiating on each template argument.
    //
-   void Instantiating() const;
+   void Instantiating(CxxScopedVector& locals) const;
 
    //  Determines if THAT can instantiate a template for args_.
    //  o Returns Compatible if args_ is empty.
@@ -799,6 +803,10 @@ public:
    //
    void SetUserType(Cxx::ItemType user) const;
 
+   //  Invokes SetTemplateArgs on the last name.
+   //
+   void SetTemplateArgs(const TemplateParms* tparms);
+
    //  Sets the referent of the Nth name to ITEM.  VIEW provides information
    //  about how the name was resolved.  If name resolution failed, ITEM will
    //  be nullptr.  If whoever requested name resolution did not provide a
@@ -927,10 +935,6 @@ private:
    //  Returns the last name.
    //
    TypeName* Last() const;
-
-   //  Resolves the item's qualified name within a function.
-   //
-   CxxNamed* ResolveLocal(SymbolView* view) const;
 
    //  Checks if REF (the name's referent) is a template argument.
    //
@@ -1259,7 +1263,7 @@ public:
    //  to instantiate a template.  Finds the type's referent and, if it is a
    //  template, also instantiates it.
    //
-   virtual void Instantiating() const = 0;
+   virtual void Instantiating(CxxScopedVector& locals) const = 0;
 
    //  Adds each scoped name in the type to NAMES.
    //
@@ -1459,7 +1463,7 @@ private:
 
    //  Overridden to instantiate the type's referent if it is a template.
    //
-   void Instantiating() const override;
+   void Instantiating(CxxScopedVector& locals) const override;
 
    //  Overridden to return true if the type is "auto" and the referent has
    //  yet to be determined.
@@ -1626,72 +1630,6 @@ private:
    //  The type's tags.
    //
    TypeTags tags_;
-};
-
-//------------------------------------------------------------------------------
-//
-//  A template parameter appears within the angle brackets that follow the
-//  "template" keyword.
-//
-class TemplateParm : public CxxNamed
-{
-public:
-   //  Creates a parameter defined by NAME, TAG or TYPE, and PTRS (e.g.
-   //  T/class/nullptr/1 for template <class T*...), which may specify
-   //  an optional default (PRESET).
-   //
-   TemplateParm(std::string& name, Cxx::ClassTag tag,
-      QualNamePtr& type, size_t ptrs, QualNamePtr& preset);
-
-   //  Not subclassed.
-   //
-   ~TemplateParm() { CxxStats::Decr(CxxStats::TEMPLATE_PARM); }
-
-   //  Returns the parameter's default type.
-   //
-   const QualName* Default() const { return default_.get(); }
-
-   //  Overridden to check the default type.
-   //
-   void Check() const override;
-
-   //  Overridden to return the parameter's name.
-   //
-   const std::string* Name() const override { return &name_; }
-
-   //  Overridden to display the parameter.
-   //
-   void Print
-      (std::ostream& stream, const NodeBase::Flags& options) const override;
-
-   //  Overridden to shrink the item's name.
-   //
-   void Shrink() override;
-
-   //  Overridden to return the parameter's name and pointers.
-   //
-   std::string TypeString(bool arg) const override;
-private:
-   //  The parameter's name.
-   //
-   std::string name_;
-
-   //  The parameter's type tag.  Set to Cxx::ClassTag_N
-   //  if a non-class type was specified.
-   //
-   const Cxx::ClassTag tag_;
-
-   //  The parameter's type if tag_ is Cxx::ClassTag_N.
-   //
-   const QualNamePtr type_;
-
-   //  The level of pointer indirection for the parameter.
-   //
-   const size_t ptrs_;
-
-   //  The parameter's default value, if any.
-   //
-   const QualNamePtr default_;
 };
 
 //------------------------------------------------------------------------------

@@ -442,6 +442,18 @@ CxxScoped* CxxNamed::ResolveName(const CodeFile* file,
    }
    else
    {
+      //  Look for a terminal or local variable.
+      //
+      if(qname->Size() == 1)
+      {
+         item = Context::FindLocal(*Name(), view);
+
+         if(item != nullptr)
+         {
+            return item;
+         }
+      }
+
       //  Start with the first name in the qualified name.  Return if
       //  it refers to itself, which can occur for a friend declaration.
       //
@@ -1006,10 +1018,13 @@ void DataSpec::FindReferent()
    //  in "template< typename T >", for example) it never will be.
    //
    auto qname = QualifiedName(true, false);
+   item = scope->NameToTemplateParm(qname);
 
-   if(scope->NameToTemplateParm(qname) != nullptr)
+   if(item != nullptr)
    {
       SetTemplateRole(TemplateParameter);
+      view = DeclaredLocally;
+      SetReferent(item, &view);
       return;
    }
 
@@ -1218,7 +1233,7 @@ void DataSpec::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
 fn_name DataSpec_Instantiating = "DataSpec.Instantiating";
 
-void DataSpec::Instantiating() const
+void DataSpec::Instantiating(CxxScopedVector& locals) const
 {
    Debug::ft(DataSpec_Instantiating);
 
@@ -1232,6 +1247,23 @@ void DataSpec::Instantiating() const
    if(ref != nullptr)
    {
       ref->Instantiate();
+
+      if(ref->Type() == Cxx::TemplateParm)
+      {
+         //  To compile templates--not just template *instances*--we need to
+         //  handle situations where one template uses another.  For example,
+         //  TlvMessage.CopyParm<T> invokes TlvMessage.FindParm<T>.  In such
+         //  a case, we "instantiate" the second template using a *template
+         //  parameter* as a template argument.  So when FindParm<T> is about
+         //  to be compiled, we will make T a local variable so that it can
+         //  be resolved as a symbol.  Ideally Instantiate() would pass along
+         //  our LOCALS parameter so that TemplateParm could override it and
+         //  add itself to LOCALS, but this would be a bit messy, so it's done
+         //  with this hack instead.
+         //
+         locals.push_back(ref);
+      }
+
       return;
    }
 
@@ -1835,12 +1867,8 @@ StackArg DataSpec::ResultType() const
       return arg;
    }
 
-   switch(GetTemplateRole())
+   if(GetTemplateRole() != TemplateClass)
    {
-   case TemplateParameter:
-   case TemplateClass:
-      break;
-   default:
       auto expl = "Failed to find referent for " + QualifiedName(true, true);
       Context::SwLog(DataSpec_ResultType, expl, 0);
    }
@@ -1883,6 +1911,13 @@ void DataSpec::SetReferent(CxxScoped* item, const SymbolView* view) const
    //  not yet possible, so make sure that our referent is empty so that we will
    //  revisit it.
    //
+   if(item == nullptr)
+   {
+      string expl = "Nil ITEM for " + TypeString(true);
+      Context::SwLog(DataSpec_SetReferent, expl, 0);
+      return;
+   }
+
    if((item->IsTemplate() && item->Referent() == nullptr))
    {
       name_->SetReferent(nullptr, nullptr);
@@ -1991,7 +2026,7 @@ string DataSpec::TypeString(bool arg) const
    //  no referent, and a template argument could be an unresolved forward
    //  declaration.  In such cases, just use the full name.
    //
-   auto ref = (role != TemplateParameter ? Referent() : nullptr);
+   auto ref = Referent();
    auto tags = GetAllTags();
 
    if(ref != nullptr)
@@ -2473,7 +2508,7 @@ CxxScoped* QualName::Referent() const
    if(ref != nullptr) return ref;
 
    SymbolView view;
-   auto item = ResolveLocal(&view);
+   auto item = ResolveName(Context::File(), Context::Scope(), CODE_REFS, &view);
    if(item == nullptr) return ReferentError(QualifiedName(true, true), 0);
 
    //  Verify that the item has a referent in case it's a typedef or a
@@ -2483,30 +2518,6 @@ CxxScoped* QualName::Referent() const
    if(ref == nullptr) return ReferentError(item->Trace(), item->Type());
    CheckIfTemplateArgument(ref);
    return ref;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name QualName_ResolveLocal = "QualName.ResolveLocal";
-
-CxxNamed* QualName::ResolveLocal(SymbolView* view) const
-{
-   Debug::ft(QualName_ResolveLocal);
-
-   auto syms = Singleton< CxxSymbols >::Instance();
-
-   if((Size() == 1) && !IsGlobal())
-   {
-      auto item = syms->FindLocal(*Name(), view);
-
-      if(item != nullptr)
-      {
-         SetReferentN(0, item, view);
-         return item;
-      }
-   }
-
-   return ResolveName(Context::File(), Context::Scope(), CODE_REFS, view);
 }
 
 //------------------------------------------------------------------------------
@@ -2570,6 +2581,17 @@ void QualName::SetReferentN
    Debug::ft(QualName_SetReferentN);
 
    At(n)->SetReferent(item, view);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name QualName_SetTemplateArgs = "QualName.SetTemplateArgs";
+
+void QualName::SetTemplateArgs(const TemplateParms* tparms)
+{
+   Debug::ft(QualName_SetTemplateArgs);
+
+   Last()->SetTemplateArgs(tparms);
 }
 
 //------------------------------------------------------------------------------
@@ -2746,71 +2768,6 @@ void StaticAssert::Shrink()
 {
    expr_-> Shrink();
    if(message_ != nullptr) message_->Shrink();
-}
-
-//==============================================================================
-
-fn_name TemplateParm_ctor1 = "TemplateParm.ctor";
-
-TemplateParm::TemplateParm(string& name, Cxx::ClassTag tag,
-   QualNamePtr& type, size_t ptrs, QualNamePtr& preset) :
-   tag_(tag),
-   type_(std::move(type)),
-   ptrs_(ptrs),
-   default_(std::move(preset))
-{
-   Debug::ft(TemplateParm_ctor1);
-
-   std::swap(name_, name);
-   CxxStats::Incr(CxxStats::TEMPLATE_PARM);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name TemplateParm_Check = "TemplateParm.Check";
-
-void TemplateParm::Check() const
-{
-   Debug::ft(TemplateParm_Check);
-
-   if(type_ != nullptr) type_->Check();
-   if(default_ != nullptr) default_->Check();
-}
-
-//------------------------------------------------------------------------------
-
-void TemplateParm::Print(ostream& stream, const Flags& options) const
-{
-   if(tag_ != Cxx::ClassTag_N)
-      stream << tag_;
-   else
-      type_->Print(stream, options);
-
-   stream << SPACE << *Name();
-   if(ptrs_ > 0) stream << string(ptrs_, '*');
-
-   if(default_ != nullptr)
-   {
-      stream << " = ";
-      default_->Print(stream, options);
-   }
-}
-
-//------------------------------------------------------------------------------
-
-void TemplateParm::Shrink()
-{
-   name_.shrink_to_fit();
-   CxxStats::Strings(CxxStats::TEMPLATE_PARM, name_.capacity());
-}
-
-//------------------------------------------------------------------------------
-
-string TemplateParm::TypeString(bool arg) const
-{
-   auto ts = *Name();
-   if(ptrs_ > 0) ts += string(ptrs_, '*');
-   return ts;
 }
 
 //==============================================================================
@@ -3184,7 +3141,7 @@ bool TypeName::HasTemplateParmFor(const CxxScope* scope) const
 
 fn_name TypeName_Instantiating = "TypeName.Instantiating";
 
-void TypeName::Instantiating() const
+void TypeName::Instantiating(CxxScopedVector& locals) const
 {
    Debug::ft(TypeName_Instantiating);
 
@@ -3192,7 +3149,7 @@ void TypeName::Instantiating() const
    {
       for(auto a = args_->cbegin(); a != args_->cend(); ++a)
       {
-         (*a)->Instantiating();
+         (*a)->Instantiating(locals);
       }
    }
 }
@@ -3418,6 +3375,24 @@ void TypeName::SetReferent(CxxScoped* item, const SymbolView* view) const
 
 //------------------------------------------------------------------------------
 
+fn_name TypeName_SetTemplateArgs = "TypeName.SetTemplateArgs";
+
+void TypeName::SetTemplateArgs(const TemplateParms* tparms)
+{
+   Debug::ft(TypeName_SetTemplateArgs);
+
+   auto parms = tparms->Parms();
+
+   for(auto p = parms->cbegin(); p != parms->cend(); ++p)
+   {
+      TypeSpecPtr spec(new DataSpec((*p)->Name()->c_str()));
+      spec->CopyContext(this);
+      AddTemplateArg(spec);
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name TypeName_SetTemplateRole = "TypeName.SetTemplateRole";
 
 void TypeName::SetTemplateRole(TemplateRole role) const
@@ -3610,7 +3585,7 @@ bool TypeSpec::HasArrayDefn() const
 
 //------------------------------------------------------------------------------
 
-void TypeSpec::Instantiating() const
+void TypeSpec::Instantiating(CxxScopedVector& locals) const
 {
    Debug::SwLog(TypeSpec_PureVirtualFunction, "Instantiating", 0);
 }
@@ -3656,8 +3631,6 @@ TypeMatch TypeSpec::MustMatchWith(const StackArg& that) const
 {
    Debug::ft(TypeSpec_MustMatchWith);
 
-   if(GetTemplateRole() == TemplateParameter) return Compatible;
-
    auto thisType = this->TypeString(true);
    auto thatType = that.TypeString(true);
    auto match = ResultType().CalcMatchWith(that, thisType, thatType);
@@ -3671,7 +3644,7 @@ TypeMatch TypeSpec::MustMatchWith(const StackArg& that) const
    {
       if((*this->Name() == BOOL_STR) || that.IsBool())
       {
-         GetFile()->LogPos(Context::GetPos(), BoolMixedWithNumeric);
+         Context::Log(BoolMixedWithNumeric);
       }
    }
 

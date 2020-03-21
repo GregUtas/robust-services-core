@@ -254,10 +254,10 @@ void Context::InsertTracepoint
 string Context::Location()
 {
    auto parser = GetParser();
-   if(parser == nullptr) return "[at unknown location]";
+   if(parser == nullptr) return "unknown location";
 
    std::ostringstream stream;
-   stream << " [" << parser->GetVenue();
+   stream << parser->GetVenue();
    stream << ", line " << parser->GetLineNum(GetPos()) + 1;
 
    if(parser->GetSourceType() == Parser::IsFile)
@@ -275,7 +275,6 @@ string Context::Location()
       }
    }
 
-   stream << ']';
    return stream.str();
 }
 
@@ -379,7 +378,6 @@ void Context::Reset()
    File_ = nullptr;
    CheckPos_ = false;
    Block::ResetUsings();
-   Singleton< CxxSymbols >::Instance()->EraseLocals();
 }
 
 //------------------------------------------------------------------------------
@@ -510,7 +508,7 @@ void Context::SwLog
    }
 
    LastLogLoc_ = loc;
-   auto info = expl + loc;
+   auto info = loc + ": " + expl;
    Trace(CxxTrace::ERROR, errval, info);
    if(Tracing && (level == SwInfo)) return;  //@
    Debug::SwLog(func, info, errval, level);
@@ -729,6 +727,17 @@ void ParseFrame::Clear(word from)
 
 //------------------------------------------------------------------------------
 
+fn_name ParseFrame_EraseLocal = "ParseFrame.EraseLocal";
+
+void ParseFrame::EraseLocal(const CxxScoped* local)
+{
+   Debug::ft(ParseFrame_EraseLocal);
+
+   EraseSymbol(local, locals_);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name ParseFrame_Execute = "ParseFrame.Execute";
 
 void ParseFrame::Execute()
@@ -750,6 +759,77 @@ void ParseFrame::Execute()
       if(top->Op() == Cxx::START_OF_EXPRESSION) return;
       top->Execute();
    }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name ParseFrame_FindLocal = "ParseFrame.FindLocal";
+
+CxxScoped* ParseFrame::FindLocal(const string& name, SymbolView* view) const
+{
+   Debug::ft(ParseFrame_FindLocal);
+
+   SymbolVector list;
+
+   //  Start by looking for a terminal.
+   //
+   Singleton< CxxSymbols >::Instance()->FindTerminal(name, list);
+
+   if(!list.empty())
+   {
+      *view = DeclaredGlobally;
+      return list.front();
+   }
+
+   //  Look for a local that matches NAME.
+   //
+   ListSymbols(name, locals_, list);
+
+   if(!list.empty())
+   {
+      *view = DeclaredLocally;
+
+      if(list.size() > 1)
+      {
+         auto idx = FindNearestItem(list);
+         if(idx != SIZE_MAX) return list[idx];
+         auto expl = name + " has more than one definition";
+         Context::SwLog(ParseFrame_FindLocal, expl, list.size());
+      }
+
+      return list.front();
+   }
+
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name ParseFrame_InsertLocal = "ParseFrame.InsertLocal";
+
+void ParseFrame::InsertLocal(CxxScoped* local)
+{
+   Debug::ft(ParseFrame_InsertLocal);
+
+   typedef std::pair< string, CxxScoped* > LocalPair;
+
+   //  Delete any item with the same name that is defined in the same block.
+   //
+   auto name = local->Name();
+   auto scope = local->GetScope();
+   SymbolVector list;
+
+   ListSymbols(*name, locals_, list);
+
+   for(auto s = list.cbegin(); s != list.cend(); ++s)
+   {
+      if((*s)->GetScope() == scope)
+      {
+         EraseLocal(*s);
+      }
+   }
+
+   locals_.insert(LocalPair(Normalize(*name), local));
 }
 
 //------------------------------------------------------------------------------
@@ -933,6 +1013,7 @@ void ParseFrame::Reset()
    Debug::ft(ParseFrame_Reset);
 
    opts_.clear();
+   locals_.clear();
    scopes_.clear();
    ops_.clear();
    args_.clear();

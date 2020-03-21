@@ -3362,11 +3362,11 @@ bool Parser::GetTemplateParm(TemplateParmPtr& parm)
 
    auto ptrs = GetPointers();
 
-   QualNamePtr preset;
+   TypeSpecPtr preset;
 
    if(lexer_.NextCharIs('='))
    {
-      if(!GetQualName(preset)) return Backup(start, 191);
+      if(!GetTypeSpec(preset)) return Backup(start, 191);
    }
 
    parm.reset(new TemplateParm(argName, tag, type, ptrs, preset));

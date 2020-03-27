@@ -1052,9 +1052,7 @@ EventHandler::Rc TestNuVerify::ProcessEvent
    //  Create the UPSM and enter the Active state.
    //
    auto& tssm = static_cast< TestSsm& >(ssm);
-   auto tpsm = new TestPsm;
-
-   if(tpsm == nullptr) return Suspend;
+   new TestPsm;
    tssm.SetNextState(TestState::Active);
    return Suspend;
 }

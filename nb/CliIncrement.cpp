@@ -77,7 +77,7 @@ bool CliIncrement::BindCommand(CliCommand& comm)
    //
    auto s = comm.Text();
 
-   if(strlen(s) == 0)
+   if(s[0] == NUL)
    {
       Debug::SwLog(CliIncrement_BindCommand, "null name", 0);
       return false;
@@ -99,7 +99,7 @@ bool CliIncrement::BindCommand(CliCommand& comm)
 
 ptrdiff_t CliIncrement::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const CliIncrement* >(&local);
    return ptrdiff(&fake->iid_, fake);
 }

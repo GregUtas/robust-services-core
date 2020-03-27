@@ -4624,6 +4624,7 @@ TcpIoThread.h
       NetworkBase.IoThread [IoThread.h]
    Direct usage:
       NodeBase.Array [Array.h]
+      NodeBase.word [SysTypes.h]
       size_t [cstddef]
    Indirect usage:
       NetworkBase.ipport_t [NwTypes.h]
@@ -5119,7 +5120,6 @@ CxxStrLiteral.h
       NodeBase.Singleton.Instance [Singleton.h]
       size_t [cstddef]
       std.allocator [memory]
-      std.basic_ostream [ostream]
       std.basic_ostream.operator<<(char) [ostream]
       std.basic_string [string]
       std.basic_string.append(const basic_string&) [string]
@@ -7843,6 +7843,7 @@ MutexGuard.cpp
       NodeBase.Debug.Assert [Debug.h]
       NodeBase.Debug.ft [Debug.h]
       NodeBase.MutexGuard.MutexGuard(SysMutex*) [MutexGuard.h]
+      NodeBase.MutexGuard.Release [MutexGuard.h]
       NodeBase.MutexGuard.mutex_ [MutexGuard.h]
       NodeBase.MutexGuard.~MutexGuard [MutexGuard.h]
       NodeBase.SysMutex [SysMutex.h]
@@ -8059,6 +8060,7 @@ FunctionStats.cpp
       std.basic_string [string]
       std.setw [iomanip]
       strcmp [cstring]
+      uintptr_t [cstdint]
    Add a using statement for
       NodeBase
 CodeSet.cpp
@@ -8131,6 +8133,7 @@ MscContextPair.cpp
       std.basic_ostream.operator<<(const char*) [ostream]
       std.basic_ostream.operator<<(const void*) [ostream]
       std.basic_string [string]
+      uintptr_t [cstdint]
    Add a using statement for
       NodeBase
 Location.cpp
@@ -8330,12 +8333,14 @@ FunctionGuard.cpp
    Base usage:
       NodeBase.FunctionGuard [FunctionGuard.h]
    Direct usage:
+      NodeBase.Debug.SwLog(fn_name_arg,debug64_t,debug64_t,SwLogLevel) [Debug.h]
       NodeBase.Debug.ft [Debug.h]
       NodeBase.FunctionGuard.First.MakePreemptable [FunctionGuard.h]
       NodeBase.FunctionGuard.First.MakeUnpreemptable [FunctionGuard.h]
       NodeBase.FunctionGuard.First.MemUnprotect [FunctionGuard.h]
       NodeBase.FunctionGuard.First.NilFunction [FunctionGuard.h]
       NodeBase.FunctionGuard.FunctionGuard(First,bool) [FunctionGuard.h]
+      NodeBase.FunctionGuard.Release [FunctionGuard.h]
       NodeBase.FunctionGuard.first_ [FunctionGuard.h]
       NodeBase.FunctionGuard.~FunctionGuard [FunctionGuard.h]
       NodeBase.ThisThread.MakePreemptable [ThisThread.h]
@@ -9707,6 +9712,7 @@ Alarm.cpp
       std.basic_string [string]
       std.basic_string.c_str [string]
       std.basic_string.size [string]
+      uintptr_t [cstdint]
 AlarmRegistry.cpp
    Base usage:
       NodeBase.AlarmRegistry [AlarmRegistry.h]
@@ -9812,6 +9818,7 @@ CfgParm.cpp
       std.basic_ostringstream [sstream]
       std.basic_string [string]
       std.basic_string.c_str [string]
+      uintptr_t [cstdint]
 CfgParmRegistry.cpp
    Base usage:
       NodeBase.CfgParmRegistry [CfgParmRegistry.h]
@@ -9966,6 +9973,7 @@ CfgTuple.cpp
       std.basic_string.find_first_not_of(const basic_string&,size_t) const [string]
       std.basic_string.npos [string]
       std.string [string]
+      uintptr_t [cstdint]
 Class.cpp
    Base usage:
       NodeBase.Class [Class.h]
@@ -10036,6 +10044,7 @@ Class.cpp
       std.unique_ptr.get [memory]
       std.unique_ptr.release [memory]
       std.unique_ptr.reset [memory]
+      uintptr_t [cstdint]
 ClassRegistry.cpp
    Base usage:
       NodeBase.ClassRegistry [ClassRegistry.h]
@@ -10329,6 +10338,7 @@ FunctionTrace.cpp
       NodeBase.FunctionTrace.operator new(size_t,void*) [FunctionTrace.h]
       NodeBase.FunctionTracer [ToolTypes.h]
       NodeBase.NIL_ID [SysTypes.h]
+      NodeBase.NUL [SysTypes.h]
       NodeBase.NoCtorRelocation [TraceRecord.h]
       NodeBase.NoTimeData [TraceRecord.h]
       NodeBase.Singleton.Instance [Singleton.h]
@@ -10396,7 +10406,6 @@ FunctionTrace.cpp
       std.vector.push_back [vector]
       std.vector.size [vector]
       strcmp [cstring]
-      strlen [cstring]
       strstr [cstring]
 LogGroup.cpp
    Base usage:
@@ -10461,6 +10470,7 @@ LogGroup.cpp
       std.basic_string [string]
       std.basic_string.c_str [string]
       std.basic_string.size [string]
+      uintptr_t [cstdint]
    Forward usage:
       NodeBase.Log [LogGroup.h]
 Memory.cpp
@@ -10586,6 +10596,7 @@ Module.cpp
       std.basic_ostream.operator<<(char) [ostream]
       std.basic_ostream.operator<<(const char*) [ostream]
       std.basic_string [string]
+      uintptr_t [cstdint]
 ModuleRegistry.cpp
    Base usage:
       NodeBase.ModuleRegistry [ModuleRegistry.h]
@@ -11117,6 +11128,7 @@ ObjectPool.cpp
       std.unique_ptr.release [memory]
       std.unique_ptr.reset [memory]
       uint8_t [cstdint]
+      uintptr_t [cstdint]
    Forward usage:
       NodeBase.ObjectPoolStats [ObjectPool.h]
       NodeBase.Pooled [ObjectPool.h]
@@ -11204,6 +11216,7 @@ Pooled.cpp
       std.basic_ostream.operator<<(const char*) [ostream]
       std.basic_ostream.operator<<(int) [ostream]
       std.basic_string [string]
+      uintptr_t [cstdint]
 PooledClass.cpp
    Base usage:
       NodeBase.PooledClass [PooledClass.h]
@@ -11293,6 +11306,7 @@ PosixSignal.cpp
       std.basic_string [string]
       std.bitset [bitset]
       std.bitset.test [bitset]
+      uintptr_t [cstdint]
 PosixSignalRegistry.cpp
    Base usage:
       NodeBase.PosixSignalRegistry [PosixSignalRegistry.h]
@@ -11454,6 +11468,7 @@ Statistics.cpp
       std.bitset [bitset]
       std.bitset.test [bitset]
       std.setw [iomanip]
+      uintptr_t [cstdint]
 StatisticsGroup.cpp
    Base usage:
       NodeBase.StatisticsGroup [StatisticsGroup.h]
@@ -11494,6 +11509,7 @@ StatisticsGroup.cpp
       std.basic_string [string]
       std.basic_string.c_str [string]
       std.basic_string.size [string]
+      uintptr_t [cstdint]
 StatisticsRegistry.cpp
    Base usage:
       NodeBase.StatisticsRegistry [StatisticsRegistry.h]
@@ -11592,6 +11608,7 @@ Symbol.cpp
       std.basic_string [string]
       std.basic_string.c_str [string]
       std.string [string]
+      uintptr_t [cstdint]
 SymbolRegistry.cpp
    Base usage:
       NodeBase.SymbolRegistry [SymbolRegistry.h]
@@ -11671,6 +11688,7 @@ SysMutex.cpp
       std.basic_ostream.operator<<(const void*) [ostream]
       std.basic_ostream.operator<<(unsigned int) [ostream]
       std.basic_string [string]
+      uintptr_t [cstdint]
 SysMutex.win.cpp
    Base usage:
       NodeBase.SysMutex [SysMutex.h]
@@ -11935,6 +11953,7 @@ Tool.cpp
       std.basic_ostream.operator<<(const char*) [ostream]
       std.basic_ostream.operator<<(unsigned int) [ostream]
       std.basic_string [string]
+      uintptr_t [cstdint]
 ToolRegistry.cpp
    Base usage:
       NodeBase.ToolRegistry [ToolRegistry.h]
@@ -11993,6 +12012,7 @@ TraceBuffer.cpp
       NodeBase.Debug.SwLog(fn_name_arg,debug64_t,debug64_t,SwLogLevel) [Debug.h]
       NodeBase.Debug.TraceOn [Debug.h]
       NodeBase.Debug.ft [Debug.h]
+      NodeBase.EMPTY_STR [SysTypes.h]
       NodeBase.Element.Name [Element.h]
       NodeBase.Element.OutputPath [Element.h]
       NodeBase.Flags [SysTypes.h]
@@ -12629,6 +12649,7 @@ Factory.cpp
       std.unique_ptr [memory]
       std.unique_ptr.release [memory]
       std.unique_ptr.reset [memory]
+      uintptr_t [cstdint]
    Forward usage:
       SessionBase.FactoryStats [Factory.h]
 FactoryRegistry.cpp
@@ -12810,6 +12831,7 @@ Parameter.cpp
       std.basic_string [string]
       std.bitset [bitset]
       std.bitset.test [bitset]
+      uintptr_t [cstdint]
 Protocol.cpp
    Base usage:
       SessionBase.Protocol [Protocol.h]
@@ -12877,6 +12899,7 @@ Protocol.cpp
       std.basic_ostream.operator<<(const char*) [ostream]
       std.basic_ostream.operator<<(unsigned short) [ostream]
       std.basic_string [string]
+      uintptr_t [cstdint]
    Forward usage:
       SessionBase.Parameter [Protocol.h]
       SessionBase.Signal [Protocol.h]
@@ -13106,6 +13129,7 @@ Service.cpp
       std.basic_ostream.operator<<(const char*) [ostream]
       std.basic_ostream.operator<<(int) [ostream]
       std.basic_string [string]
+      uintptr_t [cstdint]
    Forward usage:
       SessionBase.Trigger [SbTypes.h]
 ServiceRegistry.cpp
@@ -13183,6 +13207,7 @@ Signal.cpp
       std.basic_string [string]
       std.bitset [bitset]
       std.bitset.test [bitset]
+      uintptr_t [cstdint]
 State.cpp
    Base usage:
       SessionBase.State [State.h]
@@ -13261,6 +13286,7 @@ State.cpp
       std.basic_string [string]
       std.bitset [bitset]
       std.bitset.test [bitset]
+      uintptr_t [cstdint]
 Trigger.cpp
    Base usage:
       SessionBase.Trigger [Trigger.h]
@@ -13356,6 +13382,7 @@ MscContext.cpp
       std.basic_ostream.operator<<(unsigned short) [ostream]
       std.basic_string [string]
       std.basic_string.push_back [string]
+      uintptr_t [cstdint]
    Add a using statement for
       NodeBase
       SessionBase
@@ -13402,6 +13429,7 @@ PotsFeature.cpp
       std.basic_ostream.operator<<(char) [ostream]
       std.basic_ostream.operator<<(const char*) [ostream]
       std.basic_string [string]
+      uintptr_t [cstdint]
    Add a using statement for
       NodeBase
 PotsFeatureProfile.cpp
@@ -13438,6 +13466,7 @@ PotsFeatureProfile.cpp
       std.basic_ostream.operator<<(const char*) [ostream]
       std.basic_ostream.operator<<(int) [ostream]
       std.basic_string [string]
+      uintptr_t [cstdint]
    Add a using statement for
       NodeBase
 PotsFeatureRegistry.cpp
@@ -13598,7 +13627,7 @@ CinThread.cpp
       NodeBase.Faction.OperationsFaction [NbTypes.h]
       NodeBase.FunctionGuard [FunctionGuard.h]
       NodeBase.FunctionGuard.First.MakeUnpreemptable [FunctionGuard.h]
-      NodeBase.FunctionGuard.~FunctionGuard [FunctionGuard.h]
+      NodeBase.FunctionGuard.Release [FunctionGuard.h]
       NodeBase.Memory.Copy [Memory.h]
       NodeBase.NUL [SysTypes.h]
       NodeBase.Object.Patch [Object.h]
@@ -13799,6 +13828,7 @@ CliBuffer.cpp
       std.basic_string.front() const [string]
       std.basic_string.size [string]
       std.ostringstream [iosfwd]
+      std.streamsize [ios]
       std.string [string]
       tolower [cctype]
 CliCharParm.cpp
@@ -13942,6 +13972,7 @@ CliIncrement.cpp
       NodeBase.Debug.SwLog(fn_name_arg,debug64_t,debug64_t,SwLogLevel) [Debug.h]
       NodeBase.Debug.ft [Debug.h]
       NodeBase.MemoryType.MemProt [SysTypes.h]
+      NodeBase.NUL [SysTypes.h]
       NodeBase.Object.Patch [Object.h]
       NodeBase.Protected [Protected.h]
       NodeBase.RegCell [RegCell.h]
@@ -13961,6 +13992,7 @@ CliIncrement.cpp
       std.basic_ostream.operator<<(const char*) [ostream]
       std.basic_string [string]
       strlen [cstring]
+      uintptr_t [cstdint]
    Forward usage:
       NodeBase.CliCommand [CliIncrement.h]
 CliIntParm.cpp
@@ -14101,6 +14133,7 @@ CliParm.cpp
       std.ostringstream [iosfwd]
       std.string [string]
       strlen [cstring]
+      uintptr_t [cstdint]
 CliPtrParm.cpp
    Base usage:
       NodeBase.CliPtrParm [CliPtrParm.h]
@@ -14188,6 +14221,7 @@ CliText.cpp
       NodeBase.Debug.ft [Debug.h]
       NodeBase.EMPTY_STR [SysTypes.h]
       NodeBase.MemoryType.MemProt [SysTypes.h]
+      NodeBase.NUL [SysTypes.h]
       NodeBase.Object.Patch [Object.h]
       NodeBase.Registry [Registry.h]
       NodeBase.Registry.At [Registry.h]
@@ -14209,7 +14243,6 @@ CliText.cpp
       std.basic_string.empty [string]
       std.string [string]
       strcmp [cstring]
-      strlen [cstring]
 CliTextParm.cpp
    Base usage:
       NodeBase.CliTextParm [CliTextParm.h]
@@ -14272,6 +14305,7 @@ CliTextParm.cpp
       NodeBase.Debug.SwLog(fn_name_arg,debug64_t,debug64_t,SwLogLevel) [Debug.h]
       NodeBase.Debug.ft [Debug.h]
       NodeBase.MemoryType.MemProt [SysTypes.h]
+      NodeBase.NUL [SysTypes.h]
       NodeBase.Object.Patch [Object.h]
       NodeBase.Registry [Registry.h]
       NodeBase.Registry.At [Registry.h]
@@ -14449,6 +14483,7 @@ Daemon.cpp
       std.set.size [set]
       std.string [string]
       std.to_string(int) [string]
+      uintptr_t [cstdint]
    Forward usage:
       NodeBase.Thread [Daemon.h]
 Debug.cpp
@@ -14543,7 +14578,7 @@ FileThread.cpp
       NodeBase.FileThread.~FileThread [FileThread.h]
       NodeBase.FunctionGuard [FunctionGuard.h]
       NodeBase.FunctionGuard.First.MakePreemptable [FunctionGuard.h]
-      NodeBase.FunctionGuard.~FunctionGuard [FunctionGuard.h]
+      NodeBase.FunctionGuard.Release [FunctionGuard.h]
       NodeBase.MsgBuffer.~MsgBuffer [MsgBuffer.h]
       NodeBase.MutexGuard [MutexGuard.h]
       NodeBase.Object.Patch [Object.h]
@@ -14786,6 +14821,7 @@ Log.cpp
       std.string [string]
       std.unique_ptr [memory]
       std.unique_ptr.reset [memory]
+      uintptr_t [cstdint]
 LogBuffer.cpp
    Base usage:
       NodeBase.CallbackRequest [CallbackRequest.h]
@@ -14845,7 +14881,7 @@ LogBuffer.cpp
       NodeBase.Memory.Free [Memory.h]
       NodeBase.MemoryType.MemPerm [SysTypes.h]
       NodeBase.MutexGuard [MutexGuard.h]
-      NodeBase.MutexGuard.~MutexGuard [MutexGuard.h]
+      NodeBase.MutexGuard.Release [MutexGuard.h]
       NodeBase.NUL [SysTypes.h]
       NodeBase.Object.Patch [Object.h]
       NodeBase.Permanent [Permanent.h]
@@ -16037,6 +16073,7 @@ Thread.cpp
       toupper [cctype]
       uint32_t [cstdint]
       uint8_t [cstdint]
+      uintptr_t [cstdint]
    Indirect usage:
       NodeBase.Singleton [Singleton.h]
    Forward usage:
@@ -16340,7 +16377,7 @@ TestDatabase.cpp
       NodeBase.Element.InputPath [Element.h]
       NodeBase.FunctionGuard [FunctionGuard.h]
       NodeBase.FunctionGuard.First.MakePreemptable [FunctionGuard.h]
-      NodeBase.FunctionGuard.~FunctionGuard [FunctionGuard.h]
+      NodeBase.FunctionGuard.Release [FunctionGuard.h]
       NodeBase.PATH_SEPARATOR [SysTypes.h]
       NodeBase.SPACE [SysTypes.h]
       NodeBase.SuccessExpl [NbCliParms.h]
@@ -16604,6 +16641,7 @@ CodeDir.cpp
       std.basic_string [string]
       std.basic_string.c_str [string]
       std.string [string]
+      uintptr_t [cstdint]
 CodeDirSet.cpp
    Base usage:
       CodeTools.CodeDirSet [CodeDirSet.h]
@@ -16891,6 +16929,7 @@ LibrarySet.cpp
       std.string [string]
       std.to_string(int) [string]
       uint8_t [cstdint]
+      uintptr_t [cstdint]
 InputHandler.cpp
    Base usage:
       NetworkBase.InputHandler [InputHandler.h]
@@ -17256,6 +17295,7 @@ Initiator.cpp
       std.basic_ostream.operator<<(const char*) [ostream]
       std.basic_ostream.operator<<(int) [ostream]
       std.basic_string [string]
+      uintptr_t [cstdint]
 InvokerThread.cpp
    Base usage:
       SessionBase.InvokerThread [InvokerThread.h]
@@ -17335,6 +17375,7 @@ InvokerThread.cpp
       std.unique_ptr.get [memory]
       std.unique_ptr.release [memory]
       std.unique_ptr.reset [memory]
+      uintptr_t [cstdint]
 SbDaemons.cpp
    Base usage:
       SessionBase.InvokerDaemon [SbDaemons.h]
@@ -17631,6 +17672,7 @@ Circuit.cpp
       std.basic_ostream.operator<<(const char*) [ostream]
       std.basic_ostream.operator<<(unsigned short) [ostream]
       std.basic_string [string]
+      uintptr_t [cstdint]
    Add a using statement for
       NodeBase
 MbPools.cpp
@@ -17745,6 +17787,7 @@ CliCommandSet.cpp
       NodeBase.CliThread.obuf [CliThread.h]
       NodeBase.Debug.SwLog(fn_name_arg,debug64_t,debug64_t,SwLogLevel) [Debug.h]
       NodeBase.Debug.ft [Debug.h]
+      NodeBase.NUL [SysTypes.h]
       NodeBase.NoCommandExpl [NbCliParms.h]
       NodeBase.Object.Patch [Object.h]
       NodeBase.Registry [Registry.h]
@@ -17762,7 +17805,6 @@ CliCommandSet.cpp
       std.basic_string [string]
       std.basic_string.empty [string]
       std.string [string]
-      strlen [cstring]
 CliThread.cpp
    Base usage:
       NodeBase.CliThread [CliThread.h]
@@ -19868,6 +19910,7 @@ IpPort.cpp
       std.unique_ptr.get [memory]
       std.unique_ptr.release [memory]
       std.unique_ptr.reset [memory]
+      uintptr_t [cstdint]
    Forward usage:
       NetworkBase.IpPortStats [IpPort.h]
 IpPortCfgParm.cpp
@@ -20053,6 +20096,7 @@ IpService.cpp
       std.basic_ostringstream [sstream]
       std.basic_string [string]
       std.string [string]
+      uintptr_t [cstdint]
 IpServiceRegistry.cpp
    Base usage:
       NetworkBase.IpServiceRegistry [IpServiceRegistry.h]
@@ -20541,6 +20585,7 @@ NtIncrement.cpp
       std.unique_ptr.get [memory]
       std.unique_ptr.release [memory]
       std.unique_ptr.reset [memory]
+      uintptr_t [cstdint]
    Indirect usage:
       NodeBase.Singleton [Singleton.h]
    Add a using statement for
@@ -21060,6 +21105,7 @@ CodeFile.cpp
       std.vector.size [vector]
       strlen [cstring]
       toupper [cctype]
+      uintptr_t [cstdint]
 CodeWarning.cpp
    Base usage:
       CodeTools.CodeWarning [CodeWarning.h]
@@ -22002,6 +22048,7 @@ CxxArea.cpp
       NodeBase.Debug.ft [Debug.h]
       NodeBase.EMPTY_STR [SysTypes.h]
       NodeBase.Flags [SysTypes.h]
+      NodeBase.NUL [SysTypes.h]
       NodeBase.SCOPE_STR [SysTypes.h]
       NodeBase.SPACE [SysTypes.h]
       NodeBase.Singleton.Instance [Singleton.h]
@@ -24651,6 +24698,7 @@ CxxToken.cpp
       CodeTools.Cxx.ItemType.Friend [Cxx.h]
       CodeTools.Cxx.ItemType.Function [Cxx.h]
       CodeTools.Cxx.ItemType.Operation [Cxx.h]
+      CodeTools.Cxx.ItemType.TemplateParm [Cxx.h]
       CodeTools.Cxx.ItemType.Terminal [Cxx.h]
       CodeTools.Cxx.ItemType.Typedef [Cxx.h]
       CodeTools.Cxx.Operator.ADD [Cxx.h]
@@ -25494,7 +25542,6 @@ Lexer.cpp
       std.set.insert [set]
       std.string [string]
       std.unique_ptr [memory]
-      std.unique_ptr.release [memory]
       std.unique_ptr.reset [memory]
       std.unordered_map [unordered_map]
       std.unordered_map.cend [unordered_map]
@@ -26091,7 +26138,6 @@ SysTcpSocket.win.cpp
       SO_KEEPALIVE [winsock2.h]
       WSAEWOULDBLOCK [winsock2.h]
       WSAPoll [winsock2.h]
-      WSA_NOT_ENOUGH_MEMORY [winsock2.h]
       accept [winsock2.h]
       connect [winsock2.h]
       getpeername [winsock2.h]
@@ -26806,6 +26852,7 @@ Tones.cpp
       std.basic_ostream.operator<<(char) [ostream]
       std.basic_ostream.operator<<(const char*) [ostream]
       std.basic_string [string]
+      uintptr_t [cstdint]
    Add a using statement for
       NodeBase
 AnalyzeSapEvent.cpp
@@ -27149,6 +27196,7 @@ InvokerPool.cpp
       std.unique_ptr [memory]
       std.unique_ptr.get [memory]
       std.unique_ptr.reset [memory]
+      uintptr_t [cstdint]
    Forward usage:
       SessionBase.InvokerPoolStats [InvokerPool.h]
       SessionBase.InvokerThread [SbTypes.h]
@@ -27600,6 +27648,7 @@ MscAddress.cpp
       std.basic_ostream.operator<<(const void*) [ostream]
       std.basic_ostream.operator<<(unsigned short) [ostream]
       std.basic_string [string]
+      uintptr_t [cstdint]
    Add a using statement for
       NodeBase
       SessionBase
@@ -30173,6 +30222,7 @@ Context.cpp
       std.basic_string [string]
       std.ostringstream [iosfwd]
       std.string [string]
+      uintptr_t [cstdint]
    Forward usage:
       SessionBase.Message [SbTypes.h]
 Event.cpp
@@ -30476,14 +30526,12 @@ PsmFactory.cpp
       NodeBase.Object.Patch [Object.h]
       NodeBase.fn_name [SysTypes.h]
       NodeBase.strOver [Debug.h]
-      SessionBase.Context.~Context [Context.h]
       SessionBase.Factory.AllocContext [Factory.h]
       SessionBase.Factory.Fid [Factory.h]
       SessionBase.Factory.GetFaction [Factory.h]
       SessionBase.Factory.IncrContexts [Factory.h]
       SessionBase.Factory.Rc.ContextNotFound [Factory.h]
       SessionBase.Factory.Rc.CtxAllocFailed [Factory.h]
-      SessionBase.Factory.Rc.PortAllocFailed [Factory.h]
       SessionBase.Factory.Rc.PortNotFound [Factory.h]
       SessionBase.Factory.ReceiveMsg [Factory.h]
       SessionBase.GlobalAddress [GlobalAddress.h]
@@ -30918,6 +30966,7 @@ Timer.cpp
       std.basic_ostream.operator<<(int) [ostream]
       std.basic_ostream.operator<<(unsigned int) [ostream]
       std.basic_string [string]
+      uintptr_t [cstdint]
 TimerProtocol.cpp
    Base usage:
       SessionBase.TimeoutInfo [TimerProtocol.h]
@@ -36329,6 +36378,7 @@ PotsProfile.cpp
       std.unique_ptr.get [memory]
       std.unique_ptr.release [memory]
       std.unique_ptr.reset [memory]
+      uintptr_t [cstdint]
    Forward usage:
       PotsBase.PotsFeatureProfile [PotsFeature.h]
    Add a using statement for
@@ -39113,6 +39163,7 @@ PotsTreatments.cpp
       std.basic_string [string]
       std.bitset [bitset]
       std.bitset.test [bitset]
+      uintptr_t [cstdint]
    Forward usage:
       PotsBase.PotsTreatment [PotsTreatments.h]
    Add a using statement for
@@ -39541,6 +39592,7 @@ PotsTrafficThread.cpp
       std.ostream [iosfwd]
       std.setw [iomanip]
       std.string [string]
+      uintptr_t [cstdint]
    Indirect usage:
       NodeBase.Singleton [Singleton.h]
    Add a using statement for

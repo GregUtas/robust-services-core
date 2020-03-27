@@ -42,6 +42,7 @@ public:
    //  Deleted to prohibit assignment.
    //
    Exception& operator=(const Exception& that) = delete;
+   Exception& operator=(const Exception&& that) = delete;
 
    //  Outputs information about the exception in STREAM.  INDENT specifies
    //  how far to indent the output.  The implementation provided here does

@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "MscContextPair.h"
+#include <cstdint>
 #include <ostream>
 #include <string>
 #include "Algorithms.h"
@@ -88,7 +89,7 @@ bool MscContextPair::IsEqualTo
 
 ptrdiff_t MscContextPair::LinkDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const MscContextPair* >(&local);
    return ptrdiff(&fake->link_, fake);
 }

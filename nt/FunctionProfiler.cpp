@@ -126,7 +126,7 @@ FunctionStats* FunctionProfiler::EnsureRecord(fn_name_arg func, size_t count)
 {
    Debug::ft(FunctionProfiler_EnsureRecord);
 
-   auto index = (stringHash(func) & HashMask);
+   size_t index = (stringHash(func) & HashMask);
    auto fsq = &functionq_[index];
 
    //  Search the hash location to see if an entry for this function

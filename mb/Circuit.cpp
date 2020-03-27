@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Circuit.h"
+#include <cstdint>
 #include <ostream>
 #include "Algorithms.h"
 #include "Debug.h"
@@ -57,7 +58,7 @@ Circuit::~Circuit()
 
 ptrdiff_t Circuit::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const Circuit* >(&local);
    return ptrdiff(&fake->port_, fake);
 }

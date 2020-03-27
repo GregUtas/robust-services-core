@@ -600,7 +600,6 @@ Parameter::TestRc PotsFacilityParameter::InjectMsg
    case CliParm::None:
       if(use == Mandatory) return StreamMissingMandatoryParm;
       return Ok;
-      break;
    case CliParm::Ok:
       break;
    default:
@@ -614,7 +613,6 @@ Parameter::TestRc PotsFacilityParameter::InjectMsg
    case CliParm::None:
       if(use == Mandatory) return StreamMissingMandatoryParm;
       return Ok;
-      break;
    case CliParm::Ok:
       break;
    default:

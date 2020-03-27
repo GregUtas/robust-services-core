@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "StatisticsGroup.h"
+#include <cstdint>
 #include <ostream>
 #include "Algorithms.h"
 #include "Debug.h"
@@ -74,7 +75,7 @@ StatisticsGroup::~StatisticsGroup()
 
 ptrdiff_t StatisticsGroup::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const StatisticsGroup* >(&local);
    return ptrdiff(&fake->gid_, fake);
 }

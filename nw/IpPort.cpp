@@ -21,6 +21,7 @@
 //
 #include "IpPort.h"
 #include "Dynamic.h"
+#include <cstdint>
 #include <ostream>
 #include "Alarm.h"
 #include "AlarmRegistry.h"
@@ -296,7 +297,7 @@ void IpPort::InvalidDiscarded() const
 
 ptrdiff_t IpPort::LinkDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const IpPort* >(&local);
    return ptrdiff(&fake->link_, fake);
 }

@@ -20,7 +20,6 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CliCommandSet.h"
-#include <cstring>
 #include <sstream>
 #include <string>
 #include "CliBuffer.h"
@@ -69,7 +68,7 @@ bool CliCommandSet::BindCommand(CliCommand& comm)
    //
    auto s = comm.Text();
 
-   if(strlen(s) == 0)
+   if(s[0] == NUL)
    {
       Debug::SwLog(CliCommandSet_BindCommand, "null name", 0);
       return false;

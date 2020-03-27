@@ -58,7 +58,6 @@ IpBuffer* SbExtInputHandler::AllocBuff(const byte_t* source,
    Debug::ft(SbExtInputHandler_AllocBuff);
 
    auto buff = new SbIpBuffer(MsgIncoming, size);
-   if(buff == nullptr) return nullptr;
    dest = buff->PayloadPtr();
    return buff;
 }

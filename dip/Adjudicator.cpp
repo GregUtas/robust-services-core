@@ -1558,8 +1558,7 @@ ProvinceId MapAndUnits::find_dislodger
    //  The strongest attack advances if it has more support than the
    //  second strongest.
    //
-   if((most_supports_to_dislodge <= second_most_supports) ||
-      (most_supports_to_dislodge <= 0))  // <f>
+   if(most_supports_to_dislodge <= second_most_supports)  // <f>
    {
       return NIL_PROVINCE;
    }

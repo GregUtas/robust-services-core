@@ -110,9 +110,10 @@ CliParm::Rc CliCharParm::GetCharParmRc(char& c, CliThread& cli) const
       //  A string was found.  See if its first character matches one of
       //  those in our list.
       //
+      auto n = strlen(chars_);
       c = s.front();
 
-      for(size_t i = 0; i < strlen(chars_); ++i)
+      for(size_t i = 0; i < n; ++i)
       {
          if(chars_[i] == c)
          {

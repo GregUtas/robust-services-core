@@ -123,7 +123,7 @@ MemoryType Object::MemType() const
 
 fn_name Object_MorphTo = "Object.MorphTo";
 
-void Object::MorphTo(Class& target)
+void Object::MorphTo(const Class& target)
 {
    Debug::ft(Object_MorphTo);
 

@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Module.h"
+#include <cstdint>
 #include <ostream>
 #include <string>
 #include "Algorithms.h"
@@ -61,7 +62,7 @@ Module::~Module()
 
 ptrdiff_t Module::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const Module* >(&local);
    return ptrdiff(&fake->mid_, fake);
 }

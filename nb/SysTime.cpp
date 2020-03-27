@@ -300,7 +300,7 @@ int32_t SysTime::MsecsUntil(const SysTime& time) const
    }
 
    auto diff = ms0 - ms1;
-   if(diff >= INT32_MIN) return diff;
+   if(diff <= INT32_MAX) return -diff;
    Debug::SwLog(SysTime_MsecsUntil, "underflow", diff);
    return INT32_MIN;
 }
@@ -392,9 +392,7 @@ c_string SysTime::strMonth() const
 
 c_string SysTime::strWeekDay() const
 {
-   auto wday = DayOfWeek();
-   if((wday >= 0) && (wday <= MaxWeekDay)) return WeekDayStrings[wday];
-   return WeekDayStrings[MaxWeekDay + 1];
+   return WeekDayStrings[DayOfWeek()];
 }
 
 //------------------------------------------------------------------------------

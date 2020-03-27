@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "LogGroup.h"
+#include <cstdint>
 #include <ostream>
 #include "Algorithms.h"
 #include "Debug.h"
@@ -109,7 +110,7 @@ bool LogGroup::BindLog(Log& log)
 
 ptrdiff_t LogGroup::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const LogGroup* >(&local);
    return ptrdiff(&fake->gid_, fake);
 }

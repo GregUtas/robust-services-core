@@ -203,7 +203,7 @@ CliParm::Rc CliText::GetTextParmRc(id_t& i, string& s, CliThread& cli) const
       //  A string was found.  See if it matches this parameter's text_
       //  string.  An empty text_ string accepts all string inputs.
       //
-      if((strlen(text_) == 0) || (s.compare(text_) == 0))
+      if((text_[0] == NUL) || (s.compare(text_) == 0))
       {
          i = 1;
          Descend(cli.Cookie());
@@ -235,8 +235,7 @@ CliParm::Rc CliText::GetTextParmRc(id_t& i, string& s, CliThread& cli) const
 
 c_string CliText::HelpText() const
 {
-   if(strlen(text_) > 0) return text_;
-   return AnyStringParm;
+   return (text_[0] != NUL ? text_ : AnyStringParm);
 }
 
 //------------------------------------------------------------------------------

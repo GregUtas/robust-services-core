@@ -200,7 +200,7 @@ ostringstreamPtr FileThread::CreateStream()
    Debug::ft(FileThread_CreateStream);
 
    ostringstreamPtr stream(new std::ostringstream);
-   if(stream != nullptr) *stream << std::boolalpha << std::nouppercase;
+   *stream << std::boolalpha << std::nouppercase;
    return stream;
 }
 
@@ -251,7 +251,7 @@ void FileThread::Enter()
       //  Now that the file has been written, run unpreemptably
       //  again before invoking any callback.
       //
-      guard.~FunctionGuard();
+      guard.Release();
       if(written != nullptr) written->Callback();
       name.reset();
       stream.reset();
@@ -313,23 +313,15 @@ void FileThread::Spool(const string& name,
    //  Forward the stream to our thread.
    //
    auto request = new FileRequest(name, trunc);
+   request->GiveStream(stream);
+   request->GiveCallback(written);
 
-   if(request != nullptr)
-   {
-      request->GiveStream(stream);
-      request->GiveCallback(written);
-
-      //  This function runs on the client thread, so it contends for our
-      //  message queue with our Enter function.  Although it's unlikely,
-      //  the client could be preemptable or of higher priority.
-      //
-      MutexGuard guard(&FileThreadMsgQLock_);
-      Singleton< FileThread >::Instance()->EnqMsg(*request);
-   }
-   else
-   {
-      stream.reset();
-   }
+   //  This function runs on the client thread, so it contends for our
+   //  message queue with our Enter function.  Although it's unlikely,
+   //  the client could be preemptable or of higher priority.
+   //
+   MutexGuard guard(&FileThreadMsgQLock_);
+   Singleton< FileThread >::Instance()->EnqMsg(*request);
 }
 
 //------------------------------------------------------------------------------
@@ -353,7 +345,6 @@ void FileThread::Spool(const string& name, const string& s, bool eol)
    Debug::ft(FileThread_Spool3);
 
    ostringstreamPtr stream(new std::ostringstream);
-   if(stream == nullptr) return;
    *stream << s;
    if(eol) *stream << CRLF;
 

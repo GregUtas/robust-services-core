@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "PotsFeatureProfile.h"
+#include <cstdint>
 #include <ostream>
 #include <string>
 #include "Algorithms.h"
@@ -93,7 +94,7 @@ void PotsFeatureProfile::Display(ostream& stream,
 
 ptrdiff_t PotsFeatureProfile::LinkDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const PotsFeatureProfile* >(&local);
    return ptrdiff(&fake->link_, fake);
 }

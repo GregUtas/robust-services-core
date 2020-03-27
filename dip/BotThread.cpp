@@ -190,7 +190,6 @@ void BotThread::ProcessEvent()
    wakeups_.erase(first);
 
    DipIpBufferPtr buff(new DipIpBuffer(MsgIncoming, DipHeaderSize));
-   if(buff == nullptr) return;
    auto msg = reinterpret_cast< BM_Message* >(buff->PayloadPtr());
    msg->header.signal = BM_MESSAGE;
    msg->header.spare = event;

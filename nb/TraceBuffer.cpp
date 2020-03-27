@@ -193,7 +193,8 @@ bool TraceBuffer::AllocBuffers(size_t n, bool ex)
    //
    if(n < MinSize) n = MinSize;
    if(n > MaxSize) n = MaxSize;
-   auto size = 1 << n;
+   size_t size = 1;
+   size <<= n;
 
    Memory::Free(buff_);
    buff_ = nullptr;
@@ -403,7 +404,7 @@ bool TraceBuffer::Insert(TraceRecord* record)
    //
    if(immediate_)
    {
-      if(record->Display(*stream_, false)) *stream_ << CRLF;
+      if(record->Display(*stream_, EMPTY_STR)) *stream_ << CRLF;
    }
 
    //  Delete the record if no slot is available.

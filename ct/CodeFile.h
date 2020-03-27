@@ -218,9 +218,9 @@ public:
    //    group 6: an internal file (one in quotes)
    //  Returns 0 if an error occurred.
    //
-   int CalcGroup(const CodeFile* file) const;
-   int CalcGroup(const std::string& fn) const;
-   int CalcGroup(const Include& incl) const;
+   size_t CalcGroup(const CodeFile* file) const;
+   size_t CalcGroup(const std::string& fn) const;
+   size_t CalcGroup(const Include& incl) const;
 
    //  Reads the file into code_ and preprocesses it.
    //

@@ -132,21 +132,12 @@ Factory::Rc PsmFactory::ReceiveMsg
             ctx = AllocContext();
             if(ctx == nullptr) return CtxAllocFailed;
             IncrContexts();
-
             port = new MsgPort(msg, *ctx);
-
-            if(port == nullptr)
-            {
-               delete ctx;
-               ctx = nullptr;
-               return PortAllocFailed;
-            }
          }
          else  // case (b)
          {
             if(ctx == nullptr) return ContextNotFound;
             port = new MsgPort(msg, *ctx);
-            if(port == nullptr) return PortAllocFailed;
          }
       }
       else  // case (c)

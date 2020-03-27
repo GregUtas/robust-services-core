@@ -1507,7 +1507,7 @@ bool Parser::GetCxxExpr(ExprPtr& expr, size_t end, bool force)
 
    if(expr->Empty())
    {
-      expr.release();
+      expr.reset();
       return Backup(start, 86);
    }
 
@@ -2805,7 +2805,7 @@ bool Parser::GetPreExpr(ExprPtr& expr, size_t end)
 
    if(expr->Empty())
    {
-      expr.release();
+      expr.reset();
       return Backup(start, 157);
    }
 

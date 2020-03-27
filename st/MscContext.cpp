@@ -95,7 +95,7 @@ bool MscContext::IsEqualTo(const void* rcvr, uint16_t cid) const
 
 ptrdiff_t MscContext::LinkDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const MscContext* >(&local);
    return ptrdiff(&fake->link_, fake);
 }

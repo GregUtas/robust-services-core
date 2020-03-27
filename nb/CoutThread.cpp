@@ -139,22 +139,14 @@ void CoutThread::Spool(ostringstreamPtr& stream)
    //  Forward the stream to our thread.
    //
    auto request = new StreamRequest;
+   request->GiveStream(stream);
 
-   if(request != nullptr)
-   {
-      request->GiveStream(stream);
-
-      //  This function runs on the client thread, so it contends for our
-      //  message queue with our Enter function.  Although it's unlikely,
-      //  the client could be preemptable or of higher priority.
-      //
-      MutexGuard guard(&CoutThreadMsgQLock_);
-      Singleton< CoutThread >::Instance()->EnqMsg(*request);
-   }
-   else
-   {
-      stream.reset();
-   }
+   //  This function runs on the client thread, so it contends for our
+   //  message queue with our Enter function.  Although it's unlikely,
+   //  the client could be preemptable or of higher priority.
+   //
+   MutexGuard guard(&CoutThreadMsgQLock_);
+   Singleton< CoutThread >::Instance()->EnqMsg(*request);
 }
 
 //------------------------------------------------------------------------------
@@ -166,7 +158,6 @@ void CoutThread::Spool(c_string s, bool eol)
    Debug::ft(CoutThread_Spool2);
 
    ostringstreamPtr stream(new std::ostringstream);
-   if(stream == nullptr) return;
    *stream << s;
    if(eol) *stream << CRLF;
    Spool(stream);

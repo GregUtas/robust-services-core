@@ -79,9 +79,6 @@ template< typename T > struct DynAllocator
    template< typename U > DynAllocator
       (const DynAllocator< U >& that) noexcept { }
 
-   template< typename U > DynAllocator& operator=
-      (const DynAllocator< U >& that) noexcept { }
-
    template< typename U > bool operator==
       (const DynAllocator< U >& that) const noexcept
    {
@@ -119,9 +116,6 @@ template< typename T > struct ImmAllocator
    ~ImmAllocator() = default;
 
    template< typename U > ImmAllocator
-      (const ImmAllocator< U >& that) noexcept { }
-
-   template< typename U > ImmAllocator& operator=
       (const ImmAllocator< U >& that) noexcept { }
 
    template< typename U > bool operator==
@@ -163,9 +157,6 @@ template< typename T > struct PermAllocator
    template< typename U > PermAllocator
       (const PermAllocator< U >& that) noexcept { }
 
-   template< typename U > PermAllocator& operator=
-      (const PermAllocator< U >& that) noexcept { }
-
    template< typename U > bool operator==
       (const PermAllocator< U >& that) const noexcept
    {
@@ -205,9 +196,6 @@ template< typename T > struct ProtAllocator
    template< typename U > ProtAllocator
       (const ProtAllocator< U >& that) noexcept { }
 
-   template< typename U > ProtAllocator& operator=
-      (const ProtAllocator< U >& that) noexcept { }
-
    template< typename U > bool operator==
       (const ProtAllocator< U >& that) const noexcept
    {
@@ -245,9 +233,6 @@ template< typename T > struct TempAllocator
    ~TempAllocator() = default;
 
    template< typename U > TempAllocator
-      (const TempAllocator< U >& that) noexcept { }
-
-   template< typename U > TempAllocator& operator=
       (const TempAllocator< U >& that) noexcept { }
 
    template< typename U > bool operator==

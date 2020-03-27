@@ -233,10 +233,12 @@ void ServiceSM::EndOfTransaction()
    //  Invoke EndOfTransaction on each modifier.  Delete a modifier that
    //  ends up in the Null state.
    //
-   for(auto mod = ssmq_.First(); mod != nullptr; ssmq_.Next(mod))
+   for(auto mod = ssmq_.First(); mod != nullptr; NO_OP)
    {
-      mod->EndOfTransaction();
-      if(mod->CurrState() == Null) delete mod;
+      auto curr = mod;
+      ssmq_.Next(mod);
+      curr->EndOfTransaction();
+      if(curr->CurrState() == Null) delete curr;
    }
 }
 

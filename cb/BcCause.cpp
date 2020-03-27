@@ -59,8 +59,7 @@ fixed_string CauseIndStrings[Cause::MaxInd + 2] =
 
 c_string Cause::strInd(Ind ind)
 {
-   if((ind >= 0) && (ind <= MaxInd)) return CauseIndStrings[ind];
-   return CauseIndStrings[MaxInd + 1];
+   return (ind <= MaxInd ? CauseIndStrings[ind] : CauseIndStrings[MaxInd + 1]);
 }
 
 //==============================================================================

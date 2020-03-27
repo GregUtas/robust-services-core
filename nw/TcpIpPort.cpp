@@ -63,8 +63,6 @@ SysTcpSocket* TcpIpPort::CreateAppSocket()
 {
    Debug::ft(TcpIpPort_CreateAppSocket);
 
-   auto rc = SysSocket::AllocFailed;
-
    //  If there is no I/O thread running on this port, create it after
    //  generating a log.
    //
@@ -81,8 +79,9 @@ SysTcpSocket* TcpIpPort::CreateAppSocket()
    //  Create the socket and register it with the I/O thread.
    //
    auto svc = static_cast< const TcpIpService* >(GetService());
+   auto rc = SysSocket::AllocFailed;
+
    SysTcpSocketPtr socket(new SysTcpSocket(NilIpPort, svc, rc));
-   if(socket == nullptr) return nullptr;
 
    if(rc != SysSocket::AllocOk)
    {
@@ -99,7 +98,6 @@ SysTcpSocket* TcpIpPort::CreateAppSocket()
    }
 
    if(!thread->InsertSocket(socket.get())) return nullptr;
-   rc = SysSocket::AllocOk;
    return socket.release();
 }
 

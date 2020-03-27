@@ -124,12 +124,7 @@ TokenMessage::~TokenMessage()
 
 Token TokenMessage::at(size_t index) const
 {
-   if((index >= length_) || (index < 0))
-   {
-      return TOKEN_END_OF_MESSAGE;
-   }
-
-   return message_[index];
+   return (index < length_ ? message_[index] : TOKEN_END_OF_MESSAGE);
 }
 
 //------------------------------------------------------------------------------
@@ -351,8 +346,7 @@ TokenMessage& TokenMessage::operator=(const TokenMessage& that)
 
 Token TokenMessage::operator[](size_t index) const
 {
-   if((index >= length_) || (index < 0)) return TOKEN_END_OF_MESSAGE;
-   return message_[index];
+   return (index < length_ ? message_[index] : TOKEN_END_OF_MESSAGE);
 }
 
 //------------------------------------------------------------------------------
@@ -508,7 +502,7 @@ bool TokenMessage::parm_is_single_token(size_t n) const
 {
    Debug::ft(TokenMessage_parm_is_single_token);
 
-   if((n >= parm_count_) || (n < 0)) return false;
+   if(n >= parm_count_) return false;
    find_parms();
    return ((parm_begins_[n + 1] - parm_begins_[n]) == 1);
 }
@@ -521,11 +515,7 @@ size_t TokenMessage::parm_start(size_t n) const
 {
    Debug::ft(TokenMessage_parm_start);
 
-   if((n >= parm_count_) || (n < 0))
-   {
-      return 0;
-   }
-
+   if(n >= parm_count_) return 0;
    find_parms();
 
    if(parm_begins_[n + 1] - parm_begins_[n] > 1)

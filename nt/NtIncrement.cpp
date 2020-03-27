@@ -30,6 +30,7 @@
 #include <cctype>
 #include <csignal>
 #include <cstddef>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <exception>
@@ -472,7 +473,6 @@ word NtSaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 
    FunctionTrace::Process(EMPTY_STR);
    std::unique_ptr< FunctionProfiler > fp(new FunctionProfiler);
-   if(fp == nullptr) return cli.Report(-7, AllocationError);
    rc = fp->Generate(*stream, sort);
    fp.reset();
 
@@ -1364,7 +1364,7 @@ void Q1WayItem::Display(ostream& stream,
 
 ptrdiff_t Q1WayItem::LinkDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const Q1WayItem* >(&local);
    return ptrdiff(&fake->link_, fake);
 }
@@ -1884,7 +1884,7 @@ void Q2WayItem::Display(ostream& stream,
 
 ptrdiff_t Q2WayItem::LinkDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const Q2WayItem* >(&local);
    return ptrdiff(&fake->link_, fake);
 }
@@ -2437,7 +2437,7 @@ RegistryItem::~RegistryItem()
 
 ptrdiff_t RegistryItem::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const RegistryItem* >(&local);
    return ptrdiff(&fake->rid_, fake);
 }

@@ -21,6 +21,7 @@
 //
 #include "PotsProfile.h"
 #include <bitset>
+#include <cstdint>
 #include <sstream>
 #include <string>
 #include "Algorithms.h"
@@ -81,7 +82,7 @@ PotsProfile::~PotsProfile()
 
 ptrdiff_t PotsProfile::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const PotsProfile* >(&local);
    return ptrdiff(&fake->dn_, fake);
 }

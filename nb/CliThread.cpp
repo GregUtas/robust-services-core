@@ -353,7 +353,7 @@ word CliThread::Execute(const string& input)
 {
    Debug::ft(CliThread_Execute);
 
-   auto result = -1;
+   word result = -1;
 
    Flush();
    auto rc = ibuf->PutLine(*this, input);

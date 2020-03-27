@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Alarm.h"
+#include <cstdint>
 #include <ostream>
 #include "AlarmRegistry.h"
 #include "Algorithms.h"
@@ -79,7 +80,7 @@ Alarm::~Alarm()
 
 ptrdiff_t Alarm::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const Alarm* >(&local);
    return ptrdiff(&fake->aid_, fake);
 }

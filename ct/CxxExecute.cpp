@@ -1634,7 +1634,7 @@ size_t StackArg::Ptrs(bool arrays) const
 
    if(item == nullptr) return 0;
    auto spec = item->GetTypeSpec();
-   size_t count = (spec == nullptr ? 0 : spec->Ptrs(arrays));
+   auto count = (spec == nullptr ? 0 : spec->Ptrs(arrays));
    count += ptrs_;
    if(count >= 0) return count;
 

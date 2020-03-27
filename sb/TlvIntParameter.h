@@ -73,7 +73,6 @@ protected:
       case NodeBase::CliParm::None:
          if(use == Mandatory) return StreamMissingMandatoryParm;
          return Ok;
-         break;
       case NodeBase::CliParm::Ok:
          break;
       default:

@@ -194,7 +194,7 @@ Message* Factory::AllocOgMsg(SignalId sid) const
 
 ptrdiff_t Factory::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const Factory* >(&local);
    return ptrdiff(&fake->fid_, fake);
 }

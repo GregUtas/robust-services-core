@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CodeDir.h"
+#include <cstdint>
 #include <ostream>
 #include "Algorithms.h"
 #include "CodeFile.h"
@@ -61,7 +62,7 @@ CodeDir::~CodeDir()
 
 ptrdiff_t CodeDir::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const CodeDir* >(&local);
    return ptrdiff(&fake->did_, fake);
 }

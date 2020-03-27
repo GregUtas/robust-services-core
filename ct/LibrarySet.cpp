@@ -277,7 +277,7 @@ bool LibrarySet::IsTemporary() const
 
 ptrdiff_t LibrarySet::LinkDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const LibrarySet* >(&local);
    return ptrdiff(&fake->link_, fake);
 }

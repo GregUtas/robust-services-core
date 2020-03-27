@@ -189,9 +189,6 @@ bool TcpIoThread::AllocateListener()
    auto rc = SysSocket::AllocFailed;
    SysTcpSocketPtr socket(new SysTcpSocket(port_, svc, rc));
 
-   if(socket == nullptr)
-      return RaiseAlarm(0);
-
    if(rc != SysSocket::AllocOk)
       return RaiseAlarm(socket->GetError());
 

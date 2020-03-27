@@ -312,13 +312,13 @@ public:
    //
    ticks_t out;
 
-   //  The thread being scheduled out.
-   //
-   ThreadId tid;
-
    //  The native identifier for the thread being scheduled out.
    //
    SysThreadId nid;
+
+   //  The thread being scheduled out.
+   //
+   ThreadId tid;
 
    //  Set if unpreemptable when scheduled out.
    //
@@ -330,8 +330,8 @@ public:
 ContextSwitch::ContextSwitch() :
    in(0),
    out(0),
-   tid(0),
    nid(0),
+   tid(0),
    locked (false)
 {
 }
@@ -1338,7 +1338,7 @@ void Thread::CauseTrap()
 
 ptrdiff_t Thread::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const Thread* >(&local);
    return ptrdiff(&fake->tid_, fake);
 }

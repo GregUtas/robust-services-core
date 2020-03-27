@@ -100,7 +100,7 @@ ostreamPtr SysFile::CreateOstream(const char* fileName, bool trunc)
 
    auto mode = (trunc ? std::ios::trunc : std::ios::app);
    ostreamPtr stream(new std::ofstream(fileName, mode));
-   if(stream != nullptr) *stream << std::boolalpha << std::nouppercase;
+   *stream << std::boolalpha << std::nouppercase;
    return stream;
 }
 

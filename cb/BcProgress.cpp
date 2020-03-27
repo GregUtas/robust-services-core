@@ -44,8 +44,8 @@ fixed_string ProgressIndStrings[Progress::MaxInd + 2] =
 
 c_string Progress::strInd(Ind ind)
 {
-   if((ind >= 0) && (ind <= MaxInd)) return ProgressIndStrings[ind];
-   return ProgressIndStrings[MaxInd + 1];
+   return (ind <= MaxInd ?
+      ProgressIndStrings[ind] : ProgressIndStrings[MaxInd + 1]);
 }
 
 //==============================================================================

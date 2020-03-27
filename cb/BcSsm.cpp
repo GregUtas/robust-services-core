@@ -136,8 +136,6 @@ CipMessage* BcSsm::BuildCipCpg(Progress::Ind progress)
    }
 
    auto msg = new CipMessage(nPsm_, 16);
-   if(msg == nullptr) return nullptr;
-
    ProgressInfo cpi;
 
    msg->SetSignal(CipSignal::CPG);
@@ -181,8 +179,6 @@ CipMessage* BcSsm::BuildCipIam()
    }
 
    auto iam = new CipMessage(nPsm_, 44);
-   if(iam == nullptr) return nullptr;
-
    iam->SetSignal(CipSignal::IAM);
    iam->SetPriority(EGRESS);
    iam->AddRoute(route_);
@@ -211,8 +207,6 @@ CipMessage* BcSsm::BuildCipRel(Cause::Ind cause)
    }
 
    auto msg = new CipMessage(nPsm_, 16);
-   if(msg == nullptr) return nullptr;
-
    CauseInfo cci;
 
    msg->SetSignal(CipSignal::REL);
@@ -339,8 +333,6 @@ EventHandler::Rc BcSsm::HandleLocalAlerting()
    }
 
    auto msg = new CipMessage(nPsm_, 16);
-   if(msg == nullptr) return EventHandler::Suspend;
-
    ProgressInfo cpi;
 
    msg->SetSignal(CipSignal::CPG);
@@ -377,8 +369,6 @@ EventHandler::Rc BcSsm::HandleLocalAnswer()
    }
 
    auto msg = new CipMessage(nPsm_, 16);
-   if(msg == nullptr) return EventHandler::Suspend;
-
    msg->SetSignal(CipSignal::ANM);
 
    if(uPsm_ == nullptr)

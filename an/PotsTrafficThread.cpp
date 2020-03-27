@@ -21,6 +21,7 @@
 //
 #include "PotsTrafficThread.h"
 #include "Dynamic.h"
+#include <cstdint>
 #include <iomanip>
 #include <sstream>
 #include "Algorithms.h"
@@ -484,7 +485,7 @@ void TrafficCall::EraseTerm()
 
 ptrdiff_t TrafficCall::LinkDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const TrafficCall* >(&local);
    return ptrdiff(&fake->link_, fake);
 }
@@ -589,7 +590,7 @@ msecs_t TrafficCall::ProcessDialing()
       return 0;
    }
 
-   if((rnd <= 5) || !orig_->CanDial())
+   if(!orig_->CanDial())
    {
       ReleaseOrig();
       return 0;
@@ -1091,7 +1092,7 @@ PotsTrafficThread::~PotsTrafficThread()
    {
       if(timewheel_ != nullptr)
       {
-         for(auto i = 0; i < NumOfSlots; ++i)
+         for(size_t i = 0; i < NumOfSlots; ++i)
          {
             timewheel_[i].Purge();
          }
@@ -1169,7 +1170,7 @@ void PotsTrafficThread::Enqueue(TrafficCall& call, msecs_t delay)
       return;
    }
 
-   auto incr = delay / MsecsPerTick;
+   size_t incr = delay / MsecsPerTick;
    if(incr == 0) incr = 1;
    if(incr >= NumOfSlots) incr = NumOfSlots - 1;
    auto nextSlot = currSlot_ + incr;
@@ -1440,7 +1441,7 @@ void PotsTrafficThread::SetRate(word rate)
    {
       //  Add N more circuits, with a minimum of 20, starting at DN.
       //
-      auto n = 20;
+      size_t n = 20;
 
       if(rate > 10)
       {

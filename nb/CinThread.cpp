@@ -182,7 +182,7 @@ std::streamsize CinThread::GetLine(char* buff, std::streamsize capacity)
    server->buff_[0] = NUL;
    server->size_ = 0;
    server->client_ = nullptr;
-   guard.~FunctionGuard();
+   guard.Release();
 
    server->Interrupt();
    return n - 1;

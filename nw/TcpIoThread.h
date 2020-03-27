@@ -173,7 +173,7 @@ private:
 
    //  The number of sockets with events that still need to be serviced.
    //
-   size_t ready_;
+   NodeBase::word ready_;
 
    //  The socket currently being serviced (used to index sockets_).
    //

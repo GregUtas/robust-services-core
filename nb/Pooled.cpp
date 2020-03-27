@@ -116,7 +116,7 @@ void Pooled::Display(ostream& stream,
 
 ptrdiff_t Pooled::LinkDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const Pooled* >(&local);
    return ptrdiff(&fake->link_, fake);
 }

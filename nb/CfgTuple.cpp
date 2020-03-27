@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CfgTuple.h"
+#include <cstdint>
 #include <sstream>
 #include "Algorithms.h"
 #include "CfgParmRegistry.h"
@@ -87,7 +88,7 @@ void CfgTuple::Display(ostream& stream,
 
 ptrdiff_t CfgTuple::LinkDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const CfgTuple* >(&local);
    return ptrdiff(&fake->link_, fake);
 }

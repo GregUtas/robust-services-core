@@ -1531,6 +1531,7 @@ void BaseBot::process_thx_message(const TokenMessage& message)
       //
       new_order = unit + Token(TOKEN_ORDER_DSB);
       send_new_order = true;
+      break;
 
    case TOKEN_ORDER_NOTE_YSC:
    case TOKEN_ORDER_NOTE_ESC:
@@ -1542,6 +1543,7 @@ void BaseBot::process_thx_message(const TokenMessage& message)
       //
       new_order = unit.get_parm(0) + Token(TOKEN_ORDER_WVE);
       send_new_order = true;
+      break;
 
    case TOKEN_ORDER_NOTE_NYU:
    case TOKEN_ORDER_NOTE_NRS:
@@ -2267,7 +2269,7 @@ void BaseBot::send_bm_message(const byte_t* payload, uint16_t length) const
 
 fn_name BaseBot_send_broadcast_to_server = "BaseBot.send_broadcast_to_server";
 
-void BaseBot::send_broadcast_to_server(TokenMessage broadcast_message)
+void BaseBot::send_broadcast_to_server(const TokenMessage& broadcast_message)
 {
    Debug::ft(BaseBot_send_broadcast_to_server);
 

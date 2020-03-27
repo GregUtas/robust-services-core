@@ -3919,10 +3919,10 @@ size_t Function::GetRange(size_t& begin, size_t& end) const
    //  left brace at the beginning of the function body, and set END to
    //  the location of the matching right brace.
    //
-   auto left = CxxScoped::GetRange(begin, end);
+   CxxScoped::GetRange(begin, end);
    if(impl_ == nullptr) return string::npos;
    auto lexer = GetFile()->GetLexer();
-   left = impl_->GetPos();
+   auto left = impl_->GetPos();
    end = lexer.FindClosing('{', '}', left);
    return left;
 }
@@ -4014,6 +4014,7 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
          symbols.Union(sets);
          return;
       }
+      break;
 
    case ClassTemplate:
       //
@@ -4023,6 +4024,7 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
       //  be obtained here.
       //
       if(!inline_) return;
+      break;
    }
 
    //  Place the symbols used in the function's signature in a local variable.
@@ -4245,7 +4247,7 @@ Function* Function::InstantiateFunction(const TypeName* type) const
    }
 
    stringPtr code(new string(*code_));
-   if((code == nullptr) || code->empty()) return InstantiateError(instName, 0);
+   if(code->empty()) return InstantiateError(instName, 0);
 
    //  A function template in a substitute file (e.g. std::move) does not
    //  have an implementation, which will cause Parser.GetProcDefn to fail.

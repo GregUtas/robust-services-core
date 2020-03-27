@@ -549,7 +549,7 @@ const SetOfIds& CodeFile::Affecters() const
 
 fn_name CodeFile_CalcGroup1 = "CodeFile.CalcGroup(file)";
 
-int CodeFile::CalcGroup(const CodeFile* file) const
+size_t CodeFile::CalcGroup(const CodeFile* file) const
 {
    Debug::ft(CodeFile_CalcGroup1);
 
@@ -565,7 +565,7 @@ int CodeFile::CalcGroup(const CodeFile* file) const
 
 fn_name CodeFile_CalcGroup2 = "CodeFile.CalcGroup(fn)";
 
-int CodeFile::CalcGroup(const string& fn) const
+size_t CodeFile::CalcGroup(const string& fn) const
 {
    Debug::ft(CodeFile_CalcGroup2);
 
@@ -576,7 +576,7 @@ int CodeFile::CalcGroup(const string& fn) const
 
 fn_name CodeFile_CalcGroup3 = "CodeFile.CalcGroup(incl)";
 
-int CodeFile::CalcGroup(const Include& incl) const
+size_t CodeFile::CalcGroup(const Include& incl) const
 {
    Debug::ft(CodeFile_CalcGroup3);
 
@@ -603,7 +603,7 @@ bool CodeFile::CanBeTrimmed() const
 
 ptrdiff_t CodeFile::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const CodeFile* >(&local);
    return ptrdiff(&fake->fid_, fake);
 }
@@ -995,12 +995,12 @@ void CodeFile::CheckProlog()
    if(!ok) return LogLine(0, HeadingNotStandard);
 
    pos = lexer_.GetLineStart(1);
-   ok = ok && (code_.find(COMMENT_STR, pos) == pos);
+   ok = (code_.find(COMMENT_STR, pos) == pos);
    ok = ok && (lineType_[1] == EmptyComment);
    if(!ok) return LogLine(1, HeadingNotStandard);
 
    pos = lexer_.GetLineStart(2);
-   ok = ok && (code_.find(COMMENT_STR, pos) == pos);
+   ok = (code_.find(COMMENT_STR, pos) == pos);
    ok = ok && (code_.find(Name(), pos) == pos + 4);
    if(!ok) return LogLine(2, HeadingNotStandard);
 
@@ -1394,11 +1394,6 @@ word CodeFile::CreateEditor(string& expl) const
    //  Fail if the editor can't be created.
    //
    editor_.reset(new Editor(this, expl));
-   if(editor_ == nullptr)
-   {
-      expl = "Failed to create editor for " + Name() + '.';
-      return -7;
-   }
 
    //  Fail if the editor set EXPL to explain an error.
    //

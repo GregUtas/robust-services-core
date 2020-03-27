@@ -45,6 +45,11 @@ public:
    //
    ~MutexGuard();
 
+   //  Releases the mutex.  Used to release it before the guard
+   //  goes out of scope.
+   //
+   void Release();
+
    //  Deleted to prohibit copying.
    //
    MutexGuard(const MutexGuard& that) = delete;

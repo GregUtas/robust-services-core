@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Service.h"
+#include <cstdint>
 #include <ostream>
 #include <string>
 #include "Algorithms.h"
@@ -282,7 +283,7 @@ bool Service::BindTrigger(Trigger& trigger)
 
 ptrdiff_t Service::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const Service* >(&local);
    return ptrdiff(&fake->sid_, fake);
 }

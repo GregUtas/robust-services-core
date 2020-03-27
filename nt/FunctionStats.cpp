@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "FunctionStats.h"
+#include <cstdint>
 #include <cstring>
 #include <iomanip>
 #include <ostream>
@@ -72,7 +73,7 @@ void FunctionStats::IncrCalls(usecs_t net)
 
 ptrdiff_t FunctionStats::LinkDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const FunctionStats* >(&local);
    return ptrdiff(&fake->link_, fake);
 }

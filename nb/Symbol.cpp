@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Symbol.h"
+#include <cstdint>
 #include <ostream>
 #include "Algorithms.h"
 #include "Debug.h"
@@ -95,7 +96,7 @@ const string& Symbol::InvalidInitialChars()
 
 ptrdiff_t Symbol::LinkDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const Symbol* >(&local);
    return ptrdiff(&fake->link_, fake);
 }

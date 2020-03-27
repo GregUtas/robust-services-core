@@ -48,6 +48,8 @@ FunctionGuard::FunctionGuard(First first, bool invoke) : first_(NilFunction)
    case MemUnprotect:
       ThisThread::MemUnprotect();
       return;
+   default:
+      Debug::SwLog(FunctionGuard_ctor, "unexpected function", first_);
    }
 }
 
@@ -59,13 +61,22 @@ FunctionGuard::~FunctionGuard()
 {
    Debug::ft(FunctionGuard_dtor);
 
+   if(first_ != NilFunction) Release();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name FunctionGuard_Release = "FunctionGuard.Release";
+
+void FunctionGuard::Release()
+{
+   Debug::ft(FunctionGuard_Release);
+
    auto first = first_;
    first_ = NilFunction;
 
    switch(first)
    {
-   case NilFunction:
-      return;
    case MakeUnpreemptable:
       ThisThread::MakePreemptable();
       return;
@@ -74,6 +85,8 @@ FunctionGuard::~FunctionGuard()
       return;
    case MemUnprotect:
       ThisThread::MemProtect();
+      return;
+   default:
       return;
    }
 }

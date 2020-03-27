@@ -99,7 +99,7 @@ Log::~Log()
 
 ptrdiff_t Log::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const Log* >(&local);
    return ptrdiff(&fake->lid_, fake);
 }
@@ -263,15 +263,11 @@ ostringstreamPtr Log::Format(AlarmStatus status) const
    //  which it occurred, a sequence number, and a line feed that precedes
    //  log-specific data.
    //
-   if(stream != nullptr)
-   {
-      *stream << std::boolalpha << std::nouppercase << CRLF;
-      *stream << AlarmStatusSymbol(status);
-      *stream << group_->Name() << id_ << SPACE;
-      *stream << Element::strTimePlace() << SPACE;
-      *stream << '{' << ++SeqNo_ << '}' << CRLF;
-   }
-
+   *stream << std::boolalpha << std::nouppercase << CRLF;
+   *stream << AlarmStatusSymbol(status);
+   *stream << group_->Name() << id_ << SPACE;
+   *stream << Element::strTimePlace() << SPACE;
+   *stream << '{' << ++SeqNo_ << '}' << CRLF;
    return stream;
 }
 

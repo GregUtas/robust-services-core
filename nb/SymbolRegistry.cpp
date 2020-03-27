@@ -109,7 +109,6 @@ Symbol* SymbolRegistry::EnsureSymbol(const string& name)
    if(symbolq_.Size() >= MaxSymbols) return nullptr;
 
    sym = new Symbol(name);
-   if(sym == nullptr) return nullptr;
 
    //  Register symbols by name, in alphabetical order.
    //

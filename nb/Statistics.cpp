@@ -82,7 +82,7 @@ Statistic::~Statistic()
 
 ptrdiff_t Statistic::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const Statistic* >(&local);
    return ptrdiff(&fake->sid_, fake);
 }

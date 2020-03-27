@@ -183,7 +183,7 @@ word AlarmsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(AlarmsCommand_ProcessCommand);
 
-   auto rc = 0;
+   word rc = 0;
    id_t index;
    string name, key, path;
    Alarm* alarm;
@@ -1634,7 +1634,7 @@ word LogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 {
    Debug::ft(LogsCommand_ProcessSubcommand);
 
-   auto rc = 0;
+   word rc = 0;
    string name, expl, key, path;
    word id, count, interval;
    auto v = false;

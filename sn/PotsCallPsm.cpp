@@ -421,8 +421,8 @@ void PotsCallPsm::SendFinalMsg()
    Debug::ft(PotsCallPsm_SendFinalMsg);
 
    if(GetState() == Idle) return;
+
    auto msg = new PotsMessage(this, 20);
-   if(msg == nullptr) return;
 
    header_.signal = PotsSignal::Release;
    msg->AddHeader(header_);

@@ -837,8 +837,6 @@ void BcPsm::InjectFinalMsg()
    Debug::ft(BcPsm_InjectFinalMsg);
 
    auto msg = new CipMessage(this, 16);
-   if(msg == nullptr) return;
-
    CauseInfo cci;
 
    msg->SetSignal(CipSignal::REL);
@@ -1120,9 +1118,8 @@ void BcPsm::SendFinalMsg()
    Debug::ft(BcPsm_SendFinalMsg);
 
    if(GetState() == Idle) return;
-   auto msg = new CipMessage(this, 16);
-   if(msg == nullptr) return;
 
+   auto msg = new CipMessage(this, 16);
    CauseInfo cci;
 
    msg->SetSignal(CipSignal::REL);

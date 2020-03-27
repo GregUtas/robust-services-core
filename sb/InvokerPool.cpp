@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "InvokerPool.h"
+#include <cstdint>
 #include <sstream>
 #include "Algorithms.h"
 #include "CfgIntParm.h"
@@ -226,7 +227,7 @@ bool InvokerPool::BindThread(InvokerThread& thread)
 
 ptrdiff_t InvokerPool::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const InvokerPool* >(&local);
    return ptrdiff(&fake->faction_, fake);
 }

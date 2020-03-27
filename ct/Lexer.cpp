@@ -571,7 +571,7 @@ bool Lexer::FindIdentifier(string& id, bool tokenize)
 
             if(GetNum(num))
             {
-               num.release();
+               num.reset();
                if(tokenize) return true;
                continue;
             }

@@ -211,7 +211,7 @@ EventHandler::Rc Initiator::InvokeHandler
 
 ptrdiff_t Initiator::LinkDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const Initiator* >(&local);
    return ptrdiff(&fake->link_, fake);
 }

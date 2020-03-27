@@ -77,45 +77,38 @@ CliBuffer::CharType CliBuffer::CalcType(bool quoted)
 {
    Debug::ft(CliBuffer_CalcType);
 
-   bool escape = false;
-
-   while(pos_ < size_)
+   if(pos_ < size_)
    {
-      if(!escape)
+      switch(buff_[pos_])
       {
-         switch(buff_[pos_])
-         {
-         case EscapeChar:
-            //
-            //  Set the escape flag, decrement the number of characters,
-            //  move the remaining characters up, and continue to the next
-            //  character, suppressing all special interpretations.
-            //
-            escape = true;
-            --size_;
-            for(auto i = pos_; i < size_; ++i) buff_[i] = buff_[i + 1];
-            break;
+      case EscapeChar:
+         //
+         //  Move the remaining characters up and continue to the next
+         //  characters.
+         //
+         --size_;
+         for(auto i = pos_; i < size_; ++i) buff_[i] = buff_[i + 1];
+         break;
 
-         case CommentChar:
-            if(quoted) return Regular;
-            pos_ = size_;
-            return EndOfLine;
+      case CommentChar:
+         if(quoted) return Regular;
+         pos_ = size_;
+         return EndOfLine;
 
-         case StringChar:
-            return String;
+      case StringChar:
+         return String;
 
-         case OptSkipChar:
-            if(quoted) return Regular;
-            return OptSkip;
+      case OptSkipChar:
+         if(quoted) return Regular;
+         return OptSkip;
 
-         case OptTagChar:
-            if(quoted) return Regular;
-            return OptTag;
+      case OptTagChar:
+         if(quoted) return Regular;
+         return OptTag;
 
-         case SymbolChar:
-            if(quoted) return Regular;
-            return Symbol;
-         }
+      case SymbolChar:
+         if(quoted) return Regular;
+         return Symbol;
       }
 
       if(isspace(buff_[pos_]) && !quoted) return Blank;
@@ -572,7 +565,7 @@ std::streamsize CliBuffer::PutLine(const CliThread& cli, const string& input)
    //
    size_ = input.size();
    if(size_ <= 0) return StreamEmpty;
-   for(auto i = 0; i < size_; ++i) buff_[i] = input[i];
+   for(std::streamsize i = 0; i < size_; ++i) buff_[i] = input[i];
    buff_[size_] = NUL;
    CoutThread::Spool(input.c_str(), true);
    return ScanLine(cli);

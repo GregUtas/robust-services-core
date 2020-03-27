@@ -1393,7 +1393,7 @@ bool DataSpec::IsUsedInNameOnly() const
 
    if(user != Cxx::Typedef) return false;
 
-   if(ref == nullptr) ref = name_->GetReferent();
+   ref = name_->GetReferent();
    if((ref != nullptr) && (ref->Type() == Cxx::Class))
    {
       if(ref->IsInTemplateInstance()) return false;
@@ -3904,7 +3904,7 @@ bool TypeTags::SetPointer(size_t n, bool readonly, bool unstable)
 
    //  Note that a "const" or "volatile" attributed cannot be cleared once set.
    //
-   if((n >= 0) && (n < Cxx::MAX_PTRS))
+   if(n < Cxx::MAX_PTRS)
    {
       auto mask = 1 << n;
       if(n >= ptrs_) ptrs_ = n + 1;

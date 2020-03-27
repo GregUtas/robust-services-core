@@ -21,6 +21,7 @@
 //
 #include "State.h"
 #include <bitset>
+#include <cstdint>
 #include <ostream>
 #include <string>
 #include "Algorithms.h"
@@ -197,7 +198,7 @@ bool State::BindMsgAnalyzer(EventHandlerId ehid, ServicePortId pid)
 
 ptrdiff_t State::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const State* >(&local);
    return ptrdiff(&fake->stid_, fake);
 }

@@ -47,6 +47,11 @@ public:
    //
    ~FunctionGuard();
 
+   //  Invokes the conjugate function if the constructor invoked FIRST.
+   //  Used to invoke that function before the guard goes out of scope.
+   //
+   void Release();
+
    //  Deleted to prohibit copying.
    //
    FunctionGuard(const FunctionGuard& that) = delete;

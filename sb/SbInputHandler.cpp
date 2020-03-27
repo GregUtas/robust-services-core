@@ -83,7 +83,6 @@ IpBuffer* SbInputHandler::AllocBuff(const byte_t* source,
    rcvd = sizeof(MsgHeader) + header->length;
 
    auto buff = new SbIpBuffer(MsgIncoming, rcvd - sizeof(MsgHeader));
-   if(buff == nullptr) return nullptr;
    dest = buff->HeaderPtr();
    return buff;
 }

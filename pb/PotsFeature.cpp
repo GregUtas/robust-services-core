@@ -81,7 +81,7 @@ CliText* PotsFeature::Attrs() const
 
 ptrdiff_t PotsFeature::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const PotsFeature* >(&local);
    return ptrdiff(&fake->fid_, fake);
 }

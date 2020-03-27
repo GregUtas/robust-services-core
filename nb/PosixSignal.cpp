@@ -68,7 +68,7 @@ PosixSignal::~PosixSignal()
 
 ptrdiff_t PosixSignal::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const PosixSignal* >(&local);
    return ptrdiff(&fake->sid_, fake);
 }

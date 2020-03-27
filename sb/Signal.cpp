@@ -21,6 +21,7 @@
 //
 #include "Signal.h"
 #include <bitset>
+#include <cstdint>
 #include <ostream>
 #include <string>
 #include "Algorithms.h"
@@ -74,7 +75,7 @@ Signal::~Signal()
 
 ptrdiff_t Signal::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const Signal* >(&local);
    return ptrdiff(&fake->sid_, fake);
 }

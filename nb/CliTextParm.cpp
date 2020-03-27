@@ -96,7 +96,7 @@ bool CliTextParm::BindText(CliText& text, id_t index)
    {
       auto prev = t->Text();
 
-      if((strlen(prev) == 0) || (strcmp(prev, s) == 0))
+      if((prev[0] == NUL) || (strcmp(prev, s) == 0))
       {
          Debug::SwLog(CliTextParm_BindText, t->GetId(), index);
          return false;
@@ -362,7 +362,7 @@ CliParm::Rc CliTextParm::GetTextParmRc(id_t& i, string& s, CliThread& cli) const
       {
          auto text = r->Text();
 
-         if((strlen(text) == 0) || (s.compare(text) == 0))
+         if((text[0] == NUL) || (s.compare(text) == 0))
          {
             i = r->GetId();
             Descend(cli.Cookie(), i);

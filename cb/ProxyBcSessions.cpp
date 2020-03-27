@@ -611,7 +611,6 @@ ProxyBcPsm* ProxyBcSsm::AllocOgProxy()
    Debug::ft(ProxyBcSsm_AllocOgProxy);
 
    auto ppsm = new ProxyBcPsm;
-   if(ppsm == nullptr) return nullptr;
 
    ++proxyCount_;
 

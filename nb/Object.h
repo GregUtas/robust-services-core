@@ -132,7 +132,7 @@ protected:
    //  Morphs the object to the class associated with TARGET by changing
    //  its vptr.
    //
-   void MorphTo(Class& target);
+   void MorphTo(const Class& target);
 private:
    //  If a Patch function requires additional memory, this provides enough
    //  space for a pointer to dynamically allocated memory.

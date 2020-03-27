@@ -21,6 +21,7 @@
 //
 #include "PotsTreatments.h"
 #include <bitset>
+#include <cstdint>
 #include <ostream>
 #include <string>
 #include "Algorithms.h"
@@ -81,7 +82,7 @@ void PotsTreatmentQueue::BindTreatment(PotsTreatment& treatment)
 
 ptrdiff_t PotsTreatmentQueue::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const PotsTreatmentQueue* >(&local);
    return ptrdiff(&fake->qid_, fake);
 }
@@ -199,7 +200,7 @@ void PotsTreatment::Display(ostream& stream,
 
 ptrdiff_t PotsTreatment::LinkDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const PotsTreatment* >(&local);
    return ptrdiff(&fake->link_, fake);
 }

@@ -65,7 +65,7 @@ fixed_string MsgPriorityStrings[MAX_PRIORITY + 2] =
 
 c_string strMsgPriority(MsgPriority prio)
 {
-   if((prio >= 0) && (prio <= MAX_PRIORITY)) return MsgPriorityStrings[prio];
-   return MsgPriorityStrings[MAX_PRIORITY + 1];
+   return (prio <= MAX_PRIORITY ?
+      MsgPriorityStrings[prio] : MsgPriorityStrings[MAX_PRIORITY + 1]);
 }
 }

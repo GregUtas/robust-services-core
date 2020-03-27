@@ -394,7 +394,7 @@ MemoryType Memory::Type(const void* addr)
 
 fn_name Memory_Verify = "Memory.Verify";
 
-bool Memory::Verify(MemoryType type, void* addr)
+bool Memory::Verify(MemoryType type, const void* addr)
 {
    Debug::ft(Memory_Verify);
 

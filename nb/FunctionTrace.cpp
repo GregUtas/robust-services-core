@@ -769,7 +769,7 @@ bool FunctionTrace::Display(ostream& stream, const string& opts)
       stream << "[+" << setw(4) << depth_ - MaxDispDepth << "] ";
    }
 
-   if((func_ != nullptr) && (strlen(func_) > 0))
+   if((func_ != nullptr) && (func_[0] != NUL))
       stream << func_;
    else
       stream << "unknown function";

@@ -1101,7 +1101,7 @@ EventHandler::Rc PotsCwmSsm::Flipflop()
       StopTimer(tid_);
       hldNPsm->SendSignal(PotsSignal::Offhook);
       SetSubstate(Answering);
-
+      //  [[fallthrough]]
    case Answered:
       //
       //  Hold the active call and connect to the held call.
@@ -1557,7 +1557,7 @@ EventHandler::Rc PotsCwmSsm::ReleaseActive(Cause::Ind cause, Event*& nextEvent)
 
    case Reringing:
       StopTimer(ReanswerTimeoutId);
-
+      //  [[fallthrough]]
    case Ringing:
       //
       //  The only remaining call has released.  Relay the Release and idle.
@@ -1668,7 +1668,7 @@ EventHandler::Rc PotsCwmSsm::ReleaseInactive
          upsm->SendCause(cause);
          break;
       }
-
+      //  [[fallthrough]]
    case Answered:
       //
       //  The active call is still connected and CWT is over.

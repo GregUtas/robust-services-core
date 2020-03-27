@@ -89,7 +89,7 @@ bool Protocol::BindSignal(Signal& signal)
 
 ptrdiff_t Protocol::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const Protocol* >(&local);
    return ptrdiff(&fake->prid_, fake);
 }

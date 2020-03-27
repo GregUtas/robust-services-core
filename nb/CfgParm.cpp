@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CfgParm.h"
+#include <cstdint>
 #include <sstream>
 #include "Algorithms.h"
 #include "CfgParmRegistry.h"
@@ -132,7 +133,7 @@ c_string CfgParm::Key() const
 
 ptrdiff_t CfgParm::LinkDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const CfgParm* >(&local);
    return ptrdiff(&fake->link_, fake);
 }

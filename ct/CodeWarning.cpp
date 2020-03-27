@@ -993,6 +993,7 @@ bool CodeWarning::Suppress() const
 
    case LineLength:
       if(fn.find("CliParms.cpp") != string::npos) return true;
+      break;
 
    case RemoveLineBreak:
       if(fn == "BcStates.cpp") return true;

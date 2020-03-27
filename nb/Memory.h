@@ -80,7 +80,7 @@ public:
    //  Verifies ADDR, which should be of TYPE.  If ADDR is nullptr, the
    //  entire heap for TYPE is verified.
    //
-   static bool Verify(MemoryType type, void* addr);
+   static bool Verify(MemoryType type, const void* addr);
 
    //  Returns the type of memory used by the object located at ADDR.
    //

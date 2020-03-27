@@ -491,7 +491,7 @@ Pooled* ObjectPool::BidToObj(PooledObjectId bid) const
 
 ptrdiff_t ObjectPool::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const ObjectPool* >(&local);
    return ptrdiff(&fake->pid_, fake);
 }

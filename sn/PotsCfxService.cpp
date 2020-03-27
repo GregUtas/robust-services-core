@@ -404,8 +404,6 @@ EventHandler::Rc PotsCfxSsm::ForwardCall(Event*& nextEvent)
       return ReleaseCall(nextEvent, Cause::TemporaryFailure, nullptr);
 
    auto umsg = new CipMessage(ppsm, 44);
-   if(umsg == nullptr)
-      return ReleaseCall(nextEvent, Cause::TemporaryFailure, nullptr);
 
    auto clg = nmsg->FindType< DigitString >(CipParameter::Calling);
    if(clg == nullptr)
@@ -679,7 +677,7 @@ EventHandler::Rc PotsCfxSsm::ReleaseCall
 
    auto& pssm = static_cast< PotsBcSsm& >(*Parent());
 
-   if(msg != nullptr) delete msg;
+   delete msg;
    pssm.RaiseReleaseCall(nextEvent, cause);
    SetNextState(PotsCfxState::Null);
    return EventHandler::Revert;

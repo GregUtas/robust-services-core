@@ -140,7 +140,7 @@ protected:
    //  into civil disorder or was eliminated before the server responded
    //  to the press.
    //
-   void send_broadcast_to_server(TokenMessage broadcast_message);
+   void send_broadcast_to_server(const TokenMessage& broadcast_message);
    void send_press_to_server(const TokenMessage& press_to,
       const TokenMessage& press, bool resend_partial);
 

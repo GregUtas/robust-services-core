@@ -21,6 +21,7 @@
 //
 #include "Context.h"
 #include "SoftwareException.h"
+#include <cstdint>
 #include <iosfwd>
 #include <sstream>
 #include "Algorithms.h"
@@ -612,7 +613,7 @@ void Context::Kill(const string& errstr, debug32_t offset)
 
 ptrdiff_t Context::LinkDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const Context* >(&local);
    return ptrdiff(&fake->link_, fake);
 }

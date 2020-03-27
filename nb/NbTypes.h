@@ -107,7 +107,7 @@ enum LogType
    InfoLog = 500,       // 500-699: no intervention required
    MiscLog = 700,       // 700-899: other types of logs
    DebugLog = 900,      // 900-999: to help debug software
-   LogType_N            // number of LogTypes
+   LogType_N = 0        // illegal value
 };
 
 //  Alarm levels.

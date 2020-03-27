@@ -61,7 +61,7 @@ Tone::~Tone()
 
 ptrdiff_t Tone::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const Tone* >(&local);
    return ptrdiff(&fake->tid_, fake);
 }

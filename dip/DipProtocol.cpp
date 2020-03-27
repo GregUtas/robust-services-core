@@ -204,7 +204,6 @@ IpBuffer* DipInputHandler::AllocBuff(const byte_t* source,
       size_t pending = DipHeaderSize + ntohs(header->length);
       rcvd = (pending < size ? pending : size);
       buff.reset(new DipIpBuffer(MsgIncoming, pending));
-      if(buff == nullptr) return nullptr;
       dest = buff->PayloadPtr();
    }
    else
@@ -367,7 +366,6 @@ void DipInputHandler::SocketFailed(SysSocket* socket) const
    //  Send a message to BotThread, informing it of the failure.
    //
    DipIpBufferPtr buff(new DipIpBuffer(MsgIncoming, DipHeaderSize));
-   if(buff == nullptr) return;
    auto msg = reinterpret_cast< BM_Message* >(buff->PayloadPtr());
    msg->header.signal = BM_MESSAGE;
    msg->header.spare = SOCKET_FAILURE_EVENT;

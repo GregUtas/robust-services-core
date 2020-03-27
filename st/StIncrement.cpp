@@ -452,7 +452,6 @@ word StSaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    FunctionGuard guard(FunctionGuard::MakePreemptable, yield);
 
    std::unique_ptr< MscBuilder > msc(new MscBuilder(debug));
-   if(msc == nullptr) return cli.Report(-7, AllocationError);
    rc = msc->Generate(*stream);
    msc.reset();
 

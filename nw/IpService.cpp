@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "IpService.h"
+#include <cstdint>
 #include <sstream>
 #include <string>
 #include "Algorithms.h"
@@ -67,7 +68,7 @@ IpService::~IpService()
 
 ptrdiff_t IpService::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const IpService* >(&local);
    return ptrdiff(&fake->sid_, fake);
 }

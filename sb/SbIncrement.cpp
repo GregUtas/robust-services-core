@@ -813,7 +813,7 @@ word MessagesCommand::ProcessCommand(CliThread& cli) const
 
    PooledObjectId id;
    auto time = 200;
-   auto count = 0;
+   word count = 0;
 
    for(auto obj = pool->FirstUsed(id); obj != nullptr; obj = pool->NextUsed(id))
    {
@@ -899,7 +899,7 @@ word MsgPortsCommand::ProcessCommand(CliThread& cli) const
    }
 
    PooledObjectId id;
-   auto count = 0;
+   word count = 0;
    auto time = 200;
 
    for(auto obj = pool->FirstUsed(id); obj != nullptr; obj = pool->NextUsed(id))
@@ -1111,7 +1111,7 @@ word PsmsCommand::ProcessCommand(CliThread& cli) const
    }
 
    PooledObjectId id;
-   auto count = 0;
+   word count = 0;
    auto time = 200;
 
    for(auto obj = pool->FirstUsed(id); obj != nullptr; obj = pool->NextUsed(id))
@@ -1343,7 +1343,7 @@ word SsmsCommand::ProcessCommand(CliThread& cli) const
    }
 
    PooledObjectId id;
-   auto count = 0;
+   word count = 0;
    auto time = 200;
 
    for(auto obj = pool->FirstUsed(id); obj != nullptr; obj = pool->NextUsed(id))
@@ -1556,7 +1556,7 @@ word TimersCommand::ProcessCommand(CliThread& cli) const
    Singleton< TimerRegistry >::Instance()->Output(*cli.obuf, 2, false);
 
    PooledObjectId id;
-   auto count = 0;
+   word count = 0;
    auto time = 200;
 
    for(auto obj = pool->FirstUsed(id); obj != nullptr; obj = pool->NextUsed(id))

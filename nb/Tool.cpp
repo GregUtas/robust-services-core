@@ -21,6 +21,7 @@
 //
 #include "Tool.h"
 #include <cctype>
+#include <cstdint>
 #include <ostream>
 #include "Algorithms.h"
 #include "Debug.h"
@@ -63,7 +64,7 @@ Tool::~Tool()
 
 ptrdiff_t Tool::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const Tool* >(&local);
    return ptrdiff(&fake->tid_, fake);
 }

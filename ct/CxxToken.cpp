@@ -399,36 +399,36 @@ bool CxxToken::WasWritten(const StackArg* arg, bool passed)
 
 //==============================================================================
 //
-//  Removes, from SET, an item that is a template argument in TYPE or whose
-//  name is found in NAMES.  Both of these techniques are used to filter out
-//  template arguments because there are situations in which one of them, but
-//  not the other, detects a template argument.  Ideally this would be cleaned
-//  up, but the effort does not seem worthwhile.
+//  Removes, from SET, an item that is
+//    (a) a template parameter,
+//    (b) a template argument in TYPE, or
+//    (c) a name found in NAMES.
+//  There are situation in which (b) or (c), but not both, detects a template
+//  argument.  Ideally this would be cleaned up, but the effort does not seem
+//  worthwhile.
 //
 void EraseTemplateArgs
    (CxxNamedSet& set, const TypeName* type, const stringVector& names)
 {
    for(auto i = set.cbegin(); i != set.cend(); NO_OP)
    {
-      auto erase1 = false;
-      auto erase2 = false;
       auto name = (*i)->ScopedName(true);
+      auto erase = ((*i)->Type() == Cxx::TemplateParm);
+      erase = erase || type->ItemIsTemplateArg(*i);
 
-      if(type->ItemIsTemplateArg(*i))
+      if(!erase)
       {
-         erase1 = true;
-      }
-
-      for(auto n = names.cbegin(); n != names.cend(); ++n)
-      {
-         if(name == *n)
+         for(auto n = names.cbegin(); n != names.cend(); ++n)
          {
-            erase2 = true;
-            break;
+            if(name == *n)
+            {
+               erase = true;
+               break;
+            }
          }
       }
 
-      if(erase1 || erase2)
+      if(erase)
          i = set.erase(i);
       else
          ++i;

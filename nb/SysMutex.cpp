@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "SysMutex.h"
+#include <cstdint>
 #include <ostream>
 #include <string>
 #include "Algorithms.h"
@@ -36,7 +37,7 @@ namespace NodeBase
 {
 ptrdiff_t SysMutex::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const SysMutex* >(&local);
    return ptrdiff(&fake->mid_, fake);
 }

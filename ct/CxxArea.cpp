@@ -717,6 +717,7 @@ void Class::CheckRuleOfThree() const
       if(copyOperLoc == LocalDeclared) break;
       if(copyOperLoc == BaseDeleted) break;
       Log(RuleOf3CopyCtorNoOper, this, copyCtorTrivial);
+      break;
    }
 
    switch(copyOperLoc)
@@ -726,6 +727,7 @@ void Class::CheckRuleOfThree() const
       if(copyCtorLoc == LocalDeclared) break;
       if(copyCtorLoc == BaseDeleted) break;
       Log(RuleOf3CopyOperNoCtor, this, copyOperTrivial);
+      break;
    }
 
    //  If the destructor is not trivial, then the copy constructor and copy
@@ -932,10 +934,11 @@ void Class::Display(ostream& stream,
    DisplayObjects(*Funcs(), stream, lead, nonqual);
    DisplayObjects(*Opers(), stream, lead, nonqual);
    DisplayObjects(*Assembly(), stream, lead, qual);
-   if(!code) DisplayObjects(*Datas(), stream, lead, nonqual);
 
    if(!code)
    {
+      DisplayObjects(*Datas(), stream, lead, nonqual);
+
       lead += spaces(INDENT_SIZE);
 
       if(!subs_.empty())
@@ -2960,7 +2963,7 @@ void Namespace::Display(ostream& stream,
 {
    auto name = Name()->c_str();
 
-   if(strlen(name) == 0) name = SCOPE_STR;
+   if(name[0] == NUL) name = SCOPE_STR;
 
    if(!options.test(DispCode))
    {

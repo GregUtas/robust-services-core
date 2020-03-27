@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "InvokerThread.h"
+#include <cstdint>
 #include <ostream>
 #include <string>
 #include "Algorithms.h"
@@ -128,7 +129,7 @@ TraceStatus InvokerThread::CalcStatus(bool dynamic) const
 
 ptrdiff_t InvokerThread::CellDiff2()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const InvokerThread* >(&local);
    return ptrdiff(&fake->iid_, fake);
 }

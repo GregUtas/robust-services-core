@@ -278,7 +278,6 @@ SysSocket::SendRc SysTcpSocket::QueueBuff(IpBuffer* buff, bool henq)
       //  when it no longer requires access the outgoing message.
       //
       buff = new IpBuffer(*buff);
-      if(buff == nullptr) return SendFailed;
    }
 
    if(henq)

@@ -360,6 +360,7 @@ NameVector GetNameAndArgs(const string& name)
          --depth;
          names.push_back(curr);
          curr = NameAndPtrs();
+         break;
 
       case '*':
          //

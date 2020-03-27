@@ -121,7 +121,7 @@ protected:
    //  vptr if it supports morphing or deserialization. The vptr is
    //  read from OBJ, which may be deleted after calling this function.
    //
-   bool SetVptr(Object& obj);
+   bool SetVptr(const Object& obj);
 
    //  Sets template_.  An Initialize function calls this to register
    //  its template if it uses Create to instantiate objects.  OBJ must

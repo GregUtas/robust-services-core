@@ -21,6 +21,7 @@
 //
 #include "Parameter.h"
 #include <bitset>
+#include <cstdint>
 #include <ostream>
 #include "Algorithms.h"
 #include "Debug.h"
@@ -103,7 +104,7 @@ bool Parameter::BindUsage(SignalId sid, Usage usage)
 
 ptrdiff_t Parameter::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const Parameter* >(&local);
    return ptrdiff(&fake->pid_, fake);
 }

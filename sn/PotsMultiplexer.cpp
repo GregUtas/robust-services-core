@@ -544,7 +544,6 @@ void PotsMuxPsm::SendFinalMsg()
 
    if(GetState() == Idle) return;
    auto msg = new Pots_UN_Message(this, 20);
-   if(msg == nullptr) return;
 
    header_.signal = PotsSignal::Release;
    cause_.cause = Cause::TemporaryFailure;

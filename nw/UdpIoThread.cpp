@@ -268,7 +268,7 @@ void UdpIoThread::ReleaseResources()
    if(ipPort_ != nullptr)
    {
       auto socket = static_cast< SysUdpSocket* >(ipPort_->GetSocket());
-      if(socket != nullptr) delete socket;
+      delete socket;
       ipPort_->SetSocket(nullptr);
    }
 }

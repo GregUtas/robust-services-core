@@ -903,12 +903,8 @@ BuildOrderPtr CodeFileSet::SortInBuildOrder() const
 
    for(CodeFile* f = files.First(); f != nullptr; files.Next(f))
    {
-      if(f != nullptr)
-      {
-         incls[n] = f->InclList();
-         fids[n] = f->Fid();
-      }
-
+      incls[n] = f->InclList();
+      fids[n] = f->Fid();
       ++n;
    }
 

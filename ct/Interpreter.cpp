@@ -182,10 +182,6 @@ private:
    //
    bool CheckArgType(LibSetType accepted, LibSetType entered);
 
-   //  The operation to perform.
-   //
-   const LibTokenType op_;
-
    //  Where to put the result.
    //
    LibrarySet* lhs_;
@@ -198,6 +194,10 @@ private:
    //
    LibrarySet* rhs2_;
 
+   //  The operation to perform.
+   //
+   const LibTokenType op_;
+
    //  Any error that occurred when executing the opcode.
    //
    LibExprErr err_;
@@ -208,10 +208,10 @@ private:
 fn_name LibraryOpcode_ctor = "LibraryOpcode.ctor";
 
 LibraryOpcode::LibraryOpcode(LibTokenType op, std::stack< LibrarySet* >& args) :
-   op_(op),
    lhs_(nullptr),
    rhs1_(nullptr),
    rhs2_(nullptr),
+   op_(op),
    err_(ExpressionOk)
 {
    Debug::ft(LibraryOpcode_ctor);

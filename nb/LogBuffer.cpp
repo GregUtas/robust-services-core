@@ -263,7 +263,6 @@ ostringstreamPtr LogBuffer::GetLogs
    auto curr = FirstUnspooled();
    if(curr == nullptr) return nullptr;
    ostringstreamPtr stream(new std::ostringstream);
-   if(stream == nullptr) return nullptr;
 
    //  Accumulate logs until they exceed the size limit.  But first, insert
    //  a warning if some logs were discarded because the buffer was full.
@@ -482,7 +481,7 @@ bool LogBuffer::Push(const ostringstreamPtr& log)
    entry->log[count] = NUL;
    if(unspooled_ == nullptr) unspooled_ = entry;
    UpdateMax();
-   guard.~MutexGuard();
+   guard.Release();
 
    Singleton< LogThread >::Instance()->Interrupt();
    return true;

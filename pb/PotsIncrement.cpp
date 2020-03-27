@@ -292,6 +292,8 @@ word DnsCommand::ProcessCommand(CliThread& cli) const
    {
    case None:
       last = first;
+      //  [[ fallthrough]]
+   case Ok:
       break;
    default:
       return -1;
@@ -435,7 +437,7 @@ word MepsCommand::ProcessCommand(CliThread& cli) const
    }
 
    PooledObjectId id;
-   auto count = 0;
+   word count = 0;
    auto time = 200;
 
    for(auto obj = pool->FirstUsed(id); obj != nullptr; obj = pool->NextUsed(id))
@@ -545,8 +547,6 @@ word ResetCommand::ProcessCommand(CliThread& cli) const
    if(cct == nullptr) return cli.Report (-3, NoCircuitExpl);
 
    auto msg = new Pots_NU_Message(nullptr, 20);
-   if(msg == nullptr) return cli.Report(-7, AllocationError);
-
    PotsHeaderInfo phi;
    CauseInfo cci;
 
@@ -747,6 +747,8 @@ word TsPortsCommand::ProcessCommand(CliThread& cli) const
    {
    case None:
       last = first;
+      //  [[ fallthrough]]
+   case Ok:
       break;
    default:
       return -1;

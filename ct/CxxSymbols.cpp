@@ -208,7 +208,6 @@ size_t FindNearestItem(const SymbolVector& list, ViewVector& views)
       {
          if((idx == SIZE_MAX) || !views[idx].resolved)
          {
-            min = view.distance;
             idx = i;
          }
       }
@@ -243,7 +242,7 @@ bool IsSortedByName(const CxxScoped* item1, const CxxScoped* item2)
    }
    else if(file2 == nullptr)
    {
-      if(file1 != nullptr) return false;
+      return false;
    }
    else
    {
@@ -280,7 +279,7 @@ bool IsSortedByPos(const CxxNamed* item1, const CxxNamed* item2)
    }
    else if(file2 == nullptr)
    {
-      if(file1 != nullptr) return false;
+      return false;
    }
    else
    {

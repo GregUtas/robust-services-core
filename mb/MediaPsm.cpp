@@ -195,8 +195,6 @@ void MediaPsm::EnsureMedia(MediaPsm& other)
 {
    Debug::ft(MediaPsm_EnsureMedia);
 
-   auto peer = GetOgPsm();
-
    //  If neither this PSM nor PEER have a peer media PSM, prepare to
    //  set up media between them.
    //
@@ -209,7 +207,7 @@ void MediaPsm::EnsureMedia(MediaPsm& other)
    //  Enable media on PSM and its peer.
    //
    EnableMedia();
-   peer = GetOgPsm();
+   auto peer = GetOgPsm();
    if(peer != nullptr) peer->EnableMedia();
 
    //  If this PSM's peer is not OTHER, enable media on OTHER and its peer.

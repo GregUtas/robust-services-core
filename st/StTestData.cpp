@@ -157,7 +157,6 @@ bool StTestData::InjectMsg(Message& appMsg, TestSessionId tid)
    {
       auto dest = sdata->GetTestPsm();
       auto msg = new TestMessage(dest);
-      if(msg == nullptr) return false;
 
       msg->SetSignal(TestSignal::Inject);
       msg->SetAppMsg(appMsg);

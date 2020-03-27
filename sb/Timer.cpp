@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Timer.h"
+#include <cstdint>
 #include <ostream>
 #include <string>
 #include "Algorithms.h"
@@ -192,7 +193,7 @@ void Timer::Exqueue()
 
 ptrdiff_t Timer::LinkDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const Timer* >(&local);
    return ptrdiff(&fake->link_, fake);
 }

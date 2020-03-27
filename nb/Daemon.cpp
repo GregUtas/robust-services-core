@@ -77,7 +77,7 @@ Daemon::~Daemon()
 
 ptrdiff_t Daemon::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const Daemon* >(&local);
    return ptrdiff(&fake->did_, fake);
 }

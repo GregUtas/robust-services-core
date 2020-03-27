@@ -65,7 +65,6 @@ IpBuffer* InputHandler::AllocBuff(const byte_t* source,
    Debug::ft(InputHandler_AllocBuff);
 
    auto buffer = new IpBuffer(MsgIncoming, 0, size);
-   if(buffer == nullptr) return nullptr;
    dest = buffer->HeaderPtr();
    return buffer;
 }

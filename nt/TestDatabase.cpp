@@ -451,7 +451,7 @@ void TestDatabase::Update()
       Debug::SwLog(TestDatabase_Update, expl, 0);
    }
 
-   guard.~FunctionGuard();
+   guard.Release();
    Commit();
 }
 }

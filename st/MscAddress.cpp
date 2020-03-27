@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "MscAddress.h"
+#include <cstdint>
 #include <ostream>
 #include <string>
 #include "Algorithms.h"
@@ -84,7 +85,7 @@ bool MscAddress::ExternalFid(FactoryId& fid) const
 
 ptrdiff_t MscAddress::LinkDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const MscAddress* >(&local);
    return ptrdiff(&fake->link_, fake);
 }

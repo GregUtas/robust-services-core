@@ -96,8 +96,6 @@ Pots_UN_Message* PotsCircuit::CreateMsg(PotsSignal::Id sid) const
    Debug::ft(PotsCircuit_CreateMsg);
 
    auto msg = new Pots_UN_Message(nullptr, 12);
-   if(msg == nullptr) return nullptr;
-
    msg->Header()->injected = true;
 
    PotsHeaderInfo phi;

@@ -21,6 +21,7 @@
 //
 #include "Class.h"
 #include <bitset>
+#include <cstdint>
 #include <new>
 #include <ostream>
 #include <string>
@@ -71,7 +72,7 @@ Class::~Class()
 
 ptrdiff_t Class::CellDiff()
 {
-   int local;
+   uintptr_t local;
    auto fake = reinterpret_cast< const Class* >(&local);
    return ptrdiff(&fake->cid_, fake);
 }
@@ -279,7 +280,7 @@ bool Class::SetTemplate(Object& obj)
 
 fn_name Class_SetVptr = "Class.SetVptr";
 
-bool Class::SetVptr(Object& obj)
+bool Class::SetVptr(const Object& obj)
 {
    Debug::ft(Class_SetVptr);
 

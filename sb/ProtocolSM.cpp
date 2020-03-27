@@ -452,8 +452,6 @@ void ProtocolSM::Kill()
    //  Queue a timeout message on the PSM and set its kill flag.
    //
    auto msg = new Message(this, 0);
-   if(msg == nullptr) return;
-
    msg->SetProtocol(TimerProtocolId);
    msg->SetSignal(Signal::Timeout);
    msg->SetPriority(PROGRESS);
@@ -640,9 +638,8 @@ bool ProtocolSM::StartTimer
       return false;
    }
 
-   auto timer = new Timer(*this, owner, tid, duration, repeat);
-
-   return (timer != nullptr);
+   new Timer(*this, owner, tid, duration, repeat);
+   return true;
 }
 
 //------------------------------------------------------------------------------

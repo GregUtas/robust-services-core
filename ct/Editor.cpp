@@ -671,7 +671,7 @@ word Editor::ConvertTabsToBlanks()
             }
             else
             {
-               int spaces = untabbed.size() % indent;
+               size_t spaces = untabbed.size() % indent;
                if(spaces == 0) spaces = indent;
 
                for(NO_OP; spaces > 0; --spaces)
@@ -1201,7 +1201,7 @@ word Editor::EraseEmptySeparators()
          }
          else if(t3 == SeparatorComment)
          {
-            if((t1 == OpenBrace) || (t1 == SeparatorComment))
+            if(t1 == OpenBrace)
             {
                source_.erase(i2);
                i2 = source_.erase(i3);
@@ -2201,8 +2201,6 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
       if((opts.warning != AllWarnings) &&
          (opts.warning != item->warning_)) continue;
 
-      auto fix = false;
-
       switch(FixStatus(*item))
       {
       case NotFixed:
@@ -2210,7 +2208,6 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
          //  This item is eligible for fixing, and note that such an item
          //  was found.
          //
-         fix = true;
          found = true;
          break;
 
@@ -2234,13 +2231,6 @@ word Editor::Fix(CliThread& cli, const FixOptions& opts, string& expl)
          *cli.obuf << "Fixing this warning type is not supported." << CRLF;
          return -2;
       }
-
-      //  If this item is ineligible for fixing, we exited the "NotSupported"
-      //  case, which occurs when the user tries to fix a specific unsupported
-      //  warning type.  Exit the loop and write out the file before returning,
-      //  because it may have changed (e.g. to fix tabs and trailing blanks).
-      //
-      if(!fix) break;
 
       //  This item is eligible for fixing.  Display it.
       //

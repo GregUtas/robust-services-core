@@ -558,27 +558,21 @@ word Library::Import(const string& name, const string& path, string& expl)
    //  On success, add the directory to $dirs, else delete it.
    //
    auto dir = new CodeDir(name, path);
+   dirs_.Insert(*dir);
 
-   if(dir != nullptr)
+   auto rc = dir->Extract(expl);
+
+   if(rc == 0)
    {
-      dirs_.Insert(*dir);
-      auto rc = dir->Extract(expl);
-
-      if(rc == 0)
-      {
-         dirSet_->Set().insert(dir->Did());
-      }
-      else
-      {
-         dirs_.Erase(*dir);
-         delete dir;
-      }
-
-      return rc;
+      dirSet_->Set().insert(dir->Did());
+   }
+   else
+   {
+      dirs_.Erase(*dir);
+      delete dir;
    }
 
-   expl = AllocationError;
-   return -1;
+   return rc;
 }
 
 //------------------------------------------------------------------------------

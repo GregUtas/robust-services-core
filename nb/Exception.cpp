@@ -53,7 +53,6 @@ Exception::Exception(bool stack, fn_depth depth) : stack_(nullptr)
    if(stack)
    {
       stack_.reset(new std::ostringstream);
-      if(stack_ == nullptr) return;
       *stack_ << std::boolalpha << std::nouppercase;
       SysThreadStack::Display(*stack_, depth + 1);
    }

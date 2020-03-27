@@ -165,8 +165,6 @@ word SysTcpSocket::Poll(SysTcpSocket* sockets[], size_t size, msecs_t msecs)
    //
    std::unique_ptr< pollfd[] > list(new pollfd[size]);
 
-   if(list == nullptr) return sockets[0]->SetError(WSA_NOT_ENOUGH_MEMORY);
-
    for(size_t i = 0; i < size; ++i)
    {
       list[i].fd = sockets[i]->Socket();

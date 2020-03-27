@@ -23,6 +23,7 @@
 #include "SysThread.h"
 #include <csignal>
 #include <cstdint>
+#include <process.h>
 #include <windows.h>
 #include "Debug.h"
 #include "NbSignals.h"
@@ -135,13 +136,15 @@ SysThread_t SysThread::Create(const ThreadEntry entry,
 {
    Debug::ft(SysThread_Create);
 
-   auto handle = CreateThread(
-      nullptr,                         // default security attributes
-      stackSize,                       // stack size
-      (LPTHREAD_START_ROUTINE) entry,  // thread entry function
-      (LPVOID) client,                 // argument to entry function
-      0,                               // default creation flags
-      (DWORD*) &nid);                  // updates thread's identifier
+   auto result = _beginthreadex(
+      nullptr,                           // default security attributes
+      stackSize,                         // stack size
+      (_beginthreadex_proc_type) entry,  // thread entry function
+      (void*) client,                    // argument to entry function
+      0,                                 // default creation flags
+      &nid);                             // updates thread's identifier
+
+   auto handle = (HANDLE) result;
 
    if(handle != nullptr)
    {

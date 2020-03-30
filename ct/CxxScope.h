@@ -1484,6 +1484,13 @@ private:
    static Function* InstantiateError
       (const std::string& instName, NodeBase::debug32_t offset);
 
+   //  Marks recvArg const if
+   //  o it's a "this" argument and this function also has a const version, or
+   //  o this function is virtual and INVOKER (the function invoking this one)
+   //    is another instance of that function.
+   //
+   void AdjustRecvConstness(const Function* invoker, StackArg& recvArg) const;
+
    //  Invoked when the function accesed a non-public member in its class.
    //
    void SetNonPublic();

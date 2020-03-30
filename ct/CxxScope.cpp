@@ -2130,6 +2130,72 @@ void Function::AddToXref() const
 
 //------------------------------------------------------------------------------
 
+fn_name Function_AdjustRecvConstness = "Function.AdjustRecvConstness";
+
+void Function::AdjustRecvConstness
+   (const Function* invoker, StackArg& recvArg) const
+{
+   Debug::ft(Function_AdjustRecvConstness);
+
+   //  Make ARG const if it's another instance of the same virtual function or
+   //  it's a "this" argument and this function also has a const version.  This
+   //  is done so that the argument about to be passed to ARG will not lose the
+   //  possibility of being logged as "could be const".  If it is not declared
+   //  const, it will select the non-const version of a function (making its
+   //  non-constness self-fulfilling).  The same thing occurs if it is passed
+   //  to the same argument in another instance of the same virtual function.
+   //
+   if(invoker == nullptr) return;
+   if(recvArg.IsConst()) return;
+
+   if(IsVirtual() && (FindRootFunc() == invoker->FindRootFunc()))
+   {
+      recvArg.SetAsConst();
+      return;
+   }
+
+   if(*recvArg.item->Name() != THIS_STR) return;
+
+   auto target = RemoveConsts(TypeString(true));
+   auto list = GetArea()->FuncVector(*Name());
+
+   for(size_t i = 0; i < list->size(); ++i)
+   {
+      auto func = list->at(i).get();
+      if(!func->IsConst()) continue;
+
+      auto& temp = *func->Name();
+
+      if(temp == *Name())
+      {
+         auto actual = RemoveConsts(func->TypeString(true));
+
+         if(actual == target)
+         {
+            //  The following is commented out because it causes spurious
+            //  "could be const" logs for data, arguments, and functions.
+            //  The code can be enabled when the *chain* (entire expression)
+            //  that precedes an assignment is preserved, which is a known
+            //  deficiency.  For example, with vector V
+            //    v.at(i)->ConstFunction();
+            //    v.at(i)->NonConstFunction();
+            //  the commented out code will discover that at() has a version
+            //  that returns a const value.  It will therefore mark recvArg
+            //  as const, even though it is subsequently used in a non-const
+            //  manner.  Whether V can be const isn't known until the final
+            //  function is invoked, but we don't preserve the chain that led
+            //  up to that function call and therefore cannot retroactively
+            //  mark V as ultimately being used in a non-const way.
+            //
+//c         recvArg.SetAsConst();
+            return;
+         }
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Function_ArgCouldBeConst = "Function.ArgCouldBeConst";
 
 bool Function::ArgCouldBeConst(size_t n) const
@@ -4367,6 +4433,8 @@ void Function::Invoke(StackArgVector* args)
       size1 = size2;
    }
 
+   auto func = Context::Scope()->GetFunction();
+
    //  Register a read on each sent argument and check its assignment to
    //  the received argument.
    //
@@ -4375,6 +4443,7 @@ void Function::Invoke(StackArgVector* args)
       auto& sendArg = args->at(i);
       sendArg.WasRead();
       StackArg recvArg(args_.at(i).get(), 0, false);
+      AdjustRecvConstness(func, recvArg);
       sendArg.AssignedTo(recvArg, Passed);
    }
 
@@ -4390,8 +4459,6 @@ void Function::Invoke(StackArgVector* args)
    //
    if(IsVirtual() && (FuncType() == FuncStandard))
    {
-      auto func = Context::Scope()->GetFunction();
-
       if(func != nullptr)
       {
          auto type = func->FuncType();

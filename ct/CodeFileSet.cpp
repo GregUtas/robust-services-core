@@ -730,7 +730,7 @@ word CodeFileSet::Parse(string& expl, const string& opts) const
 
    for(auto f = files.First(); f != nullptr; files.Next(f))
    {
-      f->AddToXref();
+      if(!f->IsSubsFile()) f->AddToXref();
    }
 
    std::ostringstream summary;

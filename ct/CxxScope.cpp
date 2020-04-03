@@ -2092,12 +2092,37 @@ void Function::AddToXref() const
 
    if(deleted_) return;
 
-   //  Don't add items in a template instance to the cross-reference, since
-   //  they have no code file or line number.
-   //
-   if(IsInTemplateInstance()) return;
+   auto type = GetTemplateType();
 
-   name_->AddToXref();
+   switch(type)
+   {
+   case NonTemplate:
+      //
+      //  This includes a function in a template instance.  It normally doesn't
+      //  update the cross-reference, since it has no code file or line numbers.
+      //  However, a function in a template cannot resolve an item accessed by a
+      //  template parameter, so it uses a template instance to add that item to
+      //  the cross-reference.
+      //
+      if(IsInTemplateInstance())
+      {
+         if(Context::GetXrefVenue() != TemplateFunction) return;
+         Context::PushXrefFrame(InstanceFunction);
+      }
+      else
+      {
+         Context::PushXrefFrame(StandardFunction);
+      }
+      break;
+
+   default:
+      //
+      //  This is either a function template or a function in a class template.
+      //
+      Context::PushXrefFrame(TemplateFunction);
+   };
+
+   if(defn_) name_->AddToXref();
 
    if(spec_ != nullptr) spec_->AddToXref();
 
@@ -2126,6 +2151,36 @@ void Function::AddToXref() const
    }
 
    if(impl_ != nullptr) impl_->AddToXref();
+
+   switch(type)
+   {
+   case NonTemplate:
+      break;
+
+   case FuncTemplate:
+      //
+      //  Add any unresolved symbols to the cross-reference by consulting
+      //  our first template instance.
+      //
+      if(!tmplts_.empty())
+      {
+         tmplts_.front()->AddToXref();
+      }
+      break;
+
+   case ClassTemplate:
+   default:
+      //
+      //  Add any unresolved symbols to the cross-reference by consulting
+      //  our analog in first template instance.
+      //
+      auto instances = GetClass()->Instances();
+      if(instances->empty()) break;
+      auto func = instances->front()->FindInstanceAnalog(this);
+      if(func != nullptr) func->AddToXref();
+   }
+
+   Context::PopXrefFrame();
 }
 
 //------------------------------------------------------------------------------
@@ -3534,18 +3589,7 @@ void Function::EnterBlock()
 
       for(auto m = mems_.cbegin(); m != mems_.cend(); ++m)
       {
-         auto data = cls->FindData(*(*m)->Name());
-
-         if(data != nullptr)
-         {
-            static_cast< ClassData* >(data)->SetMemInit(m->get());
-         }
-         else
-         {
-            string expl("Failed to find member ");
-            expl += *cls->Name() + SCOPE_STR + *(*m)->Name();
-            Context::SwLog(Function_EnterBlock, expl, 0);
-         }
+         (*m)->EnterBlock();
       }
 
       auto data = cls->Datas();
@@ -4031,6 +4075,11 @@ TemplateType Function::GetTemplateType() const
 {
    if(IsTemplate()) return FuncTemplate;
 
+   //  An inline function in a class template is treated as a regular function
+   //  because it is not copied into template instances.
+   //
+   if(inline_) return NonTemplate;
+
    auto cls = GetClass();
 
    if(cls != nullptr)
@@ -4053,9 +4102,7 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 
    //  See if this function appears in a function or class template.
    //
-   auto type = GetTemplateType();
-
-   switch(type)
+   switch(GetTemplateType())
    {
    case NonTemplate:
       //
@@ -4085,12 +4132,9 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    case ClassTemplate:
       //
       //  This function appears in a class template, which pulls its usages
-      //  from its first instance, in the same way as above.  However, an
-      //  inline function is not copied into instances, so its usages must
-      //  be obtained here.
+      //  from its first instance, in the same way as above.
       //
-      if(!inline_) return;
-      break;
+      return;
    }
 
    //  Place the symbols used in the function's signature in a local variable.

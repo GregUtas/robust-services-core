@@ -2583,13 +2583,6 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
 
    if(type != Cxx::Class)
    {
-      //* If ARG1 is a template parameter, search for a function that
-      //  matches the arguments (not yet available).  This could mean
-      //  pushing a temporary argument that will be resolved later,
-      //  similar to when a function is overloaded.  (The code that
-      //  follows appears to assume that the first function found in
-      //  CLS will always be correct, and not an incorrect overload!)
-      //
       auto expl = arg1.Trace() + " is not a class";
       Context::SwLog(Operation_PushMember, expl, type);
       return;
@@ -2629,6 +2622,8 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
 
    if(arg2.name != nullptr)
    {
+      //* If MEM is a function, the following should be deferred until function
+      //  matching is concluded.
       //  Record that MEM was accessed through CLS (cls.mem or cls->mem).  If
       //  MEM was Inherited, it must actually be public (rather than protected)
       //  if SCOPE was not a friend of its declarer and neither in CLS nor one

@@ -101,13 +101,13 @@ public:
    //
    virtual bool IncludeInXref() const;
 
-   //  Records NAME as a reference to the item.
+   //  Records ITEM as a reference to this item.
    //
-   virtual void AddReference(const CxxNamed* name);
+   virtual void AddReference(const CxxNamed* item) const;
 
    //  Returns the item's cross-reference (the items that reference it).
    //
-   const CxxNamedSet& Xref() const { return xref_; }
+   CxxNamedSet& Xref() const { return xref_; }
 
    //  Returns the amount of memory used by xref_ entries.
    //
@@ -225,7 +225,7 @@ private:
 
    //  Source code references to the item.
    //
-   CxxNamedSet xref_;
+   mutable CxxNamedSet xref_;
 
    //  The access control level for the item.
    //
@@ -1095,6 +1095,10 @@ public:
    //
    void AddToXref() const override;
 
+   //  Overridden to compile the member's initialization expression.
+   //
+   void EnterBlock() override;
+
    //  Overridden to update SYMBOLS with the statement's type usage.
    //
    void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
@@ -1112,6 +1116,10 @@ public:
    void Print
       (std::ostream& stream, const NodeBase::Flags& options) const override;
 
+   //  Overridden to return the data member being initialized.
+   //
+   CxxScoped* Referent() const override;
+
    //  Overridden to shrink containers.
    //
    void Shrink() override;
@@ -1127,6 +1135,10 @@ private:
    //  The name of the member being initialized.
    //
    std::string name_;
+
+   //  The member being initialized.
+   //
+   mutable ClassData* ref_;
 
    //  The expression that initializes the member.
    //
@@ -1246,7 +1258,7 @@ public:
 
    //  Overridden to not track references to terminals.
    //
-   void AddReference(const CxxNamed* name) override { }
+   void AddReference(const CxxNamed* item) const override { }
 
    //  Overridden to set the type for an "auto" variable.
    //

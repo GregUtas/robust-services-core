@@ -253,10 +253,10 @@ enum TemplateType
 //  NOT_A_SUBSCOPE and NOT_A_SUBCLASS indicate that the distance is
 //  "infinite".
 //
-typedef uint16_t Distance;
+typedef uint8_t Distance;
 
-constexpr Distance NOT_A_SUBSCOPE = UINT16_MAX;
-constexpr Distance NOT_A_SUBCLASS = UINT16_MAX;
+constexpr Distance NOT_A_SUBSCOPE = UINT8_MAX;
+constexpr Distance NOT_A_SUBCLASS = UINT8_MAX;
 
 //------------------------------------------------------------------------------
 //
@@ -306,11 +306,11 @@ struct SymbolView
 
    //  The symbol's accessibility.
    //
-   Accessibility accessibility : 4;
+   Accessibility accessibility : 8;
 
    //  How well the symbol's arguments matched those supplied.
    //
-   TypeMatch match : 4;
+   TypeMatch match : 8;
 
    //  Set if the symbol was resolved by a using statement.
    //
@@ -330,7 +330,7 @@ struct SymbolView
    //  Otherwise, the distance from the scope that defined the symbol to
    //  the scope that used it.
    //
-   Distance distance : 16;
+   Distance distance : 8;
 };
 
 //  For initializing SymbolView instances.
@@ -361,6 +361,18 @@ enum AssignmentType
    Copied,   // right-hand side of an assignment operator
    Passed,   // passed as an argument
    Returned  // returned as a function result
+};
+
+//------------------------------------------------------------------------------
+//
+//  What type of function is updating the cross-reference.
+//
+enum XrefVenue
+{
+   NotAFunction,      // not currently in a function
+   StandardFunction,  // a regular function
+   TemplateFunction,  // a function in a template
+   InstanceFunction   // a function in a template instance
 };
 
 //------------------------------------------------------------------------------

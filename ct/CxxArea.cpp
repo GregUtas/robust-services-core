@@ -420,8 +420,6 @@ void Class::AddToXref() const
 
    CxxArea::AddToXref();
 
-   name_->AddToXref();
-
    if(alignas_ != nullptr) alignas_->AddToXref();
 
    auto base = GetBaseDecl();

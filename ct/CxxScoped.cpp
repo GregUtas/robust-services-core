@@ -487,11 +487,34 @@ void CxxScoped::AddFiles(SetOfIds& imSet) const
 
 //------------------------------------------------------------------------------
 
-void CxxScoped::AddReference(const CxxNamed* name)
+void CxxScoped::AddReference(const CxxNamed* item) const
 {
-   auto file = name->GetFile();
+   auto file = item->GetFile();
    if(file->IsSubsFile()) return;
-   xref_.insert(name);
+
+   if(Context::GetXrefVenue() == InstanceFunction)
+   {
+      //  A function in a template instance only adds, to the cross-reference,
+      //  items that were unresolved in its template.  These items are usually
+      //  functions invoked via a template parameter, and so the instance will
+      //  often invoke an override in a derived class.  This should be aliased
+      //  back to the base class declaration of the function.
+      //
+      auto prev = Context::FindXrefItem(*item->Name());
+      if(prev == nullptr) return;
+
+      auto ref = item->Referent();
+      if(ref->Type() == Cxx::Function)
+      {
+         ref = static_cast< const Function* >(ref)->FindRootFunc();
+      }
+
+      prev->SetReferent(ref, nullptr);
+      ref->Xref().insert(prev);
+      return;
+   }
+
+   xref_.insert(item);
 }
 
 //------------------------------------------------------------------------------
@@ -1520,6 +1543,7 @@ void Forward::AddToXref() const
 {
    Debug::ft(Forward_AddToXref);
 
+   if(Referent() == nullptr) return;
    name_->AddToXref();
 }
 
@@ -1736,6 +1760,7 @@ void Friend::AddToXref() const
 {
    Debug::ft(Friend_AddToXref);
 
+   if(Referent() == nullptr) return;
    name_->AddToXref();
 }
 
@@ -2355,6 +2380,7 @@ fn_name MemberInit_ctor = "MemberInit.ctor";
 
 MemberInit::MemberInit(const Function* ctor, string& name, TokenPtr& init) :
    ctor_(ctor),
+   ref_(nullptr),
    init_(init.release())
 {
    Debug::ft(MemberInit_ctor);
@@ -2371,10 +2397,30 @@ void MemberInit::AddToXref() const
 {
    Debug::ft(MemberInit_AddToXref);
 
-   auto cls = ctor_->GetClass();
-   auto member = cls->FindData(name_);
-   member->AddReference(this);
+   if(ref_ != nullptr) ref_->AddReference(this);
    init_->AddToXref();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name MemberInit_EnterBlock = "MemberInit.EnterBlock";
+
+void MemberInit::EnterBlock()
+{
+   Debug::ft(MemberInit_EnterBlock);
+
+   Context::SetPos(GetLoc());
+
+   if(Referent() != nullptr)
+   {
+      ref_->SetMemInit(this);
+   }
+   else
+   {
+      string expl("Failed to find member ");
+      expl += *ctor_->GetClass()->Name() + SCOPE_STR + name_;
+      Context::SwLog(MemberInit_EnterBlock, expl, 0);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -2394,6 +2440,17 @@ void MemberInit::Print(ostream& stream, const Flags& options) const
 {
    stream << name_;
    init_->Print(stream, options);
+}
+
+//------------------------------------------------------------------------------
+
+CxxScoped* MemberInit::Referent() const
+{
+   if(ref_ != nullptr) return ref_;
+
+   auto cls = ctor_->GetClass();
+   ref_ = static_cast< ClassData* >(cls->FindData(name_));
+   return ref_;
 }
 
 //------------------------------------------------------------------------------

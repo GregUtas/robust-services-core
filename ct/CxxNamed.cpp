@@ -450,6 +450,7 @@ CxxScoped* CxxNamed::ResolveName(const CodeFile* file,
 
          if(item != nullptr)
          {
+            qname->SetReferentN(0, item, view);
             return item;
          }
       }
@@ -2956,6 +2957,13 @@ void TypeName::AddToXref() const
                type_->AddReference(this);
          }
       }
+   }
+   else
+   {
+      //  Record this unresolved item in case it is one that a template
+      //  needs to have resolved by a template instance.
+      //
+      Context::PushXrefItem(this);
    }
 
    if(args_ != nullptr)

@@ -175,6 +175,7 @@ ParseFrame* Context::Frame_ = nullptr;
 string Context::LastLogLoc_ = EMPTY_STR;
 std::set< Tracepoint > Context::Tracepoints_ = std::set< Tracepoint >();
 bool Context::CheckPos_ = false;
+std::vector< XrefFrame > Context::XrefFrames_ = std::vector< XrefFrame >();
 
 //------------------------------------------------------------------------------
 
@@ -230,10 +231,30 @@ void Context::EraseTracepoint
 
 //------------------------------------------------------------------------------
 
+const TypeName* Context::FindXrefItem(const string& name)
+{
+   //  The top frame is currently an InstanceFunction that is resolving any
+   //  items pushed by the TemplateFunction in the frame below it.
+   //
+   auto size = XrefFrames_.size();
+   if(size < 2) return nullptr;
+   return XrefFrames_.at(size - 2).FindItem(name);
+}
+
+//------------------------------------------------------------------------------
+
 const Parser* Context::GetParser()
 {
    if(Frame_ == nullptr) return nullptr;
    return Frame_->GetParser();
+}
+
+//------------------------------------------------------------------------------
+
+XrefVenue Context::GetXrefVenue()
+{
+   if(XrefFrames_.empty()) return NotAFunction;
+   return XrefFrames_.back().Venue();
 }
 
 //------------------------------------------------------------------------------
@@ -340,6 +361,13 @@ void Context::PopParser(const Parser* parser)
 
 //------------------------------------------------------------------------------
 
+void Context::PopXrefFrame()
+{
+   XrefFrames_.pop_back();
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Context_PrevScope = "Context.PrevScope";
 
 CxxScope* Context::PrevScope()
@@ -364,6 +392,23 @@ void Context::PushParser(const Parser* parser)
    ParseFramePtr frame(new ParseFrame(parser));
    Frame_ = frame.get();
    Frames_.push_back(std::move(frame));
+}
+
+//------------------------------------------------------------------------------
+
+void Context::PushXrefFrame(XrefVenue venue)
+{
+   XrefFrames_.push_back(XrefFrame(venue));
+}
+
+//------------------------------------------------------------------------------
+
+void Context::PushXrefItem(const TypeName* item)
+{
+   if(!XrefFrames_.empty())
+   {
+      XrefFrames_.back().PushItem(item);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -2114,5 +2159,31 @@ ostream& operator<<(ostream& stream, Tracepoint::Action action)
    else
       stream << TraceActionStrings[0];
    return stream;
+}
+
+//==============================================================================
+
+XrefFrame::XrefFrame(XrefVenue venue) : venue_(venue) { }
+
+//------------------------------------------------------------------------------
+
+const TypeName* XrefFrame::FindItem(const string& name) const
+{
+   for(auto i = items_.cbegin(); i != items_.cend(); ++i)
+   {
+      if(*(*i)->Name() == name) return *i;
+   }
+
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+void XrefFrame::PushItem(const TypeName* item)
+{
+   if(venue_ == TemplateFunction)
+   {
+      items_.push_back(item);
+   }
 }
 }

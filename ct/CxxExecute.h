@@ -543,6 +543,40 @@ private:
 
 //------------------------------------------------------------------------------
 //
+//  Used when generating the cross-reference.
+//
+class XrefFrame
+{
+public:
+   //  Invoked when a function in VENUE is updating the cross-reference.
+   //
+   explicit XrefFrame(XrefVenue venue);
+
+   //  Returns where the function that is updating the cross-reference appears.
+   //
+   XrefVenue Venue() const { return venue_; }
+
+   //  Adds ITEM, which appears in a template, as a name that needs to be
+   //  resolved by a template instance so that it can be added to the
+   //  cross-reference.
+   //
+   void PushItem(const TypeName* item);
+
+   //  Returns any unresolved item that matches NAME.
+   //
+   const TypeName* FindItem(const std::string& name) const;
+private:
+   //  Where the function that is updating the cross-reference appears.
+   //
+   const XrefVenue venue_;
+
+   //  The items that need to be resolved for the function.
+   //
+   std::vector< const TypeName* > items_;
+};
+
+//------------------------------------------------------------------------------
+//
 //  A source code tracepoint used to debug the >parse command.
 //
 class Tracepoint
@@ -727,6 +761,26 @@ public:
    //
    static bool ParsingTemplateInstance();
 
+   //  Invoked when a function starts updating the cross-reference.
+   //
+   static void PushXrefFrame(XrefVenue venue);
+
+   //  Invoked when a function finishes updating the cross-reference.
+   //
+   static void PopXrefFrame();
+
+   //  Returns the type of function that is updating the cross-reference.
+   //
+   static XrefVenue GetXrefVenue();
+
+   //  Adds ITEM to those that the current function needs to resolve.
+   //
+   static void PushXrefItem(const TypeName* item);
+
+   //  Returns any unresolved item that matches NAME.
+   //
+   static const TypeName* FindXrefItem(const std::string& name);
+
    //  Returns true if the option identified by OPT is on.
    //
    static bool OptionIsOn(char opt);
@@ -866,6 +920,11 @@ private:
    //  Whether invocations of SetPos should be checked for a breakpoint.
    //
    static bool CheckPos_;
+
+   //  Information for the function(s) that are updating the cross-reference.
+   //  This acts as a stack to allow nesting.
+   //
+   static std::vector< XrefFrame > XrefFrames_;
 };
 }
 #endif

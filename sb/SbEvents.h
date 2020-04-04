@@ -180,7 +180,7 @@ private:
 
    //  The event about to be processed by the ancestor.
    //
-   Event* currEvent_;
+   Event* const currEvent_;
 
    //  The trigger associated with the SAP, if any.
    //

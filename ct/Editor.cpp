@@ -4112,11 +4112,14 @@ word Editor::TagAsConstPointer(const CodeWarning& log, string& expl)
    Debug::ft(Editor_TagAsConstPointer);
 
    //  If there is more than one pointer, this applies to the last one, so
-   //  back up from the data item's name.
+   //  back up from the data item's name.  Search for the name on this line
+   //  in case other edits have altered its position.
    //
    auto data = FindPos(log.item_->GetPos());
-   if(data.pos == string::npos) return NotFound(expl, "Member name");
-   auto ptr = Rfind(data.iter, "*", data.pos);
+   if(data.pos == string::npos) return NotFound(expl, "Data member");
+   auto pos = data.iter->code.find(*log.item_->Name());
+   if(pos == string::npos) return NotFound(expl, "Member name");
+   auto ptr = Rfind(data.iter, "*", pos);
    if(ptr.pos == string::npos) return NotFound(expl, "Pointer tag");
    ptr.iter->code.insert(ptr.pos + 1, " const");
    return Changed(ptr.iter, expl);

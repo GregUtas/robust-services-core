@@ -1107,6 +1107,10 @@ public:
    //
    Function* FindRootFunc() const;
 
+   //  Determines how the function is associated with a template.
+   //
+   TemplateType GetTemplateType() const;
+
    //  Returns true if this is a function template instance.
    //
    bool IsTemplateInstance() const { return tmplt_ != nullptr; }
@@ -1540,10 +1544,6 @@ private:
    //  the function.
    //
    void LogToBoth(Warning warning, size_t index = SIZE_MAX) const;
-
-   //  Determines how the function is associated with a template.
-   //
-   TemplateType GetTemplateType() const;
 
    //  Displays the function's definition.
    //

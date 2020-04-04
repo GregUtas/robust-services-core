@@ -491,7 +491,7 @@ public:
 private:
    //  The primary class for the namespace.
    //
-   Namespace* space_;
+   const Namespace* const space_;
 };
 
 //------------------------------------------------------------------------------

@@ -785,12 +785,8 @@ void DataSpec::AddArray(ArraySpecPtr& array)
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_AddToXref = "DataSpec.AddToXref";
-
 void DataSpec::AddToXref() const
 {
-   Debug::ft(DataSpec_AddToXref);
-
    if(IsAutoDecl()) return;
 
    name_->AddToXref();
@@ -853,12 +849,8 @@ TagCount DataSpec::Arrays() const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_Check = "DataSpec.Check";
-
 void DataSpec::Check() const
 {
-   Debug::ft(DataSpec_Check);
-
    if(tags_.ptrDet_) Log(PtrTagDetached);
    if(tags_.refDet_) Log(RefTagDetached);
 }
@@ -1152,12 +1144,8 @@ TypeSpec* DataSpec::GetTypeSpec() const
 
 //------------------------------------------------------------------------------
 
-fn_name DataSpec_GetUsages = "DataSpec.GetUsages";
-
 void DataSpec::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(DataSpec_GetUsages);
-
    //  Don't obtain usages for an auto type.  If the type ends up being
    //  used to invoke a function, for example, this usage will be noted.
    //  However, items in the expression that obtain the auto type will
@@ -2101,12 +2089,8 @@ QualName::~QualName()
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_AddToXref = "QualName.AddToXref";
-
 void QualName::AddToXref() const
 {
-   Debug::ft(QualName_AddToXref);
-
    for(auto n = First(); n != nullptr; n = n->Next())
    {
       n->AddToXref();
@@ -2141,12 +2125,8 @@ TypeName* QualName::At(size_t n) const
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_Check = "QualName.Check";
-
 void QualName::Check() const
 {
-   Debug::ft(QualName_Check);
-
    for(auto n = First(); n != nullptr; n = n->Next())
    {
       n->Check();
@@ -2327,12 +2307,8 @@ TypeName* QualName::GetTemplateArgs() const
 
 //------------------------------------------------------------------------------
 
-fn_name QualName_GetUsages = "QualName.GetUsages";
-
 void QualName::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(QualName_GetUsages);
-
    //  Get the usages for each individual name.
    //
    for(auto n = First(); n != nullptr; n = n->Next())
@@ -2651,12 +2627,8 @@ SpaceDefn::SpaceDefn(const Namespace* ns) :
 
 //------------------------------------------------------------------------------
 
-fn_name SpaceDefn_AddToXref = "SpaceDefn.AddToXref";
-
 void SpaceDefn::AddToXref() const
 {
-   Debug::ft(SpaceDefn_AddToXref);
-
    space_->AddReference(this);
 }
 
@@ -2689,12 +2661,8 @@ StaticAssert::StaticAssert(ExprPtr& expr, ExprPtr& message) :
 
 //------------------------------------------------------------------------------
 
-fn_name StaticAssert_AddToXref = "StaticAssert.AddToXref";
-
 void StaticAssert::AddToXref() const
 {
-   Debug::ft(StaticAssert_AddToXref);
-
    expr_->AddToXref();
 }
 
@@ -2727,12 +2695,8 @@ bool StaticAssert::EnterScope()
 
 //------------------------------------------------------------------------------
 
-fn_name StaticAssert_GetUsages = "StaticAssert.GetUsages";
-
 void StaticAssert::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(StaticAssert_GetUsages);
-
    expr_->GetUsages(file, symbols);
 }
 
@@ -2780,15 +2744,73 @@ void TemplateParms::AddParm(TemplateParmPtr& parm)
 
 //------------------------------------------------------------------------------
 
-fn_name TemplateParms_Check = "TemplateParms.Check";
+void TemplateParms::AddToXref() const
+{
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      (*p)->AddToXref();
+   }
+}
+
+//------------------------------------------------------------------------------
 
 void TemplateParms::Check() const
 {
-   Debug::ft(TemplateParms_Check);
-
    for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
    {
       (*p)->Check();
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TemplateParms_EnterBlock = "TemplateParms.EnterBlock";
+
+void TemplateParms::EnterBlock()
+{
+   Debug::ft(TemplateParms_EnterBlock);
+
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      (*p)->EnterBlock();
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TemplateParms_EnterScope = "TemplateParms.EnterScope";
+
+void TemplateParms::EnterScope() const
+{
+   Debug::ft(TemplateParms_EnterScope);
+
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      (*p)->EnterScope();
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name TemplateParms_ExitBlock = "TemplateParms.ExitBlock";
+
+void TemplateParms::ExitBlock()
+{
+   Debug::ft(TemplateParms_ExitBlock);
+
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      (*p)->ExitBlock();
+   }
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParms::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+{
+   for(auto p = parms_.cbegin(); p != parms_.cend(); ++p)
+   {
+      (*p)->GetUsages(file, symbols);
    }
 }
 
@@ -2914,12 +2936,8 @@ void TypeName::AddTemplateArg(TypeSpecPtr& arg)
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_AddToXref = "TypeName.AddToXref";
-
 void TypeName::AddToXref() const
 {
-   Debug::ft(TypeName_AddToXref);
-
    auto ref = ReferentDefn();
 
    if(ref != nullptr)
@@ -2975,12 +2993,8 @@ void TypeName::Append(const string& name, bool space)
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_Check = "TypeName.Check";
-
 void TypeName::Check() const
 {
-   Debug::ft(TypeName_Check);
-
    if(args_ != nullptr)
    {
       for(auto a = args_->cbegin(); a != args_->cend(); ++a)
@@ -3079,12 +3093,8 @@ TypeName* TypeName::GetTemplateArgs() const
 
 //------------------------------------------------------------------------------
 
-fn_name TypeName_GetUsages = "TypeName.GetUsages";
-
 void TypeName::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(TypeName_GetUsages);
-
    if(direct_) GetDirectClasses(symbols);
 
    //  Currently, this does not report usages based on ref_ or type_.

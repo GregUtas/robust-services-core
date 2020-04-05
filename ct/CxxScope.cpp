@@ -84,12 +84,8 @@ bool Block::AddStatement(CxxToken* s)
 
 //------------------------------------------------------------------------------
 
-fn_name Block_AddToXref = "Block.AddToXref";
-
 void Block::AddToXref() const
 {
-   Debug::ft(Block_AddToXref);
-
    for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
    {
       (*s)->AddToXref();
@@ -109,12 +105,8 @@ void Block::AddUsing(Using* use)
 
 //------------------------------------------------------------------------------
 
-fn_name Block_Check = "Block.Check";
-
 void Block::Check() const
 {
-   Debug::ft(Block_Check);
-
    for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
    {
       (*s)->Check();
@@ -276,12 +268,8 @@ Function* Block::GetFunction() const
 
 //------------------------------------------------------------------------------
 
-fn_name Block_GetUsages = "Block.GetUsages";
-
 void Block::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Block_GetUsages);
-
    for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
    {
       (*s)->GetUsages(file, symbols);
@@ -449,12 +437,8 @@ ClassData::~ClassData()
 
 //------------------------------------------------------------------------------
 
-fn_name ClassData_AddToXref = "ClassData.AddToXref";
-
 void ClassData::AddToXref() const
 {
-   Debug::ft(ClassData_AddToXref);
-
    Data::AddToXref();
 
    if(width_ != nullptr) width_->AddToXref();
@@ -696,12 +680,8 @@ bool ClassData::EnterScope()
 
 //------------------------------------------------------------------------------
 
-fn_name ClassData_GetUsages = "ClassData.GetUsages";
-
 void ClassData::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(ClassData_GetUsages);
-
    Data::GetUsages(file, symbols);
 
    if(width_ != nullptr) width_->GetUsages(file, symbols);
@@ -1114,12 +1094,8 @@ Data::~Data()
 
 //------------------------------------------------------------------------------
 
-fn_name Data_AddToXref = "Data.AddToXref";
-
 void Data::AddToXref() const
 {
-   Debug::ft(Data_AddToXref);
-
    if(alignas_ != nullptr) alignas_->AddToXref();
    spec_->AddToXref();
    if(expr_ != nullptr) expr_->AddToXref();
@@ -1367,12 +1343,8 @@ TypeName* Data::GetTemplateArgs() const
 
 //------------------------------------------------------------------------------
 
-fn_name Data_GetUsages = "Data.GetUsages";
-
 void Data::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Data_GetUsages);
-
    if(alignas_ != nullptr) alignas_->GetUsages(file, symbols);
    spec_->GetUsages(file, symbols);
    if(expr_ != nullptr) expr_->GetUsages(file, symbols);
@@ -1724,12 +1696,8 @@ FuncData::~FuncData()
 
 //------------------------------------------------------------------------------
 
-fn_name FuncData_AddToXref = "FuncData.AddToXref";
-
 void FuncData::AddToXref() const
 {
-   Debug::ft(FuncData_AddToXref);
-
    Data::AddToXref();
 
    if(next_ != nullptr) next_->AddToXref();
@@ -1846,12 +1814,8 @@ void FuncData::ExitBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name FuncData_GetUsages = "FuncData.GetUsages";
-
 void FuncData::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(FuncData_GetUsages);
-
    Data::GetUsages(file, symbols);
 
    if(next_ != nullptr) next_->GetUsages(file, symbols);
@@ -2084,12 +2048,8 @@ void Function::AddThisArg()
 
 //------------------------------------------------------------------------------
 
-fn_name Function_AddToXref = "Function.AddToXref";
-
 void Function::AddToXref() const
 {
-   Debug::ft(Function_AddToXref);
-
    if(deleted_) return;
 
    auto type = GetTemplateType();
@@ -2124,6 +2084,7 @@ void Function::AddToXref() const
 
    if(defn_) name_->AddToXref();
 
+   if(parms_ != nullptr) parms_->AddToXref();
    if(spec_ != nullptr) spec_->AddToXref();
 
    for(size_t i = (this_ ? 1 : 0); i < args_.size(); ++i)
@@ -3528,10 +3489,7 @@ void Function::EnterBlock()
    //
    if(!IsImplemented()) return;
 
-   auto type = GetTemplateType();
-   const TemplateParmPtrVector* parms = nullptr;
-
-   if(type != NonTemplate)
+   if(GetTemplateType() != NonTemplate)
    {
       //  This is a function template or a function in a class template.
       //  Don't bother compiling a function template in a class template
@@ -3540,11 +3498,6 @@ void Function::EnterBlock()
       //  (GetTemplateType returns NonTemplate in those cases).
       //
       if(Context::ParsingTemplateInstance()) return;
-
-      if(type == FuncTemplate)
-         parms = parms_->Parms();
-      else
-         parms = GetClass()->GetTemplateParms()->Parms();
    }
 
    //  Set up the compilation context and add any template parameters and
@@ -3554,16 +3507,13 @@ void Function::EnterBlock()
    //  all non-static members are initialized so that class members can
    //  invoke default constructors.
    //
+   const Class* cls = GetClass();
+   if(cls != nullptr) cls->EnterParms();
+
+   if(parms_ != nullptr) parms_->EnterBlock();
+
    Context::Enter(this);
    Context::PushScope(this);
-
-   if(parms != nullptr)
-   {
-      for(auto p = parms->cbegin(); p != parms->cend(); ++p)
-      {
-         (*p)->EnterBlock();
-      }
-   }
 
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
    {
@@ -3572,8 +3522,6 @@ void Function::EnterBlock()
 
    if(FuncType() == FuncCtor)
    {
-      const Class* cls = GetClass();
-
       if(call_ != nullptr)
       {
          call_->EnterBlock();
@@ -3605,13 +3553,8 @@ void Function::EnterBlock()
       (*a)->ExitBlock();
    }
 
-   if(parms != nullptr)
-   {
-      for(auto p = parms->cbegin(); p != parms->cend(); ++p)
-      {
-         (*p)->ExitBlock();
-      }
-   }
+   if(parms_ != nullptr) parms_->ExitBlock();
+   if(cls != nullptr) cls->ExitParms();
 
    Context::PopScope();
 }
@@ -3627,6 +3570,7 @@ bool Function::EnterScope()
    //  If this function requires a "this" argument, add it now.
    //
    AddThisArg();
+   if(parms_ != nullptr) parms_->EnterScope();
 
    //  Enter our return type and arguments.
    //
@@ -4089,12 +4033,8 @@ TemplateType Function::GetTemplateType() const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_GetUsages = "Function.GetUsages";
-
 void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Function_GetUsages);
-
    if(deleted_) return;
 
    //  See if this function appears in a function or class template.
@@ -4139,6 +4079,7 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    //
    CxxUsageSets usages;
 
+   if(parms_ != nullptr) parms_->GetUsages(file, usages);
    if(spec_ != nullptr) spec_->GetUsages(file, usages);
 
    for(size_t i = (this_ ? 1 : 0); i < args_.size(); ++i)
@@ -5828,6 +5769,7 @@ bool SpaceData::EnterScope()
    Debug::ft(SpaceData_EnterScope);
 
    Context::SetPos(GetLoc());
+   if(parms_ != nullptr) parms_->EnterScope();
    ExecuteAlignment();
    GetTypeSpec()->EnteringScope(this);
    CloseScope();

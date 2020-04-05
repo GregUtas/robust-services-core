@@ -1176,6 +1176,10 @@ public:
    //
    const TypeSpec* Default() const { return default_.get(); }
 
+   //  Overridden to add the parameter's components to cross-references.
+   //
+   void AddToXref() const override;
+
    //  Overridden to return the default's type, else this item.
    //
    CxxToken* AutoType() const override;
@@ -1188,9 +1192,17 @@ public:
    //
    void EnterBlock() override;
 
+   //  Overridden to make the parameter visible as a local.
+   //
+   bool EnterScope() override;
+
    //  Overridden to remove the parameter as a local.
    //
    void ExitBlock() override;
+
+   //  Overridden to update SYMBOLS with the parameter's type usage.
+   //
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
    //  Overridden to return the parameter's name.
    //

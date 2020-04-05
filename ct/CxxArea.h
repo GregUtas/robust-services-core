@@ -443,6 +443,14 @@ public:
    //
    void GetMemberInitAttrs(DataInitVector& members) const;
 
+   //  Invokes EnterBlock on any template parameters.
+   //
+   void EnterParms() const;
+
+   //  Invokes ExitBlock on any template parameters.
+   //
+   void ExitParms() const;
+
    //  Invoked when an instance of the class is block-copied by assignment
    //  to ARG.  This means that none of its data members can be const.
    //

@@ -489,12 +489,8 @@ void CodeFile::AddIndirectExternalTypes
 
 //------------------------------------------------------------------------------
 
-fn_name CodeFile_AddToXref = "CodeFile.AddToXref";
-
 void CodeFile::AddToXref() const
 {
-   Debug::ft(CodeFile_AddToXref);
-
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
    {
       (*i)->AddToXref();

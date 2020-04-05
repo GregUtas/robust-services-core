@@ -1654,13 +1654,21 @@ public:
    //
    void AddParm(TemplateParmPtr& parm);
 
+   //  Invokes EnterScope on each parameter.
+   //
+   void EnterScope() const;
+
    //  Returns the template's parameters.
    //
    const TemplateParmPtrVector* Parms() const { return &parms_; }
 
-   //  Overridden to check each parameter.
+   //  The following invoke the corresponding function on each parameter.
    //
+   void AddToXref() const override;
    void Check() const override;
+   void EnterBlock() override;
+   void ExitBlock() override;
+   void GetUsages(const CodeFile& file, CxxUsageSets& symbols) const override;
 
    //  Overridden to display the template's full specification.
    //
@@ -1671,7 +1679,7 @@ public:
    //
    void Shrink() override;
 
-   //  Overridden to return the template's parameter names in angle brackets.
+   //  Overridden to return the template's parameters in angle brackets.
    //
    std::string TypeString(bool arg) const override;
 private:

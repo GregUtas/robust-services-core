@@ -63,12 +63,8 @@ Argument::Argument(string& name, TypeSpecPtr& spec) :
 
 //------------------------------------------------------------------------------
 
-fn_name Argument_AddToXref = "Argument.AddToXref";
-
 void Argument::AddToXref() const
 {
-   Debug::ft(Argument_AddToXref);
-
    spec_->AddToXref();
    if(default_ != nullptr) default_->AddToXref();
 }
@@ -155,12 +151,8 @@ void Argument::ExitBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name Argument_GetUsages = "Argument.GetUsages";
-
 void Argument::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Argument_GetUsages);
-
    spec_->GetUsages(file, symbols);
    if(default_ != nullptr) default_->GetUsages(file, symbols);
 }
@@ -317,12 +309,8 @@ BaseDecl::BaseDecl(QualNamePtr& name, Cxx::Access access) :
 
 //------------------------------------------------------------------------------
 
-fn_name BaseDecl_AddToXref = "BaseDecl.AddToXref";
-
 void BaseDecl::AddToXref() const
 {
-   Debug::ft(BaseDecl_AddToXref);
-
    name_->AddToXref();
 }
 
@@ -387,12 +375,8 @@ Class* BaseDecl::GetClass() const
 
 //------------------------------------------------------------------------------
 
-fn_name BaseDecl_GetUsages = "BaseDecl.GetUsages";
-
 void BaseDecl::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(BaseDecl_GetUsages);
-
    //  Our class was used as a base class.  Its name cannot include template
    //  arguments, because subclassing a template instance is not supported.
    //
@@ -487,8 +471,6 @@ void CxxScoped::AddFiles(SetOfIds& imSet) const
 
 //------------------------------------------------------------------------------
 
-fn_name CxxScoped_AddReference = "CxxScoped.AddReference";
-
 void CxxScoped::AddReference(const CxxNamed* item) const
 {
    auto file = item->GetFile();
@@ -506,23 +488,15 @@ void CxxScoped::AddReference(const CxxNamed* item) const
       if(prev == nullptr) return;
 
       auto ref = item->Referent();
-      auto type = ref->Type();
 
-      switch(type)
+      if(ref->IsInTemplateInstance())
       {
-      case Cxx::Function:
+         ref = ref->FindTemplateAnalog(ref);
+      }
+
+      if(ref->Type() == Cxx::Function)
+      {
          ref = static_cast< const Function* >(ref)->FindRootFunc();
-         break;
-
-      case Cxx::Data:
-         if(ref->IsInTemplateInstance())
-         {
-            ref = ref->FindTemplateAnalog(ref);
-         }
-         break;
-
-      default:
-         Debug::SwLog(CxxScoped_AddReference, *ref->Name(), type, SwInfo);
       }
 
       prev->SetReferent(ref, nullptr);
@@ -1006,12 +980,8 @@ void Enum::AddEnumerator(string& name, ExprPtr& init, size_t pos)
 
 //------------------------------------------------------------------------------
 
-fn_name Enum_AddToXref = "Enum.AddToXref";
-
 void Enum::AddToXref() const
 {
-   Debug::ft(Enum_AddToXref);
-
    if(alignas_ != nullptr) alignas_->AddToXref();
    if(spec_ != nullptr) spec_->AddToXref();
 
@@ -1208,12 +1178,8 @@ TypeSpec* Enum::GetTypeSpec() const
 
 //------------------------------------------------------------------------------
 
-fn_name Enum_GetUsages = "Enum.GetUsages";
-
 void Enum::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Enum_GetUsages);
-
    if(alignas_ != nullptr) alignas_->GetUsages(file, symbols);
    if(spec_ != nullptr) spec_->GetUsages(file, symbols);
 
@@ -1319,12 +1285,8 @@ Enumerator::~Enumerator()
 
 //------------------------------------------------------------------------------
 
-fn_name Enumerator_AddToXref = "Enumerator.AddToXref";
-
 void Enumerator::AddToXref() const
 {
-   Debug::ft(Enumerator_AddToXref);
-
    if(init_ != nullptr) init_->AddToXref();
 }
 
@@ -1443,12 +1405,8 @@ void Enumerator::GetScopedNames(stringVector& names, bool templates) const
 
 //------------------------------------------------------------------------------
 
-fn_name Enumerator_GetUsages = "Enumerator.GetUsages";
-
 void Enumerator::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Enumerator_GetUsages);
-
    if(init_ != nullptr) init_->GetUsages(file, symbols);
 }
 
@@ -1553,12 +1511,8 @@ Forward::~Forward()
 
 //------------------------------------------------------------------------------
 
-fn_name Forward_AddToXref = "Forward.AddToXref";
-
 void Forward::AddToXref() const
 {
-   Debug::ft(Forward_AddToXref);
-
    if(Referent() == nullptr) return;
    name_->AddToXref();
 }
@@ -1636,6 +1590,7 @@ bool Forward::EnterScope()
 
    Context::SetPos(GetLoc());
    if(AtFileScope()) GetFile()->InsertForw(this);
+   if(parms_ != nullptr) parms_->EnterScope();
    return true;
 }
 
@@ -1770,12 +1725,8 @@ Friend::~Friend()
 
 //------------------------------------------------------------------------------
 
-fn_name Friend_AddToXref = "Friend.AddToXref";
-
 void Friend::AddToXref() const
 {
-   Debug::ft(Friend_AddToXref);
-
    if(Referent() == nullptr) return;
    name_->AddToXref();
 }
@@ -1895,6 +1846,7 @@ bool Friend::EnterScope()
    //
    Context::SetPos(GetLoc());
    Singleton< CxxSymbols >::Instance()->InsertFriend(this);
+   if(parms_ != nullptr) parms_->EnterScope();
    FindReferent();
    return true;
 }
@@ -2096,12 +2048,8 @@ CxxScoped* Friend::GetReferent() const
 
 //------------------------------------------------------------------------------
 
-fn_name Friend_GetUsages = "Friend.GetUsages";
-
 void Friend::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Friend_GetUsages);
-
    auto ref = Referent();
    if(ref == nullptr) return;
 
@@ -2402,12 +2350,8 @@ MemberInit::MemberInit(const Function* ctor, string& name, TokenPtr& init) :
 
 //------------------------------------------------------------------------------
 
-fn_name MemberInit_AddToXref = "MemberInit.AddToXref";
-
 void MemberInit::AddToXref() const
 {
-   Debug::ft(MemberInit_AddToXref);
-
    if(ref_ != nullptr) ref_->AddReference(this);
    init_->AddToXref();
 }
@@ -2436,12 +2380,8 @@ void MemberInit::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name MemberInit_GetUsages = "MemberInit.GetUsages";
-
 void MemberInit::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(MemberInit_GetUsages);
-
    init_->GetUsages(file, symbols);
 }
 
@@ -2492,6 +2432,14 @@ TemplateParm::TemplateParm(string& name, Cxx::ClassTag tag,
 
 //------------------------------------------------------------------------------
 
+void TemplateParm::AddToXref() const
+{
+   if(type_ != nullptr) type_->AddToXref();
+   if(default_ != nullptr) default_->AddToXref();
+}
+
+//------------------------------------------------------------------------------
+
 CxxToken* TemplateParm::AutoType() const
 {
    if(default_ != nullptr)
@@ -2528,6 +2476,18 @@ void TemplateParm::EnterBlock()
 
 //------------------------------------------------------------------------------
 
+fn_name TemplateParm_EnterScope = "TemplateParm.EnterScope";
+
+bool TemplateParm::EnterScope()
+{
+   Debug::ft(TemplateParm_EnterScope);
+
+   if(default_ != nullptr) default_->EnteringScope(Context::Scope());
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name TemplateParm_ExitBlock = "TemplateParm.ExitBlock";
 
 void TemplateParm::ExitBlock()
@@ -2535,6 +2495,14 @@ void TemplateParm::ExitBlock()
    Debug::ft(TemplateParm_ExitBlock);
 
    Context::EraseLocal(this);
+}
+
+//------------------------------------------------------------------------------
+
+void TemplateParm::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
+{
+   if(type_ != nullptr) type_->GetUsages(file, symbols);
+   if(default_ != nullptr) default_->GetUsages(file, symbols);
 }
 
 //------------------------------------------------------------------------------
@@ -2721,12 +2689,8 @@ Typedef::~Typedef()
 
 //------------------------------------------------------------------------------
 
-fn_name Typedef_AddToXref = "Typedef.AddToXref";
-
 void Typedef::AddToXref() const
 {
-   Debug::ft(Typedef_AddToXref);
-
    spec_->AddToXref();
    if(alignas_ != nullptr) alignas_->AddToXref();
 }
@@ -2873,12 +2837,8 @@ TypeName* Typedef::GetTemplateArgs() const
 
 //------------------------------------------------------------------------------
 
-fn_name Typedef_GetUsages = "Typedef.GetUsages";
-
 void Typedef::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Typedef_GetUsages);
-
    spec_->GetUsages(file, symbols);
    if(alignas_ != nullptr) alignas_->GetUsages(file, symbols);
 }
@@ -2973,12 +2933,8 @@ Using::Using(QualNamePtr& name, bool space, bool added) :
 
 //------------------------------------------------------------------------------
 
-fn_name Using_AddToXref = "Using.AddToXref";
-
 void Using::AddToXref() const
 {
-   Debug::ft(Using_AddToXref);
-
    name_->AddToXref();
 }
 

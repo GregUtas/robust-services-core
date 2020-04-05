@@ -243,7 +243,7 @@ enum FunctionDefinition
 enum TemplateType
 {
    NonTemplate,   // not a template (or a function not in a template)
-   FuncTemplate,  // a function template
+   FuncTemplate,  // a function template, which could be in a class template
    ClassTemplate  // a class template (or a function in a class template)
 };
 

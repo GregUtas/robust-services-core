@@ -52,12 +52,8 @@ AlignAs::AlignAs(TokenPtr& token) : token_(std::move(token))
 
 //------------------------------------------------------------------------------
 
-fn_name AlignAs_AddToXref = "AlignAs.AddToXref";
-
 void AlignAs::AddToXref() const
 {
-   Debug::ft(AlignAs_AddToXref);
-
    token_->AddToXref();
 }
 
@@ -74,12 +70,8 @@ void AlignAs::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name AlignAs_GetUsages = "AlignAs.GetUsages";
-
 void AlignAs::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(AlignAs_GetUsages);
-
    token_->GetUsages(file, symbols);
 }
 
@@ -105,12 +97,8 @@ ArraySpec::ArraySpec(ExprPtr& expr) : expr_(expr.release())
 
 //------------------------------------------------------------------------------
 
-fn_name ArraySpec_AddToXref = "ArraySpec.AddToXref";
-
 void ArraySpec::AddToXref() const
 {
-   Debug::ft(ArraySpec_AddToXref);
-
    if(expr_ != nullptr) expr_->AddToXref();
 }
 
@@ -127,12 +115,8 @@ void ArraySpec::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name ArraySpec_GetUsages = "ArraySpec.GetUsages";
-
 void ArraySpec::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(ArraySpec_GetUsages);
-
    if(expr_ != nullptr) expr_->GetUsages(file, symbols);
 }
 
@@ -176,12 +160,8 @@ BraceInit::BraceInit()
 
 //------------------------------------------------------------------------------
 
-fn_name BraceInit_AddToXref = "BraceInit.AddToXref";
-
 void BraceInit::AddToXref() const
 {
-   Debug::ft(BraceInit_AddToXref);
-
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
    {
       (*i)->AddToXref();
@@ -213,12 +193,8 @@ void BraceInit::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name BraceInit_GetUsages = "BraceInit.GetUsages";
-
 void BraceInit::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(BraceInit_GetUsages);
-
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
    {
       (*i)->GetUsages(file, symbols);
@@ -723,12 +699,8 @@ bool Expression::AddItem(TokenPtr& item)
 
 //------------------------------------------------------------------------------
 
-fn_name Expression_AddToXref = "Expression.AddToXref";
-
 void Expression::AddToXref() const
 {
-   Debug::ft(Expression_AddToXref);
-
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
    {
       (*i)->AddToXref();
@@ -877,12 +849,8 @@ void Expression::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name Expression_GetUsages = "Expression.GetUsages";
-
 void Expression::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Expression_GetUsages);
-
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
    {
       (*i)->GetUsages(file, symbols);
@@ -1252,12 +1220,8 @@ void Operation::AddArg(TokenPtr& arg, bool prefixed)
 
 //------------------------------------------------------------------------------
 
-fn_name Operation_AddToXref = "Operation.AddToXref";
-
 void Operation::AddToXref() const
 {
-   Debug::ft(Operation_AddToXref);
-
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
    {
       (*a)->AddToXref();
@@ -2304,12 +2268,8 @@ Function* Operation::FindNewOrDelete
 
 //------------------------------------------------------------------------------
 
-fn_name Operation_GetUsages = "Operation.GetUsages";
-
 void Operation::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Operation_GetUsages);
-
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
    {
       (*a)->GetUsages(file, symbols);
@@ -2939,12 +2899,8 @@ string Operation::Trace() const
 
 //==============================================================================
 
-fn_name Precedence_AddToXref = "Precedence.AddToXref";
-
 void Precedence::AddToXref() const
 {
-   Debug::ft(Precedence_AddToXref);
-
    if(expr_ != nullptr) expr_->AddToXref();
 }
 
@@ -2961,12 +2917,8 @@ void Precedence::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name Precedence_GetUsages = "Precedence.GetUsages";
-
 void Precedence::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Precedence_GetUsages);
-
    if(expr_ != nullptr) expr_->GetUsages(file, symbols);
 }
 

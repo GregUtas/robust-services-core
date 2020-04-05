@@ -52,12 +52,8 @@ AlignAs::AlignAs(TokenPtr& token) : token_(std::move(token))
 
 //------------------------------------------------------------------------------
 
-fn_name AlignAs_AddToXref = "AlignAs.AddToXref";
-
 void AlignAs::AddToXref() const
 {
-   Debug::ft(AlignAs_AddToXref);
-
    token_->AddToXref();
 }
 
@@ -74,12 +70,8 @@ void AlignAs::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name AlignAs_GetUsages = "AlignAs.GetUsages";
-
 void AlignAs::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(AlignAs_GetUsages);
-
    token_->GetUsages(file, symbols);
 }
 
@@ -105,12 +97,8 @@ ArraySpec::ArraySpec(ExprPtr& expr) : expr_(expr.release())
 
 //------------------------------------------------------------------------------
 
-fn_name ArraySpec_AddToXref = "ArraySpec.AddToXref";
-
 void ArraySpec::AddToXref() const
 {
-   Debug::ft(ArraySpec_AddToXref);
-
    if(expr_ != nullptr) expr_->AddToXref();
 }
 
@@ -127,12 +115,8 @@ void ArraySpec::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name ArraySpec_GetUsages = "ArraySpec.GetUsages";
-
 void ArraySpec::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(ArraySpec_GetUsages);
-
    if(expr_ != nullptr) expr_->GetUsages(file, symbols);
 }
 
@@ -176,12 +160,8 @@ BraceInit::BraceInit()
 
 //------------------------------------------------------------------------------
 
-fn_name BraceInit_AddToXref = "BraceInit.AddToXref";
-
 void BraceInit::AddToXref() const
 {
-   Debug::ft(BraceInit_AddToXref);
-
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
    {
       (*i)->AddToXref();
@@ -213,12 +193,8 @@ void BraceInit::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name BraceInit_GetUsages = "BraceInit.GetUsages";
-
 void BraceInit::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(BraceInit_GetUsages);
-
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
    {
       (*i)->GetUsages(file, symbols);
@@ -351,6 +327,25 @@ CxxScoped* CxxToken::Referent() const
 
    Debug::SwLog(CxxToken_Referent, strOver(this), 0);
    return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name CxxToken_ReferentDefn = "CxxToken.ReferentDefn";
+
+CxxScoped* CxxToken::ReferentDefn() const
+{
+   Debug::ft(CxxToken_ReferentDefn);
+
+   auto ref1 = Referent();
+
+   if((ref1 != nullptr) && ref1->IsForward())
+   {
+      auto ref2 = ref1->Referent();
+      if(ref2 != nullptr) return ref2;
+   }
+
+   return ref1;
 }
 
 //------------------------------------------------------------------------------
@@ -704,12 +699,8 @@ bool Expression::AddItem(TokenPtr& item)
 
 //------------------------------------------------------------------------------
 
-fn_name Expression_AddToXref = "Expression.AddToXref";
-
 void Expression::AddToXref() const
 {
-   Debug::ft(Expression_AddToXref);
-
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
    {
       (*i)->AddToXref();
@@ -858,12 +849,8 @@ void Expression::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name Expression_GetUsages = "Expression.GetUsages";
-
 void Expression::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Expression_GetUsages);
-
    for(auto i = items_.cbegin(); i != items_.cend(); ++i)
    {
       (*i)->GetUsages(file, symbols);
@@ -1233,12 +1220,8 @@ void Operation::AddArg(TokenPtr& arg, bool prefixed)
 
 //------------------------------------------------------------------------------
 
-fn_name Operation_AddToXref = "Operation.AddToXref";
-
 void Operation::AddToXref() const
 {
-   Debug::ft(Operation_AddToXref);
-
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
    {
       (*a)->AddToXref();
@@ -2285,12 +2268,8 @@ Function* Operation::FindNewOrDelete
 
 //------------------------------------------------------------------------------
 
-fn_name Operation_GetUsages = "Operation.GetUsages";
-
 void Operation::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Operation_GetUsages);
-
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
    {
       (*a)->GetUsages(file, symbols);
@@ -2583,13 +2562,6 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
 
    if(type != Cxx::Class)
    {
-      //* If ARG1 is a template parameter, search for a function that
-      //  matches the arguments (not yet available).  This could mean
-      //  pushing a temporary argument that will be resolved later,
-      //  similar to when a function is overloaded.  (The code that
-      //  follows appears to assume that the first function found in
-      //  CLS will always be correct, and not an incorrect overload!)
-      //
       auto expl = arg1.Trace() + " is not a class";
       Context::SwLog(Operation_PushMember, expl, type);
       return;
@@ -2629,6 +2601,8 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
 
    if(arg2.name != nullptr)
    {
+      //* If MEM is a function, the following should be deferred until function
+      //  matching is concluded.
       //  Record that MEM was accessed through CLS (cls.mem or cls->mem).  If
       //  MEM was Inherited, it must actually be public (rather than protected)
       //  if SCOPE was not a friend of its declarer and neither in CLS nor one
@@ -2925,12 +2899,8 @@ string Operation::Trace() const
 
 //==============================================================================
 
-fn_name Precedence_AddToXref = "Precedence.AddToXref";
-
 void Precedence::AddToXref() const
 {
-   Debug::ft(Precedence_AddToXref);
-
    if(expr_ != nullptr) expr_->AddToXref();
 }
 
@@ -2947,12 +2917,8 @@ void Precedence::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name Precedence_GetUsages = "Precedence.GetUsages";
-
 void Precedence::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Precedence_GetUsages);
-
    if(expr_ != nullptr) expr_->GetUsages(file, symbols);
 }
 

@@ -65,12 +65,8 @@ Case::Case(ExprPtr& expression, size_t pos) : CxxStatement(pos),
 
 //------------------------------------------------------------------------------
 
-fn_name Case_AddToXref = "Case.AddToXref";
-
 void Case::AddToXref() const
 {
-   Debug::ft(Case_AddToXref);
-
    expr_->AddToXref();
 }
 
@@ -102,12 +98,8 @@ void Case::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name Case_GetUsages = "Case.GetUsages";
-
 void Case::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Case_GetUsages);
-
    expr_->GetUsages(file, symbols);
 }
 
@@ -124,24 +116,16 @@ Catch::Catch(size_t pos) : CxxStatement(pos)
 
 //------------------------------------------------------------------------------
 
-fn_name Catch_AddToXref = "Catch.AddToXref";
-
 void Catch::AddToXref() const
 {
-   Debug::ft(Catch_AddToXref);
-
    if(arg_ != nullptr) arg_->AddToXref();
    handler_->AddToXref();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Catch_Check = "Catch.Check";
-
 void Catch::Check() const
 {
-   Debug::ft(Catch_Check);
-
    if(arg_ != nullptr) arg_->Check();
    handler_->Check();
 }
@@ -208,12 +192,8 @@ CxxScoped* Catch::FindNthItem(const std::string& name, size_t& n) const
 
 //------------------------------------------------------------------------------
 
-fn_name Catch_GetUsages = "Catch.GetUsages";
-
 void Catch::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Catch_GetUsages);
-
    if(arg_ != nullptr) arg_->GetUsages(file, symbols);
    handler_->GetUsages(file, symbols);
 }
@@ -248,12 +228,8 @@ Condition::Condition(size_t pos) : CxxStatement(pos)
 
 //------------------------------------------------------------------------------
 
-fn_name Condition_AddToXref = "Condition.AddToXref";
-
 void Condition::AddToXref() const
 {
-   Debug::ft(Condition_AddToXref);
-
    if(condition_ != nullptr) condition_->AddToXref();
 }
 
@@ -279,12 +255,8 @@ void Condition::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name Condition_GetUsages = "Condition.GetUsages";
-
 void Condition::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Condition_GetUsages);
-
    if(condition_ != nullptr) condition_->GetUsages(file, symbols);
 }
 
@@ -351,24 +323,16 @@ Do::Do(size_t pos) : Condition(pos)
 
 //------------------------------------------------------------------------------
 
-fn_name Do_AddToXref = "Do.AddToXref";
-
 void Do::AddToXref() const
 {
-   Debug::ft(Do_AddToXref);
-
    loop_->AddToXref();
    Condition::AddToXref();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Do_Check = "Do.Check";
-
 void Do::Check() const
 {
-   Debug::ft(Do_Check);
-
    loop_->Check();
 }
 
@@ -424,12 +388,8 @@ CxxScoped* Do::FindNthItem(const std::string& name, size_t& n) const
 
 //------------------------------------------------------------------------------
 
-fn_name Do_GetUsages = "Do.GetUsages";
-
 void Do::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Do_GetUsages);
-
    loop_->GetUsages(file, symbols);
    Condition::GetUsages(file, symbols);
 }
@@ -485,12 +445,8 @@ Expr::Expr(ExprPtr& expression, size_t pos) : CxxStatement(pos),
 
 //------------------------------------------------------------------------------
 
-fn_name Expr_AddToXref = "Expr.AddToXref";
-
 void Expr::AddToXref() const
 {
-   Debug::ft(Expr_AddToXref);
-
    expr_->AddToXref();
 }
 
@@ -509,12 +465,8 @@ void Expr::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name Expr_GetUsages = "Expr.GetUsages";
-
 void Expr::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Expr_GetUsages);
-
    expr_->GetUsages(file, symbols);
 }
 
@@ -539,12 +491,8 @@ For::For(size_t pos) : Condition(pos)
 
 //------------------------------------------------------------------------------
 
-fn_name For_AddToXref = "For.AddToXref";
-
 void For::AddToXref() const
 {
-   Debug::ft(For_AddToXref);
-
    if(initial_ != nullptr) initial_->AddToXref();
    Condition::AddToXref();
    if(subsequent_ != nullptr) subsequent_->AddToXref();
@@ -553,12 +501,8 @@ void For::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name For_Check = "For.Check";
-
 void For::Check() const
 {
-   Debug::ft(For_Check);
-
    if(initial_ != nullptr) initial_->Check();
    loop_->Check();
 }
@@ -683,12 +627,8 @@ CxxScoped* For::FindNthItem(const std::string& name, size_t& n) const
 
 //------------------------------------------------------------------------------
 
-fn_name For_GetUsages = "For.GetUsages";
-
 void For::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(For_GetUsages);
-
    if(initial_ != nullptr) initial_->GetUsages(file, symbols);
    Condition::GetUsages(file, symbols);
    if(subsequent_ != nullptr) subsequent_->GetUsages(file, symbols);
@@ -779,12 +719,8 @@ If::If(size_t pos) : Condition(pos),
 
 //------------------------------------------------------------------------------
 
-fn_name If_AddToXref = "If.AddToXref";
-
 void If::AddToXref() const
 {
-   Debug::ft(If_AddToXref);
-
    Condition::AddToXref();
    then_->AddToXref();
    if(else_ != nullptr) else_->AddToXref();
@@ -792,12 +728,8 @@ void If::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name If_Check = "If.Check";
-
 void If::Check() const
 {
-   Debug::ft(If_Check);
-
    then_->Check();
    if(else_ != nullptr) else_->Check();
 }
@@ -863,12 +795,8 @@ CxxScoped* If::FindNthItem(const std::string& name, size_t& n) const
 
 //------------------------------------------------------------------------------
 
-fn_name If_GetUsages = "If.GetUsages";
-
 void If::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(If_GetUsages);
-
    Condition::GetUsages(file, symbols);
    then_->GetUsages(file, symbols);
    if(else_ != nullptr) else_->GetUsages(file, symbols);
@@ -1009,12 +937,8 @@ Return::Return(size_t pos) : CxxStatement(pos)
 
 //------------------------------------------------------------------------------
 
-fn_name Return_AddToXref = "Return.AddToXref";
-
 void Return::AddToXref() const
 {
-   Debug::ft(Return_AddToXref);
-
    if(expr_ != nullptr) expr_->AddToXref();
 }
 
@@ -1043,12 +967,8 @@ void Return::EnterBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name Return_GetUsages = "Return.GetUsages";
-
 void Return::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Return_GetUsages);
-
    if(expr_ != nullptr) expr_->GetUsages(file, symbols);
 }
 
@@ -1080,24 +1000,16 @@ Switch::Switch(size_t pos) : CxxStatement(pos)
 
 //------------------------------------------------------------------------------
 
-fn_name Switch_AddToXref = "Switch.AddToXref";
-
 void Switch::AddToXref() const
 {
-   Debug::ft(Switch_AddToXref);
-
    expr_->AddToXref();
    cases_->AddToXref();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Switch_Check = "Switch.Check";
-
 void Switch::Check() const
 {
-   Debug::ft(Switch_Check);
-
    cases_->Check();
 }
 
@@ -1144,12 +1056,8 @@ CxxScoped* Switch::FindNthItem(const std::string& name, size_t& n) const
 
 //------------------------------------------------------------------------------
 
-fn_name Switch_GetUsages = "Switch.GetUsages";
-
 void Switch::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Switch_GetUsages);
-
    expr_->GetUsages(file, symbols);
    cases_->GetUsages(file, symbols);
 }
@@ -1186,12 +1094,8 @@ Try::Try(size_t pos) : CxxStatement(pos)
 
 //------------------------------------------------------------------------------
 
-fn_name Try_AddToXref = "Try.AddToXref";
-
 void Try::AddToXref() const
 {
-   Debug::ft(Try_AddToXref);
-
    try_->AddToXref();
 
    for(auto c = catches_.cbegin(); c != catches_.cend(); ++c)
@@ -1202,12 +1106,8 @@ void Try::AddToXref() const
 
 //------------------------------------------------------------------------------
 
-fn_name Try_Check = "Try.Check";
-
 void Try::Check() const
 {
-   Debug::ft(Try_Check);
-
    try_->Check();
 
    for(auto c = catches_.cbegin(); c != catches_.cend(); ++c)
@@ -1286,12 +1186,8 @@ CxxScoped* Try::FindNthItem(const std::string& name, size_t& n) const
 
 //------------------------------------------------------------------------------
 
-fn_name Try_GetUsages = "Try.GetUsages";
-
 void Try::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Try_GetUsages);
-
    try_->GetUsages(file, symbols);
 
    for(auto c = catches_.cbegin(); c != catches_.cend(); ++c)
@@ -1343,24 +1239,16 @@ While::While(size_t pos) : Condition(pos)
 
 //------------------------------------------------------------------------------
 
-fn_name While_AddToXref = "While.AddToXref";
-
 void While::AddToXref() const
 {
-   Debug::ft(While_AddToXref);
-
    Condition::AddToXref();
    loop_->AddToXref();
 }
 
 //------------------------------------------------------------------------------
 
-fn_name While_Check = "While.Check";
-
 void While::Check() const
 {
-   Debug::ft(While_Check);
-
    loop_->Check();
 }
 
@@ -1403,12 +1291,8 @@ CxxScoped* While::FindNthItem(const std::string& name, size_t& n) const
 
 //------------------------------------------------------------------------------
 
-fn_name While_GetUsages = "While.GetUsages";
-
 void While::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(While_GetUsages);
-
    Condition::GetUsages(file, symbols);
    loop_->GetUsages(file, symbols);
 }

@@ -104,10 +104,6 @@ public:
    //
    bool IsSubsFile() const { return isSubsFile_; }
 
-   //  Returns true if the file defines a class template.
-   //
-   bool IsTemplateHeader() const;
-
    //  Returns the using statement, if any, that makes ITEM visible within
    //  this file or SCOPE because it matches fqName to at least PREFIX.
    //
@@ -160,11 +156,6 @@ public:
    //  Records that ITEM was used in the file's executable code.
    //
    void AddUsage(const CxxNamed* item);
-
-   //  Invoked when the file defines a function template or a function
-   //  in a class template.
-   //
-   void SetTemplate(TemplateType type);
 
    enum ParseState
    {
@@ -585,10 +576,6 @@ private:
    //  The file's parse status.
    //
    ParseState parsed_;
-
-   //  Whether any of the file's functions involve templates.
-   //
-   TemplateType template_;
 
    //  Set if >check was run on the file.
    //

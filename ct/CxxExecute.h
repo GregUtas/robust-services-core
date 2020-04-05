@@ -405,6 +405,7 @@ extern const StackArg NilStackArg;
 //
 //  Options for the CLI >parse command.
 //
+constexpr char TemplateLogs = 't';
 constexpr char TraceParse = 'p';
 constexpr char SaveParseTrace = 's';
 constexpr char TraceCompilation = 'c';
@@ -539,6 +540,40 @@ private:
    //  The current position in the source code.
    //
    size_t pos_;
+};
+
+//------------------------------------------------------------------------------
+//
+//  Used when generating the cross-reference.
+//
+class XrefFrame
+{
+public:
+   //  Invoked when UPDATER is updating the cross-reference.
+   //
+   explicit XrefFrame(XrefUpdater updater);
+
+   //  Returns what type of item is updating the cross-reference.
+   //
+   XrefUpdater Updater() const { return updater_; }
+
+   //  Adds ITEM, which appears in a template, as a name that needs to be
+   //  resolved by a template instance so that it can be added to the
+   //  cross-reference.
+   //
+   void PushItem(const TypeName* item);
+
+   //  Returns any unresolved item that matches NAME.
+   //
+   const TypeName* FindItem(const std::string& name) const;
+private:
+   //  Where the item that is updating the cross-reference appears.
+   //
+   const XrefUpdater updater_;
+
+   //  The items that need to be resolved for the function.
+   //
+   std::vector< const TypeName* > items_;
 };
 
 //------------------------------------------------------------------------------
@@ -727,6 +762,31 @@ public:
    //
    static bool ParsingTemplateInstance();
 
+   //  Returns true if a function in a template (not in a template
+   //  *instance*) is being compiled.
+   //
+   static bool CompilingTemplateFunction();
+
+   //  Invoked when UPDATER starts updating the cross-reference.
+   //
+   static void PushXrefFrame(XrefUpdater updater);
+
+   //  Invoked when a function finishes updating the cross-reference.
+   //
+   static void PopXrefFrame();
+
+   //  Returns the type of item that is updating the cross-reference.
+   //
+   static XrefUpdater GetXrefUpdater();
+
+   //  Adds ITEM to those that the current function needs to resolve.
+   //
+   static void PushXrefItem(const TypeName* item);
+
+   //  Returns any unresolved item that matches NAME.
+   //
+   static const TypeName* FindXrefItem(const std::string& name);
+
    //  Returns true if the option identified by OPT is on.
    //
    static bool OptionIsOn(char opt);
@@ -755,7 +815,7 @@ public:
    //
    static void ClearTracepoints();
 
-   //  Displays current tracepoint in STREAM.  Each line starts with PREFIX.
+   //  Displays current tracepoints in STREAM.  Each line starts with PREFIX.
    //
    static void DisplayTracepoints
       (std::ostream& stream, const std::string& prefix);
@@ -866,6 +926,11 @@ private:
    //  Whether invocations of SetPos should be checked for a breakpoint.
    //
    static bool CheckPos_;
+
+   //  Information for the function(s) that are updating the cross-reference.
+   //  This acts as a stack to allow nesting.
+   //
+   static std::vector< XrefFrame > XrefFrames_;
 };
 }
 #endif

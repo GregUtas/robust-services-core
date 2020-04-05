@@ -997,6 +997,7 @@ const string& ValidParseOptions()
 
    if(ValidOpts.empty())
    {
+      ValidOpts.push_back(TemplateLogs);
       ValidOpts.push_back(TraceParse);
       ValidOpts.push_back(SaveParseTrace);
       ValidOpts.push_back(TraceCompilation);

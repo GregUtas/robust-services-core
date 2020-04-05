@@ -94,6 +94,12 @@ public:
    //
    virtual Cxx::ItemType Type() const { return Cxx::Undefined; }
 
+   //  Returns true if the type is a forward declaration: namely, if its
+   //  Type() is Cxx::Forward or Cxx::Friend.  Declarations of data and
+   //  functions are not currently included in this scheme.
+   //
+   virtual bool IsForward() const { return false; }
+
    //  Returns the item's name.  The default version generates a log and
    //  returns nullptr.  All subclasses of CxxNamed have names, although
    //  the name may be an empty string (e.g. for an unnamed argument).
@@ -289,6 +295,12 @@ public:
    //  size required for their current contents.
    //
    virtual void Shrink() { }
+
+   //  Invokes Referent to find what the item refers to.  If the result is a
+   //  forward or friend declaration, *its* referent is found in an attempt to
+   //  locate the actual definition.
+   //
+   CxxScoped* ReferentDefn() const;
 
    //  Returns the item's underlying type.  It uses RootType (below) to follow
    //  a data item or function argument to its underlying type, through typedef

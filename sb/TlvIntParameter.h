@@ -43,7 +43,7 @@ namespace SessionBase
 //  it compared unused bytes.  Nevertheless, this class would need enhancing
 //  to support ints that are not 1, 2, 4, or 8 bytes long.
 //
-template< typename T > class TlvIntParameter : public TlvParameter
+template< class T > class TlvIntParameter : public TlvParameter
 {
 protected:
    //  Protected because this class is virtual.
@@ -65,7 +65,6 @@ protected:
       NodeBase::Debug::ft(TlvIntParameter_InjectMsg());
 
       NodeBase::word value;
-      T parmval;
       auto& tlvmsg = static_cast< TlvMessage& >(msg);
 
       switch(cli.Command()->GetIntParmRc(value, cli))
@@ -79,7 +78,7 @@ protected:
          return IllegalValueInStream;
       }
 
-      parmval = value;
+      T parmval = value;
 
       if(tlvmsg.AddType(parmval, Pid()) == nullptr)
       {

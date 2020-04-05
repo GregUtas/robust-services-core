@@ -21,7 +21,7 @@
 //
 #include "Alarm.h"
 #include <cstdint>
-#include <ostream>
+#include <sstream>
 #include "AlarmRegistry.h"
 #include "Algorithms.h"
 #include "Debug.h"

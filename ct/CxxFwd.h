@@ -41,6 +41,7 @@ class Asm;
 class BaseDecl;
 class Block;
 class Class;
+class ClassData;
 class ClassInst;
 class CodeDir;
 class CodeFile;

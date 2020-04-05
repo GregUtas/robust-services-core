@@ -1107,6 +1107,10 @@ public:
    //
    Function* FindRootFunc() const;
 
+   //  Determines how the function is associated with a template.
+   //
+   TemplateType GetTemplateType() const;
+
    //  Returns true if this is a function template instance.
    //
    bool IsTemplateInstance() const { return tmplt_ != nullptr; }
@@ -1484,6 +1488,13 @@ private:
    static Function* InstantiateError
       (const std::string& instName, NodeBase::debug32_t offset);
 
+   //  Marks recvArg const if
+   //  o it's a "this" argument and this function also has a const version, or
+   //  o this function is virtual and INVOKER (the function invoking this one)
+   //    is another instance of that function.
+   //
+   void AdjustRecvConstness(const Function* invoker, StackArg& recvArg) const;
+
    //  Invoked when the function accesed a non-public member in its class.
    //
    void SetNonPublic();
@@ -1533,10 +1544,6 @@ private:
    //  the function.
    //
    void LogToBoth(Warning warning, size_t index = SIZE_MAX) const;
-
-   //  Determines how the function is associated with a template.
-   //
-   TemplateType GetTemplateType() const;
 
    //  Displays the function's definition.
    //

@@ -412,16 +412,11 @@ bool Class::AddSubclass(Class* cls)
 
 //------------------------------------------------------------------------------
 
-fn_name Class_AddToXref = "Class.AddToXref";
-
 void Class::AddToXref() const
 {
-   Debug::ft(Class_AddToXref);
-
    CxxArea::AddToXref();
 
-   name_->AddToXref();
-
+   if(parms_ != nullptr) parms_->AddToXref();
    if(alignas_ != nullptr) alignas_->AddToXref();
 
    auto base = GetBaseDecl();
@@ -1068,6 +1063,17 @@ ClassInst* Class::EnsureInstance(const TypeName* type)
 
 //------------------------------------------------------------------------------
 
+fn_name Class_EnterParms = "Class.EnterParms";
+
+void Class::EnterParms() const
+{
+   Debug::ft(Class_EnterParms);
+
+   if(parms_ != nullptr) parms_->EnterBlock();
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Class_EnterScope = "Class.EnterScope";
 
 bool Class::EnterScope()
@@ -1075,8 +1081,20 @@ bool Class::EnterScope()
    Debug::ft(Class_EnterScope);
 
    if(AtFileScope()) GetFile()->InsertClass(this);
+   if(parms_ != nullptr) parms_->EnterScope();
    if(alignas_ != nullptr) alignas_->EnterBlock();
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Class_ExitParms = "Class.ExitParms";
+
+void Class::ExitParms() const
+{
+   Debug::ft(Class_ExitParms);
+
+   if(parms_ != nullptr) parms_->ExitBlock();
 }
 
 //------------------------------------------------------------------------------
@@ -1550,12 +1568,8 @@ Class::UsageAttributes Class::GetUsageAttrs() const
 
 //------------------------------------------------------------------------------
 
-fn_name Class_GetUsages = "Class.GetUsages";
-
 void Class::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Class_GetUsages);
-
    //  IF this is a class template, obtain usage information from its first
    //  instance in case some symbols in the template could not be resolved.
    //
@@ -1565,6 +1579,7 @@ void Class::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
       first->GetUsages(file, symbols);
    }
 
+   if(parms_ != nullptr) parms_->GetUsages(file, symbols);
    if(alignas_ != nullptr) alignas_->GetUsages(file, symbols);
 
    auto base = GetBaseDecl();
@@ -2177,12 +2192,8 @@ CxxScoped* ClassInst::FindTemplateAnalog(const CxxNamed* item) const
 
 //------------------------------------------------------------------------------
 
-fn_name ClassInst_GetUsages = "ClassInst.GetUsages";
-
 void ClassInst::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(ClassInst_GetUsages);
-
    //  This is invoked by a class template in order to obtain symbol usage
    //  information from one of its instances.
    //
@@ -2443,12 +2454,8 @@ bool CxxArea::AddStaticAssert(StaticAssertPtr& assert)
 
 //------------------------------------------------------------------------------
 
-fn_name CxxArea_AddToXref = "CxxArea.AddToXref";
-
 void CxxArea::AddToXref() const
 {
-   Debug::ft(CxxArea_AddToXref);
-
    for(auto c = classes_.cbegin(); c != classes_.cend(); ++c)
    {
       (*c)->AddToXref();

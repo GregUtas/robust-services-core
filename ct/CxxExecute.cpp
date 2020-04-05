@@ -175,6 +175,7 @@ ParseFrame* Context::Frame_ = nullptr;
 string Context::LastLogLoc_ = EMPTY_STR;
 std::set< Tracepoint > Context::Tracepoints_ = std::set< Tracepoint >();
 bool Context::CheckPos_ = false;
+std::vector< XrefFrame > Context::XrefFrames_ = std::vector< XrefFrame >();
 
 //------------------------------------------------------------------------------
 
@@ -185,6 +186,19 @@ void Context::ClearTracepoints()
    Debug::ft(Context_ClearTracepoints);
 
    Tracepoints_.clear();
+}
+
+//------------------------------------------------------------------------------
+
+bool Context::CompilingTemplateFunction()
+{
+   auto scope = Scope();
+   if(scope == nullptr) return false;
+
+   auto func = Scope()->GetFunction();
+   if(func == nullptr) return false;
+
+   return (func->GetTemplateType() != NonTemplate);
 }
 
 //------------------------------------------------------------------------------
@@ -230,10 +244,30 @@ void Context::EraseTracepoint
 
 //------------------------------------------------------------------------------
 
+const TypeName* Context::FindXrefItem(const string& name)
+{
+   //  The top frame is currently an InstanceFunction that is resolving any
+   //  items pushed by the TemplateFunction in the frame below it.
+   //
+   auto size = XrefFrames_.size();
+   if(size < 2) return nullptr;
+   return XrefFrames_.at(size - 2).FindItem(name);
+}
+
+//------------------------------------------------------------------------------
+
 const Parser* Context::GetParser()
 {
    if(Frame_ == nullptr) return nullptr;
    return Frame_->GetParser();
+}
+
+//------------------------------------------------------------------------------
+
+XrefUpdater Context::GetXrefUpdater()
+{
+   if(XrefFrames_.empty()) return NotAFunction;
+   return XrefFrames_.back().Updater();
 }
 
 //------------------------------------------------------------------------------
@@ -340,6 +374,13 @@ void Context::PopParser(const Parser* parser)
 
 //------------------------------------------------------------------------------
 
+void Context::PopXrefFrame()
+{
+   XrefFrames_.pop_back();
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Context_PrevScope = "Context.PrevScope";
 
 CxxScope* Context::PrevScope()
@@ -364,6 +405,23 @@ void Context::PushParser(const Parser* parser)
    ParseFramePtr frame(new ParseFrame(parser));
    Frame_ = frame.get();
    Frames_.push_back(std::move(frame));
+}
+
+//------------------------------------------------------------------------------
+
+void Context::PushXrefFrame(XrefUpdater updater)
+{
+   XrefFrames_.push_back(XrefFrame(updater));
+}
+
+//------------------------------------------------------------------------------
+
+void Context::PushXrefItem(const TypeName* item)
+{
+   if(!XrefFrames_.empty())
+   {
+      XrefFrames_.back().PushItem(item);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -497,10 +555,14 @@ void Context::SwLog
 {
    Debug::ft(Context_SwLog);
 
-   auto loc = Location();
+   //  Logs are usually suppressed when compiling a function in a template.
+   //
+   if(CompilingTemplateFunction() && !OptionIsOn(TemplateLogs)) return;
 
    //  Suppress noise that occurs after logging another error.
    //
+   auto loc = Location();
+
    if(loc == LastLogLoc_)
    {
       if(expl == "Empty argument stack") return;
@@ -2114,5 +2176,31 @@ ostream& operator<<(ostream& stream, Tracepoint::Action action)
    else
       stream << TraceActionStrings[0];
    return stream;
+}
+
+//==============================================================================
+
+XrefFrame::XrefFrame(XrefUpdater updater) : updater_(updater) { }
+
+//------------------------------------------------------------------------------
+
+const TypeName* XrefFrame::FindItem(const string& name) const
+{
+   for(auto i = items_.cbegin(); i != items_.cend(); ++i)
+   {
+      if(*(*i)->Name() == name) return *i;
+   }
+
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+void XrefFrame::PushItem(const TypeName* item)
+{
+   if(updater_ == TemplateFunction)
+   {
+      items_.push_back(item);
+   }
 }
 }

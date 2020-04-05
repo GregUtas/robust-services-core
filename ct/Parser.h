@@ -121,7 +121,8 @@ public:
    //
    SourceType GetSourceType() const { return source_; }
 
-   //  Returns the name of what is being parsed (e.g. a file or template name).
+   //  Returns the name of what is being parsed (e.g. a file or a template
+   //  instance).
    //
    std::string GetVenue() const { return venue_; }
 

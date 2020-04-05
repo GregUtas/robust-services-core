@@ -1031,6 +1031,9 @@ bool CodeWarning::Suppress() const
       if(name->compare("Patch") == 0) return true;
       if(name->compare("CreateText") == 0) return true;
       if(name->compare("CreateCliParm") == 0) return true;
+      if(name->compare("AddToXref") == 0) return true;
+      if(name->compare("Check") == 0) return true;
+      if(name->compare("GetUsages") == 0) return true;
       if(name->compare("TypeString") == 0) return true;
       if(name->compare("operator<<") == 0) return true;
       if(name->compare("operator==") == 0) return true;

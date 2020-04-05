@@ -64,12 +64,8 @@ Conditional::Conditional()
 
 //------------------------------------------------------------------------------
 
-fn_name Conditional_AddToXref = "Conditional.AddToXref";
-
 void Conditional::AddToXref() const
 {
-   Debug::ft(Conditional_AddToXref);
-
    condition_->AddToXref();
 }
 
@@ -104,12 +100,8 @@ bool Conditional::EnterScope()
 
 //------------------------------------------------------------------------------
 
-fn_name Conditional_GetUsages = "Conditional.GetUsages";
-
 void Conditional::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Conditional_GetUsages);
-
    condition_->GetUsages(file, symbols);
 }
 
@@ -396,12 +388,8 @@ bool Existential::AddElse(const Else* e)
 
 //------------------------------------------------------------------------------
 
-fn_name Existential_AddToXref = "Existential.AddToXref";
-
 void Existential::AddToXref() const
 {
-   Debug::ft(Existential_AddToXref);
-
    name_->AddToXref();
 }
 
@@ -416,12 +404,8 @@ void Existential::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Existential_GetUsages = "Existential.GetUsages";
-
 void Existential::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Existential_GetUsages);
-
    auto ref = name_->Referent();
    if(ref != nullptr) symbols.AddDirect(ref);
 }
@@ -844,12 +828,8 @@ MacroName::~MacroName()
 
 //------------------------------------------------------------------------------
 
-fn_name MacroName_AddToXref = "MacroName.AddToXref";
-
 void MacroName::AddToXref() const
 {
-   Debug::ft(MacroName_AddToXref);
-
    if(ref_ != nullptr) ref_->AddReference(this);
 }
 
@@ -873,12 +853,8 @@ CxxScope* MacroName::GetScope() const
 
 //------------------------------------------------------------------------------
 
-fn_name MacroName_GetUsages = "MacroName.GetUsages";
-
 void MacroName::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(MacroName_GetUsages);
-
    //  Add our referent as a direct usage.
    //
    if(ref_ != nullptr) symbols.AddDirect(ref_);

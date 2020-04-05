@@ -84,12 +84,8 @@ bool Block::AddStatement(CxxToken* s)
 
 //------------------------------------------------------------------------------
 
-fn_name Block_AddToXref = "Block.AddToXref";
-
 void Block::AddToXref() const
 {
-   Debug::ft(Block_AddToXref);
-
    for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
    {
       (*s)->AddToXref();
@@ -109,12 +105,8 @@ void Block::AddUsing(Using* use)
 
 //------------------------------------------------------------------------------
 
-fn_name Block_Check = "Block.Check";
-
 void Block::Check() const
 {
-   Debug::ft(Block_Check);
-
    for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
    {
       (*s)->Check();
@@ -276,12 +268,8 @@ Function* Block::GetFunction() const
 
 //------------------------------------------------------------------------------
 
-fn_name Block_GetUsages = "Block.GetUsages";
-
 void Block::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Block_GetUsages);
-
    for(auto s = statements_.cbegin(); s != statements_.cend(); ++s)
    {
       (*s)->GetUsages(file, symbols);
@@ -449,12 +437,8 @@ ClassData::~ClassData()
 
 //------------------------------------------------------------------------------
 
-fn_name ClassData_AddToXref = "ClassData.AddToXref";
-
 void ClassData::AddToXref() const
 {
-   Debug::ft(ClassData_AddToXref);
-
    Data::AddToXref();
 
    if(width_ != nullptr) width_->AddToXref();
@@ -696,12 +680,8 @@ bool ClassData::EnterScope()
 
 //------------------------------------------------------------------------------
 
-fn_name ClassData_GetUsages = "ClassData.GetUsages";
-
 void ClassData::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(ClassData_GetUsages);
-
    Data::GetUsages(file, symbols);
 
    if(width_ != nullptr) width_->GetUsages(file, symbols);
@@ -1114,12 +1094,8 @@ Data::~Data()
 
 //------------------------------------------------------------------------------
 
-fn_name Data_AddToXref = "Data.AddToXref";
-
 void Data::AddToXref() const
 {
-   Debug::ft(Data_AddToXref);
-
    if(alignas_ != nullptr) alignas_->AddToXref();
    spec_->AddToXref();
    if(expr_ != nullptr) expr_->AddToXref();
@@ -1367,12 +1343,8 @@ TypeName* Data::GetTemplateArgs() const
 
 //------------------------------------------------------------------------------
 
-fn_name Data_GetUsages = "Data.GetUsages";
-
 void Data::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Data_GetUsages);
-
    if(alignas_ != nullptr) alignas_->GetUsages(file, symbols);
    spec_->GetUsages(file, symbols);
    if(expr_ != nullptr) expr_->GetUsages(file, symbols);
@@ -1724,12 +1696,8 @@ FuncData::~FuncData()
 
 //------------------------------------------------------------------------------
 
-fn_name FuncData_AddToXref = "FuncData.AddToXref";
-
 void FuncData::AddToXref() const
 {
-   Debug::ft(FuncData_AddToXref);
-
    Data::AddToXref();
 
    if(next_ != nullptr) next_->AddToXref();
@@ -1846,12 +1814,8 @@ void FuncData::ExitBlock()
 
 //------------------------------------------------------------------------------
 
-fn_name FuncData_GetUsages = "FuncData.GetUsages";
-
 void FuncData::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(FuncData_GetUsages);
-
    Data::GetUsages(file, symbols);
 
    if(next_ != nullptr) next_->GetUsages(file, symbols);
@@ -2084,21 +2048,43 @@ void Function::AddThisArg()
 
 //------------------------------------------------------------------------------
 
-fn_name Function_AddToXref = "Function.AddToXref";
-
 void Function::AddToXref() const
 {
-   Debug::ft(Function_AddToXref);
-
    if(deleted_) return;
 
-   //  Don't add items in a template instance to the cross-reference, since
-   //  they have no code file or line number.
-   //
-   if(IsInTemplateInstance()) return;
+   auto type = GetTemplateType();
 
-   name_->AddToXref();
+   switch(type)
+   {
+   case NonTemplate:
+      //
+      //  This includes a function in a template instance.  It normally doesn't
+      //  update the cross-reference, since it has no code file or line numbers.
+      //  However, a function in a template cannot resolve an item accessed by a
+      //  template parameter, so it uses a template instance to add that item to
+      //  the cross-reference.
+      //
+      if(IsInTemplateInstance())
+      {
+         if(Context::GetXrefUpdater() != TemplateFunction) return;
+         Context::PushXrefFrame(InstanceFunction);
+      }
+      else
+      {
+         Context::PushXrefFrame(StandardFunction);
+      }
+      break;
 
+   default:
+      //
+      //  This is either a function template or a function in a class template.
+      //
+      Context::PushXrefFrame(TemplateFunction);
+   };
+
+   if(defn_) name_->AddToXref();
+
+   if(parms_ != nullptr) parms_->AddToXref();
    if(spec_ != nullptr) spec_->AddToXref();
 
    for(size_t i = (this_ ? 1 : 0); i < args_.size(); ++i)
@@ -2126,6 +2112,102 @@ void Function::AddToXref() const
    }
 
    if(impl_ != nullptr) impl_->AddToXref();
+
+   switch(type)
+   {
+   case NonTemplate:
+      break;
+
+   case FuncTemplate:
+      //
+      //  Add any unresolved symbols to the cross-reference by consulting
+      //  our first template instance.
+      //
+      if(!tmplts_.empty())
+      {
+         tmplts_.front()->AddToXref();
+      }
+      break;
+
+   case ClassTemplate:
+   default:
+      //
+      //  Add any unresolved symbols to the cross-reference by consulting
+      //  our analog in first template instance.
+      //
+      auto instances = GetClass()->Instances();
+      if(instances->empty()) break;
+      auto func = instances->front()->FindInstanceAnalog(this);
+      if(func != nullptr) func->AddToXref();
+   }
+
+   Context::PopXrefFrame();
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Function_AdjustRecvConstness = "Function.AdjustRecvConstness";
+
+void Function::AdjustRecvConstness
+   (const Function* invoker, StackArg& recvArg) const
+{
+   Debug::ft(Function_AdjustRecvConstness);
+
+   //  Make ARG const if it's another instance of the same virtual function or
+   //  it's a "this" argument and this function also has a const version.  This
+   //  is done so that the argument about to be passed to ARG will not lose the
+   //  possibility of being logged as "could be const".  If it is not declared
+   //  const, it will select the non-const version of a function (making its
+   //  non-constness self-fulfilling).  The same thing occurs if it is passed
+   //  to the same argument in another instance of the same virtual function.
+   //
+   if(invoker == nullptr) return;
+   if(recvArg.IsConst()) return;
+
+   if(IsVirtual() && (FindRootFunc() == invoker->FindRootFunc()))
+   {
+      recvArg.SetAsConst();
+      return;
+   }
+
+   if(*recvArg.item->Name() != THIS_STR) return;
+
+   auto target = RemoveConsts(TypeString(true));
+   auto list = GetArea()->FuncVector(*Name());
+
+   for(size_t i = 0; i < list->size(); ++i)
+   {
+      auto func = list->at(i).get();
+      if(!func->IsConst()) continue;
+
+      auto& temp = *func->Name();
+
+      if(temp == *Name())
+      {
+         auto actual = RemoveConsts(func->TypeString(true));
+
+         if(actual == target)
+         {
+            //  The following is commented out because it causes spurious
+            //  "could be const" logs for data, arguments, and functions.
+            //  The code can be enabled when the *chain* (entire expression)
+            //  that precedes an assignment is preserved, which is a known
+            //  deficiency.  For example, with vector V
+            //    v.at(i)->ConstFunction();
+            //    v.at(i)->NonConstFunction();
+            //  the commented out code will discover that at() has a version
+            //  that returns a const value.  It will therefore mark recvArg
+            //  as const, even though it is subsequently used in a non-const
+            //  manner.  Whether V can be const isn't known until the final
+            //  function is invoked, but we don't preserve the chain that led
+            //  up to that function call and therefore cannot retroactively
+            //  mark V as ultimately being used in a non-const way.
+            //
+//c         recvArg.SetAsConst();
+            return;
+         }
+      }
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -3407,26 +3489,15 @@ void Function::EnterBlock()
    //
    if(!IsImplemented()) return;
 
-   auto type = GetTemplateType();
-   const TemplateParmPtrVector* parms = nullptr;
-
-   if(type != NonTemplate)
+   if(GetTemplateType() != NonTemplate)
    {
       //  This is a function template or a function in a class template.
-      //  Don't bother compiling a function *template* in a class template
+      //  Don't bother compiling a function template in a class template
       //  *instance*.  However, a *regular* function in a class template
       //  instance *is* compiled, and so is a function template instance
-      //  (GetTemplateType returns NonTemplate in these cases).
+      //  (GetTemplateType returns NonTemplate in those cases).
       //
       if(Context::ParsingTemplateInstance()) return;
-
-      if(type == FuncTemplate)
-         parms = parms_->Parms();
-      else
-         parms = GetClass()->GetTemplateParms()->Parms();
-
-      auto file = GetImplFile();
-      if(file != nullptr) file->SetTemplate(type);
    }
 
    //  Set up the compilation context and add any template parameters and
@@ -3436,16 +3507,13 @@ void Function::EnterBlock()
    //  all non-static members are initialized so that class members can
    //  invoke default constructors.
    //
+   const Class* cls = GetClass();
+   if(cls != nullptr) cls->EnterParms();
+
+   if(parms_ != nullptr) parms_->EnterBlock();
+
    Context::Enter(this);
    Context::PushScope(this);
-
-   if(parms != nullptr)
-   {
-      for(auto p = parms->cbegin(); p != parms->cend(); ++p)
-      {
-         (*p)->EnterBlock();
-      }
-   }
 
    for(auto a = args_.cbegin(); a != args_.cend(); ++a)
    {
@@ -3454,8 +3522,6 @@ void Function::EnterBlock()
 
    if(FuncType() == FuncCtor)
    {
-      const Class* cls = GetClass();
-
       if(call_ != nullptr)
       {
          call_->EnterBlock();
@@ -3468,18 +3534,7 @@ void Function::EnterBlock()
 
       for(auto m = mems_.cbegin(); m != mems_.cend(); ++m)
       {
-         auto data = cls->FindData(*(*m)->Name());
-
-         if(data != nullptr)
-         {
-            static_cast< ClassData* >(data)->SetMemInit(m->get());
-         }
-         else
-         {
-            string expl("Failed to find member ");
-            expl += *cls->Name() + SCOPE_STR + *(*m)->Name();
-            Context::SwLog(Function_EnterBlock, expl, 0);
-         }
+         (*m)->EnterBlock();
       }
 
       auto data = cls->Datas();
@@ -3498,13 +3553,8 @@ void Function::EnterBlock()
       (*a)->ExitBlock();
    }
 
-   if(parms != nullptr)
-   {
-      for(auto p = parms->cbegin(); p != parms->cend(); ++p)
-      {
-         (*p)->ExitBlock();
-      }
-   }
+   if(parms_ != nullptr) parms_->ExitBlock();
+   if(cls != nullptr) cls->ExitParms();
 
    Context::PopScope();
 }
@@ -3520,6 +3570,7 @@ bool Function::EnterScope()
    //  If this function requires a "this" argument, add it now.
    //
    AddThisArg();
+   if(parms_ != nullptr) parms_->EnterScope();
 
    //  Enter our return type and arguments.
    //
@@ -3965,6 +4016,11 @@ TemplateType Function::GetTemplateType() const
 {
    if(IsTemplate()) return FuncTemplate;
 
+   //  An inline function in a class template is treated as a regular function
+   //  because it is not copied into template instances.
+   //
+   if(inline_) return NonTemplate;
+
    auto cls = GetClass();
 
    if(cls != nullptr)
@@ -3977,19 +4033,13 @@ TemplateType Function::GetTemplateType() const
 
 //------------------------------------------------------------------------------
 
-fn_name Function_GetUsages = "Function.GetUsages";
-
 void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
 {
-   Debug::ft(Function_GetUsages);
-
    if(deleted_) return;
 
    //  See if this function appears in a function or class template.
    //
-   auto type = GetTemplateType();
-
-   switch(type)
+   switch(GetTemplateType())
    {
    case NonTemplate:
       //
@@ -4019,12 +4069,9 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    case ClassTemplate:
       //
       //  This function appears in a class template, which pulls its usages
-      //  from its first instance, in the same way as above.  However, an
-      //  inline function is not copied into instances, so its usages must
-      //  be obtained here.
+      //  from its first instance, in the same way as above.
       //
-      if(!inline_) return;
-      break;
+      return;
    }
 
    //  Place the symbols used in the function's signature in a local variable.
@@ -4032,6 +4079,7 @@ void Function::GetUsages(const CodeFile& file, CxxUsageSets& symbols) const
    //
    CxxUsageSets usages;
 
+   if(parms_ != nullptr) parms_->GetUsages(file, usages);
    if(spec_ != nullptr) spec_->GetUsages(file, usages);
 
    for(size_t i = (this_ ? 1 : 0); i < args_.size(); ++i)
@@ -4367,6 +4415,8 @@ void Function::Invoke(StackArgVector* args)
       size1 = size2;
    }
 
+   auto func = Context::Scope()->GetFunction();
+
    //  Register a read on each sent argument and check its assignment to
    //  the received argument.
    //
@@ -4375,6 +4425,7 @@ void Function::Invoke(StackArgVector* args)
       auto& sendArg = args->at(i);
       sendArg.WasRead();
       StackArg recvArg(args_.at(i).get(), 0, false);
+      AdjustRecvConstness(func, recvArg);
       sendArg.AssignedTo(recvArg, Passed);
    }
 
@@ -4390,8 +4441,6 @@ void Function::Invoke(StackArgVector* args)
    //
    if(IsVirtual() && (FuncType() == FuncStandard))
    {
-      auto func = Context::Scope()->GetFunction();
-
       if(func != nullptr)
       {
          auto type = func->FuncType();
@@ -5720,6 +5769,7 @@ bool SpaceData::EnterScope()
    Debug::ft(SpaceData_EnterScope);
 
    Context::SetPos(GetLoc());
+   if(parms_ != nullptr) parms_->EnterScope();
    ExecuteAlignment();
    GetTypeSpec()->EnteringScope(this);
    CloseScope();

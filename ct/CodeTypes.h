@@ -347,7 +347,7 @@ enum TemplateRole
 {
    TemplateNone,       // not part of a template
    TemplateArgument,   // e.g. int in vector< int >
-   TemplateParameter,  // e.g. T in template< typename T > class vector{...};
+   TemplateParameter,  // e.g. T in template< typename T > class vector {...};
    TemplateClass       // a DataSpec created internally for template matching;
                        // contains each of the parameters to a class template
 };
@@ -367,9 +367,9 @@ enum AssignmentType
 //
 //  What type of function is updating the cross-reference.
 //
-enum XrefVenue
+enum XrefUpdater
 {
-   NotAFunction,      // not currently in a function
+   NotAFunction,      // being updated by something besides a function
    StandardFunction,  // a regular function
    TemplateFunction,  // a function in a template
    InstanceFunction   // a function in a template instance

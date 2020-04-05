@@ -803,6 +803,10 @@ public:
    //
    bool IncludeInXref() const override;
 
+   //  Overridden to reveal that this is a forward declaration.
+   //
+   bool IsForward() const override { return true; }
+
    //  Overridden to determine if the declaration is unused.
    //
    bool IsUnused() const override { return (users_ == 0); }
@@ -950,6 +954,10 @@ public:
    //  Overridden to indicate that inline display is not supported.
    //
    bool InLine() const override { return false; }
+
+   //  Overridden to reveal that this can act as a forward declaration.
+   //
+   bool IsForward() const override { return true; }
 
    //  Overridden to determine if the declaration is unused.
    //

@@ -2106,7 +2106,7 @@ void Function::AddToXref() const
       //
       if(IsInTemplateInstance())
       {
-         if(Context::GetXrefVenue() != TemplateFunction) return;
+         if(Context::GetXrefUpdater() != TemplateFunction) return;
          Context::PushXrefFrame(InstanceFunction);
       }
       else
@@ -3534,10 +3534,10 @@ void Function::EnterBlock()
    if(type != NonTemplate)
    {
       //  This is a function template or a function in a class template.
-      //  Don't bother compiling a function *template* in a class template
+      //  Don't bother compiling a function template in a class template
       //  *instance*.  However, a *regular* function in a class template
       //  instance *is* compiled, and so is a function template instance
-      //  (GetTemplateType returns NonTemplate in these cases).
+      //  (GetTemplateType returns NonTemplate in those cases).
       //
       if(Context::ParsingTemplateInstance()) return;
 
@@ -3545,9 +3545,6 @@ void Function::EnterBlock()
          parms = parms_->Parms();
       else
          parms = GetClass()->GetTemplateParms()->Parms();
-
-      auto file = GetImplFile();
-      if(file != nullptr) file->SetTemplate(type);
    }
 
    //  Set up the compilation context and add any template parameters and

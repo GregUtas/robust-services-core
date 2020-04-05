@@ -190,6 +190,19 @@ void Context::ClearTracepoints()
 
 //------------------------------------------------------------------------------
 
+bool Context::CompilingTemplateFunction()
+{
+   auto scope = Scope();
+   if(scope == nullptr) return false;
+
+   auto func = Scope()->GetFunction();
+   if(func == nullptr) return false;
+
+   return (func->GetTemplateType() != NonTemplate);
+}
+
+//------------------------------------------------------------------------------
+
 void Context::DisplayTracepoints(ostream& stream, const string& prefix)
 {
    if(Tracepoints_.empty())
@@ -251,10 +264,10 @@ const Parser* Context::GetParser()
 
 //------------------------------------------------------------------------------
 
-XrefVenue Context::GetXrefVenue()
+XrefUpdater Context::GetXrefUpdater()
 {
    if(XrefFrames_.empty()) return NotAFunction;
-   return XrefFrames_.back().Venue();
+   return XrefFrames_.back().Updater();
 }
 
 //------------------------------------------------------------------------------
@@ -396,9 +409,9 @@ void Context::PushParser(const Parser* parser)
 
 //------------------------------------------------------------------------------
 
-void Context::PushXrefFrame(XrefVenue venue)
+void Context::PushXrefFrame(XrefUpdater updater)
 {
-   XrefFrames_.push_back(XrefFrame(venue));
+   XrefFrames_.push_back(XrefFrame(updater));
 }
 
 //------------------------------------------------------------------------------
@@ -542,10 +555,14 @@ void Context::SwLog
 {
    Debug::ft(Context_SwLog);
 
-   auto loc = Location();
+   //  Logs are usually suppressed when compiling a function in a template.
+   //
+   if(CompilingTemplateFunction() && !OptionIsOn(TemplateLogs)) return;
 
    //  Suppress noise that occurs after logging another error.
    //
+   auto loc = Location();
+
    if(loc == LastLogLoc_)
    {
       if(expl == "Empty argument stack") return;
@@ -2163,7 +2180,7 @@ ostream& operator<<(ostream& stream, Tracepoint::Action action)
 
 //==============================================================================
 
-XrefFrame::XrefFrame(XrefVenue venue) : venue_(venue) { }
+XrefFrame::XrefFrame(XrefUpdater updater) : updater_(updater) { }
 
 //------------------------------------------------------------------------------
 
@@ -2181,7 +2198,7 @@ const TypeName* XrefFrame::FindItem(const string& name) const
 
 void XrefFrame::PushItem(const TypeName* item)
 {
-   if(venue_ == TemplateFunction)
+   if(updater_ == TemplateFunction)
    {
       items_.push_back(item);
    }

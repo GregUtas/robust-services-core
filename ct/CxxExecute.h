@@ -405,6 +405,7 @@ extern const StackArg NilStackArg;
 //
 //  Options for the CLI >parse command.
 //
+constexpr char TemplateLogs = 't';
 constexpr char TraceParse = 'p';
 constexpr char SaveParseTrace = 's';
 constexpr char TraceCompilation = 'c';
@@ -548,13 +549,13 @@ private:
 class XrefFrame
 {
 public:
-   //  Invoked when a function in VENUE is updating the cross-reference.
+   //  Invoked when UPDATER is updating the cross-reference.
    //
-   explicit XrefFrame(XrefVenue venue);
+   explicit XrefFrame(XrefUpdater updater);
 
-   //  Returns where the function that is updating the cross-reference appears.
+   //  Returns what type of item is updating the cross-reference.
    //
-   XrefVenue Venue() const { return venue_; }
+   XrefUpdater Updater() const { return updater_; }
 
    //  Adds ITEM, which appears in a template, as a name that needs to be
    //  resolved by a template instance so that it can be added to the
@@ -566,9 +567,9 @@ public:
    //
    const TypeName* FindItem(const std::string& name) const;
 private:
-   //  Where the function that is updating the cross-reference appears.
+   //  Where the item that is updating the cross-reference appears.
    //
-   const XrefVenue venue_;
+   const XrefUpdater updater_;
 
    //  The items that need to be resolved for the function.
    //
@@ -761,17 +762,22 @@ public:
    //
    static bool ParsingTemplateInstance();
 
-   //  Invoked when a function starts updating the cross-reference.
+   //  Returns true if a function in a template (not in a template
+   //  *instance*) is being compiled.
    //
-   static void PushXrefFrame(XrefVenue venue);
+   static bool CompilingTemplateFunction();
+
+   //  Invoked when UPDATER starts updating the cross-reference.
+   //
+   static void PushXrefFrame(XrefUpdater updater);
 
    //  Invoked when a function finishes updating the cross-reference.
    //
    static void PopXrefFrame();
 
-   //  Returns the type of function that is updating the cross-reference.
+   //  Returns the type of item that is updating the cross-reference.
    //
-   static XrefVenue GetXrefVenue();
+   static XrefUpdater GetXrefUpdater();
 
    //  Adds ITEM to those that the current function needs to resolve.
    //
@@ -809,7 +815,7 @@ public:
    //
    static void ClearTracepoints();
 
-   //  Displays current tracepoint in STREAM.  Each line starts with PREFIX.
+   //  Displays current tracepoints in STREAM.  Each line starts with PREFIX.
    //
    static void DisplayTracepoints
       (std::ostream& stream, const std::string& prefix);

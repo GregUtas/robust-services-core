@@ -134,6 +134,8 @@ If no options are entered, they default to "nchsux".  At least one option of
 /
 ? ct.parse
 The options are specified in a string that contains any of the following:
+  t: display logs while compiling templates (otherwise suppressed because
+     an item accessed through a template parameter cannot be resolved)
   p: save parse tree on failure
   s: always save parse tree
   c: generate "object code" when compiling (use >save trace <fn> afterwards)

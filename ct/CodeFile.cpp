@@ -399,7 +399,6 @@ CodeFile::CodeFile(const string& name, CodeDir* dir) : LibraryItem(name),
    isSubsFile_(false),
    slashAsterisk_(false),
    parsed_(Unparsed),
-   template_(NonTemplate),
    checked_(false)
 {
    Debug::ft(CodeFile_ctor);
@@ -651,11 +650,6 @@ void CodeFile::CheckDebugFt() const
 {
    Debug::ft(CodeFile_CheckDebugFt);
 
-   //  Functions in a header are not expected to invoke Debug::ft unless
-   //  this is a template header.
-   //
-   if(IsHeader() && !IsTemplateHeader()) return;
-
    auto cover = Singleton< CodeCoverage >::Instance();
    size_t begin, end;
    string statement;
@@ -671,7 +665,13 @@ void CodeFile::CheckDebugFt() const
    //
    for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
    {
+      //  A function in a header is only expected to invoke Debug::ft if
+      //  part of a template; checking functions in a template instance
+      //  would therefore be redundant.
+      //
+      if(IsHeader() && ((*f)->GetTemplateType() == NonTemplate)) return;
       if((*f)->IsInTemplateInstance()) continue;
+
       (*f)->GetRange(begin, end);
       if(begin >= end) continue;
       auto last = lexer_.GetLineNum(end);
@@ -1684,8 +1684,7 @@ Using* CodeFile::FindUsingFor(const string& fqName, size_t prefix,
    //  omit files, however, if ITEM is a forward or friend declaration, as its
    //  actual definition could occur totally outside of the search area.
    //
-   auto type = item->Type();
-   if((type != Cxx::Forward) && (type != Cxx::Friend))
+   if(!item->IsForward())
    {
       SetDifference(search, item->GetFile()->Affecters());
       search.insert(item->GetFile()->Fid());
@@ -2131,27 +2130,6 @@ void CodeFile::InsertUsing(Using* use)
 {
    items_.push_back(use);
    usings_.push_back(use);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CodeFile_IsTemplateHeader = "CodeFile.IsTemplateHeader";
-
-bool CodeFile::IsTemplateHeader() const
-{
-   Debug::ft(CodeFile_IsTemplateHeader);
-
-   for(auto c = classes_.cbegin(); c != classes_.cend(); ++c)
-   {
-      if((*c)->IsTemplate()) return true;
-   }
-
-   for(auto f = funcs_.cbegin(); f != funcs_.cend(); ++f)
-   {
-      if(!(*f)->IsTemplate()) return false;
-   }
-
-   return (!funcs_.empty());
 }
 
 //------------------------------------------------------------------------------
@@ -2784,17 +2762,6 @@ void CodeFile::SetParsed(bool passed)
    Debug::ft(CodeFile_SetParsed);
 
    parsed_ = (passed ? Passed : Failed);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CodeFile_SetTemplate = "CodeFile.SetTemplate";
-
-void CodeFile::SetTemplate(TemplateType type)
-{
-   Debug::ft(CodeFile_SetTemplate);
-
-   if(type > template_) template_ = type;
 }
 
 //------------------------------------------------------------------------------

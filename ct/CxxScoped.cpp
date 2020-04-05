@@ -487,12 +487,14 @@ void CxxScoped::AddFiles(SetOfIds& imSet) const
 
 //------------------------------------------------------------------------------
 
+fn_name CxxScoped_AddReference = "CxxScoped.AddReference";
+
 void CxxScoped::AddReference(const CxxNamed* item) const
 {
    auto file = item->GetFile();
    if(file->IsSubsFile()) return;
 
-   if(Context::GetXrefVenue() == InstanceFunction)
+   if(Context::GetXrefUpdater() == InstanceFunction)
    {
       //  A function in a template instance only adds, to the cross-reference,
       //  items that were unresolved in its template.  These items are usually
@@ -504,9 +506,23 @@ void CxxScoped::AddReference(const CxxNamed* item) const
       if(prev == nullptr) return;
 
       auto ref = item->Referent();
-      if(ref->Type() == Cxx::Function)
+      auto type = ref->Type();
+
+      switch(type)
       {
+      case Cxx::Function:
          ref = static_cast< const Function* >(ref)->FindRootFunc();
+         break;
+
+      case Cxx::Data:
+         if(ref->IsInTemplateInstance())
+         {
+            ref = ref->FindTemplateAnalog(ref);
+         }
+         break;
+
+      default:
+         Debug::SwLog(CxxScoped_AddReference, *ref->Name(), type, SwInfo);
       }
 
       prev->SetReferent(ref, nullptr);
@@ -2251,12 +2267,7 @@ void Friend::SetAsReferent(const CxxNamed* user)
 
    //  Don't log this for another friend or forward declaration.
    //
-   switch(user->Type())
-   {
-   case Cxx::Forward:
-   case Cxx::Friend:
-      return;
-   }
+   if(user->IsForward()) return;
 
    //  Provide a string that specifies the forward declaration that
    //  is equivalent to the friend declaration.

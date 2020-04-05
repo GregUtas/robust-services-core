@@ -1106,9 +1106,7 @@ void DataSpec::GetDirectTemplateArgs(CxxUsageSets& symbols) const
 
       if((GetTemplateRole() == TemplateArgument) && (Ptrs(true) == 0))
       {
-         auto type = ref->Type();
-
-         if((type == Cxx::Forward) || (type == Cxx::Friend))
+         if(ref->IsForward())
          {
             ref->GetDirectClasses(symbols);
          }
@@ -1849,19 +1847,11 @@ StackArg DataSpec::ResultType() const
 {
    Debug::ft(DataSpec_ResultType);
 
-   auto result = Referent();
+   auto ref = ReferentDefn();
 
-   if(result != nullptr)
+   if(ref != nullptr)
    {
-      auto type = result->Type();
-
-      if((type == Cxx::Forward) || (type == Cxx::Friend))
-      {
-         auto target = result->Referent();
-         if(target != nullptr) result = target;
-      }
-
-      StackArg arg(result, tags_.PtrCount(true), false);
+      StackArg arg(ref, tags_.PtrCount(true), false);
       arg.SetRefs(tags_.RefCount());
       if(tags_.IsConst()) arg.SetAsConst();
       if(tags_.IsConstPtr() == 1) arg.SetAsConstPtr();
@@ -2200,13 +2190,7 @@ void QualName::CheckIfTemplateArgument(const CxxScoped* ref) const
 
    for(auto a = args->cbegin(); a != args->cend(); ++a)
    {
-      auto aref = (*a)->Referent();
-      if(aref == nullptr) continue;
-
-      auto type = aref->Type();
-      if((type == Cxx::Forward) || (type == Cxx::Friend))
-         aref = aref->Referent();
-      if(ref == aref)
+      if((*a)->ReferentDefn() == ref)
       {
          auto tfunc = inst->FindTemplateAnalog(ifunc);
          if(tfunc != nullptr)
@@ -2657,7 +2641,7 @@ string QualName::TypeString(bool arg) const
 
 fn_name SpaceDefn_ctor = "SpaceDefn.ctor";
 
-SpaceDefn::SpaceDefn(Namespace* ns) :
+SpaceDefn::SpaceDefn(const Namespace* ns) :
    space_(ns)
 {
    Debug::ft(SpaceDefn_ctor);
@@ -2936,18 +2920,20 @@ void TypeName::AddToXref() const
 {
    Debug::ft(TypeName_AddToXref);
 
-   if(ref_ != nullptr)
+   auto ref = ReferentDefn();
+
+   if(ref != nullptr)
    {
-      ref_->AddReference(this);
+      ref->AddReference(this);
 
       //  If the referent is in a template instance, also record a reference
       //  to the analogous item in the template.  A template class instance
       //  (e.g. basic_string) is often accessed through a typedef ("string"),
       //  so make sure the reference is recorded against the correct item.
       //
-      if(ref_->IsInTemplateInstance())
+      if(ref->IsInternal())
       {
-         auto item = ref_->FindTemplateAnalog(ref_);
+         auto item = ref->FindTemplateAnalog(ref);
 
          if(item != nullptr)
          {
@@ -2963,7 +2949,7 @@ void TypeName::AddToXref() const
       //  Record this unresolved item in case it is one that a template
       //  needs to have resolved by a template instance.
       //
-      Context::PushXrefItem(this);
+      if(!IsInternal()) Context::PushXrefItem(this);
    }
 
    if(args_ != nullptr)

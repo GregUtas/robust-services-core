@@ -355,6 +355,25 @@ CxxScoped* CxxToken::Referent() const
 
 //------------------------------------------------------------------------------
 
+fn_name CxxToken_ReferentDefn = "CxxToken.ReferentDefn";
+
+CxxScoped* CxxToken::ReferentDefn() const
+{
+   Debug::ft(CxxToken_ReferentDefn);
+
+   auto ref1 = Referent();
+
+   if((ref1 != nullptr) && ref1->IsForward())
+   {
+      auto ref2 = ref1->Referent();
+      if(ref2 != nullptr) return ref2;
+   }
+
+   return ref1;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CxxToken_Root = "CxxToken.Root";
 
 CxxToken* CxxToken::Root() const

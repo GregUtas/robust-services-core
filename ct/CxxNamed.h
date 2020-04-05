@@ -471,7 +471,7 @@ public:
    //  represents a single occurrence of a namespace definition that defines
    //  some of the namespace's items.
    //
-   explicit SpaceDefn(Namespace* ns);
+   explicit SpaceDefn(const Namespace* ns);
 
    //  Not subclassed.
    //

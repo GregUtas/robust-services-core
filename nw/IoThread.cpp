@@ -77,7 +77,7 @@ IoThread::IoThread(Daemon* daemon, const IpService* service, ipport_t port) :
       txSize_ = MaxTxBuffSize;
    }
 
-   buffer_ = (byte_t*) Memory::Alloc(SysSocket::MaxMsgSize, MemDyn);
+   buffer_ = (byte_t*) Memory::Alloc(SysSocket::MaxMsgSize, MemDynamic);
 }
 
 //------------------------------------------------------------------------------

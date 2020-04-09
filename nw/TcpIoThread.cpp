@@ -96,7 +96,7 @@ TcpIoThread::TcpIoThread(Daemon* daemon,
    //  run-time, SysTcpSocket::Poll will fail spectacularly if it was blocked
    //  on its polling operation when the resizing occurred.
    //
-   sockets_.Init(fdSize, MemDyn);
+   sockets_.Init(fdSize, MemDynamic);
    sockets_.Reserve(fdSize);
    SetInitialized();
 }

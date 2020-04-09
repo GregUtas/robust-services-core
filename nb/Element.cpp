@@ -99,7 +99,7 @@ const string& Element::ConsoleFileName()
 void Element::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Persistent::Display(stream, prefix, options);
 
    stream << prefix << "Name         : " << Name_ << CRLF;
    stream << prefix << "RscPath      : " << RscPath() << CRLF;
@@ -161,7 +161,7 @@ const string& Element::OutputPath()
 
 void Element::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Persistent::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

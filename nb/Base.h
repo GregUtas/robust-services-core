@@ -149,7 +149,7 @@ public:
 
    //  Returns the type of memory used by the object.
    //
-   virtual MemoryType MemType() const { return MemPerm; }
+   virtual MemoryType MemType() const { return MemPermanent; }
 
    //  Returns the class's name as provided by the C++ typeid operator.
    //

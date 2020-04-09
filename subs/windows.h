@@ -52,12 +52,32 @@ errno_t localtime_s(tm* Tm, const time_t* Time);
 
 //------------------------------------------------------------------------------
 //
+//  Windows memory
+//
+typedef uint64_t SIZE_T;
+
+constexpr DWORD PAGE_NOACCESS = 0x01;
+constexpr DWORD PAGE_READONLY = 0x02;
+constexpr DWORD PAGE_READWRITE = 0x04;
+constexpr DWORD PAGE_EXECUTE = 0x10;
+constexpr DWORD PAGE_EXECUTE_READ = 0x20;
+constexpr DWORD PAGE_EXECUTE_READWRITE = 0x40;
+
+constexpr DWORD MEM_COMMIT = 0x1000;
+constexpr DWORD MEM_RELEASE = 0x8000;
+
+void* VirtualAlloc(void* addr, SIZE_T size, DWORD allocType, DWORD prot);
+bool VirtualFree(void* addr, SIZE_T size, DWORD freeType);
+bool VirtualLock(void* addr, SIZE_T size);
+bool VirtualUnlock(void* addr, SIZE_T size);
+bool VirtualProtect(void* addr, SIZE_T size, DWORD newProt, DWORD* oldProt);
+
+//------------------------------------------------------------------------------
+//
 //  Windows heaps
 //
 typedef int32_t HRESULT;
 constexpr HRESULT S_OK = 0;
-typedef uint64_t SIZE_T;
-
 HANDLE  GetProcessHeap();
 DWORD   GetProcessHeaps(DWORD numberOfHeaps, HANDLE* processHeaps);
 HANDLE  HeapCreate(DWORD opts, SIZE_T initialSize, SIZE_T maxSize);

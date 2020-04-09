@@ -22,7 +22,7 @@
 #ifndef CLASS_H_INCLUDED
 #define CLASS_H_INCLUDED
 
-#include "Protected.h"
+#include "Persistent.h"
 #include <cstddef>
 #include <memory>
 #include "RegCell.h"
@@ -38,7 +38,7 @@ namespace NodeBase
 //  framework provides PooledClass to support the techniques mentioned for
 //  objects subclassed from Pooled.
 //
-class Class : public Protected
+class Class : public Persistent
 {
    friend class Registry< Class >;
 public:

@@ -192,7 +192,7 @@ bool CfgParmRegistry::BindTuple(CfgTuple& tuple)
 void CfgParmRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Persistent::Display(stream, prefix, options);
 
    stream << prefix << "mainArgs       : " << CRLF;
    for(size_t i = 0; i < mainArgs_->size(); ++i)
@@ -430,7 +430,7 @@ void CfgParmRegistry::LoadTuples()
 
 void CfgParmRegistry::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Persistent::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

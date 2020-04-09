@@ -115,7 +115,7 @@ Object* Class::Create()
 void Class::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Persistent::Display(stream, prefix, options);
 
    stream << prefix << "cid   : " << cid_.to_str() << CRLF;
    stream << prefix << "size  : " << size_ << CRLF;
@@ -187,7 +187,7 @@ void Class::GetSubtended(Base* objects[], size_t& count) const
 {
    Debug::ft(Class_GetSubtended);
 
-   Protected::GetSubtended(objects, count);
+   Persistent::GetSubtended(objects, count);
 
    if(template_ != nullptr) template_->GetSubtended(objects, count);
    if(singleton_ != nullptr) singleton_->GetSubtended(objects, count);
@@ -219,14 +219,14 @@ Object* Class::New(size_t size)
    //
    auto addr = ::operator new(size, std::nothrow);
    if(addr != nullptr) return (Object*) addr;
-   throw AllocationException(MemPerm, size);
+   throw AllocationException(MemPermanent, size);
 }
 
 //------------------------------------------------------------------------------
 
 void Class::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Persistent::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

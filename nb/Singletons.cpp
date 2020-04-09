@@ -55,7 +55,7 @@ Singletons::Singletons()
 {
    Debug::ft(Singletons_ctor);
 
-   registry_.Init(MaxSingletons, MemPerm);
+   registry_.Init(MaxSingletons, MemPermanent);
    registry_.Reserve(MaxSingletons >> 4);
 }
 
@@ -81,9 +81,10 @@ void Singletons::BindInstance(const Base** addr, MemoryType type)
    //
    switch(type)
    {
-   case MemProt:
-   case MemDyn:
-   case MemTemp:
+   case MemProtected:
+   case MemPersistent:
+   case MemDynamic:
+   case MemTemporary:
       break;
    default:
       return;
@@ -151,13 +152,13 @@ void Singletons::Shutdown(RestartLevel level)
    switch(level)
    {
    case RestartWarm:
-      type = MemTemp;
+      type = MemTemporary;
       break;
    case RestartCold:
-      type = MemDyn;
+      type = MemDynamic;
       break;
    case RestartReload:
-      type = MemProt;
+      type = MemProtected;
       break;
    default:
       return;

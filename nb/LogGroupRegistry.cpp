@@ -110,7 +110,7 @@ LogGroupRegistry::LogGroupRegistry()
 {
    Debug::ft(LogGroupRegistry_ctor);
 
-   groups_.Init(MaxGroups, LogGroup::CellDiff(), MemDyn);
+   groups_.Init(MaxGroups, LogGroup::CellDiff(), MemDynamic);
    statsGroup_.reset(new LogStatsGroup);
 }
 

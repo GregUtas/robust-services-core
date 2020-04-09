@@ -22,7 +22,7 @@
 #ifndef STATE_H_INCLUDED
 #define STATE_H_INCLUDED
 
-#include "Protected.h"
+#include "Persistent.h"
 #include <cstddef>
 #include "Event.h"
 #include "RegCell.h"
@@ -35,7 +35,7 @@ namespace SessionBase
 //  Subclassed by a Service to define states for its state machine.  Each
 //  subclass must be a singleton.
 //
-class State : public NodeBase::Protected
+class State : public NodeBase::Persistent
 {
    friend class NodeBase::Registry< State >;
 public:

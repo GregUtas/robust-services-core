@@ -22,7 +22,7 @@
 #ifndef CLASSREGISTRY_H_INCLUDED
 #define CLASSREGISTRY_H_INCLUDED
 
-#include "Protected.h"
+#include "Persistent.h"
 #include "NbTypes.h"
 #include "Registry.h"
 
@@ -32,7 +32,7 @@ namespace NodeBase
 {
 //  Global registry for classes.
 //
-class ClassRegistry : public Protected
+class ClassRegistry : public Persistent
 {
    friend class Singleton< ClassRegistry >;
 public:

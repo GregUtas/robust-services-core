@@ -22,7 +22,7 @@
 #ifndef PROTOCOLREGISTRY_H_INCLUDED
 #define PROTOCOLREGISTRY_H_INCLUDED
 
-#include "Protected.h"
+#include "Persistent.h"
 #include "NbTypes.h"
 #include "Registry.h"
 #include "SbTypes.h"
@@ -38,7 +38,7 @@ namespace SessionBase
 {
 //  Global registry for protocols.
 //
-class ProtocolRegistry : public NodeBase::Protected
+class ProtocolRegistry : public NodeBase::Persistent
 {
    friend class Protocol;
    friend class NodeBase::Singleton< ProtocolRegistry >;

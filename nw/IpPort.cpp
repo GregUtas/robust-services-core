@@ -216,7 +216,7 @@ size_t IpPort::Discards() const
 void IpPort::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Persistent::Display(stream, prefix, options);
 
    stream << prefix << "link    : " << link_.to_str() << CRLF;
    stream << prefix << "port    : " << port_ << CRLF;
@@ -306,7 +306,7 @@ ptrdiff_t IpPort::LinkDiff()
 
 void IpPort::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Persistent::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

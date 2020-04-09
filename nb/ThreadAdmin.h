@@ -22,7 +22,7 @@
 #ifndef THREADADMIN_H_INCLUDED
 #define THREADADMIN_H_INCLUDED
 
-#include "Protected.h"
+#include "Persistent.h"
 #include <iosfwd>
 #include "Clock.h"
 #include "NbTypes.h"
@@ -40,7 +40,7 @@ namespace NodeBase
 //  Defines statistics and configuration parameters used by the Thread class.
 //  Logically, these are members of Thread but would clutter its interface.
 //
-class ThreadAdmin : public Protected
+class ThreadAdmin : public Persistent
 {
    friend class Singleton< ThreadAdmin >;
 public:

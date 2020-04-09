@@ -82,8 +82,8 @@ Library::Library() :
 {
    Debug::ft(Library_ctor);
 
-   dirs_.Init(MaxDirs, CodeDir::CellDiff(), MemPerm);
-   files_.Init(MaxFiles, CodeFile::CellDiff(), MemPerm);
+   dirs_.Init(MaxDirs, CodeDir::CellDiff(), MemPermanent);
+   files_.Init(MaxFiles, CodeFile::CellDiff(), MemPermanent);
    vars_.Init(LibrarySet::LinkDiff());
 
    //  After a restart, sourcePathCfg_ may still exist, so try to look it

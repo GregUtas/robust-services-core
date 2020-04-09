@@ -159,27 +159,45 @@ typedef uint64_t debug64_t;
 //
 enum MemoryType
 {
-   MemNull,      // nil value
-   MemTemp,      // does not survive restarts
-   MemDyn,       // survives warm restarts
-   MemProt,      // survives warm and cold restarts; write-protected
-   MemPerm,      // survives all restarts (default process heap)
-   MemImm,       // survives all restarts; write-protected
-   MemoryType_N  // number of memory types
+   MemNull,        // nil value
+   MemTemporary,   // does not survive restarts
+   MemDynamic,     // survives warm restarts
+   MemPersistent,  // survives warm and cold restarts
+   MemProtected,   // survives warm and cold restarts; write-protected
+   MemPermanent,   // survives all restarts (default process heap)
+   MemImmutable,   // survives all restarts; write-protected
+   MemoryType_N    // number of memory types
 };
 
 //  Inserts a string for TYPE into STREAM.
 //
 std::ostream& operator<<(std::ostream& stream, MemoryType type);
 
+//  Whether a memory segment can be read, written, and/or executed.
+//
+enum MemoryProtection
+{
+   MemInaccessible = 0,      // ---
+   MemExecuteOnly = 1,       // --x
+   MemReadOnly = 4,          // r--
+   MemReadExecute = 5,       // r-x
+   MemReadWrite = 6,         // rw-
+   MemReadWriteExecute = 7,  // rwx
+   MemoryProtection_N = 8    // range of enumerators
+};
+
+//  Inserts a string for ATTRS into STREAM.
+//
+std::ostream& operator<<(std::ostream& stream, MemoryProtection attrs);
+
 //  Types of restarts.
 //
 enum RestartLevel
 {
    RestartNil,     // in service (not restarting)
-   RestartWarm,    // deleting MemTemp and exiting threads
-   RestartCold,    // warm plus deleting MemDyn (user sessions)
-   RestartReload,  // cold plus deleting MemProt (configuration data)
+   RestartWarm,    // deleting MemTemporary and exiting threads
+   RestartCold,    // warm + deleting MemDynamic (user sessions)
+   RestartReload,  // cold + deleting MemPersistent & MemProtected (config data)
    RestartReboot,  // exiting and restarting executable
    RestartExit,    // exiting without restarting
    RestartLevel_N  // number of restart levels

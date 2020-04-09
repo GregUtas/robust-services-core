@@ -79,7 +79,7 @@ CfgParm::~CfgParm()
 void CfgParm::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Persistent::Display(stream, prefix, options);
 
    stream << prefix << "tuple : ";
 
@@ -142,7 +142,7 @@ ptrdiff_t CfgParm::LinkDiff()
 
 void CfgParm::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Persistent::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

@@ -64,7 +64,7 @@ ServiceCodeRegistry::~ServiceCodeRegistry()
 void ServiceCodeRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Persistent::Display(stream, prefix, options);
 
    stream << prefix << "codeToService [Address::SC]" << CRLF;
 

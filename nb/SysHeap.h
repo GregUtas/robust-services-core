@@ -36,6 +36,7 @@ namespace NodeBase
 //
 class SysHeap : public Object
 {
+   friend class Memory;
 public:
    //  Virtual to allow subclassing.
    //
@@ -115,13 +116,18 @@ public:
    static void* operator new(size_t size, MemoryType type) = delete;
    static void* operator new[](size_t size, MemoryType type) = delete;
 protected:
-   //  Creates a heap for memory of TYPE.  If SIZE is 0, the heap can grow
-   //  indefinitely, else it is limited to SIZE bytes.  If TYPE is MemPerm,
-   //  the constructor acts as a wrapper for the default heap.  Protected
-   //  because this class is virtual.
+   //  Creates a heap for memory of TYPE.  If SIZE is 0, the heap's
+   //  size can expand, else it is limited to SIZE bytes.  If TYPE
+   //  is MemPermanent, this creates a wrapper for the default heap.
+   //  Protected because this class is virtual.
    //
-   SysHeap(MemoryType type, size_t bytes);
+   SysHeap(MemoryType type, size_t size);
 private:
+   //  Applies ATTRS to the heap.  The heap must have been
+   //  constructed with a fixed size.
+   //
+   bool SetPermissions(MemoryProtection attrs);
+
    //  The type of memory provided by the heap.
    //
    const MemoryType type_;
@@ -129,6 +135,14 @@ private:
    //  The native handle to the underlying heap.
    //
    SysHeap_t heap_;
+
+   //  The size of the heap.
+   //
+   size_t size_;
+
+   //  The heap's current memory protection attributes.
+   //
+   MemoryProtection attrs_;
 
    //  The number of bytes currently allocated on the heap.
    //

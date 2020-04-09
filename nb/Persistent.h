@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  Protected.h
+//  Persistent.h
 //
 //  Copyright (C) 2017  Greg Utas
 //
@@ -19,8 +19,8 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-#ifndef PROTECTED_H_INCLUDED
-#define PROTECTED_H_INCLUDED
+#ifndef PERSISTENT_H_INCLUDED
+#define PERSISTENT_H_INCLUDED
 
 #include "Object.h"
 #include <cstddef>
@@ -30,34 +30,34 @@
 
 namespace NodeBase
 {
-//  Virtual base class for objects allocated on a heap that is write-protected
-//  at run-time and that survives both warm and cold restarts.  Subclasses
-//  contain critical data that changes infrequently, typically configuration
-//  data.
+//  Virtual base class for objects allocated on a heap that survives both warm
+//  and cold restarts.  Subclasses usually contain data that is associated with
+//  data subclassed from Protected, but which changes too frequently to be
+//  write-protected.
 //
-class Protected : public Object
+class Persistent : public Object
 {
 public:
    //  Virtual to allow subclassing.
    //
-   virtual ~Protected() = default;
+   virtual ~Persistent() = default;
 
    //  Overridden to return the type of memory used by subclasses.
    //
-   MemoryType MemType() const override { return MemProtected; }
+   MemoryType MemType() const override { return MemPersistent; }
 
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
 
-   //  Overridden to allocate memory from the protected heap.
+   //  Overridden to allocate memory from the persistent heap.
    //
    static void* operator new(size_t size);
    static void* operator new[](size_t size);
 protected:
    //  Protected because this class is virtual.
    //
-   Protected();
+   Persistent();
 };
 }
 #endif

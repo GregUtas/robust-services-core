@@ -120,7 +120,7 @@ LogBuffer::LogBuffer(size_t kbs) :
    if(pos != string::npos) fileName_[pos] = '-';
    fileName_.append(".txt");
 
-   buff_ = static_cast< char* >(Memory::Alloc(kbs << 10, MemPerm));
+   buff_ = static_cast< char* >(Memory::Alloc(kbs << 10, MemPermanent));
    size_ = kbs << 10;
    SetNext(reinterpret_cast< Entry* >(buff_));
 }

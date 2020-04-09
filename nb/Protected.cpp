@@ -42,7 +42,7 @@ void* Protected::operator new(size_t size)
 {
    Debug::ft(Protected_new1);
 
-   return Memory::Alloc(size, MemProt);
+   return Memory::Alloc(size, MemProtected);
 }
 
 //------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ void* Protected::operator new[](size_t size)
 {
    Debug::ft(Protected_new2);
 
-   return Memory::Alloc(size, MemProt);
+   return Memory::Alloc(size, MemProtected);
 }
 
 //------------------------------------------------------------------------------

@@ -22,7 +22,7 @@
 #ifndef IPPORTREGISTRY_H_INCLUDED
 #define IPPORTREGISTRY_H_INCLUDED
 
-#include "Protected.h"
+#include "Persistent.h"
 #include <string>
 #include "NbTypes.h"
 #include "NwTypes.h"
@@ -40,7 +40,7 @@ namespace NetworkBase
 {
 //  Global registry for IP ports that receive messages for applications.
 //
-class IpPortRegistry : public NodeBase::Protected
+class IpPortRegistry : public NodeBase::Persistent
 {
    friend class IpPort;
    friend class NodeBase::Singleton< IpPortRegistry >;

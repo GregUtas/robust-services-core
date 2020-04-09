@@ -55,7 +55,7 @@ FunctionProfiler::FunctionProfiler() :
    Debug::ft(FunctionProfiler_ctor);
 
    auto size = sizeof(Q2Way< FunctionStats >) * size_;
-   functionq_ = (Q2Way< FunctionStats >*) Memory::Alloc(size, MemTemp);
+   functionq_ = (Q2Way< FunctionStats >*) Memory::Alloc(size, MemTemporary);
 
    for(size_t i = 0; i < size_; ++i)
    {

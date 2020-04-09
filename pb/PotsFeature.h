@@ -22,7 +22,7 @@
 #ifndef POTSFEATURE_H_INCLUDED
 #define POTSFEATURE_H_INCLUDED
 
-#include "Protected.h"
+#include "Persistent.h"
 #include <cstddef>
 #include <cstdint>
 #include "Parameter.h"
@@ -46,7 +46,7 @@ namespace PotsBase
 //  which is a singleton registered with PotsFeatureRegistry.  Each subclass
 //  implements behavior that is common to all instances of its feature.
 //
-class PotsFeature : public Protected
+class PotsFeature : public Persistent
 {
    friend class PotsFeatureRegistry;
    friend class Registry< PotsFeature >;

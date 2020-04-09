@@ -42,7 +42,7 @@ void* Dynamic::operator new(size_t size)
 {
    Debug::ft(Dynamic_new1);
 
-   return Memory::Alloc(size, MemDyn);
+   return Memory::Alloc(size, MemDynamic);
 }
 
 //------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ void* Dynamic::operator new[](size_t size)
 {
    Debug::ft(Dynamic_new2);
 
-   return Memory::Alloc(size, MemDyn);
+   return Memory::Alloc(size, MemDynamic);
 }
 
 //------------------------------------------------------------------------------

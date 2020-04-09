@@ -2537,7 +2537,7 @@ word InitCommand::ProcessCommand(CliThread& cli) const
    cli.EndOfInput(false);
    auto pool = Singleton< RegistryPool >::Instance();
    auto result = pool->registry_.Init
-      (id1, RegistryItem::CellDiff(), MemTemp, false);
+      (id1, RegistryItem::CellDiff(), MemTemporary, false);
    *cli.obuf << "  rc=" << result << CRLF;
    pool->Output(*cli.obuf, 2, true);
    return 0;

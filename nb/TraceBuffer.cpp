@@ -203,11 +203,11 @@ bool TraceBuffer::AllocBuffers(size_t n, bool ex)
    size_ = 0;
 
    buff_ = (TraceRecord**)
-      Memory::Alloc(size * sizeof(TraceRecord*), MemPerm, ex);
+      Memory::Alloc(size * sizeof(TraceRecord*), MemPermanent, ex);
    if(buff_ == nullptr) return false;
 
    funcs_ = (FunctionTrace*)
-      Memory::Alloc(size * sizeof(FunctionTrace), MemPerm, ex);
+      Memory::Alloc(size * sizeof(FunctionTrace), MemPermanent, ex);
    if(funcs_ == nullptr)
    {
       Memory::Free(buff_);

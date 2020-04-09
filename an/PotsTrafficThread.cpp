@@ -1065,7 +1065,7 @@ PotsTrafficThread::PotsTrafficThread() : Thread(LoadTestFaction),
    Debug::ft(PotsTrafficThread_ctor);
 
    auto size = sizeof(Q1Way< TrafficCall >) * NumOfSlots;
-   timewheel_ = (Q1Way< TrafficCall >*) Memory::Alloc(size, MemDyn);
+   timewheel_ = (Q1Way< TrafficCall >*) Memory::Alloc(size, MemDynamic);
 
    for(auto i = 0; i < NumOfSlots; ++i)
    {

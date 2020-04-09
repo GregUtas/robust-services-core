@@ -74,7 +74,7 @@ IpBuffer* InputHandler::AllocBuff(const byte_t* source,
 void InputHandler::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Persistent::Display(stream, prefix, options);
 
    stream << prefix << "port : " << port_ << CRLF;
 }
@@ -107,7 +107,7 @@ void InputHandler::NetworkToHost
 
 void InputHandler::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Persistent::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

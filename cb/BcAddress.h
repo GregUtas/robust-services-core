@@ -22,7 +22,7 @@
 #ifndef BCADDRESS_H_INCLUDED
 #define BCADDRESS_H_INCLUDED
 
-#include "Protected.h"
+#include "Persistent.h"
 #include "TlvParameter.h"
 #include <cstddef>
 #include <cstdint>
@@ -66,7 +66,7 @@ enum Digit
 //
 //  A network defines addresses to identify subscribers (users) and services.
 //
-class Address : public Protected
+class Address : public Persistent
 {
 public:
    //  Currently two types of addresses are supported: directory numbers

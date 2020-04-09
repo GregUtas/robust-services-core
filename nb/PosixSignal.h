@@ -22,7 +22,7 @@
 #ifndef POSIXSIGNAL_H_INCLUDED
 #define POSIXSIGNAL_H_INCLUDED
 
-#include "Protected.h"
+#include "Persistent.h"
 #include <cstddef>
 #include <cstdint>
 #include "RegCell.h"
@@ -34,7 +34,7 @@ namespace NodeBase
 {
 //  Base class for a POSIX signal.
 //
-class PosixSignal : public Protected
+class PosixSignal : public Persistent
 {
    friend class Registry< PosixSignal >;
 public:

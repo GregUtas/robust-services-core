@@ -107,7 +107,7 @@ ThreadRegistry::ThreadRegistry()
 {
    Debug::ft(ThreadRegistry_ctor);
 
-   threads_.Init(Thread::MaxId, Thread::CellDiff(), MemPerm);
+   threads_.Init(Thread::MaxId, Thread::CellDiff(), MemPermanent);
    statsGroup_.reset(new ThreadStatsGroup);
    ids_.reset(new IdMap);
 }

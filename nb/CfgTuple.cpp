@@ -77,7 +77,7 @@ CfgTuple::~CfgTuple()
 void CfgTuple::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Persistent::Display(stream, prefix, options);
 
    stream << prefix << "key   : " << key_ << CRLF;
    stream << prefix << "input : " << input_ << CRLF;
@@ -97,7 +97,7 @@ ptrdiff_t CfgTuple::LinkDiff()
 
 void CfgTuple::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Persistent::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

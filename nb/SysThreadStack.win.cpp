@@ -161,7 +161,7 @@ DWORD StackInfo::Startup()
    if(Symbols != nullptr) return 0;
 
    auto size = sizeof(SYMBOL_INFO) + MAX_SYM_NAME;
-   Symbols = (SYMBOL_INFO*) Memory::Alloc(size, MemPerm, false);
+   Symbols = (SYMBOL_INFO*) Memory::Alloc(size, MemPermanent, false);
    if(Symbols == nullptr) return ERROR_NOT_ENOUGH_MEMORY;
 
    Process = GetCurrentProcess();

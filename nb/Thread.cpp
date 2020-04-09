@@ -243,7 +243,7 @@ void* ThreadTrace::operator new(size_t size)
 {
    auto addr = ::operator new(size, std::nothrow);
    if(addr != nullptr) return addr;
-   throw AllocationException(MemPerm, size);
+   throw AllocationException(MemPermanent, size);
 }
 
 //==============================================================================
@@ -765,7 +765,7 @@ Orphans::Orphans()
 {
    Debug::ft(Orphans_ctor);
 
-   orphans_.Init(32, MemPerm);
+   orphans_.Init(32, MemPermanent);
 }
 
 //------------------------------------------------------------------------------

@@ -40,7 +40,7 @@ IpServiceRegistry::IpServiceRegistry()
 {
    Debug::ft(IpServiceRegistry_ctor);
 
-   services_.Init(IpService::MaxId, IpService::CellDiff(), MemProt);
+   services_.Init(IpService::MaxId, IpService::CellDiff(), MemPersistent);
 }
 
 //------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ bool IpServiceRegistry::BindService(IpService& service)
 void IpServiceRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Persistent::Display(stream, prefix, options);
 
    stream << prefix << "services [id_t]" << CRLF;
    services_.Display(stream, prefix + spaces(2), options);
@@ -90,7 +90,7 @@ IpService* IpServiceRegistry::GetService(const string& name) const
 
 void IpServiceRegistry::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Persistent::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

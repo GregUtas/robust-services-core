@@ -22,7 +22,7 @@
 #ifndef POTSPROFILEREGISTRY_H_INCLUDED
 #define POTSPROFILEREGISTRY_H_INCLUDED
 
-#include "Protected.h"
+#include "Persistent.h"
 #include "BcAddress.h"
 #include "NbTypes.h"
 #include "Registry.h"
@@ -41,7 +41,7 @@ namespace PotsBase
 {
 //  Registry for PotsProfile instances.
 //
-class PotsProfileRegistry : public Protected
+class PotsProfileRegistry : public Persistent
 {
    friend class Singleton< PotsProfileRegistry >;
 public:

@@ -38,6 +38,7 @@ namespace NodeBase
 //
 class Memory
 {
+   friend class Thread;
 public:
    //  Deleted because this class only has static members.
    //
@@ -94,6 +95,14 @@ public:
    //
    static void Shutdown(RestartLevel level);
 private:
+   //  Protects the heap for TYPE.
+   //
+   static bool Protect(MemoryType type);
+
+   //  Unprotects the heap for TYPE.
+   //
+   static bool Unprotect(MemoryType type);
+
    //  Returns the heap for TYPE.  If it doesn't exist, it is created.
    //
    static SysHeap* EnsureHeap(MemoryType type);

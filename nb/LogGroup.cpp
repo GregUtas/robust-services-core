@@ -61,7 +61,7 @@ LogGroup::LogGroup(fixed_string name, fixed_string expl) :
       Debug::SwLog(LogGroup_ctor, "expl length", expl_.size());
    }
 
-   logs_.Init(MaxLogs, Log::CellDiff(), MemDyn);
+   logs_.Init(MaxLogs, Log::CellDiff(), MemDynamic);
 
    Singleton< LogGroupRegistry >::Instance()->BindGroup(*this);
 }

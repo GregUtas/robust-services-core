@@ -51,6 +51,14 @@ private:
    ~ProtectedHeap();
 };
 
+class PersistentHeap : public SysHeap
+{
+   friend class Singleton< PersistentHeap >;
+private:
+   PersistentHeap();
+   ~PersistentHeap();
+};
+
 class DynamicHeap : public SysHeap
 {
    friend class Singleton< DynamicHeap >;
@@ -71,7 +79,7 @@ private:
 
 fn_name ImmutableHeap_ctor = "ImmutableHeap.ctor";
 
-ImmutableHeap::ImmutableHeap() : SysHeap(MemImm, 0)
+ImmutableHeap::ImmutableHeap() : SysHeap(MemImmutable, 0)
 {
    Debug::ft(ImmutableHeap_ctor);
 }
@@ -89,7 +97,7 @@ ImmutableHeap::~ImmutableHeap()
 
 fn_name ProtectedHeap_ctor = "ProtectedHeap.ctor";
 
-ProtectedHeap::ProtectedHeap() : SysHeap(MemProt, 0)
+ProtectedHeap::ProtectedHeap() : SysHeap(MemProtected, 0)
 {
    Debug::ft(ProtectedHeap_ctor);
 }
@@ -105,9 +113,27 @@ ProtectedHeap::~ProtectedHeap()
 
 //------------------------------------------------------------------------------
 
+fn_name PersistentHeap_ctor = "PersistentHeap.ctor";
+
+PersistentHeap::PersistentHeap() : SysHeap(MemPersistent, 0)
+{
+   Debug::ft(PersistentHeap_ctor);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name PersistentHeap_dtor = "PersistentHeap.dtor";
+
+PersistentHeap::~PersistentHeap()
+{
+   Debug::ft(PersistentHeap_dtor);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name DynamicHeap_ctor = "DynamicHeap.ctor";
 
-DynamicHeap::DynamicHeap() : SysHeap(MemDyn, 0)
+DynamicHeap::DynamicHeap() : SysHeap(MemDynamic, 0)
 {
    Debug::ft(DynamicHeap_ctor);
 }
@@ -125,7 +151,7 @@ DynamicHeap::~DynamicHeap()
 
 fn_name TemporaryHeap_ctor = "TemporaryHeap.ctor";
 
-TemporaryHeap::TemporaryHeap() : SysHeap(MemTemp, 0)
+TemporaryHeap::TemporaryHeap() : SysHeap(MemTemporary, 0)
 {
    Debug::ft(TemporaryHeap_ctor);
 }
@@ -172,11 +198,12 @@ SysHeap* Memory::AccessHeap(MemoryType type)
 {
    switch(type)
    {
-   case MemTemp: return Singleton< TemporaryHeap >::Extant();
-   case MemDyn: return Singleton< DynamicHeap >::Extant();
-   case MemProt: return Singleton< ProtectedHeap >::Extant();
-   case MemPerm: return PermanentHeap::Instance();
-   case MemImm: return Singleton< ImmutableHeap >::Extant();
+   case MemTemporary: return Singleton< TemporaryHeap >::Extant();
+   case MemDynamic: return Singleton< DynamicHeap >::Extant();
+   case MemPersistent: return Singleton< PersistentHeap >::Extant();
+   case MemProtected: return Singleton< ProtectedHeap >::Extant();
+   case MemPermanent: return PermanentHeap::Instance();
+   case MemImmutable: return Singleton< ImmutableHeap >::Extant();
    }
 
    return nullptr;
@@ -259,11 +286,12 @@ SysHeap* Memory::EnsureHeap(MemoryType type)
 {
    switch(type)
    {
-   case MemTemp: return Singleton< TemporaryHeap >::Instance();
-   case MemDyn: return Singleton< DynamicHeap >::Instance();
-   case MemProt: return Singleton< ProtectedHeap >::Instance();
-   case MemPerm: return PermanentHeap::Instance();
-   case MemImm: return Singleton< ImmutableHeap >::Instance();
+   case MemTemporary: return Singleton< TemporaryHeap >::Instance();
+   case MemDynamic: return Singleton< DynamicHeap >::Instance();
+   case MemPersistent: return Singleton< PersistentHeap >::Instance();
+   case MemProtected: return Singleton< ProtectedHeap >::Instance();
+   case MemPermanent: return PermanentHeap::Instance();
+   case MemImmutable: return Singleton< ImmutableHeap >::Instance();
    }
 
    return nullptr;
@@ -314,6 +342,15 @@ void Memory::Free(const void* addr)
 const SysHeap* Memory::Heap(MemoryType type)
 {
    return AccessHeap(type);
+}
+
+//------------------------------------------------------------------------------
+
+bool Memory::Protect(MemoryType type)
+{
+   //* to be implemented
+
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -369,6 +406,7 @@ void Memory::Shutdown(RestartLevel level)
    if(level < RestartCold) return;
    Singleton< DynamicHeap >::Destroy();
    if(level < RestartReload) return;
+   Singleton< PersistentHeap >::Destroy();
    Singleton< ProtectedHeap >::Destroy();
 }
 
@@ -388,6 +426,15 @@ MemoryType Memory::Type(const void* addr)
 
    auto source = (Segment*) getptr1(addr, SegmentHeader::Size());
    return source->header.type;
+}
+
+//------------------------------------------------------------------------------
+
+bool Memory::Unprotect(MemoryType type)
+{
+   //* to be implemented
+
+   return false;
 }
 
 //------------------------------------------------------------------------------

@@ -22,7 +22,7 @@
 #ifndef ELEMENT_H_INCLUDED
 #define ELEMENT_H_INCLUDED
 
-#include "Protected.h"
+#include "Persistent.h"
 #include <string>
 #include "NbTypes.h"
 
@@ -32,7 +32,7 @@ namespace NodeBase
 {
 //  Attributes of the element on which this software load is running.
 //
-class Element : public Protected
+class Element : public Persistent
 {
    friend class Singleton< Element >;
 public:

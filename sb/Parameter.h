@@ -22,7 +22,7 @@
 #ifndef PARAMETER_H_INCLUDED
 #define PARAMETER_H_INCLUDED
 
-#include "Protected.h"
+#include "Persistent.h"
 #include <cstddef>
 #include <iosfwd>
 #include <string>
@@ -44,7 +44,7 @@ namespace SessionBase
 //  Each protocol defines a singleton subclass for each of its parameters.
 //  A parameter that uses the TLV format should subclass from TlvParameter.
 //
-class Parameter : public NodeBase::Protected
+class Parameter : public NodeBase::Persistent
 {
    friend class NodeBase::Registry< Parameter >;
 public:

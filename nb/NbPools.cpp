@@ -41,7 +41,7 @@ const size_t MsgBufferPool::BlockSize =
 fn_name MsgBufferPool_ctor = "MsgBufferPool.ctor";
 
 MsgBufferPool::MsgBufferPool() :
-   ObjectPool(MsgBufferObjPoolId, MemDyn, BlockSize, "MsgBuffers")
+   ObjectPool(MsgBufferObjPoolId, MemDynamic, BlockSize, "MsgBuffers")
 {
    Debug::ft(MsgBufferPool_ctor);
 }
@@ -82,7 +82,7 @@ const size_t ThreadPool::BlockSize = sizeof(Thread) + (60 * BYTES_PER_WORD);
 fn_name ThreadPool_ctor = "ThreadPool.ctor";
 
 ThreadPool::ThreadPool() :
-   ObjectPool(ThreadObjPoolId, MemPerm, BlockSize, "Threads")
+   ObjectPool(ThreadObjPoolId, MemPermanent, BlockSize, "Threads")
 {
    Debug::ft(ThreadPool_ctor);
 }

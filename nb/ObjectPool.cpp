@@ -581,7 +581,7 @@ Pooled* ObjectPool::DeqBlock(size_t size)
 void ObjectPool::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Persistent::Display(stream, prefix, options);
 
    stream << prefix << "pid          : " << pid_.to_str() << CRLF;
    stream << prefix << "name         : " << name_ << CRLF;
@@ -963,7 +963,7 @@ ObjectBlock* ObjectPool::ObjToBlock(const Pooled* obj)
 
 void ObjectPool::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Persistent::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------
@@ -1065,10 +1065,10 @@ void ObjectPool::Shutdown(RestartLevel level)
    {
    case RestartCold:
       stats_.release();
-      if((type_ == MemTemp) || (type_ == MemDyn)) break;
+      if((type_ == MemTemporary) || (type_ == MemDynamic)) break;
       return;
    case RestartWarm:
-      if(type_ == MemTemp) break;
+      if(type_ == MemTemporary) break;
       return;
    default:
       return;

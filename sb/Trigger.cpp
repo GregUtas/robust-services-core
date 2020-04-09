@@ -82,7 +82,7 @@ bool Trigger::BindInitiator(Initiator& init)
 void Trigger::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Persistent::Display(stream, prefix, options);
 
    if(!options.test(DispVerbose)) return;
 
@@ -95,7 +95,7 @@ void Trigger::Display(ostream& stream,
 
 void Trigger::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Persistent::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

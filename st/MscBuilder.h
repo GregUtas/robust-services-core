@@ -282,7 +282,7 @@ private:
 
    //  Workspace for assembling the current MSC.
    //
-   TempString rows_[MaxRows];
+   TemporaryStr rows_[MaxRows];
 
    //  The next available slot in rows_.
    //

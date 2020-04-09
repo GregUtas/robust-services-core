@@ -42,7 +42,7 @@ void* Permanent::operator new(size_t size)
 {
    Debug::ft(Permanent_new1);
 
-   return Memory::Alloc(size, MemPerm);
+   return Memory::Alloc(size, MemPermanent);
 }
 
 //------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ void* Permanent::operator new[](size_t size)
 {
    Debug::ft(Permanent_new2);
 
-   return Memory::Alloc(size, MemPerm);
+   return Memory::Alloc(size, MemPermanent);
 }
 
 //------------------------------------------------------------------------------

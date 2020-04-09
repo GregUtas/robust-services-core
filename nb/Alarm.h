@@ -110,11 +110,11 @@ private:
 
    //  The alarm's name.
    //
-   const DynString name_;
+   const DynamicStr name_;
 
    //  The string that explains the alarm.
    //
-   const DynString expl_;
+   const DynamicStr expl_;
 
    //  The delay when downgrading the alarm.
    //

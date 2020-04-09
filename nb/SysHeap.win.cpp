@@ -36,9 +36,11 @@ namespace NodeBase
 {
 fn_name SysHeap_ctor = "SysHeap.ctor";
 
-SysHeap::SysHeap(MemoryType type, size_t bytes) :
+SysHeap::SysHeap(MemoryType type, size_t size) :
    type_(type),
    heap_(nullptr),
+   size_(size),
+   attrs_(MemReadWrite),
    inUse_(0),
    allocs_(0),
    fails_(0),
@@ -47,13 +49,12 @@ SysHeap::SysHeap(MemoryType type, size_t bytes) :
 {
    Debug::ft(SysHeap_ctor);
 
-   //  If this is the default heap, look it up, else create it.  If creation
-   //  fails, throw an exception.
+   //  If this is the default heap, wrap it, else create it.
    //
-   if(type_ == MemPerm)
+   if(type_ == MemPermanent)
       heap_ = GetProcessHeap();
    else
-      heap_ = HeapCreate(0, bytes, bytes);
+      heap_ = HeapCreate(0, size_, size_);
 
    if(heap_ == nullptr)
    {
@@ -75,7 +76,7 @@ SysHeap::~SysHeap()
 
    //  Prevent an attempt to destroy the default heap.
    //
-   if(type_ == MemPerm)
+   if(type_ == MemPermanent)
    {
       Debug::SwLog(SysHeap_dtor, debug64_t(heap_), 0);
       return;

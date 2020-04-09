@@ -42,8 +42,8 @@ PotsTreatmentRegistry::PotsTreatmentRegistry()
    Debug::ft(PotsTreatmentRegistry_ctor);
 
    for(auto c = 0; c <= Cause::MaxInd; ++c) causeToQId_[c] = NIL_ID;
-   treatmentqs_.Init
-      (PotsTreatmentQueue::MaxQId, PotsTreatmentQueue::CellDiff(), MemProt);
+   treatmentqs_.Init(PotsTreatmentQueue::MaxQId,
+      PotsTreatmentQueue::CellDiff(), MemPersistent);
 }
 
 //------------------------------------------------------------------------------
@@ -93,7 +93,7 @@ PotsTreatmentQueue* PotsTreatmentRegistry::CauseToTreatmentQ
 void PotsTreatmentRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Persistent::Display(stream, prefix, options);
 
    stream << prefix << "treatmentqs [PotsTreatmentQueue::QId]" << CRLF;
    treatmentqs_.Display(stream, prefix + spaces(2), options);

@@ -59,10 +59,10 @@ Service::Service(Id sid, bool modifiable, bool modifier) :
 
    sid_.SetId(sid);
 
-   states_.Init(State::MaxId, State::CellDiff(), MemProt);
-   handlers_.Init(EventHandler::MaxId, 0, MemProt, false);
+   states_.Init(State::MaxId, State::CellDiff(), MemPersistent);
+   handlers_.Init(EventHandler::MaxId, 0, MemPersistent, false);
    for(auto i = 0; i <= Event::MaxId; ++i) eventNames_[i] = nullptr;
-   triggers_.Init(Trigger::MaxId, 0, MemProt, false);
+   triggers_.Init(Trigger::MaxId, 0, MemPersistent, false);
 
    //  Add the service to the global service registry.
    //
@@ -313,7 +313,7 @@ bool Service::Disable()
 void Service::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Persistent::Display(stream, prefix, options);
 
    stream << prefix << "sid        : " << sid_.to_str() << CRLF;
    stream << prefix << "status     : " << status_ << CRLF;
@@ -381,7 +381,7 @@ Trigger* Service::GetTrigger(TriggerId tid) const
 
 void Service::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Persistent::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

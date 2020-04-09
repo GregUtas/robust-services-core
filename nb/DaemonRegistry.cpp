@@ -40,7 +40,7 @@ DaemonRegistry::DaemonRegistry()
 {
    Debug::ft(DaemonRegistry_ctor);
 
-   daemons_.Init(Thread::MaxId, Daemon::CellDiff(), MemProt);
+   daemons_.Init(Thread::MaxId, Daemon::CellDiff(), MemPersistent);
 }
 
 //------------------------------------------------------------------------------

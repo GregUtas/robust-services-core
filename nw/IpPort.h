@@ -22,7 +22,7 @@
 #ifndef IPPORT_H_INCLUDED
 #define IPPORT_H_INCLUDED
 
-#include "Protected.h"
+#include "Persistent.h"
 #include <cstddef>
 #include <iosfwd>
 #include <memory>
@@ -48,7 +48,7 @@ namespace NetworkBase
 {
 //  An IP port that supports a service (an application protocol).
 //
-class IpPort : public NodeBase::Protected
+class IpPort : public NodeBase::Persistent
 {
    friend class InputHandler;
 public:

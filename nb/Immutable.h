@@ -43,7 +43,7 @@ public:
 
    //  Overridden to return the type of memory used by subclasses.
    //
-   MemoryType MemType() const override { return MemImm; }
+   MemoryType MemType() const override { return MemImmutable; }
 
    //  Overridden for patching.
    //

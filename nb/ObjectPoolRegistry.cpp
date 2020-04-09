@@ -135,7 +135,7 @@ ObjectPoolRegistry::ObjectPoolRegistry()
    Debug::ft(ObjectPoolRegistry_ctor);
 
    Singleton< ObjPoolTraceTool >::Instance();
-   pools_.Init(ObjectPool::MaxId, ObjectPool::CellDiff(), MemProt);
+   pools_.Init(ObjectPool::MaxId, ObjectPool::CellDiff(), MemPersistent);
    statsGroup_.reset(new ObjectPoolStatsGroup);
    nullifyObjectData_.reset(new CfgBoolParm("NullifyObjectData", "F",
       &NullifyObjectData_, "set to nullify the data after an object's vptr"));
@@ -266,7 +266,7 @@ bool ObjectPoolRegistry::BindPool(ObjectPool& pool)
 void ObjectPoolRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Persistent::Display(stream, prefix, options);
 
    stream << prefix << "statsGroup        : ";
    stream << strObj(statsGroup_.get()) << CRLF;
@@ -283,7 +283,7 @@ void ObjectPoolRegistry::Display(ostream& stream,
 
 void ObjectPoolRegistry::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Persistent::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

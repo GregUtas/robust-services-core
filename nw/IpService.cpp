@@ -114,7 +114,7 @@ CliText* IpService::CreateText() const
 void IpService::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Persistent::Display(stream, prefix, options);
 
    stream << prefix << "sid      : " << sid_.to_str() << CRLF;
    stream << prefix << "Name     : " << Name() << CRLF;
@@ -178,7 +178,7 @@ c_string IpService::Name() const
 
 void IpService::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Persistent::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

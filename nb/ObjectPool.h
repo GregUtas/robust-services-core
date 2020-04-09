@@ -22,7 +22,7 @@
 #ifndef OBJECTPOOL_H_INCLUDED
 #define OBJECTPOOL_H_INCLUDED
 
-#include "Protected.h"
+#include "Persistent.h"
 #include <cstddef>
 #include <cstdint>
 #include <iosfwd>
@@ -50,7 +50,7 @@ namespace NodeBase
 //  sizes, all objects subclassed from a common application framework class
 //  should draw their blocks from the same pool.
 //
-class ObjectPool : public Protected
+class ObjectPool : public Persistent
 {
    friend class ObjectPoolRegistry;
    friend class ObjectPoolSizeCfg;

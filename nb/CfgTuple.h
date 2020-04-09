@@ -22,7 +22,7 @@
 #ifndef CFGTUPLE_H_INCLUDED
 #define CFGTUPLE_H_INCLUDED
 
-#include "Protected.h"
+#include "Persistent.h"
 #include <cstddef>
 #include <string>
 #include "Q1Link.h"
@@ -40,7 +40,7 @@ namespace NodeBase
 //    In this case, a tuple is created for the parameter, and its value
 //    is set to the parameter's default.
 //
-class CfgTuple : public Protected
+class CfgTuple : public Persistent
 {
 public:
    //  The character that prefixes comments in the file that contains

@@ -170,7 +170,7 @@ private:
 
    //  The log's explanation.
    //
-   const DynString expl_;
+   const DynamicStr expl_;
 
    //  The log's index in its LogGroup's registry.
    //

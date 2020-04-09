@@ -40,7 +40,7 @@ ClassRegistry::ClassRegistry()
 {
    Debug::ft(ClassRegistry_ctor);
 
-   classes_.Init(MaxClassId, Class::CellDiff(), MemProt);
+   classes_.Init(MaxClassId, Class::CellDiff(), MemPersistent);
 }
 
 //------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ bool ClassRegistry::BindClass(Class& cls)
 void ClassRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Persistent::Display(stream, prefix, options);
 
    stream << prefix << "classes [Object::ClassId]" << CRLF;
    classes_.Display(stream, prefix + spaces(2), options);
@@ -85,7 +85,7 @@ Class* ClassRegistry::Lookup(ClassId cid) const
 
 void ClassRegistry::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Persistent::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

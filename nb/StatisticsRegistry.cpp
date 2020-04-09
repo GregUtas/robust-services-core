@@ -46,8 +46,8 @@ StatisticsRegistry::StatisticsRegistry()
 {
    Debug::ft(StatisticsRegistry_ctor);
 
-   stats_.Init(MaxStats, Statistic::CellDiff(), MemDyn);
-   groups_.Init(MaxGroups, StatisticsGroup::CellDiff(), MemDyn);
+   stats_.Init(MaxStats, Statistic::CellDiff(), MemDynamic);
+   groups_.Init(MaxGroups, StatisticsGroup::CellDiff(), MemDynamic);
 
    StartTicks_ = Clock::TicksZero();
 }

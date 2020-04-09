@@ -22,7 +22,7 @@
 #ifndef TRIGGER_H_INCLUDED
 #define TRIGGER_H_INCLUDED
 
-#include "Protected.h"
+#include "Persistent.h"
 #include <cstdint>
 #include "Q1Way.h"
 #include "SbTypes.h"
@@ -53,7 +53,7 @@ namespace SessionBase
 //  to be registered against this TriggerId, however, if an Initiator needs
 //  to *create* a modifier when the SAP or SNP occurs.
 //
-class Trigger : public NodeBase::Protected
+class Trigger : public NodeBase::Persistent
 {
    friend class Initiator;
    friend class NodeBase::Registry< Trigger >;

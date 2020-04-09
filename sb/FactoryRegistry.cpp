@@ -110,7 +110,7 @@ FactoryRegistry::FactoryRegistry()
 {
    Debug::ft(FactoryRegistry_ctor);
 
-   factories_.Init(Factory::MaxId, Factory::CellDiff(), MemProt);
+   factories_.Init(Factory::MaxId, Factory::CellDiff(), MemPersistent);
    statsGroup_.reset(new FactoryStatsGroup);
 }
 
@@ -139,7 +139,7 @@ bool FactoryRegistry::BindFactory(Factory& factory)
 void FactoryRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Persistent::Display(stream, prefix, options);
 
    stream << prefix << "statsGroup : ";
    stream << strObj(statsGroup_.get()) << CRLF;
@@ -159,7 +159,7 @@ Factory* FactoryRegistry::GetFactory(FactoryId fid) const
 
 void FactoryRegistry::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Persistent::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

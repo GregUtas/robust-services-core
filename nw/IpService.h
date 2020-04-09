@@ -22,7 +22,7 @@
 #ifndef IPSERVICE_H_INCLUDED
 #define IPSERVICE_H_INCLUDED
 
-#include "Protected.h"
+#include "Persistent.h"
 #include <cstddef>
 #include "IoThread.h"
 #include "NbTypes.h"
@@ -39,7 +39,7 @@ namespace NodeBase
 
 namespace NetworkBase
 {
-class IpService : public NodeBase::Protected
+class IpService : public NodeBase::Persistent
 {
    friend class NodeBase::Registry< IpService >;
 public:

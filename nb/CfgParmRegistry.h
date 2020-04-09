@@ -22,7 +22,7 @@
 #ifndef CFGPARMREGISTRY_H_INCLUDED
 #define CFGPARMREGISTRY_H_INCLUDED
 
-#include "Protected.h"
+#include "Persistent.h"
 #include <cstddef>
 #include <iosfwd>
 #include <string>
@@ -43,7 +43,7 @@ namespace NodeBase
 {
 //  Global registry for configuration parameters.
 //
-class CfgParmRegistry : public Protected
+class CfgParmRegistry : public Persistent
 {
    friend class Singleton< CfgParmRegistry >;
 public:

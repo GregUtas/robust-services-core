@@ -51,11 +51,11 @@ namespace NodeBase
 //
 //  The type of memory that a singleton wishes to use determines it ultimate
 //  base class:
-//    o MemTemp: Temporary
-//    o MemDyn:  Dynamic
-//    o MemProt: Protected
-//    o MemPerm: Base, Object, or Permanent
-//    o MemImm:  Immutable
+//    o MemTemporary: Temporary
+//    o MemDynamic:   Dynamic
+//    o MemProtected: Protected
+//    o MemPermanent: Base, Object, or Permanent
+//    o MemImmutable: Immutable
 //  The reason for this is that the only other way to specify an object's memory
 //  type is to use the override of Object.operator new that includes MemoryType.
 //  This is not possible for a singleton, however, because Singleton.Instance

@@ -92,7 +92,7 @@ ptrdiff_t PotsTreatmentQueue::CellDiff()
 void PotsTreatmentQueue::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Persistent::Display(stream, prefix, options);
 
    if(!options.test(DispVerbose)) return;
 
@@ -188,7 +188,7 @@ EventHandler::Rc PotsTreatment::ApplyTreatment
 void PotsTreatment::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Persistent::Display(stream, prefix, options);
 
    if(!options.test(DispVerbose)) return;
 

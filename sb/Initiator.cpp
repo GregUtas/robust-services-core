@@ -87,7 +87,7 @@ Initiator::~Initiator()
 void Initiator::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Persistent::Display(stream, prefix, options);
 
    stream << prefix << "sid  : " << int(sid_) << CRLF;
    stream << prefix << "aid  : " << int(aid_) << CRLF;
@@ -220,7 +220,7 @@ ptrdiff_t Initiator::LinkDiff()
 
 void Initiator::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Persistent::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

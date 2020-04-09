@@ -1,6 +1,6 @@
 //==============================================================================
 //
-//  Immutable.cpp
+//  Persistent.cpp
 //
 //  Copyright (C) 2017  Greg Utas
 //
@@ -19,7 +19,7 @@
 //  You should have received a copy of the GNU General Public License along
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
-#include "Immutable.h"
+#include "Persistent.h"
 #include "Debug.h"
 #include "Memory.h"
 
@@ -27,38 +27,38 @@
 
 namespace NodeBase
 {
-fn_name Immutable_ctor = "Immutable.ctor";
+fn_name Persistent_ctor = "Persistent.ctor";
 
-Immutable::Immutable()
+Persistent::Persistent()
 {
-   Debug::ft(Immutable_ctor);
+   Debug::ft(Persistent_ctor);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Immutable_new1 = "Immutable.operator new";
+fn_name Persistent_new1 = "Persistent.operator new";
 
-void* Immutable::operator new(size_t size)
+void* Persistent::operator new(size_t size)
 {
-   Debug::ft(Immutable_new1);
+   Debug::ft(Persistent_new1);
 
-   return Memory::Alloc(size, MemImmutable);
+   return Memory::Alloc(size, MemPersistent);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Immutable_new2 = "Immutable.operator new[]";
+fn_name Persistent_new2 = "Persistent.operator new[]";
 
-void* Immutable::operator new[](size_t size)
+void* Persistent::operator new[](size_t size)
 {
-   Debug::ft(Immutable_new2);
+   Debug::ft(Persistent_new2);
 
-   return Memory::Alloc(size, MemImmutable);
+   return Memory::Alloc(size, MemPersistent);
 }
 
 //------------------------------------------------------------------------------
 
-void Immutable::Patch(sel_t selector, void* arguments)
+void Persistent::Patch(sel_t selector, void* arguments)
 {
    Object::Patch(selector, arguments);
 }

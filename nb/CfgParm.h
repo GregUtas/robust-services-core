@@ -22,7 +22,7 @@
 #ifndef CFGPARM_H_INCLUDED
 #define CFGPARM_H_INCLUDED
 
-#include "Protected.h"
+#include "Persistent.h"
 #include <cstddef>
 #include <string>
 #include "Q1Link.h"
@@ -46,7 +46,7 @@ namespace NodeBase
 //  the parameter is registered, its value (the field) is updated to what (if
 //  anything) was specified in the element configuration file.
 //
-class CfgParm : public Protected
+class CfgParm : public Persistent
 {
    friend class CfgParmRegistry;
 public:

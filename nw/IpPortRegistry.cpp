@@ -271,7 +271,7 @@ bool IpPortRegistry::CanBypassStack
 void IpPortRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Persistent::Display(stream, prefix, options);
 
    stream << prefix << "HostAddr    : " << HostAddr_.to_str() << CRLF;
    stream << prefix << "HostAddrStr : " << HostAddrStr_ << CRLF;
@@ -327,7 +327,7 @@ SysIpL2Addr IpPortRegistry::HostAddress()
 
 void IpPortRegistry::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Persistent::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

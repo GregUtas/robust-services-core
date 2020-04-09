@@ -111,7 +111,7 @@ InvokerPoolRegistry::InvokerPoolRegistry() : poolToAudit_(0)
 {
    Debug::ft(InvokerPoolRegistry_ctor);
 
-   pools_.Init(Faction_N, InvokerPool::CellDiff(), MemDyn);
+   pools_.Init(Faction_N, InvokerPool::CellDiff(), MemDynamic);
    statsGroup_.reset(new InvokerPoolStatsGroup);
 }
 

@@ -22,7 +22,7 @@
 #ifndef FACTORYREGISTRY_H_INCLUDED
 #define FACTORYREGISTRY_H_INCLUDED
 
-#include "Protected.h"
+#include "Persistent.h"
 #include "NbTypes.h"
 #include "Registry.h"
 #include "SbTypes.h"
@@ -33,7 +33,7 @@ namespace SessionBase
 {
 //  Global registry for factories.
 //
-class FactoryRegistry : public NodeBase::Protected
+class FactoryRegistry : public NodeBase::Persistent
 {
    friend class Factory;
    friend class NodeBase::Singleton< FactoryRegistry >;

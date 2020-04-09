@@ -22,7 +22,7 @@
 #ifndef SERVICEREGISTRY_H_INCLUDED
 #define SERVICEREGISTRY_H_INCLUDED
 
-#include "Protected.h"
+#include "Persistent.h"
 #include "NbTypes.h"
 #include "Registry.h"
 #include "SbTypes.h"
@@ -33,7 +33,7 @@ namespace SessionBase
 {
 //  Global registry for services.
 //
-class ServiceRegistry : public NodeBase::Protected
+class ServiceRegistry : public NodeBase::Persistent
 {
    friend class Service;
    friend class NodeBase::Singleton< ServiceRegistry >;

@@ -22,7 +22,7 @@
 #ifndef CLIINCREMENT_H_INCLUDED
 #define CLIINCREMENT_H_INCLUDED
 
-#include "Protected.h"
+#include "Persistent.h"
 #include <cstddef>
 #include <cstdint>
 #include <iosfwd>
@@ -42,7 +42,7 @@ namespace NodeBase
 {
 //  A set of related CLI commands.
 //
-class CliIncrement : public Protected
+class CliIncrement : public Persistent
 {
 public:
    //  Removes the increment from CliRegistry.  Virtual to allow subclassing.

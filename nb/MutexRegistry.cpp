@@ -48,7 +48,7 @@ MutexRegistry::MutexRegistry()
 {
    Debug::ft(MutexRegistry_ctor);
 
-   mutexes_.Init(MaxMutexes, SysMutex::CellDiff(), MemPerm);
+   mutexes_.Init(MaxMutexes, SysMutex::CellDiff(), MemPermanent);
 }
 
 //------------------------------------------------------------------------------

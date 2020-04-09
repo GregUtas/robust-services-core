@@ -22,7 +22,7 @@
 #ifndef OBJECTPOOLREGISTRY_H_INCLUDED
 #define OBJECTPOOLREGISTRY_H_INCLUDED
 
-#include "Protected.h"
+#include "Persistent.h"
 #include "NbTypes.h"
 #include "Registry.h"
 
@@ -37,7 +37,7 @@ namespace NodeBase
 {
 //  Global registry for object pools.
 //
-class ObjectPoolRegistry : public Protected
+class ObjectPoolRegistry : public Persistent
 {
    friend class Singleton< ObjectPoolRegistry >;
    friend class ObjectPool;

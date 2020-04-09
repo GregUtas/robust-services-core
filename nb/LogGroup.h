@@ -123,11 +123,11 @@ private:
 
    //  The group's name.
    //
-   const DynString name_;
+   const DynamicStr name_;
 
    //  The group's explanation.
    //
-   const DynString expl_;
+   const DynamicStr expl_;
 
    //  Set if all logs in the group are to be suppressed.
    //

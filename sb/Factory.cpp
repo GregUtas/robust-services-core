@@ -229,7 +229,7 @@ size_t Factory::DiscardedMessageCount() const
 void Factory::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Persistent::Display(stream, prefix, options);
 
    stream << prefix << "fid     : " << fid_.to_str() << CRLF;
    stream << prefix << "type    : " << int(type_) << CRLF;
@@ -326,7 +326,7 @@ bool Factory::IsLegalOgSignal(SignalId sid) const
 
 void Factory::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Persistent::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

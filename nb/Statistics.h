@@ -121,7 +121,7 @@ private:
 
    //  The string that explains the statistic's purpose.
    //
-   const DynString expl_;
+   const DynamicStr expl_;
 };
 
 //------------------------------------------------------------------------------

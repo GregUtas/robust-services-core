@@ -22,7 +22,7 @@
 #ifndef POTSFEATUREPROFILE_H_INCLUDED
 #define POTSFEATUREPROFILE_H_INCLUDED
 
-#include "Protected.h"
+#include "Persistent.h"
 #include <cstddef>
 #include "Parameter.h"
 #include "PotsFeature.h"
@@ -39,7 +39,7 @@ namespace PotsBase
 //  the user's profile.  It contains data that persists across sessions and
 //  that is specific to the user's subscription to the feature.
 //
-class PotsFeatureProfile : public Protected
+class PotsFeatureProfile : public Persistent
 {
    friend class PotsProfile;
    friend class Q1Way< PotsFeatureProfile >;

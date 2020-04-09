@@ -42,7 +42,7 @@ void* Temporary::operator new(size_t size)
 {
    Debug::ft(Temporary_new1);
 
-   return Memory::Alloc(size, MemTemp);
+   return Memory::Alloc(size, MemTemporary);
 }
 
 //------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ void* Temporary::operator new[](size_t size)
 {
    Debug::ft(Temporary_new2);
 
-   return Memory::Alloc(size, MemTemp);
+   return Memory::Alloc(size, MemTemporary);
 }
 
 //------------------------------------------------------------------------------

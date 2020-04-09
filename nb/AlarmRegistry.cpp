@@ -43,7 +43,7 @@ AlarmRegistry::AlarmRegistry()
 {
    Debug::ft(AlarmRegistry_ctor);
 
-   alarms_.Init(MaxAlarms, Alarm::CellDiff(), MemDyn);
+   alarms_.Init(MaxAlarms, Alarm::CellDiff(), MemDynamic);
 }
 
 //------------------------------------------------------------------------------

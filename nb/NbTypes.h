@@ -214,13 +214,20 @@ typedef std::unique_ptr< StatisticsGroup > StatisticsGroupPtr;
 template< class T > class Singleton;
 
 //  Versions of std::string that support the various MemTypes.  See the
-//  comments in Allocators.h.
+//  comments in Allocators.h.  There is no PermanentString, as it would
+//  be equivalent to std::string.
 //
-typedef std::char_traits<char> CharTraits;
-typedef std::basic_string<char, CharTraits, DynAllocator<char>>  DynString;
-typedef std::basic_string<char, CharTraits, ImmAllocator<char>>  ImmString;
-typedef std::basic_string<char, CharTraits, PermAllocator<char>> PermString;
-typedef std::basic_string<char, CharTraits, ProtAllocator<char>> ProtString;
-typedef std::basic_string<char, CharTraits, TempAllocator<char>> TempString;
+using CharTraits = std::char_traits<char>;
+
+using DynamicStr =
+   std::basic_string<char, CharTraits, DynamicAllocator<char>>;
+using ImmutableStr =
+   std::basic_string<char, CharTraits, ImmutableAllocator<char>>;
+using PersistentStr =
+   std::basic_string<char, CharTraits, PersistentAllocator<char>>;
+using ProtectedStr =
+   std::basic_string<char, CharTraits, ProtectedAllocator<char>>;
+using TemporaryStr =
+   std::basic_string<char, CharTraits, TemporaryAllocator<char>>;
 }
 #endif

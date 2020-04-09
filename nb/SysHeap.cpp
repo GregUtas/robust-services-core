@@ -25,6 +25,7 @@
 #include <string>
 #include "AllocationException.h"
 #include "Debug.h"
+#include "SysMemory.h"
 
 using std::ostream;
 using std::string;
@@ -39,7 +40,9 @@ void SysHeap::Display(ostream& stream,
    Object::Display(stream, prefix, options);
 
    stream << prefix << "heap     : " << heap_ << CRLF;
+   stream << prefix << "size     : " << size_ << CRLF;
    stream << prefix << "type     : " << type_ << CRLF;
+   stream << prefix << "attrs    : " << attrs_ << CRLF;
    stream << prefix << "inUse    : " << inUse_ << CRLF;
    stream << prefix << "allocs   : " << allocs_ << CRLF;
    stream << prefix << "fails    : " << fails_ << CRLF;
@@ -79,7 +82,7 @@ void* SysHeap::operator new(size_t size)
 
    auto addr = ::operator new(size, std::nothrow);
    if(addr != nullptr) return addr;
-   throw AllocationException(MemPerm, size);
+   throw AllocationException(MemPermanent, size);
 }
 
 //------------------------------------------------------------------------------
@@ -92,6 +95,26 @@ void* SysHeap::operator new[](size_t size)
 
    auto addr = ::operator new[](size, std::nothrow);
    if(addr != nullptr) return addr;
-   throw AllocationException(MemPerm, size);
+   throw AllocationException(MemPermanent, size);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SysHeap_SetPermissions = "SysHeap.SetPermissions";
+
+bool SysHeap::SetPermissions(MemoryProtection attrs)
+{
+   Debug::ft(SysHeap_SetPermissions);
+
+   if(size_ == 0)
+   {
+      Debug::SwLog(SysHeap_SetPermissions, "heap size not fixed", 0);
+      return false;
+   }
+
+   if(!SysMemory::Protect(heap_, size_, attrs)) return false;
+
+   attrs_ = attrs;
+   return true;
 }
 }

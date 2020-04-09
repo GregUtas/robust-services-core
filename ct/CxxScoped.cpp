@@ -112,6 +112,7 @@ void Argument::EnterBlock()
 {
    Debug::ft(Argument_EnterBlock);
 
+   Context::SetPos(GetLoc());
    if(!name_.empty()) Context::InsertLocal(this);
 }
 
@@ -1823,17 +1824,6 @@ void Friend::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-fn_name Friend_EnterBlock = "Friend.EnterBlock";
-
-void Friend::EnterBlock()
-{
-   Debug::ft(Friend_EnterBlock);
-
-   Context::PushArg(StackArg(Referent(), 0, false));
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Friend_EnterScope = "Friend.EnterScope";
 
 bool Friend::EnterScope()
@@ -2471,6 +2461,7 @@ void TemplateParm::EnterBlock()
 {
    Debug::ft(TemplateParm_EnterBlock);
 
+   Context::SetPos(GetLoc());
    Context::InsertLocal(this);
 }
 
@@ -2482,6 +2473,7 @@ bool TemplateParm::EnterScope()
 {
    Debug::ft(TemplateParm_EnterScope);
 
+   Context::SetPos(GetLoc());
    if(default_ != nullptr) default_->EnteringScope(Context::Scope());
    return true;
 }

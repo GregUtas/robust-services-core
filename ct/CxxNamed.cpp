@@ -949,6 +949,7 @@ void DataSpec::EnterBlock()
 {
    Debug::ft(DataSpec_EnterBlock);
 
+   Context::SetPos(GetLoc());
    Context::PushArg(ResultType());
 }
 
@@ -2674,6 +2675,7 @@ void StaticAssert::EnterBlock()
 {
    Debug::ft(StaticAssert_EnterBlock);
 
+   Context::SetPos(GetLoc());
    expr_->EnterBlock();
    auto result = Context::PopArg(true);
    result.CheckIfBool();

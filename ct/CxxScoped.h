@@ -918,10 +918,6 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const NodeBase::Flags& options) const override;
 
-   //  Overridden to push the declaration's referent onto the argument stack.
-   //
-   void EnterBlock() override;
-
    //  Overridden to add the declaration to the current scope.
    //
    bool EnterScope() override;

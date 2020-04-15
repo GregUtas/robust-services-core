@@ -22,7 +22,7 @@
 #ifndef CFGPARMREGISTRY_H_INCLUDED
 #define CFGPARMREGISTRY_H_INCLUDED
 
-#include "Persistent.h"
+#include "Protected.h"
 #include <cstddef>
 #include <iosfwd>
 #include <string>
@@ -43,7 +43,7 @@ namespace NodeBase
 {
 //  Global registry for configuration parameters.
 //
-class CfgParmRegistry : public Persistent
+class CfgParmRegistry : public Protected
 {
    friend class Singleton< CfgParmRegistry >;
 public:
@@ -118,16 +118,16 @@ private:
    //
    ~CfgParmRegistry();
 
-   //  Reads configuration tuples (key-value pairs) from ConfigFileName
-   //  during system initialization.  Creates a CfgTuple instance for
+   //  Reads configuration tuples (key-value pairs) from the configuration
+   //  file during system initialization.  Creates a CfgTuple instance for
    //  each valid tuple and adds it to the registry.
    //
    void LoadTuples();
 
-   //  Called by LoadTuples to read the next tuple from ConfigFileName.
-   //  Returns true if another valid tuple exists; updates KEY and VALUE
-   //  accordingly.  Returns false on EOF.  Calls BadLine to log invalid
-   //  entries, but continues to look for tuples.
+   //  Called by LoadTuples to read the next tuple from the configuration
+   //  file.    Returns true if another valid tuple exists; updates KEY
+   //  and VALUE accordingly.  Returns false on EOF.  Calls BadLine to log
+   //  invalid entries, but continues to look for tuples.
    //
    bool LoadNextTuple(std::string& key, std::string& value);
 
@@ -143,11 +143,11 @@ private:
 
    //  The arguments to main().
    //
-   stringPtrVectorPtr mainArgs_;  //r
+   stringPtrVectorPtr mainArgs_;
 
    //  The file from which tuples are read during system initialization.
    //
-   stringPtr configFileName_;  //r
+   ProtectedStr configFileName_;
 
    //  The tuples (key-value pairs) in the registry.  They are kept
    //  in a queue that is sorted in alphabetical order, by key.
@@ -158,25 +158,6 @@ private:
    //  in a queue that is sorted in alphabetical order.
    //
    Q1Way< CfgParm > parmq_;
-
-   //  A handle for reading ConfigFileName.
-   //
-   istreamPtr stream_;  //r
-
-   //  The current line number in ConfigFileName.
-   //
-   size_t currLine_;
-
-   //> Used to calculate configFileName_, the name of the file that contains
-   //  this node's configuration parameters.  It is created by modifying the
-   //  first argument to main(), which is the path to our executable, as
-   //  follows:
-   //  o find the last occurrence of BackFromExePath and erase what *follows*
-   //    it (that is, retain BackFromExePath as a "suffix"), and then
-   //  o append AppendToExePath.
-   //
-   static fixed_string BackFromExePath;
-   static fixed_string AppendToExePath;
 };
 }
 #endif

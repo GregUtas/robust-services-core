@@ -22,7 +22,7 @@
 #ifndef POSIXSIGNAL_H_INCLUDED
 #define POSIXSIGNAL_H_INCLUDED
 
-#include "Persistent.h"
+#include "Immutable.h"
 #include <cstddef>
 #include <cstdint>
 #include "RegCell.h"
@@ -34,7 +34,7 @@ namespace NodeBase
 {
 //  Base class for a POSIX signal.
 //
-class PosixSignal : public Persistent
+class PosixSignal : public Immutable
 {
    friend class Registry< PosixSignal >;
 public:
@@ -121,11 +121,11 @@ private:
 
    //  The signal's severity.
    //
-   uint8_t severity_;
+   const uint8_t severity_;
 
    //  The signal's attributes.
    //
-   Flags attrs_;
+   const Flags attrs_;
 
    //  The signal's index in PosixSignalRegistry.
    //

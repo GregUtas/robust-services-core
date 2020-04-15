@@ -22,7 +22,7 @@
 #ifndef ALARMREGISTRY_H_INCLUDED
 #define ALARMREGISTRY_H_INCLUDED
 
-#include "Dynamic.h"
+#include "Immutable.h"
 #include <string>
 #include "NbTypes.h"
 #include "Registry.h"
@@ -39,7 +39,7 @@ namespace NodeBase
 {
 //  Global registry for alarms.
 //
-class AlarmRegistry : public Dynamic
+class AlarmRegistry : public Immutable
 {
    friend class Singleton< AlarmRegistry >;
    friend class Alarm;
@@ -59,6 +59,10 @@ public:
    //  Overridden for restarts.
    //
    void Shutdown(RestartLevel level) override;
+
+   //  Overridden for restarts.
+   //
+   void Startup(RestartLevel level) override;
 
    //  Overridden to display member variables.
    //

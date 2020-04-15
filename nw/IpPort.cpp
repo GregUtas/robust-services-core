@@ -28,6 +28,7 @@
 #include "Algorithms.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "IoThread.h"
 #include "IpPortRegistry.h"
 #include "IpService.h"
@@ -108,10 +109,9 @@ IpPort::IpPort(ipport_t port, const IpService* service) :
 {
    Debug::ft(IpPort_ctor);
 
+   EnsureAlarm();
    stats_.reset(new IpPortStats);
    Singleton< IpPortRegistry >::Instance()->BindPort(*this);
-   alarmName_ = "PORT" + std::to_string(port);
-   EnsureAlarm();
 }
 
 //------------------------------------------------------------------------------
@@ -216,7 +216,7 @@ size_t IpPort::Discards() const
 void IpPort::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Persistent::Display(stream, prefix, options);
+   Protected::Display(stream, prefix, options);
 
    stream << prefix << "link    : " << link_.to_str() << CRLF;
    stream << prefix << "port    : " << port_ << CRLF;
@@ -262,12 +262,13 @@ void IpPort::EnsureAlarm()
    //  If the port's alarm is not registered, create it.
    //
    auto reg = Singleton< AlarmRegistry >::Instance();
-   alarm_ = reg->Find(alarmName_);
+   auto alarmName = "PORT" + std::to_string(port_);
+   alarm_ = reg->Find(alarmName);
 
    if(alarm_ == nullptr)
    {
-      alarmExpl_ = "Service unavailable: " + string(service_->Name());
-      alarm_ = new Alarm(alarmName_, alarmExpl_, 5);
+      auto alarmExpl = "Service unavailable: " + string(service_->Name());
+      alarm_ = new Alarm(alarmName.c_str(), alarmExpl.c_str(), 5);
    }
 }
 
@@ -306,7 +307,7 @@ ptrdiff_t IpPort::LinkDiff()
 
 void IpPort::Patch(sel_t selector, void* arguments)
 {
-   Persistent::Patch(selector, arguments);
+   Protected::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------
@@ -368,6 +369,7 @@ bool IpPort::SetSocket(SysSocket* socket)
       Debug::SwLog(IpPort_SetSocket, "socket already exists", port_);
    }
 
+   FunctionGuard guard(Guard_MemUnprotect);
    socket_ = socket;
    return true;
 }
@@ -406,10 +408,12 @@ void IpPort::Shutdown(RestartLevel level)
 {
    Debug::ft(IpPort_Shutdown);
 
-   if(level < RestartCold) return;
-
-   stats_.release();
-   socket_ = nullptr;
+   if(level == RestartCold)
+   {
+      FunctionGuard guard(Guard_MemUnprotect);
+      stats_.release();
+      socket_ = nullptr;
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -420,9 +424,14 @@ void IpPort::Startup(RestartLevel level)
 {
    Debug::ft(IpPort_Startup);
 
+   FunctionGuard guard(Guard_MemUnprotect, (level < RestartReload));
+
    EnsureAlarm();
 
-   if(stats_ == nullptr) stats_.reset(new IpPortStats);
+   if(stats_ == nullptr)
+   {
+      stats_.reset(new IpPortStats);
+   }
 
    //  If the port has an input handler, make sure that it has an I/O thread.
    //

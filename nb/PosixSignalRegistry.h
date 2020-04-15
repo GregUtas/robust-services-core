@@ -22,7 +22,7 @@
 #ifndef POSIXSIGNALREGISTRY_H_INCLUDED
 #define POSIXSIGNALREGISTRY_H_INCLUDED
 
-#include "Persistent.h"
+#include "Immutable.h"
 #include <string>
 #include "NbTypes.h"
 #include "Registry.h"
@@ -39,7 +39,7 @@ namespace NodeBase
 {
 //  Global registry for POSIX signals.
 //
-class PosixSignalRegistry : public Persistent
+class PosixSignalRegistry : public Immutable
 {
    friend class Singleton< PosixSignalRegistry >;
    friend class PosixSignal;

@@ -91,7 +91,7 @@ ptrdiff_t PotsFeature::CellDiff()
 void PotsFeature::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Persistent::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    stream << prefix << "fid          : " << fid_.to_str() << CRLF;
    stream << prefix << "deactivation : " << deactivation_ << CRLF;

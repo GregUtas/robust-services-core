@@ -208,7 +208,7 @@ ptrdiff_t State::CellDiff()
 void State::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Persistent::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    if(!options.test(DispVerbose)) return;
 
@@ -264,6 +264,6 @@ EventHandlerId State::MsgAnalyzer(ServicePortId pid) const
 
 void State::Patch(sel_t selector, void* arguments)
 {
-   Persistent::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 }

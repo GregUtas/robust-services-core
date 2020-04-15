@@ -45,8 +45,8 @@ Protocol::Protocol(Id prid, Id base) : base_(base)
 {
    Debug::ft(Protocol_ctor);
 
-   signals_.Init(Signal::MaxId, Signal::CellDiff(), MemPersistent);
-   parameters_.Init(Parameter::MaxId, Parameter::CellDiff(), MemPersistent);
+   signals_.Init(Signal::MaxId, Signal::CellDiff(), MemImmutable);
+   parameters_.Init(Parameter::MaxId, Parameter::CellDiff(), MemImmutable);
 
    prid_.SetId(prid);
    Singleton< ProtocolRegistry >::Instance()->BindProtocol(*this);
@@ -99,7 +99,7 @@ ptrdiff_t Protocol::CellDiff()
 void Protocol::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Persistent::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    stream << prefix << "prid : " << prid_.to_str() << CRLF;
    stream << prefix << "base : " << base_ << CRLF;
@@ -209,7 +209,7 @@ void Protocol::NextSignal(Signal*& sig) const
 
 void Protocol::Patch(sel_t selector, void* arguments)
 {
-   Persistent::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

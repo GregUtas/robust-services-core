@@ -2601,7 +2601,7 @@ void Operation::PushMember(StackArg& arg1, const StackArg& arg2) const
 
    if(arg2.name != nullptr)
    {
-      //* If MEM is a function, the following should be deferred until function
+      //c If MEM is a function, the following should be deferred until function
       //  matching is concluded.
       //  Record that MEM was accessed through CLS (cls.mem or cls->mem).  If
       //  MEM was Inherited, it must actually be public (rather than protected)

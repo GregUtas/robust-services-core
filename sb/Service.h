@@ -22,7 +22,7 @@
 #ifndef SERVICE_H_INCLUDED
 #define SERVICE_H_INCLUDED
 
-#include "Persistent.h"
+#include "Immutable.h"
 #include <cstddef>
 #include "Event.h"
 #include "EventHandler.h"
@@ -39,7 +39,7 @@ namespace SessionBase
 //  Each SessionBase application provides a singleton subclass, which contains
 //  other singletons that define the application's state machine.
 //
-class Service : public NodeBase::Persistent
+class Service : public NodeBase::Immutable
 {
    friend class NodeBase::Registry< Service >;
    friend class State;

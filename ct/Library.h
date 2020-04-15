@@ -54,7 +54,7 @@ public:
    //  Returns the path to the source directory, the root for all .h and
    //  .cpp files.  Does not include a trailing PATH_SEPARATOR character.
    //
-   static const std::string& SourcePath() { return SourcePath_; }
+   NodeBase::c_string SourcePath() { return sourcePath_.c_str(); }
 
    //  Adds PATH, which will be known by NAME, to the code base.  Updates
    //  EXPL to indicate success or failure.  Returns 0 on success.
@@ -176,10 +176,9 @@ private:
    //
    ~Library();
 
-   //  The path to the root directory for source code files.  This is
-   //  deliberately static so that it survives restarts.
+   //  The path to the root directory for source code files.
    //
-   static std::string SourcePath_;
+   NodeBase::ProtectedStr sourcePath_;
 
    //  Configuration parameter for the source code directory.
    //

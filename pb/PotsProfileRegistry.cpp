@@ -42,7 +42,7 @@ PotsProfileRegistry::PotsProfileRegistry()
    Debug::ft(PotsProfileRegistry_ctor);
 
    auto max = Address::LastDN - Address::FirstDN + 1;
-   profiles_.Init(max, PotsProfile::CellDiff(), MemPersistent);
+   profiles_.Init(max, PotsProfile::CellDiff(), MemProtected);
 }
 
 //------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ bool PotsProfileRegistry::BindProfile(PotsProfile& profile)
 void PotsProfileRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Persistent::Display(stream, prefix, options);
+   Protected::Display(stream, prefix, options);
 
    stream << prefix << "profiles [Address::DN]" << CRLF;
    profiles_.Display(stream, prefix + spaces(2), options);

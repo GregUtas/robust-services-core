@@ -42,17 +42,35 @@ using std::string;
 
 namespace NodeBase
 {
+//  Data that changes too frequently to unprotect and reprotect memory
+//  when it needs to be modified.
+//
+struct ClassDynamic
+{
+   //  Constructor.
+   //
+   ClassDynamic() { }
+
+   //  Used by Create to block-initialize a new object.
+   //
+   std::unique_ptr< Object > template_;
+   
+   //  The quasi-singleton instance.
+   //
+   std::unique_ptr< Object > singleton_;
+};
+
+//==============================================================================
+
 fn_name Class_ctor = "Class.ctor";
 
 Class::Class(ClassId cid, size_t size) :
    size_(size),
-   vptr_(BAD_POINTER),
-   template_(nullptr),
-   quasi_(false),
-   singleton_(nullptr)
+   vptr_(BAD_POINTER)
 {
    Debug::ft(Class_ctor);
 
+   dyn_.reset(new ClassDynamic);
    cid_.SetId(cid);
    Singleton< ClassRegistry >::Instance()->BindClass(*this);
 }
@@ -90,20 +108,20 @@ Object* Class::Create()
    //  Get a block for a new object and use its template to initialize it.
    //  Call PostInitialize to set any members that depend on run-time data.
    //
-   if(template_ == nullptr)
+   if(dyn_->template_ == nullptr)
    {
       Debug::SwLog(Class_Create, "null template", Cid());
       return nullptr;
    }
 
-   if(quasi_)
-      obj = GetQuasiSingleton();
+   if(dyn_->singleton_ != nullptr)
+      obj = dyn_->singleton_.release();
    else
       obj = New(size_);
 
    if(obj != nullptr)
    {
-      Memory::Copy(obj, template_.get(), size_);
+      Memory::Copy(obj, dyn_->template_.get(), size_);
       obj->PostInitialize();
    }
 
@@ -115,35 +133,34 @@ Object* Class::Create()
 void Class::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Persistent::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
-   stream << prefix << "cid   : " << cid_.to_str() << CRLF;
-   stream << prefix << "size  : " << size_ << CRLF;
-   stream << prefix << "vptr  : " << vptr_ << CRLF;
-   stream << prefix << "quasi : " << quasi_ << CRLF;
+   stream << prefix << "cid  : " << cid_.to_str() << CRLF;
+   stream << prefix << "size : " << size_ << CRLF;
+   stream << prefix << "vptr : " << vptr_ << CRLF;
 
    stream << prefix << "template : ";
 
-   if((template_ != nullptr) && options.test(DispVerbose))
+   if((dyn_->template_ != nullptr) && options.test(DispVerbose))
    {
       stream << CRLF;
-      template_->Display(stream, prefix + spaces(2), options);
+      dyn_->template_->Display(stream, prefix + spaces(2), options);
    }
    else
    {
-      stream << strObj(template_.get()) << CRLF;
+      stream << strObj(dyn_->template_.get()) << CRLF;
    }
 
    stream << prefix << "singleton : ";
 
-   if((singleton_ != nullptr) && options.test(DispVerbose))
+   if((dyn_->singleton_ != nullptr) && options.test(DispVerbose))
    {
       stream << CRLF;
-      singleton_->Display(stream, prefix + spaces(2), options);
+      dyn_->singleton_->Display(stream, prefix + spaces(2), options);
    }
    else
    {
-      stream << strObj(singleton_.get()) << CRLF;
+      stream << strObj(dyn_->singleton_.get()) << CRLF;
    }
 }
 
@@ -158,8 +175,8 @@ void Class::FreeQuasiSingleton(Object* obj)
    //  If a quasi-singleton is already available, return OBJ to its pool,
    //  else make it the quasi-singleton.
    //
-   if(singleton_ == nullptr)
-      singleton_.reset(obj);
+   if(dyn_->singleton_ == nullptr)
+      dyn_->singleton_.reset(obj);
    else
       delete obj;
 }
@@ -175,7 +192,11 @@ Object* Class::GetQuasiSingleton()
    //  If the quasi-singleton is available, return it, else allocate a block
    //  from the pool associated with this class.
    //
-   if(singleton_ != nullptr) return singleton_.release();
+   if(dyn_->singleton_ != nullptr)
+   {
+      return dyn_->singleton_.release();
+   }
+
    return New(size_);
 }
 
@@ -187,10 +208,12 @@ void Class::GetSubtended(Base* objects[], size_t& count) const
 {
    Debug::ft(Class_GetSubtended);
 
-   Persistent::GetSubtended(objects, count);
+   Immutable::GetSubtended(objects, count);
 
-   if(template_ != nullptr) template_->GetSubtended(objects, count);
-   if(singleton_ != nullptr) singleton_->GetSubtended(objects, count);
+   if(dyn_->template_ != nullptr)
+      dyn_->template_->GetSubtended(objects, count);
+   if(dyn_->singleton_ != nullptr)
+      dyn_->singleton_->GetSubtended(objects, count);
 }
 
 //------------------------------------------------------------------------------
@@ -201,9 +224,6 @@ void Class::Initialize()
 {
    Debug::ft(Class_Initialize);
 
-   //  Subclasses override this to call Set functions.  Consequently,
-   //  it should not be called.
-   //
    Debug::SwLog(Class_Initialize, strOver(this), Cid());
 }
 
@@ -215,18 +235,28 @@ Object* Class::New(size_t size)
 {
    Debug::ft(Class_New);
 
-   //e Support memory types.
-   //
-   auto addr = ::operator new(size, std::nothrow);
-   if(addr != nullptr) return (Object*) addr;
-   throw AllocationException(MemPermanent, size);
+   auto type = MemType();
+   auto addr = Memory::Alloc(size, type);
+   return (Object*) addr;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Class_ObjType = "Class.ObjType";
+
+MemoryType Class::ObjType() const
+{
+   Debug::ft(Class_ObjType);
+
+   Debug::SwLog(Class_ObjType, strOver(this), 0);
+   return MemNull;
 }
 
 //------------------------------------------------------------------------------
 
 void Class::Patch(sel_t selector, void* arguments)
 {
-   Persistent::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------
@@ -240,16 +270,17 @@ bool Class::SetQuasiSingleton(Object& obj)
    //  Verify OBJ and make it the quasi-singleton if it wasn't already
    //  registered as this class's template.
    //
+   if(ObjType() != MemDynamic) return false;
+
    if(!VerifyClass(obj)) return false;
 
-   if(&obj == template_.get())
+   if(&obj == dyn_->template_.get())
    {
       Debug::SwLog(Class_SetQuasiSingleton, "object is template", Cid());
       return false;
    }
 
-   singleton_.reset(&obj);
-   quasi_ = true;
+   dyn_->singleton_.reset(&obj);
    return true;
 }
 
@@ -266,13 +297,13 @@ bool Class::SetTemplate(Object& obj)
    //
    if(!VerifyClass(obj)) return false;
 
-   if(&obj == singleton_.get())
+   if(&obj == dyn_->singleton_.get())
    {
       Debug::SwLog(Class_SetTemplate, "object is quasi-singleton", Cid());
       return false;
    }
 
-   template_.reset(&obj);
+   dyn_->template_.reset(&obj);
    return true;
 }
 
@@ -290,6 +321,21 @@ bool Class::SetVptr(const Object& obj)
 
    vptr_ = obj.Vptr();
    return true;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Class_Shutdown = "Class.Shutdown";
+
+void Class::Shutdown(RestartLevel level)
+{
+   Debug::ft(Class_Shutdown);
+
+   if(level >= RestartCold)
+   {
+      dyn_->template_.release();
+      dyn_->singleton_.release();
+   }
 }
 
 //------------------------------------------------------------------------------

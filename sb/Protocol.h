@@ -22,7 +22,7 @@
 #ifndef PROTOCOL_H_INCLUDED
 #define PROTOCOL_H_INCLUDED
 
-#include "Persistent.h"
+#include "Immutable.h"
 #include <cstddef>
 #include <cstdint>
 #include <iosfwd>
@@ -50,7 +50,7 @@ namespace SessionBase
 //  signals and parameters into the subclass.  Each protocol should ultimately
 //  inherit from TimerProtocol, which defines TimeoutSignal.
 //
-class Protocol : public NodeBase::Persistent
+class Protocol : public NodeBase::Immutable
 {
    friend class Parameter;
    friend class NodeBase::Registry< Protocol >;

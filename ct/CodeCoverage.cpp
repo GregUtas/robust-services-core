@@ -77,7 +77,7 @@ word CodeCoverage::Build(std::ostringstream& expl)
 
    auto testdb = Singleton< TestDatabase >::Instance();
 
-   FunctionGuard guard(FunctionGuard::MakePreemptable);
+   FunctionGuard guard(Guard_MakePreemptable);
 
    //  Find all *.funcs.txt files in the output directory.  If a testcase
    //  with the same file name exists, add it, along with the functions
@@ -166,7 +166,7 @@ bool CodeCoverage::Commit(const Functions& funcs)
 {
    Debug::ft(CodeCoverage_Commit);
 
-   FunctionGuard guard(FunctionGuard::MakePreemptable);
+   FunctionGuard guard(Guard_MakePreemptable);
 
    auto path = Element::InputPath() + PATH_SEPARATOR + "coverage.db.txt";
    auto stream = SysFile::CreateOstream(path.c_str(), true);
@@ -376,7 +376,7 @@ word CodeCoverage::Load(string& expl)
 {
    Debug::ft(CodeCoverage_Load);
 
-   FunctionGuard guard(FunctionGuard::MakePreemptable);
+   FunctionGuard guard(Guard_MakePreemptable);
 
    auto path = Element::InputPath() + PATH_SEPARATOR + "coverage.db.txt";
    auto stream = SysFile::CreateIstream(path.c_str());

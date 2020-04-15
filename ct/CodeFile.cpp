@@ -2448,7 +2448,7 @@ string CodeFile::Path(bool full) const
 
    if(!full)
    {
-      auto path = Library::SourcePath();
+      string path(Singleton< Library >::Instance()->SourcePath());
       path.push_back(PATH_SEPARATOR);
 
       if(name.find(path, 0) == 0)

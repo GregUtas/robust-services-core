@@ -22,7 +22,7 @@
 #ifndef IPSERVICEREGISTRY_H_INCLUDED
 #define IPSERVICEREGISTRY_H_INCLUDED
 
-#include "Persistent.h"
+#include "Immutable.h"
 #include <string>
 #include "NbTypes.h"
 #include "Registry.h"
@@ -38,7 +38,7 @@ namespace NetworkBase
 {
 //  Global registry for protocols supported over IP.
 //
-class IpServiceRegistry : public NodeBase::Persistent
+class IpServiceRegistry : public NodeBase::Immutable
 {
    friend class IpService;
    friend class NodeBase::Singleton< IpServiceRegistry >;

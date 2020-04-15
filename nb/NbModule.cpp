@@ -112,9 +112,9 @@ void NbModule::Shutdown(RestartLevel level)
    Singleton< PosixSignalRegistry >::Instance()->Shutdown(level);
 
    Singleton< TraceBuffer >::Instance()->Shutdown(level);
-   Singletons::Instance()->Shutdown(level);
    SysThreadStack::Shutdown(level);
    Memory::Shutdown(level);
+   Singletons::Instance()->Shutdown(level);
 }
 
 //------------------------------------------------------------------------------

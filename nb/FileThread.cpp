@@ -237,7 +237,7 @@ void FileThread::Enter()
       delete msg;
       msg = nullptr;
 
-      FunctionGuard guard(FunctionGuard::MakePreemptable);
+      FunctionGuard guard(Guard_MakePreemptable);
 
       auto path = Element::OutputPath() + PATH_SEPARATOR + *name;
       auto file = SysFile::CreateOstream(path.c_str(), trunc);

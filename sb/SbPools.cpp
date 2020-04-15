@@ -243,14 +243,14 @@ void MsgPortPool::Patch(sel_t selector, void* arguments)
 
 const size_t ProtocolSMPool::BlockSize =
    sizeof(ProtocolSM) + (60 * BYTES_PER_WORD);
+PooledObjectId ProtocolSMPool::PsmToAudit_ = NIL_ID;
 
 //------------------------------------------------------------------------------
 
 fn_name ProtocolSMPool_ctor = "ProtocolSMPool.ctor";
 
 ProtocolSMPool::ProtocolSMPool() :
-   ObjectPool(ProtocolSMObjPoolId, MemDynamic, BlockSize, "ProtocolSMs"),
-   psmToAudit_(NIL_ID)
+   ObjectPool(ProtocolSMObjPoolId, MemDynamic, BlockSize, "ProtocolSMs")
 {
    Debug::ft(ProtocolSMPool_ctor);
 }
@@ -277,12 +277,12 @@ void ProtocolSMPool::ClaimBlocks()
    //  have a PSM, so its objects are claimed via PSMs.  This way, the audit
    //  will recover any context that is not on a work queue and has no PSM.
    //  If we encounter a corrupt PSM, the audit invokes this function again
-   //  after recovering from a trap.  psmToAudit_ therefore persists outside
+   //  after recovering from a trap.  PsmToAudit_ therefore persists outside
    //  this function so that we can continue from where we left off.
    //
    size_t count = 0;
 
-   auto psm = static_cast< ProtocolSM* >(NextUsed(psmToAudit_));
+   auto psm = static_cast< ProtocolSM* >(NextUsed(PsmToAudit_));
 
    while(psm != nullptr)
    {
@@ -299,10 +299,10 @@ void ProtocolSMPool::ClaimBlocks()
          }
       }
 
-      psm = static_cast< ProtocolSM* >(NextUsed(psmToAudit_));
+      psm = static_cast< ProtocolSM* >(NextUsed(PsmToAudit_));
    }
 
-   psmToAudit_ = NIL_ID;
+   PsmToAudit_ = NIL_ID;
 }
 
 //------------------------------------------------------------------------------
@@ -312,7 +312,7 @@ void ProtocolSMPool::Display(ostream& stream,
 {
    ObjectPool::Display(stream, prefix, options);
 
-   stream << prefix << "psmToAudit : " << psmToAudit_ << CRLF;
+   stream << prefix << "psmToAudit : " << PsmToAudit_ << CRLF;
 }
 
 //------------------------------------------------------------------------------

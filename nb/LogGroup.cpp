@@ -46,8 +46,7 @@ fn_name LogGroup_ctor = "LogGroup.ctor";
 
 LogGroup::LogGroup(fixed_string name, fixed_string expl) :
    name_(strUpper(name).c_str()),
-   expl_(expl),
-   suppressed_(false)
+   expl_(expl)
 {
    Debug::ft(LogGroup_ctor);
 
@@ -61,7 +60,10 @@ LogGroup::LogGroup(fixed_string name, fixed_string expl) :
       Debug::SwLog(LogGroup_ctor, "expl length", expl_.size());
    }
 
-   logs_.Init(MaxLogs, Log::CellDiff(), MemDynamic);
+   suppressed_ = new bool;
+   *suppressed_ = false;
+
+   logs_.Init(MaxLogs, Log::CellDiff(), MemImmutable);
 
    Singleton< LogGroupRegistry >::Instance()->BindGroup(*this);
 }
@@ -168,7 +170,7 @@ Log* LogGroup::FindLog(LogId id) const
 
 void LogGroup::Patch(sel_t selector, void* arguments)
 {
-   Dynamic::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------
@@ -179,9 +181,25 @@ void LogGroup::Shutdown(RestartLevel level)
 {
    Debug::ft(LogGroup_Shutdown);
 
+   *suppressed_ = false;
+
    for(auto l = logs_.First(); l != nullptr; logs_.Next(l))
    {
       l->Shutdown(level);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name LogGroup_Startup = "LogGroup.Startup";
+
+void LogGroup::Startup(RestartLevel level)
+{
+   Debug::ft(LogGroup_Startup);
+
+   for(auto l = logs_.First(); l != nullptr; logs_.Next(l))
+   {
+      l->Startup(level);
    }
 }
 

@@ -80,7 +80,8 @@ public:
       if(Instance_ != nullptr) return Instance_;
       Instance_ = new T;
       auto reg = Singletons::Instance();
-      reg->BindInstance((const Base**) &Instance_, Instance_->MemType());
+      auto type = Instance_->MemType();
+      reg->BindInstance((const Base**) &Instance_, type);
       return Instance_;
    }
 

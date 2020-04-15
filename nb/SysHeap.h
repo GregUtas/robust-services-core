@@ -22,7 +22,7 @@
 #ifndef SYSHEAP_H_INCLUDED
 #define SYSHEAP_H_INCLUDED
 
-#include "Object.h"
+#include "Permanent.h"
 #include <cstddef>
 #include <iosfwd>
 #include "SysDecls.h"
@@ -34,7 +34,7 @@ namespace NodeBase
 {
 //  Operating system abstraction layer: heap.
 //
-class SysHeap : public Object
+class SysHeap : public Permanent
 {
    friend class Memory;
 public:
@@ -64,9 +64,17 @@ public:
    //
    MemoryType Type() const { return type_; }
 
+   //  Returns the heap's size.
+   //
+   size_t Size() const { return size_; }
+
+   //  Returns the heap's current memory protection.
+   //
+   MemoryProtection Protection() const { return attrs_; }
+
    //  Returns the address of the heap itself.
    //
-   const void* Heap() const { return heap_; }
+   const void* Addr() const;
 
    //  Returns the number of bytes currently allocated from the heap.
    //
@@ -87,6 +95,14 @@ public:
    //  Returns the number of times that Free() released memory.
    //
    size_t FreeCount() const { return frees_; }
+
+   //  Returns true if the heap has a fixed size.
+   //
+   bool IsFixedSize() const;
+
+   //  Returns true if the heap is protected.
+   //
+   bool IsProtected() const;
 
    //  Displays all heaps allocated by this process.
    //
@@ -163,6 +179,14 @@ private:
    //  The maximum number of bytes allocated on the heap.
    //
    size_t maxInUse_;
+
+   //  The address of the most recently allocated segment.
+   //
+   void* lastAddr_;
+
+   //  The size of the most recently allocated segment.
+   //
+   size_t lastSize_;
 };
 }
 #endif

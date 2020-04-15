@@ -83,13 +83,24 @@ const FactionFlags& ShutdownFactions()
 }
 
 //==============================================================================
+//
+//  The reason for a reinitialization or shutdown.
+//
+reinit_t reason_ = NilRestart;
+
+//  An error value for debugging.
+//
+debug32_t errval_ = 0;
+
+//  A stream for recording the progress of system initialization.
+//
+ostringstreamPtr stream_ = nullptr;
+
+//==============================================================================
 
 fn_name ModuleRegistry_ctor = "ModuleRegistry.ctor";
 
-ModuleRegistry::ModuleRegistry() :
-   reason_(NilRestart),
-   errval_(0),
-   stream_(nullptr)
+ModuleRegistry::ModuleRegistry()
 {
    Debug::ft(ModuleRegistry_ctor);
 
@@ -439,6 +450,11 @@ void ModuleRegistry::Startup(RestartLevel level)
       *Stream() << Clock::TicksToMsecs(Clock::TicksSince(time)) << CRLF;
       Log::Submit(stream_);
    }
+   
+   //  Write-protect memory segments that are read-only while in service.
+   //
+   Memory::Protect(MemImmutable);
+   Memory::Protect(MemProtected);
 
    *Stream() << setw(36) << string(5, '-') << CRLF;
    auto width = strlen(StartupTotalStr);

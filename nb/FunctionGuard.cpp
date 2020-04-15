@@ -30,7 +30,8 @@ namespace NodeBase
 {
 fn_name FunctionGuard_ctor = "FunctionGuard.ctor";
 
-FunctionGuard::FunctionGuard(First first, bool invoke) : first_(NilFunction)
+FunctionGuard::FunctionGuard(GuardedFunction first, bool invoke) :
+   first_(Guard_Nil)
 {
    Debug::ft(FunctionGuard_ctor);
 
@@ -39,14 +40,17 @@ FunctionGuard::FunctionGuard(First first, bool invoke) : first_(NilFunction)
 
    switch(first_)
    {
-   case MakeUnpreemptable:
+   case Guard_MakeUnpreemptable:
       ThisThread::MakeUnpreemptable();
       return;
-   case MakePreemptable:
+   case Guard_MakePreemptable:
       ThisThread::MakePreemptable();
       return;
-   case MemUnprotect:
+   case Guard_MemUnprotect:
       ThisThread::MemUnprotect();
+      return;
+   case Guard_ImmUnprotect:
+      Memory::Unprotect(MemImmutable);
       return;
    default:
       Debug::SwLog(FunctionGuard_ctor, "unexpected function", first_);
@@ -61,7 +65,7 @@ FunctionGuard::~FunctionGuard()
 {
    Debug::ft(FunctionGuard_dtor);
 
-   if(first_ != NilFunction) Release();
+   if(first_ != Guard_Nil) Release();
 }
 
 //------------------------------------------------------------------------------
@@ -73,18 +77,21 @@ void FunctionGuard::Release()
    Debug::ft(FunctionGuard_Release);
 
    auto first = first_;
-   first_ = NilFunction;
+   first_ = Guard_Nil;
 
    switch(first)
    {
-   case MakeUnpreemptable:
+   case Guard_MakeUnpreemptable:
       ThisThread::MakePreemptable();
       return;
-   case MakePreemptable:
+   case Guard_MakePreemptable:
       ThisThread::MakeUnpreemptable();
       return;
-   case MemUnprotect:
+   case Guard_MemUnprotect:
       ThisThread::MemProtect();
+      return;
+   case Guard_ImmUnprotect:
+      Memory::Protect(MemImmutable);
       return;
    default:
       return;

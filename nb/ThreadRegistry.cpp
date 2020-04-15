@@ -25,6 +25,7 @@
 #include <string>
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "NbCliParms.h"
 #include "Singleton.h"
 #include "Thread.h"
@@ -259,9 +260,10 @@ void ThreadRegistry::Shutdown(RestartLevel level)
       t->Shutdown(level);
    }
 
-   if(level < RestartCold) return;
-
-   statsGroup_.release();
+   if(level == RestartCold)
+   {
+      statsGroup_.release();
+   }
 }
 
 //------------------------------------------------------------------------------

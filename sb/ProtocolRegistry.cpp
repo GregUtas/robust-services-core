@@ -41,7 +41,7 @@ ProtocolRegistry::ProtocolRegistry()
 {
    Debug::ft(ProtocolRegistry_ctor);
 
-   protocols_.Init(Protocol::MaxId, Protocol::CellDiff(), MemPersistent);
+   protocols_.Init(Protocol::MaxId, Protocol::CellDiff(), MemImmutable);
 }
 
 //------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ bool ProtocolRegistry::BindProtocol(Protocol& protocol)
 void ProtocolRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Persistent::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    stream << prefix << "protocols [ProtocolId]" << CRLF;
    protocols_.Display(stream, prefix + spaces(2), options);
@@ -86,7 +86,7 @@ Protocol* ProtocolRegistry::GetProtocol(ProtocolId prid) const
 
 void ProtocolRegistry::Patch(sel_t selector, void* arguments)
 {
-   Persistent::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

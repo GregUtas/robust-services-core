@@ -26,6 +26,8 @@
 #include <ostream>
 #include <windows.h>
 #include "Debug.h"
+#include "Memory.h"
+#include "SysMemory.h"
 
 using std::ostream;
 using std::setw;
@@ -45,7 +47,9 @@ SysHeap::SysHeap(MemoryType type, size_t size) :
    allocs_(0),
    fails_(0),
    frees_(0),
-   maxInUse_(0)
+   maxInUse_(0),
+   lastAddr_(nullptr),
+   lastSize_(0)
 {
    Debug::ft(SysHeap_ctor);
 
@@ -54,7 +58,7 @@ SysHeap::SysHeap(MemoryType type, size_t size) :
    if(type_ == MemPermanent)
       heap_ = GetProcessHeap();
    else
-      heap_ = HeapCreate(0, size_, size_);
+      heap_ = HeapCreate(HEAP_GENERATE_EXCEPTIONS, size_, size_);
 
    if(heap_ == nullptr)
    {
@@ -74,12 +78,20 @@ SysHeap::~SysHeap()
    //
    if(heap_ == nullptr) return;
 
-   //  Prevent an attempt to destroy the default heap.
+   //  Prevent an attempt to destroy the default or immutable heap.
    //
-   if(type_ == MemPermanent)
+   if((type_ == MemPermanent) || (type_ == MemImmutable))
    {
       Debug::SwLog(SysHeap_dtor, debug64_t(heap_), 0);
       return;
+   }
+
+   //  The heap cannot be destroyed if it is write-protected; only
+   //  fixed-size heaps can be write-protected.
+   //
+   if(IsFixedSize())
+   {
+      SysMemory::Protect(heap_, size_, MemReadWrite);
    }
 
    if(!HeapDestroy(heap_))
@@ -92,6 +104,13 @@ SysHeap::~SysHeap()
 
 //------------------------------------------------------------------------------
 
+const void* SysHeap::Addr() const
+{
+   return heap_;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name SysHeap_Alloc= "SysHeap.Alloc";
 
 void* SysHeap::Alloc(size_t size)
@@ -100,20 +119,27 @@ void* SysHeap::Alloc(size_t size)
 
    if(heap_ == nullptr) return nullptr;
 
-   auto memory = HeapAlloc(heap_, 0, size);
+   if(!HeapValidate(heap_, 0, nullptr))  //* make this optional
+   {
+      Debug::noop();
+   }
 
-   if(memory != nullptr)
+   auto addr = HeapAlloc(heap_, 0, size);
+
+   if(addr != nullptr)
    {
       inUse_ += size;
       if(inUse_ > maxInUse_) maxInUse_ = inUse_;
       ++allocs_;
+      lastAddr_ = addr;
+      lastSize_ = size;
    }
    else
    {
       ++fails_;
    }
 
-   return memory;
+   return addr;
 }
 
 //------------------------------------------------------------------------------
@@ -194,16 +220,21 @@ void SysHeap::DisplayHeaps(ostream& stream)
    }
    else
    {
-      stream << "  Heap  Address" << CRLF;
+      stream << "  Heap  MemoryType  Address" << CRLF;
 
       for(HeapsIndex = 0; HeapsIndex < HeapsLength; ++HeapsIndex)
       {
+         auto type = Memory::AddrToType(aHeaps[HeapsIndex]);
+
          stream << setw(6) << HeapsIndex + 1;
+
+         if(type != MemNull)
+            stream << setw(12) << type;
+         else
+            stream << setw(12) << "unknown";   
+
          stream << setw(NIBBLES_PER_POINTER + 2) << aHeaps[HeapsIndex] << CRLF;
       }
-
-      stream << "The default heap is at address "
-         << DefaultProcessHeap << '.' << CRLF;
    }
 
    //  Release the memory allocated from the default process heap.
@@ -237,6 +268,13 @@ void SysHeap::Free(void* addr, size_t size)
 
 //------------------------------------------------------------------------------
 
+bool SysHeap::IsFixedSize() const
+{
+   return (Size() != 0);
+}
+
+//------------------------------------------------------------------------------
+
 void SysHeap::Patch(sel_t selector, void* arguments)
 {
    Object::Patch(selector, arguments);
@@ -251,7 +289,18 @@ bool SysHeap::Validate(const void* addr)
    Debug::ft(SysHeap_Validate);
 
    if(heap_ == nullptr) return false;
-   return HeapValidate(heap_, 0, addr);
+
+   //  If the heap is write-protected, Windows will fail to validate it.
+   //  A heap can only be write-protected if its size if fixed, in which
+   //  case it needs to be unprotected, validated, and restored to its
+   //  current protection status.
+   //
+   auto attrs = attrs_;
+   auto unprotect = IsFixedSize();
+   if(unprotect) SysMemory::Protect(heap_, size_, MemReadWrite);
+   auto valid = HeapValidate(heap_, 0, addr);
+   if(unprotect) SysMemory::Protect(heap_, size_, attrs);
+   return valid;
 }
 }
 #endif

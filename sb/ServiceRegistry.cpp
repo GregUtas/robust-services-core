@@ -41,7 +41,7 @@ ServiceRegistry::ServiceRegistry()
 {
    Debug::ft(ServiceRegistry_ctor);
 
-   services_.Init(Service::MaxId, Service::CellDiff(), MemPersistent);
+   services_.Init(Service::MaxId, Service::CellDiff(), MemImmutable);
 }
 
 //------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ bool ServiceRegistry::BindService(Service& service)
 void ServiceRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Persistent::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    stream << prefix << "services [ServiceId]" << CRLF;
    services_.Display(stream, prefix + spaces(2), options);
@@ -86,7 +86,7 @@ Service* ServiceRegistry::GetService(ServiceId sid) const
 
 void ServiceRegistry::Patch(sel_t selector, void* arguments)
 {
-   Persistent::Patch(selector,arguments);
+   Immutable::Patch(selector,arguments);
 }
 
 //------------------------------------------------------------------------------

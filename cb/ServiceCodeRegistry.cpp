@@ -64,7 +64,7 @@ ServiceCodeRegistry::~ServiceCodeRegistry()
 void ServiceCodeRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Persistent::Display(stream, prefix, options);
+   Protected::Display(stream, prefix, options);
 
    stream << prefix << "codeToService [Address::SC]" << CRLF;
 
@@ -126,15 +126,8 @@ void ServiceCodeRegistry::Startup(RestartLevel level)
 {
    Debug::ft(ServiceCodeRegistry_Startup);
 
-   //  Define service codes and corresponding symbols.  These are
-   //  fixed but would be configurable in a production system.
+   //  Define service code symbols on cold restarts or higher.
    //
-   SetService(33, PotsWmlActivation);
-   SetService(34, PotsWmlDeactivation);
-   SetService(70, PotsCcwServiceId);
-   SetService(72, PotsCfuActivation);
-   SetService(73, PotsCfuDeactivation);
-
    if(level < RestartCold) return;
 
    auto reg = Singleton< SymbolRegistry >::Instance();
@@ -143,5 +136,16 @@ void ServiceCodeRegistry::Startup(RestartLevel level)
    reg->BindSymbol("sc.ccw", "*70");
    reg->BindSymbol("sc.cfu.activation", "*72");
    reg->BindSymbol("sc.cfu.deactivation", "*73");
+
+   //  Define service codes on reload restarts or higher.  These
+   //  are fixed but would be configurable in a production system.
+   //
+   if(level < RestartReload) return;
+
+   SetService(33, PotsWmlActivation);
+   SetService(34, PotsWmlDeactivation);
+   SetService(70, PotsCcwServiceId);
+   SetService(72, PotsCfuActivation);
+   SetService(73, PotsCfuDeactivation);
 }
 }

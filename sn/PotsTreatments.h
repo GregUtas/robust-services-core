@@ -22,7 +22,7 @@
 #ifndef POTSTREATMENTS_H_INCLUDED
 #define POTSTREATMENTS_H_INCLUDED
 
-#include "Persistent.h"
+#include "Protected.h"
 #include <cstddef>
 #include "Clock.h"
 #include "EventHandler.h"
@@ -54,7 +54,7 @@ namespace PotsBase
 //  In the Exception state, the cause value (for call takedown) is mapped to a
 //  queue of treatments.
 //
-class PotsTreatmentQueue : public Persistent
+class PotsTreatmentQueue : public Protected
 {
 public:
    //  Type for identifying a treatment queue.
@@ -121,7 +121,7 @@ private:
 //
 //  Base class for treatments.
 //
-class PotsTreatment : public Persistent
+class PotsTreatment : public Protected
 {
 public:
    //  Removes the treatment from its queue.  Virtual to allow subclassing.

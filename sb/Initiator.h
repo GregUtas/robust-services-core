@@ -22,7 +22,7 @@
 #ifndef INITIATOR_H_INCLUDED
 #define INITIATOR_H_INCLUDED
 
-#include "Persistent.h"
+#include "Immutable.h"
 #include <cstddef>
 #include <cstdint>
 #include "EventHandler.h"
@@ -38,7 +38,7 @@ namespace SessionBase
 //  trigger (usually one) that it uses in order to observe its root service's
 //  behavior and create its own ServiceSM at the appropriate time.
 //
-class Initiator : public NodeBase::Persistent
+class Initiator : public NodeBase::Immutable
 {
    friend class NodeBase::Q1Way< Initiator >;
 public:

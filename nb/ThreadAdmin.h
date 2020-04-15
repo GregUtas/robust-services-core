@@ -22,7 +22,7 @@
 #ifndef THREADADMIN_H_INCLUDED
 #define THREADADMIN_H_INCLUDED
 
-#include "Persistent.h"
+#include "Protected.h"
 #include <iosfwd>
 #include "Clock.h"
 #include "NbTypes.h"
@@ -40,7 +40,7 @@ namespace NodeBase
 //  Defines statistics and configuration parameters used by the Thread class.
 //  Logically, these are members of Thread but would clutter its interface.
 //
-class ThreadAdmin : public Persistent
+class ThreadAdmin : public Protected
 {
    friend class Singleton< ThreadAdmin >;
 public:
@@ -169,13 +169,20 @@ private:
    //
    ~ThreadAdmin();
 
-   //  Aggregate statistics for threads.
+   //  See eponymous public functions for documentation.
    //
-   std::unique_ptr< ThreadsStats > stats_;
-
-   //  The statistics group for threads.
-   //
-   StatisticsGroupPtr statsGroup_;
+   static word InitTimeoutMsecs_;
+   static word SchedTimeoutMsecs_;
+   static bool ReinitOnSchedTimeout_;
+   static word RtcTimeoutMsecs_;
+   static bool TrapOnRtcTimeout_;
+   static word RtcLimit_;
+   static word RtcInterval_;
+   static bool BreakEnabled_;
+   static word TrapLimit_;
+   static word TrapInterval_;
+   static word StackUsageLimit_;
+   static word StackCheckInterval_;
 
    //  Thread configuration parameters.
    //
@@ -193,20 +200,13 @@ private:
    CfgIntParmPtr  stackUsageLimit_;
    CfgIntParmPtr  stackCheckInterval_;
 
-   //  See public functions for documentation.
+   //  Aggregate statistics for threads.
    //
-   static word InitTimeoutMsecs_;
-   static word SchedTimeoutMsecs_;
-   static bool ReinitOnSchedTimeout_;
-   static word RtcTimeoutMsecs_;
-   static bool TrapOnRtcTimeout_;
-   static word RtcLimit_;
-   static word RtcInterval_;
-   static bool BreakEnabled_;
-   static word TrapLimit_;
-   static word TrapInterval_;
-   static word StackUsageLimit_;
-   static word StackCheckInterval_;
+   std::unique_ptr< ThreadsStats > stats_;
+
+   //  The statistics group for threads.
+   //
+   StatisticsGroupPtr statsGroup_;
 };
 }
 #endif

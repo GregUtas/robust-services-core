@@ -104,7 +104,7 @@ ptrdiff_t CliParm::CellDiff()
 void CliParm::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Persistent::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    stream << prefix << "pid : " << pid_.to_str() << CRLF;
    stream << prefix << "opt : " << opt_ << CRLF;
@@ -375,7 +375,7 @@ CliParm::Rc CliParm::Mismatch(const CliThread& cli, const string& type)
 
 void CliParm::Patch(sel_t selector, void* arguments)
 {
-   Persistent::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

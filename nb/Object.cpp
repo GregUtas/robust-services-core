@@ -181,20 +181,42 @@ void Object::operator delete[](void* addr, MemoryType type)
 
 fn_name Object_new1 = "Object.operator new";
 
-void* Object::operator new(size_t size, MemoryType type)
+void* Object::operator new(size_t size)
 {
    Debug::ft(Object_new1);
 
-   return Memory::Alloc(size, type);
+   throw AllocationException(MemNull, size);
 }
 
 //------------------------------------------------------------------------------
 
 fn_name Object_new2 = "Object.operator new[]";
 
-void* Object::operator new[](size_t size, MemoryType type)
+void* Object::operator new[](size_t size)
 {
    Debug::ft(Object_new2);
+
+   throw AllocationException(MemNull, size);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Object_new3 = "Object.operator new(type)";
+
+void* Object::operator new(size_t size, MemoryType type)
+{
+   Debug::ft(Object_new3);
+
+   return Memory::Alloc(size, type);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Object_new4 = "Object.operator new[](type)";
+
+void* Object::operator new[](size_t size, MemoryType type)
+{
+   Debug::ft(Object_new4);
 
    return Memory::Alloc(size, type);
 }

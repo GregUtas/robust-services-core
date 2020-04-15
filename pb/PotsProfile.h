@@ -35,6 +35,11 @@
 using namespace NodeBase;
 using namespace CallBase;
 
+namespace PotsBase
+{
+   struct PotsProfileDynamic;
+}
+
 //------------------------------------------------------------------------------
 
 namespace PotsBase
@@ -70,13 +75,31 @@ public:
    //
    DN GetDN() const { return IndexToDN(dn_.GetId()); }
 
+   //  Data that changes too frequently to unprotect and reprotect memory
+   //  when it needs to be modified.
+   //
+   struct PotsProfileDynamic
+   {
+      //  Constructor.
+      //
+      PotsProfileDynamic() : state_(Idle) { }
+
+      //  The profile's state.
+      //
+      PotsProfile::State state_;
+
+      //  The address of the object that is receiving messages from the circuit.
+      //
+      LocalAddress objAddr_;
+   };
+
    //  Returns the circuit associated with the profile.
    //
    PotsCircuit* GetCircuit() const { return circuit_.get(); }
 
    //  Returns the profile's state.
    //
-   State GetState() const { return state_; }
+   State GetState() const { return dyn_->state_; }
 
    //  Sets the profile's state.  PSM is the object that is receiving
    //  messages from the circuit.  If PSM is nullptr or its port's address
@@ -87,7 +110,7 @@ public:
    //  Returns the address of the object that is receiving messages
    //  from the circuit when the profile is in the Active state.
    //
-   const LocalAddress& ObjAddr() const { return objAddr_; }
+   const LocalAddress& ObjAddr() const { return dyn_->objAddr_; }
 
    //  Sets PORT as the object that is receiving messages from the circuit.
    // If the profile is in the Idle state, it enters the Active state.
@@ -155,10 +178,6 @@ private:
    //
    RegCell dn_;
 
-   //  The profile's state.
-   //
-   State state_;
-
    //  The circuit associated with the profile.
    //
    std::unique_ptr< PotsCircuit > circuit_;
@@ -167,9 +186,10 @@ private:
    //
    Q1Way< PotsFeatureProfile > featureq_;
 
-   //  The address of the object that is receiving messages from the circuit.
+   //  Data that changes too frequently to unprotect and reprotect memory
+   //  when it needs to be modified.
    //
-   LocalAddress objAddr_;
+   std::unique_ptr< PotsProfileDynamic > dyn_;
 };
 }
 #endif

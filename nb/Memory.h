@@ -38,6 +38,8 @@ namespace NodeBase
 //
 class Memory
 {
+   friend class FunctionGuard;
+   friend class ModuleRegistry;
    friend class Thread;
 public:
    //  Deleted because this class only has static members.
@@ -78,10 +80,10 @@ public:
    //
    static void* Realloc(void* addr, size_t nBytes);
 
-   //  Verifies ADDR, which should be of TYPE.  If ADDR is nullptr, the
-   //  entire heap for TYPE is verified.
+   //  Validates ADDR, which should be of TYPE.  If ADDR is nullptr, the
+   //  entire heap for TYPE is validated.
    //
-   static bool Verify(MemoryType type, const void* addr);
+   static bool Validate(MemoryType type, const void* addr);
 
    //  Returns the type of memory used by the object located at ADDR.
    //
@@ -90,6 +92,11 @@ public:
    //  Returns the heap (if any) associated with TYPE.
    //
    static const SysHeap* Heap(MemoryType type);
+
+   //  Returns the type of memory associated with the heap at ADDR.
+   //  Returns MemNull if no heap begins at ADDR.
+   //
+   static MemoryType AddrToType(const void* addr);
 
    //  Frees the appropriate heap(s) during a restart.
    //

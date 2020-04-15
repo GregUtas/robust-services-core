@@ -43,7 +43,7 @@ AlarmRegistry::AlarmRegistry()
 {
    Debug::ft(AlarmRegistry_ctor);
 
-   alarms_.Init(MaxAlarms, Alarm::CellDiff(), MemDynamic);
+   alarms_.Init(MaxAlarms, Alarm::CellDiff(), MemImmutable);
 }
 
 //------------------------------------------------------------------------------
@@ -118,7 +118,7 @@ Alarm* AlarmRegistry::Find(const std::string& name) const
 
 void AlarmRegistry::Patch(sel_t selector, void* arguments)
 {
-   Dynamic::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------
@@ -132,6 +132,20 @@ void AlarmRegistry::Shutdown(RestartLevel level)
    for(auto a = alarms_.First(); a != nullptr; alarms_.Next(a))
    {
       a->Shutdown(level);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name AlarmRegistry_Startup = "AlarmRegistry.Startup";
+
+void AlarmRegistry::Startup(RestartLevel level)
+{
+   Debug::ft(AlarmRegistry_Startup);
+
+   for(auto a = alarms_.First(); a != nullptr; alarms_.Next(a))
+   {
+      a->Startup(level);
    }
 }
 

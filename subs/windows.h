@@ -76,8 +76,11 @@ bool VirtualProtect(void* addr, SIZE_T size, DWORD newProt, DWORD* oldProt);
 //
 //  Windows heaps
 //
+constexpr DWORD HEAP_GENERATE_EXCEPTIONS = 0x00000004;
+
 typedef int32_t HRESULT;
 constexpr HRESULT S_OK = 0;
+
 HANDLE  GetProcessHeap();
 DWORD   GetProcessHeaps(DWORD numberOfHeaps, HANDLE* processHeaps);
 HANDLE  HeapCreate(DWORD opts, SIZE_T initialSize, SIZE_T maxSize);

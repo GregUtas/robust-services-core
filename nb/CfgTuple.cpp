@@ -43,13 +43,13 @@ const char CfgTuple::CommentChar = '/';
 
 fn_name CfgTuple_ctor = "CfgTuple.ctor";
 
-CfgTuple::CfgTuple(const string& key, const string& input) :
+CfgTuple::CfgTuple(fixed_string key, fixed_string input) :
    key_(key),
    input_(input)
 {
    Debug::ft(CfgTuple_ctor);
 
-   if(key_.find_first_not_of(ValidKeyChars()) != string::npos)
+   if(key_.find_first_not_of(ValidKeyChars().c_str()) != string::npos)
    {
       auto log = Log::Create(ConfigLogGroup, ConfigKeyInvalid);
 
@@ -77,7 +77,7 @@ CfgTuple::~CfgTuple()
 void CfgTuple::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Persistent::Display(stream, prefix, options);
+   Protected::Display(stream, prefix, options);
 
    stream << prefix << "key   : " << key_ << CRLF;
    stream << prefix << "input : " << input_ << CRLF;
@@ -97,7 +97,7 @@ ptrdiff_t CfgTuple::LinkDiff()
 
 void CfgTuple::Patch(sel_t selector, void* arguments)
 {
-   Persistent::Patch(selector, arguments);
+   Protected::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

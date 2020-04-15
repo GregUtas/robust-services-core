@@ -178,14 +178,6 @@ private:
    //
    uint8_t traps_;
 
-   //  The name for the unavailable thread alarm.
-   //
-   std::string alarmName_;
-
-   //  The explanation for the unavailable thread alarm.
-   //
-   std::string alarmExpl_;
-
    //  The alarm raised when a thread is unavailable.
    //
    Alarm* alarm_;

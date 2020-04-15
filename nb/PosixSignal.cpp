@@ -89,7 +89,7 @@ fixed_string AttrStrings[PosixSignal::Attribute_N] =
 void PosixSignal::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Persistent::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    stream << prefix << "value    : " << value_ << CRLF;
    stream << prefix << "name     : " << name_ << CRLF;
@@ -117,7 +117,7 @@ void PosixSignal::Display(ostream& stream,
 
 void PosixSignal::Patch(sel_t selector, void* arguments)
 {
-   Persistent::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

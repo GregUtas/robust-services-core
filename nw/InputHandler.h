@@ -22,7 +22,7 @@
 #ifndef INPUTHANDLER_H_INCLUDED
 #define INPUTHANDLER_H_INCLUDED
 
-#include "Persistent.h"
+#include "Protected.h"
 #include <cstddef>
 #include "NbTypes.h"
 #include "NwTypes.h"
@@ -51,7 +51,7 @@ namespace NetworkBase
 //  defined in SbInputHandler.h and must be subclassed for each well-known
 //  port that receives or sends messages with SessionBase headers.
 //
-class InputHandler : public NodeBase::Persistent
+class InputHandler : public NodeBase::Protected
 {
 public:
    //  Virtual to allow subclassing.

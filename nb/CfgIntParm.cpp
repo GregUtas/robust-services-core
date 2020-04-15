@@ -113,7 +113,7 @@ void CfgIntParm::SetCurr()
 
 fn_name CfgIntParm_SetNext = "CfgIntParm.SetNext";
 
-bool CfgIntParm::SetNext(const string& input)
+bool CfgIntParm::SetNext(c_string input)
 {
    Debug::ft(CfgIntParm_SetNext);
 

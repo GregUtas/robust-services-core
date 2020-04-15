@@ -32,6 +32,7 @@
 #include "Debug.h"
 #include "Element.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "InitThread.h"
 #include "Singleton.h"
 #include "Statistics.h"
@@ -308,7 +309,7 @@ bool ThreadAdmin::BreakEnabled()
 void ThreadAdmin::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Persistent::Display(stream, prefix, options);
+   Protected::Display(stream, prefix, options);
 
    if(!options.test(DispVerbose)) return;
 
@@ -406,8 +407,8 @@ void ThreadAdmin::Incr(Register r)
    auto admin = Singleton< ThreadAdmin >::Extant();
 
    if(admin == nullptr) return;
-
    if(admin->stats_ == nullptr) return;
+   if(Restart::GetLevel() != Running) return;
 
    switch(r)
    {
@@ -483,7 +484,7 @@ msecs_t ThreadAdmin::InitTimeoutMsecs()
 
 void ThreadAdmin::Patch(sel_t selector, void* arguments)
 {
-   Persistent::Patch(selector, arguments);
+   Protected::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------
@@ -494,10 +495,12 @@ void ThreadAdmin::Shutdown(RestartLevel level)
 {
    Debug::ft(ThreadAdmin_Shutdown);
 
-   if(level < RestartCold) return;
-
-   stats_.release();
-   statsGroup_.release();
+   if(level == RestartCold)
+   {
+      FunctionGuard guard(Guard_MemUnprotect);
+      stats_.release();
+      statsGroup_.release();
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -512,8 +515,10 @@ void ThreadAdmin::Startup(RestartLevel level)
    //
    if(level < RestartCold) return;
 
+   FunctionGuard guard(Guard_MemUnprotect, (level < RestartReboot));
    if(stats_ == nullptr) stats_.reset(new ThreadsStats);
    if(statsGroup_ == nullptr) statsGroup_.reset(new ThreadsStatsGroup);
+   guard.Release();
 
    auto reg = Singleton< SymbolRegistry >::Instance();
    reg->BindSymbol("faction.audit", AuditFaction);
@@ -534,6 +539,7 @@ word ThreadAdmin::TrapCount()
 
    if(admin == nullptr) return 0;
    if(admin->stats_ == nullptr) return 0;
+   if(Restart::GetLevel() != Running) return 0;
    return admin->stats_->traps_->Overall();
 }
 

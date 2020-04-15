@@ -24,6 +24,7 @@
 #include <ostream>
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "LogGroup.h"
 #include "NbCliParms.h"
 #include "Singleton.h"
@@ -110,7 +111,7 @@ LogGroupRegistry::LogGroupRegistry()
 {
    Debug::ft(LogGroupRegistry_ctor);
 
-   groups_.Init(MaxGroups, LogGroup::CellDiff(), MemDynamic);
+   groups_.Init(MaxGroups, LogGroup::CellDiff(), MemImmutable);
    statsGroup_.reset(new LogStatsGroup);
 }
 
@@ -199,7 +200,27 @@ LogGroup* LogGroupRegistry::Group(id_t gid) const
 
 void LogGroupRegistry::Patch(sel_t selector, void* arguments)
 {
-   Dynamic::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name LogGroupRegistry_Startup = "LogGroupRegistry.Startup";
+
+void LogGroupRegistry::Startup(RestartLevel level)
+{
+   Debug::ft(LogGroupRegistry_Startup);
+
+   if(statsGroup_ == nullptr)
+   {
+      FunctionGuard guard(Guard_ImmUnprotect);
+      statsGroup_.reset(new LogStatsGroup);
+   }
+
+   for(auto g = groups_.First(); g != nullptr; groups_.Next(g))
+   {
+      g->Startup(level);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -213,6 +234,12 @@ void LogGroupRegistry::Shutdown(RestartLevel level)
    for(auto g = groups_.First(); g != nullptr; groups_.Next(g))
    {
       g->Shutdown(level);
+   }
+
+   if((level >= RestartCold) && (level <= RestartReload))
+   {
+      FunctionGuard guard(Guard_ImmUnprotect);
+      statsGroup_.release();
    }
 }
 

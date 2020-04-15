@@ -148,7 +148,7 @@ std::streamsize CinThread::GetLine(char* buff, std::streamsize capacity)
    //  Make sure we're running unpreemptably, which will prevent more than
    //  one client from being in this code at the same time.
    //
-   FunctionGuard guard(FunctionGuard::MakeUnpreemptable);
+   FunctionGuard guard(Guard_MakeUnpreemptable);
 
    auto server = Singleton< CinThread >::Instance();
 

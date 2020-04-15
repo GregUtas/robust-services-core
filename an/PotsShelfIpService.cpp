@@ -54,9 +54,9 @@ PotsShelfIpService::PotsShelfIpService() : port_(NilIpPort)
    Debug::ft(PotsShelfIpService_ctor);
 
    auto port = std::to_string(PotsShelfIpPort);
-   cfgPort_.reset(new IpPortCfgParm
+   portCfg_.reset(new IpPortCfgParm
       (PotsShelfIpPortKey, port.c_str(), &port_, PotsShelfIpPortExpl, this));
-   Singleton< CfgParmRegistry >::Instance()->BindParm(*cfgPort_);
+   Singleton< CfgParmRegistry >::Instance()->BindParm(*portCfg_);
 }
 
 //------------------------------------------------------------------------------

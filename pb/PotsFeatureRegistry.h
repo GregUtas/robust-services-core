@@ -22,7 +22,7 @@
 #ifndef POTSFEATUREREGISTRY_H_INCLUDED
 #define POTSFEATUREREGISTRY_H_INCLUDED
 
-#include "Persistent.h"
+#include "Immutable.h"
 #include <memory>
 #include "NbTypes.h"
 #include "PotsFeature.h"
@@ -41,7 +41,7 @@ namespace PotsBase
 {
 //  Registry for the singleton instances of PotsFeature subclasses.
 //
-class PotsFeatureRegistry : public Persistent
+class PotsFeatureRegistry : public Immutable
 {
    friend class Singleton< PotsFeatureRegistry >;
    friend class ActivateCommand;

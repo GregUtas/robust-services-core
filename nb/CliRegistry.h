@@ -22,7 +22,7 @@
 #ifndef CLIREGISTRY_H_INCLUDED
 #define CLIREGISTRY_H_INCLUDED
 
-#include "Persistent.h"
+#include "Immutable.h"
 #include <cstddef>
 #include <iosfwd>
 #include <string>
@@ -40,7 +40,7 @@ namespace NodeBase
 {
 //  Global registry for CLI increments.
 //
-class CliRegistry : public Persistent
+class CliRegistry : public Immutable
 {
    friend class Singleton< CliRegistry >;
 public:

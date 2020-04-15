@@ -22,7 +22,7 @@
 #ifndef CLASSREGISTRY_H_INCLUDED
 #define CLASSREGISTRY_H_INCLUDED
 
-#include "Persistent.h"
+#include "Immutable.h"
 #include "NbTypes.h"
 #include "Registry.h"
 
@@ -32,7 +32,7 @@ namespace NodeBase
 {
 //  Global registry for classes.
 //
-class ClassRegistry : public Persistent
+class ClassRegistry : public Immutable
 {
    friend class Singleton< ClassRegistry >;
 public:
@@ -47,6 +47,14 @@ public:
    //  Returns the class registered against CID.
    //
    Class* Lookup(ClassId cid) const;
+
+   //  Overridden for restarts.
+   //
+   void Shutdown(RestartLevel level) override;
+
+   //  Overridden for restarts.
+   //
+   void Startup(RestartLevel level) override;
 
    //  Overridden to display member variables.
    //

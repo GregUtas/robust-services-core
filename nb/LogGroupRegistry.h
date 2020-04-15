@@ -22,7 +22,7 @@
 #ifndef LOGGROUPREGISTRY_H_INCLUDED
 #define LOGGROUPREGISTRY_H_INCLUDED
 
-#include "Dynamic.h"
+#include "Immutable.h"
 #include <string>
 #include "NbTypes.h"
 #include "Registry.h"
@@ -40,7 +40,7 @@ namespace NodeBase
 {
 //  Global registry for log groups.
 //
-class LogGroupRegistry : public Dynamic
+class LogGroupRegistry : public Immutable
 {
    friend class Singleton< LogGroupRegistry >;
    friend class LogGroup;
@@ -68,6 +68,10 @@ public:
    //  Overridden for restarts.
    //
    void Shutdown(RestartLevel level) override;
+
+   //  Overridden for restarts.
+   //
+   void Startup(RestartLevel level) override;
 
    //  Overridden to display member variables.
    //

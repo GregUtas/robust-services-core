@@ -22,7 +22,7 @@
 #ifndef ALARM_H_INCLUDED
 #define ALARM_H_INCLUDED
 
-#include "Dynamic.h"
+#include "Immutable.h"
 #include <cstddef>
 #include <string>
 #include "Clock.h"
@@ -30,15 +30,20 @@
 #include "RegCell.h"
 #include "SysTypes.h"
 
+namespace NodeBase
+{
+   struct AlarmDynamic;
+}
+
 //------------------------------------------------------------------------------
 
 namespace NodeBase
 {
-//  Interface for defining alarms.  Alarm definitions survive warm restarts
-//  but must be recreated during all others.  An alarm is set or cleared by
+//  Interface for defining alarms.  Alarms are closely coupled to logs
+//  and therefore survive all restarts.  An alarm is set or cleared by
 //  Log::Create (see Logs.h).
 //
-class Alarm : public Dynamic
+class Alarm : public Immutable
 {
    friend class AlarmsCommand;
 public:
@@ -56,7 +61,7 @@ public:
    //  Instead of Log::Create, the application must invoke Alarm::Create,
    //  which returns nullptr unless a log should be generated.
    //
-   Alarm(const std::string& name, const std::string& expl, secs_t delay);
+   Alarm(c_string name, c_string expl, secs_t delay);
 
    //  Not subclassed.
    //
@@ -85,7 +90,7 @@ public:
 
    //  Returns the alarm's status.
    //
-   AlarmStatus Status() const { return status_; }
+   AlarmStatus Status() const;
 
    //  Returns the offset to aid_.
    //
@@ -110,33 +115,24 @@ private:
 
    //  The alarm's name.
    //
-   const DynamicStr name_;
+   ImmutableStr name_;
 
    //  The string that explains the alarm.
    //
-   const DynamicStr expl_;
+   ImmutableStr expl_;
 
    //  The delay when downgrading the alarm.
    //
    const ticks_t delay_;
 
-   //  The alarm's current status.
-   //
-   AlarmStatus status_;
-
-   //  The level to which the alarm will be downgraded once DELAY has
-   //  passed.  It is the highest value set for the alarm during the
-   //  delay.
-   //
-   AlarmStatus nextStatus_;
-
-   //  The most recent time at which the alarm was at its current level.
-   //
-   ticks_t currStatusTime_;
-
    //  The alarm's index in AlarmRegistry.
    //
    RegCell aid_;
+
+   //  Data that changes too frequently to unprotect and reprotect memory
+   //  when it needs to be modified.
+   //
+   std::unique_ptr< AlarmDynamic > dyn_;
 };
 }
 #endif

@@ -43,7 +43,7 @@ CliRegistry::CliRegistry()
 {
    Debug::ft(CliRegistry_ctor);
 
-   increments_.Init(MaxIncrements, CliIncrement::CellDiff(), MemPersistent);
+   increments_.Init(MaxIncrements, CliIncrement::CellDiff(), MemProtected);
 }
 
 //------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ bool CliRegistry::BindIncrement(CliIncrement& incr)
 void CliRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Persistent::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    stream << prefix << "increments : " << CRLF;
    increments_.Display(stream, prefix + spaces(2), options);
@@ -117,7 +117,7 @@ void CliRegistry::ListIncrements(ostream& stream) const
 
 void CliRegistry::Patch(sel_t selector, void* arguments)
 {
-   Persistent::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

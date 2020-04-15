@@ -1508,21 +1508,17 @@ void Thread::DisplayStats(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-const size_t SchedHeaderSize = 3;
-
-fixed_string SchedHeader[SchedHeaderSize] =
-{
+fixed_string SchedHeader =
+"      THREADS          |    SINCE START OF CURRENT 15-MIN INTERVAL    | LAST\n"
+"                       |            rtc  max   max     max  total     |5 SEC\n"
+"id    name     host f b| ex yields  t/o msgs stack   usecs  msecs %cpu| %cpu";
 //        1         2         3         4         5         6         7
 //234567890123456789012345678901234567890123456789012345678901234567890123456
-"      THREADS          |    SINCE START OF CURRENT 15-MIN INTERVAL    | LAST",
-"                       |            rtc  max   max     max  total     |5 SEC",
-"id    name     host f b| ex yields  t/o msgs stack   usecs  msecs %cpu| %cpu"
-};
+fixed_string SchedLine =
+"----------------------------------------------------------------------------";
 
 void Thread::DisplaySummaries(ostream& stream)
 {
-   string line(strlen(SchedHeader[0]), '-');
-
    ticks_t ticks;     // start of current interval
    usecs_t time0;     // duration of current interval
    size_t idle0;      // idle time during current interval
@@ -1545,9 +1541,9 @@ void Thread::DisplaySummaries(ostream& stream)
    stream << "for interval beginning at ";
    stream << Clock::TicksToTime(StatisticsRegistry::StartTicks()) << CRLF;
 
-   stream << line << CRLF;
-   for(auto i = 0; i < SchedHeaderSize; ++i) stream << SchedHeader[i] << CRLF;
-   stream << line << CRLF;
+   stream << SchedLine << CRLF;
+   stream << SchedHeader << CRLF;
+   stream << SchedLine << CRLF;
 
    stream << setw(10) << "idle";
    stream << setw(55) << (idle0 + 500) / 1000;
@@ -1569,7 +1565,7 @@ void Thread::DisplaySummaries(ostream& stream)
       t->DisplaySummary(stream, time0, time1);
    }
 
-   stream << line << CRLF;
+   stream << SchedLine << CRLF;
 
    if(Singleton< ContextSwitches >::Instance()->LoggingOn())
    {
@@ -2362,36 +2358,42 @@ void Thread::MemProtect()
 
    auto thr = RunningThread();
 
-   //e Write-disable the protected memory segment.
-
+   //  Write-protect the protected memory segment.
+   //
    if(thr->priv_->unprotects_ == 0)
    {
       Debug::SwLog(Thread_MemProtect, "underflow", thr->Tid());
       return;
    }
 
-   --thr->priv_->unprotects_;
+   if(--thr->priv_->unprotects_ == 0)
+   {
+      Memory::Protect(MemProtected);
+   }
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_MemUnprotect = "Thread.MemUnprotect";
+fn_name Guard_MemUnprotect = "Thread.MemUnprotect";
 
 void Thread::MemUnprotect()
 {
-   Debug::ft(Thread_MemUnprotect);
+   Debug::ft(Guard_MemUnprotect);
 
    auto thr = RunningThread();
 
-   //e Write-enable the protected memory segment.
-
+   //  Write-enable the protected memory segment.
+   //
    if(thr->priv_->unprotects_ >= 0x0f)
    {
-      Debug::SwLog(Thread_MemUnprotect, "overflow", thr->Tid());
+      Debug::SwLog(Guard_MemUnprotect, "overflow", thr->Tid());
       return;
    }
 
-   ++thr->priv_->unprotects_;
+   if(++thr->priv_->unprotects_ == 1)
+   {
+      Memory::Unprotect(MemProtected);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -2521,9 +2523,15 @@ void Thread::Proceed()
 {
    Debug::ft(Thread_Proceed);
 
-   //  Ensure that the thread's priority is such that the platform will
-   //  schedule it in and signal it to resume.
+   //  Update memory protection to what the thread expects.  Ensure that its
+   //  priority is such that the platform will schedule it in, and signal it
+   //  to resume.
    //
+   if(priv_->unprotects_ == 0)
+      Memory::Protect(MemProtected);
+   else
+      Memory::Unprotect(MemProtected);
+
    systhrd_->SetPriority(SysThread::DefaultPriority);
    if(priv_->waiting_) systhrd_->Proceed();
 }
@@ -3146,7 +3154,7 @@ fn_name Thread_Start = "Thread.Start";
 
 main_t Thread::Start()
 {
-   for(NO_OP; true; stats_->traps_->Incr())
+   while(true)
    {
       try
       {
@@ -3652,6 +3660,7 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
       //    and let the object pool audit recover the Thread object.
       //
       auto retrapped = false;
+      if(Restart::GetLevel() == Running) stats_->traps_->Incr();
 
       switch(++priv_->traps_)
       {

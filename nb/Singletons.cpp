@@ -81,12 +81,8 @@ void Singletons::BindInstance(const Base** addr, MemoryType type)
    //
    switch(type)
    {
-   case MemProtected:
-   case MemPersistent:
-   case MemDynamic:
-   case MemTemporary:
-      break;
-   default:
+   case MemPermanent:
+   case MemImmutable:
       return;
    }
 

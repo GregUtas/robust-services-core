@@ -40,7 +40,7 @@ ClassRegistry::ClassRegistry()
 {
    Debug::ft(ClassRegistry_ctor);
 
-   classes_.Init(MaxClassId, Class::CellDiff(), MemPersistent);
+   classes_.Init(MaxClassId, Class::CellDiff(), MemImmutable);
 }
 
 //------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ bool ClassRegistry::BindClass(Class& cls)
 void ClassRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Persistent::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    stream << prefix << "classes [Object::ClassId]" << CRLF;
    classes_.Display(stream, prefix + spaces(2), options);
@@ -85,7 +85,35 @@ Class* ClassRegistry::Lookup(ClassId cid) const
 
 void ClassRegistry::Patch(sel_t selector, void* arguments)
 {
-   Persistent::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name ClassRegistry_Shutdown = "ClassRegistry.Shutdown";
+
+void ClassRegistry::Shutdown(RestartLevel level)
+{
+   Debug::ft(ClassRegistry_Shutdown);
+
+   for(auto c = classes_.First(); c != nullptr; classes_.Next(c))
+   {
+      c->Shutdown(level);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name ClassRegistry_Startup = "ClassRegistry.Startup";
+
+void ClassRegistry::Startup(RestartLevel level)
+{
+   Debug::ft(ClassRegistry_Startup);
+
+   for(auto c = classes_.First(); c != nullptr; classes_.Next(c))
+   {
+      c->Startup(level);
+   }
 }
 
 //------------------------------------------------------------------------------

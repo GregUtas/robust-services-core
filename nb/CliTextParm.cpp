@@ -49,7 +49,7 @@ CliTextParm::CliTextParm(c_string help, bool opt, uint32_t size,
 {
    Debug::ft(CliTextParm_ctor);
 
-   strings_.Init(size, CliParm::CellDiff(), MemPersistent);
+   strings_.Init(size, CliParm::CellDiff(), MemImmutable);
 }
 
 //------------------------------------------------------------------------------

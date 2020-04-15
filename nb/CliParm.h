@@ -81,7 +81,7 @@
 #ifndef CLIPARM_H_INCLUDED
 #define CLIPARM_H_INCLUDED
 
-#include "Persistent.h"
+#include "Immutable.h"
 #include <cstddef>
 #include <cstdint>
 #include <iosfwd>
@@ -101,7 +101,7 @@ namespace NodeBase
 {
 //  A virtual class that defines functions common to CLI parameters.
 //
-class CliParm : public Persistent
+class CliParm : public Immutable
 {
 public:
    //  The outcome of looking for a parameter when parsing the command line.

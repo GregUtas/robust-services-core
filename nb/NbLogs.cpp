@@ -43,7 +43,7 @@ void CreateNbLogs(RestartLevel level)
 {
    Debug::ft(NodeBase_CreateNbLogs);
 
-   if(level <= RestartWarm) return;
+   if(level < RestartReboot) return;
 
    auto group = new LogGroup(NodeLogGroup, "Node");
    new Log(group, NodeInitTimeout, "Initialization timeout");

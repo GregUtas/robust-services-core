@@ -36,6 +36,10 @@ namespace NodeBase
 //  o memory types (MemType and operators new and delete)
 //  o association with a Class (most everything else)
 //
+//  NOTE: A class whose objects are allocated on the heap must derive from
+//  ====  Temporary, Dynamic, Persistent, Protected, Permanent, or Immutable.
+//        If it derives from Object, operator new throws an exception.
+//
 class Object : public Base
 {
 public:
@@ -118,6 +122,8 @@ public:
 
    //  Overridden to support memory types.
    //
+   static void* operator new(size_t size);
+   static void* operator new[](size_t size);
    static void* operator new(size_t size, MemoryType type);
    static void* operator new[](size_t size, MemoryType type);
    static void operator delete(void* addr);

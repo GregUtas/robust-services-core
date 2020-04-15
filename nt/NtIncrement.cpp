@@ -277,7 +277,7 @@ word NtLogsCommand::Sort
 {
    Debug::ft(NtLogsCommand_Sort);
 
-   FunctionGuard guard(FunctionGuard::MakePreemptable);
+   FunctionGuard guard(Guard_MakePreemptable);
 
    //  Each log is saved as a single string with embedded CRLFs.  The log's
    //  sequence number, which appears at the end of the first line enclosed
@@ -469,7 +469,7 @@ word NtSaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
 
    auto yield = cli.GenerateReportPreemptably();
-   FunctionGuard guard(FunctionGuard::MakePreemptable, yield);
+   FunctionGuard guard(Guard_MakePreemptable, yield);
 
    FunctionTrace::Process(EMPTY_STR);
    std::unique_ptr< FunctionProfiler > fp(new FunctionProfiler);

@@ -218,7 +218,7 @@ private:
 
    //  The configuration parameter for the number of invokers in the pool.
    //
-   NodeBase::CfgIntParmPtr cfgInvokers_;
+   NodeBase::CfgIntParmPtr invokersCfg_;
 
    //  The pool's pending work.
    //

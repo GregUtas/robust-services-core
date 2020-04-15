@@ -22,7 +22,7 @@
 #ifndef PARAMETER_H_INCLUDED
 #define PARAMETER_H_INCLUDED
 
-#include "Persistent.h"
+#include "Immutable.h"
 #include <cstddef>
 #include <iosfwd>
 #include <string>
@@ -44,7 +44,7 @@ namespace SessionBase
 //  Each protocol defines a singleton subclass for each of its parameters.
 //  A parameter that uses the TLV format should subclass from TlvParameter.
 //
-class Parameter : public NodeBase::Persistent
+class Parameter : public NodeBase::Immutable
 {
    friend class NodeBase::Registry< Parameter >;
 public:

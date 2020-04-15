@@ -22,7 +22,7 @@
 #ifndef SERVICECODEREGISTRY_H_INCLUDED
 #define SERVICECODEREGISTRY_H_INCLUDED
 
-#include "Persistent.h"
+#include "Protected.h"
 #include "BcAddress.h"
 #include "NbTypes.h"
 #include "SbTypes.h"
@@ -36,7 +36,7 @@ namespace CallBase
 {
 //  Registry for service codes (*nn digit strings used to control services).
 //
-class ServiceCodeRegistry : public Persistent
+class ServiceCodeRegistry : public Protected
 {
    friend class Singleton< ServiceCodeRegistry >;
 public:

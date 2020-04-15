@@ -22,12 +22,13 @@
 #ifndef IPPORT_H_INCLUDED
 #define IPPORT_H_INCLUDED
 
-#include "Persistent.h"
+#include "Protected.h"
 #include <cstddef>
 #include <iosfwd>
 #include <memory>
 #include <string>
 #include "InputHandler.h"
+#include "NbTypes.h"
 #include "NwTypes.h"
 #include "Q1Link.h"
 #include "SysTypes.h"
@@ -48,7 +49,7 @@ namespace NetworkBase
 {
 //  An IP port that supports a service (an application protocol).
 //
-class IpPort : public NodeBase::Persistent
+class IpPort : public NodeBase::Protected
 {
    friend class InputHandler;
 public:
@@ -213,14 +214,6 @@ private:
    //  The port's socket.
    //
    SysSocket* socket_;
-
-   //  The name for the port's alarm.
-   //
-   std::string alarmName_;  //r
-
-   //  The explanation for the port's alarm.
-   //
-   std::string alarmExpl_;  //r
 
    //  The port's alarm.
    //

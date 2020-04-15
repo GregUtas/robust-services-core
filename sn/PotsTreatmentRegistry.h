@@ -22,7 +22,7 @@
 #ifndef POTSTREATMENTREGISTRY_H_INCLUDED
 #define POTSTREATMENTREGISTRY_H_INCLUDED
 
-#include "Persistent.h"
+#include "Protected.h"
 #include "BcCause.h"
 #include "NbTypes.h"
 #include "PotsTreatments.h"
@@ -40,7 +40,7 @@ namespace PotsBase
 //  these queues and then applies the queue's treatments in order.  Many of
 //  these treatments apply a tone while waiting for the user to go onhook.
 //
-class PotsTreatmentRegistry : public Persistent
+class PotsTreatmentRegistry : public Protected
 {
    friend class Singleton< PotsTreatmentRegistry >;
 public:

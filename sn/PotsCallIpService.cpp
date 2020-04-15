@@ -54,9 +54,9 @@ PotsCallIpService::PotsCallIpService() : port_(NilIpPort)
    Debug::ft(PotsCallIpService_ctor);
 
    auto port = std::to_string(PotsCallIpPort);
-   cfgPort_.reset(new IpPortCfgParm
+   portCfg_.reset(new IpPortCfgParm
       (PotsCallIpPortKey, port.c_str(), &port_, PotsCallIpPortExpl, this));
-   Singleton< CfgParmRegistry >::Instance()->BindParm(*cfgPort_);
+   Singleton< CfgParmRegistry >::Instance()->BindParm(*portCfg_);
 }
 
 //------------------------------------------------------------------------------

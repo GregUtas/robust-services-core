@@ -692,7 +692,7 @@ TraceRc TraceBuffer::SetTool(FlagId tid, bool value)
 {
    Debug::ft(TraceBuffer_SetTool);
 
-   //u This is invoked well before main(), so avoid creating ToolRegistry that
+   //  This is invoked well before main(), so avoid creating ToolRegistry that
    //  early.  Doing so causes heap corruption in Windows debug mode, but the
    //  reason has not been determined.
    //

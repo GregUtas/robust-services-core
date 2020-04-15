@@ -2261,7 +2261,7 @@ void BaseBot::send_bm_message(const byte_t* payload, uint16_t length) const
    bm->header.length = length;
    if(length > 0) memcpy(&bm->first_payload_byte, payload, length);
 
-   FunctionGuard guard(FunctionGuard::MakeUnpreemptable, true);
+   FunctionGuard guard(Guard_MakeUnpreemptable);
    Singleton< BotThread >::Instance()->QueueMsg(buff);
 }
 

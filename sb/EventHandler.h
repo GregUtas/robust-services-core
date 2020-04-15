@@ -22,7 +22,7 @@
 #ifndef EVENTHANDLER_H_INCLUDED
 #define EVENTHANDLER_H_INCLUDED
 
-#include "Persistent.h"
+#include "Immutable.h"
 #include <cstdint>
 #include <iosfwd>
 #include "SbTypes.h"
@@ -45,7 +45,7 @@ namespace SessionBase
 //  Event handlers include message analyzers, and each subclass must be a
 //  singleton.
 //
-class EventHandler : public NodeBase::Persistent
+class EventHandler : public NodeBase::Immutable
 {
    friend class NodeBase::Registry< EventHandler >;
 public:

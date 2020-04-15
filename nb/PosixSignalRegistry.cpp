@@ -41,7 +41,7 @@ PosixSignalRegistry::PosixSignalRegistry()
 {
    Debug::ft(PosixSignalRegistry_ctor);
 
-   signals_.Init(PosixSignal::MaxId, PosixSignal::CellDiff(), MemPersistent);
+   signals_.Init(PosixSignal::MaxId, PosixSignal::CellDiff(), MemImmutable);
 }
 
 //------------------------------------------------------------------------------
@@ -80,7 +80,7 @@ bool PosixSignalRegistry::BindSignal(PosixSignal& signal)
 void PosixSignalRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Persistent::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    stream << prefix << "signals [id_t]" << CRLF;
    signals_.Display(stream, prefix + spaces(2), options);
@@ -114,7 +114,7 @@ PosixSignal* PosixSignalRegistry::Find(const string& name) const
 
 void PosixSignalRegistry::Patch(sel_t selector, void* arguments)
 {
-   Persistent::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

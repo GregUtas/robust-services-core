@@ -27,6 +27,7 @@
 #include "Debug.h"
 #include "FactoryRegistry.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "Singleton.h"
 #include "Statistics.h"
 
@@ -229,7 +230,7 @@ size_t Factory::DiscardedMessageCount() const
 void Factory::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Persistent::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    stream << prefix << "fid     : " << fid_.to_str() << CRLF;
    stream << prefix << "type    : " << int(type_) << CRLF;
@@ -326,7 +327,7 @@ bool Factory::IsLegalOgSignal(SignalId sid) const
 
 void Factory::Patch(sel_t selector, void* arguments)
 {
-   Persistent::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------
@@ -426,9 +427,11 @@ void Factory::Shutdown(RestartLevel level)
 {
    Debug::ft(Factory_Shutdown);
 
-   if(level < RestartCold) return;
-
-   stats_.release();
+   if(level == RestartCold)
+   {
+      FunctionGuard guard(Guard_ImmUnprotect);
+      stats_.release();
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -439,6 +442,10 @@ void Factory::Startup(RestartLevel level)
 {
    Debug::ft(Factory_Startup);
 
-   if(stats_ == nullptr) stats_.reset(new FactoryStats);
+   if(stats_ == nullptr)
+   {
+      FunctionGuard guard(Guard_ImmUnprotect, (level < RestartReboot));
+      stats_.reset(new FactoryStats);
+   }
 }
 }

@@ -39,19 +39,34 @@ using std::string;
 
 namespace NodeBase
 {
-fixed_string CfgParmRegistry::BackFromExePath = "rsc/";
-fixed_string CfgParmRegistry::AppendToExePath = "input/element.config.txt";
+//  A handle for reading the configuration file.
+//
+istreamPtr Stream_= nullptr;
+
+//  The current line number in the configuration file.
+//
+size_t CurrLine_ = 0;
+
+//> Used to derive the name of the file that contains this node's configuration
+//  parameters.  It is created by modifying the first argument to main(), which
+//  is the path to our executable, as follows:
+//  o find the last occurrence of BackFromExePath and erase what *follows*
+//    it (that is, retain BackFromExePath as a "suffix"), and then
+//  o append AppendToExePath.
+//
+fixed_string BackFromExePath_ = "rsc/";
+fixed_string AppendToExePath_ = "input/element.config.txt";
 
 //------------------------------------------------------------------------------
 
 fn_name CfgParmRegistry_ctor = "CfgParmRegistry.ctor";
 
-CfgParmRegistry::CfgParmRegistry() : currLine_(0)
+CfgParmRegistry::CfgParmRegistry()
 {
    Debug::ft(CfgParmRegistry_ctor);
 
    mainArgs_.reset(new std::vector< stringPtr >());
-   configFileName_.reset(new string("element.config.txt"));
+   configFileName_ = "element.config.txt";
    tupleq_.Init(CfgTuple::LinkDiff());
    parmq_.Init(CfgParm::LinkDiff());
 }
@@ -83,17 +98,17 @@ void CfgParmRegistry::AddMainArg(const string& arg)
 
    if(mainArgs_->size() == 1)
    {
-      *configFileName_ = SysFile::Normalize(arg);
+      configFileName_ = SysFile::Normalize(arg).c_str();
 
-      auto pos = configFileName_->rfind(BackFromExePath);
+      auto pos = configFileName_.rfind(BackFromExePath_);
 
       if(pos != string::npos)
-         pos += strlen(BackFromExePath);
+         pos += strlen(BackFromExePath_);
       else
-         pos = configFileName_->rfind('/') + 1;
+         pos = configFileName_.rfind('/') + 1;
 
-      configFileName_->erase(pos);
-      configFileName_->append(AppendToExePath);
+      configFileName_.erase(pos);
+      configFileName_.append(AppendToExePath_);
    }
 }
 
@@ -109,7 +124,7 @@ void CfgParmRegistry::BadLine(LogId id, const string& input) const
 
    if(log != nullptr)
    {
-      *log << Log::Tab << "errval=" << input << " line=" << currLine_;
+      *log << Log::Tab << "errval=" << input << " line=" << CurrLine_;
       Log::Submit(log);
    }
 }
@@ -192,7 +207,7 @@ bool CfgParmRegistry::BindTuple(CfgTuple& tuple)
 void CfgParmRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Persistent::Display(stream, prefix, options);
+   Protected::Display(stream, prefix, options);
 
    stream << prefix << "mainArgs       : " << CRLF;
    for(size_t i = 0; i < mainArgs_->size(); ++i)
@@ -200,12 +215,10 @@ void CfgParmRegistry::Display(ostream& stream,
       stream << spaces(2) << strIndex(i) << *mainArgs_->at(i) << CRLF;
    }
 
-   stream << prefix << "configFileName : " << *configFileName_ << CRLF;
-   stream << prefix << "stream         : " << stream_.get() << CRLF;
-   stream << prefix << "currLine       : " << currLine_ << CRLF;
-   stream << prefix << "tupleq         : " << CRLF;
+   stream << prefix << "configFileName : " << configFileName_ << CRLF;
+   stream << prefix << "tupleq : " << CRLF;
    tupleq_.Display(stream, prefix + spaces(2), options);
-   stream << prefix << "parmq          : " << CRLF;
+   stream << prefix << "parmq : " << CRLF;
    parmq_.Display(stream, prefix + spaces(2), options);
 }
 
@@ -293,14 +306,14 @@ bool CfgParmRegistry::LoadNextTuple(string& key, string& value)
    string input;
    size_t keyBeg, keyEnd, valBeg, valEnd, extra;
 
-   while(stream_->peek() != EOF)
+   while(Stream_->peek() != EOF)
    {
       //  Read lines from the configuration file until EOF is reached.
       //  Skip any line that is empty, that contains only blanks, or that
       //  has the comment character as its first non-blank character.
       //
-      std::getline(*stream_, input);
-      ++currLine_;
+      std::getline(*Stream_, input);
+      ++CurrLine_;
 
       if(input.empty()) continue;
 
@@ -382,22 +395,22 @@ void CfgParmRegistry::LoadTuples()
    //  with that key already exists, update its value so that the parameter
    //  can later be set to the value specified in the configuration file.
    //
-   stream_ = SysFile::CreateIstream(configFileName_->c_str());
+   Stream_ = SysFile::CreateIstream(configFileName_.c_str());
 
-   if(stream_ == nullptr)
+   if(Stream_ == nullptr)
    {
       auto log = Log::Create(ConfigLogGroup, ConfigFileNotFound);
 
       if(log != nullptr)
       {
-         *log << Log::Tab << "path=" << *configFileName_;
+         *log << Log::Tab << "path=" << configFileName_;
          Log::Submit(log);
       }
 
       return;
    }
 
-   currLine_ = 0;
+   CurrLine_ = 0;
 
    while(LoadNextTuple(key, value))
    {
@@ -405,16 +418,16 @@ void CfgParmRegistry::LoadTuples()
 
       if(tuple != nullptr)
       {
-         tuple->SetInput(value);
+         tuple->SetInput(value.c_str());
       }
       else
       {
-         tuple = new CfgTuple(key, value);
+         tuple = new CfgTuple(key.c_str(), value.c_str());
          BindTuple(*tuple);
       }
    }
 
-   stream_.reset();
+   Stream_.reset();
 
    //  If a configuration parameter was registered *before* its tuple in the
    //  configuration file was loaded, ensure that its value matches the value
@@ -430,7 +443,7 @@ void CfgParmRegistry::LoadTuples()
 
 void CfgParmRegistry::Patch(sel_t selector, void* arguments)
 {
-   Persistent::Patch(selector, arguments);
+   Protected::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

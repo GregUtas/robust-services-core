@@ -53,7 +53,7 @@ PotsFeatureRegistry::PotsFeatureRegistry()
 {
    Debug::ft(PotsFeatureRegistry_ctor);
 
-   features_.Init(PotsFeature::MaxId, PotsFeature::CellDiff(), MemPersistent);
+   features_.Init(PotsFeature::MaxId, PotsFeature::CellDiff(), MemImmutable);
    featuresSubscribe_.reset(new WhichFeatureParm);
    featuresActivate_.reset(new WhichFeatureParm);
    featuresDeactivate_.reset(new WhichFeatureParm);
@@ -128,7 +128,7 @@ bool PotsFeatureRegistry::BindFeature(PotsFeature& feature)
 void PotsFeatureRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Persistent::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    stream << prefix << "featuresSubscribe   : ";
    stream << strObj(featuresSubscribe_.get());

@@ -37,9 +37,10 @@ namespace NodeBase
 void SysHeap::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Object::Display(stream, prefix, options);
+   Permanent::Display(stream, prefix, options);
 
    stream << prefix << "heap     : " << heap_ << CRLF;
+   stream << prefix << "addr     : " << Addr() << CRLF;
    stream << prefix << "size     : " << size_ << CRLF;
    stream << prefix << "type     : " << type_ << CRLF;
    stream << prefix << "attrs    : " << attrs_ << CRLF;
@@ -48,6 +49,22 @@ void SysHeap::Display(ostream& stream,
    stream << prefix << "fails    : " << fails_ << CRLF;
    stream << prefix << "frees    : " << frees_ << CRLF;
    stream << prefix << "maxInUse : " << maxInUse_ << CRLF;
+}
+
+//------------------------------------------------------------------------------
+
+bool SysHeap::IsProtected() const
+{
+   switch(attrs_)
+   {
+   case MemInaccessible:
+   case MemExecuteOnly:
+   case MemReadOnly:
+   case MemReadExecute:
+      return true;
+   }
+
+   return false;
 }
 
 //------------------------------------------------------------------------------
@@ -106,11 +123,13 @@ bool SysHeap::SetPermissions(MemoryProtection attrs)
 {
    Debug::ft(SysHeap_SetPermissions);
 
-   if(size_ == 0)
+   if(!IsFixedSize())
    {
       Debug::SwLog(SysHeap_SetPermissions, "heap size not fixed", 0);
       return false;
    }
+
+   if(attrs_ == attrs) return true;
 
    if(!SysMemory::Protect(heap_, size_, attrs)) return false;
 

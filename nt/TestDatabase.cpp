@@ -94,7 +94,7 @@ void TestDatabase::Commit() const
 {
    Debug::ft(TestDatabase_Commit);
 
-   FunctionGuard guard(FunctionGuard::MakePreemptable);
+   FunctionGuard guard(Guard_MakePreemptable);
 
    auto path = Element::InputPath() + PATH_SEPARATOR + "testcase.db.txt";
    auto stream = SysFile::CreateOstream(path.c_str(), true);
@@ -244,7 +244,7 @@ void TestDatabase::Load()
 {
    Debug::ft(TestDatabase_Load);
 
-   FunctionGuard guard(FunctionGuard::MakePreemptable);
+   FunctionGuard guard(Guard_MakePreemptable);
 
    auto path = Element::InputPath() + PATH_SEPARATOR + "testcase.db.txt";
    auto stream = SysFile::CreateIstream(path.c_str());
@@ -401,7 +401,7 @@ void TestDatabase::Update()
 {
    Debug::ft(TestDatabase_Update);
 
-   FunctionGuard guard(FunctionGuard::MakePreemptable);
+   FunctionGuard guard(Guard_MakePreemptable);
 
    //  Find all *.txt files in the input directory.
    //

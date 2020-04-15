@@ -621,7 +621,7 @@ CxxStats::CxxStats(const string& item, size_t bytes) :
 fixed_string ItemHeader =
    "    ITEM TYPE   SIZE    IN USE    OBJECTS    STRINGS    VECTORS      TOTAL";
 // 0         1         2         3         4         5         6         7
-// 0123456789012345678901234567890123456789012345678901234567890123456789012345
+// 012345678901234567890123456789012345678901234567890123456789012345678901234
 
 void CxxStats::Display(ostream& stream)
 {

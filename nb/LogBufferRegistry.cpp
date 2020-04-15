@@ -26,7 +26,10 @@
 #include "Clock.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "LogBuffer.h"
+#include "Memory.h"
+#include "Restart.h"
 
 using std::ostream;
 using std::string;
@@ -175,8 +178,12 @@ void LogBufferRegistry::Startup(RestartLevel level)
 {
    Debug::ft(LogBufferRegistry_Startup);
 
-   //  Allocate a log buffer during each restart.
+   //  Allocate a log buffer during each restart.  When the system is booting,
+   //  don't unprotect immutable memory, because it needs to stay unprotected
+   //  during initialization.
    //
+   FunctionGuard guard(Guard_ImmUnprotect, (level != RestartReboot));
+
    buffer_[size_] = std::unique_ptr< LogBuffer >(new LogBuffer(LogBufferSize));
    ++size_;
 

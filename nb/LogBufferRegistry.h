@@ -66,7 +66,8 @@ public:
    LogBuffer* Access(size_t index) const;
 
    //  Deletes buffer_[INDEX].  Returns false if INDEX is invalid or
-   //  that of the active buffer.
+   //  that of the active buffer.  A FunctionGuard must be used to
+   //  unprotect MemImmutable before invoking this function.
    //
    bool Free(size_t index);
 

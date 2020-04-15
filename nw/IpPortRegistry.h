@@ -22,7 +22,7 @@
 #ifndef IPPORTREGISTRY_H_INCLUDED
 #define IPPORTREGISTRY_H_INCLUDED
 
-#include "Persistent.h"
+#include "Protected.h"
 #include <string>
 #include "NbTypes.h"
 #include "NwTypes.h"
@@ -40,7 +40,7 @@ namespace NetworkBase
 {
 //  Global registry for IP ports that receive messages for applications.
 //
-class IpPortRegistry : public NodeBase::Persistent
+class IpPortRegistry : public NodeBase::Protected
 {
    friend class IpPort;
    friend class NodeBase::Singleton< IpPortRegistry >;
@@ -99,11 +99,11 @@ private:
 
    //  The element's IP address.
    //
-   static SysIpL2Addr HostAddr_;
+   SysIpL2Addr hostAddr_;
 
    //  The element's IP address.
    //
-   static std::string HostAddrStr_;
+   NodeBase::ProtectedStr hostAddrStr_;
 
    //  Configuration parameter for the element's IP address.
    //

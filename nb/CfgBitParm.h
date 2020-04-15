@@ -63,7 +63,7 @@ protected:
    //  Calls SetNextValue based on the value of INPUT, which must
    //  be a character in ValidTrueChars or ValidFalseChars.
    //
-   bool SetNext(const std::string& input) override;
+   bool SetNext(c_string input) override;
 private:
    //  Sets the parameter's next value.  Returns false if VALUE
    //  is invalid.

@@ -551,7 +551,7 @@ word CfgParmsCommand::ProcessCommand(CliThread& cli) const
       parm = reg->FindParm(key);
       if(parm == nullptr) return cli.Report(-2, NoCfgParmExpl);
 
-      if(!parm->SetValue(value, level))
+      if(!parm->SetValue(value.c_str(), level))
       {
          parm->Explain(expl);
          return cli.Report(-3, BadParameterValue + expl);
@@ -1004,6 +1004,21 @@ word ExcludeCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 //
 //  The HEAPS command.
 //
+class HeapsListText : public CliText
+{
+public: HeapsListText();
+};
+
+class HeapsValidateText : public CliText
+{
+public: HeapsValidateText();
+};
+
+class HeapsAction : public CliTextParm
+{
+public: HeapsAction();
+};
+
 class HeapsCommand : public CliCommand
 {
 public:
@@ -1012,11 +1027,35 @@ private:
    word ProcessCommand(CliThread& cli) const override;
 };
 
+fixed_string HeapsListTextStr = "list";
+fixed_string HeapsListTextExpl = "lists all heaps";
+
+HeapsListText::HeapsListText() :
+   CliText(HeapsListTextExpl, HeapsListTextStr) { }
+
+fixed_string HeapsValidateTextStr = "validate";
+fixed_string HeapsValidateTextExpl = "validates all heaps";
+
+HeapsValidateText::HeapsValidateText() :
+   CliText(HeapsValidateTextExpl, HeapsValidateTextStr) { }
+
+const id_t HeapsListIndex = 1;
+const id_t HeapsValidateIndex  = 2;
+
+fixed_string HeapsActionExpl = "subcommand...";
+
+HeapsAction::HeapsAction() : CliTextParm(HeapsActionExpl)
+{
+   BindText(*new HeapsListText, HeapsListIndex);
+   BindText(*new HeapsValidateText, HeapsValidateIndex);
+}
+
 fixed_string HeapsStr = "heaps";
 fixed_string HeapsExpl = "Lists all heaps.";
 
 HeapsCommand::HeapsCommand() : CliCommand(HeapsStr, HeapsExpl)
 {
+   BindParm(*new HeapsAction);
 }
 
 fn_name HeapsCommand_ProcessCommand = "HeapsCommand.ProcessCommand";
@@ -1025,10 +1064,33 @@ word HeapsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(HeapsCommand_ProcessCommand);
 
+   id_t index;
+
+   if(!GetTextIndex(index, cli)) return -1;
    cli.EndOfInput(false);
 
-   SysHeap::DisplayHeaps(*cli.obuf);
-   return 0;
+   switch(index)
+   {
+   case HeapsListIndex:
+      SysHeap::DisplayHeaps(*cli.obuf);
+      return 0;
+
+   case HeapsValidateIndex:
+      *cli.obuf << spaces(2) << "Validating heaps..." << CRLF;
+
+      for(auto m = 1; m < MemoryType_N; ++m)
+      {
+         auto type = MemoryType(m);
+         auto valid = Memory::Validate(type, nullptr);
+         *cli.obuf << setw(13) << MemoryType(m) << ": " << valid << CRLF;
+      }
+
+      return 0;
+
+   default:
+      Debug::SwLog(HeapsCommand_ProcessCommand, UnexpectedIndex, index);
+      return cli.Report(index, SystemErrorExpl);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -1752,9 +1814,14 @@ word LogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    case FreeIndex:
       if(!GetIntParm(id, cli)) return -1;
       cli.EndOfInput(false);
-      if(!Singleton< LogBufferRegistry >::Instance()->Free(id))
+
       {
-         return cli.Report(-1, "That buffer is either active or invalid.");
+         FunctionGuard guard(Guard_ImmUnprotect);
+
+         if(!Singleton< LogBufferRegistry >::Instance()->Free(id))
+         {
+            return cli.Report(-1, "That buffer is either active or invalid.");
+         }
       }
       break;
 
@@ -2446,7 +2513,7 @@ word SaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
 
    auto yield = cli.GenerateReportPreemptably();
-   FunctionGuard guard(FunctionGuard::MakePreemptable, yield);
+   FunctionGuard guard(Guard_MakePreemptable, yield);
 
    rc = Singleton< TraceBuffer >::Instance()->DisplayTrace(stream, opts);
 
@@ -3235,19 +3302,17 @@ void StatusCommand::Patch(sel_t selector, void* arguments)
    CliCommand::Patch(selector, arguments);
 }
 
-fixed_string MemoryHeader1 =
-   "  Alloc                            Bytes        Max     Memory  Heap";
-fixed_string MemoryHeader2 =
-   "  Fails     Allocs      Frees     In Use     In Use       Type  Address";
-// 0         1         2         3         4         5         6         7
-// 01234567890123456789012345678901234567890123456789012345678901234567890
+fixed_string HeapsHeader =
+   " Alloc                            Bytes  Max Bytes        Size      Memory  Mem\n"
+   " Fails     Allocs      Frees     In Use     In Use    In Bytes        Type  Pro";
+// 0         1         2         3         4         5         6         7         
+// 01234567890123456789012345678901234567890123456789012345678901234567890123456789
 
-fixed_string PoolsHeader1 =
-   "  Alloc  Lowest    Curr    Curr";
-fixed_string PoolsHeader2 =
-   "  Fails   Avail   Avail  In Use   Allocs    Frees  Exps   Pool";
-// 0         1         2         3         4         5         6         7
-// 01234567890123456789012345678901234567890123456789012345678901234567890
+fixed_string PoolsHeader =
+   " Alloc  Lowest    Curr    Curr\n"
+   " Fails   Avail   Avail  In Use   Allocs    Frees  Exps   Pool";
+// 0         1         2         3         4         5         6
+// 01234567890123456789012345678901234567890123456789012345678901
 
 fn_name StatusCommand_ProcessCommand = "StatusCommand.ProcessCommand";
 
@@ -3259,8 +3324,7 @@ word StatusCommand::ProcessCommand(CliThread& cli) const
 
    *cli.obuf << "STATUS REPORT: " << Element::strTimePlace() << CRLF;
    *cli.obuf << "MEMORY USAGE" << CRLF;
-   *cli.obuf << MemoryHeader1 << CRLF;
-   *cli.obuf << MemoryHeader2 << CRLF;
+   *cli.obuf << HeapsHeader << CRLF;
 
    for(auto m = 0; m < MemoryType_N; ++m)
    {
@@ -3268,20 +3332,27 @@ word StatusCommand::ProcessCommand(CliThread& cli) const
 
       if(heap != nullptr)
       {
-         *cli.obuf << setw(7) << heap->FailCount();
+         *cli.obuf << setw(6) << heap->FailCount();
          *cli.obuf << setw(11) << heap->AllocCount();
          *cli.obuf << setw(11) << heap->FreeCount();
          *cli.obuf << setw(11) << heap->BytesInUse();
          *cli.obuf << setw(11) << heap->MaxBytesInUse();
-         *cli.obuf << setw(11) << heap->Type();
-         *cli.obuf << setw(NIBBLES_PER_POINTER + 2) << heap->Heap() << CRLF;
+
+         auto size = heap->Size();
+         if(size == 0)
+
+            *cli.obuf << setw(12) << "extensible";
+         else
+            *cli.obuf << setw(12) << size;
+
+         *cli.obuf << setw(12) << heap->Type();
+         *cli.obuf << setw(5) << heap->Protection() << CRLF;
       }
    }
 
    *cli.obuf << CRLF;
    *cli.obuf << "OBJECT POOLS" << CRLF;
-   *cli.obuf << PoolsHeader1 << CRLF;
-   *cli.obuf << PoolsHeader2 << CRLF;
+   *cli.obuf << PoolsHeader << CRLF;
 
    auto& objpools = Singleton< ObjectPoolRegistry >::Instance()->Pools();
 
@@ -3289,7 +3360,7 @@ word StatusCommand::ProcessCommand(CliThread& cli) const
    {
       auto low = p->LowAvailCount();
 
-      *cli.obuf << setw(7) << p->FailCount();
+      *cli.obuf << setw(6) << p->FailCount();
       if(low == LowWatermark::Initial)
          *cli.obuf << setw(8) << '*';
       else
@@ -3628,8 +3699,8 @@ word ThreadsCommand::ProcessCommand(CliThread& cli) const
 //  The TOOLS command.
 //
 fixed_string ToolHeaderStr = "  Tool Name          Abbr  Explanation";
-//                           0         1         2        3         4
-//                           0123456789012345678901345678901234567890
+//                           0         1         2        3         
+//                           012345678901234567890134567890123456789
 
 class ToolsCommand : public CliCommand
 {

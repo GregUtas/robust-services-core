@@ -105,18 +105,6 @@ private:
    //  The global registry of modules.
    //
    Registry< Module > modules_;
-
-   //  The reason for a reinitialization or shutdown.
-   //
-   reinit_t reason_;
-
-   //  An error value for debugging.
-   //
-   debug32_t errval_;
-
-   //  A stream for recording the progress of system initialization.
-   //
-   ostringstreamPtr stream_;
 };
 }
 #endif

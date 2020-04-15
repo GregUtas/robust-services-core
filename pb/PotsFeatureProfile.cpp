@@ -81,7 +81,7 @@ bool PotsFeatureProfile::Deactivate(PotsProfile& profile)
 void PotsFeatureProfile::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Persistent::Display(stream, prefix, options);
+   Protected::Display(stream, prefix, options);
 
    auto ftr = Singleton< PotsFeatureRegistry >::Instance()->Feature(fid_);
 

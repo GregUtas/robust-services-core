@@ -22,7 +22,7 @@
 #ifndef OBJECTPOOLREGISTRY_H_INCLUDED
 #define OBJECTPOOLREGISTRY_H_INCLUDED
 
-#include "Persistent.h"
+#include "Protected.h"
 #include "NbTypes.h"
 #include "Registry.h"
 
@@ -37,7 +37,7 @@ namespace NodeBase
 {
 //  Global registry for object pools.
 //
-class ObjectPoolRegistry : public Persistent
+class ObjectPoolRegistry : public Protected
 {
    friend class Singleton< ObjectPoolRegistry >;
    friend class ObjectPool;
@@ -53,7 +53,7 @@ public:
 
    //  Returns true if full object nullification is enabled.
    //
-   static bool NullifyObjectData() { return NullifyObjectData_; }
+   bool NullifyObjectData() { return *nullifyObjectData_; }
 
    //  Overridden for restarts.
    //
@@ -96,13 +96,13 @@ private:
    //
    Registry< ObjectPool > pools_;
 
+   //  If set, causes an object's data to be nullified after its vptr.
+   //
+   bool* nullifyObjectData_;
+
    //  Configuration parameter for object nullification.
    //
-   CfgBoolParmPtr nullifyObjectData_;
-
-   //  Causes an object's data to be nullified after its vptr.
-   //
-   static bool NullifyObjectData_;
+   CfgBoolParmPtr nullifyObjectDataCfg_;
 
    //  The statistics group for object pools.
    //

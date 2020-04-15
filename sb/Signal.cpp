@@ -96,7 +96,7 @@ CliText* Signal::CreateText() const
 void Signal::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Persistent::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    if(!options.test(DispVerbose)) return;
 
@@ -108,6 +108,6 @@ void Signal::Display(ostream& stream,
 
 void Signal::Patch(sel_t selector, void* arguments)
 {
-   Persistent::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 }

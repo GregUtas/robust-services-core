@@ -41,6 +41,7 @@ class ImmutableHeap : public SysHeap
 private:
    ImmutableHeap();
    ~ImmutableHeap();
+   static size_t GetSize();
 };
 
 class ProtectedHeap : public SysHeap
@@ -49,6 +50,7 @@ class ProtectedHeap : public SysHeap
 private:
    ProtectedHeap();
    ~ProtectedHeap();
+   static size_t GetSize();
 };
 
 class PersistentHeap : public SysHeap
@@ -79,7 +81,7 @@ private:
 
 fn_name ImmutableHeap_ctor = "ImmutableHeap.ctor";
 
-ImmutableHeap::ImmutableHeap() : SysHeap(MemImmutable, 0)
+ImmutableHeap::ImmutableHeap() : SysHeap(MemImmutable, GetSize())
 {
    Debug::ft(ImmutableHeap_ctor);
 }
@@ -95,9 +97,16 @@ ImmutableHeap::~ImmutableHeap()
 
 //------------------------------------------------------------------------------
 
+size_t ImmutableHeap::GetSize()
+{
+   return 0x40000;  //* to be implemented
+}
+
+//------------------------------------------------------------------------------
+
 fn_name ProtectedHeap_ctor = "ProtectedHeap.ctor";
 
-ProtectedHeap::ProtectedHeap() : SysHeap(MemProtected, 0)
+ProtectedHeap::ProtectedHeap() : SysHeap(MemProtected, GetSize())
 {
    Debug::ft(ProtectedHeap_ctor);
 }
@@ -109,6 +118,13 @@ fn_name ProtectedHeap_dtor = "ProtectedHeap.dtor";
 ProtectedHeap::~ProtectedHeap()
 {
    Debug::ft(ProtectedHeap_dtor);
+}
+
+//------------------------------------------------------------------------------
+
+size_t ProtectedHeap::GetSize()
+{
+   return 0x100000;  //* to be implemented
 }
 
 //------------------------------------------------------------------------------
@@ -173,15 +189,9 @@ struct SegmentHeader
 {
    size_t size;      // size of data (see below)
    MemoryType type;  // type of memory
-
-   static size_t Size();
 };
 
-size_t SegmentHeader::Size()
-{
-   static size_t size = Memory::Align(sizeof(SegmentHeader));
-   return size;
-}
+constexpr size_t SegmentHeaderSize = sizeof(SegmentHeader);
 
 //  This struct references a memory segment's header and the location
 //  where the client's data begins.
@@ -207,6 +217,21 @@ SysHeap* Memory::AccessHeap(MemoryType type)
    }
 
    return nullptr;
+}
+
+//------------------------------------------------------------------------------
+
+MemoryType Memory::AddrToType(const void* addr)
+{
+   for(auto m = 1; m < MemoryType_N; ++m)
+   {
+      auto type = MemoryType(m);
+      auto heap = AccessHeap(type);
+      if(heap == nullptr) continue;
+      if(heap->Addr() == addr) return type;
+   }
+
+   return MemNull;
 }
 
 //------------------------------------------------------------------------------
@@ -241,11 +266,11 @@ void* Memory::Alloc(size_t nBytes, MemoryType type, bool ex)
    //  the heap to allocate it.
    //
    auto size = Align(nBytes);
-   auto addr = heap->Alloc(SegmentHeader::Size() + size);
+   auto addr = heap->Alloc(SegmentHeaderSize + size);
    if(addr == nullptr)
    {
       if(!ex) return nullptr;
-      throw AllocationException(type, SegmentHeader::Size() + size);
+      throw AllocationException(type, SegmentHeaderSize + size);
    }
 
    //  Success.  Record the size of the segment (excluding its header)
@@ -310,7 +335,7 @@ void Memory::Free(const void* addr)
    //
    if(addr == nullptr) return;
 
-   auto segment = (Segment*) getptr1(addr, SegmentHeader::Size());
+   auto segment = (Segment*) getptr1(addr, SegmentHeaderSize);
    auto header = &segment->header;
    auto heap = AccessHeap(header->type);
 
@@ -334,7 +359,7 @@ void Memory::Free(const void* addr)
       }
    }
 
-   heap->Free(segment, SegmentHeader::Size() + header->size);
+   heap->Free(segment, SegmentHeaderSize + header->size);
 }
 
 //------------------------------------------------------------------------------
@@ -346,11 +371,23 @@ const SysHeap* Memory::Heap(MemoryType type)
 
 //------------------------------------------------------------------------------
 
+fn_name Memory_Protect = "Memory.Protect";
+
 bool Memory::Protect(MemoryType type)
 {
-   //* to be implemented
+   switch(type)
+   {
+   case MemProtected:
+   case MemImmutable:
+      break;
+   default:
+      Debug::SwLog(Memory_Protect, "invalid memory type", type);
+      return false;
+   }
 
-   return false;
+   auto heap = AccessHeap(type);
+   if(heap == nullptr) return false;
+   return heap->SetPermissions(MemReadOnly);
 }
 
 //------------------------------------------------------------------------------
@@ -372,7 +409,7 @@ void* Memory::Realloc(void* addr, size_t nBytes)
       return nullptr;
    }
 
-   auto source = (Segment*) getptr1(addr, SegmentHeader::Size());
+   auto source = (Segment*) getptr1(addr, SegmentHeaderSize);
    if(source->header.size >= Align(nBytes)) return addr;
 
    auto dest = Alloc(nBytes, source->header.type);
@@ -402,10 +439,14 @@ void Memory::Shutdown(RestartLevel level)
    Debug::ft(Memory_Shutdown);
 
    if(level < RestartWarm) return;
+
    Singleton< TemporaryHeap >::Destroy();
    if(level < RestartCold) return;
+
    Singleton< DynamicHeap >::Destroy();
    if(level < RestartReload) return;
+
+   Unprotect(MemProtected);
    Singleton< PersistentHeap >::Destroy();
    Singleton< ProtectedHeap >::Destroy();
 }
@@ -424,7 +465,7 @@ MemoryType Memory::Type(const void* addr)
       return MemNull;
    }
 
-   auto source = (Segment*) getptr1(addr, SegmentHeader::Size());
+   auto source = (Segment*) getptr1(addr, SegmentHeaderSize);
    return source->header.type;
 }
 
@@ -432,21 +473,31 @@ MemoryType Memory::Type(const void* addr)
 
 bool Memory::Unprotect(MemoryType type)
 {
-   //* to be implemented
+   switch(type)
+   {
+   case MemProtected:
+   case MemImmutable:
+      break;
+   default:
+      Debug::SwLog(Memory_Protect, "invalid memory type", type);
+      return true;
+   }
 
-   return false;
+   auto heap = AccessHeap(type);
+   if(heap == nullptr) return false;
+   return heap->SetPermissions(MemReadWrite);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Memory_Verify = "Memory.Verify";
+fn_name Memory_Validate = "Memory.Validate";
 
-bool Memory::Verify(MemoryType type, const void* addr)
+bool Memory::Validate(MemoryType type, const void* addr)
 {
-   Debug::ft(Memory_Verify);
+   Debug::ft(Memory_Validate);
 
    auto heap = AccessHeap(type);
-   if(heap == nullptr) return true;
+   if(heap == nullptr) return false;
    return heap->Validate(addr);
 }
 

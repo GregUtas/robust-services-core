@@ -33,10 +33,9 @@ namespace NodeBase
 fn_name CfgStrParm_ctor = "CfgStrParm.ctor";
 
 CfgStrParm::CfgStrParm
-   (c_string key, c_string def, string* field, c_string expl) :
+   (c_string key, c_string def, ProtectedStr* field, c_string expl) :
    CfgParm(key, def, expl),
-   curr_(field),
-   next_(EMPTY_STR)
+   curr_(field)
 {
    Debug::ft(CfgStrParm_ctor);
 }
@@ -93,7 +92,7 @@ void CfgStrParm::SetCurr()
 
 fn_name CfgStrParm_SetNext = "CfgStrParm.SetNext";
 
-bool CfgStrParm::SetNext(const string& input)
+bool CfgStrParm::SetNext(c_string input)
 {
    Debug::ft(CfgStrParm_SetNext);
 

@@ -22,7 +22,7 @@
 #ifndef SIGNAL_H_INCLUDED
 #define SIGNAL_H_INCLUDED
 
-#include "Persistent.h"
+#include "Immutable.h"
 #include <cstddef>
 #include "RegCell.h"
 #include "SbTypes.h"
@@ -41,7 +41,7 @@ namespace SessionBase
 //  of parameters that may be present in its message. Each protocol defines
 //  a singleton Signal subclass for each of its signals.
 //
-class Signal : public NodeBase::Persistent
+class Signal : public NodeBase::Immutable
 {
    friend class NodeBase::Registry< Signal >;
 public:

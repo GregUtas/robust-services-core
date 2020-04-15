@@ -30,6 +30,7 @@
 #include "Debug.h"
 #include "Element.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "LogBuffer.h"
 #include "LogBufferRegistry.h"
 #include "LogGroup.h"
@@ -46,27 +47,52 @@ using std::string;
 
 namespace NodeBase
 {
+//  Data that changes too frequently to unprotect and reprotect memory
+//  when it needs to be modified.
+//
+struct LogDynamic
+{
+   //  Initializes members.
+   //
+   LogDynamic() : interval_(1), sequence_(1) { }
+
+   //  Determines whether the log should be suppressed or throttled.
+   //  o 0: don't output the log
+   //  o 1: output each log
+   //  o n: output every nth log and suppress the others
+   //
+   uint16_t interval_;
+
+   //  Counts occurrences of the log when interval_ is greater than 1.
+   //
+   uint16_t sequence_;
+};
+
+//------------------------------------------------------------------------------
+//
+//  Incremented when a log is created; assigned to it as a sequence number.
+//
+std::atomic_size_t SeqNo_ = 0;
+
+//==============================================================================
+
 const size_t Log::MaxExplSize = 48;
 const col_t Log::Indent = 4;
 const string Log::Tab = spaces(Log::Indent);
-std::atomic_size_t Log::SeqNo_ = 0;
-
-//------------------------------------------------------------------------------
 
 fn_name Log_ctor = "Log.ctor";
 
 Log::Log(LogGroup* group, LogId id, fixed_string expl) :
    group_(group),
    id_(id),
-   expl_(expl),
-   interval_(1),
-   sequence_(1)
+   expl_(expl)
 {
    Debug::ft(Log_ctor);
 
    //  Register the log after creating its statistics and checking
    //  that its identifier is valid and that EXPL isn't too long.
    //
+   dyn_.reset(new LogDynamic);
    bufferCount_.reset(new Counter("buffered"));
    suppressCount_.reset(new Counter("suppressed"));
    discardCount_.reset(new Counter("discarded"));
@@ -106,6 +132,13 @@ ptrdiff_t Log::CellDiff()
 
 //------------------------------------------------------------------------------
 
+size_t Log::Count()
+{
+   return SeqNo_;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Log_Create1 = "Log.Create";
 
 ostringstreamPtr Log::Create(fixed_string groupName, LogId id)
@@ -122,11 +155,11 @@ ostringstreamPtr Log::Create(fixed_string groupName, LogId id)
    //
    if(group->Suppressed()) return log->Suppressed();
 
-   if(log->interval_ != 1)
+   if(log->dyn_->interval_ != 1)
    {
-      if(log->interval_ == 0) return log->Suppressed();
-      if(--log->sequence_ > 0) return log->Suppressed();
-      log->sequence_ = log->interval_;
+      if(log->dyn_->interval_ == 0) return log->Suppressed();
+      if(--log->dyn_->sequence_ > 0) return log->Suppressed();
+      log->dyn_->sequence_ = log->dyn_->interval_;
    }
 
    return log->Format(NoAlarm);
@@ -174,7 +207,7 @@ void Log::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
    stream << prefix << group_->Name() << id_ << " (" << expl_ << ')';
-   if(interval_ != 1) stream << " [INTERVAL=" << interval_ << ']';
+   if(dyn_->interval_ != 1) stream << " [INTERVAL=" << dyn_->interval_ << ']';
    stream << CRLF;
 }
 
@@ -275,7 +308,7 @@ ostringstreamPtr Log::Format(AlarmStatus status) const
 
 void Log::Patch(sel_t selector, void* arguments)
 {
-   Dynamic::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------
@@ -286,8 +319,8 @@ void Log::SetInterval(uint8_t interval)
 {
    Debug::ft(Log_SetInterval);
 
-   interval_ = interval;
-   sequence_ = interval;
+   dyn_->interval_ = interval;
+   dyn_->sequence_ = interval;
 }
 
 //------------------------------------------------------------------------------
@@ -298,11 +331,34 @@ void Log::Shutdown(RestartLevel level)
 {
    Debug::ft(Log_Shutdown);
 
-   //  A log survives a warm restart but should not continue to be throttled
-   //  or suppressed.
+   //  Do not suppress or throttle a log after a restart.
    //
-   interval_ = 1;
-   sequence_ = 1;
+   new (dyn_.get()) LogDynamic();
+
+   if(level >= RestartCold)
+   {
+      FunctionGuard guard(Guard_ImmUnprotect);
+      bufferCount_.release();
+      suppressCount_.release();
+      discardCount_.release();
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Log_Startup = "Log.Startup";
+
+void Log::Startup(RestartLevel level)
+{
+   Debug::ft(Log_Startup);
+
+   if((level >= RestartCold) && (level < RestartReboot))
+   {
+      FunctionGuard guard(Guard_ImmUnprotect);
+      bufferCount_.reset(new Counter("buffered"));
+      suppressCount_.reset(new Counter("suppressed"));
+      discardCount_.reset(new Counter("discarded"));
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -324,7 +380,12 @@ void Log::Submit(ostringstreamPtr& stream)
    if(Restart::GetStatus() != Running)
    {
       LogThread::Spool(stream);
-      if(log != nullptr) log->bufferCount_->Incr();
+
+      if((log != nullptr) && (log->bufferCount_ != nullptr))
+      {
+         log->bufferCount_->Incr();
+      }
+
       return;
    }
 

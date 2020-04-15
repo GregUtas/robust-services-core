@@ -79,7 +79,7 @@ CfgParm::~CfgParm()
 void CfgParm::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Persistent::Display(stream, prefix, options);
+   Protected::Display(stream, prefix, options);
 
    stream << prefix << "tuple : ";
 
@@ -126,7 +126,7 @@ string CfgParm::GetInput() const
 
 c_string CfgParm::Key() const
 {
-   return tuple_->Key().c_str();
+   return tuple_->Key();
 }
 
 //------------------------------------------------------------------------------
@@ -142,7 +142,7 @@ ptrdiff_t CfgParm::LinkDiff()
 
 void CfgParm::Patch(sel_t selector, void* arguments)
 {
-   Persistent::Patch(selector, arguments);
+   Protected::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------
@@ -154,7 +154,7 @@ void CfgParm::SetCurr()
    Debug::ft(CfgParm_SetCurr);
 
    auto input = GetInput();
-   tuple_->SetInput(input);
+   tuple_->SetInput(input.c_str());
    level_ = RestartNil;
 }
 
@@ -191,7 +191,7 @@ bool CfgParm::SetFromTuple()
 
 fn_name CfgParm_SetNext = "CfgParm.SetNext";
 
-bool CfgParm::SetNext(const string& input)
+bool CfgParm::SetNext(c_string input)
 {
    Debug::ft(CfgParm_SetNext);
 
@@ -203,7 +203,7 @@ bool CfgParm::SetNext(const string& input)
 
 fn_name CfgParm_SetValue = "CfgParm.SetValue";
 
-bool CfgParm::SetValue(const string& input, RestartLevel& level)
+bool CfgParm::SetValue(c_string input, RestartLevel& level)
 {
    Debug::ft(CfgParm_SetValue);
 

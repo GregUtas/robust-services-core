@@ -27,6 +27,7 @@
 #include <string>
 #include "NbTypes.h"
 #include "Q1Link.h"
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -107,7 +108,7 @@ public:
 private:
    //  The name of the parameter associated with the tuple.
    //
-   ProtectedStr key_;
+   const ProtectedStr key_;
 
    //  The string used to set the parameter's value.
    //

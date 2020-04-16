@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Log.h"
+#include <atomic>
 #include <bitset>
 #include <cctype>
 #include <ios>

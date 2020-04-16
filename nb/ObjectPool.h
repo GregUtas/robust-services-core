@@ -28,7 +28,6 @@
 #include <iosfwd>
 #include <string>
 #include "NbTypes.h"
-#include "Q1Way.h"
 #include "RegCell.h"
 #include "SysTypes.h"
 

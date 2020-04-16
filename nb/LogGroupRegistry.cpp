@@ -205,26 +205,6 @@ void LogGroupRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name LogGroupRegistry_Startup = "LogGroupRegistry.Startup";
-
-void LogGroupRegistry::Startup(RestartLevel level)
-{
-   Debug::ft(LogGroupRegistry_Startup);
-
-   if(statsGroup_ == nullptr)
-   {
-      FunctionGuard guard(Guard_ImmUnprotect);
-      statsGroup_.reset(new LogStatsGroup);
-   }
-
-   for(auto g = groups_.First(); g != nullptr; groups_.Next(g))
-   {
-      g->Startup(level);
-   }
-}
-
-//------------------------------------------------------------------------------
-
 fn_name LogGroupRegistry_Shutdown = "LogGroupRegistry.Shutdown";
 
 void LogGroupRegistry::Shutdown(RestartLevel level)
@@ -240,6 +220,26 @@ void LogGroupRegistry::Shutdown(RestartLevel level)
    {
       FunctionGuard guard(Guard_ImmUnprotect);
       statsGroup_.release();
+   }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name LogGroupRegistry_Startup = "LogGroupRegistry.Startup";
+
+void LogGroupRegistry::Startup(RestartLevel level)
+{
+   Debug::ft(LogGroupRegistry_Startup);
+
+   if(statsGroup_ == nullptr)
+   {
+      FunctionGuard guard(Guard_ImmUnprotect);
+      statsGroup_.reset(new LogStatsGroup);
+   }
+
+   for(auto g = groups_.First(); g != nullptr; groups_.Next(g))
+   {
+      g->Startup(level);
    }
 }
 

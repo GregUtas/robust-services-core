@@ -47,9 +47,7 @@ SysHeap::SysHeap(MemoryType type, size_t size) :
    allocs_(0),
    fails_(0),
    frees_(0),
-   maxInUse_(0),
-   lastAddr_(nullptr),
-   lastSize_(0)
+   maxInUse_(0)
 {
    Debug::ft(SysHeap_ctor);
 
@@ -131,8 +129,6 @@ void* SysHeap::Alloc(size_t size)
       inUse_ += size;
       if(inUse_ > maxInUse_) maxInUse_ = inUse_;
       ++allocs_;
-      lastAddr_ = addr;
-      lastSize_ = size;
    }
    else
    {
@@ -231,7 +227,7 @@ void SysHeap::DisplayHeaps(ostream& stream)
          if(type != MemNull)
             stream << setw(12) << type;
          else
-            stream << setw(12) << "unknown";   
+            stream << setw(12) << "unknown";
 
          stream << setw(NIBBLES_PER_POINTER + 2) << aHeaps[HeapsIndex] << CRLF;
       }
@@ -284,7 +280,7 @@ void SysHeap::Patch(sel_t selector, void* arguments)
 
 fn_name SysHeap_Validate = "SysHeap.Validate";
 
-bool SysHeap::Validate(const void* addr)
+bool SysHeap::Validate(const void* addr) const
 {
    Debug::ft(SysHeap_Validate);
 

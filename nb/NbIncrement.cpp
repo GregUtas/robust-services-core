@@ -1113,7 +1113,6 @@ public:
    HelpCommand();
 private:
    word ProcessCommand(CliThread& cli) const override;
-   static word DisplayHelp(const CliThread& cli, const string& key);
 };
 
 fixed_string HelpIncrExpl = "name of increment";
@@ -1154,7 +1153,7 @@ HelpCommand::HelpCommand() : CliCommand(HelpStr, HelpExpl)
    BindParm(*new HelpFullParm);
 }
 
-word HelpCommand::DisplayHelp(const CliThread& cli, const string& key)
+word DisplayHelp(const CliThread& cli, const string& key)
 {
    auto path = Element::HelpPath() + PATH_SEPARATOR + "cli.txt";
    auto rc = cli.DisplayHelp(path, key);
@@ -1814,7 +1813,6 @@ word LogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    case FreeIndex:
       if(!GetIntParm(id, cli)) return -1;
       cli.EndOfInput(false);
-
       {
          FunctionGuard guard(Guard_ImmUnprotect);
 
@@ -3303,10 +3301,10 @@ void StatusCommand::Patch(sel_t selector, void* arguments)
 }
 
 fixed_string HeapsHeader =
-   " Alloc                            Bytes  Max Bytes        Size      Memory  Mem\n"
-   " Fails     Allocs      Frees     In Use     In Use    In Bytes        Type  Pro";
-// 0         1         2         3         4         5         6         7         
-// 01234567890123456789012345678901234567890123456789012345678901234567890123456789
+" Alloc                            Bytes  Max Bytes        Size      Memory  Mem\n"
+" Fails     Allocs      Frees     In Use     In Use    In Bytes        Type  Pro";
+//        1         2         3         4         5         6         7
+//234567890123456789012345678901234567890123456789012345678901234567890123456789
 
 fixed_string PoolsHeader =
    " Alloc  Lowest    Curr    Curr\n"
@@ -3699,7 +3697,7 @@ word ThreadsCommand::ProcessCommand(CliThread& cli) const
 //  The TOOLS command.
 //
 fixed_string ToolHeaderStr = "  Tool Name          Abbr  Explanation";
-//                           0         1         2        3         
+//                           0         1         2        3
 //                           012345678901234567890134567890123456789
 
 class ToolsCommand : public CliCommand

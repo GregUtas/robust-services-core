@@ -103,7 +103,8 @@ void Element::Display(ostream& stream,
    stream << prefix << "OutputPath      : " << OutputPath() << CRLF;
    stream << prefix << "ConsoleFileName : " << ConsoleFileName() << CRLF;
    stream << prefix << "nameCfg         : " << strObj(nameCfg_.get()) << CRLF;
-   stream << prefix << "runningInLabCfg : " << strObj(runningInLabCfg_.get()) << CRLF;
+   stream << prefix << "runningInLabCfg : "
+      << strObj(runningInLabCfg_.get()) << CRLF;
 }
 
 //------------------------------------------------------------------------------

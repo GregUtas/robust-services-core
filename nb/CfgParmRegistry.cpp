@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "CfgParmRegistry.h"
+#include <cstddef>
 #include <cstdio>
 #include <cstring>
 #include <istream>
@@ -58,6 +59,26 @@ fixed_string BackFromExePath_ = "rsc/";
 fixed_string AppendToExePath_ = "input/element.config.txt";
 
 //------------------------------------------------------------------------------
+//
+//  Called by LoadNextTuple to flag invalid entries in ConfigFileName.
+//  ID identifies the problem, and INPUT is the invalid entry.
+//
+fn_name NodeBase_BadLine = "NodeBase.BadLine";
+
+void BadLine(LogId id, const string& input)
+{
+   Debug::ft(NodeBase_BadLine);
+
+   auto log = Log::Create(ConfigLogGroup, id);
+
+   if(log != nullptr)
+   {
+      *log << Log::Tab << "errval=" << input << " line=" << CurrLine_;
+      Log::Submit(log);
+   }
+}
+
+//==============================================================================
 
 fn_name CfgParmRegistry_ctor = "CfgParmRegistry.ctor";
 
@@ -109,23 +130,6 @@ void CfgParmRegistry::AddMainArg(const string& arg)
 
       configFileName_.erase(pos);
       configFileName_.append(AppendToExePath_);
-   }
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CfgParmRegistry_BadLine = "CfgParmRegistry.BadLine";
-
-void CfgParmRegistry::BadLine(LogId id, const string& input) const
-{
-   Debug::ft(CfgParmRegistry_BadLine);
-
-   auto log = Log::Create(ConfigLogGroup, id);
-
-   if(log != nullptr)
-   {
-      *log << Log::Tab << "errval=" << input << " line=" << CurrLine_;
-      Log::Submit(log);
    }
 }
 

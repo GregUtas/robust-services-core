@@ -36,40 +36,32 @@ namespace NodeBase
 {
 //  Memory management.
 //
-class Memory
+namespace Memory
 {
-   friend class FunctionGuard;
-   friend class ModuleRegistry;
-   friend class Thread;
-public:
-   //  Deleted because this class only has static members.
-   //
-   Memory() = delete;
-
    //  Rounds up SIZE bytes to a multiple of LOG2ALIGN bytes.
    //
-   static size_t Align(size_t size, size_t log2align = BYTES_PER_WORD_LOG2);
+   size_t Align(size_t size, size_t log2align = BYTES_PER_WORD_LOG2);
 
    //  Rounds up nBytes to a word multiple.  The result is in words.
    //
-   static size_t Words(size_t nBytes);
+   size_t Words(size_t nBytes);
 
    //  Copies nBytes of memory, starting at SOURCE, to DEST.
    //
-   static void Copy(void* dest, const void* source, size_t nBytes);
+   void Copy(void* dest, const void* source, size_t nBytes);
 
    //  Initializes nBytes of memory to VALUE, starting at DEST.
    //
-   static void Set(void* dest, byte_t value, size_t nBytes);
+   void Set(void* dest, byte_t value, size_t nBytes);
 
    //  Allocates a memory segment of nBytes of the specified TYPE.  If
    //  EX is true, an AllocationException is thrown on failure.
    //
-   static void* Alloc(size_t nBytes, MemoryType type, bool ex = true);
+   void* Alloc(size_t nBytes, MemoryType type, bool ex = true);
 
    //  Deallocates the memory segment returned by Alloc.
    //
-   static void Free(const void* addr);
+   void Free(const void* addr);
 
    //  Extends the segment at ADDR so that it can hold nBytes.  If there
    //  is insufficient space for the additional bytes, a new segment of
@@ -78,45 +70,37 @@ public:
    //  extension succeeds, nullptr if extension fails, or another value
    //  if a new segment was allocated.
    //
-   static void* Realloc(void* addr, size_t nBytes);
+   void* Realloc(void* addr, size_t nBytes);
+
+   //  Returns the heap (if any) associated with TYPE.
+   //
+   const SysHeap* Heap(MemoryType type);
+
+   //  Protects the heap for TYPE.
+   //
+   bool Protect(MemoryType type);
+
+   //  Unprotects the heap for TYPE.
+   //
+   bool Unprotect(MemoryType type);
+
+   //  Returns the type of memory used by the object located at ADDR.
+   //
+   MemoryType Type(const void* addr);
 
    //  Validates ADDR, which should be of TYPE.  If ADDR is nullptr, the
    //  entire heap for TYPE is validated.
    //
-   static bool Validate(MemoryType type, const void* addr);
-
-   //  Returns the type of memory used by the object located at ADDR.
-   //
-   static MemoryType Type(const void* addr);
-
-   //  Returns the heap (if any) associated with TYPE.
-   //
-   static const SysHeap* Heap(MemoryType type);
+   bool Validate(MemoryType type, const void* addr);
 
    //  Returns the type of memory associated with the heap at ADDR.
    //  Returns MemNull if no heap begins at ADDR.
    //
-   static MemoryType AddrToType(const void* addr);
+   MemoryType AddrToType(const void* addr);
 
    //  Frees the appropriate heap(s) during a restart.
    //
-   static void Shutdown(RestartLevel level);
-private:
-   //  Protects the heap for TYPE.
-   //
-   static bool Protect(MemoryType type);
-
-   //  Unprotects the heap for TYPE.
-   //
-   static bool Unprotect(MemoryType type);
-
-   //  Returns the heap for TYPE.  If it doesn't exist, it is created.
-   //
-   static SysHeap* EnsureHeap(MemoryType type);
-
-   //  Returns the heap (if any) associated with TYPE.
-   //
-   static SysHeap* AccessHeap(MemoryType type);
-};
+   void Shutdown(RestartLevel level);
+}
 }
 #endif

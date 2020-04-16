@@ -53,7 +53,7 @@ public:
 
    //  Returns true if full object nullification is enabled.
    //
-   bool NullifyObjectData() { return *nullifyObjectData_; }
+   bool NullifyObjectData() const { return *nullifyObjectData_; }
 
    //  Overridden for restarts.
    //

@@ -127,11 +127,11 @@ private:
 
    //  The group's name.
    //
-   ImmutableStr name_;
+   const ImmutableStr name_;
 
    //  The group's explanation.
    //
-   ImmutableStr expl_;
+   const ImmutableStr expl_;
 
    //  Set if all logs in the group are to be suppressed.
    //

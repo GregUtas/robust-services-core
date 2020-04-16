@@ -36,7 +36,6 @@ namespace NodeBase
 //
 class SysHeap : public Permanent
 {
-   friend class Memory;
 public:
    //  Virtual to allow subclassing.
    //
@@ -58,7 +57,12 @@ public:
    //  Validates the heap.  If ADDR is not nullptr, only the memory
    //  segment alleged to be at ADDR is validated.
    //
-   bool Validate(const void* addr);
+   bool Validate(const void* addr) const;
+
+   //  Applies ATTRS to the heap.  The heap must have been
+   //  constructed with a fixed size.
+   //
+   bool SetPermissions(MemoryProtection attrs);
 
    //  Returns the type of memory that the heap manages.
    //
@@ -100,10 +104,6 @@ public:
    //
    bool IsFixedSize() const;
 
-   //  Returns true if the heap is protected.
-   //
-   bool IsProtected() const;
-
    //  Displays all heaps allocated by this process.
    //
    static void DisplayHeaps(std::ostream& stream);
@@ -139,11 +139,6 @@ protected:
    //
    SysHeap(MemoryType type, size_t size);
 private:
-   //  Applies ATTRS to the heap.  The heap must have been
-   //  constructed with a fixed size.
-   //
-   bool SetPermissions(MemoryProtection attrs);
-
    //  The type of memory provided by the heap.
    //
    const MemoryType type_;
@@ -154,7 +149,7 @@ private:
 
    //  The size of the heap.
    //
-   size_t size_;
+   const size_t size_;
 
    //  The heap's current memory protection attributes.
    //
@@ -179,14 +174,6 @@ private:
    //  The maximum number of bytes allocated on the heap.
    //
    size_t maxInUse_;
-
-   //  The address of the most recently allocated segment.
-   //
-   void* lastAddr_;
-
-   //  The size of the most recently allocated segment.
-   //
-   size_t lastSize_;
 };
 }
 #endif

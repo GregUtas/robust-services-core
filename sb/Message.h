@@ -26,6 +26,7 @@
 #include <cstddef>
 #include <cstdint>
 #include "NbTypes.h"
+#include "Q1Link.h"
 #include "SbIpBuffer.h"
 #include "SbTypes.h"
 #include "SysTypes.h"

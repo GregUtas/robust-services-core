@@ -21,6 +21,7 @@
 //
 #include "FunctionGuard.h"
 #include "Debug.h"
+#include "Memory.h"
 #include "SysTypes.h"
 #include "ThisThread.h"
 

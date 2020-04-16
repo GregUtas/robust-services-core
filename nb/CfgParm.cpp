@@ -27,8 +27,10 @@
 #include "CfgTuple.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "Log.h"
 #include "NbLogs.h"
+#include "Restart.h"
 #include "Singleton.h"
 
 using std::ostream;
@@ -153,6 +155,7 @@ void CfgParm::SetCurr()
 {
    Debug::ft(CfgParm_SetCurr);
 
+   FunctionGuard guard(Guard_MemUnprotect, Restart::GetLevel() < RestartReboot);
    auto input = GetInput();
    tuple_->SetInput(input.c_str());
    level_ = RestartNil;

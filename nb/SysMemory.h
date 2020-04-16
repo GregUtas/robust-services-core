@@ -23,7 +23,6 @@
 #define SYSMEMORY_H_INCLUDED
 
 #include <cstddef>
-#include <iosfwd>
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------

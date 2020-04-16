@@ -24,6 +24,8 @@
 #include <ostream>
 #include <string>
 #include "Debug.h"
+#include "FunctionGuard.h"
+#include "Restart.h"
 
 using std::ostream;
 using std::string;
@@ -87,6 +89,7 @@ void CfgFlagParm::SetCurr()
 {
    Debug::ft(CfgFlagParm_SetCurr);
 
+   FunctionGuard guard(Guard_MemUnprotect, Restart::GetLevel() < RestartReboot);
    curr_->set(fid_, next_);
    CfgBitParm::SetCurr();
 }
@@ -99,6 +102,7 @@ bool CfgFlagParm::SetNextValue(bool value)
 {
    Debug::ft(CfgFlagParm_SetNextValue);
 
+   FunctionGuard guard(Guard_MemUnprotect, Restart::GetLevel() < RestartReboot);
    next_ = value;
    return true;
 }

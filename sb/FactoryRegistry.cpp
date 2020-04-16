@@ -193,7 +193,7 @@ void FactoryRegistry::Startup(RestartLevel level)
 
    if(statsGroup_ == nullptr)
    {
-      FunctionGuard guard(Guard_ImmUnprotect, (level < RestartReboot));
+      FunctionGuard guard(Guard_ImmUnprotect, level < RestartReboot);
       statsGroup_.reset(new FactoryStatsGroup);
    }
 

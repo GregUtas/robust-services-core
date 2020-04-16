@@ -526,7 +526,7 @@ struct FixOptions
 enum LineType
 {
    SourceCode,            // source code
-   Blank,                 // blank lines
+   BlankLine,             // blank lines
    EmptyComment,          // //
    FileComment,           // comment at top of file, before any code
    SeparatorComment,      // //# (# = repeated -, =, or /)
@@ -539,7 +539,6 @@ enum LineType
    AccessControl,         // public: protected: private:
    DebugFt,               // Debug::ft(Class_Func);
    FunctionName,          // fn_name Class_Func = "Class.Func";
-   FunctionNameSplit,     // fn_name Class_Func =\n "Class.Func";
    IncludeDirective,      // #include
    HashDirective,         // #ifndef #define #endif et al
    UsingStatement,        // using directive or declaration

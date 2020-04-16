@@ -23,7 +23,6 @@
 #define CFGPARMREGISTRY_H_INCLUDED
 
 #include "Protected.h"
-#include <cstddef>
 #include <iosfwd>
 #include <string>
 #include <vector>
@@ -130,11 +129,6 @@ private:
    //  invalid entries, but continues to look for tuples.
    //
    bool LoadNextTuple(std::string& key, std::string& value);
-
-   //  Called by LoadNextTuple to flag invalid entries in ConfigFileName.
-   //  ID identifies the problem, and INPUT is the invalid entry.
-   //
-   void BadLine(LogId id, const std::string& input) const;
 
    //  Type for a dynamically allocated vector that holds dynamically
    //  allocated strings.

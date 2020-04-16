@@ -24,6 +24,8 @@
 #include <sstream>
 #include <string>
 #include "Debug.h"
+#include "FunctionGuard.h"
+#include "Restart.h"
 
 using std::ostream;
 using std::string;
@@ -105,6 +107,7 @@ void CfgIntParm::SetCurr()
 {
    Debug::ft(CfgIntParm_SetCurr);
 
+   FunctionGuard guard(Guard_MemUnprotect, Restart::GetLevel() < RestartReboot);
    *curr_ = next_;
    CfgParm::SetCurr();
 }
@@ -132,6 +135,8 @@ fn_name CfgIntParm_SetNextValue = "CfgIntParm.SetNextValue";
 bool CfgIntParm::SetNextValue(word value)
 {
    Debug::ft(CfgIntParm_SetNextValue);
+
+   FunctionGuard guard(Guard_MemUnprotect, Restart::GetLevel() < RestartReboot);
 
    if((value >= min_) && (value <= max_))
    {

@@ -22,6 +22,7 @@
 #include "Object.h"
 #include <ostream>
 #include <string>
+#include "AllocationException.h"
 #include "Class.h"
 #include "ClassRegistry.h"
 #include "Debug.h"

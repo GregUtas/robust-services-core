@@ -24,7 +24,6 @@
 
 #include "Immutable.h"
 #include <cstddef>
-#include <string>
 #include "Clock.h"
 #include "NbTypes.h"
 #include "RegCell.h"
@@ -115,11 +114,11 @@ private:
 
    //  The alarm's name.
    //
-   ImmutableStr name_;
+   const ImmutableStr name_;
 
    //  The string that explains the alarm.
    //
-   ImmutableStr expl_;
+   const ImmutableStr expl_;
 
    //  The delay when downgrading the alarm.
    //

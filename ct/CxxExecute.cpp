@@ -1259,6 +1259,11 @@ void StackArg::AssignedTo(const StackArg& that, AssignmentType type) const
 {
    Debug::ft(StackArg_AssignedTo);
 
+   //  The scenarios are
+   //  o Copied     that = this   already invoked THAT.WasWritten
+   //  o Passed     this(that)    THAT is an Argument type
+   //  o Returned   return this   THAT is a Function return type
+   //
    if(that.const_) return;
    if(this->item == nullptr) return;
    if(that.item == nullptr) return;
@@ -1267,7 +1272,7 @@ void StackArg::AssignedTo(const StackArg& that, AssignmentType type) const
    auto thatPtrs = that.Ptrs(true);
    auto thatRefs = that.Refs();
 
-   if((type == Returned) && member_ && !that.const_)
+   if((type == Returned) && member_)
    {
       if((thatRefs > 0) || (thatPtrs > thisPtrs))
       {

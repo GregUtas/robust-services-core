@@ -86,10 +86,6 @@ private:
    //
    static RestartLevel NextLevel();
 
-   //  Determines the restart level when the system is in service.
-   //
-   RestartLevel CalcLevel() const;
-
    //  Overridden to start up all modules.
    //
    void Startup(RestartLevel level) override;
@@ -97,10 +93,6 @@ private:
    //  Overridden to shut down all modules.
    //
    void Shutdown(RestartLevel level) override;
-
-   //  Returns stream_, creating it if it doesn't exist.
-   //
-   std::ostringstream* Stream();
 
    //  The global registry of modules.
    //

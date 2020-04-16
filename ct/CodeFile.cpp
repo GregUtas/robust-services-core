@@ -234,6 +234,21 @@ bool IsSortedByPosition(const Function* func1, const Function* func2)
 
 //------------------------------------------------------------------------------
 
+char LastCodeChar(const string& s, size_t slashSlashPos)
+{
+   //  S is a line of source code, and slashSlashPos is the location of any
+   //  trailing comment on that line.  If there is no trailing comment,
+   //  return the last character, else return the first non-blank character
+   //  before the comment.
+   //
+   if(slashSlashPos == string::npos) return s.back();
+
+   auto pos = RfindFirstNotOf(s, slashSlashPos - 1, WhitespaceChars);
+   return s.at(pos);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CodeTools_RemoveAliasedClasses = "CodeTools.RemoveAliasedClasses";
 
 void RemoveAliasedClasses(CxxNamedSet& inclSet)
@@ -1029,7 +1044,7 @@ void CodeFile::CheckSeparation()
    //  Look for warnings that involve looking at adjacent lines or the
    //  file's contents as a whole.
    //
-   LineType prevType = Blank;
+   LineType prevType = BlankLine;
    slashAsterisk_ = false;
 
    for(size_t n = 0; n < lineType_.size(); ++n)
@@ -1037,7 +1052,8 @@ void CodeFile::CheckSeparation()
       //  Based on the type of line just found, look for warnings that can
       //  only be found based on the type of line that preceded this one.
       //
-      auto nextType = (n == lineType_.size() - 1 ? Blank : lineType_[n + 1]);
+      auto nextType =
+         (n == lineType_.size() - 1 ? BlankLine : lineType_[n + 1]);
 
       switch(lineType_[n])
       {
@@ -1053,11 +1069,11 @@ void CodeFile::CheckSeparation()
          }
          break;
 
-      case Blank:
+      case BlankLine:
       case EmptyComment:
          switch(prevType)
          {
-         case Blank:
+         case BlankLine:
          case EmptyComment:
          case OpenBrace:
             LogLine(n, RemoveBlankLine);
@@ -1093,14 +1109,12 @@ void CodeFile::CheckSeparation()
          break;
 
       case FunctionName:
-      case FunctionNameSplit:
          switch(prevType)
          {
-         case Blank:
+         case BlankLine:
          case EmptyComment:
          case OpenBrace:
          case FunctionName:
-         case FunctionNameSplit:
             break;
          case TextComment:
             if(IsCpp()) LogLine(n, AddBlankLine);
@@ -1146,12 +1160,15 @@ void CodeFile::CheckUsings() const
 
 fn_name CodeFile_ClassifyLine1 = "CodeFile.ClassifyLine(string)";
 
-LineType CodeFile::ClassifyLine(string s, std::set< Warning >& warnings) const
+LineType CodeFile::ClassifyLine
+   (string s, bool& cont, std::set< Warning >& warnings) const
 {
    Debug::ft(CodeFile_ClassifyLine1);
 
+   cont = false;
+
    auto length = s.size();
-   if(length == 0) return Blank;
+   if(length == 0) return BlankLine;
 
    //  Flag the line if it is too long.
    //
@@ -1170,7 +1187,7 @@ LineType CodeFile::ClassifyLine(string s, std::set< Warning >& warnings) const
    if(s.find_first_not_of(SPACE) == string::npos)
    {
       warnings.insert(TrailingSpace);
-      return Blank;
+      return BlankLine;
    }
 
    while(s.rfind(SPACE) == s.size() - 1)
@@ -1182,7 +1199,7 @@ LineType CodeFile::ClassifyLine(string s, std::set< Warning >& warnings) const
    //  Flag a line that is not indented a multiple of the standard, unless
    //  it begins with a comment or string literal.
    //
-   if(s.empty()) return Blank;
+   if(s.empty()) return BlankLine;
    auto pos = s.find_first_not_of(SPACE);
    if(pos > 0) s.erase(0, pos);
 
@@ -1240,7 +1257,11 @@ LineType CodeFile::ClassifyLine(string s, std::set< Warning >& warnings) const
 
    //  Look for using statements.
    //
-   if(s.find("using ") == 0) return UsingStatement;
+   if(s.find("using ") == 0)
+   {
+      cont = (LastCodeChar(s, slashSlashPos) != ';');
+      return UsingStatement;
+   }
 
    //  Look for access controls.
    //
@@ -1275,7 +1296,12 @@ LineType CodeFile::ClassifyLine(string s, std::set< Warning >& warnings) const
       if(begin1 == string::npos) break;
       auto equals = s.find('=', under);
       if(equals == string::npos) break;
-      if(equals == length - 1) return FunctionNameSplit;
+
+      if(LastCodeChar(s, slashSlashPos) == '=')
+      {
+         cont = true;
+         return FunctionName;
+      }
 
       auto end1 = s.find_first_not_of(ValidNextChars, under);
       if(end1 == string::npos) break;
@@ -1306,6 +1332,7 @@ LineType CodeFile::ClassifyLine(string s, std::set< Warning >& warnings) const
       }
    }
 
+   cont = (LastCodeChar(s, slashSlashPos) != ';');
    return SourceCode;
 }
 
@@ -1313,7 +1340,7 @@ LineType CodeFile::ClassifyLine(string s, std::set< Warning >& warnings) const
 
 fn_name CodeFile_ClassifyLine2 = "CodeFile.ClassifyLine(size_t)";
 
-LineType CodeFile::ClassifyLine(size_t n)
+LineType CodeFile::ClassifyLine(size_t n, bool& cont)
 {
    Debug::ft(CodeFile_ClassifyLine2);
 
@@ -1323,7 +1350,7 @@ LineType CodeFile::ClassifyLine(size_t n)
    if(!lexer_.GetNthLine(n, s)) return LineType_N;
 
    std::set< Warning > warnings;
-   auto type = ClassifyLine(s, warnings);
+   auto type = ClassifyLine(s, cont, warnings);
 
    //  A line within a /* comment can be logged spuriously.
    //
@@ -1360,10 +1387,6 @@ LineType CodeFile::ClassifyLine(size_t n)
       if(s.find(COMMENT_END_STR) == string::npos) slashAsterisk_ = true;
       if(s.find(COMMENT_BEGIN_STR) == 0) return SlashAsteriskComment;
    }
-
-   //  See if this is a fn_name definition split across two lines.
-   //
-   if((n > 0) && (lineType_[n - 1] == FunctionNameSplit)) return FunctionName;
 
    return type;
 }
@@ -2691,11 +2714,29 @@ void CodeFile::Scan()
       lineType_.push_back(LineType_N);
    }
 
-   //  Categorize each line.
+   //  Categorize each line.  If the previous line failed to finish
+   //  a using statement or function name definition, carry it over
+   //  to the next line.
    //
+   auto prevCont = false;
+   auto prevType = LineType_N;
+
    for(size_t n = 0; n < lines; ++n)
    {
-      lineType_[n] = ClassifyLine(n);
+      auto currCont = false;
+      auto currType = ClassifyLine(n, currCont);
+
+      if(prevCont)
+      {
+         if((prevType != UsingStatement) && (prevType != FunctionName))
+         {
+            prevCont = false;
+         }
+      }
+
+      lineType_[n] = (prevCont ? prevType: currType);
+      prevCont = currCont;
+      prevType = currType;
    }
 
    for(size_t n = 0; n < lines; ++n)

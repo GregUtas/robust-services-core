@@ -283,7 +283,7 @@ void PotsProfile::Startup(RestartLevel level)
 
    if(circuit_ == nullptr)
    {
-      FunctionGuard guard(Guard_MemUnprotect, (level < RestartReboot));
+      FunctionGuard guard(Guard_MemUnprotect, level < RestartReboot);
       circuit_.reset(new PotsCircuit(*this));
    }
 }

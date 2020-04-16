@@ -973,6 +973,15 @@ bool CodeWarning::Suppress() const
       if(fn == "MapAndUnits.h") return true;
       break;
 
+   case DataInitOnly:
+   {
+      auto data = static_cast< const Data* >(item_);
+      auto type = data->GetTypeSpec()->TypeString(true);
+      if(type.find("FunctionGuard") != string::npos) return true;
+      if(type.find("MutexGuard") != string::npos) return true;
+      break;
+   }
+
    case DataNotPrivate:
       if(fn == "BaseBot.h") return true;
       if(fn == "MapAndUnits.h") return true;

@@ -23,7 +23,6 @@
 #define IPPORTREGISTRY_H_INCLUDED
 
 #include "Protected.h"
-#include <string>
 #include "NbTypes.h"
 #include "NwTypes.h"
 #include "Q1Way.h"

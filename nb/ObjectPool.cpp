@@ -39,6 +39,7 @@
 #include "ObjectPoolTrace.h"
 #include "Pooled.h"
 #include "Q1Link.h"
+#include "Q1Way.h"
 #include "Restart.h"
 #include "Singleton.h"
 #include "Statistics.h"
@@ -440,7 +441,7 @@ void ObjectPool::AuditFreeq()
                else
                {
                   prev->corrupt_ = false;
-                  prev->link_.next = dyn_->freeq_.tail_.next;  // tail now after PREV
+                  prev->link_.next = dyn_->freeq_.tail_.next;
                   dyn_->availCount_ = count;
                }
 

@@ -46,7 +46,8 @@ fn_name LogGroup_ctor = "LogGroup.ctor";
 
 LogGroup::LogGroup(fixed_string name, fixed_string expl) :
    name_(strUpper(name).c_str()),
-   expl_(expl)
+   expl_(expl),
+   suppressed_(nullptr)
 {
    Debug::ft(LogGroup_ctor);
 
@@ -124,7 +125,7 @@ void LogGroup::Display(ostream& stream,
 {
    stream << prefix << strIndex(gid_.GetId());
    stream << name_ << " group (" << expl_ << ')';
-   if(suppressed_) stream << " [SUPPRESSED]";
+   if(*suppressed_) stream << " [SUPPRESSED]";
    stream << CRLF;
 
    for(auto l = logs_.First(); l != nullptr; logs_.Next(l))

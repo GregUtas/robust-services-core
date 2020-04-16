@@ -22,18 +22,15 @@
 #include "Class.h"
 #include <bitset>
 #include <cstdint>
-#include <new>
 #include <ostream>
 #include <string>
 #include "Algorithms.h"
-#include "AllocationException.h"
 #include "ClassRegistry.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Memory.h"
 #include "NbTypes.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 
 using std::ostream;
 using std::string;
@@ -49,12 +46,12 @@ struct ClassDynamic
 {
    //  Constructor.
    //
-   ClassDynamic() { }
+   ClassDynamic() = default;
 
    //  Used by Create to block-initialize a new object.
    //
    std::unique_ptr< Object > template_;
-   
+
    //  The quasi-singleton instance.
    //
    std::unique_ptr< Object > singleton_;

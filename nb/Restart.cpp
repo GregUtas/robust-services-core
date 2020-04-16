@@ -28,7 +28,7 @@
 namespace NodeBase
 {
 RestartStatus Restart::Status_ = Initial;
-RestartLevel Restart::Level_ = RestartNil;
+RestartLevel Restart::Level_ = RestartReboot;
 
 //------------------------------------------------------------------------------
 

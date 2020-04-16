@@ -25,7 +25,6 @@
 #include <string>
 #include "Debug.h"
 #include "Formatters.h"
-#include "FunctionGuard.h"
 #include "NbCliParms.h"
 #include "Singleton.h"
 #include "Thread.h"

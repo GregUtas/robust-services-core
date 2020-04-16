@@ -28,7 +28,6 @@
 #include "Log.h"
 #include "NbLogs.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 
 using std::ostream;
 using std::string;

@@ -26,6 +26,7 @@
 #include <cstddef>
 #include <memory>
 #include "RegCell.h"
+#include "SysTypes.h"
 
 namespace NodeBase
 {

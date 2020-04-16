@@ -54,7 +54,7 @@ public:
    //  Returns the path to the source directory, the root for all .h and
    //  .cpp files.  Does not include a trailing PATH_SEPARATOR character.
    //
-   NodeBase::c_string SourcePath() { return sourcePath_.c_str(); }
+   NodeBase::c_string SourcePath() const { return sourcePath_.c_str(); }
 
    //  Adds PATH, which will be known by NAME, to the code base.  Updates
    //  EXPL to indicate success or failure.  Returns 0 on success.

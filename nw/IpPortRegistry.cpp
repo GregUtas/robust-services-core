@@ -23,6 +23,7 @@
 #include "CfgStrParm.h"
 #include "StatisticsGroup.h"
 #include <ostream>
+#include <string>
 #include "Algorithms.h"
 #include "CfgParmRegistry.h"
 #include "Debug.h"
@@ -31,6 +32,7 @@
 #include "IpPort.h"
 #include "IpService.h"
 #include "NwCliParms.h"
+#include "Restart.h"
 #include "Singleton.h"
 #include "SysIpL3Addr.h"
 #include "SysTypes.h"
@@ -364,7 +366,7 @@ void IpPortRegistry::Startup(RestartLevel level)
    //  look up.  It is therefore cached during initialization, after
    //  which a restart is required to change it.
    //
-   FunctionGuard guard(Guard_MemUnprotect, (level < RestartReload));
+   FunctionGuard guard(Guard_MemUnprotect, level < RestartReload);
 
    HostAddress();
 

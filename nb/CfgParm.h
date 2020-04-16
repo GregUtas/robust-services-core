@@ -73,7 +73,7 @@ public:
    //  of restart needed to make the change.  If LFVEL is RestartNil, the
    //  new value is already in effect, and no restart is required.
    //
-   bool SetValue(c_string, RestartLevel& level);
+   bool SetValue(c_string input, RestartLevel& level);
 
    //  Returns the offset to link_.
    //

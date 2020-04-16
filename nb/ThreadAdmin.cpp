@@ -34,6 +34,7 @@
 #include "Formatters.h"
 #include "FunctionGuard.h"
 #include "InitThread.h"
+#include "Restart.h"
 #include "Singleton.h"
 #include "Statistics.h"
 #include "SymbolRegistry.h"
@@ -408,7 +409,7 @@ void ThreadAdmin::Incr(Register r)
 
    if(admin == nullptr) return;
    if(admin->stats_ == nullptr) return;
-   if(Restart::GetLevel() != Running) return;
+   if(Restart::GetStatus() != Running) return;
 
    switch(r)
    {
@@ -515,7 +516,7 @@ void ThreadAdmin::Startup(RestartLevel level)
    //
    if(level < RestartCold) return;
 
-   FunctionGuard guard(Guard_MemUnprotect, (level < RestartReboot));
+   FunctionGuard guard(Guard_MemUnprotect, level < RestartReboot);
    if(stats_ == nullptr) stats_.reset(new ThreadsStats);
    if(statsGroup_ == nullptr) statsGroup_.reset(new ThreadsStatsGroup);
    guard.Release();
@@ -539,7 +540,7 @@ word ThreadAdmin::TrapCount()
 
    if(admin == nullptr) return 0;
    if(admin->stats_ == nullptr) return 0;
-   if(Restart::GetLevel() != Running) return 0;
+   if(Restart::GetStatus() != Running) return 0;
    return admin->stats_->traps_->Overall();
 }
 

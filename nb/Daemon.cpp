@@ -209,7 +209,7 @@ void Daemon::EnsureAlarm()
    //  If the thread unavailable alarm is not registered, create it.
    //
    auto reg = Singleton< AlarmRegistry >::Instance();
-   auto alarmName =  "DAEMON" + std::to_string(Did());
+   auto alarmName = "DAEMON" + std::to_string(Did());
    alarm_ = reg->Find(alarmName);
 
    if(alarm_ == nullptr)

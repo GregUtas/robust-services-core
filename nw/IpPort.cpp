@@ -23,6 +23,7 @@
 #include "Dynamic.h"
 #include <cstdint>
 #include <ostream>
+#include <string>
 #include "Alarm.h"
 #include "AlarmRegistry.h"
 #include "Algorithms.h"
@@ -424,7 +425,7 @@ void IpPort::Startup(RestartLevel level)
 {
    Debug::ft(IpPort_Startup);
 
-   FunctionGuard guard(Guard_MemUnprotect, (level < RestartReload));
+   FunctionGuard guard(Guard_MemUnprotect, level < RestartReload);
 
    EnsureAlarm();
 

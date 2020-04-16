@@ -35,11 +35,6 @@
 using namespace NodeBase;
 using namespace CallBase;
 
-namespace PotsBase
-{
-   struct PotsProfileDynamic;
-}
-
 //------------------------------------------------------------------------------
 
 namespace PotsBase

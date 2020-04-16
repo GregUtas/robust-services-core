@@ -181,6 +181,44 @@ TemporaryHeap::~TemporaryHeap()
    Debug::ft(TemporaryHeap_dtor);
 }
 
+//------------------------------------------------------------------------------
+//
+//  Returns the heap (if any) associated with TYPE.
+//
+SysHeap* AccessHeap(MemoryType type)
+{
+   switch(type)
+   {
+   case MemTemporary: return Singleton< TemporaryHeap >::Extant();
+   case MemDynamic: return Singleton< DynamicHeap >::Extant();
+   case MemPersistent: return Singleton< PersistentHeap >::Extant();
+   case MemProtected: return Singleton< ProtectedHeap >::Extant();
+   case MemPermanent: return PermanentHeap::Instance();
+   case MemImmutable: return Singleton< ImmutableHeap >::Extant();
+   }
+
+   return nullptr;
+}
+
+//------------------------------------------------------------------------------
+//
+//  Returns the heap for TYPE.  If it doesn't exist, it is created.
+//
+SysHeap* EnsureHeap(MemoryType type)
+{
+   switch(type)
+   {
+   case MemTemporary: return Singleton< TemporaryHeap >::Instance();
+   case MemDynamic: return Singleton< DynamicHeap >::Instance();
+   case MemPersistent: return Singleton< PersistentHeap >::Instance();
+   case MemProtected: return Singleton< ProtectedHeap >::Instance();
+   case MemPermanent: return PermanentHeap::Instance();
+   case MemImmutable: return Singleton< ImmutableHeap >::Instance();
+   }
+
+   return nullptr;
+}
+
 //==============================================================================
 //
 //  Each memory segment allocated from a heap has the following header.
@@ -201,23 +239,6 @@ struct Segment
    SegmentHeader header;  // memory management information
    uword data;            // start of application data
 };
-
-//------------------------------------------------------------------------------
-
-SysHeap* Memory::AccessHeap(MemoryType type)
-{
-   switch(type)
-   {
-   case MemTemporary: return Singleton< TemporaryHeap >::Extant();
-   case MemDynamic: return Singleton< DynamicHeap >::Extant();
-   case MemPersistent: return Singleton< PersistentHeap >::Extant();
-   case MemProtected: return Singleton< ProtectedHeap >::Extant();
-   case MemPermanent: return PermanentHeap::Instance();
-   case MemImmutable: return Singleton< ImmutableHeap >::Extant();
-   }
-
-   return nullptr;
-}
 
 //------------------------------------------------------------------------------
 
@@ -303,23 +324,6 @@ void Memory::Copy(void* dest, const void* source, size_t nBytes)
    Debug::ft(Memory_Copy);
 
    memcpy(dest, source, nBytes);
-}
-
-//------------------------------------------------------------------------------
-
-SysHeap* Memory::EnsureHeap(MemoryType type)
-{
-   switch(type)
-   {
-   case MemTemporary: return Singleton< TemporaryHeap >::Instance();
-   case MemDynamic: return Singleton< DynamicHeap >::Instance();
-   case MemPersistent: return Singleton< PersistentHeap >::Instance();
-   case MemProtected: return Singleton< ProtectedHeap >::Instance();
-   case MemPermanent: return PermanentHeap::Instance();
-   case MemImmutable: return Singleton< ImmutableHeap >::Instance();
-   }
-
-   return nullptr;
 }
 
 //------------------------------------------------------------------------------

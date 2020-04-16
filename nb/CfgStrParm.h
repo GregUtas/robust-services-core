@@ -23,7 +23,6 @@
 #define CFGSTRPARM_H_INCLUDED
 
 #include "CfgParm.h"
-#include <string>
 #include "NbTypes.h"
 #include "SysTypes.h"
 

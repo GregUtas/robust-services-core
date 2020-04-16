@@ -584,7 +584,6 @@ Editor::Iter Editor::CodeBegin()
       case AccessControl:
       case DebugFt:
       case FunctionName:
-      case FunctionNameSplit:
          //
          //  These shouldn't occur.
          //
@@ -2056,7 +2055,7 @@ Editor::Iter Editor::FindSpecialFuncLoc
       //
       auto type = GetLineType(where.iter);
       auto& line = LineTypeAttr::Attrs[type];
-      attrs.comment = (!line.isCode && (type != Blank));
+      attrs.comment = (!line.isCode && (type != BlankLine));
    }
    else
    {
@@ -2067,7 +2066,7 @@ Editor::Iter Editor::FindSpecialFuncLoc
       auto floc = FindPos(func->GetPos());
       auto type = GetLineType(std::prev(floc.iter));
       auto& line = LineTypeAttr::Attrs[type];
-      attrs.comment = (!line.isCode && (type != Blank));
+      attrs.comment = (!line.isCode && (type != BlankLine));
    }
 
    //  Decide where to insert a blank line to offset the new function.
@@ -2094,10 +2093,10 @@ Editor::Iter Editor::FindSpecialFuncLoc
    //  If the new function will not be commented, don't set it off with
    //  a blank unless one precedes or follows its insertion point.
    //
-   if(!attrs.comment && (prevType != Blank))
+   if(!attrs.comment && (prevType != BlankLine))
    {
       if((nextType == CloseBraceSemicolon) ||
-         (GetLineType(std::next(where.iter)) != Blank))
+         (GetLineType(std::next(where.iter)) != BlankLine))
       {
          attrs.blank = BlankNone;
       }
@@ -2602,10 +2601,11 @@ word Editor::GetCode(std::string& expl)
 
 LineType Editor::GetLineType(const Iter& iter) const
 {
+   bool cont;
    std::set< Warning > warnings;
 
    if(iter->line != SIZE_MAX) return file_->GetLineType(iter->line);
-   return file_->ClassifyLine(iter->code, warnings);
+   return file_->ClassifyLine(iter->code, cont, warnings);
 }
 
 //------------------------------------------------------------------------------
@@ -3450,11 +3450,7 @@ Editor::Iter Editor::IntroStart(const Iter& iter, bool funcName)
       {
          //  The only code that can be included is an fn_name.
          //
-         if(funcName)
-         {
-            if((type == FunctionName) || (type == FunctionNameSplit)) continue;
-         }
-
+         if(funcName && (type == FunctionName)) continue;
          return ++curr;
       }
    }
@@ -4332,7 +4328,7 @@ void Editor::UpdateFuncDeclAttrs(const Function* func, FuncDeclAttrs& attrs)
    auto type = GetLineType(std::prev(loc.iter));
    auto& line = LineTypeAttr::Attrs[type];
 
-   if(!line.isCode && (type != Blank))
+   if(!line.isCode && (type != BlankLine))
    {
       attrs.comment = true;
       attrs.blank = BlankBefore;
@@ -4341,7 +4337,7 @@ void Editor::UpdateFuncDeclAttrs(const Function* func, FuncDeclAttrs& attrs)
 
    //  FUNC isn't commented, so see if a blank line precedes or follows it.
    //
-   if(type == Blank)
+   if(type == BlankLine)
    {
       attrs.blank = BlankBefore;
       return;
@@ -4350,7 +4346,7 @@ void Editor::UpdateFuncDeclAttrs(const Function* func, FuncDeclAttrs& attrs)
    loc = FindPos(end);
    type = GetLineType(std::next(loc.iter));
 
-   if(type == Blank)
+   if(type == BlankLine)
    {
       attrs.blank = BlankBefore;
    }
@@ -4391,7 +4387,7 @@ Editor::Iter Editor::UpdateFuncDeclLoc
 
       if(!LineTypeAttr::Attrs[type].isCode)
       {
-         if(type == Blank) break;
+         if(type == BlankLine) break;
 
          //  This is a comment, so keep moving up to find the insertion point.
          //
@@ -4435,7 +4431,7 @@ void Editor::UpdateFuncDefnAttrs(const Function* func, FuncDefnAttrs& attrs)
    auto loc = FindPos(end);
    auto type = GetLineType(++loc.iter);
 
-   if(type == Blank)
+   if(type == BlankLine)
    {
       blank = true;
       type = GetLineType(++loc.iter);
@@ -4460,11 +4456,10 @@ void Editor::UpdateFuncDefnAttrs(const Function* func, FuncDefnAttrs& attrs)
          attrs.blank = BlankBefore;
          return;
 
-      case Blank:
+      case BlankLine:
          blank = true;
          //  [[fallthrough]]
       case FunctionName:
-      case FunctionNameSplit:
          continue;
 
       default:
@@ -4529,13 +4524,12 @@ Editor::Iter Editor::UpdateFuncDefnLoc
 
       switch(type)
       {
-      case Blank:
+      case BlankLine:
          --pred;
          continue;
       case FunctionName:
-         return pred;
-      case FunctionNameSplit:
-         return --pred;
+         while(GetLineType(--pred) == FunctionName);
+         return ++pred;
       default:
          return loc.iter;
       }

@@ -28,8 +28,6 @@
 #include "Formatters.h"
 #include "FunctionGuard.h"
 #include "LogBuffer.h"
-#include "Memory.h"
-#include "Restart.h"
 
 using std::ostream;
 using std::string;
@@ -182,7 +180,7 @@ void LogBufferRegistry::Startup(RestartLevel level)
    //  don't unprotect immutable memory, because it needs to stay unprotected
    //  during initialization.
    //
-   FunctionGuard guard(Guard_ImmUnprotect, (level != RestartReboot));
+   FunctionGuard guard(Guard_ImmUnprotect, level < RestartReboot);
 
    buffer_[size_] = std::unique_ptr< LogBuffer >(new LogBuffer(LogBufferSize));
    ++size_;

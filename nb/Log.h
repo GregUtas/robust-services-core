@@ -23,7 +23,6 @@
 #define LOG_H_INCLUDED
 
 #include "Immutable.h"
-#include <atomic>
 #include <cstddef>
 #include <cstdint>
 #include <iosfwd>
@@ -175,7 +174,7 @@ private:
 
    //  The log's explanation.
    //
-   ImmutableStr expl_;
+   const ImmutableStr expl_;
 
    //  The log's index in its LogGroup's registry.
    //

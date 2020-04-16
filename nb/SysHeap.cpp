@@ -53,22 +53,6 @@ void SysHeap::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-bool SysHeap::IsProtected() const
-{
-   switch(attrs_)
-   {
-   case MemInaccessible:
-   case MemExecuteOnly:
-   case MemReadOnly:
-   case MemReadExecute:
-      return true;
-   }
-
-   return false;
-}
-
-//------------------------------------------------------------------------------
-
 fn_name SysHeap_delete1 = "SysHeap.operator delete";
 
 void SysHeap::operator delete(void* addr)

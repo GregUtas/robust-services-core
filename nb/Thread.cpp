@@ -46,6 +46,7 @@
 #include "InitThread.h"
 #include "LeakyBucketCounter.h"
 #include "Log.h"
+#include "Memory.h"
 #include "MsgBuffer.h"
 #include "MutexGuard.h"
 #include "MutexRegistry.h"
@@ -3660,7 +3661,7 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
       //    and let the object pool audit recover the Thread object.
       //
       auto retrapped = false;
-      if(Restart::GetLevel() == Running) stats_->traps_->Incr();
+      if(Restart::GetStatus() == Running) stats_->traps_->Incr();
 
       switch(++priv_->traps_)
       {

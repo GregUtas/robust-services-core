@@ -444,7 +444,7 @@ void Factory::Startup(RestartLevel level)
 
    if(stats_ == nullptr)
    {
-      FunctionGuard guard(Guard_ImmUnprotect, (level < RestartReboot));
+      FunctionGuard guard(Guard_ImmUnprotect, level < RestartReboot);
       stats_.reset(new FactoryStats);
    }
 }

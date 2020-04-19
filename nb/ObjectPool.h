@@ -209,10 +209,10 @@ public:
    void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Defines a pool, identified by NAME and PID, that allocates blocks of
-   //  TYPE, with a size of nBytes.  Protected because this class is virtual.
+   //  TYPE and SIZE bytes.  Protected because this class is virtual.
    //
    ObjectPool(ObjectPoolId pid, MemoryType type,
-      size_t nBytes, const std::string& name);
+      size_t size, const std::string& name);
 
    //  Frees all blocks.  Protected because subclasses should be singletons.
    //

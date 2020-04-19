@@ -23,6 +23,9 @@
 #include "Debug.h"
 #include "Log.h"
 #include "LogGroup.h"
+#include "LogGroupRegistry.h"
+#include "Restart.h"
+#include "Singleton.h"
 
 //------------------------------------------------------------------------------
 
@@ -39,11 +42,12 @@ fixed_string ObjPoolLogGroup = "OBJ";
 
 fn_name NodeBase_CreateNbLogs = "NodeBase.CreateNbLogs";
 
-void CreateNbLogs(RestartLevel level)
+void CreateNbLogs()
 {
    Debug::ft(NodeBase_CreateNbLogs);
 
-   if(level < RestartReboot) return;
+   auto reg = Singleton< LogGroupRegistry >::Instance();
+   if(!Restart::ClearsMemory(reg->MemType())) return;
 
    auto group = new LogGroup(NodeLogGroup, "Node");
    new Log(group, NodeInitTimeout, "Initialization timeout");

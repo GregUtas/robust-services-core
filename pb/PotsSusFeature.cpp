@@ -24,6 +24,7 @@
 #include "PotsFeatureProfile.h"
 #include "CliThread.h"
 #include "Debug.h"
+#include "FunctionGuard.h"
 #include "PotsFeatures.h"
 #include "SysTypes.h"
 
@@ -43,14 +44,14 @@ class PotsSusAttrs : public CliText
 public: PotsSusAttrs();
 };
 
-//==============================================================================
+//------------------------------------------------------------------------------
 
 fixed_string PotsSusAbbrName = "sus";
 fixed_string PotsSusFullName = "Suspended Service";
 
 PotsSusAttrs::PotsSusAttrs() : CliText(PotsSusFullName, PotsSusAbbrName) { }
 
-//------------------------------------------------------------------------------
+//==============================================================================
 
 fn_name PotsSusFeature_ctor = "PotsSusFeature.ctor";
 
@@ -83,6 +84,8 @@ PotsFeatureProfile* PotsSusFeature::Subscribe
    Debug::ft(PotsSusFeature_Subscribe);
 
    cli.EndOfInput(false);
+
+   FunctionGuard guard(Guard_MemUnprotect);
    return new PotsSusFeatureProfile;
 }
 

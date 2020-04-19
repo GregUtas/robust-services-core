@@ -30,6 +30,7 @@
 
 namespace NodeBase
 {
+   struct ThreadAdminValues;
    class ThreadsStats;
 }
 
@@ -51,31 +52,31 @@ public:
    //  Returns how long InitThread should sleep before interrupting
    //  RootThread to indicate that scheduling is still occurring.
    //
-   static msecs_t SchedTimeoutMsecs() { return SchedTimeoutMsecs_; }
+   static msecs_t SchedTimeoutMsecs();
 
    //  Returns true if RootThread should cause a restart if InitThread
    //  fails to indicate that scheduling is still occurring.
    //
-   static bool ReinitOnSchedTimeout() { return ReinitOnSchedTimeout_; }
+   static bool ReinitOnSchedTimeout();
 
    //  Returns how long a thread can run unpreemptably before yielding.
    //
-   static msecs_t RtcTimeoutMsecs() { return RtcTimeoutMsecs_; }
+   static msecs_t RtcTimeoutMsecs();
 
    //  Returns true if InitThread should trap the running thread if
    //  it runs unpreemptably too long.
    //
-   static bool TrapOnRtcTimeout() { return TrapOnRtcTimeout_; }
+   static bool TrapOnRtcTimeout();
 
    //  Returns the maximum number of run-to-completion timeouts that
    //  are allowed before a thread is trapped.
    //
-   static word RtcLimit() { return RtcLimit_; }
+   static word RtcLimit();
 
    //  Returns the interval (in seconds) during which a thread must
    //  reach its RTC timeout limit to be trapped.
    //
-   static word RtcInterval() { return RtcInterval_; }
+   static word RtcInterval();
 
    //  Returns true if breakpoint debugging is enabled.  This stops
    //  RootThread and InitThread from timing out and generating logs
@@ -92,21 +93,21 @@ public:
    //  Returns the maximum number of traps allowed before a thread
    //  is killed and recreated.
    //
-   static word TrapLimit() { return TrapLimit_; }
+   static word TrapLimit();
 
    //  Returns the interval (in seconds) during which a thread must
    //  reach its trap limit for it to be killed and recreated.
    //
-   static word TrapInterval() { return TrapInterval_; }
+   static word TrapInterval();
 
    //  Returns a thread's maximum allowed stack size.
    //
-   static word StackUsageLimit() { return StackUsageLimit_; }
+   static word StackUsageLimit();
 
    //  Returns the frequency (every nth function call) at which a
    //  stack size check is performed.
    //
-   static word StackCheckInterval() { return StackCheckInterval_; }
+   static word StackCheckInterval();
 
    //  Identifiers for Counters associated with threads.
    //
@@ -169,20 +170,9 @@ private:
    //
    ~ThreadAdmin();
 
-   //  See eponymous public functions for documentation.
+   //  Thread configuration values;
    //
-   static word InitTimeoutMsecs_;
-   static word SchedTimeoutMsecs_;
-   static bool ReinitOnSchedTimeout_;
-   static word RtcTimeoutMsecs_;
-   static bool TrapOnRtcTimeout_;
-   static word RtcLimit_;
-   static word RtcInterval_;
-   static bool BreakEnabled_;
-   static word TrapLimit_;
-   static word TrapInterval_;
-   static word StackUsageLimit_;
-   static word StackCheckInterval_;
+   std::unique_ptr< ThreadAdminValues > config_;
 
    //  Thread configuration parameters.
    //

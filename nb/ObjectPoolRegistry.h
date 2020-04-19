@@ -53,7 +53,7 @@ public:
 
    //  Returns true if full object nullification is enabled.
    //
-   bool NullifyObjectData() const { return *nullifyObjectData_; }
+   bool NullifyObjectData() const { return nullifyObjectData_; }
 
    //  Overridden for restarts.
    //
@@ -98,7 +98,7 @@ private:
 
    //  If set, causes an object's data to be nullified after its vptr.
    //
-   bool* nullifyObjectData_;
+   bool nullifyObjectData_;
 
    //  Configuration parameter for object nullification.
    //

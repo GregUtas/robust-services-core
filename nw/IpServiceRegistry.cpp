@@ -95,6 +95,20 @@ void IpServiceRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
+fn_name IpServiceRegistry_Shutdown = "IpServiceRegistry.Shutdown";
+
+void IpServiceRegistry::Shutdown(RestartLevel level)
+{
+   Debug::ft(IpServiceRegistry_Shutdown);
+
+   for(auto s = services_.First(); s != nullptr; services_.Next(s))
+   {
+      s->Shutdown(level);
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name IpServiceRegistry_Startup = "IpServiceRegistry.Startup";
 
 void IpServiceRegistry::Startup(RestartLevel level)

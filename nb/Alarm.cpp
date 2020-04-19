@@ -190,7 +190,8 @@ void Alarm::Shutdown(RestartLevel level)
 {
    Debug::ft(Alarm_Shutdown);
 
-   //  Clear an alarm during all restarts.
+   //  Clear an alarm during all restarts by using placement new to
+   //  reset dyn_.
    //
    new (dyn_.get()) AlarmDynamic();
 }

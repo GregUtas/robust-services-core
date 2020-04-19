@@ -39,18 +39,11 @@ namespace MediaBase
 class ToneRegistry : public Dynamic
 {
    friend class Singleton< ToneRegistry >;
+   friend class Tone;
 public:
    //  Returns the port associated with the tone identified by TID.
    //
    static Switch::PortId ToneToPort(Tone::Id tid);
-
-   //  Registers TONE.
-   //
-   bool BindTone(Tone& tone);
-
-   //  Deregisters TONE.
-   //
-   void UnbindTone(Tone& tone);
 
    //  Returns the tone registered against TID.
    //
@@ -68,6 +61,14 @@ private:
    //  Private because this singleton is not subclassed.
    //
    ~ToneRegistry();
+
+   //  Registers TONE.
+   //
+   bool BindTone(Tone& tone);
+
+   //  Deregisters TONE.
+   //
+   void UnbindTone(Tone& tone);
 
    //  Registry for singleton subclasses of Tone.
    //

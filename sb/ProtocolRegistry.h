@@ -40,8 +40,8 @@ namespace SessionBase
 //
 class ProtocolRegistry : public NodeBase::Immutable
 {
-   friend class Protocol;
    friend class NodeBase::Singleton< ProtocolRegistry >;
+   friend class Protocol;
 public:
    //  Returns the protocol registered against PRID.
    //

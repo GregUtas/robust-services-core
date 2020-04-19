@@ -82,11 +82,11 @@ public:
 
    //  Returns true if all logs in the group are to be suppressed.
    //
-   bool Suppressed() const { return *suppressed_; }
+   bool Suppressed() const { return suppressed_; }
 
    //  Controls whether all logs in the group are to be suppressed.
    //
-   void SetSuppressed(bool suppressed) { *suppressed_ = suppressed; }
+   void SetSuppressed(bool suppressed);
 
    //  Returns the log associated with ID.
    //
@@ -135,7 +135,7 @@ private:
 
    //  Set if all logs in the group are to be suppressed.
    //
-   bool* suppressed_;
+   bool suppressed_;
 
    //  The group's index in LogGroupRegistry.
    //

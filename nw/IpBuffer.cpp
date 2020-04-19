@@ -151,16 +151,16 @@ bool IpBuffer::AddBytes(const byte_t* source, size_t size, bool& moved)
 
 fn_name IpBuffer_BuffSize = "IpBuffer.BuffSize";
 
-size_t IpBuffer::BuffSize(size_t nBytes)
+size_t IpBuffer::BuffSize(size_t size)
 {
    Debug::ft(IpBuffer_BuffSize);
 
    for(auto i = 0; i <= nSizes; ++i)
    {
-      if(BuffSizes[i] >= nBytes) return BuffSizes[i];
+      if(BuffSizes[i] >= size) return BuffSizes[i];
    }
 
-   Debug::SwLog(IpBuffer_BuffSize, "size out of range", nBytes, SwError);
+   Debug::SwLog(IpBuffer_BuffSize, "size out of range", size, SwError);
    return 0;
 }
 

@@ -27,6 +27,7 @@
 #include "FunctionGuard.h"
 #include "LogGroup.h"
 #include "NbCliParms.h"
+#include "Restart.h"
 #include "Singleton.h"
 
 using std::ostream;
@@ -216,11 +217,8 @@ void LogGroupRegistry::Shutdown(RestartLevel level)
       g->Shutdown(level);
    }
 
-   if((level >= RestartCold) && (level <= RestartReload))
-   {
-      FunctionGuard guard(Guard_ImmUnprotect);
-      statsGroup_.release();
-   }
+   FunctionGuard guard(Guard_ImmUnprotect);
+   Restart::Release(statsGroup_);
 }
 
 //------------------------------------------------------------------------------

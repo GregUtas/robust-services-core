@@ -162,10 +162,10 @@ protected:
    //
    void Cleanup() override;
 private:
-   //  When buff_ is allocated, this function rounds nBytes off to a standard
-   //  size.  An exception is thrown if nBytes is greater than MaxBuffSize.
+   //  When buff_ is allocated, this function rounds SIZE off to a standard
+   //  size.  An exception is thrown if SIZE is greater than MaxBuffSize.
    //
-   static size_t BuffSize(size_t nBytes);
+   static size_t BuffSize(size_t size);
 
    //  The buffer that holds the message.
    //

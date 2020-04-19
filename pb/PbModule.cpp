@@ -102,7 +102,7 @@ void PbModule::Startup(RestartLevel level)
 {
    Debug::ft(PbModule_Startup);
 
-   CreatePotsLogs(level);
+   CreatePotsLogs();
    Singleton< PotsProfileRegistry >::Instance()->Startup(level);
    Singleton< PotsBicFeature >::Instance()->Startup(level);
    Singleton< PotsBocFeature >::Instance()->Startup(level);
@@ -120,7 +120,7 @@ void PbModule::Startup(RestartLevel level)
    //  Audit the features and create their CLI parameters.
    //  This is done before creating the POTS CLI increment.
    //
-   if(level >= RestartReload)
+   if(level >= RestartReboot)
    {
       Singleton< PotsFeatureRegistry >::Instance()->Audit();
    }

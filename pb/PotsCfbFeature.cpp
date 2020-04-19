@@ -27,6 +27,7 @@
 #include "CliThread.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "PotsCliParms.h"
 #include "PotsProfile.h"
 #include "PotsProfileRegistry.h"
@@ -42,7 +43,7 @@ class PotsCfbAttrs : public CliText
 public: PotsCfbAttrs();
 };
 
-//==============================================================================
+//------------------------------------------------------------------------------
 
 fixed_string PotsCfbAbbrName = "cfb";
 fixed_string PotsCfbFullName = "Call Forwarding Busy";
@@ -52,7 +53,7 @@ PotsCfbAttrs::PotsCfbAttrs() : CliText(PotsCfbFullName, PotsCfbAbbrName)
    BindParm(*new DnOptParm);
 }
 
-//------------------------------------------------------------------------------
+//==============================================================================
 
 fn_name PotsCfbFeature_ctor = "PotsCfbFeature.ctor";
 
@@ -105,6 +106,7 @@ PotsFeatureProfile* PotsCfbFeature::Subscribe
       *cli.obuf << spaces(2) << NoDestinationWarning << CRLF;
    }
 
+   FunctionGuard guard(Guard_MemUnprotect);
    return new PotsCfbFeatureProfile(dn);
 }
 

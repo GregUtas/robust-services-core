@@ -2973,7 +2973,7 @@ word SetCommand::ProcessSubcommand(CliThread& cli, id_t index) const
       cli.EndOfInput(false);
       flag = (setHowIndex == SetHowParm::On);
 
-      if(!ValidateOptions(toolList, reg->ListTools(), expl))
+      if(!ValidateOptions(toolList, reg->ListToolChars(), expl))
       {
          return cli.Report(-1, expl);
       }

@@ -47,7 +47,7 @@ CliIncrement::CliIncrement(c_string name, c_string help, uint32_t size) :
    Debug::Assert(name_ != nullptr);
    Debug::Assert(help_ != nullptr);
 
-   commands_.Init(size, CliParm::CellDiff(), MemProtected);
+   commands_.Init(size, CliParm::CellDiff(), MemImmutable);
    Singleton< CliRegistry >::Instance()->BindIncrement(*this);
 }
 

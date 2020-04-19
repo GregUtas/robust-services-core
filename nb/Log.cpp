@@ -332,17 +332,18 @@ void Log::Shutdown(RestartLevel level)
 {
    Debug::ft(Log_Shutdown);
 
-   //  Do not suppress or throttle a log after a restart.
+   //  Stop throttling or suppressing a log after a restart by
+   //  using placement new to reset dyn_.
    //
    new (dyn_.get()) LogDynamic();
 
-   if(level >= RestartCold)
-   {
-      FunctionGuard guard(Guard_ImmUnprotect);
-      bufferCount_.release();
-      suppressCount_.release();
-      discardCount_.release();
-   }
+   //  Release items that may disappear during the restart.
+   //
+   FunctionGuard guard(Guard_ImmUnprotect);
+
+   Restart::Release(bufferCount_);
+   Restart::Release(suppressCount_);
+   Restart::Release(discardCount_);
 }
 
 //------------------------------------------------------------------------------
@@ -353,13 +354,16 @@ void Log::Startup(RestartLevel level)
 {
    Debug::ft(Log_Startup);
 
-   if((level >= RestartCold) && (level < RestartReboot))
-   {
-      FunctionGuard guard(Guard_ImmUnprotect);
+   //  Create items that may have disappeared during the restart.
+   //
+   FunctionGuard guard(Guard_ImmUnprotect);
+
+   if(bufferCount_ == nullptr)
       bufferCount_.reset(new Counter("buffered"));
+   if(suppressCount_ == nullptr)
       suppressCount_.reset(new Counter("suppressed"));
+   if(discardCount_ == nullptr)
       discardCount_.reset(new Counter("discarded"));
-   }
 }
 
 //------------------------------------------------------------------------------

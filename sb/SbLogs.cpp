@@ -24,6 +24,9 @@
 #include "Debug.h"
 #include "Log.h"
 #include "LogGroup.h"
+#include "LogGroupRegistry.h"
+#include "Restart.h"
+#include "Singleton.h"
 
 using namespace NodeBase;
 
@@ -38,11 +41,12 @@ fixed_string OverloadAlarmName = "OVERLOAD";
 
 fn_name SessionBase_CreateSbLogs = "SessionBase.CreateSbLogs";
 
-void CreateSbLogs(RestartLevel level)
+void CreateSbLogs()
 {
    Debug::ft(SessionBase_CreateSbLogs);
 
-   if(level < RestartReboot) return;
+   auto reg = Singleton< LogGroupRegistry >::Instance();
+   if(!Restart::ClearsMemory(reg->MemType())) return;
 
    new Alarm(OverloadAlarmName, "Payload processing is overloaded", 30);
 

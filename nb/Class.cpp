@@ -28,8 +28,10 @@
 #include "ClassRegistry.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "Memory.h"
 #include "NbTypes.h"
+#include "Restart.h"
 #include "Singleton.h"
 
 using std::ostream;
@@ -100,8 +102,6 @@ Object* Class::Create()
 {
    Debug::ft(Class_Create);
 
-   Object* obj;
-
    //  Get a block for a new object and use its template to initialize it.
    //  Call PostInitialize to set any members that depend on run-time data.
    //
@@ -110,6 +110,8 @@ Object* Class::Create()
       Debug::SwLog(Class_Create, "null template", Cid());
       return nullptr;
    }
+
+   Object* obj;
 
    if(dyn_->singleton_ != nullptr)
       obj = dyn_->singleton_.release();
@@ -316,6 +318,7 @@ bool Class::SetVptr(const Object& obj)
    //
    if(!VerifyClass(obj)) return false;
 
+   FunctionGuard guard(Guard_ImmUnprotect);
    vptr_ = obj.Vptr();
    return true;
 }
@@ -328,11 +331,8 @@ void Class::Shutdown(RestartLevel level)
 {
    Debug::ft(Class_Shutdown);
 
-   if(level >= RestartCold)
-   {
-      dyn_->template_.release();
-      dyn_->singleton_.release();
-   }
+   Restart::Release(dyn_->template_);
+   Restart::Release(dyn_->singleton_);
 }
 
 //------------------------------------------------------------------------------

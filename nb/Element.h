@@ -102,7 +102,7 @@ private:
 
    //  Set if this is a lab load.
    //
-   bool* runningInLab_;
+   bool runningInLab_;
 
    //  Configuration parameter that defines if this is a lab load.
    //

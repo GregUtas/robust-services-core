@@ -64,6 +64,15 @@ public:
    //
    bool SetPermissions(MemoryProtection attrs);
 
+   //  Invoked when SIZE bytes of memory have been allocated.
+   //  OK is set if allocation succeeded.
+   //
+   void Allocated(size_t size, bool ok = true);
+
+   //  Invoked when a SIZE bytes of memory have been freed.
+   //
+   void Freed(size_t size);
+
    //  Returns the type of memory that the heap manages.
    //
    MemoryType Type() const { return type_; }

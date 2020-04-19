@@ -34,6 +34,22 @@ using std::string;
 
 namespace NodeBase
 {
+void SysHeap::Allocated(size_t size, bool ok)
+{
+   if(ok)
+   {
+      inUse_ += size;
+      if(inUse_ > maxInUse_) maxInUse_ = inUse_;
+      ++allocs_;
+   }
+   else
+   {
+      ++fails_;
+   }
+}
+
+//------------------------------------------------------------------------------
+
 void SysHeap::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -49,6 +65,14 @@ void SysHeap::Display(ostream& stream,
    stream << prefix << "fails    : " << fails_ << CRLF;
    stream << prefix << "frees    : " << frees_ << CRLF;
    stream << prefix << "maxInUse : " << maxInUse_ << CRLF;
+}
+
+//------------------------------------------------------------------------------
+
+void SysHeap::Freed(size_t size)
+{
+   inUse_ -= size;
+   ++frees_;
 }
 
 //------------------------------------------------------------------------------

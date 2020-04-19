@@ -42,35 +42,35 @@ namespace Memory
    //
    size_t Align(size_t size, size_t log2align = BYTES_PER_WORD_LOG2);
 
-   //  Rounds up nBytes to a word multiple.  The result is in words.
+   //  Rounds up SIZE bytes to a word multiple.  The result is in words.
    //
-   size_t Words(size_t nBytes);
+   size_t Words(size_t size);
 
-   //  Copies nBytes of memory, starting at SOURCE, to DEST.
+   //  Copies SIZE bytes of memory, starting at SOURCE, to DEST.
    //
-   void Copy(void* dest, const void* source, size_t nBytes);
+   void Copy(void* dest, const void* source, size_t size);
 
-   //  Initializes nBytes of memory to VALUE, starting at DEST.
+   //  Initializes SIZE bytes of memory to VALUE, starting at DEST.
    //
-   void Set(void* dest, byte_t value, size_t nBytes);
+   void Set(void* dest, byte_t value, size_t size);
 
-   //  Allocates a memory segment of nBytes of the specified TYPE.  If
-   //  EX is true, an AllocationException is thrown on failure.
+   //  Allocates a memory segment of size BYTES of the specified TYPE.
+   //  If EX is true, an AllocationException is thrown on failure.
    //
-   void* Alloc(size_t nBytes, MemoryType type, bool ex = true);
+   void* Alloc(size_t size, MemoryType type, bool ex = true);
 
    //  Deallocates the memory segment returned by Alloc.
    //
    void Free(const void* addr);
 
-   //  Extends the segment at ADDR so that it can hold nBytes.  If there
-   //  is insufficient space for the additional bytes, a new segment of
-   //  sufficient length is allocated, the existing bytes are copied to
+   //  Extends the segment at ADDR so that it can hold SIZE bytes.  If
+   //  there is insufficient space for the additional bytes, a new segment
+   //  of sufficient length is allocated, the existing bytes are copied to
    //  it, and the segment at ADDR is freed.  Returns ADDR if in-place
    //  extension succeeds, nullptr if extension fails, or another value
    //  if a new segment was allocated.
    //
-   void* Realloc(void* addr, size_t nBytes);
+   void* Realloc(void* addr, size_t size);
 
    //  Returns the heap (if any) associated with TYPE.
    //
@@ -100,7 +100,7 @@ namespace Memory
 
    //  Frees the appropriate heap(s) during a restart.
    //
-   void Shutdown(RestartLevel level);
+   void Shutdown();
 }
 }
 #endif

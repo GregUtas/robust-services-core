@@ -36,6 +36,7 @@
 #include "PotsFeatureRegistry.h"
 #include "PotsProfileRegistry.h"
 #include "ProtocolSM.h"
+#include "Restart.h"
 #include "RootServiceSM.h"
 #include "SbAppIds.h"
 #include "Singleton.h"
@@ -43,6 +44,8 @@
 
 using std::ostream;
 using std::string;
+
+//------------------------------------------------------------------------------
 
 namespace PotsBase
 {
@@ -128,6 +131,8 @@ fn_name PotsProfile_Deregister = "PotsProfile.Deregister";
 bool PotsProfile::Deregister()
 {
    Debug::ft(PotsProfile_Deregister);
+
+   FunctionGuard guard(Guard_MemUnprotect);
 
    for(auto f = featureq_.First(); f != nullptr; f = featureq_.First())
    {
@@ -260,17 +265,13 @@ void PotsProfile::Shutdown(RestartLevel level)
 {
    Debug::ft(PotsProfile_Shutdown);
 
-   //  On a warm restart, everything in the profile will be preserved.
-   //  On a reload restart, everything will be freed.  In either case,
-   //  there is nothing to do.  On a cold restart, the circuit will be
-   //  freed, so reset the data related to it.
+   if(Restart::ClearsMemory(MemType())) return;
+
+   //  If the circuit will be freed, reset the data related to it.
    //
-   if(level == RestartCold)
-   {
-      FunctionGuard guard(Guard_MemUnprotect);
-      circuit_.release();
-      new (dyn_.get()) PotsProfileDynamic();
-   }
+   FunctionGuard guard(Guard_MemUnprotect);
+   Restart::Release(circuit_);
+   if(circuit_ == nullptr) new (dyn_.get()) PotsProfileDynamic();
 }
 
 //------------------------------------------------------------------------------
@@ -283,7 +284,7 @@ void PotsProfile::Startup(RestartLevel level)
 
    if(circuit_ == nullptr)
    {
-      FunctionGuard guard(Guard_MemUnprotect, level < RestartReboot);
+      FunctionGuard guard(Guard_MemUnprotect);
       circuit_.reset(new PotsCircuit(*this));
    }
 }
@@ -314,6 +315,8 @@ bool PotsProfile::Subscribe(PotsFeature::Id fid, CliThread& cli)
 
    if(ftr != nullptr)
    {
+      FunctionGuard guard(Guard_MemUnprotect);
+
       auto fp = ftr->Subscribe(*this, cli);
 
       if(fp != nullptr)
@@ -337,11 +340,12 @@ fn_name PotsProfile_Unsubscribe = "PotsProfile.Unsubscribe";
 bool PotsProfile::Unsubscribe(PotsFeature::Id fid)
 {
    Debug::ft(PotsProfile_Unsubscribe);
-
    for(auto fp = featureq_.First(); fp != nullptr; featureq_.Next(fp))
    {
       if(fp->Fid() == fid)
       {
+         FunctionGuard guard(Guard_MemUnprotect);
+
          if(!fp->Unsubscribe(*this)) return false;
          featureq_.Exq(*fp);
          delete fp;

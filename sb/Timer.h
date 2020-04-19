@@ -37,9 +37,9 @@ namespace SessionBase
 //
 class Timer : public NodeBase::Pooled
 {
-   friend class ProtocolSM;
    friend class NodeBase::Q1Way< Timer >;
    friend class NodeBase::Q2Way< Timer >;
+   friend class ProtocolSM;
    friend class TimerRegistry;
    friend class TimerTrace;
 public:

@@ -59,6 +59,7 @@ class Thread : public Pooled
 {
    friend class Debug;
    friend class Exception;
+   friend class FunctionGuard;
    friend class InitThread;
    friend class ModuleRegistry;
    friend class Registry< Thread >;
@@ -75,16 +76,6 @@ public:
    //  if ASSERT is set and the running thread cannot be found.
    //
    static Thread* RunningThread(bool assert = true);
-
-   //  Causes the current thread to run unpreemptably (run to completion).
-   //  When a thread is entered, it is made unpreemptable before its Enter
-   //  function is invoked.
-   //
-   static void MakeUnpreemptable();
-
-   //  Causes the current thread to run preemptably.
-   //
-   static void MakePreemptable();
 
    //  Returns how long the running thread has run as a percentage (0 to 100)
    //  of the run-to-completion timeout.  Returns 0 for a preemptable thread.
@@ -151,14 +142,6 @@ public:
    //
    BlockingReason GetBlockingReason() const;
 
-   //  Write-enables memory that is normally write-protected.
-   //
-   static void MemUnprotect();
-
-   //  Write-disables memory that is normally write-protected.
-   //
-   static void MemProtect();
-
    //  Returns the thread's identifier within ThreadRegistry.
    //
    ThreadId Tid() const { return ThreadId(tid_.GetId()); }
@@ -174,6 +157,13 @@ public:
    //  Changes the thread to FACTION.  Returns true on success.
    //
    bool ChangeFaction(Faction faction);
+
+   //  Invoked at the outset of a restart so that the thread can decide whether
+   //  to exit or sleep until the restart is over.  The default version returns
+   //  true.  Because it is desirable to delete and recreate all threads during
+   //  a restart, this should only be overridden for compelling reasons.
+   //
+   virtual bool ExitOnRestart(RestartLevel level) const;
 
    //  Used to explicitly include or exclude the thread from a trace.
    //
@@ -318,6 +308,33 @@ protected:
    //
    static void StartShortInterval();
 private:
+   //  Causes the current thread to run unpreemptably (run to completion).
+   //  When a thread is entered, it is made unpreemptable before its Enter
+   //  function is invoked.  Must be invoked via FunctionGuard.
+   //
+   static void MakeUnpreemptable();
+
+   //  Causes the current thread to run preemptably.  Must be invoked
+   //  via FunctionGuard.
+   //
+   static void MakePreemptable();
+
+   //  Write-enables MemProtected.  Must be invoked via FunctionGuard.
+   //
+   static void MemUnprotect();
+
+   //  Write-disables MemProtected.  Must be invoked via FunctionGuard.
+   //
+   static void MemProtect();
+
+   //  Write-enables MemImmutable.  Must be invoked via FunctionGuard.
+   //
+   static void ImmUnprotect();
+
+   //  Write-disables MemImmutable.  Must be invoked via FunctionGuard.
+   //
+   static void ImmProtect();
+
    //  What to do after handling a signal or exception.
    //
    enum TrapAction
@@ -387,13 +404,6 @@ private:
    //  o it traps during trap recovery, except in this function.
    //
    virtual bool Recover();
-
-   //  Invoked at the outset of a restart so that the thread can decide whether
-   //  to exit or sleep until the restart is over.  The default version returns
-   //  true.  Because it is desirable to delete and recreate all threads during
-   //  a restart, this should only be overridden for compelling reasons.
-   //
-   virtual bool ExitOnRestart(RestartLevel level) const;
 
    //  Invoked to destroy a thread.  The default version simply invokes
    //  delete but may be overridden to properly delete a Singleton.

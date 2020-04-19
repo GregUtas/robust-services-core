@@ -239,11 +239,6 @@ private:
    //
    void ReleaseResources();
 
-   //  Nullifies resources whose heap was or will be deleted during
-   //  a restart at LEVEL.
-   //
-   void NullifyResources(RestartLevel level);
-
    //  Overridden to return a name for the thread.
    //
    c_string AbbrName() const override;

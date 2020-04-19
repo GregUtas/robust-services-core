@@ -33,6 +33,7 @@
 #include "NbCliParms.h"
 #include "ObjectPool.h"
 #include "ObjectPoolAudit.h"
+#include "Restart.h"
 #include "Singleton.h"
 #include "SysTypes.h"
 #include "ThisThread.h"
@@ -127,16 +128,16 @@ void ObjectPoolStatsGroup::DisplayStats
 
 fn_name ObjectPoolRegistry_ctor = "ObjectPoolRegistry.ctor";
 
-ObjectPoolRegistry::ObjectPoolRegistry() : nullifyObjectData_(false)
+ObjectPoolRegistry::ObjectPoolRegistry() :
+   nullifyObjectData_(false)
 {
    Debug::ft(ObjectPoolRegistry_ctor);
 
    Singleton< ObjPoolTraceTool >::Instance();
    pools_.Init(ObjectPool::MaxId, ObjectPool::CellDiff(), MemProtected);
    statsGroup_.reset(new ObjectPoolStatsGroup);
-   nullifyObjectData_ = new bool;
    nullifyObjectDataCfg_.reset(new CfgBoolParm("NullifyObjectData", "F",
-      nullifyObjectData_, "set to nullify the data after an object's vptr"));
+      &nullifyObjectData_, "set to nullify the data after an object's vptr"));
    Singleton< CfgParmRegistry >::Instance()->BindParm(*nullifyObjectDataCfg_);
 }
 
@@ -147,9 +148,6 @@ fn_name ObjectPoolRegistry_dtor = "ObjectPoolRegistry.dtor";
 ObjectPoolRegistry::~ObjectPoolRegistry()
 {
    Debug::ft(ObjectPoolRegistry_dtor);
-
-   delete nullifyObjectData_;
-   nullifyObjectData_ = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -259,6 +257,7 @@ bool ObjectPoolRegistry::BindPool(ObjectPool& pool)
 {
    Debug::ft(ObjectPoolRegistry_BindPool);
 
+   FunctionGuard guard(Guard_MemUnprotect);
    return pools_.Insert(pool);
 }
 
@@ -307,11 +306,10 @@ void ObjectPoolRegistry::Shutdown(RestartLevel level)
       p->Shutdown(level);
    }
 
-   if(level == RestartCold)
-   {
-      FunctionGuard guard(Guard_MemUnprotect);
-      statsGroup_.release();
-   }
+   if(Restart::ClearsMemory(MemType())) return;
+
+   FunctionGuard guard(Guard_MemUnprotect);
+   Restart::Release(statsGroup_);
 }
 
 //------------------------------------------------------------------------------
@@ -324,7 +322,7 @@ void ObjectPoolRegistry::Startup(RestartLevel level)
 
    if(statsGroup_ == nullptr)
    {
-      FunctionGuard guard(Guard_MemUnprotect, level < RestartReload);
+      FunctionGuard guard(Guard_MemUnprotect);
       statsGroup_.reset(new ObjectPoolStatsGroup);
    }
 
@@ -342,6 +340,7 @@ void ObjectPoolRegistry::UnbindPool(ObjectPool& pool)
 {
    Debug::ft(ObjectPoolRegistry_UnbindPool);
 
+   FunctionGuard guard(Guard_MemUnprotect);
    pools_.Erase(pool);
 }
 }

@@ -23,7 +23,6 @@
 #define MODULEREGISTRY_H_INCLUDED
 
 #include "Immutable.h"
-#include <iosfwd>
 #include "NbTypes.h"
 #include "Registry.h"
 #include "SysTypes.h"
@@ -42,8 +41,8 @@ namespace NodeBase
 class ModuleRegistry : public Immutable
 {
    friend class Singleton< ModuleRegistry >;
-   friend class InitThread;
    friend class Module;
+   friend class InitThread;
 public:
    //  Returns the module registered against MID.
    //

@@ -24,6 +24,7 @@
 #include <string>
 #include "Debug.h"
 #include "Formatters.h"
+#include "Restart.h"
 #include "SysTypes.h"
 #include "Tones.h"
 
@@ -142,7 +143,7 @@ void PotsTreatmentRegistry::Startup(RestartLevel level)
    //  allow them to be provisioned dynamically, along with the cause to
    //  treatment queue mappings.
    //
-   if(level < RestartReload) return;
+   if(!Restart::ClearsMemory(MemType())) return;
 
    auto IdleQId = PotsTreatmentQueue::IdleQId;
    new PotsTreatmentQueue(IdleQId);

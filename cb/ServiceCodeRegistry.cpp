@@ -24,6 +24,7 @@
 #include <string>
 #include "Debug.h"
 #include "Formatters.h"
+#include "Restart.h"
 #include "SbAppIds.h"
 #include "Service.h"
 #include "ServiceRegistry.h"
@@ -126,26 +127,30 @@ void ServiceCodeRegistry::Startup(RestartLevel level)
 {
    Debug::ft(ServiceCodeRegistry_Startup);
 
-   //  Define service code symbols on cold restarts or higher.
-   //
-   if(level < RestartCold) return;
-
-   auto reg = Singleton< SymbolRegistry >::Instance();
-   reg->BindSymbol("sc.wml.activation", "*33");
-   reg->BindSymbol("sc.wml.deactivation", "*34");
-   reg->BindSymbol("sc.ccw", "*70");
-   reg->BindSymbol("sc.cfu.activation", "*72");
-   reg->BindSymbol("sc.cfu.deactivation", "*73");
-
-   //  Define service codes on reload restarts or higher.  These
+   //  Define service codes if our registry was just created.  These
    //  are fixed but would be configurable in a production system.
    //
-   if(level < RestartReload) return;
+   if(Restart::ClearsMemory(MemType()))
+   {
+      SetService(33, PotsWmlActivation);
+      SetService(34, PotsWmlDeactivation);
+      SetService(70, PotsCcwServiceId);
+      SetService(72, PotsCfuActivation);
+      SetService(73, PotsCfuDeactivation);
+   }
 
-   SetService(33, PotsWmlActivation);
-   SetService(34, PotsWmlDeactivation);
-   SetService(70, PotsCcwServiceId);
-   SetService(72, PotsCfuActivation);
-   SetService(73, PotsCfuDeactivation);
+   //  Define service code symbols if the symbol registry was just
+   //  created.
+   //
+   auto reg = Singleton< SymbolRegistry >::Instance();
+
+   if(Restart::ClearsMemory(reg->MemType()))
+   {
+      reg->BindSymbol("sc.wml.activation", "*33");
+      reg->BindSymbol("sc.wml.deactivation", "*34");
+      reg->BindSymbol("sc.ccw", "*70");
+      reg->BindSymbol("sc.cfu.activation", "*72");
+      reg->BindSymbol("sc.cfu.deactivation", "*73");
+   }
 }
 }

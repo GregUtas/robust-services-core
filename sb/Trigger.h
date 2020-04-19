@@ -55,8 +55,8 @@ namespace SessionBase
 //
 class Trigger : public NodeBase::Immutable
 {
-   friend class Initiator;
    friend class NodeBase::Registry< Trigger >;
+   friend class Initiator;
    friend class ServiceSM;
 public:
    //  Allows "Id" to refer to a trigger identifier in this class hierarchy.

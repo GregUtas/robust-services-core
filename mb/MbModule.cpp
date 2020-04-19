@@ -23,6 +23,7 @@
 #include "Debug.h"
 #include "MbPools.h"
 #include "ModuleRegistry.h"
+#include "Restart.h"
 #include "SbModule.h"
 #include "Singleton.h"
 #include "Switch.h"
@@ -105,9 +106,9 @@ void MbModule::Startup(RestartLevel level)
 
    //  Define symbols.
    //
-   if(level < RestartCold) return;
-
    auto reg = Singleton< SymbolRegistry >::Instance();
+   if(!Restart::ClearsMemory(reg->MemType())) return;
+
    reg->BindSymbol("port.silence", Tone::Silence);
    reg->BindSymbol("port.dial", Tone::Dial);
    reg->BindSymbol("port.stutter", Tone::StutteredDial);

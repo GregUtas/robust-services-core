@@ -44,6 +44,7 @@ namespace PotsBase
 class PotsFeatureRegistry : public Immutable
 {
    friend class Singleton< PotsFeatureRegistry >;
+   friend class PotsFeature;
    friend class ActivateCommand;
    friend class DeactivateCommand;
    friend class SubscribeCommand;
@@ -55,14 +56,6 @@ public:
    //  with feature B, that B is also defined as incompatible with A.
    //
    void Audit();
-
-   //  Adds FEATURE to the registry.
-   //
-   bool BindFeature(PotsFeature& feature);
-
-   //  Removes FEATURE from the registry.
-   //
-   void UnbindFeature(PotsFeature& feature);
 
    //  Returns the feature identified by FID.
    //
@@ -80,6 +73,14 @@ private:
    //  Private because this singleton is not subclassed.
    //
    ~PotsFeatureRegistry();
+
+   //  Adds FEATURE to the registry.
+   //
+   bool BindFeature(PotsFeature& feature);
+
+   //  Removes FEATURE from the registry.
+   //
+   void UnbindFeature(PotsFeature& feature);
 
    //  The registry of PotsFeature subclasses.
    //

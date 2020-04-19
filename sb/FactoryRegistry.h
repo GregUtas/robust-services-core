@@ -35,8 +35,8 @@ namespace SessionBase
 //
 class FactoryRegistry : public NodeBase::Immutable
 {
-   friend class Factory;
    friend class NodeBase::Singleton< FactoryRegistry >;
+   friend class Factory;
 public:
    //  Returns the factory registered against FID.
    //

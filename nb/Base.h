@@ -134,8 +134,7 @@ public:
    //  Allocates resources when exiting a restart at LEVEL.  This allows an
    //  object that survived a restart to reallocate resources that did not.
    //  Invokes Restart::Initiate on a failure that warrants an escalation of
-   //  LEVEL.  If LEVEL is RestartReboot, the system is being initialized
-   //  after entering main().
+   //  LEVEL.
    //
    virtual void Startup(RestartLevel level) { }
 

@@ -1049,9 +1049,9 @@ void CxxSymbols::Shutdown(RestartLevel level)
 {
    Debug::ft(CxxSymbols_Shutdown);
 
-   //  Symbol tables are now preserved during restarts.
+   //  Symbol tables are preserved during restarts.
    //
-   if(level < RestartReboot) return;
+   if(terms_ != nullptr) return;
 
    classes_.reset();
    data_.reset();
@@ -1074,9 +1074,9 @@ void CxxSymbols::Startup(RestartLevel level)
 {
    Debug::ft(CxxSymbols_Startup);
 
-   //  Symbol tables are now preserved during restarts.
+   //  Create the symbol tables if they don't exist.
    //
-   if(level < RestartReboot) return;
+   if(terms_ != nullptr) return;
 
    classes_.reset(new ClassTable);
    data_.reset(new DataTable);

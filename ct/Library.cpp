@@ -38,6 +38,7 @@
 #include "LibraryTypes.h"
 #include "LibraryVarSet.h"
 #include "NbCliParms.h"
+#include "Restart.h"
 #include "Singleton.h"
 #include "ThisThread.h"
 
@@ -598,19 +599,15 @@ void Library::Shutdown(RestartLevel level)
 {
    Debug::ft(Library_Shutdown);
 
-   //  Configuration parameters disappear during reload restarts.
-   //  Everything else survives unless rebooting.
+   Restart::Release(sourcePathCfg_);
+
+   //  The library is preserved during restarts.
    //
-   switch(level)
+   if(level == RestartReboot)
    {
-   case RestartReboot:
       vars_.Purge();
       files_.Purge();
       dirs_.Purge();
-      //  [[fallthrough]]
-   case RestartReload:
-      sourcePathCfg_.release();
-      break;
    }
 }
 
@@ -622,17 +619,18 @@ void Library::Startup(RestartLevel level)
 {
    Debug::ft(Library_Startup);
 
-   //  Configuration parameters must be recreated during reload restarts.
+   //  Recreate our configuration parameter if it no longer exists.
    //
-   if(level < RestartReload) return;
+   if(sourcePathCfg_ == nullptr)
+   {
+      sourcePathCfg_.reset(new CfgStrParm
+         ("SourcePath", EMPTY_STR, &sourcePath_, "source code directory"));
+      Singleton< CfgParmRegistry >::Instance()->BindParm(*sourcePathCfg_);
+   }
 
-   sourcePathCfg_.reset(new CfgStrParm
-      ("SourcePath", EMPTY_STR, &sourcePath_, "source code directory"));
-   Singleton< CfgParmRegistry >::Instance()->BindParm(*sourcePathCfg_);
-
-   //  The library is now preserved during restarts.
+   //  Create the library's sets if they don't exist.
    //
-   if(level < RestartReboot) return;
+   if(varSet_ != nullptr) return;
 
    //  Create the fixed sets.
    //

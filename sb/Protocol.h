@@ -52,8 +52,8 @@ namespace SessionBase
 //
 class Protocol : public NodeBase::Immutable
 {
-   friend class Parameter;
    friend class NodeBase::Registry< Protocol >;
+   friend class Parameter;
    friend class Signal;
 public:
    //  Allows "Id" to refer to a protocol identifier in this class hierarchy.

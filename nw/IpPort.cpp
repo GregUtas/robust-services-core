@@ -35,6 +35,7 @@
 #include "IpService.h"
 #include "NbSignals.h"
 #include "NbTypes.h"
+#include "Restart.h"
 #include "Singleton.h"
 #include "Statistics.h"
 #include "SysSocket.h"
@@ -269,6 +270,7 @@ void IpPort::EnsureAlarm()
    if(alarm_ == nullptr)
    {
       auto alarmExpl = "Service unavailable: " + string(service_->Name());
+      FunctionGuard guard(Guard_ImmUnprotect);
       alarm_ = new Alarm(alarmName.c_str(), alarmExpl.c_str(), 5);
    }
 }
@@ -345,6 +347,7 @@ bool IpPort::SetSocket(SysSocket* socket)
    //
    if(socket == nullptr)
    {
+      FunctionGuard guard(Guard_MemUnprotect);
       socket_ = nullptr;
       return true;
    }
@@ -387,6 +390,7 @@ void IpPort::SetThread(IoThread* thread)
    //
    if(thread == nullptr)
    {
+      FunctionGuard guard(Guard_MemUnprotect);
       thread_ = nullptr;
       return;
    }
@@ -398,6 +402,7 @@ void IpPort::SetThread(IoThread* thread)
       Debug::SwLog(IpPort_SetThread, "I/O thread already exists", port_);
    }
 
+   FunctionGuard guard(Guard_MemUnprotect);
    thread_ = thread;
 }
 
@@ -409,10 +414,13 @@ void IpPort::Shutdown(RestartLevel level)
 {
    Debug::ft(IpPort_Shutdown);
 
-   if(level == RestartCold)
+   if(Restart::ClearsMemory(MemType())) return;
+
+   FunctionGuard guard(Guard_MemUnprotect);
+   Restart::Release(stats_);
+
+   if((thread_ == nullptr) || thread_->ExitOnRestart(level))
    {
-      FunctionGuard guard(Guard_MemUnprotect);
-      stats_.release();
       socket_ = nullptr;
    }
 }
@@ -425,7 +433,7 @@ void IpPort::Startup(RestartLevel level)
 {
    Debug::ft(IpPort_Startup);
 
-   FunctionGuard guard(Guard_MemUnprotect, level < RestartReload);
+   FunctionGuard guard(Guard_MemUnprotect);
 
    EnsureAlarm();
 

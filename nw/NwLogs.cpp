@@ -24,6 +24,9 @@
 #include "Debug.h"
 #include "Log.h"
 #include "LogGroup.h"
+#include "LogGroupRegistry.h"
+#include "Restart.h"
+#include "Singleton.h"
 
 using namespace NodeBase;
 
@@ -38,11 +41,12 @@ fixed_string NetworkAlarmName = "NETWORK";
 
 fn_name NetworkBase_CreateNwLogs = "NetworkBase.CreateNwLogs";
 
-void CreateNwLogs(RestartLevel level)
+void CreateNwLogs()
 {
    Debug::ft(NetworkBase_CreateNwLogs);
 
-   if(level < RestartReboot) return;
+   auto reg = Singleton< LogGroupRegistry >::Instance();
+   if(!Restart::ClearsMemory(reg->MemType())) return;
 
    new Alarm(NetworkAlarmName, "Network access lost", 5);
 

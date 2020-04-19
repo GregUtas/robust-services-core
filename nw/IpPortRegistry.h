@@ -41,8 +41,8 @@ namespace NetworkBase
 //
 class IpPortRegistry : public NodeBase::Protected
 {
-   friend class IpPort;
    friend class NodeBase::Singleton< IpPortRegistry >;
+   friend class IpPort;
 public:
    //  Returns the element's IP address (hostname).
    //

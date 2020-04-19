@@ -46,6 +46,6 @@ namespace NetworkBase
 
    extern NodeBase::fixed_string NetworkAlarmName;
 
-   void CreateNwLogs(NodeBase::RestartLevel level);
+   void CreateNwLogs();
 }
 #endif

@@ -26,6 +26,7 @@
 #include "CliThread.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "PotsCliParms.h"
 #include "PotsProfile.h"
 #include "SysTypes.h"
@@ -48,6 +49,8 @@ DnRouteFeatureProfile::DnRouteFeatureProfile
    Debug::ft(DnRouteFeatureProfile_ctor);
 }
 
+//------------------------------------------------------------------------------
+
 fn_name DnRouteFeatureProfile_dtor = "DnRouteFeatureProfile.dtor";
 
 DnRouteFeatureProfile::~DnRouteFeatureProfile()
@@ -55,11 +58,15 @@ DnRouteFeatureProfile::~DnRouteFeatureProfile()
    Debug::ft(DnRouteFeatureProfile_dtor);
 }
 
+//------------------------------------------------------------------------------
+
 fn_name DnRouteFeatureProfile_Activate = "DnRouteFeatureProfile.Activate";
 
 bool DnRouteFeatureProfile::Activate(PotsProfile& profile, CliThread& cli)
 {
    Debug::ft(DnRouteFeatureProfile_Activate);
+
+   FunctionGuard guard(Guard_MemUnprotect);
 
    word dn;
 
@@ -77,15 +84,20 @@ bool DnRouteFeatureProfile::Activate(PotsProfile& profile, CliThread& cli)
    return true;
 }
 
+//------------------------------------------------------------------------------
+
 fn_name DnRouteFeatureProfile_Deactivate = "DnRouteFeatureProfile.Deactivate";
 
 bool DnRouteFeatureProfile::Deactivate(PotsProfile& profile)
 {
    Debug::ft(DnRouteFeatureProfile_Deactivate);
 
+   FunctionGuard guard(Guard_MemUnprotect);
    on_ = false;
    return true;
 }
+
+//------------------------------------------------------------------------------
 
 void DnRouteFeatureProfile::Display(ostream& stream,
    const string& prefix, const Flags& options) const
@@ -94,5 +106,21 @@ void DnRouteFeatureProfile::Display(ostream& stream,
 
    stream << prefix << "dn : " << dn_ << CRLF;
    stream << prefix << "on : " << on_ << CRLF;
+}
+
+//------------------------------------------------------------------------------
+
+void DnRouteFeatureProfile::SetActive(bool on)
+{
+   FunctionGuard guard(Guard_MemUnprotect);
+   on_ = on;
+}
+
+//------------------------------------------------------------------------------
+
+void DnRouteFeatureProfile::SetDN(Address::DN dn)
+{
+   FunctionGuard guard(Guard_MemUnprotect);
+   dn_ = dn;
 }
 }

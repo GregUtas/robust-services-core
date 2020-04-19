@@ -111,6 +111,20 @@ void DaemonRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
+fn_name DaemonRegistry_Shutdown = "DaemonRegistry.Shutdown";
+
+void DaemonRegistry::Shutdown(RestartLevel level)
+{
+   Debug::ft(DaemonRegistry_Shutdown);
+
+   for(auto d = daemons_.First(); d != nullptr; daemons_.Next(d))
+   {
+      d->Shutdown(level);
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name DaemonRegistry_Startup = "DaemonRegistry.Startup";
 
 void DaemonRegistry::Startup(RestartLevel level)

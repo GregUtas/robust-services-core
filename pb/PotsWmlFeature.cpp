@@ -28,6 +28,7 @@
 #include "CliThread.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "PotsCliParms.h"
 #include "PotsProfile.h"
 #include "PotsProfileRegistry.h"
@@ -52,7 +53,7 @@ class PotsWmlAttrs : public CliText
 public: PotsWmlAttrs();
 };
 
-//==============================================================================
+//------------------------------------------------------------------------------
 
 fixed_string PotsWmlTimerOptExpl = "timeout (default=5)";
 fixed_string PotsWmlTimerTag = "to";
@@ -69,7 +70,7 @@ PotsWmlAttrs::PotsWmlAttrs() : CliText(PotsWmlFullName, PotsWmlAbbrName)
    BindParm(*new PotsWmlTimerOptParm);
 }
 
-//------------------------------------------------------------------------------
+//==============================================================================
 
 fn_name PotsWmlFeature_ctor = "PotsWmlFeature.ctor";
 
@@ -129,6 +130,7 @@ PotsFeatureProfile* PotsWmlFeature::Subscribe
       *cli.obuf << spaces(2) << NoDestinationWarning << CRLF;
    }
 
+   FunctionGuard guard(Guard_MemUnprotect);
    return new PotsWmlFeatureProfile(dn, timeout);
 }
 
@@ -161,6 +163,8 @@ fn_name PotsWmlFeatureProfile_Activate = "PotsWmlFeatureProfile.Activate";
 bool PotsWmlFeatureProfile::Activate(PotsProfile& profile, CliThread& cli)
 {
    Debug::ft(PotsWmlFeatureProfile_Activate);
+
+   FunctionGuard guard(Guard_MemUnprotect);
 
    word timeout;
    bool dnwarn = false;

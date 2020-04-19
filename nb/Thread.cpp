@@ -879,9 +879,13 @@ public:
    //
    uint8_t unpreempts_;
 
+   //  Calls to ImmUnprotect minus calls to ImmProtect.
+   //
+   uint8_t immUnprots_;
+
    //  Calls to MemUnprotect minus calls to MemProtect.
    //
-   uint8_t unprotects_;
+   uint8_t memUnprots_;
 
    //  The number of mutexes currently held by the thread.
    //
@@ -1011,7 +1015,8 @@ fn_name ThreadPriv_ctor = "ThreadPriv.ctor";
 ThreadPriv::ThreadPriv() :
    stackBase_(nullptr),
    unpreempts_(1),
-   unprotects_(0),
+   immUnprots_(0),
+   memUnprots_(0),
    mutexes_(0),
    acquiring_(nullptr),
    swlogs_(0),
@@ -1062,7 +1067,8 @@ void ThreadPriv::Display(ostream& stream,
 
    stream << prefix << "stackBase  : " << stackBase_ << CRLF;
    stream << prefix << "unpreempts : " << int(unpreempts_) << CRLF;
-   stream << prefix << "unprotects : " << int(unprotects_) << CRLF;
+   stream << prefix << "immUnprots : " << int(immUnprots_) << CRLF;
+   stream << prefix << "memUnprots : " << int(memUnprots_) << CRLF;
    stream << prefix << "mutexes    : " << int(mutexes_) << CRLF;
    stream << prefix << "acquiring  : ";
    if(acquiring_ == nullptr)
@@ -2047,6 +2053,57 @@ bool Thread::HandleSignal(signal_t sig, uint32_t code)
 
 //------------------------------------------------------------------------------
 
+fn_name Thread_ImmProtect = "Thread.ImmProtect";
+
+void Thread::ImmProtect()
+{
+   Debug::ft(Thread_ImmProtect);
+
+   auto thr = RunningThread();
+
+   //  Write-protect the immutable memory segment.  This is used after
+   //  ImmUnprotect, so it is an error if underflow would occur.
+   //
+   if(thr->priv_->immUnprots_ == 0)
+   {
+      Debug::SwLog(Thread_ImmProtect, "underflow", thr->Tid(), SwError);
+      return;
+   }
+
+   if(--thr->priv_->immUnprots_ == 0)
+   {
+      Memory::Protect(MemImmutable);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+const uint8_t MaxUnprotectCount = 15;
+
+fn_name Thread_ImmUnprotect = "Thread.ImmUnprotect";
+
+void Thread::ImmUnprotect()
+{
+   Debug::ft(Thread_ImmUnprotect);
+
+   auto thr = RunningThread();
+
+   //  Write-enable the immutable memory segment.
+   //
+   if(thr->priv_->immUnprots_ >= MaxUnprotectCount)
+   {
+      Debug::SwLog(Thread_ImmUnprotect, "overflow", thr->Tid(), SwError);
+      return;
+   }
+
+   if(++thr->priv_->immUnprots_ == 1)
+   {
+      Memory::Unprotect(MemImmutable);
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Thread_InitialMsecs = "Thread.InitialMsecs";
 
 msecs_t Thread::InitialMsecs() const
@@ -2315,19 +2372,16 @@ void Thread::MakePreemptable()
 
    auto thr = RunningThread();
 
-   //  Check for underflow.  If the thread has just become preemptable,
-   //  schedule it out.
+   //  If the thread is already preemptable, nothing needs to be done.
+   //  If it just become preemptable, schedule it out.
    //
-   if(thr->priv_->unpreempts_ == 0)
-   {
-      Debug::SwLog(Thread_MakePreemptable, "underflow", thr->Tid());
-      return;
-   }
-
+   if(thr->priv_->unpreempts_ == 0) return;
    if(--thr->priv_->unpreempts_ == 0) Pause();
 }
 
 //------------------------------------------------------------------------------
+
+const uint8_t MaxUnpreemptCount = 15;
 
 fn_name Thread_MakeUnpreemptable = "Thread.MakeUnpreemptable";
 
@@ -2340,9 +2394,9 @@ void Thread::MakeUnpreemptable()
    //  Increment the unpreemptable count.  If the thread has just become
    //  unpreemptable, schedule it out before starting to run it locked.
    //
-   if(thr->priv_->unpreempts_ >= 0x0f)
+   if(thr->priv_->unpreempts_ >= MaxUnpreemptCount)
    {
-      Debug::SwLog(Thread_MakeUnpreemptable, "overflow", thr->Tid());
+      Debug::SwLog(Thread_MakeUnpreemptable, "overflow", thr->Tid(), SwError);
       return;
    }
 
@@ -2359,15 +2413,16 @@ void Thread::MemProtect()
 
    auto thr = RunningThread();
 
-   //  Write-protect the protected memory segment.
+   //  Write-protect the protected memory segment.  This is used after
+   //  MemUnprotect, so it is an error if underflow would occur.
    //
-   if(thr->priv_->unprotects_ == 0)
+   if(thr->priv_->memUnprots_ == 0)
    {
-      Debug::SwLog(Thread_MemProtect, "underflow", thr->Tid());
+      Debug::SwLog(Thread_MemProtect, "underflow", thr->Tid(), SwError);
       return;
    }
 
-   if(--thr->priv_->unprotects_ == 0)
+   if(--thr->priv_->memUnprots_ == 0)
    {
       Memory::Protect(MemProtected);
    }
@@ -2375,23 +2430,23 @@ void Thread::MemProtect()
 
 //------------------------------------------------------------------------------
 
-fn_name Guard_MemUnprotect = "Thread.MemUnprotect";
+fn_name Thread_MemUnprotect = "Thread.MemUnprotect";
 
 void Thread::MemUnprotect()
 {
-   Debug::ft(Guard_MemUnprotect);
+   Debug::ft(Thread_MemUnprotect);
 
    auto thr = RunningThread();
 
    //  Write-enable the protected memory segment.
    //
-   if(thr->priv_->unprotects_ >= 0x0f)
+   if(thr->priv_->memUnprots_ >= MaxUnprotectCount)
    {
-      Debug::SwLog(Guard_MemUnprotect, "overflow", thr->Tid());
+      Debug::SwLog(Thread_MemUnprotect, "overflow", thr->Tid(), SwError);
       return;
    }
 
-   if(++thr->priv_->unprotects_ == 1)
+   if(++thr->priv_->memUnprots_ == 1)
    {
       Memory::Unprotect(MemProtected);
    }
@@ -2528,7 +2583,12 @@ void Thread::Proceed()
    //  priority is such that the platform will schedule it in, and signal it
    //  to resume.
    //
-   if(priv_->unprotects_ == 0)
+   if(priv_->immUnprots_ == 0)
+      Memory::Protect(MemImmutable);
+   else
+      Memory::Unprotect(MemImmutable);
+
+   if(priv_->memUnprots_ == 0)
       Memory::Protect(MemProtected);
    else
       Memory::Unprotect(MemProtected);
@@ -2738,10 +2798,7 @@ void Thread::ReleaseResources(bool orphaned)
    //  If a restart is underway, save time by releasing any object that
    //  the thread owns but whose heap will be deleted.
    //
-   if(Restart::GetLevel() >= RestartCold)
-   {
-      stats_.release();
-   }
+   Restart::Release(stats_);
 
    //  If the thread is not orphaned, it is about to exit, so delete its
    //  native thread; otherwise, add its native thread to set of orphans.
@@ -3066,12 +3123,15 @@ void Thread::Shutdown(RestartLevel level)
 {
    Debug::ft(Thread_Shutdown);
 
-   if(level < RestartCold) return;
+   Restart::Release(stats_);
 
-   //  On a cold restart or higher, the thread's messages and statistics
-   //  will be deleted.  Clean up the messages in case they own objects
-   //  that they need to free, and then reinitialize the message queue
-   //  so that the destructor will not be invoked for each message.
+   auto pool = Singleton< MsgBufferPool >::Instance();
+   if(!Restart::ClearsMemory(pool->BlockType())) return;
+
+   //  The thread's messages will be deleted during this restart.  Clean
+   //  up the messages in case they own objects that they need to free,
+   //  and then reinitialize the message queue so that the destructor
+   //  will not be invoked for each message.
    //
    for(auto m = msgq_.First(); m != nullptr; msgq_.Next(m))
    {
@@ -3079,7 +3139,6 @@ void Thread::Shutdown(RestartLevel level)
    }
 
    msgq_.Init(Pooled::LinkDiff());
-   stats_.release();
 }
 
 //------------------------------------------------------------------------------
@@ -3640,6 +3699,17 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
    try
    {
       Debug::ft(Thread_TrapHandler);  //@
+
+      //  Reprotect any unprotected memory.
+      //
+      priv_->immUnprots_ = 0;
+      priv_->memUnprots_ = 0;
+
+      if(Restart::GetLevel() != RestartReboot)
+      {
+         Memory::Protect(MemImmutable);
+         Memory::Protect(MemProtected);
+      }
 
       //  If the thread is holding any mutexes, release them.
       //

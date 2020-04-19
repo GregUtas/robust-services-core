@@ -21,9 +21,9 @@
 //
 #include "FunctionGuard.h"
 #include "Debug.h"
-#include "Memory.h"
+#include "Restart.h"
 #include "SysTypes.h"
-#include "ThisThread.h"
+#include "Thread.h"
 
 //------------------------------------------------------------------------------
 
@@ -37,21 +37,26 @@ FunctionGuard::FunctionGuard(GuardedFunction first, bool invoke) :
    Debug::ft(FunctionGuard_ctor);
 
    if(!invoke) return;
-   first_ = first;
 
-   switch(first_)
+   switch(first)
    {
    case Guard_MakeUnpreemptable:
-      ThisThread::MakeUnpreemptable();
+      first_ = first;
+      Thread::MakeUnpreemptable();
       return;
    case Guard_MakePreemptable:
-      ThisThread::MakePreemptable();
+      first_ = first;
+      Thread::MakePreemptable();
       return;
    case Guard_MemUnprotect:
-      ThisThread::MemUnprotect();
+      if(Restart::GetLevel() == RestartReboot) return;
+      first_ = first;
+      Thread::MemUnprotect();
       return;
    case Guard_ImmUnprotect:
-      Memory::Unprotect(MemImmutable);
+      if(Restart::GetLevel() == RestartReboot) return;
+      first_ = first;
+      Thread::ImmUnprotect();
       return;
    default:
       Debug::SwLog(FunctionGuard_ctor, "unexpected function", first_);
@@ -83,16 +88,16 @@ void FunctionGuard::Release()
    switch(first)
    {
    case Guard_MakeUnpreemptable:
-      ThisThread::MakePreemptable();
+      Thread::MakePreemptable();
       return;
    case Guard_MakePreemptable:
-      ThisThread::MakeUnpreemptable();
+      Thread::MakeUnpreemptable();
       return;
    case Guard_MemUnprotect:
-      ThisThread::MemProtect();
+      Thread::MemProtect();
       return;
    case Guard_ImmUnprotect:
-      Memory::Protect(MemImmutable);
+      Thread::ImmProtect();
       return;
    default:
       return;

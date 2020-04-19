@@ -24,12 +24,14 @@
 #include <string>
 #include "Debug.h"
 #include "Event.h"
+#include "FunctionGuard.h"
 #include "GlobalAddress.h"
 #include "InvokerPoolRegistry.h"
 #include "Message.h"
 #include "MsgPort.h"
 #include "NbAppIds.h"
 #include "ProtocolSM.h"
+#include "Restart.h"
 #include "RootServiceSM.h"
 #include "SbIpBuffer.h"
 #include "Singleton.h"
@@ -424,7 +426,8 @@ void TimerPool::Shutdown(RestartLevel level)
 {
    Debug::ft(TimerPool_Shutdown);
 
-   if(level >= RestartCold) timeouts_ = nullptr;
+   FunctionGuard guard(Guard_MemUnprotect);
+   Restart::Release(timeouts_);
 
    ObjectPool::Shutdown(level);
 }

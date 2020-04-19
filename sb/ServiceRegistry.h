@@ -35,8 +35,8 @@ namespace SessionBase
 //
 class ServiceRegistry : public NodeBase::Immutable
 {
-   friend class Service;
    friend class NodeBase::Singleton< ServiceRegistry >;
+   friend class Service;
 public:
    //  Returns the service registered against SID.
    //

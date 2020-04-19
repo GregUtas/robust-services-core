@@ -120,11 +120,11 @@ Tool* ToolRegistry::GetTool(FlagId id) const
 
 //------------------------------------------------------------------------------
 
-fn_name ToolRegistry_ListTools = "ToolRegistry.ListTools";
+fn_name ToolRegistry_ListToolChars = "ToolRegistry.ListToolChars";
 
-string ToolRegistry::ListTools() const
+string ToolRegistry::ListToolChars() const
 {
-   Debug::ft(ToolRegistry_ListTools);
+   Debug::ft(ToolRegistry_ListToolChars);
 
    string tools;
 

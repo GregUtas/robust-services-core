@@ -43,15 +43,8 @@ namespace NodeBase
 class CliRegistry : public Immutable
 {
    friend class Singleton< CliRegistry >;
+   friend class CliIncrement;
 public:
-   //  Adds INCR to the registry.
-   //
-   bool BindIncrement(CliIncrement& incr);
-
-   //  Removes INCR from the registry.
-   //
-   void UnbindIncrement(CliIncrement& incr);
-
    //  Returns the increment registered against NAME, if any.
    //
    CliIncrement* FindIncrement(const std::string& name) const;
@@ -76,6 +69,14 @@ private:
    //  Private because this singleton is not subclassed.
    //
    ~CliRegistry();
+
+   //  Adds INCR to the registry.
+   //
+   bool BindIncrement(CliIncrement& incr);
+
+   //  Removes INCR from the registry.
+   //
+   void UnbindIncrement(CliIncrement& incr);
 
    //> The maximum number of increments that can register.
    //

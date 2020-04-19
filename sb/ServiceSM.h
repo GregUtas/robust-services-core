@@ -47,8 +47,8 @@ namespace SessionBase
 //
 class ServiceSM : public NodeBase::Pooled
 {
-   friend class Event;
    friend class NodeBase::Q1Way< ServiceSM >;
+   friend class Event;
    friend class SbInitiationReq;
    friend class SsmContext;
 public:

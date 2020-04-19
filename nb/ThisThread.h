@@ -42,15 +42,11 @@ namespace NodeBase
    namespace ThisThread
    {
       ThreadId RunningThreadId();
-      void MakeUnpreemptable();
-      void MakePreemptable();
       word RtcPercentUsed();
       DelayRc Pause(msecs_t msecs = TIMEOUT_IMMED);
       void PauseOver(word limit);
       bool EnterBlockingOperation(BlockingReason why, fn_name_arg func);
       void ExitBlockingOperation(fn_name_arg func);
-      void MemUnprotect();
-      void MemProtect();
       void IncludeInTrace();
       TraceRc StartTracing(const std::string& opts);
       void StopTracing();

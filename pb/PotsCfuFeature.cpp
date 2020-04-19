@@ -27,6 +27,7 @@
 #include "CliThread.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "PotsCliParms.h"
 #include "PotsProfile.h"
 #include "PotsProfileRegistry.h"
@@ -42,7 +43,7 @@ class PotsCfuAttrs : public CliText
 public: PotsCfuAttrs();
 };
 
-//==============================================================================
+//------------------------------------------------------------------------------
 
 fixed_string PotsCfuAbbrName = "cfu";
 fixed_string PotsCfuFullName = "Call Forwarding Unconditional";
@@ -52,7 +53,7 @@ PotsCfuAttrs::PotsCfuAttrs() : CliText(PotsCfuFullName, PotsCfuAbbrName)
    BindParm(*new DnOptParm);
 }
 
-//------------------------------------------------------------------------------
+//==============================================================================
 
 fn_name PotsCfuFeature_ctor = "PotsCfuFeature.ctor";
 
@@ -105,6 +106,7 @@ PotsFeatureProfile* PotsCfuFeature::Subscribe
       *cli.obuf << spaces(2) << NoDestinationWarning << CRLF;
    }
 
+   FunctionGuard guard(Guard_MemUnprotect);
    return new PotsCfuFeatureProfile(dn);
 }
 

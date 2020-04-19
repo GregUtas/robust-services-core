@@ -113,7 +113,7 @@ void NbModule::Shutdown(RestartLevel level)
 
    Singleton< TraceBuffer >::Instance()->Shutdown(level);
    SysThreadStack::Shutdown(level);
-   Memory::Shutdown(level);
+   Memory::Shutdown();
    Singletons::Instance()->Shutdown(level);
 }
 
@@ -134,7 +134,7 @@ void NbModule::Startup(RestartLevel level)
    Singleton< LogBufferRegistry >::Instance()->Startup(level);
    Singleton< AlarmRegistry >::Instance()->Startup(level);
    Singleton< LogGroupRegistry >::Instance()->Startup(level);
-   CreateNbLogs(level);
+   CreateNbLogs();
    Singleton< CfgParmRegistry >::Instance()->Startup(level);
    Singleton< DaemonRegistry >::Instance()->Startup(level);
    Singleton< ObjectPoolRegistry >::Instance()->Startup(level);

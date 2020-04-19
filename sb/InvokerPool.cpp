@@ -71,6 +71,31 @@ public:
    CounterPtr       lockouts_;
 };
 
+//------------------------------------------------------------------------------
+
+fn_name InvokerPoolStats_ctor = "InvokerPoolStats.ctor";
+
+InvokerPoolStats::InvokerPoolStats()
+{
+   Debug::ft(InvokerPoolStats_ctor);
+
+   maxTrans_.reset(new HighWatermark("most transactions before yielding"));
+   requeues_.reset(new Counter("contexts requeued after priority work"));
+   trojans_.reset(new Counter("corrupt contexts found on work queue"));
+   lockouts_.reset(new Counter("times that all invokers were blocked"));
+}
+
+//------------------------------------------------------------------------------
+
+fn_name InvokerPoolStats_dtor = "InvokerPoolStats.dtor";
+
+InvokerPoolStats::~InvokerPoolStats()
+{
+   Debug::ft(InvokerPoolStats_dtor);
+}
+
+//==============================================================================
+//
 //  The work of a given priority that is waiting for an invoker pool.
 //
 class InvokerWork : public Dynamic
@@ -111,29 +136,6 @@ public:
 };
 
 //------------------------------------------------------------------------------
-
-fn_name InvokerPoolStats_ctor = "InvokerPoolStats.ctor";
-
-InvokerPoolStats::InvokerPoolStats()
-{
-   Debug::ft(InvokerPoolStats_ctor);
-
-   maxTrans_.reset(new HighWatermark("most transactions before yielding"));
-   requeues_.reset(new Counter("contexts requeued after priority work"));
-   trojans_.reset(new Counter("corrupt contexts found on work queue"));
-   lockouts_.reset(new Counter("times that all invokers were blocked"));
-}
-
-//------------------------------------------------------------------------------
-
-fn_name InvokerPoolStats_dtor = "InvokerPoolStats.dtor";
-
-InvokerPoolStats::~InvokerPoolStats()
-{
-   Debug::ft(InvokerPoolStats_dtor);
-}
-
-//==============================================================================
 
 fn_name InvokerWork_ctor = "InvokerWork.ctor";
 

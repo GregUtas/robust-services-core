@@ -23,6 +23,7 @@
 #include "Debug.h"
 #include "ModuleRegistry.h"
 #include "NtModule.h"
+#include "Restart.h"
 #include "SbAppIds.h"
 #include "SbModule.h"
 #include "Singleton.h"
@@ -89,9 +90,9 @@ void StModule::Startup(RestartLevel level)
 
    //  Define symbols.
    //
-   if(level < RestartCold) return;
-
    auto reg = Singleton< SymbolRegistry >::Instance();
+   if(!Restart::ClearsMemory(reg->MemType())) return;
+
    reg->BindSymbol("factory.test", TestFactoryId);
 }
 }

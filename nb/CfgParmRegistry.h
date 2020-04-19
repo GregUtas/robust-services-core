@@ -45,24 +45,18 @@ namespace NodeBase
 class CfgParmRegistry : public Protected
 {
    friend class Singleton< CfgParmRegistry >;
+   friend class CfgParm;
+   friend class CfgTuple;
 public:
    //  Deleted to prohibit copying.
    //
    CfgParmRegistry(const CfgParmRegistry& that) = delete;
    CfgParmRegistry& operator=(const CfgParmRegistry& that) = delete;
 
-   //  Adds TUPLE to the registry.
-   //
-   bool BindTuple(CfgTuple& tuple);
-
    //  Searches the registry and returns a tuple that matches KEY.
    //  Returns nullptr if no such tuple exists.
    //
    CfgTuple* FindTuple(const std::string& key) const;
-
-   //  Removes TUPLE from the registry.
-   //
-   void UnbindTuple(CfgTuple& tuple);
 
    //  Adds PARM to the registry and sets its value from the tuple
    //  that is associated with it.
@@ -73,10 +67,6 @@ public:
    //  that matches KEY.  Returns nullptr if no such parameter exists.
    //
    CfgParm* FindParm(const std::string& key) const;
-
-   //  Removes PARM from the registry.
-   //
-   void UnbindParm(CfgParm& parm);
 
    //  Searches the registry for a configuration parameter that
    //  matches KEY.  If such a parameter exists, updates VALUE to
@@ -116,6 +106,18 @@ private:
    //  Private because this singleton is not subclassed.
    //
    ~CfgParmRegistry();
+
+   //  Adds TUPLE to the registry.
+   //
+   bool BindTuple(CfgTuple& tuple);
+
+   //  Removes TUPLE from the registry.
+   //
+   void UnbindTuple(CfgTuple& tuple);
+
+   //  Removes PARM from the registry.
+   //
+   void UnbindParm(CfgParm& parm);
 
    //  Reads configuration tuples (key-value pairs) from the configuration
    //  file during system initialization.  Creates a CfgTuple instance for

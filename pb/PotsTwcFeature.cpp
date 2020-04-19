@@ -24,6 +24,7 @@
 #include "PotsFeatureProfile.h"
 #include "CliThread.h"
 #include "Debug.h"
+#include "FunctionGuard.h"
 #include "PotsFeatures.h"
 #include "SysTypes.h"
 
@@ -54,6 +55,8 @@ public:
    ~PotsTwcFeatureProfile();
 };
 
+//==============================================================================
+
 class PotsTwcAttrs : public CliText
 {
 public: PotsTwcAttrs();
@@ -63,6 +66,8 @@ fixed_string PotsTwcAbbrName = "twc";
 fixed_string PotsTwcFullName = "Three-Way Calling";
 
 PotsTwcAttrs::PotsTwcAttrs() : CliText(PotsTwcFullName, PotsTwcAbbrName) { }
+
+//==============================================================================
 
 fn_name PotsTwcFeature_ctor = "PotsTwcFeature.ctor";
 
@@ -75,6 +80,8 @@ PotsTwcFeature::PotsTwcFeature() :
    SetIncompatible(HTL);
 }
 
+//------------------------------------------------------------------------------
+
 fn_name PotsTwcFeature_dtor = "PotsTwcFeature.dtor";
 
 PotsTwcFeature::~PotsTwcFeature()
@@ -82,7 +89,11 @@ PotsTwcFeature::~PotsTwcFeature()
    Debug::ft(PotsTwcFeature_dtor);
 }
 
+//------------------------------------------------------------------------------
+
 CliText* PotsTwcFeature::Attrs() const { return new PotsTwcAttrs; }
+
+//------------------------------------------------------------------------------
 
 fn_name PotsTwcFeature_Subscribe = "PotsTwcFeature.Subscribe";
 
@@ -92,8 +103,12 @@ PotsFeatureProfile* PotsTwcFeature::Subscribe
    Debug::ft(PotsTwcFeature_Subscribe);
 
    cli.EndOfInput(false);
+
+   FunctionGuard guard(Guard_MemUnprotect);
    return new PotsTwcFeatureProfile;
 }
+
+//==============================================================================
 
 fn_name PotsTwcFeatureProfile_ctor = "PotsTwcFeatureProfile.ctor";
 
@@ -101,6 +116,8 @@ PotsTwcFeatureProfile::PotsTwcFeatureProfile() : PotsFeatureProfile(TWC)
 {
    Debug::ft(PotsTwcFeatureProfile_ctor);
 }
+
+//------------------------------------------------------------------------------
 
 fn_name PotsTwcFeatureProfile_dtor = "PotsTwcFeatureProfile.dtor";
 

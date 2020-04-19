@@ -24,6 +24,7 @@
 #include "PotsFeatureProfile.h"
 #include "CliThread.h"
 #include "Debug.h"
+#include "FunctionGuard.h"
 #include "PotsFeatures.h"
 #include "SysTypes.h"
 
@@ -43,14 +44,14 @@ class PotsCwtAttrs : public CliText
 public: PotsCwtAttrs();
 };
 
-//==============================================================================
+//------------------------------------------------------------------------------
 
 fixed_string PotsCwtAbbrName = "cwt";
 fixed_string PotsCwtFullName = "Call Waiting";
 
 PotsCwtAttrs::PotsCwtAttrs() : CliText(PotsCwtFullName, PotsCwtAbbrName) { }
 
-//------------------------------------------------------------------------------
+//==============================================================================
 
 fn_name PotsCwtFeature_ctor = "PotsCwtFeature.ctor";
 
@@ -85,6 +86,8 @@ PotsFeatureProfile* PotsCwtFeature::Subscribe
    Debug::ft(PotsCwtFeature_Subscribe);
 
    cli.EndOfInput(false);
+
+   FunctionGuard guard(Guard_MemUnprotect);
    return new PotsCwtFeatureProfile;
 }
 

@@ -27,6 +27,7 @@
 #include "DaemonRegistry.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "InitThread.h"
 #include "Log.h"
 #include "NbLogs.h"
@@ -215,6 +216,7 @@ void Daemon::EnsureAlarm()
    if(alarm_ == nullptr)
    {
       auto alarmExpl = "Thread(s) unavailable: " + alarmName;
+      FunctionGuard guard(Guard_ImmUnprotect);
       alarm_ = new Alarm(alarmName.c_str(), alarmExpl.c_str(), 0);
    }
 }

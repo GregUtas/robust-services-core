@@ -26,6 +26,7 @@
 #include "Debug.h"
 #include "Formatters.h"
 #include "NbCliParms.h"
+#include "Restart.h"
 #include "Singleton.h"
 #include "Thread.h"
 
@@ -259,10 +260,7 @@ void ThreadRegistry::Shutdown(RestartLevel level)
       t->Shutdown(level);
    }
 
-   if(level == RestartCold)
-   {
-      statsGroup_.release();
-   }
+   Restart::Release(statsGroup_);
 }
 
 //------------------------------------------------------------------------------

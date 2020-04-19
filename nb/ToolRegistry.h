@@ -43,22 +43,15 @@ namespace NodeBase
 class ToolRegistry : public Immutable
 {
    friend class Singleton< ToolRegistry >;
+   friend class Tool;
 public:
-   //  Adds TOOL to the registry.
-   //
-   bool BindTool(Tool& tool);
-
-   //  Removes TOOL from the registry.
-   //
-   void UnbindTool(Tool& tool);
-
    //  Returns the tool registered against ID.
    //
    Tool* GetTool(FlagId id) const;
 
    //  Returns a string that contains each tool's character identifier.
    //
-   std::string ListTools() const;
+   std::string ListToolChars() const;
 
    //  Returns the tool, if any, whose CLI character is ABBR.
    //
@@ -84,6 +77,14 @@ private:
    //  Private because this singleton is not subclassed.
    //
    ~ToolRegistry();
+
+   //  Adds TOOL to the registry.
+   //
+   bool BindTool(Tool& tool);
+
+   //  Removes TOOL from the registry.
+   //
+   void UnbindTool(Tool& tool);
 
    //> The maximum number of tools that can register.
    //

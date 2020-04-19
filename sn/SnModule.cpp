@@ -39,6 +39,7 @@
 #include "PotsSusService.h"
 #include "PotsTreatmentRegistry.h"
 #include "PotsWmlService.h"
+#include "Restart.h"
 #include "SbAppIds.h"
 #include "Singleton.h"
 #include "SnIncrement.h"
@@ -154,7 +155,7 @@ void SnModule::Startup(RestartLevel level)
 
    //  Create initiators.
    //
-   if(level >= RestartReload)
+   if(level >= RestartReboot)
    {
       new PotsOSusInitiator;
       new PotsTSusInitiator;
@@ -170,9 +171,8 @@ void SnModule::Startup(RestartLevel level)
 
    //  Define symbols.
    //
-   if(level < RestartCold) return;
-
    auto reg = Singleton< SymbolRegistry >::Instance();
+   if(!Restart::ClearsMemory(reg->MemType())) return;
 
    reg->BindSymbol("factory.pots.shelf", PotsShelfFactoryId);
    reg->BindSymbol("factory.pots.call", PotsCallFactoryId);

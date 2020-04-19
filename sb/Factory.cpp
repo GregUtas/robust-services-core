@@ -28,6 +28,7 @@
 #include "FactoryRegistry.h"
 #include "Formatters.h"
 #include "FunctionGuard.h"
+#include "Restart.h"
 #include "Singleton.h"
 #include "Statistics.h"
 
@@ -427,11 +428,8 @@ void Factory::Shutdown(RestartLevel level)
 {
    Debug::ft(Factory_Shutdown);
 
-   if(level == RestartCold)
-   {
-      FunctionGuard guard(Guard_ImmUnprotect);
-      stats_.release();
-   }
+   FunctionGuard guard(Guard_ImmUnprotect);
+   Restart::Release(stats_);
 }
 
 //------------------------------------------------------------------------------
@@ -444,7 +442,7 @@ void Factory::Startup(RestartLevel level)
 
    if(stats_ == nullptr)
    {
-      FunctionGuard guard(Guard_ImmUnprotect, level < RestartReboot);
+      FunctionGuard guard(Guard_ImmUnprotect);
       stats_.reset(new FactoryStats);
    }
 }

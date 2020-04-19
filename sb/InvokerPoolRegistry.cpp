@@ -184,6 +184,20 @@ InvokerPool* InvokerPoolRegistry::Pool(Faction faction) const
 
 //------------------------------------------------------------------------------
 
+fn_name InvokerPoolRegistry_Shutdown = "InvokerPoolRegistry.Shutdown";
+
+void InvokerPoolRegistry::Shutdown(RestartLevel level)
+{
+   Debug::ft(InvokerPoolRegistry_Shutdown);
+
+   for(auto p = pools_.First(); p != nullptr; pools_.Next(p))
+   {
+      p->Shutdown(level);
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name InvokerPoolRegistry_Startup = "InvokerPoolRegistry.Startup";
 
 void InvokerPoolRegistry::Startup(RestartLevel level)

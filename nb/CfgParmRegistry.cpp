@@ -31,6 +31,7 @@
 #include "Formatters.h"
 #include "Log.h"
 #include "NbLogs.h"
+#include "Restart.h"
 #include "SysFile.h"
 
 using std::ostream;
@@ -458,11 +459,11 @@ void CfgParmRegistry::Startup(RestartLevel level)
 {
    Debug::ft(CfgParmRegistry_Startup);
 
-   //  Load configuration parameters when booting or during a reload restart.
-   //  During less severe restarts, update any configuration parameters whose
+   //  Load configuration parameters if the registry was created.  If the
+   //  registry survived a restart, update any configuration parameters whose
    //  new value could only be assigned during a restart of this severity.
    //
-   if(level >= RestartReload)
+   if(Restart::ClearsMemory(MemType()))
    {
       LoadTuples();
    }

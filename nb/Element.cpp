@@ -44,16 +44,12 @@ fn_name Element_ctor = "Element.ctor";
 
 Element::Element() :
    name_("Unnamed Element"),
-   runningInLab_(nullptr)
+   runningInLab_(false)
 {
    Debug::ft(Element_ctor);
 
-   runningInLab_ = new bool;
-
-#ifdef FIELD_LOAD
-   *runningInLab_ = false;
-#else
-   *runningInLab_ = true;
+#ifndef FIELD_LOAD
+   runningInLab_ = true;
 #endif
 
    //  Create our configuration parameters.
@@ -65,7 +61,7 @@ Element::Element() :
    reg->BindParm(*nameCfg_);
 
    runningInLabCfg_.reset(new CfgBoolParm
-      ("RunningInLab", "T", runningInLab_, "set if running in lab"));
+      ("RunningInLab", "T", &runningInLab_, "set if running in lab"));
    reg->BindParm(*runningInLabCfg_);
 }
 
@@ -76,9 +72,6 @@ fn_name Element_dtor = "Element.dtor";
 Element::~Element()
 {
    Debug::ft(Element_dtor);
-
-   delete runningInLab_;
-   runningInLab_ = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -96,7 +89,7 @@ void Element::Display(ostream& stream,
    Protected::Display(stream, prefix, options);
 
    stream << prefix << "name            : " << name_ << CRLF;
-   stream << prefix << "runningInLab    : " << *runningInLab_ << CRLF;
+   stream << prefix << "RunningInLab    : " << runningInLab_ << CRLF;
    stream << prefix << "RscPath         : " << RscPath() << CRLF;
    stream << prefix << "HelpPath        : " << HelpPath() << CRLF;
    stream << prefix << "InputPath       : " << InputPath() << CRLF;
@@ -205,7 +198,17 @@ const string Element::RscPath()
 
 bool Element::RunningInLab()
 {
-   return *Singleton< Element >::Instance()->runningInLab_;
+   //  This might be invoked very early during initialization, so don't
+   //  create this class until it is required for another purpose.
+   //
+   auto element = Singleton< Element >::Extant();
+   if(element != nullptr) return element->runningInLab_;
+
+#ifndef FIELD_LOAD
+   return true;
+#else
+   return false;
+#endif;
 }
 
 //------------------------------------------------------------------------------

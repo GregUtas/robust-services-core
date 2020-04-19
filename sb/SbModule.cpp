@@ -110,7 +110,7 @@ void SbModule::Startup(RestartLevel level)
 {
    Debug::ft(SbModule_Startup);
 
-   CreateSbLogs(level);
+   CreateSbLogs();
 
    Singleton< ProtocolRegistry >::Instance()->Startup(level);
    Singleton< ServiceRegistry >::Instance()->Startup(level);

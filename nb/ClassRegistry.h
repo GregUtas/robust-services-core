@@ -35,15 +35,8 @@ namespace NodeBase
 class ClassRegistry : public Immutable
 {
    friend class Singleton< ClassRegistry >;
+   friend class Class;
 public:
-   //  Adds CLS to the registry.
-   //
-   bool BindClass(Class& cls);
-
-   //  Removes CLS from the registry.
-   //
-   void UnbindClass(Class& cls);
-
    //  Returns the class registered against CID.
    //
    Class* Lookup(ClassId cid) const;
@@ -72,6 +65,14 @@ private:
    //  Private because this singleton is not subclassed.
    //
    ~ClassRegistry();
+
+   //  Adds CLS to the registry.
+   //
+   bool BindClass(Class& cls);
+
+   //  Removes CLS from the registry.
+   //
+   void UnbindClass(Class& cls);
 
    //  The global registry of classes.
    //

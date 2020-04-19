@@ -23,6 +23,9 @@
 #include "Debug.h"
 #include "Log.h"
 #include "LogGroup.h"
+#include "LogGroupRegistry.h"
+#include "Restart.h"
+#include "Singleton.h"
 
 using namespace NodeBase;
 
@@ -36,11 +39,12 @@ fixed_string PotsLogGroup = "POTS";
 
 fn_name PotsBase_CreatePotsLogs = "PotsBase.CreatePotsLogs";
 
-void CreatePotsLogs(RestartLevel level)
+void CreatePotsLogs()
 {
    Debug::ft(PotsBase_CreatePotsLogs);
 
-   if(level < RestartReboot) return;
+   auto reg = Singleton< LogGroupRegistry >::Instance();
+   if(!Restart::ClearsMemory(reg->MemType())) return;
 
    auto group = new LogGroup(PotsLogGroup, "POTS Application");
    new Log(group, PotsShelfIcSignal, "POTS shelf invalid incoming signal");

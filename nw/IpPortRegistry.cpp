@@ -90,6 +90,7 @@ void HostAddrCfg::SetCurr()
 {
    Debug::ft(HostAddrCfg_SetCurr);
 
+   FunctionGuard guard(Guard_MemUnprotect);
    CfgStrParm::SetCurr();
    addr_ = SysIpL2Addr(GetCurr());
 }
@@ -318,8 +319,7 @@ SysIpL2Addr IpPortRegistry::HostAddress()
    {
       SysIpL3Addr host(name, service, proto);
 
-      auto invoke = (Restart::GetLevel() < RestartReboot);
-      FunctionGuard guard(Guard_MemUnprotect, invoke);
+      FunctionGuard guard(Guard_MemUnprotect);
       reg->hostAddr_ = host;
       return host;
    }
@@ -347,11 +347,8 @@ void IpPortRegistry::Shutdown(RestartLevel level)
       p->Shutdown(level);
    }
 
-   if(level == RestartCold)
-   {
-      FunctionGuard guard(Guard_MemUnprotect);
-      statsGroup_.release();
-   }
+   FunctionGuard guard(Guard_MemUnprotect);
+   Restart::Release(statsGroup_);
 }
 
 //------------------------------------------------------------------------------
@@ -366,15 +363,9 @@ void IpPortRegistry::Startup(RestartLevel level)
    //  look up.  It is therefore cached during initialization, after
    //  which a restart is required to change it.
    //
-   FunctionGuard guard(Guard_MemUnprotect, level < RestartReload);
-
+   FunctionGuard guard(Guard_MemUnprotect);
    HostAddress();
-
-   if(statsGroup_ == nullptr)
-   {
-      statsGroup_.reset(new IpPortStatsGroup);
-   }
-
+   if(statsGroup_ == nullptr) statsGroup_.reset(new IpPortStatsGroup);
    guard.Release();
 
    for(auto p = portq_.First(); p != nullptr; portq_.Next(p))

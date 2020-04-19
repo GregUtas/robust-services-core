@@ -27,8 +27,26 @@
 
 namespace NodeBase
 {
-RestartStatus Restart::Status_ = Initial;
+RestartStatus Restart::Status_ = Launching;
 RestartLevel Restart::Level_ = RestartReboot;
+
+//------------------------------------------------------------------------------
+
+bool Restart::ClearsMemory(MemoryType type)
+{
+   switch(type)
+   {
+   case MemProtected:
+   case MemPersistent:
+      return (Level_ >= RestartReload);
+   case MemDynamic:
+      return (Level_ >= RestartCold);
+   case MemTemporary:
+      return (Level_ >= RestartWarm);
+   }
+
+   return false;
+}
 
 //------------------------------------------------------------------------------
 

@@ -56,6 +56,7 @@ namespace PotsBase
 //
 class PotsTreatmentQueue : public Protected
 {
+   friend class PotsTreatment;
 public:
    //  Type for identifying a treatment queue.
    //
@@ -83,14 +84,6 @@ public:
    PotsTreatmentQueue(const PotsTreatmentQueue& that) = delete;
    PotsTreatmentQueue& operator=(const PotsTreatmentQueue& that) = delete;
 
-   //  Adds TREATMENT to the queue.
-   //
-   void BindTreatment(PotsTreatment& treatment);
-
-   //  Removes TREATMENT from the queue.
-   //
-   void UnbindTreatment(PotsTreatment& treatment);
-
    //  Returns the first treatment in the queue.
    //
    PotsTreatment* FirstTreatment() const;
@@ -108,6 +101,14 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
+   //  Adds TREATMENT to the queue.
+   //
+   void BindTreatment(PotsTreatment& treatment);
+
+   //  Removes TREATMENT from the queue.
+   //
+   void UnbindTreatment(PotsTreatment& treatment);
+
    //  The queue's index in PotsTreatmentRegistry.
    //
    RegCell qid_;

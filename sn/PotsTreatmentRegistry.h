@@ -43,15 +43,8 @@ namespace PotsBase
 class PotsTreatmentRegistry : public Protected
 {
    friend class Singleton< PotsTreatmentRegistry >;
+   friend class PotsTreatmentQueue;
 public:
-   //  Adds TREATMENTQ to the registry.
-   //
-   bool BindTreatmentQ(PotsTreatmentQueue& treatmentq);
-
-   //  Removes TREATMENTQ from the registry.
-   //
-   void UnbindTreatmentQ(PotsTreatmentQueue& treatmentq);
-
    //  Sets CAUSE to map to QID.
    //
    void SetCauseToTreatmentQ(Cause::Ind cause, PotsTreatmentQueue::QId qid);
@@ -80,6 +73,14 @@ private:
    //  Private because this singleton is not subclassed.
    //
    ~PotsTreatmentRegistry();
+
+   //  Adds TREATMENTQ to the registry.
+   //
+   bool BindTreatmentQ(PotsTreatmentQueue& treatmentq);
+
+   //  Removes TREATMENTQ from the registry.
+   //
+   void UnbindTreatmentQ(PotsTreatmentQueue& treatmentq);
 
    //  The registry of treatment queues.
    //

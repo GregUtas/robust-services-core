@@ -40,12 +40,16 @@ namespace NetworkBase
 //
 class IpServiceRegistry : public NodeBase::Immutable
 {
-   friend class IpService;
    friend class NodeBase::Singleton< IpServiceRegistry >;
+   friend class IpService;
 public:
    //  Returns the service registered against NAME.
    //
    IpService* GetService(const std::string& name) const;
+
+   //  Overridden for restarts.
+   //
+   void Shutdown(NodeBase::RestartLevel level) override;
 
    //  Overridden for restarts.
    //

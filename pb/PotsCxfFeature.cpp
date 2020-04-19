@@ -24,6 +24,7 @@
 #include "PotsFeatureProfile.h"
 #include "CliThread.h"
 #include "Debug.h"
+#include "FunctionGuard.h"
 #include "PotsFeatures.h"
 #include "SysTypes.h"
 
@@ -38,6 +39,8 @@ public:
    ~PotsCxfFeatureProfile();
 };
 
+//------------------------------------------------------------------------------
+
 class PotsCxfAttrs : public CliText
 {
 public: PotsCxfAttrs();
@@ -47,6 +50,8 @@ fixed_string PotsCxfAbbrName = "cxf";
 fixed_string PotsCxfFullName = "Call Transfer";
 
 PotsCxfAttrs::PotsCxfAttrs() : CliText(PotsCxfFullName, PotsCxfAbbrName) { }
+
+//==============================================================================
 
 fn_name PotsCxfFeature_ctor = "PotsCxfFeature.ctor";
 
@@ -59,6 +64,8 @@ PotsCxfFeature::PotsCxfFeature() :
    SetIncompatible(HTL);
 }
 
+//------------------------------------------------------------------------------
+
 fn_name PotsCxfFeature_dtor = "PotsCxfFeature.dtor";
 
 PotsCxfFeature::~PotsCxfFeature()
@@ -66,7 +73,11 @@ PotsCxfFeature::~PotsCxfFeature()
    Debug::ft(PotsCxfFeature_dtor);
 }
 
+//------------------------------------------------------------------------------
+
 CliText* PotsCxfFeature::Attrs() const { return new PotsCxfAttrs; }
+
+//------------------------------------------------------------------------------
 
 fn_name PotsCxfFeature_Subscribe = "PotsCxfFeature.Subscribe";
 
@@ -76,8 +87,12 @@ PotsFeatureProfile* PotsCxfFeature::Subscribe
    Debug::ft(PotsCxfFeature_Subscribe);
 
    cli.EndOfInput(false);
+
+   FunctionGuard guard(Guard_MemUnprotect);
    return new PotsCxfFeatureProfile;
 }
+
+//==============================================================================
 
 fn_name PotsCxfFeatureProfile_ctor = "PotsCxfFeatureProfile.ctor";
 
@@ -85,6 +100,8 @@ PotsCxfFeatureProfile::PotsCxfFeatureProfile() : PotsFeatureProfile(CXF)
 {
    Debug::ft(PotsCxfFeatureProfile_ctor);
 }
+
+//------------------------------------------------------------------------------
 
 fn_name PotsCxfFeatureProfile_dtor = "PotsCxfFeatureProfile.dtor";
 

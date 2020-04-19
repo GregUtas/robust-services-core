@@ -27,6 +27,7 @@
 #include "Debug.h"
 #include "MemoryTrace.h"
 #include "PermanentHeap.h"
+#include "Restart.h"
 #include "Singleton.h"
 #include "ToolTypes.h"
 #include "TraceBuffer.h"
@@ -268,11 +269,11 @@ size_t Memory::Align(size_t size, size_t log2align)
 
 fn_name Memory_Alloc = "Memory.Alloc";
 
-void* Memory::Alloc(size_t nBytes, MemoryType type, bool ex)
+void* Memory::Alloc(size_t size, MemoryType type, bool ex)
 {
    Debug::ft(Memory_Alloc);
 
-   if(nBytes == 0) return nullptr;
+   if(size == 0) return nullptr;
 
    //  Access the heap that manages the type of memory being requested.
    //
@@ -280,25 +281,25 @@ void* Memory::Alloc(size_t nBytes, MemoryType type, bool ex)
    if(heap == nullptr)
    {
       if(!ex) return nullptr;
-      throw AllocationException(type, nBytes);
+      throw AllocationException(type, size);
    }
 
    //  Align the size of the segment to the system's word size and ask
    //  the heap to allocate it.
    //
-   auto size = Align(nBytes);
-   auto addr = heap->Alloc(SegmentHeaderSize + size);
+   auto gross = Align(size);
+   auto addr = heap->Alloc(SegmentHeaderSize + gross);
    if(addr == nullptr)
    {
       if(!ex) return nullptr;
-      throw AllocationException(type, SegmentHeaderSize + size);
+      throw AllocationException(type, SegmentHeaderSize + gross);
    }
 
    //  Success.  Record the size of the segment (excluding its header)
    //  and its memory type.
    //
    auto seg = (Segment*) addr;
-   seg->header.size = size;
+   seg->header.size = gross;
    seg->header.type = type;
 
    if(Debug::TraceOn())
@@ -307,7 +308,8 @@ void* Memory::Alloc(size_t nBytes, MemoryType type, bool ex)
 
       if((buff != nullptr) && buff->ToolIsOn(MemoryTracer))
       {
-         auto rec = new MemoryTrace(MemoryTrace::Alloc, &seg->data, type, size);
+         auto rec =
+            new MemoryTrace(MemoryTrace::Alloc, &seg->data, type, gross);
          buff->Insert(rec);
       }
    }
@@ -319,11 +321,11 @@ void* Memory::Alloc(size_t nBytes, MemoryType type, bool ex)
 
 fn_name Memory_Copy = "Memory.Copy";
 
-void Memory::Copy(void* dest, const void* source, size_t nBytes)
+void Memory::Copy(void* dest, const void* source, size_t size)
 {
    Debug::ft(Memory_Copy);
 
-   memcpy(dest, source, nBytes);
+   memcpy(dest, source, size);
 }
 
 //------------------------------------------------------------------------------
@@ -398,7 +400,7 @@ bool Memory::Protect(MemoryType type)
 
 fn_name Memory_Realloc = "Memory.Realloc";
 
-void* Memory::Realloc(void* addr, size_t nBytes)
+void* Memory::Realloc(void* addr, size_t size)
 {
    Debug::ft(Memory_Realloc);
 
@@ -409,14 +411,14 @@ void* Memory::Realloc(void* addr, size_t nBytes)
    //
    if(addr == nullptr)
    {
-      Debug::SwLog(Memory_Realloc, "null address", nBytes);
+      Debug::SwLog(Memory_Realloc, "null address", size);
       return nullptr;
    }
 
    auto source = (Segment*) getptr1(addr, SegmentHeaderSize);
-   if(source->header.size >= Align(nBytes)) return addr;
+   if(source->header.size >= Align(size)) return addr;
 
-   auto dest = Alloc(nBytes, source->header.type);
+   auto dest = Alloc(size, source->header.type);
    if(dest == nullptr) return nullptr;
    Copy(dest, &source->data, source->header.size);
    Free(addr);
@@ -427,32 +429,41 @@ void* Memory::Realloc(void* addr, size_t nBytes)
 
 fn_name Memory_Set = "Memory.Set";
 
-void Memory::Set(void* dest, byte_t value, size_t nBytes)
+void Memory::Set(void* dest, byte_t value, size_t size)
 {
    Debug::ft(Memory_Set);
 
-   memset(dest, value, nBytes);
+   memset(dest, value, size);
 }
 
 //------------------------------------------------------------------------------
 
 fn_name Memory_Shutdown = "Memory.Shutdown";
 
-void Memory::Shutdown(RestartLevel level)
+void Memory::Shutdown()
 {
    Debug::ft(Memory_Shutdown);
 
-   if(level < RestartWarm) return;
+   if(Restart::ClearsMemory(MemTemporary))
+   {
+      Singleton< TemporaryHeap >::Destroy();
+   }
 
-   Singleton< TemporaryHeap >::Destroy();
-   if(level < RestartCold) return;
+   if(Restart::ClearsMemory(MemDynamic))
+   {
+      Singleton< DynamicHeap >::Destroy();
+   }
 
-   Singleton< DynamicHeap >::Destroy();
-   if(level < RestartReload) return;
+   if(Restart::ClearsMemory(MemPersistent))
+   {
+      Singleton< PersistentHeap >::Destroy();
+   }
 
-   Unprotect(MemProtected);
-   Singleton< PersistentHeap >::Destroy();
-   Singleton< ProtectedHeap >::Destroy();
+   if(Restart::ClearsMemory(MemProtected))
+   {
+      Unprotect(MemProtected);
+      Singleton< ProtectedHeap >::Destroy();
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -507,8 +518,8 @@ bool Memory::Validate(MemoryType type, const void* addr)
 
 //------------------------------------------------------------------------------
 
-size_t Memory::Words(size_t nBytes)
+size_t Memory::Words(size_t size)
 {
-   return ((nBytes + BYTES_PER_WORD - 1) >> BYTES_PER_WORD_LOG2);
+   return ((size + BYTES_PER_WORD - 1) >> BYTES_PER_WORD_LOG2);
 }
 }

@@ -53,8 +53,8 @@ namespace SessionBase
 //
 class Factory : public NodeBase::Immutable
 {
-   friend class InvokerPool;
    friend class NodeBase::Registry< Factory >;
+   friend class InvokerPool;
 public:
    //  Allows "Id" to refer to a factory identifier in this class hierarchy.
    //

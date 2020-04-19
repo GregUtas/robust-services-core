@@ -22,6 +22,8 @@
 #ifndef RESTART_H_INCLUDED
 #define RESTART_H_INCLUDED
 
+#include <memory>
+#include "Base.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -32,7 +34,7 @@ namespace NodeBase
 //
 enum RestartStatus
 {
-   Initial,      // system was just booted
+   Launching,    // system is just starting up
    StartingUp,   // system is being initialized
    Running,      // system is in operation
    ShuttingDown  // system is being shut down
@@ -76,6 +78,22 @@ public:
    //  Returns the type of restart currently in progress.
    //
    static RestartLevel GetLevel() { return Level_; }
+
+   //  Returns true if the heap for memory of TYPE will be freed
+   //  and reallocated during any restart that is underway.
+   //
+   static bool ClearsMemory(MemoryType type);
+
+   //  Invokes obj.release() and returns true if OBJ's heap will be
+   //  freed during any restart that is currently underway.
+   //
+   template< class T > static bool Release(std::unique_ptr< T >& obj)
+   {
+      auto type = (obj == nullptr ? MemNull : obj->MemType());
+      if(!ClearsMemory(type)) return false;
+      obj.release();
+      return true;
+   }
 
    //  Forces a restart after generating a log.  REASON must be defined
    //  above and indicates why the restart was initiated.  ERRVAL is for

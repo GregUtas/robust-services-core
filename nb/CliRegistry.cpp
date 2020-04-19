@@ -43,7 +43,7 @@ CliRegistry::CliRegistry()
 {
    Debug::ft(CliRegistry_ctor);
 
-   increments_.Init(MaxIncrements, CliIncrement::CellDiff(), MemProtected);
+   increments_.Init(MaxIncrements, CliIncrement::CellDiff(), MemImmutable);
 }
 
 //------------------------------------------------------------------------------

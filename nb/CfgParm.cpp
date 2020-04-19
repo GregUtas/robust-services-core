@@ -30,7 +30,6 @@
 #include "FunctionGuard.h"
 #include "Log.h"
 #include "NbLogs.h"
-#include "Restart.h"
 #include "Singleton.h"
 
 using std::ostream;
@@ -155,7 +154,7 @@ void CfgParm::SetCurr()
 {
    Debug::ft(CfgParm_SetCurr);
 
-   FunctionGuard guard(Guard_MemUnprotect, Restart::GetLevel() < RestartReboot);
+   FunctionGuard guard(Guard_MemUnprotect);
    auto input = GetInput();
    tuple_->SetInput(input.c_str());
    level_ = RestartNil;
@@ -210,6 +209,7 @@ bool CfgParm::SetValue(c_string input, RestartLevel& level)
 {
    Debug::ft(CfgParm_SetValue);
 
+   FunctionGuard guard(Guard_MemUnprotect);
    if(!SetNext(input)) return false;
    level = RestartRequired();
    if(level == RestartNil) SetCurr();

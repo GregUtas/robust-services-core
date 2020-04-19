@@ -36,6 +36,7 @@
 #include "Protocol.h"
 #include "ProtocolRegistry.h"
 #include "ProtocolSM.h"
+#include "Restart.h"
 #include "RootServiceSM.h"
 #include "SbEvents.h"
 #include "SbIpBuffer.h"
@@ -435,7 +436,12 @@ void BuffTrace::Shutdown(RestartLevel level)
 {
    Debug::ft(BuffTrace_Shutdown);
 
-   if(level >= RestartCold) Nullify();
+   if(buff_ != nullptr)
+   {
+      if(!Restart::ClearsMemory(buff_->MemType())) return;
+   }
+
+   Nullify();
 }
 
 //==============================================================================

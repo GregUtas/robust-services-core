@@ -44,32 +44,16 @@ namespace NodeBase
 class StatisticsRegistry : public Dynamic
 {
    friend class Singleton< StatisticsRegistry >;
-   friend class StatisticsCommand;
-   friend class StatisticsThread;
+   friend class Statistic;
+   friend class StatisticsGroup;
 public:
    //> The maximum number of statistics that can register.
    //
    static const size_t MaxStats;
 
-   //  Adds STAT, which is explained by EXPL, to the registry.
-   //
-   bool BindStat(Statistic& stat);
-
-   //  Removes STAT from the registry.
-   //
-   void UnbindStat(Statistic& stat);
-
    //> The maximum number of groups that can register.
    //
    static const size_t MaxGroups;
-
-   //  Adds GROUP to the registry.
-   //
-   bool BindGroup(StatisticsGroup& group);
-
-   //  Removes GROUP from the registry.
-   //
-   void UnbindGroup(StatisticsGroup& group);
 
    //  Returns the group registered against GID.
    //
@@ -82,6 +66,15 @@ public:
    //  Returns the tick time when the current interval started.
    //
    static const ticks_t& StartTicks() { return StartTicks_; }
+
+   //  Invoked at regular intervals to start a new measurement period.  If
+   //  FIRST is true, previous values in Statistics::total_ are discarded.
+   //
+   void StartInterval(bool first);
+
+   //  Overridden for restarts.
+   //
+   void Shutdown(RestartLevel level) override;
 
    //  Overridden for restarts.
    //
@@ -104,10 +97,21 @@ private:
    //
    ~StatisticsRegistry();
 
-   //  Invoked at regular intervals to start a new measurement period.  If
-   //  FIRST is true, previous values in Statistics::total_ are discarded.
+   //  Adds STAT, which is explained by EXPL, to the registry.
    //
-   void StartInterval(bool first);
+   bool BindStat(Statistic& stat);
+
+   //  Removes STAT from the registry.
+   //
+   void UnbindStat(Statistic& stat);
+
+   //  Adds GROUP to the registry.
+   //
+   bool BindGroup(StatisticsGroup& group);
+
+   //  Removes GROUP from the registry.
+   //
+   void UnbindGroup(StatisticsGroup& group);
 
    //  The global registry of statistics.
    //

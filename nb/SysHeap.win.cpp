@@ -117,24 +117,8 @@ void* SysHeap::Alloc(size_t size)
 
    if(heap_ == nullptr) return nullptr;
 
-   if(!HeapValidate(heap_, 0, nullptr))  //* make this optional
-   {
-      Debug::noop();
-   }
-
    auto addr = HeapAlloc(heap_, 0, size);
-
-   if(addr != nullptr)
-   {
-      inUse_ += size;
-      if(inUse_ > maxInUse_) maxInUse_ = inUse_;
-      ++allocs_;
-   }
-   else
-   {
-      ++fails_;
-   }
-
+   Allocated(size, addr != nullptr);
    return addr;
 }
 
@@ -252,14 +236,9 @@ void SysHeap::Free(void* addr, size_t size)
    if(heap_ == nullptr) return;
 
    if(HeapFree(heap_, 0, addr))
-   {
-      inUse_ -= size;
-      ++frees_;
-   }
+      Freed(size);
    else
-   {
       Debug::SwLog(SysHeap_Free, debug64_t(addr), GetLastError());
-   }
 }
 
 //------------------------------------------------------------------------------

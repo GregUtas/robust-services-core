@@ -32,6 +32,7 @@
 #include "Debug.h"
 #include "Element.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "Log.h"
 #include "Memory.h"
 #include "NbLogs.h"
@@ -136,13 +137,17 @@ void ObjectPoolSizeCfg::SetCurr()
 {
    Debug::ft(ObjectPoolSizeCfg_SetCurr);
 
+   FunctionGuard guard(Guard_MemUnprotect);
    CfgIntParm::SetCurr();
 
    //  If the pool contains no blocks, it is currently being constructed,
    //  so do nothing.  But if it already contains blocks, expand its size
    //  to the new value.
    //
-   if(pool_->currSegments_ > 0) pool_->AllocBlocks();
+   if(pool_->currSegments_ > 0)
+   {
+      pool_->AllocBlocks();
+   }
 }
 
 //==============================================================================
@@ -219,7 +224,7 @@ const size_t ObjectPool::OrphanMaxLogs = 8;
 fn_name ObjectPool_ctor = "ObjectPool.ctor";
 
 ObjectPool::ObjectPool
-   (ObjectPoolId pid, MemoryType type, size_t nBytes, const string& name) :
+   (ObjectPoolId pid, MemoryType type, size_t size, const string& name) :
    name_(name.c_str()),
    key_("NumOf" + name_),
    type_(type),
@@ -235,7 +240,7 @@ ObjectPool::ObjectPool
 
    //  The block size must account for the header above each Pooled object.
    //
-   blockSize_ = BlockHeaderSize + Memory::Align(nBytes);
+   blockSize_ = BlockHeaderSize + Memory::Align(size);
    segIncr_ = blockSize_ >> BYTES_PER_WORD_LOG2;
    segSize_ = segIncr_ * ObjectsPerSegment;
 
@@ -789,6 +794,7 @@ void ObjectPool::EnsureAlarm()
    if(alarm_ == nullptr)
    {
       auto alarmExpl = "High percentage of in-use " + name_;
+      FunctionGuard guard(Guard_ImmUnprotect);
       alarm_ = new Alarm(alarmName.c_str(), alarmExpl.c_str(), 30);
    }
 }
@@ -1098,27 +1104,21 @@ void ObjectPool::Shutdown(RestartLevel level)
 {
    Debug::ft(ObjectPool_Shutdown);
 
+   if(Restart::ClearsMemory(MemType())) return;
+
    //  Reinitialize our segments and dynamic data if the restart
    //  will destroy the heap where our blocks are allocated.
    //
-   switch(level)
+   FunctionGuard guard(Guard_MemUnprotect);
+
+   Restart::Release(stats_);
+
+   if(Restart::ClearsMemory(type_))
    {
-   case RestartCold:
-      stats_.release();
-      if((type_ == MemTemporary) || (type_ == MemDynamic)) break;
-      return;
-
-   case RestartWarm:
-      if(type_ == MemTemporary) break;
-      return;
-
-   default:
-      return;
+      for(auto i = 0; i < MaxSegments; ++i) blocks_[i] = nullptr;
+      currSegments_ = 0;
+      new (dyn_.get()) ObjectPoolDynamic();
    }
-
-   for(auto i = 0; i < MaxSegments; ++i) blocks_[i] = nullptr;
-   currSegments_ = 0;
-   new (dyn_.get()) ObjectPoolDynamic();
 }
 
 //------------------------------------------------------------------------------
@@ -1128,6 +1128,8 @@ fn_name ObjectPool_Startup = "ObjectPool.Startup";
 void ObjectPool::Startup(RestartLevel level)
 {
    Debug::ft(ObjectPool_Startup);
+
+   FunctionGuard guard(Guard_MemUnprotect);
 
    if(stats_ == nullptr) stats_.reset(new ObjectPoolStats);
 

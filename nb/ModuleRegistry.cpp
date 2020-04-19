@@ -240,6 +240,7 @@ RestartLevel ModuleRegistry::NextLevel()
    {
    case RestartWarm:
       return RestartCold;
+
    case RestartCold:
       return RestartReload;
 
@@ -248,11 +249,12 @@ RestartLevel ModuleRegistry::NextLevel()
       //
       //  These cause a reboot.
       //
+      //  [[ fallthrough ]]
    case RestartNil:
    case RestartExit:
    default:
       //
-      //  This functions is invoked when a restart is already underway,
+      //  This function is invoked when a restart is already underway,
       //  so these values should not occur.
       //
       return RestartReboot;
@@ -280,7 +282,7 @@ void ModuleRegistry::Restart()
    {
       switch(Restart::Status_)
       {
-      case Initial:
+      case Launching:
          Thread::EnableFactions(NoFactions);
          reentered = false;
          Restart::Level_ = RestartReboot;

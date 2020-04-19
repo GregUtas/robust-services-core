@@ -25,6 +25,7 @@
 #include <string>
 #include "Algorithms.h"
 #include "Debug.h"
+#include "FunctionGuard.h"
 #include "IpPort.h"
 #include "IpPortRegistry.h"
 #include "IpServiceRegistry.h"
@@ -231,6 +232,8 @@ IpPort* IpService::Provision(ipport_t pid)
       }
       return port;
    }
+
+   FunctionGuard guard(Guard_MemUnprotect);
 
    port = CreatePort(pid);
    if(port == nullptr)

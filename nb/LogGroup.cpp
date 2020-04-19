@@ -25,6 +25,7 @@
 #include "Algorithms.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "Log.h"
 #include "LogGroupRegistry.h"
 #include "Singleton.h"
@@ -47,7 +48,7 @@ fn_name LogGroup_ctor = "LogGroup.ctor";
 LogGroup::LogGroup(fixed_string name, fixed_string expl) :
    name_(strUpper(name).c_str()),
    expl_(expl),
-   suppressed_(nullptr)
+   suppressed_(false)
 {
    Debug::ft(LogGroup_ctor);
 
@@ -60,9 +61,6 @@ LogGroup::LogGroup(fixed_string name, fixed_string expl) :
    {
       Debug::SwLog(LogGroup_ctor, "expl length", expl_.size());
    }
-
-   suppressed_ = new bool;
-   *suppressed_ = false;
 
    logs_.Init(MaxLogs, Log::CellDiff(), MemImmutable);
 
@@ -125,7 +123,7 @@ void LogGroup::Display(ostream& stream,
 {
    stream << prefix << strIndex(gid_.GetId());
    stream << name_ << " group (" << expl_ << ')';
-   if(*suppressed_) stream << " [SUPPRESSED]";
+   if(suppressed_) stream << " [SUPPRESSED]";
    stream << CRLF;
 
    for(auto l = logs_.First(); l != nullptr; logs_.Next(l))
@@ -176,18 +174,26 @@ void LogGroup::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
+void LogGroup::SetSuppressed(bool suppressed)
+{
+   FunctionGuard guard(Guard_ImmUnprotect);
+   suppressed_ = suppressed;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name LogGroup_Shutdown = "LogGroup.Shutdown";
 
 void LogGroup::Shutdown(RestartLevel level)
 {
    Debug::ft(LogGroup_Shutdown);
 
-   *suppressed_ = false;
-
    for(auto l = logs_.First(); l != nullptr; logs_.Next(l))
    {
       l->Shutdown(level);
    }
+
+   SetSuppressed(false);
 }
 
 //------------------------------------------------------------------------------

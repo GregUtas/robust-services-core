@@ -23,7 +23,6 @@
 #include <ostream>
 #include "Debug.h"
 #include "FunctionGuard.h"
-#include "Restart.h"
 
 using std::ostream;
 using std::string;
@@ -86,7 +85,7 @@ void CfgStrParm::SetCurr()
 {
    Debug::ft(CfgStrParm_SetCurr);
 
-   FunctionGuard guard(Guard_MemUnprotect, Restart::GetLevel() < RestartReboot);
+   FunctionGuard guard(Guard_MemUnprotect);
    *curr_ = next_;
    CfgParm::SetCurr();
 }
@@ -99,7 +98,7 @@ bool CfgStrParm::SetNext(c_string input)
 {
    Debug::ft(CfgStrParm_SetNext);
 
-   FunctionGuard guard(Guard_MemUnprotect, Restart::GetLevel() < RestartReboot);
+   FunctionGuard guard(Guard_MemUnprotect);
    next_ = input;
    return true;
 }

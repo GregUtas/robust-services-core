@@ -20,10 +20,13 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "StatisticsRegistry.h"
-#include <ostream>
+#include <sstream>
 #include <string>
 #include "Debug.h"
 #include "Formatters.h"
+#include "Log.h"
+#include "NbLogs.h"
+#include "Restart.h"
 #include "Statistics.h"
 #include "StatisticsGroup.h"
 
@@ -136,6 +139,30 @@ void StatisticsRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
+fn_name StatisticsRegistry_Shutdown = "StatisticsRegistry.Shutdown";
+
+void StatisticsRegistry::Shutdown(RestartLevel level)
+{
+   Debug::ft(StatisticsRegistry_Shutdown);
+
+   //  Generate a statistics report if the registry will disappear
+   //  during the restart.
+   //
+   if(Restart::ClearsMemory(MemType()))
+   {
+      auto log = Log::Create(StatsLogGroup, StatsReport);
+
+      if(log != nullptr)
+      {
+         *log << Log::Tab;
+         DisplayStats(*log, VerboseOpt);
+         Log::Submit(log);
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name StatisticsRegistry_StartInterval = "StatisticsRegistry.StartInterval";
 
 void StatisticsRegistry::StartInterval(bool first)
@@ -162,10 +189,8 @@ void StatisticsRegistry::Startup(RestartLevel level)
    //  StartTicks_ to the system's original boot time.  It needs to be reset
    //  to the current time, given that all statistics have been cleared.
    //
-   switch(level)
+   if(Restart::ClearsMemory(MemType()))
    {
-   case RestartReload:
-   case RestartCold:
       StartTicks_ = Clock::TicksNow();
    }
 }

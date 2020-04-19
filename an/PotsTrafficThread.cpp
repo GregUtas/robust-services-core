@@ -27,6 +27,7 @@
 #include "Algorithms.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "Log.h"
 #include "Memory.h"
 #include "PotsCircuit.h"
@@ -1460,6 +1461,7 @@ void PotsTrafficThread::SetRate(word rate)
          firstDN_ = StartDN;
       }
 
+      FunctionGuard guard(Guard_MemUnprotect);
       auto reg = Singleton< PotsProfileRegistry >::Instance();
 
       for(auto i = 0; i < n; ++i)
@@ -1523,6 +1525,8 @@ void PotsTrafficThread::Takedown()
       if(curr == 0) break;
       if(curr == prev) --count;
    }
+
+   FunctionGuard guard(Guard_MemUnprotect);
 
    auto reg = Singleton< PotsProfileRegistry >::Instance();
 

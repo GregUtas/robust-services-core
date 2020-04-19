@@ -134,7 +134,7 @@ void NbModule::Startup(RestartLevel level)
    Singleton< LogBufferRegistry >::Instance()->Startup(level);
    Singleton< AlarmRegistry >::Instance()->Startup(level);
    Singleton< LogGroupRegistry >::Instance()->Startup(level);
-   CreateNbLogs();
+   CreateNbLogs(level);
    Singleton< CfgParmRegistry >::Instance()->Startup(level);
    Singleton< DaemonRegistry >::Instance()->Startup(level);
    Singleton< ObjectPoolRegistry >::Instance()->Startup(level);

@@ -41,12 +41,11 @@ fixed_string NetworkAlarmName = "NETWORK";
 
 fn_name NetworkBase_CreateNwLogs = "NetworkBase.CreateNwLogs";
 
-void CreateNwLogs()
+void CreateNwLogs(RestartLevel level)
 {
    Debug::ft(NetworkBase_CreateNwLogs);
 
-   auto reg = Singleton< LogGroupRegistry >::Instance();
-   if(!Restart::ClearsMemory(reg->MemType())) return;
+   if(level < RestartReboot) return;
 
    new Alarm(NetworkAlarmName, "Network access lost", 5);
 

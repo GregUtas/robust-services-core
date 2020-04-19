@@ -39,12 +39,11 @@ fixed_string PotsLogGroup = "POTS";
 
 fn_name PotsBase_CreatePotsLogs = "PotsBase.CreatePotsLogs";
 
-void CreatePotsLogs()
+void CreatePotsLogs(RestartLevel level)
 {
    Debug::ft(PotsBase_CreatePotsLogs);
 
-   auto reg = Singleton< LogGroupRegistry >::Instance();
-   if(!Restart::ClearsMemory(reg->MemType())) return;
+   if(level < RestartReboot) return;
 
    auto group = new LogGroup(PotsLogGroup, "POTS Application");
    new Log(group, PotsShelfIcSignal, "POTS shelf invalid incoming signal");

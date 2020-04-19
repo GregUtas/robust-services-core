@@ -73,6 +73,6 @@ namespace NodeBase
    constexpr LogId ObjPoolBlockRecovered = DebugLog + 2;
    constexpr LogId ObjPoolBlocksRecovered = DebugLog + 3;
 
-   void CreateNbLogs();
+   void CreateNbLogs(RestartLevel level);
 }
 #endif

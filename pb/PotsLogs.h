@@ -41,6 +41,6 @@ namespace PotsBase
    constexpr NodeBase::LogId PotsTrafficRate = NodeBase::InfoLog;
    constexpr NodeBase::LogId PotsShelfOgSignal = NodeBase::DebugLog;
 
-   void CreatePotsLogs();
+   void CreatePotsLogs(NodeBase::RestartLevel level);
 }
 #endif

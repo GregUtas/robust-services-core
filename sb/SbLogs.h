@@ -44,6 +44,6 @@ namespace SessionBase
 
    extern NodeBase::fixed_string OverloadAlarmName;
 
-   void CreateSbLogs();
+   void CreateSbLogs(NodeBase::RestartLevel level);
 }
 #endif

@@ -41,12 +41,11 @@ fixed_string OverloadAlarmName = "OVERLOAD";
 
 fn_name SessionBase_CreateSbLogs = "SessionBase.CreateSbLogs";
 
-void CreateSbLogs()
+void CreateSbLogs(RestartLevel level)
 {
    Debug::ft(SessionBase_CreateSbLogs);
 
-   auto reg = Singleton< LogGroupRegistry >::Instance();
-   if(!Restart::ClearsMemory(reg->MemType())) return;
+   if(level < RestartReboot) return;
 
    new Alarm(OverloadAlarmName, "Payload processing is overloaded", 30);
 

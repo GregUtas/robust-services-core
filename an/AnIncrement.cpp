@@ -43,9 +43,9 @@ namespace PotsBase
 {
 //  The TRAFFIC command.
 //
-class TrafficProfileText : public CliText
+class TrafficStatesText : public CliText
 {
-public: TrafficProfileText();
+public: TrafficStatesText();
 };
 
 class CallRateParm : public CliIntParm
@@ -76,11 +76,11 @@ private:
    word ProcessCommand(CliThread& cli) const override;
 };
 
-fixed_string TrafficProfileTextStr = "profile";
-fixed_string TrafficProfileTextExpl = "displays circuit and call states";
+fixed_string TrafficStatesTextStr = "states";
+fixed_string TrafficStatesTextExpl = "displays circuit and call states";
 
-TrafficProfileText::TrafficProfileText() :
-   CliText(TrafficProfileTextExpl, TrafficProfileTextStr) { }
+TrafficStatesText::TrafficStatesText() :
+   CliText(TrafficStatesTextExpl, TrafficStatesTextStr) { }
 
 fixed_string CallRateExpl = "calls per minute";
 
@@ -102,7 +102,7 @@ fixed_string TrafficQueryTextExpl = "displays traffic statistics";
 TrafficQueryText::TrafficQueryText() :
    CliText(TrafficQueryTextExpl, TrafficQueryTextStr) { }
 
-const id_t TrafficProfileIndex = 1;
+const id_t TrafficStatesIndex = 1;
 const id_t TrafficRateIndex    = 2;
 const id_t TrafficQueryIndex   = 3;
 
@@ -110,7 +110,7 @@ fixed_string TrafficActionExpl = "subcommand...";
 
 TrafficAction::TrafficAction() : CliTextParm(TrafficActionExpl)
 {
-   BindText(*new TrafficProfileText, TrafficProfileIndex);
+   BindText(*new TrafficStatesText, TrafficStatesIndex);
    BindText(*new TrafficRateText, TrafficRateIndex);
    BindText(*new TrafficQueryText, TrafficQueryIndex);
 }
@@ -136,7 +136,7 @@ word TrafficCommand::ProcessCommand(CliThread& cli) const
 
    switch(index)
    {
-   case TrafficProfileIndex:
+   case TrafficStatesIndex:
       cli.EndOfInput(false);
       *cli.obuf << "Basic call states:" << CRLF;
       BcSsm::DisplayStateCounts(*cli.obuf, spaces(2));

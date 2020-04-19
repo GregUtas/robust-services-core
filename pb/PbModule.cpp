@@ -102,7 +102,7 @@ void PbModule::Startup(RestartLevel level)
 {
    Debug::ft(PbModule_Startup);
 
-   CreatePotsLogs();
+   CreatePotsLogs(level);
    Singleton< PotsProfileRegistry >::Instance()->Startup(level);
    Singleton< PotsBicFeature >::Instance()->Startup(level);
    Singleton< PotsBocFeature >::Instance()->Startup(level);

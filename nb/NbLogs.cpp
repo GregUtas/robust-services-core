@@ -42,12 +42,11 @@ fixed_string ObjPoolLogGroup = "OBJ";
 
 fn_name NodeBase_CreateNbLogs = "NodeBase.CreateNbLogs";
 
-void CreateNbLogs()
+void CreateNbLogs(RestartLevel level)
 {
    Debug::ft(NodeBase_CreateNbLogs);
 
-   auto reg = Singleton< LogGroupRegistry >::Instance();
-   if(!Restart::ClearsMemory(reg->MemType())) return;
+   if(level < RestartReboot) return;
 
    auto group = new LogGroup(NodeLogGroup, "Node");
    new Log(group, NodeInitTimeout, "Initialization timeout");

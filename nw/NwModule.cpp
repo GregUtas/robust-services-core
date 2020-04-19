@@ -93,7 +93,7 @@ void NwModule::Startup(RestartLevel level)
 {
    Debug::ft(NwModule_Startup);
 
-   CreateNwLogs();
+   CreateNwLogs(level);
 
    if((level >= RestartCold) && !SysSocket::StartLayer())
    {

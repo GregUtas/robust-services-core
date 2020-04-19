@@ -120,6 +120,7 @@ Service::~Service()
 {
    Debug::ft(Service_dtor);
 
+   Debug::SwLog(Service_dtor, UnexpectedInvocation, 0);
    Singleton< ServiceRegistry >::Instance()->UnbindService(*this);
 }
 

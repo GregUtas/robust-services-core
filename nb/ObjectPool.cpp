@@ -127,6 +127,8 @@ fn_name ObjectPoolSizeCfg_dtor = "ObjectPoolSizeCfg.dtor";
 ObjectPoolSizeCfg::~ObjectPoolSizeCfg()
 {
    Debug::ft(ObjectPoolSizeCfg_dtor);
+
+   Debug::SwLog(ObjectPoolSizeCfg_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -262,6 +264,8 @@ fn_name ObjectPool_dtor = "ObjectPool.dtor";
 ObjectPool::~ObjectPool()
 {
    Debug::ft(ObjectPool_dtor);
+
+   Debug::SwLog(ObjectPool_dtor, UnexpectedInvocation, 0);
 
    for(size_t i = 0; i < currSegments_; ++i)
    {

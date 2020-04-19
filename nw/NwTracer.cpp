@@ -86,6 +86,8 @@ fn_name NwTracer_dtor = "NwTracer.dtor";
 NwTracer::~NwTracer()
 {
    Debug::ft(NwTracer_dtor);
+
+   Debug::SwLog(NwTracer_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

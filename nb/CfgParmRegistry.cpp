@@ -101,11 +101,7 @@ CfgParmRegistry::~CfgParmRegistry()
 {
    Debug::ft(CfgParmRegistry_dtor);
 
-   //  This should not be invoked.  On a reload restart, all configuration
-   //  parameters and tuples should be freed together, when the protected
-   //  heap is deallocated.
-   //
-   Debug::SwLog(CfgParmRegistry_dtor, "unexpected invocation", 0);
+   Debug::SwLog(CfgParmRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

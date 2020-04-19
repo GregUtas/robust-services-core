@@ -53,6 +53,8 @@ fn_name ToolRegistry_dtor = "ToolRegistry.dtor";
 ToolRegistry::~ToolRegistry()
 {
    Debug::ft(ToolRegistry_dtor);
+
+   Debug::SwLog(ToolRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

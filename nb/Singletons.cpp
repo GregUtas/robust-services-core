@@ -66,6 +66,8 @@ fn_name Singletons_dtor = "Singletons.dtor";
 Singletons::~Singletons()
 {
    Debug::ft(Singletons_dtor);
+
+   Debug::SwLog(Singletons_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

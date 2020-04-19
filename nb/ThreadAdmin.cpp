@@ -132,6 +132,8 @@ fn_name ThreadsStats_dtor = "ThreadsStats.dtor";
 ThreadsStats::~ThreadsStats()
 {
    Debug::ft(ThreadsStats_dtor);
+
+   Debug::SwLog(ThreadsStats_dtor, UnexpectedInvocation, 0);
 }
 
 //==============================================================================
@@ -336,6 +338,8 @@ fn_name ThreadAdmin_dtor = "ThreadAdmin.dtor";
 ThreadAdmin::~ThreadAdmin()
 {
    Debug::ft(ThreadAdmin_dtor);
+
+   Debug::SwLog(ThreadAdmin_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

@@ -68,6 +68,7 @@ CfgTuple::~CfgTuple()
 {
    Debug::ft(CfgTuple_dtor);
 
+   Debug::SwLog(CfgTuple_dtor, UnexpectedInvocation, 0);
    Singleton< CfgParmRegistry >::Instance()->UnbindTuple(*this);
 }
 

@@ -70,6 +70,7 @@ Daemon::~Daemon()
 {
    Debug::ft(Daemon_dtor);
 
+   Debug::SwLog(Daemon_dtor, UnexpectedInvocation, 0);
    Singleton< DaemonRegistry >::Instance()->UnbindDaemon(*this);
 }
 

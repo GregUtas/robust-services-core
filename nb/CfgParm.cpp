@@ -72,6 +72,7 @@ CfgParm::~CfgParm()
 {
    Debug::ft(CfgParm_dtor);
 
+   Debug::SwLog(CfgParm_dtor, UnexpectedInvocation, 0);
    Singleton< CfgParmRegistry >::Instance()->UnbindParm(*this);
 }
 

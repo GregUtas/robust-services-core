@@ -123,6 +123,8 @@ fn_name FactoryRegistry_dtor = "FactoryRegistry.dtor";
 FactoryRegistry::~FactoryRegistry()
 {
    Debug::ft(FactoryRegistry_dtor);
+
+   Debug::SwLog(FactoryRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

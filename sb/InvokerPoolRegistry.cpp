@@ -122,6 +122,8 @@ fn_name InvokerPoolRegistry_dtor = "InvokerPoolRegistry.dtor";
 InvokerPoolRegistry::~InvokerPoolRegistry()
 {
    Debug::ft(InvokerPoolRegistry_dtor);
+
+   Debug::SwLog(InvokerPoolRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

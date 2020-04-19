@@ -120,6 +120,8 @@ State::~State()
 {
    Debug::ft(State_dtor);
 
+   Debug::SwLog(State_dtor, UnexpectedInvocation, 0);
+
    auto svc = Singleton< ServiceRegistry >::Instance()->GetService(sid_);
    if(svc != nullptr) svc->UnbindState(*this);
 }

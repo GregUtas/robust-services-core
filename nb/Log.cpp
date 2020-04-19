@@ -119,6 +119,7 @@ Log::~Log()
 {
    Debug::ft(Log_dtor);
 
+   Debug::SwLog(Log_dtor, UnexpectedInvocation, 0);
    group_->UnbindLog(*this);
 }
 

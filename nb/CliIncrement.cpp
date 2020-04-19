@@ -59,6 +59,7 @@ CliIncrement::~CliIncrement()
 {
    Debug::ft(CliIncrement_dtor);
 
+   Debug::SwLog(CliIncrement_dtor, UnexpectedInvocation, 0);
    Singleton< CliRegistry >::Instance()->UnbindIncrement(*this);
 }
 

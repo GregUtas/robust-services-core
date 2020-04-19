@@ -136,10 +136,14 @@ TraceBuffer::TraceBuffer() :
 
 //------------------------------------------------------------------------------
 
+fn_name TraceBuffer_dtor = "TraceBuffer.dtor";
+
 TraceBuffer::~TraceBuffer()
 {
    //  Delete all trace records before freeing the buffer.
    //
+   Debug::SwLog(TraceBuffer_dtor, UnexpectedInvocation, 0);
+
    Clear();
    Memory::Free(buff_);
    buff_ = nullptr;

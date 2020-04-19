@@ -433,6 +433,8 @@ fn_name ContextSwitches_dtor = "ContextSwitches.dtor";
 ContextSwitches::~ContextSwitches()
 {
    Debug::ft(ContextSwitches_dtor);
+
+   Debug::SwLog(ContextSwitches_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -776,6 +778,8 @@ fn_name Orphans_dtor = "Orphans.dtor";
 Orphans::~Orphans()
 {
    Debug::ft(Orphans_dtor);
+
+   Debug::SwLog(Orphans_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

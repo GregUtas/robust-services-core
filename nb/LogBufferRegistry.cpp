@@ -54,6 +54,8 @@ fn_name LogBufferRegistry_dtor = "LogBufferRegistry.dtor";
 LogBufferRegistry::~LogBufferRegistry()
 {
    Debug::ft(LogBufferRegistry_dtor);
+
+   Debug::SwLog(LogBufferRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

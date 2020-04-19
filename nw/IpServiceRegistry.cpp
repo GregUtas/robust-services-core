@@ -50,6 +50,8 @@ fn_name IpServiceRegistry_dtor = "IpServiceRegistry.dtor";
 IpServiceRegistry::~IpServiceRegistry()
 {
    Debug::ft(IpServiceRegistry_dtor);
+
+   Debug::SwLog(IpServiceRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

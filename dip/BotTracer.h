@@ -43,7 +43,7 @@ private:
 
    //  Private because this singleton is not subclassed.
    //
-   ~BotTracer() = default;
+   ~BotTracer();
 };
 }
 #endif

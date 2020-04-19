@@ -62,6 +62,7 @@ IpService::~IpService()
 {
    Debug::ft(IpService_dtor);
 
+   Debug::SwLog(IpService_dtor, UnexpectedInvocation, 0);
    Singleton< IpServiceRegistry >::Instance()->UnbindService(*this);
 }
 

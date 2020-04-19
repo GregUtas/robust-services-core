@@ -53,6 +53,8 @@ fn_name AlarmRegistry_dtor = "AlarmRegistry.dtor";
 AlarmRegistry::~AlarmRegistry()
 {
    Debug::ft(AlarmRegistry_dtor);
+
+   Debug::SwLog(AlarmRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

@@ -71,6 +71,8 @@ Initiator::~Initiator()
 {
    Debug::ft(Initiator_dtor);
 
+   Debug::SwLog(Initiator_dtor, UnexpectedInvocation, 0);
+
    auto trg = GetTrigger();
 
    if(trg == nullptr)

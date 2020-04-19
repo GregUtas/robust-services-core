@@ -126,6 +126,8 @@ fn_name SbTracer_dtor = "SbTracer.dtor";
 SbTracer::~SbTracer()
 {
    Debug::ft(SbTracer_dtor);
+
+   Debug::SwLog(SbTracer_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

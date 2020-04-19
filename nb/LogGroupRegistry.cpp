@@ -123,6 +123,8 @@ fn_name LogGroupRegistry_dtor = "LogGroupRegistry.dtor";
 LogGroupRegistry::~LogGroupRegistry()
 {
    Debug::ft(LogGroupRegistry_dtor);
+
+   Debug::SwLog(LogGroupRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

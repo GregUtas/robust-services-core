@@ -75,10 +75,10 @@ Parameter::~Parameter()
 {
    Debug::ft(Parameter_dtor);
 
+   Debug::SwLog(Parameter_dtor, UnexpectedInvocation, 0);
+
    auto pro = Singleton< ProtocolRegistry >::Instance()->GetProtocol(prid_);
-
    if(pro == nullptr) return;
-
    pro->UnbindParameter(*this);
 }
 

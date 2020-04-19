@@ -58,6 +58,8 @@ fn_name MutexRegistry_dtor = "MutexRegistry.dtor";
 MutexRegistry::~MutexRegistry()
 {
    Debug::ft(MutexRegistry_dtor);
+
+   Debug::SwLog(MutexRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

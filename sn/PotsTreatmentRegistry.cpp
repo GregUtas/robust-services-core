@@ -54,6 +54,8 @@ fn_name PotsTreatmentRegistry_dtor = "PotsTreatmentRegistry.dtor";
 PotsTreatmentRegistry::~PotsTreatmentRegistry()
 {
    Debug::ft(PotsTreatmentRegistry_dtor);
+
+   Debug::SwLog(PotsTreatmentRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

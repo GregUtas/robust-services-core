@@ -60,6 +60,7 @@ Protocol::~Protocol()
 {
    Debug::ft(Protocol_dtor);
 
+   Debug::SwLog(Protocol_dtor, UnexpectedInvocation, 0);
    Singleton< ProtocolRegistry >::Instance()->UnbindProtocol(*this);
 }
 

@@ -85,6 +85,8 @@ fn_name FactoryStats_dtor = "FactoryStats.dtor";
 FactoryStats::~FactoryStats()
 {
    Debug::ft(FactoryStats_dtor);
+
+   Debug::SwLog(FactoryStats_dtor, UnexpectedInvocation, 0);
 }
 
 //==============================================================================
@@ -119,6 +121,7 @@ Factory::~Factory()
 {
    Debug::ft(Factory_dtor);
 
+   Debug::SwLog(Factory_dtor, UnexpectedInvocation, 0);
    Singleton< FactoryRegistry >::Instance()->UnbindFactory(*this);
 }
 

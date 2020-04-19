@@ -54,6 +54,7 @@ Trigger::~Trigger()
 {
    Debug::ft(Trigger_dtor);
 
+   Debug::SwLog(Trigger_dtor, UnexpectedInvocation, 0);
    initq_.Purge();
 }
 

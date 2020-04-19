@@ -62,6 +62,7 @@ PotsFeature::~PotsFeature()
 {
    Debug::ft(PotsFeature_dtor);
 
+   Debug::SwLog(PotsFeature_dtor, UnexpectedInvocation, 0);
    Singleton< PotsFeatureRegistry >::Instance()->UnbindFeature(*this);
 }
 

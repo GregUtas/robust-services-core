@@ -73,6 +73,8 @@ fn_name CliParm_dtor = "CliParm.dtor";
 CliParm::~CliParm()
 {
    Debug::ft(CliParm_dtor);
+
+   Debug::SwLog(CliParm_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

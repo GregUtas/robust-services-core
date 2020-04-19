@@ -120,6 +120,8 @@ fn_name ThreadRegistry_dtor = "ThreadRegistry.dtor";
 ThreadRegistry::~ThreadRegistry()
 {
    Debug::ft(ThreadRegistry_dtor);
+
+   Debug::SwLog(ThreadRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

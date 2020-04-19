@@ -57,6 +57,7 @@ Tool::~Tool()
 {
    Debug::ft(Tool_dtor);
 
+   Debug::SwLog(Tool_dtor, UnexpectedInvocation, 0);
    Singleton< ToolRegistry >::Instance()->UnbindTool(*this);
 }
 

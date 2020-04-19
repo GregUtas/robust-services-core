@@ -194,6 +194,8 @@ fn_name IpPortRegistry_dtor = "IpPortRegistry.dtor";
 IpPortRegistry::~IpPortRegistry()
 {
    Debug::ft(IpPortRegistry_dtor);
+
+   Debug::SwLog(IpPortRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

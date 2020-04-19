@@ -51,6 +51,8 @@ fn_name ProtocolRegistry_dtor = "ProtocolRegistry.dtor";
 ProtocolRegistry::~ProtocolRegistry()
 {
    Debug::ft(ProtocolRegistry_dtor);
+
+   Debug::SwLog(ProtocolRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

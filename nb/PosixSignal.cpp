@@ -61,6 +61,7 @@ PosixSignal::~PosixSignal()
 {
    Debug::ft(PosixSignal_dtor);
 
+   Debug::SwLog(PosixSignal_dtor, UnexpectedInvocation, 0);
    Singleton< PosixSignalRegistry >::Instance()->UnbindSignal(*this);
 }
 

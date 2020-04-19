@@ -52,6 +52,8 @@ fn_name PotsProfileRegistry_dtor = "PotsProfileRegistry.dtor";
 PotsProfileRegistry::~PotsProfileRegistry()
 {
    Debug::ft(PotsProfileRegistry_dtor);
+
+   Debug::SwLog(PotsProfileRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

@@ -50,6 +50,8 @@ fn_name ClassRegistry_dtor = "ClassRegistry.dtor";
 ClassRegistry::~ClassRegistry()
 {
    Debug::ft(ClassRegistry_dtor);
+
+   Debug::SwLog(ClassRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

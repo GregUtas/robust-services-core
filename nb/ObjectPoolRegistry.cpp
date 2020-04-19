@@ -148,6 +148,8 @@ fn_name ObjectPoolRegistry_dtor = "ObjectPoolRegistry.dtor";
 ObjectPoolRegistry::~ObjectPoolRegistry()
 {
    Debug::ft(ObjectPoolRegistry_dtor);
+
+   Debug::SwLog(ObjectPoolRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

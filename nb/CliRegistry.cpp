@@ -53,6 +53,8 @@ fn_name CliRegistry_dtor = "CliRegistry.dtor";
 CliRegistry::~CliRegistry()
 {
    Debug::ft(CliRegistry_dtor);
+
+   Debug::SwLog(CliRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

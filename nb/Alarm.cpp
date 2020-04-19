@@ -98,6 +98,7 @@ Alarm::~Alarm()
 {
    Debug::ft(Alarm_dtor);
 
+   Debug::SwLog(Alarm_dtor, UnexpectedInvocation, 0);
    Singleton< AlarmRegistry >::Instance()->UnbindAlarm(*this);
 }
 

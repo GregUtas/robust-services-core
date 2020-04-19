@@ -67,6 +67,8 @@ fn_name PotsFeatureRegistry_dtor = "PotsFeatureRegistry.dtor";
 PotsFeatureRegistry::~PotsFeatureRegistry()
 {
    Debug::ft(PotsFeatureRegistry_dtor);
+
+   Debug::SwLog(PotsFeatureRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

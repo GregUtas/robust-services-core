@@ -295,7 +295,7 @@ main_t RootThread::Main()
       //  Create the object pool for threads.
       //
       auto pool = Singleton< ThreadPool >::Instance();
-      if(!pool->AllocBlocks()) return SystemOutOfMemory;
+      if(!pool->AllocBlocks()) return ObjectPoolCreationFailed;
 
       //  Wrap the root thread and enter it.
       //

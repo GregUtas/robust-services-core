@@ -25,8 +25,10 @@ uint8_t LOBYTE(WORD w);
 uint8_t HIBYTE(WORD w);
 DWORD   GetLastError();
 
-constexpr int ERROR_NOT_ENOUGH_MEMORY = 8;
-constexpr int ERROR_NOT_OWNER = 288;
+constexpr int ERROR_NOT_ENOUGH_MEMORY = 0x0008;
+constexpr int ERROR_NOT_SUPPORTED = 0x0032;
+constexpr int ERROR_INVALID_PARAMETER = 0x0057;
+constexpr int ERROR_NOT_OWNER = 0x0120;
 
 //------------------------------------------------------------------------------
 //
@@ -64,6 +66,7 @@ constexpr DWORD PAGE_EXECUTE_READ = 0x20;
 constexpr DWORD PAGE_EXECUTE_READWRITE = 0x40;
 
 constexpr DWORD MEM_COMMIT = 0x1000;
+constexpr DWORD MEM_RESERVE = 0x2000;
 constexpr DWORD MEM_RELEASE = 0x8000;
 
 void* VirtualAlloc(void* addr, SIZE_T size, DWORD allocType, DWORD prot);

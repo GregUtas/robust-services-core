@@ -49,9 +49,10 @@ constexpr word WORD_MAX = (sizeof(word) == 8 ? INT64_MAX: INT32_MAX);
 constexpr word WORD_MIN = (sizeof(word) == 8 ? INT64_MIN: INT32_MIN);
 constexpr uword UWORD_MAX = (sizeof(word) == 8 ? UINT64_MAX : UINT32_MAX);
 
+constexpr size_t BITS_PER_BYTE_LOG2 = 3;
 constexpr size_t BYTES_PER_WORD = sizeof(uintptr_t);
 constexpr size_t BYTES_PER_WORD_LOG2 = (BYTES_PER_WORD == 8 ? 3 : 2);
-constexpr size_t BITS_PER_WORD = BYTES_PER_WORD << 3;
+constexpr size_t BITS_PER_WORD = BYTES_PER_WORD << BITS_PER_BYTE_LOG2;
 constexpr size_t BYTES_PER_POINTER = sizeof(uintptr_t);
 constexpr size_t NIBBLES_PER_POINTER = 2 * BYTES_PER_POINTER;
 

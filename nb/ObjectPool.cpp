@@ -1139,7 +1139,7 @@ void ObjectPool::Startup(RestartLevel level)
 
    if(!AllocBlocks())
    {
-      Restart::Initiate(SystemOutOfMemory, Pid());
+      Restart::Initiate(ObjectPoolCreationFailed, Pid());
    }
 }
 

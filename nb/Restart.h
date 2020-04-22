@@ -48,17 +48,21 @@ enum RestartStatus
 //
 enum RestartReasons
 {
-   NilRestart             = 0x0000,  // nil value
-   ManualRestart          = 0x0001,  // CLI >restart command
-   SystemOutOfMemory      = 0x0010,  // memory exhausted
-   ModuleStartupFailed    = 0x0020,  // failed to allocate resources
-   SocketLayerUnavailable = 0x0030,  // socket layer could not be started
-   RestartTimeout         = 0x0040,  // restart took too long
-   SchedulingTimeout      = 0x0041,  // missed InitThread heartbeat
-   ThreadPauseFailed      = 0x0050,  // Thread::Pause failed
-   DeathOfCriticalThread  = 0x0051,  // irrecoverable exception
-   WorkQueueCorruption    = 0x0100,  // corrupt invoker work queue
-   TimerQueueCorruption   = 0x0101   // corrupt timer registry queue
+   NilRestart               = 0x0000,  // nil value
+   ManualRestart            = 0x0001,  // CLI >restart command
+   ObjectPoolCreationFailed = 0x0010,  // insufficient memory for object pool
+   ModuleStartupFailed      = 0x0020,  // failed to allocate resources
+   NetworkLayerUnavailable  = 0x0030,  // network layer could not be started
+   RestartTimeout           = 0x0040,  // restart took too long
+   SchedulingTimeout        = 0x0041,  // missed InitThread heartbeat
+   ThreadPauseFailed        = 0x0050,  // Thread::Pause failed
+   DeathOfCriticalThread    = 0x0051,  // irrecoverable exception
+   MutexCreationFailed      = 0x0052,  // failed to create mutex
+   HeapCreationFailed       = 0x0060,  // insufficient memory for heap
+   HeapCorruption           = 0x0060,  // corrupt heap detected
+   HeapProtection           = 0x0061,  // failed to change memory protection
+   WorkQueueCorruption      = 0x0100,  // corrupt invoker work queue
+   TimerQueueCorruption     = 0x0101   // corrupt timer registry queue
 };
 
 //------------------------------------------------------------------------------

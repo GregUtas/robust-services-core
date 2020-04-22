@@ -23,9 +23,6 @@
 #include "Debug.h"
 #include "Log.h"
 #include "LogGroup.h"
-#include "LogGroupRegistry.h"
-#include "Restart.h"
-#include "Singleton.h"
 
 using namespace NodeBase;
 

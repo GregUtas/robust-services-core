@@ -97,7 +97,7 @@ void NwModule::Startup(RestartLevel level)
 
    if((level >= RestartCold) && !SysSocket::StartLayer())
    {
-      Restart::Initiate(SocketLayerUnavailable, 0);
+      Restart::Initiate(NetworkLayerUnavailable, 0);
    }
 
    Singleton< NwTracer >::Instance()->Startup(level);

@@ -41,6 +41,7 @@ namespace NodeBase
 class Q2Link
 {
    template< class T > friend class Q2Way;
+   friend class NbHeap;
 public:
    //  Public because an instance of this class is included in objects that
    //  can be queued.

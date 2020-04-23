@@ -72,7 +72,7 @@ public:
    {
       Debug::ft(Registry_dtor());
       if((delete_) && (capacity_ > 0)) Purge();
-      Memory::Free(registry_);
+      Memory::Free(registry_, mem_);
       registry_ = nullptr;
    }
 
@@ -578,7 +578,7 @@ private:
       for(id_t i = 0; i < capacity_; ++i) table[i] = registry_[i];
       for(id_t i = capacity_; i < count; ++i) table[i] = nullptr;
       capacity_ = count;
-      Memory::Free(registry_);
+      Memory::Free(registry_, mem_);
       registry_ = table;
       return true;
    }

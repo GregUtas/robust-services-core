@@ -36,6 +36,28 @@ Persistent::Persistent()
 
 //------------------------------------------------------------------------------
 
+fn_name Persistent_delete1 = "Persistent.operator delete";
+
+void Persistent::operator delete(void* addr)
+{
+   Debug::ft(Persistent_delete1);
+
+   Memory::Free(addr, MemPersistent);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Persistent_delete2 = "Persistent.operator delete[]";
+
+void Persistent::operator delete[](void* addr)
+{
+   Debug::ft(Persistent_delete2);
+
+   Memory::Free(addr, MemPersistent);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Persistent_new1 = "Persistent.operator new";
 
 void* Persistent::operator new(size_t size)

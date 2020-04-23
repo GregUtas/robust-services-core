@@ -226,10 +226,10 @@ const size_t ObjectPool::OrphanMaxLogs = 8;
 fn_name ObjectPool_ctor = "ObjectPool.ctor";
 
 ObjectPool::ObjectPool
-   (ObjectPoolId pid, MemoryType type, size_t size, const string& name) :
+   (ObjectPoolId pid, MemoryType mem, size_t size, const string& name) :
    name_(name.c_str()),
    key_("NumOf" + name_),
-   type_(type),
+   mem_(mem),
    blockSize_(0),
    segIncr_(0),
    segSize_(0),
@@ -269,7 +269,7 @@ ObjectPool::~ObjectPool()
 
    for(size_t i = 0; i < currSegments_; ++i)
    {
-      Memory::Free(blocks_[i]);
+      Memory::Free(blocks_[i], mem_);
       blocks_[i] = nullptr;
    }
 
@@ -288,7 +288,7 @@ bool ObjectPool::AllocBlocks()
    {
       auto pid = Pid();
       auto size = sizeof(uword) * segSize_;
-      blocks_[currSegments_] = (uword*) Memory::Alloc(size, type_, false);
+      blocks_[currSegments_] = (uword*) Memory::Alloc(size, mem_, false);
 
       if(blocks_[currSegments_] == nullptr)
       {
@@ -586,7 +586,7 @@ Pooled* ObjectPool::DeqBlock(size_t size)
    if(size > maxsize)
    {
       Debug::SwLog(ObjectPool_DeqBlock, size, Pid());
-      throw AllocationException(type_, size);
+      throw AllocationException(mem_, size);
    }
 
    stats_->lowExcess_->Update(maxsize - size);
@@ -596,7 +596,7 @@ Pooled* ObjectPool::DeqBlock(size_t size)
    if(item == nullptr)
    {
       stats_->failCount_->Incr();
-      throw AllocationException(type_, size);
+      throw AllocationException(mem_, size);
    }
 
    --dyn_->availCount_;
@@ -632,7 +632,7 @@ void ObjectPool::Display(ostream& stream,
    stream << prefix << "pid             : " << pid_.to_str() << CRLF;
    stream << prefix << "name            : " << name_ << CRLF;
    stream << prefix << "key             : " << key_ << CRLF;
-   stream << prefix << "type            : " << type_ << CRLF;
+   stream << prefix << "mem             : " << mem_ << CRLF;
    stream << prefix << "blockSize       : " << blockSize_ << CRLF;
    stream << prefix << "segIncr         : " << segIncr_ << CRLF;
    stream << prefix << "segSize         : " << segSize_ << CRLF;
@@ -1117,7 +1117,7 @@ void ObjectPool::Shutdown(RestartLevel level)
 
    Restart::Release(stats_);
 
-   if(Restart::ClearsMemory(type_))
+   if(Restart::ClearsMemory(mem_))
    {
       for(auto i = 0; i < MaxSegments; ++i) blocks_[i] = nullptr;
       currSegments_ = 0;

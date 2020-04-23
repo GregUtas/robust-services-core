@@ -22,7 +22,6 @@
 #include "Memory.h"
 #include "SysHeap.h"
 #include <cstring>
-#include "Algorithms.h"
 #include "AllocationException.h"
 #include "Debug.h"
 #include "MemoryTrace.h"
@@ -100,7 +99,7 @@ ImmutableHeap::~ImmutableHeap()
 
 size_t ImmutableHeap::GetSize()
 {
-   return 0x40000;  //* to be implemented
+   return 0x40000;  //* make configurable via command line
 }
 
 //------------------------------------------------------------------------------
@@ -125,7 +124,7 @@ ProtectedHeap::~ProtectedHeap()
 
 size_t ProtectedHeap::GetSize()
 {
-   return 0x100000;  //* to be implemented
+   return 0x100000;  //* make configurable via command line
 }
 
 //------------------------------------------------------------------------------
@@ -186,7 +185,7 @@ TemporaryHeap::~TemporaryHeap()
 //
 //  Returns the heap (if any) associated with TYPE.
 //
-SysHeap* AccessHeap(MemoryType type)
+Heap* AccessHeap(MemoryType type)
 {
    switch(type)
    {
@@ -205,7 +204,7 @@ SysHeap* AccessHeap(MemoryType type)
 //
 //  Returns the heap for TYPE.  If it doesn't exist, it is created.
 //
-SysHeap* EnsureHeap(MemoryType type)
+Heap* EnsureHeap(MemoryType type)
 {
    switch(type)
    {
@@ -221,27 +220,6 @@ SysHeap* EnsureHeap(MemoryType type)
 }
 
 //==============================================================================
-//
-//  Each memory segment allocated from a heap has the following header.
-//
-struct SegmentHeader
-{
-   size_t size;      // size of data (see below)
-   MemoryType type;  // type of memory
-};
-
-constexpr size_t SegmentHeaderSize = sizeof(SegmentHeader);
-
-//  This struct references a memory segment's header and the location
-//  where the client's data begins.
-//
-struct Segment
-{
-   SegmentHeader header;  // memory management information
-   uword data;            // start of application data
-};
-
-//------------------------------------------------------------------------------
 
 MemoryType Memory::AddrToType(const void* addr)
 {
@@ -288,33 +266,28 @@ void* Memory::Alloc(size_t size, MemoryType type, bool ex)
    //  the heap to allocate it.
    //
    auto gross = Align(size);
-   auto addr = heap->Alloc(SegmentHeaderSize + gross);
+   auto addr = heap->Alloc(gross);
    if(addr == nullptr)
    {
       if(!ex) return nullptr;
-      throw AllocationException(type, SegmentHeaderSize + gross);
+      throw AllocationException(type, gross);
    }
 
    //  Success.  Record the size of the segment (excluding its header)
    //  and its memory type.
    //
-   auto seg = (Segment*) addr;
-   seg->header.size = gross;
-   seg->header.type = type;
-
    if(Debug::TraceOn())
    {
       auto buff = Singleton< TraceBuffer >::Extant();
 
       if((buff != nullptr) && buff->ToolIsOn(MemoryTracer))
       {
-         auto rec =
-            new MemoryTrace(MemoryTrace::Alloc, &seg->data, type, gross);
+         auto rec = new MemoryTrace(MemoryTrace::Alloc, addr, type, gross);
          buff->Insert(rec);
       }
    }
 
-   return &seg->data;
+   return addr;
 }
 
 //------------------------------------------------------------------------------
@@ -332,7 +305,7 @@ void Memory::Copy(void* dest, const void* source, size_t size)
 
 fn_name Memory_Free = "Memory.Free";
 
-void Memory::Free(const void* addr)
+void Memory::Free(void* addr, MemoryType type)
 {
    Debug::ft(Memory_Free);
 
@@ -341,13 +314,11 @@ void Memory::Free(const void* addr)
    //
    if(addr == nullptr) return;
 
-   auto segment = (Segment*) getptr1(addr, SegmentHeaderSize);
-   auto header = &segment->header;
-   auto heap = AccessHeap(header->type);
+   auto heap = AccessHeap(type);
 
    if(heap == nullptr)
    {
-      Debug::SwLog(Memory_Free, header->size, header->type);
+      Debug::SwLog(Memory_Free, 0, type);
       return;
    }
 
@@ -359,18 +330,18 @@ void Memory::Free(const void* addr)
 
       if((buff != nullptr) && buff->ToolIsOn(MemoryTracer))
       {
-         auto rec = new MemoryTrace(MemoryTrace::Free,
-            addr, header->type, header->size);
+         auto size = heap->BlockSize(addr);
+         auto rec = new MemoryTrace(MemoryTrace::Free, addr, type, size);
          buff->Insert(rec);
       }
    }
 
-   heap->Free(segment, SegmentHeaderSize + header->size);
+   heap->Free(addr);
 }
 
 //------------------------------------------------------------------------------
 
-const SysHeap* Memory::Heap(MemoryType type)
+const Heap* Memory::GetHeap(MemoryType type)
 {
    return AccessHeap(type);
 }
@@ -393,21 +364,20 @@ bool Memory::Protect(MemoryType type)
 
    auto heap = AccessHeap(type);
    if(heap == nullptr) return false;
-   return heap->SetPermissions(MemReadOnly);
+   if(!heap->CanBeProtected()) return true;
+   return (heap->SetPermissions(MemReadOnly) == 0);
 }
 
 //------------------------------------------------------------------------------
 
 fn_name Memory_Realloc = "Memory.Realloc";
 
-void* Memory::Realloc(void* addr, size_t size)
+void* Memory::Realloc(void* addr, size_t size, MemoryType type)
 {
    Debug::ft(Memory_Realloc);
 
-   //  ADDR is where the application's data begins.  Access the header that
-   //  precedes it.  Return the current segment if its size is sufficient.
-   //  Otherwise, allocate a new segment, copy the data to it, and free the
-   //  original segment.
+   //  ADDR is where the application's data begins.  Allocate a new
+   //  segment, copy the data to it, and free the original segment.
    //
    if(addr == nullptr)
    {
@@ -415,13 +385,10 @@ void* Memory::Realloc(void* addr, size_t size)
       return nullptr;
    }
 
-   auto source = (Segment*) getptr1(addr, SegmentHeaderSize);
-   if(source->header.size >= Align(size)) return addr;
-
-   auto dest = Alloc(size, source->header.type);
+   auto dest = Alloc(size, type);
    if(dest == nullptr) return nullptr;
-   Copy(dest, &source->data, source->header.size);
-   Free(addr);
+   Copy(dest, addr, size);
+   Free(addr, type);
    return dest;
 }
 
@@ -468,24 +435,6 @@ void Memory::Shutdown()
 
 //------------------------------------------------------------------------------
 
-fn_name Memory_Type = "Memory.Type";
-
-MemoryType Memory::Type(const void* addr)
-{
-   Debug::ft(Memory_Type);
-
-   if(addr == nullptr)
-   {
-      Debug::SwLog(Memory_Type, "null address", 0);
-      return MemNull;
-   }
-
-   auto source = (Segment*) getptr1(addr, SegmentHeaderSize);
-   return source->header.type;
-}
-
-//------------------------------------------------------------------------------
-
 bool Memory::Unprotect(MemoryType type)
 {
    switch(type)
@@ -500,7 +449,8 @@ bool Memory::Unprotect(MemoryType type)
 
    auto heap = AccessHeap(type);
    if(heap == nullptr) return false;
-   return heap->SetPermissions(MemReadWrite);
+   if(!heap->CanBeProtected()) return true;
+   return (heap->SetPermissions(MemReadWrite) == 0);
 }
 
 //------------------------------------------------------------------------------

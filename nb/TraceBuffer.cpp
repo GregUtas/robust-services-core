@@ -145,9 +145,9 @@ TraceBuffer::~TraceBuffer()
    Debug::SwLog(TraceBuffer_dtor, UnexpectedInvocation, 0);
 
    Clear();
-   Memory::Free(buff_);
+   Memory::Free(buff_, MemPermanent);
    buff_ = nullptr;
-   Memory::Free(funcs_);
+   Memory::Free(funcs_, MemPermanent);
    funcs_ = nullptr;
 }
 
@@ -200,9 +200,9 @@ bool TraceBuffer::AllocBuffers(size_t n, bool ex)
    size_t size = 1;
    size <<= n;
 
-   Memory::Free(buff_);
+   Memory::Free(buff_, MemPermanent);
    buff_ = nullptr;
-   Memory::Free(funcs_);
+   Memory::Free(funcs_, MemPermanent);
    funcs_ = nullptr;
    size_ = 0;
 
@@ -214,7 +214,7 @@ bool TraceBuffer::AllocBuffers(size_t n, bool ex)
       Memory::Alloc(size * sizeof(FunctionTrace), MemPermanent, ex);
    if(funcs_ == nullptr)
    {
-      Memory::Free(buff_);
+      Memory::Free(buff_, MemPermanent);
       buff_ = nullptr;
       return false;
    }

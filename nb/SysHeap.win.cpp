@@ -24,12 +24,13 @@
 #include <intsafe.h>
 #include <iomanip>
 #include <ostream>
+#include <string>
 #include <windows.h>
 #include "Debug.h"
 #include "Memory.h"
-#include "SysMemory.h"
 
 using std::ostream;
+using std::string;
 using std::setw;
 
 //------------------------------------------------------------------------------
@@ -38,25 +39,19 @@ namespace NodeBase
 {
 fn_name SysHeap_ctor = "SysHeap.ctor";
 
-SysHeap::SysHeap(MemoryType type, size_t size) :
-   type_(type),
+SysHeap::SysHeap(MemoryType type, size_t size) : Heap(),
    heap_(nullptr),
    size_(size),
-   attrs_(MemReadWrite),
-   inUse_(0),
-   allocs_(0),
-   fails_(0),
-   frees_(0),
-   maxInUse_(0)
+   type_(type)
 {
    Debug::ft(SysHeap_ctor);
 
    //  If this is the default heap, wrap it, else create it.
    //
-   if(type_ == MemPermanent)
+   if(type == MemPermanent)
       heap_ = GetProcessHeap();
    else
-      heap_ = HeapCreate(HEAP_GENERATE_EXCEPTIONS, size_, size_);
+      heap_ = HeapCreate(HEAP_GENERATE_EXCEPTIONS, size, size);
 
    if(heap_ == nullptr)
    {
@@ -76,20 +71,12 @@ SysHeap::~SysHeap()
    //
    if(heap_ == nullptr) return;
 
-   //  Prevent an attempt to destroy the default or immutable heap.
+   //  Prevent an attempt to destroy the C++ default heap.
    //
-   if((type_ == MemPermanent) || (type_ == MemImmutable))
+   if(type_ == MemPermanent)
    {
       Debug::SwLog(SysHeap_dtor, debug64_t(heap_), 0);
       return;
-   }
-
-   //  The heap cannot be destroyed if it is write-protected; only
-   //  fixed-size heaps can be write-protected.
-   //
-   if(IsFixedSize())
-   {
-      SysMemory::Protect(heap_, size_, MemReadWrite);
    }
 
    if(!HeapDestroy(heap_))
@@ -102,7 +89,7 @@ SysHeap::~SysHeap()
 
 //------------------------------------------------------------------------------
 
-const void* SysHeap::Addr() const
+void* SysHeap::Addr() const
 {
    return heap_;
 }
@@ -118,8 +105,32 @@ void* SysHeap::Alloc(size_t size)
    if(heap_ == nullptr) return nullptr;
 
    auto addr = HeapAlloc(heap_, 0, size);
-   Allocated(size, addr != nullptr);
+   Requested(size, addr != nullptr);
    return addr;
+}
+
+//------------------------------------------------------------------------------
+
+size_t SysHeap::BlockSize(const void* addr) const
+{
+   if(heap_ == nullptr) return 0;
+   return HeapSize(heap_, 0, addr);
+}
+
+//------------------------------------------------------------------------------
+
+bool SysHeap::CanBeProtected() const { return false; }
+
+//------------------------------------------------------------------------------
+
+void SysHeap::Display(ostream& stream,
+   const string& prefix, const Flags& options) const
+{
+   Heap::Display(stream, prefix, options);
+
+   stream << prefix << "heap : " << heap_ << CRLF;
+   stream << prefix << "size : " << size_ << CRLF;
+   stream << prefix << "type : " << type_ << CRLF;
 }
 
 //------------------------------------------------------------------------------
@@ -229,23 +240,18 @@ void SysHeap::DisplayHeaps(ostream& stream)
 
 fn_name SysHeap_Free = "SysHeap.Free";
 
-void SysHeap::Free(void* addr, size_t size)
+void SysHeap::Free(void* addr)
 {
    Debug::ft(SysHeap_Free);
 
    if(heap_ == nullptr) return;
 
+   auto size = BlockSize(addr);
+
    if(HeapFree(heap_, 0, addr))
       Freed(size);
    else
       Debug::SwLog(SysHeap_Free, debug64_t(addr), GetLastError());
-}
-
-//------------------------------------------------------------------------------
-
-bool SysHeap::IsFixedSize() const
-{
-   return (Size() != 0);
 }
 
 //------------------------------------------------------------------------------
@@ -257,6 +263,18 @@ void SysHeap::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
+fn_name SysHeap_SetPermissions = "SysHeap.SetPermissions";
+
+int SysHeap::SetPermissions(MemoryProtection attrs)
+{
+   Debug::ft(SysHeap_SetPermissions);
+
+   Debug::SwLog(SysHeap_SetPermissions, "not supported: use NbHeap", 0);
+   return ERROR_NOT_SUPPORTED;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name SysHeap_Validate = "SysHeap.Validate";
 
 bool SysHeap::Validate(const void* addr) const
@@ -264,18 +282,7 @@ bool SysHeap::Validate(const void* addr) const
    Debug::ft(SysHeap_Validate);
 
    if(heap_ == nullptr) return false;
-
-   //  If the heap is write-protected, Windows will fail to validate it.
-   //  A heap can only be write-protected if its size if fixed, in which
-   //  case it needs to be unprotected, validated, and restored to its
-   //  current protection status.
-   //
-   auto attrs = attrs_;
-   auto unprotect = IsFixedSize();
-   if(unprotect) SysMemory::Protect(heap_, size_, MemReadWrite);
-   auto valid = HeapValidate(heap_, 0, addr);
-   if(unprotect) SysMemory::Protect(heap_, size_, attrs);
-   return valid;
+   return HeapValidate(heap_, 0, addr);
 }
 }
 #endif

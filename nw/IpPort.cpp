@@ -38,7 +38,6 @@
 #include "Restart.h"
 #include "Singleton.h"
 #include "Statistics.h"
-#include "SysSocket.h"
 
 using namespace NodeBase;
 using std::ostream;

@@ -145,7 +145,7 @@ const char* StackInfo::GetFunction(DWORD64 frame)
 
 void StackInfo::Shutdown()
 {
-   Memory::Free(Symbols);
+   Memory::Free(Symbols, MemPermanent);
    Symbols = nullptr;
    SymCleanup(GetCurrentProcess());
 }
@@ -168,7 +168,7 @@ DWORD StackInfo::Startup()
 
    if(!SymInitialize(Process, nullptr, true))
    {
-      Memory::Free(Symbols);
+      Memory::Free(Symbols, MemPermanent);
       Symbols = nullptr;
       return GetLastError();
    }

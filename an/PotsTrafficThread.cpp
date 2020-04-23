@@ -274,7 +274,7 @@ TrafficCallPool::~TrafficCallPool()
    //
    for(auto call = freeq_.Deq(); call != nullptr; call = freeq_.Deq())
    {
-      Memory::Free(call);
+      Memory::Free(call, MemDynamic);
    }
 }
 
@@ -1098,7 +1098,7 @@ PotsTrafficThread::~PotsTrafficThread()
             timewheel_[i].Purge();
          }
 
-         Memory::Free(timewheel_);
+         Memory::Free(timewheel_, MemDynamic);
          timewheel_ = nullptr;
       }
    }

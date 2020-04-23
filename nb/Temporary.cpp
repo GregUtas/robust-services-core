@@ -36,6 +36,28 @@ Temporary::Temporary()
 
 //------------------------------------------------------------------------------
 
+fn_name Temporary_delete1 = "Temporary.operator delete";
+
+void Temporary::operator delete(void* addr)
+{
+   Debug::ft(Temporary_delete1);
+
+   Memory::Free(addr, MemTemporary);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Temporary_delete2 = "Temporary.operator delete[]";
+
+void Temporary::operator delete[](void* addr)
+{
+   Debug::ft(Temporary_delete2);
+
+   Memory::Free(addr, MemTemporary);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Temporary_new1 = "Temporary.operator new";
 
 void* Temporary::operator new(size_t size)

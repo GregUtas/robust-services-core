@@ -101,7 +101,7 @@ template< typename T > struct DynamicAllocator
 
    void deallocate(T* const addr, size_t n) const
    {
-      Memory::Free(addr);
+      Memory::Free(addr, MemDynamic);
    }
 };
 
@@ -140,7 +140,7 @@ template< typename T > struct ImmutableAllocator
 
    void deallocate(T* const addr, size_t n) const
    {
-      Memory::Free(addr);
+      Memory::Free(addr, MemImmutable);
    }
 };
 
@@ -179,7 +179,7 @@ template< typename T > struct PermanentAllocator
 
    void deallocate(T* const addr, size_t n) const
    {
-      Memory::Free(addr);
+      Memory::Free(addr, MemPermanent);
    }
 };
 
@@ -218,7 +218,7 @@ template< typename T > struct PersistentAllocator
 
    void deallocate(T* const addr, size_t n) const
    {
-      Memory::Free(addr);
+      Memory::Free(addr, MemPersistent);
    }
 };
 
@@ -257,7 +257,7 @@ template< typename T > struct ProtectedAllocator
 
    void deallocate(T* const addr, size_t n) const
    {
-      Memory::Free(addr);
+      Memory::Free(addr, MemProtected);
    }
 };
 
@@ -296,7 +296,7 @@ template< typename T > struct TemporaryAllocator
 
    void deallocate(T* const addr, size_t n) const
    {
-      Memory::Free(addr);
+      Memory::Free(addr, MemTemporary);
    }
 };
 }

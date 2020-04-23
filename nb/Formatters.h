@@ -28,11 +28,6 @@
 #include <string>
 #include "SysTypes.h"
 
-namespace NodeBase
-{
-   class Base;
-}
-
 //------------------------------------------------------------------------------
 
 namespace NodeBase
@@ -121,12 +116,12 @@ namespace NodeBase
    //  a trap.  If the object is corrupt, its Display function should not
    //  trap during error recovery.
    //
-   std::string strClass(const Base* obj, bool ns = true);
+   std::string strClass(const void* obj, bool ns = true);
 
    //  Returns a string containing OBJ's "this" pointer followed by its class
    //  name as returned by strClass.
    //
-   std::string strObj(const Base* obj, bool ns = true);
+   std::string strObj(const void* obj, bool ns = true);
 
    //  Skips any leading blanks in INPUT and returns the next string, which
    //  ends at the next blank.  Updates INPUT by removing the string and the

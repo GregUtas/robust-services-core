@@ -26,7 +26,6 @@
 #include "Formatters.h"
 #include "Protocol.h"
 #include "ProtocolRegistry.h"
-#include "Signal.h"
 #include "Singleton.h"
 #include "SysTypes.h"
 

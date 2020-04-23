@@ -33,12 +33,10 @@ namespace NodeBase
 {
 //  This extends Base to provide support for
 //  o patching (Patch and patchArea_)
-//  o memory types (MemType and operators new and delete)
-//  o association with a Class (most everything else)
+//  o association with a Class (most everything else in this header)
 //
-//  NOTE: A class whose objects are allocated on the heap must derive from
-//  ====  Temporary, Dynamic, Persistent, Protected, Permanent, or Immutable.
-//        If it derives from Object, operator new throws an exception.
+//  NOTE: Objects allocated on the heap must derive from Pooled, Temporary,
+//  ====  Dynamic, Persistent, Protected, Permanent, or Immutable.
 //
 class Object : public Base
 {
@@ -116,20 +114,12 @@ public:
    //
    static bool GetClassInstanceId(ObjectId oid, Class*& cls, InstanceId& iid);
 
-   //  Overridden to return the type of memory used by the object.
+   //  Deleted to prevent heap allocation for objects directly derived from
+   //  this class.  Such objects must derive from Pooled, Temporary, Dynamic,
+   //  Persistent, Protected, Permanent, or Immutable.
    //
-   MemoryType MemType() const override;
-
-   //  Overridden to support memory types.
-   //
-   static void* operator new(size_t size);
-   static void* operator new[](size_t size);
-   static void* operator new(size_t size, MemoryType type);
-   static void* operator new[](size_t size, MemoryType type);
-   static void operator delete(void* addr);
-   static void operator delete[](void* addr);
-   static void operator delete(void* addr, MemoryType type);
-   static void operator delete[](void* addr, MemoryType type);
+   static void* operator new(size_t size) = delete;
+   static void* operator new[](size_t size) = delete;
 protected:
    //  Protected because this class is virtual.
    //

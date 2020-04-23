@@ -106,7 +106,7 @@ IpBuffer::~IpBuffer()
 
    if(buff_ != nullptr)
    {
-      Memory::Free(buff_);
+      Memory::Free(buff_, MemDynamic);
       buff_ = nullptr;
    }
 }
@@ -129,7 +129,8 @@ bool IpBuffer::AddBytes(const byte_t* source, size_t size, bool& moved)
 
    if(newSize > buffSize_)
    {
-      auto buff = (byte_t*) Memory::Realloc(buff_, BuffSize(newSize));
+      auto buff = (byte_t*)
+         Memory::Realloc(buff_, BuffSize(newSize), MemDynamic);
       if(buff == nullptr) return false;
 
       moved = (buff != buff_);
@@ -174,7 +175,7 @@ void IpBuffer::Cleanup()
 
    if(buff_ != nullptr)
    {
-      Memory::Free(buff_);
+      Memory::Free(buff_, MemDynamic);
       buff_ = nullptr;
    }
 

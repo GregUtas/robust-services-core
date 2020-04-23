@@ -33,7 +33,6 @@
 #include "Protocol.h"
 #include "ProtocolRegistry.h"
 #include "SbTrace.h"
-#include "Signal.h"
 #include "Singleton.h"
 #include "TraceBuffer.h"
 

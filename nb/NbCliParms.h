@@ -24,7 +24,6 @@
 
 #include "CliCharParm.h"
 #include "CliIntParm.h"
-#include "CliPtrParm.h"
 #include "CliText.h"
 #include "CliTextParm.h"
 #include <string>
@@ -227,15 +226,6 @@ public: ObjPoolIdMandParm();
 class ObjPoolIdOptParm : public CliIntParm
 {
 public: ObjPoolIdOptParm();
-};
-
-//------------------------------------------------------------------------------
-//
-//  Parameter for a pointer to an object.
-//
-class ObjPtrMandParm : public CliPtrParm
-{
-public: ObjPtrMandParm();
 };
 
 //------------------------------------------------------------------------------

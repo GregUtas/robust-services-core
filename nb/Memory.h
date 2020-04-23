@@ -27,7 +27,7 @@
 
 namespace NodeBase
 {
-   class SysHeap;
+   class Heap;
 }
 
 //------------------------------------------------------------------------------
@@ -38,7 +38,7 @@ namespace NodeBase
 //
 namespace Memory
 {
-   //  Rounds up SIZE bytes to a multiple of LOG2ALIGN bytes.
+   //  Rounds up SIZE bytes to a multiple of log2align bytes.
    //
    size_t Align(size_t size, size_t log2align = BYTES_PER_WORD_LOG2);
 
@@ -61,7 +61,7 @@ namespace Memory
 
    //  Deallocates the memory segment returned by Alloc.
    //
-   void Free(const void* addr);
+   void Free(void* addr, MemoryType type);
 
    //  Extends the segment at ADDR so that it can hold SIZE bytes.  If
    //  there is insufficient space for the additional bytes, a new segment
@@ -70,11 +70,11 @@ namespace Memory
    //  extension succeeds, nullptr if extension fails, or another value
    //  if a new segment was allocated.
    //
-   void* Realloc(void* addr, size_t size);
+   void* Realloc(void* addr, size_t size, MemoryType type);
 
    //  Returns the heap (if any) associated with TYPE.
    //
-   const SysHeap* Heap(MemoryType type);
+   const Heap* GetHeap(MemoryType type);
 
    //  Protects the heap for TYPE.
    //
@@ -83,10 +83,6 @@ namespace Memory
    //  Unprotects the heap for TYPE.
    //
    bool Unprotect(MemoryType type);
-
-   //  Returns the type of memory used by the object located at ADDR.
-   //
-   MemoryType Type(const void* addr);
 
    //  Validates ADDR, which should be of TYPE.  If ADDR is nullptr, the
    //  entire heap for TYPE is validated.

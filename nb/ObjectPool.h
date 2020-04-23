@@ -170,7 +170,7 @@ public:
 
    //  Returns the type of memory used by the pool's blocks.
    //
-   MemoryType BlockType() const { return type_; }
+   MemoryType BlockType() const { return mem_; }
 
    //  Displays statistics.  May be overridden to include pool-specific
    //  statistics, but the base class version must be invoked.
@@ -209,9 +209,9 @@ public:
    void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Defines a pool, identified by NAME and PID, that allocates blocks of
-   //  TYPE and SIZE bytes.  Protected because this class is virtual.
+   //  type MEM and SIZE bytes.  Protected because this class is virtual.
    //
-   ObjectPool(ObjectPoolId pid, MemoryType type,
+   ObjectPool(ObjectPoolId pid, MemoryType mem,
       size_t size, const std::string& name);
 
    //  Frees all blocks.  Protected because subclasses should be singletons.
@@ -281,7 +281,7 @@ private:
 
    //  The type of memory used for blocks in the pool.
    //
-   const MemoryType type_;
+   const MemoryType mem_;
 
    //  The size of each block in bytes, rounded up for alignment purposes.
    //

@@ -88,6 +88,7 @@ HANDLE  GetProcessHeap();
 DWORD   GetProcessHeaps(DWORD numberOfHeaps, HANDLE* processHeaps);
 HANDLE  HeapCreate(DWORD opts, SIZE_T initialSize, SIZE_T maxSize);
 HANDLE  HeapAlloc(HANDLE heap, DWORD flags, SIZE_T bytes);
+SIZE_T  HeapSize(HANDLE heap, DWORD flags, const void* mem);
 bool    HeapValidate(HANDLE heap, DWORD flags, const void* mem);
 bool    HeapFree(HANDLE heap, DWORD flags, void* mem);
 bool    HeapDestroy(HANDLE heap);

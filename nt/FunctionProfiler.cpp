@@ -88,7 +88,7 @@ FunctionProfiler::~FunctionProfiler()
       }
    }
 
-   Memory::Free(functionq_);
+   Memory::Free(functionq_, MemTemporary);
    functionq_ = nullptr;
 }
 

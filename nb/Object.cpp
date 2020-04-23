@@ -22,12 +22,10 @@
 #include "Object.h"
 #include <ostream>
 #include <string>
-#include "AllocationException.h"
 #include "Class.h"
 #include "ClassRegistry.h"
 #include "Debug.h"
 #include "Formatters.h"
-#include "Memory.h"
 #include "Singleton.h"
 
 using std::ostream;
@@ -111,17 +109,6 @@ Object::ObjectId Object::GetObjectId() const
 
 //------------------------------------------------------------------------------
 
-fn_name Object_MemType = "Object.MemType";
-
-MemoryType Object::MemType() const
-{
-   Debug::ft(Object_MemType);
-
-   return Memory::Type(static_cast< const void* >(this));
-}
-
-//------------------------------------------------------------------------------
-
 fn_name Object_MorphTo = "Object.MorphTo";
 
 void Object::MorphTo(const Class& target)
@@ -132,93 +119,5 @@ void Object::MorphTo(const Class& target)
    //
    auto obj = reinterpret_cast< ObjectStruct* >(this);
    obj->vptr = target.GetVptr();
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Object_delete1 = "Object.operator delete";
-
-void Object::operator delete(void* addr)
-{
-   Debug::ft(Object_delete1);
-
-   Memory::Free(addr);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Object_delete2 = "Object.operator delete[]";
-
-void Object::operator delete[](void* addr)
-{
-   Debug::ft(Object_delete2);
-
-   Memory::Free(addr);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Object_delete3 = "Object.operator delete(type)";
-
-void Object::operator delete(void* addr, MemoryType type)
-{
-   Debug::ft(Object_delete3);
-
-   Memory::Free(addr);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Object_delete4 = "Object.operator delete[](type)";
-
-void Object::operator delete[](void* addr, MemoryType type)
-{
-   Debug::ft(Object_delete4);
-
-   Memory::Free(addr);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Object_new1 = "Object.operator new";
-
-void* Object::operator new(size_t size)
-{
-   Debug::ft(Object_new1);
-
-   throw AllocationException(MemNull, size);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Object_new2 = "Object.operator new[]";
-
-void* Object::operator new[](size_t size)
-{
-   Debug::ft(Object_new2);
-
-   throw AllocationException(MemNull, size);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Object_new3 = "Object.operator new(type)";
-
-void* Object::operator new(size_t size, MemoryType type)
-{
-   Debug::ft(Object_new3);
-
-   return Memory::Alloc(size, type);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name Object_new4 = "Object.operator new[](type)";
-
-void* Object::operator new[](size_t size, MemoryType type)
-{
-   Debug::ft(Object_new4);
-
-   return Memory::Alloc(size, type);
 }
 }

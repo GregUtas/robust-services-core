@@ -36,6 +36,28 @@ Permanent::Permanent()
 
 //------------------------------------------------------------------------------
 
+fn_name Permanent_delete1 = "Permanent.operator delete";
+
+void Permanent::operator delete(void* addr)
+{
+   Debug::ft(Permanent_delete1);
+
+   Memory::Free(addr, MemPermanent);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Permanent_delete2 = "Permanent.operator delete[]";
+
+void Permanent::operator delete[](void* addr)
+{
+   Debug::ft(Permanent_delete2);
+
+   Memory::Free(addr, MemPermanent);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Permanent_new1 = "Permanent.operator new";
 
 void* Permanent::operator new(size_t size)

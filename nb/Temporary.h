@@ -49,10 +49,12 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 
-   //  Overridden to allocate memory from the temporary heap.
+   //  Overridden to use the temporary heap.
    //
    static void* operator new(size_t size);
    static void* operator new[](size_t size);
+   static void operator delete(void* addr);
+   static void operator delete[](void* addr);
 protected:
    //  Protected because this class is virtual.
    //

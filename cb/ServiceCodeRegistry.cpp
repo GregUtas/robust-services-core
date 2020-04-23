@@ -26,7 +26,6 @@
 #include "Formatters.h"
 #include "Restart.h"
 #include "SbAppIds.h"
-#include "Service.h"
 #include "ServiceRegistry.h"
 #include "Singleton.h"
 #include "SymbolRegistry.h"

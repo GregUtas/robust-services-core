@@ -36,6 +36,28 @@ Immutable::Immutable()
 
 //------------------------------------------------------------------------------
 
+fn_name Immutable_delete1 = "Immutable.operator delete";
+
+void Immutable::operator delete(void* addr)
+{
+   Debug::ft(Immutable_delete1);
+
+   Memory::Free(addr, MemImmutable);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Immutable_delete2 = "Immutable.operator delete[]";
+
+void Immutable::operator delete[](void* addr)
+{
+   Debug::ft(Immutable_delete2);
+
+   Memory::Free(addr, MemImmutable);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Immutable_new1 = "Immutable.operator new";
 
 void* Immutable::operator new(size_t size)

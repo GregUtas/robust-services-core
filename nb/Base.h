@@ -150,10 +150,6 @@ public:
    //
    virtual MemoryType MemType() const { return MemPermanent; }
 
-   //  Returns the class's name as provided by the C++ typeid operator.
-   //
-   virtual const char* ClassName() const;
-
    //  Overridden to invoke Debug::ft before the default ::operator new.
    //
    static void* operator new(size_t size);

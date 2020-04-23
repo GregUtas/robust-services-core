@@ -34,12 +34,14 @@ namespace NodeBase
 namespace SysMemory
 {
    //  Allocates SIZE memory, applying ATTRS to it.  Returns the address
-   //  where the segment begins.  If ADDR is provide, the segment begins
+   //  where the segment begins.  If ADDR is provided, the segment begins
    //  at that location on success.
    //
-   void* Alloc(void* addr, size_t size, MemoryProtection attrs);
+   void* Alloc(void* addr, size_t size, MemoryProtection attrs = MemReadWrite);
 
-   //  Frees the memory ADDR[0 to SIZE-1].
+   //  Frees the memory ADDR[0 to SIZE-1].  To free an entire segment that
+   //  was previously returned by Alloc, ADDR must be the the address that
+   //  was returned by ALLOC and SIZE must be 0.
    //
    bool Free(void* addr, size_t size);
 
@@ -52,9 +54,10 @@ namespace SysMemory
    //
    bool Unlock(void* addr, size_t size);
 
-   //  Applies ATTRS to ADDR[0 to SIZE-1].
+   //  Applies ATTRS to ADDR[0 to SIZE-1].  Returns 0 on success, else a
+   //  system-specific failure code.
    //
-   bool Protect(void* addr, size_t size, MemoryProtection attrs);
+   int Protect(void* addr, size_t size, MemoryProtection attrs);
 }
 }
 #endif

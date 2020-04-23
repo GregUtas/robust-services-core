@@ -36,6 +36,28 @@ Dynamic::Dynamic()
 
 //------------------------------------------------------------------------------
 
+fn_name Dynamic_delete1 = "Dynamic.operator delete";
+
+void Dynamic::operator delete(void* addr)
+{
+   Debug::ft(Dynamic_delete1);
+
+   Memory::Free(addr, MemDynamic);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Dynamic_delete2 = "Dynamic.operator delete[]";
+
+void Dynamic::operator delete[](void* addr)
+{
+   Debug::ft(Dynamic_delete2);
+
+   Memory::Free(addr, MemDynamic);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Dynamic_new1 = "Dynamic.operator new";
 
 void* Dynamic::operator new(size_t size)

@@ -92,10 +92,6 @@ public:
    //  Overridden to return a block to its object pool.
    //
    static void operator delete(void* addr);
-
-   //  Deleted to prohibit array allocation.
-   //
-   static void* operator new[](size_t size, MemoryType type) = delete;
 protected:
    //  Protected because this class is virtual.
    //

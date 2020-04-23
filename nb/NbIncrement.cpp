@@ -22,6 +22,7 @@
 #include "NbIncrement.h"
 #include "CliBoolParm.h"
 #include "CliIntParm.h"
+#include "CliPtrParm.h"
 #include "CliText.h"
 #include <cctype>
 #include <cstddef>
@@ -844,6 +845,15 @@ word DelayCommand::ProcessCommand(CliThread& cli) const
 //
 //  The DISPLAY command.
 //
+class ObjPtrMandParm : public CliPtrParm
+{
+public: ObjPtrMandParm();
+};
+
+fixed_string ObjPtrMandText = "pointer to an object derived from Base";
+
+ObjPtrMandParm::ObjPtrMandParm() : CliPtrParm(ObjPtrMandText) { }
+
 class DisplayCommand : public CliCommand
 {
 public:
@@ -853,7 +863,7 @@ private:
 };
 
 fixed_string DisplayStr = "display";
-fixed_string DisplayExpl = "Displays an object.";
+fixed_string DisplayExpl = "Displays an object derived from NodeBase::Base.";
 
 DisplayCommand::DisplayCommand() : CliCommand(DisplayStr, DisplayExpl)
 {
@@ -885,6 +895,11 @@ word DisplayCommand::ProcessCommand(CliThread& cli) const
 //
 //  The DUMP command.
 //
+class MemAddrParm : public CliPtrParm
+{
+public: MemAddrParm();
+};
+
 class ByteCountParm : public CliIntParm
 {
 public:
@@ -899,6 +914,10 @@ private:
    word ProcessCommand(CliThread& cli) const override;
 };
 
+fixed_string MemAddrText = "memory address";
+
+MemAddrParm::MemAddrParm() : CliPtrParm(MemAddrText) { }
+
 fixed_string ByteCountExpl = "number of bytes to display";
 
 ByteCountParm::ByteCountParm() : CliIntParm(ByteCountExpl, 1, 1024) { }
@@ -908,7 +927,7 @@ fixed_string DumpExpl = "Displays memory in hex.";
 
 DumpCommand::DumpCommand() : CliCommand(DumpStr, DumpExpl)
 {
-   BindParm(*new ObjPtrMandParm);
+   BindParm(*new MemAddrParm);
    BindParm(*new ByteCountParm);
 }
 
@@ -3301,16 +3320,16 @@ void StatusCommand::Patch(sel_t selector, void* arguments)
 }
 
 fixed_string HeapsHeader =
-" Alloc                            Bytes  Max Bytes        Size      Memory  Mem\n"
-" Fails     Allocs      Frees     In Use     In Use    In Bytes        Type  Pro";
+"Alloc    Lowest      Curr        Curr                            Memory\n"
+"Fails  Avail(K)  Avail(K)      In Use     Allocs      Frees        Type  RWX";
 //        1         2         3         4         5         6         7
 //234567890123456789012345678901234567890123456789012345678901234567890123456789
 
 fixed_string PoolsHeader =
-   " Alloc  Lowest    Curr    Curr\n"
-   " Fails   Avail   Avail  In Use   Allocs    Frees  Exps   Pool";
+   "Alloc  Lowest    Curr    Curr\n"
+   "Fails   Avail   Avail  In Use   Allocs    Frees  Expands   Pool";
 // 0         1         2         3         4         5         6
-// 01234567890123456789012345678901234567890123456789012345678901
+// 0123456789012345678901234567890123456789012345678901234567890123
 
 fn_name StatusCommand_ProcessCommand = "StatusCommand.ProcessCommand";
 
@@ -3326,25 +3345,29 @@ word StatusCommand::ProcessCommand(CliThread& cli) const
 
    for(auto m = 0; m < MemoryType_N; ++m)
    {
-      auto heap = Memory::Heap(MemoryType(m));
+      auto heap = Memory::GetHeap(MemoryType(m));
 
       if(heap != nullptr)
       {
-         *cli.obuf << setw(6) << heap->FailCount();
-         *cli.obuf << setw(11) << heap->AllocCount();
-         *cli.obuf << setw(11) << heap->FreeCount();
-         *cli.obuf << setw(11) << heap->BytesInUse();
-         *cli.obuf << setw(11) << heap->MaxBytesInUse();
+         *cli.obuf << setw(5) << heap->FailCount();
 
          auto size = heap->Size();
          if(size == 0)
-
-            *cli.obuf << setw(12) << "extensible";
+         {
+            *cli.obuf << setw(10) << "n/a";
+            *cli.obuf << setw(10) << "n/a";
+         }
          else
-            *cli.obuf << setw(12) << size;
+         {
+            *cli.obuf << setw(10) << ((size - heap->MaxBytesInUse()) / 1024);
+            *cli.obuf << setw(10) << ((size - heap->BytesInUse()) / 1024);
+         }
 
+         *cli.obuf << setw(12) << heap->BytesInUse();
+         *cli.obuf << setw(11) << heap->AllocCount();
+         *cli.obuf << setw(11) << heap->FreeCount();
          *cli.obuf << setw(12) << heap->Type();
-         *cli.obuf << setw(5) << heap->Protection() << CRLF;
+         *cli.obuf << setw(5) << heap->GetAttrs() << CRLF;
       }
    }
 
@@ -3358,7 +3381,7 @@ word StatusCommand::ProcessCommand(CliThread& cli) const
    {
       auto low = p->LowAvailCount();
 
-      *cli.obuf << setw(6) << p->FailCount();
+      *cli.obuf << setw(5) << p->FailCount();
       if(low == LowWatermark::Initial)
          *cli.obuf << setw(8) << '*';
       else
@@ -3367,7 +3390,7 @@ word StatusCommand::ProcessCommand(CliThread& cli) const
       *cli.obuf << setw(8) << p->InUseCount();
       *cli.obuf << setw(9) << p->AllocCount();
       *cli.obuf << setw(9) << p->FreeCount();
-      *cli.obuf << setw(6) << p->Expansions();
+      *cli.obuf << setw(9) << p->Expansions();
       *cli.obuf << spaces(3) << p->Name() << CRLF;
    }
 

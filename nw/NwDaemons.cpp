@@ -26,9 +26,7 @@
 #include "Formatters.h"
 #include "Singleton.h"
 #include "TcpIoThread.h"
-#include "TcpIpService.h"
 #include "UdpIoThread.h"
-#include "UdpIpService.h"
 
 using namespace NodeBase;
 using std::ostream;

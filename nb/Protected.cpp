@@ -36,6 +36,28 @@ Protected::Protected()
 
 //------------------------------------------------------------------------------
 
+fn_name Protected_delete1 = "Protected.operator delete";
+
+void Protected::operator delete(void* addr)
+{
+   Debug::ft(Protected_delete1);
+
+   Memory::Free(addr, MemProtected);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Protected_delete2 = "Protected.operator delete[]";
+
+void Protected::operator delete[](void* addr)
+{
+   Debug::ft(Protected_delete2);
+
+   Memory::Free(addr, MemProtected);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Protected_new1 = "Protected.operator new";
 
 void* Protected::operator new(size_t size)

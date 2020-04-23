@@ -32,7 +32,6 @@
 #include "ProtocolRegistry.h"
 #include "SbIpBuffer.h"
 #include "ServiceRegistry.h"
-#include "Signal.h"
 #include "Singleton.h"
 #include "Thread.h"
 #include "TraceBuffer.h"

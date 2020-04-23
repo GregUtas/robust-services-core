@@ -30,7 +30,6 @@
 #include "CliThread.h"
 #include "Debug.h"
 #include "Event.h"
-#include "EventHandler.h"
 #include "Factory.h"
 #include "FactoryRegistry.h"
 #include "Formatters.h"

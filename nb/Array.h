@@ -55,7 +55,7 @@ public:
    ~Array()
    {
       Debug::ft(Array_dtor());
-      Memory::Free(array_);
+      Memory::Free(array_, mem_);
       array_ = nullptr;
    }
 
@@ -239,7 +239,7 @@ private:
       if(table == nullptr) return false;
       for(size_t i = 0; i < size_; ++i) table[i] = std::move(array_[i]);
       cap_ = size;
-      Memory::Free(array_);
+      Memory::Free(array_, mem_);
       array_ = table;
       return true;
    }

@@ -75,7 +75,7 @@ void* SysMemory::Alloc(void* addr, size_t size, MemoryProtection attrs)
    auto mode = GetMemoryProtection(attrs);
    if(mode == PAGE_INVALID) return nullptr;
 
-   addr = VirtualAlloc(addr, size, MEM_COMMIT, attrs);
+   addr = VirtualAlloc(addr, size, MEM_COMMIT | MEM_RESERVE, mode);
    if(addr != nullptr) return addr;
 
    auto err = GetLastError();
@@ -117,19 +117,18 @@ bool SysMemory::Lock(void* addr, size_t size)
 
 fn_name SysMemory_Protect = "SysMemory.Protect";
 
-bool SysMemory::Protect(void* addr, size_t size, MemoryProtection attrs)
+int SysMemory::Protect(void* addr, size_t size, MemoryProtection attrs)
 {
    Debug::ft(SysMemory_Protect);
 
    auto newMode = GetMemoryProtection(attrs);
-   if(newMode == PAGE_INVALID) return false;
+   if(newMode == PAGE_INVALID) return ERROR_INVALID_PARAMETER;
 
    DWORD oldMode = 0;
-   if(VirtualProtect(addr, size, newMode, &oldMode)) return true;
+   if(VirtualProtect(addr, size, newMode, &oldMode)) return 0;
 
    auto err = GetLastError();
-   Debug::SwLog(SysMemory_Protect, "failed to alter permissions", err);
-   return false;
+   return err;
 }
 
 //------------------------------------------------------------------------------

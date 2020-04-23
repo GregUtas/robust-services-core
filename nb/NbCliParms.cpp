@@ -257,12 +257,6 @@ ObjPoolIdOptParm::ObjPoolIdOptParm() :
 
 //------------------------------------------------------------------------------
 
-fixed_string ObjPtrMandText = "pointer to an Object";
-
-ObjPtrMandParm::ObjPtrMandParm() : CliPtrParm(ObjPtrMandText) { }
-
-//------------------------------------------------------------------------------
-
 fixed_string OstreamMandExpl = "filename for output";
 
 OstreamMandParm::OstreamMandParm() : CliTextParm(OstreamMandExpl) { }

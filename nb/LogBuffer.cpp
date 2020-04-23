@@ -135,7 +135,7 @@ LogBuffer::~LogBuffer()
 
    MutexGuard guard(&LogBufferLock_);
 
-   Memory::Free(buff_);
+   Memory::Free(buff_, MemPermanent);
    buff_ = nullptr;
 }
 

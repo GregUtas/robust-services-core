@@ -149,8 +149,8 @@ const char* SbException::what() const noexcept
 
 //==============================================================================
 
-const Context::MessageEntry Context::NilMessageEntry
-   = {MsgIncoming, NIL_ID, NIL_ID};
+const Context::MessageEntry Context::NilMessageEntry =
+   {MsgIncoming, NIL_ID, NIL_ID};
 
 Message* Context::ContextMsg_ = nullptr;
 

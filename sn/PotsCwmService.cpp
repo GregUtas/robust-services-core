@@ -394,15 +394,15 @@ public:
       Transient  // was sent a Facility Nack (third NPSM)
    };
 
-   static const secs_t ToneTimeout      = 6;  // (was 1; changed for tests)
-   static const secs_t RenotifyTimeout  = 6;  // (was 10; changed for tests)
+   static const secs_t ToneTimeout = 6;        // (was 1; changed for tests)
+   static const secs_t RenotifyTimeout = 6;    // (was 10; changed for tests)
    static const secs_t ReconnectTimeout = 10;
-   static const secs_t ReanswerTimeout  = 30;
+   static const secs_t ReanswerTimeout = 30;
 
-   static const TimerId ToneTimeoutId      = 1;
-   static const TimerId RenotifyTimeoutId  = 2;
+   static const TimerId ToneTimeoutId = 1;
+   static const TimerId RenotifyTimeoutId = 2;
    static const TimerId ReconnectTimeoutId = 3;
-   static const TimerId ReanswerTimeoutId  = 4;
+   static const TimerId ReanswerTimeoutId = 4;
 
    enum Substate    // States marked '*' are transient, waiting for
    {                // a specific message from one of the two calls.

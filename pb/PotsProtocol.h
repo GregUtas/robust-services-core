@@ -62,18 +62,18 @@ public:
    //
    static const secs_t FirstDigitTimeout = 10;  // dial tone to first digit
    static const secs_t InterDigitTimeout = 10;  // between subsequent digits
-   static const secs_t RingingCycleTime  =  6;  // length of one ringing cycle
-   static const secs_t AlertingTimeout   =  6;  // ringing to alerting message
-   static const secs_t AnswerTimeout     = 60;  // call presentation to offhook
-   static const secs_t SuspendTimeout    = 10;  // TBC onhook to call takedown
+   static const secs_t RingingCycleTime =  6;   // length of one ringing cycle
+   static const secs_t AlertingTimeout =  6;    // ringing to alerting message
+   static const secs_t AnswerTimeout = 60;      // call presentation to offhook
+   static const secs_t SuspendTimeout = 10;     // TBC onhook to call takedown
 
    //  Timer identifiers.
    //
    static const TimerId CollectionTimeoutId = 1;  // for digit timeouts
-   static const TimerId AlertingTimeoutId   = 2;  // for alerting timeout
-   static const TimerId AnswerTimeoutId     = 3;  // for answer timeout
-   static const TimerId SuspendTimeoutId    = 4;  // for suspend timeout
-   static const TimerId TreatmentTimeoutId  = 5;  // for a timed treatment
+   static const TimerId AlertingTimeoutId = 2;    // for alerting timeout
+   static const TimerId AnswerTimeoutId = 3;      // for answer timeout
+   static const TimerId SuspendTimeoutId = 4;     // for suspend timeout
+   static const TimerId TreatmentTimeoutId = 5;   // for a timed treatment
 private:
    //  Private because this singleton is not subclassed.
    //
@@ -218,11 +218,11 @@ public:
    //
    typedef uint8_t Ind;
 
-   static const Ind NilInd         = 0;  // default value
-   static const Ind InitiationReq  = 1;  // service initiation request
-   static const Ind InitiationAck  = 2;  // service initiation succeeded
+   static const Ind NilInd = 0;          // default value
+   static const Ind InitiationReq = 1;   // service initiation request
+   static const Ind InitiationAck = 2;   // service initiation succeeded
    static const Ind InitiationNack = 3;  // service initiation failed
-   static const Ind NextInd        = 4;  // next available indicator
+   static const Ind NextInd = 4;         // next available indicator
 
    //  Deleted because this class is not intended to be instantiated.
    //

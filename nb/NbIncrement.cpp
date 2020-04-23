@@ -298,7 +298,7 @@ AuditForceText::AuditForceText() :
    CliText(AuditForceExpl, AuditForceStr) { }
 
 const id_t AuditIntervalIndex = 1;
-const id_t AuditForceIndex    = 2;
+const id_t AuditForceIndex = 2;
 
 fixed_string AuditActionExpl = "subcommand...";
 
@@ -488,8 +488,8 @@ CfgParmsSetText::CfgParmsSetText() : CliText(CfgParmsSetExpl, CfgParmsSetStr)
 
 const id_t CfgParmsListIndex = 1;
 const id_t CfgParmsExplIndex = 2;
-const id_t CfgParmsGetIndex  = 3;
-const id_t CfgParmsSetIndex  = 4;
+const id_t CfgParmsGetIndex = 3;
+const id_t CfgParmsSetIndex = 4;
 
 fixed_string CfgParmsActionExpl = "subcommand...";
 
@@ -719,7 +719,7 @@ DaemonsSetText::DaemonsSetText() :
 }
 
 const id_t DaemonsListIndex = 1;
-const id_t DaemonsSetIndex  = 2;
+const id_t DaemonsSetIndex = 2;
 
 fixed_string DaemonsActionExpl = "subcommand...";
 
@@ -1059,7 +1059,7 @@ HeapsValidateText::HeapsValidateText() :
    CliText(HeapsValidateTextExpl, HeapsValidateTextStr) { }
 
 const id_t HeapsListIndex = 1;
-const id_t HeapsValidateIndex  = 2;
+const id_t HeapsValidateIndex = 2;
 
 fixed_string HeapsActionExpl = "subcommand...";
 
@@ -2372,11 +2372,11 @@ ExitText::ExitText() : CliText(ExitTextExpl, ExitTextStr) { }
 fixed_string RestartStr = "restart";
 fixed_string RestartExpl = "Shuts down the system.";
 
-const id_t WarmIndex   = 1;
-const id_t ColdIndex   = 2;
+const id_t WarmIndex = 1;
+const id_t ColdIndex = 2;
 const id_t ReloadIndex = 3;
 const id_t RebootIndex = 4;
-const id_t ExitIndex   = 5;
+const id_t ExitIndex = 5;
 
 fixed_string RestartTypeExpl = "type of shutdown...";
 
@@ -2608,10 +2608,10 @@ SchedKillText::SchedKillText() : CliText(SchedKillTextExpl, SchedKillTextStr)
    BindParm(*new ThreadIdMandParm);
 }
 
-const id_t SchedShowIndex  = 1;
+const id_t SchedShowIndex = 1;
 const id_t SchedStartIndex = 2;
-const id_t SchedStopIndex  = 3;
-const id_t SchedKillIndex  = 4;
+const id_t SchedStopIndex = 3;
+const id_t SchedKillIndex = 4;
 
 fixed_string SchedActionExpl = "subcommand...";
 
@@ -3205,8 +3205,8 @@ RolloverText::RolloverText() : CliText(RolloverTextExpl, RolloverTextStr)
    BindParm(*new RolloverParm);
 }
 
-const id_t StatsGroupsIndex   = 1;
-const id_t StatsShowIndex     = 2;
+const id_t StatsGroupsIndex = 1;
+const id_t StatsShowIndex = 2;
 const id_t StatsRolloverIndex = 3;
 
 fixed_string StatsActionExpl = "subcommand...";
@@ -3534,8 +3534,8 @@ SymbolsAssignText::SymbolsAssignText() :
    BindParm(*new CfgParmName);
 }
 
-const id_t SymbolsListIndex   = 1;
-const id_t SymbolsSetIndex    = 2;
+const id_t SymbolsListIndex = 1;
+const id_t SymbolsSetIndex = 2;
 const id_t SymbolsAssignIndex = 3;
 
 fixed_string SymbolsActionExpl = "subcommand...";

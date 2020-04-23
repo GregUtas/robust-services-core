@@ -77,7 +77,7 @@ class NtSetCommand : public SetCommand
 {
 public:
    static const id_t FuncTraceScope = LastNbIndex + 1;
-   static const id_t LastNtIndex    = FuncTraceScope;
+   static const id_t LastNtIndex = FuncTraceScope;
 
    //  Set BIND to false if binding a subclass of NtSetWhatParm.
    //
@@ -143,16 +143,16 @@ public:
 class TestcaseCommand : public CliCommand
 {
 public:
-   static const id_t TestPrologIndex  = 1;
-   static const id_t TestEpilogIndex  = 2;
+   static const id_t TestPrologIndex = 1;
+   static const id_t TestEpilogIndex = 2;
    static const id_t TestRecoverIndex = 3;
-   static const id_t TestBeginIndex   = 4;
-   static const id_t TestEndIndex     = 5;
-   static const id_t TestFailedIndex  = 6;
-   static const id_t TestQueryIndex   = 7;
-   static const id_t TestRetestIndex  = 8;
-   static const id_t TestEraseIndex   = 9;
-   static const id_t TestResetIndex   = 10;
+   static const id_t TestBeginIndex = 4;
+   static const id_t TestEndIndex = 5;
+   static const id_t TestFailedIndex = 6;
+   static const id_t TestQueryIndex = 7;
+   static const id_t TestRetestIndex = 8;
+   static const id_t TestEraseIndex = 9;
+   static const id_t TestResetIndex = 10;
    static const id_t LastNtIndex = TestResetIndex;
 
    //  Set BIND to false if binding a subclass of TestcaseAction.

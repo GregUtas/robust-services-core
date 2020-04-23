@@ -37,8 +37,8 @@ class MemoryTrace : public TimedRecord
 public:
    //  Types of memory trace records.
    //
-   static const Id Alloc = 1;  // allocation
-   static const Id Free  = 2;  // deallocation
+   static const Id Alloc = 1;
+   static const Id Free = 2;
 
    //  Sets addr_, type_, and size_.  RID specifies allocation or deallocation.
    //

@@ -115,7 +115,7 @@ class ThreadTrace : public FunctionTrace
 {
 public:
    static const Id PauseEnter = 1;  // entering Pause
-   static const Id PauseExit  = 2;  // returning from Pause
+   static const Id PauseExit = 2;   // returning from Pause
 
    //  Creates a trace record for the event identified by RID, which
    //  occurred in function FUNC.  INFO is any debugging information.

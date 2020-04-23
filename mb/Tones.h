@@ -46,19 +46,19 @@ public:
 
    //  Identifiers for various tones.
    //
-   static const Id Silence         = 1;
-   static const Id Dial            = 2;
-   static const Id StutteredDial   = 3;
-   static const Id Confirmation    = 4;
-   static const Id Ringback        = 5;
-   static const Id Busy            = 6;
-   static const Id CallWaiting     = 7;
-   static const Id Reorder         = 8;
+   static const Id Silence = 1;
+   static const Id Dial = 2;
+   static const Id StutteredDial = 3;
+   static const Id Confirmation = 4;
+   static const Id Ringback = 5;
+   static const Id Busy = 6;
+   static const Id CallWaiting = 7;
+   static const Id Reorder = 8;
    static const Id ReceiverOffHook = 9;
-   static const Id Held            = 10;
-   static const Id MaxId           = 10;
+   static const Id Held = 10;
+   static const Id MaxId = 10;
 
-   static const Id Media           = UINT8_MAX;  // not connected to a tone
+   static const Id Media = UINT8_MAX;  // not connected to a tone
 
    //  Deleted to prohibit copying.
    //

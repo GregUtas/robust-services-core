@@ -68,8 +68,8 @@ public:
    //
    typedef int Usage;
 
-   static const Usage Illegal   = 0;  // parameter illegal for signal
-   static const Usage Optional  = 1;  // parameter optional for signal
+   static const Usage Illegal = 0;    // parameter illegal for signal
+   static const Usage Optional = 1;   // parameter optional for signal
    static const Usage Mandatory = 2;  // parameter mandatory for signal
 
    //  Deleted to prohibit copying.

@@ -36,7 +36,7 @@ using std::string;
 namespace NodeBase
 {
 fixed_string CliParm::ParmExplPrefix = " : ";
-fixed_string CliParm::AnyStringParm  = "<str>";
+fixed_string CliParm::AnyStringParm = "<str>";
 const col_t CliParm::ParmWidth = 17;
 const char CliParm::MandParmBegin = '(';
 const char CliParm::MandParmEnd = ')';

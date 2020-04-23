@@ -40,15 +40,15 @@ class SysTime : public Object
 public:
    //  Ranges of fields in the time_ structure.
    //
-   static const int16_t MinYear    = 1900;
-   static const int16_t MaxYear    = 2100;
-   static const int16_t MaxMonth   = 11;
-   static const int16_t MinDay     = 1;
-   static const int16_t MaxDay     = 31;
-   static const int16_t MaxHour    = 23;
-   static const int16_t MaxMin     = 59;
-   static const int16_t MaxSec     = 59;
-   static const int16_t MaxMsec    = 999;
+   static const int16_t MinYear = 1900;
+   static const int16_t MaxYear = 2100;
+   static const int16_t MaxMonth = 11;
+   static const int16_t MinDay = 1;
+   static const int16_t MaxDay = 31;
+   static const int16_t MaxHour = 23;
+   static const int16_t MaxMin = 59;
+   static const int16_t MaxSec = 59;
+   static const int16_t MaxMsec = 999;
    static const int16_t MaxWeekDay = 6;
 
    //  Formats for to_str.

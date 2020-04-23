@@ -99,7 +99,7 @@ public:
    static const id_t SetToolListIndex = 1;
    static const id_t SetBuffSizeIndex = 2;
    static const id_t SetBuffWrapIndex = 3;
-   static const id_t LastNbIndex      = 3;
+   static const id_t LastNbIndex = 3;
 
    //  Set BIND to false if binding a subclass of SetWhatParm.
    //
@@ -127,10 +127,10 @@ public:
 class IncludeCommand : public CliCommand
 {
 public:
-   static const id_t IncludeAllIndex     = 1;
+   static const id_t IncludeAllIndex = 1;
    static const id_t IncludeFactionIndex = 2;
-   static const id_t IncludeThreadIndex  = 3;
-   static const id_t LastNbIndex         = 3;
+   static const id_t IncludeThreadIndex = 3;
+   static const id_t LastNbIndex = 3;
 
    //  Set BIND to false if binding a subclass of IncludeWhatParm.
    //
@@ -159,8 +159,8 @@ class ExcludeCommand : public CliCommand
 {
 public:
    static const id_t ExcludeFactionIndex = 1;
-   static const id_t ExcludeThreadIndex  = 2;
-   static const id_t LastNbIndex         = 2;
+   static const id_t ExcludeThreadIndex = 2;
+   static const id_t LastNbIndex = 2;
 
    //  Set BIND to false if binding a subclass of ExcludeWhatParm.
    //
@@ -188,10 +188,10 @@ public:
 class QueryCommand : public CliCommand
 {
 public:
-   static const id_t BufferIndex     = 1;
-   static const id_t ToolsIndex      = 2;
+   static const id_t BufferIndex = 1;
+   static const id_t ToolsIndex = 2;
    static const id_t SelectionsIndex = 3;
-   static const id_t LastNbIndex     = 3;
+   static const id_t LastNbIndex = 3;
 
    //  Set BIND to false if binding a subclass of QueryWhatParm.
    //
@@ -219,7 +219,7 @@ public:
 class SaveCommand : public CliCommand
 {
 public:
-   static const id_t TraceIndex  = 1;
+   static const id_t TraceIndex = 1;
    static const id_t LastNbIndex = 1;
 
    //  Set BIND to false if binding a subclass of SaveWhatParm.
@@ -248,14 +248,14 @@ public:
 class ClearCommand : public CliCommand
 {
 public:
-   static const id_t BufferIndex     = 1;
-   static const id_t ToolsIndex      = 2;
+   static const id_t BufferIndex = 1;
+   static const id_t ToolsIndex = 2;
    static const id_t SelectionsIndex = 3;
-   static const id_t FactionIndex    = 4;
-   static const id_t FactionsIndex   = 5;
-   static const id_t ThreadIndex     = 6;
-   static const id_t ThreadsIndex    = 7;
-   static const id_t LastNbIndex     = 7;
+   static const id_t FactionIndex = 4;
+   static const id_t FactionsIndex = 5;
+   static const id_t ThreadIndex = 6;
+   static const id_t ThreadsIndex = 7;
+   static const id_t LastNbIndex = 7;
 
    //  Set BIND to false if binding a subclass of ClearWhatParm.
    //

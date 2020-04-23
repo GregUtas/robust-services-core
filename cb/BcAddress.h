@@ -84,9 +84,9 @@ public:
    //
    typedef uint32_t DN;
 
-   static const DN NilDN   = 0;
+   static const DN NilDN = 0;
    static const DN FirstDN = 20000;
-   static const DN LastDN  = 99999;
+   static const DN LastDN = 99999;
 
    //  The length of a directory number.
    //
@@ -104,9 +104,9 @@ public:
    //
    typedef uint32_t SC;
 
-   static const SC NilSC   = 0;
+   static const SC NilSC = 0;
    static const SC FirstSC = 20;
-   static const SC LastSC  = 99;
+   static const SC LastSC = 99;
 
    //  The length of a service code.
    //

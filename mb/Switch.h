@@ -59,7 +59,7 @@ public:
 
    //  The maximum valid port number.
    //
-   static const PortId MaxPortId  = 65000;
+   static const PortId MaxPortId = 65000;
 
    //  Returns true if PID is a valid port identifier.
    //

@@ -38,24 +38,24 @@ class NwTrace : public NodeBase::TimedRecord
 public:
    //  Types of socket trace records.
    //
-   static const Id Acquire    = 1;
-   static const Id Release    = 2;
-   static const Id Register   = 3;
+   static const Id Acquire = 1;
+   static const Id Release = 2;
+   static const Id Register = 3;
    static const Id Deregister = 4;
-   static const Id Connect    = 5;
-   static const Id Listen     = 6;
-   static const Id Poll       = 7;
-   static const Id Accept     = 8;
-   static const Id Recv       = 9;
-   static const Id RecvFrom   = 10;
-   static const Id Queue      = 11;
-   static const Id Dispatch   = 12;
-   static const Id Send       = 13;
-   static const Id SendTo     = 14;
+   static const Id Connect = 5;
+   static const Id Listen = 6;
+   static const Id Poll = 7;
+   static const Id Accept = 8;
+   static const Id Recv = 9;
+   static const Id RecvFrom = 10;
+   static const Id Queue = 11;
+   static const Id Dispatch = 12;
+   static const Id Send = 13;
+   static const Id SendTo = 14;
    static const Id Disconnect = 15;
-   static const Id Close      = 16;
-   static const Id Purge      = 17;
-   static const Id Delete     = 18;
+   static const Id Close = 16;
+   static const Id Purge = 17;
+   static const Id Delete = 18;
 
    //  Creates a trace record of type RID, which is associated with SOCKET.
    //  DATA is event specific.

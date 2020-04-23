@@ -103,8 +103,8 @@ TrafficQueryText::TrafficQueryText() :
    CliText(TrafficQueryTextExpl, TrafficQueryTextStr) { }
 
 const id_t TrafficStatesIndex = 1;
-const id_t TrafficRateIndex    = 2;
-const id_t TrafficQueryIndex   = 3;
+const id_t TrafficRateIndex = 2;
+const id_t TrafficQueryIndex = 3;
 
 fixed_string TrafficActionExpl = "subcommand...";
 

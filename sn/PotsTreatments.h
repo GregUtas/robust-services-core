@@ -64,12 +64,12 @@ public:
 
    //  The treatment queues that can be selected by a cause value.
    //
-   static const QId IdleQId       = 1;  // sends a Release (causing dial tone)
+   static const QId IdleQId = 1;        // sends a Release (causing dial tone)
    static const QId DisconnectQId = 2;  // sends silent tone for 10 seconds
-   static const QId BusyQId       = 3;  // sends busy tone
-   static const QId ErrorQId      = 4;  // sends reorder tone
-   static const QId ConfQId       = 5;  // sends confirmation tone
-   static const QId MaxQId        = 5;  // range constant
+   static const QId BusyQId = 3;        // sends busy tone
+   static const QId ErrorQId = 4;       // sends reorder tone
+   static const QId ConfQId = 5;        // sends confirmation tone
+   static const QId MaxQId = 5;         // range constant
 
    //  Registers the queue against QID with PotsTreatmentRegistry.
    //

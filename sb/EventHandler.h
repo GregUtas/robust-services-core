@@ -63,11 +63,11 @@ public:
    //  handlers associated with these identifiers are automatically registered
    //  against each service and cannot be overwritten.
    //
-   static const Id AnalyzeMsg      = 1;
-   static const Id AnalyzeSap      = 2;
-   static const Id AnalyzeSnp      = 3;
+   static const Id AnalyzeMsg = 1;
+   static const Id AnalyzeSap = 2;
+   static const Id AnalyzeSnp = 3;
    static const Id ForceTransition = 4;
-   static const Id InitiationReq   = 5;
+   static const Id InitiationReq = 5;
 
    //  Predefined identifier for an event handler that handles media
    //  failures for a service that controls media streams.

@@ -351,9 +351,9 @@ class MsgTrace : public SboTrace
 public:
    //  Types of message trace records.
    //
-   static const Id Creation     = 7;
-   static const Id Deletion     = 8;
-   static const Id Reception    = 9;   // incoming message
+   static const Id Creation = 7;
+   static const Id Deletion = 8;
+   static const Id Reception = 9;      // incoming message
    static const Id Transmission = 10;  // outgoing message
 
    //  Creates a trace record for MSG, with a record type of RID.
@@ -455,7 +455,7 @@ public:
    //
    static const Id Creation = 13;
    static const Id Deletion = 14;
-   static const Id Handler  = 15;
+   static const Id Handler = 15;
    static const Id SxpEvent = 16;
    static const Id SipEvent = 17;
 

@@ -160,7 +160,6 @@ word CliCommandSet::ProcessCommand(CliThread& cli) const
    {
       if(c->Text() == s)
       {
-         DescendTo(cli.Cookie(), c->GetId());
          return cli.InvokeSubcommand(*c);
       }
    }

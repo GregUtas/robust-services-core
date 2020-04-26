@@ -60,8 +60,6 @@ SysMutex::~SysMutex()
 {
    Debug::ft(SysMutex_dtor);
 
-   Debug::SwLog(SysMutex_dtor, UnexpectedInvocation, 0);
-
    if(nid_ != NIL_ID)
    {
       Debug::SwLog(SysMutex_dtor, name_, nid_);

@@ -63,7 +63,7 @@ public:
 
    //  Returns the size of the block at ADDR.
    //
-   size_t BlockSize(const void* addr) const override;
+   size_t BlockToSize(const void* addr) const override;
 
    //  Validates the heap.
    //
@@ -105,11 +105,11 @@ private:
 
    //  The heap's size.
    //
-   size_t size_;
+   const size_t size_;
 
    //  The type of memory that the heap manages.
    //
-   MemoryType type_;
+   const MemoryType type_;
 };
 }
 #endif

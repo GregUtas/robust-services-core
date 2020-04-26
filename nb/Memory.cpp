@@ -330,7 +330,7 @@ void Memory::Free(void* addr, MemoryType type)
 
       if((buff != nullptr) && buff->ToolIsOn(MemoryTracer))
       {
-         auto size = heap->BlockSize(addr);
+         auto size = heap->BlockToSize(addr);
          auto rec = new MemoryTrace(MemoryTrace::Free, addr, type, size);
          buff->Insert(rec);
       }

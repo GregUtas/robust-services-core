@@ -84,13 +84,13 @@ void* Heap::Alloc(size_t size)
 
 //------------------------------------------------------------------------------
 
-fn_name Heap_BlockSize = "Heap.BlockSize";
+fn_name Heap_BlockToSize = "Heap.BlockToSize";
 
-size_t Heap::BlockSize(const void* addr) const
+size_t Heap::BlockToSize(const void* addr) const
 {
-   Debug::ft(Heap_BlockSize);
+   Debug::ft(Heap_BlockToSize);
 
-   Debug::SwLog(Heap_BlockSize, strOver(this), 0);
+   Debug::SwLog(Heap_BlockToSize, strOver(this), 0);
    return 0;
 }
 
@@ -215,7 +215,7 @@ int Heap::SetPermissions(MemoryProtection attrs)
 
    auto err = SysMemory::Protect(Addr(), Size(), attrs);
    if(err == 0) return SetAttrs(attrs);
-  
+
    Restart::Initiate(HeapProtection, err);
    return err;
 }

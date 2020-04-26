@@ -66,7 +66,7 @@ public:
 
    //  Returns the size of the block at ADDR.
    //
-   virtual size_t BlockSize(const void* addr) const = 0;
+   virtual size_t BlockToSize(const void* addr) const = 0;
 
    //  Validates the heap.  If ADDR is not nullptr, only the memory
    //  segment alleged to be at ADDR is validated.

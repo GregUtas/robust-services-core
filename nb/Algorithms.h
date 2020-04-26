@@ -54,12 +54,25 @@ namespace NodeBase
    //
    uint64_t pack4(uint16_t a, uint16_t b, uint16_t c, uint16_t d);
 
+   //  Returns log2(N), rounded UP or down.
+   //
+   size_t log2(size_t n, bool up);
+
+   //  Rounds N off to a multiple of 2^E, either UP or down.
+   //
+   size_t round_to_2_exp_n(size_t n, size_t e, bool up);
+
+   //  Returns the position of least significant "1" bit in N.
+   //  Returns BITS_PER_WORD if N is 0.
+   //
+   size_t find_first_one(uword n);
+
    //  Returns an integer between MIN and MAX inclusive.
    //
    uint32_t rand(uint32_t min, uint32_t max);
 
    //  Returns a hash value for S.
    //
-   uint32_t stringHash(c_string s);
+   uint32_t string_hash(c_string s);
 }
 #endif

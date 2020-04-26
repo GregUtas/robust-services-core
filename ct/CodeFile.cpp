@@ -689,7 +689,7 @@ void CodeFile::CheckDebugFt() const
       auto open = false, debug = false, code = false;
       std::ostringstream source;
       (*f)->Display(source, EMPTY_STR, Code_Mask);
-      auto hash = stringHash(source.str().c_str());
+      auto hash = string_hash(source.str().c_str());
 
       for(auto n = lexer_.GetLineNum(begin); n < last; ++n)
       {

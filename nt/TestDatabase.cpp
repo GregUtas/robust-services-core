@@ -211,7 +211,7 @@ void TestDatabase::Insert(const string& test, const string& dir)
          contents += input;
       }
 
-      hash = stringHash(contents.c_str());
+      hash = string_hash(contents.c_str());
    }
 
    auto prev = tests_.find(test);

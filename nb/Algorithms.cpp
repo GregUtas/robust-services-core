@@ -27,6 +27,17 @@
 
 namespace NodeBase
 {
+size_t find_first_one(uword n)
+{
+   if(n == 0) return BITS_PER_WORD;
+
+   int i = 0;
+   for(NO_OP; ((n & 0x01) == 0); ++i) n >>= 1;
+   return i;
+}
+
+//------------------------------------------------------------------------------
+
 void* getptr1(const void* ptr2, ptrdiff_t diff)
 {
    return (void*) ((const_ptr_t) ptr2 - diff);
@@ -37,6 +48,21 @@ void* getptr1(const void* ptr2, ptrdiff_t diff)
 void* getptr2(const void* ptr1, ptrdiff_t diff)
 {
    return (void*) ((const_ptr_t) ptr1 + diff);
+}
+
+//------------------------------------------------------------------------------
+
+size_t log2(size_t n, bool up)
+{
+   if(n == 0) return 0;
+
+   size_t i = 0;
+
+   if(up) --n;
+   for(n; n > 0; n >>= 1) ++i;
+   if(!up) --i;
+
+   return i;
 }
 
 //------------------------------------------------------------------------------
@@ -87,7 +113,17 @@ uint32_t rand(uint32_t min, uint32_t max)
 
 //------------------------------------------------------------------------------
 
-uint32_t stringHash(c_string s)
+size_t round_to_2_exp_n(size_t n, size_t e, bool up)
+{
+   auto incr = (1 << e);
+   if(up) n += (incr - 1);
+   n = (n >> e) << e;
+   return n;
+}
+
+//------------------------------------------------------------------------------
+
+uint32_t string_hash(c_string s)
 {
    uint64_t hash = 0;
 

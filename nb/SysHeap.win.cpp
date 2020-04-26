@@ -28,6 +28,7 @@
 #include <windows.h>
 #include "Debug.h"
 #include "Memory.h"
+#include "Restart.h"
 
 using std::ostream;
 using std::string;
@@ -55,7 +56,7 @@ SysHeap::SysHeap(MemoryType type, size_t size) : Heap(),
 
    if(heap_ == nullptr)
    {
-      Debug::SwLog(SysHeap_ctor, 0, GetLastError(), SwError);
+      Restart::Initiate(HeapCreationFailed, type);
    }
 }
 
@@ -73,7 +74,7 @@ SysHeap::~SysHeap()
 
    //  Prevent an attempt to destroy the C++ default heap.
    //
-   if(type_ == MemPermanent)
+   if(heap_ == GetProcessHeap())
    {
       Debug::SwLog(SysHeap_dtor, debug64_t(heap_), 0);
       return;
@@ -111,8 +112,12 @@ void* SysHeap::Alloc(size_t size)
 
 //------------------------------------------------------------------------------
 
-size_t SysHeap::BlockSize(const void* addr) const
+fn_name SysHeap_BlockToSize = "SysHeap.BlockToSize";
+
+size_t SysHeap::BlockToSize(const void* addr) const
 {
+   Debug::ft(SysHeap_BlockToSize);
+
    if(heap_ == nullptr) return 0;
    return HeapSize(heap_, 0, addr);
 }
@@ -246,7 +251,7 @@ void SysHeap::Free(void* addr)
 
    if(heap_ == nullptr) return;
 
-   auto size = BlockSize(addr);
+   auto size = BlockToSize(addr);
 
    if(HeapFree(heap_, 0, addr))
       Freed(size);

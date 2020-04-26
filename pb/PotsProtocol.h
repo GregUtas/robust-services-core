@@ -62,8 +62,8 @@ public:
    //
    static const secs_t FirstDigitTimeout = 10;  // dial tone to first digit
    static const secs_t InterDigitTimeout = 10;  // between subsequent digits
-   static const secs_t RingingCycleTime =  6;   // length of one ringing cycle
-   static const secs_t AlertingTimeout =  6;    // ringing to alerting message
+   static const secs_t RingingCycleTime = 6;    // length of one ringing cycle
+   static const secs_t AlertingTimeout = 6;     // ringing to alerting message
    static const secs_t AnswerTimeout = 60;      // call presentation to offhook
    static const secs_t SuspendTimeout = 10;     // TBC onhook to call takedown
 

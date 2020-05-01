@@ -44,7 +44,7 @@ struct SingletonTuple
 
 //------------------------------------------------------------------------------
 
-const size_t Singletons::MaxSingletons = 16 * 1024;
+const size_t Singletons::MaxSingletons = 32 * kBs;
 Singletons* Singletons::Instance_ = nullptr;
 
 //------------------------------------------------------------------------------

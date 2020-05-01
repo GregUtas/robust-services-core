@@ -42,6 +42,11 @@ namespace NodeBase
    //
    extern fixed_string ObjSeparatorStr;
 
+   //  Converts STR to a positive integer, returning it in SIZE.  Returns false
+   //  if STR is empty or contains a non-digit.
+   //
+   bool strToSize(const std::string& str, size_t& size);
+
    //  Returns a string of COUNT spaces.  If COUNT is COUT_LENGTH_MAX or more,
    //  an empty string is returned under the assumption that COUNT was actually
    //  negative.  The following can therefore be done with impunity:

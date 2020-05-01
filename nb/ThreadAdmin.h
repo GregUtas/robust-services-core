@@ -170,6 +170,10 @@ private:
    //
    ~ThreadAdmin();
 
+   //  Safely accesses configuration values.
+   //
+   static const ThreadAdminValues* AccessConfig();
+
    //  Thread configuration values;
    //
    std::unique_ptr< ThreadAdminValues > config_;

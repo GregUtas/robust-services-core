@@ -21,18 +21,16 @@
 //
 #ifdef OS_WIN
 #include "SysHeap.h"
+#include <cstdint>
 #include <intsafe.h>
-#include <iomanip>
-#include <ostream>
+#include <sstream>
 #include <string>
 #include <windows.h>
 #include "Debug.h"
-#include "Memory.h"
 #include "Restart.h"
 
 using std::ostream;
 using std::string;
-using std::setw;
 
 //------------------------------------------------------------------------------
 
@@ -119,7 +117,9 @@ size_t SysHeap::BlockToSize(const void* addr) const
    Debug::ft(SysHeap_BlockToSize);
 
    if(heap_ == nullptr) return 0;
-   return HeapSize(heap_, 0, addr);
+   auto size = HeapSize(heap_, 0, addr);
+   if(size == (SIZE_MAX - 1)) size = 0;
+   return size;
 }
 
 //------------------------------------------------------------------------------
@@ -140,7 +140,25 @@ void SysHeap::Display(ostream& stream,
 
 //------------------------------------------------------------------------------
 
-void SysHeap::DisplayHeaps(ostream& stream)
+fn_name SysHeap_Free = "SysHeap.Free";
+
+void SysHeap::Free(void* addr)
+{
+   Debug::ft(SysHeap_Free);
+
+   if(heap_ == nullptr) return;
+
+   auto size = BlockToSize(addr);
+
+   if(HeapFree(heap_, 0, addr))
+      Freed(size);
+   else
+      Debug::SwLog(SysHeap_Free, debug64_t(addr), GetLastError());
+}
+
+//------------------------------------------------------------------------------
+
+void SysHeap::ListHeaps(std::set< void* >& heaps, std::ostringstream& expl)
 {
    DWORD NumberOfHeaps;
    DWORD HeapsIndex;
@@ -157,7 +175,7 @@ void SysHeap::DisplayHeaps(ostream& stream)
 
    if(NumberOfHeaps == 0)
    {
-      stream << "Failed to get number of heaps: err=" << GetLastError() << CRLF;
+      expl << "Failed to get number of heaps: err=" << GetLastError() << CRLF;
       return;
    }
 
@@ -167,7 +185,7 @@ void SysHeap::DisplayHeaps(ostream& stream)
 
    if(Result != S_OK)
    {
-      stream << "SIZETMult failed: result=" << Result << CRLF;
+      expl << "SIZETMult failed: result=" << Result << CRLF;
       return;
    }
 
@@ -177,7 +195,7 @@ void SysHeap::DisplayHeaps(ostream& stream)
 
    if(DefaultProcessHeap == nullptr)
    {
-      stream << "Failed to get default heap: err=" << GetLastError() << CRLF;
+      expl << "Failed to get default heap: err=" << GetLastError() << CRLF;
       return;
    }
 
@@ -187,7 +205,7 @@ void SysHeap::DisplayHeaps(ostream& stream)
 
    if(aHeaps == nullptr)
    {
-      stream << "Failed to allocate " << BytesToAllocate << " bytes." << CRLF;
+      expl << "Failed to allocate " << BytesToAllocate << " bytes." << CRLF;
       return;
    }
 
@@ -202,7 +220,7 @@ void SysHeap::DisplayHeaps(ostream& stream)
 
    if(NumberOfHeaps == 0)
    {
-      stream << "Failed to get list of heaps: err=" << GetLastError() << CRLF;
+      expl << "Failed to get list of heaps: err=" << GetLastError() << CRLF;
       return;
    }
 
@@ -212,24 +230,14 @@ void SysHeap::DisplayHeaps(ostream& stream)
       //  the latest number is larger than the original, another component
       //  has created a new heap and the buffer is now too small.
       //
-      stream << "The number of heaps has changed." << CRLF;
+      expl << "The number of heaps changed: try again." << CRLF;
+      return;
    }
    else
    {
-      stream << "  Heap  MemoryType  Address" << CRLF;
-
       for(HeapsIndex = 0; HeapsIndex < HeapsLength; ++HeapsIndex)
       {
-         auto type = Memory::AddrToType(aHeaps[HeapsIndex]);
-
-         stream << setw(6) << HeapsIndex + 1;
-
-         if(type != MemNull)
-            stream << setw(12) << type;
-         else
-            stream << setw(12) << "unknown";
-
-         stream << setw(NIBBLES_PER_POINTER + 2) << aHeaps[HeapsIndex] << CRLF;
+         heaps.insert(aHeaps[HeapsIndex]);
       }
    }
 
@@ -237,26 +245,8 @@ void SysHeap::DisplayHeaps(ostream& stream)
    //
    if(!HeapFree(DefaultProcessHeap, 0, aHeaps))
    {
-      stream << "Failed to free memory allocated from default heap." << CRLF;
+      expl << "Failed to free memory allocated from default heap." << CRLF;
    }
-}
-
-//------------------------------------------------------------------------------
-
-fn_name SysHeap_Free = "SysHeap.Free";
-
-void SysHeap::Free(void* addr)
-{
-   Debug::ft(SysHeap_Free);
-
-   if(heap_ == nullptr) return;
-
-   auto size = BlockToSize(addr);
-
-   if(HeapFree(heap_, 0, addr))
-      Freed(size);
-   else
-      Debug::SwLog(SysHeap_Free, debug64_t(addr), GetLastError());
 }
 
 //------------------------------------------------------------------------------
@@ -286,7 +276,7 @@ bool SysHeap::Validate(const void* addr) const
 {
    Debug::ft(SysHeap_Validate);
 
-   if(heap_ == nullptr) return false;
+   if(heap_ == nullptr) return true;
    return HeapValidate(heap_, 0, addr);
 }
 }

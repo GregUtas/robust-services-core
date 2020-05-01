@@ -23,7 +23,6 @@
 #include <sstream>
 #include <string>
 #include "CliBuffer.h"
-#include "CliCookie.h"
 #include "CliThread.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -100,17 +99,6 @@ bool CliCommandSet::BindParm(CliParm& parm)
    //
    Debug::SwLog(CliCommandSet_BindParm, strClass(&parm), Parms().Size());
    return false;
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CliCommandSet_DescendTo = "CliCommandSet.DescendTo";
-
-void CliCommandSet::DescendTo(CliCookie& cookie, uint32_t index)
-{
-   Debug::ft(CliCommandSet_DescendTo);
-
-   cookie.Descend(index);
 }
 
 //------------------------------------------------------------------------------

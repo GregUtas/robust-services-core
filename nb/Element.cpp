@@ -21,13 +21,13 @@
 //
 #include "Element.h"
 #include <ostream>
-#include <vector>
 #include "CfgBoolParm.h"
 #include "CfgParmRegistry.h"
 #include "CfgStrParm.h"
 #include "Clock.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "MainArgs.h"
 #include "Singleton.h"
 #include "SysFile.h"
 #include "SysTime.h"
@@ -167,13 +167,7 @@ const string Element::RscPath()
 {
    //  Return the last directory named "rsc/" on the path to the executable.
    //
-   auto reg = Singleton< CfgParmRegistry >::Extant();
-   if(reg == nullptr) return EMPTY_STR;
-
-   auto& args = reg->GetMainArgs();
-   if(args.empty()) return EMPTY_STR;
-
-   string path(args.at(0)->c_str());
+   string path(MainArgs::At(0));
    SysFile::Normalize(path);
 
    string dir("rsc");

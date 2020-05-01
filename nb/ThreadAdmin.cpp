@@ -21,6 +21,7 @@
 //
 #include "ThreadAdmin.h"
 #include "CfgBoolParm.h"
+#include "Dynamic.h"
 #include "StatisticsGroup.h"
 #include <bitset>
 #include <ostream>
@@ -344,12 +345,27 @@ ThreadAdmin::~ThreadAdmin()
 
 //------------------------------------------------------------------------------
 
+const ThreadAdminValues* ThreadAdmin::AccessConfig()
+{
+   if((Restart::GetStatus() == ShuttingDown) &&
+      (Restart::GetLevel() == RestartReload))
+   {
+      return nullptr;
+   }
+
+   auto admin = Singleton< ThreadAdmin >::Extant();
+   if(admin == nullptr) return nullptr;
+   return admin->config_.get();
+}
+
+//------------------------------------------------------------------------------
+
 bool ThreadAdmin::BreakEnabled()
 {
    if(!Element::RunningInLab()) return false;
 
-   auto admin = Singleton< ThreadAdmin >::Extant();
-   if(admin != nullptr) return admin->config_->breakEnabled_;
+   auto config = AccessConfig();
+   if(config != nullptr) return config->breakEnabled_;
    return DefaultAdminValues.breakEnabled_;
 }
 
@@ -526,9 +542,9 @@ msecs_t ThreadAdmin::InitTimeoutMsecs()
 {
    Debug::ft(ThreadAdmin_InitTimeoutMsecs);
 
-   auto admin = Singleton< ThreadAdmin >::Extant();
-   auto msecs = (admin != nullptr ?
-      admin->config_->initTimeoutMsecs_ : DefaultAdminValues.initTimeoutMsecs_);
+   auto config = AccessConfig();
+   auto msecs = (config != nullptr ?
+      config->initTimeoutMsecs_ : DefaultAdminValues.initTimeoutMsecs_);
    return msecs << WarpFactor();
 }
 
@@ -543,8 +559,8 @@ void ThreadAdmin::Patch(sel_t selector, void* arguments)
 
 bool ThreadAdmin::ReinitOnSchedTimeout()
 {
-   auto admin = Singleton< ThreadAdmin >::Extant();
-   if(admin != nullptr) return admin->config_->reinitOnSchedTimeout_;
+   auto config = AccessConfig();
+   if(config != nullptr) return config->reinitOnSchedTimeout_;
    return DefaultAdminValues.reinitOnSchedTimeout_;
 }
 
@@ -552,8 +568,8 @@ bool ThreadAdmin::ReinitOnSchedTimeout()
 
 word ThreadAdmin::RtcInterval()
 {
-   auto admin = Singleton< ThreadAdmin >::Extant();
-   if(admin != nullptr) return admin->config_->rtcInterval_;
+   auto config = AccessConfig();
+   if(config != nullptr) return config->rtcInterval_;
    return DefaultAdminValues.rtcInterval_;
 }
 
@@ -561,8 +577,8 @@ word ThreadAdmin::RtcInterval()
 
 word ThreadAdmin::RtcLimit()
 {
-   auto admin = Singleton< ThreadAdmin >::Extant();
-   if(admin != nullptr) return admin->config_->rtcLimit_;
+   auto config = AccessConfig();
+   if(config != nullptr) return config->rtcLimit_;
    return DefaultAdminValues.rtcLimit_;
 }
 
@@ -570,8 +586,8 @@ word ThreadAdmin::RtcLimit()
 
 msecs_t ThreadAdmin::RtcTimeoutMsecs()
 {
-   auto admin = Singleton< ThreadAdmin >::Extant();
-   if(admin != nullptr) return admin->config_->rtcTimeoutMsecs_;
+   auto config = AccessConfig();
+   if(config != nullptr) return config->rtcTimeoutMsecs_;
    return DefaultAdminValues.rtcTimeoutMsecs_;
 }
 
@@ -579,8 +595,8 @@ msecs_t ThreadAdmin::RtcTimeoutMsecs()
 
 msecs_t ThreadAdmin::SchedTimeoutMsecs()
 {
-   auto admin = Singleton< ThreadAdmin >::Extant();
-   if(admin != nullptr) return admin->config_->schedTimeoutMsecs_;
+   auto config = AccessConfig();
+   if(config != nullptr) return config->schedTimeoutMsecs_;
    return DefaultAdminValues.schedTimeoutMsecs_;
 }
 
@@ -601,8 +617,8 @@ void ThreadAdmin::Shutdown(RestartLevel level)
 
 word ThreadAdmin::StackCheckInterval()
 {
-   auto admin = Singleton< ThreadAdmin >::Extant();
-   if(admin != nullptr) return admin->config_->stackCheckInterval_;
+   auto config = AccessConfig();
+   if(config != nullptr) return config->stackCheckInterval_;
    return DefaultAdminValues.stackCheckInterval_;
 }
 
@@ -610,8 +626,8 @@ word ThreadAdmin::StackCheckInterval()
 
 word ThreadAdmin::StackUsageLimit()
 {
-   auto admin = Singleton< ThreadAdmin >::Extant();
-   if(admin != nullptr) return admin->config_->stackUsageLimit_;
+   auto config = AccessConfig();
+   if(config != nullptr) return config->stackUsageLimit_;
    return DefaultAdminValues.stackUsageLimit_;
 }
 
@@ -659,8 +675,8 @@ word ThreadAdmin::TrapCount()
 
 word ThreadAdmin::TrapInterval()
 {
-   auto admin = Singleton< ThreadAdmin >::Extant();
-   if(admin != nullptr) return admin->config_->trapInterval_;
+   auto config = AccessConfig();
+   if(config != nullptr) return config->trapInterval_;
    return DefaultAdminValues.trapInterval_;
 }
 
@@ -668,8 +684,8 @@ word ThreadAdmin::TrapInterval()
 
 word ThreadAdmin::TrapLimit()
 {
-   auto admin = Singleton< ThreadAdmin >::Extant();
-   if(admin != nullptr) return admin->config_->trapLimit_;
+   auto config = AccessConfig();
+   if(config != nullptr) return config->trapLimit_;
    return DefaultAdminValues.trapLimit_;
 }
 
@@ -677,8 +693,8 @@ word ThreadAdmin::TrapLimit()
 
 bool ThreadAdmin::TrapOnRtcTimeout()
 {
-   auto admin = Singleton< ThreadAdmin >::Extant();
-   if(admin != nullptr) return admin->config_->trapOnRtcTimeout_;
+   auto config = AccessConfig();
+   if(config != nullptr) return config->trapOnRtcTimeout_;
    return DefaultAdminValues.trapOnRtcTimeout_;
 }
 

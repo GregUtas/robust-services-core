@@ -298,6 +298,22 @@ string strPtr(const void* p)
 
 //------------------------------------------------------------------------------
 
+bool strToSize(const std::string& str, size_t& size)
+{
+   size = 0;
+   if(str.empty()) return false;
+
+   for(size_t i = 0; i < str.size(); ++i)
+   {
+      if(!isdigit(str[i])) return false;
+      size = (10 * size) + (str[i] - '0');
+   }
+
+   return true;
+}
+
+//------------------------------------------------------------------------------
+
 string strUpper(const string& s)
 {
    string output;

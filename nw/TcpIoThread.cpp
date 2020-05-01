@@ -45,7 +45,7 @@ using std::string;
 
 namespace NetworkBase
 {
-const size_t TcpIoThread::MaxConns = 48 * 1024;  // 48K
+const size_t TcpIoThread::MaxConns = 48 * kBs;
 
 //------------------------------------------------------------------------------
 

@@ -20,10 +20,16 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Memory.h"
+#include "NbHeap.h"
 #include "SysHeap.h"
 #include <cstring>
+#include <iomanip>
+#include <set>
+#include <sstream>
 #include "AllocationException.h"
 #include "Debug.h"
+#include "Formatters.h"
+#include "MainArgs.h"
 #include "MemoryTrace.h"
 #include "PermanentHeap.h"
 #include "Restart.h"
@@ -31,26 +37,41 @@
 #include "ToolTypes.h"
 #include "TraceBuffer.h"
 
+using std::ostream;
+using std::setw;
+using std::string;
+
 //------------------------------------------------------------------------------
 
 namespace NodeBase
 {
-class ImmutableHeap : public SysHeap
+class ImmutableHeap : public NbHeap
 {
    friend class Singleton< ImmutableHeap >;
 private:
    ImmutableHeap();
    ~ImmutableHeap();
-   static size_t GetSize();
+
+   //  The size of the immutable heap must be defined at compile
+   //  time because it is created even before main() is entered.
+   //
+   static const size_t Size = 512 * kBs;
 };
 
-class ProtectedHeap : public SysHeap
+class ProtectedHeap : public NbHeap
 {
    friend class Singleton< ProtectedHeap >;
 private:
    ProtectedHeap();
    ~ProtectedHeap();
+
+   //  The number of kBs in the protected heap may be defined by a
+   //  command line parameter prefixed by "Prot_kBs=".  Its value
+   //  may range from 1MB to 512Mb (32-bit CPU) or 8GB (64-bit CPU).
+   //
    static size_t GetSize();
+   const static size_t MinSize = 1 * MBs;
+   const static size_t MaxSize = 1 << (25 + BYTES_PER_WORD);
 };
 
 class PersistentHeap : public SysHeap
@@ -81,7 +102,7 @@ private:
 
 fn_name ImmutableHeap_ctor = "ImmutableHeap.ctor";
 
-ImmutableHeap::ImmutableHeap() : SysHeap(MemImmutable, GetSize())
+ImmutableHeap::ImmutableHeap() : NbHeap(MemImmutable, Size)
 {
    Debug::ft(ImmutableHeap_ctor);
 }
@@ -97,16 +118,9 @@ ImmutableHeap::~ImmutableHeap()
 
 //------------------------------------------------------------------------------
 
-size_t ImmutableHeap::GetSize()
-{
-   return 0x40000;  //* make configurable via command line
-}
-
-//------------------------------------------------------------------------------
-
 fn_name ProtectedHeap_ctor = "ProtectedHeap.ctor";
 
-ProtectedHeap::ProtectedHeap() : SysHeap(MemProtected, GetSize())
+ProtectedHeap::ProtectedHeap() : NbHeap(MemProtected, GetSize())
 {
    Debug::ft(ProtectedHeap_ctor);
 }
@@ -122,9 +136,25 @@ ProtectedHeap::~ProtectedHeap()
 
 //------------------------------------------------------------------------------
 
+fn_name ProtectedHeap_GetSize = "ProtectedHeap.GetSize";
+
 size_t ProtectedHeap::GetSize()
 {
-   return 0x100000;  //* make configurable via command line
+   Debug::ft(ProtectedHeap_GetSize);
+
+   size_t size;
+
+   auto str = MainArgs::Find("Prot_kBs=");
+   if(!strToSize(str, size)) return MinSize;
+
+   size *= kBs;
+
+   if(size < MinSize)
+      size = MinSize;
+   else if(size > MaxSize)
+      size = MaxSize;
+
+   return size;
 }
 
 //------------------------------------------------------------------------------
@@ -303,6 +333,52 @@ void Memory::Copy(void* dest, const void* source, size_t size)
 
 //------------------------------------------------------------------------------
 
+void Memory::DisplayHeaps(ostream& stream, const string& prefix)
+{
+   std::set< void* > heaps;
+   std::ostringstream expl;
+
+   SysHeap::ListHeaps(heaps, expl);
+   const Heap* heap = PermanentHeap::Instance();
+   if(heap != nullptr) heaps.insert(heap->Addr());
+   heap = Singleton< ImmutableHeap >::Extant();
+   if(heap != nullptr) heaps.insert(heap->Addr());
+   heap = Singleton< ProtectedHeap >::Extant();
+   if(heap != nullptr) heaps.insert(heap->Addr());
+   heap = Singleton< PersistentHeap >::Extant();
+   if(heap != nullptr) heaps.insert(heap->Addr());
+   heap = Singleton< DynamicHeap >::Extant();
+   if(heap != nullptr) heaps.insert(heap->Addr());
+   heap = Singleton< TemporaryHeap >::Extant();
+   if(heap != nullptr) heaps.insert(heap->Addr());
+
+   stream << prefix << "Heap  MemoryType  Address" << CRLF;
+   size_t index = 1;
+
+   for(auto h = heaps.cbegin(); h != heaps.cend(); ++h)
+   {
+      auto type = Memory::AddrToType(*h);
+
+      stream << prefix << setw(4) << index++;
+
+      if(type != MemNull)
+         stream << setw(12) << type;
+      else
+         stream << setw(12) << "unknown";
+
+      stream << setw(NIBBLES_PER_POINTER + 2) << *h << CRLF;
+   }
+
+   if(!expl.str().empty())
+   {
+      stream << CRLF;
+      stream << prefix << "Problem while querying system heaps: " << CRLF;
+      stream << prefix << spaces(2) << expl.str() << CRLF;
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Memory_Free = "Memory.Free";
 
 void Memory::Free(void* addr, MemoryType type)
@@ -457,13 +533,13 @@ bool Memory::Unprotect(MemoryType type)
 
 fn_name Memory_Validate = "Memory.Validate";
 
-bool Memory::Validate(MemoryType type, const void* addr)
+int Memory::Validate(MemoryType type, const void* addr)
 {
    Debug::ft(Memory_Validate);
 
    auto heap = AccessHeap(type);
-   if(heap == nullptr) return false;
-   return heap->Validate(addr);
+   if(heap == nullptr) return -1;
+   return (heap->Validate(addr) ? 1 : 0);
 }
 
 //------------------------------------------------------------------------------

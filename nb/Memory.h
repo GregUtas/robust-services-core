@@ -23,6 +23,8 @@
 #define MEMORY_H_INCLUDED
 
 #include <cstddef>
+#include <iosfwd>
+#include <string>
 #include "SysTypes.h"
 
 namespace NodeBase
@@ -85,14 +87,22 @@ namespace Memory
    bool Unprotect(MemoryType type);
 
    //  Validates ADDR, which should be of TYPE.  If ADDR is nullptr, the
-   //  entire heap for TYPE is validated.
+   //  entire heap for TYPE is validated.  Returns
+   //  o 1 if the heap was validated
+   //  o 0 if the heap was corrupt
+   //  o -1 if the heap does not exist
    //
-   bool Validate(MemoryType type, const void* addr);
+   int Validate(MemoryType type, const void* addr);
 
    //  Returns the type of memory associated with the heap at ADDR.
    //  Returns MemNull if no heap begins at ADDR.
    //
    MemoryType AddrToType(const void* addr);
+
+   //  Displays the system's heaps in STREAM, using PREFIX at the start
+   //  of each line.
+   //
+   void DisplayHeaps(std::ostream& stream, const std::string& prefix);
 
    //  Frees the appropriate heap(s) during a restart.
    //

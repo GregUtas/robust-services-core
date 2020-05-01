@@ -50,6 +50,7 @@
 #include "FileThread.h"
 #include "Formatters.h"
 #include "FunctionGuard.h"
+#include "Heap.h"
 #include "Log.h"
 #include "LogBuffer.h"
 #include "LogBufferRegistry.h"
@@ -76,7 +77,6 @@
 #include "StatisticsRegistry.h"
 #include "Symbol.h"
 #include "SymbolRegistry.h"
-#include "SysHeap.h"
 #include "SysMutex.h"
 #include "ThisThread.h"
 #include "ThreadRegistry.h"
@@ -1091,7 +1091,7 @@ word HeapsCommand::ProcessCommand(CliThread& cli) const
    switch(index)
    {
    case HeapsListIndex:
-      SysHeap::DisplayHeaps(*cli.obuf);
+      Memory::DisplayHeaps(*cli.obuf, spaces(2));
       return 0;
 
    case HeapsValidateIndex:
@@ -1100,8 +1100,17 @@ word HeapsCommand::ProcessCommand(CliThread& cli) const
       for(auto m = 1; m < MemoryType_N; ++m)
       {
          auto type = MemoryType(m);
-         auto valid = Memory::Validate(type, nullptr);
-         *cli.obuf << setw(13) << MemoryType(m) << ": " << valid << CRLF;
+         auto result = Memory::Validate(type, nullptr);
+         string status;
+
+         if(result > 0)
+            status = "true";
+         else if(result == 0)
+            status = "false";
+         else
+            status = "unallocated";
+
+         *cli.obuf << setw(13) << MemoryType(m) << ": " << status << CRLF;
       }
 
       return 0;
@@ -3320,16 +3329,16 @@ void StatusCommand::Patch(sel_t selector, void* arguments)
 }
 
 fixed_string HeapsHeader =
-"Alloc    Lowest      Curr        Curr                            Memory\n"
-"Fails  Avail(K)  Avail(K)      In Use     Allocs      Frees        Type  RWX";
+"Alloc  Low kB     kB       Bytes                            Memory        Prot\n"
+"Fails   Avail  Avail      In Use     Allocs      Frees        Type  RWX  Chngs";
 //        1         2         3         4         5         6         7
 //234567890123456789012345678901234567890123456789012345678901234567890123456789
 
 fixed_string PoolsHeader =
    "Alloc  Lowest    Curr    Curr\n"
-   "Fails   Avail   Avail  In Use   Allocs    Frees  Expands   Pool";
+   "Fails   Avail   Avail  In Use   Allocs    Frees  Expands   Pool Name";
 // 0         1         2         3         4         5         6
-// 0123456789012345678901234567890123456789012345678901234567890123
+// 012345678901234567890123456789012345678901234567890123456789012345678
 
 fn_name StatusCommand_ProcessCommand = "StatusCommand.ProcessCommand";
 
@@ -3354,20 +3363,21 @@ word StatusCommand::ProcessCommand(CliThread& cli) const
          auto size = heap->Size();
          if(size == 0)
          {
-            *cli.obuf << setw(10) << "n/a";
-            *cli.obuf << setw(10) << "n/a";
+            *cli.obuf << setw(7) << "---";
+            *cli.obuf << setw(8) << "---";
          }
          else
          {
-            *cli.obuf << setw(10) << ((size - heap->MaxBytesInUse()) / 1024);
-            *cli.obuf << setw(10) << ((size - heap->BytesInUse()) / 1024);
+            *cli.obuf << setw(7) << ((size - heap->MaxBytesInUse()) / kBs);
+            *cli.obuf << setw(8) << ((size - heap->BytesInUse()) / kBs);
          }
 
          *cli.obuf << setw(12) << heap->BytesInUse();
          *cli.obuf << setw(11) << heap->AllocCount();
          *cli.obuf << setw(11) << heap->FreeCount();
          *cli.obuf << setw(12) << heap->Type();
-         *cli.obuf << setw(5) << heap->GetAttrs() << CRLF;
+         *cli.obuf << setw(5) << heap->GetAttrs();
+         *cli.obuf << setw(7) << heap->ChangeCount() << CRLF;
       }
    }
 

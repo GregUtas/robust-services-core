@@ -20,7 +20,6 @@
 #include "BotThread.h"
 #include "BotTrace.h"
 #include "BotType.h"
-#include "CfgParmRegistry.h"
 #include "CliThread.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -29,6 +28,7 @@
 #include "IpPort.h"
 #include "IpPortRegistry.h"
 #include "Location.h"
+#include "MainArgs.h"
 #include "MapAndUnits.h"
 #include "NbTracer.h"
 #include "NbTypes.h"
@@ -73,8 +73,7 @@ BaseBot::BaseBot() :
 {
    Debug::ft(BaseBot_ctor);
 
-   auto& args = Singleton< CfgParmRegistry >::Instance()->GetMainArgs();
-   title_ = *args.at(0);
+   title_ = MainArgs::At(0);
 }
 
 //------------------------------------------------------------------------------

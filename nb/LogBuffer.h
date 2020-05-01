@@ -44,9 +44,9 @@ class LogBuffer : public Permanent
 //
    friend class LogsWritten;
 public:
-   //  Creates a buffer of length KBS kilobytes.
+   //  Creates a buffer of length SIZE.
    //
-   explicit LogBuffer(size_t kbs);
+   explicit LogBuffer(size_t size);
 
    //  Releases the buffer.
    //

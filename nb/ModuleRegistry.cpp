@@ -31,6 +31,7 @@
 #include "Debug.h"
 #include "Formatters.h"
 #include "Log.h"
+#include "MainArgs.h"
 #include "Memory.h"
 #include "Module.h"
 #include "NbLogs.h"
@@ -182,6 +183,12 @@ ModuleRegistry::ModuleRegistry()
    Debug::ft(ModuleRegistry_ctor);
 
    modules_.Init(Module::MaxId, Module::CellDiff(), MemImmutable);
+
+   //  The creation of this registry means that immutable memory is now
+   //  available, so create MainArgs in order to save main()'s arguments
+   //  in immutable memory.
+   //
+   Singleton< MainArgs >::Instance();
 }
 
 //------------------------------------------------------------------------------
@@ -219,6 +226,7 @@ void ModuleRegistry::Display(ostream& stream,
    stream << prefix << "reason    : " << reason_ << CRLF;
    stream << prefix << "errval    : " << errval_ << CRLF;
    stream << prefix << "stream    : " << stream_.get() << CRLF;
+
    stream << prefix << "modules [ModuleId]" << CRLF;
    modules_.Display(stream, prefix + spaces(2), options);
 }
@@ -358,6 +366,11 @@ fn_name ModuleRegistry_Shutdown = "ModuleRegistry.Shutdown";
 void ModuleRegistry::Shutdown(RestartLevel level)
 {
    Debug::ft(ModuleRegistry_Shutdown);
+
+   if(level >= RestartReload)
+   {
+      Memory::Unprotect(MemProtected);
+   }
 
    //  Schedule a subset of the factions so that pending logs will be output.
    //

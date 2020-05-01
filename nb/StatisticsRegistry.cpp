@@ -20,13 +20,10 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "StatisticsRegistry.h"
-#include <sstream>
+#include <ostream>
 #include <string>
 #include "Debug.h"
 #include "Formatters.h"
-#include "Log.h"
-#include "NbLogs.h"
-#include "Restart.h"
 #include "Statistics.h"
 #include "StatisticsGroup.h"
 

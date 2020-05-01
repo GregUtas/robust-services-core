@@ -58,11 +58,6 @@ protected:
    //
    CliCommandSet(c_string comm, c_string help, uint32_t size = 32);
 private:
-   //  Used while parsing the command.  INDEX is the offset within
-   //  Parms() where a valid subcommand was found.
-   //
-   static void DescendTo(CliCookie& cookie, uint32_t index);
-
    //  Overridden to find and invoke a subcommand.
    //
    word ProcessCommand(CliThread& cli) const override;

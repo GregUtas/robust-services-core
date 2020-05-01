@@ -2063,6 +2063,8 @@ void Thread::ImmProtect()
 {
    Debug::ft(Thread_ImmProtect);
 
+   if(Restart::GetLevel() >= RestartReboot) return;
+
    auto thr = RunningThread();
 
    //  Write-protect the immutable memory segment.  This is used after
@@ -2089,6 +2091,8 @@ fn_name Thread_ImmUnprotect = "Thread.ImmUnprotect";
 void Thread::ImmUnprotect()
 {
    Debug::ft(Thread_ImmUnprotect);
+
+   if(Restart::GetLevel() >= RestartReboot) return;
 
    auto thr = RunningThread();
 
@@ -2415,6 +2419,8 @@ void Thread::MemProtect()
 {
    Debug::ft(Thread_MemProtect);
 
+   if(Restart::GetLevel() >= RestartReload) return;
+
    auto thr = RunningThread();
 
    //  Write-protect the protected memory segment.  This is used after
@@ -2439,6 +2445,8 @@ fn_name Thread_MemUnprotect = "Thread.MemUnprotect";
 void Thread::MemUnprotect()
 {
    Debug::ft(Thread_MemUnprotect);
+
+   if(Restart::GetLevel() >= RestartReload) return;
 
    auto thr = RunningThread();
 
@@ -2583,19 +2591,27 @@ void Thread::Proceed()
 {
    Debug::ft(Thread_Proceed);
 
-   //  Update memory protection to what the thread expects.  Ensure that its
-   //  priority is such that the platform will schedule it in, and signal it
-   //  to resume.
+   //  Unless a restart runs with unprotected memory, update memory protection
+   //  to what the thread expects.  Ensure that its priority is such that the
+   //  platform will schedule it in, and signal it to resume.
    //
-   if(priv_->immUnprots_ == 0)
-      Memory::Protect(MemImmutable);
-   else
-      Memory::Unprotect(MemImmutable);
+   auto level = Restart::GetLevel();
 
-   if(priv_->memUnprots_ == 0)
-      Memory::Protect(MemProtected);
-   else
-      Memory::Unprotect(MemProtected);
+   if(level < RestartReload)
+   {
+      if(priv_->memUnprots_ == 0)
+         Memory::Protect(MemProtected);
+      else
+         Memory::Unprotect(MemProtected);
+   }
+
+   if(level < RestartReboot)
+   {
+      if(priv_->immUnprots_ == 0)
+         Memory::Protect(MemImmutable);
+      else
+         Memory::Unprotect(MemImmutable);
+   }
 
    systhrd_->SetPriority(SysThread::DefaultPriority);
    if(priv_->waiting_) systhrd_->Proceed();
@@ -2950,9 +2966,14 @@ Thread* Thread::RunningThread(bool assert)
    auto active = ActiveThread();
 
    if((active != nullptr) && (active->NativeThreadId() == nid))
+   {
       thr = active;
+   }
    else
-      thr = Singleton< ThreadRegistry >::Instance()->FindThread(nid);
+   {
+      auto reg = Singleton< ThreadRegistry >::Extant();
+      if(reg != nullptr) thr = reg->FindThread(nid);
+   }
 
    if((thr != nullptr) && !thr->deleted_) return thr;
 
@@ -3709,9 +3730,15 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
       priv_->immUnprots_ = 0;
       priv_->memUnprots_ = 0;
 
-      if(Restart::GetLevel() != RestartReboot)
+      auto level = Restart::GetLevel();
+
+      if(level < RestartReboot)
       {
          Memory::Protect(MemImmutable);
+      }
+
+      if(level < RestartReload)
+      {
          Memory::Protect(MemProtected);
       }
 

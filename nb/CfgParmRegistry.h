@@ -25,10 +25,8 @@
 #include "Protected.h"
 #include <iosfwd>
 #include <string>
-#include <vector>
 #include "NbTypes.h"
 #include "Q1Way.h"
-#include "SysTypes.h"
 
 namespace NodeBase
 {
@@ -78,14 +76,6 @@ public:
    //
    void ListParms(std::ostream& stream, const std::string& prefix) const;
 
-   //  Returns the arguments that were passed to main().
-   //
-   const std::vector< stringPtr >& GetMainArgs() const { return *mainArgs_; }
-
-   //  Adds the next argument that was passed to main().
-   //
-   void AddMainArg(const std::string& arg);
-
    //  Overridden for restarts.
    //
    void Startup(RestartLevel level) override;
@@ -131,15 +121,6 @@ private:
    //  invalid entries, but continues to look for tuples.
    //
    bool LoadNextTuple(std::string& key, std::string& value);
-
-   //  Type for a dynamically allocated vector that holds dynamically
-   //  allocated strings.
-   //
-   typedef std::unique_ptr< std::vector < stringPtr >> stringPtrVectorPtr;
-
-   //  The arguments to main().
-   //
-   stringPtrVectorPtr mainArgs_;
 
    //  The file from which tuples are read during system initialization.
    //

@@ -26,6 +26,11 @@
 #include "NbTypes.h"
 #include "SysTypes.h"
 
+namespace NodeBase
+{
+   class Log;
+}
+
 //------------------------------------------------------------------------------
 
 namespace NodeBase

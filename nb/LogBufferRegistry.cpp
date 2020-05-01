@@ -36,7 +36,7 @@ using std::string;
 
 namespace NodeBase
 {
-const size_t LogBufferRegistry::LogBufferSize = 1024;  // 1MB
+const size_t LogBufferRegistry::LogBufferSize = 1 * MBs;
 
 //------------------------------------------------------------------------------
 

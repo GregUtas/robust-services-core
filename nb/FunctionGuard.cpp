@@ -21,7 +21,6 @@
 //
 #include "FunctionGuard.h"
 #include "Debug.h"
-#include "Restart.h"
 #include "SysTypes.h"
 #include "Thread.h"
 
@@ -49,12 +48,10 @@ FunctionGuard::FunctionGuard(GuardedFunction first, bool invoke) :
       Thread::MakePreemptable();
       return;
    case Guard_MemUnprotect:
-      if(Restart::GetLevel() == RestartReboot) return;
       first_ = first;
       Thread::MemUnprotect();
       return;
    case Guard_ImmUnprotect:
-      if(Restart::GetLevel() == RestartReboot) return;
       first_ = first;
       Thread::ImmUnprotect();
       return;

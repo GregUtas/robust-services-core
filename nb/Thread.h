@@ -158,13 +158,6 @@ public:
    //
    bool ChangeFaction(Faction faction);
 
-   //  Invoked at the outset of a restart so that the thread can decide whether
-   //  to exit or sleep until the restart is over.  The default version returns
-   //  true.  Because it is desirable to delete and recreate all threads during
-   //  a restart, this should only be overridden for compelling reasons.
-   //
-   virtual bool ExitOnRestart(RestartLevel level) const;
-
    //  Used to explicitly include or exclude the thread from a trace.
    //
    void SetStatus(TraceStatus status);
@@ -404,6 +397,13 @@ private:
    //  o it traps during trap recovery, except in this function.
    //
    virtual bool Recover();
+
+   //  Invoked at the outset of a restart so that the thread can decide whether
+   //  to exit or sleep until the restart is over.  The default version returns
+   //  true.  Because it is desirable to delete and recreate all threads during
+   //  a restart, this should only be overridden for compelling reasons.
+   //
+   virtual bool ExitOnRestart(RestartLevel level) const;
 
    //  Invoked to destroy a thread.  The default version simply invokes
    //  delete but may be overridden to properly delete a Singleton.

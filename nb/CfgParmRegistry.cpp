@@ -30,9 +30,11 @@
 #include "Debug.h"
 #include "Formatters.h"
 #include "Log.h"
+#include "MainArgs.h"
 #include "NbLogs.h"
 #include "Restart.h"
 #include "SysFile.h"
+#include "SysTypes.h"
 
 using std::ostream;
 using std::string;
@@ -87,10 +89,22 @@ CfgParmRegistry::CfgParmRegistry()
 {
    Debug::ft(CfgParmRegistry_ctor);
 
-   mainArgs_.reset(new std::vector< stringPtr >());
-   configFileName_ = "element.config.txt";
    tupleq_.Init(CfgTuple::LinkDiff());
    parmq_.Init(CfgParm::LinkDiff());
+
+   string exe(MainArgs::At(0));
+   SysFile::Normalize(exe);
+   configFileName_ = exe.c_str();
+
+   auto pos = configFileName_.rfind(BackFromExePath_);
+
+   if(pos != string::npos)
+      pos += strlen(BackFromExePath_);
+   else
+      pos = configFileName_.rfind('/') + 1;
+
+   configFileName_.erase(pos);
+   configFileName_.append(AppendToExePath_);
 }
 
 //------------------------------------------------------------------------------
@@ -102,32 +116,6 @@ CfgParmRegistry::~CfgParmRegistry()
    Debug::ft(CfgParmRegistry_dtor);
 
    Debug::SwLog(CfgParmRegistry_dtor, UnexpectedInvocation, 0);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name CfgParmRegistry_AddMainArg = "CfgParmRegistry.AddMainArg";
-
-void CfgParmRegistry::AddMainArg(const string& arg)
-{
-   Debug::ft(CfgParmRegistry_AddMainArg);
-
-   mainArgs_->push_back(stringPtr(new string(arg)));
-
-   if(mainArgs_->size() == 1)
-   {
-      configFileName_ = SysFile::Normalize(arg).c_str();
-
-      auto pos = configFileName_.rfind(BackFromExePath_);
-
-      if(pos != string::npos)
-         pos += strlen(BackFromExePath_);
-      else
-         pos = configFileName_.rfind('/') + 1;
-
-      configFileName_.erase(pos);
-      configFileName_.append(AppendToExePath_);
-   }
 }
 
 //------------------------------------------------------------------------------
@@ -209,12 +197,6 @@ void CfgParmRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
    Protected::Display(stream, prefix, options);
-
-   stream << prefix << "mainArgs       : " << CRLF;
-   for(size_t i = 0; i < mainArgs_->size(); ++i)
-   {
-      stream << spaces(2) << strIndex(i) << *mainArgs_->at(i) << CRLF;
-   }
 
    stream << prefix << "configFileName : " << configFileName_ << CRLF;
    stream << prefix << "tupleq : " << CRLF;

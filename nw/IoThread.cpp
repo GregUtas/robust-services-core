@@ -42,8 +42,8 @@ using std::string;
 
 namespace NetworkBase
 {
-const size_t IoThread::MaxRxBuffSize = 64 * 1024;  // 64KB
-const size_t IoThread::MaxTxBuffSize = 64 * 1024;  // 64KB
+const size_t IoThread::MaxRxBuffSize = 64 * kBs;
+const size_t IoThread::MaxTxBuffSize = 64 * kBs;
 
 //------------------------------------------------------------------------------
 

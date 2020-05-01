@@ -15,12 +15,10 @@
 #include <cctype>
 #include <cstddef>
 #include <sstream>
-#include <vector>
 #include "BaseBot.h"
-#include "CfgParmRegistry.h"
 #include "Debug.h"
 #include "DipTypes.h"
-#include "Singleton.h"
+#include "MainArgs.h"
 #include "SysConsole.h"
 #include "SysTypes.h"
 
@@ -71,12 +69,11 @@ void StartupParameters::SetFromCommandLine()
    Debug::ft(StartupParameters_SetFromCommandLine);
 
    auto bot = BaseBot::instance();
-   auto reg = Singleton< CfgParmRegistry >::Instance();
-   auto& args = reg->GetMainArgs();
+   auto size = MainArgs::Size();
 
-   for(size_t p = 1; p < args.size(); ++p)
+   for(size_t p = 1; p < size; ++p)
    {
-      const auto& parm = *args.at(p);
+      string parm(MainArgs::At(p));
 
       if(parm.front() != '-') continue;
 

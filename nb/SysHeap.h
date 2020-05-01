@@ -25,6 +25,7 @@
 #include "Heap.h"
 #include <cstddef>
 #include <iosfwd>
+#include <set>
 #include "SysDecls.h"
 #include "SysTypes.h"
 
@@ -79,9 +80,10 @@ public:
    //
    int SetPermissions(MemoryProtection attrs) override;
 
-   //  Displays all heaps allocated by this process.
+   //  Inserts, in HEAPS, the address of each heap allocated by this process.
+   //  Updates EXPL with an explanation if a problem occurs.
    //
-   static void DisplayHeaps(std::ostream& stream);
+   static void ListHeaps(std::set< void* >& heaps, std::ostringstream& expl);
 
    //  Overridden to display member variables.
    //

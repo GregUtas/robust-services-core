@@ -56,6 +56,12 @@ constexpr size_t BITS_PER_WORD = BYTES_PER_WORD << BITS_PER_BYTE_LOG2;
 constexpr size_t BYTES_PER_POINTER = sizeof(uintptr_t);
 constexpr size_t NIBBLES_PER_POINTER = 2 * BYTES_PER_POINTER;
 
+//  For memory sizes.
+//
+constexpr size_t kBs = 1024;
+constexpr size_t MBs = 1024 * 1024;
+constexpr size_t GBs = 1024 * 1024 * 1024;
+
 //  Type for an identifier, most commonly used for items in a Registry.
 //  Unsigned identifiers are preferred for compatibility with array
 //  indices and size_t.  An identifier should be defined as 32 bits

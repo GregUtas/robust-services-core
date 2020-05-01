@@ -42,9 +42,10 @@ const int PriorityMap[SysThread::Priority_N] =
    THREAD_PRIORITY_ABOVE_NORMAL,  // SystemPriority
    THREAD_PRIORITY_HIGHEST        // WatchdogPriority
 };
+
 //------------------------------------------------------------------------------
 
-signal_t AccessViolationType(_EXCEPTION_POINTERS* ex)
+signal_t AccessViolationType(const _EXCEPTION_POINTERS* ex)
 {
    auto rec = ex->ExceptionRecord;
 
@@ -65,7 +66,7 @@ fn_name NodeBase_SE_Handler = "NodeBase.SE_Handler";
 
 //  Converts a Windows structured exception to a C++ exception.
 //
-void SE_Handler(uint32_t errval, _EXCEPTION_POINTERS* ex)
+void SE_Handler(uint32_t errval, const _EXCEPTION_POINTERS* ex)
 {
    //  Reenable Debug functions before tracing this function.
    //

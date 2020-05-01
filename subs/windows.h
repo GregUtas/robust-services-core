@@ -140,6 +140,7 @@ constexpr uint32_t DBG_CONTROL_C                   = 0x40010005;
 constexpr uint32_t DBG_CONTROL_BREAK               = 0x40010008;
 constexpr uint32_t STATUS_DATATYPE_MISALIGNMENT    = 0x80000002;
 constexpr uint32_t STATUS_ACCESS_VIOLATION         = 0xC0000005;
+constexpr uint32_t EXCEPTION_ACCESS_VIOLATION      = 0xC0000005;
 constexpr uint32_t STATUS_IN_PAGE_ERROR            = 0xC0000006;
 constexpr uint32_t STATUS_INVALID_HANDLE           = 0xC0000008;
 constexpr uint32_t STATUS_NO_MEMORY                = 0xC0000017;
@@ -159,7 +160,19 @@ constexpr uint32_t STATUS_INTEGER_OVERFLOW         = 0xC0000095;
 constexpr uint32_t STATUS_PRIVILEGED_INSTRUCTION   = 0xC0000096;
 constexpr uint32_t STATUS_STACK_OVERFLOW           = 0xC00000FD;
 
-typedef void (*_se_translator_function)(uint32_t ErrVal, void* ExceptionPointers);
+struct EXCEPTION_RECORD
+{
+   DWORD ExceptionCode;
+   DWORD NumberParameters;
+   uintptr_t ExceptionInformation[15];
+};
+
+struct _EXCEPTION_POINTERS
+{
+   EXCEPTION_RECORD* ExceptionRecord;
+};
+
+typedef void (*_se_translator_function)(uint32_t ErrVal, _EXCEPTION_POINTERS* ex);
 _se_translator_function _set_se_translator(_se_translator_function NewPtFunc);
 int _resetstkoflw();
 

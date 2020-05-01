@@ -98,8 +98,6 @@ void NbModule::Shutdown(RestartLevel level)
    Singleton< CliRegistry >::Instance()->Shutdown(level);
    Singleton< Element >::Instance()->Shutdown(level);
    Singleton< ClassRegistry >::Instance()->Shutdown(level);
-   Singleton< MsgBufferPool >::Instance()->Shutdown(level);
-   Singleton< ThreadPool >::Instance()->Shutdown(level);
    Singleton< ThreadAdmin >::Instance()->Shutdown(level);
    Singleton< ThreadRegistry >::Instance()->Shutdown(level);
    Singleton< ObjectPoolRegistry >::Instance()->Shutdown(level);

@@ -81,21 +81,6 @@ void SbModule::Shutdown(RestartLevel level)
 {
    Debug::ft(SbModule_Shutdown);
 
-   Singleton< SbIncrement >::Instance()->Shutdown(level);
-   Singleton< SbTracer >::Instance()->Shutdown(level);
-   Singleton< TimerProtocol >::Instance()->Shutdown(level);
-   Singleton< PayloadInvokerPool >::Instance()->Shutdown(level);
-
-   Singleton< SbIpBufferPool >::Instance()->Shutdown(level);
-   Singleton< ContextPool >::Instance()->Shutdown(level);
-   Singleton< MsgPortPool >::Instance()->Shutdown(level);
-   Singleton< MessagePool >::Instance()->Shutdown(level);
-   Singleton< ProtocolSMPool >::Instance()->Shutdown(level);
-   Singleton< TimerPool >::Instance()->Shutdown(level);
-   Singleton< ServiceSMPool >::Instance()->Shutdown(level);
-   Singleton< EventPool >::Instance()->Shutdown(level);
-   Singleton< BtIpBufferPool >::Instance()->Shutdown(level);
-
    Singleton< TimerRegistry >::Instance()->Shutdown(level);
    Singleton< FactoryRegistry >::Instance()->Shutdown(level);
    Singleton< ServiceRegistry >::Instance()->Shutdown(level);

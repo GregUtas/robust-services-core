@@ -54,11 +54,11 @@ private:
    //
    ~LogThread();
 
-   //  Invoked to immediately output a STREAM of logs during a restart.
-   //  Writes STREAM to the log file and, if appropriate, the console.
-   //  STREAM is freed and set to nullptr before returning.
+   //  Invoked to immediately output STREAM, which contains a log of type
+   //  LOG, during a restart.  STREAM is freed and set to nullptr before
+   //  returning.
    //
-   static void Spool(ostringstreamPtr& stream);
+   static void Spool(ostringstreamPtr& stream, const Log* log);
 
    //  Copies the STREAM of logs to the console when appropriate.
    //

@@ -64,7 +64,8 @@ public:
    //
    virtual void Free(void* addr) = 0;
 
-   //  Returns the size of the block at ADDR.
+   //  Returns the size of the block at ADDR if it is currently in
+   //  use by an application.  Returns 0 if the block is on the heap.
    //
    virtual size_t BlockToSize(const void* addr) const = 0;
 
@@ -92,15 +93,6 @@ public:
    //  Returns 0.
    //
    int SetAttrs(MemoryProtection attrs);
-
-   //  Invoked when SIZE bytes of memory were requested.  OK is
-   //  set if allocation succeeded.
-   //
-   void Requested(size_t size, bool ok = true);
-
-   //  Invoked when a SIZE bytes of memory have been freed.
-   //
-   void Freed(size_t size);
 
    //  Returns the number of bytes currently allocated from the heap.
    //
@@ -154,6 +146,15 @@ protected:
    //  Protected because this class is virtual.
    //
    Heap();
+
+   //  Invoked when SIZE bytes of memory were requested.  OK is
+   //  set if allocation succeeded.
+   //
+   void Requested(size_t size, bool ok = true);
+
+   //  Invoked when a SIZE bytes of memory have been freed.
+   //
+   void Freed(size_t size);
 private:
    //  The heap's current memory protection attributes.
    //

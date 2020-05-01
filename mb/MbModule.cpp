@@ -67,17 +67,6 @@ void MbModule::Shutdown(RestartLevel level)
 {
    Debug::ft(MbModule_Shutdown);
 
-   Singleton< MediaEndptPool >::Instance()->Shutdown(level);
-   Singleton< ToneSilent >::Instance()->Shutdown(level);
-   Singleton< ToneDial >::Instance()->Shutdown(level);
-   Singleton< ToneStutteredDial >::Instance()->Shutdown(level);
-   Singleton< ToneConfirmation >::Instance()->Shutdown(level);
-   Singleton< ToneRingback >::Instance()->Shutdown(level);
-   Singleton< ToneBusy >::Instance()->Shutdown(level);
-   Singleton< ToneCallWaiting >::Instance()->Shutdown(level);
-   Singleton< ToneReorder >::Instance()->Shutdown(level);
-   Singleton< ToneReceiverOffHook >::Instance()->Shutdown(level);
-   Singleton< ToneHeld >::Instance()->Shutdown(level);
    Singleton< ToneRegistry >::Instance()->Shutdown(level);
    Singleton< Switch >::Instance()->Shutdown(level);
 }

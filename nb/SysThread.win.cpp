@@ -42,15 +42,30 @@ const int PriorityMap[SysThread::Priority_N] =
    THREAD_PRIORITY_ABOVE_NORMAL,  // SystemPriority
    THREAD_PRIORITY_HIGHEST        // WatchdogPriority
 };
+//------------------------------------------------------------------------------
+
+signal_t AccessViolationType(_EXCEPTION_POINTERS* ex)
+{
+   auto rec = ex->ExceptionRecord;
+
+   if(rec->ExceptionCode == EXCEPTION_ACCESS_VIOLATION)
+   {
+      if(rec->NumberParameters > 0)
+      {
+         if(rec->ExceptionInformation[0] == 1) return SIGWRITE;
+      }
+   }
+
+   return SIGSEGV;
+}
 
 //------------------------------------------------------------------------------
 
 fn_name NodeBase_SE_Handler = "NodeBase.SE_Handler";
 
-//  Converts a Windows structured exception to a C++ exception.  The type of EX
-//  is actually EXCEPTION_POINTERS, but it is not used and is therefore omitted.
+//  Converts a Windows structured exception to a C++ exception.
 //
-void SE_Handler(uint32_t errval, void* ex)
+void SE_Handler(uint32_t errval, _EXCEPTION_POINTERS* ex)
 {
    //  Reenable Debug functions before tracing this function.
    //
@@ -69,8 +84,11 @@ void SE_Handler(uint32_t errval, void* ex)
       sig = SIGBREAK;
       break;
 
-   case STATUS_DATATYPE_MISALIGNMENT:     // 0x80000002
    case STATUS_ACCESS_VIOLATION:          // 0xC0000005
+      sig = AccessViolationType(ex);
+      break;
+
+   case STATUS_DATATYPE_MISALIGNMENT:     // 0x80000002
    case STATUS_IN_PAGE_ERROR:             // 0xC0000006
    case STATUS_INVALID_HANDLE:            // 0xC0000008
    case STATUS_NO_MEMORY:                 // 0xC0000017

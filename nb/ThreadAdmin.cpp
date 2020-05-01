@@ -49,7 +49,7 @@ namespace NodeBase
 {
 //  Aggregate statistics for threads.
 //
-class ThreadsStats : public Protected
+class ThreadsStats : public Dynamic
 {
 public:
    ThreadsStats();

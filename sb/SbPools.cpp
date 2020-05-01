@@ -444,6 +444,7 @@ void TimerPool::Startup(RestartLevel level)
 
    if(timeouts_ == nullptr)
    {
+      FunctionGuard guard(Guard_MemUnprotect);
       timeouts_.reset(new Counter("timeout messages sent"));
    }
 }

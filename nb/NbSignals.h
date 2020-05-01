@@ -32,6 +32,7 @@ namespace NodeBase
 //  SignalException outside the signal handler.
 //
 constexpr signal_t SIGNIL = 0;        // nil signal
+constexpr signal_t SIGWRITE = 121;    // write to protected memory
 constexpr signal_t SIGCLOSE = 122;    // exit thread (non-error)
 constexpr signal_t SIGYIELD = 123;    // ran unpreemptably too long
 constexpr signal_t SIGSTACK1 = 124;   // stack overflow: attempt recovery

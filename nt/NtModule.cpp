@@ -66,8 +66,6 @@ void NtModule::Shutdown(RestartLevel level)
 
    auto testdb = Singleton< TestDatabase >::Extant();
    if(testdb != nullptr) testdb->Shutdown(level);
-
-   Singleton< NtIncrement >::Instance()->Shutdown(level);
 }
 
 //------------------------------------------------------------------------------

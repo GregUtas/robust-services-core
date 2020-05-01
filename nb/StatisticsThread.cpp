@@ -26,6 +26,7 @@
 #include "Log.h"
 #include "NbDaemons.h"
 #include "NbLogs.h"
+#include "Restart.h"
 #include "Singleton.h"
 #include "StatisticsRegistry.h"
 #include "SysTime.h"
@@ -207,6 +208,34 @@ void StatisticsThread::Enter()
       wakeupTicks_ += PrevToCurrTicks;
       sleep = Clock::TicksToMsecs(Clock::TicksUntil(wakeupTicks_));
    }
+}
+
+//------------------------------------------------------------------------------
+
+fn_name StatisticsThread_ExitOnRestart = "StatisticsThread.ExitOnRestart";
+
+bool StatisticsThread::ExitOnRestart(NodeBase::RestartLevel level) const
+{
+   Debug::ft(StatisticsThread_ExitOnRestart);
+
+   //  Generate a statistics report if statistics will disappear
+   //  during the restart.
+   //
+   auto reg = Singleton< StatisticsRegistry >::Instance();
+
+   if(Restart::ClearsMemory(reg->MemType()))
+   {
+      auto log = Log::Create(StatsLogGroup, StatsReport);
+
+      if(log != nullptr)
+      {
+         *log << Log::Tab;
+         reg->DisplayStats(*log, VerboseOpt);
+         Log::Submit(log);
+      }
+   }
+
+   return true;
 }
 
 //------------------------------------------------------------------------------

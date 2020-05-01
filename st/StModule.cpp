@@ -68,11 +68,6 @@ fn_name StModule_Shutdown = "StModule.Shutdown";
 void StModule::Shutdown(RestartLevel level)
 {
    Debug::ft(StModule_Shutdown);
-
-   Singleton< StIncrement >::Instance()->Shutdown(level);
-   Singleton< TestFactory >::Instance()->Shutdown(level);
-   Singleton< TestService >::Instance()->Shutdown(level);
-   Singleton< TestProtocol >::Instance()->Shutdown(level);
 }
 
 //------------------------------------------------------------------------------

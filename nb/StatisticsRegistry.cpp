@@ -52,7 +52,7 @@ StatisticsRegistry::StatisticsRegistry()
    stats_.Init(MaxStats, Statistic::CellDiff(), MemDynamic);
    groups_.Init(MaxGroups, StatisticsGroup::CellDiff(), MemDynamic);
 
-   StartTicks_ = Clock::TicksZero();
+   StartTicks_ = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -141,30 +141,6 @@ void StatisticsRegistry::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
-fn_name StatisticsRegistry_Shutdown = "StatisticsRegistry.Shutdown";
-
-void StatisticsRegistry::Shutdown(RestartLevel level)
-{
-   Debug::ft(StatisticsRegistry_Shutdown);
-
-   //  Generate a statistics report if the registry will disappear
-   //  during the restart.
-   //
-   if(Restart::ClearsMemory(MemType()))
-   {
-      auto log = Log::Create(StatsLogGroup, StatsReport);
-
-      if(log != nullptr)
-      {
-         *log << Log::Tab;
-         DisplayStats(*log, VerboseOpt);
-         Log::Submit(log);
-      }
-   }
-}
-
-//------------------------------------------------------------------------------
-
 fn_name StatisticsRegistry_StartInterval = "StatisticsRegistry.StartInterval";
 
 void StatisticsRegistry::StartInterval(bool first)
@@ -187,11 +163,11 @@ void StatisticsRegistry::Startup(RestartLevel level)
 {
    Debug::ft(StatisticsRegistry_Startup);
 
-   //  The registry is reconstructed after a cold or reload restart and sets
-   //  StartTicks_ to the system's original boot time.  It needs to be reset
-   //  to the current time, given that all statistics have been cleared.
+   //  If StartTicks_ is zero, the registry has just been constructed or
+   //  reconstructed.  Statistics can only start to be accumulated now,
+   //  so set StartTicks_ to the current time.
    //
-   if(Restart::ClearsMemory(MemType()))
+   if(StartTicks_ == 0)
    {
       StartTicks_ = Clock::TicksNow();
    }

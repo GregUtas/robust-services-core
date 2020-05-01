@@ -34,6 +34,13 @@ namespace NodeBase
 //  functions signal() and raise(), but their SIG... constants can be used
 //  with SignalException.
 //
+class SigWrite : public PosixSignal
+{
+   friend class Singleton< SigWrite >;
+private:
+   SigWrite();
+};
+
 class SigClose : public PosixSignal
 {
    friend class Singleton< SigClose >;
@@ -78,6 +85,9 @@ private:
 
 //------------------------------------------------------------------------------
 
+SigWrite::SigWrite() : PosixSignal(SIGWRITE, "SIGWRITE",
+   "Write to Protected Memory", 12, PS_Native()) { }
+
 SigClose::SigClose() : PosixSignal(SIGCLOSE, "SIGCLOSE",
    "Non-Error Shutdown", 12,
    PS_Interrupt() | PS_Final() | PS_NoLog() | PS_NoError()) { }
@@ -110,6 +120,7 @@ void CreatePosixSignals()
    //
    SysSignals::CreateNativeSignals();
 
+   Singleton< SigWrite >::Instance();
    Singleton< SigClose >::Instance();
    Singleton< SigYield >::Instance();
    Singleton< SigStack1 >::Instance();

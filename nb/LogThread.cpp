@@ -33,6 +33,7 @@
 #include "Element.h"
 #include "FileThread.h"
 #include "Formatters.h"
+#include "Log.h"
 #include "LogBuffer.h"
 #include "LogBufferRegistry.h"
 #include "MutexGuard.h"
@@ -89,6 +90,12 @@ fn_name LogThread_dtor = "LogThread.dtor";
 LogThread::~LogThread()
 {
    Debug::ft(LogThread_dtor);
+
+   //  Clear our configuration parameter so that it won't be deleted.
+   //  (it resides in protected memory.)  When we are recreated, our
+   //  constructor will discover that it still exists.
+   //
+   noSpoolingMessageCount_.release();
 }
 
 //------------------------------------------------------------------------------
@@ -198,7 +205,7 @@ void LogThread::Patch(sel_t selector, void* arguments)
 
 fn_name LogThread_Spool = "LogThread.Spool";
 
-void LogThread::Spool(ostringstreamPtr& stream)
+void LogThread::Spool(ostringstreamPtr& stream, const Log* log)
 {
    Debug::ft(LogThread_Spool);
 
@@ -210,7 +217,10 @@ void LogThread::Spool(ostringstreamPtr& stream)
    auto level = Restart::GetStatus();
    Debug::Assert(level != Running, level);
 
-   CopyToConsole(stream);
+   if((log == nullptr) || (GetLogType(log->Id()) != PeriodicLog))
+   {
+      CopyToConsole(stream);
+   }
 
    auto name = Singleton< LogBufferRegistry >::Instance()->FileName();
    auto path = Element::OutputPath() + PATH_SEPARATOR + name;

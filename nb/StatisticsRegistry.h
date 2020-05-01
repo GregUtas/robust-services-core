@@ -74,10 +74,6 @@ public:
 
    //  Overridden for restarts.
    //
-   void Shutdown(RestartLevel level) override;
-
-   //  Overridden for restarts.
-   //
    void Startup(RestartLevel level) override;
 
    //  Overridden to display member variables.

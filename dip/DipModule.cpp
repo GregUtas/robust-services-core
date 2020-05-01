@@ -57,9 +57,6 @@ fn_name DipModule_Shutdown = "DipModule.Shutdown";
 void DipModule::Shutdown(RestartLevel level)
 {
    Debug::ft(DipModule_Shutdown);
-
-   Singleton< BotTcpService >::Instance()->Shutdown(level);
-   Singleton< DipIpBufferPool >::Instance()->Shutdown(level);
 }
 
 //------------------------------------------------------------------------------

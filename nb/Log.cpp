@@ -385,7 +385,7 @@ void Log::Submit(ostringstreamPtr& stream)
    //
    if(Restart::GetStatus() != Running)
    {
-      LogThread::Spool(stream);
+      LogThread::Spool(stream, log);
 
       if((log != nullptr) && (log->bufferCount_ != nullptr))
       {

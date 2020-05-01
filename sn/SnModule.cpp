@@ -82,36 +82,7 @@ void SnModule::Shutdown(RestartLevel level)
 {
    Debug::ft(SnModule_Shutdown);
 
-   Singleton< PotsStatistics >::Instance()->Shutdown(level);
-
-   Singleton< PotsBicService >::Instance()->Shutdown(level);
-   Singleton< PotsBocService >::Instance()->Shutdown(level);
-   Singleton< PotsCcwService >::Instance()->Shutdown(level);
-   Singleton< PotsCfbService >::Instance()->Shutdown(level);
-   Singleton< PotsCfnService >::Instance()->Shutdown(level);
-   Singleton< PotsCfxService >::Instance()->Shutdown(level);
-   Singleton< PotsCfuActivate >::Instance()->Shutdown(level);
-   Singleton< PotsCfuDeactivate >::Instance()->Shutdown(level);
-   Singleton< PotsCfuService >::Instance()->Shutdown(level);
-   Singleton< PotsCwaService >::Instance()->Shutdown(level);
-   Singleton< PotsCwbService >::Instance()->Shutdown(level);
-   Singleton< PotsCwmService >::Instance()->Shutdown(level);
-   Singleton< PotsDiscService >::Instance()->Shutdown(level);
-   Singleton< PotsHtlService >::Instance()->Shutdown(level);
-   Singleton< PotsMuxService >::Instance()->Shutdown(level);
-   Singleton< PotsSusService >::Instance()->Shutdown(level);
-   Singleton< PotsWmlActivate >::Instance()->Shutdown(level);
-   Singleton< PotsWmlDeactivate >::Instance()->Shutdown(level);
-   Singleton< PotsWmlService >::Instance()->Shutdown(level);
-
    Singleton< PotsTreatmentRegistry >::Instance()->Shutdown(level);
-   Singleton< PotsCallIpService >::Instance()->Shutdown(level);
-   Singleton< PotsMuxFactory >::Instance()->Shutdown(level);
-   Singleton< PotsCallFactory >::Instance()->Shutdown(level);
-   Singleton< PotsProxyService >::Instance()->Shutdown(level);
-   Singleton< PotsBcService >::Instance()->Shutdown(level);
-
-   Singleton< SnIncrement >::Instance()->Shutdown(level);
 }
 
 //------------------------------------------------------------------------------

@@ -62,10 +62,6 @@ fn_name AnModule_Shutdown = "AnModule.Shutdown";
 void AnModule::Shutdown(RestartLevel level)
 {
    Debug::ft(AnModule_Shutdown);
-
-   Singleton< AnIncrement >::Instance()->Shutdown(level);
-   Singleton< PotsShelfIpService >::Instance()->Shutdown(level);
-   Singleton< PotsShelfFactory >::Instance()->Shutdown(level);
 }
 
 //------------------------------------------------------------------------------

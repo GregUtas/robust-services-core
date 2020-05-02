@@ -58,6 +58,24 @@ void Persistent::operator delete[](void* addr)
 
 //------------------------------------------------------------------------------
 
+fn_name Persistent_delete3 = "Persistent.operator delete(place)";
+
+void Persistent::operator delete(void* addr, void* place) noexcept
+{
+   Debug::ft(Persistent_delete3);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Persistent_delete4 = "Persistent.operator delete[](place)";
+
+void Persistent::operator delete[](void* addr, void* place) noexcept
+{
+   Debug::ft(Persistent_delete4);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Persistent_new1 = "Persistent.operator new";
 
 void* Persistent::operator new(size_t size)
@@ -76,6 +94,28 @@ void* Persistent::operator new[](size_t size)
    Debug::ft(Persistent_new2);
 
    return Memory::Alloc(size, MemPersistent);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Persistent_new3 = "Persistent.operator new(place)";
+
+void* Persistent::operator new(size_t size, void* place)
+{
+   Debug::ft(Persistent_new3);
+
+   return place;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Persistent_new4 = "Persistent.operator new[](place)";
+
+void* Persistent::operator new[](size_t size, void* place)
+{
+   Debug::ft(Persistent_new4);
+
+   return place;
 }
 
 //------------------------------------------------------------------------------

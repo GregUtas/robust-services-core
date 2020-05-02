@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Log.h"
+#include "Permanent.h"
 #include <atomic>
 #include <bitset>
 #include <cctype>
@@ -51,7 +52,7 @@ namespace NodeBase
 //  Data that changes too frequently to unprotect and reprotect memory
 //  when it needs to be modified.
 //
-struct LogDynamic
+struct LogDynamic : public Permanent
 {
    //  Initializes members.
    //

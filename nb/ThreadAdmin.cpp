@@ -22,6 +22,7 @@
 #include "ThreadAdmin.h"
 #include "CfgBoolParm.h"
 #include "Dynamic.h"
+#include "Persistent.h"
 #include "StatisticsGroup.h"
 #include <bitset>
 #include <ostream>
@@ -213,7 +214,7 @@ void BreakEnabledCfg::SetCurr()
 
 //==============================================================================
 
-struct ThreadAdminValues
+struct ThreadAdminValues : public Persistent
 {
    //  Initializes configuration parameters to default values.
    //

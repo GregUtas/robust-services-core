@@ -58,6 +58,24 @@ void Protected::operator delete[](void* addr)
 
 //------------------------------------------------------------------------------
 
+fn_name Protected_delete3 = "Protected.operator delete(place)";
+
+void Protected::operator delete(void* addr, void* place) noexcept
+{
+   Debug::ft(Protected_delete3);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Protected_delete4 = "Protected.operator delete[](place)";
+
+void Protected::operator delete[](void* addr, void* place) noexcept
+{
+   Debug::ft(Protected_delete4);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Protected_new1 = "Protected.operator new";
 
 void* Protected::operator new(size_t size)
@@ -76,6 +94,28 @@ void* Protected::operator new[](size_t size)
    Debug::ft(Protected_new2);
 
    return Memory::Alloc(size, MemProtected);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Protected_new3 = "Protected.operator new(place)";
+
+void* Protected::operator new(size_t size, void* place)
+{
+   Debug::ft(Protected_new3);
+
+   return place;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Protected_new4 = "Protected.operator new[](place)";
+
+void* Protected::operator new[](size_t size, void* place)
+{
+   Debug::ft(Protected_new4);
+
+   return place;
 }
 
 //------------------------------------------------------------------------------

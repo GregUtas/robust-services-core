@@ -22,6 +22,7 @@
 #include "ObjectPool.h"
 #include "CfgIntParm.h"
 #include "Dynamic.h"
+#include "Persistent.h"
 #include <bitset>
 #include <sstream>
 #include "Alarm.h"
@@ -183,7 +184,7 @@ ObjectPoolStats::~ObjectPoolStats()
 //  Data that changes too frequently to unprotect and reprotect memory
 //  when it needs to be modified.
 //
-struct ObjectPoolDynamic
+struct ObjectPoolDynamic : public Persistent
 {
    //  Constructor.
    //

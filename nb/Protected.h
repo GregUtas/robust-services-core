@@ -56,6 +56,13 @@ public:
    static void* operator new[](size_t size);
    static void operator delete(void* addr);
    static void operator delete[](void* addr);
+
+   //  Placement new and delete.
+   //
+   static void* operator new(size_t size, void* place);
+   static void* operator new[](size_t size, void* place);
+   static void operator delete(void* addr, void* place) noexcept;
+   static void operator delete[](void* addr, void* place) noexcept;
 protected:
    //  Protected because this class is virtual.
    //

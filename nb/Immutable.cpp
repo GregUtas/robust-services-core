@@ -58,6 +58,24 @@ void Immutable::operator delete[](void* addr)
 
 //------------------------------------------------------------------------------
 
+fn_name Immutable_delete3 = "Immutable.operator delete(place)";
+
+void Immutable::operator delete(void* addr, void* place) noexcept
+{
+   Debug::ft(Immutable_delete3);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Immutable_delete4 = "Immutable.operator delete[](place)";
+
+void Immutable::operator delete[](void* addr, void* place) noexcept
+{
+   Debug::ft(Immutable_delete4);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Immutable_new1 = "Immutable.operator new";
 
 void* Immutable::operator new(size_t size)
@@ -76,6 +94,28 @@ void* Immutable::operator new[](size_t size)
    Debug::ft(Immutable_new2);
 
    return Memory::Alloc(size, MemImmutable);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Immutable_new3 = "Immutable.operator new(place)";
+
+void* Immutable::operator new(size_t size, void* place)
+{
+   Debug::ft(Immutable_new3);
+
+   return place;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Immutable_new4 = "Immutable.operator new[](place)";
+
+void* Immutable::operator new[](size_t size, void* place)
+{
+   Debug::ft(Immutable_new4);
+
+   return place;
 }
 
 //------------------------------------------------------------------------------

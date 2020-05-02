@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Class.h"
+#include "Permanent.h"
 #include <bitset>
 #include <cstdint>
 #include <ostream>
@@ -44,7 +45,7 @@ namespace NodeBase
 //  Data that changes too frequently to unprotect and reprotect memory
 //  when it needs to be modified.
 //
-struct ClassDynamic
+struct ClassDynamic : public Permanent
 {
    //  Constructor.
    //

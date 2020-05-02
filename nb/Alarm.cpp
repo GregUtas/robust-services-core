@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Alarm.h"
+#include "Permanent.h"
 #include <cstdint>
 #include <sstream>
 #include "AlarmRegistry.h"
@@ -38,7 +39,7 @@ namespace NodeBase
 //  Data that changes too frequently to unprotect and reprotect memory
 //  when it needs to be modified.
 //
-struct AlarmDynamic
+struct AlarmDynamic : public Permanent
 {
    //  Initializes members.
    //

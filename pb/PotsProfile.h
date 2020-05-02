@@ -23,6 +23,7 @@
 #define POTSPROFILE_H_INCLUDED
 
 #include "BcAddress.h"
+#include "Persistent.h"
 #include <cstddef>
 #include <memory>
 #include "LocalAddress.h"
@@ -73,7 +74,7 @@ public:
    //  Data that changes too frequently to unprotect and reprotect memory
    //  when it needs to be modified.
    //
-   struct PotsProfileDynamic
+   struct PotsProfileDynamic : public Persistent
    {
       //  Constructor.
       //

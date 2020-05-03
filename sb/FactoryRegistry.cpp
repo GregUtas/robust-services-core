@@ -26,6 +26,8 @@
 #include "Debug.h"
 #include "Factory.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
+#include "Restart.h"
 #include "SbCliParms.h"
 #include "Singleton.h"
 #include "SysTypes.h"
@@ -110,7 +112,7 @@ FactoryRegistry::FactoryRegistry()
 {
    Debug::ft(FactoryRegistry_ctor);
 
-   factories_.Init(Factory::MaxId, Factory::CellDiff(), MemProt);
+   factories_.Init(Factory::MaxId, Factory::CellDiff(), MemImmutable);
    statsGroup_.reset(new FactoryStatsGroup);
 }
 
@@ -121,6 +123,8 @@ fn_name FactoryRegistry_dtor = "FactoryRegistry.dtor";
 FactoryRegistry::~FactoryRegistry()
 {
    Debug::ft(FactoryRegistry_dtor);
+
+   Debug::SwLog(FactoryRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -139,7 +143,7 @@ bool FactoryRegistry::BindFactory(Factory& factory)
 void FactoryRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    stream << prefix << "statsGroup : ";
    stream << strObj(statsGroup_.get()) << CRLF;
@@ -159,7 +163,7 @@ Factory* FactoryRegistry::GetFactory(FactoryId fid) const
 
 void FactoryRegistry::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------
@@ -175,9 +179,8 @@ void FactoryRegistry::Shutdown(RestartLevel level)
       f->Shutdown(level);
    }
 
-   if(level < RestartCold) return;
-
-   statsGroup_.release();
+   FunctionGuard guard(Guard_ImmUnprotect);
+   Restart::Release(statsGroup_);
 }
 
 //------------------------------------------------------------------------------
@@ -188,7 +191,11 @@ void FactoryRegistry::Startup(RestartLevel level)
 {
    Debug::ft(FactoryRegistry_Startup);
 
-   if(statsGroup_ == nullptr) statsGroup_.reset(new FactoryStatsGroup);
+   if(statsGroup_ == nullptr)
+   {
+      FunctionGuard guard(Guard_ImmUnprotect);
+      statsGroup_.reset(new FactoryStatsGroup);
+   }
 
    for(auto f = factories_.First(); f != nullptr; factories_.Next(f))
    {

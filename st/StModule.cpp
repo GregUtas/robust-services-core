@@ -23,6 +23,7 @@
 #include "Debug.h"
 #include "ModuleRegistry.h"
 #include "NtModule.h"
+#include "Restart.h"
 #include "SbAppIds.h"
 #include "SbModule.h"
 #include "Singleton.h"
@@ -67,11 +68,6 @@ fn_name StModule_Shutdown = "StModule.Shutdown";
 void StModule::Shutdown(RestartLevel level)
 {
    Debug::ft(StModule_Shutdown);
-
-   Singleton< StIncrement >::Instance()->Shutdown(level);
-   Singleton< TestFactory >::Instance()->Shutdown(level);
-   Singleton< TestService >::Instance()->Shutdown(level);
-   Singleton< TestProtocol >::Instance()->Shutdown(level);
 }
 
 //------------------------------------------------------------------------------
@@ -89,9 +85,9 @@ void StModule::Startup(RestartLevel level)
 
    //  Define symbols.
    //
-   if(level < RestartCold) return;
-
    auto reg = Singleton< SymbolRegistry >::Instance();
+   if(!Restart::ClearsMemory(reg->MemType())) return;
+
    reg->BindSymbol("factory.test", TestFactoryId);
 }
 }

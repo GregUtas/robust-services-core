@@ -32,7 +32,6 @@
 #include "ProtocolRegistry.h"
 #include "SbIpBuffer.h"
 #include "ServiceRegistry.h"
-#include "Signal.h"
 #include "Singleton.h"
 #include "Thread.h"
 #include "TraceBuffer.h"
@@ -126,6 +125,8 @@ fn_name SbTracer_dtor = "SbTracer.dtor";
 SbTracer::~SbTracer()
 {
    Debug::ft(SbTracer_dtor);
+
+   Debug::SwLog(SbTracer_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

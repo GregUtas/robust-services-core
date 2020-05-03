@@ -132,7 +132,7 @@ Parser::~Parser()
 
 //------------------------------------------------------------------------------
 //
-//  Current causes are 1 to 257.
+//  Current causes are 1 to 259.
 //
 fn_name Parser_Backup1 = "Parser.Backup(cause)";
 
@@ -2130,7 +2130,7 @@ bool Parser::GetFuncDecl(Cxx::Keyword kwd, FunctionPtr& func)
    //  Wait to parse a class's inlines until the rest of the class has
    //  been parsed.
    //
-   if(func->AtFileScope())
+   if(func->AtFileScope() || (source_ == IsFuncInst))
    {
       lexer_.Reposition(pos);
       if(!GetFuncImpl(func.get())) return Backup(start, func, 221);
@@ -2835,6 +2835,7 @@ bool Parser::GetProcDecl(FunctionPtr& func)
    auto pos = start;
    TypeSpecPtr typeSpec;
    string name;
+   QualNamePtr funcName;
 
    if(NextKeywordIs(OPERATOR_STR))
    {
@@ -2848,7 +2849,21 @@ bool Parser::GetProcDecl(FunctionPtr& func)
       if(!GetTypeSpec(typeSpec, &attrs)) return Backup(start, 159);
       lexer_.GetFuncFrontTags(attrs);
       pos = CurrPos();
-      if(!lexer_.GetName(name, oper)) return Backup(start, 160);
+
+      if(source_ == IsFuncInst)
+      {
+         if(!lexer_.GetName(name, oper)) return Backup(start, 258);
+         funcName.reset(new QualName(name));
+         funcName->SetContext(pos);
+         funcName->SetOperator(oper);
+         string spec;
+         if(!lexer_.GetTemplateSpec(spec)) return Backup(start, 259);
+         funcName->Append(spec, false);
+      }
+      else
+      {
+         if(!lexer_.GetName(name, oper)) return Backup(start, 160);
+      }
    }
 
    auto extn = (attrs.find(Cxx::EXTERN) != attrs.cend());
@@ -2858,7 +2873,7 @@ bool Parser::GetProcDecl(FunctionPtr& func)
    auto expl = (attrs.find(Cxx::EXPLICIT) != attrs.cend());
    auto cexp = (attrs.find(Cxx::CONSTEXPR) != attrs.cend());
    if(!lexer_.NextCharIs('(')) return Backup(start, 161);
-   QualNamePtr funcName(new QualName(name));
+   if(funcName == nullptr) funcName.reset(new QualName(name));
    funcName->SetContext(pos);
    func.reset(new Function(funcName, typeSpec));
    func->SetContext(pos);
@@ -2877,7 +2892,7 @@ bool Parser::GetProcDecl(FunctionPtr& func)
    if(!pure) lexer_.Reposition(pos);
 
    func->SetStatic(stat, oper);
-   func->SetInline(extn);
+   func->SetExtern(extn);
    func->SetInline(inln);
    func->SetVirtual(virt);
    func->SetExplicit(expl);
@@ -4422,7 +4437,10 @@ bool Parser::ParseFuncInst(const std::string& name, const Function* tmplt,
    auto kwd = NextKeyword(str);
 
    FunctionPtr func;
-   if(GetFuncDefn(kwd, func))
+   auto parsed = GetFuncDefn(kwd, func);
+   if(!parsed) parsed = GetFuncDecl(kwd, func);
+
+   if(parsed)
    {
       func->SetAccess(tmplt->GetAccess());
       func->SetTemplateArgs(type);
@@ -4436,7 +4454,7 @@ bool Parser::ParseFuncInst(const std::string& name, const Function* tmplt,
    //  parse failed, indicate this on the console.  If an "object code" file
    //  is being produced, indicate that parsing of the template is complete.
    //
-   auto parsed = lexer_.Eof();
+   parsed = lexer_.Eof();
    Debug::Progress((parsed ? EMPTY_STR : " **FAILED** "), true);
    if(!parsed) Failure(venue_);
    Context::Trace(CxxTrace::END_TEMPLATE);

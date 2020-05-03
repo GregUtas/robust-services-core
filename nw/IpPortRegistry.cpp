@@ -23,13 +23,16 @@
 #include "CfgStrParm.h"
 #include "StatisticsGroup.h"
 #include <ostream>
+#include <string>
 #include "Algorithms.h"
 #include "CfgParmRegistry.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "IpPort.h"
 #include "IpService.h"
 #include "NwCliParms.h"
+#include "Restart.h"
 #include "Singleton.h"
 #include "SysIpL3Addr.h"
 #include "SysTypes.h"
@@ -47,13 +50,13 @@ namespace NetworkBase
 class HostAddrCfg : public CfgStrParm
 {
 public:
-   explicit HostAddrCfg(string* field);
+   explicit HostAddrCfg(ProtectedStr* field);
    ~HostAddrCfg();
    SysIpL2Addr Address() const { return addr_; }
 protected:
    void SetCurr() override;
 private:
-   bool SetNext(const string& input) override;
+   bool SetNext(c_string input) override;
 
    //  Kept in synch with the string version of the element's address.
    //
@@ -64,7 +67,7 @@ private:
 
 fn_name HostAddrCfg_ctor = "HostAddrCfg.ctor";
 
-HostAddrCfg::HostAddrCfg(string* field) : CfgStrParm("ElementDefaultAddr",
+HostAddrCfg::HostAddrCfg(ProtectedStr* field) : CfgStrParm("ElementDefaultAddr",
    "127.0.0.1", field, "element's default IP address (n.n.n.n)")
 {
    Debug::ft(HostAddrCfg_ctor);
@@ -87,6 +90,7 @@ void HostAddrCfg::SetCurr()
 {
    Debug::ft(HostAddrCfg_SetCurr);
 
+   FunctionGuard guard(Guard_MemUnprotect);
    CfgStrParm::SetCurr();
    addr_ = SysIpL2Addr(GetCurr());
 }
@@ -95,7 +99,7 @@ void HostAddrCfg::SetCurr()
 
 fn_name HostAddrCfg_SetNext = "HostAddrCfg.SetNext";
 
-bool HostAddrCfg::SetNext(const string& input)
+bool HostAddrCfg::SetNext(c_string input)
 {
    Debug::ft(HostAddrCfg_SetNext);
 
@@ -171,17 +175,14 @@ void IpPortStatsGroup::DisplayStats
 
 //==============================================================================
 
-SysIpL2Addr IpPortRegistry::HostAddr_ = SysIpL2Addr();
-string IpPortRegistry::HostAddrStr_ = "127.0.0.1";
-
 fn_name IpPortRegistry_ctor = "IpPortRegistry.ctor";
 
-IpPortRegistry::IpPortRegistry() : hostAddrCfg_(nullptr)
+IpPortRegistry::IpPortRegistry() : hostAddrStr_("127.0.0.1")
 {
    Debug::ft(IpPortRegistry_ctor);
 
    portq_.Init(IpPort::LinkDiff());
-   hostAddrCfg_.reset(new HostAddrCfg(&HostAddrStr_));
+   hostAddrCfg_.reset(new HostAddrCfg(&hostAddrStr_));
    Singleton< CfgParmRegistry >::Instance()->BindParm(*hostAddrCfg_);
    statsGroup_.reset(new IpPortStatsGroup);
 }
@@ -193,6 +194,8 @@ fn_name IpPortRegistry_dtor = "IpPortRegistry.dtor";
 IpPortRegistry::~IpPortRegistry()
 {
    Debug::ft(IpPortRegistry_dtor);
+
+   Debug::SwLog(IpPortRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -273,8 +276,8 @@ void IpPortRegistry::Display(ostream& stream,
 {
    Protected::Display(stream, prefix, options);
 
-   stream << prefix << "HostAddr    : " << HostAddr_.to_str() << CRLF;
-   stream << prefix << "HostAddrStr : " << HostAddrStr_ << CRLF;
+   stream << prefix << "HostAddr    : " << hostAddr_.to_str() << CRLF;
+   stream << prefix << "HostAddrStr : " << hostAddrStr_ << CRLF;
    stream << prefix << "hostAddrCfg : " << strObj(hostAddrCfg_.get()) << CRLF;
    stream << prefix << "statsGroup  : " << strObj(statsGroup_.get()) << CRLF;
    stream << prefix << "portq : " << CRLF;
@@ -305,7 +308,10 @@ SysIpL2Addr IpPortRegistry::HostAddress()
 {
    Debug::ft(IpPortRegistry_HostAddress);
 
-   if(HostAddr_.IsValid()) return HostAddr_;
+   auto reg = Singleton< IpPortRegistry >::Extant();
+   if(reg == nullptr) return SysIpL2Addr::LoopbackAddr();
+
+   if(reg->hostAddr_.IsValid()) return reg->hostAddr_;
 
    string name;
    string service;
@@ -314,13 +320,13 @@ SysIpL2Addr IpPortRegistry::HostAddress()
    if(SysIpL2Addr::HostName(name))
    {
       SysIpL3Addr host(name, service, proto);
-      HostAddr_ = host;
-      return HostAddr_;
+
+      FunctionGuard guard(Guard_MemUnprotect);
+      reg->hostAddr_ = host;
+      return host;
    }
 
-   auto reg = Singleton< IpPortRegistry >::Extant();
-   if(reg != nullptr) return reg->hostAddrCfg_->Address();
-   return SysIpL2Addr::LoopbackAddr();
+   return reg->hostAddrCfg_->Address();
 }
 
 //------------------------------------------------------------------------------
@@ -343,9 +349,8 @@ void IpPortRegistry::Shutdown(RestartLevel level)
       p->Shutdown(level);
    }
 
-   if(level < RestartCold) return;
-
-   statsGroup_.release();
+   FunctionGuard guard(Guard_MemUnprotect);
+   Restart::Release(statsGroup_);
 }
 
 //------------------------------------------------------------------------------
@@ -360,9 +365,10 @@ void IpPortRegistry::Startup(RestartLevel level)
    //  look up.  It is therefore cached during initialization, after
    //  which a restart is required to change it.
    //
+   FunctionGuard guard(Guard_MemUnprotect);
    HostAddress();
-
    if(statsGroup_ == nullptr) statsGroup_.reset(new IpPortStatsGroup);
+   guard.Release();
 
    for(auto p = portq_.First(); p != nullptr; portq_.Next(p))
    {

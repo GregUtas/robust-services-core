@@ -33,7 +33,6 @@
 #include "Protocol.h"
 #include "ProtocolRegistry.h"
 #include "SbTrace.h"
-#include "Signal.h"
 #include "Singleton.h"
 #include "TraceBuffer.h"
 
@@ -50,9 +49,9 @@ fixed_string MscHeader  = "MESSAGE SEQUENCE CHART";
 fixed_string MscTrailer = "END OF MSC";
 
 const MscColumn FirstCol = (ColWidth / 2);  // column for first vertical line
-const size_t MinMsgLine  = 5;               // minimum length of horizontal line
-const size_t TimeGap     = 3;               // spacing between event times
-const size_t TimeLen     = 9;               // length of an event time (m:s.ms)
+const size_t MinMsgLine = 5;                // minimum length of horizontal line
+const size_t TimeGap = 3;                   // spacing between event times
+const size_t TimeLen = 9;                   // length of an event time (m:s.ms)
 
 const char IdleCtx   = ':';
 const char ActiveCtx = '|';

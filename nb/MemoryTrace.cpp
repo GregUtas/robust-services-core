@@ -60,7 +60,7 @@ bool MemoryTrace::Display(ostream& stream, const string& opts)
    //
    auto buff = Singleton< TraceBuffer >::Instance();
    Flags mask(1 << MemoryTracer);
-   TraceRecord* rec  = this;
+   TraceRecord* rec = this;
 
    for(buff->Next(rec, mask); rec != nullptr; buff->Next(rec, mask))
    {

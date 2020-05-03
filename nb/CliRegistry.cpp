@@ -43,7 +43,7 @@ CliRegistry::CliRegistry()
 {
    Debug::ft(CliRegistry_ctor);
 
-   increments_.Init(MaxIncrements, CliIncrement::CellDiff(), MemProt);
+   increments_.Init(MaxIncrements, CliIncrement::CellDiff(), MemImmutable);
 }
 
 //------------------------------------------------------------------------------
@@ -53,6 +53,8 @@ fn_name CliRegistry_dtor = "CliRegistry.dtor";
 CliRegistry::~CliRegistry()
 {
    Debug::ft(CliRegistry_dtor);
+
+   Debug::SwLog(CliRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -71,7 +73,7 @@ bool CliRegistry::BindIncrement(CliIncrement& incr)
 void CliRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    stream << prefix << "increments : " << CRLF;
    increments_.Display(stream, prefix + spaces(2), options);
@@ -117,7 +119,7 @@ void CliRegistry::ListIncrements(ostream& stream) const
 
 void CliRegistry::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

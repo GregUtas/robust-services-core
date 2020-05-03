@@ -27,6 +27,7 @@
 #include "DaemonRegistry.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "InitThread.h"
 #include "Log.h"
 #include "NbLogs.h"
@@ -58,7 +59,6 @@ Daemon::Daemon(fixed_string name, size_t size) :
    }
 
    Singleton< DaemonRegistry >::Instance()->BindDaemon(*this);
-   alarmName_ = "DAEMON" + std::to_string(Did());
    EnsureAlarm();
 }
 
@@ -70,6 +70,7 @@ Daemon::~Daemon()
 {
    Debug::ft(Daemon_dtor);
 
+   Debug::SwLog(Daemon_dtor, UnexpectedInvocation, 0);
    Singleton< DaemonRegistry >::Instance()->UnbindDaemon(*this);
 }
 
@@ -167,13 +168,11 @@ void Daemon::Display(ostream& stream,
 {
    Permanent::Display(stream, prefix, options);
 
-   stream << prefix << "name      : " << name_ << CRLF;
-   stream << prefix << "did       : " << did_.to_str() << CRLF;
-   stream << prefix << "size      : " << size_ << CRLF;
-   stream << prefix << "traps     : " << int(traps_) << CRLF;
-   stream << prefix << "alarmName : " << alarmName_ << CRLF;
-   stream << prefix << "alarmExpl : " << alarmExpl_ << CRLF;
-   stream << prefix << "alarm     : " << strObj(alarm_) << CRLF;
+   stream << prefix << "name  : " << name_ << CRLF;
+   stream << prefix << "did   : " << did_.to_str() << CRLF;
+   stream << prefix << "size  : " << size_ << CRLF;
+   stream << prefix << "traps : " << int(traps_) << CRLF;
+   stream << prefix << "alarm : " << strObj(alarm_) << CRLF;
    stream << prefix << "threads [ThreadId]" << CRLF;
 
    auto lead = prefix + spaces(2);
@@ -212,12 +211,14 @@ void Daemon::EnsureAlarm()
    //  If the thread unavailable alarm is not registered, create it.
    //
    auto reg = Singleton< AlarmRegistry >::Instance();
-   alarm_ = reg->Find(alarmName_);
+   auto alarmName = "DAEMON" + std::to_string(Did());
+   alarm_ = reg->Find(alarmName);
 
    if(alarm_ == nullptr)
    {
-      alarmExpl_ = "Thread(s) unavailable: " + name_;
-      alarm_ = new Alarm(alarmName_, alarmExpl_, 0);
+      auto alarmExpl = "Thread(s) unavailable: " + alarmName;
+      FunctionGuard guard(Guard_ImmUnprotect);
+      alarm_ = new Alarm(alarmName.c_str(), alarmExpl.c_str(), 0);
    }
 }
 

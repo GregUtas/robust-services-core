@@ -43,16 +43,25 @@ public:
 
    //  Overridden to return the type of memory used by subclasses.
    //
-   MemoryType MemType() const override { return MemTemp; }
+   MemoryType MemType() const override { return MemTemporary; }
 
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
 
-   //  Overridden to allocate memory from the temporary heap.
+   //  Overridden to use the temporary heap.
    //
    static void* operator new(size_t size);
    static void* operator new[](size_t size);
+   static void operator delete(void* addr);
+   static void operator delete[](void* addr);
+
+   //  Placement new and delete.
+   //
+   static void* operator new(size_t size, void* place);
+   static void* operator new[](size_t size, void* place);
+   static void operator delete(void* addr, void* place) noexcept;
+   static void operator delete[](void* addr, void* place) noexcept;
 protected:
    //  Protected because this class is virtual.
    //

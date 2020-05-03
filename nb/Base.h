@@ -134,8 +134,7 @@ public:
    //  Allocates resources when exiting a restart at LEVEL.  This allows an
    //  object that survived a restart to reallocate resources that did not.
    //  Invokes Restart::Initiate on a failure that warrants an escalation of
-   //  LEVEL.  If LEVEL is RestartReboot, the system is being initialized
-   //  after entering main().
+   //  LEVEL.
    //
    virtual void Startup(RestartLevel level) { }
 
@@ -149,11 +148,7 @@ public:
 
    //  Returns the type of memory used by the object.
    //
-   virtual MemoryType MemType() const { return MemPerm; }
-
-   //  Returns the class's name as provided by the C++ typeid operator.
-   //
-   virtual const char* ClassName() const;
+   virtual MemoryType MemType() const { return MemPermanent; }
 
    //  Overridden to invoke Debug::ft before the default ::operator new.
    //

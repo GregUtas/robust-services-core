@@ -44,15 +44,8 @@ namespace PotsBase
 class PotsProfileRegistry : public Protected
 {
    friend class Singleton< PotsProfileRegistry >;
+   friend class PotsProfile;
 public:
-   //  Adds PROFILE to the registry.
-   //
-   bool BindProfile(PotsProfile& profile);
-
-   //  Removes PROFILE from the registry.
-   //
-   void UnbindProfile(PotsProfile& profile);
-
    //  Returns DN's profile.
    //
    PotsProfile* Profile(Address::DN dn) const;
@@ -86,6 +79,14 @@ private:
    //  Private because this singleton is not subclassed.
    //
    ~PotsProfileRegistry();
+
+   //  Adds PROFILE to the registry.
+   //
+   bool BindProfile(PotsProfile& profile);
+
+   //  Removes PROFILE from the registry.
+   //
+   void UnbindProfile(PotsProfile& profile);
 
    //  The registry of POTS profiles.
    //

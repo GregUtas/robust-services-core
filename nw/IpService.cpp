@@ -25,6 +25,7 @@
 #include <string>
 #include "Algorithms.h"
 #include "Debug.h"
+#include "FunctionGuard.h"
 #include "IpPort.h"
 #include "IpPortRegistry.h"
 #include "IpServiceRegistry.h"
@@ -61,6 +62,7 @@ IpService::~IpService()
 {
    Debug::ft(IpService_dtor);
 
+   Debug::SwLog(IpService_dtor, UnexpectedInvocation, 0);
    Singleton< IpServiceRegistry >::Instance()->UnbindService(*this);
 }
 
@@ -114,7 +116,7 @@ CliText* IpService::CreateText() const
 void IpService::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    stream << prefix << "sid      : " << sid_.to_str() << CRLF;
    stream << prefix << "Name     : " << Name() << CRLF;
@@ -178,7 +180,7 @@ c_string IpService::Name() const
 
 void IpService::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------
@@ -231,6 +233,8 @@ IpPort* IpService::Provision(ipport_t pid)
       }
       return port;
    }
+
+   FunctionGuard guard(Guard_MemUnprotect);
 
    port = CreatePort(pid);
    if(port == nullptr)

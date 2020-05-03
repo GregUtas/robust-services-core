@@ -52,9 +52,9 @@ class DnRouteFeatureProfile : public PotsFeatureProfile
 {
 public:
    Address::DN GetDN() const { return dn_; }
-   void SetDN(Address::DN dn) { dn_ = dn; }
+   void SetDN(Address::DN dn);
    bool IsActive() const { return on_; }
-   void SetActive(bool on) { on_ = on; }
+   void SetActive(bool on);
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 protected:

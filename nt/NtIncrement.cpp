@@ -21,10 +21,13 @@
 //
 #include "NtIncrement.h"
 #include "CliBoolParm.h"
+#include "CliCharParm.h"
 #include "CliCommandSet.h"
 #include "CliIntParm.h"
+#include "CliPtrParm.h"
 #include "CliText.h"
 #include "Daemon.h"
+#include "NbHeap.h"
 #include "Temporary.h"
 #include "Thread.h"
 #include <cctype>
@@ -277,7 +280,7 @@ word NtLogsCommand::Sort
 {
    Debug::ft(NtLogsCommand_Sort);
 
-   FunctionGuard guard(FunctionGuard::MakePreemptable);
+   FunctionGuard guard(Guard_MakePreemptable);
 
    //  Each log is saved as a single string with embedded CRLFs.  The log's
    //  sequence number, which appears at the end of the first line enclosed
@@ -469,7 +472,7 @@ word NtSaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
 
    auto yield = cli.GenerateReportPreemptably();
-   FunctionGuard guard(FunctionGuard::MakePreemptable, yield);
+   FunctionGuard guard(Guard_MakePreemptable, yield);
 
    FunctionTrace::Process(EMPTY_STR);
    std::unique_ptr< FunctionProfiler > fp(new FunctionProfiler);
@@ -523,7 +526,7 @@ FuncScopeCountsOnly::FuncScopeCountsOnly() :
 
 fixed_string FuncScopeExpl = "how to trace function invocations";
 
-const id_t FuncScopeFullTraceIndex  = 1;
+const id_t FuncScopeFullTraceIndex = 1;
 const id_t FuncScopeCountsOnlyIndex = 2;
 
 FuncScopeParm::FuncScopeParm() : CliTextParm(FuncScopeExpl)
@@ -1085,6 +1088,408 @@ word TestcaseCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    }
 
    return cli.Report(0, SuccessExpl);
+}
+
+//==============================================================================
+//
+//  Testing for NbHeap.
+//
+class TestHeap : public NbHeap
+{
+   friend class Singleton< TestHeap >;
+public:
+   static void SetSize(size_t size) { Size_ = size; }
+   static void SetType(MemoryType type) { Type_ = type; }
+private:
+   TestHeap();
+   ~TestHeap() = default;
+
+   static MemoryType Type_;
+   static size_t Size_;
+};
+
+MemoryType TestHeap::Type_ = MemTemporary;
+size_t TestHeap::Size_ = 1 * kBs;
+
+TestHeap::TestHeap() : NbHeap(Type_, Size_) { }
+
+//------------------------------------------------------------------------------
+
+class HeapSizeParm : public CliIntParm
+{
+public: HeapSizeParm();
+};
+
+class HeapTypeParm : public CliCharParm
+{
+public: HeapTypeParm();
+};
+
+class HeapBlockSizeParm : public CliIntParm
+{
+public: HeapBlockSizeParm();
+};
+
+class HeapBlockAddrParm : public CliPtrParm
+{
+public: HeapBlockAddrParm();
+};
+
+//------------------------------------------------------------------------------
+
+fixed_string HeapSizeExpl = "heap's size";
+
+HeapSizeParm::HeapSizeParm() : CliIntParm(HeapSizeExpl, 0, 2048) { }
+
+//------------------------------------------------------------------------------
+
+fixed_string HeapTypeExpl = "heap's memory type (temporary|dynamic|protected)";
+fixed_string HeapTypeChars = "tdp";
+
+HeapTypeParm::HeapTypeParm() : CliCharParm(HeapTypeExpl, HeapTypeChars) { }
+
+//------------------------------------------------------------------------------
+
+fixed_string HeapBlockAddrExpl = "block's address";
+
+HeapBlockAddrParm::HeapBlockAddrParm() : CliPtrParm(HeapBlockAddrExpl) { }
+
+//------------------------------------------------------------------------------
+
+fixed_string HeapBlockSizeExpl = "block's size";
+
+HeapBlockSizeParm::HeapBlockSizeParm() :
+   CliIntParm(HeapBlockSizeExpl, 0, 1 * kBs) { }
+
+//------------------------------------------------------------------------------
+
+class HeapCreateCommand : public CliCommand
+{
+public:
+   HeapCreateCommand();
+private:
+   word ProcessCommand(CliThread& cli) const override;
+};
+
+class HeapDestroyCommand : public CliCommand
+{
+public:
+   HeapDestroyCommand();
+private:
+   word ProcessCommand(CliThread& cli) const override;
+};
+
+class HeapAllocCommand : public CliCommand
+{
+public:
+   HeapAllocCommand();
+private:
+   word ProcessCommand(CliThread& cli) const override;
+};
+
+class HeapBlockToSizeCommand : public CliCommand
+{
+public:
+   HeapBlockToSizeCommand();
+private:
+   word ProcessCommand(CliThread& cli) const override;
+};
+
+class HeapDisplayCommand : public CliCommand
+{
+public:
+   HeapDisplayCommand();
+private:
+   word ProcessCommand(CliThread& cli) const override;
+};
+
+class HeapFreeCommand : public CliCommand
+{
+public:
+   HeapFreeCommand();
+private:
+   word ProcessCommand(CliThread& cli) const override;
+};
+
+class HeapValidateCommand : public CliCommand
+{
+public:
+   HeapValidateCommand();
+private:
+   word ProcessCommand(CliThread& cli) const override;
+};
+
+//------------------------------------------------------------------------------
+
+class HeapCommands : public CliCommandSet
+{
+public:
+   HeapCommands();
+};
+
+fixed_string HeapStr = "heap";
+fixed_string HeapExpl = "Tests an NbHeap function.";
+
+HeapCommands::HeapCommands() : CliCommandSet(HeapStr, HeapExpl)
+{
+   BindCommand(*new HeapCreateCommand);
+   BindCommand(*new HeapDestroyCommand);
+   BindCommand(*new HeapAllocCommand);
+   BindCommand(*new HeapBlockToSizeCommand);
+   BindCommand(*new HeapDisplayCommand);
+   BindCommand(*new HeapFreeCommand);
+   BindCommand(*new HeapValidateCommand);
+}
+
+//------------------------------------------------------------------------------
+
+word CheckHeap(bool shouldExist, CliThread& cli, Heap*& heap)
+{
+   heap = Singleton< TestHeap >::Extant();
+
+   if(heap == nullptr)
+   {
+      if(shouldExist)
+      {
+         *cli.obuf << spaces(2) << "The heap must first be created." << CRLF;
+         return -1;
+      }
+   }
+   else
+   {
+      if(!shouldExist)
+      {
+         *cli.obuf << spaces(2) << "The heap must first be destroyed." << CRLF;
+         return -1;
+      }
+   }
+
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string HeapCreateStr = "create";
+fixed_string HeapCreateExpl = "Creates the heap.";
+
+HeapCreateCommand::HeapCreateCommand() :
+   CliCommand(HeapCreateStr, HeapCreateExpl)
+{
+   BindParm(*new HeapTypeParm);
+   BindParm(*new HeapSizeParm);
+}
+
+fn_name HeapCreateCommand_ProcessCommand = "HeapCreateCommand.ProcessCommand";
+
+word HeapCreateCommand::ProcessCommand(CliThread& cli) const
+{
+   Debug::ft(HeapCreateCommand_ProcessCommand);
+
+   char c;
+   word size;
+   MemoryType type;
+
+   if(!GetCharParm(c, cli)) return -1;
+   if(!GetIntParm(size, cli)) return -1;
+   cli.EndOfInput(false);
+
+   switch(c)
+   {
+   case 't':
+      type = MemTemporary;
+      break;
+   case 'd':
+      type = MemDynamic;
+      break;
+   case 'p':
+      type = MemProtected;
+      break;
+   default:
+      return cli.Report(c, SystemErrorExpl);
+   }
+
+   Heap* heap = nullptr;
+   auto rc = CheckHeap(false, cli, heap);
+   if(rc != 0) return rc;
+
+   TestHeap::SetType(type);
+   TestHeap::SetSize(size);
+   heap = Singleton< TestHeap >::Instance();
+   *cli.obuf << "  Heap: " << heap << CRLF;
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string HeapDestroyStr = "destroy";
+fixed_string HeapDestroyExpl = "Destroys the heap.";
+
+HeapDestroyCommand::HeapDestroyCommand() :
+   CliCommand(HeapDestroyStr, HeapDestroyExpl) { }
+
+fn_name HeapDestroyCommand_ProcessCommand = "HeapDestroyCommand.ProcessCommand";
+
+word HeapDestroyCommand::ProcessCommand(CliThread& cli) const
+{
+   Debug::ft(HeapDestroyCommand_ProcessCommand);
+
+   cli.EndOfInput(false);
+
+   Heap* heap = nullptr;
+   auto rc = CheckHeap(true, cli, heap);
+   if(rc != 0) return rc;
+
+   Singleton< TestHeap >::Destroy();
+   heap = Singleton< TestHeap >::Extant();
+   *cli.obuf << "  Heap: " << heap << CRLF;
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string HeapAllocStr = "alloc";
+fixed_string HeapAllocExpl = "Allocates a block.";
+
+HeapAllocCommand::HeapAllocCommand() :
+   CliCommand(HeapAllocStr, HeapAllocExpl)
+{
+   BindParm(*new HeapBlockSizeParm);
+}
+
+fn_name HeapAllocCommand_ProcessCommand = "HeapAllocCommand.ProcessCommand";
+
+word HeapAllocCommand::ProcessCommand(CliThread& cli) const
+{
+   Debug::ft(HeapAllocCommand_ProcessCommand);
+
+   word size;
+
+   if(!GetIntParm(size, cli)) return -1;
+   cli.EndOfInput(false);
+
+   Heap* heap = nullptr;
+   auto rc = CheckHeap(true, cli, heap);
+   if(rc != 0) return rc;
+
+   auto addr = heap->Alloc(size);
+   *cli.obuf << "  Address: " << addr << CRLF;
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string HeapBlockToSizeStr = "blocksize";
+fixed_string HeapBlockToSizeExpl = "Returns a block's size.";
+
+HeapBlockToSizeCommand::HeapBlockToSizeCommand() :
+   CliCommand(HeapBlockToSizeStr, HeapBlockToSizeExpl)
+{
+   BindParm(*new HeapBlockAddrParm);
+}
+
+fn_name HeapBlockToSizeCommand_ProcessCommand =
+   "HeapBlockToSizeCommand.ProcessCommand";
+
+word HeapBlockToSizeCommand::ProcessCommand(CliThread& cli) const
+{
+   Debug::ft(HeapBlockToSizeCommand_ProcessCommand);
+
+   void* addr;
+
+   if(!GetPtrParm(addr, cli)) return -1;
+   cli.EndOfInput(false);
+
+   Heap* heap = nullptr;
+   auto rc = CheckHeap(true, cli, heap);
+   if(rc != 0) return rc;
+
+   auto size = heap->BlockToSize(addr);
+   *cli.obuf << "  Size: " << size << CRLF;
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string HeapDisplayStr = "display";
+fixed_string HeapDisplayExpl = "Displays the heap.";
+
+HeapDisplayCommand::HeapDisplayCommand() :
+   CliCommand(HeapDisplayStr, HeapDisplayExpl) { }
+
+fn_name HeapDisplayCommand_ProcessCommand = "HeapDisplayCommand.ProcessCommand";
+
+word HeapDisplayCommand::ProcessCommand(CliThread& cli) const
+{
+   Debug::ft(HeapDisplayCommand_ProcessCommand);
+
+   Heap* heap = nullptr;
+   auto rc = CheckHeap(true, cli, heap);
+   if(rc != 0) return rc;
+
+   heap->Display(*cli.obuf, spaces(2), VerboseOpt);
+   return 0;
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string HeapFreeStr = "free";
+fixed_string HeapFreeExpl = "Frees a block.";
+
+HeapFreeCommand::HeapFreeCommand() :
+   CliCommand(HeapFreeStr, HeapFreeExpl)
+{
+   BindParm(*new HeapBlockAddrParm);
+}
+
+fn_name HeapFreeCommand_ProcessCommand = "HeapFreeCommand.ProcessCommand";
+
+word HeapFreeCommand::ProcessCommand(CliThread& cli) const
+{
+   Debug::ft(HeapFreeCommand_ProcessCommand);
+
+   void* addr;
+
+   if(!GetPtrParm(addr, cli)) return -1;
+   cli.EndOfInput(false);
+
+   Heap* heap = nullptr;
+   auto rc = CheckHeap(true, cli, heap);
+   if(rc != 0) return rc;
+
+   heap->Free(addr);
+   return cli.Report(0, SuccessExpl);
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string HeapValidateStr = "validate";
+fixed_string HeapValidateExpl = "Validates the heap (if 0) or a block.";
+
+HeapValidateCommand::HeapValidateCommand() :
+   CliCommand(HeapValidateStr, HeapValidateExpl)
+{
+   BindParm(*new HeapBlockAddrParm);
+}
+
+fn_name HeapValidateCommand_ProcessCommand =
+   "HeapValidateCommand.ProcessCommand";
+
+word HeapValidateCommand::ProcessCommand(CliThread& cli) const
+{
+   Debug::ft(HeapValidateCommand_ProcessCommand);
+
+   void* addr;
+
+   if(!GetPtrParm(addr, cli)) return -1;
+   cli.EndOfInput(false);
+
+   Heap* heap = nullptr;
+   auto rc = CheckHeap(true, cli, heap);
+   if(rc != 0) return rc;
+
+   auto result = heap->Validate(addr);
+   *cli.obuf << "  Result: " << result << CRLF;
+   return 0;
 }
 
 //==============================================================================
@@ -2537,7 +2942,7 @@ word InitCommand::ProcessCommand(CliThread& cli) const
    cli.EndOfInput(false);
    auto pool = Singleton< RegistryPool >::Instance();
    auto result = pool->registry_.Init
-      (id1, RegistryItem::CellDiff(), MemTemp, false);
+      (id1, RegistryItem::CellDiff(), MemTemporary, false);
    *cli.obuf << "  rc=" << result << CRLF;
    pool->Output(*cli.obuf, 2, true);
    return 0;
@@ -3478,23 +3883,23 @@ class RecoveryThread : public Thread
 public:
    typedef id_t Test;
 
-   static const Test Sleep           = 0;
-   static const Test Abort           = 1;
-   static const Test Create          = 2;
-   static const Test CtorTrap        = 3;
-   static const Test Delete          = 4;
+   static const Test Sleep = 0;
+   static const Test Abort = 1;
+   static const Test Create = 2;
+   static const Test CtorTrap = 3;
+   static const Test Delete = 4;
    static const Test DerefenceBadPtr = 5;
-   static const Test DivideByZero    = 6;
-   static const Test InfiniteLoop    = 7;
-   static const Test MutexBlock      = 8;
-   static const Test MutexExit       = 9;
-   static const Test MutexTrap       = 10;
-   static const Test OverflowStack   = 11;
-   static const Test RaiseSignal     = 12;
-   static const Test Return          = 13;
-   static const Test Swerr           = 14;
-   static const Test Terminate       = 15;
-   static const Test Trap            = 16;
+   static const Test DivideByZero = 6;
+   static const Test InfiniteLoop = 7;
+   static const Test MutexBlock = 8;
+   static const Test MutexExit = 9;
+   static const Test MutexTrap = 10;
+   static const Test OverflowStack = 11;
+   static const Test RaiseSignal = 12;
+   static const Test Return = 13;
+   static const Test Swerr = 14;
+   static const Test Terminate = 15;
+   static const Test Trap = 16;
 
    void SetTest(Test test) { test_ = test; }
    void SetTestSignal(signal_t signal) {signal_ = signal; }
@@ -4256,6 +4661,7 @@ NtIncrement::NtIncrement() : CliIncrement(NtStr, NtExpl)
    BindCommand(*new Q2WayCommands);
    BindCommand(*new RegistryCommands);
    BindCommand(*new SysTimeCommands);
+   BindCommand(*new HeapCommands);
    BindCommand(*new RecoverCommand);
 }
 

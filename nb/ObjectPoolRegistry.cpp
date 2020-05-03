@@ -29,9 +29,11 @@
 #include "CfgParmRegistry.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "NbCliParms.h"
 #include "ObjectPool.h"
 #include "ObjectPoolAudit.h"
+#include "Restart.h"
 #include "Singleton.h"
 #include "SysTypes.h"
 #include "ThisThread.h"
@@ -124,22 +126,19 @@ void ObjectPoolStatsGroup::DisplayStats
 
 //==============================================================================
 
-bool ObjectPoolRegistry::NullifyObjectData_ = false;
-
-//------------------------------------------------------------------------------
-
 fn_name ObjectPoolRegistry_ctor = "ObjectPoolRegistry.ctor";
 
-ObjectPoolRegistry::ObjectPoolRegistry()
+ObjectPoolRegistry::ObjectPoolRegistry() :
+   nullifyObjectData_(false)
 {
    Debug::ft(ObjectPoolRegistry_ctor);
 
    Singleton< ObjPoolTraceTool >::Instance();
-   pools_.Init(ObjectPool::MaxId, ObjectPool::CellDiff(), MemProt);
+   pools_.Init(ObjectPool::MaxId, ObjectPool::CellDiff(), MemProtected);
    statsGroup_.reset(new ObjectPoolStatsGroup);
-   nullifyObjectData_.reset(new CfgBoolParm("NullifyObjectData", "F",
-      &NullifyObjectData_, "set to nullify the data after an object's vptr"));
-   Singleton< CfgParmRegistry >::Instance()->BindParm(*nullifyObjectData_);
+   nullifyObjectDataCfg_.reset(new CfgBoolParm("NullifyObjectData", "F",
+      &nullifyObjectData_, "set to nullify the data after an object's vptr"));
+   Singleton< CfgParmRegistry >::Instance()->BindParm(*nullifyObjectDataCfg_);
 }
 
 //------------------------------------------------------------------------------
@@ -149,6 +148,8 @@ fn_name ObjectPoolRegistry_dtor = "ObjectPoolRegistry.dtor";
 ObjectPoolRegistry::~ObjectPoolRegistry()
 {
    Debug::ft(ObjectPoolRegistry_dtor);
+
+   Debug::SwLog(ObjectPoolRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -258,6 +259,7 @@ bool ObjectPoolRegistry::BindPool(ObjectPool& pool)
 {
    Debug::ft(ObjectPoolRegistry_BindPool);
 
+   FunctionGuard guard(Guard_MemUnprotect);
    return pools_.Insert(pool);
 }
 
@@ -270,10 +272,10 @@ void ObjectPoolRegistry::Display(ostream& stream,
 
    stream << prefix << "statsGroup        : ";
    stream << strObj(statsGroup_.get()) << CRLF;
-   stream << prefix << "NullifyObjectData : ";
-   stream << NullifyObjectData_ << CRLF;
    stream << prefix << "nullifyObjectData : ";
-   stream << strObj(nullifyObjectData_.get()) << CRLF;
+   stream << nullifyObjectData_ << CRLF;
+   stream << prefix << "nullifyObjectDataCfg : ";
+   stream << strObj(nullifyObjectDataCfg_.get()) << CRLF;
 
    stream << prefix << "pools [ObjectPoolId]" << CRLF;
    pools_.Display(stream, prefix + spaces(2), options);
@@ -306,9 +308,10 @@ void ObjectPoolRegistry::Shutdown(RestartLevel level)
       p->Shutdown(level);
    }
 
-   if(level < RestartCold) return;
+   if(Restart::ClearsMemory(MemType())) return;
 
-   statsGroup_.release();
+   FunctionGuard guard(Guard_MemUnprotect);
+   Restart::Release(statsGroup_);
 }
 
 //------------------------------------------------------------------------------
@@ -319,7 +322,11 @@ void ObjectPoolRegistry::Startup(RestartLevel level)
 {
    Debug::ft(ObjectPoolRegistry_Startup);
 
-   if(statsGroup_ == nullptr) statsGroup_.reset(new ObjectPoolStatsGroup);
+   if(statsGroup_ == nullptr)
+   {
+      FunctionGuard guard(Guard_MemUnprotect);
+      statsGroup_.reset(new ObjectPoolStatsGroup);
+   }
 
    for(auto p = pools_.First(); p != nullptr; pools_.Next(p))
    {
@@ -335,6 +342,7 @@ void ObjectPoolRegistry::UnbindPool(ObjectPool& pool)
 {
    Debug::ft(ObjectPoolRegistry_UnbindPool);
 
+   FunctionGuard guard(Guard_MemUnprotect);
    pools_.Erase(pool);
 }
 }

@@ -100,7 +100,7 @@ void CoutThread::Enter()
       delete msg;
       msg = nullptr;
 
-      FunctionGuard guard(FunctionGuard::MakePreemptable);
+      FunctionGuard guard(Guard_MakePreemptable);
       SysConsole::Out() << stream->str() << std::flush;
       stream.reset();
    }

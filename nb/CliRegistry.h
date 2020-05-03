@@ -22,7 +22,7 @@
 #ifndef CLIREGISTRY_H_INCLUDED
 #define CLIREGISTRY_H_INCLUDED
 
-#include "Protected.h"
+#include "Immutable.h"
 #include <cstddef>
 #include <iosfwd>
 #include <string>
@@ -40,18 +40,11 @@ namespace NodeBase
 {
 //  Global registry for CLI increments.
 //
-class CliRegistry : public Protected
+class CliRegistry : public Immutable
 {
    friend class Singleton< CliRegistry >;
+   friend class CliIncrement;
 public:
-   //  Adds INCR to the registry.
-   //
-   bool BindIncrement(CliIncrement& incr);
-
-   //  Removes INCR from the registry.
-   //
-   void UnbindIncrement(CliIncrement& incr);
-
    //  Returns the increment registered against NAME, if any.
    //
    CliIncrement* FindIncrement(const std::string& name) const;
@@ -76,6 +69,14 @@ private:
    //  Private because this singleton is not subclassed.
    //
    ~CliRegistry();
+
+   //  Adds INCR to the registry.
+   //
+   bool BindIncrement(CliIncrement& incr);
+
+   //  Removes INCR from the registry.
+   //
+   void UnbindIncrement(CliIncrement& incr);
 
    //> The maximum number of increments that can register.
    //

@@ -126,11 +126,11 @@ namespace Clock
 
    //  Returns the time (string) when the clock was initialized.
    //
-   const std::string& TimeZeroStr();
+   std::string TimeZeroStr();
 
    //  Returns the time (ticks) when the clock was initialized.
    //
-   const ticks_t& TicksZero();
+   ticks_t TicksZero();
 }
 }
 #endif

@@ -62,6 +62,7 @@ PotsFeature::~PotsFeature()
 {
    Debug::ft(PotsFeature_dtor);
 
+   Debug::SwLog(PotsFeature_dtor, UnexpectedInvocation, 0);
    Singleton< PotsFeatureRegistry >::Instance()->UnbindFeature(*this);
 }
 
@@ -91,7 +92,7 @@ ptrdiff_t PotsFeature::CellDiff()
 void PotsFeature::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    stream << prefix << "fid          : " << fid_.to_str() << CRLF;
    stream << prefix << "deactivation : " << deactivation_ << CRLF;

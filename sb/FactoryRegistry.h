@@ -22,7 +22,7 @@
 #ifndef FACTORYREGISTRY_H_INCLUDED
 #define FACTORYREGISTRY_H_INCLUDED
 
-#include "Protected.h"
+#include "Immutable.h"
 #include "NbTypes.h"
 #include "Registry.h"
 #include "SbTypes.h"
@@ -33,10 +33,10 @@ namespace SessionBase
 {
 //  Global registry for factories.
 //
-class FactoryRegistry : public NodeBase::Protected
+class FactoryRegistry : public NodeBase::Immutable
 {
-   friend class Factory;
    friend class NodeBase::Singleton< FactoryRegistry >;
+   friend class Factory;
 public:
    //  Returns the factory registered against FID.
    //

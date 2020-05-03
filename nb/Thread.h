@@ -22,7 +22,7 @@
 #ifndef THREAD_H_INCLUDED
 #define THREAD_H_INCLUDED
 
-#include "Pooled.h"
+#include "Permanent.h"
 #include <atomic>
 #include <cstddef>
 #include <cstdint>
@@ -55,10 +55,11 @@ namespace NodeBase
 //  Base class for threads.  All threads should subclass from this, as it
 //  provides functions that support RSC's programming model.
 //
-class Thread : public Pooled
+class Thread : public Permanent
 {
    friend class Debug;
    friend class Exception;
+   friend class FunctionGuard;
    friend class InitThread;
    friend class ModuleRegistry;
    friend class Registry< Thread >;
@@ -75,16 +76,6 @@ public:
    //  if ASSERT is set and the running thread cannot be found.
    //
    static Thread* RunningThread(bool assert = true);
-
-   //  Causes the current thread to run unpreemptably (run to completion).
-   //  When a thread is entered, it is made unpreemptable before its Enter
-   //  function is invoked.
-   //
-   static void MakeUnpreemptable();
-
-   //  Causes the current thread to run preemptably.
-   //
-   static void MakePreemptable();
 
    //  Returns how long the running thread has run as a percentage (0 to 100)
    //  of the run-to-completion timeout.  Returns 0 for a preemptable thread.
@@ -150,14 +141,6 @@ public:
    //  Returns the reason, if any, that the thread is blocked.
    //
    BlockingReason GetBlockingReason() const;
-
-   //  Write-enables memory that is normally write-protected.
-   //
-   static void MemUnprotect();
-
-   //  Write-disables memory that is normally write-protected.
-   //
-   static void MemProtect();
 
    //  Returns the thread's identifier within ThreadRegistry.
    //
@@ -260,10 +243,6 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
-
-   //  Overridden to obtain a thread from its object pool.
-   //
-   static void* operator new(size_t size);
 protected:
    //  Creates a thread that runs in the scheduler faction FACTION and
    //  is managed by DAEMON.  Protected because this class is virtual.
@@ -318,6 +297,33 @@ protected:
    //
    static void StartShortInterval();
 private:
+   //  Causes the current thread to run unpreemptably (run to completion).
+   //  When a thread is entered, it is made unpreemptable before its Enter
+   //  function is invoked.  Must be invoked via FunctionGuard.
+   //
+   static void MakeUnpreemptable();
+
+   //  Causes the current thread to run preemptably.  Must be invoked
+   //  via FunctionGuard.
+   //
+   static void MakePreemptable();
+
+   //  Write-enables MemProtected.  Must be invoked via FunctionGuard.
+   //
+   static void MemUnprotect();
+
+   //  Write-disables MemProtected.  Must be invoked via FunctionGuard.
+   //
+   static void MemProtect();
+
+   //  Write-enables MemImmutable.  Must be invoked via FunctionGuard.
+   //
+   static void ImmUnprotect();
+
+   //  Write-disables MemImmutable.  Must be invoked via FunctionGuard.
+   //
+   static void ImmProtect();
+
    //  What to do after handling a signal or exception.
    //
    enum TrapAction

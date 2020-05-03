@@ -959,6 +959,8 @@ bool CodeWarning::Suppress() const
       break;
 
    case FunctionUnused:
+      if(item_->Name()->find("operator new") == 0) return true;
+      if(item_->Name()->find("operator delete") == 0) return true;
       if(fn == "Allocators.h") return true;
       if(fn == "BaseBot.h") return true;
       if(fn == "MapAndUnits.h") return true;
@@ -972,6 +974,15 @@ bool CodeWarning::Suppress() const
       if(fn == "BaseBot.h") return true;
       if(fn == "MapAndUnits.h") return true;
       break;
+
+   case DataInitOnly:
+   {
+      auto data = static_cast< const Data* >(item_);
+      auto type = data->GetTypeSpec()->TypeString(true);
+      if(type.find("FunctionGuard") != string::npos) return true;
+      if(type.find("MutexGuard") != string::npos) return true;
+      break;
+   }
 
    case DataNotPrivate:
       if(fn == "BaseBot.h") return true;
@@ -987,7 +998,6 @@ bool CodeWarning::Suppress() const
    case FunctionCouldBeStatic:
    case FunctionCouldBeFree:
    case CouldBeNoexcept:
-   case ShouldNotBeNoexcept:
       if(fn == "Allocators.h") return true;
       break;
 
@@ -1122,6 +1132,18 @@ bool CodeWarning::Suppress() const
       }
       break;
    }
+
+   case ShouldNotBeNoexcept:
+      if(fn == "Allocators.h") return true;
+
+      //  Placeement delete must be noexcept.
+      //
+      if(item_->Name()->find("operator delete") == 0)
+      {
+         auto func = static_cast< const Function* >(item_);
+         return (func->MinArgs() > 1);
+      }
+      break;
    }
 
    return false;

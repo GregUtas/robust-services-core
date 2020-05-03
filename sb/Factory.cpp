@@ -27,6 +27,8 @@
 #include "Debug.h"
 #include "FactoryRegistry.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
+#include "Restart.h"
 #include "Singleton.h"
 #include "Statistics.h"
 
@@ -83,6 +85,8 @@ fn_name FactoryStats_dtor = "FactoryStats.dtor";
 FactoryStats::~FactoryStats()
 {
    Debug::ft(FactoryStats_dtor);
+
+   Debug::SwLog(FactoryStats_dtor, UnexpectedInvocation, 0);
 }
 
 //==============================================================================
@@ -117,6 +121,7 @@ Factory::~Factory()
 {
    Debug::ft(Factory_dtor);
 
+   Debug::SwLog(Factory_dtor, UnexpectedInvocation, 0);
    Singleton< FactoryRegistry >::Instance()->UnbindFactory(*this);
 }
 
@@ -229,7 +234,7 @@ size_t Factory::DiscardedMessageCount() const
 void Factory::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    stream << prefix << "fid     : " << fid_.to_str() << CRLF;
    stream << prefix << "type    : " << int(type_) << CRLF;
@@ -326,7 +331,7 @@ bool Factory::IsLegalOgSignal(SignalId sid) const
 
 void Factory::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------
@@ -426,9 +431,8 @@ void Factory::Shutdown(RestartLevel level)
 {
    Debug::ft(Factory_Shutdown);
 
-   if(level < RestartCold) return;
-
-   stats_.release();
+   FunctionGuard guard(Guard_ImmUnprotect);
+   Restart::Release(stats_);
 }
 
 //------------------------------------------------------------------------------
@@ -439,6 +443,10 @@ void Factory::Startup(RestartLevel level)
 {
    Debug::ft(Factory_Startup);
 
-   if(stats_ == nullptr) stats_.reset(new FactoryStats);
+   if(stats_ == nullptr)
+   {
+      FunctionGuard guard(Guard_ImmUnprotect);
+      stats_.reset(new FactoryStats);
+   }
 }
 }

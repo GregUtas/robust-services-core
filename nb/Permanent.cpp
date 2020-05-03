@@ -36,13 +36,53 @@ Permanent::Permanent()
 
 //------------------------------------------------------------------------------
 
+fn_name Permanent_delete1 = "Permanent.operator delete";
+
+void Permanent::operator delete(void* addr)
+{
+   Debug::ft(Permanent_delete1);
+
+   Memory::Free(addr, MemPermanent);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Permanent_delete2 = "Permanent.operator delete[]";
+
+void Permanent::operator delete[](void* addr)
+{
+   Debug::ft(Permanent_delete2);
+
+   Memory::Free(addr, MemPermanent);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Permanent_delete3 = "Permanent.operator delete(place)";
+
+void Permanent::operator delete(void* addr, void* place) noexcept
+{
+   Debug::ft(Permanent_delete3);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Permanent_delete4 = "Permanent.operator delete[](place)";
+
+void Permanent::operator delete[](void* addr, void* place) noexcept
+{
+   Debug::ft(Permanent_delete4);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Permanent_new1 = "Permanent.operator new";
 
 void* Permanent::operator new(size_t size)
 {
    Debug::ft(Permanent_new1);
 
-   return Memory::Alloc(size, MemPerm);
+   return Memory::Alloc(size, MemPermanent);
 }
 
 //------------------------------------------------------------------------------
@@ -53,7 +93,29 @@ void* Permanent::operator new[](size_t size)
 {
    Debug::ft(Permanent_new2);
 
-   return Memory::Alloc(size, MemPerm);
+   return Memory::Alloc(size, MemPermanent);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Permanent_new3 = "Permanent.operator new(place)";
+
+void* Permanent::operator new(size_t size, void* place)
+{
+   Debug::ft(Permanent_new3);
+
+   return place;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Permanent_new4 = "Permanent.operator new[](place)";
+
+void* Permanent::operator new[](size_t size, void* place)
+{
+   Debug::ft(Permanent_new4);
+
+   return place;
 }
 
 //------------------------------------------------------------------------------

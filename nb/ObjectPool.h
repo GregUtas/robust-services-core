@@ -28,7 +28,6 @@
 #include <iosfwd>
 #include <string>
 #include "NbTypes.h"
-#include "Q1Way.h"
 #include "RegCell.h"
 #include "SysTypes.h"
 
@@ -36,6 +35,7 @@ namespace NodeBase
 {
    class Alarm;
    struct ObjectBlock;
+   struct ObjectPoolDynamic;
    class ObjectPoolStats;
    class Pooled;
 }
@@ -87,17 +87,11 @@ public:
 
    //  Returns the pool's name.
    //
-   const std::string& Name() const { return name_; }
+   fixed_string Name() const { return name_.c_str(); }
 
    //  Returns the pool's identifier.
    //
    ObjectPoolId Pid() const { return ObjectPoolId(pid_.GetId()); }
-
-   //  Creates or expands the object pool so that it contains the target
-   //  number of segments.  A pool's size can be increased at run time,
-   //  but it can only be decreased during a restart.
-   //
-   bool AllocBlocks();
 
    //  Allocates a block from the free queue.  SIZE specifies the size
    //  of the object to be constructed within the block.
@@ -140,7 +134,7 @@ public:
 
    //  Returns the total number of blocks on the free queue.
    //
-   size_t AvailCount() const { return availCount_; }
+   size_t AvailCount() const;
 
    //  Returns the total number of blocks currently in use.
    //
@@ -170,7 +164,7 @@ public:
 
    //  Returns the type of memory used by the pool's blocks.
    //
-   MemoryType BlockType() const { return type_; }
+   MemoryType BlockType() const { return mem_; }
 
    //  Displays statistics.  May be overridden to include pool-specific
    //  statistics, but the base class version must be invoked.
@@ -209,10 +203,10 @@ public:
    void Patch(sel_t selector, void* arguments) override;
 protected:
    //  Defines a pool, identified by NAME and PID, that allocates blocks of
-   //  TYPE, with a size of nBytes.  Protected because this class is virtual.
+   //  type MEM and SIZE bytes.  Protected because this class is virtual.
    //
-   ObjectPool(ObjectPoolId pid, MemoryType type,
-      size_t nBytes, const std::string& name);
+   ObjectPool(ObjectPoolId pid, MemoryType mem,
+      size_t size, const std::string& name);
 
    //  Frees all blocks.  Protected because subclasses should be singletons.
    //
@@ -221,6 +215,12 @@ private:
    //  Used in a mask (&) operation to find a block's offset in its segment.
    //
    static const size_t ObjectSecondIndexMask = ObjectsPerSegment - 1;
+
+   //  Creates or expands the object pool so that it contains the target
+   //  number of segments.  A pool's size can be increased at run time,
+   //  but it can only be decreased during a restart.
+   //
+   bool AllocBlocks();
 
    //  Returns the first block in the pool and updates the iterator BID
    //  to reference it.
@@ -271,17 +271,17 @@ private:
 
    //  The pool's name.
    //
-   const std::string name_;  //r
+   const ProtectedStr name_;
 
    //  The string "NumOf" + name_, which identifies (in the element
    //  configuration file) the parameter that determines the number
    //  of blocks in the pool.
    //
-   const std::string key_;  //r
+   const ProtectedStr key_;
 
    //  The type of memory used for blocks in the pool.
    //
-   const MemoryType type_;
+   const MemoryType mem_;
 
    //  The size of each block in bytes, rounded up for alignment purposes.
    //
@@ -306,43 +306,20 @@ private:
 
    //  The configuration parameter for the number of segments in the pool.
    //
-   CfgIntParmPtr cfgSegments_;
+   CfgIntParmPtr targSegmentsCfg_;
 
    //  All of the blocks in the pool, allocated in segments.
    //
    uword* blocks_[MaxSegments];
 
-   //  The queue of available blocks.
-   //
-   Q1Way< Pooled > freeq_;
-
-   //  The number of blocks in freeq_.
-   //
-   size_t availCount_;
-
-   //  The total number of blocks currently allocated.
-   //
-   size_t totalCount_;
-
-   //  The name for the high usage alarm.
-   //
-   std::string alarmName_;  //r
-
-   //  The explanation for the high usage alarm.
-   //
-   std::string alarmExpl_;  //r
-
    //  The alarm raised when the percentage of blocks in use is high.
    //
    Alarm* alarm_;
 
-   //  Used to reduce calls to UpdateAlarm.
+   //  Data that changes too frequently to unprotect and reprotect memory
+   //  when it needs to be modified.
    //
-   int8_t delta_;
-
-   //  Used to detect a corrupt queue header when auditing freeq_.
-   //
-   bool corruptQHead_;
+   std::unique_ptr< ObjectPoolDynamic > dyn_;
 
    //  The pool's statistics.
    //

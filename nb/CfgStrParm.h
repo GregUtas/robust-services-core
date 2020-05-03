@@ -23,7 +23,7 @@
 #define CFGSTRPARM_H_INCLUDED
 
 #include "CfgParm.h"
-#include <string>
+#include "NbTypes.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -37,7 +37,7 @@ class CfgStrParm : public CfgParm
 public:
    //  Creates a parameter with the specified attributes.
    //
-   CfgStrParm(c_string key, c_string def, std::string* field, c_string expl);
+   CfgStrParm(c_string key, c_string def, ProtectedStr* field, c_string expl);
 
    //  Virtual to allow subclassing.
    //
@@ -58,7 +58,7 @@ protected:
 
    //  Overridden to return the parameter's current value.
    //
-   std::string GetCurr() const override { return *curr_; }
+   std::string GetCurr() const override { return curr_->c_str(); }
 
    //  Overridden to transfer next_ to curr_.
    //
@@ -68,15 +68,15 @@ protected:
    //  to prevent invalid settings.  If so, invoke this version before
    //  returning true.
    //
-   bool SetNext(const std::string& input) override;
+   bool SetNext(c_string input) override;
 private:
    //  A pointer to the string that contains the parameter's value.
    //
-   std::string* curr_;
+   ProtectedStr* curr_;
 
    //  The value to be set during an appropriate restart.
    //
-   std::string next_;  //r
+   ProtectedStr next_;
 };
 }
 #endif

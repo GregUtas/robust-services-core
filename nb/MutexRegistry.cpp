@@ -48,7 +48,7 @@ MutexRegistry::MutexRegistry()
 {
    Debug::ft(MutexRegistry_ctor);
 
-   mutexes_.Init(MaxMutexes, SysMutex::CellDiff(), MemPerm);
+   mutexes_.Init(MaxMutexes, SysMutex::CellDiff(), MemPermanent);
 }
 
 //------------------------------------------------------------------------------
@@ -58,6 +58,8 @@ fn_name MutexRegistry_dtor = "MutexRegistry.dtor";
 MutexRegistry::~MutexRegistry()
 {
    Debug::ft(MutexRegistry_dtor);
+
+   Debug::SwLog(MutexRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

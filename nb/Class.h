@@ -22,10 +22,16 @@
 #ifndef CLASS_H_INCLUDED
 #define CLASS_H_INCLUDED
 
-#include "Protected.h"
+#include "Immutable.h"
 #include <cstddef>
 #include <memory>
 #include "RegCell.h"
+#include "SysTypes.h"
+
+namespace NodeBase
+{
+   struct ClassDynamic;
+}
 
 //------------------------------------------------------------------------------
 
@@ -38,7 +44,7 @@ namespace NodeBase
 //  framework provides PooledClass to support the techniques mentioned for
 //  objects subclassed from Pooled.
 //
-class Class : public Protected
+class Class : public Immutable
 {
    friend class Registry< Class >;
 public:
@@ -55,6 +61,10 @@ public:
    //    SetQuasiSingleton(*obj2);
    //
    virtual void Initialize();
+
+   //  Returns the type of memory used by objects in this class.
+   //
+   virtual MemoryType ObjType() const = 0;
 
    //  Creates an object using the Object Template technique.
    //  The Initialize function must have called SetTemplate.
@@ -81,9 +91,14 @@ public:
    //
    static ptrdiff_t CellDiff();
 
-   //  Overridden to enumerate all objects that the class owns.
+   //  Overridden to enumerate all objects that the Class owns (not
+   //  objects of, or created by, this Class, but its actual members).
    //
    void GetSubtended(Base* objects[], size_t& count) const override;
+
+   //  Overridden for restarts.
+   //
+   void Shutdown(RestartLevel level) override;
 
    //  Overridden to display member variables.
    //
@@ -131,9 +146,10 @@ protected:
    bool SetTemplate(Object& obj);
 
    //  Sets quasi_ and singleton_.  An Initialize function calls this
-   //  to create its initial quasi-singleton. OBJ must not be deleted
+   //  to create its initial quasi-singleton.  OBJ must not be deleted
    //  after calling this function, and it must not be the same object
-   //  passed to SetTemplate.
+   //  passed to SetTemplate.  Only a class whose ObjType function
+   //  returns MemDynamic may use quasi-singletons.
    //
    bool SetQuasiSingleton(Object& obj);
 private:
@@ -153,17 +169,10 @@ private:
    //
    vptr_t vptr_;
 
-   //  Used by Create to block-initialize a new object.
+   //  Data that changes too frequently to unprotect and reprotect memory
+   //  when it needs to be modified.
    //
-   std::unique_ptr< Object > template_;
-
-   //  Set if the class uses quasi-singletons.
-   //
-   bool quasi_;
-
-   //  The quasi-singleton instance.
-   //
-   std::unique_ptr< Object > singleton_;
+   std::unique_ptr< ClassDynamic > dyn_;
 };
 }
 #endif

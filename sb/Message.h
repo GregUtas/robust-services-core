@@ -26,6 +26,7 @@
 #include <cstddef>
 #include <cstdint>
 #include "NbTypes.h"
+#include "Q1Link.h"
 #include "SbIpBuffer.h"
 #include "SbTypes.h"
 #include "SysTypes.h"
@@ -63,7 +64,7 @@ public:
    typedef uint8_t Route;
 
    static const Route External = 0;  // remove MsgHeader; send over IP stack
-   static const Route IpStack  = 1;  // keep MsgHeader; force over IP stack
+   static const Route IpStack = 1;   // keep MsgHeader; force over IP stack
    static const Route Internal = 2;  // keep MsgHeader; bypass IP stack
 
    //  Message locations (not currently used; only defined as documentation).

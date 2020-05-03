@@ -36,13 +36,53 @@ Immutable::Immutable()
 
 //------------------------------------------------------------------------------
 
+fn_name Immutable_delete1 = "Immutable.operator delete";
+
+void Immutable::operator delete(void* addr)
+{
+   Debug::ft(Immutable_delete1);
+
+   Memory::Free(addr, MemImmutable);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Immutable_delete2 = "Immutable.operator delete[]";
+
+void Immutable::operator delete[](void* addr)
+{
+   Debug::ft(Immutable_delete2);
+
+   Memory::Free(addr, MemImmutable);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Immutable_delete3 = "Immutable.operator delete(place)";
+
+void Immutable::operator delete(void* addr, void* place) noexcept
+{
+   Debug::ft(Immutable_delete3);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Immutable_delete4 = "Immutable.operator delete[](place)";
+
+void Immutable::operator delete[](void* addr, void* place) noexcept
+{
+   Debug::ft(Immutable_delete4);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Immutable_new1 = "Immutable.operator new";
 
 void* Immutable::operator new(size_t size)
 {
    Debug::ft(Immutable_new1);
 
-   return Memory::Alloc(size, MemImm);
+   return Memory::Alloc(size, MemImmutable);
 }
 
 //------------------------------------------------------------------------------
@@ -53,7 +93,29 @@ void* Immutable::operator new[](size_t size)
 {
    Debug::ft(Immutable_new2);
 
-   return Memory::Alloc(size, MemImm);
+   return Memory::Alloc(size, MemImmutable);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Immutable_new3 = "Immutable.operator new(place)";
+
+void* Immutable::operator new(size_t size, void* place)
+{
+   Debug::ft(Immutable_new3);
+
+   return place;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Immutable_new4 = "Immutable.operator new[](place)";
+
+void* Immutable::operator new[](size_t size, void* place)
+{
+   Debug::ft(Immutable_new4);
+
+   return place;
 }
 
 //------------------------------------------------------------------------------

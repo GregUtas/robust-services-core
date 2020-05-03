@@ -36,13 +36,53 @@ Dynamic::Dynamic()
 
 //------------------------------------------------------------------------------
 
+fn_name Dynamic_delete1 = "Dynamic.operator delete";
+
+void Dynamic::operator delete(void* addr)
+{
+   Debug::ft(Dynamic_delete1);
+
+   Memory::Free(addr, MemDynamic);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Dynamic_delete2 = "Dynamic.operator delete[]";
+
+void Dynamic::operator delete[](void* addr)
+{
+   Debug::ft(Dynamic_delete2);
+
+   Memory::Free(addr, MemDynamic);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Dynamic_delete3 = "Dynamic.operator delete(place)";
+
+void Dynamic::operator delete(void* addr, void* place) noexcept
+{
+   Debug::ft(Dynamic_delete3);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Dynamic_delete4 = "Dynamic.operator delete[](place)";
+
+void Dynamic::operator delete[](void* addr, void* place) noexcept
+{
+   Debug::ft(Dynamic_delete4);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Dynamic_new1 = "Dynamic.operator new";
 
 void* Dynamic::operator new(size_t size)
 {
    Debug::ft(Dynamic_new1);
 
-   return Memory::Alloc(size, MemDyn);
+   return Memory::Alloc(size, MemDynamic);
 }
 
 //------------------------------------------------------------------------------
@@ -53,7 +93,29 @@ void* Dynamic::operator new[](size_t size)
 {
    Debug::ft(Dynamic_new2);
 
-   return Memory::Alloc(size, MemDyn);
+   return Memory::Alloc(size, MemDynamic);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Dynamic_new3 = "Dynamic.operator new(place)";
+
+void* Dynamic::operator new(size_t size, void* place)
+{
+   Debug::ft(Dynamic_new3);
+
+   return place;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Dynamic_new4 = "Dynamic.operator new[](place)";
+
+void* Dynamic::operator new[](size_t size, void* place)
+{
+   Debug::ft(Dynamic_new4);
+
+   return place;
 }
 
 //------------------------------------------------------------------------------

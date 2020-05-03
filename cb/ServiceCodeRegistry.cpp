@@ -24,8 +24,8 @@
 #include <string>
 #include "Debug.h"
 #include "Formatters.h"
+#include "Restart.h"
 #include "SbAppIds.h"
-#include "Service.h"
 #include "ServiceRegistry.h"
 #include "Singleton.h"
 #include "SymbolRegistry.h"
@@ -57,6 +57,8 @@ fn_name ServiceCodeRegistry_dtor = "ServiceCodeRegistry.dtor";
 ServiceCodeRegistry::~ServiceCodeRegistry()
 {
    Debug::ft(ServiceCodeRegistry_dtor);
+
+   Debug::SwLog(ServiceCodeRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -126,22 +128,30 @@ void ServiceCodeRegistry::Startup(RestartLevel level)
 {
    Debug::ft(ServiceCodeRegistry_Startup);
 
-   //  Define service codes and corresponding symbols.  These are
-   //  fixed but would be configurable in a production system.
+   //  Define service codes if our registry was just created.  These
+   //  are fixed but would be configurable in a production system.
    //
-   SetService(33, PotsWmlActivation);
-   SetService(34, PotsWmlDeactivation);
-   SetService(70, PotsCcwServiceId);
-   SetService(72, PotsCfuActivation);
-   SetService(73, PotsCfuDeactivation);
+   if(Restart::ClearsMemory(MemType()))
+   {
+      SetService(33, PotsWmlActivation);
+      SetService(34, PotsWmlDeactivation);
+      SetService(70, PotsCcwServiceId);
+      SetService(72, PotsCfuActivation);
+      SetService(73, PotsCfuDeactivation);
+   }
 
-   if(level < RestartCold) return;
-
+   //  Define service code symbols if the symbol registry was just
+   //  created.
+   //
    auto reg = Singleton< SymbolRegistry >::Instance();
-   reg->BindSymbol("sc.wml.activation", "*33");
-   reg->BindSymbol("sc.wml.deactivation", "*34");
-   reg->BindSymbol("sc.ccw", "*70");
-   reg->BindSymbol("sc.cfu.activation", "*72");
-   reg->BindSymbol("sc.cfu.deactivation", "*73");
+
+   if(Restart::ClearsMemory(reg->MemType()))
+   {
+      reg->BindSymbol("sc.wml.activation", "*33");
+      reg->BindSymbol("sc.wml.deactivation", "*34");
+      reg->BindSymbol("sc.ccw", "*70");
+      reg->BindSymbol("sc.cfu.activation", "*72");
+      reg->BindSymbol("sc.cfu.deactivation", "*73");
+   }
 }
 }

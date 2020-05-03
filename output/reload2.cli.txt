@@ -1,0 +1,69 @@
+nt>sched show
+SCHEDULER REPORT: 3-May-2020 11:29:43.327 on Reigi
+for interval beginning at 11:29:35.216
+----------------------------------------------------------------------------
+      THREADS          |    SINCE START OF CURRENT 15-MIN INTERVAL    | LAST
+                       |            rtc  max   max     max  total     |5 SEC
+id    name     host f b| ex yields  t/o msgs stack   usecs  msecs %cpu| %cpu
+----------------------------------------------------------------------------
+      idle                                                   3052 37.6  74.7
+ 1    root     6154 w S   0    619    0    0   274     640     67  0.8   0.8
+ 2    init     7238 s S   0    619    0    0  2746 1728477   1855 22.9  24.4
+ 3    file     9750 b     0     51    0   13   325  359920    849 10.5   0.1
+ 4    cout     7ea8 B     0     52    0   10   293     327      7  0.1   0.0
+ 5     cin     2558 O C   0      2    0    0   240      76      0  0.0   0.0
+ 6  objaud     9914 A S   0     38    0    0   424    3128     20  0.2   0.0
+ 7   stats     4bbc B S   0      2    0    0   248     240      0  0.0   0.0
+ 8     log     9c28 B S   0      4    0    0   329     237      0  0.0   0.0
+ 9     cli     9284 O     0     26    9    0   672 1893287   2256 27.8   0.0
+10   tcpio     6f38 P N   0      4    0    0   285    1617      3  0.0   0.0
+11   udpio     60e0 P N   0      1    0    0   269     423      0  0.0   0.0
+12   udpio     70d4 P N   0      1    0    0   269     362      0  0.0   0.0
+13   timer     3d64 P S   0      8    0    0   241     193      1  0.0   0.0
+14 invoker     8f4c P S   0      1    0    0   259     124      0  0.0   0.0
+----------------------------------------------------------------------------
+nt>sb status
+STATUS REPORT: 3-May-2020 11:29:43.340 on Reigi
+MEMORY USAGE
+Alloc  Low kB     kB       Bytes                            Memory        Prot
+Fails   Avail  Avail      In Use     Allocs      Frees        Type  RWX  Chngs
+    0    ---     ---         436        307        300   temporary  rw-      0
+    0    ---     ---    24223356       1867          6     dynamic  rw-      0
+    0    ---     ---         392         13          0  persistent  rw-      0
+    0   1219    1219       61496        260         15   protected  r--      7
+    0    ---     ---     3977028        193         37   permanent  rw-      0
+    0    386     386      128460       2270         58   immutable  r--    293
+
+OBJECT POOLS
+Alloc  Lowest    Curr    Curr
+Fails   Avail   Avail  In Use   Allocs    Frees  Expands   Pool Name
+    0    2024    2025      23       73       50        0   MsgBuffers
+    0       *    2048       0        0        0        0   IpBuffers
+    0       *    8192       0        0        0        0   SbIpBuffers
+    0       *   10240       0        0        0        0   BtIpBuffers
+    0       *   15360       0        0        0        0   Contexts
+    0       *    8192       0        0        0        0   Messages
+    0       *   24576       0        0        0        0   MsgPorts
+    0       *   24576       0        0        0        0   ProtocolSMs
+    0       *    7168       0        0        0        0   Timers
+    0       *    1024       0        0        0        0   Events
+    0       *   14336       0        0        0        0   ServiceSMs
+    0       *    1024       0        0        0        0   MediaEndpts
+
+CPU IDLE TIME: 74.7%
+
+ACTIVE ALARMS
+  No active alarms.
+
+IP PORT DISCARDS
+  There were no discards to display.
+
+INGRESS WORK QUEUES
+    Curr     Max     Max
+  Length  Length   Delay   Faction
+       0       0       0   Payload
+
+FACTORY DISCARDS
+  There were no discards to display.
+nt>send cout
+  OK.

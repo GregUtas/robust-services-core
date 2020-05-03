@@ -96,7 +96,7 @@ private:
    //
    static const size_t HashTableSizeLog2;
 
-   //  The mask used to bring the hash returned by stringHash into range.
+   //  The mask used to bring the hash returned by string_hash into range.
    //
    static const uint32_t HashMask;
 

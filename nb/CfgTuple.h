@@ -25,7 +25,9 @@
 #include "Protected.h"
 #include <cstddef>
 #include <string>
+#include "NbTypes.h"
 #include "Q1Link.h"
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -51,7 +53,7 @@ public:
 
    //  Sets key_ and input_ from the arguments.
    //
-   CfgTuple(const std::string& key, const std::string& input);
+   CfgTuple(fixed_string key, fixed_string input);
 
    //  Removes the tuple from CfgParmRegistry.  Not subclassed.
    //
@@ -64,17 +66,17 @@ public:
 
    //  Returns the tuple's key.
    //
-   const std::string& Key() const { return key_; }
+   c_string Key() const { return key_.c_str(); }
 
    //  Returns the string used to set the parameter's value.
    //
-   const std::string& Input() const { return input_; }
+   c_string Input() const { return input_.c_str(); }
 
    //  Saves the string that would set the parameter to its current value.
    //  Such a string must be available so that it can be written to a file
    //  that can later be read to restore the parameter's current value.
    //
-   void SetInput(const std::string& input) { input_ = input; }
+   void SetInput(c_string input) { input_ = input; }
 
    //  Returns a string containing the characters that are valid in the
    //  name of a configuration parameter.
@@ -106,11 +108,11 @@ public:
 private:
    //  The name of the parameter associated with the tuple.
    //
-   const std::string key_;  //r
+   const ProtectedStr key_;
 
    //  The string used to set the parameter's value.
    //
-   std::string input_;  //r
+   ProtectedStr input_;
 
    //  The next tuple in CfgParmRegistry.
    //

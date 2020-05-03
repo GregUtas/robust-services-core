@@ -22,6 +22,7 @@
 #include "NbIncrement.h"
 #include "CliBoolParm.h"
 #include "CliIntParm.h"
+#include "CliPtrParm.h"
 #include "CliText.h"
 #include <cctype>
 #include <cstddef>
@@ -49,6 +50,7 @@
 #include "FileThread.h"
 #include "Formatters.h"
 #include "FunctionGuard.h"
+#include "Heap.h"
 #include "Log.h"
 #include "LogBuffer.h"
 #include "LogBufferRegistry.h"
@@ -75,7 +77,6 @@
 #include "StatisticsRegistry.h"
 #include "Symbol.h"
 #include "SymbolRegistry.h"
-#include "SysHeap.h"
 #include "SysMutex.h"
 #include "ThisThread.h"
 #include "ThreadRegistry.h"
@@ -297,7 +298,7 @@ AuditForceText::AuditForceText() :
    CliText(AuditForceExpl, AuditForceStr) { }
 
 const id_t AuditIntervalIndex = 1;
-const id_t AuditForceIndex    = 2;
+const id_t AuditForceIndex = 2;
 
 fixed_string AuditActionExpl = "subcommand...";
 
@@ -487,8 +488,8 @@ CfgParmsSetText::CfgParmsSetText() : CliText(CfgParmsSetExpl, CfgParmsSetStr)
 
 const id_t CfgParmsListIndex = 1;
 const id_t CfgParmsExplIndex = 2;
-const id_t CfgParmsGetIndex  = 3;
-const id_t CfgParmsSetIndex  = 4;
+const id_t CfgParmsGetIndex = 3;
+const id_t CfgParmsSetIndex = 4;
 
 fixed_string CfgParmsActionExpl = "subcommand...";
 
@@ -551,7 +552,7 @@ word CfgParmsCommand::ProcessCommand(CliThread& cli) const
       parm = reg->FindParm(key);
       if(parm == nullptr) return cli.Report(-2, NoCfgParmExpl);
 
-      if(!parm->SetValue(value, level))
+      if(!parm->SetValue(value.c_str(), level))
       {
          parm->Explain(expl);
          return cli.Report(-3, BadParameterValue + expl);
@@ -718,7 +719,7 @@ DaemonsSetText::DaemonsSetText() :
 }
 
 const id_t DaemonsListIndex = 1;
-const id_t DaemonsSetIndex  = 2;
+const id_t DaemonsSetIndex = 2;
 
 fixed_string DaemonsActionExpl = "subcommand...";
 
@@ -844,6 +845,15 @@ word DelayCommand::ProcessCommand(CliThread& cli) const
 //
 //  The DISPLAY command.
 //
+class ObjPtrMandParm : public CliPtrParm
+{
+public: ObjPtrMandParm();
+};
+
+fixed_string ObjPtrMandText = "pointer to an object derived from Base";
+
+ObjPtrMandParm::ObjPtrMandParm() : CliPtrParm(ObjPtrMandText) { }
+
 class DisplayCommand : public CliCommand
 {
 public:
@@ -853,7 +863,7 @@ private:
 };
 
 fixed_string DisplayStr = "display";
-fixed_string DisplayExpl = "Displays an object.";
+fixed_string DisplayExpl = "Displays an object derived from NodeBase::Base.";
 
 DisplayCommand::DisplayCommand() : CliCommand(DisplayStr, DisplayExpl)
 {
@@ -885,6 +895,11 @@ word DisplayCommand::ProcessCommand(CliThread& cli) const
 //
 //  The DUMP command.
 //
+class MemAddrParm : public CliPtrParm
+{
+public: MemAddrParm();
+};
+
 class ByteCountParm : public CliIntParm
 {
 public:
@@ -899,6 +914,10 @@ private:
    word ProcessCommand(CliThread& cli) const override;
 };
 
+fixed_string MemAddrText = "memory address";
+
+MemAddrParm::MemAddrParm() : CliPtrParm(MemAddrText) { }
+
 fixed_string ByteCountExpl = "number of bytes to display";
 
 ByteCountParm::ByteCountParm() : CliIntParm(ByteCountExpl, 1, 1024) { }
@@ -908,7 +927,7 @@ fixed_string DumpExpl = "Displays memory in hex.";
 
 DumpCommand::DumpCommand() : CliCommand(DumpStr, DumpExpl)
 {
-   BindParm(*new ObjPtrMandParm);
+   BindParm(*new MemAddrParm);
    BindParm(*new ByteCountParm);
 }
 
@@ -1004,6 +1023,21 @@ word ExcludeCommand::ProcessSubcommand(CliThread& cli, id_t index) const
 //
 //  The HEAPS command.
 //
+class HeapsListText : public CliText
+{
+public: HeapsListText();
+};
+
+class HeapsValidateText : public CliText
+{
+public: HeapsValidateText();
+};
+
+class HeapsAction : public CliTextParm
+{
+public: HeapsAction();
+};
+
 class HeapsCommand : public CliCommand
 {
 public:
@@ -1012,11 +1046,35 @@ private:
    word ProcessCommand(CliThread& cli) const override;
 };
 
+fixed_string HeapsListTextStr = "list";
+fixed_string HeapsListTextExpl = "lists all heaps";
+
+HeapsListText::HeapsListText() :
+   CliText(HeapsListTextExpl, HeapsListTextStr) { }
+
+fixed_string HeapsValidateTextStr = "validate";
+fixed_string HeapsValidateTextExpl = "validates all heaps";
+
+HeapsValidateText::HeapsValidateText() :
+   CliText(HeapsValidateTextExpl, HeapsValidateTextStr) { }
+
+const id_t HeapsListIndex = 1;
+const id_t HeapsValidateIndex = 2;
+
+fixed_string HeapsActionExpl = "subcommand...";
+
+HeapsAction::HeapsAction() : CliTextParm(HeapsActionExpl)
+{
+   BindText(*new HeapsListText, HeapsListIndex);
+   BindText(*new HeapsValidateText, HeapsValidateIndex);
+}
+
 fixed_string HeapsStr = "heaps";
 fixed_string HeapsExpl = "Lists all heaps.";
 
 HeapsCommand::HeapsCommand() : CliCommand(HeapsStr, HeapsExpl)
 {
+   BindParm(*new HeapsAction);
 }
 
 fn_name HeapsCommand_ProcessCommand = "HeapsCommand.ProcessCommand";
@@ -1025,10 +1083,42 @@ word HeapsCommand::ProcessCommand(CliThread& cli) const
 {
    Debug::ft(HeapsCommand_ProcessCommand);
 
+   id_t index;
+
+   if(!GetTextIndex(index, cli)) return -1;
    cli.EndOfInput(false);
 
-   SysHeap::DisplayHeaps(*cli.obuf);
-   return 0;
+   switch(index)
+   {
+   case HeapsListIndex:
+      Memory::DisplayHeaps(*cli.obuf, spaces(2));
+      return 0;
+
+   case HeapsValidateIndex:
+      *cli.obuf << spaces(2) << "Validating heaps..." << CRLF;
+
+      for(auto m = 1; m < MemoryType_N; ++m)
+      {
+         auto type = MemoryType(m);
+         auto result = Memory::Validate(type, nullptr);
+         string status;
+
+         if(result > 0)
+            status = "true";
+         else if(result == 0)
+            status = "false";
+         else
+            status = "unallocated";
+
+         *cli.obuf << setw(13) << MemoryType(m) << ": " << status << CRLF;
+      }
+
+      return 0;
+
+   default:
+      Debug::SwLog(HeapsCommand_ProcessCommand, UnexpectedIndex, index);
+      return cli.Report(index, SystemErrorExpl);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -1051,7 +1141,6 @@ public:
    HelpCommand();
 private:
    word ProcessCommand(CliThread& cli) const override;
-   static word DisplayHelp(const CliThread& cli, const string& key);
 };
 
 fixed_string HelpIncrExpl = "name of increment";
@@ -1092,7 +1181,7 @@ HelpCommand::HelpCommand() : CliCommand(HelpStr, HelpExpl)
    BindParm(*new HelpFullParm);
 }
 
-word HelpCommand::DisplayHelp(const CliThread& cli, const string& key)
+word DisplayHelp(const CliThread& cli, const string& key)
 {
    auto path = Element::HelpPath() + PATH_SEPARATOR + "cli.txt";
    auto rc = cli.DisplayHelp(path, key);
@@ -1752,9 +1841,13 @@ word LogsCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    case FreeIndex:
       if(!GetIntParm(id, cli)) return -1;
       cli.EndOfInput(false);
-      if(!Singleton< LogBufferRegistry >::Instance()->Free(id))
       {
-         return cli.Report(-1, "That buffer is either active or invalid.");
+         FunctionGuard guard(Guard_ImmUnprotect);
+
+         if(!Singleton< LogBufferRegistry >::Instance()->Free(id))
+         {
+            return cli.Report(-1, "That buffer is either active or invalid.");
+         }
       }
       break;
 
@@ -2288,11 +2381,11 @@ ExitText::ExitText() : CliText(ExitTextExpl, ExitTextStr) { }
 fixed_string RestartStr = "restart";
 fixed_string RestartExpl = "Shuts down the system.";
 
-const id_t WarmIndex   = 1;
-const id_t ColdIndex   = 2;
+const id_t WarmIndex = 1;
+const id_t ColdIndex = 2;
 const id_t ReloadIndex = 3;
 const id_t RebootIndex = 4;
-const id_t ExitIndex   = 5;
+const id_t ExitIndex = 5;
 
 fixed_string RestartTypeExpl = "type of shutdown...";
 
@@ -2446,7 +2539,7 @@ word SaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    if(stream == nullptr) return cli.Report(-7, CreateStreamFailure);
 
    auto yield = cli.GenerateReportPreemptably();
-   FunctionGuard guard(FunctionGuard::MakePreemptable, yield);
+   FunctionGuard guard(Guard_MakePreemptable, yield);
 
    rc = Singleton< TraceBuffer >::Instance()->DisplayTrace(stream, opts);
 
@@ -2524,10 +2617,10 @@ SchedKillText::SchedKillText() : CliText(SchedKillTextExpl, SchedKillTextStr)
    BindParm(*new ThreadIdMandParm);
 }
 
-const id_t SchedShowIndex  = 1;
+const id_t SchedShowIndex = 1;
 const id_t SchedStartIndex = 2;
-const id_t SchedStopIndex  = 3;
-const id_t SchedKillIndex  = 4;
+const id_t SchedStopIndex = 3;
+const id_t SchedKillIndex = 4;
 
 fixed_string SchedActionExpl = "subcommand...";
 
@@ -2908,7 +3001,7 @@ word SetCommand::ProcessSubcommand(CliThread& cli, id_t index) const
       cli.EndOfInput(false);
       flag = (setHowIndex == SetHowParm::On);
 
-      if(!ValidateOptions(toolList, reg->ListTools(), expl))
+      if(!ValidateOptions(toolList, reg->ListToolChars(), expl))
       {
          return cli.Report(-1, expl);
       }
@@ -3121,8 +3214,8 @@ RolloverText::RolloverText() : CliText(RolloverTextExpl, RolloverTextStr)
    BindParm(*new RolloverParm);
 }
 
-const id_t StatsGroupsIndex   = 1;
-const id_t StatsShowIndex     = 2;
+const id_t StatsGroupsIndex = 1;
+const id_t StatsShowIndex = 2;
 const id_t StatsRolloverIndex = 3;
 
 fixed_string StatsActionExpl = "subcommand...";
@@ -3235,19 +3328,17 @@ void StatusCommand::Patch(sel_t selector, void* arguments)
    CliCommand::Patch(selector, arguments);
 }
 
-fixed_string MemoryHeader1 =
-   "  Alloc                            Bytes        Max     Memory  Heap";
-fixed_string MemoryHeader2 =
-   "  Fails     Allocs      Frees     In Use     In Use       Type  Address";
-// 0         1         2         3         4         5         6         7
-// 01234567890123456789012345678901234567890123456789012345678901234567890
+fixed_string HeapsHeader =
+"Alloc  Low kB     kB       Bytes                            Memory        Prot\n"
+"Fails   Avail  Avail      In Use     Allocs      Frees        Type  RWX  Chngs";
+//        1         2         3         4         5         6         7
+//234567890123456789012345678901234567890123456789012345678901234567890123456789
 
-fixed_string PoolsHeader1 =
-   "  Alloc  Lowest    Curr    Curr";
-fixed_string PoolsHeader2 =
-   "  Fails   Avail   Avail  In Use   Allocs    Frees  Exps   Pool";
-// 0         1         2         3         4         5         6         7
-// 01234567890123456789012345678901234567890123456789012345678901234567890
+fixed_string PoolsHeader =
+   "Alloc  Lowest    Curr    Curr\n"
+   "Fails   Avail   Avail  In Use   Allocs    Frees  Expands   Pool Name";
+// 0         1         2         3         4         5         6
+// 012345678901234567890123456789012345678901234567890123456789012345678
 
 fn_name StatusCommand_ProcessCommand = "StatusCommand.ProcessCommand";
 
@@ -3259,29 +3350,40 @@ word StatusCommand::ProcessCommand(CliThread& cli) const
 
    *cli.obuf << "STATUS REPORT: " << Element::strTimePlace() << CRLF;
    *cli.obuf << "MEMORY USAGE" << CRLF;
-   *cli.obuf << MemoryHeader1 << CRLF;
-   *cli.obuf << MemoryHeader2 << CRLF;
+   *cli.obuf << HeapsHeader << CRLF;
 
    for(auto m = 0; m < MemoryType_N; ++m)
    {
-      auto heap = Memory::Heap(MemoryType(m));
+      auto heap = Memory::GetHeap(MemoryType(m));
 
       if(heap != nullptr)
       {
-         *cli.obuf << setw(7) << heap->FailCount();
+         *cli.obuf << setw(5) << heap->FailCount();
+
+         auto size = heap->Size();
+         if(size == 0)
+         {
+            *cli.obuf << setw(7) << "---";
+            *cli.obuf << setw(8) << "---";
+         }
+         else
+         {
+            *cli.obuf << setw(7) << ((size - heap->MaxBytesInUse()) / kBs);
+            *cli.obuf << setw(8) << ((size - heap->BytesInUse()) / kBs);
+         }
+
+         *cli.obuf << setw(12) << heap->BytesInUse();
          *cli.obuf << setw(11) << heap->AllocCount();
          *cli.obuf << setw(11) << heap->FreeCount();
-         *cli.obuf << setw(11) << heap->BytesInUse();
-         *cli.obuf << setw(11) << heap->MaxBytesInUse();
-         *cli.obuf << setw(11) << heap->Type();
-         *cli.obuf << setw(NIBBLES_PER_POINTER + 2) << heap->Heap() << CRLF;
+         *cli.obuf << setw(12) << heap->Type();
+         *cli.obuf << setw(5) << heap->GetAttrs();
+         *cli.obuf << setw(7) << heap->ChangeCount() << CRLF;
       }
    }
 
    *cli.obuf << CRLF;
    *cli.obuf << "OBJECT POOLS" << CRLF;
-   *cli.obuf << PoolsHeader1 << CRLF;
-   *cli.obuf << PoolsHeader2 << CRLF;
+   *cli.obuf << PoolsHeader << CRLF;
 
    auto& objpools = Singleton< ObjectPoolRegistry >::Instance()->Pools();
 
@@ -3289,7 +3391,7 @@ word StatusCommand::ProcessCommand(CliThread& cli) const
    {
       auto low = p->LowAvailCount();
 
-      *cli.obuf << setw(7) << p->FailCount();
+      *cli.obuf << setw(5) << p->FailCount();
       if(low == LowWatermark::Initial)
          *cli.obuf << setw(8) << '*';
       else
@@ -3298,7 +3400,7 @@ word StatusCommand::ProcessCommand(CliThread& cli) const
       *cli.obuf << setw(8) << p->InUseCount();
       *cli.obuf << setw(9) << p->AllocCount();
       *cli.obuf << setw(9) << p->FreeCount();
-      *cli.obuf << setw(6) << p->Expansions();
+      *cli.obuf << setw(9) << p->Expansions();
       *cli.obuf << spaces(3) << p->Name() << CRLF;
    }
 
@@ -3442,8 +3544,8 @@ SymbolsAssignText::SymbolsAssignText() :
    BindParm(*new CfgParmName);
 }
 
-const id_t SymbolsListIndex   = 1;
-const id_t SymbolsSetIndex    = 2;
+const id_t SymbolsListIndex = 1;
+const id_t SymbolsSetIndex = 2;
 const id_t SymbolsAssignIndex = 3;
 
 fixed_string SymbolsActionExpl = "subcommand...";
@@ -3628,8 +3730,8 @@ word ThreadsCommand::ProcessCommand(CliThread& cli) const
 //  The TOOLS command.
 //
 fixed_string ToolHeaderStr = "  Tool Name          Abbr  Explanation";
-//                           0         1         2        3         4
-//                           0123456789012345678901345678901234567890
+//                           0         1         2        3
+//                           012345678901234567890134567890123456789
 
 class ToolsCommand : public CliCommand
 {

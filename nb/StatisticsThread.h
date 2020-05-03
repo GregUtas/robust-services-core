@@ -86,14 +86,18 @@ private:
    //
    c_string AbbrName() const override;
 
+   //  Overridden to delete the singleton.
+   //
+   void Destroy() override;
+
    //  Overridden to enter a loop that generates statistics reports and
    //  performs rollovers on statistics registers.
    //
    void Enter() override;
 
-   //  Overridden to delete the singleton.
+   //  Overridden to generate a statistics report during cold restarts.
    //
-   void Destroy() override;
+   bool ExitOnRestart(NodeBase::RestartLevel level) const override;
 
    //  The next time at which the thread wants to run.
    //

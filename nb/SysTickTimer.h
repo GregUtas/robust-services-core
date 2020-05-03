@@ -23,14 +23,10 @@
 #define SYSTICKTIMER_H_INCLUDED
 
 #include "Immutable.h"
-#include <string>
 #include "Clock.h"
+#include "NbTypes.h"
 #include "SysTime.h"
-
-namespace NodeBase
-{
-   template< class T > class Singleton;
-}
+#include "SysTypes.h"
 
 //------------------------------------------------------------------------------
 
@@ -44,7 +40,7 @@ class SysTickTimer : public Immutable
 public:
    //  Returns the number of ticks in one second.
    //
-   const ticks_t& TicksPerSec() const { return ticks_per_sec_; }
+   ticks_t TicksPerSec() const { return ticks_per_sec_; }
 
    //  Returns the current time as a raw tick count.  It is assumed
    //  that the value returned by this function increases over time
@@ -54,7 +50,7 @@ public:
 
    //  Returns the time (in ticks) when the system was booted.
    //
-   const ticks_t& StartTick() const { return startTick_; }
+   ticks_t StartTick() const { return startTick_; }
 
    //  Returns the time (in full) when the system was booted.
    //
@@ -62,7 +58,7 @@ public:
 
    //  Returns the time (yymmdd-hhmmss) when the system was booted.
    //
-   const std::string& StartTimeStr() const { return startTimeStr_; }
+   c_string StartTimeStr() const { return startTimeStr_.c_str(); }
 
    //  Returns true if this platform supports fine-grained timing.  If
    //  it returns false, timing is only accurate to 1 millisecond, so
@@ -96,7 +92,7 @@ private:
 
    //  startTime_ as a string (yymmdd-hhmmss).
    //
-   std::string startTimeStr_;
+   ImmutableStr startTimeStr_;
 
    //  Set if this platform supports fine-grained tick timing.
    //

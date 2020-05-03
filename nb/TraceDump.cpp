@@ -35,10 +35,10 @@ namespace NodeBase
 {
 fixed_string EndOfTrace = "END OF TRACE";
 
-//                     0         1         2         3         4         5
-//                     01234567890123456789012345678901234567890123456789012
-fixed_string Header1 = "mm:ss.ttt  Thr  Event  TotalTime   NetTime  Function";
-fixed_string Header2 = "---------  ---  -----  ---------   -------  --------";
+//                    0         1         2         3         4         5
+//                    01234567890123456789012345678901234567890123456789012
+fixed_string Header = "mm:ss.ttt  Thr  Event  TotalTime   NetTime  Function\n"
+                      "---------  ---  -----  ---------   -------  --------\n";
 
 //------------------------------------------------------------------------------
 
@@ -53,8 +53,7 @@ TraceRc TraceDump::Generate(ostream& stream, const string& opts)
    auto buff = Singleton< TraceBuffer >::Instance();
    buff->DisplayStart(stream);
 
-   stream << Header1 << CRLF;
-   stream << Header2 << CRLF;
+   stream << Header;
 
    //  Step through the trace buffer, displaying a trace record if the
    //  tool that created it is enabled.  This allows a single trace to

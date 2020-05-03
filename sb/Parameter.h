@@ -22,7 +22,7 @@
 #ifndef PARAMETER_H_INCLUDED
 #define PARAMETER_H_INCLUDED
 
-#include "Protected.h"
+#include "Immutable.h"
 #include <cstddef>
 #include <iosfwd>
 #include <string>
@@ -44,7 +44,7 @@ namespace SessionBase
 //  Each protocol defines a singleton subclass for each of its parameters.
 //  A parameter that uses the TLV format should subclass from TlvParameter.
 //
-class Parameter : public NodeBase::Protected
+class Parameter : public NodeBase::Immutable
 {
    friend class NodeBase::Registry< Parameter >;
 public:
@@ -68,8 +68,8 @@ public:
    //
    typedef int Usage;
 
-   static const Usage Illegal   = 0;  // parameter illegal for signal
-   static const Usage Optional  = 1;  // parameter optional for signal
+   static const Usage Illegal = 0;    // parameter illegal for signal
+   static const Usage Optional = 1;   // parameter optional for signal
    static const Usage Mandatory = 2;  // parameter mandatory for signal
 
    //  Deleted to prohibit copying.

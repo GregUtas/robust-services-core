@@ -71,6 +71,33 @@ public:
    CounterPtr       lockouts_;
 };
 
+//------------------------------------------------------------------------------
+
+fn_name InvokerPoolStats_ctor = "InvokerPoolStats.ctor";
+
+InvokerPoolStats::InvokerPoolStats()
+{
+   Debug::ft(InvokerPoolStats_ctor);
+
+   maxTrans_.reset(new HighWatermark("most transactions before yielding"));
+   requeues_.reset(new Counter("contexts requeued after priority work"));
+   trojans_.reset(new Counter("corrupt contexts found on work queue"));
+   lockouts_.reset(new Counter("times that all invokers were blocked"));
+}
+
+//------------------------------------------------------------------------------
+
+fn_name InvokerPoolStats_dtor = "InvokerPoolStats.dtor";
+
+InvokerPoolStats::~InvokerPoolStats()
+{
+   Debug::ft(InvokerPoolStats_dtor);
+
+   Debug::SwLog(InvokerPoolStats_dtor, UnexpectedInvocation, 0);
+}
+
+//==============================================================================
+//
 //  The work of a given priority that is waiting for an invoker pool.
 //
 class InvokerWork : public Dynamic
@@ -112,29 +139,6 @@ public:
 
 //------------------------------------------------------------------------------
 
-fn_name InvokerPoolStats_ctor = "InvokerPoolStats.ctor";
-
-InvokerPoolStats::InvokerPoolStats()
-{
-   Debug::ft(InvokerPoolStats_ctor);
-
-   maxTrans_.reset(new HighWatermark("most transactions before yielding"));
-   requeues_.reset(new Counter("contexts requeued after priority work"));
-   trojans_.reset(new Counter("corrupt contexts found on work queue"));
-   lockouts_.reset(new Counter("times that all invokers were blocked"));
-}
-
-//------------------------------------------------------------------------------
-
-fn_name InvokerPoolStats_dtor = "InvokerPoolStats.dtor";
-
-InvokerPoolStats::~InvokerPoolStats()
-{
-   Debug::ft(InvokerPoolStats_dtor);
-}
-
-//==============================================================================
-
 fn_name InvokerWork_ctor = "InvokerWork.ctor";
 
 InvokerWork::InvokerWork() : length_(0)
@@ -156,6 +160,7 @@ InvokerWork::~InvokerWork()
 {
    Debug::ft(InvokerWork_dtor);
 
+   Debug::SwLog(InvokerWork_dtor, UnexpectedInvocation, 0);
    contextq_.Purge();
 }
 
@@ -169,28 +174,28 @@ fn_name InvokerPool_ctor = "InvokerPool.ctor";
 
 InvokerPool::InvokerPool(Faction faction, const string& parmKey) :
    poolSize_(1),
-   cfgInvokers_(nullptr),
+   invokersCfg_(nullptr),
    corrupt_(false)
 {
    Debug::ft(InvokerPool_ctor);
 
    faction_.SetId(faction);
-   invokers_.Init(MaxInvokers, InvokerThread::CellDiff2(), MemDyn);
+   invokers_.Init(MaxInvokers, InvokerThread::CellDiff2(), MemDynamic);
    stats_.reset(new InvokerPoolStats);
 
-   //  After a restart, cfgInvokers_ may still exist, so try to look it
+   //  After a restart, invokersCfg_ may still exist, so try to look it
    //  up before creating it.
    //
    auto reg = Singleton< CfgParmRegistry >::Instance();
 
-   cfgInvokers_.reset(static_cast< CfgIntParm* >(reg->FindParm(parmKey)));
+   invokersCfg_.reset(static_cast< CfgIntParm* >(reg->FindParm(parmKey)));
 
-   if(cfgInvokers_ == nullptr)
+   if(invokersCfg_ == nullptr)
    {
-      cfgInvokers_.reset(new CfgIntParm(parmKey.c_str(), "1",
+      invokersCfg_.reset(new CfgIntParm(parmKey.c_str(), "1",
          reinterpret_cast< word* >(&poolSize_), 1,
          10, "number of invokers in pool"));
-      reg->BindParm(*cfgInvokers_);
+      reg->BindParm(*invokersCfg_);
    }
 
    for(auto p = 0; p <= MAX_PRIORITY; ++p)
@@ -209,6 +214,7 @@ InvokerPool::~InvokerPool()
 {
    Debug::ft(InvokerPool_dtor);
 
+   Debug::SwLog(InvokerPool_dtor, UnexpectedInvocation, 0);
    Singleton< InvokerPoolRegistry >::Instance()->UnbindPool(*this);
 }
 
@@ -319,8 +325,8 @@ void InvokerPool::Display(ostream& stream,
    stream << prefix << "faction     : " << faction_.to_str() << CRLF;
    stream << prefix << "poolSize    : " << poolSize_ << CRLF;
    stream << prefix << "corrupt     : " << corrupt_ << CRLF;
-   stream << prefix << "cfgInvokers : " << CRLF;
-   stream << strObj(cfgInvokers_.get()) << CRLF;
+   stream << prefix << "invokersCfg : " << CRLF;
+   stream << strObj(invokersCfg_.get()) << CRLF;
 
    stream << prefix << "invokers []" << CRLF;
    invokers_.Display(stream, prefix + spaces(2), options);

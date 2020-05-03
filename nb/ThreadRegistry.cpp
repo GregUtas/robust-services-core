@@ -26,6 +26,7 @@
 #include "Debug.h"
 #include "Formatters.h"
 #include "NbCliParms.h"
+#include "Restart.h"
 #include "Singleton.h"
 #include "Thread.h"
 
@@ -107,7 +108,7 @@ ThreadRegistry::ThreadRegistry()
 {
    Debug::ft(ThreadRegistry_ctor);
 
-   threads_.Init(Thread::MaxId, Thread::CellDiff(), MemPerm);
+   threads_.Init(Thread::MaxId, Thread::CellDiff(), MemPermanent);
    statsGroup_.reset(new ThreadStatsGroup);
    ids_.reset(new IdMap);
 }
@@ -119,6 +120,8 @@ fn_name ThreadRegistry_dtor = "ThreadRegistry.dtor";
 ThreadRegistry::~ThreadRegistry()
 {
    Debug::ft(ThreadRegistry_dtor);
+
+   Debug::SwLog(ThreadRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -259,9 +262,7 @@ void ThreadRegistry::Shutdown(RestartLevel level)
       t->Shutdown(level);
    }
 
-   if(level < RestartCold) return;
-
-   statsGroup_.release();
+   Restart::Release(statsGroup_);
 }
 
 //------------------------------------------------------------------------------

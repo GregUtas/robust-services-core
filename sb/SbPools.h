@@ -182,7 +182,7 @@ private:
 
    //  The identifier of the PSM currently being audited.
    //
-   NodeBase::PooledObjectId psmToAudit_;
+   static NodeBase::PooledObjectId PsmToAudit_;
 };
 
 //------------------------------------------------------------------------------

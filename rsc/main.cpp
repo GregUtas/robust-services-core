@@ -56,8 +56,8 @@
 #include <iostream>
 #include <ostream>
 #include <string>
-#include "CfgParmRegistry.h"
 #include "Debug.h"
+#include "MainArgs.h"
 #include "RootThread.h"
 #include "Singleton.h"
 #include "SysTypes.h"  // modules follow
@@ -110,12 +110,10 @@ main_t main(int argc, char* argv[])
    std::cout << "ENTERING main(int argc, char* argv[])" << CRLF;
    std::cout << "  argc: " << argc << CRLF;
 
-   auto reg = Singleton< CfgParmRegistry >::Instance();
-
    for(auto i = 0; i < argc; ++i)
    {
       string arg(argv[i]);
-      reg->AddMainArg(arg);
+      MainArgs::PushBack(arg);
       std::cout << "  argv[" << i << "]: " << arg << CRLF;
    }
 

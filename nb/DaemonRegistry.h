@@ -42,15 +42,8 @@ namespace NodeBase
 class DaemonRegistry : public Permanent
 {
    friend class Singleton< DaemonRegistry >;
+   friend class Daemon;
 public:
-   //  Adds DAEMON to the registry.
-   //
-   bool BindDaemon(Daemon& daemon);
-
-   //  Removes DAEMON from the registry.
-   //
-   void UnbindDaemon(Daemon& daemon);
-
    //  Returns the daemon identified by NAME.
    //
    Daemon* FindDaemon(fixed_string name) const;
@@ -59,7 +52,11 @@ public:
    //
    const Registry< Daemon >& Daemons() const { return daemons_; }
 
-   //  Overridden to start up all daemons.
+   //  Overridden to invoke all daemons.
+   //
+   void Shutdown(RestartLevel level) override;
+
+   //  Overridden to invoke all daemons.
    //
    void Startup(RestartLevel level) override;
 
@@ -79,6 +76,14 @@ private:
    //  Private because this singleton is not subclassed.
    //
    ~DaemonRegistry();
+
+   //  Adds DAEMON to the registry.
+   //
+   bool BindDaemon(Daemon& daemon);
+
+   //  Removes DAEMON from the registry.
+   //
+   void UnbindDaemon(Daemon& daemon);
 
    //  The daemons in the registry.
    //

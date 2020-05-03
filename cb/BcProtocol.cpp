@@ -220,9 +220,9 @@ CipUdpService::CipUdpService() : port_(NilIpPort)
    Debug::ft(CipUdpService_ctor);
 
    auto port = std::to_string(CipIpPort);
-   cfgPort_.reset(new IpPortCfgParm
+   portCfg_.reset(new IpPortCfgParm
       (CipUdpPortKey, port.c_str(), &port_, CipUdpPortExpl, this));
-   Singleton< CfgParmRegistry >::Instance()->BindParm(*cfgPort_);
+   Singleton< CfgParmRegistry >::Instance()->BindParm(*portCfg_);
 }
 
 //------------------------------------------------------------------------------
@@ -281,9 +281,9 @@ CipTcpService::CipTcpService() : port_(NilIpPort)
    Debug::ft(CipTcpService_ctor);
 
    auto port = std::to_string(CipIpPort);
-   cfgPort_.reset(new IpPortCfgParm
+   portCfg_.reset(new IpPortCfgParm
       (CipTcpPortKey, port.c_str(), &port_, CipTcpPortExpl, this));
-   Singleton< CfgParmRegistry >::Instance()->BindParm(*cfgPort_);
+   Singleton< CfgParmRegistry >::Instance()->BindParm(*portCfg_);
 }
 
 //------------------------------------------------------------------------------

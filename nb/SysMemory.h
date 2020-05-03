@@ -22,6 +22,9 @@
 #ifndef SYSMEMORY_H_INCLUDED
 #define SYSMEMORY_H_INCLUDED
 
+#include <cstddef>
+#include "SysTypes.h"
+
 //------------------------------------------------------------------------------
 
 namespace NodeBase
@@ -30,7 +33,31 @@ namespace NodeBase
 //
 namespace SysMemory
 {
-   //e Define memory protection functions here.
+   //  Allocates SIZE memory, applying ATTRS to it.  Returns the address
+   //  where the segment begins.  If ADDR is provided, the segment begins
+   //  at that location on success.
+   //
+   void* Alloc(void* addr, size_t size, MemoryProtection attrs = MemReadWrite);
+
+   //  Frees the memory ADDR[0 to SIZE-1].  To free an entire segment that
+   //  was previously returned by Alloc, ADDR must be the the address that
+   //  was returned by ALLOC and SIZE must be 0.
+   //
+   bool Free(void* addr, size_t size);
+
+   //  Disables paging for ADDR[0 to SIZE-1].
+   //
+   bool Lock(void* addr, size_t size);
+
+   //  Enables paging for ADDR[0 to SIZE-1].  All pages in that range must
+   //  currently be locked.
+   //
+   bool Unlock(void* addr, size_t size);
+
+   //  Applies ATTRS to ADDR[0 to SIZE-1].  Returns 0 on success, else a
+   //  system-specific failure code.
+   //
+   int Protect(void* addr, size_t size, MemoryProtection attrs);
 }
 }
 #endif

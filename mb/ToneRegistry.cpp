@@ -40,7 +40,7 @@ ToneRegistry::ToneRegistry()
 {
    Debug::ft(ToneRegistry_ctor);
 
-   tones_.Init(Tone::MaxId, Tone::CellDiff(), MemDyn);
+   tones_.Init(Tone::MaxId, Tone::CellDiff(), MemDynamic);
 }
 
 //------------------------------------------------------------------------------
@@ -50,6 +50,8 @@ fn_name ToneRegistry_dtor = "ToneRegistry.dtor";
 ToneRegistry::~ToneRegistry()
 {
    Debug::ft(ToneRegistry_dtor);
+
+   Debug::SwLog(ToneRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

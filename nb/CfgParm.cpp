@@ -27,6 +27,7 @@
 #include "CfgTuple.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "Log.h"
 #include "NbLogs.h"
 #include "Singleton.h"
@@ -71,6 +72,7 @@ CfgParm::~CfgParm()
 {
    Debug::ft(CfgParm_dtor);
 
+   Debug::SwLog(CfgParm_dtor, UnexpectedInvocation, 0);
    Singleton< CfgParmRegistry >::Instance()->UnbindParm(*this);
 }
 
@@ -126,7 +128,7 @@ string CfgParm::GetInput() const
 
 c_string CfgParm::Key() const
 {
-   return tuple_->Key().c_str();
+   return tuple_->Key();
 }
 
 //------------------------------------------------------------------------------
@@ -153,8 +155,9 @@ void CfgParm::SetCurr()
 {
    Debug::ft(CfgParm_SetCurr);
 
+   FunctionGuard guard(Guard_MemUnprotect);
    auto input = GetInput();
-   tuple_->SetInput(input);
+   tuple_->SetInput(input.c_str());
    level_ = RestartNil;
 }
 
@@ -191,7 +194,7 @@ bool CfgParm::SetFromTuple()
 
 fn_name CfgParm_SetNext = "CfgParm.SetNext";
 
-bool CfgParm::SetNext(const string& input)
+bool CfgParm::SetNext(c_string input)
 {
    Debug::ft(CfgParm_SetNext);
 
@@ -203,10 +206,11 @@ bool CfgParm::SetNext(const string& input)
 
 fn_name CfgParm_SetValue = "CfgParm.SetValue";
 
-bool CfgParm::SetValue(const string& input, RestartLevel& level)
+bool CfgParm::SetValue(c_string input, RestartLevel& level)
 {
    Debug::ft(CfgParm_SetValue);
 
+   FunctionGuard guard(Guard_MemUnprotect);
    if(!SetNext(input)) return false;
    level = RestartRequired();
    if(level == RestartNil) SetCurr();

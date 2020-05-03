@@ -76,11 +76,8 @@ void NwModule::Shutdown(RestartLevel level)
 {
    Debug::ft(NwModule_Shutdown);
 
-   Singleton< NwIncrement >::Instance()->Shutdown(level);
-   Singleton< IpBufferPool >::Instance()->Shutdown(level);
    Singleton< IpPortRegistry >::Instance()->Shutdown(level);
    Singleton< IpServiceRegistry >::Instance()->Shutdown(level);
-   Singleton< NwTracer >::Instance()->Shutdown(level);
 
    if(level >= RestartCold) SysSocket::StopLayer();
 }
@@ -97,7 +94,7 @@ void NwModule::Startup(RestartLevel level)
 
    if((level >= RestartCold) && !SysSocket::StartLayer())
    {
-      Restart::Initiate(SocketLayerUnavailable, 0);
+      Restart::Initiate(NetworkLayerUnavailable, 0);
    }
 
    Singleton< NwTracer >::Instance()->Startup(level);

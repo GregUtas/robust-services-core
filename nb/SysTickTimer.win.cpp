@@ -24,7 +24,6 @@
 #include <sys/timeb.h>
 #include <windows.h>
 #include "Debug.h"
-#include "SysTypes.h"
 
 using std::string;
 
@@ -52,7 +51,7 @@ SysTickTimer::SysTickTimer() :
    startTick_ = TicksNow();
    startTime_ = SysTime();
 
-   startTimeStr_ = startTime_.to_str(SysTime::Numeric);
+   startTimeStr_ = startTime_.to_str(SysTime::Numeric).c_str();
    auto pos = startTimeStr_.find('.');
    if(pos != string::npos) startTimeStr_[pos] = '-';
 }
@@ -64,6 +63,8 @@ fn_name SysTickTimer_dtor = "SysTickTimer.dtor";
 SysTickTimer::~SysTickTimer()
 {
    Debug::ft(SysTickTimer_dtor);
+
+   Debug::SwLog(SysTickTimer_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

@@ -175,7 +175,6 @@ fixed_string LineTypeStrings[LineType_N + 1] =
    "access control",
    "invocation of Debug::ft",
    "definition of an fn_name",
-   "definition of an fn_name continued on a subsequent line",
    "#include directive",
    "preprocessor directive other than #include",
    "using statement",
@@ -211,7 +210,7 @@ const LineTypeAttr LineTypeAttr::Attrs[LineType_N + 1] =
 {
    //           c  x  m  b
    LineTypeAttr(T, T, T, F),  // SourceCode
-   LineTypeAttr(F, F, F, T),  // Blank
+   LineTypeAttr(F, F, F, T),  // BlankLine
    LineTypeAttr(F, F, F, T),  // EmptyComment
    LineTypeAttr(F, F, F, F),  // FileComment
    LineTypeAttr(F, F, F, F),  // SeparatorComment
@@ -224,7 +223,6 @@ const LineTypeAttr LineTypeAttr::Attrs[LineType_N + 1] =
    LineTypeAttr(T, F, F, F),  // AccessControl
    LineTypeAttr(T, T, T, F),  // DebugFt
    LineTypeAttr(T, T, T, F),  // FunctionName
-   LineTypeAttr(T, T, T, F),  // FunctionNameSplit
    LineTypeAttr(T, T, F, F),  // IncludeDirective
    LineTypeAttr(T, T, F, F),  // HashDirective
    LineTypeAttr(T, T, F, F),  // UsingStatement

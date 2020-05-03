@@ -78,7 +78,7 @@ protected:
    //  Calls SetNextValue based on the value of INPUT, which is converted
    //  to an integer by reading it from an istringstream.
    //
-   bool SetNext(const std::string& input) override;
+   bool SetNext(c_string input) override;
 private:
    //  A pointer to the field that contains the parameter's value.
    //

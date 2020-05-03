@@ -49,9 +49,9 @@ namespace SessionBase
 //
 class ProtocolSM : public ProtocolLayer
 {
+   friend class NodeBase::Q1Way< ProtocolSM >;
    friend class Message;
    friend class PsmContext;
-   friend class NodeBase::Q1Way< ProtocolSM >;
    friend class Timer;
 public:
    //  Initial state for PSMs.  If a PSM is in this state at the end of a

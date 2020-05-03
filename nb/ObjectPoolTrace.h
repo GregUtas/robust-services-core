@@ -39,9 +39,9 @@ namespace NodeBase
 class ObjectPoolTrace : public TimedRecord
 {
 public:
-   static const Id Dequeued  = 1;  // block returned to pool
-   static const Id Enqueued  = 2;  // block allocated from pool
-   static const Id Claimed   = 3;  // block claimed by application
+   static const Id Dequeued = 1;   // block returned to pool
+   static const Id Enqueued = 2;   // block allocated from pool
+   static const Id Claimed = 3;    // block claimed by application
    static const Id Recovered = 4;  // block recovered by audit
 
    //  RID is the type of event (see above), which occurred on OBJ.

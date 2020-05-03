@@ -24,8 +24,10 @@
 #include <ostream>
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "LogGroup.h"
 #include "NbCliParms.h"
+#include "Restart.h"
 #include "Singleton.h"
 
 using std::ostream;
@@ -110,7 +112,7 @@ LogGroupRegistry::LogGroupRegistry()
 {
    Debug::ft(LogGroupRegistry_ctor);
 
-   groups_.Init(MaxGroups, LogGroup::CellDiff(), MemDyn);
+   groups_.Init(MaxGroups, LogGroup::CellDiff(), MemImmutable);
    statsGroup_.reset(new LogStatsGroup);
 }
 
@@ -121,6 +123,8 @@ fn_name LogGroupRegistry_dtor = "LogGroupRegistry.dtor";
 LogGroupRegistry::~LogGroupRegistry()
 {
    Debug::ft(LogGroupRegistry_dtor);
+
+   Debug::SwLog(LogGroupRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -199,7 +203,7 @@ LogGroup* LogGroupRegistry::Group(id_t gid) const
 
 void LogGroupRegistry::Patch(sel_t selector, void* arguments)
 {
-   Dynamic::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------
@@ -213,6 +217,29 @@ void LogGroupRegistry::Shutdown(RestartLevel level)
    for(auto g = groups_.First(); g != nullptr; groups_.Next(g))
    {
       g->Shutdown(level);
+   }
+
+   FunctionGuard guard(Guard_ImmUnprotect);
+   Restart::Release(statsGroup_);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name LogGroupRegistry_Startup = "LogGroupRegistry.Startup";
+
+void LogGroupRegistry::Startup(RestartLevel level)
+{
+   Debug::ft(LogGroupRegistry_Startup);
+
+   if(statsGroup_ == nullptr)
+   {
+      FunctionGuard guard(Guard_ImmUnprotect);
+      statsGroup_.reset(new LogStatsGroup);
+   }
+
+   for(auto g = groups_.First(); g != nullptr; groups_.Next(g))
+   {
+      g->Startup(level);
    }
 }
 

@@ -36,13 +36,53 @@ Temporary::Temporary()
 
 //------------------------------------------------------------------------------
 
+fn_name Temporary_delete1 = "Temporary.operator delete";
+
+void Temporary::operator delete(void* addr)
+{
+   Debug::ft(Temporary_delete1);
+
+   Memory::Free(addr, MemTemporary);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Temporary_delete2 = "Temporary.operator delete[]";
+
+void Temporary::operator delete[](void* addr)
+{
+   Debug::ft(Temporary_delete2);
+
+   Memory::Free(addr, MemTemporary);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Temporary_delete3 = "Temporary.operator delete(place)";
+
+void Temporary::operator delete(void* addr, void* place) noexcept
+{
+   Debug::ft(Temporary_delete3);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Temporary_delete4 = "Temporary.operator delete[](place)";
+
+void Temporary::operator delete[](void* addr, void* place) noexcept
+{
+   Debug::ft(Temporary_delete4);
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Temporary_new1 = "Temporary.operator new";
 
 void* Temporary::operator new(size_t size)
 {
    Debug::ft(Temporary_new1);
 
-   return Memory::Alloc(size, MemTemp);
+   return Memory::Alloc(size, MemTemporary);
 }
 
 //------------------------------------------------------------------------------
@@ -53,7 +93,29 @@ void* Temporary::operator new[](size_t size)
 {
    Debug::ft(Temporary_new2);
 
-   return Memory::Alloc(size, MemTemp);
+   return Memory::Alloc(size, MemTemporary);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Temporary_new3 = "Temporary.operator new(place)";
+
+void* Temporary::operator new(size_t size, void* place)
+{
+   Debug::ft(Temporary_new3);
+
+   return place;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name Temporary_new4 = "Temporary.operator new[](place)";
+
+void* Temporary::operator new[](size_t size, void* place)
+{
+   Debug::ft(Temporary_new4);
+
+   return place;
 }
 
 //------------------------------------------------------------------------------

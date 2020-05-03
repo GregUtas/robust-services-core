@@ -63,6 +63,8 @@ TimerRegistry::~TimerRegistry()
 {
    Debug::ft(TimerRegistry_dtor);
 
+   Debug::SwLog(TimerRegistry_dtor, UnexpectedInvocation, 0);
+
    for(auto i = 0; i <= Timer::MaxQId; ++i)
    {
       timerq_[i].Purge();

@@ -26,6 +26,7 @@
 #include "Clock.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "LogBuffer.h"
 
 using std::ostream;
@@ -35,7 +36,7 @@ using std::string;
 
 namespace NodeBase
 {
-const size_t LogBufferRegistry::LogBufferSize = 1024;  // 1MB
+const size_t LogBufferRegistry::LogBufferSize = 1 * MBs;
 
 //------------------------------------------------------------------------------
 
@@ -53,6 +54,8 @@ fn_name LogBufferRegistry_dtor = "LogBufferRegistry.dtor";
 LogBufferRegistry::~LogBufferRegistry()
 {
    Debug::ft(LogBufferRegistry_dtor);
+
+   Debug::SwLog(LogBufferRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -175,8 +178,12 @@ void LogBufferRegistry::Startup(RestartLevel level)
 {
    Debug::ft(LogBufferRegistry_Startup);
 
-   //  Allocate a log buffer during each restart.
+   //  Allocate a log buffer during each restart.  When the system is booting,
+   //  don't unprotect immutable memory, because it needs to stay unprotected
+   //  during initialization.
    //
+   FunctionGuard guard(Guard_ImmUnprotect);
+
    buffer_[size_] = std::unique_ptr< LogBuffer >(new LogBuffer(LogBufferSize));
    ++size_;
 

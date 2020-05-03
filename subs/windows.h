@@ -25,8 +25,10 @@ uint8_t LOBYTE(WORD w);
 uint8_t HIBYTE(WORD w);
 DWORD   GetLastError();
 
-constexpr int ERROR_NOT_ENOUGH_MEMORY = 8;
-constexpr int ERROR_NOT_OWNER = 288;
+constexpr int ERROR_NOT_ENOUGH_MEMORY = 0x0008;
+constexpr int ERROR_NOT_SUPPORTED = 0x0032;
+constexpr int ERROR_INVALID_PARAMETER = 0x0057;
+constexpr int ERROR_NOT_OWNER = 0x0120;
 
 //------------------------------------------------------------------------------
 //
@@ -52,16 +54,41 @@ errno_t localtime_s(tm* Tm, const time_t* Time);
 
 //------------------------------------------------------------------------------
 //
+//  Windows memory
+//
+typedef uint64_t SIZE_T;
+
+constexpr DWORD PAGE_NOACCESS = 0x01;
+constexpr DWORD PAGE_READONLY = 0x02;
+constexpr DWORD PAGE_READWRITE = 0x04;
+constexpr DWORD PAGE_EXECUTE = 0x10;
+constexpr DWORD PAGE_EXECUTE_READ = 0x20;
+constexpr DWORD PAGE_EXECUTE_READWRITE = 0x40;
+
+constexpr DWORD MEM_COMMIT = 0x1000;
+constexpr DWORD MEM_RESERVE = 0x2000;
+constexpr DWORD MEM_RELEASE = 0x8000;
+
+void* VirtualAlloc(void* addr, SIZE_T size, DWORD allocType, DWORD prot);
+bool VirtualFree(void* addr, SIZE_T size, DWORD freeType);
+bool VirtualLock(void* addr, SIZE_T size);
+bool VirtualUnlock(void* addr, SIZE_T size);
+bool VirtualProtect(void* addr, SIZE_T size, DWORD newProt, DWORD* oldProt);
+
+//------------------------------------------------------------------------------
+//
 //  Windows heaps
 //
+constexpr DWORD HEAP_GENERATE_EXCEPTIONS = 0x00000004;
+
 typedef int32_t HRESULT;
 constexpr HRESULT S_OK = 0;
-typedef uint64_t SIZE_T;
 
 HANDLE  GetProcessHeap();
 DWORD   GetProcessHeaps(DWORD numberOfHeaps, HANDLE* processHeaps);
 HANDLE  HeapCreate(DWORD opts, SIZE_T initialSize, SIZE_T maxSize);
 HANDLE  HeapAlloc(HANDLE heap, DWORD flags, SIZE_T bytes);
+SIZE_T  HeapSize(HANDLE heap, DWORD flags, const void* mem);
 bool    HeapValidate(HANDLE heap, DWORD flags, const void* mem);
 bool    HeapFree(HANDLE heap, DWORD flags, void* mem);
 bool    HeapDestroy(HANDLE heap);
@@ -113,6 +140,7 @@ constexpr uint32_t DBG_CONTROL_C                   = 0x40010005;
 constexpr uint32_t DBG_CONTROL_BREAK               = 0x40010008;
 constexpr uint32_t STATUS_DATATYPE_MISALIGNMENT    = 0x80000002;
 constexpr uint32_t STATUS_ACCESS_VIOLATION         = 0xC0000005;
+constexpr uint32_t EXCEPTION_ACCESS_VIOLATION      = 0xC0000005;
 constexpr uint32_t STATUS_IN_PAGE_ERROR            = 0xC0000006;
 constexpr uint32_t STATUS_INVALID_HANDLE           = 0xC0000008;
 constexpr uint32_t STATUS_NO_MEMORY                = 0xC0000017;
@@ -132,7 +160,19 @@ constexpr uint32_t STATUS_INTEGER_OVERFLOW         = 0xC0000095;
 constexpr uint32_t STATUS_PRIVILEGED_INSTRUCTION   = 0xC0000096;
 constexpr uint32_t STATUS_STACK_OVERFLOW           = 0xC00000FD;
 
-typedef void (*_se_translator_function)(uint32_t ErrVal, void* ExceptionPointers);
+struct EXCEPTION_RECORD
+{
+   DWORD ExceptionCode;
+   DWORD NumberParameters;
+   uintptr_t ExceptionInformation[15];
+};
+
+struct _EXCEPTION_POINTERS
+{
+   EXCEPTION_RECORD* ExceptionRecord;
+};
+
+typedef void (*_se_translator_function)(uint32_t ErrVal, _EXCEPTION_POINTERS* ex);
 _se_translator_function _set_se_translator(_se_translator_function NewPtFunc);
 int _resetstkoflw();
 

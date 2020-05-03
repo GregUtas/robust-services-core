@@ -28,7 +28,6 @@
 #include "Log.h"
 #include "NbLogs.h"
 #include "Singleton.h"
-#include "SysTypes.h"
 
 using std::ostream;
 using std::string;
@@ -43,13 +42,13 @@ const char CfgTuple::CommentChar = '/';
 
 fn_name CfgTuple_ctor = "CfgTuple.ctor";
 
-CfgTuple::CfgTuple(const string& key, const string& input) :
+CfgTuple::CfgTuple(fixed_string key, fixed_string input) :
    key_(key),
    input_(input)
 {
    Debug::ft(CfgTuple_ctor);
 
-   if(key_.find_first_not_of(ValidKeyChars()) != string::npos)
+   if(key_.find_first_not_of(ValidKeyChars().c_str()) != string::npos)
    {
       auto log = Log::Create(ConfigLogGroup, ConfigKeyInvalid);
 
@@ -69,6 +68,7 @@ CfgTuple::~CfgTuple()
 {
    Debug::ft(CfgTuple_dtor);
 
+   Debug::SwLog(CfgTuple_dtor, UnexpectedInvocation, 0);
    Singleton< CfgParmRegistry >::Instance()->UnbindTuple(*this);
 }
 

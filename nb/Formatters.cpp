@@ -24,6 +24,7 @@
 #include <iomanip>
 #include <ios>
 #include <sstream>
+#include <typeinfo>
 #include "Base.h"
 
 using std::ostream;
@@ -141,22 +142,31 @@ string strCenter(const string& s, size_t breadth, size_t blanks)
 
 //------------------------------------------------------------------------------
 
-string strClass(const Base* obj, bool ns)
+string strClass(const void* obj, bool ns)
 {
-   if(obj == nullptr) return "nullptr";
-
-   string name(obj->ClassName());
-
-   if(name.find("class ") == 0) name.erase(0, 6);
-
-   if(!ns)
+   try
    {
-      auto pos = name.rfind(SCOPE_STR);
-      if(pos != string::npos) name.erase(0, pos + 2);
+      if(obj == nullptr) return "nullptr";
+
+      auto base = (const Base*) obj;
+      string name(typeid(*base).name());
+
+      if(name.find("class ") == 0) name.erase(0, 6);
+
+      if(!ns)
+      {
+         auto pos = name.rfind(SCOPE_STR);
+         if(pos != string::npos) name.erase(0, pos + 2);
+      }
+
+      ReplaceScopeOperators(name);
+      return name;
    }
 
-   ReplaceScopeOperators(name);
-   return name;
+   catch(...)
+   {
+      return ERROR_STR;
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -268,7 +278,7 @@ string strName(c_string name, int value)
 
 //------------------------------------------------------------------------------
 
-string strObj(const Base* obj, bool ns)
+string strObj(const void* obj, bool ns)
 {
    std::ostringstream stream;
 
@@ -284,6 +294,22 @@ string strPtr(const void* p)
 
    stream << p;
    return stream.str();
+}
+
+//------------------------------------------------------------------------------
+
+bool strToSize(const std::string& str, size_t& size)
+{
+   size = 0;
+   if(str.empty()) return false;
+
+   for(size_t i = 0; i < str.size(); ++i)
+   {
+      if(!isdigit(str[i])) return false;
+      size = (10 * size) + (str[i] - '0');
+   }
+
+   return true;
 }
 
 //------------------------------------------------------------------------------

@@ -23,7 +23,6 @@
 #define IPPORTREGISTRY_H_INCLUDED
 
 #include "Protected.h"
-#include <string>
 #include "NbTypes.h"
 #include "NwTypes.h"
 #include "Q1Way.h"
@@ -42,8 +41,8 @@ namespace NetworkBase
 //
 class IpPortRegistry : public NodeBase::Protected
 {
-   friend class IpPort;
    friend class NodeBase::Singleton< IpPortRegistry >;
+   friend class IpPort;
 public:
    //  Returns the element's IP address (hostname).
    //
@@ -99,11 +98,11 @@ private:
 
    //  The element's IP address.
    //
-   static SysIpL2Addr HostAddr_;
+   SysIpL2Addr hostAddr_;
 
    //  The element's IP address.
    //
-   static std::string HostAddrStr_;
+   NodeBase::ProtectedStr hostAddrStr_;
 
    //  Configuration parameter for the element's IP address.
    //

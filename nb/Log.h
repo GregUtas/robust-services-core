@@ -22,8 +22,7 @@
 #ifndef LOG_H_INCLUDED
 #define LOG_H_INCLUDED
 
-#include "Dynamic.h"
-#include <atomic>
+#include "Immutable.h"
 #include <cstddef>
 #include <cstdint>
 #include <iosfwd>
@@ -36,16 +35,17 @@ namespace NodeBase
 {
    class Alarm;
    class LogGroup;
+   struct LogDynamic;
 }
 
 //------------------------------------------------------------------------------
 
 namespace NodeBase
 {
-//  Interface for defining and generating logs.  Log definitions survive
-//  a warm restart but must be recreated during all others.
+//  Interface for defining and generating logs.  Logs survive all restarts
+//  so that they can be generated during a restart.
 //
-class Log : public Dynamic
+class Log : public Immutable
 {
    friend class Alarm;
 public:
@@ -125,7 +125,7 @@ public:
 
    //  Returns the number of logs generated so far.
    //
-   static size_t Count() { return SeqNo_; }
+   static size_t Count();
 
    //  Returns the offset to lid_.
    //
@@ -134,6 +134,10 @@ public:
    //  Overridden for restarts.
    //
    void Shutdown(RestartLevel level) override;
+
+   //  Overridden for restarts.
+   //
+   void Startup(RestartLevel level) override;
 
    //  Overridden to display member variables.
    //
@@ -162,7 +166,7 @@ private:
 
    //  The group to which the log belongs.
    //
-   LogGroup* group_;
+   LogGroup* const group_;
 
    //  The log's identifier within its group.
    //
@@ -170,19 +174,16 @@ private:
 
    //  The log's explanation.
    //
-   const DynString expl_;
+   const ImmutableStr expl_;
 
    //  The log's index in its LogGroup's registry.
    //
    RegCell lid_;
 
-   //  Whether to suppress or throttle the log.
+   //  Data that changes too frequently to unprotect and reprotect memory
+   //  when it needs to be modified.
    //
-   uint16_t interval_;
-
-   //  Counts occurrences of the log when interval_ is greater than 1.
-   //
-   uint16_t sequence_;
+   std::unique_ptr< LogDynamic > dyn_;
 
    //  The number of times the log was buffered for output.
    //
@@ -195,10 +196,6 @@ private:
    //  The number of times the log was discarded.
    //
    CounterPtr discardCount_;
-
-   //  Incremented when a log is created; assigned to it as a sequence number.
-   //
-   static std::atomic_size_t SeqNo_;
 };
 }
 #endif

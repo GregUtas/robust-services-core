@@ -327,7 +327,7 @@ private:
 
    //  The configuration parameter for port_.
    //
-   IpPortCfgParmPtr cfgPort_;
+   IpPortCfgParmPtr portCfg_;
 };
 
 //------------------------------------------------------------------------------
@@ -372,7 +372,7 @@ private:
 
    //  The configuration parameter for port_.
    //
-   IpPortCfgParmPtr cfgPort_;
+   IpPortCfgParmPtr portCfg_;
 };
 
 //------------------------------------------------------------------------------

@@ -96,7 +96,7 @@ const size_t LogBuffer::BundledLogSizeThreshold = 2048;
 
 fn_name LogBuffer_ctor = "LogBuffer.ctor";
 
-LogBuffer::LogBuffer(size_t kbs) :
+LogBuffer::LogBuffer(size_t size) :
    discards_(0),
    spooled_(nullptr),
    unspooled_(nullptr),
@@ -120,8 +120,9 @@ LogBuffer::LogBuffer(size_t kbs) :
    if(pos != string::npos) fileName_[pos] = '-';
    fileName_.append(".txt");
 
-   buff_ = static_cast< char* >(Memory::Alloc(kbs << 10, MemPerm));
-   size_ = kbs << 10;
+   if(size < (16 * kBs)) size = 16 * kBs;
+   buff_ = static_cast< char* >(Memory::Alloc(size, MemPermanent));
+   size_ = size;
    SetNext(reinterpret_cast< Entry* >(buff_));
 }
 
@@ -135,7 +136,7 @@ LogBuffer::~LogBuffer()
 
    MutexGuard guard(&LogBufferLock_);
 
-   Memory::Free(buff_);
+   Memory::Free(buff_, MemPermanent);
    buff_ = nullptr;
 }
 
@@ -208,8 +209,8 @@ void LogBuffer::Display(ostream& stream,
    stream << prefix << "spooled    : " << spooled_ << CRLF;
    stream << prefix << "unspooled  : " << unspooled_ << CRLF;
    stream << prefix << "next       : " << next_ << CRLF;
-   stream << prefix << "max (KBs)  : " << (max_ >> 10) << CRLF;
-   stream << prefix << "size (KBs) : " << (size_ >> 10) << CRLF;
+   stream << prefix << "max (kBs)  : " << (max_ / kBs) << CRLF;
+   stream << prefix << "size (kBs) : " << (size_ / kBs) << CRLF;
    stream << prefix << "buff       : " << intptr_t(buff_) << CRLF;
 }
 

@@ -42,6 +42,8 @@ using std::string;
 
 namespace NodeBase
 {
+fixed_string UnexpectedInvocation = "unexpected invocation";
+
 Flags Debug::SwFlags_ = Flags();
 Flags Debug::FcFlags_ = Flags(InitFlags::TraceInit() ? 1 << TracingActive : 0);
 

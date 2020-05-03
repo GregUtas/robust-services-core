@@ -136,14 +136,18 @@ TraceBuffer::TraceBuffer() :
 
 //------------------------------------------------------------------------------
 
+fn_name TraceBuffer_dtor = "TraceBuffer.dtor";
+
 TraceBuffer::~TraceBuffer()
 {
    //  Delete all trace records before freeing the buffer.
    //
+   Debug::SwLog(TraceBuffer_dtor, UnexpectedInvocation, 0);
+
    Clear();
-   Memory::Free(buff_);
+   Memory::Free(buff_, MemPermanent);
    buff_ = nullptr;
-   Memory::Free(funcs_);
+   Memory::Free(funcs_, MemPermanent);
    funcs_ = nullptr;
 }
 
@@ -196,21 +200,21 @@ bool TraceBuffer::AllocBuffers(size_t n, bool ex)
    size_t size = 1;
    size <<= n;
 
-   Memory::Free(buff_);
+   Memory::Free(buff_, MemPermanent);
    buff_ = nullptr;
-   Memory::Free(funcs_);
+   Memory::Free(funcs_, MemPermanent);
    funcs_ = nullptr;
    size_ = 0;
 
    buff_ = (TraceRecord**)
-      Memory::Alloc(size * sizeof(TraceRecord*), MemPerm, ex);
+      Memory::Alloc(size * sizeof(TraceRecord*), MemPermanent, ex);
    if(buff_ == nullptr) return false;
 
    funcs_ = (FunctionTrace*)
-      Memory::Alloc(size * sizeof(FunctionTrace), MemPerm, ex);
+      Memory::Alloc(size * sizeof(FunctionTrace), MemPermanent, ex);
    if(funcs_ == nullptr)
    {
-      Memory::Free(buff_);
+      Memory::Free(buff_, MemPermanent);
       buff_ = nullptr;
       return false;
    }
@@ -692,7 +696,7 @@ TraceRc TraceBuffer::SetTool(FlagId tid, bool value)
 {
    Debug::ft(TraceBuffer_SetTool);
 
-   //u This is invoked well before main(), so avoid creating ToolRegistry that
+   //  This is invoked well before main(), so avoid creating ToolRegistry that
    //  early.  Doing so causes heap corruption in Windows debug mode, but the
    //  reason has not been determined.
    //

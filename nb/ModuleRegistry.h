@@ -23,7 +23,6 @@
 #define MODULEREGISTRY_H_INCLUDED
 
 #include "Immutable.h"
-#include <iosfwd>
 #include "NbTypes.h"
 #include "Registry.h"
 #include "SysTypes.h"
@@ -42,8 +41,8 @@ namespace NodeBase
 class ModuleRegistry : public Immutable
 {
    friend class Singleton< ModuleRegistry >;
-   friend class InitThread;
    friend class Module;
+   friend class InitThread;
 public:
    //  Returns the module registered against MID.
    //
@@ -86,10 +85,6 @@ private:
    //
    static RestartLevel NextLevel();
 
-   //  Determines the restart level when the system is in service.
-   //
-   RestartLevel CalcLevel() const;
-
    //  Overridden to start up all modules.
    //
    void Startup(RestartLevel level) override;
@@ -98,25 +93,9 @@ private:
    //
    void Shutdown(RestartLevel level) override;
 
-   //  Returns stream_, creating it if it doesn't exist.
-   //
-   std::ostringstream* Stream();
-
    //  The global registry of modules.
    //
    Registry< Module > modules_;
-
-   //  The reason for a reinitialization or shutdown.
-   //
-   reinit_t reason_;
-
-   //  An error value for debugging.
-   //
-   debug32_t errval_;
-
-   //  A stream for recording the progress of system initialization.
-   //
-   ostringstreamPtr stream_;
 };
 }
 #endif

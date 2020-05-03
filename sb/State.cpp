@@ -120,6 +120,8 @@ State::~State()
 {
    Debug::ft(State_dtor);
 
+   Debug::SwLog(State_dtor, UnexpectedInvocation, 0);
+
    auto svc = Singleton< ServiceRegistry >::Instance()->GetService(sid_);
    if(svc != nullptr) svc->UnbindState(*this);
 }
@@ -208,7 +210,7 @@ ptrdiff_t State::CellDiff()
 void State::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    if(!options.test(DispVerbose)) return;
 
@@ -264,6 +266,6 @@ EventHandlerId State::MsgAnalyzer(ServicePortId pid) const
 
 void State::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 }

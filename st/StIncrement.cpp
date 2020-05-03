@@ -449,7 +449,7 @@ word StSaveCommand::ProcessSubcommand(CliThread& cli, id_t index) const
    if(buff->Empty()) return ExplainTraceRc(cli, BufferEmpty);
 
    auto yield = cli.GenerateReportPreemptably();
-   FunctionGuard guard(FunctionGuard::MakePreemptable, yield);
+   FunctionGuard guard(Guard_MakePreemptable, yield);
 
    std::unique_ptr< MscBuilder > msc(new MscBuilder(debug));
    rc = msc->Generate(*stream);
@@ -877,6 +877,8 @@ void StIncrement::Enter()
    //  once all factories and protocols have registered during system
    //  initialization.
    //
+   FunctionGuard guard(Guard_ImmUnprotect);
+
    if(FindCommand(InjectStr) == nullptr)
    {
       BindCommand(*new InjectCommand);

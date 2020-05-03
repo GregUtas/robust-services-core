@@ -22,6 +22,7 @@
 #include "ObjectPool.h"
 #include "CfgIntParm.h"
 #include "Dynamic.h"
+#include "Persistent.h"
 #include <bitset>
 #include <sstream>
 #include "Alarm.h"
@@ -32,6 +33,7 @@
 #include "Debug.h"
 #include "Element.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "Log.h"
 #include "Memory.h"
 #include "NbLogs.h"
@@ -39,6 +41,7 @@
 #include "ObjectPoolTrace.h"
 #include "Pooled.h"
 #include "Q1Link.h"
+#include "Q1Way.h"
 #include "Restart.h"
 #include "Singleton.h"
 #include "Statistics.h"
@@ -60,7 +63,6 @@ struct BlockHeader
 {
    ObjectPoolId pid : 8;       // the pool to which the block belongs
    PooledObjectSeqNo seq : 8;  // the block's sequence number
-   static const size_t Size;   // the size of a BlockHeader
 };
 
 //  This struct references the block for a Pooled and the location
@@ -71,6 +73,8 @@ struct ObjectBlock
    BlockHeader header;  // block management information
    Pooled obj;          // the actual location of the object
 };
+
+constexpr size_t BlockHeaderSize = sizeof(ObjectBlock) - sizeof(Pooled);
 
 //  The configuration parameter for an object pool, which expands
 //  the pool's size if the pool was created *before* its tuple was
@@ -106,10 +110,6 @@ public:
 
 //==============================================================================
 
-const size_t BlockHeader::Size = Memory::Align(sizeof(BlockHeader));
-
-//==============================================================================
-
 fn_name ObjectPoolSizeCfg_ctor = "ObjectPoolSizeCfg.ctor";
 
 ObjectPoolSizeCfg::ObjectPoolSizeCfg(ObjectPool* pool) :
@@ -128,6 +128,8 @@ fn_name ObjectPoolSizeCfg_dtor = "ObjectPoolSizeCfg.dtor";
 ObjectPoolSizeCfg::~ObjectPoolSizeCfg()
 {
    Debug::ft(ObjectPoolSizeCfg_dtor);
+
+   Debug::SwLog(ObjectPoolSizeCfg_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -138,13 +140,17 @@ void ObjectPoolSizeCfg::SetCurr()
 {
    Debug::ft(ObjectPoolSizeCfg_SetCurr);
 
+   FunctionGuard guard(Guard_MemUnprotect);
    CfgIntParm::SetCurr();
 
    //  If the pool contains no blocks, it is currently being constructed,
    //  so do nothing.  But if it already contains blocks, expand its size
    //  to the new value.
    //
-   if(pool_->currSegments_ > 0) pool_->AllocBlocks();
+   if(pool_->currSegments_ > 0)
+   {
+      pool_->AllocBlocks();
+   }
 }
 
 //==============================================================================
@@ -174,6 +180,45 @@ ObjectPoolStats::~ObjectPoolStats()
 }
 
 //==============================================================================
+//
+//  Data that changes too frequently to unprotect and reprotect memory
+//  when it needs to be modified.
+//
+struct ObjectPoolDynamic : public Persistent
+{
+   //  Constructor.
+   //
+   ObjectPoolDynamic() :
+      availCount_(0),
+      totalCount_(0),
+      delta_(0),
+      corruptQHead_(false)
+   {
+      freeq_.Init(Pooled::LinkDiff());
+   }
+
+   //  The queue of available blocks.
+   //
+   Q1Way< Pooled > freeq_;
+
+   //  The number of blocks in freeq_.
+   //
+   size_t availCount_;
+
+   //  The total number of blocks currently allocated.
+   //
+   size_t totalCount_;
+
+   //  Used to reduce calls to UpdateAlarm.
+   //
+   int8_t delta_;
+
+   //  Used to detect a corrupt queue header when auditing freeq_.
+   //
+   bool corruptQHead_;
+};
+
+//==============================================================================
 
 const ObjectPoolId ObjectPool::MaxId = 250;
 const uint8_t ObjectPool::OrphanThreshold = 2;
@@ -182,42 +227,35 @@ const size_t ObjectPool::OrphanMaxLogs = 8;
 fn_name ObjectPool_ctor = "ObjectPool.ctor";
 
 ObjectPool::ObjectPool
-   (ObjectPoolId pid, MemoryType type, size_t nBytes, const string& name) :
-   name_(name),
-   key_("NumOf" + name),
-   type_(type),
+   (ObjectPoolId pid, MemoryType mem, size_t size, const string& name) :
+   name_(name.c_str()),
+   key_("NumOf" + name_),
+   mem_(mem),
    blockSize_(0),
    segIncr_(0),
    segSize_(0),
    currSegments_(0),
    targSegments_(1),
-   cfgSegments_(nullptr),
-   availCount_(0),
-   totalCount_(0),
-   alarm_(nullptr),
-   delta_(0),
-   corruptQHead_(false)
+   targSegmentsCfg_(nullptr),
+   alarm_(nullptr)
 {
    Debug::ft(ObjectPool_ctor);
 
    //  The block size must account for the header above each Pooled object.
    //
-   blockSize_ = Memory::Align(nBytes) + Memory::Align(BlockHeader::Size);
+   blockSize_ = BlockHeaderSize + Memory::Align(size);
    segIncr_ = blockSize_ >> BYTES_PER_WORD_LOG2;
    segSize_ = segIncr_ * ObjectsPerSegment;
 
    pid_.SetId(pid);
-   freeq_.Init(Pooled::LinkDiff());
 
    for(auto i = 0; i < MaxSegments; ++i) blocks_[i] = nullptr;
-
-   stats_.reset(new ObjectPoolStats);
-   cfgSegments_.reset(new ObjectPoolSizeCfg(this));
-   Singleton< CfgParmRegistry >::Instance()->BindParm(*cfgSegments_);
-
-   Singleton< ObjectPoolRegistry >::Instance()->BindPool(*this);
-   alarmName_ = "OBJPOOL" + std::to_string(Pid());
+   dyn_.reset(new ObjectPoolDynamic);
+   targSegmentsCfg_.reset(new ObjectPoolSizeCfg(this));
+   Singleton< CfgParmRegistry >::Instance()->BindParm(*targSegmentsCfg_);
    EnsureAlarm();
+   stats_.reset(new ObjectPoolStats);
+   Singleton< ObjectPoolRegistry >::Instance()->BindPool(*this);
 }
 
 //------------------------------------------------------------------------------
@@ -228,9 +266,11 @@ ObjectPool::~ObjectPool()
 {
    Debug::ft(ObjectPool_dtor);
 
+   Debug::SwLog(ObjectPool_dtor, UnexpectedInvocation, 0);
+
    for(size_t i = 0; i < currSegments_; ++i)
    {
-      Memory::Free(blocks_[i]);
+      Memory::Free(blocks_[i], mem_);
       blocks_[i] = nullptr;
    }
 
@@ -249,7 +289,7 @@ bool ObjectPool::AllocBlocks()
    {
       auto pid = Pid();
       auto size = sizeof(uword) * segSize_;
-      blocks_[currSegments_] = (uword*) Memory::Alloc(size, type_, false);
+      blocks_[currSegments_] = (uword*) Memory::Alloc(size, mem_, false);
 
       if(blocks_[currSegments_] == nullptr)
       {
@@ -268,7 +308,7 @@ bool ObjectPool::AllocBlocks()
 
       auto bid = currSegments_ << ObjectsPerSegmentLog2;
       ++currSegments_;
-      totalCount_ = currSegments_ * ObjectsPerSegment;
+      dyn_->totalCount_ = currSegments_ * ObjectsPerSegment;
       auto seg = blocks_[currSegments_ - 1];
 
       for(size_t j = 0; j < segSize_; j += segIncr_)
@@ -334,7 +374,7 @@ void ObjectPool::AuditFreeq()
       //  the links are sane and that the count of free blocks is correct.
       //
       auto diff = Pooled::LinkDiff();
-      auto item = freeq_.tail_.next;
+      auto item = dyn_->freeq_.tail_.next;
 
       if(item != nullptr)
       {
@@ -359,16 +399,16 @@ void ObjectPool::AuditFreeq()
          Pooled* prev = nullptr;
          auto badLink = false;
 
-         while(count <= totalCount_)
+         while(count <= dyn_->totalCount_)
          {
             auto curr = (Pooled*) getptr1(item, diff);
 
             if(prev == nullptr)
             {
-               if(corruptQHead_)
+               if(dyn_->corruptQHead_)
                   badLink = true;
                else
-                  corruptQHead_ = true;
+                  dyn_->corruptQHead_ = true;
             }
             else
             {
@@ -397,22 +437,22 @@ void ObjectPool::AuditFreeq()
                if(log != nullptr)
                {
                   *log << Log::Tab << "pool=" << int(Pid());
-                  *log << " available=" << availCount_;
+                  *log << " available=" << dyn_->availCount_;
                   *log << " revised=" << count;
                   Log::Submit(log);
                }
 
                if(prev == nullptr)
                {
-                  corruptQHead_ = false;
-                  freeq_.Init(Pooled::LinkDiff());
-                  availCount_ = 0;
+                  dyn_->corruptQHead_ = false;
+                  dyn_->freeq_.Init(Pooled::LinkDiff());
+                  dyn_->availCount_ = 0;
                }
                else
                {
                   prev->corrupt_ = false;
-                  prev->link_.next = freeq_.tail_.next;  // tail now after PREV
-                  availCount_ = count;
+                  prev->link_.next = dyn_->freeq_.tail_.next;
+                  dyn_->availCount_ = count;
                }
 
                UpdateAlarm();
@@ -424,14 +464,14 @@ void ObjectPool::AuditFreeq()
             ++count;
 
             if(prev == nullptr)
-               corruptQHead_ = false;
+               dyn_->corruptQHead_ = false;
             else
                prev->corrupt_ = false;
 
             prev = curr;
             item = item->next;
 
-            if(freeq_.tail_.next == item) break;  // reached tail again
+            if(dyn_->freeq_.tail_.next == item) break;  // reached tail again
          }
       }
    }
@@ -439,21 +479,28 @@ void ObjectPool::AuditFreeq()
 
    //  The queue has been traversed.  Check the free count before returning.
    //
-   if(availCount_ != count)
+   if(dyn_->availCount_ != count)
    {
       auto log = Log::Create(ObjPoolLogGroup, ObjPoolQueueCount);
 
       if(log != nullptr)
       {
          *log << Log::Tab << "pool=" << int(Pid());
-         *log << " available=" << availCount_;
+         *log << " available=" << dyn_->availCount_;
          *log << " revised=" << count;
          Log::Submit(log);
       }
 
-      availCount_ = count;
+      dyn_->availCount_ = count;
       UpdateAlarm();
    }
+}
+
+//------------------------------------------------------------------------------
+
+size_t ObjectPool::AvailCount() const
+{
+   return dyn_->availCount_;
 }
 
 //------------------------------------------------------------------------------
@@ -506,22 +553,22 @@ bool ObjectPool::Corrupt(size_t n)
 
    if(!Element::RunningInLab()) return false;
 
-   if((n == 0) || freeq_.Empty())
+   if((n == 0) || dyn_->freeq_.Empty())
    {
-      freeq_.Corrupt(nullptr);
+      dyn_->freeq_.Corrupt(nullptr);
    }
    else
    {
-      auto p = freeq_.First();
+      auto p = dyn_->freeq_.First();
 
       while((p != nullptr) && (n > 1))
       {
-         freeq_.Next(p);
+         dyn_->freeq_.Next(p);
          --n;
       }
 
       if(p == nullptr) return false;
-      freeq_.Corrupt(p);
+      dyn_->freeq_.Corrupt(p);
    }
 
    return true;
@@ -535,29 +582,29 @@ Pooled* ObjectPool::DeqBlock(size_t size)
 {
    Debug::ft(ObjectPool_DeqBlock);
 
-   auto maxsize = blockSize_ - BlockHeader::Size;
+   auto maxsize = blockSize_ - BlockHeaderSize;
 
    if(size > maxsize)
    {
       Debug::SwLog(ObjectPool_DeqBlock, size, Pid());
-      throw AllocationException(type_, size);
+      throw AllocationException(mem_, size);
    }
 
    stats_->lowExcess_->Update(maxsize - size);
 
-   auto item = freeq_.Deq();
+   auto item = dyn_->freeq_.Deq();
 
    if(item == nullptr)
    {
       stats_->failCount_->Incr();
-      throw AllocationException(type_, size);
+      throw AllocationException(mem_, size);
    }
 
-   --availCount_;
-   stats_->lowCount_->Update(availCount_);
+   --dyn_->availCount_;
+   stats_->lowCount_->Update(dyn_->availCount_);
    stats_->allocCount_->Incr();
 
-   if(--delta_ <= -50)
+   if(--dyn_->delta_ <= -50)
    {
       UpdateAlarm();
    }
@@ -583,24 +630,22 @@ void ObjectPool::Display(ostream& stream,
 {
    Protected::Display(stream, prefix, options);
 
-   stream << prefix << "pid          : " << pid_.to_str() << CRLF;
-   stream << prefix << "name         : " << name_ << CRLF;
-   stream << prefix << "key          : " << key_ << CRLF;
-   stream << prefix << "type         : " << type_ << CRLF;
-   stream << prefix << "blockSize    : " << blockSize_ << CRLF;
-   stream << prefix << "segIncr      : " << segIncr_ << CRLF;
-   stream << prefix << "segSize      : " << segSize_ << CRLF;
-   stream << prefix << "currSegments : " << currSegments_ << CRLF;
-   stream << prefix << "targSegments : " << targSegments_ << CRLF;
-   stream << prefix << "cfgSegments  : ";
-   stream << strObj(cfgSegments_.get()) << CRLF;
-   stream << prefix << "availCount   : " << availCount_ << CRLF;
-   stream << prefix << "totalCount   : " << totalCount_ << CRLF;
-   stream << prefix << "alarmName    : " << alarmName_ << CRLF;
-   stream << prefix << "alarmExpl    : " << alarmExpl_ << CRLF;
-   stream << prefix << "alarm        : " << strObj(alarm_) << CRLF;
-   stream << prefix << "delta        : " << int(delta_) << CRLF;
-   stream << prefix << "corruptQHead : " << corruptQHead_ << CRLF;
+   stream << prefix << "pid             : " << pid_.to_str() << CRLF;
+   stream << prefix << "name            : " << name_ << CRLF;
+   stream << prefix << "key             : " << key_ << CRLF;
+   stream << prefix << "mem             : " << mem_ << CRLF;
+   stream << prefix << "blockSize       : " << blockSize_ << CRLF;
+   stream << prefix << "segIncr         : " << segIncr_ << CRLF;
+   stream << prefix << "segSize         : " << segSize_ << CRLF;
+   stream << prefix << "currSegments    : " << currSegments_ << CRLF;
+   stream << prefix << "targSegments    : " << targSegments_ << CRLF;
+   stream << prefix << "targSegmentsCfg : ";
+   stream << strObj(targSegmentsCfg_.get()) << CRLF;
+   stream << prefix << "availCount      : " << dyn_->availCount_ << CRLF;
+   stream << prefix << "totalCount      : " << dyn_->totalCount_ << CRLF;
+   stream << prefix << "alarm           : " << strObj(alarm_) << CRLF;
+   stream << prefix << "delta           : " << int(dyn_->delta_) << CRLF;
+   stream << prefix << "corruptQHead    : " << dyn_->corruptQHead_ << CRLF;
 
    auto lead = prefix + spaces(2);
    stream << prefix << "blocks [segment]" << CRLF;
@@ -701,8 +746,9 @@ void ObjectPool::EnqBlock(Pooled* obj, bool deleted)
       return;
    }
 
-   auto nullify = ObjectPoolRegistry::NullifyObjectData();
-   obj->Nullify(nullify ? blockSize_ - BlockHeader::Size : 0);
+   auto reg = Singleton< ObjectPoolRegistry >::Instance();
+   auto nullify = reg->NullifyObjectData();
+   obj->Nullify(nullify ? blockSize_ - BlockHeaderSize : 0);
 
    auto block = ObjToBlock(obj);
 
@@ -717,17 +763,17 @@ void ObjectPool::EnqBlock(Pooled* obj, bool deleted)
    obj->corrupt_ = false;
    obj->logged_ = false;
 
-   if(!freeq_.Enq(*obj))
+   if(!dyn_->freeq_.Enq(*obj))
    {
       Debug::SwLog(ObjectPool_EnqBlock, debug64_t(obj), pack2(2, Pid()));
       return;
    }
 
-   ++availCount_;
+   ++dyn_->availCount_;
 
    if(deleted)
    {
-      if(++delta_ >= 50)
+      if(++dyn_->delta_ >= 50)
       {
          UpdateAlarm();
       }
@@ -747,12 +793,14 @@ void ObjectPool::EnsureAlarm()
    //  If the high usage alarm is not registered, create it.
    //
    auto reg = Singleton< AlarmRegistry >::Instance();
-   alarm_ = reg->Find(alarmName_);
+   auto alarmName = "OBJPOOL" + std::to_string(Pid());
+   alarm_ = reg->Find(alarmName);
 
    if(alarm_ == nullptr)
    {
-      alarmExpl_ = "High percentage of in-use " + name_;
-      alarm_ = new Alarm(alarmName_, alarmExpl_, 30);
+      auto alarmExpl = "High percentage of in-use " + name_;
+      FunctionGuard guard(Guard_ImmUnprotect);
+      alarm_ = new Alarm(alarmName.c_str(), alarmExpl.c_str(), 30);
    }
 }
 
@@ -831,7 +879,7 @@ bool ObjectPool::IndicesToBid(size_t i, size_t j, PooledObjectId& bid) const
 
 size_t ObjectPool::InUseCount() const
 {
-   return totalCount_ - availCount_;
+   return dyn_->totalCount_ - dyn_->availCount_;
 }
 
 //------------------------------------------------------------------------------
@@ -956,7 +1004,7 @@ PooledObjectSeqNo ObjectPool::ObjSeq(const Pooled* obj)
 ObjectBlock* ObjectPool::ObjToBlock(const Pooled* obj)
 {
    if(obj == nullptr) return nullptr;
-   return (ObjectBlock*) getptr1(obj, BlockHeader::Size);
+   return (ObjectBlock*) getptr1(obj, BlockHeaderSize);
 }
 
 //------------------------------------------------------------------------------
@@ -1061,26 +1109,21 @@ void ObjectPool::Shutdown(RestartLevel level)
 {
    Debug::ft(ObjectPool_Shutdown);
 
-   switch(level)
-   {
-   case RestartCold:
-      stats_.release();
-      if((type_ == MemTemp) || (type_ == MemDyn)) break;
-      return;
-   case RestartWarm:
-      if(type_ == MemTemp) break;
-      return;
-   default:
-      return;
-   }
+   if(Restart::ClearsMemory(MemType())) return;
 
-   for(auto i = 0; i < MaxSegments; ++i) blocks_[i] = nullptr;
-   freeq_.Init(Pooled::LinkDiff());
-   currSegments_ = 0;
-   availCount_ = 0;
-   totalCount_ = 0;
-   delta_ = 0;
-   corruptQHead_ = false;
+   //  Reinitialize our segments and dynamic data if the restart
+   //  will destroy the heap where our blocks are allocated.
+   //
+   FunctionGuard guard(Guard_MemUnprotect);
+
+   Restart::Release(stats_);
+
+   if(Restart::ClearsMemory(mem_))
+   {
+      for(auto i = 0; i < MaxSegments; ++i) blocks_[i] = nullptr;
+      currSegments_ = 0;
+      new (dyn_.get()) ObjectPoolDynamic();
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -1091,13 +1134,13 @@ void ObjectPool::Startup(RestartLevel level)
 {
    Debug::ft(ObjectPool_Startup);
 
-   EnsureAlarm();
+   FunctionGuard guard(Guard_MemUnprotect);
 
    if(stats_ == nullptr) stats_.reset(new ObjectPoolStats);
 
    if(!AllocBlocks())
    {
-      Restart::Initiate(SystemOutOfMemory, Pid());
+      Restart::Initiate(ObjectPoolCreationFailed, Pid());
    }
 }
 
@@ -1110,7 +1153,7 @@ void ObjectPool::UpdateAlarm()
    Debug::ft(ObjectPool_UpdateAlarm);
 
    if(alarm_ == nullptr) return;
-   delta_ = 0;
+   dyn_->delta_ = 0;
 
    //  The alarm level is determined by the number of available blocks
    //  compared to the total number of blocks allocated:
@@ -1121,11 +1164,11 @@ void ObjectPool::UpdateAlarm()
    //
    auto status = NoAlarm;
 
-   if(availCount_ <= (totalCount_ >> 5))
+   if(dyn_->availCount_ <= (dyn_->totalCount_ >> 5))
       status = CriticalAlarm;
-   else if(availCount_ <= (totalCount_ >> 4))
+   else if(dyn_->availCount_ <= (dyn_->totalCount_ >> 4))
       status = MajorAlarm;
-   else if(availCount_ <= (totalCount_ >> 3))
+   else if(dyn_->availCount_ <= (dyn_->totalCount_ >> 3))
       status = MinorAlarm;
 
    auto log = alarm_->Create(ObjPoolLogGroup, ObjPoolBlocksInUse, status);
@@ -1134,12 +1177,12 @@ void ObjectPool::UpdateAlarm()
    //  When the number of available blocks drops to a dangerous level,
    //  add another segment to the pool.
    //
-   if(availCount_ <= (totalCount_ >> 6))
+   if(dyn_->availCount_ <= (dyn_->totalCount_ >> 6))
    {
       RestartLevel level;
       auto size = std::to_string(currSegments_ + 1);
 
-      if(cfgSegments_->SetValue(size, level))
+      if(targSegmentsCfg_->SetValue(size.c_str(), level))
       {
          stats_->expansions_->Incr();
 

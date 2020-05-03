@@ -1,0 +1,805 @@
+
+MODULE INITIALIZATION          msecs      invoked at
+pre-Module.Startup               161    11:29:26.379
+NodeBase.NbModule...                    11:29:26.540
+...initialized                   405
+NodeTools.NtModule...                   11:29:26.957
+...initialized                    79
+CodeTools.CtModule...                   11:29:27.047
+...initialized                    33
+NetworkBase.NwModule...                 11:29:27.090
+
+    NET500 3-May-2020 11:29:27.111 on Reigi {1}
+...initialized                   142
+SessionBase.SbModule...                 11:29:27.244
+...initialized                   145
+ControlNode.CnModule...                 11:29:27.401
+...initialized                    10
+SessionTools.StModule...                11:29:27.425
+...initialized                    27
+MediaBase.MbModule...                   11:29:27.465
+...initialized                    25
+CallBase.CbModule...                    11:29:27.505
+...initialized                    30
+PotsBase.PbModule...                    11:29:27.546
+...initialized                    38
+OperationsNode.OnModule...              11:29:27.600
+...initialized                    11
+RoutingNode.RnModule...                 11:29:27.624
+...initialized                    11
+ServiceNode.SnModule...                 11:29:27.647
+...initialized                    70
+AccessNode.AnModule...                  11:29:27.735
+...initialized                    23
+                               -----
+total initialization time       1397
+
+    NODE500 3-May-2020 11:29:27.788 on Reigi {2}
+
+    NODE103 3-May-2020 11:29:33.686 on Reigi {3}
+    in NodeBase.CliThread (tid=9, nid=0x00008c98)
+      reason : 0x1
+      errval : 0x3
+    Function Traceback:
+      NodeBase.Thread.FunctionInvoked @ thread.cpp + 2012[9]
+      NodeBase.Debug.ft @ debug.cpp + 71[9]
+      NodeBase.SysThread.Suspend @ systhread.win.cpp + 340[11]
+      NodeBase.SysThread.Delay @ systhread.cpp + 107[0]
+      NodeBase.Thread.Pause @ thread.cpp + 2579[28]
+      NodeBase.RootThread.Enter @ rootthread.cpp + 202[9]
+      NodeBase.Thread.Start @ thread.cpp + 3366[15]
+      NodeBase.Thread.EnterThread @ thread.cpp + 1812[0]
+      NodeBase.RootThread.Main @ rootthread.cpp + 297[9]
+      main @ main.cpp + 141[0]
+      invoke_main @ exe_common.inl + 78[27]
+      __scrt_common_main_seh @ exe_common.inl + 288[5]
+      __scrt_common_main @ exe_common.inl + 331[0]
+      mainCRTStartup @ exe_main.cpp + 17[0]
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
+
+RESTART TYPE: reload
+
+MODULE SHUTDOWN                msecs      invoked at
+Notifying threads...                    11:29:33.919
+
+    STATS400 3-May-2020 11:29:33.966 on Reigi {4}
+    For reporting period beginning at 11:29:26.554
+----------------------------------------------------------------------------
+Threads [ThreadId]                               Curr      Prev         All
+  root [1]
+                                       traps         0         0           0
+              running unpreemptable too long         0         0           0
+                                      yields       746         0         746
+                                  interrupts       744         0         744
+             longest length of message queue         *         *           *
+                 highest stack usage (words)       274         *         274
+           longest time scheduled in (usecs)      2086         *        2086
+                total execution time (msecs)        68         0          68
+  init [2]
+                                       traps         0         0           0
+              running unpreemptable too long         0         0           0
+                                      yields       788         0         788
+                                  interrupts       700         0         700
+             longest length of message queue         *         *           *
+                 highest stack usage (words)      2746         *        2746
+           longest time scheduled in (usecs)   1264213         *     1264213
+                total execution time (msecs)      1397         0        1397
+  file [3]
+                                       traps         0         0           0
+              running unpreemptable too long         0         0           0
+                                      yields       136         0         136
+                                  interrupts        65         0          65
+             longest length of message queue        38         *          38
+                 highest stack usage (words)       325         *         325
+           longest time scheduled in (usecs)    249196         *      249196
+                total execution time (msecs)       924         0         924
+  cout [4]
+                                       traps         0         0           0
+              running unpreemptable too long         0         0           0
+                                      yields       116         0         116
+                                  interrupts        55         0          55
+             longest length of message queue        29         *          29
+                 highest stack usage (words)       293         *         293
+           longest time scheduled in (usecs)      2045         *        2045
+                total execution time (msecs)        18         0          18
+  cin [5]
+                                       traps         0         0           0
+              running unpreemptable too long         0         0           0
+                                      yields         3         0           3
+                                  interrupts         1         0           1
+             longest length of message queue         *         *           *
+                 highest stack usage (words)       240         *         240
+           longest time scheduled in (usecs)       108         *         108
+                total execution time (msecs)         0         0           0
+  objaud [6]
+                                       traps         0         0           0
+              running unpreemptable too long         0         0           0
+                                      yields        38         0          38
+                                  interrupts         0         0           0
+             longest length of message queue         *         *           *
+                 highest stack usage (words)       424         *         424
+           longest time scheduled in (usecs)      2959         *        2959
+                total execution time (msecs)        16         0          16
+  stats [7]
+                                       traps         0         0           0
+              running unpreemptable too long         0         0           0
+                                      yields         1         0           1
+                                  interrupts         0         0           0
+             longest length of message queue         *         *           *
+                 highest stack usage (words)       248         *         248
+           longest time scheduled in (usecs)       224         *         224
+                total execution time (msecs)         0         0           0
+  log [8]
+                                       traps         0         0           0
+              running unpreemptable too long         0         0           0
+                                      yields         3         0           3
+                                  interrupts         2         0           2
+             longest length of message queue         *         *           *
+                 highest stack usage (words)       341         *         341
+           longest time scheduled in (usecs)     22958         *       22958
+                total execution time (msecs)        23         0          23
+  cli [9]
+                                       traps         0         0           0
+              running unpreemptable too long         0         0           0
+                                      yields        49         0          49
+                                  interrupts         2         0           2
+             longest length of message queue         *         *           *
+                 highest stack usage (words)      1046         *        1046
+           longest time scheduled in (usecs)    255805         *      255805
+                total execution time (msecs)       346         0         346
+  timer [10]
+                                       traps         0         0           0
+              running unpreemptable too long         0         0           0
+                                      yields         6         0           6
+                                  interrupts         1         0           1
+             longest length of message queue         *         *           *
+                 highest stack usage (words)       241         *         241
+           longest time scheduled in (usecs)       334         *         334
+                total execution time (msecs)         1         0           1
+  invoker [11]
+                                       traps         0         0           0
+              running unpreemptable too long         0         0           0
+                                      yields         1         0           1
+                                  interrupts         1         0           1
+             longest length of message queue         *         *           *
+                 highest stack usage (words)       259         *         259
+           longest time scheduled in (usecs)       168         *         168
+                total execution time (msecs)         0         0           0
+  tcpio [12]
+                                       traps         0         0           0
+              running unpreemptable too long         0         0           0
+                                      yields         3         0           3
+                                  interrupts         1         0           1
+             longest length of message queue         *         *           *
+                 highest stack usage (words)       285         *         285
+           longest time scheduled in (usecs)      1623         *        1623
+                total execution time (msecs)         2         0           2
+  udpio [13]
+                                       traps         0         0           0
+              running unpreemptable too long         0         0           0
+                                      yields         1         0           1
+                                  interrupts         1         0           1
+             longest length of message queue         *         *           *
+                 highest stack usage (words)       319         *         319
+           longest time scheduled in (usecs)       586         *         586
+                total execution time (msecs)         1         0           1
+  udpio [14]
+                                       traps         0         0           0
+              running unpreemptable too long         0         0           0
+                                      yields         1         0           1
+                                  interrupts         1         0           1
+             longest length of message queue         *         *           *
+                 highest stack usage (words)       317         *         317
+           longest time scheduled in (usecs)       653         *         653
+                total execution time (msecs)         1         0           1
+----------------------------------------------------------------------------
+Logs [group id_t]                                Curr      Prev         All
+  NODE group [1]
+    100
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    101
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    102
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    103
+                                    buffered         1         0           1
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    500
+                                    buffered         1         0           1
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+  SW group [2]
+    900
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+  CFG group [3]
+    100
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    101
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    102
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    103
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    104
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    500
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+  STATS group [4]
+    400
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+  THR group [5]
+    100
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    300
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    900
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    901
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    902
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    903
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    904
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    905
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    906
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    907
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+  OBJ group [6]
+    100
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    200
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    300
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    900
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    901
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    902
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    903
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+  NET group [7]
+    100
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    101
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    102
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    103
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    104
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    105
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    106
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    500
+                                    buffered         1         0           1
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    501
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    900
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    901
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+  SESS group [8]
+    100
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    200
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    500
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    900
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    901
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    902
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    903
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    904
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    905
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+  POTS group [9]
+    100
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    101
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    102
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    103
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    104
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    300
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    500
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+    900
+                                    buffered         0         0           0
+                                  suppressed         0         0           0
+                                   discarded         0         0           0
+----------------------------------------------------------------------------
+Object Pools [ObjectPoolId]                      Curr      Prev         All
+  MsgBuffers [1]
+                     fewest remaining blocks      1981         *        1981
+                      successful allocations       120         0         120
+                               deallocations       120         0         120
+                    unsuccessful allocations         0         0           0
+                   blocks recovered by audit         0         0           0
+          size of block minus largest object        48         *          48
+  IpBuffers [2]
+                     fewest remaining blocks         *         *           *
+                      successful allocations         0         0           0
+                               deallocations         0         0           0
+                    unsuccessful allocations         0         0           0
+                   blocks recovered by audit         0         0           0
+          size of block minus largest object         *         *           *
+  SbIpBuffers [3]
+                     fewest remaining blocks         *         *           *
+                      successful allocations         0         0           0
+                               deallocations         0         0           0
+                    unsuccessful allocations         0         0           0
+                   blocks recovered by audit         0         0           0
+          size of block minus largest object         *         *           *
+  BtIpBuffers [4]
+                     fewest remaining blocks         *         *           *
+                      successful allocations         0         0           0
+                               deallocations         0         0           0
+                    unsuccessful allocations         0         0           0
+                   blocks recovered by audit         0         0           0
+          size of block minus largest object         *         *           *
+  Contexts [5]
+                     fewest remaining blocks         *         *           *
+                      successful allocations         0         0           0
+                               deallocations         0         0           0
+                    unsuccessful allocations         0         0           0
+                   blocks recovered by audit         0         0           0
+          size of block minus largest object         *         *           *
+  Messages [6]
+                     fewest remaining blocks         *         *           *
+                      successful allocations         0         0           0
+                               deallocations         0         0           0
+                    unsuccessful allocations         0         0           0
+                   blocks recovered by audit         0         0           0
+          size of block minus largest object         *         *           *
+  MsgPorts [7]
+                     fewest remaining blocks         *         *           *
+                      successful allocations         0         0           0
+                               deallocations         0         0           0
+                    unsuccessful allocations         0         0           0
+                   blocks recovered by audit         0         0           0
+          size of block minus largest object         *         *           *
+  ProtocolSMs [8]
+                     fewest remaining blocks         *         *           *
+                      successful allocations         0         0           0
+                               deallocations         0         0           0
+                    unsuccessful allocations         0         0           0
+                   blocks recovered by audit         0         0           0
+          size of block minus largest object         *         *           *
+  Timers [9]
+                     fewest remaining blocks         *         *           *
+                      successful allocations         0         0           0
+                               deallocations         0         0           0
+                    unsuccessful allocations         0         0           0
+                   blocks recovered by audit         0         0           0
+          size of block minus largest object         *         *           *
+                       timeout messages sent         0         0           0
+  Events [10]
+                     fewest remaining blocks         *         *           *
+                      successful allocations         0         0           0
+                               deallocations         0         0           0
+                    unsuccessful allocations         0         0           0
+                   blocks recovered by audit         0         0           0
+          size of block minus largest object         *         *           *
+  ServiceSMs [11]
+                     fewest remaining blocks         *         *           *
+                      successful allocations         0         0           0
+                               deallocations         0         0           0
+                    unsuccessful allocations         0         0           0
+                   blocks recovered by audit         0         0           0
+          size of block minus largest object         *         *           *
+  MediaEndpts [12]
+                     fewest remaining blocks         *         *           *
+                      successful allocations         0         0           0
+                               deallocations         0         0           0
+                    unsuccessful allocations         0         0           0
+                   blocks recovered by audit         0         0           0
+          size of block minus largest object         *         *           *
+----------------------------------------------------------------------------
+Threads (all)                                    Curr      Prev         All
+                                   creations         0         0           0
+                                   deletions         0         0           0
+                                  interrupts      1514         0        1514
+                            context switches      1822         0        1822
+                     scheduled to run locked       221         0         221
+                                 preemptions        22         0          22
+                     scheduled after timeout        22         0          22
+                       resignaled to proceed         0         0           0
+     scheduling interrupt when thread locked         0         0           0
+                       selected to run again         0         0           0
+     race condition between selected threads         0         0           0
+                                       traps         0         0           0
+                             trap recoveries         0         0           0
+                                re-creations         0         0           0
+                           orphan detections         0         0           0
+                                       kills         0         0           0
+                    running thread not found         0         0           0
+                   locks recovered by kernel         0         0           0
+----------------------------------------------------------------------------
+IpPorts [ipport_t]                               Curr      Prev         All
+  Call Interworking [40000]
+                          receive operations         0         0           0
+                              bytes received         0         0           0
+                         most bytes received         *         *           *
+               most receives before yielding         *         *           *
+         messages discarded by input handler         0         0           0
+      ingress work rejected by input handler         0         0           0
+                             send operations         0         0           0
+                                  bytes sent         0         0           0
+                             most bytes sent         *         *           *
+      connection rejected: socket array full         0         0           0
+  POTS Shelf [40001]
+                          receive operations         0         0           0
+                              bytes received         0         0           0
+                         most bytes received         *         *           *
+               most receives before yielding         *         *           *
+         messages discarded by input handler         0         0           0
+      ingress work rejected by input handler         0         0           0
+                             send operations         0         0           0
+                                  bytes sent         0         0           0
+                             most bytes sent         *         *           *
+      connection rejected: socket array full         0         0           0
+  POTS Call [40002]
+                          receive operations         0         0           0
+                              bytes received         0         0           0
+                         most bytes received         *         *           *
+               most receives before yielding         *         *           *
+         messages discarded by input handler         0         0           0
+      ingress work rejected by input handler         0         0           0
+                             send operations         0         0           0
+                                  bytes sent         0         0           0
+                             most bytes sent         *         *           *
+      connection rejected: socket array full         0         0           0
+----------------------------------------------------------------------------
+Factories [Factory::Id]                          Curr      Prev         All
+  Test Sessions [1]
+            incoming intraprocessor messages         0         0           0
+            incoming interprocessor messages         0         0           0
+                    longest incoming message         *         *           *
+            outgoing intraprocessor messages         0         0           0
+            outgoing interprocessor messages         0         0           0
+                    longest outgoing message         *         *           *
+                            contexts created         0         0           0
+              retransmitted messages deleted         0         0           0
+            contexts freed on request-cancel         0         0           0
+  Outgoing CIP Calls [2]
+            incoming intraprocessor messages         0         0           0
+            incoming interprocessor messages         0         0           0
+                    longest incoming message         *         *           *
+            outgoing intraprocessor messages         0         0           0
+            outgoing interprocessor messages         0         0           0
+                    longest outgoing message         *         *           *
+                            contexts created         0         0           0
+              retransmitted messages deleted         0         0           0
+            contexts freed on request-cancel         0         0           0
+  Incoming CIP Calls [3]
+            incoming intraprocessor messages         0         0           0
+            incoming interprocessor messages         0         0           0
+                    longest incoming message         *         *           *
+            outgoing intraprocessor messages         0         0           0
+            outgoing interprocessor messages         0         0           0
+                    longest outgoing message         *         *           *
+                            contexts created         0         0           0
+              retransmitted messages deleted         0         0           0
+            contexts freed on request-cancel         0         0           0
+  Proxy Calls [4]
+            incoming intraprocessor messages         0         0           0
+            incoming interprocessor messages         0         0           0
+                    longest incoming message         *         *           *
+            outgoing intraprocessor messages         0         0           0
+            outgoing interprocessor messages         0         0           0
+                    longest outgoing message         *         *           *
+                            contexts created         0         0           0
+              retransmitted messages deleted         0         0           0
+            contexts freed on request-cancel         0         0           0
+  CIP Test Calls [5]
+            incoming intraprocessor messages         0         0           0
+            incoming interprocessor messages         0         0           0
+                    longest incoming message         *         *           *
+            outgoing intraprocessor messages         0         0           0
+            outgoing interprocessor messages         0         0           0
+                    longest outgoing message         *         *           *
+                            contexts created         0         0           0
+              retransmitted messages deleted         0         0           0
+            contexts freed on request-cancel         0         0           0
+  POTS Shelf [6]
+            incoming intraprocessor messages         0         0           0
+            incoming interprocessor messages         0         0           0
+                    longest incoming message         *         *           *
+            outgoing intraprocessor messages         0         0           0
+            outgoing interprocessor messages         0         0           0
+                    longest outgoing message         *         *           *
+                            contexts created         0         0           0
+              retransmitted messages deleted         0         0           0
+            contexts freed on request-cancel         0         0           0
+  POTS Basic Call [7]
+            incoming intraprocessor messages         0         0           0
+            incoming interprocessor messages         0         0           0
+                    longest incoming message         *         *           *
+            outgoing intraprocessor messages         0         0           0
+            outgoing interprocessor messages         0         0           0
+                    longest outgoing message         *         *           *
+                            contexts created         0         0           0
+              retransmitted messages deleted         0         0           0
+            contexts freed on request-cancel         0         0           0
+  POTS Multiplexer [8]
+            incoming intraprocessor messages         0         0           0
+            incoming interprocessor messages         0         0           0
+                    longest incoming message         *         *           *
+            outgoing intraprocessor messages         0         0           0
+            outgoing interprocessor messages         0         0           0
+                    longest outgoing message         *         *           *
+                            contexts created         0         0           0
+              retransmitted messages deleted         0         0           0
+            contexts freed on request-cancel         0         0           0
+----------------------------------------------------------------------------
+Invoker Pools [Faction]                          Curr      Prev         All
+  Payload [5]
+    ingress work queue:
+                           contexts dequeued         0         0           0
+                longest length of work queue         *         *           *
+                longest queue delay in msecs         *         *           *
+    egress work queue:
+                           contexts dequeued         0         0           0
+                longest length of work queue         *         *           *
+                longest queue delay in msecs         *         *           *
+    progress work queue:
+                           contexts dequeued         0         0           0
+                longest length of work queue         *         *           *
+                longest queue delay in msecs         *         *           *
+    immediate work queue:
+                           contexts dequeued         0         0           0
+                longest length of work queue         *         *           *
+                longest queue delay in msecs         *         *           *
+    pool statistics:
+           most transactions before yielding         *         *           *
+       contexts requeued after priority work         0         0           0
+        corrupt contexts found on work queue         0         0           0
+        times that all invokers were blocked         0         0           0
+----------------------------------------------------------------------------
+POTS Calls                                       Curr      Prev         All
+  Basic Calls
+                      originations attempted         0         0           0
+                      originations abandoned         0         0           0
+                      terminations attempted         0         0           0
+                      terminations abandoned         0         0           0
+                               calls alerted         0         0           0
+                              calls answered         0         0           0
+                               calls resumed         0         0           0
+                       proxy calls attempted         0         0           0
+                        proxy calls answered         0         0           0
+  Treatments (by Cause)
+                               Invalid Cause         0         0           0
+                          Unallocated Number         0         0           0
+                                Confirmation         0         0           0
+                             Address Timeout         0         0           0
+                        Normal Call Clearing         0         0           0
+                                   User Busy         0         0           0
+                            Alerting Timeout         0         0           0
+                              Answer Timeout         0         0           0
+                      Exchange Routing Error         0         0           0
+                    Destination Out Of Order         0         0           0
+                             Invalid Address         0         0           0
+                           Facility Rejected         0         0           0
+                           Temporary Failure         0         0           0
+                       Outgoing Calls Barred         0         0           0
+                       Incoming Calls Barred         0         0           0
+                             Call Redirected         0         0           0
+                       Excessive Redirection         0         0           0
+                   Message Invalid For State         0         0           0
+                            Parameter Absent         0         0           0
+                      Protocol Timer Expired         0         0           0
+                               Reset Circuit         0         0           0
+----------------------------------------------------------------------------
+...threads to exit: 11            77
+
+    THR907 3-May-2020 11:29:34.066 on Reigi {5}
+    thread=NetworkBase.UdpIoThread (tid=13, nid=0x000065c8)
+    mutexes=1
+
+    THR901 3-May-2020 11:29:34.067 on Reigi {7}
+    thread=SessionBase.TimerThread (tid=10, nid=0x00005618)
+    signal=122 (SIGCLOSE: Non-Error Shutdown)
+
+    THR901 3-May-2020 11:29:34.067 on Reigi {10}
+    thread=NodeBase.CliThread (tid=9, nid=0x00008c98)
+    signal=122 (SIGCLOSE: Non-Error Shutdown)
+
+    THR901 3-May-2020 11:29:34.090 on Reigi {15}
+    thread=NetworkBase.UdpIoThread (tid=13, nid=0x000065c8)
+    signal=122 (SIGCLOSE: Non-Error Shutdown)
+
+    THR901 3-May-2020 11:29:34.072 on Reigi {13}
+    thread=SessionBase.InvokerThread (tid=11, nid=0x00009300)
+    signal=122 (SIGCLOSE: Non-Error Shutdown)
+
+    THR901 3-May-2020 11:29:34.067 on Reigi {6}
+    thread=NetworkBase.UdpIoThread (tid=14, nid=0x000088f4)
+    signal=122 (SIGCLOSE: Non-Error Shutdown)
+
+    THR901 3-May-2020 11:29:34.073 on Reigi {14}
+    thread=NodeBase.ObjectPoolAudit (tid=6, nid=0x00007838)
+    signal=122 (SIGCLOSE: Non-Error Shutdown)
+
+    THR901 3-May-2020 11:29:34.067 on Reigi {8}
+    thread=NodeBase.StatisticsThread (tid=7, nid=0x00006c0c)
+    signal=122 (SIGCLOSE: Non-Error Shutdown)
+
+    THR901 3-May-2020 11:29:34.117 on Reigi {16}
+    thread=NetworkBase.TcpIoThread (tid=12, nid=0x00009f50)
+    signal=122 (SIGCLOSE: Non-Error Shutdown)
+
+    THR901 3-May-2020 11:29:34.071 on Reigi {11}
+    thread=NodeBase.CoutThread (tid=4, nid=0x000061f4)
+    signal=122 (SIGCLOSE: Non-Error Shutdown)
+
+    THR901 3-May-2020 11:29:34.067 on Reigi {9}
+    thread=NodeBase.FileThread (tid=3, nid=0x00006d80)
+    signal=122 (SIGCLOSE: Non-Error Shutdown)
+
+    THR901 3-May-2020 11:29:34.071 on Reigi {12}
+    thread=NodeBase.LogThread (tid=8, nid=0x000071f8)
+    signal=122 (SIGCLOSE: Non-Error Shutdown)
+
+...threads exited: 11            322
+AccessNode.AnModule...                  11:29:34.258
+...shut down                      17
+ServiceNode.SnModule...                 11:29:34.294
+...shut down                      21
+RoutingNode.RnModule...                 11:29:34.334
+...shut down                      18
+OperationsNode.OnModule...              11:29:34.370
+...shut down                      18
+PotsBase.PbModule...                    11:29:34.408
+...shut down                      18
+CallBase.CbModule...                    11:29:34.444
+...shut down                      20
+MediaBase.MbModule...                   11:29:34.483
+...shut down                      17
+SessionTools.StModule...                11:29:34.519
+...shut down                     269
+ControlNode.CnModule...                 11:29:34.875
+...shut down                      26
+SessionBase.SbModule...                 11:29:34.927
+...shut down                      26
+NetworkBase.NwModule...                 11:29:34.979
+...shut down                      41
+CodeTools.CtModule...                   11:29:35.044
+...shut down                      21
+NodeTools.NtModule...                   11:29:35.084
+...shut down                      26
+NodeBase.NbModule...                    11:29:35.134
+...shut down                      29
+                               -----
+total shutdown time             1260
+
+MODULE INITIALIZATION          msecs      invoked at
+NodeBase.NbModule...                    11:29:35.197

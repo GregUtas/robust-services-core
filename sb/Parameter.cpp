@@ -75,10 +75,10 @@ Parameter::~Parameter()
 {
    Debug::ft(Parameter_dtor);
 
+   Debug::SwLog(Parameter_dtor, UnexpectedInvocation, 0);
+
    auto pro = Singleton< ProtocolRegistry >::Instance()->GetProtocol(prid_);
-
    if(pro == nullptr) return;
-
    pro->UnbindParameter(*this);
 }
 
@@ -125,7 +125,7 @@ CliParm* Parameter::CreateCliParm(Usage use) const
 void Parameter::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    if(!options.test(DispVerbose)) return;
 
@@ -220,7 +220,7 @@ Parameter::TestRc Parameter::InjectMsg
 
 void Parameter::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

@@ -40,7 +40,7 @@ IpServiceRegistry::IpServiceRegistry()
 {
    Debug::ft(IpServiceRegistry_ctor);
 
-   services_.Init(IpService::MaxId, IpService::CellDiff(), MemProt);
+   services_.Init(IpService::MaxId, IpService::CellDiff(), MemImmutable);
 }
 
 //------------------------------------------------------------------------------
@@ -50,6 +50,8 @@ fn_name IpServiceRegistry_dtor = "IpServiceRegistry.dtor";
 IpServiceRegistry::~IpServiceRegistry()
 {
    Debug::ft(IpServiceRegistry_dtor);
+
+   Debug::SwLog(IpServiceRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -68,7 +70,7 @@ bool IpServiceRegistry::BindService(IpService& service)
 void IpServiceRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    stream << prefix << "services [id_t]" << CRLF;
    services_.Display(stream, prefix + spaces(2), options);
@@ -90,7 +92,21 @@ IpService* IpServiceRegistry::GetService(const string& name) const
 
 void IpServiceRegistry::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name IpServiceRegistry_Shutdown = "IpServiceRegistry.Shutdown";
+
+void IpServiceRegistry::Shutdown(RestartLevel level)
+{
+   Debug::ft(IpServiceRegistry_Shutdown);
+
+   for(auto s = services_.First(); s != nullptr; services_.Next(s))
+   {
+      s->Shutdown(level);
+   }
 }
 
 //------------------------------------------------------------------------------

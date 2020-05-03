@@ -906,9 +906,10 @@ word ImportCommand::ProcessCommand(CliThread& cli) const
    if(!GetString(subdir, cli)) return -1;
    cli.EndOfInput(false);
 
-   auto path = Library::SourcePath();
+   auto lib = Singleton< Library >::Instance();
+   string path(lib->SourcePath());
    if(!subdir.empty()) path += PATH_SEPARATOR + subdir;
-   auto rc = Singleton< Library >::Instance()->Import(name, path, expl);
+   auto rc = lib->Import(name, path, expl);
    return cli.Report(rc, expl);
 }
 

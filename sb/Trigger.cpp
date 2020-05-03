@@ -54,6 +54,7 @@ Trigger::~Trigger()
 {
    Debug::ft(Trigger_dtor);
 
+   Debug::SwLog(Trigger_dtor, UnexpectedInvocation, 0);
    initq_.Purge();
 }
 
@@ -82,7 +83,7 @@ bool Trigger::BindInitiator(Initiator& init)
 void Trigger::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    if(!options.test(DispVerbose)) return;
 
@@ -95,7 +96,7 @@ void Trigger::Display(ostream& stream,
 
 void Trigger::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

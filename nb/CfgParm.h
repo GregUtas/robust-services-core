@@ -73,7 +73,7 @@ public:
    //  of restart needed to make the change.  If LFVEL is RestartNil, the
    //  new value is already in effect, and no restart is required.
    //
-   bool SetValue(const std::string& input, RestartLevel& level);
+   bool SetValue(c_string input, RestartLevel& level);
 
    //  Returns the offset to link_.
    //
@@ -119,7 +119,7 @@ private:
    //  a subclass-specific next_ field to the future value.  If INPUT is not
    //  valid, it returns false and does nothing.
    //
-   virtual bool SetNext(const std::string& input) = 0;
+   virtual bool SetNext(c_string input) = 0;
 
    //  A subclass may override this to specify the level of restart that is
    //  needed to invoke SetCurr (that is, to modify its parameter's value).

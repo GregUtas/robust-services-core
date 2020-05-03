@@ -42,7 +42,7 @@ PotsProfileRegistry::PotsProfileRegistry()
    Debug::ft(PotsProfileRegistry_ctor);
 
    auto max = Address::LastDN - Address::FirstDN + 1;
-   profiles_.Init(max, PotsProfile::CellDiff(), MemProt);
+   profiles_.Init(max, PotsProfile::CellDiff(), MemProtected);
 }
 
 //------------------------------------------------------------------------------
@@ -52,6 +52,8 @@ fn_name PotsProfileRegistry_dtor = "PotsProfileRegistry.dtor";
 PotsProfileRegistry::~PotsProfileRegistry()
 {
    Debug::ft(PotsProfileRegistry_dtor);
+
+   Debug::SwLog(PotsProfileRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -124,8 +126,6 @@ void PotsProfileRegistry::Shutdown(RestartLevel level)
 {
    Debug::ft(PotsProfileRegistry_Shutdown);
 
-   if(level < RestartCold) return;
-
    PotsCircuit::ResetStateCounts(level);
 
    for(auto p = profiles_.Last(); p != nullptr; profiles_.Prev(p))
@@ -141,8 +141,6 @@ fn_name PotsProfileRegistry_Startup = "PotsProfileRegistry.Startup";
 void PotsProfileRegistry::Startup(RestartLevel level)
 {
    Debug::ft(PotsProfileRegistry_Startup);
-
-   if(level < RestartCold) return;
 
    for(auto p = profiles_.First(); p != nullptr; profiles_.Next(p))
    {

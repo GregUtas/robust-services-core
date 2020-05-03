@@ -24,6 +24,7 @@
 #include <string>
 #include "Debug.h"
 #include "Formatters.h"
+#include "Restart.h"
 #include "SysTypes.h"
 #include "Tones.h"
 
@@ -42,8 +43,8 @@ PotsTreatmentRegistry::PotsTreatmentRegistry()
    Debug::ft(PotsTreatmentRegistry_ctor);
 
    for(auto c = 0; c <= Cause::MaxInd; ++c) causeToQId_[c] = NIL_ID;
-   treatmentqs_.Init
-      (PotsTreatmentQueue::MaxQId, PotsTreatmentQueue::CellDiff(), MemProt);
+   treatmentqs_.Init(PotsTreatmentQueue::MaxQId,
+      PotsTreatmentQueue::CellDiff(), MemProtected);
 }
 
 //------------------------------------------------------------------------------
@@ -53,6 +54,8 @@ fn_name PotsTreatmentRegistry_dtor = "PotsTreatmentRegistry.dtor";
 PotsTreatmentRegistry::~PotsTreatmentRegistry()
 {
    Debug::ft(PotsTreatmentRegistry_dtor);
+
+   Debug::SwLog(PotsTreatmentRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -142,7 +145,7 @@ void PotsTreatmentRegistry::Startup(RestartLevel level)
    //  allow them to be provisioned dynamically, along with the cause to
    //  treatment queue mappings.
    //
-   if(level < RestartReload) return;
+   if(!Restart::ClearsMemory(MemType())) return;
 
    auto IdleQId = PotsTreatmentQueue::IdleQId;
    new PotsTreatmentQueue(IdleQId);

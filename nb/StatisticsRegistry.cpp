@@ -46,10 +46,10 @@ StatisticsRegistry::StatisticsRegistry()
 {
    Debug::ft(StatisticsRegistry_ctor);
 
-   stats_.Init(MaxStats, Statistic::CellDiff(), MemDyn);
-   groups_.Init(MaxGroups, StatisticsGroup::CellDiff(), MemDyn);
+   stats_.Init(MaxStats, Statistic::CellDiff(), MemDynamic);
+   groups_.Init(MaxGroups, StatisticsGroup::CellDiff(), MemDynamic);
 
-   StartTicks_ = Clock::TicksZero();
+   StartTicks_ = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -59,6 +59,8 @@ fn_name StatisticsRegistry_dtor = "StatisticsRegistry.dtor";
 StatisticsRegistry::~StatisticsRegistry()
 {
    Debug::ft(StatisticsRegistry_dtor);
+
+   Debug::SwLog(StatisticsRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -158,14 +160,12 @@ void StatisticsRegistry::Startup(RestartLevel level)
 {
    Debug::ft(StatisticsRegistry_Startup);
 
-   //  The registry is reconstructed after a cold or reload restart and sets
-   //  StartTicks_ to the system's original boot time.  It needs to be reset
-   //  to the current time, given that all statistics have been cleared.
+   //  If StartTicks_ is zero, the registry has just been constructed or
+   //  reconstructed.  Statistics can only start to be accumulated now,
+   //  so set StartTicks_ to the current time.
    //
-   switch(level)
+   if(StartTicks_ == 0)
    {
-   case RestartReload:
-   case RestartCold:
       StartTicks_ = Clock::TicksNow();
    }
 }

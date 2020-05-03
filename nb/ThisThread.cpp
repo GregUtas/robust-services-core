@@ -50,34 +50,6 @@ void ThisThread::IncludeInTrace()
 
 //------------------------------------------------------------------------------
 
-void ThisThread::MakePreemptable()
-{
-   Thread::MakePreemptable();
-}
-
-//------------------------------------------------------------------------------
-
-void ThisThread::MakeUnpreemptable()
-{
-   Thread::MakeUnpreemptable();
-}
-
-//------------------------------------------------------------------------------
-
-void ThisThread::MemProtect()
-{
-   Thread::MemProtect();
-}
-
-//------------------------------------------------------------------------------
-
-void ThisThread::MemUnprotect()
-{
-   Thread::MemUnprotect();
-}
-
-//------------------------------------------------------------------------------
-
 DelayRc ThisThread::Pause(msecs_t msecs)
 {
    return Thread::Pause(msecs);

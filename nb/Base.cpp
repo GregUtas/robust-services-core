@@ -22,7 +22,6 @@
 #include "Base.h"
 #include <new>
 #include <ostream>
-#include <typeinfo>
 #include "Debug.h"
 #include "Formatters.h"
 #include "NbTypes.h"
@@ -54,21 +53,6 @@ void Base::ClaimBlocks()
    for(size_t i = 0; i < count; ++i)
    {
       objects[i]->Claim();
-   }
-}
-
-//------------------------------------------------------------------------------
-
-const char* Base::ClassName() const
-{
-   try
-   {
-      return typeid(*this).name();
-   }
-
-   catch(...)
-   {
-      return ERROR_STR;
    }
 }
 

@@ -49,6 +49,8 @@ fn_name EventHandler_dtor = "EventHandler.dtor";
 EventHandler::~EventHandler()
 {
    Debug::ft(EventHandler_dtor);
+
+   Debug::SwLog(EventHandler_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

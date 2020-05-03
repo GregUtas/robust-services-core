@@ -196,7 +196,7 @@ bool InvokerThread::Recover()
    //  If a restart is underway, just exit, which is what we wanted to do
    //  anyway.
    //
-   if(Restart::GetLevel() >= RestartWarm)
+   if(Restart::GetStatus() != Running)
    {
       return false;
    }
@@ -266,23 +266,15 @@ void InvokerThread::Shutdown(RestartLevel level)
    //  Our destructor always invokes this, and it is also invoked if we
    //  failed to exit during a restart.
    //  o If no restart is underway, there is nothing to do.
-   //  o During a cold restart, our context's heap will be deleted, so
-   //    nullify it.
-   //  o During a warm restart, put our context back on a work queue so
-   //    that it can be serviced after the restart is over.
+   //  o If our context's heap will be deleted, nullify it.
+   //  o If our context will survive the restart, put it back on a work
+   //    queue so that it can be serviced after the restart is over.
    //
-   switch(level)
-   {
-   case RestartNil:
-      break;
+   if(level == RestartNil) return;
 
-   case RestartWarm:
-      if(ctx_ == nullptr) return;
-      Singleton< PayloadInvokerPool >::Instance()->Requeue(*ctx_.release());
-      break;
+   Restart::Release(ctx_);
+   if(ctx_ == nullptr) return;
 
-   default:
-      ctx_.release();
-   }
+   Singleton< PayloadInvokerPool >::Instance()->Requeue(*ctx_.release());
 }
 }

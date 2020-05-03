@@ -55,6 +55,7 @@ Module::~Module()
 {
    Debug::ft(Module_dtor);
 
+   Debug::SwLog(Module_dtor, UnexpectedInvocation, 0);
    Singleton< ModuleRegistry >::Instance()->UnbindModule(*this);
 }
 

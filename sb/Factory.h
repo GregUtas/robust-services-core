@@ -22,7 +22,7 @@
 #ifndef FACTORY_H_INCLUDED
 #define FACTORY_H_INCLUDED
 
-#include "Protected.h"
+#include "Immutable.h"
 #include <cstddef>
 #include <cstdint>
 #include <iosfwd>
@@ -51,10 +51,10 @@ namespace SessionBase
 //  or protocol.  This is a virtual base class.  Applications subclass from
 //  MsgFactory, PsmFactory, or SsmFactory.
 //
-class Factory : public NodeBase::Protected
+class Factory : public NodeBase::Immutable
 {
-   friend class InvokerPool;
    friend class NodeBase::Registry< Factory >;
+   friend class InvokerPool;
 public:
    //  Allows "Id" to refer to a factory identifier in this class hierarchy.
    //

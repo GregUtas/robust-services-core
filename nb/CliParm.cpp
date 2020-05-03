@@ -36,7 +36,7 @@ using std::string;
 namespace NodeBase
 {
 fixed_string CliParm::ParmExplPrefix = " : ";
-fixed_string CliParm::AnyStringParm  = "<str>";
+fixed_string CliParm::AnyStringParm = "<str>";
 const col_t CliParm::ParmWidth = 17;
 const char CliParm::MandParmBegin = '(';
 const char CliParm::MandParmEnd = ')';
@@ -73,6 +73,8 @@ fn_name CliParm_dtor = "CliParm.dtor";
 CliParm::~CliParm()
 {
    Debug::ft(CliParm_dtor);
+
+   Debug::SwLog(CliParm_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -104,7 +106,7 @@ ptrdiff_t CliParm::CellDiff()
 void CliParm::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    stream << prefix << "pid : " << pid_.to_str() << CRLF;
    stream << prefix << "opt : " << opt_ << CRLF;
@@ -375,7 +377,7 @@ CliParm::Rc CliParm::Mismatch(const CliThread& cli, const string& type)
 
 void CliParm::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

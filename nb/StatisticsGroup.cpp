@@ -68,6 +68,7 @@ StatisticsGroup::~StatisticsGroup()
 {
    Debug::ft(StatisticsGroup_dtor);
 
+   Debug::SwLog(StatisticsGroup_dtor, UnexpectedInvocation, 0);
    Singleton< StatisticsRegistry >::Instance()->UnbindGroup(*this);
 }
 

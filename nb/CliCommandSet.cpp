@@ -23,7 +23,6 @@
 #include <sstream>
 #include <string>
 #include "CliBuffer.h"
-#include "CliCookie.h"
 #include "CliThread.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -104,17 +103,6 @@ bool CliCommandSet::BindParm(CliParm& parm)
 
 //------------------------------------------------------------------------------
 
-fn_name CliCommandSet_DescendTo = "CliCommandSet.DescendTo";
-
-void CliCommandSet::DescendTo(CliCookie& cookie, uint32_t index)
-{
-   Debug::ft(CliCommandSet_DescendTo);
-
-   cookie.Descend(index);
-}
-
-//------------------------------------------------------------------------------
-
 void CliCommandSet::Patch(sel_t selector, void* arguments)
 {
    CliText::Patch(selector, arguments);
@@ -160,7 +148,6 @@ word CliCommandSet::ProcessCommand(CliThread& cli) const
    {
       if(c->Text() == s)
       {
-         DescendTo(cli.Cookie(), c->GetId());
          return cli.InvokeSubcommand(*c);
       }
    }

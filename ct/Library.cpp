@@ -34,10 +34,12 @@
 #include "CxxString.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "Interpreter.h"
 #include "LibraryTypes.h"
 #include "LibraryVarSet.h"
 #include "NbCliParms.h"
+#include "Restart.h"
 #include "Singleton.h"
 #include "ThisThread.h"
 
@@ -61,7 +63,6 @@ fixed_string VarsStr  = "$vars";
 
 //------------------------------------------------------------------------------
 
-string Library::SourcePath_ = EMPTY_STR;
 const size_t Library::MaxDirs = 500;
 const size_t Library::MaxFiles = 30000;
 fixed_string Library::SubsDir = "subs";
@@ -82,24 +83,14 @@ Library::Library() :
 {
    Debug::ft(Library_ctor);
 
-   dirs_.Init(MaxDirs, CodeDir::CellDiff(), MemPerm);
-   files_.Init(MaxFiles, CodeFile::CellDiff(), MemPerm);
+   dirs_.Init(MaxDirs, CodeDir::CellDiff(), MemPermanent);
+   files_.Init(MaxFiles, CodeFile::CellDiff(), MemPermanent);
    vars_.Init(LibrarySet::LinkDiff());
 
-   //  After a restart, sourcePathCfg_ may still exist, so try to look it
-   //  up before creating it.
-   //
-   auto reg = Singleton< CfgParmRegistry >::Instance();
-
-   sourcePathCfg_.reset
-      (static_cast< CfgStrParm* >(reg->FindParm("SourcePath")));
-
-   if(sourcePathCfg_ == nullptr)
-   {
-      sourcePathCfg_.reset(new CfgStrParm
-         ("SourcePath", EMPTY_STR, &SourcePath_, "source code directory"));
-      reg->BindParm(*sourcePathCfg_);
-   }
+   sourcePath_.reset(new ProtectedStr);
+   sourcePathCfg_.reset(new CfgStrParm
+      ("SourcePath", EMPTY_STR, sourcePath_.get(), "source code directory"));
+   Singleton< CfgParmRegistry >::Instance()->BindParm(*sourcePathCfg_);
 }
 
 //------------------------------------------------------------------------------
@@ -265,7 +256,7 @@ void Library::Display(ostream& stream,
 {
    Base::Display(stream, prefix, options);
 
-   stream << prefix << "SourcePath    : " << SourcePath_ << CRLF;
+   stream << prefix << "sourcePath    : " << sourcePath_.get() << CRLF;
    stream << prefix << "sourcePathCfg : " << sourcePathCfg_.get() << CRLF;
    stream << prefix << "dirs : " << CRLF;
    dirs_.Display(stream, prefix + spaces(2), options);
@@ -610,15 +601,17 @@ void Library::Shutdown(RestartLevel level)
 {
    Debug::ft(Library_Shutdown);
 
-   //  The library is now preserved during restarts.
-   //
-   if(level < RestartReboot) return;
+   Restart::Release(sourcePathCfg_);
+   if(Restart::ClearsMemory(MemProtected)) sourcePath_.release();
 
-   //  Delete variables, files, and directories.
+   //  The library is preserved during restarts.
    //
-   vars_.Purge();
-   files_.Purge();
-   dirs_.Purge();
+   if(level == RestartReboot)
+   {
+      vars_.Purge();
+      files_.Purge();
+      dirs_.Purge();
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -629,9 +622,25 @@ void Library::Startup(RestartLevel level)
 {
    Debug::ft(Library_Startup);
 
-   //  The library is now preserved during restarts.
+   //  Recreate our configuration parameter and its string if either no longer
+   //  exists.
    //
-   if(level < RestartReboot) return;
+   if(sourcePath_ == nullptr)
+   {
+      sourcePath_.reset(new ProtectedStr);
+   }
+
+   if(sourcePathCfg_ == nullptr)
+   {
+      FunctionGuard guard(Guard_MemUnprotect);
+      sourcePathCfg_.reset(new CfgStrParm
+         ("SourcePath", EMPTY_STR, sourcePath_.get(), "source code directory"));
+      Singleton< CfgParmRegistry >::Instance()->BindParm(*sourcePathCfg_);
+   }
+
+   //  Create the library's sets if they don't exist.
+   //
+   if(varSet_ != nullptr) return;
 
    //  Create the fixed sets.
    //

@@ -28,7 +28,7 @@
 
 namespace NodeBase
 {
-//  The default heap, which allocates memory of type MemPerm.  The heap for
+//  The default heap, which allocates memory of type MemPermanent.  The heap for
 //  each memory type is a singleton.  However, each singleton registers with
 //  Singletons, which also needs to allocate memory from a heap.  This class
 //  therefore resolves the circular dependency between heaps and singletons.

@@ -22,9 +22,10 @@
 #ifndef SYSHEAP_H_INCLUDED
 #define SYSHEAP_H_INCLUDED
 
-#include "Object.h"
+#include "Heap.h"
 #include <cstddef>
 #include <iosfwd>
+#include <set>
 #include "SysDecls.h"
 #include "SysTypes.h"
 
@@ -34,62 +35,55 @@ namespace NodeBase
 {
 //  Operating system abstraction layer: heap.
 //
-class SysHeap : public Object
+class SysHeap : public Heap
 {
 public:
    //  Virtual to allow subclassing.
    //
    virtual ~SysHeap();
 
-   //  Deleted to prohibit copying.
+   //  Overridden to return the heap's address.
    //
-   SysHeap(const SysHeap& that) = delete;
-   SysHeap& operator=(const SysHeap& that) = delete;
+   void* Addr() const override;
+
+   //  Overridden to return the heap's size.
+   //
+   size_t Size() const override { return size_; }
+
+   //  Overridden to return the type of memory that the heap manages.
+   //
+   MemoryType Type() const override { return type_; }
 
    //  Allocates SIZE bytes.
    //
-   void* Alloc(size_t size);
+   void* Alloc(size_t size) override;
 
-   //  Frees the memory segment at ADDR, which is SIZE bytes long.
+   //  Frees the memory segment at ADDR.
    //
-   void Free(void* addr, size_t size);
+   void Free(void* addr) override;
 
-   //  Validates the heap.  If ADDR is not nullptr, only the memory
-   //  segment alleged to be at ADDR is validated.
+   //  Returns the size of the block at ADDR.
    //
-   bool Validate(const void* addr);
+   size_t BlockToSize(const void* addr) const override;
 
-   //  Returns the type of memory that the heap manages.
+   //  Validates the heap.
    //
-   MemoryType Type() const { return type_; }
+   bool Validate(const void* addr) const override;
 
-   //  Returns the address of the heap itself.
+   //  Returns true if the heap supports write-protection.
    //
-   const void* Heap() const { return heap_; }
+   bool CanBeProtected() const override;
 
-   //  Returns the number of bytes currently allocated from the heap.
+   //  Returns false on Windows, where VirtualProtect can fail if
+   //  used on a heap.  Use NbHeap for a heap that requires write
+   //  protection.
    //
-   size_t BytesInUse() const { return inUse_; }
+   int SetPermissions(MemoryProtection attrs) override;
 
-   //  Returns the maximum number of bytes allocated from the heap.
+   //  Inserts, in HEAPS, the address of each heap allocated by this process.
+   //  Updates EXPL with an explanation if a problem occurs.
    //
-   size_t MaxBytesInUse() const { return maxInUse_; }
-
-   //  Returns the number of successful calls to Alloc().
-   //
-   size_t AllocCount() const { return allocs_; }
-
-   //  Returns the number of unsuccessful calls to Alloc().
-   //
-   size_t FailCount() const { return fails_; }
-
-   //  Returns the number of times that Free() released memory.
-   //
-   size_t FreeCount() const { return frees_; }
-
-   //  Displays all heaps allocated by this process.
-   //
-   static void DisplayHeaps(std::ostream& stream);
+   static void ListHeaps(std::set< void* >& heaps, std::ostringstream& expl);
 
    //  Overridden to display member variables.
    //
@@ -99,56 +93,25 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
-
-   //  Overridden to allocate memory from the default heap.
-   //
-   static void* operator new(size_t size);
-   static void* operator new[](size_t size);
-
-   //  Overridden to return memory to the default heap.
-   //
-   static void operator delete(void* addr);
-   static void operator delete[](void* addr);
-
-   //  Deleted to prevent allocation on another heap.
-   //
-   static void* operator new(size_t size, MemoryType type) = delete;
-   static void* operator new[](size_t size, MemoryType type) = delete;
 protected:
-   //  Creates a heap for memory of TYPE.  If SIZE is 0, the heap can grow
-   //  indefinitely, else it is limited to SIZE bytes.  If TYPE is MemPerm,
-   //  the constructor acts as a wrapper for the default heap.  Protected
-   //  because this class is virtual.
+   //  Creates a heap for memory of TYPE.  If SIZE is 0, the heap's
+   //  size can expand, else it is limited to SIZE bytes.  If TYPE
+   //  is MemPermanent, this creates a wrapper for the default heap.
+   //  Protected because this class is virtual.
    //
-   SysHeap(MemoryType type, size_t bytes);
+   SysHeap(MemoryType type, size_t size);
 private:
-   //  The type of memory provided by the heap.
-   //
-   const MemoryType type_;
-
    //  The native handle to the underlying heap.
    //
    SysHeap_t heap_;
 
-   //  The number of bytes currently allocated on the heap.
+   //  The heap's size.
    //
-   size_t inUse_;
+   const size_t size_;
 
-   //  The number of successful calls to Alloc().
+   //  The type of memory that the heap manages.
    //
-   size_t allocs_;
-
-   //  The number of unsuccessful calls to Alloc().
-   //
-   size_t fails_;
-
-   //  The number of times that Free() released memory.
-   //
-   size_t frees_;
-
-   //  The maximum number of bytes allocated on the heap.
-   //
-   size_t maxInUse_;
+   const MemoryType type_;
 };
 }
 #endif

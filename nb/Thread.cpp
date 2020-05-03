@@ -22,7 +22,6 @@
 #include "Thread.h"
 #include "Dynamic.h"
 #include "FunctionTrace.h"
-#include "Permanent.h"
 #include <cctype>
 #include <csignal>
 #include <cstdlib>
@@ -35,7 +34,6 @@
 #include <utility>
 #include "Algorithms.h"
 #include "AllocationException.h"
-#include "Array.h"
 #include "CliThread.h"
 #include "CoutThread.h"
 #include "Daemon.h"
@@ -46,6 +44,7 @@
 #include "InitThread.h"
 #include "LeakyBucketCounter.h"
 #include "Log.h"
+#include "Memory.h"
 #include "MsgBuffer.h"
 #include "MutexGuard.h"
 #include "MutexRegistry.h"
@@ -114,7 +113,7 @@ class ThreadTrace : public FunctionTrace
 {
 public:
    static const Id PauseEnter = 1;  // entering Pause
-   static const Id PauseExit  = 2;  // returning from Pause
+   static const Id PauseExit = 2;   // returning from Pause
 
    //  Creates a trace record for the event identified by RID, which
    //  occurred in function FUNC.  INFO is any debugging information.
@@ -243,7 +242,7 @@ void* ThreadTrace::operator new(size_t size)
 {
    auto addr = ::operator new(size, std::nothrow);
    if(addr != nullptr) return addr;
-   throw AllocationException(MemPerm, size);
+   throw AllocationException(MemPermanent, size);
 }
 
 //==============================================================================
@@ -432,6 +431,8 @@ fn_name ContextSwitches_dtor = "ContextSwitches.dtor";
 ContextSwitches::~ContextSwitches()
 {
    Debug::ft(ContextSwitches_dtor);
+
+   Debug::SwLog(ContextSwitches_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -715,101 +716,148 @@ TraceRc ContextSwitches::LogSwitches(bool on)
 
 //==============================================================================
 //
-//  Registry for orphans.  An orphan is a deleted Thread that has not yet
-//  exited.  Its SysThread object still exists, and it must be exited at
-//  the first opportunity.
+//  The state of a Thread object.
 //
-class Orphans : public Permanent
+enum ThreadState
 {
-   friend class Singleton< Orphans >;
+   Constructing,  // under construction
+   Constructed,   // not in the registry
+   Deleted        // unexpectedly deleted
+};
+
+//  Registry for threads in transient states.  It exists to handle the
+//  following scenarios:
+//  1. A thread runs before its thread object is fully constructed.
+//  2. A thread runs without a thread object because
+//     a) its constructor trapped after its native thread was created
+//     b) it was deleted by another thread
+//     c) it deleted itself
+//  In case #1, the thread must wait to run.  In the other cases, it
+//  must exit as soon as possible.
+//
+class Threads : public Permanent
+{
+   friend class Singleton< Threads >;
 public:
    //  Deleted to prohibit copying.
    //
-   Orphans(const Orphans& that) = delete;
-   Orphans& operator=(const Orphans& that) = delete;
+   Threads(const Threads& that) = delete;
+   Threads& operator=(const Threads& that) = delete;
 
-   //  Adds THR to the list of orphans when a Thread object is unexpectedly
-   //  deleted.
+   //  Places THR in STATE.
    //
-   void Register(SysThread* thr);
+   void SetState(SysThread* thr, ThreadState state);
 
-   //  If the running thread is in the list of orphans, returns true after
-   //  deleting its SysThread object.
+   //  Returns the running thread's state.  If it is Deleted, the
+   //  thread is removed from the registry and is expected to exit.
+   //  Returns Constructing if the thread is not found.
    //
-   bool ExitNow();
+   ThreadState GetState();
+
+   //  Returns true if the running thread has been deleted.
+   //
+   bool IsDeleted() const;
 private:
    //  Private because this singleton is not subclassed.
    //
-   Orphans();
+   Threads();
 
    //  Private because this singleton is not subclassed.
    //
-   ~Orphans();
+   ~Threads();
 
-   //  The orphans array.
+   //  An entry for a thread.
    //
-   Array< SysThread* > orphans_;
+   typedef std::pair< SysThread*, ThreadState > Entry;
+
+   //  The threads in transient states.
+   //
+   std::map< SysThread*, ThreadState > threads_;
 };
 
 //------------------------------------------------------------------------------
 //
 //  Critical section lock for the array of orphans.
 //
-SysMutex OrphansLock_("OrphansLock");
+SysMutex ThreadsLock_("ThreadsLock");
 
 //------------------------------------------------------------------------------
 
-fn_name Orphans_ctor = "Orphans.ctor";
+fn_name Threads_ctor = "Threads.ctor";
 
-Orphans::Orphans()
+Threads::Threads()
 {
-   Debug::ft(Orphans_ctor);
-
-   orphans_.Init(32, MemPerm);
+   Debug::ft(Threads_ctor);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Orphans_dtor = "Orphans.dtor";
+fn_name Threads_dtor = "Threads.dtor";
 
-Orphans::~Orphans()
+Threads::~Threads()
 {
-   Debug::ft(Orphans_dtor);
+   Debug::ft(Threads_dtor);
+
+   Debug::SwLog(Threads_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Orphans_ExitNow = "Orphans.ExitNow";
+fn_name Threads_GetState = "Threads.GetState";
 
-bool Orphans::ExitNow()
+ThreadState Threads::GetState()
 {
-   Debug::ft(Orphans_ExitNow);
+   Debug::ft(Threads_GetState);
 
-   //  Search the list of orphans for one whose native thread identifier is
-   //  the same as the running thread.  If such a thread exists, delete it
-   //  and move the last entry up to keep the entries contiguous.
-   //
    auto pid = SysThread::RunningThreadId();
 
-   MutexGuard guard(&OrphansLock_);
+   MutexGuard guard(&ThreadsLock_);
 
-   for(size_t i = 0; i < orphans_.Size(); ++i)
+   for(auto entry = threads_.begin(); entry != threads_.cend(); ++entry)
    {
-      auto orphan = orphans_[i];
-
-      if(orphan->Nid() == pid)
+      if(entry->first->Nid() == pid)
       {
-         //  The orphan's entry must be overwritten before invoking other
-         //  functions so that we don't cause a stack overflow.  If the
-         //  orphan holds a lock, the platform kernel must recover it now,
-         //  when the orphan is deleted, or in a moment, when the orphan
-         //  exits.
-         //
-         orphans_.Erase(i);
-         ThreadAdmin::Incr(ThreadAdmin::Orphans);
-         delete orphan;
-         Debug::SwLog(Orphans_ExitNow, "orphan exited", pid);
-         return true;
+         auto thread = entry->first;
+         auto state = entry->second;
+
+         switch(state)
+         {
+         case Constructing:
+            return Constructing;
+
+         case Constructed:
+            threads_.erase(entry);
+            return Constructed;
+
+         case Deleted:
+            threads_.erase(entry);
+            ThreadAdmin::Incr(ThreadAdmin::Orphans);
+            delete thread;
+            Debug::SwLog(Threads_GetState, "orphan exited", pid);
+            return Deleted;
+
+         default:
+            Debug::SwLog(Threads_GetState, "invalid state", state);
+         }
+      }
+   }
+
+   return Constructing;
+}
+
+//------------------------------------------------------------------------------
+
+bool Threads::IsDeleted() const
+{
+   auto pid = SysThread::RunningThreadId();
+
+   MutexGuard guard(&ThreadsLock_);
+
+   for(auto entry = threads_.begin(); entry != threads_.cend(); ++entry)
+   {
+      if(entry->first->Nid() == pid)
+      {
+         return (entry->second == Deleted);
       }
    }
 
@@ -818,19 +866,28 @@ bool Orphans::ExitNow()
 
 //------------------------------------------------------------------------------
 
-fn_name Orphans_Register = "Orphans.Register";
+fn_name Threads_SetState = "Threads.SetState";
 
-void Orphans::Register(SysThread* thr)
+void Threads::SetState(SysThread* thr, ThreadState state)
 {
-   Debug::ft(Orphans_Register);
+   Debug::ft(Threads_SetState);
 
    if(thr == nullptr) return;
 
-   MutexGuard guard(&OrphansLock_);
+   MutexGuard guard(&ThreadsLock_);
 
-   if(!orphans_.PushBack(thr))
+   auto entry = threads_.find(thr);
+
+   if(entry != threads_.cend())
    {
-      Debug::SwLog(Orphans_Register, "failed to register orphan", thr->Nid());
+      if(state != Constructing)
+         entry->second = state;
+      else
+         Debug::SwLog(Threads_SetState, "thread already constructing", state);
+   }
+   else
+   {
+      threads_.insert(Entry(thr, state));
    }
 }
 
@@ -878,9 +935,13 @@ public:
    //
    uint8_t unpreempts_;
 
+   //  Calls to ImmUnprotect minus calls to ImmProtect.
+   //
+   uint8_t immUnprots_;
+
    //  Calls to MemUnprotect minus calls to MemProtect.
    //
-   uint8_t unprotects_;
+   uint8_t memUnprots_;
 
    //  The number of mutexes currently held by the thread.
    //
@@ -1010,7 +1071,8 @@ fn_name ThreadPriv_ctor = "ThreadPriv.ctor";
 ThreadPriv::ThreadPriv() :
    stackBase_(nullptr),
    unpreempts_(1),
-   unprotects_(0),
+   immUnprots_(0),
+   memUnprots_(0),
    mutexes_(0),
    acquiring_(nullptr),
    swlogs_(0),
@@ -1061,7 +1123,8 @@ void ThreadPriv::Display(ostream& stream,
 
    stream << prefix << "stackBase  : " << stackBase_ << CRLF;
    stream << prefix << "unpreempts : " << int(unpreempts_) << CRLF;
-   stream << prefix << "unprotects : " << int(unprotects_) << CRLF;
+   stream << prefix << "immUnprots : " << int(immUnprots_) << CRLF;
+   stream << prefix << "memUnprots : " << int(memUnprots_) << CRLF;
    stream << prefix << "mutexes    : " << int(mutexes_) << CRLF;
    stream << prefix << "acquiring  : ";
    if(acquiring_ == nullptr)
@@ -1197,7 +1260,7 @@ Thread::Thread(Faction faction, Daemon* daemon) :
       //
       CurrIntervalStart_ = Clock::TicksNow();
 
-      Singleton< Orphans >::Instance();
+      Singleton< Threads >::Instance();
       Singleton< ContextSwitches >::Instance();
 
       systhrd_.reset(new SysThread);
@@ -1210,9 +1273,11 @@ Thread::Thread(Faction faction, Daemon* daemon) :
       //  Create a new thread.  StackUsageLimit is in words, so convert
       //  it to bytes.
       //
+      auto threads = Singleton< Threads >::Instance();
       auto prio = FactionToPriority(faction_);
       systhrd_.reset(new SysThread(this, EnterThread, prio,
          ThreadAdmin::StackUsageLimit() << BYTES_PER_WORD_LOG2));
+      if(systhrd_ != nullptr) threads->SetState(systhrd_.get(), Constructing);
    }
 
    ThreadAdmin::Incr(ThreadAdmin::Creations);
@@ -1250,18 +1315,21 @@ Thread::~Thread()
       return;
    }
 
-   //  This thread is still active and did not invoke Thread::Exit.  This
-   //  is a serious error, so output a log now.
-   //
-   auto log = Log::Create(ThreadLogGroup, ThreadDeleted);
-
-   if(log != nullptr)
+   if(!initialized_)
    {
-      *log << Log::Tab << "thread=" << to_str() << CRLF;
-      SysThreadStack::Display(*log, 0);
-      *log << Log::Tab << ThreadDataStr << CRLF;
-      Display(*log, Log::Tab + spaces(2), NoFlags);
-      Log::Submit(log);
+      //  This thread was constructed and has not invoked Thread::Exit.
+      //  This is a serious error, so output a log now.
+      //
+      auto log = Log::Create(ThreadLogGroup, ThreadDeleted);
+
+      if(log != nullptr)
+      {
+         *log << Log::Tab << "thread=" << to_str() << CRLF;
+         SysThreadStack::Display(*log, 0);
+         *log << Log::Tab << ThreadDataStr << CRLF;
+         Display(*log, Log::Tab + spaces(2), NoFlags);
+         Log::Submit(log);
+      }
    }
 
    ReleaseResources(true);
@@ -1377,7 +1445,7 @@ void Thread::Claim()
 {
    Debug::ft(Thread_Claim);
 
-   Pooled::Claim();
+   Permanent::Claim();
 
    //  Claim messages on the queue.  Sometimes there are hundreds of these,
    //  so trying to add them all to GetSubtended's array isn't possible.
@@ -1403,7 +1471,7 @@ void Thread::Cleanup()
    stats_.reset();
    priv_.reset();
    ReleaseResources(true);
-   Pooled::Cleanup();
+   Permanent::Cleanup();
 }
 
 //------------------------------------------------------------------------------
@@ -1463,7 +1531,7 @@ void Thread::Destroy()
 void Thread::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Pooled::Display(stream, prefix, options);
+   Permanent::Display(stream, prefix, options);
 
    auto lead = prefix + spaces(2);
    stream << prefix << "systhrd : " << systhrd_.get() << CRLF;
@@ -1508,21 +1576,17 @@ void Thread::DisplayStats(ostream& stream, const Flags& options) const
 
 //------------------------------------------------------------------------------
 
-const size_t SchedHeaderSize = 3;
-
-fixed_string SchedHeader[SchedHeaderSize] =
-{
+fixed_string SchedHeader =
+"      THREADS          |    SINCE START OF CURRENT 15-MIN INTERVAL    | LAST\n"
+"                       |            rtc  max   max     max  total     |5 SEC\n"
+"id    name     host f b| ex yields  t/o msgs stack   usecs  msecs %cpu| %cpu";
 //        1         2         3         4         5         6         7
 //234567890123456789012345678901234567890123456789012345678901234567890123456
-"      THREADS          |    SINCE START OF CURRENT 15-MIN INTERVAL    | LAST",
-"                       |            rtc  max   max     max  total     |5 SEC",
-"id    name     host f b| ex yields  t/o msgs stack   usecs  msecs %cpu| %cpu"
-};
+fixed_string SchedLine =
+"----------------------------------------------------------------------------";
 
 void Thread::DisplaySummaries(ostream& stream)
 {
-   string line(strlen(SchedHeader[0]), '-');
-
    ticks_t ticks;     // start of current interval
    usecs_t time0;     // duration of current interval
    size_t idle0;      // idle time during current interval
@@ -1545,9 +1609,9 @@ void Thread::DisplaySummaries(ostream& stream)
    stream << "for interval beginning at ";
    stream << Clock::TicksToTime(StatisticsRegistry::StartTicks()) << CRLF;
 
-   stream << line << CRLF;
-   for(auto i = 0; i < SchedHeaderSize; ++i) stream << SchedHeader[i] << CRLF;
-   stream << line << CRLF;
+   stream << SchedLine << CRLF;
+   stream << SchedHeader << CRLF;
+   stream << SchedLine << CRLF;
 
    stream << setw(10) << "idle";
    stream << setw(55) << (idle0 + 500) / 1000;
@@ -1569,7 +1633,7 @@ void Thread::DisplaySummaries(ostream& stream)
       t->DisplaySummary(stream, time0, time1);
    }
 
-   stream << line << CRLF;
+   stream << SchedLine << CRLF;
 
    if(Singleton< ContextSwitches >::Instance()->LoggingOn())
    {
@@ -1722,26 +1786,19 @@ main_t Thread::EnterThread(void* arg)
 
    //  Our argument is a pointer to a Thread.  The thread may start to run
    //  before its Thread object is fully constructed.  This causes a trap,
-   //  so the thread must wait until it is constructed (initialized_).  If
-   //  its constructor trapped, the object block will return to its pool,
-   //  so it is also necessary to check if the Thread is still valid.  If
-   //  it is invalid, break the loop to immediately return SIGDELETED.
+   //  so the thread must wait until it is constructed.  If its constructor
+   //  trapped, it will have been registered as an orphan, so immediately
+   //  exit it by returning SIGDELETED.
    //
    auto self = static_cast< Thread* >(arg);
+   auto reg = Singleton< Threads >::Instance();
 
-   while(!self->initialized_ && !self->IsInvalid())
+   while(true)
    {
+      auto state = reg->GetState();
+      if(state == Constructed) break;
+      if(state == Deleted) return SIGDELETED;
       Debug::noop();
-   }
-
-   //  If the thread is orphaned, it must exit immediately.  This occurs if
-   //  the thread's constructor trapped, which resulted in its deletion but
-   //  the survival of its native thread, which is now about to run without
-   //  a Thread object.
-   //
-   if(Singleton< Orphans >::Instance()->ExitNow())
-   {
-      return SIGDELETED;
    }
 
    //  Indicate that we're ready to run.  This blocks until we're scheduled
@@ -1858,6 +1915,7 @@ void Thread::ExitIfSafe(debug32_t offset)
    if((priv_->traps_ == 0) && SysThreadStack::TrapIsOk())
    {
       SetTrap(false);
+      lock.clear();
       throw SignalException(priv_->signal_, offset);
    }
 
@@ -2050,6 +2108,61 @@ bool Thread::HandleSignal(signal_t sig, uint32_t code)
 
 //------------------------------------------------------------------------------
 
+fn_name Thread_ImmProtect = "Thread.ImmProtect";
+
+void Thread::ImmProtect()
+{
+   Debug::ft(Thread_ImmProtect);
+
+   if(Restart::GetLevel() >= RestartReboot) return;
+
+   auto thr = RunningThread();
+
+   //  Write-protect the immutable memory segment.  This is used after
+   //  ImmUnprotect, so it is an error if underflow would occur.
+   //
+   if(thr->priv_->immUnprots_ == 0)
+   {
+      Debug::SwLog(Thread_ImmProtect, "underflow", thr->Tid(), SwError);
+      return;
+   }
+
+   if(--thr->priv_->immUnprots_ == 0)
+   {
+      Memory::Protect(MemImmutable);
+   }
+}
+
+//------------------------------------------------------------------------------
+
+const uint8_t MaxUnprotectCount = 15;
+
+fn_name Thread_ImmUnprotect = "Thread.ImmUnprotect";
+
+void Thread::ImmUnprotect()
+{
+   Debug::ft(Thread_ImmUnprotect);
+
+   if(Restart::GetLevel() >= RestartReboot) return;
+
+   auto thr = RunningThread();
+
+   //  Write-enable the immutable memory segment.
+   //
+   if(thr->priv_->immUnprots_ >= MaxUnprotectCount)
+   {
+      Debug::SwLog(Thread_ImmUnprotect, "overflow", thr->Tid(), SwError);
+      return;
+   }
+
+   if(++thr->priv_->immUnprots_ == 1)
+   {
+      Memory::Unprotect(MemImmutable);
+   }
+}
+
+//------------------------------------------------------------------------------
+
 fn_name Thread_InitialMsecs = "Thread.InitialMsecs";
 
 msecs_t Thread::InitialMsecs() const
@@ -2177,7 +2290,7 @@ void Thread::LogContextSwitch() const
 
    auto now = Clock::TicksNow();
 
-   if(IsInvalid())
+   if(Singleton< Threads >::Instance()->IsDeleted())
    {
       //  This thread has been deleted.  Create a partial entry for it.
       //
@@ -2318,19 +2431,16 @@ void Thread::MakePreemptable()
 
    auto thr = RunningThread();
 
-   //  Check for underflow.  If the thread has just become preemptable,
-   //  schedule it out.
+   //  If the thread is already preemptable, nothing needs to be done.
+   //  If it just become preemptable, schedule it out.
    //
-   if(thr->priv_->unpreempts_ == 0)
-   {
-      Debug::SwLog(Thread_MakePreemptable, "underflow", thr->Tid());
-      return;
-   }
-
+   if(thr->priv_->unpreempts_ == 0) return;
    if(--thr->priv_->unpreempts_ == 0) Pause();
 }
 
 //------------------------------------------------------------------------------
+
+const uint8_t MaxUnpreemptCount = 15;
 
 fn_name Thread_MakeUnpreemptable = "Thread.MakeUnpreemptable";
 
@@ -2343,9 +2453,9 @@ void Thread::MakeUnpreemptable()
    //  Increment the unpreemptable count.  If the thread has just become
    //  unpreemptable, schedule it out before starting to run it locked.
    //
-   if(thr->priv_->unpreempts_ >= 0x0f)
+   if(thr->priv_->unpreempts_ >= MaxUnpreemptCount)
    {
-      Debug::SwLog(Thread_MakeUnpreemptable, "overflow", thr->Tid());
+      Debug::SwLog(Thread_MakeUnpreemptable, "overflow", thr->Tid(), SwError);
       return;
    }
 
@@ -2360,17 +2470,23 @@ void Thread::MemProtect()
 {
    Debug::ft(Thread_MemProtect);
 
+   if(Restart::GetLevel() >= RestartReload) return;
+
    auto thr = RunningThread();
 
-   //e Write-disable the protected memory segment.
-
-   if(thr->priv_->unprotects_ == 0)
+   //  Write-protect the protected memory segment.  This is used after
+   //  MemUnprotect, so it is an error if underflow would occur.
+   //
+   if(thr->priv_->memUnprots_ == 0)
    {
-      Debug::SwLog(Thread_MemProtect, "underflow", thr->Tid());
+      Debug::SwLog(Thread_MemProtect, "underflow", thr->Tid(), SwError);
       return;
    }
 
-   --thr->priv_->unprotects_;
+   if(--thr->priv_->memUnprots_ == 0)
+   {
+      Memory::Protect(MemProtected);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -2381,17 +2497,22 @@ void Thread::MemUnprotect()
 {
    Debug::ft(Thread_MemUnprotect);
 
+   if(Restart::GetLevel() >= RestartReload) return;
+
    auto thr = RunningThread();
 
-   //e Write-enable the protected memory segment.
-
-   if(thr->priv_->unprotects_ >= 0x0f)
+   //  Write-enable the protected memory segment.
+   //
+   if(thr->priv_->memUnprots_ >= MaxUnprotectCount)
    {
-      Debug::SwLog(Thread_MemUnprotect, "overflow", thr->Tid());
+      Debug::SwLog(Thread_MemUnprotect, "overflow", thr->Tid(), SwError);
       return;
    }
 
-   ++thr->priv_->unprotects_;
+   if(++thr->priv_->memUnprots_ == 1)
+   {
+      Memory::Unprotect(MemProtected);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -2427,20 +2548,9 @@ SysThreadId Thread::NativeThreadId() const
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_new = "Thread.operator new";
-
-void* Thread::operator new(size_t size)
-{
-   Debug::ft(Thread_new);
-
-   return Singleton< ThreadPool >::Instance()->DeqBlock(size);
-}
-
-//------------------------------------------------------------------------------
-
 void Thread::Patch(sel_t selector, void* arguments)
 {
-   Pooled::Patch(selector, arguments);
+   Permanent::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------
@@ -2521,9 +2631,28 @@ void Thread::Proceed()
 {
    Debug::ft(Thread_Proceed);
 
-   //  Ensure that the thread's priority is such that the platform will
-   //  schedule it in and signal it to resume.
+   //  Unless a restart runs with unprotected memory, update memory protection
+   //  to what the thread expects.  Ensure that its priority is such that the
+   //  platform will schedule it in, and signal it to resume.
    //
+   auto level = Restart::GetLevel();
+
+   if(level < RestartReload)
+   {
+      if(priv_->memUnprots_ == 0)
+         Memory::Protect(MemProtected);
+      else
+         Memory::Unprotect(MemProtected);
+   }
+
+   if(level < RestartReboot)
+   {
+      if(priv_->immUnprots_ == 0)
+         Memory::Protect(MemImmutable);
+      else
+         Memory::Unprotect(MemImmutable);
+   }
+
    systhrd_->SetPriority(SysThread::DefaultPriority);
    if(priv_->waiting_) systhrd_->Proceed();
 }
@@ -2729,18 +2858,15 @@ void Thread::ReleaseResources(bool orphaned)
    //  If a restart is underway, save time by releasing any object that
    //  the thread owns but whose heap will be deleted.
    //
-   if(Restart::GetLevel() >= RestartCold)
-   {
-      stats_.release();
-   }
+   Restart::Release(stats_);
 
    //  If the thread is not orphaned, it is about to exit, so delete its
-   //  native thread; otherwise, add its native thread to set of orphans.
-   //  Various functions invoke ExitNow to check for the existence of an
+   //  native thread; otherwise, register its native thread as an orphan.
+   //  Various functions invoke GetState to check for the existence of an
    //  orphaned native thread, which is immediately exited when found.
    //
    if(orphaned)
-      Singleton< Orphans >::Instance()->Register(systhrd_.release());
+      Singleton< Threads >::Instance()->SetState(systhrd_.release(), Deleted);
    else
       systhrd_.reset();
 }
@@ -2880,9 +3006,14 @@ Thread* Thread::RunningThread(bool assert)
    auto active = ActiveThread();
 
    if((active != nullptr) && (active->NativeThreadId() == nid))
+   {
       thr = active;
+   }
    else
-      thr = Singleton< ThreadRegistry >::Instance()->FindThread(nid);
+   {
+      auto reg = Singleton< ThreadRegistry >::Extant();
+      if(reg != nullptr) thr = reg->FindThread(nid);
+   }
 
    if((thr != nullptr) && !thr->deleted_) return thr;
 
@@ -2899,7 +3030,7 @@ Thread* Thread::RunningThread(bool assert)
 
    if(assert)
    {
-      if(Singleton< Orphans >::Instance()->ExitNow())
+      if(Singleton< Threads >::Instance()->GetState() == Deleted)
          throw SignalException(SIGDELETED, 0);
       else
          Debug::Assert(false);
@@ -2994,6 +3125,7 @@ void Thread::SetInitialized()
    Debug::ft(Thread_SetInitialized);
 
    initialized_ = true;
+   Singleton< Threads >::Instance()->SetState(systhrd_.get(), Constructed);
 }
 
 //------------------------------------------------------------------------------
@@ -3057,12 +3189,15 @@ void Thread::Shutdown(RestartLevel level)
 {
    Debug::ft(Thread_Shutdown);
 
-   if(level < RestartCold) return;
+   Restart::Release(stats_);
 
-   //  On a cold restart or higher, the thread's messages and statistics
-   //  will be deleted.  Clean up the messages in case they own objects
-   //  that they need to free, and then reinitialize the message queue
-   //  so that the destructor will not be invoked for each message.
+   auto pool = Singleton< MsgBufferPool >::Instance();
+   if(!Restart::ClearsMemory(pool->BlockType())) return;
+
+   //  The thread's messages will be deleted during this restart.  Clean
+   //  up the messages in case they own objects that they need to free,
+   //  and then reinitialize the message queue so that the destructor
+   //  will not be invoked for each message.
    //
    for(auto m = msgq_.First(); m != nullptr; msgq_.Next(m))
    {
@@ -3070,7 +3205,6 @@ void Thread::Shutdown(RestartLevel level)
    }
 
    msgq_.Init(Pooled::LinkDiff());
-   stats_.release();
 }
 
 //------------------------------------------------------------------------------
@@ -3146,7 +3280,7 @@ fn_name Thread_Start = "Thread.Start";
 
 main_t Thread::Start()
 {
-   for(NO_OP; true; stats_->traps_->Incr())
+   while(true)
    {
       try
       {
@@ -3632,17 +3766,36 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
    {
       Debug::ft(Thread_TrapHandler);  //@
 
+      //  Reprotect any unprotected memory.
+      //
+      auto level = Restart::GetLevel();
+
+      if(level < RestartReboot)
+      {
+         Memory::Protect(MemImmutable);
+      }
+
+      if(level < RestartReload)
+      {
+         Memory::Protect(MemProtected);
+      }
+
       //  If the thread is holding any mutexes, release them.
       //
       Singleton< MutexRegistry >::Instance()->Abandon();
 
       //  Exit immediately if the Thread has already been deleted.
       //
-      if((sig == SIGDELETED) || IsInvalid() ||
-         Singleton< Orphans >::Instance()->ExitNow())
+      if((sig == SIGDELETED) ||
+         (Singleton< Threads >::Instance()->GetState() == Deleted))
       {
          return Return;
       }
+
+      //  The thread is no longer running with unprotected memory.
+      //
+      priv_->immUnprots_ = 0;
+      priv_->memUnprots_ = 0;
 
       //  The first time in, save the signal.  After that, we're dealing
       //  with a trap during trap recovery:
@@ -3652,6 +3805,7 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
       //    and let the object pool audit recover the Thread object.
       //
       auto retrapped = false;
+      if(Restart::GetStatus() == Running) stats_->traps_->Incr();
 
       switch(++priv_->traps_)
       {
@@ -3782,23 +3936,15 @@ void Thread::Unblock()
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_UpdateMutex = "Thread.UpdateMutex";
-
 void Thread::UpdateMutex(SysMutex* mutex)
 {
-   Debug::ft(Thread_UpdateMutex);
-
    priv_->acquiring_ = mutex;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_UpdateMutexCount = "Thread.UpdateMutexCount";
-
 void Thread::UpdateMutexCount(bool acquired)
 {
-   Debug::ft(Thread_UpdateMutexCount);
-
    if(acquired)
       ++priv_->mutexes_;
    else

@@ -38,7 +38,7 @@ Switch::Switch()
 {
    Debug::ft(Switch_ctor);
 
-   circuits_.Init(MaxPortId, Circuit::CellDiff(), MemDyn);
+   circuits_.Init(MaxPortId, Circuit::CellDiff(), MemDynamic);
 }
 
 //------------------------------------------------------------------------------
@@ -48,6 +48,8 @@ fn_name Switch_dtor = "Switch.dtor";
 Switch::~Switch()
 {
    Debug::ft(Switch_dtor);
+
+   Debug::SwLog(Switch_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

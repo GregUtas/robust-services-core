@@ -92,18 +92,20 @@ void CfgBitParm::Patch(sel_t selector, void* arguments)
 
 fn_name CfgBitParm_SetNext = "CfgBitParm.SetNext";
 
-bool CfgBitParm::SetNext(const string& input)
+bool CfgBitParm::SetNext(c_string input)
 {
    Debug::ft(CfgBitParm_SetNext);
 
-   if(input.size() != 1) return false;
+   string next(input);
+
+   if(next.size() != 1) return false;
 
    string tchars(ValidTrueChars());
    auto n = tchars.size();
 
    for(size_t i = 0; i < n; ++i)
    {
-      if(input.front() == tchars[i]) return SetNextValue(true);
+      if(next.front() == tchars[i]) return SetNextValue(true);
    }
 
    string fchars(ValidFalseChars());
@@ -111,7 +113,7 @@ bool CfgBitParm::SetNext(const string& input)
 
    for(size_t i = 0; i < n; ++i)
    {
-      if(input.front() == fchars[i]) return SetNextValue(false);
+      if(next.front() == fchars[i]) return SetNextValue(false);
    }
 
    return false;

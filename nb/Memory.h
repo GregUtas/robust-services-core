@@ -23,11 +23,13 @@
 #define MEMORY_H_INCLUDED
 
 #include <cstddef>
+#include <iosfwd>
+#include <string>
 #include "SysTypes.h"
 
 namespace NodeBase
 {
-   class SysHeap;
+   class Heap;
 }
 
 //------------------------------------------------------------------------------
@@ -36,71 +38,75 @@ namespace NodeBase
 {
 //  Memory management.
 //
-class Memory
+namespace Memory
 {
-public:
-   //  Deleted because this class only has static members.
+   //  Rounds up SIZE bytes to a multiple of log2align bytes.
    //
-   Memory() = delete;
+   size_t Align(size_t size, size_t log2align = BYTES_PER_WORD_LOG2);
 
-   //  Rounds up SIZE bytes to a multiple of LOG2ALIGN bytes.
+   //  Rounds up SIZE bytes to a word multiple.  The result is in words.
    //
-   static size_t Align(size_t size, size_t log2align = BYTES_PER_WORD_LOG2);
+   size_t Words(size_t size);
 
-   //  Rounds up nBytes to a word multiple.  The result is in words.
+   //  Copies SIZE bytes of memory, starting at SOURCE, to DEST.
    //
-   static size_t Words(size_t nBytes);
+   void Copy(void* dest, const void* source, size_t size);
 
-   //  Copies nBytes of memory, starting at SOURCE, to DEST.
+   //  Initializes SIZE bytes of memory to VALUE, starting at DEST.
    //
-   static void Copy(void* dest, const void* source, size_t nBytes);
+   void Set(void* dest, byte_t value, size_t size);
 
-   //  Initializes nBytes of memory to VALUE, starting at DEST.
+   //  Allocates a memory segment of size BYTES of the specified TYPE.
+   //  If EX is true, an AllocationException is thrown on failure.
    //
-   static void Set(void* dest, byte_t value, size_t nBytes);
-
-   //  Allocates a memory segment of nBytes of the specified TYPE.  If
-   //  EX is true, an AllocationException is thrown on failure.
-   //
-   static void* Alloc(size_t nBytes, MemoryType type, bool ex = true);
+   void* Alloc(size_t size, MemoryType type, bool ex = true);
 
    //  Deallocates the memory segment returned by Alloc.
    //
-   static void Free(const void* addr);
+   void Free(void* addr, MemoryType type);
 
-   //  Extends the segment at ADDR so that it can hold nBytes.  If there
-   //  is insufficient space for the additional bytes, a new segment of
-   //  sufficient length is allocated, the existing bytes are copied to
+   //  Extends the segment at ADDR so that it can hold SIZE bytes.  If
+   //  there is insufficient space for the additional bytes, a new segment
+   //  of sufficient length is allocated, the existing bytes are copied to
    //  it, and the segment at ADDR is freed.  Returns ADDR if in-place
    //  extension succeeds, nullptr if extension fails, or another value
    //  if a new segment was allocated.
    //
-   static void* Realloc(void* addr, size_t nBytes);
-
-   //  Verifies ADDR, which should be of TYPE.  If ADDR is nullptr, the
-   //  entire heap for TYPE is verified.
-   //
-   static bool Verify(MemoryType type, const void* addr);
-
-   //  Returns the type of memory used by the object located at ADDR.
-   //
-   static MemoryType Type(const void* addr);
+   void* Realloc(void* addr, size_t size, MemoryType type);
 
    //  Returns the heap (if any) associated with TYPE.
    //
-   static const SysHeap* Heap(MemoryType type);
+   const Heap* GetHeap(MemoryType type);
+
+   //  Protects the heap for TYPE.
+   //
+   bool Protect(MemoryType type);
+
+   //  Unprotects the heap for TYPE.
+   //
+   bool Unprotect(MemoryType type);
+
+   //  Validates ADDR, which should be of TYPE.  If ADDR is nullptr, the
+   //  entire heap for TYPE is validated.  Returns
+   //  o 1 if the heap was validated
+   //  o 0 if the heap was corrupt
+   //  o -1 if the heap does not exist
+   //
+   int Validate(MemoryType type, const void* addr);
+
+   //  Returns the type of memory associated with the heap at ADDR.
+   //  Returns MemNull if no heap begins at ADDR.
+   //
+   MemoryType AddrToType(const void* addr);
+
+   //  Displays the system's heaps in STREAM, using PREFIX at the start
+   //  of each line.
+   //
+   void DisplayHeaps(std::ostream& stream, const std::string& prefix);
 
    //  Frees the appropriate heap(s) during a restart.
    //
-   static void Shutdown(RestartLevel level);
-private:
-   //  Returns the heap for TYPE.  If it doesn't exist, it is created.
-   //
-   static SysHeap* EnsureHeap(MemoryType type);
-
-   //  Returns the heap (if any) associated with TYPE.
-   //
-   static SysHeap* AccessHeap(MemoryType type);
-};
+   void Shutdown();
+}
 }
 #endif

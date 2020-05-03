@@ -41,7 +41,7 @@ PosixSignalRegistry::PosixSignalRegistry()
 {
    Debug::ft(PosixSignalRegistry_ctor);
 
-   signals_.Init(PosixSignal::MaxId, PosixSignal::CellDiff(), MemProt);
+   signals_.Init(PosixSignal::MaxId, PosixSignal::CellDiff(), MemImmutable);
 }
 
 //------------------------------------------------------------------------------
@@ -51,6 +51,8 @@ fn_name PosixSignalRegistry_dtor = "PosixSignalRegistry.dtor";
 PosixSignalRegistry::~PosixSignalRegistry()
 {
    Debug::ft(PosixSignalRegistry_dtor);
+
+   Debug::SwLog(PosixSignalRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -80,7 +82,7 @@ bool PosixSignalRegistry::BindSignal(PosixSignal& signal)
 void PosixSignalRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    stream << prefix << "signals [id_t]" << CRLF;
    signals_.Display(stream, prefix + spaces(2), options);
@@ -114,7 +116,7 @@ PosixSignal* PosixSignalRegistry::Find(const string& name) const
 
 void PosixSignalRegistry::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

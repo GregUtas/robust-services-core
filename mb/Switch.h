@@ -47,6 +47,7 @@ namespace MediaBase
 class Switch : public Dynamic
 {
    friend class Singleton< Switch >;
+   friend class Circuit;
 public:
    //  Allows PortId to be used within this class.
    //
@@ -58,7 +59,7 @@ public:
 
    //  The maximum valid port number.
    //
-   static const PortId MaxPortId  = 65000;
+   static const PortId MaxPortId = 65000;
 
    //  Returns true if PID is a valid port identifier.
    //
@@ -66,14 +67,6 @@ public:
    {
       return ((pid != NIL_ID) && (pid < MaxPortId));
    }
-
-   //  Adds CIRCUIT to the switch by assigning it to an available port.
-   //
-   bool BindCircuit(Circuit& circuit);
-
-   //  Removes CIRCUIT from the switch.
-   //
-   void UnbindCircuit(Circuit& circuit);
 
    //  Returns a string identifying the circuit assigned to PID.
    //
@@ -95,6 +88,14 @@ private:
    //  Private because this singleton is not subclassed.
    //
    ~Switch();
+
+   //  Adds CIRCUIT to the switch by assigning it to an available port.
+   //
+   bool BindCircuit(Circuit& circuit);
+
+   //  Removes CIRCUIT from the switch.
+   //
+   void UnbindCircuit(Circuit& circuit);
 
    //  The registry of circuits, indexed by PortId.
    //

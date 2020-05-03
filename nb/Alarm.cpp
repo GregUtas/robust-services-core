@@ -20,6 +20,7 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Alarm.h"
+#include "Permanent.h"
 #include <cstdint>
 #include <sstream>
 #include "AlarmRegistry.h"
@@ -35,6 +36,33 @@ using std::string;
 
 namespace NodeBase
 {
+//  Data that changes too frequently to unprotect and reprotect memory
+//  when it needs to be modified.
+//
+struct AlarmDynamic : public Permanent
+{
+   //  Initializes members.
+   //
+   AlarmDynamic() : status_(NoAlarm),
+      nextStatus_(NoAlarm), currStatusTime_(0) { }
+
+   //  The alarm's current status.
+   //
+   AlarmStatus status_;
+
+   //  The level to which the alarm will be downgraded once DELAY has
+   //  passed.  It is the highest value set for the alarm during the
+   //  delay.
+   //
+   AlarmStatus nextStatus_;
+
+   //  The most recent time at which the alarm was at its current level.
+   //
+   ticks_t currStatusTime_;
+};
+
+//==============================================================================
+
 const size_t Alarm::MaxNameSize = 12;
 const size_t Alarm::MaxExplSize = 48;
 
@@ -42,13 +70,10 @@ const size_t Alarm::MaxExplSize = 48;
 
 fn_name Alarm_ctor = "Alarm.ctor";
 
-Alarm::Alarm(const string& name, const string& expl, secs_t delay) :
-   name_(name.c_str()),
-   expl_(expl.c_str()),
-   delay_(delay * Clock::TicksPerSec()),
-   status_(NoAlarm),
-   nextStatus_(NoAlarm),
-   currStatusTime_(0)
+Alarm::Alarm(c_string name, c_string expl, secs_t delay) :
+   name_(name),
+   expl_(expl),
+   delay_(delay * Clock::TicksPerSec())
 {
    Debug::ft(Alarm_ctor);
 
@@ -62,6 +87,7 @@ Alarm::Alarm(const string& name, const string& expl, secs_t delay) :
       Debug::SwLog(Alarm_ctor, "expl length", expl_.size());
    }
 
+   dyn_.reset(new AlarmDynamic);
    Singleton< AlarmRegistry >::Instance()->BindAlarm(*this);
 }
 
@@ -73,6 +99,7 @@ Alarm::~Alarm()
 {
    Debug::ft(Alarm_dtor);
 
+   Debug::SwLog(Alarm_dtor, UnexpectedInvocation, 0);
    Singleton< AlarmRegistry >::Instance()->UnbindAlarm(*this);
 }
 
@@ -97,31 +124,31 @@ ostringstreamPtr Alarm::Create
    auto now = Clock::TicksNow();
    ostringstreamPtr log(nullptr);
 
-   if(status > status_)
+   if(status > dyn_->status_)
    {
       //  Increase the alarm's level immediately.
       //
       SetStatus(status);
-      log = Log::Create(groupName, id, name_.c_str(), status_);
+      log = Log::Create(groupName, id, name_.c_str(), dyn_->status_);
    }
-   else if(status == status_)
+   else if(status == dyn_->status_)
    {
       //  The alarm is still at its current level.
       //
-      nextStatus_ = NoAlarm;
-      currStatusTime_ = now;
+      dyn_->nextStatus_ = NoAlarm;
+      dyn_->currStatusTime_ = now;
    }
    else
    {
       //  After the delay has passed, decrease the alarm to the
       //  highest level recorded during the delay period.
       //
-      if(status > nextStatus_) nextStatus_ = status;
+      if(status > dyn_->nextStatus_) dyn_->nextStatus_ = status;
 
-      if(now - currStatusTime_ >= delay_)
+      if(now - dyn_->currStatusTime_ >= delay_)
       {
-         SetStatus(nextStatus_);
-         log = Log::Create(groupName, id, name_.c_str(), status_);
+         SetStatus(dyn_->nextStatus_);
+         log = Log::Create(groupName, id, name_.c_str(), dyn_->status_);
       }
    }
 
@@ -133,7 +160,7 @@ ostringstreamPtr Alarm::Create
 void Alarm::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   stream << prefix << AlarmStatusSymbol(status_);
+   stream << prefix << AlarmStatusSymbol(dyn_->status_);
    stream << name_ << SPACE << '(' << expl_ << ')' << CRLF;
 }
 
@@ -141,7 +168,7 @@ void Alarm::Display(ostream& stream,
 
 void Alarm::Patch(sel_t selector, void* arguments)
 {
-   Dynamic::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------
@@ -152,9 +179,9 @@ void Alarm::SetStatus(AlarmStatus status)
 {
    Debug::ft(Alarm_SetStatus);
 
-   status_ = status;
-   nextStatus_ = NoAlarm;
-   currStatusTime_ = Clock::TicksNow();
+   dyn_->status_ = status;
+   dyn_->nextStatus_ = NoAlarm;
+   dyn_->currStatusTime_ = Clock::TicksNow();
 }
 
 //------------------------------------------------------------------------------
@@ -165,8 +192,16 @@ void Alarm::Shutdown(RestartLevel level)
 {
    Debug::ft(Alarm_Shutdown);
 
-   //  An alarm survives a warm restart but should be cleared.
+   //  Clear an alarm during all restarts by using placement new to
+   //  reset dyn_.
    //
-   status_ = NoAlarm;
+   new (dyn_.get()) AlarmDynamic();
+}
+
+//------------------------------------------------------------------------------
+
+AlarmStatus Alarm::Status() const
+{
+   return dyn_->status_;
 }
 }

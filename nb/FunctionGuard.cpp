@@ -22,7 +22,7 @@
 #include "FunctionGuard.h"
 #include "Debug.h"
 #include "SysTypes.h"
-#include "ThisThread.h"
+#include "Thread.h"
 
 //------------------------------------------------------------------------------
 
@@ -30,23 +30,30 @@ namespace NodeBase
 {
 fn_name FunctionGuard_ctor = "FunctionGuard.ctor";
 
-FunctionGuard::FunctionGuard(First first, bool invoke) : first_(NilFunction)
+FunctionGuard::FunctionGuard(GuardedFunction first, bool invoke) :
+   first_(Guard_Nil)
 {
    Debug::ft(FunctionGuard_ctor);
 
    if(!invoke) return;
-   first_ = first;
 
-   switch(first_)
+   switch(first)
    {
-   case MakeUnpreemptable:
-      ThisThread::MakeUnpreemptable();
+   case Guard_MakeUnpreemptable:
+      first_ = first;
+      Thread::MakeUnpreemptable();
       return;
-   case MakePreemptable:
-      ThisThread::MakePreemptable();
+   case Guard_MakePreemptable:
+      first_ = first;
+      Thread::MakePreemptable();
       return;
-   case MemUnprotect:
-      ThisThread::MemUnprotect();
+   case Guard_MemUnprotect:
+      first_ = first;
+      Thread::MemUnprotect();
+      return;
+   case Guard_ImmUnprotect:
+      first_ = first;
+      Thread::ImmUnprotect();
       return;
    default:
       Debug::SwLog(FunctionGuard_ctor, "unexpected function", first_);
@@ -61,7 +68,7 @@ FunctionGuard::~FunctionGuard()
 {
    Debug::ft(FunctionGuard_dtor);
 
-   if(first_ != NilFunction) Release();
+   if(first_ != Guard_Nil) Release();
 }
 
 //------------------------------------------------------------------------------
@@ -73,18 +80,21 @@ void FunctionGuard::Release()
    Debug::ft(FunctionGuard_Release);
 
    auto first = first_;
-   first_ = NilFunction;
+   first_ = Guard_Nil;
 
    switch(first)
    {
-   case MakeUnpreemptable:
-      ThisThread::MakePreemptable();
+   case Guard_MakeUnpreemptable:
+      Thread::MakePreemptable();
       return;
-   case MakePreemptable:
-      ThisThread::MakeUnpreemptable();
+   case Guard_MakePreemptable:
+      Thread::MakeUnpreemptable();
       return;
-   case MemUnprotect:
-      ThisThread::MemProtect();
+   case Guard_MemUnprotect:
+      Thread::MemProtect();
+      return;
+   case Guard_ImmUnprotect:
+      Thread::ImmProtect();
       return;
    default:
       return;

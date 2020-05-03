@@ -71,6 +71,8 @@ Initiator::~Initiator()
 {
    Debug::ft(Initiator_dtor);
 
+   Debug::SwLog(Initiator_dtor, UnexpectedInvocation, 0);
+
    auto trg = GetTrigger();
 
    if(trg == nullptr)
@@ -87,7 +89,7 @@ Initiator::~Initiator()
 void Initiator::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    stream << prefix << "sid  : " << int(sid_) << CRLF;
    stream << prefix << "aid  : " << int(aid_) << CRLF;
@@ -220,7 +222,7 @@ ptrdiff_t Initiator::LinkDiff()
 
 void Initiator::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

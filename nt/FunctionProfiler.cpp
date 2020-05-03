@@ -55,7 +55,7 @@ FunctionProfiler::FunctionProfiler() :
    Debug::ft(FunctionProfiler_ctor);
 
    auto size = sizeof(Q2Way< FunctionStats >) * size_;
-   functionq_ = (Q2Way< FunctionStats >*) Memory::Alloc(size, MemTemp);
+   functionq_ = (Q2Way< FunctionStats >*) Memory::Alloc(size, MemTemporary);
 
    for(size_t i = 0; i < size_; ++i)
    {
@@ -88,7 +88,7 @@ FunctionProfiler::~FunctionProfiler()
       }
    }
 
-   Memory::Free(functionq_);
+   Memory::Free(functionq_, MemTemporary);
    functionq_ = nullptr;
 }
 
@@ -126,7 +126,7 @@ FunctionStats* FunctionProfiler::EnsureRecord(fn_name_arg func, size_t count)
 {
    Debug::ft(FunctionProfiler_EnsureRecord);
 
-   size_t index = (stringHash(func) & HashMask);
+   size_t index = (string_hash(func) & HashMask);
    auto fsq = &functionq_[index];
 
    //  Search the hash location to see if an entry for this function

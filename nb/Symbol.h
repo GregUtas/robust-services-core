@@ -94,11 +94,11 @@ public:
 private:
    //  The symbol's name.
    //
-   const DynString name_;
+   const DynamicStr name_;
 
    //  The symbol's value.
    //
-   DynString value_;
+   DynamicStr value_;
 
    //  Set if the value is locked.
    //

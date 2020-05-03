@@ -25,6 +25,7 @@
 #include "NbAppIds.h"
 #include "NbModule.h"
 #include "NtIncrement.h"
+#include "Restart.h"
 #include "Singleton.h"
 #include "SymbolRegistry.h"
 #include "SysTypes.h"
@@ -65,8 +66,6 @@ void NtModule::Shutdown(RestartLevel level)
 
    auto testdb = Singleton< TestDatabase >::Extant();
    if(testdb != nullptr) testdb->Shutdown(level);
-
-   Singleton< NtIncrement >::Instance()->Shutdown(level);
 }
 
 //------------------------------------------------------------------------------
@@ -81,9 +80,9 @@ void NtModule::Startup(RestartLevel level)
 
    //  Define symbols.
    //
-   if(level < RestartCold) return;
-
    auto reg = Singleton< SymbolRegistry >::Instance();
+   if(!Restart::ClearsMemory(reg->MemType())) return;
+
    reg->BindSymbol("flag.showtoolprogress", ShowToolProgress);
    reg->BindSymbol("flag.disablerootthread", DisableRootThreadFlag);
    reg->BindSymbol("flag.reenterthread", ThreadReenterFlag);

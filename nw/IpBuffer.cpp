@@ -70,7 +70,7 @@ IpBuffer::IpBuffer(MsgDirection dir, size_t header, size_t payload) :
 {
    Debug::ft(IpBuffer_ctor1);
 
-   buff_ = (byte_t*) Memory::Alloc(BuffSize(buffSize_), MemDyn);
+   buff_ = (byte_t*) Memory::Alloc(BuffSize(buffSize_), MemDynamic);
 }
 
 //------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ IpBuffer::IpBuffer(const IpBuffer& that) : MsgBuffer(that),
 {
    Debug::ft(IpBuffer_ctor2);
 
-   buff_ = (byte_t*) Memory::Alloc(BuffSize(buffSize_), MemDyn);
+   buff_ = (byte_t*) Memory::Alloc(BuffSize(buffSize_), MemDynamic);
 
    //  Copy the original buffer into the new one.
    //
@@ -106,7 +106,7 @@ IpBuffer::~IpBuffer()
 
    if(buff_ != nullptr)
    {
-      Memory::Free(buff_);
+      Memory::Free(buff_, MemDynamic);
       buff_ = nullptr;
    }
 }
@@ -129,7 +129,8 @@ bool IpBuffer::AddBytes(const byte_t* source, size_t size, bool& moved)
 
    if(newSize > buffSize_)
    {
-      auto buff = (byte_t*) Memory::Realloc(buff_, BuffSize(newSize));
+      auto buff = (byte_t*)
+         Memory::Realloc(buff_, BuffSize(newSize), MemDynamic);
       if(buff == nullptr) return false;
 
       moved = (buff != buff_);
@@ -151,16 +152,16 @@ bool IpBuffer::AddBytes(const byte_t* source, size_t size, bool& moved)
 
 fn_name IpBuffer_BuffSize = "IpBuffer.BuffSize";
 
-size_t IpBuffer::BuffSize(size_t nBytes)
+size_t IpBuffer::BuffSize(size_t size)
 {
    Debug::ft(IpBuffer_BuffSize);
 
    for(auto i = 0; i <= nSizes; ++i)
    {
-      if(BuffSizes[i] >= nBytes) return BuffSizes[i];
+      if(BuffSizes[i] >= size) return BuffSizes[i];
    }
 
-   Debug::SwLog(IpBuffer_BuffSize, "size out of range", nBytes, SwError);
+   Debug::SwLog(IpBuffer_BuffSize, "size out of range", size, SwError);
    return 0;
 }
 
@@ -174,7 +175,7 @@ void IpBuffer::Cleanup()
 
    if(buff_ != nullptr)
    {
-      Memory::Free(buff_);
+      Memory::Free(buff_, MemDynamic);
       buff_ = nullptr;
    }
 
@@ -364,7 +365,7 @@ const size_t IpBufferPool::BlockSize = sizeof(IpBuffer);
 fn_name IpBufferPool_ctor = "IpBufferPool.ctor";
 
 IpBufferPool::IpBufferPool() :
-   ObjectPool(IpBufferObjPoolId, MemDyn, BlockSize, "IpBuffers")
+   ObjectPool(IpBufferObjPoolId, MemDynamic, BlockSize, "IpBuffers")
 {
    Debug::ft(IpBufferPool_ctor);
 }

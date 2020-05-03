@@ -21,14 +21,16 @@
 //
 #ifdef OS_WIN
 #include "SysHeap.h"
+#include <cstdint>
 #include <intsafe.h>
-#include <iomanip>
-#include <ostream>
+#include <sstream>
+#include <string>
 #include <windows.h>
 #include "Debug.h"
+#include "Restart.h"
 
 using std::ostream;
-using std::setw;
+using std::string;
 
 //------------------------------------------------------------------------------
 
@@ -36,28 +38,23 @@ namespace NodeBase
 {
 fn_name SysHeap_ctor = "SysHeap.ctor";
 
-SysHeap::SysHeap(MemoryType type, size_t bytes) :
-   type_(type),
+SysHeap::SysHeap(MemoryType type, size_t size) : Heap(),
    heap_(nullptr),
-   inUse_(0),
-   allocs_(0),
-   fails_(0),
-   frees_(0),
-   maxInUse_(0)
+   size_(size),
+   type_(type)
 {
    Debug::ft(SysHeap_ctor);
 
-   //  If this is the default heap, look it up, else create it.  If creation
-   //  fails, throw an exception.
+   //  If this is the default heap, wrap it, else create it.
    //
-   if(type_ == MemPerm)
+   if(type == MemPermanent)
       heap_ = GetProcessHeap();
    else
-      heap_ = HeapCreate(0, bytes, bytes);
+      heap_ = HeapCreate(0, size, size);
 
    if(heap_ == nullptr)
    {
-      Debug::SwLog(SysHeap_ctor, 0, GetLastError(), SwError);
+      Restart::Initiate(HeapCreationFailed, type);
    }
 }
 
@@ -73,9 +70,9 @@ SysHeap::~SysHeap()
    //
    if(heap_ == nullptr) return;
 
-   //  Prevent an attempt to destroy the default heap.
+   //  Prevent an attempt to destroy the C++ default heap.
    //
-   if(type_ == MemPerm)
+   if(heap_ == GetProcessHeap())
    {
       Debug::SwLog(SysHeap_dtor, debug64_t(heap_), 0);
       return;
@@ -91,6 +88,13 @@ SysHeap::~SysHeap()
 
 //------------------------------------------------------------------------------
 
+void* SysHeap::Addr() const
+{
+   return heap_;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name SysHeap_Alloc= "SysHeap.Alloc";
 
 void* SysHeap::Alloc(size_t size)
@@ -99,25 +103,62 @@ void* SysHeap::Alloc(size_t size)
 
    if(heap_ == nullptr) return nullptr;
 
-   auto memory = HeapAlloc(heap_, 0, size);
-
-   if(memory != nullptr)
-   {
-      inUse_ += size;
-      if(inUse_ > maxInUse_) maxInUse_ = inUse_;
-      ++allocs_;
-   }
-   else
-   {
-      ++fails_;
-   }
-
-   return memory;
+   auto addr = HeapAlloc(heap_, 0, size);
+   Requested(size, addr != nullptr);
+   return addr;
 }
 
 //------------------------------------------------------------------------------
 
-void SysHeap::DisplayHeaps(ostream& stream)
+fn_name SysHeap_BlockToSize = "SysHeap.BlockToSize";
+
+size_t SysHeap::BlockToSize(const void* addr) const
+{
+   Debug::ft(SysHeap_BlockToSize);
+
+   if(heap_ == nullptr) return 0;
+   auto size = HeapSize(heap_, 0, addr);
+   if(size == (SIZE_MAX - 1)) size = 0;
+   return size;
+}
+
+//------------------------------------------------------------------------------
+
+bool SysHeap::CanBeProtected() const { return false; }
+
+//------------------------------------------------------------------------------
+
+void SysHeap::Display(ostream& stream,
+   const string& prefix, const Flags& options) const
+{
+   Heap::Display(stream, prefix, options);
+
+   stream << prefix << "heap : " << heap_ << CRLF;
+   stream << prefix << "size : " << size_ << CRLF;
+   stream << prefix << "type : " << type_ << CRLF;
+}
+
+//------------------------------------------------------------------------------
+
+fn_name SysHeap_Free = "SysHeap.Free";
+
+void SysHeap::Free(void* addr)
+{
+   Debug::ft(SysHeap_Free);
+
+   if(heap_ == nullptr) return;
+
+   auto size = BlockToSize(addr);
+
+   if(HeapFree(heap_, 0, addr))
+      Freed(size);
+   else
+      Debug::SwLog(SysHeap_Free, debug64_t(addr), GetLastError());
+}
+
+//------------------------------------------------------------------------------
+
+void SysHeap::ListHeaps(std::set< void* >& heaps, std::ostringstream& expl)
 {
    DWORD NumberOfHeaps;
    DWORD HeapsIndex;
@@ -134,7 +175,7 @@ void SysHeap::DisplayHeaps(ostream& stream)
 
    if(NumberOfHeaps == 0)
    {
-      stream << "Failed to get number of heaps: err=" << GetLastError() << CRLF;
+      expl << "Failed to get number of heaps: err=" << GetLastError() << CRLF;
       return;
    }
 
@@ -144,7 +185,7 @@ void SysHeap::DisplayHeaps(ostream& stream)
 
    if(Result != S_OK)
    {
-      stream << "SIZETMult failed: result=" << Result << CRLF;
+      expl << "SIZETMult failed: result=" << Result << CRLF;
       return;
    }
 
@@ -154,7 +195,7 @@ void SysHeap::DisplayHeaps(ostream& stream)
 
    if(DefaultProcessHeap == nullptr)
    {
-      stream << "Failed to get default heap: err=" << GetLastError() << CRLF;
+      expl << "Failed to get default heap: err=" << GetLastError() << CRLF;
       return;
    }
 
@@ -164,7 +205,7 @@ void SysHeap::DisplayHeaps(ostream& stream)
 
    if(aHeaps == nullptr)
    {
-      stream << "Failed to allocate " << BytesToAllocate << " bytes." << CRLF;
+      expl << "Failed to allocate " << BytesToAllocate << " bytes." << CRLF;
       return;
    }
 
@@ -179,7 +220,7 @@ void SysHeap::DisplayHeaps(ostream& stream)
 
    if(NumberOfHeaps == 0)
    {
-      stream << "Failed to get list of heaps: err=" << GetLastError() << CRLF;
+      expl << "Failed to get list of heaps: err=" << GetLastError() << CRLF;
       return;
    }
 
@@ -189,48 +230,22 @@ void SysHeap::DisplayHeaps(ostream& stream)
       //  the latest number is larger than the original, another component
       //  has created a new heap and the buffer is now too small.
       //
-      stream << "The number of heaps has changed." << CRLF;
+      expl << "The number of heaps changed: try again." << CRLF;
+      return;
    }
    else
    {
-      stream << "  Heap  Address" << CRLF;
-
       for(HeapsIndex = 0; HeapsIndex < HeapsLength; ++HeapsIndex)
       {
-         stream << setw(6) << HeapsIndex + 1;
-         stream << setw(NIBBLES_PER_POINTER + 2) << aHeaps[HeapsIndex] << CRLF;
+         heaps.insert(aHeaps[HeapsIndex]);
       }
-
-      stream << "The default heap is at address "
-         << DefaultProcessHeap << '.' << CRLF;
    }
 
    //  Release the memory allocated from the default process heap.
    //
    if(!HeapFree(DefaultProcessHeap, 0, aHeaps))
    {
-      stream << "Failed to free memory allocated from default heap." << CRLF;
-   }
-}
-
-//------------------------------------------------------------------------------
-
-fn_name SysHeap_Free = "SysHeap.Free";
-
-void SysHeap::Free(void* addr, size_t size)
-{
-   Debug::ft(SysHeap_Free);
-
-   if(heap_ == nullptr) return;
-
-   if(HeapFree(heap_, 0, addr))
-   {
-      inUse_ -= size;
-      ++frees_;
-   }
-   else
-   {
-      Debug::SwLog(SysHeap_Free, debug64_t(addr), GetLastError());
+      expl << "Failed to free memory allocated from default heap." << CRLF;
    }
 }
 
@@ -243,13 +258,25 @@ void SysHeap::Patch(sel_t selector, void* arguments)
 
 //------------------------------------------------------------------------------
 
+fn_name SysHeap_SetPermissions = "SysHeap.SetPermissions";
+
+int SysHeap::SetPermissions(MemoryProtection attrs)
+{
+   Debug::ft(SysHeap_SetPermissions);
+
+   Debug::SwLog(SysHeap_SetPermissions, "not supported: use NbHeap", 0);
+   return ERROR_NOT_SUPPORTED;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name SysHeap_Validate = "SysHeap.Validate";
 
-bool SysHeap::Validate(const void* addr)
+bool SysHeap::Validate(const void* addr) const
 {
    Debug::ft(SysHeap_Validate);
 
-   if(heap_ == nullptr) return false;
+   if(heap_ == nullptr) return true;
    return HeapValidate(heap_, 0, addr);
 }
 }

@@ -48,11 +48,36 @@ fixed_string SCOPE_STR = "::";
 
 //------------------------------------------------------------------------------
 
+fixed_string MemoryProtectionStrings[MemoryProtection_N + 1] =
+{
+   "---",
+   "--x",
+   ERROR_STR,
+   ERROR_STR,
+   "r--",
+   "r-x",
+   "rw-",
+   "rwx",
+   ERROR_STR
+};
+
+ostream& operator<<(ostream& stream, MemoryProtection attrs)
+{
+   if((attrs >= 0) && (attrs < MemoryProtection_N))
+      stream << MemoryProtectionStrings[attrs];
+   else
+      stream << MemoryProtectionStrings[MemoryType_N];
+   return stream;
+}
+
+//------------------------------------------------------------------------------
+
 fixed_string MemoryTypeStrings[MemoryType_N + 1] =
 {
    "null",
    "temporary",
    "dynamic",
+   "persistent",
    "protected",
    "permanent",
    "immutable",

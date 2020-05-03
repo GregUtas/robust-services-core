@@ -40,15 +40,8 @@ namespace SessionBase
 class InvokerPoolRegistry : public NodeBase::Dynamic
 {
    friend class NodeBase::Singleton< InvokerPoolRegistry >;
+   friend class InvokerPool;
 public:
-   //  Adds POOL to the registry against its scheduler faction.
-   //
-   bool BindPool(InvokerPool& pool);
-
-   //  Removes POOL from the registry.
-   //
-   void UnbindPool(InvokerPool& pool);
-
    //  Returns the pool registered against FACTION.
    //
    InvokerPool* Pool(NodeBase::Faction faction) const;
@@ -60,6 +53,10 @@ public:
    //  Overridden to mark the objects in each pool as being in use.
    //
    void ClaimBlocks() override;
+
+   //  Overridden for restarts.
+   //
+   void Shutdown(NodeBase::RestartLevel level) override;
 
    //  Overridden for restarts.
    //
@@ -81,6 +78,14 @@ private:
    //  Private because this singleton is not subclassed.
    //
    ~InvokerPoolRegistry();
+
+   //  Adds POOL to the registry against its scheduler faction.
+   //
+   bool BindPool(InvokerPool& pool);
+
+   //  Removes POOL from the registry.
+   //
+   void UnbindPool(InvokerPool& pool);
 
    //  The global registry of invoker pools.
    //

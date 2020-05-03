@@ -23,10 +23,8 @@
 #include <ostream>
 #include "Algorithms.h"
 #include "Debug.h"
-#include "Factory.h"
 #include "FactoryRegistry.h"
 #include "Formatters.h"
-#include "Service.h"
 #include "ServiceRegistry.h"
 #include "Singleton.h"
 

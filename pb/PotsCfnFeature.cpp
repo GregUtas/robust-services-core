@@ -28,6 +28,7 @@
 #include "CliThread.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "PotsCliParms.h"
 #include "PotsProfile.h"
 #include "PotsProfileRegistry.h"
@@ -52,7 +53,7 @@ class PotsCfnAttrs : public CliText
 public: PotsCfnAttrs();
 };
 
-//==============================================================================
+//------------------------------------------------------------------------------
 
 fixed_string PotsCfnTimerOptExpl = "timeout (default=30)";
 fixed_string PotsCfnTimerTag = "to";
@@ -70,7 +71,7 @@ PotsCfnAttrs::PotsCfnAttrs() : CliText(PotsCfnFullName, PotsCfnAbbrName)
    BindParm(*new PotsCfnTimerOptParm);
 }
 
-//------------------------------------------------------------------------------
+//==============================================================================
 
 fn_name PotsCfnFeature_ctor = "PotsCfnFeature.ctor";
 
@@ -130,6 +131,7 @@ PotsFeatureProfile* PotsCfnFeature::Subscribe
       *cli.obuf << spaces(2) << NoDestinationWarning << CRLF;
    }
 
+   FunctionGuard guard(Guard_MemUnprotect);
    return new PotsCfnFeatureProfile(dn, timeout);
 }
 
@@ -169,6 +171,7 @@ bool PotsCfnFeatureProfile::Activate(PotsProfile& profile, CliThread& cli)
    {
       if(cli.Command()->GetIntParmRc(timeout, cli) == CliParm::Ok)
       {
+         FunctionGuard guard(Guard_MemUnprotect);
          timeout_ = timeout;
       }
       cli.EndOfInput(false);

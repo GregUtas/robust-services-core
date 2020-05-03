@@ -98,8 +98,6 @@ void NbModule::Shutdown(RestartLevel level)
    Singleton< CliRegistry >::Instance()->Shutdown(level);
    Singleton< Element >::Instance()->Shutdown(level);
    Singleton< ClassRegistry >::Instance()->Shutdown(level);
-   Singleton< MsgBufferPool >::Instance()->Shutdown(level);
-   Singleton< ThreadPool >::Instance()->Shutdown(level);
    Singleton< ThreadAdmin >::Instance()->Shutdown(level);
    Singleton< ThreadRegistry >::Instance()->Shutdown(level);
    Singleton< ObjectPoolRegistry >::Instance()->Shutdown(level);
@@ -112,9 +110,9 @@ void NbModule::Shutdown(RestartLevel level)
    Singleton< PosixSignalRegistry >::Instance()->Shutdown(level);
 
    Singleton< TraceBuffer >::Instance()->Shutdown(level);
-   Singletons::Instance()->Shutdown(level);
    SysThreadStack::Shutdown(level);
-   Memory::Shutdown(level);
+   Memory::Shutdown();
+   Singletons::Instance()->Shutdown(level);
 }
 
 //------------------------------------------------------------------------------
@@ -140,7 +138,6 @@ void NbModule::Startup(RestartLevel level)
    Singleton< ObjectPoolRegistry >::Instance()->Startup(level);
    Singleton< ThreadRegistry >::Instance()->Startup(level);
    Singleton< ThreadAdmin >::Instance()->Startup(level);
-   Singleton< ThreadPool >::Instance()->Startup(level);
    Singleton< MsgBufferPool >::Instance()->Startup(level);
    Singleton< ClassRegistry >::Instance()->Startup(level);
    Singleton< Element >::Instance()->Startup(level);

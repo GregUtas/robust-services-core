@@ -56,6 +56,7 @@ namespace PotsBase
 //
 class PotsTreatmentQueue : public Protected
 {
+   friend class PotsTreatment;
 public:
    //  Type for identifying a treatment queue.
    //
@@ -63,12 +64,12 @@ public:
 
    //  The treatment queues that can be selected by a cause value.
    //
-   static const QId IdleQId       = 1;  // sends a Release (causing dial tone)
+   static const QId IdleQId = 1;        // sends a Release (causing dial tone)
    static const QId DisconnectQId = 2;  // sends silent tone for 10 seconds
-   static const QId BusyQId       = 3;  // sends busy tone
-   static const QId ErrorQId      = 4;  // sends reorder tone
-   static const QId ConfQId       = 5;  // sends confirmation tone
-   static const QId MaxQId        = 5;  // range constant
+   static const QId BusyQId = 3;        // sends busy tone
+   static const QId ErrorQId = 4;       // sends reorder tone
+   static const QId ConfQId = 5;        // sends confirmation tone
+   static const QId MaxQId = 5;         // range constant
 
    //  Registers the queue against QID with PotsTreatmentRegistry.
    //
@@ -82,14 +83,6 @@ public:
    //
    PotsTreatmentQueue(const PotsTreatmentQueue& that) = delete;
    PotsTreatmentQueue& operator=(const PotsTreatmentQueue& that) = delete;
-
-   //  Adds TREATMENT to the queue.
-   //
-   void BindTreatment(PotsTreatment& treatment);
-
-   //  Removes TREATMENT from the queue.
-   //
-   void UnbindTreatment(PotsTreatment& treatment);
 
    //  Returns the first treatment in the queue.
    //
@@ -108,6 +101,14 @@ public:
    void Display(std::ostream& stream,
       const std::string& prefix, const Flags& options) const override;
 private:
+   //  Adds TREATMENT to the queue.
+   //
+   void BindTreatment(PotsTreatment& treatment);
+
+   //  Removes TREATMENT from the queue.
+   //
+   void UnbindTreatment(PotsTreatment& treatment);
+
    //  The queue's index in PotsTreatmentRegistry.
    //
    RegCell qid_;

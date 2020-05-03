@@ -43,7 +43,7 @@ ToolRegistry::ToolRegistry()
 {
    Debug::ft(ToolRegistry_ctor);
 
-   tools_.Init(MaxTools, Tool::CellDiff(), MemImm);
+   tools_.Init(MaxTools, Tool::CellDiff(), MemImmutable);
 }
 
 //------------------------------------------------------------------------------
@@ -53,6 +53,8 @@ fn_name ToolRegistry_dtor = "ToolRegistry.dtor";
 ToolRegistry::~ToolRegistry()
 {
    Debug::ft(ToolRegistry_dtor);
+
+   Debug::SwLog(ToolRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -120,11 +122,11 @@ Tool* ToolRegistry::GetTool(FlagId id) const
 
 //------------------------------------------------------------------------------
 
-fn_name ToolRegistry_ListTools = "ToolRegistry.ListTools";
+fn_name ToolRegistry_ListToolChars = "ToolRegistry.ListToolChars";
 
-string ToolRegistry::ListTools() const
+string ToolRegistry::ListToolChars() const
 {
-   Debug::ft(ToolRegistry_ListTools);
+   Debug::ft(ToolRegistry_ListToolChars);
 
    string tools;
 

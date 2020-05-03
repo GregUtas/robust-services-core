@@ -42,8 +42,8 @@ using std::string;
 
 namespace NetworkBase
 {
-const size_t IoThread::MaxRxBuffSize = 64 * 1024;  // 64KB
-const size_t IoThread::MaxTxBuffSize = 64 * 1024;  // 64KB
+const size_t IoThread::MaxRxBuffSize = 64 * kBs;
+const size_t IoThread::MaxTxBuffSize = 64 * kBs;
 
 //------------------------------------------------------------------------------
 
@@ -77,7 +77,7 @@ IoThread::IoThread(Daemon* daemon, const IpService* service, ipport_t port) :
       txSize_ = MaxTxBuffSize;
    }
 
-   buffer_ = (byte_t*) Memory::Alloc(SysSocket::MaxMsgSize, MemDyn);
+   buffer_ = (byte_t*) Memory::Alloc(SysSocket::MaxMsgSize, MemDynamic);
 }
 
 //------------------------------------------------------------------------------

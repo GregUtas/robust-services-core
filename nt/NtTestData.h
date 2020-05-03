@@ -96,19 +96,19 @@ private:
 
    //  The file to be read before executing the >testcase command.
    //
-   TempString prolog_;
+   TemporaryStr prolog_;
 
    //  The file to be read after a testcase passes.
    //
-   TempString epilog_;
+   TemporaryStr epilog_;
 
    //  The file to be read after a testcase fails.
    //
-   TempString recover_;
+   TemporaryStr recover_;
 
    //  The test currently being executed.
    //
-   TempString name_;
+   TemporaryStr name_;
 
    //  Set if the current testcase failed.
    //

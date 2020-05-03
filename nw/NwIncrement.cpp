@@ -265,7 +265,7 @@ NameToAddrText::NameToAddrText() :
    BindParm(*new ServiceNameOptParm);
 }
 
-const id_t HostNameIndex   = 1;
+const id_t HostNameIndex = 1;
 const id_t NameToAddrIndex = 2;
 const id_t AddrToNameIndex = 3;
 

@@ -26,7 +26,6 @@
 #include <cstddef>
 #include <iosfwd>
 #include <memory>
-#include <string>
 #include "InputHandler.h"
 #include "NwTypes.h"
 #include "Q1Link.h"
@@ -213,14 +212,6 @@ private:
    //  The port's socket.
    //
    SysSocket* socket_;
-
-   //  The name for the port's alarm.
-   //
-   std::string alarmName_;  //r
-
-   //  The explanation for the port's alarm.
-   //
-   std::string alarmExpl_;  //r
 
    //  The port's alarm.
    //

@@ -22,7 +22,6 @@
 #include "BcRouting.h"
 #include <ostream>
 #include "Debug.h"
-#include "Factory.h"
 #include "FactoryRegistry.h"
 #include "Formatters.h"
 #include "SbAppIds.h"

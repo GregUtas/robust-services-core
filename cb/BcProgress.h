@@ -44,13 +44,13 @@ namespace Progress
    //
    typedef uint8_t Ind;
 
-   constexpr Ind NilInd         = 0; // default value
-   constexpr Ind EndOfSelection = 1; // facility for incoming call chosen
-   constexpr Ind Alerting       = 2; // facility acknowledged incoming call
-   constexpr Ind Suspend        = 3; // will clear call if timer expires
-   constexpr Ind Resume         = 4; // resumed call before timer expired
-   constexpr Ind MediaUpdate    = 5; // sending media from a new address
-   constexpr Ind MaxInd         = 5; // range constant
+   constexpr Ind NilInd = 0;          // default value
+   constexpr Ind EndOfSelection = 1;  // facility for incoming call chosen
+   constexpr Ind Alerting = 2;        // facility acknowledged incoming call
+   constexpr Ind Suspend = 3;         // will clear call if timer expires
+   constexpr Ind Resume = 4;          // resumed call before timer expired
+   constexpr Ind MediaUpdate = 5;     // sending media from a new address
+   constexpr Ind MaxInd = 5;          // range constant
 
    //  Returns a string for displaying ID.
    //

@@ -111,7 +111,7 @@ InvokerPoolRegistry::InvokerPoolRegistry() : poolToAudit_(0)
 {
    Debug::ft(InvokerPoolRegistry_ctor);
 
-   pools_.Init(Faction_N, InvokerPool::CellDiff(), MemDyn);
+   pools_.Init(Faction_N, InvokerPool::CellDiff(), MemDynamic);
    statsGroup_.reset(new InvokerPoolStatsGroup);
 }
 
@@ -122,6 +122,8 @@ fn_name InvokerPoolRegistry_dtor = "InvokerPoolRegistry.dtor";
 InvokerPoolRegistry::~InvokerPoolRegistry()
 {
    Debug::ft(InvokerPoolRegistry_dtor);
+
+   Debug::SwLog(InvokerPoolRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -180,6 +182,20 @@ void InvokerPoolRegistry::Patch(sel_t selector, void* arguments)
 InvokerPool* InvokerPoolRegistry::Pool(Faction faction) const
 {
    return pools_.At(faction);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name InvokerPoolRegistry_Shutdown = "InvokerPoolRegistry.Shutdown";
+
+void InvokerPoolRegistry::Shutdown(RestartLevel level)
+{
+   Debug::ft(InvokerPoolRegistry_Shutdown);
+
+   for(auto p = pools_.First(); p != nullptr; pools_.Next(p))
+   {
+      p->Shutdown(level);
+   }
 }
 
 //------------------------------------------------------------------------------

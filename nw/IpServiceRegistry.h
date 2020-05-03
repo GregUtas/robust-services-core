@@ -22,7 +22,7 @@
 #ifndef IPSERVICEREGISTRY_H_INCLUDED
 #define IPSERVICEREGISTRY_H_INCLUDED
 
-#include "Protected.h"
+#include "Immutable.h"
 #include <string>
 #include "NbTypes.h"
 #include "Registry.h"
@@ -38,14 +38,18 @@ namespace NetworkBase
 {
 //  Global registry for protocols supported over IP.
 //
-class IpServiceRegistry : public NodeBase::Protected
+class IpServiceRegistry : public NodeBase::Immutable
 {
-   friend class IpService;
    friend class NodeBase::Singleton< IpServiceRegistry >;
+   friend class IpService;
 public:
    //  Returns the service registered against NAME.
    //
    IpService* GetService(const std::string& name) const;
+
+   //  Overridden for restarts.
+   //
+   void Shutdown(NodeBase::RestartLevel level) override;
 
    //  Overridden for restarts.
    //

@@ -173,9 +173,11 @@ public:
    void SetParsed(bool passed);
 
    //  Classifies a line of code (S) and updates WARNINGS with any warnings
-   //  that were found.
+   //  that were found.  Sets CONT for a line of code that does not end in
+   //  a semicolon.
    //
-   LineType ClassifyLine(std::string s, std::set< Warning >& warnings) const;
+   LineType ClassifyLine
+      (std::string s, bool& cont, std::set< Warning >& warnings) const;
 
    //  Returns the LineType for line N.  Returns LineType_N if N is out
    //  of range.
@@ -308,8 +310,9 @@ private:
    void AddUser(const CodeFile* file);
 
    //  Classifies the Nth line of code and looks for some warnings.
+   //  Sets CONT if a line of code continues on the next line.
    //
-   LineType ClassifyLine(size_t n);
+   LineType ClassifyLine(size_t n, bool& cont);
 
    //  Returns the file's prolog (comments that should appear at the top
    //  of the file).

@@ -26,22 +26,27 @@
 
 namespace NodeBase
 {
+//  Functions supported by FunctionGuard.
+//
+enum GuardedFunction
+{
+   Guard_Nil,                // no function to invoke or reverse
+   Guard_MakeUnpreemptable,  // ...Thread::MakePreemptable
+   Guard_MakePreemptable,    // ...Thread::MakeUnpreemptable
+   Guard_MemUnprotect,       // ...Thread::MemProtect
+   Guard_ImmUnprotect        // ...Memory::Protect(MemImmutable)
+};
+
+//------------------------------------------------------------------------------
+//
 //  Invokes a function and, when it goes out of scope, the function's conjugate.
 //
 class FunctionGuard
 {
 public:
-   enum First
-   {
-      NilFunction,        // no function to invoke or reverse
-      MakeUnpreemptable,  // Thread::MakeUnpreemptable...MakePreemptable
-      MakePreemptable,    // Thread::MakePreemptable...MakeUnpreemptable
-      MemUnprotect        // Thread::MemUnprotect...MemProtect
-   };
-
    //  Invokes the function associated with FIRST if INVOKE is set.
    //
-   FunctionGuard(First first, bool invoke = true);
+   FunctionGuard(GuardedFunction first, bool invoke = true);
 
    //  Invokes the conjugate function if the constructor invoked FIRST.
    //
@@ -59,7 +64,7 @@ public:
 private:
    //  The first function that was invoked.
    //
-   First first_;
+   GuardedFunction first_;
 };
 }
 #endif

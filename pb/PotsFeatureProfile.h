@@ -41,8 +41,8 @@ namespace PotsBase
 //
 class PotsFeatureProfile : public Protected
 {
-   friend class PotsProfile;
    friend class Q1Way< PotsFeatureProfile >;
+   friend class PotsProfile;
 public:
    //  Deleted to prohibit copying.
    //
@@ -81,10 +81,9 @@ protected:
    virtual ~PotsFeatureProfile();
 private:
    //  Deletes the user's subscription to the feature.  Deletion is actually
-   //  performed by PotsProfile.Unsubscribe (see below), which also invokes
-   //  this function.  The default version does nothing but may be overridden
-   //  by subclasses that need to perform feature-specific work when a feature
-   //  is unsubscribed.
+   //  performed by PotsProfile::Unsubscribe, which invokes this function.
+   //  The default version does nothing but may be overridden by subclasses
+   //  to perform feature-specific work when a feature is unsubscribed.
    //
    virtual bool Unsubscribe(PotsProfile& profile);
 

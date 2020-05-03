@@ -28,11 +28,6 @@
 #include <string>
 #include "SysTypes.h"
 
-namespace NodeBase
-{
-   class Base;
-}
-
 //------------------------------------------------------------------------------
 
 namespace NodeBase
@@ -46,6 +41,11 @@ namespace NodeBase
    //  with each object.
    //
    extern fixed_string ObjSeparatorStr;
+
+   //  Converts STR to a positive integer, returning it in SIZE.  Returns false
+   //  if STR is empty or contains a non-digit.
+   //
+   bool strToSize(const std::string& str, size_t& size);
 
    //  Returns a string of COUNT spaces.  If COUNT is COUT_LENGTH_MAX or more,
    //  an empty string is returned under the assumption that COUNT was actually
@@ -121,12 +121,12 @@ namespace NodeBase
    //  a trap.  If the object is corrupt, its Display function should not
    //  trap during error recovery.
    //
-   std::string strClass(const Base* obj, bool ns = true);
+   std::string strClass(const void* obj, bool ns = true);
 
    //  Returns a string containing OBJ's "this" pointer followed by its class
    //  name as returned by strClass.
    //
-   std::string strObj(const Base* obj, bool ns = true);
+   std::string strObj(const void* obj, bool ns = true);
 
    //  Skips any leading blanks in INPUT and returns the next string, which
    //  ends at the next blank.  Updates INPUT by removing the string and the

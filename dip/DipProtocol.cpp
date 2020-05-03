@@ -529,7 +529,7 @@ const size_t DipIpBufferPool::BlockSize = sizeof(DipIpBuffer);
 fn_name DipIpBufferPool_ctor = "DipIpBufferPool.ctor";
 
 DipIpBufferPool::DipIpBufferPool() :
-   ObjectPool(DipIpBufferObjPoolId, MemDyn, BlockSize, "DipIpBuffers")
+   ObjectPool(DipIpBufferObjPoolId, MemDynamic, BlockSize, "DipIpBuffers")
 {
    Debug::ft(DipIpBufferPool_ctor);
 }

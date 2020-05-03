@@ -31,6 +31,7 @@
 #include "CliThread.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "LocalAddress.h"
 #include "MbPools.h"
 #include "MediaEndpt.h"
@@ -504,6 +505,8 @@ word RegisterCommand::ProcessCommand(CliThread& cli) const
 
    auto pro = Singleton< PotsProfileRegistry >::Instance()->Profile(id1);
    if(pro != nullptr) return cli.Report(-3, AlreadyRegistered);
+
+   FunctionGuard guard(Guard_MemUnprotect);
    pro = new PotsProfile(id1);
    if(pro == nullptr) return cli.Report(-7, AllocationError);
    return cli.Report(0, SuccessExpl);

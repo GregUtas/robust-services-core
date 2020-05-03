@@ -29,6 +29,7 @@
 #include "ModuleRegistry.h"
 #include "NbAppIds.h"
 #include "ProxyBcSessions.h"
+#include "Restart.h"
 #include "SbAppIds.h"
 #include "ServiceCodeRegistry.h"
 #include "Singleton.h"
@@ -77,13 +78,6 @@ void CbModule::Shutdown(RestartLevel level)
    Singleton< ServiceCodeRegistry >::Instance()->Shutdown(level);
 
    BcSsm::ResetStateCounts(level);
-//s Singleton< CipUdpService >::Instance()->Shutdown(level);
-   Singleton< CipTcpService >::Instance()->Shutdown(level);
-   Singleton< ProxyBcFactory >::Instance()->Shutdown(level);
-   Singleton< TestCallFactory >::Instance()->Shutdown(level);
-   Singleton< CipTbcFactory >::Instance()->Shutdown(level);
-   Singleton< CipObcFactory >::Instance()->Shutdown(level);
-   Singleton< CipProtocol >::Instance()->Shutdown(level);
 }
 
 //------------------------------------------------------------------------------
@@ -105,9 +99,8 @@ void CbModule::Startup(RestartLevel level)
 
    //  Define symbols.
    //
-   if(level < RestartCold) return;
-
    auto reg = Singleton< SymbolRegistry >::Instance();
+   if(!Restart::ClearsMemory(reg->MemType())) return;
 
    reg->BindSymbol("factory.cip.obc", CipObcFactoryId);
    reg->BindSymbol("factory.cip.tbc", CipTbcFactoryId);

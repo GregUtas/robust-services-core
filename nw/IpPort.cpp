@@ -23,19 +23,21 @@
 #include "Dynamic.h"
 #include <cstdint>
 #include <ostream>
+#include <string>
 #include "Alarm.h"
 #include "AlarmRegistry.h"
 #include "Algorithms.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "IoThread.h"
 #include "IpPortRegistry.h"
 #include "IpService.h"
 #include "NbSignals.h"
 #include "NbTypes.h"
+#include "Restart.h"
 #include "Singleton.h"
 #include "Statistics.h"
-#include "SysSocket.h"
 
 using namespace NodeBase;
 using std::ostream;
@@ -108,10 +110,9 @@ IpPort::IpPort(ipport_t port, const IpService* service) :
 {
    Debug::ft(IpPort_ctor);
 
+   EnsureAlarm();
    stats_.reset(new IpPortStats);
    Singleton< IpPortRegistry >::Instance()->BindPort(*this);
-   alarmName_ = "PORT" + std::to_string(port);
-   EnsureAlarm();
 }
 
 //------------------------------------------------------------------------------
@@ -262,12 +263,14 @@ void IpPort::EnsureAlarm()
    //  If the port's alarm is not registered, create it.
    //
    auto reg = Singleton< AlarmRegistry >::Instance();
-   alarm_ = reg->Find(alarmName_);
+   auto alarmName = "PORT" + std::to_string(port_);
+   alarm_ = reg->Find(alarmName);
 
    if(alarm_ == nullptr)
    {
-      alarmExpl_ = "Service unavailable: " + string(service_->Name());
-      alarm_ = new Alarm(alarmName_, alarmExpl_, 5);
+      auto alarmExpl = "Service unavailable: " + string(service_->Name());
+      FunctionGuard guard(Guard_ImmUnprotect);
+      alarm_ = new Alarm(alarmName.c_str(), alarmExpl.c_str(), 5);
    }
 }
 
@@ -343,6 +346,7 @@ bool IpPort::SetSocket(SysSocket* socket)
    //
    if(socket == nullptr)
    {
+      FunctionGuard guard(Guard_MemUnprotect);
       socket_ = nullptr;
       return true;
    }
@@ -368,6 +372,7 @@ bool IpPort::SetSocket(SysSocket* socket)
       Debug::SwLog(IpPort_SetSocket, "socket already exists", port_);
    }
 
+   FunctionGuard guard(Guard_MemUnprotect);
    socket_ = socket;
    return true;
 }
@@ -384,6 +389,7 @@ void IpPort::SetThread(IoThread* thread)
    //
    if(thread == nullptr)
    {
+      FunctionGuard guard(Guard_MemUnprotect);
       thread_ = nullptr;
       return;
    }
@@ -395,6 +401,7 @@ void IpPort::SetThread(IoThread* thread)
       Debug::SwLog(IpPort_SetThread, "I/O thread already exists", port_);
    }
 
+   FunctionGuard guard(Guard_MemUnprotect);
    thread_ = thread;
 }
 
@@ -406,10 +413,15 @@ void IpPort::Shutdown(RestartLevel level)
 {
    Debug::ft(IpPort_Shutdown);
 
-   if(level < RestartCold) return;
+   if(Restart::ClearsMemory(MemType())) return;
 
-   stats_.release();
-   socket_ = nullptr;
+   FunctionGuard guard(Guard_MemUnprotect);
+   Restart::Release(stats_);
+
+   if((thread_ == nullptr) || thread_->ExitOnRestart(level))
+   {
+      socket_ = nullptr;
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -420,9 +432,14 @@ void IpPort::Startup(RestartLevel level)
 {
    Debug::ft(IpPort_Startup);
 
+   FunctionGuard guard(Guard_MemUnprotect);
+
    EnsureAlarm();
 
-   if(stats_ == nullptr) stats_.reset(new IpPortStats);
+   if(stats_ == nullptr)
+   {
+      stats_.reset(new IpPortStats);
+   }
 
    //  If the port has an input handler, make sure that it has an I/O thread.
    //

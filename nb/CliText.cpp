@@ -45,7 +45,7 @@ CliText::CliText(c_string help, c_string text, bool opt, uint32_t size) :
    Debug::ft(CliText_ctor);
 
    if(text_ == nullptr) text = EMPTY_STR;
-   parms_.Init(size, CliParm::CellDiff(), MemProt);
+   parms_.Init(size, CliParm::CellDiff(), MemImmutable);
 }
 
 //------------------------------------------------------------------------------

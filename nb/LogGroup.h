@@ -22,7 +22,7 @@
 #ifndef LOGGROUP_H_INCLUDED
 #define LOGGROUP_H_INCLUDED
 
-#include "Dynamic.h"
+#include "Immutable.h"
 #include <cstddef>
 #include <iosfwd>
 #include "NbTypes.h"
@@ -39,10 +39,10 @@ namespace NodeBase
 
 namespace NodeBase
 {
-//  Base class for grouping related logs.  A log group survives
-//  warm restarts but must be created during all others.
+//  Base class for grouping related logs.  Log groups survive all
+//  restarts so that logs can be generated during a restart.
 //
-class LogGroup : public Dynamic
+class LogGroup : public Immutable
 {
    friend class Log;
 public:
@@ -86,7 +86,7 @@ public:
 
    //  Controls whether all logs in the group are to be suppressed.
    //
-   void SetSuppressed(bool suppressed) { suppressed_ = suppressed; }
+   void SetSuppressed(bool suppressed);
 
    //  Returns the log associated with ID.
    //
@@ -103,6 +103,10 @@ public:
    //  Overridden for restarts.
    //
    void Shutdown(RestartLevel level) override;
+
+   //  Overridden for restarts.
+   //
+   void Startup(RestartLevel level) override;
 
    //  Overridden to display member variables.
    //
@@ -123,11 +127,11 @@ private:
 
    //  The group's name.
    //
-   const DynString name_;
+   const ImmutableStr name_;
 
    //  The group's explanation.
    //
-   const DynString expl_;
+   const ImmutableStr expl_;
 
    //  Set if all logs in the group are to be suppressed.
    //

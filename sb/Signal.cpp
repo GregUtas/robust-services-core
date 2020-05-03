@@ -67,6 +67,8 @@ Signal::~Signal()
 {
    Debug::ft(Signal_dtor);
 
+   Debug::SwLog(Signal_dtor, UnexpectedInvocation, 0);
+
    auto pro = Singleton< ProtocolRegistry >::Instance()->GetProtocol(prid_);
    if(pro != nullptr) pro->UnbindSignal(*this);
 }
@@ -96,7 +98,7 @@ CliText* Signal::CreateText() const
 void Signal::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    if(!options.test(DispVerbose)) return;
 
@@ -108,6 +110,6 @@ void Signal::Display(ostream& stream,
 
 void Signal::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 }

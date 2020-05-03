@@ -149,8 +149,8 @@ const char* SbException::what() const noexcept
 
 //==============================================================================
 
-const Context::MessageEntry Context::NilMessageEntry
-   = {MsgIncoming, NIL_ID, NIL_ID};
+const Context::MessageEntry Context::NilMessageEntry =
+   {MsgIncoming, NIL_ID, NIL_ID};
 
 Message* Context::ContextMsg_ = nullptr;
 
@@ -433,7 +433,7 @@ void Context::Enqueue(Q2Way< Context >& whichq, MsgPriority prio, bool henq)
       //  a warm restart, when an invoker thread requeues the context that
       //  it couldn't service before exiting.
       //
-      if(Restart::GetLevel() == RestartNil)
+      if(Restart::GetStatus() == RestartStatus::Running)
          return;
       else
          henq = true;

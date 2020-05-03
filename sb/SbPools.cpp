@@ -24,12 +24,14 @@
 #include <string>
 #include "Debug.h"
 #include "Event.h"
+#include "FunctionGuard.h"
 #include "GlobalAddress.h"
 #include "InvokerPoolRegistry.h"
 #include "Message.h"
 #include "MsgPort.h"
 #include "NbAppIds.h"
 #include "ProtocolSM.h"
+#include "Restart.h"
 #include "RootServiceSM.h"
 #include "SbIpBuffer.h"
 #include "Singleton.h"
@@ -56,7 +58,7 @@ const size_t SbIpBufferPool::BlockSize = sizeof(SbIpBuffer);
 fn_name SbIpBufferPool_ctor = "SbIpBufferPool.ctor";
 
 SbIpBufferPool::SbIpBufferPool() :
-   ObjectPool(SbIpBufferObjPoolId, MemDyn, BlockSize, "SbIpBuffers")
+   ObjectPool(SbIpBufferObjPoolId, MemDynamic, BlockSize, "SbIpBuffers")
 {
    Debug::ft(SbIpBufferPool_ctor);
 }
@@ -86,7 +88,7 @@ const size_t ContextPool::BlockSize = sizeof(SsmContext);
 fn_name ContextPool_ctor = "ContextPool.ctor";
 
 ContextPool::ContextPool() :
-   ObjectPool(ContextObjPoolId, MemDyn, BlockSize, "Contexts")
+   ObjectPool(ContextObjPoolId, MemDynamic, BlockSize, "Contexts")
 {
    Debug::ft(ContextPool_ctor);
 }
@@ -127,7 +129,7 @@ const size_t EventPool::BlockSize = sizeof(Event) + (20 * BYTES_PER_WORD);
 fn_name EventPool_ctor = "EventPool.ctor";
 
 EventPool::EventPool() :
-   ObjectPool(EventObjPoolId, MemDyn, BlockSize, "Events")
+   ObjectPool(EventObjPoolId, MemDynamic, BlockSize, "Events")
 {
    Debug::ft(EventPool_ctor);
 }
@@ -157,7 +159,7 @@ const size_t MessagePool::BlockSize = sizeof(Message) + (40 * BYTES_PER_WORD);
 fn_name MessagePool_ctor = "MessagePool.ctor";
 
 MessagePool::MessagePool() :
-   ObjectPool(MessageObjPoolId, MemDyn, BlockSize, "Messages")
+   ObjectPool(MessageObjPoolId, MemDynamic, BlockSize, "Messages")
 {
    Debug::ft(MessagePool_ctor);
 }
@@ -187,7 +189,7 @@ const size_t MsgPortPool::BlockSize = sizeof(MsgPort);
 fn_name MsgPortPool_ctor = "MsgPortPool.ctor";
 
 MsgPortPool::MsgPortPool() :
-   ObjectPool(MsgPortObjPoolId, MemDyn, BlockSize, "MsgPorts")
+   ObjectPool(MsgPortObjPoolId, MemDynamic, BlockSize, "MsgPorts")
 {
    Debug::ft(MsgPortPool_ctor);
 }
@@ -243,14 +245,14 @@ void MsgPortPool::Patch(sel_t selector, void* arguments)
 
 const size_t ProtocolSMPool::BlockSize =
    sizeof(ProtocolSM) + (60 * BYTES_PER_WORD);
+PooledObjectId ProtocolSMPool::PsmToAudit_ = NIL_ID;
 
 //------------------------------------------------------------------------------
 
 fn_name ProtocolSMPool_ctor = "ProtocolSMPool.ctor";
 
 ProtocolSMPool::ProtocolSMPool() :
-   ObjectPool(ProtocolSMObjPoolId, MemDyn, BlockSize, "ProtocolSMs"),
-   psmToAudit_(NIL_ID)
+   ObjectPool(ProtocolSMObjPoolId, MemDynamic, BlockSize, "ProtocolSMs")
 {
    Debug::ft(ProtocolSMPool_ctor);
 }
@@ -277,12 +279,12 @@ void ProtocolSMPool::ClaimBlocks()
    //  have a PSM, so its objects are claimed via PSMs.  This way, the audit
    //  will recover any context that is not on a work queue and has no PSM.
    //  If we encounter a corrupt PSM, the audit invokes this function again
-   //  after recovering from a trap.  psmToAudit_ therefore persists outside
+   //  after recovering from a trap.  PsmToAudit_ therefore persists outside
    //  this function so that we can continue from where we left off.
    //
    size_t count = 0;
 
-   auto psm = static_cast< ProtocolSM* >(NextUsed(psmToAudit_));
+   auto psm = static_cast< ProtocolSM* >(NextUsed(PsmToAudit_));
 
    while(psm != nullptr)
    {
@@ -299,10 +301,10 @@ void ProtocolSMPool::ClaimBlocks()
          }
       }
 
-      psm = static_cast< ProtocolSM* >(NextUsed(psmToAudit_));
+      psm = static_cast< ProtocolSM* >(NextUsed(PsmToAudit_));
    }
 
-   psmToAudit_ = NIL_ID;
+   PsmToAudit_ = NIL_ID;
 }
 
 //------------------------------------------------------------------------------
@@ -312,7 +314,7 @@ void ProtocolSMPool::Display(ostream& stream,
 {
    ObjectPool::Display(stream, prefix, options);
 
-   stream << prefix << "psmToAudit : " << psmToAudit_ << CRLF;
+   stream << prefix << "psmToAudit : " << PsmToAudit_ << CRLF;
 }
 
 //------------------------------------------------------------------------------
@@ -332,7 +334,7 @@ const size_t ServiceSMPool::BlockSize =
 fn_name ServiceSMPool_ctor = "ServiceSMPool.ctor";
 
 ServiceSMPool::ServiceSMPool() :
-   ObjectPool(ServiceSMObjPoolId, MemDyn, BlockSize, "ServiceSMs")
+   ObjectPool(ServiceSMObjPoolId, MemDynamic, BlockSize, "ServiceSMs")
 {
    Debug::ft(ServiceSMPool_ctor);
 }
@@ -361,7 +363,8 @@ const size_t TimerPool::BlockSize = sizeof(Timer);
 
 fn_name TimerPool_ctor = "TimerPool.ctor";
 
-TimerPool::TimerPool() : ObjectPool(TimerObjPoolId, MemDyn, BlockSize, "Timers")
+TimerPool::TimerPool() :
+   ObjectPool(TimerObjPoolId, MemDynamic, BlockSize, "Timers")
 {
    Debug::ft(TimerPool_ctor);
 
@@ -423,7 +426,8 @@ void TimerPool::Shutdown(RestartLevel level)
 {
    Debug::ft(TimerPool_Shutdown);
 
-   if(level >= RestartCold) timeouts_ = nullptr;
+   FunctionGuard guard(Guard_MemUnprotect);
+   Restart::Release(timeouts_);
 
    ObjectPool::Shutdown(level);
 }
@@ -440,6 +444,7 @@ void TimerPool::Startup(RestartLevel level)
 
    if(timeouts_ == nullptr)
    {
+      FunctionGuard guard(Guard_MemUnprotect);
       timeouts_.reset(new Counter("timeout messages sent"));
    }
 }
@@ -453,7 +458,7 @@ const size_t BtIpBufferPool::BlockSize = sizeof(SbIpBuffer);
 fn_name BtIpBufferPool_ctor = "BtIpBufferPool.ctor";
 
 BtIpBufferPool::BtIpBufferPool() :
-   ObjectPool(BtIpBufferObjPoolId, MemDyn, BlockSize, "BtIpBuffers")
+   ObjectPool(BtIpBufferObjPoolId, MemDynamic, BlockSize, "BtIpBuffers")
 {
    Debug::ft(BtIpBufferPool_ctor);
 }

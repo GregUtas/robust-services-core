@@ -25,6 +25,7 @@
 #include "Algorithms.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "Log.h"
 #include "LogGroupRegistry.h"
 #include "Singleton.h"
@@ -61,7 +62,7 @@ LogGroup::LogGroup(fixed_string name, fixed_string expl) :
       Debug::SwLog(LogGroup_ctor, "expl length", expl_.size());
    }
 
-   logs_.Init(MaxLogs, Log::CellDiff(), MemDyn);
+   logs_.Init(MaxLogs, Log::CellDiff(), MemImmutable);
 
    Singleton< LogGroupRegistry >::Instance()->BindGroup(*this);
 }
@@ -74,6 +75,7 @@ LogGroup::~LogGroup()
 {
    Debug::ft(LogGroup_dtor);
 
+   Debug::SwLog(LogGroup_dtor, UnexpectedInvocation, 0);
    Singleton< LogGroupRegistry >::Instance()->UnbindGroup(*this);
 }
 
@@ -168,7 +170,15 @@ Log* LogGroup::FindLog(LogId id) const
 
 void LogGroup::Patch(sel_t selector, void* arguments)
 {
-   Dynamic::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
+void LogGroup::SetSuppressed(bool suppressed)
+{
+   FunctionGuard guard(Guard_ImmUnprotect);
+   suppressed_ = suppressed;
 }
 
 //------------------------------------------------------------------------------
@@ -182,6 +192,22 @@ void LogGroup::Shutdown(RestartLevel level)
    for(auto l = logs_.First(); l != nullptr; logs_.Next(l))
    {
       l->Shutdown(level);
+   }
+
+   SetSuppressed(false);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name LogGroup_Startup = "LogGroup.Startup";
+
+void LogGroup::Startup(RestartLevel level)
+{
+   Debug::ft(LogGroup_Startup);
+
+   for(auto l = logs_.First(); l != nullptr; logs_.Next(l))
+   {
+      l->Startup(level);
    }
 }
 

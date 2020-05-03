@@ -43,6 +43,10 @@ enum SwLogLevel
    SwError     // throws an exception (which includes a stack trace)
 };
 
+//  Used in software logs when a function invocation was unexpected.
+//
+extern fixed_string UnexpectedInvocation;
+
 //  Used in software logs when a function override should have been provided.
 //  Returns the string "override not found in " + strClass(obj, ns).
 //

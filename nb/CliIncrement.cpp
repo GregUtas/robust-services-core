@@ -47,7 +47,7 @@ CliIncrement::CliIncrement(c_string name, c_string help, uint32_t size) :
    Debug::Assert(name_ != nullptr);
    Debug::Assert(help_ != nullptr);
 
-   commands_.Init(size, CliParm::CellDiff(), MemProt);
+   commands_.Init(size, CliParm::CellDiff(), MemImmutable);
    Singleton< CliRegistry >::Instance()->BindIncrement(*this);
 }
 
@@ -59,6 +59,7 @@ CliIncrement::~CliIncrement()
 {
    Debug::ft(CliIncrement_dtor);
 
+   Debug::SwLog(CliIncrement_dtor, UnexpectedInvocation, 0);
    Singleton< CliRegistry >::Instance()->UnbindIncrement(*this);
 }
 
@@ -109,7 +110,7 @@ ptrdiff_t CliIncrement::CellDiff()
 void CliIncrement::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    stream << prefix << "iid  : " << iid_.to_str() << CRLF;
    stream << prefix << "name : " << name_ << CRLF;
@@ -195,6 +196,6 @@ CliCommand* CliIncrement::FindCommand(const string& comm) const
 
 void CliIncrement::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 }

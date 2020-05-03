@@ -40,7 +40,7 @@ DaemonRegistry::DaemonRegistry()
 {
    Debug::ft(DaemonRegistry_ctor);
 
-   daemons_.Init(Thread::MaxId, Daemon::CellDiff(), MemProt);
+   daemons_.Init(Thread::MaxId, Daemon::CellDiff(), MemPermanent);
 }
 
 //------------------------------------------------------------------------------
@@ -50,6 +50,8 @@ fn_name DaemonRegistry_dtor = "DaemonRegistry.dtor";
 DaemonRegistry::~DaemonRegistry()
 {
    Debug::ft(DaemonRegistry_dtor);
+
+   Debug::SwLog(DaemonRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -107,6 +109,20 @@ Daemon* DaemonRegistry::FindDaemon(fixed_string name) const
 void DaemonRegistry::Patch(sel_t selector, void* arguments)
 {
    Permanent::Patch(selector, arguments);
+}
+
+//------------------------------------------------------------------------------
+
+fn_name DaemonRegistry_Shutdown = "DaemonRegistry.Shutdown";
+
+void DaemonRegistry::Shutdown(RestartLevel level)
+{
+   Debug::ft(DaemonRegistry_Shutdown);
+
+   for(auto d = daemons_.First(); d != nullptr; daemons_.Next(d))
+   {
+      d->Shutdown(level);
+   }
 }
 
 //------------------------------------------------------------------------------

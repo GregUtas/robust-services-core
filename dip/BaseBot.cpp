@@ -20,7 +20,6 @@
 #include "BotThread.h"
 #include "BotTrace.h"
 #include "BotType.h"
-#include "CfgParmRegistry.h"
 #include "CliThread.h"
 #include "Debug.h"
 #include "Formatters.h"
@@ -29,6 +28,7 @@
 #include "IpPort.h"
 #include "IpPortRegistry.h"
 #include "Location.h"
+#include "MainArgs.h"
 #include "MapAndUnits.h"
 #include "NbTracer.h"
 #include "NbTypes.h"
@@ -73,8 +73,7 @@ BaseBot::BaseBot() :
 {
    Debug::ft(BaseBot_ctor);
 
-   auto& args = Singleton< CfgParmRegistry >::Instance()->GetMainArgs();
-   title_ = *args.at(0);
+   title_ = MainArgs::At(0);
 }
 
 //------------------------------------------------------------------------------
@@ -2261,7 +2260,7 @@ void BaseBot::send_bm_message(const byte_t* payload, uint16_t length) const
    bm->header.length = length;
    if(length > 0) memcpy(&bm->first_payload_byte, payload, length);
 
-   FunctionGuard guard(FunctionGuard::MakeUnpreemptable, true);
+   FunctionGuard guard(Guard_MakeUnpreemptable);
    Singleton< BotThread >::Instance()->QueueMsg(buff);
 }
 
@@ -2556,7 +2555,7 @@ void BaseBot::set_title(token_t msg, bool rcvd)
 
    case TOKEN_COMMAND_NME:
       if(!rcvd)
-         title_  = "<-NME: "+ name_ + SPACE + version_;
+         title_ = "<-NME: "+ name_ + SPACE + version_;
       else
          title_ = "NME: "+ name_ + SPACE + version_;
       break;
@@ -2570,7 +2569,7 @@ void BaseBot::set_title(token_t msg, bool rcvd)
 
    case TOKEN_COMMAND_HLO:
       if(!rcvd)
-         title_  = "<-HLO: "+ name_ + SPACE + version_;
+         title_ = "<-HLO: "+ name_ + SPACE + version_;
       else
       {
          if(!observer_)

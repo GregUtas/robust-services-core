@@ -27,6 +27,7 @@
 #include "CliThread.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "PotsCliParms.h"
 #include "PotsFeatures.h"
 #include "PotsProfileRegistry.h"
@@ -45,7 +46,7 @@ class PotsHtlAttrs : public CliText
 public: PotsHtlAttrs();
 };
 
-//==============================================================================
+//------------------------------------------------------------------------------
 
 fixed_string PotsHtlAbbrName = "htl";
 fixed_string PotsHtlFullName = "Hot Line";
@@ -55,7 +56,7 @@ PotsHtlAttrs::PotsHtlAttrs() : CliText(PotsHtlFullName, PotsHtlAbbrName)
    BindParm(*new DnMandParm);
 }
 
-//------------------------------------------------------------------------------
+//==============================================================================
 
 fn_name PotsHtlFeature_ctor = "PotsHtlFeature.ctor";
 
@@ -99,6 +100,8 @@ PotsFeatureProfile* PotsHtlFeature::Subscribe
 
    if(Singleton< PotsProfileRegistry >::Instance()->Profile(dn) == nullptr)
       *cli.obuf << spaces(2) << UnregisteredDnWarning << CRLF;
+
+   FunctionGuard guard(Guard_MemUnprotect);
    return new PotsHtlFeatureProfile(dn);
 }
 

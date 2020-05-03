@@ -26,6 +26,7 @@
 #include "Algorithms.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "SbHandlers.h"
 #include "ServiceRegistry.h"
 #include "Singleton.h"
@@ -59,10 +60,10 @@ Service::Service(Id sid, bool modifiable, bool modifier) :
 
    sid_.SetId(sid);
 
-   states_.Init(State::MaxId, State::CellDiff(), MemProt);
-   handlers_.Init(EventHandler::MaxId, 0, MemProt, false);
+   states_.Init(State::MaxId, State::CellDiff(), MemImmutable);
+   handlers_.Init(EventHandler::MaxId, 0, MemImmutable, false);
    for(auto i = 0; i <= Event::MaxId; ++i) eventNames_[i] = nullptr;
-   triggers_.Init(Trigger::MaxId, 0, MemProt, false);
+   triggers_.Init(Trigger::MaxId, 0, MemImmutable, false);
 
    //  Add the service to the global service registry.
    //
@@ -119,6 +120,7 @@ Service::~Service()
 {
    Debug::ft(Service_dtor);
 
+   Debug::SwLog(Service_dtor, UnexpectedInvocation, 0);
    Singleton< ServiceRegistry >::Instance()->UnbindService(*this);
 }
 
@@ -304,6 +306,7 @@ bool Service::Disable()
       return false;
    }
 
+   FunctionGuard guard(Guard_ImmUnprotect);
    status_ = Disabled;
    return true;
 }
@@ -313,7 +316,7 @@ bool Service::Disable()
 void Service::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Protected::Display(stream, prefix, options);
+   Immutable::Display(stream, prefix, options);
 
    stream << prefix << "sid        : " << sid_.to_str() << CRLF;
    stream << prefix << "status     : " << status_ << CRLF;
@@ -357,6 +360,7 @@ bool Service::Enable()
       return false;
    }
 
+   FunctionGuard guard(Guard_ImmUnprotect);
    status_ = Enabled;
    return true;
 }
@@ -381,7 +385,7 @@ Trigger* Service::GetTrigger(TriggerId tid) const
 
 void Service::Patch(sel_t selector, void* arguments)
 {
-   Protected::Patch(selector, arguments);
+   Immutable::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------

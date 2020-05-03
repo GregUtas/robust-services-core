@@ -77,19 +77,6 @@ void PbModule::Shutdown(RestartLevel level)
 {
    Debug::ft(PbModule_Shutdown);
 
-   Singleton< PotsIncrement >::Instance()->Shutdown(level);
-   Singleton< PotsProtocol >::Instance()->Shutdown(level);
-   Singleton< PotsBicFeature >::Instance()->Shutdown(level);
-   Singleton< PotsBocFeature >::Instance()->Shutdown(level);
-   Singleton< PotsCfbFeature >::Instance()->Shutdown(level);
-   Singleton< PotsCfnFeature >::Instance()->Shutdown(level);
-   Singleton< PotsCfuFeature >::Instance()->Shutdown(level);
-   Singleton< PotsCwtFeature >::Instance()->Shutdown(level);
-   Singleton< PotsCxfFeature >::Instance()->Shutdown(level);
-   Singleton< PotsHtlFeature >::Instance()->Shutdown(level);
-   Singleton< PotsSusFeature >::Instance()->Shutdown(level);
-   Singleton< PotsTwcFeature >::Instance()->Shutdown(level);
-   Singleton< PotsWmlFeature >::Instance()->Shutdown(level);
    Singleton< PotsFeatureRegistry >::Instance()->Shutdown(level);
    Singleton< PotsProfileRegistry >::Instance()->Shutdown(level);
 }
@@ -120,7 +107,7 @@ void PbModule::Startup(RestartLevel level)
    //  Audit the features and create their CLI parameters.
    //  This is done before creating the POTS CLI increment.
    //
-   if(level >= RestartReload)
+   if(level >= RestartReboot)
    {
       Singleton< PotsFeatureRegistry >::Instance()->Audit();
    }

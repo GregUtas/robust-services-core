@@ -40,7 +40,7 @@ namespace NodeBase
 //  template a friend class to enable access to the non-public constructor and
 //  destructor:
 //
-//    class MyClass : public Base  // or some subclass of Base
+//    class MyClass : public Base  // actually a subclass of Base: see below
 //    {
 //       friend class Singleton< MyClass >;
 //    public:
@@ -51,16 +51,12 @@ namespace NodeBase
 //
 //  The type of memory that a singleton wishes to use determines it ultimate
 //  base class:
-//    o MemTemp: Temporary
-//    o MemDyn:  Dynamic
-//    o MemProt: Protected
-//    o MemPerm: Base, Object, or Permanent
-//    o MemImm:  Immutable
-//  The reason for this is that the only other way to specify an object's memory
-//  type is to use the override of Object.operator new that includes MemoryType.
-//  This is not possible for a singleton, however, because Singleton.Instance
-//  invokes the standard form of new, which means that the memory type must be
-//  determine by one of the singleton's base classes.
+//    o MemTemporary:  Temporary
+//    o MemDynamic:    Dynamic
+//    o MemPersistent: Persistent
+//    o MemProtected:  Protected
+//    o MemPermanent:  Permanent
+//    o MemImmutable:  Immutable
 //
 template< class T > class Singleton
 {
@@ -80,7 +76,8 @@ public:
       if(Instance_ != nullptr) return Instance_;
       Instance_ = new T;
       auto reg = Singletons::Instance();
-      reg->BindInstance((const Base**) &Instance_, Instance_->MemType());
+      auto type = Instance_->MemType();
+      reg->BindInstance((const Base**) &Instance_, type);
       return Instance_;
    }
 

@@ -28,6 +28,7 @@
 #include "CliThread.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "MsgPort.h"
 #include "NbTypes.h"
 #include "PotsCliParms.h"
@@ -35,6 +36,7 @@
 #include "PotsFeatureRegistry.h"
 #include "PotsProfileRegistry.h"
 #include "ProtocolSM.h"
+#include "Restart.h"
 #include "RootServiceSM.h"
 #include "SbAppIds.h"
 #include "Singleton.h"
@@ -49,8 +51,7 @@ namespace PotsBase
 {
 fn_name PotsProfile_ctor = "PotsProfile.ctor";
 
-PotsProfile::PotsProfile(DN dn) :
-   state_(Idle)
+PotsProfile::PotsProfile(DN dn)
 {
    Debug::ft(PotsProfile_ctor);
 
@@ -61,6 +62,7 @@ PotsProfile::PotsProfile(DN dn) :
    dn_.SetId(Address::DNToIndex(dn));
    circuit_.reset(new PotsCircuit(*this));
    featureq_.Init(PotsFeatureProfile::LinkDiff());
+   dyn_.reset(new PotsProfileDynamic);
 
    Singleton< PotsProfileRegistry >::Instance()->BindProfile(*this);
 }
@@ -98,10 +100,10 @@ bool PotsProfile::ClearObjAddr(const LocalAddress& addr)
    //  For purposes of error recovery, transition to the idle state
    //  if the address is unknown.
    //
-   if((addr == LocalAddress()) || (objAddr_ == addr))
+   if((addr == LocalAddress()) || (dyn_->objAddr_ == addr))
    {
-      objAddr_ = LocalAddress();
-      if(state_ == Active) state_ = Idle;
+      dyn_->objAddr_ = LocalAddress();
+      if(dyn_->state_ == Active) dyn_->state_ = Idle;
       return true;
    }
 
@@ -130,6 +132,8 @@ bool PotsProfile::Deregister()
 {
    Debug::ft(PotsProfile_Deregister);
 
+   FunctionGuard guard(Guard_MemUnprotect);
+
    for(auto f = featureq_.First(); f != nullptr; f = featureq_.First())
    {
       if(!Unsubscribe(f->Fid())) return false;
@@ -148,8 +152,8 @@ void PotsProfile::Display(ostream& stream,
 
    stream << prefix << "DN       : " << Address::IndexToDN(GetDN());
    stream << prefix << "DN id    : " << dn_.to_str() << CRLF;
-   stream << prefix << "state    : " << state_ << CRLF;
-   stream << prefix << "objAddr  : " << objAddr_.to_str() << CRLF;
+   stream << prefix << "state    : " << dyn_->state_ << CRLF;
+   stream << prefix << "objAddr  : " << dyn_->objAddr_.to_str() << CRLF;
    stream << prefix << "circuit  : ";
 
    if(options.test(DispVerbose))
@@ -214,7 +218,7 @@ bool PotsProfile::SetObjAddr(const MsgPort& port)
 
    //  Overwrite the profile's current port if it is invalid.
    //
-   if(MsgPort::Find(objAddr_) != nullptr)
+   if(MsgPort::Find(dyn_->objAddr_) != nullptr)
    {
       //  The current port is valid.  If the new port's root SSM is a
       //  multiplexer, it has created a user-side PSM, so overwrite the
@@ -230,8 +234,8 @@ bool PotsProfile::SetObjAddr(const MsgPort& port)
       }
    }
 
-   objAddr_ = port.ObjAddr();
-   if(state_ == Idle) state_ = Active;
+   dyn_->objAddr_ = port.ObjAddr();
+   if(dyn_->state_ == Idle) dyn_->state_ = Active;
    return true;
 }
 
@@ -247,9 +251,9 @@ void PotsProfile::SetState(const ProtocolSM* psm, State state)
    auto port = psm->Port();
    if(port == nullptr) return;
 
-   if(port->ObjAddr() == objAddr_)
+   if(port->ObjAddr() == dyn_->objAddr_)
    {
-      state_ = state;
+      dyn_->state_ = state;
    }
 }
 
@@ -261,16 +265,13 @@ void PotsProfile::Shutdown(RestartLevel level)
 {
    Debug::ft(PotsProfile_Shutdown);
 
-   //  On a warm restart, everything in the profile will be preserved.
-   //  On a reload restart, everything will be freed.  In either case,
-   //  there is nothing to do.  On a cold restart, the circuit will be
-   //  freed, so reset the data related to it.
-   //
-   if(level != RestartCold) return;
+   if(Restart::ClearsMemory(MemType())) return;
 
-   state_ = Idle;
-   circuit_.release();
-   objAddr_ = LocalAddress();
+   //  If the circuit will be freed, reset the data related to it.
+   //
+   FunctionGuard guard(Guard_MemUnprotect);
+   Restart::Release(circuit_);
+   if(circuit_ == nullptr) new (dyn_.get()) PotsProfileDynamic();
 }
 
 //------------------------------------------------------------------------------
@@ -281,7 +282,11 @@ void PotsProfile::Startup(RestartLevel level)
 {
    Debug::ft(PotsProfile_Startup);
 
-   if(circuit_ == nullptr) circuit_.reset(new PotsCircuit(*this));
+   if(circuit_ == nullptr)
+   {
+      FunctionGuard guard(Guard_MemUnprotect);
+      circuit_.reset(new PotsCircuit(*this));
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -310,6 +315,8 @@ bool PotsProfile::Subscribe(PotsFeature::Id fid, CliThread& cli)
 
    if(ftr != nullptr)
    {
+      FunctionGuard guard(Guard_MemUnprotect);
+
       auto fp = ftr->Subscribe(*this, cli);
 
       if(fp != nullptr)
@@ -333,11 +340,12 @@ fn_name PotsProfile_Unsubscribe = "PotsProfile.Unsubscribe";
 bool PotsProfile::Unsubscribe(PotsFeature::Id fid)
 {
    Debug::ft(PotsProfile_Unsubscribe);
-
    for(auto fp = featureq_.First(); fp != nullptr; featureq_.Next(fp))
    {
       if(fp->Fid() == fid)
       {
+         FunctionGuard guard(Guard_MemUnprotect);
+
          if(!fp->Unsubscribe(*this)) return false;
          featureq_.Exq(*fp);
          delete fp;

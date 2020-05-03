@@ -46,16 +46,16 @@ public:
 
    //  Identifiers for the statistics gathered during POTS calls.
    //
-   static const Id OrigAttempted  = 0;  // outgoing call attempts by POTS users
-   static const Id OrigAbandoned  = 1;  // calls abandoned while dialing
-   static const Id TermAttempted  = 2;  // incoming call attempts to POTS users
-   static const Id TermAbandoned  = 3;  // abandoned while waiting for answer
-   static const Id Alerted        = 4;  // calls that applied ringing
-   static const Id Answered       = 5;  // calls that were answered
-   static const Id Resumed        = 6;  // calls that were suspended and resumed
+   static const Id OrigAttempted = 0;   // outgoing call attempts by POTS users
+   static const Id OrigAbandoned = 1;   // calls abandoned while dialing
+   static const Id TermAttempted = 2;   // incoming call attempts to POTS users
+   static const Id TermAbandoned = 3;   // abandoned while waiting for answer
+   static const Id Alerted = 4;         // calls that applied ringing
+   static const Id Answered = 5;        // calls that were answered
+   static const Id Resumed = 6;         // calls that were suspended and resumed
    static const Id ProxyAttempted = 7;  // proxy calls attempted (redirections)
-   static const Id ProxyAnswered  = 8;  // proxy calls answered
-   static const Id MaxId          = 8;  // range constant
+   static const Id ProxyAnswered = 8;   // proxy calls answered
+   static const Id MaxId = 8;           // range constant
 
    //  Increments the basic call statistic identified by ID.
    //

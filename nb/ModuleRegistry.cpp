@@ -24,12 +24,15 @@
 #include <cstring>
 #include <iomanip>
 #include <ios>
+#include <iosfwd>
 #include <sstream>
 #include <string>
 #include "Clock.h"
 #include "Debug.h"
 #include "Formatters.h"
 #include "Log.h"
+#include "MainArgs.h"
+#include "Memory.h"
 #include "Module.h"
 #include "NbLogs.h"
 #include "Restart.h"
@@ -83,17 +86,109 @@ const FactionFlags& ShutdownFactions()
 }
 
 //==============================================================================
+//
+//  The reason for a reinitialization or shutdown.
+//
+reinit_t reason_ = NilRestart;
+
+//  An error value for debugging.
+//
+debug32_t errval_ = 0;
+
+//  A stream for recording the progress of system initialization.
+//
+ostringstreamPtr stream_ = nullptr;
+
+//------------------------------------------------------------------------------
+//
+//  Determines the restart level when the system is in service.
+//
+fn_name NodeBase_CalcLevel = "NodeBase.CalcLevel";
+
+RestartLevel CalcLevel()
+{
+   Debug::ft(NodeBase_CalcLevel);
+
+   //  A restart was initiated when the system was in service.  Determine
+   //  the restart level based on what caused the restart.
+   //
+   if(reason_ == ManualRestart)
+   {
+      //  CLI >restart command.  errval_ is the restart level.
+      //
+      switch(errval_)
+      {
+      case RestartNil:
+         Debug::SwLog(NodeBase_CalcLevel, reason_, errval_);
+         return RestartNil;
+
+      case RestartWarm:
+      case RestartCold:
+      case RestartReload:
+      case RestartReboot:
+      case RestartExit:
+         return RestartLevel(errval_);
+
+      default:
+         Debug::SwLog(NodeBase_CalcLevel, reason_, errval_);
+         return RestartWarm;
+      }
+   }
+
+   switch(reason_)
+   {
+   case WorkQueueCorruption:
+   case TimerQueueCorruption:
+      //
+      //  These require a cold restart to reset these queues and
+      //  delete all objects associated with them.
+      //
+      return RestartCold;
+
+   case RestartTimeout:
+   case ModuleStartupFailed:
+      //
+      //  These reasons should not occur when the system is in service.
+      //
+      Debug::SwLog(NodeBase_CalcLevel, reason_, errval_);
+      return RestartReboot;
+   }
+
+   //  A warm restart is the default.
+   //
+   return RestartWarm;
+}
+
+//------------------------------------------------------------------------------
+//
+//  Returns stream_, creating it if it doesn't exist.
+//
+std::ostringstream* Stream()
+{
+   if(stream_ == nullptr)
+   {
+      stream_.reset(new std::ostringstream);
+      *stream_ << std::boolalpha << std::nouppercase;
+   }
+
+   return stream_.get();
+}
+
+//==============================================================================
 
 fn_name ModuleRegistry_ctor = "ModuleRegistry.ctor";
 
-ModuleRegistry::ModuleRegistry() :
-   reason_(NilRestart),
-   errval_(0),
-   stream_(nullptr)
+ModuleRegistry::ModuleRegistry()
 {
    Debug::ft(ModuleRegistry_ctor);
 
-   modules_.Init(Module::MaxId, Module::CellDiff(), MemImm);
+   modules_.Init(Module::MaxId, Module::CellDiff(), MemImmutable);
+
+   //  The creation of this registry means that immutable memory is now
+   //  available, so create MainArgs in order to save main()'s arguments
+   //  in immutable memory.
+   //
+   Singleton< MainArgs >::Instance();
 }
 
 //------------------------------------------------------------------------------
@@ -103,6 +198,8 @@ fn_name ModuleRegistry_dtor = "ModuleRegistry.dtor";
 ModuleRegistry::~ModuleRegistry()
 {
    Debug::ft(ModuleRegistry_dtor);
+
+   Debug::SwLog(ModuleRegistry_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -118,59 +215,6 @@ void ModuleRegistry::BindModule(Module& module)
 
 //------------------------------------------------------------------------------
 
-fn_name ModuleRegistry_CalcLevel = "ModuleRegistry.CalcLevel";
-
-RestartLevel ModuleRegistry::CalcLevel() const
-{
-   Debug::ft(ModuleRegistry_CalcLevel);
-
-   //  A restart was initiated when the system was in service.  Determine
-   //  the restart level based on what caused the restart.
-   //
-   if(reason_ == ManualRestart)
-   {
-      //  CLI >restart command.  errval_ is the restart level.
-      //
-      switch(errval_)
-      {
-      case RestartNil:
-         Debug::SwLog(ModuleRegistry_CalcLevel, reason_, errval_);
-         return RestartNil;
-
-      case RestartWarm:
-      case RestartCold:
-      case RestartReload:
-      case RestartReboot:
-      case RestartExit:
-         return RestartLevel(errval_);
-
-      default:
-         Debug::SwLog(ModuleRegistry_CalcLevel, reason_, errval_);
-         return RestartWarm;
-      }
-   }
-
-   //  PayloadFaction queue corruptions require a cold restart to reset
-   //  these queues and delete all objects associated with them.
-   //
-   if(reason_ == WorkQueueCorruption) return RestartCold;
-   if(reason_ == TimerQueueCorruption) return RestartCold;
-
-   if((reason_ == RestartTimeout) || (reason_ == ModuleStartupFailed))
-   {
-      //  These reasons should not occur when the system is in service.
-      //
-      Debug::SwLog(ModuleRegistry_CalcLevel, reason_, errval_);
-      return RestartReboot;
-   }
-
-   //  A warm restart is the default.
-   //
-   return RestartWarm;
-}
-
-//------------------------------------------------------------------------------
-
 void ModuleRegistry::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
@@ -182,6 +226,7 @@ void ModuleRegistry::Display(ostream& stream,
    stream << prefix << "reason    : " << reason_ << CRLF;
    stream << prefix << "errval    : " << errval_ << CRLF;
    stream << prefix << "stream    : " << stream_.get() << CRLF;
+
    stream << prefix << "modules [ModuleId]" << CRLF;
    modules_.Display(stream, prefix + spaces(2), options);
 }
@@ -205,6 +250,7 @@ RestartLevel ModuleRegistry::NextLevel()
    {
    case RestartWarm:
       return RestartCold;
+
    case RestartCold:
       return RestartReload;
 
@@ -213,11 +259,12 @@ RestartLevel ModuleRegistry::NextLevel()
       //
       //  These cause a reboot.
       //
+      //  [[ fallthrough ]]
    case RestartNil:
    case RestartExit:
    default:
       //
-      //  This functions is invoked when a restart is already underway,
+      //  This function is invoked when a restart is already underway,
       //  so these values should not occur.
       //
       return RestartReboot;
@@ -245,7 +292,7 @@ void ModuleRegistry::Restart()
    {
       switch(Restart::Status_)
       {
-      case Initial:
+      case Launching:
          Thread::EnableFactions(NoFactions);
          reentered = false;
          Restart::Level_ = RestartReboot;
@@ -319,6 +366,11 @@ fn_name ModuleRegistry_Shutdown = "ModuleRegistry.Shutdown";
 void ModuleRegistry::Shutdown(RestartLevel level)
 {
    Debug::ft(ModuleRegistry_Shutdown);
+
+   if(level >= RestartReload)
+   {
+      Memory::Unprotect(MemProtected);
+   }
 
    //  Schedule a subset of the factions so that pending logs will be output.
    //
@@ -440,24 +492,16 @@ void ModuleRegistry::Startup(RestartLevel level)
       Log::Submit(stream_);
    }
 
+   //  Write-protect memory segments that are read-only while in service.
+   //
+   Memory::Protect(MemImmutable);
+   Memory::Protect(MemProtected);
+
    *Stream() << setw(36) << string(5, '-') << CRLF;
    auto width = strlen(StartupTotalStr);
    auto msecs = Clock::TicksToMsecs(Clock::TicksSince(zeroTime));
    *Stream() << StartupTotalStr << setw(36 - width) << msecs << CRLF;
    Log::Submit(stream_);
-}
-
-//------------------------------------------------------------------------------
-
-std::ostringstream* ModuleRegistry::Stream()
-{
-   if(stream_ == nullptr)
-   {
-      stream_.reset(new std::ostringstream);
-      *stream_ << std::boolalpha << std::nouppercase;
-   }
-
-   return stream_.get();
 }
 
 //------------------------------------------------------------------------------

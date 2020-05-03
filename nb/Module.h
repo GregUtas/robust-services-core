@@ -44,8 +44,6 @@ namespace NodeBase
 //    {
 //       friend class Singleton< SomeModule >;
 //    public:
-//       virtual void Display(std::ostream& stream,
-//          const std::string& prefix, const Flags& options) const override;
 //       virtual void Patch(sel_t selector, void* arguments) override;
 //    private:
 //       SomeModule() : Module()

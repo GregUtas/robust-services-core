@@ -79,7 +79,6 @@ void CtModule::Shutdown(RestartLevel level)
    Singleton< CxxRoot >::Instance()->Shutdown(level);
    Singleton< Library >::Instance()->Shutdown(level);
    Singleton< CxxSymbols >::Instance()->Shutdown(level);
-   Singleton< CtIncrement >::Instance()->Shutdown(level);
 }
 
 //------------------------------------------------------------------------------

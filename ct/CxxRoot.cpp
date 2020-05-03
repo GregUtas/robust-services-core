@@ -36,6 +36,7 @@
 #include "CxxStrLiteral.h"
 #include "Debug.h"
 #include "Parser.h"
+#include "Restart.h"
 #include "Singleton.h"
 #include "SysTime.h"
 #include "SysTypes.h"
@@ -395,11 +396,7 @@ void CxxRoot::Shutdown(RestartLevel level)
 {
    Debug::ft(CxxRoot_Shutdown);
 
-   //  Parser output is now preserved during restarts.
-   //
-   if(level < RestartReboot) return;
-
-   gns_.reset();
+   Restart::Release(gns_);
 }
 
 //------------------------------------------------------------------------------
@@ -412,7 +409,7 @@ void CxxRoot::Startup(RestartLevel level)
 
    //  Parser output is now preserved during restarts.
    //
-   if(level < RestartReboot) return;
+   if(gns_ != nullptr) return;
 
    CxxChar::Initialize();
 

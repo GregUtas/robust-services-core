@@ -22,7 +22,7 @@
 #ifndef EVENTHANDLER_H_INCLUDED
 #define EVENTHANDLER_H_INCLUDED
 
-#include "Protected.h"
+#include "Immutable.h"
 #include <cstdint>
 #include <iosfwd>
 #include "SbTypes.h"
@@ -45,7 +45,7 @@ namespace SessionBase
 //  Event handlers include message analyzers, and each subclass must be a
 //  singleton.
 //
-class EventHandler : public NodeBase::Protected
+class EventHandler : public NodeBase::Immutable
 {
    friend class NodeBase::Registry< EventHandler >;
 public:
@@ -63,11 +63,11 @@ public:
    //  handlers associated with these identifiers are automatically registered
    //  against each service and cannot be overwritten.
    //
-   static const Id AnalyzeMsg      = 1;
-   static const Id AnalyzeSap      = 2;
-   static const Id AnalyzeSnp      = 3;
+   static const Id AnalyzeMsg = 1;
+   static const Id AnalyzeSap = 2;
+   static const Id AnalyzeSnp = 3;
    static const Id ForceTransition = 4;
-   static const Id InitiationReq   = 5;
+   static const Id InitiationReq = 5;
 
    //  Predefined identifier for an event handler that handles media
    //  failures for a service that controls media streams.

@@ -27,6 +27,7 @@
 #include "Algorithms.h"
 #include "Debug.h"
 #include "Formatters.h"
+#include "FunctionGuard.h"
 #include "Log.h"
 #include "Memory.h"
 #include "PotsCircuit.h"
@@ -273,7 +274,7 @@ TrafficCallPool::~TrafficCallPool()
    //
    for(auto call = freeq_.Deq(); call != nullptr; call = freeq_.Deq())
    {
-      Memory::Free(call);
+      Memory::Free(call, MemDynamic);
    }
 }
 
@@ -1065,7 +1066,7 @@ PotsTrafficThread::PotsTrafficThread() : Thread(LoadTestFaction),
    Debug::ft(PotsTrafficThread_ctor);
 
    auto size = sizeof(Q1Way< TrafficCall >) * NumOfSlots;
-   timewheel_ = (Q1Way< TrafficCall >*) Memory::Alloc(size, MemDyn);
+   timewheel_ = (Q1Way< TrafficCall >*) Memory::Alloc(size, MemDynamic);
 
    for(auto i = 0; i < NumOfSlots; ++i)
    {
@@ -1097,7 +1098,7 @@ PotsTrafficThread::~PotsTrafficThread()
             timewheel_[i].Purge();
          }
 
-         Memory::Free(timewheel_);
+         Memory::Free(timewheel_, MemDynamic);
          timewheel_ = nullptr;
       }
    }
@@ -1460,6 +1461,7 @@ void PotsTrafficThread::SetRate(word rate)
          firstDN_ = StartDN;
       }
 
+      FunctionGuard guard(Guard_MemUnprotect);
       auto reg = Singleton< PotsProfileRegistry >::Instance();
 
       for(auto i = 0; i < n; ++i)
@@ -1523,6 +1525,8 @@ void PotsTrafficThread::Takedown()
       if(curr == 0) break;
       if(curr == prev) --count;
    }
+
+   FunctionGuard guard(Guard_MemUnprotect);
 
    auto reg = Singleton< PotsProfileRegistry >::Instance();
 

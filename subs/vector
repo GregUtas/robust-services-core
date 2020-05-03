@@ -7,10 +7,11 @@
 
 #include "cstddef"
 #include "iterator"
+#include "memory"
 
 namespace std
 {
-   template< typename T > class vector
+   template< typename T, class alloc = allocator<T>> class vector
    {
    public:
       typedef iterator_t< T > iterator;

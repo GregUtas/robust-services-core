@@ -44,7 +44,7 @@ struct SingletonTuple
 
 //------------------------------------------------------------------------------
 
-const size_t Singletons::MaxSingletons = 16 * 1024;
+const size_t Singletons::MaxSingletons = 32 * kBs;
 Singletons* Singletons::Instance_ = nullptr;
 
 //------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ Singletons::Singletons()
 {
    Debug::ft(Singletons_ctor);
 
-   registry_.Init(MaxSingletons, MemPerm);
+   registry_.Init(MaxSingletons, MemPermanent);
    registry_.Reserve(MaxSingletons >> 4);
 }
 
@@ -66,6 +66,8 @@ fn_name Singletons_dtor = "Singletons.dtor";
 Singletons::~Singletons()
 {
    Debug::ft(Singletons_dtor);
+
+   Debug::SwLog(Singletons_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -81,11 +83,8 @@ void Singletons::BindInstance(const Base** addr, MemoryType type)
    //
    switch(type)
    {
-   case MemProt:
-   case MemDyn:
-   case MemTemp:
-      break;
-   default:
+   case MemPermanent:
+   case MemImmutable:
       return;
    }
 
@@ -151,13 +150,13 @@ void Singletons::Shutdown(RestartLevel level)
    switch(level)
    {
    case RestartWarm:
-      type = MemTemp;
+      type = MemTemporary;
       break;
    case RestartCold:
-      type = MemDyn;
+      type = MemDynamic;
       break;
    case RestartReload:
-      type = MemProt;
+      type = MemProtected;
       break;
    default:
       return;

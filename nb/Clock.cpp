@@ -143,7 +143,7 @@ ticks_t Clock::TicksUntil(const ticks_t& future)
 
 //------------------------------------------------------------------------------
 
-const ticks_t& Clock::TicksZero()
+ticks_t Clock::TicksZero()
 {
    return Singleton< SysTickTimer >::Instance()->StartTick();
 }
@@ -157,7 +157,7 @@ const SysTime& Clock::TimeZero()
 
 //------------------------------------------------------------------------------
 
-const string& Clock::TimeZeroStr()
+string Clock::TimeZeroStr()
 {
    return Singleton< SysTickTimer >::Instance()->StartTimeStr();
 }

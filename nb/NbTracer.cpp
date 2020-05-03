@@ -48,7 +48,7 @@ class TraceBufferTool : public Tool
 {
    friend class Singleton< TraceBufferTool >;
 private:
-   TraceBufferTool() : Tool(ToolBuffer, 0, true) { }
+   TraceBufferTool() : Tool(ToolBuffer, NUL, true) { }
    ~TraceBufferTool() = default;
    c_string Name() const override { return TraceBufferToolName; }
    c_string Expl() const override { return TraceBufferToolExpl; }
@@ -123,6 +123,8 @@ fn_name NbTracer_dtor = "NbTracer.dtor";
 NbTracer::~NbTracer()
 {
    Debug::ft(NbTracer_dtor);
+
+   Debug::SwLog(NbTracer_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------

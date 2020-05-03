@@ -189,6 +189,10 @@ singletons        : Displays the singletons registry.
   [b|v]           : 'b'=brief 'v'=verbose (default='b')
 
 heaps             : Lists all heaps.
+(                 : subcommand...
+  list            : lists all heaps
+  validate        : validates all heaps
+)
 
 status            : Displays system statistics.
 
@@ -276,12 +280,12 @@ if                : Executes rest of input line if condition is true.
 delay             : Pauses before executing the next command.
   (0:180)         : time (secs)
 
-display           : Displays an object.
-  <hex>           : pointer to an Object
+display           : Displays an object derived from NodeBase::Base.
+  <hex>           : pointer to an object derived from Base
   [b|v]           : 'b'=brief 'v'=verbose (default='b')
 
 dump              : Displays memory in hex.
-  <hex>           : pointer to an Object
+  <hex>           : memory address
   (1:1024)        : number of bytes to display
 
 restart           : Shuts down the system.
@@ -527,6 +531,21 @@ time              : Tests a SysTime function.
     <int>         : number of days
   strtime         : Displays the time in various formats.
     (1:3)         : item number
+
+heap              : Tests an NbHeap function.
+  create          : Creates the heap.
+    (t|d|p)       : heap's memory type (temporary|dynamic|protected)
+    (0:2048)      : heap's size
+  destroy         : Destroys the heap.
+  alloc           : Allocates a block.
+    (0:1024)      : block's size
+  blocksize       : Returns a block's size.
+    <hex>         : block's address
+  display         : Displays the heap.
+  free            : Frees a block.
+    <hex>         : block's address
+  validate        : Validates the heap (if 0) or a block.
+    <hex>         : block's address
 
 recover           : Tests thread recovery.
 (                 : what to recover from...
@@ -1223,7 +1242,7 @@ nb>an
 an>help full
 traffic           : Generates POTS calls for load testing.
 (                 : subcommand...
-  profile         : displays circuit and call states
+  states          : displays circuit and call states
   rate            : sets call rate
     (0:48460)     : calls per minute
   query           : displays traffic statistics

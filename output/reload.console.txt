@@ -1,0 +1,249 @@
+
+MODULE INITIALIZATION          msecs      invoked at
+pre-Module.Startup               161    11:29:26.379
+NodeBase.NbModule...                    11:29:26.540
+...initialized                   405
+NodeTools.NtModule...                   11:29:26.957
+...initialized                    79
+CodeTools.CtModule...                   11:29:27.047
+...initialized                    33
+NetworkBase.NwModule...                 11:29:27.090
+
+    NET500 3-May-2020 11:29:27.111 on Reigi {1}
+...initialized                   142
+SessionBase.SbModule...                 11:29:27.244
+...initialized                   145
+ControlNode.CnModule...                 11:29:27.401
+...initialized                    10
+SessionTools.StModule...                11:29:27.425
+...initialized                    27
+MediaBase.MbModule...                   11:29:27.465
+...initialized                    25
+CallBase.CbModule...                    11:29:27.505
+...initialized                    30
+PotsBase.PbModule...                    11:29:27.546
+...initialized                    38
+OperationsNode.OnModule...              11:29:27.600
+...initialized                    11
+RoutingNode.RnModule...                 11:29:27.624
+...initialized                    11
+ServiceNode.SnModule...                 11:29:27.647
+...initialized                    70
+AccessNode.AnModule...                  11:29:27.735
+...initialized                    23
+                               -----
+total initialization time       1397
+
+    NODE500 3-May-2020 11:29:27.788 on Reigi {2}
+nb>read restart.reload1
+nb>nt
+nt>testcase reset
+  OK.
+nt>testcase begin reload1
+symbols set testcase.name reload1
+  OK.
+nt>read test.restart.prolog
+nt>stop
+  OK.
+nt>clear buffer
+  OK.
+nt>clear tools
+  OK.
+nt>set tools f on
+  f: OK.
+  OK.
+nt>/ set tools fmo on  / enable to trace heaps and object pools
+nt>set scope full
+  OK.
+nt>clear selections
+  OK.
+nt>include all on
+  OK.
+nt>send &testcase.name
+  OK.
+nt>sched show
+nt>sb status
+nt>send cout
+nt>testcase end
+  OK.
+nt>delay 1
+  OK.
+nt>nt>
+    NODE103 3-May-2020 11:29:33.686 on Reigi {3}
+    in NodeBase.CliThread (tid=9, nid=0x00008c98)
+      reason : 0x1
+      errval : 0x3
+    Function Traceback:
+      NodeBase.Thread.FunctionInvoked @ thread.cpp + 2012[9]
+      NodeBase.Debug.ft @ debug.cpp + 71[9]
+      NodeBase.SysThread.Suspend @ systhread.win.cpp + 340[11]
+      NodeBase.SysThread.Delay @ systhread.cpp + 107[0]
+      NodeBase.Thread.Pause @ thread.cpp + 2579[28]
+      NodeBase.RootThread.Enter @ rootthread.cpp + 202[9]
+      NodeBase.Thread.Start @ thread.cpp + 3366[15]
+      NodeBase.Thread.EnterThread @ thread.cpp + 1812[0]
+      NodeBase.RootThread.Main @ rootthread.cpp + 297[9]
+      main @ main.cpp + 141[0]
+      invoke_main @ exe_common.inl + 78[27]
+      __scrt_common_main_seh @ exe_common.inl + 288[5]
+      __scrt_common_main @ exe_common.inl + 331[0]
+      mainCRTStartup @ exe_main.cpp + 17[0]
+      BaseThreadInitThunk @ <unknown file> (err=487)
+      RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
+start
+  OK.
+nt>restart reload
+
+RESTART TYPE: reload
+
+MODULE SHUTDOWN                msecs      invoked at
+Notifying threads...                    11:29:33.919
+...threads to exit: 11            77
+
+    THR907 3-May-2020 11:29:34.066 on Reigi {5}
+    thread=NetworkBase.UdpIoThread (tid=13, nid=0x000065c8)
+    mutexes=1
+
+    THR901 3-May-2020 11:29:34.067 on Reigi {7}
+    thread=SessionBase.TimerThread (tid=10, nid=0x00005618)
+    signal=122 (SIGCLOSE: Non-Error Shutdown)
+
+    THR901 3-May-2020 11:29:34.067 on Reigi {10}
+    thread=NodeBase.CliThread (tid=9, nid=0x00008c98)
+    signal=122 (SIGCLOSE: Non-Error Shutdown)
+
+    THR901 3-May-2020 11:29:34.090 on Reigi {15}
+    thread=NetworkBase.UdpIoThread (tid=13, nid=0x000065c8)
+    signal=122 (SIGCLOSE: Non-Error Shutdown)
+
+    THR901 3-May-2020 11:29:34.072 on Reigi {13}
+    thread=SessionBase.InvokerThread (tid=11, nid=0x00009300)
+    signal=122 (SIGCLOSE: Non-Error Shutdown)
+
+    THR901 3-May-2020 11:29:34.067 on Reigi {6}
+    thread=NetworkBase.UdpIoThread (tid=14, nid=0x000088f4)
+    signal=122 (SIGCLOSE: Non-Error Shutdown)
+
+    THR901 3-May-2020 11:29:34.073 on Reigi {14}
+    thread=NodeBase.ObjectPoolAudit (tid=6, nid=0x00007838)
+    signal=122 (SIGCLOSE: Non-Error Shutdown)
+
+    THR901 3-May-2020 11:29:34.067 on Reigi {8}
+    thread=NodeBase.StatisticsThread (tid=7, nid=0x00006c0c)
+    signal=122 (SIGCLOSE: Non-Error Shutdown)
+
+    THR901 3-May-2020 11:29:34.117 on Reigi {16}
+    thread=NetworkBase.TcpIoThread (tid=12, nid=0x00009f50)
+    signal=122 (SIGCLOSE: Non-Error Shutdown)
+
+    THR901 3-May-2020 11:29:34.071 on Reigi {11}
+    thread=NodeBase.CoutThread (tid=4, nid=0x000061f4)
+    signal=122 (SIGCLOSE: Non-Error Shutdown)
+
+    THR901 3-May-2020 11:29:34.067 on Reigi {9}
+    thread=NodeBase.FileThread (tid=3, nid=0x00006d80)
+    signal=122 (SIGCLOSE: Non-Error Shutdown)
+
+    THR901 3-May-2020 11:29:34.071 on Reigi {12}
+    thread=NodeBase.LogThread (tid=8, nid=0x000071f8)
+    signal=122 (SIGCLOSE: Non-Error Shutdown)
+
+...threads exited: 11            322
+AccessNode.AnModule...                  11:29:34.258
+...shut down                      17
+ServiceNode.SnModule...                 11:29:34.294
+...shut down                      21
+RoutingNode.RnModule...                 11:29:34.334
+...shut down                      18
+OperationsNode.OnModule...              11:29:34.370
+...shut down                      18
+PotsBase.PbModule...                    11:29:34.408
+...shut down                      18
+CallBase.CbModule...                    11:29:34.444
+...shut down                      20
+MediaBase.MbModule...                   11:29:34.483
+...shut down                      17
+SessionTools.StModule...                11:29:34.519
+...shut down                     269
+ControlNode.CnModule...                 11:29:34.875
+...shut down                      26
+SessionBase.SbModule...                 11:29:34.927
+...shut down                      26
+NetworkBase.NwModule...                 11:29:34.979
+...shut down                      41
+CodeTools.CtModule...                   11:29:35.044
+...shut down                      21
+NodeTools.NtModule...                   11:29:35.084
+...shut down                      26
+NodeBase.NbModule...                    11:29:35.134
+...shut down                      29
+                               -----
+total shutdown time             1260
+
+MODULE INITIALIZATION          msecs      invoked at
+NodeBase.NbModule...                    11:29:35.197
+...initialized                    81
+NodeTools.NtModule...                   11:29:35.293
+...initialized                    14
+CodeTools.CtModule...                   11:29:35.322
+...initialized                    15
+NetworkBase.NwModule...                 11:29:35.351
+
+    NET500 3-May-2020 11:29:35.369 on Reigi {17}
+...initialized                    71
+SessionBase.SbModule...                 11:29:35.437
+...initialized                    84
+ControlNode.CnModule...                 11:29:35.539
+...initialized                    18
+SessionTools.StModule...                11:29:35.574
+...initialized                    20
+MediaBase.MbModule...                   11:29:35.614
+...initialized                    20
+CallBase.CbModule...                    11:29:35.652
+...initialized                    21
+PotsBase.PbModule...                    11:29:35.693
+...initialized                    21
+OperationsNode.OnModule...              11:29:35.735
+...initialized                    24
+RoutingNode.RnModule...                 11:29:35.783
+...initialized                    28
+ServiceNode.SnModule...                 11:29:35.837
+...initialized                    31
+AccessNode.AnModule...                  11:29:35.889
+...initialized                    22
+                               -----
+total initialization time        736
+
+    NODE500 3-May-2020 11:29:35.951 on Reigi {18}
+nb>read restart.reload2
+nb>nt
+nt>testcase reset
+  OK.
+nt>testcase begin reload2
+symbols set testcase.name reload2
+  OK.
+nt>read test.restart.epilog
+nt>stop
+  OK.
+nt>save trace &testcase.name
+  OK.
+nt>save funcs &testcase.name
+
+    THR903 3-May-2020 11:29:43.076 on Reigi {19}
+    by NodeBase.InitThread (tid=2, nid=0x00007238)
+    for NodeBase.CliThread (tid=9, nid=0x00009284)
+    signal=123 (SIGYIELD: Running Unpreemptably Too Long)
+
+    THR905 3-May-2020 11:29:43.119 on Reigi {20}
+    thread=NodeBase.CliThread (tid=9, nid=0x00009284) extra msecs=167
+  OK.
+nt>clear buffer
+  OK.
+nt>send &testcase.name
+  OK.
+nt>sched show
+nt>sb status
+nt>send cout
+nt>testcase end
+  OK.
+nt>

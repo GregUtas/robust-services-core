@@ -71,7 +71,7 @@ private:
    //
    static size_t GetSize();
    const static size_t MinSize = 1 * MBs;
-   const static size_t MaxSize = 1 << (25 + BYTES_PER_WORD);
+   const static size_t MaxSize = size_t(1) << (25 + BYTES_PER_WORD);
 };
 
 class PersistentHeap : public SysHeap

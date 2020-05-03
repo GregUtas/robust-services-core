@@ -56,32 +56,5 @@ private:
    //
    ~MsgBufferPool();
 };
-
-//  Pool for Thread objects.
-//
-class ThreadPool : public ObjectPool
-{
-   friend class Singleton< ThreadPool >;
-public:
-   //> The size of Thread blocks.
-   //
-   static const size_t BlockSize;
-
-   //  Overridden to claim blocks held by NbTracer.
-   //
-   void ClaimBlocks() override;
-
-   //  Overridden for patching.
-   //
-   void Patch(sel_t selector, void* arguments) override;
-private:
-   //  Private because this singleton is not subclassed.
-   //
-   ThreadPool();
-
-   //  Private because this singleton is not subclassed.
-   //
-   ~ThreadPool();
-};
 }
 #endif

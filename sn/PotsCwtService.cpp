@@ -378,6 +378,7 @@ PotsCwbService::PotsCwbService() : PotsCwtService(PotsCwbServiceId)
       PotsCwtEventHandler::PeAck);
    BindHandler(*Singleton< PotsCwtPeRelease >::Instance(),
       PotsCwtEventHandler::PeRelease);
+   Singleton< PotsCwtPrPresentCall >::Instance();
 
    BindEventName(PotsCwtAckEventStr, PotsCwtEvent::Ack);
 }

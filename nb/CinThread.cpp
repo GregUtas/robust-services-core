@@ -69,6 +69,13 @@ c_string CinThread::AbbrName() const
 
 //------------------------------------------------------------------------------
 
+void CinThread::ClearClient(const Thread* client)
+{
+   if(client_ == client) client_ = nullptr;
+}
+
+//------------------------------------------------------------------------------
+
 fn_name CinThread_Destroy = "CinThread.Destroy";
 
 void CinThread::Destroy()
@@ -123,7 +130,7 @@ void CinThread::Enter()
       //
       if(size_ > 0)
       {
-         if((client_ != nullptr) && !client_->IsInvalid()) client_->Interrupt();
+         if(client_ != nullptr) client_->Interrupt();
          Pause(TIMEOUT_NEVER);
       }
    }
@@ -205,10 +212,9 @@ bool CinThread::SetClient(Thread* client)
 
    //  This succeeds if
    //  o no client is currently registered
-   //  o an invalid client is currently registered
    //  o CLIENT is already registered
    //
-   if((client_ == nullptr) || client_->IsInvalid())
+   if(client_ == nullptr)
    {
       client_ = client;
       return true;

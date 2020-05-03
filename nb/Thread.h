@@ -22,7 +22,7 @@
 #ifndef THREAD_H_INCLUDED
 #define THREAD_H_INCLUDED
 
-#include "Pooled.h"
+#include "Permanent.h"
 #include <atomic>
 #include <cstddef>
 #include <cstdint>
@@ -55,7 +55,7 @@ namespace NodeBase
 //  Base class for threads.  All threads should subclass from this, as it
 //  provides functions that support RSC's programming model.
 //
-class Thread : public Pooled
+class Thread : public Permanent
 {
    friend class Debug;
    friend class Exception;
@@ -243,10 +243,6 @@ public:
    //  Overridden for patching.
    //
    void Patch(sel_t selector, void* arguments) override;
-
-   //  Overridden to obtain a thread from its object pool.
-   //
-   static void* operator new(size_t size);
 protected:
    //  Creates a thread that runs in the scheduler faction FACTION and
    //  is managed by DAEMON.  Protected because this class is virtual.

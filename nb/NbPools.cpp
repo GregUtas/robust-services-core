@@ -25,7 +25,6 @@
 #include "NbAppIds.h"
 #include "Singleton.h"
 #include "SysTypes.h"
-#include "Thread.h"
 #include "ThreadRegistry.h"
 #include "TraceBuffer.h"
 
@@ -63,53 +62,13 @@ void MsgBufferPool::ClaimBlocks()
 {
    Debug::ft(MsgBufferPool_ClaimBlocks);
 
+   Singleton< ThreadRegistry >::Instance()->ClaimBlocks();
    Singleton< TraceBuffer >::Instance()->ClaimBlocks();
 }
 
 //------------------------------------------------------------------------------
 
 void MsgBufferPool::Patch(sel_t selector, void* arguments)
-{
-   ObjectPool::Patch(selector, arguments);
-}
-
-//==============================================================================
-
-const size_t ThreadPool::BlockSize = sizeof(Thread) + (60 * BYTES_PER_WORD);
-
-//------------------------------------------------------------------------------
-
-fn_name ThreadPool_ctor = "ThreadPool.ctor";
-
-ThreadPool::ThreadPool() :
-   ObjectPool(ThreadObjPoolId, MemPermanent, BlockSize, "Threads")
-{
-   Debug::ft(ThreadPool_ctor);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name ThreadPool_dtor = "ThreadPool.dtor";
-
-ThreadPool::~ThreadPool()
-{
-   Debug::ft(ThreadPool_dtor);
-}
-
-//------------------------------------------------------------------------------
-
-fn_name ThreadPool_ClaimBlocks = "ThreadPool.ClaimBlocks";
-
-void ThreadPool::ClaimBlocks()
-{
-   Debug::ft(ThreadPool_ClaimBlocks);
-
-   Singleton< ThreadRegistry >::Instance()->ClaimBlocks();
-}
-
-//------------------------------------------------------------------------------
-
-void ThreadPool::Patch(sel_t selector, void* arguments)
 {
    ObjectPool::Patch(selector, arguments);
 }

@@ -31,7 +31,6 @@
 #include "Log.h"
 #include "NbAppIds.h"
 #include "NbLogs.h"
-#include "NbPools.h"
 #include "NbSignals.h"
 #include "Restart.h"
 #include "Singleton.h"
@@ -291,11 +290,6 @@ main_t RootThread::Main()
       //  RootThread can register for signals when it is wrapped.
       //
       CreatePosixSignals();
-
-      //  Create the object pool for threads.
-      //
-      auto pool = Singleton< ThreadPool >::Instance();
-      if(!pool->AllocBlocks()) return ObjectPoolCreationFailed;
 
       //  Wrap the root thread and enter it.
       //

@@ -525,9 +525,10 @@ bool Class::CheckIfUnused(Warning warning) const
 
    auto attrs = GetUsageAttrs();
 
-   //  If the class has a public inner class or public member functions or
-   //  data, suggest making it a struct unless it is derived from a class
-   //  or has private items, in which case it should be a class.
+   //  If the class is derived from a class, it can remain a class.
+   //  If the class has a public inner class or public member functions
+   //  or data, suggest making it a struct unless it has private items,
+   //  in which case it should be a class.
    //
    if((attrs.test(HasPublicInnerClass)) ||
       (attrs.test(HasPublicMemberFunction)) ||
@@ -536,8 +537,7 @@ bool Class::CheckIfUnused(Warning warning) const
       auto base = BaseClass();
       if((base != nullptr) && (base->GetClassTag() == Cxx::ClassType))
       {
-         if(tag_ == Cxx::StructType) Log(StructCouldBeClass);
-         return false;
+         if(tag_ == Cxx::ClassType) return false;
       }
 
       if((attrs.test(IsBase)) ||
@@ -566,12 +566,7 @@ bool Class::CheckIfUnused(Warning warning) const
       (attrs.test(HasEnum)) ||
       (attrs.test(HasTypedef)))
    {
-      auto base = BaseClass();
-      if((base != nullptr) && (base->GetClassTag() == Cxx::ClassType))
-      {
-         if(tag_ == Cxx::StructType) Log(StructCouldBeClass);
-         return false;
-      }
+      if(BaseClass() != nullptr) return false;
 
       if((attrs.test(IsBase)) || (attrs.test(HasInstantiations)) ||
          (attrs.test(HasNonPublicInnerClass)) ||

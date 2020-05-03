@@ -47,6 +47,11 @@ public:
    //
    static std::streamsize GetLine(char* buff, std::streamsize capacity);
 
+   //  If THR is the current client, clears it.  A thread's destructor should
+   //  invoke this if it uses CinThread::GetLine.
+   //
+   void ClearClient(const Thread* client);
+
    //  Overridden to display member variables.
    //
    void Display(std::ostream& stream,

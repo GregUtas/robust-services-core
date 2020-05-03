@@ -34,20 +34,19 @@ namespace NodeBase
 //
 enum ObjectPoolIds
 {
-   ThreadObjPoolId = 1,
-   MsgBufferObjPoolId = 2,
-   IpBufferObjPoolId = 3,
-   SbIpBufferObjPoolId = 4,
-   BtIpBufferObjPoolId = 5,
-   ContextObjPoolId = 6,
-   MessageObjPoolId = 7,
-   MsgPortObjPoolId = 8,
-   ProtocolSMObjPoolId = 9,
-   TimerObjPoolId = 10,
-   EventObjPoolId = 11,
-   ServiceSMObjPoolId = 12,
-   MediaEndptObjPoolId = 13,
-   DipIpBufferObjPoolId = 14
+   MsgBufferObjPoolId = 1,
+   IpBufferObjPoolId = 2,
+   SbIpBufferObjPoolId = 3,
+   BtIpBufferObjPoolId = 4,
+   ContextObjPoolId = 5,
+   MessageObjPoolId = 6,
+   MsgPortObjPoolId = 7,
+   ProtocolSMObjPoolId = 8,
+   TimerObjPoolId = 9,
+   EventObjPoolId = 10,
+   ServiceSMObjPoolId = 11,
+   MediaEndptObjPoolId = 12,
+   DipIpBufferObjPoolId = 13
 };
 
 //------------------------------------------------------------------------------

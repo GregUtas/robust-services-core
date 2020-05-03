@@ -48,7 +48,7 @@ class SysThread : public Permanent
    friend class Thread;
    friend class RootThread;
    friend class InitThread;
-   friend class Orphans;
+   friend class Threads;
 public:
    //  Returns the native identifier of the running thread.
    //

@@ -123,7 +123,10 @@ public:
    //
    T* Deq()
    {
-      Debug::ft(Q2Way_Deq());
+      if(Restart::GetStatus() == Running)
+      {
+         Debug::ft(Q2Way_Deq());
+      }
       if(diff_ == NilDiff)
       {
          Debug::SwLog(Q2Way_Deq(), 0, 0);  // queue is not initialized
@@ -143,7 +146,10 @@ public:
    //
    bool Exq(T& elem)
    {
-      Debug::ft(Q2Way_Exq());
+      if(Restart::GetStatus() == Running)
+      {
+         Debug::ft(Q2Way_Exq());
+      }
       auto item = Item(elem);
       if(item == nullptr) return false;  // error
       if(item->next == nullptr)          // if item is not queued

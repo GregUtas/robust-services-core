@@ -138,7 +138,6 @@ void NbModule::Startup(RestartLevel level)
    Singleton< ObjectPoolRegistry >::Instance()->Startup(level);
    Singleton< ThreadRegistry >::Instance()->Startup(level);
    Singleton< ThreadAdmin >::Instance()->Startup(level);
-   Singleton< ThreadPool >::Instance()->Startup(level);
    Singleton< MsgBufferPool >::Instance()->Startup(level);
    Singleton< ClassRegistry >::Instance()->Startup(level);
    Singleton< Element >::Instance()->Startup(level);

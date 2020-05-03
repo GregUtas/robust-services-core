@@ -22,7 +22,6 @@
 #include "Thread.h"
 #include "Dynamic.h"
 #include "FunctionTrace.h"
-#include "Permanent.h"
 #include <cctype>
 #include <csignal>
 #include <cstdlib>
@@ -35,7 +34,6 @@
 #include <utility>
 #include "Algorithms.h"
 #include "AllocationException.h"
-#include "Array.h"
 #include "CliThread.h"
 #include "CoutThread.h"
 #include "Daemon.h"
@@ -718,103 +716,148 @@ TraceRc ContextSwitches::LogSwitches(bool on)
 
 //==============================================================================
 //
-//  Registry for orphans.  An orphan is a deleted Thread that has not yet
-//  exited.  Its SysThread object still exists, and it must be exited at
-//  the first opportunity.
+//  The state of a Thread object.
 //
-class Orphans : public Permanent
+enum ThreadState
 {
-   friend class Singleton< Orphans >;
+   Constructing,  // under construction
+   Constructed,   // not in the registry
+   Deleted        // unexpectedly deleted
+};
+
+//  Registry for threads in transient states.  It exists to handle the
+//  following scenarios:
+//  1. A thread runs before its thread object is fully constructed.
+//  2. A thread runs without a thread object because
+//     a) its constructor trapped after its native thread was created
+//     b) it was deleted by another thread
+//     c) it deleted itself
+//  In case #1, the thread must wait to run.  In the other cases, it
+//  must exit as soon as possible.
+//
+class Threads : public Permanent
+{
+   friend class Singleton< Threads >;
 public:
    //  Deleted to prohibit copying.
    //
-   Orphans(const Orphans& that) = delete;
-   Orphans& operator=(const Orphans& that) = delete;
+   Threads(const Threads& that) = delete;
+   Threads& operator=(const Threads& that) = delete;
 
-   //  Adds THR to the list of orphans when a Thread object is unexpectedly
-   //  deleted.
+   //  Places THR in STATE.
    //
-   void Register(SysThread* thr);
+   void SetState(SysThread* thr, ThreadState state);
 
-   //  If the running thread is in the list of orphans, returns true after
-   //  deleting its SysThread object.
+   //  Returns the running thread's state.  If it is Deleted, the
+   //  thread is removed from the registry and is expected to exit.
+   //  Returns Constructing if the thread is not found.
    //
-   bool ExitNow();
+   ThreadState GetState();
+
+   //  Returns true if the running thread has been deleted.
+   //
+   bool IsDeleted() const;
 private:
    //  Private because this singleton is not subclassed.
    //
-   Orphans();
+   Threads();
 
    //  Private because this singleton is not subclassed.
    //
-   ~Orphans();
+   ~Threads();
 
-   //  The orphans array.
+   //  An entry for a thread.
    //
-   Array< SysThread* > orphans_;
+   typedef std::pair< SysThread*, ThreadState > Entry;
+
+   //  The threads in transient states.
+   //
+   std::map< SysThread*, ThreadState > threads_;
 };
 
 //------------------------------------------------------------------------------
 //
 //  Critical section lock for the array of orphans.
 //
-SysMutex OrphansLock_("OrphansLock");
+SysMutex ThreadsLock_("ThreadsLock");
 
 //------------------------------------------------------------------------------
 
-fn_name Orphans_ctor = "Orphans.ctor";
+fn_name Threads_ctor = "Threads.ctor";
 
-Orphans::Orphans()
+Threads::Threads()
 {
-   Debug::ft(Orphans_ctor);
-
-   orphans_.Init(32, MemPermanent);
+   Debug::ft(Threads_ctor);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Orphans_dtor = "Orphans.dtor";
+fn_name Threads_dtor = "Threads.dtor";
 
-Orphans::~Orphans()
+Threads::~Threads()
 {
-   Debug::ft(Orphans_dtor);
+   Debug::ft(Threads_dtor);
 
-   Debug::SwLog(Orphans_dtor, UnexpectedInvocation, 0);
+   Debug::SwLog(Threads_dtor, UnexpectedInvocation, 0);
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Orphans_ExitNow = "Orphans.ExitNow";
+fn_name Threads_GetState = "Threads.GetState";
 
-bool Orphans::ExitNow()
+ThreadState Threads::GetState()
 {
-   Debug::ft(Orphans_ExitNow);
+   Debug::ft(Threads_GetState);
 
-   //  Search the list of orphans for one whose native thread identifier is
-   //  the same as the running thread.  If such a thread exists, delete it
-   //  and move the last entry up to keep the entries contiguous.
-   //
    auto pid = SysThread::RunningThreadId();
 
-   MutexGuard guard(&OrphansLock_);
+   MutexGuard guard(&ThreadsLock_);
 
-   for(size_t i = 0; i < orphans_.Size(); ++i)
+   for(auto entry = threads_.begin(); entry != threads_.cend(); ++entry)
    {
-      auto orphan = orphans_[i];
-
-      if(orphan->Nid() == pid)
+      if(entry->first->Nid() == pid)
       {
-         //  The orphan's entry must be overwritten before invoking other
-         //  functions so that we don't cause a stack overflow.  If the
-         //  orphan holds a lock, the platform kernel must recover it now,
-         //  when the orphan is deleted, or in a moment, when the orphan
-         //  exits.
-         //
-         orphans_.Erase(i);
-         ThreadAdmin::Incr(ThreadAdmin::Orphans);
-         delete orphan;
-         Debug::SwLog(Orphans_ExitNow, "orphan exited", pid);
-         return true;
+         auto thread = entry->first;
+         auto state = entry->second;
+
+         switch(state)
+         {
+         case Constructing:
+            return Constructing;
+
+         case Constructed:
+            threads_.erase(entry);
+            return Constructed;
+
+         case Deleted:
+            threads_.erase(entry);
+            ThreadAdmin::Incr(ThreadAdmin::Orphans);
+            delete thread;
+            Debug::SwLog(Threads_GetState, "orphan exited", pid);
+            return Deleted;
+
+         default:
+            Debug::SwLog(Threads_GetState, "invalid state", state);
+         }
+      }
+   }
+
+   return Constructing;
+}
+
+//------------------------------------------------------------------------------
+
+bool Threads::IsDeleted() const
+{
+   auto pid = SysThread::RunningThreadId();
+
+   MutexGuard guard(&ThreadsLock_);
+
+   for(auto entry = threads_.begin(); entry != threads_.cend(); ++entry)
+   {
+      if(entry->first->Nid() == pid)
+      {
+         return (entry->second == Deleted);
       }
    }
 
@@ -823,19 +866,28 @@ bool Orphans::ExitNow()
 
 //------------------------------------------------------------------------------
 
-fn_name Orphans_Register = "Orphans.Register";
+fn_name Threads_SetState = "Threads.SetState";
 
-void Orphans::Register(SysThread* thr)
+void Threads::SetState(SysThread* thr, ThreadState state)
 {
-   Debug::ft(Orphans_Register);
+   Debug::ft(Threads_SetState);
 
    if(thr == nullptr) return;
 
-   MutexGuard guard(&OrphansLock_);
+   MutexGuard guard(&ThreadsLock_);
 
-   if(!orphans_.PushBack(thr))
+   auto entry = threads_.find(thr);
+
+   if(entry != threads_.cend())
    {
-      Debug::SwLog(Orphans_Register, "failed to register orphan", thr->Nid());
+      if(state != Constructing)
+         entry->second = state;
+      else
+         Debug::SwLog(Threads_SetState, "thread already constructing", state);
+   }
+   else
+   {
+      threads_.insert(Entry(thr, state));
    }
 }
 
@@ -1208,7 +1260,7 @@ Thread::Thread(Faction faction, Daemon* daemon) :
       //
       CurrIntervalStart_ = Clock::TicksNow();
 
-      Singleton< Orphans >::Instance();
+      Singleton< Threads >::Instance();
       Singleton< ContextSwitches >::Instance();
 
       systhrd_.reset(new SysThread);
@@ -1221,9 +1273,11 @@ Thread::Thread(Faction faction, Daemon* daemon) :
       //  Create a new thread.  StackUsageLimit is in words, so convert
       //  it to bytes.
       //
+      auto threads = Singleton< Threads >::Instance();
       auto prio = FactionToPriority(faction_);
       systhrd_.reset(new SysThread(this, EnterThread, prio,
          ThreadAdmin::StackUsageLimit() << BYTES_PER_WORD_LOG2));
+      if(systhrd_ != nullptr) threads->SetState(systhrd_.get(), Constructing);
    }
 
    ThreadAdmin::Incr(ThreadAdmin::Creations);
@@ -1261,18 +1315,21 @@ Thread::~Thread()
       return;
    }
 
-   //  This thread is still active and did not invoke Thread::Exit.  This
-   //  is a serious error, so output a log now.
-   //
-   auto log = Log::Create(ThreadLogGroup, ThreadDeleted);
-
-   if(log != nullptr)
+   if(!initialized_)
    {
-      *log << Log::Tab << "thread=" << to_str() << CRLF;
-      SysThreadStack::Display(*log, 0);
-      *log << Log::Tab << ThreadDataStr << CRLF;
-      Display(*log, Log::Tab + spaces(2), NoFlags);
-      Log::Submit(log);
+      //  This thread was constructed and has not invoked Thread::Exit.
+      //  This is a serious error, so output a log now.
+      //
+      auto log = Log::Create(ThreadLogGroup, ThreadDeleted);
+
+      if(log != nullptr)
+      {
+         *log << Log::Tab << "thread=" << to_str() << CRLF;
+         SysThreadStack::Display(*log, 0);
+         *log << Log::Tab << ThreadDataStr << CRLF;
+         Display(*log, Log::Tab + spaces(2), NoFlags);
+         Log::Submit(log);
+      }
    }
 
    ReleaseResources(true);
@@ -1388,7 +1445,7 @@ void Thread::Claim()
 {
    Debug::ft(Thread_Claim);
 
-   Pooled::Claim();
+   Permanent::Claim();
 
    //  Claim messages on the queue.  Sometimes there are hundreds of these,
    //  so trying to add them all to GetSubtended's array isn't possible.
@@ -1414,7 +1471,7 @@ void Thread::Cleanup()
    stats_.reset();
    priv_.reset();
    ReleaseResources(true);
-   Pooled::Cleanup();
+   Permanent::Cleanup();
 }
 
 //------------------------------------------------------------------------------
@@ -1474,7 +1531,7 @@ void Thread::Destroy()
 void Thread::Display(ostream& stream,
    const string& prefix, const Flags& options) const
 {
-   Pooled::Display(stream, prefix, options);
+   Permanent::Display(stream, prefix, options);
 
    auto lead = prefix + spaces(2);
    stream << prefix << "systhrd : " << systhrd_.get() << CRLF;
@@ -1729,26 +1786,19 @@ main_t Thread::EnterThread(void* arg)
 
    //  Our argument is a pointer to a Thread.  The thread may start to run
    //  before its Thread object is fully constructed.  This causes a trap,
-   //  so the thread must wait until it is constructed (initialized_).  If
-   //  its constructor trapped, the object block will return to its pool,
-   //  so it is also necessary to check if the Thread is still valid.  If
-   //  it is invalid, break the loop to immediately return SIGDELETED.
+   //  so the thread must wait until it is constructed.  If its constructor
+   //  trapped, it will have been registered as an orphan, so immediately
+   //  exit it by returning SIGDELETED.
    //
    auto self = static_cast< Thread* >(arg);
+   auto reg = Singleton< Threads >::Instance();
 
-   while(!self->initialized_ && !self->IsInvalid())
+   while(true)
    {
+      auto state = reg->GetState();
+      if(state == Constructed) break;
+      if(state == Deleted) return SIGDELETED;
       Debug::noop();
-   }
-
-   //  If the thread is orphaned, it must exit immediately.  This occurs if
-   //  the thread's constructor trapped, which resulted in its deletion but
-   //  the survival of its native thread, which is now about to run without
-   //  a Thread object.
-   //
-   if(Singleton< Orphans >::Instance()->ExitNow())
-   {
-      return SIGDELETED;
    }
 
    //  Indicate that we're ready to run.  This blocks until we're scheduled
@@ -1865,6 +1915,7 @@ void Thread::ExitIfSafe(debug32_t offset)
    if((priv_->traps_ == 0) && SysThreadStack::TrapIsOk())
    {
       SetTrap(false);
+      lock.clear();
       throw SignalException(priv_->signal_, offset);
    }
 
@@ -2239,7 +2290,7 @@ void Thread::LogContextSwitch() const
 
    auto now = Clock::TicksNow();
 
-   if(IsInvalid())
+   if(Singleton< Threads >::Instance()->IsDeleted())
    {
       //  This thread has been deleted.  Create a partial entry for it.
       //
@@ -2497,20 +2548,9 @@ SysThreadId Thread::NativeThreadId() const
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_new = "Thread.operator new";
-
-void* Thread::operator new(size_t size)
-{
-   Debug::ft(Thread_new);
-
-   return Singleton< ThreadPool >::Instance()->DeqBlock(size);
-}
-
-//------------------------------------------------------------------------------
-
 void Thread::Patch(sel_t selector, void* arguments)
 {
-   Pooled::Patch(selector, arguments);
+   Permanent::Patch(selector, arguments);
 }
 
 //------------------------------------------------------------------------------
@@ -2821,12 +2861,12 @@ void Thread::ReleaseResources(bool orphaned)
    Restart::Release(stats_);
 
    //  If the thread is not orphaned, it is about to exit, so delete its
-   //  native thread; otherwise, add its native thread to set of orphans.
-   //  Various functions invoke ExitNow to check for the existence of an
+   //  native thread; otherwise, register its native thread as an orphan.
+   //  Various functions invoke GetState to check for the existence of an
    //  orphaned native thread, which is immediately exited when found.
    //
    if(orphaned)
-      Singleton< Orphans >::Instance()->Register(systhrd_.release());
+      Singleton< Threads >::Instance()->SetState(systhrd_.release(), Deleted);
    else
       systhrd_.reset();
 }
@@ -2990,7 +3030,7 @@ Thread* Thread::RunningThread(bool assert)
 
    if(assert)
    {
-      if(Singleton< Orphans >::Instance()->ExitNow())
+      if(Singleton< Threads >::Instance()->GetState() == Deleted)
          throw SignalException(SIGDELETED, 0);
       else
          Debug::Assert(false);
@@ -3085,6 +3125,7 @@ void Thread::SetInitialized()
    Debug::ft(Thread_SetInitialized);
 
    initialized_ = true;
+   Singleton< Threads >::Instance()->SetState(systhrd_.get(), Constructed);
 }
 
 //------------------------------------------------------------------------------
@@ -3727,9 +3768,6 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
 
       //  Reprotect any unprotected memory.
       //
-      priv_->immUnprots_ = 0;
-      priv_->memUnprots_ = 0;
-
       auto level = Restart::GetLevel();
 
       if(level < RestartReboot)
@@ -3748,11 +3786,16 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
 
       //  Exit immediately if the Thread has already been deleted.
       //
-      if((sig == SIGDELETED) || IsInvalid() ||
-         Singleton< Orphans >::Instance()->ExitNow())
+      if((sig == SIGDELETED) ||
+         (Singleton< Threads >::Instance()->GetState() == Deleted))
       {
          return Return;
       }
+
+      //  The thread is no longer running with unprotected memory.
+      //
+      priv_->immUnprots_ = 0;
+      priv_->memUnprots_ = 0;
 
       //  The first time in, save the signal.  After that, we're dealing
       //  with a trap during trap recovery:
@@ -3893,23 +3936,15 @@ void Thread::Unblock()
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_UpdateMutex = "Thread.UpdateMutex";
-
 void Thread::UpdateMutex(SysMutex* mutex)
 {
-   Debug::ft(Thread_UpdateMutex);
-
    priv_->acquiring_ = mutex;
 }
 
 //------------------------------------------------------------------------------
 
-fn_name Thread_UpdateMutexCount = "Thread.UpdateMutexCount";
-
 void Thread::UpdateMutexCount(bool acquired)
 {
-   Debug::ft(Thread_UpdateMutexCount);
-
    if(acquired)
       ++priv_->mutexes_;
    else

@@ -50,7 +50,7 @@ SysHeap::SysHeap(MemoryType type, size_t size) : Heap(),
    if(type == MemPermanent)
       heap_ = GetProcessHeap();
    else
-      heap_ = HeapCreate(HEAP_GENERATE_EXCEPTIONS, size, size);
+      heap_ = HeapCreate(0, size, size);
 
    if(heap_ == nullptr)
    {

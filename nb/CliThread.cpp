@@ -83,6 +83,8 @@ fn_name CliThread_dtor = "CliThread.dtor";
 CliThread::~CliThread()
 {
    Debug::ft(CliThread_dtor);
+
+   Singleton< CinThread >::Instance()->ClearClient(this);
 }
 
 //------------------------------------------------------------------------------
@@ -430,6 +432,8 @@ fn_name CliThread_GetAppData = "CliThread.GetAppData";
 
 CliAppData* CliThread::GetAppData(CliAppData::Id aid) const
 {
+   Debug::ft(CliThread_GetAppData);
+
    if(aid <= CliAppData::MaxId) return appData_[aid].get();
 
    Debug::SwLog(CliThread_GetAppData, "invalid CliAppData::Id", aid);

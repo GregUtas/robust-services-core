@@ -55,7 +55,7 @@ private:
    //  The size of the immutable heap must be defined at compile
    //  time because it is created even before main() is entered.
    //
-   static const size_t Size = 512 * kBs;
+   static const size_t Size_ = 512 * kBs;
 };
 
 class ProtectedHeap : public NbHeap
@@ -102,7 +102,7 @@ private:
 
 fn_name ImmutableHeap_ctor = "ImmutableHeap.ctor";
 
-ImmutableHeap::ImmutableHeap() : NbHeap(MemImmutable, Size)
+ImmutableHeap::ImmutableHeap() : NbHeap(MemImmutable, Size_)
 {
    Debug::ft(ImmutableHeap_ctor);
 }

@@ -93,12 +93,6 @@ public:
    //
    ObjectPoolId Pid() const { return ObjectPoolId(pid_.GetId()); }
 
-   //  Creates or expands the object pool so that it contains the target
-   //  number of segments.  A pool's size can be increased at run time,
-   //  but it can only be decreased during a restart.
-   //
-   bool AllocBlocks();
-
    //  Allocates a block from the free queue.  SIZE specifies the size
    //  of the object to be constructed within the block.
    //
@@ -221,6 +215,12 @@ private:
    //  Used in a mask (&) operation to find a block's offset in its segment.
    //
    static const size_t ObjectSecondIndexMask = ObjectsPerSegment - 1;
+
+   //  Creates or expands the object pool so that it contains the target
+   //  number of segments.  A pool's size can be increased at run time,
+   //  but it can only be decreased during a restart.
+   //
+   bool AllocBlocks();
 
    //  Returns the first block in the pool and updates the iterator BID
    //  to reference it.

@@ -105,6 +105,8 @@ PotsCcwService::PotsCcwService() : Service(PotsCcwServiceId, false, true)
 
    Singleton< PotsCcwNull >::Instance();
    Singleton< PotsCcwActive >::Instance();
+
+   Singleton< PotsCcwAcCollectInformation >::Instance();
 }
 
 //------------------------------------------------------------------------------

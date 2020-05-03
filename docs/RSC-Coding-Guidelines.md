@@ -171,10 +171,8 @@ following are currently used:
 - `//>` is an internal constant that can be changed to alter behavior
 - `//@` is a useful breakpoint during development
 - `//b` is a basic call enhancement
-- `//c` is a CodeTools enhancement
+- `//c` is a `CodeTools` enhancement
 - `//d` is a decoupling enhancement
 - `//e` is an unclassified enhancement
 - `//p` is a POTS enhancement
-- `//r` is a restart enhancement
 - `//s` is a socket enhancement
-- `//u` is a workaround for an unexplained bug

@@ -720,8 +720,8 @@ TraceRc ContextSwitches::LogSwitches(bool on)
 //
 enum ThreadState
 {
-   Constructing,  // under construction
-   Constructed,   // not in the registry
+   Constructing,  // under construction or not in the registry
+   Constructed,   // waiting to enter Thread.Start
    Deleted        // unexpectedly deleted
 };
 
@@ -1798,7 +1798,6 @@ main_t Thread::EnterThread(void* arg)
       auto state = reg->GetState();
       if(state == Constructed) break;
       if(state == Deleted) return SIGDELETED;
-      Debug::noop();
    }
 
    //  Indicate that we're ready to run.  This blocks until we're scheduled

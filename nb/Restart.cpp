@@ -52,10 +52,31 @@ bool Restart::ClearsMemory(MemoryType type)
 
 fn_name Restart_Initiate = "Restart.Initiate";
 
-void Restart::Initiate(reinit_t reason, debug64_t errval)
+void Restart::Initiate(RestartLevel level, reinit_t reason, debug64_t errval)
 {
    Debug::ft(Restart_Initiate);
 
-   throw ElementException(reason, errval);
+   throw ElementException(level, reason, errval);
+}
+
+//------------------------------------------------------------------------------
+
+RestartLevel Restart::LevelToClear(MemoryType type)
+{
+   switch(type)
+   {
+   case MemTemporary:
+      return RestartWarm;
+   case MemDynamic:
+      return RestartCold;
+   case MemPersistent:
+   case MemProtected:
+      return RestartReload;
+   case MemPermanent:
+   case MemImmutable:
+      return RestartReboot;
+   }
+
+   return RestartNone;
 }
 }

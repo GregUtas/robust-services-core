@@ -179,6 +179,11 @@ private:
    //
    BlockState ValidateBlock(index_t index, level_t level, bool restart) const;
 
+   //  Invoked when heap corruption is detected.  REASON specifies the type
+   //  of corruption, and RESTART is set to initiate a restart.
+   //
+   BlockState Corrupt(int reason, bool restart) const;
+
    //  Returns the index that accesses BLOCK's state within heap management
    //  data.  The block's LEVEL, which also corresponds to its size, must
    //  be provided because blocks of different sizes have the same address

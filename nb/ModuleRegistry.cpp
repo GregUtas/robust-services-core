@@ -87,6 +87,10 @@ const FactionFlags& ShutdownFactions()
 
 //==============================================================================
 //
+//  The minimum level specified when a restart was initiated.
+//
+RestartLevel level_ = RestartNone;
+
 //  The reason for a reinitialization or shutdown.
 //
 reinit_t reason_ = NilRestart;
@@ -339,10 +343,12 @@ void ModuleRegistry::Restart()
 
 fn_name ModuleRegistry_SetReason = "ModuleRegistry.SetReason";
 
-void ModuleRegistry::SetReason(reinit_t reason, debug64_t errval)
+void ModuleRegistry::SetReason
+   (RestartLevel level, reinit_t reason, debug64_t errval)
 {
    Debug::ft(ModuleRegistry_SetReason);
 
+   level_ = level;
    reason_ = reason;
    errval_ = errval;
 }

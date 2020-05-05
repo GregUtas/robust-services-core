@@ -249,7 +249,10 @@ void InvokerPool::ClaimBlocks()
    //  Mark all objects accessible through the work queues as being in use.
    //  If we trap because a work queue was corrupt, cause a restart.
    //
-   if(corrupt_) Restart::Initiate(WorkQueueCorruption, GetFaction());
+   if(corrupt_)
+   {
+      Restart::Initiate(RestartCold, WorkQueueCorruption, GetFaction());
+   }
 
    corrupt_ = true;
 

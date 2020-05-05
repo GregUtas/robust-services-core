@@ -369,7 +369,8 @@ void InitThread::InitializeSystem()
 
 fn_name InitThread_InitiateRestart = "InitThread.InitiateRestart";
 
-void InitThread::InitiateRestart(reinit_t reason, debug64_t errval)
+void InitThread::InitiateRestart
+   (RestartLevel level, reinit_t reason, debug64_t errval)
 {
    Debug::ft(InitThread_InitiateRestart);
 
@@ -377,7 +378,7 @@ void InitThread::InitiateRestart(reinit_t reason, debug64_t errval)
    //  a restart is occurring so that it can act as a watchdog on its
    //  completion, and then inform our thread.
    //
-   Singleton< ModuleRegistry >::Instance()->SetReason(reason, errval);
+   Singleton< ModuleRegistry >::Instance()->SetReason(level, reason, errval);
    Singleton< RootThread >::Instance()->Interrupt(RestartMask);
    Interrupt(RestartMask);
 }

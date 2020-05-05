@@ -54,7 +54,7 @@ SysHeap::SysHeap(MemoryType type, size_t size) : Heap(),
 
    if(heap_ == nullptr)
    {
-      Restart::Initiate(HeapCreationFailed, type);
+      Restart::Initiate(RestartWarm, HeapCreationFailed, type);
    }
 }
 

@@ -99,11 +99,15 @@ public:
       return true;
    }
 
-   //  Forces a restart after generating a log.  REASON must be defined
-   //  above and indicates why the restart was initiated.  ERRVAL is for
-   //  debugging.
+   //  Returns the minmum level required to destroy memory of TYPE.
    //
-   static void Initiate(reinit_t reason, debug64_t errval);
+   static RestartLevel LevelToClear(MemoryType type);
+
+   //  Generates a log and forces a restart at LEVEL (or higher, if escalation
+   //  occurs).  REASON must be defined above and indicates why the restart was
+   //  initiated.  ERRVAL is for debugging.
+   //
+   static void Initiate(RestartLevel level, reinit_t reason, debug64_t errval);
 private:
    //  The current stage of system initialization or shutdown.
    //

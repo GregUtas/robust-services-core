@@ -279,7 +279,7 @@ void Daemon::RaiseAlarm(AlarmStatus level) const
 
    if(level == CriticalAlarm)
    {
-      Restart::Initiate(DeathOfCriticalThread, Did());
+      Restart::Initiate(RestartWarm, DeathOfCriticalThread, Did());
    }
 }
 

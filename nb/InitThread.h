@@ -83,9 +83,9 @@ private:
    //
    ~InitThread();
 
-   //  Initiates a restart that resulted from REASON and ERRVAL.
+   //  Initiates a restart of the type specified by LEVEL, REASON, and ERRVAL.
    //
-   void InitiateRestart(reinit_t reason, debug64_t errval);
+   void InitiateRestart(RestartLevel level, reinit_t reason, debug64_t errval);
 
    //  Initializes or restarts the system.
    //

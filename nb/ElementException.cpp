@@ -34,8 +34,10 @@ namespace NodeBase
 {
 fn_name ElementException_ctor = "ElementException.ctor";
 
-ElementException::ElementException(reinit_t reason, debug64_t errval) :
+ElementException::ElementException
+   (RestartLevel level, reinit_t reason, debug64_t errval) :
    Exception(true, 1),
+   level_(level),
    reason_(reason),
    errval_(errval)
 {
@@ -57,6 +59,7 @@ void ElementException::Display(ostream& stream, const string& prefix) const
 {
    Exception::Display(stream, prefix);
 
+   stream << prefix << "level  : " << level_ << CRLF;
    stream << prefix << "reason : " << strHex(reason_) << CRLF;
    stream << prefix << "errval : " << strHex(errval_) << CRLF;
 }

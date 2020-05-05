@@ -1498,7 +1498,7 @@ MsgBuffer* Thread::DeqMsg(msecs_t timeout)
       switch(Pause(timeout))
       {
       case DelayError:
-         Restart::Initiate(ThreadPauseFailed, Tid());
+         Restart::Initiate(RestartWarm, ThreadPauseFailed, Tid());
          return nullptr;
 
       case DelayCompleted:
@@ -3399,7 +3399,7 @@ main_t Thread::Start()
          if(faction_ < SystemFaction)
          {
             auto system = Singleton< InitThread >::Instance();
-            system->InitiateRestart(reason, code);
+            system->InitiateRestart(nex.Level(), reason, code);
          }
 
          continue;

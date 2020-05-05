@@ -2444,7 +2444,7 @@ word RestartCommand::ProcessCommand(CliThread& cli) const
 
    prompt << RestartWarning << CRLF << ContinuePrompt;
    if(!cli.BoolPrompt(prompt.str())) return cli.Report(0, CommandAbortedExpl);
-   Restart::Initiate(ManualRestart, level);
+   Restart::Initiate(level, ManualRestart, level);
    return 0;
 }
 

@@ -526,7 +526,7 @@ void MscBuilder::EnsureFactories()
 
 fn_name MscBuilder_Error = "MscBuilder.Error";
 
-bool MscBuilder::Error(debug64_t errval, debug32_t offset)
+bool MscBuilder::Error(debug64_t errval, debug64_t offset)
 {
    Debug::ft(MscBuilder_Error);
 

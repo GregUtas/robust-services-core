@@ -558,7 +558,7 @@ word CfgParmsCommand::ProcessCommand(CliThread& cli) const
          return cli.Report(-3, BadParameterValue + expl);
       }
 
-      if(level != RestartNil)
+      if(level != RestartNone)
       {
          expl = NextRestartExpl;
          auto pos = expl.rfind("restart");

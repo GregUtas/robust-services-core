@@ -30,12 +30,12 @@
 
 namespace NodeBase
 {
-//  The element's state.
+//  The current restart stage.
 //
-enum RestartStatus
+enum RestartStage
 {
-   Launching,    // system is just starting up
-   StartingUp,   // system is being initialized
+   Launching,    // system is just booting
+   StartingUp,   // system is being reinitialized
    Running,      // system is in operation
    ShuttingDown  // system is being shut down
 };
@@ -75,9 +75,9 @@ public:
    //
    Restart() = delete;
 
-   //  Returns the system's initialization status.
+   //  Returns the system's initialization stage.
    //
-   static RestartStatus GetStatus() { return Status_; }
+   static RestartStage GetStage() { return Stage_; }
 
    //  Returns the type of restart currently in progress.
    //
@@ -103,11 +103,11 @@ public:
    //  above and indicates why the restart was initiated.  ERRVAL is for
    //  debugging.
    //
-   static void Initiate(reinit_t reason, debug32_t errval);
+   static void Initiate(reinit_t reason, debug64_t errval);
 private:
-   //  The state of system initialization or shutdown.
+   //  The current stage of system initialization or shutdown.
    //
-   static RestartStatus Status_;
+   static RestartStage Stage_;
 
    //  The type of initialization or shutdown being performed.
    //

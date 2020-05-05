@@ -325,7 +325,7 @@ void Daemon::ThreadDeleted(Thread* thread)
    if(item != threads_.end())
    {
       threads_.erase(item);
-      if(Restart::GetStatus() != Running) return;
+      if(Restart::GetStage() != Running) return;
       Singleton< InitThread >::Instance()->Interrupt(InitThread::RecreateMask);
    }
 }

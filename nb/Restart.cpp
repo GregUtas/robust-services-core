@@ -27,7 +27,7 @@
 
 namespace NodeBase
 {
-RestartStatus Restart::Status_ = Launching;
+RestartStage Restart::Stage_ = Launching;
 RestartLevel Restart::Level_ = RestartReboot;
 
 //------------------------------------------------------------------------------
@@ -52,7 +52,7 @@ bool Restart::ClearsMemory(MemoryType type)
 
 fn_name Restart_Initiate = "Restart.Initiate";
 
-void Restart::Initiate(reinit_t reason, debug32_t errval)
+void Restart::Initiate(reinit_t reason, debug64_t errval)
 {
    Debug::ft(Restart_Initiate);
 

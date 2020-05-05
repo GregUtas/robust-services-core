@@ -196,7 +196,7 @@ bool InvokerThread::Recover()
    //  If a restart is underway, just exit, which is what we wanted to do
    //  anyway.
    //
-   if(Restart::GetStatus() != Running)
+   if(Restart::GetStage() != Running)
    {
       return false;
    }
@@ -270,7 +270,7 @@ void InvokerThread::Shutdown(RestartLevel level)
    //  o If our context will survive the restart, put it back on a work
    //    queue so that it can be serviced after the restart is over.
    //
-   if(level == RestartNil) return;
+   if(level == RestartNone) return;
 
    Restart::Release(ctx_);
    if(ctx_ == nullptr) return;

@@ -34,7 +34,7 @@ namespace NodeBase
 {
 fn_name ElementException_ctor = "ElementException.ctor";
 
-ElementException::ElementException(reinit_t reason, debug32_t errval) :
+ElementException::ElementException(reinit_t reason, debug64_t errval) :
    Exception(true, 1),
    reason_(reason),
    errval_(errval)

@@ -243,7 +243,7 @@ void UdpIoThread::Patch(sel_t selector, void* arguments)
 
 fn_name UdpIoThread_RaiseAlarm = "UdpIoThread.RaiseAlarm";
 
-void UdpIoThread::RaiseAlarm(debug32_t errval) const
+void UdpIoThread::RaiseAlarm(debug64_t errval) const
 {
    Debug::ft(UdpIoThread_RaiseAlarm);
 

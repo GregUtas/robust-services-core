@@ -45,7 +45,7 @@ CfgParm::CfgParm(c_string key, c_string def, c_string expl) :
    tuple_(nullptr),
    default_(def),
    expl_(expl),
-   level_(RestartNil)
+   level_(RestartNone)
 {
    Debug::ft(CfgParm_ctor);
 
@@ -158,7 +158,7 @@ void CfgParm::SetCurr()
    FunctionGuard guard(Guard_MemUnprotect);
    auto input = GetInput();
    tuple_->SetInput(input.c_str());
-   level_ = RestartNil;
+   level_ = RestartNone;
 }
 
 //------------------------------------------------------------------------------
@@ -213,7 +213,7 @@ bool CfgParm::SetValue(c_string input, RestartLevel& level)
    FunctionGuard guard(Guard_MemUnprotect);
    if(!SetNext(input)) return false;
    level = RestartRequired();
-   if(level == RestartNil) SetCurr();
+   if(level == RestartNone) SetCurr();
    return true;
 }
 }

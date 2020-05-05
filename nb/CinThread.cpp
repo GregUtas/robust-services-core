@@ -148,7 +148,7 @@ std::streamsize CinThread::GetLine(char* buff, std::streamsize capacity)
    //  which prevents it from exiting.
    //
    if(capacity <= 0) return StreamInterrupt;
-   if(Restart::GetStatus() != Running) return StreamRestart;
+   if(Restart::GetStage() != Running) return StreamRestart;
 
    auto client = RunningThread();
 

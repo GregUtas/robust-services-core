@@ -348,7 +348,7 @@ ThreadAdmin::~ThreadAdmin()
 
 const ThreadAdminValues* ThreadAdmin::AccessConfig()
 {
-   if((Restart::GetStatus() == ShuttingDown) &&
+   if((Restart::GetStage() == ShuttingDown) &&
       (Restart::GetLevel() == RestartReload))
    {
       return nullptr;
@@ -474,7 +474,7 @@ void ThreadAdmin::Incr(Register r)
 
    if(admin == nullptr) return;
    if(admin->stats_ == nullptr) return;
-   if(Restart::GetStatus() != Running) return;
+   if(Restart::GetStage() != Running) return;
 
    switch(r)
    {
@@ -668,7 +668,7 @@ word ThreadAdmin::TrapCount()
 
    if(admin == nullptr) return 0;
    if(admin->stats_ == nullptr) return 0;
-   if(Restart::GetStatus() != Running) return 0;
+   if(Restart::GetStage() != Running) return 0;
    return admin->stats_->traps_->Overall();
 }
 

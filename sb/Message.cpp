@@ -462,7 +462,7 @@ void Message::Henqueue(Q1Way< Message >& whichq)
 
 fn_name Message_InspectMsg = "Message.InspectMsg";
 
-Message::InspectRc Message::InspectMsg(debug32_t& errval) const
+Message::InspectRc Message::InspectMsg(debug64_t& errval) const
 {
    Debug::ft(Message_InspectMsg);
 
@@ -543,7 +543,7 @@ bool Message::Relay(ProtocolSM& ogPsm)
 {
    Debug::ft(Message_Relay);
 
-   debug32_t error = 0;
+   debug64_t error = 0;
 
    //  Only an incoming message that is queued on a PSM can be relayed.
    //
@@ -591,7 +591,7 @@ bool Message::Restore()
 {
    Debug::ft(Message_Restore);
 
-   debug32_t error = 0;
+   debug64_t error = 0;
 
    //  Only an incoming message that is queued on a PSM and that has been
    //  handled (already processed) can be brought into context.
@@ -629,7 +629,7 @@ bool Message::Retrieve(ProtocolSM* psm)
 {
    Debug::ft(Message_Retrieve);
 
-   debug32_t error = 0;
+   debug64_t error = 0;
 
    //  Only an outgoing message that is queued on a PSM and that has been
    //  sent (handled) may be retrieved.
@@ -882,7 +882,7 @@ bool Message::Send(Route route)
 
 fn_name Message_SendFailure = "Message.SendFailure";
 
-bool Message::SendFailure(debug64_t errval, debug32_t offset)
+bool Message::SendFailure(debug64_t errval, debug64_t offset)
 {
    Debug::ft(Message_SendFailure);
 
@@ -899,7 +899,7 @@ bool Message::SendToSelf()
 {
    Debug::ft(Message_SendToSelf);
 
-   debug32_t error = 0;
+   debug64_t error = 0;
 
    //  Only an outgoing message that is queued on the PSM and that has not
    //  been sent (handled) may be sent to the same PSM.

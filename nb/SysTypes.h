@@ -157,9 +157,8 @@ extern fixed_string CRLF_STR;
 extern fixed_string ERROR_STR;
 extern fixed_string SCOPE_STR;
 
-//  Types for debug error codes.
+//  Type for a debug error code.
 //
-typedef uint32_t debug32_t;
 typedef uint64_t debug64_t;
 
 //  Types of memory.
@@ -201,7 +200,7 @@ std::ostream& operator<<(std::ostream& stream, MemoryProtection attrs);
 //
 enum RestartLevel
 {
-   RestartNil,     // in service (not restarting)
+   RestartNone,    // in service (not restarting)
    RestartWarm,    // deleting MemTemporary and exiting threads
    RestartCold,    // warm + deleting MemDynamic (user sessions)
    RestartReload,  // cold + deleting MemPersistent & MemProtected (config data)
@@ -211,7 +210,7 @@ enum RestartLevel
 };
 
 //  Returns a string that identifies LEVEL.  Returns ERROR_STR if
-//  LEVEL is RestartNil or RestartExit.
+//  LEVEL is RestartNone or RestartExit.
 //
 c_string strRestartLevel(RestartLevel level);
 

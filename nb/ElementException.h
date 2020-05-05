@@ -37,7 +37,7 @@ public:
    //  REASON is one of the values defined in Restart.h.
    //  ERRVAL is for debugging.
    //
-   ElementException(reinit_t reason, debug32_t errval);
+   ElementException(reinit_t reason, debug64_t errval);
 
    //  Not subclassed.
    //
@@ -53,7 +53,7 @@ public:
 
    //  Returns the error value.
    //
-   debug32_t Errval() const { return errval_; }
+   debug64_t Errval() const { return errval_; }
 private:
    //  Overridden to identify the type of exception.
    //
@@ -65,7 +65,7 @@ private:
 
    //  An error value for debugging.
    //
-   const debug32_t errval_;
+   const debug64_t errval_;
 };
 }
 #endif

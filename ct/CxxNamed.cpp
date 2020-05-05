@@ -49,7 +49,7 @@ namespace CodeTools
 {
 fn_name CodeTools_ReferentError = "CodeTools.ReferentError";
 
-CxxScoped* ReferentError(const string& item, debug32_t offset)
+CxxScoped* ReferentError(const string& item, debug64_t offset)
 {
    Debug::ft(CodeTools_ReferentError);
 

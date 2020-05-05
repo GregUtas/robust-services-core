@@ -369,7 +369,7 @@ void InitThread::InitializeSystem()
 
 fn_name InitThread_InitiateRestart = "InitThread.InitiateRestart";
 
-void InitThread::InitiateRestart(reinit_t reason, debug32_t errval)
+void InitThread::InitiateRestart(reinit_t reason, debug64_t errval)
 {
    Debug::ft(InitThread_InitiateRestart);
 

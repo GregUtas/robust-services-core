@@ -121,7 +121,7 @@ public:
    //
    bool Insert(T& item)
    {
-      if(Restart::GetStatus() == Running)
+      if(Restart::GetStage() == Running)
       {
          Debug::ft(Registry_Insert());
       }
@@ -199,7 +199,7 @@ public:
    //
    bool Insert(T& item, id_t id)
    {
-      if(Restart::GetStatus() == Running)
+      if(Restart::GetStage() == Running)
       {
          Debug::ft(Registry_Insert());
       }

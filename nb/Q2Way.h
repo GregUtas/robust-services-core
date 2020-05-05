@@ -77,7 +77,7 @@ public:
    //
    void Init(ptrdiff_t diff)
    {
-      if(Restart::GetStatus() == Running)
+      if(Restart::GetStage() == Running)
       {
          Debug::ft(Q2Way_Init());
       }
@@ -90,7 +90,7 @@ public:
    //
    bool Enq(T& elem)
    {
-      if(Restart::GetStatus() == Running)
+      if(Restart::GetStage() == Running)
       {
          Debug::ft(Q2Way_Enq());
       }
@@ -123,7 +123,7 @@ public:
    //
    T* Deq()
    {
-      if(Restart::GetStatus() == Running)
+      if(Restart::GetStage() == Running)
       {
          Debug::ft(Q2Way_Deq());
       }
@@ -146,7 +146,7 @@ public:
    //
    bool Exq(T& elem)
    {
-      if(Restart::GetStatus() == Running)
+      if(Restart::GetStage() == Running)
       {
          Debug::ft(Q2Way_Exq());
       }

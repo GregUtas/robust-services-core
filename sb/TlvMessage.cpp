@@ -366,7 +366,7 @@ TlvParmPtr TlvMessage::FirstParm(ParmIterator& pit) const
 
 fn_name TlvMessage_InspectMsg = "TlvMessage.InspectMsg";
 
-Message::InspectRc TlvMessage::InspectMsg(debug32_t& errval) const
+Message::InspectRc TlvMessage::InspectMsg(debug64_t& errval) const
 {
    Debug::ft(TlvMessage_InspectMsg);
 

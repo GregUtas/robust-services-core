@@ -518,7 +518,7 @@ bool TcpIoThread::ListenerHasFailed(SysTcpSocket* listener) const
 fn_name TcpIoThread_OutputLog = "TcpIoThread.OutputLog";
 
 void TcpIoThread::OutputLog(LogId id, fixed_string expl,
-   Error error, SysTcpSocket* socket, debug32_t errval) const
+   Error error, SysTcpSocket* socket, debug64_t errval) const
 {
    Debug::ft(TcpIoThread_OutputLog);
 

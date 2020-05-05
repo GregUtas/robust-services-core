@@ -459,7 +459,7 @@ void InvokerPool::KickThread()
    //  During a restart, all invoker threads exit and are recreated, so
    //  suppress the following log.
    //
-   if(Restart::GetStatus() == Running)
+   if(Restart::GetStage() == Running)
    {
       auto log = Log::Create(SessionLogGroup, InvokerPoolBlocked);
       if(log == nullptr) return;
@@ -754,7 +754,7 @@ void InvokerPool::ScheduledOut()
    Debug::ft(InvokerPool_ScheduledOut);
 
    if(InvokerThread::RunningInvoker_ == nullptr) return;
-   if(Restart::GetStatus() != Running) return;
+   if(Restart::GetStage() != Running) return;
    stats_->maxTrans_->Update(InvokerThread::RunningInvoker_->trans_);
 }
 

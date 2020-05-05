@@ -49,7 +49,7 @@ Flags Debug::FcFlags_ = Flags(InitFlags::TraceInit() ? 1 << TracingActive : 0);
 
 //------------------------------------------------------------------------------
 
-void Debug::Assert(bool condition, debug32_t errval)
+void Debug::Assert(bool condition, debug64_t errval)
 {
    if(!condition)
    {

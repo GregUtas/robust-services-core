@@ -39,9 +39,9 @@ public:
    //  ERRVAL/ERRSTR and OFFSET are the arguments to Debug::SwLog.
    //
    SoftwareException
-      (debug64_t errval, debug32_t offset, fn_depth depth = 1);
+      (debug64_t errval, debug64_t offset, fn_depth depth = 1);
    SoftwareException
-      (const std::string& errstr, debug32_t offset, fn_depth depth = 1);
+      (const std::string& errstr, debug64_t offset, fn_depth depth = 1);
 
    //  Virtual to allow subclassing.
    //
@@ -65,7 +65,7 @@ private:
 
    //  A location or additional value associated with the exception.
    //
-   const debug32_t offset_;
+   const debug64_t offset_;
 };
 }
 #endif

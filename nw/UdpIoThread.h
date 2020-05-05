@@ -72,7 +72,7 @@ private:
 
    //  Raises an alarm when an error forces the thread to exit.
    //
-   void RaiseAlarm(NodeBase::debug32_t errval) const;
+   void RaiseAlarm(NodeBase::debug64_t errval) const;
 
    //  Clears any alarm associated with the thread's service.
    //

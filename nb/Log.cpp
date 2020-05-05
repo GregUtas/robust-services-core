@@ -384,7 +384,7 @@ void Log::Submit(ostringstreamPtr& stream)
    //  During a restart, LogThread won't run, so output the log
    //  directly instead of buffering it.
    //
-   if(Restart::GetStatus() != Running)
+   if(Restart::GetStage() != Running)
    {
       LogThread::Spool(stream, log);
 

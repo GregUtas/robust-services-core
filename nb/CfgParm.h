@@ -70,7 +70,7 @@ public:
 
    //  Sets the parameter's value based on INPUT.  Returns false if INPUT
    //  was invalid; otherwise, returns true and updates LEVEL to the type
-   //  of restart needed to make the change.  If LFVEL is RestartNil, the
+   //  of restart needed to make the change.  If LFVEL is RestartNone, the
    //  new value is already in effect, and no restart is required.
    //
    bool SetValue(c_string input, RestartLevel& level);
@@ -123,10 +123,10 @@ private:
 
    //  A subclass may override this to specify the level of restart that is
    //  needed to invoke SetCurr (that is, to modify its parameter's value).
-   //  The default, RestartNil, indicates that the value can be modified
+   //  The default, RestartNone, indicates that the value can be modified
    //  while the system is in service.
    //
-   virtual RestartLevel RestartRequired() const { return RestartNil; }
+   virtual RestartLevel RestartRequired() const { return RestartNone; }
 
    //  Sets the parameter to the value specified in its tuple.  If that value
    //  is invalid, the parameter's default value is retained and the value in

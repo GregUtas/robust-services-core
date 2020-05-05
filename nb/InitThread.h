@@ -85,7 +85,7 @@ private:
 
    //  Initiates a restart that resulted from REASON and ERRVAL.
    //
-   void InitiateRestart(reinit_t reason, debug32_t errval);
+   void InitiateRestart(reinit_t reason, debug64_t errval);
 
    //  Initializes or restarts the system.
    //
@@ -129,6 +129,10 @@ private:
    //
    void Destroy() override;
 
+   //  An error value for debugging.
+   //
+   debug64_t errval_;
+
    //  The thread's current state.
    //
    State state_;
@@ -136,10 +140,6 @@ private:
    //  Set when a run-to-completion timeout has occurred.
    //
    bool timeout_;
-
-   //  An error value for debugging.
-   //
-   debug32_t errval_;
 };
 }
 #endif

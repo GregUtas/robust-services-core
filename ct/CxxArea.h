@@ -647,7 +647,7 @@ private:
    //  whose code could not be found.
    //
    static size_t CreateCodeError
-      (const std::string& name, NodeBase::debug32_t offset);
+      (const std::string& name, NodeBase::debug64_t offset);
 
    //  Class attributes and the types of items that it defines.
    //

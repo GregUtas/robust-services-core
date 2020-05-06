@@ -1486,7 +1486,7 @@ private:
    //  Invoked when InstantiateFunction fails.
    //
    static Function* InstantiateError
-      (const std::string& instName, NodeBase::debug32_t offset);
+      (const std::string& instName, NodeBase::debug64_t offset);
 
    //  Marks recvArg const if
    //  o it's a "this" argument and this function also has a const version, or

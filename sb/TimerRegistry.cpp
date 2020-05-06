@@ -110,7 +110,10 @@ void TimerRegistry::ClaimBlocks()
    //  What this does, however, is traverse all of the timer queues to ensure
    //  that they are not corrupt.
    //
-   if(corrupt_) Restart::Initiate(TimerQueueCorruption, 0);
+   if(corrupt_)
+   {
+      Restart::Initiate(RestartCold, TimerQueueCorruption, 0);
+   }
 
    corrupt_ = true;
 

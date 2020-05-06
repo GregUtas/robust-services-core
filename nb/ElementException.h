@@ -23,6 +23,7 @@
 #define ELEMENTEXCEPTION_H_INCLUDED
 
 #include "Exception.h"
+#include "Restart.h"
 #include "SysTypes.h"
 
 //------------------------------------------------------------------------------
@@ -34,10 +35,10 @@ namespace NodeBase
 class ElementException : public Exception
 {
 public:
-   //  REASON is one of the values defined in Restart.h.
-   //  ERRVAL is for debugging.
+   //  LEVEL is the restart severity.  REASON is one of the values defined
+   //  in Restart.h. ERRVAL is for debugging.
    //
-   ElementException(reinit_t reason, debug32_t errval);
+   ElementException(RestartLevel level, RestartReason reason, debug64_t errval);
 
    //  Not subclassed.
    //
@@ -47,25 +48,33 @@ public:
    //
    void Display(std::ostream& stream, const std::string& prefix) const override;
 
+   //  Returns the severity of the restart.
+   //
+   RestartLevel Level() const { return level_; }
+
    //  Returns the reason for the restart.
    //
-   reinit_t Reason() const { return reason_; }
+   RestartReason Reason() const { return reason_; }
 
    //  Returns the error value.
    //
-   debug32_t Errval() const { return errval_; }
+   debug64_t Errval() const { return errval_; }
 private:
    //  Overridden to identify the type of exception.
    //
    const char* what() const noexcept override;
 
+   //  The severity of the restart.
+   //
+   const RestartLevel level_;
+
    //  The reason for the restart.
    //
-   const reinit_t reason_;
+   const RestartReason reason_;
 
    //  An error value for debugging.
    //
-   const debug32_t errval_;
+   const debug64_t errval_;
 };
 }
 #endif

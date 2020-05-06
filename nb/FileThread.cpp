@@ -293,7 +293,7 @@ void FileThread::Spool(const string& name,
 
    //  During a restart, our thread won't run, so output the stream directly.
    //
-   if(Restart::GetStatus() != Running)
+   if(Restart::GetStage() != Running)
    {
       auto path = Element::OutputPath() + PATH_SEPARATOR + name;
       auto file = SysFile::CreateOstream(path.c_str(), trunc);

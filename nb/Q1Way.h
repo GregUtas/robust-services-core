@@ -74,7 +74,7 @@ public:
    //
    void Init(ptrdiff_t diff)
    {
-      if(Restart::GetStatus() == Running)
+      if(Restart::GetStage() == Running)
       {
          Debug::ft(Q1Way_Init());
       }
@@ -86,7 +86,7 @@ public:
    //
    bool Enq(T& elem)
    {
-      if(Restart::GetStatus() == Running)
+      if(Restart::GetStage() == Running)
       {
          Debug::ft(Q1Way_Enq());
       }

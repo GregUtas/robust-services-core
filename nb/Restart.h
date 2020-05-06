@@ -22,6 +22,7 @@
 #ifndef RESTART_H_INCLUDED
 #define RESTART_H_INCLUDED
 
+#include <iosfwd>
 #include <memory>
 #include "Base.h"
 #include "SysTypes.h"
@@ -30,40 +31,44 @@
 
 namespace NodeBase
 {
-//  The element's state.
+//  The current restart stage.
 //
-enum RestartStatus
+enum RestartStage
 {
-   Launching,    // system is just starting up
-   StartingUp,   // system is being initialized
+   Launching,    // system is just booting
+   StartingUp,   // system is being reinitialized
    Running,      // system is in operation
    ShuttingDown  // system is being shut down
 };
 
 //------------------------------------------------------------------------------
 //
-//  Reasons for shutdowns/restarts.
+//  Reasons for restarts/shutdowns.
 //
 //  Each user of Initiate (below) must define a value here.
 //
-enum RestartReasons
+enum RestartReason
 {
-   NilRestart               = 0x0000,  // nil value
-   ManualRestart            = 0x0001,  // CLI >restart command
-   ObjectPoolCreationFailed = 0x0010,  // insufficient memory for object pool
-   ModuleStartupFailed      = 0x0020,  // failed to allocate resources
-   NetworkLayerUnavailable  = 0x0030,  // network layer could not be started
-   RestartTimeout           = 0x0040,  // restart took too long
-   SchedulingTimeout        = 0x0041,  // missed InitThread heartbeat
-   ThreadPauseFailed        = 0x0050,  // Thread::Pause failed
-   DeathOfCriticalThread    = 0x0051,  // irrecoverable exception
-   MutexCreationFailed      = 0x0052,  // failed to create mutex
-   HeapCreationFailed       = 0x0060,  // insufficient memory for heap
-   HeapCorruption           = 0x0060,  // corrupt heap detected
-   HeapProtection           = 0x0061,  // failed to change memory protection
-   WorkQueueCorruption      = 0x0100,  // corrupt invoker work queue
-   TimerQueueCorruption     = 0x0101   // corrupt timer registry queue
+   NilRestart,                // nil value
+   ManualRestart,             // CLI >restart command
+   MutexCreationFailed,       // failed to create mutex
+   HeapCreationFailed,        // insufficient memory for heap
+   ObjectPoolCreationFailed,  // insufficient memory for object pool
+   NetworkLayerUnavailable,   // network layer could not be started
+   RestartTimeout,            // restart took too long
+   SchedulingTimeout,         // missed InitThread heartbeat
+   ThreadPauseFailed,         // Thread::Pause failed
+   DeathOfCriticalThread,     // irrecoverable exception
+   HeapProtectionFailed,      // failed to change memory protection
+   HeapCorruption,            // corrupt heap detected
+   WorkQueueCorruption,       // corrupt invoker work queue
+   TimerQueueCorruption,      // corrupt timer registry queue
+   RestartReason_N            // number of restart reasons
 };
+
+//  Inserts a string for REASON into STREAM.
+//
+std::ostream& operator<<(std::ostream& stream, RestartReason reason);
 
 //------------------------------------------------------------------------------
 
@@ -75,9 +80,9 @@ public:
    //
    Restart() = delete;
 
-   //  Returns the system's initialization status.
+   //  Returns the system's initialization stage.
    //
-   static RestartStatus GetStatus() { return Status_; }
+   static RestartStage GetStage() { return Stage_; }
 
    //  Returns the type of restart currently in progress.
    //
@@ -99,15 +104,20 @@ public:
       return true;
    }
 
-   //  Forces a restart after generating a log.  REASON must be defined
-   //  above and indicates why the restart was initiated.  ERRVAL is for
-   //  debugging.
+   //  Returns the minmum level required to destroy memory of TYPE.
    //
-   static void Initiate(reinit_t reason, debug32_t errval);
+   static RestartLevel LevelToClear(MemoryType type);
+
+   //  Generates a log and forces a restart at LEVEL (or higher, if escalation
+   //  occurs).  REASON must be defined above and indicates why the restart was
+   //  initiated.  ERRVAL is for debugging.
+   //
+   static void Initiate
+      (RestartLevel level, RestartReason reason, debug64_t errval);
 private:
-   //  The state of system initialization or shutdown.
+   //  The current stage of system initialization or shutdown.
    //
-   static RestartStatus Status_;
+   static RestartStage Stage_;
 
    //  The type of initialization or shutdown being performed.
    //

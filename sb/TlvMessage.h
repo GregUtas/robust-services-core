@@ -200,7 +200,7 @@ public:
 
    //  Overridden to inspect the message's contents.
    //
-   InspectRc InspectMsg(NodeBase::debug32_t& errval) const override;
+   InspectRc InspectMsg(NodeBase::debug64_t& errval) const override;
 
    //  Overridden to check the fence pattern before sending the message.
    //

@@ -129,7 +129,7 @@ void CoutThread::Spool(ostringstreamPtr& stream)
 
    //  During a restart, our thread won't run, so output the stream directly.
    //
-   if(Restart::GetStatus() != Running)
+   if(Restart::GetStage() != Running)
    {
       SysConsole::Out() << stream->str() << std::flush;
       stream.reset();

@@ -69,11 +69,11 @@ class SbException : public SoftwareException
 public:
    //  ERRVAL and OFFSET are passed to Software Exception.
    //
-   SbException(debug64_t errval, debug32_t offset);
+   SbException(debug64_t errval, debug64_t offset);
 
    //  ERRSTR and OFFSET are passed to Software Exception.
    //
-   SbException(const string& errstr, debug32_t offset);
+   SbException(const string& errstr, debug64_t offset);
 
    //  Not subclassed.
    //
@@ -96,7 +96,7 @@ private:
 
 fn_name SbException_ctor1 = "SbException.ctor";
 
-SbException::SbException(debug64_t errval, debug32_t offset) :
+SbException::SbException(debug64_t errval, debug64_t offset) :
    SoftwareException(errval, offset, 2),
    ctx_(nullptr)
 {
@@ -110,7 +110,7 @@ SbException::SbException(debug64_t errval, debug32_t offset) :
 
 fn_name SbException_ctor2 = "SbException.ctor(string)";
 
-SbException::SbException(const string& errstr, debug32_t offset) :
+SbException::SbException(const string& errstr, debug64_t offset) :
    SoftwareException(errstr, offset, 2),
    ctx_(nullptr)
 {
@@ -336,7 +336,7 @@ void Context::Display(ostream& stream,
 
 fn_name Context_Dump = "Context.Dump";
 
-void Context::Dump(fn_name_arg func, debug64_t errval, debug32_t offset)
+void Context::Dump(fn_name_arg func, debug64_t errval, debug64_t offset)
 {
    Debug::ft(Context_Dump);
 
@@ -433,7 +433,7 @@ void Context::Enqueue(Q2Way< Context >& whichq, MsgPriority prio, bool henq)
       //  a warm restart, when an invoker thread requeues the context that
       //  it couldn't service before exiting.
       //
-      if(Restart::GetStatus() == RestartStatus::Running)
+      if(Restart::GetStage() == RestartStage::Running)
          return;
       else
          henq = true;
@@ -591,7 +591,7 @@ void Context::HenqPsm(ProtocolSM& psm)
 
 fn_name Context_Kill1 = "Context.Kill";
 
-void Context::Kill(debug64_t errval, debug32_t offset)
+void Context::Kill(debug64_t errval, debug64_t offset)
 {
    Debug::ft(Context_Kill1);
 
@@ -602,7 +602,7 @@ void Context::Kill(debug64_t errval, debug32_t offset)
 
 fn_name Context_Kill2 = "Context.Kill(string)";
 
-void Context::Kill(const string& errstr, debug32_t offset)
+void Context::Kill(const string& errstr, debug64_t offset)
 {
    Debug::ft(Context_Kill2);
 

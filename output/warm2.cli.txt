@@ -1,43 +1,43 @@
 nt>sched show
-SCHEDULER REPORT: 3-May-2020 10:40:56.997 on Reigi
-for interval beginning at 10:40:38.018
+SCHEDULER REPORT: 6-May-2020 09:28:28.854 on Reigi
+for interval beginning at 09:28:17.564
 ----------------------------------------------------------------------------
       THREADS          |    SINCE START OF CURRENT 15-MIN INTERVAL    | LAST
                        |            rtc  max   max     max  total     |5 SEC
 id    name     host f b| ex yields  t/o msgs stack   usecs  msecs %cpu| %cpu
 ----------------------------------------------------------------------------
-      idle                                                  11488 60.5  79.2
- 1    root     79e0 w S   0   1363    0    0   274    2257     99  0.5   0.5
- 2    init     232c s S   0   1416    0    0  2746 2483322   4587 24.2  20.0
- 3    file     8b40 b     0     39    0   15   325  452216   1141  6.0   0.1
- 4    cout     90f4 B     0     50    0   10   293     365      7  0.0   0.0
- 5     cin     9fc8 O C   0      5    0    0   240      90      0  0.0   0.0
- 6  objaud     8c08 A S   0     38    0    0   424    2984     19  0.1   0.2
- 7   stats     9f38 B S   0      2    0    0   248     178      0  0.0   0.0
- 8     log     9d24 B S   0      1    0    0   255      88      0  0.0   0.0
- 9     cli     4274 O     0     26    4    0   672 1317523   1634  8.6   0.0
-10   timer     6ae8 P S   0      9    0    0   241     105      1  0.0   0.0
-11 invoker     7954 P S   0      1    0    0   259      82      0  0.0   0.0
-12   tcpio     9f78 P N   0      9    0    0   285    1515      3  0.0   0.0
-13   udpio     8f3c P N   0      1    0    0   269     814      1  0.0   0.0
-14   udpio     95a8 P N   0      1    0    0   269     508      1  0.0   0.0
+      idle                                                   7045 62.4
+ 1    root     b810 w S   0   1085    0    0   268    1895     80  0.7
+ 2    init     87b4 s S   0   1140    0    0  2746 1552039   2605 23.1
+ 3    file     72c4 b     0     51    0   11   319  241808    544  4.8
+ 4    cout     7b48 B     0     50    0   10   287     388      7  0.1
+ 5     cin     c27c O C   0      5    0    0   234     178      1  0.0
+ 6  objaud     6738 A S   0      1    0    0   231      66      0  0.0
+ 7   stats     a4cc B S   0      1    0    0   242     130      0  0.0
+ 8     log     2fe0 B S   0      1    0    0   249      69      0  0.0
+ 9     cli     6d90 O     0     26    0    0   672  925491   1004  8.9
+10   timer     7410 P S   0      3    0    0   235     118      0  0.0
+11 invoker     bf7c P S   0      1    0    0   253      89      0  0.0
+12   tcpio     bff4 P N   0      6    0    0   285    1160      2  0.0
+13   udpio     a92c P N   0      1    0    0   263     425      0  0.0
+14   udpio     b368 P N   0      1    0    0   263     561      1  0.0
 ----------------------------------------------------------------------------
 nt>sb status
-STATUS REPORT: 3-May-2020 10:40:57.041 on Reigi
+STATUS REPORT: 6-May-2020 09:28:28.867 on Reigi
 MEMORY USAGE
 Alloc  Low kB     kB       Bytes                            Memory        Prot
 Fails   Avail  Avail      In Use     Allocs      Frees        Type  RWX  Chngs
-    0    ---     ---         436        294        287   temporary  rw-      0
+    0    ---     ---         436        272        265   temporary  rw-      0
     0    ---     ---    24223356       2043        182     dynamic  rw-      0
     0    ---     ---         392         13          0  persistent  rw-      0
     0   1219    1219       61748        308         51   protected  r--    101
-    0    ---     ---     3977028        183         27   permanent  rw-      0
+    0    ---     ---     3977032        183         27   permanent  rw-      0
     0    386     386      128460       2270         58   immutable  r--    273
 
 OBJECT POOLS
 Alloc  Lowest    Curr    Curr
 Fails   Avail   Avail  In Use   Allocs    Frees  Expands   Pool Name
-    0    1981    2021      27      191      164        0   MsgBuffers
+    0    1981    2027      21      191      170        0   MsgBuffers
     0       *    2048       0        0        0        0   IpBuffers
     0       *    8192       0        0        0        0   SbIpBuffers
     0       *   10240       0        0        0        0   BtIpBuffers
@@ -50,7 +50,7 @@ Fails   Avail   Avail  In Use   Allocs    Frees  Expands   Pool Name
     0       *   14336       0        0        0        0   ServiceSMs
     0       *    1024       0        0        0        0   MediaEndpts
 
-CPU IDLE TIME: 79.2%
+CPU IDLE TIME: 0.0%
 
 ACTIVE ALARMS
   No active alarms.

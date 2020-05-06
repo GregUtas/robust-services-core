@@ -37,7 +37,7 @@ public:
    //  Invokes Exception's constructor to capture the stack.
    //  ERRVAL is for debugging.
    //
-   explicit AssertionException(debug32_t errval);
+   explicit AssertionException(debug64_t errval);
 
    //  Not subclassed.
    //
@@ -53,7 +53,7 @@ private:
 
    //  An error value for debugging.
    //
-   const debug32_t errval_;
+   const debug64_t errval_;
 };
 }
 #endif

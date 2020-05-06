@@ -1498,7 +1498,7 @@ MsgBuffer* Thread::DeqMsg(msecs_t timeout)
       switch(Pause(timeout))
       {
       case DelayError:
-         Restart::Initiate(ThreadPauseFailed, Tid());
+         Restart::Initiate(RestartWarm, ThreadPauseFailed, Tid());
          return nullptr;
 
       case DelayCompleted:
@@ -1883,7 +1883,7 @@ void Thread::ExitBlockingOperation(fn_name_arg func)
 
 fn_name Thread_ExitIfSafe = "Thread.ExitIfSafe";
 
-void Thread::ExitIfSafe(debug32_t offset)
+void Thread::ExitIfSafe(debug64_t offset)
 {
    Debug::noft();
 
@@ -2236,7 +2236,7 @@ bool Thread::IsTraceable() const
    {
    case WatchdogFaction:
    case SystemFaction:
-      if(Restart::GetStatus() != Running) return true;
+      if(Restart::GetStage() != Running) return true;
    }
 
    return (trace == TraceIncluded);
@@ -3398,8 +3398,7 @@ main_t Thread::Start()
          //
          if(faction_ < SystemFaction)
          {
-            auto system = Singleton< InitThread >::Instance();
-            system->InitiateRestart(reason, code);
+            Singleton< InitThread >::Instance()->InitiateRestart(nex.Level());
          }
 
          continue;
@@ -3804,7 +3803,7 @@ Thread::TrapAction Thread::TrapHandler(const Exception* ex,
       //    and let the object pool audit recover the Thread object.
       //
       auto retrapped = false;
-      if(Restart::GetStatus() == Running) stats_->traps_->Incr();
+      if(Restart::GetStage() == Running) stats_->traps_->Incr();
 
       switch(++priv_->traps_)
       {

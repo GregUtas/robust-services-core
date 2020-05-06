@@ -87,77 +87,13 @@ const FactionFlags& ShutdownFactions()
 
 //==============================================================================
 //
-//  The reason for a reinitialization or shutdown.
+//  The minimum level specified when a restart was initiated.
 //
-reinit_t reason_ = NilRestart;
-
-//  An error value for debugging.
-//
-debug32_t errval_ = 0;
+RestartLevel level_ = RestartNone;
 
 //  A stream for recording the progress of system initialization.
 //
 ostringstreamPtr stream_ = nullptr;
-
-//------------------------------------------------------------------------------
-//
-//  Determines the restart level when the system is in service.
-//
-fn_name NodeBase_CalcLevel = "NodeBase.CalcLevel";
-
-RestartLevel CalcLevel()
-{
-   Debug::ft(NodeBase_CalcLevel);
-
-   //  A restart was initiated when the system was in service.  Determine
-   //  the restart level based on what caused the restart.
-   //
-   if(reason_ == ManualRestart)
-   {
-      //  CLI >restart command.  errval_ is the restart level.
-      //
-      switch(errval_)
-      {
-      case RestartNil:
-         Debug::SwLog(NodeBase_CalcLevel, reason_, errval_);
-         return RestartNil;
-
-      case RestartWarm:
-      case RestartCold:
-      case RestartReload:
-      case RestartReboot:
-      case RestartExit:
-         return RestartLevel(errval_);
-
-      default:
-         Debug::SwLog(NodeBase_CalcLevel, reason_, errval_);
-         return RestartWarm;
-      }
-   }
-
-   switch(reason_)
-   {
-   case WorkQueueCorruption:
-   case TimerQueueCorruption:
-      //
-      //  These require a cold restart to reset these queues and
-      //  delete all objects associated with them.
-      //
-      return RestartCold;
-
-   case RestartTimeout:
-   case ModuleStartupFailed:
-      //
-      //  These reasons should not occur when the system is in service.
-      //
-      Debug::SwLog(NodeBase_CalcLevel, reason_, errval_);
-      return RestartReboot;
-   }
-
-   //  A warm restart is the default.
-   //
-   return RestartWarm;
-}
 
 //------------------------------------------------------------------------------
 //
@@ -221,10 +157,8 @@ void ModuleRegistry::Display(ostream& stream,
    Immutable::Display(stream, prefix, options);
 
    stream << prefix << "TicksZero : " << Clock::TicksZero() << CRLF;
-   stream << prefix << "Status    : " << Restart::Status_ << CRLF;
+   stream << prefix << "Stage     : " << Restart::Stage_ << CRLF;
    stream << prefix << "Level     : " << Restart::Level_ << CRLF;
-   stream << prefix << "reason    : " << reason_ << CRLF;
-   stream << prefix << "errval    : " << errval_ << CRLF;
    stream << prefix << "stream    : " << stream_.get() << CRLF;
 
    stream << prefix << "modules [ModuleId]" << CRLF;
@@ -255,19 +189,10 @@ RestartLevel ModuleRegistry::NextLevel()
       return RestartReload;
 
    case RestartReload:
-   case RestartReboot:
-      //
-      //  These cause a reboot.
-      //
-      //  [[ fallthrough ]]
-   case RestartNil:
-   case RestartExit:
-   default:
-      //
-      //  This function is invoked when a restart is already underway,
-      //  so these values should not occur.
-      //
       return RestartReboot;
+
+   default:
+      return RestartExit;
    }
 }
 
@@ -290,20 +215,20 @@ void ModuleRegistry::Restart()
 
    while(true)
    {
-      switch(Restart::Status_)
+      switch(Restart::Stage_)
       {
       case Launching:
          Thread::EnableFactions(NoFactions);
          reentered = false;
          Restart::Level_ = RestartReboot;
-         Restart::Status_ = StartingUp;
+         Restart::Stage_ = StartingUp;
          break;
 
       case StartingUp:
          Thread::EnableFactions(NoFactions);
          if(reentered)
          {
-            Restart::Status_ = ShuttingDown;
+            Restart::Stage_ = ShuttingDown;
             break;
          }
 
@@ -312,16 +237,16 @@ void ModuleRegistry::Restart()
             auto log = Log::Create(NodeLogGroup, NodeRunning);
             if(log != nullptr) Log::Submit(log);
          }
-         Restart::Level_ = RestartNil;
-         Restart::Status_ = Running;
+         Restart::Level_ = RestartNone;
+         Restart::Stage_ = Running;
          Thread::EnableFactions(AllFactions());
          return;
 
       case Running:
          reentered = false;
-         Restart::Level_ = CalcLevel();
-         if(Restart::Level_ == RestartNil) return;
-         Restart::Status_ = ShuttingDown;
+         Restart::Level_ = level_;
+         if(Restart::Level_ == RestartNone) return;
+         Restart::Stage_ = ShuttingDown;
          break;
 
       case ShuttingDown:
@@ -329,7 +254,7 @@ void ModuleRegistry::Restart()
          if(reentered) Restart::Level_ = NextLevel();
          Shutdown(Restart::Level_);
          reentered = false;
-         Restart::Status_ = StartingUp;
+         Restart::Stage_ = StartingUp;
          break;
       }
    }
@@ -337,14 +262,13 @@ void ModuleRegistry::Restart()
 
 //------------------------------------------------------------------------------
 
-fn_name ModuleRegistry_SetReason = "ModuleRegistry.SetReason";
+fn_name ModuleRegistry_SetLevel = "ModuleRegistry.SetLevel";
 
-void ModuleRegistry::SetReason(reinit_t reason, debug32_t errval)
+void ModuleRegistry::SetLevel(RestartLevel level)
 {
-   Debug::ft(ModuleRegistry_SetReason);
+   Debug::ft(ModuleRegistry_SetLevel);
 
-   reason_ = reason;
-   errval_ = errval;
+   level_ = level;
 }
 
 //------------------------------------------------------------------------------
@@ -386,7 +310,7 @@ void ModuleRegistry::Shutdown(RestartLevel level)
    Thread::EnableFactions(NoFactions);
 
    auto zeroTime = Clock::TicksNow();
-   *Stream() << CRLF << "RESTART TYPE: " << strRestartLevel(level) << CRLF;
+   *Stream() << CRLF << "RESTART TYPE: " << level << CRLF;
    *Stream() << CRLF << ShutdownHeader << CRLF;
 
    //  Notify all threads of the restart.

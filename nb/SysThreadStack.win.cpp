@@ -23,6 +23,7 @@
 #include "SysThreadStack.h"
 #include <cstddef>
 #include <cstring>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <windows.h>  // must precede dbghelp.h
@@ -40,7 +41,26 @@ using std::string;
 
 namespace NodeBase
 {
-//  Global data for capturing stack traces.
+//  The maximum number of frames that RtlCaptureStackBackTrace can capture.
+//  On Windows XP, it's 62.  In later versions of Windows, it's UINT16_MAX.
+//
+constexpr size_t MaxFrames = 2048;
+
+//* Workaround for RSC not finding unique_ptr< void*[] >::reset.
+//
+typedef void* voidstar;
+
+//  For holding stack frames.
+//
+typedef void* StackFrames[MaxFrames];
+
+//  For holding stack frames.
+//
+typedef std::unique_ptr< voidstar[] > StackFramesPtr;
+
+//------------------------------------------------------------------------------
+//
+//  For capturing stack traces.
 //
 class StackInfo
 {
@@ -57,14 +77,10 @@ public:
    //
    static void Shutdown();
 
-   //  Captures the running thread's stack frames.  Returns the number of
-   //  functions on the stack.
+   //  Captures the running thread's stack in FRAMES.  Returns the number
+   //  of functions on the stack.
    //
-   static fn_depth GetFrames();
-
-   //  Returns a handle to the stack frame at DEPTH.
-   //
-   static DWORD64 GetFrame(fn_depth depth);
+   static fn_depth GetFrames(StackFramesPtr& frames);
 
    //  Returns the name of the function associated with FRAME.
    //
@@ -75,11 +91,6 @@ public:
    //  within that file.
    //
    static const char* GetFileLoc(DWORD64 frame, DWORD& line, DWORD& disp);
-
-   //> The maximum number of frames that RtlCaptureStackBackTrace can capture.
-   //  On Windows XP, it's 62.  In later versions of Windows, it's UINT16_MAX.
-   //
-   static const size_t MaxFrames = 2048;
 private:
    //  A handle to our process.
    //
@@ -89,14 +100,6 @@ private:
    //
    static SYMBOL_INFO* Symbols;
 
-   //  The number of stack frames in Frames.
-   //
-   static WORD Depth;
-
-   //  An array of pointers, one to each stack frame.
-   //
-   static void* Frames[MaxFrames];
-
    //  File name and line number information for a function.
    //
    static IMAGEHLP_LINE64 Source;
@@ -104,8 +107,6 @@ private:
 
 HANDLE StackInfo::Process = nullptr;
 SYMBOL_INFO* StackInfo::Symbols = nullptr;
-WORD StackInfo::Depth = 0;
-void* StackInfo::Frames[MaxFrames] = { nullptr };
 IMAGEHLP_LINE64 StackInfo::Source = { };
 
 //------------------------------------------------------------------------------
@@ -119,18 +120,10 @@ const char* StackInfo::GetFileLoc(DWORD64 frame, DWORD& line, DWORD& disp)
 
 //------------------------------------------------------------------------------
 
-DWORD64 StackInfo::GetFrame(fn_depth depth)
+fn_depth StackInfo::GetFrames(StackFramesPtr& frames)
 {
-   if(depth < Depth) return DWORD64(Frames[depth]);
-   return 0;
-}
-
-//------------------------------------------------------------------------------
-
-fn_depth StackInfo::GetFrames()
-{
-   Depth = RtlCaptureStackBackTrace(0, MaxFrames, Frames, nullptr);
-   return Depth;
+   frames.reset(new StackFrames);
+   return RtlCaptureStackBackTrace(0, MaxFrames, frames.get(), nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -193,7 +186,8 @@ void SysThreadStack::Display(ostream& stream, fn_depth omit)
 {
    Debug::ft(SysThreadStack_Display);
 
-   auto depth = StackInfo::GetFrames();
+   StackFramesPtr frames = nullptr;
+   auto depth = StackInfo::GetFrames(frames);
    if(depth == 0) return;
 
    //  XLO and XHI limit the traceback's display to 48 functions, namely
@@ -225,7 +219,7 @@ void SysThreadStack::Display(ostream& stream, fn_depth omit)
          //  Get the name of the function associated with this stack frame.
          //  Modify the name by replacing each C++ scope operator with a dot.
          //
-         auto frame = StackInfo::GetFrame(f);
+         auto frame = DWORD64(frames[f]);
          auto func = StackInfo::GetFunction(frame);
 
          if(func != nullptr)
@@ -266,9 +260,12 @@ void SysThreadStack::Display(ostream& stream, fn_depth omit)
 
 fn_depth SysThreadStack::FuncDepth()
 {
-   //  Exclude this function from the depth count.
+   //  Exclude this function from the depth count.  We're only interested
+   //  in the current function's depth, so Frames needn't be per-thread.
    //
-   auto depth = StackInfo::GetFrames();
+   static void* Frames[MaxFrames];
+
+   auto depth = RtlCaptureStackBackTrace(0, MaxFrames, Frames, nullptr);
    return (depth > 0 ? depth - 1 : 0);
 }
 
@@ -318,12 +315,13 @@ bool SysThreadStack::TrapIsOk()
 
    //  Do not trap a thread that is currently executing a destructor.
    //
-   auto depth = StackInfo::GetFrames();
+   StackFramesPtr frames = nullptr;
+   auto depth = StackInfo::GetFrames(frames);
    if(depth == 0) return true;
 
    for(auto f = 2; f < depth; ++f)
    {
-      auto func = StackInfo::GetFunction(StackInfo::GetFrame(f));
+      auto func = StackInfo::GetFunction(DWORD64(frames[f]));
 
       if(func != nullptr)
       {

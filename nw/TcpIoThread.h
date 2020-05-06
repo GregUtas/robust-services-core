@@ -154,7 +154,7 @@ private:
    //  the error occurred, and ERRVAL is used if SOCKET is nullptr.
    //
    void OutputLog(NodeBase::LogId id, NodeBase::fixed_string expl, Error error,
-      SysTcpSocket* socket, NodeBase::debug32_t errval = 0) const;
+      SysTcpSocket* socket, NodeBase::debug64_t errval = 0) const;
 
    //  Releases resources when exiting or cleaning up the thread.
    //

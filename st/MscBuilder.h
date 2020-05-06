@@ -233,7 +233,7 @@ private:
    //  contains ERRVAL and OFFSET, and adds a '?' debug line to the MSC to
    //  indicate where the error occurred.  Returns false.
    //
-   bool Error(debug64_t errval, debug32_t offset);
+   bool Error(debug64_t errval, debug64_t offset);
 
    //  Set if internal data structures are to be displayed.
    //

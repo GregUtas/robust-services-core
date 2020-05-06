@@ -521,7 +521,7 @@ private:
    //  currently unsafe to exit the thread.  OFFSET indicates where the exit
    //  was forced.
    //
-   void ExitIfSafe(debug32_t offset);
+   void ExitIfSafe(debug64_t offset);
 
    //  The signal handler that is registered for all threads.  It turns a
    //  signal into a C++ exception that is caught in Thread::Start.

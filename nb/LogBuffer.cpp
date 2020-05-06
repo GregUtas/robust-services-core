@@ -462,7 +462,7 @@ bool LogBuffer::Push(const ostringstreamPtr& log)
    //  This must not be invoked during a restart.
    //  LogThread::Spool should be invoked instead.
    //
-   auto level = Restart::GetStatus();
+   auto level = Restart::GetStage();
    Debug::Assert(level == Running, level);
 
    auto count = log->str().size();

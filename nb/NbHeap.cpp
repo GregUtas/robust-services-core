@@ -120,20 +120,6 @@ enum HeapCorruptionReason
 
 //------------------------------------------------------------------------------
 //
-//  Invoked when heap corruption is detected.
-//
-NbHeap::BlockState Corrupt(int reason, bool restart)
-{
-   if(restart && !Element::RunningInLab())
-   {
-      Restart::Initiate(HeapCorruption, reason);
-   }
-
-   return NbHeap::Invalid;
-}
-
-//------------------------------------------------------------------------------
-//
 //  Returns the index of the first child associated with INDEX.
 //  The second child's index follows immediately.
 //
@@ -287,7 +273,7 @@ NbHeap::NbHeap(MemoryType type, size_t size) : Heap(),
 
    if(lock == nullptr)
    {
-      Restart::Initiate(MutexCreationFailed, 0);
+      Restart::Initiate(RestartWarm, MutexCreationFailed, 0);
       return;
    }
 
@@ -302,7 +288,7 @@ NbHeap::NbHeap(MemoryType type, size_t size) : Heap(),
    {
       size_ = 0;
       lock.release();
-      Restart::Initiate(HeapCreationFailed, type);
+      Restart::Initiate(RestartWarm, HeapCreationFailed, type);
       return;
    }
 
@@ -544,6 +530,20 @@ size_t NbHeap::BlockToSize(const void* addr) const
 }
 
 //------------------------------------------------------------------------------
+//
+//  Invoked when heap corruption is detected.
+//
+NbHeap::BlockState NbHeap::Corrupt(int reason, bool restart) const
+{
+   if(restart && !Element::RunningInLab())
+   {
+      Restart::Initiate(Restart::LevelToClear(Type()), HeapCorruption, reason);
+   }
+
+   return NbHeap::Invalid;
+}
+
+//------------------------------------------------------------------------------
 
 HeapBlock* NbHeap::Dequeue(level_t level)
 {
@@ -668,8 +668,13 @@ HeapBlock* NbHeap::Enqueue(HeapBlock* block, level_t level)
 
    auto sibling = IndexToBlock(s, level);
    ValidateBlock(s, level, true);
+
    if(!heap_->freeq[level].Exq(*sibling))
-      Restart::Initiate(HeapCorruption, ExqFailure);
+   {
+      Restart::Initiate
+         (Restart::LevelToClear(Type()), HeapCorruption, ExqFailure);
+   }
+
    return sibling;
 }
 

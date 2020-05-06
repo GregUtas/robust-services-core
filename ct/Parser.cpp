@@ -311,7 +311,7 @@ fn_name Parser_Failure = "Parser.Failure";
 
 void Parser::Failure(const string& venue) const
 {
-   Debug::ft(Parser_Failure);
+   Debug::ft(Parser_Failure);  //@
 
    auto code = lexer_.GetLine(farthest_);
    auto line = lexer_.GetLineNum(farthest_);
@@ -3702,22 +3702,11 @@ bool Parser::GetTypeTags(TypeSpec* spec)
 {
    Debug::ft(Parser_GetTypeTags);
 
-   //  <TypeTags> = [["*"] ["const"] ["volatile"]]*
-   //               ["&" | "&&"] ["const"] ["volatile"]  |  ["[]"]
+   //  <TypeTags> = [["*"] ["const"] ["volatile"]]* ["[]"]
+   //               ["&" | "&&"] ["const"] ["volatile"]
    //
    auto tags = spec->Tags();
 
-   //  Start by looking for an unbounded array tag.  This is only
-   //  supported in isolation.
-   //
-   if(lexer_.NextStringIs(ARRAY_STR, false))
-   {
-      tags->SetUnboundedArray();
-      return true;
-   }
-
-   //  Now look for pointers.
-   //
    bool space;
    TagCount ptrs = 0;
 
@@ -3738,6 +3727,13 @@ bool Parser::GetTypeTags(TypeSpec* spec)
       auto readonly = (attrs.find(Cxx::CONST) != attrs.cend());
       auto unstable = (attrs.find(Cxx::VOLATILE) != attrs.cend());
       tags->SetPointer(ptrs - 1, readonly, unstable);
+   }
+
+   //  Now look for an unbounded array tag.
+   //
+   if(lexer_.NextStringIs(ARRAY_STR, false))
+   {
+      tags->SetUnboundedArray();
    }
 
    //  Now look for references.

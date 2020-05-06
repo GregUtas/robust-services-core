@@ -20,14 +20,17 @@
 //  with RSC.  If not, see <http://www.gnu.org/licenses/>.
 //
 #include "Restart.h"
+#include <ostream>
 #include "Debug.h"
 #include "ElementException.h"
+
+using std::ostream;
 
 //------------------------------------------------------------------------------
 
 namespace NodeBase
 {
-RestartStatus Restart::Status_ = Launching;
+RestartStage Restart::Stage_ = Launching;
 RestartLevel Restart::Level_ = RestartReboot;
 
 //------------------------------------------------------------------------------
@@ -52,10 +55,62 @@ bool Restart::ClearsMemory(MemoryType type)
 
 fn_name Restart_Initiate = "Restart.Initiate";
 
-void Restart::Initiate(reinit_t reason, debug32_t errval)
+void Restart::Initiate
+   (RestartLevel level, RestartReason reason, debug64_t errval)
 {
    Debug::ft(Restart_Initiate);
 
-   throw ElementException(reason, errval);
+   throw ElementException(level, reason, errval);
+}
+
+//------------------------------------------------------------------------------
+
+RestartLevel Restart::LevelToClear(MemoryType type)
+{
+   switch(type)
+   {
+   case MemTemporary:
+      return RestartWarm;
+   case MemDynamic:
+      return RestartCold;
+   case MemPersistent:
+   case MemProtected:
+      return RestartReload;
+   case MemPermanent:
+   case MemImmutable:
+      return RestartReboot;
+   }
+
+   return RestartNone;
+}
+
+//------------------------------------------------------------------------------
+
+fixed_string RestartReasonStrings[RestartReason_N + 1] =
+{
+   "nil restart",
+   "manual restart",
+   "mutex creation failed",
+   "heap creation failed",
+   "object pool creation failed",
+   "network layer unavailable",
+   "restart timeout",
+   "scheduling timeout",
+   "thread pause failed",
+   "death of eritical thread",
+   "heap protection failed",
+   "heap corruption",
+   "work queue corruption",
+   "timer queue corruption",
+   ERROR_STR
+};
+
+ostream& operator<<(ostream& stream, RestartReason reason)
+{
+   if((reason >= 0) && (reason < RestartReason_N))
+      stream << RestartReasonStrings[reason];
+   else
+      stream << RestartReasonStrings[RestartReason_N];
+   return stream;
 }
 }

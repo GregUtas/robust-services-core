@@ -58,9 +58,9 @@ private:
    //
    enum State
    {
-      Initializing,  // system being initialized
+      Initializing,  // system is being initialized or restarted
       Running,       // system is in service
-      Restarting     // initiating a restart
+      Restarting     // internal error: initiating a restart
    };
 
    //  Flags used when interrupting InitThread.
@@ -83,9 +83,9 @@ private:
    //
    ~InitThread();
 
-   //  Initiates a restart that resulted from REASON and ERRVAL.
+   //  Initiates a restart at LEVEL.
    //
-   void InitiateRestart(reinit_t reason, debug32_t errval);
+   void InitiateRestart(RestartLevel level);
 
    //  Initializes or restarts the system.
    //
@@ -129,6 +129,10 @@ private:
    //
    void Destroy() override;
 
+   //  An error value for debugging.
+   //
+   debug64_t errval_;
+
    //  The thread's current state.
    //
    State state_;
@@ -136,10 +140,6 @@ private:
    //  Set when a run-to-completion timeout has occurred.
    //
    bool timeout_;
-
-   //  An error value for debugging.
-   //
-   debug32_t errval_;
 };
 }
 #endif

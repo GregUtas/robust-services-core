@@ -36,7 +36,7 @@ namespace NodeBase
 {
 fn_name SignalException_ctor = "SignalException.ctor";
 
-SignalException::SignalException(signal_t sig, debug32_t errval) :
+SignalException::SignalException(signal_t sig, debug64_t errval) :
    Exception(true, 1),
    signal_(sig),
    errval_(errval)

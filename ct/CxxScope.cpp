@@ -4249,7 +4249,7 @@ void Function::IncrThisWrites() const
 
 fn_name Function_InstantiateError = "Function.InstantiateError";
 
-Function* Function::InstantiateError(const string& instName, debug32_t offset)
+Function* Function::InstantiateError(const string& instName, debug64_t offset)
 {
    Debug::ft(Function_InstantiateError);
 

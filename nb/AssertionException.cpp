@@ -33,7 +33,7 @@ namespace NodeBase
 {
 fn_name AssertionException_ctor = "AssertionException.ctor";
 
-AssertionException::AssertionException(debug32_t errval) : Exception(true, 1),
+AssertionException::AssertionException(debug64_t errval) : Exception(true, 1),
    errval_(errval)
 {
    Debug::ft(AssertionException_ctor);

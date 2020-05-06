@@ -216,7 +216,7 @@ int Heap::SetPermissions(MemoryProtection attrs)
    auto err = SysMemory::Protect(Addr(), Size(), attrs);
    if(err == 0) return SetAttrs(attrs);
 
-   Restart::Initiate(HeapProtection, err);
+   Restart::Initiate(Restart::LevelToClear(Type()), HeapProtectionFailed, err);
    return err;
 }
 

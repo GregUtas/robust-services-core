@@ -214,7 +214,7 @@ void LogThread::Spool(ostringstreamPtr& stream, const Log* log)
    //  contention for the log file, because many threads come through here to
    //  generate an exit log during the shutdown phase.
    //
-   auto level = Restart::GetStatus();
+   auto level = Restart::GetStage();
    Debug::Assert(level != Running, level);
 
    if((log == nullptr) || (GetLogType(log->Id()) != PeriodicLog))

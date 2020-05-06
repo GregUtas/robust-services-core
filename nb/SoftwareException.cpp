@@ -33,7 +33,7 @@ namespace NodeBase
 {
 fn_name SoftwareException_ctor1 = "SoftwareException.ctor";
 
-SoftwareException::SoftwareException(debug64_t errval, debug32_t offset,
+SoftwareException::SoftwareException(debug64_t errval, debug64_t offset,
    fn_depth depth) : Exception(true, depth),
    errval_(errval),
    errstr_(EMPTY_STR),
@@ -46,7 +46,7 @@ SoftwareException::SoftwareException(debug64_t errval, debug32_t offset,
 
 fn_name SoftwareException_ctor2 = "SoftwareException.ctor(string)";
 
-SoftwareException::SoftwareException(const string& errstr, debug32_t offset,
+SoftwareException::SoftwareException(const string& errstr, debug64_t offset,
    fn_depth depth) : Exception(true, depth),
    errval_(0),
    errstr_(errstr),

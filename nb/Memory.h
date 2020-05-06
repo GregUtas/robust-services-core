@@ -56,7 +56,7 @@ namespace Memory
    //
    void Set(void* dest, byte_t value, size_t size);
 
-   //  Allocates a memory segment of size BYTES of the specified TYPE.
+   //  Allocates a memory segment of SIZE of the specified TYPE.
    //  If EX is true, an AllocationException is thrown on failure.
    //
    void* Alloc(size_t size, MemoryType type, bool ex = true);

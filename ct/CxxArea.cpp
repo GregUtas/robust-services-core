@@ -835,7 +835,7 @@ size_t Class::CreateCode(const ClassInst* inst, stringPtr& code) const
 
 fn_name Class_CreateCodeError = "Class.CreateCodeError";
 
-size_t Class::CreateCodeError(const string& name, debug32_t offset)
+size_t Class::CreateCodeError(const string& name, debug64_t offset)
 {
    Debug::ft(Class_CreateCodeError);
 

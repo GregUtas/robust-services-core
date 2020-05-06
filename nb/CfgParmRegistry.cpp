@@ -449,7 +449,7 @@ void CfgParmRegistry::Startup(RestartLevel level)
    {
       for(auto p = parmq_.First(); p != nullptr; parmq_.Next(p))
       {
-         if((p->level_ != RestartNil) && (p->level_ <= level))
+         if((p->level_ != RestartNone) && (p->level_ <= level))
          {
             p->SetCurr();
          }

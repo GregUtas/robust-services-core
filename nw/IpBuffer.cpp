@@ -344,7 +344,7 @@ bool IpBuffer::Send(bool external)
 
       if(socket == nullptr)
       {
-         if(Restart::GetStatus() != ShuttingDown)
+         if(Restart::GetStage() != ShuttingDown)
          {
             Debug::SwLog(IpBuffer_Send, "socket not found", txPort);
          }

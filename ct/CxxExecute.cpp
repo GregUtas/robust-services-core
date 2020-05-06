@@ -727,7 +727,7 @@ bool ErrTrace::Display(ostream& stream, const string& opts)
    if(rid_ == ERROR)
    {
       if(expl_ != nullptr) stream << "expl=" << *expl_;
-      stream << " err=" << strHex(debug32_t(err_)) << CRLF;
+      stream << " err=" << strHex(debug64_t(err_)) << CRLF;
    }
    else
    {

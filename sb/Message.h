@@ -83,7 +83,7 @@ public:
    //  pid: parameter id).
    //
    enum InspectRc
-   {                   //                              debug32_t (hex)
+   {                   //                              debug64_t (hex)
       Ok,              // signal and parameters OK          0000 0000
       IllegalSignal,   // illegal signal found              0000  sid
       IllegalParm,     // illegal parameter found          index  pid
@@ -129,7 +129,7 @@ public:
    //  Scans a message to ensure that its signal and parameters are valid.
    //  Returns Ok on success.  On failure, updates ERRVAL with debug info.
    //
-   virtual InspectRc InspectMsg(NodeBase::debug32_t& errval) const;
+   virtual InspectRc InspectMsg(NodeBase::debug64_t& errval) const;
 
    //  Invoked when an incoming message is discarded.
    //
@@ -331,7 +331,7 @@ protected:
    //  Invoked when Send wants to log an error.  Also invokes Handled.
    //
    virtual bool SendFailure
-      (NodeBase::debug64_t errval, NodeBase::debug32_t offset);
+      (NodeBase::debug64_t errval, NodeBase::debug64_t offset);
 
    //  Returns a non-const pointer to the message's buffer.
    //

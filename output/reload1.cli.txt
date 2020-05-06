@@ -1,29 +1,29 @@
 nt>sched show
-SCHEDULER REPORT: 3-May-2020 11:29:32.272 on Reigi
-for interval beginning at 11:29:26.554
+SCHEDULER REPORT: 6-May-2020 09:29:52.304 on Reigi
+for interval beginning at 09:29:46.254
 ----------------------------------------------------------------------------
       THREADS          |    SINCE START OF CURRENT 15-MIN INTERVAL    | LAST
                        |            rtc  max   max     max  total     |5 SEC
 id    name     host f b| ex yields  t/o msgs stack   usecs  msecs %cpu| %cpu
 ----------------------------------------------------------------------------
-      idle                                                   4156 72.7
- 1    root     6154 w S   0    377    0    0   274    2086     45  0.8
- 2    init     7238 s S   0    376    0    0  2746 1264213   1340 23.4
- 3    file     6d80 B     0     32    0   28   325   10922    146  2.6
- 4    cout     61f4 b     0     31    0   26   293     311      5  0.1
- 5     cin     2558 O C   0      3    0    0   240     108      0  0.0
- 6  objaud     7838 A S   0      1    0    0   237      82      0  0.0
- 7   stats     6c0c B S   0      1    0    0   248     224      0  0.0
- 8     log     71f8 B S   0      1    0    0   255      93      0  0.0
- 9     cli     8c98 O     0     29    0    0   672    4717     21  0.4
-10   timer     5618 P S   0      5    0    0   241     334      1  0.0
-11 invoker     9300 P S   0      1    0    0   259     168      0  0.0
-12   tcpio     9f50 P N   0      3    0    0   285    1623      2  0.0
-13   udpio     65c8 P N   0      1    0    0   269     586      1  0.0
-14   udpio     88f4 P N   0      1    0    0   269     653      1  0.0
+      idle                                                   4912 81.2  76.5
+ 1    root     ae1c w S   0    484    0    0   268    2085     52  0.9   0.6
+ 2    init     1704 s S   0    483    0    0  2746  809263    898 14.8  22.4
+ 3    file     9b78 B     0     32    0   28   319   13726    140  2.3   0.2
+ 4    cout     a664 b     0     31    0   26   287     477      6  0.1   0.0
+ 5     cin     ac9c O C   0      3    0    0   234      76      0  0.0   0.0
+ 6  objaud     b59c A S   0     38    0    0   424    3716     18  0.3   0.0
+ 7   stats     617c B S   0      2    0    0   242     138      0  0.0   0.0
+ 8     log     8960 B S   0      1    0    0   249      80      0  0.0   0.0
+ 9     cli     be7c O     0     29    0    0   672    4116     19  0.3   0.0
+10   timer     a1d8 P S   0      6    0    0   235     261      1  0.0   0.0
+11 invoker     9744 P S   0      1    0    0   253     159      0  0.0   0.0
+12   tcpio     5de0 P N   0      3    0    0   285    1724      3  0.0   0.1
+13   udpio     b5f8 P N   0      1    0    0   263     477      0  0.0   0.0
+14   udpio     8d2c P N   0      1    0    0   263     875      1  0.0   0.0
 ----------------------------------------------------------------------------
 nt>sb status
-STATUS REPORT: 3-May-2020 11:29:32.285 on Reigi
+STATUS REPORT: 6-May-2020 09:29:52.316 on Reigi
 MEMORY USAGE
 Alloc  Low kB     kB       Bytes                            Memory        Prot
 Fails   Avail  Avail      In Use     Allocs      Frees        Type  RWX  Chngs
@@ -31,7 +31,7 @@ Fails   Avail  Avail      In Use     Allocs      Frees        Type  RWX  Chngs
     0    ---     ---    24223356       1867          6     dynamic  rw-      0
     0    ---     ---         392         13          0  persistent  rw-      0
     0   1219    1219       61748        308         51   protected  r--      7
-    0    ---     ---     3977028        157          1   permanent  rw-      0
+    0    ---     ---     3977032        157          1   permanent  rw-      0
     0    386     386      128460       2270         58   immutable  r--      1
 
 OBJECT POOLS
@@ -50,7 +50,7 @@ Fails   Avail   Avail  In Use   Allocs    Frees  Expands   Pool Name
     0       *   14336       0        0        0        0   ServiceSMs
     0       *    1024       0        0        0        0   MediaEndpts
 
-CPU IDLE TIME: 0.0%
+CPU IDLE TIME: 76.5%
 
 ACTIVE ALARMS
   No active alarms.

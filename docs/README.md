@@ -32,8 +32,8 @@ Document | Description
 
 ## RSC Session Processing and Applications
 
-These documents describe the session processing framework provided with RSC and the POTS
-application that uses it:
+These documents describe the session processing framework provided with RSC and the POTS and
+Diplomacy bot applications that uses it:
 
 Document | Description
 -------- | -----------
@@ -41,4 +41,4 @@ Document | Description
 [RSC Session Processing](/docs/RSC-Session-Processing.pdf) | design guide for `SessionBase` applications
 [RSC POTS Application](/docs/RSC-POTS-Application.md) | overview of the POTS application
 [_A Pattern Language of Call Processing_](/docs/PLCP.pdf) | patterns used in session processing
-
+[RSC Diplomacy Bot](/docs/RSC-Diplomacy.md) | overview of the Diplomacy Bot application

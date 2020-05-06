@@ -99,7 +99,7 @@ public:
 
    //  Throws an exception if CONDITION is false.  ERRVAL is for debugging.
    //
-   static void Assert(bool condition, debug32_t errval = 0);
+   static void Assert(bool condition, debug64_t errval = 0);
 
    //  If FORCE or the ShowToolProgress is set, invokes CoutThread::Spool(s)
    //  followed by Thread::Pause(10).

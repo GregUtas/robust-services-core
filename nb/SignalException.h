@@ -36,7 +36,7 @@ class SignalException : public Exception
 public:
    //  SIG is the signal that occurred.  ERRVAL is for debugging.
    //
-   SignalException(signal_t sig, debug32_t errval);
+   SignalException(signal_t sig, debug64_t errval);
 
    //  Not subclassed.
    //
@@ -60,7 +60,7 @@ private:
 
    //  An error value for debugging.
    //
-   const debug32_t errval_;
+   const debug64_t errval_;
 };
 }
 #endif

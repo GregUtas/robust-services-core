@@ -87,17 +87,6 @@ public:
    //
    void Patch(sel_t selector, void* arguments) override;
 
-   //  The state of a block.
-   //
-   enum BlockState
-   {
-      Merged,     // merged with sibling: look at parent block
-      Split,      // split from sibling: look at child block
-      Allocated,  // in use by application software
-      Available,  // on heap's free queue
-      Invalid     // used to denote an invalid block address
-   };
-
    //  The type for a level within the heap.  Blocks at the same level have
    //  the same size.  Blocks at level N-1 are twice the size of blocks at
    //  level N.
@@ -119,6 +108,17 @@ protected:
    //
    NbHeap(MemoryType type, size_t size);
 private:
+   //  The state of a block.
+   //
+   enum BlockState
+   {
+      Merged,     // merged with sibling: look at parent block
+      Split,      // split from sibling: look at child block
+      Allocated,  // in use by application software
+      Available,  // on heap's free queue
+      Invalid     // used to denote an invalid block address
+   };
+
    //  Puts BLOCK on the free queue at LEVEL when initializing the heap.
    //
    void ReleaseBlock(HeapBlock* block, level_t level);
@@ -178,6 +178,11 @@ private:
    //  if RESTART is set.
    //
    BlockState ValidateBlock(index_t index, level_t level, bool restart) const;
+
+   //  Invoked when heap corruption is detected.  REASON specifies the type
+   //  of corruption, and RESTART is set to initiate a restart.
+   //
+   BlockState Corrupt(int reason, bool restart) const;
 
    //  Returns the index that accesses BLOCK's state within heap management
    //  data.  The block's LEVEL, which also corresponds to its size, must

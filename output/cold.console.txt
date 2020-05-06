@@ -1,40 +1,40 @@
 
 MODULE INITIALIZATION          msecs      invoked at
-pre-Module.Startup               169    10:41:09.957
-NodeBase.NbModule...                    10:41:10.126
-...initialized                   284
-NodeTools.NtModule...                   10:41:10.421
-...initialized                    68
-CodeTools.CtModule...                   10:41:10.499
-...initialized                    27
-NetworkBase.NwModule...                 10:41:10.536
+pre-Module.Startup               226    09:29:00.297
+NodeBase.NbModule...                    09:29:00.524
+...initialized                   145
+NodeTools.NtModule...                   09:29:00.678
+...initialized                    64
+CodeTools.CtModule...                   09:29:00.752
+...initialized                    31
+NetworkBase.NwModule...                 09:29:00.793
 
-    NET500 3-May-2020 10:41:10.556 on Reigi {1}
-...initialized                   110
-SessionBase.SbModule...                 10:41:10.656
-...initialized                   200
-ControlNode.CnModule...                 10:41:10.868
-...initialized                    10
-SessionTools.StModule...                10:41:10.894
-...initialized                    36
-MediaBase.MbModule...                   10:41:10.943
-...initialized                    18
-CallBase.CbModule...                    10:41:10.978
-...initialized                    40
-PotsBase.PbModule...                    10:41:11.032
+    NET500 6-May-2020 09:29:00.818 on Reigi {1}
+...initialized                   132
+SessionBase.SbModule...                 09:29:00.934
+...initialized                   129
+ControlNode.CnModule...                 09:29:01.071
+...initialized                     8
+SessionTools.StModule...                09:29:01.096
+...initialized                    22
+MediaBase.MbModule...                   09:29:01.132
+...initialized                    16
+CallBase.CbModule...                    09:29:01.165
 ...initialized                    35
-OperationsNode.OnModule...              10:41:11.078
-...initialized                    13
-RoutingNode.RnModule...                 10:41:11.106
+PotsBase.PbModule...                    09:29:01.215
+...initialized                    28
+OperationsNode.OnModule...              09:29:01.256
 ...initialized                    15
-ServiceNode.SnModule...                 10:41:11.133
-...initialized                    91
-AccessNode.AnModule...                  10:41:11.241
-...initialized                    25
+RoutingNode.RnModule...                 09:29:01.290
+...initialized                    12
+ServiceNode.SnModule...                 09:29:01.319
+...initialized                    53
+AccessNode.AnModule...                  09:29:01.387
+...initialized                    20
                                -----
-total initialization time       1326
+total initialization time       1123
 
-    NODE500 3-May-2020 10:41:11.298 on Reigi {2}
+    NODE500 6-May-2020 09:29:01.435 on Reigi {2}
 nb>read restart.cold1
 nb>nt
 nt>testcase reset
@@ -68,149 +68,150 @@ nt>testcase end
   OK.
 nt>delay 1
   OK.
-nt>start
-
-    NODE103 3-May-2020 10:41:16.631 on Reigi {3}
-    in NodeBase.CliThread (tid=9, nid=0x00009e64)
-      reason : 0x1
+nt>nt>
+    NODE103 6-May-2020 09:29:06.863 on Reigi {3}
+    in NodeBase.CliThread (tid=9, nid=0x00005844)
+      level  : cold
+      reason : manual restart
       errval : 0x2
     Function Traceback:
-      NodeBase.ElementException.ElementException @ elementexception.cpp + 38[12]
-      NodeBase.Debug.ft @ debug.cpp + 71[9]
-      NodeBase.SysThread.Suspend @ systhread.win.cpp + 340[11]
-      NodeBase.SysThread.Delay @ systhread.cpp + 107[0]
-      NodeBase.Thread.Pause @ thread.cpp + 2578[28]
-      NodeBase.RootThread.Enter @ rootthread.cpp + 202[9]
+      NodeBase.ElementException.ElementException @ elementexception.cpp + 39[12]
+      NodeBase.Restart.Initiate @ restart.cpp + 63[24]
+      NodeBase.RestartCommand.ProcessCommand @ nbincrement.cpp + 2445[17]
+      NodeBase.CliThread.InvokeCommand @ clithread.cpp + 505[19]
+      NodeBase.CliThread.ReadCommands @ clithread.cpp + 693[0]
+      NodeBase.ReadCommand.ProcessCommand @ nbincrement.cpp + 2309[0]
+      NodeBase.CliThread.InvokeCommand @ clithread.cpp + 505[19]
+      NodeBase.CliThread.ReadCommands @ clithread.cpp + 693[0]
+      NodeBase.CliThread.Enter @ clithread.cpp + 339[17]
       NodeBase.Thread.Start @ thread.cpp + 3365[15]
-      NodeBase.Thread.EnterThread @ thread.cpp + 1812[0]
-      NodeBase.RootThread.Main @ rootthread.cpp + 297[9]
-      main @ main.cpp + 141[0]
-      invoke_main @ exe_common.inl + 78[27]
-      __scrt_common_main_seh @ exe_common.inl + 288[5]
-      __scrt_common_main @ exe_common.inl + 331[0]
-      mainCRTStartup @ exe_main.cpp + 17[0]
+      NodeBase.Thread.EnterThread @ thread.cpp + 1811[0]
+      register_onexit_function @ <unknown file> (err=487)
+      register_onexit_function @ <unknown file> (err=487)
       BaseThreadInitThunk @ <unknown file> (err=487)
       RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
+      RtlGetAppContainerNamedObjectPath @ <unknown file> (err=487)
+start
   OK.
 nt>restart cold
-nt>
+
 RESTART TYPE: cold
 
 MODULE SHUTDOWN                msecs      invoked at
-Notifying threads...                    10:41:16.904
-...threads to exit: 11            50
+Notifying threads...                    09:29:07.149
+...threads to exit: 11            48
 
-    THR901 3-May-2020 10:41:17.030 on Reigi {5}
-    thread=NodeBase.CliThread (tid=9, nid=0x00009e64)
+    THR901 6-May-2020 09:29:07.244 on Reigi {5}
+    thread=NodeBase.FileThread (tid=3, nid=0x00001558)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 3-May-2020 10:41:17.039 on Reigi {11}
-    thread=NetworkBase.TcpIoThread (tid=12, nid=0x0000947c)
+    THR901 6-May-2020 09:29:07.249 on Reigi {6}
+    thread=NodeBase.ObjectPoolAudit (tid=6, nid=0x0000ad64)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 3-May-2020 10:41:17.041 on Reigi {12}
-    thread=NetworkBase.UdpIoThread (tid=13, nid=0x000029c0)
+    THR901 6-May-2020 09:29:07.270 on Reigi {12}
+    thread=NetworkBase.UdpIoThread (tid=13, nid=0x0000821c)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 3-May-2020 10:41:17.044 on Reigi {13}
-    thread=NetworkBase.UdpIoThread (tid=14, nid=0x000091dc)
+    THR901 6-May-2020 09:29:07.261 on Reigi {8}
+    thread=SessionBase.TimerThread (tid=10, nid=0x0000a1b8)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 3-May-2020 10:41:17.045 on Reigi {15}
-    thread=SessionBase.InvokerThread (tid=11, nid=0x00009c80)
+    THR901 6-May-2020 09:29:07.264 on Reigi {10}
+    thread=NetworkBase.UdpIoThread (tid=14, nid=0x0000ae88)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 3-May-2020 10:41:17.039 on Reigi {9}
-    thread=SessionBase.TimerThread (tid=10, nid=0x0000799c)
+    THR901 6-May-2020 09:29:07.261 on Reigi {9}
+    thread=NodeBase.LogThread (tid=8, nid=0x0000bfd4)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 3-May-2020 10:41:17.036 on Reigi {6}
-    thread=NodeBase.LogThread (tid=8, nid=0x00005b84)
+    THR901 6-May-2020 09:29:07.270 on Reigi {14}
+    thread=NetworkBase.TcpIoThread (tid=12, nid=0x00005410)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 3-May-2020 10:41:17.039 on Reigi {8}
-    thread=NodeBase.CoutThread (tid=4, nid=0x00007724)
+    THR901 6-May-2020 09:29:07.270 on Reigi {13}
+    thread=SessionBase.InvokerThread (tid=11, nid=0x00006b98)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 3-May-2020 10:41:17.039 on Reigi {10}
-    thread=NodeBase.ObjectPoolAudit (tid=6, nid=0x00008518)
+    THR901 6-May-2020 09:29:07.272 on Reigi {15}
+    thread=NodeBase.CliThread (tid=9, nid=0x00005844)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 3-May-2020 10:41:17.039 on Reigi {7}
-    thread=NodeBase.StatisticsThread (tid=7, nid=0x00007e00)
+    THR901 6-May-2020 09:29:07.251 on Reigi {7}
+    thread=NodeBase.StatisticsThread (tid=7, nid=0x00004dc4)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-    THR901 3-May-2020 10:41:17.045 on Reigi {14}
-    thread=NodeBase.FileThread (tid=3, nid=0x00007d40)
+    THR901 6-May-2020 09:29:07.267 on Reigi {11}
+    thread=NodeBase.CoutThread (tid=4, nid=0x0000b0cc)
     signal=122 (SIGCLOSE: Non-Error Shutdown)
 
-...threads exited: 11            244
-AccessNode.AnModule...                  10:41:17.165
-...shut down                      15
-ServiceNode.SnModule...                 10:41:17.198
-...shut down                      15
-RoutingNode.RnModule...                 10:41:17.232
-...shut down                      21
-OperationsNode.OnModule...              10:41:17.271
-...shut down                      20
-PotsBase.PbModule...                    10:41:17.311
+...threads exited: 11            242
+AccessNode.AnModule...                  09:29:07.412
+...shut down                      18
+ServiceNode.SnModule...                 09:29:07.449
 ...shut down                      16
-CallBase.CbModule...                    10:41:17.421
-...shut down                      74
-MediaBase.MbModule...                   10:41:17.515
+RoutingNode.RnModule...                 09:29:07.487
+...shut down                      20
+OperationsNode.OnModule...              09:29:07.524
 ...shut down                      21
-SessionTools.StModule...                10:41:17.557
-...shut down                      23
-ControlNode.CnModule...                 10:41:17.600
+PotsBase.PbModule...                    09:29:07.567
+...shut down                      18
+CallBase.CbModule...                    09:29:07.605
+...shut down                      18
+MediaBase.MbModule...                   09:29:07.642
 ...shut down                      17
-SessionBase.SbModule...                 10:41:17.935
-...shut down                      21
-NetworkBase.NwModule...                 10:41:17.979
+SessionTools.StModule...                09:29:07.680
+...shut down                      17
+ControlNode.CnModule...                 09:29:07.719
+...shut down                      16
+SessionBase.SbModule...                 09:29:07.752
+...shut down                      20
+NetworkBase.NwModule...                 09:29:08.032
+...shut down                      70
+CodeTools.CtModule...                   09:29:08.122
+...shut down                      18
+NodeTools.NtModule...                   09:29:08.163
 ...shut down                      24
-CodeTools.CtModule...                   10:41:18.025
-...shut down                      22
-NodeTools.NtModule...                   10:41:18.137
-...shut down                      23
-NodeBase.NbModule...                    10:41:18.184
-...shut down                      44
+NodeBase.NbModule...                    09:29:08.212
+...shut down                      47
                                -----
-total shutdown time             1347
+total shutdown time             1134
 
 MODULE INITIALIZATION          msecs      invoked at
-NodeBase.NbModule...                    10:41:18.271
-...initialized                   127
-NodeTools.NtModule...                   10:41:18.413
-...initialized                    17
-CodeTools.CtModule...                   10:41:18.446
+NodeBase.NbModule...                    09:29:08.309
+...initialized                   140
+NodeTools.NtModule...                   09:29:08.465
 ...initialized                    16
-NetworkBase.NwModule...                 10:41:18.479
+CodeTools.CtModule...                   09:29:08.498
+...initialized                    15
+NetworkBase.NwModule...                 09:29:08.527
 
-    NET500 3-May-2020 10:41:18.501 on Reigi {16}
-...initialized                    51
-SessionBase.SbModule...                 10:41:18.549
-...initialized                    40
-ControlNode.CnModule...                 10:41:18.605
-...initialized                    19
-SessionTools.StModule...                10:41:18.643
-...initialized                    15
-MediaBase.MbModule...                   10:41:18.673
-...initialized                    15
-CallBase.CbModule...                    10:41:18.704
-...initialized                    19
-PotsBase.PbModule...                    10:41:18.743
-...initialized                    16
-OperationsNode.OnModule...              10:41:18.778
-...initialized                    18
-RoutingNode.RnModule...                 10:41:18.817
-...initialized                    20
-ServiceNode.SnModule...                 10:41:18.853
+    NET500 6-May-2020 09:29:08.543 on Reigi {16}
+...initialized                    37
+SessionBase.SbModule...                 09:29:08.578
 ...initialized                    31
-AccessNode.AnModule...                  10:41:18.904
-...initialized                    17
+ControlNode.CnModule...                 09:29:08.625
+...initialized                    16
+SessionTools.StModule...                09:29:08.659
+...initialized                    14
+MediaBase.MbModule...                   09:29:08.692
+...initialized                    15
+CallBase.CbModule...                    09:29:08.723
+...initialized                    19
+PotsBase.PbModule...                    09:29:08.760
+...initialized                    21
+OperationsNode.OnModule...              09:29:08.801
+...initialized                    21
+RoutingNode.RnModule...                 09:29:08.845
+...initialized                    21
+ServiceNode.SnModule...                 09:29:08.886
+...initialized                    24
+AccessNode.AnModule...                  09:29:08.934
+...initialized                    23
                                -----
-total initialization time        668
+total initialization time        667
 
-    NODE500 3-May-2020 10:41:18.962 on Reigi {17}
+    NODE500 6-May-2020 09:29:08.997 on Reigi {17}
 nb>read restart.cold2
 nb>nt
 nt>testcase reset
